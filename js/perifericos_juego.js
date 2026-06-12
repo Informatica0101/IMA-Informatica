@@ -371,4 +371,4 @@
         if (finalTimeDisplay) finalTimeDisplay.textContent = '00:00';
     }
 
-})(window.QuizProApp);
+})(QuizProApp);

@@ -1,7 +1,7 @@
 [
   {
     "Pregunta": "¿Cuál es una ventaja fundamental de utilizar la Interfaz de Línea de Comandos (CLI)?",
-    "RespuestaCorrecta": "Automatización y precisión en tareas complejas",
+    "respuesta_correcta_literal": "Automatización y precisión en tareas complejas",
     "Nivel": "Avanzado",
     "Tema": "Línea de Comandos",
     "Asignatura": "Informatica_Aplicada",
@@ -15,7 +15,7 @@
   },
   {
     "Pregunta": "En la terminal de Windows (CMD), ¿qué comando se utiliza para listar los archivos de un directorio?",
-    "RespuestaCorrecta": "dir",
+    "respuesta_correcta_literal": "dir",
     "Nivel": "Avanzado",
     "Tema": "Línea de Comandos",
     "Asignatura": "Informatica_Aplicada",
@@ -29,7 +29,7 @@
   },
   {
     "Pregunta": "¿Qué comando permite crear una nueva carpeta o directorio desde la consola?",
-    "RespuestaCorrecta": "mkdir",
+    "respuesta_correcta_literal": "mkdir",
     "Nivel": "Avanzado",
     "Tema": "Línea de Comandos",
     "Asignatura": "Informatica_Aplicada",
@@ -43,7 +43,7 @@
   },
   {
     "Pregunta": "Para limpiar la pantalla de la terminal en Windows se utiliza el comando:",
-    "RespuestaCorrecta": "cls",
+    "respuesta_correcta_literal": "cls",
     "Nivel": "Avanzado",
     "Tema": "Línea de Comandos",
     "Asignatura": "Informatica_Aplicada",
@@ -57,7 +57,7 @@
   },
   {
     "Pregunta": "¿Cómo se visualiza el contenido de un archivo de texto directamente en la terminal de Windows?",
-    "RespuestaCorrecta": "type",
+    "respuesta_correcta_literal": "type",
     "Nivel": "Avanzado",
     "Tema": "Línea de Comandos",
     "Asignatura": "Informatica_Aplicada",
@@ -71,7 +71,7 @@
   },
   {
     "Pregunta": "¿Qué extensión tienen los archivos que contienen secuencias de comandos por lotes en Windows?",
-    "RespuestaCorrecta": ".bat",
+    "respuesta_correcta_literal": ".bat",
     "Nivel": "Avanzado",
     "Tema": "Scripts",
     "Asignatura": "Informatica_Aplicada",
@@ -85,7 +85,7 @@
   },
   {
     "Pregunta": "¿Qué comando se utiliza para cambiar de directorio en la terminal?",
-    "RespuestaCorrecta": "cd",
+    "respuesta_correcta_literal": "cd",
     "Nivel": "Avanzado",
     "Tema": "Línea de Comandos",
     "Asignatura": "Informatica_Aplicada",
@@ -99,7 +99,7 @@
   },
   {
     "Pregunta": "¿Cuál es la función del comando 'ipconfig' en la línea de comandos de Windows?",
-    "RespuestaCorrecta": "Mostrar la configuración de red del equipo",
+    "respuesta_correcta_literal": "Mostrar la configuración de red del equipo",
     "Nivel": "Avanzado",
     "Tema": "Línea de Comandos",
     "Asignatura": "Informatica_Aplicada",
@@ -113,7 +113,7 @@
   },
   {
     "Pregunta": "Para eliminar un archivo desde la terminal de Windows se utiliza:",
-    "RespuestaCorrecta": "del",
+    "respuesta_correcta_literal": "del",
     "Nivel": "Avanzado",
     "Tema": "Línea de Comandos",
     "Asignatura": "Informatica_Aplicada",
@@ -127,7 +127,7 @@
   },
   {
     "Pregunta": "¿Qué símbolo se usa en la ruta para representar el directorio raíz en Windows?",
-    "RespuestaCorrecta": "\\ (barra invertida)",
+    "respuesta_correcta_literal": "\\ (barra invertida)",
     "Nivel": "Avanzado",
     "Tema": "Línea de Comandos",
     "Asignatura": "Informatica_Aplicada",
@@ -141,7 +141,7 @@
   },
   {
     "Pregunta": "¿Qué es la topología de red en bus?",
-    "RespuestaCorrecta": "Los dispositivos se conectan a un único cable central",
+    "respuesta_correcta_literal": "Los dispositivos se conectan a un único cable central",
     "Nivel": "Avanzado",
     "Tema": "Redes",
     "Asignatura": "Informatica_Aplicada",

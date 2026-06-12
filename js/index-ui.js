@@ -162,8 +162,7 @@ var QuizProApp = window.QuizProApp || {};
 
         if (contentBackButton) {
             contentBackButton.addEventListener('click', function() {
-var QuizProApp = window.QuizProApp || {};
-                animateContentTransition(function(app) {
+                animateContentTransition(function() {
                     if (currentContentView === 'subjects') {
                         renderDownloadGrades();
                         selectedGradeData = null;
@@ -204,8 +203,7 @@ var QuizProApp = window.QuizProApp || {};
             if (!modal) return safeLoadGame(gameId, html, js, initFn, title);
 
             modal.classList.remove('hidden');
-var QuizProApp = window.QuizProApp || {};
-            setTimeout(function(app) { modal.classList.add('opacity-100'); }, 10);
+            setTimeout(function() { modal.classList.add('opacity-100'); }, 10);
 
             var loginBtn = document.getElementById('triage-login-btn');
             var guestBtn = document.getElementById('triage-guest-btn');
@@ -213,8 +211,7 @@ var QuizProApp = window.QuizProApp || {};
 
             var closeTriage = function() {
                 modal.classList.remove('opacity-100');
-var QuizProApp = window.QuizProApp || {};
-                setTimeout(function(app) { modal.classList.add('hidden'); }, 300);
+                setTimeout(function() { modal.classList.add('hidden'); }, 300);
             };
 
             if (loginBtn) {
@@ -300,6 +297,8 @@ var QuizProApp = window.QuizProApp || {};
             }
             return loadGame(gameId, html, js, initFn, title);
         }
+
+        app.renderActivityList = renderActivityList;
 
         app.loadPeripheralsGame = function() { return safeLoadGame('peripherals', 'juegos/perifericos.html', 'js/perifericos_juego.js', 'initializePeripheralsGame', 'Juego de Periféricos'); };
         app.loadWebMasterQuiz = function() { return safeLoadGame('webmaster', 'juegos/webmaster_quiz.html', 'js/webmaster_quiz_juego.js', 'initQuizGame', 'WebMaster Quiz'); };
@@ -466,8 +465,7 @@ var QuizProApp = window.QuizProApp || {};
         /**
          * Login Modal Logic
          */
-var QuizProApp = window.QuizProApp || {};
-        (function(app) {
+        (function() {
             var loginModal = document.getElementById('login-modal');
             var loginModalContent = document.getElementById('login-modal-content');
             var closeLoginModal = document.getElementById('close-login-modal');
@@ -520,8 +518,9 @@ var QuizProApp = window.QuizProApp || {};
                 }
             }
 
+            app.renderAccessButton = renderAccessButton;
             renderAccessButton();
-        })(QuizProApp);
+        })();
 
         /**
          * Global Authentication Helper

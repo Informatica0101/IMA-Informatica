@@ -1,7 +1,7 @@
 [
   {
     "Pregunta": "¿Qué tipo de red cubre un área pequeña como una habitación o una oficina?",
-    "RespuestaCorrecta": "LAN (Red de Área Local)",
+    "respuesta_correcta_literal": "LAN (Red de Área Local)",
     "Nivel": "Intermedio",
     "Tema": "Redes",
     "Asignatura": "Informatica",
@@ -15,7 +15,7 @@
   },
   {
     "Pregunta": "¿Cuál es la red de redes que conecta computadoras en todo el mundo?",
-    "RespuestaCorrecta": "Internet",
+    "respuesta_correcta_literal": "Internet",
     "Nivel": "Intermedio",
     "Tema": "Redes",
     "Asignatura": "Informatica",
@@ -29,7 +29,7 @@
   },
   {
     "Pregunta": "¿Qué dispositivo se encarga de interconectar diferentes redes y dirigir el tráfico de datos?",
-    "RespuestaCorrecta": "Router",
+    "respuesta_correcta_literal": "Router",
     "Nivel": "Intermedio",
     "Tema": "Redes",
     "Asignatura": "Informatica",
@@ -43,7 +43,7 @@
   },
   {
     "Pregunta": "¿Qué significan las siglas WAN?",
-    "RespuestaCorrecta": "Wide Area Network",
+    "respuesta_correcta_literal": "Wide Area Network",
     "Nivel": "Intermedio",
     "Tema": "Redes",
     "Asignatura": "Informatica",
@@ -57,7 +57,7 @@
   },
   {
     "Pregunta": "¿Cuál es la función principal de una dirección IP?",
-    "RespuestaCorrecta": "Identificar de forma única a un dispositivo en una red",
+    "respuesta_correcta_literal": "Identificar de forma única a un dispositivo en una red",
     "Nivel": "Intermedio",
     "Tema": "Redes",
     "Asignatura": "Informatica",
@@ -71,7 +71,7 @@
   },
   {
     "Pregunta": "¿Qué servicio traduce nombres de dominio (como google.com) a direcciones IP?",
-    "RespuestaCorrecta": "DNS",
+    "respuesta_correcta_literal": "DNS",
     "Nivel": "Intermedio",
     "Tema": "Redes",
     "Asignatura": "Informatica",
@@ -85,7 +85,7 @@
   },
   {
     "Pregunta": "¿Qué protocolo asigna direcciones IP de forma automática a los dispositivos?",
-    "RespuestaCorrecta": "DHCP",
+    "respuesta_correcta_literal": "DHCP",
     "Nivel": "Intermedio",
     "Tema": "Redes",
     "Asignatura": "Informatica",
@@ -99,7 +99,7 @@
   },
   {
     "Pregunta": "¿Qué componente actúa como la 'puerta de salida' de una red local hacia internet?",
-    "RespuestaCorrecta": "Puerta de Enlace (Gateway)",
+    "respuesta_correcta_literal": "Puerta de Enlace (Gateway)",
     "Nivel": "Intermedio",
     "Tema": "Redes",
     "Asignatura": "Informatica",
@@ -113,7 +113,7 @@
   },
   {
     "Pregunta": "¿Qué dispositivo permite conectar múltiples dispositivos en una misma red local (LAN)?",
-    "RespuestaCorrecta": "Switch",
+    "respuesta_correcta_literal": "Switch",
     "Nivel": "Intermedio",
     "Tema": "Redes",
     "Asignatura": "Informatica",
@@ -127,7 +127,7 @@
   },
   {
     "Pregunta": "¿Qué tecnología inalámbrica permite la conexión a internet en áreas cortas?",
-    "RespuestaCorrecta": "Wi-Fi",
+    "respuesta_correcta_literal": "Wi-Fi",
     "Nivel": "Intermedio",
     "Tema": "Redes",
     "Asignatura": "Informatica",
@@ -141,7 +141,7 @@
   },
   {
     "Pregunta": "¿Cuál es un ejemplo de una dirección IPv4 válida?",
-    "RespuestaCorrecta": "192.168.1.1",
+    "respuesta_correcta_literal": "192.168.1.1",
     "Nivel": "Intermedio",
     "Tema": "Redes",
     "Asignatura": "Informatica",
@@ -155,7 +155,7 @@
   },
   {
     "Pregunta": "¿Qué es un algoritmo?",
-    "RespuestaCorrecta": "Una serie de pasos ordenados para resolver un problema",
+    "respuesta_correcta_literal": "Una serie de pasos ordenados para resolver un problema",
     "Nivel": "Intermedio",
     "Tema": "Algoritmos",
     "Asignatura": "Informatica",
@@ -169,7 +169,7 @@
   },
   {
     "Pregunta": "En un algoritmo para hacer una taza de té, ¿cuál sería el primer paso lógico?",
-    "RespuestaCorrecta": "Hervir el agua",
+    "respuesta_correcta_literal": "Hervir el agua",
     "Nivel": "Intermedio",
     "Tema": "Algoritmos",
     "Asignatura": "Informatica",
@@ -183,7 +183,7 @@
   },
   {
     "Pregunta": "¿Qué característica debe tener un algoritmo para ser correcto?",
-    "RespuestaCorrecta": "Debe ser preciso, definido y finito",
+    "respuesta_correcta_literal": "Debe ser preciso, definido y finito",
     "Nivel": "Intermedio",
     "Tema": "Algoritmos",
     "Asignatura": "Informatica",
@@ -197,7 +197,7 @@
   },
   {
     "Pregunta": "En un diagrama de flujo, ¿qué representa el símbolo de un óvalo?",
-    "RespuestaCorrecta": "Inicio o Fin",
+    "respuesta_correcta_literal": "Inicio o Fin",
     "Nivel": "Intermedio",
     "Tema": "Diagramas de Flujo",
     "Asignatura": "Informatica",
@@ -211,7 +211,7 @@
   },
   {
     "Pregunta": "¿Qué símbolo se utiliza para representar un proceso o una operación en un diagrama de flujo?",
-    "RespuestaCorrecta": "Rectángulo",
+    "respuesta_correcta_literal": "Rectángulo",
     "Nivel": "Intermedio",
     "Tema": "Diagramas de Flujo",
     "Asignatura": "Informatica",
@@ -225,7 +225,7 @@
   },
   {
     "Pregunta": "El rombo en un diagrama de flujo se utiliza para representar:",
-    "RespuestaCorrecta": "Una decisión (Si / No)",
+    "respuesta_correcta_literal": "Una decisión (Si / No)",
     "Nivel": "Intermedio",
     "Tema": "Diagramas de Flujo",
     "Asignatura": "Informatica",
@@ -239,7 +239,7 @@
   },
   {
     "Pregunta": "¿Qué indica la flecha en un diagrama de flujo?",
-    "RespuestaCorrecta": "La dirección del flujo del proceso",
+    "respuesta_correcta_literal": "La dirección del flujo del proceso",
     "Nivel": "Intermedio",
     "Tema": "Diagramas de Flujo",
     "Asignatura": "Informatica",
@@ -253,7 +253,7 @@
   },
   {
     "Pregunta": "¿Cuál es la función de la memoria RAM en una computadora?",
-    "RespuestaCorrecta": "Almacenar datos temporalmente mientras se ejecutan",
+    "respuesta_correcta_literal": "Almacenar datos temporalmente mientras se ejecutan",
     "Nivel": "Intermedio",
     "Tema": "Hardware",
     "Asignatura": "Informatica",
@@ -267,7 +267,7 @@
   },
   {
     "Pregunta": "¿Cuál de las siguientes memorias es no volátil (no pierde datos al apagar)?",
-    "RespuestaCorrecta": "ROM",
+    "respuesta_correcta_literal": "ROM",
     "Nivel": "Intermedio",
     "Tema": "Hardware",
     "Asignatura": "Informatica",
@@ -281,7 +281,7 @@
   },
   {
     "Pregunta": "Un algoritmo que suma dos números y muestra el resultado es un ejemplo de:",
-    "RespuestaCorrecta": "Estructura secuencial",
+    "respuesta_correcta_literal": "Estructura secuencial",
     "Nivel": "Intermedio",
     "Tema": "Algoritmos",
     "Asignatura": "Informatica",
@@ -295,7 +295,7 @@
   },
   {
     "Pregunta": "¿Qué es un pseudocódigo?",
-    "RespuestaCorrecta": "Un lenguaje intermedio entre el humano y la máquina",
+    "respuesta_correcta_literal": "Un lenguaje intermedio entre el humano y la máquina",
     "Nivel": "Intermedio",
     "Tema": "Algoritmos",
     "Asignatura": "Informatica",
@@ -309,7 +309,7 @@
   },
   {
     "Pregunta": "En un diagrama de flujo, el paralelogramo se utiliza habitualmente para:",
-    "RespuestaCorrecta": "Entrada y salida de datos",
+    "respuesta_correcta_literal": "Entrada y salida de datos",
     "Nivel": "Intermedio",
     "Tema": "Diagramas de Flujo",
     "Asignatura": "Informatica",
@@ -323,7 +323,7 @@
   },
   {
     "Pregunta": "¿Qué sucede si un algoritmo no es finito?",
-    "RespuestaCorrecta": "Entra en un bucle infinito y no termina",
+    "respuesta_correcta_literal": "Entra en un bucle infinito y no termina",
     "Nivel": "Intermedio",
     "Tema": "Algoritmos",
     "Asignatura": "Informatica",
@@ -337,7 +337,7 @@
   },
   {
     "Pregunta": "¿Cuál es la unidad mínima de información en informática?",
-    "RespuestaCorrecta": "Bit",
+    "respuesta_correcta_literal": "Bit",
     "Nivel": "Intermedio",
     "Tema": "Fundamentos",
     "Asignatura": "Informatica",
@@ -351,7 +351,7 @@
   },
   {
     "Pregunta": "¿Cuántos bits conforman un Byte?",
-    "RespuestaCorrecta": "8 bits",
+    "respuesta_correcta_literal": "8 bits",
     "Nivel": "Intermedio",
     "Tema": "Fundamentos",
     "Asignatura": "Informatica",
@@ -365,7 +365,7 @@
   },
   {
     "Pregunta": "Un Kilobyte (KB) equivale aproximadamente a:",
-    "RespuestaCorrecta": "1024 Bytes",
+    "respuesta_correcta_literal": "1024 Bytes",
     "Nivel": "Intermedio",
     "Tema": "Fundamentos",
     "Asignatura": "Informatica",
@@ -379,7 +379,7 @@
   },
   {
     "Pregunta": "¿Cuál es la capacidad típica de un Terabyte (TB)?",
-    "RespuestaCorrecta": "1024 Gigabytes",
+    "respuesta_correcta_literal": "1024 Gigabytes",
     "Nivel": "Intermedio",
     "Tema": "Fundamentos",
     "Asignatura": "Informatica",
@@ -393,7 +393,7 @@
   },
   {
     "Pregunta": "¿Qué significa 'ancho de banda' en una red?",
-    "RespuestaCorrecta": "La cantidad de datos que pueden transmitirse en un tiempo",
+    "respuesta_correcta_literal": "La cantidad de datos que pueden transmitirse en un tiempo",
     "Nivel": "Intermedio",
     "Tema": "Redes",
     "Asignatura": "Informatica",
@@ -407,7 +407,7 @@
   },
   {
     "Pregunta": "¿Qué es una red MAN?",
-    "RespuestaCorrecta": "Red de Área Metropolitana (una ciudad)",
+    "respuesta_correcta_literal": "Red de Área Metropolitana (una ciudad)",
     "Nivel": "Intermedio",
     "Tema": "Redes",
     "Asignatura": "Informatica",
@@ -421,7 +421,7 @@
   },
   {
     "Pregunta": "¿Cuál es la función del módem?",
-    "RespuestaCorrecta": "Convertir señales digitales en analógicas y viceversa",
+    "respuesta_correcta_literal": "Convertir señales digitales en analógicas y viceversa",
     "Nivel": "Intermedio",
     "Tema": "Redes",
     "Asignatura": "Informatica",
@@ -435,7 +435,7 @@
   },
   {
     "Pregunta": "¿Qué es una dirección MAC?",
-    "RespuestaCorrecta": "Identificador físico único de la tarjeta de red",
+    "respuesta_correcta_literal": "Identificador físico único de la tarjeta de red",
     "Nivel": "Intermedio",
     "Tema": "Redes",
     "Asignatura": "Informatica",
@@ -449,7 +449,7 @@
   },
   {
     "Pregunta": "En un algoritmo, ¿qué es una variable?",
-    "RespuestaCorrecta": "Un espacio en memoria para guardar un dato que cambia",
+    "respuesta_correcta_literal": "Un espacio en memoria para guardar un dato que cambia",
     "Nivel": "Intermedio",
     "Tema": "Algoritmos",
     "Asignatura": "Informatica",
@@ -463,7 +463,7 @@
   },
   {
     "Pregunta": "¿Qué tipo de dato usarías para guardar un nombre en un algoritmo?",
-    "RespuestaCorrecta": "Cadena de texto (String)",
+    "respuesta_correcta_literal": "Cadena de texto (String)",
     "Nivel": "Intermedio",
     "Tema": "Algoritmos",
     "Asignatura": "Informatica",
@@ -477,7 +477,7 @@
   },
   {
     "Pregunta": "¿Cuál es el resultado de evaluar (5 > 3) en lógica?",
-    "RespuestaCorrecta": "Verdadero",
+    "respuesta_correcta_literal": "Verdadero",
     "Nivel": "Intermedio",
     "Tema": "Algoritmos",
     "Asignatura": "Informatica",
@@ -491,7 +491,7 @@
   },
   {
     "Pregunta": "El proceso de buscar y corregir errores en un algoritmo se llama:",
-    "RespuestaCorrecta": "Depuración",
+    "respuesta_correcta_literal": "Depuración",
     "Nivel": "Intermedio",
     "Tema": "Algoritmos",
     "Asignatura": "Informatica",
@@ -505,7 +505,7 @@
   },
   {
     "Pregunta": "¿Qué es una red de área personal (PAN)?",
-    "RespuestaCorrecta": "Conexión de dispositivos personales (ej. celular y reloj)",
+    "respuesta_correcta_literal": "Conexión de dispositivos personales (ej. celular y reloj)",
     "Nivel": "Intermedio",
     "Tema": "Redes",
     "Asignatura": "Informatica",
@@ -519,7 +519,7 @@
   },
   {
     "Pregunta": "¿Cuál es la función de la máscara de subred?",
-    "RespuestaCorrecta": "Delimitar qué parte de la IP es red y qué parte es host",
+    "respuesta_correcta_literal": "Delimitar qué parte de la IP es red y qué parte es host",
     "Nivel": "Intermedio",
     "Tema": "Redes",
     "Asignatura": "Informatica",
@@ -533,7 +533,7 @@
   },
   {
     "Pregunta": "Un algoritmo para lavarse las manos debe ser:",
-    "RespuestaCorrecta": "Secuencial y lógico",
+    "respuesta_correcta_literal": "Secuencial y lógico",
     "Nivel": "Intermedio",
     "Tema": "Algoritmos",
     "Asignatura": "Informatica",
@@ -547,7 +547,7 @@
   },
   {
     "Pregunta": "¿Qué símbolo se usa para la 'Salida de Datos' (mostrar en pantalla)?",
-    "RespuestaCorrecta": "Paralelogramo o Documento",
+    "respuesta_correcta_literal": "Paralelogramo o Documento",
     "Nivel": "Intermedio",
     "Tema": "Diagramas de Flujo",
     "Asignatura": "Informatica",
@@ -561,7 +561,7 @@
   },
   {
     "Pregunta": "Si un algoritmo tiene un error de lógica:",
-    "RespuestaCorrecta": "Funciona pero da un resultado equivocado",
+    "respuesta_correcta_literal": "Funciona pero da un resultado equivocado",
     "Nivel": "Intermedio",
     "Tema": "Algoritmos",
     "Asignatura": "Informatica",
@@ -575,7 +575,7 @@
   },
   {
     "Pregunta": "¿Cuál es un ejemplo de almacenamiento secundario?",
-    "RespuestaCorrecta": "Disco Duro (HDD)",
+    "respuesta_correcta_literal": "Disco Duro (HDD)",
     "Nivel": "Intermedio",
     "Tema": "Hardware",
     "Asignatura": "Informatica",
@@ -589,7 +589,7 @@
   },
   {
     "Pregunta": "¿Qué significa SSD?",
-    "RespuestaCorrecta": "Solid State Drive",
+    "respuesta_correcta_literal": "Solid State Drive",
     "Nivel": "Intermedio",
     "Tema": "Hardware",
     "Asignatura": "Informatica",
@@ -603,7 +603,7 @@
   },
   {
     "Pregunta": "¿Por qué el SSD es más rápido que el HDD?",
-    "RespuestaCorrecta": "No tiene partes mecánicas móviles",
+    "respuesta_correcta_literal": "No tiene partes mecánicas móviles",
     "Nivel": "Intermedio",
     "Tema": "Hardware",
     "Asignatura": "Informatica",
@@ -617,7 +617,7 @@
   },
   {
     "Pregunta": "¿Qué es la latencia en una red?",
-    "RespuestaCorrecta": "El tiempo de retardo en la transmisión",
+    "respuesta_correcta_literal": "El tiempo de retardo en la transmisión",
     "Nivel": "Intermedio",
     "Tema": "Redes",
     "Asignatura": "Informatica",
@@ -631,7 +631,7 @@
   },
   {
     "Pregunta": "¿Qué comando de red básico permite probar la conectividad con otro equipo?",
-    "RespuestaCorrecta": "ping",
+    "respuesta_correcta_literal": "ping",
     "Nivel": "Intermedio",
     "Tema": "Redes",
     "Asignatura": "Informatica",
@@ -645,7 +645,7 @@
   },
   {
     "Pregunta": "¿Qué significan las siglas HTTP?",
-    "RespuestaCorrecta": "HyperText Transfer Protocol",
+    "respuesta_correcta_literal": "HyperText Transfer Protocol",
     "Nivel": "Intermedio",
     "Tema": "Redes",
     "Asignatura": "Informatica",
@@ -659,7 +659,7 @@
   },
   {
     "Pregunta": "En un algoritmo, una 'constante' es:",
-    "RespuestaCorrecta": "Un valor que no cambia durante la ejecución",
+    "respuesta_correcta_literal": "Un valor que no cambia durante la ejecución",
     "Nivel": "Intermedio",
     "Tema": "Algoritmos",
     "Asignatura": "Informatica",
@@ -673,7 +673,7 @@
   },
   {
     "Pregunta": "¿Cuál es el propósito final de un algoritmo?",
-    "RespuestaCorrecta": "Resolver un problema específico",
+    "respuesta_correcta_literal": "Resolver un problema específico",
     "Nivel": "Intermedio",
     "Tema": "Algoritmos",
     "Asignatura": "Informatica",

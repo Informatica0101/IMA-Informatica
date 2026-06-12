@@ -101,8 +101,8 @@ var QuizProApp = window.QuizProApp || {};
 
         var closeBtn = document.getElementById('close-profile-modal');
         var cancelBtn = document.getElementById('cancel-profile-btn');
-        if (closeBtn) closeBtn.onclick = QuizProApp.closeProfileModal;
-        if (cancelBtn) cancelBtn.onclick = QuizProApp.closeProfileModal;
+        if (closeBtn) closeBtn.onclick = function() { QuizProApp.closeProfileModal(); };
+        if (cancelBtn) cancelBtn.onclick = function() { QuizProApp.closeProfileModal(); };
 
         app.handleLogout = function() {
             localStorage.removeItem('currentUser');
@@ -334,16 +334,16 @@ var QuizProApp = window.QuizProApp || {};
     };
 
     app.checkSectionHelper = function(sectionsField, targetSection) {
-        if (!sectionsField || !targetSection) return true;
-        if (Array.isArray(sectionsField)) return sectionsField.indexOf(targetSection) !== -1;
-        var parts = sectionsField.split(',');
-        for (var i = 0; i < parts.length; i++) {
-            if (parts[i].trim() === targetSection) return true;
-        }
-        return false;
-    };
+            if (!sectionsField || !targetSection) return true;
+            if (Array.isArray(sectionsField)) return sectionsField.indexOf(targetSection) !== -1;
+            var parts = String(sectionsField).split(',');
+            for (var i = 0; i < parts.length; i++) {
+                if (parts[i].trim() === targetSection) return true;
+            }
+            return false;
+        };
 
-    app.handleHeaderAction = function(action) {
+        app.handleHeaderAction = function(action) {
         if (action === 'show-activities') {
             if (QuizProApp.showMainContentSections) {
                 QuizProApp.showMainContentSections();

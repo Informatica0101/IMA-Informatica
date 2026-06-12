@@ -1,7 +1,7 @@
 [
   {
     "Pregunta": "¿Cómo se llama el sistema de numeración que utiliza diez símbolos (0-9)?",
-    "RespuestaCorrecta": "Sistema Decimal",
+    "respuesta_correcta_literal": "Sistema Decimal",
     "Nivel": "Intermedio",
     "Tema": "Sistemas de Numeración",
     "Asignatura": "Informatica_Aplicada",
@@ -15,7 +15,7 @@
   },
   {
     "Pregunta": "¿Cuál es la base del sistema de numeración binario?",
-    "RespuestaCorrecta": "Base 2",
+    "respuesta_correcta_literal": "Base 2",
     "Nivel": "Intermedio",
     "Tema": "Sistemas de Numeración",
     "Asignatura": "Informatica_Aplicada",
@@ -29,7 +29,7 @@
   },
   {
     "Pregunta": "¿Cuál es la base del sistema de numeración hexadecimal?",
-    "RespuestaCorrecta": "Base 16",
+    "respuesta_correcta_literal": "Base 16",
     "Nivel": "Intermedio",
     "Tema": "Sistemas de Numeración",
     "Asignatura": "Informatica_Aplicada",
@@ -43,7 +43,7 @@
   },
   {
     "Pregunta": "Al convertir el número decimal 10 a binario, ¿qué resultado obtienes?",
-    "RespuestaCorrecta": "1010",
+    "respuesta_correcta_literal": "1010",
     "Nivel": "Intermedio",
     "Tema": "Sistemas de Numeración",
     "Asignatura": "Informatica_Aplicada",
@@ -57,7 +57,7 @@
   },
   {
     "Pregunta": "Al convertir el número binario 1001 a decimal, el resultado es:",
-    "RespuestaCorrecta": "9",
+    "respuesta_correcta_literal": "9",
     "Nivel": "Intermedio",
     "Tema": "Sistemas de Numeración",
     "Asignatura": "Informatica_Aplicada",
@@ -71,7 +71,7 @@
   },
   {
     "Pregunta": "¿Cuál es el valor decimal de la letra 'A' en hexadecimal?",
-    "RespuestaCorrecta": "10",
+    "respuesta_correcta_literal": "10",
     "Nivel": "Intermedio",
     "Tema": "Sistemas de Numeración",
     "Asignatura": "Informatica_Aplicada",
@@ -85,7 +85,7 @@
   },
   {
     "Pregunta": "¿Qué letra representa el valor decimal 15 en hexadecimal?",
-    "RespuestaCorrecta": "F",
+    "respuesta_correcta_literal": "F",
     "Nivel": "Intermedio",
     "Tema": "Sistemas de Numeración",
     "Asignatura": "Informatica_Aplicada",
@@ -99,7 +99,7 @@
   },
   {
     "Pregunta": "Un conjunto de 4 bits (la mitad de un byte) se conoce técnicamente como:",
-    "RespuestaCorrecta": "Nibble",
+    "respuesta_correcta_literal": "Nibble",
     "Nivel": "Intermedio",
     "Tema": "Sistemas de Numeración",
     "Asignatura": "Informatica_Aplicada",
@@ -113,7 +113,7 @@
   },
   {
     "Pregunta": "¿Cuántos bits se necesitan para representar un dígito hexadecimal?",
-    "RespuestaCorrecta": "4",
+    "respuesta_correcta_literal": "4",
     "Nivel": "Intermedio",
     "Tema": "Sistemas de Numeración",
     "Asignatura": "Informatica_Aplicada",
@@ -127,7 +127,7 @@
   },
   {
     "Pregunta": "En el sistema decimal, la base es 10. ¿Cuál es la base en el sistema Octal?",
-    "RespuestaCorrecta": "8",
+    "respuesta_correcta_literal": "8",
     "Nivel": "Intermedio",
     "Tema": "Sistemas de Numeración",
     "Asignatura": "Informatica_Aplicada",

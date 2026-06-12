@@ -1,7 +1,7 @@
 [
   {
     "Pregunta": "¿Cuál es la etiqueta recomendada para poner texto en negrita?",
-    "RespuestaCorrecta": "<strong>",
+    "respuesta_correcta_literal": "<strong>",
     "Nivel": "Avanzado",
     "Tema": "Estructura HTML",
     "Asignatura": "Diseno_Web",
@@ -15,7 +15,7 @@
   },
   {
     "Pregunta": "¿Qué etiqueta se usa para poner texto en cursiva (itálica)?",
-    "RespuestaCorrecta": "<em>",
+    "respuesta_correcta_literal": "<em>",
     "Nivel": "Avanzado",
     "Tema": "Estructura HTML",
     "Asignatura": "Diseno_Web",
@@ -29,7 +29,7 @@
   },
   {
     "Pregunta": "¿Qué propiedad de CSS se usa para justificar el texto?",
-    "RespuestaCorrecta": "text-align: justify",
+    "respuesta_correcta_literal": "text-align: justify",
     "Nivel": "Avanzado",
     "Tema": "Estilos CSS",
     "Asignatura": "Diseno_Web",
@@ -43,7 +43,7 @@
   },
   {
     "Pregunta": "¿Cuál es la diferencia entre <b> y <strong>?",
-    "RespuestaCorrecta": "<strong> tiene importancia semántica, <b> solo visual",
+    "respuesta_correcta_literal": "<strong> tiene importancia semántica, <b> solo visual",
     "Nivel": "Avanzado",
     "Tema": "Tablas HTML",
     "Asignatura": "Diseno_Web",
@@ -57,7 +57,7 @@
   },
   {
     "Pregunta": "¿Qué etiqueta se usa para subrayar texto?",
-    "RespuestaCorrecta": "<u>",
+    "respuesta_correcta_literal": "<u>",
     "Nivel": "Avanzado",
     "Tema": "Estructura HTML",
     "Asignatura": "Diseno_Web",
@@ -71,7 +71,7 @@
   },
   {
     "Pregunta": "1. ¿Qué propiedad CSS alinea el texto horizontalmente?",
-    "RespuestaCorrecta": "text-align",
+    "respuesta_correcta_literal": "text-align",
     "Nivel": "Avanzado",
     "Tema": "Estilos CSS",
     "Asignatura": "Diseno_Web",
@@ -85,7 +85,7 @@
   },
   {
     "Pregunta": "2. ¿Qué valor de text-align centra el texto?",
-    "RespuestaCorrecta": "center",
+    "respuesta_correcta_literal": "center",
     "Nivel": "Avanzado",
     "Tema": "Estilos CSS",
     "Asignatura": "Diseno_Web",
@@ -99,7 +99,7 @@
   },
   {
     "Pregunta": "3. ¿Qué propiedad CSS se usa para el interlineado?",
-    "RespuestaCorrecta": "line-height",
+    "respuesta_correcta_literal": "line-height",
     "Nivel": "Avanzado",
     "Tema": "Estilos CSS",
     "Asignatura": "Diseno_Web",
@@ -113,7 +113,7 @@
   },
   {
     "Pregunta": "4. ¿Qué valor de text-decoration tacha el texto?",
-    "RespuestaCorrecta": "line-through",
+    "respuesta_correcta_literal": "line-through",
     "Nivel": "Avanzado",
     "Tema": "Estilos CSS",
     "Asignatura": "Diseno_Web",
@@ -127,7 +127,7 @@
   },
   {
     "Pregunta": "5. ¿Qué etiqueta HTML resalta texto con un fondo?",
-    "RespuestaCorrecta": "<mark>",
+    "respuesta_correcta_literal": "<mark>",
     "Nivel": "Avanzado",
     "Tema": "Estructura HTML",
     "Asignatura": "Diseno_Web",
@@ -141,7 +141,7 @@
   },
   {
     "Pregunta": "6. ¿Qué propiedad convierte todo a mayúsculas?",
-    "RespuestaCorrecta": "text-transform",
+    "respuesta_correcta_literal": "text-transform",
     "Nivel": "Avanzado",
     "Tema": "Listas HTML",
     "Asignatura": "Diseno_Web",
@@ -155,7 +155,7 @@
   },
   {
     "Pregunta": "7. ¿Qué etiqueta se usa para superíndices (ej: x²)?",
-    "RespuestaCorrecta": "<sup>",
+    "respuesta_correcta_literal": "<sup>",
     "Nivel": "Avanzado",
     "Tema": "Estructura HTML",
     "Asignatura": "Diseno_Web",
@@ -169,7 +169,7 @@
   },
   {
     "Pregunta": "8. ¿Qué valor de text-align estira el texto en los bordes?",
-    "RespuestaCorrecta": "justify",
+    "respuesta_correcta_literal": "justify",
     "Nivel": "Avanzado",
     "Tema": "Estilos CSS",
     "Asignatura": "Diseno_Web",
@@ -183,7 +183,7 @@
   },
   {
     "Pregunta": "9. ¿Cómo se aplica cursiva en CSS?",
-    "RespuestaCorrecta": "font-style: italic;",
+    "respuesta_correcta_literal": "font-style: italic;",
     "Nivel": "Avanzado",
     "Tema": "Estilos CSS",
     "Asignatura": "Diseno_Web",
@@ -197,7 +197,7 @@
   },
   {
     "Pregunta": "10. ¿Qué hace 'text-transform: capitalize'?",
-    "RespuestaCorrecta": "Primeras letras en mayúsculas",
+    "respuesta_correcta_literal": "Primeras letras en mayúsculas",
     "Nivel": "Avanzado",
     "Tema": "Fundamentos Web",
     "Asignatura": "Diseno_Web",
@@ -211,7 +211,7 @@
   },
   {
     "Pregunta": "¿Qué significa la sigla DOM?",
-    "RespuestaCorrecta": "Document Object Model",
+    "respuesta_correcta_literal": "Document Object Model",
     "Nivel": "Avanzado",
     "Tema": "DOM y Dinamismo",
     "Asignatura": "Diseno_Web",
@@ -225,7 +225,7 @@
   },
   {
     "Pregunta": "¿El DOM representa un documento HTML como una estructura de árbol de nodos?",
-    "RespuestaCorrecta": "Verdadero",
+    "respuesta_correcta_literal": "Verdadero",
     "Nivel": "Avanzado",
     "Tema": "DOM y Dinamismo",
     "Asignatura": "Diseno_Web",
@@ -237,7 +237,7 @@
   },
   {
     "Pregunta": "¿Qué método usarías para seleccionar un elemento por su atributo `id`?",
-    "RespuestaCorrecta": "`getElementById()`",
+    "respuesta_correcta_literal": "`getElementById()`",
     "Nivel": "Avanzado",
     "Tema": "Tablas HTML",
     "Asignatura": "Diseno_Web",
@@ -251,7 +251,7 @@
   },
   {
     "Pregunta": "¿La propiedad `textContent` se usa para cambiar el contenido HTML de un elemento, incluyendo etiquetas?",
-    "RespuestaCorrecta": "Falso",
+    "respuesta_correcta_literal": "Falso",
     "Nivel": "Avanzado",
     "Tema": "Estructura HTML",
     "Asignatura": "Diseno_Web",
@@ -263,7 +263,7 @@
   },
   {
     "Pregunta": "Para añadir una nueva clase CSS a un elemento, ¿qué método de `classList` usarías?",
-    "RespuestaCorrecta": "`classList.add()`",
+    "respuesta_correcta_literal": "`classList.add()`",
     "Nivel": "Avanzado",
     "Tema": "Estilos CSS",
     "Asignatura": "Diseno_Web",
@@ -277,7 +277,7 @@
   },
   {
     "Pregunta": "¿El método `appendChild()` se utiliza para eliminar un nodo hijo de un elemento padre?",
-    "RespuestaCorrecta": "Falso",
+    "respuesta_correcta_literal": "Falso",
     "Nivel": "Avanzado",
     "Tema": "Listas HTML",
     "Asignatura": "Diseno_Web",
@@ -289,7 +289,7 @@
   },
   {
     "Pregunta": "¿Qué evento se dispara cuando el usuario hace clic en un elemento?",
-    "RespuestaCorrecta": "`click`",
+    "respuesta_correcta_literal": "`click`",
     "Nivel": "Avanzado",
     "Tema": "DOM y Dinamismo",
     "Asignatura": "Diseno_Web",
@@ -303,7 +303,7 @@
   },
   {
     "Pregunta": "¿Qué objeto global representa toda la página web y es la raíz del DOM?",
-    "RespuestaCorrecta": "document",
+    "respuesta_correcta_literal": "document",
     "Nivel": "Avanzado",
     "Tema": "DOM y Dinamismo",
     "Asignatura": "Diseno_Web",
@@ -317,7 +317,7 @@
   },
   {
     "Pregunta": "El método que selecciona todos los elementos que coinciden con un selector CSS es:",
-    "RespuestaCorrecta": "`querySelectorAll()`",
+    "respuesta_correcta_literal": "`querySelectorAll()`",
     "Nivel": "Avanzado",
     "Tema": "Estilos CSS",
     "Asignatura": "Diseno_Web",
@@ -331,7 +331,7 @@
   },
   {
     "Pregunta": "Para cambiar el color de fondo de un elemento directamente en JS, se usa:",
-    "RespuestaCorrecta": "`elemento.style.backgroundColor`",
+    "respuesta_correcta_literal": "`elemento.style.backgroundColor`",
     "Nivel": "Avanzado",
     "Tema": "Estilos CSS",
     "Asignatura": "Diseno_Web",
@@ -345,7 +345,7 @@
   },
   {
     "Pregunta": "¿Cuál es el objetivo principal de Diseño Web II?",
-    "RespuestaCorrecta": "Creación de sitios web dinámicos e interactivos",
+    "respuesta_correcta_literal": "Creación de sitios web dinámicos e interactivos",
     "Nivel": "Avanzado",
     "Tema": "Estructura HTML",
     "Asignatura": "Diseno_Web",
@@ -359,7 +359,7 @@
   },
   {
     "Pregunta": "El proceso integral que incluye planificación, conceptualización y mantenimiento se llama:",
-    "RespuestaCorrecta": "Diseño Web",
+    "respuesta_correcta_literal": "Diseño Web",
     "Nivel": "Avanzado",
     "Tema": "Listas HTML",
     "Asignatura": "Diseno_Web",
@@ -373,7 +373,7 @@
   },
   {
     "Pregunta": "¿Qué parte de la aplicación web es la que el usuario ve y con la que interactúa?",
-    "RespuestaCorrecta": "Front-end",
+    "respuesta_correcta_literal": "Front-end",
     "Nivel": "Avanzado",
     "Tema": "Listas HTML",
     "Asignatura": "Diseno_Web",
@@ -387,7 +387,7 @@
   },
   {
     "Pregunta": "¿Cuál de estas tecnologías NO es una tecnología Front-end clave?",
-    "RespuestaCorrecta": "MySQL",
+    "respuesta_correcta_literal": "MySQL",
     "Nivel": "Avanzado",
     "Tema": "Fundamentos Web",
     "Asignatura": "Diseno_Web",
@@ -401,7 +401,7 @@
   },
   {
     "Pregunta": "El rol del desarrollador Front-end se enfoca principalmente en:",
-    "RespuestaCorrecta": "Usabilidad y Experiencia de Usuario (UX)",
+    "respuesta_correcta_literal": "Usabilidad y Experiencia de Usuario (UX)",
     "Nivel": "Avanzado",
     "Tema": "Fundamentos Web",
     "Asignatura": "Diseno_Web",
@@ -415,7 +415,7 @@
   },
   {
     "Pregunta": "La parte 'invisible' que se ejecuta en el servidor se conoce como:",
-    "RespuestaCorrecta": "Back-end",
+    "respuesta_correcta_literal": "Back-end",
     "Nivel": "Avanzado",
     "Tema": "Fundamentos Web",
     "Asignatura": "Diseno_Web",
@@ -429,7 +429,7 @@
   },
   {
     "Pregunta": "¿Qué componente del Back-end se encarga de almacenar y organizar los datos?",
-    "RespuestaCorrecta": "Base de Datos",
+    "respuesta_correcta_literal": "Base de Datos",
     "Nivel": "Avanzado",
     "Tema": "Fundamentos Web",
     "Asignatura": "Diseno_Web",
@@ -443,7 +443,7 @@
   },
   {
     "Pregunta": "¿Cómo se comunican el Front-end y el Back-end?",
-    "RespuestaCorrecta": "A través de APIs",
+    "respuesta_correcta_literal": "A través de APIs",
     "Nivel": "Avanzado",
     "Tema": "Fundamentos Web",
     "Asignatura": "Diseno_Web",
@@ -457,7 +457,7 @@
   },
   {
     "Pregunta": "Un desarrollador que maneja tanto Front-end como Back-end se llama:",
-    "RespuestaCorrecta": "Desarrollador Full-stack",
+    "respuesta_correcta_literal": "Desarrollador Full-stack",
     "Nivel": "Avanzado",
     "Tema": "Fundamentos Web",
     "Asignatura": "Diseno_Web",
@@ -471,7 +471,7 @@
   },
   {
     "Pregunta": "La seguridad de los datos y la escalabilidad son enfoques principales del:",
-    "RespuestaCorrecta": "Desarrollador Back-end",
+    "respuesta_correcta_literal": "Desarrollador Back-end",
     "Nivel": "Avanzado",
     "Tema": "Listas HTML",
     "Asignatura": "Diseno_Web",
@@ -485,7 +485,7 @@
   },
   {
     "Pregunta": "¿Qué propiedad controla el borde de un elemento?",
-    "RespuestaCorrecta": "border",
+    "respuesta_correcta_literal": "border",
     "Nivel": "Avanzado",
     "Tema": "Tablas HTML",
     "Asignatura": "Diseno_Web",
@@ -499,7 +499,7 @@
   },
   {
     "Pregunta": "¿Qué valor hace que un borde sea una línea lisa?",
-    "RespuestaCorrecta": "solid",
+    "respuesta_correcta_literal": "solid",
     "Nivel": "Avanzado",
     "Tema": "Listas HTML",
     "Asignatura": "Diseno_Web",
@@ -513,7 +513,7 @@
   },
   {
     "Pregunta": "¿Cómo se redondean las esquinas de una caja?",
-    "RespuestaCorrecta": "border-radius",
+    "respuesta_correcta_literal": "border-radius",
     "Nivel": "Avanzado",
     "Tema": "Maquetación Web",
     "Asignatura": "Diseno_Web",
@@ -527,7 +527,7 @@
   },
   {
     "Pregunta": "¿Qué propiedad quita el subrayado de un enlace?",
-    "RespuestaCorrecta": "text-decoration",
+    "respuesta_correcta_literal": "text-decoration",
     "Nivel": "Avanzado",
     "Tema": "Estructura HTML",
     "Asignatura": "Diseno_Web",
@@ -541,7 +541,7 @@
   },
   {
     "Pregunta": "¿Qué pseudoclase aplica al pasar el cursor?",
-    "RespuestaCorrecta": "a:hover",
+    "respuesta_correcta_literal": "a:hover",
     "Nivel": "Avanzado",
     "Tema": "Listas HTML",
     "Asignatura": "Diseno_Web",
@@ -555,7 +555,7 @@
   },
   {
     "Pregunta": "¿Cuál es un valor válido de estilo de borde?",
-    "RespuestaCorrecta": "dashed",
+    "respuesta_correcta_literal": "dashed",
     "Nivel": "Avanzado",
     "Tema": "Estilos CSS",
     "Asignatura": "Diseno_Web",
@@ -569,7 +569,7 @@
   },
   {
     "Pregunta": "¿Qué hace 'text-decoration: line-through'?",
-    "RespuestaCorrecta": "Tacha el texto",
+    "respuesta_correcta_literal": "Tacha el texto",
     "Nivel": "Avanzado",
     "Tema": "Estilos CSS",
     "Asignatura": "Diseno_Web",
@@ -583,7 +583,7 @@
   },
   {
     "Pregunta": "¿Cómo se define un borde rojo sólido de 1px?",
-    "RespuestaCorrecta": "1px solid red",
+    "respuesta_correcta_literal": "1px solid red",
     "Nivel": "Avanzado",
     "Tema": "Listas HTML",
     "Asignatura": "Diseno_Web",
@@ -597,7 +597,7 @@
   },
   {
     "Pregunta": "¿Qué pseudoclase es para un enlace visitado?",
-    "RespuestaCorrecta": "a:visited",
+    "respuesta_correcta_literal": "a:visited",
     "Nivel": "Avanzado",
     "Tema": "Estructura HTML",
     "Asignatura": "Diseno_Web",
@@ -611,7 +611,7 @@
   },
   {
     "Pregunta": "¿En qué etiqueta se aplican mayormente bordes?",
-    "RespuestaCorrecta": "div",
+    "respuesta_correcta_literal": "div",
     "Nivel": "Avanzado",
     "Tema": "Estructura HTML",
     "Asignatura": "Diseno_Web",
@@ -625,7 +625,7 @@
   },
   {
     "Pregunta": "¿En qué sección del HTML se coloca la etiqueta <link>?",
-    "RespuestaCorrecta": "Dentro del <head>",
+    "respuesta_correcta_literal": "Dentro del <head>",
     "Nivel": "Avanzado",
     "Tema": "Estructura HTML",
     "Asignatura": "Diseno_Web",
@@ -639,7 +639,7 @@
   },
   {
     "Pregunta": "¿Qué atributo de <link> define la ruta del archivo?",
-    "RespuestaCorrecta": "Atributo href",
+    "respuesta_correcta_literal": "Atributo href",
     "Nivel": "Avanzado",
     "Tema": "HTML Multimedia y Enlaces",
     "Asignatura": "Diseno_Web",
@@ -653,7 +653,7 @@
   },
   {
     "Pregunta": "¿Qué valor debe tener 'rel' para enlazar un CSS?",
-    "RespuestaCorrecta": "Stylesheet",
+    "respuesta_correcta_literal": "Stylesheet",
     "Nivel": "Avanzado",
     "Tema": "Estilos CSS",
     "Asignatura": "Diseno_Web",
@@ -667,7 +667,7 @@
   },
   {
     "Pregunta": "¿Cuál es una ventaja de los archivos CSS externos?",
-    "RespuestaCorrecta": "Mantenimiento fácil",
+    "respuesta_correcta_literal": "Mantenimiento fácil",
     "Nivel": "Avanzado",
     "Tema": "Estilos CSS",
     "Asignatura": "Diseno_Web",
@@ -681,7 +681,7 @@
   },
   {
     "Pregunta": "¿Qué es una etiqueta autocerrable?",
-    "RespuestaCorrecta": "Carece de cierre manual",
+    "respuesta_correcta_literal": "Carece de cierre manual",
     "Nivel": "Avanzado",
     "Tema": "Estructura HTML",
     "Asignatura": "Diseno_Web",
@@ -695,7 +695,7 @@
   },
   {
     "Pregunta": "¿Cómo se cierra formalmente una etiqueta void?",
-    "RespuestaCorrecta": "Usando /> final",
+    "respuesta_correcta_literal": "Usando /> final",
     "Nivel": "Avanzado",
     "Tema": "Estructura HTML",
     "Asignatura": "Diseno_Web",
@@ -709,7 +709,7 @@
   },
   {
     "Pregunta": "¿Cuál de estas etiquetas es autocerrable?",
-    "RespuestaCorrecta": "La etiqueta img",
+    "respuesta_correcta_literal": "La etiqueta img",
     "Nivel": "Avanzado",
     "Tema": "Estructura HTML",
     "Asignatura": "Diseno_Web",
@@ -723,7 +723,7 @@
   },
   {
     "Pregunta": "¿Qué hace la etiqueta <br />?",
-    "RespuestaCorrecta": "Salto de línea",
+    "respuesta_correcta_literal": "Salto de línea",
     "Nivel": "Avanzado",
     "Tema": "Estructura HTML",
     "Asignatura": "Diseno_Web",
@@ -737,7 +737,7 @@
   },
   {
     "Pregunta": "¿Qué etiqueta define metadatos?",
-    "RespuestaCorrecta": "Etiqueta meta",
+    "respuesta_correcta_literal": "Etiqueta meta",
     "Nivel": "Avanzado",
     "Tema": "Estructura HTML",
     "Asignatura": "Diseno_Web",
@@ -751,7 +751,7 @@
   },
   {
     "Pregunta": "¿Qué sucede si cierras mal una etiqueta void?",
-    "RespuestaCorrecta": "Error de renderizado",
+    "respuesta_correcta_literal": "Error de renderizado",
     "Nivel": "Avanzado",
     "Tema": "Estructura HTML",
     "Asignatura": "Diseno_Web",
@@ -765,7 +765,7 @@
   },
   {
     "Pregunta": "¿Qué es un evento en JavaScript?",
-    "RespuestaCorrecta": "Una acción o suceso que el navegador detecta",
+    "respuesta_correcta_literal": "Una acción o suceso que el navegador detecta",
     "Nivel": "Avanzado",
     "Tema": "DOM y Dinamismo",
     "Asignatura": "Diseno_Web",
@@ -779,7 +779,7 @@
   },
   {
     "Pregunta": "¿Cuál es el método recomendado para manejar eventos en JavaScript?",
-    "RespuestaCorrecta": "`element.addEventListener()`",
+    "respuesta_correcta_literal": "`element.addEventListener()`",
     "Nivel": "Avanzado",
     "Tema": "DOM y Dinamismo",
     "Asignatura": "Diseno_Web",
@@ -793,7 +793,7 @@
   },
   {
     "Pregunta": "El evento `click` pertenece a la categoría de eventos de:",
-    "RespuestaCorrecta": "Ratón",
+    "respuesta_correcta_literal": "Ratón",
     "Nivel": "Avanzado",
     "Tema": "DOM y Dinamismo",
     "Asignatura": "Diseno_Web",
@@ -807,7 +807,7 @@
   },
   {
     "Pregunta": "¿Qué tipo de evento se dispara cuando el usuario presiona una tecla?",
-    "RespuestaCorrecta": "`keydown`",
+    "respuesta_correcta_literal": "`keydown`",
     "Nivel": "Avanzado",
     "Tema": "DOM y Dinamismo",
     "Asignatura": "Diseno_Web",
@@ -821,7 +821,7 @@
   },
   {
     "Pregunta": "¿Qué método se utiliza para evitar el comportamiento predeterminado del navegador?",
-    "RespuestaCorrecta": "`event.preventDefault()`",
+    "respuesta_correcta_literal": "`event.preventDefault()`",
     "Nivel": "Avanzado",
     "Tema": "Listas HTML",
     "Asignatura": "Diseno_Web",
@@ -835,7 +835,7 @@
   },
   {
     "Pregunta": "¿Qué es la propagación de eventos 'bubbling'?",
-    "RespuestaCorrecta": "El evento se propaga desde el elemento más interno hasta el más externo",
+    "respuesta_correcta_literal": "El evento se propaga desde el elemento más interno hasta el más externo",
     "Nivel": "Avanzado",
     "Tema": "DOM y Dinamismo",
     "Asignatura": "Diseno_Web",
@@ -849,7 +849,7 @@
   },
   {
     "Pregunta": "Para que un evento se propague en fase de 'capturing', el tercer argumento en `addEventListener()` debe ser:",
-    "RespuestaCorrecta": "`true`",
+    "respuesta_correcta_literal": "`true`",
     "Nivel": "Avanzado",
     "Tema": "DOM y Dinamismo",
     "Asignatura": "Diseno_Web",
@@ -863,7 +863,7 @@
   },
   {
     "Pregunta": "¿Qué propiedad del objeto evento te permite saber qué elemento lo disparó?",
-    "RespuestaCorrecta": "`event.target`",
+    "respuesta_correcta_literal": "`event.target`",
     "Nivel": "Avanzado",
     "Tema": "DOM y Dinamismo",
     "Asignatura": "Diseno_Web",
@@ -877,7 +877,7 @@
   },
   {
     "Pregunta": "¿Qué es la delegación de eventos?",
-    "RespuestaCorrecta": "Manejar eventos en un contenedor padre en lugar de cada elemento hijo",
+    "respuesta_correcta_literal": "Manejar eventos en un contenedor padre en lugar de cada elemento hijo",
     "Nivel": "Avanzado",
     "Tema": "DOM y Dinamismo",
     "Asignatura": "Diseno_Web",
@@ -891,7 +891,7 @@
   },
   {
     "Pregunta": "¿Qué evento de formulario se dispara cuando un usuario selecciona una opción en un `<select>` o cambia el valor de un `<input>`?",
-    "RespuestaCorrecta": "`change`",
+    "respuesta_correcta_literal": "`change`",
     "Nivel": "Avanzado",
     "Tema": "DOM y Dinamismo",
     "Asignatura": "Diseno_Web",
@@ -905,7 +905,7 @@
   },
   {
     "Pregunta": "¿Qué característica define a JavaScript como lenguaje?",
-    "RespuestaCorrecta": "Ligero e interpretado",
+    "respuesta_correcta_literal": "Ligero e interpretado",
     "Nivel": "Avanzado",
     "Tema": "DOM y Dinamismo",
     "Asignatura": "Diseno_Web",
@@ -919,7 +919,7 @@
   },
   {
     "Pregunta": "¿En qué lado se ejecuta principalmente JavaScript en el desarrollo web?",
-    "RespuestaCorrecta": "Lado del cliente (Navegador)",
+    "respuesta_correcta_literal": "Lado del cliente (Navegador)",
     "Nivel": "Avanzado",
     "Tema": "DOM y Dinamismo",
     "Asignatura": "Diseno_Web",
@@ -933,7 +933,7 @@
   },
   {
     "Pregunta": "¿Cuál de estas palabras clave permite declarar una variable con alcance de bloque y que puede ser reasignada?",
-    "RespuestaCorrecta": "let",
+    "respuesta_correcta_literal": "let",
     "Nivel": "Avanzado",
     "Tema": "Estructura HTML",
     "Asignatura": "Diseno_Web",
@@ -947,7 +947,7 @@
   },
   {
     "Pregunta": "¿Qué sucede si intentas reasignar un valor a una variable declarada con 'const'?",
-    "RespuestaCorrecta": "Produce un error",
+    "respuesta_correcta_literal": "Produce un error",
     "Nivel": "Avanzado",
     "Tema": "Estructura HTML",
     "Asignatura": "Diseno_Web",
@@ -961,7 +961,7 @@
   },
   {
     "Pregunta": "¿Cuál es el tipo de dato para valores lógicos (true/false)?",
-    "RespuestaCorrecta": "Boolean",
+    "respuesta_correcta_literal": "Boolean",
     "Nivel": "Avanzado",
     "Tema": "Tablas HTML",
     "Asignatura": "Diseno_Web",
@@ -975,7 +975,7 @@
   },
   {
     "Pregunta": "¿Qué operador se utiliza para la igualdad estricta (valor y tipo)?",
-    "RespuestaCorrecta": "===",
+    "respuesta_correcta_literal": "===",
     "Nivel": "Avanzado",
     "Tema": "Tablas HTML",
     "Asignatura": "Diseno_Web",
@@ -989,7 +989,7 @@
   },
   {
     "Pregunta": "El operador '%' (módulo) se utiliza para:",
-    "RespuestaCorrecta": "Obtener el residuo de una división",
+    "respuesta_correcta_literal": "Obtener el residuo de una división",
     "Nivel": "Avanzado",
     "Tema": "Listas HTML",
     "Asignatura": "Diseno_Web",
@@ -1003,7 +1003,7 @@
   },
   {
     "Pregunta": "¿Qué estructura de control usarías para repetir código un número conocido de veces?",
-    "RespuestaCorrecta": "Bucle for",
+    "respuesta_correcta_literal": "Bucle for",
     "Nivel": "Avanzado",
     "Tema": "Tablas HTML",
     "Asignatura": "Diseno_Web",
@@ -1017,7 +1017,7 @@
   },
   {
     "Pregunta": "¿Cómo se define una función flecha (Arrow Function)?",
-    "RespuestaCorrecta": "const func = () => { }",
+    "respuesta_correcta_literal": "const func = () => { }",
     "Nivel": "Avanzado",
     "Tema": "Estructura HTML",
     "Asignatura": "Diseno_Web",
@@ -1031,7 +1031,7 @@
   },
   {
     "Pregunta": "¿Qué etiqueta HTML se utiliza para insertar código JavaScript interno o enlazar uno externo?",
-    "RespuestaCorrecta": "<script>",
+    "respuesta_correcta_literal": "<script>",
     "Nivel": "Avanzado",
     "Tema": "DOM y Dinamismo",
     "Asignatura": "Diseno_Web",
@@ -1045,7 +1045,7 @@
   },
   {
     "Pregunta": "¿Qué significan las siglas CSS?",
-    "RespuestaCorrecta": "Cascading Style Sheets",
+    "respuesta_correcta_literal": "Cascading Style Sheets",
     "Nivel": "Avanzado",
     "Tema": "Estilos CSS",
     "Asignatura": "Diseno_Web",
@@ -1059,7 +1059,7 @@
   },
   {
     "Pregunta": "¿Qué describe una hoja de estilo?",
-    "RespuestaCorrecta": "Cómo debe verse un archivo HTML",
+    "respuesta_correcta_literal": "Cómo debe verse un archivo HTML",
     "Nivel": "Avanzado",
     "Tema": "Estilos CSS",
     "Asignatura": "Diseno_Web",
@@ -1073,7 +1073,7 @@
   },
   {
     "Pregunta": "¿Por qué se llaman 'en cascada'?",
-    "RespuestaCorrecta": "Porque se pueden usar unas sobre otras",
+    "respuesta_correcta_literal": "Porque se pueden usar unas sobre otras",
     "Nivel": "Avanzado",
     "Tema": "Estructura HTML",
     "Asignatura": "Diseno_Web",
@@ -1087,7 +1087,7 @@
   },
   {
     "Pregunta": "¿Cuál es una ventaja de separar forma de función?",
-    "RespuestaCorrecta": "Reutilización de código",
+    "respuesta_correcta_literal": "Reutilización de código",
     "Nivel": "Avanzado",
     "Tema": "Estructura HTML",
     "Asignatura": "Diseno_Web",
@@ -1101,7 +1101,7 @@
   },
   {
     "Pregunta": "¿Cómo se llama el atributo para estilos en línea?",
-    "RespuestaCorrecta": "style",
+    "respuesta_correcta_literal": "style",
     "Nivel": "Avanzado",
     "Tema": "Estilos CSS",
     "Asignatura": "Diseno_Web",
@@ -1115,7 +1115,7 @@
   },
   {
     "Pregunta": "¿Dónde se ubican los estilos internos?",
-    "RespuestaCorrecta": "Dentro de <head>",
+    "respuesta_correcta_literal": "Dentro de <head>",
     "Nivel": "Avanzado",
     "Tema": "Estilos CSS",
     "Asignatura": "Diseno_Web",
@@ -1129,7 +1129,7 @@
   },
   {
     "Pregunta": "¿Qué etiqueta enlaza un CSS externo?",
-    "RespuestaCorrecta": "<link>",
+    "respuesta_correcta_literal": "<link>",
     "Nivel": "Avanzado",
     "Tema": "Estilos CSS",
     "Asignatura": "Diseno_Web",
@@ -1143,7 +1143,7 @@
   },
   {
     "Pregunta": "¿Qué valor debe tener el atributo 'rel'?",
-    "RespuestaCorrecta": "stylesheet",
+    "respuesta_correcta_literal": "stylesheet",
     "Nivel": "Avanzado",
     "Tema": "Tablas HTML",
     "Asignatura": "Diseno_Web",
@@ -1157,7 +1157,7 @@
   },
   {
     "Pregunta": "¿Qué es una etiqueta autocerrable?",
-    "RespuestaCorrecta": "No tiene una etiqueta de cierre separada",
+    "respuesta_correcta_literal": "No tiene una etiqueta de cierre separada",
     "Nivel": "Avanzado",
     "Tema": "Estructura HTML",
     "Asignatura": "Diseno_Web",
@@ -1171,7 +1171,7 @@
   },
   {
     "Pregunta": "¿Qué parte de la regla CSS indica qué característica cambiar?",
-    "RespuestaCorrecta": "Propiedad",
+    "respuesta_correcta_literal": "Propiedad",
     "Nivel": "Avanzado",
     "Tema": "Estilos CSS",
     "Asignatura": "Diseno_Web",
@@ -1185,7 +1185,7 @@
   },
   {
     "Pregunta": "¿Qué es un píxel (px) en diseño web?",
-    "RespuestaCorrecta": "Punto en la pantalla",
+    "respuesta_correcta_literal": "Punto en la pantalla",
     "Nivel": "Avanzado",
     "Tema": "Estructura HTML",
     "Asignatura": "Diseno_Web",
@@ -1199,7 +1199,7 @@
   },
   {
     "Pregunta": "¿Por qué los px son una unidad absoluta?",
-    "RespuestaCorrecta": "Son de tamaño fijo",
+    "respuesta_correcta_literal": "Son de tamaño fijo",
     "Nivel": "Avanzado",
     "Tema": "Listas HTML",
     "Asignatura": "Diseno_Web",
@@ -1213,7 +1213,7 @@
   },
   {
     "Pregunta": "¿A qué es igual un 1em?",
-    "RespuestaCorrecta": "Al tamaño base fuente",
+    "respuesta_correcta_literal": "Al tamaño base fuente",
     "Nivel": "Avanzado",
     "Tema": "Estructura HTML",
     "Asignatura": "Diseno_Web",
@@ -1227,7 +1227,7 @@
   },
   {
     "Pregunta": "¿Qué unidad es mejor para smartphones?",
-    "RespuestaCorrecta": "Unidad relativa em",
+    "respuesta_correcta_literal": "Unidad relativa em",
     "Nivel": "Avanzado",
     "Tema": "Estructura HTML",
     "Asignatura": "Diseno_Web",
@@ -1241,7 +1241,7 @@
   },
   {
     "Pregunta": "¿Cómo se escribe un comentario en CSS?",
-    "RespuestaCorrecta": "/* comentario */",
+    "respuesta_correcta_literal": "/* comentario */",
     "Nivel": "Avanzado",
     "Tema": "Estilos CSS",
     "Asignatura": "Diseno_Web",
@@ -1255,7 +1255,7 @@
   },
   {
     "Pregunta": "¿Qué fuente tiene adornos decorativos?",
-    "RespuestaCorrecta": "serif",
+    "respuesta_correcta_literal": "serif",
     "Nivel": "Avanzado",
     "Tema": "Estilos CSS",
     "Asignatura": "Diseno_Web",
@@ -1269,7 +1269,7 @@
   },
   {
     "Pregunta": "¿Qué fuente es limpia y sin adornos?",
-    "RespuestaCorrecta": "sans-serif",
+    "respuesta_correcta_literal": "sans-serif",
     "Nivel": "Avanzado",
     "Tema": "Estilos CSS",
     "Asignatura": "Diseno_Web",
@@ -1283,7 +1283,7 @@
   },
   {
     "Pregunta": "¿Para qué sirve el punto y coma en CSS?",
-    "RespuestaCorrecta": "Cerrar propiedad",
+    "respuesta_correcta_literal": "Cerrar propiedad",
     "Nivel": "Avanzado",
     "Tema": "Estilos CSS",
     "Asignatura": "Diseno_Web",
@@ -1297,7 +1297,7 @@
   },
   {
     "Pregunta": "¿Qué unidad mide porcentajes del padre?",
-    "RespuestaCorrecta": "Simbolo %",
+    "respuesta_correcta_literal": "Simbolo %",
     "Nivel": "Avanzado",
     "Tema": "Estructura HTML",
     "Asignatura": "Diseno_Web",
@@ -1311,7 +1311,7 @@
   },
   {
     "Pregunta": "¿Qué sucede si una fuente no está instalada?",
-    "RespuestaCorrecta": "Usa la siguiente",
+    "respuesta_correcta_literal": "Usa la siguiente",
     "Nivel": "Avanzado",
     "Tema": "Estilos CSS",
     "Asignatura": "Diseno_Web",
@@ -1325,7 +1325,7 @@
   },
   {
     "Pregunta": "¿Qué es el Modelo de Caja?",
-    "RespuestaCorrecta": "Un esquema de cada elemento HTML",
+    "respuesta_correcta_literal": "Un esquema de cada elemento HTML",
     "Nivel": "Avanzado",
     "Tema": "Maquetación Web",
     "Asignatura": "Diseno_Web",
@@ -1339,7 +1339,7 @@
   },
   {
     "Pregunta": "¿Qué propiedad controla el espacio interior?",
-    "RespuestaCorrecta": "Padding",
+    "respuesta_correcta_literal": "Padding",
     "Nivel": "Avanzado",
     "Tema": "Tablas HTML",
     "Asignatura": "Diseno_Web",
@@ -1353,7 +1353,7 @@
   },
   {
     "Pregunta": "¿Cómo se llama el espacio exterior de la caja?",
-    "RespuestaCorrecta": "Margin",
+    "respuesta_correcta_literal": "Margin",
     "Nivel": "Avanzado",
     "Tema": "Maquetación Web",
     "Asignatura": "Diseno_Web",
@@ -1367,7 +1367,7 @@
   },
   {
     "Pregunta": "¿Qué hace 'box-sizing: border-box'?",
-    "RespuestaCorrecta": "Incluye padding en el ancho",
+    "respuesta_correcta_literal": "Incluye padding en el ancho",
     "Nivel": "Avanzado",
     "Tema": "Maquetación Web",
     "Asignatura": "Diseno_Web",
@@ -1381,7 +1381,7 @@
   },
   {
     "Pregunta": "¿Cuál de estos NO es parte del modelo de caja?",
-    "RespuestaCorrecta": "Z-index",
+    "respuesta_correcta_literal": "Z-index",
     "Nivel": "Avanzado",
     "Tema": "Maquetación Web",
     "Asignatura": "Diseno_Web",
@@ -1395,7 +1395,7 @@
   },
   {
     "Pregunta": "¿Qué valor de margin centra un bloque?",
-    "RespuestaCorrecta": "margin: 0 auto",
+    "respuesta_correcta_literal": "margin: 0 auto",
     "Nivel": "Avanzado",
     "Tema": "Modelo de Caja CSS",
     "Asignatura": "Diseno_Web",
@@ -1409,7 +1409,7 @@
   },
   {
     "Pregunta": "¿Qué unidad es relativa al ancho de ventana?",
-    "RespuestaCorrecta": "vw",
+    "respuesta_correcta_literal": "vw",
     "Nivel": "Avanzado",
     "Tema": "Estructura HTML",
     "Asignatura": "Diseno_Web",
@@ -1423,7 +1423,7 @@
   },
   {
     "Pregunta": "¿Qué propiedad evita que una caja sea gigante?",
-    "RespuestaCorrecta": "max-width",
+    "respuesta_correcta_literal": "max-width",
     "Nivel": "Avanzado",
     "Tema": "Maquetación Web",
     "Asignatura": "Diseno_Web",
@@ -1437,7 +1437,7 @@
   },
   {
     "Pregunta": "¿Qué pasa con overflow: hidden?",
-    "RespuestaCorrecta": "Se corta lo que sobra",
+    "respuesta_correcta_literal": "Se corta lo que sobra",
     "Nivel": "Avanzado",
     "Tema": "Modelo de Caja CSS",
     "Asignatura": "Diseno_Web",
@@ -1451,7 +1451,7 @@
   },
   {
     "Pregunta": "¿El margen tiene color de fondo?",
-    "RespuestaCorrecta": "No, es transparente",
+    "respuesta_correcta_literal": "No, es transparente",
     "Nivel": "Avanzado",
     "Tema": "Estilos CSS",
     "Asignatura": "Diseno_Web",
@@ -1465,7 +1465,7 @@
   },
   {
     "Pregunta": "¿Qué símbolo representa al selector global?",
-    "RespuestaCorrecta": "El signo *",
+    "respuesta_correcta_literal": "El signo *",
     "Nivel": "Avanzado",
     "Tema": "Listas HTML",
     "Asignatura": "Diseno_Web",
@@ -1479,7 +1479,7 @@
   },
   {
     "Pregunta": "¿Cómo se separa una lista de selectores múltiples?",
-    "RespuestaCorrecta": "Usando comas",
+    "respuesta_correcta_literal": "Usando comas",
     "Nivel": "Avanzado",
     "Tema": "Listas HTML",
     "Asignatura": "Diseno_Web",
@@ -1493,7 +1493,7 @@
   },
   {
     "Pregunta": "¿Qué prefijo se usa para los selectores de clase?",
-    "RespuestaCorrecta": "Un punto final",
+    "respuesta_correcta_literal": "Un punto final",
     "Nivel": "Avanzado",
     "Tema": "Estructura HTML",
     "Asignatura": "Diseno_Web",
@@ -1507,7 +1507,7 @@
   },
   {
     "Pregunta": "¿Cuál selector es más específico en el DOM?",
-    "RespuestaCorrecta": "Selector de ID",
+    "respuesta_correcta_literal": "Selector de ID",
     "Nivel": "Avanzado",
     "Tema": "DOM y Dinamismo",
     "Asignatura": "Diseno_Web",
@@ -1521,7 +1521,7 @@
   },
   {
     "Pregunta": "¿Qué hace exactamente el selector universal?",
-    "RespuestaCorrecta": "Selecciona todo",
+    "respuesta_correcta_literal": "Selecciona todo",
     "Nivel": "Avanzado",
     "Tema": "Estructura HTML",
     "Asignatura": "Diseno_Web",
@@ -1535,7 +1535,7 @@
   },
   {
     "Pregunta": "¿Para qué sirve agrupar selectores en CSS?",
-    "RespuestaCorrecta": "Evitar repetir",
+    "respuesta_correcta_literal": "Evitar repetir",
     "Nivel": "Avanzado",
     "Tema": "Estilos CSS",
     "Asignatura": "Diseno_Web",
@@ -1549,7 +1549,7 @@
   },
   {
     "Pregunta": "¿Cómo se define un selector de ID en CSS?",
-    "RespuestaCorrecta": "Usando signo #",
+    "respuesta_correcta_literal": "Usando signo #",
     "Nivel": "Avanzado",
     "Tema": "Estilos CSS",
     "Asignatura": "Diseno_Web",
@@ -1563,7 +1563,7 @@
   },
   {
     "Pregunta": "¿Qué etiqueta se usa para agrupar en línea?",
-    "RespuestaCorrecta": "Etiqueta span",
+    "respuesta_correcta_literal": "Etiqueta span",
     "Nivel": "Avanzado",
     "Tema": "Estructura HTML",
     "Asignatura": "Diseno_Web",
@@ -1577,7 +1577,7 @@
   },
   {
     "Pregunta": "¿Qué propiedad CSS define el color del texto?",
-    "RespuestaCorrecta": "Propiedad color",
+    "respuesta_correcta_literal": "Propiedad color",
     "Nivel": "Avanzado",
     "Tema": "Estilos CSS",
     "Asignatura": "Diseno_Web",
@@ -1591,7 +1591,7 @@
   },
   {
     "Pregunta": "¿Los selectores de clase pueden repetirse?",
-    "RespuestaCorrecta": "Se permite usar",
+    "respuesta_correcta_literal": "Se permite usar",
     "Nivel": "Avanzado",
     "Tema": "Estructura HTML",
     "Asignatura": "Diseno_Web",
@@ -1605,7 +1605,7 @@
   },
   {
     "Pregunta": "¿Qué propiedad de CSS se utiliza para crear un layout de cuadrícula bidimensional?",
-    "RespuestaCorrecta": "display: grid;",
+    "respuesta_correcta_literal": "display: grid;",
     "Nivel": "Avanzado",
     "Tema": "Maquetación Web",
     "Asignatura": "Diseno_Web",
@@ -1619,7 +1619,7 @@
   },
   {
     "Pregunta": "¿Qué sistema de maquetación es más adecuado para alinear elementos en una sola fila o columna?",
-    "RespuestaCorrecta": "Flexbox",
+    "respuesta_correcta_literal": "Flexbox",
     "Nivel": "Avanzado",
     "Tema": "Listas HTML",
     "Asignatura": "Diseno_Web",
@@ -1633,7 +1633,7 @@
   },
   {
     "Pregunta": "¿Cuál es el principal beneficio de usar Grid y Flexbox en lugar de tablas para el diseño?",
-    "RespuestaCorrecta": "Son más flexibles y responsivos",
+    "respuesta_correcta_literal": "Son más flexibles y responsivos",
     "Nivel": "Avanzado",
     "Tema": "Maquetación Web",
     "Asignatura": "Diseno_Web",
@@ -1647,7 +1647,7 @@
   },
   {
     "Pregunta": "¿Qué propiedad de Flexbox centra los elementos horizontalmente?",
-    "RespuestaCorrecta": "justify-content",
+    "respuesta_correcta_literal": "justify-content",
     "Nivel": "Avanzado",
     "Tema": "Maquetación Web",
     "Asignatura": "Diseno_Web",
@@ -1661,7 +1661,7 @@
   },
   {
     "Pregunta": "¿Qué sistema permite control total sobre filas y columnas al mismo tiempo?",
-    "RespuestaCorrecta": "CSS Grid",
+    "respuesta_correcta_literal": "CSS Grid",
     "Nivel": "Avanzado",
     "Tema": "Tablas HTML",
     "Asignatura": "Diseno_Web",
@@ -1675,7 +1675,7 @@
   },
   {
     "Pregunta": "Flexbox se define como un sistema de maquetación de tipo:",
-    "RespuestaCorrecta": "Unidimensional",
+    "respuesta_correcta_literal": "Unidimensional",
     "Nivel": "Avanzado",
     "Tema": "Maquetación Web",
     "Asignatura": "Diseno_Web",
@@ -1689,7 +1689,7 @@
   },
   {
     "Pregunta": "¿Cuál es el método tradicional y hoy desaconsejado para maquetar toda una web?",
-    "RespuestaCorrecta": "Tablas HTML",
+    "respuesta_correcta_literal": "Tablas HTML",
     "Nivel": "Avanzado",
     "Tema": "Tablas HTML",
     "Asignatura": "Diseno_Web",
@@ -1703,7 +1703,7 @@
   },
   {
     "Pregunta": "La capacidad de un diseño para adaptarse a cualquier tamaño de pantalla se llama:",
-    "RespuestaCorrecta": "Diseño Responsivo",
+    "respuesta_correcta_literal": "Diseño Responsivo",
     "Nivel": "Avanzado",
     "Tema": "Estructura HTML",
     "Asignatura": "Diseno_Web",
@@ -1717,7 +1717,7 @@
   },
   {
     "Pregunta": "Propiedad de Grid para definir áreas específicas con nombre:",
-    "RespuestaCorrecta": "grid-template-areas",
+    "respuesta_correcta_literal": "grid-template-areas",
     "Nivel": "Avanzado",
     "Tema": "Maquetación Web",
     "Asignatura": "Diseno_Web",
@@ -1731,7 +1731,7 @@
   },
   {
     "Pregunta": "¿Qué herramienta es ideal para crear un menú de navegación horizontal?",
-    "RespuestaCorrecta": "Flexbox",
+    "respuesta_correcta_literal": "Flexbox",
     "Nivel": "Avanzado",
     "Tema": "Estructura HTML",
     "Asignatura": "Diseno_Web",
@@ -1745,7 +1745,7 @@
   },
   {
     "Pregunta": "¿Cuál es la función del atributo 'style' en una etiqueta HTML?",
-    "RespuestaCorrecta": "Aplicar estilos CSS directamente al elemento",
+    "respuesta_correcta_literal": "Aplicar estilos CSS directamente al elemento",
     "Nivel": "Avanzado",
     "Tema": "Estructura HTML",
     "Asignatura": "Diseno_Web",
@@ -1759,7 +1759,7 @@
   },
   {
     "Pregunta": "¿Qué propiedad de estilo cambia el color del texto?",
-    "RespuestaCorrecta": "color",
+    "respuesta_correcta_literal": "color",
     "Nivel": "Avanzado",
     "Tema": "Estilos CSS",
     "Asignatura": "Diseno_Web",
@@ -1773,7 +1773,7 @@
   },
   {
     "Pregunta": "¿Qué propiedad de estilo cambia el tamaño de la fuente?",
-    "RespuestaCorrecta": "font-size",
+    "respuesta_correcta_literal": "font-size",
     "Nivel": "Avanzado",
     "Tema": "Estilos CSS",
     "Asignatura": "Diseno_Web",
@@ -1787,7 +1787,7 @@
   },
   {
     "Pregunta": "¿Qué propiedad se usa para alinear el texto al centro?",
-    "RespuestaCorrecta": "text-align: center",
+    "respuesta_correcta_literal": "text-align: center",
     "Nivel": "Avanzado",
     "Tema": "Tablas HTML",
     "Asignatura": "Diseno_Web",
@@ -1801,7 +1801,7 @@
   },
   {
     "Pregunta": "¿Cómo se representa el color negro en código hexadecimal?",
-    "RespuestaCorrecta": "#000000",
+    "respuesta_correcta_literal": "#000000",
     "Nivel": "Avanzado",
     "Tema": "Estilos CSS",
     "Asignatura": "Diseno_Web",
@@ -1815,7 +1815,7 @@
   },
   {
     "Pregunta": "1. ¿Qué significan las siglas CSS?",
-    "RespuestaCorrecta": "Cascading Style Sheets",
+    "respuesta_correcta_literal": "Cascading Style Sheets",
     "Nivel": "Avanzado",
     "Tema": "Estilos CSS",
     "Asignatura": "Diseno_Web",
@@ -1829,7 +1829,7 @@
   },
   {
     "Pregunta": "2. ¿Qué atributo se usa para aplicar estilos directamente en una etiqueta?",
-    "RespuestaCorrecta": "style",
+    "respuesta_correcta_literal": "style",
     "Nivel": "Avanzado",
     "Tema": "Estilos CSS",
     "Asignatura": "Diseno_Web",
@@ -1843,7 +1843,7 @@
   },
   {
     "Pregunta": "3. ¿Qué propiedad cambia el color de la letra?",
-    "RespuestaCorrecta": "color",
+    "respuesta_correcta_literal": "color",
     "Nivel": "Avanzado",
     "Tema": "Estilos CSS",
     "Asignatura": "Diseno_Web",
@@ -1857,7 +1857,7 @@
   },
   {
     "Pregunta": "4. ¿Qué propiedad cambia el color de fondo?",
-    "RespuestaCorrecta": "background-color",
+    "respuesta_correcta_literal": "background-color",
     "Nivel": "Avanzado",
     "Tema": "Estilos CSS",
     "Asignatura": "Diseno_Web",
@@ -1871,7 +1871,7 @@
   },
   {
     "Pregunta": "5. ¿Qué propiedad define el tipo de letra?",
-    "RespuestaCorrecta": "font-family",
+    "respuesta_correcta_literal": "font-family",
     "Nivel": "Avanzado",
     "Tema": "Tablas HTML",
     "Asignatura": "Diseno_Web",
@@ -1885,7 +1885,7 @@
   },
   {
     "Pregunta": "6. ¿Qué unidad se usa comúnmente para el tamaño de fuente (font-size)?",
-    "RespuestaCorrecta": "px (píxeles)",
+    "respuesta_correcta_literal": "px (píxeles)",
     "Nivel": "Avanzado",
     "Tema": "Estilos CSS",
     "Asignatura": "Diseno_Web",
@@ -1899,7 +1899,7 @@
   },
   {
     "Pregunta": "7. ¿Cómo se separan múltiples estilos dentro del atributo style?",
-    "RespuestaCorrecta": "Con punto y coma (;)",
+    "respuesta_correcta_literal": "Con punto y coma (;)",
     "Nivel": "Avanzado",
     "Tema": "Estilos CSS",
     "Asignatura": "Diseno_Web",
@@ -1913,7 +1913,7 @@
   },
   {
     "Pregunta": "8. ¿Cuál es la forma correcta de escribir un estilo?",
-    "RespuestaCorrecta": "color: red;",
+    "respuesta_correcta_literal": "color: red;",
     "Nivel": "Avanzado",
     "Tema": "Estilos CSS",
     "Asignatura": "Diseno_Web",
@@ -1927,7 +1927,7 @@
   },
   {
     "Pregunta": "9. Si HTML es el esqueleto, ¿qué es CSS?",
-    "RespuestaCorrecta": "La piel y el vestido",
+    "respuesta_correcta_literal": "La piel y el vestido",
     "Nivel": "Avanzado",
     "Tema": "Estilos CSS",
     "Asignatura": "Diseno_Web",
@@ -1941,7 +1941,7 @@
   },
   {
     "Pregunta": "10. ¿A qué etiquetas se les puede aplicar el atributo style?",
-    "RespuestaCorrecta": "A casi cualquier etiqueta HTML",
+    "respuesta_correcta_literal": "A casi cualquier etiqueta HTML",
     "Nivel": "Avanzado",
     "Tema": "Estructura HTML",
     "Asignatura": "Diseno_Web",
@@ -1955,7 +1955,7 @@
   },
   {
     "Pregunta": "¿Qué significa que el WWW sea hipertexto?",
-    "RespuestaCorrecta": "Que las páginas están unidas por enlaces",
+    "respuesta_correcta_literal": "Que las páginas están unidas por enlaces",
     "Nivel": "Avanzado",
     "Tema": "Estructura HTML",
     "Asignatura": "Diseno_Web",
@@ -1969,7 +1969,7 @@
   },
   {
     "Pregunta": "¿Cuál es el atributo principal de la etiqueta <a> para indicar el destino?",
-    "RespuestaCorrecta": "href",
+    "respuesta_correcta_literal": "href",
     "Nivel": "Avanzado",
     "Tema": "Estructura HTML",
     "Asignatura": "Diseno_Web",
@@ -1983,7 +1983,7 @@
   },
   {
     "Pregunta": "¿Qué etiqueta se utiliza para insertar una imagen?",
-    "RespuestaCorrecta": "<img>",
+    "respuesta_correcta_literal": "<img>",
     "Nivel": "Avanzado",
     "Tema": "Estructura HTML",
     "Asignatura": "Diseno_Web",
@@ -1997,7 +1997,7 @@
   },
   {
     "Pregunta": "¿Para qué sirve el atributo 'alt' en una imagen?",
-    "RespuestaCorrecta": "Descripción alternativa para accesibilidad",
+    "respuesta_correcta_literal": "Descripción alternativa para accesibilidad",
     "Nivel": "Avanzado",
     "Tema": "HTML Multimedia y Enlaces",
     "Asignatura": "Diseno_Web",
@@ -2011,7 +2011,7 @@
   },
   {
     "Pregunta": "¿Cómo se abre un enlace en una pestaña nueva?",
-    "RespuestaCorrecta": "target='_blank'",
+    "respuesta_correcta_literal": "target='_blank'",
     "Nivel": "Avanzado",
     "Tema": "Estructura HTML",
     "Asignatura": "Diseno_Web",
@@ -2025,7 +2025,7 @@
   },
   {
     "Pregunta": "1. ¿Qué etiqueta se usa para crear un enlace?",
-    "RespuestaCorrecta": "<a>",
+    "respuesta_correcta_literal": "<a>",
     "Nivel": "Avanzado",
     "Tema": "Estructura HTML",
     "Asignatura": "Diseno_Web",
@@ -2039,7 +2039,7 @@
   },
   {
     "Pregunta": "2. ¿Qué atributo define la dirección de un enlace?",
-    "RespuestaCorrecta": "href",
+    "respuesta_correcta_literal": "href",
     "Nivel": "Avanzado",
     "Tema": "Tablas HTML",
     "Asignatura": "Diseno_Web",
@@ -2053,7 +2053,7 @@
   },
   {
     "Pregunta": "3. ¿Para qué sirve target='_blank'?",
-    "RespuestaCorrecta": "Para abrir en pestaña nueva",
+    "respuesta_correcta_literal": "Para abrir en pestaña nueva",
     "Nivel": "Avanzado",
     "Tema": "Estructura HTML",
     "Asignatura": "Diseno_Web",
@@ -2067,7 +2067,7 @@
   },
   {
     "Pregunta": "4. ¿Qué etiqueta inserta una imagen?",
-    "RespuestaCorrecta": "<img>",
+    "respuesta_correcta_literal": "<img>",
     "Nivel": "Avanzado",
     "Tema": "Estructura HTML",
     "Asignatura": "Diseno_Web",
@@ -2081,7 +2081,7 @@
   },
   {
     "Pregunta": "5. ¿Qué atributo indica la ruta de la imagen?",
-    "RespuestaCorrecta": "src",
+    "respuesta_correcta_literal": "src",
     "Nivel": "Avanzado",
     "Tema": "HTML Multimedia y Enlaces",
     "Asignatura": "Diseno_Web",
@@ -2095,7 +2095,7 @@
   },
   {
     "Pregunta": "6. ¿Qué atributo describe la imagen para accesibilidad?",
-    "RespuestaCorrecta": "alt",
+    "respuesta_correcta_literal": "alt",
     "Nivel": "Avanzado",
     "Tema": "HTML Multimedia y Enlaces",
     "Asignatura": "Diseno_Web",
@@ -2109,7 +2109,7 @@
   },
   {
     "Pregunta": "7. ¿La etiqueta <img> requiere etiqueta de cierre?",
-    "RespuestaCorrecta": "No",
+    "respuesta_correcta_literal": "No",
     "Nivel": "Avanzado",
     "Tema": "Estructura HTML",
     "Asignatura": "Diseno_Web",
@@ -2123,7 +2123,7 @@
   },
   {
     "Pregunta": "8. ¿Qué es una ruta absoluta?",
-    "RespuestaCorrecta": "Una URL completa de internet",
+    "respuesta_correcta_literal": "Una URL completa de internet",
     "Nivel": "Avanzado",
     "Tema": "HTML Multimedia y Enlaces",
     "Asignatura": "Diseno_Web",
@@ -2137,7 +2137,7 @@
   },
   {
     "Pregunta": "9. ¿Cómo se convierte una imagen en enlace?",
-    "RespuestaCorrecta": "Anidándola dentro de <a>",
+    "respuesta_correcta_literal": "Anidándola dentro de <a>",
     "Nivel": "Avanzado",
     "Tema": "HTML Multimedia y Enlaces",
     "Asignatura": "Diseno_Web",
@@ -2151,7 +2151,7 @@
   },
   {
     "Pregunta": "10. ¿Qué significa HTML?",
-    "RespuestaCorrecta": "HyperText Markup Language",
+    "respuesta_correcta_literal": "HyperText Markup Language",
     "Nivel": "Avanzado",
     "Tema": "Estructura HTML",
     "Asignatura": "Diseno_Web",
@@ -2165,7 +2165,7 @@
   },
   {
     "Pregunta": "¿Qué significan las siglas WWW?",
-    "RespuestaCorrecta": "World Wide Web",
+    "respuesta_correcta_literal": "World Wide Web",
     "Nivel": "Avanzado",
     "Tema": "Estructura HTML",
     "Asignatura": "Diseno_Web",
@@ -2179,7 +2179,7 @@
   },
   {
     "Pregunta": "¿Qué es el hipertexto?",
-    "RespuestaCorrecta": "Texto que contiene enlaces a otras páginas",
+    "respuesta_correcta_literal": "Texto que contiene enlaces a otras páginas",
     "Nivel": "Avanzado",
     "Tema": "Estructura HTML",
     "Asignatura": "Diseno_Web",
@@ -2193,7 +2193,7 @@
   },
   {
     "Pregunta": "Característica de HTML que lo hace compatible con diferentes computadoras y sistemas:",
-    "RespuestaCorrecta": "Compatible",
+    "respuesta_correcta_literal": "Compatible",
     "Nivel": "Avanzado",
     "Tema": "Estructura HTML",
     "Asignatura": "Diseno_Web",
@@ -2207,7 +2207,7 @@
   },
   {
     "Pregunta": "El proceso de cambiar y actualizar información de forma ágil es una característica:",
-    "RespuestaCorrecta": "Dinámica",
+    "respuesta_correcta_literal": "Dinámica",
     "Nivel": "Avanzado",
     "Tema": "Listas HTML",
     "Asignatura": "Diseno_Web",
@@ -2221,7 +2221,7 @@
   },
   {
     "Pregunta": "¿Cuál es la función principal de HTML en una página web?",
-    "RespuestaCorrecta": "Dar estructura y esqueleto a la página",
+    "respuesta_correcta_literal": "Dar estructura y esqueleto a la página",
     "Nivel": "Avanzado",
     "Tema": "Estructura HTML",
     "Asignatura": "Diseno_Web",
@@ -2235,7 +2235,7 @@
   },
   {
     "Pregunta": "¿Qué significa la sigla HTML?",
-    "RespuestaCorrecta": "HyperText Markup Language",
+    "respuesta_correcta_literal": "HyperText Markup Language",
     "Nivel": "Avanzado",
     "Tema": "Estructura HTML",
     "Asignatura": "Diseno_Web",
@@ -2249,7 +2249,7 @@
   },
   {
     "Pregunta": "Característica de HTML que permite que la información esté repartida en páginas enlazadas entre sí:",
-    "RespuestaCorrecta": "Distribuido",
+    "respuesta_correcta_literal": "Distribuido",
     "Nivel": "Avanzado",
     "Tema": "Estructura HTML",
     "Asignatura": "Diseno_Web",
@@ -2263,7 +2263,7 @@
   },
   {
     "Pregunta": "¿Qué tipo de software es suficiente para escribir código HTML?",
-    "RespuestaCorrecta": "Un editor de texto plano (como Bloc de notas)",
+    "respuesta_correcta_literal": "Un editor de texto plano (como Bloc de notas)",
     "Nivel": "Avanzado",
     "Tema": "Estructura HTML",
     "Asignatura": "Diseno_Web",
@@ -2277,7 +2277,7 @@
   },
   {
     "Pregunta": "¿Cuál es la extensión correcta para guardar un archivo HTML?",
-    "RespuestaCorrecta": ".html o .htm",
+    "respuesta_correcta_literal": ".html o .htm",
     "Nivel": "Avanzado",
     "Tema": "Estructura HTML",
     "Asignatura": "Diseno_Web",
@@ -2291,7 +2291,7 @@
   },
   {
     "Pregunta": "La etiqueta que define el título que se ve en la pestaña del navegador es:",
-    "RespuestaCorrecta": "<title>",
+    "respuesta_correcta_literal": "<title>",
     "Nivel": "Avanzado",
     "Tema": "Estructura HTML",
     "Asignatura": "Diseno_Web",
@@ -2305,7 +2305,7 @@
   },
   {
     "Pregunta": "¿Cuál es la regla de oro al cerrar etiquetas anidadas?",
-    "RespuestaCorrecta": "La última etiqueta que abres debe ser la primera que cierres",
+    "respuesta_correcta_literal": "La última etiqueta que abres debe ser la primera que cierres",
     "Nivel": "Avanzado",
     "Tema": "Estructura HTML",
     "Asignatura": "Diseno_Web",
@@ -2319,7 +2319,7 @@
   },
   {
     "Pregunta": "¿En qué sección del documento se coloca el contenido visible para el usuario?",
-    "RespuestaCorrecta": "<body>",
+    "respuesta_correcta_literal": "<body>",
     "Nivel": "Avanzado",
     "Tema": "Listas HTML",
     "Asignatura": "Diseno_Web",
@@ -2333,7 +2333,7 @@
   },
   {
     "Pregunta": "¿Cuál de los siguientes encabezados es el más grande en tamaño?",
-    "RespuestaCorrecta": "<h1>",
+    "respuesta_correcta_literal": "<h1>",
     "Nivel": "Avanzado",
     "Tema": "Estructura HTML",
     "Asignatura": "Diseno_Web",
@@ -2347,7 +2347,7 @@
   },
   {
     "Pregunta": "¿Qué etiqueta se utiliza para definir un párrafo de texto?",
-    "RespuestaCorrecta": "<p>",
+    "respuesta_correcta_literal": "<p>",
     "Nivel": "Avanzado",
     "Tema": "Estructura HTML",
     "Asignatura": "Diseno_Web",
@@ -2361,7 +2361,7 @@
   },
   {
     "Pregunta": "HTML fue diseñado para ser compatible con:",
-    "RespuestaCorrecta": "Todo tipo de computadoras y sistemas operativos",
+    "respuesta_correcta_literal": "Todo tipo de computadoras y sistemas operativos",
     "Nivel": "Avanzado",
     "Tema": "Estructura HTML",
     "Asignatura": "Diseno_Web",
@@ -2375,7 +2375,7 @@
   },
   {
     "Pregunta": "¿Cuál es la etiqueta para una lista no ordenada (viñetas)?",
-    "RespuestaCorrecta": "<ul>",
+    "respuesta_correcta_literal": "<ul>",
     "Nivel": "Avanzado",
     "Tema": "Estructura HTML",
     "Asignatura": "Diseno_Web",
@@ -2389,7 +2389,7 @@
   },
   {
     "Pregunta": "¿Cuál es la etiqueta para cada elemento dentro de una lista?",
-    "RespuestaCorrecta": "<li>",
+    "respuesta_correcta_literal": "<li>",
     "Nivel": "Avanzado",
     "Tema": "Estructura HTML",
     "Asignatura": "Diseno_Web",
@@ -2403,7 +2403,7 @@
   },
   {
     "Pregunta": "¿Cómo se escribe un comentario en HTML?",
-    "RespuestaCorrecta": "<!-- comentario -->",
+    "respuesta_correcta_literal": "<!-- comentario -->",
     "Nivel": "Avanzado",
     "Tema": "Estructura HTML",
     "Asignatura": "Diseno_Web",
@@ -2417,7 +2417,7 @@
   },
   {
     "Pregunta": "¿Para qué sirven los comentarios en el código?",
-    "RespuestaCorrecta": "Para dejar notas al programador sin que se vean en la página",
+    "respuesta_correcta_literal": "Para dejar notas al programador sin que se vean en la página",
     "Nivel": "Avanzado",
     "Tema": "Estructura HTML",
     "Asignatura": "Diseno_Web",
@@ -2431,7 +2431,7 @@
   },
   {
     "Pregunta": "¿Qué etiqueta se usa para una lista ordenada (numerada)?",
-    "RespuestaCorrecta": "<ol>",
+    "respuesta_correcta_literal": "<ol>",
     "Nivel": "Avanzado",
     "Tema": "Estructura HTML",
     "Asignatura": "Diseno_Web",
@@ -2445,7 +2445,7 @@
   },
   {
     "Pregunta": "1. ¿Qué etiqueta define una lista desordenada?",
-    "RespuestaCorrecta": "<ul>",
+    "respuesta_correcta_literal": "<ul>",
     "Nivel": "Avanzado",
     "Tema": "Estructura HTML",
     "Asignatura": "Diseno_Web",
@@ -2459,7 +2459,7 @@
   },
   {
     "Pregunta": "2. ¿Qué etiqueta define una lista ordenada?",
-    "RespuestaCorrecta": "<ol>",
+    "respuesta_correcta_literal": "<ol>",
     "Nivel": "Avanzado",
     "Tema": "Estructura HTML",
     "Asignatura": "Diseno_Web",
@@ -2473,7 +2473,7 @@
   },
   {
     "Pregunta": "3. ¿Qué etiqueta se usa para cada elemento dentro de una lista?",
-    "RespuestaCorrecta": "<li>",
+    "respuesta_correcta_literal": "<li>",
     "Nivel": "Avanzado",
     "Tema": "Estructura HTML",
     "Asignatura": "Diseno_Web",
@@ -2487,7 +2487,7 @@
   },
   {
     "Pregunta": "4. ¿Cómo se escribe un comentario en HTML?",
-    "RespuestaCorrecta": "<!-- Comentario -->",
+    "respuesta_correcta_literal": "<!-- Comentario -->",
     "Nivel": "Avanzado",
     "Tema": "Estructura HTML",
     "Asignatura": "Diseno_Web",
@@ -2501,7 +2501,7 @@
   },
   {
     "Pregunta": "5. ¿El navegador muestra los comentarios al usuario?",
-    "RespuestaCorrecta": "No",
+    "respuesta_correcta_literal": "No",
     "Nivel": "Avanzado",
     "Tema": "Tablas HTML",
     "Asignatura": "Diseno_Web",
@@ -2515,7 +2515,7 @@
   },
   {
     "Pregunta": "6. ¿Qué significa 'anidamiento'?",
-    "RespuestaCorrecta": "Poner una etiqueta dentro de otra",
+    "respuesta_correcta_literal": "Poner una etiqueta dentro de otra",
     "Nivel": "Avanzado",
     "Tema": "Estructura HTML",
     "Asignatura": "Diseno_Web",
@@ -2529,7 +2529,7 @@
   },
   {
     "Pregunta": "7. ¿Qué símbolo precede al texto en una lista <ul> por defecto?",
-    "RespuestaCorrecta": "Una viñeta (punto)",
+    "respuesta_correcta_literal": "Una viñeta (punto)",
     "Nivel": "Avanzado",
     "Tema": "Listas HTML",
     "Asignatura": "Diseno_Web",
@@ -2543,7 +2543,7 @@
   },
   {
     "Pregunta": "8. ¿Para qué sirven los comentarios?",
-    "RespuestaCorrecta": "Para dejar notas al programador",
+    "respuesta_correcta_literal": "Para dejar notas al programador",
     "Nivel": "Avanzado",
     "Tema": "Estructura HTML",
     "Asignatura": "Diseno_Web",
@@ -2557,7 +2557,7 @@
   },
   {
     "Pregunta": "9. ¿Cómo se comenta una línea en JavaScript?",
-    "RespuestaCorrecta": "//",
+    "respuesta_correcta_literal": "//",
     "Nivel": "Avanzado",
     "Tema": "DOM y Dinamismo",
     "Asignatura": "Diseno_Web",
@@ -2571,7 +2571,7 @@
   },
   {
     "Pregunta": "10. ¿Cuál es el orden correcto de anidación?",
-    "RespuestaCorrecta": "<ul><li></li></ul>",
+    "respuesta_correcta_literal": "<ul><li></li></ul>",
     "Nivel": "Avanzado",
     "Tema": "Estructura HTML",
     "Asignatura": "Diseno_Web",
@@ -2585,7 +2585,7 @@
   },
   {
     "Pregunta": "¿Cuál es la etiqueta para crear una fila en una tabla?",
-    "RespuestaCorrecta": "<tr>",
+    "respuesta_correcta_literal": "<tr>",
     "Nivel": "Avanzado",
     "Tema": "Estructura HTML",
     "Asignatura": "Diseno_Web",
@@ -2599,7 +2599,7 @@
   },
   {
     "Pregunta": "¿Cuál es la etiqueta para crear una celda de datos estándar?",
-    "RespuestaCorrecta": "<td>",
+    "respuesta_correcta_literal": "<td>",
     "Nivel": "Avanzado",
     "Tema": "Estructura HTML",
     "Asignatura": "Diseno_Web",
@@ -2613,7 +2613,7 @@
   },
   {
     "Pregunta": "¿Cuál es la diferencia entre <div> y <span>?",
-    "RespuestaCorrecta": "<div> es en bloque, <span> es en línea",
+    "respuesta_correcta_literal": "<div> es en bloque, <span> es en línea",
     "Nivel": "Avanzado",
     "Tema": "Tablas HTML",
     "Asignatura": "Diseno_Web",
@@ -2627,7 +2627,7 @@
   },
   {
     "Pregunta": "¿Qué etiqueta se usa para los encabezados de una tabla (celdas en negrita y centradas)?",
-    "RespuestaCorrecta": "<th>",
+    "respuesta_correcta_literal": "<th>",
     "Nivel": "Avanzado",
     "Tema": "Estructura HTML",
     "Asignatura": "Diseno_Web",
@@ -2641,7 +2641,7 @@
   },
   {
     "Pregunta": "¿Cuál es el propósito principal de una etiqueta <div>?",
-    "RespuestaCorrecta": "Servir como contenedor para agrupar otros elementos",
+    "respuesta_correcta_literal": "Servir como contenedor para agrupar otros elementos",
     "Nivel": "Avanzado",
     "Tema": "Estructura HTML",
     "Asignatura": "Diseno_Web",
@@ -2655,7 +2655,7 @@
   },
   {
     "Pregunta": "1. ¿Qué etiqueta define una fila en una tabla?",
-    "RespuestaCorrecta": "<tr>",
+    "respuesta_correcta_literal": "<tr>",
     "Nivel": "Avanzado",
     "Tema": "Estructura HTML",
     "Asignatura": "Diseno_Web",
@@ -2669,7 +2669,7 @@
   },
   {
     "Pregunta": "2. ¿Para qué se usa <th>?",
-    "RespuestaCorrecta": "Encabezados de tabla",
+    "respuesta_correcta_literal": "Encabezados de tabla",
     "Nivel": "Avanzado",
     "Tema": "Tablas HTML",
     "Asignatura": "Diseno_Web",
@@ -2683,7 +2683,7 @@
   },
   {
     "Pregunta": "3. ¿Qué tipo de elemento es <div>?",
-    "RespuestaCorrecta": "De bloque",
+    "respuesta_correcta_literal": "De bloque",
     "Nivel": "Avanzado",
     "Tema": "Estructura HTML",
     "Asignatura": "Diseno_Web",
@@ -2697,7 +2697,7 @@
   },
   {
     "Pregunta": "4. ¿Qué etiqueta es mejor para resaltar una palabra en un párrafo?",
-    "RespuestaCorrecta": "<span>",
+    "respuesta_correcta_literal": "<span>",
     "Nivel": "Avanzado",
     "Tema": "Estructura HTML",
     "Asignatura": "Diseno_Web",
@@ -2711,7 +2711,7 @@
   },
   {
     "Pregunta": "5. ¿Qué etiqueta define una celda de datos?",
-    "RespuestaCorrecta": "<td>",
+    "respuesta_correcta_literal": "<td>",
     "Nivel": "Avanzado",
     "Tema": "Estructura HTML",
     "Asignatura": "Diseno_Web",
@@ -2725,7 +2725,7 @@
   },
   {
     "Pregunta": "6. ¿Los <div> ocupan todo el ancho disponible?",
-    "RespuestaCorrecta": "Sí, por defecto",
+    "respuesta_correcta_literal": "Sí, por defecto",
     "Nivel": "Avanzado",
     "Tema": "Estructura HTML",
     "Asignatura": "Diseno_Web",
@@ -2739,7 +2739,7 @@
   },
   {
     "Pregunta": "7. ¿Se pueden anidar tablas?",
-    "RespuestaCorrecta": "Sí, pero no es recomendado",
+    "respuesta_correcta_literal": "Sí, pero no es recomendado",
     "Nivel": "Avanzado",
     "Tema": "Tablas HTML",
     "Asignatura": "Diseno_Web",
@@ -2753,7 +2753,7 @@
   },
   {
     "Pregunta": "8. ¿Qué etiqueta inicia la definición de una tabla?",
-    "RespuestaCorrecta": "<table>",
+    "respuesta_correcta_literal": "<table>",
     "Nivel": "Avanzado",
     "Tema": "Estructura HTML",
     "Asignatura": "Diseno_Web",
@@ -2767,7 +2767,7 @@
   },
   {
     "Pregunta": "9. ¿<span> rompe la línea de texto?",
-    "RespuestaCorrecta": "No, es un elemento en línea",
+    "respuesta_correcta_literal": "No, es un elemento en línea",
     "Nivel": "Avanzado",
     "Tema": "Estructura HTML",
     "Asignatura": "Diseno_Web",
@@ -2781,7 +2781,7 @@
   },
   {
     "Pregunta": "10. ¿Cuál es el propósito principal de div y span?",
-    "RespuestaCorrecta": "Agrupar contenido para aplicar estilos",
+    "respuesta_correcta_literal": "Agrupar contenido para aplicar estilos",
     "Nivel": "Avanzado",
     "Tema": "Estructura HTML",
     "Asignatura": "Diseno_Web",
@@ -2795,7 +2795,7 @@
   },
   {
     "Pregunta": "¿Qué es CSS y para qué se utiliza?",
-    "RespuestaCorrecta": "Lenguaje para definir el estilo visual y presentación",
+    "respuesta_correcta_literal": "Lenguaje para definir el estilo visual y presentación",
     "Nivel": "Avanzado",
     "Tema": "Estilos CSS",
     "Asignatura": "Diseno_Web",
@@ -2809,7 +2809,7 @@
   },
   {
     "Pregunta": "¿Cuál es la analogía de HTML en un edificio?",
-    "RespuestaCorrecta": "El esqueleto o estructura",
+    "respuesta_correcta_literal": "El esqueleto o estructura",
     "Nivel": "Avanzado",
     "Tema": "Estructura HTML",
     "Asignatura": "Diseno_Web",
@@ -2823,7 +2823,7 @@
   },
   {
     "Pregunta": "¿Qué es una 'etiqueta de inicio'?",
-    "RespuestaCorrecta": "La que indica dónde empieza un elemento",
+    "respuesta_correcta_literal": "La que indica dónde empieza un elemento",
     "Nivel": "Avanzado",
     "Tema": "Estructura HTML",
     "Asignatura": "Diseno_Web",
@@ -2837,7 +2837,7 @@
   },
   {
     "Pregunta": "¿Qué elemento del head permite usar acentos y la letra 'ñ'?",
-    "RespuestaCorrecta": "<meta charset='UTF-8'>",
+    "respuesta_correcta_literal": "<meta charset='UTF-8'>",
     "Nivel": "Avanzado",
     "Tema": "Estructura HTML",
     "Asignatura": "Diseno_Web",
@@ -2851,7 +2851,7 @@
   },
   {
     "Pregunta": "¿Qué sucede si anidamos etiquetas en el orden incorrecto?",
-    "RespuestaCorrecta": "Puede causar errores en la visualización",
+    "respuesta_correcta_literal": "Puede causar errores en la visualización",
     "Nivel": "Avanzado",
     "Tema": "Estructura HTML",
     "Asignatura": "Diseno_Web",
@@ -2865,7 +2865,7 @@
   },
   {
     "Pregunta": "1. ¿Qué significa HTML?",
-    "RespuestaCorrecta": "HyperText Markup Language",
+    "respuesta_correcta_literal": "HyperText Markup Language",
     "Nivel": "Avanzado",
     "Tema": "Estructura HTML",
     "Asignatura": "Diseno_Web",
@@ -2879,7 +2879,7 @@
   },
   {
     "Pregunta": "2. ¿Cuál es la etiqueta raíz de un documento HTML?",
-    "RespuestaCorrecta": "<html>",
+    "respuesta_correcta_literal": "<html>",
     "Nivel": "Avanzado",
     "Tema": "Estructura HTML",
     "Asignatura": "Diseno_Web",
@@ -2893,7 +2893,7 @@
   },
   {
     "Pregunta": "3. ¿Qué etiqueta se utiliza para el encabezado de mayor nivel?",
-    "RespuestaCorrecta": "<h1>",
+    "respuesta_correcta_literal": "<h1>",
     "Nivel": "Avanzado",
     "Tema": "Estructura HTML",
     "Asignatura": "Diseno_Web",
@@ -2907,7 +2907,7 @@
   },
   {
     "Pregunta": "4. ¿En qué sección se coloca el título de la página?",
-    "RespuestaCorrecta": "<head>",
+    "respuesta_correcta_literal": "<head>",
     "Nivel": "Avanzado",
     "Tema": "Listas HTML",
     "Asignatura": "Diseno_Web",
@@ -2921,7 +2921,7 @@
   },
   {
     "Pregunta": "5. ¿Qué etiqueta define un párrafo?",
-    "RespuestaCorrecta": "<p>",
+    "respuesta_correcta_literal": "<p>",
     "Nivel": "Avanzado",
     "Tema": "Estructura HTML",
     "Asignatura": "Diseno_Web",
@@ -2935,7 +2935,7 @@
   },
   {
     "Pregunta": "6. ¿Para qué sirve la etiqueta <body>?",
-    "RespuestaCorrecta": "Para el contenido visible",
+    "respuesta_correcta_literal": "Para el contenido visible",
     "Nivel": "Avanzado",
     "Tema": "Estructura HTML",
     "Asignatura": "Diseno_Web",
@@ -2949,7 +2949,7 @@
   },
   {
     "Pregunta": "7. ¿Cuál es la extensión de archivo correcta para una página web?",
-    "RespuestaCorrecta": ".html",
+    "respuesta_correcta_literal": ".html",
     "Nivel": "Avanzado",
     "Tema": "Estructura HTML",
     "Asignatura": "Diseno_Web",
@@ -2963,7 +2963,7 @@
   },
   {
     "Pregunta": "8. ¿Qué etiqueta se usa para crear un salto de línea?",
-    "RespuestaCorrecta": "<br/>",
+    "respuesta_correcta_literal": "<br/>",
     "Nivel": "Avanzado",
     "Tema": "Estructura HTML",
     "Asignatura": "Diseno_Web",
@@ -2977,7 +2977,7 @@
   },
   {
     "Pregunta": "9. ¿Cómo se llama al hecho de poner una etiqueta dentro de otra?",
-    "RespuestaCorrecta": "Anidamiento",
+    "respuesta_correcta_literal": "Anidamiento",
     "Nivel": "Avanzado",
     "Tema": "Estructura HTML",
     "Asignatura": "Diseno_Web",
@@ -2991,7 +2991,7 @@
   },
   {
     "Pregunta": "10. ¿Cuál es el encabezado más pequeño?",
-    "RespuestaCorrecta": "<h6>",
+    "respuesta_correcta_literal": "<h6>",
     "Nivel": "Avanzado",
     "Tema": "Estructura HTML",
     "Asignatura": "Diseno_Web",

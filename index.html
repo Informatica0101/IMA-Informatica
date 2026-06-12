@@ -63,7 +63,7 @@
                     </div>
                 </div>
 
-                <a href="#" onclick="handleHeaderAction('show-activities')" class="nav-link-desktop">Actividades</a>
+                <a href="#" onclick="QuizProApp.handleHeaderAction('show-activities')" class="nav-link-desktop">Actividades</a>
                 <a href="pseudocode.html" class="nav-link-desktop">Pseudocódigo</a>
                 <button id="open-profile-btn" class="nav-link-desktop">Mi perfil</button>
             </nav>
@@ -256,7 +256,7 @@
                         <button type="button" id="cancel-profile-btn" class="flex-1 py-3 bg-gray-100 text-gray-700 font-medium rounded-xl hover:bg-gray-200 transition-colors">Cerrar</button>
                         <button type="submit" class="flex-1 py-3 bg-blue-600 text-white font-medium rounded-xl hover:bg-blue-700 shadow-lg transition-all">Guardar Cambios</button>
                     </div>
-                    <button type="button" onclick="handleLogout()" class="w-full py-3 bg-red-50 text-red-600 font-semibold rounded-xl hover:bg-red-100 transition-colors flex items-center justify-center gap-2">
+                    <button type="button" onclick="QuizProApp.handleLogout()" class="w-full py-3 bg-red-50 text-red-600 font-semibold rounded-xl hover:bg-red-100 transition-colors flex items-center justify-center gap-2">
                         <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
                     </button>
                 </div>
@@ -305,13 +305,13 @@
         <a href="login.html" id="mobile-portal-bottom-nav" class="bottom-nav-item" title="Portal">
             <i class="fas fa-th-large text-xl"></i>
         </a>
-        <button class="bottom-nav-item" onclick="window.openAcademicHierarchy('Presentaciones')" title="Cursos">
+        <button class="bottom-nav-item" onclick="QuizProApp.openAcademicHierarchy('Presentaciones')" title="Cursos">
             <i class="fas fa-book-open text-xl"></i>
         </button>
-        <button class="bottom-nav-item" onclick="window.openAcademicHierarchy('Contenido')" title="Contenido">
+        <button class="bottom-nav-item" onclick="QuizProApp.openAcademicHierarchy('Contenido')" title="Contenido">
             <i class="fas fa-file-pdf text-xl"></i>
         </button>
-        <a href="#" onclick="handleHeaderAction('show-activities')" class="bottom-nav-item" title="Actividades">
+        <a href="#" onclick="QuizProApp.handleHeaderAction('show-activities')" class="bottom-nav-item" title="Actividades">
             <i class="fas fa-gamepad text-xl"></i>
         </a>
         <a href="pseudocode.html" class="bottom-nav-item" title="Pseudocódigo">

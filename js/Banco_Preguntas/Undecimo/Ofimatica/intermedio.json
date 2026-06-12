@@ -1,7 +1,7 @@
 [
   {
     "Pregunta": "¿Qué es el Formato Condicional?",
-    "RespuestaCorrecta": "Una herramienta para dar formato a una celda basada en una regla",
+    "respuesta_correcta_literal": "Una herramienta para dar formato a una celda basada en una regla",
     "Nivel": "Intermedio",
     "Tema": "Formato Condicional",
     "Asignatura": "Ofimatica",
@@ -15,7 +15,7 @@
   },
   {
     "Pregunta": "¿Para qué sirve el Formato Condicional?",
-    "RespuestaCorrecta": "Para visualizar rápidamente tendencias y valores importantes",
+    "respuesta_correcta_literal": "Para visualizar rápidamente tendencias y valores importantes",
     "Nivel": "Intermedio",
     "Tema": "Formato Condicional",
     "Asignatura": "Ofimatica",
@@ -29,7 +29,7 @@
   },
   {
     "Pregunta": "Una regla que usa una fórmula personalizada siempre comienza con:",
-    "RespuestaCorrecta": "`=`",
+    "respuesta_correcta_literal": "`=`",
     "Nivel": "Intermedio",
     "Tema": "Formato Condicional",
     "Asignatura": "Ofimatica",
@@ -43,7 +43,7 @@
   },
   {
     "Pregunta": "Si tienes dos reglas que se aplican a la misma celda, ¿cuál tiene prioridad?",
-    "RespuestaCorrecta": "La que está más arriba en el Administrador de reglas",
+    "respuesta_correcta_literal": "La que está más arriba en el Administrador de reglas",
     "Nivel": "Intermedio",
     "Tema": "Formato Condicional",
     "Asignatura": "Ofimatica",
@@ -57,7 +57,7 @@
   },
   {
     "Pregunta": "La fórmula `=C2 > 1000` resaltará las celdas en la columna C que:",
-    "RespuestaCorrecta": "Son mayores a 1000",
+    "respuesta_correcta_literal": "Son mayores a 1000",
     "Nivel": "Intermedio",
     "Tema": "Excel Avanzado",
     "Asignatura": "Ofimatica",
@@ -71,7 +71,7 @@
   },
   {
     "Pregunta": "¿Cuál de estas visualizaciones usa una barra horizontal proporcional al valor?",
-    "RespuestaCorrecta": "Barras de Datos",
+    "respuesta_correcta_literal": "Barras de Datos",
     "Nivel": "Intermedio",
     "Tema": "Excel Avanzado",
     "Asignatura": "Ofimatica",
@@ -85,7 +85,7 @@
   },
   {
     "Pregunta": "¿Qué visualización usa un degradado de color según el valor?",
-    "RespuestaCorrecta": "Escalas de Color",
+    "respuesta_correcta_literal": "Escalas de Color",
     "Nivel": "Intermedio",
     "Tema": "Excel Avanzado",
     "Asignatura": "Ofimatica",
@@ -99,7 +99,7 @@
   },
   {
     "Pregunta": "Para agregar flechas o semáforos a una celda se usa:",
-    "RespuestaCorrecta": "Conjuntos de Íconos",
+    "respuesta_correcta_literal": "Conjuntos de Íconos",
     "Nivel": "Intermedio",
     "Tema": "Excel Avanzado",
     "Asignatura": "Ofimatica",
@@ -113,7 +113,7 @@
   },
   {
     "Pregunta": "La opción 'Detener si es verdad' sirve para:",
-    "RespuestaCorrecta": "Evitar que se apliquen reglas posteriores",
+    "respuesta_correcta_literal": "Evitar que se apliquen reglas posteriores",
     "Nivel": "Intermedio",
     "Tema": "Excel Avanzado",
     "Asignatura": "Ofimatica",
@@ -127,7 +127,7 @@
   },
   {
     "Pregunta": "¿En qué pestaña de Excel se encuentra usualmente el Formato Condicional?",
-    "RespuestaCorrecta": "Inicio",
+    "respuesta_correcta_literal": "Inicio",
     "Nivel": "Intermedio",
     "Tema": "Formato Condicional",
     "Asignatura": "Ofimatica",
@@ -141,7 +141,7 @@
   },
   {
     "Pregunta": "En la instrucción Range(\"A1\").Value = \"Hola\", ¿qué representa '.Value'?",
-    "RespuestaCorrecta": "Una Propiedad",
+    "respuesta_correcta_literal": "Una Propiedad",
     "Nivel": "Intermedio",
     "Tema": "Excel Avanzado",
     "Asignatura": "Ofimatica",
@@ -155,7 +155,7 @@
   },
   {
     "Pregunta": "¿Para qué sirve el comando 'MsgBox' en VBA?",
-    "RespuestaCorrecta": "Para mostrar un mensaje al usuario",
+    "respuesta_correcta_literal": "Para mostrar un mensaje al usuario",
     "Nivel": "Intermedio",
     "Tema": "Macros y Automatización",
     "Asignatura": "Ofimatica",
@@ -169,7 +169,7 @@
   },
   {
     "Pregunta": "Todo el código de una macro (procedimiento) se escribe entre:",
-    "RespuestaCorrecta": "Sub...End Sub",
+    "respuesta_correcta_literal": "Sub...End Sub",
     "Nivel": "Intermedio",
     "Tema": "Macros y Automatización",
     "Asignatura": "Ofimatica",
@@ -183,7 +183,7 @@
   },
   {
     "Pregunta": "¿Qué significa la sigla VBA?",
-    "RespuestaCorrecta": "Visual Basic for Applications",
+    "respuesta_correcta_literal": "Visual Basic for Applications",
     "Nivel": "Intermedio",
     "Tema": "Macros y Automatización",
     "Asignatura": "Ofimatica",
@@ -197,7 +197,7 @@
   },
   {
     "Pregunta": "¿Qué combinación de teclas abre el Editor de VBA (VBE)?",
-    "RespuestaCorrecta": "Alt + F11",
+    "respuesta_correcta_literal": "Alt + F11",
     "Nivel": "Intermedio",
     "Tema": "Macros y Automatización",
     "Asignatura": "Ofimatica",
@@ -211,7 +211,7 @@
   },
   {
     "Pregunta": "¿Qué palabra clave se usa para crear o declarar una variable en VBA?",
-    "RespuestaCorrecta": "Dim",
+    "respuesta_correcta_literal": "Dim",
     "Nivel": "Intermedio",
     "Tema": "Macros y Automatización",
     "Asignatura": "Ofimatica",
@@ -225,7 +225,7 @@
   },
   {
     "Pregunta": "¿Cuál es el tipo de dato correcto para almacenar texto?",
-    "RespuestaCorrecta": "String",
+    "respuesta_correcta_literal": "String",
     "Nivel": "Intermedio",
     "Tema": "Excel Avanzado",
     "Asignatura": "Ofimatica",
@@ -239,7 +239,7 @@
   },
   {
     "Pregunta": "¿Qué extensión debe tener un libro de Excel para conservar el código VBA?",
-    "RespuestaCorrecta": ".xlsm",
+    "respuesta_correcta_literal": ".xlsm",
     "Nivel": "Intermedio",
     "Tema": "Macros y Automatización",
     "Asignatura": "Ofimatica",
@@ -253,7 +253,7 @@
   },
   {
     "Pregunta": "En VBA, una acción que un objeto puede realizar (como borrar) se llama:",
-    "RespuestaCorrecta": "Método",
+    "respuesta_correcta_literal": "Método",
     "Nivel": "Intermedio",
     "Tema": "Macros y Automatización",
     "Asignatura": "Ofimatica",
@@ -267,7 +267,7 @@
   },
   {
     "Pregunta": "Para referirse a la celda B5 en VBA, se utiliza:",
-    "RespuestaCorrecta": "Range(\"B5\")",
+    "respuesta_correcta_literal": "Range(\"B5\")",
     "Nivel": "Intermedio",
     "Tema": "Macros y Automatización",
     "Asignatura": "Ofimatica",
@@ -281,7 +281,7 @@
   },
   {
     "Pregunta": "¿Qué es una hoja de cálculo?",
-    "RespuestaCorrecta": "Aplicación para organizar y analizar datos en tablas",
+    "respuesta_correcta_literal": "Aplicación para organizar y analizar datos en tablas",
     "Nivel": "Intermedio",
     "Tema": "Excel Avanzado",
     "Asignatura": "Ofimatica",
@@ -295,7 +295,7 @@
   },
   {
     "Pregunta": "Las unidades básicas de una hoja de cálculo son:",
-    "RespuestaCorrecta": "Celdas",
+    "respuesta_correcta_literal": "Celdas",
     "Nivel": "Intermedio",
     "Tema": "Excel Avanzado",
     "Asignatura": "Ofimatica",
@@ -309,7 +309,7 @@
   },
   {
     "Pregunta": "¿Cuál es la función de la barra de fórmulas?",
-    "RespuestaCorrecta": "Introducir y editar datos o fórmulas",
+    "respuesta_correcta_literal": "Introducir y editar datos o fórmulas",
     "Nivel": "Intermedio",
     "Tema": "Excel Avanzado",
     "Asignatura": "Ofimatica",
@@ -323,7 +323,7 @@
   },
   {
     "Pregunta": "¿Qué atajo de teclado abre el cuadro de formato de celdas?",
-    "RespuestaCorrecta": "Ctrl + 1",
+    "respuesta_correcta_literal": "Ctrl + 1",
     "Nivel": "Intermedio",
     "Tema": "Excel Avanzado",
     "Asignatura": "Ofimatica",
@@ -337,7 +337,7 @@
   },
   {
     "Pregunta": "Todas las fórmulas en una hoja de cálculo deben comenzar con:",
-    "RespuestaCorrecta": "Signo igual (=)",
+    "respuesta_correcta_literal": "Signo igual (=)",
     "Nivel": "Intermedio",
     "Tema": "Excel Avanzado",
     "Asignatura": "Ofimatica",
@@ -351,7 +351,7 @@
   },
   {
     "Pregunta": "¿Qué función se utiliza para sumar un rango de celdas?",
-    "RespuestaCorrecta": "SUMA",
+    "respuesta_correcta_literal": "SUMA",
     "Nivel": "Intermedio",
     "Tema": "Excel Avanzado",
     "Asignatura": "Ofimatica",
@@ -365,7 +365,7 @@
   },
   {
     "Pregunta": "La función que calcula el promedio de un conjunto de valores es:",
-    "RespuestaCorrecta": "PROMEDIO",
+    "respuesta_correcta_literal": "PROMEDIO",
     "Nivel": "Intermedio",
     "Tema": "Excel Avanzado",
     "Asignatura": "Ofimatica",
@@ -379,7 +379,7 @@
   },
   {
     "Pregunta": "¿Qué herramienta permite mostrar solo los datos que cumplen ciertos criterios?",
-    "RespuestaCorrecta": "Filtrar",
+    "respuesta_correcta_literal": "Filtrar",
     "Nivel": "Intermedio",
     "Tema": "Excel Avanzado",
     "Asignatura": "Ofimatica",
@@ -393,7 +393,7 @@
   },
   {
     "Pregunta": "Reorganizar los datos de mayor a menor se conoce como:",
-    "RespuestaCorrecta": "Ordenar descendente",
+    "respuesta_correcta_literal": "Ordenar descendente",
     "Nivel": "Intermedio",
     "Tema": "Excel Avanzado",
     "Asignatura": "Ofimatica",
@@ -407,7 +407,7 @@
   },
   {
     "Pregunta": "¿Cuál de estos es un tipo de dato válido en una celda?",
-    "RespuestaCorrecta": "Texto, Números, Fechas y Fórmulas",
+    "respuesta_correcta_literal": "Texto, Números, Fechas y Fórmulas",
     "Nivel": "Intermedio",
     "Tema": "Excel Avanzado",
     "Asignatura": "Ofimatica",
@@ -421,7 +421,7 @@
   },
   {
     "Pregunta": "¿Qué permite realizar la Función SI (IF) en Excel?",
-    "RespuestaCorrecta": "Evaluaciones condicionales",
+    "respuesta_correcta_literal": "Evaluaciones condicionales",
     "Nivel": "Intermedio",
     "Tema": "Excel Avanzado",
     "Asignatura": "Ofimatica",
@@ -435,7 +435,7 @@
   },
   {
     "Pregunta": "¿Cuál es la estructura correcta de la función SI?",
-    "RespuestaCorrecta": "=SI(prueba_lógica; valor_verdadero; valor_falso)",
+    "respuesta_correcta_literal": "=SI(prueba_lógica; valor_verdadero; valor_falso)",
     "Nivel": "Intermedio",
     "Tema": "Excel Avanzado",
     "Asignatura": "Ofimatica",
@@ -449,7 +449,7 @@
   },
   {
     "Pregunta": "Si queremos evaluar varias condiciones una dentro de otra, usamos una función SI __________.",
-    "RespuestaCorrecta": "Anidada",
+    "respuesta_correcta_literal": "Anidada",
     "Nivel": "Intermedio",
     "Tema": "Excel Avanzado",
     "Asignatura": "Ofimatica",
@@ -463,7 +463,7 @@
   },
   {
     "Pregunta": "¿Cuál es el principal beneficio de los gráficos en Excel?",
-    "RespuestaCorrecta": "Visualizar tendencias y patrones rápidamente",
+    "respuesta_correcta_literal": "Visualizar tendencias y patrones rápidamente",
     "Nivel": "Intermedio",
     "Tema": "Excel Avanzado",
     "Asignatura": "Ofimatica",
@@ -477,7 +477,7 @@
   },
   {
     "Pregunta": "¿Qué tipo de gráfico es ideal para mostrar proporciones de un total?",
-    "RespuestaCorrecta": "Gráfico Circular (Pastel)",
+    "respuesta_correcta_literal": "Gráfico Circular (Pastel)",
     "Nivel": "Intermedio",
     "Tema": "Excel Avanzado",
     "Asignatura": "Ofimatica",
@@ -491,7 +491,7 @@
   },
   {
     "Pregunta": "¿Qué gráfico usarías para mostrar tendencias a lo largo del tiempo?",
-    "RespuestaCorrecta": "Gráfico de Líneas",
+    "respuesta_correcta_literal": "Gráfico de Líneas",
     "Nivel": "Intermedio",
     "Tema": "Excel Avanzado",
     "Asignatura": "Ofimatica",
@@ -505,7 +505,7 @@
   },
   {
     "Pregunta": "¿Qué es una Tabla Dinámica?",
-    "RespuestaCorrecta": "Herramienta interactiva para resumir y analizar grandes datos",
+    "respuesta_correcta_literal": "Herramienta interactiva para resumir y analizar grandes datos",
     "Nivel": "Intermedio",
     "Tema": "Excel Avanzado",
     "Asignatura": "Ofimatica",
@@ -519,7 +519,7 @@
   },
   {
     "Pregunta": "¿En qué área de la tabla dinámica se colocan los datos numéricos que se quieren sumar o promediar?",
-    "RespuestaCorrecta": "Valores",
+    "respuesta_correcta_literal": "Valores",
     "Nivel": "Intermedio",
     "Tema": "Excel Avanzado",
     "Asignatura": "Ofimatica",
@@ -533,7 +533,7 @@
   },
   {
     "Pregunta": "Para insertar un gráfico o tabla dinámica, debemos ir a la pestaña:",
-    "RespuestaCorrecta": "Insertar",
+    "respuesta_correcta_literal": "Insertar",
     "Nivel": "Intermedio",
     "Tema": "Excel Avanzado",
     "Asignatura": "Ofimatica",
@@ -547,7 +547,7 @@
   },
   {
     "Pregunta": "El componente del gráfico que identifica qué representa cada color se llama:",
-    "RespuestaCorrecta": "Leyenda",
+    "respuesta_correcta_literal": "Leyenda",
     "Nivel": "Intermedio",
     "Tema": "Excel Avanzado",
     "Asignatura": "Ofimatica",
@@ -561,7 +561,7 @@
   },
   {
     "Pregunta": "¿Qué es un procesador de texto?",
-    "RespuestaCorrecta": "Programa para crear y editar documentos digitales",
+    "respuesta_correcta_literal": "Programa para crear y editar documentos digitales",
     "Nivel": "Intermedio",
     "Tema": "Excel Avanzado",
     "Asignatura": "Ofimatica",
@@ -575,7 +575,7 @@
   },
   {
     "Pregunta": "¿Cuál de estos es un ejemplo de formato de carácter?",
-    "RespuestaCorrecta": "Tipo y tamaño de fuente",
+    "respuesta_correcta_literal": "Tipo y tamaño de fuente",
     "Nivel": "Intermedio",
     "Tema": "Excel Avanzado",
     "Asignatura": "Ofimatica",
@@ -589,7 +589,7 @@
   },
   {
     "Pregunta": "Negrita, Cursiva y Subrayado son ejemplos de:",
-    "RespuestaCorrecta": "Estilos de texto",
+    "respuesta_correcta_literal": "Estilos de texto",
     "Nivel": "Intermedio",
     "Tema": "Excel Avanzado",
     "Asignatura": "Ofimatica",
@@ -603,7 +603,7 @@
   },
   {
     "Pregunta": "¿Qué opción define la posición del texto (izquierda, derecha, centrado)?",
-    "RespuestaCorrecta": "Alineación",
+    "respuesta_correcta_literal": "Alineación",
     "Nivel": "Intermedio",
     "Tema": "Excel Avanzado",
     "Asignatura": "Ofimatica",
@@ -617,7 +617,7 @@
   },
   {
     "Pregunta": "¿Qué formato de página permite elegir entre Vertical u Horizontal?",
-    "RespuestaCorrecta": "Orientación",
+    "respuesta_correcta_literal": "Orientación",
     "Nivel": "Intermedio",
     "Tema": "Excel Avanzado",
     "Asignatura": "Ofimatica",
@@ -631,7 +631,7 @@
   },
   {
     "Pregunta": "La función que permite corregir palabras mal escritas se llama:",
-    "RespuestaCorrecta": "Revisión ortográfica",
+    "respuesta_correcta_literal": "Revisión ortográfica",
     "Nivel": "Intermedio",
     "Tema": "Excel Avanzado",
     "Asignatura": "Ofimatica",
@@ -645,7 +645,7 @@
   },
   {
     "Pregunta": "¿Cuál de estos NO es un objeto que se pueda insertar en un procesador de texto?",
-    "RespuestaCorrecta": "Un procesador físico",
+    "respuesta_correcta_literal": "Un procesador físico",
     "Nivel": "Intermedio",
     "Tema": "Excel Avanzado",
     "Asignatura": "Ofimatica",
@@ -659,7 +659,7 @@
   },
   {
     "Pregunta": "¿Qué herramienta permite que varias personas editen un documento al mismo tiempo?",
-    "RespuestaCorrecta": "Herramientas colaborativas",
+    "respuesta_correcta_literal": "Herramientas colaborativas",
     "Nivel": "Intermedio",
     "Tema": "Excel Avanzado",
     "Asignatura": "Ofimatica",
@@ -673,7 +673,7 @@
   },
   {
     "Pregunta": "Es el procesador de texto más usado en el mundo:",
-    "RespuestaCorrecta": "Microsoft Word",
+    "respuesta_correcta_literal": "Microsoft Word",
     "Nivel": "Intermedio",
     "Tema": "Excel Avanzado",
     "Asignatura": "Ofimatica",
@@ -687,7 +687,7 @@
   },
   {
     "Pregunta": "LibreOffice Writer es conocido por ser:",
-    "RespuestaCorrecta": "Gratuito y de código abierto",
+    "respuesta_correcta_literal": "Gratuito y de código abierto",
     "Nivel": "Intermedio",
     "Tema": "Excel Avanzado",
     "Asignatura": "Ofimatica",
@@ -701,7 +701,7 @@
   },
   {
     "Pregunta": "¿Qué tipo de referencia de celda cambia automáticamente cuando se copia a otra celda?",
-    "RespuestaCorrecta": "Relativa",
+    "respuesta_correcta_literal": "Relativa",
     "Nivel": "Intermedio",
     "Tema": "Excel Avanzado",
     "Asignatura": "Ofimatica",
@@ -715,7 +715,7 @@
   },
   {
     "Pregunta": "¿Qué carácter se utiliza para indicar una referencia absoluta?",
-    "RespuestaCorrecta": "$",
+    "respuesta_correcta_literal": "$",
     "Nivel": "Intermedio",
     "Tema": "Excel Avanzado",
     "Asignatura": "Ofimatica",
@@ -729,7 +729,7 @@
   },
   {
     "Pregunta": "La fórmula `=A1+B1` en la celda C1 se copia a la celda C2. ¿Qué fórmula aparecerá en C2?",
-    "RespuestaCorrecta": "`=A2+B2`",
+    "respuesta_correcta_literal": "`=A2+B2`",
     "Nivel": "Intermedio",
     "Tema": "Excel Avanzado",
     "Asignatura": "Ofimatica",
@@ -743,7 +743,7 @@
   },
   {
     "Pregunta": "En la fórmula `=$A1`, la referencia a la columna está:",
-    "RespuestaCorrecta": "Absoluta",
+    "respuesta_correcta_literal": "Absoluta",
     "Nivel": "Intermedio",
     "Tema": "Excel Avanzado",
     "Asignatura": "Ofimatica",
@@ -757,7 +757,7 @@
   },
   {
     "Pregunta": "¿Cuál de las siguientes es una referencia mixta?",
-    "RespuestaCorrecta": "`A$1`",
+    "respuesta_correcta_literal": "`A$1`",
     "Nivel": "Intermedio",
     "Tema": "Excel Avanzado",
     "Asignatura": "Ofimatica",
@@ -771,7 +771,7 @@
   },
   {
     "Pregunta": "Si quieres calcular una serie de precios con IVA, ¿qué tipo de referencia usarías para la celda que contiene el porcentaje de IVA?",
-    "RespuestaCorrecta": "Absoluta",
+    "respuesta_correcta_literal": "Absoluta",
     "Nivel": "Intermedio",
     "Tema": "Excel Avanzado",
     "Asignatura": "Ofimatica",
@@ -785,7 +785,7 @@
   },
   {
     "Pregunta": "Al copiar la fórmula `=B$2` de la celda C3 a C4, ¿cómo cambia la fórmula?",
-    "RespuestaCorrecta": "`=B$2`",
+    "respuesta_correcta_literal": "`=B$2`",
     "Nivel": "Intermedio",
     "Tema": "Excel Avanzado",
     "Asignatura": "Ofimatica",
@@ -799,7 +799,7 @@
   },
   {
     "Pregunta": "¿Qué ocurre con una referencia relativa como `A5` si la fórmula se copia una fila hacia abajo y una columna a la derecha?",
-    "RespuestaCorrecta": "`B6`",
+    "respuesta_correcta_literal": "`B6`",
     "Nivel": "Intermedio",
     "Tema": "Excel Avanzado",
     "Asignatura": "Ofimatica",
@@ -813,7 +813,7 @@
   },
   {
     "Pregunta": "Si quieres fijar la fila pero permitir que la columna cambie, ¿cuál es la sintaxis correcta?",
-    "RespuestaCorrecta": "`B$5`",
+    "respuesta_correcta_literal": "`B$5`",
     "Nivel": "Intermedio",
     "Tema": "Excel Avanzado",
     "Asignatura": "Ofimatica",
@@ -827,7 +827,7 @@
   },
   {
     "Pregunta": "En una fórmula que utiliza `SUMA`, ¿qué tipo de referencia se usa normalmente para el rango de celdas?",
-    "RespuestaCorrecta": "Relativa",
+    "respuesta_correcta_literal": "Relativa",
     "Nivel": "Intermedio",
     "Tema": "Excel Avanzado",
     "Asignatura": "Ofimatica",
@@ -841,7 +841,7 @@
   },
   {
     "Pregunta": "¿Qué es un modelo de datos en Excel?",
-    "RespuestaCorrecta": "Una colección de tablas relacionadas",
+    "respuesta_correcta_literal": "Una colección de tablas relacionadas",
     "Nivel": "Intermedio",
     "Tema": "Excel Avanzado",
     "Asignatura": "Ofimatica",
@@ -855,7 +855,7 @@
   },
   {
     "Pregunta": "¿Qué herramienta de Excel se usa para crear relaciones en un modelo de datos?",
-    "RespuestaCorrecta": "Power Pivot",
+    "respuesta_correcta_literal": "Power Pivot",
     "Nivel": "Intermedio",
     "Tema": "Excel Avanzado",
     "Asignatura": "Ofimatica",
@@ -869,7 +869,7 @@
   },
   {
     "Pregunta": "¿Qué es una 'medida' en el modelo de datos?",
-    "RespuestaCorrecta": "Un cálculo usando fórmulas DAX",
+    "respuesta_correcta_literal": "Un cálculo usando fórmulas DAX",
     "Nivel": "Intermedio",
     "Tema": "Excel Avanzado",
     "Asignatura": "Ofimatica",
@@ -883,7 +883,7 @@
   },
   {
     "Pregunta": "¿Cuál es el beneficio principal de usar un modelo de datos?",
-    "RespuestaCorrecta": "Permite analizar grandes volúmenes de datos rápidamente",
+    "respuesta_correcta_literal": "Permite analizar grandes volúmenes de datos rápidamente",
     "Nivel": "Intermedio",
     "Tema": "Excel Avanzado",
     "Asignatura": "Ofimatica",
@@ -897,7 +897,7 @@
   },
   {
     "Pregunta": "¿Qué tipo de relación es la más común en un modelo de datos?",
-    "RespuestaCorrecta": "Uno a Muchos (1:M)",
+    "respuesta_correcta_literal": "Uno a Muchos (1:M)",
     "Nivel": "Intermedio",
     "Tema": "Excel Avanzado",
     "Asignatura": "Ofimatica",
@@ -911,7 +911,7 @@
   },
   {
     "Pregunta": "Las relaciones entre tablas se establecen a través de:",
-    "RespuestaCorrecta": "Una columna común (ID)",
+    "respuesta_correcta_literal": "Una columna común (ID)",
     "Nivel": "Intermedio",
     "Tema": "Excel Avanzado",
     "Asignatura": "Ofimatica",
@@ -925,7 +925,7 @@
   },
   {
     "Pregunta": "¿Qué lenguaje se usa para crear fórmulas avanzadas en Power Pivot?",
-    "RespuestaCorrecta": "DAX",
+    "respuesta_correcta_literal": "DAX",
     "Nivel": "Intermedio",
     "Tema": "Excel Avanzado",
     "Asignatura": "Ofimatica",
@@ -939,7 +939,7 @@
   },
   {
     "Pregunta": "Una relación de Muchos a Muchos (M:M) requiere de:",
-    "RespuestaCorrecta": "Una tabla intermedia",
+    "respuesta_correcta_literal": "Una tabla intermedia",
     "Nivel": "Intermedio",
     "Tema": "Excel Avanzado",
     "Asignatura": "Ofimatica",
@@ -953,7 +953,7 @@
   },
   {
     "Pregunta": "¿Cómo se llama la vista donde se arrastran columnas para crear relaciones?",
-    "RespuestaCorrecta": "Vista de Diagrama",
+    "respuesta_correcta_literal": "Vista de Diagrama",
     "Nivel": "Intermedio",
     "Tema": "Excel Avanzado",
     "Asignatura": "Ofimatica",
@@ -967,7 +967,7 @@
   },
   {
     "Pregunta": "Power Pivot es un __________ integrado en Excel para modelos avanzados.",
-    "RespuestaCorrecta": "Complemento",
+    "respuesta_correcta_literal": "Complemento",
     "Nivel": "Intermedio",
     "Tema": "Excel Avanzado",
     "Asignatura": "Ofimatica",
@@ -981,7 +981,7 @@
   },
   {
     "Pregunta": "1. ¿Cuál es el principal objetivo de usar la herramienta de <strong>Validación de Datos</strong>?",
-    "RespuestaCorrecta": "Restringir los valores que se pueden introducir en una celda",
+    "respuesta_correcta_literal": "Restringir los valores que se pueden introducir en una celda",
     "Nivel": "Intermedio",
     "Tema": "Excel Avanzado",
     "Asignatura": "Ofimatica",
@@ -995,7 +995,7 @@
   },
   {
     "Pregunta": "2. ¿Qué criterio de validación usaría si desea que el usuario solo elija entre 'Licenciado', 'Ingeniero' o 'Técnico'?",
-    "RespuestaCorrecta": "Lista",
+    "respuesta_correcta_literal": "Lista",
     "Nivel": "Intermedio",
     "Tema": "Excel Avanzado",
     "Asignatura": "Ofimatica",
@@ -1009,7 +1009,7 @@
   },
   {
     "Pregunta": "3. ¿Qué herramienta nos permite ocultar filas temporalmente para enfocarnos solo en registros que cumplen un criterio (ej. solo ver ventas mayores a L. 5,000)?",
-    "RespuestaCorrecta": "Filtrado de Datos",
+    "respuesta_correcta_literal": "Filtrado de Datos",
     "Nivel": "Intermedio",
     "Tema": "Excel Avanzado",
     "Asignatura": "Ofimatica",
@@ -1023,7 +1023,7 @@
   },
   {
     "Pregunta": "4. Un <strong>Mensaje de Entrada</strong> en la Validación de Datos sirve como:",
-    "RespuestaCorrecta": "Una instrucción preventiva que aparece al seleccionar la celda",
+    "respuesta_correcta_literal": "Una instrucción preventiva que aparece al seleccionar la celda",
     "Nivel": "Intermedio",
     "Tema": "Excel Avanzado",
     "Asignatura": "Ofimatica",
@@ -1037,7 +1037,7 @@
   },
   {
     "Pregunta": "5. ¿Qué sucede con las filas que no cumplen el criterio cuando se aplica un <strong>Filtro</strong>?",
-    "RespuestaCorrecta": "Se ocultan temporalmente",
+    "respuesta_correcta_literal": "Se ocultan temporalmente",
     "Nivel": "Intermedio",
     "Tema": "Análisis de Datos",
     "Asignatura": "Ofimatica",
@@ -1051,7 +1051,7 @@
   },
   {
     "Pregunta": "6. Si necesitas asegurarte de que un campo de ID solo contenga números entre 1000 y 9999, ¿qué criterio de validación sería más adecuado?",
-    "RespuestaCorrecta": "Número Entero",
+    "respuesta_correcta_literal": "Número Entero",
     "Nivel": "Intermedio",
     "Tema": "Excel Avanzado",
     "Asignatura": "Ofimatica",
@@ -1065,7 +1065,7 @@
   },
   {
     "Pregunta": "7. ¿En qué pestaña de la cinta de opciones se encuentran generalmente las herramientas de <strong>Validación y Filtrado</strong>?",
-    "RespuestaCorrecta": "Datos",
+    "respuesta_correcta_literal": "Datos",
     "Nivel": "Intermedio",
     "Tema": "Excel Avanzado",
     "Asignatura": "Ofimatica",
@@ -1079,7 +1079,7 @@
   },
   {
     "Pregunta": "8. Deducción: Si la columna 'Salario' está validada para ser 'Mayor que 5000' y alguien ingresa '4999', ¿qué aparecerá?",
-    "RespuestaCorrecta": "El <strong>Mensaje de Error</strong> configurado",
+    "respuesta_correcta_literal": "El <strong>Mensaje de Error</strong> configurado",
     "Nivel": "Intermedio",
     "Tema": "Excel Avanzado",
     "Asignatura": "Ofimatica",
@@ -1093,7 +1093,7 @@
   },
   {
     "Pregunta": "9. ¿Cuál es un beneficio directo de la <strong>consistencia</strong> de datos, lograda mediante la validación?",
-    "RespuestaCorrecta": "Facilita la aplicación de fórmulas y filtros sin errores",
+    "respuesta_correcta_literal": "Facilita la aplicación de fórmulas y filtros sin errores",
     "Nivel": "Intermedio",
     "Tema": "Excel Avanzado",
     "Asignatura": "Ofimatica",
@@ -1107,7 +1107,7 @@
   },
   {
     "Pregunta": "10. Deducción: Un <strong>Filtro Avanzado</strong> es útil cuando...",
-    "RespuestaCorrecta": "Se necesita buscar datos usando criterios complejos (ej. País = 'Honduras' Y Salario > 15000)",
+    "respuesta_correcta_literal": "Se necesita buscar datos usando criterios complejos (ej. País = 'Honduras' Y Salario > 15000)",
     "Nivel": "Intermedio",
     "Tema": "Análisis de Datos",
     "Asignatura": "Ofimatica",

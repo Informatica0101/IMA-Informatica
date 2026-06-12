@@ -1221,4 +1221,4 @@
         });
     };
 
-})(window.QuizProApp);
+})(QuizProApp);

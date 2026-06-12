@@ -553,4 +553,4 @@
         }
     }
 
-})(window.QuizProApp);
+})(QuizProApp);

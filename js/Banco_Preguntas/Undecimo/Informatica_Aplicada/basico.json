@@ -1,7 +1,7 @@
 [
   {
     "Pregunta": "¿Cuál es la función de la memoria RAM?",
-    "RespuestaCorrecta": "Almacenar datos temporalmente para acceso rápido del procesador",
+    "respuesta_correcta_literal": "Almacenar datos temporalmente para acceso rápido del procesador",
     "Nivel": "Básico",
     "Tema": "Almacenamiento",
     "Asignatura": "Informatica_Aplicada",
@@ -15,7 +15,7 @@
   },
   {
     "Pregunta": "La memoria RAM tiene como característica ser:",
-    "RespuestaCorrecta": "Volátil (se borra al apagar)",
+    "respuesta_correcta_literal": "Volátil (se borra al apagar)",
     "Nivel": "Básico",
     "Tema": "Almacenamiento",
     "Asignatura": "Informatica_Aplicada",
@@ -29,7 +29,7 @@
   },
   {
     "Pregunta": "La tarjeta principal que conecta todos los componentes se llama:",
-    "RespuestaCorrecta": "Placa Madre (Motherboard)",
+    "respuesta_correcta_literal": "Placa Madre (Motherboard)",
     "Nivel": "Básico",
     "Tema": "Redes",
     "Asignatura": "Informatica_Aplicada",
@@ -43,7 +43,7 @@
   },
   {
     "Pregunta": "¿Cuál de estas unidades de almacenamiento es más rápida y duradera?",
-    "RespuestaCorrecta": "SSD",
+    "respuesta_correcta_literal": "SSD",
     "Nivel": "Básico",
     "Tema": "Almacenamiento",
     "Asignatura": "Informatica_Aplicada",
@@ -57,7 +57,7 @@
   },
   {
     "Pregunta": "¿Qué tipo de computadora está diseñada para la movilidad y es 'todo en uno'?",
-    "RespuestaCorrecta": "Portátil (Laptop)",
+    "respuesta_correcta_literal": "Portátil (Laptop)",
     "Nivel": "Básico",
     "Tema": "Redes",
     "Asignatura": "Informatica_Aplicada",
@@ -71,7 +71,7 @@
   },
   {
     "Pregunta": "¿Qué máquina es considerada el primer concepto de computadora programable?",
-    "RespuestaCorrecta": "Máquina Analítica",
+    "respuesta_correcta_literal": "Máquina Analítica",
     "Nivel": "Básico",
     "Tema": "Almacenamiento",
     "Asignatura": "Informatica_Aplicada",
@@ -85,7 +85,7 @@
   },
   {
     "Pregunta": "¿Qué tecnología permitió el paso a las computadoras electrónicas a principios del siglo XX?",
-    "RespuestaCorrecta": "Válvulas de vacío",
+    "respuesta_correcta_literal": "Válvulas de vacío",
     "Nivel": "Básico",
     "Tema": "Redes",
     "Asignatura": "Informatica_Aplicada",
@@ -99,7 +99,7 @@
   },
   {
     "Pregunta": "¿Cuál fue la primera máquina programable y completamente automática (1941)?",
-    "RespuestaCorrecta": "Z3",
+    "respuesta_correcta_literal": "Z3",
     "Nivel": "Básico",
     "Tema": "Almacenamiento",
     "Asignatura": "Informatica_Aplicada",
@@ -113,7 +113,7 @@
   },
   {
     "Pregunta": "¿Qué red militar precursora de Internet nació en 1969?",
-    "RespuestaCorrecta": "ARPANET",
+    "respuesta_correcta_literal": "ARPANET",
     "Nivel": "Básico",
     "Tema": "Redes",
     "Asignatura": "Informatica_Aplicada",
@@ -127,7 +127,7 @@
   },
   {
     "Pregunta": "¿Cuál es el propósito principal de una hoja de cálculo?",
-    "RespuestaCorrecta": "Realizar cálculos matemáticos y organizar datos en tablas",
+    "respuesta_correcta_literal": "Realizar cálculos matemáticos y organizar datos en tablas",
     "Nivel": "Básico",
     "Tema": "Redes",
     "Asignatura": "Informatica_Aplicada",
@@ -141,7 +141,7 @@
   },
   {
     "Pregunta": "¿Qué hace la función =PROMEDIO(A1:A10)?",
-    "RespuestaCorrecta": "Calcula el promedio de los valores de A1 a A10",
+    "respuesta_correcta_literal": "Calcula el promedio de los valores de A1 a A10",
     "Nivel": "Básico",
     "Tema": "Hardware y Almacenamiento",
     "Asignatura": "Informatica_Aplicada",
@@ -155,7 +155,7 @@
   },
   {
     "Pregunta": "¿Qué operador se usa para multiplicar en una fórmula?",
-    "RespuestaCorrecta": "*",
+    "respuesta_correcta_literal": "*",
     "Nivel": "Básico",
     "Tema": "Redes",
     "Asignatura": "Informatica_Aplicada",
@@ -169,7 +169,7 @@
   },
   {
     "Pregunta": "1. ¿Qué componente del Formato de Página define el espacio en blanco alrededor de los bordes del documento?",
-    "RespuestaCorrecta": "Márgenes",
+    "respuesta_correcta_literal": "Márgenes",
     "Nivel": "Básico",
     "Tema": "Redes",
     "Asignatura": "Informatica_Aplicada",
@@ -183,7 +183,7 @@
   },
   {
     "Pregunta": "3. ¿Qué herramienta debe aplicar a los encabezados (Capítulos, Secciones) para que se incluyan automáticamente en la Tabla de Contenido (Índice)?",
-    "RespuestaCorrecta": "Estilos de Título (Título 1, Título 2)",
+    "respuesta_correcta_literal": "Estilos de Título (Título 1, Título 2)",
     "Nivel": "Básico",
     "Tema": "Almacenamiento",
     "Asignatura": "Informatica_Aplicada",
@@ -197,7 +197,7 @@
   },
   {
     "Pregunta": "7. ¿Qué opción de Ajuste de Texto permite que el texto rodee la imagen de manera ajustada, ocupando el espacio a su alrededor?",
-    "RespuestaCorrecta": "Cuadrado / Estrecho",
+    "respuesta_correcta_literal": "Cuadrado / Estrecho",
     "Nivel": "Básico",
     "Tema": "Redes",
     "Asignatura": "Informatica_Aplicada",
@@ -211,7 +211,7 @@
   },
   {
     "Pregunta": "¿Cuál es el componente principal de un sistema informático que se puede tocar?",
-    "RespuestaCorrecta": "Hardware",
+    "respuesta_correcta_literal": "Hardware",
     "Nivel": "Básico",
     "Tema": "Redes",
     "Asignatura": "Informatica_Aplicada",
@@ -225,7 +225,7 @@
   },
   {
     "Pregunta": "¿Cómo se le llama al conjunto de programas e instrucciones?",
-    "RespuestaCorrecta": "Software",
+    "respuesta_correcta_literal": "Software",
     "Nivel": "Básico",
     "Tema": "Almacenamiento",
     "Asignatura": "Informatica_Aplicada",
@@ -239,7 +239,7 @@
   },
   {
     "Pregunta": "¿Cuál es la función principal de una computadora?",
-    "RespuestaCorrecta": "Procesar datos para convertirlos en información",
+    "respuesta_correcta_literal": "Procesar datos para convertirlos en información",
     "Nivel": "Básico",
     "Tema": "Redes",
     "Asignatura": "Informatica_Aplicada",
@@ -253,7 +253,7 @@
   },
   {
     "Pregunta": "¿Para qué sirve el Disco Duro?",
-    "RespuestaCorrecta": "Para guardar información permanentemente",
+    "respuesta_correcta_literal": "Para guardar información permanentemente",
     "Nivel": "Básico",
     "Tema": "Almacenamiento",
     "Asignatura": "Informatica_Aplicada",
@@ -267,7 +267,7 @@
   },
   {
     "Pregunta": "¿Cuál es la unidad básica de almacenamiento en informática?",
-    "RespuestaCorrecta": "Bit",
+    "respuesta_correcta_literal": "Bit",
     "Nivel": "Básico",
     "Tema": "Almacenamiento",
     "Asignatura": "Informatica_Aplicada",
@@ -281,7 +281,7 @@
   },
   {
     "Pregunta": "¿Qué formato de archivo se utiliza comúnmente para documentos de texto plano sin formato?",
-    "RespuestaCorrecta": ".txt",
+    "respuesta_correcta_literal": ".txt",
     "Nivel": "Básico",
     "Tema": "Redes",
     "Asignatura": "Informatica_Aplicada",
@@ -295,7 +295,7 @@
   },
   {
     "Pregunta": "La 'Carpeta Raíz' es la carpeta principal de una unidad de almacenamiento.",
-    "RespuestaCorrecta": "Verdadero",
+    "respuesta_correcta_literal": "Verdadero",
     "Nivel": "Básico",
     "Tema": "Redes",
     "Asignatura": "Informatica_Aplicada",
@@ -307,7 +307,7 @@
   },
   {
     "Pregunta": "¿Cuál es la función principal de un escáner?",
-    "RespuestaCorrecta": "Convertir documentos físicos en datos digitales",
+    "respuesta_correcta_literal": "Convertir documentos físicos en datos digitales",
     "Nivel": "Básico",
     "Tema": "Redes",
     "Asignatura": "Informatica_Aplicada",
@@ -321,7 +321,7 @@
   },
   {
     "Pregunta": "¿Qué dispositivo se utiliza principalmente para la comunicación por voz en una computadora?",
-    "RespuestaCorrecta": "Micrófono",
+    "respuesta_correcta_literal": "Micrófono",
     "Nivel": "Básico",
     "Tema": "Redes",
     "Asignatura": "Informatica_Aplicada",
@@ -335,7 +335,7 @@
   },
   {
     "Pregunta": "¿Qué tipo de periférico es una Impresora Multifunción?",
-    "RespuestaCorrecta": "Mixto",
+    "respuesta_correcta_literal": "Mixto",
     "Nivel": "Básico",
     "Tema": "Redes",
     "Asignatura": "Informatica_Aplicada",
@@ -349,7 +349,7 @@
   },
   {
     "Pregunta": "La memoria USB (Pendrive) se considera un periférico:",
-    "RespuestaCorrecta": "Mixto",
+    "respuesta_correcta_literal": "Mixto",
     "Nivel": "Básico",
     "Tema": "Almacenamiento",
     "Asignatura": "Informatica_Aplicada",
@@ -363,7 +363,7 @@
   },
   {
     "Pregunta": "¿Cuál es el objetivo principal de la seguridad informática?",
-    "RespuestaCorrecta": "Proteger la infraestructura y la información contenida",
+    "respuesta_correcta_literal": "Proteger la infraestructura y la información contenida",
     "Nivel": "Básico",
     "Tema": "Redes",
     "Asignatura": "Informatica_Aplicada",
@@ -377,7 +377,7 @@
   },
   {
     "Pregunta": "¿Qué tipo de malware se disfraza de software legítimo y abre puertas traseras?",
-    "RespuestaCorrecta": "Troyano",
+    "respuesta_correcta_literal": "Troyano",
     "Nivel": "Básico",
     "Tema": "Redes",
     "Asignatura": "Informatica_Aplicada",
@@ -391,7 +391,7 @@
   },
   {
     "Pregunta": "¿Un gusano informático necesita adjuntarse a un programa para propagarse?",
-    "RespuestaCorrecta": "Falso",
+    "respuesta_correcta_literal": "Falso",
     "Nivel": "Básico",
     "Tema": "Almacenamiento",
     "Asignatura": "Informatica_Aplicada",
@@ -403,7 +403,7 @@
   },
   {
     "Pregunta": "¿Qué tipo de malware cifra tus archivos y exige un rescate?",
-    "RespuestaCorrecta": "Ransomware",
+    "respuesta_correcta_literal": "Ransomware",
     "Nivel": "Básico",
     "Tema": "Redes",
     "Asignatura": "Informatica_Aplicada",
@@ -417,7 +417,7 @@
   },
   {
     "Pregunta": "¿Qué tipo de malware se dedica a recopilar información del usuario sin su consentimiento, como hábitos de navegación o contraseñas?",
-    "RespuestaCorrecta": "Spyware",
+    "respuesta_correcta_literal": "Spyware",
     "Nivel": "Básico",
     "Tema": "Redes",
     "Asignatura": "Informatica_Aplicada",
@@ -431,7 +431,7 @@
   },
   {
     "Pregunta": "Se encarga de asignar tiempo de CPU a cada programa y controlar su ejecución.",
-    "RespuestaCorrecta": "Gestión de Procesos",
+    "respuesta_correcta_literal": "Gestión de Procesos",
     "Nivel": "Básico",
     "Tema": "Almacenamiento",
     "Asignatura": "Informatica_Aplicada",
@@ -445,7 +445,7 @@
   },
   {
     "Pregunta": "Organiza y controla el almacenamiento de datos en discos, permitiendo crear y eliminar archivos.",
-    "RespuestaCorrecta": "Gestión de Archivos",
+    "respuesta_correcta_literal": "Gestión de Archivos",
     "Nivel": "Básico",
     "Tema": "Almacenamiento",
     "Asignatura": "Informatica_Aplicada",
@@ -459,7 +459,7 @@
   },
   {
     "Pregunta": "Asigna y desasigna espacio en la memoria principal (RAM) a los programas.",
-    "RespuestaCorrecta": "Gestión de Memoria",
+    "respuesta_correcta_literal": "Gestión de Memoria",
     "Nivel": "Básico",
     "Tema": "Redes",
     "Asignatura": "Informatica_Aplicada",
@@ -473,7 +473,7 @@
   },
   {
     "Pregunta": "Permite la comunicación entre computadoras conectadas y gestiona protocolos.",
-    "RespuestaCorrecta": "Gestión de Redes",
+    "respuesta_correcta_literal": "Gestión de Redes",
     "Nivel": "Básico",
     "Tema": "Redes y Conectividad",
     "Asignatura": "Informatica_Aplicada",
@@ -487,7 +487,7 @@
   },
   {
     "Pregunta": "Tipo de SO que permite a varios usuarios utilizar el sistema al mismo tiempo.",
-    "RespuestaCorrecta": "Multiusuario",
+    "respuesta_correcta_literal": "Multiusuario",
     "Nivel": "Básico",
     "Tema": "Redes",
     "Asignatura": "Informatica_Aplicada",
@@ -501,7 +501,7 @@
   },
   {
     "Pregunta": "Tipo de SO capaz de ejecutar múltiples programas de forma concurrente.",
-    "RespuestaCorrecta": "Multitarea",
+    "respuesta_correcta_literal": "Multitarea",
     "Nivel": "Básico",
     "Tema": "Redes",
     "Asignatura": "Informatica_Aplicada",
@@ -515,7 +515,7 @@
   },
   {
     "Pregunta": "¿Cuál de estas es una categoría principal de clasificación del software?",
-    "RespuestaCorrecta": "Software de Sistema",
+    "respuesta_correcta_literal": "Software de Sistema",
     "Nivel": "Básico",
     "Tema": "Redes",
     "Asignatura": "Informatica_Aplicada",
@@ -529,7 +529,7 @@
   },
   {
     "Pregunta": "¿Qué software permite a los programadores crear otros programas?",
-    "RespuestaCorrecta": "Software de Programación",
+    "respuesta_correcta_literal": "Software de Programación",
     "Nivel": "Básico",
     "Tema": "Almacenamiento",
     "Asignatura": "Informatica_Aplicada",
@@ -543,7 +543,7 @@
   },
   {
     "Pregunta": "¿Qué tipo de software es un compilador?",
-    "RespuestaCorrecta": "Software de Programación",
+    "respuesta_correcta_literal": "Software de Programación",
     "Nivel": "Básico",
     "Tema": "Redes",
     "Asignatura": "Informatica_Aplicada",
@@ -557,7 +557,7 @@
   },
   {
     "Pregunta": "¿Qué herramienta permite organizar datos en filas y columnas de manera estructurada?",
-    "RespuestaCorrecta": "Tablas",
+    "respuesta_correcta_literal": "Tablas",
     "Nivel": "Básico",
     "Tema": "Almacenamiento",
     "Asignatura": "Informatica_Aplicada",
@@ -571,7 +571,7 @@
   },
   {
     "Pregunta": "¿Qué opción permite cambiar el tipo de letra (ej. Arial)?",
-    "RespuestaCorrecta": "Fuente",
+    "respuesta_correcta_literal": "Fuente",
     "Nivel": "Básico",
     "Tema": "Redes",
     "Asignatura": "Informatica_Aplicada",

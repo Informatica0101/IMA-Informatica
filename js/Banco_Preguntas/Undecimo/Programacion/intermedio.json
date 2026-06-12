@@ -1,7 +1,7 @@
 [
   {
     "Pregunta": "¿Cuál es el primer paso en el análisis de un problema?",
-    "RespuestaCorrecta": "Definir el problema con precisión",
+    "respuesta_correcta_literal": "Definir el problema con precisión",
     "Nivel": "Intermedio",
     "Tema": "Lógica de Programación: Algoritmos",
     "Asignatura": "Programacion",
@@ -15,7 +15,7 @@
   },
   {
     "Pregunta": "¿Qué representa la 'Entrada' en el análisis?",
-    "RespuestaCorrecta": "Los datos iniciales que requiere el programa",
+    "respuesta_correcta_literal": "Los datos iniciales que requiere el programa",
     "Nivel": "Intermedio",
     "Tema": "Lógica de Programación: Análisis",
     "Asignatura": "Programacion",
@@ -29,7 +29,7 @@
   },
   {
     "Pregunta": "¿Qué representa la 'Salida' en el análisis?",
-    "RespuestaCorrecta": "Los resultados o información procesada que se desea obtener",
+    "respuesta_correcta_literal": "Los resultados o información procesada que se desea obtener",
     "Nivel": "Intermedio",
     "Tema": "Lógica de Programación: Análisis",
     "Asignatura": "Programacion",
@@ -43,7 +43,7 @@
   },
   {
     "Pregunta": "¿Qué pregunta debemos hacernos para definir el Proceso?",
-    "RespuestaCorrecta": "¿Qué métodos o fórmulas se necesitan para transformar los datos?",
+    "respuesta_correcta_literal": "¿Qué métodos o fórmulas se necesitan para transformar los datos?",
     "Nivel": "Intermedio",
     "Tema": "Lógica de Programación: Análisis",
     "Asignatura": "Programacion",
@@ -57,7 +57,7 @@
   },
   {
     "Pregunta": "¿Cómo se llama la fase que sigue inmediatamente después del Análisis?",
-    "RespuestaCorrecta": "Diseño del Algoritmo",
+    "respuesta_correcta_literal": "Diseño del Algoritmo",
     "Nivel": "Intermedio",
     "Tema": "Fundamentos de Programación",
     "Asignatura": "Programacion",
@@ -71,7 +71,7 @@
   },
   {
     "Pregunta": "1. ¿Cuál es el objetivo principal del análisis del problema?",
-    "RespuestaCorrecta": "Comprender la naturaleza del problema",
+    "respuesta_correcta_literal": "Comprender la naturaleza del problema",
     "Nivel": "Intermedio",
     "Tema": "Fundamentos de Programación",
     "Asignatura": "Programacion",
@@ -85,7 +85,7 @@
   },
   {
     "Pregunta": "2. ¿Qué se define como 'Entrada' en un análisis?",
-    "RespuestaCorrecta": "Los datos necesarios para la resolución",
+    "respuesta_correcta_literal": "Los datos necesarios para la resolución",
     "Nivel": "Intermedio",
     "Tema": "Lógica de Programación: Análisis",
     "Asignatura": "Programacion",
@@ -99,7 +99,7 @@
   },
   {
     "Pregunta": "3. ¿Qué etapa define el CÓMO se resolverá el problema?",
-    "RespuestaCorrecta": "Diseño",
+    "respuesta_correcta_literal": "Diseño",
     "Nivel": "Intermedio",
     "Tema": "Fundamentos de Programación",
     "Asignatura": "Programacion",
@@ -113,7 +113,7 @@
   },
   {
     "Pregunta": "4. ¿Qué es el Lenguaje Natural en programación?",
-    "RespuestaCorrecta": "Idioma cotidiano (español)",
+    "respuesta_correcta_literal": "Idioma cotidiano (español)",
     "Nivel": "Intermedio",
     "Tema": "Lenguajes de Programación",
     "Asignatura": "Programacion",
@@ -127,7 +127,7 @@
   },
   {
     "Pregunta": "5. ¿Cuál es una característica de un buen algoritmo?",
-    "RespuestaCorrecta": "Que sea finito",
+    "respuesta_correcta_literal": "Que sea finito",
     "Nivel": "Intermedio",
     "Tema": "Algoritmos",
     "Asignatura": "Programacion",
@@ -141,7 +141,7 @@
   },
   {
     "Pregunta": "6. ¿Qué pregunta NO pertenece al análisis del problema?",
-    "RespuestaCorrecta": "¿Qué color tendrá el botón?",
+    "respuesta_correcta_literal": "¿Qué color tendrá el botón?",
     "Nivel": "Intermedio",
     "Tema": "Fundamentos de Programación",
     "Asignatura": "Programacion",
@@ -155,7 +155,7 @@
   },
   {
     "Pregunta": "7. ¿Por qué es útil el Lenguaje Natural?",
-    "RespuestaCorrecta": "Para expresar la lógica claramente",
+    "respuesta_correcta_literal": "Para expresar la lógica claramente",
     "Nivel": "Intermedio",
     "Tema": "Lenguajes de Programación",
     "Asignatura": "Programacion",
@@ -169,7 +169,7 @@
   },
   {
     "Pregunta": "8. ¿Qué significa que un algoritmo sea 'preciso'?",
-    "RespuestaCorrecta": "Que indique exactamente qué acción realizar",
+    "respuesta_correcta_literal": "Que indique exactamente qué acción realizar",
     "Nivel": "Intermedio",
     "Tema": "Algoritmos",
     "Asignatura": "Programacion",
@@ -183,7 +183,7 @@
   },
   {
     "Pregunta": "9. En el análisis del área de un círculo, ¿qué es el Radio?",
-    "RespuestaCorrecta": "Una entrada",
+    "respuesta_correcta_literal": "Una entrada",
     "Nivel": "Intermedio",
     "Tema": "Fundamentos de Programación",
     "Asignatura": "Programacion",
@@ -197,7 +197,7 @@
   },
   {
     "Pregunta": "10. ¿Qué sigue después del Diseño del Algoritmo?",
-    "RespuestaCorrecta": "La Codificación",
+    "respuesta_correcta_literal": "La Codificación",
     "Nivel": "Intermedio",
     "Tema": "Algoritmos",
     "Asignatura": "Programacion",
@@ -211,7 +211,7 @@
   },
   {
     "Pregunta": "¿Cuál es el propósito de clasificar los algoritmos?",
-    "RespuestaCorrecta": "Elegir la estrategia más eficiente",
+    "respuesta_correcta_literal": "Elegir la estrategia más eficiente",
     "Nivel": "Intermedio",
     "Tema": "Algoritmos",
     "Asignatura": "Programacion",
@@ -225,7 +225,7 @@
   },
   {
     "Pregunta": "¿Qué técnica consiste en probar todas las opciones posibles?",
-    "RespuestaCorrecta": "Fuerza Bruta",
+    "respuesta_correcta_literal": "Fuerza Bruta",
     "Nivel": "Intermedio",
     "Tema": "Fundamentos de Programación",
     "Asignatura": "Programacion",
@@ -239,7 +239,7 @@
   },
   {
     "Pregunta": "¿Qué estrategia toma la mejor decisión en cada paso local?",
-    "RespuestaCorrecta": "Codiciosos",
+    "respuesta_correcta_literal": "Codiciosos",
     "Nivel": "Intermedio",
     "Tema": "Lógica de Programación: Algoritmos",
     "Asignatura": "Programacion",
@@ -253,7 +253,7 @@
   },
   {
     "Pregunta": "¿Qué significa 'Top-Down' en el diseño de algoritmos?",
-    "RespuestaCorrecta": "Dividir el problema de lo general a lo más simple",
+    "respuesta_correcta_literal": "Dividir el problema de lo general a lo más simple",
     "Nivel": "Intermedio",
     "Tema": "Algoritmos",
     "Asignatura": "Programacion",
@@ -267,7 +267,7 @@
   },
   {
     "Pregunta": "¿Para qué sirve el 'Refinamiento por pasos'?",
-    "RespuestaCorrecta": "Para detallar poco a poco los pasos generales",
+    "respuesta_correcta_literal": "Para detallar poco a poco los pasos generales",
     "Nivel": "Intermedio",
     "Tema": "Lógica de Programación: Algoritmos",
     "Asignatura": "Programacion",
@@ -281,7 +281,7 @@
   },
   {
     "Pregunta": "1. ¿Cuál es la primera etapa para desarrollar un algoritmo?",
-    "RespuestaCorrecta": "Análisis",
+    "respuesta_correcta_literal": "Análisis",
     "Nivel": "Intermedio",
     "Tema": "Algoritmos",
     "Asignatura": "Programacion",
@@ -295,7 +295,7 @@
   },
   {
     "Pregunta": "2. ¿Qué técnica divide un problema complejo en subproblemas?",
-    "RespuestaCorrecta": "Divide y Vencerás",
+    "respuesta_correcta_literal": "Divide y Vencerás",
     "Nivel": "Intermedio",
     "Tema": "Fundamentos de Programación",
     "Asignatura": "Programacion",
@@ -309,7 +309,7 @@
   },
   {
     "Pregunta": "3. ¿Cómo se llaman los algoritmos que prueban todas las soluciones?",
-    "RespuestaCorrecta": "Fuerza Bruta",
+    "respuesta_correcta_literal": "Fuerza Bruta",
     "Nivel": "Intermedio",
     "Tema": "Algoritmos",
     "Asignatura": "Programacion",
@@ -323,7 +323,7 @@
   },
   {
     "Pregunta": "4. ¿Qué algoritmos toman la mejor decisión local en cada paso?",
-    "RespuestaCorrecta": "Codiciosos",
+    "respuesta_correcta_literal": "Codiciosos",
     "Nivel": "Intermedio",
     "Tema": "Algoritmos",
     "Asignatura": "Programacion",
@@ -337,7 +337,7 @@
   },
   {
     "Pregunta": "5. ¿Qué etapa consiste en traducir el algoritmo a un lenguaje?",
-    "RespuestaCorrecta": "Codificación",
+    "respuesta_correcta_literal": "Codificación",
     "Nivel": "Intermedio",
     "Tema": "Lenguajes de Programación",
     "Asignatura": "Programacion",
@@ -351,7 +351,7 @@
   },
   {
     "Pregunta": "6. ¿Qué técnica de representación usa lenguaje natural?",
-    "RespuestaCorrecta": "Lenguaje Natural",
+    "respuesta_correcta_literal": "Lenguaje Natural",
     "Nivel": "Intermedio",
     "Tema": "Lenguajes de Programación",
     "Asignatura": "Programacion",
@@ -365,7 +365,7 @@
   },
   {
     "Pregunta": "7. ¿Cuál es el objetivo de la etapa de Diseño?",
-    "RespuestaCorrecta": "Planear cómo resolver el problema",
+    "respuesta_correcta_literal": "Planear cómo resolver el problema",
     "Nivel": "Intermedio",
     "Tema": "Fundamentos de Programación",
     "Asignatura": "Programacion",
@@ -379,7 +379,7 @@
   },
   {
     "Pregunta": "8. ¿Qué algoritmos guardan resultados para evitar duplicados?",
-    "RespuestaCorrecta": "Programación Dinámica",
+    "respuesta_correcta_literal": "Programación Dinámica",
     "Nivel": "Intermedio",
     "Tema": "Algoritmos",
     "Asignatura": "Programacion",
@@ -393,7 +393,7 @@
   },
   {
     "Pregunta": "9. ¿Cómo se llama al refinamiento progresivo de un algoritmo?",
-    "RespuestaCorrecta": "Refinamiento por pasos",
+    "respuesta_correcta_literal": "Refinamiento por pasos",
     "Nivel": "Intermedio",
     "Tema": "Algoritmos",
     "Asignatura": "Programacion",
@@ -407,7 +407,7 @@
   },
   {
     "Pregunta": "10. ¿En qué etapa se definen las entradas y salidas?",
-    "RespuestaCorrecta": "Análisis",
+    "respuesta_correcta_literal": "Análisis",
     "Nivel": "Intermedio",
     "Tema": "Lógica de Programación: Análisis",
     "Asignatura": "Programacion",
@@ -421,7 +421,7 @@
   },
   {
     "Pregunta": "¿Qué es un diagrama de flujo?",
-    "RespuestaCorrecta": "Una representación gráfica de un algoritmo",
+    "respuesta_correcta_literal": "Una representación gráfica de un algoritmo",
     "Nivel": "Intermedio",
     "Tema": "Fundamentos de Programación",
     "Asignatura": "Programacion",
@@ -435,7 +435,7 @@
   },
   {
     "Pregunta": "¿Qué representa el símbolo del óvalo en un diagrama de flujo?",
-    "RespuestaCorrecta": "Inicio o Fin del algoritmo",
+    "respuesta_correcta_literal": "Inicio o Fin del algoritmo",
     "Nivel": "Intermedio",
     "Tema": "Fundamentos de Programación",
     "Asignatura": "Programacion",
@@ -449,7 +449,7 @@
   },
   {
     "Pregunta": "¿Para qué se usa el rombo en los diagramas de flujo?",
-    "RespuestaCorrecta": "Tomar decisiones (SI/NO)",
+    "respuesta_correcta_literal": "Tomar decisiones (SI/NO)",
     "Nivel": "Intermedio",
     "Tema": "Fundamentos de Programación",
     "Asignatura": "Programacion",
@@ -463,7 +463,7 @@
   },
   {
     "Pregunta": "¿Qué representa el rectángulo en un diagrama de flujo?",
-    "RespuestaCorrecta": "Un proceso o acción",
+    "respuesta_correcta_literal": "Un proceso o acción",
     "Nivel": "Intermedio",
     "Tema": "Fundamentos de Programación",
     "Asignatura": "Programacion",
@@ -477,7 +477,7 @@
   },
   {
     "Pregunta": "¿Qué indican las flechas en un diagrama de flujo?",
-    "RespuestaCorrecta": "El flujo o dirección de la ejecución",
+    "respuesta_correcta_literal": "El flujo o dirección de la ejecución",
     "Nivel": "Intermedio",
     "Tema": "Fundamentos de Programación",
     "Asignatura": "Programacion",
@@ -491,7 +491,7 @@
   },
   {
     "Pregunta": "1. ¿Qué es un diagrama de flujo?",
-    "RespuestaCorrecta": "Óvalo",
+    "respuesta_correcta_literal": "Óvalo",
     "Nivel": "Intermedio",
     "Tema": "Fundamentos de Programación",
     "Asignatura": "Programacion",
@@ -505,7 +505,7 @@
   },
   {
     "Pregunta": "2. ¿Qué símbolo se usa para una decisión?",
-    "RespuestaCorrecta": "Rombo",
+    "respuesta_correcta_literal": "Rombo",
     "Nivel": "Intermedio",
     "Tema": "Fundamentos de Programación",
     "Asignatura": "Programacion",
@@ -519,7 +519,7 @@
   },
   {
     "Pregunta": "3. ¿Qué representa el rectángulo?",
-    "RespuestaCorrecta": "Proceso o acción",
+    "respuesta_correcta_literal": "Proceso o acción",
     "Nivel": "Intermedio",
     "Tema": "Fundamentos de Programación",
     "Asignatura": "Programacion",
@@ -533,7 +533,7 @@
   },
   {
     "Pregunta": "4. ¿En qué dirección debe fluir el diagrama?",
-    "RespuestaCorrecta": "De arriba hacia abajo",
+    "respuesta_correcta_literal": "De arriba hacia abajo",
     "Nivel": "Intermedio",
     "Tema": "Fundamentos de Programación",
     "Asignatura": "Programacion",
@@ -547,7 +547,7 @@
   },
   {
     "Pregunta": "5. ¿Qué símbolo se usa para Entrada y Salida?",
-    "RespuestaCorrecta": "Paralelogramo",
+    "respuesta_correcta_literal": "Paralelogramo",
     "Nivel": "Intermedio",
     "Tema": "Lógica de Programación: Análisis",
     "Asignatura": "Programacion",
@@ -561,7 +561,7 @@
   },
   {
     "Pregunta": "6. ¿Pueden cruzarse las líneas de flujo?",
-    "RespuestaCorrecta": "No, nunca",
+    "respuesta_correcta_literal": "No, nunca",
     "Nivel": "Intermedio",
     "Tema": "Fundamentos de Programación",
     "Asignatura": "Programacion",
@@ -575,7 +575,7 @@
   },
   {
     "Pregunta": "7. ¿Qué indica una flecha?",
-    "RespuestaCorrecta": "El sentido del flujo",
+    "respuesta_correcta_literal": "El sentido del flujo",
     "Nivel": "Intermedio",
     "Tema": "Fundamentos de Programación",
     "Asignatura": "Programacion",
@@ -589,7 +589,7 @@
   },
   {
     "Pregunta": "8. ¿El rombo cuántas salidas suele tener?",
-    "RespuestaCorrecta": "Dos (Sí y No)",
+    "respuesta_correcta_literal": "Dos (Sí y No)",
     "Nivel": "Intermedio",
     "Tema": "Lógica de Programación: Análisis",
     "Asignatura": "Programacion",
@@ -603,7 +603,7 @@
   },
   {
     "Pregunta": "9. ¿Qué es un diagrama de flujo?",
-    "RespuestaCorrecta": "Una representación gráfica",
+    "respuesta_correcta_literal": "Una representación gráfica",
     "Nivel": "Intermedio",
     "Tema": "Fundamentos de Programación",
     "Asignatura": "Programacion",
@@ -617,7 +617,7 @@
   },
   {
     "Pregunta": "10. ¿Para qué sirve documentar con diagramas?",
-    "RespuestaCorrecta": "Para guiar la programación",
+    "respuesta_correcta_literal": "Para guiar la programación",
     "Nivel": "Intermedio",
     "Tema": "Fundamentos de Programación",
     "Asignatura": "Programacion",
@@ -631,7 +631,7 @@
   },
   {
     "Pregunta": "¿Cuál es el primer paso para resolver un problema mediante programación?",
-    "RespuestaCorrecta": "Identificar y entender el problema claramente",
+    "respuesta_correcta_literal": "Identificar y entender el problema claramente",
     "Nivel": "Intermedio",
     "Tema": "Lógica de Programación: Algoritmos",
     "Asignatura": "Programacion",
@@ -645,7 +645,7 @@
   },
   {
     "Pregunta": "¿Qué técnica consiste en descomponer un problema en otros más sencillos?",
-    "RespuestaCorrecta": "Divide y vencerás",
+    "respuesta_correcta_literal": "Divide y vencerás",
     "Nivel": "Intermedio",
     "Tema": "Fundamentos de Programación",
     "Asignatura": "Programacion",
@@ -659,7 +659,7 @@
   },
   {
     "Pregunta": "¿Qué es una 'alternativa de solución'?",
-    "RespuestaCorrecta": "Diferentes formas posibles de resolver el mismo problema",
+    "respuesta_correcta_literal": "Diferentes formas posibles de resolver el mismo problema",
     "Nivel": "Intermedio",
     "Tema": "Fundamentos de Programación",
     "Asignatura": "Programacion",
@@ -673,7 +673,7 @@
   },
   {
     "Pregunta": "¿Qué debemos evaluar al elegir una alternativa de solución?",
-    "RespuestaCorrecta": "La eficiencia y los recursos necesarios",
+    "respuesta_correcta_literal": "La eficiencia y los recursos necesarios",
     "Nivel": "Intermedio",
     "Tema": "Fundamentos de Programación",
     "Asignatura": "Programacion",
@@ -687,7 +687,7 @@
   },
   {
     "Pregunta": "¿Qué significa 'validar' un algoritmo?",
-    "RespuestaCorrecta": "Comprobar que produce los resultados correctos para diferentes datos",
+    "respuesta_correcta_literal": "Comprobar que produce los resultados correctos para diferentes datos",
     "Nivel": "Intermedio",
     "Tema": "Algoritmos",
     "Asignatura": "Programacion",
@@ -701,7 +701,7 @@
   },
   {
     "Pregunta": "1. ¿Cuál es el primer paso para solucionar un problema?",
-    "RespuestaCorrecta": "Divide y Vencerás",
+    "respuesta_correcta_literal": "Divide y Vencerás",
     "Nivel": "Intermedio",
     "Tema": "Lógica de Programación: Algoritmos",
     "Asignatura": "Programacion",
@@ -715,7 +715,7 @@
   },
   {
     "Pregunta": "2. ¿Cómo se llama al diseño que va de lo general a lo particular?",
-    "RespuestaCorrecta": "Top-Down",
+    "respuesta_correcta_literal": "Top-Down",
     "Nivel": "Intermedio",
     "Tema": "Fundamentos de Programación",
     "Asignatura": "Programacion",
@@ -729,7 +729,7 @@
   },
   {
     "Pregunta": "3. ¿Qué pregunta define el propósito de un módulo?",
-    "RespuestaCorrecta": "¿Qué hace?",
+    "respuesta_correcta_literal": "¿Qué hace?",
     "Nivel": "Intermedio",
     "Tema": "Fundamentos de Programación",
     "Asignatura": "Programacion",
@@ -743,7 +743,7 @@
   },
   {
     "Pregunta": "4. ¿Cuál es una ventaja de dividir problemas?",
-    "RespuestaCorrecta": "Facilitar la depuración",
+    "respuesta_correcta_literal": "Facilitar la depuración",
     "Nivel": "Intermedio",
     "Tema": "Fundamentos de Programación",
     "Asignatura": "Programacion",
@@ -757,7 +757,7 @@
   },
   {
     "Pregunta": "5. ¿Qué sigue después de dividir y resolver los subproblemas?",
-    "RespuestaCorrecta": "Combinar soluciones",
+    "respuesta_correcta_literal": "Combinar soluciones",
     "Nivel": "Intermedio",
     "Tema": "Fundamentos de Programación",
     "Asignatura": "Programacion",
@@ -771,7 +771,7 @@
   },
   {
     "Pregunta": "6. ¿Qué técnica se enfoca en el refinamiento sucesivo?",
-    "RespuestaCorrecta": "Refinamiento por pasos",
+    "respuesta_correcta_literal": "Refinamiento por pasos",
     "Nivel": "Intermedio",
     "Tema": "Fundamentos de Programación",
     "Asignatura": "Programacion",
@@ -785,7 +785,7 @@
   },
   {
     "Pregunta": "7. ¿Qué representa la 'Entrada' en un módulo?",
-    "RespuestaCorrecta": "Los datos necesarios",
+    "respuesta_correcta_literal": "Los datos necesarios",
     "Nivel": "Intermedio",
     "Tema": "Lógica de Programación: Análisis",
     "Asignatura": "Programacion",
@@ -799,7 +799,7 @@
   },
   {
     "Pregunta": "8. ¿Por qué es útil la programación modular?",
-    "RespuestaCorrecta": "Para reutilizar código",
+    "respuesta_correcta_literal": "Para reutilizar código",
     "Nivel": "Intermedio",
     "Tema": "Fundamentos de Programación",
     "Asignatura": "Programacion",
@@ -813,7 +813,7 @@
   },
   {
     "Pregunta": "9. ¿Qué se define en el Nivel Superior del diseño Top-Down?",
-    "RespuestaCorrecta": "El problema global",
+    "respuesta_correcta_literal": "El problema global",
     "Nivel": "Intermedio",
     "Tema": "Fundamentos de Programación",
     "Asignatura": "Programacion",
@@ -827,7 +827,7 @@
   },
   {
     "Pregunta": "10. ¿Qué significa 'Depuración'?",
-    "RespuestaCorrecta": "Encontrar y corregir errores",
+    "respuesta_correcta_literal": "Encontrar y corregir errores",
     "Nivel": "Intermedio",
     "Tema": "Fundamentos de Programación",
     "Asignatura": "Programacion",
@@ -841,7 +841,7 @@
   },
   {
     "Pregunta": "¿En qué década se formalizó el concepto de algoritmo?",
-    "RespuestaCorrecta": "1930",
+    "respuesta_correcta_literal": "1930",
     "Nivel": "Intermedio",
     "Tema": "Estructuras de Control",
     "Asignatura": "Programacion",
@@ -855,7 +855,7 @@
   },
   {
     "Pregunta": "¿Quién demostró la insolubilidad del 'problema del paro'?",
-    "RespuestaCorrecta": "Alan Turing",
+    "respuesta_correcta_literal": "Alan Turing",
     "Nivel": "Intermedio",
     "Tema": "Fundamentos de Programación",
     "Asignatura": "Programacion",
@@ -869,7 +869,7 @@
   },
   {
     "Pregunta": "¿Qué dos factores mide la complejidad computacional?",
-    "RespuestaCorrecta": "Tiempo y Espacio",
+    "respuesta_correcta_literal": "Tiempo y Espacio",
     "Nivel": "Intermedio",
     "Tema": "Fundamentos de Programación",
     "Asignatura": "Programacion",
@@ -883,7 +883,7 @@
   },
   {
     "Pregunta": "¿Qué es un algoritmo según la definición informal?",
-    "RespuestaCorrecta": "Instrucciones sencillas para resolver un problema",
+    "respuesta_correcta_literal": "Instrucciones sencillas para resolver un problema",
     "Nivel": "Intermedio",
     "Tema": "Estructuras de Control",
     "Asignatura": "Programacion",
@@ -897,7 +897,7 @@
   },
   {
     "Pregunta": "¿Qué problema determinó Turing que no puede ser resuelto por computadora?",
-    "RespuestaCorrecta": "El Problema del Paro",
+    "respuesta_correcta_literal": "El Problema del Paro",
     "Nivel": "Intermedio",
     "Tema": "Fundamentos de Programación",
     "Asignatura": "Programacion",
@@ -911,7 +911,7 @@
   },
   {
     "Pregunta": "¿Cuál es una medida de complejidad mencionada?",
-    "RespuestaCorrecta": "Número de instrucciones ejecutadas",
+    "respuesta_correcta_literal": "Número de instrucciones ejecutadas",
     "Nivel": "Intermedio",
     "Tema": "Fundamentos de Programación",
     "Asignatura": "Programacion",
@@ -925,7 +925,7 @@
   },
   {
     "Pregunta": "¿Qué permiten los lenguajes de alto nivel al programador?",
-    "RespuestaCorrecta": "Escribir instrucciones usando palabras y símbolos",
+    "respuesta_correcta_literal": "Escribir instrucciones usando palabras y símbolos",
     "Nivel": "Intermedio",
     "Tema": "Lenguajes de Programación",
     "Asignatura": "Programacion",
@@ -939,7 +939,7 @@
   },
   {
     "Pregunta": "¿Cuál es la principal ventaja de los lenguajes de alto nivel?",
-    "RespuestaCorrecta": "Son independientes de la máquina",
+    "respuesta_correcta_literal": "Son independientes de la máquina",
     "Nivel": "Intermedio",
     "Tema": "Lenguajes de Programación",
     "Asignatura": "Programacion",
@@ -953,7 +953,7 @@
   },
   {
     "Pregunta": "¿Por qué el ajedrez se considera complejo en la práctica?",
-    "RespuestaCorrecta": "Las posibilidades de movimientos son astronómicas",
+    "respuesta_correcta_literal": "Las posibilidades de movimientos son astronómicas",
     "Nivel": "Intermedio",
     "Tema": "Fundamentos de Programación",
     "Asignatura": "Programacion",
@@ -967,7 +967,7 @@
   },
   {
     "Pregunta": "¿Qué significa que un algoritmo sea finito?",
-    "RespuestaCorrecta": "Que tiene un fin definido",
+    "respuesta_correcta_literal": "Que tiene un fin definido",
     "Nivel": "Intermedio",
     "Tema": "Algoritmos",
     "Asignatura": "Programacion",
@@ -981,7 +981,7 @@
   },
   {
     "Pregunta": "¿Qué es la programación?",
-    "RespuestaCorrecta": "Creación de instrucciones precisas para la computadora",
+    "respuesta_correcta_literal": "Creación de instrucciones precisas para la computadora",
     "Nivel": "Intermedio",
     "Tema": "Fundamentos de Programación",
     "Asignatura": "Programacion",
@@ -995,7 +995,7 @@
   },
   {
     "Pregunta": "¿Qué es un algoritmo?",
-    "RespuestaCorrecta": "Pasos ordenados para la solución de un problema",
+    "respuesta_correcta_literal": "Pasos ordenados para la solución de un problema",
     "Nivel": "Intermedio",
     "Tema": "Algoritmos",
     "Asignatura": "Programacion",
@@ -1009,7 +1009,7 @@
   },
   {
     "Pregunta": "¿De dónde proviene la palabra 'algoritmo'?",
-    "RespuestaCorrecta": "Del matemático árabe Al-Khwarizmi",
+    "respuesta_correcta_literal": "Del matemático árabe Al-Khwarizmi",
     "Nivel": "Intermedio",
     "Tema": "Algoritmos",
     "Asignatura": "Programacion",
@@ -1023,7 +1023,7 @@
   },
   {
     "Pregunta": "¿Qué significa que un algoritmo sea 'Finito'?",
-    "RespuestaCorrecta": "Que cuenta con un número determinado de pasos",
+    "respuesta_correcta_literal": "Que cuenta con un número determinado de pasos",
     "Nivel": "Intermedio",
     "Tema": "Algoritmos",
     "Asignatura": "Programacion",
@@ -1037,7 +1037,7 @@
   },
   {
     "Pregunta": "¿Qué significa que un algoritmo sea 'Preciso'?",
-    "RespuestaCorrecta": "Que cada paso está definido sin ambigúedades",
+    "respuesta_correcta_literal": "Que cada paso está definido sin ambigúedades",
     "Nivel": "Intermedio",
     "Tema": "Algoritmos",
     "Asignatura": "Programacion",
@@ -1051,7 +1051,7 @@
   },
   {
     "Pregunta": "¿Qué significa que un algoritmo sea 'Definido'?",
-    "RespuestaCorrecta": "Que ante mismas entradas produce siempre lo mismo",
+    "respuesta_correcta_literal": "Que ante mismas entradas produce siempre lo mismo",
     "Nivel": "Intermedio",
     "Tema": "Algoritmos",
     "Asignatura": "Programacion",
@@ -1065,7 +1065,7 @@
   },
   {
     "Pregunta": "¿Qué significa que un algoritmo sea 'General'?",
-    "RespuestaCorrecta": "Que resuelve todos los casos de un mismo problema",
+    "respuesta_correcta_literal": "Que resuelve todos los casos de un mismo problema",
     "Nivel": "Intermedio",
     "Tema": "Algoritmos",
     "Asignatura": "Programacion",
@@ -1079,7 +1079,7 @@
   },
   {
     "Pregunta": "¿Cuál es un ejemplo de algoritmo cualitativo?",
-    "RespuestaCorrecta": "Instrucciones para seguir una receta de cocina",
+    "respuesta_correcta_literal": "Instrucciones para seguir una receta de cocina",
     "Nivel": "Intermedio",
     "Tema": "Algoritmos",
     "Asignatura": "Programacion",
@@ -1093,7 +1093,7 @@
   },
   {
     "Pregunta": "¿Cuál es un ejemplo de algoritmo cuantitativo?",
-    "RespuestaCorrecta": "Cálculo del área de una figura geométrica",
+    "respuesta_correcta_literal": "Cálculo del área de una figura geométrica",
     "Nivel": "Intermedio",
     "Tema": "Algoritmos",
     "Asignatura": "Programacion",
@@ -1107,7 +1107,7 @@
   },
   {
     "Pregunta": "¿Qué requiere la computadora para ejecutar un algoritmo?",
-    "RespuestaCorrecta": "Instrucciones lógicas exactas y sin ambigüedad",
+    "respuesta_correcta_literal": "Instrucciones lógicas exactas y sin ambigüedad",
     "Nivel": "Intermedio",
     "Tema": "Algoritmos",
     "Asignatura": "Programacion",
@@ -1121,7 +1121,7 @@
   },
   {
     "Pregunta": "6. Un algoritmo para 'cambiar llanta' es:",
-    "RespuestaCorrecta": "No computacional y cualitativo",
+    "respuesta_correcta_literal": "No computacional y cualitativo",
     "Nivel": "Intermedio",
     "Tema": "Algoritmos",
     "Asignatura": "Programacion",
@@ -1135,7 +1135,7 @@
   },
   {
     "Pregunta": "7. ¿Qué fórmula se usa para el área de triángulo?",
-    "RespuestaCorrecta": "(Base × Altura) ÷ 2",
+    "respuesta_correcta_literal": "(Base × Altura) ÷ 2",
     "Nivel": "Intermedio",
     "Tema": "Fundamentos de Programación",
     "Asignatura": "Programacion",
@@ -1149,7 +1149,7 @@
   },
   {
     "Pregunta": "8. ¿Qué característica asegura mismo resultado con mismas entradas?",
-    "RespuestaCorrecta": "Definido",
+    "respuesta_correcta_literal": "Definido",
     "Nivel": "Intermedio",
     "Tema": "Lógica de Programación: Análisis",
     "Asignatura": "Programacion",
@@ -1163,7 +1163,7 @@
   },
   {
     "Pregunta": "9. En 'ir al colegio', ¿qué estructura tiene '¿Hay tiempo?'?",
-    "RespuestaCorrecta": "Decisión (SI/NO)",
+    "respuesta_correcta_literal": "Decisión (SI/NO)",
     "Nivel": "Intermedio",
     "Tema": "Fundamentos de Programación",
     "Asignatura": "Programacion",
@@ -1177,7 +1177,7 @@
   },
   {
     "Pregunta": "10. ¿Por qué es importante que un algoritmo sea 'general'?",
-    "RespuestaCorrecta": "Para que funcione en diferentes casos del mismo problema",
+    "respuesta_correcta_literal": "Para que funcione en diferentes casos del mismo problema",
     "Nivel": "Intermedio",
     "Tema": "Algoritmos",
     "Asignatura": "Programacion",
@@ -1191,7 +1191,7 @@
   },
   {
     "Pregunta": "¿Qué hace un compilador con el código fuente?",
-    "RespuestaCorrecta": "Genera código objeto",
+    "respuesta_correcta_literal": "Genera código objeto",
     "Nivel": "Intermedio",
     "Tema": "Lenguajes de Programación",
     "Asignatura": "Programacion",
@@ -1205,7 +1205,7 @@
   },
   {
     "Pregunta": "¿Cuál es una ventaja de los lenguajes interpretados?",
-    "RespuestaCorrecta": "Diseño más rápido",
+    "respuesta_correcta_literal": "Diseño más rápido",
     "Nivel": "Intermedio",
     "Tema": "Lenguajes de Programación",
     "Asignatura": "Programacion",
@@ -1219,7 +1219,7 @@
   },
   {
     "Pregunta": "¿Qué sucede con las instrucciones de un ciclo en un intérprete?",
-    "RespuestaCorrecta": "Se interpretan siempre",
+    "respuesta_correcta_literal": "Se interpretan siempre",
     "Nivel": "Intermedio",
     "Tema": "Estructuras de Control",
     "Asignatura": "Programacion",
@@ -1233,7 +1233,7 @@
   },
   {
     "Pregunta": "¿Cuál lenguaje es un ejemplo de lenguaje compilado?",
-    "RespuestaCorrecta": "C++",
+    "respuesta_correcta_literal": "C++",
     "Nivel": "Intermedio",
     "Tema": "Lenguajes de Programación",
     "Asignatura": "Programacion",
@@ -1247,7 +1247,7 @@
   },
   {
     "Pregunta": "¿Qué es un bucle en programación?",
-    "RespuestaCorrecta": "Repite instrucciones",
+    "respuesta_correcta_literal": "Repite instrucciones",
     "Nivel": "Intermedio",
     "Tema": "Estructuras de Control",
     "Asignatura": "Programacion",
@@ -1261,7 +1261,7 @@
   },
   {
     "Pregunta": "¿Cuándo se usa preferentemente el bucle 'Para'?",
-    "RespuestaCorrecta": "Conteo definido",
+    "respuesta_correcta_literal": "Conteo definido",
     "Nivel": "Intermedio",
     "Tema": "Estructuras de Control",
     "Asignatura": "Programacion",
@@ -1275,7 +1275,7 @@
   },
   {
     "Pregunta": "¿Qué componente define el inicio y el fin del bucle?",
-    "RespuestaCorrecta": "Rango de ejecución",
+    "respuesta_correcta_literal": "Rango de ejecución",
     "Nivel": "Intermedio",
     "Tema": "Estructuras de Control",
     "Asignatura": "Programacion",
@@ -1289,7 +1289,7 @@
   },
   {
     "Pregunta": "¿Qué lenguaje usa 'let i = 0' en su bucle for?",
-    "RespuestaCorrecta": "JavaScript",
+    "respuesta_correcta_literal": "JavaScript",
     "Nivel": "Intermedio",
     "Tema": "Lenguajes de Programación",
     "Asignatura": "Programacion",
@@ -1303,7 +1303,7 @@
   },
   {
     "Pregunta": "¿Cuál es el resultado de un bucle de 1 a 5?",
-    "RespuestaCorrecta": "1, 2, 3, 4, 5",
+    "respuesta_correcta_literal": "1, 2, 3, 4, 5",
     "Nivel": "Intermedio",
     "Tema": "Estructuras de Control",
     "Asignatura": "Programacion",
@@ -1317,7 +1317,7 @@
   },
   {
     "Pregunta": "¿Qué lenguajes comparten sintaxis de bucle for?",
-    "RespuestaCorrecta": "C, C++ y JS",
+    "respuesta_correcta_literal": "C, C++ y JS",
     "Nivel": "Intermedio",
     "Tema": "Lenguajes de Programación",
     "Asignatura": "Programacion",
@@ -1331,7 +1331,7 @@
   },
   {
     "Pregunta": "¿Qué describe un lenguaje declarativo?",
-    "RespuestaCorrecta": "Lo que se busca",
+    "respuesta_correcta_literal": "Lo que se busca",
     "Nivel": "Intermedio",
     "Tema": "Lenguajes de Programación",
     "Asignatura": "Programacion",
@@ -1345,7 +1345,7 @@
   },
   {
     "Pregunta": "¿Cuál es un ejemplo de lenguaje declarativo?",
-    "RespuestaCorrecta": "SQL",
+    "respuesta_correcta_literal": "SQL",
     "Nivel": "Intermedio",
     "Tema": "Lenguajes de Programación",
     "Asignatura": "Programacion",
@@ -1359,7 +1359,7 @@
   },
   {
     "Pregunta": "¿Qué pasa con el orden de ejecución en declarativos?",
-    "RespuestaCorrecta": "No es importante",
+    "respuesta_correcta_literal": "No es importante",
     "Nivel": "Intermedio",
     "Tema": "Paradigmas de Programación",
     "Asignatura": "Programacion",
@@ -1373,7 +1373,7 @@
   },
   {
     "Pregunta": "¿Cuál es una ventaja de este paradigma?",
-    "RespuestaCorrecta": "Alta abstracción",
+    "respuesta_correcta_literal": "Alta abstracción",
     "Nivel": "Intermedio",
     "Tema": "Lenguajes de Programación",
     "Asignatura": "Programacion",
@@ -1387,7 +1387,7 @@
   },
   {
     "Pregunta": "¿Qué estructura es fundamental en lenguajes lógicos?",
-    "RespuestaCorrecta": "Las listas",
+    "respuesta_correcta_literal": "Las listas",
     "Nivel": "Intermedio",
     "Tema": "Lenguajes de Programación",
     "Asignatura": "Programacion",
@@ -1401,7 +1401,7 @@
   },
   {
     "Pregunta": "¿Cuándo se evalúa la condición en el bucle 'Mientras'?",
-    "RespuestaCorrecta": "Antes de ejecutar",
+    "respuesta_correcta_literal": "Antes de ejecutar",
     "Nivel": "Intermedio",
     "Tema": "Estructuras de Control",
     "Asignatura": "Programacion",
@@ -1415,7 +1415,7 @@
   },
   {
     "Pregunta": "¿Qué sucede si la condición es falsa desde el inicio?",
-    "RespuestaCorrecta": "Nunca se ejecuta",
+    "respuesta_correcta_literal": "Nunca se ejecuta",
     "Nivel": "Intermedio",
     "Tema": "Fundamentos de Programación",
     "Asignatura": "Programacion",
@@ -1429,7 +1429,7 @@
   },
   {
     "Pregunta": "¿Qué evitamos al cambiar la variable dentro del bucle?",
-    "RespuestaCorrecta": "Un bucle infinito",
+    "respuesta_correcta_literal": "Un bucle infinito",
     "Nivel": "Intermedio",
     "Tema": "Estructuras de Control",
     "Asignatura": "Programacion",
@@ -1443,7 +1443,7 @@
   },
   {
     "Pregunta": "¿Cuál es un uso común del bucle Mientras?",
-    "RespuestaCorrecta": "Validar entrada",
+    "respuesta_correcta_literal": "Validar entrada",
     "Nivel": "Intermedio",
     "Tema": "Estructuras de Control",
     "Asignatura": "Programacion",
@@ -1457,7 +1457,7 @@
   },
   {
     "Pregunta": "¿En qué lenguaje declarativo se basa Prolog?",
-    "RespuestaCorrecta": "Prog. lógica",
+    "respuesta_correcta_literal": "Prog. lógica",
     "Nivel": "Intermedio",
     "Tema": "Lenguajes de Programación",
     "Asignatura": "Programacion",
@@ -1471,7 +1471,7 @@
   },
   {
     "Pregunta": "¿Qué define a una base de datos?",
-    "RespuestaCorrecta": "Banco de datos",
+    "respuesta_correcta_literal": "Banco de datos",
     "Nivel": "Intermedio",
     "Tema": "Bases de Datos",
     "Asignatura": "Programacion",
@@ -1485,7 +1485,7 @@
   },
   {
     "Pregunta": "¿Qué tipo de lenguaje utiliza una BD?",
-    "RespuestaCorrecta": "Tipo declarativo",
+    "respuesta_correcta_literal": "Tipo declarativo",
     "Nivel": "Intermedio",
     "Tema": "Lenguajes de Programación",
     "Asignatura": "Programacion",
@@ -1499,7 +1499,7 @@
   },
   {
     "Pregunta": "¿Cómo se llama el nodo superior?",
-    "RespuestaCorrecta": "Raíz del árbol",
+    "respuesta_correcta_literal": "Raíz del árbol",
     "Nivel": "Intermedio",
     "Tema": "Fundamentos de Programación",
     "Asignatura": "Programacion",
@@ -1513,7 +1513,7 @@
   },
   {
     "Pregunta": "¿Quién postuló el modelo relacional?",
-    "RespuestaCorrecta": "Edgar F. Codd",
+    "respuesta_correcta_literal": "Edgar F. Codd",
     "Nivel": "Intermedio",
     "Tema": "Bases de Datos",
     "Asignatura": "Programacion",
@@ -1527,7 +1527,7 @@
   },
   {
     "Pregunta": "¿Cuál BD se usa para datos históricos?",
-    "RespuestaCorrecta": "Base estática",
+    "respuesta_correcta_literal": "Base estática",
     "Nivel": "Intermedio",
     "Tema": "Fundamentos de Programación",
     "Asignatura": "Programacion",
@@ -1541,7 +1541,7 @@
   },
   {
     "Pregunta": "¿Qué permite el modelo de red?",
-    "RespuestaCorrecta": "Varios padres",
+    "respuesta_correcta_literal": "Varios padres",
     "Nivel": "Intermedio",
     "Tema": "Fundamentos de Programación",
     "Asignatura": "Programacion",
@@ -1555,7 +1555,7 @@
   },
   {
     "Pregunta": "¿Qué almacena una BD de texto?",
-    "RespuestaCorrecta": "Fuentes puras",
+    "respuesta_correcta_literal": "Fuentes puras",
     "Nivel": "Intermedio",
     "Tema": "Fundamentos de Programación",
     "Asignatura": "Programacion",
@@ -1569,7 +1569,7 @@
   },
   {
     "Pregunta": "¿Cómo se ve el modelo relacional?",
-    "RespuestaCorrecta": "Formato tabla",
+    "respuesta_correcta_literal": "Formato tabla",
     "Nivel": "Intermedio",
     "Tema": "Bases de Datos",
     "Asignatura": "Programacion",
@@ -1583,7 +1583,7 @@
   },
   {
     "Pregunta": "¿Qué significa el acrónimo SGBD?",
-    "RespuestaCorrecta": "Sistema gestor",
+    "respuesta_correcta_literal": "Sistema gestor",
     "Nivel": "Intermedio",
     "Tema": "Bases de Datos",
     "Asignatura": "Programacion",
@@ -1597,7 +1597,7 @@
   },
   {
     "Pregunta": "¿Cuál es una desventaja de las BD?",
-    "RespuestaCorrecta": "Riesgos acceso",
+    "respuesta_correcta_literal": "Riesgos acceso",
     "Nivel": "Intermedio",
     "Tema": "Fundamentos de Programación",
     "Asignatura": "Programacion",
@@ -1611,7 +1611,7 @@
   },
   {
     "Pregunta": "¿Qué caracteriza a la programación lógica?",
-    "RespuestaCorrecta": "Es declarativa",
+    "respuesta_correcta_literal": "Es declarativa",
     "Nivel": "Intermedio",
     "Tema": "Fundamentos de Programación",
     "Asignatura": "Programacion",
@@ -1625,7 +1625,7 @@
   },
   {
     "Pregunta": "¿Qué especifica el programador en este paradigma?",
-    "RespuestaCorrecta": "Qué problema resolver",
+    "respuesta_correcta_literal": "Qué problema resolver",
     "Nivel": "Intermedio",
     "Tema": "Lenguajes de Programación",
     "Asignatura": "Programacion",
@@ -1639,7 +1639,7 @@
   },
   {
     "Pregunta": "¿Cuál es la idea esencial de la prog. lógica?",
-    "RespuestaCorrecta": "Lógica + Control",
+    "respuesta_correcta_literal": "Lógica + Control",
     "Nivel": "Intermedio",
     "Tema": "Fundamentos de Programación",
     "Asignatura": "Programacion",
@@ -1653,7 +1653,7 @@
   },
   {
     "Pregunta": "¿En qué lenguaje se basa la prog. lógica?",
-    "RespuestaCorrecta": "Prolog",
+    "respuesta_correcta_literal": "Prolog",
     "Nivel": "Intermedio",
     "Tema": "Lenguajes de Programación",
     "Asignatura": "Programacion",
@@ -1667,7 +1667,7 @@
   },
   {
     "Pregunta": "¿Qué es una 'entidad' en este contexto?",
-    "RespuestaCorrecta": "Un objeto",
+    "respuesta_correcta_literal": "Un objeto",
     "Nivel": "Intermedio",
     "Tema": "Bases de Datos",
     "Asignatura": "Programacion",
@@ -1681,7 +1681,7 @@
   },
   {
     "Pregunta": "¿Cuántas veces corre mínimo el bucle 'Repetir'?",
-    "RespuestaCorrecta": "1 vez",
+    "respuesta_correcta_literal": "1 vez",
     "Nivel": "Intermedio",
     "Tema": "Estructuras de Control",
     "Asignatura": "Programacion",
@@ -1695,7 +1695,7 @@
   },
   {
     "Pregunta": "¿Cuándo se evalúa la condición en 'Repetir'?",
-    "RespuestaCorrecta": "Al final",
+    "respuesta_correcta_literal": "Al final",
     "Nivel": "Intermedio",
     "Tema": "Estructuras de Control",
     "Asignatura": "Programacion",
@@ -1709,7 +1709,7 @@
   },
   {
     "Pregunta": "¿Qué lenguaje es clásico de la IA?",
-    "RespuestaCorrecta": "Prolog",
+    "respuesta_correcta_literal": "Prolog",
     "Nivel": "Intermedio",
     "Tema": "Lenguajes de Programación",
     "Asignatura": "Programacion",
@@ -1723,7 +1723,7 @@
   },
   {
     "Pregunta": "¿Cuándo sale el flujo del bucle 'Repetir'?",
-    "RespuestaCorrecta": "Condición es verdadera",
+    "respuesta_correcta_literal": "Condición es verdadera",
     "Nivel": "Intermedio",
     "Tema": "Estructuras de Control",
     "Asignatura": "Programacion",
@@ -1737,7 +1737,7 @@
   },
   {
     "Pregunta": "¿Cómo se describen los algoritmos según el PDF?",
-    "RespuestaCorrecta": "Conocimiento formal",
+    "respuesta_correcta_literal": "Conocimiento formal",
     "Nivel": "Intermedio",
     "Tema": "Algoritmos",
     "Asignatura": "Programacion",
@@ -1751,7 +1751,7 @@
   },
   {
     "Pregunta": "¿Qué es la codificación en programación?",
-    "RespuestaCorrecta": "Traducir un algoritmo a un lenguaje de programación",
+    "respuesta_correcta_literal": "Traducir un algoritmo a un lenguaje de programación",
     "Nivel": "Intermedio",
     "Tema": "Fundamentos de Programación",
     "Asignatura": "Programacion",
@@ -1765,7 +1765,7 @@
   },
   {
     "Pregunta": "¿Qué herramienta se usa para planear la lógica antes de programar?",
-    "RespuestaCorrecta": "Técnicas de representación",
+    "respuesta_correcta_literal": "Técnicas de representación",
     "Nivel": "Intermedio",
     "Tema": "Fundamentos de Programación",
     "Asignatura": "Programacion",
@@ -1779,7 +1779,7 @@
   },
   {
     "Pregunta": "¿Qué es el pseudocódigo?",
-    "RespuestaCorrecta": "Un lenguaje intermedio entre el natural y el de programación",
+    "respuesta_correcta_literal": "Un lenguaje intermedio entre el natural y el de programación",
     "Nivel": "Intermedio",
     "Tema": "Fundamentos de Programación",
     "Asignatura": "Programacion",
@@ -1793,7 +1793,7 @@
   },
   {
     "Pregunta": "¿Qué técnica utiliza símbolos gráficos para representar algoritmos?",
-    "RespuestaCorrecta": "Diagramas de Flujo",
+    "respuesta_correcta_literal": "Diagramas de Flujo",
     "Nivel": "Intermedio",
     "Tema": "Algoritmos",
     "Asignatura": "Programacion",
@@ -1807,7 +1807,7 @@
   },
   {
     "Pregunta": "¿Cuál es la función del 'Inicio' y 'Fin' en un algoritmo?",
-    "RespuestaCorrecta": "Delimitar la secuencia de pasos",
+    "respuesta_correcta_literal": "Delimitar la secuencia de pasos",
     "Nivel": "Intermedio",
     "Tema": "Algoritmos",
     "Asignatura": "Programacion",
@@ -1821,7 +1821,7 @@
   },
   {
     "Pregunta": "1. ¿En qué consiste la codificación?",
-    "RespuestaCorrecta": "Escribir el algoritmo en un lenguaje de programación",
+    "respuesta_correcta_literal": "Escribir el algoritmo en un lenguaje de programación",
     "Nivel": "Intermedio",
     "Tema": "Fundamentos de Programación",
     "Asignatura": "Programacion",
@@ -1835,7 +1835,7 @@
   },
   {
     "Pregunta": "2. ¿Qué se hace en la fase de ejecución?",
-    "RespuestaCorrecta": "Se pone en marcha el programa en la computadora",
+    "respuesta_correcta_literal": "Se pone en marcha el programa en la computadora",
     "Nivel": "Intermedio",
     "Tema": "Fundamentos de Programación",
     "Asignatura": "Programacion",
@@ -1849,7 +1849,7 @@
   },
   {
     "Pregunta": "3. ¿Cuál es el objetivo de la comprobación?",
-    "RespuestaCorrecta": "Verificar que el programa produce resultados correctos",
+    "respuesta_correcta_literal": "Verificar que el programa produce resultados correctos",
     "Nivel": "Intermedio",
     "Tema": "Fundamentos de Programación",
     "Asignatura": "Programacion",
@@ -1863,7 +1863,7 @@
   },
   {
     "Pregunta": "4. ¿Cuál de estas NO es una técnica de representación?",
-    "RespuestaCorrecta": "Monitor de la PC",
+    "respuesta_correcta_literal": "Monitor de la PC",
     "Nivel": "Intermedio",
     "Tema": "Fundamentos de Programación",
     "Asignatura": "Programacion",
@@ -1877,7 +1877,7 @@
   },
   {
     "Pregunta": "5. ¿Qué técnica usa símbolos gráficos estandarizados?",
-    "RespuestaCorrecta": "Diagramas de flujo",
+    "respuesta_correcta_literal": "Diagramas de flujo",
     "Nivel": "Intermedio",
     "Tema": "Fundamentos de Programación",
     "Asignatura": "Programacion",
@@ -1891,7 +1891,7 @@
   },
   {
     "Pregunta": "6. ¿Qué es el pseudocódigo?",
-    "RespuestaCorrecta": "Representación textual de la lógica",
+    "respuesta_correcta_literal": "Representación textual de la lógica",
     "Nivel": "Intermedio",
     "Tema": "Fundamentos de Programación",
     "Asignatura": "Programacion",
@@ -1905,7 +1905,7 @@
   },
   {
     "Pregunta": "7. ¿Cuál es la ventaja de la representación paso a paso?",
-    "RespuestaCorrecta": "Facilita la implementación en código real",
+    "respuesta_correcta_literal": "Facilita la implementación en código real",
     "Nivel": "Intermedio",
     "Tema": "Lógica de Programación: Algoritmos",
     "Asignatura": "Programacion",
@@ -1919,7 +1919,7 @@
   },
   {
     "Pregunta": "8. ¿Qué técnica usa el idioma cotidiano (español)?",
-    "RespuestaCorrecta": "Lenguaje Natural",
+    "respuesta_correcta_literal": "Lenguaje Natural",
     "Nivel": "Intermedio",
     "Tema": "Fundamentos de Programación",
     "Asignatura": "Programacion",
@@ -1933,7 +1933,7 @@
   },
   {
     "Pregunta": "9. ¿Qué fase sigue inmediatamente al Diseño del Algoritmo?",
-    "RespuestaCorrecta": "Codificación",
+    "respuesta_correcta_literal": "Codificación",
     "Nivel": "Intermedio",
     "Tema": "Algoritmos",
     "Asignatura": "Programacion",
@@ -1947,7 +1947,7 @@
   },
   {
     "Pregunta": "10. ¿Por qué es importante la comprobación?",
-    "RespuestaCorrecta": "Para detectar errores antes del uso final",
+    "respuesta_correcta_literal": "Para detectar errores antes del uso final",
     "Nivel": "Intermedio",
     "Tema": "Fundamentos de Programación",
     "Asignatura": "Programacion",
@@ -1961,7 +1961,7 @@
   },
   {
     "Pregunta": "¿Cuál es la principal ventaja del pseudocódigo?",
-    "RespuestaCorrecta": "Permite centrarse en la lógica sin preocuparse por la sintaxis estricta",
+    "respuesta_correcta_literal": "Permite centrarse en la lógica sin preocuparse por la sintaxis estricta",
     "Nivel": "Intermedio",
     "Tema": "Fundamentos de Programación",
     "Asignatura": "Programacion",
@@ -1975,7 +1975,7 @@
   },
   {
     "Pregunta": "¿Qué significa 'ordenación simbólica'?",
-    "RespuestaCorrecta": "Representar los pasos del algoritmo mediante símbolos o palabras clave",
+    "respuesta_correcta_literal": "Representar los pasos del algoritmo mediante símbolos o palabras clave",
     "Nivel": "Intermedio",
     "Tema": "Fundamentos de Programación",
     "Asignatura": "Programacion",
@@ -1989,7 +1989,7 @@
   },
   {
     "Pregunta": "¿Cuál es una palabra clave común en el pseudocódigo?",
-    "RespuestaCorrecta": "Escribir / Leer",
+    "respuesta_correcta_literal": "Escribir / Leer",
     "Nivel": "Intermedio",
     "Tema": "Fundamentos de Programación",
     "Asignatura": "Programacion",
@@ -2003,7 +2003,7 @@
   },
   {
     "Pregunta": "¿Para qué se usa el símbolo '=' en muchos lenguajes o pseudocódigos?",
-    "RespuestaCorrecta": "Asignación de valores",
+    "respuesta_correcta_literal": "Asignación de valores",
     "Nivel": "Intermedio",
     "Tema": "Lenguajes de Programación",
     "Asignatura": "Programacion",
@@ -2017,7 +2017,7 @@
   },
   {
     "Pregunta": "¿Qué es una variable?",
-    "RespuestaCorrecta": "Un espacio de memoria para almacenar un dato que puede cambiar",
+    "respuesta_correcta_literal": "Un espacio de memoria para almacenar un dato que puede cambiar",
     "Nivel": "Intermedio",
     "Tema": "Variables y Datos",
     "Asignatura": "Programacion",
@@ -2031,7 +2031,7 @@
   },
   {
     "Pregunta": "1. ¿Qué es el pseudocódigo?",
-    "RespuestaCorrecta": "Falso",
+    "respuesta_correcta_literal": "Falso",
     "Nivel": "Intermedio",
     "Tema": "Fundamentos de Programación",
     "Asignatura": "Programacion",
@@ -2045,7 +2045,7 @@
   },
   {
     "Pregunta": "2. ¿Para qué sirve la palabra clave 'Leer'?",
-    "RespuestaCorrecta": "Capturar datos de entrada",
+    "respuesta_correcta_literal": "Capturar datos de entrada",
     "Nivel": "Intermedio",
     "Tema": "Algoritmos",
     "Asignatura": "Programacion",
@@ -2059,7 +2059,7 @@
   },
   {
     "Pregunta": "3. ¿Qué símbolo se usa comúnmente para la asignación?",
-    "RespuestaCorrecta": "<-",
+    "respuesta_correcta_literal": "<-",
     "Nivel": "Intermedio",
     "Tema": "Fundamentos de Programación",
     "Asignatura": "Programacion",
@@ -2073,7 +2073,7 @@
   },
   {
     "Pregunta": "4. ¿Cuál es una ventaja del pseudocódigo?",
-    "RespuestaCorrecta": "Es independiente del lenguaje",
+    "respuesta_correcta_literal": "Es independiente del lenguaje",
     "Nivel": "Intermedio",
     "Tema": "Fundamentos de Programación",
     "Asignatura": "Programacion",
@@ -2087,7 +2087,7 @@
   },
   {
     "Pregunta": "5. ¿Qué palabra clave se usa para mostrar resultados?",
-    "RespuestaCorrecta": "Escribir",
+    "respuesta_correcta_literal": "Escribir",
     "Nivel": "Intermedio",
     "Tema": "Fundamentos de Programación",
     "Asignatura": "Programacion",
@@ -2101,7 +2101,7 @@
   },
   {
     "Pregunta": "6. ¿Cómo termina un bloque de decisión Si-Entonces?",
-    "RespuestaCorrecta": "FinSi",
+    "respuesta_correcta_literal": "FinSi",
     "Nivel": "Intermedio",
     "Tema": "Fundamentos de Programación",
     "Asignatura": "Programacion",
@@ -2115,7 +2115,7 @@
   },
   {
     "Pregunta": "7. ¿Qué representa la 'Selección' en un algoritmo?",
-    "RespuestaCorrecta": "Caminos alternativos",
+    "respuesta_correcta_literal": "Caminos alternativos",
     "Nivel": "Intermedio",
     "Tema": "Algoritmos",
     "Asignatura": "Programacion",
@@ -2129,7 +2129,7 @@
   },
   {
     "Pregunta": "8. ¿El pseudocódigo es ejecutado directamente por la PC?",
-    "RespuestaCorrecta": "No, es para humanos",
+    "respuesta_correcta_literal": "No, es para humanos",
     "Nivel": "Intermedio",
     "Tema": "Fundamentos de Programación",
     "Asignatura": "Programacion",
@@ -2143,7 +2143,7 @@
   },
   {
     "Pregunta": "9. ¿Qué palabra marca el fin de todo el proceso?",
-    "RespuestaCorrecta": "FinAlgoritmo",
+    "respuesta_correcta_literal": "FinAlgoritmo",
     "Nivel": "Intermedio",
     "Tema": "Lógica de Programación: Análisis",
     "Asignatura": "Programacion",
@@ -2157,7 +2157,7 @@
   },
   {
     "Pregunta": "10. ¿Qué es la 'Iteración'?",
-    "RespuestaCorrecta": "Una repetición de pasos",
+    "respuesta_correcta_literal": "Una repetición de pasos",
     "Nivel": "Intermedio",
     "Tema": "Fundamentos de Programación",
     "Asignatura": "Programacion",

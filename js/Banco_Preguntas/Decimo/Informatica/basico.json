@@ -1,7 +1,7 @@
 [
   {
     "Pregunta": "¿Qué componente se encarga de realizar todos los cálculos y procesos lógicos?",
-    "RespuestaCorrecta": "Procesador (CPU)",
+    "respuesta_correcta_literal": "Procesador (CPU)",
     "Nivel": "Básico",
     "Tema": "Sistemas Operativos",
     "Asignatura": "Informatica",
@@ -15,7 +15,7 @@
   },
   {
     "Pregunta": "¿Qué componente almacena el sistema operativo y todos los archivos permanentemente?",
-    "RespuestaCorrecta": "Disco Duro / SSD",
+    "respuesta_correcta_literal": "Disco Duro / SSD",
     "Nivel": "Básico",
     "Tema": "Sistemas Operativos",
     "Asignatura": "Informatica",
@@ -29,7 +29,7 @@
   },
   {
     "Pregunta": "¿A qué componente se conectan todos los demás elementos internos de la PC?",
-    "RespuestaCorrecta": "Placa Base (Motherboard)",
+    "respuesta_correcta_literal": "Placa Base (Motherboard)",
     "Nivel": "Básico",
     "Tema": "Fundamentos de Computación",
     "Asignatura": "Informatica",
@@ -43,7 +43,7 @@
   },
   {
     "Pregunta": "¿Qué componente suministra energía eléctrica a todas las partes de la computadora?",
-    "RespuestaCorrecta": "Fuente de Poder",
+    "respuesta_correcta_literal": "Fuente de Poder",
     "Nivel": "Básico",
     "Tema": "Introducción a la Informática",
     "Asignatura": "Informatica",
@@ -57,7 +57,7 @@
   },
   {
     "Pregunta": "¿Qué componente se considera el 'cerebro' de la computadora?",
-    "RespuestaCorrecta": "CPU",
+    "respuesta_correcta_literal": "CPU",
     "Nivel": "Básico",
     "Tema": "Introducción a la Informática",
     "Asignatura": "Informatica",
@@ -71,7 +71,7 @@
   },
   {
     "Pregunta": "El hardware se define como:",
-    "RespuestaCorrecta": "Componentes físicos y tangibles",
+    "respuesta_correcta_literal": "Componentes físicos y tangibles",
     "Nivel": "Básico",
     "Tema": "Hardware",
     "Asignatura": "Informatica",
@@ -85,7 +85,7 @@
   },
   {
     "Pregunta": "¿Qué unidad de la CPU realiza las operaciones matemáticas y lógicas?",
-    "RespuestaCorrecta": "ALU",
+    "respuesta_correcta_literal": "ALU",
     "Nivel": "Básico",
     "Tema": "Introducción a la Informática",
     "Asignatura": "Informatica",
@@ -99,7 +99,7 @@
   },
   {
     "Pregunta": "¿Qué componente convierte la corriente eléctrica para el resto de piezas?",
-    "RespuestaCorrecta": "Fuente de Poder",
+    "respuesta_correcta_literal": "Fuente de Poder",
     "Nivel": "Básico",
     "Tema": "Fundamentos de Computación",
     "Asignatura": "Informatica",
@@ -113,7 +113,7 @@
   },
   {
     "Pregunta": "Las computadoras extremadamente potentes para investigación avanzada son:",
-    "RespuestaCorrecta": "Supercomputadoras",
+    "respuesta_correcta_literal": "Supercomputadoras",
     "Nivel": "Básico",
     "Tema": "Sistemas Operativos",
     "Asignatura": "Informatica",
@@ -127,7 +127,7 @@
   },
   {
     "Pregunta": "Un sistema computacional especializado dentro de otro aparato es un sistema:",
-    "RespuestaCorrecta": "Integrado (Embedded)",
+    "respuesta_correcta_literal": "Integrado (Embedded)",
     "Nivel": "Básico",
     "Tema": "Fundamentos de Computación",
     "Asignatura": "Informatica",
@@ -141,7 +141,7 @@
   },
   {
     "Pregunta": "¿Cuál es considerado el primer dispositivo de cálculo, originado en Mesopotamia?",
-    "RespuestaCorrecta": "Ábaco",
+    "respuesta_correcta_literal": "Ábaco",
     "Nivel": "Básico",
     "Tema": "Sistemas Operativos",
     "Asignatura": "Informatica",
@@ -155,7 +155,7 @@
   },
   {
     "Pregunta": "¿Quién inventó la Pascalina, la primera calculadora mecánica?",
-    "RespuestaCorrecta": "Blaise Pascal",
+    "respuesta_correcta_literal": "Blaise Pascal",
     "Nivel": "Básico",
     "Tema": "Historia de la Computación",
     "Asignatura": "Informatica",
@@ -169,7 +169,7 @@
   },
   {
     "Pregunta": "¿Qué invento de 1947 permitió crear dispositivos más pequeños y eficientes que los tubos de vacío?",
-    "RespuestaCorrecta": "Transistor",
+    "respuesta_correcta_literal": "Transistor",
     "Nivel": "Básico",
     "Tema": "Fundamentos de Computación",
     "Asignatura": "Informatica",
@@ -183,7 +183,7 @@
   },
   {
     "Pregunta": "¿Quién inventó el circuito integrado en 1958?",
-    "RespuestaCorrecta": "Jack Kilby",
+    "respuesta_correcta_literal": "Jack Kilby",
     "Nivel": "Básico",
     "Tema": "Fundamentos de Computación",
     "Asignatura": "Informatica",
@@ -197,7 +197,7 @@
   },
   {
     "Pregunta": "¿Cuál fue el primer microprocesador comercial lanzado en 1971?",
-    "RespuestaCorrecta": "Intel 4004",
+    "respuesta_correcta_literal": "Intel 4004",
     "Nivel": "Básico",
     "Tema": "Procesadores de Texto",
     "Asignatura": "Informatica",
@@ -211,7 +211,7 @@
   },
   {
     "Pregunta": "¿Quién inventó la World Wide Web (WWW) en el CERN en 1989?",
-    "RespuestaCorrecta": "Tim Berners-Lee",
+    "respuesta_correcta_literal": "Tim Berners-Lee",
     "Nivel": "Básico",
     "Tema": "Fundamentos de Computación",
     "Asignatura": "Informatica",
@@ -225,7 +225,7 @@
   },
   {
     "Pregunta": "¿Qué es una celda en Excel?",
-    "RespuestaCorrecta": "La intersección de una fila y una columna",
+    "respuesta_correcta_literal": "La intersección de una fila y una columna",
     "Nivel": "Básico",
     "Tema": "Hojas de Cálculo",
     "Asignatura": "Informatica",
@@ -239,7 +239,7 @@
   },
   {
     "Pregunta": "¿Cómo se identifican las columnas en una hoja de cálculo?",
-    "RespuestaCorrecta": "Con letras (A, B, C...)",
+    "respuesta_correcta_literal": "Con letras (A, B, C...)",
     "Nivel": "Básico",
     "Tema": "Fundamentos de Computación",
     "Asignatura": "Informatica",
@@ -253,7 +253,7 @@
   },
   {
     "Pregunta": "¿Cómo se identifican las filas en una hoja de cálculo?",
-    "RespuestaCorrecta": "Con números (1, 2, 3...)",
+    "respuesta_correcta_literal": "Con números (1, 2, 3...)",
     "Nivel": "Básico",
     "Tema": "Fundamentos de Computación",
     "Asignatura": "Informatica",
@@ -267,7 +267,7 @@
   },
   {
     "Pregunta": "¿Con qué símbolo debe comenzar siempre una fórmula en Excel?",
-    "RespuestaCorrecta": "Signo igual (=)",
+    "respuesta_correcta_literal": "Signo igual (=)",
     "Nivel": "Básico",
     "Tema": "Hojas de Cálculo",
     "Asignatura": "Informatica",
@@ -281,7 +281,7 @@
   },
   {
     "Pregunta": "¿Qué es una hoja de cálculo?",
-    "RespuestaCorrecta": "Una aplicación para organizar y analizar datos en tablas",
+    "respuesta_correcta_literal": "Una aplicación para organizar y analizar datos en tablas",
     "Nivel": "Básico",
     "Tema": "Fundamentos de Computación",
     "Asignatura": "Informatica",
@@ -295,7 +295,7 @@
   },
   {
     "Pregunta": "¿Cómo se llama la barra donde se escriben fórmulas en Excel?",
-    "RespuestaCorrecta": "Barra de fórmulas",
+    "respuesta_correcta_literal": "Barra de fórmulas",
     "Nivel": "Básico",
     "Tema": "Hojas de Cálculo",
     "Asignatura": "Informatica",
@@ -309,7 +309,7 @@
   },
   {
     "Pregunta": "¿Cuál es el símbolo que debe iniciar toda fórmula en una hoja de cálculo?",
-    "RespuestaCorrecta": "=",
+    "respuesta_correcta_literal": "=",
     "Nivel": "Básico",
     "Tema": "Fundamentos de Computación",
     "Asignatura": "Informatica",
@@ -323,7 +323,7 @@
   },
   {
     "Pregunta": "¿Qué función se usa para sumar un rango de celdas?",
-    "RespuestaCorrecta": "SUMA",
+    "respuesta_correcta_literal": "SUMA",
     "Nivel": "Básico",
     "Tema": "Hojas de Cálculo",
     "Asignatura": "Informatica",
@@ -337,7 +337,7 @@
   },
   {
     "Pregunta": "¿Cuál de los siguientes es un tipo de dato que puedes ingresar en una celda?",
-    "RespuestaCorrecta": "Todos los anteriores",
+    "respuesta_correcta_literal": "Todos los anteriores",
     "Nivel": "Básico",
     "Tema": "Hojas de Cálculo",
     "Asignatura": "Informatica",
@@ -351,7 +351,7 @@
   },
   {
     "Pregunta": "¿Qué atajo abre el cuadro de formato de celdas en la mayoría de hojas de cálculo?",
-    "RespuestaCorrecta": "Ctrl + 1",
+    "respuesta_correcta_literal": "Ctrl + 1",
     "Nivel": "Básico",
     "Tema": "Hojas de Cálculo",
     "Asignatura": "Informatica",
@@ -365,7 +365,7 @@
   },
   {
     "Pregunta": "¿Para qué sirve el filtrado de datos?",
-    "RespuestaCorrecta": "Para mostrar solo los datos que cumplen ciertos criterios",
+    "respuesta_correcta_literal": "Para mostrar solo los datos que cumplen ciertos criterios",
     "Nivel": "Básico",
     "Tema": "Fundamentos de Computación",
     "Asignatura": "Informatica",
@@ -379,7 +379,7 @@
   },
   {
     "Pregunta": "¿Cuál es la función para encontrar el valor máximo en un rango?",
-    "RespuestaCorrecta": "MAX",
+    "respuesta_correcta_literal": "MAX",
     "Nivel": "Básico",
     "Tema": "Fundamentos de Computación",
     "Asignatura": "Informatica",
@@ -393,7 +393,7 @@
   },
   {
     "Pregunta": "¿En qué pestaña del procesador de texto se encuentra la opción para insertar una tabla?",
-    "RespuestaCorrecta": "Insertar",
+    "respuesta_correcta_literal": "Insertar",
     "Nivel": "Básico",
     "Tema": "Procesadores de Texto",
     "Asignatura": "Informatica",
@@ -407,7 +407,7 @@
   },
   {
     "Pregunta": "¿Cuál es el propósito de los márgenes en una página?",
-    "RespuestaCorrecta": "Definir el espacio en blanco alrededor del contenido del documento",
+    "respuesta_correcta_literal": "Definir el espacio en blanco alrededor del contenido del documento",
     "Nivel": "Básico",
     "Tema": "Fundamentos de Computación",
     "Asignatura": "Informatica",
@@ -421,7 +421,7 @@
   },
   {
     "Pregunta": "¿Qué nos permite configurar la opción 'Orientación' en el diseño de página?",
-    "RespuestaCorrecta": "Elegir entre Vertical u Horizontal",
+    "respuesta_correcta_literal": "Elegir entre Vertical u Horizontal",
     "Nivel": "Básico",
     "Tema": "Fundamentos de Computación",
     "Asignatura": "Informatica",
@@ -435,7 +435,7 @@
   },
   {
     "Pregunta": "¿Qué es el encabezado de una página?",
-    "RespuestaCorrecta": "Un texto que se repite en la parte superior de cada página",
+    "respuesta_correcta_literal": "Un texto que se repite en la parte superior de cada página",
     "Nivel": "Básico",
     "Tema": "Fundamentos de Computación",
     "Asignatura": "Informatica",
@@ -449,7 +449,7 @@
   },
   {
     "Pregunta": "¿Para qué sirve la numeración de páginas?",
-    "RespuestaCorrecta": "Para organizar y facilitar la navegación en documentos extensos",
+    "respuesta_correcta_literal": "Para organizar y facilitar la navegación en documentos extensos",
     "Nivel": "Básico",
     "Tema": "Fundamentos de Computación",
     "Asignatura": "Informatica",
@@ -463,7 +463,7 @@
   },
   {
     "Pregunta": "2. Si inserta una imagen y esta actúa como un carácter más que no se puede mover libremente, ¿cuál es su ajuste de texto (Text Wrapping) por defecto?",
-    "RespuestaCorrecta": "En línea con el texto",
+    "respuesta_correcta_literal": "En línea con el texto",
     "Nivel": "Básico",
     "Tema": "Fundamentos de Computación",
     "Asignatura": "Informatica",
@@ -477,7 +477,7 @@
   },
   {
     "Pregunta": "4. ¿Cuál es el tamaño de papel estándar utilizado en Honduras, conocido internacionalmente como Carta?",
-    "RespuestaCorrecta": "Carta (Tamaño más común)",
+    "respuesta_correcta_literal": "Carta (Tamaño más común)",
     "Nivel": "Básico",
     "Tema": "Fundamentos de Computación",
     "Asignatura": "Informatica",
@@ -491,7 +491,7 @@
   },
   {
     "Pregunta": "5. ¿Cómo se llama el símbolo de un ancla que aparece en la imagen y que indica el párrafo al que está ligada?",
-    "RespuestaCorrecta": "Anclaje",
+    "respuesta_correcta_literal": "Anclaje",
     "Nivel": "Básico",
     "Tema": "Fundamentos de Computación",
     "Asignatura": "Informatica",
@@ -505,7 +505,7 @@
   },
   {
     "Pregunta": "6. Si necesita incluir un gráfico muy ancho en su informe, ¿qué orientación de página es más conveniente usar?",
-    "RespuestaCorrecta": "Horizontal (Paisaje)",
+    "respuesta_correcta_literal": "Horizontal (Paisaje)",
     "Nivel": "Básico",
     "Tema": "Fundamentos de Computación",
     "Asignatura": "Informatica",
@@ -519,7 +519,7 @@
   },
   {
     "Pregunta": "8. ¿Qué acción debe realizar sobre la Tabla de Contenido automática si añade un nuevo título o mueve una sección a otra página?",
-    "RespuestaCorrecta": "Actualizar Campos",
+    "respuesta_correcta_literal": "Actualizar Campos",
     "Nivel": "Básico",
     "Tema": "Sistemas Operativos",
     "Asignatura": "Informatica",
@@ -533,7 +533,7 @@
   },
   {
     "Pregunta": "9. ¿En qué pestaña de la cinta de opciones se encuentra generalmente la configuración de Márgenes y Orientación?",
-    "RespuestaCorrecta": "Disposición / Formato",
+    "respuesta_correcta_literal": "Disposición / Formato",
     "Nivel": "Básico",
     "Tema": "Fundamentos de Computación",
     "Asignatura": "Informatica",
@@ -547,7 +547,7 @@
   },
   {
     "Pregunta": "10. ¿Cuál es la configuración de margen requerida por las Normas APA (Séptima Edición) en los cuatro lados de la página?",
-    "RespuestaCorrecta": "$2.54 \text{ cm}$ ($1 \text{ pulgada}$)",
+    "respuesta_correcta_literal": "$2.54 \text{ cm}$ ($1 \text{ pulgada}$)",
     "Nivel": "Básico",
     "Tema": "Procesadores de Texto",
     "Asignatura": "Informatica",
@@ -561,7 +561,7 @@
   },
   {
     "Pregunta": "¿Qué es la informática?",
-    "RespuestaCorrecta": "Ciencia del tratamiento automático de la información",
+    "respuesta_correcta_literal": "Ciencia del tratamiento automático de la información",
     "Nivel": "Básico",
     "Tema": "Fundamentos de Computación",
     "Asignatura": "Informatica",
@@ -575,7 +575,7 @@
   },
   {
     "Pregunta": "¿Qué es un sistema informático?",
-    "RespuestaCorrecta": "Conjunto de Hardware, Software y Personal informático",
+    "respuesta_correcta_literal": "Conjunto de Hardware, Software y Personal informático",
     "Nivel": "Básico",
     "Tema": "Fundamentos de Computación",
     "Asignatura": "Informatica",
@@ -589,7 +589,7 @@
   },
   {
     "Pregunta": "¿Cuál de estos es un ejemplo de Hardware?",
-    "RespuestaCorrecta": "Monitor",
+    "respuesta_correcta_literal": "Monitor",
     "Nivel": "Básico",
     "Tema": "Hardware",
     "Asignatura": "Informatica",
@@ -603,7 +603,7 @@
   },
   {
     "Pregunta": "¿Cuál de estos es un ejemplo de Software?",
-    "RespuestaCorrecta": "Navegador Web",
+    "respuesta_correcta_literal": "Navegador Web",
     "Nivel": "Básico",
     "Tema": "Software",
     "Asignatura": "Informatica",
@@ -617,7 +617,7 @@
   },
   {
     "Pregunta": "¿Qué dispositivo es el cerebro de la computadora?",
-    "RespuestaCorrecta": "CPU",
+    "respuesta_correcta_literal": "CPU",
     "Nivel": "Básico",
     "Tema": "Introducción a la Informática",
     "Asignatura": "Informatica",
@@ -631,7 +631,7 @@
   },
   {
     "Pregunta": "¿Qué significa la palabra Informática?",
-    "RespuestaCorrecta": "Información Automática",
+    "respuesta_correcta_literal": "Información Automática",
     "Nivel": "Básico",
     "Tema": "Fundamentos de Computación",
     "Asignatura": "Informatica",
@@ -645,7 +645,7 @@
   },
   {
     "Pregunta": "¿Cuál de estos componentes NO es físico?",
-    "RespuestaCorrecta": "Sistema Operativo",
+    "respuesta_correcta_literal": "Sistema Operativo",
     "Nivel": "Básico",
     "Tema": "Fundamentos de Computación",
     "Asignatura": "Informatica",
@@ -659,7 +659,7 @@
   },
   {
     "Pregunta": "¿A qué categoría pertenece el Mouse?",
-    "RespuestaCorrecta": "Hardware",
+    "respuesta_correcta_literal": "Hardware",
     "Nivel": "Básico",
     "Tema": "Periféricos",
     "Asignatura": "Informatica",
@@ -673,7 +673,7 @@
   },
   {
     "Pregunta": "¿Qué es el Humanware?",
-    "RespuestaCorrecta": "El usuario que utiliza la computadora",
+    "respuesta_correcta_literal": "El usuario que utiliza la computadora",
     "Nivel": "Básico",
     "Tema": "Fundamentos de Computación",
     "Asignatura": "Informatica",
@@ -687,7 +687,7 @@
   },
   {
     "Pregunta": "¿Cuál es un periférico de entrada?",
-    "RespuestaCorrecta": "Teclado",
+    "respuesta_correcta_literal": "Teclado",
     "Nivel": "Básico",
     "Tema": "Periféricos",
     "Asignatura": "Informatica",

@@ -25,6 +25,8 @@ var QuizProApp = window.QuizProApp || {};
             if (autoHide === undefined) autoHide = true;
             console.log("[GamesAdapter] Iniciando sesión para: " + gameId);
 
+            // REQ v7.5: Reinicio de telemetría por sesión
+            this.pendingAnalytics = [];
             this.state.currentSession = {
                 gameId: gameId,
                 startTime: Date.now(),

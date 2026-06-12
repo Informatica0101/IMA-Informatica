@@ -1,7 +1,7 @@
 [
   {
     "Pregunta": "¿Cuál es el objetivo principal de Análisis y Diseño de Sistemas?",
-    "RespuestaCorrecta": "Comprender el desarrollo de soluciones informáticas",
+    "respuesta_correcta_literal": "Comprender el desarrollo de soluciones informáticas",
     "Nivel": "Intermedio",
     "Tema": "Fundamentos de Sistemas",
     "Asignatura": "Analisis_Diseno",
@@ -15,7 +15,7 @@
   },
   {
     "Pregunta": "Un conjunto de componentes interrelacionados con un objetivo común se define como:",
-    "RespuestaCorrecta": "Sistema",
+    "respuesta_correcta_literal": "Sistema",
     "Nivel": "Intermedio",
     "Tema": "Modelado de Sistemas",
     "Asignatura": "Analisis_Diseno",
@@ -29,7 +29,7 @@
   },
   {
     "Pregunta": "¿Qué fase investiga qué debe hacer el nuevo sistema?",
-    "RespuestaCorrecta": "Análisis",
+    "respuesta_correcta_literal": "Análisis",
     "Nivel": "Intermedio",
     "Tema": "Ciclo de Vida (SDLC)",
     "Asignatura": "Analisis_Diseno",
@@ -43,7 +43,7 @@
   },
   {
     "Pregunta": "¿Qué fase especifica cómo se construirá el sistema?",
-    "RespuestaCorrecta": "Diseño",
+    "respuesta_correcta_literal": "Diseño",
     "Nivel": "Intermedio",
     "Tema": "Ciclo de Vida (SDLC)",
     "Asignatura": "Analisis_Diseno",
@@ -57,7 +57,7 @@
   },
   {
     "Pregunta": "¿Cuál de estos es un beneficio de un buen Análisis y Diseño?",
-    "RespuestaCorrecta": "Reduce errores y retrabajo",
+    "respuesta_correcta_literal": "Reduce errores y retrabajo",
     "Nivel": "Intermedio",
     "Tema": "Ciclo de Vida de Software (SDLC)",
     "Asignatura": "Analisis_Diseno",
@@ -71,7 +71,7 @@
   },
   {
     "Pregunta": "¿Qué significa SDLC?",
-    "RespuestaCorrecta": "Software Development Life Cycle",
+    "respuesta_correcta_literal": "Software Development Life Cycle",
     "Nivel": "Intermedio",
     "Tema": "Ciclo de Vida (SDLC)",
     "Asignatura": "Analisis_Diseno",
@@ -85,7 +85,7 @@
   },
   {
     "Pregunta": "El profesional que es el puente entre usuarios y desarrolladores es el:",
-    "RespuestaCorrecta": "Analista de Sistemas",
+    "respuesta_correcta_literal": "Analista de Sistemas",
     "Nivel": "Intermedio",
     "Tema": "Rol del Analista",
     "Asignatura": "Analisis_Diseno",
@@ -99,7 +99,7 @@
   },
   {
     "Pregunta": "Habilidades fundamentales del analista:",
-    "RespuestaCorrecta": "Comunicación, lógica y resolución de problemas",
+    "respuesta_correcta_literal": "Comunicación, lógica y resolución de problemas",
     "Nivel": "Intermedio",
     "Tema": "Rol del Analista",
     "Asignatura": "Analisis_Diseno",
@@ -113,7 +113,7 @@
   },
   {
     "Pregunta": "El Análisis y Diseño son los __________ del software.",
-    "RespuestaCorrecta": "Cimientos",
+    "respuesta_correcta_literal": "Cimientos",
     "Nivel": "Intermedio",
     "Tema": "Ciclo de Vida de Software (SDLC)",
     "Asignatura": "Analisis_Diseno",
@@ -127,7 +127,7 @@
   },
   {
     "Pregunta": "¿Qué incluye la fase de diseño?",
-    "RespuestaCorrecta": "Arquitectura, datos e interfaz",
+    "respuesta_correcta_literal": "Arquitectura, datos e interfaz",
     "Nivel": "Intermedio",
     "Tema": "Ciclo de Vida (SDLC)",
     "Asignatura": "Analisis_Diseno",
@@ -141,7 +141,7 @@
   },
   {
     "Pregunta": "¿Cuál es el objetivo principal de Análisis y Diseño de Sistemas I?",
-    "RespuestaCorrecta": "Comprender el desarrollo de soluciones informáticas",
+    "respuesta_correcta_literal": "Comprender el desarrollo de soluciones informáticas",
     "Nivel": "Intermedio",
     "Tema": "Fundamentos de Sistemas",
     "Asignatura": "Analisis_Diseno",
@@ -155,7 +155,7 @@
   },
   {
     "Pregunta": "¿Qué es un sistema en el contexto de esta clase?",
-    "RespuestaCorrecta": "Conjunto de componentes interrelacionados con un objetivo común",
+    "respuesta_correcta_literal": "Conjunto de componentes interrelacionados con un objetivo común",
     "Nivel": "Intermedio",
     "Tema": "Fundamentos de Sistemas",
     "Asignatura": "Analisis_Diseno",
@@ -169,7 +169,7 @@
   },
   {
     "Pregunta": "El proceso de investigar 'qué debe hacer' un nuevo sistema se llama:",
-    "RespuestaCorrecta": "Análisis de Sistemas",
+    "respuesta_correcta_literal": "Análisis de Sistemas",
     "Nivel": "Intermedio",
     "Tema": "Ciclo de Vida de Software (SDLC)",
     "Asignatura": "Analisis_Diseno",
@@ -183,7 +183,7 @@
   },
   {
     "Pregunta": "El proceso de especificar 'cómo se construirá' el sistema se llama:",
-    "RespuestaCorrecta": "Diseño de Sistemas",
+    "respuesta_correcta_literal": "Diseño de Sistemas",
     "Nivel": "Intermedio",
     "Tema": "Ciclo de Vida de Software (SDLC)",
     "Asignatura": "Analisis_Diseno",
@@ -197,7 +197,7 @@
   },
   {
     "Pregunta": "¿Cuál de estos NO es un beneficio de un buen análisis y diseño?",
-    "RespuestaCorrecta": "Aumento de errores y retrabajo",
+    "respuesta_correcta_literal": "Aumento de errores y retrabajo",
     "Nivel": "Intermedio",
     "Tema": "Ciclo de Vida de Software (SDLC)",
     "Asignatura": "Analisis_Diseno",
@@ -211,7 +211,7 @@
   },
   {
     "Pregunta": "¿Qué significa la sigla SDLC?",
-    "RespuestaCorrecta": "System Development Life Cycle",
+    "respuesta_correcta_literal": "System Development Life Cycle",
     "Nivel": "Intermedio",
     "Tema": "Ciclo de Vida (SDLC)",
     "Asignatura": "Analisis_Diseno",
@@ -225,7 +225,7 @@
   },
   {
     "Pregunta": "¿Cuál es el 'puente' esencial entre usuarios y desarrolladores?",
-    "RespuestaCorrecta": "Analista de Sistemas",
+    "respuesta_correcta_literal": "Analista de Sistemas",
     "Nivel": "Intermedio",
     "Tema": "Rol del Analista",
     "Asignatura": "Analisis_Diseno",
@@ -239,7 +239,7 @@
   },
   {
     "Pregunta": "Una fase del SDLC que ocurre después del Diseño es:",
-    "RespuestaCorrecta": "Implementación",
+    "respuesta_correcta_literal": "Implementación",
     "Nivel": "Intermedio",
     "Tema": "Ciclo de Vida (SDLC)",
     "Asignatura": "Analisis_Diseno",
@@ -253,7 +253,7 @@
   },
   {
     "Pregunta": "¿Qué habilidades son fundamentales para un analista de sistemas?",
-    "RespuestaCorrecta": "Comunicación, lógica y resolución de problemas",
+    "respuesta_correcta_literal": "Comunicación, lógica y resolución de problemas",
     "Nivel": "Intermedio",
     "Tema": "Rol del Analista",
     "Asignatura": "Analisis_Diseno",
@@ -267,7 +267,7 @@
   },
   {
     "Pregunta": "El análisis y diseño se consideran los __________ del proyecto de software.",
-    "RespuestaCorrecta": "Cimientos",
+    "respuesta_correcta_literal": "Cimientos",
     "Nivel": "Intermedio",
     "Tema": "Gestión de Proyectos",
     "Asignatura": "Analisis_Diseno",
@@ -281,7 +281,7 @@
   },
   {
     "Pregunta": "¿Qué es el Ciclo de Vida de Desarrollo de Software (SDLC)?",
-    "RespuestaCorrecta": "Proceso estructurado que guía la creación de software",
+    "respuesta_correcta_literal": "Proceso estructurado que guía la creación de software",
     "Nivel": "Intermedio",
     "Tema": "Rol del Analista",
     "Asignatura": "Analisis_Diseno",
@@ -295,7 +295,7 @@
   },
   {
     "Pregunta": "¿Cuál es una ventaja del Modelo Cascada?",
-    "RespuestaCorrecta": "Simple y fácil de entender",
+    "respuesta_correcta_literal": "Simple y fácil de entender",
     "Nivel": "Intermedio",
     "Tema": "Metodologías",
     "Asignatura": "Analisis_Diseno",
@@ -309,7 +309,7 @@
   },
   {
     "Pregunta": "El Modelo Cascada se caracteriza por ser:",
-    "RespuestaCorrecta": "Lineal y secuencial",
+    "respuesta_correcta_literal": "Lineal y secuencial",
     "Nivel": "Intermedio",
     "Tema": "Metodologías",
     "Asignatura": "Analisis_Diseno",
@@ -323,7 +323,7 @@
   },
   {
     "Pregunta": "¿En qué se basa principalmente el Modelo Espiral?",
-    "RespuestaCorrecta": "Gestión de riesgos",
+    "respuesta_correcta_literal": "Gestión de riesgos",
     "Nivel": "Intermedio",
     "Tema": "Modelos y Metodologías",
     "Asignatura": "Analisis_Diseno",
@@ -337,7 +337,7 @@
   },
   {
     "Pregunta": "¿Cuál de estos es un principio de los Modelos Ágiles?",
-    "RespuestaCorrecta": "Respuesta al cambio sobre seguir un plan",
+    "respuesta_correcta_literal": "Respuesta al cambio sobre seguir un plan",
     "Nivel": "Intermedio",
     "Tema": "Modelos y Metodologías",
     "Asignatura": "Analisis_Diseno",
@@ -351,7 +351,7 @@
   },
   {
     "Pregunta": "¿Qué son los 'Sprints' en Scrum?",
-    "RespuestaCorrecta": "Iteraciones cortas de tiempo fijo",
+    "respuesta_correcta_literal": "Iteraciones cortas de tiempo fijo",
     "Nivel": "Intermedio",
     "Tema": "Metodologías",
     "Asignatura": "Analisis_Diseno",
@@ -365,7 +365,7 @@
   },
   {
     "Pregunta": "En Scrum, la lista priorizada de funcionalidades se llama:",
-    "RespuestaCorrecta": "Product Backlog",
+    "respuesta_correcta_literal": "Product Backlog",
     "Nivel": "Intermedio",
     "Tema": "Ingeniería de Requisitos",
     "Asignatura": "Analisis_Diseno",
@@ -379,7 +379,7 @@
   },
   {
     "Pregunta": "¿Qué modelo es más adecuado para proyectos con requisitos muy inestables?",
-    "RespuestaCorrecta": "Ágil (Scrum)",
+    "respuesta_correcta_literal": "Ágil (Scrum)",
     "Nivel": "Intermedio",
     "Tema": "Gestión de Proyectos",
     "Asignatura": "Analisis_Diseno",
@@ -393,7 +393,7 @@
   },
   {
     "Pregunta": "¿Qué característica define la flexibilidad en la comparación de modelos?",
-    "RespuestaCorrecta": "La capacidad de adaptarse a cambios",
+    "respuesta_correcta_literal": "La capacidad de adaptarse a cambios",
     "Nivel": "Intermedio",
     "Tema": "Modelos y Metodologías",
     "Asignatura": "Analisis_Diseno",
@@ -407,7 +407,7 @@
   },
   {
     "Pregunta": "El modelo que combina elementos de Cascada y Prototipado es el:",
-    "RespuestaCorrecta": "Modelo Espiral",
+    "respuesta_correcta_literal": "Modelo Espiral",
     "Nivel": "Intermedio",
     "Tema": "Metodologías",
     "Asignatura": "Analisis_Diseno",
@@ -421,7 +421,7 @@
   },
   {
     "Pregunta": "¿Qué es la Gestión de Proyectos de Software?",
-    "RespuestaCorrecta": "Disciplina que organiza, planifica, ejecuta y controla recursos",
+    "respuesta_correcta_literal": "Disciplina que organiza, planifica, ejecuta y controla recursos",
     "Nivel": "Intermedio",
     "Tema": "Gestión de Proyectos",
     "Asignatura": "Analisis_Diseno",
@@ -435,7 +435,7 @@
   },
   {
     "Pregunta": "¿Cuál de estos NO es un objetivo de la gestión de proyectos?",
-    "RespuestaCorrecta": "Aumentar el presupuesto sin control",
+    "respuesta_correcta_literal": "Aumentar el presupuesto sin control",
     "Nivel": "Intermedio",
     "Tema": "Gestión de Proyectos",
     "Asignatura": "Analisis_Diseno",
@@ -449,7 +449,7 @@
   },
   {
     "Pregunta": "¿Cuál es la primera fase de la gestión de proyectos?",
-    "RespuestaCorrecta": "Inicio",
+    "respuesta_correcta_literal": "Inicio",
     "Nivel": "Intermedio",
     "Tema": "Gestión de Proyectos",
     "Asignatura": "Analisis_Diseno",
@@ -463,7 +463,7 @@
   },
   {
     "Pregunta": "El responsable principal del éxito del proyecto es:",
-    "RespuestaCorrecta": "Gerente de Proyecto",
+    "respuesta_correcta_literal": "Gerente de Proyecto",
     "Nivel": "Intermedio",
     "Tema": "Gestión de Proyectos",
     "Asignatura": "Analisis_Diseno",
@@ -477,7 +477,7 @@
   },
   {
     "Pregunta": "¿Qué herramienta visualiza el cronograma y las dependencias de tareas?",
-    "RespuestaCorrecta": "Diagramas de Gantt",
+    "respuesta_correcta_literal": "Diagramas de Gantt",
     "Nivel": "Intermedio",
     "Tema": "Fundamentos de Sistemas",
     "Asignatura": "Analisis_Diseno",
@@ -491,7 +491,7 @@
   },
   {
     "Pregunta": "¿Qué es un hito (milestone)?",
-    "RespuestaCorrecta": "Un logro clave sin duración",
+    "respuesta_correcta_literal": "Un logro clave sin duración",
     "Nivel": "Intermedio",
     "Tema": "Gestión de Proyectos",
     "Asignatura": "Analisis_Diseno",
@@ -505,7 +505,7 @@
   },
   {
     "Pregunta": "¿Qué busca el Análisis Orientado a Objetos (AOO)?",
-    "RespuestaCorrecta": "Comprender el problema y crear un modelo visual",
+    "respuesta_correcta_literal": "Comprender el problema y crear un modelo visual",
     "Nivel": "Intermedio",
     "Tema": "Modelado de Sistemas",
     "Asignatura": "Analisis_Diseno",
@@ -519,7 +519,7 @@
   },
   {
     "Pregunta": "¿Cuál de estos es un artefacto clave del AOO?",
-    "RespuestaCorrecta": "Tarjetas CRC",
+    "respuesta_correcta_literal": "Tarjetas CRC",
     "Nivel": "Intermedio",
     "Tema": "Modelado de Sistemas",
     "Asignatura": "Analisis_Diseno",
@@ -533,7 +533,7 @@
   },
   {
     "Pregunta": "El modelo de datos que define entidades y relaciones de alto nivel es el:",
-    "RespuestaCorrecta": "Conceptual",
+    "respuesta_correcta_literal": "Conceptual",
     "Nivel": "Intermedio",
     "Tema": "Modelos y Metodologías",
     "Asignatura": "Analisis_Diseno",
@@ -547,7 +547,7 @@
   },
   {
     "Pregunta": "¿Para qué sirve la Gestión de Riesgos?",
-    "RespuestaCorrecta": "Identificar y mitigar problemas potenciales",
+    "respuesta_correcta_literal": "Identificar y mitigar problemas potenciales",
     "Nivel": "Intermedio",
     "Tema": "Gestión de Proyectos",
     "Asignatura": "Analisis_Diseno",
@@ -561,7 +561,7 @@
   },
   {
     "Pregunta": "¿Cómo se define al analista de sistemas en relación con el negocio y la tecnología?",
-    "RespuestaCorrecta": "Como un puente esencial",
+    "respuesta_correcta_literal": "Como un puente esencial",
     "Nivel": "Intermedio",
     "Tema": "Rol del Analista",
     "Asignatura": "Analisis_Diseno",
@@ -575,7 +575,7 @@
   },
   {
     "Pregunta": "¿Cuál de estas es una habilidad técnica requerida para un analista?",
-    "RespuestaCorrecta": "Comprensión de programación",
+    "respuesta_correcta_literal": "Comprensión de programación",
     "Nivel": "Intermedio",
     "Tema": "Rol del Analista",
     "Asignatura": "Analisis_Diseno",
@@ -589,7 +589,7 @@
   },
   {
     "Pregunta": "La capacidad de proponer soluciones innovadoras 'fuera de la caja' se refiere a:",
-    "RespuestaCorrecta": "Creatividad",
+    "respuesta_correcta_literal": "Creatividad",
     "Nivel": "Intermedio",
     "Tema": "El Rol del Analista",
     "Asignatura": "Analisis_Diseno",
@@ -603,7 +603,7 @@
   },
   {
     "Pregunta": "¿Qué habilidad blanda permite ser el enlace efectivo entre usuarios y técnicos?",
-    "RespuestaCorrecta": "Comunicación y Negociación",
+    "respuesta_correcta_literal": "Comunicación y Negociación",
     "Nivel": "Intermedio",
     "Tema": "El Rol del Analista",
     "Asignatura": "Analisis_Diseno",
@@ -617,7 +617,7 @@
   },
   {
     "Pregunta": "Identificar obstáculos y desarrollar estrategias efectivas se asocia con:",
-    "RespuestaCorrecta": "Resolución de Problemas",
+    "respuesta_correcta_literal": "Resolución de Problemas",
     "Nivel": "Intermedio",
     "Tema": "Rol del Analista",
     "Asignatura": "Analisis_Diseno",
@@ -631,7 +631,7 @@
   },
   {
     "Pregunta": "¿Por qué es importante para un analista entender de Estructuras de Datos?",
-    "RespuestaCorrecta": "Para diseñar bases de datos eficientes",
+    "respuesta_correcta_literal": "Para diseñar bases de datos eficientes",
     "Nivel": "Intermedio",
     "Tema": "Rol del Analista",
     "Asignatura": "Analisis_Diseno",
@@ -645,7 +645,7 @@
   },
   {
     "Pregunta": "Un desafío común del analista es enfrentarse a:",
-    "RespuestaCorrecta": "Requisitos ambiguos o cambiantes",
+    "respuesta_correcta_literal": "Requisitos ambiguos o cambiantes",
     "Nivel": "Intermedio",
     "Tema": "Rol del Analista",
     "Asignatura": "Analisis_Diseno",
@@ -659,7 +659,7 @@
   },
   {
     "Pregunta": "¿Cuál es una tarea clave del analista durante el inicio del proyecto?",
-    "RespuestaCorrecta": "Identificar y documentar requisitos",
+    "respuesta_correcta_literal": "Identificar y documentar requisitos",
     "Nivel": "Intermedio",
     "Tema": "Gestión de Proyectos",
     "Asignatura": "Analisis_Diseno",
@@ -673,7 +673,7 @@
   },
   {
     "Pregunta": "Las habilidades interpersonales del analista se conocen como:",
-    "RespuestaCorrecta": "Habilidades blandas",
+    "respuesta_correcta_literal": "Habilidades blandas",
     "Nivel": "Intermedio",
     "Tema": "Rol del Analista",
     "Asignatura": "Analisis_Diseno",
@@ -687,7 +687,7 @@
   },
   {
     "Pregunta": "¿Cuál es el objetivo de tener conocimientos de redes y conectividad?",
-    "RespuestaCorrecta": "Diseñar sistemas distribuidos y seguros",
+    "respuesta_correcta_literal": "Diseñar sistemas distribuidos y seguros",
     "Nivel": "Intermedio",
     "Tema": "Fundamentos de Sistemas",
     "Asignatura": "Analisis_Diseno",
@@ -701,7 +701,7 @@
   },
   {
     "Pregunta": "¿Qué son los requerimientos en un sistema?",
-    "RespuestaCorrecta": "Condiciones o capacidades que el sistema debe poseer",
+    "respuesta_correcta_literal": "Condiciones o capacidades que el sistema debe poseer",
     "Nivel": "Intermedio",
     "Tema": "Ingeniería de Requisitos",
     "Asignatura": "Analisis_Diseno",
@@ -715,7 +715,7 @@
   },
   {
     "Pregunta": "Los requerimientos que describen 'lo que el sistema debe hacer' se llaman:",
-    "RespuestaCorrecta": "Funcionales",
+    "respuesta_correcta_literal": "Funcionales",
     "Nivel": "Intermedio",
     "Tema": "Ingeniería de Requisitos",
     "Asignatura": "Analisis_Diseno",
@@ -729,7 +729,7 @@
   },
   {
     "Pregunta": "Ejemplo de requerimiento No Funcional:",
-    "RespuestaCorrecta": "Seguridad y rendimiento",
+    "respuesta_correcta_literal": "Seguridad y rendimiento",
     "Nivel": "Intermedio",
     "Tema": "Ingeniería de Requisitos",
     "Asignatura": "Analisis_Diseno",
@@ -743,7 +743,7 @@
   },
   {
     "Pregunta": "¿Cuál es la primera etapa del proceso de recolección?",
-    "RespuestaCorrecta": "Identificación de Stakeholders",
+    "respuesta_correcta_literal": "Identificación de Stakeholders",
     "Nivel": "Intermedio",
     "Tema": "Fundamentos de Sistemas",
     "Asignatura": "Analisis_Diseno",
@@ -757,7 +757,7 @@
   },
   {
     "Pregunta": "Técnica que consiste en conversaciones directas para obtener detalles:",
-    "RespuestaCorrecta": "Entrevistas",
+    "respuesta_correcta_literal": "Entrevistas",
     "Nivel": "Intermedio",
     "Tema": "Fundamentos de Sistemas",
     "Asignatura": "Analisis_Diseno",
@@ -771,7 +771,7 @@
   },
   {
     "Pregunta": "¿Cuál es una desventaja de los cuestionarios?",
-    "RespuestaCorrecta": "No permite aclaraciones inmediatas",
+    "respuesta_correcta_literal": "No permite aclaraciones inmediatas",
     "Nivel": "Intermedio",
     "Tema": "Ingeniería de Requisitos",
     "Asignatura": "Analisis_Diseno",
@@ -785,7 +785,7 @@
   },
   {
     "Pregunta": "La técnica de observar a los usuarios en su entorno real se llama:",
-    "RespuestaCorrecta": "Observación",
+    "respuesta_correcta_literal": "Observación",
     "Nivel": "Intermedio",
     "Tema": "Fundamentos de Sistemas",
     "Asignatura": "Analisis_Diseno",
@@ -799,7 +799,7 @@
   },
   {
     "Pregunta": "¿Qué técnica utiliza una versión simplificada del sistema para obtener feedback?",
-    "RespuestaCorrecta": "Prototipos",
+    "respuesta_correcta_literal": "Prototipos",
     "Nivel": "Intermedio",
     "Tema": "Fundamentos de Sistemas",
     "Asignatura": "Analisis_Diseno",
@@ -813,7 +813,7 @@
   },
   {
     "Pregunta": "La técnica de 'Lluvia de Ideas' busca principalmente:",
-    "RespuestaCorrecta": "Generar muchas ideas rápidamente",
+    "respuesta_correcta_literal": "Generar muchas ideas rápidamente",
     "Nivel": "Intermedio",
     "Tema": "Ingeniería de Requisitos",
     "Asignatura": "Analisis_Diseno",
@@ -827,7 +827,7 @@
   },
   {
     "Pregunta": "¿Qué técnica describe las interacciones entre usuario y sistema para un objetivo?",
-    "RespuestaCorrecta": "Casos de Uso",
+    "respuesta_correcta_literal": "Casos de Uso",
     "Nivel": "Intermedio",
     "Tema": "Fundamentos de Sistemas",
     "Asignatura": "Analisis_Diseno",

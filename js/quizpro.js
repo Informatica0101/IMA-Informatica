@@ -542,10 +542,10 @@ var QuizProApp = window.QuizProApp || {};
         if (q.type === 'practice' || q.type === 'funcionalidad') {
             optCont.classList.remove('hidden');
             var codeEl = document.createElement('div'); codeEl.className = 'bg-gray-900 text-green-400 p-4 rounded-xl font-mono text-xs mb-6 overflow-x-auto whitespace-pre';
-            codeEl.textContent = q.code; optCont.appendChild(codeEl);
+            codeEl.innerHTML = app.sanitizarHTMLTecnico(q.code); optCont.appendChild(codeEl);
             app.getBalancedOptions(q.options, q.answer).forEach(function(opt) {
                 var btn = document.createElement('button'); btn.className = 'option-card w-full p-4 text-left border-2 border-gray-100 rounded-xl font-medium text-gray-700 bg-white hover:bg-gray-50 transition-all';
-                btn.innerText = opt; btn.onclick = function() { app.checkAnswer(opt, q.answer, btn); }; optCont.appendChild(btn);
+                btn.innerHTML = app.sanitizarHTMLTecnico(opt); btn.onclick = function() { app.checkAnswer(opt, q.answer, btn); }; optCont.appendChild(btn);
             });
         } else if (q.type === 'transcription') {
             fibCont.classList.remove('hidden');
@@ -560,7 +560,7 @@ var QuizProApp = window.QuizProApp || {};
             optCont.classList.remove('hidden');
             ["Verdadero", "Falso"].forEach(function(opt) {
                 var btn = document.createElement('button'); btn.className = 'option-card w-full p-6 text-center border-2 border-gray-100 rounded-2xl font-black text-gray-700 bg-white hover:bg-blue-50 transition-all uppercase tracking-widest text-sm';
-                btn.innerText = opt; btn.onclick = function() { var val = (String(q.answer).toLowerCase().indexOf('v') === 0) ? opt : (opt === "Verdadero" ? "A" : "B"); app.checkAnswer(val, q.answer, btn); }; optCont.appendChild(btn);
+                btn.innerHTML = app.sanitizarHTMLTecnico(opt); btn.onclick = function() { var val = (String(q.answer).toLowerCase().indexOf('v') === 0) ? opt : (opt === "Verdadero" ? "A" : "B"); app.checkAnswer(val, q.answer, btn); }; optCont.appendChild(btn);
             });
         } else if (q.type === 'memory') {
             matchCont.classList.remove('hidden');
@@ -596,7 +596,7 @@ var QuizProApp = window.QuizProApp || {};
             optCont.classList.remove('hidden');
             app.getBalancedOptions(q.options, q.answer).forEach(function(opt) {
                 var btn = document.createElement('button'); btn.className = 'option-card w-full p-4 text-left border-2 border-gray-100 rounded-xl font-medium text-gray-700 bg-white hover:bg-gray-50 transition-all';
-                btn.innerText = opt; btn.onclick = function() { app.checkAnswer(opt, q.answer, btn); }; optCont.appendChild(btn);
+                btn.innerHTML = app.sanitizarHTMLTecnico(opt); btn.onclick = function() { app.checkAnswer(opt, q.answer, btn); }; optCont.appendChild(btn);
             });
         }
         app.registerSeenQuestion(q.id);
@@ -656,6 +656,7 @@ var QuizProApp = window.QuizProApp || {};
 
     app.endQuiz = function() {
         clearInterval(timerInterval);
+        var self = this;
         document.getElementById('quiz-screen').classList.add('hidden');
         document.getElementById('result-screen').classList.remove('hidden');
         var finalPercent = Math.round((score / currentQuizQuestions.length) * 100);
@@ -687,11 +688,20 @@ var QuizProApp = window.QuizProApp || {};
             var user = userRaw ? JSON.parse(userRaw) : null;
             if (user) {
                 var payload = { userId: user.userId, nombreAlumno: user.nombre, juego: "QuizPro", asignatura: selectedAsignatura, puntaje: finalPercent, nivel: lvlName, grado: selectedGrado, xpGanada: sessionXP, fecha_logro: new Date().toISOString() };
-                app.fetchApi('USER', 'saveGameResult', payload).then(function(res) {
+
+                // REQ v7.5: Telemetría determinista
+                var analyticsWait = (QuizProApp.GamesAdapter && QuizProApp.GamesAdapter.pendingAnalytics) ?
+                    Promise.all(QuizProApp.GamesAdapter.pendingAnalytics) : Promise.resolve();
+
+                analyticsWait.then(function() {
+                    return app.fetchApi('USER', 'saveGameResult', payload);
+                }).then(function(res) {
                     if (res.status === 'success' && res.updatedStats) {
                         for (var k in res.updatedStats) QuizProApp.userGameStats[k] = res.updatedStats[k];
                         app.loadPerformanceTable();
                     }
+                })["catch"](function(e) {
+                    console.warn("[QuizPro] Error en guardado final:", e);
                 });
             }
         }

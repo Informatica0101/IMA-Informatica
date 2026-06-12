@@ -60,7 +60,7 @@
 - **Dependencias Expuestas:** QuizProApp.sanitizarHTMLTecnico, GamesAdapter.pendingAnalytics
 - **Descripción del Alcance:** 1) Sustituir innerText por innerHTML sanitizado en renderizado de opciones. 2) Implementar espera de pendingAnalytics en endQuiz. 3) Actualizar onclick en HTML a la jerarquía QuizProApp.
 - **Criterios de Aceptación:** Visualización correcta de etiquetas <code> en el quiz; Sincronización completa de analítica antes de redirección.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 ### [T-ATÓMICA-02] Normalización de Esquema de Banco de Preguntas
 - **Origen del Hallazgo:** Auditoría Deep-Dive - 2026-06-24
@@ -69,7 +69,7 @@
 - **Dependencias Expuestas:** QuizProApp.normalizeQuestion
 - **Descripción del Alcance:** Unificar las llaves de respuesta a 'respuesta_correcta_literal' en todos los archivos JSON para eliminar ambigüedad en el motor v7.6.
 - **Criterios de Aceptación:** 100% de los reactivos utilizan la llave estándar snake_case.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 ### [T-ATÓMICA-03] Limpieza de Redundancias y Estandarización de Footers
 - **Origen del Hallazgo:** Auditoría Deep-Dive - 2026-06-24
@@ -78,4 +78,4 @@
 - **Dependencias Expuestas:** QuizProApp
 - **Descripción del Alcance:** Eliminar re-declaraciones de QuizProApp dentro de funciones y estandarizar el cierre de IIFEs al objeto 'app' o 'QuizProApp' local.
 - **Criterios de Aceptación:** Consistencia en la estructura de módulos.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
