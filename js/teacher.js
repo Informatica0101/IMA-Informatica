@@ -174,6 +174,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 fetchApi('USER', 'updateAcademicConfig', { key: 'ParcialActual', value: parcial }),
                 fetchApi('USER', 'updateAsignaturasActivas', { parcial, asignaturas: selectedAsignaturas })
             ]);
+
+            // REQ 3: Update local cache for immediate effect cascade
+            const localConfig = JSON.parse(localStorage.getItem('academic_config_cache') || '{}');
+            localConfig[window.normalizePartial(parcial)] = selectedAsignaturas;
+            localStorage.setItem('academic_config_cache', JSON.stringify(localConfig));
+
             alert('Configuración académica actualizada correctamente.');
         } catch (e) {
             alert('Error al guardar configuración: ' + e.message);

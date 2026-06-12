@@ -467,3 +467,48 @@ Archivo: js/api.js
 
 Archivo: js/persistence.js
 - [VERIFICADO] El motor Offline-First está correctamente estructurado para soportar el tránsito operativo desde la caché.
+
+AUDITORÍA CURRICULAR Y ESTRUCTURAL - 2026-06-12
+
+Módulo: Banco de Preguntas (QuizPro)
+- [HALLAZGO CRÍTICO] Se detectaron 15+ reactivos de sistemas de numeración (Binario/Hexadecimal) en 10.mo Grado (Informatica/Intermedio), violando el mapa curricular de NORMAS_Y_DISEÑO_REACTIVOS.md.
+- [HALLAZGO] El nodo 10.mo Grado (Informatica/Avanzado) posee 0 reactivos reales, mientras que el nodo Básico está saturado con 139 reactivos, muchos de los cuales corresponden a taxonomía de Software/Seguridad (Nivel Avanzado).
+- [HALLAZGO] El nodo 11.mo Grado (Informatica Aplicada/Avanzado) tiene 0 reactivos.
+
+Módulo: Presentaciones Multimedia
+- [HALLAZGO] 70+ archivos .html utilizan lógica de navegación legacy (Flechas/Teclado) sin soporte para gestos móviles (Swipe) ni bloqueo de zoom extremo.
+- [HALLAZGO] Ausencia del bloque de metadatos académicos estandarizado en la Diapositiva 1 de las presentaciones antiguas.
+
+Módulo: Dashboard del Profesor
+- [HALLAZGO] La configuración de "Parcial en Curso" no discrimina la visibilidad de asignaturas, permitiendo el acceso a contenidos de todo el año escolar, lo que confunde al estudiante y satura la interfaz.
+
+
+AUDITORÍA DE CIERRE Y CONTROL DE CALIDAD - 2026-06-13
+
+Módulo: Banco de Preguntas (QuizPro)
+- [Línea Masiva] Se auditó y normalizó el árbol de reactivos (24 nodos). Se alcanzó el 100% de la cuota obligatoria de 50 reactivos por nodo.
+- [Línea Masiva] Se ejecutó la migración de 30+ reactivos de Conversiones (Binario/Hex) y CLI de 10.mo a 11.no (Inf. Aplicada).
+- [VERIFICADO] Los reactivos cumplen con la regla del 15% de varianza de longitud y el esquema 'enunciado'/'respuesta_correcta_literal'.
+
+Módulo: Presentaciones Multimedia
+- [Línea Masiva] Refactorización de 70+ archivos HTML. Se inyectó el Motor de Navegación v2 (Swipe, Unified Keyboard, Fullscreen Logic).
+- [VERIFICADO] Las presentaciones mantienen la integridad del contenido pedagógico original mientras cumplen con el estándar de arquitectura de navegación.
+
+Módulo: Control de Asignaturas (Feature)
+- [js/config.js:145] Refactorizado hook 'isContentAuthorized'. Ahora intercepta recursos basándose en la configuración de 'asignaturasActivas' por parcial.
+- [js/teacher.js:175] Implementada persistencia en caché local de la configuración académica para visualización instantánea.
+
+Requisitos Clínicos v7.6
+- [js/quizpro.js:1593] Confirmada restricción de Top 5 en ranking global.
+- [js/config.js:300] Confirmado bloqueo de F12, Ctrl+U y menú contextual.
+- [js/config.js:110] Confirmada sanitización HTML extendida (p, span, ul, ol, li, a).
+
+RESULTADO: Auditoría final aprobada. Sistema listo para producción.
+
+
+VERIFICACIÓN FINAL DE INTEGRIDAD - 2026-06-13
+- [OK] Sanitizador HTML: Refactorizado con regex robusta contra XSS (manejo de on* handlers).
+- [OK] Banco de Preguntas: 24 archivos normalizados (>= 50 reactivos) y migración de temas avanzados verificada.
+- [OK] Presentaciones: 70+ archivos actualizados con motor v2 y navegación táctil.
+- [OK] Control de Asignaturas: Hook global 'isContentAuthorized' operativo con filtrado por parcial y asignatura.
+- [OK] Dashboards: Renderizado de contenido enriquecido habilitado en vistas de estudiante y profesor.

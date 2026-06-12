@@ -2067,7 +2067,7 @@ function renderSyntaxOptions() {
         currentSyntaxFragments.forEach((fragment, index) => {
             const fragmentSpan = document.createElement('span');
             fragmentSpan.classList.add('syntax-fragment', 'bg-gray-200', 'text-gray-800', 'px-3', 'py-1', 'rounded', 'cursor-pointer', 'hover:bg-gray-300', 'transition-colors', 'duration-200');
-            fragmentSpan.textContent = fragment;
+            fragmentSpan.innerHTML = window.sanitizarHTMLTecnico ? window.sanitizarHTMLTecnico(fragment) : fragment;
             fragmentSpan.dataset.index = index;
             fragmentSpan.onclick = () => addSyntaxFragment(fragment, index);
             responseChanges++;
@@ -2082,7 +2082,7 @@ function renderSyntaxTarget() {
         currentSyntaxOrder.forEach((item) => {
             const fragmentSpan = document.createElement('span');
             fragmentSpan.classList.add('syntax-fragment-target', 'bg-purple-200', 'text-purple-800', 'px-3', 'py-1', 'rounded', 'relative', 'cursor-pointer', 'hover:bg-purple-300', 'transition-colors', 'duration-200');
-            fragmentSpan.textContent = item.fragment;
+            fragmentSpan.innerHTML = window.sanitizarHTMLTecnico ? window.sanitizarHTMLTecnico(item.fragment) : item.fragment;
             fragmentSpan.dataset.originalIndex = item.originalIndex; // Store original index
 
             // Add a small 'x' button for removal
@@ -2206,7 +2206,7 @@ function setupDragMatchQuestion(question) {
             const dragItem = document.createElement('div');
             // Initial styling for draggable items
             dragItem.classList.add('drag-item', 'bg-blue-200', 'text-blue-800', 'px-4', 'py-2', 'rounded-lg', 'cursor-grab', 'hover:bg-blue-300', 'transition-colors', 'duration-200', 'shadow-md');
-            dragItem.textContent = dragText;
+            dragItem.innerHTML = window.sanitizarHTMLTecnico ? window.sanitizarHTMLTecnico(dragText) : dragText;
             dragItem.setAttribute('draggable', true);
             dragItem.dataset.originalText = dragText; // Store original text to match later
             dragItem.addEventListener('dragstart', handleDragStart);
@@ -2221,7 +2221,7 @@ function setupDragMatchQuestion(question) {
 
             const dropTextSpan = document.createElement('span');
             dropTextSpan.classList.add('drop-text-placeholder', 'absolute', 'inset-0', 'flex', 'items-center', 'justify-center', 'p-2');
-            dropTextSpan.textContent = dropText; // Show the target text initially
+            dropTextSpan.innerHTML = window.sanitizarHTMLTecnico ? window.sanitizarHTMLTecnico(dropText) : dropText; // Show the target text initially
             dropTarget.appendChild(dropTextSpan);
 
             dropTarget.addEventListener('dragover', handleDragOver);
@@ -2285,7 +2285,7 @@ function handleDrop(e) {
                 // If the original element was somehow lost, recreate it in the drag area
                 const tempDragItem = document.createElement('div');
                 tempDragItem.classList.add('drag-item', 'bg-blue-200', 'text-blue-800', 'px-4', 'py-2', 'rounded-lg', 'cursor-grab', 'hover:bg-blue-300', 'transition-colors', 'duration-200', 'shadow-md');
-                tempDragItem.textContent = existingDroppedItemInTarget.dataset.originalText;
+                tempDragItem.innerHTML = window.sanitizarHTMLTecnico ? window.sanitizarHTMLTecnico(existingDroppedItemInTarget.dataset.originalText) : existingDroppedItemInTarget.dataset.originalText;
                 tempDragItem.dataset.originalText = existingDroppedItemInTarget.dataset.originalText;
                 tempDragItem.setAttribute('draggable', true);
                 tempDragItem.addEventListener('dragstart', handleDragStart);
@@ -2298,7 +2298,7 @@ function handleDrop(e) {
         if (draggedItemOriginalElement) {
             const droppedItem = document.createElement('div');
             droppedItem.classList.add('drag-item-dropped', 'bg-indigo-300', 'text-indigo-900', 'px-4', 'py-2', 'rounded-lg', 'cursor-default', 'min-w-[100px]', 'text-center', 'shadow-inner', 'flex', 'items-center', 'justify-center', 'w-full', 'h-full');
-            droppedItem.textContent = draggedItemOriginalElement.dataset.originalText;
+            droppedItem.innerHTML = window.sanitizarHTMLTecnico ? window.sanitizarHTMLTecnico(draggedItemOriginalElement.dataset.originalText) : draggedItemOriginalElement.dataset.originalText;
             droppedItem.dataset.originalText = draggedItemOriginalElement.dataset.originalText; // Keep original text reference
 
             // Hide the placeholder text if present
@@ -2377,7 +2377,7 @@ function checkDragMatch() {
                 target.classList.add('border-red-600');
                 // Show the correct answer in the target placeholder for incorrect matches
                 if (targetPlaceholder) {
-                    targetPlaceholder.textContent = `${correctMatch} (Correcto)`;
+                    targetPlaceholder.innerHTML = (window.sanitizarHTMLTecnico ? window.sanitizarHTMLTecnico(correctMatch) : correctMatch) + ' (Correcto)';
                     targetPlaceholder.classList.remove('hidden');
                     targetPlaceholder.classList.add('text-green-700', 'font-bold');
                 }
@@ -2387,7 +2387,7 @@ function checkDragMatch() {
             allCorrect = false;
             target.classList.add('border-red-600');
             if (targetPlaceholder) {
-                targetPlaceholder.textContent = `${correctMatch} (Faltante)`;
+                targetPlaceholder.innerHTML = (window.sanitizarHTMLTecnico ? window.sanitizarHTMLTecnico(correctMatch) : correctMatch) + ' (Faltante)';
                 targetPlaceholder.classList.remove('hidden');
                 targetPlaceholder.classList.add('text-red-700', 'font-bold');
             }
@@ -2425,7 +2425,7 @@ function undoDragMatch() {
         const dropTextPlaceholder = target.querySelector('.drop-text-placeholder');
         if (dropTextPlaceholder) {
             dropTextPlaceholder.classList.remove('hidden', 'text-green-700', 'font-bold', 'text-red-700');
-            dropTextPlaceholder.textContent = target.dataset.correctMatch; // Restore original placeholder text
+            dropTextPlaceholder.innerHTML = window.sanitizarHTMLTecnico ? window.sanitizarHTMLTecnico(target.dataset.correctMatch) : target.dataset.correctMatch; // Restore original placeholder text
         }
         // Remove any border feedback from the target
         target.classList.remove('border-green-600', 'border-red-600');

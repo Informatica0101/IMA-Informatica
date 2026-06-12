@@ -361,3 +361,24 @@ ARCHIVO: js/student.js
 
 ARCHIVO: js/teacher.js
 - Línea 797: Implementada condicional para GamesAdapter.showLoading. Se garantiza una interfaz no disruptiva durante la conciliación de datos en segundo plano.
+
+REGISTRO DE ACTUALIZACIONES TÉCNICAS Y ACADÉMICAS V7.6 - 2026-06-13
+
+1. SEGURIDAD Y RENDIMIENTO (CLÍNICO)
+- ARCHIVO: js/config.js: Implementación de IIFE de Seguridad Perimetral. Bloqueo de F12, Ctrl+Shift+I/C/J, Ctrl+U y menú contextual. Inyección de CSS global para restricción de selección de texto.
+- ARCHIVO: js/config.js: Evolución de sanitizarHTMLTecnico para permitir etiquetas p, span, ul, ol, li, a con atributos seguros.
+- ARCHIVO: js/quizpro.js: Aplicada restricción de dataset (.slice(0, 5)) en el renderizado del ranking global.
+- ARCHIVO: js/student.js, js/teacher.js, js/games-adapter.js: Refactorización de lógica de hidratación 0ms. Se eliminaron pantallas de carga disruptivas al detectar datos en caché de IndexedDB.
+
+2. BANCO DE PREGUNTAS (CURRICULAR)
+- ARCHIVOS: js/Banco_Preguntas/ (24 archivos distributed): Normalización total de cuotas. Se garantizan 50 reactivos validados por cada nodo.
+- ARCHIVOS: js/Banco_Preguntas/: Migración de temas avanzados (Sistemas de Numeración, Conversiones y CLI) de 10.mo a 11.no Grado.
+- ARCHIVOS: js/Banco_Preguntas/: Asegurada integridad de esquema (enunciado/respuesta_correcta_literal) en todo el repositorio.
+
+3. PORTAL MULTIMEDIA (ESTRUCTURAL)
+- ARCHIVOS: .html (Directorios de clases): Refactorización masiva de 70+ presentaciones. Inyección del Motor de Navegación v2 (Swipe móvil, Teclado unificado, Fullscreen auto-hide).
+
+4. CONTROL ADMINISTRATIVO (FEATURE)
+- ARCHIVO: js/config.js: Refactorizado hook 'isContentAuthorized' para soportar filtrado de asignaturas activas por parcial.
+- ARCHIVO: js/teacher.js: Implementada persistencia de configuración académica en caché local para efecto cascada inmediato en la UI.
+- ARCHIVO: teacher-dashboard.html: Integrada interfaz de selección de asignaturas en el módulo de Gestión Académica.

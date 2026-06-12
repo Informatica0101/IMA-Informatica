@@ -110,15 +110,16 @@ window.sanitizarHTMLTecnico = function(html) {
     temp.textContent = html;
     var sanitized = temp.innerHTML;
 
-    // v7.6: Improved whitelist with attribute support (style, class, href)
     return sanitized
         .replace(/&lt;(p|span|strong|b|i|em|ul|ol|li|code|pre|br)(.*?)&gt;/gi, function(match, tag, attrs) {
-            var cleanAttrs = attrs.replace(/&quot;/g, '"').replace(/on\w+\s*=\s*".*?"/gi, '');
+            var cleanAttrs = attrs.replace(/&quot;/g, '"')
+                                  .replace(/\s*on\w+\s*=\s*(?:'[^']*'|"[^"]*"|[^\s>]+)/gi, '');
             return '<' + tag + cleanAttrs + '>';
         })
         .replace(/&lt;\/(p|span|strong|b|i|em|ul|ol|li|code|pre)&gt;/gi, '</$1>')
         .replace(/&lt;a\s+(.*?)&gt;/gi, function(match, attrs) {
-             var cleanAttrs = attrs.replace(/&quot;/g, '"').replace(/on\w+\s*=\s*".*?"/gi, '');
+             var cleanAttrs = attrs.replace(/&quot;/g, '"')
+                                   .replace(/\s*on\w+\s*=\s*(?:'[^']*'|"[^"]*"|[^\s>]+)/gi, '');
              if (!cleanAttrs.includes('target=')) cleanAttrs += ' target="_blank"';
              return '<a ' + cleanAttrs + '>';
         })
@@ -140,7 +141,7 @@ function normalizePartial(p) {
 }
 window.normalizePartial = normalizePartial;
 
-window.isContentAuthorized = function(contentPartial) {
+window.isContentAuthorized = function(contentPartial, contentSubject) {
     const user = JSON.parse(localStorage.getItem('currentUser'));
     if (user?.rol === 'Profesor') return true;
 
@@ -149,20 +150,35 @@ window.isContentAuthorized = function(contentPartial) {
     const normContent = normalizePartial(contentPartial);
     const normActual = normalizePartial(window.PARCIAL_ACTUAL);
 
-    // El estudiante solo tiene acceso al parcial configurado globalmente
-    if (normContent === normActual) return true;
+    // 1. Partial Level Check
+    let partialMatch = (normContent === normActual);
 
-    // Manejo de asignaturas que abarcan múltiples parciales
     const partialGroups = {
         "I y II Parcial": ["Primer Parcial", "Segundo Parcial"],
         "III y IV Parcial": ["Tercer Parcial", "Cuarto Parcial"]
     };
 
     if (partialGroups[contentPartial]) {
-        return partialGroups[contentPartial].includes(normActual);
+        partialMatch = partialGroups[contentPartial].includes(normActual);
     }
 
-    return false;
+    if (!partialMatch) return false;
+
+    // 2. Subject Level Check (Requirement 3: Control de Asignaturas por Parcial)
+    try {
+        const config = JSON.parse(localStorage.getItem('academic_config_cache') || '{}');
+        const activeSubjects = config[normActual] || [];
+
+        if (contentSubject && activeSubjects.length > 0) {
+            const normSubject = normalizeSubject(contentSubject);
+            const isSubjectActive = activeSubjects.some(s => normalizeSubject(s) === normSubject);
+            return isSubjectActive;
+        }
+    } catch (e) {
+        console.warn("[IMA-FILTER] Error parsing academic config:", e);
+    }
+
+    return true;
 };
 
 /**
@@ -313,10 +329,10 @@ window.normalizeQuestion = function(q) {
         // F12
         if (e.keyCode === 123) return blockEvents(e);
 
-        // Ctrl+Shift+I, Ctrl+Shift+C, Ctrl+Shift+J, Ctrl+U, Ctrl+S
-        if (e.ctrlKey && (e.shiftKey || e.keyCode === 85 || e.keyCode === 83)) {
+        // Ctrl+Shift+I, Ctrl+Shift+C, Ctrl+Shift+J, Ctrl+U
+        if (e.ctrlKey && (e.shiftKey || e.keyCode === 85)) {
             if (e.shiftKey && (e.keyCode === 73 || e.keyCode === 67 || e.keyCode === 74)) return blockEvents(e);
-            if (e.keyCode === 85 || e.keyCode === 83) return blockEvents(e);
+            if (e.keyCode === 85) return blockEvents(e);
         }
 
         // Mac Equivalents (Cmd+Option+I, etc.)
