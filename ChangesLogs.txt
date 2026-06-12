@@ -447,3 +447,15 @@ ARCHIVO: js/quizpro.js
 ARCHIVO: js/Banco_Preguntas/ (Auditoría Curricular)
 - [RELOCALIZADO] Reactivos de Numeración y CLI movidos de 10mo a 11mo (Informática Aplicada).
 - [CONSOLIDADO] Bloque de 10mo Informática con 150 reactivos depurados sobre Redes y Algoritmos.
+
+REMEDIACIÓN DE INTERFAZ Y MÉTRICAS (v7.6) - 2026-06-24
+ARCHIVO: js/config.js
+- Líneas 78-88: Implementado método 'app.getRange' para cálculo de rangos académicos por XP.
+- Líneas 125-130: Ampliado 'sanitizarHTMLTecnico' para soportar etiquetas Quill (ul, ol, li, a) en descripciones.
+
+ARCHIVO: js/quizpro.js
+- Líneas 726-744: Refactorizada 'renderPerformanceHTML' con normalización v7.5 para prevenir tablas vacías.
+- Líneas 775-785: Limitado Ranking Global a Top 5 y corregido mapeo de columnas (Nombre, Rango, Promedio, XP).
+
+ARCHIVO: js/student.js
+- Línea 648: Corregida referencia de namespace para sanitización de descripciones de actividades.

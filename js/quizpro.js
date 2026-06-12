@@ -723,17 +723,39 @@ var QuizProApp = window.QuizProApp || {};
 
     app.renderPerformanceHTML = function(res) {
         var container = document.getElementById('performance-table-body');
-        if (!container) return;
-        app.userGameStats = res.data || (res.id ? null : res) || {};
+        if (!container || !res) return;
+
+        // Normalización v7.5 para envoltorios de persistencia
+        var rawData = res.data || (res.id ? res.data : res) || {};
+        QuizProApp.userGameStats = rawData;
+
         var approvedCount = 0;
         var statsEntries = [];
-        for (var k in QuizProApp.userGameStats) { if (k.indexOf('QuizPro_') === 0) statsEntries.push(QuizProApp.userGameStats[k]); }
+        for (var k in QuizProApp.userGameStats) {
+            if (k.indexOf('QuizPro_') === 0) {
+                statsEntries.push(QuizProApp.userGameStats[k]);
+            }
+        }
+
+        if (statsEntries.length === 0) {
+            container.innerHTML = '<tr><td colspan="3" class="py-8 text-center text-gray-400 italic">No hay intentos registrados todavía.</td></tr>';
+            return;
+        }
+
         container.innerHTML = statsEntries.map(function(s) {
             if (s.maxScore >= 70) approvedCount++;
-            return '<tr class="border-b border-gray-50 text-[11px]"><td class="py-3 font-bold text-gray-700">' + app.getSanitizedAcademicText(s.subject) + '</td><td class="py-3 capitalize text-blue-600 font-semibold">' + app.getSanitizedAcademicText(s.level) + ' (' + app.getSanitizedAcademicText(s.grade) + ')</td><td class="py-3 font-black text-gray-900">' + s.maxScore + '%</td></tr>';
+            return '<tr class="border-b border-gray-50 text-[11px]">' +
+                '<td class="py-3 font-bold text-gray-700">' + app.getSanitizedAcademicText(s.subject) + '</td>' +
+                '<td class="py-3 capitalize text-blue-600 font-semibold">' + app.getStandardLevelName(s.level) + ' (' + app.getSanitizedAcademicText(s.grade) + ')</td>' +
+                '<td class="py-3 font-black text-gray-900 text-right">' + s.maxScore + '%</td>' +
+            '</tr>';
         }).join('');
-        var approvedEl = document.getElementById('total-approvals'); if (approvedEl) approvedEl.textContent = approvedCount;
-        if (statsEntries.length > 0) { var d = document.getElementById('performance-dashboard'); if (d) d.classList.remove('hidden'); }
+
+        var approvedEl = document.getElementById('total-approvals');
+        if (approvedEl) approvedEl.textContent = approvedCount;
+
+        var d = document.getElementById('performance-dashboard');
+        if (d && statsEntries.length > 0) d.classList.remove('hidden');
     };
 
     app.loadGlobalTop = function() {
@@ -750,9 +772,32 @@ var QuizProApp = window.QuizProApp || {};
     app.renderGlobalTopHTML = function(res) {
         var body = document.getElementById('global-top-body');
         if (!body || !res || !res.global) return;
-        var filtered = res.global.filter(function(u) { return u && (u.nombre || u.username); });
+
+        // REQ: Solo mejores 5 (Top 5)
+        var filtered = res.global.filter(function(u) {
+            return u && (u.nombre || u.username || u.display_name);
+        }).slice(0, 5);
+
         body.innerHTML = filtered.map(function(u, i) {
-            return '<tr class="hover:bg-blue-50/30 transition-colors"><td class="px-6 py-4"><p class="font-bold text-gray-900">' + (u.nombre || u.username) + '</p></td><td class="px-6 py-4 text-right"><span class="text-sm font-black">' + (u.promedio || 0) + '%</span></td><td class="px-6 py-4 text-right"><span class="text-[10px] font-bold text-gray-500">' + (u.xp || 0).toLocaleString() + '</span></td></tr>';
+            var userName = u.nombre || u.username || u.display_name || 'Estudiante';
+            var userXP = parseInt(u.xp || 0);
+            var userRange = app.getRange(userXP);
+            var userAvg = parseFloat(u.promedio || 0).toFixed(1);
+
+            return '<tr class="hover:bg-blue-50/30 transition-colors border-b border-gray-50 last:border-0">' +
+                '<td class="px-6 py-4">' +
+                    '<p class="font-bold text-gray-900">' + userName + '</p>' +
+                '</td>' +
+                '<td class="px-6 py-4">' +
+                    '<span class="text-[9px] font-black uppercase tracking-widest text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-lg">' + userRange + '</span>' +
+                '</td>' +
+                '<td class="px-6 py-4 text-right">' +
+                    '<span class="text-sm font-black text-gray-800">' + userAvg + '%</span>' +
+                '</td>' +
+                '<td class="px-6 py-4 text-right">' +
+                    '<span class="text-[10px] font-bold text-gray-400">' + userXP.toLocaleString() + '</span>' +
+                '</td>' +
+            '</tr>';
         }).join('');
     };
 

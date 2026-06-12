@@ -1,0 +1,16 @@
+127.0.0.1 - - [12/Jun/2026 02:07:46] "GET /juegos/quizpro.html HTTP/1.1" 200 -
+127.0.0.1 - - [12/Jun/2026 02:07:46] "GET /js/config.js?v=22 HTTP/1.1" 200 -
+127.0.0.1 - - [12/Jun/2026 02:07:46] "GET /js/games-adapter.js?v=22 HTTP/1.1" 200 -
+127.0.0.1 - - [12/Jun/2026 02:07:46] "GET /js/api.js?v=22 HTTP/1.1" 200 -
+127.0.0.1 - - [12/Jun/2026 02:07:46] "GET /js/data.js?v=22 HTTP/1.1" 200 -
+127.0.0.1 - - [12/Jun/2026 02:07:46] "GET /js/persistence.js?v=22 HTTP/1.1" 200 -
+127.0.0.1 - - [12/Jun/2026 02:07:46] "GET /js/ui-common.js?v=22 HTTP/1.1" 200 -
+127.0.0.1 - - [12/Jun/2026 02:07:46] "GET /js/quizpro.js?v=22 HTTP/1.1" 200 -
+127.0.0.1 - - [12/Jun/2026 02:07:47] "GET /imagenes/logo.png HTTP/1.1" 200 -
+127.0.0.1 - - [12/Jun/2026 02:07:47] "GET /imagenes/bandera-de-honduras.png HTTP/1.1" 200 -
+127.0.0.1 - - [12/Jun/2026 02:07:49] "GET /index.html HTTP/1.1" 200 -
+127.0.0.1 - - [12/Jun/2026 02:07:49] "GET /css/style.css?v=21 HTTP/1.1" 200 -
+127.0.0.1 - - [12/Jun/2026 02:07:49] "GET /js/index-ui.js?v=22 HTTP/1.1" 200 -
+127.0.0.1 - - [12/Jun/2026 02:07:55] "GET /student-dashboard.html HTTP/1.1" 200 -
+127.0.0.1 - - [12/Jun/2026 02:07:55] "GET /js/student.js?v=22 HTTP/1.1" 200 -
+127.0.0.1 - - [12/Jun/2026 02:07:55] "GET /css/style.css?v=22 HTTP/1.1" 200 -

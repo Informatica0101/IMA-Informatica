@@ -645,7 +645,7 @@ var QuizProApp = window.QuizProApp || {};
                         '<div class="assignment-content overflow-hidden max-h-0 transition-all duration-300 ease-in-out group-[.is-expanded]:max-h-[1200px]">' +
                             '<div class="pt-4 mt-4 border-t border-gray-50">' +
                                 '<div class="assignment-content-scroll scroll-minimalist mb-4">' +
-                                    '<div class="text-gray-600 text-sm font-medium mb-5 leading-relaxed quill-content">' + (QuizProApp.sanitizarHTMLTecnico(activity.descripcion) || 'Sin descripción.') + '</div>' +
+                                    '<div class="text-gray-600 text-sm font-medium mb-5 leading-relaxed quill-content">' + (app.sanitizarHTMLTecnico(activity.descripcion) || 'Sin descripción.') + '</div>' +
                                 '</div>' +
                                 '<div class="flex justify-center md:justify-start">' +
                                     actionButtonHtml +

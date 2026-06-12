@@ -79,3 +79,30 @@
 - **Descripción del Alcance:** Eliminar re-declaraciones de QuizProApp dentro de funciones y estandarizar el cierre de IIFEs al objeto 'app' o 'QuizProApp' local.
 - **Criterios de Aceptación:** Consistencia en la estructura de módulos.
 - **Estado:** [X] Completada
+
+### [T-UI-01] Remediación de Ranking Global y Top 5 (QuizPro)
+- **Origen del Hallazgo:** Auditoría Forense v7.6 - 2026-06-24
+- **Severidad/Clasificación:** Alto
+- **Archivos Involucrados:** js/quizpro.js, js/config.js
+- **Dependencias Expuestas:** renderGlobalTopHTML, app.getRange
+- **Descripción del Alcance:** Limitar el ranking global a los mejores 5 estudiantes, corregir el mapeo de columnas (Nombre, Rango, Promedio, XP) e implementar el helper de cálculo de rangos basado en la escala v7.2.
+- **Criterios de Aceptación:** El ranking muestra exactamente 5 filas; los datos de rango y promedio coinciden con los encabezados de la tabla.
+- **Estado:** [ ] Pendiente
+
+### [T-DATOS-01] Restauración de Tabla de Historial del Jugador (QuizPro)
+- **Origen del Hallazgo:** Auditoría Forense v7.6 - 2026-06-24
+- **Severidad/Clasificación:** Medio
+- **Archivos Involucrados:** js/quizpro.js
+- **Dependencias Expuestas:** renderPerformanceHTML, PersistenceManager
+- **Descripción del Alcance:** Corregir la lógica de procesamiento de datos en renderPerformanceHTML para manejar correctamente los objetos devueltos por el sistema de persistencia y asegurar que la tabla se pueble si hay datos disponibles.
+- **Criterios de Aceptación:** La tabla "Logros Alcanzados" muestra el historial de intentos del usuario.
+- **Estado:** [ ] Pendiente
+
+### [T-DASHBOARD-01] Saneamiento de Etiquetas HTML en Actividades (Estudiante)
+- **Origen del Hallazgo:** Auditoría Forense v7.6 - 2026-06-24
+- **Severidad/Clasificación:** Alto
+- **Archivos Involucrados:** js/student.js, js/config.js
+- **Dependencias Expuestas:** renderActivities, sanitizarHTMLTecnico
+- **Descripción del Alcance:** Ajustar el renderizado de la descripción de actividades para permitir HTML seguro, evitando el escape doble que muestra tags literales. Ampliar sanitizarHTMLTecnico para soportar la maquetación de Quill.
+- **Criterios de Aceptación:** Las descripciones de tareas en el dashboard se muestran con formato (negritas, listas) y sin tags visibles como "<p>".
+- **Estado:** [ ] Pendiente

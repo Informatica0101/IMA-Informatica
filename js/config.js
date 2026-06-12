@@ -76,6 +76,20 @@ var QuizProApp = window.QuizProApp || {};
     app.redondearMetrica = app.formatearMetricaPsicométrica;
 
     /**
+     * REQ v7.2: XP Range Calculation
+     * Returns the academic rank based on accumulated XP.
+     */
+    app.getRange = function(xp) {
+        var x = parseInt(xp || 0);
+        if (x >= 22001) return 'Leyenda';
+        if (x >= 14001) return 'Maestro';
+        if (x >= 8001) return 'Avanzado';
+        if (x >= 4001) return 'Promedio';
+        if (x >= 1501) return 'Principiante';
+        return 'Básico';
+    };
+
+    /**
      * Helper manual para extraer parámetros de la URL (ES5 compatible).
      * @param {string} param - Nombre del parámetro.
      * @returns {string|null} - Valor del parámetro o null.
@@ -108,7 +122,12 @@ var QuizProApp = window.QuizProApp || {};
             .replace(/&lt;br\s*\/?&gt;/gi, '<br>')
             .replace(/&lt;pre&gt;/gi, '<pre>').replace(/&lt;\/pre&gt;/gi, '</pre>')
             .replace(/&lt;span&gt;/gi, '<span>').replace(/&lt;\/span&gt;/gi, '</span>')
-            .replace(/&lt;p&gt;/gi, '<p>').replace(/&lt;\/p&gt;/gi, '</p>');
+            .replace(/&lt;p&gt;/gi, '<p>').replace(/&lt;\/p&gt;/gi, '</p>')
+            .replace(/&lt;ul&gt;/gi, '<ul>').replace(/&lt;\/ul&gt;/gi, '</ul>')
+            .replace(/&lt;ol&gt;/gi, '<ol>').replace(/&lt;\/ol&gt;/gi, '</ol>')
+            .replace(/&lt;li&gt;/gi, '<li>').replace(/&lt;\/li&gt;/gi, '</li>')
+            .replace(/&lt;a\s+href=(&quot;|')(.*?)(&quot;|')&gt;/gi, '<a href=$1$2$3 target="_blank" class="text-blue-600 underline">')
+            .replace(/&lt;\/a&gt;/gi, '</a>');
     };
 
     app.normalizePartial = function(p) {
