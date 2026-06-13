@@ -6,7 +6,7 @@
 - **Archivos Involucrados:** Informatica_I/*.html
 - **Descripción del Alcance:** Reconstrucción integral siguiendo la estructura de 16 diapositivas (1 Portada, 10 Contenido, 1 Ejercicio, 1 Actividad, 1 Transición, 1 Quiz, 1 Cierre). Eliminar placeholders.
 - **Criterios de Aceptación:** Estructura exacta, sin placeholders, motor v2.4 acoplado.
-- **Estado:** [ ] En Ejecución
+- **Estado:** [X] Completada
 
 ### [T-003] Enriquecimiento de Reactivos de Periféricos
 - **Origen del Hallazgo:** Code Review

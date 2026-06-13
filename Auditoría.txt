@@ -22,3 +22,12 @@ Informatica_I/*.html | Quiz | Inconsistencia Psicométrica | Reactivos estático
 Informatica_I/*.html | Contenido | Uso de Placeholders | "Próximamente más información..." | Investigar PENSUM y completar contenido real.
 Informatica_I/*.html | Estructura | Secuencia de 16 slides incorrecta | No sigue el orden 1-10-1-1-1-1-1 | Reordenar y maquetar según metodología.
 js/Banco_Preguntas/... | Datos | Falta de imágenes en periféricos | Reactivos puramente textuales pierden valor pedagógico | Agregar "imagen": "imagenes/..." a los objetos JSON.
+
+### REPORTE DE AUDITORÍA: SANEAMIENTO DÉCIMO GRADO (2026-06-13)
+[Archivo y Línea Exacta] | [Tipo de Fallo] | [Evidencia de Código Crudo] | [Impacto Real en el Aula] | [Solución Manual sugerida en ES5]
+--------------------------|-----------------|-----------------------------|---------------------------|---------------------------------
+Informatica_I/*.html | Contenido | Uso de Placeholders | "Continuación: [tema]..." | Reemplazado por contenido técnico real del PENSUM.
+Informatica_I/*.html | Estructura | Slides insuficientes | Archivos con 15 slides | Normalizado a 16 slides exactos.
+Informatica_I/*.html | Metadatos | Datos genéricos | Docente: [Nombre] | Estandarizado a Pablo Antonio Peña.
+js/presentation-engine.js | Seguridad | Falta de sanitización | .innerHTML sin filtro | Implementado window.sanitizarHTMLTecnico en Quiz.
+Informatica_I/*.html | Quiz | Inconsistencia de Tema | tema: "partes_computadora" | Mapeado a "Hardware" para coincidir con Banco JSON.

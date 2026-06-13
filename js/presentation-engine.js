@@ -281,7 +281,8 @@
             var rawQ = this.quizQuestions[this.currentQuizIndex];
             var q = window.normalizeQuestion ? window.normalizeQuestion(rawQ) : rawQ;
 
-            qText.innerHTML = (this.currentQuizIndex + 1) + ". " + (q.enunciado || q.Pregunta);
+            var questionText = (this.currentQuizIndex + 1) + ". " + (q.enunciado || q.Pregunta);
+            qText.innerHTML = window.sanitizarHTMLTecnico ? window.sanitizarHTMLTecnico(questionText) : questionText;
             qGrid.innerHTML = "";
             if (qFeedback) qFeedback.style.display = "none";
 
@@ -294,7 +295,7 @@
                 (function(opt) {
                     var btn = document.createElement('button');
                     btn.className = "quiz-option";
-                    btn.innerHTML = opt;
+                    btn.innerHTML = window.sanitizarHTMLTecnico ? window.sanitizarHTMLTecnico(opt) : opt;
                     btn.onclick = function(e) {
                         if (e.stopPropagation) e.stopPropagation();
                         self.handleAnswer(opt, q.respuesta_correcta_literal || q.RespuestaCorrecta, btn);

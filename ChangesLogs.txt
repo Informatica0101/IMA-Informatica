@@ -13,3 +13,16 @@
    - Despliegue del Perímetro de Seguridad v7.6 (bloqueo F12, Menú Contextual y Selección de Texto).
 5. **Respaldos**:
    - Generados archivos .bak para todos los originales de 10mo grado.
+
+### CAMBIOS REALIZADOS - RECONSTRUCCIÓN 10MO GRADO (2026-06-13)
+1. **Informatica_I/**:
+   - Saneamiento integral de 13 archivos HTML eliminando placeholders descriptivos.
+   - Inyección de contenido didáctico real (Hardware, Software, Historia, Redes, Ofimática).
+   - Estandarización de 16 diapositivas por presentación.
+   - Homologación de Header/Footer con index.html.
+   - Renombrado historia_computacion.htm -> .html.
+2. **js/presentation-engine.js**:
+   - Refactorización de renderCurrentQuizQuestion para usar sanitizarHTMLTecnico.
+   - Optimización de visualización en modo Fullscreen.
+3. **Metadatos**:
+   - Actualización de window.presentationMetadata.tema para compatibilidad con el Banco de Preguntas centralizado.

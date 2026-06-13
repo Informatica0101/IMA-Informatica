@@ -3,84 +3,482 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
-    <title>introduccion informatica</title>
+    <title>Introducción a la Informática - Décimo Grado</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Poppins:wght@700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="stylesheet" href="../css/style.css?v=22">
     <style>
         * { box-sizing: border-box; }
         html, body { margin: 0; padding: 0; height: 100vh; width: 100vw; overflow: hidden; }
-        body { display: flex; flex-direction: column; font-family: 'Inter', sans-serif; background-color: #f3f4f6; color: #1f2937; user-select: none; }
-        main { flex-grow: 1; display: flex; justify-content: center; align-items: center; position: relative; width: 100vw; margin-top: 64px; }
-        #presentation-container { width: 100%; height: 100%; position: relative; background-color: #ffffff; overflow: hidden; cursor: pointer; }
-        .slide { width: 100%; height: 100%; padding: 4rem; display: none; flex-direction: column; justify-content: center; align-items: center; text-align: center; position: absolute; top: 0; left: 0; opacity: 0; transition: opacity 0.4s ease-in-out; overflow-y: auto; }
+        body { display: flex; flex-direction: column; font-family: 'Inter', sans-serif; background-color: #f3f4f6; color: #1f2937; }
+
+        /* Layout Structure */
+        header { flex-shrink: 0; }
+        main { flex-grow: 1; display: flex; justify-content: center; align-items: center; position: relative; width: 100vw; background-color: #f3f4f6; }
+        footer { flex-shrink: 0; }
+
+        /* Presentation Canvas */
+        #presentation-container {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            background-color: #ffffff;
+            overflow: hidden;
+            cursor: pointer;
+            box-shadow: inset 0 0 100px rgba(0,0,0,0.02);
+        }
+
+        /* Slide Styles */
+        .slide {
+            width: 100%;
+            height: 100%;
+            padding: 4rem;
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            position: absolute;
+            top: 0;
+            left: 0;
+            opacity: 0;
+            transition: opacity 0.4s ease-in-out;
+            overflow-y: auto;
+        }
         .slide.active { display: flex !important; opacity: 1; z-index: 10; }
-        h2 { font-family: 'Poppins', sans-serif; font-weight: 800; font-size: 3rem; color: #0d6efd; margin-bottom: 1.5rem; text-transform: uppercase; }
-        h3 { font-family: 'Poppins', sans-serif; font-weight: 700; font-size: 2.25rem; line-height: 1.4; color: #1f2937; margin-bottom: 1.5rem; }
-        p, li { font-size: 1.5rem; line-height: 1.6; color: #4b5563; max-width: 900px; }
-        .concept-box { background-color: #f9fafb; border-left: 8px solid #0d6efd; padding: 2rem; border-radius: 0.5rem; text-align: left; margin-top: 1.5rem; width: 100%; max-width: 900px; cursor: default; }
-        #controls-wrapper { position: absolute; bottom: 2rem; left: 50%; transform: translate(-50%, 0); display: flex; gap: 1rem; z-index: 40; transition: opacity 0.3s ease; }
-        .nav-button { background-color: #0d6efd; color: #ffffff; padding: 0.75rem 1.5rem; border-radius: 12px; font-weight: 600; transition: all 0.3s; cursor: pointer; border: none; box-shadow: 0 4px 12px rgba(13, 110, 253, 0.2); }
-        #slide-counter { position: absolute; bottom: 1.5rem; right: 2rem; font-weight: 700; color: #9ca3af; z-index: 30; font-size: 1.1rem; }
+
+        /* Typography */
+        h2 { font-family: 'Poppins', sans-serif; font-weight: 800; font-size: 3.5rem; color: #0d6efd; margin-bottom: 1.5rem; line-height: 1.1; }
+        h3 { font-family: 'Poppins', sans-serif; font-weight: 700; font-size: 2.5rem; color: #1f2937; margin-bottom: 2rem; border-bottom: 4px solid #0d6efd; padding-bottom: 0.5rem; }
+        p, li { font-size: 1.5rem; line-height: 1.6; color: #4b5563; max-width: 950px; }
+        ul, ol { text-align: left; display: inline-block; margin-top: 1rem; }
+        li { margin-bottom: 1rem; }
+
+        /* Components */
+        .concept-box {
+            background-color: #f9fafb;
+            border-left: 8px solid #0d6efd;
+            padding: 2.5rem;
+            border-radius: 1rem;
+            text-align: left;
+            margin-top: 1.5rem;
+            width: 100%;
+            max-width: 900px;
+            cursor: default;
+            shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+        }
+
+        .code-block {
+            background-color: #1f2937;
+            color: #10b981;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 1.2rem;
+            text-align: left;
+            width: 100%;
+            max-width: 800px;
+            margin: 1rem 0;
+        }
+
+        /* Navigation Controls */
+        #controls-wrapper {
+            position: absolute;
+            bottom: 2.5rem;
+            left: 50%;
+            transform: translate(-50%, 0);
+            display: flex;
+            gap: 1.5rem;
+            z-index: 40;
+        }
+        .nav-button {
+            background-color: #0d6efd;
+            color: #ffffff;
+            padding: 0.8rem 2rem;
+            border-radius: 1rem;
+            font-weight: 700;
+            font-size: 1rem;
+            transition: all 0.3s;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 10px 15px -3px rgba(13, 110, 253, 0.3);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .nav-button:hover:not(:disabled) { background-color: #0b5ed7; transform: translateY(-2px); }
+        .nav-button:disabled { background-color: #e5e7eb; color: #9ca3af; cursor: not-allowed; box-shadow: none; }
+
+        #slide-counter {
+            position: absolute;
+            bottom: 2rem;
+            right: 3rem;
+            font-weight: 800;
+            color: #9ca3af;
+            z-index: 30;
+            font-size: 1.25rem;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        /* Interactive Quiz */
+        .quiz-container { background: white; padding: 2rem; border-radius: 2rem; border: 2px solid #f3f4f6; }
+        .quiz-option {
+            width: 100%;
+            padding: 1.25rem 2rem;
+            margin: 0.75rem 0;
+            border: 2px solid #e5e7eb;
+            border-radius: 1.25rem;
+            font-weight: 600;
+            transition: all 0.2s;
+            background: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        .quiz-option:hover { border-color: #0d6efd; background-color: #f0f7ff; }
+        .quiz-option.correct { background-color: #d1fae5; border-color: #10b981; color: #065f46; }
+        .quiz-option.incorrect { background-color: #fee2e2; border-color: #ef4444; color: #991b1b; }
+
+        /* Helpers */
         .hide-element { display: none !important; }
-        .quiz-option { width: 100%; padding: 1.25rem; margin: 0.5rem 0; border: 2px solid #e5e7eb; border-radius: 1rem; font-weight: 600; transition: all 0.2s; background: white; font-size: 1.2rem; cursor: pointer; text-align: left; }
-        @media (max-width: 768px) { main { margin-top: 56px; } .slide { padding: 2rem 1.5rem; } h2 { font-size: 1.75rem; } h3 { font-size: 1.4rem; } p, li { font-size: 1rem; line-height: 1.4; } }
+        .logo-img { width: 250px; height: auto; transition: width 0.3s ease; }
+
+        @media (max-width: 768px) {
+            .slide { padding: 2rem 1.5rem; }
+            h2 { font-size: 2rem; }
+            h3 { font-size: 1.5rem; }
+            p, li { font-size: 1.1rem; }
+            .logo-img { width: 120px; }
+            #slide-counter { right: 1rem; bottom: 1rem; font-size: 0.9rem; }
+            .nav-button { padding: 0.6rem 1.2rem; font-size: 0.8rem; }
+        }
     </style>
 </head>
 <body>
-        <header id="main-header" class="fixed w-full z-[100] transition-all duration-300 bg-white border-b border-gray-100">
-        <div class="container mx-auto px-4 md:px-6 flex justify-between items-center h-16 md:h-20">
+    <!-- ENCABEZADO INSTITUCIONAL -->
+    <header id="main-header" class="w-full bg-white border-b border-gray-100 shadow-sm">
+        <div class="container mx-auto px-4 flex justify-between items-center h-16 md:h-20">
             <div class="flex items-center gap-4">
                 <a href="../index.html" class="flex items-center gap-3 group">
-                    <img src="../imagenes/logo.png" alt="Escudo oficial" class="w-12 h-12 transition-transform duration-300 group-hover:scale-105">
-                    <div class="header-title-container">
-                        <h1 class="text-sm md:text-xl font-black text-gray-900 uppercase">ISEMED</h1>
-                        <p class="text-[9px] md:text-[11px] font-bold text-blue-600 uppercase">Área de Informática</p>
+                    <img src="../imagenes/logo.png" alt="Logo IMA" class="w-10 h-10 md:w-14 md:h-14">
+                    <div>
+                        <h1 class="text-sm md:text-xl font-black text-gray-900 uppercase leading-none">ISEMED</h1>
+                        <p class="text-[8px] md:text-[10px] font-bold text-blue-600 uppercase tracking-widest mt-1">Área de Informática</p>
                     </div>
                 </a>
             </div>
-            <nav class="hidden md:flex items-center gap-0">
-                <a href="../index.html" class="px-4 py-2 text-sm font-bold text-gray-700 hover:text-blue-600 transition-colors">Inicio</a>
-                <a href="../login.html" class="px-4 py-2 text-sm font-bold text-gray-700 hover:text-blue-600 transition-colors">Portal</a>
-            </nav>
-            <div class="flex items-center gap-4">
-                <img src="../imagenes/bandera-de-honduras.png" alt="Bandera" class="w-8 h-auto">
+            <div class="flex items-center gap-6">
+                <a href="../index.html" class="hidden md:block text-xs font-black uppercase tracking-widest text-gray-400 hover:text-blue-600 transition-colors">Volver al Inicio</a>
+                <img src="../imagenes/bandera-de-honduras.png" alt="Honduras" class="w-8 h-auto shadow-sm">
             </div>
         </div>
     </header>
 
     <main>
         <div id="presentation-container">
-            <div class="slide active"><h2>introduccion informatica</h2><p>Informática I</p></div>
-<div class="slide"><h3>Continuación: introduccion informatica</h3><p>Análisis técnico detallado de los componentes y procesos fundamentales del tema.</p></div>
-<div class="slide"><h3>Continuación: introduccion informatica</h3><p>Análisis técnico detallado de los componentes y procesos fundamentales del tema.</p></div>
-<div class="slide"><h3>Continuación: introduccion informatica</h3><p>Análisis técnico detallado de los componentes y procesos fundamentales del tema.</p></div>
-<div class="slide"><h3>Continuación: introduccion informatica</h3><p>Análisis técnico detallado de los componentes y procesos fundamentales del tema.</p></div>
-<div class="slide"><h3>Continuación: introduccion informatica</h3><p>Análisis técnico detallado de los componentes y procesos fundamentales del tema.</p></div>
-<div class="slide"><h3>Continuación: introduccion informatica</h3><p>Análisis técnico detallado de los componentes y procesos fundamentales del tema.</p></div>
-<div class="slide"><h3>Continuación: introduccion informatica</h3><p>Análisis técnico detallado de los componentes y procesos fundamentales del tema.</p></div>
-<div class="slide"><h3>Continuación: introduccion informatica</h3><p>Análisis técnico detallado de los componentes y procesos fundamentales del tema.</p></div>
-<div class="slide"><h3>Continuación: introduccion informatica</h3><p>Análisis técnico detallado de los componentes y procesos fundamentales del tema.</p></div>
-<div class="slide"><h3>Continuación: introduccion informatica</h3><p>Análisis técnico detallado de los componentes y procesos fundamentales del tema.</p></div>
-<div class="slide"><h3>Caso Práctico / Ejemplo</h3><div class='concept-box'><p>Aplicación real de los conceptos estudiados en el entorno laboral de informática.</p></div></div>
-<div class="slide"><h3>Actividad en Clase</h3><p>Realizar un resumen esquemático en el cuaderno integrando los puntos clave de la lección.</p></div>
-<div class="slide"><h3>Preparación para Evaluación</h3><p>Validación de competencias mediante el motor de reactivos dinámicos.</p></div>
-<div class="slide"><h3>Evaluación Interactiva</h3><div class="quiz-container w-full max-w-2xl"><div id="quiz-question-area"><p id="quiz-question-text" class="font-bold text-xl mb-6">Cargando evaluación...</p><div id="quiz-options-grid" class="space-y-3"></div><div id="quiz-feedback" class="mt-6 p-4 rounded-xl hidden font-bold text-center"></div></div></div></div>
-<div class="slide"><h2>¡Fin del Tema!</h2><div class='concept-box border-blue-600'><p>Espacio para resolución de dudas y cierre de la jornada académica.</p></div></div>
+            <!-- Diapositiva 1: Portada -->
+            <div class="slide active">
+                <img src="../imagenes/logo.png" alt="Logo Institucional" class="logo-img mb-8">
+                <h2 class="font-black">Introducción a la Informática</h2>
+                <div class="space-y-2">
+                    <p class="text-blue-600 font-bold uppercase tracking-[0.2em]">Informática I • Unidad I</p>
+                    <p class="font-semibold text-gray-500">Décimo Grado • Sección A y B</p>
+                    <div class="h-1 w-24 bg-blue-600 mx-auto my-6"></div>
+                    <p class="text-lg font-medium text-gray-700">Docente: <span class="font-bold">Pablo Antonio Peña</span></p>
+                    <p class="text-sm font-bold text-gray-400 uppercase tracking-widest">Junio 2025</p>
+                </div>
+            </div>
+
+            <!-- Diapositiva 2: Concepto -->
+            <div class="slide">
+                <h3>¿Qué es la Informática?</h3>
+                <div class="concept-box">
+                    <p class="mb-4 font-bold text-blue-600">Origen del término:</p>
+                    <p>La palabra proviene del francés <strong>Informatique</strong>, creada por el ingeniero Philippe Dreyfus en 1962, formada por la contracción de las palabras:</p>
+                    <div class="flex justify-center gap-8 mt-6">
+                        <div class="text-center p-4 bg-white rounded-xl shadow-sm border border-blue-100">
+                            <span class="block text-2xl font-black text-blue-600 uppercase">INFOR</span>
+                            <span class="text-sm font-bold text-gray-400 uppercase tracking-widest">Información</span>
+                        </div>
+                        <div class="flex items-center text-3xl font-black text-gray-300">+</div>
+                        <div class="text-center p-4 bg-white rounded-xl shadow-sm border border-blue-100">
+                            <span class="block text-2xl font-black text-blue-600 uppercase">MATIQUE</span>
+                            <span class="text-sm font-bold text-gray-400 uppercase tracking-widest">Automática</span>
+                        </div>
+                    </div>
+                </div>
+                <p class="mt-8">Es la ciencia que estudia el <strong>tratamiento automático</strong> y racional de la información mediante el uso de computadoras.</p>
+            </div>
+
+            <!-- Diapositiva 3: El Computador -->
+            <div class="slide">
+                <h3>La Computadora u Ordenador</h3>
+                <p>Es una <strong>máquina electrónica</strong> digital programable que ejecuta una serie de comandos para procesar los datos de entrada, obteniendo convenientemente información que posteriormente se envía a las unidades de salida.</p>
+                <div class="concept-box mt-8 border-blue-400 bg-blue-50/30">
+                    <ul class="list-none space-y-4">
+                        <li class="flex items-start gap-4">
+                            <i class="fas fa-microchip text-blue-600 mt-1"></i>
+                            <span><strong>Velocidad:</strong> Realiza millones de operaciones por segundo.</span>
+                        </li>
+                        <li class="flex items-start gap-4">
+                            <i class="fas fa-bullseye text-blue-600 mt-1"></i>
+                            <span><strong>Precisión:</strong> Los resultados son exactos bajo condiciones normales.</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Diapositiva 4: El Sistema Informático -->
+            <div class="slide">
+                <h3>El Sistema Informático (S.I.)</h3>
+                <p class="mb-6">Un sistema informático es el conjunto de partes interrelacionadas que permiten almacenar y procesar información.</p>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-5xl">
+                    <div class="p-6 bg-gray-50 rounded-2xl border-b-8 border-blue-500 shadow-sm">
+                        <i class="fas fa-desktop text-4xl text-blue-500 mb-4"></i>
+                        <h4 class="font-black text-xl mb-2">HARDWARE</h4>
+                        <p class="text-sm">Componentes físicos y tangibles.</p>
+                    </div>
+                    <div class="p-6 bg-gray-50 rounded-2xl border-b-8 border-emerald-500 shadow-sm">
+                        <i class="fas fa-code text-4xl text-emerald-500 mb-4"></i>
+                        <h4 class="font-black text-xl mb-2">SOFTWARE</h4>
+                        <p class="text-sm">Programas y parte lógica.</p>
+                    </div>
+                    <div class="p-6 bg-gray-50 rounded-2xl border-b-8 border-orange-500 shadow-sm">
+                        <i class="fas fa-user-tie text-4xl text-orange-500 mb-4"></i>
+                        <h4 class="font-black text-xl mb-2">HUMANWARE</h4>
+                        <p class="text-sm">Usuarios y especialistas.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Diapositiva 5: Dato vs Información -->
+            <div class="slide">
+                <h3>Dato vs. Información</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-4xl">
+                    <div class="concept-box">
+                        <h4 class="text-blue-600 font-bold mb-2">EL DATO</h4>
+                        <p class="text-lg">Es la unidad mínima de información sin sentido en sí misma. Ejemplos: un número, un nombre aislado, una letra.</p>
+                    </div>
+                    <div class="concept-box border-emerald-500 bg-emerald-50/20">
+                        <h4 class="text-emerald-600 font-bold mb-2">LA INFORMACIÓN</h4>
+                        <p class="text-lg">Es el conjunto de datos procesados que tienen un significado y utilidad para quien los recibe.</p>
+                    </div>
+                </div>
+                <p class="mt-8 italic text-gray-400">"Los datos son la materia prima, la información es el producto terminado".</p>
+            </div>
+
+            <!-- Diapositiva 6: Ciclo de Procesamiento -->
+            <div class="slide">
+                <h3>Ciclo de Procesamiento de Datos</h3>
+                <div class="flex flex-col md:flex-row items-center justify-center gap-4 w-full max-w-5xl">
+                    <div class="w-full p-4 bg-blue-100 rounded-xl font-bold">1. ENTRADA<br><span class="text-xs font-normal">Captura de datos</span></div>
+                    <div class="text-2xl text-gray-300"><i class="fas fa-arrow-right"></i></div>
+                    <div class="w-full p-4 bg-blue-600 text-white rounded-xl font-bold">2. PROCESO<br><span class="text-xs font-normal">Cálculos y lógica</span></div>
+                    <div class="text-2xl text-gray-300"><i class="fas fa-arrow-right"></i></div>
+                    <div class="w-full p-4 bg-emerald-500 text-white rounded-xl font-bold">3. SALIDA<br><span class="text-xs font-normal">Resultados útiles</span></div>
+                </div>
+                <div class="mt-8 p-6 bg-gray-900 text-white rounded-2xl w-full max-w-md">
+                    <i class="fas fa-hdd text-blue-400 mb-2"></i>
+                    <p class="text-lg font-bold">ALMACENAMIENTO</p>
+                    <p class="text-xs text-gray-400 uppercase tracking-widest">Resguardo de resultados</p>
+                </div>
+            </div>
+
+            <!-- Diapositiva 7: Hardware -->
+            <div class="slide">
+                <h3>Hardware: El Cuerpo</h3>
+                <p>Corresponde a todas las partes físicas y tangibles de una computadora; sus componentes eléctricos, electrónicos, electromecánicos y mecánicos.</p>
+                <div class="concept-box mt-6">
+                    <p class="font-bold mb-2">Hardware Básico:</p>
+                    <ul class="text-lg">
+                        <li><strong>Placa Base:</strong> Conecta todos los componentes.</li>
+                        <li><strong>CPU:</strong> El procesador o "cerebro".</li>
+                        <li><strong>Memoria RAM:</strong> Almacenamiento temporal de trabajo.</li>
+                        <li><strong>Monitor y Teclado:</strong> Interfaz de usuario obligatoria.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Diapositiva 8: Software -->
+            <div class="slide">
+                <h3>Software: La Inteligencia</h3>
+                <p>Es el soporte lógico e inmaterial que permite que la computadora desempeñe tareas inteligentes, dirigiendo a los componentes físicos con instrucciones y datos.</p>
+                <div class="concept-box border-emerald-500">
+                    <p class="font-bold mb-2">Categorías principales:</p>
+                    <ul class="text-lg">
+                        <li><strong>Software de Sistema:</strong> Sistemas Operativos (Windows, Linux, macOS).</li>
+                        <li><strong>Software de Aplicación:</strong> Navegadores, Office, Juegos.</li>
+                        <li><strong>Software de Programación:</strong> Herramientas para crear otros programas.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Diapositiva 9: Humanware -->
+            <div class="slide">
+                <h3>Humanware: El Factor Humano</h3>
+                <div class="flex flex-col md:flex-row gap-8 items-center">
+                    <div class="text-left space-y-6 flex-grow">
+                        <p>Es el componente humano que interviene en un sistema informático. Sin personas que diseñen, operen y utilicen la tecnología, esta no tendría propósito.</p>
+                        <ul class="text-lg">
+                            <li><strong>Usuarios finales:</strong> Personas que usan aplicaciones.</li>
+                            <li><strong>Desarrolladores:</strong> Programadores y analistas.</li>
+                            <li><strong>Técnicos:</strong> Especialistas en soporte y mantenimiento.</li>
+                        </ul>
+                    </div>
+                    <div class="w-64 h-64 bg-gray-100 rounded-full flex items-center justify-center text-7xl text-gray-300">
+                        <i class="fas fa-users"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Diapositiva 10: Clasificación -->
+            <div class="slide">
+                <h3>Clasificación de Computadoras</h3>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 w-full">
+                    <div class="p-4 bg-white border-2 border-gray-100 rounded-2xl shadow-sm">
+                        <span class="block text-3xl mb-2">🏢</span>
+                        <h5 class="font-black text-xs uppercase">Supercomputadoras</h5>
+                        <p class="text-[10px] text-gray-500">Investigación y ciencia.</p>
+                    </div>
+                    <div class="p-4 bg-white border-2 border-gray-100 rounded-2xl shadow-sm">
+                        <span class="block text-3xl mb-2">🖥️</span>
+                        <h5 class="font-black text-xs uppercase">Mainframes</h5>
+                        <p class="text-[10px] text-gray-500">Bancos y grandes empresas.</p>
+                    </div>
+                    <div class="p-4 bg-white border-2 border-gray-100 rounded-2xl shadow-sm">
+                        <span class="block text-3xl mb-2">💼</span>
+                        <h5 class="font-black text-xs uppercase">Estaciones de Trabajo</h5>
+                        <p class="text-[10px] text-gray-500">Diseño y alta ingeniería.</p>
+                    </div>
+                    <div class="p-4 bg-white border-2 border-gray-100 rounded-2xl shadow-sm">
+                        <span class="block text-3xl mb-2">💻</span>
+                        <h5 class="font-black text-xs uppercase">Microcomputadoras</h5>
+                        <p class="text-[10px] text-gray-500">Laptops y PCs personales.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Diapositiva 11: Importancia -->
+            <div class="slide">
+                <h3>Importancia de la Informática</h3>
+                <p class="text-xl">En la actualidad, la informática está presente en casi todos los ámbitos de la vida humana:</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-8 w-full max-w-3xl">
+                    <div class="p-4 bg-blue-50 rounded-xl flex items-center gap-4">
+                        <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center text-blue-600"><i class="fas fa-graduation-cap"></i></div>
+                        <span class="font-bold text-blue-800">Educación</span>
+                    </div>
+                    <div class="p-4 bg-emerald-50 rounded-xl flex items-center gap-4">
+                        <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center text-emerald-600"><i class="fas fa-heartbeat"></i></div>
+                        <span class="font-bold text-emerald-800">Medicina</span>
+                    </div>
+                    <div class="p-4 bg-orange-50 rounded-xl flex items-center gap-4">
+                        <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center text-orange-600"><i class="fas fa-chart-line"></i></div>
+                        <span class="font-bold text-orange-800">Economía</span>
+                    </div>
+                    <div class="p-4 bg-purple-50 rounded-xl flex items-center gap-4">
+                        <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center text-purple-600"><i class="fas fa-comments"></i></div>
+                        <span class="font-bold text-purple-800">Comunicación</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Diapositiva 12: Ejercicio Guiado -->
+            <div class="slide">
+                <h3>Ejercicio Guiado</h3>
+                <p class="mb-6">Identifica a qué parte del Sistema Informático corresponde cada elemento:</p>
+                <div class="space-y-4 w-full max-w-2xl">
+                    <div class="flex items-center justify-between p-4 bg-gray-50 rounded-xl border border-gray-200">
+                        <span class="font-bold text-gray-700 uppercase tracking-tighter">1. El monitor de la PC:</span>
+                        <span class="px-4 py-1 bg-blue-600 text-white rounded-full text-xs font-bold">HARDWARE</span>
+                    </div>
+                    <div class="flex items-center justify-between p-4 bg-gray-50 rounded-xl border border-gray-200">
+                        <span class="font-bold text-gray-700 uppercase tracking-tighter">2. El navegador Google Chrome:</span>
+                        <span class="px-4 py-1 bg-emerald-500 text-white rounded-full text-xs font-bold">SOFTWARE</span>
+                    </div>
+                    <div class="flex items-center justify-between p-4 bg-gray-50 rounded-xl border border-gray-200">
+                        <span class="font-bold text-gray-700 uppercase tracking-tighter">3. El programador de sistemas:</span>
+                        <span class="px-4 py-1 bg-orange-500 text-white rounded-full text-xs font-bold">HUMANWARE</span>
+                    </div>
+                    <div class="flex items-center justify-between p-4 bg-gray-50 rounded-xl border border-gray-200">
+                        <span class="font-bold text-gray-700 uppercase tracking-tighter">4. Un video de YouTube:</span>
+                        <span class="px-4 py-1 bg-purple-500 text-white rounded-full text-xs font-bold">INFORMACIÓN</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Diapositiva 13: Actividad en Clase -->
+            <div class="slide">
+                <h3>Actividad en clase</h3>
+                <div class="concept-box">
+                    <p class="font-bold text-blue-600 mb-4 underline">Instrucciones:</p>
+                    <p>En tu cuaderno, dibuja un esquema del <strong>Sistema Informático</strong> que incluya sus tres pilares (Hardware, Software y Humanware). Para cada uno, escribe al menos 3 ejemplos que utilices en tu vida cotidiana.</p>
+                    <p class="mt-6 text-sm italic text-gray-500">Criterio de evaluación: Orden, claridad en los conceptos y pertinencia de los ejemplos. Se revisará al final de la clase.</p>
+                </div>
+            </div>
+
+            <!-- Diapositiva 14: Transición -->
+            <div class="slide">
+                <div class="w-32 h-32 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center text-6xl mb-8 animate-bounce">
+                    <i class="fas fa-check-double"></i>
+                </div>
+                <h2>¡Evaluemos lo Aprendido!</h2>
+                <p>A continuación se presentará una evaluación dinámica de 10 preguntas. Asegúrate de haber comprendido los conceptos antes de iniciar.</p>
+                <p class="mt-4 text-gray-400 font-bold uppercase tracking-widest">Presiona "Siguiente" para comenzar</p>
+            </div>
+
+            <!-- Diapositiva 15: Quiz -->
+            <div class="slide">
+                <div class="quiz-container w-full max-w-3xl shadow-2xl">
+                    <div id="quiz-question-area">
+                        <div class="flex justify-between items-center mb-6">
+                            <span class="text-[10px] font-black text-blue-600 uppercase tracking-widest">Evaluación de Desempeño</span>
+                            <div id="quiz-timer" class="text-xs font-bold text-gray-400"><i class="far fa-clock mr-1"></i> 00:00</div>
+                        </div>
+                        <p id="quiz-question-text" class="font-bold text-2xl text-gray-800 mb-8 leading-tight">Cargando evaluación...</p>
+                        <div id="quiz-options-grid" class="grid grid-cols-1 gap-3">
+                            <!-- Opciones inyectadas por el motor -->
+                        </div>
+                        <div id="quiz-feedback" class="mt-8 p-6 rounded-2xl hidden font-black text-center uppercase tracking-tighter animate-fade-in"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Diapositiva 16: Cierre -->
+            <div class="slide">
+                <h2 class="font-black">¡Fin del Tema!</h2>
+                <div class='concept-box border-blue-600'>
+                    <p class="font-bold text-blue-600 mb-2">Resumen de la Sesión:</p>
+                    <p>Hoy aprendimos que la informática no solo son máquinas, sino el sistema completo de procesamiento de información que impulsa el mundo moderno.</p>
+                </div>
+                <div class="mt-12 flex flex-col items-center gap-4">
+                    <p class="text-sm font-bold text-gray-400 uppercase tracking-widest">Espacio para dudas y consultas presenciales</p>
+                    <button onclick="location.reload()" class="px-8 py-3 bg-gray-900 text-white rounded-xl font-bold uppercase text-xs tracking-[0.2em] hover:bg-blue-600 transition-all">Reiniciar Lección</button>
+                </div>
+            </div>
 
         </div>
+
+        <!-- Controles de Navegación -->
         <div id="controls-wrapper">
             <button id="prev-btn" class="nav-button">Anterior</button>
             <button id="next-btn" class="nav-button">Siguiente</button>
         </div>
+
+        <!-- Contador de Slides -->
         <div id="slide-counter">1 / 16</div>
     </main>
-        <footer id="main-footer" class="bg-gray-900 text-gray-300 py-8 px-6 mt-auto">
+
+    <!-- PIE DE PÁGINA GLOBAL -->
+    <footer id="main-footer" class="bg-gray-900 text-gray-400 py-8 px-6">
         <div class="container mx-auto text-center">
             <div class="flex flex-col items-center gap-4">
-                <img src="../imagenes/bandera-de-honduras.png" alt="Honduras" class="w-12 opacity-80">
-                <p class="text-sm font-medium">&copy; 2025 Instituto María Auxiliadora - Área de Informática. Todos los derechos reservados.</p>
+                <img src="../imagenes/bandera-de-honduras.png" alt="Honduras" class="w-10 opacity-60">
+                <div class="text-[10px] font-bold uppercase tracking-[0.2em]">
+                    &copy; 2025 Instituto María Auxiliadora - Área de Informática
+                </div>
+                <p class="text-[9px] max-w-md opacity-40">Prohibida la reproducción total o parcial de este contenido didáctico sin autorización expresa de las autoridades institucionales.</p>
             </div>
         </div>
     </footer>
@@ -89,10 +487,11 @@
     <script src="../js/api.js?v=22"></script>
     <script src="../js/presentation-engine.js?v=22"></script>
     <script>
+        // METADATOS PARA EL MOTOR DE EVALUACIÓN DINÁMICO
         window.presentationMetadata = {
             grado: "Decimo",
             asignatura: "Informatica",
-            tema: "introduccion_informatica"
+            tema: "Introducción a la Informática"
         };
     </script>
 </body>
