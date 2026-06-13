@@ -1,28 +1,15 @@
-ARCHIVOS MODIFICADOS Y CAMBIOS REALIZADOS:
-
-1. js/quizpro.js:
-   - Restringido renderizado de Top Global a 5 usuarios (.slice(0, 5)).
-   - Integrado await Promise.all(GamesAdapter.pendingAnalytics) en endQuiz.
-   - Refactorizada carga de ranking para priorizar caché local (0ms).
-
-2. js/config.js:
-   - Refactorizada window.sanitizarHTMLTecnico con regex profunda para handlers on*.
-   - Implementado Guardián de Alcance isContentAuthorized con soporte para academic_config_cache.
-   - Desplegado Perímetro de Seguridad (bloqueo F12, atajos, menú contextual, selección).
-   - Corregido escape de strings en renderizado de preguntas y descripciones.
-
-3. js/student.js:
-   - Integrada conciliación silenciosa de configuración académica.
-   - Filtrado de actividades y pestañas de parcial usando isContentAuthorized.
-
-4. js/presentation-engine.js:
-   - Desarrollado Motor v2.4 (Navegación híbrida, Zoom Resistance, Dynamic Quiz).
-
-5. Informatica_I/, II_BTP_A/, III_BTP_A/:
-   - Reconstrucción masiva de todas las presentaciones al estándar de 16 slides y Layout Global.
-   - Generados nuevos temas para Programación II y POO en 12mo Grado.
-
-6. js/Banco_Preguntas/:
-   - Migración de temas binarios/CLI de 10mo a 11no.
-   - Normalización de 24 archivos JSON (campos snake_case v5.0).
-   - Inyección de 20 preguntas de clasificación de periféricos en Decimo/Informatica/basico.json.
+### CAMBIOS REALIZADOS - FASE 1: DÉCIMO GRADO
+1. **js/presentation-engine.js**:
+   - Desarrollado motor v2.4 con soporte para navegación híbrida (teclado/touch), doble clic para fullscreen y carga dinámica de reactivos.
+2. **Informatica_I/**:
+   - Reconstrucción masiva de 13 archivos HTML.
+   - Estandarización de Portada (Slide 1) con logo fluid y metadatos reglamentarios.
+   - Inyección de Encabezado Institucional y Pie de Página Global.
+   - Implementación de secuencia de 16 diapositivas.
+   - Desacoplamiento de lógica JS local en favor del motor centralizado.
+3. **js/ui-common.js**:
+   - Exposición de acciones globales (`handleHeaderAction`, `openAcademicHierarchy`) bajo el namespace `QuizProApp`.
+4. **js/config.js**:
+   - Despliegue del Perímetro de Seguridad v7.6 (bloqueo F12, Menú Contextual y Selección de Texto).
+5. **Respaldos**:
+   - Generados archivos .bak para todos los originales de 10mo grado.

@@ -1,17 +1,16 @@
-# REGISTRO DE TAREAS Y REMEDIACIÓN v7.6+
+# REGISTRO DE TAREAS Y REMEDIACIÓN v7.6
 
-## TAREAS PENDIENTES DE REVISIÓN
-- [ ] Validación de la lógica de "Cold Start" en entornos reales con alumnos nuevos.
-- [ ] Pruebas de regresión en navegadores extremadamente antiguos (IE11/Safari 10).
+### [T-001] Reparación Masiva de Presentaciones 10mo Grado (REINTENTO)
+- **Origen del Hallazgo:** Code Review / Auditoría Forense
+- **Severidad/Clasificación:** Crítico
+- **Archivos Involucrados:** Informatica_I/*.html
+- **Descripción del Alcance:** Reconstrucción integral siguiendo la estructura de 16 diapositivas (1 Portada, 10 Contenido, 1 Ejercicio, 1 Actividad, 1 Transición, 1 Quiz, 1 Cierre). Eliminar placeholders.
+- **Criterios de Aceptación:** Estructura exacta, sin placeholders, motor v2.4 acoplado.
+- **Estado:** [ ] En Ejecución
 
-## TAREAS COMPLETADAS
-- [x] Restricción de Top Global a 5 registros (Rendimiento clínico).
-- [x] Hidratación 0ms y Sincronización en segundo plano (Estrategia de persistencia).
-- [x] Corrección de renderizado HTML enriquecido con sanitización XSS profunda.
-- [x] Perímetro de seguridad anti-debugging y bloqueo de atajos de sistema.
-- [x] Migración académica de 10mo a 11mo (Binarios/CLI) y normalización del Banco.
-- [x] Centralización del Motor de Presentaciones v2.4 (Navegación híbrida y Zoom Resistance).
-- [x] Refactorización masiva de todas las presentaciones al estándar de 16 diapositivas.
-- [x] Generación Ex Nihilo de 11 presentaciones para Programación II y POO (12mo).
-- [x] Implementación de filtro de asignaturas activas (Scope Guard) en dashboards.
-- [x] Integración de analítica psicométrica y recomendaciones académicas en el perfil.
+### [T-003] Enriquecimiento de Reactivos de Periféricos
+- **Origen del Hallazgo:** Code Review
+- **Severidad/Clasificación:** Alto
+- **Archivos Involucrados:** js/Banco_Preguntas/Decimo/Informatica/basico.json
+- **Descripción del Alcance:** Inyectar imágenes a los reactivos de periféricos y asegurar simetría.
+- **Estado:** [ ] Pendiente

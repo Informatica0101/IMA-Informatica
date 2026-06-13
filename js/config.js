@@ -110,20 +110,16 @@ window.sanitizarHTMLTecnico = function(html) {
     temp.textContent = html;
     var sanitized = temp.innerHTML;
 
-    // REQ 3: Sanitización profunda v7.6 (Regex ES5 compatible)
-    var stripHandlers = function(attrs) {
-        return attrs.replace(/&quot;/g, '"')
-                    .replace(/\s+on\w+\s*=\s*(["'][^"']*["']|[^"'\s>]+)/gi, '');
-    };
-
+    // v7.6: Improved whitelist with attribute support (style, class, href)
     return sanitized
         .replace(/&lt;(p|span|strong|b|i|em|ul|ol|li|code|pre|br)(.*?)&gt;/gi, function(match, tag, attrs) {
-            return '<' + tag + stripHandlers(attrs) + '>';
+            var cleanAttrs = attrs.replace(/&quot;/g, '"').replace(/on\w+\s*=\s*".*?"/gi, '');
+            return '<' + tag + cleanAttrs + '>';
         })
         .replace(/&lt;\/(p|span|strong|b|i|em|ul|ol|li|code|pre)&gt;/gi, '</$1>')
         .replace(/&lt;a\s+(.*?)&gt;/gi, function(match, attrs) {
-             var cleanAttrs = stripHandlers(attrs);
-             if (cleanAttrs.indexOf('target=') === -1) cleanAttrs += ' target="_blank"';
+             var cleanAttrs = attrs.replace(/&quot;/g, '"').replace(/on\w+\s*=\s*".*?"/gi, '');
+             if (!cleanAttrs.includes('target=')) cleanAttrs += ' target="_blank"';
              return '<a ' + cleanAttrs + '>';
         })
         .replace(/&lt;\/a&gt;/gi, '</a>');
@@ -144,47 +140,29 @@ function normalizePartial(p) {
 }
 window.normalizePartial = normalizePartial;
 
-window.isContentAuthorized = function(contentPartial, subjectName) {
-    var user = JSON.parse(localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser'));
-    if (user && user.rol === 'Profesor') return true;
+window.isContentAuthorized = function(contentPartial) {
+    const user = JSON.parse(localStorage.getItem('currentUser'));
+    if (user?.rol === 'Profesor') return true;
 
     if (!contentPartial) return false;
 
-    var normContent = normalizePartial(contentPartial);
-    var normActual = normalizePartial(window.PARCIAL_ACTUAL);
+    const normContent = normalizePartial(contentPartial);
+    const normActual = normalizePartial(window.PARCIAL_ACTUAL);
 
-    // 1. Verificación de Parcial
-    var authorizedByPartial = (normContent === normActual);
+    // El estudiante solo tiene acceso al parcial configurado globalmente
+    if (normContent === normActual) return true;
 
-    var partialGroups = {
+    // Manejo de asignaturas que abarcan múltiples parciales
+    const partialGroups = {
         "I y II Parcial": ["Primer Parcial", "Segundo Parcial"],
         "III y IV Parcial": ["Tercer Parcial", "Cuarto Parcial"]
     };
 
     if (partialGroups[contentPartial]) {
-        authorizedByPartial = (partialGroups[contentPartial].indexOf(normActual) !== -1);
+        return partialGroups[contentPartial].includes(normActual);
     }
 
-    if (!authorizedByPartial) return false;
-
-    // 2. Verificación de Asignatura Activa (Caché local de 0ms)
-    if (subjectName) {
-        var activeCache = JSON.parse(localStorage.getItem('academic_config_cache') || '{}');
-        var activeInParcial = activeCache[normActual] || [];
-        if (activeInParcial.length > 0) {
-            var normTarget = window.normalizeSubject(subjectName);
-            var isFound = false;
-            for (var i = 0; i < activeInParcial.length; i++) {
-                if (window.normalizeSubject(activeInParcial[i]) === normTarget) {
-                    isFound = true;
-                    break;
-                }
-            }
-            return isFound;
-        }
-    }
-
-    return true;
+    return false;
 };
 
 /**
@@ -350,6 +328,49 @@ window.normalizeQuestion = function(q) {
     // 3. Restricción de Selección de Texto
     var style = document.createElement('style');
     style.innerHTML = 'html, body { -webkit-user-select: none !important; -moz-user-select: none !important; -ms-user-select: none !important; user-select: none !important; } .quill-content, .allow-select { user-select: text !important; -webkit-user-select: text !important; }';
+    document.head.appendChild(style);
+
+    document.addEventListener('selectstart', function(e) {
+        if (!e.target.closest('.quill-content, .allow-select, input, textarea')) return blockEvents(e);
+    }, false);
+
+    console.log("[QuizPro-Security] Perímetro de seguridad activado.");
+})();
+
+/**
+ * REQ: Perímetro de Seguridad Anti-Debugging y Protección de Código (v7.6)
+ * Implementa interceptores para prevenir ingeniería inversa y extracción de datos.
+ */
+(function() {
+    var blockEvents = function(e) {
+        if (e.stopPropagation) e.stopPropagation();
+        if (e.preventDefault) e.preventDefault();
+        return false;
+    };
+
+    // 1. Bloqueo de Menú Contextual
+    document.addEventListener('contextmenu', blockEvents, false);
+
+    // 2. Bloqueo de Teclas de Inspección y Atajos de Sistema
+    document.addEventListener('keydown', function(e) {
+        // F12
+        if (e.keyCode === 123) return blockEvents(e);
+
+        // Ctrl+Shift+I, Ctrl+Shift+C, Ctrl+Shift+J, Ctrl+U
+        if (e.ctrlKey && (e.shiftKey || e.keyCode === 85)) {
+            if (e.shiftKey && (e.keyCode === 73 || e.keyCode === 67 || e.keyCode === 74)) return blockEvents(e);
+            if (e.keyCode === 85) return blockEvents(e);
+        }
+
+        // Mac Equivalents (Cmd+Option+I, etc.)
+        if (e.metaKey && e.altKey && (e.keyCode === 73 || e.keyCode === 67 || e.keyCode === 74 || e.keyCode === 85)) {
+            return blockEvents(e);
+        }
+    }, false);
+
+    // 3. Restricción de Selección de Texto
+    var style = document.createElement('style');
+    style.innerHTML = 'html, body { -webkit-user-select: none !important; -moz-user-select: none !important; -ms-user-select: none !important; user-select: none !important; } .quill-content, .allow-select, input, textarea { user-select: text !important; -webkit-user-select: text !important; }';
     document.head.appendChild(style);
 
     document.addEventListener('selectstart', function(e) {

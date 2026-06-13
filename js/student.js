@@ -64,16 +64,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Función para obtener Tareas y Exámenes
     async function fetchAllActivities() {
-            // Background reconciliation for academic config (Active Subjects)
-            fetchApi('USER', 'getAcademicConfig').then(configRes => {
-                if (configRes.status === 'success' && configRes.data) {
-                    const activeCache = JSON.parse(localStorage.getItem('academic_config_cache') || '{}');
-                    const parcial = configRes.data.ParcialActual || window.PARCIAL_ACTUAL;
-                    activeCache[parcial] = configRes.data.AsignaturasActivas || [];
-                    localStorage.setItem('academic_config_cache', JSON.stringify(activeCache));
-                }
-            }).catch(e => console.warn("Fallo conciliación de config académica:", e));
-
         if (!tasksList) return;
 
         // REQ: Eager Caching & Offline-First (Modulo 1)
@@ -218,7 +208,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // REQ: Filtro Estricto por Parcial (Incidencia 5)
         // No mezclar históricos en el cálculo de progreso actual
         const currentParcialActivities = activities.filter(a =>
-            window.isContentAuthorized(a.parcial, a.asignatura)
+            window.normalizePartial(a.parcial) === window.normalizePartial(window.PARCIAL_ACTUAL)
         );
 
         // --- Ajuste de Lógica de Progreso (Req 2) ---

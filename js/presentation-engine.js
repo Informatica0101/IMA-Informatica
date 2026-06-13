@@ -57,16 +57,18 @@
             var lastClickTime = 0;
             if (container) {
                 container.addEventListener('click', function(e) {
+                    // Ignore clicks on interactive elements
                     if (e.target.closest('.quiz-option, a, .concept-box, button')) return;
 
                     var now = new Date().getTime();
-                    if (now - lastClickTime < 300) return;
+                    if (now - lastClickTime < 300) return; // Debounce
                     lastClickTime = now;
 
                     var width = container.clientWidth;
                     var clickX = e.clientX;
 
                     if (window.innerWidth <= 768) {
+                        // Mobile: 30% Left = Prev, 70% Right = Next
                         if (clickX < (width * 0.30)) self.prevSlide();
                         else self.nextSlide();
                     } else {
@@ -135,6 +137,7 @@
             var presentationContainer = document.getElementById('presentation-container');
 
             // Zoom resistance rule: window.innerHeight >= (screen.height - 15)
+            // This detects if the window is maximized or at high zoom level occupying most of screen
             var isWindowFull = (window.innerHeight >= (window.screen.height - 15));
             var isNativeFull = !!(document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement);
             var shouldHide = isWindowFull || isNativeFull;
@@ -156,6 +159,7 @@
                 else controls.classList.remove('hide-element');
             }
 
+            // Adjustment for main margin when header is hidden
             var main = document.querySelector('main');
             if (main) {
                 if (shouldHide) {
@@ -211,16 +215,12 @@
             var levels = ['basico', 'intermedio', 'avanzado'];
             var allLoaded = [];
 
-            // Calculate path prefix based on metadata or current location
-            var pathPrefix = "../../";
-            if (meta.grado === "Duodecimo") pathPrefix = "../../../";
-
             function fetchLevel(idx) {
                 if (idx >= levels.length) {
                     self.quizQuestions = self.filterAndShuffle(allLoaded, 10);
                     return;
                 }
-                var path = pathPrefix + 'js/Banco_Preguntas/' + meta.grado + '/' + meta.asignatura + '/' + levels[idx] + '.json';
+                var path = '../js/Banco_Preguntas/' + meta.grado + '/' + meta.asignatura + '/' + levels[idx] + '.json';
 
                 var xhr = new XMLHttpRequest();
                 xhr.open('GET', path, true);
@@ -313,12 +313,12 @@
                 buttons[i].disabled = true;
             }
 
-            var isCorrect = (String(selected).trim().toLowerCase() === String(correct).trim().toLowerCase());
+            var isCorrect = (selected === correct);
             btn.classList.add(isCorrect ? 'correct' : 'incorrect');
 
             if (!isCorrect) {
                 for (var j = 0; j < buttons.length; j++) {
-                    if (String(buttons[j].innerHTML).trim().toLowerCase() === String(correct).trim().toLowerCase()) {
+                    if (buttons[j].innerHTML === correct || buttons[j].textContent === correct) {
                         buttons[j].classList.add('correct');
                     }
                 }

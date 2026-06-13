@@ -740,3 +740,9 @@ window.renderCommonNav = function() {
         mobilePortalBottom.href = currentUser.rol === 'Profesor' ? 'teacher-dashboard.html' : 'student-dashboard.html';
     }
 };
+
+// Official Namespace Blindaje (v7.6)
+// Expose core actions to QuizProApp namespace for HTML onclick compatibility
+window.QuizProApp = window.QuizProApp || {};
+window.QuizProApp.handleHeaderAction = window.handleHeaderAction;
+window.QuizProApp.openAcademicHierarchy = window.openAcademicHierarchy;

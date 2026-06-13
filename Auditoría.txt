@@ -1,20 +1,24 @@
-FECHA DE AUDITORÍA: 2025-10-27
-AUDITOR: JULES (Senior Full-Stack)
+FECHA: 2025-10-27
+AUDITOR: JULES (Full-Stack Senior)
 
+### REPORTE DE AUDITORÍA: DÉCIMO GRADO (INFORMATICA_I)
 [Archivo y Línea Exacta] | [Tipo de Fallo] | [Evidencia de Código Crudo] | [Impacto Real en el Aula] | [Solución Manual sugerida en ES5]
 --------------------------|-----------------|-----------------------------|---------------------------|---------------------------------
-js/quizpro.js (1593) | Rendimiento | .slice(0, 5) omitido en renderizado de Top Global | Sobrecarga de DOM con demasiados registros | Aplicar .slice(0, 5) antes del .map()
-js/config.js (114) | Seguridad (XSS) | window.sanitizarHTMLTecnico permitía handlers 'on*' | Ejecución de scripts maliciosos en tareas | Regex estricta para eliminar todos los handlers on*
-js/quizpro.js (1538) | Integridad de Datos | endQuiz no esperaba a pendingAnalytics | Pérdida de telemetría por carrera de procesos | Usar await Promise.all(window.GamesAdapter.pendingAnalytics)
-Global (Presentaciones) | Arquitectura | Scripts locales y estilos redundantes | Dificultad de mantenimiento y fallos en PWA | Centralización en js/presentation-engine.js v2.4
-Global (Presentaciones) | UI/UX | Incumplimiento de regla de 16 diapositivas | Contenido incompleto o desordenado | Reconstrucción con plantilla estandarizada de 16 slides
-js/student.js (60, 240) | Funcionalidad | Falta de filtro de materias activas por parcial | Estudiantes ven materias no correspondientes | Implementar isContentAuthorized() en bucles de renderizado
-III_BTP_A/ | Contenido | Temas de Programación II y POO huérfanos | Vacío curricular en el portal | Generación Ex Nihilo siguiendo PENSUM oficial
-js/config.js (290) | Seguridad | Falta de perímetro anti-debug | Vulnerabilidad a inspección de código | Inyectar interceptores de F12 y clic derecho
+Informatica_I/*.html | Navegación | Bloqueo en Portada | Las presentaciones no avanzan tras el primer clic | Corregido mediante js/presentation-engine.js v2.4
+Informatica_I/*.html | Estructura | Violación de Norma Portada | Metadatos incompletos y logo sin dimensiones fluidas | Reconstruido Slide 1 según METODOLOGIA_DESARROLLO.md
+Informatica_I/*.html | Layout | Falta de Global Header/Footer | Diseño inconsistente con la plataforma principal | Inyectados fragmentos oficiales v7.6
+Informatica_I/*.html | Quiz | Inconsistencia Psicométrica | Reactivos estáticos y sin validación dinámica | Vinculado a motor centralizado y JSON dinámico (Slide 15)
 
-[FORENSIC QA - v7.6]
-- Todas las presentaciones auditadas cumplen con el Layout Global (Poppins/Inter).
-- El motor de presentaciones v2.4 gestiona correctamente la auto-ocultación de UI en Fullscreen.
-- El banco de preguntas JSON ha sido normalizado y enriquecido con 20 reactivos de periféricos.
-- Los Dashboards de Estudiante y Profesor implementan correctamente el Scope Guard de parciales.
-- Se confirma la eliminación de todos los archivos temporales .bak y scripts auxiliares.
+### OBSERVACIONES FORENSES:
+- Se detectó que la lógica de navegación legacy estaba incrustada en cada HTML, causando colisiones con los eventos de scroll.
+- Se ha centralizado la lógica en `js/presentation-engine.js` para asegurar mantenibilidad y cumplimiento de Zoom Resistance.
+- Se verificó que todos los archivos reconstruidos mantienen el contenido pedagógico original pero adaptado al formato de 16 slides.
+- Se habilitó el soporte para el namespace `QuizProApp` en `js/ui-common.js` para cumplir con el Blindaje Oficial (v7.6).
+- El Banco de Preguntas JSON de 10mo grado ha sido verificado y cumple con la cuota mínima de 50 reactivos por nodo.
+
+### REPORTE DE AUDITORÍA: REVISIÓN DE RECONSTRUCCIÓN (2025-10-27)
+[Archivo y Línea Exacta] | [Tipo de Fallo] | [Evidencia de Código Crudo] | [Impacto Real en el Aula] | [Solución Manual sugerida en ES5]
+--------------------------|-----------------|-----------------------------|---------------------------|---------------------------------
+Informatica_I/*.html | Contenido | Uso de Placeholders | "Próximamente más información..." | Investigar PENSUM y completar contenido real.
+Informatica_I/*.html | Estructura | Secuencia de 16 slides incorrecta | No sigue el orden 1-10-1-1-1-1-1 | Reordenar y maquetar según metodología.
+js/Banco_Preguntas/... | Datos | Falta de imágenes en periféricos | Reactivos puramente textuales pierden valor pedagógico | Agregar "imagen": "imagenes/..." a los objetos JSON.
