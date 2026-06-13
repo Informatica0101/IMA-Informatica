@@ -173,16 +173,7 @@
             .quiz-option { padding: 0.65rem; font-size: 0.85rem; }
         }
     </style>
-
-    <style>
-    #controls-wrapper { position: absolute; bottom: 2rem; left: 50%; transform: translate(-50%, 0); display: flex; gap: 1rem; z-index: 40; transition: opacity 0.3s ease; }
-    .nav-button { background-color: #0d6efd; color: #ffffff; padding: 0.75rem 1.5rem; border-radius: 6px; font-weight: 600; transition: all 0.3s; cursor: pointer; border: none; }
-    .nav-button:hover { background-color: #0b5ed7; transform: scale(1.05); }
-    .nav-button:disabled { background-color: #d1d5db; cursor: not-allowed; transform: scale(1); }
-    #slide-counter { position: absolute; bottom: 1.5rem; right: 2rem; font-weight: 600; color: #9ca3af; z-index: 30; }
-    .hide-element { display: none !important; }
-    </style>
-    </head>
+</head>
 <body class="antialiased">
 
     <header id="page-header" class="w-full bg-white p-4 shadow-sm flex justify-between items-center z-50">
@@ -624,35 +615,5 @@
         showSlide(0);
         checkFullscreenMetrics();
     </script>
-
-    <script>
-    (function() {
-        const slides = document.querySelectorAll('.slide');
-        const nextBtn = document.getElementById('next-btn') || document.getElementById('next-slide');
-        const prevBtn = document.getElementById('prev-btn') || document.getElementById('prev-slide');
-        const counter = document.getElementById('slide-counter');
-        const container = document.getElementById('presentation-container') || document.body;
-        let current = 0;
-        function update(n) {
-            if (n < 0 || n >= slides.length) return;
-            slides.forEach(s => s.classList.remove('active'));
-            current = n;
-            slides[current].classList.add('active');
-            if (counter) counter.textContent = (current + 1) + ' / ' + slides.length;
-            if (prevBtn) prevBtn.disabled = current === 0;
-            if (nextBtn) nextBtn.disabled = current === slides.length - 1;
-        }
-        if (nextBtn) nextBtn.onclick = () => update(current + 1);
-        if (prevBtn) prevBtn.onclick = () => update(current - 1);
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'ArrowRight') update(current + 1);
-            if (e.key === 'ArrowLeft') update(current - 1);
-        });
-        container.addEventListener('dblclick', () => {
-            if (!document.fullscreenElement) document.documentElement.requestFullscreen();
-            else document.exitFullscreen();
-        });
-    })();
-    </script>
-    </body>
+</body>
 </html>

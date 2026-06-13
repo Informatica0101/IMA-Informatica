@@ -1,95 +1,40 @@
-# Inventario Estructural y Mapa de Dependencias (v7.5)
+# MAPA DE DEPENDENCIAS Y ESTRUCTURA TÉCNICA v7.6
 
-## 1. Núcleo (Core)
+## 1. MÓDULOS DE NÚCLEO (CORE)
+- **js/config.js**: Punto de entrada de configuración.
+  - `window.PARCIAL_ACTUAL`: Estado global del período.
+  - `window.sanitizarHTMLTecnico`: Motor de limpieza XSS para renderizado enriquecido.
+  - `window.isContentAuthorized`: Guardián de acceso a contenidos por parcial y asignatura.
+  - `window.normalizeQuestion`: Estandarizador de integridad para reactivos.
+  - **Perímetro de Seguridad**: IIFE que bloquea F12, Ctrl+U y Menú Contextual.
+- **js/api.js**: Capa de comunicación con microservicios.
+  - Depende de: `window.SERVICE_URLS` en `config.js`.
+- **js/persistence.js**: Gestión de IndexedDB y caché local.
+  - Store: `local_progress`, `academic_stats`, `rankings`.
 
-### QuizProApp (js/config.js)
-- **Responsabilidad:** Namespace raíz, configuración global y utilidades de normalización.
-- **Funciones:**
-    - `app.parseGrade(gradeStr)`: Parsea grado (10, 11, 12).
-    - `app.getSanitizedAcademicText(text)`: Normaliza texto académico (ES5).
-    - `app.normalizeSubject(name)`: Limpia nombres de asignaturas.
-    - `app.getStandardLevelName(lvl)`: Normaliza niveles (Básico, Intermedio, Avanzado).
-    - `app.formatearMetricaPsicométrica(valor)`: Redondeo simétrico a 2 decimales.
-    - `app.getUrlParam(param)`: Extracción manual de parámetros URL.
-    - `app.sanitizarHTMLTecnico(html)`: Sanitización de etiquetas técnicas permitidas.
-    - `app.normalizePartial(p)`: Normalización de nombres de parciales.
-    - `app.isContentAuthorized(contentPartial)`: Control de acceso por parcial.
-    - `app.validateQuestion(q)`: Validador de esquema de reactivos.
-    - `app.normalizeQuestion(q)`: Mapeo PascalCase para integridad de reactivos.
-- **Variables Globales:**
-    - `app.SERVICE_URLS`: Endpoints de microservicios (USER, TASK, EXAM).
-    - `app.PARCIAL_ACTUAL`: Estado del periodo académico actual.
-- **Seguridad:** Interceptores de ContextMenu y Teclado (F12, etc).
+## 2. MOTORES LÓGICOS
+- **js/quizpro.js**: Motor de evaluación inteligente.
+  - `loadGlobalTop`: Implementa restricción clínica de 5 registros.
+  - `endQuiz`: Sincroniza telemetría mediante `Promise.all(GamesAdapter.pendingAnalytics)`.
+  - Depende de: `js/config.js`, `js/api.js`, `js/games-adapter.js`.
+- **js/presentation-engine.js (v2.4)**: Centralizador de lecciones interactivas.
+  - Controla: Navegación, Fullscreen (Slide 1 dblclick), Zoom Resistance.
+  - Inyecta: 10 reactivos aleatorios del banco JSON centralizado.
 
-### PersistenceManager (js/persistence.js)
-- **Responsabilidad:** Gestión de persistencia Offline-First mediante IndexedDB.
-- **Funciones:**
-    - `app.PersistenceManager.init()`: Inicializa `IMA_Persistence_DB` (v2).
-    - `app.PersistenceManager.getGuestId()`: Gestión de `GUEST_UUID`.
-    - `app.PersistenceManager.getActiveId()`: Retorna ID activo (User o Guest).
-    - `app.PersistenceManager.get(store, key)`: Recuperación asíncrona.
-    - `app.PersistenceManager.set(store, data, key)`: Persistencia con timestamp.
-    - `app.PersistenceManager.getAll(store)`: Recuperación masiva.
-    - `app.PersistenceManager.delete(store, key)`: Eliminación de registros.
-    - `app.PersistenceManager.reconcile(store, serverData, onUpdate)`: Sincronización silenciosa.
-    - `app.PersistenceManager.clearTelemetry()`: Purga de búfer analítico (`pending_anl_`).
-- **Dependencias:** `QuizProApp`.
-- **Eventos:** Listener `online` para sincronización de fondo de telemetría pendiente.
+## 3. INTERFACES DE USUARIO (DASHBOARDS)
+- **js/student.js**: Dashboard del Estudiante.
+  - Implementa: Hidratación 0ms, Conciliación silenciosa.
+  - Filtro: Usa `isContentAuthorized` para ocultar materias no activas.
+- **js/teacher.js**: Dashboard del Docente.
+  - Gestión: Activa/Desactiva asignaturas por parcial en `academic_config_cache`.
 
-### fetchApi (js/api.js)
-- **Responsabilidad:** Bus de comunicación unificado con reintentos y timeout.
-- **Funciones:**
-    - `app.fetchApi(service, action, payload, retryCount, options)`: Ejecuta peticiones POST.
-- **Dependencias:** `QuizProApp.SERVICE_URLS`, `QuizProApp.PersistenceManager`.
-- **Características:** Timeout de 60s (AbortController), reintento automático (2 veces), fallback visual (Toast).
+## 4. ESTRUCTURA DE CONTENIDOS
+- **Informatica_I/**: 10mo Grado (Bachillerato).
+- **II_BTP_A/**: 11no Grado (Programación, Ofimática, IA, Análisis).
+- **III_BTP_A/**: 12mo Grado (Diseño Web, Programación 2, POO).
+- **js/Banco_Preguntas/**: 24 archivos JSON normalizados (Min 50 reactivos por nodo).
 
-## 2. Lógica de Aplicación (UI & Business Logic)
-
-### AuthModule (js/auth.js)
-- **Responsabilidad:** Gestión de sesiones, registro y fusión de datos de invitados.
-- **Funciones:**
-    - `app.initAuth()`: Inicializa formularios de login/registro.
-    - `app.handlePostLoginRedirection(user)`: Redirección y Intent Recovery.
-    - `app.mergeGuestData(userId)`: Migración de progreso local a la nube (Regla del Máximo Promedio).
-- **Dependencias:** `app.fetchApi`, `app.PersistenceManager`.
-
-### QuizPro Engine (js/quizpro.js)
-- **Responsabilidad:** Motor de evaluación, gamificación y gestión de niveles.
-- **Funciones:**
-    - `app.initQuizPro()`: Inicialización de listeners de abandono y carga de datos.
-    - `app.navigateToSubjects()`: Renderizado de malla curricular.
-    - `app.checkCrossGradeLock(subject, grade)`: Validación de prerrequisitos inter-grado.
-    - `app.navigateToLevels(subject, grade)`: Gestión de desbloqueo de niveles (70% + Cold Start).
-    - `app.startQuiz()`: Inicializa pool de preguntas (Reinforcement + Fresh).
-    - `app.loadQuestions()`: Enrutamiento local autónomo a `js/Banco_Preguntas/`.
-    - `app.calculateXP(isCorrect, level, time)`: Algoritmo XP v7.0 con penalización por reintentos.
-    - `app.endQuiz()`: Sincronización final, persistencia de logros y XP.
-- **Dependencias:** `GamesAdapter`, `PersistenceManager`, `fetchApi`, `normalizeQuestion`.
-- **Variables Críticas:** `XP_CONFIG` (Rangos, Factores de tiempo y racha).
-
-### GamesAdapter (js/games-adapter.js)
-- **Responsabilidad:** Fachada de telemetría para minijuegos.
-- **Funciones:**
-    - `init(gameId)`: Carga récords y rankings iniciales.
-    - `recordAction(data)`: Registra telemetría atómica (pregunta/respuesta).
-    - `finishSession(subject, level, score)`: Cierre de sesión y persistencia.
-
-## 3. Módulos de Usuario (Dashboards)
-
-### StudentDashboard (js/student.js)
-- **Dependencias:** `fetchApi`, `GamesAdapter`, `PersistenceManager`, `PDF-Lib`, `Chart.js`.
-- **Flujos Críticos:** Segmentación Binaria Autónoma (PDF > 9.5MB), Visualización Psicométrica (Radar/Trend).
-
-### TeacherDashboard (js/teacher.js)
-- **Dependencias:** `fetchApi`, `PersistenceManager`, `Chart.js`.
-- **Flujos Críticos:** Migración de Banco (JSON -> Sheets), Auditoría de Entregas, Analítica Grupal.
-
-## 4. Almacenamiento (IndexedDB IMA_Persistence_DB)
-- **Stores:**
-    - `news`: Caché de noticias.
-    - `academic_stats`: Historial de logros del usuario.
-    - `rankings`: Top Global y tops por asignatura.
-    - `user_profile`: Perfil extendido del usuario.
-    - `local_progress`: Búfer de telemetría asíncrona (`pending_anl_`).
-    - `cache_estudiante_dashboard`: Instantánea del dashboard.
-    - `cache_profesor_data`: Datos administrativos.
+## 5. FLUJOS DE DATOS CRÍTICOS
+1. **Evaluación -> Telemetría**: `quizpro.js` -> `GamesAdapter` -> `api.js` -> `backend/`.
+2. **Carga Contenido**: `student.js` -> `localStorage (Cache)` -> Render -> `api.js (Sync)`.
+3. **Presentación -> Banco**: `presentation-engine.js` -> `fetch(Banco_Preguntas/*.json)` -> Render Quiz.

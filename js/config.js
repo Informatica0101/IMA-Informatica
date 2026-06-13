@@ -110,17 +110,20 @@ window.sanitizarHTMLTecnico = function(html) {
     temp.textContent = html;
     var sanitized = temp.innerHTML;
 
+    // REQ 3: Sanitización profunda v7.6 (Regex ES5 compatible)
+    var stripHandlers = function(attrs) {
+        return attrs.replace(/&quot;/g, '"')
+                    .replace(/\s+on\w+\s*=\s*(["'][^"']*["']|[^"'\s>]+)/gi, '');
+    };
+
     return sanitized
         .replace(/&lt;(p|span|strong|b|i|em|ul|ol|li|code|pre|br)(.*?)&gt;/gi, function(match, tag, attrs) {
-            var cleanAttrs = attrs.replace(/&quot;/g, '"')
-                                  .replace(/\s*on\w+\s*=\s*(?:'[^']*'|"[^"]*"|[^\s>]+)/gi, '');
-            return '<' + tag + cleanAttrs + '>';
+            return '<' + tag + stripHandlers(attrs) + '>';
         })
         .replace(/&lt;\/(p|span|strong|b|i|em|ul|ol|li|code|pre)&gt;/gi, '</$1>')
         .replace(/&lt;a\s+(.*?)&gt;/gi, function(match, attrs) {
-             var cleanAttrs = attrs.replace(/&quot;/g, '"')
-                                   .replace(/\s*on\w+\s*=\s*(?:'[^']*'|"[^"]*"|[^\s>]+)/gi, '');
-             if (!cleanAttrs.includes('target=')) cleanAttrs += ' target="_blank"';
+             var cleanAttrs = stripHandlers(attrs);
+             if (cleanAttrs.indexOf('target=') === -1) cleanAttrs += ' target="_blank"';
              return '<a ' + cleanAttrs + '>';
         })
         .replace(/&lt;\/a&gt;/gi, '</a>');
@@ -141,41 +144,44 @@ function normalizePartial(p) {
 }
 window.normalizePartial = normalizePartial;
 
-window.isContentAuthorized = function(contentPartial, contentSubject) {
-    const user = JSON.parse(localStorage.getItem('currentUser'));
-    if (user?.rol === 'Profesor') return true;
+window.isContentAuthorized = function(contentPartial, subjectName) {
+    var user = JSON.parse(localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser'));
+    if (user && user.rol === 'Profesor') return true;
 
     if (!contentPartial) return false;
 
-    const normContent = normalizePartial(contentPartial);
-    const normActual = normalizePartial(window.PARCIAL_ACTUAL);
+    var normContent = normalizePartial(contentPartial);
+    var normActual = normalizePartial(window.PARCIAL_ACTUAL);
 
-    // 1. Partial Level Check
-    let partialMatch = (normContent === normActual);
+    // 1. Verificación de Parcial
+    var authorizedByPartial = (normContent === normActual);
 
-    const partialGroups = {
+    var partialGroups = {
         "I y II Parcial": ["Primer Parcial", "Segundo Parcial"],
         "III y IV Parcial": ["Tercer Parcial", "Cuarto Parcial"]
     };
 
     if (partialGroups[contentPartial]) {
-        partialMatch = partialGroups[contentPartial].includes(normActual);
+        authorizedByPartial = (partialGroups[contentPartial].indexOf(normActual) !== -1);
     }
 
-    if (!partialMatch) return false;
+    if (!authorizedByPartial) return false;
 
-    // 2. Subject Level Check (Requirement 3: Control de Asignaturas por Parcial)
-    try {
-        const config = JSON.parse(localStorage.getItem('academic_config_cache') || '{}');
-        const activeSubjects = config[normActual] || [];
-
-        if (contentSubject && activeSubjects.length > 0) {
-            const normSubject = normalizeSubject(contentSubject);
-            const isSubjectActive = activeSubjects.some(s => normalizeSubject(s) === normSubject);
-            return isSubjectActive;
+    // 2. Verificación de Asignatura Activa (Caché local de 0ms)
+    if (subjectName) {
+        var activeCache = JSON.parse(localStorage.getItem('academic_config_cache') || '{}');
+        var activeInParcial = activeCache[normActual] || [];
+        if (activeInParcial.length > 0) {
+            var normTarget = window.normalizeSubject(subjectName);
+            var isFound = false;
+            for (var i = 0; i < activeInParcial.length; i++) {
+                if (window.normalizeSubject(activeInParcial[i]) === normTarget) {
+                    isFound = true;
+                    break;
+                }
+            }
+            return isFound;
         }
-    } catch (e) {
-        console.warn("[IMA-FILTER] Error parsing academic config:", e);
     }
 
     return true;
