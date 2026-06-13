@@ -281,8 +281,7 @@
             var rawQ = this.quizQuestions[this.currentQuizIndex];
             var q = window.normalizeQuestion ? window.normalizeQuestion(rawQ) : rawQ;
 
-            var questionText = (this.currentQuizIndex + 1) + ". " + (q.enunciado || q.Pregunta);
-            qText.innerHTML = window.sanitizarHTMLTecnico ? window.sanitizarHTMLTecnico(questionText) : questionText;
+            qText.innerHTML = (this.currentQuizIndex + 1) + ". " + (window.sanitizarHTMLTecnico ? window.sanitizarHTMLTecnico(q.enunciado || q.Pregunta) : (q.enunciado || q.Pregunta));
             qGrid.innerHTML = "";
             if (qFeedback) qFeedback.style.display = "none";
 
