@@ -369,14 +369,24 @@ footer a:hover {
     color: var(--blue-institutional);
 }
 
-/* Quill Editor Rich Text Reset */
+/* Quill Editor Rich Text Reset (Force Black Color v7.6.2) */
+.quill-content, .ql-editor,
+.quill-content p, .ql-editor p,
+.quill-content span, .ql-editor span,
+.quill-content li, .ql-editor li,
+.quill-content strong, .ql-editor strong,
+.quill-content h1, .ql-editor h1,
+.quill-content h2, .ql-editor h2,
+.quill-content h3, .ql-editor h3 {
+    color: #000000 !important;
+}
 .quill-content ul { list-style-type: disc; margin-left: 1.5rem; margin-bottom: 1rem; }
 .quill-content ol { list-style-type: decimal; margin-left: 1.5rem; margin-bottom: 1rem; }
-.quill-content h1 { font-size: 1.5rem; margin-top: 1rem; margin-bottom: 0.5rem; color: var(--gray-dark); font-weight: 600; }
-.quill-content h2 { font-size: 1.25rem; margin-top: 1rem; margin-bottom: 0.5rem; color: var(--gray-dark); font-weight: 600; }
-.quill-content p { margin-bottom: 0.75rem; color: var(--blue-grayish); font-weight: 400; }
-.quill-content strong { font-weight: 600; color: var(--gray-dark); }
-.quill-content blockquote { border-left: 4px solid var(--blue-institutional); padding-left: 1rem; font-style: italic; color: var(--blue-grayish); margin-bottom: 1rem; }
+.quill-content h1 { font-size: 1.5rem; margin-top: 1rem; margin-bottom: 0.5rem; font-weight: 600; }
+.quill-content h2 { font-size: 1.25rem; margin-top: 1rem; margin-bottom: 0.5rem; font-weight: 600; }
+.quill-content p { margin-bottom: 0.75rem; font-weight: 400; }
+.quill-content strong { font-weight: 600; }
+.quill-content blockquote { border-left: 4px solid var(--blue-institutional); padding-left: 1rem; font-style: italic; color: #000000 !important; margin-bottom: 1rem; }
 
 /* Dashboard Accordion Internal Scroll */
 .assignment-content-scroll {

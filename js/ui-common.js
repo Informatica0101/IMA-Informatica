@@ -157,7 +157,14 @@ window.setupCommonUI = function() {
 
         if (!state) return;
 
-        if (state.type === 'dashboard-section') {
+        if (state.type === 'index-main') {
+            if (window.returnToMainContent) {
+                window.returnToMainContent();
+            } else {
+                if (window.showMainContentSections) window.showMainContentSections(false);
+                if (window.renderInitialContentButton) window.renderInitialContentButton();
+            }
+        } else if (state.type === 'dashboard-section') {
             const targetNav = document.getElementById(state.navId);
             const targetSection = document.getElementById(state.sectionId);
             if (targetNav && targetSection && window.navigateTo) {
@@ -167,8 +174,31 @@ window.setupCommonUI = function() {
             if (window.syncNavWithState) {
                 window.syncNavWithState(state);
             }
+        } else if (state.type === 'presentation-slide') {
+            if (window.PresentationEngine && typeof window.PresentationEngine.showSlide === 'function') {
+                window.PresentationEngine.showSlide(state.slideIndex, false);
+            }
+        } else if (state.type === 'student-tab') {
+            if (window.switchParcialTab) {
+                window.switchParcialTab(state.parcial, false);
+            }
+        } else if (state.type === 'index-content') {
+            if (state.view === 'grades') {
+                if (window.renderDownloadGrades) window.renderDownloadGrades(false);
+            } else if (state.view === 'subjects') {
+                if (state.gradeData) window.selectedGradeData = state.gradeData;
+                if (window.renderDownloadSubjects) window.renderDownloadSubjects(false);
+            } else if (state.view === 'topics') {
+                if (state.subjectData) window.selectedSubjectData = state.subjectData;
+                if (window.renderDownloadTopics) window.renderDownloadTopics(false);
+            }
+        } else if (state.type === 'index-activities') {
+            if (state.view === 'main') {
+                if (window.showMainContentSections) window.showMainContentSections(false);
+            } else if (state.view === 'list') {
+                if (window.renderActivityList) window.renderActivityList(false);
+            }
         } else if (state.type === 'academic-menu') {
-            // REQ 8: Garantía de contexto en Navegación (Fase 8)
             const modal = document.getElementById('academic-menu-modal');
             if (modal && modal.classList.contains('hidden')) {
                 window.openAcademicMenu(false);
@@ -176,6 +206,8 @@ window.setupCommonUI = function() {
             if (state.level === 'root') {
                 window.resetAcademicMenu(false);
             } else {
+                // Determine previous logical level for back navigation if needed,
+                // but popstate already carries the exact level to restore.
                 window.renderHierarchyLevel(state.menuType, state.level, state.params, false);
             }
         } else if (state.type === 'modal-close') {
@@ -456,8 +488,11 @@ window.closeAcademicMenu = function(doPop = true) {
 };
 
 window.resetAcademicMenu = function(pushState = true) {
-    document.getElementById('academic-menu-options').classList.remove('hidden');
-    document.getElementById('hierarchy-navigation').classList.add('hidden');
+    const options = document.getElementById('academic-menu-options');
+    const nav = document.getElementById('hierarchy-navigation');
+    if (options) options.classList.remove('hidden');
+    if (nav) nav.classList.add('hidden');
+
     if (pushState) {
         history.pushState({ type: 'academic-menu', level: 'root', scrollPos: window.pageYOffset }, '');
     }
@@ -583,7 +618,14 @@ window.renderHierarchyLevel = function(type, level, params = {}, pushState = tru
     }
 
     if (pushState) {
-        history.pushState({ type: 'academic-menu', menuType: type, level, params, scrollPos: window.pageYOffset }, '');
+        // REQ: Robust state preservation for hierarchical levels
+        history.pushState({
+            type: 'academic-menu',
+            menuType: type,
+            level: level,
+            params: params,
+            scrollPos: window.pageYOffset
+        }, '');
     }
 
     container.innerHTML = items.map(item => {

@@ -106,10 +106,24 @@ document.addEventListener('DOMContentLoaded', () => {
             // REQ 2: No disparar loader global si ya renderizamos desde caché
             if (!hasLocalData && window.GamesAdapter) window.GamesAdapter.showLoading(true);
 
-            // REQ: Mitigación de Latencia mediante Paralelismo (Ticket 4)
+            // REQ: Mitigación de Latencia mediante Paralelismo y Silent Reconciliation (Ticket 4)
             const [tasksResult, examsResult, profileResult] = await Promise.all([
-                fetchApi('TASK', 'getStudentTasks', payload),
-                fetchApi('EXAM', 'getStudentExams', payload),
+                fetchApi('TASK', 'getStudentTasks', payload, 0, {
+                    store: 'cache_estudiante_tasks',
+                    onUpdate: (data) => {
+                        allActivitiesData = [...allActivitiesData.filter(a => a.type === 'Examen'), ...data.map(t => ({ ...t, type: t.tipo || 'Tarea' }))];
+                        renderStudentExpediente(allActivitiesData);
+                        renderParcialTabs(allActivitiesData);
+                    }
+                }),
+                fetchApi('EXAM', 'getStudentExams', payload, 0, {
+                    store: 'cache_estudiante_exams',
+                    onUpdate: (data) => {
+                        allActivitiesData = [...allActivitiesData.filter(a => a.type !== 'Examen'), ...data.map(e => ({ ...e, type: 'Examen' }))];
+                        renderStudentExpediente(allActivitiesData);
+                        renderParcialTabs(allActivitiesData);
+                    }
+                }),
                 fetchAndRenderLearningProfile(true) // Obtener datos de perfil sin renderizar aún
             ]);
 
@@ -213,15 +227,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // --- Ajuste de Lógica de Progreso (Req 2) ---
         // Excluir 'Credito Extra' del total asignado (baseline), ya que son de recuperación
-        const baseActivities = currentParcialActivities.filter(a => a.type !== 'Credito Extra');
+        const baseActivities = currentParcialActivities.filter(a => a.type !== 'Credito Extra' && a.type !== 'Crédito Extra');
         const totalAssigned = baseActivities.length;
 
         // Las completadas suman puntos al progreso real (separando obligatorias de recuperación)
-        const mandatoryCompleted = currentParcialActivities.filter(a => a.type !== 'Credito Extra' && a.entrega &&
+        const mandatoryCompleted = currentParcialActivities.filter(a => (a.type !== 'Credito Extra' && a.type !== 'Crédito Extra') && a.entrega &&
             (a.entrega.estado === 'Completada' || a.entrega.estado === 'Revisada' || a.entrega.estado === 'Finalizado')
         ).length;
 
-        const extraCreditCompleted = currentParcialActivities.filter(a => a.type === 'Credito Extra' && a.entrega &&
+        const extraCreditCompleted = currentParcialActivities.filter(a => (a.type === 'Credito Extra' || a.type === 'Crédito Extra') && a.entrega &&
             (a.entrega.estado === 'Completada' || a.entrega.estado === 'Revisada' || a.entrega.estado === 'Finalizado')
         ).length;
 
@@ -230,7 +244,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const pending = Math.max(0, totalAssigned - completed);
 
         // Tasa de entrega basada en tareas obligatorias (Req 2: Crédito extra no es obligatorio)
-        const mandatoryDelivered = currentParcialActivities.filter(a => a.type !== 'Credito Extra' && a.entrega).length;
+        const mandatoryDelivered = currentParcialActivities.filter(a => (a.type !== 'Credito Extra' && a.type !== 'Crédito Extra') && a.entrega).length;
         const deliveryRate = totalAssigned > 0 ? (mandatoryDelivered / totalAssigned) : 0;
 
         // Puntos totales obtenidos (incluye recuperación por créditos extra)
@@ -482,25 +496,52 @@ document.addEventListener('DOMContentLoaded', () => {
         // Interactividad
         tabsContainer.querySelectorAll('.parcial-tab').forEach(btn => {
             btn.addEventListener('click', (e) => {
-                tabsContainer.querySelectorAll('.parcial-tab').forEach(b => {
-                    b.classList.remove('bg-blue-600', 'text-white');
-                    b.classList.add('bg-gray-100', 'text-gray-500', 'hover:bg-gray-200');
-                });
                 const target = e.currentTarget;
-                target.classList.remove('bg-gray-100', 'text-gray-500', 'hover:bg-gray-200');
-                target.classList.add('bg-blue-600', 'text-white');
-
                 const p = target.dataset.parcial;
-                const activitiesInParcial = allActivitiesData.filter(a => a.parcial === p);
-                renderSubjectNav(activitiesInParcial, p);
+                window.switchParcialTab(p);
             });
         });
 
+        window.switchParcialTab = function(p, pushState = true) {
+            const tabs = tabsContainer.querySelectorAll('.parcial-tab');
+            tabs.forEach(b => {
+                b.classList.remove('bg-blue-600', 'text-white');
+                b.classList.add('bg-gray-100', 'text-gray-500', 'hover:bg-gray-200');
+                if (b.dataset.parcial === p) {
+                    b.classList.remove('bg-gray-100', 'text-gray-500', 'hover:bg-gray-200');
+                    b.classList.add('bg-blue-600', 'text-white');
+                }
+            });
+
+            const activitiesInParcial = allActivitiesData.filter(a => a.parcial === p);
+            renderSubjectNav(activitiesInParcial, p);
+
+            if (pushState) {
+                history.pushState({ type: 'student-tab', parcial: p }, '');
+            }
+        };
+
         // Seleccionar primer parcial por defecto
-        tabsContainer.querySelector('.parcial-tab').click();
+        const firstTab = tabsContainer.querySelector('.parcial-tab');
+        if (firstTab) {
+            const p = firstTab.dataset.parcial;
+            history.replaceState({ type: 'student-tab', parcial: p }, '');
+            window.switchParcialTab(p, false);
+        }
     }
 
-    function renderActivities(filtered) {
+    function renderActivities(inputFiltered) {
+        // REQ: Extra Credit Visibility Logic (v7.6.1)
+        // Only show extra credit tasks if student has at least one REJECTED activity
+        const hasRejected = allActivitiesData.some(a => a.entrega && (a.entrega.estado === 'Rechazada' || a.entrega.estado === 'Tarea incompleta'));
+
+        const filtered = inputFiltered.filter(a => {
+            if (a.type === 'Crédito Extra' || a.type === 'Credito Extra') {
+                return hasRejected;
+            }
+            return true;
+        });
+
         if (!filtered || filtered.length === 0) {
             tasksList.innerHTML = `
                 <div class="col-span-full p-12 text-center bg-white rounded-[2rem] border border-gray-100 animate-fade-in">
@@ -518,7 +559,7 @@ document.addEventListener('DOMContentLoaded', () => {
             let feedbackHtml = '';
             let actionButtonHtml = '';
 
-            if (activity.type === 'Tarea' || activity.type === 'Credito Extra') {
+            if (activity.type === 'Tarea' || activity.type === 'Credito Extra' || activity.type === 'Crédito Extra') {
                 if (activity.entrega) {
                     const status = activity.entrega.estado;
                     const isPending = (status === 'Pendiente de revisión' || status === 'Pendiente' || !status);
