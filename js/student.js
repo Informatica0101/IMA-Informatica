@@ -208,7 +208,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // REQ: Filtro Estricto por Parcial (Incidencia 5)
         // No mezclar históricos en el cálculo de progreso actual
         const currentParcialActivities = activities.filter(a =>
-            window.isContentAuthorized(a.parcial, a.asignatura)
+            window.normalizePartial(a.parcial) === window.normalizePartial(window.PARCIAL_ACTUAL)
         );
 
         // --- Ajuste de Lógica de Progreso (Req 2) ---
@@ -491,7 +491,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 target.classList.add('bg-blue-600', 'text-white');
 
                 const p = target.dataset.parcial;
-                const activitiesInParcial = allActivitiesData.filter(a => window.isContentAuthorized(a.parcial, a.asignatura));
+                const activitiesInParcial = allActivitiesData.filter(a => a.parcial === p);
                 renderSubjectNav(activitiesInParcial, p);
             });
         });

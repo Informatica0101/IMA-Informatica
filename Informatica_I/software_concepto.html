@@ -2,905 +2,254 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Presentación: Conceptos Fundamentales del Software y Sistemas Operativos</title>
-    <!-- Tailwind CSS CDN -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <title>Software: Concepto y Clasificación - Décimo Grado</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Fonts - Inter -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Poppins:wght@700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        /* Reduce base font size for overall scaling */
-        html {
-            font-size: 80%; /* Reduces overall size by 20% */
-        }
-
-        /* Custom animations for transitions */
-        @keyframes fadeInDown {
-            from {
-                opacity: 0;
-                transform: translateY(-20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        @keyframes fadeOutUp {
-            from {
-                opacity: 1;
-                transform: translateY(0);
-            }
-            to {
-                opacity: 0;
-                transform: translateY(-20px);
-            }
-        }
-
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px); /* Changed for slide-in effect */
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        @keyframes fadeOutDown {
-            from {
-                opacity: 1;
-                transform: translateY(0);
-            }
-            to {
-                opacity: 0;
-                transform: translateY(20px); /* Changed for slide-out effect */
-            }
-        }
-
-        /* Specific styles for slides */
-        .slide {
-            display: none; /* Hidden by default */
-            animation-duration: 0.5s;
-            animation-fill-mode: forwards;
-            /* Ensure it fills the parent container fully */
-            position: absolute; /* Position absolutely within presentation-container */
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%; /* Fill the height of the presentation-container */
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            padding: 2rem;
-            box-sizing: border-box;
-            background-color: white; /* Ensure background is white during transition */
-        }
-
-        .slide.active {
-            display: flex; /* Show active slide */
-            animation-name: fadeInUp; /* Animation for entering slide */
-            position: relative; /* Make active slide take up space */
-            z-index: 1; /* Ensure it's above any lingering old slides */
-        }
-
-        .slide.leaving {
-            animation-name: fadeOutDown; /* Animation for leaving slide */
-            position: absolute; /* It needs to stay absolute to animate out */
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 20; /* Ensure it animates on top of the incoming slide */
-            display: flex; /* Keep it flex during animation */
-        }
-
-        /* Custom styles for navigation buttons */
-        .nav-button {
-            background-color: #4F46E5; /* Indigo 600 */
-            color: white;
-            padding: 0.75rem 1.5rem;
-            border-radius: 0.5rem;
-            font-weight: 600;
-            transition: background-color 0.3s ease, transform 0.2s ease;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            cursor: pointer;
-        }
-
-        .nav-button:hover {
-            background-color: #4338CA; /* Indigo 700 */
-            transform: translateY(-2px);
-        }
-
-        .nav-button:active {
-            transform: translateY(0);
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-
-        .nav-button:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none;
-            box-shadow: none;
-        }
-
-        /* Mobile navigation menu specific styles */
-        .mobile-menu {
-            transition: transform 0.3s ease-out;
-            transform: translateX(100%); /* Hidden by default */
-        }
-
-        .mobile-menu.open {
-            transform: translateX(0); /* Visible when open */
-        }
-
-        /* Ensure content takes available space */
-        .content-area {
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            padding: 1rem;
-        }
-
-        /* Responsive adjustments for text and images */
-        .slide h1 {
-            font-size: 2.5rem; /* Default for larger screens */
-        }
-        .slide h2 {
-            font-size: 2rem;
-        }
-        .slide p, .slide ul {
-            font-size: 1.1rem;
-            max-width: 800px; /* Limit text width for readability */
-            margin: 0 auto;
-        }
-        /* General image styling - removed border-radius and box-shadow */
-        .slide img {
-            max-width: 80%;
-            height: auto;
-        }
-
-        /* Specific style for content images (not cover logo) */
-        .content-image-style {
-            border-radius: 0.75rem;
-            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
-            margin-top: 1.5rem;
-        }
-
-        /* Specific style for the cover logo to ensure no square shadow */
-        .cover-logo {
-            box-shadow: none !important; /* Override any potential inherited shadows */
-        }
-
-
-        @media (max-width: 768px) {
-            html {
-                font-size: 75%; /* Further reduce for smaller screens */
-            }
-            .slide h1 {
-                font-size: 2rem;
-            }
-            .slide h2 {
-                font-size: 1.75rem;
-            }
-            .slide p, .slide ul {
-                font-size: 1rem;
-                padding: 0 1rem;
-            }
-            .slide {
-                padding: 1rem;
-            }
-        }
-
-        @media (max-width: 480px) {
-            html {
-                font-size: 70%;
-            }
-            .slide h1 {
-                font-size: 1.75rem;
-            }
-            .slide h2 {
-                font-size: 1.5rem;
-            }
-            .slide p, .slide ul {
-                font-size: 0.9rem;
-            }
-            .slide img {
-                max-width: 95%;
-            }
-        }
+        * { box-sizing: border-box; }
+        html, body { margin: 0; padding: 0; height: 100vh; width: 100vw; overflow: hidden; }
+        body { display: flex; flex-direction: column; font-family: 'Inter', sans-serif; background-color: #f3f4f6; color: #1f2937; user-select: none; }
+        main { flex-grow: 1; display: flex; justify-content: center; align-items: center; position: relative; width: 100vw; }
+        #presentation-container { width: 100%; height: 100%; position: relative; background-color: #ffffff; overflow: hidden; cursor: pointer; }
+        .slide { width: 100%; height: 100%; padding: 4rem; display: none; flex-direction: column; justify-content: center; align-items: center; text-align: center; position: absolute; top: 0; left: 0; opacity: 0; transition: opacity 0.4s ease-in-out; overflow-y: auto; }
+        .slide.active { display: flex !important; opacity: 1; z-index: 10; }
+        h2 { font-family: 'Poppins', sans-serif; font-weight: 800; font-size: 3.5rem; color: #0d6efd; margin-bottom: 1.5rem; line-height: 1.1; }
+        h3 { font-family: 'Poppins', sans-serif; font-weight: 700; font-size: 2.5rem; color: #1f2937; margin-bottom: 2rem; border-bottom: 4px solid #0d6efd; padding-bottom: 0.5rem; }
+        p, li { font-size: 1.5rem; line-height: 1.6; color: #4b5563; max-width: 950px; }
+        .concept-box { background-color: #f9fafb; border-left: 8px solid #0d6efd; padding: 2.5rem; border-radius: 1rem; text-align: left; margin-top: 1.5rem; width: 100%; max-width: 900px; cursor: default; }
+        #controls-wrapper { position: absolute; bottom: 2.5rem; left: 50%; transform: translate(-50%, 0); display: flex; gap: 1.5rem; z-index: 40; }
+        .nav-button { background-color: #0d6efd; color: #ffffff; padding: 0.8rem 2rem; border-radius: 1rem; font-weight: 700; font-size: 1rem; transition: all 0.3s; cursor: pointer; border: none; box-shadow: 0 10px 15px -3px rgba(13, 110, 253, 0.3); text-transform: uppercase; letter-spacing: 0.05em; }
+        .nav-button:hover:not(:disabled) { background-color: #0b5ed7; transform: translateY(-2px); }
+        .nav-button:disabled { background-color: #e5e7eb; color: #9ca3af; cursor: not-allowed; box-shadow: none; }
+        #slide-counter { position: absolute; bottom: 2rem; right: 3rem; font-weight: 800; color: #9ca3af; z-index: 30; font-size: 1.25rem; font-family: 'Poppins', sans-serif; }
+        .quiz-container { background: white; padding: 2rem; border-radius: 2rem; border: 2px solid #f3f4f6; }
+        .quiz-option { width: 100%; padding: 1.25rem 2rem; margin: 0.75rem 0; border: 2px solid #e5e7eb; border-radius: 1.25rem; font-weight: 600; transition: all 0.2s; background: white; font-size: 1.2rem; cursor: pointer; text-align: left; display: flex; align-items: center; gap: 1rem; }
+        .quiz-option:hover { border-color: #0d6efd; background-color: #f0f7ff; }
+        .quiz-option.correct { background-color: #d1fae5; border-color: #10b981; color: #065f46; }
+        .quiz-option.incorrect { background-color: #fee2e2; border-color: #ef4444; color: #991b1b; }
+        .hide-element { display: none !important; }
+        .logo-img { width: 250px; height: auto; }
+        @media (max-width: 768px) { .slide { padding: 2rem 1.5rem; } h2 { font-size: 2rem; } h3 { font-size: 1.5rem; } p, li { font-size: 1.1rem; } .logo-img { width: 120px; } #slide-counter { right: 1rem; bottom: 1rem; font-size: 0.9rem; } }
     </style>
-
-    <style>
-    #controls-wrapper { position: absolute; bottom: 2rem; left: 50%; transform: translate(-50%, 0); display: flex; gap: 1rem; z-index: 40; transition: opacity 0.3s ease; }
-    .nav-button { background-color: #0d6efd; color: #ffffff; padding: 0.75rem 1.5rem; border-radius: 6px; font-weight: 600; transition: all 0.3s; cursor: pointer; border: none; }
-    .nav-button:hover { background-color: #0b5ed7; transform: scale(1.05); }
-    .nav-button:disabled { background-color: #d1d5db; cursor: not-allowed; transform: scale(1); }
-    #slide-counter { position: absolute; bottom: 1.5rem; right: 2rem; font-weight: 600; color: #9ca3af; z-index: 30; }
-    .hide-element { display: none !important; }
-    </style>
-    </head>
-<body class="font-['Inter'] bg-gray-50 text-gray-800 flex flex-col min-h-screen">
-
-    <!-- Desktop Navigation -->
-    <header class="bg-white shadow-md py-4 px-6 sticky top-0 z-50 hidden md:block">
-        <div class="container mx-auto flex items-center justify-between">
-            <!-- Left Section: Logo -->
-            <a href="../index.html" class="flex items-center space-x-2 text-gray-900 hover:text-indigo-600 transition duration-300">
-                <img src="../imagenes/logo.png" alt="Logo ISEMED" style="width: 180px; height: auto;">
-            </a>
-
-            <!-- Center Section: Area de Informatica -->
-            <span class="font-extrabold text-2xl text-center flex-grow">Area de Informatica</span>
-
-            <!-- Right Section: Desktop Nav Links -->
-            <nav class="flex space-x-6">
-                <a href="../index.html" class="text-gray-600 hover:text-indigo-600 font-medium transition duration-300">Inicio</a>
-                <!-- Dropdown Menu for Asignaturas -->
-                <div class="relative group">
-                    <button class="text-gray-600 hover:text-indigo-600 font-medium transition duration-300 focus:outline-none flex items-center">
-                        Asignaturas
-                        <svg class="ml-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                    </button>
-                    <div class="absolute left-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-20 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity duration-300 invisible group-hover:visible group-focus-within:visible">
-                        <a href="../index.html" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Informática I</a>
-                        <a href="../index.html" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Ofimática I</a>
-                        <a href="../index.html" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Informática Aplicada I</a>
-                        <a href="../index.html" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Análisis y Diseño I</a>
-                        <a href="../index.html" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Diseño Web II</a>
+</head>
+<body>
+    <header id="main-header" class="w-full bg-white border-b border-gray-100 shadow-sm">
+        <div class="container mx-auto px-4 flex justify-between items-center h-16 md:h-20">
+            <div class="flex items-center gap-4">
+                <a href="../index.html" class="flex items-center gap-3 group">
+                    <img src="../imagenes/logo.png" alt="Logo IMA" class="w-10 h-10 md:w-14 md:h-14">
+                    <div>
+                        <h1 class="text-sm md:text-xl font-black text-gray-900 uppercase leading-none">ISEMED</h1>
+                        <p class="text-[8px] md:text-[10px] font-bold text-blue-600 uppercase tracking-widest mt-1">Área de Informática</p>
                     </div>
-                </div>
-                <a href="../index.html" class="text-gray-600 hover:text-indigo-600 font-medium transition duration-300">Contenido de clase</a>
-            </nav>
+                </a>
+            </div>
+            <div class="flex items-center gap-6">
+                <a href="../index.html" class="hidden md:block text-xs font-black uppercase tracking-widest text-gray-400 hover:text-blue-600 transition-colors">Volver al Inicio</a>
+                <img src="../imagenes/bandera-de-honduras.png" alt="Bandera" class="w-8 h-auto shadow-sm">
+            </div>
         </div>
     </header>
 
-    <!-- Mobile Navigation (hidden by default, shown on small screens) -->
-    <header class="bg-white shadow-md py-4 px-4 flex justify-between items-center md:hidden">
-        <!-- Logo and Area de Informatica for mobile -->
-        <a href="../index.html" class="flex items-center space-x-2 text-gray-900 hover:text-indigo-600 transition duration-300">
-            <img src="../imagenes/logo.png" alt="Logo ISEMED" style="width: 180px; height: auto;">
-            <span class="font-extrabold text-xl">Area de Informatica</span>
-        </a>
-        <!-- Hamburger Icon -->
-        <button id="mobile-menu-button" class="text-gray-600 hover:text-indigo-600 focus:outline-none">
-            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
-        </button>
-        <!-- Mobile Menu Overlay -->
-        <div id="mobile-menu-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden"></div>
-        <!-- Mobile Menu Sidebar -->
-        <div id="mobile-menu" class="mobile-menu fixed top-0 right-0 w-64 h-full bg-white shadow-lg z-50 p-6 flex flex-col">
-            <button id="close-mobile-menu" class="self-end text-gray-600 hover:text-indigo-600 focus:outline-none mb-4">
-                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-            </button>
-            <nav class="flex flex-col space-y-4">
-                <a href="../index.html" class="text-gray-800 hover:text-indigo-600 font-medium text-lg transition duration-300">Inicio</a>
-                <!-- Mobile Dropdown for Asignaturas -->
-                <div class="relative">
-                    <button id="mobile-asignaturas-button" class="text-gray-800 hover:text-indigo-600 font-medium text-lg transition duration-300 focus:outline-none flex items-center justify-between w-full">
-                        Asignaturas
-                        <svg class="ml-1 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                    </button>
-                    <div id="mobile-asignaturas-dropdown" class="hidden mt-2 pl-4 flex flex-col space-y-2">
-                        <a href="../index.html" class="block text-base text-gray-700 hover:text-indigo-600">Informática I</a>
-                        <a href="../index.html" class="block text-base text-gray-700 hover:bg-gray-100">Ofimática I</a>
-                        <a href="../index.html" class="block text-base text-gray-700 hover:bg-gray-100">Informática Aplicada I</a>
-                        <a href="../index.html" class="block text-base text-gray-700 hover:bg-gray-100">Análisis y Diseño I</a>
-                        <a href="../index.html" class="block text-base text-gray-700 hover:bg-gray-100">Diseño Web II</a>
-                    </div>
+    <main>
+        <div id="presentation-container">
+            <!-- 1. Portada -->
+            <div class="slide active">
+                <img src="../imagenes/logo.png" alt="Logo" class="logo-img mb-8">
+                <h2 class="font-black">Software: Concepto y Clasificación</h2>
+                <div class="space-y-2">
+                    <p class="text-blue-600 font-bold uppercase tracking-[0.2em]">Informática I • Unidad I</p>
+                    <p class="font-semibold text-gray-500">Décimo Grado • Sección A y B</p>
+                    <div class="h-1 w-24 bg-blue-600 mx-auto my-6"></div>
+                    <p class="text-lg font-medium text-gray-700">Docente: <span class="font-bold">Pablo Antonio Peña</span></p>
+                    <p class="text-sm font-bold text-gray-400 uppercase tracking-widest">Junio 2025</p>
                 </div>
-                <a href="../index.html" class="text-gray-800 hover:text-indigo-600 font-medium text-lg transition duration-300">Contenido de clase</a>
-            </nav>
-        </div>
-    </header>
-
-    <main class="flex-grow container mx-auto px-4 py-8 flex flex-col items-center justify-center relative">
-        <!-- Presentation Slides Container -->
-        <div id="presentation-container" class="relative w-full max-w-4xl bg-white rounded-lg shadow-xl overflow-hidden min-h-[60vh] flex flex-col justify-between">
-
-            <!-- Slide 1: Portada -->
-            <div id="slide-1" class="slide active">
-                <img src="../imagenes/logo.png" alt="Logo de la Institución" style="width: 400px; height: auto;" class="mx-auto mb-8 cover-logo">
-                <h1 class="text-indigo-700 font-extrabold text-4xl mb-4">Conceptos Fundamentales del Software y Sistemas Operativos</h1>
-                <h3 class="text-2xl text-gray-700 mb-2">Informática I</h3>
-                <p class="text-xl text-gray-600 mb-2">Décimo A</p>
-                <p class="text-xl text-gray-600 mb-2">Docente: Pablo Antonio Peña</p>
-                <p class="text-xl text-gray-600 mb-2">San Pedro Sula</p>
-                <p class="text-xl text-gray-600">03 de agosto del 2025</p>
             </div>
 
-            <!-- Slide 2: ¿Qué es el Software? -->
-            <div id="slide-2" class="slide">
-                <h2 class="text-indigo-600 font-bold mb-4">¿Qué es el Software?</h2>
-                <p class="text-lg text-gray-700 mb-6">El <strong>software</strong> es el conjunto de programas, instrucciones, reglas informáticas, datos y pautas que permiten a una computadora realizar funciones específicas.</p>
-                <img src="../imagenes/software_general.png" alt="Concepto General de Software" class="max-w-md mx-auto content-image-style">
-                <ul class="list-disc list-inside text-left text-base text-gray-700 mt-6 space-y-2">
-                    <li>Es la parte <i>lógica</i> de un sistema informático.</li>
-                    <li>Sin software, el hardware no puede funcionar ni interactuar con el usuario.</li>
-                </ul>
-            </div>
-
-            <!-- Slide 3: Diferencia entre Software y Hardware -->
-            <div id="slide-3" class="slide">
-                <h2 class="text-indigo-600 font-bold mb-4">Software vs. Hardware</h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-2xl">
-                    <div class="bg-blue-50 p-6 rounded-lg shadow-md">
-                        <h3 class="text-2xl font-semibold text-blue-700 mb-3">Hardware</h3>
-                        <ul class="list-disc list-inside text-base text-gray-700 space-y-1">
-                            <li>Componentes <strong>físicos</strong> y tangibles.</li>
-                            <li>Se puede tocar y ver.</li>
-                            <li>Ejemplos: CPU, RAM, teclado, monitor, disco duro.</li>
-                        </ul>
-                    </div>
-                    <div class="bg-green-50 p-6 rounded-lg shadow-md">
-                        <h3 class="text-2xl font-semibold text-green-700 mb-3">Software</h3>
-                        <ul class="list-disc list-inside text-base text-gray-700 space-y-1">
-                            <li>Programas e instrucciones <i>intangibles</i>.</li>
-                            <li>No se puede tocar físicamente.</li>
-                            <li>Ejemplos: Windows, Word, Chrome, Fortnite.</li>
-                        </ul>
-                    </div>
+            <!-- 2. Concepto -->
+            <div class="slide">
+                <h3>¿Qué es el Software?</h3>
+                <div class="concept-box">
+                    <p>Es el <strong>componente lógico</strong> del sistema. Comprende el conjunto de programas, datos y protocolos que permiten que el hardware realice tareas inteligentes.</p>
                 </div>
-                <img src="../imagenes/hardware_software.png" alt="Comparación Hardware y Software" class="max-w-xl mx-auto content-image-style mt-6">
+                <p class="mt-8">Es la parte <strong>intangible</strong> e inmaterial de la computadora.</p>
             </div>
 
-            <!-- Slide 4: Clasificación del Software -->
-            <div id="slide-4" class="slide">
-                <h2 class="text-indigo-600 font-bold mb-4">Clasificación del Software</h2>
-                <p class="text-lg text-gray-700 mb-6">El software se organiza en tres categorías principales según su función:</p>
-                <ul class="list-decimal list-inside text-xl font-semibold text-purple-700 space-y-3">
-                    <li>Software de Sistema</li>
-                    <li>Software de Programación</li>
-                    <li>Software de Aplicación (o Software de Usuario)</li>
-                </ul>
-                <img src="../imagenes/software_clasificacion.png" alt="Diagrama de Clasificación de Software" class="max-w-md mx-auto content-image-style mt-6">
+            <!-- 3. Clasificación General -->
+            <div class="slide">
+                <h3>Clasificación del Software</h3>
+                <p>El software se divide principalmente en tres categorías según su función:</p>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-8 w-full max-w-5xl">
+                    <div class="p-6 bg-blue-50 rounded-2xl shadow-sm border-b-8 border-blue-600 font-bold">SISTEMA</div>
+                    <div class="p-6 bg-blue-50 rounded-2xl shadow-sm border-b-8 border-emerald-600 font-bold">APLICACIÓN</div>
+                    <div class="p-6 bg-blue-50 rounded-2xl shadow-sm border-b-8 border-purple-600 font-bold">PROGRAMACIÓN</div>
+                </div>
             </div>
 
-            <!-- Slide 5: Software de Sistema -->
-            <div id="slide-5" class="slide">
-                <h2 class="text-indigo-600 font-bold mb-4">1. Software de Sistema</h2>
-                <p class="text-lg text-gray-700 mb-6">Gestiona y controla el hardware, creando un entorno para otros programas.</p>
-                <h3 class="text-xl font-semibold text-purple-700 mb-3">Componentes Clave:</h3>
-                <ul class="list-disc list-inside text-base text-gray-700 space-y-1">
-                    <li><strong>Sistemas Operativos (SO):</strong> El más fundamental (Windows, macOS, Linux).</li>
-                    <li><strong>Controladores de Dispositivos (Drivers):</strong> Permiten la comunicación entre hardware y SO.</li>
-                    <li><strong>Utilidades:</strong> Herramientas para mantenimiento y optimización (antivirus, desfragmentadores).</li>
-                </ul>
-                <img src="../imagenes/software_sistema_ejemplos.png" alt="Ejemplos de Software de Sistema" class="max-w-xl mx-auto content-image-style mt-6">
+            <!-- 4. Software de Sistema -->
+            <div class="slide">
+                <h3>Software de Sistema</h3>
+                <p>Sirve de <strong>interfaz</strong> entre el usuario, las aplicaciones y el hardware. Gestiona los recursos básicos del equipo.</p>
+                <div class="concept-box border-blue-500 bg-blue-50/20">
+                    <p><strong>Ejemplos:</strong> Sistemas Operativos (Windows, Linux, Android), Controladores (Drivers) y herramientas de diagnóstico.</p>
+                </div>
             </div>
 
-            <!-- Slide 6: Software de Programación -->
-            <div id="slide-6" class="slide">
-                <h2 class="text-indigo-600 font-bold mb-4">2. Software de Programación</h2>
-                <p class="text-lg text-gray-700 mb-6">Herramientas diseñadas para que los programadores creen, desarrollen y mantengan software.</p>
-                <h3 class="text-xl font-semibold text-purple-700 mb-3">Ejemplos Comunes:</h3>
-                <ul class="list-disc list-inside text-base text-gray-700 space-y-1">
-                    <li><strong>Editores de Texto:</strong> Para escribir código fuente (Visual Studio Code, Sublime Text).</li>
-                    <li><strong>Compiladores e Intérpretes:</strong> Traducen el código a un lenguaje que la máquina entiende.</li>
-                    <li><strong>Entornos de Desarrollo Integrado (IDEs):</strong> Combinan varias herramientas en una sola interfaz (Eclipse, IntelliJ IDEA).</li>
-                </ul>
-                <img src="../imagenes/software_programacion_ejemplos.png" alt="Ejemplos de Software de Programación" class="max-w-xl mx-auto content-image-style mt-6">
+            <!-- 5. Software de Aplicación -->
+            <div class="slide">
+                <h3>Software de Aplicación</h3>
+                <p>Son los programas diseñados para que el usuario realice <strong>tareas específicas</strong> (productividad, ocio, comunicación).</p>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8 w-full">
+                    <div class="p-4 bg-gray-50 rounded-xl text-xs font-bold">Office</div>
+                    <div class="p-4 bg-gray-50 rounded-xl text-xs font-bold">Navegadores</div>
+                    <div class="p-4 bg-gray-50 rounded-xl text-xs font-bold">Videojuegos</div>
+                    <div class="p-4 bg-gray-50 rounded-xl text-xs font-bold">Editores Multimedia</div>
+                </div>
             </div>
 
-            <!-- Slide 7: Software de Aplicación (o de Usuario) -->
-            <div id="slide-7" class="slide">
-                <h2 class="text-indigo-600 font-bold mb-4">3. Software de Aplicación (o de Usuario)</h2>
-                <p class="text-lg text-gray-700 mb-6">Programas diseñados para realizar tareas específicas directamente para el usuario final.</p>
-                <h3 class="text-xl font-semibold text-purple-700 mb-3">Categorías y Ejemplos:</h3>
-                <ul class="list-disc list-inside text-base text-gray-700 space-y-1">
-                    <li><strong>Productividad:</strong> Microsoft Word, Excel, PowerPoint, Google Docs.</li>
-                    <li><strong>Navegación Web:</strong> Google Chrome, Mozilla Firefox, Microsoft Edge.</li>
-                    <li><strong>Multimedia:</strong> VLC Media Player, Spotify, Netflix.</li>
-                    <li><strong>Diseño Gráfico:</strong> Adobe Photoshop, GIMP, Canva.</li>
-                    <li><strong>Entretenimiento:</strong> Videojuegos (Fortnite, Minecraft), aplicaciones de streaming.</li>
-                </ul>
-                <img src="../imagenes/software_aplicacion_ejemplos.png" alt="Ejemplos de Software de Aplicación" class="max-w-xl mx-auto content-image-style mt-6">
+            <!-- 6. Software de Programación -->
+            <div class="slide">
+                <h3>Software de Programación</h3>
+                <p>Herramientas que permiten a los desarrolladores <strong>crear otros programas</strong> usando lenguajes específicos.</p>
+                <div class="concept-box border-purple-500 bg-purple-50/20">
+                    <p><strong>Incluye:</strong> Compiladores, Intérpretes, Editores de código y Entornos de Desarrollo Integrados (IDE) como Visual Studio.</p>
+                </div>
             </div>
 
-            <!-- Slide 8: El Sistema Operativo (SO) -->
-            <div id="slide-8" class="slide">
-                <h2 class="text-indigo-600 font-bold mb-4">El Sistema Operativo (SO)</h2>
-                <p class="text-lg text-gray-700 mb-6">El <strong>Sistema Operativo</strong> es el software más importante de una computadora.</p>
-                <p class="text-base text-gray-600">Es el programa principal que se carga al encender el equipo y es esencial para que cualquier otro software pueda funcionar.</p>
-                <img src="../imagenes/sistema_operativo_concepto.png" alt="Concepto de Sistema Operativo" class="max-w-md mx-auto content-image-style mt-6">
+            <!-- 7. El Sistema Operativo -->
+            <div class="slide">
+                <h3>El Rey del Software</h3>
+                <p>El <strong>Sistema Operativo</strong> es el software más importante. Actúa como el administrador central de toda la computadora.</p>
+                <div class="flex justify-center gap-8 mt-8">
+                    <i class="fab fa-windows text-4xl text-blue-500"></i>
+                    <i class="fab fa-apple text-4xl text-gray-800"></i>
+                    <i class="fab fa-linux text-4xl text-orange-500"></i>
+                    <i class="fab fa-android text-4xl text-green-500"></i>
+                </div>
             </div>
 
-            <!-- Slide 9: Funciones Clave del Sistema Operativo -->
-            <div id="slide-9" class="slide">
-                <h2 class="text-indigo-600 font-bold mb-4">Funciones Clave del SO</h2>
-                <ul class="list-disc list-inside text-base text-gray-700 space-y-2 text-left mx-auto max-w-xl">
-                    <li><strong>Gestión de Procesos:</strong> Administra la ejecución de todos los programas.</li>
-                    <li><strong>Gestión de Memoria:</strong> Asigna y libera espacio en la memoria RAM para las aplicaciones.</li>
-                    <li><strong>Gestión de Archivos:</strong> Organiza, almacena y recupera archivos y carpetas en los dispositivos de almacenamiento.</li>
-                    <li><strong>Gestión de Dispositivos:</strong> Controla la comunicación con los periféricos (impresoras, USB, etc.).</li>
-                    <li><strong>Interfaz de Usuario:</strong> Permite la interacción entre el usuario y la computadora (GUI o CLI).</li>
-                </ul>
-                <img src="../imagenes/funciones_so.png" alt="Funciones del Sistema Operativo" class="max-w-md mx-auto content-image-style mt-6">
+            <!-- 8. Controladores -->
+            <div class="slide">
+                <h3>Drivers (Controladores)</h3>
+                <p>Son programas pequeños que permiten que el Sistema Operativo se comunique con un hardware específico.</p>
+                <div class="concept-box border-yellow-500">
+                    <p class="italic text-lg">"Es el traductor que le explica al Windows cómo debe usar una impresora nueva o una tarjeta de video."</p>
+                </div>
             </div>
 
-            <!-- Slide 10: Ejemplos de Sistemas Operativos -->
-            <div id="slide-10" class="slide">
-                <h2 class="text-indigo-600 font-bold mb-4">Ejemplos de Sistemas Operativos</h2>
-                <div class="grid grid-cols-2 md:grid-cols-3 gap-4 w-full max-w-3xl text-center">
-                    <div class="p-4 bg-gray-50 rounded-lg shadow-sm">
-                        <img src="../imagenes/windows_logo.png" alt="Logo Windows" class="h-12 mx-auto mb-2">
-                        <p class="text-lg font-medium text-gray-800">Windows</p>
-                        <p class="text-sm text-gray-600">Escritorio/Portátil</p>
+            <!-- 9. Firmware -->
+            <div class="slide">
+                <h3>Firmware: Software Empotrado</h3>
+                <p>Es un tipo de software que está grabado permanentemente en el hardware. Controla los circuitos electrónicos de un dispositivo.</p>
+                <p class="mt-4 text-sm font-bold uppercase text-blue-600">Ejemplo: El BIOS de la placa madre.</p>
+            </div>
+
+            <!-- 10. Tipos de Licencia -->
+            <div class="slide">
+                <h3>Software Libre vs. Propietario</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-4xl">
+                    <div class="p-6 bg-emerald-50 rounded-2xl border-l-4 border-emerald-500">
+                        <h4 class="font-bold text-emerald-700">Libre / Open Source</h4>
+                        <p class="text-xs">Se puede ver el código, modificarlo y compartirlo gratis. (Ej: Linux, VLC).</p>
                     </div>
-                    <div class="p-4 bg-gray-50 rounded-lg shadow-sm">
-                        <img src="../imagenes/macos_logo.png" alt="Logo macOS" class="h-12 mx-auto mb-2">
-                        <p class="text-lg font-medium text-gray-800">macOS</p>
-                        <p class="text-sm text-gray-600">Escritorio/Portátil</p>
-                    </div>
-                    <div class="p-4 bg-gray-50 rounded-lg shadow-sm">
-                        <img src="../imagenes/linux_logo.png" alt="Logo Linux" class="h-12 mx-auto mb-2">
-                        <p class="text-lg font-medium text-gray-800">Linux</p>
-                        <p class="text-sm text-gray-600">Escritorio/Servidor</p>
-                    </div>
-                    <div class="p-4 bg-gray-50 rounded-lg shadow-sm">
-                        <img src="../imagenes/android_logo.png" alt="Logo Android" class="h-12 mx-auto mb-2">
-                        <p class="text-lg font-medium text-gray-800">Android</p>
-                        <p class="text-sm text-gray-600">Móvil/Tableta</p>
-                    </div>
-                    <div class="p-4 bg-gray-50 rounded-lg shadow-sm">
-                        <img src="../imagenes/ios_logo.png" alt="Logo iOS" class="h-12 mx-auto mb-2">
-                        <p class="text-lg font-medium text-gray-800">iOS</p>
-                        <p class="text-sm text-gray-600">Móvil/Tableta</p>
-                    </div>
-                    <div class="p-4 bg-gray-50 rounded-lg shadow-sm">
-                        <img src="../imagenes/chromeos_logo.png" alt="Logo ChromeOS" class="h-12 mx-auto mb-2">
-                        <p class="text-lg font-medium text-gray-800">ChromeOS</p>
-                        <p class="text-sm text-gray-600">Chromebooks</p>
+                    <div class="p-6 bg-blue-50 rounded-2xl border-l-4 border-blue-500">
+                        <h4 class="font-bold text-blue-700">Propietario</h4>
+                        <p class="text-xs">El código es secreto y generalmente requiere pago de licencia. (Ej: Windows, Photoshop).</p>
                     </div>
                 </div>
             </div>
 
-            <!-- Slide 11: ¿Sabías que...? -->
-            <div id="slide-11" class="slide">
-                <h2 class="text-indigo-600 font-bold mb-4">¿Sabías que...?</h2>
-                <ul class="list-disc list-inside text-base text-gray-700 space-y-3 text-left mx-auto max-w-xl">
-                    <li>El primer sistema operativo reconocido, el <strong>GM-NAA I/O</strong>, fue desarrollado en 1956.</li>
-                    <li><strong>Linux</strong> es un sistema operativo de código abierto, lo que ha permitido la creación de miles de versiones (distribuciones).</li>
-                    <li>El término "bug" (bicho) se popularizó en 1947 cuando se encontró una polilla real causando un fallo en una computadora.</li>
-                    <li>Los sistemas operativos móviles son más recientes pero dominan el uso global de internet.</li>
-                </ul>
-                <img src="../imagenes/curiosidades_so.png" alt="Curiosidades sobre Sistemas Operativos" class="max-w-md mx-auto content-image-style mt-6">
-            </div>
-
-            <!-- Slide 12: Clasifica el Software -->
-            <div id="slide-12" class="slide">
-                <h2 class="text-indigo-600 font-bold mb-4">Clasifica el Software</h2>
-                <p class="text-lg text-gray-700 mb-6">¡Pon a prueba tus conocimientos clasificando estos programas!</p>
-
-                <div id="game-area" class="bg-gray-100 p-6 rounded-lg shadow-md w-full max-w-lg flex flex-col items-center">
-                    <p id="software-name" class="text-3xl font-bold text-indigo-800 mb-6">Cargando...</p>
-                    <div class="flex flex-wrap justify-center gap-4 mb-6">
-                        <button class="game-button bg-blue-500 hover:bg-blue-600 text-white font-semibold py-3 px-6 rounded-lg transition duration-200" data-type="aplicacion">Aplicación</button>
-                        <button class="game-button bg-green-500 hover:bg-green-600 text-white font-semibold py-3 px-6 rounded-lg transition duration-200" data-type="sistema">Sistema</button>
-                        <button class="game-button bg-purple-500 hover:bg-purple-600 text-white font-semibold py-3 px-6 rounded-lg transition duration-200" data-type="programacion">Programación</button>
+            <!-- 11. Resumen -->
+            <div class="slide">
+                <h3>Arquitectura del Usuario</h3>
+                <div class="p-8 bg-gray-900 text-white rounded-[3rem] w-full max-w-4xl shadow-xl">
+                    <div class="text-2xl font-black text-blue-400 mb-6 uppercase">Capas del Sistema</div>
+                    <div class="space-y-2 text-xs font-bold">
+                        <div class="p-2 border border-white/20">USUARIO FINAL</div>
+                        <div class="p-2 border border-white/20 bg-emerald-900/50">APLICACIONES</div>
+                        <div class="p-2 border border-white/20 bg-blue-900/50">SISTEMA OPERATIVO</div>
+                        <div class="p-2 border border-white/20 bg-gray-800">HARDWARE</div>
                     </div>
-                    <p id="feedback" class="text-xl font-semibold mb-4"></p>
-                    <p class="text-lg text-gray-700">Aciertos: <span id="score" class="font-bold text-indigo-700">0</span> / <span id="total-questions" class="font-bold text-indigo-700">0</span></p>
-                    <button id="next-software-button" class="mt-6 bg-gray-700 hover:bg-gray-800 text-white font-semibold py-2 px-5 rounded-lg transition duration-200">Siguiente</button>
-                    <button id="restart-game-button" class="mt-3 bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-5 rounded-lg transition duration-200">Reiniciar Juego</button>
                 </div>
             </div>
 
-            <!-- Slide 13: Asignación de Tarea -->
-            <div id="slide-13" class="slide">
-                <h2 class="text-indigo-700 font-extrabold mb-4">Asignación de Tarea</h2>
-                <div class="bg-yellow-50 p-6 rounded-lg shadow-md w-full max-w-xl text-center">
-                    <p class="text-xl font-semibold text-yellow-800 mb-4">Para entregar el 10 de agosto de 2025:</p>
-                    <ol class="list-decimal list-inside text-base text-gray-700 space-y-3 text-left mx-auto max-w-md">
-                        <li>Realiza un <strong>cuadro de doble entrada</strong> con las tres categorías de software (Sistema, Programación, Aplicación/Usuario). Para cada categoría, incluye al menos <strong>tres ejemplos</strong> específicos y una breve descripción de su función.</li>
-                        <li>Investiga y redacta un párrafo (entre 50 y 70 palabras) sobre la importancia de la <strong>interfaz de usuario gráfica (GUI)</strong> en los sistemas operativos modernos para la interacción diaria de las personas.</li>
-                    </ol>
+            <!-- 12. Ejercicio Guiado -->
+            <div class="slide">
+                <h3>Ejercicio Guiado</h3>
+                <div class="concept-box border-emerald-500 bg-emerald-50">
+                    <p>Si instalas el juego <strong>Minecraft</strong> en tu computadora, ¿a qué categoría de software pertenece?</p>
+                    <div class="mt-6 p-4 bg-white rounded-xl font-bold text-center text-emerald-800">
+                        Respuesta: <strong>SOFTWARE DE APLICACIÓN</strong> (Específicamente de entretenimiento).
+                    </div>
                 </div>
             </div>
 
-            <!-- Navigation Buttons -->
-            <div class="flex justify-between w-full p-4 mt-auto">
-                <button id="prev-slide" class="nav-button flex items-center">
-                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
-                    Anterior
-                </button>
-                <span id="slide-counter" class="text-gray-600 font-medium text-lg flex items-center">1 / 13</span>
-                <button id="next-slide" class="nav-button flex items-center">
-                    Siguiente
-                    <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
-                </button>
+            <!-- 13. Actividad en Clase -->
+            <div class="slide">
+                <h3>Actividad en clase</h3>
+                <div class="concept-box">
+                    <p class="font-bold text-blue-600 mb-4 underline">Instrucciones:</p>
+                    <p>En tu cuaderno, haz una lista de 5 programas que uses en tu celular o computadora. Identifica a qué categoría pertenecen (Sistema, Aplicación o Programación).</p>
+                    <p class="mt-6 text-sm italic text-gray-500">Criterio: Correcta clasificación según las definiciones vistas.</p>
+                </div>
+            </div>
+
+            <!-- 14. Transición Quiz -->
+            <div class="slide">
+                <div class="w-32 h-32 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center text-6xl mb-8 animate-bounce">
+                    <i class="fas fa-code"></i>
+                </div>
+                <h2>Quiz: Conceptos de Software</h2>
+                <p>¿Qué tan bien conoces la parte lógica de tu computadora?</p>
+            </div>
+
+            <!-- 15. Quiz -->
+            <div class="slide">
+                <div class="quiz-container w-full max-w-3xl shadow-2xl">
+                    <div id="quiz-question-area">
+                        <p id="quiz-question-text" class="font-bold text-2xl text-gray-800 mb-8">Cargando evaluación...</p>
+                        <div id="quiz-options-grid" class="grid grid-cols-1 gap-3"></div>
+                        <div id="quiz-feedback" class="mt-8 p-6 rounded-2xl hidden font-black text-center uppercase tracking-tighter"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 16. Cierre -->
+            <div class="slide">
+                <h2 class="font-black">¡Fin del Tema!</h2>
+                <div class='concept-box border-blue-600'>
+                    <p>El software evoluciona constantemente. ¡Asegúrate de mantener tus programas actualizados!</p>
+                </div>
+                <button onclick="location.reload()" class="mt-12 px-8 py-3 bg-gray-900 text-white rounded-xl font-bold uppercase text-xs tracking-[0.2em] hover:bg-blue-600 transition-all">Reiniciar Lección</button>
             </div>
         </div>
+        <div id="controls-wrapper">
+            <button id="prev-btn" class="nav-button">Anterior</button>
+            <button id="next-btn" class="nav-button">Siguiente</button>
+        </div>
+        <div id="slide-counter">1 / 16</div>
     </main>
 
-    <!-- Footer -->
-    <footer class="bg-gray-900 text-gray-300 py-6 px-6 mt-8">
-        <div class="container mx-auto text-center text-sm">
-            <p class="flex items-center justify-center">
-                &copy;&nbsp;<span id="current-year"></span>&nbsp;Instituto Maria Auxiliadora - Area de Informatica ISEMED. Todos los derechos reservados.
-                <img src="../imagenes/bandera-de-honduras.png" alt="Bandera de Honduras" style="width: 50px; height: auto; margin-left: 0.5rem;">
-            </p>
+    <footer id="main-footer" class="bg-gray-900 text-gray-400 py-8 px-6">
+        <div class="container mx-auto text-center">
+            <div class="flex flex-col items-center gap-4">
+                <img src="../imagenes/bandera-de-honduras.png" alt="Honduras" class="w-10 opacity-60">
+                <div class="text-[10px] font-bold uppercase tracking-[0.2em]">&copy; 2025 Instituto María Auxiliadora - Área de Informática</div>
+            </div>
         </div>
     </footer>
 
+    <script src="../js/config.js?v=22"></script>
+    <script src="../js/api.js?v=22"></script>
+    <script src="../js/presentation-engine.js?v=22"></script>
     <script>
-        // --- Mobile Menu Logic ---
-        const mobileMenuButton = document.getElementById('mobile-menu-button');
-        const closeMobileMenuButton = document.getElementById('close-mobile-menu');
-        const mobileMenu = document.getElementById('mobile-menu');
-        const mobileMenuOverlay = document.getElementById('mobile-menu-overlay');
-        const mobileAsignaturasButton = document.getElementById('mobile-asignaturas-button');
-        const mobileAsignaturasDropdown = document.getElementById('mobile-asignaturas-dropdown');
-
-        function toggleMobileMenu() {
-            mobileMenu.classList.toggle('open');
-            mobileMenuOverlay.classList.toggle('hidden');
-        }
-
-        mobileMenuButton.addEventListener('click', toggleMobileMenu);
-        closeMobileMenuButton.addEventListener('click', toggleMobileMenu);
-        mobileMenuOverlay.addEventListener('click', toggleMobileMenu); // Close when clicking outside
-
-        mobileAsignaturasButton.addEventListener('click', () => {
-            mobileAsignaturasDropdown.classList.toggle('hidden');
-            // Rotate arrow icon
-            mobileAsignaturasButton.querySelector('svg').classList.toggle('rotate-180');
-        });
-
-        // --- Presentation Logic ---
-        const slides = document.querySelectorAll('.slide');
-        const prevButton = document.getElementById('prev-slide');
-        const nextButton = document.getElementById('next-slide');
-        const slideCounter = document.getElementById('slide-counter');
-        let currentSlideIndex = 0;
-
-        function updateSlideCounter() {
-            slideCounter.textContent = `${currentSlideIndex + 1} / ${slides.length}`;
-        }
-
-        function showSlide(index, direction = 'next') {
-            // Ensure index is within bounds
-            if (index < 0 || index >= slides.length) {
-                return;
-            }
-
-            const currentActiveSlide = document.querySelector('.slide.active');
-            const newSlideElement = slides[index];
-
-            // If there's an active slide and it's not the same as the new one
-            if (currentActiveSlide && currentActiveSlide !== newSlideElement) {
-                // Animate out the current slide
-                currentActiveSlide.classList.add('leaving'); // Add leaving class for its animation
-                currentActiveSlide.style.animationName = (direction === 'next' ? 'fadeOutDown' : 'fadeOutUp');
-
-                // Listen for animation end to fully hide the leaving slide
-                currentActiveSlide.addEventListener('animationend', function handler() {
-                    currentActiveSlide.classList.remove('active', 'leaving'); // Remove both active and leaving
-                    currentActiveSlide.style.display = 'none'; // Hide it completely
-                    currentActiveSlide.style.animationName = ''; // Clear animation
-                    currentActiveSlide.removeEventListener('animationend', handler);
-                }, { once: true });
-
-                // Animate in the new slide
-                newSlideElement.classList.add('active'); // Make it active so it takes up space
-                newSlideElement.style.display = 'flex'; // Ensure it's displayed
-                newSlideElement.style.animationName = (direction === 'next' ? 'fadeInUp' : 'fadeInDown');
-
-            } else if (!currentActiveSlide && index === 0) {
-                // This block specifically handles the very first load if showSlide(0) is called
-                // and no slide is active yet. It ensures the first slide is shown without animation.
-                newSlideElement.classList.add('active');
-                newSlideElement.style.display = 'flex';
-                newSlideElement.style.animationName = ''; // No animation on initial display
-            }
-
-            currentSlideIndex = index;
-            updateSlideCounter();
-            updateNavigationButtons();
-
-            // Special handling for the game slide to initialize it when shown
-            if (newSlideElement.id === 'slide-12') {
-                initializeGame();
-            }
-        }
-
-
-        function updateNavigationButtons() {
-            prevButton.disabled = currentSlideIndex === 0;
-            nextButton.disabled = currentSlideIndex === slides.length - 1;
-        }
-
-        function nextSlide() {
-            if (currentSlideIndex < slides.length - 1) {
-                showSlide(currentSlideIndex + 1, 'next');
-            }
-        }
-
-        function prevSlide() {
-            if (currentSlideIndex > 0) {
-                showSlide(currentSlideIndex - 1, 'prev');
-            }
-        }
-
-        // Event Listeners for Navigation Buttons
-        prevButton.addEventListener('click', prevSlide);
-        nextButton.addEventListener('click', nextSlide);
-
-        // Keyboard Navigation
-        document.addEventListener('keydown', (event) => {
-            if (event.key === 'ArrowRight') {
-                nextSlide();
-            } else if (event.key === 'ArrowLeft') {
-                prevSlide();
-            }
-        });
-
-        // --- Minijuego Logic ---
-        const softwareData = [
-            { name: "Microsoft Word", type: "aplicacion" },
-            { name: "Windows 11", type: "sistema" },
-            { name: "Python IDE (PyCharm)", type: "programacion" },
-            { name: "Google Chrome", type: "aplicacion" },
-            { name: "macOS Ventura", type: "sistema" },
-            { name: "Adobe Photoshop", type: "aplicacion" },
-            { name: "Linux Ubuntu", type: "sistema" },
-            { name: "Visual Studio Code", type: "programacion" },
-            { name: "Spotify", type: "aplicacion" },
-            { name: "Android", type: "sistema" },
-            { name: "Java Development Kit (JDK)", type: "programacion" },
-            { name: "Microsoft Excel", type: "aplicacion" }
-        ];
-
-        let currentQuestionIndex = 0;
-        let score = 0;
-        let shuffledSoftware = [];
-
-        const softwareNameDisplay = document.getElementById('software-name');
-        const gameButtons = document.querySelectorAll('.game-button');
-        const feedbackDisplay = document.getElementById('feedback');
-        const scoreDisplay = document.getElementById('score');
-        const totalQuestionsDisplay = document.getElementById('total-questions');
-        const nextSoftwareButton = document.getElementById('next-software-button');
-        const restartGameButton = document.getElementById('restart-game-button');
-
-        function shuffleArray(array) {
-            for (let i = array.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [array[i], array[j]] = [array[j], array[i]];
-            }
-            return array;
-        }
-
-        function initializeGame() {
-            shuffledSoftware = shuffleArray([...softwareData]); // Create a shuffled copy
-            currentQuestionIndex = 0;
-            score = 0;
-            totalQuestionsDisplay.textContent = shuffledSoftware.length;
-            updateGameDisplay();
-            enableGameButtons();
-            nextSoftwareButton.style.display = 'none'; // Hide next button initially
-            restartGameButton.style.display = 'none'; // Hide restart button initially
-        }
-
-        function updateGameDisplay() {
-            if (currentQuestionIndex < shuffledSoftware.length) {
-                softwareNameDisplay.textContent = shuffledSoftware[currentQuestionIndex].name;
-                feedbackDisplay.textContent = "";
-                scoreDisplay.textContent = score;
-                enableGameButtons();
-                nextSoftwareButton.style.display = 'none'; // Hide next button until answered
-            } else {
-                softwareNameDisplay.textContent = "¡Juego Terminado!";
-                feedbackDisplay.textContent = `Tu puntuación final es: ${score} de ${shuffledSoftware.length}`;
-                disableGameButtons();
-                nextSoftwareButton.style.display = 'none';
-                restartGameButton.style.display = 'block'; // Show restart button
-            }
-        }
-
-        function handleAnswer(selectedType) {
-            const correctType = shuffledSoftware[currentQuestionIndex].type;
-            if (selectedType === correctType) {
-                feedbackDisplay.textContent = "¡Correcto!";
-                feedbackDisplay.classList.remove('text-red-600');
-                feedbackDisplay.classList.add('text-green-600');
-                score++;
-            } else {
-                feedbackDisplay.textContent = `Incorrecto. Es ${correctType.charAt(0).toUpperCase() + correctType.slice(1)}.`;
-                feedbackDisplay.classList.remove('text-green-600');
-                feedbackDisplay.classList.add('text-red-600');
-            }
-            scoreDisplay.textContent = score;
-            disableGameButtons();
-            if (currentQuestionIndex < shuffledSoftware.length - 1) {
-                nextSoftwareButton.style.display = 'block'; // Show next button
-            } else {
-                restartGameButton.style.display = 'block'; // Show restart button if last question
-            }
-        }
-
-        function enableGameButtons() {
-            gameButtons.forEach(button => {
-                button.disabled = false;
-                button.classList.remove('opacity-50', 'cursor-not-allowed');
-            });
-        }
-
-        function disableGameButtons() {
-            gameButtons.forEach(button => {
-                button.disabled = true;
-                button.classList.add('opacity-50', 'cursor-not-allowed');
-            });
-        }
-
-        gameButtons.forEach(button => {
-            button.addEventListener('click', (event) => {
-                handleAnswer(event.target.dataset.type);
-            });
-        });
-
-        nextSoftwareButton.addEventListener('click', () => {
-            currentQuestionIndex++;
-            updateGameDisplay();
-        });
-
-        restartGameButton.addEventListener('click', () => {
-            initializeGame();
-        });
-
-
-        // --- Initialize on DOMContentLoaded ---
-        document.addEventListener('DOMContentLoaded', () => { handleFullscreenChange();
-            // Set current year in footer
-            const currentYearSpan = document.getElementById('current-year');
-            if (currentYearSpan) { // Added a check to prevent TypeError if element is not found
-                currentYearSpan.textContent = new Date().getFullYear();
-            }
-
-            // Initialize the first slide directly without calling showSlide,
-            // to ensure it's immediately visible and not subject to initial animation issues.
-            slides[0].classList.add('active');
-            slides[0].style.display = 'flex';
-            slides[0].style.animationName = ''; // No animation on initial display
-
-            currentSlideIndex = 0; // Ensure index is correctly set for the first slide
-            updateSlideCounter(); // Update counter for initial display
-            updateNavigationButtons(); // Update buttons for initial display
-        });
-
-    function handleFullscreenChange() {
-        const isFS = !!(document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement);
-        const header = document.getElementById('page-header') || document.getElementById('main-header') || document.getElementById('mobile-header');
-        const footer = document.getElementById('page-footer') || document.getElementById('main-footer');
-        const container = document.getElementById('presentation-container');
-
-        if (isFS) {
-            if (header) header.style.setProperty('display', 'none', 'important');
-            if (footer) footer.style.setProperty('display', 'none', 'important');
-            if (container) container.style.setProperty('height', '100vh', 'important');
-        } else {
-            if (header) header.style.display = '';
-            if (footer) footer.style.display = '';
-            if (container) container.style.height = '';
-        }
-    }
-    document.addEventListener('fullscreenchange', handleFullscreenChange);
-    document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
-    document.addEventListener('mozfullscreenchange', handleFullscreenChange);
-    document.addEventListener('MSFullscreenChange', handleFullscreenChange);
-
-    const quizData = [
-        {
-            q: "¿Cómo se llama el conjunto de componentes lógicos de una computadora?",
-            options: ["Software", "Hardware", "Firmware", "Peopleware"],
-            a: "Software"
-        },
-        {
-            q: "¿Cuál es la función principal de un Sistema Operativo?",
-            options: ["Administrar los recursos del hardware y servir de interfaz", "Limpiar el monitor", "Solo navegar por internet", "Escribir cartas en Word"],
-            a: "Administrar los recursos del hardware y servir de interfaz"
-        },
-        {
-            q: "¿Qué es el software de aplicación?",
-            options: ["Programas diseñados para realizar tareas específicas del usuario", "El sistema que arranca la PC", "Los cables internos", "La memoria RAM"],
-            a: "Programas diseñados para realizar tareas específicas del usuario"
-        },
-        {
-            q: "¿Cuál de estos es un ejemplo de Sistema Operativo?",
-            options: ["Windows 11", "Microsoft Excel", "Google Chrome", "Adobe Photoshop"],
-            a: "Windows 11"
-        },
-        {
-            q: "¿Qué es el software de sistema?",
-            options: ["Programas que permiten el funcionamiento del hardware", "Juegos de video", "Hojas de cálculo", "Presentaciones multimedia"],
-            a: "Programas que permiten el funcionamiento del hardware"
-        },
-        {
-            q: "¿Qué es el software?",
-            options: ["Conjunto de programas y reglas informáticas", "Componentes físicos de la PC", "Solo los cables de red", "La pantalla y el teclado"],
-            a: "Conjunto de programas y reglas informáticas"
-        },
-        {
-            q: "El hardware se diferencia del software porque el hardware es:",
-            options: ["Físico y tangible", "Intangible", "Un conjunto de instrucciones", "Solo programas de juego"],
-            a: "Físico y tangible"
-        },
-        {
-            q: "¿Cuál de estas es una categoría principal de clasificación del software?",
-            options: ["Software de Sistema", "Software de Madera", "Software de Metal", "Software de Plástico"],
-            a: "Software de Sistema"
-        },
-        {
-            q: "Windows, macOS y Linux son ejemplos de:",
-            options: ["Sistemas Operativos", "Software de Aplicación", "Hardware de entrada", "Editores de texto"],
-            a: "Sistemas Operativos"
-        },
-        {
-            q: "¿Qué software permite a los programadores crear otros programas?",
-            options: ["Software de Programación", "Software de Aplicación", "Drivers", "Firmware"],
-            a: "Software de Programación"
-        },
-        {
-            q: "Microsoft Word y Google Chrome son ejemplos de:",
-            options: ["Software de Aplicación", "Software de Sistema", "Software de Programación", "Hardware"],
-            a: "Software de Aplicación"
-        },
-        {
-            q: "La función del Sistema Operativo que administra la RAM se llama:",
-            options: ["Gestión de Memoria", "Gestión de Archivos", "Interfaz de Usuario", "Gestión de Dispositivos"],
-            a: "Gestión de Memoria"
-        },
-        {
-            q: "¿Qué componente permite la comunicación entre el hardware y el SO?",
-            options: ["Controladores (Drivers)", "Iconos", "Fondo de pantalla", "Teclado físico"],
-            a: "Controladores (Drivers)"
-        },
-        {
-            q: "Un Sistema Operativo móvil muy popular es:",
-            options: ["Android", "Windows 95", "Linux Ubuntu", "MS-DOS"],
-            a: "Android"
-        },
-        {
-            q: "¿Qué tipo de software es un compilador?",
-            options: ["Software de Programación", "Software de Aplicación", "Software de Sistema", "Hardware"],
-            a: "Software de Programación"
-        }
-    ];
-
-</script>
-
-    <script>
-    (function() {
-        const slides = document.querySelectorAll('.slide');
-        const nextBtn = document.getElementById('next-btn') || document.getElementById('next-slide');
-        const prevBtn = document.getElementById('prev-btn') || document.getElementById('prev-slide');
-        const counter = document.getElementById('slide-counter');
-        const container = document.getElementById('presentation-container') || document.body;
-        let current = 0;
-        function update(n) {
-            if (n < 0 || n >= slides.length) return;
-            slides.forEach(s => s.classList.remove('active'));
-            current = n;
-            slides[current].classList.add('active');
-            if (counter) counter.textContent = (current + 1) + ' / ' + slides.length;
-            if (prevBtn) prevBtn.disabled = current === 0;
-            if (nextBtn) nextBtn.disabled = current === slides.length - 1;
-        }
-        if (nextBtn) nextBtn.onclick = () => update(current + 1);
-        if (prevBtn) prevBtn.onclick = () => update(current - 1);
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'ArrowRight') update(current + 1);
-            if (e.key === 'ArrowLeft') update(current - 1);
-        });
-        container.addEventListener('dblclick', () => {
-            if (!document.fullscreenElement) document.documentElement.requestFullscreen();
-            else document.exitFullscreen();
-        });
-    })();
+        window.presentationMetadata = {
+            grado: "Decimo",
+            asignatura: "Informatica",
+            tema: "Software"
+        };
     </script>
-    </body>
+</body>
 </html>

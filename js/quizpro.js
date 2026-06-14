@@ -1586,11 +1586,10 @@ async function loadGlobalTop() {
 function renderGlobalTopHTML(res) {
     const body = document.getElementById('global-top-body');
     if (!body || !res || !res.global) return;
-
-    window.globalTopData = res;
-    body.innerHTML = res.global
-        .filter(user => user && (user.nombre || user.username || user.display_name))
-        .slice(0, 5) // REQ 1: Restricción Clínica de Dataset (Top 5 Estricto)
+    // REQ 1: Restricción Clínica de Dataset (Top 5 Estricto)
+    var top5 = (res.global || []).filter(function(u) { return u && (u.nombre || u.username || u.display_name); }).slice(0, 5);
+    window.globalTopData = { global: top5, subjectTops: res.subjectTops };
+    body.innerHTML = top5
         .map((user, idx) => {
             const xp = parseInt(user.xp || 0);
             const range = XP_CONFIG.RANGES.find(r => xp >= r.min && xp <= r.max) || XP_CONFIG.RANGES[0];

@@ -2,678 +2,271 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Presentación: Hojas de Cálculo</title>
-    <!-- CDN de Tailwind CSS -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <title>Hojas de Cálculo - Décimo Grado</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Fonts - Inter -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Poppins:wght@700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         * { box-sizing: border-box; }
-        html { font-size: 90%; }
-        html, body { margin: 0; padding: 0; height: 100vh; width: 100vw; overflow-x: hidden; }
-        body {
-            display: flex;
-            flex-direction: column;
-            font-family: 'Inter', sans-serif;
-            background-color: #f9fafb;
-            color: #374151;
-            justify-content: space-between;
-        }
-        #presentation-container {
-            width: 100%;
-            height: calc(100vh - 7rem);
-            position: relative;
-            background-color: #ffffff;
-            border-radius: 1rem;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
-            overflow: hidden;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin: 0 auto;
-            max-width: 100vw;
-            /* Transición para evitar saltos bruscos al salir de fullscreen */
-            transition: all 0.3s ease;
-        }
-
-        /* --- CÓDIGO MODIFICADO PARA PANTALLA COMPLETA --- */
-
-        /* Usa una clase en el body para manejar el estilo cuando la API Fullscreen está activa en el contenedor */
-        body.is-fullscreen #page-header,
-        body.is-fullscreen #page-footer {
-            display: none !important;
-        }
-
-        /* Ajusta el contenedor principal para que use el 100% de la altura de la ventana cuando está en fullscreen */
-        body.is-fullscreen main {
-            padding: 0 !important;
-        }
-
-        body.is-fullscreen #presentation-container {
-            height: 100vh !important;
-            border-radius: 0 !important;
-            box-shadow: none !important;
-            max-width: 100vw !important;
-            width: 100vw !important;
-        }
-        /*
-        Nota: Los selectores de pseudo-clase :fullscreen anteriores se han eliminado.
-        Ahora la clase 'is-fullscreen' se añade y se elimina mediante JavaScript
-        cuando el contenedor #presentation-container entra/sale del modo de pantalla completa,
-        lo cual soluciona el error 'Disallowed by permissions policy' al no intentar
-        poner todo el documento en pantalla completa.
-        */
-        /* --- FIN CÓDIGO PANTALLA COMPLETA --- */
-
-        .slide {
-            width: 100%;
-            height: 100%;
-            padding: 1.8rem;
-            display: none;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            transition: opacity 0.5s ease-in-out;
-            position: absolute;
-            top: 0;
-            left: 0;
-            opacity: 0;
-            -ms-overflow-style: none;
-            scrollbar-width: none;
-            overflow-y: auto;
-        }
-        .slide::-webkit-scrollbar { display: none; }
-        .slide.active {
-            display: flex;
-            opacity: 1;
-            animation-name: fadeIn;
-            animation-duration: 0.8s;
-            animation-fill-mode: forwards;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(18px);}
-            to { opacity: 1; transform: translateY(0);}
-        }
-        @media (max-width: 768px) {
-            .slide h2, .slide h3 { font-size: 1.4rem; }
-            .slide p, .slide li { font-size: 0.9rem; }
-            .nav-button { padding: 0.4rem 0.8rem; font-size: 0.8rem; }
-            .example-box { padding: 1rem; }
-            .table-content th, .table-content td { padding: 0.5rem; font-size: 0.75rem; }
-        }
-        .quiz-option-button {
-            transition: background-color 0.3s, transform 0.2s;
-            text-align: left;
-            padding-left: 1.5rem;
-        }
-        .quiz-option-button.correct {
-            background-color: #d1fae5;
-            color: #065f46;
-            border-color: #10b981;
-        }
-        .quiz-option-button.incorrect {
-            background-color: #fee2e2;
-            color: #991b1b;
-            border-color: #ef4444;
-        }
-        .section-header {
-            font-size: 1.8rem;
-            font-weight: 700;
-            color: #6366f1;
-            margin-bottom: 1rem;
-        }
-        .example-box {
-            background-color: #f0f9ff;
-            border-left: 5px solid #6366f1;
-            padding: 1.5rem;
-            border-radius: 0.5rem;
-            text-align: left;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-        }
-        .content-image-style {
-            border-radius: 0.75rem;
-            box-shadow: 0 10px 15px rgba(0,0,0,0.1);
-            margin-top: 1.5rem;
-        }
+        html, body { margin: 0; padding: 0; height: 100vh; width: 100vw; overflow: hidden; }
+        body { display: flex; flex-direction: column; font-family: 'Inter', sans-serif; background-color: #f3f4f6; color: #1f2937; user-select: none; }
+        main { flex-grow: 1; display: flex; justify-content: center; align-items: center; position: relative; width: 100vw; }
+        #presentation-container { width: 100%; height: 100%; position: relative; background-color: #ffffff; overflow: hidden; cursor: pointer; }
+        .slide { width: 100%; height: 100%; padding: 4rem; display: none; flex-direction: column; justify-content: center; align-items: center; text-align: center; position: absolute; top: 0; left: 0; opacity: 0; transition: opacity 0.4s ease-in-out; overflow-y: auto; }
+        .slide.active { display: flex !important; opacity: 1; z-index: 10; }
+        h2 { font-family: 'Poppins', sans-serif; font-weight: 800; font-size: 3.5rem; color: #0d6efd; margin-bottom: 1.5rem; line-height: 1.1; }
+        h3 { font-family: 'Poppins', sans-serif; font-weight: 700; font-size: 2.5rem; color: #1f2937; margin-bottom: 2rem; border-bottom: 4px solid #0d6efd; padding-bottom: 0.5rem; }
+        p, li { font-size: 1.5rem; line-height: 1.6; color: #4b5563; max-width: 950px; }
+        .concept-box { background-color: #f9fafb; border-left: 8px solid #0d6efd; padding: 2.5rem; border-radius: 1rem; text-align: left; margin-top: 1.5rem; width: 100%; max-width: 900px; cursor: default; }
+        #controls-wrapper { position: absolute; bottom: 2.5rem; left: 50%; transform: translate(-50%, 0); display: flex; gap: 1.5rem; z-index: 40; }
+        .nav-button { background-color: #0d6efd; color: #ffffff; padding: 0.8rem 2rem; border-radius: 1rem; font-weight: 700; font-size: 1rem; transition: all 0.3s; cursor: pointer; border: none; box-shadow: 0 10px 15px -3px rgba(13, 110, 253, 0.3); text-transform: uppercase; letter-spacing: 0.05em; }
+        .nav-button:hover:not(:disabled) { background-color: #0b5ed7; transform: translateY(-2px); }
+        .nav-button:disabled { background-color: #e5e7eb; color: #9ca3af; cursor: not-allowed; box-shadow: none; }
+        #slide-counter { position: absolute; bottom: 2rem; right: 3rem; font-weight: 800; color: #9ca3af; z-index: 30; font-size: 1.25rem; font-family: 'Poppins', sans-serif; }
+        .quiz-container { background: white; padding: 2rem; border-radius: 2rem; border: 2px solid #f3f4f6; }
+        .quiz-option { width: 100%; padding: 1.25rem 2rem; margin: 0.75rem 0; border: 2px solid #e5e7eb; border-radius: 1.25rem; font-weight: 600; transition: all 0.2s; background: white; font-size: 1.2rem; cursor: pointer; text-align: left; display: flex; align-items: center; gap: 1rem; }
+        .quiz-option:hover { border-color: #0d6efd; background-color: #f0f7ff; }
+        .quiz-option.correct { background-color: #d1fae5; border-color: #10b981; color: #065f46; }
+        .quiz-option.incorrect { background-color: #fee2e2; border-color: #ef4444; color: #991b1b; }
+        .hide-element { display: none !important; }
+        .logo-img { width: 250px; height: auto; }
+        @media (max-width: 768px) { .slide { padding: 2rem 1.5rem; } h2 { font-size: 2rem; } h3 { font-size: 1.5rem; } p, li { font-size: 1.1rem; } .logo-img { width: 120px; } #slide-counter { right: 1rem; bottom: 1rem; font-size: 0.9rem; } }
     </style>
-
-    <style>
-    #controls-wrapper { position: absolute; bottom: 2rem; left: 50%; transform: translate(-50%, 0); display: flex; gap: 1rem; z-index: 40; transition: opacity 0.3s ease; }
-    .nav-button { background-color: #0d6efd; color: #ffffff; padding: 0.75rem 1.5rem; border-radius: 6px; font-weight: 600; transition: all 0.3s; cursor: pointer; border: none; }
-    .nav-button:hover { background-color: #0b5ed7; transform: scale(1.05); }
-    .nav-button:disabled { background-color: #d1d5db; cursor: not-allowed; transform: scale(1); }
-    #slide-counter { position: absolute; bottom: 1.5rem; right: 2rem; font-weight: 600; color: #9ca3af; z-index: 30; }
-    .hide-element { display: none !important; }
-    </style>
-    </head>
-<body class="antialiased">
-
-    <!-- Header de la página -->
-    <header id="page-header" class="w-full bg-white p-3 shadow-md flex flex-col sm:flex-row justify-center sm:justify-between items-center z-50 text-center sm:text-left">
-        <div class="flex flex-col sm:flex-row items-center space-y-1 sm:space-y-0 sm:space-x-3">
-            <img src="../imagenes/logo.png" alt="Logo de la institución" class="w-20 sm:w-28 h-auto">
-            <h1 class="text-base sm:text-xl font-bold text-gray-800 mt-1 sm:mt-0">Hojas de Cálculo</h1>
+</head>
+<body>
+    <header id="main-header" class="w-full bg-white border-b border-gray-100 shadow-sm">
+        <div class="container mx-auto px-4 flex justify-between items-center h-16 md:h-20">
+            <div class="flex items-center gap-4">
+                <a href="../index.html" class="flex items-center gap-3 group">
+                    <img src="../imagenes/logo.png" alt="Logo IMA" class="w-10 h-10 md:w-14 md:h-14">
+                    <div>
+                        <h1 class="text-sm md:text-xl font-black text-gray-900 uppercase leading-none">ISEMED</h1>
+                        <p class="text-[8px] md:text-[10px] font-bold text-blue-600 uppercase tracking-widest mt-1">Área de Informática</p>
+                    </div>
+                </a>
+            </div>
+            <div class="flex items-center gap-6">
+                <a href="../index.html" class="hidden md:block text-xs font-black uppercase tracking-widest text-gray-400 hover:text-blue-600 transition-colors">Volver al Inicio</a>
+                <img src="../imagenes/bandera-de-honduras.png" alt="Bandera" class="w-8 h-auto shadow-sm">
+            </div>
         </div>
-        <nav class="mt-3 sm:mt-0 flex items-center space-x-3">
-            <ul class="flex space-x-2 sm:space-x-3">
-                <li><a href="../index.html" class="text-gray-600 hover:text-indigo-500 transition-colors text-xs sm:text-sm">Inicio</a></li>
-               </ul>
-            <!-- Botón para activar el modo de pantalla completa mediante la API de JavaScript -->
-            <button id="fullscreen-btn" class="bg-indigo-600 hover:bg-indigo-700 text-white rounded-full px-3 py-1 text-xs sm:text-sm transition-colors shadow-lg">
-                Modo Presentación
-            </button>
-        </nav>
     </header>
 
-    <!-- Contenido principal de la presentación -->
-    <main class="flex-grow flex justify-center items-center p-3">
-        <div id="presentation-container" class="relative">
-
-            <!-- Slide 1: Portada -->
-            <div id="slide-1" class="slide active">
-                <img src="../imagenes/logo.png" alt="Logo de la Institución" class="w-40 sm:w-56 md:w-72 h-auto mb-3 sm:mb-7">
-                <h2 class="text-lg sm:text-xl mb-1 sm:mb-3 text-indigo-700 font-extrabold">Hojas de Cálculo</h2>
-                <p class="text-xs sm:text-sm text-gray-600">Informática I</p>
-                <div class="mt-3 sm:mt-7 text-xs text-gray-500">
-                    <p>Docente: Pablo Antonio Peña</p>
-                    <p>Fecha: 12 de octubre del 2025</p>
-                    <p>Grado: Décimo A</p>
+    <main>
+        <div id="presentation-container">
+            <!-- 1. Portada -->
+            <div class="slide active">
+                <img src="../imagenes/logo.png" alt="Logo" class="logo-img mb-8">
+                <h2 class="font-black">Hojas de Cálculo</h2>
+                <div class="space-y-2">
+                    <p class="text-blue-600 font-bold uppercase tracking-[0.2em]">Informática I • Unidad I</p>
+                    <p class="font-semibold text-gray-500">Décimo Grado • Sección A y B</p>
+                    <div class="h-1 w-24 bg-blue-600 mx-auto my-6"></div>
+                    <p class="text-lg font-medium text-gray-700">Docente: <span class="font-bold">Pablo Antonio Peña</span></p>
+                    <p class="text-sm font-bold text-gray-400 uppercase tracking-widest">Junio 2025</p>
                 </div>
             </div>
 
-            <!-- Slide 2: ¿Qué es una Hoja de Cálculo? -->
-            <div id="slide-2" class="slide">
-                <h3 class="section-header">1. ¿Qué es una Hoja de Cálculo?</h3>
-                <p class="text-sm sm:text-lg text-gray-700 leading-relaxed max-w-3xl mb-6">
-                    Una hoja de cálculo es una aplicación informática que permite organizar, analizar y presentar datos numéricos y alfanuméricos en tablas.
-                </p>
-                <img src="../imagenes/ejemplo-hoja-de-calculo.png" alt="Ejemplo de Hoja de Cálculo" class="max-w-md mx-auto content-image-style">
-                <ul class="list-disc list-inside text-left text-base text-gray-700 mt-6 space-y-2 max-w-2xl mx-auto">
-                    <li>Se compone de <strong>celdas</strong> organizadas en <strong>filas</strong> y <strong>columnas</strong>.</li>
-                    <li>Ideal para contabilidad, presupuestos, análisis estadístico y más.</li>
-                </ul>
-            </div>
-
-            <!-- Slide 3: Interfaz Principal -->
-            <div id="slide-3" class="slide">
-                <h3 class="section-header">2. Interfaz Principal</h3>
-                <p class="text-sm sm:text-lg text-gray-700 leading-relaxed max-w-3xl mb-6">
-                    Familiaricémonos con los componentes clave de una hoja de cálculo.
-                </p>
-                <img src="../imagenes/interfaz-hoja-de-calculo.png" alt="Interfaz de una Hoja de Cálculo" class="max-w-xl mx-auto content-image-style">
-                <ul class="list-disc list-inside text-left text-base text-gray-700 mt-6 space-y-2 max-w-2xl mx-auto">
-                    <li><strong>Barra de Fórmulas:</strong> Para introducir y editar datos o fórmulas.</li>
-                    <li><strong>Celdas, Filas y Columnas:</strong> Unidades básicas de almacenamiento de datos.</li>
-                    <li><strong>Pestañas de Hoja:</strong> Para navegar entre diferentes hojas de trabajo.</li>
-                </ul>
-            </div>
-
-            <!-- Slide 4: Entrada y Formato de Datos -->
-            <div id="slide-4" class="slide">
-                <h3 class="section-header">3. Entrada y Formato de Datos</h3>
-                <p class="text-sm sm:text-lg text-gray-700 leading-relaxed max-w-3xl mb-6">
-                    Aprende a introducir diferentes tipos de datos y a darles el formato adecuado.
-                </p>
-                <img src="../imagenes/formato-de-datos.png" alt="Formato de Datos en Hoja de Cálculo" class="max-w-md mx-auto content-image-style">
-                <ul class="list-disc list-inside text-left text-base text-gray-700 mt-6 space-y-2 max-w-2xl mx-auto">
-                    <li><strong>Tipos de Datos:</strong> Texto, Números, Fechas, Fórmulas.</li>
-                    <li><strong>Formato de Celdas:</strong> Moneda, Porcentaje, Alineación, Bordes, Colores.</li>
-                    <li><strong>Atajo:</strong> <code>Ctrl + 1</code> para abrir el cuadro de diálogo de formato de celdas.</li>
-                </ul>
-            </div>
-
-            <!-- Slide 5: Fórmulas Básicas -->
-            <div id="slide-5" class="slide">
-                <h3 class="section-header">4. Fórmulas Básicas</h3>
-                <p class="text-sm sm:text-lg text-gray-700 leading-relaxed max-w-3xl mb-6">
-                    Las fórmulas son expresiones que realizan cálculos en tus datos.
-                </p>
-                <img src="../imagenes/formulas-basicas.png" alt="Ejemplo de Fórmulas Básicas" class="max-w-md mx-auto content-image-style">
-                <div class="bg-gray-100 p-4 rounded-md mt-6 w-full max-w-xl text-left text-sm font-mono mx-auto">
-                    <pre><code>=A1+B1        // Suma
-=C2-D2        // Resta
-=E3*F3        // Multiplicación
-=G4/H4        // División
-=SUMA(A1:A10) // Suma de un rango
-</code></pre>
+            <!-- 2. Introducción -->
+            <div class="slide">
+                <h3>¿Qué es una Hoja de Cálculo?</h3>
+                <div class="concept-box">
+                    <p>Es una aplicación diseñada para <strong>organizar, analizar y manipular</strong> datos numéricos y alfanuméricos en forma de tablas.</p>
                 </div>
-                <p class="text-base text-gray-500 mt-4">Todas las fórmulas comienzan con el signo <code>=</code>.</p>
+                <p class="mt-8">Permite realizar cálculos complejos mediante el uso de <strong>fórmulas y funciones</strong> de manera automatizada.</p>
             </div>
 
-            <!-- Slide 6: Funciones Básicas -->
-            <div id="slide-6" class="slide">
-                <h3 class="section-header">5. Funciones Básicas</h3>
-                <p class="text-sm sm:text-lg text-gray-700 leading-relaxed max-w-3xl mb-6">
-                    Las funciones son fórmulas predefinidas que realizan cálculos complejos.
-                </p>
-                <img src="../imagenes/funciones-basicas.png" alt="Ejemplo de Funciones Básicas" class="max-w-md mx-auto content-image-style">
-                <div class="bg-gray-100 p-4 rounded-md mt-6 w-full max-w-xl text-left text-sm font-mono mx-auto">
-                    <pre><code>=SUMA(A1:A5)      // Suma el rango
-=PROMEDIO(B1:B5)   // Calcula el promedio
-=CONTAR(C1:C10)    // Cuenta celdas con números
-=MAX(D1:D7)        // Encuentra el valor máximo
-=MIN(E1:E7)        // Encuentra el valor mínimo
-</code></pre>
-                </div>
-                <p class="text-base text-gray-500 mt-4">Las funciones simplifican cálculos repetitivos.</p>
-            </div>
-
-            <!-- Slide 7: Ordenamiento y Filtrado de Datos -->
-            <div id="slide-7" class="slide">
-                <h3 class="section-header">6. Ordenamiento y Filtrado de Datos</h3>
-                <p class="text-sm sm:text-lg text-gray-700 leading-relaxed max-w-3xl mb-6">
-                    Organiza y visualiza tus datos de manera eficiente.
-                </p>
-                <img src="../imagenes/ordenamiento-y-filtrado.PNG" alt="Ordenamiento y Filtrado de Datos" class="max-w-md mx-auto content-image-style">
-                <ul class="list-disc list-inside text-left text-base text-gray-700 mt-6 space-y-2 max-w-2xl mx-auto">
-                    <li><strong>Ordenar:</strong> Reorganiza los datos en orden ascendente o descendente.</li>
-                    <li><strong>Filtrar:</strong> Muestra solo los datos que cumplen con criterios específicos.</li>
-                    <li>Herramientas esenciales para el análisis de grandes conjuntos de datos.</li>
-                </ul>
-            </div>
-
-            <!-- Slide 8: Ejercicio Práctico 1: Presupuesto Simple -->
-            <div id="slide-8" class="slide">
-                <h3 class="section-header">Ejercicio Práctico 1: Presupuesto Simple</h3>
-                <p class="text-sm sm:text-lg text-gray-700 leading-relaxed max-w-3xl mb-6">
-                    Crea una hoja de cálculo para un presupuesto personal mensual.
-                </p>
-                <img src="../imagenes/presupuesto-simple.png" alt="Ejemplo de Presupuesto Simple" class="max-w-md mx-auto content-image-style">
-                <ul class="list-disc list-inside text-left text-base text-gray-700 mt-6 space-y-2 max-w-2xl mx-auto">
-                    <li>Columnas: <code>Categoría</code>, <code>Ingresos</code>, <code>Gastos</code>.</li>
-                    <li>Usa fórmulas para calcular el <code>Total Ingresos</code>, <code>Total Gastos</code> y <code>Balance</code>.</li>
-                    <li>Aplica formato de moneda y bordes.</li>
-                </ul>
-            </div>
-
-            <!-- Slide 9: Ejercicio Práctico 2: Control de Inventario -->
-            <div id="slide-9" class="slide">
-                <h3 class="section-header">Ejercicio Práctico 2: Control de Inventario</h3>
-                <p class="text-sm sm:text-lg text-gray-700 leading-relaxed max-w-3xl mb-6">
-                    Diseña una hoja de cálculo para gestionar un inventario básico de productos.
-                </p>
-                <img src="../imagenes/control-inventario.png" alt="Ejemplo de Control de Inventario" class="max-w-md mx-auto content-image-style">
-                <ul class="list-disc list-inside text-left text-base text-gray-700 mt-6 space-y-2 max-w-2xl mx-auto">
-                    <li>Columnas: <code>ID Producto</code>, <code>Nombre</code>, <code>Cantidad</code>, <code>Precio Unitario</code>, <code>Valor Total</code>.</li>
-                    <li>Calcula el <code>Valor Total</code> (<code>Cantidad * Precio Unitario</code>).</li>
-                    <li>Usa la función <code>SUMA</code> para el <code>Valor Total del Inventario</code>.</li>
-                    <li>Ordena los productos por <code>Cantidad</code> (ascendente/descendente).</li>
-                </ul>
-            </div>
-
-            <!-- Slide 10: Quiz de Hojas de Cálculo -->
-            <div id="slide-10" class="slide">
-                <h3 class="section-header">¡Pon a prueba tus conocimientos!</h3>
-                <div id="quiz-container" class="bg-gray-100 p-3 sm:p-7 rounded-lg shadow-md max-w-3xl w-full text-center">
-                    <div id="quiz-question" class="text-base sm:text-xl font-semibold mb-2 sm:mb-5 text-gray-800"></div>
-                    <div id="quiz-options" class="flex flex-col space-y-2 sm:space-y-3"></div>
-                    <div id="quiz-feedback" class="mt-3 sm:mt-5 text-sm sm:text-base font-bold"></div>
+            <!-- 3. Conceptos Básicos -->
+            <div class="slide">
+                <h3>Celdas, Filas y Columnas</h3>
+                <p>La estructura fundamental de una hoja de cálculo es la cuadrícula.</p>
+                <div class="concept-box border-emerald-500 bg-emerald-50/20">
+                    <ul class="text-lg">
+                        <li><strong>Columnas:</strong> Se identifican por letras (A, B, C...).</li>
+                        <li><strong>Filas:</strong> Se identifican por números (1, 2, 3...).</li>
+                        <li><strong>Celda:</strong> La intersección de una fila y una columna (Ej: B4).</li>
+                    </ul>
                 </div>
             </div>
 
-            <!-- Slide 11: Asignación de Tareas -->
-            <div id="slide-11" class="slide">
-                <h3 class="section-header">Asignación de Tareas</h3>
-                <p class="text-sm sm:text-lg text-gray-700 leading-relaxed max-w-3xl mb-6">
-                    Elaboración de un control de notas o inventario simple que incluya entrada, formato y uso de al menos 3 funciones básicas.
-                </p>
-                <p class="text-base text-gray-500">Fecha de entrega: 19/07/2025</p>
-                <p class="text-base text-gray-500">Ponderación: 5%</p>
+            <!-- 4. Tipos de Datos -->
+            <div class="slide">
+                <h3>Tipos de Datos en Celdas</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
+                    <div class="p-6 bg-gray-50 rounded-2xl shadow-sm">
+                        <h4 class="font-bold text-blue-600">Valores Constantes</h4>
+                        <p class="text-sm">Datos que no cambian (Texto, números, fechas).</p>
+                    </div>
+                    <div class="p-6 bg-gray-50 rounded-2xl shadow-sm">
+                        <h4 class="font-bold text-blue-600">Fórmulas</h4>
+                        <p class="text-sm">Secuencias que calculan nuevos valores a partir de otros.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 5. Operadores -->
+            <div class="slide">
+                <h3>Operadores Aritméticos</h3>
+                <p>Para realizar cálculos en Excel u otras hojas de cálculo, se utilizan los siguientes símbolos:</p>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8 w-full max-w-2xl">
+                    <div class="p-4 bg-blue-50 rounded-xl font-bold">+ (Suma)</div>
+                    <div class="p-4 bg-blue-50 rounded-xl font-bold">- (Resta)</div>
+                    <div class="p-4 bg-blue-50 rounded-xl font-bold">* (Multiplicación)</div>
+                    <div class="p-4 bg-blue-50 rounded-xl font-bold">/ (División)</div>
+                </div>
+                <p class="mt-6 text-sm italic">Nota: Todas las fórmulas deben comenzar con el signo igual (<strong>=</strong>).</p>
+            </div>
+
+            <!-- 6. Funciones Básicas -->
+            <div class="slide">
+                <h3>Funciones Predeterminadas</h3>
+                <p>Son fórmulas ya creadas por la aplicación para simplificar tareas comunes.</p>
+                <div class="concept-box border-blue-400">
+                    <ul class="text-lg">
+                        <li><strong>=SUMA(rango):</strong> Suma todos los valores.</li>
+                        <li><strong>=PROMEDIO(rango):</strong> Calcula la media aritmética.</li>
+                        <li><strong>=MAX(rango):</strong> Devuelve el valor más alto.</li>
+                        <li><strong>=MIN(rango):</strong> Devuelve el valor más bajo.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- 7. Formato de Celdas -->
+            <div class="slide">
+                <h3>Formato de Datos</h3>
+                <p>Podemos cambiar cómo se ven los datos según su naturaleza:</p>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8 w-full">
+                    <div class="p-4 bg-gray-50 rounded-xl font-bold">Moneda</div>
+                    <div class="p-4 bg-gray-50 rounded-xl font-bold">Porcentaje</div>
+                    <div class="p-4 bg-gray-50 rounded-xl font-bold">Fecha</div>
+                    <div class="p-4 bg-gray-50 rounded-xl font-bold">Contabilidad</div>
+                </div>
+            </div>
+
+            <!-- 8. Referencias -->
+            <div class="slide">
+                <h3>Referencias Relativas y Absolutas</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-4xl">
+                    <div class="concept-box">
+                        <h4 class="text-blue-600 font-bold mb-2">Relativas</h4>
+                        <p class="text-lg">Cambian al copiar la fórmula a otra posición (Ej: A1).</p>
+                    </div>
+                    <div class="concept-box border-emerald-500 bg-emerald-50/20">
+                        <h4 class="text-emerald-600 font-bold mb-2">Absolutas</h4>
+                        <p class="text-lg">Se mantienen fijas usando el signo $ (Ej: $A$1).</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 9. Gráficos -->
+            <div class="slide">
+                <h3>Visualización de Datos (Gráficos)</h3>
+                <p>Permiten representar los datos numéricos de forma visual para facilitar su interpretación.</p>
+                <div class="flex flex-wrap justify-center gap-4 mt-8">
+                    <span class="px-6 py-2 bg-blue-100 text-blue-800 rounded-full font-bold">Gráfico de Columnas</span>
+                    <span class="px-6 py-2 bg-emerald-100 text-emerald-800 rounded-full font-bold">Gráfico Circular</span>
+                    <span class="px-6 py-2 bg-purple-100 text-purple-800 rounded-full font-bold">Gráfico de Líneas</span>
+                </div>
+            </div>
+
+            <!-- 10. Orden y Filtros -->
+            <div class="slide">
+                <h3>Organización de la Información</h3>
+                <div class="concept-box border-yellow-500">
+                    <p><strong>Filtros:</strong> Permiten mostrar solo las filas que cumplen con ciertos criterios.</p>
+                    <p class="mt-4"><strong>Ordenamiento:</strong> Organiza los datos de forma alfabética (A-Z) o numérica de mayor a menor.</p>
+                </div>
+            </div>
+
+            <!-- 11. Errores Comunes -->
+            <div class="slide">
+                <h3>Manejo de Errores</h3>
+                <p>Cuando algo sale mal en una fórmula, la aplicación nos avisa con códigos:</p>
+                <div class="grid grid-cols-2 gap-4 mt-8 w-full max-w-2xl">
+                    <div class="p-4 bg-red-50 text-red-800 rounded-xl font-mono">#¡DIV/0!</div>
+                    <div class="p-4 bg-red-50 text-red-800 rounded-xl font-mono">División por cero.</div>
+                    <div class="p-4 bg-red-50 text-red-800 rounded-xl font-mono">#¿NOMBRE?</div>
+                    <div class="p-4 bg-red-50 text-red-800 rounded-xl font-mono">Función mal escrita.</div>
+                </div>
+            </div>
+
+            <!-- 12. Ejercicio Guiado -->
+            <div class="slide">
+                <h3>Ejercicio Guiado: Factura Simple</h3>
+                <div class="concept-box border-emerald-500 bg-emerald-50">
+                    <p>Si la celda <strong>B1</strong> tiene el precio (100) y la celda <strong>B2</strong> tiene la cantidad (5):</p>
+                    <p class="mt-4 text-2xl font-mono text-emerald-900">¿Cuál es la fórmula para el total?</p>
+                    <div class="mt-6 p-4 bg-white rounded-xl font-bold">
+                        Respuesta: <strong>=B1*B2</strong>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 13. Actividad en Clase -->
+            <div class="slide">
+                <h3>Actividad en clase</h3>
+                <div class="concept-box">
+                    <p class="font-bold text-blue-600 mb-4 underline">Instrucciones:</p>
+                    <p>En tu cuaderno, diseña una tabla de presupuesto mensual con las columnas: <strong>Descripción</strong>, <strong>Monto</strong> y <strong>Categoría</strong>. Escribe las fórmulas necesarias para obtener el total de gastos.</p>
+                    <p class="mt-6 text-sm italic text-gray-500">Nota: Asegúrate de indicar correctamente las letras de columnas y números de filas.</p>
+                </div>
+            </div>
+
+            <!-- 14. Transición Quiz -->
+            <div class="slide">
+                <div class="w-32 h-32 bg-emerald-50 text-emerald-600 rounded-full flex items-center justify-center text-6xl mb-8 animate-bounce">
+                    <i class="fas fa-table"></i>
+                </div>
+                <h2>Quiz: Hojas de Cálculo</h2>
+                <p>Pon a prueba tus conocimientos sobre fórmulas y funciones.</p>
+            </div>
+
+            <!-- 15. Quiz -->
+            <div class="slide">
+                <div class="quiz-container w-full max-w-3xl shadow-2xl">
+                    <div id="quiz-question-area">
+                        <p id="quiz-question-text" class="font-bold text-2xl text-gray-800 mb-8">Cargando evaluación...</p>
+                        <div id="quiz-options-grid" class="grid grid-cols-1 gap-3"></div>
+                        <div id="quiz-feedback" class="mt-8 p-6 rounded-2xl hidden font-black text-center uppercase tracking-tighter"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 16. Cierre -->
+            <div class="slide">
+                <h2 class="font-black">¡Fin del Tema!</h2>
+                <div class='concept-box border-blue-600'>
+                    <p>Dominar las hojas de cálculo es una habilidad esencial para la administración, la ingeniería y las finanzas.</p>
+                </div>
+                <button onclick="location.reload()" class="mt-12 px-8 py-3 bg-gray-900 text-white rounded-xl font-bold uppercase text-xs tracking-[0.2em] hover:bg-blue-600 transition-all">Reiniciar Lección</button>
             </div>
         </div>
-
-        <!-- Botones de navegación -->
-        <div class="absolute bottom-3 sm:bottom-7 left-1/2 transform -translate-x-1/2 flex space-x-2 sm:space-x-3 z-20">
-            <button id="prev-btn" class="nav-button bg-indigo-500 hover:bg-indigo-600 text-white rounded-full px-3 py-1 text-xs sm:text-sm">Anterior</button>
-            <button id="next-btn" class="nav-button bg-indigo-500 hover:bg-indigo-600 text-white rounded-full px-3 py-1 text-xs sm:text-sm">Siguiente</button>
+        <div id="controls-wrapper">
+            <button id="prev-btn" class="nav-button">Anterior</button>
+            <button id="next-btn" class="nav-button">Siguiente</button>
         </div>
-        <div id="slide-counter" class="absolute bottom-3 sm:bottom-7 right-3 sm:right-7 font-semibold text-gray-400 z-10 text-xs">1 / 11</div>
+        <div id="slide-counter">1 / 16</div>
     </main>
 
-    <!-- Pie de página -->
-    <footer id="page-footer" class="w-full bg-gray-800 text-white text-center text-xs p-2">
-        <div class="flex flex-col sm:flex-row items-center justify-center space-y-1 sm:space-y-0 sm:space-x-1">
-            <img src="../imagenes/bandera-de-honduras.png" alt="Bandera de Honduras" class="w-14 sm:w-16 h-auto">
-            <p>© <span id="current-year"></span> Instituto María Auxiliadora, Sistema ISEMED. Todos los derechos reservados.</p>
+    <footer id="main-footer" class="bg-gray-900 text-gray-400 py-8 px-6">
+        <div class="container mx-auto text-center">
+            <div class="flex flex-col items-center gap-4">
+                <img src="../imagenes/bandera-de-honduras.png" alt="Honduras" class="w-10 opacity-60">
+                <div class="text-[10px] font-bold uppercase tracking-[0.2em]">&copy; 2025 Instituto María Auxiliadora - Área de Informática</div>
+            </div>
         </div>
     </footer>
 
-    <!-- Scripts para la navegación, el quiz y la nueva funcionalidad de pantalla completa -->
+    <script src="../js/config.js?v=22"></script>
+    <script src="../js/api.js?v=22"></script>
+    <script src="../js/presentation-engine.js?v=22"></script>
     <script>
-        window.addEventListener('unhandledrejection', (event) => {
-            console.error('Unhandled promise rejection:', event.reason);
-            event.preventDefault();
-        });
-
-        const slides = document.querySelectorAll('.slide');
-        const nextButton = document.getElementById('next-btn');
-        const prevButton = document.getElementById('prev-btn');
-        const slideCounter = document.getElementById('slide-counter');
-        const fullscreenButton = document.getElementById('fullscreen-btn');
-        const presentationContainer = document.getElementById('presentation-container');
-        let currentSlideIndex = 0;
-        let isTransitioning = false;
-
-        // --- LÓGICA DE PANTALLA COMPLETA (FIXED) ---
-        function toggleFullScreen() {
-            // El elemento que intentaremos poner en pantalla completa es el contenedor principal.
-            const targetElement = presentationContainer;
-
-            try {
-                if (!document.fullscreenElement) {
-                    // Entrar en modo pantalla completa en el contenedor
-                    if (targetElement.requestFullscreen) {
-                        targetElement.requestFullscreen();
-                    } else if (targetElement.webkitRequestFullscreen) { /* Prefijos para compatibilidad */
-                        targetElement.webkitRequestFullscreen();
-                    } else if (targetElement.msRequestFullscreen) {
-                        targetElement.msRequestFullscreen();
-                    }
-                    // El texto del botón y la clase CSS se actualizarán en handleFullscreenChange
-                } else {
-                    // Salir de modo pantalla completa (se aplica al documento)
-                    if (document.exitFullscreen) {
-                        document.exitFullscreen();
-                    }
-                }
-            } catch (error) {
-                // Manejo de errores para prevenir la "unhandled promise rejection"
-                // El error 'Disallowed by permissions policy' será atrapado aquí.
-                console.error("Error al intentar pantalla completa. La política de permisos del host (iframe) podría no permitirlo. La aplicación seguirá funcionando.", error);
-            }
-        }
-
-        function handleFullscreenChange() {
-            // Comprobamos si el elemento en pantalla completa es nuestro contenedor.
-            const isFullscreen = document.fullscreenElement === presentationContainer;
-            const body = document.body;
-
-            if (isFullscreen) {
-                // Si estamos en fullscreen, añadimos la clase para ocultar el header/footer
-                body.classList.add('is-fullscreen');
-                fullscreenButton.textContent = 'Salir Presentación';
-            } else {
-                // Si salimos de fullscreen, quitamos la clase
-                body.classList.remove('is-fullscreen');
-                fullscreenButton.textContent = 'Modo Presentación';
-            }
-        }
-
-        // Detectar cambios en el estado de pantalla completa
-        document.addEventListener('fullscreenchange', handleFullscreenChange);
-        document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
-        document.addEventListener('mozfullscreenchange', handleFullscreenChange);
-        document.addEventListener('MSFullscreenChange', handleFullscreenChange);
-
-        // Asigna la función al clic del nuevo botón
-        fullscreenButton.addEventListener('click', toggleFullScreen);
-        // --- FIN LÓGICA DE PANTALLA COMPLETA (FIXED) ---
-
-
-        // Quiz de Hojas de Cálculo (Mantenido)
-        const quizQuestions = [
-            {
-                question: "¿Cuál es el propósito principal de una hoja de cálculo?",
-                options: ["Realizar cálculos matemáticos y organizar datos en tablas", "Escribir cartas y ensayos", "Editar fotografías profesionales", "Navegar por redes sociales"],
-                correctAnswer: "Realizar cálculos matemáticos y organizar datos en tablas"
-            },
-            {
-                question: "¿Qué es una celda en Excel?",
-                options: ["La intersección de una fila y una columna", "El nombre de un archivo", "Un tipo de monitor", "Una tecla especial"],
-                correctAnswer: "La intersección de una fila y una columna"
-            },
-            {
-                question: "¿Cómo se identifican las columnas en una hoja de cálculo?",
-                options: ["Con letras (A, B, C...)", "Con números (1, 2, 3...)", "Con colores", "Con nombres de animales"],
-                correctAnswer: "Con letras (A, B, C...)"
-            },
-            {
-                question: "¿Cómo se identifican las filas en una hoja de cálculo?",
-                options: ["Con números (1, 2, 3...)", "Con letras (A, B, C...)", "Con símbolos", "Con iconos"],
-                correctAnswer: "Con números (1, 2, 3...)"
-            },
-            {
-                question: "¿Con qué símbolo debe comenzar siempre una fórmula en Excel?",
-                options: ["Signo igual (=)", "Signo más (+)", "Signo de pesos ($)", "Asterisco (*)"],
-                correctAnswer: "Signo igual (=)"
-            },
-            {
-                question: "¿Qué es una hoja de cálculo?",
-                options: [
-                    "Un programa para editar imágenes",
-                    "Una aplicación para organizar y analizar datos en tablas",
-                    "Un editor de texto avanzado",
-                    "Un navegador web"
-                ],
-                correctAnswer: "Una aplicación para organizar y analizar datos en tablas"
-            },
-            {
-                question: "¿Cómo se llama la barra donde se escriben fórmulas en Excel?",
-                options: [
-                    "Barra de estado",
-                    "Barra de herramientas",
-                    "Barra de fórmulas",
-                    "Barra de menú"
-                ],
-                correctAnswer: "Barra de fórmulas"
-            },
-            {
-                question: "¿Cuál es el símbolo que debe iniciar toda fórmula en una hoja de cálculo?",
-                options: [
-                    "+",
-                    "=",
-                    "-",
-                    "#"
-                ],
-                correctAnswer: "="
-            },
-            {
-                question: "¿Qué función se usa para sumar un rango de celdas?",
-                options: [
-                    "PROMEDIO",
-                    "SUMA",
-                    "CONTAR",
-                    "MAX"
-                ],
-                correctAnswer: "SUMA"
-            },
-            {
-                question: "¿Cuál de los siguientes es un tipo de dato que puedes ingresar en una celda?",
-                options: [
-                    "Texto",
-                    "Imagen",
-                    "Hipervínculo",
-                    "Todos los anteriores"
-                ],
-                correctAnswer: "Todos los anteriores"
-            },
-            {
-                question: "¿Qué atajo abre el cuadro de formato de celdas en la mayoría de hojas de cálculo?",
-                options: [
-                    "Ctrl + F",
-                    "Ctrl + 1",
-                    "Ctrl + C",
-                    "Ctrl + S"
-                ],
-                correctAnswer: "Ctrl + 1"
-            },
-            {
-                question: "¿Qué hace la función =PROMEDIO(A1:A10)?",
-                options: [
-                    "Suma los valores de A1 a A10",
-                    "Cuenta las celdas de A1 a A10",
-                    "Calcula el promedio de los valores de A1 a A10",
-                    "Muestra el valor máximo de A1 a A10"
-                ],
-                correctAnswer: "Calcula el promedio de los valores de A1 a A10"
-            },
-            {
-                question: "¿Para qué sirve el filtrado de datos?",
-                options: [
-                    "Para ocultar filas o columnas",
-                    "Para mostrar solo los datos que cumplen ciertos criterios",
-                    "Para cambiar el formato de los datos",
-                    "Para sumar datos automáticamente"
-                ],
-                correctAnswer: "Para mostrar solo los datos que cumplen ciertos criterios"
-            },
-            {
-                question: "¿Qué operador se usa para multiplicar en una fórmula?",
-                options: [
-                    "x",
-                    "*",
-                    "&",
-                    "%"
-                ],
-                correctAnswer: "*"
-            },
-            {
-                question: "¿Cuál es la función para encontrar el valor máximo en un rango?",
-                options: [
-                    "MIN",
-                    "MAX",
-                    "CONTAR",
-                    "SI"
-                ],
-                correctAnswer: "MAX"
-            }
-        ];
-        let currentQuizQuestionIndex = 0;
-
-        function updateQuizDisplay() {
-            const quizQuestionElement = document.getElementById('quiz-question');
-            const quizOptionsElement = document.getElementById('quiz-options');
-            const quizFeedbackElement = document.getElementById('quiz-feedback');
-            if (currentQuizQuestionIndex >= quizQuestions.length) {
-                quizQuestionElement.textContent = "¡Cuestionario completado!";
-                quizOptionsElement.innerHTML = '';
-                quizFeedbackElement.textContent = '';
-                return;
-            }
-            const currentQuestion = quizQuestions[currentQuizQuestionIndex];
-            quizQuestionElement.textContent = currentQuestion.question;
-            quizOptionsElement.innerHTML = '';
-            quizFeedbackElement.textContent = '';
-            currentQuestion.options.forEach(option => {
-                const button = document.createElement('button');
-                button.textContent = option;
-                button.className = "quiz-option-button w-full px-5 py-2 rounded-xl border border-indigo-400 bg-indigo-50 text-indigo-700 font-semibold transition-colors duration-200 hover:bg-indigo-100 text-sm";
-                button.onclick = () => checkAnswer(option);
-                quizOptionsElement.appendChild(button);
-            });
-        }
-        function checkAnswer(selectedOption) {
-            const currentQuestion = quizQuestions[currentQuizQuestionIndex];
-            const quizFeedback = document.getElementById('quiz-feedback');
-            const buttons = document.querySelectorAll('#quiz-options .quiz-option-button');
-            const isCorrect = selectedOption === currentQuestion.correctAnswer;
-            buttons.forEach(button => {
-                button.disabled = true;
-                if (button.textContent === currentQuestion.correctAnswer) {
-                    button.classList.add('correct');
-                } else if (button.textContent === selectedOption) {
-                    button.classList.add('incorrect');
-                }
-            });
-            if (isCorrect) {
-                quizFeedback.textContent = '¡Correcto!';
-                quizFeedback.classList.remove('text-red-500');
-                quizFeedback.classList.add('text-green-500');
-            } else {
-                quizFeedback.textContent = 'Incorrecto. La respuesta correcta es: ' + currentQuestion.correctAnswer;
-                quizFeedback.classList.remove('text-green-500');
-                quizFeedback.classList.add('text-red-500');
-            }
-            setTimeout(() => {
-                currentQuizQuestionIndex++;
-                updateQuizDisplay();
-            }, 2500);
-        }
-
-        // --- LÓGICA DE NAVEGACIÓN ---
-        function updateSlideCounter() {
-            slideCounter.textContent = `${currentSlideIndex + 1} / ${slides.length}`;
-        }
-        function updateNavigationButtons() {
-            prevButton.disabled = currentSlideIndex === 0;
-            nextButton.disabled = currentSlideIndex === slides.length - 1;
-        }
-        function showSlide(index) {
-            if (isTransitioning || index < 0 || index >= slides.length) {
-                return;
-            }
-            isTransitioning = true;
-            slides.forEach((slide) => {
-                slide.classList.remove('active');
-                slide.style.display = 'none';
-            });
-            currentSlideIndex = index;
-            // Quiz en la diapositiva 10 (índice 9)
-            if (currentSlideIndex === 9) {
-                currentQuizQuestionIndex = 0;
-                updateQuizDisplay();
-            }
-            const activeSlide = slides[currentSlideIndex];
-            activeSlide.style.display = 'flex';
-            setTimeout(() => {
-                activeSlide.classList.add('active');
-                updateSlideCounter();
-                updateNavigationButtons();
-                isTransitioning = false;
-            }, 10);
-        }
-        nextButton.addEventListener('click', () => {
-            showSlide(currentSlideIndex + 1);
-        });
-        prevButton.addEventListener('click', () => {
-            showSlide(currentSlideIndex - 1);
-        });
-        document.addEventListener('keydown', (event) => {
-            if (event.key === 'ArrowRight') {
-                showSlide(currentSlideIndex + 1);
-            } else if (event.key === 'ArrowLeft') {
-                showSlide(currentSlideIndex - 1);
-            }
-        });
-        document.addEventListener('DOMContentLoaded', () => {
-            const currentYearSpan = document.getElementById('current-year');
-            if (currentYearSpan) {
-                currentYearSpan.textContent = new Date().getFullYear();
-            }
-            showSlide(0); handleFullscreenChange();
-        });
+        window.presentationMetadata = {
+            grado: "Decimo",
+            asignatura: "Informatica",
+            tema: "Hojas de Cálculo"
+        };
     </script>
-
-    <script>
-    (function() {
-        const slides = document.querySelectorAll('.slide');
-        const nextBtn = document.getElementById('next-btn') || document.getElementById('next-slide');
-        const prevBtn = document.getElementById('prev-btn') || document.getElementById('prev-slide');
-        const counter = document.getElementById('slide-counter');
-        const container = document.getElementById('presentation-container') || document.body;
-        let current = 0;
-        function update(n) {
-            if (n < 0 || n >= slides.length) return;
-            slides.forEach(s => s.classList.remove('active'));
-            current = n;
-            slides[current].classList.add('active');
-            if (counter) counter.textContent = (current + 1) + ' / ' + slides.length;
-            if (prevBtn) prevBtn.disabled = current === 0;
-            if (nextBtn) nextBtn.disabled = current === slides.length - 1;
-        }
-        if (nextBtn) nextBtn.onclick = () => update(current + 1);
-        if (prevBtn) prevBtn.onclick = () => update(current - 1);
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'ArrowRight') update(current + 1);
-            if (e.key === 'ArrowLeft') update(current - 1);
-        });
-        container.addEventListener('dblclick', () => {
-            if (!document.fullscreenElement) document.documentElement.requestFullscreen();
-            else document.exitFullscreen();
-        });
-    })();
-    </script>
-    </body>
+</body>
 </html>

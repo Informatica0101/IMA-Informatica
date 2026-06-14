@@ -352,7 +352,3 @@ TAREAS PENDIENTES DE REVISIÓN
 - Tarea 6: Auditoría de Banco de Preguntas y Reordenación de la Taxonomía Académica.
 - Tarea 7: Expansión y Saneamiento del Banco de Preguntas v5.1 (1200+ reactivos genuninos).
 - Tarea 8: Reingeniería de Sincronización Híbrida y Gamificación (v7.1) - Offline-First, Guest Sessions, Skeleton Screens, XP Engine Recalibration.
-- Tarea 9: Implementación de Requisitos Clínicos v7.6 (Restricción Top 5, Caché 0ms, Sanitización HTML y Seguridad Perimetral).
-- Tarea 10: Auditoría Curricular, Migración de Temas (Numeración/CLI) y Normalización de Cuotas (50 reactivos) en Banco de Preguntas.
-- Tarea 11: Refactorización de 70+ Presentaciones al Estándar de Navegación v2 y Arquitectura de 16 Diapositivas.
-- Tarea 12: Desarrollo del Componente Administrativo de Control de Asignaturas por Parcial y Filtro Cascada.
