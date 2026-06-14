@@ -68,3 +68,16 @@ Descripción: Creación de presentación de 16 diapositivas (Bloque 14 Junio).
 
 Archivo: js/data.js
 Descripción: Registro de nuevas presentaciones en el currículo.
+
+[2026-06-14 11:22]
+Archivo: II_BTP_A/Programacion/Imperativa_vs_POO.html
+Descripción: Refactorización para eliminar referencias a PDF. Inyección de ejemplo y actividad de Pseudocódigo con Arreglos. Ajuste de metadatos de grado a 'Undecimo'.
+
+Archivo: III_BTP_A/dw_II/Posicionamiento_Layout.html
+Descripción: Refactorización para eliminar referencias a PDF. Inyección de ejercicios prácticos para VSCode. Ajuste de metadatos de grado a 'Duodecimo'.
+
+Archivo: js/Banco_Preguntas/Undecimo/Programacion/basico.json
+Descripción: Creación de 10 reactivos basados en el contenido de la presentación 'Imperativa vs POO', incluyendo lógica de arreglos.
+
+Archivo: js/Banco_Preguntas/Duodecimo/Diseno_Web/basico.json
+Descripción: Creación de 10 reactivos basados en el contenido de la presentación 'Posicionamiento y Layout'.

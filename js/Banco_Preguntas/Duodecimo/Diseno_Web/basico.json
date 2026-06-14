@@ -1,1 +1,112 @@
-[]
+[
+  {
+    "tema": "Posicionamiento_Layout_Caja",
+    "Pregunta": "¿Cuáles son los 4 componentes del Modelo de Caja en CSS?",
+    "opcionA": "Color, Fuente, Tamaño y Fondo",
+    "opcionB": "Content, Padding, Border y Margin",
+    "opcionC": "Header, Main, Footer y Nav",
+    "opcionD": "Static, Relative, Absolute y Fixed",
+    "respuesta_correcta_literal": "Content, Padding, Border y Margin",
+    "Nivel": "basico",
+    "Asignatura": "Diseno_Web"
+  },
+  {
+    "tema": "Posicionamiento_Layout_Caja",
+    "Pregunta": "¿Qué es el 'Padding' (Relleno) en CSS?",
+    "opcionA": "El espacio fuera del borde que separa elementos",
+    "opcionB": "El espacio transparente entre el contenido y el borde",
+    "opcionC": "La línea que rodea al elemento",
+    "opcionD": "El área donde aparece el texto",
+    "respuesta_correcta_literal": "El espacio transparente entre el contenido y el borde",
+    "Nivel": "basico",
+    "Asignatura": "Diseno_Web"
+  },
+  {
+    "tema": "Posicionamiento_Layout_Caja",
+    "Pregunta": "¿Cómo se calcula el tamaño total físico de un elemento en el modelo de caja?",
+    "opcionA": "Content + Margin",
+    "opcionB": "Content + Padding + Border + Margin",
+    "opcionC": "Solo el Content",
+    "opcionD": "Padding + Border",
+    "respuesta_correcta_literal": "Content + Padding + Border + Margin",
+    "Nivel": "basico",
+    "Asignatura": "Diseno_Web"
+  },
+  {
+    "tema": "Posicionamiento_Layout_Caja",
+    "Pregunta": "¿Cuál es el valor por defecto de la propiedad 'position'?",
+    "opcionA": "Relative",
+    "opcionB": "Static",
+    "opcionC": "Absolute",
+    "opcionD": "Fixed",
+    "respuesta_correcta_literal": "Static",
+    "Nivel": "basico",
+    "Asignatura": "Diseno_Web"
+  },
+  {
+    "tema": "Posicionamiento_Layout_Caja",
+    "Pregunta": "¿Qué hace la propiedad 'position: fixed'?",
+    "opcionA": "Mueve el elemento respecto a su padre",
+    "opcionB": "Fija el elemento respecto a la ventana del navegador",
+    "opcionC": "Sigue el flujo normal del texto",
+    "opcionD": "Oculta el elemento de la pantalla",
+    "respuesta_correcta_literal": "Fija el elemento respecto a la ventana del navegador",
+    "Nivel": "basico",
+    "Asignatura": "Diseno_Web"
+  },
+  {
+    "tema": "Posicionamiento_Layout_Caja",
+    "Pregunta": "¿Qué característica tiene un elemento con 'Display: Block'?",
+    "opcionA": "Ocupa solo el espacio necesario",
+    "opcionB": "Ocupa todo el ancho disponible y empieza en nueva línea",
+    "opcionC": "No permite el uso de márgenes",
+    "opcionD": "Se coloca al lado de otros elementos sin romper la línea",
+    "respuesta_correcta_literal": "Ocupa todo el ancho disponible y empieza en nueva línea",
+    "Nivel": "basico",
+    "Asignatura": "Diseno_Web"
+  },
+  {
+    "tema": "Posicionamiento_Layout_Caja",
+    "Pregunta": "¿Para qué sirve la propiedad 'z-index'?",
+    "opcionA": "Para cambiar el tamaño de la fuente",
+    "opcionB": "Para controlar el orden de las capas (qué aparece encima de qué)",
+    "opcionC": "Para centrar un elemento horizontalmente",
+    "opcionD": "Para definir el ancho de los bordes",
+    "respuesta_correcta_literal": "Para controlar el orden de las capas (qué aparece encima de qué)",
+    "Nivel": "basico",
+    "Asignatura": "Diseno_Web"
+  },
+  {
+    "tema": "Posicionamiento_Layout_Caja",
+    "Pregunta": "¿Cuál de estas es una unidad de medida absoluta?",
+    "opcionA": "%",
+    "opcionB": "px (píxeles)",
+    "opcionC": "vh",
+    "opcionD": "vw",
+    "respuesta_correcta_literal": "px (píxeles)",
+    "Nivel": "basico",
+    "Asignatura": "Diseno_Web"
+  },
+  {
+    "tema": "Posicionamiento_Layout_Caja",
+    "Pregunta": "Si un DIV tiene ancho 300px, padding 10px y borde 5px por lado, ¿cuál es su ancho físico total?",
+    "opcionA": "300px",
+    "opcionB": "330px",
+    "opcionC": "315px",
+    "opcionD": "360px",
+    "respuesta_correcta_literal": "330px",
+    "Nivel": "basico",
+    "Asignatura": "Diseno_Web"
+  },
+  {
+    "tema": "Posicionamiento_Layout_Caja",
+    "Pregunta": "¿Qué propiedad permite empujar elementos a la izquierda o derecha para crear columnas?",
+    "opcionA": "Position",
+    "opcionB": "Float",
+    "opcionC": "Display",
+    "opcionD": "Z-index",
+    "respuesta_correcta_literal": "Float",
+    "Nivel": "basico",
+    "Asignatura": "Diseno_Web"
+  }
+]

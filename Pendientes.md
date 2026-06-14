@@ -50,7 +50,7 @@
 - **Descripción del Alcance:** Inyección de dropdown de tipo de tarea, gestión de estados (disabled) de inputs y ajuste de lógica de calificación para Crédito Extra.
 - **Estado:** [X] Completada
 
-### [T-008] Despliegue de Presentaciones Bloque 14 de Junio
+### [T-008] Despliegue y Corrección de Presentaciones Bloque 14 de Junio
 - **Origen del Hallazgo:** Tarea 2 (2026-06-14)
 - **Severidad/Clasificación:** Crítica
 - **Archivos Involucrados:** II_BTP_A/Programacion/Imperativa_vs_POO.html, III_BTP_A/dw_II/Posicionamiento_Layout.html, js/data.js

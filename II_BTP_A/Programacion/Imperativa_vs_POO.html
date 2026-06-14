@@ -215,7 +215,7 @@
                 <h3>Enfoque en el Procedimiento</h3>
                 <p>En este modelo, las funciones y procedimientos son el centro de atención. Los datos son "pasados" de una función a otra.</p>
                 <div class="concept-box border-yellow-500 bg-yellow-50/50">
-                    <ul class="list-disc list-inside space-y-2">
+                    <ul class="list-disc list-inside space-y-2 text-base">
                         <li>Lógica separada de los datos.</li>
                         <li>Ejecución lineal y secuencial.</li>
                         <li>Dificultad para escalar en sistemas muy grandes.</li>
@@ -318,26 +318,34 @@
                 </div>
             </div>
 
-            <!-- Slide 12: Ejercicio Guiado -->
+            <!-- Slide 12: Ejemplo Guiado: Arreglos en POO -->
             <div class="slide">
-                <h3>Ejercicio Guiado: Modelado</h3>
-                <p>Identifiquemos los componentes para un sistema de una <strong>Biblioteca</strong> usando POO:</p>
-                <div class="concept-box border-green-500 bg-green-50 text-left text-lg">
-                    <p><strong>Clase:</strong> Libro</p>
-                    <ul class="list-none mt-2 space-y-1">
-                        <li><strong>Atributos:</strong> título, autor, ISBN, disponible (si/no).</li>
-                        <li><strong>Métodos:</strong> prestar(), devolver(), mostrarInfo().</li>
-                    </ul>
+                <h3>Ejemplo Guiado: Arreglo de Objetos</h3>
+                <p>En POO, podemos usar <strong>Arreglos</strong> para gestionar múltiples objetos de una clase:</p>
+                <div class="bg-gray-900 text-green-400 p-6 rounded-xl text-left font-mono text-xs w-full max-w-2xl mt-4">
+                    <p>// Creamos un arreglo para guardar 3 libros</p>
+                    <p>Definir biblioteca[3] Como Clase Libro</p>
+                    <p class="mt-2 text-gray-500">// Cada posición del arreglo es un objeto completo</p>
+                    <p>biblioteca[1].titulo = "Don Quijote"</p>
+                    <p>biblioteca[2].titulo = "La Odisea"</p>
+                    <p>biblioteca[3].titulo = "Cien Años de Soledad"</p>
+                    <p class="mt-2 text-white">Escribir biblioteca[2].titulo // Muestra: La Odisea</p>
                 </div>
             </div>
 
-            <!-- Slide 13: Actividad en Clase -->
+            <!-- Slide 13: Actividad: Pseudocódigo con Arreglos -->
             <div class="slide">
-                <h3>Actividad en clase</h3>
-                <div class="concept-box">
-                    <p class="font-bold text-blue-600 mb-4 underline">Instrucciones:</p>
-                    <p>Define en tu cuaderno una <strong>Clase</strong> para un sistema de "Cuenta Bancaria". Debes listar al menos 3 atributos y 2 métodos esenciales.</p>
-                    <p class="mt-6 text-sm italic text-gray-500">Criterio: Relación lógica entre los datos y las acciones propuestas.</p>
+                <h3>Actividad: Gestión de Inventario</h3>
+                <p>Completa el código para procesar un arreglo de <strong>Objetos Producto</strong>:</p>
+                <div class="bg-gray-800 text-blue-300 p-6 rounded-2xl w-full max-w-2xl text-left font-mono text-sm mt-4 shadow-xl">
+                    <p>Algoritmo Inventario</p>
+                    <p class="ml-4">Definir tienda[2] Como Clase Producto</p>
+                    <p class="ml-4 mt-2 text-gray-500">// Asignación de datos:</p>
+                    <p class="ml-4">tienda[1].nombre = "Teclado"</p>
+                    <p class="ml-4">tienda[2].nombre = "______"</p>
+                    <p class="ml-4 mt-2 text-gray-500">// Mostrar el nombre del segundo producto:</p>
+                    <p class="ml-4">Escribir tienda[____].nombre</p>
+                    <p>FinAlgoritmo</p>
                 </div>
             </div>
 
@@ -366,7 +374,7 @@
                 <h2 class="font-black">¡Fin del Tema!</h2>
                 <div class='concept-box border-blue-600 text-center'>
                     <p class="font-bold text-xl">¿Diferencias claras entre pasos y objetos?</p>
-                    <p class="mt-4 text-base text-gray-600">Preparen sus cuadernos para la revisión de los modelos de clases realizados en clase.</p>
+                    <p class="mt-4 text-base text-gray-600">Revisaremos la lógica del arreglo de objetos en la próxima sesión práctica.</p>
                 </div>
             </div>
 
@@ -392,14 +400,11 @@
     <script>
         // Metadatos para el motor de presentaciones
         window.presentationMetadata = {
-            grado: "11",
+            grado: "Undecimo",
             asignatura: "Programacion",
             tema: "Diferencias_Imperativa_vs_POO",
             nivel: "BTP"
         };
-
-        // El motor v2.4 se encarga de cargar las preguntas desde el banco central
-        // basándose en el tema definido en los metadatos.
     </script>
 </body>
 </html>

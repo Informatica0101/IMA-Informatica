@@ -231,12 +231,12 @@
                 <h3>Content y Padding</h3>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-4xl mt-6">
                     <div class="concept-box">
-                        <h4 class="font-bold text-blue-600">Content (Contenido):</h4>
-                        <p class="text-lg">Donde aparece el texto o las imágenes del elemento.</p>
+                        <h4 class="font-bold text-blue-600 text-base">Content (Contenido):</h4>
+                        <p class="text-sm">Donde aparece el texto o las imágenes del elemento.</p>
                     </div>
                     <div class="concept-box border-emerald-500 bg-emerald-50/50">
-                        <h4 class="font-bold text-emerald-600">Padding (Relleno):</h4>
-                        <p class="text-lg">Espacio transparente entre el contenido y el borde.</p>
+                        <h4 class="font-bold text-emerald-600 text-base">Padding (Relleno):</h4>
+                        <p class="text-sm">Espacio transparente entre el contenido y el borde.</p>
                     </div>
                 </div>
             </div>
@@ -246,12 +246,12 @@
                 <h3>Border y Margin</h3>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-4xl mt-6">
                     <div class="concept-box border-yellow-500 bg-yellow-50/50">
-                        <h4 class="font-bold text-yellow-600">Border (Borde):</h4>
-                        <p class="text-lg">Línea que rodea el relleno y el contenido.</p>
+                        <h4 class="font-bold text-yellow-600 text-base">Border (Borde):</h4>
+                        <p class="text-sm">Línea que rodea el relleno y el contenido.</p>
                     </div>
                     <div class="concept-box border-red-500 bg-red-50/50">
-                        <h4 class="font-bold text-red-600">Margin (Margen):</h4>
-                        <p class="text-lg">Espacio transparente fuera del borde, separa al elemento de sus vecinos.</p>
+                        <h4 class="font-bold text-red-600 text-base">Margin (Margen):</h4>
+                        <p class="text-sm">Espacio transparente fuera del borde, separa al elemento de sus vecinos.</p>
                     </div>
                 </div>
             </div>
@@ -280,7 +280,7 @@
                     <ul class="list-disc list-inside space-y-2">
                         <li><strong>Static:</strong> Posición por defecto, sigue el flujo normal.</li>
                         <li><strong>Relative:</strong> Se desplaza respecto a su posición original.</li>
-                        <li><strong>Absolute:</strong> Se posiciona respecto a su ancestro más cercano con posición.</li>
+                        <li><strong>Absolute:</strong> Se posiciona respecto a su ancestro más cercano.</li>
                         <li><strong>Fixed:</strong> Se fija respecto a la ventana del navegador.</li>
                     </ul>
                 </div>
@@ -296,7 +296,7 @@
                 </div>
             </div>
 
-            <!-- Slide 8: Diseño de Layouts Modernos -->
+            <!-- Slide 8: Estructura de un Layout -->
             <div class="slide">
                 <h3>Estructura de un Layout</h3>
                 <p>Un layout o maqueta define las regiones principales de una página web.</p>
@@ -352,28 +352,34 @@
                 </table>
             </div>
 
-            <!-- Slide 12: Ejercicio Guiado -->
+            <!-- Slide 12: Ejemplo en VSCode: El Modelo de Caja -->
             <div class="slide">
-                <h3>Ejercicio Guiado: Cálculo de Espacio</h3>
-                <div class="concept-box border-green-500 bg-green-50 text-left text-lg">
-                    <p>Si un DIV tiene:</p>
-                    <ul class="list-none mt-2 space-y-1">
-                        <li><code>width: 300px;</code></li>
-                        <li><code>padding: 10px;</code></li>
-                        <li><code>border: 5px solid black;</code></li>
-                    </ul>
-                    <p class="mt-4 font-bold">¿Cuál es su ancho total físico?</p>
-                    <p class="mt-2 text-blue-700">Ancho = 300 + (10*2) + (5*2) = <strong>330px</strong>.</p>
+                <h3>Práctica en VSCode: Modelo de Caja</h3>
+                <p>Crea un archivo <code>index.html</code> y añade este estilo básico:</p>
+                <div class="bg-gray-900 text-blue-300 p-4 rounded-xl text-left font-mono text-xs w-full max-w-2xl mt-4">
+                    <p>&lt;style&gt;</p>
+                    <p class="ml-4">.caja {</p>
+                    <p class="ml-8">width: 200px;</p>
+                    <p class="ml-8">padding: 20px;</p>
+                    <p class="ml-8">border: 5px solid blue;</p>
+                    <p class="ml-8">margin: 10px;</p>
+                    <p class="ml-4">}</p>
+                    <p>&lt;/style&gt;</p>
+                    <p>&lt;div class="caja"&gt;Hola Mundo&lt;/div&gt;</p>
                 </div>
             </div>
 
-            <!-- Slide 13: Actividad en Clase -->
+            <!-- Slide 13: Actividad: Diseño de Layout -->
             <div class="slide">
-                <h3>Actividad en clase</h3>
-                <div class="concept-box">
-                    <p class="font-bold text-blue-600 mb-4 underline">Instrucciones:</p>
-                    <p>Dibuja en tu cuaderno el <strong>Modelo de Caja</strong> para un botón que tiene 100px de ancho, 5px de padding, 2px de borde y 15px de margen. Etiqueta cada parte con su valor.</p>
-                    <p class="mt-6 text-sm italic text-gray-500">Evaluación: Identificación correcta del orden de las capas (adentro hacia afuera).</p>
+                <h3>Actividad: Estructura de Capas</h3>
+                <p>Abre VSCode y completa el siguiente reto de maquetación:</p>
+                <div class="concept-box border-emerald-500 bg-emerald-50/50">
+                    <p class="font-bold text-gray-800">Reto:</p>
+                    <ul class="list-decimal list-inside space-y-2 text-sm mt-2">
+                        <li>Crea un <code>header</code> con posición <code>fixed</code> en la parte superior.</li>
+                        <li>Crea un <code>div</code> centrado usando márgenes automáticos (<code>margin: 0 auto;</code>).</li>
+                        <li>Añade un <code>padding</code> de 15px a todos los párrafos.</li>
+                    </ul>
                 </div>
             </div>
 
@@ -402,7 +408,7 @@
                 <h2 class="font-black">¡Fin del Tema!</h2>
                 <div class='concept-box border-blue-600 text-center'>
                     <p class="font-bold text-xl">¿Dudas sobre el modelo de caja?</p>
-                    <p class="mt-4 text-base text-gray-600">Asegúrense de completar el diagrama en sus libretas para la revisión en el laboratorio.</p>
+                    <p class="mt-4 text-base text-gray-600">Revisaremos los archivos creados en VSCode en la próxima sesión de laboratorio.</p>
                 </div>
             </div>
 
@@ -428,7 +434,7 @@
     <script>
         // Metadatos para el motor de presentaciones
         window.presentationMetadata = {
-            grado: "12",
+            grado: "Duodecimo",
             asignatura: "Diseno_Web",
             tema: "Posicionamiento_Layout_Caja",
             nivel: "BTP"

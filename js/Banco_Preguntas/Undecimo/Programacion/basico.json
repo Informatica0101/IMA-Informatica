@@ -1,1 +1,112 @@
-[]
+[
+  {
+    "tema": "Diferencias_Imperativa_vs_POO",
+    "Pregunta": "¿En qué se basa principalmente la Programación Imperativa?",
+    "opcionA": "En dar órdenes directas sobre cómo realizar cada paso",
+    "opcionB": "En el modelado de objetos y comportamientos",
+    "opcionC": "En el uso de clases y herencia",
+    "opcionD": "En la abstracción de datos complejos",
+    "respuesta_correcta_literal": "En dar órdenes directas sobre cómo realizar cada paso",
+    "Nivel": "basico",
+    "Asignatura": "Programacion"
+  },
+  {
+    "tema": "Diferencias_Imperativa_vs_POO",
+    "Pregunta": "¿Qué es un objeto en el paradigma de POO?",
+    "opcionA": "Una secuencia de instrucciones lineales",
+    "opcionB": "Una entidad que combina datos (atributos) y comportamientos (métodos)",
+    "opcionC": "Una función aislada que procesa datos globales",
+    "opcionD": "Un valor de variable que cambia el estado",
+    "respuesta_correcta_literal": "Una entidad que combina datos (atributos) y comportamientos (métodos)",
+    "Nivel": "basico",
+    "Asignatura": "Programacion"
+  },
+  {
+    "tema": "Diferencias_Imperativa_vs_POO",
+    "Pregunta": "¿Qué función cumple una 'Clase' en la POO?",
+    "opcionA": "Ejecutar el código de forma secuencial",
+    "opcionB": "Funcionar como una plantilla o molde para crear objetos",
+    "opcionC": "Guardar únicamente datos globales",
+    "opcionD": "Pasar parámetros entre funciones aisladas",
+    "respuesta_correcta_literal": "Funcionar como una plantilla o molde para crear objetos",
+    "Nivel": "basico",
+    "Asignatura": "Programacion"
+  },
+  {
+    "tema": "Diferencias_Imperativa_vs_POO",
+    "Pregunta": "¿Cómo se pueden gestionar múltiples objetos de una clase de forma organizada?",
+    "opcionA": "Usando Arreglos (Arrays) de objetos",
+    "opcionB": "Escribiendo funciones separadas",
+    "opcionC": "Usando solo variables globales",
+    "opcionD": "No es posible gestionar múltiples objetos",
+    "respuesta_correcta_literal": "Usando Arreglos (Arrays) de objetos",
+    "Nivel": "basico",
+    "Asignatura": "Programacion"
+  },
+  {
+    "tema": "Diferencias_Imperativa_vs_POO",
+    "Pregunta": "¿Qué son los 'Atributos' de un objeto?",
+    "opcionA": "Las acciones que el objeto realiza",
+    "opcionB": "Las características o propiedades (datos) del objeto",
+    "opcionC": "Los pasos para resolver un algoritmo",
+    "opcionD": "Las funciones globales del programa",
+    "respuesta_correcta_literal": "Las características o propiedades (datos) del objeto",
+    "Nivel": "basico",
+    "Asignatura": "Programacion"
+  },
+  {
+    "tema": "Diferencias_Imperativa_vs_POO",
+    "Pregunta": "¿Qué ventaja de la POO protege los datos internos para que solo se accedan mediante métodos seguros?",
+    "opcionA": "Abstracción",
+    "opcionB": "Encapsulamiento",
+    "opcionC": "Linealidad",
+    "opcionD": "Escalabilidad",
+    "respuesta_correcta_literal": "Encapsulamiento",
+    "Nivel": "basico",
+    "Asignatura": "Programacion"
+  },
+  {
+    "tema": "Diferencias_Imperativa_vs_POO",
+    "Pregunta": "¿Qué permite la 'Abstracción' en programación?",
+    "opcionA": "Mostrar todos los detalles técnicos al usuario",
+    "opcionB": "Manejar la complejidad ocultando detalles innecesarios y mostrando lo relevante",
+    "opcionC": "Ejecutar instrucciones una tras otra",
+    "opcionD": "Eliminar la necesidad de usar clases",
+    "respuesta_correcta_literal": "Manejar la complejidad ocultando detalles innecesarios y mostrando lo relevante",
+    "Nivel": "basico",
+    "Asignatura": "Programacion"
+  },
+  {
+    "tema": "Diferencias_Imperativa_vs_POO",
+    "Pregunta": "Si tenemos un arreglo 'tienda[5]' de objetos Producto, ¿cómo accedemos al nombre del primer producto?",
+    "opcionA": "tienda.nombre[1]",
+    "opcionB": "tienda[1].nombre",
+    "opcionC": "nombre.tienda(1)",
+    "opcionD": "tienda{1}->nombre",
+    "respuesta_correcta_literal": "tienda[1].nombre",
+    "Nivel": "basico",
+    "Asignatura": "Programacion"
+  },
+  {
+    "tema": "Diferencias_Imperativa_vs_POO",
+    "Pregunta": "¿Cuál es el enfoque principal de la POO?",
+    "opcionA": "Algoritmos y pasos",
+    "opcionB": "Objetos y entidades",
+    "opcionC": "Ejecución lineal",
+    "opcionD": "Modificación directa del estado global",
+    "respuesta_correcta_literal": "Objetos y entidades",
+    "Nivel": "basico",
+    "Asignatura": "Programacion"
+  },
+  {
+    "tema": "Diferencias_Imperativa_vs_POO",
+    "Pregunta": "¿Qué sucede con los datos en el modelo de Programación Imperativa?",
+    "opcionA": "Están encapsulados en objetos",
+    "opcionB": "Son pasados de una función a otra o son globales",
+    "opcionC": "Están protegidos por métodos privados",
+    "opcionD": "No existen en este paradigma",
+    "respuesta_correcta_literal": "Son pasados de una función a otra o son globales",
+    "Nivel": "basico",
+    "Asignatura": "Programacion"
+  }
+]
