@@ -99,7 +99,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (userGrade && dataGrade && userGrade !== dataGrade) return;
 
             gridDiv.appendChild(createCustomButton(gradeData.grade, () => {
-                selectedGradeData = gradeData;
+                window.selectedGradeData = gradeData;
                 animateContentTransition(renderDownloadSubjects);
             }, 'w-full bg-gray-100 text-gray-800 shadow-none hover:bg-blue-600 hover:text-white'));
         });
@@ -135,7 +135,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!isAuthorized) return;
 
             gridDiv.appendChild(createCustomButton(subjectData.name, () => {
-                selectedSubjectData = subjectData;
+                window.selectedSubjectData = subjectData;
                 animateContentTransition(renderDownloadTopics);
             }, 'w-full bg-gray-100 text-gray-800 shadow-none hover:bg-blue-600 hover:text-white'));
         });
@@ -390,6 +390,9 @@ document.addEventListener('DOMContentLoaded', () => {
             localStorage.setItem(this.localStorageKey, JSON.stringify(all));
         }
     };
+
+    // Set initial state for index navigation
+    history.replaceState({ type: 'index-main' }, '');
 
     renderInitialContentButton();
     renderInitialActivityButton();

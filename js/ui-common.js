@@ -157,7 +157,14 @@ window.setupCommonUI = function() {
 
         if (!state) return;
 
-        if (state.type === 'dashboard-section') {
+        if (state.type === 'index-main') {
+            if (window.returnToMainContent) {
+                window.returnToMainContent();
+            } else {
+                if (window.showMainContentSections) window.showMainContentSections(false);
+                if (window.renderInitialContentButton) window.renderInitialContentButton();
+            }
+        } else if (state.type === 'dashboard-section') {
             const targetNav = document.getElementById(state.navId);
             const targetSection = document.getElementById(state.sectionId);
             if (targetNav && targetSection && window.navigateTo) {
@@ -179,10 +186,10 @@ window.setupCommonUI = function() {
             if (state.view === 'grades') {
                 if (window.renderDownloadGrades) window.renderDownloadGrades(false);
             } else if (state.view === 'subjects') {
-                window.selectedGradeData = state.gradeData;
+                if (state.gradeData) window.selectedGradeData = state.gradeData;
                 if (window.renderDownloadSubjects) window.renderDownloadSubjects(false);
             } else if (state.view === 'topics') {
-                window.selectedSubjectData = state.subjectData;
+                if (state.subjectData) window.selectedSubjectData = state.subjectData;
                 if (window.renderDownloadTopics) window.renderDownloadTopics(false);
             }
         } else if (state.type === 'index-activities') {

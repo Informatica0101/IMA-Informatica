@@ -508,7 +508,12 @@ document.addEventListener('DOMContentLoaded', () => {
         };
 
         // Seleccionar primer parcial por defecto
-        tabsContainer.querySelector('.parcial-tab').click();
+        const firstTab = tabsContainer.querySelector('.parcial-tab');
+        if (firstTab) {
+            const p = firstTab.dataset.parcial;
+            history.replaceState({ type: 'student-tab', parcial: p }, '');
+            window.switchParcialTab(p, false);
+        }
     }
 
     function renderActivities(inputFiltered) {

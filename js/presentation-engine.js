@@ -201,7 +201,11 @@
             if (nextBtn) nextBtn.disabled = (this.currentSlide === this.slides.length - 1);
 
             if (pushState) {
-                history.pushState({ type: 'presentation-slide', slideIndex: this.currentSlide }, '');
+                // Optimized state push: prevent duplicate states
+                var currentState = history.state;
+                if (!currentState || currentState.type !== 'presentation-slide' || currentState.slideIndex !== this.currentSlide) {
+                    history.pushState({ type: 'presentation-slide', slideIndex: this.currentSlide }, '');
+                }
             }
 
             // 16-Slide Structure Rule: Evaluation typically on index 14
@@ -353,5 +357,14 @@
     };
 
     window.PresentationEngine = PresentationEngine;
-    document.addEventListener('DOMContentLoaded', function() { PresentationEngine.init(); });
+    document.addEventListener('DOMContentLoaded', function() {
+        PresentationEngine.init();
+
+        // REQ: Handle back/forward navigation within slides (v2.5)
+        window.addEventListener('popstate', function(event) {
+            if (event.state && event.state.type === 'presentation-slide') {
+                PresentationEngine.showSlide(event.state.slideIndex, false);
+            }
+        });
+    });
 })(window);

@@ -1,10 +1,10 @@
-REGISTRO DE CAMBIOS FINAL - Sun Jun 14 19:17:09 UTC 2026
+REGISTRO DE CAMBIOS FINAL - Sun Jun 14 21:57:19 UTC 2026
 
 Módulo: Dashboard del Profesor
 - teacher-dashboard.html:
     - Corregida inicialización del selector de tipo de tarea (Tarea por defecto).
     - Agregado contenedor para vinculación de Crédito Extra con tareas rechazadas.
-    - Agregado CSS global para corregir visibilidad de iconos en toolbar de Quill.
+    - Agregado CSS global para corregir visibilidad de iconos en toolbar de Quill y forzar color negro.
 - js/teacher.js:
     - Implementada habilitación inmediata y foco automático en el editor de tareas.
     - Forzado color de texto negro en todos los editores Quill.
@@ -15,7 +15,7 @@ Módulo: Dashboard del Estudiante
 - js/student.js:
     - Ajustado cálculo de progreso base para excluir tareas de Crédito Extra.
     - Implementada visibilidad condicional: Crédito Extra solo aparece si el alumno tiene entregas rechazadas.
-    - Implementado history.pushState para navegación entre pestañas de parciales.
+    - Implementado history.pushState/replaceState para navegación fluida entre pestañas de parciales.
 
 Módulo: Index y Navegación
 - js/index-ui.js:
@@ -23,15 +23,17 @@ Módulo: Index y Navegación
     - Implementado history.pushState en flujo de contenidos y sub-menús de actividades.
     - Integrada carga dinámica de js/security-minigames.js al lanzar juegos.
 - js/ui-common.js:
-    - Refactorizado manejador global popstate para soportar todos los estados de historial implementados.
+    - Refactorizado manejador global popstate para soportar todos los estados de historial implementados (dashboards, index, pestañas).
 
 Módulo: Presentaciones
 - js/presentation-engine.js:
-    - Implementado history.pushState en el cambio de diapositivas para evitar cierres de app al navegar atrás.
+    - Implementado history.pushState optimizado (sin duplicados) en el cambio de diapositivas.
+    - Agregado manejador local de popstate para navegar entre diapositivas con los botones del navegador.
 
-Módulo: Seguridad
+Módulo: Seguridad y Sanitización
 - js/config.js:
     - Eliminado perímetro anti-debugging global.
+    - Ampliada whitelist en sanitizarHTMLTecnico (h1-h3, u, s, blockquote, center) para corregir visibilidad de etiquetas HTML en descripciones.
 - js/security-minigames.js:
     - Creado archivo dedicado para lógica de seguridad restringida.
 - juegos/*.html:

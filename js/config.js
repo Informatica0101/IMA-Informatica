@@ -110,13 +110,13 @@ window.sanitizarHTMLTecnico = function(html) {
     temp.textContent = html;
     var sanitized = temp.innerHTML;
 
-    // v7.6: Improved whitelist with attribute support (style, class, href)
+    // v7.6.1: Expanded whitelist for rich text consistency
     return sanitized
-        .replace(/&lt;(p|span|strong|b|i|em|ul|ol|li|code|pre|br)(.*?)&gt;/gi, function(match, tag, attrs) {
-            var cleanAttrs = attrs.replace(/&quot;/g, '"').replace(/on\w+\s*=\s*".*?"/gi, '');
+        .replace(/&lt;(p|span|strong|b|i|u|s|strike|em|ul|ol|li|code|pre|br|blockquote|h1|h2|h3|center)(.*?)&gt;/gi, function(match, tag, attrs) {
+            var cleanAttrs = attrs.replace(/&quot;/g, '"').replace(/\s*on\w+\s*=\s*(?:'[^']*'|"[^" ]*"|[^\s>]+)/gi, '');
             return '<' + tag + cleanAttrs + '>';
         })
-        .replace(/&lt;\/(p|span|strong|b|i|em|ul|ol|li|code|pre)&gt;/gi, '</$1>')
+        .replace(/&lt;\/(p|span|strong|b|i|u|s|strike|em|ul|ol|li|code|pre|blockquote|h1|h2|h3|center)&gt;/gi, '</$1>')
         .replace(/&lt;a\s+(.*?)&gt;/gi, function(match, attrs) {
              var cleanAttrs = attrs.replace(/&quot;/g, '"').replace(/on\w+\s*=\s*".*?"/gi, '');
              if (!cleanAttrs.includes('target=')) cleanAttrs += ' target="_blank"';
