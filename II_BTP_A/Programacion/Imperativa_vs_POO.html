@@ -318,18 +318,57 @@
                 </div>
             </div>
 
-            <!-- Slide 12: Ejemplo Guiado: Arreglos en POO -->
+            <!-- Slide 12: Ejemplo Guiado: SistemaEstudiantes -->
             <div class="slide">
-                <h3>Ejemplo Guiado: Arreglo de Objetos</h3>
-                <p>En POO, podemos usar <strong>Arreglos</strong> para gestionar múltiples objetos de una clase:</p>
-                <div class="bg-gray-900 text-green-400 p-6 rounded-xl text-left font-mono text-xs w-full max-w-2xl mt-4">
-                    <p>// Creamos un arreglo para guardar 3 libros</p>
-                    <p>Definir biblioteca[3] Como Clase Libro</p>
-                    <p class="mt-2 text-gray-500">// Cada posición del arreglo es un objeto completo</p>
-                    <p>biblioteca[1].titulo = "Don Quijote"</p>
-                    <p>biblioteca[2].titulo = "La Odisea"</p>
-                    <p>biblioteca[3].titulo = "Cien Años de Soledad"</p>
-                    <p class="mt-2 text-white">Escribir biblioteca[2].titulo // Muestra: La Odisea</p>
+                <h3 class="text-xl">Ejemplo Guiado: Sistema Estudiantes</h3>
+                <div class="bg-gray-900 text-green-400 p-6 rounded-2xl text-left font-mono text-[0.6rem] w-full max-w-2xl mt-1 overflow-y-auto shadow-2xl" style="max-height: 70vh; border: 1px solid #333;">
+                    <p class="text-blue-400">Algoritmo SistemaEstudiantes</p>
+                    <br>
+                    <p class="ml-4">Definir nombres Como Cadena</p>
+                    <p class="ml-4">Dimension nombres[5]</p>
+                    <br>
+                    <p class="ml-4">Dimension notas[5,3]</p>
+                    <p class="ml-4">Definir promedio Como Real</p>
+                    <br>
+                    <p class="ml-4">Definir n, i, j Como Entero</p>
+                    <br>
+                    <p class="ml-4">Escribir "Cuantos estudiantes desea registrar? (max 5): "</p>
+                    <p class="ml-4">Leer n</p>
+                    <br>
+                    <p class="ml-4">Para i <- 0 Hasta n-1 Hacer</p>
+                    <br>
+                    <p class="ml-8">Escribir "Ingrese nombre del estudiante ", i+1, ": "</p>
+                    <p class="ml-8">Leer nombres[i]</p>
+                    <br>
+                    <p class="ml-8">Para j <- 0 Hasta 2 Hacer</p>
+                    <p class="ml-12">Escribir "Ingrese nota ", j+1, ": "</p>
+                    <p class="ml-12">Leer notas[i,j]</p>
+                    <p class="ml-8">FinPara</p>
+                    <br>
+                    <p class="ml-4">FinPara</p>
+                    <br>
+                    <p class="ml-4">Escribir " "</p>
+                    <p class="ml-4 text-white">Escribir "===== LISTA DE ESTUDIANTES ====="</p>
+                    <br>
+                    <p class="ml-4">Para i <- 0 Hasta n-1 Hacer</p>
+                    <br>
+                    <p class="ml-8">Escribir "Nombre: ", nombres[i]</p>
+                    <br>
+                    <p class="ml-8">promedio <- 0</p>
+                    <br>
+                    <p class="ml-8">Para j <- 0 Hasta 2 Hacer</p>
+                    <p class="ml-12">Escribir "Nota ", j+1, ": ", notas[i,j]</p>
+                    <p class="ml-12">promedio <- promedio + notas[i,j]</p>
+                    <p class="ml-8">FinPara</p>
+                    <br>
+                    <p class="ml-8">promedio <- promedio / 3</p>
+                    <br>
+                    <p class="ml-8">Escribir "Promedio: ", promedio</p>
+                    <p class="ml-8">Escribir "-------------------------"</p>
+                    <br>
+                    <p class="ml-4">FinPara</p>
+                    <br>
+                    <p class="text-blue-400">FinAlgoritmo</p>
                 </div>
             </div>
 

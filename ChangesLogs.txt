@@ -81,3 +81,7 @@ Descripción: Creación de 10 reactivos basados en el contenido de la presentaci
 
 Archivo: js/Banco_Preguntas/Duodecimo/Diseno_Web/basico.json
 Descripción: Creación de 10 reactivos basados en el contenido de la presentación 'Posicionamiento y Layout'.
+
+[2026-06-14 13:45]
+Archivo: II_BTP_A/Programacion/Imperativa_vs_POO.html
+Descripción: Actualización final de la Diapositiva 12. Se inyectó el algoritmo "SistemaEstudiantes" con lógica de arreglos bidimensionales y cálculo de promedios para Undécimo grado.

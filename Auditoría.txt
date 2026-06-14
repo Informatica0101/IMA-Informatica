@@ -60,3 +60,9 @@ teacher-dashboard.html:196 | UI/UX | Falta dropdown de tipo de tarea | <form id=
 teacher-dashboard.html:812 | UI/UX | Falta dropdown de tipo en edición | <form id="edit-assignment-form"> | Inconsistencia en la edición de tareas especiales. | Inyectar dropdown de tipo en el modal de edición.
 js/teacher.js:1680 | Lógica | Paypload incompleto | const formData = Object.fromEntries(new FormData(e.target).entries()); | El backend no recibe el campo 'tipo'. | Asegurar que el campo 'tipo' se capture del nuevo dropdown.
 js/teacher.js:1171 | Lógica | Manejo de Crédito Extra | const baseAssignments = subjectAssignments.filter(a => a.tipo !== 'Credito Extra'); | Validar que la lógica de recuperación de puntos sea precisa. | Verificar y ajustar cálculos de compositeProgress en renderDetallesAlumno.
+
+[Archivo y Línea Exacta]: II_BTP_A/Programacion/Imperativa_vs_POO.html (Líneas 321-380)
+[Tipo de Fallo]: Actualización de Contenido Pedagógico
+[Evidencia de Código Crudo]: Sustitución del ejemplo de biblioteca por el algoritmo SistemaEstudiantes.
+[Impacto Real en el Aula]: Alineación con el nivel de complejidad requerido para Undécimo grado (Arreglos bidimensionales).
+[Solución Manual sugerida en ES5]: Reemplazo de bloque de diapositiva con el Pseudocódigo proporcionado.
