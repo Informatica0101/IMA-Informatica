@@ -74,14 +74,15 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!contentDisplayArea || !contentBackButtonContainer) return;
         contentBackButtonContainer.classList.add('hidden');
 
+        const currentUser = JSON.parse(localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser'));
+        const isProfesor = currentUser?.rol === 'Profesor';
+
         if (pushState) {
             history.pushState({ type: 'index-content', view: 'grades' }, '');
         }
 
         const gridDiv = document.createElement('div');
         gridDiv.className = 'grid grid-cols-1 md:grid-cols-3 gap-4 w-full max-w-lg';
-
-        const currentUser = JSON.parse(localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser'));
 
         // REQ: Asegurar población de contentDisplayArea tras limpieza
         contentDisplayArea.innerHTML = '';
@@ -92,11 +93,10 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         window.downloadContentData.forEach(gradeData => {
-            // Filtrado por Grado (Normalizado para evitar fallos de coincidencia)
-            const userGrade = window.parseGrade ? window.parseGrade(currentUser?.grado) : null;
-            const dataGrade = window.parseGrade ? window.parseGrade(gradeData.grade) : null;
-
-            if (userGrade && dataGrade && userGrade !== dataGrade) return;
+            // Filtrado: Los alumnos solo ven su propio grado como opción única
+            if (!isProfesor && currentUser?.grado) {
+                if (window.parseGrade(gradeData.grade) !== window.parseGrade(currentUser.grado)) return;
+            }
 
             gridDiv.appendChild(createCustomButton(gradeData.grade, () => {
                 window.selectedGradeData = gradeData;
@@ -105,9 +105,9 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         if (gridDiv.children.length === 0) {
-            contentDisplayArea.innerHTML = '<p class="text-gray-400 text-sm">No hay contenidos disponibles para tu grado.</p>';
+             contentDisplayArea.innerHTML = '<p class="text-gray-400 text-sm">No hay contenidos disponibles para tu grado.</p>';
         } else {
-            contentDisplayArea.appendChild(gridDiv);
+             contentDisplayArea.appendChild(gridDiv);
         }
         currentContentView = 'grades';
     }
@@ -115,7 +115,16 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderDownloadSubjects(pushState = true) {
         if (!contentDisplayArea || !contentBackButtonContainer) return;
         if (!selectedGradeData) return renderDownloadGrades();
-        contentBackButtonContainer.classList.remove('hidden');
+
+        const currentUser = JSON.parse(localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser'));
+        const isProfesor = currentUser?.rol === 'Profesor';
+
+        // Solo mostrar botón de regresar si es profesor (ya que el alumno auto-avanzó)
+        if (isProfesor) {
+            contentBackButtonContainer.classList.remove('hidden');
+        } else {
+            contentBackButtonContainer.classList.add('hidden');
+        }
 
         if (pushState) {
             history.pushState({ type: 'index-content', view: 'subjects', gradeData: selectedGradeData }, '');
@@ -124,15 +133,17 @@ document.addEventListener('DOMContentLoaded', () => {
         const gridDiv = document.createElement('div');
         gridDiv.className = 'grid grid-cols-1 md:grid-cols-2 gap-4 w-full max-w-lg';
 
-        const currentUser = JSON.parse(localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser'));
-        const role = currentUser?.rol || 'Invitado';
-
         contentDisplayArea.innerHTML = '';
 
         selectedGradeData.subjects.forEach(subjectData => {
-            // REQ 7: Filtrado por Parcial Actual para no-profesores (Normalizado)
-            const isAuthorized = window.isContentAuthorized ? window.isContentAuthorized(subjectData.partial) : (role === 'Profesor' || subjectData.partial === window.PARCIAL_ACTUAL);
+            // REQ 7: Filtrado por Parcial Actual y SECCION para no-profesores
+            const isAuthorized = window.isContentAuthorized ? window.isContentAuthorized(subjectData.partial) : (isProfesor || subjectData.partial === window.PARCIAL_ACTUAL);
             if (!isAuthorized) return;
+
+            // Filtrado por sección para alumnos
+            if (!isProfesor && currentUser?.seccion && subjectData.sections) {
+                if (!window.checkSectionHelper(subjectData.sections, currentUser.seccion)) return;
+            }
 
             gridDiv.appendChild(createCustomButton(subjectData.name, () => {
                 window.selectedSubjectData = subjectData;
@@ -141,7 +152,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         if (gridDiv.children.length === 0) {
-            contentDisplayArea.innerHTML = '<p class="text-gray-400 text-sm">No hay contenidos autorizados para este período.</p>';
+            contentDisplayArea.innerHTML = '<p class="text-gray-400 text-sm">No hay contenidos autorizados para tu sección en este período.</p>';
         } else {
             contentDisplayArea.appendChild(gridDiv);
         }

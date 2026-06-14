@@ -604,9 +604,12 @@ document.addEventListener('DOMContentLoaded', () => {
         if (navStack.length > 1) {
             try {
                 if (studentSearchInput) studentSearchInput.value = '';
-                navStack.pop();
-                if (doPop) history.back();
-                else renderCurrentLevel();
+                if (doPop) {
+                    history.back();
+                } else {
+                    navStack.pop();
+                    renderCurrentLevel();
+                }
             } catch (e) {
                 console.error("Error en popNav:", e);
             }
@@ -616,6 +619,7 @@ document.addEventListener('DOMContentLoaded', () => {
     window.syncNavWithState = function(state) {
         if (state.stack) {
             navStack = [...state.stack];
+            // Ensure studentSearchInput is handled if needed
             renderCurrentLevel();
         }
     };
@@ -917,10 +921,23 @@ document.addEventListener('DOMContentLoaded', () => {
             // REQ 2: No disparar loader global si ya renderizamos desde caché
             if (!hasLocalData && window.GamesAdapter) window.GamesAdapter.showLoading(true);
 
-            // REQ: Mitigación de Latencia (Ticket 4) - Parallel fetch of config and activity
+            // REQ: Mitigación de Latencia (Ticket 4) - Parallel fetch with Silent Reconciliation
             const [taskSubmissions, examSubmissions, tasksRes, examsRes, configRes] = await Promise.all([
-                fetchApi('TASK', 'getTeacherActivity', payload),
-                fetchApi('EXAM', 'getTeacherExamActivity', payload),
+                fetchApi('TASK', 'getTeacherActivity', payload, 0, {
+                    store: 'cache_profesor_activity',
+                    onUpdate: (data) => {
+                        allActivityRaw = data.map(s => ({ ...s, tipo: 'Tarea' }));
+                        renderCurrentLevel();
+                    }
+                }),
+                fetchApi('EXAM', 'getTeacherExamActivity', payload, 0, {
+                    store: 'cache_profesor_exams_activity',
+                    onUpdate: (data) => {
+                        // Merge with tasks activity
+                        allActivityRaw = [...allActivityRaw.filter(a => a.tipo === 'Tarea'), ...data.map(s => ({ ...s, tipo: 'Examen' }))];
+                        renderCurrentLevel();
+                    }
+                }),
                 fetchApi('TASK', 'getAllTasks', payload),
                 fetchApi('EXAM', 'getAllExams', payload),
                 fetchApi('USER', 'getAcademicConfig')

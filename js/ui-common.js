@@ -199,7 +199,6 @@ window.setupCommonUI = function() {
                 if (window.renderActivityList) window.renderActivityList(false);
             }
         } else if (state.type === 'academic-menu') {
-            // REQ 8: Garantía de contexto en Navegación (Fase 8)
             const modal = document.getElementById('academic-menu-modal');
             if (modal && modal.classList.contains('hidden')) {
                 window.openAcademicMenu(false);
@@ -207,6 +206,8 @@ window.setupCommonUI = function() {
             if (state.level === 'root') {
                 window.resetAcademicMenu(false);
             } else {
+                // Determine previous logical level for back navigation if needed,
+                // but popstate already carries the exact level to restore.
                 window.renderHierarchyLevel(state.menuType, state.level, state.params, false);
             }
         } else if (state.type === 'modal-close') {
@@ -487,8 +488,11 @@ window.closeAcademicMenu = function(doPop = true) {
 };
 
 window.resetAcademicMenu = function(pushState = true) {
-    document.getElementById('academic-menu-options').classList.remove('hidden');
-    document.getElementById('hierarchy-navigation').classList.add('hidden');
+    const options = document.getElementById('academic-menu-options');
+    const nav = document.getElementById('hierarchy-navigation');
+    if (options) options.classList.remove('hidden');
+    if (nav) nav.classList.add('hidden');
+
     if (pushState) {
         history.pushState({ type: 'academic-menu', level: 'root', scrollPos: window.pageYOffset }, '');
     }
@@ -614,7 +618,14 @@ window.renderHierarchyLevel = function(type, level, params = {}, pushState = tru
     }
 
     if (pushState) {
-        history.pushState({ type: 'academic-menu', menuType: type, level, params, scrollPos: window.pageYOffset }, '');
+        // REQ: Robust state preservation for hierarchical levels
+        history.pushState({
+            type: 'academic-menu',
+            menuType: type,
+            level: level,
+            params: params,
+            scrollPos: window.pageYOffset
+        }, '');
     }
 
     container.innerHTML = items.map(item => {

@@ -1,44 +1,27 @@
-REGISTRO DE CAMBIOS FINAL (Revisado) - Sun Jun 14 22:16:37 UTC 2026
+REGISTRO DE CAMBIOS FINAL (Versión Navegación y Cache) - Sun Jun 14 22:37:41 UTC 2026
 
-Módulo: Dashboard del Profesor
-- teacher-dashboard.html:
-    - Corregida inicialización del selector de tipo de tarea (Tarea por defecto).
-    - Agregado contenedor para vinculación de Crédito Extra con tareas rechazadas.
-    - Agregado CSS global para corregir visibilidad de iconos en toolbar de Quill y forzar color negro recursivo.
-- js/teacher.js:
-    - Implementada habilitación inmediata y foco automático en el editor de tareas.
-    - Forzado color de texto negro en todos los editores Quill mediante JS y CSS.
-    - Implementada lógica de población dinámica y vinculación de tareas rechazadas para Crédito Extra.
-    - Corregido cálculo de tasa de entrega excluyendo Crédito Extra de la base.
-
-Módulo: Dashboard del Estudiante
-- js/student.js:
-    - Ajustado cálculo de progreso base para excluir tareas de Crédito Extra.
-    - Implementada visibilidad condicional: Crédito Extra solo aparece si el alumno tiene entregas rechazadas.
-    - Implementado history.pushState/replaceState para navegación fluida entre pestañas de parciales.
-
-Módulo: Index y Navegación
+Módulo: Index y Navegación de Contenidos
 - js/index-ui.js:
-    - Reparada renderización de contenidos de clase (Descargas) en el área principal.
-    - Implementado history.pushState/replaceState para estados iniciales y transiciones de contenido.
-    - Integrada carga dinámica de js/security-minigames.js al lanzar juegos.
+    - Refactorizada navegación de contenidos: el primer nivel filtra automáticamente por el grado del alumno.
+    - Implementada lógica de filtrado por sección para alumnos en la lista de asignaturas.
+    - Agregado history.replaceState para definir el estado inicial 'index-main'.
+    - Mejorada la consistencia entre los botones del área principal y el menú de navegación.
+
+Módulo: Navegación Global (Hierarchical & Modals)
 - js/ui-common.js:
-    - Refactorizado manejador global popstate para soportar todos los estados de historial implementados (dashboards, index, pestañas, presentaciones).
+    - Refactorizado handlePopState para restaurar fielmente estados de modales académicos y navegación jerárquica.
+    - Asegurada persistencia de datos (grado/asignatura) en el objeto state de la historia.
+    - El botón de regresar en modales ahora utiliza history.back() para delegar en el sistema nativo.
+- js/teacher.js:
+    - Ajustada función popNav para interactuar correctamente con el historial del navegador.
+
+Módulo: Cache y Rendimiento (Silent Reconciliation)
+- js/teacher.js:
+    - Implementada reconciliación silenciosa para actividades y entregas del profesor.
+- js/student.js:
+    - Implementada reconciliación silenciosa para tareas y exámenes del estudiante.
+    - Asegurado renderizado 'Cache-First' para una respuesta de 0ms en la hidratación de la interfaz.
 
 Módulo: Presentaciones
 - js/presentation-engine.js:
-    - Implementado history.pushState optimizado (sin duplicados) en el cambio de diapositivas.
-    - Agregado manejador local de popstate para navegar entre diapositivas con los botones del navegador.
-
-Módulo: Seguridad y Sanitización
-- js/config.js:
-    - Eliminado perímetro anti-debugging global.
-    - Ampliada whitelist en sanitizarHTMLTecnico (h1-h3, u, s, strike, blockquote, center) para corregir visibilidad de etiquetas HTML en descripciones.
-- js/security-minigames.js:
-    - Creado archivo dedicado para lógica de seguridad restringida.
-- juegos/*.html:
-    - Inyectado script de seguridad en archivos fuente de minijuegos.
-
-Módulo: Estilos Globales
-- css/style.css:
-    - Forzado color negro (#000000 !important) en .quill-content, .ql-editor y todos sus elementos internos para garantizar legibilidad absoluta.
+    - Agregado listener de popstate para navegar entre diapositivas usando los botones nativos del navegador.

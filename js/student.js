@@ -106,10 +106,24 @@ document.addEventListener('DOMContentLoaded', () => {
             // REQ 2: No disparar loader global si ya renderizamos desde caché
             if (!hasLocalData && window.GamesAdapter) window.GamesAdapter.showLoading(true);
 
-            // REQ: Mitigación de Latencia mediante Paralelismo (Ticket 4)
+            // REQ: Mitigación de Latencia mediante Paralelismo y Silent Reconciliation (Ticket 4)
             const [tasksResult, examsResult, profileResult] = await Promise.all([
-                fetchApi('TASK', 'getStudentTasks', payload),
-                fetchApi('EXAM', 'getStudentExams', payload),
+                fetchApi('TASK', 'getStudentTasks', payload, 0, {
+                    store: 'cache_estudiante_tasks',
+                    onUpdate: (data) => {
+                        allActivitiesData = [...allActivitiesData.filter(a => a.type === 'Examen'), ...data.map(t => ({ ...t, type: t.tipo || 'Tarea' }))];
+                        renderStudentExpediente(allActivitiesData);
+                        renderParcialTabs(allActivitiesData);
+                    }
+                }),
+                fetchApi('EXAM', 'getStudentExams', payload, 0, {
+                    store: 'cache_estudiante_exams',
+                    onUpdate: (data) => {
+                        allActivitiesData = [...allActivitiesData.filter(a => a.type !== 'Examen'), ...data.map(e => ({ ...e, type: 'Examen' }))];
+                        renderStudentExpediente(allActivitiesData);
+                        renderParcialTabs(allActivitiesData);
+                    }
+                }),
                 fetchAndRenderLearningProfile(true) // Obtener datos de perfil sin renderizar aún
             ]);
 
