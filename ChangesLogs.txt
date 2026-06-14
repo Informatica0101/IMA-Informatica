@@ -1,87 +1,38 @@
-### CAMBIOS REALIZADOS - FASE 1: DÉCIMO GRADO
-1. **js/presentation-engine.js**:
-   - Desarrollado motor v2.4 con soporte para navegación híbrida (teclado/touch), doble clic para fullscreen y carga dinámica de reactivos.
-2. **Informatica_I/**:
-   - Reconstrucción masiva de 13 archivos HTML.
-   - Estandarización de Portada (Slide 1) con logo fluid y metadatos reglamentarios.
-   - Inyección de Encabezado Institucional y Pie de Página Global.
-   - Implementación de secuencia de 16 diapositivas.
-   - Desacoplamiento de lógica JS local en favor del motor centralizado.
-3. **js/ui-common.js**:
-   - Exposición de acciones globales (`handleHeaderAction`, `openAcademicHierarchy`) bajo el namespace `QuizProApp`.
-4. **js/config.js**:
-   - Despliegue del Perímetro de Seguridad v7.6 (bloqueo F12, Menú Contextual y Selección de Texto).
-5. **Respaldos**:
-   - Generados archivos .bak para todos los originales de 10mo grado.
+REGISTRO DE CAMBIOS FINAL - Sun Jun 14 19:17:09 UTC 2026
 
-### CAMBIOS REALIZADOS - CORRECCIÓN INTEGRAL 10MO GRADO (2026-06-13)
-1. **Informatica_I/**:
-   - Reconstrucción masiva de 13 presentaciones para eliminar placeholders y portadas no normativas.
-   - Saneamiento de Slide 1: Inyectada clase 'font-black' en h2 y respetada la secuencia obligatoria de metadatos.
-   - Integración de contenido técnico real extraído mediante OCR/pdf2text de los recursos oficiales.
-   - Asegurada la existencia de exactamente 16 diapositivas por presentación.
-2. **js/presentation-engine.js**:
-   - Refactorizada la función loadQuizFromBank para normalizar el nombre del tema (espacios a underscores).
-   - Corregido el fallo de renderizado del Quiz de 10 preguntas.
+Módulo: Dashboard del Profesor
+- teacher-dashboard.html:
+    - Corregida inicialización del selector de tipo de tarea (Tarea por defecto).
+    - Agregado contenedor para vinculación de Crédito Extra con tareas rechazadas.
+    - Agregado CSS global para corregir visibilidad de iconos en toolbar de Quill.
+- js/teacher.js:
+    - Implementada habilitación inmediata y foco automático en el editor de tareas.
+    - Forzado color de texto negro en todos los editores Quill.
+    - Implementada lógica de población dinámica y vinculación de tareas rechazadas para Crédito Extra.
+    - Corregido cálculo de tasa de entrega excluyendo Crédito Extra de la base.
 
-### CAMBIOS REALIZADOS - DASHBOARD PROFESOR Y PRESENTACIONES 14 JUNIO (2026-06-13)
-1. **teacher-dashboard.html**:
-   - Inyectado dropdown de "Tipo de Tarea" (Tarea / Crédito Extra) en formularios de creación (línea 199) y edición (línea 826).
-   - Configurado estado inhabilitado por defecto para Título y Descripción en creación.
-2. **js/teacher.js**:
-   - Implementado listener de cambio para el tipo de tarea que habilita/deshabilita campos (línea 450).
-   - Actualizado reseteo de formulario en creación para restaurar estado inhabilitado (línea 481).
-   - Actualizada población de modal de edición para incluir el tipo de tarea (línea 642).
-   - Incluido campo 'tipo' en los payloads de actualización (línea 688) y creación (vía FormData).
-   - Refactorizada lógica de renderDetallesAlumno para manejar 'Crédito Extra' en el cálculo de progreso (línea 1256).
-3. **II_BTP_A/Programacion/Imperativa_vs_POO.html**:
-   - Creada nueva presentación siguiendo el estándar de 16 diapositivas.
-   - Contenido didáctico profundo sobre la transición de Paradigma Imperativo a POO.
-4. **III_BTP_A/dw_II/Posicionamiento_Layout.html**:
-   - Creada nueva presentación siguiendo el estándar de 16 diapositivas.
-   - Contenido sobre Modelo de Caja (Box Model), Posicionamiento y Layouts.
-5. **js/data.js**:
-   - Vinculadas las 2 nuevas presentaciones en la malla curricular de II Parcial.
+Módulo: Dashboard del Estudiante
+- js/student.js:
+    - Ajustado cálculo de progreso base para excluir tareas de Crédito Extra.
+    - Implementada visibilidad condicional: Crédito Extra solo aparece si el alumno tiene entregas rechazadas.
+    - Implementado history.pushState para navegación entre pestañas de parciales.
 
-[2026-06-14 06:35]
-Archivo: teacher-dashboard.html
-Líneas: 425-435, 785-795
-Descripción: Inyección de select 'tipo' en formularios de creación y edición.
+Módulo: Index y Navegación
+- js/index-ui.js:
+    - Reparada renderización de contenidos de clase (Descargas) en el área principal.
+    - Implementado history.pushState en flujo de contenidos y sub-menús de actividades.
+    - Integrada carga dinámica de js/security-minigames.js al lanzar juegos.
+- js/ui-common.js:
+    - Refactorizado manejador global popstate para soportar todos los estados de historial implementados.
 
-Archivo: js/teacher.js
-Líneas: 450-475
-Descripción: Implementación de event listener para habilitar/deshabilitar campos según selección de tipo de tarea.
-Líneas: 680-700
-Descripción: Actualización de payloads de API para incluir campo 'tipo'.
-Líneas: 1150-1200
-Descripción: Refactorización de renderDetallesAlumno para manejar lógica de Crédito Extra (puntos de recuperación).
+Módulo: Presentaciones
+- js/presentation-engine.js:
+    - Implementado history.pushState en el cambio de diapositivas para evitar cierres de app al navegar atrás.
 
-Archivo: js/presentation-engine.js
-Líneas: 105-115
-Descripción: Implementación de pathPrefix dinámico para carga de Banco de Preguntas en subdirectorios profundos.
-
-Archivo: II_BTP_A/Programacion/Imperativa_vs_POO.html
-Descripción: Creación de presentación de 16 diapositivas (Bloque 14 Junio).
-
-Archivo: III_BTP_A/dw_II/Posicionamiento_Layout.html
-Descripción: Creación de presentación de 16 diapositivas (Bloque 14 Junio).
-
-Archivo: js/data.js
-Descripción: Registro de nuevas presentaciones en el currículo.
-
-[2026-06-14 11:22]
-Archivo: II_BTP_A/Programacion/Imperativa_vs_POO.html
-Descripción: Refactorización para eliminar referencias a PDF. Inyección de ejemplo y actividad de Pseudocódigo con Arreglos. Ajuste de metadatos de grado a 'Undecimo'.
-
-Archivo: III_BTP_A/dw_II/Posicionamiento_Layout.html
-Descripción: Refactorización para eliminar referencias a PDF. Inyección de ejercicios prácticos para VSCode. Ajuste de metadatos de grado a 'Duodecimo'.
-
-Archivo: js/Banco_Preguntas/Undecimo/Programacion/basico.json
-Descripción: Creación de 10 reactivos basados en el contenido de la presentación 'Imperativa vs POO', incluyendo lógica de arreglos.
-
-Archivo: js/Banco_Preguntas/Duodecimo/Diseno_Web/basico.json
-Descripción: Creación de 10 reactivos basados en el contenido de la presentación 'Posicionamiento y Layout'.
-
-[2026-06-14 13:45]
-Archivo: II_BTP_A/Programacion/Imperativa_vs_POO.html
-Descripción: Actualización final de la Diapositiva 12. Se inyectó el algoritmo "SistemaEstudiantes" con lógica de arreglos bidimensionales y cálculo de promedios para Undécimo grado.
+Módulo: Seguridad
+- js/config.js:
+    - Eliminado perímetro anti-debugging global.
+- js/security-minigames.js:
+    - Creado archivo dedicado para lógica de seguridad restringida.
+- juegos/*.html:
+    - Inyectado script de seguridad en archivos fuente de minijuegos.

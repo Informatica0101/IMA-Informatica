@@ -1,68 +1,17 @@
-FECHA: 2025-10-27
-AUDITOR: JULES (Full-Stack Senior)
+AUDITORÍA TÉCNICA - Sun Jun 14 17:50:19 UTC 2026
 
-### REPORTE DE AUDITORÍA: DÉCIMO GRADO (INFORMATICA_I)
-[Archivo y Línea Exacta] | [Tipo de Fallo] | [Evidencia de Código Crudo] | [Impacto Real en el Aula] | [Solución Manual sugerida en ES5]
---------------------------|-----------------|-----------------------------|---------------------------|---------------------------------
-Informatica_I/*.html | Navegación | Bloqueo en Portada | Las presentaciones no avanzan tras el primer clic | Corregido mediante js/presentation-engine.js v2.4
-Informatica_I/*.html | Estructura | Violación de Norma Portada | Metadatos incompletos y logo sin dimensiones fluidas | Reconstruido Slide 1 según METODOLOGIA_DESARROLLO.md
-Informatica_I/*.html | Layout | Falta de Global Header/Footer | Diseño inconsistente con la plataforma principal | Inyectados fragmentos oficiales v7.6
-Informatica_I/*.html | Quiz | Inconsistencia Psicométrica | Reactivos estáticos y sin validación dinámica | Vinculado a motor centralizado y JSON dinámico (Slide 15)
+[js/config.js:207-238] [Tipo de Fallo: Alcance incorrecto] [Evidencia: IIFE global de seguridad] [Impacto: Restricciones en dashboards administrativos] [Solución: Mover a js/security-minigames.js y cargar solo en minijuegos].
 
-### OBSERVACIONES FORENSES:
-- Se detectó que la lógica de navegación legacy estaba incrustada en cada HTML, causando colisiones con los eventos de scroll.
-- Se ha centralizado la lógica en `js/presentation-engine.js` para asegurar mantenibilidad y cumplimiento de Zoom Resistance.
-- Se verificó que todos los archivos reconstruidos mantienen el contenido pedagógico original pero adaptado al formato de 16 slides.
-- Se habilitó el soporte para el namespace `QuizProApp` en `js/ui-common.js` para cumplir con el Blindaje Oficial (v7.6).
-- El Banco de Preguntas JSON de 10mo grado ha sido verificado y cumple con la cuota mínima de 50 reactivos por nodo.
+[teacher-dashboard.html:205] [Tipo de Fallo: UX] [Evidencia: <select> sin opción default activa] [Impacto: Fricción al crear tareas] [Solución: Marcar 'Tarea' como selected].
 
-### REPORTE DE AUDITORÍA: REVISIÓN DE RECONSTRUCCIÓN (2025-10-27)
-[Archivo y Línea Exacta] | [Tipo de Fallo] | [Evidencia de Código Crudo] | [Impacto Real en el Aula] | [Solución Manual sugerida en ES5]
---------------------------|-----------------|-----------------------------|---------------------------|---------------------------------
-Informatica_I/*.html | Contenido | Uso de Placeholders | "Próximamente más información..." | Investigar PENSUM y completar contenido real.
-Informatica_I/*.html | Estructura | Secuencia de 16 slides incorrecta | No sigue el orden 1-10-1-1-1-1-1 | Reordenar y maquetar según metodología.
-js/Banco_Preguntas/... | Datos | Falta de imágenes en periféricos | Reactivos puramente textuales pierden valor pedagógico | Agregar "imagen": "imagenes/..." a los objetos JSON.
+[js/teacher.js:469-482] [Tipo de Fallo: Inicialización] [Evidencia: Reset de formulario bloquea editor] [Impacto: Editor inaccesible al abrir] [Solución: Forzar habilitación si es 'Tarea'].
 
-### REPORTE DE AUDITORÍA: REQUERIMIENTOS CLÍNICOS (2026-06-13)
-[Archivo y Línea Exacta] | [Tipo de Fallo] | [Evidencia de Código Crudo] | [Impacto Real en el Aula] | [Solución Manual sugerida en ES5]
---------------------------|-----------------|-----------------------------|---------------------------|---------------------------------
-js/config.js:302-382 | Redundancia | Implementación duplicada de bloqueos | Código muerto y riesgo de inconsistencia | Eliminar bloque duplicado.
-js/config.js:334, 377 | Seguridad | Selección permitida en minigames | .target.closest('.quill-content...') | Restringir user-select: none estrictamente en áreas de juego.
-js/quizpro.js:1593 | Cumplimiento | .slice(0, 5) | Cumple con la restricción de Top 5 | N/A (Validado).
-js/student.js:624 | Cumplimiento | sanitizarHTMLTecnico(activity.descripcion) | Cumple con renderizado HTML | N/A (Validado).
-js/teacher.js:579 | Cumplimiento | sanitizarHTMLTecnico(item.descripcion) | Cumple con renderizado HTML | N/A (Validado).
-js/api.js:52 | Optimización | window.PersistenceManager.reconcile | Conciliación silenciosa asíncrona | N/A (Validado).
+[js/teacher.js:415-455] [Tipo de Fallo: Estilo] [Evidencia: Quill init sin forzar color] [Impacto: Texto gris claro ilegible] [Solución: Forzar ql-editor color: black].
 
-### REPORTE DE AUDITORÍA: OPTIMIZACIÓN CLÍNICA (2025-10-27)
-[Archivo y Línea Exacta] | [Tipo de Fallo] | [Evidencia de Código Crudo] | [Impacto Real en el Aula] | [Solución Manual sugerida en ES5]
---------------------------|-----------------|-----------------------------|---------------------------|---------------------------------
-js/config.js:345-385 | Redundancia | IIFE de seguridad duplicada | Incremento innecesario de peso del script | Eliminar bloque duplicado.
-js/presentation-engine.js:284 | UX | Falta de sanitización en Quiz | qText.innerHTML = ... + (q.enunciado) | Riesgo de strings escapados en evaluación | Aplicar sanitizarHTMLTecnico().
-js/student.js:107 | UX | Sincronización | if (!hasLocalData) showLoading(true) | El primer inicio sin caché es lento | Validado; 0ms en recargas posteriores.
-js/quizpro.js:1593 | Cumplimiento | .slice(0, 5) | Top Global restringido correctamente | N/A (Validado).
+[js/student.js:198-250] [Tipo de Fallo: Lógica de Negocio] [Evidencia: Baseline incluye Crédito Extra] [Impacto: Estadísticas infladas/incorrectas] [Solución: Excluir 'Crédito Extra' de totalAssigned].
 
-### OBSERVACIONES FORENSES:
-- El mecanismo de 0ms hydration es funcional a través de PersistenceManager e IndexedDB.
-- Se detectó que el Presentation Engine v2.4 no consume el sanitizador centralizado en el módulo de Quiz.
-- Los dashboards de Estudiante y Profesor ya implementan sanitizarHTMLTecnico en sus renderers principales.
+[js/index-ui.js:73-95] [Tipo de Fallo: Renderizado] [Evidencia: renderDownloadGrades no muestra contenido en el main] [Impacto: Recursos inaccesibles desde el home] [Solución: Asegurar población de contentDisplayArea].
 
-### REPORTE DE AUDITORÍA: RECONSTRUCCIÓN FINAL 10MO GRADO (2026-06-13)
-[Archivo y Línea Exacta] | [Tipo de Fallo] | [Evidencia de Código Crudo] | [Impacto Real en el Aula] | [Solución Manual sugerida en ES5]
---------------------------|-----------------|-----------------------------|---------------------------|---------------------------------
-Informatica_I/*.html | Contenido | Placeholders detectados | "Análisis técnico detallado..." | Reemplazado por contenido real extraído de PDFs oficiales.
-Informatica_I/*.html | Estructura | Portada No Normativa | Faltaba clase font-black y secuencia correcta | Reconstruido Slide 1 según estándar institucional IMA v7.6.
-js/presentation-engine.js:234 | Lógica | Fallo de renderizado Quiz | targetTema = meta.tema.toLowerCase() | Los temas con espacios no coincidían con el JSON (que usa guiones bajos) | Aplicar .replace(/\s+/g, '_') al targetTema.
+[js/ui-common.js:137-189] [Tipo de Fallo: Navegación] [Evidencia: popstate incompleto] [Impacto: El app se cierra o vuelve al home al dar atrás] [Solución: Mapear estados de historia a vistas de UI].
 
-### REPORTE DE AUDITORÍA: DASHBOARD DEL PROFESOR | TAREA 1 (2026-06-13)
-[Archivo y Línea Exacta] | [Tipo de Fallo] | [Evidencia de Código Crudo] | [Impacto Real en el Aula] | [Solución Manual sugerida en ES5]
---------------------------|-----------------|-----------------------------|---------------------------|---------------------------------
-teacher-dashboard.html:196 | UI/UX | Falta dropdown de tipo de tarea | <form id="create-assignment-form"> ... <div> <label>Título</label> | El docente no puede categorizar la tarea, impidiendo la lógica de Crédito Extra. | Inyectar <select name="tipo"> con opciones 'Tarea' y 'Crédito Extra'.
-teacher-dashboard.html:812 | UI/UX | Falta dropdown de tipo en edición | <form id="edit-assignment-form"> | Inconsistencia en la edición de tareas especiales. | Inyectar dropdown de tipo en el modal de edición.
-js/teacher.js:1680 | Lógica | Paypload incompleto | const formData = Object.fromEntries(new FormData(e.target).entries()); | El backend no recibe el campo 'tipo'. | Asegurar que el campo 'tipo' se capture del nuevo dropdown.
-js/teacher.js:1171 | Lógica | Manejo de Crédito Extra | const baseAssignments = subjectAssignments.filter(a => a.tipo !== 'Credito Extra'); | Validar que la lógica de recuperación de puntos sea precisa. | Verificar y ajustar cálculos de compositeProgress en renderDetallesAlumno.
-
-[Archivo y Línea Exacta]: II_BTP_A/Programacion/Imperativa_vs_POO.html (Líneas 321-380)
-[Tipo de Fallo]: Actualización de Contenido Pedagógico
-[Evidencia de Código Crudo]: Sustitución del ejemplo de biblioteca por el algoritmo SistemaEstudiantes.
-[Impacto Real en el Aula]: Alineación con el nivel de complejidad requerido para Undécimo grado (Arreglos bidimensionales).
-[Solución Manual sugerida en ES5]: Reemplazo de bloque de diapositiva con el Pseudocódigo proporcionado.
+[js/presentation-engine.js:173] [Tipo de Fallo: Navegación] [Evidencia: showSlide no registra historial] [Impacto: Al dar atrás sale de la presentación] [Solución: pushState en cambio de diapositiva].

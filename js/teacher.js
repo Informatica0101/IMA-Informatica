@@ -415,6 +415,8 @@ document.addEventListener('DOMContentLoaded', () => {
             ['link', 'image'],
             ['clean']
         ] } });
+            // Forzar color de texto negro
+            quillTask.root.style.color = '#000000';
         }
         if (!quillExam && document.getElementById('editor-exam-container')) {
             quillExam = new Quill('#editor-exam-container', { theme: 'snow', placeholder: 'Escribe las instrucciones del examen...', modules: { toolbar: [
@@ -424,6 +426,7 @@ document.addEventListener('DOMContentLoaded', () => {
             ['link', 'image'],
             ['clean']
         ] } });
+            quillExam.root.style.color = '#000000';
         }
         if (!quillEdit && document.getElementById('editor-edit-container')) {
             quillEdit = new Quill('#editor-edit-container', { theme: 'snow', modules: { toolbar: [
@@ -433,6 +436,7 @@ document.addEventListener('DOMContentLoaded', () => {
             ['link', 'image'],
             ['clean']
         ] } });
+            quillEdit.root.style.color = '#000000';
         }
         if (!quillNews && document.getElementById('editor-news-container')) {
             quillNews = new Quill('#editor-news-container', { theme: 'snow', placeholder: 'Contenido de la noticia...', modules: { toolbar: [
@@ -442,28 +446,90 @@ document.addEventListener('DOMContentLoaded', () => {
             ['link', 'image'],
             ['clean']
         ] } });
+            quillNews.root.style.color = '#000000';
         }
     }
     initEditors();
 
     // Task 1: Control de estados en creación de tareas
     const createTaskType = document.getElementById("create-task-type");
+    function updateCreateTaskUIState(type) {
+        var isSelected = type !== "";
+        var titleInput = document.getElementById("create-task-title");
+        var editorContainer = document.getElementById("editor-task-container");
+        var extraCreditAsoc = document.getElementById("extra-credit-association-container");
+
+        if (titleInput) titleInput.disabled = !isSelected;
+        if (editorContainer) {
+            if (isSelected) {
+                editorContainer.style.opacity = "1";
+                editorContainer.style.pointerEvents = "auto";
+            } else {
+                editorContainer.style.opacity = "0.5";
+                editorContainer.style.pointerEvents = "none";
+            }
+        }
+
+        if (extraCreditAsoc) {
+            if (type === "Crédito Extra") {
+                extraCreditAsoc.classList.remove("hidden");
+                populateRejectedTasksDropdown("extra-credit-task-asoc");
+            } else {
+                extraCreditAsoc.classList.add("hidden");
+            }
+        }
+    }
+
     if (createTaskType) {
         createTaskType.addEventListener("change", function(e) {
-            var isSelected = e.target.value !== "";
-            var titleInput = document.getElementById("create-task-title");
-            var editorContainer = document.getElementById("editor-task-container");
-            if (titleInput) titleInput.disabled = !isSelected;
-            if (editorContainer) {
-                if (isSelected) {
-                    editorContainer.style.opacity = "1";
-                    editorContainer.style.pointerEvents = "auto";
+            updateCreateTaskUIState(e.target.value);
+        });
+    }
+
+    const editTaskType = document.getElementById("edit-task-type");
+    if (editTaskType) {
+        editTaskType.addEventListener("change", function(e) {
+            const extraCreditAsoc = document.getElementById("edit-extra-credit-association-container");
+            if (extraCreditAsoc) {
+                if (e.target.value === "Crédito Extra") {
+                    extraCreditAsoc.classList.remove("hidden");
+                    populateRejectedTasksDropdown("edit-extra-credit-task-asoc");
                 } else {
-                    editorContainer.style.opacity = "0.5";
-                    editorContainer.style.pointerEvents = "none";
+                    extraCreditAsoc.classList.add("hidden");
                 }
             }
         });
+    }
+
+    async function populateRejectedTasksDropdown(dropdownId) {
+        const dropdown = document.getElementById(dropdownId);
+        if (!dropdown) return;
+
+        dropdown.innerHTML = '<option value="">Cargando tareas rechazadas...</option>';
+
+        try {
+            // Buscamos tareas rechazadas en toda la actividad cargada
+            const rejected = allActivityRaw.filter(item => item.estado === 'Rechazada');
+
+            if (rejected.length === 0) {
+                dropdown.innerHTML = '<option value="">No hay tareas rechazadas para vincular.</option>';
+                return;
+            }
+
+            // Eliminar duplicados de títulos de tareas rechazadas para el dropdown
+            const seenTitles = new Set();
+            const uniqueRejected = rejected.filter(r => {
+                const key = `${r.titulo}`;
+                if (seenTitles.has(key)) return false;
+                seenTitles.add(key);
+                return true;
+            });
+
+            dropdown.innerHTML = '<option value="">Seleccione la tarea a reemplazar...</option>' +
+                uniqueRejected.map(r => `<option value="${r.tareaId}_${r.alumnoId}">${r.titulo} - ${r.alumnoNombre}</option>`).join('');
+        } catch (e) {
+            dropdown.innerHTML = '<option value="">Error al cargar tareas.</option>';
+        }
     }
 
     // --- Lógica de Navegación de Tareas ---
@@ -478,16 +544,20 @@ document.addEventListener('DOMContentLoaded', () => {
         formContainerExamen.classList.add('hidden');
         document.getElementById('tareas-form-title').textContent = "Crear Nueva Tarea";
 
-        // Task 1: Reset state for creation form
+        // Task 1: Initialize form with 'Tarea' and enabled editor
         const typeSelect = document.getElementById('create-task-type');
-        const titleInput = document.getElementById('create-task-title');
-        const editorContainer = document.getElementById('editor-task-container');
-
-        if (typeSelect) typeSelect.value = "";
-        if (titleInput) titleInput.disabled = true;
-        if (editorContainer) {
-            editorContainer.style.opacity = "0.5"; editorContainer.style.pointerEvents = "none";
+        if (typeSelect) {
+            typeSelect.value = "Tarea";
+            updateCreateTaskUIState("Tarea");
         }
+
+        // REQ: Automatic focus on initialization (v7.6.1)
+        setTimeout(() => {
+            if (quillTask) {
+                quillTask.focus();
+                console.log("[IMA-TEACHER] Task editor focused.");
+            }
+        }, 300);
     };
     if (btnShowCreateExam) btnShowCreateExam.onclick = () => {
         tareasListView.classList.add('hidden');
@@ -643,6 +713,17 @@ document.addEventListener('DOMContentLoaded', () => {
         const editTypeSelect = document.getElementById('edit-task-type');
         if (editTypeSelect) {
             editTypeSelect.value = item.tipo || "Tarea";
+            // Trigger change event to show/hide extra credit association
+            const event = new Event('change');
+            editTypeSelect.dispatchEvent(event);
+
+            // If it was already associated, we should ideally populate it
+            if (item.tareaAsociadaId) {
+                setTimeout(() => {
+                    const asocSelect = document.getElementById('edit-extra-credit-task-asoc');
+                    if (asocSelect) asocSelect.value = item.tareaAsociadaId;
+                }, 500); // Give time for populateRejectedTasksDropdown
+            }
         }
         document.getElementById('edit-titulo').value = item.titulo;
 
@@ -686,7 +767,8 @@ document.addEventListener('DOMContentLoaded', () => {
             fechaLimite: document.getElementById('edit-fecha').value,
             puntaje: document.getElementById('edit-puntaje').value,
             archivoUrl: document.getElementById('edit-archivo').value,
-            tipo: document.getElementById('edit-task-type').value
+            tipo: document.getElementById('edit-task-type').value,
+            tareaAsociadaId: document.getElementById('edit-extra-credit-task-asoc')?.value || ''
         };
 
         if (tipo === 'Tarea') {
@@ -1274,7 +1356,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // Tasa de entrega basada en tareas obligatorias
             const mandatoryDelivered = studentSubmissions.filter(s => {
                 const assignment = subjectAssignments.find(a => norm(a.titulo) === norm(s.titulo));
-                return assignment && assignment.tipo !== 'Credito Extra';
+                return assignment && assignment.tipo !== 'Crédito Extra' && assignment.tipo !== 'Credito Extra';
             }).length;
             const deliveryRate = totalAssigned > 0 ? (mandatoryDelivered / totalAssigned) : 0;
 
@@ -1723,6 +1805,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Obtener contenido de Quill
         if (quillTask) formData.descripcion = quillTask.root.innerHTML;
+
+        // Asegurar que tareaAsociadaId se incluya si es Crédito Extra
+        if (formData.tipo === 'Crédito Extra') {
+            formData.tareaAsociadaId = document.getElementById('extra-credit-task-asoc')?.value || '';
+        }
 
         btn.classList.add('btn-loading');
         try {

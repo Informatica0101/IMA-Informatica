@@ -70,42 +70,69 @@ document.addEventListener('DOMContentLoaded', () => {
         currentContentView = 'initial';
     }
 
-    function renderDownloadGrades() {
+    function renderDownloadGrades(pushState = true) {
         if (!contentDisplayArea || !contentBackButtonContainer) return;
         contentBackButtonContainer.classList.add('hidden');
-        contentDisplayArea.innerHTML = '';
+
+        if (pushState) {
+            history.pushState({ type: 'index-content', view: 'grades' }, '');
+        }
+
         const gridDiv = document.createElement('div');
         gridDiv.className = 'grid grid-cols-1 md:grid-cols-3 gap-4 w-full max-w-lg';
 
         const currentUser = JSON.parse(localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser'));
 
+        // REQ: Asegurar población de contentDisplayArea tras limpieza
+        contentDisplayArea.innerHTML = '';
+
+        if (!window.downloadContentData || window.downloadContentData.length === 0) {
+            contentDisplayArea.innerHTML = '<p class="text-gray-400 text-sm">No hay contenidos cargados.</p>';
+            return;
+        }
+
         window.downloadContentData.forEach(gradeData => {
-            // Filtrado por Grado
-            if (currentUser && currentUser.grado && gradeData.grade !== currentUser.grado) return;
+            // Filtrado por Grado (Normalizado para evitar fallos de coincidencia)
+            const userGrade = window.parseGrade ? window.parseGrade(currentUser?.grado) : null;
+            const dataGrade = window.parseGrade ? window.parseGrade(gradeData.grade) : null;
+
+            if (userGrade && dataGrade && userGrade !== dataGrade) return;
 
             gridDiv.appendChild(createCustomButton(gradeData.grade, () => {
                 selectedGradeData = gradeData;
                 animateContentTransition(renderDownloadSubjects);
             }, 'w-full bg-gray-100 text-gray-800 shadow-none hover:bg-blue-600 hover:text-white'));
         });
-        contentDisplayArea.appendChild(gridDiv);
+
+        if (gridDiv.children.length === 0) {
+            contentDisplayArea.innerHTML = '<p class="text-gray-400 text-sm">No hay contenidos disponibles para tu grado.</p>';
+        } else {
+            contentDisplayArea.appendChild(gridDiv);
+        }
         currentContentView = 'grades';
     }
 
-    function renderDownloadSubjects() {
+    function renderDownloadSubjects(pushState = true) {
         if (!contentDisplayArea || !contentBackButtonContainer) return;
         if (!selectedGradeData) return renderDownloadGrades();
         contentBackButtonContainer.classList.remove('hidden');
-        contentDisplayArea.innerHTML = '';
+
+        if (pushState) {
+            history.pushState({ type: 'index-content', view: 'subjects', gradeData: selectedGradeData }, '');
+        }
+
         const gridDiv = document.createElement('div');
         gridDiv.className = 'grid grid-cols-1 md:grid-cols-2 gap-4 w-full max-w-lg';
 
         const currentUser = JSON.parse(localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser'));
         const role = currentUser?.rol || 'Invitado';
 
+        contentDisplayArea.innerHTML = '';
+
         selectedGradeData.subjects.forEach(subjectData => {
-            // REQ 7: Filtrado por Parcial Actual para no-profesores
-            if (role !== 'Profesor' && subjectData.partial !== window.PARCIAL_ACTUAL) return;
+            // REQ 7: Filtrado por Parcial Actual para no-profesores (Normalizado)
+            const isAuthorized = window.isContentAuthorized ? window.isContentAuthorized(subjectData.partial) : (role === 'Profesor' || subjectData.partial === window.PARCIAL_ACTUAL);
+            if (!isAuthorized) return;
 
             gridDiv.appendChild(createCustomButton(subjectData.name, () => {
                 selectedSubjectData = subjectData;
@@ -121,10 +148,14 @@ document.addEventListener('DOMContentLoaded', () => {
         currentContentView = 'subjects';
     }
 
-    function renderDownloadTopics() {
+    function renderDownloadTopics(pushState = true) {
         if (!contentDisplayArea || !contentBackButtonContainer) return;
         if (!selectedSubjectData) return renderDownloadSubjects();
         contentBackButtonContainer.classList.remove('hidden');
+
+        if (pushState) {
+            history.pushState({ type: 'index-content', view: 'topics', subjectData: selectedSubjectData }, '');
+        }
         contentDisplayArea.innerHTML = '';
         const gridDiv = document.createElement('div');
         gridDiv.className = 'grid grid-cols-1 gap-3 w-full max-w-lg';
@@ -168,7 +199,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- Activities & Games Logic ---
-    function showMainContentSections() {
+    function showMainContentSections(pushState = true) {
         if (!mainContentSections) return;
         mainContentSections.classList.remove('hidden');
         mainContentSections.classList.add('flex');
@@ -176,6 +207,10 @@ document.addEventListener('DOMContentLoaded', () => {
         mainContentTitle.textContent = 'Contenido y Actividades';
         renderInitialActivityButton();
         window.scrollTo({ top: mainContentTitle.offsetTop - 100, behavior: 'smooth' });
+
+        if (pushState) {
+            history.pushState({ type: 'index-activities', view: 'main' }, '');
+        }
     }
 
     /**
@@ -250,6 +285,11 @@ document.addEventListener('DOMContentLoaded', () => {
             const htmlResponse = await fetch(htmlPath);
             gameOverlay.innerHTML = await htmlResponse.text();
 
+            // REQ: Load security perimeter for minigames (v7.6.1)
+            const secScript = document.createElement('script');
+            secScript.src = 'js/security-minigames.js?v=1';
+            gameOverlay.appendChild(secScript);
+
             const script = document.createElement('script');
             script.src = jsPath;
             script.onload = () => {
@@ -312,13 +352,17 @@ document.addEventListener('DOMContentLoaded', () => {
         gameListMenu.classList.remove('flex');
     }
 
-    function renderActivityList() {
+    function renderActivityList(pushState = true) {
         if (!initialActivityMenu || !gameListMenu || !mainContentTitle) return;
         initialActivityMenu.classList.add('hidden');
         initialActivityMenu.classList.remove('flex');
         gameListMenu.classList.remove('hidden');
         gameListMenu.classList.add('flex');
         mainContentTitle.textContent = 'Actividades';
+
+        if (pushState) {
+            history.pushState({ type: 'index-activities', view: 'list' }, '');
+        }
     }
 
     if (showActivitiesButton) showActivitiesButton.addEventListener('click', renderActivityList);

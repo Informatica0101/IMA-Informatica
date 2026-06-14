@@ -17,7 +17,10 @@
             this.setupNavigation();
             this.setupFullscreen();
             this.setupSecurity();
-            this.showSlide(0);
+
+            // Set initial state
+            history.replaceState({ type: 'presentation-slide', slideIndex: 0 }, '');
+            this.showSlide(0, false);
 
             if (window.presentationMetadata) {
                 this.loadQuizFromBank();
@@ -174,8 +177,12 @@
             }
         },
 
-        showSlide: function(n) {
+        showSlide: function(n, pushState) {
             if (this.slides.length === 0) return;
+
+            // pushState default to true if not provided
+            if (pushState === undefined) pushState = true;
+
             this.slides[this.currentSlide].classList.remove('active');
 
             this.currentSlide = n;
@@ -192,6 +199,10 @@
             var nextBtn = document.getElementById('next-btn');
             if (prevBtn) prevBtn.disabled = (this.currentSlide === 0);
             if (nextBtn) nextBtn.disabled = (this.currentSlide === this.slides.length - 1);
+
+            if (pushState) {
+                history.pushState({ type: 'presentation-slide', slideIndex: this.currentSlide }, '');
+            }
 
             // 16-Slide Structure Rule: Evaluation typically on index 14
             if (this.currentSlide === 14 && !this.quizStarted) {

@@ -167,6 +167,30 @@ window.setupCommonUI = function() {
             if (window.syncNavWithState) {
                 window.syncNavWithState(state);
             }
+        } else if (state.type === 'presentation-slide') {
+            if (window.PresentationEngine && typeof window.PresentationEngine.showSlide === 'function') {
+                window.PresentationEngine.showSlide(state.slideIndex, false);
+            }
+        } else if (state.type === 'student-tab') {
+            if (window.switchParcialTab) {
+                window.switchParcialTab(state.parcial, false);
+            }
+        } else if (state.type === 'index-content') {
+            if (state.view === 'grades') {
+                if (window.renderDownloadGrades) window.renderDownloadGrades(false);
+            } else if (state.view === 'subjects') {
+                window.selectedGradeData = state.gradeData;
+                if (window.renderDownloadSubjects) window.renderDownloadSubjects(false);
+            } else if (state.view === 'topics') {
+                window.selectedSubjectData = state.subjectData;
+                if (window.renderDownloadTopics) window.renderDownloadTopics(false);
+            }
+        } else if (state.type === 'index-activities') {
+            if (state.view === 'main') {
+                if (window.showMainContentSections) window.showMainContentSections(false);
+            } else if (state.view === 'list') {
+                if (window.renderActivityList) window.renderActivityList(false);
+            }
         } else if (state.type === 'academic-menu') {
             // REQ 8: Garantía de contexto en Navegación (Fase 8)
             const modal = document.getElementById('academic-menu-modal');
