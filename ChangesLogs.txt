@@ -13,3 +13,13 @@
    - Despliegue del Perímetro de Seguridad v7.6 (bloqueo F12, Menú Contextual y Selección de Texto).
 5. **Respaldos**:
    - Generados archivos .bak para todos los originales de 10mo grado.
+
+### CAMBIOS REALIZADOS - CORRECCIÓN INTEGRAL 10MO GRADO (2026-06-13)
+1. **Informatica_I/**:
+   - Reconstrucción masiva de 13 presentaciones para eliminar placeholders y portadas no normativas.
+   - Saneamiento de Slide 1: Inyectada clase 'font-black' en h2 y respetada la secuencia obligatoria de metadatos.
+   - Integración de contenido técnico real extraído mediante OCR/pdf2text de los recursos oficiales.
+   - Asegurada la existencia de exactamente 16 diapositivas por presentación.
+2. **js/presentation-engine.js**:
+   - Refactorizada la función loadQuizFromBank para normalizar el nombre del tema (espacios a underscores).
+   - Corregido el fallo de renderizado del Quiz de 10 preguntas.

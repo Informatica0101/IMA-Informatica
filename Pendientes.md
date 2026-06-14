@@ -35,3 +35,10 @@
 - **Archivos Involucrados:** js/config.js, js/presentation-engine.js
 - **Descripción del Alcance:** Eliminar código duplicado en config.js. Integrar sanitizarHTMLTecnico en el motor de presentaciones para garantizar renderizado de tags técnicos en el Quiz.
 - **Estado:** [ ] Pendiente
+
+### [T-006] Validación de Contenidos 10mo Grado
+- **Origen del Hallazgo:** Revisión de Reconstrucción (2026-06-13)
+- **Severidad/Clasificación:** Bajo
+- **Archivos Involucrados:** Informatica_I/*.html
+- **Descripción del Alcance:** Realizar una lectura pedagógica de los nuevos contenidos para asegurar que la síntesis de los PDFs sea óptima para el aula.
+- **Estado: [X] Completada**

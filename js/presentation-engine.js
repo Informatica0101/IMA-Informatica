@@ -231,7 +231,7 @@
                                 var data = JSON.parse(xhr.responseText);
                                 var filtered = data.filter(function(q) {
                                     var qTema = (q.tema || q.Tema || "").toLowerCase().replace(/\s+/g, '_');
-                                    var targetTema = meta.tema.toLowerCase();
+                                    var targetTema = meta.tema.toLowerCase().replace(/\s+/g, '_');
                                     return qTema === targetTema;
                                 });
                                 allLoaded = allLoaded.concat(filtered);
