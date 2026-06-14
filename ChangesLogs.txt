@@ -1,13 +1,13 @@
-REGISTRO DE CAMBIOS FINAL - Sun Jun 14 21:57:19 UTC 2026
+REGISTRO DE CAMBIOS FINAL (Revisado) - Sun Jun 14 22:16:37 UTC 2026
 
 Módulo: Dashboard del Profesor
 - teacher-dashboard.html:
     - Corregida inicialización del selector de tipo de tarea (Tarea por defecto).
     - Agregado contenedor para vinculación de Crédito Extra con tareas rechazadas.
-    - Agregado CSS global para corregir visibilidad de iconos en toolbar de Quill y forzar color negro.
+    - Agregado CSS global para corregir visibilidad de iconos en toolbar de Quill y forzar color negro recursivo.
 - js/teacher.js:
     - Implementada habilitación inmediata y foco automático en el editor de tareas.
-    - Forzado color de texto negro en todos los editores Quill.
+    - Forzado color de texto negro en todos los editores Quill mediante JS y CSS.
     - Implementada lógica de población dinámica y vinculación de tareas rechazadas para Crédito Extra.
     - Corregido cálculo de tasa de entrega excluyendo Crédito Extra de la base.
 
@@ -20,10 +20,10 @@ Módulo: Dashboard del Estudiante
 Módulo: Index y Navegación
 - js/index-ui.js:
     - Reparada renderización de contenidos de clase (Descargas) en el área principal.
-    - Implementado history.pushState en flujo de contenidos y sub-menús de actividades.
+    - Implementado history.pushState/replaceState para estados iniciales y transiciones de contenido.
     - Integrada carga dinámica de js/security-minigames.js al lanzar juegos.
 - js/ui-common.js:
-    - Refactorizado manejador global popstate para soportar todos los estados de historial implementados (dashboards, index, pestañas).
+    - Refactorizado manejador global popstate para soportar todos los estados de historial implementados (dashboards, index, pestañas, presentaciones).
 
 Módulo: Presentaciones
 - js/presentation-engine.js:
@@ -33,8 +33,12 @@ Módulo: Presentaciones
 Módulo: Seguridad y Sanitización
 - js/config.js:
     - Eliminado perímetro anti-debugging global.
-    - Ampliada whitelist en sanitizarHTMLTecnico (h1-h3, u, s, blockquote, center) para corregir visibilidad de etiquetas HTML en descripciones.
+    - Ampliada whitelist en sanitizarHTMLTecnico (h1-h3, u, s, strike, blockquote, center) para corregir visibilidad de etiquetas HTML en descripciones.
 - js/security-minigames.js:
     - Creado archivo dedicado para lógica de seguridad restringida.
 - juegos/*.html:
     - Inyectado script de seguridad en archivos fuente de minijuegos.
+
+Módulo: Estilos Globales
+- css/style.css:
+    - Forzado color negro (#000000 !important) en .quill-content, .ql-editor y todos sus elementos internos para garantizar legibilidad absoluta.
