@@ -194,9 +194,17 @@
                         <div class="dashboard-card">
                             <form id="create-assignment-form">
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div class="md:col-span-2">
+                                        <label class="block font-medium text-gray-700 mb-2">Tipo de Tarea</label>
+                                        <select name="tipo" id="create-task-type" class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-blue-400" required>
+                                            <option value="" disabled selected>Seleccione el tipo...</option>
+                                            <option value="Tarea">Tarea (Estándar)</option>
+                                            <option value="Crédito Extra">Crédito Extra (Recuperación)</option>
+                                        </select>
+                                    </div>
                                     <div>
                                         <label class="block font-medium text-gray-700 mb-2">Título</label>
-                                        <input type="text" name="titulo" class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-blue-400" required>
+                                        <input type="text" name="titulo" id="create-task-title" class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-blue-400" required disabled>
                                     </div>
                                     <div>
                                         <label class="block font-medium text-gray-700 mb-2">Asignatura</label>
@@ -204,7 +212,7 @@
                                     </div>
                                     <div class="md:col-span-2">
                                         <label class="block font-medium text-gray-700 mb-2">Descripción (Editor Enriquecido)</label>
-                                        <div id="editor-task-container" style="height: 200px;" class="bg-white rounded-xl"></div>
+                                        <div id="editor-task-container" style="height: 200px;" class="bg-white rounded-xl opacity-50 pointer-events-none"></div>
                                         <input type="hidden" name="descripcion" id="hidden-task-description">
                                     </div>
                                     <div>
@@ -813,6 +821,13 @@
                 <input type="hidden" id="edit-id">
                 <input type="hidden" id="edit-tipo-orig">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="md:col-span-2">
+                        <label class="block font-medium text-gray-700 mb-1">Tipo de Tarea</label>
+                        <select id="edit-task-type" name="tipo" class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-blue-400" required>
+                            <option value="Tarea">Tarea</option>
+                            <option value="Crédito Extra">Crédito Extra</option>
+                        </select>
+                    </div>
                     <div class="md:col-span-2">
                         <label class="block font-medium text-gray-700 mb-1">Título</label>
                         <input type="text" id="edit-titulo" class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-blue-400" required>

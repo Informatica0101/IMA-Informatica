@@ -52,3 +52,11 @@ js/quizpro.js:1593 | Cumplimiento | .slice(0, 5) | Top Global restringido correc
 Informatica_I/*.html | Contenido | Placeholders detectados | "Análisis técnico detallado..." | Reemplazado por contenido real extraído de PDFs oficiales.
 Informatica_I/*.html | Estructura | Portada No Normativa | Faltaba clase font-black y secuencia correcta | Reconstruido Slide 1 según estándar institucional IMA v7.6.
 js/presentation-engine.js:234 | Lógica | Fallo de renderizado Quiz | targetTema = meta.tema.toLowerCase() | Los temas con espacios no coincidían con el JSON (que usa guiones bajos) | Aplicar .replace(/\s+/g, '_') al targetTema.
+
+### REPORTE DE AUDITORÍA: DASHBOARD DEL PROFESOR | TAREA 1 (2026-06-13)
+[Archivo y Línea Exacta] | [Tipo de Fallo] | [Evidencia de Código Crudo] | [Impacto Real en el Aula] | [Solución Manual sugerida en ES5]
+--------------------------|-----------------|-----------------------------|---------------------------|---------------------------------
+teacher-dashboard.html:196 | UI/UX | Falta dropdown de tipo de tarea | <form id="create-assignment-form"> ... <div> <label>Título</label> | El docente no puede categorizar la tarea, impidiendo la lógica de Crédito Extra. | Inyectar <select name="tipo"> con opciones 'Tarea' y 'Crédito Extra'.
+teacher-dashboard.html:812 | UI/UX | Falta dropdown de tipo en edición | <form id="edit-assignment-form"> | Inconsistencia en la edición de tareas especiales. | Inyectar dropdown de tipo en el modal de edición.
+js/teacher.js:1680 | Lógica | Paypload incompleto | const formData = Object.fromEntries(new FormData(e.target).entries()); | El backend no recibe el campo 'tipo'. | Asegurar que el campo 'tipo' se capture del nuevo dropdown.
+js/teacher.js:1171 | Lógica | Manejo de Crédito Extra | const baseAssignments = subjectAssignments.filter(a => a.tipo !== 'Credito Extra'); | Validar que la lógica de recuperación de puntos sea precisa. | Verificar y ajustar cálculos de compositeProgress en renderDetallesAlumno.

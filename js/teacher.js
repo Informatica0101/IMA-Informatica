@@ -446,6 +446,26 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     initEditors();
 
+    // Task 1: Control de estados en creación de tareas
+    const createTaskType = document.getElementById("create-task-type");
+    if (createTaskType) {
+        createTaskType.addEventListener("change", function(e) {
+            var isSelected = e.target.value !== "";
+            var titleInput = document.getElementById("create-task-title");
+            var editorContainer = document.getElementById("editor-task-container");
+            if (titleInput) titleInput.disabled = !isSelected;
+            if (editorContainer) {
+                if (isSelected) {
+                    editorContainer.style.opacity = "1";
+                    editorContainer.style.pointerEvents = "auto";
+                } else {
+                    editorContainer.style.opacity = "0.5";
+                    editorContainer.style.pointerEvents = "none";
+                }
+            }
+        });
+    }
+
     // --- Lógica de Navegación de Tareas ---
     const btnShowCreateTask = document.getElementById('btn-show-create-task');
     const btnShowCreateExam = document.getElementById('btn-show-create-exam');
@@ -457,6 +477,17 @@ document.addEventListener('DOMContentLoaded', () => {
         formContainerTarea.classList.remove('hidden');
         formContainerExamen.classList.add('hidden');
         document.getElementById('tareas-form-title').textContent = "Crear Nueva Tarea";
+
+        // Task 1: Reset state for creation form
+        const typeSelect = document.getElementById('create-task-type');
+        const titleInput = document.getElementById('create-task-title');
+        const editorContainer = document.getElementById('editor-task-container');
+
+        if (typeSelect) typeSelect.value = "";
+        if (titleInput) titleInput.disabled = true;
+        if (editorContainer) {
+            editorContainer.style.opacity = "0.5"; editorContainer.style.pointerEvents = "none";
+        }
     };
     if (btnShowCreateExam) btnShowCreateExam.onclick = () => {
         tareasListView.classList.add('hidden');
@@ -607,6 +638,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
         document.getElementById('edit-id').value = item.tareaId || item.examenId;
         document.getElementById('edit-tipo-orig').value = item.tipoReal;
+
+        // Task 1: Populate task type in edit form
+        const editTypeSelect = document.getElementById('edit-task-type');
+        if (editTypeSelect) {
+            editTypeSelect.value = item.tipo || "Tarea";
+        }
         document.getElementById('edit-titulo').value = item.titulo;
 
         if (quillEdit) quillEdit.root.innerHTML = item.descripcion || '';
@@ -648,7 +685,8 @@ document.addEventListener('DOMContentLoaded', () => {
             seccionAsignada: document.getElementById('edit-seccion').value,
             fechaLimite: document.getElementById('edit-fecha').value,
             puntaje: document.getElementById('edit-puntaje').value,
-            archivoUrl: document.getElementById('edit-archivo').value
+            archivoUrl: document.getElementById('edit-archivo').value,
+            tipo: document.getElementById('edit-task-type').value
         };
 
         if (tipo === 'Tarea') {
@@ -1215,18 +1253,18 @@ document.addEventListener('DOMContentLoaded', () => {
             );
 
             // --- Ajuste de Lógica de Progreso (Req 2) ---
-            // Excluir 'Credito Extra' del total asignado (baseline)
-            const baseAssignments = subjectAssignments.filter(a => a.tipo !== 'Credito Extra');
+            // Excluir 'Crédito Extra' del total asignado (baseline)
+            const baseAssignments = subjectAssignments.filter(a => a.tipo !== 'Crédito Extra');
             const totalAssigned = baseAssignments.length;
 
             const mandatoryCompleted = studentSubmissions.filter(s => {
                 const assignment = subjectAssignments.find(a => norm(a.titulo) === norm(s.titulo));
-                return (s.estado === 'Completada' || s.estado === 'Revisada' || s.estado === 'Finalizado') && assignment && assignment.tipo !== 'Credito Extra';
+                return (s.estado === 'Completada' || s.estado === 'Revisada' || s.estado === 'Finalizado') && assignment && assignment.tipo !== 'Crédito Extra';
             }).length;
 
             const extraCreditCompleted = studentSubmissions.filter(s => {
                 const assignment = subjectAssignments.find(a => norm(a.titulo) === norm(s.titulo));
-                return (s.estado === 'Completada' || s.estado === 'Revisada' || s.estado === 'Finalizado') && assignment && assignment.tipo === 'Credito Extra';
+                return (s.estado === 'Completada' || s.estado === 'Revisada' || s.estado === 'Finalizado') && assignment && assignment.tipo === 'Crédito Extra';
             }).length;
 
             const completed = Math.min(totalAssigned, mandatoryCompleted + extraCreditCompleted);

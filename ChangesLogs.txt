@@ -23,3 +23,48 @@
 2. **js/presentation-engine.js**:
    - Refactorizada la función loadQuizFromBank para normalizar el nombre del tema (espacios a underscores).
    - Corregido el fallo de renderizado del Quiz de 10 preguntas.
+
+### CAMBIOS REALIZADOS - DASHBOARD PROFESOR Y PRESENTACIONES 14 JUNIO (2026-06-13)
+1. **teacher-dashboard.html**:
+   - Inyectado dropdown de "Tipo de Tarea" (Tarea / Crédito Extra) en formularios de creación (línea 199) y edición (línea 826).
+   - Configurado estado inhabilitado por defecto para Título y Descripción en creación.
+2. **js/teacher.js**:
+   - Implementado listener de cambio para el tipo de tarea que habilita/deshabilita campos (línea 450).
+   - Actualizado reseteo de formulario en creación para restaurar estado inhabilitado (línea 481).
+   - Actualizada población de modal de edición para incluir el tipo de tarea (línea 642).
+   - Incluido campo 'tipo' en los payloads de actualización (línea 688) y creación (vía FormData).
+   - Refactorizada lógica de renderDetallesAlumno para manejar 'Crédito Extra' en el cálculo de progreso (línea 1256).
+3. **II_BTP_A/Programacion/Imperativa_vs_POO.html**:
+   - Creada nueva presentación siguiendo el estándar de 16 diapositivas.
+   - Contenido didáctico profundo sobre la transición de Paradigma Imperativo a POO.
+4. **III_BTP_A/dw_II/Posicionamiento_Layout.html**:
+   - Creada nueva presentación siguiendo el estándar de 16 diapositivas.
+   - Contenido sobre Modelo de Caja (Box Model), Posicionamiento y Layouts.
+5. **js/data.js**:
+   - Vinculadas las 2 nuevas presentaciones en la malla curricular de II Parcial.
+
+[2026-06-14 06:35]
+Archivo: teacher-dashboard.html
+Líneas: 425-435, 785-795
+Descripción: Inyección de select 'tipo' en formularios de creación y edición.
+
+Archivo: js/teacher.js
+Líneas: 450-475
+Descripción: Implementación de event listener para habilitar/deshabilitar campos según selección de tipo de tarea.
+Líneas: 680-700
+Descripción: Actualización de payloads de API para incluir campo 'tipo'.
+Líneas: 1150-1200
+Descripción: Refactorización de renderDetallesAlumno para manejar lógica de Crédito Extra (puntos de recuperación).
+
+Archivo: js/presentation-engine.js
+Líneas: 105-115
+Descripción: Implementación de pathPrefix dinámico para carga de Banco de Preguntas en subdirectorios profundos.
+
+Archivo: II_BTP_A/Programacion/Imperativa_vs_POO.html
+Descripción: Creación de presentación de 16 diapositivas (Bloque 14 Junio).
+
+Archivo: III_BTP_A/dw_II/Posicionamiento_Layout.html
+Descripción: Creación de presentación de 16 diapositivas (Bloque 14 Junio).
+
+Archivo: js/data.js
+Descripción: Registro de nuevas presentaciones en el currículo.

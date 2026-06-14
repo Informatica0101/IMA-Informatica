@@ -220,7 +220,11 @@
                     self.quizQuestions = self.filterAndShuffle(allLoaded, 10);
                     return;
                 }
-                var path = '../js/Banco_Preguntas/' + meta.grado + '/' + meta.asignatura + '/' + levels[idx] + '.json';
+                // Dynamic path prefixing based on nesting level
+                var pathPrefix = window.location.pathname.split('/').length > 2 ? '../../' : '../';
+                if (window.location.pathname.indexOf('/juegos/') !== -1) pathPrefix = '../'; // Special case for games folder
+
+                var path = pathPrefix + 'js/Banco_Preguntas/' + meta.grado + '/' + meta.asignatura + '/' + levels[idx] + '.json';
 
                 var xhr = new XMLHttpRequest();
                 xhr.open('GET', path, true);

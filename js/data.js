@@ -52,7 +52,8 @@ window.presentationData = [
                     { title: "Lenguajes declarativos / Bucle Mientras", file: "II_BTP_A/Programacion/lenguajes_declarativos_mientras.html" },
                     { title: "Programación Lógica / Bucle Repetir", file: "II_BTP_A/Programacion/prog_logica_repetir.html" },
                     { title: "Bases de Datos: Tipos y Modelos", file: "II_BTP_A/Programacion/prog_bd_modelos.html" },
-                    { title: "Lenguajes de Programación Imperativos y Procedurales", file: "II_BTP_A/Programacion/Imperativos_Procedurales.html" }
+                    { title: "Lenguajes de Programación Imperativos y Procedurales", file: "II_BTP_A/Programacion/Imperativos_Procedurales.html" },
+                    { title: "Diferencias: Programación Imperativa vs POO", file: "II_BTP_A/Programacion/Imperativa_vs_POO.html" }
                 ]
             },
             {
@@ -122,7 +123,8 @@ window.presentationData = [
                     { title: "Modelo de Caja y Dimensiones", file: "III_BTP_A/dw_II/modelo_caja_dimensiones.html" },
                     { title: "Bordes, Enlaces y Decoración", file: "III_BTP_A/dw_II/bordes_enlaces_decoracion.html" },
                     { title: "Selectores (Simples, Múltiples y Globales)", file: "III_BTP_A/dw_II/selectores_css.html" },
-                    { title: "Clases, IDs y Pseudoclases", file: "III_BTP_A/dw_II/Clases_Ids_Pseudoclases.html" }
+                    { title: "Clases, IDs y Pseudoclases", file: "III_BTP_A/dw_II/Clases_Ids_Pseudoclases.html" },
+                    { title: "Posicionamiento, Layout y Modelo de Caja", file: "III_BTP_A/dw_II/Posicionamiento_Layout.html" }
                 ]
             }
         ]
