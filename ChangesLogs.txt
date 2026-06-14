@@ -85,3 +85,40 @@ Descripción: Creación de 10 reactivos basados en el contenido de la presentaci
 [2026-06-14 13:45]
 Archivo: II_BTP_A/Programacion/Imperativa_vs_POO.html
 Descripción: Actualización final de la Diapositiva 12. Se inyectó el algoritmo "SistemaEstudiantes" con lógica de arreglos bidimensionales y cálculo de promedios para Undécimo grado.
+
+[2026-06-15 10:00]
+Archivo: teacher-dashboard.html
+Líneas: 203-228, 834-850
+Descripción: Modificación de select de tipo de tarea para incluir 'Tarea' por defecto y inyección de contenedores para selección de tarea a reemplazar.
+
+Archivo: js/teacher.js
+Líneas: 448-480
+Descripción: Implementación de lógica de cambio de tipo de tarea, habilitación de campos por defecto y población dinámica de tareas reemplazables.
+Líneas: 503-530
+Descripción: Actualización de estado inicial de creación de tareas y agregado de pushState para navegación.
+Líneas: 664-685, 720-725, 1758-1765
+Descripción: Soporte para 'Crédito Extra' en edición y creación, incluyendo el mapeo de replacesTaskId en los payloads.
+
+Archivo: js/student.js
+Líneas: 212-240
+Descripción: Refactorización de renderStudentExpediente para validar tareas de Crédito Extra contra tareas rechazadas antes de sumarlas al progreso.
+Líneas: 366-375
+Descripción: Inyección de history.pushState al filtrar por asignatura para habilitar navegación con botón atrás.
+
+Archivo: js/index-ui.js
+Líneas: 347-355
+Descripción: Ajuste en la inicialización para disparar renderDownloadGrades automáticamente si el usuario ya tiene sesión activa.
+
+Archivo: js/config.js
+Líneas: 112-118
+Descripción: Actualización de sanitizarHTMLTecnico para permitir etiquetas <u>.
+Líneas: 297-308
+Descripción: Restricción del perímetro de seguridad anti-debugging exclusivamente a rutas que contienen '/juegos/'.
+
+Archivo: js/presentation-engine.js
+Líneas: 13-40, 188-215
+Descripción: Integración de History API en el motor de presentaciones. Implementación de pushState en cada cambio de diapositiva y manejo de popstate para navegación fluida.
+
+Archivo: js/ui-common.js
+Líneas: 167-185, 197-205
+Descripción: Ampliación del manejador global de popstate para dar soporte a los nuevos tipos de estado: 'task-creation' y 'student-subject-filter'.

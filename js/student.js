@@ -212,18 +212,29 @@ document.addEventListener('DOMContentLoaded', () => {
         );
 
         // --- Ajuste de Lógica de Progreso (Req 2) ---
-        // Excluir 'Credito Extra' del total asignado (baseline), ya que son de recuperación
-        const baseActivities = currentParcialActivities.filter(a => a.type !== 'Credito Extra');
+        // Excluir 'Crédito Extra' del total asignado (baseline), ya que son de recuperación
+        const baseActivities = currentParcialActivities.filter(a => a.type !== 'Crédito Extra');
         const totalAssigned = baseActivities.length;
 
-        // Las completadas suman puntos al progreso real (separando obligatorias de recuperación)
-        const mandatoryCompleted = currentParcialActivities.filter(a => a.type !== 'Credito Extra' && a.entrega &&
+        // Las completadas de tareas obligatorias
+        const mandatoryCompleted = currentParcialActivities.filter(a =>
+            (a.type !== 'Crédito Extra') && a.entrega &&
             (a.entrega.estado === 'Completada' || a.entrega.estado === 'Revisada' || a.entrega.estado === 'Finalizado')
         ).length;
 
-        const extraCreditCompleted = currentParcialActivities.filter(a => a.type === 'Credito Extra' && a.entrega &&
-            (a.entrega.estado === 'Completada' || a.entrega.estado === 'Revisada' || a.entrega.estado === 'Finalizado')
-        ).length;
+        // Las de Crédito Extra solo cuentan si reemplazan una tarea RECHAZADA o INCOMPLETA de este alumno
+        const extraCreditCompleted = currentParcialActivities.filter(a => {
+            if (a.type !== 'Crédito Extra') return false;
+            if (!a.entrega || !(a.entrega.estado === 'Completada' || a.entrega.estado === 'Revisada' || a.entrega.estado === 'Finalizado')) return false;
+
+            // Buscar la tarea que reemplaza
+            if (!a.replacesTaskId) return false;
+            const originalTask = currentParcialActivities.find(orig => orig.tareaId === a.replacesTaskId);
+            if (!originalTask || !originalTask.entrega) return false;
+
+            const status = originalTask.entrega.estado;
+            return (status === 'Rechazada' || status === 'Tarea incompleta');
+        }).length;
 
         // El progreso visual (slots llenos) se beneficia del crédito extra para cubrir faltantes (Req 2)
         const completed = Math.min(totalAssigned, mandatoryCompleted + extraCreditCompleted);
@@ -355,6 +366,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 renderActivities(finalActivities);
                 showSubjectInfo(subj);
+
+                // History Navigation support
+                history.pushState({
+                    type: 'student-subject-filter',
+                    subject: subj,
+                    parcial: selectedParcial
+                }, '');
             });
         });
 

@@ -56,3 +56,25 @@
 - **Archivos Involucrados:** II_BTP_A/Programacion/Imperativa_vs_POO.html, III_BTP_A/dw_II/Posicionamiento_Layout.html, js/data.js
 - **Descripción del Alcance:** Creación de presentaciones de 16 diapositivas para Programación y Diseño Web.
 - **Estado:** [X] Completada
+
+### [T-009] Optimización de Editor y Lógica de Crédito Extra
+- **Origen del Hallazgo:** Reporte de Usuario / Auditoría (2026-06-15)
+- **Severidad/Clasificación:** Alta
+- **Archivos Involucrados:** teacher-dashboard.html, js/teacher.js, js/student.js, js/config.js
+- **Descripción del Alcance:** Corregir bloqueo de editor, implementar vinculación de crédito extra con tareas rechazadas y arreglar sanitización de <u>.
+- **Criterios de Aceptación:** Editor usable desde inicio, crédito extra solo suma si reemplaza rechazada, navegación fluida.
+- **Estado:** [X] Completada
+
+### [T-010] Mejora de Navegación y Acceso a Contenidos
+- **Origen del Hallazgo:** Reporte de Usuario / Auditoría (2026-06-15)
+- **Severidad/Clasificación:** Media
+- **Archivos Involucrados:** js/index-ui.js, js/presentation-engine.js, js/ui-common.js
+- **Descripción del Alcance:** Habilitar History API en presentaciones y filtros, y auto-cargar contenido en la home.
+- **Estado:** [X] Completada
+
+### [T-011] Ajuste de Perímetro de Seguridad (Anti-Debugging)
+- **Origen del Hallazgo:** Reporte de Usuario (2026-06-15)
+- **Severidad/Clasificación:** Media
+- **Archivos Involucrados:** js/config.js
+- **Descripción del Alcance:** Restringir bloqueos de F12 y clic derecho únicamente a minijuegos.
+- **Estado:** [X] Completada

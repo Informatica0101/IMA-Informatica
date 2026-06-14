@@ -347,7 +347,12 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    renderInitialContentButton();
+    const currentUser = JSON.parse(localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser'));
+    if (currentUser) {
+        renderDownloadGrades();
+    } else {
+        renderInitialContentButton();
+    }
     renderInitialActivityButton();
     setupGlobalAuth();
     renderWelcomeMessage();

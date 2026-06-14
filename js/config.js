@@ -112,11 +112,11 @@ window.sanitizarHTMLTecnico = function(html) {
 
     // v7.6: Improved whitelist with attribute support (style, class, href)
     return sanitized
-        .replace(/&lt;(p|span|strong|b|i|em|ul|ol|li|code|pre|br)(.*?)&gt;/gi, function(match, tag, attrs) {
+        .replace(/&lt;(p|span|strong|b|i|u|em|ul|ol|li|code|pre|br)(.*?)&gt;/gi, function(match, tag, attrs) {
             var cleanAttrs = attrs.replace(/&quot;/g, '"').replace(/on\w+\s*=\s*".*?"/gi, '');
             return '<' + tag + cleanAttrs + '>';
         })
-        .replace(/&lt;\/(p|span|strong|b|i|em|ul|ol|li|code|pre)&gt;/gi, '</$1>')
+        .replace(/&lt;\/(p|span|strong|b|i|u|em|ul|ol|li|code|pre)&gt;/gi, '</$1>')
         .replace(/&lt;a\s+(.*?)&gt;/gi, function(match, attrs) {
              var cleanAttrs = attrs.replace(/&quot;/g, '"').replace(/on\w+\s*=\s*".*?"/gi, '');
              if (!cleanAttrs.includes('target=')) cleanAttrs += ' target="_blank"';
@@ -297,8 +297,16 @@ window.normalizeQuestion = function(q) {
 /**
  * REQ: Perímetro de Seguridad Anti-Debugging y Protección de Código (v7.6)
  * Implementa interceptores para prevenir ingeniería inversa y extracción de datos.
+ * Restringido únicamente al entorno de minijuegos según requerimiento institucional.
  */
 (function() {
+    // El bloqueo anti-debugging solo se aplica a los minijuegos en la carpeta /juegos/
+    var isMinigame = window.location.pathname.indexOf('/juegos/') !== -1;
+    if (!isMinigame) {
+        console.log("[QuizPro-Security] Modo estándar: Debugging permitido.");
+        return;
+    }
+
     var blockEvents = function(e) {
         if (e.stopPropagation) e.stopPropagation();
         if (e.preventDefault) e.preventDefault();

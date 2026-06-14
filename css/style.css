@@ -196,7 +196,7 @@ body {
 /* Typography */
 h1, .h1 { font-size: 1.5rem; font-weight: 600; letter-spacing: -0.01em; line-height: 1.2; }
 h2, .h2 { font-size: 1.25rem; font-weight: 600; letter-spacing: -0.005em; }
-p { font-size: 0.875rem; line-height: 1.6; color: var(--blue-grayish); font-weight: 400; }
+p { font-size: 0.875rem; line-height: 1.6; color: #1f2937; font-weight: 400; }
 
 /* Buttons Refined */
 .btn-ima {
@@ -312,7 +312,7 @@ footer a:hover {
     padding: 10px 16px;
     font-size: 0.65rem;
     font-weight: 600;
-    color: var(--blue-grayish);
+    color: #64748b;
     text-transform: uppercase;
     border-bottom: 1px solid #f1f5f9;
 }
@@ -353,7 +353,7 @@ footer a:hover {
     display: flex;
     align-items: center;
     justify-content: center;
-    color: var(--blue-grayish);
+    color: #64748b;
     transition: all 0.2s ease;
     padding: 8px;
     border-radius: 12px;
@@ -374,9 +374,9 @@ footer a:hover {
 .quill-content ol { list-style-type: decimal; margin-left: 1.5rem; margin-bottom: 1rem; }
 .quill-content h1 { font-size: 1.5rem; margin-top: 1rem; margin-bottom: 0.5rem; color: var(--gray-dark); font-weight: 600; }
 .quill-content h2 { font-size: 1.25rem; margin-top: 1rem; margin-bottom: 0.5rem; color: var(--gray-dark); font-weight: 600; }
-.quill-content p { margin-bottom: 0.75rem; color: var(--blue-grayish); font-weight: 400; }
+.quill-content p { margin-bottom: 0.75rem; color: #000000; font-weight: 400; }
 .quill-content strong { font-weight: 600; color: var(--gray-dark); }
-.quill-content blockquote { border-left: 4px solid var(--blue-institutional); padding-left: 1rem; font-style: italic; color: var(--blue-grayish); margin-bottom: 1rem; }
+.quill-content blockquote { border-left: 4px solid var(--blue-institutional); padding-left: 1rem; font-style: italic; color: #64748b; margin-bottom: 1rem; }
 
 /* Dashboard Accordion Internal Scroll */
 .assignment-content-scroll {

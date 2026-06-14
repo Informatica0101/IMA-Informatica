@@ -66,3 +66,27 @@ js/teacher.js:1171 | Lógica | Manejo de Crédito Extra | const baseAssignments 
 [Evidencia de Código Crudo]: Sustitución del ejemplo de biblioteca por el algoritmo SistemaEstudiantes.
 [Impacto Real en el Aula]: Alineación con el nivel de complejidad requerido para Undécimo grado (Arreglos bidimensionales).
 [Solución Manual sugerida en ES5]: Reemplazo de bloque de diapositiva con el Pseudocódigo proporcionado.
+
+### REPORTE DE AUDITORÍA: DASHBOARD DEL PROFESOR | EDITOR DE TAREAS Y CRÉDITO EXTRA (2026-06-15)
+[Archivo y Línea Exacta] | [Tipo de Fallo] | [Evidencia de Código Crudo] | [Impacto Real en el Aula] | [Solución Manual sugerida en ES5]
+--------------------------|-----------------|-----------------------------|---------------------------|---------------------------------
+js/teacher.js:525-542 | UX/Bug | Editor bloqueado al inicio | editorContainer.style.opacity = "0.5"; editorContainer.style.pointerEvents = "none"; | El docente no puede escribir inmediatamente, genera confusión. | Eliminar bloqueo inicial o activarlo solo si el select está vacío.
+teacher-dashboard.html:198 | UI | Default Select vacío | <option value="" disabled selected>Seleccione el tipo...</option> | Requiere un clic extra innecesario. | Cambiar a "Tarea" por defecto.
+js/teacher.js:518-523 | Lógica | Falta mapeo de reemplazo | N/A | No se puede vincular tarea de crédito extra con tarea rechazada. | Inyectar selector de "Tarea a reemplazar" dinámicamente.
+teacher-dashboard.html:24 | Estilo | Color de texto en Quill | .ql-editor { color: #000000 !important; } | Aunque existe el estilo, parece que el placeholder o el color inicial fallan. | Verificar inicialización de Quill y asegurar color base.
+
+### REPORTE DE AUDITORÍA: DASHBOARD DEL ESTUDIANTE | PROGRESO (2026-06-15)
+[Archivo y Línea Exacta] | [Tipo de Fallo] | [Evidencia de Código Crudo] | [Impacto Real en el Aula] | [Solución Manual sugerida en ES5]
+--------------------------|-----------------|-----------------------------|---------------------------|---------------------------------
+js/student.js:145-160 | Lógica | Conteo erróneo de Crédito Extra | const completed = Math.min(totalAssigned, mandatoryCompleted + extraCreditCompleted); | El progreso muestra más del 100% o cuenta tareas no vinculadas. | Ajustar lógica para que crédito extra solo sustituya si hay una rechazada.
+
+### REPORTE DE AUDITORÍA: NAVEGACIÓN Y SEGURIDAD (2026-06-15)
+[Archivo y Línea Exacta] | [Tipo de Fallo] | [Evidencia de Código Crudo] | [Impacto Real en el Aula] | [Solución Manual sugerida en ES5]
+--------------------------|-----------------|-----------------------------|---------------------------|---------------------------------
+js/config.js:335-360 | Seguridad | Bloqueo global de debugging | document.addEventListener('keydown', ...); | Dificulta soporte técnico en dashboards. | Envolver bloqueos en una condicional que detecte si estamos en un minijuego.
+js/presentation-engine.js | Navegación | Gestión de historial deficiente | window.addEventListener('popstate', ...) | El botón atrás cierra la app o reinicia. | Implementar pushState/replaceState para cada cambio de slide y nivel de navegación.
+
+### REPORTE DE AUDITORÍA: CONTENIDO DE CLASE (2026-06-15)
+[Archivo y Línea Exacta] | [Tipo de Fallo] | [Evidencia de Código Crudo] | [Impacto Real en el Aula] | [Solución Manual sugerida en ES5]
+--------------------------|-----------------|-----------------------------|---------------------------|---------------------------------
+js/index-ui.js:65-75 | Funcionalidad | Fallo en renderizado de contenido | renderDownloadGrades() | El div de descarga en la home no se puebla correctamente. | Verificar por qué no se dispara el renderizado inicial de recursos.

@@ -13,11 +13,25 @@
         quizStarted: false,
 
         init: function() {
+            var self = this;
             this.slides = document.querySelectorAll('.slide');
             this.setupNavigation();
             this.setupFullscreen();
             this.setupSecurity();
-            this.showSlide(0);
+
+            // Initial state
+            var slideFromUrl = 0;
+            if (window.location.hash) {
+                slideFromUrl = parseInt(window.location.hash.replace('#slide', '')) - 1;
+                if (isNaN(slideFromUrl)) slideFromUrl = 0;
+            }
+            this.showSlide(slideFromUrl, false);
+
+            window.addEventListener('popstate', function(event) {
+                if (event.state && typeof event.state.slideIndex === 'number') {
+                    self.showSlide(event.state.slideIndex, false);
+                }
+            });
 
             if (window.presentationMetadata) {
                 this.loadQuizFromBank();
@@ -174,8 +188,10 @@
             }
         },
 
-        showSlide: function(n) {
+        showSlide: function(n, pushState) {
             if (this.slides.length === 0) return;
+            if (typeof pushState === 'undefined') pushState = true;
+
             this.slides[this.currentSlide].classList.remove('active');
 
             this.currentSlide = n;
@@ -192,6 +208,10 @@
             var nextBtn = document.getElementById('next-btn');
             if (prevBtn) prevBtn.disabled = (this.currentSlide === 0);
             if (nextBtn) nextBtn.disabled = (this.currentSlide === this.slides.length - 1);
+
+            if (pushState) {
+                history.pushState({ slideIndex: this.currentSlide }, "", "#slide" + (this.currentSlide + 1));
+            }
 
             // 16-Slide Structure Rule: Evaluation typically on index 14
             if (this.currentSlide === 14 && !this.quizStarted) {

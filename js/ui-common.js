@@ -162,10 +162,29 @@ window.setupCommonUI = function() {
             const targetSection = document.getElementById(state.sectionId);
             if (targetNav && targetSection && window.navigateTo) {
                 window.navigateTo(targetSection, targetNav, false);
+                if (state.stack && window.syncNavWithState) {
+                    window.syncNavWithState(state);
+                }
             }
         } else if (state.type === 'hierarchical-nav') {
             if (window.syncNavWithState) {
                 window.syncNavWithState(state);
+            }
+        } else if (state.type === 'task-creation') {
+            const tareasListView = document.getElementById('tareas-list-view');
+            const tareasCreateView = document.getElementById('tareas-create-view');
+            const formContainerTarea = document.getElementById('form-container-crear-tarea');
+            const formContainerExamen = document.getElementById('form-container-crear-examen');
+            if (tareasListView && tareasCreateView) {
+                tareasListView.classList.add('hidden');
+                tareasCreateView.classList.remove('hidden');
+                if (state.view === 'tarea') {
+                    if (formContainerTarea) formContainerTarea.classList.remove('hidden');
+                    if (formContainerExamen) formContainerExamen.classList.add('hidden');
+                } else {
+                    if (formContainerTarea) formContainerTarea.classList.add('hidden');
+                    if (formContainerExamen) formContainerExamen.classList.remove('hidden');
+                }
             }
         } else if (state.type === 'academic-menu') {
             // REQ 8: Garantía de contexto en Navegación (Fase 8)
@@ -181,6 +200,15 @@ window.setupCommonUI = function() {
         } else if (state.type === 'modal-close') {
             if (state.modalId === 'academic-menu-modal') window.openAcademicMenu(false);
             if (state.modalId === 'profile-modal') window.openProfileModal(false);
+        } else if (state.type === 'student-subject-filter') {
+            const parcialTab = document.querySelector(`.parcial-tab[data-parcial="${state.parcial}"]`);
+            if (parcialTab) {
+                parcialTab.click();
+                setTimeout(() => {
+                    const subjectTab = document.querySelector(`.subject-tab[data-subject="${state.subject}"]`);
+                    if (subjectTab) subjectTab.click();
+                }, 100);
+            }
         }
 
         // REQ 8: Restaurar posición de scroll al navegar atrás

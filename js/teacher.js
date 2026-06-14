@@ -82,8 +82,18 @@ document.addEventListener('DOMContentLoaded', () => {
         navElement.classList.add('bg-blue-600', 'text-white');
         navElement.classList.remove('bg-gray-100', 'text-gray-500');
 
+        // Reset hierarchical nav stack if switching to Dashboard (A-77)
+        if (targetSection === sectionAcademicReports) {
+            navStack = [{ level: 'Grados', data: null }];
+        }
+
         if (pushState) {
-            history.pushState({ type: 'dashboard-section', sectionId: targetSection.id, navId: navElement.id }, '');
+            history.pushState({
+                type: 'dashboard-section',
+                sectionId: targetSection.id,
+                navId: navElement.id,
+                stack: (targetSection === sectionAcademicReports) ? navStack : null
+            }, '');
         }
     }
 
@@ -448,22 +458,43 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Task 1: Control de estados en creación de tareas
     const createTaskType = document.getElementById("create-task-type");
-    if (createTaskType) {
-        createTaskType.addEventListener("change", function(e) {
-            var isSelected = e.target.value !== "";
-            var titleInput = document.getElementById("create-task-title");
-            var editorContainer = document.getElementById("editor-task-container");
-            if (titleInput) titleInput.disabled = !isSelected;
-            if (editorContainer) {
-                if (isSelected) {
-                    editorContainer.style.opacity = "1";
-                    editorContainer.style.pointerEvents = "auto";
-                } else {
-                    editorContainer.style.opacity = "0.5";
-                    editorContainer.style.pointerEvents = "none";
-                }
+    const editTaskType = document.getElementById("edit-task-type");
+
+    function handleTaskTypeChange(e, prefix) {
+        const type = e.target.value;
+        const replaceContainer = document.getElementById(prefix + "replace-task-container");
+        const replaceSelect = document.getElementById(prefix + "replaces-task");
+
+        if (type === "Crédito Extra") {
+            if (replaceContainer) replaceContainer.classList.remove('hidden');
+            populateReplaceableTasks(replaceSelect);
+        } else {
+            if (replaceContainer) replaceContainer.classList.add('hidden');
+        }
+    }
+
+    async function populateReplaceableTasks(selectElement) {
+        if (!selectElement) return;
+        selectElement.innerHTML = '<option value="">Cargando tareas...</option>';
+        try {
+            // Usamos las tareas ya cargadas en allAssignmentsRaw
+            const tasks = allAssignmentsRaw.filter(a => a.tipoReal === 'Tarea' && a.tipo !== 'Crédito Extra');
+            if (tasks.length === 0) {
+                selectElement.innerHTML = '<option value="">No hay tareas disponibles</option>';
+                return;
             }
-        });
+            selectElement.innerHTML = '<option value="">Seleccione tarea original...</option>' +
+                tasks.map(t => `<option value="${t.tareaId}">${t.titulo} (${t.asignatura})</option>`).join('');
+        } catch (e) {
+            selectElement.innerHTML = '<option value="">Error al cargar</option>';
+        }
+    }
+
+    if (createTaskType) {
+        createTaskType.addEventListener("change", (e) => handleTaskTypeChange(e, ""));
+    }
+    if (editTaskType) {
+        editTaskType.addEventListener("change", (e) => handleTaskTypeChange(e, "edit-"));
     }
 
     // --- Lógica de Navegación de Tareas ---
@@ -482,12 +513,16 @@ document.addEventListener('DOMContentLoaded', () => {
         const typeSelect = document.getElementById('create-task-type');
         const titleInput = document.getElementById('create-task-title');
         const editorContainer = document.getElementById('editor-task-container');
+        const replaceContainer = document.getElementById('replace-task-container');
 
-        if (typeSelect) typeSelect.value = "";
-        if (titleInput) titleInput.disabled = true;
+        if (typeSelect) typeSelect.value = "Tarea";
+        if (titleInput) titleInput.disabled = false;
         if (editorContainer) {
-            editorContainer.style.opacity = "0.5"; editorContainer.style.pointerEvents = "none";
+            editorContainer.style.opacity = "1"; editorContainer.style.pointerEvents = "auto";
         }
+        if (replaceContainer) replaceContainer.classList.add('hidden');
+
+        history.pushState({ type: 'task-creation', view: 'tarea' }, '');
     };
     if (btnShowCreateExam) btnShowCreateExam.onclick = () => {
         tareasListView.classList.add('hidden');
@@ -495,6 +530,7 @@ document.addEventListener('DOMContentLoaded', () => {
         formContainerTarea.classList.add('hidden');
         formContainerExamen.classList.remove('hidden');
         document.getElementById('tareas-form-title').textContent = "Crear Nuevo Examen";
+        history.pushState({ type: 'task-creation', view: 'examen' }, '');
     };
     if (btnBackToTareas) btnBackToTareas.onclick = () => {
         tareasListView.classList.remove('hidden');
@@ -641,8 +677,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Task 1: Populate task type in edit form
         const editTypeSelect = document.getElementById('edit-task-type');
+        const editReplaceContainer = document.getElementById('edit-replace-task-container');
+        const editReplaceSelect = document.getElementById('edit-replaces-task');
+
         if (editTypeSelect) {
             editTypeSelect.value = item.tipo || "Tarea";
+            if (editTypeSelect.value === 'Crédito Extra') {
+                if (editReplaceContainer) editReplaceContainer.classList.remove('hidden');
+                populateReplaceableTasks(editReplaceSelect).then(() => {
+                    if (item.replacesTaskId) editReplaceSelect.value = item.replacesTaskId;
+                });
+            } else {
+                if (editReplaceContainer) editReplaceContainer.classList.add('hidden');
+            }
         }
         document.getElementById('edit-titulo').value = item.titulo;
 
@@ -686,7 +733,8 @@ document.addEventListener('DOMContentLoaded', () => {
             fechaLimite: document.getElementById('edit-fecha').value,
             puntaje: document.getElementById('edit-puntaje').value,
             archivoUrl: document.getElementById('edit-archivo').value,
-            tipo: document.getElementById('edit-task-type').value
+            tipo: document.getElementById('edit-task-type').value,
+            replacesTaskId: document.getElementById('edit-replaces-task').value
         };
 
         if (tipo === 'Tarea') {
@@ -1723,6 +1771,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Obtener contenido de Quill
         if (quillTask) formData.descripcion = quillTask.root.innerHTML;
+        if (formData.tipo === 'Crédito Extra') {
+            formData.replacesTaskId = document.getElementById('create-replaces-task').value;
+        }
 
         btn.classList.add('btn-loading');
         try {
