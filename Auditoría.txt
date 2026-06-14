@@ -1,17 +1,9 @@
-AUDITORÍA TÉCNICA - Sun Jun 14 17:50:19 UTC 2026
+AUDITORÍA DE ESTILOS - Sun Jun 14 22:49:59 UTC 2026
 
-[js/config.js:207-238] [Tipo de Fallo: Alcance incorrecto] [Evidencia: IIFE global de seguridad] [Impacto: Restricciones en dashboards administrativos] [Solución: Mover a js/security-minigames.js y cargar solo en minijuegos].
+Archivo: css/style.css
+Hallazgo: Se detectó que el selector global 'p' (línea 199) define color: var(--blue-grayish). Aunque existen reglas específicas para .quill-content p y .ql-editor (líneas 373-383), la herencia o especificidad podría estar causando que elementos internos de Quill mantengan el gris.
 
-[teacher-dashboard.html:205] [Tipo de Fallo: UX] [Evidencia: <select> sin opción default activa] [Impacto: Fricción al crear tareas] [Solución: Marcar 'Tarea' como selected].
+Archivo: js/teacher.js
+Hallazgo: Se está forzando color: #000000; vía JS en el contenedor raíz del editor, pero si Quill inyecta párrafos dinámicamente, estos podrían heredar el gris global.
 
-[js/teacher.js:469-482] [Tipo de Fallo: Inicialización] [Evidencia: Reset de formulario bloquea editor] [Impacto: Editor inaccesible al abrir] [Solución: Forzar habilitación si es 'Tarea'].
-
-[js/teacher.js:415-455] [Tipo de Fallo: Estilo] [Evidencia: Quill init sin forzar color] [Impacto: Texto gris claro ilegible] [Solución: Forzar ql-editor color: black].
-
-[js/student.js:198-250] [Tipo de Fallo: Lógica de Negocio] [Evidencia: Baseline incluye Crédito Extra] [Impacto: Estadísticas infladas/incorrectas] [Solución: Excluir 'Crédito Extra' de totalAssigned].
-
-[js/index-ui.js:73-95] [Tipo de Fallo: Renderizado] [Evidencia: renderDownloadGrades no muestra contenido en el main] [Impacto: Recursos inaccesibles desde el home] [Solución: Asegurar población de contentDisplayArea].
-
-[js/ui-common.js:137-189] [Tipo de Fallo: Navegación] [Evidencia: popstate incompleto] [Impacto: El app se cierra o vuelve al home al dar atrás] [Solución: Mapear estados de historia a vistas de UI].
-
-[js/presentation-engine.js:173] [Tipo de Fallo: Navegación] [Evidencia: showSlide no registra historial] [Impacto: Al dar atrás sale de la presentación] [Solución: pushState en cambio de diapositiva].
+Diagnóstico: La especificidad de 'p' en style.css (color: var(--blue-grayish)) es muy alta al ser un tag universal. Quill envuelve casi todo en tags 'p'. Se requiere una regla de reset más agresiva para el contenedor del editor.

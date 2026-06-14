@@ -25,3 +25,14 @@ Módulo: Cache y Rendimiento (Silent Reconciliation)
 Módulo: Presentaciones
 - js/presentation-engine.js:
     - Agregado listener de popstate para navegar entre diapositivas usando los botones nativos del navegador.
+REGISTRO DE CAMBIOS FINAL (Color Fix) - Sun Jun 14 22:55:40 UTC 2026
+
+Módulo: Estilos Globales
+- css/style.css:
+    - Se implementó un reset de color agresivo (v7.6.2) para contenedores Quill.
+    - Se forzó color: #000000 !important en p, span, li, strong, h1-h3 dentro de .quill-content y .ql-editor.
+    - Esto anula la herencia del color gris de la regla global 'p'.
+
+Módulo: Dashboard del Profesor
+- teacher-dashboard.html:
+    - Reforzada la regla inline para asegurar color negro en todos los elementos hijos de .ql-editor.
