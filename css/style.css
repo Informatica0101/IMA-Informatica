@@ -145,6 +145,18 @@ body {
 
 .animate-fade-in-up { animation: fadeIn var(--anim-speed) ease-out forwards; }
 
+@keyframes fadeOutUp {
+    from { opacity: 1; transform: translateY(0); }
+    to { opacity: 0; transform: translateY(-10px); }
+}
+@keyframes fadeInDown {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-out-up { animation: fadeOutUp var(--anim-speed) ease-in forwards; }
+.animate-fade-in-down { animation: fadeInDown var(--anim-speed) ease-out forwards; }
+
 /* 4px-based Spacing System */
 .p-4px { padding: 4px !important; }
 .p-8px { padding: 8px !important; }
@@ -196,7 +208,7 @@ body {
 /* Typography */
 h1, .h1 { font-size: 1.5rem; font-weight: 600; letter-spacing: -0.01em; line-height: 1.2; }
 h2, .h2 { font-size: 1.25rem; font-weight: 600; letter-spacing: -0.005em; }
-p { font-size: 0.875rem; line-height: 1.6; color: var(--blue-grayish); font-weight: 400; }
+p { font-size: 0.875rem; line-height: 1.6; color: #1f2937; font-weight: 400; }
 
 /* Buttons Refined */
 .btn-ima {
@@ -369,7 +381,8 @@ footer a:hover {
     color: var(--blue-institutional);
 }
 
-/* Quill Editor Rich Text Reset (Force Black Color v7.6.2) */
+/* Quill Editor Rich Text Reset (Default Black Color v7.6.2) */
+/* REQ: Permite que el color picker funcione eliminando !important de los selectores generales de contenido */
 .quill-content, .ql-editor,
 .quill-content p, .ql-editor p,
 .quill-content span, .ql-editor span,
@@ -378,15 +391,28 @@ footer a:hover {
 .quill-content h1, .ql-editor h1,
 .quill-content h2, .ql-editor h2,
 .quill-content h3, .ql-editor h3 {
-    color: #000000 !important;
+    color: #000000;
 }
+
+/* Forzar negro solo en el contenedor raíz si no hay estilos inline */
+.ql-editor {
+    color: #000000;
+}
+
+/* Placeholder debe mantener su color grisáceo estándar */
+.ql-editor.ql-blank::before {
+    color: #9ca3af !important;
+    -webkit-text-fill-color: #9ca3af !important;
+    font-style: normal !important;
+}
+
 .quill-content ul { list-style-type: disc; margin-left: 1.5rem; margin-bottom: 1rem; }
 .quill-content ol { list-style-type: decimal; margin-left: 1.5rem; margin-bottom: 1rem; }
 .quill-content h1 { font-size: 1.5rem; margin-top: 1rem; margin-bottom: 0.5rem; font-weight: 600; }
 .quill-content h2 { font-size: 1.25rem; margin-top: 1rem; margin-bottom: 0.5rem; font-weight: 600; }
 .quill-content p { margin-bottom: 0.75rem; font-weight: 400; }
 .quill-content strong { font-weight: 600; }
-.quill-content blockquote { border-left: 4px solid var(--blue-institutional); padding-left: 1rem; font-style: italic; color: #000000 !important; margin-bottom: 1rem; }
+.quill-content blockquote { border-left: 4px solid var(--blue-institutional); padding-left: 1rem; font-style: italic; color: #000000; margin-bottom: 1rem; }
 
 /* Dashboard Accordion Internal Scroll */
 .assignment-content-scroll {

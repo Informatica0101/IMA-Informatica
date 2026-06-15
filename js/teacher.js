@@ -407,47 +407,45 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Inicialización de Editores Quill ---
     let quillTask, quillExam, quillEdit, quillNews;
     function initEditors() {
-        if (!quillTask && document.getElementById('editor-task-container')) {
-            quillTask = new Quill('#editor-task-container', { theme: 'snow', placeholder: 'Escribe la descripción de la tarea...', modules: { toolbar: [
+        const toolbarOptions = [
             ['bold', 'italic', 'underline', 'strike'],
-            [{ 'color': [] }, { 'background': [] }],
+            [{ 'color': ['#000000', '#e60000', '#ff9900', '#ffff00', '#008a00', '#0066cc', '#9933ff', '#ffffff', '#facccc', '#ffebcc', '#ffffcc', '#cce8cc', '#cce0f5', '#ebd6ff', '#bbbbbb', '#f06666', '#ffc266', '#ffff66', '#66b966', '#66a3e0', '#c285ff', '#888888', '#a10000', '#b26b00', '#b2b200', '#006100', '#0047b2', '#6b24b2', '#444444', '#5c0000', '#663d00', '#666600', '#003700', '#002966', '#3d1466'] }, { 'background': [] }],
             [{ 'list': 'ordered'}, { 'list': 'bullet' }],
             ['link', 'image'],
             ['clean']
-        ] } });
-            // Forzar color de texto negro
+        ];
+
+        if (!quillTask && document.getElementById('editor-task-container')) {
+            quillTask = new Quill('#editor-task-container', { theme: 'snow', placeholder: 'Escribe la descripción de la tarea...', modules: { toolbar: toolbarOptions } });
             quillTask.root.style.color = '#000000';
         }
         if (!quillExam && document.getElementById('editor-exam-container')) {
-            quillExam = new Quill('#editor-exam-container', { theme: 'snow', placeholder: 'Escribe las instrucciones del examen...', modules: { toolbar: [
-            ['bold', 'italic', 'underline', 'strike'],
-            [{ 'color': [] }, { 'background': [] }],
-            [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-            ['link', 'image'],
-            ['clean']
-        ] } });
+            quillExam = new Quill('#editor-exam-container', { theme: 'snow', placeholder: 'Escribe las instrucciones del examen...', modules: { toolbar: toolbarOptions } });
             quillExam.root.style.color = '#000000';
         }
         if (!quillEdit && document.getElementById('editor-edit-container')) {
-            quillEdit = new Quill('#editor-edit-container', { theme: 'snow', modules: { toolbar: [
-            ['bold', 'italic', 'underline', 'strike'],
-            [{ 'color': [] }, { 'background': [] }],
-            [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-            ['link', 'image'],
-            ['clean']
-        ] } });
+            quillEdit = new Quill('#editor-edit-container', { theme: 'snow', modules: { toolbar: toolbarOptions } });
             quillEdit.root.style.color = '#000000';
         }
         if (!quillNews && document.getElementById('editor-news-container')) {
-            quillNews = new Quill('#editor-news-container', { theme: 'snow', placeholder: 'Contenido de la noticia...', modules: { toolbar: [
-            ['bold', 'italic', 'underline', 'strike'],
-            [{ 'color': [] }, { 'background': [] }],
-            [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-            ['link', 'image'],
-            ['clean']
-        ] } });
+            quillNews = new Quill('#editor-news-container', { theme: 'snow', placeholder: 'Contenido de la noticia...', modules: { toolbar: toolbarOptions } });
             quillNews.root.style.color = '#000000';
         }
+
+        // REQ: Forzar negro por defecto si no hay un color seleccionado (v7.6.2)
+        [quillTask, quillExam, quillEdit, quillNews].forEach(q => {
+            if (q) {
+                q.on('selection-change', function(range) {
+                    if (range && range.length === 0) { // Solo si es el cursor de inserción
+                        const formats = q.getFormat(range);
+                        // Si no hay color activo, asegurar que el siguiente texto sea negro
+                        if (!formats.color) {
+                            q.format('color', '#000000', 'silent');
+                        }
+                    }
+                });
+            }
+        });
     }
     initEditors();
 
