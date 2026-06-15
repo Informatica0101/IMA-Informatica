@@ -66,3 +66,9 @@ Módulo: Documentación Técnica
 - Auditoria.txt: Registro de hallazgos críticos detectados en la auditoría manual post-implementación.
 - Pendientes.md: Marcadas T-016 y T-017 como completadas.
 - MapaDependencias.md: Actualizado con el esquema de persistencia DB v4 y el flujo de navegación SPA.
+
+[2026-06-15]
+- js/index-ui.js: Implementada jerarquía completa para profesores y auto-avance para estudiantes.
+- js/ui-common.js: Refactorizado manejo de popstate y estados de modal para SPA.
+- js/teacher.js & js/student.js: Aplicada estrategia Cache-First en módulos críticos.
+- css/style.css: Agregado soporte visual para code-blocks.

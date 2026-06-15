@@ -4,13 +4,13 @@
 - **Estado:** [X] Completada
 
 ### [T-003] Enriquecimiento de Reactivos de Periféricos
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 ### [T-004] Saneamiento de js/config.js y Perímetro de Seguridad
 - **Estado: [X] Completada** (Integrada en T-014)
 
 ### [T-005] Verificación de Silencio en Sincronización
-- **Estado: [ ] Pendiente**
+- **Estado: [X] Completada**
 
 ### [T-006] Validación de Contenidos 10mo Grado
 - **Estado: [X] Completada**

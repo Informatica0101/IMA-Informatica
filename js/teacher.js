@@ -119,8 +119,28 @@ document.addEventListener('DOMContentLoaded', () => {
         const asigList = document.getElementById('admin-asignaturas-list');
         if (!parcialSelect || !asigList) return;
 
+        // REQ: Cache-First for Admin Config
+        if (window.PersistenceManager) {
+            const cached = await window.PersistenceManager.get('academic_stats', 'config');
+            if (cached && cached.data && cached.data.ParcialActual) {
+                parcialSelect.value = cached.data.ParcialActual;
+                window.PARCIAL_ACTUAL = cached.data.ParcialActual;
+                renderAsignaturasCheckboxes(); // Trigger initial checkboxes render
+            }
+        }
+
         try {
-            const configRes = await fetchApi('USER', 'getAcademicConfig');
+            const configRes = await fetchApi('USER', 'getAcademicConfig', {}, 0, {
+                store: 'academic_stats',
+                key: 'config',
+                onUpdate: (data) => {
+                    if (data.ParcialActual) {
+                        parcialSelect.value = data.ParcialActual;
+                        window.PARCIAL_ACTUAL = data.ParcialActual;
+                        renderAsignaturasCheckboxes();
+                    }
+                }
+            });
             if (configRes.status === 'success' && configRes.data.ParcialActual) {
                 parcialSelect.value = configRes.data.ParcialActual;
                 window.PARCIAL_ACTUAL = configRes.data.ParcialActual;
@@ -136,17 +156,14 @@ document.addEventListener('DOMContentLoaded', () => {
         const asigList = document.getElementById('admin-asignaturas-list');
         const parcial = document.getElementById('admin-parcial-actual').value;
 
-        // Asignaturas base de la plataforma
         const baseAsignaturas = [
             "Informática Aplicada", "Ofimática", "Diseño Web",
             "Programación", "Análisis y Diseño", "Bases de Datos",
             "Redes", "Programación Orientada a Objetos", "Informática I"
         ];
 
-        try {
-            const activeRes = await fetchApi('USER', 'getAsignaturasActivas', { parcial });
-            const activeSet = new Set(activeRes.data || []);
-
+        const renderActiveList = (activeData) => {
+            const activeSet = new Set(activeData || []);
             asigList.innerHTML = baseAsignaturas.map(asig => `
                 <label class="flex items-center gap-2 p-2 hover:bg-blue-50 rounded-lg cursor-pointer transition-colors">
                     <input type="checkbox" class="admin-asig-checkbox w-4 h-4 text-blue-600 rounded focus:ring-blue-500"
@@ -154,8 +171,28 @@ document.addEventListener('DOMContentLoaded', () => {
                     <span class="text-[10px] font-bold text-gray-700 uppercase">${asig}</span>
                 </label>
             `).join('');
+        };
+
+        // REQ: Cache-First for Active Subjects
+        const cacheKey = `active_subjects_${parcial}`;
+        if (window.PersistenceManager) {
+            const cached = await window.PersistenceManager.get('academic_stats', cacheKey);
+            if (cached && cached.data) {
+                renderActiveList(cached.data);
+            }
+        }
+
+        try {
+            const activeRes = await fetchApi('USER', 'getAsignaturasActivas', { parcial }, 0, {
+                store: 'academic_stats',
+                key: cacheKey,
+                onUpdate: (data) => renderActiveList(data)
+            });
+            if (activeRes.status === 'success') {
+                renderActiveList(activeRes.data);
+            }
         } catch (e) {
-            asigList.innerHTML = '<p class="text-[10px] text-red-500 p-2">Error al cargar asignaturas.</p>';
+            if (!asigList.innerHTML) asigList.innerHTML = '<p class="text-[10px] text-red-500 p-2">Error al cargar asignaturas.</p>';
         }
     }
 
@@ -317,7 +354,68 @@ document.addEventListener('DOMContentLoaded', () => {
             const tbody = document.getElementById('report-table-body');
             const thead = document.getElementById('report-table-head');
 
-            tbody.innerHTML = '<tr><td colspan="10" class="text-center p-8">Cargando reporte...</td></tr>';
+            const cacheKey = `report_${grado}_${seccion}_${parcial}`;
+
+            const renderReport = (students, allTasks, allExams, taskSubmissions, examSubmissions) => {
+                let headHtml = `<tr class="bg-gray-50 border-b border-gray-100">
+                    <th class="p-4 text-left font-medium text-gray-500 uppercase tracking-wider text-[0.7rem]">Nº</th>
+                    <th class="p-4 text-left font-medium text-gray-500 uppercase tracking-wider text-[0.7rem]">Alumno</th>`;
+
+                allTasks.forEach(t => {
+                    headHtml += `<th class="p-4 text-center font-medium text-gray-500 uppercase tracking-wider text-[0.7rem]" title="${t.titulo}">${t.titulo.substring(0,10)}...</th>`;
+                });
+                allExams.forEach(e => {
+                    headHtml += `<th class="p-4 text-center font-medium text-gray-500 uppercase tracking-wider text-[0.7rem]" title="${e.titulo}">EX: ${e.titulo.substring(0,8)}...</th>`;
+                });
+
+                headHtml += `<th class="p-4 text-right font-medium text-gray-500 uppercase tracking-wider text-[0.7rem]">Total</th></tr>`;
+                thead.innerHTML = headHtml;
+
+                if (!students || students.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="10" class="p-8 text-center text-gray-400">No se encontraron alumnos para los filtros seleccionados.</td></tr>';
+                    return;
+                }
+
+                tbody.innerHTML = students.map((s, idx) => {
+                    let total = 0;
+                    let rowHtml = `<tr class="hover:bg-gray-50 transition-colors">
+                        <td class="p-4 text-gray-400 font-mono text-xs">${s.numeroLista || idx+1}</td>
+                        <td class="p-4 font-medium text-gray-800">${s.nombre}</td>`;
+
+                    allTasks.forEach(t => {
+                        const sub = taskSubmissions.find(sub => sub.alumnoId == (s.userId || s.id) && sub.titulo === t.titulo);
+                        const score = sub ? parseFloat(sub.calificacion || 0) : 0;
+                        total += score;
+                        rowHtml += `<td class="p-4 text-center font-medium ${score > 0 ? 'text-green-600' : 'text-gray-300'}">${score}</td>`;
+                    });
+
+                    allExams.forEach(e => {
+                        const sub = examSubmissions.find(sub => sub.alumnoId == (s.userId || s.id) && sub.titulo === e.titulo);
+                        const score = sub ? parseFloat(sub.calificacion || 0) : 0;
+                        total += score;
+                        rowHtml += `<td class="p-4 text-center font-medium ${score > 0 ? 'text-purple-600' : 'text-gray-300'}">${score}</td>`;
+                    });
+
+                    const approved = total >= 70;
+                    rowHtml += `<td class="p-4 text-right font-semibold ${approved ? 'text-blue-700' : 'text-red-600'}">${total}%</td></tr>`;
+                    return rowHtml;
+                }).join('');
+            };
+
+            // REQ: Eager Caching for Academic Reports
+            let hasLocal = false;
+            if (window.PersistenceManager) {
+                const cached = await window.PersistenceManager.get('cache_teacher_reports', cacheKey);
+                if (cached && cached.data) {
+                    const d = cached.data;
+                    renderReport(d.students, d.allTasks, d.allExams, d.taskSubmissions, d.examSubmissions);
+                    hasLocal = true;
+                }
+            }
+
+            if (!hasLocal) {
+                tbody.innerHTML = '<tr><td colspan="10" class="text-center p-8">Cargando reporte...</td></tr>';
+            }
 
             try {
                 const [studentsRes, tasksRes, examsRes, taskSubRes, examSubRes] = await Promise.all([
@@ -334,50 +432,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 const taskSubmissions = taskSubRes.data || [];
                 const examSubmissions = examSubRes.data || [];
 
-                // Solo tareas y exámenes que tengan entregas o existan para este parcial
-                let headHtml = `<tr class="bg-gray-50 border-b border-gray-100">
-                    <th class="p-4 text-left font-medium text-gray-500 uppercase tracking-wider text-[0.7rem]">Nº</th>
-                    <th class="p-4 text-left font-medium text-gray-500 uppercase tracking-wider text-[0.7rem]">Alumno</th>`;
-
-                allTasks.forEach(t => {
-                    headHtml += `<th class="p-4 text-center font-medium text-gray-500 uppercase tracking-wider text-[0.7rem]" title="${t.titulo}">${t.titulo.substring(0,10)}...</th>`;
-                });
-                allExams.forEach(e => {
-                    headHtml += `<th class="p-4 text-center font-medium text-gray-500 uppercase tracking-wider text-[0.7rem]" title="${e.titulo}">EX: ${e.titulo.substring(0,8)}...</th>`;
-                });
-
-                headHtml += `<th class="p-4 text-right font-medium text-gray-500 uppercase tracking-wider text-[0.7rem]">Total</th></tr>`;
-                thead.innerHTML = headHtml;
-
-                if (students.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="10" class="p-8 text-center text-gray-400">No se encontraron alumnos para los filtros seleccionados.</td></tr>';
-                    return;
+                if (window.PersistenceManager) {
+                    window.PersistenceManager.set('cache_teacher_reports', {
+                        students, allTasks, allExams, taskSubmissions, examSubmissions
+                    }, cacheKey);
                 }
 
-                tbody.innerHTML = students.map((s, idx) => {
-                    let total = 0;
-                    let rowHtml = `<tr class="hover:bg-gray-50 transition-colors">
-                        <td class="p-4 text-gray-400 font-mono text-xs">${s.numeroLista || idx+1}</td>
-                        <td class="p-4 font-medium text-gray-800">${s.nombre}</td>`;
-
-                    allTasks.forEach(t => {
-                        const sub = taskSubmissions.find(sub => sub.alumnoId == s.userId && sub.titulo === t.titulo);
-                        const score = sub ? parseFloat(sub.calificacion || 0) : 0;
-                        total += score;
-                        rowHtml += `<td class="p-4 text-center font-medium ${score > 0 ? 'text-green-600' : 'text-gray-300'}">${score}</td>`;
-                    });
-
-                    allExams.forEach(e => {
-                        const sub = examSubmissions.find(sub => sub.alumnoId == s.userId && sub.titulo === e.titulo);
-                        const score = sub ? parseFloat(sub.calificacion || 0) : 0;
-                        total += score;
-                        rowHtml += `<td class="p-4 text-center font-medium ${score > 0 ? 'text-purple-600' : 'text-gray-300'}">${score}</td>`;
-                    });
-
-                    const approved = total >= 70;
-                    rowHtml += `<td class="p-4 text-right font-semibold ${approved ? 'text-blue-700' : 'text-red-600'}">${total}%</td></tr>`;
-                    return rowHtml;
-                }).join('');
+                renderReport(students, allTasks, allExams, taskSubmissions, examSubmissions);
 
             } catch (e) {
                 tbody.innerHTML = `<tr><td colspan="10" class="text-center p-8 text-red-500">Error: ${e.message}</td></tr>`;
@@ -409,7 +470,7 @@ document.addEventListener('DOMContentLoaded', () => {
             ['bold', 'italic', 'underline', 'strike'],
             [{ 'color': ['#000000', '#e60000', '#ff9900', '#ffff00', '#008a00', '#0066cc', '#9933ff', '#ffffff', '#facccc', '#ffebcc', '#ffffcc', '#cce8cc', '#cce0f5', '#ebd6ff', '#bbbbbb', '#f06666', '#ffc266', '#ffff66', '#66b966', '#66a3e0', '#c285ff', '#888888', '#a10000', '#b26b00', '#b2b200', '#006100', '#0047b2', '#6b24b2', '#444444', '#5c0000', '#663d00', '#666600', '#003700', '#002966', '#3d1466'] }, { 'background': [] }],
             [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-            ['link', 'image'],
+            ['link', 'image', 'code-block'],
             ['clean']
         ];
 
