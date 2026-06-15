@@ -42,3 +42,27 @@ Módulo: Auditoría y Refactorización (Code Review Fixes)
     - Eliminada llamada redundante a fetchApi en fetchLogros para optimizar el consumo de recursos y evitar renderizados duplicados.
 - js/index-ui.js:
     - Restaurados estilos de botones institucionales (font-medium, text-sm) para mantener la coherencia visual con el resto de la plataforma.
+
+REGISTRO DE AUDITORÍA Y REMEDIACIÓN FINAL - Mon Jun 15 01:45:00 UTC 2026
+
+Módulo: Index y Navegación de Recursos (Remediación T-016)
+- js/index-ui.js:
+    - Implementada jerarquía completa para Profesores: Grados -> Secciones -> Parciales -> Asignaturas -> Temas.
+    - Se agregaron las funciones 'renderDownloadSections' y 'renderDownloadPartials' para manejar los niveles intermedios.
+    - Se refactorizó 'renderDownloadSubjects' para aplicar filtros dinámicos basados en la selección de sección y parcial del docente.
+    - Se eliminó la lógica de retroceso manual en favor de 'history.back()' para garantizar consistencia con el historial del navegador.
+
+Módulo: Navegación Global (Remediación T-013/T-016)
+- js/ui-common.js:
+    - Expandido el manejador 'handlePopState' para restaurar los nuevos niveles de 'sections' y 'partials' en el Index.
+    - Asegurada la persistencia de 'selectedSection' y 'selectedPartial' en el objeto de estado de la historia.
+
+Módulo: Rendimiento y Dashboards (Remediación T-017)
+- js/teacher.js:
+    - Refactorizada la función 'fetchLogros' eliminando una llamada redundante a 'fetchApi'.
+    - Ahora se utiliza una única petición que gestiona la hidratación desde caché y la actualización silenciosa mediante el callback 'onUpdate'.
+
+Módulo: Documentación Técnica
+- Auditoria.txt: Registro de hallazgos críticos detectados en la auditoría manual post-implementación.
+- Pendientes.md: Marcadas T-016 y T-017 como completadas.
+- MapaDependencias.md: Actualizado con el esquema de persistencia DB v4 y el flujo de navegación SPA.

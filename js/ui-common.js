@@ -185,8 +185,16 @@ window.setupCommonUI = function() {
         } else if (state.type === 'index-content') {
             if (state.view === 'grades') {
                 if (window.renderDownloadGrades) window.renderDownloadGrades(false);
+            } else if (state.view === 'sections') {
+                if (state.gradeData) window.selectedGradeData = state.gradeData;
+                if (window.renderDownloadSections) window.renderDownloadSections(false);
+            } else if (state.view === 'partials') {
+                if (state.section) window.selectedSection = state.section;
+                if (window.renderDownloadPartials) window.renderDownloadPartials(false);
             } else if (state.view === 'subjects') {
                 if (state.gradeData) window.selectedGradeData = state.gradeData;
+                if (state.section) window.selectedSection = state.section;
+                if (state.partial) window.selectedPartial = state.partial;
                 if (window.renderDownloadSubjects) window.renderDownloadSubjects(false);
             } else if (state.view === 'topics') {
                 if (state.subjectData) window.selectedSubjectData = state.subjectData;

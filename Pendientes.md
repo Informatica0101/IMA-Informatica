@@ -44,3 +44,17 @@
 - **Severidad:** Alta
 - **Descripción:** El color global de 'p' sobrepasaba el fix anterior.
 - **Estado:** [X] Completada (2026-06-14)
+
+### [T-016] Implementación de Jerarquía Completa para Profesores en Index
+- **Origen del Hallazgo:** Auditoría Técnica (2026-06-15)
+- **Severidad:** Crítico
+- **Archivos Involucrados:** js/index-ui.js
+- **Descripción:** Implementar los niveles de 'Secciones' y 'Parciales' en el Centro de Recursos Académicos del Index para el rol Profesor.
+- **Criterios de Aceptación:** Flujo Grados -> Secciones -> Parciales -> Asignaturas -> Temas funcional y con soporte de historial.
+
+### [T-017] Optimización de fetchLogros (Teacher Dashboard)
+- **Origen del Hallazgo:** Code Review / Auditoría (2026-06-15)
+- **Severidad:** Medio
+- **Archivos Involucrados:** js/teacher.js
+- **Descripción:** Eliminar la doble llamada a fetchApi.
+- **Criterios de Aceptación:** Una sola llamada que maneje tanto caché como actualización de red.

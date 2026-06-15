@@ -81,7 +81,6 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        // Filtrado previo para ver si hay auto-avance
         const filteredGrades = window.downloadContentData.filter(gradeData => {
             if (!isProfesor && currentUser?.grado) {
                 return window.parseGrade(gradeData.grade) === window.parseGrade(currentUser.grado);
@@ -89,37 +88,86 @@ document.addEventListener('DOMContentLoaded', () => {
             return true;
         });
 
-        // REQ: Auto-avance para estudiantes (Ticket: Centro de Recursos Académicos)
-        // Solo auto-avanzar si estamos navegando hacia adelante (pushState=true)
         if (pushState && !isProfesor && filteredGrades.length === 1) {
             window.selectedGradeData = filteredGrades[0];
+            // Estudiante auto-avanza a Asignaturas (ya que seccion/parcial son automáticos para él)
             renderDownloadSubjects(pushState);
             return;
         }
 
-        if (pushState) {
-            history.pushState({ type: 'index-content', view: 'grades' }, '');
-        }
+        if (pushState) history.pushState({ type: 'index-content', view: 'grades' }, '');
 
+        contentDisplayArea.innerHTML = '';
         const gridDiv = document.createElement('div');
         gridDiv.className = 'grid grid-cols-1 md:grid-cols-3 gap-4 w-full max-w-lg';
-
-        // REQ: Asegurar población de contentDisplayArea tras limpieza
-        contentDisplayArea.innerHTML = '';
 
         filteredGrades.forEach(gradeData => {
             gridDiv.appendChild(createCustomButton(gradeData.grade, () => {
                 window.selectedGradeData = gradeData;
+                if (isProfesor) animateContentTransition(renderDownloadSections);
+                else animateContentTransition(renderDownloadSubjects);
+            }, 'w-full bg-gray-100 text-gray-800 shadow-none hover:bg-blue-600 hover:text-white'));
+        });
+
+        if (gridDiv.children.length === 0) contentDisplayArea.innerHTML = '<p class="text-gray-400 text-sm">No hay contenidos disponibles.</p>';
+        else contentDisplayArea.appendChild(gridDiv);
+        currentContentView = 'grades';
+    }
+
+    function renderDownloadSections(pushState = true) {
+        if (!contentDisplayArea || !contentBackButtonContainer) return;
+        if (!selectedGradeData) return renderDownloadGrades();
+        contentBackButtonContainer.classList.remove('hidden');
+
+        if (pushState) history.pushState({ type: 'index-content', view: 'sections', gradeData: selectedGradeData }, '');
+
+        contentDisplayArea.innerHTML = '';
+        const gridDiv = document.createElement('div');
+        gridDiv.className = 'grid grid-cols-1 md:grid-cols-3 gap-4 w-full max-w-lg';
+
+        // Obtener secciones únicas de los contenidos de este grado
+        const sections = [...new Set(selectedGradeData.subjects.flatMap(s =>
+            Array.isArray(s.sections) ? s.sections : (s.sections ? s.sections.split(',').map(sec => sec.trim()) : [])
+        ))].filter(Boolean).sort();
+
+        sections.forEach(sec => {
+            gridDiv.appendChild(createCustomButton(`Sección ${sec}`, () => {
+                window.selectedSection = sec;
+                animateContentTransition(renderDownloadPartials);
+            }, 'w-full bg-gray-100 text-gray-800 shadow-none hover:bg-blue-600 hover:text-white'));
+        });
+
+        if (sections.length === 0) contentDisplayArea.innerHTML = '<p class="text-gray-400 text-sm">No hay secciones registradas.</p>';
+        else contentDisplayArea.appendChild(gridDiv);
+        currentContentView = 'sections';
+    }
+
+    function renderDownloadPartials(pushState = true) {
+        if (!contentDisplayArea || !contentBackButtonContainer) return;
+        if (!selectedSection) return renderDownloadSections();
+        contentBackButtonContainer.classList.remove('hidden');
+
+        if (pushState) history.pushState({ type: 'index-content', view: 'partials', section: selectedSection }, '');
+
+        contentDisplayArea.innerHTML = '';
+        const gridDiv = document.createElement('div');
+        gridDiv.className = 'grid grid-cols-1 md:grid-cols-2 gap-4 w-full max-w-lg';
+
+        const partials = [...new Set(selectedGradeData.subjects
+            .filter(s => window.checkSectionHelper(s.sections, selectedSection))
+            .map(s => s.partial)
+        )].filter(Boolean);
+
+        partials.forEach(p => {
+            gridDiv.appendChild(createCustomButton(p, () => {
+                window.selectedPartial = p;
                 animateContentTransition(renderDownloadSubjects);
             }, 'w-full bg-gray-100 text-gray-800 shadow-none hover:bg-blue-600 hover:text-white'));
         });
 
-        if (gridDiv.children.length === 0) {
-             contentDisplayArea.innerHTML = '<p class="text-gray-400 text-sm">No hay contenidos disponibles para tu grado.</p>';
-        } else {
-             contentDisplayArea.appendChild(gridDiv);
-        }
-        currentContentView = 'grades';
+        if (partials.length === 0) contentDisplayArea.innerHTML = '<p class="text-gray-400 text-sm">No hay parciales con contenido.</p>';
+        else contentDisplayArea.appendChild(gridDiv);
+        currentContentView = 'partials';
     }
 
     function renderDownloadSubjects(pushState = true) {
@@ -129,15 +177,21 @@ document.addEventListener('DOMContentLoaded', () => {
         const currentUser = JSON.parse(localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser'));
         const isProfesor = currentUser?.rol === 'Profesor';
 
-        // Solo mostrar botón de regresar si es profesor (ya que el alumno auto-avanzó)
-        if (isProfesor) {
+        // Solo mostrar botón de regresar si no estamos en el nivel de auto-avance
+        if (isProfesor || !(!isProfesor && currentUser?.grado)) {
             contentBackButtonContainer.classList.remove('hidden');
         } else {
             contentBackButtonContainer.classList.add('hidden');
         }
 
         if (pushState) {
-            history.pushState({ type: 'index-content', view: 'subjects', gradeData: selectedGradeData }, '');
+            history.pushState({
+                type: 'index-content',
+                view: 'subjects',
+                gradeData: selectedGradeData,
+                section: selectedSection,
+                partial: selectedPartial
+            }, '');
         }
 
         const gridDiv = document.createElement('div');
@@ -146,13 +200,20 @@ document.addEventListener('DOMContentLoaded', () => {
         contentDisplayArea.innerHTML = '';
 
         selectedGradeData.subjects.forEach(subjectData => {
-            // REQ 7: Filtrado por Parcial Actual y SECCION para no-profesores
-            const isAuthorized = window.isContentAuthorized ? window.isContentAuthorized(subjectData.partial) : (isProfesor || subjectData.partial === window.PARCIAL_ACTUAL);
-            if (!isAuthorized) return;
+            const targetSection = isProfesor ? selectedSection : currentUser.seccion;
+            const targetPartial = isProfesor ? selectedPartial : window.PARCIAL_ACTUAL;
 
-            // Filtrado por sección para alumnos
-            if (!isProfesor && currentUser?.seccion && subjectData.sections) {
-                if (!window.checkSectionHelper(subjectData.sections, currentUser.seccion)) return;
+            // Filtrado por Parcial
+            if (isProfesor) {
+                if (subjectData.partial !== targetPartial) return;
+            } else {
+                const isAuthorized = window.isContentAuthorized ? window.isContentAuthorized(subjectData.partial) : (subjectData.partial === targetPartial);
+                if (!isAuthorized) return;
+            }
+
+            // Filtrado por Sección
+            if (targetSection && subjectData.sections) {
+                if (!window.checkSectionHelper(subjectData.sections, targetSection)) return;
             }
 
             gridDiv.appendChild(createCustomButton(subjectData.name, () => {
@@ -162,7 +223,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         if (gridDiv.children.length === 0) {
-            contentDisplayArea.innerHTML = '<p class="text-gray-400 text-sm">No hay contenidos autorizados para tu sección en este período.</p>';
+            contentDisplayArea.innerHTML = '<p class="text-gray-400 text-sm">No hay contenidos para los filtros seleccionados.</p>';
         } else {
             contentDisplayArea.appendChild(gridDiv);
         }
@@ -205,17 +266,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (contentBackButton) {
         contentBackButton.addEventListener('click', () => {
-            animateContentTransition(() => {
-                if (currentContentView === 'subjects') {
-                    renderDownloadGrades();
-                    selectedGradeData = null;
-                } else if (currentContentView === 'topics') {
-                    renderDownloadSubjects();
-                    selectedSubjectData = null;
-                } else {
-                    renderInitialContentButton();
-                }
-            });
+            // REQ: Delegar en el historial para soportar retroceso granular (SPA-style)
+            history.back();
         });
     }
 
