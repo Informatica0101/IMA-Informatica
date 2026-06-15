@@ -5,8 +5,8 @@
 
 window.PersistenceManager = {
     DB_NAME: 'IMA_Persistence_DB',
-    DB_VERSION: 2,
-    STORES: ['news', 'academic_stats', 'rankings', 'user_profile', 'local_progress', 'cache_estudiante_dashboard', 'cache_profesor_data'],
+    DB_VERSION: 4,
+    STORES: ['news', 'academic_stats', 'rankings', 'user_profile', 'local_progress', 'cache_estudiante_dashboard', 'cache_profesor_data', 'cache_teacher_projects', 'cache_teacher_logros', 'cache_teacher_reports', 'cache_estudiante_profile', 'cache_estudiante_tasks', 'cache_estudiante_exams'],
     _db: null,
 
     /**
@@ -137,8 +137,8 @@ window.PersistenceManager = {
     /**
      * Reconciliation Logic.
      */
-    async reconcile(store, serverData, onUpdate) {
-        const local = await this.get(store);
+    async reconcile(store, serverData, onUpdate, key) {
+        const local = await this.get(store, key);
         const serverTimestamp = serverData.updated_at || Date.now();
 
         if (!local || serverTimestamp > local.updated_at) {
@@ -146,7 +146,7 @@ window.PersistenceManager = {
             // REQ: Preservación de estructura (Modulo 1)
             // Si el objeto ya tiene una propiedad 'data', lo guardamos tal cual para no perder hermanos (ej. allHistory)
             const newData = (serverData.status === 'success' && serverData.data) ? serverData : (serverData.data || serverData);
-            await this.set(store, newData);
+            await this.set(store, newData, key);
             if (onUpdate) onUpdate(newData);
             return 'server_win';
         }

@@ -409,6 +409,9 @@ window.handleHeaderAction = function(action) {
 window.openAcademicMenu = function(pushState = true) {
     const scrollPos = window.pageYOffset || document.documentElement.scrollTop;
     let modal = document.getElementById('academic-menu-modal');
+
+
+
     if (!modal) {
         modal = document.createElement('div');
         modal.id = 'academic-menu-modal';
@@ -449,7 +452,7 @@ window.openAcademicMenu = function(pushState = true) {
                     </div>
 
                     <div id="hierarchy-navigation" class="hidden flex flex-col min-h-[300px]">
-                        <button onclick="window.resetAcademicMenu()" class="mb-6 flex items-center gap-2 text-[10px] font-bold text-blue-600 uppercase tracking-[0.2em] hover:text-blue-700 transition-colors">
+                        <button onclick="history.back()" class="mb-6 flex items-center gap-2 text-[10px] font-bold text-blue-600 uppercase tracking-[0.2em] hover:text-blue-700 transition-colors">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M15 19l-7-7 7-7"></path></svg>
                             Regresar
                         </button>
@@ -470,10 +473,6 @@ window.openAcademicMenu = function(pushState = true) {
     modal.classList.remove('hidden');
     setTimeout(() => modal.classList.add('opacity-100'), 10);
     window.resetAcademicMenu(false);
-
-    if (pushState) {
-        history.pushState({ type: 'modal-close', modalId: 'academic-menu-modal', scrollPos }, '');
-    }
 };
 
 window.closeAcademicMenu = function(doPop = true) {
@@ -520,6 +519,17 @@ window.showAcademicHierarchy = function(type) {
 };
 
 window.renderHierarchyLevel = function(type, level, params = {}, pushState = true) {
+    if (pushState) {
+        // REQ: Robust state preservation for hierarchical levels (Ticket: Navegación de Presentaciones)
+        // Guardamos el tipo de menú, el nivel actual y los parámetros (filtros) seleccionados.
+        history.pushState({
+            type: 'academic-menu',
+            menuType: type,
+            level: level,
+            params: params,
+            scrollPos: window.pageYOffset
+        }, '');
+    }
     const container = document.getElementById('hierarchy-options');
     const label = document.getElementById('hierarchy-label');
     const user = JSON.parse(localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser') || '{}');

@@ -7,7 +7,6 @@ document.addEventListener('DOMContentLoaded', () => {
     loadNews();
 
     // REQ: Garantizar inicialización segura del DOM (v3.3)
-    console.log("[IMA-INDEX] Iniciando construcción de interfaz...");
 
     // Setup Common UI (Header, Scroll, Logout)
     if (window.setupCommonUI) window.setupCommonUI();
@@ -28,8 +27,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- State Variables ---
     let currentContentView = 'initial';
-    let selectedGradeData = null;
-    let selectedSubjectData = null;
+
+
 
     // --- Utility Functions ---
     function createCustomButton(text, onClickHandler, className = '') {
@@ -77,6 +76,27 @@ document.addEventListener('DOMContentLoaded', () => {
         const currentUser = JSON.parse(localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser'));
         const isProfesor = currentUser?.rol === 'Profesor';
 
+        if (!window.downloadContentData || window.downloadContentData.length === 0) {
+            contentDisplayArea.innerHTML = '<p class="text-gray-400 text-sm">No hay contenidos cargados.</p>';
+            return;
+        }
+
+        // Filtrado previo para ver si hay auto-avance
+        const filteredGrades = window.downloadContentData.filter(gradeData => {
+            if (!isProfesor && currentUser?.grado) {
+                return window.parseGrade(gradeData.grade) === window.parseGrade(currentUser.grado);
+            }
+            return true;
+        });
+
+        // REQ: Auto-avance para estudiantes (Ticket: Centro de Recursos Académicos)
+        // Solo auto-avanzar si estamos navegando hacia adelante (pushState=true)
+        if (pushState && !isProfesor && filteredGrades.length === 1) {
+            window.selectedGradeData = filteredGrades[0];
+            renderDownloadSubjects(pushState);
+            return;
+        }
+
         if (pushState) {
             history.pushState({ type: 'index-content', view: 'grades' }, '');
         }
@@ -87,17 +107,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // REQ: Asegurar población de contentDisplayArea tras limpieza
         contentDisplayArea.innerHTML = '';
 
-        if (!window.downloadContentData || window.downloadContentData.length === 0) {
-            contentDisplayArea.innerHTML = '<p class="text-gray-400 text-sm">No hay contenidos cargados.</p>';
-            return;
-        }
-
-        window.downloadContentData.forEach(gradeData => {
-            // Filtrado: Los alumnos solo ven su propio grado como opción única
-            if (!isProfesor && currentUser?.grado) {
-                if (window.parseGrade(gradeData.grade) !== window.parseGrade(currentUser.grado)) return;
-            }
-
+        filteredGrades.forEach(gradeData => {
             gridDiv.appendChild(createCustomButton(gradeData.grade, () => {
                 window.selectedGradeData = gradeData;
                 animateContentTransition(renderDownloadSubjects);
@@ -421,7 +431,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (game) {
-            console.log(`[IMA-INDEX] Auto-loading game: ${game}`);
             switch(game) {
                 case 'peripherals': triageGameLaunch('peripherals', 'juegos/perifericos.html', 'js/perifericos_juego.js', 'initializePeripheralsGame', 'Juego de Periféricos'); break;
                 case 'webmaster': triageGameLaunch('webmaster', 'juegos/webmaster_quiz.html', 'js/webmaster_quiz_juego.js', 'initQuizGame', 'WebMaster Quiz'); break;
@@ -601,7 +610,6 @@ async function loadNews() {
     if (window.PersistenceManager) {
         const cached = await window.PersistenceManager.get('news');
         if (cached && cached.data && cached.data.length > 0) {
-            console.log("[IMA-INDEX] Renderizado inmediato desde caché local.");
             renderNewsHTML(cached.data);
             hasLocalNews = true;
         }
@@ -630,7 +638,6 @@ async function loadNews() {
 
         // REQ: Noticia fallback si el servidor falla (v3.3)
         if (!res || res.status !== 'success' || !res.data || res.data.length === 0) {
-            console.log("[IMA-NEWS] Utilizando noticia de fallback local.");
             res = {
                 status: 'success',
                 data: [{
@@ -659,7 +666,6 @@ function renderNewsHTML(inputData) {
 
     if (!newsContainer || data.length === 0) return;
 
-    console.log("[IMA-INDEX] Renderizando noticias:", data.length);
 
     // Mostrar las 3 noticias más recientes (o todas si hay menos de 3)
     const newsToShow = data.slice(0, 3);

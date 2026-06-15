@@ -59,7 +59,7 @@ async function fetchApi(service, action, payload, retryCount = 0, options = {}) 
             // REQ: Silent Reconciliation (Modulo 1.1)
             if (options.store && window.PersistenceManager) {
                 // No esperamos la reconciliación para no bloquear el retorno del JSON parseado
-                window.PersistenceManager.reconcile(options.store, parsed, options.onUpdate);
+                window.PersistenceManager.reconcile(options.store, parsed, options.onUpdate, options.key);
             }
 
             return parsed;

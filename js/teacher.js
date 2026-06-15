@@ -220,14 +220,12 @@ document.addEventListener('DOMContentLoaded', () => {
             const validQuestions = questions.filter(q => {
                 const result = window.validateQuestion(q);
                 if (!result.valid) {
-                    console.log("EXCLUIDA:", q.Pregunta || "Sin Texto", "Motivo:", result.error);
                     excludedCount++;
                     return false;
                 }
                 return true;
             });
 
-            console.log(`[MIGRACIÓN] Auditoría: Detectadas ${questions.length}, Válidas ${validQuestions.length}, Excluidas ${excludedCount}`);
 
             if (validQuestions.length === 0) throw new Error("Ninguna pregunta pasó el filtro de validación de integridad.");
 
@@ -553,7 +551,6 @@ document.addEventListener('DOMContentLoaded', () => {
         setTimeout(() => {
             if (quillTask) {
                 quillTask.focus();
-                console.log("[IMA-TEACHER] Task editor focused.");
             }
         }, 300);
     };
@@ -630,22 +627,39 @@ document.addEventListener('DOMContentLoaded', () => {
     async function fetchManagementData() {
         const tbody = document.getElementById('tasks-management-table-body');
         if (!tbody) return;
-        tbody.innerHTML = '<tr><td colspan="5" class="text-center p-4">Cargando...</td></tr>';
+
+        const processData = (tasksData, examsData) => {
+            const tasks = (tasksData || []).map(t => ({ ...t, tipoReal: 'Tarea' }));
+            const exams = (examsData || []).map(e => ({ ...e, tipoReal: 'Examen' }));
+            allTasksExams = [...tasks, ...exams].filter(item => item.estado !== 'Inactiva');
+            allTasksExams.sort((a, b) => new Date(b.fechaLimite) - new Date(a.fechaLimite));
+            renderManagementTable();
+        };
+
+        // REQ: Cache-First logic for Task Management (Ticket: Optimización de Caché)
+        let hasLocal = false;
+        if (window.PersistenceManager) {
+            const cached = await window.PersistenceManager.get('cache_profesor_data');
+            if (cached && cached.data && cached.data.assignments) {
+                allTasksExams = cached.data.assignments;
+                renderManagementTable();
+                hasLocal = true;
+            }
+        }
+
+        if (!hasLocal) {
+            tbody.innerHTML = '<tr><td colspan="5" class="text-center p-4">Cargando...</td></tr>';
+        }
+
         try {
             const [tasksRes, examsRes] = await Promise.all([
                 fetchApi('TASK', 'getAllTasks', { profesorId: currentUser.userId }),
                 fetchApi('EXAM', 'getAllExams', { profesorId: currentUser.userId })
             ]);
 
-            const tasks = (tasksRes.data || []).map(t => ({ ...t, tipoReal: 'Tarea' }));
-            const exams = (examsRes.data || []).map(e => ({ ...e, tipoReal: 'Examen' }));
-
-            allTasksExams = [...tasks, ...exams].filter(item => item.estado !== 'Inactiva');
-            allTasksExams.sort((a, b) => new Date(b.fechaLimite) - new Date(a.fechaLimite));
-
-            renderManagementTable();
+            processData(tasksRes.data, examsRes.data);
         } catch (error) {
-            tbody.innerHTML = `<tr><td colspan="5" class="text-center p-4 text-red-500">Error: ${error.message}</td></tr>`;
+            if (!hasLocal) tbody.innerHTML = `<tr><td colspan="5" class="text-center p-4 text-red-500">Error: ${error.message}</td></tr>`;
         }
     }
 
@@ -895,7 +909,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (window.PersistenceManager) {
             const cached = await window.PersistenceManager.get('cache_profesor_data');
             if (cached && cached.data) {
-                console.log("[Offline-First] Renderizando panel docente desde caché local (cache_profesor_data).");
                 allActivityRaw = cached.data.activity || [];
                 allAssignmentsRaw = cached.data.assignments || [];
                 renderCurrentLevel();
@@ -958,7 +971,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (configRes && configRes.status === 'success' && configRes.data.ParcialActual) {
                 window.PARCIAL_ACTUAL = configRes.data.ParcialActual;
-                console.log("[IMA-TEACHER] Configuración académica sincronizada:", window.PARCIAL_ACTUAL);
             }
 
             allActivityRaw = [
@@ -1894,15 +1906,41 @@ document.addEventListener('DOMContentLoaded', () => {
     let allProjectsRaw = [];
     async function fetchProjects() {
         const tbody = document.getElementById('projects-table-body');
-        tbody.innerHTML = '<tr><td colspan="5" class="text-center p-8">Cargando proyectos...</td></tr>';
         const grado = document.getElementById('proj-filter-grado').value;
         const seccion = document.getElementById('proj-filter-seccion').value;
+
+        // REQ: Eager Caching & Offline-First (Ticket: Optimización de Caché)
+        let hasLocal = false;
+        const storeName = 'cache_teacher_projects';
+        const cacheKey = `${grado || 'all'}_${seccion || 'all'}`;
+        if (window.PersistenceManager) {
+            const cached = await window.PersistenceManager.get(storeName, cacheKey);
+            if (cached && cached.data) {
+                allProjectsRaw = cached.data;
+                renderProjects();
+                hasLocal = true;
+            }
+        }
+
+        if (!hasLocal) {
+            tbody.innerHTML = '<tr><td colspan="5" class="text-center p-8">Cargando proyectos...</td></tr>';
+        }
+
         try {
-            const res = await fetchApi('TASK', 'getAllStudentProjects', { grado, seccion });
-            allProjectsRaw = res.data || [];
-            renderProjects();
+            const res = await fetchApi('TASK', 'getAllStudentProjects', { grado, seccion }, 0, {
+                store: storeName,
+                key: cacheKey,
+                onUpdate: (data) => {
+                    allProjectsRaw = data.data || data;
+                    renderProjects();
+                }
+            });
+            if (res.status === 'success') {
+                allProjectsRaw = res.data || [];
+                renderProjects();
+            }
         } catch (e) {
-            tbody.innerHTML = `<tr><td colspan="5" class="text-center p-8 text-red-500">Error: ${e.message}</td></tr>`;
+            if (!hasLocal) tbody.innerHTML = `<tr><td colspan="5" class="text-center p-8 text-red-500">Error: ${e.message}</td></tr>`;
         }
     }
 
@@ -1946,18 +1984,12 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- MÓDULO 5: Logros y Minijuegos ---
     async function fetchLogros() {
         const tbody = document.getElementById('logros-table-body');
-        tbody.innerHTML = '<tr><td colspan="5" class="text-center p-8">Cargando logros...</td></tr>';
         const grado = document.getElementById('logros-filter-grado').value;
         const seccion = document.getElementById('logros-filter-seccion').value;
-        try {
-            // REQ 4: Inicialización de Logros sin filtros obligatorios (Modulo 4)
-            // Si los filtros están vacíos, solicitar todos los datos
-            const res = await fetchApi('USER', 'getGameStats', { grado: grado || null, seccion: seccion || null });
-            const data = res.data || [];
 
-            // Agrupar por alumno y juego para encontrar el récord máximo
+        const renderLogrosData = (data) => {
             const records = {};
-            data.forEach(r => {
+            (data || []).forEach(r => {
                 const key = `${r[1]}_${r[3]}`; // userId + juego
                 const score = parseFloat(r[5] || 0);
                 if (!records[key] || score > records[key].maxScore) {
@@ -1970,14 +2002,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     };
                 }
             });
-
             const sortedRecords = Object.values(records).sort((a, b) => b.maxScore - a.maxScore);
-
             if (sortedRecords.length === 0) {
                 tbody.innerHTML = '<tr><td colspan="5" class="text-center p-8 text-gray-500">No hay registros de juegos.</td></tr>';
                 return;
             }
-
             tbody.innerHTML = sortedRecords.map((r, idx) => `
                 <tr class="hover:bg-gray-50 transition-colors">
                     <td class="p-4 text-gray-400 font-mono">${idx + 1}</td>
@@ -1986,10 +2015,37 @@ document.addEventListener('DOMContentLoaded', () => {
                     <td class="p-4"><span class="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full font-semibold">${r.maxScore}</span></td>
                     <td class="p-4 text-xs italic text-gray-600">${r.lastLogro}</td>
                     <td class="p-4 text-xs text-gray-400">${new Date(r.fecha).toLocaleString()}</td>
-                </tr>
-            `).join('');
+                </tr>`).join('');
+        };
+
+        // REQ: Eager Caching (Ticket: Optimización de Caché)
+        let hasLocal = false;
+        const storeName = 'cache_teacher_logros';
+        const cacheKey = `${grado || 'all'}_${seccion || 'all'}`;
+        if (window.PersistenceManager) {
+            const cached = await window.PersistenceManager.get(storeName, cacheKey);
+            if (cached && cached.data) {
+                renderLogrosData(cached.data);
+                hasLocal = true;
+            }
+        }
+
+        if (!hasLocal) {
+            tbody.innerHTML = '<tr><td colspan="5" class="text-center p-8">Cargando logros...</td></tr>';
+        }
+
+        try {
+            // REQ 4: Inicialización de Logros sin filtros obligatorios (Modulo 4)
+            const res = await fetchApi('USER', 'getGameStats', { grado: grado || null, seccion: seccion || null }, 0, {
+                store: storeName,
+                key: cacheKey,
+                onUpdate: (data) => renderLogrosData(data.data || data)
+            });
+            if (res.status === 'success') {
+                renderLogrosData(res.data);
+            }
         } catch (e) {
-            tbody.innerHTML = `<tr><td colspan="5" class="text-center p-8 text-red-500">Error: ${e.message}</td></tr>`;
+            if (!hasLocal) tbody.innerHTML = `<tr><td colspan="5" class="text-center p-8 text-red-500">Error: ${e.message}</td></tr>`;
         }
     }
     document.getElementById('refresh-logros-btn').onclick = fetchLogros;

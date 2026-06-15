@@ -36,3 +36,9 @@ Módulo: Estilos Globales
 Módulo: Dashboard del Profesor
 - teacher-dashboard.html:
     - Reforzada la regla inline para asegurar color negro en todos los elementos hijos de .ql-editor.
+
+Módulo: Auditoría y Refactorización (Code Review Fixes)
+- js/teacher.js:
+    - Eliminada llamada redundante a fetchApi en fetchLogros para optimizar el consumo de recursos y evitar renderizados duplicados.
+- js/index-ui.js:
+    - Restaurados estilos de botones institucionales (font-medium, text-sm) para mantener la coherencia visual con el resto de la plataforma.
