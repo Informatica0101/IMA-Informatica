@@ -1,62 +1,62 @@
-document.addEventListener('DOMContentLoaded', () => {
-    const currentUser = JSON.parse(localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser'));
+document.addEventListenerfunction('DOMContentLoaded', () {
+    var currentUser = JSON.parse(localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser'));
     if (!currentUser || (currentUser.rol !== 'Estudiante' && currentUser.rol !== 'Alumno')) {
         window.location.href = 'login.html';
         return;
     }
 
-    const firstName = currentUser.nombre.split(' ')[0];
-    const studentNameEl = document.getElementById('student-name');
+    var firstName = currentUser.nombre.split(' ')[0];
+    var studentNameEl = document.getElementById('student-name');
     if (studentNameEl) studentNameEl.textContent = firstName;
-    const tasksList = document.getElementById('tasks-list');
-    const logoutButton = document.getElementById('logout-button');
+    var tasksList = document.getElementById('tasks-list');
+    var logoutButton = document.getElementById('logout-button');
 
     // --- Mi Perfil (Centralizado en ui-common.js) ---
 
-    const PARCIAL_ORDER = {
+    var PARCIAL_ORDER = {
         "Cuarto Parcial": 4,
         "Tercer Parcial": 3,
         "Segundo Parcial": 2,
         "Primer Parcial": 1
     };
-    let allActivitiesData = [];
+    var allActivitiesData = [];
 
     if (logoutButton) {
-        logoutButton.addEventListener('click', () => {
+        logoutButton.addEventListenerfunction('click', () {
             localStorage.removeItem('currentUser');
             window.location.href = 'login.html';
         });
     }
 
     // --- Elementos del Modal ---
-    const submissionModal = document.getElementById('submission-modal');
-    const modalTaskTitle = document.getElementById('modal-task-title');
-    const submissionForm = document.getElementById('submission-form');
-    const fileInput = document.getElementById('file-input');
-    const cancelSubmissionBtn = document.getElementById('cancel-submission-btn');
-    const filePreviewContainer = document.getElementById('file-preview-container');
-    const fileInfoPreview = document.getElementById('file-info-preview');
-    const uploadedFilesContainer = document.getElementById('uploaded-files-container');
-    const uploadedFilesList = document.getElementById('uploaded-files-list');
-    const confirmSubmissionBtn = document.getElementById('confirm-submission-btn');
+    var submissionModal = document.getElementById('submission-modal');
+    var modalTaskTitle = document.getElementById('modal-task-title');
+    var submissionForm = document.getElementById('submission-form');
+    var fileInput = document.getElementById('file-input');
+    var cancelSubmissionBtn = document.getElementById('cancel-submission-btn');
+    var filePreviewContainer = document.getElementById('file-preview-container');
+    var fileInfoPreview = document.getElementById('file-info-preview');
+    var uploadedFilesContainer = document.getElementById('uploaded-files-container');
+    var uploadedFilesList = document.getElementById('uploaded-files-list');
+    var confirmSubmissionBtn = document.getElementById('confirm-submission-btn');
 
-    let currentTaskId = null;
-    let currentTaskParcial = null;
-    let currentTaskAsignatura = null;
-    let uploadedFiles = []; // [{fileId, fileName, mimeType}]
-    let currentFolderId = null;
-    let activeUploads = 0;
-    let isSubmitting = false; // Flag para evitar avisos tras entrega exitosa (Tarea 3)
+    var currentTaskId = null;
+    var currentTaskParcial = null;
+    var currentTaskAsignatura = null;
+    var uploadedFiles = []; // [{fileId, fileName, mimeType}]
+    var currentFolderId = null;
+    var activeUploads = 0;
+    var isSubmitting = false; // Flag para evitar avisos tras entrega exitosa (Tarea 3)
 
     function formatDate(isoString) {
         if (!isoString) return 'N/A';
         try {
-            const date = new Date(isoString);
+            var date = new Date(isoString);
             if (isNaN(date.getTime())) return isoString;
-            const day = String(date.getUTCDate()).padStart(2, '0');
-            const month = String(date.getUTCMonth() + 1).padStart(2, '0');
-            const year = date.getUTCFullYear();
-            return `${day}/${month}/${year}`;
+            var day = String(date.getUTCDate()).padStart(2, '0');
+            var month = String(date.getUTCMonth() + 1).padStart(2, '0');
+            var year = date.getUTCFullYear();
+            return '${day}/${month}/${year}';
         } catch (e) {
             return isoString;
         }
@@ -68,9 +68,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // REQ: Eager Caching & Offline-First (Modulo 1)
         // Priorizar renderizado local de 0ms desde cache_estudiante_dashboard
-        let hasLocalData = false;
+        var hasLocalData = false;
         if (window.PersistenceManager) {
-            const cached = await window.PersistenceManager.get('cache_estudiante_dashboard');
+            var cached = await window.PersistenceManager.get('cache_estudiante_dashboard');
             if (cached && cached.data) {
                 allActivitiesData = cached.data.allActivities || [];
                 renderStudentExpediente(allActivitiesData);
@@ -84,7 +84,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // REQ: Skeleton Screen (Modulo 3)
             tasksList.innerHTML = `
                 <div class="col-span-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 w-full">
-                    ${Array(6).fill(0).map(() => `
+                    ${Array(6).fill(0).mapfunction(() `
                         <div class="p-6 bg-white rounded-[2rem] border border-gray-100 shadow-sm space-y-4">
                             <div class="skeleton h-4 w-1/3 rounded"></div>
                             <div class="skeleton h-6 w-3/4 rounded"></div>
@@ -100,16 +100,16 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         try {
-            const payload = { userId: currentUser.userId, grado: currentUser.grado, seccion: currentUser.seccion };
+            var payload = { userId: currentUser.userId, grado: currentUser.grado, seccion: currentUser.seccion };
 
             // REQ 2: No disparar loader global si ya renderizamos desde caché
             if (!hasLocalData && window.GamesAdapter) window.GamesAdapter.showLoading(true);
 
             // REQ: Mitigación de Latencia mediante Paralelismo y Silent Reconciliation (Ticket 4)
-            const [tasksResult, examsResult, profileResult] = await Promise.all([
+            var [tasksResult, examsResult, profileResult] = await Promise.all([
                 fetchApi('TASK', 'getStudentTasks', payload, 0, {
                     store: 'cache_estudiante_tasks',
-                    onUpdate: (data) => {
+                    onUpdate: function(data) {
                         allActivitiesData = [...allActivitiesData.filter(a => a.type === 'Examen'), ...data.map(t => ({ ...t, type: t.tipo || 'Tarea' }))];
                         renderStudentExpediente(allActivitiesData);
                         renderParcialTabs(allActivitiesData);
@@ -117,7 +117,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }),
                 fetchApi('EXAM', 'getStudentExams', payload, 0, {
                     store: 'cache_estudiante_exams',
-                    onUpdate: (data) => {
+                    onUpdate: function(data) {
                         allActivitiesData = [...allActivitiesData.filter(a => a.type !== 'Examen'), ...data.map(e => ({ ...e, type: 'Examen' }))];
                         renderStudentExpediente(allActivitiesData);
                         renderParcialTabs(allActivitiesData);
@@ -126,7 +126,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 fetchAndRenderLearningProfile(true) // Obtener datos de perfil sin renderizar aún
             ]);
 
-            const allActivities = [];
+            var allActivities = [];
             try {
                 if (tasksResult.status === 'success' && tasksResult.data) {
                     allActivities.push(...tasksResult.data.map(task => ({
@@ -153,14 +153,14 @@ document.addEventListener('DOMContentLoaded', () => {
                     });
                 }
 
-                allActivities.sort((a, b) => {
-                    const isReviewed = (act) => {
+                allActivities.sortfunction((a, b) {
+                    var isReviewed = function(act) {
                         if (!act.entrega) return false;
-                        const s = act.entrega.estado;
+                        var s = act.entrega.estado;
                         return (s === 'Completada' || s === 'Revisada' || s === 'Finalizado' || s === 'Rechazada');
                     };
-                    const revA = isReviewed(a);
-                    const revB = isReviewed(b);
+                    var revA = isReviewed(a);
+                    var revB = isReviewed(b);
                     if (revA !== revB) return revA ? 1 : -1;
                     return new Date(b.fechaLimite) - new Date(a.fechaLimite);
                 });
@@ -212,63 +212,63 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function renderStudentExpediente(inputActivities) {
-        const container = document.getElementById('student-expediente');
+        var container = document.getElementById('student-expediente');
         if (!container) return;
 
         // REQ: Normalización de entrada para soportar Offline-First (v3.3)
-        const activities = (inputActivities && inputActivities.status === 'success' && Array.isArray(inputActivities.data)) ? inputActivities.data : (Array.isArray(inputActivities) ? inputActivities : []);
+        var activities = (inputActivities && inputActivities.status === 'success' && Array.isArray(inputActivities.data)) ? inputActivities.data : (Array.isArray(inputActivities) ? inputActivities : []);
 
         // REQ: Filtro Estricto por Parcial (Incidencia 5)
         // No mezclar históricos en el cálculo de progreso actual
-        const currentParcialActivities = activities.filter(a =>
+        var currentParcialActivities = activities.filter(a =>
             window.normalizePartial(a.parcial) === window.normalizePartial(window.PARCIAL_ACTUAL)
         );
 
         // --- Ajuste de Lógica de Progreso (Req 2) ---
         // Excluir 'Credito Extra' del total asignado (baseline), ya que son de recuperación
-        const baseActivities = currentParcialActivities.filter(a => a.type !== 'Credito Extra' && a.type !== 'Crédito Extra');
-        const totalAssigned = baseActivities.length;
+        var baseActivities = currentParcialActivities.filter(a => a.type !== 'Credito Extra' && a.type !== 'Crédito Extra');
+        var totalAssigned = baseActivities.length;
 
         // Las completadas suman puntos al progreso real (separando obligatorias de recuperación)
-        const mandatoryCompleted = currentParcialActivities.filter(a => (a.type !== 'Credito Extra' && a.type !== 'Crédito Extra') && a.entrega &&
+        var mandatoryCompleted = currentParcialActivities.filter(a => (a.type !== 'Credito Extra' && a.type !== 'Crédito Extra') && a.entrega &&
             (a.entrega.estado === 'Completada' || a.entrega.estado === 'Revisada' || a.entrega.estado === 'Finalizado')
         ).length;
 
-        const extraCreditCompleted = currentParcialActivities.filter(a => (a.type === 'Credito Extra' || a.type === 'Crédito Extra') && a.entrega &&
+        var extraCreditCompleted = currentParcialActivities.filter(a => (a.type === 'Credito Extra' || a.type === 'Crédito Extra') && a.entrega &&
             (a.entrega.estado === 'Completada' || a.entrega.estado === 'Revisada' || a.entrega.estado === 'Finalizado')
         ).length;
 
         // El progreso visual (slots llenos) se beneficia del crédito extra para cubrir faltantes (Req 2)
-        const completed = Math.min(totalAssigned, mandatoryCompleted + extraCreditCompleted);
-        const pending = Math.max(0, totalAssigned - completed);
+        var completed = Math.min(totalAssigned, mandatoryCompleted + extraCreditCompleted);
+        var pending = Math.max(0, totalAssigned - completed);
 
         // Tasa de entrega basada en tareas obligatorias (Req 2: Crédito extra no es obligatorio)
-        const mandatoryDelivered = currentParcialActivities.filter(a => (a.type !== 'Credito Extra' && a.type !== 'Crédito Extra') && a.entrega).length;
-        const deliveryRate = totalAssigned > 0 ? (mandatoryDelivered / totalAssigned) : 0;
+        var mandatoryDelivered = currentParcialActivities.filter(a => (a.type !== 'Credito Extra' && a.type !== 'Crédito Extra') && a.entrega).length;
+        var deliveryRate = totalAssigned > 0 ? (mandatoryDelivered / totalAssigned) : 0;
 
         // Puntos totales obtenidos (incluye recuperación por créditos extra)
-        const gradeSum = currentParcialActivities.reduce((sum, a) => sum + parseFloat(a.entrega?.calificacion || 0), 0);
+        var gradeSum = currentParcialActivities.reducefunction((sum, a) sum + parseFloat(a.entrega?.calificacion || 0), 0);
 
         // El máximo posible se basa en las tareas obligatorias
-        const maxPossible = baseActivities.reduce((sum, a) => sum + parseFloat(a.puntaje || 100), 0);
-        const academicPerformance = maxPossible > 0 ? Math.min(1, gradeSum / maxPossible) : 0;
+        var maxPossible = baseActivities.reducefunction((sum, a) sum + parseFloat(a.puntaje || 100), 0);
+        var academicPerformance = maxPossible > 0 ? Math.min(1, gradeSum / maxPossible) : 0;
 
-        let onTimeCount = 0;
+        var onTimeCount = 0;
         activities.forEach(a => {
             if (a.entrega && a.fechaLimite) {
-                const limit = new Date(a.fechaLimite);
-                const deliveryDate = new Date(a.entrega.fecha || Date.now());
+                var limit = new Date(a.fechaLimite);
+                var deliveryDate = new Date(a.entrega.fecha || Date.now());
                 if (deliveryDate <= limit) onTimeCount++;
             }
         });
-        const totalDelivered = activities.filter(a => a.entrega).length;
-        const punctualityRate = totalDelivered > 0 ? (onTimeCount / totalDelivered) : 1;
+        var totalDelivered = activities.filter(a => a.entrega).length;
+        var punctualityRate = totalDelivered > 0 ? (onTimeCount / totalDelivered) : 1;
 
-        const compositeProgress = Math.round((deliveryRate * 0.3 + academicPerformance * 0.5 + punctualityRate * 0.2) * 100);
+        var compositeProgress = Math.round((deliveryRate * 0.3 + academicPerformance * 0.5 + punctualityRate * 0.2) * 100);
 
-        let level = "Iniciando";
-        let levelColor = "text-blue-600";
-        let barColor = "bg-blue-600";
+        var level = "Iniciando";
+        var levelColor = "text-blue-600";
+        var barColor = "bg-blue-600";
 
         if (compositeProgress >= 90) { level = "Excelencia"; levelColor = "text-emerald-600"; barColor = "bg-emerald-500"; }
         else if (compositeProgress >= 70) { level = "Satisfactorio"; levelColor = "text-green-600"; barColor = "bg-green-500"; }
@@ -336,11 +336,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function renderSubjectNav(activities, selectedParcial) {
-        const container = document.getElementById('subject-nav-container');
+        var container = document.getElementById('subject-nav-container');
         if (!container) return;
 
         // Obtener asignaturas dinámicamente filtradas por el parcial seleccionado
-        const subjects = [...new Set(activities.map(a => a.asignatura))]
+        var subjects = [...new Set(activities.map(a => a.asignatura))]
             .filter(s => s && s.trim() !== "")
             .sort();
 
@@ -358,13 +358,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Listener para filtrar por asignatura
         container.querySelectorAll('.subject-tab').forEach(btn => {
-            btn.addEventListener('click', (e) => {
+            btn.addEventListenerfunction('click', (e) {
                 container.querySelectorAll('.subject-tab').forEach(b => b.classList.remove('bg-blue-600', 'text-white', 'border-blue-600'));
-                const target = e.currentTarget;
+                var target = e.currentTarget;
                 target.classList.add('bg-blue-600', 'text-white', 'border-blue-600');
 
-                const subj = target.dataset.subject;
-                const finalActivities = activities.filter(a => a.asignatura === subj);
+                var subj = target.dataset.subject;
+                var finalActivities = activities.filter(a => a.asignatura === subj);
 
                 renderActivities(finalActivities);
                 showSubjectInfo(subj);
@@ -376,7 +376,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     async function showSubjectInfo(subject) {
-        const container = document.getElementById('subject-info-container');
+        var container = document.getElementById('subject-info-container');
         if (!container) return;
 
         container.innerHTML = '<div class="p-5 bg-gray-50 rounded-2xl text-center text-[10px] font-bold text-gray-400 uppercase tracking-widest animate-pulse">Sincronizando información de la asignatura...</div>';
@@ -384,11 +384,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
         try {
             // Identificar profesorId desde las actividades cargadas para esta asignatura específica
-            const activity = allActivitiesData.find(a => (a.asignatura || 'General') === subject && a.profesorId);
-            const profesorId = activity ? activity.profesorId : null;
+            var activity = allActivitiesData.find(a => (a.asignatura || 'General') === subject && a.profesorId);
+            var profesorId = activity ? activity.profesorId : null;
 
             // Info por defecto (Área de Informática)
-            let profInfo = {
+            var profInfo = {
                 nombre: "ISEMED - Área de Informática",
                 email: "informatica@isemed.edu.hn",
                 telefono: ""
@@ -397,7 +397,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // Intentar obtener info real del docente (A-73/75)
             if (profesorId) {
                 try {
-                    const res = await fetchApi('USER', 'getUserInfo', { userId: profesorId });
+                    var res = await fetchApi('USER', 'getUserInfo', { userId: profesorId });
                     if (res.status === 'success' && res.data) {
                         profInfo = res.data;
                     }
@@ -407,13 +407,13 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             // Normalizar WhatsApp del Docente
-            const waPhone = profInfo.telefono ? String(profInfo.telefono).replace(/\D/g, '') : '';
-            const waLink = waPhone ? `https://wa.me/504${waPhone}` : null;
+            var waPhone = profInfo.telefono ? String(profInfo.telefono).replace(/\D/g, '') : '';
+            var waLink = waPhone ? 'https://wa.me/504${waPhone}' : null;
 
             // Obtener enlace del grupo de WhatsApp por Grado (Lógica A-66 preservada)
-            let groupLink = null;
+            var groupLink = null;
             try {
-                const groupRes = await fetchApi('USER', 'getWhatsAppLink', { grado: currentUser.grado });
+                var groupRes = await fetchApi('USER', 'getWhatsAppLink', { grado: currentUser.grado });
                 if (groupRes.status === 'success' && groupRes.link) {
                     groupLink = groupRes.link;
                 }
@@ -456,11 +456,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function renderParcialTabs(inputActivities) {
-        const tabsContainer = document.getElementById('parcial-tabs-container');
+        var tabsContainer = document.getElementById('parcial-tabs-container');
         if (!tabsContainer) return;
 
         // REQ: Normalización de entrada para soportar Offline-First (v3.3)
-        const activities = (inputActivities && inputActivities.status === 'success' && Array.isArray(inputActivities.data)) ? inputActivities.data : (Array.isArray(inputActivities) ? inputActivities : []);
+        var activities = (inputActivities && inputActivities.status === 'success' && Array.isArray(inputActivities.data)) ? inputActivities.data : (Array.isArray(inputActivities) ? inputActivities : []);
 
         if (!activities || activities.length === 0) {
             tabsContainer.innerHTML = '';
@@ -477,32 +477,32 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        const parciales = [...new Set(activities.map(a => a.parcial))];
-        parciales.sort((a, b) => (PARCIAL_ORDER[b] || 0) - (PARCIAL_ORDER[a] || 0));
+        var parciales = [...new Set(activities.map(a => a.parcial))];
+        parciales.sortfunction((a, b) (PARCIAL_ORDER[b] || 0) - (PARCIAL_ORDER[a] || 0));
 
-        const activeParcial = parciales[0];
+        var activeParcial = parciales[0];
 
         tabsContainer.innerHTML = `
             <div class="flex flex-nowrap overflow-x-auto gap-2 pb-2 scroll-horizontal-clean">
                 ${parciales.map(p => {
-                    const isActive = p === activeParcial;
-                    const activeClass = isActive ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-500 hover:bg-gray-200';
-                    return `<button class="flex-none px-4 py-2 rounded-xl font-semibold transition-all text-[10px] uppercase tracking-widest ${activeClass} parcial-tab" data-parcial="${p}">${p}</button>`;
+                    var isActive = p === activeParcial;
+                    var activeClass = isActive ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-500 hover:bg-gray-200';
+                    return '<button class="flex-none px-4 py-2 rounded-xl font-semibold transition-all text-[10px] uppercase tracking-widest ${activeClass} parcial-tab" data-parcial="${p}">${p}</button>';
                 }).join('')}
             </div>
         `;
 
         // Interactividad
         tabsContainer.querySelectorAll('.parcial-tab').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                const target = e.currentTarget;
-                const p = target.dataset.parcial;
+            btn.addEventListenerfunction('click', (e) {
+                var target = e.currentTarget;
+                var p = target.dataset.parcial;
                 window.switchParcialTab(p);
             });
         });
 
         window.switchParcialTab = function(p, pushState = true) {
-            const tabs = tabsContainer.querySelectorAll('.parcial-tab');
+            var tabs = tabsContainer.querySelectorAll('.parcial-tab');
             tabs.forEach(b => {
                 b.classList.remove('bg-blue-600', 'text-white');
                 b.classList.add('bg-gray-100', 'text-gray-500', 'hover:bg-gray-200');
@@ -512,7 +512,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             });
 
-            const activitiesInParcial = allActivitiesData.filter(a => a.parcial === p);
+            var activitiesInParcial = allActivitiesData.filter(a => a.parcial === p);
             renderSubjectNav(activitiesInParcial, p);
 
             if (pushState) {
@@ -521,9 +521,9 @@ document.addEventListener('DOMContentLoaded', () => {
         };
 
         // Seleccionar primer parcial por defecto
-        const firstTab = tabsContainer.querySelector('.parcial-tab');
+        var firstTab = tabsContainer.querySelector('.parcial-tab');
         if (firstTab) {
-            const p = firstTab.dataset.parcial;
+            var p = firstTab.dataset.parcial;
             history.replaceState({ type: 'student-tab', parcial: p }, '');
             window.switchParcialTab(p, false);
         }
@@ -532,9 +532,9 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderActivities(inputFiltered) {
         // REQ: Extra Credit Visibility Logic (v7.6.1)
         // Only show extra credit tasks if student has at least one REJECTED activity
-        const hasRejected = allActivitiesData.some(a => a.entrega && (a.entrega.estado === 'Rechazada' || a.entrega.estado === 'Tarea incompleta'));
+        var hasRejected = allActivitiesData.some(a => a.entrega && (a.entrega.estado === 'Rechazada' || a.entrega.estado === 'Tarea incompleta'));
 
-        const filtered = inputFiltered.filter(a => {
+        var filtered = inputFiltered.filter(a => {
             if (a.type === 'Crédito Extra' || a.type === 'Credito Extra') {
                 return hasRejected;
             }
@@ -555,32 +555,32 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
         tasksList.innerHTML = filtered.map(activity => {
-            let feedbackHtml = '';
-            let actionButtonHtml = '';
+            var feedbackHtml = '';
+            var actionButtonHtml = '';
 
             if (activity.type === 'Tarea' || activity.type === 'Credito Extra' || activity.type === 'Crédito Extra') {
                 if (activity.entrega) {
-                    const status = activity.entrega.estado;
-                    const isPending = (status === 'Pendiente de revisión' || status === 'Pendiente' || !status);
-                    const isResubmittable = (status === 'Rechazada' || status === 'Tarea incompleta');
+                    var status = activity.entrega.estado;
+                    var isPending = (status === 'Pendiente de revisión' || status === 'Pendiente' || !status);
+                    var isResubmittable = (status === 'Rechazada' || status === 'Tarea incompleta');
 
-                    const statusColor = (status === 'Completada' || status === 'Revisada' || status === 'Finalizado') ? 'text-green-600' : (status === 'Rechazada' || status === 'Tarea incompleta' ? 'text-red-600' : 'text-yellow-600');
-                    const displayStatus = (status === 'Revisada' || status === 'Finalizado' ? 'Completada' : status);
+                    var statusColor = (status === 'Completada' || status === 'Revisada' || status === 'Finalizado') ? 'text-green-600' : (status === 'Rechazada' || status === 'Tarea incompleta' ? 'text-red-600' : 'text-yellow-600');
+                    var displayStatus = (status === 'Revisada' || status === 'Finalizado' ? 'Completada' : status);
 
-                    let fileLinkHtml = '';
+                    var fileLinkHtml = '';
                     if (isPending && activity.entrega.fileId) {
-                        const fileId = activity.entrega.fileId;
-                        const url = activity.entrega.mimeType === 'folder'
-                            ? `https://drive.google.com/drive/folders/${fileId}`
-                            : `https://drive.google.com/uc?id=${fileId}`;
-                        fileLinkHtml = `<div class="mt-2"><a href="${url}" target="_blank" class="text-blue-600 font-medium hover:underline text-sm flex items-center space-x-1"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg><span>Ver mi entrega</span></a></div>`;
+                        var fileId = activity.entrega.fileId;
+                        var url = activity.entrega.mimeType === 'folder'
+                            ? 'https://drive.google.com/drive/folders/${fileId}'
+                            : 'https://drive.google.com/uc?id=${fileId}';
+                        fileLinkHtml = '<div class="mt-2"><a href="${url}" target="_blank" class="text-blue-600 font-medium hover:underline text-sm flex items-center space-x-1"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg><span>Ver mi entrega</span></a></div>';
                     }
 
-                    const deleteBtnHtml = isPending
-                        ? `<button class="btn-ima-cancel px-3 py-1 text-[10px] delete-submission-btn" data-type="${activity.type}" data-entrega-id="${activity.entrega.entregaId}">Eliminar Entrega</button>`
+                    var deleteBtnHtml = isPending
+                        ? '<button class="btn-ima-cancel px-3 py-1 text-[10px] delete-submission-btn" data-type="${activity.type}" data-entrega-id="${activity.entrega.entregaId}">Eliminar Entrega</button>'
                         : '';
 
-                    let resubmitBtnHtml = '';
+                    var resubmitBtnHtml = '';
                     if (isResubmittable) {
                         resubmitBtnHtml = `<button class="btn-ima-primary mt-3 w-full py-2 text-xs open-submission-modal"
                             data-task-id="${activity.tareaId}"
@@ -599,8 +599,8 @@ document.addEventListener('DOMContentLoaded', () => {
                                 </div>
                                 ${deleteBtnHtml}
                             </div>
-                            ${activity.entrega.calificacion ? `<div class="mt-3 pt-3 border-t border-gray-100"><span class="text-[10px] font-medium text-gray-400 uppercase">Nota:</span> <span class="text-sm font-semibold text-blue-600">${activity.entrega.calificacion}</span></div>` : ''}
-                            ${activity.entrega.comentario ? `<div class="mt-1"><span class="text-[10px] font-medium text-gray-400 uppercase">Obs:</span> <p class="text-xs text-gray-600 italic mt-1 leading-relaxed">${activity.entrega.comentario}</p></div>` : ''}
+                            ${activity.entrega.calificacion ? '<div class="mt-3 pt-3 border-t border-gray-100"><span class="text-[10px] font-medium text-gray-400 uppercase">Nota:</span> <span class="text-sm font-semibold text-blue-600">${activity.entrega.calificacion}</span></div>' : ''}
+                            ${activity.entrega.comentario ? '<div class="mt-1"><span class="text-[10px] font-medium text-gray-400 uppercase">Obs:</span> <p class="text-xs text-gray-600 italic mt-1 leading-relaxed">${activity.entrega.comentario}</p></div>' : ''}
                             ${resubmitBtnHtml}
                         </div>`;
                 } else {
@@ -612,13 +612,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             } else if (activity.type === 'Examen') {
                 if (activity.entrega) {
-                    const status = activity.entrega.estado;
-                    const isPending = (status === 'Pendiente' || !status);
-                    const statusColor = (status === 'Completada' || status === 'Revisada' || status === 'Finalizado') ? 'text-green-600' : (status === 'Rechazada' ? 'text-red-600' : 'text-yellow-600');
-                    const displayStatus = (status === 'Revisada' || status === 'Finalizado' ? 'Completada' : status);
+                    var status = activity.entrega.estado;
+                    var isPending = (status === 'Pendiente' || !status);
+                    var statusColor = (status === 'Completada' || status === 'Revisada' || status === 'Finalizado') ? 'text-green-600' : (status === 'Rechazada' ? 'text-red-600' : 'text-yellow-600');
+                    var displayStatus = (status === 'Revisada' || status === 'Finalizado' ? 'Completada' : status);
 
-                    const deleteBtnHtml = isPending
-                        ? `<button class="btn-ima-cancel px-3 py-1 text-[10px] delete-submission-btn" data-type="Examen" data-entrega-id="${activity.entrega.entregaId}">Eliminar Entrega</button>`
+                    var deleteBtnHtml = isPending
+                        ? '<button class="btn-ima-cancel px-3 py-1 text-[10px] delete-submission-btn" data-type="Examen" data-entrega-id="${activity.entrega.entregaId}">Eliminar Entrega</button>'
                         : '';
 
                     feedbackHtml = `
@@ -630,15 +630,15 @@ document.addEventListener('DOMContentLoaded', () => {
                                 </div>
                                 ${deleteBtnHtml}
                             </div>
-                            ${activity.entrega.calificacion ? `<div class="mt-3 pt-3 border-t border-gray-100"><span class="text-[10px] font-medium text-gray-400 uppercase">Nota:</span> <span class="text-sm font-semibold text-purple-600">${activity.entrega.calificacion}</span></div>` : ''}
-                            ${activity.entrega.comentario ? `<div class="mt-1"><span class="text-[10px] font-medium text-gray-400 uppercase">Obs:</span> <p class="text-xs text-gray-600 italic mt-1 leading-relaxed">${activity.entrega.comentario}</p></div>` : ''}
+                            ${activity.entrega.calificacion ? '<div class="mt-3 pt-3 border-t border-gray-100"><span class="text-[10px] font-medium text-gray-400 uppercase">Nota:</span> <span class="text-sm font-semibold text-purple-600">${activity.entrega.calificacion}</span></div>' : ''}
+                            ${activity.entrega.comentario ? '<div class="mt-1"><span class="text-[10px] font-medium text-gray-400 uppercase">Obs:</span> <p class="text-xs text-gray-600 italic mt-1 leading-relaxed">${activity.entrega.comentario}</p></div>' : ''}
                         </div>`;
                 } else {
-                    const estado = activity.estado || 'Inactivo';
+                    var estado = activity.estado || 'Inactivo';
                     if (estado === 'Activo') {
-                        actionButtonHtml = `<a href="exam.html?examenId=${activity.examenId}" class="btn-ima-primary bg-purple-600 hover:bg-purple-700 px-6 py-2 text-xs">Realizar Examen</a>`;
+                        actionButtonHtml = '<a href="exam.html?examenId=${activity.examenId}" class="btn-ima-primary bg-purple-600 hover:bg-purple-700 px-6 py-2 text-xs">Realizar Examen</a>';
                     } else {
-                        actionButtonHtml = `<button class="bg-gray-100 text-gray-400 px-5 py-2 rounded-xl text-[10px] font-medium uppercase cursor-not-allowed" disabled>${estado}</button>`;
+                        actionButtonHtml = '<button class="bg-gray-100 text-gray-400 px-5 py-2 rounded-xl text-[10px] font-medium uppercase cursor-not-allowed" disabled>${estado}</button>';
                     }
                 }
             }
@@ -702,7 +702,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (uploadedFiles.length > 0 && !isSubmitting) {
             if (confirm('«Los archivos cargados se perderán si abandona esta entrega. ¿Desea continuar?»')) {
                 // Eliminar archivos temporales silenciosamente en segundo plano
-                const filesToDelete = [...uploadedFiles];
+                var filesToDelete = [...uploadedFiles];
                 uploadedFiles = [];
                 filesToDelete.forEach(f => {
                     fetchApi('TASK', 'deleteFile', { fileId: f.fileId }).catch(e => console.warn("Fallo limpieza silenciosa:", e));
@@ -732,35 +732,38 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     if (tasksList) {
-        tasksList.addEventListener('click', async (e) => {
-            const assignmentCard = e.target.closest('.assignment-card');
-            const isButton = e.target.closest('button, a');
+        tasksList.addEventListenerfunction('click', async (e) {
+            var assignmentCard = e.target.closest('.assignment-card');
+            var isButton = e.target.closest('button, a');
 
             if (assignmentCard && !isButton) {
-                const alreadyExpanded = assignmentCard.classList.contains('is-expanded');
+                var alreadyExpanded = assignmentCard.classList.contains('is-expanded');
                 // Collapse all
                 document.querySelectorAll('.assignment-card').forEach(card => card.classList.remove('is-expanded'));
                 // Toggle if not already expanded
-                if (!alreadyExpanded) assignmentCard.classList.add('is-expanded');
+                if (!alreadyExpanded) {
+                    assignmentCard.classList.add('is-expanded');
+                    if (window.setupCodeCopyButtons) setTimeout(window.setupCodeCopyButtons, 350);
+                }
                 return;
             }
 
             if (e.target && e.target.classList.contains('open-submission-modal')) {
-                const ds = e.target.dataset;
+                var ds = e.target.dataset;
                 openSubmissionModal(ds.taskId, ds.taskTitle, ds.parcial, ds.asignatura);
             }
 
             if (e.target && e.target.classList.contains('delete-submission-btn')) {
-                const type = e.target.dataset.type;
-                const entregaId = e.target.dataset.entregaId;
+                var type = e.target.dataset.type;
+                var entregaId = e.target.dataset.entregaId;
 
                 if (confirm('ATENCIÓN: Al eliminar tu entrega podrías perder la nota de calificación')) {
                     e.target.disabled = true;
                     e.target.textContent = 'Eliminando...';
                     try {
-                        const service = type === 'Examen' ? 'EXAM' : 'TASK';
-                        const action = type === 'Examen' ? 'deleteExamSubmission' : 'deleteSubmission';
-                        const result = await fetchApi(service, action, { entregaId });
+                        var service = type === 'Examen' ? 'EXAM' : 'TASK';
+                        var action = type === 'Examen' ? 'deleteExamSubmission' : 'deleteSubmission';
+                        var result = await fetchApi(service, action, { entregaId });
                         if (result.status === 'success') {
                             alert('Entrega eliminada correctamente.');
                             fetchAllActivities();
@@ -778,7 +781,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- (Req 3.3) Optimizador de Subida de Alta Fidelidad ---
-    let uploadQueue = [];
+    var uploadQueue = [];
 
     /**
      * Segmentación Lógica por Páginas (Object-Level Parsing) para PDF (Tarea 1)
@@ -786,25 +789,25 @@ document.addEventListener('DOMContentLoaded', () => {
      */
     async function splitPdfLogically(file, partsCount) {
         try {
-            const arrayBuffer = await file.arrayBuffer();
-            const pdfDoc = await PDFLib.PDFDocument.load(arrayBuffer);
-            const totalPages = pdfDoc.getPageCount();
-            const pagesPerPart = Math.ceil(totalPages / partsCount);
-            const segments = [];
+            var arrayBuffer = await file.arrayBuffer();
+            var pdfDoc = await PDFLib.PDFDocument.load(arrayBuffer);
+            var totalPages = pdfDoc.getPageCount();
+            var pagesPerPart = Math.ceil(totalPages / partsCount);
+            var segments = [];
 
-            for (let i = 0; i < partsCount; i++) {
-                const startPage = i * pagesPerPart;
-                const endPage = Math.min((i + 1) * pagesPerPart, totalPages);
+            for (var i = 0; i < partsCount; i++) {
+                var startPage = i * pagesPerPart;
+                var endPage = Math.min((i + 1) * pagesPerPart, totalPages);
 
                 if (startPage >= totalPages) break;
 
-                const newPdf = await PDFLib.PDFDocument.create();
-                const pagesToCopy = Array.from({ length: endPage - startPage }, (_, j) => startPage + j);
-                const copiedPages = await newPdf.copyPages(pdfDoc, pagesToCopy);
+                var newPdf = await PDFLib.PDFDocument.create();
+                var pagesToCopy = Array.fromfunction({ length: endPage - startPage }, (_, j) startPage + j);
+                var copiedPages = await newPdf.copyPages(pdfDoc, pagesToCopy);
 
                 copiedPages.forEach(page => newPdf.addPage(page));
 
-                const pdfBytes = await newPdf.save();
+                var pdfBytes = await newPdf.save();
                 segments.push(new Blob([pdfBytes], { type: 'application/pdf' }));
             }
             return segments;
@@ -815,22 +818,22 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     async function compressImage(file) {
-        return new Promise((resolve) => {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                const img = new Image();
-                img.onload = () => {
-                    const canvas = document.createElement('canvas');
-                    let width = img.width;
-                    let height = img.height;
-                    const MAX_SIZE = 1200;
+        return new Promisefunction((resolve) {
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                var img = new Image();
+                img.onload = function() {
+                    var canvas = document.createElement('canvas');
+                    var width = img.width;
+                    var height = img.height;
+                    var MAX_SIZE = 1200;
                     if (width > height) {
                         if (width > MAX_SIZE) { height *= MAX_SIZE / width; width = MAX_SIZE; }
                     } else {
                         if (height > MAX_SIZE) { width *= MAX_SIZE / height; height = MAX_SIZE; }
                     }
                     canvas.width = width; canvas.height = height;
-                    const ctx = canvas.getContext('2d');
+                    var ctx = canvas.getContext('2d');
                     ctx.drawImage(img, 0, 0, width, height);
                     resolve(canvas.toDataURL('image/jpeg', 0.8));
                 };
@@ -844,37 +847,37 @@ document.addEventListener('DOMContentLoaded', () => {
         if (files.length === 0 || activeUploads > 0) return;
 
         // Configuración de Límites y Fragmentación (Tarea 1: Multipart Reengineering)
-        const CHUNK_THRESHOLD = 9.5 * 1024 * 1024; // 9.5MB (Activador de Esquema de Segmentación Binaria Autónoma)
-        const CHUNK_SIZE = 5 * 1024 * 1024; // 5MB por fragmento (Optimizado para evitar Gateway Timeout)
+        var CHUNK_THRESHOLD = 9.5 * 1024 * 1024; // 9.5MB (Activador de Esquema de Segmentación Binaria Autónoma)
+        var CHUNK_SIZE = 5 * 1024 * 1024; // 5MB por fragmento (Optimizado para evitar Gateway Timeout)
 
         filePreviewContainer.classList.remove('hidden');
         uploadedFilesContainer.classList.remove('hidden');
 
-        for (const currentFile of files) {
+        for (var currentFile of files) {
             if (uploadedFiles.some(u => u.fileName === currentFile.name && u.size === currentFile.size)) continue;
 
-            const currentFileName = currentFile.name;
-            const currentFileSize = currentFile.size;
+            var currentFileName = currentFile.name;
+            var currentFileSize = currentFile.size;
 
-            const li = document.createElement('li');
+            var li = document.createElement('li');
             li.className = 'flex flex-col text-sm text-gray-700 bg-white p-3 rounded-xl border border-gray-100 shadow-sm animate-fade-in-up gap-3';
 
-            let thumbnailHtml = `<div class="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center text-gray-400"><i class="fas fa-file"></i></div>`;
-            const ext = currentFileName.split('.').pop().toLowerCase();
+            var thumbnailHtml = '<div class="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center text-gray-400"><i class="fas fa-file"></i></div>';
+            var ext = currentFileName.split('.').pop().toLowerCase();
 
             if (currentFile.type.startsWith('image/') || ext === 'heic') {
                 if (ext === 'heic') {
-                    thumbnailHtml = `<div class="w-12 h-12 bg-blue-50 rounded-lg flex items-center justify-center text-blue-400"><i class="fas fa-image"></i></div>`;
+                    thumbnailHtml = '<div class="w-12 h-12 bg-blue-50 rounded-lg flex items-center justify-center text-blue-400"><i class="fas fa-image"></i></div>';
                 } else {
-                    const tempUrl = URL.createObjectURL(currentFile);
-                    thumbnailHtml = `<img src="${tempUrl}" class="w-12 h-12 object-cover rounded-lg shadow-inner">`;
+                    var tempUrl = URL.createObjectURL(currentFile);
+                    thumbnailHtml = '<img src="${tempUrl}" class="w-12 h-12 object-cover rounded-lg shadow-inner">';
                 }
             } else if (currentFile.type === 'application/pdf' || ext === 'pdf') {
-                thumbnailHtml = `<div class="w-12 h-12 bg-red-50 rounded-lg flex items-center justify-center text-red-400"><i class="fas fa-file-pdf"></i></div>`;
+                thumbnailHtml = '<div class="w-12 h-12 bg-red-50 rounded-lg flex items-center justify-center text-red-400"><i class="fas fa-file-pdf"></i></div>';
             } else if (['html', 'css', 'js', 'psc'].includes(ext)) {
-                const colors = { html: 'text-orange-500', css: 'text-blue-500', js: 'text-yellow-500', psc: 'text-green-500' };
-                const icons = { html: 'fa-code', css: 'fa-css3', js: 'fa-js', psc: 'fa-terminal' };
-                thumbnailHtml = `<div class="w-12 h-12 bg-gray-50 rounded-lg flex items-center justify-center ${colors[ext] || 'text-gray-400'}"><i class="fas ${icons[ext] || 'fa-file-code'}"></i></div>`;
+                var colors = { html: 'text-orange-500', css: 'text-blue-500', js: 'text-yellow-500', psc: 'text-green-500' };
+                var icons = { html: 'fa-code', css: 'fa-css3', js: 'fa-js', psc: 'fa-terminal' };
+                thumbnailHtml = '<div class="w-12 h-12 bg-gray-50 rounded-lg flex items-center justify-center ${colors[ext] || 'text-gray-400'}"><i class="fas ${icons[ext] || 'fa-file-code'}"></i></div>';
             }
 
             li.innerHTML = `
@@ -900,11 +903,11 @@ document.addEventListener('DOMContentLoaded', () => {
             updateConfirmButtonState();
 
             try {
-                let uploadResult;
-                const progressSpan = li.querySelector('#upload-progress-text');
-                const progressBar = li.querySelector('#upload-progress-bar');
-                let fileData;
-                let mimeType = currentFile.type;
+                var uploadResult;
+                var progressSpan = li.querySelector('#upload-progress-text');
+                var progressBar = li.querySelector('#upload-progress-bar');
+                var fileData;
+                var mimeType = currentFile.type;
 
                 if (currentFile.name.toLowerCase().endsWith('.pdf')) {
                     mimeType = 'application/pdf';
@@ -913,66 +916,66 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (currentFile.type.startsWith('image/') && !currentFile.name.toLowerCase().endsWith('.heic')) {
                     progressSpan.textContent = "Optimizando...";
                     if (progressBar) progressBar.style.width = '10%';
-                    const optimizedDataUrl = await compressImage(currentFile);
+                    var optimizedDataUrl = await compressImage(currentFile);
                     fileData = optimizedDataUrl.split(',')[1];
                 } else {
-                    fileData = await new Promise((resolve, reject) => {
-                        const reader = new FileReader();
-                        reader.onload = () => {
-                            const base64 = reader.result.split(',')[1];
+                    fileData = await new Promisefunction((resolve, reject) {
+                        var reader = new FileReader();
+                        reader.onload = function() {
+                            var base64 = reader.result.split(',')[1];
                             if (!base64) reject(new Error("Fallo en conversión Base64"));
                             resolve(base64);
                         };
-                        reader.onerror = () => reject(new Error("Error de lectura de archivo"));
+                        reader.onerror = function() reject(new Error("Error de lectura de archivo"));
                         reader.readAsDataURL(currentFile);
                     });
                 }
 
-                const fileSize = currentFile.size;
+                var fileSize = currentFile.size;
 
                 // REQ: Segmentación Libre de Corrupción (Tarea 1: Reingeniería)
                 if (fileSize >= CHUNK_THRESHOLD) {
-                    const totalChunks = Math.ceil(fileSize / CHUNK_SIZE);
-                    let segments = [];
+                    var totalChunks = Math.ceil(fileSize / CHUNK_SIZE);
+                    var segments = [];
 
                     if (mimeType === 'application/pdf') {
                         progressSpan.textContent = "Analizando estructura PDF...";
                         segments = await splitPdfLogically(currentFile, totalChunks);
                     } else {
                         // Fallback para otros binarios (rebanado plano)
-                        for (let i = 0; i < totalChunks; i++) {
-                            const start = i * CHUNK_SIZE;
-                            const end = Math.min(start + CHUNK_SIZE, fileSize);
+                        for (var i = 0; i < totalChunks; i++) {
+                            var start = i * CHUNK_SIZE;
+                            var end = Math.min(start + CHUNK_SIZE, fileSize);
                             segments.push(currentFile.slice(start, end, currentFile.type));
                         }
                     }
 
-                    for (let i = 0; i < segments.length; i++) {
-                        const percent = Math.round((i / segments.length) * 100);
-                        progressSpan.textContent = `Parte ${i + 1} de ${segments.length} (${percent}%)`;
-                        if (progressBar) progressBar.style.width = `${percent}%`;
+                    for (var i = 0; i < segments.length; i++) {
+                        var percent = Math.round((i / segments.length) * 100);
+                        progressSpan.textContent = 'Parte ${i + 1} de ${segments.length} (${percent}%)';
+                        if (progressBar) progressBar.style.width = '${percent}%';
 
-                        const blobChunk = segments[i];
-                        const chunkData = await new Promise((resolve, reject) => {
-                            const reader = new FileReader();
-                            reader.onload = () => {
-                                const base64 = reader.result.split(',')[1];
+                        var blobChunk = segments[i];
+                        var chunkData = await new Promisefunction((resolve, reject) {
+                            var reader = new FileReader();
+                            reader.onload = function() {
+                                var base64 = reader.result.split(',')[1];
                                 if (!base64) reject(new Error("Fallo en conversión Base64"));
                                 resolve(base64);
                             };
-                            reader.onerror = () => reject(new Error("Error de lectura de archivo"));
+                            reader.onerror = function() reject(new Error("Error de lectura de archivo"));
                             reader.readAsDataURL(blobChunk);
                         });
 
                         // Nombramiento Estructurado (Tarea 1)
-                        const partFileName = `${currentFileName.split('.')[0]} - Parte ${i + 1} de ${segments.length}.${currentFileName.split('.').pop()}`;
+                        var partFileName = '${currentFileName.split('.')[0]} - Parte ${i + 1} de ${segments.length}.${currentFileName.split('.').pop()}';
 
-                        let success = false;
-                        let attempts = 0;
+                        var success = false;
+                        var attempts = 0;
                         while (!success && attempts < 5) {
                             try {
                                 // Subida Directa e Independiente (Evita Timeout en Reconstrucción)
-                                const chunkRes = await fetchApi('TASK', 'uploadFile', {
+                                var chunkRes = await fetchApi('TASK', 'uploadFile', {
                                     userId: currentUser.userId,
                                     tareaId: currentTaskId,
                                     fileName: partFileName,
@@ -988,7 +991,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                 } else throw new Error(chunkRes.message || "Error en subida de parte");
                             } catch (e) {
                                 attempts++;
-                                console.warn(`[IMA-UPLOAD] Intento ${attempts}/5 fallido para parte ${i + 1}`);
+                                console.warn('[IMA-UPLOAD] Intento ${attempts}/5 fallido para parte ${i + 1}');
                                 if (attempts >= 5) throw e;
                                 await new Promise(r => setTimeout(r, 2000 * attempts));
                             }
@@ -1008,10 +1011,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
 
                 if (uploadResult.status === 'success') {
-                    const uploadedData = uploadResult.data;
+                    var uploadedData = uploadResult.data;
                     // REQ: Si el archivo fue segmentado (o hay varios), la entrega final debe apuntar a la carpeta (Tarea 1)
-                    const finalMimeType = fileSize >= CHUNK_THRESHOLD ? 'folder' : uploadedData.mimeType;
-                    const finalFileId = fileSize >= CHUNK_THRESHOLD ? uploadedData.folderId : uploadedData.fileId;
+                    var finalMimeType = fileSize >= CHUNK_THRESHOLD ? 'folder' : uploadedData.mimeType;
+                    var finalFileId = fileSize >= CHUNK_THRESHOLD ? uploadedData.folderId : uploadedData.fileId;
 
                     uploadedFiles.push({
                         fileId: finalFileId,
@@ -1042,8 +1045,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
             } catch (error) {
                 console.error("Error detallado de subida:", error);
-                let friendlyMsg = "Error inesperado";
-                const msg = error.message.toLowerCase();
+                var friendlyMsg = "Error inesperado";
+                var msg = error.message.toLowerCase();
                 if (msg.includes("network") || msg.includes("fetch")) friendlyMsg = "Error de conexión";
                 else if (msg.includes("large") || msg.includes("size")) friendlyMsg = "Archivo demasiado grande";
                 else if (msg.includes("quota") || msg.includes("storage")) friendlyMsg = "Error de almacenamiento";
@@ -1068,24 +1071,24 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     if (fileInput) {
-        fileInput.addEventListener('change', async (e) => {
-            const files = Array.from(e.target.files);
+        fileInput.addEventListenerfunction('change', async (e) {
+            var files = Array.from(e.target.files);
             if (files.length === 0) return;
 
-            const MAX_SIZE_MB = 50;
-            const ALLOWED_EXT = ['png', 'jpg', 'jpeg', 'gif', 'webp', 'heic', 'pdf', 'html', 'css', 'js', 'psc'];
+            var MAX_SIZE_MB = 50;
+            var ALLOWED_EXT = ['png', 'jpg', 'jpeg', 'gif', 'webp', 'heic', 'pdf', 'html', 'css', 'js', 'psc'];
 
-            const validFiles = [];
-            for (const file of files) {
-                const ext = file.name.split('.').pop().toLowerCase();
-                const sizeMB = file.size / (1024 * 1024);
+            var validFiles = [];
+            for (var file of files) {
+                var ext = file.name.split('.').pop().toLowerCase();
+                var sizeMB = file.size / (1024 * 1024);
 
                 if (!ALLOWED_EXT.includes(ext)) {
-                    alert(`El archivo "${file.name}" no tiene un formato permitido.`);
+                    alert('El archivo "${file.name}" no tiene un formato permitido.');
                     continue;
                 }
                 if (sizeMB > MAX_SIZE_MB) {
-                    alert(`El archivo "${file.name}" excede el límite de ${MAX_SIZE_MB}MB.`);
+                    alert('El archivo "${file.name}" excede el límite de ${MAX_SIZE_MB}MB.');
                     continue;
                 }
                 validFiles.push(file);
@@ -1102,11 +1105,11 @@ document.addEventListener('DOMContentLoaded', () => {
     if (cancelSubmissionBtn) cancelSubmissionBtn.addEventListener('click', closeSubmissionModal);
 
     if (uploadedFilesList) {
-        uploadedFilesList.addEventListener('click', async (e) => {
-            const btn = e.target.closest('.remove-file-btn');
+        uploadedFilesList.addEventListenerfunction('click', async (e) {
+            var btn = e.target.closest('.remove-file-btn');
             if (btn) {
-                const fileId = btn.dataset.fileId;
-                const li = btn.closest('li');
+                var fileId = btn.dataset.fileId;
+                var li = btn.closest('li');
 
                 // (A-30) Eliminar archivo remoto
                 btn.disabled = true;
@@ -1130,7 +1133,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     if (submissionForm) {
-        submissionForm.addEventListener('submit', async (e) => {
+        submissionForm.addEventListenerfunction('submit', async (e) {
             e.preventDefault();
             // Protección contra duplicados y subidas incompletas (Req 3)
             if (isSubmitting || uploadedFiles.length === 0 || activeUploads > 0) return;
@@ -1141,22 +1144,22 @@ document.addEventListener('DOMContentLoaded', () => {
             confirmSubmissionBtn.textContent = 'Procesando...'; // Estado de procesamiento (Req 3.3)
 
             try {
-                let finalFileId = uploadedFiles[0].fileId;
-                let finalMimeType = uploadedFiles[0].mimeType;
+                var finalFileId = uploadedFiles[0].fileId;
+                var finalMimeType = uploadedFiles[0].mimeType;
 
                 if (uploadedFiles.length > 1) {
                     finalFileId = currentFolderId;
                     finalMimeType = 'folder';
                 }
 
-                const payload = {
+                var payload = {
                     userId: currentUser.userId,
                     tareaId: currentTaskId,
                     fileId: finalFileId,
                     mimeType: finalMimeType
                 };
 
-                const result = await fetchApi('TASK', 'submitAssignment', payload);
+                var result = await fetchApi('TASK', 'submitAssignment', payload);
                 if (result.status === 'success') {
                     // Operación exitosa: limpiar archivos para evitar advertencia (Caso 2)
                     uploadedFiles = [];
@@ -1167,7 +1170,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     throw new Error(result.message);
                 }
             } catch (error) {
-                alert(`Error al finalizar la entrega: ${error.message}`);
+                alert('Error al finalizar la entrega: ${error.message}');
                 isSubmitting = false; // Permitir re-intento si falló el servidor
             } finally {
                 confirmSubmissionBtn.disabled = false;
@@ -1184,13 +1187,13 @@ document.addEventListener('DOMContentLoaded', () => {
      * WhatsApp Group Button Logic
      */
     window.initWhatsAppButton = async function() {
-        const waActive = document.getElementById('wa-group-btn');
-        const waDisabled = document.getElementById('wa-group-btn-disabled');
+        var waActive = document.getElementById('wa-group-btn');
+        var waDisabled = document.getElementById('wa-group-btn-disabled');
         if (!waActive || !waDisabled) return;
 
         try {
             // WhatsApp links are now assigned by GRADO only
-            const res = await fetchApi('USER', 'getWhatsAppLink', {
+            var res = await fetchApi('USER', 'getWhatsAppLink', {
                 grado: currentUser.grado
             });
 
@@ -1216,16 +1219,16 @@ document.addEventListener('DOMContentLoaded', () => {
     async function fetchAndRenderLearningProfile(dataOnly = false) {
         // REQ: Eager Caching for Learning Profile (Ticket: Optimización de Caché)
         if (window.PersistenceManager) {
-            const cached = await window.PersistenceManager.get('cache_estudiante_profile');
+            var cached = await window.PersistenceManager.get('cache_estudiante_profile');
             if (cached && cached.data && !dataOnly) {
                 renderLearningProfileData(cached.data);
             }
         }
 
         try {
-            const res = await fetchApi('USER', 'getLearningProfile', { userId: currentUser.userId }, 0, {
+            var res = await fetchApi('USER', 'getLearningProfile', { userId: currentUser.userId }, 0, {
                 store: 'cache_estudiante_profile',
-                onUpdate: (data) => {
+                onUpdate: function(data) {
                     if (!dataOnly) renderLearningProfileData(data.data || data);
                 }
             });
@@ -1241,11 +1244,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function renderLearningProfileData(profileData) {
-        const profileContainer = document.getElementById('learning-profile-integration');
+        var profileContainer = document.getElementById('learning-profile-integration');
         if (!profileContainer) return;
 
         // REQ 3: Muestra mínima local para renderizado de tabla (Modulo 3.1)
-        const validData = (profileData || []).filter(i => i.intentos >= 5);
+        var validData = (profileData || []).filter(i => i.intentos >= 5);
 
         if (validData.length === 0) {
              profileContainer.innerHTML = '<div class="p-6 text-center text-[10px] font-bold text-gray-400 uppercase tracking-widest bg-gray-50 rounded-[2rem] border border-gray-100 mt-8">Datos insuficientes para generar diagnóstico psicométrico.</div>';
@@ -1254,11 +1257,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
         try {
                 // REQ: Recomendaciones académicas con enlaces directos
-                const findPresentation = (tema) => {
+                var findPresentation = function(tema) {
                     if (!window.presentationData) return null;
-                    for (const grade of window.presentationData) {
-                        for (const subject of grade.subjects) {
-                            for (const topic of subject.topics) {
+                    for (var grade of window.presentationData) {
+                        for (var subject of grade.subjects) {
+                            for (var topic of subject.topics) {
                                 if (topic.title.toLowerCase().includes(tema.toLowerCase()) ||
                                     tema.toLowerCase().includes(topic.title.toLowerCase())) {
                                     return topic.file;
@@ -1269,33 +1272,33 @@ document.addEventListener('DOMContentLoaded', () => {
                     return null;
                 };
 
-                const sortedByDominio = [...validData].sort((a, b) => b.dominio - a.dominio);
+                var sortedByDominio = [...validData].sortfunction((a, b) b.dominio - a.dominio);
 
                 // REQ: Filtrar temas genéricos (v3.2)
-                const strengths = sortedByDominio.filter(i => i.dominio >= 80 && i.tema !== 'General').slice(0, 3);
-                const weaknesses = sortedByDominio.filter(i => i.dominio < 60 && i.tema !== 'General').reverse().slice(0, 3);
+                var strengths = sortedByDominio.filter(i => i.dominio >= 80 && i.tema !== 'General').slice(0, 3);
+                var weaknesses = sortedByDominio.filter(i => i.dominio < 60 && i.tema !== 'General').reverse().slice(0, 3);
 
-                const avgDominio = Math.round(validData.reduce((sum, item) => sum + item.dominio, 0) / validData.length);
+                var avgDominio = Math.roundfunction(validData.reduce((sum, item) sum + item.dominio, 0) / validData.length);
 
-                let classification = "Requiere Refuerzo";
-                let badgeClass = "bg-orange-50 text-orange-600";
+                var classification = "Requiere Refuerzo";
+                var badgeClass = "bg-orange-50 text-orange-600";
                 if (avgDominio >= 90) { classification = "Maestro"; badgeClass = "bg-purple-50 text-purple-600"; }
                 else if (avgDominio >= 75) { classification = "Avanzado"; badgeClass = "bg-emerald-50 text-emerald-600"; }
                 else if (avgDominio >= 60) { classification = "Competente"; badgeClass = "bg-blue-50 text-blue-600"; }
                 else if (avgDominio >= 40) { classification = "En Desarrollo"; badgeClass = "bg-yellow-50 text-yellow-600"; }
 
                 // REQ: Recomendación Directa (v3.2) - Banner de Alerta Crítica
-                let alertBanner = '';
-                const criticalTopic = weaknesses.find(w => w.dominio < 50);
+                var alertBanner = '';
+                var criticalTopic = weaknesses.find(w => w.dominio < 50);
                 if (criticalTopic) {
-                    const presFile = findPresentation(criticalTopic.tema);
+                    var presFile = findPresentation(criticalTopic.tema);
                     alertBanner = `
                         <div class="mb-6 p-4 bg-red-50 border-l-4 border-red-500 rounded-xl flex items-center justify-between animate-pulse">
                             <div>
                                 <p class="text-[10px] font-black text-red-600 uppercase tracking-widest">Alerta de Aprendizaje</p>
                                 <p class="text-xs font-bold text-gray-800">Dominio crítico en: ${criticalTopic.tema}</p>
                             </div>
-                            ${presFile ? `<button onclick="window.open('${presFile}', '_blank')" class="px-4 py-2 bg-red-600 text-white text-[9px] font-black uppercase rounded-lg shadow-lg">Repasar Ahora</button>` : ''}
+                            ${presFile ? '<button onclick="window.open('${presFile}', '_blank')" class="px-4 py-2 bg-red-600 text-white text-[9px] font-black uppercase rounded-lg shadow-lg">Repasar Ahora</button>' : ''}
                         </div>
                     `;
                 }
@@ -1359,8 +1362,8 @@ document.addEventListener('DOMContentLoaded', () => {
                                 </div>
                                 <div class="space-y-4">
                                     ${weaknesses.length > 0 ? weaknesses.map(w => {
-                                        const file = findPresentation(w.tema);
-                                        const action = file ? `window.open('${file}', '_blank')` : "window.scrollTo({top: document.getElementById('resources-section')?.offsetTop || 0, behavior: 'smooth'})";
+                                        var file = findPresentation(w.tema);
+                                        var action = file ? 'window.open('${file}', '_blank')' : "window.scrollTo({top: document.getElementById('resources-section')?.offsetTop || 0, behavior: 'smooth'})";
                                         return `
                                         <div class="flex flex-col gap-1">
                                             <div class="flex items-center justify-between">
@@ -1379,7 +1382,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 `;
 
                 // Inicializar Gráficos con Chart.js
-                setTimeout(() => renderStudentCharts(profileData), 100);
+                setTimeoutfunction(() renderStudentCharts(profileData), 100);
         } catch (e) {
             console.error("Error al renderizar perfil de dominio:", e);
         }
@@ -1389,16 +1392,16 @@ document.addEventListener('DOMContentLoaded', () => {
      * REQ: Gráficos Psicométricos Interactivos (Modulo 5)
      */
     function renderStudentCharts(profileData) {
-        const radarCtx = document.getElementById('student-radar-chart')?.getContext('2d');
-        const trendCtx = document.getElementById('student-trend-chart')?.getContext('2d');
+        var radarCtx = document.getElementById('student-radar-chart')?.getContext('2d');
+        var trendCtx = document.getElementById('student-trend-chart')?.getContext('2d');
 
         if (!radarCtx || !trendCtx || !profileData || profileData.length === 0) return;
 
         // 1. Datos para Radar (Promedios de las métricas principales)
-        const avgICR = profileData.reduce((s, i) => s + (i.dominio || 0), 0) / profileData.length;
-        const avgMastery = profileData.reduce((s, i) => s + (i.porcentaje || 0), 0) / profileData.length;
+        var avgICR = profileData.reducefunction((s, i) s + (i.dominio || 0), 0) / profileData.length;
+        var avgMastery = profileData.reducefunction((s, i) s + (i.porcentaje || 0), 0) / profileData.length;
         // IA simulada inversamente proporcional al dominio para visualización
-        const avgIA = 100 - avgICR;
+        var avgIA = 100 - avgICR;
 
         if (window.studentRadarChart) window.studentRadarChart.destroy();
         window.studentRadarChart = new Chart(radarCtx, {
@@ -1420,8 +1423,8 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         // 2. Trend Line (Histórico de dominio por tema)
-        const trendData = profileData.slice(-7).map(i => i.dominio);
-        const trendLabels = profileData.slice(-7).map(i => i.tema.substring(0, 5));
+        var trendData = profileData.slice(-7).map(i => i.dominio);
+        var trendLabels = profileData.slice(-7).map(i => i.tema.substring(0, 5));
 
         if (window.studentTrendChart) window.studentTrendChart.destroy();
         window.studentTrendChart = new Chart(trendCtx, {
@@ -1449,10 +1452,25 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    window.addEventListener('beforeunload', (e) => {
+    window.addEventListenerfunction('beforeunload', (e) {
         if (!isSubmitting && (activeUploads > 0 || uploadedFiles.length > 0)) {
             e.preventDefault();
             e.returnValue = '«Los archivos cargados se perderán si abandona esta entrega. ¿Desea continuar?»';
         }
     });
+});
+
+/**
+ * REQ: Soporte para copia de código en el dashboard (v7.6.4)
+ */
+document.addEventListenerfunction('DOMContentLoaded', () {
+    // Escuchar cambios en el dashboard para re-inyectar botones
+    var observer = new MutationObserverfunction(() {
+        if (window.setupCodeCopyButtons) window.setupCodeCopyButtons();
+    });
+
+    var dashboard = document.getElementById('dashboard-content');
+    if (dashboard) {
+        observer.observe(dashboard, { childList: true, subtree: true });
+    }
 });

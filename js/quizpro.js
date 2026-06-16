@@ -3,24 +3,24 @@
  * Refactorización: Matriz de Prerrequisitos, Acceso Cross-Grade y Centralización Académica.
  */
 
-let allPresentationQuestions = [];
-let currentQuizQuestions = [];
-let currentIndex = 0;
-let score = 0;
-let timerSeconds = 0;
-let timerInterval = null;
-let selectedAsignatura = '';
-let selectedDifficulty = '';
-let selectedGrado = '';
-let incorrectAnswers = [];
-let lastCorrectIndex = -1; // REQ: Restricción de Memoria Inmediata (A-149)
-let questionStartTime = 0;
-let responseChanges = 0;
-let currentStreak = 0;
-let sessionXP = 0;
+var allPresentationQuestions = [];
+var currentQuizQuestions = [];
+var currentIndex = 0;
+var score = 0;
+var timerSeconds = 0;
+var timerInterval = null;
+var selectedAsignatura = '';
+var selectedDifficulty = '';
+var selectedGrado = '';
+var incorrectAnswers = [];
+var lastCorrectIndex = -1; // REQ: Restricción de Memoria Inmediata (A-149)
+var questionStartTime = 0;
+var responseChanges = 0;
+var currentStreak = 0;
+var sessionXP = 0;
 
 // REQ: Gamificación v7.0 (Modulo 4)
-const XP_CONFIG = {
+var XP_CONFIG = {
     BASE: 100,
     FACTORS: {
         basico: 1.0,
@@ -46,8 +46,8 @@ const XP_CONFIG = {
     ]
 };
 
-const SEEN_QUESTIONS_KEY = 'quizpro_seen_questions';
-const SEEN_LIMIT = 200;
+var SEEN_QUESTIONS_KEY = 'quizpro_seen_questions';
+var SEEN_LIMIT = 200;
 
 window.userGameStats = {}; // Cache de logros para validación de bloqueos
 window.globalTopData = null;
@@ -69,8 +69,8 @@ window.initQuizPro = async function() {
         console.error("[QuizPro] Error en carga de tablas asíncrona:", e);
     }
 
-    const handleAbandonment = () => {
-        const quizScreen = document.getElementById('quiz-screen');
+    var handleAbandonment = () function {
+        var quizScreen = document.getElementById('quiz-screen');
         if (quizScreen && !quizScreen.classList.contains('hidden')) {
             alert('Evaluación cancelada por abandono de ventana o cambio de pestaña.');
             location.reload();
@@ -78,13 +78,13 @@ window.initQuizPro = async function() {
     };
 
     window.addEventListener('blur', handleAbandonment);
-    document.addEventListener('visibilitychange', () => {
+    document.addEventListener('visibilitychange', () function {
         if (document.visibilityState === 'hidden') handleAbandonment();
     });
 };
 
 function getStudentGrade() {
-    const user = JSON.parse(localStorage.getItem('currentUser'));
+    var user = JSON.parse(localStorage.getItem('currentUser'));
     if (!user) return 10;
     return window.parseGrade(user.grado);
 }
@@ -94,24 +94,24 @@ function getStudentGrade() {
  * El acceso depende del historial de aprobación (Cross-Grade).
  */
 window.navigateToSubjects = function() {
-    const grid = document.getElementById('subjects-grid');
-    const user = JSON.parse(localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser'));
-    const isTeacher = user?.rol === 'Profesor';
-    const userGradeNum = getStudentGrade();
+    var grid = document.getElementById('subjects-grid');
+    var user = JSON.parse(localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser'));
+    var isTeacher = user?.rol === 'Profesor';
+    var userGradeNum = getStudentGrade();
 
-    const subjectEntries = [];
-    const userSection = user?.seccion;
+    var subjectEntries = [];
+    var userSection = user?.seccion;
 
-    window.presentationData.forEach(gradeBlock => {
-        const blockGradeNum = window.parseGrade(gradeBlock.grade);
+    window.presentationData.forEach(gradeBlock function {
+        var blockGradeNum = window.parseGrade(gradeBlock.grade);
 
         // Rule: Student can only visualize subjects of their current grade or lower
         if (isTeacher || blockGradeNum <= userGradeNum) {
-            const seenInBlock = new Set();
-            gradeBlock.subjects.forEach(subj => {
+            var seenInBlock = new Set();
+            gradeBlock.subjects.forEach(subj function {
                 if (!isTeacher && userSection && !window.checkSectionHelper(subj.sections, userSection)) return;
 
-                const normName = window.normalizeSubject(subj.name);
+                var normName = window.normalizeSubject(subj.name);
                 if (seenInBlock.has(normName)) return;
 
                 subjectEntries.push({
@@ -124,14 +124,14 @@ window.navigateToSubjects = function() {
         }
     });
 
-    subjectEntries.sort((a, b) => a.gradeNum - b.gradeNum || a.name.localeCompare(b.name));
+    subjectEntries.sort((a, b) function a.gradeNum - b.gradeNum || a.name.localeCompare(b.name));
 
-    grid.innerHTML = subjectEntries.map(entry => {
-        const isLocked = !isTeacher && checkCrossGradeLock(entry.name, entry.gradeLabel);
+    grid.innerHTML = subjectEntries.map(entry function {
+        var isLocked = !isTeacher && checkCrossGradeLock(entry.name, entry.gradeLabel);
 
-        const cardClass = isLocked ? 'opacity-60 grayscale cursor-not-allowed' : 'hover:shadow-md cursor-pointer';
-        const lockIcon = isLocked ? '<i class="fas fa-lock text-xs ml-2 text-gray-400"></i>' : '';
-        const clickAction = isLocked ? '' : `onclick="navigateToLevels('${entry.name}', '${entry.gradeLabel}')"`;
+        var cardClass = isLocked ? 'opacity-60 grayscale cursor-not-allowed' : 'hover:shadow-md cursor-pointer';
+        var lockIcon = isLocked ? '<i class="fas fa-lock text-xs ml-2 text-gray-400"></i>' : '';
+        var clickAction = isLocked ? '' : `onclick="navigateToLevels('${entry.name}', '${entry.gradeLabel}')"`;
 
         return `
             <div class="subject-card p-6 bg-white border-2 border-gray-100 rounded-3xl shadow-sm transition-all text-center ${cardClass}" ${clickAction}>
@@ -158,31 +158,31 @@ window.navigateToSubjects = function() {
  * de TODAS las asignaturas de los grados previos con Score >= 70%.
  */
 function checkCrossGradeLock(subjectName, targetGrade) {
-    const targetGradeNum = window.parseGrade(targetGrade);
+    var targetGradeNum = window.parseGrade(targetGrade);
 
     // Fase de Calibración Inicial (Décimo Grado): Básico siempre desbloqueado
     // Nota: Niveles Intermedio y Avanzado de 10mo siguen progresión lineal interna en navigateToLevels
     if (targetGradeNum <= 10) return false;
 
-    const user = JSON.parse(localStorage.getItem('currentUser'));
-    const userSection = user?.seccion;
-    const statsArray = Object.values(window.userGameStats || {});
+    var user = JSON.parse(localStorage.getItem('currentUser'));
+    var userSection = user?.seccion;
+    var statsArray = Object.values(window.userGameStats || {});
 
     // Identificar todos los grados previos que deben estar completados
-    const requiredGrades = [];
+    var requiredGrades = [];
     if (targetGradeNum > 10) requiredGrades.push(10);
     if (targetGradeNum > 11) requiredGrades.push(11);
 
-    const subjectsToApprove = []; // { name, gradeNum }
-    window.presentationData.forEach(block => {
-        const bg = window.parseGrade(block.grade);
+    var subjectsToApprove = []; // { name, gradeNum }
+    window.presentationData.forEach(block function {
+        var bg = window.parseGrade(block.grade);
         if (requiredGrades.includes(bg)) {
-            block.subjects.forEach(s => {
+            block.subjects.forEach(s function {
                 // Solo requerir materias que el estudiante debe cursar según su sección
                 if (userSection && !window.checkSectionHelper(s.sections, userSection)) return;
 
-                const name = window.normalizeSubject(s.name);
-                if (!subjectsToApprove.some(item => item.name === name && item.gradeNum === bg)) {
+                var name = window.normalizeSubject(s.name);
+                if (!subjectsToApprove.some(item function item.name === name && item.gradeNum === bg)) {
                     subjectsToApprove.push({ name, gradeNum: bg });
                 }
             });
@@ -190,10 +190,10 @@ function checkCrossGradeLock(subjectName, targetGrade) {
     });
 
     // Barrier Synchronization: Exige aprobación del 100% de niveles de grados previos
-    const levels = ['Básico', 'Intermedio', 'Avanzado'];
-    for (const req of subjectsToApprove) {
-        for (const lvl of levels) {
-            const hasApproval = statsArray.some(s =>
+    var levels = ['Básico', 'Intermedio', 'Avanzado'];
+    for (var req of subjectsToApprove) {
+        for (var lvl of levels) {
+            var hasApproval = statsArray.some(s function
                 window.normalizeSubject(s.subject) === req.name &&
                 window.parseGrade(s.grade) === req.gradeNum &&
                 window.getStandardLevelName(s.level) === lvl &&
@@ -214,16 +214,16 @@ window.navigateToLevels = function(subjectName, gradeLabel) {
     selectedGrado = gradeLabel;
     document.getElementById('selected-subject-title').textContent = subjectName;
 
-    const user = JSON.parse(localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser'));
-    const isTeacher = user?.rol === 'Profesor';
+    var user = JSON.parse(localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser'));
+    var isTeacher = user?.rol === 'Profesor';
 
     // UI: Menciones por Asignatura
-    const topContainer = document.getElementById('subject-top-container');
-    const topNames = document.getElementById('subject-top-names');
+    var topContainer = document.getElementById('subject-top-container');
+    var topNames = document.getElementById('subject-top-names');
     if (topContainer && topNames && window.globalTopData?.subjectTops) {
-        const topList = window.globalTopData.subjectTops[gradeLabel]?.[subjectName];
+        var topList = window.globalTopData.subjectTops[gradeLabel]?.[subjectName];
         if (topList && topList.length > 0) {
-            topNames.textContent = topList.map(u => u.nombre).join(', ');
+            topNames.textContent = topList.map(u function u.nombre).join(', ');
             topContainer.classList.remove('hidden');
         } else {
             topContainer.classList.add('hidden');
@@ -231,46 +231,46 @@ window.navigateToLevels = function(subjectName, gradeLabel) {
     }
 
     // REQ 4.2: Escala de Rangos y Progresión por Asignatura (Modulo 4)
-    const statsArray = Object.values(window.userGameStats || {});
-    const targetGradeNum = window.parseGrade(gradeLabel);
-    const targetSubjectNorm = window.normalizeSubject(subjectName);
+    var statsArray = Object.values(window.userGameStats || {});
+    var targetGradeNum = window.parseGrade(gradeLabel);
+    var targetSubjectNorm = window.normalizeSubject(subjectName);
 
-    const relevantStats = statsArray.filter(s => {
+    var relevantStats = statsArray.filter(s function {
         if (!s.subject || s.grade === undefined) return false;
         return window.normalizeSubject(s.subject) === targetSubjectNorm &&
                window.parseGrade(s.grade) === targetGradeNum;
     });
 
-    const getMetricsForLevel = (lvlName) => {
-        const matches = relevantStats.filter(s => window.getStandardLevelName(s.level) === lvlName);
+    var getMetricsForLevel = (lvlName) function {
+        var matches = relevantStats.filter(s function window.getStandardLevelName(s.level) === lvlName);
         if (matches.length === 0) return { score: 0, icr: 0, ia: 0, mastery: 0 };
 
         return {
-            score: Math.max(...matches.map(m => parseFloat(m.maxScore || 0))),
-            icr: Math.max(...matches.map(m => parseFloat(m.icr || 0))),
-            ia: Math.min(...matches.map(m => parseFloat(m.ia || 100))),
-            mastery: Math.max(...matches.map(m => parseFloat(m.dominio || 0)))
+            score: Math.max(...matches.map(m function parseFloat(m.maxScore || 0))),
+            icr: Math.max(...matches.map(m function parseFloat(m.icr || 0))),
+            ia: Math.min(...matches.map(m function parseFloat(m.ia || 100))),
+            mastery: Math.max(...matches.map(m function parseFloat(m.dominio || 0)))
         };
     };
 
-    const basicMetrics = getMetricsForLevel('Básico');
-    const interMetrics = getMetricsForLevel('Intermedio');
+    var basicMetrics = getMetricsForLevel('Básico');
+    var interMetrics = getMetricsForLevel('Intermedio');
 
-    const basicScore = basicMetrics.score;
-    const interScore = interMetrics.score;
+    var basicScore = basicMetrics.score;
+    var interScore = interMetrics.score;
 
     // Métrica de XP para rangos
-    const xpKey = `xp_${targetSubjectNorm}_${gradeLabel}`;
-    const currentXP = parseInt(localStorage.getItem(xpKey) || '0');
+    var xpKey = `xp_${targetSubjectNorm}_${gradeLabel}`;
+    var currentXP = parseInt(localStorage.getItem(xpKey) || '0');
 
     // Determinar Rango Actual (v3.0)
-    let userRange = XP_CONFIG.RANGES.find(r => currentXP >= r.min && currentXP <= r.max) || XP_CONFIG.RANGES[0];
+    var userRange = XP_CONFIG.RANGES.find(r function currentXP >= r.min && currentXP <= r.max) || XP_CONFIG.RANGES[0];
 
     // REQ: Validación Rango Leyenda (Modulo 4.2 / Spec v3.0)
     if (currentXP > 22000) {
-        const globalMastery = Object.values(window.userGameStats).reduce((a, b) => a + (b.dominio || 0), 0) / Math.max(Object.keys(window.userGameStats).length, 1);
-        const globalICR = Object.values(window.userGameStats).reduce((a, b) => a + (b.icr || 0), 0) / Math.max(Object.keys(window.userGameStats).length, 1);
-        const globalIA = Object.values(window.userGameStats).reduce((a, b) => a + (b.ia || 0), 0) / Math.max(Object.keys(window.userGameStats).length, 1);
+        var globalMastery = Object.values(window.userGameStats).reduce((a, b) function a + (b.dominio || 0), 0) / Math.max(Object.keys(window.userGameStats).length, 1);
+        var globalICR = Object.values(window.userGameStats).reduce((a, b) function a + (b.icr || 0), 0) / Math.max(Object.keys(window.userGameStats).length, 1);
+        var globalIA = Object.values(window.userGameStats).reduce((a, b) function a + (b.ia || 0), 0) / Math.max(Object.keys(window.userGameStats).length, 1);
 
         if (globalMastery >= 85 && globalICR >= 80 && globalIA <= 15) {
             userRange = { label: 'Leyenda' };
@@ -280,31 +280,31 @@ window.navigateToLevels = function(subjectName, gradeLabel) {
     }
 
     // UI: Mostrar Rango y XP
-    const badgeHtml = `<div class="mt-4 flex flex-col items-center gap-2">
+    var badgeHtml = `<div class="mt-4 flex flex-col items-center gap-2">
         <span class="px-4 py-1 ${userRange.label === 'Leyenda' ? 'bg-amber-500 shadow-amber-200' : 'bg-indigo-600 shadow-indigo-100'} text-white rounded-full text-[10px] font-black uppercase tracking-widest shadow-lg">${userRange.label}</span>
         <p class="text-[9px] font-bold text-gray-400 uppercase tracking-tighter">${currentXP.toLocaleString()} XP ACUMULADA</p>
     </div>`;
 
-    const existingBadge = document.getElementById('user-rank-badge');
+    var existingBadge = document.getElementById('user-rank-badge');
     if (existingBadge) existingBadge.innerHTML = badgeHtml;
     else {
-        const badgeContainer = document.createElement('div');
+        var badgeContainer = document.createElement('div');
         badgeContainer.id = 'user-rank-badge';
         badgeContainer.innerHTML = badgeHtml;
         document.getElementById('selected-subject-title').after(badgeContainer);
     }
 
-    const btnInter = document.getElementById('btn-intermedio');
-    const cardInter = document.getElementById('level-intermedio');
-    const btnAvan = document.getElementById('btn-avanzado');
-    const cardAvan = document.getElementById('level-avanzado');
+    var btnInter = document.getElementById('btn-intermedio');
+    var cardInter = document.getElementById('level-intermedio');
+    var btnAvan = document.getElementById('btn-avanzado');
+    var cardAvan = document.getElementById('level-avanzado');
 
     // REQ: Motor de Progresión Multi-factor (v3.0)
-    const checkUnlock = (metrics, targetLevel) => {
+    var checkUnlock = (metrics, targetLevel) function {
         if (isTeacher) return true;
 
         // REQ: Fase de Calibración (Cold Start) - No bloquear progresión psicométrica
-        const totalAnswers = Object.values(window.userGameStats).reduce((sum, s) => sum + (s.totalAttempts || 0), 0);
+        var totalAnswers = Object.values(window.userGameStats).reduce((sum, s) function sum + (s.totalAttempts || 0), 0);
         if (totalAnswers < 30) return metrics.score >= 70;
 
         if (targetLevel === 'intermedio') {
@@ -312,16 +312,16 @@ window.navigateToLevels = function(subjectName, gradeLabel) {
             return metrics.score >= 70 && metrics.mastery >= 55 && metrics.icr >= 50 && metrics.ia <= 40 && totalAnswers >= 30;
         } else if (targetLevel === 'avanzado') {
             // Ejemplo para Avanzado: Nota ≥ 75%, Mastery ≥ 65%, ICR ≥ 60%, IA ≤ 35%, 75 preguntas, 3 temas dominados
-            const dominatedTopics = relevantStats.filter(s => s.dominio >= 80).length;
+            var dominatedTopics = relevantStats.filter(s function s.dominio >= 80).length;
             return metrics.score >= 75 && metrics.mastery >= 65 && metrics.icr >= 60 && metrics.ia <= 35 && totalAnswers >= 75 && dominatedTopics >= 3;
         }
         return metrics.score >= 70;
     };
 
     // REQ: Prioridad de Desbloqueo Local (0ms) para fase de calibración
-    const localLevelsState = JSON.parse(localStorage.getItem('levels_state') || '{"intermedio": {"bloqueado": true}}');
-    let canUnlockInter = !localLevelsState.intermedio.bloqueado || checkUnlock(basicMetrics, 'intermedio');
-    let canUnlockAvan = checkUnlock(interMetrics, 'avanzado');
+    var localLevelsState = JSON.parse(localStorage.getItem('levels_state') || '{"intermedio": {"bloqueado": true}}');
+    var canUnlockInter = !localLevelsState.intermedio.bloqueado || checkUnlock(basicMetrics, 'intermedio');
+    var canUnlockAvan = checkUnlock(interMetrics, 'avanzado');
 
     // UI Intermedio
     if (canUnlockInter) {
@@ -330,7 +330,7 @@ window.navigateToLevels = function(subjectName, gradeLabel) {
         btnInter.classList.replace('bg-gray-300', 'bg-gray-900');
         btnInter.classList.remove('cursor-not-allowed');
         cardInter.classList.remove('locked');
-        const prog = cardInter.querySelector('.unlock-progress');
+        var prog = cardInter.querySelector('.unlock-progress');
         if (prog) prog.remove();
     } else {
         btnInter.disabled = true;
@@ -339,15 +339,15 @@ window.navigateToLevels = function(subjectName, gradeLabel) {
         btnInter.classList.add('cursor-not-allowed');
         cardInter.classList.add('locked');
 
-        let prog = cardInter.querySelector('.unlock-progress');
+        var prog = cardInter.querySelector('.unlock-progress');
         if (!prog) {
             prog = document.createElement('p');
             prog.className = 'unlock-progress text-[9px] font-bold text-red-500 mt-2 uppercase';
             btnInter.after(prog);
         }
 
-        const totalAnswers = Object.values(window.userGameStats).reduce((sum, s) => sum + (s.totalAttempts || 0), 0);
-        let reason = `Requieres 70% de precisión.`;
+        var totalAnswers = Object.values(window.userGameStats).reduce((sum, s) function sum + (s.totalAttempts || 0), 0);
+        var reason = `Requieres 70% de precisión.`;
         if (basicMetrics.score >= 70) {
             if (totalAnswers < 30) reason = `Faltan ${30 - totalAnswers} preguntas evaluadas.`;
             else if (basicMetrics.mastery < 55) reason = "Dominio insuficiente (Min 55%)";
@@ -364,7 +364,7 @@ window.navigateToLevels = function(subjectName, gradeLabel) {
         btnAvan.classList.replace('bg-gray-300', 'bg-gray-900');
         btnAvan.classList.remove('cursor-not-allowed');
         cardAvan.classList.remove('locked');
-        const prog = cardAvan.querySelector('.unlock-progress');
+        var prog = cardAvan.querySelector('.unlock-progress');
         if (prog) prog.remove();
     } else {
         btnAvan.disabled = true;
@@ -373,22 +373,22 @@ window.navigateToLevels = function(subjectName, gradeLabel) {
         btnAvan.classList.add('cursor-not-allowed');
         cardAvan.classList.add('locked');
 
-        let prog = cardAvan.querySelector('.unlock-progress');
+        var prog = cardAvan.querySelector('.unlock-progress');
         if (!prog) {
             prog = document.createElement('p');
             prog.className = 'unlock-progress text-[9px] font-bold text-red-500 mt-2 uppercase';
             btnAvan.after(prog);
         }
 
-        const totalAnswers = Object.values(window.userGameStats).reduce((sum, s) => sum + (s.totalAttempts || 0), 0);
-        let reason = `Requieres 75% de precisión.`;
+        var totalAnswers = Object.values(window.userGameStats).reduce((sum, s) function sum + (s.totalAttempts || 0), 0);
+        var reason = `Requieres 75% de precisión.`;
         if (interMetrics.score >= 75) {
             if (totalAnswers < 75) reason = `Faltan ${75 - totalAnswers} preguntas evaluadas.`;
             else if (interMetrics.mastery < 65) reason = "Dominio insuficiente (Min 65%)";
             else if (interMetrics.icr < 60) reason = "Confianza baja (Min 60%)";
             else if (interMetrics.ia > 35) reason = "Adivinación alta (Max 35%)";
             else {
-                const dominatedTopics = relevantStats.filter(s => s.dominio >= 80).length;
+                var dominatedTopics = relevantStats.filter(s function s.dominio >= 80).length;
                 if (dominatedTopics < 3) reason = `Faltan ${3 - dominatedTopics} temas dominados.`;
             }
         }
@@ -431,16 +431,16 @@ window.selectLevel = function(level) {
     selectedDifficulty = level;
     // Activar Fullscreen y Wake Lock al entrar al nivel (v3.2)
     if (document.documentElement.requestFullscreen) {
-        document.documentElement.requestFullscreen().catch(e => console.warn("FS failed", e));
+        document.documentElement.requestFullscreen().catch(e function console.warn("FS failed", e));
     }
     if (window.requestWakeLock) window.requestWakeLock();
     startQuiz();
 };
 
 function shuffleArray(a) {
-    const array = [...a];
-    for (let i = array.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
+    var array = [...a];
+    for (var i = array.length - 1; i > 0; i--) {
+        var j = Math.floor(Math.random() * (i + 1));
         [array[i], array[j]] = [array[j], array[i]];
     }
     return array;
@@ -459,38 +459,38 @@ async function startQuiz() {
     }
 
     // REQ 3.0: Sistema de Refuerzo Inteligente (Modulo 8)
-    const reinforcementIds = JSON.parse(localStorage.getItem('quizpro_reinforcement') || "[]");
-    let reinforcementQuestions = allPresentationQuestions.filter(q => reinforcementIds.includes(q.id));
+    var reinforcementIds = JSON.parse(localStorage.getItem('quizpro_reinforcement') || "[]");
+    var reinforcementQuestions = allPresentationQuestions.filter(q function reinforcementIds.includes(q.id));
 
-    let seenIds = JSON.parse(localStorage.getItem(SEEN_QUESTIONS_KEY) || "[]");
-    let freshQuestions = allPresentationQuestions.filter(q => !seenIds.includes(q.id) && !reinforcementIds.includes(q.id));
+    var seenIds = JSON.parse(localStorage.getItem(SEEN_QUESTIONS_KEY) || "[]");
+    var freshQuestions = allPresentationQuestions.filter(q function !seenIds.includes(q.id) && !reinforcementIds.includes(q.id));
 
-    if (freshQuestions.length < 5) freshQuestions = allPresentationQuestions.filter(q => !reinforcementIds.includes(q.id));
+    if (freshQuestions.length < 5) freshQuestions = allPresentationQuestions.filter(q function !reinforcementIds.includes(q.id));
 
     // Mezclar Refuerzo con Nuevas (Priorizando Refuerzo en los primeros slots)
-    let pool = [...shuffleArray(reinforcementQuestions), ...shuffleArray(freshQuestions)];
+    var pool = [...shuffleArray(reinforcementQuestions), ...shuffleArray(freshQuestions)];
     if (pool.length < 1) pool = allPresentationQuestions;
 
     // REQ 2: Algoritmo de Variedad de Fuente (Post-Audit)
     // Agrupar por origen para evitar clustering
-    const groupedBySource = {};
-    freshQuestions.forEach(q => {
+    var groupedBySource = {};
+    freshQuestions.forEach(q function {
         if (!groupedBySource[q.source]) groupedBySource[q.source] = [];
         groupedBySource[q.source].push(q);
     });
 
     // Barajar individualmente cada grupo
-    Object.keys(groupedBySource).forEach(src => {
+    Object.keys(groupedBySource).forEach(src function {
         groupedBySource[src] = shuffleArray(groupedBySource[src]);
     });
 
-    const interleaved = [];
-    const sources = Object.keys(groupedBySource);
-    let totalAdded = 0;
+    var interleaved = [];
+    var sources = Object.keys(groupedBySource);
+    var totalAdded = 0;
 
     // Intercalar para máxima variedad temática
     while (totalAdded < freshQuestions.length) {
-        sources.forEach(src => {
+        sources.forEach(src function {
             if (groupedBySource[src].length > 0) {
                 interleaved.push(groupedBySource[src].shift());
                 totalAdded++;
@@ -502,10 +502,10 @@ async function startQuiz() {
     currentQuizQuestions = interleaved.length > 0 ? interleaved : pool;
 
     currentQuizQuestions = currentQuizQuestions
-        .map(q => window.normalizeQuestion(q))
-        .filter(q => {
-            const qLevel = window.getStandardLevelName(q.nivel || selectedDifficulty);
-            const targetLevel = window.getStandardLevelName(selectedDifficulty);
+        .map(q function window.normalizeQuestion(q))
+        .filter(q function {
+            var qLevel = window.getStandardLevelName(q.nivel || selectedDifficulty);
+            var targetLevel = window.getStandardLevelName(selectedDifficulty);
 
             // Regla Estricta: Solo preguntas del nivel seleccionado
             if (qLevel !== targetLevel) {
@@ -514,7 +514,7 @@ async function startQuiz() {
             }
 
             // REQ: Validación obligatoria de integridad (Incidencia 3)
-            const validation = window.validateQuestion(q);
+            var validation = window.validateQuestion(q);
             if (!validation.valid) {
                 console.warn("[QuizPro] Pregunta descartada por integridad:", validation.error, q);
                 return false;
@@ -549,37 +549,37 @@ function calculateXP(isCorrect, level, responseTime) {
     currentStreak++;
 
     // 1. Factor Dificultad
-    const fDificultad = XP_CONFIG.FACTORS[level.toLowerCase()] || 1.0;
+    var fDificultad = XP_CONFIG.FACTORS[level.toLowerCase()] || 1.0;
 
     // 2. Factor Tiempo (Mitigador de Adivinación)
-    let fTiempo = 1.0;
+    var fTiempo = 1.0;
     if (responseTime < XP_CONFIG.TIME.MIN) {
         fTiempo = 0.5; // Respuesta Impulsiva
     } else if (responseTime <= XP_CONFIG.TIME.OPTIMAL) {
         fTiempo = 1.2; // Respuesta Reflexiva Óptima
     } else {
         // Respuesta Tardía (Decaimiento Lineal hasta 0.8)
-        const overshoot = responseTime - XP_CONFIG.TIME.OPTIMAL;
-        const totalLateWindow = XP_CONFIG.TIME.MAX - XP_CONFIG.TIME.OPTIMAL;
+        var overshoot = responseTime - XP_CONFIG.TIME.OPTIMAL;
+        var totalLateWindow = XP_CONFIG.TIME.MAX - XP_CONFIG.TIME.OPTIMAL;
         fTiempo = Math.max(0.8, 1.2 - (overshoot / totalLateWindow) * 0.4);
     }
 
     // 3. Bono Racha
-    const bonoRacha = Math.min(XP_CONFIG.STREAK.MAX, 1.0 + (currentStreak * XP_CONFIG.STREAK.BONUS_PER_HIT));
+    var bonoRacha = Math.min(XP_CONFIG.STREAK.MAX, 1.0 + (currentStreak * XP_CONFIG.STREAK.BONUS_PER_HIT));
 
     // REQ 3.0: Degradación por intentos
-    const q = currentQuizQuestions[currentIndex];
-    const prevAttempts = JSON.parse(localStorage.getItem(`attempts_${q.id}`) || '0');
-    let attemptMultiplier = 1.0;
+    var q = currentQuizQuestions[currentIndex];
+    var prevAttempts = JSON.parse(localStorage.getItem(`attempts_${q.id}`) || '0');
+    var attemptMultiplier = 1.0;
     if (prevAttempts === 1) attemptMultiplier = 0.75;
     else if (prevAttempts === 2) attemptMultiplier = 0.5;
     else if (prevAttempts >= 3) attemptMultiplier = 0.25;
 
-    const totalXP = Math.round(XP_CONFIG.BASE * fDificultad * fTiempo * bonoRacha * attemptMultiplier);
+    var totalXP = Math.round(XP_CONFIG.BASE * fDificultad * fTiempo * bonoRacha * attemptMultiplier);
 
     // REQ 4.2 & 6.3: Soft Cap & XP Freeze
-    const xpKey = `xp_${selectedAsignatura}_${selectedGrado}`;
-    let currentTotalXP = 0;
+    var xpKey = `xp_${selectedAsignatura}_${selectedGrado}`;
+    var currentTotalXP = 0;
 
     // Usar PersistenceManager para persistencia estructurada si está disponible
     if (window.PersistenceManager) {
@@ -609,10 +609,10 @@ async function loadQuestions() {
     console.log(`[QuizPro] Enrutamiento Local para: ${selectedAsignatura} (${selectedDifficulty})`);
 
     try {
-        const gradeNum = window.parseGrade ? window.parseGrade(selectedGrado) : parseInt(selectedGrado);
-        const gradeFolder = gradeNum === 10 ? 'Decimo' : (gradeNum === 11 ? 'Undecimo' : 'Duodecimo');
+        var gradeNum = window.parseGrade ? window.parseGrade(selectedGrado) : parseInt(selectedGrado);
+        var gradeFolder = gradeNum === 10 ? 'Decimo' : (gradeNum === 11 ? 'Undecimo' : 'Duodecimo');
 
-        const mapping = {
+        var mapping = {
             'Informática': 'Informatica',
             'Informática Aplicada': 'Informatica_Aplicada',
             'Diseño Web': 'Diseno_Web',
@@ -623,20 +623,20 @@ async function loadQuestions() {
             'Programación II': 'Programacion_2',
             'Programación Orientada a Objetos': 'Programacion_Orientada_a_Objetos'
         };
-        const asignaturaFolder = mapping[selectedAsignatura] || selectedAsignatura.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, '_');
+        var asignaturaFolder = mapping[selectedAsignatura] || selectedAsignatura.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, '_');
 
-        const rawLevel = window.getStandardLevelName(selectedDifficulty);
-        const levelFile = rawLevel.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "") + '.json';
+        var rawLevel = window.getStandardLevelName(selectedDifficulty);
+        var levelFile = rawLevel.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "") + '.json';
 
         // REQ: Desacoplamiento del Backend - Enrutamiento Estático Indexado
-        const isRoot = !window.location.pathname.includes('/juegos/');
-        const pathPrefix = isRoot ? '' : '../';
-        const path = `${pathPrefix}js/Banco_Preguntas/${gradeFolder}/${asignaturaFolder}/${levelFile}`;
+        var isRoot = !window.location.pathname.includes('/juegos/');
+        var pathPrefix = isRoot ? '' : '../';
+        var path = `${pathPrefix}js/Banco_Preguntas/${gradeFolder}/${asignaturaFolder}/${levelFile}`;
         console.log(`[QuizPro] Intentando cargar desde: ${path}`);
 
-        const localRes = await fetch(path);
+        var localRes = await fetch(path);
         if (localRes.ok) {
-            const localData = await localRes.json();
+            var localData = await localRes.json();
             if (localData && localData.length > 0) {
                 console.log(`[QuizPro] Persistencia Local: ${localData.length} reactivos cargados.`);
                 allPresentationQuestions = transformBankQuestions(localData);
@@ -655,34 +655,34 @@ async function loadQuestions() {
  * Transforma los datos crudos del banco (JSON o API) al formato interno de QuizPro
  */
 function transformBankQuestions(data) {
-    const bankQuestions = data.map(rawQ => {
+    var bankQuestions = data.map(rawQ function {
                 // REQ: Normalizar integridad antes de transformar (v3.2)
-                const q = window.normalizeQuestion(rawQ);
+                var q = window.normalizeQuestion(rawQ);
 
         // Heurística de Multi-Modalidad (v5.0 Polymorphic Engine)
-        let type = q.tipo_pregunta || q.TipoActividad || "Selección múltiple";
-        let questionText = q.enunciado || q.Pregunta;
-        let answer = q.respuesta_correcta_literal || q.RespuestaCorrecta;
+        var type = q.tipo_pregunta || q.TipoActividad || "Selección múltiple";
+        var questionText = q.enunciado || q.Pregunta;
+        var answer = q.respuesta_correcta_literal || q.RespuestaCorrecta;
 
-        let options = (q.opciones_visibles && q.opciones_visibles.length > 0)
+        var options = (q.opciones_visibles && q.opciones_visibles.length > 0)
                       ? q.opciones_visibles
-                      : [q.OpcionA, q.OpcionB, q.OpcionC, q.OpcionD].filter(o => o && o.trim() !== "");
+                      : [q.OpcionA, q.OpcionB, q.OpcionC, q.OpcionD].filter(o function o && o.trim() !== "");
 
-                let items = q.items || [];
-        let pairs = (q.parejas && q.parejas.length > 0) ? q.parejas : [];
+                var items = q.items || [];
+        var pairs = (q.parejas && q.parejas.length > 0) ? q.parejas : [];
 
         // Mapeo de Claves para Parejas (emparejamiento v5.0 usa {clave, valor})
         if (pairs.length > 0 && pairs[0].clave) {
-            pairs = pairs.map(p => ({ term: p.clave, definition: p.valor }));
+            pairs = pairs.map(p function ({ term: p.clave, definition: p.valor }));
         }
 
                 // Adaptar estructuras según el tipo de actividad si vienen vacíos
                 if (type === 'ordering' && items.length === 0) {
             items = options;
         } else if ((type === 'matching' || type === 'memory' || type === 'emparejamiento') && pairs.length === 0) {
-                    options.forEach(opt => {
+                    options.forEach(opt function {
                         if (opt.includes('|')) {
-                            const [term, def] = opt.split('|');
+                            var [term, def] = opt.split('|');
                             pairs.push({ term: term.trim(), definition: def.trim() });
                         }
                     });
@@ -705,14 +705,14 @@ function transformBankQuestions(data) {
             });
 
             // Generador de Distractores Inteligentes (Fase 3)
-            bankQuestions.forEach(q => {
+            bankQuestions.forEach(q function {
                 if (q.options.length < 4 && (q.type === "Selección múltiple" || q.type === "opcion_multiple")) {
-                    const sameTopicAnswers = bankQuestions
-                        .filter(other => other.id !== q.id && other.tags[0] === q.tags[0])
-                        .map(other => other.answer);
+                    var sameTopicAnswers = bankQuestions
+                        .filter(other function other.id !== q.id && other.tags[0] === q.tags[0])
+                        .map(other function other.answer);
 
                     while (q.options.length < 4 && sameTopicAnswers.length > 0) {
-                        const extra = sameTopicAnswers.shift();
+                        var extra = sameTopicAnswers.shift();
                         if (!q.options.includes(extra)) q.options.push(extra);
                     }
                 }
@@ -723,39 +723,39 @@ function transformBankQuestions(data) {
 
 async function loadQuestionsLegacy() {
     allPresentationQuestions = [];
-    const presentations = [];
-    window.presentationData.forEach(gradeBlock => {
-        const blockGradeNum = window.parseGrade(gradeBlock.grade);
-        const targetGradeNum = window.parseGrade(selectedGrado);
+    var presentations = [];
+    window.presentationData.forEach(gradeBlock function {
+        var blockGradeNum = window.parseGrade(gradeBlock.grade);
+        var targetGradeNum = window.parseGrade(selectedGrado);
 
         if (blockGradeNum === targetGradeNum) {
-            gradeBlock.subjects.forEach(subj => {
-                const normSubj = window.normalizeSubject(subj.name);
+            gradeBlock.subjects.forEach(subj function {
+                var normSubj = window.normalizeSubject(subj.name);
                 if (normSubj !== window.normalizeSubject(selectedAsignatura)) return;
-                subj.topics.forEach(t => presentations.push({ file: t.file, subject: normSubj, grade: gradeBlock.grade }));
+                subj.topics.forEach(t function presentations.push({ file: t.file, subject: normSubj, grade: gradeBlock.grade }));
             });
         }
     });
 
-    for (const p of presentations) {
+    for (var p of presentations) {
         await processPresentation(p.file, p.subject, p.grade);
     }
 }
 
 async function processPresentation(file, subject, grade) {
     try {
-        const isRoot = !window.location.pathname.includes('/juegos/');
-        const pathPrefix = isRoot ? '' : '../';
+        var isRoot = !window.location.pathname.includes('/juegos/');
+        var pathPrefix = isRoot ? '' : '../';
 
-        const res = await fetch(pathPrefix + file);
+        var res = await fetch(pathPrefix + file);
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        const text = await res.text();
+        var text = await res.text();
 
-        const quizMatch = text.match(/const (?:quizData|quizQuestions)\s*=\s*(\[[\s\S]*?\]);/);
+        var quizMatch = text.match(/var (?:quizData|quizQuestions)\s*=\s*(\[[\s\S]*?\]);/);
         if (quizMatch) {
-            const data = new Function(`return ${quizMatch[1]}`)();
-            data.forEach((q, idx) => {
-                const type = q.type || ( (q.options && q.options.length === 2 && (q.options.includes("Verdadero") || q.options.includes("V"))) ? 'true-false' : 'multiple-choice');
+            var data = new Function(`return ${quizMatch[1]}`)();
+            data.forEach((q, idx) function {
+                var type = q.type || ( (q.options && q.options.length === 2 && (q.options.includes("Verdadero") || q.options.includes("V"))) ? 'true-false' : 'multiple-choice');
                 allPresentationQuestions.push({
                     id: `${file}_${idx}`,
                     question: q.q || q.question,
@@ -770,13 +770,13 @@ async function processPresentation(file, subject, grade) {
             });
         }
 
-        const slides = text.match(/<div[^>]*class="slide[\s\S]*?<\/div>/g) || [];
-        const matchingPairs = [];
-        slides.forEach(slide => {
-            const titleMatch = slide.match(/<h[23][^>]*>(.*?)<\/h[23]>/);
-            const conceptMatch = slide.match(/<div[^>]*class="concept-box">([\s\S]*?)<\/div>/);
+        var slides = text.match(/<div[^>]*class="slide[\s\S]*?<\/div>/g) || [];
+        var matchingPairs = [];
+        slides.forEach(slide function {
+            var titleMatch = slide.match(/<h[23][^>]*>(.*?)<\/h[23]>/);
+            var conceptMatch = slide.match(/<div[^>]*class="concept-box">([\s\S]*?)<\/div>/);
             if (titleMatch && conceptMatch) {
-                const def = conceptMatch[1].replace(/<[^>]*>?/gm, '').trim();
+                var def = conceptMatch[1].replace(/<[^>]*>?/gm, '').trim();
                 if (def.length > 10 && def.length < 150) {
                     matchingPairs.push({ term: titleMatch[1].trim(), definition: def });
                 }
@@ -784,7 +784,7 @@ async function processPresentation(file, subject, grade) {
         });
 
         if (matchingPairs.length >= 3) {
-            const baseTags = extractTags(text, "memory matching");
+            var baseTags = extractTags(text, "memory matching");
             allPresentationQuestions.push({
                 id: `${file}_matching_${Math.random().toString(36).substr(2, 5)}`,
                 question: "Relaciona cada término con su definición correspondiente:",
@@ -808,13 +808,13 @@ async function processPresentation(file, subject, grade) {
             });
         }
 
-        const codeBlocks = text.match(/<pre[^>]*>([\s\S]*?)<\/pre>|<code[^>]*>([\s\S]*?)<\/code>/g) || [];
-        codeBlocks.forEach((block, bIdx) => {
-            const cleanCode = block.replace(/<[^>]*>?/gm, '').trim();
+        var codeBlocks = text.match(/<pre[^>]*>([\s\S]*?)<\/pre>|<code[^>]*>([\s\S]*?)<\/code>/g) || [];
+        codeBlocks.forEach((block, bIdx) function {
+            var cleanCode = block.replace(/<[^>]*>?/gm, '').trim();
             if (cleanCode.length > 20 && cleanCode.length < 300) {
                 // FASE 11: Evolución Práctica - Preguntas de ordenamiento de código
                 if (cleanCode.includes('\n')) {
-                    const lines = cleanCode.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+                    var lines = cleanCode.split('\n').map(l function l.trim()).filter(l function l.length > 0);
                     if (lines.length >= 3 && lines.length <= 6) {
                         allPresentationQuestions.push({
                             id: `${file}_ordering_${bIdx}`,
@@ -844,9 +844,9 @@ async function processPresentation(file, subject, grade) {
             }
         });
 
-        const longParagraphs = text.match(/<p[^>]*>([\s\S]*?)<\/p>/g) || [];
-        longParagraphs.forEach((p, pIdx) => {
-            const cleanText = p.replace(/<[^>]*>?/gm, '').trim();
+        var longParagraphs = text.match(/<p[^>]*>([\s\S]*?)<\/p>/g) || [];
+        longParagraphs.forEach((p, pIdx) function {
+            var cleanText = p.replace(/<[^>]*>?/gm, '').trim();
             if (cleanText.length > 50 && cleanText.length < 150) {
                 allPresentationQuestions.push({
                     id: `${file}_transcription_${pIdx}`,
@@ -874,11 +874,11 @@ function generateDistractorsForCode(code) {
  * REQ: Distribución Equilibrada y Restricción de Memoria Inmediata (A-149)
  */
 function getBalancedOptions(options, correct) {
-    let shuffled = shuffleArray([...options]);
-    let correctIdx = shuffled.indexOf(correct);
+    var shuffled = shuffleArray([...options]);
+    var correctIdx = shuffled.indexOf(correct);
 
     // Evitar que la correcta repita posición consecutiva (máximo 5 intentos)
-    let attempts = 0;
+    var attempts = 0;
     while (correctIdx === lastCorrectIndex && attempts < 5) {
         shuffled = shuffleArray([...options]);
         correctIdx = shuffled.indexOf(correct);
@@ -890,8 +890,8 @@ function getBalancedOptions(options, correct) {
 }
 
 function extractTags(text, question) {
-    const tags = [];
-    const content = (text + " " + question).toLowerCase();
+    var tags = [];
+    var content = (text + " " + question).toLowerCase();
 
     if (content.includes("programacion") || content.includes("codigo") || content.includes("algoritmo")) tags.push("Programación");
     if (content.includes("html") || content.includes("css") || content.includes("web") || content.includes("etiqueta")) tags.push("Web");
@@ -905,13 +905,13 @@ function extractTags(text, question) {
 }
 
 function showQuestion() {
-    const q = currentQuizQuestions[currentIndex];
+    var q = currentQuizQuestions[currentIndex];
     if (!q) return;
 
     questionStartTime = Date.now();
     responseChanges = 0;
 
-    const feedback = document.getElementById('feedback-msg');
+    var feedback = document.getElementById('feedback-msg');
     feedback.textContent = '';
 
     document.getElementById('progress-text').textContent = `${currentIndex + 1} / ${currentQuizQuestions.length}`;
@@ -922,110 +922,110 @@ function showQuestion() {
     document.getElementById('question-text').innerHTML = window.sanitizarHTMLTecnico(q.question);
 
     // REQ: Soporte para imágenes en preguntas
-    const existingImg = document.getElementById('question-image');
+    var existingImg = document.getElementById('question-image');
     if (existingImg) existingImg.remove();
 
     if (q.image) {
-        const img = document.createElement('img');
+        var img = document.createElement('img');
         img.id = 'question-image';
         img.src = window.convertDriveLink ? window.convertDriveLink(q.image) : q.image;
         img.className = 'quiz-image rounded-xl shadow-md mb-6 transition-all hover:scale-105';
         document.getElementById('question-text').after(img);
     }
 
-    const optionsContainer = document.getElementById('options-container');
-    const fibContainer = document.getElementById('fib-container');
-    const matchingContainer = document.getElementById('matching-container');
+    var optionsContainer = document.getElementById('options-container');
+    var fibContainer = document.getElementById('fib-container');
+    var matchingContainer = document.getElementById('matching-container');
 
     optionsContainer.innerHTML = '';
     optionsContainer.classList.add('hidden');
     fibContainer.classList.add('hidden');
     matchingContainer.classList.add('hidden');
 
-    const input = document.getElementById('fib-input');
-    const fibBtn = fibContainer.querySelector('button');
+    var input = document.getElementById('fib-input');
+    var fibBtn = fibContainer.querySelector('button');
     if (input) {
         input.disabled = false;
         input.value = '';
-        input.onkeydown = (e) => { if(e.key === 'Enter') submitFib(); };
+        input.onkeydown = (e) function { if(e.key === 'Enter') submitFib(); };
     }
     if (fibBtn) fibBtn.disabled = false;
 
     if (q.type === 'practice' || q.type === 'funcionalidad') {
         optionsContainer.classList.remove('hidden');
-        const codeEl = document.createElement('div');
+        var codeEl = document.createElement('div');
         codeEl.className = 'bg-gray-900 text-green-400 p-4 rounded-xl font-mono text-xs mb-6 overflow-x-auto whitespace-pre';
         codeEl.textContent = q.code;
         optionsContainer.appendChild(codeEl);
 
-        const balanced = getBalancedOptions(q.options, q.answer);
-        balanced.forEach(opt => {
-            const btn = document.createElement('button');
+        var balanced = getBalancedOptions(q.options, q.answer);
+        balanced.forEach(opt function {
+            var btn = document.createElement('button');
             btn.className = 'option-card w-full p-4 text-left border-2 border-gray-100 rounded-xl font-medium text-gray-700 bg-white hover:bg-gray-50 transition-all';
             // REQ 3: Renderizado HTML Técnico en Opciones
             btn.innerHTML = window.sanitizarHTMLTecnico(opt);
-            btn.onclick = () => checkAnswer(opt, q.answer, btn);
+            btn.onclick = () function checkAnswer(opt, q.answer, btn);
             optionsContainer.appendChild(btn);
         });
     } else if (q.type === 'transcription') {
         fibContainer.classList.remove('hidden');
-        const targetEl = document.createElement('div');
+        var targetEl = document.createElement('div');
         targetEl.className = 'bg-blue-50 text-blue-800 p-4 rounded-xl italic text-sm mb-6 border border-blue-100';
         targetEl.style.userSelect = 'none';
         targetEl.style.webkitUserSelect = 'none';
         targetEl.textContent = q.targetText || q.answer || "Error: Texto no encontrado";
-        targetEl.oncontextmenu = (e) => e.preventDefault();
+        targetEl.oncontextmenu = (e) function e.preventDefault();
 
-        const existingTarget = fibContainer.querySelector('.transcription-target');
+        var existingTarget = fibContainer.querySelector('.transcription-target');
         if (existingTarget) existingTarget.remove();
         targetEl.classList.add('transcription-target');
         fibContainer.prepend(targetEl);
 
-        const input = document.getElementById('fib-input');
+        var input = document.getElementById('fib-input');
         if (input) {
             input.placeholder = "Escribe aquí respetando ortografía...";
             input.disabled = false;
             input.readOnly = false;
-            setTimeout(() => {
+            setTimeout(() function {
                 input.focus();
                 input.click();
             }, 500);
         }
     } else if (q.type === 'Verdadero y Falso' || q.type === 'verdadero_falso') {
         optionsContainer.classList.remove('hidden');
-        const opts = ["Verdadero", "Falso"];
-        opts.forEach(opt => {
-            const btn = document.createElement('button');
+        var opts = ["Verdadero", "Falso"];
+        opts.forEach(opt function {
+            var btn = document.createElement('button');
             btn.className = 'option-card w-full p-6 text-center border-2 border-gray-100 rounded-2xl font-black text-gray-700 bg-white hover:bg-blue-50 hover:border-blue-200 transition-all uppercase tracking-widest text-sm';
             btn.textContent = opt;
-            btn.onclick = () => {
+            btn.onclick = () function {
                 // Si la respuesta correcta es literal "Verdadero"/"Falso" o "A"/"B"
-                const isLiteral = (String(q.answer).toLowerCase() === "verdadero" || String(q.answer).toLowerCase() === "falso");
-                const val = isLiteral ? opt : (opt === "Verdadero" ? "A" : "B");
+                var isLiteral = (String(q.answer).toLowerCase() === "verdadero" || String(q.answer).toLowerCase() === "falso");
+                var val = isLiteral ? opt : (opt === "Verdadero" ? "A" : "B");
                 checkAnswer(val, q.answer, btn);
             };
             optionsContainer.appendChild(btn);
         });
     } else if (q.type === 'Identificar el componente') {
         optionsContainer.classList.remove('hidden');
-        const balanced = getBalancedOptions(q.options, q.answer);
-        balanced.forEach(opt => {
-            const btn = document.createElement('button');
+        var balanced = getBalancedOptions(q.options, q.answer);
+        balanced.forEach(opt function {
+            var btn = document.createElement('button');
             btn.className = 'option-card w-full p-4 text-center border-2 border-gray-100 rounded-xl font-bold text-gray-700 bg-white hover:bg-blue-50 transition-all uppercase tracking-tighter';
             // REQ 3: Renderizado HTML Técnico en Opciones
             btn.innerHTML = window.sanitizarHTMLTecnico(opt);
-            btn.onclick = () => checkAnswer(opt, q.answer, btn);
+            btn.onclick = () function checkAnswer(opt, q.answer, btn);
             optionsContainer.appendChild(btn);
         });
     } else if (q.type === 'Completar espacios' || q.type === 'completion' || q.type === 'fill-in-the-blanks' || q.type === 'completacion') {
         fibContainer.classList.remove('hidden');
-        const input = document.getElementById('fib-input');
+        var input = document.getElementById('fib-input');
         input.value = '';
         input.placeholder = "Tu respuesta...";
-        setTimeout(() => input.focus(), 100);
+        setTimeout(() function input.focus(), 100);
     } else if (q.type === 'memory') {
         matchingContainer.classList.remove('hidden');
-        const pairsList = document.getElementById('matching-pairs');
+        var pairsList = document.getElementById('matching-pairs');
 
         // Estilización de alta densidad para Memoria (v3.2)
         pairsList.innerHTML = `
@@ -1039,10 +1039,10 @@ function showQuestion() {
                 <div class="memory-grid" id="memory-grid"></div>
             </div>
         `;
-        const grid = document.getElementById('memory-grid');
+        var grid = document.getElementById('memory-grid');
 
-        const getIcon = (tags = []) => {
-            const t = (tags || []).join(' ');
+        var getIcon = (tags = []) function {
+            var t = (tags || []).join(' ');
             if (t.includes("Programación")) return "fa-terminal";
             if (t.includes("Web") || t.includes("HTML")) return "fa-code";
             if (t.includes("Ofimática") || t.includes("Excel")) return "fa-file-alt";
@@ -1051,14 +1051,14 @@ function showQuestion() {
             if (t.includes("Seguridad")) return "fa-shield-alt";
             return "fa-brain";
         };
-        const icon = getIcon(q.tags || [q.Tema]);
+        var icon = getIcon(q.tags || [q.Tema]);
 
-        const items = shuffleArray([...q.pairs.map(p => ({v: p.term, k: p.term})), ...q.pairs.map(p => ({v: p.definition, k: p.term}))]);
-        let selectedCards = [];
-        let matchedCount = 0;
+        var items = shuffleArray([...q.pairs.map(p function ({v: p.term, k: p.term})), ...q.pairs.map(p function ({v: p.definition, k: p.term}))]);
+        var selectedCards = [];
+        var matchedCount = 0;
 
-        items.forEach(item => {
-            const card = document.createElement('div');
+        items.forEach(item function {
+            var card = document.createElement('div');
             card.className = 'memory-card group';
             card.innerHTML = `
                 <div class="memory-card-inner shadow-lg group-hover:shadow-blue-200/50 transition-transform duration-500">
@@ -1073,7 +1073,7 @@ function showQuestion() {
                     </div>
                 </div>`;
 
-            card.onclick = () => {
+            card.onclick = () function {
                 if (selectedCards.length < 2 && !card.classList.contains('revealed') && !card.classList.contains('matched')) {
                     card.classList.add('revealed');
                     selectedCards.push({card, item});
@@ -1081,10 +1081,10 @@ function showQuestion() {
                     if (selectedCards.length === 2) {
                         if (selectedCards[0].item.k === selectedCards[1].item.k) {
                             // ¡Match! (Efecto de éxito inmediato)
-                            setTimeout(() => {
-                                selectedCards.forEach(c => {
+                            setTimeout(() function {
+                                selectedCards.forEach(c function {
                                     c.card.classList.add('matched');
-                                    const back = c.card.querySelector('.memory-card-back');
+                                    var back = c.card.querySelector('.memory-card-back');
                                     back.classList.replace('border-blue-500', 'border-emerald-500');
                                     back.classList.add('bg-emerald-50', 'scale-105');
                                     // Partículas o efecto visual simple
@@ -1096,7 +1096,7 @@ function showQuestion() {
                                 selectedCards = [];
 
                                 if (matchedCount === q.pairs.length) {
-                                    const finishBtn = document.getElementById('finish-memory-btn');
+                                    var finishBtn = document.getElementById('finish-memory-btn');
                                     finishBtn.classList.replace('bg-gray-400', 'bg-emerald-600');
                                     finishBtn.classList.add('animate-bounce', 'shadow-emerald-200');
                                     finishBtn.textContent = "¡Reto Completado! Continuar";
@@ -1104,8 +1104,8 @@ function showQuestion() {
                             }, 400);
                         } else {
                             // Fallo (Efecto de vibración opcional en el futuro)
-                            setTimeout(() => {
-                                selectedCards.forEach(c => c.card.classList.remove('revealed'));
+                            setTimeout(() function {
+                                selectedCards.forEach(c function c.card.classList.remove('revealed'));
                                 selectedCards = [];
                             }, 800);
                         }
@@ -1115,11 +1115,11 @@ function showQuestion() {
             grid.appendChild(card);
         });
 
-        const btn = document.createElement('button');
+        var btn = document.createElement('button');
         btn.id = 'finish-memory-btn';
         btn.className = 'w-full py-5 bg-gray-400 text-white rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] transition-all shadow-xl';
         btn.textContent = "Validar Reto de Memoria";
-        btn.onclick = () => {
+        btn.onclick = () function {
             if (matchedCount === q.pairs.length) {
                 currentIndex++;
                 if(currentIndex < currentQuizQuestions.length) showQuestion();
@@ -1131,17 +1131,17 @@ function showQuestion() {
         matchingContainer.appendChild(btn);
     } else if (q.type === 'ordering') {
         matchingContainer.classList.remove('hidden');
-        const pairsList = document.getElementById('matching-pairs');
+        var pairsList = document.getElementById('matching-pairs');
         pairsList.innerHTML = `
             <div class="bg-gray-50 p-6 rounded-3xl border border-gray-100">
                 <p class="text-[9px] font-black text-blue-500 uppercase tracking-widest mb-4">Estructura Lógica</p>
                 <div class="space-y-2" id="ordering-list"></div>
             </div>`;
-        const list = document.getElementById('ordering-list');
+        var list = document.getElementById('ordering-list');
 
-        const shuffled = shuffleArray([...q.items]);
-        shuffled.forEach((item, idx) => {
-            const el = document.createElement('div');
+        var shuffled = shuffleArray([...q.items]);
+        shuffled.forEach((item, idx) function {
+            var el = document.createElement('div');
             el.className = 'p-4 bg-white border-2 border-gray-100 rounded-2xl cursor-move hover:border-blue-300 transition-all flex items-center justify-between group';
             el.innerHTML = `
                 <div class="flex items-center gap-4">
@@ -1155,21 +1155,21 @@ function showQuestion() {
             list.appendChild(el);
         });
 
-        window.moveOrderItem = (btn, dir) => {
-            const row = btn.closest('#ordering-list > div');
+        window.moveOrderItem = (btn, dir) function {
+            var row = btn.closest('#ordering-list > div');
             if (dir === -1 && row.previousElementSibling) row.parentNode.insertBefore(row, row.previousElementSibling);
             else if (dir === 1 && row.nextElementSibling) row.parentNode.insertBefore(row.nextElementSibling, row);
             responseChanges++;
             // Re-numerar
-            Array.from(list.children).forEach((child, i) => {
+            Array.from(list.children).forEach((child, i) function {
                 child.querySelector('span').textContent = i + 1;
             });
         };
 
         window.submitMatching = function() {
-            const currentOrder = Array.from(document.querySelectorAll('#ordering-list > div')).map(el => el.querySelector('.font-mono').textContent.trim());
-            let allCorrect = true;
-            q.items.forEach((item, idx) => {
+            var currentOrder = Array.from(document.querySelectorAll('#ordering-list > div')).map(el function el.querySelector('.font-mono').textContent.trim());
+            var allCorrect = true;
+            q.items.forEach((item, idx) function {
                 if (currentOrder[idx] !== item) allCorrect = false;
             });
 
@@ -1177,18 +1177,18 @@ function showQuestion() {
         };
     } else if (q.type === 'matching' || q.type === 'emparejamiento') {
         matchingContainer.classList.remove('hidden');
-        const pairsList = document.getElementById('matching-pairs');
+        var pairsList = document.getElementById('matching-pairs');
         pairsList.innerHTML = '';
 
-        const shuffledDefs = shuffleArray(q.pairs.map(p => p.definition));
-        const letters = "ABCDEFGHIJ";
+        var shuffledDefs = shuffleArray(q.pairs.map(p function p.definition));
+        var letters = "ABCDEFGHIJ";
 
-        let html = `
+        var html = `
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4 text-left">
                 <div class="bg-gray-100 p-3 rounded-xl">
                     <p class="text-[10px] font-black uppercase text-gray-500 mb-2">Tabla A: Conceptos</p>
                     <div class="space-y-2">
-                        ${q.pairs.map((pair, i) => `
+                        ${q.pairs.map((pair, i) function `
                             <div class="flex items-center gap-2 bg-white p-2 rounded-lg border border-gray-200">
                                 <input type="text" maxlength="1"
                                     class="matching-letter-input w-8 h-8 text-center font-bold border-2 border-blue-100 rounded-lg focus:border-blue-500 outline-none uppercase text-xs"
@@ -1202,7 +1202,7 @@ function showQuestion() {
                 <div class="bg-blue-50 p-3 rounded-xl">
                     <p class="text-[10px] font-black uppercase text-blue-400 mb-2">Tabla B: Definiciones</p>
                     <div class="space-y-2">
-                        ${shuffledDefs.map((def, i) => `
+                        ${shuffledDefs.map((def, i) function `
                             <div class="flex items-start gap-2 text-[10px] leading-tight">
                                 <span class="font-bold text-blue-600">${letters[i]})</span>
                                 <span class="text-gray-600">${window.sanitizarHTMLTecnico(def)}</span>
@@ -1216,29 +1216,29 @@ function showQuestion() {
 
         // Guardar mapeo correcto
         window.currentMatchingMapping = {};
-        q.pairs.forEach(pair => {
-            const letterIdx = shuffledDefs.indexOf(pair.definition);
+        q.pairs.forEach(pair function {
+            var letterIdx = shuffledDefs.indexOf(pair.definition);
             window.currentMatchingMapping[pair.term] = letters[letterIdx];
         });
 
     } else if (q.type === 'completion' || q.type === 'fill-in-the-blanks') {
         fibContainer.classList.remove('hidden');
-        const input = document.getElementById('fib-input');
+        var input = document.getElementById('fib-input');
         input.value = '';
         input.placeholder = "Tu respuesta...";
-        setTimeout(() => input.focus(), 100);
+        setTimeout(() function input.focus(), 100);
         // Remover elementos de transcripción si existen
-        const existingTarget = fibContainer.querySelector('.transcription-target');
+        var existingTarget = fibContainer.querySelector('.transcription-target');
         if (existingTarget) existingTarget.remove();
     } else {
         optionsContainer.classList.remove('hidden');
-        const balanced = getBalancedOptions(q.options, q.answer);
-        balanced.forEach(opt => {
-            const btn = document.createElement('button');
+        var balanced = getBalancedOptions(q.options, q.answer);
+        balanced.forEach(opt function {
+            var btn = document.createElement('button');
             btn.className = 'option-card w-full p-4 text-left border-2 border-gray-100 rounded-xl font-medium text-gray-700 bg-white hover:bg-gray-50 transition-all';
             // REQ 3: Renderizado HTML Técnico en Opciones
             btn.innerHTML = window.sanitizarHTMLTecnico(opt);
-            btn.onclick = () => checkAnswer(opt, q.answer, btn);
+            btn.onclick = () function checkAnswer(opt, q.answer, btn);
             optionsContainer.appendChild(btn);
         });
     }
@@ -1246,7 +1246,7 @@ function showQuestion() {
 }
 
 function registerSeenQuestion(id) {
-    let seenIds = JSON.parse(localStorage.getItem(SEEN_QUESTIONS_KEY) || "[]");
+    var seenIds = JSON.parse(localStorage.getItem(SEEN_QUESTIONS_KEY) || "[]");
     if (!seenIds.includes(id)) {
         seenIds.push(id);
         if (seenIds.length > SEEN_LIMIT) seenIds.shift();
@@ -1258,13 +1258,13 @@ function checkAnswer(selected, correct, btn) {
     if (window.isProcessingAnswer) return;
     window.isProcessingAnswer = true;
 
-    const responseTime = Date.now() - questionStartTime;
-    let q = currentQuizQuestions[currentIndex];
-    const user = JSON.parse(localStorage.getItem('currentUser'));
+    var responseTime = Date.now() - questionStartTime;
+    var q = currentQuizQuestions[currentIndex];
+    var user = JSON.parse(localStorage.getItem('currentUser'));
 
     // REQ: Normalización de Pregunta para Incidencia 3
     q = window.normalizeQuestion(q);
-    const finalCorrect = correct || q.respuestaCorrecta || "No disponible";
+    var finalCorrect = correct || q.respuestaCorrecta || "No disponible";
 
     // Captura de Analítica Unificada (Fase 5)
     if (window.GamesAdapter) {
@@ -1281,21 +1281,21 @@ function checkAnswer(selected, correct, btn) {
         });
     }
 
-    const allBtns = document.querySelectorAll('.option-card');
-    const input = document.getElementById('fib-input');
-    const fibBtn = document.querySelector('#fib-container button');
+    var allBtns = document.querySelectorAll('.option-card');
+    var input = document.getElementById('fib-input');
+    var fibBtn = document.querySelector('#fib-container button');
 
-    allBtns.forEach(b => b.disabled = true);
+    allBtns.forEach(b function b.disabled = true);
     if(input) input.disabled = true;
     if(fibBtn) fibBtn.disabled = true;
 
-    const feedback = document.getElementById('feedback-msg');
+    var feedback = document.getElementById('feedback-msg');
 
     // REQ 8.4: Evaluación estricta para Transcripción (Ortografía y Puntuación)
     q = currentQuizQuestions[currentIndex];
-    let isCorrect = false;
-    const cleanSelected = String(selected || "").trim();
-    const cleanCorrect = String(correct || "").trim();
+    var isCorrect = false;
+    var cleanSelected = String(selected || "").trim();
+    var cleanCorrect = String(correct || "").trim();
 
     if (q && q.type === 'transcription') {
         isCorrect = cleanSelected === cleanCorrect;
@@ -1304,13 +1304,13 @@ function checkAnswer(selected, correct, btn) {
     }
 
     if (isCorrect) {
-        const xpGained = calculateXP(true, selectedDifficulty, responseTime);
+        var xpGained = calculateXP(true, selectedDifficulty, responseTime);
         sessionXP += xpGained;
 
         // REQ 3.0: Sistema de Refuerzo - Eliminar de cola si es correcta
-        let reinforcementIds = JSON.parse(localStorage.getItem('quizpro_reinforcement') || "[]");
+        var reinforcementIds = JSON.parse(localStorage.getItem('quizpro_reinforcement') || "[]");
         if (reinforcementIds.includes(q.id)) {
-            reinforcementIds = reinforcementIds.filter(id => id !== q.id);
+            reinforcementIds = reinforcementIds.filter(id function id !== q.id);
             localStorage.setItem('quizpro_reinforcement', JSON.stringify(reinforcementIds));
             console.log(`[REFUERZO] Pregunta ${q.id} superada. Eliminada de la cola.`);
         }
@@ -1324,7 +1324,7 @@ function checkAnswer(selected, correct, btn) {
         calculateXP(false); // Reset streak
 
         // REQ 3.0: Sistema de Refuerzo - Añadir a cola si es incorrecta
-        let reinforcementIds = JSON.parse(localStorage.getItem('quizpro_reinforcement') || "[]");
+        var reinforcementIds = JSON.parse(localStorage.getItem('quizpro_reinforcement') || "[]");
         if (!reinforcementIds.includes(q.id)) {
             reinforcementIds.push(q.id);
             localStorage.setItem('quizpro_reinforcement', JSON.stringify(reinforcementIds));
@@ -1342,9 +1342,9 @@ function checkAnswer(selected, correct, btn) {
         incorrectAnswers.push(q);
 
         // Resaltar la opción correcta en la interfaz
-        allBtns.forEach(b => {
-            const btnText = b.textContent.trim().toLowerCase();
-            const correctText = String(finalCorrect).trim().toLowerCase();
+        allBtns.forEach(b function {
+            var btnText = b.textContent.trim().toLowerCase();
+            var correctText = String(finalCorrect).trim().toLowerCase();
             if (finalCorrect && btnText === correctText) {
                 b.classList.add('correct', 'border-emerald-500', 'text-emerald-600', 'bg-emerald-50/50');
             }
@@ -1354,10 +1354,10 @@ function checkAnswer(selected, correct, btn) {
     document.getElementById('score').textContent = `${score} / ${currentIndex + 1}`;
 
     // Registrar intento para degradación de XP
-    const attempts = JSON.parse(localStorage.getItem(`attempts_${q.id}`) || '0');
+    var attempts = JSON.parse(localStorage.getItem(`attempts_${q.id}`) || '0');
     localStorage.setItem(`attempts_${q.id}`, attempts + 1);
 
-    setTimeout(() => {
+    setTimeout(() function {
         window.isProcessingAnswer = false;
         currentIndex++;
         if (currentIndex < currentQuizQuestions.length) showQuestion();
@@ -1366,22 +1366,22 @@ function checkAnswer(selected, correct, btn) {
 }
 
 window.submitFib = function() {
-    const val = document.getElementById('fib-input').value;
-    const q = currentQuizQuestions[currentIndex];
+    var val = document.getElementById('fib-input').value;
+    var q = currentQuizQuestions[currentIndex];
     checkAnswer(val, q.answer);
 };
 
 window.submitMatching = function() {
-    const q = currentQuizQuestions[currentIndex];
-    const inputs = document.querySelectorAll('.matching-letter-input');
-    const selects = document.querySelectorAll('.matching-select');
-    let allCorrect = true;
+    var q = currentQuizQuestions[currentIndex];
+    var inputs = document.querySelectorAll('.matching-letter-input');
+    var selects = document.querySelectorAll('.matching-select');
+    var allCorrect = true;
 
     if (inputs.length > 0) {
-        inputs.forEach(input => {
-            const term = input.dataset.term;
-            const val = input.value.trim().toUpperCase();
-            const correctLetter = window.currentMatchingMapping[term];
+        inputs.forEach(input function {
+            var term = input.dataset.term;
+            var val = input.value.trim().toUpperCase();
+            var correctLetter = window.currentMatchingMapping[term];
 
             if (val !== correctLetter) {
                 allCorrect = false;
@@ -1392,17 +1392,17 @@ window.submitMatching = function() {
             input.disabled = true;
         });
     } else {
-        selects.forEach(sel => {
-            const term = sel.dataset.term;
-            const val = sel.value;
-            const correctPair = q.pairs.find(p => p.term === term);
+        selects.forEach(sel function {
+            var term = sel.dataset.term;
+            var val = sel.value;
+            var correctPair = q.pairs.find(p function p.term === term);
             if (val !== correctPair.definition) { allCorrect = false; sel.classList.add('border-red-500'); }
             else { sel.classList.add('border-green-500'); }
             sel.disabled = true;
         });
     }
 
-    const feedback = document.getElementById('feedback-msg');
+    var feedback = document.getElementById('feedback-msg');
     if (allCorrect) {
         feedback.textContent = '¡Emparejamiento Correcto!';
         feedback.className = 'text-center h-8 font-bold text-emerald-500';
@@ -1414,7 +1414,7 @@ window.submitMatching = function() {
     }
 
     document.getElementById('score').textContent = `${score} / ${currentIndex + 1}`;
-    setTimeout(() => {
+    setTimeout(() function {
         currentIndex++;
         if (currentIndex < currentQuizQuestions.length) showQuestion();
         else endQuiz();
@@ -1422,11 +1422,11 @@ window.submitMatching = function() {
 };
 
 function startTimer() {
-    timerInterval = setInterval(() => {
+    timerInterval = setInterval(() function {
         timerSeconds++;
-        const mins = Math.floor(timerSeconds/60).toString().padStart(2,'0');
-        const secs = (timerSeconds%60).toString().padStart(2,'0');
-        const timerEl = document.getElementById('timer');
+        var mins = Math.floor(timerSeconds/60).toString().padStart(2,'0');
+        var secs = (timerSeconds%60).toString().padStart(2,'0');
+        var timerEl = document.getElementById('timer');
         if (timerEl) timerEl.textContent = `${mins}:${secs}`;
     }, 1000);
 }
@@ -1439,22 +1439,22 @@ async function endQuiz() {
     document.getElementById('quiz-screen').classList.add('hidden');
     document.getElementById('result-screen').classList.remove('hidden');
 
-    const finalPercent = Math.round((score / currentQuizQuestions.length) * 100);
-    const approved = finalPercent >= 70;
+    var finalPercent = Math.round((score / currentQuizQuestions.length) * 100);
+    var approved = finalPercent >= 70;
 
     document.getElementById('final-score').textContent = `${finalPercent}%`;
-    const mins = Math.floor(timerSeconds/60).toString().padStart(2,'0');
-    const secs = (timerSeconds%60).toString().padStart(2,'0');
+    var mins = Math.floor(timerSeconds/60).toString().padStart(2,'0');
+    var secs = (timerSeconds%60).toString().padStart(2,'0');
     document.getElementById('final-time').textContent = `${mins}:${secs}`;
 
-    const recs = document.getElementById('recommendations-container');
+    var recs = document.getElementById('recommendations-container');
     if (incorrectAnswers.length > 0) {
-        const uniqueTags = [...new Set(incorrectAnswers.flatMap(q => q.tags || []))];
+        var uniqueTags = [...new Set(incorrectAnswers.flatMap(q function q.tags || []))];
         recs.innerHTML = `
             <div class="mt-6 p-4 bg-orange-50 rounded-2xl border border-orange-100 text-left">
                 <p class="text-[10px] font-black text-orange-400 uppercase tracking-widest mb-2">Temas a reforzar</p>
                 <div class="flex flex-wrap gap-2">
-                    ${uniqueTags.map(tag => `<span class="px-2 py-1 bg-white border border-orange-200 text-orange-700 text-[10px] font-bold rounded-lg">${getSanitizedAcademicText(tag)}</span>`).join('')}
+                    ${uniqueTags.map(tag function `<span class="px-2 py-1 bg-white border border-orange-200 text-orange-700 text-[10px] font-bold rounded-lg">${getSanitizedAcademicText(tag)}</span>`).join('')}
                 </div>
             </div>`;
         recs.classList.remove('hidden');
@@ -1462,8 +1462,8 @@ async function endQuiz() {
         recs.classList.add('hidden');
     }
 
-    const title = document.getElementById('result-title');
-    const icon = document.getElementById('result-icon');
+    var title = document.getElementById('result-title');
+    var icon = document.getElementById('result-icon');
     if (approved) {
         title.textContent = '¡Excelente Trabajo!';
         icon.className = 'w-24 h-24 rounded-full flex items-center justify-center text-4xl mx-auto mb-6 bg-emerald-50 text-emerald-500';
@@ -1474,8 +1474,8 @@ async function endQuiz() {
         icon.innerHTML = '<i class="fas fa-redo"></i>';
     }
 
-    const user = JSON.parse(localStorage.getItem('currentUser'));
-    const payload = {
+    var user = JSON.parse(localStorage.getItem('currentUser'));
+    var payload = {
         userId: user.userId,
         nombreAlumno: user.nombre,
         juego: "QuizPro",
@@ -1488,15 +1488,15 @@ async function endQuiz() {
     };
 
     // Actualizar XP local para cálculo de Soft Cap
-    const xpKey = `xp_${selectedAsignatura}_${selectedGrado}`;
-    const currentTotalXP = parseInt(localStorage.getItem(xpKey) || '0');
-    const newXP = currentTotalXP + sessionXP;
+    var xpKey = `xp_${selectedAsignatura}_${selectedGrado}`;
+    var currentTotalXP = parseInt(localStorage.getItem(xpKey) || '0');
+    var newXP = currentTotalXP + sessionXP;
     localStorage.setItem(xpKey, newXP);
 
     // REQ: Desbloqueo Predictivo Local (Modulo 1)
     // Actualizamos el estado local ANTES de la red para asegurar 0ms de latencia en la UI
-    const lvlName = window.getStandardLevelName(selectedDifficulty);
-    const statKey = `QuizPro_${selectedAsignatura}_${selectedGrado}_${lvlName}`;
+    var lvlName = window.getStandardLevelName(selectedDifficulty);
+    var statKey = `QuizPro_${selectedAsignatura}_${selectedGrado}_${lvlName}`;
 
     if (!window.userGameStats[statKey] || finalPercent > (window.userGameStats[statKey].maxScore || 0)) {
         window.userGameStats[statKey] = {
@@ -1512,7 +1512,7 @@ async function endQuiz() {
 
     // REQ: Regla del 70% y Desbloqueo de Calibración (Fase de Calibración Básico -> Intermedio)
     if (lvlName === 'Básico' && approved) {
-        const levelsState = JSON.parse(localStorage.getItem('levels_state') || '{"intermedio": {"bloqueado": true}}');
+        var levelsState = JSON.parse(localStorage.getItem('levels_state') || '{"intermedio": {"bloqueado": true}}');
         levelsState.intermedio.bloqueado = false;
         localStorage.setItem('levels_state', JSON.stringify(levelsState));
         console.log("[QuizPro] Nivel Intermedio desbloqueado localmente (0ms).");
@@ -1521,9 +1521,9 @@ async function endQuiz() {
     if (window.PersistenceManager) {
         window.PersistenceManager.set('local_progress', { totalXP: newXP }, xpKey);
         // REQ: Preservación de Historial en Actualización Predictiva (Modulo 1)
-        window.PersistenceManager.get('academic_stats').then(cached => {
+        window.PersistenceManager.get('academic_stats').then(cached function {
             if (cached && cached.data) {
-                const updatedData = { ...cached.data, data: window.userGameStats };
+                var updatedData = { ...cached.data, data: window.userGameStats };
                 window.PersistenceManager.set('academic_stats', updatedData);
             } else {
                 window.PersistenceManager.set('academic_stats', window.userGameStats);
@@ -1538,39 +1538,39 @@ async function endQuiz() {
         }
 
         // Despacho silencioso: no bloqueamos el renderizado del resultado por la red
-        fetchApi('USER', 'saveGameResult', payload).then(res => {
+        fetchApi('USER', 'saveGameResult', payload).then(res function {
             if (res.status === 'success' && res.updatedStats) {
                 window.userGameStats = { ...window.userGameStats, ...res.updatedStats };
                 console.log("[QuizPro] Sincronización silenciosa completada.");
                 // REQ: Re-sincronización total tras éxito para recuperar historial y analítica extendida
                 loadPerformanceTable();
             }
-        }).catch(err => console.warn("[QuizPro] Error en sincronización silenciosa (se mantiene estado local):", err));
+        }).catch(err function console.warn("[QuizPro] Error en sincronización silenciosa (se mantiene estado local):", err));
     }
 }
 
 async function loadGlobalTop() {
-    const body = document.getElementById('global-top-body');
+    var body = document.getElementById('global-top-body');
     if (!body) return;
 
     // REQ: Offline-First (Modulo 1)
     if (window.PersistenceManager) {
-        const cached = await window.PersistenceManager.get('rankings');
+        var cached = await window.PersistenceManager.get('rankings');
         if (cached && cached.data) {
             renderGlobalTopHTML(cached.data);
             fetchApi('USER', 'getGlobalTop', { gameId: 'quizpro' }, 0, {
                 store: 'rankings',
-                onUpdate: (data) => renderGlobalTopHTML(data)
-            }).catch(e => console.warn("[Offline-First] Sincronización silenciosa de ranking fallida."));
+                onUpdate: (data) function renderGlobalTopHTML(data)
+            }).catch(e function console.warn("[Offline-First] Sincronización silenciosa de ranking fallida."));
             return;
         }
     }
 
     try {
         console.log("[QuizPro] Solicitando ranking global...");
-        const res = await fetchApi('USER', 'getGlobalTop', { gameId: 'quizpro' }, 0, {
+        var res = await fetchApi('USER', 'getGlobalTop', { gameId: 'quizpro' }, 0, {
             store: 'rankings',
-            onUpdate: (data) => renderGlobalTopHTML(data)
+            onUpdate: (data) function renderGlobalTopHTML(data)
         });
         console.log("[QuizPro] Respuesta Ranking:", res);
 
@@ -1584,15 +1584,15 @@ async function loadGlobalTop() {
 }
 
 function renderGlobalTopHTML(res) {
-    const body = document.getElementById('global-top-body');
+    var body = document.getElementById('global-top-body');
     if (!body || !res || !res.global) return;
     // REQ 1: Restricción Clínica de Dataset (Top 5 Estricto)
     var top5 = (res.global || []).filter(function(u) { return u && (u.nombre || u.username || u.display_name); }).slice(0, 5);
     window.globalTopData = { global: top5, subjectTops: res.subjectTops };
     body.innerHTML = top5
-        .map((user, idx) => {
-            const xp = parseInt(user.xp || 0);
-            const range = XP_CONFIG.RANGES.find(r => xp >= r.min && xp <= r.max) || XP_CONFIG.RANGES[0];
+        .map((user, idx) function {
+            var xp = parseInt(user.xp || 0);
+            var range = XP_CONFIG.RANGES.find(r function xp >= r.min && xp <= r.max) || XP_CONFIG.RANGES[0];
 
             return `
             <tr class="hover:bg-blue-50/30 transition-colors">
@@ -1623,28 +1623,28 @@ function renderGlobalTopHTML(res) {
 }
 
 window.loadPerformanceTable = async function() {
-    const container = document.getElementById('performance-table-body');
-    const user = JSON.parse(localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser'));
+    var container = document.getElementById('performance-table-body');
+    var user = JSON.parse(localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser'));
     if (!container || !user) return;
 
     // REQ: Offline-First (Modulo 1)
     if (window.PersistenceManager) {
-        const cached = await window.PersistenceManager.get('academic_stats');
+        var cached = await window.PersistenceManager.get('academic_stats');
         // REQ: Eager caching - si ya tenemos datos, renderizamos y pedimos actualización silenciosa
         if (cached && cached.data) {
             renderPerformanceHTML(cached.data);
             fetchApi('USER', 'getGameStats', { userId: user.userId }, 0, {
                 store: 'academic_stats',
-                onUpdate: (data) => renderPerformanceHTML(data)
-            }).catch(e => console.warn("[Offline-First] Sincronización silenciosa fallida, usando caché."));
+                onUpdate: (data) function renderPerformanceHTML(data)
+            }).catch(e function console.warn("[Offline-First] Sincronización silenciosa fallida, usando caché."));
             return;
         }
     }
 
     try {
-        const res = await fetchApi('USER', 'getGameStats', { userId: user.userId }, 0, {
+        var res = await fetchApi('USER', 'getGameStats', { userId: user.userId }, 0, {
             store: 'academic_stats',
-            onUpdate: (data) => renderPerformanceHTML(data)
+            onUpdate: (data) function renderPerformanceHTML(data)
         });
         if (res.status === 'success') {
             renderPerformanceHTML(res);
@@ -1653,36 +1653,36 @@ window.loadPerformanceTable = async function() {
 }
 
 function renderPerformanceHTML(res) {
-    const container = document.getElementById('performance-table-body');
+    var container = document.getElementById('performance-table-body');
     if (!container) return;
 
     // REQ: Soporte polimórfico para Caché y API (Modulo 1)
     // res puede ser la respuesta completa de la API o solo el objeto de estadísticas
     window.userGameStats = res.data || (res.id ? null : res) || {};
-    const history = res.allHistory || [];
+    var history = res.allHistory || [];
 
-    let approvedCount = 0;
-    const allMistakeTags = new Set();
+    var approvedCount = 0;
+    var allMistakeTags = new Set();
 
     // REQ 7: Perfil Analítico Avanzado (Modulo 7)
-    let hits = 0;
-    let misses = 0;
-    let totalSpeed = 0;
-    let hitSpeedCount = 0;
-    let impulsiveCount = 0;
+    var hits = 0;
+    var misses = 0;
+    var totalSpeed = 0;
+    var hitSpeedCount = 0;
+    var impulsiveCount = 0;
 
-    const minTimes = { 'verdadero_falso': 3000, ' Seleccion múltiple': 4000, 'emparejamiento': 8000, 'ordering': 12000, 'completacion': 15000 };
+    var minTimes = { 'verdadero_falso': 3000, ' Seleccion múltiple': 4000, 'emparejamiento': 8000, 'ordering': 12000, 'completacion': 15000 };
 
-    history.forEach(h => {
+    history.forEach(h function {
         if (h[3] === 'QuizPro' && parseFloat(h[5]) < 70) {
             allMistakeTags.add(h[4]);
         }
 
         // Analizar registros detallados de QuizProAnalytics (h[12] = esCorrecta)
         if (h.length > 10) { // Indica que es un registro de analítica
-            const isCorrect = String(h[12]) === "true";
-            const time = parseFloat(h[13]) || 0;
-            const type = h[4]; // tipoActividad
+            var isCorrect = String(h[12]) === "true";
+            var time = parseFloat(h[13]) || 0;
+            var type = h[4]; // tipoActividad
 
             if (isCorrect) {
                 hits++;
@@ -1700,15 +1700,15 @@ function renderPerformanceHTML(res) {
 
     // Actualizar UI v2.0
     // REQ: Estandarización Psicométrica (Modulo 2)
-    const aeRatio = hits / Math.max(misses, 1);
-    const avgSpeed = hitSpeedCount > 0 ? (totalSpeed / hitSpeedCount / 1000) : 0;
-    const impulsivity = history.length > 0 ? Math.round((impulsiveCount / history.length) * 100) : 0;
+    var aeRatio = hits / Math.max(misses, 1);
+    var avgSpeed = hitSpeedCount > 0 ? (totalSpeed / hitSpeedCount / 1000) : 0;
+    var impulsivity = history.length > 0 ? Math.round((impulsiveCount / history.length) * 100) : 0;
 
-    const elHits = document.getElementById('v2-hits');
-    const elMisses = document.getElementById('v2-misses');
-    const elRatio = document.getElementById('v2-ae-ratio');
-    const elSpeed = document.getElementById('v2-speed');
-    const elImp = document.getElementById('v2-impulsivity');
+    var elHits = document.getElementById('v2-hits');
+    var elMisses = document.getElementById('v2-misses');
+    var elRatio = document.getElementById('v2-ae-ratio');
+    var elSpeed = document.getElementById('v2-speed');
+    var elImp = document.getElementById('v2-impulsivity');
 
     if (elHits) elHits.textContent = hits;
     if (elMisses) elMisses.textContent = misses;
@@ -1717,21 +1717,21 @@ function renderPerformanceHTML(res) {
     if (elImp) elImp.textContent = `${impulsivity}%`;
 
     // ICR / IA / Mastery / XP (v3.0)
-    let latestICR = 0, latestIA = 0, latestMastery = 0, totalXP = 0;
-    const qProLogs = history.filter(h => h.length > 15);
+    var latestICR = 0, latestIA = 0, latestMastery = 0, totalXP = 0;
+    var qProLogs = history.filter(h function h.length > 15);
     if (qProLogs.length > 0) {
-        const last = qProLogs[qProLogs.length - 1];
+        var last = qProLogs[qProLogs.length - 1];
         latestICR = parseFloat(last[17]) || 0;
         latestIA = parseFloat(last[18]) || 0;
         latestMastery = parseFloat(last[19]) || 0;
-        totalXP = qProLogs.reduce((s, l) => s + (parseFloat(l[20]) || 0), 0);
+        totalXP = qProLogs.reduce((s, l) function s + (parseFloat(l[20]) || 0), 0);
     }
 
-    const elMastery = document.getElementById('v2-mastery');
-    const elICR = document.getElementById('v2-icr');
-    const elIA = document.getElementById('v2-ia');
-    const elXP = document.getElementById('v2-total-xp');
-    const calBadge = document.getElementById('calibration-badge');
+    var elMastery = document.getElementById('v2-mastery');
+    var elICR = document.getElementById('v2-icr');
+    var elIA = document.getElementById('v2-ia');
+    var elXP = document.getElementById('v2-total-xp');
+    var calBadge = document.getElementById('calibration-badge');
 
     if (elMastery) elMastery.textContent = `${window.formatearMetricaPsicométrica ? window.formatearMetricaPsicométrica(latestMastery) : latestMastery.toFixed(2)}%`;
     if (elICR) elICR.textContent = `${window.formatearMetricaPsicométrica ? window.formatearMetricaPsicométrica(latestICR) : latestICR.toFixed(2)}%`;
@@ -1745,8 +1745,8 @@ function renderPerformanceHTML(res) {
     }
 
     container.innerHTML = Object.entries(window.userGameStats)
-        .filter(([key]) => key.startsWith('QuizPro_'))
-        .map(([key, s]) => {
+        .filter(([key]) function key.startsWith('QuizPro_'))
+        .map(([key, s]) function {
             if (s.maxScore >= 70) approvedCount++;
             return `
                 <tr class="border-b border-gray-50 text-[11px]">
@@ -1756,20 +1756,20 @@ function renderPerformanceHTML(res) {
                 </tr>`;
         }).join('');
 
-    const approvedEl = document.getElementById('total-approvals');
+    var approvedEl = document.getElementById('total-approvals');
     if (approvedEl) approvedEl.textContent = approvedCount;
 
-    const reinforcementSection = document.getElementById('reinforcement-feedback');
-    const tagsContainer = document.getElementById('reinforcement-tags');
+    var reinforcementSection = document.getElementById('reinforcement-feedback');
+    var tagsContainer = document.getElementById('reinforcement-tags');
     if (allMistakeTags.size > 0 && tagsContainer) {
         reinforcementSection.classList.remove('hidden');
-        tagsContainer.innerHTML = Array.from(allMistakeTags).map(tag =>
+        tagsContainer.innerHTML = Array.from(allMistakeTags).map(tag function
             `<span class="px-2 py-1 bg-white border border-orange-200 text-orange-700 text-[10px] font-bold rounded-lg">${getSanitizedAcademicText(tag)}</span>`
         ).join('');
     }
 
     if (Object.keys(window.userGameStats).length > 0) {
-        const dashboard = document.getElementById('performance-dashboard');
+        var dashboard = document.getElementById('performance-dashboard');
         if (dashboard) dashboard.classList.remove('hidden');
     }
 
@@ -1780,27 +1780,27 @@ function renderPerformanceHTML(res) {
 }
 
 function renderDiagnosis(history) {
-    const strongEl = document.getElementById('v2-strong-topic');
-    const weakEl = document.getElementById('v2-weak-topic');
-    const linkContainer = document.getElementById('v2-recommendation-link');
+    var strongEl = document.getElementById('v2-strong-topic');
+    var weakEl = document.getElementById('v2-weak-topic');
+    var linkContainer = document.getElementById('v2-recommendation-link');
     if (!strongEl || !weakEl) return;
 
     // Agrupar analítica por tema
-    const topics = {};
-    history.forEach(h => {
+    var topics = {};
+    history.forEach(h function {
         if (h.length < 15) return;
-        const tema = h[6]; // Asignatura/Tema en logs
+        var tema = h[6]; // Asignatura/Tema en logs
         if (!tema || tema === 'General') return;
 
         if (!topics[tema]) topics[tema] = { hits: 0, total: 0 };
-        const isCorrect = String(h[12]) === "true";
+        var isCorrect = String(h[12]) === "true";
         topics[tema].total++;
         if (isCorrect) topics[tema].hits++;
     });
 
-    const topicStats = Object.entries(topics)
-        .map(([tema, s]) => ({ tema, mastery: (s.hits / s.total) * 100, total: s.total }))
-        .filter(t => t.total >= 5); // Mínimo 5 preguntas (Modulo 3.1)
+    var topicStats = Object.entries(topics)
+        .map(([tema, s]) function ({ tema, mastery: (s.hits / s.total) * 100, total: s.total }))
+        .filter(t function t.total >= 5); // Mínimo 5 preguntas (Modulo 3.1)
 
     if (topicStats.length === 0) {
         strongEl.textContent = "Datos insuficientes para generar diagnóstico.";
@@ -1808,9 +1808,9 @@ function renderDiagnosis(history) {
         return;
     }
 
-    topicStats.sort((a, b) => b.mastery - a.mastery);
-    const strong = topicStats[0];
-    const weak = topicStats[topicStats.length - 1];
+    topicStats.sort((a, b) function b.mastery - a.mastery);
+    var strong = topicStats[0];
+    var weak = topicStats[topicStats.length - 1];
 
     strongEl.textContent = `${strong.tema} (${window.redondearMetrica(strong.mastery)}%)`;
     weakEl.textContent = `${weak.tema} (${window.redondearMetrica(weak.mastery)}%)`;
@@ -1820,11 +1820,11 @@ function renderDiagnosis(history) {
 
     // Recomendación Curricular (Modulo 8.2)
     if (weak.mastery < 70) {
-        const findPresentation = (tema) => {
+        var findPresentation = (tema) function {
             if (!window.presentationData) return null;
-            for (const grade of window.presentationData) {
-                for (const subject of grade.subjects) {
-                    for (const topic of subject.topics) {
+            for (var grade of window.presentationData) {
+                for (var subject of grade.subjects) {
+                    for (var topic of subject.topics) {
                         if (topic.title.toLowerCase().includes(tema.toLowerCase()) ||
                             tema.toLowerCase().includes(topic.title.toLowerCase())) {
                             return topic.file;
@@ -1835,7 +1835,7 @@ function renderDiagnosis(history) {
             return null;
         };
 
-        const file = findPresentation(weak.tema);
+        var file = findPresentation(weak.tema);
         if (file && linkContainer) {
             linkContainer.innerHTML = `
                 <a href="${file}" target="_blank" class="inline-flex items-center gap-2 px-4 py-2 bg-orange-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-orange-700 transition-all shadow-lg shadow-orange-200">
@@ -1851,17 +1851,17 @@ function renderDiagnosis(history) {
  * REQ: Gráficos Psicométricos Interactivos (Modulo 5)
  */
 function renderPsychometricCharts(history) {
-    const radarCtx = document.getElementById('psychometric-radar-chart')?.getContext('2d');
-    const trendCtx = document.getElementById('learning-trend-chart')?.getContext('2d');
+    var radarCtx = document.getElementById('psychometric-radar-chart')?.getContext('2d');
+    var trendCtx = document.getElementById('learning-trend-chart')?.getContext('2d');
 
     if (!radarCtx || !trendCtx || history.length === 0) return;
 
     // 1. Datos para Gráfico Radial (Últimas métricas registradas)
-    const qProLogs = history.filter(h => h.length > 15);
-    let latestICR = 0, latestIA = 0, latestMastery = 0;
+    var qProLogs = history.filter(h function h.length > 15);
+    var latestICR = 0, latestIA = 0, latestMastery = 0;
 
     if (qProLogs.length > 0) {
-        const last = qProLogs[qProLogs.length - 1];
+        var last = qProLogs[qProLogs.length - 1];
         latestICR = parseFloat(last[17]) || 0;
         latestIA = parseFloat(last[18]) || 0;
         latestMastery = parseFloat(last[19]) || 0;
@@ -1894,8 +1894,8 @@ function renderPsychometricCharts(history) {
     });
 
     // 2. Datos para Gráfico de Líneas (Evolución de puntaje)
-    const scores = qProLogs.map(h => parseFloat(h[5])).slice(-10); // Últimas 10 sesiones
-    const labels = scores.map((_, i) => `S${i+1}`);
+    var scores = qProLogs.map(h function parseFloat(h[5])).slice(-10); // Últimas 10 sesiones
+    var labels = scores.map((_, i) function `S${i+1}`);
 
     if (window.trendChartInstance) window.trendChartInstance.destroy();
     window.trendChartInstance = new Chart(trendCtx, {

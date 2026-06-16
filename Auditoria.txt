@@ -23,3 +23,10 @@ Hallazgo 4 [Bajo]: Se eliminó un replaceState inicial en openAcademicMenu que p
 - Cache-First: Implementado en Noticias, Reportes, Dashboard y Perfil. Reducción de tiempo de carga percibido a 0ms.
 - Editor: Code-blocks habilitados y estilizados.
 - Estudiante: Auto-avance verificado.
+
+
+[AUDITORÍA SUB-TAREA - 2026-06-15]
+- Hallazgo: Doble escapado de entidades HTML en bloques de código (e.g. &lt;div&gt;).
+- Solución: Refactorización de window.sanitizarHTMLTecnico para unescapar &amp;lt; -> &lt; post-procesamiento.
+- Mejora: Implementación de botón 'Copiar' en bloques pre.ql-syntax.
+- Verificación: Playwright confirmó renderizado literal de snippets y funcionalidad de portapapeles.

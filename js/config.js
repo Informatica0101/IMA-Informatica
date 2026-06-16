@@ -21,7 +21,7 @@ window.SERVICE_URLS = {
 };
 
 // --- URL del sitio para CORS (si es necesario ajustarlo en el backend) ---
-const FRONTEND_URL = 'https://informatica0101.github.io';
+var FRONTEND_URL = 'https://informatica0101.github.io';
 
 /**
  * CONFIGURACIÓN ACADÉMICA CENTRALIZADA
@@ -30,7 +30,7 @@ const FRONTEND_URL = 'https://informatica0101.github.io';
  */
 window.PARCIAL_ACTUAL = "Segundo Parcial";
 
-const GRADE_MAP = {
+var GRADE_MAP = {
     'decimo': 10, 'undecimo': 11, 'duodecimo': 12,
     '10': 10, '11': 11, '12': 12, '10mo': 10, '11no': 11, '12mo': 12,
     'ibtp': 10, 'iibtp': 11, 'iiibtp': 12
@@ -38,15 +38,15 @@ const GRADE_MAP = {
 
 window.parseGrade = function(gradeStr) {
     if (!gradeStr) return 10;
-    const normalized = gradeStr.toString().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, "");
+    var normalized = gradeStr.toString().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, "");
 
-    if (normalized.includes("duodecimo") || normalized.includes("iiibtp")) return 12;
-    if (normalized.includes("undecimo") || normalized.includes("iibtp")) return 11;
-    if (normalized.includes("decimo") || normalized.includes("ibtp")) return 10;
+    if (normalized.indexOf("duodecimo") !== -1 || normalized.indexOf("iiibtp") !== -1) return 12;
+    if (normalized.indexOf("undecimo") !== -1 || normalized.indexOf("iibtp") !== -1) return 11;
+    if (normalized.indexOf("decimo") !== -1 || normalized.indexOf("ibtp") !== -1) return 10;
 
-    const match = gradeStr.toString().match(/\d+/);
+    var match = gradeStr.toString().match(/\d+/);
     if (match) {
-        const num = parseInt(match[0]);
+        var num = parseInt(match[0]);
         if (num === 12) return 12;
         if (num === 11) return 11;
         if (num === 10) return 10;
@@ -75,7 +75,7 @@ window.normalizeSubject = function(name) {
 
 window.getStandardLevelName = function(lvl) {
     if (!lvl) return 'Básico';
-    const n = lvl.toLowerCase().normalize("NFD").replace(/[\u0300._-]/g, "").replace(/[\u0300-\u036f]/g, "");
+    var n = lvl.toLowerCase().normalize("NFD").replace(/[\u0300._-]/g, "").replace(/[\u0300-\u036f]/g, "");
     if (n === 'basico') return 'Básico';
     if (n === 'intermedio') return 'Intermedio';
     if (n === 'avanzado') return 'Avanzado';
@@ -83,22 +83,18 @@ window.getStandardLevelName = function(lvl) {
 };
 
 /**
- * REQ 7: Guardián Global de Alcance (Scope Guard)
- * Centraliza la lógica de visibilidad para prevenir fugas accidentales de contenido.
- */
-/**
  * REQ: Estandarización Psicométrica (Modulo 2)
  * Asegura el redondeo simétrico a 2 decimales para métricas de analítica.
  */
 window.formatearMetricaPsicométrica = function(valor) {
     if (valor === undefined || valor === null) return "0.00";
-    const num = parseFloat(valor);
+    var num = parseFloat(valor);
     if (isNaN(num)) return "0.00";
-    // REQ: Redondeo Simétrico Estándar (Modulo 3)
     return (Math.round(num * 100) / 100).toFixed(2);
 };
 
 window.redondearMetrica = window.formatearMetricaPsicométrica;
+
 
 /**
  * Sanitizador de HTML para etiquetas técnicas permitidas (Modulo 5.4)
@@ -106,88 +102,85 @@ window.redondearMetrica = window.formatearMetricaPsicométrica;
  */
 window.sanitizarHTMLTecnico = function(html) {
     if (!html) return '';
+
     var temp = document.createElement('div');
     temp.textContent = html;
     var sanitized = temp.innerHTML;
 
-    // v7.6.1: Expanded whitelist for rich text consistency
-    return sanitized
-        .replace(/&lt;(p|span|strong|b|i|u|s|strike|em|ul|ol|li|code|pre|br|blockquote|h1|h2|h3|center)(.*?)&gt;/gi, function(match, tag, attrs) {
-            var cleanAttrs = attrs.replace(/&quot;/g, '"').replace(/\s*on\w+\s*=\s*(?:'[^']*'|"[^" ]*"|[^\s>]+)/gi, '');
-            return '<' + tag + cleanAttrs + '>';
-        })
-        .replace(/&lt;\/(p|span|strong|b|i|u|s|strike|em|ul|ol|li|code|pre|blockquote|h1|h2|h3|center)&gt;/gi, '</$1>')
-        .replace(/&lt;a\s+(.*?)&gt;/gi, function(match, attrs) {
-             var cleanAttrs = attrs.replace(/&quot;/g, '"').replace(/on\w+\s*=\s*".*?"/gi, '');
-             if (!cleanAttrs.includes('target=')) cleanAttrs += ' target="_blank"';
-             return '<a ' + cleanAttrs + '>';
-        })
-        .replace(/&lt;\/a&gt;/gi, '</a>');
+    var tags = 'p|div|span|strong|b|i|u|s|strike|em|ul|ol|li|code|pre|br|blockquote|h1|h2|h3|center|table|thead|tbody|tr|td|th';
+
+    sanitized = sanitized.replace(new RegExp('&lt;(/?)(' + tags + ')(.*?)&gt;', 'gi'), function(match, slash, tag, attrs) {
+        var cleanAttrs = attrs.replace(/&quot;/g, '"').replace(/\s*on\w+\s*=\s*(?:'[^']*'|"[^" ]*"|[^\s>]+)/gi, '');
+        return '<' + slash + tag + cleanAttrs + '>';
+    });
+
+    sanitized = sanitized.replace(/&lt;a\s+(.*?)&gt;/gi, function(match, attrs) {
+        var cleanAttrs = attrs.replace(/&quot;/g, '"').replace(/\s*on\w+\s*=\s*(?:'[^']*'|"[^" ]*"|[^\s>]+)/gi, '');
+        if (cleanAttrs.indexOf('target=') === -1) cleanAttrs += ' target="_blank"';
+        return '<a ' + cleanAttrs + '>';
+    });
+    sanitized = sanitized.replace(/&lt;\/a&gt;/gi, '</a>');
+
+    sanitized = sanitized.replace(/&amp;(lt|gt|quot|apos|amp|nbsp);/g, '&$1;');
+
+    return sanitized;
 };
 
 /**
  * Normaliza nombres de parciales para permitir comparaciones flexibles
- * (ej. "II Parcial" -> "Segundo Parcial")
  */
 function normalizePartial(p) {
     if (!p) return "";
-    const n = p.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
-    if (n.includes("primer") || n === "i parcial") return "Primer Parcial";
-    if (n.includes("segundo") || n === "ii parcial") return "Segundo Parcial";
-    if (n.includes("tercer") || n === "iii parcial") return "Tercer Parcial";
-    if (n.includes("cuarto") || n === "iv parcial") return "Cuarto Parcial";
+    var n = p.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
+    if (n.indexOf("primer") !== -1 || n === "i parcial") return "Primer Parcial";
+    if (n.indexOf("segundo") !== -1 || n === "ii parcial") return "Segundo Parcial";
+    if (n.indexOf("tercer") !== -1 || n === "iii parcial") return "Tercer Parcial";
+    if (n.indexOf("cuarto") !== -1 || n === "iv parcial") return "Cuarto Parcial";
     return p;
 }
 window.normalizePartial = normalizePartial;
 
 window.isContentAuthorized = function(contentPartial) {
-    const user = JSON.parse(localStorage.getItem('currentUser'));
-    if (user?.rol === 'Profesor') return true;
+    var userRaw = localStorage.getItem('currentUser');
+    if (!userRaw) return false;
+    var user = JSON.parse(userRaw);
+    if (user && user.rol === 'Profesor') return true;
 
     if (!contentPartial) return false;
 
-    const normContent = normalizePartial(contentPartial);
-    const normActual = normalizePartial(window.PARCIAL_ACTUAL);
+    var normContent = normalizePartial(contentPartial);
+    var normActual = normalizePartial(window.PARCIAL_ACTUAL);
 
-    // El estudiante solo tiene acceso al parcial configurado globalmente
     if (normContent === normActual) return true;
 
-    // Manejo de asignaturas que abarcan múltiples parciales
-    const partialGroups = {
+    var partialGroups = {
         "I y II Parcial": ["Primer Parcial", "Segundo Parcial"],
         "III y IV Parcial": ["Tercer Parcial", "Cuarto Parcial"]
     };
 
     if (partialGroups[contentPartial]) {
-        return partialGroups[contentPartial].includes(normActual);
+        return partialGroups[contentPartial].indexOf(normActual) !== -1;
     }
 
     return false;
 };
 
-/**
- * Validador de estructura de preguntas para el Banco Central.
- * Asegura que los datos cumplen con el esquema requerido antes de persistir.
- */
 window.validateQuestion = function(q) {
-    // Normalizar antes de validar para ser flexible con nombres de campos (v3.2)
-    const normalized = window.normalizeQuestion(q);
+    var normalized = window.normalizeQuestion(q);
+    var required = ['Asignatura', 'Nivel', 'Pregunta', 'RespuestaCorrecta'];
 
-    const required = ['Asignatura', 'Nivel', 'Pregunta', 'RespuestaCorrecta'];
-
-    // Saltamos validación de RespuestaCorrecta para tipos que manejan datos complejos como pares o items
     if (normalized.TipoActividad === 'ordering' || normalized.TipoActividad === 'matching') {
-        const index = required.indexOf('RespuestaCorrecta');
+        var index = required.indexOf('RespuestaCorrecta');
         if (index > -1) required.splice(index, 1);
     }
 
-    for (const field of required) {
+    for (var i = 0; i < required.length; i++) {
+        var field = required[i];
         if (!normalized[field] || normalized[field].toString().trim() === "") {
-            return { valid: false, error: `Campo requerido faltante: ${field}` };
+            return { valid: false, error: "Campo requerido faltante: " + field };
         }
     }
 
-    // Validar que al menos haya 2 opciones si es V/F o 3-4 si es Opción Múltiple
     if (normalized.TipoActividad === 'verdadero_falso') {
         if (!normalized.OpcionA || !normalized.OpcionB) return { valid: false, error: "Verdadero/Falso requiere OpcionA y OpcionB" };
     } else if (normalized.TipoActividad === 'opcion_multiple' || normalized.TipoActividad === 'Selección múltiple') {
@@ -197,105 +190,90 @@ window.validateQuestion = function(q) {
     return { valid: true };
 };
 
-/**
- * REQ: Fallback de seguridad para GamesAdapter (Incidencia 1)
- * Previene errores de referencia si el script no carga a tiempo o falla.
- */
 window.GamesAdapter = window.GamesAdapter || {
     isFallback: true,
-    init: () => Promise.resolve({ lb: { global: [], subjectTops: {} }, record: {} }),
-    showLoading: (active) => {
+    init: function() { return Promise.resolve({ lb: { global: [], subjectTops: {} }, record: {} }); },
+    showLoading: function(active) {
         console.warn("[IMA-SYSTEM] GamesAdapter (Fallback) showLoading:", active);
         return Promise.resolve();
     },
-    saveResult: () => Promise.resolve({ status: 'success' }),
-    recordAction: () => {},
-    finishSession: () => Promise.resolve({ status: 'success' }),
-    endSession: () => {},
-    getLeaderboard: () => Promise.resolve({ status: 'success', global: [], subjectTops: {} }),
-    getPersonalRecord: () => Promise.resolve({})
+    saveResult: function() { return Promise.resolve({ status: 'success' }); },
+    recordAction: function() {},
+    finishSession: function() { return Promise.resolve({ status: 'success' }); },
+    endSession: function() {},
+    getLeaderboard: function() { return Promise.resolve({ status: 'success', global: [], subjectTops: {} }); },
+    getPersonalRecord: function() { return Promise.resolve({}); }
 };
 
-/**
- * REQ: Normalización Universal de Preguntas (Incidencia 3)
- * Estandariza el campo de respuesta correcta para eliminar el error "undefined".
- */
 window.normalizeQuestion = function(q) {
     if (!q) return null;
 
-    // Mapeo crítico para resolver errores de integridad (v3.2)
-    const id = q.id || q.ID || q.PreguntaID || `bank_${Math.random().toString(36).substr(2, 9)}`;
-    const Asignatura = q.Asignatura || q.subject || q.asignatura || "Informática I";
-    const Pregunta = q.Pregunta || q.question || q.pregunta || q.enunciado || "";
-    const TipoActividad = q.TipoActividad || q.type || q.tipoActividad || q.tipo_pregunta || "opcion_multiple";
-    const Nivel = q.Nivel || q.nivel || "Básico";
-    const Tema = q.Tema || q.tema || (q.tags && q.tags[0]) || "General";
-    const Grado = q.Grado || q.grado || 10;
+    var id = q.id || q.ID || q.PreguntaID || ("bank_" + Math.random().toString(36).substr(2, 9));
+    var Asignatura = q.Asignatura || q.subject || q.asignatura || "Informática I";
+    var Pregunta = q.Pregunta || q.question || q.pregunta || q.enunciado || "";
+    var TipoActividad = q.TipoActividad || q.type || q.tipoActividad || q.tipo_pregunta || "opcion_multiple";
+    var Nivel = q.Nivel || q.nivel || "Básico";
+    var Tema = q.Tema || q.tema || (q.tags && q.tags[0]) || "General";
+    var Grado = q.Grado || q.grado || 10;
 
-    const OpcionA = q.OpcionA || q.opcionA || (q.options && q.options[0]) || "";
-    const OpcionB = q.OpcionB || q.opcionB || (q.options && q.options[1]) || "";
-    const OpcionC = q.OpcionC || q.opcionC || (q.options && q.options[2]) || "";
-    const OpcionD = q.OpcionD || q.opcionD || (q.options && q.options[3]) || "";
+    var OpcionA = q.OpcionA || q.opcionA || (q.options && q.options[0]) || "";
+    var OpcionB = q.OpcionB || q.opcionB || (q.options && q.options[1]) || "";
+    var OpcionC = q.OpcionC || q.opcionC || (q.options && q.options[2]) || "";
+    var OpcionD = q.OpcionD || q.opcionD || (q.options && q.options[3]) || "";
 
-    const respuestaCorrecta = q.RespuestaCorrecta ??
-                             q.respuestaCorrecta ??
-                             q.respuesta_correcta_literal ??
-                             q.answer ??
-                             q.correctAnswer ??
-                             q.correct_answer ??
-                             q.correctType ??
-                             q.solution ??
-                             q.a ??
-                             null;
+    var respuestaCorrecta = (q.RespuestaCorrecta !== undefined) ? q.RespuestaCorrecta :
+                             ((q.respuestaCorrecta !== undefined) ? q.respuestaCorrecta :
+                             ((q.respuesta_correcta_literal !== undefined) ? q.respuesta_correcta_literal :
+                             ((q.answer !== undefined) ? q.answer :
+                             ((q.correctAnswer !== undefined) ? q.correctAnswer :
+                             ((q.correct_answer !== undefined) ? q.correct_answer :
+                             ((q.correctType !== undefined) ? q.correctType :
+                             ((q.solution !== undefined) ? q.solution :
+                             ((q.a !== undefined) ? q.a : null))))))));
 
     if (respuestaCorrecta === null && TipoActividad !== 'ordering' && TipoActividad !== 'matching' && TipoActividad !== 'emparejamiento') {
         console.warn("[IMA-NORMALIZER] No se detectó respuesta correcta para la pregunta:", q);
     }
 
-    // Soporte para taxonomía extendida v5.0
-    const Enunciado = q.enunciado || Pregunta;
-    const TipoPregunta = q.tipo_pregunta || TipoActividad;
-    const RespuestaCorrectaLiteral = q.respuesta_correcta_literal || respuestaCorrecta;
-    const OpcionesVisibles = q.opciones_visibles || q.opciones || [];
-    const Parejas = q.parejas || [];
+    var Enunciado = q.enunciado || Pregunta;
+    var TipoPregunta = q.tipo_pregunta || TipoActividad;
+    var RespuestaCorrectaLiteral = q.respuesta_correcta_literal || respuestaCorrecta;
+    var OpcionesVisibles = q.opciones_visibles || q.opciones || [];
+    var Parejas = q.parejas || [];
 
-    return {
-        ...q,
-        id,
-        Asignatura,
-        Pregunta,
-        TipoActividad,
-        Nivel,
-        Tema,
-        Grado,
-        OpcionA,
-        OpcionB,
-        OpcionC,
-        OpcionD,
-        RespuestaCorrecta: (respuestaCorrecta !== null) ? String(respuestaCorrecta).trim() : null,
-        // Campos v5.0
-        enunciado: Enunciado,
-        tipo_pregunta: TipoPregunta,
-        respuesta_correcta_literal: (RespuestaCorrectaLiteral !== null) ? String(RespuestaCorrectaLiteral).trim() : null,
-        opciones_visibles: OpcionesVisibles,
-        parejas: Parejas,
-        // Mantener campos para compatibilidad con código existente que use camelCase
-        asignatura: Asignatura,
-        pregunta: Pregunta,
-        tipoActividad: TipoActividad,
-        nivel: Nivel,
-        tema: Tema,
-        grado: Grado,
-        opcionA: OpcionA,
-        opcionB: OpcionB,
-        opcionC: OpcionC,
-        opcionD: OpcionD,
-        respuestaCorrecta: (respuestaCorrecta !== null) ? String(respuestaCorrecta).trim() : null
-    };
+    var result = {};
+    for (var key in q) { result[key] = q[key]; }
+
+    result.id = id;
+    result.Asignatura = Asignatura;
+    result.Pregunta = Pregunta;
+    result.TipoActividad = TipoActividad;
+    result.Nivel = Nivel;
+    result.Tema = Tema;
+    result.Grado = Grado;
+    result.OpcionA = OpcionA;
+    result.OpcionB = OpcionB;
+    result.OpcionC = OpcionC;
+    result.OpcionD = OpcionD;
+    result.RespuestaCorrecta = (respuestaCorrecta !== null) ? String(respuestaCorrecta).trim() : null;
+
+    result.enunciado = Enunciado;
+    result.tipo_pregunta = TipoPregunta;
+    result.respuesta_correcta_literal = (RespuestaCorrectaLiteral !== null) ? String(RespuestaCorrectaLiteral).trim() : null;
+    result.opciones_visibles = OpcionesVisibles;
+    result.parejas = Parejas;
+
+    result.asignatura = Asignatura;
+    result.pregunta = Pregunta;
+    result.tipoActividad = TipoActividad;
+    result.nivel = Nivel;
+    result.tema = Tema;
+    result.grado = Grado;
+    result.opcionA = OpcionA;
+    result.opcionB = OpcionB;
+    result.opcionC = OpcionC;
+    result.opcionD = OpcionD;
+    result.respuestaCorrecta = result.RespuestaCorrecta;
+
+    return result;
 };
-
-/**
- * Perímetro de Seguridad Anti-Debugging restringido a minijuegos (v7.6.1)
- * La implementación global ha sido removida para permitir depuración en áreas académicas y administrativas.
- * Se ha movido a js/security-minigames.js para carga selectiva.
- */

@@ -1,6 +1,7 @@
 /**
  * Persistence & Synchronization Engine (Offline-First) - QuizPro v7.0
- * Utilizes IndexedDB for structured, high-volume local persistence.
+ * Utiliza IndexedDB para persistencia local de alto volumen.
+ * ES5 Compliance Mandatory.
  */
 
 window.PersistenceManager = {
@@ -10,31 +11,33 @@ window.PersistenceManager = {
     _db: null,
 
     /**
-     * Initializes the IndexedDB database.
+     * Inicializa la base de datos IndexedDB.
      */
-    async init() {
-        if (this._db) return this._db;
+    init: function() {
+        var self = this;
+        if (this._db) return Promise.resolve(this._db);
 
-        return new Promise((resolve, reject) => {
-            const request = indexedDB.open(this.DB_NAME, this.DB_VERSION);
+        return new Promise(function(resolve, reject) {
+            var request = indexedDB.open(self.DB_NAME, self.DB_VERSION);
 
-            request.onupgradeneeded = (event) => {
-                const db = event.target.result;
-                this.STORES.forEach(store => {
+            request.onupgradeneeded = function(event) {
+                var db = event.target.result;
+                for (var i = 0; i < self.STORES.length; i++) {
+                    var store = self.STORES[i];
                     if (!db.objectStoreNames.contains(store)) {
                         db.createObjectStore(store, { keyPath: 'id' });
                     }
-                });
+                }
             };
 
-            request.onsuccess = (event) => {
-                this._db = event.target.result;
+            request.onsuccess = function(event) {
+                self._db = event.target.result;
                 console.log("[Persistence] IndexedDB Initialized.");
-                this.getGuestId(); // Ensure GUEST_UUID exists
-                resolve(this._db);
+                self.getGuestId();
+                resolve(self._db);
             };
 
-            request.onerror = (event) => {
+            request.onerror = function(event) {
                 console.error("[Persistence] Error opening IndexedDB:", event.target.error);
                 reject(event.target.error);
             };
@@ -42,12 +45,12 @@ window.PersistenceManager = {
     },
 
     /**
-     * Retrieves or generates a unique GUEST_UUID.
+     * Recupera o genera un GUEST_UUID único.
      */
-    getGuestId() {
-        let guestId = localStorage.getItem('GUEST_UUID');
+    getGuestId: function() {
+        var guestId = localStorage.getItem('GUEST_UUID');
         if (!guestId) {
-            guestId = 'GUEST-' + crypto.randomUUID();
+            guestId = 'GUEST-' + Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
             localStorage.setItem('GUEST_UUID', guestId);
             console.log("[Persistence] New GUEST_UUID generated:", guestId);
         }
@@ -55,13 +58,13 @@ window.PersistenceManager = {
     },
 
     /**
-     * Gets the active identifier (User ID or Guest UUID).
+     * Obtiene el identificador activo (User ID o Guest UUID).
      */
-    getActiveId() {
-        const userRaw = localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser');
+    getActiveId: function() {
+        var userRaw = localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser');
         if (userRaw) {
             try {
-                const user = JSON.parse(userRaw);
+                var user = JSON.parse(userRaw);
                 return user.userId;
             } catch (e) {}
         }
@@ -69,90 +72,99 @@ window.PersistenceManager = {
     },
 
     /**
-     * Retrieves data from a store.
+     * Recupera datos de un store.
      */
-    async get(store, key) {
-        await this.init();
-        const id = key || this.getActiveId();
-        return new Promise((resolve) => {
-            const transaction = this._db.transaction([store], 'readonly');
-            const objectStore = transaction.objectStore(store);
-            const request = objectStore.get(id);
+    get: function(store, key) {
+        var self = this;
+        return this.init().then(function() {
+            var id = key || self.getActiveId();
+            return new Promise(function(resolve) {
+                var transaction = self._db.transaction([store], 'readonly');
+                var objectStore = transaction.objectStore(store);
+                var request = objectStore.get(id);
 
-            request.onsuccess = () => resolve(request.result);
-            request.onerror = () => resolve(null);
+                request.onsuccess = function() { resolve(request.result); };
+                request.onerror = function() { resolve(null); };
+            });
         });
     },
 
     /**
-     * Persists data with a timestamp.
+     * Persiste datos con timestamp.
      */
-    async set(store, data, key) {
-        await this.init();
-        const id = key || this.getActiveId();
-        const payload = {
-            id: id,
-            data: data,
-            updated_at: Date.now()
-        };
+    set: function(store, data, key) {
+        var self = this;
+        return this.init().then(function() {
+            var id = key || self.getActiveId();
+            var payload = {
+                id: id,
+                data: data,
+                updated_at: Date.now()
+            };
 
-        return new Promise((resolve, reject) => {
-            const transaction = this._db.transaction([store], 'readwrite');
-            const objectStore = transaction.objectStore(store);
-            const request = objectStore.put(payload);
+            return new Promise(function(resolve, reject) {
+                var transaction = self._db.transaction([store], 'readwrite');
+                var objectStore = transaction.objectStore(store);
+                var request = objectStore.put(payload);
 
-            request.onsuccess = () => resolve(payload);
-            request.onerror = (event) => reject(event.target.error);
+                request.onsuccess = function() { resolve(payload); };
+                request.onerror = function(event) { reject(event.target.error); };
+            });
         });
     },
 
     /**
-     * Retrieves all items from a specific store.
+     * Recupera todos los elementos de un store.
      */
-    async getAll(store) {
-        await this.init();
-        return new Promise((resolve, reject) => {
-            const transaction = this._db.transaction([store], 'readonly');
-            const objectStore = transaction.objectStore(store);
-            const request = objectStore.getAll();
-            request.onsuccess = () => resolve(request.result);
-            request.onerror = () => reject(request.error);
+    getAll: function(store) {
+        var self = this;
+        return this.init().then(function() {
+            return new Promise(function(resolve, reject) {
+                var transaction = self._db.transaction([store], 'readonly');
+                var objectStore = transaction.objectStore(store);
+                var request = objectStore.getAll();
+
+                request.onsuccess = function() { resolve(request.result); };
+                request.onerror = function() { reject(request.error); };
+            });
         });
     },
 
     /**
-     * Deletes an item from a store.
+     * Elimina una clave de un store.
      */
-    async delete(store, key) {
-        await this.init();
-        return new Promise((resolve, reject) => {
-            const transaction = this._db.transaction([store], 'readwrite');
-            const objectStore = transaction.objectStore(store);
-            const request = objectStore.delete(key);
-            request.onsuccess = () => resolve();
-            request.onerror = () => reject(request.error);
+    delete: function(store, key) {
+        var self = this;
+        return this.init().then(function() {
+            return new Promise(function(resolve, reject) {
+                var transaction = self._db.transaction([store], 'readwrite');
+                var objectStore = transaction.objectStore(store);
+                var request = objectStore.delete(key);
+
+                request.onsuccess = function() { resolve(); };
+                request.onerror = function() { reject(request.error); };
+            });
         });
     },
 
     /**
-     * Reconciliation Logic.
+     * Reconcilia datos del servidor con el caché local.
      */
-    async reconcile(store, serverData, onUpdate, key) {
-        const local = await this.get(store, key);
-        const serverTimestamp = serverData.updated_at || Date.now();
+    reconcile: function(store, serverData, onUpdate, key) {
+        var self = this;
+        var cacheKey = key || self.getActiveId();
 
-        if (!local || serverTimestamp > local.updated_at) {
-            console.log(`[Persistence] Server data is newer for ${store}. Updating local...`);
-            // REQ: Preservación de estructura (Modulo 1)
-            // Si el objeto ya tiene una propiedad 'data', lo guardamos tal cual para no perder hermanos (ej. allHistory)
-            const newData = (serverData.status === 'success' && serverData.data) ? serverData : (serverData.data || serverData);
-            await this.set(store, newData, key);
-            if (onUpdate) onUpdate(newData);
-            return 'server_win';
-        }
-        return 'synced';
+        return this.get(store, cacheKey).then(function(local) {
+            var serverTimestamp = (serverData && serverData.updated_at) ? serverData.updated_at : Date.now();
+
+            if (!local || !local.updated_at || serverTimestamp > local.updated_at) {
+                var newData = (serverData && serverData.status === 'success' && serverData.data) ? serverData.data : serverData;
+                return self.set(store, newData, cacheKey).then(function() {
+                    if (typeof onUpdate === 'function') onUpdate(newData);
+                    return newData;
+                });
+            }
+            return local.data;
+        });
     }
 };
-
-// Start initialization
-window.PersistenceManager.init().catch(console.error);
