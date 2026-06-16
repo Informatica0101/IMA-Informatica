@@ -58,3 +58,34 @@
 - **Archivos Involucrados:** js/teacher.js
 - **Descripción:** Eliminar la doble llamada a fetchApi.
 - **Criterios de Aceptación:** Una sola llamada que maneje tanto caché como actualización de red.
+- **Estado:** [X] Completada
+
+### [T-018] Mejora de Visualización para Bloques de Código (Profesor)
+- **Origen del Hallazgo:** Requerimiento de Usuario (2026-06-16)
+- **Severidad:** Alto
+- **Archivos Involucrados:** teacher-dashboard.html, js/teacher.js, css/style.css
+- **Dependencias Expuestas:** window.setupCodeCopyButtons (ui-common.js)
+- **Descripción del Alcance:**
+    - Corregir estructura HTML en el modal de detalles de tarea para soportar bloques <pre>.
+    - Asegurar inicialización de botones de copiado en contenido dinámico del dashboard.
+    - Garantizar formato monoespaciado, fondo diferenciado y desplazamiento horizontal.
+- **Criterios de Aceptación:**
+    - El código se muestra en contenedor independiente con fuente monoespaciada.
+    - Botón "Copiar Código" funcional y con confirmación visual presente en cada bloque.
+    - El diseño es responsivo y permite scroll horizontal en móviles.
+- **Estado:** [X] Completada
+
+### [T-019] Afinamiento de la Navegación (Restauración de Grados)
+- **Origen del Hallazgo:** Requerimiento de Usuario (2026-06-16)
+- **Severidad:** Crítico
+- **Archivos Involucrados:** js/teacher.js, js/ui-common.js
+- **Dependencias Expuestas:** history API, window.syncNavWithState
+- **Descripción del Alcance:**
+    - Corregir la persistencia del estado inicial en el Dashboard del Profesor para incluir el nivel de 'Grados'.
+    - Asegurar que el retroceso desde 'Secciones' restaure correctamente la vista de 'Grados'.
+    - Sincronizar navStack interno con los estados del historial.
+- **Criterios de Aceptación:**
+    - El flujo de retroceso completo es: Detalle -> Alumnos -> Asignatura -> Parcial -> Sección -> Grados.
+    - Ningún nivel es omitido durante la navegación hacia atrás.
+    - El comportamiento es consistente en escritorio y móviles.
+- **Estado:** [X] Completada

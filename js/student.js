@@ -1,4 +1,4 @@
-document.addEventListenerfunction('DOMContentLoaded', () {
+document.addEventListener('DOMContentLoaded', function() {
     var currentUser = JSON.parse(localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser'));
     if (!currentUser || (currentUser.rol !== 'Estudiante' && currentUser.rol !== 'Alumno')) {
         window.location.href = 'login.html';
@@ -22,7 +22,7 @@ document.addEventListenerfunction('DOMContentLoaded', () {
     var allActivitiesData = [];
 
     if (logoutButton) {
-        logoutButton.addEventListenerfunction('click', () {
+        logoutButton.addEventListener('click', function() {
             localStorage.removeItem('currentUser');
             window.location.href = 'login.html';
         });
@@ -56,7 +56,7 @@ document.addEventListenerfunction('DOMContentLoaded', () {
             var day = String(date.getUTCDate()).padStart(2, '0');
             var month = String(date.getUTCMonth() + 1).padStart(2, '0');
             var year = date.getUTCFullYear();
-            return '${day}/${month}/${year}';
+            return day + '/' + month + '/' + year;
         } catch (e) {
             return isoString;
         }
@@ -84,7 +84,7 @@ document.addEventListenerfunction('DOMContentLoaded', () {
             // REQ: Skeleton Screen (Modulo 3)
             tasksList.innerHTML = `
                 <div class="col-span-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 w-full">
-                    ${Array(6).fill(0).mapfunction(() `
+                    ${Array(6).fill(0).map(function() { return `
                         <div class="p-6 bg-white rounded-[2rem] border border-gray-100 shadow-sm space-y-4">
                             <div class="skeleton h-4 w-1/3 rounded"></div>
                             <div class="skeleton h-6 w-3/4 rounded"></div>
@@ -94,7 +94,7 @@ document.addEventListenerfunction('DOMContentLoaded', () {
                                 <div class="skeleton h-8 w-8 rounded-full"></div>
                             </div>
                         </div>
-                    `).join('')}
+                    `; }).join('')}
                 </div>
             `;
         }
@@ -106,11 +106,15 @@ document.addEventListenerfunction('DOMContentLoaded', () {
             if (!hasLocalData && window.GamesAdapter) window.GamesAdapter.showLoading(true);
 
             // REQ: Mitigación de Latencia mediante Paralelismo y Silent Reconciliation (Ticket 4)
-            var [tasksResult, examsResult, profileResult] = await Promise.all([
+            var results = await Promise.all([
                 fetchApi('TASK', 'getStudentTasks', payload, 0, {
                     store: 'cache_estudiante_tasks',
                     onUpdate: function(data) {
-                        allActivitiesData = [...allActivitiesData.filter(a => a.type === 'Examen'), ...data.map(t => ({ ...t, type: t.tipo || 'Tarea' }))];
+                        var tasks = data.map(function(t) { return { ...t, type: t.tipo || 'Tarea' }; });
+                        allActivitiesData = [
+                            ...allActivitiesData.filter(function(a) { return a.type === 'Examen'; }),
+                            ...tasks
+                        ];
                         renderStudentExpediente(allActivitiesData);
                         renderParcialTabs(allActivitiesData);
                     }
@@ -118,7 +122,11 @@ document.addEventListenerfunction('DOMContentLoaded', () {
                 fetchApi('EXAM', 'getStudentExams', payload, 0, {
                     store: 'cache_estudiante_exams',
                     onUpdate: function(data) {
-                        allActivitiesData = [...allActivitiesData.filter(a => a.type !== 'Examen'), ...data.map(e => ({ ...e, type: 'Examen' }))];
+                        var exams = data.map(function(e) { return { ...e, type: 'Examen' }; });
+                        allActivitiesData = [
+                            ...allActivitiesData.filter(function(a) { return a.type !== 'Examen'; }),
+                            ...exams
+                        ];
                         renderStudentExpediente(allActivitiesData);
                         renderParcialTabs(allActivitiesData);
                     }
@@ -126,23 +134,31 @@ document.addEventListenerfunction('DOMContentLoaded', () {
                 fetchAndRenderLearningProfile(true) // Obtener datos de perfil sin renderizar aún
             ]);
 
+            var tasksResult = results[0];
+            var examsResult = results[1];
+            var profileResult = results[2];
+
             var allActivities = [];
             try {
                 if (tasksResult.status === 'success' && tasksResult.data) {
-                    allActivities.push(...tasksResult.data.map(task => ({
-                        ...task,
-                        type: task.tipo || 'Tarea',
-                        asignatura: (task.asignatura || 'General').trim(),
-                        parcial: (task.parcial || 'Sin Parcial').trim()
-                    })));
+                    allActivities.push(...tasksResult.data.map(function(task) {
+                        return {
+                            ...task,
+                            type: task.tipo || 'Tarea',
+                            asignatura: (task.asignatura || 'General').trim(),
+                            parcial: (task.parcial || 'Sin Parcial').trim()
+                        };
+                    }));
                 }
                 if (examsResult.status === 'success' && examsResult.data) {
-                    allActivities.push(...examsResult.data.map(exam => ({
-                        ...exam,
-                        type: 'Examen',
-                        asignatura: (exam.asignatura || 'General').trim(),
-                        parcial: (exam.parcial || 'Sin Parcial').trim()
-                    })));
+                    allActivities.push(...examsResult.data.map(function(exam) {
+                        return {
+                            ...exam,
+                            type: 'Examen',
+                            asignatura: (exam.asignatura || 'General').trim(),
+                            parcial: (exam.parcial || 'Sin Parcial').trim()
+                        };
+                    }));
                 }
 
                 // Persistir en cache_estudiante_dashboard para el próximo inicio (Modulo 1)
@@ -153,7 +169,7 @@ document.addEventListenerfunction('DOMContentLoaded', () {
                     });
                 }
 
-                allActivities.sortfunction((a, b) {
+                allActivities.sort(function(a, b) {
                     var isReviewed = function(act) {
                         if (!act.entrega) return false;
                         var s = act.entrega.estado;
@@ -220,48 +236,58 @@ document.addEventListenerfunction('DOMContentLoaded', () {
 
         // REQ: Filtro Estricto por Parcial (Incidencia 5)
         // No mezclar históricos en el cálculo de progreso actual
-        var currentParcialActivities = activities.filter(a =>
-            window.normalizePartial(a.parcial) === window.normalizePartial(window.PARCIAL_ACTUAL)
-        );
+        var currentParcialActivities = activities.filter(function(a) {
+            return window.normalizePartial(a.parcial) === window.normalizePartial(window.PARCIAL_ACTUAL);
+        });
 
         // --- Ajuste de Lógica de Progreso (Req 2) ---
         // Excluir 'Credito Extra' del total asignado (baseline), ya que son de recuperación
-        var baseActivities = currentParcialActivities.filter(a => a.type !== 'Credito Extra' && a.type !== 'Crédito Extra');
+        var baseActivities = currentParcialActivities.filter(function(a) {
+            return a.type !== 'Credito Extra' && a.type !== 'Crédito Extra';
+        });
         var totalAssigned = baseActivities.length;
 
         // Las completadas suman puntos al progreso real (separando obligatorias de recuperación)
-        var mandatoryCompleted = currentParcialActivities.filter(a => (a.type !== 'Credito Extra' && a.type !== 'Crédito Extra') && a.entrega &&
-            (a.entrega.estado === 'Completada' || a.entrega.estado === 'Revisada' || a.entrega.estado === 'Finalizado')
-        ).length;
+        var mandatoryCompleted = currentParcialActivities.filter(function(a) {
+            return (a.type !== 'Credito Extra' && a.type !== 'Crédito Extra') && a.entrega &&
+                (a.entrega.estado === 'Completada' || a.entrega.estado === 'Revisada' || a.entrega.estado === 'Finalizado');
+        }).length;
 
-        var extraCreditCompleted = currentParcialActivities.filter(a => (a.type === 'Credito Extra' || a.type === 'Crédito Extra') && a.entrega &&
-            (a.entrega.estado === 'Completada' || a.entrega.estado === 'Revisada' || a.entrega.estado === 'Finalizado')
-        ).length;
+        var extraCreditCompleted = currentParcialActivities.filter(function(a) {
+            return (a.type === 'Credito Extra' || a.type === 'Crédito Extra') && a.entrega &&
+                (a.entrega.estado === 'Completada' || a.entrega.estado === 'Revisada' || a.entrega.estado === 'Finalizado');
+        }).length;
 
         // El progreso visual (slots llenos) se beneficia del crédito extra para cubrir faltantes (Req 2)
         var completed = Math.min(totalAssigned, mandatoryCompleted + extraCreditCompleted);
         var pending = Math.max(0, totalAssigned - completed);
 
         // Tasa de entrega basada en tareas obligatorias (Req 2: Crédito extra no es obligatorio)
-        var mandatoryDelivered = currentParcialActivities.filter(a => (a.type !== 'Credito Extra' && a.type !== 'Crédito Extra') && a.entrega).length;
+        var mandatoryDelivered = currentParcialActivities.filter(function(a) {
+            return (a.type !== 'Credito Extra' && a.type !== 'Crédito Extra') && a.entrega;
+        }).length;
         var deliveryRate = totalAssigned > 0 ? (mandatoryDelivered / totalAssigned) : 0;
 
         // Puntos totales obtenidos (incluye recuperación por créditos extra)
-        var gradeSum = currentParcialActivities.reducefunction((sum, a) sum + parseFloat(a.entrega?.calificacion || 0), 0);
+        var gradeSum = currentParcialActivities.reduce(function(sum, a) {
+            return sum + parseFloat(a.entrega ? a.entrega.calificacion || 0 : 0);
+        }, 0);
 
         // El máximo posible se basa en las tareas obligatorias
-        var maxPossible = baseActivities.reducefunction((sum, a) sum + parseFloat(a.puntaje || 100), 0);
+        var maxPossible = baseActivities.reduce(function(sum, a) {
+            return sum + parseFloat(a.puntaje || 100);
+        }, 0);
         var academicPerformance = maxPossible > 0 ? Math.min(1, gradeSum / maxPossible) : 0;
 
         var onTimeCount = 0;
-        activities.forEach(a => {
+        activities.forEach(function(a) {
             if (a.entrega && a.fechaLimite) {
                 var limit = new Date(a.fechaLimite);
                 var deliveryDate = new Date(a.entrega.fecha || Date.now());
                 if (deliveryDate <= limit) onTimeCount++;
             }
         });
-        var totalDelivered = activities.filter(a => a.entrega).length;
+        var totalDelivered = activities.filter(function(a) { return a.entrega; }).length;
         var punctualityRate = totalDelivered > 0 ? (onTimeCount / totalDelivered) : 1;
 
         var compositeProgress = Math.round((deliveryRate * 0.3 + academicPerformance * 0.5 + punctualityRate * 0.2) * 100);
@@ -340,8 +366,8 @@ document.addEventListenerfunction('DOMContentLoaded', () {
         if (!container) return;
 
         // Obtener asignaturas dinámicamente filtradas por el parcial seleccionado
-        var subjects = [...new Set(activities.map(a => a.asignatura))]
-            .filter(s => s && s.trim() !== "")
+        var subjects = [...new Set(activities.map(function(a) { return a.asignatura; }))]
+            .filter(function(s) { return s && s.trim() !== ""; })
             .sort();
 
         if (subjects.length === 0) {
@@ -350,21 +376,24 @@ document.addEventListenerfunction('DOMContentLoaded', () {
             return;
         }
 
-        container.innerHTML = subjects.map(subj => `
+        container.innerHTML = subjects.map(function(subj) {
+            return `
             <button class="subject-tab flex-none px-5 py-2.5 bg-white border border-gray-100 text-slate-900 rounded-xl font-bold text-[10px] uppercase tracking-widest shadow-sm hover:border-blue-200 transition-all" data-subject="${subj}">
                 ${subj}
             </button>
-        `).join('');
+        `; }).join('');
 
         // Listener para filtrar por asignatura
-        container.querySelectorAll('.subject-tab').forEach(btn => {
-            btn.addEventListenerfunction('click', (e) {
-                container.querySelectorAll('.subject-tab').forEach(b => b.classList.remove('bg-blue-600', 'text-white', 'border-blue-600'));
+        container.querySelectorAll('.subject-tab').forEach(function(btn) {
+            btn.addEventListener('click', function(e) {
+                container.querySelectorAll('.subject-tab').forEach(function(b) {
+                    b.classList.remove('bg-blue-600', 'text-white', 'border-blue-600');
+                });
                 var target = e.currentTarget;
                 target.classList.add('bg-blue-600', 'text-white', 'border-blue-600');
 
                 var subj = target.dataset.subject;
-                var finalActivities = activities.filter(a => a.asignatura === subj);
+                var finalActivities = activities.filter(function(a) { return a.asignatura === subj; });
 
                 renderActivities(finalActivities);
                 showSubjectInfo(subj);
@@ -372,7 +401,8 @@ document.addEventListenerfunction('DOMContentLoaded', () {
         });
 
         // Activar la primera por defecto
-        container.querySelector('.subject-tab').click();
+        var firstTab = container.querySelector('.subject-tab');
+        if (firstTab) firstTab.click();
     }
 
     async function showSubjectInfo(subject) {
@@ -384,7 +414,9 @@ document.addEventListenerfunction('DOMContentLoaded', () {
 
         try {
             // Identificar profesorId desde las actividades cargadas para esta asignatura específica
-            var activity = allActivitiesData.find(a => (a.asignatura || 'General') === subject && a.profesorId);
+            var activity = allActivitiesData.find(function(a) {
+                return (a.asignatura || 'General') === subject && a.profesorId;
+            });
             var profesorId = activity ? activity.profesorId : null;
 
             // Info por defecto (Área de Informática)
@@ -408,7 +440,7 @@ document.addEventListenerfunction('DOMContentLoaded', () {
 
             // Normalizar WhatsApp del Docente
             var waPhone = profInfo.telefono ? String(profInfo.telefono).replace(/\D/g, '') : '';
-            var waLink = waPhone ? 'https://wa.me/504${waPhone}' : null;
+            var waLink = waPhone ? 'https://wa.me/504' + waPhone : null;
 
             // Obtener enlace del grupo de WhatsApp por Grado (Lógica A-66 preservada)
             var groupLink = null;
@@ -477,33 +509,34 @@ document.addEventListenerfunction('DOMContentLoaded', () {
             return;
         }
 
-        var parciales = [...new Set(activities.map(a => a.parcial))];
-        parciales.sortfunction((a, b) (PARCIAL_ORDER[b] || 0) - (PARCIAL_ORDER[a] || 0));
+        var parciales = [...new Set(activities.map(function(a) { return a.parcial; }))];
+        parciales.sort(function(a, b) { return (PARCIAL_ORDER[b] || 0) - (PARCIAL_ORDER[a] || 0); });
 
         var activeParcial = parciales[0];
 
         tabsContainer.innerHTML = `
             <div class="flex flex-nowrap overflow-x-auto gap-2 pb-2 scroll-horizontal-clean">
-                ${parciales.map(p => {
+                ${parciales.map(function(p) {
                     var isActive = p === activeParcial;
                     var activeClass = isActive ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-500 hover:bg-gray-200';
-                    return '<button class="flex-none px-4 py-2 rounded-xl font-semibold transition-all text-[10px] uppercase tracking-widest ${activeClass} parcial-tab" data-parcial="${p}">${p}</button>';
+                    return `<button class="flex-none px-4 py-2 rounded-xl font-semibold transition-all text-[10px] uppercase tracking-widest ${activeClass} parcial-tab" data-parcial="${p}">${p}</button>`;
                 }).join('')}
             </div>
         `;
 
         // Interactividad
-        tabsContainer.querySelectorAll('.parcial-tab').forEach(btn => {
-            btn.addEventListenerfunction('click', (e) {
+        tabsContainer.querySelectorAll('.parcial-tab').forEach(function(btn) {
+            btn.addEventListener('click', function(e) {
                 var target = e.currentTarget;
                 var p = target.dataset.parcial;
                 window.switchParcialTab(p);
             });
         });
 
-        window.switchParcialTab = function(p, pushState = true) {
+        window.switchParcialTab = function(p, pushState) {
+            if (pushState === undefined) pushState = true;
             var tabs = tabsContainer.querySelectorAll('.parcial-tab');
-            tabs.forEach(b => {
+            tabs.forEach(function(b) {
                 b.classList.remove('bg-blue-600', 'text-white');
                 b.classList.add('bg-gray-100', 'text-gray-500', 'hover:bg-gray-200');
                 if (b.dataset.parcial === p) {
@@ -512,7 +545,7 @@ document.addEventListenerfunction('DOMContentLoaded', () {
                 }
             });
 
-            var activitiesInParcial = allActivitiesData.filter(a => a.parcial === p);
+            var activitiesInParcial = allActivitiesData.filter(function(a) { return a.parcial === p; });
             renderSubjectNav(activitiesInParcial, p);
 
             if (pushState) {
@@ -532,9 +565,11 @@ document.addEventListenerfunction('DOMContentLoaded', () {
     function renderActivities(inputFiltered) {
         // REQ: Extra Credit Visibility Logic (v7.6.1)
         // Only show extra credit tasks if student has at least one REJECTED activity
-        var hasRejected = allActivitiesData.some(a => a.entrega && (a.entrega.estado === 'Rechazada' || a.entrega.estado === 'Tarea incompleta'));
+        var hasRejected = allActivitiesData.some(function(a) {
+            return a.entrega && (a.entrega.estado === 'Rechazada' || a.entrega.estado === 'Tarea incompleta');
+        });
 
-        var filtered = inputFiltered.filter(a => {
+        var filtered = inputFiltered.filter(function(a) {
             if (a.type === 'Crédito Extra' || a.type === 'Credito Extra') {
                 return hasRejected;
             }
@@ -554,7 +589,7 @@ document.addEventListenerfunction('DOMContentLoaded', () {
                 </div>`;
             return;
         }
-        tasksList.innerHTML = filtered.map(activity => {
+        tasksList.innerHTML = filtered.map(function(activity) {
             var feedbackHtml = '';
             var actionButtonHtml = '';
 
@@ -571,13 +606,13 @@ document.addEventListenerfunction('DOMContentLoaded', () {
                     if (isPending && activity.entrega.fileId) {
                         var fileId = activity.entrega.fileId;
                         var url = activity.entrega.mimeType === 'folder'
-                            ? 'https://drive.google.com/drive/folders/${fileId}'
-                            : 'https://drive.google.com/uc?id=${fileId}';
-                        fileLinkHtml = '<div class="mt-2"><a href="${url}" target="_blank" class="text-blue-600 font-medium hover:underline text-sm flex items-center space-x-1"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg><span>Ver mi entrega</span></a></div>';
+                            ? `https://drive.google.com/drive/folders/${fileId}`
+                            : `https://drive.google.com/uc?id=${fileId}`;
+                        fileLinkHtml = `<div class="mt-2"><a href="${url}" target="_blank" class="text-blue-600 font-medium hover:underline text-sm flex items-center space-x-1"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg><span>Ver mi entrega</span></a></div>`;
                     }
 
                     var deleteBtnHtml = isPending
-                        ? '<button class="btn-ima-cancel px-3 py-1 text-[10px] delete-submission-btn" data-type="${activity.type}" data-entrega-id="${activity.entrega.entregaId}">Eliminar Entrega</button>'
+                        ? `<button class="btn-ima-cancel px-3 py-1 text-[10px] delete-submission-btn" data-type="${activity.type}" data-entrega-id="${activity.entrega.entregaId}">Eliminar Entrega</button>`
                         : '';
 
                     var resubmitBtnHtml = '';
@@ -599,8 +634,8 @@ document.addEventListenerfunction('DOMContentLoaded', () {
                                 </div>
                                 ${deleteBtnHtml}
                             </div>
-                            ${activity.entrega.calificacion ? '<div class="mt-3 pt-3 border-t border-gray-100"><span class="text-[10px] font-medium text-gray-400 uppercase">Nota:</span> <span class="text-sm font-semibold text-blue-600">${activity.entrega.calificacion}</span></div>' : ''}
-                            ${activity.entrega.comentario ? '<div class="mt-1"><span class="text-[10px] font-medium text-gray-400 uppercase">Obs:</span> <p class="text-xs text-gray-600 italic mt-1 leading-relaxed">${activity.entrega.comentario}</p></div>' : ''}
+                            ${activity.entrega.calificacion ? `<div class="mt-3 pt-3 border-t border-gray-100"><span class="text-[10px] font-medium text-gray-400 uppercase">Nota:</span> <span class="text-sm font-semibold text-blue-600">${activity.entrega.calificacion}</span></div>` : ''}
+                            ${activity.entrega.comentario ? `<div class="mt-1"><span class="text-[10px] font-medium text-gray-400 uppercase">Obs:</span> <p class="text-xs text-gray-600 italic mt-1 leading-relaxed">${activity.entrega.comentario}</p></div>` : ''}
                             ${resubmitBtnHtml}
                         </div>`;
                 } else {
@@ -618,7 +653,7 @@ document.addEventListenerfunction('DOMContentLoaded', () {
                     var displayStatus = (status === 'Revisada' || status === 'Finalizado' ? 'Completada' : status);
 
                     var deleteBtnHtml = isPending
-                        ? '<button class="btn-ima-cancel px-3 py-1 text-[10px] delete-submission-btn" data-type="Examen" data-entrega-id="${activity.entrega.entregaId}">Eliminar Entrega</button>'
+                        ? `<button class="btn-ima-cancel px-3 py-1 text-[10px] delete-submission-btn" data-type="Examen" data-entrega-id="${activity.entrega.entregaId}">Eliminar Entrega</button>`
                         : '';
 
                     feedbackHtml = `
@@ -630,15 +665,15 @@ document.addEventListenerfunction('DOMContentLoaded', () {
                                 </div>
                                 ${deleteBtnHtml}
                             </div>
-                            ${activity.entrega.calificacion ? '<div class="mt-3 pt-3 border-t border-gray-100"><span class="text-[10px] font-medium text-gray-400 uppercase">Nota:</span> <span class="text-sm font-semibold text-purple-600">${activity.entrega.calificacion}</span></div>' : ''}
-                            ${activity.entrega.comentario ? '<div class="mt-1"><span class="text-[10px] font-medium text-gray-400 uppercase">Obs:</span> <p class="text-xs text-gray-600 italic mt-1 leading-relaxed">${activity.entrega.comentario}</p></div>' : ''}
+                            ${activity.entrega.calificacion ? `<div class="mt-3 pt-3 border-t border-gray-100"><span class="text-[10px] font-medium text-gray-400 uppercase">Nota:</span> <span class="text-sm font-semibold text-purple-600">${activity.entrega.calificacion}</span></div>` : ''}
+                            ${activity.entrega.comentario ? `<div class="mt-1"><span class="text-[10px] font-medium text-gray-400 uppercase">Obs:</span> <p class="text-xs text-gray-600 italic mt-1 leading-relaxed">${activity.entrega.comentario}</p></div>` : ''}
                         </div>`;
                 } else {
                     var estado = activity.estado || 'Inactivo';
                     if (estado === 'Activo') {
-                        actionButtonHtml = '<a href="exam.html?examenId=${activity.examenId}" class="btn-ima-primary bg-purple-600 hover:bg-purple-700 px-6 py-2 text-xs">Realizar Examen</a>';
+                        actionButtonHtml = `<a href="exam.html?examenId=${activity.examenId}" class="btn-ima-primary bg-purple-600 hover:bg-purple-700 px-6 py-2 text-xs">Realizar Examen</a>`;
                     } else {
-                        actionButtonHtml = '<button class="bg-gray-100 text-gray-400 px-5 py-2 rounded-xl text-[10px] font-medium uppercase cursor-not-allowed" disabled>${estado}</button>';
+                        actionButtonHtml = `<button class="bg-gray-100 text-gray-400 px-5 py-2 rounded-xl text-[10px] font-medium uppercase cursor-not-allowed" disabled>${estado}</button>`;
                     }
                 }
             }
@@ -704,8 +739,8 @@ document.addEventListenerfunction('DOMContentLoaded', () {
                 // Eliminar archivos temporales silenciosamente en segundo plano
                 var filesToDelete = [...uploadedFiles];
                 uploadedFiles = [];
-                filesToDelete.forEach(f => {
-                    fetchApi('TASK', 'deleteFile', { fileId: f.fileId }).catch(e => console.warn("Fallo limpieza silenciosa:", e));
+                filesToDelete.forEach(function(f) {
+                    fetchApi('TASK', 'deleteFile', { fileId: f.fileId }).catch(function(e) { console.warn("Fallo limpieza silenciosa:", e); });
                 });
             } else {
                 return;
@@ -732,18 +767,22 @@ document.addEventListenerfunction('DOMContentLoaded', () {
     }
 
     if (tasksList) {
-        tasksList.addEventListenerfunction('click', async (e) {
+        tasksList.addEventListener('click', async function(e) {
             var assignmentCard = e.target.closest('.assignment-card');
             var isButton = e.target.closest('button, a');
 
             if (assignmentCard && !isButton) {
                 var alreadyExpanded = assignmentCard.classList.contains('is-expanded');
                 // Collapse all
-                document.querySelectorAll('.assignment-card').forEach(card => card.classList.remove('is-expanded'));
+                document.querySelectorAll('.assignment-card').forEach(function(card) {
+                    card.classList.remove('is-expanded');
+                });
                 // Toggle if not already expanded
                 if (!alreadyExpanded) {
                     assignmentCard.classList.add('is-expanded');
-                    if (window.setupCodeCopyButtons) setTimeout(window.setupCodeCopyButtons, 350);
+                    if (window.setupCodeCopyButtons) {
+                        setTimeout(function() { window.setupCodeCopyButtons(); }, 350);
+                    }
                 }
                 return;
             }
@@ -763,7 +802,7 @@ document.addEventListenerfunction('DOMContentLoaded', () {
                     try {
                         var service = type === 'Examen' ? 'EXAM' : 'TASK';
                         var action = type === 'Examen' ? 'deleteExamSubmission' : 'deleteSubmission';
-                        var result = await fetchApi(service, action, { entregaId });
+                        var result = await fetchApi(service, action, { entregaId: entregaId });
                         if (result.status === 'success') {
                             alert('Entrega eliminada correctamente.');
                             fetchAllActivities();
@@ -802,10 +841,13 @@ document.addEventListenerfunction('DOMContentLoaded', () {
                 if (startPage >= totalPages) break;
 
                 var newPdf = await PDFLib.PDFDocument.create();
-                var pagesToCopy = Array.fromfunction({ length: endPage - startPage }, (_, j) startPage + j);
+                var pagesToCopy = [];
+                for (var j = 0; j < (endPage - startPage); j++) {
+                    pagesToCopy.push(startPage + j);
+                }
                 var copiedPages = await newPdf.copyPages(pdfDoc, pagesToCopy);
 
-                copiedPages.forEach(page => newPdf.addPage(page));
+                copiedPages.forEach(function(page) { newPdf.addPage(page); });
 
                 var pdfBytes = await newPdf.save();
                 segments.push(new Blob([pdfBytes], { type: 'application/pdf' }));
@@ -818,7 +860,7 @@ document.addEventListenerfunction('DOMContentLoaded', () {
     }
 
     async function compressImage(file) {
-        return new Promisefunction((resolve) {
+        return new Promise(function(resolve) {
             var reader = new FileReader();
             reader.onload = function(e) {
                 var img = new Image();
@@ -853,8 +895,9 @@ document.addEventListenerfunction('DOMContentLoaded', () {
         filePreviewContainer.classList.remove('hidden');
         uploadedFilesContainer.classList.remove('hidden');
 
-        for (var currentFile of files) {
-            if (uploadedFiles.some(u => u.fileName === currentFile.name && u.size === currentFile.size)) continue;
+        for (var i_f = 0; i_f < files.length; i_f++) {
+            var currentFile = files[i_f];
+            if (uploadedFiles.some(function(u) { return u.fileName === currentFile.name && u.size === currentFile.size; })) continue;
 
             var currentFileName = currentFile.name;
             var currentFileSize = currentFile.size;
@@ -870,14 +913,14 @@ document.addEventListenerfunction('DOMContentLoaded', () {
                     thumbnailHtml = '<div class="w-12 h-12 bg-blue-50 rounded-lg flex items-center justify-center text-blue-400"><i class="fas fa-image"></i></div>';
                 } else {
                     var tempUrl = URL.createObjectURL(currentFile);
-                    thumbnailHtml = '<img src="${tempUrl}" class="w-12 h-12 object-cover rounded-lg shadow-inner">';
+                    thumbnailHtml = `<img src="${tempUrl}" class="w-12 h-12 object-cover rounded-lg shadow-inner">`;
                 }
             } else if (currentFile.type === 'application/pdf' || ext === 'pdf') {
                 thumbnailHtml = '<div class="w-12 h-12 bg-red-50 rounded-lg flex items-center justify-center text-red-400"><i class="fas fa-file-pdf"></i></div>';
             } else if (['html', 'css', 'js', 'psc'].includes(ext)) {
                 var colors = { html: 'text-orange-500', css: 'text-blue-500', js: 'text-yellow-500', psc: 'text-green-500' };
                 var icons = { html: 'fa-code', css: 'fa-css3', js: 'fa-js', psc: 'fa-terminal' };
-                thumbnailHtml = '<div class="w-12 h-12 bg-gray-50 rounded-lg flex items-center justify-center ${colors[ext] || 'text-gray-400'}"><i class="fas ${icons[ext] || 'fa-file-code'}"></i></div>';
+                thumbnailHtml = `<div class="w-12 h-12 bg-gray-50 rounded-lg flex items-center justify-center ${colors[ext] || 'text-gray-400'}"><i class="fas ${icons[ext] || 'fa-file-code'}"></i></div>`;
             }
 
             li.innerHTML = `
@@ -919,14 +962,14 @@ document.addEventListenerfunction('DOMContentLoaded', () {
                     var optimizedDataUrl = await compressImage(currentFile);
                     fileData = optimizedDataUrl.split(',')[1];
                 } else {
-                    fileData = await new Promisefunction((resolve, reject) {
+                    fileData = await new Promise(function(resolve, reject) {
                         var reader = new FileReader();
                         reader.onload = function() {
                             var base64 = reader.result.split(',')[1];
                             if (!base64) reject(new Error("Fallo en conversión Base64"));
                             resolve(base64);
                         };
-                        reader.onerror = function() reject(new Error("Error de lectura de archivo"));
+                        reader.onerror = function() { reject(new Error("Error de lectura de archivo")); };
                         reader.readAsDataURL(currentFile);
                     });
                 }
@@ -952,23 +995,23 @@ document.addEventListenerfunction('DOMContentLoaded', () {
 
                     for (var i = 0; i < segments.length; i++) {
                         var percent = Math.round((i / segments.length) * 100);
-                        progressSpan.textContent = 'Parte ${i + 1} de ${segments.length} (${percent}%)';
-                        if (progressBar) progressBar.style.width = '${percent}%';
+                        progressSpan.textContent = 'Parte ' + (i + 1) + ' de ' + segments.length + ' (' + percent + '%)';
+                        if (progressBar) progressBar.style.width = percent + '%';
 
                         var blobChunk = segments[i];
-                        var chunkData = await new Promisefunction((resolve, reject) {
+                        var chunkData = await new Promise(function(resolve, reject) {
                             var reader = new FileReader();
                             reader.onload = function() {
                                 var base64 = reader.result.split(',')[1];
                                 if (!base64) reject(new Error("Fallo en conversión Base64"));
                                 resolve(base64);
                             };
-                            reader.onerror = function() reject(new Error("Error de lectura de archivo"));
+                            reader.onerror = function() { reject(new Error("Error de lectura de archivo")); };
                             reader.readAsDataURL(blobChunk);
                         });
 
                         // Nombramiento Estructurado (Tarea 1)
-                        var partFileName = '${currentFileName.split('.')[0]} - Parte ${i + 1} de ${segments.length}.${currentFileName.split('.').pop()}';
+                        var partFileName = currentFileName.split('.')[0] + ' - Parte ' + (i + 1) + ' de ' + segments.length + '.' + currentFileName.split('.').pop();
 
                         var success = false;
                         var attempts = 0;
@@ -991,9 +1034,9 @@ document.addEventListenerfunction('DOMContentLoaded', () {
                                 } else throw new Error(chunkRes.message || "Error en subida de parte");
                             } catch (e) {
                                 attempts++;
-                                console.warn('[IMA-UPLOAD] Intento ${attempts}/5 fallido para parte ${i + 1}');
+                                console.warn('[IMA-UPLOAD] Intento ' + attempts + '/5 fallido para parte ' + (i + 1));
                                 if (attempts >= 5) throw e;
-                                await new Promise(r => setTimeout(r, 2000 * attempts));
+                                await new Promise(function(r) { setTimeout(r, 2000 * attempts); });
                             }
                         }
                     }
@@ -1071,7 +1114,7 @@ document.addEventListenerfunction('DOMContentLoaded', () {
     }
 
     if (fileInput) {
-        fileInput.addEventListenerfunction('change', async (e) {
+        fileInput.addEventListener('change', async function(e) {
             var files = Array.from(e.target.files);
             if (files.length === 0) return;
 
@@ -1079,16 +1122,17 @@ document.addEventListenerfunction('DOMContentLoaded', () {
             var ALLOWED_EXT = ['png', 'jpg', 'jpeg', 'gif', 'webp', 'heic', 'pdf', 'html', 'css', 'js', 'psc'];
 
             var validFiles = [];
-            for (var file of files) {
+            for (var i = 0; i < files.length; i++) {
+                var file = files[i];
                 var ext = file.name.split('.').pop().toLowerCase();
                 var sizeMB = file.size / (1024 * 1024);
 
                 if (!ALLOWED_EXT.includes(ext)) {
-                    alert('El archivo "${file.name}" no tiene un formato permitido.');
+                    alert('El archivo "' + file.name + '" no tiene un formato permitido.');
                     continue;
                 }
                 if (sizeMB > MAX_SIZE_MB) {
-                    alert('El archivo "${file.name}" excede el límite de ${MAX_SIZE_MB}MB.');
+                    alert('El archivo "' + file.name + '" excede el límite de ' + MAX_SIZE_MB + 'MB.');
                     continue;
                 }
                 validFiles.push(file);
@@ -1105,7 +1149,7 @@ document.addEventListenerfunction('DOMContentLoaded', () {
     if (cancelSubmissionBtn) cancelSubmissionBtn.addEventListener('click', closeSubmissionModal);
 
     if (uploadedFilesList) {
-        uploadedFilesList.addEventListenerfunction('click', async (e) {
+        uploadedFilesList.addEventListener('click', async function(e) {
             var btn = e.target.closest('.remove-file-btn');
             if (btn) {
                 var fileId = btn.dataset.fileId;
@@ -1117,12 +1161,12 @@ document.addEventListenerfunction('DOMContentLoaded', () {
 
                 try {
                     // Se intenta eliminar de Drive pero no bloqueamos si falla la red
-                    await fetchApi('TASK', 'deleteFile', { fileId });
+                    await fetchApi('TASK', 'deleteFile', { fileId: fileId });
                 } catch (error) {
                     console.error("Error al eliminar archivo remoto:", error);
                 }
 
-                uploadedFiles = uploadedFiles.filter(f => f.fileId !== fileId);
+                uploadedFiles = uploadedFiles.filter(function(f) { return f.fileId !== fileId; });
                 li.remove();
                 if (uploadedFiles.length === 0) {
                     uploadedFilesContainer.classList.add('hidden');
@@ -1133,7 +1177,7 @@ document.addEventListenerfunction('DOMContentLoaded', () {
     }
 
     if (submissionForm) {
-        submissionForm.addEventListenerfunction('submit', async (e) {
+        submissionForm.addEventListener('submit', async function(e) {
             e.preventDefault();
             // Protección contra duplicados y subidas incompletas (Req 3)
             if (isSubmitting || uploadedFiles.length === 0 || activeUploads > 0) return;
@@ -1170,7 +1214,7 @@ document.addEventListenerfunction('DOMContentLoaded', () {
                     throw new Error(result.message);
                 }
             } catch (error) {
-                alert('Error al finalizar la entrega: ${error.message}');
+                alert('Error al finalizar la entrega: ' + error.message);
                 isSubmitting = false; // Permitir re-intento si falló el servidor
             } finally {
                 confirmSubmissionBtn.disabled = false;
@@ -1248,7 +1292,7 @@ document.addEventListenerfunction('DOMContentLoaded', () {
         if (!profileContainer) return;
 
         // REQ 3: Muestra mínima local para renderizado de tabla (Modulo 3.1)
-        var validData = (profileData || []).filter(i => i.intentos >= 5);
+        var validData = (profileData || []).filter(function(i) { return i.intentos >= 5; });
 
         if (validData.length === 0) {
              profileContainer.innerHTML = '<div class="p-6 text-center text-[10px] font-bold text-gray-400 uppercase tracking-widest bg-gray-50 rounded-[2rem] border border-gray-100 mt-8">Datos insuficientes para generar diagnóstico psicométrico.</div>';
@@ -1259,11 +1303,14 @@ document.addEventListenerfunction('DOMContentLoaded', () {
                 // REQ: Recomendaciones académicas con enlaces directos
                 var findPresentation = function(tema) {
                     if (!window.presentationData) return null;
-                    for (var grade of window.presentationData) {
-                        for (var subject of grade.subjects) {
-                            for (var topic of subject.topics) {
-                                if (topic.title.toLowerCase().includes(tema.toLowerCase()) ||
-                                    tema.toLowerCase().includes(topic.title.toLowerCase())) {
+                    for (var i = 0; i < window.presentationData.length; i++) {
+                        var grade = window.presentationData[i];
+                        for (var j = 0; j < grade.subjects.length; j++) {
+                            var subject = grade.subjects[j];
+                            for (var k = 0; k < subject.topics.length; k++) {
+                                var topic = subject.topics[k];
+                                if (topic.title.toLowerCase().indexOf(tema.toLowerCase()) !== -1 ||
+                                    tema.toLowerCase().indexOf(topic.title.toLowerCase()) !== -1) {
                                     return topic.file;
                                 }
                             }
@@ -1272,13 +1319,17 @@ document.addEventListenerfunction('DOMContentLoaded', () {
                     return null;
                 };
 
-                var sortedByDominio = [...validData].sortfunction((a, b) b.dominio - a.dominio);
+                var sortedByDominio = [...validData].sort(function(a, b) { return b.dominio - a.dominio; });
 
                 // REQ: Filtrar temas genéricos (v3.2)
-                var strengths = sortedByDominio.filter(i => i.dominio >= 80 && i.tema !== 'General').slice(0, 3);
-                var weaknesses = sortedByDominio.filter(i => i.dominio < 60 && i.tema !== 'General').reverse().slice(0, 3);
+                var strengths = sortedByDominio.filter(function(i) { return i.dominio >= 80 && i.tema !== 'General'; }).slice(0, 3);
+                var weaknesses = sortedByDominio.filter(function(i) { return i.dominio < 60 && i.tema !== 'General'; }).reverse().slice(0, 3);
 
-                var avgDominio = Math.roundfunction(validData.reduce((sum, item) sum + item.dominio, 0) / validData.length);
+                var sumDominio = 0;
+                for (var i = 0; i < validData.length; i++) {
+                    sumDominio += validData[i].dominio;
+                }
+                var avgDominio = Math.round(sumDominio / validData.length);
 
                 var classification = "Requiere Refuerzo";
                 var badgeClass = "bg-orange-50 text-orange-600";
@@ -1289,7 +1340,7 @@ document.addEventListenerfunction('DOMContentLoaded', () {
 
                 // REQ: Recomendación Directa (v3.2) - Banner de Alerta Crítica
                 var alertBanner = '';
-                var criticalTopic = weaknesses.find(w => w.dominio < 50);
+                var criticalTopic = weaknesses.find(function(w) { return w.dominio < 50; });
                 if (criticalTopic) {
                     var presFile = findPresentation(criticalTopic.tema);
                     alertBanner = `
@@ -1298,7 +1349,7 @@ document.addEventListenerfunction('DOMContentLoaded', () {
                                 <p class="text-[10px] font-black text-red-600 uppercase tracking-widest">Alerta de Aprendizaje</p>
                                 <p class="text-xs font-bold text-gray-800">Dominio crítico en: ${criticalTopic.tema}</p>
                             </div>
-                            ${presFile ? '<button onclick="window.open('${presFile}', '_blank')" class="px-4 py-2 bg-red-600 text-white text-[9px] font-black uppercase rounded-lg shadow-lg">Repasar Ahora</button>' : ''}
+                            ${presFile ? `<button onclick="window.open('${presFile}', '_blank')" class="px-4 py-2 bg-red-600 text-white text-[9px] font-black uppercase rounded-lg shadow-lg">Repasar Ahora</button>` : ''}
                         </div>
                     `;
                 }
@@ -1343,12 +1394,12 @@ document.addEventListenerfunction('DOMContentLoaded', () {
                                     <h5 class="text-[10px] font-black text-emerald-700 uppercase tracking-widest">Tus Fortalezas</h5>
                                 </div>
                                 <div class="space-y-3">
-                                    ${strengths.length > 0 ? strengths.map(s => `
+                                    ${strengths.length > 0 ? strengths.map(function(s) { return `
                                         <div class="flex items-center justify-between">
                                             <span class="text-xs font-bold text-gray-700 uppercase tracking-tighter">${s.tema}</span>
                                             <span class="text-[10px] font-black text-emerald-600 bg-white px-2 py-0.5 rounded-lg shadow-sm border border-emerald-100">${window.redondearMetrica(s.dominio)}%</span>
                                         </div>
-                                    `).join('') : '<p class="text-[10px] text-gray-400 italic">Sigue practicando para identificar tus fortalezas</p>'}
+                                    `; }).join('') : '<p class="text-[10px] text-gray-400 italic">Sigue practicando para identificar tus fortalezas</p>'}
                                 </div>
                             </div>
 
@@ -1361,9 +1412,9 @@ document.addEventListenerfunction('DOMContentLoaded', () {
                                     <h5 class="text-[10px] font-black text-orange-700 uppercase tracking-widest">Temas a Reforzar</h5>
                                 </div>
                                 <div class="space-y-4">
-                                    ${weaknesses.length > 0 ? weaknesses.map(w => {
+                                    ${weaknesses.length > 0 ? weaknesses.map(function(w) {
                                         var file = findPresentation(w.tema);
-                                        var action = file ? 'window.open('${file}', '_blank')' : "window.scrollTo({top: document.getElementById('resources-section')?.offsetTop || 0, behavior: 'smooth'})";
+                                        var action = file ? "window.open('" + file + "', '_blank')" : "window.scrollTo({top: document.getElementById('resources-section')?.offsetTop || 0, behavior: 'smooth'})";
                                         return `
                                         <div class="flex flex-col gap-1">
                                             <div class="flex items-center justify-between">
@@ -1374,7 +1425,7 @@ document.addEventListenerfunction('DOMContentLoaded', () {
                                                 <i class="fas fa-book-open text-[8px]"></i> ${file ? 'Repasar Ahora' : 'Ver Presentación'}
                                             </button>
                                         </div>
-                                    `;}).join('') : '<p class="text-[10px] text-emerald-600 font-bold uppercase tracking-widest">¡Excelente! No tienes temas críticos pendientes</p>'}
+                                    `; }).join('') : '<p class="text-[10px] text-emerald-600 font-bold uppercase tracking-widest">¡Excelente! No tienes temas críticos pendientes</p>'}
                                 </div>
                             </div>
                         </div>
@@ -1382,7 +1433,7 @@ document.addEventListenerfunction('DOMContentLoaded', () {
                 `;
 
                 // Inicializar Gráficos con Chart.js
-                setTimeoutfunction(() renderStudentCharts(profileData), 100);
+                setTimeout(function() { renderStudentCharts(profileData); }, 100);
         } catch (e) {
             console.error("Error al renderizar perfil de dominio:", e);
         }
@@ -1398,8 +1449,13 @@ document.addEventListenerfunction('DOMContentLoaded', () {
         if (!radarCtx || !trendCtx || !profileData || profileData.length === 0) return;
 
         // 1. Datos para Radar (Promedios de las métricas principales)
-        var avgICR = profileData.reducefunction((s, i) s + (i.dominio || 0), 0) / profileData.length;
-        var avgMastery = profileData.reducefunction((s, i) s + (i.porcentaje || 0), 0) / profileData.length;
+        var sumICR = 0, sumMastery = 0;
+        for (var i = 0; i < profileData.length; i++) {
+            sumICR += (profileData[i].dominio || 0);
+            sumMastery += (profileData[i].porcentaje || 0);
+        }
+        var avgICR = sumICR / profileData.length;
+        var avgMastery = sumMastery / profileData.length;
         // IA simulada inversamente proporcional al dominio para visualización
         var avgIA = 100 - avgICR;
 
@@ -1423,8 +1479,9 @@ document.addEventListenerfunction('DOMContentLoaded', () {
         });
 
         // 2. Trend Line (Histórico de dominio por tema)
-        var trendData = profileData.slice(-7).map(i => i.dominio);
-        var trendLabels = profileData.slice(-7).map(i => i.tema.substring(0, 5));
+        var trendItems = profileData.slice(-7);
+        var trendData = trendItems.map(function(i) { return i.dominio; });
+        var trendLabels = trendItems.map(function(i) { return i.tema.substring(0, 5); });
 
         if (window.studentTrendChart) window.studentTrendChart.destroy();
         window.studentTrendChart = new Chart(trendCtx, {
@@ -1452,7 +1509,7 @@ document.addEventListenerfunction('DOMContentLoaded', () {
         });
     }
 
-    window.addEventListenerfunction('beforeunload', (e) {
+    window.addEventListener('beforeunload', function(e) {
         if (!isSubmitting && (activeUploads > 0 || uploadedFiles.length > 0)) {
             e.preventDefault();
             e.returnValue = '«Los archivos cargados se perderán si abandona esta entrega. ¿Desea continuar?»';
@@ -1463,9 +1520,9 @@ document.addEventListenerfunction('DOMContentLoaded', () {
 /**
  * REQ: Soporte para copia de código en el dashboard (v7.6.4)
  */
-document.addEventListenerfunction('DOMContentLoaded', () {
+document.addEventListener('DOMContentLoaded', function() {
     // Escuchar cambios en el dashboard para re-inyectar botones
-    var observer = new MutationObserverfunction(() {
+    var observer = new MutationObserver(function() {
         if (window.setupCodeCopyButtons) window.setupCodeCopyButtons();
     });
 

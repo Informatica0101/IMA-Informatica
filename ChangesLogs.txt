@@ -79,3 +79,12 @@ Módulo: Documentación Técnica
 - js/ui-common.js: Agregada función global setupCodeCopyButtons para inyección de botones de copiado.
 - css/style.css: Agregados estilos institucionales para .copy-code-btn y .code-block-wrapper.
 - js/student.js & js/teacher.js: Implementados MutationObservers para inyección automática de botones en contenido dinámico.
+
+[2026-06-16 - Corrección Crítica y UX de Navegación]
+- js/student.js: Reparación masiva de SyntaxErrors (Unexpected token ')') causados por nombres de métodos corrompidos y cierres de funciones inválidos. Restaurada compatibilidad ES5 para renderizado del Dashboard del Estudiante.
+- teacher-dashboard.html: Cambiado tag <p> por <div> en el contenedor de descripción de tareas para permitir el renderizado correcto de bloques <pre> (code-blocks).
+- js/teacher.js:
+    - Corregida la inicialización del historial (replaceState) para incluir el nivel de 'Grados' en el stack de navegación.
+    - Sincronizado el contexto de sección (sectionId, navId) en las transiciones de navegación jerárquica para una restauración íntegra.
+    - Implementada activación manual de 'setupCodeCopyButtons' al abrir el modal de detalles de tarea.
+- js/ui-common.js: Actualizado handlePopState para restaurar la sección activa del dashboard basándose en el estado del historial, garantizando una navegación SPA predecible.

@@ -647,7 +647,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
             navStack.push({ level, data });
             if (pushState) {
-                history.pushState({ type: 'hierarchical-nav', stack: navStack }, '');
+                // REQ: Incluir contexto de sección para restauración íntegra (v7.6.4)
+                history.pushState({
+                    type: 'hierarchical-nav',
+                    stack: [...navStack],
+                    sectionId: sectionAcademicReports.id,
+                    navId: navDashboard.id
+                }, '');
             }
             renderCurrentLevel();
         } finally {
@@ -773,6 +779,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
         document.getElementById('task-details-modal').dataset.currentIndex = idx;
         document.getElementById('task-details-modal').classList.remove('hidden');
+
+        // REQ: Inyectar botones de copiado si hay bloques de código (v7.6.4)
+        if (window.setupCodeCopyButtons) {
+            setTimeout(() => window.setupCodeCopyButtons(), 100);
+        }
     };
 
     document.getElementById('close-task-modal-btn').onclick = () => {
@@ -2340,8 +2351,13 @@ function toBase64(file) {
 }
 
     // Inicialización automática de la sección de entregas (A-73)
-    // Usar replaceState para el estado inicial
-    history.replaceState({ type: 'dashboard-section', sectionId: sectionAcademicReports.id, navId: navDashboard.id }, '');
+    // Usar replaceState para el estado inicial incluyendo el stack jerárquico (v7.6.4)
+    history.replaceState({
+        type: 'hierarchical-nav',
+        stack: [{ level: 'Grados', data: null }],
+        sectionId: sectionAcademicReports.id,
+        navId: navDashboard.id
+    }, '');
     window.navigateTo(sectionAcademicReports, navDashboard, false);
     fetchTeacherActivity();
 });

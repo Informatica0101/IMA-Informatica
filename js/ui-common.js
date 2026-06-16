@@ -177,6 +177,12 @@ window.setupCommonUI = function() {
                 window.navigateTo(targetSection, targetNav, false);
             }
         } else if (state.type === 'hierarchical-nav') {
+            // REQ: Restaurar sección del dashboard si el estado lo incluye (v7.6.4)
+            if (state.sectionId && state.navId && window.navigateTo) {
+                var tNav = document.getElementById(state.navId);
+                var tSection = document.getElementById(state.sectionId);
+                if (tNav && tSection) window.navigateTo(tSection, tNav, false);
+            }
             if (window.syncNavWithState) {
                 window.syncNavWithState(state);
             }

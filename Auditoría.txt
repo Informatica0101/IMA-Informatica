@@ -1,9 +1,0 @@
-AUDITORÍA DE ESTILOS - Sun Jun 14 22:49:59 UTC 2026
-
-Archivo: css/style.css
-Hallazgo: Se detectó que el selector global 'p' (línea 199) define color: var(--blue-grayish). Aunque existen reglas específicas para .quill-content p y .ql-editor (líneas 373-383), la herencia o especificidad podría estar causando que elementos internos de Quill mantengan el gris.
-
-Archivo: js/teacher.js
-Hallazgo: Se está forzando color: #000000; vía JS en el contenedor raíz del editor, pero si Quill inyecta párrafos dinámicamente, estos podrían heredar el gris global.
-
-Diagnóstico: La especificidad de 'p' en style.css (color: var(--blue-grayish)) es muy alta al ser un tag universal. Quill envuelve casi todo en tags 'p'. Se requiere una regla de reset más agresiva para el contenedor del editor.
