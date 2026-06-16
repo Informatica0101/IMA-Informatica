@@ -72,7 +72,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (window.PersistenceManager) {
             const cached = await window.PersistenceManager.get('cache_estudiante_dashboard');
             if (cached && cached.data) {
-                console.log("[Offline-First] Renderizando actividades desde caché local (cache_estudiante_dashboard).");
                 allActivitiesData = cached.data.allActivities || [];
                 renderStudentExpediente(allActivitiesData);
                 renderParcialTabs(allActivitiesData);
@@ -1215,8 +1214,21 @@ document.addEventListener('DOMContentLoaded', () => {
     initWhatsAppButton();
 
     async function fetchAndRenderLearningProfile(dataOnly = false) {
+        // REQ: Eager Caching for Learning Profile (Ticket: Optimización de Caché)
+        if (window.PersistenceManager) {
+            const cached = await window.PersistenceManager.get('cache_estudiante_profile');
+            if (cached && cached.data && !dataOnly) {
+                renderLearningProfileData(cached.data);
+            }
+        }
+
         try {
-            const res = await fetchApi('USER', 'getLearningProfile', { userId: currentUser.userId });
+            const res = await fetchApi('USER', 'getLearningProfile', { userId: currentUser.userId }, 0, {
+                store: 'cache_estudiante_profile',
+                onUpdate: (data) => {
+                    if (!dataOnly) renderLearningProfileData(data.data || data);
+                }
+            });
             if (res.status === 'success' && res.data && res.data.length > 0) {
                 if (dataOnly) return res.data;
                 renderLearningProfileData(res.data);

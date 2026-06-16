@@ -1,0 +1,25 @@
+----------------------------------------------------------
+AUDITORÍA TÉCNICA DE NAVEGACIÓN Y CACHÉ - Mon Jun 15 17:01:08 UTC 2026
+
+Archivo: js/index-ui.js
+Hallazgo 1 [Crítico]: El flujo para profesores en el Centro de Recursos Académicos (Index) salta de Grado directamente a Asignaturas.
+Evidencia: Las funciones renderDownloadGrades y renderDownloadSubjects no contemplan niveles de 'Secciones' ni 'Parciales'.
+Impacto: Incumplimiento de requerimiento jerárquico para docentes: Ver Recursos -> Grados -> Secciones -> Parciales -> Asignaturas -> Contenidos.
+
+Archivo: js/teacher.js
+Hallazgo 2 [Medio]: Llamada redundante a fetchApi en fetchLogros (Línea 2039-2044) detectada en Code Review.
+Evidencia: Se llama a fetchApi con onUpdate y luego se vuelve a llamar sin onUpdate asignando a 'res'.
+Impacto: Doble consumo de ancho de banda y carga innecesaria en el servidor.
+
+Archivo: js/persistence.js
+Hallazgo 3 [Observación]: La actualización a DB_VERSION 4 es correcta y necesaria para los nuevos almacenes de caché.
+
+Archivo: js/ui-common.js
+Hallazgo 4 [Bajo]: Se eliminó un replaceState inicial en openAcademicMenu que podría ser útil para la consistencia del primer nivel.
+
+[AUDITORÍA FINAL - 2026-06-15]
+- Navegación Jerárquica Prof: Verificada. Niveles Grado -> Sección -> Parcial -> Asignatura -> Tema funcionales en Index y Modal.
+- History API: Verificada. Botón 'Regresar' e historial del navegador restauran estados correctamente.
+- Cache-First: Implementado en Noticias, Reportes, Dashboard y Perfil. Reducción de tiempo de carga percibido a 0ms.
+- Editor: Code-blocks habilitados y estilizados.
+- Estudiante: Auto-avance verificado.

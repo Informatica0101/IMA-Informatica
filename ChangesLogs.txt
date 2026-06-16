@@ -36,3 +36,39 @@ Módulo: Estilos Globales
 Módulo: Dashboard del Profesor
 - teacher-dashboard.html:
     - Reforzada la regla inline para asegurar color negro en todos los elementos hijos de .ql-editor.
+
+Módulo: Auditoría y Refactorización (Code Review Fixes)
+- js/teacher.js:
+    - Eliminada llamada redundante a fetchApi en fetchLogros para optimizar el consumo de recursos y evitar renderizados duplicados.
+- js/index-ui.js:
+    - Restaurados estilos de botones institucionales (font-medium, text-sm) para mantener la coherencia visual con el resto de la plataforma.
+
+REGISTRO DE AUDITORÍA Y REMEDIACIÓN FINAL - Mon Jun 15 01:45:00 UTC 2026
+
+Módulo: Index y Navegación de Recursos (Remediación T-016)
+- js/index-ui.js:
+    - Implementada jerarquía completa para Profesores: Grados -> Secciones -> Parciales -> Asignaturas -> Temas.
+    - Se agregaron las funciones 'renderDownloadSections' y 'renderDownloadPartials' para manejar los niveles intermedios.
+    - Se refactorizó 'renderDownloadSubjects' para aplicar filtros dinámicos basados en la selección de sección y parcial del docente.
+    - Se eliminó la lógica de retroceso manual en favor de 'history.back()' para garantizar consistencia con el historial del navegador.
+
+Módulo: Navegación Global (Remediación T-013/T-016)
+- js/ui-common.js:
+    - Expandido el manejador 'handlePopState' para restaurar los nuevos niveles de 'sections' y 'partials' en el Index.
+    - Asegurada la persistencia de 'selectedSection' y 'selectedPartial' en el objeto de estado de la historia.
+
+Módulo: Rendimiento y Dashboards (Remediación T-017)
+- js/teacher.js:
+    - Refactorizada la función 'fetchLogros' eliminando una llamada redundante a 'fetchApi'.
+    - Ahora se utiliza una única petición que gestiona la hidratación desde caché y la actualización silenciosa mediante el callback 'onUpdate'.
+
+Módulo: Documentación Técnica
+- Auditoria.txt: Registro de hallazgos críticos detectados en la auditoría manual post-implementación.
+- Pendientes.md: Marcadas T-016 y T-017 como completadas.
+- MapaDependencias.md: Actualizado con el esquema de persistencia DB v4 y el flujo de navegación SPA.
+
+[2026-06-15]
+- js/index-ui.js: Implementada jerarquía completa para profesores y auto-avance para estudiantes.
+- js/ui-common.js: Refactorizado manejo de popstate y estados de modal para SPA.
+- js/teacher.js & js/student.js: Aplicada estrategia Cache-First en módulos críticos.
+- css/style.css: Agregado soporte visual para code-blocks.

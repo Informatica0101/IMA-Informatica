@@ -90,7 +90,7 @@ window.setupCommonUI = function() {
     window.closeProfileModal = function(doPop = true) {
         const modal = document.getElementById('profile-modal');
         if (modal) modal.classList.add('hidden');
-        if (doPop && history.state && history.state.modalId === 'profile-modal') {
+        if (doPop && history.state && history.state.type === 'modal-close' && history.state.modalId === 'profile-modal') {
             history.back();
         }
     };
@@ -185,8 +185,16 @@ window.setupCommonUI = function() {
         } else if (state.type === 'index-content') {
             if (state.view === 'grades') {
                 if (window.renderDownloadGrades) window.renderDownloadGrades(false);
+            } else if (state.view === 'sections') {
+                if (state.gradeData) window.selectedGradeData = state.gradeData;
+                if (window.renderDownloadSections) window.renderDownloadSections(false);
+            } else if (state.view === 'partials') {
+                if (state.section) window.selectedSection = state.section;
+                if (window.renderDownloadPartials) window.renderDownloadPartials(false);
             } else if (state.view === 'subjects') {
                 if (state.gradeData) window.selectedGradeData = state.gradeData;
+                if (state.section) window.selectedSection = state.section;
+                if (state.partial) window.selectedPartial = state.partial;
                 if (window.renderDownloadSubjects) window.renderDownloadSubjects(false);
             } else if (state.view === 'topics') {
                 if (state.subjectData) window.selectedSubjectData = state.subjectData;
@@ -409,6 +417,7 @@ window.handleHeaderAction = function(action) {
 window.openAcademicMenu = function(pushState = true) {
     const scrollPos = window.pageYOffset || document.documentElement.scrollTop;
     let modal = document.getElementById('academic-menu-modal');
+
     if (!modal) {
         modal = document.createElement('div');
         modal.id = 'academic-menu-modal';
@@ -449,7 +458,7 @@ window.openAcademicMenu = function(pushState = true) {
                     </div>
 
                     <div id="hierarchy-navigation" class="hidden flex flex-col min-h-[300px]">
-                        <button onclick="window.resetAcademicMenu()" class="mb-6 flex items-center gap-2 text-[10px] font-bold text-blue-600 uppercase tracking-[0.2em] hover:text-blue-700 transition-colors">
+                        <button onclick="history.back()" class="mb-6 flex items-center gap-2 text-[10px] font-bold text-blue-600 uppercase tracking-[0.2em] hover:text-blue-700 transition-colors">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M15 19l-7-7 7-7"></path></svg>
                             Regresar
                         </button>
@@ -469,11 +478,7 @@ window.openAcademicMenu = function(pushState = true) {
 
     modal.classList.remove('hidden');
     setTimeout(() => modal.classList.add('opacity-100'), 10);
-    window.resetAcademicMenu(false);
-
-    if (pushState) {
-        history.pushState({ type: 'modal-close', modalId: 'academic-menu-modal', scrollPos }, '');
-    }
+    window.resetAcademicMenu(pushState);
 };
 
 window.closeAcademicMenu = function(doPop = true) {
@@ -481,7 +486,8 @@ window.closeAcademicMenu = function(doPop = true) {
     if (modal) {
         modal.classList.remove('opacity-100');
         setTimeout(() => modal.classList.add('hidden'), 300);
-        if (doPop && history.state && history.state.modalId === 'academic-menu-modal') {
+        // REQ: Ensure history is popped if we are in an academic-menu state
+        if (doPop && history.state && history.state.type === 'academic-menu') {
             history.back();
         }
     }
@@ -520,6 +526,17 @@ window.showAcademicHierarchy = function(type) {
 };
 
 window.renderHierarchyLevel = function(type, level, params = {}, pushState = true) {
+    // REQ: Pre-push state to ensure it's captured before potentially jumping levels (v7.6.3)
+    if (pushState) {
+        history.pushState({
+            type: 'academic-menu',
+            menuType: type,
+            level: level,
+            params: params,
+            scrollPos: window.pageYOffset
+        }, '');
+    }
+
     const container = document.getElementById('hierarchy-options');
     const label = document.getElementById('hierarchy-label');
     const user = JSON.parse(localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser') || '{}');
@@ -544,34 +561,33 @@ window.renderHierarchyLevel = function(type, level, params = {}, pushState = tru
             label.textContent = 'Selecciona Sección';
             const gradeObj = sourceData.find(d => window.parseGrade(d.grade) === window.parseGrade(params.grado));
             items = gradeObj ? gradeObj.sections : [];
-            nextLevel = 'Asignatura';
-            break;
-        case 'Asignatura':
-            label.textContent = 'Selecciona Asignatura';
-            const gradeObjA = sourceData.find(d => window.parseGrade(d.grade) === window.parseGrade(params.grado));
-
-            // REQ 7: Filtrado por Autorización (Parcial Actual/Anteriores)
-            if (gradeObjA) {
-                items = [...new Set(gradeObjA.subjects
-                    .filter(s => window.checkSectionHelper(s.sections, params.seccion) && window.isContentAuthorized(s.partial, s.name))
-                    .map(s => s.name)
-                )];
-            }
-
-            // Si no es profesor, saltar directamente al nivel de Temas/Archivos usando el parcial autorizado
-            if (role !== 'Profesor') {
-                nextLevel = (type === 'Presentaciones' ? 'Temas' : 'Archivos');
-            } else {
-                nextLevel = 'Parcial';
-            }
+            nextLevel = (role === 'Profesor' ? 'Parcial' : 'Asignatura');
             break;
         case 'Parcial':
             label.textContent = 'Selecciona Parcial';
             const gradeObjP = sourceData.find(d => window.parseGrade(d.grade) === window.parseGrade(params.grado));
             if (gradeObjP) {
                 items = [...new Set(gradeObjP.subjects
-                    .filter(s => window.checkSectionHelper(s.sections, params.seccion) && (!params.asignatura || s.name === params.asignatura))
+                    .filter(s => window.checkSectionHelper(s.sections, params.seccion))
                     .map(s => s.partial)
+                )];
+            }
+            nextLevel = (role === 'Profesor' ? 'Asignatura' : (type === 'Presentaciones' ? 'Temas' : 'Archivos'));
+            break;
+        case 'Asignatura':
+            label.textContent = 'Selecciona Asignatura';
+            const gradeObjA = sourceData.find(d => window.parseGrade(d.grade) === window.parseGrade(params.grado));
+
+            if (gradeObjA) {
+                items = [...new Set(gradeObjA.subjects
+                    .filter(s => {
+                        const secMatch = window.checkSectionHelper(s.sections, params.seccion);
+                        if (role === 'Profesor' && params.parcial) {
+                            return secMatch && s.partial === params.parcial;
+                        }
+                        return secMatch && window.isContentAuthorized(s.partial, s.name);
+                    })
+                    .map(s => s.name)
                 )];
             }
             nextLevel = (type === 'Presentaciones' ? 'Temas' : 'Archivos');
@@ -615,17 +631,6 @@ window.renderHierarchyLevel = function(type, level, params = {}, pushState = tru
     if (items.length === 0 || items.every(i => i === undefined)) {
         container.innerHTML = '<p class="text-center p-4 text-gray-500 text-sm">No hay opciones disponibles.</p>';
         return;
-    }
-
-    if (pushState) {
-        // REQ: Robust state preservation for hierarchical levels
-        history.pushState({
-            type: 'academic-menu',
-            menuType: type,
-            level: level,
-            params: params,
-            scrollPos: window.pageYOffset
-        }, '');
     }
 
     container.innerHTML = items.map(item => {
