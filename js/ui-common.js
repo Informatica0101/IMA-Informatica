@@ -1,24 +1,25 @@
 /**
  * Common UI Logic for all pages (Header, Mobile Menu, Scroll)
+ * ES5 Compliance Mandatory.
  */
 
 window.setupCommonUI = function() {
-    const mainHeader = document.getElementById('main-header');
-    const openProfileBtn = document.getElementById('open-profile-btn');
-    const mobileProfileBtn = document.getElementById('mobile-profile-btn-nav');
+    var mainHeader = document.getElementById('main-header');
+    var openProfileBtn = document.getElementById('open-profile-btn');
+    var mobileProfileBtn = document.getElementById('mobile-profile-btn-nav');
 
     // Restoration fix: Ensure header is visible on init
     if (mainHeader) {
         mainHeader.classList.remove('header-hidden');
     }
 
-    let lastScrollTop = 0;
-    const scrollThreshold = 10;
+    var lastScrollTop = 0;
+    var scrollThreshold = 10;
 
     // --- Header & Scroll Logic ---
     if (mainHeader) {
-        window.addEventListener('scroll', () => {
-            const currentScrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        window.addEventListener('scroll', function() {
+            var currentScrollTop = window.pageYOffset || document.documentElement.scrollTop;
             if (currentScrollTop > lastScrollTop && currentScrollTop > mainHeader.offsetHeight + 50) {
                 mainHeader.classList.add('header-hidden');
             } else if (currentScrollTop < lastScrollTop) {
@@ -34,7 +35,7 @@ window.setupCommonUI = function() {
     }
 
     // --- Mobile Menu Logic (Redirect to Academic Modal A-73/74) ---
-    window.openMobileMenu = function(section = null) {
+    window.openMobileMenu = function(section) {
         window.openAcademicMenu();
     };
 
@@ -43,17 +44,20 @@ window.setupCommonUI = function() {
     };
 
     // --- Unified Profile Modal Logic (A-75) ---
-    window.openProfileModal = function(pushState = true) {
-        const modal = document.getElementById('profile-modal');
+    window.openProfileModal = function(pushState) {
+        if (pushState === undefined) pushState = true;
+        var modal = document.getElementById('profile-modal');
         if (!modal) return;
 
-        const user = JSON.parse(localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser'));
+        var userRaw = localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser');
+        var user = userRaw ? JSON.parse(userRaw) : null;
+
         if (!user) {
             // Si no hay sesión, invitar a login (si existe modal de login)
-            const loginModal = document.getElementById('login-modal');
+            var loginModal = document.getElementById('login-modal');
             if (loginModal) {
                 loginModal.classList.remove('opacity-0', 'pointer-events-none');
-                const content = document.getElementById('login-modal-content');
+                var content = document.getElementById('login-modal-content');
                 if (content) content.classList.add('scale-100');
             } else {
                 alert('Inicie sesión para acceder a su perfil.');
@@ -63,11 +67,11 @@ window.setupCommonUI = function() {
         }
 
         // Poblar campos comunes
-        const nameEl = document.getElementById('profile-nombre');
-        const emailEl = document.getElementById('profile-email');
-        const phoneEl = document.getElementById('profile-telefono');
-        const listEl = document.getElementById('profile-numeroLista');
-        const listContainer = document.getElementById('profile-numeroLista-container');
+        var nameEl = document.getElementById('profile-nombre');
+        var emailEl = document.getElementById('profile-email');
+        var phoneEl = document.getElementById('profile-telefono');
+        var listEl = document.getElementById('profile-numeroLista');
+        var listContainer = document.getElementById('profile-numeroLista-container');
 
         if (nameEl) nameEl.value = user.nombre || '';
         if (emailEl) emailEl.value = user.email || '';
@@ -87,8 +91,9 @@ window.setupCommonUI = function() {
         }
     };
 
-    window.closeProfileModal = function(doPop = true) {
-        const modal = document.getElementById('profile-modal');
+    window.closeProfileModal = function(doPop) {
+        if (doPop === undefined) doPop = true;
+        var modal = document.getElementById('profile-modal');
         if (modal) modal.classList.add('hidden');
         if (doPop && history.state && history.state.type === 'modal-close' && history.state.modalId === 'profile-modal') {
             history.back();
@@ -96,35 +101,36 @@ window.setupCommonUI = function() {
     };
 
     // Attach to buttons if they exist
-    if (openProfileBtn) openProfileBtn.addEventListener('click', (e) => { e.preventDefault(); window.openProfileModal(); });
-    if (mobileProfileBtn) mobileProfileBtn.addEventListener('click', (e) => { e.preventDefault(); window.openProfileModal(); });
+    if (openProfileBtn) openProfileBtn.addEventListener('click', function(e) { e.preventDefault(); window.openProfileModal(); });
+    if (mobileProfileBtn) mobileProfileBtn.addEventListener('click', function(e) { e.preventDefault(); window.openProfileModal(); });
 
     // Close on X or Cancel
-    const closeBtn = document.getElementById('close-profile-modal');
-    const cancelBtn = document.getElementById('cancel-profile-btn');
+    var closeBtn = document.getElementById('close-profile-modal');
+    var cancelBtn = document.getElementById('cancel-profile-btn');
     if (closeBtn) closeBtn.onclick = window.closeProfileModal;
     if (cancelBtn) cancelBtn.onclick = window.closeProfileModal;
 
     // --- Logout Logic (Global) ---
-    window.handleLogout = () => {
+    window.handleLogout = function() {
         localStorage.removeItem('currentUser');
         sessionStorage.removeItem('currentUser');
         window.location.href = 'login.html';
     };
 
     // Portal Redirect Logic
-    const portalLink = document.getElementById('nav-portal-link');
-    const mobilePortalLink = document.getElementById('mobile-portal-link');
-    const currentUser = JSON.parse(localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser'));
+    var portalLink = document.getElementById('nav-portal-link');
+    var mobilePortalLink = document.getElementById('mobile-portal-link');
+    var currentUserRaw = localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser');
+    var currentUser = currentUserRaw ? JSON.parse(currentUserRaw) : null;
 
     if (currentUser) {
-        const dest = currentUser.rol === 'Profesor' ? 'teacher-dashboard.html' : 'student-dashboard.html';
+        var dest = currentUser.rol === 'Profesor' ? 'teacher-dashboard.html' : 'student-dashboard.html';
         if (portalLink) portalLink.href = dest;
         if (mobilePortalLink) mobilePortalLink.href = dest;
     }
 
     // Set Year
-    const yearSpan = document.getElementById('current-year');
+    var yearSpan = document.getElementById('current-year');
     if (yearSpan) yearSpan.textContent = new Date().getFullYear();
 
     // Render Navigation
@@ -134,24 +140,24 @@ window.setupCommonUI = function() {
     document.dispatchEvent(new CustomEvent('common-ui-ready'));
 
     // --- (A-77) Global History Navigation System ---
-    const handlePopState = (event) => {
-        const state = event.state;
+    var handlePopState = function(event) {
+        var state = event.state;
 
         // Siempre cerrar modales si el nuevo estado NO es de modal
         if (!state || (state.type !== 'modal-close' && state.type !== 'academic-menu')) {
-            const academicModal = document.getElementById('academic-menu-modal');
+            var academicModal = document.getElementById('academic-menu-modal');
             if (academicModal && !academicModal.classList.contains('hidden')) {
                 window.closeAcademicMenu(false);
             }
-            const profileModal = document.getElementById('profile-modal');
+            var profileModal = document.getElementById('profile-modal');
             if (profileModal && !profileModal.classList.contains('hidden')) {
                 window.closeProfileModal(false);
             }
-            const loginModal = document.getElementById('login-modal');
+            var loginModal = document.getElementById('login-modal');
             if (loginModal) {
                 loginModal.classList.add('opacity-0', 'pointer-events-none');
-                const content = document.getElementById('login-modal-content');
-                if (content) content.classList.remove('scale-100');
+                var loginContent = document.getElementById('login-modal-content');
+                if (loginContent) loginContent.classList.remove('scale-100');
             }
         }
 
@@ -165,8 +171,8 @@ window.setupCommonUI = function() {
                 if (window.renderInitialContentButton) window.renderInitialContentButton();
             }
         } else if (state.type === 'dashboard-section') {
-            const targetNav = document.getElementById(state.navId);
-            const targetSection = document.getElementById(state.sectionId);
+            var targetNav = document.getElementById(state.navId);
+            var targetSection = document.getElementById(state.sectionId);
             if (targetNav && targetSection && window.navigateTo) {
                 window.navigateTo(targetSection, targetNav, false);
             }
@@ -207,15 +213,13 @@ window.setupCommonUI = function() {
                 if (window.renderActivityList) window.renderActivityList(false);
             }
         } else if (state.type === 'academic-menu') {
-            const modal = document.getElementById('academic-menu-modal');
-            if (modal && modal.classList.contains('hidden')) {
+            var modalMenu = document.getElementById('academic-menu-modal');
+            if (modalMenu && modalMenu.classList.contains('hidden')) {
                 window.openAcademicMenu(false);
             }
             if (state.level === 'root') {
                 window.resetAcademicMenu(false);
             } else {
-                // Determine previous logical level for back navigation if needed,
-                // but popstate already carries the exact level to restore.
                 window.renderHierarchyLevel(state.menuType, state.level, state.params, false);
             }
         } else if (state.type === 'modal-close') {
@@ -232,80 +236,79 @@ window.setupCommonUI = function() {
     window.addEventListener('popstate', handlePopState);
 
     // --- Dropdown Viewport Protection (A-76) ---
-    const handleDropdownOverflow = () => {
+    var handleDropdownOverflow = function() {
         // Observer to re-apply logic if DOM changes (dynamic menus)
-        const observer = new MutationObserver((mutations) => {
+        var observer = new MutationObserver(function(mutations) {
             attachOverflowCheck();
         });
 
-        const attachOverflowCheck = () => {
+        var attachOverflowCheck = function() {
             // Check both Level 2 (below nav) and Level 3+ (right side) submenus
-            const submenus = document.querySelectorAll('.group div[class*="absolute"]');
-            submenus.forEach(menu => {
-                const parent = menu.parentElement;
-                if (!parent || parent.dataset.ovfChecked === "true") return;
+            var submenus = document.querySelectorAll('.group div[class*="absolute"]');
+            for (var i = 0; i < submenus.length; i++) {
+                var menu = submenus[i];
+                var parent = menu.parentElement;
+                if (!parent || parent.getAttribute('data-ovf-checked') === "true") continue;
 
-                parent.dataset.ovfChecked = "true";
-                parent.addEventListener('mouseenter', () => {
-                    // Temporarily show to measure accurately
-                    const originalOpacity = menu.style.opacity;
-                    const originalVisibility = menu.style.visibility;
+                parent.setAttribute('data-ovf-checked', "true");
+                parent.addEventListener('mouseenter', (function(m) {
+                    return function() {
+                        // Temporarily show to measure accurately
+                        var originalOpacity = m.style.opacity;
+                        var originalVisibility = m.style.visibility;
 
-                    menu.style.opacity = '0';
-                    menu.style.visibility = 'visible';
-                    menu.style.display = 'block';
+                        m.style.opacity = '0';
+                        m.style.visibility = 'visible';
+                        m.style.display = 'block';
 
-                    const rect = menu.getBoundingClientRect();
+                        var rect = m.getBoundingClientRect();
 
-                    menu.style.display = '';
-                    menu.style.visibility = originalVisibility;
-                    menu.style.opacity = originalOpacity;
+                        m.style.display = '';
+                        m.style.visibility = originalVisibility;
+                        m.style.opacity = originalOpacity;
 
-                    if (rect.right > window.innerWidth) {
-                        menu.classList.add('dropdown-reverse');
-                        // If it's a top-level dropdown, just shift it left
-                        if (menu.classList.contains('left-0')) {
-                            menu.classList.remove('left-0');
-                            menu.classList.add('right-0');
+                        if (rect.right > window.innerWidth) {
+                            m.classList.add('dropdown-reverse');
+                            // If it's a top-level dropdown, just shift it left
+                            if (m.classList.contains('left-0')) {
+                                m.classList.remove('left-0');
+                                m.classList.add('right-0');
+                            }
                         }
-                    } else {
-                        // Reset if it fits now
-                        if (rect.left < 0) {
-                             // Handle left overflow if needed
-                        }
-                    }
-                });
-            });
+                    };
+                })(menu));
+            }
         };
 
-        const nav = document.querySelector('nav');
+        var nav = document.querySelector('nav');
         if (nav) observer.observe(nav, { childList: true, subtree: true });
         attachOverflowCheck();
     };
     handleDropdownOverflow();
 
     // --- Unified Profile Form Handler (A-73/75) ---
-    const profileForm = document.getElementById('profile-form');
+    var profileForm = document.getElementById('profile-form');
     if (profileForm) {
-        profileForm.onsubmit = async (e) => {
+        profileForm.onsubmit = function(e) {
             e.preventDefault();
-            const user = JSON.parse(localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser'));
+            var userRaw = localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser');
+            var user = userRaw ? JSON.parse(userRaw) : null;
             if (!user) {
                 alert('Sesión no encontrada. Por favor inicie sesión de nuevo.');
                 window.location.href = 'login.html';
                 return;
             }
 
-            const submitBtn = profileForm.querySelector('button[type="submit"]');
-            const newPassword = document.getElementById('profile-password').value;
-            const currentPassword = document.getElementById('profile-current-password').value;
+            var submitBtn = profileForm.querySelector('button[type="submit"]');
+            var newPassword = document.getElementById('profile-password').value;
+            var currentPassword = document.getElementById('profile-current-password').value;
 
             if (newPassword && !currentPassword) {
                 alert('Debe ingresar su contraseña actual para establecer una nueva.');
                 return;
             }
 
-            const payload = {
+            var payload = {
                 userId: user.userId,
                 nombre: document.getElementById('profile-nombre').value.trim(),
                 email: document.getElementById('profile-email').value.trim(),
@@ -317,32 +320,37 @@ window.setupCommonUI = function() {
 
             submitBtn.disabled = true;
             submitBtn.classList.add('btn-loading');
-            const originalText = submitBtn.textContent;
+            var originalText = submitBtn.textContent;
             submitBtn.textContent = 'Procesando...';
 
-            try {
-                if (typeof fetchApi !== 'function') {
-                    throw new Error('El servicio de conexión (api.js) no se ha cargado correctamente.');
-                }
+            if (typeof fetchApi !== 'function') {
+                alert('El servicio de conexión (api.js) no se ha cargado correctamente.');
+                submitBtn.disabled = false;
+                submitBtn.classList.remove('btn-loading');
+                submitBtn.textContent = originalText;
+                return;
+            }
 
-                const result = await fetchApi('USER', 'updateUserProfile', payload);
-
+            fetchApi('USER', 'updateUserProfile', payload).then(function(result) {
                 if (result.status === 'success') {
-                    const updatedUser = { ...user, ...result.data };
-                    localStorage.setItem('currentUser', JSON.stringify(updatedUser));
+                    // Update user object manually (Object.assign replacement)
+                    for (var key in result.data) {
+                        user[key] = result.data[key];
+                    }
+                    localStorage.setItem('currentUser', JSON.stringify(user));
 
-                    const nameParts = updatedUser.nombre.split(' ');
-                    const firstName = nameParts[0];
+                    var nameParts = user.nombre.split(' ');
+                    var firstName = nameParts[0];
 
-                    const teacherNameEl = document.getElementById('teacher-name');
-                    const studentNameEl = document.getElementById('student-name');
+                    var teacherNameEl = document.getElementById('teacher-name');
+                    var studentNameEl = document.getElementById('student-name');
                     if (teacherNameEl) teacherNameEl.textContent = firstName;
                     if (studentNameEl) studentNameEl.textContent = firstName;
 
                     if (window.renderWelcomeMessage) window.renderWelcomeMessage();
 
                     alert('Perfil actualizado con éxito.');
-                    const modal = document.getElementById('profile-modal');
+                    var modal = document.getElementById('profile-modal');
                     if (modal) modal.classList.add('hidden');
 
                     document.getElementById('profile-password').value = '';
@@ -350,43 +358,41 @@ window.setupCommonUI = function() {
                 } else {
                     alert('Atención: ' + result.message);
                 }
-            } catch (err) {
+            }).catch(function(err) {
                 console.error("Critical Profile Error:", err);
                 alert('Error de conexión: No se pudo sincronizar con el servidor. Verifique su internet.');
-            } finally {
+            }).finally(function() {
                 submitBtn.disabled = false;
                 submitBtn.classList.remove('btn-loading');
                 submitBtn.textContent = originalText;
-            }
+            });
         };
     }
 };
 
 /**
  * Convierte un ID o URL de Google Drive en una URL de visualización directa pública.
- * @param {string} driveLink - El enlace o ID del archivo de Drive.
- * @returns {string} La URL convertida o el link original si no se puede procesar.
  */
 window.convertDriveLink = function(driveLink) {
     if (!driveLink || typeof driveLink !== 'string') return '';
 
     // Si ya es un enlace directo funcional, no tocar
-    if (driveLink.includes('lh3.googleusercontent.com')) return driveLink;
+    if (driveLink.indexOf('lh3.googleusercontent.com') !== -1) return driveLink;
 
-    let fileId = '';
+    var fileId = '';
 
-    if (driveLink.includes('drive.google.com')) {
+    if (driveLink.indexOf('drive.google.com') !== -1) {
         // Formatos: /file/d/ID/view, /open?id=ID, /uc?id=ID
-        const match = driveLink.match(/\/d\/([a-zA-Z0-9-_]+)/) ||
-                      driveLink.match(/[?&]id=([a-zA-Z0-9-_]+)/);
+        var match = driveLink.match(/\/d\/([a-zA-Z0-9-_]+)/) ||
+                    driveLink.match(/[?&]id=([a-zA-Z0-9-_]+)/);
         if (match && match[1]) fileId = match[1];
-    } else if (!driveLink.includes('http')) {
+    } else if (driveLink.indexOf('http') === -1) {
         // Asumir que es un ID directo
         fileId = driveLink;
     }
 
     if (fileId) {
-        return `https://lh3.googleusercontent.com/d/${fileId}`;
+        return 'https://lh3.googleusercontent.com/d/' + fileId;
     }
 
     return driveLink;
@@ -395,8 +401,8 @@ window.convertDriveLink = function(driveLink) {
 // Global helper for sections
 window.checkSectionHelper = function(sectionsField, targetSection) {
     if (!sectionsField || !targetSection) return true;
-    if (Array.isArray(sectionsField)) return sectionsField.includes(targetSection);
-    return sectionsField.split(',').map(s => s.trim()).includes(targetSection);
+    if (Array.isArray(sectionsField)) return sectionsField.indexOf(targetSection) !== -1;
+    return sectionsField.split(',').map(function(s) { return s.trim(); }).indexOf(targetSection) !== -1;
 };
 
 window.handleHeaderAction = function(action) {
@@ -414,78 +420,79 @@ window.handleHeaderAction = function(action) {
     if (window.closeMobileMenu) window.closeMobileMenu();
 };
 
-window.openAcademicMenu = function(pushState = true) {
-    const scrollPos = window.pageYOffset || document.documentElement.scrollTop;
-    let modal = document.getElementById('academic-menu-modal');
+window.openAcademicMenu = function(pushState) {
+    if (pushState === undefined) pushState = true;
+    var scrollPos = window.pageYOffset || document.documentElement.scrollTop;
+    var modal = document.getElementById('academic-menu-modal');
 
     if (!modal) {
         modal = document.createElement('div');
         modal.id = 'academic-menu-modal';
         modal.className = 'fixed inset-0 bg-gray-900/98 z-[2100] flex items-center justify-center hidden opacity-0 transition-all duration-300';
-        modal.innerHTML = `
-            <div class="bg-white w-full max-w-sm rounded-[2.5rem] shadow-2xl overflow-hidden animate-fade-in-up m-4 border border-gray-100">
-                <div class="p-8">
-                    <div class="flex justify-between items-center mb-8">
-                        <div>
-                            <h2 class="text-2xl font-semibold text-gray-900 tracking-tight">Recursos</h2>
-                            <p class="text-xs font-medium text-blue-600 uppercase tracking-widest mt-1">Explora tu contenido</p>
-                        </div>
-                        <button onclick="window.closeAcademicMenu()" class="text-gray-400 hover:text-gray-600 p-2 transition-colors">
-                            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                        </button>
-                    </div>
+        modal.innerHTML =
+            '<div class="bg-white w-full max-w-sm rounded-[2.5rem] shadow-2xl overflow-hidden animate-fade-in-up m-4 border border-gray-100">' +
+                '<div class="p-8">' +
+                    '<div class="flex justify-between items-center mb-8">' +
+                        '<div>' +
+                            '<h2 class="text-2xl font-semibold text-gray-900 tracking-tight">Recursos</h2>' +
+                            '<p class="text-xs font-medium text-blue-600 uppercase tracking-widest mt-1">Explora tu contenido</p>' +
+                        '</div>' +
+                        '<button onclick="window.closeAcademicMenu()" class="text-gray-400 hover:text-gray-600 p-2 transition-colors">' +
+                            '<svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>' +
+                        '</button>' +
+                    '</div>' +
 
-                    <div class="grid grid-cols-1 gap-4" id="academic-menu-options">
-                        <button onclick="window.showAcademicHierarchy('Presentaciones')" class="group flex items-center gap-5 p-5 bg-blue-50/50 rounded-3xl hover:bg-blue-600 transition-all duration-300">
-                            <div class="w-14 h-14 bg-blue-600 text-white rounded-2xl flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">
-                                <i class="fas fa-desktop"></i>
-                            </div>
-                            <div class="text-left">
-                                <h3 class="font-bold text-gray-900 group-hover:text-white transition-colors">Presentaciones</h3>
-                                <p class="text-xs text-blue-600 group-hover:text-blue-100 transition-colors">Clases interactivas</p>
-                            </div>
-                        </button>
+                    '<div class="grid grid-cols-1 gap-4" id="academic-menu-options">' +
+                        '<button onclick="window.showAcademicHierarchy(\'Presentaciones\')" class="group flex items-center gap-5 p-5 bg-blue-50/50 rounded-3xl hover:bg-blue-600 transition-all duration-300">' +
+                            '<div class="w-14 h-14 bg-blue-600 text-white rounded-2xl flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">' +
+                                '<i class="fas fa-desktop"></i>' +
+                            '</div>' +
+                            '<div class="text-left">' +
+                                '<h3 class="font-bold text-gray-900 group-hover:text-white transition-colors">Presentaciones</h3>' +
+                                '<p class="text-xs text-blue-600 group-hover:text-blue-100 transition-colors">Clases interactivas</p>' +
+                            '</div>' +
+                        '</button>' +
 
-                        <button onclick="window.showAcademicHierarchy('Contenido')" class="group flex items-center gap-5 p-5 bg-purple-50/50 rounded-3xl hover:bg-purple-600 transition-all duration-300">
-                            <div class="w-14 h-14 bg-purple-600 text-white rounded-2xl flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">
-                                <i class="fas fa-file-pdf"></i>
-                            </div>
-                            <div class="text-left">
-                                <h3 class="font-bold text-gray-900 group-hover:text-white transition-colors">Contenido de clase</h3>
-                                <p class="text-xs text-purple-600 group-hover:text-purple-100 transition-colors">Descargas PDF</p>
-                            </div>
-                        </button>
-                    </div>
+                        '<button onclick="window.showAcademicHierarchy(\'Contenido\')" class="group flex items-center gap-5 p-5 bg-purple-50/50 rounded-3xl hover:bg-purple-600 transition-all duration-300">' +
+                            '<div class="w-14 h-14 bg-purple-600 text-white rounded-2xl flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">' +
+                                '<i class="fas fa-file-pdf"></i>' +
+                            '</div>' +
+                            '<div class="text-left">' +
+                                '<h3 class="font-bold text-gray-900 group-hover:text-white transition-colors">Contenido de clase</h3>' +
+                                '<p class="text-xs text-purple-600 group-hover:text-purple-100 transition-colors">Descargas PDF</p>' +
+                            '</div>' +
+                        '</button>' +
+                    '</div>' +
 
-                    <div id="hierarchy-navigation" class="hidden flex flex-col min-h-[300px]">
-                        <button onclick="history.back()" class="mb-6 flex items-center gap-2 text-[10px] font-bold text-blue-600 uppercase tracking-[0.2em] hover:text-blue-700 transition-colors">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M15 19l-7-7 7-7"></path></svg>
-                            Regresar
-                        </button>
-                        <div id="hierarchy-title" class="mb-6">
-                            <h3 class="text-lg font-bold text-gray-900" id="hierarchy-label">Selecciona Grado</h3>
-                            <div class="h-1 w-12 bg-blue-600 rounded-full mt-1"></div>
-                        </div>
-                        <div id="hierarchy-options" class="flex flex-col gap-2 overflow-y-auto max-h-[350px] pr-2 scroll-minimalist">
-                            <!-- Inyectado dinámicamente -->
-                        </div>
-                    </div>
-                </div>
-            </div>
-        `;
+                    '<div id="hierarchy-navigation" class="hidden flex flex-col min-h-[300px]">' +
+                        '<button onclick="history.back()" class="mb-6 flex items-center gap-2 text-[10px] font-bold text-blue-600 uppercase tracking-[0.2em] hover:text-blue-700 transition-colors">' +
+                            '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M15 19l-7-7 7-7"></path></svg>' +
+                            'Regresar' +
+                        '</button>' +
+                        '<div id="hierarchy-title" class="mb-6">' +
+                            '<h3 class="text-lg font-bold text-gray-900" id="hierarchy-label">Selecciona Grado</h3>' +
+                            '<div class="h-1 w-12 bg-blue-600 rounded-full mt-1"></div>' +
+                        '</div>' +
+                        '<div id="hierarchy-options" class="flex flex-col gap-2 overflow-y-auto max-h-[350px] pr-2 scroll-minimalist">' +
+                            '<!-- Inyectado dinámicamente -->' +
+                        '</div>' +
+                    '</div>' +
+                '</div>' +
+            '</div>';
         document.body.appendChild(modal);
     }
 
     modal.classList.remove('hidden');
-    setTimeout(() => modal.classList.add('opacity-100'), 10);
+    setTimeout(function() { modal.classList.add('opacity-100'); }, 10);
     window.resetAcademicMenu(pushState);
 };
 
-window.closeAcademicMenu = function(doPop = true) {
-    const modal = document.getElementById('academic-menu-modal');
+window.closeAcademicMenu = function(doPop) {
+    if (doPop === undefined) doPop = true;
+    var modal = document.getElementById('academic-menu-modal');
     if (modal) {
         modal.classList.remove('opacity-100');
-        setTimeout(() => modal.classList.add('hidden'), 300);
+        setTimeout(function() { modal.classList.add('hidden'); }, 300);
         // REQ: Ensure history is popped if we are in an academic-menu state
         if (doPop && history.state && history.state.type === 'academic-menu') {
             history.back();
@@ -493,9 +500,10 @@ window.closeAcademicMenu = function(doPop = true) {
     }
 };
 
-window.resetAcademicMenu = function(pushState = true) {
-    const options = document.getElementById('academic-menu-options');
-    const nav = document.getElementById('hierarchy-navigation');
+window.resetAcademicMenu = function(pushState) {
+    if (pushState === undefined) pushState = true;
+    var options = document.getElementById('academic-menu-options');
+    var nav = document.getElementById('hierarchy-navigation');
     if (options) options.classList.remove('hidden');
     if (nav) nav.classList.add('hidden');
 
@@ -510,10 +518,11 @@ window.openAcademicHierarchy = function(type) {
 };
 
 window.showAcademicHierarchy = function(type) {
-    const options = document.getElementById('academic-menu-options');
-    const nav = document.getElementById('hierarchy-navigation');
-    const user = JSON.parse(localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser') || '{}');
-    const isProfesor = user.rol === 'Profesor';
+    var options = document.getElementById('academic-menu-options');
+    var nav = document.getElementById('hierarchy-navigation');
+    var userRaw = localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser') || '{}';
+    var user = JSON.parse(userRaw);
+    var isProfesor = user.rol === 'Profesor';
 
     if (options) options.classList.add('hidden');
     if (nav) nav.classList.remove('hidden');
@@ -525,7 +534,10 @@ window.showAcademicHierarchy = function(type) {
     }
 };
 
-window.renderHierarchyLevel = function(type, level, params = {}, pushState = true) {
+window.renderHierarchyLevel = function(type, level, params, pushState) {
+    if (params === undefined) params = {};
+    if (pushState === undefined) pushState = true;
+
     // REQ: Pre-push state to ensure it's captured before potentially jumping levels (v7.6.3)
     if (pushState) {
         history.pushState({
@@ -537,73 +549,115 @@ window.renderHierarchyLevel = function(type, level, params = {}, pushState = tru
         }, '');
     }
 
-    const container = document.getElementById('hierarchy-options');
-    const label = document.getElementById('hierarchy-label');
-    const user = JSON.parse(localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser') || '{}');
-    const role = user.rol || 'Invitado';
+    var container = document.getElementById('hierarchy-options');
+    var label = document.getElementById('hierarchy-label');
+    var userRaw = localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser') || '{}';
+    var user = JSON.parse(userRaw);
+    var role = user.rol || 'Invitado';
 
     if (!container) return;
 
     container.innerHTML = '<div class="p-8 text-center"><i class="fas fa-spinner fa-spin text-blue-600 text-2xl"></i></div>';
 
-    const sourceData = (type === 'Presentaciones') ? (window.presentationData || []) : (window.downloadContentData || []);
+    var sourceData = (type === 'Presentaciones') ? (window.presentationData || []) : (window.downloadContentData || []);
 
-    let items = [];
-    let nextLevel = '';
+    var items = [];
+    var nextLevel = '';
+    var i, j;
 
     switch(level) {
         case 'Grado':
             label.textContent = 'Selecciona Grado';
-            items = [...new Set(sourceData.map(d => d.grade))].filter(Boolean);
+            var gradeSet = {};
+            for (i = 0; i < sourceData.length; i++) {
+                if (sourceData[i].grade) gradeSet[sourceData[i].grade] = true;
+            }
+            items = Object.keys(gradeSet);
             nextLevel = 'Sección';
             break;
         case 'Sección':
             label.textContent = 'Selecciona Sección';
-            const gradeObj = sourceData.find(d => window.parseGrade(d.grade) === window.parseGrade(params.grado));
+            var gradeObj = null;
+            for (i = 0; i < sourceData.length; i++) {
+                if (window.parseGrade(sourceData[i].grade) === window.parseGrade(params.grado)) {
+                    gradeObj = sourceData[i];
+                    break;
+                }
+            }
             items = gradeObj ? gradeObj.sections : [];
             nextLevel = (role === 'Profesor' ? 'Parcial' : 'Asignatura');
             break;
         case 'Parcial':
             label.textContent = 'Selecciona Parcial';
-            const gradeObjP = sourceData.find(d => window.parseGrade(d.grade) === window.parseGrade(params.grado));
+            var gradeObjP = null;
+            for (i = 0; i < sourceData.length; i++) {
+                if (window.parseGrade(sourceData[i].grade) === window.parseGrade(params.grado)) {
+                    gradeObjP = sourceData[i];
+                    break;
+                }
+            }
             if (gradeObjP) {
-                items = [...new Set(gradeObjP.subjects
-                    .filter(s => window.checkSectionHelper(s.sections, params.seccion))
-                    .map(s => s.partial)
-                )];
+                var partialSet = {};
+                for (j = 0; j < gradeObjP.subjects.length; j++) {
+                    var s = gradeObjP.subjects[j];
+                    if (window.checkSectionHelper(s.sections, params.seccion)) {
+                        partialSet[s.partial] = true;
+                    }
+                }
+                items = Object.keys(partialSet);
             }
             nextLevel = (role === 'Profesor' ? 'Asignatura' : (type === 'Presentaciones' ? 'Temas' : 'Archivos'));
             break;
         case 'Asignatura':
             label.textContent = 'Selecciona Asignatura';
-            const gradeObjA = sourceData.find(d => window.parseGrade(d.grade) === window.parseGrade(params.grado));
+            var gradeObjA = null;
+            for (i = 0; i < sourceData.length; i++) {
+                if (window.parseGrade(sourceData[i].grade) === window.parseGrade(params.grado)) {
+                    gradeObjA = sourceData[i];
+                    break;
+                }
+            }
 
             if (gradeObjA) {
-                items = [...new Set(gradeObjA.subjects
-                    .filter(s => {
-                        const secMatch = window.checkSectionHelper(s.sections, params.seccion);
-                        if (role === 'Profesor' && params.parcial) {
-                            return secMatch && s.partial === params.parcial;
-                        }
-                        return secMatch && window.isContentAuthorized(s.partial, s.name);
-                    })
-                    .map(s => s.name)
-                )];
+                var subjSet = {};
+                for (j = 0; j < gradeObjA.subjects.length; j++) {
+                    var sub = gradeObjA.subjects[j];
+                    var secMatch = window.checkSectionHelper(sub.sections, params.seccion);
+                    var authorized = false;
+                    if (role === 'Profesor' && params.parcial) {
+                        authorized = secMatch && sub.partial === params.parcial;
+                    } else {
+                        authorized = secMatch && window.isContentAuthorized(sub.partial, sub.name);
+                    }
+                    if (authorized) subjSet[sub.name] = true;
+                }
+                items = Object.keys(subjSet);
             }
             nextLevel = (type === 'Presentaciones' ? 'Temas' : 'Archivos');
             break;
         case 'Temas':
         case 'Archivos':
             label.textContent = (type === 'Presentaciones') ? 'Selecciona Tema' : 'Descargar Archivos';
-            const gradeObjT = sourceData.find(d => window.parseGrade(d.grade) === window.parseGrade(params.grado));
-            let finalItems = [];
+            var gradeObjT = null;
+            for (i = 0; i < sourceData.length; i++) {
+                if (window.parseGrade(sourceData[i].grade) === window.parseGrade(params.grado)) {
+                    gradeObjT = sourceData[i];
+                    break;
+                }
+            }
+            var finalItems = [];
             if (gradeObjT) {
-                const subject = gradeObjT.subjects.find(s =>
-                    s.name === params.asignatura &&
-                    s.partial === params.parcial &&
-                    window.checkSectionHelper(s.sections, params.seccion)
-                );
-                finalItems = subject ? subject.topics : [];
+                var foundSubject = null;
+                for (j = 0; j < gradeObjT.subjects.length; j++) {
+                    var subject = gradeObjT.subjects[j];
+                    if (subject.name === params.asignatura &&
+                        subject.partial === params.parcial &&
+                        window.checkSectionHelper(subject.sections, params.seccion)) {
+                        foundSubject = subject;
+                        break;
+                    }
+                }
+                finalItems = foundSubject ? foundSubject.topics : [];
             }
 
             if (finalItems.length === 0) {
@@ -611,170 +665,225 @@ window.renderHierarchyLevel = function(type, level, params = {}, pushState = tru
                 return;
             }
 
-            container.innerHTML = finalItems.map(item => {
-                if (!item.title || !item.file) return '';
-                return `
-                    <a href="${item.file}" ${type === 'Contenido' ? 'download' : 'target="_blank"'} class="flex items-center justify-between p-4 bg-gray-50 rounded-2xl border border-gray-100 hover:border-blue-200 hover:bg-white transition-all group">
-                        <div class="flex items-center gap-3">
-                            <div class="w-8 h-8 rounded-lg ${type === 'Presentaciones' ? 'bg-blue-100 text-blue-600' : 'bg-purple-100 text-purple-600'} flex items-center justify-center text-xs">
-                                <i class="fas ${type === 'Presentaciones' ? 'fa-desktop' : 'fa-download'}"></i>
-                            </div>
-                            <span class="text-sm font-semibold text-gray-700">${item.title}</span>
-                        </div>
-                        <i class="fas fa-chevron-right text-[10px] text-gray-300 group-hover:text-blue-500 transition-colors"></i>
-                    </a>
-                `;
-            }).join('');
+            var htmlItems = [];
+            for (i = 0; i < finalItems.length; i++) {
+                var item = finalItems[i];
+                if (!item.title || !item.file) continue;
+                htmlItems.push(
+                    '<a href="' + item.file + '" ' + (type === 'Contenido' ? 'download' : 'target="_blank"') + ' class="flex items-center justify-between p-4 bg-gray-50 rounded-2xl border border-gray-100 hover:border-blue-200 hover:bg-white transition-all group">' +
+                        '<div class="flex items-center gap-3">' +
+                            '<div class="w-8 h-8 rounded-lg ' + (type === 'Presentaciones' ? 'bg-blue-100 text-blue-600' : 'bg-purple-100 text-purple-600') + ' flex items-center justify-center text-xs">' +
+                                '<i class="fas ' + (type === 'Presentaciones' ? 'fa-desktop' : 'fa-download') + '"></i>' +
+                            '</div>' +
+                            '<span class="text-sm font-semibold text-gray-700">' + item.title + '</span>' +
+                        '</div>' +
+                        '<i class="fas fa-chevron-right text-[10px] text-gray-300 group-hover:text-blue-500 transition-colors"></i>' +
+                    '</a>'
+                );
+            }
+            container.innerHTML = htmlItems.join('');
             return;
     }
 
-    if (items.length === 0 || items.every(i => i === undefined)) {
+    if (items.length === 0) {
         container.innerHTML = '<p class="text-center p-4 text-gray-500 text-sm">No hay opciones disponibles.</p>';
         return;
     }
 
-    container.innerHTML = items.map(item => {
-        if (item === undefined) return '';
-        const currentLevelKey = (level === 'Grado' ? 'grado' : (level === 'Sección' ? 'seccion' : (level === 'Asignatura' ? 'asignatura' : (level === 'Parcial' ? 'parcial' : level.toLowerCase()))));
-        let newParams = {...params, [currentLevelKey]: item};
+    var resultHtml = [];
+    for (i = 0; i < items.length; i++) {
+        var itemVal = items[i];
+        if (itemVal === undefined) continue;
+        var currentLevelKey = (level === 'Grado' ? 'grado' : (level === 'Sección' ? 'seccion' : (level === 'Asignatura' ? 'asignatura' : (level === 'Parcial' ? 'parcial' : level.toLowerCase()))));
+
+        var newParams = {};
+        for (var k in params) { newParams[k] = params[k]; }
+        newParams[currentLevelKey] = itemVal;
 
         // Si el usuario es estudiante y acaba de seleccionar una asignatura,
-        // debemos pre-asignar el parcial autorizado para que el siguiente nivel cargue correctamente.
+        // debemos pre-asignar el parcial autorizado.
         if (role !== 'Profesor' && level === 'Asignatura') {
-            const gradeObj = sourceData.find(d => window.parseGrade(d.grade) === window.parseGrade(params.grado));
-            const subject = gradeObj.subjects.find(s =>
-                s.name === item &&
-                window.checkSectionHelper(s.sections, params.seccion) &&
-                window.isContentAuthorized(s.partial, s.name)
-            );
-            if (subject) {
-                newParams.parcial = subject.partial;
+            var gObj = null;
+            for (var m = 0; m < sourceData.length; m++) {
+                if (window.parseGrade(sourceData[m].grade) === window.parseGrade(params.grado)) {
+                    gObj = sourceData[m];
+                    break;
+                }
+            }
+            if (gObj) {
+                for (var n = 0; n < gObj.subjects.length; n++) {
+                    var subObj = gObj.subjects[n];
+                    if (subObj.name === itemVal &&
+                        window.checkSectionHelper(subObj.sections, params.seccion) &&
+                        window.isContentAuthorized(subObj.partial, subObj.name)) {
+                        newParams.parcial = subObj.partial;
+                        break;
+                    }
+                }
             }
         }
 
-        const paramsStr = JSON.stringify(newParams).replace(/'/g, "&#39;");
-        return `
-            <button onclick='window.renderHierarchyLevel("${type}", "${nextLevel}", ${paramsStr})'
-                    class="flex items-center justify-between p-4 bg-gray-50 rounded-2xl border border-gray-100 hover:border-blue-200 hover:bg-white transition-all group">
-                <span class="text-sm font-semibold text-gray-700">${item}</span>
-                <i class="fas fa-chevron-right text-[10px] text-gray-300 group-hover:text-blue-500 transition-colors"></i>
-            </button>
-        `;
-    }).join('');
+        var paramsStr = JSON.stringify(newParams).replace(/'/g, "&#39;");
+        resultHtml.push(
+            '<button onclick=\'window.renderHierarchyLevel("' + type + '", "' + nextLevel + '", ' + paramsStr + ')\' ' +
+                    'class="flex items-center justify-between p-4 bg-gray-50 rounded-2xl border border-gray-100 hover:border-blue-200 hover:bg-white transition-all group">' +
+                '<span class="text-sm font-semibold text-gray-700">' + itemVal + '</span>' +
+                '<i class="fas fa-chevron-right text-[10px] text-gray-300 group-hover:text-blue-500 transition-colors"></i>' +
+            '</button>'
+        );
+    }
+    container.innerHTML = resultHtml.join('');
 };
 
 window.renderCommonNav = function() {
-    const desktopCoursesMenu = document.getElementById('desktop-courses-menu');
-    const desktopContentMenu = document.getElementById('desktop-content-menu');
-    const mobileCoursesMenu = document.getElementById('mobile-courses-menu');
-    const mobileContentMenu = document.getElementById('mobile-content-menu');
+    var desktopCoursesMenu = document.getElementById('desktop-courses-menu');
+    var desktopContentMenu = document.getElementById('desktop-content-menu');
+    var mobileCoursesMenu = document.getElementById('mobile-courses-menu');
+    var mobileContentMenu = document.getElementById('mobile-content-menu');
 
-    const currentUser = JSON.parse(localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser'));
-    const isProfesor = currentUser && currentUser.rol === 'Profesor';
+    var currentUserRaw = localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser');
+    var currentUser = currentUserRaw ? JSON.parse(currentUserRaw) : null;
+    var isProfesor = currentUser && currentUser.rol === 'Profesor';
 
     function buildHierarchy(data) {
         if (!data) return '';
 
-        return data.map(grade => {
-            if (!isProfesor && currentUser && currentUser.grado && window.parseGrade(grade.grade) !== window.parseGrade(currentUser.grado)) return '';
+        var html = '';
+        for (var i = 0; i < data.length; i++) {
+            var grade = data[i];
+            if (!isProfesor && currentUser && currentUser.grado && window.parseGrade(grade.grade) !== window.parseGrade(currentUser.grado)) continue;
 
-            const filteredSubjects = grade.subjects.filter(subj => {
-                if (!isProfesor && currentUser && currentUser.seccion) return window.checkSectionHelper(subj.sections, currentUser.seccion);
-                return true;
-            });
+            var filteredSubjects = [];
+            for (var j = 0; j < grade.subjects.length; j++) {
+                var subj = grade.subjects[j];
+                if (!isProfesor && currentUser && currentUser.seccion) {
+                    if (window.checkSectionHelper(subj.sections, currentUser.seccion)) {
+                        filteredSubjects.push(subj);
+                    }
+                } else {
+                    filteredSubjects.push(subj);
+                }
+            }
 
-            if (filteredSubjects.length === 0 && !isProfesor) return '';
+            if (filteredSubjects.length === 0 && !isProfesor) continue;
 
             if (isProfesor) {
-                let html = `<div class="relative group/grade">
-                    <button class="block w-full text-left px-4 py-2 text-[11px] font-black text-gray-700 hover:bg-blue-50 hover:text-blue-600 uppercase tracking-widest transition-colors focus:outline-none">
-                        ${grade.grade} <span class="float-right text-[10px] mt-0.5 ml-2">&#9656;</span>
-                    </button>
-                    <div class="absolute left-full top-0 dropdown-container-ima bg-white rounded-xl shadow-2xl py-2 opacity-0 invisible group-hover/grade:opacity-100 group-hover/grade:visible border border-gray-100">`;
+                html += '<div class="relative group/grade">' +
+                    '<button class="block w-full text-left px-4 py-2 text-[11px] font-black text-gray-700 hover:bg-blue-50 hover:text-blue-600 uppercase tracking-widest transition-colors focus:outline-none">' +
+                        grade.grade + ' <span class="float-right text-[10px] mt-0.5 ml-2">&#9656;</span>' +
+                    '</button>' +
+                    '<div class="absolute left-full top-0 dropdown-container-ima bg-white rounded-xl shadow-2xl py-2 opacity-0 invisible group-hover/grade:opacity-100 group-hover/grade:visible border border-gray-100">';
 
-                const partialGroups = {};
-                filteredSubjects.forEach(subj => {
-                    if (!partialGroups[subj.partial]) partialGroups[subj.partial] = [];
-                    partialGroups[subj.partial].push(subj);
-                });
+                var partialGroups = {};
+                for (var k = 0; k < filteredSubjects.length; k++) {
+                    var fs = filteredSubjects[k];
+                    if (!partialGroups[fs.partial]) partialGroups[fs.partial] = [];
+                    partialGroups[fs.partial].push(fs);
+                }
 
-                Object.keys(partialGroups).forEach(partial => {
-                    html += `<div class="relative group/partial">
-                        <button class="block w-full text-left px-4 py-2 text-[10px] font-bold text-gray-600 hover:bg-blue-50 hover:text-blue-600 uppercase tracking-tight">
-                            ${partial} <span class="float-right text-[10px] mt-0.5 ml-2">&#9656;</span>
-                        </button>
-                        <div class="absolute left-full top-0 dropdown-container-ima bg-white rounded-xl shadow-2xl py-2 opacity-0 invisible group-hover/partial:opacity-100 group-hover/partial:visible border border-gray-100">`;
+                var partials = Object.keys(partialGroups);
+                for (var l = 0; l < partials.length; l++) {
+                    var p = partials[l];
+                    html += '<div class="relative group/partial">' +
+                        '<button class="block w-full text-left px-4 py-2 text-[10px] font-bold text-gray-600 hover:bg-blue-50 hover:text-blue-600 uppercase tracking-tight">' +
+                            p + ' <span class="float-right text-[10px] mt-0.5 ml-2">&#9656;</span>' +
+                        '</button>' +
+                        '<div class="absolute left-full top-0 dropdown-container-ima bg-white rounded-xl shadow-2xl py-2 opacity-0 invisible group-hover/partial:opacity-100 group-hover/partial:visible border border-gray-100">';
 
-                    partialGroups[partial].forEach(subj => {
-                        html += `<div class="relative group/subj">
-                            <button class="block w-full text-left px-4 py-2 text-[10px] font-bold text-gray-500 hover:bg-blue-50 hover:text-blue-600 uppercase">
-                                ${subj.name} <span class="float-right text-[10px] mt-0.5 ml-2">&#9656;</span>
-                            </button>
-                            <div class="absolute left-full top-0 dropdown-container-ima bg-white rounded-xl shadow-2xl py-2 opacity-0 invisible group-hover/subj:opacity-100 group-hover/subj:visible border border-gray-100">`;
-                        subj.topics.forEach(topic => {
-                            html += `<a href="${topic.file}" class="block px-4 py-2 text-[11px] font-medium text-gray-600 hover:bg-blue-50 hover:text-blue-600 border-b border-gray-50 last:border-0">${topic.title}</a>`;
-                        });
-                        html += `</div></div>`;
-                    });
-                    html += `</div></div>`;
-                });
-                html += `</div></div>`;
-                return html;
+                    var groupSubjs = partialGroups[p];
+                    for (var m = 0; m < groupSubjs.length; m++) {
+                        var gs = groupSubjs[m];
+                        html += '<div class="relative group/subj">' +
+                            '<button class="block w-full text-left px-4 py-2 text-[10px] font-bold text-gray-500 hover:bg-blue-50 hover:text-blue-600 uppercase">' +
+                                gs.name + ' <span class="float-right text-[10px] mt-0.5 ml-2">&#9656;</span>' +
+                            '</button>' +
+                            '<div class="absolute left-full top-0 dropdown-container-ima bg-white rounded-xl shadow-2xl py-2 opacity-0 invisible group-hover/subj:opacity-100 group-hover/subj:visible border border-gray-100">';
+                        for (var n = 0; n < gs.topics.length; n++) {
+                            var t = gs.topics[n];
+                            html += '<a href="' + t.file + '" class="block px-4 py-2 text-[11px] font-medium text-gray-600 hover:bg-blue-50 hover:text-blue-600 border-b border-gray-50 last:border-0">' + t.title + '</a>';
+                        }
+                        html += '</div></div>';
+                    }
+                    html += '</div></div>';
+                }
+                html += '</div></div>';
             } else {
-                // REQ 7: Los estudiantes solo ven el contenido autorizado (Garantía de Scope)
-                return filteredSubjects.filter(s => window.isContentAuthorized(s.partial, s.name)).map(subj => `
-                    <div class="relative group/subj">
-                        <button class="block w-full text-left px-4 py-2 text-[10px] font-bold text-gray-600 hover:bg-blue-50 hover:text-blue-600 uppercase">
-                            ${subj.name} <span class="float-right text-[10px] mt-0.5 ml-2">&#9656;</span>
-                        </button>
-                        <div class="absolute left-full top-0 dropdown-container-ima bg-white rounded-xl shadow-2xl py-2 opacity-0 invisible group-hover/subj:opacity-100 group-hover/subj:visible border border-gray-100">
-                            ${subj.topics.map(topic => `<a href="${topic.file}" class="block px-4 py-2 text-[11px] font-medium text-gray-600 hover:bg-blue-50 hover:text-blue-600 border-b border-gray-50 last:border-0">${topic.title}</a>`).join('')}
-                        </div>
-                    </div>
-                `).join('');
+                for (var x = 0; x < filteredSubjects.length; x++) {
+                    var s = filteredSubjects[x];
+                    if (window.isContentAuthorized(s.partial, s.name)) {
+                        html += '<div class="relative group/subj">' +
+                            '<button class="block w-full text-left px-4 py-2 text-[10px] font-bold text-gray-600 hover:bg-blue-50 hover:text-blue-600 uppercase">' +
+                                s.name + ' <span class="float-right text-[10px] mt-0.5 ml-2">&#9656;</span>' +
+                            '</button>' +
+                            '<div class="absolute left-full top-0 dropdown-container-ima bg-white rounded-xl shadow-2xl py-2 opacity-0 invisible group-hover/subj:opacity-100 group-hover/subj:visible border border-gray-100">';
+                        for (var y = 0; y < s.topics.length; y++) {
+                            var topic = s.topics[y];
+                            html += '<a href="' + topic.file + '" class="block px-4 py-2 text-[11px] font-medium text-gray-600 hover:bg-blue-50 hover:text-blue-600 border-b border-gray-50 last:border-0">' + topic.title + '</a>';
+                        }
+                        html += '</div></div>';
+                    }
+                }
             }
-        }).join('');
+        }
+        return html;
     }
 
     function buildMobileHierarchy(data) {
         if (!data) return '';
-        return data.map(grade => {
-            if (!isProfesor && currentUser && currentUser.grado && window.parseGrade(grade.grade) !== window.parseGrade(currentUser.grado)) return '';
-            const filteredSubjects = grade.subjects.filter(subj => {
-                if (!isProfesor && currentUser && currentUser.seccion) return window.checkSectionHelper(subj.sections, currentUser.seccion);
-                return true;
-            });
-            if (filteredSubjects.length === 0 && !isProfesor) return '';
+        var html = '';
+        for (var i = 0; i < data.length; i++) {
+            var grade = data[i];
+            if (!isProfesor && currentUser && currentUser.grado && window.parseGrade(grade.grade) !== window.parseGrade(currentUser.grado)) continue;
+
+            var filteredSubjects = [];
+            for (var j = 0; j < grade.subjects.length; j++) {
+                var subj = grade.subjects[j];
+                if (!isProfesor && currentUser && currentUser.seccion) {
+                    if (window.checkSectionHelper(subj.sections, currentUser.seccion)) {
+                        filteredSubjects.push(subj);
+                    }
+                } else {
+                    filteredSubjects.push(subj);
+                }
+            }
+            if (filteredSubjects.length === 0 && !isProfesor) continue;
 
             if (isProfesor) {
-                let html = `<button class="w-full text-left px-6 py-4 font-black text-gray-900 uppercase tracking-widest border-b border-gray-100 flex justify-between items-center text-xs" onclick="this.nextElementSibling.classList.toggle('hidden')">
-                    ${grade.grade} <span>&#9662;</span>
-                </button>
-                <div class="hidden bg-gray-50/50">`;
-                filteredSubjects.forEach(subj => {
-                    html += `<button class="w-full text-left px-8 py-3 font-bold text-blue-600 uppercase tracking-tighter border-b border-gray-100 flex justify-between items-center text-[10px]" onclick="this.nextElementSibling.classList.toggle('hidden')">
-                        [${subj.partial}] ${subj.name} <span>&#9662;</span>
-                    </button>
-                    <div class="hidden bg-white/50">`;
-                    subj.topics.forEach(topic => {
-                        html += `<a href="${topic.file}" class="block px-10 py-3 text-[11px] font-medium text-gray-600 border-b border-gray-50 last:border-0" onclick="closeMobileMenu()">${topic.title}</a>`;
-                    });
-                    html += `</div>`;
-                });
-                html += `</div>`;
-                return html;
+                html += '<button class="w-full text-left px-6 py-4 font-black text-gray-900 uppercase tracking-widest border-b border-gray-100 flex justify-between items-center text-xs" onclick="this.nextElementSibling.classList.toggle(\'hidden\')">' +
+                    grade.grade + ' <span>&#9662;</span>' +
+                '</button>' +
+                '<div class="hidden bg-gray-50/50">';
+                for (var k = 0; k < filteredSubjects.length; k++) {
+                    var s = filteredSubjects[k];
+                    html += '<button class="w-full text-left px-8 py-3 font-bold text-blue-600 uppercase tracking-tighter border-b border-gray-100 flex justify-between items-center text-[10px]" onclick="this.nextElementSibling.classList.toggle(\'hidden\')">' +
+                        '[' + s.partial + '] ' + s.name + ' <span>&#9662;</span>' +
+                    '</button>' +
+                    '<div class="hidden bg-white/50">';
+                    for (var l = 0; l < s.topics.length; l++) {
+                        var t = s.topics[l];
+                        html += '<a href="' + t.file + '" class="block px-10 py-3 text-[11px] font-medium text-gray-600 border-b border-gray-50 last:border-0" onclick="closeMobileMenu()">' + t.title + '</a>';
+                    }
+                    html += '</div>';
+                }
+                html += '</div>';
             } else {
-                // REQ 7: Los estudiantes solo ven el contenido autorizado (Garantía de Scope)
-                return filteredSubjects.filter(s => window.isContentAuthorized(s.partial, s.name)).map(subj => `
-                    <button class="w-full text-left px-8 py-3 font-bold text-blue-600 uppercase tracking-tighter border-b border-gray-100 flex justify-between items-center text-[10px]" onclick="this.nextElementSibling.classList.toggle('hidden')">
-                        ${subj.name} <span>&#9662;</span>
-                    </button>
-                    <div class="hidden bg-white/50">
-                        ${subj.topics.map(topic => `<a href="${topic.file}" class="block px-10 py-3 text-[11px] font-medium text-gray-600 border-b border-gray-50 last:border-0" onclick="closeMobileMenu()">${topic.title}</a>`).join('')}
-                    </div>
-                `).join('');
+                for (var m = 0; m < filteredSubjects.length; m++) {
+                    var sub = filteredSubjects[m];
+                    if (window.isContentAuthorized(sub.partial, sub.name)) {
+                        html += '<button class="w-full text-left px-8 py-3 font-bold text-blue-600 uppercase tracking-tighter border-b border-gray-100 flex justify-between items-center text-[10px]" onclick="this.nextElementSibling.classList.toggle(\'hidden\')">' +
+                            sub.name + ' <span>&#9662;</span>' +
+                        '</button>' +
+                        '<div class="hidden bg-white/50">';
+                        for (var n = 0; n < sub.topics.length; n++) {
+                            var topic = sub.topics[n];
+                            html += '<a href="' + topic.file + '" class="block px-10 py-3 text-[11px] font-medium text-gray-600 border-b border-gray-50 last:border-0" onclick="closeMobileMenu()">' + topic.title + '</a>';
+                        }
+                        html += '</div>';
+                    }
+                }
             }
-        }).join('');
+        }
+        return html;
     }
 
     if (desktopCoursesMenu) desktopCoursesMenu.innerHTML = buildHierarchy(window.presentationData);
@@ -782,14 +891,51 @@ window.renderCommonNav = function() {
     if (mobileCoursesMenu) mobileCoursesMenu.innerHTML = buildMobileHierarchy(window.presentationData);
     if (mobileContentMenu) mobileContentMenu.innerHTML = buildMobileHierarchy(window.downloadContentData);
 
-    const mobilePortalBottom = document.getElementById('mobile-portal-bottom-nav');
+    var mobilePortalBottom = document.getElementById('mobile-portal-bottom-nav');
     if (mobilePortalBottom && currentUser) {
         mobilePortalBottom.href = currentUser.rol === 'Profesor' ? 'teacher-dashboard.html' : 'student-dashboard.html';
     }
 };
 
 // Official Namespace Blindaje (v7.6)
-// Expose core actions to QuizProApp namespace for HTML onclick compatibility
 window.QuizProApp = window.QuizProApp || {};
 window.QuizProApp.handleHeaderAction = window.handleHeaderAction;
 window.QuizProApp.openAcademicHierarchy = window.openAcademicHierarchy;
+
+/**
+ * Inyecta botones de copiado en los bloques de código (v7.6.4)
+ */
+window.setupCodeCopyButtons = function() {
+    var codeBlocks = document.querySelectorAll('pre.ql-syntax, .quill-content pre');
+
+    for (var i = 0; i < codeBlocks.length; i++) {
+        var block = codeBlocks[i];
+        // Evitar duplicados
+        if (block.parentElement.classList.contains('code-block-wrapper')) continue;
+
+        var wrapper = document.createElement('div');
+        wrapper.className = 'code-block-wrapper';
+        block.parentNode.insertBefore(wrapper, block);
+        wrapper.appendChild(block);
+
+        var copyBtn = document.createElement('button');
+        copyBtn.className = 'copy-code-btn';
+        copyBtn.innerHTML = '<i class="far fa-copy mr-1"></i> Copiar';
+
+        copyBtn.addEventListener('click', (function(b, btn) {
+            return function() {
+                var code = b.innerText;
+                navigator.clipboard.writeText(code).then(function() {
+                    btn.innerHTML = '<i class="fas fa-check mr-1"></i> ¡Copiado!';
+                    btn.classList.add('copied');
+                    setTimeout(function() {
+                        btn.innerHTML = '<i class="far fa-copy mr-1"></i> Copiar';
+                        btn.classList.remove('copied');
+                    }, 2000);
+                });
+            };
+        })(block, copyBtn));
+
+        wrapper.appendChild(copyBtn);
+    }
+};

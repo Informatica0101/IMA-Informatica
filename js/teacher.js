@@ -2345,3 +2345,14 @@ function toBase64(file) {
     window.navigateTo(sectionAcademicReports, navDashboard, false);
     fetchTeacherActivity();
 });
+/**
+ * REQ: Soporte para copia de código en el panel del profesor (v7.6.4)
+ */
+document.addEventListener('DOMContentLoaded', () => {
+    const observer = new MutationObserver(() => {
+        if (window.setupCodeCopyButtons) window.setupCodeCopyButtons();
+    });
+
+    const panels = document.querySelectorAll('.dashboard-card, #submissions-table-body');
+    panels.forEach(p => observer.observe(p, { childList: true, subtree: true }));
+});

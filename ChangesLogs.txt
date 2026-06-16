@@ -72,3 +72,10 @@ Módulo: Documentación Técnica
 - js/ui-common.js: Refactorizado manejo de popstate y estados de modal para SPA.
 - js/teacher.js & js/student.js: Aplicada estrategia Cache-First en módulos críticos.
 - css/style.css: Agregado soporte visual para code-blocks.
+
+
+[2026-06-15 - Sanitización y UX]
+- js/config.js: Refactorizada sanitizarHTMLTecnico para evitar doble escapado y soportar mas etiquetas (table, div).
+- js/ui-common.js: Agregada función global setupCodeCopyButtons para inyección de botones de copiado.
+- css/style.css: Agregados estilos institucionales para .copy-code-btn y .code-block-wrapper.
+- js/student.js & js/teacher.js: Implementados MutationObservers para inyección automática de botones en contenido dinámico.

@@ -564,3 +564,42 @@ footer a:hover {
     font-family: monospace;
     font-size: 0.9em;
 }
+
+/* Code Block Copy Button (v7.6.4) */
+.code-block-wrapper {
+    position: relative;
+    margin: 1rem 0;
+}
+
+.copy-code-btn {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    padding: 0.4rem 0.8rem;
+    background-color: rgba(255, 255, 255, 0.9);
+    color: #4b5563;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.5rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    z-index: 10;
+    opacity: 0;
+}
+
+.code-block-wrapper:hover .copy-code-btn {
+    opacity: 1;
+}
+
+.copy-code-btn:hover {
+    background-color: #2563eb;
+    color: white;
+    border-color: #2563eb;
+}
+
+.copy-code-btn.copied {
+    background-color: #10b981;
+    color: white;
+    border-color: #10b981;
+}
