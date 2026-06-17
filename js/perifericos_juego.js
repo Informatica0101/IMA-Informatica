@@ -58,45 +58,52 @@ let localGameStorage; // Variable to hold the gameDataStorage object passed from
 
 // Function to initialize DOM elements and attach event listeners
 // This function now accepts the gameDataStorage object
-async function initializePeripheralsGame(gameDataStorage) {
-    const user = JSON.parse(localStorage.getItem('currentUser'));
-    const isGuest = !user;
-
+window.initializePeripheralsGame = function(gameDataStorage) {
+    // REQ: Uso de sesión centralizada (Hallazgo 1)
     if (window.GamesAdapter) {
-        const { lb, record } = await GamesAdapter.init('perifericos');
+        window.GamesAdapter.init('perifericos', false).then(function() {
+            var user = window.GamesAdapter.state.currentUser;
 
-        // Mini Leaderboard (REQ 7: Top 5 con XP)
-        const miniLb = document.getElementById('mini-leaderboard');
-        if (miniLb && lb && lb.global) {
-            miniLb.innerHTML = lb.global.slice(0, 5).map((u, i) => `
-                <div class="flex items-center justify-between text-[10px] font-bold py-1 border-b border-indigo-50 last:border-0">
-                    <span class="text-indigo-700">${i+1}. ${u.nombre.split(' ')[0]}</span>
-                    <div class="flex flex-col items-end">
-                        <span class="text-indigo-500">${u.promedio}%</span>
-                        <span class="text-[8px] text-gray-400 font-black">${(u.xp || 0).toLocaleString()} XP</span>
-                    </div>
-                </div>
-            `).join('');
-        }
+            if (!user) {
+                var gmWarning = document.getElementById('guest-mode-warning');
+                if (gmWarning) gmWarning.classList.remove('hidden');
+                var guestBtn = document.getElementById('continue-guest-btn');
+                if (guestBtn) {
+                    guestBtn.classList.remove('hidden');
+                    guestBtn.onclick = function() {
+                        var gmw = document.getElementById('guest-mode-warning');
+                        if (gmw) gmw.classList.add('hidden');
+                        guestBtn.classList.add('hidden');
+                    };
+                }
+            }
 
-        // Récord
-        const myRecord = record?.["Juego de Periféricos"] || JSON.parse(localStorage.getItem('guest_record_perifericos') || 'null');
-        if (myRecord) {
-            const scoreSpan = document.getElementById('init-max-score');
-            if (scoreSpan) scoreSpan.textContent = myRecord.maxScore || myRecord.score || 0;
-        }
-    }
+            // REQ: Estrategia Caché Primero (v7.6)
+            window.GamesAdapter.getLeaderboard('perifericos', function(lb) {
+                // Mini Leaderboard (REQ 7: Top 5 con XP)
+                var miniLb = document.getElementById('mini-leaderboard');
+                if (miniLb && lb && lb.global) {
+                    miniLb.innerHTML = lb.global.slice(0, 5).map(function(u, i) {
+                        return '<div class="flex items-center justify-between text-[10px] font-bold py-1 border-b border-indigo-50 last:border-0">' +
+                                '<span class="text-indigo-700">' + (i + 1) + '. ' + (u.nombre ? u.nombre.split(' ')[0] : 'Alumno') + '</span>' +
+                                '<div class="flex flex-col items-end">' +
+                                    '<span class="text-indigo-500">' + u.promedio + '%</span>' +
+                                    '<span class="text-[8px] text-gray-400 font-black">' + (u.xp || 0).toLocaleString() + ' XP</span>' +
+                                '</div>' +
+                            '</div>';
+                    }).join('');
+                }
+            });
 
-    if (isGuest) {
-        document.getElementById('guest-mode-warning')?.classList.remove('hidden');
-        const guestBtn = document.getElementById('continue-guest-btn');
-        if (guestBtn) {
-            guestBtn.classList.remove('hidden');
-            guestBtn.onclick = () => {
-                document.getElementById('guest-mode-warning')?.classList.add('hidden');
-                guestBtn.classList.add('hidden');
-            };
-        }
+            window.GamesAdapter.getPersonalRecord(function(record) {
+                // Récord (Hallazgo 3)
+                var myRecord = record["perifericos"] || record["Juego de Periféricos"];
+                if (myRecord) {
+                    var scoreSpan = document.getElementById('init-max-score');
+                    if (scoreSpan) scoreSpan.textContent = myRecord.maxScore || myRecord.score || myRecord.puntaje || 0;
+                }
+            });
+        });
     }
 
     localGameStorage = gameDataStorage; // Store the passed object

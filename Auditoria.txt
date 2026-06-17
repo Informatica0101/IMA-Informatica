@@ -143,3 +143,55 @@ Archivo: js/student.js
 Estado: Verificado. Se eliminó la restricción de dataOnly en fetchAndRenderLearningProfile. Se ajustó el umbral de intentos y se añadió el estado 'Calibrando' para mejorar la experiencia de usuario en cuentas nuevas o con poca actividad.
 
 Conclusión: Las correcciones abordan directamente los hallazgos 1 y 2 de la revisión.
+
+AUDITORÍA DE INTEGRACIÓN DE MINIJUEGOS Y GAMESADAPTER - Wed Jun 17 15:00:00 UTC 2026
+
+Archivo: js/games-adapter.js
+Sector: Función init (Línea 86)
+Hallazgo [Alto]: No reinicia 'this.pendingAnalytics'. Esto puede causar que promesas de sesiones anteriores interfieran con la sesión actual o causen fugas de memoria.
+Hallazgo [Crítico]: El uso de Promise.race con un timeout de 5s para rankings y récords bloquea el inicio del juego si la red es lenta, a pesar de tener caché disponible.
+Hallazgo [Medio]: La lógica de sesión depende de lecturas directas a localStorage/sessionStorage en cada llamada, en lugar de persistir el usuario en el estado del adaptador durante la sesión.
+
+Archivo: js/destreza_teclado.js / js/perifericos_juego.js
+Sector: Inicialización
+Hallazgo [Medio]: Duplicación de lógica de detección de sesión (Guest vs Auth).
+Hallazgo [Bajo]: Funciones de renderizado de rankings duplicadas en cada script de juego.
+
+Archivo: js/persistence.js
+Sector: Función getActiveId
+Hallazgo [Observación]: Correcto. Verifica tanto localStorage como sessionStorage.
+
+Sector: Caché de Rankings
+Hallazgo [Medio]: GamesAdapter guarda rankings en el store 'rankings', pero fetchApi (modificado recientemente) intentará reconciliarlos usando el userId como clave por defecto si no se especifica una. Los rankings son globales, no por usuario.
+Impacto: Inconsistencia en la recuperación de caché de rankings.
+
+AUDITORÍA DE CIERRE DE INTEGRACIÓN - Wed Jun 17 15:30:00 UTC 2026
+
+Archivo: js/games-adapter.js
+- Identificación de usuario persistente durante la sesión: OK.
+- Reset de analítica pendiente: OK.
+- Carga de rankings y records usando claves globales deterministas: OK.
+- Inicialización asíncrona sin bloqueos de red: OK.
+
+Archivo: js/destreza_teclado.js / js/perifericos_juego.js
+- Eliminación de redundancias en detección de sesión: OK.
+- Renderizado reactivo a callbacks de GamesAdapter: OK.
+- Cumplimiento estricto de ES5: OK.
+
+Validación de Caché:
+- La modificación en getLeaderboard y getPersonalRecord usando claves fijas ('global_rankings', 'user_game_stats') resuelve el problema de inconsistencia en la reconciliación por userId.
+
+AUDITORÍA FINAL DE CALIDAD - Wed Jun 17 15:55:00 UTC 2026
+
+Archivo: js/games-adapter.js
+- Conversión total a ES5: OK. (async/await removidos, promesas encadenadas con .then()).
+- Uso de variables locales 'var' en lugar de 'let/const': OK.
+- Inicialización asíncrona robusta: OK.
+
+Archivo: js/perifericos_juego.js
+- Eliminación de template literals: OK.
+- Estandarización de callbacks: OK.
+
+Validación General:
+- Todos los archivos pasan 'node -c'.
+- Se resuelven los problemas de sesión, timeouts y caché reportados.

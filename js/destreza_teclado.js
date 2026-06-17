@@ -277,28 +277,28 @@ function renderPersonalRecord(record) {
 }
 
 // Inicializa el juego al cargar la página o al volver a jugar
-window.initDexterityGame = async function() {
-    const user = JSON.parse(localStorage.getItem('currentUser'));
-    const isGuest = !user;
-
+window.initDexterityGame = function() {
+    // REQ: Uso de sesión centralizada (Hallazgo 1)
     if (window.GamesAdapter) {
-        // REQ: Estrategia Caché Primero (v7.6)
-        // No esperamos el init, usamos callbacks para actualizaciones silenciosas
-        GamesAdapter.init('dexterity', false).then(() => {
-            GamesAdapter.getLeaderboard('dexterity', (lb) => {
+        window.GamesAdapter.init('dexterity', false).then(function() {
+            var user = window.GamesAdapter.state.currentUser;
+            if (!user) {
+                var gmWarning = document.getElementById('guest-mode-warning');
+                if (gmWarning) gmWarning.classList.remove('hidden');
+                var cgBtn = document.getElementById('continue-guest-btn');
+                if (cgBtn) cgBtn.classList.remove('hidden');
+            }
+
+            // REQ: Estrategia Caché Primero (v7.6)
+            window.GamesAdapter.getLeaderboard('dexterity', function(lb) {
                 window.currentLeaderboard = lb;
                 renderLeaderboard(lb);
             });
 
-            GamesAdapter.getPersonalRecord((record) => {
+            window.GamesAdapter.getPersonalRecord(function(record) {
                 renderPersonalRecord(record);
             });
         });
-    }
-
-    if (isGuest) {
-        document.getElementById('guest-mode-warning')?.classList.remove('hidden');
-        document.getElementById('continue-guest-btn')?.classList.remove('hidden');
     }
 
     console.log('initDexterityGame called'); // Log de depuración

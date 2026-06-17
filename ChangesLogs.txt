@@ -173,3 +173,21 @@ Archivo: js/student.js
 - Línea 1311: Asegurado que el callback onUpdate siempre ejecute renderLearningProfileData para actualizaciones silenciosas.
 - Línea 1332: Reducido el umbral de 'intentos' de 5 a 1 en renderLearningProfileData para evitar componentes vacíos en perfiles nuevos.
 - Líneas 1353: Introducido estado 'Calibrando' en la tabla de métricas para intentos menores a 5, mejorando la retroalimentación visual del usuario.
+Wed Jun 17 15:40:00 UTC 2026 - Unificación de Sesión y Estrategia de Caché de Minijuegos
+
+Archivo: js/games-adapter.js
+- Se implementó 'this.state.currentUser' para capturar la sesión una sola vez en 'init', garantizando consistencia en toda la partida.
+- Se añadió el reseteo de 'this.pendingAnalytics' al inicio de cada sesión para prevenir fugas de datos entre intentos.
+- Refactorizada la función 'init' para ser completamente asíncrona y no bloqueante; los rankings y récords se cargan desde caché inmediatamente y se sincronizan en segundo plano.
+- Se estandarizaron las claves de caché: 'global_rankings' para rankings generales y 'user_game_stats' (vía userId) para estadísticas personales, evitando colisiones en la reconciliación de fetchApi.
+- Conversión total a ES5 para garantizar compatibilidad.
+
+Archivo: js/destreza_teclado.js
+- Eliminada lógica redundante de detección de sesión; ahora utiliza 'GamesAdapter.state.currentUser'.
+- Refactorizado el inicio para reaccionar a la inicialización del adaptador.
+- Limpieza de sintaxis async/await para cumplimiento de ES5.
+
+Archivo: js/perifericos_juego.js
+- Alineado con la nueva arquitectura de sesión de GamesAdapter.
+- Estandarizado el renderizado de rankings y récords mediante callbacks.
+- Removidas funciones async obsoletas.

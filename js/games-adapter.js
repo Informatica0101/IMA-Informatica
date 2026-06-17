@@ -1,5 +1,6 @@
 /**
  * Adaptador Unificado para Minijuegos (Fase 1)
+ * ES5 Compliance Mandatory.
  */
 window.GamesAdapter = {
     // REQ: Mensajes dinámicos de carga
@@ -13,6 +14,7 @@ window.GamesAdapter = {
 
     state: {
         currentSession: null,
+        currentUser: null,
         personalRecords: {},
         currentStreak: 0
     },
@@ -48,7 +50,7 @@ window.GamesAdapter = {
     /**
      * Calcula XP basada en desempeño psicométrico (v7.6)
      */
-    calculateXP(isCorrect, level, responseTime, gameId) {
+    calculateXP: function(isCorrect, level, responseTime, gameId) {
         if (!isCorrect) {
             this.state.currentStreak = 0;
             return 0;
@@ -57,131 +59,146 @@ window.GamesAdapter = {
         this.state.currentStreak++;
 
         // 1. Factor Dificultad
-        const fDificultad = this.XP_CONFIG.FACTORS[(level || "").toLowerCase()] || 1.0;
+        var fDificultad = this.XP_CONFIG.FACTORS[(level || "").toLowerCase()] || 1.0;
 
         // 2. Factor Tiempo (Adivinación / Reflexión)
-        let fTiempo = 1.0;
-        if (responseTime < this.XP_CONFIG.TIME.MIN) fTiempo = 0.5;
-        else if (responseTime <= this.XP_CONFIG.TIME.OPTIMAL) fTiempo = 1.1;
-        else {
-            const overshoot = responseTime - this.XP_CONFIG.TIME.OPTIMAL;
-            const window = this.XP_CONFIG.TIME.MAX - this.XP_CONFIG.TIME.OPTIMAL;
-            fTiempo = Math.max(0.7, 1.1 - (overshoot / window) * 0.4);
+        var fTiempo = 1.0;
+        if (responseTime < this.XP_CONFIG.TIME.MIN) {
+            fTiempo = 0.5;
+        } else if (responseTime <= this.XP_CONFIG.TIME.OPTIMAL) {
+            fTiempo = 1.1;
+        } else {
+            var overshoot = responseTime - this.XP_CONFIG.TIME.OPTIMAL;
+            var windowTime = this.XP_CONFIG.TIME.MAX - this.XP_CONFIG.TIME.OPTIMAL;
+            fTiempo = Math.max(0.7, 1.1 - (overshoot / windowTime) * 0.4);
         }
 
         // 3. Bono Racha
-        const bonoRacha = Math.min(this.XP_CONFIG.STREAK.MAX, 1.0 + (this.state.currentStreak * this.XP_CONFIG.STREAK.BONUS_PER_HIT));
+        var bonoRacha = Math.min(this.XP_CONFIG.STREAK.MAX, 1.0 + (this.state.currentStreak * this.XP_CONFIG.STREAK.BONUS_PER_HIT));
 
         // 4. Degradación por Repetición Agresiva (Evitar Grinding v7.6)
-        const attemptsKey = `attempts_${gameId}_${level}`;
-        const prevAttempts = parseInt(localStorage.getItem(attemptsKey) || '0');
-        let attemptMultiplier = 1.0;
+        var attemptsKey = 'attempts_' + gameId + '_' + level;
+        var prevAttempts = parseInt(localStorage.getItem(attemptsKey) || '0');
+        var attemptMultiplier = 1.0;
 
         if (prevAttempts === 1) attemptMultiplier = 0.4;
         else if (prevAttempts === 2) attemptMultiplier = 0.2;
         else if (prevAttempts >= 3) attemptMultiplier = 0.1;
 
-        const totalXP = Math.round(this.XP_CONFIG.BASE * fDificultad * fTiempo * bonoRacha * attemptMultiplier);
+        var totalXP = Math.round(this.XP_CONFIG.BASE * fDificultad * fTiempo * bonoRacha * attemptMultiplier);
 
-        console.log(`[XP-ADAPTER] +${totalXP} XP (Racha: ${this.state.currentStreak})`);
+        console.log('[XP-ADAPTER] +' + totalXP + ' XP (Racha: ' + this.state.currentStreak + ')');
         return totalXP;
     },
 
-    async init(gameId, autoHide = true) {
-        console.log(`[GamesAdapter] Iniciando sesión para: ${gameId}`);
+    init: function(gameId, autoHide) {
+        if (autoHide === undefined) autoHide = true;
+        var self = this;
+        console.log("[GamesAdapter] Iniciando sesión para: " + gameId);
+
+        // REQ: Captura de sesión única al inicio (Hallazgo 1)
+        var userRaw = localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser');
+        this.state.currentUser = userRaw ? JSON.parse(userRaw) : null;
+
         this.state.currentSession = {
-            gameId,
+            gameId: gameId,
             startTime: Date.now(),
             actions: []
         };
-        this.state.currentStreak = 0; // REQ: Reset de racha al iniciar sesión
+        this.state.currentStreak = 0;
+        this.pendingAnalytics = []; // REQ: Reset de promesas pendientes (Hallazgo 1.1)
 
         // REQ 2: Optimización de Hidratación. No disparar loader si ya hay datos en caché (0ms logic)
-        let hasCache = false;
-        if (window.PersistenceManager) {
-            const cachedStats = await window.PersistenceManager.get('academic_stats');
-            if (cachedStats && cachedStats.data) hasCache = true;
-        }
-
-        if (!hasCache) await this.showLoading(true);
-
-        // REQ: Pre-carga segura con timeout (Fase 2)
-        try {
-            const timeout = (ms) => new Promise(resolve => setTimeout(() => resolve('TIMEOUT'), ms));
-
-            const results = await Promise.race([
-                Promise.all([
-                    this.getLeaderboard(gameId).catch(e => null),
-                    this.getPersonalRecord().catch(e => ({}))
-                ]),
-                timeout(5000)
-            ]);
-
-            if (results === 'TIMEOUT') {
-                console.warn("[GamesAdapter] Timeout en pre-carga de datos, continuando con valores por defecto.");
-                this.state.personalRecords = {};
-                if (autoHide) await this.showLoading(false);
-                return { lb: { global: [], subjectTops: {} }, record: {} };
+        var hasCache = false;
+        var checkCache = function() {
+            if (window.PersistenceManager) {
+                return window.PersistenceManager.get('academic_stats').then(function(cachedStats) {
+                    if (cachedStats && cachedStats.data) hasCache = true;
+                    return hasCache;
+                });
             }
+            return Promise.resolve(false);
+        };
 
-            const [lb, record] = results;
-            this.state.personalRecords = record || {};
+        return checkCache().then(function(cacheFound) {
+            if (!cacheFound) {
+                return self.showLoading(true).then(function() { return self.startSync(gameId, autoHide); });
+            }
+            return self.startSync(gameId, autoHide);
+        });
+    },
 
-            // REQ: Asegurar que el ranking tenga estructura base (v3.2)
-            const safeLb = lb || { global: [], subjectTops: {} };
+    startSync: function(gameId, autoHide) {
+        var self = this;
+        // REQ: Pre-carga No Bloqueante (Hallazgo 2)
+        // Disparar sincronización en segundo plano sin esperar a la red si hay caché
+        try {
+            this.getLeaderboard(gameId);
+            this.getPersonalRecord();
 
-            return { lb: safeLb, record: record || {} };
+            var result = {
+                lb: this.state.leaderboard || { global: [], subjectTops: {} },
+                record: this.state.personalRecords || {}
+            };
+
+            if (autoHide) {
+                return self.showLoading(false).then(function() { return result; });
+            }
+            return Promise.resolve(result);
         } catch (e) {
             console.error("[GamesAdapter] Error crítico en init:", e);
             this.state.personalRecords = {};
-            return { lb: { global: [], subjectTops: {} }, record: {} };
-        } finally {
-            // REQ: Liberar loader siempre ( QA Automático )
-            // Si autoHide es false, el llamador es responsable de cerrar el loader tras renderizar.
-            if (autoHide) await this.showLoading(false);
+            var fallback = { lb: { global: [], subjectTops: {} }, record: {} };
+            if (autoHide) return self.showLoading(false).then(function() { return fallback; });
+            return Promise.resolve(fallback);
         }
     },
 
-    async showLoading(active = true, container = null) {
+    showLoading: function(active, container) {
+        if (active === undefined) active = true;
+        if (container === undefined) container = null;
+        var self = this;
+
         // REQ: Soporte para Spinner Contextual (Ticket 3)
         if (container && active) {
             console.log("[GamesAdapter] Mostrando loader contextual en:", container.id || container.className);
-            container.innerHTML = `
-                <div class="flex flex-col items-center justify-center p-8 animate-fade-in contextual-loader w-full col-span-full">
-                    <div class="w-12 h-12 border-4 border-blue-100 border-t-blue-600 rounded-full animate-spin mb-4"></div>
-                    <p class="text-[10px] font-black text-blue-600 uppercase tracking-widest animate-pulse">${this.loadingMessages[Math.floor(Math.random() * this.loadingMessages.length)]}</p>
-                </div>
-            `;
+            container.innerHTML =
+                '<div class="flex flex-col items-center justify-center p-8 animate-fade-in contextual-loader w-full col-span-full">' +
+                    '<div class="w-12 h-12 border-4 border-blue-100 border-t-blue-600 rounded-full animate-spin mb-4"></div>' +
+                    '<p class="text-[10px] font-black text-blue-600 uppercase tracking-widest animate-pulse">' + this.loadingMessages[Math.floor(Math.random() * this.loadingMessages.length)] + '</p>' +
+                '</div>';
             return Promise.resolve();
         }
 
-        const overlay = document.getElementById('loading-overlay');
-        const msgEl = document.getElementById('loading-msg');
-        const bar = document.getElementById('loading-bar');
+        var overlay = document.getElementById('loading-overlay');
+        var msgEl = document.getElementById('loading-msg');
+        var bar = document.getElementById('loading-bar');
 
-        if (!overlay) return;
+        if (!overlay) return Promise.resolve();
 
         if (active) {
             overlay.classList.remove('pointer-events-none');
             overlay.classList.add('opacity-100');
             if (bar) bar.style.width = '30%';
 
-            let i = 0;
-            this.loadingInterval = setInterval(() => {
-                if (msgEl) msgEl.textContent = this.loadingMessages[i % this.loadingMessages.length];
+            var i = 0;
+            this.loadingInterval = setInterval(function() {
+                if (msgEl) msgEl.textContent = self.loadingMessages[i % self.loadingMessages.length];
                 if (bar) bar.style.width = Math.min(90, 30 + (i * 10)) + '%';
                 i++;
             }, 800);
+            return Promise.resolve();
         } else {
             // Limpiar loaders contextuales si existen
-            document.querySelectorAll('.contextual-loader').forEach(el => el.remove());
+            var loaders = document.querySelectorAll('.contextual-loader');
+            for (var j = 0; j < loaders.length; j++) { loaders[j].parentNode.removeChild(loaders[j]); }
 
             // REQ 9: Asegurar renderizado final antes de ocultar (Fase 9)
             clearInterval(this.loadingInterval);
             if (bar) bar.style.width = '100%';
 
-            return new Promise(resolve => {
-                setTimeout(() => {
+            return new Promise(function(resolve) {
+                setTimeout(function() {
                     overlay.classList.add('opacity-0', 'pointer-events-none');
                     overlay.classList.remove('opacity-100');
                     console.log("[GamesAdapter] Loader finalizado. Render completo.");
@@ -194,30 +211,32 @@ window.GamesAdapter = {
     recordAction(data) {
         if (!this.state.currentSession) return;
 
-        const action = {
-            ...data,
-            timestamp: Date.now(),
-            timeFromStart: Date.now() - this.state.currentSession.startTime,
-            tipoActividad: data.tipoActividad || data.type // Normalización v2.0
-        };
+        var action = {};
+        for (var k in data) { action[k] = data[k]; }
+        action.timestamp = Date.now();
+        action.timeFromStart = Date.now() - this.state.currentSession.startTime;
+        action.tipoActividad = data.tipoActividad || data.type;
+
         this.state.currentSession.actions.push(action);
 
         // REQ: Track pending analytical calls for final synchronization (Tarea 2)
         if (!this.pendingAnalytics) this.pendingAnalytics = [];
 
         // Envío asíncrono para no bloquear UI
-        const activeId = window.PersistenceManager ? window.PersistenceManager.getActiveId() : 'GUEST-FALLBACK';
-        const user = JSON.parse(localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser'));
+        var user = this.state.currentUser;
+        var activeId = user ? user.userId : (window.PersistenceManager ? window.PersistenceManager.getActiveId() : 'GUEST-FALLBACK');
 
         // REQ: Guest Analytics Support (Modulo 2)
-        const promise = fetchApi('USER', 'recordAnalytics', {
+        var payload = {
             userId: activeId,
             grado: user ? user.grado : 'Invitado',
             gameId: this.state.currentSession.gameId,
             gameName: this.state.currentSession.gameId,
-            isGuest: !user,
-            ...action
-        }).catch(e => {
+            isGuest: !user
+        };
+        for (var key in action) { payload[key] = action[key]; }
+
+        var promise = fetchApi('USER', 'recordAnalytics', payload).catch(function(e) {
             console.warn("[GamesAdapter] Fallo registro analítico. Guardando localmente...", e);
             if (window.PersistenceManager) {
                 window.PersistenceManager.set('local_progress', action, `pending_anl_${Date.now()}`);
@@ -234,40 +253,41 @@ window.GamesAdapter = {
     /**
      * Finaliza sesión integrando métricas extendidas (v7.6)
      */
-    async finishSession(asignatura, level, finalScore, xpGanada, extraMetrics) {
-        const session = this.state.currentSession;
-        if (!session) return;
+    finishSession: function(asignatura, level, finalScore, xpGanada, extraMetrics) {
+        var session = this.state.currentSession;
+        if (!session) return Promise.resolve();
 
         xpGanada = xpGanada || 0;
         extraMetrics = extraMetrics || {};
 
         // REQ 4: Degradación por Repetición (Persistencia de Intentos)
-        const attemptsKey = `attempts_${session.gameId}_${level}`;
-        const prevAttempts = parseInt(localStorage.getItem(attemptsKey) || '0');
+        var attemptsKey = 'attempts_' + session.gameId + '_' + level;
+        var prevAttempts = parseInt(localStorage.getItem(attemptsKey) || '0');
         localStorage.setItem(attemptsKey, prevAttempts + 1);
 
-        const user = JSON.parse(localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser'));
-        const totalTime = Date.now() - session.startTime;
+        var user = this.state.currentUser;
+        var totalTime = Date.now() - session.startTime;
 
         // REQ: Persistencia local para Invitados (Ticket 2)
         if (!user) {
             console.log("[GamesAdapter] Modo Invitado: Guardando récord local.");
-            const guestRecords = JSON.parse(localStorage.getItem('guest_records') || '{}');
+            var guestRecords = JSON.parse(localStorage.getItem('guest_records') || '{}');
             if (!guestRecords[session.gameId] || finalScore > guestRecords[session.gameId].score) {
-                guestRecords[session.gameId] = {
+                var record = {
                     score: finalScore,
                     date: new Date().toISOString(),
                     level: level,
                     asignatura: asignatura,
-                    xp: xpGanada,
-                    ...extraMetrics
+                    xp: xpGanada
                 };
+                for (var k in extraMetrics) { record[k] = extraMetrics[k]; }
+                guestRecords[session.gameId] = record;
                 localStorage.setItem('guest_records', JSON.stringify(guestRecords));
             }
             return Promise.resolve({ status: 'success', mode: 'guest' });
         }
 
-        const payload = {
+        var payload = {
             userId: user.userId,
             nombreAlumno: user.nombre,
             juego: session.gameId,
@@ -276,13 +296,13 @@ window.GamesAdapter = {
             puntaje: finalScore,
             grado: user.grado,
             totalTime: totalTime,
-            xpGanada: xpGanada, // COLUMNA I en Spreadsheet
-            ...extraMetrics
+            xpGanada: xpGanada
         };
+        for (var m in extraMetrics) { payload[m] = extraMetrics[m]; }
 
         // REQ: Telemetría Silenciosa (Modulo 4)
         // No esperamos la red para permitir que el juego muestre la pantalla de éxito inmediatamente
-        fetchApi('USER', 'saveGameResult', payload).then(res => {
+        fetchApi('USER', 'saveGameResult', payload).then(function(res) {
             console.log(`[GamesAdapter] Sesión finalizada y sincronizada: ${finalScore}%`);
         }).catch(e => {
             console.warn("[GamesAdapter] Fallo sincronización de fin de sesión. Se confía en persistencia local previa.", e);
@@ -299,70 +319,73 @@ window.GamesAdapter = {
     /**
      * REQ: Estrategia Caché Primero para Rankings (v7.6)
      */
-    async getLeaderboard(gameId, onUpdate) {
-        // 1. Intentar recuperar desde caché inmediatamente
+    getLeaderboard: function(gameId, onUpdate) {
+        var self = this;
+        // 1. Intentar recuperar desde caché inmediatamente con clave global (Hallazgo 3/4)
         if (window.PersistenceManager) {
-            const cached = await window.PersistenceManager.get('rankings');
-            if (cached && cached.data) {
-                this.state.leaderboard = cached.data;
-                if (typeof onUpdate === 'function') onUpdate(cached.data);
-            }
+            window.PersistenceManager.get('rankings', 'global_rankings').then(function(cached) {
+                if (cached && cached.data) {
+                    self.state.leaderboard = cached.data;
+                    if (typeof onUpdate === 'function') onUpdate(cached.data);
+                }
+            });
         }
 
         // 2. Sincronización en segundo plano (silenciosa)
-        try {
-            const res = await fetchApi('USER', 'getGlobalTop', { gameId: gameId }, 0, {
-                store: 'rankings',
-                onUpdate: onUpdate // fetchApi ya dispara onUpdate si detecta cambios
-            });
-            if (res && res.status === 'success') {
-                this.state.leaderboard = res;
-                return res;
+        return fetchApi('USER', 'getGlobalTop', { gameId: gameId }, 0, {
+            store: 'rankings',
+            key: 'global_rankings',
+            onUpdate: function(data) {
+                self.state.leaderboard = data;
+                if (typeof onUpdate === 'function') onUpdate(data);
             }
-            return this.state.leaderboard || { status: 'success', global: [], subjectTops: {} };
-        } catch (e) {
-            console.warn(`[GamesAdapter] Error en sync de leaderboard para ${gameId}:`, e);
-            return this.state.leaderboard || { status: 'success', global: [], subjectTops: {} };
-        }
+        }).then(function(res) {
+            return res || self.state.leaderboard || { status: 'success', global: [], subjectTops: {} };
+        }).catch(function(e) {
+            console.warn("[GamesAdapter] Error en sync de leaderboard:", e);
+            return self.state.leaderboard || { status: 'success', global: [], subjectTops: {} };
+        });
     },
 
     /**
      * REQ: Estrategia Caché Primero para Récords Personales (v7.6)
      */
-    async getPersonalRecord(onUpdate) {
-        const user = JSON.parse(localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser'));
+    getPersonalRecord: function(onUpdate) {
+        var self = this;
+        var user = this.state.currentUser;
+        var cacheKey = user ? user.userId : 'GUEST_STATS';
 
         // REQ: Consultar récords locales para Invitados
         if (!user) {
-            const guestRecords = JSON.parse(localStorage.getItem('guest_records') || '{}');
+            var guestRecords = JSON.parse(localStorage.getItem('guest_records') || '{}');
             if (typeof onUpdate === 'function') onUpdate(guestRecords);
-            return guestRecords;
+            return Promise.resolve(guestRecords);
         }
 
         // 1. Carga inmediata desde IndexedDB
         if (window.PersistenceManager) {
-            const cachedStats = await window.PersistenceManager.get('academic_stats');
-            if (cachedStats && cachedStats.data) {
-                this.state.personalRecords = cachedStats.data;
-                if (typeof onUpdate === 'function') onUpdate(cachedStats.data);
-            }
+            window.PersistenceManager.get('academic_stats', cacheKey).then(function(cachedStats) {
+                if (cachedStats && cachedStats.data) {
+                    self.state.personalRecords = cachedStats.data;
+                    if (typeof onUpdate === 'function') onUpdate(cachedStats.data);
+                }
+            });
         }
 
         // 2. Sincronización silenciosa con servidor
-        try {
-            const res = await fetchApi('USER', 'getGameStats', { userId: user.userId }, 0, {
-                store: 'academic_stats',
-                onUpdate: onUpdate
-            });
-            if (res && res.status === 'success' && res.data) {
-                this.state.personalRecords = res.data;
-                return res.data;
+        return fetchApi('USER', 'getGameStats', { userId: user.userId }, 0, {
+            store: 'academic_stats',
+            key: cacheKey,
+            onUpdate: function(data) {
+                self.state.personalRecords = data;
+                if (typeof onUpdate === 'function') onUpdate(data);
             }
-            return this.state.personalRecords || {};
-        } catch (e) {
+        }).then(function(res) {
+            return res && res.data ? res.data : (self.state.personalRecords || {});
+        }).catch(function(e) {
             console.warn("[GamesAdapter] Error en sync de record personal:", e);
-            return this.state.personalRecords || {};
-        }
+            return self.state.personalRecords || {};
+        });
     }
 };
 
@@ -370,12 +393,16 @@ window.GamesAdapter = {
  * REQ: Wake Lock API (v3.2)
  * Evita que la pantalla se apague durante el juego.
  */
-let wakeLock = null;
-async function requestWakeLock() {
+var wakeLock = null;
+function requestWakeLock() {
     try {
         if ('wakeLock' in navigator) {
-            wakeLock = await navigator.wakeLock.request('screen');
-            console.log('[GamesAdapter] Wake Lock activado');
+            navigator.wakeLock.request('screen').then(function(lock) {
+                wakeLock = lock;
+                console.log('[GamesAdapter] Wake Lock activado');
+            }).catch(function(err) {
+                console.warn('[GamesAdapter] Fallo Wake Lock request:', err);
+            });
         }
     } catch (err) {
         console.warn('[GamesAdapter] Fallo Wake Lock:', err);
