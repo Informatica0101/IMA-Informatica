@@ -41,16 +41,16 @@ var XP_CONFIG = {
         MAX: 30000 // 30s
     },
     STREAK: {
-        BONUS_PER_HIT: 0.05,
-        MAX: 1.3
+        BONUS_PER_HIT: 0.03,
+        MAX: 1.2
     },
     RANGES: [
-        { label: 'Básico', min: 0, max: 1500, restriction: null },
-        { label: 'Promedio', min: 1501, max: 4000, restriction: { level: 'Básico', minScore: 50 } },
-        { label: 'Avanzado', min: 4001, max: 8000, restriction: { level: 'Básico', minScore: 100 } },
-        { label: 'Experto', min: 8001, max: 14000, restriction: { level: 'Intermedio', minScore: 50 } },
-        { label: 'Maestro', min: 14001, max: 22000, restriction: { level: 'Intermedio', minScore: 100 } },
-        { label: 'Leyenda', min: 22001, max: Infinity, restriction: { level: 'Avanzado', minScore: 100 } }
+        { label: 'Básico', min: 0, max: 1000, restriction: null },
+        { label: 'Promedio', min: 1001, max: 3500, restriction: { level: 'Básico', minScore: 50 } },
+        { label: 'Avanzado', min: 3501, max: 9000, restriction: { level: 'Básico', minScore: 100 } },
+        { label: 'Experto', min: 9001, max: 20000, restriction: { level: 'Intermedio', minScore: 50 } },
+        { label: 'Maestro', min: 20001, max: 45000, restriction: { level: 'Intermedio', minScore: 100 } },
+        { label: 'Leyenda', min: 45001, max: Infinity, restriction: { level: 'Avanzado', minScore: 100 } }
     ]
 };
 
@@ -305,8 +305,8 @@ window.navigateToLevels = function(subjectName, gradeLabel) {
     }
     if (!userRange) userRange = XP_CONFIG.RANGES[0];
 
-    // REQ: Validación Rango Leyenda (Modulo 4.2 / Spec v3.0)
-    if (currentXP > 22000) {
+    // REQ: Validación Rango Leyenda (Modulo 4.2 / Spec v3.0) v7.6
+    if (currentXP > 45000) {
         var allStats = [];
         for (var k in window.userGameStats) { allStats.push(window.userGameStats[k]); }
 
@@ -620,13 +620,13 @@ function calculateXP(isCorrect, level, responseTime) {
         // REQ 3: Usar motor centralizado para consistencia
         var baseXP = window.GamesAdapter.calculateXP(isCorrect, level, responseTime, 'quizpro');
 
-        // --- NUEVA FILOSOFÍA DE EVALUACIÓN: CURVA DE TIEMPO INTELIGENTE (Fase 12) ---
+        // --- NUEVA FILOSOFÍA DE EVALUACIÓN: CURVA DE TIEMPO INTELIGENTE (v7.6 Rebalanceo) ---
         var modulationFactor = 1.0;
         var time = responseTime || 0;
 
         // 1. Protección contra respuestas instantáneas imposibles (< 2.5s para lectura y proceso)
         if (time < 2500 && isCorrect) {
-            modulationFactor *= 0.6; // Reducción por probabilidad de azar o automatización
+            modulationFactor *= 0.5; // Reducción por probabilidad de azar o automatización
         }
 
         // 2. Penalización gradual por tiempos excesivamente largos (Posible consulta externa)
@@ -635,12 +635,12 @@ function calculateXP(isCorrect, level, responseTime) {
         if (time > maxOptimal && isCorrect) {
             // Reducción gradual: entre más tiempo pase del óptimo, menos XP (mínimo 40% del base)
             var excess = (time - maxOptimal) / 10000; // Cada 10s de exceso reduce
-            modulationFactor *= Math.max(0.4, 1.0 - (excess * 0.15));
+            modulationFactor *= Math.max(0.4, 1.0 - (excess * 0.20));
         }
 
         // 3. Bonificación por dominio genuino (Tiempo razonable con precisión)
-        if (time >= 4000 && time <= 12000 && isCorrect) {
-            modulationFactor *= 1.15; // "Sweet spot" de conocimiento fluido
+        if (time >= 5000 && time <= 12000 && isCorrect) {
+            modulationFactor *= 1.10; // "Sweet spot" de conocimiento fluido
         }
 
         var finalXP = Math.round(baseXP * modulationFactor);

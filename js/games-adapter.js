@@ -17,14 +17,14 @@ window.GamesAdapter = {
         currentStreak: 0
     },
 
-    // REQ: Gamificación Estandarizada v7.5 (Modulo 4)
+    // REQ: Gamificación Estandarizada v7.6 (Rebalanceo Global)
     XP_CONFIG: {
-        BASE: 100,
+        BASE: 40,
         FACTORS: {
-            basico: 1.0,
-            intermedio: 1.5,
-            avanzado: 2.0,
-            especial: 2.2
+            basico: 0.8,
+            intermedio: 1.1,
+            avanzado: 1.4,
+            especial: 1.6
         },
         TIME: {
             MIN: 3000,
@@ -32,21 +32,21 @@ window.GamesAdapter = {
             MAX: 20000
         },
         STREAK: {
-            BONUS_PER_HIT: 0.05,
-            MAX: 1.3
+            BONUS_PER_HIT: 0.03,
+            MAX: 1.2
         },
         RANGES: [
-            { label: 'Básico', min: 0, max: 1500 },
-            { label: 'Promedio', min: 1501, max: 4000 },
-            { label: 'Avanzado', min: 4001, max: 8000 },
-            { label: 'Experto', min: 8001, max: 14000 },
-            { label: 'Maestro', min: 14001, max: 22000 },
-            { label: 'Leyenda', min: 22001, max: Infinity }
+            { label: 'Básico', min: 0, max: 1000 },
+            { label: 'Promedio', min: 1001, max: 3500 },
+            { label: 'Avanzado', min: 3501, max: 9000 },
+            { label: 'Experto', min: 9001, max: 20000 },
+            { label: 'Maestro', min: 20001, max: 45000 },
+            { label: 'Leyenda', min: 45001, max: Infinity }
         ]
     },
 
     /**
-     * Calcula XP basada en desempeño psicométrico (v7.5)
+     * Calcula XP basada en desempeño psicométrico (v7.6)
      */
     calculateXP(isCorrect, level, responseTime, gameId) {
         if (!isCorrect) {
@@ -57,28 +57,29 @@ window.GamesAdapter = {
         this.state.currentStreak++;
 
         // 1. Factor Dificultad
-        const fDificultad = this.XP_CONFIG.FACTORS[level.toLowerCase()] || 1.0;
+        const fDificultad = this.XP_CONFIG.FACTORS[(level || "").toLowerCase()] || 1.0;
 
         // 2. Factor Tiempo (Adivinación / Reflexión)
         let fTiempo = 1.0;
         if (responseTime < this.XP_CONFIG.TIME.MIN) fTiempo = 0.5;
-        else if (responseTime <= this.XP_CONFIG.TIME.OPTIMAL) fTiempo = 1.2;
+        else if (responseTime <= this.XP_CONFIG.TIME.OPTIMAL) fTiempo = 1.1;
         else {
             const overshoot = responseTime - this.XP_CONFIG.TIME.OPTIMAL;
             const window = this.XP_CONFIG.TIME.MAX - this.XP_CONFIG.TIME.OPTIMAL;
-            fTiempo = Math.max(0.8, 1.2 - (overshoot / window) * 0.4);
+            fTiempo = Math.max(0.7, 1.1 - (overshoot / window) * 0.4);
         }
 
         // 3. Bono Racha
         const bonoRacha = Math.min(this.XP_CONFIG.STREAK.MAX, 1.0 + (this.state.currentStreak * this.XP_CONFIG.STREAK.BONUS_PER_HIT));
 
-        // 4. Degradación por Repetición (Evitar Exploit)
+        // 4. Degradación por Repetición Agresiva (Evitar Grinding v7.6)
         const attemptsKey = `attempts_${gameId}_${level}`;
         const prevAttempts = parseInt(localStorage.getItem(attemptsKey) || '0');
         let attemptMultiplier = 1.0;
-        if (prevAttempts === 1) attemptMultiplier = 0.75;
-        else if (prevAttempts === 2) attemptMultiplier = 0.5;
-        else if (prevAttempts >= 3) attemptMultiplier = 0.25;
+
+        if (prevAttempts === 1) attemptMultiplier = 0.4;
+        else if (prevAttempts === 2) attemptMultiplier = 0.2;
+        else if (prevAttempts >= 3) attemptMultiplier = 0.1;
 
         const totalXP = Math.round(this.XP_CONFIG.BASE * fDificultad * fTiempo * bonoRacha * attemptMultiplier);
 
