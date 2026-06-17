@@ -90,3 +90,18 @@ Archivo: js/perifericos_juego.js
 Archivo: js/webmaster_quiz_juego.js
 - La lógica de finalización no calcula XP.
 - El mini-leaderboard no muestra XP ni Nivel.
+
+AUDITORÍA TÉCNICA - AFINAMIENTO FINAL MAESTRO DEL TECLADO - Wed Jun 17 11:45:00 UTC 2026
+
+Archivo: js/destreza_teclado.js
+Sector: Lógica de Temporizadores y Feedback
+Hallazgo [Optimización]: El tiempo de retroalimentación visual (800ms - 3s) se sumaba al tiempo de escritura, penalizando el WPM.
+Solución: Implementada pausa de temporizadores mediante 'pauseTimer()' inmediatamente tras detectar fin de palabra o error. El cálculo de WPM ahora utiliza 'totalActiveTimeMs'.
+
+Sector: UX Mobile / Teclado Virtual
+Hallazgo [UX]: El uso de 'wordInput.disabled = true' forzaba el cierre del teclado virtual en dispositivos móviles entre palabras.
+Solución: Reemplazado bloqueo físico del input por una bandera lógica 'isProcessingFeedback'. El input mantiene el foco ('wordInput.focus()') durante toda la sesión.
+
+Sector: Restricción de Mouse
+Hallazgo [Verificación]: Se confirmó que los mecanismos de bloqueo de mouse (contextmenu, selectstart) residen en 'js/security-minigames.js' y 'interactivo.html'.
+Estado: Preservado. Las modificaciones actuales no interfieren con la capa de seguridad interactiva.

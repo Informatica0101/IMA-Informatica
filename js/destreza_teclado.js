@@ -67,12 +67,14 @@ let totalErrors = 0; // Contador global de errores
 let correctKeys = 0; // Pulsaciones correctas (Req 6.2)
 let totalKeys = 0; // Pulsaciones totales
 let totalXP = 0; // REQ 3: Acumulador de sesión
+let totalActiveTimeMs = 0; // REQ: Tiempo real de escritura acumulado
 let gameStartTime;
 let gameTimerInterval;
 let timeRemainingSeconds; // Usaremos segundos con decimales para mayor precisión
 const MAX_CONSECUTIVE_ERRORS = 3;
 const UPDATE_INTERVAL_MS = 50; // Intervalo de actualización de la barra de tiempo en milisegundos
 let gameActive = false;
+let isProcessingFeedback = false; // REQ: Evitar input sin perder foco
 let questionStartTime = 0;
 let responseChanges = 0; // Nueva bandera para controlar el estado del juego
 let keyboardType = 'desktop';
@@ -166,8 +168,8 @@ function updateTimeBar() {
 
 // Calcula las palabras por minuto (REQ 2: Estándar Industrial)
 function calculateWPM() {
-    if (!gameStartTime) return 0;
-    const elapsedTimeInMinutes = (Date.now() - gameStartTime) / 60000;
+    // REQ: Usar tiempo activo acumulado en lugar de tiempo absoluto
+    const elapsedTimeInMinutes = totalActiveTimeMs / 60000;
     if (elapsedTimeInMinutes <= 0) return 0;
 
     // REQ: Una "palabra" estándar son 5 caracteres.
@@ -381,6 +383,7 @@ function resetGame() {
     totalKeys = 0;
     wordIndex = 0;
     totalXP = 0;
+    totalActiveTimeMs = 0;
 
     // Reiniciar los displays
     if (correctWordsDisplay) correctWordsDisplay.textContent = correctWordsCount;
@@ -471,7 +474,7 @@ function loadNewWord() {
             specialCharHint.classList.remove('hidden');
             if (wordInput) {
                 wordInput.value = '';
-                wordInput.disabled = true;
+                // wordInput.disabled = true; // REQ: No deshabilitar para persistir teclado
             }
         } else {
             specialCharHint.classList.add('hidden');
@@ -498,20 +501,25 @@ function startTimer() {
     clearInterval(gameTimerInterval);
 
     gameTimerInterval = setInterval(() => {
+        if (!gameActive) return; // REQ: Congelar si el feedback está activo
+
         timeRemainingSeconds -= (UPDATE_INTERVAL_MS / 1000);
+        totalActiveTimeMs += UPDATE_INTERVAL_MS; // REQ: Acumular solo tiempo activo
         updateTimeBar();
 
         if (timeRemainingSeconds <= 0) {
             clearInterval(gameTimerInterval);
+            pauseTimer(); // REQ: Congelar inmediatamente al fallar por tiempo
             handleIncorrectInputLogic();
 
-                    if (wordInput) wordInput.disabled = true;
+                    isProcessingFeedback = true; // REQ: Bloquear lógica sin perder foco
                     if (currentWordDisplay && currentWordDisplay.parentElement) {
                         currentWordDisplay.parentElement.classList.add('border-error');
                     }
 
                     const errTimeT = Math.min(3000, 2000 + (currentWord.word.length * 50));
                     setTimeout(() => {
+                        isProcessingFeedback = false;
                         wordIndex++;
                         loadNewWord();
                     }, errTimeT);
@@ -521,7 +529,7 @@ function startTimer() {
 
 // Maneja la entrada del usuario para palabras normales y caracteres especiales (no atajos)
 function handleInput() {
-    if (!gameActive || (wordInput && wordInput.disabled) || currentWord.type === "shortcut") {
+    if (!gameActive || isProcessingFeedback || currentWord.type === "shortcut") {
         return;
     }
 
@@ -540,15 +548,17 @@ function handleInput() {
     }
 
     if (inputText.length > targetWord.length) {
+        pauseTimer(); // REQ: Congelar inmediatamente
         wordInput.classList.add('border-error');
         if (currentWordDisplay && currentWordDisplay.parentElement) {
             currentWordDisplay.parentElement.classList.add('border-error');
         }
         handleIncorrectInputLogic();
 
-        wordInput.disabled = true;
+        isProcessingFeedback = true; // REQ: Bloquear lógica sin perder foco
         const errTime = Math.min(3000, 2000 + (currentWord.word.length * 50));
         setTimeout(() => {
+            isProcessingFeedback = false;
             wordIndex++;
             loadNewWord();
         }, errTime);
@@ -564,15 +574,17 @@ function handleInput() {
     }
 
     if (!isPartialMatch) {
+        pauseTimer(); // REQ: Congelar inmediatamente
         wordInput.classList.add('border-error');
         if (currentWordDisplay && currentWordDisplay.parentElement) {
             currentWordDisplay.parentElement.classList.add('border-error');
         }
         handleIncorrectInputLogic();
 
-        wordInput.disabled = true;
+        isProcessingFeedback = true; // REQ: Bloquear lógica sin perder foco
         const errTime = Math.min(3000, 2000 + (currentWord.word.length * 50));
         setTimeout(() => {
+            isProcessingFeedback = false;
             wordIndex++;
             loadNewWord();
         }, errTime);
@@ -585,6 +597,7 @@ function handleInput() {
     }
 
     if (inputText.length === targetWord.length) {
+        pauseTimer(); // REQ: Congelar temporizadores inmediatamente
         const responseTime = Date.now() - questionStartTime;
         const difficultyName = ['Básico', 'Intermedio', 'Avanzado', 'Especial'][currentDifficultyLevel];
         const isCorrectFinal = inputText === targetWord || inputLower === targetLower;
@@ -618,9 +631,10 @@ function handleInput() {
             }
         }
 
-        wordInput.disabled = true;
+        isProcessingFeedback = true; // REQ: Bloquear lógica sin perder foco
         const feedbackTime = isCorrectFinal ? 800 : Math.min(3000, 2000 + (currentWord.word.length * 50));
         setTimeout(() => {
+            isProcessingFeedback = false;
             wordIndex++;
             loadNewWord();
         }, feedbackTime);
@@ -629,7 +643,7 @@ function handleInput() {
 
 // Maneja la entrada del usuario para atajos de teclado (keydown)
 function handleKeyDown(event) {
-    if (!gameActive || currentWord.type !== "shortcut") {
+    if (!gameActive || isProcessingFeedback || currentWord.type !== "shortcut") {
         return;
     }
 
@@ -658,6 +672,7 @@ function handleKeyDown(event) {
     const normalizedPressed = normalizeShortcut(pressedShortcut);
     const normalizedTarget = normalizeShortcut(currentWord.word);
 
+    pauseTimer(); // REQ: Congelar temporizadores inmediatamente
     const responseTime = Date.now() - questionStartTime;
     const isCorrectShort = normalizedPressed === normalizedTarget;
 
@@ -693,8 +708,10 @@ function handleKeyDown(event) {
         handleIncorrectInputLogic();
     }
 
+    isProcessingFeedback = true; // REQ: Bloquear lógica sin perder foco
     const feedbackTimeShort = isCorrectShort ? 800 : Math.min(3000, 2000 + (currentWord.word.length * 50));
     setTimeout(() => {
+        isProcessingFeedback = false;
         wordIndex++;
         loadNewWord();
     }, feedbackTimeShort);
@@ -703,7 +720,6 @@ function handleKeyDown(event) {
 
 // Lógica para manejar una entrada correcta (actualiza contadores)
 function handleCorrectInputLogic() {
-    if (!gameActive) return;
     correctWordsCount++;
     wordsCorrectInCurrentDifficulty++;
 
@@ -718,7 +734,7 @@ function handleCorrectInputLogic() {
 
 // Lógica para manejar una entrada incorrecta (actualiza contadores)
 function handleIncorrectInputLogic() {
-    if (!gameActive) return;
+    // REQ: Permitir actualización de contadores aunque gameActive sea false por pauseTimer
     totalErrors++;
 
     totalKeys += currentWord.word.length;
@@ -738,9 +754,8 @@ function handleIncorrectInputLogic() {
 
 // Termina el juego y muestra los resultados
 function endGame() {
-    if (!gameActive) return;
-    gameActive = false;
     clearInterval(gameTimerInterval);
+    gameActive = false;
     if (window.statsInterval) clearInterval(window.statsInterval);
 
     const wpm = calculateWPM();

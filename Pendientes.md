@@ -129,3 +129,13 @@
     - Eliminar anuncios de nivel (progresión silenciosa).
     - Implementar desplazamiento de layout en móviles al enfocar input.
 - **Estado: [X] Completada (2026-06-17)**
+
+### [T-023] Afinamiento Final de Métricas y UX: Maestro del Teclado
+- **Origen del Hallazgo:** Requerimiento de Usuario (2026-06-17)
+- **Archivos Involucrados:** js/destreza_teclado.js
+- **Descripción del Alcance:**
+    - Congelar temporizadores (barra de tiempo y cronómetro WPM) durante estados de feedback.
+    - Asegurar que el WPM solo considere el tiempo real de escritura (totalActiveTimeMs).
+    - Persistencia del teclado virtual en móviles mediante el flag 'isProcessingFeedback' (evitar focus loss).
+    - Mantener la restricción del uso del mouse en la versión web.
+- **Estado: [X] Completada (2026-06-17)**
