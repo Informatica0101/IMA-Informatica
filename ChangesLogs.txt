@@ -153,3 +153,13 @@ Módulo: HTML y Estructura
 - juegos/destreza_teclado.html:
     - Eliminado bloque de script redundante de 400+ líneas.
     - Vinculado correctamente 'js/destreza_teclado.js' para asegurar la carga de la lógica.
+
+REGISTRO DE AFINAMIENTO FINAL: MAESTRO DEL TECLADO - Wed Jun 17 12:00:00 UTC 2026
+
+Módulo: Maestro del Teclado (Afinamiento UX)
+- js/destreza_teclado.js:
+    - Implementada lógica de congelación de cronómetros: los temporizadores se detienen exactamente al completar una palabra o cometer un error.
+    - El cálculo de WPM ahora se basa exclusivamente en 'totalActiveTimeMs', garantizando métricas precisas sin incluir el tiempo de feedback.
+    - Asegurada persistencia del teclado virtual en móviles: se eliminó la deshabilitación del input durante las transiciones, reemplazándola por el flag 'isProcessingFeedback'.
+    - El input mantiene el foco permanente durante la sesión de juego.
+    - Verificada la conservación de la advertencia de uso del mouse en la plataforma.
