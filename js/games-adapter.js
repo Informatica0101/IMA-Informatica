@@ -13,7 +13,77 @@ window.GamesAdapter = {
 
     state: {
         currentSession: null,
-        personalRecords: {}
+        personalRecords: {},
+        currentStreak: 0
+    },
+
+    // REQ: Gamificación Estandarizada v7.5 (Modulo 4)
+    XP_CONFIG: {
+        BASE: 100,
+        FACTORS: {
+            basico: 1.0,
+            intermedio: 1.5,
+            avanzado: 2.0,
+            especial: 2.2
+        },
+        TIME: {
+            MIN: 3000,
+            OPTIMAL: 10000,
+            MAX: 20000
+        },
+        STREAK: {
+            BONUS_PER_HIT: 0.05,
+            MAX: 1.3
+        },
+        RANGES: [
+            { label: 'Básico', min: 0, max: 1500 },
+            { label: 'Promedio', min: 1501, max: 4000 },
+            { label: 'Avanzado', min: 4001, max: 8000 },
+            { label: 'Experto', min: 8001, max: 14000 },
+            { label: 'Maestro', min: 14001, max: 22000 },
+            { label: 'Leyenda', min: 22001, max: Infinity }
+        ]
+    },
+
+    /**
+     * Calcula XP basada en desempeño psicométrico (v7.5)
+     */
+    calculateXP(isCorrect, level, responseTime, gameId) {
+        if (!isCorrect) {
+            this.state.currentStreak = 0;
+            return 0;
+        }
+
+        this.state.currentStreak++;
+
+        // 1. Factor Dificultad
+        const fDificultad = this.XP_CONFIG.FACTORS[level.toLowerCase()] || 1.0;
+
+        // 2. Factor Tiempo (Adivinación / Reflexión)
+        let fTiempo = 1.0;
+        if (responseTime < this.XP_CONFIG.TIME.MIN) fTiempo = 0.5;
+        else if (responseTime <= this.XP_CONFIG.TIME.OPTIMAL) fTiempo = 1.2;
+        else {
+            const overshoot = responseTime - this.XP_CONFIG.TIME.OPTIMAL;
+            const window = this.XP_CONFIG.TIME.MAX - this.XP_CONFIG.TIME.OPTIMAL;
+            fTiempo = Math.max(0.8, 1.2 - (overshoot / window) * 0.4);
+        }
+
+        // 3. Bono Racha
+        const bonoRacha = Math.min(this.XP_CONFIG.STREAK.MAX, 1.0 + (this.state.currentStreak * this.XP_CONFIG.STREAK.BONUS_PER_HIT));
+
+        // 4. Degradación por Repetición (Evitar Exploit)
+        const attemptsKey = `attempts_${gameId}_${level}`;
+        const prevAttempts = parseInt(localStorage.getItem(attemptsKey) || '0');
+        let attemptMultiplier = 1.0;
+        if (prevAttempts === 1) attemptMultiplier = 0.75;
+        else if (prevAttempts === 2) attemptMultiplier = 0.5;
+        else if (prevAttempts >= 3) attemptMultiplier = 0.25;
+
+        const totalXP = Math.round(this.XP_CONFIG.BASE * fDificultad * fTiempo * bonoRacha * attemptMultiplier);
+
+        console.log(`[XP-ADAPTER] +${totalXP} XP (Racha: ${this.state.currentStreak})`);
+        return totalXP;
     },
 
     async init(gameId, autoHide = true) {
@@ -23,6 +93,7 @@ window.GamesAdapter = {
             startTime: Date.now(),
             actions: []
         };
+        this.state.currentStreak = 0; // REQ: Reset de racha al iniciar sesión
 
         // REQ 2: Optimización de Hidratación. No disparar loader si ya hay datos en caché (0ms logic)
         let hasCache = false;
@@ -163,6 +234,11 @@ window.GamesAdapter = {
         const session = this.state.currentSession;
         if (!session) return;
 
+        // REQ 4: Degradación por Repetición (Persistencia de Intentos)
+        const attemptsKey = `attempts_${session.gameId}_${level}`;
+        const prevAttempts = parseInt(localStorage.getItem(attemptsKey) || '0');
+        localStorage.setItem(attemptsKey, prevAttempts + 1);
+
         const user = JSON.parse(localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser'));
         const totalTime = Date.now() - session.startTime;
 
@@ -192,7 +268,7 @@ window.GamesAdapter = {
             puntaje: finalScore,
             grado: user.grado,
             totalTime,
-            xpGanada: xpGanada // COLUMNA I en Spreadsheet
+            xpGanada: xpGanada || 0 // COLUMNA I en Spreadsheet
         };
 
         // REQ: Telemetría Silenciosa (Modulo 4)

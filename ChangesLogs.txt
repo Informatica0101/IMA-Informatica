@@ -108,3 +108,25 @@ Módulo: Maestro del Teclado (Minijuego)
 - js/destreza_teclado.js:
     - Actualizado el selector del botón de inicio de 'start-game-button' a 'start-game-button-real'.
     - Esto resuelve el error 'startGameButton: null' y permite la activación de los listeners del juego.
+
+REGISTRO DE AUDITORÍA FORENSE Y ESTANDARIZACIÓN DE MINIJUEGOS - Wed Jun 17 09:55:56 UTC 2026
+
+Módulo: GamesAdapter (Core)
+- js/games-adapter.js:
+    - Centralizado motor de XP (XP_CONFIG) portado de QuizPro.
+    - Implementada lógica 'calculateXP' con soporte para bonificaciones por racha y velocidad.
+    - Agregado sistema de degradación de XP por intentos repetidos (prevención de exploits).
+    - Portadas escalas de rangos académicos para unificación de clasificaciones.
+
+Módulo: Maestro del Teclado (Escritura)
+- js/destreza_teclado.js:
+    - Corregido cálculo de WPM al estándar industrial: (Caracteres/5) / Minutos.
+    - Implementado avance de nivel continuo: permite recorrer todas las dificultades en una misma sesión.
+    - Añadido feedback diferenciado: 800ms para aciertos, 2-3s para errores según complejidad.
+    - Ajuste dinámico de tiempo límite por palabra basado en longitud y desempeño previo.
+
+Módulo: Periféricos y WebMaster Quiz
+- js/perifericos_juego.js & js/webmaster_quiz_juego.js:
+    - Integración con el motor central de XP de GamesAdapter.
+    - Actualizado Mini-Leaderboard para mostrar Top 5 con métricas de XP y promedios.
+    - Sincronización de analítica detallada por cada respuesta.

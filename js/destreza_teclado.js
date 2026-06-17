@@ -66,6 +66,7 @@ let consecutiveErrors = 0;
 let totalErrors = 0; // Contador global de errores
 let correctKeys = 0; // Pulsaciones correctas (Req 6.2)
 let totalKeys = 0; // Pulsaciones totales
+let totalXP = 0; // REQ 3: Acumulador de sesión
 let gameStartTime;
 let gameTimerInterval;
 let timeRemainingSeconds; // Usaremos segundos con decimales para mayor precisión
@@ -162,14 +163,25 @@ function updateTimeBar() {
     }
 }
 
-// Calcula las palabras por minuto
+// Calcula las palabras por minuto (REQ 2: Estándar Industrial)
 function calculateWPM() {
     if (!gameStartTime) return 0;
     const elapsedTimeInMinutes = (Date.now() - gameStartTime) / 60000;
     if (elapsedTimeInMinutes <= 0) return 0;
-    // Se considera una "palabra" como 5 caracteres, incluyendo espacios.
-    // Para este juego, contamos palabras correctas directamente.
-    return Math.round(correctWordsCount / elapsedTimeInMinutes);
+
+    // REQ: Una "palabra" estándar son 5 caracteres.
+    const standardWords = correctKeys / 5;
+    return Math.round(standardWords / elapsedTimeInMinutes);
+}
+
+function pauseTimer() {
+    gameActive = false;
+    clearInterval(gameTimerInterval);
+}
+
+function resumeTimer() {
+    gameActive = true;
+    startTimer();
 }
 
 // --- Lógica del Juego ---
@@ -311,10 +323,19 @@ function loadNewWord() {
 
     if (wordIndex >= availableWords.length) {
         // Avanzar a la siguiente dificultad si hay
-        if (currentDifficultyLevel < 3) { // Asumiendo 0, 1, 2, 3 son los niveles
+        if (currentDifficultyLevel < 3) {
             currentDifficultyLevel++;
-            loadDifficultyWords(); // Cargar palabras para la nueva dificultad
-            wordsCorrectInCurrentDifficulty = 0; // Reiniciar este contador al cambiar de dificultad
+            loadDifficultyWords();
+            wordsCorrectInCurrentDifficulty = 0;
+
+            // REQ 6: Notificar cambio de nivel
+            if (currentWordDisplay) {
+                const levels = ['Básico', 'Intermedio', 'Avanzado', 'Especial'];
+                currentWordDisplay.innerHTML = `<span class="text-xl text-purple-600 animate-pulse">¡NIVEL ${levels[currentDifficultyLevel].toUpperCase()}!</span>`;
+                pauseTimer();
+                setTimeout(() => { resumeTimer(); loadNewWord(); }, 2000);
+                return;
+            }
         } else {
             // Si no hay más dificultades, terminar el juego
             endGame();
@@ -323,29 +344,24 @@ function loadNewWord() {
     }
 
     currentWord = availableWords[wordIndex];
-    
-    let baseTimeSetting;
-    if (currentWord.type === "word") {
-        const wordLength = currentWord.word.length;
-        if (wordLength >= 3 && wordLength <= 5) {
-            baseTimeSetting = timeSettings[wordLength];
-        } else {
-            baseTimeSetting = timeSettings.default; // Para palabras > 5 letras
-        }
-    } else { // Caracteres especiales/atajos
-        baseTimeSetting = timeSettings.default; // Tiempo fijo para especiales
-    }
 
-    // Calcular el tiempo de reducción por palabra utilizando wordsCorrectInCurrentDifficulty
-    const timeRange = baseTimeSetting.initial - baseTimeSetting.min;
-    const reductionPerWord = timeRange / REDUCTION_WORDS_THRESHOLD;
+    // REQ 6: Gestión dinámica del tiempo (v7.5)
+    // Proporcional a longitud: Base 2s + 0.8s por carácter
+    const baseTime = 2.0;
+    const initialSecPerChar = 0.8;
 
-    // Calcular el tiempo actual, limitado por el mínimo
-    let calculatedTime = baseTimeSetting.initial - (wordsCorrectInCurrentDifficulty * reductionPerWord);
-    currentWord.timeLimit = Math.max(baseTimeSetting.min, calculatedTime);
-    currentWord.timeLimit = parseFloat(currentWord.timeLimit.toFixed(2)); // Mantener 2 decimales para precisión
+    // Reducción de tiempo por desempeño (máximo 0.4s de mejora)
+    const improvement = Math.min(0.4, (wordsCorrectInCurrentDifficulty * 0.02));
+    const currentSecPerChar = Math.max(0.3, initialSecPerChar - improvement);
 
-    timeRemainingSeconds = currentWord.timeLimit; // Inicializar tiempo restante para la nueva palabra
+    let calculatedTime = baseTime + (currentWord.word.length * currentSecPerChar);
+
+    // Ajuste por nivel de dificultad
+    const difficultyFactor = [1.2, 1.0, 0.8, 0.7][currentDifficultyLevel];
+    calculatedTime *= difficultyFactor;
+
+    currentWord.timeLimit = parseFloat(Math.max(3, calculatedTime).toFixed(2));
+    timeRemainingSeconds = currentWord.timeLimit;
 
     if (currentWordDisplay) currentWordDisplay.textContent = currentWord.word;
     questionStartTime = Date.now();
@@ -392,8 +408,18 @@ function startTimer() {
         if (timeRemainingSeconds <= 0) {
             clearInterval(gameTimerInterval);
             handleIncorrectInputLogic(); // Si el tiempo se acaba, cuenta como error
-            wordIndex++; // Avanzar al siguiente índice
-            loadNewWord(); // Pasa a la siguiente palabra
+
+                    if (wordInput) wordInput.disabled = true;
+                    if (currentWordDisplay && currentWordDisplay.parentElement) {
+                        currentWordDisplay.parentElement.classList.add('border-error');
+                    }
+
+                    // REQ 6: Feedback por tiempo agotado (Incorrecto)
+                    const errTimeT = Math.min(3000, 2000 + (currentWord.word.length * 50));
+                    setTimeout(() => {
+                        wordIndex++;
+                        loadNewWord();
+                    }, errTimeT);
         }
     }, UPDATE_INTERVAL_MS);
 }
@@ -409,7 +435,7 @@ function handleInput() {
 
     const inputText = wordInput.value;
     const targetWord = currentWord.word;
-    
+
     // Convertir ambos a minúsculas para la comparación general
     const inputLower = inputText.toLowerCase();
     const targetLower = targetWord.toLowerCase();
@@ -431,8 +457,14 @@ function handleInput() {
             currentWordDisplay.parentElement.classList.add('border-error');
         }
         handleIncorrectInputLogic(); // Incrementa contadores de error
-        wordIndex++;
-        loadNewWord(); // Avanza a la siguiente palabra
+
+        // REQ 6: Retroalimentación por error (2-3s)
+        wordInput.disabled = true;
+        const errTime = Math.min(3000, 2000 + (currentWord.word.length * 50));
+        setTimeout(() => {
+            wordIndex++;
+            loadNewWord();
+        }, errTime);
         return;
     }
 
@@ -454,8 +486,14 @@ function handleInput() {
             currentWordDisplay.parentElement.classList.add('border-error');
         }
         handleIncorrectInputLogic(); // Incrementa contadores de error
-        wordIndex++;
-        loadNewWord(); // Avanza a la siguiente palabra
+
+        // REQ 6: Retroalimentación por error (2-3s)
+        wordInput.disabled = true;
+        const errTime = Math.min(3000, 2000 + (currentWord.word.length * 50));
+        setTimeout(() => {
+            wordIndex++;
+            loadNewWord();
+        }, errTime);
         return;
     }
 
@@ -469,44 +507,45 @@ function handleInput() {
     // Caso 3: La longitud de la entrada coincide con la longitud de la palabra objetivo
     if (inputText.length === targetWord.length) {
         const responseTime = Date.now() - questionStartTime;
+        const difficultyName = ['Básico', 'Intermedio', 'Avanzado', 'Especial'][currentDifficultyLevel];
+        const isCorrectFinal = inputText === targetWord || inputLower === targetLower;
+
         // Captura de Analítica Unificada (Fase 5)
         if (window.GamesAdapter) {
+            totalXP += window.GamesAdapter.calculateXP(isCorrectFinal, difficultyName, responseTime, 'destreza');
+
             GamesAdapter.recordAction({
                 asignatura: 'Ofimática I',
-                nivel: ['Básico', 'Intermedio', 'Avanzado', 'Especial'][currentDifficultyLevel],
+                nivel: difficultyName,
                 preguntaId: 'kbd_' + currentWord.word,
                 tema: 'Escritura',
                 respuestaSeleccionada: inputText,
                 respuestaCorrecta: targetWord,
-                esCorrecta: inputText.toLowerCase() === targetWord.toLowerCase(),
+                esCorrecta: isCorrectFinal,
                 tiempoRespuesta: responseTime,
                 cambiosRespuesta: responseChanges
             });
         }
 
-        // Para la coincidencia final, comparamos el input y el target en minúsculas.
-        // Esto permite que "Ctrl+Z" y "ctrl+z" sean correctos.
-        // Si el input original coincide exactamente con el target original (incluyendo acentos y caso)
-        // O si el input en minúsculas coincide con el target en minúsculas Y normalizados son iguales
-        // Esto cubre casos como "área" (target) vs "área" (input) -> Correcto
-        // y "Ctrl+Z" (target) vs "ctrl+z" (input) -> Correcto
-        if (inputText === targetWord || inputLower === targetLower) {
-            handleCorrectInputLogic(); // Incrementa contador de palabras correctas
+        if (isCorrectFinal) {
+            handleCorrectInputLogic();
         } else {
-            // Esto se activará si, por ejemplo, target es "área" y input es "area".
-            // normalized("área") === normalized("area") es true, pero "área" !== "area".
-            // Se cuenta como error y se avanza.
-            handleIncorrectInputLogic(); // Incrementa contadores de error
-            wordInput.classList.remove('border-success'); // Quitar verde si no fue exacto
-            wordInput.classList.add('border-error'); // Poner rojo
+            handleIncorrectInputLogic();
+            wordInput.classList.remove('border-success');
+            wordInput.classList.add('border-error');
             if (currentWordDisplay && currentWordDisplay.parentElement) {
                 currentWordDisplay.parentElement.classList.remove('border-success');
                 currentWordDisplay.parentElement.classList.add('border-error');
             }
         }
-        // Siempre avanza a la siguiente palabra después de un intento de palabra completa
-        wordIndex++;
-        loadNewWord();
+
+        // REQ 6: Retroalimentación diferenciada
+        wordInput.disabled = true;
+        const feedbackTime = isCorrectFinal ? 800 : Math.min(3000, 2000 + (currentWord.word.length * 50));
+        setTimeout(() => {
+            wordIndex++;
+            loadNewWord();
+        }, feedbackTime);
     }
     // Si la entrada es una palabra parcial válida, no hacemos nada más aquí,
     // el usuario sigue escribiendo y el temporizador sigue corriendo.
@@ -556,8 +595,29 @@ function handleKeyDown(event) {
 
     console.log(`Pressed: ${pressedShortcut} (Normalized: ${normalizedPressed}), Target: ${currentWord.word} (Normalized: ${normalizedTarget})`);
 
+    const responseTime = Date.now() - questionStartTime;
+    const isCorrectShort = normalizedPressed === normalizedTarget;
+
+    // Captura Analítica
+    if (window.GamesAdapter) {
+        const difficultyName = ['Básico', 'Intermedio', 'Avanzado', 'Especial'][currentDifficultyLevel];
+        totalXP += window.GamesAdapter.calculateXP(isCorrectShort, difficultyName, responseTime, 'destreza');
+
+        GamesAdapter.recordAction({
+            asignatura: 'Ofimática I',
+            nivel: difficultyName,
+            preguntaId: 'kbd_shortcut_' + currentWord.word,
+            tema: 'Escritura',
+            respuestaSeleccionada: pressedShortcut,
+            respuestaCorrecta: currentWord.word,
+            esCorrecta: isCorrectShort,
+            tiempoRespuesta: responseTime,
+            cambiosRespuesta: responseChanges
+        });
+    }
+
     // Comparar el atajo presionado con la palabra objetivo
-    if (normalizedPressed === normalizedTarget) {
+    if (isCorrectShort) {
         wordInput.classList.add('border-success');
         if (currentWordDisplay && currentWordDisplay.parentElement) {
             currentWordDisplay.parentElement.classList.add('border-success');
@@ -571,9 +631,12 @@ function handleKeyDown(event) {
         handleIncorrectInputLogic();
     }
 
-    // Siempre avanzar a la siguiente palabra después de un intento de atajo
-    wordIndex++;
-    loadNewWord();
+    // REQ 6: Retroalimentación diferenciada
+    const feedbackTimeShort = isCorrectShort ? 800 : Math.min(3000, 2000 + (currentWord.word.length * 50));
+    setTimeout(() => {
+        wordIndex++;
+        loadNewWord();
+    }, feedbackTimeShort);
 }
 
 
@@ -586,9 +649,10 @@ function handleCorrectInputLogic() {
     correctWordsCount++; // Siempre acumulativo
     wordsCorrectInCurrentDifficulty++; // Solo para el ajuste de tiempo en el nivel actual
 
-    // (Req 6.2) Sumar teclas correctas
-    correctKeys += currentWord.word.length;
-    totalKeys += currentWord.word.length;
+    // (Req 6.2) Sumar teclas correctas (incluyendo espacios si existieran)
+    const wordLen = currentWord.word.length;
+    correctKeys += wordLen;
+    totalKeys += wordLen;
 
     consecutiveErrors = 0; // Reiniciar errores consecutivos
     if (correctWordsDisplay) correctWordsDisplay.textContent = correctWordsCount;
@@ -608,6 +672,11 @@ function handleIncorrectInputLogic() {
 
     // (Req 6.2) Sumar teclas erradas (aproximado por palabra fallida)
     totalKeys += currentWord.word.length;
+
+    // REQ 3: Penalización XP por error (v7.5)
+    if (window.GamesAdapter && window.GamesAdapter.calculateXP) {
+        window.GamesAdapter.calculateXP(false);
+    }
 
     consecutiveErrors++;
     if (totalErrorsDisplay) totalErrorsDisplay.textContent = totalErrors; // Actualizar display de errores totales
@@ -647,17 +716,17 @@ function endGame() {
     // (Req 6.2) Cálculos de Precisión y Puntaje Ponderado
     const wpm = calculateWPM();
     const precision = totalKeys > 0 ? Math.round((correctKeys / totalKeys) * 100) : 0;
-    const totalScore = Math.round((wpm * 0.6) + (precision * 0.4) + (correctWordsCount * 2));
+    const finalScoreValue = Math.round((wpm * 0.6) + (precision * 0.4) + (correctWordsCount * 2));
 
-    if (finalWPM) finalWPM.textContent = `${wpm} WPM | ${precision}% Precisión`;
+    if (finalWPM) finalWPM.textContent = `${wpm} WPM | ${precision}% Precisión | ${totalXP} XP`;
 
     // Actualizar visualmente el puntaje si existe un elemento
     const scoreTitle = gameResultScreen.querySelector('h3');
-    if (scoreTitle) scoreTitle.textContent = `¡Juego Terminado! Puntaje: ${totalScore}`;
+    if (scoreTitle) scoreTitle.textContent = `¡Juego Terminado! Puntaje: ${finalScoreValue}`;
 
     // Integración con GamesAdapter (Sincronización Silenciosa)
     if (window.GamesAdapter) {
-        GamesAdapter.finishSession('Ofimática I', ['Básico', 'Intermedio', 'Avanzado', 'Especial'][currentDifficultyLevel], totalScore);
+        GamesAdapter.finishSession('Ofimática I', ['Básico', 'Intermedio', 'Avanzado', 'Especial'][currentDifficultyLevel], finalScoreValue, totalXP);
     }
 
     console.log(`Final Correct Words: ${correctWordsCount}`); // Log de depuración

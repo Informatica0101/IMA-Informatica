@@ -1748,6 +1748,7 @@ Tu navegador no soporta el tag de video.
 
 let currentQuestionIndex = 0;
 let currentScore = 0;
+let totalXP = 0;
 let quizTimer;
 let timeElapsed = 0;
 let isPaused = false;
@@ -2478,10 +2479,13 @@ function checkAnswer(selectedIndex, correctAnswer) {
 
 
     const question = currentQuestions[currentQuestionIndex];
-    const finalCorrect = correctAnswer ?? question.respuestaCorrecta;
+    const finalCorrect = (correctAnswer !== undefined && correctAnswer !== null) ? correctAnswer : question.respuestaCorrecta;
+    const isCorrect = selectedIndex == finalCorrect;
 
     // Captura de Analítica Unificada (Fase 5)
     if (window.GamesAdapter) {
+        totalXP += window.GamesAdapter.calculateXP(isCorrect, selectedDifficulty, responseTime, 'webmaster');
+
         GamesAdapter.recordAction({
             asignatura: 'Diseño Web',
             nivel: selectedDifficulty,
@@ -2489,13 +2493,13 @@ function checkAnswer(selectedIndex, correctAnswer) {
             tema: selectedTopic,
             respuestaSeleccionada: selectedIndex,
             respuestaCorrecta: finalCorrect,
-            esCorrecta: selectedIndex == finalCorrect,
+            esCorrecta: isCorrect,
             tiempoRespuesta: responseTime,
             cambiosRespuesta: responseChanges
         });
     }
 
-    if (selectedIndex == finalCorrect) {
+    if (isCorrect) {
         handleCorrectAnswer();
     } else {
         handleIncorrectAnswer();
@@ -2544,7 +2548,7 @@ function endQuiz() {
 
     // Guardar en el portal vía Adaptador Unificado (Sincronización Silenciosa)
     if (window.GamesAdapter) {
-        GamesAdapter.finishSession('Diseño Web', selectedDifficulty, currentScore);
+        GamesAdapter.finishSession('Diseño Web', selectedDifficulty, currentScore, totalXP);
     }
 
     // Check if there's a next level
@@ -2583,13 +2587,16 @@ window.initQuizGame = async function() {
     if (window.GamesAdapter) {
         const { lb, record } = await GamesAdapter.init('webmaster');
 
-        // Renderizar Mini-Leaderboard
+        // Renderizar Mini-Leaderboard (REQ 7: Top 5 con XP)
         const miniLb = document.getElementById('mini-leaderboard');
         if (miniLb && lb && lb.global) {
-            miniLb.innerHTML = lb.global.slice(0, 3).map((u, i) => `
-                <div class="flex items-center justify-between text-[10px] font-bold">
+            miniLb.innerHTML = lb.global.slice(0, 5).map((u, i) => `
+                <div class="flex items-center justify-between text-[10px] font-bold py-1 border-b border-blue-50 last:border-0">
                     <span class="text-blue-700">${i+1}. ${u.nombre.split(' ')[0]}</span>
-                    <span class="text-blue-500">${u.promedio}%</span>
+                    <div class="flex flex-col items-end">
+                        <span class="text-blue-500">${u.promedio}%</span>
+                        <span class="text-[8px] text-gray-400 font-black">${(u.xp || 0).toLocaleString()} XP</span>
+                    </div>
                 </div>
             `).join('');
         } else if (miniLb) {

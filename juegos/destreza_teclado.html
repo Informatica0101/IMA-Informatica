@@ -661,13 +661,16 @@
             if (window.GamesAdapter) {
                 const { lb, record } = await GamesAdapter.init('dexterity');
 
-                // Mini Leaderboard
+                // Mini Leaderboard (REQ 7: Top 5 con XP)
                 const miniLb = document.getElementById('mini-leaderboard');
                 if (miniLb && lb && lb.global) {
-                    miniLb.innerHTML = lb.global.slice(0, 3).map((u, i) => `
-                        <div class="flex items-center justify-between text-[10px] font-bold">
+                    miniLb.innerHTML = lb.global.slice(0, 5).map((u, i) => `
+                        <div class="flex items-center justify-between text-[10px] font-bold py-1 border-b border-purple-50 last:border-0">
                             <span class="text-purple-700">${i+1}. ${u.nombre.split(' ')[0]}</span>
-                            <span class="text-purple-500">${u.promedio}</span>
+                            <div class="flex flex-col items-end">
+                                <span class="text-purple-500">${u.promedio} WPM</span>
+                                <span class="text-[8px] text-gray-400 font-black">${(u.xp || 0).toLocaleString()} XP</span>
+                            </div>
                         </div>
                     `).join('');
                 }

@@ -600,58 +600,21 @@ function startQuiz() {
 }
 
 /**
- * ALGORITMO DE XP (QuizPro v7.0)
- * Implementa mitigación de adivinación y ponderación psicométrica.
+ * ALGORITMO DE XP (QuizPro v7.5 - Integrado con GamesAdapter)
  */
 function calculateXP(isCorrect, level, responseTime) {
-    if (!isCorrect) {
-        currentStreak = 0;
-        return 0;
+    if (window.GamesAdapter && window.GamesAdapter.calculateXP) {
+        // REQ 3: Usar motor centralizado para consistencia
+        const xp = window.GamesAdapter.calculateXP(isCorrect, level, responseTime, 'quizpro');
+
+        // REQ: Soft Cap (v7.5)
+        const xpKey = "xp_" + selectedAsignatura + "_" + selectedGrado;
+        const currentTotalXP = parseInt(localStorage.getItem(xpKey) || '0');
+        if (level.toLowerCase() === 'basico' && currentTotalXP >= 1500) return 0;
+
+        return xp;
     }
-
-    currentStreak++;
-
-    // 1. Factor Dificultad
-    var fDificultad = XP_CONFIG.FACTORS[level.toLowerCase()] || 1.0;
-
-    // 2. Factor Tiempo (Mitigador de Adivinación)
-    var fTiempo = 1.0;
-    if (responseTime < XP_CONFIG.TIME.MIN) {
-        fTiempo = 0.5; // Respuesta Impulsiva
-    } else if (responseTime <= XP_CONFIG.TIME.OPTIMAL) {
-        fTiempo = 1.2; // Respuesta Reflexiva Óptima
-    } else {
-        // Respuesta Tardía (Decaimiento Lineal hasta 0.8)
-        var overshoot = responseTime - XP_CONFIG.TIME.OPTIMAL;
-        var totalLateWindow = XP_CONFIG.TIME.MAX - XP_CONFIG.TIME.OPTIMAL;
-        fTiempo = Math.max(0.8, 1.2 - (overshoot / totalLateWindow) * 0.4);
-    }
-
-    // 3. Bono Racha
-    var bonoRacha = Math.min(XP_CONFIG.STREAK.MAX, 1.0 + (currentStreak * XP_CONFIG.STREAK.BONUS_PER_HIT));
-
-    // REQ 3.0: Degradación por intentos
-    var q = currentQuizQuestions[currentIndex];
-    var prevAttemptsRaw = localStorage.getItem("attempts_" + q.id);
-    var prevAttempts = prevAttemptsRaw ? JSON.parse(prevAttemptsRaw) : 0;
-    var attemptMultiplier = 1.0;
-    if (prevAttempts === 1) attemptMultiplier = 0.75;
-    else if (prevAttempts === 2) attemptMultiplier = 0.5;
-    else if (prevAttempts >= 3) attemptMultiplier = 0.25;
-
-    var totalXP = Math.round(XP_CONFIG.BASE * fDificultad * fTiempo * bonoRacha * attemptMultiplier);
-
-    // REQ 4.2 & 6.3: Soft Cap & XP Freeze
-    var xpKey = "xp_" + selectedAsignatura + "_" + selectedGrado;
-    var currentTotalXP = parseInt(localStorage.getItem(xpKey) || '0');
-
-    if (level.toLowerCase() === 'basico' && currentTotalXP >= 1500) {
-        console.log("[XP-ENGINE] Soft Cap alcanzado (1,500 XP). AVANCE CONGELADO hasta desbloquear nivel intermedio.");
-        return 0;
-    }
-
-    console.log("[XP-ENGINE] +" + totalXP + " XP | Dif: " + fDificultad + " | Time: " + fTiempo.toFixed(2) + " | Streak: " + bonoRacha.toFixed(2));
-    return totalXP;
+    return 0;
 }
 
 /**
