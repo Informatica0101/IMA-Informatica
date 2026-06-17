@@ -26,6 +26,7 @@ let shuffledPeripherals = [];
 let currentPeripheralIndex = 0;
 let score = 0;
 let errors = 0;
+let totalXP = 0;
 let timerInterval;
 let startTime;
 let gameStarted = false;
@@ -64,13 +65,16 @@ async function initializePeripheralsGame(gameDataStorage) {
     if (window.GamesAdapter) {
         const { lb, record } = await GamesAdapter.init('perifericos');
 
-        // Mini Leaderboard
+        // Mini Leaderboard (REQ 7: Top 5 con XP)
         const miniLb = document.getElementById('mini-leaderboard');
         if (miniLb && lb && lb.global) {
-            miniLb.innerHTML = lb.global.slice(0, 3).map((u, i) => `
-                <div class="flex items-center justify-between text-[10px] font-bold">
+            miniLb.innerHTML = lb.global.slice(0, 5).map((u, i) => `
+                <div class="flex items-center justify-between text-[10px] font-bold py-1 border-b border-indigo-50 last:border-0">
                     <span class="text-indigo-700">${i+1}. ${u.nombre.split(' ')[0]}</span>
-                    <span class="text-indigo-500">${u.promedio}%</span>
+                    <div class="flex flex-col items-end">
+                        <span class="text-indigo-500">${u.promedio}%</span>
+                        <span class="text-[8px] text-gray-400 font-black">${(u.xp || 0).toLocaleString()} XP</span>
+                    </div>
                 </div>
             `).join('');
         }
@@ -253,8 +257,12 @@ function checkAnswer(selectedType) {
 
     if (answerButtons) answerButtons.forEach(button => button.disabled = true); // Disable all answer buttons immediately
 
+    const isCorrect = selectedType === correctType;
+
     // Captura de Analítica Unificada (Fase 5)
     if (window.GamesAdapter) {
+        totalXP += window.GamesAdapter.calculateXP(isCorrect, 'Básico', responseTime, 'perifericos');
+
         GamesAdapter.recordAction({
             asignatura: 'Informática I',
             nivel: 'Básico',
@@ -262,13 +270,13 @@ function checkAnswer(selectedType) {
             tema: 'Hardware',
             respuestaSeleccionada: selectedType,
             respuestaCorrecta: correctType,
-            esCorrecta: selectedType === correctType,
+            esCorrecta: isCorrect,
             tiempoRespuesta: responseTime,
             cambiosRespuesta: responseChanges
         });
     }
 
-    if (selectedType === correctType) {
+    if (isCorrect) {
         score++;
         if (peripheralCard) peripheralCard.classList.add('border-green-500');
         if (selectedButton) {
@@ -353,7 +361,7 @@ function endGame() {
 
     // Guardar en el portal vía Adaptador Unificado (Sincronización Silenciosa)
     if (window.GamesAdapter) {
-        GamesAdapter.finishSession('Informática I', 'Básico', score);
+        GamesAdapter.finishSession('Informática I', 'Básico', score, totalXP);
     }
 }
 

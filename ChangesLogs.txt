@@ -88,3 +88,68 @@ Módulo: Documentación Técnica
     - Sincronizado el contexto de sección (sectionId, navId) en las transiciones de navegación jerárquica para una restauración íntegra.
     - Implementada activación manual de 'setupCodeCopyButtons' al abrir el modal de detalles de tarea.
 - js/ui-common.js: Actualizado handlePopState para restaurar la sección activa del dashboard basándose en el estado del historial, garantizando una navegación SPA predecible.
+
+REGISTRO DE CORRECCIÓN DE ERRORES DE CONSOLA - Wed Jun 17 08:31:39 UTC 2026
+
+Módulo: Inicialización (index.html)
+- js/index-ui.js:
+    - Reubicada la definición de 'window.renderWelcomeMessage' antes de su primera invocación.
+    - Esto resuelve el 'TypeError: window.renderWelcomeMessage is not a function' que ocurría al actualizar la página.
+
+Módulo: QuizPro (Académico)
+- js/quizpro.js:
+    - Refactorización total a ES5 para garantizar compatibilidad con navegadores legados y corregir 'SyntaxError: Unexpected token )'.
+    - Eliminado el uso de Arrow Functions, Template Literals y Optional Chaining.
+    - Corregida la definición de callbacks en forEach, map y filter.
+    - Sincronizado el enrutamiento de recursos (isRoot) para carga de bancos de preguntas desde raíz o subcarpetas.
+    - La resolución de errores de sintaxis permite que 'navigateToSubjects' se defina correctamente, eliminando el 'ReferenceError'.
+
+Módulo: Maestro del Teclado (Minijuego)
+- js/destreza_teclado.js:
+    - Actualizado el selector del botón de inicio de 'start-game-button' a 'start-game-button-real'.
+    - Esto resuelve el error 'startGameButton: null' y permite la activación de los listeners del juego.
+
+REGISTRO DE AUDITORÍA FORENSE Y ESTANDARIZACIÓN DE MINIJUEGOS - Wed Jun 17 09:55:56 UTC 2026
+
+Módulo: GamesAdapter (Core)
+- js/games-adapter.js:
+    - Centralizado motor de XP (XP_CONFIG) portado de QuizPro.
+    - Implementada lógica 'calculateXP' con soporte para bonificaciones por racha y velocidad.
+    - Agregado sistema de degradación de XP por intentos repetidos (prevención de exploits).
+    - Portadas escalas de rangos académicos para unificación de clasificaciones.
+
+Módulo: Maestro del Teclado (Escritura)
+- js/destreza_teclado.js:
+    - Corregido cálculo de WPM al estándar industrial: (Caracteres/5) / Minutos.
+    - Implementado avance de nivel continuo: permite recorrer todas las dificultades en una misma sesión.
+    - Añadido feedback diferenciado: 800ms para aciertos, 2-3s para errores según complejidad.
+    - Ajuste dinámico de tiempo límite por palabra basado en longitud y desempeño previo.
+
+Módulo: Periféricos y WebMaster Quiz
+- js/perifericos_juego.js & js/webmaster_quiz_juego.js:
+    - Integración con el motor central de XP de GamesAdapter.
+    - Actualizado Mini-Leaderboard para mostrar Top 5 con métricas de XP y promedios.
+    - Sincronización de analítica detallada por cada respuesta.
+
+REGISTRO DE OPTIMIZACIÓN UX Y MOBILE: MAESTRO DEL TECLADO - Wed Jun 17 11:20:00 UTC 2026
+
+Módulo: Maestro del Teclado (UX & Mobile)
+- js/destreza_teclado.js:
+    - Consolidada toda la lógica del juego desde el HTML inline hacia este módulo externo.
+    - Implementada pantalla de resultados obligatoria: el botón 'Salir del Juego' y el límite de 3 errores ahora invocan 'endGame()'.
+    - Mejorado el resumen de resultados: ahora muestra XP, WPM, Precisión, Nivel, Tiempo y Ranking posicional.
+    - Eliminados anuncios de nivel ('¡NIVEL...!') para permitir una progresión fluida y silenciosa.
+    - Corregido renderizado de Leaderboard: ahora utiliza 'window.currentLeaderboard' hidratado por GamesAdapter.
+    - Optimizada vista móvil: se implementó un desplazamiento vertical dinámico (translateY) al enfocar el input en pantallas <768px.
+    - Restaurada compatibilidad ES5 (var) y corregidos cierres de funciones.
+
+Módulo: QuizPro (Refuerzo ES5)
+- js/quizpro.js:
+    - Eliminados todos los residuos de 'const' restantes tras la refactorización inicial.
+    - Corregidos ReferenceErrors causados por variables fuera de scope (XP_CONFIG).
+    - Asegurada sincronización total con el motor central de GamesAdapter.
+
+Módulo: HTML y Estructura
+- juegos/destreza_teclado.html:
+    - Eliminado bloque de script redundante de 400+ líneas.
+    - Vinculado correctamente 'js/destreza_teclado.js' para asegurar la carga de la lógica.

@@ -89,3 +89,43 @@
     - Ningún nivel es omitido durante la navegación hacia atrás.
     - El comportamiento es consistente en escritorio y móviles.
 - **Estado:** [X] Completada
+
+### [T-020] Corrección Integral de Errores de Consola
+- **Origen del Hallazgo:** Reporte de Usuario (2026-06-16)
+- **Severidad:** Crítico
+- **Archivos Involucrados:** js/index-ui.js, js/quizpro.js, js/destreza_teclado.js
+- **Descripción del Alcance:**
+    - Corregir el orden de definición de window.renderWelcomeMessage para evitar TypeError.
+    - Refactorizar js/quizpro.js a ES5 para eliminar errores de sintaxis y restaurar accesibilidad de funciones.
+    - Sincronizar el selector de botón en js/destreza_teclado.js con el ID del HTML.
+- **Criterios de Aceptación:**
+    - Consola libre de errores al cargar index.html y navegar a minijuegos.
+    - Navegación a asignaturas en QuizPro funcional.
+    - Botón "Calibrar Dedos" en Maestro del Teclado interactivo.
+- **Estado:** [X] Completada
+
+### [T-021] Estandarización de XP y Rankings en Minijuegos
+- **Origen del Hallazgo:** Auditoría Forense (2026-06-16)
+- **Severidad:** Crítico
+- **Archivos Involucrados:** js/games-adapter.js, js/destreza_teclado.js, js/perifericos_juego.js, js/webmaster_quiz_juego.js
+- **Descripción del Alcance:**
+    - Centralizar XP_CONFIG y calculateXP en GamesAdapter.
+    - Implementar degradación de XP por intentos repetidos.
+    - Corregir cálculo de WPM a estándar (caracteres/5).
+    - Implementar progresión dinámica de dificultad en juegos de escritura.
+    - Asegurar Top 5 con XP en todos los minijuegos.
+- **Criterios de Aceptación:**
+    - Todos los juegos generan XP consistente con QuizPro.
+    - WPM matemáticamente preciso.
+    - Rankings actualizados en tiempo real con XP visible.
+- **Estado: [X] Completada (2026-06-17)**
+
+### [T-022] Optimización UX y Mobile: Maestro del Teclado
+- **Origen del Hallazgo:** Requerimiento de Usuario (2026-06-17)
+- **Archivos Involucrados:** js/destreza_teclado.js, juegos/destreza_teclado.html
+- **Descripción del Alcance:**
+    - Implementar pantalla de resultados obligatoria al salir o fallar.
+    - Corregir renderizado de ranking en tiempo real.
+    - Eliminar anuncios de nivel (progresión silenciosa).
+    - Implementar desplazamiento de layout en móviles al enfocar input.
+- **Estado: [X] Completada (2026-06-17)**

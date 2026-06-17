@@ -33,3 +33,60 @@ Archivo: js/teacher.js
 Hallazgo: Se está forzando color: #000000; vía JS en el contenedor raíz del editor, pero si Quill inyecta párrafos dinámicamente, estos podrían heredar el gris global.
 
 Diagnóstico: La especificidad de 'p' en style.css (color: var(--blue-grayish)) es muy alta al ser un tag universal. Quill envuelve casi todo en tags 'p'. Se requiere una regla de reset más agresiva para el contenedor del editor.
+
+AUDITORÍA TÉCNICA - CORRECCIÓN DE ERRORES DE CONSOLA - Wed Jun 17 08:16:58 UTC 2026
+
+Archivo: js/index-ui.js
+Sector: Inicialización / window.renderWelcomeMessage (Línea 500 y 531)
+Hallazgo [Alto]: Llamada a función no definida debido a orden de ejecución/asignación.
+Impacto: TypeError: window.renderWelcomeMessage is not a function. Interrumpe el flujo de inicialización.
+Recomendación: Mover la asignación al inicio del DOMContentLoaded o usar declaración de función.
+
+Archivo: js/quizpro.js
+Sector: General
+Hallazgo [Crítico]: Múltiples errores de sintaxis por incumplimiento de norma ES5. Uso de callbacks sin palabra clave 'function', flechas implícitas mal formadas y operador optional chaining (?.).
+Impacto: SyntaxError: Unexpected token ')'. El script no carga, resultando en ReferenceError para todas sus funciones globales.
+Recomendación: Refactorización total a ES5.
+
+Archivo: js/destreza_teclado.js
+Sector: initDexterityGame (Línea 185 / 186)
+Hallazgo [Alto]: Selector de ID incorrecto para el botón de inicio. Busca 'start-game-button' pero el HTML usa 'start-game-button-real'.
+Impacto: startGameButton es null. No se pueden añadir event listeners, el juego no inicia.
+Recomendación: Corregir selector a '#start-game-button-real'.
+
+AUDITORÍA FORENSE - SISTEMA DE MINIJUEGOS - Wed Jun 17 09:12:34 UTC 2026
+
+Archivo: js/games-adapter.js
+Hallazgo [Alto]: La función finishSession acepta xpGanada pero no la calcula. Los juegos (excepto QuizPro) no están enviando XP, lo que rompe la consistencia del progreso global.
+Impacto: Los minijuegos no contribuyen al XP del usuario de forma estandarizada.
+
+Archivo: js/destreza_teclado.js
+Hallazgo [Medio]: El cálculo de WPM usa correctWordsCount directamente en lugar de la métrica estándar (caracteres/5).
+Impacto: Precisión cuestionable en la métrica de velocidad.
+
+Archivo: js/perifericos_juego.js
+Hallazgo [Bajo]: No existe lógica de bonificación por racha ni penalización por tiempo, a diferencia de QuizPro.
+
+Archivo: js/webmaster_quiz_juego.js
+Hallazgo [Medio]: El ranking solo muestra "promedio", pero no XP, incumpliendo el requerimiento de visibilidad de XP en rankings.
+
+AUDITORÍA FORENSE - DETALLES TÉCNICOS - Wed Jun 17 09:14:23 UTC 2026
+
+Archivo: js/games-adapter.js
+- La arquitectura carece de un motor central de XP. QuizPro tiene su propio XP_CONFIG.
+- finishSession no implementa la lógica de degradación por intentos.
+- El record personal (getPersonalRecord) no está integrado con la lógica de desbloqueo de niveles de QuizPro.
+
+Archivo: js/destreza_teclado.js
+- La función calculateWPM (línea 166) divide correctWordsCount / tiempo.
+- Estándar industrial: (Caracteres correctos / 5) / Minutos.
+- No hay retroalimentación de 2 segundos entre palabras (avanza inmediato).
+- El tiempo no es dinámico por longitud de palabra en la práctica (está en el código pero no se aplica proporcionalmente a la racha).
+
+Archivo: js/perifericos_juego.js
+- No hay cálculo de XP.
+- No hay sistema de ranking Top 5 visible permanentemente.
+
+Archivo: js/webmaster_quiz_juego.js
+- La lógica de finalización no calcula XP.
+- El mini-leaderboard no muestra XP ni Nivel.
