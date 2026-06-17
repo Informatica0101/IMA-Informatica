@@ -105,3 +105,41 @@ Solución: Reemplazado bloqueo físico del input por una bandera lógica 'isProc
 Sector: Restricción de Mouse
 Hallazgo [Verificación]: Se confirmó que los mecanismos de bloqueo de mouse (contextmenu, selectstart) residen en 'js/security-minigames.js' y 'interactivo.html'.
 Estado: Preservado. Las modificaciones actuales no interfieren con la capa de seguridad interactiva.
+
+AUDITORÍA TÉCNICA - ESTRATEGIA DE CACHÉ Y PERFIL ANALÍTICO - Wed Jun 17 14:00:00 UTC 2026
+
+Archivo: js/api.js
+Sector: Función fetchApi (Línea 65)
+Hallazgo [Crítico]: La implementación de "Silent Reconciliation" no es realmente silenciosa ni inmediata. Espera a que el fetch termine para llamar a reconcile.
+Impacto: Viola el requerimiento de carga de 0ms. La UI depende de la latencia de red antes de intentar siquiera usar el caché para las llamadas individuales.
+Recomendación: Mover la lectura de caché al inicio de la función fetchApi para llamar a onUpdate inmediatamente si existe información local.
+
+Archivo: js/student.js
+Sector: Función fetchAndRenderLearningProfile (Línea 1111)
+Hallazgo [Alto]: La lógica de renderizado de caché se salta si dataOnly es true.
+Impacto: Al llamarse desde fetchAllActivities con dataOnly=true dentro de un Promise.all, el perfil analítico NO se renderiza desde caché, obligando al usuario a esperar la respuesta del servidor. Esto explica el Hallazgo 2.
+Recomendación: Renderizar siempre desde caché si el contenedor existe, independientemente de dataOnly.
+
+Sector: Función renderLearningProfileData (Línea 1139)
+Hallazgo [Medio]: El filtro 'intentos >= 5' es muy restrictivo y puede causar que el perfil parezca vacío para usuarios nuevos.
+Impacto: "El componente permanecía vacío o no renderizaba información útil".
+Recomendación: Ajustar el umbral o mostrar un estado intermedio más informativo.
+
+Sector: Función fetchAllActivities (Línea 75)
+Hallazgo [Medio]: Uso de Promise.all bloquea el renderizado final de la página.
+Impacto: Aunque existe una carga manual inicial de cache_estudiante_dashboard, cualquier retraso en Promise.all pospone la ejecución de renderizado sincronizado final y el renderizado del perfil analítico (si no se corrigió el punto anterior).
+
+Archivo: js/persistence.js
+Sector: Función reconcile (Línea 126)
+Hallazgo [Bajo]: Solo llama a onUpdate si los datos del servidor son más recientes.
+Impacto: Si el caché ya es el más reciente, no hay una señal de "carga completada" vía onUpdate, lo cual es correcto si ya se renderizó previamente, pero requiere que el llamador maneje la carga inicial.
+
+AUDITORÍA POST-IMPLEMENTACIÓN - OPTIMIZACIÓN DE CACHÉ Y PERFIL ANALÍTICO - Wed Jun 17 14:40:00 UTC 2026
+
+Archivo: js/api.js
+Estado: Verificado. La lectura de caché ahora ocurre ANTES del fetch, permitiendo que la UI se actualice instantáneamente.
+
+Archivo: js/student.js
+Estado: Verificado. Se eliminó la restricción de dataOnly en fetchAndRenderLearningProfile. Se ajustó el umbral de intentos y se añadió el estado 'Calibrando' para mejorar la experiencia de usuario en cuentas nuevas o con poca actividad.
+
+Conclusión: Las correcciones abordan directamente los hallazgos 1 y 2 de la revisión.

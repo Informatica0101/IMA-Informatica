@@ -163,3 +163,13 @@ Módulo: Maestro del Teclado (Afinamiento UX)
     - Asegurada persistencia del teclado virtual en móviles: se eliminó la deshabilitación del input durante las transiciones, reemplazándola por el flag 'isProcessingFeedback'.
     - El input mantiene el foco permanente durante la sesión de juego.
     - Verificada la conservación de la advertencia de uso del mouse en la plataforma.
+Wed Jun 17 14:30:00 UTC 2026 - Optimización de Caché y Perfil Analítico
+
+Archivo: js/api.js
+- Líneas 49-61: Implementada lectura asíncrona inmediata de IndexedDB dentro de fetchApi. Ahora el callback onUpdate se dispara al inicio de la petición si hay datos locales, garantizando un renderizado de 0ms independientemente de la latencia de red.
+
+Archivo: js/student.js
+- Línea 1302: Modificada fetchAndRenderLearningProfile para que siempre intente renderizar desde caché al inicio, eliminando el bloqueo condicional de dataOnly.
+- Línea 1311: Asegurado que el callback onUpdate siempre ejecute renderLearningProfileData para actualizaciones silenciosas.
+- Línea 1332: Reducido el umbral de 'intentos' de 5 a 1 en renderLearningProfileData para evitar componentes vacíos en perfiles nuevos.
+- Líneas 1353: Introducido estado 'Calibrando' en la tabla de métricas para intentos menores a 5, mejorando la retroalimentación visual del usuario.

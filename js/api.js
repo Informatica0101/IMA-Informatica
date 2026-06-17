@@ -46,6 +46,19 @@ function fetchApi(service, action, payload, retryCount, options) {
     if (signal) fetchOptions.signal = signal;
     if (options.priority) fetchOptions.priority = options.priority;
 
+    // REQ: Eager Caching & 0ms Initial Render (Modulo 1.1)
+    // Disparar lectura de caché inmediatamente sin bloquear el fetch remoto
+    if (options.store && options.onUpdate && window.PersistenceManager) {
+        window.PersistenceManager.get(options.store, options.key).then(function(cached) {
+            if (cached && cached.data) {
+                console.log('[API-CACHE] Renderizado inmediato desde:', options.store);
+                options.onUpdate(cached.data);
+            }
+        }).catch(function(e) {
+            console.warn('[API-CACHE] Error en lectura previa:', e);
+        });
+    }
+
     return fetch(url, fetchOptions)
         .then(function(response) {
             if (timeoutId) clearTimeout(timeoutId);
