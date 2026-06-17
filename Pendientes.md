@@ -118,4 +118,14 @@
     - Todos los juegos generan XP consistente con QuizPro.
     - WPM matemáticamente preciso.
     - Rankings actualizados en tiempo real con XP visible.
-- **Estado: [ ] Pendiente**
+- **Estado: [X] Completada (2026-06-17)**
+
+### [T-022] Optimización UX y Mobile: Maestro del Teclado
+- **Origen del Hallazgo:** Requerimiento de Usuario (2026-06-17)
+- **Archivos Involucrados:** js/destreza_teclado.js, juegos/destreza_teclado.html
+- **Descripción del Alcance:**
+    - Implementar pantalla de resultados obligatoria al salir o fallar.
+    - Corregir renderizado de ranking en tiempo real.
+    - Eliminar anuncios de nivel (progresión silenciosa).
+    - Implementar desplazamiento de layout en móviles al enfocar input.
+- **Estado: [X] Completada (2026-06-17)**

@@ -605,11 +605,11 @@ function startQuiz() {
 function calculateXP(isCorrect, level, responseTime) {
     if (window.GamesAdapter && window.GamesAdapter.calculateXP) {
         // REQ 3: Usar motor centralizado para consistencia
-        const xp = window.GamesAdapter.calculateXP(isCorrect, level, responseTime, 'quizpro');
+        var xp = window.GamesAdapter.calculateXP(isCorrect, level, responseTime, 'quizpro');
 
         // REQ: Soft Cap (v7.5)
-        const xpKey = "xp_" + selectedAsignatura + "_" + selectedGrado;
-        const currentTotalXP = parseInt(localStorage.getItem(xpKey) || '0');
+        var xpKey = "xp_" + selectedAsignatura + "_" + selectedGrado;
+        var currentTotalXP = parseInt(localStorage.getItem(xpKey) || '0');
         if (level.toLowerCase() === 'basico' && currentTotalXP >= 1500) return 0;
 
         return xp;

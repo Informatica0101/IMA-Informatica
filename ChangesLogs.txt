@@ -130,3 +130,26 @@ Módulo: Periféricos y WebMaster Quiz
     - Integración con el motor central de XP de GamesAdapter.
     - Actualizado Mini-Leaderboard para mostrar Top 5 con métricas de XP y promedios.
     - Sincronización de analítica detallada por cada respuesta.
+
+REGISTRO DE OPTIMIZACIÓN UX Y MOBILE: MAESTRO DEL TECLADO - Wed Jun 17 11:20:00 UTC 2026
+
+Módulo: Maestro del Teclado (UX & Mobile)
+- js/destreza_teclado.js:
+    - Consolidada toda la lógica del juego desde el HTML inline hacia este módulo externo.
+    - Implementada pantalla de resultados obligatoria: el botón 'Salir del Juego' y el límite de 3 errores ahora invocan 'endGame()'.
+    - Mejorado el resumen de resultados: ahora muestra XP, WPM, Precisión, Nivel, Tiempo y Ranking posicional.
+    - Eliminados anuncios de nivel ('¡NIVEL...!') para permitir una progresión fluida y silenciosa.
+    - Corregido renderizado de Leaderboard: ahora utiliza 'window.currentLeaderboard' hidratado por GamesAdapter.
+    - Optimizada vista móvil: se implementó un desplazamiento vertical dinámico (translateY) al enfocar el input en pantallas <768px.
+    - Restaurada compatibilidad ES5 (var) y corregidos cierres de funciones.
+
+Módulo: QuizPro (Refuerzo ES5)
+- js/quizpro.js:
+    - Eliminados todos los residuos de 'const' restantes tras la refactorización inicial.
+    - Corregidos ReferenceErrors causados por variables fuera de scope (XP_CONFIG).
+    - Asegurada sincronización total con el motor central de GamesAdapter.
+
+Módulo: HTML y Estructura
+- juegos/destreza_teclado.html:
+    - Eliminado bloque de script redundante de 400+ líneas.
+    - Vinculado correctamente 'js/destreza_teclado.js' para asegurar la carga de la lógica.
