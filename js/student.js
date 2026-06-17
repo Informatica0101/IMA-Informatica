@@ -303,6 +303,24 @@ document.addEventListener('DOMContentLoaded', function() {
 
         container.innerHTML = `
             <div class="card-ima bg-white border border-gray-100 p-6 rounded-[2rem] shadow-sm">
+                <div id="student-metrics-table-container" class="mb-6 overflow-x-auto">
+                    <!-- Tabla de métricas psicométricas (Fase 12) -->
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="border-b border-gray-100">
+                                <th class="py-2 text-[10px] font-black text-gray-400 uppercase tracking-widest">Métrica</th>
+                                <th class="py-2 text-[10px] font-black text-gray-400 uppercase tracking-widest text-right">Valor</th>
+                                <th class="py-2 text-[10px] font-black text-gray-400 uppercase tracking-widest text-center">Estado</th>
+                            </tr>
+                        </thead>
+                        <tbody id="student-metrics-body">
+                            <tr class="animate-pulse">
+                                <td colspan="3" class="py-4 text-center text-[10px] font-bold text-gray-300 uppercase">Cargando métricas...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
                     <div class="space-y-4">
                         <div class="flex items-center gap-3">
@@ -678,6 +696,20 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             }
 
+            var statusLabel = "";
+            if (activity.entrega) {
+                var s = activity.entrega.estado;
+                if (s === 'Completada' || s === 'Revisada' || s === 'Finalizado') {
+                    statusLabel = '<span class="ml-2 px-2 py-0.5 bg-emerald-100 text-emerald-700 text-[8px] font-black uppercase rounded shadow-sm">Completada</span>';
+                } else if (s === 'Rechazada') {
+                    statusLabel = '<span class="ml-2 px-2 py-0.5 bg-red-100 text-red-700 text-[8px] font-black uppercase rounded shadow-sm">Rechazada</span>';
+                } else if (s === 'Tarea incompleta') {
+                    statusLabel = '<span class="ml-2 px-2 py-0.5 bg-orange-100 text-orange-700 text-[8px] font-black uppercase rounded shadow-sm">Incompleta</span>';
+                } else {
+                    statusLabel = '<span class="ml-2 px-2 py-0.5 bg-yellow-100 text-yellow-700 text-[8px] font-black uppercase rounded shadow-sm">Pendiente de revisión</span>';
+                }
+            }
+
             return `
                 <div class="card-ima assignment-card cursor-pointer group" data-task-id="${activity.tareaId || activity.examenId}">
                     <div class="flex justify-between items-start">
@@ -686,7 +718,10 @@ document.addEventListener('DOMContentLoaded', function() {
                                 <span class="text-[9px] font-semibold uppercase tracking-widest text-blue-600 bg-blue-50 px-2 py-0.5 rounded">${activity.type}</span>
                                 <span class="text-[10px] text-gray-400 font-medium uppercase tracking-tighter">${activity.asignatura || 'General'}</span>
                             </div>
-                            <h3 class="text-base font-semibold text-gray-900 group-hover:text-blue-600 transition-colors leading-tight uppercase tracking-tighter">${activity.titulo}</h3>
+                            <h3 class="text-base font-semibold text-gray-900 group-hover:text-blue-600 transition-colors leading-tight uppercase tracking-tighter flex items-center flex-wrap">
+                                ${activity.titulo}
+                                ${statusLabel}
+                            </h3>
                         </div>
                         <div class="flex flex-col items-end">
                             <span class="text-[10px] font-semibold text-gray-400 uppercase tracking-widest">${formatDate(activity.fechaLimite)}</span>
@@ -1289,10 +1324,70 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function renderLearningProfileData(profileData) {
         var profileContainer = document.getElementById('learning-profile-integration');
-        if (!profileContainer) return;
+        var metricsBody = document.getElementById('student-metrics-body');
 
         // REQ 3: Muestra mínima local para renderizado de tabla (Modulo 3.1)
         var validData = (profileData || []).filter(function(i) { return i.intentos >= 5; });
+
+        if (metricsBody) {
+            if (validData.length > 0) {
+                // Calcular promedios para la tabla superior
+                var sumIAK = 0, sumRCE = 0, sumCONS = 0, count = 0;
+                validData.forEach(function(d) {
+                    if (d.iak !== undefined) {
+                        sumIAK += d.iak;
+                        sumRCE += (d.rce || 0);
+                        sumCONS += (d.consistencia || 100);
+                        count++;
+                    }
+                });
+
+                if (count > 0) {
+                    var avgIAK = sumIAK / count;
+                    var avgRCE = sumRCE / count;
+                    var avgCONS = sumCONS / count;
+
+                    var getStatus = function(val, type) {
+                        if (type === 'risk') {
+                            if (val < 20) return { label: 'Bajo', class: 'text-emerald-500' };
+                            if (val < 50) return { label: 'Medio', class: 'text-yellow-500' };
+                            return { label: 'Alto', class: 'text-red-500' };
+                        }
+                        if (val > 80) return { label: 'Excelente', class: 'text-emerald-500' };
+                        if (val > 60) return { label: 'Bueno', class: 'text-blue-500' };
+                        return { label: 'Crítico', class: 'text-red-500' };
+                    };
+
+                    var iakStat = getStatus(avgIAK, 'auth');
+                    var rceStat = getStatus(avgRCE, 'risk');
+                    var consStat = getStatus(avgCONS, 'cons');
+
+                    metricsBody.innerHTML = `
+                        <tr>
+                            <td class="py-3 text-[11px] font-bold text-gray-600 uppercase">Autenticidad del Conocimiento</td>
+                            <td class="py-3 text-sm font-black text-gray-900 text-right">${Math.round(avgIAK)}%</td>
+                            <td class="py-3 text-center"><span class="text-[9px] font-black uppercase ${iakStat.class}">${iakStat.label}</span></td>
+                        </tr>
+                        <tr>
+                            <td class="py-3 text-[11px] font-bold text-gray-600 uppercase">Riesgo de Consulta Externa</td>
+                            <td class="py-3 text-sm font-black text-gray-900 text-right">${Math.round(avgRCE)}%</td>
+                            <td class="py-3 text-center"><span class="text-[9px] font-black uppercase ${rceStat.class}">${rceStat.label}</span></td>
+                        </tr>
+                        <tr>
+                            <td class="py-3 text-[11px] font-bold text-gray-600 uppercase">Consistencia Académica</td>
+                            <td class="py-3 text-sm font-black text-gray-900 text-right">${Math.round(avgCONS)}%</td>
+                            <td class="py-3 text-center"><span class="text-[9px] font-black uppercase ${consStat.class}">${consStat.label}</span></td>
+                        </tr>
+                    `;
+                } else {
+                    metricsBody.innerHTML = '<tr><td colspan="3" class="py-4 text-center text-[10px] font-bold text-gray-400 uppercase">Datos psicométricos pendientes de calibración.</td></tr>';
+                }
+            } else {
+                metricsBody.innerHTML = '<tr><td colspan="3" class="py-4 text-center text-[10px] font-bold text-gray-400 uppercase">Se requiere mayor actividad para generar métricas.</td></tr>';
+            }
+        }
+
+        if (!profileContainer) return;
 
         if (validData.length === 0) {
              profileContainer.innerHTML = '<div class="p-6 text-center text-[10px] font-bold text-gray-400 uppercase tracking-widest bg-gray-50 rounded-[2rem] border border-gray-100 mt-8">Datos insuficientes para generar diagnóstico psicométrico.</div>';

@@ -512,17 +512,18 @@ function startTimer() {
             pauseTimer(); // REQ: Congelar inmediatamente al fallar por tiempo
             handleIncorrectInputLogic();
 
-                    isProcessingFeedback = true; // REQ: Bloquear lógica sin perder foco
-                    if (currentWordDisplay && currentWordDisplay.parentElement) {
-                        currentWordDisplay.parentElement.classList.add('border-error');
-                    }
+            isProcessingFeedback = true; // REQ: Bloquear lógica sin perder foco
+            if (currentWordDisplay && currentWordDisplay.parentElement) {
+                currentWordDisplay.parentElement.classList.add('border-error');
+            }
 
-                    const errTimeT = Math.min(3000, 2000 + (currentWord.word.length * 50));
-                    setTimeout(() => {
-                        isProcessingFeedback = false;
-                        wordIndex++;
-                        loadNewWord();
-                    }, errTimeT);
+            const errTimeT = Math.min(3000, 2000 + (currentWord.word.length * 50));
+            setTimeout(() => {
+                isProcessingFeedback = false;
+                wordIndex++;
+                resumeTimer(); // REQ: Reactivar timer antes de cargar nueva palabra
+                loadNewWord();
+            }, errTimeT);
         }
     }, UPDATE_INTERVAL_MS);
 }
@@ -560,6 +561,7 @@ function handleInput() {
         setTimeout(() => {
             isProcessingFeedback = false;
             wordIndex++;
+            resumeTimer(); // REQ: Reactivar timer
             loadNewWord();
         }, errTime);
         return;
@@ -586,6 +588,7 @@ function handleInput() {
         setTimeout(() => {
             isProcessingFeedback = false;
             wordIndex++;
+            resumeTimer(); // REQ: Reactivar timer
             loadNewWord();
         }, errTime);
         return;
@@ -636,6 +639,7 @@ function handleInput() {
         setTimeout(() => {
             isProcessingFeedback = false;
             wordIndex++;
+            resumeTimer(); // REQ: Reactivar timer
             loadNewWord();
         }, feedbackTime);
     }
@@ -713,6 +717,7 @@ function handleKeyDown(event) {
     setTimeout(() => {
         isProcessingFeedback = false;
         wordIndex++;
+        resumeTimer(); // REQ: Reactivar timer
         loadNewWord();
     }, feedbackTimeShort);
 }
