@@ -89,3 +89,17 @@
     - Ningún nivel es omitido durante la navegación hacia atrás.
     - El comportamiento es consistente en escritorio y móviles.
 - **Estado:** [X] Completada
+
+### [T-020] Corrección Integral de Errores de Consola
+- **Origen del Hallazgo:** Reporte de Usuario (2026-06-16)
+- **Severidad:** Crítico
+- **Archivos Involucrados:** js/index-ui.js, js/quizpro.js, js/destreza_teclado.js
+- **Descripción del Alcance:**
+    - Corregir el orden de definición de window.renderWelcomeMessage para evitar TypeError.
+    - Refactorizar js/quizpro.js a ES5 para eliminar errores de sintaxis y restaurar accesibilidad de funciones.
+    - Sincronizar el selector de botón en js/destreza_teclado.js con el ID del HTML.
+- **Criterios de Aceptación:**
+    - Consola libre de errores al cargar index.html y navegar a minijuegos.
+    - Navegación a asignaturas en QuizPro funcional.
+    - Botón "Calibrar Dedos" en Maestro del Teclado interactivo.
+- **Estado:** [X] Completada

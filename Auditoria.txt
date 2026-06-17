@@ -33,3 +33,23 @@ Archivo: js/teacher.js
 Hallazgo: Se está forzando color: #000000; vía JS en el contenedor raíz del editor, pero si Quill inyecta párrafos dinámicamente, estos podrían heredar el gris global.
 
 Diagnóstico: La especificidad de 'p' en style.css (color: var(--blue-grayish)) es muy alta al ser un tag universal. Quill envuelve casi todo en tags 'p'. Se requiere una regla de reset más agresiva para el contenedor del editor.
+
+AUDITORÍA TÉCNICA - CORRECCIÓN DE ERRORES DE CONSOLA - Wed Jun 17 08:16:58 UTC 2026
+
+Archivo: js/index-ui.js
+Sector: Inicialización / window.renderWelcomeMessage (Línea 500 y 531)
+Hallazgo [Alto]: Llamada a función no definida debido a orden de ejecución/asignación.
+Impacto: TypeError: window.renderWelcomeMessage is not a function. Interrumpe el flujo de inicialización.
+Recomendación: Mover la asignación al inicio del DOMContentLoaded o usar declaración de función.
+
+Archivo: js/quizpro.js
+Sector: General
+Hallazgo [Crítico]: Múltiples errores de sintaxis por incumplimiento de norma ES5. Uso de callbacks sin palabra clave 'function', flechas implícitas mal formadas y operador optional chaining (?.).
+Impacto: SyntaxError: Unexpected token ')'. El script no carga, resultando en ReferenceError para todas sus funciones globales.
+Recomendación: Refactorización total a ES5.
+
+Archivo: js/destreza_teclado.js
+Sector: initDexterityGame (Línea 185 / 186)
+Hallazgo [Alto]: Selector de ID incorrecto para el botón de inicio. Busca 'start-game-button' pero el HTML usa 'start-game-button-real'.
+Impacto: startGameButton es null. No se pueden añadir event listeners, el juego no inicia.
+Recomendación: Corregir selector a '#start-game-button-real'.

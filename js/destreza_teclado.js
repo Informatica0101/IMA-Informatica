@@ -182,7 +182,7 @@ window.initDexterityGame = async function() {
     console.log('initDexterityGame called'); // Log de depuración
     // Asignar elementos del DOM
     gameStartMenu = document.getElementById('game-start-menu');
-    startGameButton = document.getElementById('start-game-button');
+    startGameButton = document.getElementById('start-game-button-real');
     gamePlayArea = document.getElementById('game-play-area');
     correctWordsDisplay = document.getElementById('correct-words-display');
     // Referencia actualizada

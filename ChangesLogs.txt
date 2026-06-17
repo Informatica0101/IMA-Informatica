@@ -88,3 +88,23 @@ Módulo: Documentación Técnica
     - Sincronizado el contexto de sección (sectionId, navId) en las transiciones de navegación jerárquica para una restauración íntegra.
     - Implementada activación manual de 'setupCodeCopyButtons' al abrir el modal de detalles de tarea.
 - js/ui-common.js: Actualizado handlePopState para restaurar la sección activa del dashboard basándose en el estado del historial, garantizando una navegación SPA predecible.
+
+REGISTRO DE CORRECCIÓN DE ERRORES DE CONSOLA - Wed Jun 17 08:31:39 UTC 2026
+
+Módulo: Inicialización (index.html)
+- js/index-ui.js:
+    - Reubicada la definición de 'window.renderWelcomeMessage' antes de su primera invocación.
+    - Esto resuelve el 'TypeError: window.renderWelcomeMessage is not a function' que ocurría al actualizar la página.
+
+Módulo: QuizPro (Académico)
+- js/quizpro.js:
+    - Refactorización total a ES5 para garantizar compatibilidad con navegadores legados y corregir 'SyntaxError: Unexpected token )'.
+    - Eliminado el uso de Arrow Functions, Template Literals y Optional Chaining.
+    - Corregida la definición de callbacks en forEach, map y filter.
+    - Sincronizado el enrutamiento de recursos (isRoot) para carga de bancos de preguntas desde raíz o subcarpetas.
+    - La resolución de errores de sintaxis permite que 'navigateToSubjects' se defina correctamente, eliminando el 'ReferenceError'.
+
+Módulo: Maestro del Teclado (Minijuego)
+- js/destreza_teclado.js:
+    - Actualizado el selector del botón de inicio de 'start-game-button' a 'start-game-button-real'.
+    - Esto resuelve el error 'startGameButton: null' y permite la activación de los listeners del juego.

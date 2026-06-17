@@ -497,6 +497,24 @@ document.addEventListener('DOMContentLoaded', function() {
     window.renderInitialContentButton();
     renderInitialActivityButton();
     setupGlobalAuth();
+
+    // --- Welcome Message Logic ---
+    window.renderWelcomeMessage = function() {
+        var userRaw = localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser');
+        var currentUser = userRaw ? JSON.parse(userRaw) : null;
+        var welcomeBadge = document.getElementById('user-welcome-badge');
+        if (currentUser && welcomeBadge && currentUser.nombre) {
+            var firstName = currentUser.nombre.split(' ')[0];
+            welcomeBadge.innerHTML =
+                '<span class="relative flex h-2 w-2">' +
+                    '<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>' +
+                    '<span class="relative inline-flex rounded-full h-2 w-2 bg-blue-600"></span>' +
+                '</span>' +
+                'Bienvenido, ' + firstName;
+            welcomeBadge.classList.remove('hidden');
+        }
+    };
+
     window.renderWelcomeMessage();
 
     // --- Handle Action from URL ---
@@ -526,23 +544,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     document.addEventListener('common-ui-ready', processUrlAction);
-
-    // --- Welcome Message Logic ---
-    window.renderWelcomeMessage = function() {
-        var userRaw = localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser');
-        var currentUser = userRaw ? JSON.parse(userRaw) : null;
-        var welcomeBadge = document.getElementById('user-welcome-badge');
-        if (currentUser && welcomeBadge && currentUser.nombre) {
-            var firstName = currentUser.nombre.split(' ')[0];
-            welcomeBadge.innerHTML =
-                '<span class="relative flex h-2 w-2">' +
-                    '<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>' +
-                    '<span class="relative inline-flex rounded-full h-2 w-2 bg-blue-600"></span>' +
-                '</span>' +
-                'Bienvenido, ' + firstName;
-            welcomeBadge.classList.remove('hidden');
-        }
-    };
 
     // --- Guest Mode Logic ---
     var guestPromptModal = document.getElementById('guest-prompt-modal');
