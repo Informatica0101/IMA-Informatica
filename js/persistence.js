@@ -155,16 +155,21 @@ window.PersistenceManager = {
         var cacheKey = key || self.getActiveId();
 
         return this.get(store, cacheKey).then(function(local) {
-            var serverTimestamp = (serverData && serverData.updated_at) ? serverData.updated_at : Date.now();
+            // REQ: Forzar actualización si vienen datos válidos del servidor (Hallazgo 6)
+            // Muchos servicios no envían updated_at, por lo que confiamos en la llegada de datos.
+            var hasNewData = serverData && (serverData.status === 'success' || Array.isArray(serverData) || (typeof serverData === 'object' && Object.keys(serverData).length > 0));
 
-            if (!local || !local.updated_at || serverTimestamp > local.updated_at) {
-                var newData = (serverData && serverData.status === 'success' && serverData.data) ? serverData.data : serverData;
+            var serverTimestamp = (serverData && serverData.updated_at) ? serverData.updated_at : Date.now();
+            var isNewer = !local || !local.updated_at || serverTimestamp > local.updated_at;
+
+            if (hasNewData && isNewer) {
+                var newData = (serverData && serverData.status === 'success' && serverData.data !== undefined) ? serverData.data : serverData;
                 return self.set(store, newData, cacheKey).then(function() {
                     if (typeof onUpdate === 'function') onUpdate(newData);
                     return newData;
                 });
             }
-            return local.data;
+            return local ? local.data : null;
         });
     }
 };

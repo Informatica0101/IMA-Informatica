@@ -1326,10 +1326,13 @@ document.addEventListener('DOMContentLoaded', function() {
         var profileContainer = document.getElementById('learning-profile-integration');
         var metricsBody = document.getElementById('student-metrics-body');
 
+        // (Hallazgo 5): Asegurar que los datos sean un array válido
+        var normalizedProfile = (profileData && profileData.status === 'success') ? profileData.data : (Array.isArray(profileData) ? profileData : []);
+
         // REQ 3: Muestra mínima local para renderizado de tabla (Modulo 3.1)
         // Se reduce el umbral de intentos para evitar sensación de vacío (A-78)
-        var validData = (profileData || []).filter(function(i) { return i.intentos >= 1; });
-        var isCalibrating = (profileData || []).some(function(i) { return i.intentos < 5; });
+        var validData = normalizedProfile.filter(function(i) { return i.intentos >= 1; });
+        var isCalibrating = normalizedProfile.some(function(i) { return i.intentos < 5; }) || normalizedProfile.length === 0;
 
         if (metricsBody) {
             if (validData.length > 0) {

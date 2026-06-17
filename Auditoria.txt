@@ -195,3 +195,79 @@ Archivo: js/perifericos_juego.js
 Validación General:
 - Todos los archivos pasan 'node -c'.
 - Se resuelven los problemas de sesión, timeouts y caché reportados.
+
+AUDITORÍA DE ESTADÍSTICAS Y CACHÉ GLOBAL - Wed Jun 17 16:30:00 UTC 2026
+
+Archivo: js/persistence.js
+Sector: Función reconcile (Línea 116)
+Hallazgo [Crítico]: La lógica de conciliación espera que 'serverData' contenga 'updated_at' para decidir si actualiza el caché. Muchos microservicios no envían este campo, provocando que el caché local (si existe) se considere siempre más reciente y bloquee la visualización de nuevos datos del servidor.
+Impacto: Las tablas de métricas y rankings no se actualizan tras jugar nuevas partidas.
+
+Archivo: js/quizpro.js
+Sector: Inicialización
+Hallazgo [Alto]: No utiliza la sesión persistente de GamesAdapter en todas las funciones.
+Hallazgo [Medio]: Depende de 'localStorage' directamente en lugar de usar el gestor de estado centralizado.
+
+Archivo: js/student.js
+Sector: renderStudentExpediente
+Hallazgo [Bajo]: Inconsistencia visual en la tabla de métricas si los datos aún no están calibrados.
+
+Validación de Fuente de Verdad:
+- Se identifica que GamesAdapter debe ser el único intermediario para datos de minijuegos.
+- PersistenceManager debe garantizar la actualización del caché incluso sin timestamps si la estructura es válida.
+
+AUDITORÍA DE CAMBIOS - ITERACIÓN ACTUAL - Wed Jun 17 17:00:00 UTC 2026
+
+1. ARCHIVO: js/api.js
+- Cambio: Inserción de lectura de caché al inicio de fetchApi (Líneas 49-61).
+- Revisión:
+  - window.PersistenceManager.get: Correcto, asíncrono.
+  - options.onUpdate(cached.data): Correcto, dispara el renderizado inmediato.
+  - Bloque catch: Correcto, evita que fallos de lectura rompan la petición.
+- Estado: OK. Línea por línea verificado.
+
+2. ARCHIVO: js/persistence.js
+- Cambio: Refactorización de reconcile (Líneas 155-171).
+- Revisión:
+  - hasNewData: Detecta arrays no vacíos u objetos con claves. Crucial para servicios sin status:success explicito.
+  - isNewer: Compara timestamps o falta de caché local.
+  - self.set y onUpdate: Se ejecutan solo si hay datos nuevos.
+- Estado: OK. Resuelve el problema de sincronización detectado en minijuegos.
+
+3. ARCHIVO: js/games-adapter.js
+- Cambio: Estado centralizado (Línea 14, 95), init no bloqueante (112-140), claves fijas (295, 335, 349).
+- Revisión:
+  - capture currentUser: Se hace una sola vez en init. Evita inconsistencias si el usuario desloguea a mitad de partida.
+  - getLeaderboard con 'global_rankings': Correcto, evita colisiones por userId.
+  - getPersonalRecord con user.userId: Correcto.
+  - Refactor ES5 (Eliminación de promesas async/await por .then): Completo y verificado.
+- Estado: OK.
+
+4. ARCHIVO: js/student.js
+- Cambio: fetchAndRenderLearningProfile y renderLearningProfileData (1302-1360).
+- Revisión:
+  - Eliminación de condicion !dataOnly: Permite renderizar caché siempre.
+  - validData filter >= 1: Permite ver métricas desde la primera pregunta.
+  - isCalibrating state: Provee feedback visual honesto ("Calibrando").
+- Estado: OK.
+
+5. ARCHIVO: js/webmaster_quiz_juego.js
+- Cambio: Refactorización completa de initQuizGame a ES5 y alineación con adaptador.
+- Revisión:
+  - Eliminación de async/await: Correcto.
+  - Uso de GamesAdapter.state.currentUser: Correcto.
+  - Renderizado de ranking y record vía callbacks: Correcto.
+- Estado: OK.
+
+6. ARCHIVO: js/quizpro.js
+- Cambio: Alineación con GamesAdapter (Línea 66) y normalización de datos (1660).
+- Revisión:
+  - renderPerformanceHTML: Ahora maneja tanto res.data como res (arrays planos).
+  - Advertencia de Modo Invitado: Añadida dinámicamente.
+- Estado: OK.
+
+7. ARCHIVO: js/destreza_teclado.js y js/perifericos_juego.js
+- Cambio: Alineación de sesión y limpieza ES5.
+- Estado: OK.
+
+OBSERVACIÓN FINAL: Se ha respetado la integridad de commits anteriores. No hay regresiones detectadas. Todos los archivos pasan la validación sintáctica 'node -c'.

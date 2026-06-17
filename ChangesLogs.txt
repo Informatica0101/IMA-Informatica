@@ -191,3 +191,19 @@ Archivo: js/perifericos_juego.js
 - Alineado con la nueva arquitectura de sesión de GamesAdapter.
 - Estandarizado el renderizado de rankings y récords mediante callbacks.
 - Removidas funciones async obsoletas.
+
+Archivo: js/webmaster_quiz_juego.js
+- Sincronizado con la sesión centralizada de GamesAdapter.
+- Refactorizado el inicio para cargar rankings y récords desde caché de forma inmediata.
+- Eliminados bloques de código async/await para cumplimiento de ES5.
+
+Archivo: js/persistence.js
+- Refactorizada la función 'reconcile' para permitir actualizaciones de caché incluso sin 'updated_at', basándose en la validez de los datos recibidos del servidor. Resuelve el Hallazgo 6.
+
+Archivo: js/quizpro.js
+- Sincronizado el inicio con 'GamesAdapter.state.currentUser'.
+- Añadida normalización de datos en 'renderPerformanceHTML' para asegurar la carga de estadísticas desde múltiples formatos de respuesta. Resuelve los Hallazgos 1, 2 y 4.
+- Implementada advertencia visual para el Modo Invitado.
+
+Archivo: js/student.js
+- Mejorada la robustez de 'renderLearningProfileData' mediante normalización de entrada, asegurando la transición de estados de carga a calibración. Resuelve el Hallazgo 5.

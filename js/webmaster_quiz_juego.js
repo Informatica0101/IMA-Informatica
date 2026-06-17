@@ -1381,7 +1381,7 @@ Tu navegador no soporta el tag de video.
                 options: ["Una función que se llama automáticamente.", "Una función que se pasa como argumento a otra.", "Una función que devuelve otra función.", "Una función para depurar código."],
                 correctAnswer: 1,
                 help: "Es una función que se 'llama de vuelta' en un momento posterior.",
-                codeExample: `setTimeout(() => { console.log('Hola'); }, 1000);`
+                codeExample: `setTimeout(function() { console.log('Hola'); }, 1000);`
             },
             {
                 question: "Ordena para manejar un evento de clic en un botón:",
@@ -1389,7 +1389,7 @@ Tu navegador no soporta el tag de video.
                 fragments: [
                     "<button id=\"miBoton\">Clic</button>",
                     "const boton = document.getElementById('miBoton');",
-                    "boton.addEventListener('click', () => { alert('Clic'); });"
+                    "boton.addEventListener('click', function() { alert('Clic'); });"
                 ],
                 correctOrder: [0, 1, 2],
                 help: "Necesitas seleccionar el elemento y luego 'escuchar' la interacción.",
@@ -1401,7 +1401,7 @@ Tu navegador no soporta el tag de video.
                 options: ["Almacenar datos de la aplicación.", "Proporcionar información sobre el evento ocurrido.", "Definir nuevas funciones.", "Controlar el flujo de la aplicación."],
                 correctAnswer: 1,
                 help: "Este objeto te da detalles sobre la interacción que acaba de suceder.",
-                codeExample: `el.addEventListener('click', e => console.log(e.target));`
+                codeExample: `el.addEventListener('click', function(e) console.log(e.target));`
             },
             {
                 question: "Método para detener la propagación de un evento en el DOM:",
@@ -1496,7 +1496,7 @@ Tu navegador no soporta el tag de video.
                 options: ["Un error de sintaxis.", "Una función que recuerda su entorno léxico.", "Un tipo de bucle.", "Una forma de proteger variables."],
                 correctAnswer: 1,
                 help: "Es un concepto fundamental para entender patrones avanzados en JavaScript.",
-                codeExample: `function crearContador() { let c = 0; return () => c++; }`
+                codeExample: `function crearContador() { let c = 0; return function() c++; }`
             },
             {
                 question: "¿Qué es la 'delegación de eventos'?",
@@ -1504,7 +1504,7 @@ Tu navegador no soporta el tag de video.
                 options: ["Un método para detener eventos.", "Manejar eventos en un elemento padre para sus hijos.", "Un tipo de evento de arrastre.", "Una forma de priorizar eventos."],
                 correctAnswer: 1,
                 help: "Mejora el rendimiento y simplifica el código al manejar muchos elementos.",
-                codeExample: `parent.addEventListener('click', e => { if(e.target.matches('.child')) { ... } });`
+                codeExample: `parent.addEventListener('click', function(e) { if(e.target.matches('.child')) { ... } });`
             },
             {
                 question: "Método de `Date` para obtener el año completo:",
@@ -1530,7 +1530,7 @@ Tu navegador no soporta el tag de video.
                 question: "Ordena para ejecutar una función después de 2 segundos:",
                 type: "order-execution",
                 fragments: [
-                    "setTimeout(() => {",
+                    "setTimeout(function() {",
                     "console.log('Hola');",
                     "}, 2000);"
                 ],
@@ -1843,7 +1843,7 @@ function showInactivityWarning() {
     }
 
 
-    inactivityCountdownInterval = setInterval(() => {
+    inactivityCountdownInterval = setInterval(function() {
         inactivityCountdown--;
         if (inactivityCountdownDisplay) { // Check if element exists
             inactivityCountdownDisplay.textContent = inactivityCountdown;
@@ -1879,7 +1879,7 @@ function resetGameDueToInactivity() {
         inactivityMessageElement.textContent = 'El juego se ha reiniciado debido a la inactividad.';
     }
     // Automatically hide after a short delay or require user interaction
-    setTimeout(() => {
+    setTimeout(function() {
         hideInactivityWarning();
         if (inactivityMessageElement) {
             inactivityMessageElement.textContent = 'Inactividad detectada. El juego se reiniciará en...'; // Reset message
@@ -1940,7 +1940,7 @@ function selectDifficulty(difficulty) {
     // Shuffle and take only the first 10 questions for the session
     // REQ: Filtro Estricto de Niveles (Incidencia 4)
     const allQuestionsForLevel = [...quizData[selectedTopic][selectedDifficulty]]
-        .map(q => window.normalizeQuestion(q));
+        .map(function(q) { return window.normalizeQuestion(q); });
 
     shuffleArray(allQuestionsForLevel);
     currentQuestions = allQuestionsForLevel.slice(0, 10);
@@ -1990,7 +1990,7 @@ function startQuestion() {
 
     // Start timer after question setup
     if (!quizTimer) {
-        quizTimer = setInterval(() => {
+        quizTimer = setInterval(function() {
             if (!isPaused) {
                 timeElapsed++; // Incrementar el tiempo transcurrido
             }
@@ -2041,7 +2041,7 @@ function setupMultipleChoiceQuestion(question) {
                 'shadow-md', 'hover:shadow-lg', 'focus:outline-none', 'focus:ring-4', 'focus:ring-blue-300');
             button.dataset.option = index;
             button.innerHTML = window.sanitizarHTMLTecnico ? window.sanitizarHTMLTecnico(option) : option;
-            button.onclick = () => checkAnswer(index, question.correctAnswer);
+            button.onclick = function() { checkAnswer(index, question.correctAnswer); }
             multipleChoiceOptions.appendChild(button);
         });
     }
@@ -2070,7 +2070,7 @@ function renderSyntaxOptions() {
             fragmentSpan.classList.add('syntax-fragment', 'bg-gray-200', 'text-gray-800', 'px-3', 'py-1', 'rounded', 'cursor-pointer', 'hover:bg-gray-300', 'transition-colors', 'duration-200');
             fragmentSpan.innerHTML = window.sanitizarHTMLTecnico ? window.sanitizarHTMLTecnico(fragment) : fragment;
             fragmentSpan.dataset.index = index;
-            fragmentSpan.onclick = () => addSyntaxFragment(fragment, index);
+            fragmentSpan.onclick = function() { addSyntaxFragment(fragment, index); };
             responseChanges++;
             syntaxOptionsArea.appendChild(fragmentSpan);
         });
@@ -2102,7 +2102,7 @@ function renderSyntaxTarget() {
 
 function addSyntaxFragment(fragment, originalIndex) {
     // Only add if it's not already in the target area (based on original index)
-    if (!currentSyntaxOrder.some(item => item.originalIndex === originalIndex)) {
+    if (!currentSyntaxOrder.some(function(item) { return item.originalIndex === originalIndex; })) {
         currentSyntaxOrder.push({ fragment, originalIndex });
         renderSyntaxTarget();
         // Temporarily hide the added fragment from options area
@@ -2116,7 +2116,7 @@ function addSyntaxFragment(fragment, originalIndex) {
 }
 
 function removeSyntaxFragment(originalIndex) {
-    currentSyntaxOrder = currentSyntaxOrder.filter(item => item.originalIndex !== originalIndex);
+    currentSyntaxOrder = currentSyntaxOrder.filter(function(item) { return item.originalIndex !== originalIndex; });
     renderSyntaxTarget();
     // Make the fragment visible again in options area
     if (syntaxOptionsArea) {
@@ -2132,8 +2132,8 @@ function checkSyntaxOrder() {
     pauseTimer();
 
     const question = currentQuestions[currentQuestionIndex];
-    const correctOrderFragments = question.correctOrder.map(idx => question.fragments[idx]);
-    const userAnswerFragments = currentSyntaxOrder.map(item => item.fragment);
+    const correctOrderFragments = question.correctOrder.map(function(idx) { return question.fragments[idx]; });
+    const userAnswerFragments = currentSyntaxOrder.map(function(item) { return item.fragment; });
 
     if (quizHelpText) quizHelpText.classList.remove('hidden'); // Show help text
 
@@ -2168,7 +2168,7 @@ function checkSyntaxOrder() {
     // Trigger animation feedback
     if (quizPlayArea) {
         quizPlayArea.classList.add(isCorrect ? 'animate-flash-green' : 'animate-flash-red');
-        setTimeout(() => quizPlayArea.classList.remove('animate-flash-green', 'animate-flash-red'), 500);
+        setTimeout(function() { quizPlayArea.classList.remove('animate-flash-green', 'animate-flash-red')}, 500);
     }
 
 
@@ -2198,7 +2198,7 @@ function setupDragMatchQuestion(question) {
         if (dropTargetsArea) dropTargetsArea.innerHTML = '';
 
         currentDragMatchPairs = shuffleArray([...question.pairs]);
-        originalDragMatchState = currentDragMatchPairs.map(pair => ({ drag: pair.drag, drop: pair.drop, dropped: false }));
+        originalDragMatchState = currentDragMatchPairs.map(function(pair) { return { drag: pair.drag, drop: pair.drop, dropped: false }; });
 
         const shuffledDragItems = shuffleArray(currentDragMatchPairs.map(p => p.drag));
         const shuffledDropItems = shuffleArray(currentDragMatchPairs.map(p => p.drop)); // Use drop values as targets
@@ -2227,7 +2227,7 @@ function setupDragMatchQuestion(question) {
 
             dropTarget.addEventListener('dragover', handleDragOver);
             dropTarget.addEventListener('drop', handleDrop);
-            dropTarget.addEventListener('drop', () => responseChanges++);
+            dropTarget.addEventListener('drop', function() { responseChanges++; });
             dropTarget.addEventListener('dragleave', handleDragLeave);
             if (dropTargetsArea) dropTargetsArea.appendChild(dropTarget);
         });
@@ -2247,7 +2247,7 @@ let draggedItemOriginalElement = null;
 function handleDragStart(e) {
     draggedItemOriginalElement = e.target; // Store the actual element from the drag area
     e.dataTransfer.setData('text/plain', draggedItemOriginalElement.dataset.originalText);
-    setTimeout(() => {
+    setTimeout(function() {
         if (draggedItemOriginalElement) {
             draggedItemOriginalElement.classList.add('opacity-0'); // Make original element transparent during drag
         }
@@ -2345,7 +2345,7 @@ function checkDragMatch() {
 
     if (quizHelpText) quizHelpText.classList.remove('hidden'); // Show help text
 
-    dropTargets.forEach(target => {
+    dropTargets.forEach(function(target) {
         const droppedItem = target.querySelector('.drag-item-dropped');
         const correctMatch = target.dataset.correctMatch; // This is the expected drop text
         const targetPlaceholder = target.querySelector('.drop-text-placeholder');
@@ -2363,9 +2363,7 @@ function checkDragMatch() {
         if (droppedItem) {
             // Find the original pair using droppedItem's text and target's correctMatch
             // The logic here needs to map `dragText` to `dropText` from `question.pairs`
-            const matchedPair = currentDragMatchPairs.find(pair =>
-                pair.drag === droppedItem.dataset.originalText && pair.drop === correctMatch
-            );
+            const matchedPair = currentDragMatchPairs.find(function(pair) { return pair.drag === droppedItem.dataset.originalText && pair.drop === correctMatch; });
 
             if (matchedPair) {
                 droppedItem.classList.add('bg-green-400', 'text-green-900', 'border-2', 'border-green-600');
@@ -2404,7 +2402,7 @@ function checkDragMatch() {
     // Trigger animation feedback
     if (quizPlayArea) {
         quizPlayArea.classList.add(allCorrect ? 'animate-flash-green' : 'animate-flash-red');
-        setTimeout(() => quizPlayArea.classList.remove('animate-flash-green', 'animate-flash-red'), 500);
+        setTimeout(function() { quizPlayArea.classList.remove('animate-flash-green', 'animate-flash-red')}, 500);
     }
 
 
@@ -2416,7 +2414,7 @@ function checkDragMatch() {
 
 function undoDragMatch() {
     const dropTargets = document.querySelectorAll('.drop-target');
-    dropTargets.forEach(target => {
+    dropTargets.forEach(function(target) {
         const droppedItem = target.querySelector('.drag-item-dropped');
         if (droppedItem) {
             droppedItem.remove(); // Remove from target
@@ -2435,7 +2433,7 @@ function undoDragMatch() {
     // Ensure all original drag items are visible in the drag area and have correct styling
     if (dragElementsArea) {
         const allDragItems = dragElementsArea.querySelectorAll('.drag-item, .drag-item-dropped'); // Select both potential types
-        allDragItems.forEach(item => {
+        allDragItems.forEach(function(item) {
             // Restore original drag-item classes and remove any dropped-specific or feedback classes
             item.classList.remove('hidden', 'opacity-0', 'drag-item-dropped', 'bg-indigo-300', 'text-indigo-900', 'bg-green-400', 'text-green-900', 'bg-red-400', 'text-red-900', 'border-2', 'border-green-600', 'border-red-600');
             item.classList.add('drag-item', 'bg-blue-200', 'text-blue-800'); // Restore default drag item styles
@@ -2508,7 +2506,7 @@ function checkAnswer(selectedIndex, correctAnswer) {
     // Trigger animation feedback
     if (quizPlayArea) {
         quizPlayArea.classList.add(selectedIndex === correctAnswer ? 'animate-flash-green' : 'animate-flash-red');
-        setTimeout(() => quizPlayArea.classList.remove('animate-flash-green', 'animate-flash-red'), 500);
+        setTimeout(function() { quizPlayArea.classList.remove('animate-flash-green', 'animate-flash-red')}, 500);
     }
 
 
@@ -2559,7 +2557,7 @@ function endQuiz() {
     if (nextDifficulty && quizData[selectedTopic][nextDifficulty]) {
         if (quizNextLevelButton) {
             quizNextLevelButton.classList.remove('hidden');
-            quizNextLevelButton.onclick = () => {
+            quizNextLevelButton.onclick = function() {
                 selectDifficulty(nextDifficulty); // Start next level
             };
         }
@@ -2580,47 +2578,54 @@ function shuffleArray(array) {
 
 // --- Global Initialization Function for the Quiz Game ---
 // This function will be called by index.html after the quiz HTML content is loaded.
-window.initQuizGame = async function() {
-    const user = JSON.parse(localStorage.getItem('currentUser'));
-    const isGuest = !user;
-
+window.initQuizGame = function() {
+    // REQ: Uso de sesión centralizada (Hallazgo 1)
     if (window.GamesAdapter) {
-        const { lb, record } = await GamesAdapter.init('webmaster');
+        window.GamesAdapter.init('webmaster', false).then(function() {
+            var user = window.GamesAdapter.state.currentUser;
 
-        // Renderizar Mini-Leaderboard (REQ 7: Top 5 con XP)
-        const miniLb = document.getElementById('mini-leaderboard');
-        if (miniLb && lb && lb.global) {
-            miniLb.innerHTML = lb.global.slice(0, 5).map((u, i) => `
-                <div class="flex items-center justify-between text-[10px] font-bold py-1 border-b border-blue-50 last:border-0">
-                    <span class="text-blue-700">${i+1}. ${u.nombre.split(' ')[0]}</span>
-                    <div class="flex flex-col items-end">
-                        <span class="text-blue-500">${u.promedio}%</span>
-                        <span class="text-[8px] text-gray-400 font-black">${(u.xp || 0).toLocaleString()} XP</span>
-                    </div>
-                </div>
-            `).join('');
-        } else if (miniLb) {
-            miniLb.innerHTML = '<p class="text-[10px] text-gray-400 text-center italic">Sin datos globales</p>';
-        }
+            if (!user) {
+                var gmWarning = document.getElementById('guest-mode-warning');
+                if (gmWarning) gmWarning.classList.remove('hidden');
+                var cgBtn = document.getElementById('continue-guest-btn');
+                if (cgBtn) {
+                    cgBtn.classList.remove('hidden');
+                    cgBtn.onclick = function() {
+                        var gmw = document.getElementById('guest-mode-warning');
+                        if (gmw) gmw.classList.add('hidden');
+                        cgBtn.classList.add('hidden');
+                    };
+                }
+            }
 
-        // Cargar récord personal
-        const myRecord = record?.["WebMaster Quiz"] || JSON.parse(localStorage.getItem('guest_record_webmaster') || 'null');
-        if (myRecord) {
-            const scoreSpan = document.getElementById('init-max-score');
-            if (scoreSpan) scoreSpan.textContent = myRecord.maxScore || myRecord.score || 0;
-        }
-    }
+            // REQ: Estrategia Caché Primero (v7.6)
+            window.GamesAdapter.getLeaderboard('webmaster', function(lb) {
+                // Renderizar Mini-Leaderboard (REQ 7: Top 5 con XP)
+                var miniLb = document.getElementById('mini-leaderboard');
+                if (miniLb && lb && lb.global) {
+                    miniLb.innerHTML = lb.global.slice(0, 5).map(function(u, i) {
+                        return '<div class="flex items-center justify-between text-[10px] font-bold py-1 border-b border-blue-50 last:border-0">' +
+                                '<span class="text-blue-700">' + (i + 1) + '. ' + (u.nombre ? u.nombre.split(' ')[0] : 'Alumno') + '</span>' +
+                                '<div class="flex flex-col items-end">' +
+                                    '<span class="text-blue-500">' + u.promedio + '%</span>' +
+                                    '<span class="text-[8px] text-gray-400 font-black">' + (u.xp || 0).toLocaleString() + ' XP</span>' +
+                                '</div>' +
+                            '</div>';
+                    }).join('');
+                } else if (miniLb) {
+                    miniLb.innerHTML = '<p class="text-[10px] text-gray-400 text-center italic">Sin datos globales</p>';
+                }
+            });
 
-    if (isGuest) {
-        document.getElementById('guest-mode-warning')?.classList.remove('hidden');
-        const guestBtn = document.getElementById('continue-guest-btn');
-        if (guestBtn) {
-            guestBtn.classList.remove('hidden');
-            guestBtn.onclick = () => {
-                document.getElementById('guest-mode-warning')?.classList.add('hidden');
-                guestBtn.classList.add('hidden');
-            };
-        }
+            window.GamesAdapter.getPersonalRecord(function(record) {
+                // Cargar récord personal (Hallazgo 2/3)
+                var myRecord = record["webmaster"] || record["WebMaster Quiz"];
+                if (myRecord) {
+                    var scoreSpan = document.getElementById('init-max-score');
+                    if (scoreSpan) scoreSpan.textContent = myRecord.maxScore || myRecord.score || myRecord.puntaje || 0;
+                }
+            });
+        });
     }
 
     // Assign DOM elements now that they are guaranteed to be in the document
@@ -2664,9 +2669,9 @@ window.initQuizGame = async function() {
 
     // --- Event Listeners ---
     if (startQuizButton) {
-        startQuizButton.addEventListener('click', () => {
+        startQuizButton.addEventListener('click', function() {
             if (document.documentElement.requestFullscreen) {
-                document.documentElement.requestFullscreen().catch(e => console.warn("FS failed", e));
+                document.documentElement.requestFullscreen().catch(function(e) { console.warn("FS failed", e); });
             }
             if (window.requestWakeLock) window.requestWakeLock();
             startQuiz();
@@ -2675,22 +2680,22 @@ window.initQuizGame = async function() {
 
     topicButtons.forEach(button => {
         if (button) {
-            button.addEventListener('click', () => selectTopic(button.dataset.topic));
+            button.addEventListener('click', function() { selectTopic(button.dataset.topic); });
         }
     });
 
     if (backToStartMenuButton) {
-        backToStartMenuButton.addEventListener('click', () => showScreen('quiz-start-menu'));
+        backToStartMenuButton.addEventListener('click', function() { showScreen('quiz-start-menu'); });
     }
 
     difficultyButtons.forEach(button => {
         if (button) {
-            button.addEventListener('click', () => selectDifficulty(button.dataset.difficulty));
+            button.addEventListener('click', function() { selectDifficulty(button.dataset.difficulty); });
         }
     });
 
     if (backToTopicMenuButton) {
-        backToTopicMenuButton.addEventListener('click', () => showScreen('quiz-topic-selection-menu'));
+        backToTopicMenuButton.addEventListener('click', function() { showScreen('quiz-topic-selection-menu'); });
     }
 
     if (endQuizButton) {
@@ -2698,7 +2703,7 @@ window.initQuizGame = async function() {
     }
 
     if (quizRetryLevelButton) {
-        quizRetryLevelButton.addEventListener('click', () => {
+        quizRetryLevelButton.addEventListener('click', function() {
             selectDifficulty(selectedDifficulty); // Re-select current difficulty to restart
         });
     }
@@ -2706,11 +2711,11 @@ window.initQuizGame = async function() {
     // quizNextLevelButton's click handler is set dynamically in endQuiz
 
     if (quizChangeTopicButton) {
-        quizChangeTopicButton.addEventListener('click', () => showScreen('quiz-topic-selection-menu'));
+        quizChangeTopicButton.addEventListener('click', function() { showScreen('quiz-topic-selection-menu'); });
     }
 
     if (quizExitGameButton) {
-        quizExitGameButton.addEventListener('click', () => {
+        quizExitGameButton.addEventListener('click', function() {
             // This assumes window.returnToMainContent is defined in the parent index.html
             if (window.returnToMainContent) {
                 window.returnToMainContent();
@@ -2728,14 +2733,14 @@ window.initQuizGame = async function() {
     });
 
     // Control de Abandono (Fase 11)
-    const handleAbandonment = () => {
+    const handleAbandonment = function() {
         if (quizPlayArea && !quizPlayArea.classList.contains('hidden')) {
             alert('Evaluación cancelada por cambio de pestaña o ventana.');
             location.reload();
         }
     };
     window.addEventListener('blur', handleAbandonment);
-    document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') handleAbandonment(); });
+    document.addEventListener('visibilitychange', function() { if (document.visibilityState === 'hidden') handleAbandonment(); });
 
     if (window.GamesAdapter) window.GamesAdapter.showLoading(false);
     // Initial screen setup - moved inside initQuizGame
