@@ -61,18 +61,16 @@ window.userGameStats = {}; // Cache de logros para validación de bloqueos
 window.globalTopData = null;
 
 window.initQuizPro = function() {
-    // REQ 2: Remoción del Bloqueador Visual (Spinner) en favor de carga asíncrona (Modulo 1)
+    // REQ: Estrategia Caché Primero (v7.6)
     if (window.GamesAdapter) {
-        // No esperamos el init síncrono para evitar el bloqueo del hilo de renderizado
-        window.GamesAdapter.init('quizpro', false);
-    }
-
-    try {
-        // Carga en paralelo sin bloquear la UI
+        window.GamesAdapter.init('quizpro', false).then(function() {
+            // Sincronización silenciosa en segundo plano
+            window.loadPerformanceTable();
+            loadGlobalTop();
+        });
+    } else {
         window.loadPerformanceTable();
         loadGlobalTop();
-    } catch (e) {
-        console.error("[QuizPro] Error en carga de tablas asíncrona:", e);
     }
 
     var handleAbandonment = function() {
@@ -1556,33 +1554,19 @@ function loadGlobalTop() {
     var body = document.getElementById('global-top-body');
     if (!body) return;
 
-    var handleFetch = function() {
-        return fetchApi('USER', 'getGlobalTop', { gameId: 'quizpro' }, 0, {
+    // REQ: Estrategia Caché Primero mediante GamesAdapter (v7.6)
+    if (window.GamesAdapter && window.GamesAdapter.getLeaderboard) {
+        window.GamesAdapter.getLeaderboard('quizpro', function(data) {
+            renderGlobalTopHTML(data);
+        });
+    } else {
+        // Fallback manual si no hay GamesAdapter
+        fetchApi('USER', 'getGlobalTop', { gameId: 'quizpro' }, 0, {
             store: 'rankings',
             onUpdate: function(data) { renderGlobalTopHTML(data); }
         }).then(function(res) {
-            console.log("[QuizPro] Respuesta Ranking:", res);
-            if (res.status === 'success' && Array.isArray(res.global)) {
-                renderGlobalTopHTML(res);
-            }
-        })["catch"](function(e) {
-            console.error("Error loading global top", e);
-            body.innerHTML = '<tr><td colspan="4" class="px-6 py-8 text-center text-red-400 text-xs italic">Error al cargar ranking global</td></tr>';
+            if (res.status === 'success') renderGlobalTopHTML(res);
         });
-    };
-
-    // REQ: Offline-First (Modulo 1)
-    if (window.PersistenceManager) {
-        window.PersistenceManager.get('rankings').then(function(cached) {
-            if (cached && cached.data) {
-                renderGlobalTopHTML(cached.data);
-                handleFetch()["catch"](function(e) { console.warn("[Offline-First] Sincronización silenciosa de ranking fallida."); });
-            } else {
-                handleFetch();
-            }
-        });
-    } else {
-        handleFetch();
     }
 }
 
@@ -1631,34 +1615,25 @@ function renderGlobalTopHTML(res) {
 
 window.loadPerformanceTable = function() {
     var container = document.getElementById('performance-table-body');
-    var userRaw = localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser');
-    var user = userRaw ? JSON.parse(userRaw) : null;
-    if (!container || !user) return;
+    if (!container) return;
 
-    var handleFetch = function() {
-        return fetchApi('USER', 'getGameStats', { userId: user.userId }, 0, {
-            store: 'academic_stats',
-            onUpdate: function(data) { renderPerformanceHTML(data); }
-        }).then(function(res) {
-            if (res.status === 'success') {
-                renderPerformanceHTML(res);
-            }
-        })["catch"](function(e) { console.error("Error loading stats", e); });
-    };
-
-    // REQ: Offline-First (Modulo 1)
-    if (window.PersistenceManager) {
-        window.PersistenceManager.get('academic_stats').then(function(cached) {
-            // REQ: Eager caching - si ya tenemos datos, renderizamos y pedimos actualización silenciosa
-            if (cached && cached.data) {
-                renderPerformanceHTML(cached.data);
-                handleFetch()["catch"](function(e) { console.warn("[Offline-First] Sincronización silenciosa fallida, usando caché."); });
-            } else {
-                handleFetch();
-            }
+    // REQ: Estrategia Caché Primero mediante GamesAdapter (v7.6)
+    if (window.GamesAdapter && window.GamesAdapter.getPersonalRecord) {
+        window.GamesAdapter.getPersonalRecord(function(data) {
+            renderPerformanceHTML(data);
         });
     } else {
-        handleFetch();
+        // Fallback manual legacy
+        var userRaw = localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser');
+        var user = userRaw ? JSON.parse(userRaw) : null;
+        if (user) {
+            fetchApi('USER', 'getGameStats', { userId: user.userId }, 0, {
+                store: 'academic_stats',
+                onUpdate: function(data) { renderPerformanceHTML(data); }
+            }).then(function(res) {
+                if (res.status === 'success') renderPerformanceHTML(res);
+            });
+        }
     }
 };
 

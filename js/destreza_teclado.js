@@ -253,23 +253,47 @@ function renderLeaderboard(lb) {
     }
 }
 
+// Renderiza el récord personal buscando el WPM más alto en el historial (v7.6)
+function renderPersonalRecord(record) {
+    if (!record) return;
+    const scoreSpan = document.getElementById('init-max-score');
+    if (!scoreSpan) return;
+
+    let maxWPM = 0;
+
+    // Buscar en el objeto de estadísticas académicas (QuizPro_Asignatura_...)
+    // O en las claves directas del juego
+    const keys = Object.keys(record);
+    keys.forEach(key => {
+        const entry = record[key];
+        // Revisar si es una entrada de este juego o tiene el campo wpm
+        if (key.indexOf('dexterity') !== -1 || key.indexOf('Destreza en el Teclado') !== -1 || entry.juego === 'dexterity') {
+            const wpm = parseFloat(entry.wpm || entry.maxWPM || entry.puntaje || 0);
+            if (wpm > maxWPM) maxWPM = wpm;
+        }
+    });
+
+    scoreSpan.textContent = Math.round(maxWPM);
+}
+
 // Inicializa el juego al cargar la página o al volver a jugar
 window.initDexterityGame = async function() {
     const user = JSON.parse(localStorage.getItem('currentUser'));
     const isGuest = !user;
 
     if (window.GamesAdapter) {
-        const { lb, record } = await GamesAdapter.init('dexterity');
-        window.currentLeaderboard = lb;
+        // REQ: Estrategia Caché Primero (v7.6)
+        // No esperamos el init, usamos callbacks para actualizaciones silenciosas
+        GamesAdapter.init('dexterity', false).then(() => {
+            GamesAdapter.getLeaderboard('dexterity', (lb) => {
+                window.currentLeaderboard = lb;
+                renderLeaderboard(lb);
+            });
 
-        renderLeaderboard(lb);
-
-        // Récord
-        const myRecord = record?.["Destreza en el Teclado"] || (JSON.parse(localStorage.getItem('guest_records')) || {})['dexterity'];
-        if (myRecord) {
-            const scoreSpan = document.getElementById('init-max-score');
-            if (scoreSpan) scoreSpan.textContent = myRecord.maxScore || myRecord.score || 0;
-        }
+            GamesAdapter.getPersonalRecord((record) => {
+                renderPersonalRecord(record);
+            });
+        });
     }
 
     if (isGuest) {
@@ -816,9 +840,14 @@ function endGame() {
     if (scoreTitle) scoreTitle.textContent = `¡Juego Terminado! Puntaje: ${finalScoreValue}`;
 
     if (window.GamesAdapter) {
-        GamesAdapter.finishSession('Ofimática I', difficultyName, finalScoreValue, totalXP);
+        // Enviar WPM como puntaje principal y métrica extra (v7.6)
+        GamesAdapter.finishSession('Ofimática I', difficultyName, wpm, totalXP, {
+            wpm: wpm,
+            accuracy: accuracy,
+            score: finalScoreValue
+        });
         // Actualizar ranking al finalizar (silencioso)
-        GamesAdapter.getLeaderboard('dexterity').then(renderLeaderboard);
+        GamesAdapter.getLeaderboard('dexterity', renderLeaderboard);
     }
 }
 

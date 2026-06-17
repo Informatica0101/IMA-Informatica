@@ -231,9 +231,15 @@ window.GamesAdapter = {
         });
     },
 
-    async finishSession(asignatura, level, finalScore, xpGanada = 0) {
+    /**
+     * Finaliza sesión integrando métricas extendidas (v7.6)
+     */
+    async finishSession(asignatura, level, finalScore, xpGanada, extraMetrics) {
         const session = this.state.currentSession;
         if (!session) return;
+
+        xpGanada = xpGanada || 0;
+        extraMetrics = extraMetrics || {};
 
         // REQ 4: Degradación por Repetición (Persistencia de Intentos)
         const attemptsKey = `attempts_${session.gameId}_${level}`;
@@ -251,9 +257,10 @@ window.GamesAdapter = {
                 guestRecords[session.gameId] = {
                     score: finalScore,
                     date: new Date().toISOString(),
-                    level,
-                    asignatura,
-                    xp: xpGanada
+                    level: level,
+                    asignatura: asignatura,
+                    xp: xpGanada,
+                    ...extraMetrics
                 };
                 localStorage.setItem('guest_records', JSON.stringify(guestRecords));
             }
@@ -264,20 +271,19 @@ window.GamesAdapter = {
             userId: user.userId,
             nombreAlumno: user.nombre,
             juego: session.gameId,
-            asignatura,
+            asignatura: asignatura,
             nivel: level,
             puntaje: finalScore,
             grado: user.grado,
-            totalTime,
-            xpGanada: xpGanada || 0 // COLUMNA I en Spreadsheet
+            totalTime: totalTime,
+            xpGanada: xpGanada, // COLUMNA I en Spreadsheet
+            ...extraMetrics
         };
 
         // REQ: Telemetría Silenciosa (Modulo 4)
         // No esperamos la red para permitir que el juego muestre la pantalla de éxito inmediatamente
         fetchApi('USER', 'saveGameResult', payload).then(res => {
             console.log(`[GamesAdapter] Sesión finalizada y sincronizada: ${finalScore}%`);
-            // Si el juego es QuizPro, ya maneja su propia sincronización local,
-            // pero para otros juegos podríamos actualizar el caché aquí si fuera necesario.
         }).catch(e => {
             console.warn("[GamesAdapter] Fallo sincronización de fin de sesión. Se confía en persistencia local previa.", e);
         });
@@ -285,21 +291,29 @@ window.GamesAdapter = {
         return Promise.resolve({ status: 'success', message: 'Resultado registrado localmente.' });
     },
 
-    async saveResult(gameId, gameName, asignatura, level, score, behavioralData = {}) {
+    async saveResult(gameId, gameName, asignatura, level, score, behavioralData) {
         // Método legacy para compatibilidad
-        return this.finishSession(asignatura, level, score);
+        return this.finishSession(asignatura, level, score, 0, behavioralData);
     },
 
-    async getLeaderboard(gameId) {
-        // REQ: Offline-First (Modulo 1)
+    /**
+     * REQ: Estrategia Caché Primero para Rankings (v7.6)
+     */
+    async getLeaderboard(gameId, onUpdate) {
+        // 1. Intentar recuperar desde caché inmediatamente
         if (window.PersistenceManager) {
             const cached = await window.PersistenceManager.get('rankings');
-            if (cached && cached.data) this.state.leaderboard = cached.data;
+            if (cached && cached.data) {
+                this.state.leaderboard = cached.data;
+                if (typeof onUpdate === 'function') onUpdate(cached.data);
+            }
         }
 
+        // 2. Sincronización en segundo plano (silenciosa)
         try {
-            const res = await fetchApi('USER', 'getGlobalTop', { gameId }, 0, {
-                store: 'rankings'
+            const res = await fetchApi('USER', 'getGlobalTop', { gameId: gameId }, 0, {
+                store: 'rankings',
+                onUpdate: onUpdate // fetchApi ya dispara onUpdate si detecta cambios
             });
             if (res && res.status === 'success') {
                 this.state.leaderboard = res;
@@ -307,29 +321,38 @@ window.GamesAdapter = {
             }
             return this.state.leaderboard || { status: 'success', global: [], subjectTops: {} };
         } catch (e) {
-            console.warn(`[GamesAdapter] Error obteniendo leaderboard para ${gameId}:`, e);
+            console.warn(`[GamesAdapter] Error en sync de leaderboard para ${gameId}:`, e);
             return this.state.leaderboard || { status: 'success', global: [], subjectTops: {} };
         }
     },
 
-    async getPersonalRecord() {
+    /**
+     * REQ: Estrategia Caché Primero para Récords Personales (v7.6)
+     */
+    async getPersonalRecord(onUpdate) {
         const user = JSON.parse(localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser'));
 
         // REQ: Consultar récords locales para Invitados
         if (!user) {
             const guestRecords = JSON.parse(localStorage.getItem('guest_records') || '{}');
+            if (typeof onUpdate === 'function') onUpdate(guestRecords);
             return guestRecords;
         }
 
-        // REQ: Offline-First (Modulo 1)
+        // 1. Carga inmediata desde IndexedDB
         if (window.PersistenceManager) {
-            const cached = await window.PersistenceManager.get('academic_stats');
-            if (cached && cached.data) this.state.personalRecords = cached.data;
+            const cachedStats = await window.PersistenceManager.get('academic_stats');
+            if (cachedStats && cachedStats.data) {
+                this.state.personalRecords = cachedStats.data;
+                if (typeof onUpdate === 'function') onUpdate(cachedStats.data);
+            }
         }
 
+        // 2. Sincronización silenciosa con servidor
         try {
             const res = await fetchApi('USER', 'getGameStats', { userId: user.userId }, 0, {
-                store: 'academic_stats'
+                store: 'academic_stats',
+                onUpdate: onUpdate
             });
             if (res && res.status === 'success' && res.data) {
                 this.state.personalRecords = res.data;
@@ -337,7 +360,7 @@ window.GamesAdapter = {
             }
             return this.state.personalRecords || {};
         } catch (e) {
-            console.warn("[GamesAdapter] Error obteniendo record personal:", e);
+            console.warn("[GamesAdapter] Error en sync de record personal:", e);
             return this.state.personalRecords || {};
         }
     }
