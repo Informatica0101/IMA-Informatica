@@ -17,14 +17,14 @@ window.GamesAdapter = {
         currentStreak: 0
     },
 
-    // REQ: Gamificación Estandarizada v7.5 (Modulo 4)
+    // REQ: Gamificación Estandarizada v7.6 (Rebalanceo Global)
     XP_CONFIG: {
-        BASE: 100,
+        BASE: 40,
         FACTORS: {
-            basico: 1.0,
-            intermedio: 1.5,
-            avanzado: 2.0,
-            especial: 2.2
+            basico: 0.8,
+            intermedio: 1.1,
+            avanzado: 1.4,
+            especial: 1.6
         },
         TIME: {
             MIN: 3000,
@@ -32,21 +32,21 @@ window.GamesAdapter = {
             MAX: 20000
         },
         STREAK: {
-            BONUS_PER_HIT: 0.05,
-            MAX: 1.3
+            BONUS_PER_HIT: 0.03,
+            MAX: 1.2
         },
         RANGES: [
-            { label: 'Básico', min: 0, max: 1500 },
-            { label: 'Promedio', min: 1501, max: 4000 },
-            { label: 'Avanzado', min: 4001, max: 8000 },
-            { label: 'Experto', min: 8001, max: 14000 },
-            { label: 'Maestro', min: 14001, max: 22000 },
-            { label: 'Leyenda', min: 22001, max: Infinity }
+            { label: 'Básico', min: 0, max: 1000 },
+            { label: 'Promedio', min: 1001, max: 3500 },
+            { label: 'Avanzado', min: 3501, max: 9000 },
+            { label: 'Experto', min: 9001, max: 20000 },
+            { label: 'Maestro', min: 20001, max: 45000 },
+            { label: 'Leyenda', min: 45001, max: Infinity }
         ]
     },
 
     /**
-     * Calcula XP basada en desempeño psicométrico (v7.5)
+     * Calcula XP basada en desempeño psicométrico (v7.6)
      */
     calculateXP(isCorrect, level, responseTime, gameId) {
         if (!isCorrect) {
@@ -57,28 +57,29 @@ window.GamesAdapter = {
         this.state.currentStreak++;
 
         // 1. Factor Dificultad
-        const fDificultad = this.XP_CONFIG.FACTORS[level.toLowerCase()] || 1.0;
+        const fDificultad = this.XP_CONFIG.FACTORS[(level || "").toLowerCase()] || 1.0;
 
         // 2. Factor Tiempo (Adivinación / Reflexión)
         let fTiempo = 1.0;
         if (responseTime < this.XP_CONFIG.TIME.MIN) fTiempo = 0.5;
-        else if (responseTime <= this.XP_CONFIG.TIME.OPTIMAL) fTiempo = 1.2;
+        else if (responseTime <= this.XP_CONFIG.TIME.OPTIMAL) fTiempo = 1.1;
         else {
             const overshoot = responseTime - this.XP_CONFIG.TIME.OPTIMAL;
             const window = this.XP_CONFIG.TIME.MAX - this.XP_CONFIG.TIME.OPTIMAL;
-            fTiempo = Math.max(0.8, 1.2 - (overshoot / window) * 0.4);
+            fTiempo = Math.max(0.7, 1.1 - (overshoot / window) * 0.4);
         }
 
         // 3. Bono Racha
         const bonoRacha = Math.min(this.XP_CONFIG.STREAK.MAX, 1.0 + (this.state.currentStreak * this.XP_CONFIG.STREAK.BONUS_PER_HIT));
 
-        // 4. Degradación por Repetición (Evitar Exploit)
+        // 4. Degradación por Repetición Agresiva (Evitar Grinding v7.6)
         const attemptsKey = `attempts_${gameId}_${level}`;
         const prevAttempts = parseInt(localStorage.getItem(attemptsKey) || '0');
         let attemptMultiplier = 1.0;
-        if (prevAttempts === 1) attemptMultiplier = 0.75;
-        else if (prevAttempts === 2) attemptMultiplier = 0.5;
-        else if (prevAttempts >= 3) attemptMultiplier = 0.25;
+
+        if (prevAttempts === 1) attemptMultiplier = 0.4;
+        else if (prevAttempts === 2) attemptMultiplier = 0.2;
+        else if (prevAttempts >= 3) attemptMultiplier = 0.1;
 
         const totalXP = Math.round(this.XP_CONFIG.BASE * fDificultad * fTiempo * bonoRacha * attemptMultiplier);
 
@@ -230,9 +231,15 @@ window.GamesAdapter = {
         });
     },
 
-    async finishSession(asignatura, level, finalScore, xpGanada = 0) {
+    /**
+     * Finaliza sesión integrando métricas extendidas (v7.6)
+     */
+    async finishSession(asignatura, level, finalScore, xpGanada, extraMetrics) {
         const session = this.state.currentSession;
         if (!session) return;
+
+        xpGanada = xpGanada || 0;
+        extraMetrics = extraMetrics || {};
 
         // REQ 4: Degradación por Repetición (Persistencia de Intentos)
         const attemptsKey = `attempts_${session.gameId}_${level}`;
@@ -250,9 +257,10 @@ window.GamesAdapter = {
                 guestRecords[session.gameId] = {
                     score: finalScore,
                     date: new Date().toISOString(),
-                    level,
-                    asignatura,
-                    xp: xpGanada
+                    level: level,
+                    asignatura: asignatura,
+                    xp: xpGanada,
+                    ...extraMetrics
                 };
                 localStorage.setItem('guest_records', JSON.stringify(guestRecords));
             }
@@ -263,20 +271,19 @@ window.GamesAdapter = {
             userId: user.userId,
             nombreAlumno: user.nombre,
             juego: session.gameId,
-            asignatura,
+            asignatura: asignatura,
             nivel: level,
             puntaje: finalScore,
             grado: user.grado,
-            totalTime,
-            xpGanada: xpGanada || 0 // COLUMNA I en Spreadsheet
+            totalTime: totalTime,
+            xpGanada: xpGanada, // COLUMNA I en Spreadsheet
+            ...extraMetrics
         };
 
         // REQ: Telemetría Silenciosa (Modulo 4)
         // No esperamos la red para permitir que el juego muestre la pantalla de éxito inmediatamente
         fetchApi('USER', 'saveGameResult', payload).then(res => {
             console.log(`[GamesAdapter] Sesión finalizada y sincronizada: ${finalScore}%`);
-            // Si el juego es QuizPro, ya maneja su propia sincronización local,
-            // pero para otros juegos podríamos actualizar el caché aquí si fuera necesario.
         }).catch(e => {
             console.warn("[GamesAdapter] Fallo sincronización de fin de sesión. Se confía en persistencia local previa.", e);
         });
@@ -284,21 +291,29 @@ window.GamesAdapter = {
         return Promise.resolve({ status: 'success', message: 'Resultado registrado localmente.' });
     },
 
-    async saveResult(gameId, gameName, asignatura, level, score, behavioralData = {}) {
+    async saveResult(gameId, gameName, asignatura, level, score, behavioralData) {
         // Método legacy para compatibilidad
-        return this.finishSession(asignatura, level, score);
+        return this.finishSession(asignatura, level, score, 0, behavioralData);
     },
 
-    async getLeaderboard(gameId) {
-        // REQ: Offline-First (Modulo 1)
+    /**
+     * REQ: Estrategia Caché Primero para Rankings (v7.6)
+     */
+    async getLeaderboard(gameId, onUpdate) {
+        // 1. Intentar recuperar desde caché inmediatamente
         if (window.PersistenceManager) {
             const cached = await window.PersistenceManager.get('rankings');
-            if (cached && cached.data) this.state.leaderboard = cached.data;
+            if (cached && cached.data) {
+                this.state.leaderboard = cached.data;
+                if (typeof onUpdate === 'function') onUpdate(cached.data);
+            }
         }
 
+        // 2. Sincronización en segundo plano (silenciosa)
         try {
-            const res = await fetchApi('USER', 'getGlobalTop', { gameId }, 0, {
-                store: 'rankings'
+            const res = await fetchApi('USER', 'getGlobalTop', { gameId: gameId }, 0, {
+                store: 'rankings',
+                onUpdate: onUpdate // fetchApi ya dispara onUpdate si detecta cambios
             });
             if (res && res.status === 'success') {
                 this.state.leaderboard = res;
@@ -306,29 +321,38 @@ window.GamesAdapter = {
             }
             return this.state.leaderboard || { status: 'success', global: [], subjectTops: {} };
         } catch (e) {
-            console.warn(`[GamesAdapter] Error obteniendo leaderboard para ${gameId}:`, e);
+            console.warn(`[GamesAdapter] Error en sync de leaderboard para ${gameId}:`, e);
             return this.state.leaderboard || { status: 'success', global: [], subjectTops: {} };
         }
     },
 
-    async getPersonalRecord() {
+    /**
+     * REQ: Estrategia Caché Primero para Récords Personales (v7.6)
+     */
+    async getPersonalRecord(onUpdate) {
         const user = JSON.parse(localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser'));
 
         // REQ: Consultar récords locales para Invitados
         if (!user) {
             const guestRecords = JSON.parse(localStorage.getItem('guest_records') || '{}');
+            if (typeof onUpdate === 'function') onUpdate(guestRecords);
             return guestRecords;
         }
 
-        // REQ: Offline-First (Modulo 1)
+        // 1. Carga inmediata desde IndexedDB
         if (window.PersistenceManager) {
-            const cached = await window.PersistenceManager.get('academic_stats');
-            if (cached && cached.data) this.state.personalRecords = cached.data;
+            const cachedStats = await window.PersistenceManager.get('academic_stats');
+            if (cachedStats && cachedStats.data) {
+                this.state.personalRecords = cachedStats.data;
+                if (typeof onUpdate === 'function') onUpdate(cachedStats.data);
+            }
         }
 
+        // 2. Sincronización silenciosa con servidor
         try {
             const res = await fetchApi('USER', 'getGameStats', { userId: user.userId }, 0, {
-                store: 'academic_stats'
+                store: 'academic_stats',
+                onUpdate: onUpdate
             });
             if (res && res.status === 'success' && res.data) {
                 this.state.personalRecords = res.data;
@@ -336,7 +360,7 @@ window.GamesAdapter = {
             }
             return this.state.personalRecords || {};
         } catch (e) {
-            console.warn("[GamesAdapter] Error obteniendo record personal:", e);
+            console.warn("[GamesAdapter] Error en sync de record personal:", e);
             return this.state.personalRecords || {};
         }
     }

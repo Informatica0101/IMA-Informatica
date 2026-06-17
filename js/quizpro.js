@@ -19,6 +19,14 @@ var responseChanges = 0;
 var currentStreak = 0;
 var sessionXP = 0;
 
+// NUEVAS MÉTRICAS PSICOMÉTRICAS - ÍNDICE DE AUTENTICIDAD (IAK) v7.6
+var sessionResponseTimes = [];
+var sessionChanges = [];
+var sessionSuccessMap = []; // Registro de aciertos para análisis de patrones
+var academicConsistency = 100;
+var knowledgeAuthenticityIndex = 100;
+var externalConsultationRisk = 0;
+
 // REQ: Gamificación v7.0 (Modulo 4)
 var XP_CONFIG = {
     BASE: 100,
@@ -33,16 +41,16 @@ var XP_CONFIG = {
         MAX: 30000 // 30s
     },
     STREAK: {
-        BONUS_PER_HIT: 0.05,
-        MAX: 1.3
+        BONUS_PER_HIT: 0.03,
+        MAX: 1.2
     },
     RANGES: [
-        { label: 'Básico', min: 0, max: 1500, restriction: null },
-        { label: 'Promedio', min: 1501, max: 4000, restriction: { level: 'Básico', minScore: 50 } },
-        { label: 'Avanzado', min: 4001, max: 8000, restriction: { level: 'Básico', minScore: 100 } },
-        { label: 'Experto', min: 8001, max: 14000, restriction: { level: 'Intermedio', minScore: 50 } },
-        { label: 'Maestro', min: 14001, max: 22000, restriction: { level: 'Intermedio', minScore: 100 } },
-        { label: 'Leyenda', min: 22001, max: Infinity, restriction: { level: 'Avanzado', minScore: 100 } }
+        { label: 'Básico', min: 0, max: 1000, restriction: null },
+        { label: 'Promedio', min: 1001, max: 3500, restriction: { level: 'Básico', minScore: 50 } },
+        { label: 'Avanzado', min: 3501, max: 9000, restriction: { level: 'Básico', minScore: 100 } },
+        { label: 'Experto', min: 9001, max: 20000, restriction: { level: 'Intermedio', minScore: 50 } },
+        { label: 'Maestro', min: 20001, max: 45000, restriction: { level: 'Intermedio', minScore: 100 } },
+        { label: 'Leyenda', min: 45001, max: Infinity, restriction: { level: 'Avanzado', minScore: 100 } }
     ]
 };
 
@@ -53,18 +61,16 @@ window.userGameStats = {}; // Cache de logros para validación de bloqueos
 window.globalTopData = null;
 
 window.initQuizPro = function() {
-    // REQ 2: Remoción del Bloqueador Visual (Spinner) en favor de carga asíncrona (Modulo 1)
+    // REQ: Estrategia Caché Primero (v7.6)
     if (window.GamesAdapter) {
-        // No esperamos el init síncrono para evitar el bloqueo del hilo de renderizado
-        window.GamesAdapter.init('quizpro', false);
-    }
-
-    try {
-        // Carga en paralelo sin bloquear la UI
+        window.GamesAdapter.init('quizpro', false).then(function() {
+            // Sincronización silenciosa en segundo plano
+            window.loadPerformanceTable();
+            loadGlobalTop();
+        });
+    } else {
         window.loadPerformanceTable();
         loadGlobalTop();
-    } catch (e) {
-        console.error("[QuizPro] Error en carga de tablas asíncrona:", e);
     }
 
     var handleAbandonment = function() {
@@ -297,8 +303,8 @@ window.navigateToLevels = function(subjectName, gradeLabel) {
     }
     if (!userRange) userRange = XP_CONFIG.RANGES[0];
 
-    // REQ: Validación Rango Leyenda (Modulo 4.2 / Spec v3.0)
-    if (currentXP > 22000) {
+    // REQ: Validación Rango Leyenda (Modulo 4.2 / Spec v3.0) v7.6
+    if (currentXP > 45000) {
         var allStats = [];
         for (var k in window.userGameStats) { allStats.push(window.userGameStats[k]); }
 
@@ -584,7 +590,7 @@ function startQuiz() {
 
                 return true;
             })
-            .slice(0, (selectedDifficulty.toLowerCase() === 'basico' ? 30 : 15));
+            .slice(0, ((selectedDifficulty || "").toLowerCase() === 'basico' ? 30 : 15));
 
         currentIndex = 0;
         score = 0;
@@ -593,6 +599,11 @@ function startQuiz() {
         sessionXP = 0;
         incorrectAnswers = [];
         lastCorrectIndex = -1; // Resetear para nueva sesión
+        sessionResponseTimes = [];
+        sessionChanges = [];
+        sessionSuccessMap = [];
+        knowledgeAuthenticityIndex = 100;
+        externalConsultationRisk = 0;
 
         startTimer();
         showQuestion();
@@ -605,14 +616,39 @@ function startQuiz() {
 function calculateXP(isCorrect, level, responseTime) {
     if (window.GamesAdapter && window.GamesAdapter.calculateXP) {
         // REQ 3: Usar motor centralizado para consistencia
-        var xp = window.GamesAdapter.calculateXP(isCorrect, level, responseTime, 'quizpro');
+        var baseXP = window.GamesAdapter.calculateXP(isCorrect, level, responseTime, 'quizpro');
+
+        // --- NUEVA FILOSOFÍA DE EVALUACIÓN: CURVA DE TIEMPO INTELIGENTE (v7.6 Rebalanceo) ---
+        var modulationFactor = 1.0;
+        var time = responseTime || 0;
+
+        // 1. Protección contra respuestas instantáneas imposibles (< 2.5s para lectura y proceso)
+        if (time < 2500 && isCorrect) {
+            modulationFactor *= 0.5; // Reducción por probabilidad de azar o automatización
+        }
+
+        // 2. Penalización gradual por tiempos excesivamente largos (Posible consulta externa)
+        // Ventana óptima adaptativa según dificultad
+        var maxOptimal = (level || "").toLowerCase() === 'avanzado' ? 25000 : 18000;
+        if (time > maxOptimal && isCorrect) {
+            // Reducción gradual: entre más tiempo pase del óptimo, menos XP (mínimo 40% del base)
+            var excess = (time - maxOptimal) / 10000; // Cada 10s de exceso reduce
+            modulationFactor *= Math.max(0.4, 1.0 - (excess * 0.20));
+        }
+
+        // 3. Bonificación por dominio genuino (Tiempo razonable con precisión)
+        if (time >= 5000 && time <= 12000 && isCorrect) {
+            modulationFactor *= 1.10; // "Sweet spot" de conocimiento fluido
+        }
+
+        var finalXP = Math.round(baseXP * modulationFactor);
 
         // REQ: Soft Cap (v7.5)
         var xpKey = "xp_" + selectedAsignatura + "_" + selectedGrado;
         var currentTotalXP = parseInt(localStorage.getItem(xpKey) || '0');
-        if (level.toLowerCase() === 'basico' && currentTotalXP >= 1500) return 0;
+        if ((level || "").toLowerCase() === 'basico' && currentTotalXP >= 1500) return 0;
 
-        return xp;
+        return finalXP;
     }
     return 0;
 }
@@ -643,7 +679,7 @@ function loadQuestions() {
     var asignaturaFolder = mapping[selectedAsignatura] || selectedAsignatura.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, '_');
 
     var rawLevel = window.getStandardLevelName(selectedDifficulty);
-    var levelFile = rawLevel.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "") + '.json';
+    var levelFile = (rawLevel || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "") + '.json';
 
     // REQ: Desacoplamiento del Backend - Enrutamiento Estático Indexado
     var isRoot = window.location.pathname.indexOf('/juegos/') === -1;
@@ -766,7 +802,7 @@ function getBalancedOptions(options, correct) {
 
 function extractTags(text, question) {
     var tags = [];
-    var content = (text + " " + question).toLowerCase();
+    var content = (String(text || "") + " " + String(question || "")).toLowerCase();
 
     if (content.indexOf("programacion") !== -1 || content.indexOf("codigo") !== -1 || content.indexOf("algoritmo") !== -1) tags.push("Programación");
     if (content.indexOf("html") !== -1 || content.indexOf("css") !== -1 || content.indexOf("web") !== -1 || content.indexOf("etiqueta") !== -1) tags.push("Web");
@@ -876,7 +912,7 @@ function showQuestion() {
             btn.textContent = opt;
             btn.onclick = function() {
                 // Si la respuesta correcta es literal "Verdadero"/"Falso" o "A"/"B"
-                var isLiteral = (String(q.answer).toLowerCase() === "verdadero" || String(q.answer).toLowerCase() === "falso");
+                var isLiteral = (String(q.answer || "").toLowerCase() === "verdadero" || String(q.answer || "").toLowerCase() === "falso");
                 var val = isLiteral ? opt : (opt === "Verdadero" ? "A" : "B");
                 checkAnswer(val, q.answer, btn);
             };
@@ -1140,6 +1176,11 @@ function checkAnswer(selected, correct, btn) {
     q = window.normalizeQuestion(q);
     var finalCorrect = correct || q.respuestaCorrecta || "No disponible";
 
+    // Registrar métricas de comportamiento para análisis psicométrico
+    sessionResponseTimes.push(responseTime);
+    sessionChanges.push(responseChanges);
+    sessionSuccessMap.push(isCorrect);
+
     // Captura de Analítica Unificada (Fase 5)
     if (window.GamesAdapter && window.GamesAdapter.recordAction) {
         window.GamesAdapter.recordAction({
@@ -1149,7 +1190,7 @@ function checkAnswer(selected, correct, btn) {
             tema: (q.tags && q.tags.length > 0) ? q.tags[0] : 'General',
             respuestaSeleccionada: selected,
             respuestaCorrecta: finalCorrect,
-            esCorrecta: String(selected).trim().toLowerCase() === String(finalCorrect).trim().toLowerCase(),
+            esCorrecta: String(selected || "").trim().toLowerCase() === String(finalCorrect || "").trim().toLowerCase(),
             tiempoRespuesta: responseTime,
             cambiosRespuesta: responseChanges
         });
@@ -1173,7 +1214,7 @@ function checkAnswer(selected, correct, btn) {
     if (q && q.type === 'transcription') {
         isCorrect = cleanSelected === cleanCorrect;
     } else {
-        isCorrect = cleanSelected.toLowerCase() === cleanCorrect.toLowerCase();
+        isCorrect = (cleanSelected || "").toLowerCase() === (cleanCorrect || "").toLowerCase();
     }
 
     if (isCorrect) {
@@ -1218,8 +1259,8 @@ function checkAnswer(selected, correct, btn) {
 
         // Resaltar la opción correcta en la interfaz
         allBtns.forEach(function(b) {
-            var btnText = b.textContent.trim().toLowerCase();
-            var correctText = String(finalCorrect).trim().toLowerCase();
+            var btnText = (b.textContent || "").trim().toLowerCase();
+            var correctText = String(finalCorrect || "").trim().toLowerCase();
             if (finalCorrect && btnText === correctText) {
                 b.classList.add('correct', 'border-emerald-500', 'text-emerald-600', 'bg-emerald-50/50');
             }
@@ -1317,8 +1358,64 @@ function startTimer() {
 /**
  * REQ 4: Persistencia Extendida
  */
+/**
+ * Motor de Evaluación Psicométrica Avanzada (v7.6)
+ * Calcula el Índice de Autenticidad del Conocimiento (IAK) y Riesgo de Consulta Externa (RCE).
+ */
+function runPsychometricEvaluation() {
+    var totalQuestions = sessionSuccessMap.length;
+    if (totalQuestions < 5) return;
+
+    var accuracy = (score / totalQuestions) * 100;
+    var avgTime = sessionResponseTimes.reduce(function(a,b){return a+b;}, 0) / totalQuestions;
+
+    // 1. Análisis de Uniformidad Temporal (Detección de patrones artificiales)
+    var variance = sessionResponseTimes.reduce(function(a,b){ return a + Math.pow(b - avgTime, 2); }, 0) / totalQuestions;
+    var stdDev = Math.sqrt(variance);
+
+    // Si la desviación estándar es muy baja (< 1.5s) en una sesión larga, indica patrón artificial
+    if (stdDev < 1500 && totalQuestions > 8) {
+        knowledgeAuthenticityIndex -= 15;
+        externalConsultationRisk += 20;
+    }
+
+    // 2. Análisis de Alta Precisión con Tiempos de Consulta (> 20s promedio)
+    if (accuracy > 90 && avgTime > 20000) {
+        knowledgeAuthenticityIndex -= 20;
+        externalConsultationRisk += 30;
+    }
+
+    // 3. Saltos Improbables de Rendimiento
+    var history = [];
+    for(var k in window.userGameStats) { if(k.indexOf('QuizPro_') === 0) history.push(window.userGameStats[k]); }
+    if (history.length > 3) {
+        var prevAvg = history.reduce(function(a,b){return a + (b.maxScore || 0);}, 0) / history.length;
+        if (accuracy > (prevAvg + 40) && avgTime > 15000) {
+            knowledgeAuthenticityIndex -= 10;
+            externalConsultationRisk += 15;
+        }
+    }
+
+    // 4. Consistencia del Conocimiento (Incertidumbre sistemática)
+    var extremeChanges = sessionChanges.filter(function(c){ return c > 3; }).length;
+    if (extremeChanges > (totalQuestions / 3)) {
+        knowledgeAuthenticityIndex -= 10;
+    }
+
+    // 5. Consistencia Académica (Estabilidad de desempeño)
+    academicConsistency = Math.max(0, 100 - (externalConsultationRisk * 0.5) - (extremeChanges * 5));
+
+    // Normalización de rangos
+    knowledgeAuthenticityIndex = Math.max(10, Math.min(100, knowledgeAuthenticityIndex));
+    externalConsultationRisk = Math.max(0, Math.min(100, externalConsultationRisk));
+
+    console.log("[PSICOMETRÍA] IAK:", knowledgeAuthenticityIndex, "RCE:", externalConsultationRisk, "Consistencia:", academicConsistency);
+}
+
 function endQuiz() {
     clearInterval(timerInterval);
+    runPsychometricEvaluation();
+
     document.getElementById('quiz-screen').classList.add('hidden');
     document.getElementById('result-screen').classList.remove('hidden');
 
@@ -1371,7 +1468,11 @@ function endQuiz() {
         nivel: window.getStandardLevelName(selectedDifficulty),
         grado: selectedGrado,
         xpGanada: sessionXP, // COLUMNA I: Asegurar el envío de XP neta
-        fecha_logro: new Date().toISOString()
+        fecha_logro: new Date().toISOString(),
+        // Nuevas métricas psicométricas (v7.6)
+        iak: knowledgeAuthenticityIndex,
+        rce: externalConsultationRisk,
+        consistencia: academicConsistency
     };
 
     // Actualizar XP local para cálculo de Soft Cap
@@ -1396,7 +1497,10 @@ function endQuiz() {
             date: new Date().toISOString(),
             dominio: existing.dominio,
             icr: existing.icr,
-            ia: existing.ia
+            ia: existing.ia,
+            iak: knowledgeAuthenticityIndex,
+            rce: externalConsultationRisk,
+            consistencia: academicConsistency
         };
     }
 
@@ -1450,33 +1554,19 @@ function loadGlobalTop() {
     var body = document.getElementById('global-top-body');
     if (!body) return;
 
-    var handleFetch = function() {
-        return fetchApi('USER', 'getGlobalTop', { gameId: 'quizpro' }, 0, {
+    // REQ: Estrategia Caché Primero mediante GamesAdapter (v7.6)
+    if (window.GamesAdapter && window.GamesAdapter.getLeaderboard) {
+        window.GamesAdapter.getLeaderboard('quizpro', function(data) {
+            renderGlobalTopHTML(data);
+        });
+    } else {
+        // Fallback manual si no hay GamesAdapter
+        fetchApi('USER', 'getGlobalTop', { gameId: 'quizpro' }, 0, {
             store: 'rankings',
             onUpdate: function(data) { renderGlobalTopHTML(data); }
         }).then(function(res) {
-            console.log("[QuizPro] Respuesta Ranking:", res);
-            if (res.status === 'success' && Array.isArray(res.global)) {
-                renderGlobalTopHTML(res);
-            }
-        })["catch"](function(e) {
-            console.error("Error loading global top", e);
-            body.innerHTML = '<tr><td colspan="4" class="px-6 py-8 text-center text-red-400 text-xs italic">Error al cargar ranking global</td></tr>';
+            if (res.status === 'success') renderGlobalTopHTML(res);
         });
-    };
-
-    // REQ: Offline-First (Modulo 1)
-    if (window.PersistenceManager) {
-        window.PersistenceManager.get('rankings').then(function(cached) {
-            if (cached && cached.data) {
-                renderGlobalTopHTML(cached.data);
-                handleFetch()["catch"](function(e) { console.warn("[Offline-First] Sincronización silenciosa de ranking fallida."); });
-            } else {
-                handleFetch();
-            }
-        });
-    } else {
-        handleFetch();
     }
 }
 
@@ -1525,34 +1615,25 @@ function renderGlobalTopHTML(res) {
 
 window.loadPerformanceTable = function() {
     var container = document.getElementById('performance-table-body');
-    var userRaw = localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser');
-    var user = userRaw ? JSON.parse(userRaw) : null;
-    if (!container || !user) return;
+    if (!container) return;
 
-    var handleFetch = function() {
-        return fetchApi('USER', 'getGameStats', { userId: user.userId }, 0, {
-            store: 'academic_stats',
-            onUpdate: function(data) { renderPerformanceHTML(data); }
-        }).then(function(res) {
-            if (res.status === 'success') {
-                renderPerformanceHTML(res);
-            }
-        })["catch"](function(e) { console.error("Error loading stats", e); });
-    };
-
-    // REQ: Offline-First (Modulo 1)
-    if (window.PersistenceManager) {
-        window.PersistenceManager.get('academic_stats').then(function(cached) {
-            // REQ: Eager caching - si ya tenemos datos, renderizamos y pedimos actualización silenciosa
-            if (cached && cached.data) {
-                renderPerformanceHTML(cached.data);
-                handleFetch()["catch"](function(e) { console.warn("[Offline-First] Sincronización silenciosa fallida, usando caché."); });
-            } else {
-                handleFetch();
-            }
+    // REQ: Estrategia Caché Primero mediante GamesAdapter (v7.6)
+    if (window.GamesAdapter && window.GamesAdapter.getPersonalRecord) {
+        window.GamesAdapter.getPersonalRecord(function(data) {
+            renderPerformanceHTML(data);
         });
     } else {
-        handleFetch();
+        // Fallback manual legacy
+        var userRaw = localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser');
+        var user = userRaw ? JSON.parse(userRaw) : null;
+        if (user) {
+            fetchApi('USER', 'getGameStats', { userId: user.userId }, 0, {
+                store: 'academic_stats',
+                onUpdate: function(data) { renderPerformanceHTML(data); }
+            }).then(function(res) {
+                if (res.status === 'success') renderPerformanceHTML(res);
+            });
+        }
     }
 };
 
@@ -1739,8 +1820,8 @@ function renderDiagnosis(history) {
                     var subject = grade.subjects[sIdx];
                     for (var tIdx=0; tIdx<subject.topics.length; tIdx++) {
                         var topic = subject.topics[tIdx];
-                        if (topic.title.toLowerCase().indexOf(tName.toLowerCase()) !== -1 ||
-                            tName.toLowerCase().indexOf(topic.title.toLowerCase()) !== -1) {
+                    if ((topic.title || "").toLowerCase().indexOf((tName || "").toLowerCase()) !== -1 ||
+                        (tName || "").toLowerCase().indexOf((topic.title || "").toLowerCase()) !== -1) {
                             return topic.file;
                         }
                     }
