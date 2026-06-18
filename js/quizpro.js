@@ -64,19 +64,6 @@ window.initQuizPro = function() {
     // REQ: Estrategia Caché Primero (v7.6)
     if (window.GamesAdapter) {
         window.GamesAdapter.init('quizpro', false).then(function() {
-            var user = window.GamesAdapter.state.currentUser;
-
-            if (!user) {
-                // Modo Invitado UI
-                var lb = document.getElementById('global-top-body');
-                if (lb) {
-                    var warning = document.createElement('div');
-                    warning.className = 'p-4 bg-orange-50 border border-orange-100 rounded-xl mb-4 text-[9px] font-black text-orange-700 uppercase tracking-widest text-center';
-                    warning.textContent = 'Inicia sesión para registrar tu progreso en la nube';
-                    lb.parentNode.insertBefore(warning, lb);
-                }
-            }
-
             // Sincronización silenciosa en segundo plano
             window.loadPerformanceTable();
             loadGlobalTop();
@@ -1633,7 +1620,6 @@ window.loadPerformanceTable = function() {
     // REQ: Estrategia Caché Primero mediante GamesAdapter (v7.6)
     if (window.GamesAdapter && window.GamesAdapter.getPersonalRecord) {
         window.GamesAdapter.getPersonalRecord(function(data) {
-            // Asegurar que si viene el objeto completo de GamesAdapter se maneje bien (Hallazgo 2)
             renderPerformanceHTML(data);
         });
     } else {
@@ -1657,11 +1643,8 @@ function renderPerformanceHTML(res) {
 
     // REQ: Soporte polimórfico para Caché y API (Modulo 1)
     // res puede ser la respuesta completa de la API o solo el objeto de estadísticas
-    // (Hallazgo 2/4): Normalizar datos de entrada
-    window.userGameStats = (res && res.data) ? res.data : (res && res.allHistory ? res : {});
-    var history = (res && res.allHistory) ? res.allHistory : [];
-
-    if (!window.userGameStats && res && !res.allHistory) window.userGameStats = res;
+    window.userGameStats = res.data || (res.id ? null : res) || {};
+    var history = res.allHistory || [];
 
     var approvedCount = 0;
     var allMistakeTags = [];

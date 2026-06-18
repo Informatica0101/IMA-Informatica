@@ -288,3 +288,40 @@ Dashboard Alumno:
 - Manejo de estados de error en métricas: OK.
 
 CONCLUSIÓN: Se han resuelto todos los puntos de la revisión post-commit relacionados con récords y carga de métricas.
+
+AUDITORÍA DE REVERSIÓN Y RE-DIAGNÓSTICO - Wed Jun 17 18:00:00 UTC 2026
+
+Se han revertido los cambios de la iteración anterior debido a una regresión crítica: la tabla de mejores jugadores y el récord personal dejaron de cargar.
+
+Diagnóstico Forense de la Regresión:
+1. Al unificar la sesión en GamesAdapter, se introdujo una dependencia asíncrona estricta que, en condiciones de red o latencia de IndexedDB, bloqueaba el renderizado inicial de los componentes de récord en los minijuegos.
+2. La normalización excesiva en fetchApi/persistence.js podría estar descartando estructuras anidadas necesarias para los rankings globales.
+
+Nueva Estrategia:
+- Mantener la fuente de verdad en GamesAdapter pero asegurar que el acceso a 'currentUser' sea resiliente (fallback a localStorage inmediato si el estado interno es nulo).
+- Restaurar la carga de rankings y records sin bloqueos asíncronos profundos.
+- Verificar que el renderizado de récords busque en las claves correctas del objeto de estadísticas.
+
+AUDITORÍA DE INTEGRACIÓN DE ESTADÍSTICAS - Wed Jun 17 18:30:00 UTC 2026
+
+1. ARCHIVO: js/api.js
+- Cambio: Lectura de caché 'eager' mejorada.
+- Verificación: Maneja correctamente objetos con .data y objetos planos (historial). OK.
+
+2. ARCHIVO: js/persistence.js
+- Cambio: Reconcile forzada para datos válidos y preservación de 'allHistory'.
+- Verificación: No descarta el sobre de la API si contiene el historial completo. OK.
+
+3. ARCHIVO: js/games-adapter.js
+- Cambio: getCurrentUser resiliente e init no bloqueante.
+- Verificación: Las promesas de sincronización no detienen el flujo del juego. OK.
+
+4. ARCHIVO: js/student.js
+- Cambio: Manejo de errores en la carga de perfil.
+- Verificación: Llama a renderLearningProfileData([]) en caso de fallo, limpiando el 'Cargando'. OK.
+
+5. ARCHIVO: js/webmaster_quiz_juego.js
+- Cambio: Alineación con GamesAdapter y normalización de récord.
+- Verificación: Busca en 'webmaster' o 'WebMaster Quiz'. OK.
+
+CONCLUSIÓN: Se han corregido las causas raíz de la invisibilidad de récords y la inestabilidad del dashboard.

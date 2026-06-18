@@ -156,14 +156,13 @@ window.PersistenceManager = {
 
         return this.get(store, cacheKey).then(function(local) {
             // REQ: Forzar actualización si vienen datos válidos del servidor (Hallazgo 6)
-            // Muchos servicios no envían updated_at, por lo que confiamos en la llegada de datos.
-            var hasNewData = serverData && (serverData.status === 'success' || Array.isArray(serverData) || (typeof serverData === 'object' && Object.keys(serverData).length > 0));
+            var hasNewData = serverData && (serverData.status === 'success' || (serverData.data && serverData.data.length > 0) || serverData.allHistory || Array.isArray(serverData));
 
             var serverTimestamp = (serverData && serverData.updated_at) ? serverData.updated_at : Date.now();
             var isNewer = !local || !local.updated_at || serverTimestamp > local.updated_at;
 
             if (hasNewData && isNewer) {
-                // REQ: Preservar estructura completa si contiene historial (A-78)
+                // REQ: Preservar sobres si contienen metadatos extendidos (allHistory) (A-78)
                 var newData = (serverData && serverData.status === 'success' && serverData.data !== undefined) ? serverData.data : serverData;
                 if (serverData && serverData.allHistory) { newData = serverData; }
 

@@ -1299,7 +1299,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // REQ: Eager Caching for Learning Profile (Ticket: Optimización de Caché)
         if (window.PersistenceManager) {
             var cached = await window.PersistenceManager.get('cache_estudiante_profile');
-            if (cached && cached.data) {
+            if (cached && cached.data && !dataOnly) {
                 renderLearningProfileData(cached.data);
             }
         }
@@ -1308,7 +1308,7 @@ document.addEventListener('DOMContentLoaded', function() {
             var res = await fetchApi('USER', 'getLearningProfile', { userId: currentUser.userId }, 0, {
                 store: 'cache_estudiante_profile',
                 onUpdate: function(data) {
-                    renderLearningProfileData(data.data || data);
+                    if (!dataOnly) renderLearningProfileData(data.data || data);
                 }
             });
             if (res.status === 'success' && res.data && res.data.length > 0) {
@@ -1318,8 +1318,7 @@ document.addEventListener('DOMContentLoaded', function() {
             return null;
         } catch (e) {
             console.error("Error al cargar perfil de dominio:", e);
-            // REQ: Limpiar estado de carga ante error (Hallazgo 5)
-            if (!dataOnly) { renderLearningProfileData([]); }
+            if (!dataOnly) renderLearningProfileData([]);
             return null;
         }
     }
@@ -1328,13 +1327,8 @@ document.addEventListener('DOMContentLoaded', function() {
         var profileContainer = document.getElementById('learning-profile-integration');
         var metricsBody = document.getElementById('student-metrics-body');
 
-        // (Hallazgo 5): Asegurar que los datos sean un array válido
-        var normalizedProfile = (profileData && profileData.status === 'success') ? profileData.data : (Array.isArray(profileData) ? profileData : []);
-
         // REQ 3: Muestra mínima local para renderizado de tabla (Modulo 3.1)
-        // Se reduce el umbral de intentos para evitar sensación de vacío (A-78)
-        var validData = normalizedProfile.filter(function(i) { return i.intentos >= 1; });
-        var isCalibrating = normalizedProfile.some(function(i) { return i.intentos < 5; }) || normalizedProfile.length === 0;
+        var validData = (profileData || []).filter(function(i) { return i.intentos >= 5; });
 
         if (metricsBody) {
             if (validData.length > 0) {
@@ -1355,7 +1349,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     var avgCONS = sumCONS / count;
 
                     var getStatus = function(val, type) {
-                        if (isCalibrating) return { label: 'Calibrando', class: 'text-blue-500' };
                         if (type === 'risk') {
                             if (val < 20) return { label: 'Bajo', class: 'text-emerald-500' };
                             if (val < 50) return { label: 'Medio', class: 'text-yellow-500' };

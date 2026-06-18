@@ -221,3 +221,21 @@ Archivo: js/destreza_teclado.js, js/perifericos_juego.js, js/webmaster_quiz_jueg
 
 Archivo: js/student.js
 - Asegurado el cierre del estado de carga de métricas psicométricas ante fallos de red, garantizando una transición visual estable. Resuelve el Hallazgo 5.
+
+Wed Jun 17 18:40:00 UTC 2026 - Corrección Integral de Récords y Sincronización
+
+Archivo: js/persistence.js
+- Se modificó 'reconcile' para no descartar sobres de API que contengan 'allHistory', asegurando la persistencia de estadísticas históricas detalladas.
+
+Archivo: js/api.js
+- Se mejoró la lectura 'eager' de caché para manejar polimorfismo de datos (objetos con .data vs objetos planos).
+
+Archivo: js/games-adapter.js
+- Implementado 'getCurrentUser' con fallback a almacenamiento local para garantizar sesión en cualquier contexto.
+- Refactorizado 'init' para evitar bloqueos por latencia de red.
+
+Archivo: js/student.js
+- Añadido bloque catch en 'fetchAndRenderLearningProfile' para limpiar el estado visual de carga ante fallos del microservicio.
+
+Archivos de Minijuegos:
+- Normalizada la búsqueda de récords personales para cubrir múltiples nomenclaturas de claves de juego.

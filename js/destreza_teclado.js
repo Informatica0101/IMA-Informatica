@@ -254,56 +254,51 @@ function renderLeaderboard(lb) {
 }
 
 // Renderiza el récord personal buscando el WPM más alto en el historial (v7.6)
-function renderPersonalRecord(inputRecord) {
-    if (!inputRecord) return;
-    var scoreSpan = document.getElementById('init-max-score');
+function renderPersonalRecord(record) {
+    if (!record) return;
+    const scoreSpan = document.getElementById('init-max-score');
     if (!scoreSpan) return;
 
-    // REQ: Normalización de entrada (Hallazgo 2/3)
-    var record = (inputRecord && inputRecord.data) ? inputRecord.data : inputRecord;
-    var maxWPM = 0;
+    let maxWPM = 0;
 
     // Buscar en el objeto de estadísticas académicas (QuizPro_Asignatura_...)
     // O en las claves directas del juego
-    var keys = Object.keys(record);
-    for (var i = 0; i < keys.length; i++) {
-        var key = keys[i];
-        var entry = record[key];
-        if (!entry) continue;
-
+    const keys = Object.keys(record);
+    keys.forEach(key => {
+        const entry = record[key];
         // Revisar si es una entrada de este juego o tiene el campo wpm
         if (key.indexOf('dexterity') !== -1 || key.indexOf('Destreza en el Teclado') !== -1 || entry.juego === 'dexterity') {
-            var wpm = parseFloat(entry.wpm || entry.maxWPM || entry.puntaje || 0);
+            const wpm = parseFloat(entry.wpm || entry.maxWPM || entry.puntaje || 0);
             if (wpm > maxWPM) maxWPM = wpm;
         }
-    }
+    });
 
     scoreSpan.textContent = Math.round(maxWPM);
 }
 
 // Inicializa el juego al cargar la página o al volver a jugar
-window.initDexterityGame = function() {
-    // REQ: Uso de sesión centralizada (Hallazgo 1)
-    if (window.GamesAdapter) {
-        window.GamesAdapter.init('dexterity', false).then(function() {
-            var user = window.GamesAdapter.state.currentUser;
-            if (!user) {
-                var gmWarning = document.getElementById('guest-mode-warning');
-                if (gmWarning) gmWarning.classList.remove('hidden');
-                var cgBtn = document.getElementById('continue-guest-btn');
-                if (cgBtn) cgBtn.classList.remove('hidden');
-            }
+window.initDexterityGame = async function() {
+    const user = JSON.parse(localStorage.getItem('currentUser'));
+    const isGuest = !user;
 
-            // REQ: Estrategia Caché Primero (v7.6)
-            window.GamesAdapter.getLeaderboard('dexterity', function(lb) {
+    if (window.GamesAdapter) {
+        // REQ: Estrategia Caché Primero (v7.6)
+        // No esperamos el init, usamos callbacks para actualizaciones silenciosas
+        GamesAdapter.init('dexterity', false).then(() => {
+            GamesAdapter.getLeaderboard('dexterity', (lb) => {
                 window.currentLeaderboard = lb;
                 renderLeaderboard(lb);
             });
 
-            window.GamesAdapter.getPersonalRecord(function(record) {
+            GamesAdapter.getPersonalRecord((record) => {
                 renderPersonalRecord(record);
             });
         });
+    }
+
+    if (isGuest) {
+        document.getElementById('guest-mode-warning')?.classList.remove('hidden');
+        document.getElementById('continue-guest-btn')?.classList.remove('hidden');
     }
 
     console.log('initDexterityGame called'); // Log de depuración
