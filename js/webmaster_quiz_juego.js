@@ -2617,8 +2617,9 @@ window.initQuizGame = function() {
                 }
             });
 
-            window.GamesAdapter.getPersonalRecord(function(record) {
+            window.GamesAdapter.getPersonalRecord(function(inputRecord) {
                 // Cargar récord personal (Hallazgo 2/3)
+                var record = (inputRecord && inputRecord.data) ? inputRecord.data : inputRecord;
                 var myRecord = record["webmaster"] || record["WebMaster Quiz"];
                 if (myRecord) {
                     var scoreSpan = document.getElementById('init-max-score');

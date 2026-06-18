@@ -95,8 +95,9 @@ window.initializePeripheralsGame = function(gameDataStorage) {
                 }
             });
 
-            window.GamesAdapter.getPersonalRecord(function(record) {
+            GamesAdapter.getPersonalRecord(function(inputRecord) {
                 // Récord (Hallazgo 3)
+                var record = (inputRecord && inputRecord.data) ? inputRecord.data : inputRecord;
                 var myRecord = record["perifericos"] || record["Juego de Periféricos"];
                 if (myRecord) {
                     var scoreSpan = document.getElementById('init-max-score');

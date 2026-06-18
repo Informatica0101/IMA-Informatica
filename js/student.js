@@ -1318,6 +1318,8 @@ document.addEventListener('DOMContentLoaded', function() {
             return null;
         } catch (e) {
             console.error("Error al cargar perfil de dominio:", e);
+            // REQ: Limpiar estado de carga ante error (Hallazgo 5)
+            if (!dataOnly) { renderLearningProfileData([]); }
             return null;
         }
     }

@@ -254,24 +254,29 @@ function renderLeaderboard(lb) {
 }
 
 // Renderiza el récord personal buscando el WPM más alto en el historial (v7.6)
-function renderPersonalRecord(record) {
-    if (!record) return;
-    const scoreSpan = document.getElementById('init-max-score');
+function renderPersonalRecord(inputRecord) {
+    if (!inputRecord) return;
+    var scoreSpan = document.getElementById('init-max-score');
     if (!scoreSpan) return;
 
-    let maxWPM = 0;
+    // REQ: Normalización de entrada (Hallazgo 2/3)
+    var record = (inputRecord && inputRecord.data) ? inputRecord.data : inputRecord;
+    var maxWPM = 0;
 
     // Buscar en el objeto de estadísticas académicas (QuizPro_Asignatura_...)
     // O en las claves directas del juego
-    const keys = Object.keys(record);
-    keys.forEach(key => {
-        const entry = record[key];
+    var keys = Object.keys(record);
+    for (var i = 0; i < keys.length; i++) {
+        var key = keys[i];
+        var entry = record[key];
+        if (!entry) continue;
+
         // Revisar si es una entrada de este juego o tiene el campo wpm
         if (key.indexOf('dexterity') !== -1 || key.indexOf('Destreza en el Teclado') !== -1 || entry.juego === 'dexterity') {
-            const wpm = parseFloat(entry.wpm || entry.maxWPM || entry.puntaje || 0);
+            var wpm = parseFloat(entry.wpm || entry.maxWPM || entry.puntaje || 0);
             if (wpm > maxWPM) maxWPM = wpm;
         }
-    });
+    }
 
     scoreSpan.textContent = Math.round(maxWPM);
 }

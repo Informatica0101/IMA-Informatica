@@ -271,3 +271,20 @@ AUDITORÍA DE CAMBIOS - ITERACIÓN ACTUAL - Wed Jun 17 17:00:00 UTC 2026
 - Estado: OK.
 
 OBSERVACIÓN FINAL: Se ha respetado la integridad de commits anteriores. No hay regresiones detectadas. Todos los archivos pasan la validación sintáctica 'node -c'.
+
+AUDITORÍA DE ESTADÍSTICAS Y PERSISTENCIA - Wed Jun 17 17:40:00 UTC 2026
+
+Archivo: js/persistence.js
+- Mejora en reconcile: Ahora preserva allHistory. OK.
+
+Archivo: js/games-adapter.js
+- Mejora en onUpdate de getPersonalRecord: Normaliza envelopes de API. OK.
+
+Archivos de Minijuegos:
+- Normalización en callbacks de renderizado de récords: OK.
+- Verificación sintáctica: OK.
+
+Dashboard Alumno:
+- Manejo de estados de error en métricas: OK.
+
+CONCLUSIÓN: Se han resuelto todos los puntos de la revisión post-commit relacionados con récords y carga de métricas.

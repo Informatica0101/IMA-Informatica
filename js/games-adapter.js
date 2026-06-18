@@ -377,11 +377,14 @@ window.GamesAdapter = {
             store: 'academic_stats',
             key: cacheKey,
             onUpdate: function(data) {
-                self.state.personalRecords = data;
-                if (typeof onUpdate === 'function') onUpdate(data);
+                // REQ: Normalización de entrada para evitar envelopes (Hallazgo 2)
+                var cleanData = (data && data.status === 'success') ? data.data : (data && data.data ? data.data : data);
+                self.state.personalRecords = cleanData;
+                if (typeof onUpdate === 'function') onUpdate(cleanData);
             }
         }).then(function(res) {
-            return res && res.data ? res.data : (self.state.personalRecords || {});
+            var finalRes = (res && res.status === 'success') ? res.data : (res && res.data ? res.data : res);
+            return finalRes || self.state.personalRecords || {};
         }).catch(function(e) {
             console.warn("[GamesAdapter] Error en sync de record personal:", e);
             return self.state.personalRecords || {};

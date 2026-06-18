@@ -207,3 +207,17 @@ Archivo: js/quizpro.js
 
 Archivo: js/student.js
 - Mejorada la robustez de 'renderLearningProfileData' mediante normalización de entrada, asegurando la transición de estados de carga a calibración. Resuelve el Hallazgo 5.
+
+Wed Jun 17 17:30:00 UTC 2026 - Corrección de Visualización de Récords y Métricas
+
+Archivo: js/persistence.js
+- Modificada la función 'reconcile' para preservar 'allHistory' al actualizar el caché, evitando la pérdida de datos históricos durante la sincronización.
+
+Archivo: js/games-adapter.js
+- Añadida normalización de datos en el callback 'onUpdate' de 'getPersonalRecord' para asegurar que 'this.state.personalRecords' siempre contenga el objeto de datos limpio, sin sobres de la API.
+
+Archivo: js/destreza_teclado.js, js/perifericos_juego.js, js/webmaster_quiz_juego.js
+- Actualizada la lógica de renderizado de récords para normalizar el objeto de entrada, permitiendo extraer estadísticas incluso si los datos vienen envueltos en un objeto de respuesta completo. Resuelve el Hallazgo del Récord Personal.
+
+Archivo: js/student.js
+- Asegurado el cierre del estado de carga de métricas psicométricas ante fallos de red, garantizando una transición visual estable. Resuelve el Hallazgo 5.

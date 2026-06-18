@@ -163,7 +163,10 @@ window.PersistenceManager = {
             var isNewer = !local || !local.updated_at || serverTimestamp > local.updated_at;
 
             if (hasNewData && isNewer) {
+                // REQ: Preservar estructura completa si contiene historial (A-78)
                 var newData = (serverData && serverData.status === 'success' && serverData.data !== undefined) ? serverData.data : serverData;
+                if (serverData && serverData.allHistory) { newData = serverData; }
+
                 return self.set(store, newData, cacheKey).then(function() {
                     if (typeof onUpdate === 'function') onUpdate(newData);
                     return newData;
