@@ -239,3 +239,10 @@ Archivo: js/student.js
 
 Archivos de Minijuegos:
 - Normalizada la búsqueda de récords personales para cubrir múltiples nomenclaturas de claves de juego.
+
+[CHANGESLOG 2025-10-27]
+- js/api.js: Implementación de disparador "Eager Cache" para renderizado de 0ms.
+- js/persistence.js: Refuerzo de lógica de reconciliación para evitar pérdida de sobres de datos complejos.
+- js/games-adapter.js: Refactorización a ES5 estricto para compatibilidad con entorno de juegos. Centralización de sesión.
+- js/webmaster_quiz_juego.js: Refactorización a ES5 y limpieza de sintaxis incompatible (arrow functions, template literals).
+- js/student.js: Ajuste en la visualización del expediente para incluir métricas psicométricas inmediatas.

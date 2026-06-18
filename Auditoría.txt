@@ -1,0 +1,17 @@
+
+[AUDITORÍA 2025-10-27] - REVISIÓN POST-COMMIT ESTRATEGIA CACHÉ Y PERFIL ANALÍTICO
+Archivo: js/api.js
+- Se detectó que fetchApi esperaba el resultado del servidor para reconciliar.
+- Solución: Se agregó disparador de lectura de caché síncrona/inmediata al inicio de fetchApi.
+
+Archivo: js/persistence.js
+- Se detectó que reconcile descartaba datos sin timestamp actualizado.
+- Solución: Se forzó actualización si vienen datos válidos y se preservó el historial extendido (allHistory).
+
+Archivo: js/student.js
+- El perfil analítico no se mostraba por falta de datos calibrados (umbral > 5).
+- Solución: Se ajustó el renderizado para mostrar estados de carga y datos de perfil de forma inmediata.
+
+Archivo: js/games-adapter.js
+- Falta de consistencia en el identificador de usuario para registros personales.
+- Solución: Se centralizó el acceso a currentUser y se corrigió la lógica de hidratación de récords personales.

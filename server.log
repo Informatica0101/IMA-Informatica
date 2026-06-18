@@ -1,102 +1,30 @@
-Traceback (most recent call last):
-  File "<frozen runpy>", line 198, in _run_module_as_main
-  File "<frozen runpy>", line 88, in _run_code
-  File "/home/jules/.pyenv/versions/3.12.13/lib/python3.12/http/server.py", line 1329, in <module>
-    test(
-  File "/home/jules/.pyenv/versions/3.12.13/lib/python3.12/http/server.py", line 1276, in test
-    with ServerClass(addr, HandlerClass) as httpd:
-         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/jules/.pyenv/versions/3.12.13/lib/python3.12/socketserver.py", line 457, in __init__
-    self.server_bind()
-  File "/home/jules/.pyenv/versions/3.12.13/lib/python3.12/http/server.py", line 1323, in server_bind
-    return super().server_bind()
-           ^^^^^^^^^^^^^^^^^^^^^
-  File "/home/jules/.pyenv/versions/3.12.13/lib/python3.12/http/server.py", line 140, in server_bind
-    socketserver.TCPServer.server_bind(self)
-  File "/home/jules/.pyenv/versions/3.12.13/lib/python3.12/socketserver.py", line 478, in server_bind
-    self.socket.bind(self.server_address)
-OSError: [Errno 98] Address already in use
-127.0.0.1 - - [17/Jun/2026 11:03:34] "GET /index.html HTTP/1.1" 200 -
-127.0.0.1 - - [17/Jun/2026 11:03:34] "GET /css/style.css?v=21 HTTP/1.1" 200 -
-127.0.0.1 - - [17/Jun/2026 11:03:34] "GET /imagenes/bandera-de-honduras.png HTTP/1.1" 200 -
-127.0.0.1 - - [17/Jun/2026 11:03:34] "GET /imagenes/logo.png HTTP/1.1" 200 -
-127.0.0.1 - - [17/Jun/2026 11:03:34] "GET /js/config.js?v=22 HTTP/1.1" 200 -
-127.0.0.1 - - [17/Jun/2026 11:03:34] "GET /js/persistence.js?v=22 HTTP/1.1" 200 -
-127.0.0.1 - - [17/Jun/2026 11:03:34] "GET /js/games-adapter.js?v=22 HTTP/1.1" 200 -
-127.0.0.1 - - [17/Jun/2026 11:03:34] "GET /js/api.js?v=22 HTTP/1.1" 200 -
-127.0.0.1 - - [17/Jun/2026 11:03:34] "GET /js/data.js?v=22 HTTP/1.1" 200 -
-127.0.0.1 - - [17/Jun/2026 11:03:34] "GET /js/ui-common.js?v=22 HTTP/1.1" 200 -
-127.0.0.1 - - [17/Jun/2026 11:03:34] "GET /js/index-ui.js?v=22 HTTP/1.1" 200 -
-127.0.0.1 - - [17/Jun/2026 11:03:36] "GET /juegos/destreza_teclado.html HTTP/1.1" 200 -
-127.0.0.1 - - [17/Jun/2026 11:03:36] "GET /js/security-minigames.js?v=1 HTTP/1.1" 200 -
-127.0.0.1 - - [17/Jun/2026 11:03:36] "GET /js/destreza_teclado.js HTTP/1.1" 200 -
-127.0.0.1 - - [17/Jun/2026 11:05:18] "GET /index.html HTTP/1.1" 200 -
-127.0.0.1 - - [17/Jun/2026 11:05:18] "GET /css/style.css?v=21 HTTP/1.1" 200 -
-127.0.0.1 - - [17/Jun/2026 11:05:18] "GET /imagenes/logo.png HTTP/1.1" 200 -
-127.0.0.1 - - [17/Jun/2026 11:05:18] "GET /imagenes/bandera-de-honduras.png HTTP/1.1" 200 -
-127.0.0.1 - - [17/Jun/2026 11:05:18] "GET /js/config.js?v=22 HTTP/1.1" 200 -
-127.0.0.1 - - [17/Jun/2026 11:05:18] "GET /js/persistence.js?v=22 HTTP/1.1" 200 -
-127.0.0.1 - - [17/Jun/2026 11:05:18] "GET /js/api.js?v=22 HTTP/1.1" 200 -
-127.0.0.1 - - [17/Jun/2026 11:05:18] "GET /js/games-adapter.js?v=22 HTTP/1.1" 200 -
-127.0.0.1 - - [17/Jun/2026 11:05:18] "GET /js/ui-common.js?v=22 HTTP/1.1" 200 -
-127.0.0.1 - - [17/Jun/2026 11:05:18] "GET /js/data.js?v=22 HTTP/1.1" 200 -
-127.0.0.1 - - [17/Jun/2026 11:05:18] "GET /js/index-ui.js?v=22 HTTP/1.1" 200 -
-127.0.0.1 - - [17/Jun/2026 11:05:21] "GET /juegos/destreza_teclado.html HTTP/1.1" 200 -
-127.0.0.1 - - [17/Jun/2026 11:05:21] "GET /js/security-minigames.js?v=1 HTTP/1.1" 200 -
-127.0.0.1 - - [17/Jun/2026 11:05:21] "GET /js/destreza_teclado.js HTTP/1.1" 200 -
-127.0.0.1 - - [17/Jun/2026 12:50:28] "GET /index.html HTTP/1.1" 200 -
-127.0.0.1 - - [17/Jun/2026 12:50:28] "GET /css/style.css?v=21 HTTP/1.1" 200 -
-127.0.0.1 - - [17/Jun/2026 12:50:28] "GET /imagenes/logo.png HTTP/1.1" 200 -
-127.0.0.1 - - [17/Jun/2026 12:50:28] "GET /imagenes/bandera-de-honduras.png HTTP/1.1" 200 -
-127.0.0.1 - - [17/Jun/2026 12:50:28] "GET /js/config.js?v=22 HTTP/1.1" 200 -
-127.0.0.1 - - [17/Jun/2026 12:50:28] "GET /js/persistence.js?v=22 HTTP/1.1" 200 -
-127.0.0.1 - - [17/Jun/2026 12:50:28] "GET /js/api.js?v=22 HTTP/1.1" 200 -
-127.0.0.1 - - [17/Jun/2026 12:50:28] "GET /js/games-adapter.js?v=22 HTTP/1.1" 200 -
-127.0.0.1 - - [17/Jun/2026 12:50:28] "GET /js/ui-common.js?v=22 HTTP/1.1" 200 -
-127.0.0.1 - - [17/Jun/2026 12:50:28] "GET /js/data.js?v=22 HTTP/1.1" 200 -
-127.0.0.1 - - [17/Jun/2026 12:50:28] "GET /js/index-ui.js?v=22 HTTP/1.1" 200 -
-127.0.0.1 - - [17/Jun/2026 12:50:31] "GET /juegos/destreza_teclado.html HTTP/1.1" 200 -
-127.0.0.1 - - [17/Jun/2026 12:50:31] "GET /js/security-minigames.js?v=1 HTTP/1.1" 200 -
-127.0.0.1 - - [17/Jun/2026 12:50:31] "GET /js/destreza_teclado.js HTTP/1.1" 200 -
-127.0.0.1 - - [17/Jun/2026 12:54:19] "GET /index.html HTTP/1.1" 200 -
-127.0.0.1 - - [17/Jun/2026 12:54:19] "GET /css/style.css?v=21 HTTP/1.1" 200 -
-127.0.0.1 - - [17/Jun/2026 12:54:19] "GET /imagenes/logo.png HTTP/1.1" 200 -
-127.0.0.1 - - [17/Jun/2026 12:54:19] "GET /imagenes/bandera-de-honduras.png HTTP/1.1" 200 -
-127.0.0.1 - - [17/Jun/2026 12:54:19] "GET /js/persistence.js?v=22 HTTP/1.1" 200 -
-127.0.0.1 - - [17/Jun/2026 12:54:19] "GET /js/config.js?v=22 HTTP/1.1" 200 -
-127.0.0.1 - - [17/Jun/2026 12:54:19] "GET /js/games-adapter.js?v=22 HTTP/1.1" 200 -
-127.0.0.1 - - [17/Jun/2026 12:54:19] "GET /js/api.js?v=22 HTTP/1.1" 200 -
-127.0.0.1 - - [17/Jun/2026 12:54:19] "GET /js/ui-common.js?v=22 HTTP/1.1" 200 -
-127.0.0.1 - - [17/Jun/2026 12:54:19] "GET /js/data.js?v=22 HTTP/1.1" 200 -
-127.0.0.1 - - [17/Jun/2026 12:54:19] "GET /js/index-ui.js?v=22 HTTP/1.1" 200 -
-127.0.0.1 - - [17/Jun/2026 12:54:22] "GET /juegos/destreza_teclado.html HTTP/1.1" 200 -
-127.0.0.1 - - [17/Jun/2026 12:54:22] "GET /js/destreza_teclado.js HTTP/1.1" 200 -
-127.0.0.1 - - [17/Jun/2026 12:54:22] "GET /js/security-minigames.js?v=1 HTTP/1.1" 200 -
-127.0.0.1 - - [17/Jun/2026 12:57:26] "GET /index.html HTTP/1.1" 200 -
-127.0.0.1 - - [17/Jun/2026 12:57:26] "GET /css/style.css?v=21 HTTP/1.1" 200 -
-127.0.0.1 - - [17/Jun/2026 12:57:26] "GET /imagenes/logo.png HTTP/1.1" 200 -
-127.0.0.1 - - [17/Jun/2026 12:57:26] "GET /imagenes/bandera-de-honduras.png HTTP/1.1" 200 -
-127.0.0.1 - - [17/Jun/2026 12:57:26] "GET /js/config.js?v=22 HTTP/1.1" 200 -
-127.0.0.1 - - [17/Jun/2026 12:57:26] "GET /js/persistence.js?v=22 HTTP/1.1" 200 -
-127.0.0.1 - - [17/Jun/2026 12:57:26] "GET /js/api.js?v=22 HTTP/1.1" 200 -
-127.0.0.1 - - [17/Jun/2026 12:57:26] "GET /js/games-adapter.js?v=22 HTTP/1.1" 200 -
-127.0.0.1 - - [17/Jun/2026 12:57:26] "GET /js/data.js?v=22 HTTP/1.1" 200 -
-127.0.0.1 - - [17/Jun/2026 12:57:26] "GET /js/ui-common.js?v=22 HTTP/1.1" 200 -
-127.0.0.1 - - [17/Jun/2026 12:57:26] "GET /js/index-ui.js?v=22 HTTP/1.1" 200 -
-127.0.0.1 - - [17/Jun/2026 12:57:29] "GET /juegos/destreza_teclado.html HTTP/1.1" 200 -
-127.0.0.1 - - [17/Jun/2026 12:57:29] "GET /js/security-minigames.js?v=1 HTTP/1.1" 200 -
-127.0.0.1 - - [17/Jun/2026 12:57:29] "GET /js/destreza_teclado.js HTTP/1.1" 200 -
-127.0.0.1 - - [17/Jun/2026 13:00:08] "GET /index.html HTTP/1.1" 200 -
-127.0.0.1 - - [17/Jun/2026 13:00:08] "GET /css/style.css?v=21 HTTP/1.1" 200 -
-127.0.0.1 - - [17/Jun/2026 13:00:08] "GET /imagenes/bandera-de-honduras.png HTTP/1.1" 200 -
-127.0.0.1 - - [17/Jun/2026 13:00:08] "GET /imagenes/logo.png HTTP/1.1" 200 -
-127.0.0.1 - - [17/Jun/2026 13:00:08] "GET /js/config.js?v=22 HTTP/1.1" 200 -
-127.0.0.1 - - [17/Jun/2026 13:00:08] "GET /js/persistence.js?v=22 HTTP/1.1" 200 -
-127.0.0.1 - - [17/Jun/2026 13:00:08] "GET /js/api.js?v=22 HTTP/1.1" 200 -
-127.0.0.1 - - [17/Jun/2026 13:00:08] "GET /js/games-adapter.js?v=22 HTTP/1.1" 200 -
-127.0.0.1 - - [17/Jun/2026 13:00:08] "GET /js/ui-common.js?v=22 HTTP/1.1" 200 -
-127.0.0.1 - - [17/Jun/2026 13:00:08] "GET /js/data.js?v=22 HTTP/1.1" 200 -
-127.0.0.1 - - [17/Jun/2026 13:00:08] "GET /js/index-ui.js?v=22 HTTP/1.1" 200 -
-127.0.0.1 - - [17/Jun/2026 13:00:10] "GET /juegos/destreza_teclado.html HTTP/1.1" 200 -
-127.0.0.1 - - [17/Jun/2026 13:00:10] "GET /js/destreza_teclado.js HTTP/1.1" 200 -
-127.0.0.1 - - [17/Jun/2026 13:00:10] "GET /js/security-minigames.js?v=1 HTTP/1.1" 200 -
+127.0.0.1 - - [18/Jun/2026 12:20:40] "GET /login.html HTTP/1.1" 200 -
+127.0.0.1 - - [18/Jun/2026 12:20:40] "GET /css/style.css?v=22 HTTP/1.1" 200 -
+127.0.0.1 - - [18/Jun/2026 12:20:40] "GET /imagenes/bandera-de-honduras.png HTTP/1.1" 200 -
+127.0.0.1 - - [18/Jun/2026 12:20:40] "GET /imagenes/logo.png HTTP/1.1" 200 -
+127.0.0.1 - - [18/Jun/2026 12:20:40] "GET /js/config.js?v=22 HTTP/1.1" 200 -
+127.0.0.1 - - [18/Jun/2026 12:20:40] "GET /js/persistence.js?v=22 HTTP/1.1" 200 -
+127.0.0.1 - - [18/Jun/2026 12:20:40] "GET /js/api.js?v=22 HTTP/1.1" 200 -
+127.0.0.1 - - [18/Jun/2026 12:20:40] "GET /js/games-adapter.js?v=22 HTTP/1.1" 200 -
+127.0.0.1 - - [18/Jun/2026 12:20:40] "GET /js/ui-common.js?v=22 HTTP/1.1" 200 -
+127.0.0.1 - - [18/Jun/2026 12:20:40] "GET /js/data.js?v=22 HTTP/1.1" 200 -
+127.0.0.1 - - [18/Jun/2026 12:20:40] "GET /js/auth.js?v=22 HTTP/1.1" 200 -
+127.0.0.1 - - [18/Jun/2026 12:20:42] "GET /student-dashboard.html HTTP/1.1" 200 -
+127.0.0.1 - - [18/Jun/2026 12:20:42] "GET /js/student.js?v=22 HTTP/1.1" 200 -
+127.0.0.1 - - [18/Jun/2026 12:20:44] "GET /juegos/webmaster_quiz.html HTTP/1.1" 200 -
+127.0.0.1 - - [18/Jun/2026 12:20:44] code 404, message File not found
+127.0.0.1 - - [18/Jun/2026 12:20:44] "GET /juegos/js/security-minigames.js?v=1 HTTP/1.1" 404 -
+127.0.0.1 - - [18/Jun/2026 12:23:08] "GET /login.html HTTP/1.1" 200 -
+127.0.0.1 - - [18/Jun/2026 12:23:08] "GET /imagenes/logo.png HTTP/1.1" 200 -
+127.0.0.1 - - [18/Jun/2026 12:23:08] "GET /css/style.css?v=22 HTTP/1.1" 200 -
+127.0.0.1 - - [18/Jun/2026 12:23:08] "GET /imagenes/bandera-de-honduras.png HTTP/1.1" 200 -
+127.0.0.1 - - [18/Jun/2026 12:23:08] "GET /js/config.js?v=22 HTTP/1.1" 200 -
+127.0.0.1 - - [18/Jun/2026 12:23:08] "GET /js/persistence.js?v=22 HTTP/1.1" 200 -
+127.0.0.1 - - [18/Jun/2026 12:23:08] "GET /js/api.js?v=22 HTTP/1.1" 200 -
+127.0.0.1 - - [18/Jun/2026 12:23:08] "GET /js/games-adapter.js?v=22 HTTP/1.1" 200 -
+127.0.0.1 - - [18/Jun/2026 12:23:08] "GET /js/ui-common.js?v=22 HTTP/1.1" 200 -
+127.0.0.1 - - [18/Jun/2026 12:23:08] "GET /js/data.js?v=22 HTTP/1.1" 200 -
+127.0.0.1 - - [18/Jun/2026 12:23:08] "GET /js/auth.js?v=22 HTTP/1.1" 200 -
+127.0.0.1 - - [18/Jun/2026 12:23:09] "GET /student-dashboard.html HTTP/1.1" 200 -
+127.0.0.1 - - [18/Jun/2026 12:23:09] "GET /js/student.js?v=22 HTTP/1.1" 200 -
+127.0.0.1 - - [18/Jun/2026 12:23:10] "GET /student-dashboard.html HTTP/1.1" 304 -
