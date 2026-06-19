@@ -268,3 +268,21 @@ Módulo: Mundo Periférico (Remediación T-024)
 Módulo: QuizPro (Remediación T-024)
 - js/quizpro.js:
     - La encapsulación permite que el script se cargue sin conflictos de variables con el juego de Periféricos, habilitando el renderizado de la tarjeta de analítica.
+
+MODIFICACIÓN EN MINIJUEGO WEBMASTER - Fri Jun 19 17:36:15 UTC 2026
+
+Archivo: css/style.css
+Líneas: Final del archivo (aprox 615+)
+Descripción: Se definieron las clases .code-fragment, .syntax-fragment y .syntax-fragment-target para estandarizar la presentación visual de fragmentos de código y etiquetas HTML utilizando la fuente monoespaciada institucional.
+
+Archivo: js/webmaster_quiz_juego.js
+Líneas: 1-736 (Refactorización integral)
+Descripción:
+- Se implementaron las funciones auxiliares escapeHTML, formatCodeInText y smartFormat para asegurar que las etiquetas HTML se rendericen como texto visible y no sean interpretadas por el navegador.
+- Se refactorizaron setupMultipleChoiceQuestion, renderSyntaxOptions, renderSyntaxTarget y setupDragMatchQuestion para utilizar el nuevo motor de renderizado.
+- Se implementó la función validateStructure para permitir una validación inteligente de estructuras HTML (tablas y listas), permitiendo órdenes alternativos válidos y verificando jerarquías.
+- Se implementó la lógica real de validación para checkDragMatch, que anteriormente era un placeholder.
+- Se implementó undoDragMatch para permitir al usuario revertir acciones en actividades de arrastrar y soltar.
+- Se consolidó la asignación de eventos para botones de acción en initQuizGame.
+- Se expandió significativamente el banco de preguntas (quizData) incluyendo niveles Intermedio y Avanzado con temas de semántica, tablas, formularios y accesibilidad.
+- Se eliminaron delimitadores innecesarios (backticks) en todo el conjunto de datos para mejorar la legibilidad.

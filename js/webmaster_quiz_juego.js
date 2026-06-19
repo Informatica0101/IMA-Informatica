@@ -13,7 +13,7 @@
                 {
                     question: "Etiqueta para un salto de línea simple:",
                     type: "multiple-choice",
-                    options: ["`<p>`", "`<br>`", "`<h1>`", "`<a>`"],
+                    options: ["<p>", "<br>", "<h1>", "<a>"],
                     correctAnswer: 1,
                     help: "Piensa en cómo forzar una nueva línea sin crear un nuevo párrafo.",
                     codeExample: "<p>Línea 1<br>Línea 2</p>"
@@ -21,7 +21,7 @@
                 {
                     question: "Atributo que especifica la URL de un enlace:",
                     type: "multiple-choice",
-                    options: ["`src`", "`alt`", "`href`", "`link`"],
+                    options: ["src", "alt", "href", "link"],
                     correctAnswer: 2,
                     help: "Este atributo es clave para dónde te llevará el hipervínculo.",
                     codeExample: "<a href=\"https://www.ejemplo.com\">Visitar Ejemplo</a>"
@@ -45,7 +45,7 @@
                 {
                     question: "Etiqueta para definir un párrafo de texto:",
                     type: "multiple-choice",
-                    options: ["`<pa>`", "`<p>`", "`<pr>`", "`<par>`"],
+                    options: ["<pa>", "<p>", "<pr>", "<par>"],
                     correctAnswer: 1,
                     help: "Es una de las etiquetas más básicas para bloques de texto.",
                     codeExample: "<p>Este es un párrafo de ejemplo.</p>"
@@ -53,7 +53,7 @@
                 {
                     question: "Atributo que indica la fuente de una imagen:",
                     type: "multiple-choice",
-                    options: ["`link`", "`url`", "`src`", "`href`"],
+                    options: ["link", "url", "src", "href"],
                     correctAnswer: 2,
                     help: "Este atributo indica la ubicación del archivo de la imagen.",
                     codeExample: "<img src=\"imagen.jpg\" alt=\"Descripción de la imagen\">"
@@ -81,10 +81,106 @@
                 {
                     question: "Etiqueta para crear un hipervínculo:",
                     type: "multiple-choice",
-                    options: ["`<link>`", "`<a>`", "`<href>`", "`<url>`"],
+                    options: ["<link>", "<a>", "<href>", "<url>"],
                     correctAnswer: 1,
                     help: "Esta etiqueta es la abreviatura de 'anchor'.",
                     codeExample: "<a href=\"otra_pagina.html\">Ir a otra página</a>"
+                }
+            ],
+            intermedio: [
+                {
+                    question: "Etiqueta semántica para el contenido principal de la página:",
+                    type: "multiple-choice",
+                    options: ["<section>", "<article>", "<main>", "<div>"],
+                    correctAnswer: 2,
+                    help: "Solo debe haber uno por página y engloba el contenido único.",
+                    codeExample: "<main>...</main>"
+                },
+                {
+                    question: "Atributo para agrupar celdas horizontalmente en una tabla:",
+                    type: "multiple-choice",
+                    options: ["rowspan", "colspan", "headers", "scope"],
+                    correctAnswer: 1,
+                    help: "Permite que una celda ocupe más de una columna.",
+                    codeExample: '<td colspan="2">Celda extendida</td>'
+                },
+                {
+                    question: "Ordena los elementos de un formulario de contacto básico:",
+                    type: "order-execution",
+                    fragments: ["<form>", "<label>", "Nombre:", "</label>", "<input type=\"text\">", "<button>", "Enviar", "</button>", "</form>"],
+                    correctOrder: [0, 1, 2, 3, 4, 5, 6, 7, 8],
+                    help: "Los labels deben preceder a sus inputs para mejor accesibilidad.",
+                    codeExample: "<form>...</form>"
+                },
+                {
+                    question: "Etiqueta utilizada para definir una celda de encabezado en una tabla:",
+                    type: "multiple-choice",
+                    options: ["<td>", "<tr>", "<th>", "<thead>"],
+                    correctAnswer: 2,
+                    help: "Por defecto, el texto dentro de esta etiqueta aparece en negrita y centrado.",
+                    codeExample: "<th>Nombre</th>"
+                },
+                {
+                    question: "Atributo de <input> para que el campo sea obligatorio:",
+                    type: "multiple-choice",
+                    options: ["mandatory", "required", "validate", "important"],
+                    correctAnswer: 1,
+                    help: "Es un atributo booleano de validación nativa.",
+                    codeExample: '<input type="email" required>'
+                },
+                {
+                    question: "Empareja el elemento semántico con su descripción:",
+                    type: "drag-match",
+                    pairs: [
+                        { drag: "Navegación", drop: "<nav>" },
+                        { drag: "Pie de página", drop: "<footer>" },
+                        { drag: "Contenido tangencial", drop: "<aside>" },
+                        { drag: "Encabezado de sección", drop: "<header>" }
+                    ],
+                    help: "El uso de etiquetas semánticas mejora el SEO y la accesibilidad.",
+                    codeExample: null
+                }
+            ],
+            avanzado: [
+                {
+                    question: "Atributo ARIA para describir un elemento que actúa como etiqueta de otro:",
+                    type: "multiple-choice",
+                    options: ["aria-label", "aria-labelledby", "aria-describedby", "role"],
+                    correctAnswer: 1,
+                    help: "Se utiliza cuando el texto de la etiqueta ya existe en el DOM.",
+                    codeExample: '<div aria-labelledby="title-id">...</div>'
+                },
+                {
+                    question: "Construye una estructura de tabla compleja con encabezado, cuerpo y pie:",
+                    type: "order-execution",
+                    fragments: ["<table>", "<thead>", "<tr><th>ID</th></tr>", "</thead>", "<tbody>", "<tr><td>1</td></tr>", "</tbody>", "<tfoot>", "<tr><td>Total</td></tr>", "</tfoot>", "</table>"],
+                    correctOrder: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+                    help: "El orden tfoot antes de tbody era común en HTML4, pero en HTML5 puede ir después.",
+                    codeExample: "<table>...</table>"
+                },
+                {
+                    question: "¿Cuál es el propósito del elemento <figure>?",
+                    type: "multiple-choice",
+                    options: ["Insertar formas geométricas", "Agrupar contenido ilustrativo con una leyenda opcional", "Crear diagramas de flujo", "Renderizar modelos 3D"],
+                    correctAnswer: 1,
+                    help: "Suele contener una imagen y un figcaption.",
+                    codeExample: "<figure><img src='...'><figcaption>Leyenda</figcaption></figure>"
+                },
+                {
+                    question: "Atributo para asociar un <label> con un <input> de forma explícita:",
+                    type: "multiple-choice",
+                    options: ["id", "name", "for", "connect"],
+                    correctAnswer: 2,
+                    help: "El valor de este atributo debe coincidir con el 'id' del input.",
+                    codeExample: '<label for="user-id">Usuario</label><input id="user-id">'
+                },
+                {
+                    question: "Estructura correcta para un grupo de opciones en un <select>:",
+                    type: "order-execution",
+                    fragments: ["<select>", "<optgroup label=\"Frutas\">", "<option>", "Manzana", "</option>", "</optgroup>", "</select>"],
+                    correctOrder: [0, 1, 2, 3, 4, 5, 6],
+                    help: "Los optgroups permiten categorizar las opciones de una lista desplegable.",
+                    codeExample: "<select>...</select>"
                 }
             ]
         },
@@ -93,7 +189,7 @@
                 {
                     question: "¿Qué propiedad se usa para cambiar el color de fondo de un elemento?",
                     type: "multiple-choice",
-                    options: ["`color`", "`background-color`", "`font-color`", "`fill`"],
+                    options: ["color", "background-color", "font-color", "fill"],
                     correctAnswer: 1,
                     help: "Esta propiedad define el color detrás del contenido de un elemento.",
                     codeExample: "body { background-color: lightblue; }"
@@ -105,7 +201,7 @@
                 {
                     question: "Palabra clave para declarar una variable que no puede ser reasignada:",
                     type: "multiple-choice",
-                    options: ["`var`", "`let`", "`const`", "`static`"],
+                    options: ["var", "let", "const", "static"],
                     correctAnswer: 2,
                     help: "Esta palabra clave se utiliza para valores que permanecen fijos.",
                     codeExample: "const PI = 3.14;"
@@ -144,14 +240,34 @@
         quizFinalTime, quizRetryLevelButton, quizNextLevelButton, quizChangeTopicButton, quizExitGameButton,
         inactivityWarningModal, inactivityCountdownDisplay;
 
-    var currentDragMatchPairs = [];
-    var originalDragMatchState = [];
     var currentSyntaxFragments = [];
     var currentSyntaxOrder = [];
     var draggedItemOriginalElement = null;
 
     function pauseTimer() { isPaused = true; }
     function resumeTimer() { isPaused = false; }
+
+    function escapeHTML(text) {
+        if (!text) return "";
+        return text.toString()
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+    }
+
+    function formatCodeInText(text) {
+        if (!text) return "";
+        return '<code class="code-fragment">' + escapeHTML(text) + '</code>';
+    }
+
+    function smartFormat(text) {
+        if (!text) return "";
+        var isCode = /<[a-z/][^>]*>|{.*}|[a-z-]+\s*:/i.test(text) || text.indexOf('<') !== -1 || text.indexOf('>') !== -1;
+        if (isCode) return formatCodeInText(text);
+        return window.sanitizarHTMLTecnico ? window.sanitizarHTMLTecnico(text) : text;
+    }
 
     function resetInactivityTimer() {
         clearTimeout(inactivityTimer);
@@ -254,11 +370,11 @@
         updateTimerDisplay();
 
         var question = currentQuestions[currentQuestionIndex];
-        if (quizQuestion) quizQuestion.innerHTML = window.sanitizarHTMLTecnico ? window.sanitizarHTMLTecnico(question.question) : question.question;
+        if (quizQuestion) quizQuestion.innerHTML = smartFormat(question.question);
         questionStartTime = Date.now();
         responseChanges = 0;
         if (quizHelpText) {
-            quizHelpText.innerHTML = window.sanitizarHTMLTecnico ? window.sanitizarHTMLTecnico(question.help || '') : (question.help || '');
+            quizHelpText.innerHTML = smartFormat(question.help || '');
             quizHelpText.classList.remove('hidden');
         }
 
@@ -299,7 +415,7 @@
                 var button = document.createElement('button');
                 button.className = 'answer-option-button px-6 py-3 rounded-xl font-semibold text-lg bg-blue-500 text-white hover:bg-blue-600 transition-all shadow-md';
                 button.dataset.option = index;
-                button.innerHTML = window.sanitizarHTMLTecnico ? window.sanitizarHTMLTecnico(option) : option;
+                button.innerHTML = smartFormat(option);
                 button.onclick = function() { checkAnswer(index, question.correctAnswer); };
                 multipleChoiceOptions.appendChild(button);
             });
@@ -313,8 +429,6 @@
             currentSyntaxOrder = [];
             renderSyntaxOptions();
             renderSyntaxTarget();
-            if (checkSyntaxButton) checkSyntaxButton.onclick = checkSyntaxOrder;
-            if (undoSyntaxButton) undoSyntaxButton.onclick = undoSyntaxOrder;
         }
     }
 
@@ -324,7 +438,7 @@
             currentSyntaxFragments.forEach(function(fragment, index) {
                 var span = document.createElement('span');
                 span.className = 'syntax-fragment bg-gray-200 text-gray-800 px-3 py-1 rounded cursor-pointer';
-                span.innerHTML = window.sanitizarHTMLTecnico ? window.sanitizarHTMLTecnico(fragment) : fragment;
+                span.innerHTML = formatCodeInText(fragment);
                 span.dataset.index = index;
                 span.onclick = function() { addSyntaxFragment(fragment, index); };
                 syntaxOptionsArea.appendChild(span);
@@ -338,7 +452,7 @@
             currentSyntaxOrder.forEach(function(item) {
                 var span = document.createElement('span');
                 span.className = 'syntax-fragment-target bg-purple-200 text-purple-800 px-3 py-1 rounded relative cursor-pointer';
-                span.innerHTML = window.sanitizarHTMLTecnico ? window.sanitizarHTMLTecnico(item.fragment) : item.fragment;
+                span.innerHTML = formatCodeInText(item.fragment);
                 var x = document.createElement('span');
                 x.className = 'absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-4 h-4 flex items-center justify-center text-xs';
                 x.textContent = 'x';
@@ -359,16 +473,79 @@
         renderSyntaxTarget();
     }
 
+    function validateStructure(userItems, expectedFragments, type) {
+        if (userItems.length !== expectedFragments.length) return false;
+
+        var userStrings = userItems.map(function(i) { return i.fragment; });
+
+        // Reglas de validación inteligente (v7.7.1)
+        var hasTag = function(arr, tag) {
+            for (var i = 0; i < arr.length; i++) {
+                if (arr[i].indexOf('<' + tag) !== -1) return true;
+            }
+            return false;
+        };
+
+        var getTagIndex = function(arr, tag) {
+            for (var i = 0; i < arr.length; i++) {
+                if (arr[i].indexOf('<' + tag) !== -1) return i;
+            }
+            return -1;
+        };
+
+        if (hasTag(userStrings, 'table')) {
+            // Validación de tablas
+            var tableOpen = getTagIndex(userStrings, 'table');
+            var tableClose = getTagIndex(userStrings, '/table');
+            var trOpen = getTagIndex(userStrings, 'tr');
+            var trClose = getTagIndex(userStrings, '/tr');
+
+            if (tableOpen === -1 || tableClose === -1 || tableOpen > tableClose) return false;
+            if (trOpen !== -1 && (trOpen < tableOpen || trOpen > tableClose)) return false;
+            if (trClose !== -1 && (trClose < trOpen || trClose > tableClose)) return false;
+
+            // Si hay TDs, deben estar dentro de TRs
+            for (var i = 0; i < userStrings.length; i++) {
+                if (userStrings[i].indexOf('<td') !== -1 || userStrings[i].indexOf('<th') !== -1) {
+                    if (i < trOpen || i > trClose) return false;
+                }
+            }
+        }
+
+        if (hasTag(userStrings, 'ul') || hasTag(userStrings, 'ol')) {
+            // Validación de listas
+            var listOpen = getTagIndex(userStrings, 'ul');
+            if (listOpen === -1) listOpen = getTagIndex(userStrings, 'ol');
+            var listClose = getTagIndex(userStrings, '/ul');
+            if (listClose === -1) listClose = getTagIndex(userStrings, '/ol');
+
+            if (listOpen === -1 || listClose === -1 || listOpen > listClose) return false;
+
+            for (var j = 0; j < userStrings.length; j++) {
+                if (userStrings[j].indexOf('<li') !== -1) {
+                    if (j < listOpen || j > listClose) return false;
+                }
+            }
+        }
+
+        // Comparación de equivalencia (permitir cambio de orden en LIs o TDs si el contenido es el mismo)
+        var sortedUser = userStrings.slice().sort();
+        var sortedExpected = expectedFragments.slice().sort();
+        var hasSameElements = true;
+        for (var m = 0; m < sortedUser.length; m++) {
+            if (sortedUser[m] !== sortedExpected[m]) { hasSameElements = false; break; }
+        }
+
+        return hasSameElements;
+    }
+
     function checkSyntaxOrder() {
         pauseTimer();
         var q = currentQuestions[currentQuestionIndex];
-        var isCorrect = true;
-        if (currentSyntaxOrder.length !== q.fragments.length) isCorrect = false;
-        else {
-            for (var i = 0; i < q.correctOrder.length; i++) {
-                if (currentSyntaxOrder[i].fragment !== q.fragments[q.correctOrder[i]]) { isCorrect = false; break; }
-            }
-        }
+        var expectedOrderStrings = q.correctOrder.map(function(idx) { return q.fragments[idx]; });
+
+        var isCorrect = validateStructure(currentSyntaxOrder, expectedOrderStrings, 'syntax');
+
         if (isCorrect) handleCorrectAnswer(); else handleIncorrectAnswer();
         setTimeout(nextQuestion, 1000);
     }
@@ -382,7 +559,7 @@
             drags.forEach(function(d) {
                 var item = document.createElement('div');
                 item.className = 'drag-item bg-blue-200 p-2 rounded cursor-grab';
-                item.innerHTML = d;
+                item.innerHTML = smartFormat(d);
                 item.setAttribute('draggable', true);
                 item.dataset.originalText = d;
                 item.addEventListener('dragstart', handleDragStart);
@@ -393,7 +570,7 @@
                 var target = document.createElement('div');
                 target.className = 'drop-target border-2 border-dashed p-2 min-h-[40px] text-center';
                 target.dataset.correctMatch = d;
-                target.innerHTML = d;
+                target.innerHTML = smartFormat(d);
                 target.addEventListener('dragover', function(e){e.preventDefault();});
                 target.addEventListener('drop', handleDrop);
                 dropTargetsArea.appendChild(target);
@@ -402,11 +579,42 @@
     }
 
     function handleDragStart(e) { draggedItemOriginalElement = e.target; e.dataTransfer.setData('text', e.target.dataset.originalText); }
-    function handleDrop(e) { e.preventDefault(); var target = e.target.closest('.drop-target'); if(target && draggedItemOriginalElement) { target.innerHTML = draggedItemOriginalElement.dataset.originalText; draggedItemOriginalElement.classList.add('hidden'); } }
+    function handleDrop(e) { e.preventDefault(); var target = e.target.closest('.drop-target'); if(target && draggedItemOriginalElement) { target.innerHTML = smartFormat(draggedItemOriginalElement.dataset.originalText); target.dataset.userValue = draggedItemOriginalElement.dataset.originalText; draggedItemOriginalElement.classList.add('hidden'); } }
 
     function checkDragMatch() {
-        handleCorrectAnswer(); // Simplified for ES5 demo
+        pauseTimer();
+        var q = currentQuestions[currentQuestionIndex];
+        var dropTargets = dropTargetsArea.querySelectorAll('.drop-target');
+        var isCorrect = true;
+
+        dropTargets.forEach(function(target) {
+            var userValue = target.dataset.userValue;
+            var correctDrop = target.dataset.correctMatch;
+            var pair = q.pairs.find(function(p) { return p.drop === correctDrop; });
+            if (!pair || pair.drag !== userValue) isCorrect = false;
+        });
+
+        if (isCorrect) handleCorrectAnswer(); else handleIncorrectAnswer();
         setTimeout(nextQuestion, 1000);
+    }
+
+    function undoDragMatch() {
+        var dropTargets = dropTargetsArea.querySelectorAll('.drop-target');
+        var dragItems = dragElementsArea.querySelectorAll('.drag-item.hidden');
+        if (dragItems.length > 0) {
+            var lastHidden = dragItems[dragItems.length - 1];
+            var lastText = lastHidden.dataset.originalText;
+
+            // Buscar el target que tiene este valor
+            for (var i = 0; i < dropTargets.length; i++) {
+                if (dropTargets[i].dataset.userValue === lastText) {
+                    dropTargets[i].innerHTML = smartFormat(dropTargets[i].dataset.correctMatch);
+                    delete dropTargets[i].dataset.userValue;
+                    lastHidden.classList.remove('hidden');
+                    break;
+                }
+            }
+        }
     }
 
     function nextQuestion() { currentQuestionIndex++; startQuestion(); }
@@ -504,6 +712,13 @@
         syntaxOrderContainer = document.getElementById('syntax-order-container');
         syntaxTargetArea = document.getElementById('syntax-target-area');
         syntaxOptionsArea = document.getElementById('syntax-options-area');
+        checkSyntaxButton = document.getElementById('check-syntax-button');
+        undoSyntaxButton = document.getElementById('undo-syntax-button');
+        dragMatchContainer = document.getElementById('drag-match-container');
+        dragElementsArea = document.getElementById('drag-elements');
+        dropTargetsArea = document.getElementById('drop-targets');
+        checkMatchButton = document.getElementById('check-match-button');
+        undoMatchButton = document.getElementById('undo-match-button');
         quizResultScreen = document.getElementById('quiz-result-screen');
         quizCorrectAnswers = document.getElementById('quiz-correct-answers');
         quizIncorrectAnswers = document.getElementById('quiz-incorrect-answers');
@@ -514,6 +729,12 @@
         topicButtons.forEach(function(b) { b.onclick = function() { selectTopic(b.dataset.topic); }; });
         difficultyButtons.forEach(function(b) { b.onclick = function() { selectDifficulty(b.dataset.difficulty); }; });
         if (quizExitGameButton) quizExitGameButton.onclick = function() { if (window.returnToMainContent) window.returnToMainContent(); };
+
+        // Asignación de botones de acción (v7.7.1)
+        if (checkSyntaxButton) checkSyntaxButton.onclick = checkSyntaxOrder;
+        if (undoSyntaxButton) undoSyntaxButton.onclick = undoSyntaxOrder;
+        if (checkMatchButton) checkMatchButton.onclick = checkDragMatch;
+        if (undoMatchButton) undoMatchButton.onclick = undoDragMatch;
 
         ['mousemove', 'keydown', 'click'].forEach(function(e) { document.addEventListener(e, resetInactivityTimer); });
         showScreen('quiz-start-menu');

@@ -325,3 +325,31 @@ AUDITORÍA DE INTEGRACIÓN DE ESTADÍSTICAS - Wed Jun 17 18:30:00 UTC 2026
 - Verificación: Busca en 'webmaster' o 'WebMaster Quiz'. OK.
 
 CONCLUSIÓN: Se han corregido las causas raíz de la invisibilidad de récords y la inestabilidad del dashboard.
+
+AUDITORÍA TÉCNICA - MINIJUEGO WEBMASTER - Fri Jun 19 17:19:48 UTC 2026
+
+Archivo: js/webmaster_quiz_juego.js
+Sector: Renderizado de Preguntas y Opciones
+Hallazgo [Alto]: Uso de sanitizarHTMLTecnico para contenido educativo que incluye etiquetas HTML literales.
+Impacto: Las etiquetas HTML en las preguntas (ej. <br>, <table>) son interpretadas por el navegador como elementos del DOM en lugar de mostrarse como texto, desapareciendo visualmente o alterando el layout.
+Recomendación: Implementar escapeHTML manual para etiquetas que deben ser visibles y usar estilos CSS para formatearlas como código.
+
+Sector: Actividades de Ordenamiento (order-execution)
+Hallazgo [Medio]: Validación basada exclusivamente en índices fijos (correctOrder).
+Impacto: Estructuras válidas pero con orden alternativo (ej. celdas de una tabla o ítems de lista equivalentes) podrían marcarse como incorrectas.
+Recomendación: Implementar validación estructural inteligente.
+
+Sector: Actividades de Arrastrar y Soltar (drag-match)
+Hallazgo [Crítico]: La función checkDragMatch es un placeholder que siempre otorga acierto.
+Impacto: El usuario puede saltar estas preguntas sin responder correctamente.
+Recomendación: Implementar lógica de validación real para parejas.
+
+Sector: Banco de Datos (quizData)
+Hallazgo [Bajo]: Uso de comillas invertidas (backticks) y comillas innecesarias en fragmentos de código.
+Impacto: Ruido visual y posible confusión para el estudiante.
+Recomendación: Limpiar delimitadores y usar estilos CSS (.code-fragment).
+
+Archivo: juegos/webmaster_quiz.html
+Sector: Estilos
+Hallazgo [Observación]: No existe una clase específica para fragmentos de código que garantice uniformidad con el dashboard del profesor.
+Recomendación: Sincronizar estilos con css/style.css.
