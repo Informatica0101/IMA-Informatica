@@ -221,26 +221,18 @@
     var currentQuestions = [];
     var answeredCorrectly = 0;
     var answeredIncorrectly = 0;
-    var questionStartTime = 0;
-    var responseChanges = 0;
-
-    var INACTIVITY_TIMEOUT = 60;
-    var INACTIVITY_WARNING_DURATION = 10;
 
     var inactivityTimer;
     var inactivityCountdownInterval;
-    var inactivityCountdown = INACTIVITY_WARNING_DURATION;
 
-    var quizStartMenu, startQuizButton, quizTopicSelectionMenu, topicButtons, backToStartMenuButton,
-        quizDifficultySelectionMenu, selectedTopicDisplay, difficultyButtons, backToTopicMenuButton,
+    var quizStartMenu, startQuizButton, quizTopicSelectionMenu, topicButtons,
+        quizDifficultySelectionMenu, selectedTopicDisplay, difficultyButtons,
         quizPlayArea, quizTimerDisplay, quizScoreDisplay, quizQuestion, quizHelpText, multipleChoiceOptions,
         syntaxOrderContainer, syntaxTargetArea, syntaxOptionsArea, checkSyntaxButton, undoSyntaxButton,
         dragMatchContainer, dragElementsArea, dropTargetsArea, checkMatchButton, undoMatchButton,
         endQuizButton, quizResultScreen, quizCorrectAnswers, quizIncorrectAnswers, quizFinalScore,
-        quizFinalTime, quizRetryLevelButton, quizNextLevelButton, quizChangeTopicButton, quizExitGameButton,
-        inactivityWarningModal, inactivityCountdownDisplay;
+        quizRetryLevelButton, quizNextLevelButton, quizChangeTopicButton, quizExitGameButton;
 
-    var currentSyntaxFragments = [];
     var currentSyntaxOrder = [];
     var draggedItemOriginalElement = null;
 
@@ -273,18 +265,20 @@
         clearTimeout(inactivityTimer);
         clearInterval(inactivityCountdownInterval);
         hideInactivityWarning();
-        inactivityTimer = setTimeout(showInactivityWarning, INACTIVITY_TIMEOUT * 1000);
+        inactivityTimer = setTimeout(showInactivityWarning, 60 * 1000);
     }
 
     function showInactivityWarning() {
-        inactivityCountdown = INACTIVITY_WARNING_DURATION;
-        if (inactivityWarningModal) inactivityWarningModal.classList.remove('hidden');
-        if (inactivityCountdownDisplay) inactivityCountdownDisplay.textContent = inactivityCountdown;
+        var count = 10;
+        var modal = document.getElementById('inactivity-warning-modal');
+        var display = document.getElementById('inactivity-countdown-display');
+        if (modal) modal.classList.remove('hidden');
+        if (display) display.textContent = count;
 
         inactivityCountdownInterval = setInterval(function() {
-            inactivityCountdown--;
-            if (inactivityCountdownDisplay) inactivityCountdownDisplay.textContent = inactivityCountdown;
-            if (inactivityCountdown <= 0) {
+            count--;
+            if (display) display.textContent = count;
+            if (count <= 0) {
                 clearInterval(inactivityCountdownInterval);
                 resetGameDueToInactivity();
             }
@@ -292,7 +286,8 @@
     }
 
     function hideInactivityWarning() {
-        if (inactivityWarningModal) inactivityWarningModal.classList.add('hidden');
+        var modal = document.getElementById('inactivity-warning-modal');
+        if (modal) modal.classList.add('hidden');
     }
 
     function resetGameDueToInactivity() {
@@ -371,8 +366,6 @@
 
         var question = currentQuestions[currentQuestionIndex];
         if (quizQuestion) quizQuestion.innerHTML = smartFormat(question.question);
-        questionStartTime = Date.now();
-        responseChanges = 0;
         if (quizHelpText) {
             quizHelpText.innerHTML = smartFormat(question.help || '');
             quizHelpText.classList.remove('hidden');
@@ -394,6 +387,12 @@
     }
 
     function resetQuestionArea() {
+        var card = document.getElementById('quiz-card');
+        if (card) {
+            card.classList.remove('bg-green-50', 'bg-red-50', 'border-green-500', 'border-red-500');
+            card.classList.add('bg-white', 'border-gray-100');
+        }
+
         if (multipleChoiceOptions) { multipleChoiceOptions.innerHTML = ''; multipleChoiceOptions.classList.add('hidden'); multipleChoiceOptions.classList.remove('grid'); }
         if (syntaxOrderContainer) {
             syntaxOrderContainer.classList.add('hidden');
@@ -425,22 +424,26 @@
     function setupSyntaxOrderQuestion(question) {
         if (syntaxOrderContainer) {
             syntaxOrderContainer.classList.remove('hidden');
-            currentSyntaxFragments = shuffleArray(question.fragments.slice());
+            var fragments = shuffleArray(question.fragments.slice());
             currentSyntaxOrder = [];
-            renderSyntaxOptions();
+            renderSyntaxOptions(fragments);
             renderSyntaxTarget();
         }
     }
 
-    function renderSyntaxOptions() {
+    function renderSyntaxOptions(fragments) {
         if (syntaxOptionsArea) {
             syntaxOptionsArea.innerHTML = '';
-            currentSyntaxFragments.forEach(function(fragment, index) {
+            fragments.forEach(function(fragment, index) {
                 var span = document.createElement('span');
-                span.className = 'syntax-fragment bg-gray-200 text-gray-800 px-3 py-1 rounded cursor-pointer';
+                span.className = 'syntax-fragment bg-gray-200 text-gray-800 px-3 py-1 rounded cursor-pointer select-none';
                 span.innerHTML = formatCodeInText(fragment);
                 span.dataset.index = index;
-                span.onclick = function() { addSyntaxFragment(fragment, index); };
+
+                var action = function() { addSyntaxFragment(fragment, index); };
+                span.onclick = action;
+                span.addEventListener('touchstart', function(e) { e.preventDefault(); action(); }, { passive: false });
+
                 syntaxOptionsArea.appendChild(span);
             });
         }
@@ -451,7 +454,7 @@
             syntaxTargetArea.innerHTML = '';
             currentSyntaxOrder.forEach(function(item) {
                 var span = document.createElement('span');
-                span.className = 'syntax-fragment-target bg-purple-200 text-purple-800 px-3 py-1 rounded relative cursor-pointer';
+                span.className = 'syntax-fragment-target bg-purple-200 text-purple-800 px-3 py-1 rounded relative cursor-pointer select-none';
                 span.innerHTML = formatCodeInText(item.fragment);
                 var x = document.createElement('span');
                 x.className = 'absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-4 h-4 flex items-center justify-center text-xs';
@@ -473,81 +476,41 @@
         renderSyntaxTarget();
     }
 
-    function validateStructure(userItems, expectedFragments, type) {
+    function validateStructure(userItems, expectedFragments) {
         if (userItems.length !== expectedFragments.length) return false;
-
         var userStrings = userItems.map(function(i) { return i.fragment; });
 
-        // Reglas de validación inteligente (v7.7.1)
-        var hasTag = function(arr, tag) {
+        var getTagIndex = function(arr, tagPart) {
             for (var i = 0; i < arr.length; i++) {
-                if (arr[i].indexOf('<' + tag) !== -1) return true;
-            }
-            return false;
-        };
-
-        var getTagIndex = function(arr, tag) {
-            for (var i = 0; i < arr.length; i++) {
-                if (arr[i].indexOf('<' + tag) !== -1) return i;
+                if (arr[i].indexOf('<' + tagPart) !== -1) return i;
             }
             return -1;
         };
 
-        if (hasTag(userStrings, 'table')) {
-            // Validación de tablas
-            var tableOpen = getTagIndex(userStrings, 'table');
-            var tableClose = getTagIndex(userStrings, '/table');
-            var trOpen = getTagIndex(userStrings, 'tr');
-            var trClose = getTagIndex(userStrings, '/tr');
-
-            if (tableOpen === -1 || tableClose === -1 || tableOpen > tableClose) return false;
-            if (trOpen !== -1 && (trOpen < tableOpen || trOpen > tableClose)) return false;
-            if (trClose !== -1 && (trClose < trOpen || trClose > tableClose)) return false;
-
-            // Si hay TDs, deben estar dentro de TRs
-            for (var i = 0; i < userStrings.length; i++) {
-                if (userStrings[i].indexOf('<td') !== -1 || userStrings[i].indexOf('<th') !== -1) {
-                    if (i < trOpen || i > trClose) return false;
-                }
-            }
+        // Reglas de jerarquía básicas (v7.7.2)
+        var tableIdx = getTagIndex(userStrings, 'table');
+        var tableCloseIdx = getTagIndex(userStrings, '/table');
+        if (tableIdx !== -1) {
+            if (tableCloseIdx === -1 || tableIdx > tableCloseIdx) return false;
+            var trIdx = getTagIndex(userStrings, 'tr');
+            if (trIdx !== -1 && (trIdx < tableIdx || trIdx > tableCloseIdx)) return false;
         }
 
-        if (hasTag(userStrings, 'ul') || hasTag(userStrings, 'ol')) {
-            // Validación de listas
-            var listOpen = getTagIndex(userStrings, 'ul');
-            if (listOpen === -1) listOpen = getTagIndex(userStrings, 'ol');
-            var listClose = getTagIndex(userStrings, '/ul');
-            if (listClose === -1) listClose = getTagIndex(userStrings, '/ol');
-
-            if (listOpen === -1 || listClose === -1 || listOpen > listClose) return false;
-
-            for (var j = 0; j < userStrings.length; j++) {
-                if (userStrings[j].indexOf('<li') !== -1) {
-                    if (j < listOpen || j > listClose) return false;
-                }
-            }
-        }
-
-        // Comparación de equivalencia (permitir cambio de orden en LIs o TDs si el contenido es el mismo)
         var sortedUser = userStrings.slice().sort();
         var sortedExpected = expectedFragments.slice().sort();
-        var hasSameElements = true;
         for (var m = 0; m < sortedUser.length; m++) {
-            if (sortedUser[m] !== sortedExpected[m]) { hasSameElements = false; break; }
+            if (sortedUser[m] !== sortedExpected[m]) return false;
         }
-
-        return hasSameElements;
+        return true;
     }
 
     function checkSyntaxOrder() {
         pauseTimer();
         var q = currentQuestions[currentQuestionIndex];
         var expectedOrderStrings = q.correctOrder.map(function(idx) { return q.fragments[idx]; });
-
-        var isCorrect = validateStructure(currentSyntaxOrder, expectedOrderStrings, 'syntax');
-
+        var isCorrect = validateStructure(currentSyntaxOrder, expectedOrderStrings);
         if (isCorrect) handleCorrectAnswer(); else handleIncorrectAnswer();
-        setTimeout(nextQuestion, 1000);
+        setTimeout(nextQuestion, 1500);
     }
 
     function undoSyntaxOrder() { currentSyntaxOrder.pop(); renderSyntaxTarget(); }
@@ -558,44 +521,93 @@
             var drags = shuffleArray(question.pairs.map(function(p){return p.drag}));
             drags.forEach(function(d) {
                 var item = document.createElement('div');
-                item.className = 'drag-item bg-blue-200 p-2 rounded cursor-grab';
+                item.className = 'drag-item bg-blue-100 border border-blue-300 p-2 rounded cursor-grab active:cursor-grabbing touch-none select-none';
                 item.innerHTML = smartFormat(d);
                 item.setAttribute('draggable', true);
                 item.dataset.originalText = d;
                 item.addEventListener('dragstart', handleDragStart);
+                item.addEventListener('touchstart', handleTouchStart, { passive: false });
+                item.addEventListener('touchmove', handleTouchMove, { passive: false });
+                item.addEventListener('touchend', handleTouchEnd, { passive: false });
                 dragElementsArea.appendChild(item);
             });
             var drops = shuffleArray(question.pairs.map(function(p){return p.drop}));
             drops.forEach(function(d) {
                 var target = document.createElement('div');
-                target.className = 'drop-target border-2 border-dashed p-2 min-h-[40px] text-center';
+                target.className = 'drop-target border-2 border-dashed border-gray-300 p-2 min-h-[40px] w-full rounded-lg text-center transition-colors select-none';
                 target.dataset.correctMatch = d;
                 target.innerHTML = smartFormat(d);
-                target.addEventListener('dragover', function(e){e.preventDefault();});
+                target.addEventListener('dragover', function(e){
+                    e.preventDefault();
+                    target.classList.add('bg-blue-50', 'border-blue-400');
+                });
+                target.addEventListener('dragleave', function(){
+                    target.classList.remove('bg-blue-50', 'border-blue-400');
+                });
                 target.addEventListener('drop', handleDrop);
                 dropTargetsArea.appendChild(target);
             });
         }
     }
 
+    var touchElement = null, lastTouchTarget = null;
+    function handleTouchStart(e) {
+        touchElement = e.target.closest('.drag-item');
+        if (touchElement) touchElement.classList.add('opacity-50', 'scale-95');
+    }
+    function handleTouchMove(e) {
+        if (!touchElement) return;
+        e.preventDefault();
+        var touch = e.touches[0];
+        var target = document.elementFromPoint(touch.clientX, touch.clientY);
+        var dropTarget = target ? target.closest('.drop-target') : null;
+        if (dropTarget !== lastTouchTarget) {
+            if (lastTouchTarget) lastTouchTarget.classList.remove('bg-blue-50', 'border-blue-400');
+            if (dropTarget) dropTarget.classList.add('bg-blue-50', 'border-blue-400');
+            lastTouchTarget = dropTarget;
+        }
+    }
+    function handleTouchEnd(e) {
+        if (!touchElement) return;
+        touchElement.classList.remove('opacity-50', 'scale-95');
+        if (lastTouchTarget) lastTouchTarget.classList.remove('bg-blue-50', 'border-blue-400');
+        var touch = e.changedTouches[0];
+        var target = document.elementFromPoint(touch.clientX, touch.clientY);
+        var dropTarget = target ? target.closest('.drop-target') : null;
+        if (dropTarget && !dropTarget.dataset.userValue) {
+            dropTarget.innerHTML = smartFormat(touchElement.dataset.originalText);
+            dropTarget.dataset.userValue = touchElement.dataset.originalText;
+            touchElement.classList.add('hidden');
+        }
+        touchElement = null; lastTouchTarget = null;
+    }
     function handleDragStart(e) { draggedItemOriginalElement = e.target; e.dataTransfer.setData('text', e.target.dataset.originalText); }
-    function handleDrop(e) { e.preventDefault(); var target = e.target.closest('.drop-target'); if(target && draggedItemOriginalElement) { target.innerHTML = smartFormat(draggedItemOriginalElement.dataset.originalText); target.dataset.userValue = draggedItemOriginalElement.dataset.originalText; draggedItemOriginalElement.classList.add('hidden'); } }
+    function handleDrop(e) {
+        e.preventDefault();
+        var target = e.target.closest('.drop-target');
+        if(target && draggedItemOriginalElement && !target.dataset.userValue) {
+            target.innerHTML = smartFormat(draggedItemOriginalElement.dataset.originalText);
+            target.dataset.userValue = draggedItemOriginalElement.dataset.originalText;
+            draggedItemOriginalElement.classList.add('hidden');
+            target.classList.remove('bg-blue-50', 'border-blue-400');
+        }
+    }
 
     function checkDragMatch() {
         pauseTimer();
         var q = currentQuestions[currentQuestionIndex];
         var dropTargets = dropTargetsArea.querySelectorAll('.drop-target');
-        var isCorrect = true;
-
+        var isCorrect = true, allFilled = true;
         dropTargets.forEach(function(target) {
             var userValue = target.dataset.userValue;
+            if (!userValue) allFilled = false;
             var correctDrop = target.dataset.correctMatch;
             var pair = q.pairs.find(function(p) { return p.drop === correctDrop; });
             if (!pair || pair.drag !== userValue) isCorrect = false;
         });
-
+        if (!allFilled) { resumeTimer(); alert("Por favor completa todos los espacios."); return; }
         if (isCorrect) handleCorrectAnswer(); else handleIncorrectAnswer();
-        setTimeout(nextQuestion, 1000);
+        setTimeout(nextQuestion, 1500);
     }
 
     function undoDragMatch() {
@@ -604,8 +616,6 @@
         if (dragItems.length > 0) {
             var lastHidden = dragItems[dragItems.length - 1];
             var lastText = lastHidden.dataset.originalText;
-
-            // Buscar el target que tiene este valor
             for (var i = 0; i < dropTargets.length; i++) {
                 if (dropTargets[i].dataset.userValue === lastText) {
                     dropTargets[i].innerHTML = smartFormat(dropTargets[i].dataset.correctMatch);
@@ -621,14 +631,23 @@
     function updateScoreDisplay() { if (quizScoreDisplay) quizScoreDisplay.textContent = currentScore; }
     function updateTimerDisplay() { if (quizTimerDisplay) { var m = Math.floor(timeElapsed/60), s = timeElapsed%60; quizTimerDisplay.textContent = (m<10?'0':'')+m+':'+(s<10?'0':'')+s; } }
 
-    function handleCorrectAnswer() { currentScore++; answeredCorrectly++; updateScoreDisplay(); }
-    function handleIncorrectAnswer() { answeredIncorrectly++; }
+    function handleCorrectAnswer() { currentScore++; answeredCorrectly++; updateScoreDisplay(); showFeedback(true); }
+    function handleIncorrectAnswer() { answeredIncorrectly++; showFeedback(false); }
+    function showFeedback(isCorrect) {
+        var card = document.getElementById('quiz-card');
+        if (card) {
+            card.classList.remove('bg-white', 'border-gray-100');
+            card.classList.add(isCorrect ? 'bg-green-50' : 'bg-red-50', isCorrect ? 'border-green-500' : 'border-red-500');
+        }
+    }
 
     function endQuiz() {
-        clearInterval(quizTimer);
+        clearInterval(quizTimer); quizTimer = null;
         if (quizCorrectAnswers) quizCorrectAnswers.textContent = answeredCorrectly;
         if (quizIncorrectAnswers) quizIncorrectAnswers.textContent = answeredIncorrectly;
         if (quizFinalScore) quizFinalScore.textContent = currentScore;
+        var finalTimeDisplay = document.getElementById('quiz-final-time');
+        if (finalTimeDisplay) finalTimeDisplay.textContent = quizTimerDisplay ? quizTimerDisplay.textContent : '00:00';
         if (app) app.finishSession('Diseño Web', selectedDifficulty, currentScore, totalXP);
         showScreen('quiz-result-screen');
     }
@@ -642,9 +661,16 @@
     }
 
     function checkAnswer(idx, correct) {
+        pauseTimer();
         var isCorrect = (idx === correct);
+        var buttons = multipleChoiceOptions.querySelectorAll('button');
+        buttons.forEach(function(btn, i) {
+            btn.onclick = null;
+            if (i === correct) btn.classList.add('bg-green-600', 'ring-4', 'ring-green-200');
+            else if (i === idx) btn.classList.add('bg-red-600', 'ring-4', 'ring-red-200');
+        });
         if (isCorrect) handleCorrectAnswer(); else handleIncorrectAnswer();
-        setTimeout(nextQuestion, 1000);
+        setTimeout(nextQuestion, 1500);
     }
 
     function renderLeaderboard(lb) {
@@ -665,11 +691,8 @@
     function renderPersonalRecord(record) {
         if (!record) return;
         var scoreSpan = document.getElementById('init-max-score');
-
-        var maxPts = 0;
-        var statsData = record.data || record;
-        var keys = Object.keys(statsData);
-        keys.forEach(function(key) {
+        var maxPts = 0, statsData = record.data || record;
+        Object.keys(statsData).forEach(function(key) {
             var entry = statsData[key];
             if (key.indexOf('webmaster') !== -1 || key.indexOf('WebMaster Quiz') !== -1 || (entry && entry.juego === 'webmaster')) {
                 var pts = parseFloat(entry.maxScore || entry.score || entry.puntaje || 0);
@@ -677,25 +700,16 @@
             }
         });
         if (scoreSpan) scoreSpan.textContent = Math.round(maxPts);
-
-        // Renderizar Tarjeta Analítica Unificada (v7.7)
-        if (window.renderUnifiedAnalyticsCard) {
-            window.renderUnifiedAnalyticsCard('webmaster-analytics-container', 'webmaster', record);
-        }
+        if (window.renderUnifiedAnalyticsCard) window.renderUnifiedAnalyticsCard('webmaster-analytics-container', 'webmaster', record);
     }
 
     function initQuizGame() {
         if (app) {
             app.init('webmaster', false).then(function() {
-                app.getLeaderboard('webmaster', function(lb) {
-                    renderLeaderboard(lb);
-                });
-                app.getPersonalRecord(function(record) {
-                    renderPersonalRecord(record);
-                });
+                app.getLeaderboard('webmaster', function(lb) { renderLeaderboard(lb); });
+                app.getPersonalRecord(function(record) { renderPersonalRecord(record); });
             });
         }
-
         quizStartMenu = document.getElementById('quiz-start-menu');
         startQuizButton = document.getElementById('start-quiz-button');
         quizTopicSelectionMenu = document.getElementById('quiz-topic-selection-menu');
@@ -719,10 +733,14 @@
         dropTargetsArea = document.getElementById('drop-targets');
         checkMatchButton = document.getElementById('check-match-button');
         undoMatchButton = document.getElementById('undo-match-button');
+        endQuizButton = document.getElementById('end-quiz-button');
         quizResultScreen = document.getElementById('quiz-result-screen');
         quizCorrectAnswers = document.getElementById('quiz-correct-answers');
         quizIncorrectAnswers = document.getElementById('quiz-incorrect-answers');
         quizFinalScore = document.getElementById('quiz-final-score');
+        quizRetryLevelButton = document.getElementById('quiz-retry-level-button');
+        quizNextLevelButton = document.getElementById('quiz-next-level-button');
+        quizChangeTopicButton = document.getElementById('quiz-change-topic-button');
         quizExitGameButton = document.getElementById('quiz-exit-game-button');
 
         if (startQuizButton) startQuizButton.onclick = startQuiz;
@@ -730,17 +748,25 @@
         difficultyButtons.forEach(function(b) { b.onclick = function() { selectDifficulty(b.dataset.difficulty); }; });
         if (quizExitGameButton) quizExitGameButton.onclick = function() { if (window.returnToMainContent) window.returnToMainContent(); };
 
-        // Asignación de botones de acción (v7.7.1)
         if (checkSyntaxButton) checkSyntaxButton.onclick = checkSyntaxOrder;
         if (undoSyntaxButton) undoSyntaxButton.onclick = undoSyntaxOrder;
         if (checkMatchButton) checkMatchButton.onclick = checkDragMatch;
         if (undoMatchButton) undoMatchButton.onclick = undoDragMatch;
+        if (endQuizButton) endQuizButton.onclick = endQuiz;
+
+        if (quizRetryLevelButton) quizRetryLevelButton.onclick = function() { selectDifficulty(selectedDifficulty); };
+        if (quizChangeTopicButton) quizChangeTopicButton.onclick = function() { showScreen('quiz-topic-selection-menu'); };
+        if (quizNextLevelButton) quizNextLevelButton.onclick = function() {
+            var levels = ['basico', 'intermedio', 'avanzado'];
+            var nextIdx = levels.indexOf(selectedDifficulty) + 1;
+            if (nextIdx < levels.length) selectDifficulty(levels[nextIdx]);
+            else alert("¡Has completado todas las dificultades de este tema!");
+        };
 
         ['mousemove', 'keydown', 'click'].forEach(function(e) { document.addEventListener(e, resetInactivityTimer); });
         showScreen('quiz-start-menu');
     }
 
-    // Exportar funciones globales
     window.initQuizGame = initQuizGame;
     window.startQuiz = startQuiz;
     window.selectTopic = selectTopic;

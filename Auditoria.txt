@@ -353,3 +353,21 @@ Archivo: juegos/webmaster_quiz.html
 Sector: Estilos
 Hallazgo [Observación]: No existe una clase específica para fragmentos de código que garantice uniformidad con el dashboard del profesor.
 Recomendación: Sincronizar estilos con css/style.css.
+
+AUDITORÍA DE INTERACCIÓN - MINIJUEGO WEBMASTER - Fri Jun 19 18:28:00 UTC 2026
+
+Archivo: js/webmaster_quiz_juego.js
+Sector: Inicialización de Botones
+Hallazgo [Crítico]: La variable endQuizButton se declara pero nunca se inicializa con document.getElementById().
+Impacto: El botón "Terminar Juego" no realiza ninguna acción, impidiendo el cierre manual de la partida.
+
+Sector: Retroalimentación Visual
+Hallazgo [Alto]: Las funciones handleCorrectAnswer y handleIncorrectAnswer solo actualizan el estado interno sin disparar cambios visuales inmediatos en la UI.
+Impacto: El usuario no recibe confirmación sobre el acierto o error de su respuesta hasta que avanza de pregunta.
+
+Sector: Arrastrar y Soltar (DND)
+Hallazgo [Medio]: Uso exclusivo de eventos drag&drop de escritorio.
+Impacto: La funcionalidad es limitada o nula en navegadores móviles y dispositivos táctiles (Android/iOS).
+
+Sector: Flujo de Cierre
+Hallazgo [Bajo]: El botón quizExitGameButton depende de window.returnToMainContent, pero no se valida su existencia antes de llamar.

@@ -157,6 +157,7 @@
 - **Estado:** [X] Completada (2026-06-17)
 
 ### [T-025] Corrección Integral del Minijuego WebMaster
+- **Resultado:** Funcionalidad de DND móvil, feedback visual y cierre de partida corregidos.
 - **Origen del Hallazgo:** Requerimiento de Usuario (2026-06-19)
 - **Severidad:** Alto
 - **Archivos Involucrados:** js/webmaster_quiz_juego.js, css/style.css
