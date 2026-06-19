@@ -246,3 +246,25 @@ Archivos de Minijuegos:
 - js/games-adapter.js: Refactorización a ES5 estricto para compatibilidad con entorno de juegos. Centralización de sesión.
 - js/webmaster_quiz_juego.js: Refactorización a ES5 y limpieza de sintaxis incompatible (arrow functions, template literals).
 - js/student.js: Ajuste en la visualización del expediente para incluir métricas psicométricas inmediatas.
+
+REGISTRO DE AISLAMIENTO DE ESTADOS Y REPARACIÓN DE TABLEROS - Fri Jun 19 11:03:27 UTC 2026
+
+Módulo: Aislamiento de Scripts (Minijuegos)
+- js/destreza_teclado.js, js/perifericos_juego.js, js/webmaster_quiz_juego.js, js/quizpro.js:
+    - Encapsulada toda la lógica en IIFEs (Immediately Invoked Function Expressions).
+    - Esto resuelve de raíz los 'SyntaxError: Identifier already has been declared' (totalXP, score) al aislar los ámbitos de ejecución.
+    - Exportadas explícitamente las funciones de inicialización y control al objeto global 'window' para mantener la interoperabilidad con el cargador dinámico de 'index.html'.
+
+Módulo: WebMaster Quiz (Remediación T-024)
+- js/webmaster_quiz_juego.js:
+    - Implementada la recuperación del récord personal mediante 'GamesAdapter.getPersonalRecord'.
+    - Actualizada la función 'renderLeaderboard' para incluir estilos Tailwind institucionales, garantizando coherencia visual y legibilidad.
+    - Asegurada la inicialización del récord en el elemento 'init-max-score'.
+
+Módulo: Mundo Periférico (Remediación T-024)
+- js/perifericos_juego.js:
+    - Refactorizada la inicialización para asegurar que el récord personal se renderice correctamente desde el adaptador de juegos.
+
+Módulo: QuizPro (Remediación T-024)
+- js/quizpro.js:
+    - La encapsulación permite que el script se cargue sin conflictos de variables con el juego de Periféricos, habilitando el renderizado de la tarjeta de analítica.

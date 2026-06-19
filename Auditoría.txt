@@ -15,3 +15,25 @@ Archivo: js/student.js
 Archivo: js/games-adapter.js
 - Falta de consistencia en el identificador de usuario para registros personales.
 - Solución: Se centralizó el acceso a currentUser y se corrigió la lógica de hidratación de récords personales.
+AUDITORÍA TÉCNICA - INTEGRIDAD DE TABLEROS Y CONFLICTOS DE ALCANCE - Fri Jun 19 10:48:14 UTC 2026
+
+Archivo: js/destreza_teclado.js
+- Hallazgo [Crítico]: Variable 'totalXP' declarada con 'let' en el ámbito global (Línea 69). Impide la carga de otros minigames que declaren el mismo identificador.
+- Hallazgo [Bajo]: Función 'showScreen' no está exportada al objeto 'window', pero se llama desde el HTML (Línea 109 in HTML).
+
+Archivo: js/webmaster_quiz_juego.js
+- Hallazgo [Crítico]: Variable 'totalXP' declarada con 'var' en el ámbito global (Línea 120). Colisiona con otros scripts.
+- Hallazgo [Alto]: La función 'initQuizGame' no invoca 'GamesAdapter.getPersonalRecord', lo que causa que 'Tu Mejor Marca' permanezca en 0 o no cargue.
+- Hallazgo [Medio]: El renderizado del mini-leaderboard (Línea 433) carece de las clases de Tailwind necesarias para el diseño institucional (bordes de color, pesos tipográficos, espaciado).
+- Hallazgo [Bajo]: Funciones 'showScreen', 'selectTopic', 'selectDifficulty', 'startQuiz', 'undoSyntaxOrder', 'checkSyntaxOrder' no están exportadas explícitamente, aunque funcionan por ser 'var' (pero fallarán tras encapsulación).
+
+Archivo: js/perifericos_juego.js
+- Hallazgo [Crítico]: Variable 'score' y 'totalXP' declaradas con 'let' en el ámbito global (Líneas 27, 29). Impide la carga de QuizPro y otros scripts.
+- Hallazgo [Medio]: Uso de 'await' en 'initializePeripheralsGame' (Línea 58) puede ser redundante o causar demoras si la resolución de la caché es lenta, aunque GamesAdapter.init ya es asíncrono.
+
+Archivo: js/quizpro.js
+- Hallazgo [Crítico]: Variable 'score' declarada con 'var' en el ámbito global (Línea 9). Colisiona con 'perifericos_juego.js'.
+- Hallazgo [Bajo]: Múltiples funciones de navegación dependen de su naturaleza global para ser invocadas desde el HTML.
+
+Diagnóstico Transversal:
+La carga dinámica de scripts en el mismo contexto de 'index.html' sin aislamiento (IIFE) está provocando SyntaxErrors por redeclaración de constantes/variables de bloque (let/const) y colisiones de estado entre minijuegos.

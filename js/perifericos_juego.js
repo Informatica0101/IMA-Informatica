@@ -1,386 +1,418 @@
-// Data for the peripherals game
-const peripherals = [
-    { name: "Teclado", image: "imagenes/teclado.png", correctType: "entrada", description: "Dispositivo para introducir datos y comandos." },
-    { name: "Monitor", image: "imagenes/monitor.png", correctType: "salida", description: "Muestra información visualmente al usuario." },
-    { name: "Impresora", image: "imagenes/impresora.png", correctType: "salida", description: "Produce copias físicas de documentos e imágenes." },
-    { name: "Ratón", image: "imagenes/raton.png", correctType: "entrada", description: "Permite la interacción con la interfaz gráfica de usuario." },
-    { name: "Micrófono", image: "imagenes/microfono.png", correctType: "entrada", description: "Captura sonido para grabar o transmitir." },
-    { name: "Altavoces", image: "imagenes/altavoces.png", correctType: "salida", description: "Reproducen audio." },
-    { name: "Cámara Web", image: "imagenes/camara_web.png", correctType: "entrada", description: "Captura imágenes y video en tiempo real." },
-    { name: "Disco Duro Externo", image: "imagenes/disco_duro_externo.png", correctType: "almacenamiento", description: "Unidad de almacenamiento portátil de gran capacidad." },
-    { name: "Pendrive USB", image: "imagenes/pendrive.png", correctType: "almacenamiento", description: "Dispositivo de almacenamiento de datos portátil y pequeño." },
-    { name: "Router", image: "imagenes/router.png", correctType: "ambos", description: "Dispositivo que envía y recibe datos en una red." },
-    { name: "Auriculares con Micrófono", image: "imagenes/auriculares_con_microfono.png", correctType: "ambos", description: "Permiten escuchar audio y grabar voz." },
-    { name: "Escáner", image: "imagenes/escaner.png", correctType: "entrada", description: "Digitaliza documentos e imágenes físicas." },
-    { name: "Proyector", image: "imagenes/proyector.png", correctType: "salida", description: "Muestra imágenes y videos en una superficie grande." },
-    { name: "Gamepad", image: "imagenes/gamepad.png", correctType: "entrada", description: "Controlador para videojuegos." },
-    { name: "Tableta Gráfica", image: "imagenes/tableta_grafica.png", correctType: "entrada", description: "Permite dibujar y escribir digitalmente." },
-    { name: "Memoria RAM", image: "imagenes/memoria_ram.png", correctType: "almacenamiento", description: "Almacenamiento temporal de datos para acceso rápido." },
-    { name: "SSD", image: "imagenes/ssd.png", correctType: "almacenamiento", description: "Unidad de estado sólido para almacenamiento rápido." },
-    { name: "Pantalla Táctil", image: "imagenes/pantalla_tactil.png", correctType: "ambos", description: "Permite entrada de datos y muestra información." },
-    { name: "Lápiz Óptico", image: "imagenes/lapiz_optico.png", correctType: "entrada", description: "Permite dibujar o seleccionar en pantallas." },
-    { name: "Plotter", image: "imagenes/plotter.png", correctType: "salida", description: "Impresora de gran formato para dibujos técnicos." }
-];
+(function(window, document, app) {
+    // Data for the peripherals game
+    var peripherals = [
+        { name: "Teclado", image: "imagenes/teclado.png", correctType: "entrada", description: "Dispositivo para introducir datos y comandos." },
+        { name: "Monitor", image: "imagenes/monitor.png", correctType: "salida", description: "Muestra información visualmente al usuario." },
+        { name: "Impresora", image: "imagenes/impresora.png", correctType: "salida", description: "Produce copias físicas de documentos e imágenes." },
+        { name: "Ratón", image: "imagenes/raton.png", correctType: "entrada", description: "Permite la interacción con la interfaz gráfica de usuario." },
+        { name: "Micrófono", image: "imagenes/microfono.png", correctType: "entrada", description: "Captura sonido para grabar o transmitir." },
+        { name: "Altavoces", image: "imagenes/altavoces.png", correctType: "salida", description: "Reproducen audio." },
+        { name: "Cámara Web", image: "imagenes/camara_web.png", correctType: "entrada", description: "Captura imágenes y video en tiempo real." },
+        { name: "Disco Duro Externo", image: "imagenes/disco_duro_externo.png", correctType: "almacenamiento", description: "Unidad de almacenamiento portátil de gran capacidad." },
+        { name: "Pendrive USB", image: "imagenes/pendrive.png", correctType: "almacenamiento", description: "Dispositivo de almacenamiento de datos portátil y pequeño." },
+        { name: "Router", image: "imagenes/router.png", correctType: "ambos", description: "Dispositivo que envía y recibe datos en una red." },
+        { name: "Auriculares con Micrófono", image: "imagenes/auriculares_con_microfono.png", correctType: "ambos", description: "Permiten escuchar audio y grabar voz." },
+        { name: "Escáner", image: "imagenes/escaner.png", correctType: "entrada", description: "Digitaliza documentos e imágenes físicas." },
+        { name: "Proyector", image: "imagenes/proyector.png", correctType: "salida", description: "Muestra imágenes y videos en una superficie grande." },
+        { name: "Gamepad", image: "imagenes/gamepad.png", correctType: "entrada", description: "Controlador para videojuegos." },
+        { name: "Tableta Gráfica", image: "imagenes/tableta_grafica.png", correctType: "entrada", description: "Permite dibujar y escribir digitalmente." },
+        { name: "Memoria RAM", image: "imagenes/memoria_ram.png", correctType: "almacenamiento", description: "Almacenamiento temporal de datos para acceso rápido." },
+        { name: "SSD", image: "imagenes/ssd.png", correctType: "almacenamiento", description: "Unidad de estado sólido para almacenamiento rápido." },
+        { name: "Pantalla Táctil", image: "imagenes/pantalla_tactil.png", correctType: "ambos", description: "Permite entrada de datos y muestra información." },
+        { name: "Lápiz Óptico", image: "imagenes/lapiz_optico.png", correctType: "entrada", description: "Permite dibujar o seleccionar en pantallas." },
+        { name: "Plotter", image: "imagenes/plotter.png", correctType: "salida", description: "Impresora de gran formato para dibujos técnicos." }
+    ];
 
-let shuffledPeripherals = [];
-let currentPeripheralIndex = 0;
-let score = 0;
-let errors = 0;
-let totalXP = 0;
-let timerInterval;
-let startTime;
-let gameStarted = false;
-let questionStartTime = 0;
-let responseChanges = 0;
-let answerBlocked = false; // To prevent multiple clicks on answer buttons for a single question
+    var shuffledPeripherals = [];
+    var currentPeripheralIndex = 0;
+    var score = 0;
+    var errors = 0;
+    var totalXP = 0;
+    var timerInterval;
+    var startTime;
+    var gameStarted = false;
+    var questionStartTime = 0;
+    var responseChanges = 0;
+    var answerBlocked = false; // To prevent multiple clicks on answer buttons for a single question
 
-// DOM Elements for Game - These will be assigned inside initializePeripheralsGame
-let startMenu;
-let startGameButton;
-let gamePlayArea;
-let timerDisplay;
-let scoreDisplay;
-let peripheralCard;
-let peripheralImage;
-let peripheralName;
-let peripheralDescription;
-let answerButtons; // NodeList, will be re-queried
-let endGameButton;
-let resultScreen;
-let correctAnswersDisplay;
-let incorrectAnswersDisplay;
-let finalTimeDisplay;
-let totalAttemptsDisplay; // Total Attempts display
-let bestScoreDisplay;     // Best Score display
-let gameHistoryList;      // Game History List
+    // DOM Elements for Game - These will be assigned inside initializePeripheralsGame
+    var startMenu;
+    var startGameButton;
+    var gamePlayArea;
+    var timerDisplay;
+    var scoreDisplay;
+    var peripheralCard;
+    var peripheralImage;
+    var peripheralName;
+    var peripheralDescription;
+    var answerButtons; // NodeList, will be re-queried
+    var endGameButton;
+    var resultScreen;
+    var correctAnswersDisplay;
+    var incorrectAnswersDisplay;
+    var finalTimeDisplay;
+    var totalAttemptsDisplay; // Total Attempts display
+    var bestScoreDisplay;     // Best Score display
+    var gameHistoryList;      // Game History List
 
-let localGameStorage; // Variable to hold the gameDataStorage object passed from index.html
+    var localGameStorage; // Variable to hold the gameDataStorage object passed from index.html
 
-// Function to initialize DOM elements and attach event listeners
-// This function now accepts the gameDataStorage object
-async function initializePeripheralsGame(gameDataStorage) {
-    const user = JSON.parse(localStorage.getItem('currentUser'));
-    const isGuest = !user;
+    // Function to initialize DOM elements and attach event listeners
+    // This function now accepts the gameDataStorage object
+    function initializePeripheralsGame(gameDataStorage) {
+        var user = JSON.parse(localStorage.getItem('currentUser') || 'null');
+        var isGuest = !user;
 
-    if (window.GamesAdapter) {
-        const { lb, record } = await GamesAdapter.init('perifericos');
+        if (app) {
+            app.init('perifericos', false).then(function(res) {
+                var lb = res.lb;
+                var record = res.record;
 
-        // Mini Leaderboard (REQ 7: Top 5 con XP)
-        const miniLb = document.getElementById('mini-leaderboard');
-        if (miniLb && lb && lb.global) {
-            miniLb.innerHTML = lb.global.slice(0, 5).map((u, i) => `
-                <div class="flex items-center justify-between text-[10px] font-bold py-1 border-b border-indigo-50 last:border-0">
-                    <span class="text-indigo-700">${i+1}. ${u.nombre.split(' ')[0]}</span>
-                    <div class="flex flex-col items-end">
-                        <span class="text-indigo-500">${u.promedio}%</span>
-                        <span class="text-[8px] text-gray-400 font-black">${(u.xp || 0).toLocaleString()} XP</span>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        // Récord
-        const myRecord = record?.["Juego de Periféricos"] || JSON.parse(localStorage.getItem('guest_record_perifericos') || 'null');
-        if (myRecord) {
-            const scoreSpan = document.getElementById('init-max-score');
-            if (scoreSpan) scoreSpan.textContent = myRecord.maxScore || myRecord.score || 0;
-        }
-    }
-
-    if (isGuest) {
-        document.getElementById('guest-mode-warning')?.classList.remove('hidden');
-        const guestBtn = document.getElementById('continue-guest-btn');
-        if (guestBtn) {
-            guestBtn.classList.remove('hidden');
-            guestBtn.onclick = () => {
-                document.getElementById('guest-mode-warning')?.classList.add('hidden');
-                guestBtn.classList.add('hidden');
-            };
-        }
-    }
-
-    localGameStorage = gameDataStorage; // Store the passed object
-
-    // Use a setTimeout to ensure all DOM elements are parsed and available
-    // before attempting to get their references and attach listeners.
-    setTimeout(() => {
-        // Assign DOM elements AFTER the HTML is loaded into the container
-        startMenu = document.getElementById('start-menu');
-        startGameButton = document.getElementById('start-game-button');
-        gamePlayArea = document.getElementById('game-play-area');
-        timerDisplay = document.getElementById('timer');
-        scoreDisplay = document.getElementById('score-display');
-        peripheralCard = document.getElementById('peripheral-card');
-        peripheralImage = document.getElementById('peripheral-image');
-        peripheralName = document.getElementById('peripheral-name');
-        peripheralDescription = document.getElementById('peripheral-description');
-        answerButtons = document.querySelectorAll('.answer-button'); // Re-query
-        endGameButton = document.getElementById('end-game-button');
-        resultScreen = document.getElementById('result-screen');
-        correctAnswersDisplay = document.getElementById('correct-answers');
-        incorrectAnswersDisplay = document.getElementById('incorrect-answers');
-        finalTimeDisplay = document.getElementById('final-time');
-        totalAttemptsDisplay = document.getElementById('total-attempts');
-        bestScoreDisplay = document.getElementById('best-score');
-        gameHistoryList = document.getElementById('game-history-list');
-
-        // Console log to confirm initialization and element finding
-        console.log("initializePeripheralsGame: Elementos DOM inicializados.");
-        if (window.GamesAdapter) window.GamesAdapter.showLoading(false);
-        if (!startMenu || !startGameButton || !correctAnswersDisplay) {
-            console.error("initializePeripheralsGame: ¡ERROR! No se encontraron todos los elementos DOM esperados.");
-        }
-
-        // Attach Event Listeners - MOVED INSIDE THIS setTimeout
-        if (startGameButton) {
-            startGameButton.addEventListener('click', () => {
-                if (document.documentElement.requestFullscreen) {
-                    document.documentElement.requestFullscreen().catch(e => console.warn("FS failed", e));
+                // Mini Leaderboard (REQ 7: Top 5 con XP)
+                var miniLb = document.getElementById('mini-leaderboard');
+                if (miniLb && lb && lb.global) {
+                    miniLb.innerHTML = lb.global.slice(0, 5).map(function(u, i) {
+                        return '<div class="flex items-center justify-between text-[10px] font-bold py-1 border-b border-indigo-50 last:border-0">' +
+                            '<span class="text-indigo-700">' + (i+1) + '. ' + (u.nombre ? u.nombre.split(' ')[0] : 'Alumno') + '</span>' +
+                            '<div class="flex flex-col items-end">' +
+                                '<span class="text-indigo-500">' + u.promedio + '%</span>' +
+                                '<span class="text-[8px] text-gray-400 font-black">' + (u.xp || 0).toLocaleString() + ' XP</span>' +
+                            '</div>' +
+                        '</div>';
+                    }).join('');
                 }
-                if (window.requestWakeLock) window.requestWakeLock();
-                startGame();
-            });
-        }
-        if (endGameButton) endGameButton.addEventListener('click', endGame);
-        // Ensure retryGameButton is not null before attaching listener
-        const retryGameButton = document.getElementById('retry-game-button'); // Re-get inside here
-        if (retryGameButton) retryGameButton.addEventListener('click', resetGame);
 
-        // Simplified exit logic: reset game state and then return to main content
-        const exitGameButton = document.getElementById('exit-game-button'); // Re-get inside here
-        if (exitGameButton) {
-            exitGameButton.addEventListener('click', () => {
-                resetGame(); // Ensure game state is reset
-                if (window.returnToMainContent) {
-                    window.returnToMainContent();
+                // Récord
+                var myRecord = (record && record["Juego de Periféricos"]) || JSON.parse(localStorage.getItem('guest_record_perifericos') || 'null');
+                if (myRecord) {
+                    var scoreSpan = document.getElementById('init-max-score');
+                    if (scoreSpan) scoreSpan.textContent = myRecord.maxScore || myRecord.score || 0;
                 }
             });
         }
 
-        if (answerButtons) {
-            answerButtons.forEach(button => {
-                button.addEventListener('click', () => {
-                    checkAnswer(button.dataset.type);
-                });
-            });
-        }
-
-        // Initial state for the game, now that elements are guaranteed to be ready
-        resetGame();
-
-        // Control de Abandono (Fase 11)
-        const handleAbandonment = () => {
-            if (gamePlayArea && !gamePlayArea.classList.contains('hidden')) {
-                alert('Evaluación cancelada por cambio de pestaña o ventana.');
-                location.reload();
+        if (isGuest) {
+            var gw = document.getElementById('guest-mode-warning');
+            if (gw) gw.classList.remove('hidden');
+            var guestBtn = document.getElementById('continue-guest-btn');
+            if (guestBtn) {
+                guestBtn.classList.remove('hidden');
+                guestBtn.onclick = function() {
+                    if (gw) gw.classList.add('hidden');
+                    guestBtn.classList.add('hidden');
+                };
             }
-        };
-        window.addEventListener('blur', handleAbandonment);
-        document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') handleAbandonment(); });
-
-    }, 200); // 200ms delay to ensure DOM is fully ready
-}
-
-
-// Utility function to shuffle an array
-function shuffleArray(array) {
-    for (let i = array.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [array[i], array[j]] = [array[j], array[i]]; // Swap elements
-    }
-    return array;
-}
-
-function formatTime(seconds) {
-    const minutes = Math.floor(seconds / 60);
-    const remainingSeconds = seconds % 60;
-    return `${minutes < 10 ? '0' : ''}${minutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`;
-}
-
-function updateTimer() {
-    if (timerDisplay) { // Add check here too, though less likely to be null after init
-        const elapsedTime = Math.floor((Date.now() - startTime) / 1000);
-        timerDisplay.textContent = formatTime(elapsedTime);
-    }
-}
-
-function displayPeripheral() {
-    if (currentPeripheralIndex < shuffledPeripherals.length) {
-        const peripheral = shuffledPeripherals[currentPeripheralIndex];
-        if (peripheralName) peripheralName.innerHTML = window.sanitizarHTMLTecnico ? window.sanitizarHTMLTecnico(peripheral.name) : peripheral.name;
-        if (peripheralDescription) peripheralDescription.innerHTML = window.sanitizarHTMLTecnico ? window.sanitizarHTMLTecnico(peripheral.description) : peripheral.description;
-        questionStartTime = Date.now();
-        responseChanges = 0;
-        if (peripheral.image && peripheralImage) {
-            peripheralImage.src = peripheral.image;
-            peripheralImage.classList.remove('hidden');
-            // Fallback for image loading errors
-            peripheralImage.onerror = function() {
-                this.src = `https://placehold.co/200x200/cccccc/000000?text=${encodeURIComponent(peripheral.name)}`;
-            };
-        } else if (peripheralImage) {
-            peripheralImage.classList.add('hidden');
         }
-        if (peripheralCard) peripheralCard.classList.remove('border-green-500', 'border-red-500'); // Reset border color
 
-        // Ensure answerButtons is not null before iterating
+        localGameStorage = gameDataStorage; // Store the passed object
+
+        // Use a setTimeout to ensure all DOM elements are parsed and available
+        // before attempting to get their references and attach listeners.
+        setTimeout(function() {
+            // Assign DOM elements AFTER the HTML is loaded into the container
+            startMenu = document.getElementById('start-menu');
+            startGameButton = document.getElementById('start-game-button');
+            gamePlayArea = document.getElementById('game-play-area');
+            timerDisplay = document.getElementById('timer');
+            scoreDisplay = document.getElementById('score-display');
+            peripheralCard = document.getElementById('peripheral-card');
+            peripheralImage = document.getElementById('peripheral-image');
+            peripheralName = document.getElementById('peripheral-name');
+            peripheralDescription = document.getElementById('peripheral-description');
+            answerButtons = document.querySelectorAll('.answer-button'); // Re-query
+            endGameButton = document.getElementById('end-game-button');
+            resultScreen = document.getElementById('result-screen');
+            correctAnswersDisplay = document.getElementById('correct-answers');
+            incorrectAnswersDisplay = document.getElementById('incorrect-answers');
+            finalTimeDisplay = document.getElementById('final-time');
+            totalAttemptsDisplay = document.getElementById('total-attempts');
+            bestScoreDisplay = document.getElementById('best-score');
+            gameHistoryList = document.getElementById('game-history-list');
+
+            // Console log to confirm initialization and element finding
+            console.log("initializePeripheralsGame: Elementos DOM inicializados.");
+            if (app) app.showLoading(false);
+            if (!startMenu || !startGameButton || !correctAnswersDisplay) {
+                console.error("initializePeripheralsGame: ¡ERROR! No se encontraron todos los elementos DOM esperados.");
+            }
+
+            // Attach Event Listeners - MOVED INSIDE THIS setTimeout
+            if (startGameButton) {
+                startGameButton.addEventListener('click', function() {
+                    if (document.documentElement.requestFullscreen) {
+                        document.documentElement.requestFullscreen()["catch"](function(e) { console.warn("FS failed", e); });
+                    }
+                    if (window.requestWakeLock) window.requestWakeLock();
+                    startGame();
+                });
+            }
+            if (endGameButton) endGameButton.addEventListener('click', endGame);
+            // Ensure retryGameButton is not null before attaching listener
+            var retryGameButton = document.getElementById('retry-game-button'); // Re-get inside here
+            if (retryGameButton) retryGameButton.addEventListener('click', resetGame);
+
+            // Simplified exit logic: reset game state and then return to main content
+            var exitGameButton = document.getElementById('exit-game-button'); // Re-get inside here
+            if (exitGameButton) {
+                exitGameButton.addEventListener('click', function() {
+                    resetGame(); // Ensure game state is reset
+                    if (window.returnToMainContent) {
+                        window.returnToMainContent();
+                    }
+                });
+            }
+
+            if (answerButtons) {
+                for (var i = 0; i < answerButtons.length; i++) {
+                    (function(button) {
+                        button.addEventListener('click', function() {
+                            checkAnswer(button.dataset.type);
+                        });
+                    })(answerButtons[i]);
+                }
+            }
+
+            // Initial state for the game, now that elements are guaranteed to be ready
+            resetGame();
+
+            // Control de Abandono (Fase 11)
+            var handleAbandonment = function() {
+                if (gamePlayArea && !gamePlayArea.classList.contains('hidden')) {
+                    alert('Evaluación cancelada por cambio de pestaña o ventana.');
+                    location.reload();
+                }
+            };
+            window.addEventListener('blur', handleAbandonment);
+            document.addEventListener('visibilitychange', function() { if (document.visibilityState === 'hidden') handleAbandonment(); });
+
+        }, 200); // 200ms delay to ensure DOM is fully ready
+    }
+
+
+    // Utility function to shuffle an array
+    function shuffleArray(array) {
+        for (var i = array.length - 1; i > 0; i--) {
+            var j = Math.floor(Math.random() * (i + 1));
+            var temp = array[i];
+            array[i] = array[j];
+            array[j] = temp;
+        }
+        return array;
+    }
+
+    function formatTime(seconds) {
+        var minutes = Math.floor(seconds / 60);
+        var remainingSeconds = seconds % 60;
+        return (minutes < 10 ? '0' : '') + minutes + ':' + (remainingSeconds < 10 ? '0' : '') + remainingSeconds;
+    }
+
+    function updateTimer() {
+        if (timerDisplay) { // Add check here too, though less likely to be null after init
+            var elapsedTime = Math.floor((Date.now() - startTime) / 1000);
+            timerDisplay.textContent = formatTime(elapsedTime);
+        }
+    }
+
+    function displayPeripheral() {
+        if (currentPeripheralIndex < shuffledPeripherals.length) {
+            var peripheral = shuffledPeripherals[currentPeripheralIndex];
+            if (peripheralName) peripheralName.innerHTML = window.sanitizarHTMLTecnico ? window.sanitizarHTMLTecnico(peripheral.name) : peripheral.name;
+            if (peripheralDescription) peripheralDescription.innerHTML = window.sanitizarHTMLTecnico ? window.sanitizarHTMLTecnico(peripheral.description) : peripheral.description;
+            questionStartTime = Date.now();
+            responseChanges = 0;
+            if (peripheral.image && peripheralImage) {
+                peripheralImage.src = peripheral.image;
+                peripheralImage.classList.remove('hidden');
+                // Fallback for image loading errors
+                peripheralImage.onerror = function() {
+                    this.src = "https://placehold.co/200x200/cccccc/000000?text=" + encodeURIComponent(peripheral.name);
+                };
+            } else if (peripheralImage) {
+                peripheralImage.classList.add('hidden');
+            }
+            if (peripheralCard) peripheralCard.classList.remove('border-green-500', 'border-red-500'); // Reset border color
+
+            // Ensure answerButtons is not null before iterating
+            if (answerButtons) {
+                for (var i = 0; i < answerButtons.length; i++) {
+                    var button = answerButtons[i];
+                    button.disabled = false; // Enable buttons
+                    button.classList.remove('opacity-50', 'bg-green-700', 'bg-red-700', 'bg-purple-700', 'bg-blue-700'); // Reset button styles
+                    button.classList.add(
+                        button.dataset.type === 'entrada' ? 'bg-blue-500' :
+                        button.dataset.type === 'salida' ? 'bg-red-500' :
+                        button.dataset.type === 'ambos' ? 'bg-purple-500' : 'bg-green-500'
+                    );
+                    button.classList.add(
+                        button.dataset.type === 'entrada' ? 'hover:bg-blue-600' :
+                        button.dataset.type === 'salida' ? 'hover:bg-red-600' :
+                        button.dataset.type === 'ambos' ? 'hover:bg-purple-600' : 'hover:bg-green-600'
+                    );
+                }
+            }
+            answerBlocked = false; // Allow answering for the new peripheral
+        } else {
+            endGame(); // End game if no more peripherals
+        }
+    }
+
+    function checkAnswer(selectedType) {
+        var responseTime = Date.now() - questionStartTime;
+        if (answerBlocked) return; // Prevent multiple answers for the same question
+        answerBlocked = true;
+
+        var peripheral = shuffledPeripherals[currentPeripheralIndex];
+        var correctType = peripheral.correctType;
+        var selectedButton = document.querySelector('.answer-button[data-type="' + selectedType + '"]');
+
         if (answerButtons) {
-            answerButtons.forEach(button => {
-                button.disabled = false; // Enable buttons
-                button.classList.remove('opacity-50', 'bg-green-700', 'bg-red-700', 'bg-purple-700', 'bg-blue-700'); // Reset button styles
-                button.classList.add(
-                    button.dataset.type === 'entrada' ? 'bg-blue-500' :
-                    button.dataset.type === 'salida' ? 'bg-red-500' :
-                    button.dataset.type === 'ambos' ? 'bg-purple-500' : 'bg-green-500'
-                );
-                button.classList.add(
-                    button.dataset.type === 'entrada' ? 'hover:bg-blue-600' :
-                    button.dataset.type === 'salida' ? 'hover:bg-red-600' :
-                    button.dataset.type === 'ambos' ? 'hover:bg-purple-600' : 'hover:bg-green-600'
-                );
+            for (var i = 0; i < answerButtons.length; i++) {
+                answerButtons[i].disabled = true;
+            }
+        }
+
+        var isCorrect = selectedType === correctType;
+
+        // Captura de Analítica Unificada (Fase 5)
+        if (app) {
+            totalXP += app.calculateXP(isCorrect, 'Básico', responseTime, 'perifericos');
+
+            app.recordAction({
+                asignatura: 'Informática I',
+                nivel: 'Básico',
+                preguntaId: 'perif_' + peripheral.name,
+                tema: 'Hardware',
+                respuestaSeleccionada: selectedType,
+                respuestaCorrecta: correctType,
+                esCorrecta: isCorrect,
+                tiempoRespuesta: responseTime,
+                cambiosRespuesta: responseChanges
             });
         }
-        answerBlocked = false; // Allow answering for the new peripheral
-    } else {
-        endGame(); // End game if no more peripherals
-    }
-}
 
-function checkAnswer(selectedType) {
-    const responseTime = Date.now() - questionStartTime;
-    if (answerBlocked) return; // Prevent multiple answers for the same question
-    answerBlocked = true;
-
-    const peripheral = shuffledPeripherals[currentPeripheralIndex];
-    const correctType = peripheral.correctType;
-    const selectedButton = document.querySelector(`.answer-button[data-type="${selectedType}"]`);
-
-    if (answerButtons) answerButtons.forEach(button => button.disabled = true); // Disable all answer buttons immediately
-
-    const isCorrect = selectedType === correctType;
-
-    // Captura de Analítica Unificada (Fase 5)
-    if (window.GamesAdapter) {
-        totalXP += window.GamesAdapter.calculateXP(isCorrect, 'Básico', responseTime, 'perifericos');
-
-        GamesAdapter.recordAction({
-            asignatura: 'Informática I',
-            nivel: 'Básico',
-            preguntaId: 'perif_' + peripheral.name,
-            tema: 'Hardware',
-            respuestaSeleccionada: selectedType,
-            respuestaCorrecta: correctType,
-            esCorrecta: isCorrect,
-            tiempoRespuesta: responseTime,
-            cambiosRespuesta: responseChanges
-        });
-    }
-
-    if (isCorrect) {
-        score++;
-        if (peripheralCard) peripheralCard.classList.add('border-green-500');
-        if (selectedButton) {
-            selectedButton.classList.remove(
-                selectedButton.dataset.type === 'entrada' ? 'bg-blue-500' :
-                selectedButton.dataset.type === 'salida' ? 'bg-red-500' :
-                selectedButton.dataset.type === 'ambos' ? 'bg-purple-500' : 'bg-green-500'
-            );
-            selectedButton.classList.add('bg-green-700');
-        }
-    } else {
-        errors++;
-        score--; // Deduct a point for incorrect answer
-        if (peripheralCard) peripheralCard.classList.add('border-red-500');
-        if (selectedButton) {
-            selectedButton.classList.remove(
-                selectedButton.dataset.type === 'entrada' ? 'bg-blue-500' :
-                selectedButton.dataset.type === 'salida' ? 'bg-red-500' :
-                selectedButton.dataset.type === 'ambos' ? 'bg-purple-500' : 'bg-green-500'
-            );
-            selectedButton.classList.add('bg-red-700');
-        }
-        // Highlight the correct answer
-        const correctAnswerButton = document.querySelector(`.answer-button[data-type="${correctType}"]`);
-        if (correctAnswerButton) {
-            correctAnswerButton.classList.remove(
-                correctAnswerButton.dataset.type === 'entrada' ? 'bg-blue-500' :
-                correctAnswerButton.dataset.type === 'salida' ? 'bg-red-500' :
-                correctAnswerButton.dataset.type === 'ambos' ? 'bg-purple-500' : 'bg-green-500'
-            );
-            correctAnswerButton.classList.add('bg-green-700'); // Or a distinct highlight color
-        }
-    }
-    if (scoreDisplay) scoreDisplay.textContent = score;
-
-    // Auto-advance to the next peripheral after a shorter delay
-    setTimeout(() => {
-        currentPeripheralIndex++;
-        if (currentPeripheralIndex < shuffledPeripherals.length) {
-            displayPeripheral();
+        if (isCorrect) {
+            score++;
+            if (peripheralCard) peripheralCard.classList.add('border-green-500');
+            if (selectedButton) {
+                selectedButton.classList.remove(
+                    selectedButton.dataset.type === 'entrada' ? 'bg-blue-500' :
+                    selectedButton.dataset.type === 'salida' ? 'bg-red-500' :
+                    selectedButton.dataset.type === 'ambos' ? 'bg-purple-500' : 'bg-green-500'
+                );
+                selectedButton.classList.add('bg-green-700');
+            }
         } else {
-            endGame();
+            errors++;
+            score--; // Deduct a point for incorrect answer
+            if (peripheralCard) peripheralCard.classList.add('border-red-500');
+            if (selectedButton) {
+                selectedButton.classList.remove(
+                    selectedButton.dataset.type === 'entrada' ? 'bg-blue-500' :
+                    selectedButton.dataset.type === 'salida' ? 'bg-red-500' :
+                    selectedButton.dataset.type === 'ambos' ? 'bg-purple-500' : 'bg-green-500'
+                );
+                selectedButton.classList.add('bg-red-700');
+            }
+            // Highlight the correct answer
+            var correctAnswerButton = document.querySelector('.answer-button[data-type="' + correctType + '"]');
+            if (correctAnswerButton) {
+                correctAnswerButton.classList.remove(
+                    correctAnswerButton.dataset.type === 'entrada' ? 'bg-blue-500' :
+                    correctAnswerButton.dataset.type === 'salida' ? 'bg-red-500' :
+                    correctAnswerButton.dataset.type === 'ambos' ? 'bg-purple-500' : 'bg-green-500'
+                );
+                correctAnswerButton.classList.add('bg-green-700'); // Or a distinct highlight color
+            }
         }
-    }, 800); // Reduced delay to 800ms (0.8 seconds)
-}
+        if (scoreDisplay) scoreDisplay.textContent = score;
 
-function startGame() {
-    if (startMenu) startMenu.classList.add('hidden');
-    if (startMenu) startMenu.classList.remove('flex'); // Ensure flex is removed
-    if (gamePlayArea) gamePlayArea.classList.remove('hidden');
-    if (gamePlayArea) gamePlayArea.classList.add('flex');
-    if (resultScreen) resultScreen.classList.add('hidden');
-    if (resultScreen) resultScreen.classList.remove('flex'); // Ensure flex is removed
-
-    shuffledPeripherals = shuffleArray([...peripherals]); // Create a shuffled copy
-    currentPeripheralIndex = 0;
-    score = 0;
-    errors = 0;
-    if (scoreDisplay) scoreDisplay.textContent = score;
-    if (timerDisplay) timerDisplay.textContent = '00:00'; // Reset timer display
-    startTime = Date.now();
-    timerInterval = setInterval(updateTimer, 1000);
-    gameStarted = true;
-    displayPeripheral();
-}
-
-function endGame() {
-    clearInterval(timerInterval);
-    gameStarted = false;
-
-    if (gamePlayArea) gamePlayArea.classList.add('hidden');
-    if (gamePlayArea) gamePlayArea.classList.remove('flex');
-    if (resultScreen) resultScreen.classList.remove('hidden');
-    if (resultScreen) resultScreen.classList.add('flex');
-
-    const finalTimeSeconds = Math.floor((Date.now() - startTime) / 1000);
-    const finalTimeFormatted = formatTime(finalTimeSeconds);
-
-    if (correctAnswersDisplay) correctAnswersDisplay.textContent = score;
-    if (incorrectAnswersDisplay) incorrectAnswersDisplay.textContent = errors;
-    if (finalTimeDisplay) finalTimeDisplay.textContent = finalTimeFormatted;
-
-    // Guardar en el portal vía Adaptador Unificado (Sincronización Silenciosa)
-    if (window.GamesAdapter) {
-        GamesAdapter.finishSession('Informática I', 'Básico', score, totalXP);
+        // Auto-advance to the next peripheral after a shorter delay
+        setTimeout(function() {
+            currentPeripheralIndex++;
+            if (currentPeripheralIndex < shuffledPeripherals.length) {
+                displayPeripheral();
+            } else {
+                endGame();
+            }
+        }, 800); // Reduced delay to 800ms (0.8 seconds)
     }
-}
 
-function resetGame() {
-    if (startMenu) startMenu.classList.remove('hidden');
-    if (startMenu) startMenu.classList.add('flex');
-    if (gamePlayArea) gamePlayArea.classList.add('hidden');
-    if (gamePlayArea) gamePlayArea.classList.remove('flex');
-    if (resultScreen) resultScreen.classList.add('hidden');
-    if (resultScreen) resultScreen.classList.remove('flex');
-    if (timerDisplay) timerDisplay.textContent = '00:00';
-    if (peripheralCard) peripheralCard.classList.remove('border-green-500', 'border-red-500'); // Reset border color
-    clearInterval(timerInterval); // Ensure timer is stopped
+    function startGame() {
+        if (startMenu) {
+            startMenu.classList.add('hidden');
+            startMenu.classList.remove('flex'); // Ensure flex is removed
+        }
+        if (gamePlayArea) {
+            gamePlayArea.classList.remove('hidden');
+            gamePlayArea.classList.add('flex');
+        }
+        if (resultScreen) {
+            resultScreen.classList.add('hidden');
+            resultScreen.classList.remove('flex'); // Ensure flex is removed
+        }
 
-    // Also reset correct/incorrect answers display on reset
-    if (correctAnswersDisplay) correctAnswersDisplay.textContent = 0;
-    if (incorrectAnswersDisplay) incorrectAnswersDisplay.textContent = 0;
-    if (finalTimeDisplay) finalTimeDisplay.textContent = '00:00';
-}
+        shuffledPeripherals = shuffleArray(peripherals.slice()); // Create a shuffled copy
+        currentPeripheralIndex = 0;
+        score = 0;
+        errors = 0;
+        if (scoreDisplay) scoreDisplay.textContent = score;
+        if (timerDisplay) timerDisplay.textContent = '00:00'; // Reset timer display
+        startTime = Date.now();
+        timerInterval = setInterval(updateTimer, 1000);
+        gameStarted = true;
+        displayPeripheral();
+    }
 
-// Expose initializePeripheralsGame to the global scope so index.html can call it
-window.initializePeripheralsGame = initializePeripheralsGame;
+    function endGame() {
+        clearInterval(timerInterval);
+        gameStarted = false;
+
+        if (gamePlayArea) {
+            gamePlayArea.classList.add('hidden');
+            gamePlayArea.classList.remove('flex');
+        }
+        if (resultScreen) {
+            resultScreen.classList.remove('hidden');
+            resultScreen.classList.add('flex');
+        }
+
+        var finalTimeSeconds = Math.floor((Date.now() - startTime) / 1000);
+        var finalTimeFormatted = formatTime(finalTimeSeconds);
+
+        if (correctAnswersDisplay) correctAnswersDisplay.textContent = score;
+        if (incorrectAnswersDisplay) incorrectAnswersDisplay.textContent = errors;
+        if (finalTimeDisplay) finalTimeDisplay.textContent = finalTimeFormatted;
+
+        // Guardar en el portal vía Adaptador Unificado (Sincronización Silenciosa)
+        if (app) {
+            app.finishSession('Informática I', 'Básico', score, totalXP);
+        }
+    }
+
+    function resetGame() {
+        if (startMenu) {
+            startMenu.classList.remove('hidden');
+            startMenu.classList.add('flex');
+        }
+        if (gamePlayArea) {
+            gamePlayArea.classList.add('hidden');
+            gamePlayArea.classList.remove('flex');
+        }
+        if (resultScreen) {
+            resultScreen.classList.add('hidden');
+            resultScreen.classList.remove('flex');
+        }
+        if (timerDisplay) timerDisplay.textContent = '00:00';
+        if (peripheralCard) peripheralCard.classList.remove('border-green-500', 'border-red-500'); // Reset border color
+        clearInterval(timerInterval); // Ensure timer is stopped
+
+        // Also reset correct/incorrect answers display on reset
+        if (correctAnswersDisplay) correctAnswersDisplay.textContent = 0;
+        if (incorrectAnswersDisplay) incorrectAnswersDisplay.textContent = 0;
+        if (finalTimeDisplay) finalTimeDisplay.textContent = '00:00';
+    }
+
+    // Expose initializePeripheralsGame to the global scope so index.html can call it
+    window.initializePeripheralsGame = initializePeripheralsGame;
+
+})(window, document, window.GamesAdapter);
