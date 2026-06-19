@@ -1483,7 +1483,7 @@
                     store: 'academic_stats',
                     onUpdate: function(data) { renderPerformanceHTML(data); }
                 }).then(function(res) {
-                    if (res.status === 'success') renderPerformanceHTML(res);
+                    if (res && (res.status === 'success' || res.data || res.allHistory)) renderPerformanceHTML(res);
                 });
             }
         }
@@ -1493,7 +1493,11 @@
         var container = document.getElementById('performance-table-body');
         if (!container) return;
 
-        window.userGameStats = res.data || (res.id ? null : res) || {};
+        // Normalización de datos (Hallazgo Core)
+        var data = res.data || (res.status === 'success' ? {} : res);
+        if (res.id && !res.data) data = res; // Si viene un sobre de persistence
+        window.userGameStats = data;
+
         var history = res.allHistory || [];
 
         var approvedCount = 0;
@@ -1599,9 +1603,10 @@
             }).join('');
         }
 
-        if (statsEntries.length > 0) {
-            var dashboard = document.getElementById('performance-dashboard');
-            if (dashboard) dashboard.classList.remove('hidden');
+        // Forzar visibilidad del dashboard si hay datos
+        var dashboard = document.getElementById('performance-dashboard');
+        if (dashboard && (statsEntries.length > 0 || history.length > 0)) {
+            dashboard.classList.remove('hidden');
         }
 
         if (history.length > 0) {

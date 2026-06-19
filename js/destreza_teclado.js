@@ -259,23 +259,27 @@
     function renderPersonalRecord(record) {
         if (!record) return;
         var scoreSpan = document.getElementById('init-max-score');
-        if (!scoreSpan) return;
 
         var maxWPM = 0;
 
-        // Buscar en el objeto de estadísticas académicas (QuizPro_Asignatura_...)
-        // O en las claves directas del juego
-        var keys = Object.keys(record);
+        // Normalización de búsqueda de récord (Hallazgo Core)
+        var statsData = record.data || record;
+        var keys = Object.keys(statsData);
         keys.forEach(function(key) {
-            var entry = record[key];
+            var entry = statsData[key];
             // Revisar si es una entrada de este juego o tiene el campo wpm
-            if (key.indexOf('dexterity') !== -1 || key.indexOf('Destreza en el Teclado') !== -1 || entry.juego === 'dexterity') {
+            if (key.indexOf('dexterity') !== -1 || key.indexOf('Destreza en el Teclado') !== -1 || (entry && entry.juego === 'dexterity')) {
                 var wpm = parseFloat(entry.wpm || entry.maxWPM || entry.puntaje || 0);
                 if (wpm > maxWPM) maxWPM = wpm;
             }
         });
 
-        scoreSpan.textContent = Math.round(maxWPM);
+        if (scoreSpan) scoreSpan.textContent = Math.round(maxWPM);
+
+        // Renderizar Tarjeta Analítica Unificada (v7.7)
+        if (window.renderUnifiedAnalyticsCard) {
+            window.renderUnifiedAnalyticsCard('keyboard-analytics-container', 'dexterity', record);
+        }
     }
 
     // Inicializa el juego al cargar la página o al volver a jugar

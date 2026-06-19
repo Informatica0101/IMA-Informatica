@@ -59,35 +59,57 @@
 
     // Function to initialize DOM elements and attach event listeners
     // This function now accepts the gameDataStorage object
+    function renderLeaderboard(lb) {
+        var miniLb = document.getElementById('mini-leaderboard');
+        if (miniLb && lb && lb.global) {
+            miniLb.innerHTML = lb.global.slice(0, 5).map(function(u, i) {
+                return '<div class="flex items-center justify-between text-[10px] font-bold py-1 border-b border-indigo-50 last:border-0">' +
+                    '<span class="text-indigo-700">' + (i+1) + '. ' + (u.nombre ? u.nombre.split(' ')[0] : 'Alumno') + '</span>' +
+                    '<div class="flex flex-col items-end">' +
+                        '<span class="text-indigo-500">' + u.promedio + '%</span>' +
+                        '<span class="text-[8px] text-gray-400 font-black">' + (u.xp || 0).toLocaleString() + ' XP</span>' +
+                    '</div>' +
+                '</div>';
+            }).join('');
+        }
+    }
+
+    function renderPersonalRecord(record) {
+        if (!record) return;
+        var scoreSpan = document.getElementById('init-max-score');
+
+        // Normalización de búsqueda de récord (Hallazgo Core)
+        var maxPts = 0;
+        var statsData = record.data || record;
+        var keys = Object.keys(statsData);
+        keys.forEach(function(key) {
+            var entry = statsData[key];
+            if (key.indexOf('perifericos') !== -1 || key.indexOf('Juego de Periféricos') !== -1 || (entry && entry.juego === 'perifericos')) {
+                var pts = parseFloat(entry.maxScore || entry.score || entry.puntaje || 0);
+                if (pts > maxPts) maxPts = pts;
+            }
+        });
+
+        if (scoreSpan) scoreSpan.textContent = Math.round(maxPts);
+
+        // Renderizar Tarjeta Analítica Unificada (v7.7)
+        if (window.renderUnifiedAnalyticsCard) {
+            window.renderUnifiedAnalyticsCard('peripherals-analytics-container', 'perifericos', record);
+        }
+    }
+
     function initializePeripheralsGame(gameDataStorage) {
         var user = JSON.parse(localStorage.getItem('currentUser') || 'null');
         var isGuest = !user;
 
         if (app) {
-            app.init('perifericos', false).then(function(res) {
-                var lb = res.lb;
-                var record = res.record;
-
-                // Mini Leaderboard (REQ 7: Top 5 con XP)
-                var miniLb = document.getElementById('mini-leaderboard');
-                if (miniLb && lb && lb.global) {
-                    miniLb.innerHTML = lb.global.slice(0, 5).map(function(u, i) {
-                        return '<div class="flex items-center justify-between text-[10px] font-bold py-1 border-b border-indigo-50 last:border-0">' +
-                            '<span class="text-indigo-700">' + (i+1) + '. ' + (u.nombre ? u.nombre.split(' ')[0] : 'Alumno') + '</span>' +
-                            '<div class="flex flex-col items-end">' +
-                                '<span class="text-indigo-500">' + u.promedio + '%</span>' +
-                                '<span class="text-[8px] text-gray-400 font-black">' + (u.xp || 0).toLocaleString() + ' XP</span>' +
-                            '</div>' +
-                        '</div>';
-                    }).join('');
-                }
-
-                // Récord
-                var myRecord = (record && record["Juego de Periféricos"]) || JSON.parse(localStorage.getItem('guest_record_perifericos') || 'null');
-                if (myRecord) {
-                    var scoreSpan = document.getElementById('init-max-score');
-                    if (scoreSpan) scoreSpan.textContent = myRecord.maxScore || myRecord.score || 0;
-                }
+            app.init('perifericos', false).then(function() {
+                app.getLeaderboard('perifericos', function(lb) {
+                    renderLeaderboard(lb);
+                });
+                app.getPersonalRecord(function(record) {
+                    renderPersonalRecord(record);
+                });
             });
         }
 

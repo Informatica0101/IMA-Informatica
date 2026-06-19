@@ -945,3 +945,158 @@ window.setupCodeCopyButtons = function() {
         wrapper.appendChild(copyBtn);
     }
 };
+
+/**
+ * Renderizado de Tarjeta Analítica Unificada (v7.7)
+ * Estandariza la visualización de estadísticas en todos los minijuegos.
+ */
+window.renderUnifiedAnalyticsCard = function(containerId, gameId, stats) {
+    var container = document.getElementById(containerId);
+    if (!container) return;
+
+    var history = stats.allHistory || [];
+    var gameLogs = history.filter(function(h) {
+        return (h[4] === gameId) || (h[3] === gameId); // Detectar por ID en Logros o Analytics
+    });
+
+    if (gameLogs.length === 0) {
+        container.innerHTML = '<div class="p-8 text-center bg-gray-50 rounded-[2rem] border border-dashed border-gray-200">' +
+            '<p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Sin datos históricos para este juego</p>' +
+        '</div>';
+        container.classList.remove('hidden');
+        return;
+    }
+
+    // 1. Procesamiento de Métricas Base
+    var hits = 0, misses = 0, totalXP = 0, maxScore = 0;
+    var totalResponseTime = 0, correctResponseTime = 0, correctCount = 0;
+
+    gameLogs.forEach(function(h) {
+        // Si es de QuizProAnalytics (21 columnas)
+        if (h.length >= 20) {
+            var isCorrect = String(h[12]) === "true";
+            if (isCorrect) {
+                hits++;
+                correctResponseTime += parseFloat(h[13]) || 0;
+                correctCount++;
+            } else {
+                misses++;
+            }
+            totalResponseTime += parseFloat(h[13]) || 0;
+            totalXP += parseFloat(h[20]) || 0;
+        } else {
+            // Si es de Logros (9 columnas)
+            var score = parseFloat(h[5]) || 0;
+            if (score > maxScore) maxScore = score;
+            totalXP += parseFloat(h[8]) || 0;
+        }
+    });
+
+    // Buscar récord real en el objeto de datos si no se encontró en logs
+    if (stats.data && stats.data[gameId]) {
+        maxScore = Math.max(maxScore, stats.data[gameId].maxScore || 0);
+    }
+
+    var precision = Math.round((hits / Math.max(1, hits + misses)) * 100);
+    var ratio = (hits / Math.max(1, misses)).toFixed(1);
+    var avgResponseTime = (correctCount > 0 ? (correctResponseTime / correctCount / 1000) : 0).toFixed(2);
+
+    // 2. Métricas Específicas
+    var specificHtml = '';
+    if (gameId === 'dexterity') {
+        var wpmLogs = gameLogs.filter(function(h) { return h.length < 20; }); // Logros
+        var maxWPM = 0;
+        wpmLogs.forEach(function(l) { if (parseFloat(l[5]) > maxWPM) maxWPM = parseFloat(l[5]); });
+        specificHtml =
+            '<div class="grid grid-cols-2 gap-4 mt-4">' +
+                '<div class="p-3 bg-blue-50 rounded-xl"> <p class="text-[7px] font-black text-blue-400 uppercase">Mejor WPM</p> <p class="text-lg font-black text-blue-700">' + Math.round(maxWPM) + '</p> </div>' +
+                '<div class="p-3 bg-indigo-50 rounded-xl"> <p class="text-[7px] font-black text-indigo-400 uppercase">XP Total</p> <p class="text-lg font-black text-indigo-700">' + Math.round(totalXP).toLocaleString() + '</p> </div>' +
+            '</div>';
+    } else if (gameId === 'perifericos') {
+        specificHtml =
+            '<div class="grid grid-cols-2 gap-4 mt-4">' +
+                '<div class="p-3 bg-amber-50 rounded-xl"> <p class="text-[7px] font-black text-amber-500 uppercase">TR Promedio</p> <p class="text-lg font-black text-amber-700">' + avgResponseTime + 's</p> </div>' +
+                '<div class="p-3 bg-emerald-50 rounded-xl"> <p class="text-[7px] font-black text-emerald-500 uppercase">Precisión</p> <p class="text-lg font-black text-emerald-700">' + precision + '%</p> </div>' +
+            '</div>';
+    } else if (gameId === 'webmaster') {
+        specificHtml =
+            '<div class="grid grid-cols-2 gap-4 mt-4">' +
+                '<div class="p-3 bg-teal-50 rounded-xl"> <p class="text-[7px] font-black text-teal-500 uppercase">Mejor Marca</p> <p class="text-lg font-black text-teal-700">' + Math.round(maxScore) + '</p> </div>' +
+                '<div class="p-3 bg-purple-50 rounded-xl"> <p class="text-[7px] font-black text-purple-400 uppercase">Ratio A/E</p> <p class="text-lg font-black text-purple-700">' + ratio + '</p> </div>' +
+            '</div>';
+    }
+
+    // 3. Estructura de la Tarjeta
+    container.innerHTML =
+        '<div class="p-6 bg-slate-900 rounded-[2rem] text-white shadow-2xl relative overflow-hidden animate-fade-in">' +
+            '<div class="absolute top-0 right-0 w-32 h-32 bg-blue-600/10 rounded-full -mr-16 -mt-16 blur-2xl"></div>' +
+            '<div class="relative z-10">' +
+                '<div class="flex justify-between items-center mb-6">' +
+                    '<div>' +
+                        '<p class="text-[8px] font-black text-blue-400 uppercase tracking-[0.2em]">Dashboard Analítico</p>' +
+                        '<h4 class="text-lg font-bold tracking-tight">Rendimiento Histórico</h4>' +
+                    '</div>' +
+                    '<div class="px-3 py-1 bg-white/10 rounded-lg backdrop-blur-md">' +
+                        '<span class="text-xs font-black text-emerald-400">' + maxScore + '</span>' +
+                        '<span class="text-[7px] text-white/50 uppercase ml-1">Puntaje Máx</span>' +
+                    '</div>' +
+                '</div>' +
+
+                '<div class="grid grid-cols-4 gap-2 mb-6">' +
+                    '<div class="text-center"> <p class="text-[6px] font-black text-white/30 uppercase mb-1">Aciertos</p> <p class="text-xs font-bold text-emerald-400">' + hits + '</p> </div>' +
+                    '<div class="text-center"> <p class="text-[6px] font-black text-white/30 uppercase mb-1">Errores</p> <p class="text-xs font-bold text-red-400">' + misses + '</p> </div>' +
+                    '<div class="text-center"> <p class="text-[6px] font-black text-white/30 uppercase mb-1">Precisión</p> <p class="text-xs font-bold text-blue-400">' + precision + '%</p> </div>' +
+                    '<div class="text-center"> <p class="text-[6px] font-black text-white/30 uppercase mb-1">Ratio</p> <p class="text-xs font-bold text-purple-400">' + ratio + '</p> </div>' +
+                '</div>' +
+
+                '<div class="bg-white/5 rounded-2xl p-4 mb-4">' +
+                    '<p class="text-[7px] font-black text-white/30 uppercase mb-3 tracking-widest text-center">Evolución de Desempeño</p>' +
+                    '<div class="h-32 w-full">' +
+                        '<canvas id="unified-trend-chart-' + gameId + '"></canvas>' +
+                    '</div>' +
+                '</div>' +
+
+                specificHtml +
+            '</div>' +
+        '</div>';
+
+    container.classList.remove('hidden');
+
+    // 4. Renderizado de Gráfica
+    setTimeout(function() {
+        var ctx = document.getElementById('unified-trend-chart-' + gameId);
+        if (!ctx) return;
+
+        // Extraer últimos 10 puntajes
+        var trendData = gameLogs.slice(-10).map(function(h) {
+            return h.length >= 20 ? (String(h[12]) === "true" ? 100 : 0) : parseFloat(h[5]);
+        });
+        var trendLabels = trendData.map(function(_, i) { return 'P' + (i+1); });
+
+        if (window['chart_' + gameId]) window['chart_' + gameId].destroy();
+        window['chart_' + gameId] = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: trendLabels,
+                datasets: [{
+                    data: trendData,
+                    borderColor: '#3b82f6',
+                    backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                    fill: true,
+                    tension: 0.4,
+                    borderWidth: 2,
+                    pointRadius: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: { beginAtZero: true, max: 100, display: false },
+                    x: { display: false }
+                },
+                plugins: { legend: { display: false } }
+            }
+        });
+    }, 100);
+};

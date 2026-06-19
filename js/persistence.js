@@ -155,6 +155,12 @@ window.PersistenceManager = {
         var cacheKey = key || self.getActiveId();
 
         return this.get(store, cacheKey).then(function(local) {
+            // REQ: No sobrescribir con fallbacks vacíos si ya hay datos locales (v7.7)
+            if (serverData && serverData.isFallback && local && local.data) {
+                console.log("[Persistence] Ignorando fallback de servidor para preservar datos locales:", store);
+                return local.data;
+            }
+
             // REQ: Forzar actualización si vienen datos válidos del servidor (Hallazgo 6)
             var hasNewData = serverData && (serverData.status === 'success' || (serverData.data && serverData.data.length > 0) || serverData.allHistory || Array.isArray(serverData));
 
@@ -171,7 +177,7 @@ window.PersistenceManager = {
                     return newData;
                 });
             }
-            return local ? local.data : null;
+            return local ? local.data : (serverData ? (serverData.data || serverData) : null);
         });
     }
 };

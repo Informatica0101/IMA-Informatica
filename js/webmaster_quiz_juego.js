@@ -457,18 +457,23 @@
     function renderPersonalRecord(record) {
         if (!record) return;
         var scoreSpan = document.getElementById('init-max-score');
-        if (!scoreSpan) return;
 
         var maxPts = 0;
-        var keys = Object.keys(record);
+        var statsData = record.data || record;
+        var keys = Object.keys(statsData);
         keys.forEach(function(key) {
-            var entry = record[key];
-            if (key.indexOf('webmaster') !== -1 || key.indexOf('WebMaster Quiz') !== -1 || entry.juego === 'webmaster') {
+            var entry = statsData[key];
+            if (key.indexOf('webmaster') !== -1 || key.indexOf('WebMaster Quiz') !== -1 || (entry && entry.juego === 'webmaster')) {
                 var pts = parseFloat(entry.maxScore || entry.score || entry.puntaje || 0);
                 if (pts > maxPts) maxPts = pts;
             }
         });
-        scoreSpan.textContent = Math.round(maxPts);
+        if (scoreSpan) scoreSpan.textContent = Math.round(maxPts);
+
+        // Renderizar Tarjeta Analítica Unificada (v7.7)
+        if (window.renderUnifiedAnalyticsCard) {
+            window.renderUnifiedAnalyticsCard('webmaster-analytics-container', 'webmaster', record);
+        }
     }
 
     function initQuizGame() {
