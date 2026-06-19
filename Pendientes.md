@@ -139,3 +139,19 @@
     - Persistencia del teclado virtual en móviles mediante el flag 'isProcessingFeedback' (evitar focus loss).
     - Mantener la restricción del uso del mouse en la versión web.
 - **Estado: [X] Completada (2026-06-17)**
+
+### [T-024] Aislamiento de Estados y Reparación de Tableros de Minijuegos
+- **Origen del Hallazgo:** Auditoría Técnica (2026-06-17)
+- **Severidad/Clasificación:** Crítico
+- **Archivos Involucrados:** js/destreza_teclado.js, js/perifericos_juego.js, js/webmaster_quiz_juego.js, js/quizpro.js
+- **Dependencias Expuestas:** GamesAdapter
+- **Descripción del Alcance:**
+    - Envolver los scripts de minijuegos en IIFEs para evitar colisiones de variables globales (totalXP, score).
+    - Exportar explícitamente las funciones de inicialización y control al objeto 'window'.
+    - Implementar la recuperación del récord personal en WebMaster Quiz.
+    - Corregir el estilo visual del mini-leaderboard en WebMaster Quiz.
+- **Criterios de Aceptación:**
+    - No existen SyntaxErrors por redeclaración en la consola.
+    - Todos los minijuegos cargan sus récords personales correctamente.
+    - El ranking de WebMaster Quiz es legible y coherente con el diseño institucional.
+- **Estado:** [X] Completada (2026-06-17)
