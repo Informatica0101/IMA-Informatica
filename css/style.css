@@ -622,3 +622,49 @@ footer a:hover {
     font-size: 0.85em !important;
     font-weight: 600 !important;
 }
+
+/* --- Student Sidebar Navigation (v7.7.1) --- */
+.subject-tab-btn {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.subject-tab-btn.active {
+    background-color: rgba(37, 99, 235, 0.05);
+}
+
+.subject-tab-btn.active span {
+    color: #111827;
+}
+
+.subject-tab-btn.active .rounded-full {
+    background-color: #2563eb;
+    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+}
+
+.subject-tab-btn:hover:not(.active) {
+    background-color: #f8fafc;
+}
+
+.subject-tab-btn:hover:not(.active) .rounded-full {
+    background-color: #cbd5e1;
+}
+
+/* Assignment Card Modernization */
+.assignment-card {
+    border-radius: 1.5rem !important;
+    padding: 1.5rem !important;
+    border: 1px solid #f1f5f9 !important;
+    background: #ffffff !important;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.assignment-card:hover {
+    border-color: #e2e8f0 !important;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05) !important;
+    transform: translateY(-2px);
+}
+
+.assignment-card.is-expanded {
+    border-color: #3b82f6 !important;
+    box-shadow: 0 20px 40px -10px rgba(59, 130, 246, 0.08) !important;
+}

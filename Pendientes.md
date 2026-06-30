@@ -173,3 +173,21 @@
     - Banco de preguntas completo según requerimiento.
     - Interfaz libre de comillas innecesarias en fragmentos de código.
 - **Estado:** [ ] Pendiente | [ ] En Ejecución | [X] Completada
+
+### [T-026] Expansión del Módulo de Configuración Global y Alcance Académico
+- **Origen del Hallazgo:** Auditoría Técnica - EXPANSIÓN CONFIGURACIÓN GLOBAL (2026-06-20)
+- **Severidad/Clasificación:** Crítico
+- **Archivos Involucrados:** teacher-dashboard.html, js/teacher.js, js/config.js, js/index-ui.js, js/student.js
+- **Dependencias Expuestas:** fetchApi, PersistenceManager, window.PARCIAL_ACTUAL, window.isContentAuthorized
+- **Descripción del Alcance:**
+    - Expandir la interfaz de administración en `teacher-dashboard.html` para incluir selectores de Parcial, Grado, Sección, Asignatura y Tema.
+    - Implementar en `js/teacher.js` la lógica de población dinámica de selectores (cascada) usando `js/data.js` como fuente y la persistencia del objeto de alcance global.
+    - Actualizar `js/config.js` para centralizar el estado del alcance global activo.
+    - Aplicar filtrado restrictivo en el Dashboard del Alumno (`js/student.js`) y Profesor (`js/teacher.js`) para que solo muestren actividades del parcial y alcance configurado.
+    - Modificar la navegación de recursos en `js/index-ui.js` para bloquear el acceso a contenidos fuera del alcance global definido.
+- **Criterios de Aceptación:**
+    - El administrador puede definir un alcance de hasta 5 niveles (Parcial, Grado, Sección, Asignatura, Tema).
+    - Los alumnos solo ven tareas/exámenes que coincidan con el alcance global activo.
+    - El Centro de Recursos (`index.html`) redirige o filtra automáticamente al contenido exacto del alcance global.
+    - No se altera la lógica de negocio de parciales individuales preexistente.
+- **Estado:** [ ] Pendiente | [ ] En Ejecución | [X] Completada

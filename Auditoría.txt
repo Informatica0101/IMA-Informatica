@@ -37,3 +37,17 @@ Archivo: js/quizpro.js
 
 Diagnóstico Transversal:
 La carga dinámica de scripts en el mismo contexto de 'index.html' sin aislamiento (IIFE) está provocando SyntaxErrors por redeclaración de constantes/variables de bloque (let/const) y colisiones de estado entre minijuegos.
+
+AUDITORÍA TÉCNICA - REFACTORIZACIÓN DASHBOARD ESTUDIANTE (ASIGNATURAS) - Tue Jun 30 18:37:28 UTC 2026
+
+Archivo: js/student.js
+Sector: Función renderParcialTabs (Línea 512)
+Hallazgo [Tarea]: Actualmente genera botones basados en los parciales únicos de las actividades.
+Recomendación: Cambiar el pivote de navegación. Ahora debe generar botones basados en las asignaturas únicas, pero solo de las actividades que pertenecen al parcial activo (global scope).
+
+Sector: Función renderSubjectNav (Línea 441)
+Hallazgo [Tarea]: Esta función actualmente actúa como un sub-filtro debajo de los parciales.
+Recomendación: Integrar su lógica en la navegación principal o eliminarla si se unifica en la nueva función de pestañas de asignatura.
+
+Sector: Función renderActivities (Línea 569)
+Hallazgo [Observación]: Se encarga del renderizado final de las cards. Se mantiene igual, pero recibirá el set filtrado por (Parcial Activo + Asignatura Seleccionada).

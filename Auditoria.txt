@@ -371,3 +371,34 @@ Impacto: La funcionalidad es limitada o nula en navegadores móviles y dispositi
 
 Sector: Flujo de Cierre
 Hallazgo [Bajo]: El botón quizExitGameButton depende de window.returnToMainContent, pero no se valida su existencia antes de llamar.
+
+AUDITORÍA TÉCNICA - EXPANSIÓN CONFIGURACIÓN GLOBAL - Tue Jun 30 17:46:05 UTC 2026
+
+Archivo: teacher-dashboard.html
+Sector: Tarjeta de Gestión Académica (Líneas 474-500)
+Hallazgo [Tarea]: Se requiere expandir los selectores para incluir Grado, Sección, Asignatura y Tema.
+Impacto: Actualmente solo permite Parcial y selección múltiple de Asignaturas, lo cual es insuficiente para el alcance dinámico solicitado.
+
+Archivo: js/teacher.js
+Sector: Función loadAcademicAdminData y renderAsignaturasCheckboxes
+Hallazgo [Tarea]: La lógica actual solo maneja ParcialActual y AsignaturasActivas.
+Impacto: Se debe refactorizar para manejar un objeto de configuración global más robusto y poblar selectores dependientes (ej. Temas dependientes de Asignatura).
+
+Archivo: js/config.js
+Sector: window.PARCIAL_ACTUAL y window.isContentAuthorized
+Hallazgo [Tarea]: isContentAuthorized solo valida Parcial.
+Impacto: Debe validar el objeto de configuración global (Grado, Sección, Asignatura, Tema) para cumplir con la restricción dinámica.
+
+Archivo: js/index-ui.js
+Sector: Funciones renderDownload*
+Hallazgo [Tarea]: La navegación de recursos es semi-libre (permite elegir grado si no es alumno).
+Impacto: Debe forzar el alcance global si el administrador lo ha definido, bloqueando la navegación a otros niveles no autorizados.
+
+Archivo: js/student.js
+Sector: fetchAllActivities y renderStudentExpediente
+Hallazgo [Tarea]: El filtrado por parcial usa window.PARCIAL_ACTUAL.
+Impacto: Debe sincronizarse con la nueva configuración global.
+
+Archivo: js/data.js
+Hallazgo [Observación]: Es la fuente de verdad para la estructura de contenidos.
+Impacto: Se usará para poblar los selectores de la interfaz de administración.

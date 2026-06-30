@@ -133,6 +133,32 @@ window.setupCommonUI = function() {
     var yearSpan = document.getElementById('current-year');
     if (yearSpan) yearSpan.textContent = new Date().getFullYear();
 
+    // REQ: Sincronización de Alcance Global (v7.7)
+    if (window.PersistenceManager) {
+        window.PersistenceManager.get('academic_stats', 'config').then(function(cached) {
+            if (cached && cached.data) {
+                window.GLOBAL_SCOPE = cached.data;
+                window.PARCIAL_ACTUAL = cached.data.ParcialActual || window.PARCIAL_ACTUAL;
+                // Re-renderizar navegación con el nuevo alcance
+                window.renderCommonNav();
+            }
+        });
+    }
+
+    fetchApi('USER', 'getAcademicConfig', {}, 0, {
+        store: 'academic_stats',
+        key: 'config',
+        onUpdate: function(data) {
+            if (data) {
+                window.GLOBAL_SCOPE = data;
+                window.PARCIAL_ACTUAL = data.ParcialActual || window.PARCIAL_ACTUAL;
+                window.renderCommonNav();
+                // Notificar cambio de alcance para módulos reactivos
+                document.dispatchEvent(new CustomEvent('academic-scope-updated', { detail: data }));
+            }
+        }
+    }).catch(function(e) { console.warn("Fallo carga remota de config:", e); });
+
     // Render Navigation
     window.renderCommonNav();
 
@@ -190,9 +216,9 @@ window.setupCommonUI = function() {
             if (window.PresentationEngine && typeof window.PresentationEngine.showSlide === 'function') {
                 window.PresentationEngine.showSlide(state.slideIndex, false);
             }
-        } else if (state.type === 'student-tab') {
-            if (window.switchParcialTab) {
-                window.switchParcialTab(state.parcial, false);
+        } else if (state.type === 'student-subject') {
+            if (window.switchSubject) {
+                window.switchSubject(state.subject, false);
             }
         } else if (state.type === 'index-content') {
             if (state.view === 'grades') {
@@ -633,7 +659,7 @@ window.renderHierarchyLevel = function(type, level, params, pushState) {
                     if (role === 'Profesor' && params.parcial) {
                         authorized = secMatch && sub.partial === params.parcial;
                     } else {
-                        authorized = secMatch && window.isContentAuthorized(sub.partial, sub.name);
+                        authorized = secMatch && window.isContentAuthorized(sub.partial, params.grado, params.seccion, sub.name);
                     }
                     if (authorized) subjSet[sub.name] = true;
                 }
@@ -721,7 +747,7 @@ window.renderHierarchyLevel = function(type, level, params, pushState) {
                     var subObj = gObj.subjects[n];
                     if (subObj.name === itemVal &&
                         window.checkSectionHelper(subObj.sections, params.seccion) &&
-                        window.isContentAuthorized(subObj.partial, subObj.name)) {
+                        window.isContentAuthorized(subObj.partial, params.grado, params.seccion, subObj.name)) {
                         newParams.parcial = subObj.partial;
                         break;
                     }
@@ -816,7 +842,8 @@ window.renderCommonNav = function() {
             } else {
                 for (var x = 0; x < filteredSubjects.length; x++) {
                     var s = filteredSubjects[x];
-                    if (window.isContentAuthorized(s.partial, s.name)) {
+                    var targetSection = currentUser ? currentUser.seccion : null;
+                    if (window.isContentAuthorized(s.partial, grade.grade, targetSection, s.name)) {
                         html += '<div class="relative group/subj">' +
                             '<button class="block w-full text-left px-4 py-2 text-[10px] font-bold text-gray-600 hover:bg-blue-50 hover:text-blue-600 uppercase">' +
                                 s.name + ' <span class="float-right text-[10px] mt-0.5 ml-2">&#9656;</span>' +
@@ -875,7 +902,8 @@ window.renderCommonNav = function() {
             } else {
                 for (var m = 0; m < filteredSubjects.length; m++) {
                     var sub = filteredSubjects[m];
-                    if (window.isContentAuthorized(sub.partial, sub.name)) {
+                    var targetSection = currentUser ? currentUser.seccion : null;
+                    if (window.isContentAuthorized(sub.partial, grade.grade, targetSection, sub.name)) {
                         html += '<button class="w-full text-left px-8 py-3 font-bold text-blue-600 uppercase tracking-tighter border-b border-gray-100 flex justify-between items-center text-[10px]" onclick="this.nextElementSibling.classList.toggle(\'hidden\')">' +
                             sub.name + ' <span>&#9662;</span>' +
                         '</button>' +

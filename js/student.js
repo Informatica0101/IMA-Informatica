@@ -74,7 +74,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (cached && cached.data) {
                 allActivitiesData = cached.data.allActivities || [];
                 renderStudentExpediente(allActivitiesData);
-                renderParcialTabs(allActivitiesData);
+                renderSubjectNavigation(allActivitiesData);
                 // Si ya tenemos caché, procedemos a conciliación silenciosa sin bloquear la UI
                 hasLocalData = true;
             }
@@ -116,7 +116,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             ...tasks
                         ];
                         renderStudentExpediente(allActivitiesData);
-                        renderParcialTabs(allActivitiesData);
+                        renderSubjectNavigation(allActivitiesData);
                     }
                 }),
                 fetchApi('EXAM', 'getStudentExams', payload, 0, {
@@ -128,7 +128,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             ...exams
                         ];
                         renderStudentExpediente(allActivitiesData);
-                        renderParcialTabs(allActivitiesData);
+                        renderSubjectNavigation(allActivitiesData);
                     }
                 }),
                 fetchAndRenderLearningProfile(true) // Obtener datos de perfil sin renderizar aún
@@ -193,7 +193,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
 
             if (allActivities.length > 0) {
-                renderParcialTabs(allActivities);
+                renderSubjectNavigation(allActivities);
             } else {
                 // REQ: Manejo de respuesta vacía amigable (v3.3)
                 tasksList.innerHTML = `
@@ -234,10 +234,12 @@ document.addEventListener('DOMContentLoaded', function() {
         // REQ: Normalización de entrada para soportar Offline-First (v3.3)
         var activities = (inputActivities && inputActivities.status === 'success' && Array.isArray(inputActivities.data)) ? inputActivities.data : (Array.isArray(inputActivities) ? inputActivities : []);
 
-        // REQ: Filtro Estricto por Parcial (Incidencia 5)
+        // REQ: Filtro Estricto por Alcance Global (v7.7)
         // No mezclar históricos en el cálculo de progreso actual
+        var scope = window.GLOBAL_SCOPE || { ParcialActual: window.PARCIAL_ACTUAL };
         var currentParcialActivities = activities.filter(function(a) {
-            return window.normalizePartial(a.parcial) === window.normalizePartial(window.PARCIAL_ACTUAL);
+            var isAuthorized = window.isContentAuthorized(a.parcial, a.grado, a.seccion, a.asignatura);
+            return isAuthorized;
         });
 
         // --- Ajuste de Lógica de Progreso (Req 2) ---
@@ -379,49 +381,6 @@ document.addEventListener('DOMContentLoaded', function() {
         container.classList.remove('hidden');
     }
 
-    function renderSubjectNav(activities, selectedParcial) {
-        var container = document.getElementById('subject-nav-container');
-        if (!container) return;
-
-        // Obtener asignaturas dinámicamente filtradas por el parcial seleccionado
-        var subjects = [...new Set(activities.map(function(a) { return a.asignatura; }))]
-            .filter(function(s) { return s && s.trim() !== ""; })
-            .sort();
-
-        if (subjects.length === 0) {
-            container.innerHTML = '<p class="text-gray-400 text-[10px] uppercase font-bold p-4">No hay asignaturas en este parcial.</p>';
-            tasksList.innerHTML = '<p class="text-gray-500 text-center py-8">No hay actividades registradas.</p>';
-            return;
-        }
-
-        container.innerHTML = subjects.map(function(subj) {
-            return `
-            <button class="subject-tab flex-none px-5 py-2.5 bg-white border border-gray-100 text-slate-900 rounded-xl font-bold text-[10px] uppercase tracking-widest shadow-sm hover:border-blue-200 transition-all" data-subject="${subj}">
-                ${subj}
-            </button>
-        `; }).join('');
-
-        // Listener para filtrar por asignatura
-        container.querySelectorAll('.subject-tab').forEach(function(btn) {
-            btn.addEventListener('click', function(e) {
-                container.querySelectorAll('.subject-tab').forEach(function(b) {
-                    b.classList.remove('bg-blue-600', 'text-white', 'border-blue-600');
-                });
-                var target = e.currentTarget;
-                target.classList.add('bg-blue-600', 'text-white', 'border-blue-600');
-
-                var subj = target.dataset.subject;
-                var finalActivities = activities.filter(function(a) { return a.asignatura === subj; });
-
-                renderActivities(finalActivities);
-                showSubjectInfo(subj);
-            });
-        });
-
-        // Activar la primera por defecto
-        var firstTab = container.querySelector('.subject-tab');
-        if (firstTab) firstTab.click();
-    }
 
     async function showSubjectInfo(subject) {
         var container = document.getElementById('subject-info-container');
@@ -505,15 +464,26 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    function renderParcialTabs(inputActivities) {
-        var tabsContainer = document.getElementById('parcial-tabs-container');
-        if (!tabsContainer) return;
+    function renderSubjectNavigation(inputActivities) {
+        var sidebarNav = document.getElementById('subject-sidebar-nav');
+        var mobileSelector = document.getElementById('mobile-subject-selector');
+        var parcialLabel = document.getElementById('active-parcial-label');
+        if (!sidebarNav || !mobileSelector) return;
 
         // REQ: Normalización de entrada para soportar Offline-First (v3.3)
-        var activities = (inputActivities && inputActivities.status === 'success' && Array.isArray(inputActivities.data)) ? inputActivities.data : (Array.isArray(inputActivities) ? inputActivities : []);
+        var activitiesRaw = (inputActivities && inputActivities.status === 'success' && Array.isArray(inputActivities.data)) ? inputActivities.data : (Array.isArray(inputActivities) ? inputActivities : []);
+
+        // REQ: Filtrado Estricto por Alcance Global (v7.7.1)
+        var scope = window.GLOBAL_SCOPE || { ParcialActual: window.PARCIAL_ACTUAL };
+        if (parcialLabel) parcialLabel.textContent = scope.ParcialActual || "Periodo Vigente";
+
+        var activities = activitiesRaw.filter(function(a) {
+            return window.isContentAuthorized(a.parcial, a.grado, a.seccion, a.asignatura);
+        });
 
         if (!activities || activities.length === 0) {
-            tabsContainer.innerHTML = '';
+            sidebarNav.innerHTML = '<p class="text-[10px] font-bold text-gray-400 uppercase p-4">No hay asignaturas activas</p>';
+            mobileSelector.innerHTML = '<option value="">Sin materias</option>';
             tasksList.innerHTML = `
                 <div class="col-span-full p-12 text-center bg-white rounded-[2rem] border border-gray-100 animate-fade-in">
                     <div class="w-16 h-16 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center text-2xl mx-auto mb-4">
@@ -521,62 +491,64 @@ document.addEventListener('DOMContentLoaded', function() {
                     </div>
                     <h3 class="text-lg font-bold text-gray-800 uppercase tracking-tighter mb-2">¡Sin pendientes!</h3>
                     <p class="text-gray-400 text-xs font-medium uppercase tracking-widest leading-relaxed">
-                        No se han encontrado tareas ni exámenes asignados para tu grado y sección en este momento.
+                        No se han encontrado actividades asignadas para el periodo actual.
                     </p>
                 </div>`;
             return;
         }
 
-        var parciales = [...new Set(activities.map(function(a) { return a.parcial; }))];
-        parciales.sort(function(a, b) { return (PARCIAL_ORDER[b] || 0) - (PARCIAL_ORDER[a] || 0); });
+        var subjects = [...new Set(activities.map(function(a) { return a.asignatura; }))]
+            .filter(function(s) { return s && s.trim() !== ""; })
+            .sort();
 
-        var activeParcial = parciales[0];
+        // 1. Render Sidebar
+        sidebarNav.innerHTML = subjects.map(function(subj) {
+            return `
+                <button class="subject-tab-btn group flex items-center gap-3 w-full px-4 py-3 text-left rounded-xl transition-all duration-300" data-subject="${subj}">
+                    <div class="w-2 h-2 rounded-full bg-gray-200 group-[.active]:bg-blue-600 transition-colors"></div>
+                    <span class="text-[11px] font-bold text-gray-500 group-[.active]:text-gray-900 group-hover:text-blue-600 uppercase tracking-tight">${subj}</span>
+                </button>
+            `;
+        }).join('');
 
-        tabsContainer.innerHTML = `
-            <div class="flex flex-nowrap overflow-x-auto gap-2 pb-2 scroll-horizontal-clean">
-                ${parciales.map(function(p) {
-                    var isActive = p === activeParcial;
-                    var activeClass = isActive ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-500 hover:bg-gray-200';
-                    return `<button class="flex-none px-4 py-2 rounded-xl font-semibold transition-all text-[10px] uppercase tracking-widest ${activeClass} parcial-tab" data-parcial="${p}">${p}</button>`;
-                }).join('')}
-            </div>
-        `;
+        // 2. Render Mobile Selector
+        mobileSelector.innerHTML = '<option value="">Seleccionar Materia</option>' +
+            subjects.map(function(subj) { return `<option value="${subj}">${subj}</option>`; }).join('');
 
-        // Interactividad
-        tabsContainer.querySelectorAll('.parcial-tab').forEach(function(btn) {
-            btn.addEventListener('click', function(e) {
-                var target = e.currentTarget;
-                var p = target.dataset.parcial;
-                window.switchParcialTab(p);
-            });
-        });
-
-        window.switchParcialTab = function(p, pushState) {
+        // 3. Logic & Event Listeners
+        window.switchSubject = function(subj, pushState) {
             if (pushState === undefined) pushState = true;
-            var tabs = tabsContainer.querySelectorAll('.parcial-tab');
-            tabs.forEach(function(b) {
-                b.classList.remove('bg-blue-600', 'text-white');
-                b.classList.add('bg-gray-100', 'text-gray-500', 'hover:bg-gray-200');
-                if (b.dataset.parcial === p) {
-                    b.classList.remove('bg-gray-100', 'text-gray-500', 'hover:bg-gray-200');
-                    b.classList.add('bg-blue-600', 'text-white');
-                }
+
+            // Update UI State (Sidebar)
+            document.querySelectorAll('.subject-tab-btn').forEach(function(btn) {
+                if (btn.dataset.subject === subj) btn.classList.add('active', 'bg-blue-50/50');
+                else btn.classList.remove('active', 'bg-blue-50/50');
             });
 
-            var activitiesInParcial = allActivitiesData.filter(function(a) { return a.parcial === p; });
-            renderSubjectNav(activitiesInParcial, p);
+            // Update UI State (Mobile)
+            mobileSelector.value = subj;
+
+            var filtered = activities.filter(function(a) { return a.asignatura === subj; });
+            renderActivities(filtered);
+            showSubjectInfo(subj);
+
+            var countEl = document.getElementById('activities-count');
+            if (countEl) countEl.textContent = filtered.length + ' Actividades';
 
             if (pushState) {
-                history.pushState({ type: 'student-tab', parcial: p }, '');
+                history.pushState({ type: 'student-subject', subject: subj }, '');
             }
         };
 
-        // Seleccionar primer parcial por defecto
-        var firstTab = tabsContainer.querySelector('.parcial-tab');
-        if (firstTab) {
-            var p = firstTab.dataset.parcial;
-            history.replaceState({ type: 'student-tab', parcial: p }, '');
-            window.switchParcialTab(p, false);
+        sidebarNav.querySelectorAll('.subject-tab-btn').forEach(function(btn) {
+            btn.onclick = function() { window.switchSubject(btn.dataset.subject); };
+        });
+
+        mobileSelector.onchange = function(e) { if (e.target.value) window.switchSubject(e.target.value); };
+
+        // Auto-select first subject
+        if (subjects.length > 0) {
+            window.switchSubject(subjects[0], false);
         }
     }
 
@@ -1294,6 +1266,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
     fetchAllActivities();
     initWhatsAppButton();
+
+    // REQ: Reactividad ante cambios de alcance (v7.7)
+    document.addEventListener('academic-scope-updated', function() {
+        fetchAllActivities();
+    });
 
     async function fetchAndRenderLearningProfile(dataOnly = false) {
         // REQ: Eager Caching for Learning Profile (Ticket: Optimización de Caché)

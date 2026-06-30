@@ -299,3 +299,29 @@ Descripción:
 - Se implementaron los controladores para los botones de la pantalla de resultados (Reintentar, Siguiente Nivel, Cambiar Tema).
 - Se optimizó la lógica de validación estructural para ser más flexible y precisa.
 - Se garantizó el cumplimiento total de ES5 para evitar errores en navegadores legacy.
+
+MODIFICACIONES - EXPANSIÓN CONFIGURACIÓN GLOBAL - Tue Jun 30 18:26:19 UTC 2026
+
+Archivo: teacher-dashboard.html
+Líneas: 442-500
+Descripción: Rediseño de la tarjeta de Gestión Académica. Inserción de selectores para Parcial Vigente, Grado, Sección, Asignatura y Tema. Actualización de estilos para compactación visual.
+
+Archivo: js/teacher.js
+Líneas: 116-300, 1235-1250, 1311-1330, 1491-1540
+Descripción: Implementación de carga y guardado del alcance global (5 niveles). Población dinámica de dropdowns basada en data.js. Aplicación de filtros de alcance en la navegación jerárquica del dashboard.
+
+Archivo: js/config.js
+Líneas: 30-42, 152-190
+Descripción: Definición de window.GLOBAL_SCOPE. Refactorización de isContentAuthorized para validar Grado, Sección, Asignatura y Tema. Implementación de isPartialAuthorized con soporte para grupos ("I y II Parcial").
+
+Archivo: js/student.js
+Líneas: 234-245, 512-525, 1302-1310
+Descripción: Sincronización del Dashboard del Alumno con el Alcance Global. Implementación de listener 'academic-scope-updated' para reactividad inmediata.
+
+Archivo: js/index-ui.js
+Líneas: 84-320
+Descripción: Restricción absoluta en el Centro de Recursos Académicos. Los niveles de Grados, Secciones, Parciales, Asignaturas y Temas ahora filtran el contenido según el alcance global activo.
+
+Archivo: js/ui-common.js
+Líneas: 133-160, 633-880
+Descripción: Coordinación central de la sincronización del alcance global. Emisión de eventos reactivos y ajuste de llamadas a isContentAuthorized en la navegación jerárquica.

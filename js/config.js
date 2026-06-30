@@ -30,6 +30,18 @@ var FRONTEND_URL = 'https://informatica0101.github.io';
  */
 window.PARCIAL_ACTUAL = "Segundo Parcial";
 
+/**
+ * ALCANCE GLOBAL (v7.7)
+ * Define el alcance dinámico del contenido visible.
+ */
+window.GLOBAL_SCOPE = {
+    ParcialActual: "Segundo Parcial",
+    GradoActual: "Todos",
+    SeccionActual: "Todas",
+    AsignaturaActual: "Todas",
+    TemaActual: "Todos"
+};
+
 var GRADE_MAP = {
     'decimo': 10, 'undecimo': 11, 'duodecimo': 12,
     '10': 10, '11': 11, '12': 12, '10mo': 10, '11no': 11, '12mo': 12,
@@ -140,18 +152,16 @@ function normalizePartial(p) {
 }
 window.normalizePartial = normalizePartial;
 
-window.isContentAuthorized = function(contentPartial) {
-    var userRaw = localStorage.getItem('currentUser');
-    if (!userRaw) return false;
-    var user = JSON.parse(userRaw);
-    if (user && user.rol === 'Profesor') return true;
-
-    if (!contentPartial) return false;
-
+/**
+ * Verifica si un parcial de contenido está autorizado para un parcial objetivo (v7.7.1)
+ * Soporta grupos como "I y II Parcial".
+ */
+window.isPartialAuthorized = function(contentPartial, targetPartial) {
+    if (!contentPartial || !targetPartial) return false;
     var normContent = normalizePartial(contentPartial);
-    var normActual = normalizePartial(window.PARCIAL_ACTUAL);
+    var normTarget = normalizePartial(targetPartial);
 
-    if (normContent === normActual) return true;
+    if (normContent === normTarget) return true;
 
     var partialGroups = {
         "I y II Parcial": ["Primer Parcial", "Segundo Parcial"],
@@ -159,10 +169,46 @@ window.isContentAuthorized = function(contentPartial) {
     };
 
     if (partialGroups[contentPartial]) {
-        return partialGroups[contentPartial].indexOf(normActual) !== -1;
+        return partialGroups[contentPartial].indexOf(normTarget) !== -1;
+    }
+    return false;
+};
+
+window.isContentAuthorized = function(contentPartial, contentGrado, contentSeccion, contentAsignatura, contentTema) {
+    var userRaw = localStorage.getItem('currentUser');
+    if (!userRaw) return false;
+    var user = JSON.parse(userRaw);
+
+    var scope = window.GLOBAL_SCOPE;
+    if (!scope) return (user && user.rol === 'Profesor'); // Professors see everything if scope is not yet loaded
+
+    // Professors see everything unless we are in a context that specifically requests restricted filtering.
+    // The requirement says "tanto para profesores como para alumnos", so we apply filtering if scope exists.
+
+    // 1. Validar Parcial
+    if (!window.isPartialAuthorized(contentPartial, scope.ParcialActual)) return false;
+
+    // 2. Validar Grado
+    if (scope.GradoActual !== 'Todos') {
+        if (window.parseGrade(contentGrado) !== window.parseGrade(scope.GradoActual)) return false;
     }
 
-    return false;
+    // 3. Validar Sección
+    if (scope.SeccionActual !== 'Todas') {
+        if (contentSeccion && contentSeccion !== 'todas' && contentSeccion !== scope.SeccionActual) return false;
+    }
+
+    // 4. Validar Asignatura
+    if (scope.AsignaturaActual !== 'Todas') {
+        if (contentAsignatura && window.normalizeSubject(contentAsignatura) !== window.normalizeSubject(scope.AsignaturaActual)) return false;
+    }
+
+    // 5. Validar Tema
+    if (scope.TemaActual !== 'Todos') {
+        if (contentTema && contentTema !== scope.TemaActual) return false;
+    }
+
+    return true;
 };
 
 window.validateQuestion = function(q) {

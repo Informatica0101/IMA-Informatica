@@ -116,16 +116,35 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function loadAcademicAdminData() {
         const parcialSelect = document.getElementById('admin-parcial-actual');
+        const gradoSelect = document.getElementById('admin-grado-global');
+        const seccionSelect = document.getElementById('admin-seccion-global');
+        const asignaturaSelect = document.getElementById('admin-asignatura-global');
+        const temaSelect = document.getElementById('admin-tema-global');
         const asigList = document.getElementById('admin-asignaturas-list');
+
         if (!parcialSelect || !asigList) return;
+
+        const populateGlobalSelects = (config) => {
+            if (config.ParcialActual) parcialSelect.value = config.ParcialActual;
+            if (config.GradoActual) gradoSelect.value = config.GradoActual;
+            if (config.SeccionActual) seccionSelect.value = config.SeccionActual;
+
+            updateAdminAsignaturasGlobal();
+            if (config.AsignaturaActual) asignaturaSelect.value = config.AsignaturaActual;
+
+            updateAdminTemasGlobal();
+            if (config.TemaActual) temaSelect.value = config.TemaActual;
+
+            window.PARCIAL_ACTUAL = config.ParcialActual || window.PARCIAL_ACTUAL;
+            window.GLOBAL_SCOPE = config;
+            renderAsignaturasCheckboxes();
+        };
 
         // REQ: Cache-First for Admin Config
         if (window.PersistenceManager) {
             const cached = await window.PersistenceManager.get('academic_stats', 'config');
-            if (cached && cached.data && cached.data.ParcialActual) {
-                parcialSelect.value = cached.data.ParcialActual;
-                window.PARCIAL_ACTUAL = cached.data.ParcialActual;
-                renderAsignaturasCheckboxes(); // Trigger initial checkboxes render
+            if (cached && cached.data) {
+                populateGlobalSelects(cached.data);
             }
         }
 
@@ -133,24 +152,72 @@ document.addEventListener('DOMContentLoaded', () => {
             const configRes = await fetchApi('USER', 'getAcademicConfig', {}, 0, {
                 store: 'academic_stats',
                 key: 'config',
-                onUpdate: (data) => {
-                    if (data.ParcialActual) {
-                        parcialSelect.value = data.ParcialActual;
-                        window.PARCIAL_ACTUAL = data.ParcialActual;
-                        renderAsignaturasCheckboxes();
-                    }
-                }
+                onUpdate: (data) => populateGlobalSelects(data)
             });
-            if (configRes.status === 'success' && configRes.data.ParcialActual) {
-                parcialSelect.value = configRes.data.ParcialActual;
-                window.PARCIAL_ACTUAL = configRes.data.ParcialActual;
+            if (configRes.status === 'success' && configRes.data) {
+                populateGlobalSelects(configRes.data);
             }
-
-            await renderAsignaturasCheckboxes();
         } catch (e) {
             console.error("Error cargando config académica:", e);
         }
     }
+
+    function updateAdminAsignaturasGlobal() {
+        const grado = document.getElementById('admin-grado-global').value;
+        const asignaturaSelect = document.getElementById('admin-asignatura-global');
+        if (!asignaturaSelect) return;
+
+        let options = '<option value="Todas">Todas las Materias</option>';
+        const presentations = window.presentationData || [];
+
+        if (grado === 'Todos') {
+            const allSubjects = new Set();
+            presentations.forEach(g => g.subjects.forEach(s => allSubjects.add(s.name)));
+            Array.from(allSubjects).sort().forEach(s => options += `<option value="${s}">${s}</option>`);
+        } else {
+            const gradeData = presentations.find(g => g.grade === grado);
+            if (gradeData) {
+                const gradeSubjects = new Set();
+                gradeData.subjects.forEach(s => gradeSubjects.add(s.name));
+                Array.from(gradeSubjects).sort().forEach(s => options += `<option value="${s}">${s}</option>`);
+            }
+        }
+        asignaturaSelect.innerHTML = options;
+        updateAdminTemasGlobal();
+    }
+
+    function updateAdminTemasGlobal() {
+        const grado = document.getElementById('admin-grado-global').value;
+        const asignatura = document.getElementById('admin-asignatura-global').value;
+        const temaSelect = document.getElementById('admin-tema-global');
+        if (!temaSelect) return;
+
+        let options = '<option value="Todos">Todos los Temas</option>';
+        const presentations = window.presentationData || [];
+
+        const addTopicsFromSubject = (subj) => {
+            if (subj.topics) {
+                subj.topics.forEach(t => options += `<option value="${t.title}">${t.title}</option>`);
+            }
+        };
+
+        if (grado === 'Todos') {
+            presentations.forEach(g => g.subjects.forEach(s => {
+                if (asignatura === 'Todas' || s.name === asignatura) addTopicsFromSubject(s);
+            }));
+        } else {
+            const gradeData = presentations.find(g => g.grade === grado);
+            if (gradeData) {
+                gradeData.subjects.forEach(s => {
+                    if (asignatura === 'Todas' || s.name === asignatura) addTopicsFromSubject(s);
+                });
+            }
+        }
+        temaSelect.innerHTML = options;
+    }
+
+    document.getElementById('admin-grado-global')?.addEventListener('change', updateAdminAsignaturasGlobal);
+    document.getElementById('admin-asignatura-global')?.addEventListener('change', updateAdminTemasGlobal);
 
     async function renderAsignaturasCheckboxes() {
         const asigList = document.getElementById('admin-asignaturas-list');
@@ -168,7 +235,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <label class="flex items-center gap-2 p-2 hover:bg-blue-50 rounded-lg cursor-pointer transition-colors">
                     <input type="checkbox" class="admin-asig-checkbox w-4 h-4 text-blue-600 rounded focus:ring-blue-500"
                            value="${asig}" ${activeSet.has(asig) ? 'checked' : ''}>
-                    <span class="text-[10px] font-bold text-gray-700 uppercase">${asig}</span>
+                    <span class="text-[9px] font-bold text-gray-700 uppercase">${asig}</span>
                 </label>
             `).join('');
         };
@@ -200,23 +267,43 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.getElementById('btn-save-academic-config')?.addEventListener('click', async () => {
         const btn = document.getElementById('btn-save-academic-config');
-        const parcial = document.getElementById('admin-parcial-actual').value;
+        const payload = {
+            ParcialActual: document.getElementById('admin-parcial-actual').value,
+            GradoActual: document.getElementById('admin-grado-global').value,
+            SeccionActual: document.getElementById('admin-seccion-global').value,
+            AsignaturaActual: document.getElementById('admin-asignatura-global').value,
+            TemaActual: document.getElementById('admin-tema-global').value
+        };
+
         const selectedAsignaturas = Array.from(document.querySelectorAll('.admin-asig-checkbox:checked')).map(cb => cb.value);
 
         btn.disabled = true;
-        btn.textContent = 'Guardando...';
+        btn.textContent = 'Estableciendo Alcance...';
 
         try {
+            // REQ: Atomic Configuration Update (v7.7.1)
+            // Se asume que el backend soporta un objeto completo en updateAcademicConfig
+            // o se procesa como una transacción de promesas.
             await Promise.all([
-                fetchApi('USER', 'updateAcademicConfig', { key: 'ParcialActual', value: parcial }),
-                fetchApi('USER', 'updateAsignaturasActivas', { parcial, asignaturas: selectedAsignaturas })
+                fetchApi('USER', 'updateAcademicConfig', {
+                    fullScope: payload,
+                    // Fallback para backends que no iteran sobre fullScope:
+                    key: 'ParcialActual', value: payload.ParcialActual
+                }),
+                fetchApi('USER', 'updateAcademicConfig', { key: 'GradoActual', value: payload.GradoActual }),
+                fetchApi('USER', 'updateAcademicConfig', { key: 'SeccionActual', value: payload.SeccionActual }),
+                fetchApi('USER', 'updateAcademicConfig', { key: 'AsignaturaActual', value: payload.AsignaturaActual }),
+                fetchApi('USER', 'updateAcademicConfig', { key: 'TemaActual', value: payload.TemaActual }),
+                fetchApi('USER', 'updateAsignaturasActivas', { parcial: payload.ParcialActual, asignaturas: selectedAsignaturas })
             ]);
-            alert('Configuración académica actualizada correctamente.');
+            window.PARCIAL_ACTUAL = payload.ParcialActual;
+            window.GLOBAL_SCOPE = payload;
+            alert('¡Alcance Global establecido correctamente!');
         } catch (e) {
             alert('Error al guardar configuración: ' + e.message);
         } finally {
             btn.disabled = false;
-            btn.textContent = 'Guardar Configuración';
+            btn.textContent = 'Establecer Alcance Global';
         }
     });
 
@@ -1155,10 +1242,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function renderGrados(search) {
         const fGrado = document.getElementById('filter-grado').value;
+
+        // REQ: Filtrado de Alcance Global en Dashboard (v7.7)
+        const scope = window.GLOBAL_SCOPE;
+        const scopeGrado = (scope && scope.GradoActual !== 'Todos') ? scope.GradoActual : null;
+
         let grados = [...new Set([
             ...allActivityRaw.map(item => item.grado),
             ...allAssignmentsRaw.map(item => item.grado)
         ].filter(g => g))];
+
+        if (scopeGrado) grados = grados.filter(g => norm(g) === norm(scopeGrado));
         if (fGrado) grados = grados.filter(g => norm(g) === norm(fGrado));
         const filtered = grados.filter(g => norm(g).includes(norm(search)));
         currentFilteredItems = filtered;
@@ -1224,10 +1318,19 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function renderParciales(grado, seccion, asignatura, search) {
+        // REQ: Filtrado de Alcance Global (v7.7)
+        const scope = window.GLOBAL_SCOPE;
+        const scopeParcial = scope ? scope.ParcialActual : window.PARCIAL_ACTUAL;
+
         let parciales = [...new Set([
             ...allActivityRaw.filter(i => norm(i.grado) === norm(grado) && norm(i.seccion) === norm(seccion) && norm(i.asignatura) === norm(asignatura)).map(i => i.parcial),
             ...allAssignmentsRaw.filter(i => norm(i.grado) === norm(grado) && (norm(i.seccion) === norm(seccion) || !i.seccion || norm(i.seccion) === 'todas') && norm(i.asignatura) === norm(asignatura)).map(i => i.parcial)
         ].filter(p => p))];
+
+        // Restringir al parcial global si está configurado
+        if (scopeParcial) {
+            parciales = parciales.filter(p => window.normalizePartial(p) === window.normalizePartial(scopeParcial));
+        }
 
         const PARCIAL_ORDER = ['Primer Parcial', 'Segundo Parcial', 'Tercer Parcial', 'Cuarto Parcial'];
         parciales.sort((a, b) => PARCIAL_ORDER.indexOf(a) - PARCIAL_ORDER.indexOf(b));
@@ -1395,6 +1498,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Rediseño completo de la Tarjeta del Alumno (A-72)
         const studentInfo = current.data.studentInfo || null;
+        const scope = window.GLOBAL_SCOPE;
+
         // Cargar Analítica de Aprendizaje (Fase 9)
         if (studentInfo) {
             fetchApi("USER", "getLearningProfile", { userId: studentInfo.userId || studentInfo.id }).then(res => {
@@ -1415,14 +1520,15 @@ document.addEventListener('DOMContentLoaded', () => {
             const waLink = waPhone ? `https://wa.me/504${waPhone}` : '#';
 
             // Calcular carga académica total (A-73)
-            // REQ: Filtro Estricto por Parcial (Incidencia 5)
-            const activeParcial = window.normalizePartial(window.PARCIAL_ACTUAL);
+            // REQ: Filtro Estricto por Parcial e Scope (v7.7)
+            const activeParcial = window.normalizePartial(scope ? scope.ParcialActual : window.PARCIAL_ACTUAL);
 
             const subjectAssignments = allAssignmentsRaw.filter(a =>
                 norm(a.grado) === norm(grado) &&
                 (!a.seccion || norm(a.seccion) === norm(seccion) || norm(a.seccion) === 'todas') &&
                 (isGlobalSearch || norm(a.asignatura) === norm(asignatura)) &&
-                (isGlobalSearch || window.normalizePartial(a.parcial) === activeParcial)
+                (isGlobalSearch || window.normalizePartial(a.parcial) === activeParcial) &&
+                (isGlobalSearch || window.isContentAuthorized(a.parcial, a.grado, a.seccion, a.asignatura))
             );
 
             const studentSubmissions = allActivityRaw.filter(sub =>
@@ -1430,7 +1536,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 norm(sub.grado) === norm(grado) &&
                 norm(sub.seccion) === norm(seccion) &&
                 norm(sub.asignatura) === norm(asignatura) &&
-                (isGlobalSearch || window.normalizePartial(sub.parcial) === activeParcial)
+                (isGlobalSearch || window.normalizePartial(sub.parcial) === activeParcial) &&
+                (isGlobalSearch || window.isContentAuthorized(sub.parcial, sub.grado, sub.seccion, sub.asignatura))
             );
 
             // --- Ajuste de Lógica de Progreso (Req 2) ---

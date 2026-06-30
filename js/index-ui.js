@@ -84,8 +84,16 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         var filteredGrades = [];
+        var scope = window.GLOBAL_SCOPE;
+
         for (var i = 0; i < window.downloadContentData.length; i++) {
             var gradeData = window.downloadContentData[i];
+
+            // REQ: Restricción de Alcance Global (v7.7)
+            if (scope && scope.GradoActual !== 'Todos') {
+                if (window.parseGrade(gradeData.grade) !== window.parseGrade(scope.GradoActual)) continue;
+            }
+
             if (!isProfesor && currentUser && currentUser.grado) {
                 if (window.parseGrade(gradeData.grade) === window.parseGrade(currentUser.grado)) {
                     filteredGrades.push(gradeData);
@@ -135,14 +143,26 @@ document.addEventListener('DOMContentLoaded', function() {
         gridDiv.className = 'grid grid-cols-1 md:grid-cols-3 gap-4 w-full max-w-lg';
 
         var sectionSet = {};
+        var scope = window.GLOBAL_SCOPE;
+
         for (var i = 0; i < window.selectedGradeData.subjects.length; i++) {
             var s = window.selectedGradeData.subjects[i];
+
+            // REQ: Restricción de Alcance Global (v7.7)
+            if (scope && scope.SeccionActual !== 'Todas') {
+                if (!window.checkSectionHelper(s.sections, scope.SeccionActual)) continue;
+            }
+
             var secs = [];
             if (Array.isArray(s.sections)) secs = s.sections;
             else if (s.sections) secs = s.sections.split(',').map(function(sec) { return sec.trim(); });
 
             for (var k = 0; k < secs.length; k++) {
-                if (secs[k]) sectionSet[secs[k]] = true;
+                if (secs[k]) {
+                    // Si hay sección global, solo esa se permite
+                    if (scope && scope.SeccionActual !== 'Todas' && secs[k] !== scope.SeccionActual) continue;
+                    sectionSet[secs[k]] = true;
+                }
             }
         }
         var sections = Object.keys(sectionSet).sort();
@@ -174,10 +194,18 @@ document.addEventListener('DOMContentLoaded', function() {
         gridDiv.className = 'grid grid-cols-1 md:grid-cols-2 gap-4 w-full max-w-lg';
 
         var partialSet = {};
+        var scope = window.GLOBAL_SCOPE;
+
         for (var i = 0; i < window.selectedGradeData.subjects.length; i++) {
             var sub = window.selectedGradeData.subjects[i];
             if (window.checkSectionHelper(sub.sections, window.selectedSection)) {
-                if (sub.partial) partialSet[sub.partial] = true;
+                if (sub.partial) {
+                    // REQ: Restricción de Alcance Global (v7.7)
+                    if (scope && scope.ParcialActual) {
+                        if (window.normalizePartial(sub.partial) !== window.normalizePartial(scope.ParcialActual)) continue;
+                    }
+                    partialSet[sub.partial] = true;
+                }
             }
         }
         var partials = Object.keys(partialSet);
@@ -225,15 +253,22 @@ document.addEventListener('DOMContentLoaded', function() {
         gridDiv.className = 'grid grid-cols-1 md:grid-cols-2 gap-4 w-full max-w-lg';
         contentDisplayArea.innerHTML = '';
 
+        var scope = window.GLOBAL_SCOPE;
+
         for (var i = 0; i < window.selectedGradeData.subjects.length; i++) {
             var subjectData = window.selectedGradeData.subjects[i];
             var targetSection = isProfesor ? window.selectedSection : (currentUser ? currentUser.seccion : null);
-            var targetPartial = isProfesor ? window.selectedPartial : window.PARCIAL_ACTUAL;
+            var targetPartial = isProfesor ? window.selectedPartial : (scope ? scope.ParcialActual : window.PARCIAL_ACTUAL);
+
+            // REQ: Restricción de Alcance Global (v7.7)
+            if (scope && scope.AsignaturaActual !== 'Todas') {
+                if (window.normalizeSubject(subjectData.name) !== window.normalizeSubject(scope.AsignaturaActual)) continue;
+            }
 
             if (isProfesor) {
                 if (subjectData.partial !== targetPartial) continue;
             } else {
-                var isAuthorized = window.isContentAuthorized ? window.isContentAuthorized(subjectData.partial) : (subjectData.partial === targetPartial);
+                var isAuthorized = window.isContentAuthorized ? window.isContentAuthorized(subjectData.partial, window.selectedGradeData.grade, targetSection, subjectData.name) : (subjectData.partial === targetPartial);
                 if (!isAuthorized) continue;
             }
 
@@ -270,8 +305,15 @@ document.addEventListener('DOMContentLoaded', function() {
         var gridDiv = document.createElement('div');
         gridDiv.className = 'grid grid-cols-1 gap-3 w-full max-w-lg';
 
+        var scope = window.GLOBAL_SCOPE;
+
         for (var i = 0; i < window.selectedSubjectData.topics.length; i++) {
             var topic = window.selectedSubjectData.topics[i];
+
+            // REQ: Restricción de Alcance Global (v7.7)
+            if (scope && scope.TemaActual !== 'Todos') {
+                if (topic.title !== scope.TemaActual) continue;
+            }
             var link = document.createElement('a');
             link.href = topic.file;
             link.target = '_blank';
