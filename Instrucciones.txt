@@ -344,6 +344,7 @@ Ninguna presentación de la asignatura de informática será empaquetada ni dada
 
 ================================================================================================
 TAREAS PENDIENTES DE REVISIÓN
+- Tarea 9: Corrección Integral del Minijuego WebMaster - Renderizado de etiquetas, validación inteligente y expansión de banco de preguntas v7.7.
 - Tarea 1: Reingeniería del Módulo de Entrega de Tareas (Dashboard del Estudiante) - Multipart Reengineering & Autonomous Slicing.
 - Tarea 2: Dashboard del Profesor (Módulo de Calificaciones) - Bug de persistencia en botón "Guardar".
 - Tarea 3: Optimización y Reestructuración del Minijuego "QuizPro" - Arquitectura Distribuida y Lógica de Evaluación Literal.

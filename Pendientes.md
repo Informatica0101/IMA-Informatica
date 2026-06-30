@@ -155,3 +155,21 @@
     - Todos los minijuegos cargan sus récords personales correctamente.
     - El ranking de WebMaster Quiz es legible y coherente con el diseño institucional.
 - **Estado:** [X] Completada (2026-06-17)
+
+### [T-025] Corrección Integral del Minijuego WebMaster
+- **Resultado:** Funcionalidad de DND móvil, feedback visual y cierre de partida corregidos.
+- **Origen del Hallazgo:** Requerimiento de Usuario (2026-06-19)
+- **Severidad:** Alto
+- **Archivos Involucrados:** js/webmaster_quiz_juego.js, css/style.css
+- **Descripción del Alcance:**
+    - Corregir renderizado de etiquetas HTML para que se muestren como texto y no sean interpretadas.
+    - Implementar validación estructural inteligente para tablas y listas.
+    - Implementar lógica real para actividades de arrastrar y soltar.
+    - Expandir banco de preguntas para cubrir niveles básico, intermedio y avanzado.
+    - Estandarizar visualización de código con fuente monoespaciada.
+- **Criterios de Aceptación:**
+    - Etiquetas HTML visibles en todas las actividades.
+    - Validación funcional para ordenamiento y arrastre.
+    - Banco de preguntas completo según requerimiento.
+    - Interfaz libre de comillas innecesarias en fragmentos de código.
+- **Estado:** [ ] Pendiente | [ ] En Ejecución | [X] Completada

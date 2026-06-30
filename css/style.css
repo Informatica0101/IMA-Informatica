@@ -603,3 +603,22 @@ footer a:hover {
     color: white;
     border-color: #10b981;
 }
+
+/* --- WebMaster Code Styles (v7.7) --- */
+.code-fragment {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace !important;
+    background-color: #f8fafc;
+    color: #1e293b;
+    padding: 0.2rem 0.4rem;
+    border-radius: 0.4rem;
+    font-size: 0.95em;
+    border: 1px solid #e2e8f0;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.syntax-fragment, .syntax-fragment-target {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace !important;
+    font-size: 0.85em !important;
+    font-weight: 600 !important;
+}
