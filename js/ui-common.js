@@ -133,8 +133,14 @@ window.setupCommonUI = function() {
     var yearSpan = document.getElementById('current-year');
     if (yearSpan) yearSpan.textContent = new Date().getFullYear();
 
-    // Render Navigation
-    window.renderCommonNav();
+    // Sincronizar alcance antes de renderizar navegación (v7.7.4)
+    if (window.syncAcademicScope) {
+        window.syncAcademicScope(function() {
+            window.renderCommonNav();
+        });
+    } else {
+        window.renderCommonNav();
+    }
 
     // REQ: Event for child scripts (v3.3)
     document.dispatchEvent(new CustomEvent('common-ui-ready'));
@@ -633,7 +639,8 @@ window.renderHierarchyLevel = function(type, level, params, pushState) {
                     if (role === 'Profesor' && params.parcial) {
                         authorized = secMatch && sub.partial === params.parcial;
                     } else {
-                        authorized = secMatch && window.isContentAuthorized(sub.partial, sub.name);
+                        // REQ: Contextual authorization (v7.7.5)
+                        authorized = window.isContentAuthorized(sub.partial, sub.name, null, params.grado, params.seccion);
                     }
                     if (authorized) subjSet[sub.name] = true;
                 }
@@ -669,7 +676,7 @@ window.renderHierarchyLevel = function(type, level, params, pushState) {
             var filteredTopics = [];
             for (i = 0; i < finalItems.length; i++) {
                 var topicItem = finalItems[i];
-                if (window.isContentAuthorized(params.parcial, params.asignatura, topicItem.title)) {
+                if (window.isContentAuthorized(params.parcial, params.asignatura, topicItem.title, params.grado, params.seccion)) {
                     filteredTopics.push(topicItem);
                 }
             }
@@ -824,11 +831,11 @@ window.renderCommonNav = function() {
             } else {
                 for (var x = 0; x < filteredSubjects.length; x++) {
                     var s = filteredSubjects[x];
-                    if (window.isContentAuthorized(s.partial, s.name)) {
+                    if (window.isContentAuthorized(s.partial, s.name, null, grade.grade, currentUser.seccion)) {
                         var subjectTopicsHtml = '';
                         for (var y = 0; y < s.topics.length; y++) {
                             var topic = s.topics[y];
-                            if (window.isContentAuthorized(s.partial, s.name, topic.title)) {
+                            if (window.isContentAuthorized(s.partial, s.name, topic.title, grade.grade, currentUser.seccion)) {
                                 subjectTopicsHtml += '<a href="' + topic.file + '" class="block px-4 py-2 text-[11px] font-medium text-gray-600 hover:bg-blue-50 hover:text-blue-600 border-b border-gray-50 last:border-0">' + topic.title + '</a>';
                             }
                         }
@@ -890,11 +897,11 @@ window.renderCommonNav = function() {
             } else {
                 for (var m = 0; m < filteredSubjects.length; m++) {
                     var sub = filteredSubjects[m];
-                    if (window.isContentAuthorized(sub.partial, sub.name)) {
+                    if (window.isContentAuthorized(sub.partial, sub.name, null, grade.grade, currentUser.seccion)) {
                         var mobileTopicsHtml = '';
                         for (var n = 0; n < sub.topics.length; n++) {
                             var topicM = sub.topics[n];
-                            if (window.isContentAuthorized(sub.partial, sub.name, topicM.title)) {
+                            if (window.isContentAuthorized(sub.partial, sub.name, topicM.title, grade.grade, currentUser.seccion)) {
                                 mobileTopicsHtml += '<a href="' + topicM.file + '" class="block px-10 py-3 text-[11px] font-medium text-gray-600 border-b border-gray-50 last:border-0" onclick="closeMobileMenu()">' + topicM.title + '</a>';
                             }
                         }

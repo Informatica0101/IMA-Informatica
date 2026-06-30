@@ -116,21 +116,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function loadAcademicAdminData() {
         const parcialSelect = document.getElementById('admin-parcial-actual');
-
         if (!parcialSelect) return;
 
         const applyConfig = (data) => {
             if (!data) return;
+            console.log("[IMA-TEACHER] Aplicando configuración recibida:", data);
+
             if (data.ParcialActual) parcialSelect.value = data.ParcialActual;
 
-            // Handle Multi-Grades
-            const grades = Array.isArray(data.GradoActual) ? data.GradoActual : [data.GradoActual];
+            // Normalización para visualización (v7.7.5)
+            const grades = Array.isArray(data.GradoActual) ? data.GradoActual : [data.GradoActual].filter(Boolean);
             document.querySelectorAll('input[name="admin-grado"]').forEach(cb => {
                 cb.checked = grades.includes(cb.value);
             });
 
-            // Handle Multi-Sections
-            const sections = Array.isArray(data.SeccionActual) ? data.SeccionActual : [data.SeccionActual];
+            const sections = Array.isArray(data.SeccionActual) ? data.SeccionActual : [data.SeccionActual].filter(Boolean);
             document.querySelectorAll('input[name="admin-seccion"]').forEach(cb => {
                 cb.checked = sections.includes(cb.value);
             });
@@ -143,31 +143,28 @@ document.addEventListener('DOMContentLoaded', () => {
                 TemaActual: Array.isArray(data.TemaActual) ? data.TemaActual : [data.TemaActual].filter(Boolean)
             };
             if (window.GLOBAL_SCOPE.TemaActual.length === 0) window.GLOBAL_SCOPE.TemaActual = ["General"];
-
             window.PARCIAL_ACTUAL = window.GLOBAL_SCOPE.ParcialActual;
 
             updateCascadingSelectors(window.GLOBAL_SCOPE.AsignaturaActual, window.GLOBAL_SCOPE.TemaActual);
         };
 
-        // REQ: Cache-First for Admin Config
-        if (window.PersistenceManager) {
-            const cached = await window.PersistenceManager.get('academic_stats', 'config');
-            if (cached && cached.data) {
-                applyConfig(cached.data);
+        // REQ: Sync Global Scope from Server (v7.7.5 - Use unified syncAcademicScope)
+        if (window.syncAcademicScope) {
+            window.syncAcademicScope(applyConfig);
+        } else {
+            // Fallback si no está disponible (no debería ocurrir)
+            try {
+                const configRes = await fetchApi('USER', 'getAcademicConfig', {}, 0, {
+                    store: 'academic_stats',
+                    key: 'config',
+                    onUpdate: (data) => applyConfig(data)
+                });
+                if (configRes.status === 'success' && configRes.data) {
+                    applyConfig(configRes.data);
+                }
+            } catch (e) {
+                console.error("Error cargando config académica:", e);
             }
-        }
-
-        try {
-            const configRes = await fetchApi('USER', 'getAcademicConfig', {}, 0, {
-                store: 'academic_stats',
-                key: 'config',
-                onUpdate: (data) => applyConfig(data)
-            });
-            if (configRes.status === 'success' && configRes.data) {
-                applyConfig(configRes.data);
-            }
-        } catch (e) {
-            console.error("Error cargando config académica:", e);
         }
     }
 
@@ -289,12 +286,18 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             const res = await fetchApi('USER', 'updateAcademicConfig', { fullScope: fullScope });
             if (res.status === 'success') {
-                window.GLOBAL_SCOPE = fullScope;
-                window.PARCIAL_ACTUAL = fullScope.ParcialActual;
+                // Usar la respuesta del servidor para actualizar el caché (v7.7.5)
+                const confirmedScope = res.data || fullScope;
+                if (window.PersistenceManager) {
+                    await window.PersistenceManager.set('academic_stats', confirmedScope, 'config');
+                }
+
+                window.GLOBAL_SCOPE = confirmedScope;
+                window.PARCIAL_ACTUAL = confirmedScope.ParcialActual;
                 alert('Configuración global actualizada correctamente.');
 
                 // Disparar evento para que otros componentes reaccionen
-                document.dispatchEvent(new CustomEvent('academic-scope-updated', { detail: fullScope }));
+                document.dispatchEvent(new CustomEvent('academic-scope-updated', { detail: confirmedScope }));
             } else {
                 throw new Error(res.message);
             }

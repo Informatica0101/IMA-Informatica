@@ -105,11 +105,9 @@ document.addEventListener('DOMContentLoaded', function() {
             // REQ 2: No disparar loader global si ya renderizamos desde caché
             if (!hasLocalData && window.GamesAdapter) window.GamesAdapter.showLoading(true);
 
-            // REQ: Sync Global Scope from Server
-            var scopeRes = await fetchApi('USER', 'getAcademicConfig');
-            if (scopeRes && scopeRes.status === 'success' && scopeRes.data) {
-                window.GLOBAL_SCOPE = scopeRes.data;
-                window.PARCIAL_ACTUAL = window.GLOBAL_SCOPE.ParcialActual;
+            // REQ: Sync Global Scope from Server (v7.7.5 - Use unified syncAcademicScope)
+            if (window.syncAcademicScope) {
+                await window.syncAcademicScope();
             }
 
             // REQ: Mitigación de Latencia mediante Paralelismo y Silent Reconciliation (Ticket 4)
@@ -247,7 +245,8 @@ document.addEventListener('DOMContentLoaded', function() {
         // No mezclar históricos en el cálculo de progreso actual
         var currentParcialActivities = activities.filter(function(a) {
             var isParcialOk = window.normalizePartial(a.parcial) === window.normalizePartial(window.PARCIAL_ACTUAL);
-            var isAuthorized = window.isContentAuthorized(a.parcial, a.asignatura, a.tema);
+            // REQ: Contextual authorization (v7.7.5)
+            var isAuthorized = window.isContentAuthorized(a.parcial, a.asignatura, a.tema, a.grado, a.seccion);
             return isParcialOk && isAuthorized;
         });
 
@@ -538,7 +537,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
         var currentActivities = activities.filter(function(a) {
             var isParcialOk = window.normalizePartial(a.parcial) === window.normalizePartial(activePartial);
-            var isAuthorized = window.isContentAuthorized(a.parcial, a.asignatura, a.tema);
+            // REQ: Contextual authorization (v7.7.5)
+            var isAuthorized = window.isContentAuthorized(a.parcial, a.asignatura, a.tema, a.grado, a.seccion);
             return isParcialOk && isAuthorized;
         });
 
@@ -1349,7 +1349,14 @@ document.addEventListener('DOMContentLoaded', function() {
     // REQ: Reactive Scope Synchronization (v7.7.1)
     document.addEventListener('academic-scope-updated', function() {
         console.log("[Student] Academic scope updated, refreshing activities...");
-        fetchAllActivities();
+        // Forzar limpieza de cache local para asegurar datos frescos tras cambio de alcance
+        if (window.PersistenceManager) {
+            window.PersistenceManager.delete('cache_estudiante_dashboard').then(function() {
+                fetchAllActivities();
+            });
+        } else {
+            fetchAllActivities();
+        }
     });
 
     async function fetchAndRenderLearningProfile(dataOnly = false) {

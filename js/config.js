@@ -49,6 +49,66 @@ window.PRESENTATION_INDEX = [
 
 window.PARCIAL_ACTUAL = window.GLOBAL_SCOPE.ParcialActual;
 
+/**
+ * Sincroniza la configuración académica global con el servidor/caché (v7.7.4)
+ */
+window.syncAcademicScope = function(callback) {
+    var normalizeToArray = function(val) {
+        if (!val) return [];
+        if (Array.isArray(val)) return val.filter(Boolean);
+        if (typeof val === 'string') return val.split(',').map(function(s){ return s.trim(); }).filter(Boolean);
+        return [val];
+    };
+
+    var applyConfig = function(data) {
+        if (!data) return;
+
+        // Normalización profunda de campos multi-valor (v7.7.5)
+        window.GLOBAL_SCOPE = {
+            ParcialActual: data.ParcialActual || "Primer Parcial",
+            GradoActual: normalizeToArray(data.GradoActual),
+            SeccionActual: normalizeToArray(data.SeccionActual),
+            AsignaturaActual: normalizeToArray(data.AsignaturaActual),
+            TemaActual: normalizeToArray(data.TemaActual)
+        };
+
+        if (window.GLOBAL_SCOPE.TemaActual.length === 0) window.GLOBAL_SCOPE.TemaActual = ["General"];
+        window.PARCIAL_ACTUAL = window.GLOBAL_SCOPE.ParcialActual;
+
+        console.log("[IMA-SCOPE] Alcance académico sincronizado (Normalizado):", window.GLOBAL_SCOPE);
+
+        document.dispatchEvent(new CustomEvent('academic-scope-updated', { detail: window.GLOBAL_SCOPE }));
+        if (typeof callback === 'function') callback(window.GLOBAL_SCOPE);
+    };
+
+    if (typeof fetchApi !== 'function') {
+        console.warn("[IMA-SCOPE] fetchApi no disponible para sincronización inicial.");
+        return Promise.resolve(window.GLOBAL_SCOPE);
+    }
+
+    // Retornamos una promesa para que el llamador pueda esperar a la sincronización REAL (desde el servidor)
+    return new Promise(function(resolve) {
+        fetchApi('USER', 'getAcademicConfig', {}, 0, {
+            store: 'academic_stats',
+            key: 'config',
+            onUpdate: function(data) {
+                applyConfig(data);
+                // No resolvemos aquí porque onUpdate puede llamarse varias veces (caché y luego servidor)
+            }
+        }).then(function(res) {
+            if (res && res.status === 'success' && res.data) {
+                applyConfig(res.data);
+                resolve(window.GLOBAL_SCOPE);
+            } else {
+                resolve(window.GLOBAL_SCOPE);
+            }
+        }).catch(function(e) {
+            console.error("[IMA-SCOPE] Fallo crítico en sincronización:", e);
+            resolve(window.GLOBAL_SCOPE);
+        });
+    });
+};
+
 var GRADE_MAP = {
     'decimo': 10, 'undecimo': 11, 'duodecimo': 12,
     '10': 10, '11': 11, '12': 12, '10mo': 10, '11no': 11, '12mo': 12,
@@ -159,67 +219,103 @@ function normalizePartial(p) {
 }
 window.normalizePartial = normalizePartial;
 
-window.isContentAuthorized = function(contentPartial, contentSubject, contentTopic) {
-    var userRaw = localStorage.getItem('currentUser');
-    if (!userRaw) return false;
-    var user = JSON.parse(userRaw);
-    if (user && user.rol === 'Profesor') return true;
+window.isContentAuthorized = function(contentPartial, contentSubject, contentTopic, contentGrade, contentSection) {
+    var userRaw = localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser');
+    var user = userRaw ? JSON.parse(userRaw) : { rol: 'Invitado' };
+
+    // El profesor siempre tiene acceso completo
+    if (user.rol === 'Profesor') return true;
 
     // Si no hay configuración de alcance cargada, ser restrictivo por defecto
     if (!window.GLOBAL_SCOPE) return false;
 
+    // Helper para normalizar strings de comparación
+    var fastNorm = function(s) {
+        if (!s) return "";
+        return s.toString().trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    };
+
+    // --- TIER 1: VALIDACIÓN GLOBAL (VIGENTE) ---
+
+    // 1. Verificación de Parcial (OBLIGATORIO)
     if (!contentPartial) return false;
+    var normContentP = normalizePartial(contentPartial);
+    var normActualP = normalizePartial(window.GLOBAL_SCOPE.ParcialActual);
 
-    var normContent = normalizePartial(contentPartial);
-    var normActual = normalizePartial(window.GLOBAL_SCOPE.ParcialActual);
-
-    // 1. Verificación de Parcial
-    var authorized = (normContent === normActual);
-
-    if (!authorized) {
+    var partialAuthorized = (normContentP === normActualP);
+    if (!partialAuthorized) {
         var partialGroups = {
             "I y II Parcial": ["Primer Parcial", "Segundo Parcial"],
             "III y IV Parcial": ["Tercer Parcial", "Cuarto Parcial"]
         };
         if (partialGroups[contentPartial]) {
-            authorized = partialGroups[contentPartial].indexOf(normActual) !== -1;
+            partialAuthorized = partialGroups[contentPartial].indexOf(normActualP) !== -1;
+        }
+    }
+    if (!partialAuthorized) return false;
+
+    // 2. Verificación de Grado (Global)
+    if (contentGrade && window.GLOBAL_SCOPE.GradoActual && window.GLOBAL_SCOPE.GradoActual.length > 0) {
+        var cGradeVal = window.parseGrade(contentGrade);
+        var gMatch = false;
+        for (var i = 0; i < window.GLOBAL_SCOPE.GradoActual.length; i++) {
+            if (window.parseGrade(window.GLOBAL_SCOPE.GradoActual[i]) === cGradeVal) {
+                gMatch = true;
+                break;
+            }
+        }
+        if (!gMatch) return false;
+    }
+
+    // 3. Verificación de Sección (Global)
+    if (contentSection && window.GLOBAL_SCOPE.SeccionActual && window.GLOBAL_SCOPE.SeccionActual.length > 0) {
+        var sMatch = false;
+        var sectionsToCheck = Array.isArray(contentSection) ? contentSection : contentSection.toString().split(',').map(function(s){return s.trim();});
+        for (var j = 0; j < sectionsToCheck.length; j++) {
+            if (window.GLOBAL_SCOPE.SeccionActual.indexOf(sectionsToCheck[j]) !== -1) {
+                sMatch = true;
+                break;
+            }
+        }
+        if (!sMatch) return false;
+    }
+
+    // 4. Verificación de Asignatura (Global)
+    if (contentSubject && window.GLOBAL_SCOPE.AsignaturaActual && window.GLOBAL_SCOPE.AsignaturaActual.length > 0) {
+        var normSubj = fastNorm(contentSubject);
+        var asigMatch = false;
+        for (var k = 0; k < window.GLOBAL_SCOPE.AsignaturaActual.length; k++) {
+            if (fastNorm(window.GLOBAL_SCOPE.AsignaturaActual[k]) === normSubj) {
+                asigMatch = true;
+                break;
+            }
+        }
+        if (!asigMatch) return false;
+    }
+
+    // 5. Verificación de Tema (Global)
+    if (contentTopic && window.GLOBAL_SCOPE.TemaActual && window.GLOBAL_SCOPE.TemaActual.length > 0) {
+        if (window.GLOBAL_SCOPE.TemaActual.indexOf("General") === -1) {
+            var normTopic = fastNorm(contentTopic);
+            var tMatch = false;
+            for (var l = 0; l < window.GLOBAL_SCOPE.TemaActual.length; l++) {
+                if (fastNorm(window.GLOBAL_SCOPE.TemaActual[l]) === normTopic) {
+                    tMatch = true;
+                    break;
+                }
+            }
+            if (!tMatch) return false;
         }
     }
 
-    if (!authorized) return false;
-
-    // 2. Verificación de Asignatura (si se provee)
-    if (contentSubject && window.GLOBAL_SCOPE.AsignaturaActual) {
-        var authorizedAsigs = Array.isArray(window.GLOBAL_SCOPE.AsignaturaActual)
-            ? window.GLOBAL_SCOPE.AsignaturaActual
-            : [window.GLOBAL_SCOPE.AsignaturaActual];
-
-        if (authorizedAsigs.length > 0 && authorizedAsigs.indexOf(contentSubject) === -1) return false;
-    }
-
-    // 3. Verificación de Tema (si se provee)
-    if (contentTopic && window.GLOBAL_SCOPE.TemaActual) {
-        var authorizedTopics = Array.isArray(window.GLOBAL_SCOPE.TemaActual)
-            ? window.GLOBAL_SCOPE.TemaActual
-            : [window.GLOBAL_SCOPE.TemaActual];
-
-        // Si el alcance tiene "General", se autorizan todos los temas.
-        if (authorizedTopics.indexOf("General") === -1) {
-            if (authorizedTopics.indexOf(contentTopic) === -1) return false;
+    // --- TIER 2: VALIDACIÓN DE PERFIL (SOLO PARA ALUMNOS LOGUEADOS) ---
+    // Si el usuario es estudiante, solo puede ver lo que corresponde a SU grado y sección
+    if (user.rol === 'Estudiante' || user.rol === 'Alumno') {
+        if (contentGrade) {
+            if (window.parseGrade(contentGrade) !== window.parseGrade(user.grado)) return false;
         }
-    }
-
-    // 4. Verificación de Grado y Sección para Alumnos (si aplica al contenido)
-    // Nota: El dashboard del estudiante ya filtra por perfil del usuario,
-    // pero esta función refuerza la autorización si el contenido tiene metadatos de grado/seccion.
-    if (user.rol !== 'Profesor') {
-        if (user.grado && window.GLOBAL_SCOPE.GradoActual) {
-            var authorizedGrades = Array.isArray(window.GLOBAL_SCOPE.GradoActual) ? window.GLOBAL_SCOPE.GradoActual : [window.GLOBAL_SCOPE.GradoActual];
-            if (authorizedGrades.indexOf(user.grado) === -1) return false;
-        }
-        if (user.seccion && window.GLOBAL_SCOPE.SeccionActual) {
-            var authorizedSections = Array.isArray(window.GLOBAL_SCOPE.SeccionActual) ? window.GLOBAL_SCOPE.SeccionActual : [window.GLOBAL_SCOPE.SeccionActual];
-            if (authorizedSections.indexOf(user.seccion) === -1) return false;
+        if (contentSection && user.seccion) {
+            if (!window.checkSectionHelper(contentSection, user.seccion)) return false;
         }
     }
 

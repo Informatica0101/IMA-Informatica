@@ -9,7 +9,16 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Setup Common UI (Header, Scroll, Logout)
     if (window.setupCommonUI) window.setupCommonUI();
-    if (window.renderCommonNav) window.renderCommonNav();
+
+    // Sincronizar alcance antes de renderizar componentes principales (v7.7.4)
+    if (window.syncAcademicScope) {
+        window.syncAcademicScope(function() {
+            window.renderInitialContentButton();
+            if (window.renderCommonNav) window.renderCommonNav();
+        });
+    } else {
+        window.renderInitialContentButton();
+    }
 
     // --- DOM Elements specific to index.html ---
     var contentDisplayArea = document.getElementById('content-display-area');
@@ -233,7 +242,8 @@ document.addEventListener('DOMContentLoaded', function() {
             if (isProfesor) {
                 if (subjectData.partial !== targetPartial) continue;
             } else {
-                var isAuthorized = window.isContentAuthorized ? window.isContentAuthorized(subjectData.partial, subjectData.name) : (subjectData.partial === targetPartial);
+                // REQ: Contextual authorization (v7.7.5)
+                var isAuthorized = window.isContentAuthorized ? window.isContentAuthorized(subjectData.partial, subjectData.name, null, window.selectedGradeData.grade, (currentUser ? currentUser.seccion : null)) : (subjectData.partial === targetPartial);
                 if (!isAuthorized) continue;
             }
 
@@ -276,7 +286,8 @@ document.addEventListener('DOMContentLoaded', function() {
             var topic = window.selectedSubjectData.topics[i];
 
             if (!isProfesor) {
-                if (!window.isContentAuthorized(window.selectedSubjectData.partial, window.selectedSubjectData.name, topic.title)) {
+                // REQ: Contextual authorization (v7.7.5)
+                if (!window.isContentAuthorized(window.selectedSubjectData.partial, window.selectedSubjectData.name, topic.title, window.selectedGradeData.grade, (currentUser ? currentUser.seccion : null))) {
                     continue;
                 }
             }
@@ -503,7 +514,6 @@ document.addEventListener('DOMContentLoaded', function() {
     // Set initial state for index navigation
     history.replaceState({ type: 'index-main' }, '');
 
-    window.renderInitialContentButton();
     renderInitialActivityButton();
     setupGlobalAuth();
 
