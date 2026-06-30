@@ -233,7 +233,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (isProfesor) {
                 if (subjectData.partial !== targetPartial) continue;
             } else {
-                var isAuthorized = window.isContentAuthorized ? window.isContentAuthorized(subjectData.partial) : (subjectData.partial === targetPartial);
+                var isAuthorized = window.isContentAuthorized ? window.isContentAuthorized(subjectData.partial, subjectData.name) : (subjectData.partial === targetPartial);
                 if (!isAuthorized) continue;
             }
 
@@ -270,8 +270,17 @@ document.addEventListener('DOMContentLoaded', function() {
         var gridDiv = document.createElement('div');
         gridDiv.className = 'grid grid-cols-1 gap-3 w-full max-w-lg';
 
+        var isProfesor = currentUser && currentUser.rol === 'Profesor';
+
         for (var i = 0; i < window.selectedSubjectData.topics.length; i++) {
             var topic = window.selectedSubjectData.topics[i];
+
+            if (!isProfesor) {
+                if (!window.isContentAuthorized(window.selectedSubjectData.partial, window.selectedSubjectData.name, topic.title)) {
+                    continue;
+                }
+            }
+
             var link = document.createElement('a');
             link.href = topic.file;
             link.target = '_blank';

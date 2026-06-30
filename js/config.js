@@ -32,7 +32,7 @@ window.GLOBAL_SCOPE = {
     GradoActual: ["Décimo"],
     SeccionActual: ["A"],
     AsignaturaActual: ["Informática I"],
-    TemaActual: "General"
+    TemaActual: ["General"]
 };
 
 /**
@@ -198,8 +198,15 @@ window.isContentAuthorized = function(contentPartial, contentSubject, contentTop
     }
 
     // 3. Verificación de Tema (si se provee)
-    if (contentTopic && window.GLOBAL_SCOPE.TemaActual && window.GLOBAL_SCOPE.TemaActual !== "General") {
-        if (contentTopic !== window.GLOBAL_SCOPE.TemaActual) return false;
+    if (contentTopic && window.GLOBAL_SCOPE.TemaActual) {
+        var authorizedTopics = Array.isArray(window.GLOBAL_SCOPE.TemaActual)
+            ? window.GLOBAL_SCOPE.TemaActual
+            : [window.GLOBAL_SCOPE.TemaActual];
+
+        // Si el alcance tiene "General", se autorizan todos los temas.
+        if (authorizedTopics.indexOf("General") === -1) {
+            if (authorizedTopics.indexOf(contentTopic) === -1) return false;
+        }
     }
 
     // 4. Verificación de Grado y Sección para Alumnos (si aplica al contenido)

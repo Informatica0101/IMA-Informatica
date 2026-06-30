@@ -666,14 +666,22 @@ window.renderHierarchyLevel = function(type, level, params, pushState) {
                 finalItems = foundSubject ? foundSubject.topics : [];
             }
 
-            if (finalItems.length === 0) {
-                container.innerHTML = '<p class="text-center p-4 text-gray-500 text-sm">No hay contenido disponible.</p>';
+            var filteredTopics = [];
+            for (i = 0; i < finalItems.length; i++) {
+                var topicItem = finalItems[i];
+                if (window.isContentAuthorized(params.parcial, params.asignatura, topicItem.title)) {
+                    filteredTopics.push(topicItem);
+                }
+            }
+
+            if (filteredTopics.length === 0) {
+                container.innerHTML = '<p class="text-center p-4 text-gray-500 text-sm">No hay temas autorizados disponibles.</p>';
                 return;
             }
 
             var htmlItems = [];
-            for (i = 0; i < finalItems.length; i++) {
-                var item = finalItems[i];
+            for (i = 0; i < filteredTopics.length; i++) {
+                var item = filteredTopics[i];
                 if (!item.title || !item.file) continue;
                 htmlItems.push(
                     '<a href="' + item.file + '" ' + (type === 'Contenido' ? 'download' : 'target="_blank"') + ' class="flex items-center justify-between p-4 bg-gray-50 rounded-2xl border border-gray-100 hover:border-blue-200 hover:bg-white transition-all group">' +
@@ -817,16 +825,23 @@ window.renderCommonNav = function() {
                 for (var x = 0; x < filteredSubjects.length; x++) {
                     var s = filteredSubjects[x];
                     if (window.isContentAuthorized(s.partial, s.name)) {
-                        html += '<div class="relative group/subj">' +
-                            '<button class="block w-full text-left px-4 py-2 text-[10px] font-bold text-gray-600 hover:bg-blue-50 hover:text-blue-600 uppercase">' +
-                                s.name + ' <span class="float-right text-[10px] mt-0.5 ml-2">&#9656;</span>' +
-                            '</button>' +
-                            '<div class="absolute left-full top-0 dropdown-container-ima bg-white rounded-xl shadow-2xl py-2 opacity-0 invisible group-hover/subj:opacity-100 group-hover/subj:visible border border-gray-100">';
+                        var subjectTopicsHtml = '';
                         for (var y = 0; y < s.topics.length; y++) {
                             var topic = s.topics[y];
-                            html += '<a href="' + topic.file + '" class="block px-4 py-2 text-[11px] font-medium text-gray-600 hover:bg-blue-50 hover:text-blue-600 border-b border-gray-50 last:border-0">' + topic.title + '</a>';
+                            if (window.isContentAuthorized(s.partial, s.name, topic.title)) {
+                                subjectTopicsHtml += '<a href="' + topic.file + '" class="block px-4 py-2 text-[11px] font-medium text-gray-600 hover:bg-blue-50 hover:text-blue-600 border-b border-gray-50 last:border-0">' + topic.title + '</a>';
+                            }
                         }
-                        html += '</div></div>';
+
+                        if (subjectTopicsHtml !== '') {
+                            html += '<div class="relative group/subj">' +
+                                '<button class="block w-full text-left px-4 py-2 text-[10px] font-bold text-gray-600 hover:bg-blue-50 hover:text-blue-600 uppercase">' +
+                                    s.name + ' <span class="float-right text-[10px] mt-0.5 ml-2">&#9656;</span>' +
+                                '</button>' +
+                                '<div class="absolute left-full top-0 dropdown-container-ima bg-white rounded-xl shadow-2xl py-2 opacity-0 invisible group-hover/subj:opacity-100 group-hover/subj:visible border border-gray-100">' +
+                                    subjectTopicsHtml +
+                                '</div></div>';
+                        }
                     }
                 }
             }
@@ -876,15 +891,22 @@ window.renderCommonNav = function() {
                 for (var m = 0; m < filteredSubjects.length; m++) {
                     var sub = filteredSubjects[m];
                     if (window.isContentAuthorized(sub.partial, sub.name)) {
-                        html += '<button class="w-full text-left px-8 py-3 font-bold text-blue-600 uppercase tracking-tighter border-b border-gray-100 flex justify-between items-center text-[10px]" onclick="this.nextElementSibling.classList.toggle(\'hidden\')">' +
-                            sub.name + ' <span>&#9662;</span>' +
-                        '</button>' +
-                        '<div class="hidden bg-white/50">';
+                        var mobileTopicsHtml = '';
                         for (var n = 0; n < sub.topics.length; n++) {
-                            var topic = sub.topics[n];
-                            html += '<a href="' + topic.file + '" class="block px-10 py-3 text-[11px] font-medium text-gray-600 border-b border-gray-50 last:border-0" onclick="closeMobileMenu()">' + topic.title + '</a>';
+                            var topicM = sub.topics[n];
+                            if (window.isContentAuthorized(sub.partial, sub.name, topicM.title)) {
+                                mobileTopicsHtml += '<a href="' + topicM.file + '" class="block px-10 py-3 text-[11px] font-medium text-gray-600 border-b border-gray-50 last:border-0" onclick="closeMobileMenu()">' + topicM.title + '</a>';
+                            }
                         }
-                        html += '</div>';
+
+                        if (mobileTopicsHtml !== '') {
+                            html += '<button class="w-full text-left px-8 py-3 font-bold text-blue-600 uppercase tracking-tighter border-b border-gray-100 flex justify-between items-center text-[10px]" onclick="this.nextElementSibling.classList.toggle(\'hidden\')">' +
+                                sub.name + ' <span>&#9662;</span>' +
+                            '</button>' +
+                            '<div class="hidden bg-white/50">' +
+                                mobileTopicsHtml +
+                            '</div>';
+                        }
                     }
                 }
             }

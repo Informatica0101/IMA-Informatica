@@ -503,11 +503,10 @@
                                     </div>
                                 </div>
                                 <div class="sm:col-span-2">
-                                    <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Tema Vigente (Filtro Secundario)</label>
-                                    <select id="admin-tema-vigente" class="w-full p-3 bg-white border border-blue-100 rounded-xl text-sm font-medium focus:ring-2 focus:ring-blue-400 outline-none">
-                                        <option value="General">General (Todos los temas)</option>
-                                        <!-- Se poblará dinámicamente -->
-                                    </select>
+                                    <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Temas Vigentes (Agrupados por Asignatura)</label>
+                                    <div id="admin-temas-container" class="grid grid-cols-1 gap-4 p-4 bg-white border border-blue-100 rounded-xl max-h-64 overflow-y-auto">
+                                        <p class="text-[10px] text-gray-400 p-2">Seleccione una asignatura para ver sus temas.</p>
+                                    </div>
                                 </div>
                             </div>
 
