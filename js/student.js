@@ -246,7 +246,9 @@ document.addEventListener('DOMContentLoaded', function() {
         // REQ: Filtro Estricto por Parcial (Incidencia 5)
         // No mezclar históricos en el cálculo de progreso actual
         var currentParcialActivities = activities.filter(function(a) {
-            return window.normalizePartial(a.parcial) === window.normalizePartial(window.PARCIAL_ACTUAL);
+            var isParcialOk = window.normalizePartial(a.parcial) === window.normalizePartial(window.PARCIAL_ACTUAL);
+            var isAuthorized = window.isContentAuthorized(a.parcial, a.asignatura, a.tema);
+            return isParcialOk && isAuthorized;
         });
 
         // --- Ajuste de Lógica de Progreso (Req 2) ---
@@ -535,7 +537,9 @@ document.addEventListener('DOMContentLoaded', function() {
         if (parcialLabel) parcialLabel.textContent = activePartial;
 
         var currentActivities = activities.filter(function(a) {
-            return window.normalizePartial(a.parcial) === window.normalizePartial(activePartial);
+            var isParcialOk = window.normalizePartial(a.parcial) === window.normalizePartial(activePartial);
+            var isAuthorized = window.isContentAuthorized(a.parcial, a.asignatura, a.tema);
+            return isParcialOk && isAuthorized;
         });
 
         var subjects = [...new Set(currentActivities.map(function(a) { return a.asignatura; }))]

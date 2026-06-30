@@ -116,29 +116,36 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function loadAcademicAdminData() {
         const parcialSelect = document.getElementById('admin-parcial-actual');
-        const gradoSelect = document.getElementById('admin-grado-actual');
-        const seccionSelect = document.getElementById('admin-seccion-actual');
-        const asignaturaSelect = document.getElementById('admin-asignatura-vigente');
-        const temaSelect = document.getElementById('admin-tema-vigente');
+        const themeSelect = document.getElementById('admin-tema-vigente');
 
-        if (!parcialSelect || !gradoSelect) return;
+        if (!parcialSelect) return;
 
         const applyConfig = (data) => {
             if (!data) return;
             if (data.ParcialActual) parcialSelect.value = data.ParcialActual;
-            if (data.GradoActual) gradoSelect.value = data.GradoActual;
-            if (data.SeccionActual) seccionSelect.value = data.SeccionActual;
+
+            // Handle Multi-Grades
+            const grades = Array.isArray(data.GradoActual) ? data.GradoActual : [data.GradoActual];
+            document.querySelectorAll('input[name="admin-grado"]').forEach(cb => {
+                cb.checked = grades.includes(cb.value);
+            });
+
+            // Handle Multi-Sections
+            const sections = Array.isArray(data.SeccionActual) ? data.SeccionActual : [data.SeccionActual];
+            document.querySelectorAll('input[name="admin-seccion"]').forEach(cb => {
+                cb.checked = sections.includes(cb.value);
+            });
 
             window.GLOBAL_SCOPE = {
                 ParcialActual: parcialSelect.value,
-                GradoActual: gradoSelect.value,
-                SeccionActual: seccionSelect.value,
-                AsignaturaActual: data.AsignaturaActual || "",
-                TemaActual: data.TemaActual || ""
+                GradoActual: grades,
+                SeccionActual: sections,
+                AsignaturaActual: Array.isArray(data.AsignaturaActual) ? data.AsignaturaActual : [data.AsignaturaActual].filter(Boolean),
+                TemaActual: data.TemaActual || "General"
             };
             window.PARCIAL_ACTUAL = window.GLOBAL_SCOPE.ParcialActual;
 
-            updateCascadingSelectors(data.AsignaturaActual, data.TemaActual);
+            updateCascadingSelectors(window.GLOBAL_SCOPE.AsignaturaActual, window.GLOBAL_SCOPE.TemaActual);
         };
 
         // REQ: Cache-First for Admin Config
@@ -163,99 +170,88 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    function updateCascadingSelectors(selectedAsig, selectedTema) {
-        const grado = document.getElementById('admin-grado-actual').value;
-        const seccion = document.getElementById('admin-seccion-actual').value;
-        const asigSelect = document.getElementById('admin-asignatura-vigente');
+    function updateCascadingSelectors(selectedAsigs, selectedTema) {
+        const selectedGrades = Array.from(document.querySelectorAll('input[name="admin-grado"]:checked')).map(cb => cb.value);
+        const selectedSections = Array.from(document.querySelectorAll('input[name="admin-seccion"]:checked')).map(cb => cb.value);
+        const asigContainer = document.getElementById('admin-asignaturas-container');
         const temaSelect = document.getElementById('admin-tema-vigente');
 
-        if (!asigSelect || !temaSelect) return;
+        if (!asigContainer || !temaSelect) return;
 
         const presentations = window.presentationData || [];
-        const gradeObj = presentations.find(g => window.parseGrade(g.grade) === window.parseGrade(grado));
+        let availableSubjs = [];
 
-        if (!gradeObj) {
-            asigSelect.innerHTML = '<option value="">No hay asignaturas</option>';
-            temaSelect.innerHTML = '<option value="">No hay temas</option>';
-            return;
-        }
-
-        // Filtrar asignaturas por sección
-        const availableSubjs = gradeObj.subjects.filter(s => window.checkSectionHelper(s.sections, seccion));
-        const uniqueSubjs = [...new Set(availableSubjs.map(s => s.name))];
-
-        asigSelect.innerHTML = uniqueSubjs.map(s => `<option value="${s}" ${s === selectedAsig ? 'selected' : ''}>${s}</option>`).join('');
-
-        const updateTemas = (asigName, selTema) => {
-            const currentAsig = availableSubjs.find(s => s.name === asigName);
-            if (currentAsig && currentAsig.topics) {
-                temaSelect.innerHTML = currentAsig.topics.map(t => `<option value="${t.title}" ${t.title === selTema ? 'selected' : ''}>${t.title}</option>`).join('');
-            } else {
-                temaSelect.innerHTML = '<option value="">Sin temas</option>';
+        selectedGrades.forEach(grado => {
+            const gradeObj = presentations.find(g => window.parseGrade(g.grade) === window.parseGrade(grado));
+            if (gradeObj) {
+                const subjs = gradeObj.subjects.filter(s => {
+                    return selectedSections.some(sec => window.checkSectionHelper(s.sections, sec));
+                });
+                availableSubjs = availableSubjs.concat(subjs);
             }
-        };
+        });
 
-        updateTemas(asigSelect.value, selectedTema);
+        // Unique subjects by name
+        const uniqueSubjsNames = [...new Set(availableSubjs.map(s => s.name))];
+        const selectedAsigArray = Array.isArray(selectedAsigs) ? selectedAsigs : [selectedAsigs].filter(Boolean);
 
-        asigSelect.onchange = (e) => updateTemas(e.target.value);
-    }
-
-    document.getElementById('admin-grado-actual')?.addEventListener('change', () => updateCascadingSelectors());
-    document.getElementById('admin-seccion-actual')?.addEventListener('change', () => updateCascadingSelectors());
-
-    async function renderAsignaturasCheckboxes() {
-        const asigList = document.getElementById('admin-asignaturas-list');
-        const parcial = document.getElementById('admin-parcial-actual').value;
-
-        const baseAsignaturas = [
-            "Informática Aplicada", "Ofimática", "Diseño Web",
-            "Programación", "Análisis y Diseño", "Bases de Datos",
-            "Redes", "Programación Orientada a Objetos", "Informática I"
-        ];
-
-        const renderActiveList = (activeData) => {
-            const activeSet = new Set(activeData || []);
-            asigList.innerHTML = baseAsignaturas.map(asig => `
-                <label class="flex items-center gap-2 p-2 hover:bg-blue-50 rounded-lg cursor-pointer transition-colors">
-                    <input type="checkbox" class="admin-asig-checkbox w-4 h-4 text-blue-600 rounded focus:ring-blue-500"
-                           value="${asig}" ${activeSet.has(asig) ? 'checked' : ''}>
-                    <span class="text-[10px] font-bold text-gray-700 uppercase">${asig}</span>
+        if (uniqueSubjsNames.length === 0) {
+            asigContainer.innerHTML = '<p class="text-[10px] text-gray-400 p-2">Seleccione grado y sección para ver asignaturas.</p>';
+        } else {
+            asigContainer.innerHTML = uniqueSubjsNames.map(s => `
+                <label class="flex items-center gap-2 px-2 py-1 hover:bg-blue-50 rounded-lg cursor-pointer transition-colors">
+                    <input type="checkbox" name="admin-asignatura" value="${s}" class="w-4 h-4 text-blue-600 rounded" ${selectedAsigArray.includes(s) ? 'checked' : ''}>
+                    <span class="text-[10px] font-bold text-gray-700 uppercase">${s}</span>
                 </label>
             `).join('');
+        }
+
+        // Topics: Union of topics for all selected subjects (only if manageable, otherwise "General")
+        const updateTemas = () => {
+            const checkedAsigs = Array.from(document.querySelectorAll('input[name="admin-asignatura"]:checked')).map(cb => cb.value);
+            const allTopics = [];
+            checkedAsigs.forEach(asigName => {
+                const subjs = availableSubjs.filter(s => s.name === asigName);
+                subjs.forEach(s => {
+                    if (s.topics) s.topics.forEach(t => allTopics.push(t.title));
+                });
+            });
+
+            const uniqueTopics = [...new Set(allTopics)];
+            temaSelect.innerHTML = '<option value="General">General (Todos los temas)</option>' +
+                uniqueTopics.map(t => `<option value="${t}" ${t === selectedTema ? 'selected' : ''}>${t}</option>`).join('');
         };
 
-        // REQ: Cache-First for Active Subjects
-        const cacheKey = `active_subjects_${parcial}`;
-        if (window.PersistenceManager) {
-            const cached = await window.PersistenceManager.get('academic_stats', cacheKey);
-            if (cached && cached.data) {
-                renderActiveList(cached.data);
-            }
-        }
+        updateTemas();
 
-        try {
-            const activeRes = await fetchApi('USER', 'getAsignaturasActivas', { parcial }, 0, {
-                store: 'academic_stats',
-                key: cacheKey,
-                onUpdate: (data) => renderActiveList(data)
-            });
-            if (activeRes.status === 'success') {
-                renderActiveList(activeRes.data);
-            }
-        } catch (e) {
-            if (!asigList.innerHTML) asigList.innerHTML = '<p class="text-[10px] text-red-500 p-2">Error al cargar asignaturas.</p>';
-        }
+        // Add listeners to new checkboxes
+        asigContainer.querySelectorAll('input[name="admin-asignatura"]').forEach(cb => {
+            cb.addEventListener('change', updateTemas);
+        });
     }
 
-    document.getElementById('admin-parcial-actual')?.addEventListener('change', renderAsignaturasCheckboxes);
+    document.querySelectorAll('input[name="admin-grado"], input[name="admin-seccion"]').forEach(cb => {
+        cb.addEventListener('change', () => updateCascadingSelectors());
+    });
+
 
     document.getElementById('btn-save-academic-config')?.addEventListener('click', async () => {
         const btn = document.getElementById('btn-save-academic-config');
+
+        const selectedGrades = Array.from(document.querySelectorAll('input[name="admin-grado"]:checked')).map(cb => cb.value);
+        const selectedSections = Array.from(document.querySelectorAll('input[name="admin-seccion"]:checked')).map(cb => cb.value);
+        const selectedAsigs = Array.from(document.querySelectorAll('input[name="admin-asignatura"]:checked')).map(cb => cb.value);
+
+        if (selectedGrades.length === 0 || selectedSections.length === 0 || selectedAsigs.length === 0) {
+            alert('Debe seleccionar al menos un grado, una sección y una asignatura.');
+            return;
+        }
+
         const fullScope = {
             ParcialActual: document.getElementById('admin-parcial-actual').value,
-            GradoActual: document.getElementById('admin-grado-actual').value,
-            SeccionActual: document.getElementById('admin-seccion-actual').value,
-            AsignaturaActual: document.getElementById('admin-asignatura-vigente').value,
+            GradoActual: selectedGrades,
+            SeccionActual: selectedSections,
+            AsignaturaActual: selectedAsigs,
             TemaActual: document.getElementById('admin-tema-vigente').value
         };
 

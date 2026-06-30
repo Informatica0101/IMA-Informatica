@@ -462,40 +462,52 @@
                                         <option value="Cuarto Parcial">Cuarto Parcial</option>
                                     </select>
                                 </div>
-                                <div>
-                                    <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Grado Vigente</label>
-                                    <select id="admin-grado-actual" class="w-full p-3 bg-white border border-blue-100 rounded-xl text-sm font-medium focus:ring-2 focus:ring-blue-400 outline-none">
-                                        <option value="Décimo">Décimo</option>
-                                        <option value="Undécimo">Undécimo</option>
-                                        <option value="Duodécimo">Duodécimo</option>
-                                    </select>
-                                </div>
-                                <div>
-                                    <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Sección Vigente</label>
-                                    <select id="admin-seccion-actual" class="w-full p-3 bg-white border border-blue-100 rounded-xl text-sm font-medium focus:ring-2 focus:ring-blue-400 outline-none">
-                                        <option value="A">A</option>
-                                        <option value="B">B</option>
-                                        <option value="C">C</option>
-                                    </select>
-                                </div>
-                                <div>
-                                    <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Asignatura Vigente</label>
-                                    <select id="admin-asignatura-vigente" class="w-full p-3 bg-white border border-blue-100 rounded-xl text-sm font-medium focus:ring-2 focus:ring-blue-400 outline-none">
-                                        <!-- Se poblará dinámicamente -->
-                                    </select>
+                                <div class="sm:col-span-2">
+                                    <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Grados Vigentes</label>
+                                    <div id="admin-grados-container" class="flex flex-wrap gap-2 p-3 bg-white border border-blue-100 rounded-xl">
+                                        <label class="flex items-center gap-2 px-3 py-1 bg-gray-50 rounded-lg cursor-pointer hover:bg-blue-50 transition-colors">
+                                            <input type="checkbox" name="admin-grado" value="Décimo" class="w-4 h-4 text-blue-600 rounded">
+                                            <span class="text-xs font-semibold text-gray-700 uppercase">10°</span>
+                                        </label>
+                                        <label class="flex items-center gap-2 px-3 py-1 bg-gray-50 rounded-lg cursor-pointer hover:bg-blue-50 transition-colors">
+                                            <input type="checkbox" name="admin-grado" value="Undécimo" class="w-4 h-4 text-blue-600 rounded">
+                                            <span class="text-xs font-semibold text-gray-700 uppercase">11°</span>
+                                        </label>
+                                        <label class="flex items-center gap-2 px-3 py-1 bg-gray-50 rounded-lg cursor-pointer hover:bg-blue-50 transition-colors">
+                                            <input type="checkbox" name="admin-grado" value="Duodécimo" class="w-4 h-4 text-blue-600 rounded">
+                                            <span class="text-xs font-semibold text-gray-700 uppercase">12°</span>
+                                        </label>
+                                    </div>
                                 </div>
                                 <div class="sm:col-span-2">
-                                    <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Tema Vigente</label>
+                                    <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Secciones Vigentes</label>
+                                    <div id="admin-secciones-container" class="flex flex-wrap gap-2 p-3 bg-white border border-blue-100 rounded-xl">
+                                        <label class="flex items-center gap-2 px-3 py-1 bg-gray-50 rounded-lg cursor-pointer hover:bg-blue-50 transition-colors">
+                                            <input type="checkbox" name="admin-seccion" value="A" class="w-4 h-4 text-blue-600 rounded">
+                                            <span class="text-xs font-semibold text-gray-700 uppercase">A</span>
+                                        </label>
+                                        <label class="flex items-center gap-2 px-3 py-1 bg-gray-50 rounded-lg cursor-pointer hover:bg-blue-50 transition-colors">
+                                            <input type="checkbox" name="admin-seccion" value="B" class="w-4 h-4 text-blue-600 rounded">
+                                            <span class="text-xs font-semibold text-gray-700 uppercase">B</span>
+                                        </label>
+                                        <label class="flex items-center gap-2 px-3 py-1 bg-gray-50 rounded-lg cursor-pointer hover:bg-blue-50 transition-colors">
+                                            <input type="checkbox" name="admin-seccion" value="C" class="w-4 h-4 text-blue-600 rounded">
+                                            <span class="text-xs font-semibold text-gray-700 uppercase">C</span>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="sm:col-span-2">
+                                    <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Asignaturas Vigentes</label>
+                                    <div id="admin-asignaturas-container" class="grid grid-cols-1 sm:grid-cols-2 gap-2 p-3 bg-white border border-blue-100 rounded-xl max-h-48 overflow-y-auto">
+                                        <!-- Checkboxes dinámicos -->
+                                    </div>
+                                </div>
+                                <div class="sm:col-span-2">
+                                    <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Tema Vigente (Filtro Secundario)</label>
                                     <select id="admin-tema-vigente" class="w-full p-3 bg-white border border-blue-100 rounded-xl text-sm font-medium focus:ring-2 focus:ring-blue-400 outline-none">
+                                        <option value="General">General (Todos los temas)</option>
                                         <!-- Se poblará dinámicamente -->
                                     </select>
-                                </div>
-                            </div>
-
-                            <div class="hidden">
-                                <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-3">Asignaturas Visibles para el Parcial</label>
-                                <div id="admin-asignaturas-list" class="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-40 overflow-y-auto p-2 bg-white/50 rounded-xl border border-blue-50">
-                                    <!-- Checkboxes dinámicos -->
                                 </div>
                             </div>
 

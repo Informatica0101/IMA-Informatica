@@ -29,9 +29,9 @@ var FRONTEND_URL = 'https://informatica0101.github.io';
  */
 window.GLOBAL_SCOPE = {
     ParcialActual: "Segundo Parcial",
-    GradoActual: "Décimo",
-    SeccionActual: "A",
-    AsignaturaActual: "Informática I",
+    GradoActual: ["Décimo"],
+    SeccionActual: ["A"],
+    AsignaturaActual: ["Informática I"],
     TemaActual: "General"
 };
 
@@ -190,12 +190,30 @@ window.isContentAuthorized = function(contentPartial, contentSubject, contentTop
 
     // 2. Verificación de Asignatura (si se provee)
     if (contentSubject && window.GLOBAL_SCOPE.AsignaturaActual) {
-        if (contentSubject !== window.GLOBAL_SCOPE.AsignaturaActual) return false;
+        var authorizedAsigs = Array.isArray(window.GLOBAL_SCOPE.AsignaturaActual)
+            ? window.GLOBAL_SCOPE.AsignaturaActual
+            : [window.GLOBAL_SCOPE.AsignaturaActual];
+
+        if (authorizedAsigs.length > 0 && authorizedAsigs.indexOf(contentSubject) === -1) return false;
     }
 
     // 3. Verificación de Tema (si se provee)
     if (contentTopic && window.GLOBAL_SCOPE.TemaActual && window.GLOBAL_SCOPE.TemaActual !== "General") {
         if (contentTopic !== window.GLOBAL_SCOPE.TemaActual) return false;
+    }
+
+    // 4. Verificación de Grado y Sección para Alumnos (si aplica al contenido)
+    // Nota: El dashboard del estudiante ya filtra por perfil del usuario,
+    // pero esta función refuerza la autorización si el contenido tiene metadatos de grado/seccion.
+    if (user.rol !== 'Profesor') {
+        if (user.grado && window.GLOBAL_SCOPE.GradoActual) {
+            var authorizedGrades = Array.isArray(window.GLOBAL_SCOPE.GradoActual) ? window.GLOBAL_SCOPE.GradoActual : [window.GLOBAL_SCOPE.GradoActual];
+            if (authorizedGrades.indexOf(user.grado) === -1) return false;
+        }
+        if (user.seccion && window.GLOBAL_SCOPE.SeccionActual) {
+            var authorizedSections = Array.isArray(window.GLOBAL_SCOPE.SeccionActual) ? window.GLOBAL_SCOPE.SeccionActual : [window.GLOBAL_SCOPE.SeccionActual];
+            if (authorizedSections.indexOf(user.seccion) === -1) return false;
+        }
     }
 
     return true;
