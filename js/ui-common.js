@@ -190,9 +190,9 @@ window.setupCommonUI = function() {
             if (window.PresentationEngine && typeof window.PresentationEngine.showSlide === 'function') {
                 window.PresentationEngine.showSlide(state.slideIndex, false);
             }
-        } else if (state.type === 'student-tab') {
-            if (window.switchParcialTab) {
-                window.switchParcialTab(state.parcial, false);
+        } else if (state.type === 'student-subject') {
+            if (window.switchSubject) {
+                window.switchSubject(state.subject, false);
             }
         } else if (state.type === 'index-content') {
             if (state.view === 'grades') {

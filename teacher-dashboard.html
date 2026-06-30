@@ -452,17 +452,47 @@
                         </div>
 
                         <div class="space-y-6">
-                            <div>
-                                <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Parcial Activo</label>
-                                <select id="admin-parcial-actual" class="w-full p-3 bg-white border border-blue-100 rounded-xl text-sm font-medium focus:ring-2 focus:ring-blue-400 outline-none">
-                                    <option value="Primer Parcial">Primer Parcial</option>
-                                    <option value="Segundo Parcial">Segundo Parcial</option>
-                                    <option value="Tercer Parcial">Tercer Parcial</option>
-                                    <option value="Cuarto Parcial">Cuarto Parcial</option>
-                                </select>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Parcial Activo</label>
+                                    <select id="admin-parcial-actual" class="w-full p-3 bg-white border border-blue-100 rounded-xl text-sm font-medium focus:ring-2 focus:ring-blue-400 outline-none">
+                                        <option value="Primer Parcial">Primer Parcial</option>
+                                        <option value="Segundo Parcial">Segundo Parcial</option>
+                                        <option value="Tercer Parcial">Tercer Parcial</option>
+                                        <option value="Cuarto Parcial">Cuarto Parcial</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Grado Vigente</label>
+                                    <select id="admin-grado-actual" class="w-full p-3 bg-white border border-blue-100 rounded-xl text-sm font-medium focus:ring-2 focus:ring-blue-400 outline-none">
+                                        <option value="Décimo">Décimo</option>
+                                        <option value="Undécimo">Undécimo</option>
+                                        <option value="Duodécimo">Duodécimo</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Sección Vigente</label>
+                                    <select id="admin-seccion-actual" class="w-full p-3 bg-white border border-blue-100 rounded-xl text-sm font-medium focus:ring-2 focus:ring-blue-400 outline-none">
+                                        <option value="A">A</option>
+                                        <option value="B">B</option>
+                                        <option value="C">C</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Asignatura Vigente</label>
+                                    <select id="admin-asignatura-vigente" class="w-full p-3 bg-white border border-blue-100 rounded-xl text-sm font-medium focus:ring-2 focus:ring-blue-400 outline-none">
+                                        <!-- Se poblará dinámicamente -->
+                                    </select>
+                                </div>
+                                <div class="sm:col-span-2">
+                                    <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Tema Vigente</label>
+                                    <select id="admin-tema-vigente" class="w-full p-3 bg-white border border-blue-100 rounded-xl text-sm font-medium focus:ring-2 focus:ring-blue-400 outline-none">
+                                        <!-- Se poblará dinámicamente -->
+                                    </select>
+                                </div>
                             </div>
 
-                            <div>
+                            <div class="hidden">
                                 <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-3">Asignaturas Visibles para el Parcial</label>
                                 <div id="admin-asignaturas-list" class="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-40 overflow-y-auto p-2 bg-white/50 rounded-xl border border-blue-50">
                                     <!-- Checkboxes dinámicos -->

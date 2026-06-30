@@ -74,7 +74,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (cached && cached.data) {
                 allActivitiesData = cached.data.allActivities || [];
                 renderStudentExpediente(allActivitiesData);
-                renderParcialTabs(allActivitiesData);
+                renderSubjectNavigation(allActivitiesData);
                 // Si ya tenemos caché, procedemos a conciliación silenciosa sin bloquear la UI
                 hasLocalData = true;
             }
@@ -83,7 +83,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (!hasLocalData) {
             // REQ: Skeleton Screen (Modulo 3)
             tasksList.innerHTML = `
-                <div class="col-span-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 w-full">
+                <div class="col-span-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full">
                     ${Array(6).fill(0).map(function() { return `
                         <div class="p-6 bg-white rounded-[2rem] border border-gray-100 shadow-sm space-y-4">
                             <div class="skeleton h-4 w-1/3 rounded"></div>
@@ -105,30 +105,39 @@ document.addEventListener('DOMContentLoaded', function() {
             // REQ 2: No disparar loader global si ya renderizamos desde caché
             if (!hasLocalData && window.GamesAdapter) window.GamesAdapter.showLoading(true);
 
+            // REQ: Sync Global Scope from Server
+            var scopeRes = await fetchApi('USER', 'getAcademicConfig');
+            if (scopeRes && scopeRes.status === 'success' && scopeRes.data) {
+                window.GLOBAL_SCOPE = scopeRes.data;
+                window.PARCIAL_ACTUAL = window.GLOBAL_SCOPE.ParcialActual;
+            }
+
             // REQ: Mitigación de Latencia mediante Paralelismo y Silent Reconciliation (Ticket 4)
             var results = await Promise.all([
                 fetchApi('TASK', 'getStudentTasks', payload, 0, {
                     store: 'cache_estudiante_tasks',
                     onUpdate: function(data) {
+                        if (!Array.isArray(data)) return;
                         var tasks = data.map(function(t) { return { ...t, type: t.tipo || 'Tarea' }; });
                         allActivitiesData = [
                             ...allActivitiesData.filter(function(a) { return a.type === 'Examen'; }),
                             ...tasks
                         ];
                         renderStudentExpediente(allActivitiesData);
-                        renderParcialTabs(allActivitiesData);
+                        renderSubjectNavigation(allActivitiesData);
                     }
                 }),
                 fetchApi('EXAM', 'getStudentExams', payload, 0, {
                     store: 'cache_estudiante_exams',
                     onUpdate: function(data) {
+                        if (!Array.isArray(data)) return;
                         var exams = data.map(function(e) { return { ...e, type: 'Examen' }; });
                         allActivitiesData = [
                             ...allActivitiesData.filter(function(a) { return a.type !== 'Examen'; }),
                             ...exams
                         ];
                         renderStudentExpediente(allActivitiesData);
-                        renderParcialTabs(allActivitiesData);
+                        renderSubjectNavigation(allActivitiesData);
                     }
                 }),
                 fetchAndRenderLearningProfile(true) // Obtener datos de perfil sin renderizar aún
@@ -140,7 +149,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             var allActivities = [];
             try {
-                if (tasksResult.status === 'success' && tasksResult.data) {
+                if (tasksResult.status === 'success' && Array.isArray(tasksResult.data)) {
                     allActivities.push(...tasksResult.data.map(function(task) {
                         return {
                             ...task,
@@ -150,7 +159,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         };
                     }));
                 }
-                if (examsResult.status === 'success' && examsResult.data) {
+                if (examsResult.status === 'success' && Array.isArray(examsResult.data)) {
                     allActivities.push(...examsResult.data.map(function(exam) {
                         return {
                             ...exam,
@@ -193,7 +202,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
 
             if (allActivities.length > 0) {
-                renderParcialTabs(allActivities);
+                renderSubjectNavigation(allActivities);
             } else {
                 // REQ: Manejo de respuesta vacía amigable (v3.3)
                 tasksList.innerHTML = `
@@ -505,78 +514,116 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    function renderParcialTabs(inputActivities) {
-        var tabsContainer = document.getElementById('parcial-tabs-container');
-        if (!tabsContainer) return;
+    function renderSubjectNavigation(inputActivities) {
+        var sidebarNav = document.getElementById('subject-sidebar-nav');
+        var mobileNav = document.getElementById('subject-mobile-nav');
+        var sidebar = document.getElementById('student-sidebar');
+        var parcialLabel = document.getElementById('active-parcial-label');
+
+        if (!sidebarNav || !mobileNav) return;
 
         // REQ: Normalización de entrada para soportar Offline-First (v3.3)
         var activities = (inputActivities && inputActivities.status === 'success' && Array.isArray(inputActivities.data)) ? inputActivities.data : (Array.isArray(inputActivities) ? inputActivities : []);
 
         if (!activities || activities.length === 0) {
-            tabsContainer.innerHTML = '';
-            tasksList.innerHTML = `
-                <div class="col-span-full p-12 text-center bg-white rounded-[2rem] border border-gray-100 animate-fade-in">
-                    <div class="w-16 h-16 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center text-2xl mx-auto mb-4">
-                        <i class="fas fa-calendar-check"></i>
-                    </div>
-                    <h3 class="text-lg font-bold text-gray-800 uppercase tracking-tighter mb-2">¡Sin pendientes!</h3>
-                    <p class="text-gray-400 text-xs font-medium uppercase tracking-widest leading-relaxed">
-                        No se han encontrado tareas ni exámenes asignados para tu grado y sección en este momento.
-                    </p>
-                </div>`;
+            sidebarNav.innerHTML = '<p class="text-gray-400 text-[10px] uppercase font-bold p-4">Sin contenido asignado.</p>';
             return;
         }
 
-        var parciales = [...new Set(activities.map(function(a) { return a.parcial; }))];
-        parciales.sort(function(a, b) { return (PARCIAL_ORDER[b] || 0) - (PARCIAL_ORDER[a] || 0); });
+        // REQ: Restrictive Global Scope Filtering (v7.7.1)
+        var activePartial = window.GLOBAL_SCOPE ? window.GLOBAL_SCOPE.ParcialActual : window.PARCIAL_ACTUAL;
+        if (parcialLabel) parcialLabel.textContent = activePartial;
 
-        var activeParcial = parciales[0];
+        var currentActivities = activities.filter(function(a) {
+            return window.normalizePartial(a.parcial) === window.normalizePartial(activePartial);
+        });
 
-        tabsContainer.innerHTML = `
-            <div class="flex flex-nowrap overflow-x-auto gap-2 pb-2 scroll-horizontal-clean">
-                ${parciales.map(function(p) {
-                    var isActive = p === activeParcial;
-                    var activeClass = isActive ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-500 hover:bg-gray-200';
-                    return `<button class="flex-none px-4 py-2 rounded-xl font-semibold transition-all text-[10px] uppercase tracking-widest ${activeClass} parcial-tab" data-parcial="${p}">${p}</button>`;
-                }).join('')}
-            </div>
-        `;
+        var subjects = [...new Set(currentActivities.map(function(a) { return a.asignatura; }))]
+            .filter(function(s) { return s && s.trim() !== ""; })
+            .sort();
 
-        // Interactividad
-        tabsContainer.querySelectorAll('.parcial-tab').forEach(function(btn) {
+        if (subjects.length === 0) {
+            sidebarNav.innerHTML = '<p class="text-gray-400 text-[10px] uppercase font-bold p-4">No hay materias en este parcial.</p>';
+            tasksList.innerHTML = '<p class="text-gray-500 text-center py-8">No hay actividades registradas.</p>';
+            return;
+        }
+
+        // REQ: Desktop Sidebar (Tabs)
+        sidebarNav.innerHTML = subjects.map(function(subj) {
+            return `
+                <button class="w-full flex items-center justify-between px-5 py-4 bg-gray-50/50 text-slate-600 rounded-2xl font-bold text-[10px] uppercase tracking-widest group hover:bg-blue-50 hover:text-blue-600 transition-all border border-transparent hover:border-blue-100 subject-nav-item" data-subject="${subj}">
+                    <div class="flex items-center gap-3">
+                        <div class="w-1.5 h-4 bg-gray-200 rounded-full group-hover:bg-blue-400 transition-colors bar-indicator"></div>
+                        <span class="truncate max-w-[150px]">${subj}</span>
+                    </div>
+                    <i class="fas fa-chevron-right text-[8px] opacity-0 group-hover:opacity-100 transition-all -translate-x-2 group-hover:translate-x-0"></i>
+                </button>
+            `;
+        }).join('');
+
+        // REQ: Mobile Buttons (Physical buttons, no dropdowns)
+        mobileNav.innerHTML = subjects.map(function(subj) {
+            return `
+                <button class="px-4 py-3 bg-white border border-gray-100 text-slate-900 rounded-xl font-bold text-[10px] uppercase tracking-widest shadow-sm hover:border-blue-200 active:scale-95 transition-all subject-nav-item" data-subject="${subj}">
+                    ${subj}
+                </button>
+            `;
+        }).join('');
+
+        // Sidebar display logic
+        if (sidebar) sidebar.classList.remove('hidden');
+
+        // Logic for Switching Subjects
+        var navItems = document.querySelectorAll('.subject-nav-item');
+        navItems.forEach(function(btn) {
             btn.addEventListener('click', function(e) {
-                var target = e.currentTarget;
-                var p = target.dataset.parcial;
-                window.switchParcialTab(p);
+                var subj = e.currentTarget.dataset.subject;
+                window.switchSubject(subj);
             });
         });
 
-        window.switchParcialTab = function(p, pushState) {
+        window.switchSubject = function(subj, pushState) {
             if (pushState === undefined) pushState = true;
-            var tabs = tabsContainer.querySelectorAll('.parcial-tab');
-            tabs.forEach(function(b) {
-                b.classList.remove('bg-blue-600', 'text-white');
-                b.classList.add('bg-gray-100', 'text-gray-500', 'hover:bg-gray-200');
-                if (b.dataset.parcial === p) {
-                    b.classList.remove('bg-gray-100', 'text-gray-500', 'hover:bg-gray-200');
-                    b.classList.add('bg-blue-600', 'text-white');
+
+            // Update UI State for Sidebar items
+            document.querySelectorAll('#subject-sidebar-nav .subject-nav-item').forEach(function(b) {
+                var bar = b.querySelector('.bar-indicator');
+                if (b.dataset.subject === subj) {
+                    b.classList.remove('bg-gray-50/50', 'text-slate-600');
+                    b.classList.add('bg-blue-600', 'text-white', 'shadow-lg', 'shadow-blue-100');
+                    if (bar) bar.classList.replace('bg-gray-200', 'bg-white');
+                } else {
+                    b.classList.add('bg-gray-50/50', 'text-slate-600');
+                    b.classList.remove('bg-blue-600', 'text-white', 'shadow-lg', 'shadow-blue-100');
+                    if (bar) bar.classList.replace('bg-white', 'bg-gray-200');
                 }
             });
 
-            var activitiesInParcial = allActivitiesData.filter(function(a) { return a.parcial === p; });
-            renderSubjectNav(activitiesInParcial, p);
+            // Update UI State for Mobile items
+            document.querySelectorAll('#subject-mobile-nav .subject-nav-item').forEach(function(b) {
+                if (b.dataset.subject === subj) {
+                    b.classList.remove('bg-white', 'text-slate-900');
+                    b.classList.add('bg-blue-600', 'text-white', 'border-blue-600');
+                } else {
+                    b.classList.add('bg-white', 'text-slate-900');
+                    b.classList.remove('bg-blue-600', 'text-white', 'border-blue-600');
+                }
+            });
+
+            var finalActivities = currentActivities.filter(function(a) { return a.asignatura === subj; });
+            renderActivities(finalActivities);
+            showSubjectInfo(subj);
 
             if (pushState) {
-                history.pushState({ type: 'student-tab', parcial: p }, '');
+                history.pushState({ type: 'student-subject', subject: subj, parcial: activePartial }, '');
             }
         };
 
-        // Seleccionar primer parcial por defecto
-        var firstTab = tabsContainer.querySelector('.parcial-tab');
-        if (firstTab) {
-            var p = firstTab.dataset.parcial;
-            history.replaceState({ type: 'student-tab', parcial: p }, '');
-            window.switchParcialTab(p, false);
+        // Select first subject by default
+        var firstSubj = subjects[0];
+        if (firstSubj) {
+            history.replaceState({ type: 'student-subject', subject: firstSubj, parcial: activePartial }, '');
+            window.switchSubject(firstSubj, false);
         }
     }
 
@@ -1295,6 +1342,12 @@ document.addEventListener('DOMContentLoaded', function() {
     fetchAllActivities();
     initWhatsAppButton();
 
+    // REQ: Reactive Scope Synchronization (v7.7.1)
+    document.addEventListener('academic-scope-updated', function() {
+        console.log("[Student] Academic scope updated, refreshing activities...");
+        fetchAllActivities();
+    });
+
     async function fetchAndRenderLearningProfile(dataOnly = false) {
         // REQ: Eager Caching for Learning Profile (Ticket: Optimización de Caché)
         if (window.PersistenceManager) {
@@ -1326,6 +1379,9 @@ document.addEventListener('DOMContentLoaded', function() {
     function renderLearningProfileData(profileData) {
         var profileContainer = document.getElementById('learning-profile-integration');
         var metricsBody = document.getElementById('student-metrics-body');
+
+        // REQ: Defensive Data Validation (v7.7.1)
+        if (!Array.isArray(profileData)) profileData = [];
 
         // REQ 3: Muestra mínima local para renderizado de tabla (Modulo 3.1)
         var validData = (profileData || []).filter(function(i) { return i.intentos >= 5; });

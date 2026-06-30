@@ -299,3 +299,39 @@ Descripción:
 - Se implementaron los controladores para los botones de la pantalla de resultados (Reintentar, Siguiente Nivel, Cambiar Tema).
 - Se optimizó la lógica de validación estructural para ser más flexible y precisa.
 - Se garantizó el cumplimiento total de ES5 para evitar errores en navegadores legacy.
+
+REGISTRO DE CAMBIOS - CONFIGURACIÓN GLOBAL Y REESTRUCTURACIÓN - Tue Jun 30 2026
+
+Módulo: Red y API
+- js/api.js:
+    - Optimizada fetchApi con validación 'Array.isArray()' preventiva.
+    - Asegurada respuesta de arreglo vacío para acciones 'get' en caso de datos nulos.
+    - Sincronización inmediata de caché con el callback 'onUpdate'.
+
+Módulo: Configuración Global
+- js/config.js:
+    - Implementado 'GLOBAL_SCOPE' para control centralizado de 5 niveles académicos.
+    - Expandida 'isContentAuthorized' para filtrar por Parcial, Asignatura y Tema.
+    - Creado 'PRESENTATION_INDEX' para indexación formal de lecciones.
+
+Módulo: Dashboard Profesor (Admin)
+- teacher-dashboard.html:
+    - Rediseñada sección de administración con selectores en cascada.
+- js/teacher.js:
+    - Implementada lógica de selectores dependientes (Grado -> Asignatura -> Tema).
+    - Actualizada persistencia para enviar el objeto 'fullScope' atómico al servidor.
+    - Vinculación de tema y asignatura en el proceso de calificación.
+
+Módulo: Dashboard Estudiante
+- student-dashboard.html:
+    - Reestructurada maquetación para incluir barra lateral de navegación (#student-sidebar).
+- js/student.js:
+    - Reemplazada navegación de pestañas por sistema de barra lateral y botones físicos.
+    - Implementado filtrado estricto basado en el alcance global vigente.
+    - Añadida sincronización reactiva al evento 'academic-scope-updated'.
+
+Módulo: Estilos y UX
+- css/style.css:
+    - Evolución visual de .card-ima a un estándar corporativo (20px radius, sombras suaves).
+    - Implementadas animaciones de entrada 'fadeInLeft' para componentes de navegación.
+    - Eliminación de estilos de alto contraste no institucionales.

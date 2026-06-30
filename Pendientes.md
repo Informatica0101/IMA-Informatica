@@ -173,3 +173,20 @@
     - Banco de preguntas completo según requerimiento.
     - Interfaz libre de comillas innecesarias en fragmentos de código.
 - **Estado:** [ ] Pendiente | [ ] En Ejecución | [X] Completada
+
+### [T-026] Configuración Global, Reestructuración de Dashboards y Corrección de Red
+- **Origen del Hallazgo:** Requerimiento Sprint v7.7.1
+- **Severidad/Clasificación:** Crítico
+- **Archivos Involucrados:** js/api.js, js/config.js, js/student.js, js/teacher.js, student-dashboard.html, teacher-dashboard.html, css/style.css
+- **Descripción del Alcance:**
+    - Implementación de GLOBAL_SCOPE (5 niveles) y filtrado estricto.
+    - Reestructuración de la navegación del estudiante (Sidebar + Botones físicos).
+    - Refactorización de fetchApi y validación de arreglos en dashboards.
+    - Rediseño visual corporativo (20px radius) y eliminación de neones.
+    - Indexación formal de presentaciones y vinculación en calificaciones.
+- **Criterios de Aceptación:**
+    - Consola libre de TypeError: Failed to fetch y data.map.
+    - Navegación lateral funcional en estudiante.
+    - Administración por cascada (Grado -> Asig -> Tema) funcional.
+    - Estilos coherentes con la línea institucional.
+- **Estado:** [ ] TAREAS PENDIENTES DE REVISIÓN

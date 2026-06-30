@@ -1,98 +1,43 @@
-127.0.0.1 - - [19/Jun/2026 17:27:23] "GET /index.html HTTP/1.1" 200 -
-127.0.0.1 - - [19/Jun/2026 17:27:23] "GET /imagenes/bandera-de-honduras.png HTTP/1.1" 200 -
-127.0.0.1 - - [19/Jun/2026 17:27:23] "GET /css/style.css?v=21 HTTP/1.1" 200 -
-127.0.0.1 - - [19/Jun/2026 17:27:23] "GET /imagenes/logo.png HTTP/1.1" 200 -
-127.0.0.1 - - [19/Jun/2026 17:27:23] "GET /js/config.js?v=22 HTTP/1.1" 200 -
-127.0.0.1 - - [19/Jun/2026 17:27:23] "GET /js/persistence.js?v=22 HTTP/1.1" 200 -
-127.0.0.1 - - [19/Jun/2026 17:27:24] "GET /js/api.js?v=22 HTTP/1.1" 200 -
-127.0.0.1 - - [19/Jun/2026 17:27:24] "GET /js/games-adapter.js?v=22 HTTP/1.1" 200 -
-127.0.0.1 - - [19/Jun/2026 17:27:24] "GET /js/ui-common.js?v=22 HTTP/1.1" 200 -
-127.0.0.1 - - [19/Jun/2026 17:27:24] "GET /js/data.js?v=22 HTTP/1.1" 200 -
-127.0.0.1 - - [19/Jun/2026 17:27:24] "GET /js/index-ui.js?v=22 HTTP/1.1" 200 -
-127.0.0.1 - - [19/Jun/2026 17:27:26] "GET /juegos/webmaster_quiz.html HTTP/1.1" 200 -
-127.0.0.1 - - [19/Jun/2026 17:27:26] "GET /js/security-minigames.js?v=1 HTTP/1.1" 200 -
-127.0.0.1 - - [19/Jun/2026 17:27:26] "GET /js/webmaster_quiz_juego.js HTTP/1.1" 200 -
-127.0.0.1 - - [19/Jun/2026 17:28:44] "GET /index.html HTTP/1.1" 200 -
-127.0.0.1 - - [19/Jun/2026 17:28:44] "GET /css/style.css?v=21 HTTP/1.1" 200 -
-127.0.0.1 - - [19/Jun/2026 17:28:44] "GET /imagenes/logo.png HTTP/1.1" 200 -
-127.0.0.1 - - [19/Jun/2026 17:28:44] "GET /imagenes/bandera-de-honduras.png HTTP/1.1" 200 -
-127.0.0.1 - - [19/Jun/2026 17:28:44] "GET /js/config.js?v=22 HTTP/1.1" 200 -
-127.0.0.1 - - [19/Jun/2026 17:28:44] "GET /js/persistence.js?v=22 HTTP/1.1" 200 -
-127.0.0.1 - - [19/Jun/2026 17:28:44] "GET /js/api.js?v=22 HTTP/1.1" 200 -
-127.0.0.1 - - [19/Jun/2026 17:28:44] "GET /js/games-adapter.js?v=22 HTTP/1.1" 200 -
-127.0.0.1 - - [19/Jun/2026 17:28:44] "GET /js/ui-common.js?v=22 HTTP/1.1" 200 -
-127.0.0.1 - - [19/Jun/2026 17:28:44] "GET /js/data.js?v=22 HTTP/1.1" 200 -
-127.0.0.1 - - [19/Jun/2026 17:28:44] "GET /js/index-ui.js?v=22 HTTP/1.1" 200 -
-127.0.0.1 - - [19/Jun/2026 17:28:46] "GET /juegos/webmaster_quiz.html HTTP/1.1" 200 -
-127.0.0.1 - - [19/Jun/2026 17:28:46] "GET /js/security-minigames.js?v=1 HTTP/1.1" 200 -
-127.0.0.1 - - [19/Jun/2026 17:28:46] "GET /js/webmaster_quiz_juego.js HTTP/1.1" 200 -
-127.0.0.1 - - [19/Jun/2026 17:35:30] "GET /index.html HTTP/1.1" 200 -
-127.0.0.1 - - [19/Jun/2026 17:35:30] "GET /css/style.css?v=21 HTTP/1.1" 200 -
-127.0.0.1 - - [19/Jun/2026 17:35:30] "GET /imagenes/bandera-de-honduras.png HTTP/1.1" 200 -
-127.0.0.1 - - [19/Jun/2026 17:35:30] "GET /imagenes/logo.png HTTP/1.1" 200 -
-127.0.0.1 - - [19/Jun/2026 17:35:30] "GET /js/config.js?v=22 HTTP/1.1" 200 -
-127.0.0.1 - - [19/Jun/2026 17:35:31] "GET /js/api.js?v=22 HTTP/1.1" 200 -
-127.0.0.1 - - [19/Jun/2026 17:35:31] "GET /js/persistence.js?v=22 HTTP/1.1" 200 -
-127.0.0.1 - - [19/Jun/2026 17:35:31] "GET /js/games-adapter.js?v=22 HTTP/1.1" 200 -
-127.0.0.1 - - [19/Jun/2026 17:35:31] "GET /js/ui-common.js?v=22 HTTP/1.1" 200 -
-127.0.0.1 - - [19/Jun/2026 17:35:31] "GET /js/index-ui.js?v=22 HTTP/1.1" 200 -
-127.0.0.1 - - [19/Jun/2026 17:35:31] "GET /js/data.js?v=22 HTTP/1.1" 200 -
-127.0.0.1 - - [19/Jun/2026 17:35:32] "GET /juegos/webmaster_quiz.html HTTP/1.1" 200 -
-127.0.0.1 - - [19/Jun/2026 17:35:32] "GET /js/security-minigames.js?v=1 HTTP/1.1" 200 -
-127.0.0.1 - - [19/Jun/2026 17:35:32] "GET /js/webmaster_quiz_juego.js HTTP/1.1" 200 -
-127.0.0.1 - - [19/Jun/2026 18:36:25] "GET /index.html HTTP/1.1" 200 -
-127.0.0.1 - - [19/Jun/2026 18:36:25] "GET /css/style.css?v=21 HTTP/1.1" 200 -
-127.0.0.1 - - [19/Jun/2026 18:36:25] "GET /imagenes/bandera-de-honduras.png HTTP/1.1" 200 -
-127.0.0.1 - - [19/Jun/2026 18:36:25] "GET /imagenes/logo.png HTTP/1.1" 200 -
-127.0.0.1 - - [19/Jun/2026 18:36:25] "GET /js/config.js?v=22 HTTP/1.1" 200 -
-127.0.0.1 - - [19/Jun/2026 18:36:25] "GET /js/persistence.js?v=22 HTTP/1.1" 200 -
-127.0.0.1 - - [19/Jun/2026 18:36:25] "GET /js/api.js?v=22 HTTP/1.1" 200 -
-127.0.0.1 - - [19/Jun/2026 18:36:25] "GET /js/games-adapter.js?v=22 HTTP/1.1" 200 -
-127.0.0.1 - - [19/Jun/2026 18:36:25] "GET /js/ui-common.js?v=22 HTTP/1.1" 200 -
-127.0.0.1 - - [19/Jun/2026 18:36:25] "GET /js/data.js?v=22 HTTP/1.1" 200 -
-127.0.0.1 - - [19/Jun/2026 18:36:26] "GET /js/index-ui.js?v=22 HTTP/1.1" 200 -
-127.0.0.1 - - [19/Jun/2026 18:36:27] "GET /juegos/webmaster_quiz.html HTTP/1.1" 200 -
-127.0.0.1 - - [19/Jun/2026 18:36:28] "GET /js/security-minigames.js?v=1 HTTP/1.1" 200 -
-127.0.0.1 - - [19/Jun/2026 18:36:28] "GET /js/webmaster_quiz_juego.js HTTP/1.1" 200 -
-127.0.0.1 - - [19/Jun/2026 18:38:34] "GET /index.html HTTP/1.1" 200 -
-127.0.0.1 - - [19/Jun/2026 18:38:34] "GET /css/style.css?v=21 HTTP/1.1" 200 -
-127.0.0.1 - - [19/Jun/2026 18:38:34] "GET /imagenes/logo.png HTTP/1.1" 200 -
-127.0.0.1 - - [19/Jun/2026 18:38:34] "GET /imagenes/bandera-de-honduras.png HTTP/1.1" 200 -
-127.0.0.1 - - [19/Jun/2026 18:38:34] "GET /js/persistence.js?v=22 HTTP/1.1" 200 -
-127.0.0.1 - - [19/Jun/2026 18:38:34] "GET /js/config.js?v=22 HTTP/1.1" 200 -
-127.0.0.1 - - [19/Jun/2026 18:38:34] "GET /js/games-adapter.js?v=22 HTTP/1.1" 200 -
-127.0.0.1 - - [19/Jun/2026 18:38:34] "GET /js/api.js?v=22 HTTP/1.1" 200 -
-127.0.0.1 - - [19/Jun/2026 18:38:34] "GET /js/data.js?v=22 HTTP/1.1" 200 -
-127.0.0.1 - - [19/Jun/2026 18:38:34] "GET /js/ui-common.js?v=22 HTTP/1.1" 200 -
-127.0.0.1 - - [19/Jun/2026 18:38:34] "GET /js/index-ui.js?v=22 HTTP/1.1" 200 -
-127.0.0.1 - - [19/Jun/2026 18:38:36] "GET /juegos/webmaster_quiz.html HTTP/1.1" 200 -
-127.0.0.1 - - [19/Jun/2026 18:38:36] "GET /js/security-minigames.js?v=1 HTTP/1.1" 200 -
-127.0.0.1 - - [19/Jun/2026 18:38:36] "GET /js/webmaster_quiz_juego.js HTTP/1.1" 200 -
-127.0.0.1 - - [19/Jun/2026 18:41:30] "GET /index.html HTTP/1.1" 200 -
-127.0.0.1 - - [19/Jun/2026 18:41:30] "GET /css/style.css?v=21 HTTP/1.1" 200 -
-127.0.0.1 - - [19/Jun/2026 18:41:30] "GET /imagenes/logo.png HTTP/1.1" 200 -
-127.0.0.1 - - [19/Jun/2026 18:41:30] "GET /imagenes/bandera-de-honduras.png HTTP/1.1" 200 -
-127.0.0.1 - - [19/Jun/2026 18:41:30] "GET /js/config.js?v=22 HTTP/1.1" 200 -
-127.0.0.1 - - [19/Jun/2026 18:41:30] "GET /js/persistence.js?v=22 HTTP/1.1" 200 -
-127.0.0.1 - - [19/Jun/2026 18:41:30] "GET /js/games-adapter.js?v=22 HTTP/1.1" 200 -
-127.0.0.1 - - [19/Jun/2026 18:41:30] "GET /js/api.js?v=22 HTTP/1.1" 200 -
-127.0.0.1 - - [19/Jun/2026 18:41:30] "GET /js/ui-common.js?v=22 HTTP/1.1" 200 -
-127.0.0.1 - - [19/Jun/2026 18:41:30] "GET /js/data.js?v=22 HTTP/1.1" 200 -
-127.0.0.1 - - [19/Jun/2026 18:41:30] "GET /js/index-ui.js?v=22 HTTP/1.1" 200 -
-127.0.0.1 - - [19/Jun/2026 18:41:32] "GET /juegos/webmaster_quiz.html HTTP/1.1" 200 -
-127.0.0.1 - - [19/Jun/2026 18:41:32] "GET /js/security-minigames.js?v=1 HTTP/1.1" 200 -
-127.0.0.1 - - [19/Jun/2026 18:41:32] "GET /js/webmaster_quiz_juego.js HTTP/1.1" 200 -
-127.0.0.1 - - [19/Jun/2026 18:44:12] "GET /index.html HTTP/1.1" 200 -
-127.0.0.1 - - [19/Jun/2026 18:44:12] "GET /css/style.css?v=21 HTTP/1.1" 200 -
-127.0.0.1 - - [19/Jun/2026 18:44:12] "GET /imagenes/logo.png HTTP/1.1" 200 -
-127.0.0.1 - - [19/Jun/2026 18:44:12] "GET /imagenes/bandera-de-honduras.png HTTP/1.1" 200 -
-127.0.0.1 - - [19/Jun/2026 18:44:12] "GET /js/persistence.js?v=22 HTTP/1.1" 200 -
-127.0.0.1 - - [19/Jun/2026 18:44:12] "GET /js/config.js?v=22 HTTP/1.1" 200 -
-127.0.0.1 - - [19/Jun/2026 18:44:12] "GET /js/api.js?v=22 HTTP/1.1" 200 -
-127.0.0.1 - - [19/Jun/2026 18:44:12] "GET /js/games-adapter.js?v=22 HTTP/1.1" 200 -
-127.0.0.1 - - [19/Jun/2026 18:44:12] "GET /js/data.js?v=22 HTTP/1.1" 200 -
-127.0.0.1 - - [19/Jun/2026 18:44:12] "GET /js/ui-common.js?v=22 HTTP/1.1" 200 -
-127.0.0.1 - - [19/Jun/2026 18:44:12] "GET /js/index-ui.js?v=22 HTTP/1.1" 200 -
-127.0.0.1 - - [19/Jun/2026 18:44:16] "GET /juegos/webmaster_quiz.html HTTP/1.1" 200 -
-127.0.0.1 - - [19/Jun/2026 18:44:16] "GET /js/webmaster_quiz_juego.js HTTP/1.1" 200 -
-127.0.0.1 - - [19/Jun/2026 18:44:16] "GET /js/security-minigames.js?v=1 HTTP/1.1" 200 -
+Starting up http-server, serving .
+
+http-server version: 14.1.1
+
+http-server settings:
+CORS: disabled
+Cache: 3600 seconds
+Connection Timeout: 120 seconds
+Directory Listings: visible
+AutoIndex: visible
+Serve GZIP Files: false
+Serve Brotli Files: false
+Default File Extension: none
+
+Available on:
+  http://127.0.0.1:8080
+  http://192.168.0.2:8080
+Hit CTRL-C to stop the server
+
+[2026-06-30T21:23:10.672Z]  "GET /teacher-dashboard.html" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/145.0.7632.6 Safari/537.36"
+(node:175595) [DEP0066] DeprecationWarning: OutgoingMessage.prototype._headers is deprecated
+(Use `node --trace-deprecation ...` to show where the warning was created)
+[2026-06-30T21:23:11.032Z]  "GET /css/style.css?v=22" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/145.0.7632.6 Safari/537.36"
+[2026-06-30T21:23:11.039Z]  "GET /imagenes/logo.png" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/145.0.7632.6 Safari/537.36"
+[2026-06-30T21:23:11.040Z]  "GET /imagenes/bandera-de-honduras.png" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/145.0.7632.6 Safari/537.36"
+[2026-06-30T21:23:11.206Z]  "GET /js/config.js?v=22" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/145.0.7632.6 Safari/537.36"
+[2026-06-30T21:23:11.220Z]  "GET /js/persistence.js?v=22" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/145.0.7632.6 Safari/537.36"
+[2026-06-30T21:23:11.303Z]  "GET /js/api.js?v=22" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/145.0.7632.6 Safari/537.36"
+[2026-06-30T21:23:11.305Z]  "GET /js/games-adapter.js?v=22" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/145.0.7632.6 Safari/537.36"
+[2026-06-30T21:23:11.365Z]  "GET /js/ui-common.js?v=22" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/145.0.7632.6 Safari/537.36"
+[2026-06-30T21:23:11.367Z]  "GET /js/data.js?v=22" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/145.0.7632.6 Safari/537.36"
+[2026-06-30T21:23:11.447Z]  "GET /js/teacher.js?v=22" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/145.0.7632.6 Safari/537.36"
+[2026-06-30T21:23:18.577Z]  "GET /student-dashboard.html" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/145.0.7632.6 Safari/537.36"
+[2026-06-30T21:23:18.595Z]  "GET /css/style.css?v=22" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/145.0.7632.6 Safari/537.36"
+[2026-06-30T21:23:18.598Z]  "GET /imagenes/logo.png" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/145.0.7632.6 Safari/537.36"
+[2026-06-30T21:23:18.599Z]  "GET /imagenes/bandera-de-honduras.png" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/145.0.7632.6 Safari/537.36"
+[2026-06-30T21:23:18.611Z]  "GET /js/config.js?v=22" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/145.0.7632.6 Safari/537.36"
+[2026-06-30T21:23:18.616Z]  "GET /js/persistence.js?v=22" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/145.0.7632.6 Safari/537.36"
+[2026-06-30T21:23:18.621Z]  "GET /js/api.js?v=22" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/145.0.7632.6 Safari/537.36"
+[2026-06-30T21:23:18.630Z]  "GET /js/games-adapter.js?v=22" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/145.0.7632.6 Safari/537.36"
+[2026-06-30T21:23:18.636Z]  "GET /js/ui-common.js?v=22" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/145.0.7632.6 Safari/537.36"
+[2026-06-30T21:23:18.642Z]  "GET /js/data.js?v=22" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/145.0.7632.6 Safari/537.36"
+[2026-06-30T21:23:18.650Z]  "GET /js/student.js?v=22" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/145.0.7632.6 Safari/537.36"

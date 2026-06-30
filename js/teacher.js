@@ -116,16 +116,36 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function loadAcademicAdminData() {
         const parcialSelect = document.getElementById('admin-parcial-actual');
-        const asigList = document.getElementById('admin-asignaturas-list');
-        if (!parcialSelect || !asigList) return;
+        const gradoSelect = document.getElementById('admin-grado-actual');
+        const seccionSelect = document.getElementById('admin-seccion-actual');
+        const asignaturaSelect = document.getElementById('admin-asignatura-vigente');
+        const temaSelect = document.getElementById('admin-tema-vigente');
+
+        if (!parcialSelect || !gradoSelect) return;
+
+        const applyConfig = (data) => {
+            if (!data) return;
+            if (data.ParcialActual) parcialSelect.value = data.ParcialActual;
+            if (data.GradoActual) gradoSelect.value = data.GradoActual;
+            if (data.SeccionActual) seccionSelect.value = data.SeccionActual;
+
+            window.GLOBAL_SCOPE = {
+                ParcialActual: parcialSelect.value,
+                GradoActual: gradoSelect.value,
+                SeccionActual: seccionSelect.value,
+                AsignaturaActual: data.AsignaturaActual || "",
+                TemaActual: data.TemaActual || ""
+            };
+            window.PARCIAL_ACTUAL = window.GLOBAL_SCOPE.ParcialActual;
+
+            updateCascadingSelectors(data.AsignaturaActual, data.TemaActual);
+        };
 
         // REQ: Cache-First for Admin Config
         if (window.PersistenceManager) {
             const cached = await window.PersistenceManager.get('academic_stats', 'config');
-            if (cached && cached.data && cached.data.ParcialActual) {
-                parcialSelect.value = cached.data.ParcialActual;
-                window.PARCIAL_ACTUAL = cached.data.ParcialActual;
-                renderAsignaturasCheckboxes(); // Trigger initial checkboxes render
+            if (cached && cached.data) {
+                applyConfig(cached.data);
             }
         }
 
@@ -133,24 +153,55 @@ document.addEventListener('DOMContentLoaded', () => {
             const configRes = await fetchApi('USER', 'getAcademicConfig', {}, 0, {
                 store: 'academic_stats',
                 key: 'config',
-                onUpdate: (data) => {
-                    if (data.ParcialActual) {
-                        parcialSelect.value = data.ParcialActual;
-                        window.PARCIAL_ACTUAL = data.ParcialActual;
-                        renderAsignaturasCheckboxes();
-                    }
-                }
+                onUpdate: (data) => applyConfig(data)
             });
-            if (configRes.status === 'success' && configRes.data.ParcialActual) {
-                parcialSelect.value = configRes.data.ParcialActual;
-                window.PARCIAL_ACTUAL = configRes.data.ParcialActual;
+            if (configRes.status === 'success' && configRes.data) {
+                applyConfig(configRes.data);
             }
-
-            await renderAsignaturasCheckboxes();
         } catch (e) {
             console.error("Error cargando config académica:", e);
         }
     }
+
+    function updateCascadingSelectors(selectedAsig, selectedTema) {
+        const grado = document.getElementById('admin-grado-actual').value;
+        const seccion = document.getElementById('admin-seccion-actual').value;
+        const asigSelect = document.getElementById('admin-asignatura-vigente');
+        const temaSelect = document.getElementById('admin-tema-vigente');
+
+        if (!asigSelect || !temaSelect) return;
+
+        const presentations = window.presentationData || [];
+        const gradeObj = presentations.find(g => window.parseGrade(g.grade) === window.parseGrade(grado));
+
+        if (!gradeObj) {
+            asigSelect.innerHTML = '<option value="">No hay asignaturas</option>';
+            temaSelect.innerHTML = '<option value="">No hay temas</option>';
+            return;
+        }
+
+        // Filtrar asignaturas por sección
+        const availableSubjs = gradeObj.subjects.filter(s => window.checkSectionHelper(s.sections, seccion));
+        const uniqueSubjs = [...new Set(availableSubjs.map(s => s.name))];
+
+        asigSelect.innerHTML = uniqueSubjs.map(s => `<option value="${s}" ${s === selectedAsig ? 'selected' : ''}>${s}</option>`).join('');
+
+        const updateTemas = (asigName, selTema) => {
+            const currentAsig = availableSubjs.find(s => s.name === asigName);
+            if (currentAsig && currentAsig.topics) {
+                temaSelect.innerHTML = currentAsig.topics.map(t => `<option value="${t.title}" ${t.title === selTema ? 'selected' : ''}>${t.title}</option>`).join('');
+            } else {
+                temaSelect.innerHTML = '<option value="">Sin temas</option>';
+            }
+        };
+
+        updateTemas(asigSelect.value, selectedTema);
+
+        asigSelect.onchange = (e) => updateTemas(e.target.value);
+    }
+
+    document.getElementById('admin-grado-actual')?.addEventListener('change', () => updateCascadingSelectors());
+    document.getElementById('admin-seccion-actual')?.addEventListener('change', () => updateCascadingSelectors());
 
     async function renderAsignaturasCheckboxes() {
         const asigList = document.getElementById('admin-asignaturas-list');
@@ -200,18 +251,29 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.getElementById('btn-save-academic-config')?.addEventListener('click', async () => {
         const btn = document.getElementById('btn-save-academic-config');
-        const parcial = document.getElementById('admin-parcial-actual').value;
-        const selectedAsignaturas = Array.from(document.querySelectorAll('.admin-asig-checkbox:checked')).map(cb => cb.value);
+        const fullScope = {
+            ParcialActual: document.getElementById('admin-parcial-actual').value,
+            GradoActual: document.getElementById('admin-grado-actual').value,
+            SeccionActual: document.getElementById('admin-seccion-actual').value,
+            AsignaturaActual: document.getElementById('admin-asignatura-vigente').value,
+            TemaActual: document.getElementById('admin-tema-vigente').value
+        };
 
         btn.disabled = true;
         btn.textContent = 'Guardando...';
 
         try {
-            await Promise.all([
-                fetchApi('USER', 'updateAcademicConfig', { key: 'ParcialActual', value: parcial }),
-                fetchApi('USER', 'updateAsignaturasActivas', { parcial, asignaturas: selectedAsignaturas })
-            ]);
-            alert('Configuración académica actualizada correctamente.');
+            const res = await fetchApi('USER', 'updateAcademicConfig', { fullScope: fullScope });
+            if (res.status === 'success') {
+                window.GLOBAL_SCOPE = fullScope;
+                window.PARCIAL_ACTUAL = fullScope.ParcialActual;
+                alert('Configuración global actualizada correctamente.');
+
+                // Disparar evento para que otros componentes reaccionen
+                document.dispatchEvent(new CustomEvent('academic-scope-updated', { detail: fullScope }));
+            } else {
+                throw new Error(res.message);
+            }
         } catch (e) {
             alert('Error al guardar configuración: ' + e.message);
         } finally {
@@ -696,8 +758,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!tbody) return;
 
         const processData = (tasksData, examsData) => {
-            const tasks = (tasksData || []).map(t => ({ ...t, tipoReal: 'Tarea' }));
-            const exams = (examsData || []).map(e => ({ ...e, tipoReal: 'Examen' }));
+            const tasks = (Array.isArray(tasksData) ? tasksData : []).map(t => ({ ...t, tipoReal: 'Tarea' }));
+            const exams = (Array.isArray(examsData) ? examsData : []).map(e => ({ ...e, tipoReal: 'Examen' }));
             allTasksExams = [...tasks, ...exams].filter(item => item.estado !== 'Inactiva');
             allTasksExams.sort((a, b) => new Date(b.fechaLimite) - new Date(a.fechaLimite));
             renderManagementTable();
@@ -1009,6 +1071,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 fetchApi('TASK', 'getTeacherActivity', payload, 0, {
                     store: 'cache_profesor_activity',
                     onUpdate: (data) => {
+                        if (!Array.isArray(data)) return;
                         allActivityRaw = data.map(s => ({ ...s, tipo: 'Tarea' }));
                         renderCurrentLevel();
                     }
@@ -1016,6 +1079,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 fetchApi('EXAM', 'getTeacherExamActivity', payload, 0, {
                     store: 'cache_profesor_exams_activity',
                     onUpdate: (data) => {
+                        if (!Array.isArray(data)) return;
                         // Merge with tasks activity
                         allActivityRaw = [...allActivityRaw.filter(a => a.tipo === 'Tarea'), ...data.map(s => ({ ...s, tipo: 'Examen' }))];
                         renderCurrentLevel();
@@ -1028,31 +1092,41 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Guardar para Offline-First (Modulo 1)
             if (window.PersistenceManager) {
+                const taskDataArr = Array.isArray(taskSubmissions.data) ? taskSubmissions.data : [];
+                const examDataArr = Array.isArray(examSubmissions.data) ? examSubmissions.data : [];
+                const taskResArr = Array.isArray(tasksRes.data) ? tasksRes.data : [];
+                const examResArr = Array.isArray(examsRes.data) ? examsRes.data : [];
+
                 const unified = {
                     activity: [
-                        ...((taskSubmissions.data || [])).map(s => ({ ...s, tipo: 'Tarea' })),
-                        ...((examSubmissions.data || [])).map(s => ({ ...s, tipo: 'Examen' }))
+                        ...taskDataArr.map(s => ({ ...s, tipo: 'Tarea' })),
+                        ...examDataArr.map(s => ({ ...s, tipo: 'Examen' }))
                     ],
                     assignments: [
-                        ...((tasksRes.data || [])).map(t => ({ ...t, tipoReal: 'Tarea' })),
-                        ...((examsRes.data || [])).map(e => ({ ...e, tipoReal: 'Examen' }))
+                        ...taskResArr.map(t => ({ ...t, tipoReal: 'Tarea' })),
+                        ...examResArr.map(e => ({ ...e, tipoReal: 'Examen' }))
                     ].filter(a => a.estado !== 'Inactiva')
                 };
                 window.PersistenceManager.set('cache_profesor_data', unified);
             }
 
-            if (configRes && configRes.status === 'success' && configRes.data.ParcialActual) {
+            if (configRes && configRes.status === 'success' && configRes.data && configRes.data.ParcialActual) {
                 window.PARCIAL_ACTUAL = configRes.data.ParcialActual;
             }
 
+            const finalTaskDataArr = Array.isArray(taskSubmissions.data) ? taskSubmissions.data : [];
+            const finalExamDataArr = Array.isArray(examSubmissions.data) ? examSubmissions.data : [];
+            const finalTaskResArr = Array.isArray(tasksRes.data) ? tasksRes.data : [];
+            const finalExamResArr = Array.isArray(examsRes.data) ? examsRes.data : [];
+
             allActivityRaw = [
-                ...((taskSubmissions.data || [])).map(s => ({ ...s, tipo: 'Tarea' })),
-                ...((examSubmissions.data || [])).map(s => ({ ...s, tipo: 'Examen' }))
+                ...finalTaskDataArr.map(s => ({ ...s, tipo: 'Tarea' })),
+                ...finalExamDataArr.map(s => ({ ...s, tipo: 'Examen' }))
             ];
 
             allAssignmentsRaw = [
-                ...((tasksRes.data || [])).map(t => ({ ...t, tipoReal: 'Tarea' })),
-                ...((examsRes.data || [])).map(e => ({ ...e, tipoReal: 'Examen' }))
+                ...finalTaskResArr.map(t => ({ ...t, tipoReal: 'Tarea' })),
+                ...finalExamResArr.map(e => ({ ...e, tipoReal: 'Examen' }))
             ].filter(a => a.estado !== 'Inactiva');
 
             renderCurrentLevel();
@@ -1868,11 +1942,18 @@ document.addEventListener('DOMContentLoaded', () => {
     saveGradeBtn.onclick = async () => {
         if (saveGradeBtn.disabled) return;
         const type = saveGradeBtn.dataset.type;
+
+        // REQ: Linking Topic from Global Scope (v7.7.1)
+        // Ensure the grade is associated with the current theme for weighting
+        const scope = window.GLOBAL_SCOPE || {};
+
         const payload = {
             entregaId: currentEditingEntregaId,
             calificacion: document.getElementById('calificacion').value,
             estado: document.getElementById('estado').value,
-            comentario: document.getElementById('comentario').value
+            comentario: document.getElementById('comentario').value,
+            temaAsociado: scope.TemaActual || "General",
+            asignaturaAsociada: scope.AsignaturaActual || ""
         };
 
         // Bloqueo temporal del botón (Req 1.3)

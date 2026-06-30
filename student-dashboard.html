@@ -113,40 +113,53 @@
         </div>
     </div>
 
-    <main class="mt-[4.5rem] pb-12 flex-grow">
-        <div class="container mx-auto px-4 md:px-6">
+    <main class="mt-[4.5rem] pb-12 flex-grow flex flex-col md:flex-row">
+        <!-- Sidebar Navigation (Task 9) -->
+        <aside id="student-sidebar" class="w-full md:w-72 bg-white border-r border-gray-100 flex-shrink-0 md:sticky md:top-20 md:h-[calc(100vh-5rem)] overflow-y-auto hidden md:block animate-fade-in-left">
+            <div class="p-6">
+                <h2 class="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-6 flex items-center gap-2">
+                    <i class="fas fa-layer-group text-blue-600"></i>
+                    Mis Asignaturas
+                </h2>
+                <nav id="subject-sidebar-nav" class="space-y-2">
+                    <!-- Se poblará vía js/student.js -->
+                </nav>
+            </div>
+        </aside>
+
+        <div class="container mx-auto px-4 md:px-8 py-8 flex-grow overflow-x-hidden">
             <div id="hidden-student-data" class="hidden"><span id="student-name"></span></div>
 
+            <!-- Mobile Subject Selection (Required physical buttons, no dropdowns) -->
+            <div class="md:hidden mb-8">
+                <h2 class="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-4">Seleccionar Asignatura</h2>
+                <div id="subject-mobile-nav" class="grid grid-cols-2 gap-2">
+                    <!-- Se poblará vía js/student.js -->
+                </div>
+            </div>
+
             <!-- Expediente Académico (Task 4) -->
-            <div id="student-expediente" class="mb-8 hidden">
+            <div id="student-expediente" class="mb-10 hidden">
                 <!-- Inyectado dinámicamente desde student.js -->
             </div>
 
-            <div class="grid grid-cols-1 gap-4">
+            <div class="space-y-10">
                 <section>
-                    <h2 class="text-lg font-semibold text-gray-900 uppercase tracking-tighter mb-4 flex items-center gap-2">
-                        <div class="w-1.5 h-6 bg-blue-600 rounded-full"></div>
-                        Mis Asignaturas
-                    </h2>
-
-                    <!-- Navegación por Asignaturas (Task 9) -->
-                    <div id="subject-nav-container" class="flex flex-wrap gap-2 mb-6 scroll-horizontal-clean">
+                    <div id="subject-info-container" class="mb-8 hidden">
                         <!-- Se poblará vía js/student.js -->
                     </div>
 
-                    <div id="subject-info-container" class="mb-6 hidden">
-                        <!-- Se poblará vía js/student.js -->
+                    <div class="flex items-center justify-between mb-6">
+                        <h2 class="text-xl font-bold text-gray-900 uppercase tracking-tighter flex items-center gap-3">
+                            <div class="w-1.5 h-8 bg-blue-600 rounded-full"></div>
+                            Actividades Vigentes
+                        </h2>
+                        <div id="active-parcial-label" class="px-4 py-1.5 bg-blue-50 text-blue-600 rounded-full text-[10px] font-black uppercase tracking-widest border border-blue-100 shadow-sm">
+                            <!-- Parcial Actual -->
+                        </div>
                     </div>
 
-                    <h2 class="text-lg font-semibold text-gray-900 uppercase tracking-tighter mb-4 flex items-center gap-2">
-                        <div class="w-1.5 h-6 bg-blue-600 rounded-full"></div>
-                        Actividades del Parcial
-                    </h2>
-
-                    <div id="parcial-tabs-container" class="mb-6">
-                        <!-- Se poblará vía js/student.js -->
-                    </div>
-                    <div id="tasks-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
+                    <div id="tasks-list" class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
                         <!-- Se poblará vía js/student.js -->
                     </div>
                 </section>

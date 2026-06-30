@@ -24,11 +24,30 @@ window.SERVICE_URLS = {
 var FRONTEND_URL = 'https://informatica0101.github.io';
 
 /**
- * CONFIGURACIÓN ACADÉMICA CENTRALIZADA
- * Punto único de verdad para el período escolar vigente.
- * Valores: "Primer Parcial", "Segundo Parcial", "Tercer Parcial", "Cuarto Parcial"
+ * CONFIGURACIÓN ACADÉMICA CENTRALIZADA (v7.7.1)
+ * Punto único de verdad para el alcance académico vigente.
  */
-window.PARCIAL_ACTUAL = "Segundo Parcial";
+window.GLOBAL_SCOPE = {
+    ParcialActual: "Segundo Parcial",
+    GradoActual: "Décimo",
+    SeccionActual: "A",
+    AsignaturaActual: "Informática I",
+    TemaActual: "General"
+};
+
+/**
+ * ÍNDICE FORMAL DE PRESENTACIONES (v7.7.1)
+ * Mapeo de temas a archivos de presentación para vinculación con el sistema de calificación.
+ */
+window.PRESENTATION_INDEX = [
+    { tema: "Imperativos Procedurales", asignatura: "Programación", grado: "11", file: "Imperativos_Procedurales.html" },
+    { tema: "Estructuras de Control", asignatura: "Programación", grado: "11", file: "Estructuras_Control.html" },
+    { tema: "Hardware y Software", asignatura: "Informática I", grado: "10", file: "Hardware_Software.html" },
+    { tema: "Sistemas Operativos", asignatura: "Informática I", grado: "10", file: "Sistemas_Operativos.html" }
+    // Este índice se expandirá automáticamente tras la migración del banco de preguntas
+];
+
+window.PARCIAL_ACTUAL = window.GLOBAL_SCOPE.ParcialActual;
 
 var GRADE_MAP = {
     'decimo': 10, 'undecimo': 11, 'duodecimo': 12,
@@ -140,29 +159,46 @@ function normalizePartial(p) {
 }
 window.normalizePartial = normalizePartial;
 
-window.isContentAuthorized = function(contentPartial) {
+window.isContentAuthorized = function(contentPartial, contentSubject, contentTopic) {
     var userRaw = localStorage.getItem('currentUser');
     if (!userRaw) return false;
     var user = JSON.parse(userRaw);
     if (user && user.rol === 'Profesor') return true;
 
+    // Si no hay configuración de alcance cargada, ser restrictivo por defecto
+    if (!window.GLOBAL_SCOPE) return false;
+
     if (!contentPartial) return false;
 
     var normContent = normalizePartial(contentPartial);
-    var normActual = normalizePartial(window.PARCIAL_ACTUAL);
+    var normActual = normalizePartial(window.GLOBAL_SCOPE.ParcialActual);
 
-    if (normContent === normActual) return true;
+    // 1. Verificación de Parcial
+    var authorized = (normContent === normActual);
 
-    var partialGroups = {
-        "I y II Parcial": ["Primer Parcial", "Segundo Parcial"],
-        "III y IV Parcial": ["Tercer Parcial", "Cuarto Parcial"]
-    };
-
-    if (partialGroups[contentPartial]) {
-        return partialGroups[contentPartial].indexOf(normActual) !== -1;
+    if (!authorized) {
+        var partialGroups = {
+            "I y II Parcial": ["Primer Parcial", "Segundo Parcial"],
+            "III y IV Parcial": ["Tercer Parcial", "Cuarto Parcial"]
+        };
+        if (partialGroups[contentPartial]) {
+            authorized = partialGroups[contentPartial].indexOf(normActual) !== -1;
+        }
     }
 
-    return false;
+    if (!authorized) return false;
+
+    // 2. Verificación de Asignatura (si se provee)
+    if (contentSubject && window.GLOBAL_SCOPE.AsignaturaActual) {
+        if (contentSubject !== window.GLOBAL_SCOPE.AsignaturaActual) return false;
+    }
+
+    // 3. Verificación de Tema (si se provee)
+    if (contentTopic && window.GLOBAL_SCOPE.TemaActual && window.GLOBAL_SCOPE.TemaActual !== "General") {
+        if (contentTopic !== window.GLOBAL_SCOPE.TemaActual) return false;
+    }
+
+    return true;
 };
 
 window.validateQuestion = function(q) {
