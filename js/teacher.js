@@ -281,23 +281,18 @@ document.addEventListener('DOMContentLoaded', () => {
         btn.textContent = 'Estableciendo Alcance...';
 
         try {
-            // REQ: Atomic Configuration Update (v7.7.1)
-            // Se asume que el backend soporta un objeto completo en updateAcademicConfig
-            // o se procesa como una transacción de promesas.
+            // REQ: Atomic Configuration Update (v7.7.1) - Consolidado en una sola llamada
             await Promise.all([
-                fetchApi('USER', 'updateAcademicConfig', {
-                    fullScope: payload,
-                    // Fallback para backends que no iteran sobre fullScope:
-                    key: 'ParcialActual', value: payload.ParcialActual
-                }),
-                fetchApi('USER', 'updateAcademicConfig', { key: 'GradoActual', value: payload.GradoActual }),
-                fetchApi('USER', 'updateAcademicConfig', { key: 'SeccionActual', value: payload.SeccionActual }),
-                fetchApi('USER', 'updateAcademicConfig', { key: 'AsignaturaActual', value: payload.AsignaturaActual }),
-                fetchApi('USER', 'updateAcademicConfig', { key: 'TemaActual', value: payload.TemaActual }),
+                fetchApi('USER', 'updateAcademicConfig', { fullScope: payload }),
                 fetchApi('USER', 'updateAsignaturasActivas', { parcial: payload.ParcialActual, asignaturas: selectedAsignaturas })
             ]);
+
             window.PARCIAL_ACTUAL = payload.ParcialActual;
             window.GLOBAL_SCOPE = payload;
+
+            // Notificar cambio de alcance globalmente para actualización reactiva (A-78)
+            document.dispatchEvent(new CustomEvent('academic-scope-updated', { detail: payload }));
+
             alert('¡Alcance Global establecido correctamente!');
         } catch (e) {
             alert('Error al guardar configuración: ' + e.message);

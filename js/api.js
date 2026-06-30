@@ -50,14 +50,17 @@ function fetchApi(service, action, payload, retryCount, options) {
     // Disparar lectura de caché inmediatamente sin bloquear el fetch remoto
     if (options.store && options.onUpdate && window.PersistenceManager) {
         window.PersistenceManager.get(options.store, options.key).then(function(cached) {
-            if (cached && (cached.data || cached.allHistory || Array.isArray(cached))) {
+            if (cached && (cached.data !== undefined || cached.allHistory || Array.isArray(cached))) {
                 console.log('[API-CACHE] Renderizado inmediato desde:', options.store);
                 // REQ: Preservar sobres si contienen historial detallado (v7.7)
                 var cleanCached = cached;
                 if (cached.data !== undefined && !cached.allHistory) {
                     cleanCached = cached.data;
                 }
-                options.onUpdate(cleanCached);
+                // REQ: Validación de integridad antes de callback (A-78)
+                if (cleanCached) {
+                    options.onUpdate(cleanCached);
+                }
             }
         }).catch(function(e) {
             console.warn('[API-CACHE] Error en lectura previa:', e);

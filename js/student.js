@@ -110,6 +110,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 fetchApi('TASK', 'getStudentTasks', payload, 0, {
                     store: 'cache_estudiante_tasks',
                     onUpdate: function(data) {
+                        if (!Array.isArray(data)) return;
                         var tasks = data.map(function(t) { return { ...t, type: t.tipo || 'Tarea' }; });
                         allActivitiesData = [
                             ...allActivitiesData.filter(function(a) { return a.type === 'Examen'; }),
@@ -122,6 +123,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 fetchApi('EXAM', 'getStudentExams', payload, 0, {
                     store: 'cache_estudiante_exams',
                     onUpdate: function(data) {
+                        if (!Array.isArray(data)) return;
                         var exams = data.map(function(e) { return { ...e, type: 'Examen' }; });
                         allActivitiesData = [
                             ...allActivitiesData.filter(function(a) { return a.type !== 'Examen'; }),
@@ -140,7 +142,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             var allActivities = [];
             try {
-                if (tasksResult.status === 'success' && tasksResult.data) {
+                if (tasksResult && tasksResult.status === 'success' && Array.isArray(tasksResult.data)) {
                     allActivities.push(...tasksResult.data.map(function(task) {
                         return {
                             ...task,
@@ -150,7 +152,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         };
                     }));
                 }
-                if (examsResult.status === 'success' && examsResult.data) {
+                if (examsResult && examsResult.status === 'success' && Array.isArray(examsResult.data)) {
                     allActivities.push(...examsResult.data.map(function(exam) {
                         return {
                             ...exam,
@@ -466,9 +468,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function renderSubjectNavigation(inputActivities) {
         var sidebarNav = document.getElementById('subject-sidebar-nav');
-        var mobileSelector = document.getElementById('mobile-subject-selector');
+        var mobileNav = document.getElementById('mobile-subject-nav');
         var parcialLabel = document.getElementById('active-parcial-label');
-        if (!sidebarNav || !mobileSelector) return;
+        if (!sidebarNav || !mobileNav) return;
 
         // REQ: Normalización de entrada para soportar Offline-First (v3.3)
         var activitiesRaw = (inputActivities && inputActivities.status === 'success' && Array.isArray(inputActivities.data)) ? inputActivities.data : (Array.isArray(inputActivities) ? inputActivities : []);
@@ -483,7 +485,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         if (!activities || activities.length === 0) {
             sidebarNav.innerHTML = '<p class="text-[10px] font-bold text-gray-400 uppercase p-4">No hay asignaturas activas</p>';
-            mobileSelector.innerHTML = '<option value="">Sin materias</option>';
+            mobileNav.innerHTML = '<p class="text-[10px] font-bold text-gray-400 uppercase p-4">No hay asignaturas</p>';
             tasksList.innerHTML = `
                 <div class="col-span-full p-12 text-center bg-white rounded-[2rem] border border-gray-100 animate-fade-in">
                     <div class="w-16 h-16 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center text-2xl mx-auto mb-4">
@@ -497,7 +499,7 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
 
-        var subjects = [...new Set(activities.map(function(a) { return a.asignatura; }))]
+        var subjects = [...new Set(activities.map(function(a) { return a.asignatura || 'General'; }))]
             .filter(function(s) { return s && s.trim() !== ""; })
             .sort();
 
@@ -511,9 +513,14 @@ document.addEventListener('DOMContentLoaded', function() {
             `;
         }).join('');
 
-        // 2. Render Mobile Selector
-        mobileSelector.innerHTML = '<option value="">Seleccionar Materia</option>' +
-            subjects.map(function(subj) { return `<option value="${subj}">${subj}</option>`; }).join('');
+        // 2. Render Mobile Buttons (v7.7.1)
+        mobileNav.innerHTML = subjects.map(function(subj) {
+            return `
+                <button class="mobile-subject-btn flex-none px-4 py-2 bg-white border border-gray-100 text-gray-500 rounded-xl font-bold text-[10px] uppercase tracking-widest shadow-sm transition-all" data-subject="${subj}">
+                    ${subj}
+                </button>
+            `;
+        }).join('');
 
         // 3. Logic & Event Listeners
         window.switchSubject = function(subj, pushState) {
@@ -525,8 +532,18 @@ document.addEventListener('DOMContentLoaded', function() {
                 else btn.classList.remove('active', 'bg-blue-50/50');
             });
 
-            // Update UI State (Mobile)
-            mobileSelector.value = subj;
+            // Update UI State (Mobile Buttons)
+            document.querySelectorAll('.mobile-subject-btn').forEach(function(btn) {
+                if (btn.dataset.subject === subj) {
+                    btn.classList.add('bg-blue-600', 'text-white', 'border-blue-600');
+                    btn.classList.remove('bg-white', 'text-gray-500', 'border-gray-100');
+                    // Scroll into view
+                    btn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+                } else {
+                    btn.classList.remove('bg-blue-600', 'text-white', 'border-blue-600');
+                    btn.classList.add('bg-white', 'text-gray-500', 'border-gray-100');
+                }
+            });
 
             var filtered = activities.filter(function(a) { return a.asignatura === subj; });
             renderActivities(filtered);
@@ -544,7 +561,9 @@ document.addEventListener('DOMContentLoaded', function() {
             btn.onclick = function() { window.switchSubject(btn.dataset.subject); };
         });
 
-        mobileSelector.onchange = function(e) { if (e.target.value) window.switchSubject(e.target.value); };
+        mobileNav.querySelectorAll('.mobile-subject-btn').forEach(function(btn) {
+            btn.onclick = function() { window.switchSubject(btn.dataset.subject); };
+        });
 
         // Auto-select first subject
         if (subjects.length > 0) {

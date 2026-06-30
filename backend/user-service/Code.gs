@@ -881,8 +881,8 @@ function getOrCreateSheet(ss, name) {
       sheet.appendRow(["PreguntaID", "Asignatura", "Nivel", "Tema", "TipoActividad", "Pregunta", "OpcionA", "OpcionB", "OpcionC", "OpcionD", "RespuestaCorrecta", "Explicacion", "Imagen", "VecesRespondida", "VecesCorrecta", "PorcentajeAcierto", "UltimaActualizacion", "Activa", "DificultadCalculada"]);
     }
     if (name === "ConfiguracionAcademica") {
-      sheet.appendRow(["Clave", "Valor"]);
-      sheet.appendRow(["ParcialActual", "Primer Parcial"]);
+      sheet.appendRow(["ParcialActual", "GradoActual", "SeccionActual", "AsignaturaActual", "TemaActual"]);
+      sheet.appendRow(["Primer Parcial", "Todos", "Todas", "Todas", "Todos"]);
     }
     if (name === "AsignaturasPorParcial") {
       sheet.appendRow(["Parcial", "Asignatura"]);
@@ -1245,18 +1245,66 @@ function saveQuestion(payload) {
 function getAcademicConfig() {
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
   const sheet = getOrCreateSheet(ss, "ConfiguracionAcademica");
-  const data = sheet.getDataRange().getValues().slice(1);
+  const data = sheet.getDataRange().getValues();
+
+  if (data.length < 2) {
+    return { status: "success", data: {
+      ParcialActual: "Primer Parcial",
+      GradoActual: "Todos",
+      SeccionActual: "Todas",
+      AsignaturaActual: "Todas",
+      TemaActual: "Todos"
+    }};
+  }
+
+  // Soporte para formato escalable (Fila 1: Headers, Fila 2: Valores)
+  const headers = data[0];
+  const values = data[1];
   const config = {};
-  data.forEach(r => config[r[0]] = r[1]);
+
+  // Si detectamos formato legacy (Key-Value), migrar o retornar compatible
+  if (headers[1] === "Valor" || headers[1] === "valor") {
+    data.slice(1).forEach(r => config[r[0]] = r[1]);
+    return { status: "success", data: config };
+  }
+
+  headers.forEach((h, i) => {
+    if (h) config[h] = values[i];
+  });
+
   return { status: "success", data: config };
 }
 
 function updateAcademicConfig(payload) {
-  const { key, value } = payload;
+  const { key, value, fullScope } = payload || {};
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
   const sheet = getOrCreateSheet(ss, "ConfiguracionAcademica");
-  const data = sheet.getDataRange().getValues();
 
+  // REQ: Atomic Update (fullScope support)
+  if (fullScope) {
+    const headers = ["ParcialActual", "GradoActual", "SeccionActual", "AsignaturaActual", "TemaActual"];
+    const values = headers.map(h => fullScope[h] || "Todas");
+
+    sheet.clear();
+    sheet.appendRow(headers);
+    sheet.appendRow(values);
+
+    return { status: "success", message: "Alcance global actualizado atómicamente." };
+  }
+
+  // Fallback para actualizaciones individuales (Modo Legacy compatible)
+  const data = sheet.getDataRange().getValues();
+  if (data.length >= 2 && data[0][1] !== "Valor") {
+    // Formato escalable activo: buscar header y actualizar en fila 2
+    const headers = data[0];
+    const colIndex = headers.indexOf(key);
+    if (colIndex !== -1) {
+      sheet.getRange(2, colIndex + 1).setValue(value);
+      return { status: "success" };
+    }
+  }
+
+  // Modo Legacy o header no encontrado
   const rowIndex = data.findIndex(r => r[0] === key);
   if (rowIndex !== -1) {
     sheet.getRange(rowIndex + 1, 2).setValue(value);

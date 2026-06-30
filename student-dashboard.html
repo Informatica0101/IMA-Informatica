@@ -140,11 +140,11 @@
                     <p class="text-xs font-bold text-blue-600 uppercase tracking-widest mt-1" id="active-parcial-label">Cargando periodo...</p>
                 </div>
 
-                <!-- Selector de Asignatura (Móvil) -->
-                <div class="md:hidden">
-                    <select id="mobile-subject-selector" class="w-full p-3 bg-white border border-gray-200 rounded-2xl text-xs font-bold uppercase tracking-widest outline-none focus:ring-2 focus:ring-blue-500/20">
-                        <option value="">Seleccionar Materia</option>
-                    </select>
+                <!-- Selector de Asignatura (Móvil: Botones con Scroll Horizontal) -->
+                <div class="md:hidden w-full overflow-hidden">
+                    <div id="mobile-subject-nav" class="flex gap-2 overflow-x-auto pb-4 scroll-minimalist px-1">
+                        <!-- Inyectado dinámicamente -->
+                    </div>
                 </div>
             </div>
 
