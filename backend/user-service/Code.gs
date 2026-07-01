@@ -886,7 +886,7 @@ function getOrCreateSheet(ss, name) {
     }
     if (name === "ConfiguracionAcademica") {
       sheet.appendRow(["Clave", "Valor"]);
-      sheet.appendRow(["ParcialActual", "Primer Parcial"]);
+      sheet.appendRow(["ParcialActual", "I Parcial"]);
     }
     if (name === "AsignaturasPorParcial") {
       sheet.appendRow(["Parcial", "Asignatura"]);
@@ -1260,7 +1260,7 @@ function getAcademicConfig() {
     return {
       status: "success",
       data: {
-        ParcialActual: "Primer Parcial",
+        ParcialActual: "I Parcial",
         GradoActual: ["Décimo"],
         SeccionActual: ["A"],
         AsignaturaActual: ["Informática I"],

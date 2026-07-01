@@ -516,66 +516,59 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function renderSubjectNavigation(inputActivities) {
-        var sidebarNav = document.getElementById('subject-sidebar-nav');
-        var mobileNav = document.getElementById('subject-mobile-nav');
-        var sidebar = document.getElementById('student-sidebar');
+        var tabsContainer = document.getElementById('subject-tabs-container');
         var parcialLabel = document.getElementById('active-parcial-label');
+        var historySelector = document.getElementById('parcial-history-selector');
 
-        if (!sidebarNav || !mobileNav) return;
+        if (!tabsContainer) return;
 
         // REQ: Normalización de entrada para soportar Offline-First (v3.3)
         var activities = (inputActivities && inputActivities.status === 'success' && Array.isArray(inputActivities.data)) ? inputActivities.data : (Array.isArray(inputActivities) ? inputActivities : []);
 
         if (!activities || activities.length === 0) {
-            sidebarNav.innerHTML = '<p class="text-gray-400 text-[10px] uppercase font-bold p-4">Sin contenido asignado.</p>';
+            tabsContainer.innerHTML = '<p class="text-gray-400 text-[10px] uppercase font-bold p-4">Sin contenido asignado.</p>';
             return;
         }
 
-        // REQ: Restrictive Global Scope Filtering (v7.7.1)
+        // Establecer parcial actual por defecto en el selector si no se ha cambiado manualmente
         var activePartial = window.GLOBAL_SCOPE ? window.GLOBAL_SCOPE.ParcialActual : window.PARCIAL_ACTUAL;
-        if (parcialLabel) parcialLabel.textContent = activePartial;
+        if (historySelector && !historySelector.dataset.manuallyChanged) {
+            historySelector.value = window.normalizePartial(activePartial);
+        }
 
+        var selectedPartial = historySelector ? historySelector.value : activePartial;
+        if (parcialLabel) parcialLabel.textContent = selectedPartial;
+
+        // REQ: Filtrado Dinámico por Parcial Histórico (v7.7.6)
         var currentActivities = activities.filter(function(a) {
-            var isParcialOk = window.normalizePartial(a.parcial) === window.normalizePartial(activePartial);
-            // REQ: Contextual authorization (v7.7.5)
-            var isAuthorized = window.isContentAuthorized(a.parcial, a.asignatura, a.tema, a.grado, a.seccion);
+            var isParcialOk = window.normalizePartial(a.parcial) === window.normalizePartial(selectedPartial);
+            // REQ: Contextual authorization (v7.7.5) - Solo filtramos por perfil si es el parcial VIGENTE
+            var isAuthorized = true;
+            if (window.normalizePartial(selectedPartial) === window.normalizePartial(activePartial)) {
+                isAuthorized = window.isContentAuthorized(a.parcial, a.asignatura, a.tema, a.grado, a.seccion);
+            }
             return isParcialOk && isAuthorized;
         });
 
+        // Obtener asignaturas únicas
         var subjects = [...new Set(currentActivities.map(function(a) { return a.asignatura; }))]
             .filter(function(s) { return s && s.trim() !== ""; })
             .sort();
 
         if (subjects.length === 0) {
-            sidebarNav.innerHTML = '<p class="text-gray-400 text-[10px] uppercase font-bold p-4">No hay materias en este parcial.</p>';
-            tasksList.innerHTML = '<p class="text-gray-500 text-center py-8">No hay actividades registradas.</p>';
+            tabsContainer.innerHTML = '<p class="text-gray-400 text-[10px] uppercase font-bold p-2">No hay materias registradas para este parcial.</p>';
+            tasksList.innerHTML = '<p class="text-gray-500 text-center py-8">Sin actividades en ' + selectedPartial + '.</p>';
             return;
         }
 
-        // REQ: Desktop Sidebar (Tabs)
-        sidebarNav.innerHTML = subjects.map(function(subj) {
+        // REQ: Tab UI Redesign (v7.7.6) - Physical button tabs with horizontal scroll
+        tabsContainer.innerHTML = subjects.map(function(subj) {
             return `
-                <button class="w-full flex items-center justify-between px-5 py-4 bg-gray-50/50 text-slate-600 rounded-2xl font-bold text-[10px] uppercase tracking-widest group hover:bg-blue-50 hover:text-blue-600 transition-all border border-transparent hover:border-blue-100 subject-nav-item" data-subject="${subj}">
-                    <div class="flex items-center gap-3">
-                        <div class="w-1.5 h-4 bg-gray-200 rounded-full group-hover:bg-blue-400 transition-colors bar-indicator"></div>
-                        <span class="truncate max-w-[150px]">${subj}</span>
-                    </div>
-                    <i class="fas fa-chevron-right text-[8px] opacity-0 group-hover:opacity-100 transition-all -translate-x-2 group-hover:translate-x-0"></i>
-                </button>
-            `;
-        }).join('');
-
-        // REQ: Mobile Buttons (Physical buttons, no dropdowns)
-        mobileNav.innerHTML = subjects.map(function(subj) {
-            return `
-                <button class="px-4 py-3 bg-white border border-gray-100 text-slate-900 rounded-xl font-bold text-[10px] uppercase tracking-widest shadow-sm hover:border-blue-200 active:scale-95 transition-all subject-nav-item" data-subject="${subj}">
+                <button class="flex-none px-6 py-2.5 bg-white border border-gray-100 text-slate-500 rounded-xl font-bold text-[10px] uppercase tracking-widest transition-all hover:border-blue-200 subject-nav-item" data-subject="${subj}">
                     ${subj}
                 </button>
             `;
         }).join('');
-
-        // Sidebar display logic
-        if (sidebar) sidebar.classList.remove('hidden');
 
         // Logic for Switching Subjects
         var navItems = document.querySelectorAll('.subject-nav-item');
@@ -589,28 +582,13 @@ document.addEventListener('DOMContentLoaded', function() {
         window.switchSubject = function(subj, pushState) {
             if (pushState === undefined) pushState = true;
 
-            // Update UI State for Sidebar items
-            document.querySelectorAll('#subject-sidebar-nav .subject-nav-item').forEach(function(b) {
-                var bar = b.querySelector('.bar-indicator');
+            document.querySelectorAll('.subject-nav-item').forEach(function(b) {
                 if (b.dataset.subject === subj) {
-                    b.classList.remove('bg-gray-50/50', 'text-slate-600');
-                    b.classList.add('bg-blue-600', 'text-white', 'shadow-lg', 'shadow-blue-100');
-                    if (bar) bar.classList.replace('bg-gray-200', 'bg-white');
+                    b.classList.remove('bg-white', 'text-slate-500', 'border-gray-100');
+                    b.classList.add('bg-blue-600', 'text-white', 'border-blue-600', 'shadow-lg', 'shadow-blue-100');
                 } else {
-                    b.classList.add('bg-gray-50/50', 'text-slate-600');
-                    b.classList.remove('bg-blue-600', 'text-white', 'shadow-lg', 'shadow-blue-100');
-                    if (bar) bar.classList.replace('bg-white', 'bg-gray-200');
-                }
-            });
-
-            // Update UI State for Mobile items
-            document.querySelectorAll('#subject-mobile-nav .subject-nav-item').forEach(function(b) {
-                if (b.dataset.subject === subj) {
-                    b.classList.remove('bg-white', 'text-slate-900');
-                    b.classList.add('bg-blue-600', 'text-white', 'border-blue-600');
-                } else {
-                    b.classList.add('bg-white', 'text-slate-900');
-                    b.classList.remove('bg-blue-600', 'text-white', 'border-blue-600');
+                    b.classList.add('bg-white', 'text-slate-500', 'border-gray-100');
+                    b.classList.remove('bg-blue-600', 'text-white', 'border-blue-600', 'shadow-lg', 'shadow-blue-100');
                 }
             });
 
@@ -619,15 +597,23 @@ document.addEventListener('DOMContentLoaded', function() {
             showSubjectInfo(subj);
 
             if (pushState) {
-                history.pushState({ type: 'student-subject', subject: subj, parcial: activePartial }, '');
+                history.pushState({ type: 'student-subject', subject: subj, parcial: selectedPartial }, '');
             }
         };
 
         // Select first subject by default
         var firstSubj = subjects[0];
         if (firstSubj) {
-            history.replaceState({ type: 'student-subject', subject: firstSubj, parcial: activePartial }, '');
             window.switchSubject(firstSubj, false);
+        }
+
+        // Listener for Parcial History Selector
+        if (historySelector && !historySelector.dataset.listenerAttached) {
+            historySelector.dataset.listenerAttached = "true";
+            historySelector.addEventListener('change', function() {
+                historySelector.dataset.manuallyChanged = "true";
+                renderSubjectNavigation(allActivitiesData);
+            });
         }
     }
 

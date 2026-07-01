@@ -10,13 +10,13 @@
 // ----------------------------------------------------------
 
 window.SERVICE_URLS = {
-  // Pega aquí la URL del despliegue del microservicio de usuarios.
+  // Pega aquí la URL del despliegue del microservicio de usuarios. (v7.7.6)
   USER: 'https://script.google.com/macros/s/AKfycbzD1mMce5JpnkHqM2L8i-HrrVMpnNJYf4KK0A6g5zFAMBFS8fYOzG25yG92QT7OK8mc/exec',
 
   // Pega aquí la URL del despliegie del microservicio de tareas.
   TASK: 'https://script.google.com/macros/s/AKfycbz4geYGjF7FCe17VuLL8uylHaKM1vwbDqnFmEMgZXQQFVhBkKt0GtT0LB-_u94IVGDZ/exec',
 
-  // Pega aquí la URL del despliegue del microservicio de exámenes.
+  // Pega aquí la URL del despliegue del microservicio de exámenes. (v7.7.6)
   EXAM: 'https://script.google.com/macros/s/AKfycbwH_DWGdegGA4SfyE5cTXrTROA6l0AnKCAEbD26FMmumISGmp92kTPSdDd7hxMcYpzk/exec'
 };
 
@@ -211,10 +211,10 @@ window.sanitizarHTMLTecnico = function(html) {
 function normalizePartial(p) {
     if (!p) return "";
     var n = p.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
-    if (n.indexOf("primer") !== -1 || n === "i parcial") return "Primer Parcial";
-    if (n.indexOf("segundo") !== -1 || n === "ii parcial") return "Segundo Parcial";
-    if (n.indexOf("tercer") !== -1 || n === "iii parcial") return "Tercer Parcial";
-    if (n.indexOf("cuarto") !== -1 || n === "iv parcial") return "Cuarto Parcial";
+    if (n.indexOf("primer") !== -1 || n === "i parcial") return "I Parcial";
+    if (n.indexOf("segundo") !== -1 || n === "ii parcial") return "II Parcial";
+    if (n.indexOf("tercer") !== -1 || n === "iii parcial") return "III Parcial";
+    if (n.indexOf("cuarto") !== -1 || n === "iv parcial") return "IV Parcial";
     return p;
 }
 window.normalizePartial = normalizePartial;
@@ -237,22 +237,30 @@ window.isContentAuthorized = function(contentPartial, contentSubject, contentTop
 
     // --- TIER 1: VALIDACIÓN GLOBAL (VIGENTE) ---
 
-    // 1. Verificación de Parcial (OBLIGATORIO)
-    if (!contentPartial) return false;
-    var normContentP = normalizePartial(contentPartial);
+    // 1. Verificación de Parcial (SOLO PARA ACTIVIDADES/ENTREGAS, NO PARA RECURSOS ESTÁTICOS)
+    // Para recursos estáticos (Presentaciones/PDF), priorizamos Asignatura y Tema.
+    // Si NO se provee asignatura/tema (ej: filtrado de nivel superior), el parcial es obligatorio.
     var normActualP = normalizePartial(window.GLOBAL_SCOPE.ParcialActual);
 
-    var partialAuthorized = (normContentP === normActualP);
-    if (!partialAuthorized) {
-        var partialGroups = {
-            "I y II Parcial": ["Primer Parcial", "Segundo Parcial"],
-            "III y IV Parcial": ["Tercer Parcial", "Cuarto Parcial"]
-        };
-        if (partialGroups[contentPartial]) {
-            partialAuthorized = partialGroups[contentPartial].indexOf(normActualP) !== -1;
+    if (contentPartial) {
+        var normContentP = normalizePartial(contentPartial);
+        var partialAuthorized = (normContentP === normActualP);
+
+        if (!partialAuthorized) {
+            var partialGroups = {
+                "I y II Parcial": ["I Parcial", "II Parcial"],
+                "III y IV Parcial": ["III Parcial", "IV Parcial"]
+            };
+            if (partialGroups[contentPartial]) {
+                partialAuthorized = partialGroups[contentPartial].indexOf(normActualP) !== -1;
+            }
         }
+
+        // REQ: Desacoplamiento de recursos (v7.7.6)
+        // Si es un recurso estático (tiene tema) y el parcial no coincide,
+        // aún puede ser autorizado si el tema está explícitamente en el GLOBAL_SCOPE.
+        if (!partialAuthorized && !contentTopic) return false;
     }
-    if (!partialAuthorized) return false;
 
     // 2. Verificación de Grado (Global)
     if (contentGrade && window.GLOBAL_SCOPE.GradoActual && window.GLOBAL_SCOPE.GradoActual.length > 0) {
@@ -306,6 +314,8 @@ window.isContentAuthorized = function(contentPartial, contentSubject, contentTop
             }
             if (!tMatch) return false;
         }
+        // Si el tema coincide pero el parcial no, lo autorizamos de todos modos (Filtro Dinámico v7.7.6)
+        return true;
     }
 
     // --- TIER 2: VALIDACIÓN DE PERFIL (SOLO PARA ALUMNOS LOGUEADOS) ---

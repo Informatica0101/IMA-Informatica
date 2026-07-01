@@ -113,28 +113,33 @@
         </div>
     </div>
 
-    <main class="mt-[4.5rem] pb-12 flex-grow flex flex-col md:flex-row">
-        <!-- Sidebar Navigation (Task 9) -->
-        <aside id="student-sidebar" class="w-full md:w-72 bg-white border-r border-gray-100 flex-shrink-0 md:sticky md:top-20 md:h-[calc(100vh-5rem)] overflow-y-auto hidden md:block animate-fade-in-left">
-            <div class="p-6">
-                <h2 class="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-6 flex items-center gap-2">
-                    <i class="fas fa-layer-group text-blue-600"></i>
-                    Mis Asignaturas
-                </h2>
-                <nav id="subject-sidebar-nav" class="space-y-2">
-                    <!-- Se poblará vía js/student.js -->
-                </nav>
-            </div>
-        </aside>
-
-        <div class="container mx-auto px-4 md:px-8 py-8 flex-grow overflow-x-hidden">
+    <main class="mt-[4.5rem] pb-12 flex-grow">
+        <div class="container mx-auto px-4 md:px-8 py-8 max-w-7xl">
             <div id="hidden-student-data" class="hidden"><span id="student-name"></span></div>
 
-            <!-- Mobile Subject Selection (Required physical buttons, no dropdowns) -->
-            <div class="md:hidden mb-8">
-                <h2 class="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-4">Seleccionar Asignatura</h2>
-                <div id="subject-mobile-nav" class="grid grid-cols-2 gap-2">
-                    <!-- Se poblará vía js/student.js -->
+            <!-- Header de Navegación del Dashboard (v7.7.6) -->
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8 bg-white/40 backdrop-blur-md p-6 rounded-[2.5rem] border border-white/60 shadow-sm">
+                <div>
+                    <h2 class="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2">Seguimiento Académico</h2>
+                    <div class="flex items-center gap-3">
+                        <label for="parcial-history-selector" class="text-xs font-bold text-gray-700 uppercase">Parcial:</label>
+                        <select id="parcial-history-selector" class="bg-white/50 border border-blue-100 rounded-xl px-4 py-2 text-xs font-bold text-blue-600 outline-none focus:ring-2 focus:ring-blue-500/20 transition-all appearance-none cursor-pointer pr-8 relative">
+                            <option value="I Parcial">I Parcial</option>
+                            <option value="II Parcial">II Parcial</option>
+                            <option value="III Parcial">III Parcial</option>
+                            <option value="IV Parcial">IV Parcial</option>
+                        </select>
+                        <div class="pointer-events-none -ml-8 z-10 text-blue-400">
+                            <i class="fas fa-chevron-down text-[10px]"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex-grow md:max-w-2xl">
+                    <h2 class="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-3">Mis Asignaturas</h2>
+                    <div id="subject-tabs-container" class="flex overflow-x-auto gap-2 pb-2 scroll-horizontal-clean no-scrollbar">
+                        <!-- Pestañas (Tabs) inyectadas dinámicamente -->
+                    </div>
                 </div>
             </div>
 
@@ -152,10 +157,10 @@
                     <div class="flex items-center justify-between mb-6">
                         <h2 class="text-xl font-bold text-gray-900 uppercase tracking-tighter flex items-center gap-3">
                             <div class="w-1.5 h-8 bg-blue-600 rounded-full"></div>
-                            Actividades Vigentes
+                            Actividades de la Clase
                         </h2>
                         <div id="active-parcial-label" class="px-4 py-1.5 bg-blue-50 text-blue-600 rounded-full text-[10px] font-black uppercase tracking-widest border border-blue-100 shadow-sm">
-                            <!-- Parcial Actual -->
+                            <!-- Parcial Seleccionado -->
                         </div>
                     </div>
 
