@@ -9,7 +9,16 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Setup Common UI (Header, Scroll, Logout)
     if (window.setupCommonUI) window.setupCommonUI();
-    if (window.renderCommonNav) window.renderCommonNav();
+
+    // Sincronizar alcance antes de renderizar componentes principales (v7.7.4)
+    if (window.syncAcademicScope) {
+        window.syncAcademicScope(function() {
+            window.renderInitialContentButton();
+            if (window.renderCommonNav) window.renderCommonNav();
+        });
+    } else {
+        window.renderInitialContentButton();
+    }
 
     // --- DOM Elements specific to index.html ---
     var contentDisplayArea = document.getElementById('content-display-area');
@@ -233,7 +242,8 @@ document.addEventListener('DOMContentLoaded', function() {
             if (isProfesor) {
                 if (subjectData.partial !== targetPartial) continue;
             } else {
-                var isAuthorized = window.isContentAuthorized ? window.isContentAuthorized(subjectData.partial) : (subjectData.partial === targetPartial);
+                // REQ: Contextual authorization (v7.7.5)
+                var isAuthorized = window.isContentAuthorized ? window.isContentAuthorized(subjectData.partial, subjectData.name, null, window.selectedGradeData.grade, (currentUser ? currentUser.seccion : null)) : (subjectData.partial === targetPartial);
                 if (!isAuthorized) continue;
             }
 
@@ -270,8 +280,18 @@ document.addEventListener('DOMContentLoaded', function() {
         var gridDiv = document.createElement('div');
         gridDiv.className = 'grid grid-cols-1 gap-3 w-full max-w-lg';
 
+        var isProfesor = currentUser && currentUser.rol === 'Profesor';
+
         for (var i = 0; i < window.selectedSubjectData.topics.length; i++) {
             var topic = window.selectedSubjectData.topics[i];
+
+            if (!isProfesor) {
+                // REQ: Contextual authorization (v7.7.5)
+                if (!window.isContentAuthorized(window.selectedSubjectData.partial, window.selectedSubjectData.name, topic.title, window.selectedGradeData.grade, (currentUser ? currentUser.seccion : null))) {
+                    continue;
+                }
+            }
+
             var link = document.createElement('a');
             link.href = topic.file;
             link.target = '_blank';
@@ -494,7 +514,6 @@ document.addEventListener('DOMContentLoaded', function() {
     // Set initial state for index navigation
     history.replaceState({ type: 'index-main' }, '');
 
-    window.renderInitialContentButton();
     renderInitialActivityButton();
     setupGlobalAuth();
 

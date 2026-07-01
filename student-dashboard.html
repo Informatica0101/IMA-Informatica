@@ -114,39 +114,57 @@
     </div>
 
     <main class="mt-[4.5rem] pb-12 flex-grow">
-        <div class="container mx-auto px-4 md:px-6">
+        <div class="container mx-auto px-4 md:px-8 py-8 max-w-7xl">
             <div id="hidden-student-data" class="hidden"><span id="student-name"></span></div>
 
+            <!-- Header de Navegación del Dashboard (v7.7.6) -->
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8 bg-white/40 backdrop-blur-md p-6 rounded-[2.5rem] border border-white/60 shadow-sm">
+                <div>
+                    <h2 class="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-2">Seguimiento Académico</h2>
+                    <div class="flex items-center gap-3">
+                        <label for="parcial-history-selector" class="text-xs font-bold text-gray-700 uppercase">Parcial:</label>
+                        <select id="parcial-history-selector" class="bg-white/50 border border-blue-100 rounded-xl px-4 py-2 text-xs font-bold text-blue-600 outline-none focus:ring-2 focus:ring-blue-500/20 transition-all appearance-none cursor-pointer pr-8 relative">
+                            <option value="I Parcial">I Parcial</option>
+                            <option value="II Parcial">II Parcial</option>
+                            <option value="III Parcial">III Parcial</option>
+                            <option value="IV Parcial">IV Parcial</option>
+                        </select>
+                        <div class="pointer-events-none -ml-8 z-10 text-blue-400">
+                            <i class="fas fa-chevron-down text-[10px]"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex-grow md:max-w-2xl">
+                    <h2 class="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-3">Mis Asignaturas</h2>
+                    <div id="subject-tabs-container" class="flex overflow-x-auto gap-2 pb-2 scroll-horizontal-clean no-scrollbar">
+                        <!-- Pestañas (Tabs) inyectadas dinámicamente -->
+                    </div>
+                </div>
+            </div>
+
             <!-- Expediente Académico (Task 4) -->
-            <div id="student-expediente" class="mb-8 hidden">
+            <div id="student-expediente" class="mb-10 hidden">
                 <!-- Inyectado dinámicamente desde student.js -->
             </div>
 
-            <div class="grid grid-cols-1 gap-4">
+            <div class="space-y-10">
                 <section>
-                    <h2 class="text-lg font-semibold text-gray-900 uppercase tracking-tighter mb-4 flex items-center gap-2">
-                        <div class="w-1.5 h-6 bg-blue-600 rounded-full"></div>
-                        Mis Asignaturas
-                    </h2>
-
-                    <!-- Navegación por Asignaturas (Task 9) -->
-                    <div id="subject-nav-container" class="flex flex-wrap gap-2 mb-6 scroll-horizontal-clean">
+                    <div id="subject-info-container" class="mb-8 hidden">
                         <!-- Se poblará vía js/student.js -->
                     </div>
 
-                    <div id="subject-info-container" class="mb-6 hidden">
-                        <!-- Se poblará vía js/student.js -->
+                    <div class="flex items-center justify-between mb-6">
+                        <h2 class="text-xl font-bold text-gray-900 uppercase tracking-tighter flex items-center gap-3">
+                            <div class="w-1.5 h-8 bg-blue-600 rounded-full"></div>
+                            Actividades de la Clase
+                        </h2>
+                        <div id="active-parcial-label" class="px-4 py-1.5 bg-blue-50 text-blue-600 rounded-full text-[10px] font-black uppercase tracking-widest border border-blue-100 shadow-sm">
+                            <!-- Parcial Seleccionado -->
+                        </div>
                     </div>
 
-                    <h2 class="text-lg font-semibold text-gray-900 uppercase tracking-tighter mb-4 flex items-center gap-2">
-                        <div class="w-1.5 h-6 bg-blue-600 rounded-full"></div>
-                        Actividades del Parcial
-                    </h2>
-
-                    <div id="parcial-tabs-container" class="mb-6">
-                        <!-- Se poblará vía js/student.js -->
-                    </div>
-                    <div id="tasks-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
+                    <div id="tasks-list" class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
                         <!-- Se poblará vía js/student.js -->
                     </div>
                 </section>

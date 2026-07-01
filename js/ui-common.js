@@ -133,8 +133,14 @@ window.setupCommonUI = function() {
     var yearSpan = document.getElementById('current-year');
     if (yearSpan) yearSpan.textContent = new Date().getFullYear();
 
-    // Render Navigation
-    window.renderCommonNav();
+    // Sincronizar alcance antes de renderizar navegación (v7.7.4)
+    if (window.syncAcademicScope) {
+        window.syncAcademicScope(function() {
+            window.renderCommonNav();
+        });
+    } else {
+        window.renderCommonNav();
+    }
 
     // REQ: Event for child scripts (v3.3)
     document.dispatchEvent(new CustomEvent('common-ui-ready'));
@@ -190,9 +196,9 @@ window.setupCommonUI = function() {
             if (window.PresentationEngine && typeof window.PresentationEngine.showSlide === 'function') {
                 window.PresentationEngine.showSlide(state.slideIndex, false);
             }
-        } else if (state.type === 'student-tab') {
-            if (window.switchParcialTab) {
-                window.switchParcialTab(state.parcial, false);
+        } else if (state.type === 'student-subject') {
+            if (window.switchSubject) {
+                window.switchSubject(state.subject, false);
             }
         } else if (state.type === 'index-content') {
             if (state.view === 'grades') {
@@ -633,7 +639,8 @@ window.renderHierarchyLevel = function(type, level, params, pushState) {
                     if (role === 'Profesor' && params.parcial) {
                         authorized = secMatch && sub.partial === params.parcial;
                     } else {
-                        authorized = secMatch && window.isContentAuthorized(sub.partial, sub.name);
+                        // REQ: Contextual authorization (v7.7.5)
+                        authorized = window.isContentAuthorized(sub.partial, sub.name, null, params.grado, params.seccion);
                     }
                     if (authorized) subjSet[sub.name] = true;
                 }
@@ -666,14 +673,22 @@ window.renderHierarchyLevel = function(type, level, params, pushState) {
                 finalItems = foundSubject ? foundSubject.topics : [];
             }
 
-            if (finalItems.length === 0) {
-                container.innerHTML = '<p class="text-center p-4 text-gray-500 text-sm">No hay contenido disponible.</p>';
+            var filteredTopics = [];
+            for (i = 0; i < finalItems.length; i++) {
+                var topicItem = finalItems[i];
+                if (window.isContentAuthorized(params.parcial, params.asignatura, topicItem.title, params.grado, params.seccion)) {
+                    filteredTopics.push(topicItem);
+                }
+            }
+
+            if (filteredTopics.length === 0) {
+                container.innerHTML = '<p class="text-center p-4 text-gray-500 text-sm">No hay temas autorizados disponibles.</p>';
                 return;
             }
 
             var htmlItems = [];
-            for (i = 0; i < finalItems.length; i++) {
-                var item = finalItems[i];
+            for (i = 0; i < filteredTopics.length; i++) {
+                var item = filteredTopics[i];
                 if (!item.title || !item.file) continue;
                 htmlItems.push(
                     '<a href="' + item.file + '" ' + (type === 'Contenido' ? 'download' : 'target="_blank"') + ' class="flex items-center justify-between p-4 bg-gray-50 rounded-2xl border border-gray-100 hover:border-blue-200 hover:bg-white transition-all group">' +
@@ -780,51 +795,64 @@ window.renderCommonNav = function() {
                     '</button>' +
                     '<div class="absolute left-full top-0 dropdown-container-ima bg-white rounded-xl shadow-2xl py-2 opacity-0 invisible group-hover/grade:opacity-100 group-hover/grade:visible border border-gray-100">';
 
-                var partialGroups = {};
+                // Agrupar por asignatura (omitiendo nivel de parcial para simplificar navegación)
+                var subjGroups = {};
                 for (var k = 0; k < filteredSubjects.length; k++) {
                     var fs = filteredSubjects[k];
-                    if (!partialGroups[fs.partial]) partialGroups[fs.partial] = [];
-                    partialGroups[fs.partial].push(fs);
+                    if (!subjGroups[fs.name]) subjGroups[fs.name] = { topics: [] };
+                    for (var tIdx = 0; tIdx < fs.topics.length; tIdx++) {
+                        var topic = fs.topics[tIdx];
+                        if (!subjGroups[fs.name].topics.find(function(ex){ return ex.title === topic.title; })) {
+                            subjGroups[fs.name].topics.push(topic);
+                        }
+                    }
                 }
 
-                var partials = Object.keys(partialGroups);
-                for (var l = 0; l < partials.length; l++) {
-                    var p = partials[l];
-                    html += '<div class="relative group/partial">' +
-                        '<button class="block w-full text-left px-4 py-2 text-[10px] font-bold text-gray-600 hover:bg-blue-50 hover:text-blue-600 uppercase tracking-tight">' +
-                            p + ' <span class="float-right text-[10px] mt-0.5 ml-2">&#9656;</span>' +
+                var subjNames = Object.keys(subjGroups);
+                for (var m = 0; m < subjNames.length; m++) {
+                    var sName = subjNames[m];
+                    var sData = subjGroups[sName];
+                    html += '<div class="relative group/subj">' +
+                        '<button class="block w-full text-left px-4 py-2 text-[10px] font-bold text-gray-500 hover:bg-blue-50 hover:text-blue-600 uppercase">' +
+                            sName + ' <span class="float-right text-[10px] mt-0.5 ml-2">&#9656;</span>' +
                         '</button>' +
-                        '<div class="absolute left-full top-0 dropdown-container-ima bg-white rounded-xl shadow-2xl py-2 opacity-0 invisible group-hover/partial:opacity-100 group-hover/partial:visible border border-gray-100">';
-
-                    var groupSubjs = partialGroups[p];
-                    for (var m = 0; m < groupSubjs.length; m++) {
-                        var gs = groupSubjs[m];
-                        html += '<div class="relative group/subj">' +
-                            '<button class="block w-full text-left px-4 py-2 text-[10px] font-bold text-gray-500 hover:bg-blue-50 hover:text-blue-600 uppercase">' +
-                                gs.name + ' <span class="float-right text-[10px] mt-0.5 ml-2">&#9656;</span>' +
-                            '</button>' +
-                            '<div class="absolute left-full top-0 dropdown-container-ima bg-white rounded-xl shadow-2xl py-2 opacity-0 invisible group-hover/subj:opacity-100 group-hover/subj:visible border border-gray-100">';
-                        for (var n = 0; n < gs.topics.length; n++) {
-                            var t = gs.topics[n];
-                            html += '<a href="' + t.file + '" class="block px-4 py-2 text-[11px] font-medium text-gray-600 hover:bg-blue-50 hover:text-blue-600 border-b border-gray-50 last:border-0">' + t.title + '</a>';
-                        }
-                        html += '</div></div>';
+                        '<div class="absolute left-full top-0 dropdown-container-ima bg-white rounded-xl shadow-2xl py-2 opacity-0 invisible group-hover/subj:opacity-100 group-hover/subj:visible border border-gray-100">';
+                    for (var n = 0; n < sData.topics.length; n++) {
+                        var t = sData.topics[n];
+                        html += '<a href="' + t.file + '" class="block px-4 py-2 text-[11px] font-medium text-gray-600 hover:bg-blue-50 hover:text-blue-600 border-b border-gray-50 last:border-0">' + t.title + '</a>';
                     }
                     html += '</div></div>';
                 }
                 html += '</div></div>';
             } else {
+                // Estudiantes: Agrupar por asignatura y filtrar por autorización dinámica
+                var studentSubjGroups = {};
                 for (var x = 0; x < filteredSubjects.length; x++) {
                     var s = filteredSubjects[x];
-                    if (window.isContentAuthorized(s.partial, s.name)) {
+                    if (!studentSubjGroups[s.name]) studentSubjGroups[s.name] = { topics: [] };
+                    for (var stIdx = 0; stIdx < s.topics.length; stIdx++) {
+                        var stTopic = s.topics[stIdx];
+                        if (window.isContentAuthorized(s.partial, s.name, stTopic.title, grade.grade, currentUser.seccion)) {
+                            if (!studentSubjGroups[s.name].topics.find(function(ex){ return ex.title === stTopic.title; })) {
+                                studentSubjGroups[s.name].topics.push(stTopic);
+                            }
+                        }
+                    }
+                }
+
+                var stSubjNames = Object.keys(studentSubjGroups);
+                for (var si = 0; si < stSubjNames.length; si++) {
+                    var stName = stSubjNames[si];
+                    var stData = studentSubjGroups[stName];
+                    if (stData.topics.length > 0) {
                         html += '<div class="relative group/subj">' +
                             '<button class="block w-full text-left px-4 py-2 text-[10px] font-bold text-gray-600 hover:bg-blue-50 hover:text-blue-600 uppercase">' +
-                                s.name + ' <span class="float-right text-[10px] mt-0.5 ml-2">&#9656;</span>' +
+                                stName + ' <span class="float-right text-[10px] mt-0.5 ml-2">&#9656;</span>' +
                             '</button>' +
                             '<div class="absolute left-full top-0 dropdown-container-ima bg-white rounded-xl shadow-2xl py-2 opacity-0 invisible group-hover/subj:opacity-100 group-hover/subj:visible border border-gray-100">';
-                        for (var y = 0; y < s.topics.length; y++) {
-                            var topic = s.topics[y];
-                            html += '<a href="' + topic.file + '" class="block px-4 py-2 text-[11px] font-medium text-gray-600 hover:bg-blue-50 hover:text-blue-600 border-b border-gray-50 last:border-0">' + topic.title + '</a>';
+                        for (var ti = 0; ti < stData.topics.length; ti++) {
+                            var t = stData.topics[ti];
+                            html += '<a href="' + t.file + '" class="block px-4 py-2 text-[11px] font-medium text-gray-600 hover:bg-blue-50 hover:text-blue-600 border-b border-gray-50 last:border-0">' + t.title + '</a>';
                         }
                         html += '</div></div>';
                     }
@@ -859,30 +887,61 @@ window.renderCommonNav = function() {
                     grade.grade + ' <span>&#9662;</span>' +
                 '</button>' +
                 '<div class="hidden bg-gray-50/50">';
+
+                var mobileSubjGroups = {};
                 for (var k = 0; k < filteredSubjects.length; k++) {
                     var s = filteredSubjects[k];
+                    if (!mobileSubjGroups[s.name]) mobileSubjGroups[s.name] = { topics: [] };
+                    for (var mtIdx = 0; mtIdx < s.topics.length; mtIdx++) {
+                        var mTopic = s.topics[mtIdx];
+                        if (!mobileSubjGroups[s.name].topics.find(function(ex){ return ex.title === mTopic.title; })) {
+                            mobileSubjGroups[s.name].topics.push(mTopic);
+                        }
+                    }
+                }
+
+                var mSubjNames = Object.keys(mobileSubjGroups);
+                for (var mIdx = 0; mIdx < mSubjNames.length; mIdx++) {
+                    var msName = mSubjNames[mIdx];
+                    var msData = mobileSubjGroups[msName];
                     html += '<button class="w-full text-left px-8 py-3 font-bold text-blue-600 uppercase tracking-tighter border-b border-gray-100 flex justify-between items-center text-[10px]" onclick="this.nextElementSibling.classList.toggle(\'hidden\')">' +
-                        '[' + s.partial + '] ' + s.name + ' <span>&#9662;</span>' +
+                        msName + ' <span>&#9662;</span>' +
                     '</button>' +
                     '<div class="hidden bg-white/50">';
-                    for (var l = 0; l < s.topics.length; l++) {
-                        var t = s.topics[l];
+                    for (var l = 0; l < msData.topics.length; l++) {
+                        var t = msData.topics[l];
                         html += '<a href="' + t.file + '" class="block px-10 py-3 text-[11px] font-medium text-gray-600 border-b border-gray-50 last:border-0" onclick="closeMobileMenu()">' + t.title + '</a>';
                     }
                     html += '</div>';
                 }
                 html += '</div>';
             } else {
+                var mobileStudentSubjGroups = {};
                 for (var m = 0; m < filteredSubjects.length; m++) {
                     var sub = filteredSubjects[m];
-                    if (window.isContentAuthorized(sub.partial, sub.name)) {
+                    if (!mobileStudentSubjGroups[sub.name]) mobileStudentSubjGroups[sub.name] = { topics: [] };
+                    for (var mstIdx = 0; mstIdx < sub.topics.length; mstIdx++) {
+                        var mstTopic = sub.topics[mstIdx];
+                        if (window.isContentAuthorized(sub.partial, sub.name, mstTopic.title, grade.grade, currentUser.seccion)) {
+                             if (!mobileStudentSubjGroups[sub.name].topics.find(function(ex){ return ex.title === mstTopic.title; })) {
+                                mobileStudentSubjGroups[sub.name].topics.push(mstTopic);
+                             }
+                        }
+                    }
+                }
+
+                var mstNames = Object.keys(mobileStudentSubjGroups);
+                for (var mi = 0; mi < mstNames.length; mi++) {
+                    var mstName = mstNames[mi];
+                    var mstData = mobileStudentSubjGroups[mstName];
+                    if (mstData.topics.length > 0) {
                         html += '<button class="w-full text-left px-8 py-3 font-bold text-blue-600 uppercase tracking-tighter border-b border-gray-100 flex justify-between items-center text-[10px]" onclick="this.nextElementSibling.classList.toggle(\'hidden\')">' +
-                            sub.name + ' <span>&#9662;</span>' +
+                            mstName + ' <span>&#9662;</span>' +
                         '</button>' +
                         '<div class="hidden bg-white/50">';
-                        for (var n = 0; n < sub.topics.length; n++) {
-                            var topic = sub.topics[n];
-                            html += '<a href="' + topic.file + '" class="block px-10 py-3 text-[11px] font-medium text-gray-600 border-b border-gray-50 last:border-0" onclick="closeMobileMenu()">' + topic.title + '</a>';
+                        for (var mti = 0; mti < mstData.topics.length; mti++) {
+                            var t = mstData.topics[mti];
+                            html += '<a href="' + t.file + '" class="block px-10 py-3 text-[11px] font-medium text-gray-600 border-b border-gray-50 last:border-0" onclick="closeMobileMenu()">' + t.title + '</a>';
                         }
                         html += '</div>';
                     }

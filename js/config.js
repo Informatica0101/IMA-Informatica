@@ -10,25 +10,104 @@
 // ----------------------------------------------------------
 
 window.SERVICE_URLS = {
-  // Pega aquí la URL del despliegue del microservicio de usuarios.
-  USER: 'https://script.google.com/macros/s/AKfycbxzclcX7ulnXKLn0yLKiJdo3CsBz10OYYfQDwj9UklMhAS8BfY_eSywtZ7jwO5aulr3/exec',
+  // Pega aquí la URL del despliegue del microservicio de usuarios. (v7.7.6)
+  USER: 'https://script.google.com/macros/s/AKfycbxiV3gpw3hADHmM9c7JbUe4rfc73XFM2AFH9H2g4HO6k6u6lqMpWLuZmq83BfbIyvoX/exec',
 
   // Pega aquí la URL del despliegie del microservicio de tareas.
   TASK: 'https://script.google.com/macros/s/AKfycbz4geYGjF7FCe17VuLL8uylHaKM1vwbDqnFmEMgZXQQFVhBkKt0GtT0LB-_u94IVGDZ/exec',
 
-  // Pega aquí la URL del despliegue del microservicio de exámenes.
-  EXAM: 'https://script.google.com/macros/s/AKfycbwnfpVCq_S9MNe9HzTkLcvp54Su4JdbPVQWOCP8IoKzlMlx4Lr6FwSjkDiP47oi0fU/exec'
+  // Pega aquí la URL del despliegue del microservicio de exámenes. (v7.7.6)
+  EXAM: 'https://script.google.com/macros/s/AKfycbwH_DWGdegGA4SfyE5cTXrTROA6l0AnKCAEbD26FMmumISGmp92kTPSdDd7hxMcYpzk/exec'
 };
 
 // --- URL del sitio para CORS (si es necesario ajustarlo en el backend) ---
 var FRONTEND_URL = 'https://informatica0101.github.io';
 
 /**
- * CONFIGURACIÓN ACADÉMICA CENTRALIZADA
- * Punto único de verdad para el período escolar vigente.
- * Valores: "Primer Parcial", "Segundo Parcial", "Tercer Parcial", "Cuarto Parcial"
+ * CONFIGURACIÓN ACADÉMICA CENTRALIZADA (v7.7.1)
+ * Punto único de verdad para el alcance académico vigente.
  */
-window.PARCIAL_ACTUAL = "Segundo Parcial";
+window.GLOBAL_SCOPE = {
+    ParcialActual: "Segundo Parcial",
+    GradoActual: ["Décimo"],
+    SeccionActual: ["A"],
+    AsignaturaActual: ["Informática I"],
+    TemaActual: ["General"]
+};
+
+/**
+ * ÍNDICE FORMAL DE PRESENTACIONES (v7.7.1)
+ * Mapeo de temas a archivos de presentación para vinculación con el sistema de calificación.
+ */
+window.PRESENTATION_INDEX = [
+    { tema: "Imperativos Procedurales", asignatura: "Programación", grado: "11", file: "Imperativos_Procedurales.html" },
+    { tema: "Estructuras de Control", asignatura: "Programación", grado: "11", file: "Estructuras_Control.html" },
+    { tema: "Hardware y Software", asignatura: "Informática I", grado: "10", file: "Hardware_Software.html" },
+    { tema: "Sistemas Operativos", asignatura: "Informática I", grado: "10", file: "Sistemas_Operativos.html" }
+    // Este índice se expandirá automáticamente tras la migración del banco de preguntas
+];
+
+window.PARCIAL_ACTUAL = window.GLOBAL_SCOPE.ParcialActual;
+
+/**
+ * Sincroniza la configuración académica global con el servidor/caché (v7.7.4)
+ */
+window.syncAcademicScope = function(callback) {
+    var normalizeToArray = function(val) {
+        if (!val) return [];
+        if (Array.isArray(val)) return val.filter(Boolean);
+        if (typeof val === 'string') return val.split(',').map(function(s){ return s.trim(); }).filter(Boolean);
+        return [val];
+    };
+
+    var applyConfig = function(data) {
+        if (!data) return;
+
+        // Normalización profunda de campos multi-valor (v7.7.5)
+        window.GLOBAL_SCOPE = {
+            ParcialActual: data.ParcialActual || "Primer Parcial",
+            GradoActual: normalizeToArray(data.GradoActual),
+            SeccionActual: normalizeToArray(data.SeccionActual),
+            AsignaturaActual: normalizeToArray(data.AsignaturaActual),
+            TemaActual: normalizeToArray(data.TemaActual)
+        };
+
+        if (window.GLOBAL_SCOPE.TemaActual.length === 0) window.GLOBAL_SCOPE.TemaActual = ["General"];
+        window.PARCIAL_ACTUAL = window.GLOBAL_SCOPE.ParcialActual;
+
+        console.log("[IMA-SCOPE] Alcance académico sincronizado (Normalizado):", window.GLOBAL_SCOPE);
+
+        document.dispatchEvent(new CustomEvent('academic-scope-updated', { detail: window.GLOBAL_SCOPE }));
+        if (typeof callback === 'function') callback(window.GLOBAL_SCOPE);
+    };
+
+    if (typeof fetchApi !== 'function') {
+        console.warn("[IMA-SCOPE] fetchApi no disponible para sincronización inicial.");
+        return Promise.resolve(window.GLOBAL_SCOPE);
+    }
+
+    // Retornamos una promesa para que el llamador pueda esperar a la sincronización REAL (desde el servidor)
+    return new Promise(function(resolve) {
+        fetchApi('USER', 'getAcademicConfig', {}, 0, {
+            store: 'academic_stats',
+            key: 'config',
+            onUpdate: function(data) {
+                applyConfig(data);
+                // No resolvemos aquí porque onUpdate puede llamarse varias veces (caché y luego servidor)
+            }
+        }).then(function(res) {
+            if (res && res.status === 'success' && res.data) {
+                applyConfig(res.data);
+                resolve(window.GLOBAL_SCOPE);
+            } else {
+                resolve(window.GLOBAL_SCOPE);
+            }
+        }).catch(function(e) {
+            console.error("[IMA-SCOPE] Fallo crítico en sincronización:", e);
+            resolve(window.GLOBAL_SCOPE);
+        });
+    });
+};
 
 var GRADE_MAP = {
     'decimo': 10, 'undecimo': 11, 'duodecimo': 12,
@@ -132,37 +211,125 @@ window.sanitizarHTMLTecnico = function(html) {
 function normalizePartial(p) {
     if (!p) return "";
     var n = p.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
-    if (n.indexOf("primer") !== -1 || n === "i parcial") return "Primer Parcial";
-    if (n.indexOf("segundo") !== -1 || n === "ii parcial") return "Segundo Parcial";
-    if (n.indexOf("tercer") !== -1 || n === "iii parcial") return "Tercer Parcial";
-    if (n.indexOf("cuarto") !== -1 || n === "iv parcial") return "Cuarto Parcial";
+    if (n.indexOf("primer") !== -1 || n === "i parcial") return "I Parcial";
+    if (n.indexOf("segundo") !== -1 || n === "ii parcial") return "II Parcial";
+    if (n.indexOf("tercer") !== -1 || n === "iii parcial") return "III Parcial";
+    if (n.indexOf("cuarto") !== -1 || n === "iv parcial") return "IV Parcial";
     return p;
 }
 window.normalizePartial = normalizePartial;
 
-window.isContentAuthorized = function(contentPartial) {
-    var userRaw = localStorage.getItem('currentUser');
-    if (!userRaw) return false;
-    var user = JSON.parse(userRaw);
-    if (user && user.rol === 'Profesor') return true;
+window.isContentAuthorized = function(contentPartial, contentSubject, contentTopic, contentGrade, contentSection) {
+    var userRaw = localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser');
+    var user = userRaw ? JSON.parse(userRaw) : { rol: 'Invitado' };
 
-    if (!contentPartial) return false;
+    // El profesor siempre tiene acceso completo
+    if (user.rol === 'Profesor') return true;
 
-    var normContent = normalizePartial(contentPartial);
-    var normActual = normalizePartial(window.PARCIAL_ACTUAL);
+    // Si no hay configuración de alcance cargada, ser restrictivo por defecto
+    if (!window.GLOBAL_SCOPE) return false;
 
-    if (normContent === normActual) return true;
-
-    var partialGroups = {
-        "I y II Parcial": ["Primer Parcial", "Segundo Parcial"],
-        "III y IV Parcial": ["Tercer Parcial", "Cuarto Parcial"]
+    // Helper para normalizar strings de comparación
+    var fastNorm = function(s) {
+        if (!s) return "";
+        return s.toString().trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
     };
 
-    if (partialGroups[contentPartial]) {
-        return partialGroups[contentPartial].indexOf(normActual) !== -1;
+    // --- TIER 1: VALIDACIÓN GLOBAL (VIGENTE) ---
+
+    // 1. Verificación de Parcial (SOLO PARA ACTIVIDADES/ENTREGAS, NO PARA RECURSOS ESTÁTICOS)
+    // Para recursos estáticos (Presentaciones/PDF), priorizamos Asignatura y Tema.
+    // Si NO se provee asignatura/tema (ej: filtrado de nivel superior), el parcial es obligatorio.
+    var normActualP = normalizePartial(window.GLOBAL_SCOPE.ParcialActual);
+
+    if (contentPartial) {
+        var normContentP = normalizePartial(contentPartial);
+        var partialAuthorized = (normContentP === normActualP);
+
+        if (!partialAuthorized) {
+            var partialGroups = {
+                "I y II Parcial": ["I Parcial", "II Parcial"],
+                "III y IV Parcial": ["III Parcial", "IV Parcial"]
+            };
+            if (partialGroups[contentPartial]) {
+                partialAuthorized = partialGroups[contentPartial].indexOf(normActualP) !== -1;
+            }
+        }
+
+        // REQ: Desacoplamiento de recursos (v7.7.6)
+        // Si es un recurso estático (tiene tema) y el parcial no coincide,
+        // aún puede ser autorizado si el tema está explícitamente en el GLOBAL_SCOPE.
+        if (!partialAuthorized && !contentTopic) return false;
     }
 
-    return false;
+    // 2. Verificación de Grado (Global)
+    if (contentGrade && window.GLOBAL_SCOPE.GradoActual && window.GLOBAL_SCOPE.GradoActual.length > 0) {
+        var cGradeVal = window.parseGrade(contentGrade);
+        var gMatch = false;
+        for (var i = 0; i < window.GLOBAL_SCOPE.GradoActual.length; i++) {
+            if (window.parseGrade(window.GLOBAL_SCOPE.GradoActual[i]) === cGradeVal) {
+                gMatch = true;
+                break;
+            }
+        }
+        if (!gMatch) return false;
+    }
+
+    // 3. Verificación de Sección (Global)
+    if (contentSection && window.GLOBAL_SCOPE.SeccionActual && window.GLOBAL_SCOPE.SeccionActual.length > 0) {
+        var sMatch = false;
+        var sectionsToCheck = Array.isArray(contentSection) ? contentSection : contentSection.toString().split(',').map(function(s){return s.trim();});
+        for (var j = 0; j < sectionsToCheck.length; j++) {
+            if (window.GLOBAL_SCOPE.SeccionActual.indexOf(sectionsToCheck[j]) !== -1) {
+                sMatch = true;
+                break;
+            }
+        }
+        if (!sMatch) return false;
+    }
+
+    // 4. Verificación de Asignatura (Global)
+    if (contentSubject && window.GLOBAL_SCOPE.AsignaturaActual && window.GLOBAL_SCOPE.AsignaturaActual.length > 0) {
+        var normSubj = fastNorm(contentSubject);
+        var asigMatch = false;
+        for (var k = 0; k < window.GLOBAL_SCOPE.AsignaturaActual.length; k++) {
+            if (fastNorm(window.GLOBAL_SCOPE.AsignaturaActual[k]) === normSubj) {
+                asigMatch = true;
+                break;
+            }
+        }
+        if (!asigMatch) return false;
+    }
+
+    // 5. Verificación de Tema (Global)
+    if (contentTopic && window.GLOBAL_SCOPE.TemaActual && window.GLOBAL_SCOPE.TemaActual.length > 0) {
+        if (window.GLOBAL_SCOPE.TemaActual.indexOf("General") === -1) {
+            var normTopic = fastNorm(contentTopic);
+            var tMatch = false;
+            for (var l = 0; l < window.GLOBAL_SCOPE.TemaActual.length; l++) {
+                if (fastNorm(window.GLOBAL_SCOPE.TemaActual[l]) === normTopic) {
+                    tMatch = true;
+                    break;
+                }
+            }
+            if (!tMatch) return false;
+        }
+        // Si el tema coincide pero el parcial no, lo autorizamos de todos modos (Filtro Dinámico v7.7.6)
+        return true;
+    }
+
+    // --- TIER 2: VALIDACIÓN DE PERFIL (SOLO PARA ALUMNOS LOGUEADOS) ---
+    // Si el usuario es estudiante, solo puede ver lo que corresponde a SU grado y sección
+    if (user.rol === 'Estudiante' || user.rol === 'Alumno') {
+        if (contentGrade) {
+            if (window.parseGrade(contentGrade) !== window.parseGrade(user.grado)) return false;
+        }
+        if (contentSection && user.seccion) {
+            if (!window.checkSectionHelper(contentSection, user.seccion)) return false;
+        }
+    }
+
+    return true;
 };
 
 window.validateQuestion = function(q) {

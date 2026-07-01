@@ -57,6 +57,12 @@ function fetchApi(service, action, payload, retryCount, options) {
                 if (cached.data !== undefined && !cached.allHistory) {
                     cleanCached = cached.data;
                 }
+
+                // REQ: Defensive array check for cache (v7.7.1)
+                if (action.indexOf('get') === 0 && cleanCached === undefined) {
+                    cleanCached = [];
+                }
+
                 options.onUpdate(cleanCached);
             }
         }).catch(function(e) {
@@ -87,6 +93,12 @@ function fetchApi(service, action, payload, retryCount, options) {
 
                 try {
                     var parsed = JSON.parse(textResponse);
+
+                    // REQ: Defensive Data Validation (v7.7.1)
+                    // If the action is a "get" action, ensure we return an array if data is missing
+                    if (action.indexOf('get') === 0 && parsed.status === 'success' && parsed.data === undefined) {
+                        parsed.data = [];
+                    }
 
                     // REQ: Silent Reconciliation (Modulo 1.1)
                     if (options.store && window.PersistenceManager) {
@@ -143,9 +155,10 @@ function fetchApi(service, action, payload, retryCount, options) {
                 }, 8000);
             }
 
-            // Estructuras de fallback según la acción solicitada
+            // Estructuras de fallback según la acción solicitada (v7.7.5)
             if (action === 'getNews') return { status: 'success', data: [], isFallback: true };
             if (action === 'getGlobalTop') return { status: 'success', global: [], subjectTops: {}, isFallback: true };
+            if (action === 'getAcademicConfig') return { status: 'success', data: { ParcialActual: "Primer Parcial", GradoActual: [], SeccionActual: [], AsignaturaActual: [], TemaActual: ["General"] }, isFallback: true };
             if (action.indexOf('get') === 0) return { status: 'success', data: [], isFallback: true };
             if (action === 'loginUser') return { status: 'error', message: 'Servicio de autenticación no disponible.', isFallback: true };
 

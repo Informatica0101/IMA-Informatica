@@ -108,6 +108,10 @@ function doGet() {
 
 function doPost(e) {
   try {
+    if (!e || !e.postData || !e.postData.contents) {
+      return textResponse({ status: "error", message: "No se recibieron datos en la petición." });
+    }
+
     const { action, payload } = JSON.parse(e.postData.contents);
     let result;
 
@@ -882,7 +886,7 @@ function getOrCreateSheet(ss, name) {
     }
     if (name === "ConfiguracionAcademica") {
       sheet.appendRow(["Clave", "Valor"]);
-      sheet.appendRow(["ParcialActual", "Primer Parcial"]);
+      sheet.appendRow(["ParcialActual", "I Parcial"]);
     }
     if (name === "AsignaturasPorParcial") {
       sheet.appendRow(["Parcial", "Asignatura"]);
@@ -1242,28 +1246,94 @@ function saveQuestion(payload) {
   return { status: "success", preguntaId: questionObj.PreguntaID };
 }
 
+/**
+ * Recupera la configuración académica global (v7.7.5)
+ * Soporta el formato Atómico de Filas (Fila 1: Cabeceras, Fila 2: Valores)
+ */
 function getAcademicConfig() {
-  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
-  const sheet = getOrCreateSheet(ss, "ConfiguracionAcademica");
-  const data = sheet.getDataRange().getValues().slice(1);
-  const config = {};
-  data.forEach(r => config[r[0]] = r[1]);
-  return { status: "success", data: config };
-}
-
-function updateAcademicConfig(payload) {
-  const { key, value } = payload;
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
   const sheet = getOrCreateSheet(ss, "ConfiguracionAcademica");
   const data = sheet.getDataRange().getValues();
 
-  const rowIndex = data.findIndex(r => r[0] === key);
-  if (rowIndex !== -1) {
-    sheet.getRange(rowIndex + 1, 2).setValue(value);
-  } else {
-    sheet.appendRow([key, value]);
+  if (data.length < 2) {
+    // Si la hoja está vacía, retornar valores por defecto
+    return {
+      status: "success",
+      data: {
+        ParcialActual: "I Parcial",
+        GradoActual: ["Décimo"],
+        SeccionActual: ["A"],
+        AsignaturaActual: ["Informática I"],
+        TemaActual: ["General"]
+      }
+    };
   }
-  return { status: "success" };
+
+  const headers = data[0];
+  const values = data[1];
+  const config = {};
+
+  headers.forEach((h, i) => {
+    let val = values[i];
+    if (val === "" || val === undefined) {
+      config[h] = [];
+      return;
+    }
+
+    // Intentar parsear como JSON si parece un array/objeto stringificado
+    if (typeof val === 'string' && (val.startsWith('[') || val.startsWith('{'))) {
+      try {
+        config[h] = JSON.parse(val);
+      } catch (e) {
+        config[h] = val;
+      }
+    } else {
+      config[h] = val;
+    }
+  });
+
+  return { status: "success", data: config };
+}
+
+/**
+ * Actualiza la configuración académica global de forma atómica (v7.7.5)
+ * Implementa el formato de almacenamiento escalable en Spreadsheet.
+ */
+function updateAcademicConfig(payload) {
+  const { fullScope } = payload || {};
+  if (!fullScope) {
+    throw new Error("Payload 'fullScope' no proporcionado para la actualización académica.");
+  }
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "ConfiguracionAcademica");
+
+  // Limpieza y Re-escritura atómica para garantizar integridad
+  sheet.clear();
+
+  const headers = Object.keys(fullScope);
+  const values = headers.map(h => {
+    const val = fullScope[h];
+    // Persistir arrays como strings JSON para preservar multi-selección
+    return Array.isArray(val) ? JSON.stringify(val) : val;
+  });
+
+  sheet.appendRow(headers);
+  sheet.appendRow(values);
+
+  SpreadsheetApp.flush();
+
+  logDebug("Configuración académica actualizada atómicamente", fullScope);
+
+  // Recuperar los datos guardados para confirmar consistencia
+  const confirmedData = getAcademicConfig();
+
+  return {
+    status: "success",
+    message: "Configuración global guardada en Spreadsheet.",
+    data: confirmedData.data,
+    updated_at: new Date().getTime()
+  };
 }
 
 function getAsignaturasActivas(payload) {

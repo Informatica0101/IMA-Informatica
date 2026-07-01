@@ -371,3 +371,30 @@ Impacto: La funcionalidad es limitada o nula en navegadores móviles y dispositi
 
 Sector: Flujo de Cierre
 Hallazgo [Bajo]: El botón quizExitGameButton depende de window.returnToMainContent, pero no se valida su existencia antes de llamar.
+
+AUDITORÍA TÉCNICA - CONFIGURACIÓN GLOBAL Y REESTRUCTURACIÓN - Tue Jun 30 2026
+
+Archivo: js/api.js
+Sector: fetchApi
+Hallazgo [Crítico]: Las llamadas a microservicios fallaban con 'TypeError: Failed to fetch' por falta de validación de respuesta y manejo de nulos en datos procesados con .map().
+Solución: Implementada validación defensiva 'Array.isArray()' y normalización de respuesta para acciones 'get'.
+
+Archivo: js/config.js
+Sector: Global Scope
+Hallazgo [Alto]: La plataforma carecía de un filtrado granular por grado/sección/asignatura/tema.
+Solución: Implementado 'window.GLOBAL_SCOPE' y refactorizada 'isContentAuthorized' para aplicar restricción de 5 niveles.
+
+Archivo: teacher-dashboard.html
+Sector: Administración
+Hallazgo [Medio]: El panel de administración solo permitía configurar parcial y asignaturas generales.
+Solución: Implementados selectores en cascada (Grado -> Asignatura -> Tema) para control total del alcance académico.
+
+Archivo: student-dashboard.html / js/student.js
+Sector: Navegación Estudiante
+Hallazgo [Alto]: La navegación por parciales era confusa y no permitía un enfoque directo por materia.
+Solución: Reemplazadas las pestañas de parcial por una barra lateral de asignaturas (escritorio) y botones físicos (móvil). Eliminado el uso de menús desplegables en móviles según requerimiento.
+
+Archivo: css/style.css
+Sector: Estilos Corporativos
+Hallazgo [Observación]: Existían discrepancias visuales y falta de acabado profesional en componentes de tarjetas.
+Solución: Rediseño de .card-ima con bordes de 20px, sombras suaves y transiciones suaves. Eliminado cualquier rastro de efectos neón.

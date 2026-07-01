@@ -1,5 +1,5 @@
 /**
- * Data constants for index.html
+ * Data constants for index.html (Standardized v7.7.6)
  */
 
 window.presentationData = [
@@ -9,7 +9,7 @@ window.presentationData = [
         subjects: [
             {
                 name: "Informática I",
-                partial: "Primer Parcial",
+                partial: "I Parcial",
                 sections: "A, B",
                 topics: [
                     { title: "Introducción a la Informática", file: "Informatica_I/introduccion_informatica.html" },
@@ -41,13 +41,14 @@ window.presentationData = [
                     { title: "Programación y representación", file: "II_BTP_A/Programacion/programacion_representacion.html" },
                     { title: "Pseudocódigo y ordenación simbólica", file: "II_BTP_A/Programacion/pseudocodigo_ordenacion.html" },
                     { title: "Diagramas de flujo", file: "II_BTP_A/Programacion/diagramas_flujo.html" }
-                    ]
+                ]
             },
             {
                 name: "Programación",
                 partial: "II Parcial",
                 sections: "A",
-                topics: [{ title: "Introducción a los Lenguajes de Programación", file: "II_BTP_A/Programacion/intro_lenguajes_programacion.html" },
+                topics: [
+                    { title: "Introducción a los Lenguajes de Programación", file: "II_BTP_A/Programacion/intro_lenguajes_programacion.html" },
                     { title: "Lenguajes compilados e interpretados / Bucles", file: "II_BTP_A/Programacion/lenguajes_compilados_interpretados.html" },
                     { title: "Lenguajes declarativos / Bucle Mientras", file: "II_BTP_A/Programacion/lenguajes_declarativos_mientras.html" },
                     { title: "Programación Lógica / Bucle Repetir", file: "II_BTP_A/Programacion/prog_logica_repetir.html" },
@@ -58,7 +59,7 @@ window.presentationData = [
             },
             {
                 name: "Ofimática I",
-                partial: "Primer Parcial",
+                partial: "I Parcial",
                 sections: "A",
                 topics: [
                     { title: "Procesadores de Texto", file: "II_BTP_A/Ofimatica_I/procesadores_texto.html" },
@@ -99,7 +100,7 @@ window.presentationData = [
         sections: ["A"],
         subjects: [
             {
-                name: "Diseño Web (I Parcial)",
+                name: "Diseño Web",
                 partial: "I Parcial",
                 sections: "A",
                 topics: [
@@ -159,7 +160,7 @@ window.downloadContentData = [
         subjects: [
             {
                 name: "Informática I",
-                partial: "Primer Parcial",
+                partial: "I Parcial",
                 sections: "A, B",
                 topics: [
                     { title: "Procesadores de Texto", file: "Informatica_I/procesadores_palabras.pdf" },
@@ -176,8 +177,8 @@ window.downloadContentData = [
         sections: ["A"],
         subjects: [
             {
-                name: "Programación (I Parcial)",
-                partial: "Primer Parcial",
+                name: "Programación",
+                partial: "I Parcial",
                 sections: "A",
                 topics: [
                     { title: "Introduccion a programacion", file: "II_BTP_A/Programacion/Programación_2026.pdf" }
@@ -185,7 +186,7 @@ window.downloadContentData = [
             },
             {
                 name: "Programación",
-                partial: "Segundo Parcial",
+                partial: "II Parcial",
                 sections: "A",
                 topics: [
                     { title: "Contenido II Parcial (PDF)", file: "II_BTP_A/Programacion/II Parcial/Programacion Segunda Unidad.pdf" }
@@ -198,8 +199,8 @@ window.downloadContentData = [
         sections: ["A"],
         subjects: [
             {
-                name: "Diseño Web (I Parcial)",
-                partial: "Primer Parcial",
+                name: "Diseño Web",
+                partial: "I Parcial",
                 sections: "A",
                 topics: [
                     { title: "Introduccion a Html", file: "III_BTP_A/introducción a HTML.pdf" }
@@ -207,7 +208,7 @@ window.downloadContentData = [
             },
             {
                 name: "Diseño Web",
-                partial: "Segundo Parcial",
+                partial: "II Parcial",
                 sections: "A",
                 topics: [
                     { title: "Contenido II Parcial (PDF)", file: "III_BTP_A/dw_II/contenido/Unidad 4 Diseño Web.pdf" }
