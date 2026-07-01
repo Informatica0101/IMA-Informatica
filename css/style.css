@@ -662,3 +662,22 @@ footer a:hover {
     font-size: 0.85em !important;
     font-weight: 600 !important;
 }
+
+/* --- Dashboard Navigation Animations (v7.8) --- */
+.nav-transition-push {
+    animation: slideInRight 0.3s ease-out forwards;
+}
+
+.nav-transition-pop {
+    animation: slideInLeft 0.3s ease-out forwards;
+}
+
+@keyframes slideInRight {
+    from { opacity: 0; transform: translateX(20px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes slideInLeft {
+    from { opacity: 0; transform: translateX(-20px); }
+    to { opacity: 1; transform: translateX(0); }
+}

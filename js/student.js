@@ -48,6 +48,40 @@ document.addEventListener('DOMContentLoaded', function() {
     var activeUploads = 0;
     var isSubmitting = false; // Flag para evitar avisos tras entrega exitosa (Tarea 3)
 
+    // Tarea 3 (Fase Diagnóstico): Renderizar encabezado de perfil inmediatamente
+    function renderStudentHeader() {
+        var profileHeader = document.getElementById('student-profile-header');
+        if (!profileHeader || !currentUser) return;
+
+        profileHeader.innerHTML = `
+            <div class="card-ima bg-white border border-gray-100 p-6 rounded-[2rem] shadow-sm animate-fade-in-up">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+                    <div class="flex items-center gap-4">
+                        <div class="w-16 h-16 bg-blue-600 rounded-[1.5rem] flex items-center justify-center text-white text-2xl font-black shadow-xl shadow-blue-100 relative">
+                            ${currentUser.nombre.charAt(0)}
+                            <div class="absolute -bottom-1 -right-1 w-6 h-6 bg-green-500 border-2 border-white rounded-full flex items-center justify-center text-white shadow-md">
+                                <i class="fas fa-check text-[10px]"></i>
+                            </div>
+                        </div>
+                        <div>
+                            <span class="inline-block px-2 py-0.5 bg-blue-50 text-blue-600 rounded-full text-[8px] font-black uppercase tracking-widest mb-1">Estudiante Informática</span>
+                            <h2 class="text-xl md:text-2xl font-black text-gray-900 leading-tight tracking-tighter">${currentUser.nombre}</h2>
+                            <div class="flex items-center gap-3 mt-1 text-[10px] text-gray-400 font-bold uppercase tracking-widest">
+                                <span>${currentUser.grado} - ${currentUser.seccion}</span>
+                                <span class="w-1 h-1 bg-gray-300 rounded-full"></span>
+                                <span>Lista #${currentUser.numeroLista || 'N/A'}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="header-mini-stats" class="flex gap-4">
+                        <!-- Se poblará con mini-métricas si es necesario -->
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+    renderStudentHeader();
+
     function formatDate(isoString) {
         if (!isoString) return 'N/A';
         try {
@@ -354,6 +388,24 @@ document.addEventListener('DOMContentLoaded', function() {
             `;
         }).join('');
 
+        // Tarea 3 (Fase Diagnóstico): Actualizar mini-stats en el encabezado
+        var headerMiniStats = document.getElementById('header-mini-stats');
+        if (headerMiniStats) {
+            headerMiniStats.innerHTML = `
+                <div class="hidden sm:flex items-center gap-4 animate-fade-in">
+                    <div class="text-right">
+                        <p class="text-[8px] font-black text-gray-400 uppercase tracking-widest">Progreso</p>
+                        <p class="text-sm font-black text-blue-600">${compositeProgress}%</p>
+                    </div>
+                    <div class="w-px h-8 bg-gray-100"></div>
+                    <div class="text-right">
+                        <p class="text-[8px] font-black text-gray-400 uppercase tracking-widest">Completadas</p>
+                        <p class="text-sm font-black text-emerald-600">${completed}</p>
+                    </div>
+                </div>
+            `;
+        }
+
         container.innerHTML = `
             <div class="space-y-6">
                 <div class="card-ima bg-white border border-gray-100 p-6 rounded-[2rem] shadow-sm">
@@ -374,58 +426,6 @@ document.addEventListener('DOMContentLoaded', function() {
                             </tbody>
                         </table>
                     </div>
-
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                    <div class="space-y-4">
-                        <div class="flex items-center gap-3">
-                            <div class="w-12 h-12 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center text-xl">
-                                <i class="fas fa-id-card"></i>
-                            </div>
-                            <div>
-                                <h3 class="text-xs font-bold text-gray-400 uppercase tracking-widest">Estudiante</h3>
-                                <p class="text-lg font-bold text-gray-900">${currentUser.nombre}</p>
-                            </div>
-                        </div>
-                        <div class="grid grid-cols-2 gap-4 pt-2">
-                            <div><span class="text-[10px] font-bold text-gray-400 uppercase">Grado</span><p class="text-sm font-semibold">${currentUser.grado}</p></div>
-                            <div><span class="text-[10px] font-bold text-gray-400 uppercase">Sección</span><p class="text-sm font-semibold">${currentUser.seccion}</p></div>
-                            <div><span class="text-[10px] font-bold text-gray-400 uppercase">No. Lista</span><p class="text-sm font-semibold">#${currentUser.numeroLista || 'N/A'}</p></div>
-                        </div>
-                    </div>
-
-                    <div class="md:border-x border-gray-50 px-0 md:px-8 space-y-4">
-                        <div class="flex justify-between items-end">
-                            <div>
-                                <h3 class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Progreso Académico</h3>
-                                <p class="text-3xl font-black text-gray-900">${compositeProgress}%</p>
-                            </div>
-                            <div class="text-right">
-                                <span class="text-[10px] font-bold text-gray-400 uppercase block mb-1">Nivel</span>
-                                <span class="text-xs font-bold ${levelColor} uppercase tracking-tighter">${level}</span>
-                            </div>
-                        </div>
-                        <div class="w-full h-3 bg-gray-100 rounded-full overflow-hidden">
-                            <div class="${barColor} h-full transition-all duration-1000" style="width: ${compositeProgress}%"></div>
-                        </div>
-                    </div>
-
-                    <div class="flex flex-col justify-center space-y-3">
-                        <div class="flex items-center justify-between p-3 bg-green-50 rounded-2xl">
-                            <div class="flex items-center gap-3">
-                                <div class="w-8 h-8 bg-white text-green-600 rounded-xl flex items-center justify-center text-xs shadow-sm"><i class="fas fa-check"></i></div>
-                                <span class="text-xs font-bold text-green-700 uppercase">Completadas</span>
-                            </div>
-                            <span class="text-lg font-black text-green-700">${completed}</span>
-                        </div>
-                        <div class="flex items-center justify-between p-3 bg-yellow-50 rounded-2xl">
-                            <div class="flex items-center gap-3">
-                                <div class="w-8 h-8 bg-white text-yellow-600 rounded-xl flex items-center justify-center text-xs shadow-sm"><i class="fas fa-clock"></i></div>
-                                <span class="text-xs font-bold text-yellow-700 uppercase">Pendientes</span>
-                            </div>
-                            <span class="text-lg font-black text-yellow-700">${pending}</span>
-                        </div>
-                    </div>
-                </div>
                     <!-- Fase 9: Integración de Perfil de Dominio -->
                     <div id="learning-profile-integration"></div>
                 </div>
@@ -442,49 +442,6 @@ document.addEventListener('DOMContentLoaded', function() {
         container.classList.remove('hidden');
     }
 
-    function renderSubjectNav(activities, selectedParcial) {
-        var container = document.getElementById('subject-nav-container');
-        if (!container) return;
-
-        // Obtener asignaturas dinámicamente filtradas por el parcial seleccionado
-        var subjects = [...new Set(activities.map(function(a) { return a.asignatura; }))]
-            .filter(function(s) { return s && s.trim() !== ""; })
-            .sort();
-
-        if (subjects.length === 0) {
-            container.innerHTML = '<p class="text-gray-400 text-[10px] uppercase font-bold p-4">No hay asignaturas en este parcial.</p>';
-            tasksList.innerHTML = '<p class="text-gray-500 text-center py-8">No hay actividades registradas.</p>';
-            return;
-        }
-
-        container.innerHTML = subjects.map(function(subj) {
-            return `
-            <button class="subject-tab flex-none px-5 py-2.5 bg-white border border-gray-100 text-slate-900 rounded-xl font-bold text-[10px] uppercase tracking-widest shadow-sm hover:border-blue-200 transition-all" data-subject="${subj}">
-                ${subj}
-            </button>
-        `; }).join('');
-
-        // Listener para filtrar por asignatura
-        container.querySelectorAll('.subject-tab').forEach(function(btn) {
-            btn.addEventListener('click', function(e) {
-                container.querySelectorAll('.subject-tab').forEach(function(b) {
-                    b.classList.remove('bg-blue-600', 'text-white', 'border-blue-600');
-                });
-                var target = e.currentTarget;
-                target.classList.add('bg-blue-600', 'text-white', 'border-blue-600');
-
-                var subj = target.dataset.subject;
-                var finalActivities = activities.filter(function(a) { return a.asignatura === subj; });
-
-                renderActivities(finalActivities);
-                showSubjectInfo(subj);
-            });
-        });
-
-        // Activar la primera por defecto
-        var firstTab = container.querySelector('.subject-tab');
-        if (firstTab) firstTab.click();
-    }
 
     async function showSubjectInfo(subject) {
         var container = document.getElementById('subject-info-container');
@@ -572,6 +529,13 @@ document.addEventListener('DOMContentLoaded', function() {
         var tabsContainer = document.getElementById('subject-tabs-container');
         var parcialLabel = document.getElementById('active-parcial-label');
         var historySelector = document.getElementById('parcial-history-selector');
+        if (historySelector && !historySelector.dataset.listenerAdded) {
+            historySelector.addEventListener('change', function() {
+                historySelector.dataset.manuallyChanged = "true";
+                renderSubjectNavigation(allActivitiesData);
+            });
+            historySelector.dataset.listenerAdded = "true";
+        }
 
         if (!tabsContainer || !tasksList) return;
 
@@ -587,6 +551,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         var currentActivities = activities.filter(function(a) {
             var isParcialOk = window.normalizePartial(a.parcial) === window.normalizePartial(selectedPartial);
+            // Tarea 2: Persistencia Histórica (Bypass parcial restrictivo para historial)
             var isAuthorized = true;
             if (window.normalizePartial(selectedPartial) === window.normalizePartial(activePartial)) {
                 isAuthorized = window.isContentAuthorized(a.parcial, a.asignatura, a.tema, a.grado, a.seccion);
@@ -603,6 +568,15 @@ document.addEventListener('DOMContentLoaded', function() {
             tasksList.innerHTML = '<p class="text-gray-500 text-center py-8">Sin actividades.</p>';
             return;
         }
+
+        // Tarea 4: Resolución de Carga en la Lista de Asignaturas (Botones superiores)
+        // Aseguramos que se generen botones de navegación rápida por materia
+        tabsContainer.innerHTML = subjects.map(function(subj) {
+            return `
+            <button class="subject-tab flex-none px-4 py-2 bg-white border border-gray-100 text-slate-700 rounded-xl font-bold text-[10px] uppercase tracking-widest shadow-sm hover:border-blue-200 transition-all hover:bg-blue-50" onclick="window.expandSubject('${subj.replace(/'/g, "\\'")}')">
+                <i class="fas fa-tag mr-1.5 text-blue-400"></i> ${subj}
+            </button>
+        `; }).join('');
 
         // REQ: Tarjetas de Asignatura (Tarea 2)
         // En la vista inicial de Actividades, mostramos tarjetas por asignatura con solo pendientes.
@@ -1476,28 +1450,28 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     };
 
-    // --- Sistema de Pestañas Principal (Tarea 1) ---
+    // --- Sistema de Pestañas Principal (Tarea 1 - Fase Diagnóstico) ---
     var tabActivities = document.getElementById('tab-activities');
     var tabProgress = document.getElementById('tab-progress');
     var viewActivities = document.getElementById('view-activities');
     var viewProgress = document.getElementById('view-progress');
 
     if (tabActivities && tabProgress && viewActivities && viewProgress) {
-        tabActivities.onclick = function() {
+        tabActivities.addEventListener('click', function() {
             tabActivities.className = "px-8 py-2.5 rounded-full text-xs font-bold uppercase tracking-widest transition-all duration-300 bg-blue-600 text-white shadow-lg shadow-blue-100";
             tabProgress.className = "px-8 py-2.5 rounded-full text-xs font-bold uppercase tracking-widest transition-all duration-300 text-gray-500 hover:bg-white hover:text-blue-600";
             viewActivities.classList.remove('hidden');
             viewProgress.classList.add('hidden');
-        };
+        });
 
-        tabProgress.onclick = function() {
+        tabProgress.addEventListener('click', function() {
             tabProgress.className = "px-8 py-2.5 rounded-full text-xs font-bold uppercase tracking-widest transition-all duration-300 bg-blue-600 text-white shadow-lg shadow-blue-100";
             tabActivities.className = "px-8 py-2.5 rounded-full text-xs font-bold uppercase tracking-widest transition-all duration-300 text-gray-500 hover:bg-white hover:text-blue-600";
             viewProgress.classList.remove('hidden');
             viewActivities.classList.add('hidden');
             // Asegurar que las métricas se rendericen al cambiar a la pestaña
-            renderStudentExpediente(allActivitiesData);
-        };
+            window.renderStudentExpediente(allActivitiesData);
+        });
     }
 
     fetchAllActivities();

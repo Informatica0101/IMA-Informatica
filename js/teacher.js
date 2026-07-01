@@ -744,7 +744,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     navId: navDashboard.id
                 }, '');
             }
-            renderCurrentLevel();
+            renderCurrentLevel('push');
         } finally {
             isNavigating = false;
         }
@@ -759,7 +759,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     history.back();
                 } else {
                     navStack.pop();
-                    renderCurrentLevel();
+                    renderCurrentLevel('pop');
                 }
             } catch (e) {
                 console.error("Error en popNav:", e);
@@ -771,7 +771,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (state.stack) {
             navStack = [...state.stack];
             // Ensure studentSearchInput is handled if needed
-            renderCurrentLevel();
+            renderCurrentLevel('pop');
         }
     };
 
@@ -1171,20 +1171,22 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    function renderCurrentLevel() {
+    function renderCurrentLevel(direction) {
         const current = navStack[navStack.length - 1];
         let title = current.level;
+
+        // Tarea 3: Animación de Navegación
+        if (submissionsTableBody && direction) {
+            submissionsTableBody.classList.remove('nav-transition-push', 'nav-transition-pop');
+            void submissionsTableBody.offsetWidth; // Force reflow
+            submissionsTableBody.classList.add(direction === 'push' ? 'nav-transition-push' : 'nav-transition-pop');
+        }
 
         // Limpieza de estados visuales persistentes (A-72)
         const infoCard = document.getElementById('student-details-info-card');
         if (infoCard) infoCard.remove();
         const waContainer = document.querySelector('.bg-green-50');
         if (waContainer) waContainer.classList.add('hidden');
-
-        // Reiniciar buscador si volvemos a niveles superiores para evitar inconsistencias
-        if (current.level === 'Grados' && studentSearchInput && !isNavigating) {
-             // studentSearchInput.value = ''; // No limpiar forzosamente para permitir persistencia de búsqueda si el usuario lo desea, pero sincronizar
-        }
 
         if (current.level === 'Detalles') title = `Actividades de ${current.data.alumnoNombre}`;
         if (dashboardLevelTitle) dashboardLevelTitle.textContent = title;
@@ -1211,7 +1213,6 @@ document.addEventListener('DOMContentLoaded', () => {
             case 'Grados': renderGrados(searchTerm); break;
             case 'Secciones': renderSecciones(current.data.grado, searchTerm); break;
             case 'Asignaturas': renderAsignaturas(current.data.grado, current.data.seccion, searchTerm); break;
-            case 'Parciales': renderParciales(current.data.grado, current.data.seccion, current.data.asignatura, searchTerm); break;
             case 'Alumnos': renderAlumnos(current.data.grado, current.data.seccion, current.data.asignatura, searchTerm); break;
             case 'Detalles': renderDetallesAlumno(current.data.alumnoId, current.data.grado, current.data.seccion, current.data.asignatura, searchTerm); break;
         }
@@ -1264,6 +1265,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const filtered = grados.filter(g => norm(g).includes(norm(search)));
         currentFilteredItems = filtered;
         dashboardTableHead.innerHTML = `<tr class="bg-gray-50 border-b border-gray-100"><th class="p-4 text-left font-medium text-gray-500 uppercase tracking-wider text-[0.7rem]">Grado Académico</th><th class="p-4 text-right font-medium text-gray-500 uppercase tracking-wider text-[0.7rem]">Navegación</th></tr>`;
+
         if (filtered.length === 0) {
             submissionsTableBody.innerHTML = `
                 <tr>
@@ -1276,7 +1278,22 @@ document.addEventListener('DOMContentLoaded', () => {
                 </tr>`;
             return;
         }
-        submissionsTableBody.innerHTML = filtered.map((grado, idx) => `
+
+        const getSectionsForGrado = (grado) => {
+            let secciones = [...new Set([
+                ...allActivityRaw.filter(i => norm(i.grado) === norm(grado)).map(i => i.seccion),
+                ...allAssignmentsRaw.filter(i => norm(i.grado) === norm(grado)).map(i => i.seccion)
+            ].filter(s => s && norm(s) !== 'todas'))];
+            const hasTodas = allAssignmentsRaw.some(a => norm(a.grado) === norm(grado) && (norm(a.seccion) === 'todas' || !a.seccion));
+            if (hasTodas && secciones.length === 0) secciones = ['A'];
+            return secciones;
+        };
+
+        submissionsTableBody.innerHTML = filtered.map((grado, idx) => {
+            const sections = getSectionsForGrado(grado);
+            const nextStepText = sections.length >= 2 ? "Ver Secciones" : "Ver Materias";
+
+            return `
             <tr class="hover:bg-gray-50 transition-colors cursor-pointer nav-btn group" data-index="${idx}">
                 <td class="p-4">
                     <div class="flex items-center gap-3">
@@ -1284,8 +1301,9 @@ document.addEventListener('DOMContentLoaded', () => {
                         <span class="font-semibold text-gray-900 uppercase tracking-tighter">${grado}</span>
                     </div>
                 </td>
-                <td class="p-4 text-right"><span class="text-blue-600 font-semibold text-[9px] uppercase tracking-widest group-hover:underline transition-all">Ver Secciones &rsaquo;</span></td>
-            </tr>`).join('');
+                <td class="p-4 text-right"><span class="text-blue-600 font-semibold text-[9px] uppercase tracking-widest group-hover:underline transition-all">${nextStepText} &rsaquo;</span></td>
+            </tr>`;
+        }).join('');
     }
 
     function renderSecciones(grado, search) {
@@ -1314,29 +1332,32 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function renderAsignaturas(grado, seccion, search) {
+        // Tarea 2: Reglas de Aislamiento e Integridad
+        const activePartial = window.PARCIAL_ACTUAL;
+        const authorizedAsigs = window.GLOBAL_SCOPE ? window.GLOBAL_SCOPE.AsignaturaActual : [];
+
         let asignaturas = [...new Set([
-            ...allActivityRaw.filter(i => norm(i.grado) === norm(grado) && norm(i.seccion) === norm(seccion)).map(i => i.asignatura),
-            ...allAssignmentsRaw.filter(i => norm(i.grado) === norm(grado) && (norm(i.seccion) === norm(seccion) || !i.seccion || norm(i.seccion) === 'todas')).map(i => i.asignatura)
+            ...allActivityRaw.filter(i =>
+                norm(i.grado) === norm(grado) &&
+                norm(i.seccion) === norm(seccion) &&
+                window.normalizePartial(i.parcial) === window.normalizePartial(activePartial)
+            ).map(i => i.asignatura),
+            ...allAssignmentsRaw.filter(i =>
+                norm(i.grado) === norm(grado) &&
+                (norm(i.seccion) === norm(seccion) || !i.seccion || norm(i.seccion) === 'todas') &&
+                window.normalizePartial(i.parcial) === window.normalizePartial(activePartial)
+            ).map(i => i.asignatura)
         ].filter(s => s))];
+
+        // Filtrar por asignaturas autorizadas en Configuración Global si existen
+        if (authorizedAsigs && authorizedAsigs.length > 0) {
+            asignaturas = asignaturas.filter(asig => authorizedAsigs.indexOf(asig) !== -1);
+        }
+
         const filtered = asignaturas.filter(s => norm(s).includes(norm(search)));
         currentFilteredItems = filtered;
-        dashboardTableHead.innerHTML = `<tr class="bg-gray-50 border-b border-gray-100"><th class="p-4 text-left font-medium text-gray-500 uppercase tracking-wider text-[0.7rem]">Asignatura</th><th class="p-4 text-right font-medium text-gray-500 uppercase tracking-wider text-[0.7rem]">Acción</th></tr>`;
-        submissionsTableBody.innerHTML = filtered.map((asig, idx) => `<tr class="hover:bg-gray-50 transition-colors cursor-pointer nav-btn" data-index="${idx}"><td class="p-4 font-semibold text-gray-900 uppercase tracking-tighter">${asig}</td><td class="p-4 text-right"><span class="text-blue-600 font-semibold text-[9px] uppercase tracking-widest">Ver Parciales &rsaquo;</span></td></tr>`).join('');
-    }
-
-    function renderParciales(grado, seccion, asignatura, search) {
-        let parciales = [...new Set([
-            ...allActivityRaw.filter(i => norm(i.grado) === norm(grado) && norm(i.seccion) === norm(seccion) && norm(i.asignatura) === norm(asignatura)).map(i => i.parcial),
-            ...allAssignmentsRaw.filter(i => norm(i.grado) === norm(grado) && (norm(i.seccion) === norm(seccion) || !i.seccion || norm(i.seccion) === 'todas') && norm(i.asignatura) === norm(asignatura)).map(i => i.parcial)
-        ].filter(p => p))];
-
-        const PARCIAL_ORDER = ['Primer Parcial', 'Segundo Parcial', 'Tercer Parcial', 'Cuarto Parcial'];
-        parciales.sort((a, b) => PARCIAL_ORDER.indexOf(a) - PARCIAL_ORDER.indexOf(b));
-
-        const filtered = parciales.filter(p => norm(p).includes(norm(search)));
-        currentFilteredItems = filtered;
-        dashboardTableHead.innerHTML = `<tr class="bg-gray-50 border-b border-gray-100"><th class="p-4 text-left font-medium text-gray-500 uppercase tracking-wider text-[0.7rem]">Parcial Académico</th><th class="p-4 text-right font-medium text-gray-500 uppercase tracking-wider text-[0.7rem]">Acción</th></tr>`;
-        submissionsTableBody.innerHTML = filtered.map((parcial, idx) => `<tr class="hover:bg-gray-50 transition-colors cursor-pointer nav-btn" data-index="${idx}"><td class="p-4 font-semibold text-gray-900 uppercase tracking-tighter">${parcial}</td><td class="p-4 text-right"><span class="text-blue-600 font-semibold text-[9px] uppercase tracking-widest">Ver Alumnos &rsaquo;</span></td></tr>`).join('');
+        dashboardTableHead.innerHTML = `<tr class="bg-gray-50 border-b border-gray-100"><th class="p-4 text-left font-medium text-gray-500 uppercase tracking-wider text-[0.7rem]">Asignatura (${activePartial})</th><th class="p-4 text-right font-medium text-gray-500 uppercase tracking-wider text-[0.7rem]">Acción</th></tr>`;
+        submissionsTableBody.innerHTML = filtered.map((asig, idx) => `<tr class="hover:bg-gray-50 transition-colors cursor-pointer nav-btn" data-index="${idx}"><td class="p-4 font-semibold text-gray-900 uppercase tracking-tighter">${asig}</td><td class="p-4 text-right"><span class="text-blue-600 font-semibold text-[9px] uppercase tracking-widest">Ver Alumnos &rsaquo;</span></td></tr>`).join('');
     }
 
     function renderAlumnos(grado, seccion, asignatura, search) {
@@ -1846,13 +1867,34 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
 
                 if (current.level === 'Grados') {
-                    await pushNav('Secciones', { grado: item });
+                    // Tarea 1: Lógica de Omisión Inteligente (Secciones)
+                    const getSectionsForGrado = (grado) => {
+                        let secciones = [...new Set([
+                            ...allActivityRaw.filter(i => norm(i.grado) === norm(grado)).map(i => i.seccion),
+                            ...allAssignmentsRaw.filter(i => norm(i.grado) === norm(grado)).map(i => i.seccion)
+                        ].filter(s => s && norm(s) !== 'todas'))];
+                        const hasTodas = allAssignmentsRaw.some(a => norm(a.grado) === norm(grado) && (norm(a.seccion) === 'todas' || !a.seccion));
+                        if (hasTodas && secciones.length === 0) secciones = ['A'];
+                        return secciones;
+                    };
+
+                    const sections = getSectionsForGrado(item);
+                    if (sections.length >= 2) {
+                        await pushNav('Secciones', { grado: item });
+                    } else {
+                        const singleSeccion = sections.length === 1 ? sections[0] : 'A';
+                        await pushNav('Asignaturas', { grado: item, seccion: singleSeccion });
+                    }
                 } else if (current.level === 'Secciones') {
                     await pushNav('Asignaturas', { grado: current.data.grado, seccion: item });
                 } else if (current.level === 'Asignaturas') {
-                    await pushNav('Parciales', { grado: current.data.grado, seccion: current.data.seccion, asignatura: item });
-                } else if (current.level === 'Parciales') {
-                    await pushNav('Alumnos', { grado: current.data.grado, seccion: current.data.seccion, asignatura: current.data.asignatura, parcial: item });
+                    // Tarea 1: Eliminación de la Etapa de "Parcial"
+                    await pushNav('Alumnos', {
+                        grado: current.data.grado,
+                        seccion: current.data.seccion,
+                        asignatura: item,
+                        parcial: window.PARCIAL_ACTUAL
+                    });
                 } else if (current.level === 'Alumnos') {
                     await pushNav('Detalles', {
                         alumnoId: item.userId,
