@@ -904,6 +904,9 @@ function getOrCreateSheet(ss, name) {
     if (name === "LearningProfile") {
       sheet.appendRow(["profileId", "userId", "asignatura", "tema", "nivel", "intentos", "aciertos", "porcentajeAciertos", "indiceDominio", "ultimaActualizacion"]);
     }
+    if (name === "HistorialAcademico") {
+      sheet.appendRow(["ID", "Fecha", "Parcial", "Grado", "Sección", "Asignatura", "Unidad", "Timestamp"]);
+    }
   }
   return sheet;
 }
@@ -1345,20 +1348,20 @@ function updateAcademicConfig(payload) {
 }
 
 /**
- * Registra el estado actual de la configuración en un historial (Reorganizado v7.8.3)
- * Estructura: id | fecha | parcial | grado | seccion | asignatura | unidad
+ * Registra el estado actual de la configuración en un historial (Reorganizado v7.8.4)
+ * Estructura: ID | Fecha | Parcial | Grado | Sección | Asignatura | Unidad
  */
 function saveToAcademicHistory(scope) {
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
   const sheet = getOrCreateSheet(ss, "HistorialAcademico");
 
   if (sheet.getLastRow() === 0) {
-    sheet.appendRow(["id", "fecha", "parcial", "grado", "seccion", "asignatura", "unidad", "timestamp"]);
+    sheet.appendRow(["ID", "Fecha", "Parcial", "Grado", "Sección", "Asignatura", "Unidad", "Timestamp"]);
   }
 
   const rawParcial = scope.ParcialActual || "I parcial";
 
-  // Normalización a Romano + minúscula (Tarea Estructural)
+  // Normalización estricta a Romano + minúscula
   const getRomanStandard = (str, type) => {
     const s = str.toLowerCase();
     let prefix = "I";
@@ -1369,7 +1372,16 @@ function saveToAcademicHistory(scope) {
   };
 
   const parcialNorm = getRomanStandard(rawParcial, "parcial");
-  const unidadNorm = getRomanStandard(rawParcial, "unidad"); // Por defecto se asocia al parcial
+  const unidadNorm = getRomanStandard(rawParcial, "unidad");
+
+  // Normalización de Grados
+  const normalizeGradeLabel = (g) => {
+    const gn = normalizeString(g);
+    if (gn.includes("duodecimo") || gn.includes("12") || gn.includes("iiibtp")) return "duodécimo";
+    if (gn.includes("undecimo") || gn.includes("11") || gn.includes("iibtp")) return "undécimo";
+    if (gn.includes("decimo") || gn.includes("10") || gn.includes("ibtp")) return "décimo";
+    return g.toLowerCase();
+  };
 
   // Calcular rango de fecha (ej: febrero - marzo)
   const months = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
@@ -1377,26 +1389,40 @@ function saveToAcademicHistory(scope) {
   const currentMonth = now.getMonth();
   const dateRange = months[Math.max(0, currentMonth - 1)] + " - " + months[currentMonth];
 
-  const grades = Array.isArray(scope.GradoActual) ? scope.GradoActual : [scope.GradoActual];
-  const sections = Array.isArray(scope.SeccionActual) ? scope.SeccionActual : [scope.SeccionActual];
-  const subjects = Array.isArray(scope.AsignaturaActual) ? scope.AsignaturaActual : [scope.AsignaturaActual];
+  // Soporte para strings separados por comas
+  const parseInput = (val) => {
+    if (Array.isArray(val)) return val;
+    if (typeof val === 'string') return val.split(',').map(s => s.trim()).filter(Boolean);
+    return [val];
+  };
+
+  const grades = parseInput(scope.GradoActual);
+  const sections = parseInput(scope.SeccionActual);
+  const subjects = parseInput(scope.AsignaturaActual);
 
   const timestamp = now.getTime();
   let lastIdNum = 0;
 
-  if (sheet.getLastRow() > 1) {
-    const lastId = sheet.getRange(sheet.getLastRow(), 1).getValue();
-    if (typeof lastId === 'string' && lastId.startsWith("hist-")) {
-      lastIdNum = parseInt(lastId.replace("hist-", ""));
+  // Obtener todos los datos actuales para evitar duplicados y calcular el siguiente ID
+  const existingData = sheet.getDataRange().getValues();
+  if (existingData.length > 1) {
+    for (let i = 1; i < existingData.length; i++) {
+      const id = existingData[i][0];
+      if (typeof id === 'string' && id.startsWith("hist-")) {
+        const num = parseInt(id.replace("hist-", ""));
+        if (!isNaN(num) && num > lastIdNum) lastIdNum = num;
+      }
     }
   }
 
   // Iterar y crear registros individuales para aislamiento total
-  grades.forEach(grado => {
+  grades.forEach(rawGrado => {
+    const grado = normalizeGradeLabel(rawGrado);
     sections.forEach(seccion => {
-      subjects.forEach(asig => {
-        // Verificar si ya existe este registro exacto para el parcial actual
-        const existingData = sheet.getDataRange().getValues();
+      subjects.forEach(rawAsig => {
+        const asig = rawAsig.toLowerCase();
+
+        // Verificar duplicidad (Parcial + Grado + Sección + Asignatura)
         const isDuplicate = existingData.some(r =>
           r[2] === parcialNorm &&
           r[3] === grado &&
@@ -1408,6 +1434,8 @@ function saveToAcademicHistory(scope) {
           lastIdNum++;
           const newId = "hist-" + lastIdNum.toString().padStart(4, '0');
           sheet.appendRow([newId, dateRange, parcialNorm, grado, seccion, asig, unidadNorm, timestamp]);
+          // Actualizar existingData localmente para evitar duplicados en el mismo loop
+          existingData.push([newId, dateRange, parcialNorm, grado, seccion, asig, unidadNorm, timestamp]);
         }
       });
     });
@@ -1415,7 +1443,7 @@ function saveToAcademicHistory(scope) {
 }
 
 /**
- * Recupera el historial académico filtrado por grado y sección (Normalizado v7.8.3)
+ * Recupera el historial académico filtrado por grado y sección (Normalizado v7.8.4)
  */
 function getAcademicHistory(payload) {
   const { grado, seccion } = payload || {};
@@ -1425,7 +1453,19 @@ function getAcademicHistory(payload) {
 
   const data = sheet.getDataRange().getValues().slice(1);
   const filtered = data.filter(r => {
-    const gradeMatch = !grado || normalizeString(r[3]) === normalizeString(grado);
+    // Normalización de grado para el filtro
+    const normalizeFilterGrade = (g) => {
+      const gn = normalizeString(g);
+      if (gn.includes("duodecimo") || gn.includes("12") || gn.includes("iiibtp")) return "duodécimo";
+      if (gn.includes("undecimo") || gn.includes("11") || gn.includes("iibtp")) return "undécimo";
+      if (gn.includes("decimo") || gn.includes("10") || gn.includes("ibtp")) return "décimo";
+      return gn;
+    };
+
+    const targetGrado = normalizeFilterGrade(grado);
+    const rowGrado = normalizeFilterGrade(r[3]);
+
+    const gradeMatch = !grado || rowGrado === targetGrado;
     const sectionMatch = !seccion || normalizeString(r[4]) === normalizeString(seccion);
     return gradeMatch && sectionMatch;
   });
@@ -1442,6 +1482,7 @@ function getAcademicHistory(payload) {
         timestamp: r[7]
       };
     }
+    // Asegurar que la asignatura esté en el formato esperado por el frontend
     if (historyMap[parcial].asignaturas.indexOf(r[5]) === -1) {
       historyMap[parcial].asignaturas.push(r[5]);
     }

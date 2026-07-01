@@ -422,3 +422,22 @@ Archivo: css/style.css
 
 Archivo: js/ui-common.js
 - Hallazgo [Bajo]: La navegación popstate maneja 'student-subject', pero deberá adaptarse si el sistema de pestañas principal cambia el estado de la URL o el historial.
+
+AUDITORÍA TÉCNICA - REESTRUCTURACIÓN HISTORIAL Y FILTRADO - Wed Jul  1 12:26:04 UTC 2026
+
+Archivo: backend/user-service/Code.gs
+Sector: Función saveToAcademicHistory
+Hallazgo [Crítico]: A pesar de que el código actual parece implementar la estructura requerida, el reporte indica que los registros se están guardando en una estructura de bloque único (posiblemente por una versión anterior del script o falla en la lógica de iteración).
+Impacto: Dificulta el filtrado por grado y asignatura, provocando que los estudiantes vean materias que no les corresponden.
+Recomendación: Asegurar que la función itere correctamente sobre grados, secciones y asignaturas, y que getOrCreateSheet inicialice correctamente los encabezados si la hoja no existe.
+
+Archivo: js/student.js
+Sector: Función renderSubjectNavigation
+Hallazgo [Alto]: La inclusión de asignaturas desde window.GLOBAL_SCOPE.AsignaturaActual no discrimina por grado del estudiante.
+Impacto: Un estudiante de Undécimo ve asignaturas de Duodécimo si ambas están activas en el alcance global.
+Recomendación: Validar que la asignatura pertenezca al grado del estudiante consultando el historial académico o el Mapa de Dependencias Académicas.
+
+Archivo: js/config.js
+Sector: Función isContentAuthorized
+Hallazgo [Medio]: La función no tiene forma de validar la relación Grado-Asignatura si solo se le pasan los valores actuales, ya que el GLOBAL_SCOPE los mantiene como listas independientes.
+Recomendación: Utilizar el historial académico como fuente de verdad para la relación Grado-Asignatura.

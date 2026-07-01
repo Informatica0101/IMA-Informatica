@@ -335,3 +335,17 @@ Módulo: Estilos y UX
     - Evolución visual de .card-ima a un estándar corporativo (20px radius, sombras suaves).
     - Implementadas animaciones de entrada 'fadeInLeft' para componentes de navegación.
     - Eliminación de estilos de alto contraste no institucionales.
+
+REESTRUCTURACIÓN DE HISTORIAL ACADÉMICO Y FILTRADO DE ASIGNATURAS - Wed Jul  1 12:39:38 UTC 2026
+
+Archivo: backend/user-service/Code.gs
+Líneas: 904-907, 1345-1443
+Descripción: Refactorización de saveToAcademicHistory para normalización estricta de parciales y unidades (Números Romanos) y grados (acentuación). Implementada creación de registros individuales por combinación Grado-Asignatura. Actualizada getAcademicHistory para compatibilidad.
+
+Archivo: js/config.js
+Líneas: 52-65, 353-363
+Descripción: Implementación de SUBJECT_GRADE_MAP para mapeo maestro de pertenencia académica. Actualización de isContentAuthorized para validar Grado vs Asignatura en perfiles de estudiante.
+
+Archivo: js/student.js
+Líneas: 600-610
+Descripción: Refinamiento de renderSubjectNavigation para aplicar filtros de seguridad robustos al cargar asignaturas desde la configuración global.

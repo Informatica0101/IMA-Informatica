@@ -50,6 +50,23 @@ window.PRESENTATION_INDEX = [
 window.PARCIAL_ACTUAL = window.GLOBAL_SCOPE.ParcialActual;
 
 /**
+ * Mapeo Maestro de Asignaturas a Grados (v7.8.4)
+ * Previene la visualización de materias ajenas al nivel académico del estudiante.
+ */
+window.SUBJECT_GRADE_MAP = {
+    "informatica i": "décimo",
+    "programacion": "undécimo",
+    "ofimatica i": "undécimo",
+    "informatica aplicada i": "undécimo",
+    "analisis y diseño": "undécimo",
+    "diseño web": "duodécimo",
+    "laboratorio i": "undécimo",
+    "laboratorio ii": "duodécimo",
+    "mantenimiento y reparacion i": "undécimo",
+    "mantenimiento y reparacion ii": "duodécimo"
+};
+
+/**
  * Sincroniza la configuración académica global con el servidor/caché (v7.7.4)
  */
 window.syncAcademicScope = function(callback) {
@@ -336,6 +353,16 @@ window.isContentAuthorized = function(contentUnit, contentSubject, contentTopic,
     // --- TIER 2: VALIDACIÓN DE PERFIL (SOLO PARA ALUMNOS LOGUEADOS) ---
     // Si el usuario es estudiante, solo puede ver lo que corresponde a SU grado y sección
     if (user.rol === 'Estudiante' || user.rol === 'Alumno') {
+        // Validación de Grado vs Asignatura (Crucial para evitar filtración v7.8.4)
+        if (contentSubject) {
+            var requiredGrade = window.SUBJECT_GRADE_MAP[fastNorm(contentSubject)];
+            if (requiredGrade) {
+                if (window.parseGrade(requiredGrade) !== window.parseGrade(user.grado)) {
+                    return false;
+                }
+            }
+        }
+
         if (contentGrade) {
             if (window.parseGrade(contentGrade) !== window.parseGrade(user.grado)) return false;
         }

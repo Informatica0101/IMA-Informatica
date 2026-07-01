@@ -600,10 +600,11 @@ document.addEventListener('DOMContentLoaded', function() {
         });
 
         // Tarea 3: Asegurar que se incluyan las asignaturas de la Configuración Global (si es el parcial actual)
-        // Se añade validación de grado para evitar filtración de materias de otros cursos (Fase Diagnóstico v7.8.3)
+        // Se añade validación de grado para evitar filtración de materias de otros cursos (Fase Diagnóstico v7.8.4)
         if (window.normalizePartial(selectedPartial) === window.normalizePartial(activePartial)) {
             var globalAsigs = window.GLOBAL_SCOPE ? window.GLOBAL_SCOPE.AsignaturaActual : [];
             globalAsigs.forEach(function(asig) {
+                // REQ: Filtro Estricto de Seguridad (isContentAuthorized ahora valida Grado vs Asignatura)
                 if (window.isContentAuthorized(selectedPartial, asig, null, currentUser.grado, currentUser.seccion)) {
                     if (subjects.indexOf(asig) === -1) subjects.push(asig);
                 }
