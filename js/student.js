@@ -20,6 +20,7 @@ document.addEventListener('DOMContentLoaded', function() {
         "Primer Parcial": 1
     };
     var allActivitiesData = [];
+    var academicHistory = []; // Tarea 4: Persistencia Histórica (v7.8.2)
 
     if (logoutButton) {
         logoutButton.addEventListener('click', function() {
@@ -96,9 +97,28 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
+    // Tarea 4: Recuperar historial de configuraciones académicas anteriores
+    async function fetchAcademicHistory() {
+        try {
+            var res = await fetchApi('USER', 'getAcademicHistory', {
+                grado: currentUser.grado,
+                seccion: currentUser.seccion
+            });
+            if (res && res.status === 'success') {
+                academicHistory = res.data || [];
+                console.log("[Student] Historial académico cargado:", academicHistory.length, "registros");
+            }
+        } catch (e) {
+            console.warn("[Student] No se pudo cargar el historial académico:", e);
+        }
+    }
+
     // Función para obtener Tareas y Exámenes
     window.fetchAllActivities = async function() {
         if (!tasksList) return;
+
+        // Tarea 4: Cargar historial en paralelo para optimizar (v7.8.2)
+        var historyPromise = fetchAcademicHistory();
 
         // REQ: Eager Caching & Offline-First (Modulo 1)
         // Priorizar renderizado local de 0ms desde cache_estudiante_dashboard
@@ -107,6 +127,8 @@ document.addEventListener('DOMContentLoaded', function() {
             var cached = await window.PersistenceManager.get('cache_estudiante_dashboard');
             if (cached && cached.data) {
                 allActivitiesData = cached.data.allActivities || [];
+                // Esperar al historial si es necesario para los botones
+                await historyPromise;
                 renderStudentExpediente(allActivitiesData);
                 renderSubjectNavigation(allActivitiesData);
                 // Si ya tenemos caché, procedemos a conciliación silenciosa sin bloquear la UI
@@ -141,8 +163,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
             // REQ: Sync Global Scope from Server (v7.7.5 - Use unified syncAcademicScope)
             if (window.syncAcademicScope) {
+                // Tarea 3: Garantizar carga síncrona/esperada de la configuración global
                 await window.syncAcademicScope();
             }
+
+            // Tarea 4: Asegurar que el historial esté listo
+            await historyPromise;
 
             // REQ: Mitigación de Latencia mediante Paralelismo y Silent Reconciliation (Ticket 4)
             var results = await Promise.all([
@@ -559,9 +585,29 @@ document.addEventListener('DOMContentLoaded', function() {
             return isParcialOk && isAuthorized;
         });
 
-        var subjects = [...new Set(currentActivities.map(function(a) { return a.asignatura; }))]
-            .filter(function(s) { return s && s.trim() !== ""; })
-            .sort();
+        var subjects = [...new Set(currentActivities.map(function(a) { return a.asignatura; }))];
+
+        // Tarea 4: Persistencia Histórica - Incluir asignaturas registradas en el historial (v7.8.2)
+        var historicalRecord = academicHistory.filter(function(h) {
+            return window.normalizePartial(h.parcial) === window.normalizePartial(selectedPartial);
+        });
+        historicalRecord.forEach(function(rec) {
+            if (Array.isArray(rec.asignaturas)) {
+                rec.asignaturas.forEach(function(asig) {
+                    if (subjects.indexOf(asig) === -1) subjects.push(asig);
+                });
+            }
+        });
+
+        // Tarea 3: Asegurar que se incluyan las asignaturas de la Configuración Global (si es el parcial actual)
+        if (window.normalizePartial(selectedPartial) === window.normalizePartial(activePartial)) {
+            var globalAsigs = window.GLOBAL_SCOPE ? window.GLOBAL_SCOPE.AsignaturaActual : [];
+            globalAsigs.forEach(function(asig) {
+                if (subjects.indexOf(asig) === -1) subjects.push(asig);
+            });
+        }
+
+        subjects = subjects.filter(function(s) { return s && s.trim() !== ""; }).sort();
 
         if (subjects.length === 0) {
             tabsContainer.innerHTML = '<p class="text-gray-400 text-[10px] uppercase font-bold p-2">Sin materias.</p>';

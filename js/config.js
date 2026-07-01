@@ -56,7 +56,18 @@ window.syncAcademicScope = function(callback) {
     var normalizeToArray = function(val) {
         if (!val) return [];
         if (Array.isArray(val)) return val.filter(Boolean);
-        if (typeof val === 'string') return val.split(',').map(function(s){ return s.trim(); }).filter(Boolean);
+        if (typeof val === 'string') {
+            // REQ: Soporte para arreglos JSON guardados como strings (Tarea 1 - Fase Diagnóstico)
+            if (val.trim().indexOf('[') === 0) {
+                try {
+                    var parsed = JSON.parse(val);
+                    if (Array.isArray(parsed)) return parsed.filter(Boolean);
+                } catch (e) {
+                    console.warn("[IMA-SCOPE] Fallo al parsear arreglo JSON:", val);
+                }
+            }
+            return val.split(',').map(function(s){ return s.trim(); }).filter(Boolean);
+        }
         return [val];
     };
 
@@ -211,15 +222,18 @@ window.sanitizarHTMLTecnico = function(html) {
 function normalizePartial(p) {
     if (!p) return "";
     var n = p.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
-    if (n.indexOf("primer") !== -1 || n === "i parcial") return "I Parcial";
-    if (n.indexOf("segundo") !== -1 || n === "ii parcial") return "II Parcial";
-    if (n.indexOf("tercer") !== -1 || n === "iii parcial") return "III Parcial";
-    if (n.indexOf("cuarto") !== -1 || n === "iv parcial") return "IV Parcial";
+
+    // Mapeo dinámico para soportar "Unidad" o "Parcial" (Tarea 4 - v7.8.2)
+    if (n.indexOf("primer") !== -1 || n.indexOf("unidad i") !== -1 || n === "i parcial") return "I Parcial";
+    if (n.indexOf("segundo") !== -1 || n.indexOf("unidad ii") !== -1 || n === "ii parcial") return "II Parcial";
+    if (n.indexOf("tercer") !== -1 || n.indexOf("unidad iii") !== -1 || n === "iii parcial") return "III Parcial";
+    if (n.indexOf("cuarto") !== -1 || n.indexOf("unidad iv") !== -1 || n === "iv parcial") return "IV Parcial";
+
     return p;
 }
 window.normalizePartial = normalizePartial;
 
-window.isContentAuthorized = function(contentPartial, contentSubject, contentTopic, contentGrade, contentSection) {
+window.isContentAuthorized = function(contentUnit, contentSubject, contentTopic, contentGrade, contentSection) {
     var userRaw = localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser');
     var user = userRaw ? JSON.parse(userRaw) : { rol: 'Invitado' };
 
@@ -242,8 +256,8 @@ window.isContentAuthorized = function(contentPartial, contentSubject, contentTop
     // Si NO se provee asignatura/tema (ej: filtrado de nivel superior), el parcial es obligatorio.
     var normActualP = normalizePartial(window.GLOBAL_SCOPE.ParcialActual);
 
-    if (contentPartial) {
-        var normContentP = normalizePartial(contentPartial);
+    if (contentUnit) {
+        var normContentP = normalizePartial(contentUnit);
         var partialAuthorized = (normContentP === normActualP);
 
         if (!partialAuthorized) {
@@ -251,8 +265,8 @@ window.isContentAuthorized = function(contentPartial, contentSubject, contentTop
                 "I y II Parcial": ["I Parcial", "II Parcial"],
                 "III y IV Parcial": ["III Parcial", "IV Parcial"]
             };
-            if (partialGroups[contentPartial]) {
-                partialAuthorized = partialGroups[contentPartial].indexOf(normActualP) !== -1;
+            if (partialGroups[contentUnit]) {
+                partialAuthorized = partialGroups[contentUnit].indexOf(normActualP) !== -1;
             }
         }
 

@@ -1349,9 +1349,10 @@ document.addEventListener('DOMContentLoaded', () => {
             ).map(i => i.asignatura)
         ].filter(s => s))];
 
-        // Filtrar por asignaturas autorizadas en Configuración Global si existen
+        // Filtrar por asignaturas autorizadas en Configuración Global si existen (v7.8.2)
         if (authorizedAsigs && authorizedAsigs.length > 0) {
-            asignaturas = asignaturas.filter(asig => authorizedAsigs.indexOf(asig) !== -1);
+            const normAuthorized = authorizedAsigs.map(a => norm(a));
+            asignaturas = asignaturas.filter(asig => normAuthorized.indexOf(norm(asig)) !== -1);
         }
 
         const filtered = asignaturas.filter(s => norm(s).includes(norm(search)));

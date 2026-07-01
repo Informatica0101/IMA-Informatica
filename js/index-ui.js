@@ -20,6 +20,14 @@ document.addEventListener('DOMContentLoaded', function() {
         window.renderInitialContentButton();
     }
 
+    // REQ: Reactive Scope Synchronization for Index Content (v7.8.2)
+    document.addEventListener('academic-scope-updated', function() {
+        console.log("[Index-UI] Academic scope updated, refreshing current view...");
+        if (currentContentView === 'subjects') window.renderDownloadSubjects(false);
+        else if (currentContentView === 'topics') window.renderDownloadTopics(false);
+        else if (currentContentView === 'initial') window.renderInitialContentButton();
+    });
+
     // --- DOM Elements specific to index.html ---
     var contentDisplayArea = document.getElementById('content-display-area');
     var contentBackButtonContainer = document.getElementById('content-back-button-container');
@@ -186,7 +194,7 @@ document.addEventListener('DOMContentLoaded', function() {
         for (var i = 0; i < window.selectedGradeData.subjects.length; i++) {
             var sub = window.selectedGradeData.subjects[i];
             if (window.checkSectionHelper(sub.sections, window.selectedSection)) {
-                if (sub.partial) partialSet[sub.partial] = true;
+                if (sub.unit) partialSet[sub.unit] = true;
             }
         }
         var partials = Object.keys(partialSet);
@@ -240,10 +248,10 @@ document.addEventListener('DOMContentLoaded', function() {
             var targetPartial = isProfesor ? window.selectedPartial : window.PARCIAL_ACTUAL;
 
             if (isProfesor) {
-                if (subjectData.partial !== targetPartial) continue;
+                if (subjectData.unit !== targetPartial) continue;
             } else {
                 // REQ: Contextual authorization (v7.7.5)
-                var isAuthorized = window.isContentAuthorized ? window.isContentAuthorized(subjectData.partial, subjectData.name, null, window.selectedGradeData.grade, (currentUser ? currentUser.seccion : null)) : (subjectData.partial === targetPartial);
+                var isAuthorized = window.isContentAuthorized ? window.isContentAuthorized(subjectData.unit, subjectData.name, null, window.selectedGradeData.grade, (currentUser ? currentUser.seccion : null)) : (subjectData.unit === targetPartial);
                 if (!isAuthorized) continue;
             }
 

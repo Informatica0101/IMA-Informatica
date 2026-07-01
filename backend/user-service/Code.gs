@@ -138,6 +138,7 @@ function doPost(e) {
       case "saveQuestion": result = saveQuestion(payload); break;
       case "getAcademicConfig": result = getAcademicConfig(payload); break;
       case "updateAcademicConfig": result = updateAcademicConfig(payload); break;
+      case "getAcademicHistory": result = getAcademicHistory(payload); break;
       case "getAsignaturasActivas": result = getAsignaturasActivas(payload); break;
       case "updateAsignaturasActivas": result = updateAsignaturasActivas(payload); break;
       case "generateMigrationReport": result = generateMigrationReport(payload); break;
@@ -1328,12 +1329,76 @@ function updateAcademicConfig(payload) {
   // Recuperar los datos guardados para confirmar consistencia
   const confirmedData = getAcademicConfig();
 
+  // Tarea 4: Guardar Historial Académico para persistencia de asignaturas por parcial
+  try {
+    saveToAcademicHistory(fullScope);
+  } catch (e) {
+    logDebug("Error al guardar historial académico", e);
+  }
+
   return {
     status: "success",
     message: "Configuración global guardada en Spreadsheet.",
     data: confirmedData.data,
     updated_at: new Date().getTime()
   };
+}
+
+/**
+ * Registra el estado actual de la configuración en un historial (Tarea 4 - v7.8.2)
+ */
+function saveToAcademicHistory(scope) {
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "HistorialAcademico");
+
+  const parcial = scope.ParcialActual;
+  const timestamp = new Date().getTime();
+  const dateStr = new Date().toISOString();
+
+  // Estructura: Fecha | Parcial | Grados | Secciones | Asignaturas | Unidades
+  const grades = Array.isArray(scope.GradoActual) ? scope.GradoActual.join(", ") : scope.GradoActual;
+  const sections = Array.isArray(scope.SeccionActual) ? scope.SeccionActual.join(", ") : scope.SeccionActual;
+  const subjects = Array.isArray(scope.AsignaturaActual) ? scope.AsignaturaActual.join(", ") : scope.AsignaturaActual;
+  const units = Array.isArray(scope.TemaActual) ? scope.TemaActual.join(", ") : scope.TemaActual;
+
+  // Evitar duplicados exactos para el mismo parcial y configuración
+  const lastRows = sheet.getLastRow() > 0 ? sheet.getRange(Math.max(1, sheet.getLastRow() - 5), 1, Math.min(5, sheet.getLastRow()), 6).getValues() : [];
+  const isDuplicate = lastRows.some(r => r[1] === parcial && r[2] === grades && r[4] === subjects);
+
+  if (!isDuplicate) {
+    sheet.appendRow([dateStr, parcial, grades, sections, subjects, units, timestamp]);
+  }
+}
+
+/**
+ * Recupera el historial académico filtrado por grado y sección (v7.8.2)
+ */
+function getAcademicHistory(payload) {
+  const { grado, seccion } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = ss.getSheetByName("HistorialAcademico");
+  if (!sheet) return { status: "success", data: [] };
+
+  const data = sheet.getDataRange().getValues().slice(1);
+  const history = data.filter(r => {
+    const grades = String(r[2]).split(", ");
+    const sections = String(r[3]).split(", ");
+
+    const gradeMatch = !grado || grades.some(g => normalizeString(g) === normalizeString(grado));
+    const sectionMatch = !seccion || sections.some(s => normalizeString(s) === normalizeString(seccion));
+
+    return gradeMatch && sectionMatch;
+  }).map(r => ({
+    fecha: r[0],
+    parcial: r[1],
+    grados: r[2],
+    secciones: r[3],
+    asignaturas: String(r[4]).split(", "),
+    temas: String(r[5]).split(", "),
+    timestamp: r[6]
+  }));
+
+  return { status: "success", data: history };
 }
 
 function getAsignaturasActivas(payload) {
