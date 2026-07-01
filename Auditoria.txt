@@ -441,3 +441,229 @@ Archivo: js/config.js
 Sector: Función isContentAuthorized
 Hallazgo [Medio]: La función no tiene forma de validar la relación Grado-Asignatura si solo se le pasan los valores actuales, ya que el GLOBAL_SCOPE los mantiene como listas independientes.
 Recomendación: Utilizar el historial académico como fuente de verdad para la relación Grado-Asignatura.
+
+AUDITORÍA TÉCNICA - PERSONALIZACIÓN POR DOCENTE E INTEGRIDAD DE ASIGNACIÓN - Wed Jul  1 13:10:48 UTC 2026
+
+Archivo: backend/user-service/Code.gs
+Sector: Función getAcademicConfig / updateAcademicConfig
+Hallazgo [Crítico]: La configuración académica es global y sobrescribe la fila única de la hoja 'ConfiguracionAcademica'. No soporta múltiples docentes.
+Impacto: Los cambios realizados por un profesor afectan a todos los demás, impidiendo la personalización.
+Recomendación: Cambiar a una estructura de múltiples filas donde cada profesorId tenga su propia configuración.
+
+Sector: Función saveToAcademicHistory
+Hallazgo [Alto]: No registra qué profesor realizó el cambio de alcance.
+Impacto: Pérdida de trazabilidad en el historial académico.
+Recomendación: Incluir profesorId como columna obligatoria.
+
+Archivo: js/teacher.js
+Sector: Navegación Jerárquica (pushNav)
+Hallazgo [Medio]: Actualmente el sistema permite ver alumnos tras seleccionar Grado/Sección si solo hay una sección, o después de seleccionar la asignatura.
+Recomendación: Forzar que el nivel 'Alumnos' sea siempre posterior a 'Asignaturas' y dependa de la selección previa del contexto completo.
+
+Sector: Carga de Configuración
+Hallazgo [Alto]: Carga la configuración global sin filtrar por el ID del usuario actual.
+Recomendación: Enviar el userId del profesor en la petición de getAcademicConfig.
+
+AUDITORÍA TÉCNICA - CONFIGURACIÓN MULTI-DOCENTE Y FLUJO DE NAVEGACIÓN - Wed Jul  1 13:13:23 UTC 2026
+
+Archivo: backend/user-service/Code.gs
+Sector: getOrCreateSheet
+Hallazgo [Medio]: Las cabeceras de 'HistorialAcademico' y 'ConfiguracionAcademica' no contemplan el campo 'profesorId'.
+Impacto: Imposibilidad de aislar configuraciones por docente y pérdida de trazabilidad.
+Recomendación: Agregar 'profesorId' a las cabeceras. En 'ConfiguracionAcademica', la estructura debe permitir múltiples filas (una por profesor).
+
+Sector: getAcademicConfig / updateAcademicConfig
+Hallazgo [Crítico]: Actualmente operan sobre una única configuración global. 'update' limpia la hoja, lo que borraría configuraciones de otros docentes.
+Impacto: Conflictos y sobreescritura de datos entre profesores.
+Recomendación: Refactorizar para buscar/actualizar por profesorId. Implementar validación de unicidad de asignaturas por parcial/grado/sección entre todos los registros.
+
+Archivo: js/teacher.js
+Sector: Función pushNav / Manejo de clicks en tabla
+Hallazgo [Alto]: La lógica de navegación omite 'Secciones' si solo hay una, saltando directamente a 'Asignaturas' y luego 'Alumnos'.
+Impacto: Incumplimiento del requerimiento de flujo contextual completo (Grado -> Sección -> Asignatura) antes de ver alumnos.
+Recomendación: Modificar el flujo para que 'Alumnos' sea estrictamente dependiente de haber seleccionado una asignatura, y 'Asignaturas' de haber seleccionado una sección (aunque sea única).
+
+Sector: Guardado de Configuración (btn-save-academic-config)
+Hallazgo [Medio]: El payload enviado a 'updateAcademicConfig' no incluye el ID del profesor.
+Impacto: El backend no podrá asociar la configuración al docente autenticado.
+Recomendación: Incluir 'profesorId: currentUser.userId' en el payload.
+
+AUDITORÍA TÉCNICA - CONFIGURACIÓN POR DOCENTE E INTEGRIDAD ACADÉMICA - Wed Jul  1 13:16:45 UTC 2026
+
+Archivo: backend/user-service/Code.gs
+Sector: getOrCreateSheet
+Hallazgo [Crítico]: Las hojas 'ConfiguracionAcademica' e 'HistorialAcademico' no tienen la columna 'profesorId'.
+Impacto: Las configuraciones son globales y se sobreescriben entre docentes.
+Recomendación: Agregar 'profesorId' a las cabeceras. 'ConfiguracionAcademica' debe cambiar a una estructura de una fila por profesor.
+
+Sector: updateAcademicConfig
+Hallazgo [Alto]: Actualmente utiliza 'sheet.clear()', lo que borraría configuraciones de otros profesores.
+Recomendación: Implementar lógica de búsqueda y actualización por profesorId.
+
+Sector: saveToAcademicHistory
+Hallazgo [Alto]: No se registra el 'profesorId', impidiendo la trazabilidad por docente.
+Recomendación: Incluir el ID del profesor en cada registro generado.
+
+Archivo: js/teacher.js
+Sector: Navegación Jerárquica (pushNav)
+Hallazgo [Alto]: El sistema permite ver la lista de alumnos inmediatamente después de seleccionar la sección si solo hay una, o después de seleccionar la asignatura.
+Impacto: Incumplimiento del requerimiento de flujo contextual (estudiantes solo al final).
+Recomendación: Modificar el flujo para que el nivel 'Alumnos' sea siempre posterior a la selección de asignatura.
+
+Sector: Guardado de Configuración
+Hallazgo [Medio]: El payload enviado a 'updateAcademicConfig' no incluye el ID del profesor.
+Recomendación: Enviar 'profesorId: currentUser.userId'.
+
+AUDITORÍA TÉCNICA - CONFIGURACIÓN MULTI-DOCENTE - Wed Jul  1 13:20:24 UTC 2026
+
+Archivo: backend/user-service/Code.gs
+Sector: getOrCreateSheet (Línea 878)
+Hallazgo [Medio]: Las cabeceras de 'ConfiguracionAcademica' e 'HistorialAcademico' no incluyen 'profesorId'.
+Recomendación: Agregar 'profesorId' a las columnas de ambas hojas.
+
+Sector: getAcademicConfig (Línea 1257)
+Hallazgo [Crítico]: Retorna la segunda fila (valores globales) sin filtrar por usuario.
+Recomendación: Refactorizar para buscar la fila correspondiente al 'profesorId' proporcionado en el payload. Para estudiantes (sin profesorId), debe retornar un agregado de todas las asignaturas activas en su grado/sección.
+
+Sector: updateAcademicConfig (Línea 1306)
+Hallazgo [Crítico]: Utiliza 'sheet.clear()', eliminando configuraciones de otros docentes.
+Recomendación: Implementar actualización por fila (profesorId). Incluir validación de integridad: antes de guardar, verificar en toda la hoja que ninguna de las asignaturas seleccionadas esté ya asignada a otro profesor en el mismo parcial/grado/sección.
+
+Sector: saveToAcademicHistory (Línea 1354)
+Hallazgo [Alto]: No guarda el profesorId.
+Recomendación: Pasar profesorId a la función y guardarlo en la nueva columna.
+
+Archivo: js/teacher.js
+Sector: Navegación Jerárquica (Línea 1025 y pushNav)
+Hallazgo [Alto]: El flujo permite ver alumnos antes de seleccionar asignatura o se salta pasos contextuales.
+Recomendación: Forzar el orden Grado -> Sección -> Asignatura -> Alumnos. El nivel 'Alumnos' debe ser accesible ÚNICAMENTE desde el nivel 'Asignaturas'.
+
+Sector: loadAcademicAdminData (Línea 109)
+Hallazgo [Bajo]: No envía el userId del profesor a getAcademicConfig.
+Recomendación: Payload: { profesorId: currentUser.userId }.
+
+AUDITORÍA TÉCNICA - CONFIGURACIÓN MULTI-PROFESOR E INTEGRIDAD DE ASIGNACIÓN - Wed Jul  1 13:25:02 UTC 2026
+
+Archivo: backend/user-service/Code.gs
+Sector: getOrCreateSheet (Línea 878)
+Hallazgo [Crítico]: Las cabeceras de 'ConfiguracionAcademica' y 'HistorialAcademico' no incluyen 'profesorId', lo que impide la personalización por docente y la trazabilidad solicitada.
+Recomendación: Agregar la columna 'profesorId' a ambas hojas. En 'ConfiguracionAcademica', la estructura debe evolucionar para permitir una configuración única por cada ID de profesor.
+
+Sector: getAcademicConfig (Línea 1257)
+Hallazgo [Alto]: Retorna siempre la primera configuración encontrada (global), sin filtrar por profesorId.
+Recomendación: Modificar para recibir profesorId y buscar la fila correspondiente. Para estudiantes, debe existir una lógica de agregación o filtro por grado/sección entre todas las configuraciones.
+
+Sector: updateAcademicConfig (Línea 1306)
+Hallazgo [Crítico]: Utiliza 'sheet.clear()', borrando los datos de todos los profesores al guardar uno solo. No valida duplicidad de asignaturas entre docentes.
+Recomendación: Implementar actualización por fila (profesorId). Antes de guardar, validar que ninguna asignatura en el nuevo alcance esté ya asignada a otro profesor en el mismo parcial/grado/sección.
+
+Archivo: js/teacher.js
+Sector: Navegación Jerárquica (Líneas 1884-1891)
+Hallazgo [Alto]: El sistema salta directamente a 'Asignaturas' si solo hay una sección, incumpliendo el requerimiento de navegación secuencial completa.
+Recomendación: Forzar el paso por 'Secciones' o asegurar que el nivel 'Alumnos' sea SIEMPRE posterior a 'Asignaturas'.
+
+Sector: Renderizado de Estudiantes (Línea 1216)
+Hallazgo [Medio]: El nivel 'Alumnos' puede ser alcanzado prematuramente.
+Recomendación: Restringir la llamada a 'renderAlumnos' para que solo ocurra tras la selección de una asignatura específica.
+
+AUDITORÍA TÉCNICA - PERSONALIZACIÓN POR DOCENTE E INTEGRIDAD ACADÉMICA - Wed Jul  1 13:34:47 UTC 2026
+
+Archivo: backend/user-service/Code.gs
+Sector: getOrCreateSheet (Línea 878)
+Hallazgo [Crítico]: Las cabeceras de 'ConfiguracionAcademica' e 'HistorialAcademico' no incluyen 'profesorId'.
+Impacto: Imposibilidad de aislar configuraciones por docente y pérdida de trazabilidad.
+Recomendación: Agregar la columna 'profesorId' a ambas hojas. 'ConfiguracionAcademica' debe soportar múltiples filas (una por profesor).
+
+Sector: getAcademicConfig (Línea 1257)
+Hallazgo [Crítico]: Retorna siempre la configuración de la fila 2, sin filtrar por usuario.
+Recomendación: Refactorizar para buscar la fila asociada al 'profesorId' del payload. Para estudiantes, retornar un agregado de configuraciones activas en su grado/sección.
+
+Sector: updateAcademicConfig (Línea 1306)
+Hallazgo [Crítico]: Utiliza 'sheet.clear()', eliminando configuraciones de otros docentes. No valida duplicidad de asignaturas.
+Recomendación: Implementar actualización por fila (profesorId). Antes de persistir, validar que las asignaturas seleccionadas no estén ya asignadas a otro profesor en el mismo contexto (Parcial/Grado/Sección).
+
+Archivo: js/teacher.js
+Sector: Navegación Jerárquica (pushNav y handlers)
+Hallazgo [Alto]: La lógica actual permite ver la lista de alumnos inmediatamente tras seleccionar la sección si es única, o tras seleccionar la asignatura.
+Impacto: Incumplimiento del requerimiento de flujo contextual (estudiantes solo al final).
+Recomendación: Modificar para que el nivel 'Alumnos' sea SIEMPRE posterior a 'Asignaturas' y dependa de la selección previa del contexto completo.
+
+Sector: Guardado de Configuración
+Hallazgo [Medio]: El payload enviado no incluye el ID del profesor.
+Recomendación: Incluir 'profesorId: currentUser.userId'.
+
+AUDITORÍA TÉCNICA - PERSONALIZACIÓN POR DOCENTE E INTEGRIDAD ACADÉMICA - Wed Jul  1 13:37:48 UTC 2026
+
+Archivo: backend/user-service/Code.gs
+Sector: getOrCreateSheet (Línea 878)
+Hallazgo [Crítico]: Las cabeceras de 'ConfiguracionAcademica' e 'HistorialAcademico' no incluyen 'profesorId', lo que impide la personalización por docente.
+Recomendación: Agregar la columna 'profesorId' a ambas hojas. En 'ConfiguracionAcademica', la estructura debe evolucionar para permitir una fila por profesor.
+
+Sector: getAcademicConfig (Línea 1257)
+Hallazgo [Crítico]: Retorna siempre la configuración de la fila 2, sin filtrar por usuario.
+Recomendación: Refactorizar para buscar la fila asociada al 'profesorId' del payload.
+
+Sector: updateAcademicConfig (Línea 1306)
+Hallazgo [Crítico]: Utiliza 'sheet.clear()', eliminando configuraciones de otros docentes. No valida duplicidad de asignaturas.
+Recomendación: Implementar actualización por fila (profesorId). Antes de persistir, validar que las asignaturas seleccionadas no estén ya asignadas a otro profesor en el mismo contexto (Parcial/Grado/Sección).
+
+Archivo: js/teacher.js
+Sector: Navegación Jerárquica (pushNav y handlers)
+Hallazgo [Alto]: La lógica actual permite ver la lista de alumnos inmediatamente tras seleccionar la sección si es única, o tras seleccionar la asignatura.
+Impacto: Incumplimiento del requerimiento de flujo contextual (estudiantes solo al final).
+Recomendación: Modificar para que el nivel 'Alumnos' sea SIEMPRE posterior a 'Asignaturas' y dependa de la selección previa del contexto completo.
+
+Sector: Guardado de Configuración
+Hallazgo [Medio]: El payload enviado no incluye el ID del profesor.
+Recomendación: Incluir 'profesorId: currentUser.userId' en el payload.
+
+AUDITORÍA TÉCNICA - CONFIGURACIÓN PERSONALIZADA POR DOCENTE - Wed Jul  1 13:39:23 UTC 2026
+
+Archivo: backend/user-service/Code.gs
+Sector: getOrCreateSheet (Línea 878)
+Hallazgo [Crítico]: Las cabeceras de 'ConfiguracionAcademica' e 'HistorialAcademico' no incluyen 'profesorId', lo que viola el nuevo requerimiento de asociación docente.
+Impacto: Las configuraciones son compartidas y se sobrescriben, impidiendo la personalización.
+Recomendación: Agregar 'profesorId' a las cabeceras. En 'ConfiguracionAcademica', la estructura debe ser tabular (una fila por profesor).
+
+Sector: getAcademicConfig (Línea 1257)
+Hallazgo [Crítico]: Retorna siempre la configuración de la fila 2. No filtra por 'profesorId'.
+Impacto: Un profesor ve la configuración de otro.
+Recomendación: Refactorizar para buscar por el ID del profesor proporcionado en el payload.
+
+Sector: updateAcademicConfig (Línea 1306)
+Hallazgo [Crítico]: Usa 'sheet.clear()', lo que borra las configuraciones de todos los profesores al guardar uno solo.
+Hallazgo [Crítico]: No existe validación de integridad para evitar que dos profesores impartan la misma asignatura en el mismo parcial/grado/sección.
+Recomendación: Implementar actualización por fila (Upsert por profesorId). Agregar lógica de validación cruzada antes de persistir.
+
+Sector: saveToAcademicHistory (Línea 1354)
+Hallazgo [Alto]: No registra el 'profesorId' en el historial.
+Recomendación: Incluir el ID del profesor en la persistencia del historial.
+
+Archivo: js/teacher.js
+Sector: Navegación Jerárquica (pushNav y handlers)
+Hallazgo [Alto]: La lógica de navegación permite saltar etapas (ej. de Grado a Asignatura si solo hay una sección) y muestra alumnos antes de la etapa terminal.
+Impacto: Incumplimiento del requerimiento de flujo contextual estricto.
+Recomendación: Modificar para que el nivel 'Alumnos' sea SIEMPRE posterior a 'Asignaturas', y ésta a 'Secciones'.
+
+Sector: API Payloads
+Hallazgo [Medio]: No se envía el 'profesorId' en las peticiones de configuración.
+Recomendación: Incluir 'currentUser.userId' en los payloads de get/updateAcademicConfig.
+
+AUDITORÍA TÉCNICA - REQUISITOS DE PERSONALIZACIÓN DOCENTE - Wed Jul  1 13:51:11 UTC 2026
+
+Archivo: backend/user-service/Code.gs
+Sector: getOrCreateSheet
+Hallazgo [Crítico]: Las cabeceras de 'ConfiguracionAcademica' e 'HistorialAcademico' no incluyen 'profesorId'.
+Impacto: Imposibilidad de aislar configuraciones por docente y pérdida de trazabilidad.
+Recomendación: Agregar 'profesorId' a las columnas. 'ConfiguracionAcademica' debe cambiar a una estructura tabular donde cada fila represente la configuración de un profesor.
+
+Sector: getAcademicConfig / updateAcademicConfig
+Hallazgo [Crítico]: Actualmente operan sobre una configuración global (fila 2). 'update' usa 'sheet.clear()', lo que borraría configuraciones de otros docentes.
+Hallazgo [Crítico]: No existe validación de integridad para evitar que dos profesores impartan la misma asignatura en el mismo contexto.
+Recomendación: Refactorizar para buscar/actualizar por profesorId. Implementar bucle de validación de unicidad de asignaturas en toda la hoja.
+
+Archivo: js/teacher.js
+Sector: Navegación Jerárquica (pushNav)
+Hallazgo [Alto]: La lógica de "omisión inteligente" de secciones viola el requerimiento de navegación contextual completa.
+Impacto: Presentación de información de alumnos antes de definir el contexto completo (Sección/Asignatura).
+Recomendación: Eliminar el salto automático a 'Asignaturas' desde 'Grados'. Forzar la secuencia: Grados -> Secciones -> Asignaturas -> Alumnos.

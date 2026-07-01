@@ -148,23 +148,18 @@ document.addEventListener('DOMContentLoaded', () => {
             updateCascadingSelectors(window.GLOBAL_SCOPE.AsignaturaActual, window.GLOBAL_SCOPE.TemaActual);
         };
 
-        // REQ: Sync Global Scope from Server (v7.7.5 - Use unified syncAcademicScope)
-        if (window.syncAcademicScope) {
-            window.syncAcademicScope(applyConfig);
-        } else {
-            // Fallback si no está disponible (no debería ocurrir)
-            try {
-                const configRes = await fetchApi('USER', 'getAcademicConfig', {}, 0, {
-                    store: 'academic_stats',
-                    key: 'config',
-                    onUpdate: (data) => applyConfig(data)
-                });
-                if (configRes.status === 'success' && configRes.data) {
-                    applyConfig(configRes.data);
-                }
-            } catch (e) {
-                console.error("Error cargando config académica:", e);
+        // REQ: Sync Teacher-Specific Scope (v7.8.5)
+        try {
+            const configRes = await fetchApi('USER', 'getAcademicConfig', { profesorId: currentUser.userId }, 0, {
+                store: 'academic_stats',
+                key: 'config_' + currentUser.userId,
+                onUpdate: (data) => applyConfig(data)
+            });
+            if (configRes.status === 'success' && configRes.data) {
+                applyConfig(configRes.data);
             }
+        } catch (e) {
+            console.error("Error cargando config académica:", e);
         }
     }
 
@@ -273,6 +268,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         const fullScope = {
+            profesorId: currentUser.userId,
             ParcialActual: document.getElementById('admin-parcial-actual').value,
             GradoActual: selectedGrades,
             SeccionActual: selectedSections,
@@ -1279,20 +1275,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        const getSectionsForGrado = (grado) => {
-            let secciones = [...new Set([
-                ...allActivityRaw.filter(i => norm(i.grado) === norm(grado)).map(i => i.seccion),
-                ...allAssignmentsRaw.filter(i => norm(i.grado) === norm(grado)).map(i => i.seccion)
-            ].filter(s => s && norm(s) !== 'todas'))];
-            const hasTodas = allAssignmentsRaw.some(a => norm(a.grado) === norm(grado) && (norm(a.seccion) === 'todas' || !a.seccion));
-            if (hasTodas && secciones.length === 0) secciones = ['A'];
-            return secciones;
-        };
-
         submissionsTableBody.innerHTML = filtered.map((grado, idx) => {
-            const sections = getSectionsForGrado(grado);
-            const nextStepText = sections.length >= 2 ? "Ver Secciones" : "Ver Materias";
-
             return `
             <tr class="hover:bg-gray-50 transition-colors cursor-pointer nav-btn group" data-index="${idx}">
                 <td class="p-4">
@@ -1301,7 +1284,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <span class="font-semibold text-gray-900 uppercase tracking-tighter">${grado}</span>
                     </div>
                 </td>
-                <td class="p-4 text-right"><span class="text-blue-600 font-semibold text-[9px] uppercase tracking-widest group-hover:underline transition-all">${nextStepText} &rsaquo;</span></td>
+                <td class="p-4 text-right"><span class="text-blue-600 font-semibold text-[9px] uppercase tracking-widest group-hover:underline transition-all">Ver Secciones &rsaquo;</span></td>
             </tr>`;
         }).join('');
     }
@@ -1868,28 +1851,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
 
                 if (current.level === 'Grados') {
-                    // Tarea 1: Lógica de Omisión Inteligente (Secciones)
-                    const getSectionsForGrado = (grado) => {
-                        let secciones = [...new Set([
-                            ...allActivityRaw.filter(i => norm(i.grado) === norm(grado)).map(i => i.seccion),
-                            ...allAssignmentsRaw.filter(i => norm(i.grado) === norm(grado)).map(i => i.seccion)
-                        ].filter(s => s && norm(s) !== 'todas'))];
-                        const hasTodas = allAssignmentsRaw.some(a => norm(a.grado) === norm(grado) && (norm(a.seccion) === 'todas' || !a.seccion));
-                        if (hasTodas && secciones.length === 0) secciones = ['A'];
-                        return secciones;
-                    };
-
-                    const sections = getSectionsForGrado(item);
-                    if (sections.length >= 2) {
-                        await pushNav('Secciones', { grado: item });
-                    } else {
-                        const singleSeccion = sections.length === 1 ? sections[0] : 'A';
-                        await pushNav('Asignaturas', { grado: item, seccion: singleSeccion });
-                    }
+                    // REQ: Flujo Contextual Estricto (v7.8.5)
+                    await pushNav('Secciones', { grado: item });
                 } else if (current.level === 'Secciones') {
                     await pushNav('Asignaturas', { grado: current.data.grado, seccion: item });
                 } else if (current.level === 'Asignaturas') {
-                    // Tarea 1: Eliminación de la Etapa de "Parcial"
+                    // REQ: Alumnos solo en la etapa terminal (v7.8.5)
                     await pushNav('Alumnos', {
                         grado: current.data.grado,
                         seccion: current.data.seccion,

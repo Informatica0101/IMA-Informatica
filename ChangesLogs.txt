@@ -349,3 +349,11 @@ Descripción: Implementación de SUBJECT_GRADE_MAP para mapeo maestro de pertene
 Archivo: js/student.js
 Líneas: 600-610
 Descripción: Refinamiento de renderSubjectNavigation para aplicar filtros de seguridad robustos al cargar asignaturas desde la configuración global.
+
+PERSONALIZACIÓN DOCENTE Y OPTIMIZACIÓN DE NAVEGACIÓN - Wed Jul  1 14:11:12 UTC 2026
+
+Archivo: backend/user-service/Code.gs
+Descripción: Refactorización para soportar configuraciones por profesorId. Implementada validación de integridad (Unicidad de asignatura por contexto). Agregada columna profesorId a HistorialAcademico.
+
+Archivo: js/teacher.js
+Descripción: Enforce de flujo Grados -> Secciones -> Asignaturas -> Alumnos. Estudiantes solo visibles en etapa terminal. Integración de profesorId en API config.
