@@ -398,3 +398,27 @@ Archivo: css/style.css
 Sector: Estilos Corporativos
 Hallazgo [Observación]: Existían discrepancias visuales y falta de acabado profesional en componentes de tarjetas.
 Solución: Rediseño de .card-ima con bordes de 20px, sombras suaves y transiciones suaves. Eliminado cualquier rastro de efectos neón.
+
+AUDITORÍA TÉCNICA - REESTRUCTURACIÓN DASHBOARD ESTUDIANTE - Wed Jul  1 01:43:14 UTC 2026
+
+Archivo: student-dashboard.html
+- Estructura actual: Tiene un selector de historial de parcial y un contenedor de pestañas de asignatura.
+- Hallazgo [Medio]: Falta el sistema de pestañas principal (Actividades / Progreso Académico).
+- Hallazgo [Bajo]: El diseño actual de las asignaturas usa un scroll horizontal simple, no tarjetas expansivas.
+- Hallazgo [Bajo]: Padding y margin en contenedores principales (container, py-8) pueden compactarse más.
+
+Archivo: js/student.js
+- Función fetchAllActivities: Gestiona la carga de datos.
+- Función renderStudentExpediente: Renderiza el resumen de métricas.
+- Función renderSubjectNavigation: Inyecta las pestañas de asignatura.
+- Función renderActivities: Renderiza la lista de tareas.
+- Hallazgo [Alto]: No existe lógica de penalización por entrega tardía en el envío de tareas.
+- Hallazgo [Medio]: No hay lógica de alertas de color (Verde/Amarillo/Rojo) basada en proximidad de fecha límite.
+- Hallazgo [Medio]: La renderización de asignaturas no soporta el estado "Contraído" (solo pendientes) y "Expandido" (todas).
+
+Archivo: css/style.css
+- Hallazgo [Bajo]: .card-ima tiene padding de 24px, se puede reducir para compactar.
+- Hallazgo [Observación]: No hay estilos definidos para las alertas de vencimiento ni para la expansión full-viewport de tarjetas de asignatura.
+
+Archivo: js/ui-common.js
+- Hallazgo [Bajo]: La navegación popstate maneja 'student-subject', pero deberá adaptarse si el sistema de pestañas principal cambia el estado de la URL o el historial.

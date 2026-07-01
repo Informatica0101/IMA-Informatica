@@ -1974,13 +1974,17 @@ document.addEventListener('DOMContentLoaded', () => {
         // Ensure the grade is associated with the current theme for weighting
         const scope = window.GLOBAL_SCOPE || {};
 
+        // Tarea 5: Asegurar compatibilidad con estructuras de arreglo multi-factor
+        const temaVal = Array.isArray(scope.TemaActual) ? scope.TemaActual.join(', ') : (scope.TemaActual || "General");
+        const asigVal = Array.isArray(scope.AsignaturaActual) ? scope.AsignaturaActual.join(', ') : (scope.AsignaturaActual || "");
+
         const payload = {
             entregaId: currentEditingEntregaId,
             calificacion: document.getElementById('calificacion').value,
             estado: document.getElementById('estado').value,
             comentario: document.getElementById('comentario').value,
-            temaAsociado: scope.TemaActual || "General",
-            asignaturaAsociada: scope.AsignaturaActual || ""
+            temaAsociado: temaVal,
+            asignaturaAsociada: asigVal
         };
 
         // Bloqueo temporal del botón (Req 1.3)
