@@ -667,3 +667,41 @@ Sector: Navegación Jerárquica (pushNav)
 Hallazgo [Alto]: La lógica de "omisión inteligente" de secciones viola el requerimiento de navegación contextual completa.
 Impacto: Presentación de información de alumnos antes de definir el contexto completo (Sección/Asignatura).
 Recomendación: Eliminar el salto automático a 'Asignaturas' desde 'Grados'. Forzar la secuencia: Grados -> Secciones -> Asignaturas -> Alumnos.
+
+AUDITORÍA TÉCNICA - CORRECCIÓN DE ERRORES POST-COMMIT - Wed Jul  1 19:13:20 UTC 2026
+
+Archivo: js/persistence.js
+Sector: Función delete (Línea 116)
+Hallazgo [Crítico]: La función no implementa un valor por defecto para el parámetro 'key'.
+Impacto: 'Uncaught DataError: No key or key range specified' cuando se intenta borrar caché sin pasar el ID explícitamente. Esto rompe el flujo de sincronización reactiva en el Student Dashboard.
+Recomendación: Implementar 'var id = key || self.getActiveId();' similar a las funciones 'get' y 'set'.
+
+Archivo: backend/user-service/Code.gs
+Sector: Función updateAcademicConfig
+Hallazgo [Alto]: Posible inconsistencia en la recuperación de la fila del profesor si el ID no es string exacto o si hay espacios.
+Impacto: Falla en la persistencia del campo 'profesorId'.
+Recomendación: Asegurar normalización de profesorId antes de 'findIndex'.
+
+Sector: Función saveToAcademicHistory
+Hallazgo [Alto]: Si 'scope.profesorId' es nulo, se usa el fallback 'SISTEMA'.
+Impacto: Pérdida de trazabilidad si el objeto 'scope' (que es 'fullScope' del frontend) no llega con la propiedad poblada.
+Recomendación: Validar por qué el objeto 'scope' podría perder el profesorId en el tránsito.
+
+Archivo: js/student.js
+Sector: Evento 'academic-scope-updated' (Línea 882)
+Hallazgo [Crítico]: Llama a 'window.PersistenceManager.delete('cache_estudiante_dashboard')' sin el segundo argumento.
+Impacto: Causa la excepción DataError reportada.
+
+AUDITORÍA FINAL POST-CORRECCIÓN - Wed Jul  1 19:28:01 UTC 2026
+
+Archivo: js/persistence.js
+Estado: Corregido. La función 'delete' ahora usa un ID por defecto, eliminando la excepción DataError.
+
+Archivo: backend/user-service/Code.gs
+Estado: Corregido. 'updateAcademicConfig' y 'saveToAcademicHistory' ahora fuerzan el uso de 'profesorId' y garantizan la estructura de columnas correcta.
+
+Archivo: js/teacher.js
+Estado: Verificado. Los payloads de configuración ahora incluyen el ID del profesor.
+
+Archivo: js/student.js
+Estado: Verificado. El listener de 'academic-scope-updated' ya no causa errores al invalidar caché.

@@ -1308,7 +1308,7 @@ function getAcademicConfig(payload) {
  */
 function updateAcademicConfig(payload) {
   const { fullScope } = payload || {};
-  const profesorId = fullScope?.profesorId;
+  const profesorId = fullScope?.profesorId ? String(fullScope.profesorId).trim() : null;
 
   if (!fullScope || !profesorId) {
     throw new Error("Payload 'fullScope' o 'profesorId' faltante.");
@@ -1319,6 +1319,11 @@ function updateAcademicConfig(payload) {
   const data = sheet.getDataRange().getValues();
   const headers = data[0];
 
+  // REQ: Asegurar estructura de cabeceras (profesorId debe ser la primera columna)
+  if (headers[0] !== "profesorId") {
+    sheet.getRange(1, 1, 1, 6).setValues([["profesorId", "ParcialActual", "GradoActual", "SeccionActual", "AsignaturaActual", "TemaActual"]]);
+  }
+
   // 1. VALIDACIÓN DE INTEGRIDAD (No dos profesores con la misma asignatura en el mismo contexto)
   const partial = fullScope.ParcialActual;
   const grades = Array.isArray(fullScope.GradoActual) ? fullScope.GradoActual : [fullScope.GradoActual];
@@ -1327,7 +1332,7 @@ function updateAcademicConfig(payload) {
 
   for (let i = 1; i < data.length; i++) {
     const row = data[i];
-    const otherProfId = row[0];
+    const otherProfId = String(row[0]).trim();
     if (otherProfId === profesorId) continue;
 
     const otherPartial = row[1];
@@ -1351,8 +1356,9 @@ function updateAcademicConfig(payload) {
   }
 
   // 2. ACTUALIZACIÓN DE FILA (UPSERT)
-  const rowIndex = data.findIndex(r => r[0] === profesorId);
-  const newRow = headers.map(h => {
+  const rowIndex = data.findIndex(r => String(r[0]).trim() === profesorId);
+  const newHeaders = ["profesorId", "ParcialActual", "GradoActual", "SeccionActual", "AsignaturaActual", "TemaActual"];
+  const newRow = newHeaders.map(h => {
     const val = fullScope[h];
     return Array.isArray(val) ? JSON.stringify(val) : (val || "");
   });
@@ -1388,9 +1394,10 @@ function updateAcademicConfig(payload) {
 function saveToAcademicHistory(scope) {
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
   const sheet = getOrCreateSheet(ss, "HistorialAcademico");
+  const headers = sheet.getDataRange().getValues()[0];
 
-  if (sheet.getLastRow() === 0) {
-    sheet.appendRow(["ID", "Fecha", "Parcial", "Grado", "Sección", "Asignatura", "Unidad", "profesorId"]);
+  if (sheet.getLastRow() === 0 || headers[0] !== "ID") {
+    sheet.getRange(1, 1, 1, 8).setValues([["ID", "Fecha", "Parcial", "Grado", "Sección", "Asignatura", "Unidad", "profesorId"]]);
   }
 
   const rawParcial = scope.ParcialActual || "I parcial";
@@ -1433,7 +1440,7 @@ function saveToAcademicHistory(scope) {
   const grades = parseInput(scope.GradoActual);
   const sections = parseInput(scope.SeccionActual);
   const subjects = parseInput(scope.AsignaturaActual);
-  const profesorId = scope.profesorId || "SISTEMA";
+  const profesorId = scope.profesorId ? String(scope.profesorId).trim() : "SISTEMA";
 
   const timestamp = now.getTime();
   let lastIdNum = 0;

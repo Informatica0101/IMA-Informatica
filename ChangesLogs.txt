@@ -357,3 +357,16 @@ Descripción: Refactorización para soportar configuraciones por profesorId. Imp
 
 Archivo: js/teacher.js
 Descripción: Enforce de flujo Grados -> Secciones -> Asignaturas -> Alumnos. Estudiantes solo visibles en etapa terminal. Integración de profesorId en API config.
+
+CORRECCIÓN DE PERSISTENCIA Y EXCEPCIONES DE CACHÉ - Wed Jul  1 19:28:01 UTC 2026
+
+Archivo: js/persistence.js
+Líneas: 139-142
+Descripción: Implementación de fallback de ID en PersistenceManager.delete. Resuelve 'DataError: No key or key range specified'.
+
+Archivo: backend/user-service/Code.gs
+Líneas: 1308-1365, 1394-1445
+Descripción: Refactorización para endurecer la persistencia de profesorId. Implementado chequeo de cabeceras, normalización de strings (trim) y garantía de 8 columnas en el historial.
+
+Archivo: js/student.js
+Descripción: Verificación de llamadas seguras a PersistenceManager.delete tras el fix en el motor de persistencia.
