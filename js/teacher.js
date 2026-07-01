@@ -1956,7 +1956,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const ws = XLSX.utils.aoa_to_sheet([headers, ...data]);
                 XLSX.utils.book_append_sheet(wb, ws, subject.substring(0, 31));
             });
-            const pNum = { 'Primer Parcial': '1', 'Segundo Parcial': '2', 'Tercer Parcial': '3', 'Cuarto Parcial': '4' }[parcial] || parcial;
+            const pNum = { 'I parcial': '1', 'II parcial': '2', 'III parcial': '3', 'IV parcial': '4' }[parcial] || parcial;
             XLSX.writeFile(wb, `${grado.normalize("NFD").replace(/[\u0300-\u036f]/g, "")}_seccion_${seccion}_parcial_${pNum}.xls`);
         } catch (error) { alert('Error: ' + error.message); }
         finally { btn.disabled = false; btn.innerHTML = '<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg><span>EXPORTAR REPORTE EXCEL</span>'; }

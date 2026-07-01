@@ -11,7 +11,7 @@
 
 window.SERVICE_URLS = {
   // Pega aquí la URL del despliegue del microservicio de usuarios. (v7.7.6)
-  USER: 'https://script.google.com/macros/s/AKfycbxO6phdo8JuRUQjSArl4YOgje75J-PsAn69qcW45Ed6TO0WPCBwJ4yDoxJoU8651LZm/exec',
+  USER: 'https://script.google.com/macros/s/AKfycbxiV3gpw3hADHmM9c7JbUe4rfc73XFM2AFH9H2g4HO6k6u6lqMpWLuZmq83BfbIyvoX/exec',
 
   // Pega aquí la URL del despliegie del microservicio de tareas.
   TASK: 'https://script.google.com/macros/s/AKfycbz4geYGjF7FCe17VuLL8uylHaKM1vwbDqnFmEMgZXQQFVhBkKt0GtT0LB-_u94IVGDZ/exec',
@@ -28,7 +28,7 @@ var FRONTEND_URL = 'https://informatica0101.github.io';
  * Punto único de verdad para el alcance académico vigente.
  */
 window.GLOBAL_SCOPE = {
-    ParcialActual: "Segundo Parcial",
+    ParcialActual: "II parcial",
     GradoActual: ["Décimo"],
     SeccionActual: ["A"],
     AsignaturaActual: ["Informática I"],
@@ -76,7 +76,7 @@ window.syncAcademicScope = function(callback) {
 
         // Normalización profunda de campos multi-valor (v7.7.5)
         window.GLOBAL_SCOPE = {
-            ParcialActual: data.ParcialActual || "Primer Parcial",
+            ParcialActual: data.ParcialActual || "I parcial",
             GradoActual: normalizeToArray(data.GradoActual),
             SeccionActual: normalizeToArray(data.SeccionActual),
             AsignaturaActual: normalizeToArray(data.AsignaturaActual),
@@ -224,10 +224,11 @@ function normalizePartial(p) {
     var n = p.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
 
     // Mapeo dinámico para soportar "Unidad" o "Parcial" (Tarea 4 - v7.8.2)
-    if (n.indexOf("primer") !== -1 || n.indexOf("unidad i") !== -1 || n === "i parcial") return "I Parcial";
-    if (n.indexOf("segundo") !== -1 || n.indexOf("unidad ii") !== -1 || n === "ii parcial") return "II Parcial";
-    if (n.indexOf("tercer") !== -1 || n.indexOf("unidad iii") !== -1 || n === "iii parcial") return "III Parcial";
-    if (n.indexOf("cuarto") !== -1 || n.indexOf("unidad iv") !== -1 || n === "iv parcial") return "IV Parcial";
+    // Tarea Estructural: Normalización a 'I parcial' (minúscula) según requerimiento v7.8.3
+    if (n.indexOf("primer") !== -1 || n.indexOf("unidad i") !== -1 || n.indexOf("i parcial") !== -1) return "I parcial";
+    if (n.indexOf("segundo") !== -1 || n.indexOf("unidad ii") !== -1 || n.indexOf("ii parcial") !== -1) return "II parcial";
+    if (n.indexOf("tercer") !== -1 || n.indexOf("unidad iii") !== -1 || n.indexOf("iii parcial") !== -1) return "III parcial";
+    if (n.indexOf("cuarto") !== -1 || n.indexOf("unidad iv") !== -1 || n.indexOf("iv parcial") !== -1) return "IV parcial";
 
     return p;
 }
@@ -262,8 +263,8 @@ window.isContentAuthorized = function(contentUnit, contentSubject, contentTopic,
 
         if (!partialAuthorized) {
             var partialGroups = {
-                "I y II Parcial": ["I Parcial", "II Parcial"],
-                "III y IV Parcial": ["III Parcial", "IV Parcial"]
+                "I y II parcial": ["I parcial", "II parcial"],
+                "III y IV parcial": ["III parcial", "IV parcial"]
             };
             if (partialGroups[contentUnit]) {
                 partialAuthorized = partialGroups[contentUnit].indexOf(normActualP) !== -1;

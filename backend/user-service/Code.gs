@@ -887,7 +887,7 @@ function getOrCreateSheet(ss, name) {
     }
     if (name === "ConfiguracionAcademica") {
       sheet.appendRow(["Clave", "Valor"]);
-      sheet.appendRow(["ParcialActual", "I Parcial"]);
+      sheet.appendRow(["ParcialActual", "I parcial"]);
     }
     if (name === "AsignaturasPorParcial") {
       sheet.appendRow(["Parcial", "Asignatura"]);
@@ -1261,7 +1261,7 @@ function getAcademicConfig() {
     return {
       status: "success",
       data: {
-        ParcialActual: "I Parcial",
+        ParcialActual: "I parcial",
         GradoActual: ["Décimo"],
         SeccionActual: ["A"],
         AsignaturaActual: ["Informática I"],
@@ -1345,33 +1345,77 @@ function updateAcademicConfig(payload) {
 }
 
 /**
- * Registra el estado actual de la configuración en un historial (Tarea 4 - v7.8.2)
+ * Registra el estado actual de la configuración en un historial (Reorganizado v7.8.3)
+ * Estructura: id | fecha | parcial | grado | seccion | asignatura | unidad
  */
 function saveToAcademicHistory(scope) {
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
   const sheet = getOrCreateSheet(ss, "HistorialAcademico");
 
-  const parcial = scope.ParcialActual;
-  const timestamp = new Date().getTime();
-  const dateStr = new Date().toISOString();
-
-  // Estructura: Fecha | Parcial | Grados | Secciones | Asignaturas | Unidades
-  const grades = Array.isArray(scope.GradoActual) ? scope.GradoActual.join(", ") : scope.GradoActual;
-  const sections = Array.isArray(scope.SeccionActual) ? scope.SeccionActual.join(", ") : scope.SeccionActual;
-  const subjects = Array.isArray(scope.AsignaturaActual) ? scope.AsignaturaActual.join(", ") : scope.AsignaturaActual;
-  const units = Array.isArray(scope.TemaActual) ? scope.TemaActual.join(", ") : scope.TemaActual;
-
-  // Evitar duplicados exactos para el mismo parcial y configuración
-  const lastRows = sheet.getLastRow() > 0 ? sheet.getRange(Math.max(1, sheet.getLastRow() - 5), 1, Math.min(5, sheet.getLastRow()), 6).getValues() : [];
-  const isDuplicate = lastRows.some(r => r[1] === parcial && r[2] === grades && r[4] === subjects);
-
-  if (!isDuplicate) {
-    sheet.appendRow([dateStr, parcial, grades, sections, subjects, units, timestamp]);
+  if (sheet.getLastRow() === 0) {
+    sheet.appendRow(["id", "fecha", "parcial", "grado", "seccion", "asignatura", "unidad", "timestamp"]);
   }
+
+  const rawParcial = scope.ParcialActual || "I parcial";
+
+  // Normalización a Romano + minúscula (Tarea Estructural)
+  const getRomanStandard = (str, type) => {
+    const s = str.toLowerCase();
+    let prefix = "I";
+    if (s.indexOf("segundo") !== -1 || s.indexOf("ii") !== -1) prefix = "II";
+    else if (s.indexOf("tercer") !== -1 || s.indexOf("iii") !== -1) prefix = "III";
+    else if (s.indexOf("cuarto") !== -1 || s.indexOf("iv") !== -1) prefix = "IV";
+    return prefix + " " + type;
+  };
+
+  const parcialNorm = getRomanStandard(rawParcial, "parcial");
+  const unidadNorm = getRomanStandard(rawParcial, "unidad"); // Por defecto se asocia al parcial
+
+  // Calcular rango de fecha (ej: febrero - marzo)
+  const months = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
+  const now = new Date();
+  const currentMonth = now.getMonth();
+  const dateRange = months[Math.max(0, currentMonth - 1)] + " - " + months[currentMonth];
+
+  const grades = Array.isArray(scope.GradoActual) ? scope.GradoActual : [scope.GradoActual];
+  const sections = Array.isArray(scope.SeccionActual) ? scope.SeccionActual : [scope.SeccionActual];
+  const subjects = Array.isArray(scope.AsignaturaActual) ? scope.AsignaturaActual : [scope.AsignaturaActual];
+
+  const timestamp = now.getTime();
+  let lastIdNum = 0;
+
+  if (sheet.getLastRow() > 1) {
+    const lastId = sheet.getRange(sheet.getLastRow(), 1).getValue();
+    if (typeof lastId === 'string' && lastId.startsWith("hist-")) {
+      lastIdNum = parseInt(lastId.replace("hist-", ""));
+    }
+  }
+
+  // Iterar y crear registros individuales para aislamiento total
+  grades.forEach(grado => {
+    sections.forEach(seccion => {
+      subjects.forEach(asig => {
+        // Verificar si ya existe este registro exacto para el parcial actual
+        const existingData = sheet.getDataRange().getValues();
+        const isDuplicate = existingData.some(r =>
+          r[2] === parcialNorm &&
+          r[3] === grado &&
+          r[4] === seccion &&
+          r[5] === asig
+        );
+
+        if (!isDuplicate) {
+          lastIdNum++;
+          const newId = "hist-" + lastIdNum.toString().padStart(4, '0');
+          sheet.appendRow([newId, dateRange, parcialNorm, grado, seccion, asig, unidadNorm, timestamp]);
+        }
+      });
+    });
+  });
 }
 
 /**
- * Recupera el historial académico filtrado por grado y sección (v7.8.2)
+ * Recupera el historial académico filtrado por grado y sección (Normalizado v7.8.3)
  */
 function getAcademicHistory(payload) {
   const { grado, seccion } = payload || {};
@@ -1380,25 +1424,30 @@ function getAcademicHistory(payload) {
   if (!sheet) return { status: "success", data: [] };
 
   const data = sheet.getDataRange().getValues().slice(1);
-  const history = data.filter(r => {
-    const grades = String(r[2]).split(", ");
-    const sections = String(r[3]).split(", ");
-
-    const gradeMatch = !grado || grades.some(g => normalizeString(g) === normalizeString(grado));
-    const sectionMatch = !seccion || sections.some(s => normalizeString(s) === normalizeString(seccion));
-
+  const filtered = data.filter(r => {
+    const gradeMatch = !grado || normalizeString(r[3]) === normalizeString(grado);
+    const sectionMatch = !seccion || normalizeString(r[4]) === normalizeString(seccion);
     return gradeMatch && sectionMatch;
-  }).map(r => ({
-    fecha: r[0],
-    parcial: r[1],
-    grados: r[2],
-    secciones: r[3],
-    asignaturas: String(r[4]).split(", "),
-    temas: String(r[5]).split(", "),
-    timestamp: r[6]
-  }));
+  });
 
-  return { status: "success", data: history };
+  // Agrupar por parcial para que el frontend reciba una lista de asignaturas coherente
+  const historyMap = {};
+  filtered.forEach(r => {
+    const parcial = r[2];
+    if (!historyMap[parcial]) {
+      historyMap[parcial] = {
+        fecha: r[1],
+        parcial: parcial,
+        asignaturas: [],
+        timestamp: r[7]
+      };
+    }
+    if (historyMap[parcial].asignaturas.indexOf(r[5]) === -1) {
+      historyMap[parcial].asignaturas.push(r[5]);
+    }
+  });
+
+  return { status: "success", data: Object.values(historyMap) };
 }
 
 function getAsignaturasActivas(payload) {

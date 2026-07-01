@@ -14,10 +14,10 @@ document.addEventListener('DOMContentLoaded', function() {
     // --- Mi Perfil (Centralizado en ui-common.js) ---
 
     var PARCIAL_ORDER = {
-        "Cuarto Parcial": 4,
-        "Tercer Parcial": 3,
-        "Segundo Parcial": 2,
-        "Primer Parcial": 1
+        "IV parcial": 4,
+        "III parcial": 3,
+        "II parcial": 2,
+        "I parcial": 1
     };
     var allActivitiesData = [];
     var academicHistory = []; // Tarea 4: Persistencia Histórica (v7.8.2)
@@ -600,10 +600,13 @@ document.addEventListener('DOMContentLoaded', function() {
         });
 
         // Tarea 3: Asegurar que se incluyan las asignaturas de la Configuración Global (si es el parcial actual)
+        // Se añade validación de grado para evitar filtración de materias de otros cursos (Fase Diagnóstico v7.8.3)
         if (window.normalizePartial(selectedPartial) === window.normalizePartial(activePartial)) {
             var globalAsigs = window.GLOBAL_SCOPE ? window.GLOBAL_SCOPE.AsignaturaActual : [];
             globalAsigs.forEach(function(asig) {
-                if (subjects.indexOf(asig) === -1) subjects.push(asig);
+                if (window.isContentAuthorized(selectedPartial, asig, null, currentUser.grado, currentUser.seccion)) {
+                    if (subjects.indexOf(asig) === -1) subjects.push(asig);
+                }
             });
         }
 

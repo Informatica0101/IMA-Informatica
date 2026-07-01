@@ -9,7 +9,7 @@ window.presentationData = [
         subjects: [
             {
                 name: "Informática I",
-                unit: "Unidad I",
+                unit: "I unidad",
                 sections: "A, B",
                 topics: [
                     { title: "Introducción a la Informática", file: "Informatica_I/introduccion_informatica.html" },
@@ -31,7 +31,7 @@ window.presentationData = [
         subjects: [
             {
                 name: "Programación",
-                unit: "Unidad I",
+                unit: "I unidad",
                 sections: "A",
                 topics: [
                     { title: "Introducción a la Programación", file: "II_BTP_A/Programacion/introduccion_programacion.html" },
@@ -45,7 +45,7 @@ window.presentationData = [
             },
             {
                 name: "Programación",
-                unit: "Unidad II",
+                unit: "II unidad",
                 sections: "A",
                 topics: [
                     { title: "Introducción a los Lenguajes de Programación", file: "II_BTP_A/Programacion/intro_lenguajes_programacion.html" },
@@ -59,7 +59,7 @@ window.presentationData = [
             },
             {
                 name: "Ofimática I",
-                unit: "Unidad I",
+                unit: "I unidad",
                 sections: "A",
                 topics: [
                     { title: "Procesadores de Texto", file: "II_BTP_A/Ofimatica_I/procesadores_texto.html" },
@@ -72,7 +72,7 @@ window.presentationData = [
             },
             {
                 name: "Informática Aplicada I",
-                unit: "Unidad I",
+                unit: "I unidad",
                 sections: "A",
                 topics: [
                     { title: "Sistemas de Numeración", file: "II_BTP_A/Informatica_Aplicada_I/sistemas_numeracion.html" },
@@ -84,7 +84,7 @@ window.presentationData = [
             },
             {
                 name: "Análisis y Diseño",
-                unit: "Unidad I",
+                unit: "I unidad",
                 sections: "A",
                 topics: [
                     { title: "Rol del Analista", file: "II_BTP_A/analisis_diseno/rol_analista_sistemas.html" },
@@ -101,7 +101,7 @@ window.presentationData = [
         subjects: [
             {
                 name: "Diseño Web",
-                unit: "Unidad I",
+                unit: "I unidad",
                 sections: "A",
                 topics: [
                     { title: "Introducción al Diseño Web", file: "III_BTP_A/introduccion_diseno_web.html" },
@@ -115,7 +115,7 @@ window.presentationData = [
             },
             {
                 name: "Diseño Web",
-                unit: "Unidad II",
+                unit: "II unidad",
                 sections: "A",
                 topics: [
                     { title: "Introducción a CSS", file: "III_BTP_A/dw_II/introduccion_css.html" },
@@ -160,7 +160,7 @@ window.downloadContentData = [
         subjects: [
             {
                 name: "Informática I",
-                unit: "Unidad I",
+                unit: "I unidad",
                 sections: "A, B",
                 topics: [
                     { title: "Procesadores de Texto", file: "Informatica_I/procesadores_palabras.pdf" },
@@ -178,7 +178,7 @@ window.downloadContentData = [
         subjects: [
             {
                 name: "Programación",
-                unit: "Unidad I",
+                unit: "I unidad",
                 sections: "A",
                 topics: [
                     { title: "Introduccion a programacion", file: "II_BTP_A/Programacion/Programación_2026.pdf" }
@@ -186,7 +186,7 @@ window.downloadContentData = [
             },
             {
                 name: "Programación",
-                unit: "Unidad II",
+                unit: "II unidad",
                 sections: "A",
                 topics: [
                     { title: "Contenido II Parcial (PDF)", file: "II_BTP_A/Programacion/II Parcial/Programacion Segunda Unidad.pdf" }
@@ -200,7 +200,7 @@ window.downloadContentData = [
         subjects: [
             {
                 name: "Diseño Web",
-                unit: "Unidad I",
+                unit: "I unidad",
                 sections: "A",
                 topics: [
                     { title: "Introduccion a Html", file: "III_BTP_A/introducción a HTML.pdf" }
@@ -208,7 +208,7 @@ window.downloadContentData = [
             },
             {
                 name: "Diseño Web",
-                unit: "Unidad II",
+                unit: "II unidad",
                 sections: "A",
                 topics: [
                     { title: "Contenido II Parcial (PDF)", file: "III_BTP_A/dw_II/contenido/Unidad 4 Diseño Web.pdf" }
