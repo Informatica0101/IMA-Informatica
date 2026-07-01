@@ -1,5 +1,15 @@
 ## TAREAS PENDIENTES DE REVISIÓN
 
+### [UNIF-001] Unificación de Configuración Académica
+- **Origen del Hallazgo:** Nueva Tarea Adicional.
+- **Severidad:** Crítico.
+- **Archivos Involucrados:** backend/user-service/Code.gs, js/config.js
+- **Descripción:** Migrar ConfiguracionAcademica a estructura granular, eliminando redundancias con AsignaturasPorParcial.
+- **Estado:** [X] Completada
+
+### [FIX-001] Corrección DataError y Persistencia profesorId
+- **Estado:** [X] Completada
+
 ### [HIST-001] Reestructuración de Historial Académico
 - **Estado:** [X] Completada
 
@@ -10,11 +20,4 @@
 - **Estado:** [X] Completada
 
 ### [NAV-001] Flujo de Navegación Contextual Docente
-- **Estado:** [X] Completada
-
-### [FIX-001] Corrección DataError y Persistencia profesorId
-- **Origen del Hallazgo:** Revisión Post-Commit.
-- **Severidad:** Crítico.
-- **Archivos Involucrados:** js/persistence.js, backend/user-service/Code.gs
-- **Descripción:** Corregir excepción de IndexedDB y asegurar almacenamiento del profesorId.
 - **Estado:** [X] Completada

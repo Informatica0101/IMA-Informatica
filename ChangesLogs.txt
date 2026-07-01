@@ -370,3 +370,12 @@ Descripción: Refactorización para endurecer la persistencia de profesorId. Imp
 
 Archivo: js/student.js
 Descripción: Verificación de llamadas seguras a PersistenceManager.delete tras el fix en el motor de persistencia.
+
+UNIFICACIÓN Y NORMALIZACIÓN DE CONFIGURACIÓN ACADÉMICA - Wed Jul  1 20:03:53 UTC 2026
+
+Archivo: backend/user-service/Code.gs
+Líneas: 888, 1250-1440, 1520-1550
+Descripción: Rediseño estructural de ConfiguracionAcademica a modelo granular (Cartesian Product). Implementada generación de IDs 'conf-XXXX'. Depreciada hoja AsignaturasPorParcial. Refactorizada getAcademicConfig para re-agregación dinámica y soporte de consolidado para estudiantes.
+
+Archivo: js/config.js
+Descripción: ActualizadaisContentAuthorized para mayor resiliencia ante cambios en la estructura de origen de datos.

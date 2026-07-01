@@ -886,10 +886,7 @@ function getOrCreateSheet(ss, name) {
       sheet.appendRow(["PreguntaID", "Asignatura", "Nivel", "Tema", "TipoActividad", "Pregunta", "OpcionA", "OpcionB", "OpcionC", "OpcionD", "RespuestaCorrecta", "Explicacion", "Imagen", "VecesRespondida", "VecesCorrecta", "PorcentajeAcierto", "UltimaActualizacion", "Activa", "DificultadCalculada"]);
     }
     if (name === "ConfiguracionAcademica") {
-      sheet.appendRow(["profesorId", "ParcialActual", "GradoActual", "SeccionActual", "AsignaturaActual", "TemaActual"]);
-    }
-    if (name === "AsignaturasPorParcial") {
-      sheet.appendRow(["Parcial", "Asignatura"]);
+      sheet.appendRow(["ID", "profesorId", "Parcial", "Grado", "Sección", "Asignatura", "Tema"]);
     }
     if (name === "QuizProAnalytics") {
       sheet.appendRow(["analyticsId", "fecha", "userId", "quizId", "gameId", "gameName", "asignatura", "grado", "nivel", "preguntaId", "respuestaSeleccionada", "respuestaCorrecta", "esCorrecta", "tiempoRespuesta", "tiempoPromedioHistorico", "tiempoRelativo", "cambiosRespuesta", "indiceConfianza", "indiceAdivinacion", "indiceDominio"]);
@@ -1250,17 +1247,14 @@ function saveQuestion(payload) {
 }
 
 /**
- * Recupera la configuración académica específica por profesor (v7.8.5)
+ * Recupera la configuración académica y la re-agrega para el frontend (v7.8.6)
  */
 function getAcademicConfig(payload) {
   const { profesorId } = payload || {};
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
   const sheet = getOrCreateSheet(ss, "ConfiguracionAcademica");
   const data = sheet.getDataRange().getValues();
-  const headers = data[0];
 
-  // Caso: Alumno o carga inicial sin profesorId -> Retornar agregado para UI local
-  // o retornar la configuración por defecto si la hoja está vacía.
   if (data.length < 2) {
     return {
       status: "success",
@@ -1268,43 +1262,39 @@ function getAcademicConfig(payload) {
     };
   }
 
-  let rowValues = null;
+  const rows = data.slice(1);
+  let relevantRows = [];
+
   if (profesorId) {
-    const rowIndex = data.findIndex(r => r[0] === profesorId);
-    if (rowIndex !== -1) rowValues = data[rowIndex];
+    relevantRows = rows.filter(r => String(r[1]).trim() === String(profesorId).trim());
   } else {
-    // Fallback: Si no hay profesorId (estudiante), retornar el primer registro activo
-    // En una evolución futura, los estudiantes cargan un consolidado.
-    rowValues = data[1];
+    // Para estudiantes: devolver todas las configuraciones activas (consolidado)
+    relevantRows = rows;
   }
 
-  if (!rowValues) {
+  if (relevantRows.length === 0) {
     return {
       status: "success",
       data: { profesorId: profesorId, ParcialActual: "I parcial", GradoActual: [], SeccionActual: [], AsignaturaActual: [], TemaActual: ["General"] }
     };
   }
 
-  const config = {};
-  headers.forEach((h, i) => {
-    let val = rowValues[i];
-    if (val === "" || val === undefined) {
-      config[h] = (h === "TemaActual") ? ["General"] : [];
-      return;
-    }
-    if (typeof val === 'string' && (val.startsWith('[') || val.startsWith('{'))) {
-      try { config[h] = JSON.parse(val); } catch (e) { config[h] = val; }
-    } else {
-      config[h] = val;
-    }
-  });
+  // Re-agregar datos para compatibilidad con GLOBAL_SCOPE (arrays de valores únicos)
+  const config = {
+    ParcialActual: relevantRows[0][2], // Tomar el parcial del primer registro
+    GradoActual: [...new Set(relevantRows.map(r => r[3]))].filter(Boolean),
+    SeccionActual: [...new Set(relevantRows.map(r => r[4]))].filter(Boolean),
+    AsignaturaActual: [...new Set(relevantRows.map(r => r[5]))].filter(Boolean),
+    TemaActual: [...new Set(relevantRows.map(r => r[6]))].filter(Boolean)
+  };
+
+  if (config.TemaActual.length === 0) config.TemaActual = ["General"];
 
   return { status: "success", data: config };
 }
 
 /**
- * Actualiza la configuración académica específica por profesor (v7.8.5)
- * Implementa validación de integridad para evitar duplicidad de asignaturas entre docentes.
+ * Actualiza la configuración académica con registros independientes (Cartesian Product) (v7.8.6)
  */
 function updateAcademicConfig(payload) {
   const { fullScope } = payload || {};
@@ -1317,60 +1307,57 @@ function updateAcademicConfig(payload) {
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
   const sheet = getOrCreateSheet(ss, "ConfiguracionAcademica");
   const data = sheet.getDataRange().getValues();
-  const headers = data[0];
 
-  // REQ: Asegurar estructura de cabeceras (profesorId debe ser la primera columna)
-  if (headers[0] !== "profesorId") {
-    sheet.getRange(1, 1, 1, 6).setValues([["profesorId", "ParcialActual", "GradoActual", "SeccionActual", "AsignaturaActual", "TemaActual"]]);
-  }
-
-  // 1. VALIDACIÓN DE INTEGRIDAD (No dos profesores con la misma asignatura en el mismo contexto)
+  // 1. VALIDACIÓN DE INTEGRIDAD (Unicidad de Asignatura entre profesores)
   const partial = fullScope.ParcialActual;
   const grades = Array.isArray(fullScope.GradoActual) ? fullScope.GradoActual : [fullScope.GradoActual];
   const sections = Array.isArray(fullScope.SeccionActual) ? fullScope.SeccionActual : [fullScope.SeccionActual];
   const subjects = Array.isArray(fullScope.AsignaturaActual) ? fullScope.AsignaturaActual : [fullScope.AsignaturaActual];
+  const themes = Array.isArray(fullScope.TemaActual) ? fullScope.TemaActual : [fullScope.TemaActual];
 
+  // Comprobar conflictos con otros profesores
   for (let i = 1; i < data.length; i++) {
-    const row = data[i];
-    const otherProfId = String(row[0]).trim();
-    if (otherProfId === profesorId) continue;
+    const r = data[i];
+    if (String(r[1]).trim() !== profesorId && r[2] === partial && grades.includes(r[3]) && sections.includes(r[4]) && subjects.includes(r[5])) {
+      throw new Error(`Conflicto: La asignatura '${r[5]}' ya está asignada a otro docente para ${r[3]} ${r[4]} en el ${partial}.`);
+    }
+  }
 
-    const otherPartial = row[1];
-    if (otherPartial !== partial) continue;
+  // 2. ELIMINACIÓN DE REGISTROS PREVIOS DEL PROFESOR
+  for (let i = data.length - 1; i >= 1; i--) {
+    if (String(data[i][1]).trim() === profesorId) {
+      sheet.deleteRow(i + 1);
+    }
+  }
 
-    const otherGrades = JSON.parse(row[2] || "[]");
-    const otherSections = JSON.parse(row[3] || "[]");
-    const otherSubjects = JSON.parse(row[4] || "[]");
-
-    // Verificar intersección de Grado-Sección
-    const hasCommonGrade = grades.some(g => otherGrades.includes(g));
-    const hasCommonSection = sections.some(s => otherSections.includes(s));
-
-    if (hasCommonGrade && hasCommonSection) {
-      // Verificar conflicto de Asignatura
-      const conflictingSubject = subjects.find(s => otherSubjects.includes(s));
-      if (conflictingSubject) {
-        throw new Error(`Conflicto de integridad: La asignatura '${conflictingSubject}' ya está asignada a otro profesor en este parcial/grado/sección.`);
+  // 3. GENERACIÓN DE REGISTROS NORMALIZADOS (Producto Cartesiano)
+  let lastIdNum = 0;
+  // Recalcular el ID más alto después de la limpieza
+  const remainingData = sheet.getDataRange().getValues();
+  if (remainingData.length > 1) {
+    for (let i = 1; i < remainingData.length; i++) {
+      const idStr = String(remainingData[i][0]);
+      if (idStr.startsWith("conf-")) {
+        const num = parseInt(idStr.replace("conf-", ""));
+        if (!isNaN(num) && num > lastIdNum) lastIdNum = num;
       }
     }
   }
 
-  // 2. ACTUALIZACIÓN DE FILA (UPSERT)
-  const rowIndex = data.findIndex(r => String(r[0]).trim() === profesorId);
-  const newHeaders = ["profesorId", "ParcialActual", "GradoActual", "SeccionActual", "AsignaturaActual", "TemaActual"];
-  const newRow = newHeaders.map(h => {
-    const val = fullScope[h];
-    return Array.isArray(val) ? JSON.stringify(val) : (val || "");
+  grades.forEach(grado => {
+    sections.forEach(seccion => {
+      subjects.forEach(asig => {
+        themes.forEach(tema => {
+          lastIdNum++;
+          const newId = "conf-" + lastIdNum.toString().padStart(4, '0');
+          sheet.appendRow([newId, profesorId, partial, grado, seccion, asig, tema]);
+        });
+      });
+    });
   });
 
-  if (rowIndex !== -1) {
-    sheet.getRange(rowIndex + 1, 1, 1, newRow.length).setValues([newRow]);
-  } else {
-    sheet.appendRow(newRow);
-  }
-
   SpreadsheetApp.flush();
-  logDebug(`Configuración guardada para profesor: ${profesorId}`);
+  logDebug(`Configuración granular guardada para profesor: ${profesorId}`);
 
   // Tarea 4: Guardar Historial Académico
   try {
@@ -1381,7 +1368,7 @@ function updateAcademicConfig(payload) {
 
   return {
     status: "success",
-    message: "Configuración personalizada guardada exitosamente.",
+    message: "Configuración unificada y granular guardada.",
     data: fullScope,
     updated_at: new Date().getTime()
   };
@@ -1532,35 +1519,26 @@ function getAcademicHistory(payload) {
   return { status: "success", data: Object.values(historyMap) };
 }
 
+/**
+ * Obsolescencia Programada: getAsignaturasActivas ahora consume de ConfiguracionAcademica (v7.8.6)
+ */
 function getAsignaturasActivas(payload) {
   const { parcial } = payload;
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
-  const sheet = getOrCreateSheet(ss, "AsignaturasPorParcial");
+  const sheet = ss.getSheetByName("ConfiguracionAcademica");
+  if (!sheet) return { status: "success", data: [] };
   const data = sheet.getDataRange().getValues().slice(1);
 
-  const asignaturas = data.filter(r => r[0] === parcial).map(r => r[1]);
+  const asignaturas = [...new Set(data.filter(r => r[2] === parcial).map(r => r[5]))];
   return { status: "success", data: asignaturas };
 }
 
+/**
+ * Obsolescencia Programada: updateAsignaturasActivas es ahora un NO-OP (v7.8.6)
+ * La configuración se gestiona exclusivamente vía updateAcademicConfig.
+ */
 function updateAsignaturasActivas(payload) {
-  const { parcial, asignaturas } = payload;
-  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
-  const sheet = getOrCreateSheet(ss, "AsignaturasPorParcial");
-
-  // Limpiar actuales para el parcial
-  const data = sheet.getDataRange().getValues();
-  for (let i = data.length - 1; i >= 1; i--) {
-    if (data[i][0] === parcial) {
-      sheet.deleteRow(i + 1);
-    }
-  }
-
-  // Insertar nuevas
-  asignaturas.forEach(asig => {
-    sheet.appendRow([parcial, asig]);
-  });
-
-  return { status: "success" };
+  return { status: "success", message: "Depreciado: Use updateAcademicConfig para sincronizar alcances académicos." };
 }
 
 /**

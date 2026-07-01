@@ -705,3 +705,34 @@ Estado: Verificado. Los payloads de configuración ahora incluyen el ID del prof
 
 Archivo: js/student.js
 Estado: Verificado. El listener de 'academic-scope-updated' ya no causa errores al invalidar caché.
+
+AUDITORÍA TÉCNICA - UNIFICACIÓN DE CONFIGURACIÓN ACADÉMICA - Wed Jul  1 19:47:12 UTC 2026
+
+Archivo: backend/user-service/Code.gs
+Sector: getOrCreateSheet (Línea 878)
+Hallazgo [Crítico]: Las hojas 'ConfiguracionAcademica' y 'AsignaturasPorParcial' mantienen información redundante y dispar. 'ConfiguracionAcademica' usa un formato multi-valor serializado (JSON en celdas) que dificulta el mantenimiento, mientras que 'AsignaturasPorParcial' es una tabla plana.
+Recomendación: Eliminar 'AsignaturasPorParcial'. Reestructurar 'ConfiguracionAcademica' para que use el formato de 'HistorialAcademico': una fila por cada combinación (ID, Parcial, Grado, Sección, Asignatura, Tema, profesorId).
+
+Sector: updateAcademicConfig
+Hallazgo [Crítico]: El guardado actual es por profesor, pero guarda arreglos serializados.
+Impacto: Dificulta consultas granulares desde otros módulos (ej. reporte de notas o dashboard de alumnos).
+Recomendación: Al guardar, la función debe 'explotar' el alcance (scope) en registros individuales en 'ConfiguracionAcademica'.
+
+Sector: getAsignaturasActivas / updateAsignaturasActivas
+Hallazgo [Medio]: Estas funciones son huérfanas o redundantes (no se encontraron llamadas desde el frontend actual), pero siguen operando sobre una hoja que será eliminada.
+Recomendación: Redirigir estas funciones a la nueva estructura de 'ConfiguracionAcademica' o eliminarlas si se confirma su obsolescencia tras consolidar la fuente de verdad.
+
+Archivo: js/teacher.js
+Sector: Función loadAcademicAdminData
+Hallazgo [Bajo]: Actualmente espera un objeto con arreglos. La nueva estructura del backend deberá retornar un consolidado (re-agrupado) para mantener compatibilidad con los selectores del frontend.
+
+AUDITORÍA FINAL DE UNIFICACIÓN - Wed Jul  1 20:03:53 UTC 2026
+
+Archivo: backend/user-service/Code.gs
+Estado: Unificado. Las configuraciones académicas ahora se almacenan de forma granular en 'ConfiguracionAcademica', eliminando la necesidad de 'AsignaturasPorParcial'. El backend gestiona el producto cartesiano para persistencia y la reagregación para el frontend.
+
+Archivo: js/teacher.js
+Estado: Verificado. Totalmente compatible con la nueva estructura re-agregada. Mantiene el flujo contextual estricto.
+
+Archivo: js/student.js
+Estado: Verificado. Consume el consolidado de configuraciones activas, manteniendo el filtrado por grado.
