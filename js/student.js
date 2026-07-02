@@ -21,6 +21,7 @@ document.addEventListener('DOMContentLoaded', function() {
     };
     var allActivitiesData = [];
     var academicHistory = []; // Tarea 4: Persistencia Histórica (v7.8.2)
+    var isFetchingActivities = false; // Flag para evitar bucles infinitos (Revisión CORS/Red)
 
     if (logoutButton) {
         logoutButton.addEventListener('click', function() {
@@ -115,7 +116,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Función para obtener Tareas y Exámenes
     window.fetchAllActivities = async function() {
-        if (!tasksList) return;
+        if (!tasksList || isFetchingActivities) return;
+        isFetchingActivities = true;
 
         // Tarea 4: Cargar historial en paralelo para optimizar (v7.8.2)
         var historyPromise = fetchAcademicHistory();
@@ -290,6 +292,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     <button onclick="location.reload()" class="mt-6 px-6 py-2 bg-blue-600 text-white rounded-xl text-[10px] font-bold uppercase tracking-widest hover:bg-blue-700 transition-all shadow-lg">Reintentar</button>
                 </div>`;
         } finally {
+            isFetchingActivities = false;
             if (window.GamesAdapter) window.GamesAdapter.showLoading(false);
         }
     }
@@ -552,7 +555,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     window.renderSubjectNavigation = function(inputActivities) {
-        var tabsContainer = document.getElementById('subject-tabs-container');
         var parcialLabel = document.getElementById('active-parcial-label');
         var historySelector = document.getElementById('parcial-history-selector');
         if (historySelector && !historySelector.dataset.listenerAdded) {
@@ -563,7 +565,7 @@ document.addEventListener('DOMContentLoaded', function() {
             historySelector.dataset.listenerAdded = "true";
         }
 
-        if (!tabsContainer || !tasksList) return;
+        if (!tasksList) return;
 
         var activities = (inputActivities && inputActivities.status === 'success' && Array.isArray(inputActivities.data)) ? inputActivities.data : (Array.isArray(inputActivities) ? inputActivities : []);
 
@@ -614,22 +616,11 @@ document.addEventListener('DOMContentLoaded', function() {
         subjects = subjects.filter(function(s) { return s && s.trim() !== ""; }).sort();
 
         if (subjects.length === 0) {
-            tabsContainer.innerHTML = '<p class="text-gray-400 text-[10px] uppercase font-bold p-2">Sin materias.</p>';
-            tasksList.innerHTML = '<p class="text-gray-500 text-center py-8">Sin actividades.</p>';
+            tasksList.innerHTML = '<div class="col-span-full p-12 text-center bg-white rounded-[2rem] border border-gray-100"><p class="text-gray-500 text-xs font-bold uppercase tracking-widest">Sin asignaturas para el parcial seleccionado.</p></div>';
             return;
         }
 
-        // Tarea 4: Resolución de Carga en la Lista de Asignaturas (Botones superiores)
-        // Aseguramos que se generen botones de navegación rápida por materia
-        tabsContainer.innerHTML = subjects.map(function(subj) {
-            return `
-            <button class="subject-tab flex-none px-4 py-2 bg-white border border-gray-100 text-slate-700 rounded-xl font-bold text-[10px] uppercase tracking-widest shadow-sm hover:border-blue-200 transition-all hover:bg-blue-50" onclick="window.expandSubject('${subj.replace(/'/g, "\\'")}')">
-                <i class="fas fa-tag mr-1.5 text-blue-400"></i> ${subj}
-            </button>
-        `; }).join('');
-
-        // REQ: Tarjetas de Asignatura (Tarea 2)
-        // En la vista inicial de Actividades, mostramos tarjetas por asignatura con solo pendientes.
+        // REQ: Tarjetas Expandibles de Asignatura (v7.8.6)
         tasksList.innerHTML = subjects.map(function(subj) {
             var subjActivities = currentActivities.filter(function(a) { return a.asignatura === subj; });
             // Solo actividades no resueltas para el estado inicial
@@ -1529,6 +1520,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // REQ: Reactive Scope Synchronization (v7.7.1)
     document.addEventListener('academic-scope-updated', function() {
+        if (isFetchingActivities) return;
         console.log("[Student] Academic scope updated, refreshing activities...");
         // Forzar limpieza de cache local para asegurar datos frescos tras cambio de alcance
         if (window.PersistenceManager) {
