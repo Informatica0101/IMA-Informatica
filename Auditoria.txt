@@ -774,3 +774,47 @@ Archivo: student-dashboard.html
 Sector: UI (Línea 159)
 Hallazgo [Bajo]: Texto "Vista Unificada de Asignaturas" presente.
 Recomendación: Reemplazar por la nueva instrucción solicitada.
+
+INFORME DE AUDITORÍA POST-COMMIT - AFINAMIENTO CONFIGURACIÓN v7.8.7 - Thu Jul  2 12:24:29 UTC 2026
+
+FASE 1: MANEJO DE PARCIAL Y UNIDAD
+- Estado: IMPLEMENTADO CORRECTAMENTE.
+- Resultado: El backend (updateAcademicConfig) utiliza 'fullScope.UnidadActual' de forma independiente a 'fullScope.ParcialActual'.
+- Evidencia: Code.gs líneas 1326-1328. Frontend (teacher.js) envía ambos campos.
+
+FASE 2: DUPLICIDAD EN CONFIGURACIONACADEMICA
+- Estado: IMPLEMENTADO CORRECTAMENTE.
+- Resultado: Lógica de Upsert contextual implementada. El sistema busca coincidencias en Grado, Sección, Asignatura y Tema antes de decidir si actualiza fila o inserta.
+- Evidencia: Code.gs líneas 1361-1411 (loop de newScopeSet y búsqueda de rowIndex).
+
+FASE 3: MANEJO DE FECHA DEL PARCIAL
+- Estado: IMPLEMENTADO CORRECTAMENTE.
+- Resultado: Al configurar un nuevo parcial, las filas del anterior se cierran con un rango (mes_inicio - mes_actual) y el nuevo inicia con mes_actual.
+- Evidencia: Code.gs líneas 1344-1358.
+
+FASE 4: PERSISTENCIA DE LA CONFIGURACIÓN
+- Estado: IMPLEMENTADO CORRECTAMENTE.
+- Resultado: getAcademicConfig ahora incluye UnidadActual y el frontend la aplica al GLOBAL_SCOPE en cada sincronización.
+- Evidencia: Code.gs línea 1286 y config.js línea 96.
+
+FASE 5: DASHBOARD DEL PROFESOR (NAVEGACIÓN)
+- Estado: IMPLEMENTADO CORRECTAMENTE.
+- Resultado: renderGrados, renderSecciones y renderAsignaturas utilizan exclusivamente GLOBAL_SCOPE. Fallbacks eliminados.
+- Evidencia: teacher.js líneas 1261, 1301, 1317.
+
+FASE 6: DASHBOARD DEL ESTUDIANTE (FILTRADO)
+- Estado: IMPLEMENTADO CORRECTAMENTE.
+- Resultado: El filtrado en renderSubjectNavigation ahora es estricto contra el parcial autorizado.
+- Evidencia: student.js líneas 604-610.
+
+FASE 7: INTERFAZ ESTUDIANTE (TEXTOS)
+- Estado: IMPLEMENTADO CORRECTAMENTE.
+- Resultado: Instrucción "Selecciona una asignatura..." visible en el header de actividades.
+- Evidencia: student-dashboard.html línea 159.
+
+FASE 8: TARJETA DEL ESTUDIANTE
+- Estado: IMPLEMENTADO CORRECTAMENTE.
+- Resultado: Tarjeta con Email, Teléfono e icono de WhatsApp funcional (https://wa.me/504...).
+- Evidencia: student.js líneas 58-97.
+
+CONCLUSIÓN FINAL: Todos los requerimientos del comité han sido validados técnicamente y se encuentran operativos según las normas de arquitectura del proyecto.

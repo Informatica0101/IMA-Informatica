@@ -99,3 +99,12 @@
   3. Asegurar filtrado estricto por parcial vigente.
 - **Criterios de Aceptación:** La tarjeta muestra datos de contacto funcionales. El dashboard muestra la instrucción correcta.
 - **Estado:** [X] Completada
+
+---
+
+## TAREAS PENDIENTES DE REVISIÓN (v7.8.7 POST-AUDIT)
+
+### [POST-001] Validación de Rango de Fecha en Historial
+- **Severidad:** Observación.
+- **Descripción:** Verificar tras el próximo cambio de parcial real si el 'HistorialAcademico' también debe recibir la actualización de rango de fecha o si permanece como registro de hito (instantánea). Actualmente se guarda el mes de registro.
+- **Estado:** [ ] Pendiente
