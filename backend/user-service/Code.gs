@@ -886,7 +886,7 @@ function getOrCreateSheet(ss, name) {
       sheet.appendRow(["PreguntaID", "Asignatura", "Nivel", "Tema", "TipoActividad", "Pregunta", "OpcionA", "OpcionB", "OpcionC", "OpcionD", "RespuestaCorrecta", "Explicacion", "Imagen", "VecesRespondida", "VecesCorrecta", "PorcentajeAcierto", "UltimaActualizacion", "Activa", "DificultadCalculada"]);
     }
     if (name === "ConfiguracionAcademica") {
-      sheet.appendRow(["ID", "profesorId", "Parcial", "Grado", "Sección", "Asignatura", "Tema"]);
+      sheet.appendRow(["ID", "Fecha", "Parcial", "Grado", "Sección", "Asignatura", "Unidad", "Tema", "profesorId"]);
     }
     if (name === "QuizProAnalytics") {
       sheet.appendRow(["analyticsId", "fecha", "userId", "quizId", "gameId", "gameName", "asignatura", "grado", "nivel", "preguntaId", "respuestaSeleccionada", "respuestaCorrecta", "esCorrecta", "tiempoRespuesta", "tiempoPromedioHistorico", "tiempoRelativo", "cambiosRespuesta", "indiceConfianza", "indiceAdivinacion", "indiceDominio"]);
@@ -1265,10 +1265,10 @@ function getAcademicConfig(payload) {
   const rows = data.slice(1);
   let relevantRows = [];
 
+  // Mapeo tabular normalizado (v7.8.6): ID(0), Fecha(1), Parcial(2), Grado(3), Sección(4), Asignatura(5), Unidad(6), Tema(7), profesorId(8)
   if (profesorId) {
-    relevantRows = rows.filter(r => String(r[1]).trim() === String(profesorId).trim());
+    relevantRows = rows.filter(r => String(r[8]).trim() === String(profesorId).trim());
   } else {
-    // Para estudiantes: devolver todas las configuraciones activas (consolidado)
     relevantRows = rows;
   }
 
@@ -1279,13 +1279,12 @@ function getAcademicConfig(payload) {
     };
   }
 
-  // Re-agregar datos para compatibilidad con GLOBAL_SCOPE (arrays de valores únicos)
   const config = {
-    ParcialActual: relevantRows[0][2], // Tomar el parcial del primer registro
+    ParcialActual: relevantRows[0][2],
     GradoActual: [...new Set(relevantRows.map(r => r[3]))].filter(Boolean),
     SeccionActual: [...new Set(relevantRows.map(r => r[4]))].filter(Boolean),
     AsignaturaActual: [...new Set(relevantRows.map(r => r[5]))].filter(Boolean),
-    TemaActual: [...new Set(relevantRows.map(r => r[6]))].filter(Boolean)
+    TemaActual: [...new Set(relevantRows.map(r => r[7]))].filter(Boolean)
   };
 
   if (config.TemaActual.length === 0) config.TemaActual = ["General"];
@@ -1295,6 +1294,7 @@ function getAcademicConfig(payload) {
 
 /**
  * Actualiza la configuración académica con registros independientes (Cartesian Product) (v7.8.6)
+ * Estructura Normalizada: ID | Fecha | Parcial | Grado | Sección | Asignatura | Unidad | Tema | profesorId
  */
 function updateAcademicConfig(payload) {
   const { fullScope } = payload || {};
@@ -1308,31 +1308,43 @@ function updateAcademicConfig(payload) {
   const sheet = getOrCreateSheet(ss, "ConfiguracionAcademica");
   const data = sheet.getDataRange().getValues();
 
-  // 1. VALIDACIÓN DE INTEGRIDAD (Unicidad de Asignatura entre profesores)
   const partial = fullScope.ParcialActual;
   const grades = Array.isArray(fullScope.GradoActual) ? fullScope.GradoActual : [fullScope.GradoActual];
   const sections = Array.isArray(fullScope.SeccionActual) ? fullScope.SeccionActual : [fullScope.SeccionActual];
   const subjects = Array.isArray(fullScope.AsignaturaActual) ? fullScope.AsignaturaActual : [fullScope.AsignaturaActual];
   const themes = Array.isArray(fullScope.TemaActual) ? fullScope.TemaActual : [fullScope.TemaActual];
 
-  // Comprobar conflictos con otros profesores
+  // Comprobar conflictos con otros profesores (Asignatura 5, profesorId 8)
   for (let i = 1; i < data.length; i++) {
     const r = data[i];
-    if (String(r[1]).trim() !== profesorId && r[2] === partial && grades.includes(r[3]) && sections.includes(r[4]) && subjects.includes(r[5])) {
+    if (String(r[8]).trim() !== profesorId && r[2] === partial && grades.includes(r[3]) && sections.includes(r[4]) && subjects.includes(r[5])) {
       throw new Error(`Conflicto: La asignatura '${r[5]}' ya está asignada a otro docente para ${r[3]} ${r[4]} en el ${partial}.`);
     }
   }
 
-  // 2. ELIMINACIÓN DE REGISTROS PREVIOS DEL PROFESOR
+  // Eliminar registros previos (profesorId en columna 8)
   for (let i = data.length - 1; i >= 1; i--) {
-    if (String(data[i][1]).trim() === profesorId) {
+    if (String(data[i][8]).trim() === profesorId) {
       sheet.deleteRow(i + 1);
     }
   }
 
-  // 3. GENERACIÓN DE REGISTROS NORMALIZADOS (Producto Cartesiano)
+  // Normalización de Tiempos
+  const months = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
+  const now = new Date();
+  const dateRange = months[Math.max(0, now.getMonth() - 1)] + " - " + months[now.getMonth()];
+
+  const getRomanStandard = (str, type) => {
+    const s = str.toLowerCase();
+    let prefix = "I";
+    if (s.indexOf("segundo") !== -1 || s.indexOf("ii") !== -1) prefix = "II";
+    else if (s.indexOf("tercer") !== -1 || s.indexOf("iii") !== -1) prefix = "III";
+    else if (s.indexOf("cuarto") !== -1 || s.indexOf("iv") !== -1) prefix = "IV";
+    return prefix + " " + type;
+  };
+  const unidadNorm = getRomanStandard(partial, "unidad");
+
   let lastIdNum = 0;
-  // Recalcular el ID más alto después de la limpieza
   const remainingData = sheet.getDataRange().getValues();
   if (remainingData.length > 1) {
     for (let i = 1; i < remainingData.length; i++) {
@@ -1350,28 +1362,17 @@ function updateAcademicConfig(payload) {
         themes.forEach(tema => {
           lastIdNum++;
           const newId = "conf-" + lastIdNum.toString().padStart(4, '0');
-          sheet.appendRow([newId, profesorId, partial, grado, seccion, asig, tema]);
+          // ID | Fecha | Parcial | Grado | Sección | Asignatura | Unidad | Tema | profesorId
+          sheet.appendRow([newId, dateRange, partial, grado, seccion, asig, unidadNorm, tema, profesorId]);
         });
       });
     });
   });
 
   SpreadsheetApp.flush();
-  logDebug(`Configuración granular guardada para profesor: ${profesorId}`);
+  try { saveToAcademicHistory(fullScope); } catch (e) { logDebug("Error historial", e); }
 
-  // Tarea 4: Guardar Historial Académico
-  try {
-    saveToAcademicHistory(fullScope);
-  } catch (e) {
-    logDebug("Error al guardar historial académico", e);
-  }
-
-  return {
-    status: "success",
-    message: "Configuración unificada y granular guardada.",
-    data: fullScope,
-    updated_at: new Date().getTime()
-  };
+  return { status: "success", message: "Configuración unificada y granular guardada.", data: fullScope, updated_at: now.getTime() };
 }
 
 /**

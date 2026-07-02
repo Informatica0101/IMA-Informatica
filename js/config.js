@@ -10,7 +10,7 @@
 // ----------------------------------------------------------
 
 window.SERVICE_URLS = {
-  // Pega aquí la URL del despliegue del microservicio de usuarios. (v7.7.6)
+  // Pega aquí la URL del despliegue del microservicio de usuarios. (v7.8.6)
   USER: 'https://script.google.com/macros/s/AKfycbzUC1NMTmRbbfJIoJ33Uc63vG5g48J8Y87vVHw9DjRu3rZ50Y3RcBsnHBA64OD2TeXK/exec',
 
   // Pega aquí la URL del despliegie del microservicio de tareas.
@@ -58,8 +58,8 @@ window.SUBJECT_GRADE_MAP = {
     "programacion": "undécimo",
     "ofimatica i": "undécimo",
     "informatica aplicada i": "undécimo",
-    "analisis y diseño": "undécimo",
-    "diseño web": "duodécimo",
+    "analisis y diseno": "undécimo",
+    "diseno web": "duodécimo",
     "laboratorio i": "undécimo",
     "laboratorio ii": "duodécimo",
     "mantenimiento y reparacion i": "undécimo",
