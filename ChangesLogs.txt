@@ -467,3 +467,43 @@ Módulo: Metodología y Calidad
 Módulo: Dashboard del Estudiante
 - js/student.js:
     - Reforzada la sincronización del selector de historial tras la carga inicial para prevenir que el valor por defecto ('I parcial') prevalezca sobre la configuración real.
+
+REGISTRO DE CAMBIOS - PERSISTENCIA E IDEMPOTENCIA v7.9.0 - Fri Jul 03 2026
+
+Módulo: Persistencia Backend
+- backend/user-service/Code.gs:
+    - Refactorizada 'updateAcademicConfig' para implementar lógica de Upsert atómica, eliminando la duplicidad de registros en la hoja ConfiguracionAcademica.
+    - Actualizada 'saveToAcademicHistory' con validación de unicidad de 5 factores (Parcial, Grado, Sección, Asignatura, Profesor) para prevenir logs redundantes.
+    - Endurecida 'getAcademicConfig' para filtrar estrictamente por el contexto del estudiante, eliminando la visibilidad de configuraciones de otros docentes.
+
+Módulo: Configuración y Sincronización
+- js/config.js:
+    - Expandida 'syncAcademicScope' para inyectar automáticamente el Grado y Sección del usuario en la petición de configuración vigente.
+    - Implementada sincronización forzada del selector '#parcial-history-selector' con el estado real del servidor.
+    - Corregida 'normalizePartial' para resolver ambigüedades en la detección de parciales mediante chequeo descendente.
+
+Módulo: Dashboards y Navegación
+- js/teacher.js:
+    - Reforzada la integridad de 'renderAsignaturas', 'renderAlumnos' y 'renderDetallesAlumno' mediante filtrado estricto por el contexto completo del navStack.
+    - Optimizada la navegación para omitir el nivel de 'Secciones' cuando solo existe una unidad funcional configurada.
+- js/student.js:
+    - Refactorizada 'renderSubjectNavigation' para garantizar la visibilidad permanente de las materias autorizadas, mejorando el feedback de 'Carga completada'.
+
+REGISTRO DE CAMBIOS - OPTIMIZACIÓN DE NAVEGACIÓN Y PERSISTENCIA v7.9.1 - Fri Jul 03 2026
+
+Módulo: Backend (Google Apps Script)
+- Code.gs:
+    - Implementado LockService (30s) en updateAcademicConfig para prevenir colisiones de escritura.
+    - Refactorizada lógica de persistencia: ahora utiliza un mapa de reconciliación en memoria para realizar una única escritura atómica tras identificar registros existentes.
+    - getAcademicConfig ahora retorna un array 'GranularConfig' que facilita la toma de decisiones de navegación en el frontend.
+
+Módulo: Frontend - Dashboard Profesor
+- js/teacher.js:
+    - Implementada lógica de "Skip Secciones": el sistema detecta automáticamente si un grado tiene una sola sección configurada y avanza directamente a la lista de asignaturas.
+    - renderAsignaturas ahora utiliza GranularConfig para asegurar que solo se muestren las materias que corresponden exactamente a la sección seleccionada.
+    - Reforzado el filtrado en renderAlumnos para basarse estrictamente en la asignatura activa del navStack.
+
+Módulo: Frontend - Dashboard Estudiante
+- js/student.js:
+    - renderSubjectNavigation ahora es inclusivo: muestra todas las asignaturas autorizadas para el parcial, permitiendo al estudiante ver su historial de completación.
+    - Refinada la lógica de visualización de 'Pendientes' vs 'Al día' mediante indicadores visuales dinámicos en las tarjetas de materia.

@@ -658,23 +658,24 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
 
-        // REQ: Tarjetas Expandibles de Asignatura (v7.8.6)
+        // REQ: Tarjetas Expandibles de Asignatura (v7.9.0)
+        // Se muestran todas las asignaturas autorizadas para el parcial seleccionado, incluso si no tienen pendientes.
         tasksList.innerHTML = subjects.map(function(subj) {
             var subjActivities = currentActivities.filter(function(a) { return a.asignatura === subj; });
-            // Solo actividades no resueltas para el estado inicial
+
+            // Actividades no resueltas para el snippet informativo
             var pendingActivities = subjActivities.filter(function(a) {
-                return !a.entrega || (a.entrega.estado !== 'Completada' && a.entrega.estado !== 'Revisada' && a.entrega.estado !== 'Finalizado');
+                var s = a.entrega ? a.entrega.estado : null;
+                return !a.entrega || (s !== 'Completada' && s !== 'Revisada' && s !== 'Finalizado');
             });
 
-            // Orden jerárquico: Más reciente primero
+            // Orden jerárquico para el snippet (vencimiento próximo primero)
             pendingActivities.sort(function(a, b) {
-                return new Date(b.fechaLimite || 0) - new Date(a.fechaLimite || 0);
+                return new Date(a.fechaLimite || 0) - new Date(b.fechaLimite || 0);
             });
 
             var mostRecent = pendingActivities[0];
             var count = pendingActivities.length;
-
-            if (count === 0) return ''; // No mostrar si no hay pendientes (Tarea 2)
 
             return `
                 <div class="card-ima subject-card cursor-pointer group animate-fade-in-up" onclick="window.expandSubject('${subj.replace(/'/g, "\\'")}')">
@@ -682,16 +683,22 @@ document.addEventListener('DOMContentLoaded', function() {
                         <div class="w-12 h-12 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center text-xl group-hover:scale-110 transition-transform">
                             <i class="fas fa-book"></i>
                         </div>
-                        <span class="px-3 py-1 bg-blue-100 text-blue-700 text-[10px] font-black uppercase rounded-full shadow-sm">${count} Pendientes</span>
+                        <span class="px-3 py-1 ${count > 0 ? 'bg-blue-100 text-blue-700' : 'bg-emerald-100 text-emerald-700'} text-[10px] font-black uppercase rounded-full shadow-sm">
+                            ${count > 0 ? count + ' Pendientes' : 'Al día'}
+                        </span>
                     </div>
                     <h3 class="text-lg font-bold text-gray-900 mb-2 uppercase tracking-tighter">${subj}</h3>
                     <div class="p-4 bg-gray-50 rounded-2xl border border-gray-100 group-hover:border-blue-200 transition-colors">
-                        <p class="text-[10px] font-bold text-blue-500 uppercase tracking-widest mb-1">Actividad Reciente</p>
-                        <p class="text-sm font-semibold text-gray-800 truncate">${mostRecent ? mostRecent.titulo : 'Sin tareas pendientes'}</p>
-                        <p class="text-[10px] text-gray-400 font-medium uppercase mt-1">${mostRecent ? 'Vence: ' + formatDate(mostRecent.fechaLimite) : ''}</p>
+                        <p class="text-[10px] font-bold text-blue-500 uppercase tracking-widest mb-1">Estado de Actividad</p>
+                        <p class="text-sm font-semibold ${count > 0 ? 'text-gray-800' : 'text-emerald-600'} truncate">
+                            ${count > 0 ? mostRecent.titulo : '¡Sin tareas pendientes!'}
+                        </p>
+                        <p class="text-[10px] text-gray-400 font-medium uppercase mt-1">
+                            ${count > 0 ? 'Vence: ' + formatDate(mostRecent.fechaLimite) : 'Carga académica completada'}
+                        </p>
                     </div>
                     <div class="mt-4 flex justify-end">
-                        <span class="text-[10px] font-bold text-blue-600 uppercase tracking-widest flex items-center gap-2 group-hover:gap-3 transition-all">Ver todas <i class="fas fa-arrow-right"></i></span>
+                        <span class="text-[10px] font-bold text-blue-600 uppercase tracking-widest flex items-center gap-2 group-hover:gap-3 transition-all">Explorar actividades <i class="fas fa-arrow-right"></i></span>
                     </div>
                 </div>
             `;

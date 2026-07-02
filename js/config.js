@@ -110,11 +110,30 @@ window.syncAcademicScope = function(callback) {
 
         if (hasChanged) {
             console.log("[IMA-SCOPE] Alcance académico actualizado:", window.GLOBAL_SCOPE);
+
+            // REQ: Sincronizar el selector de historial inmediatamente con el parcial vigente (v7.9.0)
+            var historySelector = document.getElementById('parcial-history-selector');
+            if (historySelector) {
+                historySelector.value = window.normalizePartial(window.GLOBAL_SCOPE.ParcialActual);
+            }
+
             document.dispatchEvent(new CustomEvent('academic-scope-updated', { detail: window.GLOBAL_SCOPE }));
         }
 
         if (typeof callback === 'function') callback(window.GLOBAL_SCOPE);
     };
+
+    // REQ: Enviar contexto de usuario para filtrado estricto (v7.9.0)
+    var userRaw = localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser');
+    var currentUser = userRaw ? JSON.parse(userRaw) : null;
+    var payload = {};
+    if (currentUser) {
+        if (currentUser.rol === 'Profesor') payload.profesorId = currentUser.userId;
+        else {
+            payload.grado = currentUser.grado;
+            payload.seccion = currentUser.seccion;
+        }
+    }
 
     if (typeof fetchApi !== 'function') {
         console.warn("[IMA-SCOPE] fetchApi no disponible para sincronización inicial.");
@@ -123,9 +142,9 @@ window.syncAcademicScope = function(callback) {
 
     // Retornamos una promesa para que el llamador pueda esperar a la sincronización REAL (desde el servidor)
     return new Promise(function(resolve) {
-        fetchApi('USER', 'getAcademicConfig', {}, 0, {
+        fetchApi('USER', 'getAcademicConfig', payload, 0, {
             store: 'academic_stats',
-            key: 'config',
+            key: 'config' + (currentUser ? '_' + currentUser.userId : ''),
             onUpdate: function(data) {
                 applyConfig(data);
                 // No resolvemos aquí porque onUpdate puede llamarse varias veces (caché y luego servidor)
@@ -243,16 +262,19 @@ window.sanitizarHTMLTecnico = function(html) {
 /**
  * Normaliza nombres de parciales para permitir comparaciones flexibles
  */
+/**
+ * Normaliza nombres de parciales para permitir comparaciones flexibles (v7.9.0)
+ * REQ: Los cheques deben realizarse en orden descendente para evitar que los números romanos
+ * más cortos (I, II) coincidan erróneamente con los más largos (III).
+ */
 function normalizePartial(p) {
     if (!p) return "";
     var n = p.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
 
-    // Mapeo dinámico para soportar "Unidad" o "Parcial" (Tarea 4 - v7.8.2)
-    // Tarea Estructural: Normalización a 'I parcial' (minúscula) según requerimiento v7.8.3
-    if (n.indexOf("primer") !== -1 || n.indexOf("unidad i") !== -1 || n.indexOf("i parcial") !== -1) return "I parcial";
-    if (n.indexOf("segundo") !== -1 || n.indexOf("unidad ii") !== -1 || n.indexOf("ii parcial") !== -1) return "II parcial";
-    if (n.indexOf("tercer") !== -1 || n.indexOf("unidad iii") !== -1 || n.indexOf("iii parcial") !== -1) return "III parcial";
-    if (n.indexOf("cuarto") !== -1 || n.indexOf("unidad iv") !== -1 || n.indexOf("iv parcial") !== -1) return "IV parcial";
+    if (n.indexOf("cuarto") !== -1 || n.indexOf("iv parcial") !== -1 || n.indexOf("unidad iv") !== -1 || n.indexOf("iv") === 0) return "IV parcial";
+    if (n.indexOf("tercer") !== -1 || n.indexOf("iii parcial") !== -1 || n.indexOf("unidad iii") !== -1 || n.indexOf("iii") === 0) return "III parcial";
+    if (n.indexOf("segundo") !== -1 || n.indexOf("ii parcial") !== -1 || n.indexOf("unidad ii") !== -1 || n.indexOf("ii") === 0) return "II parcial";
+    if (n.indexOf("primer") !== -1 || n.indexOf("i parcial") !== -1 || n.indexOf("unidad i") !== -1 || n.indexOf("i") === 0) return "I parcial";
 
     return p;
 }

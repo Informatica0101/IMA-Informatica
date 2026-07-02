@@ -876,3 +876,53 @@ Solución: Reforzada la sincronización en 'fetchAllActivities' tras recibir dat
 VERIFICACIÓN DE PERSISTENCIA (F5 TEST):
 - Se confirmó que al recargar la página, tanto el Dashboard del Profesor como el del Estudiante recuperan correctamente el Parcial y la Unidad vigentes.
 - Se verificó en 'ConfiguracionAcademica' que solo existe una configuración activa por docente.
+
+AUDITORÍA TÉCNICA - PERSISTENCIA E IDEMPOTENCIA v7.9.0 - Fri Jul 03 2026
+
+Archivo: backend/user-service/Code.gs
+Sector: updateAcademicConfig
+Hallazgo [Crítico]: Registro doble en ConfiguracionAcademica debido a lógica de limpieza no atómica y falta de bloqueo ante concurrencia.
+Impacto: Corrupción de la configuración vigente y degradación del rendimiento de consulta.
+Solución: Implementada lógica de Upsert con LockService para garantizar una única escritura exitosa por contexto docente.
+
+Sector: getAcademicConfig
+Hallazgo [Alto]: Fuga de datos potencial entre profesores en la vista de estudiante por falta de filtrado contextual.
+Impacto: Estudiantes visualizan alcances académicos (Asignaturas/Temas) ajenos a su grado o sección configurada.
+Solución: Incorporado filtrado obligatorio por Grado y Sección en la recuperación de la configuración consolidada.
+
+Archivo: js/student.js
+Sector: renderSubjectNavigation
+Hallazgo [Medio]: El dashboard aparecía vacío para estudiantes al día, causando confusión sobre la carga académica.
+Impacto: UX deficiente que no confirmaba el estado de completación de la materia.
+Solución: Refactorizado para mostrar todas las materias autorizadas, con estados diferenciados para 'Pendiente' y 'Al día'.
+
+Archivo: js/config.js
+Sector: normalizePartial
+Hallazgo [Bajo]: Ambigüedad en coincidencia de números romanos (ej. "I" coincidía parcialmente con "III").
+Impacto: Filtrado incorrecto de actividades al seleccionar períodos históricos.
+Solución: Reordenada la lógica de verificación a secuencia descendente (IV -> I).
+
+AUDITORÍA TÉCNICA - FLUJO DE PERSISTENCIA Y NAVEGACIÓN v7.9.1 - Fri Jul 03 2026
+
+Archivo: backend/user-service/Code.gs
+Sector: updateAcademicConfig
+Hallazgo [Crítico]: Registro doble en ConfiguracionAcademica debido a una carrera de red entre la eliminación y la inserción.
+Solución: Implementado LockService y lógica de Upsert contextual. Ahora reconcilia el estado en memoria antes de una única operación de escritura atómica.
+
+Sector: getAcademicConfig
+Hallazgo [Alto]: La vista de estudiante no filtraba por docente, lo que causaba fugas de materias configuradas por otros profesores en el mismo grado/sección.
+Solución: Implementado filtro estricto por Grado y Sección que retorna un GranularConfig consolidado pero seguro.
+
+Archivo: js/teacher.js
+Sector: Navegación Jerárquica
+Hallazgo [Optimización]: Navegación redundante en secciones únicas.
+Solución: Implementado salto automático (Skip logic) basado en la longitud de secciones únicas detectadas en el GranularConfig del GLOBAL_SCOPE.
+
+Sector: renderAsignaturas / renderAlumnos
+Hallazgo [Alto]: Uso de filtros parciales que permitían ver datos de períodos anteriores.
+Solución: Reforzado el uso de window.normalizePartial(window.GLOBAL_SCOPE.ParcialActual) y filtrado estricto por asignatura del navStack.
+
+Archivo: js/student.js
+Sector: renderSubjectNavigation
+Hallazgo [Medio]: El dashboard ocultaba materias completadas, dificultando la visibilidad del progreso total.
+Solución: Ahora se muestran todas las materias autorizadas para el parcial seleccionado, con indicadores visuales de "Pendiente" o "Al día".

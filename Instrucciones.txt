@@ -353,3 +353,4 @@ TAREAS PENDIENTES DE REVISIÓN
 - Tarea 6: Auditoría de Banco de Preguntas y Reordenación de la Taxonomía Académica.
 - Tarea 7: Expansión y Saneamiento del Banco de Preguntas v5.1 (1200+ reactivos genuninos).
 - Tarea 8: Reingeniería de Sincronización Híbrida y Gamificación (v7.1) - Offline-First, Guest Sessions, Skeleton Screens, XP Engine Recalibration.
+- Tarea 10: Optimización de Persistencia Académica y Navegación Contextual v7.9.1 - Resolución de duplicidad en persistencia, lógica de salto de navegación (Skip Logic) y filtrado estricto multi-factor.
