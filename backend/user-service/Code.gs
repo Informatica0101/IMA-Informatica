@@ -886,7 +886,7 @@ function getOrCreateSheet(ss, name) {
       sheet.appendRow(["PreguntaID", "Asignatura", "Nivel", "Tema", "TipoActividad", "Pregunta", "OpcionA", "OpcionB", "OpcionC", "OpcionD", "RespuestaCorrecta", "Explicacion", "Imagen", "VecesRespondida", "VecesCorrecta", "PorcentajeAcierto", "UltimaActualizacion", "Activa", "DificultadCalculada"]);
     }
     if (name === "ConfiguracionAcademica") {
-      sheet.appendRow(["ID", "profesorId", "Parcial", "Grado", "Sección", "Asignatura", "Tema"]);
+      sheet.appendRow(["ID", "Fecha", "Parcial", "Grado", "Sección", "Asignatura", "Unidad", "Tema", "profesorId"]);
     }
     if (name === "QuizProAnalytics") {
       sheet.appendRow(["analyticsId", "fecha", "userId", "quizId", "gameId", "gameName", "asignatura", "grado", "nivel", "preguntaId", "respuestaSeleccionada", "respuestaCorrecta", "esCorrecta", "tiempoRespuesta", "tiempoPromedioHistorico", "tiempoRelativo", "cambiosRespuesta", "indiceConfianza", "indiceAdivinacion", "indiceDominio"]);
@@ -1280,12 +1280,13 @@ function getAcademicConfig(payload) {
   }
 
   // Re-agregar datos para compatibilidad con GLOBAL_SCOPE (arrays de valores únicos)
+  // Estructura 9 columnas: ID|Fecha|Parcial|Grado|Sección|Asignatura|Unidad|Tema|profesorId
   const config = {
-    ParcialActual: relevantRows[0][2], // Tomar el parcial del primer registro
-    GradoActual: [...new Set(relevantRows.map(r => r[3]))].filter(Boolean),
-    SeccionActual: [...new Set(relevantRows.map(r => r[4]))].filter(Boolean),
-    AsignaturaActual: [...new Set(relevantRows.map(r => r[5]))].filter(Boolean),
-    TemaActual: [...new Set(relevantRows.map(r => r[6]))].filter(Boolean)
+    ParcialActual: relevantRows[0][2], // index 2
+    GradoActual: [...new Set(relevantRows.map(r => r[3]))].filter(Boolean), // index 3
+    SeccionActual: [...new Set(relevantRows.map(r => r[4]))].filter(Boolean), // index 4
+    AsignaturaActual: [...new Set(relevantRows.map(r => r[5]))].filter(Boolean), // index 5
+    TemaActual: [...new Set(relevantRows.map(r => r[7]))].filter(Boolean) // index 7 (Tema)
   };
 
   if (config.TemaActual.length === 0) config.TemaActual = ["General"];
@@ -1331,8 +1332,8 @@ function updateAcademicConfig(payload) {
   }
 
   // 3. GENERACIÓN DE REGISTROS NORMALIZADOS (Producto Cartesiano)
+  // Estructura requerida: ID | Fecha | Parcial | Grado | Sección | Asignatura | Unidad | Tema | profesorId
   let lastIdNum = 0;
-  // Recalcular el ID más alto después de la limpieza
   const remainingData = sheet.getDataRange().getValues();
   if (remainingData.length > 1) {
     for (let i = 1; i < remainingData.length; i++) {
@@ -1344,13 +1345,30 @@ function updateAcademicConfig(payload) {
     }
   }
 
+  // Normalización de tiempos y etiquetas similar a Historial
+  const getRomanStandard = (str, type) => {
+    const s = str.toLowerCase();
+    let prefix = "I";
+    if (s.indexOf("segundo") !== -1 || s.indexOf("segunda") !== -1 || s.indexOf("ii") !== -1) prefix = "II";
+    else if (s.indexOf("tercer") !== -1 || s.indexOf("tercera") !== -1 || s.indexOf("iii") !== -1) prefix = "III";
+    else if (s.indexOf("cuarto") !== -1 || s.indexOf("cuarta") !== -1 || s.indexOf("iv") !== -1) prefix = "IV";
+    return prefix + " " + type;
+  };
+
+  const parcialNorm = getRomanStandard(partial, "parcial");
+  const unidadNorm = getRomanStandard(partial, "unidad");
+
+  const months = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
+  const now = new Date();
+  const dateRange = months[Math.max(0, now.getMonth() - 1)] + " - " + months[now.getMonth()];
+
   grades.forEach(grado => {
     sections.forEach(seccion => {
       subjects.forEach(asig => {
         themes.forEach(tema => {
           lastIdNum++;
           const newId = "conf-" + lastIdNum.toString().padStart(4, '0');
-          sheet.appendRow([newId, profesorId, partial, grado, seccion, asig, tema]);
+          sheet.appendRow([newId, dateRange, parcialNorm, grado, seccion, asig, unidadNorm, tema, profesorId]);
         });
       });
     });
