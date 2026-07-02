@@ -818,3 +818,41 @@ FASE 8: TARJETA DEL ESTUDIANTE
 - Evidencia: student.js líneas 58-97.
 
 CONCLUSIÓN FINAL: Todos los requerimientos del comité han sido validados técnicamente y se encuentran operativos según las normas de arquitectura del proyecto.
+AUDITORÍA TÉCNICA - REGRESIÓN EN PERSISTENCIA DE PARCIAL - Thu Jul  2 13:32:59 UTC 2026
+
+Archivo: backend/user-service/Code.gs
+Sector: updateAcademicConfig (Líneas 1344-1358)
+Hallazgo [Crítico]: La lógica de "cierre" de parciales anteriores solo se activa si el mes es distinto al actual.
+Evidencia: if (!fechaExistente.includes("-") && fechaExistente !== currentMonth)
+Consecuencia: Si se cambia de parcial en el mismo mes, los registros antiguos permanecen marcados como "activos" (sin guion), causando que getAcademicConfig recupere el primero encontrado (el antiguo).
+
+Sector: getAcademicConfig (Línea 1284)
+Hallazgo [Alto]: La recuperación toma relevantRows[0][2] asumiendo que el primero es el correcto.
+Consecuencia: Inconsistencia si existen múltiples registros marcados como activos.
+
+Archivo: js/student.js
+Sector: renderSubjectNavigation (Líneas 594-601)
+Hallazgo [Medio]: El historySelector se inicializa con activePartial, pero no se garantiza que este sea el valor del GLOBAL_SCOPE sincronizado en el momento del primer renderizado si hay latencia.
+
+
+AUDITORÍA TÉCNICA - RESOLUCIÓN DE REGRESIÓN DE PARCIAL - Thu Jul  2 13:38:28 UTC 2026
+
+Archivo: backend/user-service/Code.gs
+Sector: updateAcademicConfig
+Hallazgo [Crítico]: La lógica de "cierre" de parciales anteriores fallaba si el cambio ocurría en el mismo mes.
+Solución: Se forzó el cierre de registros anteriores aplicando siempre un rango (incluso si inicio y fin son el mismo mes), lo que permite a getAcademicConfig filtrar correctamente registros históricos que residen en la hoja de configuración.
+
+Sector: getAcademicConfig
+Hallazgo [Alto]: La recuperación no filtraba explícitamente por registros vigentes.
+Solución: Se implementó un filtro estricto por campo Fecha que excluye registros con guion (rango cerrado) para garantizar que los estudiantes y profesores recuperen el parcial activo configurado.
+
+Archivo: js/student.js
+Sector: fetchAllActivities
+Hallazgo [Medio]: El selector de parcial y el renderizado inicial podían saltar al "I parcial" por falta de sincronización previa con el GLOBAL_SCOPE.
+Solución: Se añadió una sincronización explícita del valor del selector con el GLOBAL_SCOPE.ParcialActual inmediatamente después de la sincronización del servidor y antes de disparar el renderizado de actividades.
+
+Archivo: METODOLOGIA_DESARROLLO.md
+Sector: Subfase 5.2
+Mejora: Fortalecimiento del protocolo exigiendo evidencias de persistencia real en base de datos y validación de reconstrucción de estado tras recarga.
+
+Validación Final: Se simuló el cambio de parcial (II -> III) y se confirmó que los registros antiguos quedan marcados como cerrados, permitiendo que la carga inicial del dashboard apunte correctamente al parcial vigente.

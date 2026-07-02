@@ -621,7 +621,11 @@ El flujo de trabajo se ejecutará de forma lineal, síncrona y obligatoria. Viol
 ### FASE 5 — Autoauditoría Posterior (Desdoblamiento Crítico)
  * **Acción:** Finalizada la codificación, el operador se despoja del rol de desarrollador y asume nuevamente el rol de *Auditor Técnico*.
  * **Subfase 5.1 - Comparación Post-Edición (Diff Manual):** Se confronta de forma manual el archivo modificado contra la copia de respaldo generada en la Fase 3. Se deben aislar visualmente todas las líneas eliminadas, modificadas y los bloques sobrescritos. Si se detecta un solo cambio ajeno, accidental o cosmético no solicitado por la tarea, se **REVERTIRÁ** inmediatamente esa sección y se reiniciará la comparación.
- * **Subfase 5.2 - Verificación de Integridad:** Se ejecutan pruebas manuales exhaustivas para certificar que la solución cumple el objetivo pedagógico o técnico, que no se han roto componentes adyacentes y que el sistema está completamente libre de regresiones o incrementos de latencia.
+ * **Subfase 5.2 - Verificación de Integridad Funcional y de Datos:** Se ejecutan pruebas manuales exhaustivas para certificar que la solución cumple el objetivo pedagógico o técnico. **Esta fase exige evidencia de comportamiento real, no solo visual.**
+   - **Validación de Persistencia:** Si la tarea involucra guardado de datos, el operador debe verificar manualmente en la base de datos (ej. Spreadsheet) que los registros se modificaron según lo esperado (correspondencia exacta de valores).
+   - **Validación de Recuperación:** Confirmar que al recargar la aplicación, el estado se reconstruye íntegramente desde la fuente de verdad.
+   - **Detección de Regresiones:** Asegurar que el sistema está completamente libre de regresiones o incrementos de latencia.
+   - **Prohibición de Supuestos:** Ningún cambio se considera correcto sin evidencia empírica de su efectividad funcional.
 ### FASE 6 — Revisión de Código Externa (Code Review)
  * **Acción:** El código y los registros son sometidos al escrutinio del *Revisor de Código*.
  * **Protocolo ante Observaciones (Reinicio del Ciclo):** Si el informe de Code Review detecta la más mínima falla, riesgo, omisión o comportamiento inesperado, se aplicará la regla de **Extensión Obligatoria**:

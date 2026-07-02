@@ -434,3 +434,17 @@ Archivo: student-dashboard.html
 
 Archivo: teacher-dashboard.html
 - Líneas 459-472: Agregado selector independiente para "Unidad Activa (Planificación)" y normalización de etiquetas de parcial.
+
+
+REGISTRO DE CAMBIOS - Thu Jul  2 2026 - CORRECCIÓN DE REGRESIÓN DE PERSISTENCIA v7.8.8
+
+Archivo: METODOLOGIA_DESARROLLO.md
+- Sección 4, Subfase 5.2: Fortalecimiento del protocolo de auditoría. Se exige validación de persistencia real en DB y reconstrucción de estado tras recarga.
+
+Archivo: backend/user-service/Code.gs
+- Líneas 1269-1290: getAcademicConfig ahora filtra registros vigentes (excluyendo aquellos con rango de fecha cerrado con guion).
+- Líneas 1346-1359: updateAcademicConfig ahora valida integridad solo contra registros vigentes.
+- Líneas 1367-1375: updateAcademicConfig ahora fuerza el cierre de parciales anteriores mediante rango de fecha, incluso si el cambio ocurre en el mismo mes calendario.
+
+Archivo: js/student.js
+- Líneas 192-198: fetchAllActivities ahora sincroniza el valor del selector de historial con el ParcialActual del GLOBAL_SCOPE antes del primer renderizado de actividades.

@@ -189,6 +189,12 @@ document.addEventListener('DOMContentLoaded', function() {
             if (window.syncAcademicScope) {
                 // Tarea 3: Garantizar carga síncrona/esperada de la configuración global
                 await window.syncAcademicScope();
+
+                // REQ: Sincronizar el selector de historial con el parcial vigente antes de renderizar (Fase 3)
+                var historySelector = document.getElementById('parcial-history-selector');
+                if (historySelector && !historySelector.dataset.manuallyChanged) {
+                    historySelector.value = window.normalizePartial(window.GLOBAL_SCOPE.ParcialActual);
+                }
             }
 
             // Tarea 4: Asegurar que el historial esté listo

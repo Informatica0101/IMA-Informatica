@@ -1266,10 +1266,11 @@ function getAcademicConfig(payload) {
   let relevantRows = [];
 
   if (profesorId) {
-    relevantRows = rows.filter(r => String(r[1]).trim() === String(profesorId).trim());
+    // Filtrar por profesorId (Columna I - index 8)
+    relevantRows = rows.filter(r => String(r[8]).trim() === String(profesorId).trim());
   } else {
-    // Para estudiantes: devolver todas las configuraciones activas (consolidado)
-    relevantRows = rows;
+    // Para estudiantes: devolver configuraciones activas (sin rango de fecha con guion)
+    relevantRows = rows.filter(r => !String(r[1]).includes("-"));
   }
 
   if (relevantRows.length === 0) {
@@ -1277,6 +1278,18 @@ function getAcademicConfig(payload) {
       status: "success",
       data: { profesorId: profesorId, ParcialActual: "I parcial", GradoActual: [], SeccionActual: [], AsignaturaActual: [], TemaActual: ["General"] }
     };
+  }
+
+  // REQ: Identificar la configuración VIGENTE (la que no tiene rango de fecha)
+  if (profesorId) {
+    const activeRows = relevantRows.filter(r => !String(r[1]).includes("-"));
+    if (activeRows.length > 0) {
+      relevantRows = activeRows;
+    } else {
+      // Si no hay ninguna sin guion (caso anómalo), tomamos las del último parcial registrado
+      const lastPartial = relevantRows[relevantRows.length - 1][2];
+      relevantRows = relevantRows.filter(r => r[2] === lastPartial);
+    }
   }
 
   // Re-agregar datos para compatibilidad con GLOBAL_SCOPE (arrays de valores únicos)
@@ -1333,8 +1346,12 @@ function updateAcademicConfig(payload) {
   const themes = Array.isArray(fullScope.TemaActual) ? fullScope.TemaActual : [fullScope.TemaActual];
 
   // 1. VALIDACIÓN DE INTEGRIDAD
+  // Solo validar contra registros VIGENTES (sin rango de fecha)
   for (let i = 1; i < data.length; i++) {
     const r = data[i];
+    const fecha = String(r[1]);
+    if (fecha.includes("-")) continue; // Omitir registros cerrados (historial en Config)
+
     if (String(r[8]).trim() === profesorId) continue; // Omitir propios
     if (r[2] === parcialNorm && grades.indexOf(r[3]) !== -1 && sections.indexOf(r[4]) !== -1 && subjects.indexOf(r[5]) !== -1) {
       throw new Error(`Conflicto: La asignatura '${r[5]}' ya está asignada a otro docente para ${r[3]} ${r[4]} en el ${parcialNorm}.`);
@@ -1347,12 +1364,15 @@ function updateAcademicConfig(payload) {
   const currentMonth = months[now.getMonth()];
 
   // Actualizar registros de parciales anteriores con fecha de cierre
+  // REQ: Asegurar que el parcial anterior quede marcado como cerrado (Fase 1)
   for (let i = 1; i < data.length; i++) {
     const r = data[i];
     if (String(r[8]).trim() === profesorId && r[2] !== parcialNorm) {
       let fechaExistente = String(r[1]);
-      if (!fechaExistente.includes("-") && fechaExistente !== currentMonth) {
-        sheet.getRange(i + 1, 2).setValue(fechaExistente + " - " + currentMonth);
+      if (!fechaExistente.includes("-")) {
+        // Si el mes es el mismo, forzar un rango (ej: julio - julio) para marcar como cerrado
+        const fechaCierre = (fechaExistente === currentMonth) ? (fechaExistente + " - " + currentMonth) : (fechaExistente + " - " + currentMonth);
+        sheet.getRange(i + 1, 2).setValue(fechaCierre);
       }
     }
   }
