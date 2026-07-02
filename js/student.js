@@ -605,39 +605,48 @@ document.addEventListener('DOMContentLoaded', function() {
         var selectedPartial = historySelector ? historySelector.value : activePartial;
         if (parcialLabel) parcialLabel.textContent = selectedPartial;
 
+        // REQ: Parcial Vigente desde ConfiguracionAcademica (Fase 3)
+        var isViewingActive = window.normalizePartial(selectedPartial) === window.normalizePartial(activePartial);
+
         var currentActivities = activities.filter(function(a) {
             var isParcialOk = window.normalizePartial(a.parcial) === window.normalizePartial(selectedPartial);
 
-            // REQ: Filtro Estricto por Parcial Vigente (Fase 7)
-            // Solo autorizar si el parcial coincide con el GLOBAL_SCOPE.ParcialActual
-            // a menos que estemos viendo el historial explícitamente.
-            var isAuthorized = window.isContentAuthorized(a.parcial, a.asignatura, a.tema, a.grado, a.seccion);
+            // REQ: Filtro Estricto por Parcial Vigente o Historial (Fase 7)
+            // Si es el activo, validamos contra GLOBAL_SCOPE. Si es historial, permitimos si existe en academicHistory.
+            var isAuthorized = false;
+            if (isViewingActive) {
+                isAuthorized = window.isContentAuthorized(a.parcial, a.asignatura, a.tema, a.grado, a.seccion);
+            } else {
+                // Validar contra HistorialAcademico (Fase 4)
+                isAuthorized = academicHistory.some(function(h) {
+                    return window.normalizePartial(h.parcial) === window.normalizePartial(selectedPartial) &&
+                           h.asignaturas.indexOf(a.asignatura) !== -1;
+                });
+            }
 
             return isParcialOk && isAuthorized;
         });
 
-        var subjects = [...new Set(currentActivities.map(function(a) { return a.asignatura; }))];
+        var subjects = [];
 
-        // Tarea 4: Persistencia Histórica - Incluir asignaturas registradas en el historial (v7.8.2)
-        var historicalRecord = academicHistory.filter(function(h) {
-            return window.normalizePartial(h.parcial) === window.normalizePartial(selectedPartial);
-        });
-        historicalRecord.forEach(function(rec) {
-            if (Array.isArray(rec.asignaturas)) {
-                rec.asignaturas.forEach(function(asig) {
-                    if (subjects.indexOf(asig) === -1) subjects.push(asig);
-                });
-            }
-        });
-
-        // Tarea 3: Asegurar que se incluyan las asignaturas de la Configuración Global (si es el parcial actual)
-        // Se añade validación de grado para evitar filtración de materias de otros cursos (Fase Diagnóstico v7.8.4)
-        if (window.normalizePartial(selectedPartial) === window.normalizePartial(activePartial)) {
+        if (isViewingActive) {
+            // Caso 1: Parcial Vigente -> Fuente: ConfiguracionAcademica (GLOBAL_SCOPE)
             var globalAsigs = window.GLOBAL_SCOPE ? window.GLOBAL_SCOPE.AsignaturaActual : [];
             globalAsigs.forEach(function(asig) {
-                // REQ: Filtro Estricto de Seguridad (isContentAuthorized ahora valida Grado vs Asignatura)
                 if (window.isContentAuthorized(selectedPartial, asig, null, currentUser.grado, currentUser.seccion)) {
                     if (subjects.indexOf(asig) === -1) subjects.push(asig);
+                }
+            });
+        } else {
+            // Caso 2: Parcial Histórico -> Fuente: HistorialAcademico (Fase 4)
+            var historicalRecord = academicHistory.filter(function(h) {
+                return window.normalizePartial(h.parcial) === window.normalizePartial(selectedPartial);
+            });
+            historicalRecord.forEach(function(rec) {
+                if (Array.isArray(rec.asignaturas)) {
+                    rec.asignaturas.forEach(function(asig) {
+                        if (subjects.indexOf(asig) === -1) subjects.push(asig);
+                    });
                 }
             });
         }

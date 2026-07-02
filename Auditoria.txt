@@ -856,3 +856,23 @@ Sector: Subfase 5.2
 Mejora: Fortalecimiento del protocolo exigiendo evidencias de persistencia real en base de datos y validación de reconstrucción de estado tras recarga.
 
 Validación Final: Se simuló el cambio de parcial (II -> III) y se confirmó que los registros antiguos quedan marcados como cerrados, permitiendo que la carga inicial del dashboard apunte correctamente al parcial vigente.
+
+AUDITORÍA DE CIERRE - FASE 6 Y VERIFICACIÓN FINAL - Thu Jul  2 15:49:06 UTC 2026
+
+Archivo: js/teacher.js
+Sector: Navegación (pushNav)
+Hallazgo [Optimización]: El sistema obligaba a pasar por 'Secciones' incluso si solo había una configurada para el profesor.
+Solución: Implementado salto automático a 'Asignaturas' cuando 'GLOBAL_SCOPE.SeccionActual.length === 1'. Cumple requerimiento de Fase 6.
+
+Sector: Filtrado de Entregas y Alumnos
+Hallazgo [Alto]: Las funciones 'renderAlumnos' y 'renderDetallesAlumno' utilizaban fallbacks de parcial o no filtraban estrictamente por la asignatura seleccionada en el navStack.
+Solución: Se unificó el uso de 'window.normalizePartial(window.GLOBAL_SCOPE.ParcialActual)' y se reforzó el filtro por 'asignatura' en todas las vistas de detalle.
+
+Archivo: js/student.js
+Sector: Sincronización de Selector
+Hallazgo [Alto]: El selector de historial no siempre reflejaba el parcial activo tras una carga desde caché.
+Solución: Reforzada la sincronización en 'fetchAllActivities' tras recibir datos del servidor.
+
+VERIFICACIÓN DE PERSISTENCIA (F5 TEST):
+- Se confirmó que al recargar la página, tanto el Dashboard del Profesor como el del Estudiante recuperan correctamente el Parcial y la Unidad vigentes.
+- Se verificó en 'ConfiguracionAcademica' que solo existe una configuración activa por docente.

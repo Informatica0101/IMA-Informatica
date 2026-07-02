@@ -448,3 +448,22 @@ Archivo: backend/user-service/Code.gs
 
 Archivo: js/student.js
 - Líneas 192-198: fetchAllActivities ahora sincroniza el valor del selector de historial con el ParcialActual del GLOBAL_SCOPE antes del primer renderizado de actividades.
+
+
+REGISTRO DE CAMBIOS - FASE 6 Y OPTIMIZACIÓN v7.8.9 - Thu Jul  2 15:51:38 UTC 2026
+
+Módulo: Dashboard del Profesor
+- js/teacher.js:
+    - Implementada optimización de navegación: salta automáticamente el paso de 'Secciones' si el grado tiene una única sección configurada en el GLOBAL_SCOPE.
+    - Reforzado el filtrado de entregas y estudiantes: ahora utiliza estrictamente el parcial vigente del GLOBAL_SCOPE para evitar fugas de datos de períodos anteriores.
+    - Sincronización de la variable window.PARCIAL_ACTUAL con el GLOBAL_SCOPE en todos los puntos de entrada para garantizar consistencia.
+    - Eliminados fallbacks manuales de parcial en favor del normalizador global.
+
+Módulo: Metodología y Calidad
+- METODOLOGIA_DESARROLLO.md:
+    - Agregada norma 1.8: Prohibición absoluta de soluciones temporales o fallbacks que oculten causas raíz.
+    - Fortalecida la Subfase 5.2 (Verificación): Incorporado el "F5 Test" como requisito obligatorio para validar la reconstrucción de estado desde el backend.
+
+Módulo: Dashboard del Estudiante
+- js/student.js:
+    - Reforzada la sincronización del selector de historial tras la carga inicial para prevenir que el valor por defecto ('I parcial') prevalezca sobre la configuración real.

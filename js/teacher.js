@@ -1400,13 +1400,14 @@ document.addEventListener('DOMContentLoaded', () => {
         let filtered = students.filter(s => norm(s.nombre).includes(norm(search)));
 
         // Calcular estado y preparar datos
+        const activeParcial = window.normalizePartial(window.GLOBAL_SCOPE.ParcialActual);
         const studentsWithStatus = filtered.map(s => {
             const studentSubmissions = allActivityRaw.filter(sub =>
                 sub.alumnoId == s.userId &&
                 norm(sub.grado) === norm(grado) &&
                 norm(sub.seccion) === norm(seccion) &&
                 norm(sub.asignatura) === norm(asignatura) &&
-                norm(sub.parcial) === norm(parcial)
+                window.normalizePartial(sub.parcial) === activeParcial
             );
             const isPending = studentSubmissions.some(sub => {
                 const status = sub.estado;
@@ -1503,7 +1504,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Calcular carga académica total (A-73)
             // REQ: Filtro Estricto por Parcial (Incidencia 5)
-            const activeParcial = window.normalizePartial(window.PARCIAL_ACTUAL);
+            const activeParcial = window.normalizePartial(window.GLOBAL_SCOPE.ParcialActual);
 
             const subjectAssignments = allAssignmentsRaw.filter(a =>
                 norm(a.grado) === norm(grado) &&
@@ -1692,9 +1693,11 @@ document.addEventListener('DOMContentLoaded', () => {
             if (table) table.parentNode.insertBefore(infoCard, table);
         }
 
+        // REQ: Filtrado estricto por asignatura (Fase 6)
+        const activeParcial = window.normalizePartial(window.GLOBAL_SCOPE.ParcialActual);
         const filtered = allActivityRaw.filter(i =>
             i.alumnoId == alumnoId &&
-            (isGlobalSearch || (norm(i.asignatura) === norm(asignatura) && norm(i.parcial) === norm(parcial))) &&
+            (isGlobalSearch || (norm(i.asignatura) === norm(asignatura) && window.normalizePartial(i.parcial) === activeParcial)) &&
             norm(i.titulo).includes(norm(search))
         );
         // Ordenar por fecha más reciente primero
@@ -1832,8 +1835,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
 
                 if (current.level === 'Grados') {
-                    // REQ: Flujo Contextual Estricto (v7.8.5)
-                    await pushNav('Secciones', { grado: item });
+                    // REQ: Optimización de navegación (Fase 6)
+                    // Si solo hay una sección configurada para este grado, saltamos a Asignaturas.
+                    const seccConfig = (window.GLOBAL_SCOPE && window.GLOBAL_SCOPE.SeccionActual) ? window.GLOBAL_SCOPE.SeccionActual : [];
+                    if (seccConfig.length === 1) {
+                        await pushNav('Asignaturas', { grado: item, seccion: seccConfig[0] });
+                    } else {
+                        await pushNav('Secciones', { grado: item });
+                    }
                 } else if (current.level === 'Secciones') {
                     await pushNav('Asignaturas', { grado: current.data.grado, seccion: item });
                 } else if (current.level === 'Asignaturas') {

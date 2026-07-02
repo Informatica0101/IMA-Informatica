@@ -1247,7 +1247,8 @@ function saveQuestion(payload) {
 }
 
 /**
- * Recupera la configuración académica y la re-agrega para el frontend (v7.8.6)
+ * Recupera la configuración académica VIGENTE (v7.8.9)
+ * REQ: ConfiguracionAcademica solo almacena la configuración actual (VIGENCIA ÚNICA).
  */
 function getAcademicConfig(payload) {
   const { profesorId } = payload || {};
@@ -1266,11 +1267,10 @@ function getAcademicConfig(payload) {
   let relevantRows = [];
 
   if (profesorId) {
-    // Filtrar por profesorId (Columna I - index 8)
     relevantRows = rows.filter(r => String(r[8]).trim() === String(profesorId).trim());
   } else {
-    // Para estudiantes: devolver configuraciones activas (sin rango de fecha con guion)
-    relevantRows = rows.filter(r => !String(r[1]).includes("-"));
+    // Para estudiantes: devolver consolidado de vigentes
+    relevantRows = rows;
   }
 
   if (relevantRows.length === 0) {
@@ -1280,27 +1280,15 @@ function getAcademicConfig(payload) {
     };
   }
 
-  // REQ: Identificar la configuración VIGENTE (la que no tiene rango de fecha)
-  if (profesorId) {
-    const activeRows = relevantRows.filter(r => !String(r[1]).includes("-"));
-    if (activeRows.length > 0) {
-      relevantRows = activeRows;
-    } else {
-      // Si no hay ninguna sin guion (caso anómalo), tomamos las del último parcial registrado
-      const lastPartial = relevantRows[relevantRows.length - 1][2];
-      relevantRows = relevantRows.filter(r => r[2] === lastPartial);
-    }
-  }
-
-  // Re-agregar datos para compatibilidad con GLOBAL_SCOPE (arrays de valores únicos)
-  // Estructura 9 columnas: ID|Fecha|Parcial|Grado|Sección|Asignatura|Unidad|Tema|profesorId
+  // Identificar el parcial más reciente configurado (por ID o por orden de fila, ya que es VIGENCIA ÚNICA por profesor)
+  // En modelo de Vigencia Única, cualquier fila del profesor es válida porque todas pertenecen al mismo parcial.
   const config = {
-    ParcialActual: relevantRows[0][2], // index 2
-    UnidadActual: relevantRows[0][6], // index 6 (v7.8.7)
-    GradoActual: [...new Set(relevantRows.map(r => r[3]))].filter(Boolean), // index 3
-    SeccionActual: [...new Set(relevantRows.map(r => r[4]))].filter(Boolean), // index 4
-    AsignaturaActual: [...new Set(relevantRows.map(r => r[5]))].filter(Boolean), // index 5
-    TemaActual: [...new Set(relevantRows.map(r => r[7]))].filter(Boolean) // index 7 (Tema)
+    ParcialActual: relevantRows[relevantRows.length - 1][2],
+    UnidadActual: relevantRows[relevantRows.length - 1][6],
+    GradoActual: [...new Set(relevantRows.map(r => r[3]))].filter(Boolean),
+    SeccionActual: [...new Set(relevantRows.map(r => r[4]))].filter(Boolean),
+    AsignaturaActual: [...new Set(relevantRows.map(r => r[5]))].filter(Boolean),
+    TemaActual: [...new Set(relevantRows.map(r => r[7]))].filter(Boolean)
   };
 
   if (config.TemaActual.length === 0) config.TemaActual = ["General"];
@@ -1309,8 +1297,9 @@ function getAcademicConfig(payload) {
 }
 
 /**
- * Actualiza la configuración académica con registros independientes (Cartesian Product) (v7.8.7)
- * Implementa lógica de Upsert, Independencia de Unidad y Ciclo de Vida de Fecha.
+ * Actualiza la configuración académica VIGENTE (v7.8.9)
+ * REQ: ConfiguracionAcademica solo almacena la configuración actual (VIGENCIA ÚNICA).
+ * REQ: HistorialAcademico es la única fuente histórica.
  */
 function updateAcademicConfig(payload) {
   const { fullScope } = payload || {};
@@ -1322,6 +1311,20 @@ function updateAcademicConfig(payload) {
 
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
   const sheet = getOrCreateSheet(ss, "ConfiguracionAcademica");
+
+  // 1. LIMPIEZA DE CONFIGURACIÓN PREVIA (VIGENCIA ÚNICA)
+  // REQ: ConfiguracionAcademica representa ÚNICAMENTE la configuración vigente.
+  let rowCount = sheet.getLastRow();
+  if (rowCount > 1) {
+    const pIds = sheet.getRange(2, 9, rowCount - 1, 1).getValues();
+    for (let i = pIds.length - 1; i >= 0; i--) {
+      if (String(pIds[i][0]).trim() === profesorId) {
+        sheet.deleteRow(i + 2);
+      }
+    }
+  }
+
+  // Refrescar datos tras limpieza
   const data = sheet.getDataRange().getValues();
 
   // Helper de normalización
@@ -1337,7 +1340,6 @@ function updateAcademicConfig(payload) {
 
   const partial = fullScope.ParcialActual;
   const parcialNorm = getRomanStandard(partial, "parcial");
-  // REQ: Parcial y Unidad independientes (Fase 1)
   const unidadNorm = getRomanStandard(fullScope.UnidadActual || fullScope.ParcialActual, "unidad");
 
   const grades = Array.isArray(fullScope.GradoActual) ? fullScope.GradoActual : [fullScope.GradoActual];
@@ -1345,95 +1347,48 @@ function updateAcademicConfig(payload) {
   const subjects = Array.isArray(fullScope.AsignaturaActual) ? fullScope.AsignaturaActual : [fullScope.AsignaturaActual];
   const themes = Array.isArray(fullScope.TemaActual) ? fullScope.TemaActual : [fullScope.TemaActual];
 
-  // 1. VALIDACIÓN DE INTEGRIDAD
-  // Solo validar contra registros VIGENTES (sin rango de fecha)
+  // 2. VALIDACIÓN DE INTEGRIDAD (Contra otros profesores)
   for (let i = 1; i < data.length; i++) {
     const r = data[i];
-    const fecha = String(r[1]);
-    if (fecha.includes("-")) continue; // Omitir registros cerrados (historial en Config)
-
-    if (String(r[8]).trim() === profesorId) continue; // Omitir propios
+    if (String(r[8]).trim() === profesorId) continue;
     if (r[2] === parcialNorm && grades.indexOf(r[3]) !== -1 && sections.indexOf(r[4]) !== -1 && subjects.indexOf(r[5]) !== -1) {
       throw new Error(`Conflicto: La asignatura '${r[5]}' ya está asignada a otro docente para ${r[3]} ${r[4]} en el ${parcialNorm}.`);
     }
   }
 
-  // 2. CICLO DE VIDA DE LA FECHA (Fase 3)
+  // 3. PERSISTENCIA DE NUEVA CONFIGURACIÓN (Producto Cartesiano)
   const months = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
   const now = new Date();
   const currentMonth = months[now.getMonth()];
 
-  // Actualizar registros de parciales anteriores con fecha de cierre
-  // REQ: Asegurar que el parcial anterior quede marcado como cerrado (Fase 1)
-  for (let i = 1; i < data.length; i++) {
-    const r = data[i];
-    if (String(r[8]).trim() === profesorId && r[2] !== parcialNorm) {
-      let fechaExistente = String(r[1]);
-      if (!fechaExistente.includes("-")) {
-        // Si el mes es el mismo, forzar un rango (ej: julio - julio) para marcar como cerrado
-        const fechaCierre = (fechaExistente === currentMonth) ? (fechaExistente + " - " + currentMonth) : (fechaExistente + " - " + currentMonth);
-        sheet.getRange(i + 1, 2).setValue(fechaCierre);
-      }
-    }
-  }
-
-  // 3. UPSERT CONTEXTUAL (Fase 2)
-  const newScopeSet = [];
-  grades.forEach(g => sections.forEach(s => subjects.forEach(asig => themes.forEach(t => {
-    newScopeSet.push({ grado: g, seccion: s, asignatura: asig, tema: t });
-  }))));
-
-  // Eliminar registros del mismo profesor y mismo parcial que ya no están en el nuevo alcance
-  const currentSheetData = sheet.getDataRange().getValues();
-  for (let i = currentSheetData.length - 1; i >= 1; i--) {
-    const r = currentSheetData[i];
-    if (String(r[8]).trim() === profesorId && r[2] === parcialNorm) {
-      const existsInNewScope = newScopeSet.some(ctx =>
-        ctx.grado === r[3] && ctx.seccion === r[4] && ctx.asignatura === r[5] && ctx.tema === r[7]
-      );
-      if (!existsInNewScope) {
-        sheet.deleteRow(i + 1);
-      }
-    }
-  }
-
-  // Insertar o actualizar registros
-  const refreshedData = sheet.getDataRange().getValues();
   let lastIdNum = 0;
-  for (let i = 1; i < refreshedData.length; i++) {
-    const idStr = String(refreshedData[i][0]);
-    if (idStr.startsWith("conf-")) {
-      const num = parseInt(idStr.replace("conf-", ""));
-      if (!isNaN(num) && num > lastIdNum) lastIdNum = num;
+  const refreshedData = sheet.getDataRange().getValues();
+  if (refreshedData.length > 1) {
+    for (let i = 1; i < refreshedData.length; i++) {
+      const idStr = String(refreshedData[i][0]);
+      if (idStr.startsWith("conf-")) {
+        const num = parseInt(idStr.replace("conf-", ""));
+        if (!isNaN(num) && num > lastIdNum) lastIdNum = num;
+      }
     }
   }
 
-  newScopeSet.forEach(ctx => {
-    let rowIndex = -1;
-    for (let i = 1; i < refreshedData.length; i++) {
-      const r = refreshedData[i];
-      if (String(r[8]).trim() === profesorId && r[2] === parcialNorm && r[3] === ctx.grado && r[4] === ctx.seccion && r[5] === ctx.asignatura && r[7] === ctx.tema) {
-        rowIndex = i;
-        break;
-      }
-    }
-
-    if (rowIndex !== -1) {
-      // Reutilizar y actualizar unidad si cambió
-      sheet.getRange(rowIndex + 1, 7).setValue(unidadNorm);
-      // Mantener fecha original del inicio del parcial
-    } else {
-      // Crear nuevo
-      lastIdNum++;
-      const newId = "conf-" + lastIdNum.toString().padStart(4, '0');
-      sheet.appendRow([newId, currentMonth, parcialNorm, ctx.grado, ctx.seccion, ctx.asignatura, unidadNorm, ctx.tema, profesorId]);
-    }
+  grades.forEach(g => {
+    sections.forEach(s => {
+      subjects.forEach(asig => {
+        themes.forEach(t => {
+          lastIdNum++;
+          const newId = "conf-" + lastIdNum.toString().padStart(4, '0');
+          sheet.appendRow([newId, currentMonth, parcialNorm, g, s, asig, unidadNorm, t, profesorId]);
+        });
+      });
+    });
   });
 
   SpreadsheetApp.flush();
-  logDebug(`Configuración granular guardada para profesor: ${profesorId}`);
+  logDebug(`Configuración vigente guardada para profesor: ${profesorId}`);
 
-  // Tarea 4: Guardar Historial Académico
+  // 4. REGISTRO EN HISTORIAL (Única fuente histórica)
   try {
     saveToAcademicHistory(fullScope);
   } catch (e) {
@@ -1545,7 +1500,8 @@ function saveToAcademicHistory(scope) {
 }
 
 /**
- * Recupera el historial académico filtrado por grado y sección (Normalizado v7.8.4)
+ * Recupera el historial académico filtrado por grado y sección (Normalizado v7.8.9)
+ * Incluye la Unidad para una reconstrucción fiel del contexto histórico.
  */
 function getAcademicHistory(payload) {
   const { grado, seccion } = payload || {};
@@ -1555,7 +1511,6 @@ function getAcademicHistory(payload) {
 
   const data = sheet.getDataRange().getValues().slice(1);
   const filtered = data.filter(r => {
-    // Normalización de grado para el filtro
     const normalizeFilterGrade = (g) => {
       const gn = normalizeString(g);
       if (gn.includes("duodecimo") || gn.includes("12") || gn.includes("iiibtp")) return "duodécimo";
@@ -1572,18 +1527,19 @@ function getAcademicHistory(payload) {
     return gradeMatch && sectionMatch;
   });
 
-  // Agrupar por parcial para que el frontend reciba una lista de asignaturas coherente
+  // Agrupar por parcial
   const historyMap = {};
   filtered.forEach(r => {
     const parcial = r[2];
+    const unidad = r[6];
     if (!historyMap[parcial]) {
       historyMap[parcial] = {
         fecha: r[1],
         parcial: parcial,
+        unidad: unidad,
         asignaturas: []
       };
     }
-    // Asegurar que la asignatura esté en el formato esperado por el frontend
     if (historyMap[parcial].asignaturas.indexOf(r[5]) === -1) {
       historyMap[parcial].asignaturas.push(r[5]);
     }
