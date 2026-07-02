@@ -116,6 +116,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function loadAcademicAdminData() {
         const parcialSelect = document.getElementById('admin-parcial-actual');
+        const unidadSelect = document.getElementById('admin-unidad-actual');
         if (!parcialSelect) return;
 
         const applyConfig = (data) => {
@@ -123,6 +124,7 @@ document.addEventListener('DOMContentLoaded', () => {
             console.log("[IMA-TEACHER] Aplicando configuración recibida:", data);
 
             if (data.ParcialActual) parcialSelect.value = data.ParcialActual;
+            if (data.UnidadActual && unidadSelect) unidadSelect.value = data.UnidadActual;
 
             // Normalización para visualización (v7.7.5)
             const grades = Array.isArray(data.GradoActual) ? data.GradoActual : [data.GradoActual].filter(Boolean);
@@ -270,6 +272,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const fullScope = {
             profesorId: currentUser.userId,
             ParcialActual: document.getElementById('admin-parcial-actual').value,
+            UnidadActual: document.getElementById('admin-unidad-actual')?.value || document.getElementById('admin-parcial-actual').value.replace('parcial', 'unidad'),
             GradoActual: selectedGrades,
             SeccionActual: selectedSections,
             AsignaturaActual: selectedAsigs,
@@ -1253,10 +1256,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function renderGrados(search) {
         const fGrado = document.getElementById('filter-grado').value;
-        let grados = [...new Set([
-            ...allActivityRaw.map(item => item.grado),
-            ...allAssignmentsRaw.map(item => item.grado)
-        ].filter(g => g))];
+
+        // REQ: Navegación basada exclusivamente en GLOBAL_SCOPE (Fase 5)
+        // Eliminado fallback a actividad histórica para cumplir con norma de NO compensación.
+        let grados = (window.GLOBAL_SCOPE && window.GLOBAL_SCOPE.GradoActual) ? window.GLOBAL_SCOPE.GradoActual : [];
+
         if (fGrado) grados = grados.filter(g => norm(g) === norm(fGrado));
         const filtered = grados.filter(g => norm(g).includes(norm(search)));
         currentFilteredItems = filtered;
@@ -1291,17 +1295,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function renderSecciones(grado, search) {
         const fSeccion = document.getElementById('filter-seccion').value;
-        let secciones = [...new Set([
-            ...allActivityRaw.filter(i => norm(i.grado) === norm(grado)).map(i => i.seccion),
-            ...allAssignmentsRaw.filter(i => norm(i.grado) === norm(grado)).map(i => i.seccion)
-        ].filter(s => s && norm(s) !== 'todas'))];
 
-        const hasTodas = allAssignmentsRaw.some(a => norm(a.grado) === norm(grado) && (norm(a.seccion) === 'todas' || !a.seccion));
-        if (hasTodas) {
-            ['A', 'B', 'C'].forEach(s => {
-                if (!secciones.includes(s)) secciones.push(s);
-            });
-        }
+        // REQ: Navegación basada exclusivamente en GLOBAL_SCOPE (Fase 5)
+        // Eliminado fallback a actividad histórica para cumplir con norma de NO compensación.
+        let secciones = (window.GLOBAL_SCOPE && window.GLOBAL_SCOPE.SeccionActual) ? window.GLOBAL_SCOPE.SeccionActual : [];
 
         if (fSeccion) secciones = secciones.filter(s => norm(s) === norm(fSeccion));
         const filtered = secciones.filter(s => norm(s).includes(norm(search)));
@@ -1315,28 +1312,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function renderAsignaturas(grado, seccion, search) {
-        // Tarea 2: Reglas de Aislamiento e Integridad
-        const activePartial = window.PARCIAL_ACTUAL;
+        // REQ: Navegación basada exclusivamente en GLOBAL_SCOPE (Fase 5 y 6)
+        // Eliminado fallback a actividad histórica para cumplir con norma de NO compensación.
+        const activePartial = window.GLOBAL_SCOPE ? window.GLOBAL_SCOPE.ParcialActual : window.PARCIAL_ACTUAL;
         const authorizedAsigs = window.GLOBAL_SCOPE ? window.GLOBAL_SCOPE.AsignaturaActual : [];
 
-        let asignaturas = [...new Set([
-            ...allActivityRaw.filter(i =>
-                norm(i.grado) === norm(grado) &&
-                norm(i.seccion) === norm(seccion) &&
-                window.normalizePartial(i.parcial) === window.normalizePartial(activePartial)
-            ).map(i => i.asignatura),
-            ...allAssignmentsRaw.filter(i =>
-                norm(i.grado) === norm(grado) &&
-                (norm(i.seccion) === norm(seccion) || !i.seccion || norm(i.seccion) === 'todas') &&
-                window.normalizePartial(i.parcial) === window.normalizePartial(activePartial)
-            ).map(i => i.asignatura)
-        ].filter(s => s))];
-
-        // Filtrar por asignaturas autorizadas en Configuración Global si existen (v7.8.2)
-        if (authorizedAsigs && authorizedAsigs.length > 0) {
-            const normAuthorized = authorizedAsigs.map(a => norm(a));
-            asignaturas = asignaturas.filter(asig => normAuthorized.indexOf(norm(asig)) !== -1);
-        }
+        let asignaturas = authorizedAsigs;
 
         const filtered = asignaturas.filter(s => norm(s).includes(norm(search)));
         currentFilteredItems = filtered;

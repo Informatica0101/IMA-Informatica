@@ -407,3 +407,30 @@ Módulo: Backend (Code.gs)
     - Implementado almacenamiento granular mediante producto cartesiano de Temas (un registro por fila, sin JSON).
     - Sincronizada 'getAcademicConfig' para recuperar datos usando los nuevos índices de columna.
     - Garantizada integridad de 8 columnas en 'HistorialAcademico'.
+
+REGISTRO DE CAMBIOS - Thu Jul  2 2026 - AFINAMIENTO DE CONFIGURACIÓN v7.8.7
+
+Archivo: backend/user-service/Code.gs
+- Líneas 1286: Agregado UnidadActual al objeto de configuración retornado.
+- Líneas 1311-1430: Refactorización total de updateAcademicConfig.
+  - Implementado desacoplamiento de Parcial y Unidad.
+  - Implementada lógica de Upsert contextual para evitar duplicados.
+  - Implementado ciclo de vida dinámico de la columna Fecha (actualización de rango en parciales anteriores).
+- Líneas 1457-1518: Actualización de saveToAcademicHistory para reflejar la independencia de Unidad y uniformidad de Fecha.
+
+Archivo: js/config.js
+- Línea 96: Agregado UnidadActual al GLOBAL_SCOPE en syncAcademicScope.
+
+Archivo: js/teacher.js
+- Líneas 124, 275: Implementada carga y envío de UnidadActual desde el Panel de Administración.
+- Líneas 1261-1340: Restringida la navegación de Grados, Secciones y Asignaturas exclusivamente al GLOBAL_SCOPE, eliminando fallbacks compensatorios.
+
+Archivo: js/student.js
+- Líneas 58-100: Actualización de la tarjeta de información del estudiante para incluir Email, Teléfono e icono de WhatsApp dinámico.
+- Líneas 604-610: Ajuste de filtrado de actividades para cumplimiento estricto del parcial vigente.
+
+Archivo: student-dashboard.html
+- Línea 159: Reemplazado texto "Vista Unificada de Asignaturas" por instrucción de selección de asignatura.
+
+Archivo: teacher-dashboard.html
+- Líneas 459-472: Agregado selector independiente para "Unidad Activa (Planificación)" y normalización de etiquetas de parcial.

@@ -57,3 +57,45 @@
 - **Descripción del Alcance:** Asegurar estructura de 9 columnas en `ConfiguracionAcademica` y 8 en `HistorialAcademico`. Producto cartesiano de temas.
 - **Criterios de Aceptación:** Persistencia sin JSON. Columnas coinciden exactamente con el estándar definido.
 - **Estado:** [X] Completada
+
+---
+
+## TAREAS PENDIENTES (Afinamiento Configuración v7.8.7)
+
+### [CONF-001] Desacoplamiento Parcial/Unidad y Lógica Upsert
+- **Origen del Hallazgo:** Auditoria.txt (v7.8.7)
+- **Severidad/Clasificación:** Crítico
+- **Archivos Involucrados:** `backend/user-service/Code.gs`
+- **Descripción del Alcance:**
+  1. Modificar `updateAcademicConfig` para tratar Parcial y Unidad como conceptos independientes.
+  2. Implementar búsqueda por contexto (Parcial, Grado, Sección, Asignatura, Tema, Profesor) antes de crear registro.
+  3. Si existe, actualizar fila; si no, crear nueva.
+- **Criterios de Aceptación:** No se generan registros duplicados. Las unidades corresponden a la planificación real.
+- **Estado:** [X] Completada
+
+### [DATE-001] Ciclo de Vida Dinámico de Columna Fecha
+- **Origen del Hallazgo:** Auditoria.txt (v7.8.7)
+- **Severidad/Clasificación:** Medio
+- **Archivos Involucrados:** `backend/user-service/Code.gs`
+- **Descripción del Alcance:** Implementar lógica de fecha: nuevo parcial = mes actual; al configurar siguiente parcial = actualizar anterior con rango (inicio - fin).
+- **Criterios de Aceptación:** Las filas reflejan periodos de vigencia automáticos según el mes de configuración.
+- **Estado:** [X] Completada
+
+### [NAV-002] Navegación Docente Basada en Configuración Vigente
+- **Origen del Hallazgo:** Auditoria.txt (v7.8.7)
+- **Severidad/Clasificación:** Alto
+- **Archivos Involucrados:** `js/teacher.js`
+- **Descripción del Alcance:** Restringir `renderGrados`, `renderSecciones` y `renderAsignaturas` para que utilicen exclusivamente `window.GLOBAL_SCOPE`.
+- **Criterios de Aceptación:** Solo aparecen los grados y materias configurados por el docente para el periodo activo.
+- **Estado:** [X] Completada
+
+### [STUD-002] Actualización de Tarjeta Estudiante e Interfaz
+- **Origen del Hallazgo:** Auditoria.txt (v7.8.7)
+- **Severidad/Clasificación:** Alto
+- **Archivos Involucrados:** `js/student.js`, `student-dashboard.html`
+- **Descripción del Alcance:**
+  1. Agregar Email y Teléfono (con link WhatsApp) a `renderStudentHeader`.
+  2. Reemplazar texto "Vista Unificada de Asignaturas" por instrucción de selección.
+  3. Asegurar filtrado estricto por parcial vigente.
+- **Criterios de Aceptación:** La tarjeta muestra datos de contacto funcionales. El dashboard muestra la instrucción correcta.
+- **Estado:** [X] Completada

@@ -93,6 +93,7 @@ window.syncAcademicScope = function(callback) {
 
         var newScope = {
             ParcialActual: data.ParcialActual || "I parcial",
+            UnidadActual: data.UnidadActual || data.ParcialActual || "I unidad",
             GradoActual: normalizeToArray(data.GradoActual),
             SeccionActual: normalizeToArray(data.SeccionActual),
             AsignaturaActual: normalizeToArray(data.AsignaturaActual),

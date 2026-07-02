@@ -736,3 +736,41 @@ Estado: Verificado. Totalmente compatible con la nueva estructura re-agregada. M
 
 Archivo: js/student.js
 Estado: Verificado. Consume el consolidado de configuraciones activas, manteniendo el filtrado por grado.
+AUDITORÍA TÉCNICA - AFINAMIENTO DE CONFIGURACIÓN ACADÉMICA - Thu Jul  2 11:23:55 UTC 2026
+
+Archivo: backend/user-service/Code.gs
+Sector: updateAcademicConfig (Líneas 1358-1359)
+Hallazgo [Alto]: Parcial y Unidad se normalizan a partir del mismo valor (fullScope.ParcialActual).
+Impacto: Se pierde la independencia entre la división del año (Parcial) y la planificación de la materia (Unidad), forzando unidades inexistentes (ej. III unidad para materias de una sola unidad).
+Recomendación: Desacoplar la lógica. La unidad debe venir del payload o definirse por asignatura.
+
+Sector: updateAcademicConfig (Líneas 1328-1332)
+Hallazgo [Medio]: El sistema elimina todos los registros del profesor antes de insertar los nuevos.
+Impacto: Aunque evita duplicados brutos, no permite actualizaciones granulares y puede causar pérdida de IDs si no se maneja bien. No cumple con la lógica de 'Upsert' basada en contexto (Parcial, Grado, Sección, Asignatura, Tema, Profesor).
+Recomendación: Implementar búsqueda de registro existente por contexto antes de insertar/actualizar.
+
+Sector: updateAcademicConfig (Línea 1363)
+Hallazgo [Medio]: El rango de fechas es estático (mes anterior - mes actual).
+Impacto: No cumple con el requerimiento de evolución dinámica de la fecha (inicio con mes actual, posterior cierre con rango).
+Recomendación: Implementar lógica de actualización de fila anterior al cambiar de parcial.
+
+Archivo: js/teacher.js
+Sector: renderGrados (Línea 649)
+Hallazgo [Alto]: La navegación se construye a partir de la actividad histórica (allActivityRaw) en lugar de la configuración vigente.
+Impacto: Aparecen grados no incluidos en la configuración académica actual.
+Recomendación: Filtrar la navegación basándose exclusivamente en window.GLOBAL_SCOPE.
+
+Archivo: js/student.js
+Sector: renderStudentHeader (Línea 54)
+Hallazgo [Medio]: Faltan campos obligatorios en la tarjeta (teléfono, email).
+Impacto: Incumplimiento de requerimientos de información de contacto.
+Recomendación: Agregar email y teléfono (con link WhatsApp) al HTML generado.
+
+Sector: renderSubjectNavigation (Línea 369)
+Hallazgo [Alto]: La lógica de filtrado de actividades podría estar permitiendo la visualización de períodos anteriores si no se valida estrictamente el parcial vigente del GLOBAL_SCOPE.
+Recomendación: Asegurar que el filtro por selectedPartial sea el valor por defecto del parcial activo.
+
+Archivo: student-dashboard.html
+Sector: UI (Línea 159)
+Hallazgo [Bajo]: Texto "Vista Unificada de Asignaturas" presente.
+Recomendación: Reemplazar por la nueva instrucción solicitada.

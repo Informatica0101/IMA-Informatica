@@ -55,28 +55,50 @@ document.addEventListener('DOMContentLoaded', function() {
         var profileHeader = document.getElementById('student-profile-header');
         if (!profileHeader || !currentUser) return;
 
+        var waPhone = currentUser.telefono ? String(currentUser.telefono).replace(/\D/g, '') : '';
+        var waLink = waPhone ? 'https://wa.me/504' + waPhone : '#';
+
         profileHeader.innerHTML = `
-            <div class="card-ima bg-white border border-gray-100 p-6 rounded-[2rem] shadow-sm animate-fade-in-up">
-                <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
-                    <div class="flex items-center gap-4">
-                        <div class="w-16 h-16 bg-blue-600 rounded-[1.5rem] flex items-center justify-center text-white text-2xl font-black shadow-xl shadow-blue-100 relative">
+            <div class="card-ima bg-white border border-gray-100 p-6 rounded-[2.5rem] shadow-sm animate-fade-in-up">
+                <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-8">
+                    <div class="flex items-center gap-6">
+                        <div class="w-20 h-20 bg-blue-600 rounded-[1.8rem] flex items-center justify-center text-white text-3xl font-black shadow-2xl shadow-blue-200 relative transform hover:rotate-3 transition-transform">
                             ${currentUser.nombre.charAt(0)}
-                            <div class="absolute -bottom-1 -right-1 w-6 h-6 bg-green-500 border-2 border-white rounded-full flex items-center justify-center text-white shadow-md">
+                            <div class="absolute -bottom-1 -right-1 w-7 h-7 bg-green-500 border-4 border-white rounded-full flex items-center justify-center text-white shadow-lg">
                                 <i class="fas fa-check text-[10px]"></i>
                             </div>
                         </div>
                         <div>
-                            <span class="inline-block px-2 py-0.5 bg-blue-50 text-blue-600 rounded-full text-[8px] font-black uppercase tracking-widest mb-1">Estudiante Informática</span>
-                            <h2 class="text-xl md:text-2xl font-black text-gray-900 leading-tight tracking-tighter">${currentUser.nombre}</h2>
-                            <div class="flex items-center gap-3 mt-1 text-[10px] text-gray-400 font-bold uppercase tracking-widest">
-                                <span>${currentUser.grado} - ${currentUser.seccion}</span>
-                                <span class="w-1 h-1 bg-gray-300 rounded-full"></span>
-                                <span>Lista #${currentUser.numeroLista || 'N/A'}</span>
+                            <span class="inline-block px-3 py-1 bg-blue-50 text-blue-600 rounded-full text-[9px] font-black uppercase tracking-[0.2em] mb-2">Expediente Estudiantil</span>
+                            <h2 class="text-2xl md:text-3xl font-black text-gray-900 leading-none tracking-tighter mb-2">${currentUser.nombre}</h2>
+                            <div class="flex flex-wrap items-center gap-x-4 gap-y-1 text-[10px] text-gray-400 font-bold uppercase tracking-widest">
+                                <span class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-blue-600 rounded-full"></div> ${currentUser.grado} - ${currentUser.seccion}</span>
+                                <span class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-purple-500 rounded-full"></div> LISTA #${currentUser.numeroLista || 'N/A'}</span>
                             </div>
                         </div>
                     </div>
-                    <div id="header-mini-stats" class="flex gap-4">
-                        <!-- Se poblará con mini-métricas si es necesario -->
+
+                    <div class="flex flex-col sm:flex-row gap-4 lg:items-center">
+                        <div class="space-y-2">
+                            <div class="flex items-center gap-3 px-4 py-2 bg-gray-50 rounded-2xl border border-gray-100">
+                                <i class="fas fa-envelope text-blue-400 text-xs"></i>
+                                <span class="text-[11px] font-bold text-gray-600 lowercase">${currentUser.email || 'N/A'}</span>
+                            </div>
+                            <div class="flex items-center justify-between gap-4 px-4 py-2 bg-gray-50 rounded-2xl border border-gray-100">
+                                <div class="flex items-center gap-3">
+                                    <i class="fas fa-phone text-green-500 text-xs"></i>
+                                    <span class="text-[11px] font-bold text-gray-600">${currentUser.telefono || 'N/A'}</span>
+                                </div>
+                                ${waPhone ? `
+                                    <a href="${waLink}" target="_blank" class="w-7 h-7 bg-green-500 text-white rounded-full flex items-center justify-center hover:bg-green-600 transition-all shadow-md shadow-green-100">
+                                        <i class="fab fa-whatsapp text-sm"></i>
+                                    </a>
+                                ` : ''}
+                            </div>
+                        </div>
+                        <div id="header-mini-stats" class="flex gap-4 pl-4 border-l border-gray-100 hidden lg:flex">
+                            <!-- Mini-métricas -->
+                        </div>
                     </div>
                 </div>
             </div>
@@ -579,11 +601,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
         var currentActivities = activities.filter(function(a) {
             var isParcialOk = window.normalizePartial(a.parcial) === window.normalizePartial(selectedPartial);
-            // Tarea 2: Persistencia Histórica (Bypass parcial restrictivo para historial)
-            var isAuthorized = true;
-            if (window.normalizePartial(selectedPartial) === window.normalizePartial(activePartial)) {
-                isAuthorized = window.isContentAuthorized(a.parcial, a.asignatura, a.tema, a.grado, a.seccion);
-            }
+
+            // REQ: Filtro Estricto por Parcial Vigente (Fase 7)
+            // Solo autorizar si el parcial coincide con el GLOBAL_SCOPE.ParcialActual
+            // a menos que estemos viendo el historial explícitamente.
+            var isAuthorized = window.isContentAuthorized(a.parcial, a.asignatura, a.tema, a.grado, a.seccion);
+
             return isParcialOk && isAuthorized;
         });
 
