@@ -11,7 +11,7 @@
 
 window.SERVICE_URLS = {
   // Pega aquí la URL del despliegue del microservicio de usuarios. (v7.8.6)
-  USER: 'https://script.google.com/macros/s/AKfycbx3jga5dbjbNXPOVdX_LKS-gL-70fLCy6ErKNA3bJ0pHTg3GNkS-V6gCJW1YSsrHyM/exec',
+  USER: 'https://script.google.com/macros/s/AKfycbzUC1NMTmRbbfJIoJ33Uc63vG5g48J8Y87vVHw9DjRu3rZ50Y3RcBsnHBA64OD2TeXK/exec',
 
   // Pega aquí la URL del despliegie del microservicio de tareas.
   TASK: 'https://script.google.com/macros/s/AKfycbz4geYGjF7FCe17VuLL8uylHaKM1vwbDqnFmEMgZXQQFVhBkKt0GtT0LB-_u94IVGDZ/exec',
@@ -58,8 +58,8 @@ window.SUBJECT_GRADE_MAP = {
     "programacion": "undécimo",
     "ofimatica i": "undécimo",
     "informatica aplicada i": "undécimo",
-    "analisis y diseno": "undécimo",
-    "diseno web": "duodécimo",
+    "analisis y diseño": "undécimo",
+    "diseño web": "duodécimo",
     "laboratorio i": "undécimo",
     "laboratorio ii": "duodécimo",
     "mantenimiento y reparacion i": "undécimo",
@@ -91,8 +91,7 @@ window.syncAcademicScope = function(callback) {
     var applyConfig = function(data) {
         if (!data) return;
 
-        // Normalización profunda de campos multi-valor (v7.7.5)
-        window.GLOBAL_SCOPE = {
+        var newScope = {
             ParcialActual: data.ParcialActual || "I parcial",
             GradoActual: normalizeToArray(data.GradoActual),
             SeccionActual: normalizeToArray(data.SeccionActual),
@@ -100,12 +99,19 @@ window.syncAcademicScope = function(callback) {
             TemaActual: normalizeToArray(data.TemaActual)
         };
 
-        if (window.GLOBAL_SCOPE.TemaActual.length === 0) window.GLOBAL_SCOPE.TemaActual = ["General"];
+        if (newScope.TemaActual.length === 0) newScope.TemaActual = ["General"];
+
+        // REQ: Evitar disparos redundantes del evento (Optimización v7.8.6)
+        var hasChanged = !window.GLOBAL_SCOPE || JSON.stringify(window.GLOBAL_SCOPE) !== JSON.stringify(newScope);
+
+        window.GLOBAL_SCOPE = newScope;
         window.PARCIAL_ACTUAL = window.GLOBAL_SCOPE.ParcialActual;
 
-        console.log("[IMA-SCOPE] Alcance académico sincronizado (Normalizado):", window.GLOBAL_SCOPE);
+        if (hasChanged) {
+            console.log("[IMA-SCOPE] Alcance académico actualizado:", window.GLOBAL_SCOPE);
+            document.dispatchEvent(new CustomEvent('academic-scope-updated', { detail: window.GLOBAL_SCOPE }));
+        }
 
-        document.dispatchEvent(new CustomEvent('academic-scope-updated', { detail: window.GLOBAL_SCOPE }));
         if (typeof callback === 'function') callback(window.GLOBAL_SCOPE);
     };
 

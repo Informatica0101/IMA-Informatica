@@ -379,3 +379,31 @@ Descripción: Rediseño estructural de ConfiguracionAcademica a modelo granular 
 
 Archivo: js/config.js
 Descripción: ActualizadaisContentAuthorized para mayor resiliencia ante cambios en la estructura de origen de datos.
+
+ESTABILIZACIÓN Y REESTRUCTURACIÓN DASHBOARD v7.8.6 - Fri Jul 03 2026
+
+Módulo: Red y Conectividad
+- js/api.js:
+    - Simplificado 'Content-Type' a 'text/plain' para evitar Preflight OPTIONS y bloqueos de CORS en Google Apps Script.
+    - Actualizada estructura de fallback para 'getAcademicConfig'.
+- js/config.js:
+    - Actualizada URL del microservicio de usuarios (v7.8.6).
+    - Implementada validación 'hasChanged' en applyConfig para prevenir disparos redundantes del evento de sincronización.
+    - Normalizadas claves en SUBJECT_GRADE_MAP (sin acentos) para compatibilidad con fastNorm.
+
+Módulo: Dashboard del Estudiante
+- js/student.js:
+    - Implementado flag 'isFetchingActivities' para evitar bucles infinitos de recarga recursiva.
+    - Eliminada llamada redundante a 'syncAcademicScope' dentro de fetchAllActivities.
+    - Removida lógica de navegación por pestañas de asignaturas.
+    - Implementado filtrado estricto por parcial vigente ('window.GLOBAL_SCOPE.ParcialActual').
+- student-dashboard.html:
+    - Eliminado contenedor '#subject-tabs-container' y elementos de navegación residuales.
+    - Implementada vista unificada mediante tarjetas expandibles.
+
+Módulo: Backend (Code.gs)
+- backend/user-service/Code.gs:
+    - Refactorizada 'updateAcademicConfig' para cumplir con el estándar de 9 columnas en 'ConfiguracionAcademica' (ID, Fecha, Parcial, Grado, Sección, Asignatura, Unidad, Tema, profesorId).
+    - Implementado almacenamiento granular mediante producto cartesiano de Temas (un registro por fila, sin JSON).
+    - Sincronizada 'getAcademicConfig' para recuperar datos usando los nuevos índices de columna.
+    - Garantizada integridad de 8 columnas en 'HistorialAcademico'.

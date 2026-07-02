@@ -21,6 +21,7 @@ document.addEventListener('DOMContentLoaded', function() {
     };
     var allActivitiesData = [];
     var academicHistory = []; // Tarea 4: Persistencia Histórica (v7.8.2)
+    var isFetchingActivities = false; // Flag para evitar bucles infinitos (Revisión CORS/Red)
 
     if (logoutButton) {
         logoutButton.addEventListener('click', function() {
@@ -115,7 +116,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Función para obtener Tareas y Exámenes
     window.fetchAllActivities = async function() {
-        if (!tasksList) return;
+        if (!tasksList || isFetchingActivities) return;
+        isFetchingActivities = true;
 
         // Tarea 4: Cargar historial en paralelo para optimizar (v7.8.2)
         var historyPromise = fetchAcademicHistory();
@@ -290,6 +292,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     <button onclick="location.reload()" class="mt-6 px-6 py-2 bg-blue-600 text-white rounded-xl text-[10px] font-bold uppercase tracking-widest hover:bg-blue-700 transition-all shadow-lg">Reintentar</button>
                 </div>`;
         } finally {
+            isFetchingActivities = false;
             if (window.GamesAdapter) window.GamesAdapter.showLoading(false);
         }
     }
@@ -576,6 +579,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         var currentActivities = activities.filter(function(a) {
             var isParcialOk = window.normalizePartial(a.parcial) === window.normalizePartial(selectedPartial);
+            // Tarea 2: Persistencia Histórica (Bypass parcial restrictivo para historial)
             var isAuthorized = true;
             if (window.normalizePartial(selectedPartial) === window.normalizePartial(activePartial)) {
                 isAuthorized = window.isContentAuthorized(a.parcial, a.asignatura, a.tema, a.grado, a.seccion);
@@ -597,10 +601,12 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
 
-        // Asegurar inclusión de asignaturas de Configuración Global (v7.8.6)
+        // Tarea 3: Asegurar que se incluyan las asignaturas de la Configuración Global (si es el parcial actual)
+        // Se añade validación de grado para evitar filtración de materias de otros cursos (Fase Diagnóstico v7.8.4)
         if (window.normalizePartial(selectedPartial) === window.normalizePartial(activePartial)) {
             var globalAsigs = window.GLOBAL_SCOPE ? window.GLOBAL_SCOPE.AsignaturaActual : [];
             globalAsigs.forEach(function(asig) {
+                // REQ: Filtro Estricto de Seguridad (isContentAuthorized ahora valida Grado vs Asignatura)
                 if (window.isContentAuthorized(selectedPartial, asig, null, currentUser.grado, currentUser.seccion)) {
                     if (subjects.indexOf(asig) === -1) subjects.push(asig);
                 }
@@ -617,10 +623,12 @@ document.addEventListener('DOMContentLoaded', function() {
         // REQ: Tarjetas Expandibles de Asignatura (v7.8.6)
         tasksList.innerHTML = subjects.map(function(subj) {
             var subjActivities = currentActivities.filter(function(a) { return a.asignatura === subj; });
+            // Solo actividades no resueltas para el estado inicial
             var pendingActivities = subjActivities.filter(function(a) {
                 return !a.entrega || (a.entrega.estado !== 'Completada' && a.entrega.estado !== 'Revisada' && a.entrega.estado !== 'Finalizado');
             });
 
+            // Orden jerárquico: Más reciente primero
             pendingActivities.sort(function(a, b) {
                 return new Date(b.fechaLimite || 0) - new Date(a.fechaLimite || 0);
             });
@@ -628,80 +636,95 @@ document.addEventListener('DOMContentLoaded', function() {
             var mostRecent = pendingActivities[0];
             var count = pendingActivities.length;
 
+            if (count === 0) return ''; // No mostrar si no hay pendientes (Tarea 2)
+
             return `
-                <div class="card-ima subject-card group animate-fade-in-up flex flex-col transition-all duration-300" id="card-${window.btoa(subj).replace(/=/g, '')}">
+                <div class="card-ima subject-card cursor-pointer group animate-fade-in-up" onclick="window.expandSubject('${subj.replace(/'/g, "\\'")}')">
                     <div class="flex justify-between items-start mb-4">
-                        <div class="w-12 h-12 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center text-xl">
+                        <div class="w-12 h-12 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center text-xl group-hover:scale-110 transition-transform">
                             <i class="fas fa-book"></i>
                         </div>
-                        <span class="px-3 py-1 ${count > 0 ? 'bg-orange-100 text-orange-700' : 'bg-emerald-100 text-emerald-700'} text-[10px] font-black uppercase rounded-full shadow-sm">${count} Pendientes</span>
+                        <span class="px-3 py-1 bg-blue-100 text-blue-700 text-[10px] font-black uppercase rounded-full shadow-sm">${count} Pendientes</span>
                     </div>
                     <h3 class="text-lg font-bold text-gray-900 mb-2 uppercase tracking-tighter">${subj}</h3>
-
-                    <div class="p-4 bg-gray-50 rounded-2xl border border-gray-100 mb-4">
-                        <p class="text-[10px] font-bold text-blue-500 uppercase tracking-widest mb-1">Estado Reciente</p>
-                        <p class="text-sm font-semibold text-gray-800 truncate">${mostRecent ? mostRecent.titulo : 'Sin pendientes'}</p>
-                        ${mostRecent ? `<p class="text-[10px] text-gray-400 font-medium uppercase mt-1">Vence: ${formatDate(mostRecent.fechaLimite)}</p>` : ''}
+                    <div class="p-4 bg-gray-50 rounded-2xl border border-gray-100 group-hover:border-blue-200 transition-colors">
+                        <p class="text-[10px] font-bold text-blue-500 uppercase tracking-widest mb-1">Actividad Reciente</p>
+                        <p class="text-sm font-semibold text-gray-800 truncate">${mostRecent ? mostRecent.titulo : 'Sin tareas pendientes'}</p>
+                        <p class="text-[10px] text-gray-400 font-medium uppercase mt-1">${mostRecent ? 'Vence: ' + formatDate(mostRecent.fechaLimite) : ''}</p>
                     </div>
-
-                    <button onclick="window.expandSubject('${subj.replace(/'/g, "\\'")}', this)" class="w-full py-2 bg-blue-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-blue-700 transition-all flex items-center justify-center gap-2">
-                        <span>Ver todas las actividades</span>
-                        <i class="fas fa-chevron-down transition-transform duration-300"></i>
-                    </button>
-
-                    <!-- Contenedor In-situ para expansión -->
-                    <div class="subject-expanded-content hidden mt-6 pt-6 border-t border-gray-100">
-                        <div class="expanded-tasks-container grid grid-cols-1 gap-4">
-                            <!-- Actividades inyectadas aquí -->
-                        </div>
+                    <div class="mt-4 flex justify-end">
+                        <span class="text-[10px] font-bold text-blue-600 uppercase tracking-widest flex items-center gap-2 group-hover:gap-3 transition-all">Ver todas <i class="fas fa-arrow-right"></i></span>
                     </div>
                 </div>
             `;
         }).join('');
 
-        // Tarea 2: Expansión In-situ (v7.8.6)
-        window.expandSubject = function(subj, btn) {
-            var card = btn.closest('.subject-card');
-            var content = card.querySelector('.subject-expanded-content');
-            var container = card.querySelector('.expanded-tasks-container');
-            var icon = btn.querySelector('i');
+        // Si todas las asignaturas fueron filtradas por no tener pendientes
+        if (tasksList.innerHTML.trim() === '') {
+            tasksList.innerHTML = `
+                <div class="col-span-full p-12 text-center bg-white rounded-[2rem] border border-gray-100 animate-fade-in">
+                    <div class="w-16 h-16 bg-green-50 text-green-600 rounded-full flex items-center justify-center text-2xl mx-auto mb-4">
+                        <i class="fas fa-check-double"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-gray-800 uppercase tracking-tighter mb-2">¡Felicidades!</h3>
+                    <p class="text-gray-400 text-xs font-medium uppercase tracking-widest leading-relaxed">
+                        Has completado todas tus actividades para este parcial.
+                    </p>
+                </div>`;
+        }
 
-            if (content.classList.contains('hidden')) {
-                // Cerrar otras expansiones (opcional, pero mejora limpieza)
-                document.querySelectorAll('.subject-expanded-content').forEach(function(el) {
-                    if (el !== content) {
-                        el.classList.add('hidden');
-                        var otherBtn = el.closest('.subject-card').querySelector('button i');
-                        if (otherBtn) otherBtn.classList.remove('rotate-180');
-                    }
-                });
+        // Tarea 2: Expansión Full-Viewport
+        window.expandSubject = function(subj) {
+            var expandedOverlay = document.createElement('div');
+            expandedOverlay.id = 'expanded-subject-overlay';
+            expandedOverlay.className = 'fixed inset-0 z-[2200] bg-white overflow-y-auto animate-expansion';
 
-                // Renderizar actividades si el contenedor está vacío
-                if (container.innerHTML.trim() === '') {
-                    var subjActivities = currentActivities.filter(function(a) { return a.asignatura === subj; });
-                    subjActivities.sort(function(a, b) {
-                        return new Date(b.fechaLimite || 0) - new Date(a.fechaLimite || 0);
-                    });
+            var subjActivities = currentActivities.filter(function(a) { return a.asignatura === subj; });
 
-                    if (subjActivities.length > 0) {
-                        renderActivitiesIntoContainer(subjActivities, container);
-                    } else {
-                        container.innerHTML = '<p class="text-center text-gray-400 text-[10px] font-bold uppercase py-4">No hay actividades registradas.</p>';
-                    }
-                }
+            // Ordenar por fecha de vencimiento (más recientes primero)
+            subjActivities.sort(function(a, b) {
+                return new Date(b.fechaLimite || 0) - new Date(a.fechaLimite || 0);
+            });
 
-                content.classList.remove('hidden');
-                icon.classList.add('rotate-180');
-                btn.querySelector('span').textContent = 'Contraer Asignatura';
+            expandedOverlay.innerHTML = `
+                <div class="container mx-auto px-4 md:px-8 py-8 max-w-5xl">
+                    <div class="flex items-center justify-between mb-8 sticky top-0 bg-white/90 backdrop-blur-md py-4 z-10 border-b border-gray-100">
+                        <div class="flex items-center gap-4">
+                            <button onclick="window.closeExpandedSubject()" class="w-10 h-10 rounded-full bg-gray-100 text-gray-500 flex items-center justify-center hover:bg-blue-600 hover:text-white transition-all">
+                                <i class="fas fa-arrow-left"></i>
+                            </button>
+                            <div>
+                                <h2 class="text-2xl font-black text-gray-900 uppercase tracking-tighter">${subj}</h2>
+                                <p class="text-[10px] font-bold text-blue-600 uppercase tracking-widest">${selectedPartial}</p>
+                            </div>
+                        </div>
+                        <div class="px-4 py-2 bg-blue-50 text-blue-600 rounded-xl text-xs font-bold uppercase tracking-widest border border-blue-100">
+                            ${subjActivities.length} Actividades Totales
+                        </div>
+                    </div>
 
-                // Scroll suave a la tarjeta expandida
+                    <div id="expanded-tasks-list" class="grid grid-cols-1 gap-6 pb-20">
+                        <!-- Se poblará dinámicamente -->
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(expandedOverlay);
+            document.body.style.overflow = 'hidden';
+
+            var expandedList = document.getElementById('expanded-tasks-list');
+            // Reutilizar lógica de renderizado de tareas (con todas las tareas)
+            renderActivitiesIntoContainer(subjActivities, expandedList);
+        };
+
+        window.closeExpandedSubject = function() {
+            var overlay = document.getElementById('expanded-subject-overlay');
+            if (overlay) {
+                overlay.classList.remove('animate-expansion');
+                overlay.classList.add('animate-shrink');
                 setTimeout(function() {
-                    card.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }, 100);
-            } else {
-                content.classList.add('hidden');
-                icon.classList.remove('rotate-180');
-                btn.querySelector('span').textContent = 'Ver todas las actividades';
+                    overlay.remove();
+                    document.body.style.overflow = '';
+                }, 400);
             }
         };
     }
@@ -1497,6 +1520,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // REQ: Reactive Scope Synchronization (v7.7.1)
     document.addEventListener('academic-scope-updated', function() {
+        if (isFetchingActivities) return;
         console.log("[Student] Academic scope updated, refreshing activities...");
         // Forzar limpieza de cache local para asegurar datos frescos tras cambio de alcance
         if (window.PersistenceManager) {
