@@ -634,7 +634,7 @@ document.addEventListener('DOMContentLoaded', function() {
             var granular = (window.GLOBAL_SCOPE && window.GLOBAL_SCOPE.GranularConfig) ? window.GLOBAL_SCOPE.GranularConfig : [];
             var authorizedAsigs = [...new Set(granular.filter(function(r) {
                 var matchGrado = (window.parseGrade(r.grado) === window.parseGrade(currentUser.grado));
-                var matchSeccion = (!r.seccion || r.seccion === "Todas" || r.seccion === currentUser.seccion);
+                var matchSeccion = window.checkSectionHelper(r.seccion, currentUser.seccion) || r.seccion === "Todas";
                 // REQ: Reparar variable matchParcial no definida y asegurar filtrado estricto (v7.9.3)
                 var matchParcial = window.normalizePartial(r.parcial) === window.normalizePartial(selectedPartial);
                 return matchGrado && matchSeccion && matchParcial;

@@ -1061,3 +1061,21 @@ Archivo: backend/user-service/Code.gs
 Archivo: js/config.js
 - Hallazgo [Arquitectura]: URLs de microservicios duplicadas.
 - Solución: Separadas las constantes USER y ACADEMIC con placeholders para despliegues independientes.
+- Sector: Seguridad / Auth\n- Hallazgo: Vulnerabilidad por firma hardcodeada en resetPassword.\n- Solución: Restaurada firma HMAC SHA-256 usando SECRET_KEY.
+
+AUDITORÍA DE ESTABILIZACIÓN Y SEGURIDAD v7.9.7 - Fri Jul  3 15:57:36 UTC 2026
+
+Archivo: backend/user-service/Code.gs
+- Sector: requestPasswordRecovery / resetPassword
+- Hallazgo [Crítico]: Vulnerabilidad de firma de token hardcodeada ('SIG-REPLACEME').
+- Solución: Restaurada implementación HMAC SHA-256 utilizando SECRET_KEY.
+
+Archivo: js/student.js
+- Sector: renderSubjectNavigation
+- Hallazgo [Alto]: Error de renderizado en Dashboard Estudiante por falta de soporte a listas de secciones (csv).
+- Solución: Integrado window.checkSectionHelper para validar alcances granulares de sección.
+
+Archivo: backend/academic-service/Code.gs
+- Sector: updateAcademicConfig
+- Hallazgo [Causa Raíz]: Duplicidad por falta de normalización en la reconciliación y contaminación por producto cartesiano ciego.
+- Solución: Implementada 'hierarchicalAssignments' desde el frontend para forzar unicidad Grado-Asignatura-Tema. Normalización bidireccional aplicada a todas las búsquedas de llaves.

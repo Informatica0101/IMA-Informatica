@@ -117,25 +117,52 @@ function updateAcademicConfig(payload) {
     rows.forEach(r => { if (String(r[8]).trim() !== profesorId && r[2] === parcialNorm && grades.indexOf(r[3]) !== -1 && sections.indexOf(r[4]) !== -1 && subjects.indexOf(r[5]) !== -1) throw new Error(`Conflicto: La asignatura '${r[5]}' ya está asignada.`); });
 
     const finalConfigMap = {};
-    rows.forEach(r => { if (String(r[8]).trim() !== profesorId) finalConfigMap[`${r[3]}|${r[4]}|${r[5]}|${r[7]}|${r[8]}`] = r; });
+    rows.forEach(r => { if (String(r[8]).trim() !== profesorId) finalConfigMap[`${normalizeString(r[3])}|${normalizeString(r[4])}|${normalizeString(r[5])}|${normalizeString(r[7])}|${normalizeString(r[8])}`] = r; });
     let maxId = 0; rows.forEach(r => { const num = parseInt(String(r[0]).replace("conf-", "")); if (!isNaN(num) && num > maxId) maxId = num; });
 
-    grades.forEach(g => {
-      sections.forEach(s => {
-        subjects.forEach(asig => {
-          themes.forEach(t => {
-            const key = `${g}|${s}|${asig}|${t}|${profesorId}`;
-            const oldRow = rows.find(r => String(r[8]).trim() === profesorId && r[3] === g && r[4] === s && r[5] === asig && r[7] === t);
-            if (oldRow) {
-              const updated = [...oldRow]; updated[1] = currentMonth; updated[2] = parcialNorm; updated[6] = unidadNorm;
-              finalConfigMap[key] = updated;
-            } else {
-              maxId++; finalConfigMap[key] = ["conf-" + maxId.toString().padStart(4, '0'), currentMonth, parcialNorm, g, s, asig, unidadNorm, t, profesorId];
-            }
+    // REQ: Soporte para Asignación Jerárquica (v7.9.7)
+    // Prioriza la estructura enviada por el frontend para evitar contaminación entre grados.
+    if (fullScope.hierarchicalAssignments && Array.isArray(fullScope.hierarchicalAssignments)) {
+      fullScope.hierarchicalAssignments.forEach(entry => {
+        const { grado: g, seccion: s, asignatura: asig, temas } = entry;
+        temas.forEach(t => {
+          const key = `${normalizeString(g)}|${normalizeString(s)}|${normalizeString(asig)}|${normalizeString(t)}|${normalizeString(profesorId)}`;
+          const oldRow = rows.find(r =>
+            normalizeString(r[8]) === normalizeString(profesorId) && normalizeString(r[3]) === normalizeString(g) &&
+            normalizeString(r[4]) === normalizeString(s) && normalizeString(r[5]) === normalizeString(asig) &&
+            normalizeString(r[7]) === normalizeString(t)
+          );
+          if (oldRow) {
+            const updated = [...oldRow]; updated[1] = currentMonth; updated[2] = parcialNorm; updated[6] = unidadNorm;
+            finalConfigMap[key] = updated;
+          } else {
+            maxId++; finalConfigMap[key] = ["conf-" + maxId.toString().padStart(4, '0'), currentMonth, parcialNorm, g, s, asig, unidadNorm, t, profesorId];
+          }
+        });
+      });
+    } else {
+      // Fallback: Producto Cartesiano (Retrocompatibilidad)
+      grades.forEach(g => {
+        sections.forEach(s => {
+          subjects.forEach(asig => {
+            themes.forEach(t => {
+              const key = `${normalizeString(g)}|${normalizeString(s)}|${normalizeString(asig)}|${normalizeString(t)}|${normalizeString(profesorId)}`;
+              const oldRow = rows.find(r =>
+                normalizeString(r[8]) === normalizeString(profesorId) && normalizeString(r[3]) === normalizeString(g) &&
+                normalizeString(r[4]) === normalizeString(s) && normalizeString(r[5]) === normalizeString(asig) &&
+                normalizeString(r[7]) === normalizeString(t)
+              );
+              if (oldRow) {
+                const updated = [...oldRow]; updated[1] = currentMonth; updated[2] = parcialNorm; updated[6] = unidadNorm;
+                finalConfigMap[key] = updated;
+              } else {
+                maxId++; finalConfigMap[key] = ["conf-" + maxId.toString().padStart(4, '0'), currentMonth, parcialNorm, g, s, asig, unidadNorm, t, profesorId];
+              }
+            });
           });
         });
       });
-    });
+    }
 
     const finalRows = Object.values(finalConfigMap);
     // Persistencia Segura: No limpiar antes de escribir para evitar pérdida por timeout
@@ -187,19 +214,43 @@ function saveToAcademicHistory(scope) {
   }));
 
   const newEntries = [];
-  grades.forEach(rg => {
-    const g = normalizeGrade(rg);
-    sections.forEach(s => {
-      subjects.forEach(ra => {
-        const a = String(ra).toLowerCase();
-        const key = `${normalizeString(parcialNorm)}|${normalizeString(g)}|${normalizeString(s)}|${normalizeString(a)}|${normalizeString(profesorId)}`;
-        if (!existingKeys.has(key)) {
-          lastIdNum++; newEntries.push(["hist-" + lastIdNum.toString().padStart(4, '0'), currentMonth, parcialNorm, g, s, a, unidadNorm, profesorId]);
-          existingKeys.add(key);
-        }
+
+  if (scope.hierarchicalAssignments && Array.isArray(scope.hierarchicalAssignments)) {
+    // REQ: Historial basado en jerarquía real (v7.9.7)
+    // Evita registros redundantes de contaminación cruzada.
+    const seenAssignments = new Set();
+    scope.hierarchicalAssignments.forEach(entry => {
+      const g = normalizeGrade(entry.grado);
+      const s = entry.seccion;
+      const a = String(entry.asignatura).toLowerCase();
+      const contextKey = `${g}|${s}|${a}`;
+
+      if (seenAssignments.has(contextKey)) return;
+      seenAssignments.add(contextKey);
+
+      const key = `${normalizeString(parcialNorm)}|${normalizeString(g)}|${normalizeString(s)}|${normalizeString(a)}|${normalizeString(profesorId)}`;
+      if (!existingKeys.has(key)) {
+        lastIdNum++;
+        newEntries.push(["hist-" + lastIdNum.toString().padStart(4, '0'), currentMonth, parcialNorm, g, s, a, unidadNorm, profesorId]);
+        existingKeys.add(key);
+      }
+    });
+  } else {
+    // Fallback: Producto Cartesiano
+    grades.forEach(rg => {
+      const g = normalizeGrade(rg);
+      sections.forEach(s => {
+        subjects.forEach(ra => {
+          const a = String(ra).toLowerCase();
+          const key = `${normalizeString(parcialNorm)}|${normalizeString(g)}|${normalizeString(s)}|${normalizeString(a)}|${normalizeString(profesorId)}`;
+          if (!existingKeys.has(key)) {
+            lastIdNum++; newEntries.push(["hist-" + lastIdNum.toString().padStart(4, '0'), currentMonth, parcialNorm, g, s, a, unidadNorm, profesorId]);
+            existingKeys.add(key);
+          }
+        });
       });
     });
-  });
+  }
   if (newEntries.length > 0) sheet.getRange(sheet.getLastRow() + 1, 1, newEntries.length, 8).setValues(newEntries);
 }
 
@@ -229,7 +280,8 @@ function getAsignaturasActivas(payload) {
   const sheet = ss.getSheetByName("ConfiguracionAcademica");
   if (!sheet) return { status: "success", data: [] };
   const data = sheet.getDataRange().getValues().slice(1);
-  return { status: "success", data: [...new Set(data.filter(r => r[2] === payload.parcial).map(r => r[5]))] };
+  const target = normalizeString(payload.parcial);
+  return { status: "success", data: [...new Set(data.filter(r => normalizeString(r[2]) === target).map(r => r[5]))] };
 }
 
 function updateAsignaturasActivas(payload) { return { status: "success", message: "Depreciado." }; }

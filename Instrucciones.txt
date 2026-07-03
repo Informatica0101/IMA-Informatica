@@ -356,6 +356,8 @@ TAREAS PENDIENTES DE REVISIÓN
 - Tarea 10: Optimización de Persistencia Académica y Navegación Contextual v7.9.1 - Resolución de duplicidad en persistencia, lógica de salto de navegación (Skip Logic) y filtrado estricto multi-factor.
 
 TAREAS PENDIENTES DE REVISIÓN
-- Modularización del servicio de usuarios y restauración de lógica psicométrica v7.9.6
-- Corrección definitiva de persistencia duplicada mediante normalización de historial
-- Resolución de filtrado de asignaturas en Dashboard Estudiante (ReferenceError fixed)
+
+TAREAS PENDIENTES DE REVISIÓN
+- Implementación de Jerarquía Académica Estricta (hierarchicalAssignments) v7.9.7
+- Corrección de visibilidad de Dashboard Estudiante (Multi-section support)
+- Fortalecimiento de firma HMAC en microservicio de usuarios

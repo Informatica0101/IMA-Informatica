@@ -199,7 +199,9 @@ function requestPasswordRecovery(payload) {
   const data = getSheetOrThrow(SpreadsheetApp.openById(SPREADSHEET_ID), "Usuarios").getDataRange().getValues();
   const user = data.find(r => r[4]?.toString().toLowerCase().trim() === email.toLowerCase().trim());
   if (!user) return { status: "error", message: "Correo no encontrado." };
-  const token = Utilities.base64Encode(JSON.stringify({ p: { userId: user[0], exp: Date.now() + 3600000 }, s: "SIG-REPLACEME" }));
+  const p = { userId: user[0], exp: Date.now() + 3600000 };
+  const s = Utilities.computeHmacSha256Signature(JSON.stringify(p), SECRET_KEY).map(b => ('0' + (b & 0xFF).toString(16)).slice(-2)).join('');
+  const token = Utilities.base64Encode(JSON.stringify({ p, s }));
   MailApp.sendEmail(email, "Recuperación de Contraseña", `Enlace: ${FRONTEND_URL}/reset-password.html?token=${encodeURIComponent(token)}`);
   return { status: "success", message: "Email enviado." };
 }
@@ -207,10 +209,13 @@ function requestPasswordRecovery(payload) {
 function resetPassword(payload) {
   const { token, newPassword } = payload;
   const decoded = JSON.parse(Utilities.newBlob(Utilities.base64Decode(token)).getDataAsString());
+  const expectedS = Utilities.computeHmacSha256Signature(JSON.stringify(decoded.p), SECRET_KEY).map(b => ('0' + (b & 0xFF).toString(16)).slice(-2)).join('');
+  if (decoded.s !== expectedS) throw new Error("Firma inválida.");
   if (Date.now() > decoded.p.exp) throw new Error("Expirado.");
   const sheet = getSheetOrThrow(SpreadsheetApp.openById(SPREADSHEET_ID), "Usuarios");
   const data = sheet.getDataRange().getValues();
-  const idx = data.findIndex(r => r[0] === decoded.p.userId);
+  const idx = data.findIndex(r => String(r[0]) === String(decoded.p.userId));
+  if (idx === -1) throw new Error("Usuario no encontrado.");
   const hp = Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, newPassword).map(b => ('0' + (b & 0xFF).toString(16)).slice(-2)).join('');
   sheet.getRange(idx + 1, 6).setValue(hp);
   return { status: "success", message: "Contraseña actualizada." };

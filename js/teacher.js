@@ -195,12 +195,14 @@ document.addEventListener('DOMContentLoaded', () => {
             asigContainer.innerHTML = '<p class="text-[10px] text-gray-400 p-2">Seleccione grado y sección para ver asignaturas.</p>';
             temasContainer.innerHTML = '<p class="text-[10px] text-gray-400 p-2">Seleccione una asignatura para ver sus temas.</p>';
         } else {
-            asigContainer.innerHTML = uniqueSubjsNames.map(s => `
+            asigContainer.innerHTML = uniqueSubjsNames.map(s => {
+                const subMeta = availableSubjs.find(m => m.name === s);
+                return `
                 <label class="flex items-center gap-2 px-2 py-1 hover:bg-blue-50 rounded-lg cursor-pointer transition-colors">
-                    <input type="checkbox" name="admin-asignatura" value="${s}" class="w-4 h-4 text-blue-600 rounded" ${selectedAsigArray.includes(s) ? 'checked' : ''}>
+                    <input type="checkbox" name="admin-asignatura" value="${s}" data-grado="${subMeta ? subMeta.grade : ''}" class="w-4 h-4 text-blue-600 rounded" ${selectedAsigArray.includes(s) ? 'checked' : ''}>
                     <span class="text-[10px] font-bold text-gray-700 uppercase">${s}</span>
                 </label>
-            `).join('');
+            `}).join('');
         }
 
         const updateTemas = () => {
@@ -223,16 +225,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
 
                 if (topics.length > 0) {
-                    html += `<div class="mb-4">
+                    html += `<div class="mb-4" data-asig-container="${asigName}">
                         <h4 class="text-[11px] font-black text-blue-600 uppercase tracking-widest border-b border-blue-50 pb-1 mb-2">${asigName}</h4>
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
                             <label class="flex items-center gap-2 px-2 py-1 bg-gray-50 rounded-lg cursor-pointer hover:bg-blue-50 transition-colors">
-                                <input type="checkbox" name="admin-tema" value="General" class="w-4 h-4 text-blue-600 rounded" ${selectedTemasArray.includes("General") ? 'checked' : ''}>
+                                <input type="checkbox" name="admin-tema" value="General" data-asig="${asigName}" class="w-4 h-4 text-blue-600 rounded" ${selectedTemasArray.includes("General") ? 'checked' : ''}>
                                 <span class="text-[9px] font-bold text-gray-500 uppercase">General (Todos)</span>
                             </label>
                             ${topics.map(t => `
                                 <label class="flex items-center gap-2 px-2 py-1 bg-white border border-gray-100 rounded-lg cursor-pointer hover:bg-blue-50 transition-colors">
-                                    <input type="checkbox" name="admin-tema" value="${t.title}" class="w-4 h-4 text-blue-600 rounded" ${selectedTemasArray.includes(t.title) ? 'checked' : ''}>
+                                    <input type="checkbox" name="admin-tema" value="${t.title}" data-asig="${asigName}" class="w-4 h-4 text-blue-600 rounded" ${selectedTemasArray.includes(t.title) ? 'checked' : ''}>
                                     <span class="text-[9px] font-bold text-gray-700 uppercase">${t.title}</span>
                                 </label>
                             `).join('')}
@@ -262,11 +264,47 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const selectedGrades = Array.from(document.querySelectorAll('input[name="admin-grado"]:checked')).map(cb => cb.value);
         const selectedSections = Array.from(document.querySelectorAll('input[name="admin-seccion"]:checked')).map(cb => cb.value);
-        const selectedAsigs = Array.from(document.querySelectorAll('input[name="admin-asignatura"]:checked')).map(cb => cb.value);
-        const selectedTemas = Array.from(document.querySelectorAll('input[name="admin-tema"]:checked')).map(cb => cb.value);
+        const checkedAsigsInputs = Array.from(document.querySelectorAll('input[name="admin-asignatura"]:checked'));
+        const checkedTemasInputs = Array.from(document.querySelectorAll('input[name="admin-tema"]:checked'));
 
-        if (selectedGrades.length === 0 || selectedSections.length === 0 || selectedAsigs.length === 0 || selectedTemas.length === 0) {
+        if (selectedGrades.length === 0 || selectedSections.length === 0 || checkedAsigsInputs.length === 0 || checkedTemasInputs.length === 0) {
             alert('Debe seleccionar al menos un grado, una sección, una asignatura y un tema.');
+            return;
+        }
+
+        // Construcción de Asignación Jerárquica (v7.9.7)
+        // Evita la contaminación cruzada entre grados enviando relaciones explícitas.
+        const hierarchicalAssignments = [];
+
+        selectedGrades.forEach(grado => {
+            selectedSections.forEach(seccion => {
+                // Filtrar asignaturas que pertenecen a este grado
+                const validAsigsForGrado = checkedAsigsInputs.filter(input => {
+                    const subGrado = input.dataset.grado;
+                    return window.parseGrade(subGrado) === window.parseGrade(grado);
+                });
+
+                validAsigsForGrado.forEach(asigInput => {
+                    const asigName = asigInput.value;
+                    // Filtrar temas que fueron marcados para esta asignatura específica
+                    const validTemasForAsig = checkedTemasInputs
+                        .filter(input => input.dataset.asig === asigName)
+                        .map(input => input.value);
+
+                    if (validTemasForAsig.length > 0) {
+                        hierarchicalAssignments.push({
+                            grado: grado,
+                            seccion: seccion,
+                            asignatura: asigName,
+                            temas: validTemasForAsig
+                        });
+                    }
+                });
+            });
+        });
+
+        if (hierarchicalAssignments.length === 0) {
+            alert('No se encontraron combinaciones válidas de Grado-Asignatura. Verifique su selección.');
             return;
         }
 
@@ -276,8 +314,9 @@ document.addEventListener('DOMContentLoaded', () => {
             UnidadActual: document.getElementById('admin-unidad-actual')?.value || document.getElementById('admin-parcial-actual').value.replace('parcial', 'unidad'),
             GradoActual: selectedGrades,
             SeccionActual: selectedSections,
-            AsignaturaActual: selectedAsigs,
-            TemaActual: selectedTemas
+            AsignaturaActual: [...new Set(checkedAsigsInputs.map(i => i.value))],
+            TemaActual: [...new Set(checkedTemasInputs.map(i => i.value))],
+            hierarchicalAssignments: hierarchicalAssignments
         };
 
         btn.disabled = true;

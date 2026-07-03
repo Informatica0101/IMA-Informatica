@@ -564,3 +564,16 @@ Módulo: Frontend
 - js/config.js: Preparada configuración para despliegue de microservicios independientes.
 - js/student.js: Corregido error de referencia 'matchParcial' y reforzado aislamiento de grado/sección.
 - js/api.js: Asegurados fallbacks para el nuevo servicio ACADEMIC.
+Módulo: Seguridad\n- backend/user-service/Code.gs: Corregida validación de tokens de recuperación de contraseña.
+
+REGISTRO DE CAMBIOS - RESOLUCIÓN ESTRUCTURAL v7.9.7 - Fri Jul  3 15:57:36 UTC 2026
+
+Módulo: Persistencia y Jerarquía
+- js/teacher.js: Refactorizada captura de configuración para enviar 'hierarchicalAssignments'.
+- backend/academic-service/Code.gs: Implementada lógica de guardado jerárquico que previene contaminación cruzada entre grados.
+
+Módulo: Dashboard Estudiante
+- js/student.js: Corregida lógica de filtrado de secciones para soportar 'Todas' y listados múltiples.
+
+Módulo: Seguridad
+- backend/user-service/Code.gs: Endurecida validación de firmas en recuperación de contraseña.
