@@ -664,20 +664,23 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
 
-        // REQ: Tarjetas Expandibles de Asignatura (v7.9.0)
-        // Se muestran todas las asignaturas autorizadas para el parcial seleccionado, incluso si no tienen pendientes.
+        // REQ: Tarjetas de Asignatura Basadas en GranularConfig (Fase 3)
+        // Se muestran todas las asignaturas configuradas para el alumno en el parcial seleccionado.
         tasksList.innerHTML = subjects.map(function(subj) {
             var subjActivities = currentActivities.filter(function(a) { return a.asignatura === subj; });
 
-            // Actividades no resueltas para el snippet informativo
+            // REQ: Filtro y Orden de Actividades Pendientes (Fase 3)
             var pendingActivities = subjActivities.filter(function(a) {
                 var s = a.entrega ? a.entrega.estado : null;
+                // Excluimos las ya entregadas/aprobadas para el contador de pendientes
                 return !a.entrega || (s !== 'Completada' && s !== 'Revisada' && s !== 'Finalizado');
             });
 
-            // Orden jerárquico para el snippet (vencimiento próximo primero)
+            // Ordenar por fecha de vencimiento más próxima (ascendente)
             pendingActivities.sort(function(a, b) {
-                return new Date(a.fechaLimite || 0) - new Date(b.fechaLimite || 0);
+                var dateA = a.fechaLimite ? new Date(a.fechaLimite) : new Date(8640000000000000);
+                var dateB = b.fechaLimite ? new Date(b.fechaLimite) : new Date(8640000000000000);
+                return dateA - dateB;
             });
 
             var mostRecent = pendingActivities[0];
@@ -695,16 +698,16 @@ document.addEventListener('DOMContentLoaded', function() {
                     </div>
                     <h3 class="text-lg font-bold text-gray-900 mb-2 uppercase tracking-tighter">${subj}</h3>
                     <div class="p-4 bg-gray-50 rounded-2xl border border-gray-100 group-hover:border-blue-200 transition-colors">
-                        <p class="text-[10px] font-bold text-blue-500 uppercase tracking-widest mb-1">Estado de Actividad</p>
+                        <p class="text-[10px] font-bold text-blue-500 uppercase tracking-widest mb-1">Próxima Pendiente</p>
                         <p class="text-sm font-semibold ${count > 0 ? 'text-gray-800' : 'text-emerald-600'} truncate">
                             ${count > 0 ? mostRecent.titulo : '¡Sin tareas pendientes!'}
                         </p>
                         <p class="text-[10px] text-gray-400 font-medium uppercase mt-1">
-                            ${count > 0 ? 'Vence: ' + formatDate(mostRecent.fechaLimite) : 'Carga académica completada'}
+                            ${count > 0 ? 'Fecha límite: ' + formatDate(mostRecent.fechaLimite) : 'Carga académica completada'}
                         </p>
                     </div>
                     <div class="mt-4 flex justify-end">
-                        <span class="text-[10px] font-bold text-blue-600 uppercase tracking-widest flex items-center gap-2 group-hover:gap-3 transition-all">Explorar actividades <i class="fas fa-arrow-right"></i></span>
+                        <span class="text-[10px] font-bold text-blue-600 uppercase tracking-widest flex items-center gap-2 group-hover:gap-3 transition-all">Ver todas las actividades <i class="fas fa-arrow-right"></i></span>
                     </div>
                 </div>
             `;

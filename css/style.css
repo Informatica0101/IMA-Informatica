@@ -681,3 +681,146 @@ footer a:hover {
     from { opacity: 0; transform: translateX(-20px); }
     to { opacity: 1; transform: translateX(0); }
 }
+
+/* ==========================================================================
+   MODERN ACADEMIC CONFIGURATION CONTROLS (v7.9.8)
+   ========================================================================== */
+
+/* REQ: Lightweight Glassmorphism & Depth for Selectors */
+select,
+#builder-grado,
+#builder-seccion,
+#builder-asignatura,
+#builder-unidad,
+#admin-parcial-actual,
+#parcial-history-selector,
+#report-grado,
+#report-seccion,
+#report-parcial,
+#filter-grado,
+#filter-seccion,
+#filter-estado,
+#proj-filter-grado,
+#proj-filter-seccion,
+#logros-filter-grado,
+#logros-filter-seccion {
+    backdrop-filter: blur(8px);
+    background-color: rgba(255, 255, 255, 0.7) !important;
+    border: 1.5px solid rgba(229, 231, 235, 0.8) !important;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+    -webkit-appearance: none;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236B7280'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    background-size: 1rem;
+    padding-right: 2.5rem !important;
+}
+
+/* Hover & Focus States */
+select:hover:not(:disabled),
+#builder-grado:hover,
+#builder-seccion:hover:not(:disabled),
+#builder-asignatura:hover:not(:disabled),
+#builder-unidad:hover:not(:disabled) {
+    border-color: #3b82f6 !important;
+    background-color: rgba(255, 255, 255, 0.95) !important;
+    transform: translateY(-1px);
+    box-shadow: 0 10px 15px -3px rgba(59, 130, 246, 0.1);
+}
+
+select:focus {
+    outline: none;
+    ring: 2px;
+    ring-color: rgba(59, 130, 246, 0.2);
+    border-color: #2563eb !important;
+    background-color: #ffffff !important;
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+}
+
+/* Disabled State */
+select:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background-color: rgba(243, 244, 246, 0.5) !important;
+    border-style: dashed !important;
+}
+
+/* REQ: Progressive Entrance Animations */
+.card-ima select, .card-ima #btn-add-assignment, #admin-assignments-list > div {
+    animation: slideInFade 0.4s ease-out forwards;
+}
+
+@keyframes slideInFade {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Smooth Transition for the Assignment List */
+#admin-assignments-list > div {
+    transition: all 0.3s ease;
+}
+
+#admin-assignments-list > div:hover {
+    transform: scale(1.02);
+    background-color: #ffffff;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+/* REQ: Button Interactive Feedback */
+#btn-add-assignment {
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+#btn-add-assignment:active {
+    transform: scale(0.97);
+}
+
+#btn-add-assignment::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 5px;
+    height: 5px;
+    background: rgba(255, 255, 255, 0.5);
+    opacity: 0;
+    border-radius: 100%;
+    transform: scale(1, 1) translate(-50%);
+    transform-origin: 50% 50%;
+}
+
+@keyframes ripple {
+    0% { transform: scale(0, 0); opacity: 1; }
+    20% { transform: scale(25, 25); opacity: 1; }
+    100% { opacity: 0; transform: scale(40, 40); }
+}
+
+#btn-add-assignment:focus:not(:active)::after {
+    animation: ripple 1s ease-out;
+}
+
+/* Scroll Minimalist for the list */
+.scroll-minimalist::-webkit-scrollbar {
+    width: 4px;
+}
+.scroll-minimalist::-webkit-scrollbar-track {
+    background: transparent;
+}
+.scroll-minimalist::-webkit-scrollbar-thumb {
+    background: #e5e7eb;
+    border-radius: 10px;
+}
+.scroll-minimalist::-webkit-scrollbar-thumb:hover {
+    background: #d1d5db;
+}

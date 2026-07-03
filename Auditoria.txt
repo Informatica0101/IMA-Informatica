@@ -1079,3 +1079,43 @@ Archivo: backend/academic-service/Code.gs
 - Sector: updateAcademicConfig
 - Hallazgo [Causa Raíz]: Duplicidad por falta de normalización en la reconciliación y contaminación por producto cartesiano ciego.
 - Solución: Implementada 'hierarchicalAssignments' desde el frontend para forzar unicidad Grado-Asignatura-Tema. Normalización bidireccional aplicada a todas las búsquedas de llaves.
+
+AUDITORÍA TÉCNICA - REESTRUCTURACIÓN ACADÉMICA Y CIERRE DE CICLO - Fri Jul  3 16:56:56 UTC 2026
+
+Archivo: teacher-dashboard.html
+Sector: Panel de Administración (Líneas 410-515)
+Hallazgo [Medio]: El formulario de "Gestión Académica" se ubica después de "Finalizar Año Escolar".
+Impacto: Flujo de usuario inconsistente; las operaciones críticas administrativas deben ser el paso final.
+Recomendación: Reubicar el bloque de Gestión Académica antes del Cierre de Año.
+
+Sector: Formulario de Configuración (Líneas 474-510)
+Hallazgo [Crítico]: Uso de grupos de checkboxes para selección masiva de Grados, Secciones y Asignaturas.
+Impacto: Permite selecciones ambiguas que generan registros duplicados o incorrectos en el backend (ej. una asignatura asociada a múltiples grados erróneamente). No representa la jerarquía real Grado -> Sección -> Asignatura.
+Recomendación: Rediseñar a un flujo secuencial con selectores dependientes y una lista de asignaciones confirmadas.
+
+Archivo: js/teacher.js
+Sector: Lógica de Configuración (updateCascadingSelectors / btn-save-academic-config)
+Hallazgo [Alto]: La recolección de datos depende de estados de checkboxes que no garantizan la integridad de la relación jerárquica.
+Impacto: Generación de 'hierarchicalAssignments' propensa a errores por la naturaleza multi-selección de la UI actual.
+Recomendación: Implementar lógica para manejar un "Constructor de Asignaciones" paso a paso.
+
+Archivo: js/student.js
+Sector: renderSubjectNavigation (Línea 585)
+Hallazgo [Alto]: La generación de tarjetas de asignatura depende de la existencia de actividades en 'currentActivities'.
+Impacto: Si una asignatura configurada no tiene tareas publicadas, no se muestra en el dashboard, rompiendo la consistencia de navegación.
+Recomendación: Utilizar 'GranularConfig' como fuente primaria para renderizar todas las asignaturas autorizadas.
+
+Sector: renderSubjectNavigation (Snippet informativo)
+Hallazgo [Bajo]: El snippet de estado no prioriza visualmente la urgencia de las tareas.
+Recomendación: Ordenar actividades pendientes por fecha de vencimiento más próxima.
+
+Archivo: backend/academic-service/Code.gs
+Sector: updateAcademicConfig (Línea 88)
+Hallazgo [Alto]: La validación de unicidad (Líneas 112-113) es genérica sobre arreglos y no previene colisiones específicas en el producto cartesiano resultante si falla la estructura jerárquica.
+Recomendación: Endurecer la validación para verificar la combinación exacta (Parcial, Grado, Sección, Asignatura) contra todos los registros de otros profesores.
+
+Archivo: backend/task-service/Code.gs
+Sector: closeAcademicYear (Línea 135)
+Hallazgo [Crítico]: El proceso de cierre solo elimina registros en la Spreadsheet.
+Impacto: Los archivos de entregas permanecen ocupando espacio en Google Drive sin referencia, y la configuración académica vigente no se restablece.
+Recomendación: Implementar eliminación física de archivos vía DriveApp y limpieza de la hoja 'ConfiguracionAcademica'.
