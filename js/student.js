@@ -631,12 +631,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
         if (isViewingActive) {
             // Caso 1: Parcial Vigente -> Fuente: ConfiguracionAcademica (GLOBAL_SCOPE)
-            console.log("[DEBUG-STUDENT] Granular length:", granular.length);
             var granular = (window.GLOBAL_SCOPE && window.GLOBAL_SCOPE.GranularConfig) ? window.GLOBAL_SCOPE.GranularConfig : [];
             var authorizedAsigs = [...new Set(granular.filter(function(r) {
                 var matchGrado = (window.parseGrade(r.grado) === window.parseGrade(currentUser.grado));
                 var matchSeccion = (!r.seccion || r.seccion === "Todas" || r.seccion === currentUser.seccion);
-                console.log("[DEBUG-STUDENT] Row:", r.grado, r.seccion, r.parcial, "Match:", matchGrado, matchSeccion, matchParcial);
                 return matchGrado && matchSeccion && matchParcial;
             }).map(function(r) { return r.asignatura; }))].filter(Boolean);
 
