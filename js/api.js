@@ -39,7 +39,7 @@ function fetchApi(service, action, payload, retryCount, options) {
     var fetchOptions = {
         method: 'POST',
         headers: {
-            'Content-Type': 'text/plain;charset=utf-8'
+            'Content-Type': 'text/plain'
         },
         body: JSON.stringify({ action: action, payload: payload })
     };
@@ -158,7 +158,7 @@ function fetchApi(service, action, payload, retryCount, options) {
             // Estructuras de fallback según la acción solicitada (v7.7.5)
             if (action === 'getNews') return { status: 'success', data: [], isFallback: true };
             if (action === 'getGlobalTop') return { status: 'success', global: [], subjectTops: {}, isFallback: true };
-            if (action === 'getAcademicConfig') return { status: 'success', data: { ParcialActual: "Primer Parcial", GradoActual: [], SeccionActual: [], AsignaturaActual: [], TemaActual: ["General"] }, isFallback: true };
+            if (action === 'getAcademicConfig') return { status: 'success', data: { ParcialActual: "I parcial", GradoActual: [], SeccionActual: [], AsignaturaActual: [], TemaActual: ["General"] }, isFallback: true };
             if (action.indexOf('get') === 0) return { status: 'success', data: [], isFallback: true };
             if (action === 'loginUser') return { status: 'error', message: 'Servicio de autenticación no disponible.', isFallback: true };
 

@@ -14,12 +14,14 @@ document.addEventListener('DOMContentLoaded', function() {
     // --- Mi Perfil (Centralizado en ui-common.js) ---
 
     var PARCIAL_ORDER = {
-        "Cuarto Parcial": 4,
-        "Tercer Parcial": 3,
-        "Segundo Parcial": 2,
-        "Primer Parcial": 1
+        "IV parcial": 4,
+        "III parcial": 3,
+        "II parcial": 2,
+        "I parcial": 1
     };
     var allActivitiesData = [];
+    var academicHistory = []; // Tarea 4: Persistencia Histórica (v7.8.2)
+    var isFetchingActivities = false; // Flag para evitar bucles infinitos (Revisión CORS/Red)
 
     if (logoutButton) {
         logoutButton.addEventListener('click', function() {
@@ -48,6 +50,62 @@ document.addEventListener('DOMContentLoaded', function() {
     var activeUploads = 0;
     var isSubmitting = false; // Flag para evitar avisos tras entrega exitosa (Tarea 3)
 
+    // Tarea 3 (Fase Diagnóstico): Renderizar encabezado de perfil inmediatamente
+    function renderStudentHeader() {
+        var profileHeader = document.getElementById('student-profile-header');
+        if (!profileHeader || !currentUser) return;
+
+        var waPhone = currentUser.telefono ? String(currentUser.telefono).replace(/\D/g, '') : '';
+        var waLink = waPhone ? 'https://wa.me/504' + waPhone : '#';
+
+        profileHeader.innerHTML = `
+            <div class="card-ima bg-white border border-gray-100 p-6 rounded-[2.5rem] shadow-sm animate-fade-in-up">
+                <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-8">
+                    <div class="flex items-center gap-6">
+                        <div class="w-20 h-20 bg-blue-600 rounded-[1.8rem] flex items-center justify-center text-white text-3xl font-black shadow-2xl shadow-blue-200 relative transform hover:rotate-3 transition-transform">
+                            ${currentUser.nombre.charAt(0)}
+                            <div class="absolute -bottom-1 -right-1 w-7 h-7 bg-green-500 border-4 border-white rounded-full flex items-center justify-center text-white shadow-lg">
+                                <i class="fas fa-check text-[10px]"></i>
+                            </div>
+                        </div>
+                        <div>
+                            <span class="inline-block px-3 py-1 bg-blue-50 text-blue-600 rounded-full text-[9px] font-black uppercase tracking-[0.2em] mb-2">Expediente Estudiantil</span>
+                            <h2 class="text-2xl md:text-3xl font-black text-gray-900 leading-none tracking-tighter mb-2">${currentUser.nombre}</h2>
+                            <div class="flex flex-wrap items-center gap-x-4 gap-y-1 text-[10px] text-gray-400 font-bold uppercase tracking-widest">
+                                <span class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-blue-600 rounded-full"></div> ${currentUser.grado} - ${currentUser.seccion}</span>
+                                <span class="flex items-center gap-2"><div class="w-1.5 h-1.5 bg-purple-500 rounded-full"></div> LISTA #${currentUser.numeroLista || 'N/A'}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col sm:flex-row gap-4 lg:items-center">
+                        <div class="space-y-2">
+                            <div class="flex items-center gap-3 px-4 py-2 bg-gray-50 rounded-2xl border border-gray-100">
+                                <i class="fas fa-envelope text-blue-400 text-xs"></i>
+                                <span class="text-[11px] font-bold text-gray-600 lowercase">${currentUser.email || 'N/A'}</span>
+                            </div>
+                            <div class="flex items-center justify-between gap-4 px-4 py-2 bg-gray-50 rounded-2xl border border-gray-100">
+                                <div class="flex items-center gap-3">
+                                    <i class="fas fa-phone text-green-500 text-xs"></i>
+                                    <span class="text-[11px] font-bold text-gray-600">${currentUser.telefono || 'N/A'}</span>
+                                </div>
+                                ${waPhone ? `
+                                    <a href="${waLink}" target="_blank" class="w-7 h-7 bg-green-500 text-white rounded-full flex items-center justify-center hover:bg-green-600 transition-all shadow-md shadow-green-100">
+                                        <i class="fab fa-whatsapp text-sm"></i>
+                                    </a>
+                                ` : ''}
+                            </div>
+                        </div>
+                        <div id="header-mini-stats" class="flex gap-4 pl-4 border-l border-gray-100 hidden lg:flex">
+                            <!-- Mini-métricas -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+    renderStudentHeader();
+
     function formatDate(isoString) {
         if (!isoString) return 'N/A';
         try {
@@ -62,9 +120,29 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
+    // Tarea 4: Recuperar historial de configuraciones académicas anteriores
+    async function fetchAcademicHistory() {
+        try {
+            var res = await fetchApi('USER', 'getAcademicHistory', {
+                grado: currentUser.grado,
+                seccion: currentUser.seccion
+            });
+            if (res && res.status === 'success') {
+                academicHistory = res.data || [];
+                console.log("[Student] Historial académico cargado:", academicHistory.length, "registros");
+            }
+        } catch (e) {
+            console.warn("[Student] No se pudo cargar el historial académico:", e);
+        }
+    }
+
     // Función para obtener Tareas y Exámenes
-    async function fetchAllActivities() {
-        if (!tasksList) return;
+    window.fetchAllActivities = async function() {
+        if (!tasksList || isFetchingActivities) return;
+        isFetchingActivities = true;
+
+        // Tarea 4: Cargar historial en paralelo para optimizar (v7.8.2)
+        var historyPromise = fetchAcademicHistory();
 
         // REQ: Eager Caching & Offline-First (Modulo 1)
         // Priorizar renderizado local de 0ms desde cache_estudiante_dashboard
@@ -73,6 +151,8 @@ document.addEventListener('DOMContentLoaded', function() {
             var cached = await window.PersistenceManager.get('cache_estudiante_dashboard');
             if (cached && cached.data) {
                 allActivitiesData = cached.data.allActivities || [];
+                // Esperar al historial si es necesario para los botones
+                await historyPromise;
                 renderStudentExpediente(allActivitiesData);
                 renderSubjectNavigation(allActivitiesData);
                 // Si ya tenemos caché, procedemos a conciliación silenciosa sin bloquear la UI
@@ -107,8 +187,18 @@ document.addEventListener('DOMContentLoaded', function() {
 
             // REQ: Sync Global Scope from Server (v7.7.5 - Use unified syncAcademicScope)
             if (window.syncAcademicScope) {
+                // Tarea 3: Garantizar carga síncrona/esperada de la configuración global
                 await window.syncAcademicScope();
+
+                // REQ: Sincronizar el selector de historial con el parcial vigente antes de renderizar (Fase 3)
+                var historySelector = document.getElementById('parcial-history-selector');
+                if (historySelector && !historySelector.dataset.manuallyChanged) {
+                    historySelector.value = window.normalizePartial(window.GLOBAL_SCOPE.ParcialActual);
+                }
             }
+
+            // Tarea 4: Asegurar que el historial esté listo
+            await historyPromise;
 
             // REQ: Mitigación de Latencia mediante Paralelismo y Silent Reconciliation (Ticket 4)
             var results = await Promise.all([
@@ -230,11 +320,12 @@ document.addEventListener('DOMContentLoaded', function() {
                     <button onclick="location.reload()" class="mt-6 px-6 py-2 bg-blue-600 text-white rounded-xl text-[10px] font-bold uppercase tracking-widest hover:bg-blue-700 transition-all shadow-lg">Reintentar</button>
                 </div>`;
         } finally {
+            isFetchingActivities = false;
             if (window.GamesAdapter) window.GamesAdapter.showLoading(false);
         }
     }
 
-    function renderStudentExpediente(inputActivities) {
+    window.renderStudentExpediente = function(inputActivities) {
         var container = document.getElementById('student-expediente');
         if (!container) return;
 
@@ -311,127 +402,103 @@ document.addEventListener('DOMContentLoaded', function() {
         else if (compositeProgress >= 50) { level = "En Mejora"; levelColor = "text-yellow-600"; barColor = "bg-yellow-500"; }
         else if (compositeProgress > 0) { level = "En Riesgo"; levelColor = "text-orange-600"; barColor = "bg-orange-500"; }
 
+        // Desglose por asignatura (Tarea 1)
+        var subjectStats = {};
+        activities.forEach(function(a) {
+            var subj = a.asignatura || 'General';
+            if (!subjectStats[subj]) {
+                subjectStats[subj] = { total: 0, completed: 0, score: 0, maxScore: 0, delivered: 0, onTime: 0 };
+            }
+            if (a.type !== 'Credito Extra' && a.type !== 'Crédito Extra') {
+                subjectStats[subj].total++;
+                subjectStats[subj].maxScore += parseFloat(a.puntaje || 100);
+            }
+            if (a.entrega) {
+                subjectStats[subj].delivered++;
+                if (a.entrega.estado === 'Completada' || a.entrega.estado === 'Revisada' || a.entrega.estado === 'Finalizado') {
+                    subjectStats[subj].completed++;
+                }
+                subjectStats[subj].score += parseFloat(a.entrega.calificacion || 0);
+
+                if (a.fechaLimite) {
+                    var limit = new Date(a.fechaLimite);
+                    var deliveryDate = new Date(a.entrega.fecha || Date.now());
+                    if (deliveryDate <= limit) subjectStats[subj].onTime++;
+                }
+            }
+        });
+
+        var subjectBreakdownHtml = Object.keys(subjectStats).map(function(subj) {
+            var s = subjectStats[subj];
+            var progress = s.total > 0 ? Math.round((s.completed / s.total) * 100) : 0;
+            return `
+                <div class="p-4 bg-gray-50 rounded-2xl border border-gray-100">
+                    <h4 class="text-[10px] font-black text-blue-600 uppercase tracking-widest mb-3">${subj}</h4>
+                    <div class="flex justify-between items-end mb-2">
+                        <span class="text-[10px] font-bold text-gray-400 uppercase">Puntaje: ${s.score.toFixed(1)} / ${s.maxScore}</span>
+                        <span class="text-xs font-black text-gray-900">${progress}%</span>
+                    </div>
+                    <div class="w-full h-1.5 bg-gray-200 rounded-full overflow-hidden">
+                        <div class="bg-blue-500 h-full" style="width: ${progress}%"></div>
+                    </div>
+                </div>
+            `;
+        }).join('');
+
+        // Tarea 3 (Fase Diagnóstico): Actualizar mini-stats en el encabezado
+        var headerMiniStats = document.getElementById('header-mini-stats');
+        if (headerMiniStats) {
+            headerMiniStats.innerHTML = `
+                <div class="hidden sm:flex items-center gap-4 animate-fade-in">
+                    <div class="text-right">
+                        <p class="text-[8px] font-black text-gray-400 uppercase tracking-widest">Progreso</p>
+                        <p class="text-sm font-black text-blue-600">${compositeProgress}%</p>
+                    </div>
+                    <div class="w-px h-8 bg-gray-100"></div>
+                    <div class="text-right">
+                        <p class="text-[8px] font-black text-gray-400 uppercase tracking-widest">Completadas</p>
+                        <p class="text-sm font-black text-emerald-600">${completed}</p>
+                    </div>
+                </div>
+            `;
+        }
+
         container.innerHTML = `
-            <div class="card-ima bg-white border border-gray-100 p-6 rounded-[2rem] shadow-sm">
-                <div id="student-metrics-table-container" class="mb-6 overflow-x-auto">
-                    <!-- Tabla de métricas psicométricas (Fase 12) -->
-                    <table class="w-full text-left border-collapse">
-                        <thead>
-                            <tr class="border-b border-gray-100">
-                                <th class="py-2 text-[10px] font-black text-gray-400 uppercase tracking-widest">Métrica</th>
-                                <th class="py-2 text-[10px] font-black text-gray-400 uppercase tracking-widest text-right">Valor</th>
-                                <th class="py-2 text-[10px] font-black text-gray-400 uppercase tracking-widest text-center">Estado</th>
-                            </tr>
-                        </thead>
-                        <tbody id="student-metrics-body">
-                            <tr class="animate-pulse">
-                                <td colspan="3" class="py-4 text-center text-[10px] font-bold text-gray-300 uppercase">Cargando métricas...</td>
-                            </tr>
-                        </tbody>
-                    </table>
+            <div class="space-y-6">
+                <div class="card-ima bg-white border border-gray-100 p-6 rounded-[2rem] shadow-sm">
+                    <h3 class="text-xs font-black text-gray-400 uppercase tracking-[0.2em] mb-6">Métricas de Desempeño</h3>
+                    <div id="student-metrics-table-container" class="mb-8 overflow-x-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="border-b border-gray-100">
+                                    <th class="py-2 text-[10px] font-black text-gray-400 uppercase tracking-widest">Métrica</th>
+                                    <th class="py-2 text-[10px] font-black text-gray-400 uppercase tracking-widest text-right">Valor</th>
+                                    <th class="py-2 text-[10px] font-black text-gray-400 uppercase tracking-widest text-center">Estado</th>
+                                </tr>
+                            </thead>
+                            <tbody id="student-metrics-body">
+                                <tr class="animate-pulse">
+                                    <td colspan="3" class="py-4 text-center text-[10px] font-bold text-gray-300 uppercase">Cargando métricas...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- Fase 9: Integración de Perfil de Dominio -->
+                    <div id="learning-profile-integration"></div>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                    <div class="space-y-4">
-                        <div class="flex items-center gap-3">
-                            <div class="w-12 h-12 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center text-xl">
-                                <i class="fas fa-id-card"></i>
-                            </div>
-                            <div>
-                                <h3 class="text-xs font-bold text-gray-400 uppercase tracking-widest">Estudiante</h3>
-                                <p class="text-lg font-bold text-gray-900">${currentUser.nombre}</p>
-                            </div>
-                        </div>
-                        <div class="grid grid-cols-2 gap-4 pt-2">
-                            <div><span class="text-[10px] font-bold text-gray-400 uppercase">Grado</span><p class="text-sm font-semibold">${currentUser.grado}</p></div>
-                            <div><span class="text-[10px] font-bold text-gray-400 uppercase">Sección</span><p class="text-sm font-semibold">${currentUser.seccion}</p></div>
-                            <div><span class="text-[10px] font-bold text-gray-400 uppercase">No. Lista</span><p class="text-sm font-semibold">#${currentUser.numeroLista || 'N/A'}</p></div>
-                        </div>
-                    </div>
-
-                    <div class="md:border-x border-gray-50 px-0 md:px-8 space-y-4">
-                        <div class="flex justify-between items-end">
-                            <div>
-                                <h3 class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Progreso Académico</h3>
-                                <p class="text-3xl font-black text-gray-900">${compositeProgress}%</p>
-                            </div>
-                            <div class="text-right">
-                                <span class="text-[10px] font-bold text-gray-400 uppercase block mb-1">Nivel</span>
-                                <span class="text-xs font-bold ${levelColor} uppercase tracking-tighter">${level}</span>
-                            </div>
-                        </div>
-                        <div class="w-full h-3 bg-gray-100 rounded-full overflow-hidden">
-                            <div class="${barColor} h-full transition-all duration-1000" style="width: ${compositeProgress}%"></div>
-                        </div>
-                    </div>
-
-                    <div class="flex flex-col justify-center space-y-3">
-                        <div class="flex items-center justify-between p-3 bg-green-50 rounded-2xl">
-                            <div class="flex items-center gap-3">
-                                <div class="w-8 h-8 bg-white text-green-600 rounded-xl flex items-center justify-center text-xs shadow-sm"><i class="fas fa-check"></i></div>
-                                <span class="text-xs font-bold text-green-700 uppercase">Completadas</span>
-                            </div>
-                            <span class="text-lg font-black text-green-700">${completed}</span>
-                        </div>
-                        <div class="flex items-center justify-between p-3 bg-yellow-50 rounded-2xl">
-                            <div class="flex items-center gap-3">
-                                <div class="w-8 h-8 bg-white text-yellow-600 rounded-xl flex items-center justify-center text-xs shadow-sm"><i class="fas fa-clock"></i></div>
-                                <span class="text-xs font-bold text-yellow-700 uppercase">Pendientes</span>
-                            </div>
-                            <span class="text-lg font-black text-yellow-700">${pending}</span>
-                        </div>
+                <!-- Desglose por Asignatura (Tarea 1) -->
+                <div class="card-ima bg-white border border-gray-100 p-6 rounded-[2rem] shadow-sm">
+                    <h3 class="text-xs font-black text-gray-400 uppercase tracking-[0.2em] mb-6">Desglose por Asignatura</h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                        ${subjectBreakdownHtml}
                     </div>
                 </div>
-                <!-- Fase 9: Integración de Perfil de Dominio -->
-                <div id="learning-profile-integration"></div>
             </div>
         `;
         container.classList.remove('hidden');
     }
 
-    function renderSubjectNav(activities, selectedParcial) {
-        var container = document.getElementById('subject-nav-container');
-        if (!container) return;
-
-        // Obtener asignaturas dinámicamente filtradas por el parcial seleccionado
-        var subjects = [...new Set(activities.map(function(a) { return a.asignatura; }))]
-            .filter(function(s) { return s && s.trim() !== ""; })
-            .sort();
-
-        if (subjects.length === 0) {
-            container.innerHTML = '<p class="text-gray-400 text-[10px] uppercase font-bold p-4">No hay asignaturas en este parcial.</p>';
-            tasksList.innerHTML = '<p class="text-gray-500 text-center py-8">No hay actividades registradas.</p>';
-            return;
-        }
-
-        container.innerHTML = subjects.map(function(subj) {
-            return `
-            <button class="subject-tab flex-none px-5 py-2.5 bg-white border border-gray-100 text-slate-900 rounded-xl font-bold text-[10px] uppercase tracking-widest shadow-sm hover:border-blue-200 transition-all" data-subject="${subj}">
-                ${subj}
-            </button>
-        `; }).join('');
-
-        // Listener para filtrar por asignatura
-        container.querySelectorAll('.subject-tab').forEach(function(btn) {
-            btn.addEventListener('click', function(e) {
-                container.querySelectorAll('.subject-tab').forEach(function(b) {
-                    b.classList.remove('bg-blue-600', 'text-white', 'border-blue-600');
-                });
-                var target = e.currentTarget;
-                target.classList.add('bg-blue-600', 'text-white', 'border-blue-600');
-
-                var subj = target.dataset.subject;
-                var finalActivities = activities.filter(function(a) { return a.asignatura === subj; });
-
-                renderActivities(finalActivities);
-                showSubjectInfo(subj);
-            });
-        });
-
-        // Activar la primera por defecto
-        var firstTab = container.querySelector('.subject-tab');
-        if (firstTab) firstTab.click();
-    }
 
     async function showSubjectInfo(subject) {
         var container = document.getElementById('subject-info-container');
@@ -515,22 +582,21 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    function renderSubjectNavigation(inputActivities) {
-        var tabsContainer = document.getElementById('subject-tabs-container');
+    window.renderSubjectNavigation = function(inputActivities) {
         var parcialLabel = document.getElementById('active-parcial-label');
         var historySelector = document.getElementById('parcial-history-selector');
-
-        if (!tabsContainer) return;
-
-        // REQ: Normalización de entrada para soportar Offline-First (v3.3)
-        var activities = (inputActivities && inputActivities.status === 'success' && Array.isArray(inputActivities.data)) ? inputActivities.data : (Array.isArray(inputActivities) ? inputActivities : []);
-
-        if (!activities || activities.length === 0) {
-            tabsContainer.innerHTML = '<p class="text-gray-400 text-[10px] uppercase font-bold p-4">Sin contenido asignado.</p>';
-            return;
+        if (historySelector && !historySelector.dataset.listenerAdded) {
+            historySelector.addEventListener('change', function() {
+                historySelector.dataset.manuallyChanged = "true";
+                renderSubjectNavigation(allActivitiesData);
+            });
+            historySelector.dataset.listenerAdded = "true";
         }
 
-        // Establecer parcial actual por defecto en el selector si no se ha cambiado manualmente
+        if (!tasksList) return;
+
+        var activities = (inputActivities && inputActivities.status === 'success' && Array.isArray(inputActivities.data)) ? inputActivities.data : (Array.isArray(inputActivities) ? inputActivities : []);
+
         var activePartial = window.GLOBAL_SCOPE ? window.GLOBAL_SCOPE.ParcialActual : window.PARCIAL_ACTUAL;
         if (historySelector && !historySelector.dataset.manuallyChanged) {
             historySelector.value = window.normalizePartial(activePartial);
@@ -539,87 +605,341 @@ document.addEventListener('DOMContentLoaded', function() {
         var selectedPartial = historySelector ? historySelector.value : activePartial;
         if (parcialLabel) parcialLabel.textContent = selectedPartial;
 
-        // REQ: Filtrado Dinámico por Parcial Histórico (v7.7.6)
+        // REQ: Parcial Vigente desde ConfiguracionAcademica (Fase 3)
+        var isViewingActive = window.normalizePartial(selectedPartial) === window.normalizePartial(activePartial);
+
         var currentActivities = activities.filter(function(a) {
             var isParcialOk = window.normalizePartial(a.parcial) === window.normalizePartial(selectedPartial);
-            // REQ: Contextual authorization (v7.7.5) - Solo filtramos por perfil si es el parcial VIGENTE
-            var isAuthorized = true;
-            if (window.normalizePartial(selectedPartial) === window.normalizePartial(activePartial)) {
+
+            // REQ: Filtro Estricto por Parcial Vigente o Historial (Fase 7)
+            // Si es el activo, validamos contra GLOBAL_SCOPE. Si es historial, permitimos si existe en academicHistory.
+            var isAuthorized = false;
+            if (isViewingActive) {
                 isAuthorized = window.isContentAuthorized(a.parcial, a.asignatura, a.tema, a.grado, a.seccion);
+            } else {
+                // Validar contra HistorialAcademico (Fase 4)
+                isAuthorized = academicHistory.some(function(h) {
+                    return window.normalizePartial(h.parcial) === window.normalizePartial(selectedPartial) &&
+                           h.asignaturas.indexOf(a.asignatura) !== -1;
+                });
             }
+
             return isParcialOk && isAuthorized;
         });
 
-        // Obtener asignaturas únicas
-        var subjects = [...new Set(currentActivities.map(function(a) { return a.asignatura; }))]
-            .filter(function(s) { return s && s.trim() !== ""; })
-            .sort();
+        var subjects = [];
+
+        if (isViewingActive) {
+            // Caso 1: Parcial Vigente -> Fuente: ConfiguracionAcademica (GLOBAL_SCOPE)
+            var granular = (window.GLOBAL_SCOPE && window.GLOBAL_SCOPE.GranularConfig) ? window.GLOBAL_SCOPE.GranularConfig : [];
+            var authorizedAsigs = [...new Set(granular.filter(function(r) {
+                var matchGrado = (window.parseGrade(r.grado) === window.parseGrade(currentUser.grado));
+                var matchSeccion = (!r.seccion || r.seccion === "Todas" || r.seccion === currentUser.seccion);
+                return matchGrado && matchSeccion && matchParcial;
+            }).map(function(r) { return r.asignatura; }))].filter(Boolean);
+
+            authorizedAsigs.forEach(function(asig) {
+                if (subjects.indexOf(asig) === -1) subjects.push(asig);
+            });
+        } else {
+            // Caso 2: Parcial Histórico -> Fuente: HistorialAcademico (Fase 4)
+            var historicalRecord = academicHistory.filter(function(h) {
+                return window.normalizePartial(h.parcial) === window.normalizePartial(selectedPartial);
+            });
+            historicalRecord.forEach(function(rec) {
+                if (Array.isArray(rec.asignaturas)) {
+                    rec.asignaturas.forEach(function(asig) {
+                        if (subjects.indexOf(asig) === -1) subjects.push(asig);
+                    });
+                }
+            });
+        }
+
+        subjects = subjects.filter(function(s) { return s && s.trim() !== ""; }).sort();
 
         if (subjects.length === 0) {
-            tabsContainer.innerHTML = '<p class="text-gray-400 text-[10px] uppercase font-bold p-2">No hay materias registradas para este parcial.</p>';
-            tasksList.innerHTML = '<p class="text-gray-500 text-center py-8">Sin actividades en ' + selectedPartial + '.</p>';
+            tasksList.innerHTML = '<div class="col-span-full p-12 text-center bg-white rounded-[2rem] border border-gray-100"><p class="text-gray-500 text-xs font-bold uppercase tracking-widest">Sin asignaturas para el parcial seleccionado.</p></div>';
             return;
         }
 
-        // REQ: Tab UI Redesign (v7.7.6) - Physical button tabs with horizontal scroll
-        tabsContainer.innerHTML = subjects.map(function(subj) {
+        // REQ: Tarjetas Expandibles de Asignatura (v7.9.0)
+        // Se muestran todas las asignaturas autorizadas para el parcial seleccionado, incluso si no tienen pendientes.
+        tasksList.innerHTML = subjects.map(function(subj) {
+            var subjActivities = currentActivities.filter(function(a) { return a.asignatura === subj; });
+
+            // Actividades no resueltas para el snippet informativo
+            var pendingActivities = subjActivities.filter(function(a) {
+                var s = a.entrega ? a.entrega.estado : null;
+                return !a.entrega || (s !== 'Completada' && s !== 'Revisada' && s !== 'Finalizado');
+            });
+
+            // Orden jerárquico para el snippet (vencimiento próximo primero)
+            pendingActivities.sort(function(a, b) {
+                return new Date(a.fechaLimite || 0) - new Date(b.fechaLimite || 0);
+            });
+
+            var mostRecent = pendingActivities[0];
+            var count = pendingActivities.length;
+
             return `
-                <button class="flex-none px-6 py-2.5 bg-white border border-gray-100 text-slate-500 rounded-xl font-bold text-[10px] uppercase tracking-widest transition-all hover:border-blue-200 subject-nav-item" data-subject="${subj}">
-                    ${subj}
-                </button>
+                <div class="card-ima subject-card cursor-pointer group animate-fade-in-up" onclick="window.expandSubject('${subj.replace(/'/g, "\\'")}')">
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="w-12 h-12 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center text-xl group-hover:scale-110 transition-transform">
+                            <i class="fas fa-book"></i>
+                        </div>
+                        <span class="px-3 py-1 ${count > 0 ? 'bg-blue-100 text-blue-700' : 'bg-emerald-100 text-emerald-700'} text-[10px] font-black uppercase rounded-full shadow-sm">
+                            ${count > 0 ? count + ' Pendientes' : 'Al día'}
+                        </span>
+                    </div>
+                    <h3 class="text-lg font-bold text-gray-900 mb-2 uppercase tracking-tighter">${subj}</h3>
+                    <div class="p-4 bg-gray-50 rounded-2xl border border-gray-100 group-hover:border-blue-200 transition-colors">
+                        <p class="text-[10px] font-bold text-blue-500 uppercase tracking-widest mb-1">Estado de Actividad</p>
+                        <p class="text-sm font-semibold ${count > 0 ? 'text-gray-800' : 'text-emerald-600'} truncate">
+                            ${count > 0 ? mostRecent.titulo : '¡Sin tareas pendientes!'}
+                        </p>
+                        <p class="text-[10px] text-gray-400 font-medium uppercase mt-1">
+                            ${count > 0 ? 'Vence: ' + formatDate(mostRecent.fechaLimite) : 'Carga académica completada'}
+                        </p>
+                    </div>
+                    <div class="mt-4 flex justify-end">
+                        <span class="text-[10px] font-bold text-blue-600 uppercase tracking-widest flex items-center gap-2 group-hover:gap-3 transition-all">Explorar actividades <i class="fas fa-arrow-right"></i></span>
+                    </div>
+                </div>
             `;
         }).join('');
 
-        // Logic for Switching Subjects
-        var navItems = document.querySelectorAll('.subject-nav-item');
-        navItems.forEach(function(btn) {
-            btn.addEventListener('click', function(e) {
-                var subj = e.currentTarget.dataset.subject;
-                window.switchSubject(subj);
+        // Si todas las asignaturas fueron filtradas por no tener pendientes
+        if (tasksList.innerHTML.trim() === '') {
+            tasksList.innerHTML = `
+                <div class="col-span-full p-12 text-center bg-white rounded-[2rem] border border-gray-100 animate-fade-in">
+                    <div class="w-16 h-16 bg-green-50 text-green-600 rounded-full flex items-center justify-center text-2xl mx-auto mb-4">
+                        <i class="fas fa-check-double"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-gray-800 uppercase tracking-tighter mb-2">¡Felicidades!</h3>
+                    <p class="text-gray-400 text-xs font-medium uppercase tracking-widest leading-relaxed">
+                        Has completado todas tus actividades para este parcial.
+                    </p>
+                </div>`;
+        }
+
+        // Tarea 2: Expansión Full-Viewport
+        window.expandSubject = function(subj) {
+            var expandedOverlay = document.createElement('div');
+            expandedOverlay.id = 'expanded-subject-overlay';
+            expandedOverlay.className = 'fixed inset-0 z-[2200] bg-white overflow-y-auto animate-expansion';
+
+            var subjActivities = currentActivities.filter(function(a) { return a.asignatura === subj; });
+
+            // Ordenar por fecha de vencimiento (más recientes primero)
+            subjActivities.sort(function(a, b) {
+                return new Date(b.fechaLimite || 0) - new Date(a.fechaLimite || 0);
             });
-        });
 
-        window.switchSubject = function(subj, pushState) {
-            if (pushState === undefined) pushState = true;
+            expandedOverlay.innerHTML = `
+                <div class="container mx-auto px-4 md:px-8 py-8 max-w-5xl">
+                    <div class="flex items-center justify-between mb-8 sticky top-0 bg-white/90 backdrop-blur-md py-4 z-10 border-b border-gray-100">
+                        <div class="flex items-center gap-4">
+                            <button onclick="window.closeExpandedSubject()" class="w-10 h-10 rounded-full bg-gray-100 text-gray-500 flex items-center justify-center hover:bg-blue-600 hover:text-white transition-all">
+                                <i class="fas fa-arrow-left"></i>
+                            </button>
+                            <div>
+                                <h2 class="text-2xl font-black text-gray-900 uppercase tracking-tighter">${subj}</h2>
+                                <p class="text-[10px] font-bold text-blue-600 uppercase tracking-widest">${selectedPartial}</p>
+                            </div>
+                        </div>
+                        <div class="px-4 py-2 bg-blue-50 text-blue-600 rounded-xl text-xs font-bold uppercase tracking-widest border border-blue-100">
+                            ${subjActivities.length} Actividades Totales
+                        </div>
+                    </div>
 
-            document.querySelectorAll('.subject-nav-item').forEach(function(b) {
-                if (b.dataset.subject === subj) {
-                    b.classList.remove('bg-white', 'text-slate-500', 'border-gray-100');
-                    b.classList.add('bg-blue-600', 'text-white', 'border-blue-600', 'shadow-lg', 'shadow-blue-100');
-                } else {
-                    b.classList.add('bg-white', 'text-slate-500', 'border-gray-100');
-                    b.classList.remove('bg-blue-600', 'text-white', 'border-blue-600', 'shadow-lg', 'shadow-blue-100');
-                }
-            });
+                    <div id="expanded-tasks-list" class="grid grid-cols-1 gap-6 pb-20">
+                        <!-- Se poblará dinámicamente -->
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(expandedOverlay);
+            document.body.style.overflow = 'hidden';
 
-            var finalActivities = currentActivities.filter(function(a) { return a.asignatura === subj; });
-            renderActivities(finalActivities);
-            showSubjectInfo(subj);
-
-            if (pushState) {
-                history.pushState({ type: 'student-subject', subject: subj, parcial: selectedPartial }, '');
-            }
+            var expandedList = document.getElementById('expanded-tasks-list');
+            // Reutilizar lógica de renderizado de tareas (con todas las tareas)
+            renderActivitiesIntoContainer(subjActivities, expandedList);
         };
 
-        // Select first subject by default
-        var firstSubj = subjects[0];
-        if (firstSubj) {
-            window.switchSubject(firstSubj, false);
+        window.closeExpandedSubject = function() {
+            var overlay = document.getElementById('expanded-subject-overlay');
+            if (overlay) {
+                overlay.classList.remove('animate-expansion');
+                overlay.classList.add('animate-shrink');
+                setTimeout(function() {
+                    overlay.remove();
+                    document.body.style.overflow = '';
+                }, 400);
+            }
+        };
+    }
+
+    // Helper para renderizar tareas en un contenedor específico (necesario para el modo expandido)
+    function renderActivitiesIntoContainer(activities, container) {
+        if (!container) return;
+        container.innerHTML = activities.map(function(a) { return getActivityHtml(a, true); }).join('');
+    }
+
+    function getActivityHtml(activity, isExpandedView) {
+        var feedbackHtml = '';
+        var actionButtonHtml = '';
+
+        if (activity.type === 'Tarea' || activity.type === 'Credito Extra' || activity.type === 'Crédito Extra') {
+            if (activity.entrega) {
+                var status = activity.entrega.estado;
+                var isPending = (status === 'Pendiente de revisión' || status === 'Pendiente' || !status);
+                var isResubmittable = (status === 'Rechazada' || status === 'Tarea incompleta');
+
+                var statusColor = (status === 'Completada' || status === 'Revisada' || status === 'Finalizado') ? 'text-green-600' : (status === 'Rechazada' || status === 'Tarea incompleta' ? 'text-red-600' : 'text-yellow-600');
+                var displayStatus = (status === 'Revisada' || status === 'Finalizado' ? 'Completada' : status);
+
+                var fileLinkHtml = '';
+                if (isPending && activity.entrega.fileId) {
+                    var fileId = activity.entrega.fileId;
+                    var url = activity.entrega.mimeType === 'folder'
+                        ? `https://drive.google.com/drive/folders/${fileId}`
+                        : `https://drive.google.com/uc?id=${fileId}`;
+                    fileLinkHtml = `<div class="mt-2"><a href="${url}" target="_blank" class="text-blue-600 font-medium hover:underline text-sm flex items-center space-x-1"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg><span>Ver mi entrega</span></a></div>`;
+                }
+
+                var deleteBtnHtml = isPending
+                    ? `<button class="btn-ima-cancel px-3 py-1 text-[10px] delete-submission-btn" data-type="${activity.type}" data-entrega-id="${activity.entrega.entregaId}">Eliminar Entrega</button>`
+                    : '';
+
+                var resubmitBtnHtml = '';
+                if (isResubmittable) {
+                    resubmitBtnHtml = `<button class="btn-ima-primary mt-3 w-full py-2 text-xs open-submission-modal"
+                        data-task-id="${activity.tareaId}"
+                        data-task-title="${activity.titulo} (Re-entrega)"
+                        data-parcial="${activity.parcial || ''}"
+                        data-asignatura="${activity.asignatura || ''}">Subir Parte Pendiente</button>`;
+                }
+
+                feedbackHtml = `
+                    <div class="mt-4 p-4 bg-gray-50 rounded-2xl border border-gray-100">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h4 class="text-[10px] font-semibold text-gray-400 uppercase tracking-widest mb-1">Estado de Entrega</h4>
+                                <p class="text-sm font-semibold ${statusColor}">${displayStatus}</p>
+                                ${fileLinkHtml}
+                            </div>
+                            ${deleteBtnHtml}
+                        </div>
+                        ${activity.entrega.calificacion ? `<div class="mt-3 pt-3 border-t border-gray-100"><span class="text-[10px] font-medium text-gray-400 uppercase">Nota:</span> <span class="text-sm font-semibold text-blue-600">${activity.entrega.calificacion}</span></div>` : ''}
+                        ${activity.entrega.comentario ? `<div class="mt-1"><span class="text-[10px] font-medium text-gray-400 uppercase">Obs:</span> <p class="text-xs text-gray-600 italic mt-1 leading-relaxed">${activity.entrega.comentario}</p></div>` : ''}
+                        ${resubmitBtnHtml}
+                    </div>`;
+            } else {
+                actionButtonHtml = `<button class="btn-ima-primary px-5 py-2 text-xs open-submission-modal"
+                    data-task-id="${activity.tareaId}"
+                    data-task-title="${activity.titulo}"
+                    data-parcial="${activity.parcial || ''}"
+                    data-asignatura="${activity.asignatura || ''}"
+                    data-fecha-limite="${activity.fechaLimite || ''}">Entregar Tarea</button>`;
+            }
+        } else if (activity.type === 'Examen') {
+            if (activity.entrega) {
+                var status = activity.entrega.estado;
+                var isPending = (status === 'Pendiente' || !status);
+                var statusColor = (status === 'Completada' || status === 'Revisada' || status === 'Finalizado') ? 'text-green-600' : (status === 'Rechazada' ? 'text-red-600' : 'text-yellow-600');
+                var displayStatus = (status === 'Revisada' || status === 'Finalizado' ? 'Completada' : status);
+
+                var deleteBtnHtml = isPending
+                    ? `<button class="btn-ima-cancel px-3 py-1 text-[10px] delete-submission-btn" data-type="Examen" data-entrega-id="${activity.entrega.entregaId}">Eliminar Entrega</button>`
+                    : '';
+
+                feedbackHtml = `
+                    <div class="mt-4 p-4 bg-gray-50 rounded-2xl border border-gray-100">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h4 class="text-[10px] font-semibold text-gray-400 uppercase tracking-widest mb-1">Estado de Examen</h4>
+                                <p class="text-sm font-semibold ${statusColor}">${displayStatus}</p>
+                            </div>
+                            ${deleteBtnHtml}
+                        </div>
+                        ${activity.entrega.calificacion ? `<div class="mt-3 pt-3 border-t border-gray-100"><span class="text-[10px] font-medium text-gray-400 uppercase">Nota:</span> <span class="text-sm font-semibold text-purple-600">${activity.entrega.calificacion}</span></div>` : ''}
+                        ${activity.entrega.comentario ? `<div class="mt-1"><span class="text-[10px] font-medium text-gray-400 uppercase">Obs:</span> <p class="text-xs text-gray-600 italic mt-1 leading-relaxed">${activity.entrega.comentario}</p></div>` : ''}
+                    </div>`;
+            } else {
+                var estado = activity.estado || 'Inactivo';
+                if (estado === 'Activo') {
+                    actionButtonHtml = `<a href="exam.html?examenId=${activity.examenId}" class="btn-ima-primary bg-purple-600 hover:bg-purple-700 px-6 py-2 text-xs">Realizar Examen</a>`;
+                } else {
+                    actionButtonHtml = `<button class="bg-gray-100 text-gray-400 px-5 py-2 rounded-xl text-[10px] font-medium uppercase cursor-not-allowed" disabled>${estado}</button>`;
+                }
+            }
         }
 
-        // Listener for Parcial History Selector
-        if (historySelector && !historySelector.dataset.listenerAttached) {
-            historySelector.dataset.listenerAttached = "true";
-            historySelector.addEventListener('change', function() {
-                historySelector.dataset.manuallyChanged = "true";
-                renderSubjectNavigation(allActivitiesData);
-            });
+        var statusLabel = "";
+        if (activity.entrega) {
+            var s = activity.entrega.estado;
+            if (s === 'Completada' || s === 'Revisada' || s === 'Finalizado') {
+                statusLabel = '<span class="ml-2 px-2 py-0.5 bg-emerald-100 text-emerald-700 text-[8px] font-black uppercase rounded shadow-sm">Completada</span>';
+            } else if (s === 'Rechazada') {
+                statusLabel = '<span class="ml-2 px-2 py-0.5 bg-red-100 text-red-700 text-[8px] font-black uppercase rounded shadow-sm">Rechazada</span>';
+            } else if (s === 'Tarea incompleta') {
+                statusLabel = '<span class="ml-2 px-2 py-0.5 bg-orange-100 text-orange-700 text-[8px] font-black uppercase rounded shadow-sm">Incompleta</span>';
+            } else {
+                statusLabel = '<span class="ml-2 px-2 py-0.5 bg-yellow-100 text-yellow-700 text-[8px] font-black uppercase rounded shadow-sm">Pendiente de revisión</span>';
+            }
         }
+
+        // Tarea 3: Sistema de Feedback de Vencimiento
+        var alertBadgeHtml = '';
+        if (!activity.entrega) {
+            var now = new Date();
+            var limit = new Date(activity.fechaLimite);
+            var diffDays = (limit - now) / (1000 * 60 * 60 * 24);
+
+            if (diffDays < 0) {
+                alertBadgeHtml = '<span class="ml-2 px-2 py-0.5 bg-red-100 text-red-700 text-[8px] font-black uppercase rounded shadow-sm"><i class="fas fa-exclamation-circle mr-1"></i> Vencida (-50% Pts)</span>';
+            } else if (diffDays <= 3) {
+                alertBadgeHtml = '<span class="ml-2 px-2 py-0.5 bg-yellow-100 text-yellow-700 text-[8px] font-black uppercase rounded shadow-sm"><i class="fas fa-clock mr-1"></i> Por Vencer</span>';
+            } else if (diffDays <= 7) {
+                alertBadgeHtml = '<span class="ml-2 px-2 py-0.5 bg-green-100 text-green-700 text-[8px] font-black uppercase rounded shadow-sm">A tiempo</span>';
+            }
+        }
+
+        return `
+            <div class="card-ima assignment-card cursor-pointer group ${isExpandedView ? 'is-expanded' : ''}" data-task-id="${activity.tareaId || activity.examenId}">
+                <div class="flex justify-between items-start">
+                    <div class="flex-grow">
+                        <div class="flex items-center gap-2 mb-1">
+                            <span class="text-[9px] font-semibold uppercase tracking-widest text-blue-600 bg-blue-50 px-2 py-0.5 rounded">${activity.type}</span>
+                            <span class="text-[10px] text-gray-400 font-medium uppercase tracking-tighter">${activity.asignatura || 'General'}</span>
+                            ${alertBadgeHtml}
+                        </div>
+                        <h3 class="text-base font-semibold text-gray-900 group-hover:text-blue-600 transition-colors leading-tight uppercase tracking-tighter flex items-center flex-wrap">
+                            ${activity.titulo}
+                            ${statusLabel}
+                        </h3>
+                    </div>
+                    <div class="flex flex-col items-end">
+                        <span class="text-[10px] font-semibold text-gray-400 uppercase tracking-widest">${formatDate(activity.fechaLimite)}</span>
+                        ${!isExpandedView ? `<svg class="w-4 h-4 text-gray-300 transform group-[.is-expanded]:rotate-180 transition-transform duration-200 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7"></path></svg>` : ''}
+                    </div>
+                </div>
+                <div class="assignment-content overflow-hidden ${isExpandedView ? 'max-h-[1200px]' : 'max-h-0'} transition-all duration-300 ease-in-out group-[.is-expanded]:max-h-[1200px]">
+                    <div class="pt-4 mt-4 border-t border-gray-50">
+                        <div class="assignment-content-scroll scroll-minimalist mb-4">
+                            <div class="text-gray-600 text-sm font-medium mb-5 leading-relaxed quill-content">${window.sanitizarHTMLTecnico(activity.descripcion) || 'Sin descripción.'}</div>
+                        </div>
+                        <div class="flex justify-center md:justify-start">
+                            ${actionButtonHtml}
+                        </div>
+                        ${feedbackHtml}
+                    </div>
+                </div>
+            </div>
+        `;
     }
 
     function renderActivities(inputFiltered) {
         // REQ: Extra Credit Visibility Logic (v7.6.1)
-        // Only show extra credit tasks if student has at least one REJECTED activity
         var hasRejected = allActivitiesData.some(function(a) {
             return a.entrega && (a.entrega.estado === 'Rechazada' || a.entrega.estado === 'Tarea incompleta');
         });
@@ -644,148 +964,16 @@ document.addEventListener('DOMContentLoaded', function() {
                 </div>`;
             return;
         }
-        tasksList.innerHTML = filtered.map(function(activity) {
-            var feedbackHtml = '';
-            var actionButtonHtml = '';
-
-            if (activity.type === 'Tarea' || activity.type === 'Credito Extra' || activity.type === 'Crédito Extra') {
-                if (activity.entrega) {
-                    var status = activity.entrega.estado;
-                    var isPending = (status === 'Pendiente de revisión' || status === 'Pendiente' || !status);
-                    var isResubmittable = (status === 'Rechazada' || status === 'Tarea incompleta');
-
-                    var statusColor = (status === 'Completada' || status === 'Revisada' || status === 'Finalizado') ? 'text-green-600' : (status === 'Rechazada' || status === 'Tarea incompleta' ? 'text-red-600' : 'text-yellow-600');
-                    var displayStatus = (status === 'Revisada' || status === 'Finalizado' ? 'Completada' : status);
-
-                    var fileLinkHtml = '';
-                    if (isPending && activity.entrega.fileId) {
-                        var fileId = activity.entrega.fileId;
-                        var url = activity.entrega.mimeType === 'folder'
-                            ? `https://drive.google.com/drive/folders/${fileId}`
-                            : `https://drive.google.com/uc?id=${fileId}`;
-                        fileLinkHtml = `<div class="mt-2"><a href="${url}" target="_blank" class="text-blue-600 font-medium hover:underline text-sm flex items-center space-x-1"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg><span>Ver mi entrega</span></a></div>`;
-                    }
-
-                    var deleteBtnHtml = isPending
-                        ? `<button class="btn-ima-cancel px-3 py-1 text-[10px] delete-submission-btn" data-type="${activity.type}" data-entrega-id="${activity.entrega.entregaId}">Eliminar Entrega</button>`
-                        : '';
-
-                    var resubmitBtnHtml = '';
-                    if (isResubmittable) {
-                        resubmitBtnHtml = `<button class="btn-ima-primary mt-3 w-full py-2 text-xs open-submission-modal"
-                            data-task-id="${activity.tareaId}"
-                            data-task-title="${activity.titulo} (Re-entrega)"
-                            data-parcial="${activity.parcial || ''}"
-                            data-asignatura="${activity.asignatura || ''}">Subir Parte Pendiente</button>`;
-                    }
-
-                    feedbackHtml = `
-                        <div class="mt-4 p-4 bg-gray-50 rounded-2xl border border-gray-100">
-                            <div class="flex justify-between items-start">
-                                <div>
-                                    <h4 class="text-[10px] font-semibold text-gray-400 uppercase tracking-widest mb-1">Estado de Entrega</h4>
-                                    <p class="text-sm font-semibold ${statusColor}">${displayStatus}</p>
-                                    ${fileLinkHtml}
-                                </div>
-                                ${deleteBtnHtml}
-                            </div>
-                            ${activity.entrega.calificacion ? `<div class="mt-3 pt-3 border-t border-gray-100"><span class="text-[10px] font-medium text-gray-400 uppercase">Nota:</span> <span class="text-sm font-semibold text-blue-600">${activity.entrega.calificacion}</span></div>` : ''}
-                            ${activity.entrega.comentario ? `<div class="mt-1"><span class="text-[10px] font-medium text-gray-400 uppercase">Obs:</span> <p class="text-xs text-gray-600 italic mt-1 leading-relaxed">${activity.entrega.comentario}</p></div>` : ''}
-                            ${resubmitBtnHtml}
-                        </div>`;
-                } else {
-                    actionButtonHtml = `<button class="btn-ima-primary px-5 py-2 text-xs open-submission-modal"
-                        data-task-id="${activity.tareaId}"
-                        data-task-title="${activity.titulo}"
-                        data-parcial="${activity.parcial || ''}"
-                        data-asignatura="${activity.asignatura || ''}">Entregar Tarea</button>`;
-                }
-            } else if (activity.type === 'Examen') {
-                if (activity.entrega) {
-                    var status = activity.entrega.estado;
-                    var isPending = (status === 'Pendiente' || !status);
-                    var statusColor = (status === 'Completada' || status === 'Revisada' || status === 'Finalizado') ? 'text-green-600' : (status === 'Rechazada' ? 'text-red-600' : 'text-yellow-600');
-                    var displayStatus = (status === 'Revisada' || status === 'Finalizado' ? 'Completada' : status);
-
-                    var deleteBtnHtml = isPending
-                        ? `<button class="btn-ima-cancel px-3 py-1 text-[10px] delete-submission-btn" data-type="Examen" data-entrega-id="${activity.entrega.entregaId}">Eliminar Entrega</button>`
-                        : '';
-
-                    feedbackHtml = `
-                        <div class="mt-4 p-4 bg-gray-50 rounded-2xl border border-gray-100">
-                            <div class="flex justify-between items-start">
-                                <div>
-                                    <h4 class="text-[10px] font-semibold text-gray-400 uppercase tracking-widest mb-1">Estado de Examen</h4>
-                                    <p class="text-sm font-semibold ${statusColor}">${displayStatus}</p>
-                                </div>
-                                ${deleteBtnHtml}
-                            </div>
-                            ${activity.entrega.calificacion ? `<div class="mt-3 pt-3 border-t border-gray-100"><span class="text-[10px] font-medium text-gray-400 uppercase">Nota:</span> <span class="text-sm font-semibold text-purple-600">${activity.entrega.calificacion}</span></div>` : ''}
-                            ${activity.entrega.comentario ? `<div class="mt-1"><span class="text-[10px] font-medium text-gray-400 uppercase">Obs:</span> <p class="text-xs text-gray-600 italic mt-1 leading-relaxed">${activity.entrega.comentario}</p></div>` : ''}
-                        </div>`;
-                } else {
-                    var estado = activity.estado || 'Inactivo';
-                    if (estado === 'Activo') {
-                        actionButtonHtml = `<a href="exam.html?examenId=${activity.examenId}" class="btn-ima-primary bg-purple-600 hover:bg-purple-700 px-6 py-2 text-xs">Realizar Examen</a>`;
-                    } else {
-                        actionButtonHtml = `<button class="bg-gray-100 text-gray-400 px-5 py-2 rounded-xl text-[10px] font-medium uppercase cursor-not-allowed" disabled>${estado}</button>`;
-                    }
-                }
-            }
-
-            var statusLabel = "";
-            if (activity.entrega) {
-                var s = activity.entrega.estado;
-                if (s === 'Completada' || s === 'Revisada' || s === 'Finalizado') {
-                    statusLabel = '<span class="ml-2 px-2 py-0.5 bg-emerald-100 text-emerald-700 text-[8px] font-black uppercase rounded shadow-sm">Completada</span>';
-                } else if (s === 'Rechazada') {
-                    statusLabel = '<span class="ml-2 px-2 py-0.5 bg-red-100 text-red-700 text-[8px] font-black uppercase rounded shadow-sm">Rechazada</span>';
-                } else if (s === 'Tarea incompleta') {
-                    statusLabel = '<span class="ml-2 px-2 py-0.5 bg-orange-100 text-orange-700 text-[8px] font-black uppercase rounded shadow-sm">Incompleta</span>';
-                } else {
-                    statusLabel = '<span class="ml-2 px-2 py-0.5 bg-yellow-100 text-yellow-700 text-[8px] font-black uppercase rounded shadow-sm">Pendiente de revisión</span>';
-                }
-            }
-
-            return `
-                <div class="card-ima assignment-card cursor-pointer group" data-task-id="${activity.tareaId || activity.examenId}">
-                    <div class="flex justify-between items-start">
-                        <div class="flex-grow">
-                            <div class="flex items-center gap-2 mb-1">
-                                <span class="text-[9px] font-semibold uppercase tracking-widest text-blue-600 bg-blue-50 px-2 py-0.5 rounded">${activity.type}</span>
-                                <span class="text-[10px] text-gray-400 font-medium uppercase tracking-tighter">${activity.asignatura || 'General'}</span>
-                            </div>
-                            <h3 class="text-base font-semibold text-gray-900 group-hover:text-blue-600 transition-colors leading-tight uppercase tracking-tighter flex items-center flex-wrap">
-                                ${activity.titulo}
-                                ${statusLabel}
-                            </h3>
-                        </div>
-                        <div class="flex flex-col items-end">
-                            <span class="text-[10px] font-semibold text-gray-400 uppercase tracking-widest">${formatDate(activity.fechaLimite)}</span>
-                            <svg class="w-4 h-4 text-gray-300 transform group-[.is-expanded]:rotate-180 transition-transform duration-200 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7"></path></svg>
-                        </div>
-                    </div>
-                    <div class="assignment-content overflow-hidden max-h-0 transition-all duration-300 ease-in-out group-[.is-expanded]:max-h-[1200px]">
-                        <div class="pt-4 mt-4 border-t border-gray-50">
-                            <div class="assignment-content-scroll scroll-minimalist mb-4">
-                                <div class="text-gray-600 text-sm font-medium mb-5 leading-relaxed quill-content">${window.sanitizarHTMLTecnico(activity.descripcion) || 'Sin descripción.'}</div>
-                            </div>
-                            <div class="flex justify-center md:justify-start">
-                                ${actionButtonHtml}
-                            </div>
-                            ${feedbackHtml}
-                        </div>
-                    </div>
-                </div>
-            `;
-        }).join('');
+        tasksList.innerHTML = filtered.map(function(a) { return getActivityHtml(a); }).join('');
     }
 
     // --- Lógica del Modal ---
-    function openSubmissionModal(taskId, taskTitle, parcial, asignatura) {
+    var currentTaskFechaLimite = null;
+    function openSubmissionModal(taskId, taskTitle, parcial, asignatura, fechaLimite) {
         currentTaskId = taskId;
         currentTaskParcial = parcial;
         currentTaskAsignatura = asignatura;
+        currentTaskFechaLimite = fechaLimite;
         modalTaskTitle.textContent = taskTitle;
         uploadedFiles = [];
         currentFolderId = null;
@@ -838,57 +1026,61 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    if (tasksList) {
-        tasksList.addEventListener('click', async function(e) {
-            var assignmentCard = e.target.closest('.assignment-card');
-            var isButton = e.target.closest('button, a');
+    function handleActivityClick(e) {
+        var assignmentCard = e.target.closest('.assignment-card');
+        var isButton = e.target.closest('button, a');
 
-            if (assignmentCard && !isButton) {
-                var alreadyExpanded = assignmentCard.classList.contains('is-expanded');
-                // Collapse all
-                document.querySelectorAll('.assignment-card').forEach(function(card) {
-                    card.classList.remove('is-expanded');
-                });
-                // Toggle if not already expanded
-                if (!alreadyExpanded) {
-                    assignmentCard.classList.add('is-expanded');
-                    if (window.setupCodeCopyButtons) {
-                        setTimeout(function() { window.setupCodeCopyButtons(); }, 350);
-                    }
+        if (assignmentCard && !isButton) {
+            var alreadyExpanded = assignmentCard.classList.contains('is-expanded');
+            // Collapse all in current container
+            var container = assignmentCard.parentElement;
+            container.querySelectorAll('.assignment-card').forEach(function(card) {
+                card.classList.remove('is-expanded');
+            });
+            // Toggle if not already expanded
+            if (!alreadyExpanded) {
+                assignmentCard.classList.add('is-expanded');
+                if (window.setupCodeCopyButtons) {
+                    setTimeout(function() { window.setupCodeCopyButtons(); }, 350);
                 }
-                return;
             }
+            return;
+        }
 
-            if (e.target && e.target.classList.contains('open-submission-modal')) {
-                var ds = e.target.dataset;
-                openSubmissionModal(ds.taskId, ds.taskTitle, ds.parcial, ds.asignatura);
-            }
+        if (e.target && e.target.classList.contains('open-submission-modal')) {
+            var ds = e.target.dataset;
+            openSubmissionModal(ds.taskId, ds.taskTitle, ds.parcial, ds.asignatura, ds.fechaLimite);
+        }
 
-            if (e.target && e.target.classList.contains('delete-submission-btn')) {
-                var type = e.target.dataset.type;
-                var entregaId = e.target.dataset.entregaId;
+        if (e.target && e.target.classList.contains('delete-submission-btn')) {
+            var type = e.target.dataset.type;
+            var entregaId = e.target.dataset.entregaId;
 
-                if (confirm('ATENCIÓN: Al eliminar tu entrega podrías perder la nota de calificación')) {
-                    e.target.disabled = true;
-                    e.target.textContent = 'Eliminando...';
-                    try {
-                        var service = type === 'Examen' ? 'EXAM' : 'TASK';
-                        var action = type === 'Examen' ? 'deleteExamSubmission' : 'deleteSubmission';
-                        var result = await fetchApi(service, action, { entregaId: entregaId });
+            if (confirm('ATENCIÓN: Al eliminar tu entrega podrías perder la nota de calificación')) {
+                var btn = e.target;
+                btn.disabled = true;
+                btn.textContent = 'Eliminando...';
+                fetchApi(type === 'Examen' ? 'EXAM' : 'TASK', type === 'Examen' ? 'deleteExamSubmission' : 'deleteSubmission', { entregaId: entregaId })
+                    .then(function(result) {
                         if (result.status === 'success') {
                             alert('Entrega eliminada correctamente.');
                             fetchAllActivities();
+                            if (window.closeExpandedSubject) window.closeExpandedSubject();
                         } else {
                             throw new Error(result.message);
                         }
-                    } catch (error) {
+                    })
+                    .catch(function(error) {
                         alert('Error al eliminar entrega: ' + error.message);
-                        e.target.disabled = false;
-                        e.target.textContent = 'Eliminar Entrega';
-                    }
-                }
+                        btn.disabled = false;
+                        btn.textContent = 'Eliminar Entrega';
+                    });
             }
-        });
+        }
+    }
+
+    if (tasksList) {
+        tasksList.addEventListener('click', handleActivityClick);
     }
 
     // --- (Req 3.3) Optimizador de Subida de Alta Fidelidad ---
@@ -1260,6 +1452,24 @@ document.addEventListener('DOMContentLoaded', function() {
             confirmSubmissionBtn.textContent = 'Procesando...'; // Estado de procesamiento (Req 3.3)
 
             try {
+                // Tarea 3: Regla de Puntuación Tardía y Aviso al Usuario
+                var isLate = false;
+                if (currentTaskFechaLimite) {
+                    var now = new Date();
+                    var limit = new Date(currentTaskFechaLimite);
+                    if (now > limit) isLate = true;
+                }
+
+                if (isLate) {
+                    if (!confirm('¡ATENCIÓN! Esta actividad ya venció. Al realizar la entrega fuera de tiempo, el sistema aplicará automáticamente una penalización del 50% sobre la calificación obtenida. ¿Desea continuar con la entrega tardía?')) {
+                        isSubmitting = false;
+                        confirmSubmissionBtn.disabled = false;
+                        confirmSubmissionBtn.classList.remove('btn-loading');
+                        confirmSubmissionBtn.textContent = 'Entregar Tarea';
+                        return;
+                    }
+                }
+
                 var finalFileId = uploadedFiles[0].fileId;
                 var finalMimeType = uploadedFiles[0].mimeType;
 
@@ -1272,7 +1482,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     userId: currentUser.userId,
                     tareaId: currentTaskId,
                     fileId: finalFileId,
-                    mimeType: finalMimeType
+                    mimeType: finalMimeType,
+                    isLate: isLate // Informar al backend sobre la entrega tardía (Tarea 3)
                 };
 
                 var result = await fetchApi('TASK', 'submitAssignment', payload);
@@ -1329,11 +1540,36 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     };
 
+    // --- Sistema de Pestañas Principal (Tarea 1 - Fase Diagnóstico) ---
+    var tabActivities = document.getElementById('tab-activities');
+    var tabProgress = document.getElementById('tab-progress');
+    var viewActivities = document.getElementById('view-activities');
+    var viewProgress = document.getElementById('view-progress');
+
+    if (tabActivities && tabProgress && viewActivities && viewProgress) {
+        tabActivities.addEventListener('click', function() {
+            tabActivities.className = "px-8 py-2.5 rounded-full text-xs font-bold uppercase tracking-widest transition-all duration-300 bg-blue-600 text-white shadow-lg shadow-blue-100";
+            tabProgress.className = "px-8 py-2.5 rounded-full text-xs font-bold uppercase tracking-widest transition-all duration-300 text-gray-500 hover:bg-white hover:text-blue-600";
+            viewActivities.classList.remove('hidden');
+            viewProgress.classList.add('hidden');
+        });
+
+        tabProgress.addEventListener('click', function() {
+            tabProgress.className = "px-8 py-2.5 rounded-full text-xs font-bold uppercase tracking-widest transition-all duration-300 bg-blue-600 text-white shadow-lg shadow-blue-100";
+            tabActivities.className = "px-8 py-2.5 rounded-full text-xs font-bold uppercase tracking-widest transition-all duration-300 text-gray-500 hover:bg-white hover:text-blue-600";
+            viewProgress.classList.remove('hidden');
+            viewActivities.classList.add('hidden');
+            // Asegurar que las métricas se rendericen al cambiar a la pestaña
+            window.renderStudentExpediente(allActivitiesData);
+        });
+    }
+
     fetchAllActivities();
     initWhatsAppButton();
 
     // REQ: Reactive Scope Synchronization (v7.7.1)
     document.addEventListener('academic-scope-updated', function() {
+        if (isFetchingActivities) return;
         console.log("[Student] Academic scope updated, refreshing activities...");
         // Forzar limpieza de cache local para asegurar datos frescos tras cambio de alcance
         if (window.PersistenceManager) {

@@ -335,3 +335,203 @@ Módulo: Estilos y UX
     - Evolución visual de .card-ima a un estándar corporativo (20px radius, sombras suaves).
     - Implementadas animaciones de entrada 'fadeInLeft' para componentes de navegación.
     - Eliminación de estilos de alto contraste no institucionales.
+
+REESTRUCTURACIÓN DE HISTORIAL ACADÉMICO Y FILTRADO DE ASIGNATURAS - Wed Jul  1 12:39:38 UTC 2026
+
+Archivo: backend/user-service/Code.gs
+Líneas: 904-907, 1345-1443
+Descripción: Refactorización de saveToAcademicHistory para normalización estricta de parciales y unidades (Números Romanos) y grados (acentuación). Implementada creación de registros individuales por combinación Grado-Asignatura. Actualizada getAcademicHistory para compatibilidad.
+
+Archivo: js/config.js
+Líneas: 52-65, 353-363
+Descripción: Implementación de SUBJECT_GRADE_MAP para mapeo maestro de pertenencia académica. Actualización de isContentAuthorized para validar Grado vs Asignatura en perfiles de estudiante.
+
+Archivo: js/student.js
+Líneas: 600-610
+Descripción: Refinamiento de renderSubjectNavigation para aplicar filtros de seguridad robustos al cargar asignaturas desde la configuración global.
+
+PERSONALIZACIÓN DOCENTE Y OPTIMIZACIÓN DE NAVEGACIÓN - Wed Jul  1 14:11:12 UTC 2026
+
+Archivo: backend/user-service/Code.gs
+Descripción: Refactorización para soportar configuraciones por profesorId. Implementada validación de integridad (Unicidad de asignatura por contexto). Agregada columna profesorId a HistorialAcademico.
+
+Archivo: js/teacher.js
+Descripción: Enforce de flujo Grados -> Secciones -> Asignaturas -> Alumnos. Estudiantes solo visibles en etapa terminal. Integración de profesorId en API config.
+
+CORRECCIÓN DE PERSISTENCIA Y EXCEPCIONES DE CACHÉ - Wed Jul  1 19:28:01 UTC 2026
+
+Archivo: js/persistence.js
+Líneas: 139-142
+Descripción: Implementación de fallback de ID en PersistenceManager.delete. Resuelve 'DataError: No key or key range specified'.
+
+Archivo: backend/user-service/Code.gs
+Líneas: 1308-1365, 1394-1445
+Descripción: Refactorización para endurecer la persistencia de profesorId. Implementado chequeo de cabeceras, normalización de strings (trim) y garantía de 8 columnas en el historial.
+
+Archivo: js/student.js
+Descripción: Verificación de llamadas seguras a PersistenceManager.delete tras el fix en el motor de persistencia.
+
+UNIFICACIÓN Y NORMALIZACIÓN DE CONFIGURACIÓN ACADÉMICA - Wed Jul  1 20:03:53 UTC 2026
+
+Archivo: backend/user-service/Code.gs
+Líneas: 888, 1250-1440, 1520-1550
+Descripción: Rediseño estructural de ConfiguracionAcademica a modelo granular (Cartesian Product). Implementada generación de IDs 'conf-XXXX'. Depreciada hoja AsignaturasPorParcial. Refactorizada getAcademicConfig para re-agregación dinámica y soporte de consolidado para estudiantes.
+
+Archivo: js/config.js
+Descripción: ActualizadaisContentAuthorized para mayor resiliencia ante cambios en la estructura de origen de datos.
+
+ESTABILIZACIÓN Y REESTRUCTURACIÓN DASHBOARD v7.8.6 - Fri Jul 03 2026
+
+Módulo: Red y Conectividad
+- js/api.js:
+    - Simplificado 'Content-Type' a 'text/plain' para evitar Preflight OPTIONS y bloqueos de CORS en Google Apps Script.
+    - Actualizada estructura de fallback para 'getAcademicConfig'.
+- js/config.js:
+    - Actualizada URL del microservicio de usuarios (v7.8.6).
+    - Implementada validación 'hasChanged' en applyConfig para prevenir disparos redundantes del evento de sincronización.
+    - Normalizadas claves en SUBJECT_GRADE_MAP (sin acentos) para compatibilidad con fastNorm.
+
+Módulo: Dashboard del Estudiante
+- js/student.js:
+    - Implementado flag 'isFetchingActivities' para evitar bucles infinitos de recarga recursiva.
+    - Eliminada llamada redundante a 'syncAcademicScope' dentro de fetchAllActivities.
+    - Removida lógica de navegación por pestañas de asignaturas.
+    - Implementado filtrado estricto por parcial vigente ('window.GLOBAL_SCOPE.ParcialActual').
+- student-dashboard.html:
+    - Eliminado contenedor '#subject-tabs-container' y elementos de navegación residuales.
+    - Implementada vista unificada mediante tarjetas expandibles.
+
+Módulo: Backend (Code.gs)
+- backend/user-service/Code.gs:
+    - Refactorizada 'updateAcademicConfig' para cumplir con el estándar de 9 columnas en 'ConfiguracionAcademica' (ID, Fecha, Parcial, Grado, Sección, Asignatura, Unidad, Tema, profesorId).
+    - Implementado almacenamiento granular mediante producto cartesiano de Temas (un registro por fila, sin JSON).
+    - Sincronizada 'getAcademicConfig' para recuperar datos usando los nuevos índices de columna.
+    - Garantizada integridad de 8 columnas en 'HistorialAcademico'.
+
+REGISTRO DE CAMBIOS - Thu Jul  2 2026 - AFINAMIENTO DE CONFIGURACIÓN v7.8.7
+
+Archivo: backend/user-service/Code.gs
+- Líneas 1286: Agregado UnidadActual al objeto de configuración retornado.
+- Líneas 1311-1430: Refactorización total de updateAcademicConfig.
+  - Implementado desacoplamiento de Parcial y Unidad.
+  - Implementada lógica de Upsert contextual para evitar duplicados.
+  - Implementado ciclo de vida dinámico de la columna Fecha (actualización de rango en parciales anteriores).
+- Líneas 1457-1518: Actualización de saveToAcademicHistory para reflejar la independencia de Unidad y uniformidad de Fecha.
+
+Archivo: js/config.js
+- Línea 96: Agregado UnidadActual al GLOBAL_SCOPE en syncAcademicScope.
+
+Archivo: js/teacher.js
+- Líneas 124, 275: Implementada carga y envío de UnidadActual desde el Panel de Administración.
+- Líneas 1261-1340: Restringida la navegación de Grados, Secciones y Asignaturas exclusivamente al GLOBAL_SCOPE, eliminando fallbacks compensatorios.
+
+Archivo: js/student.js
+- Líneas 58-100: Actualización de la tarjeta de información del estudiante para incluir Email, Teléfono e icono de WhatsApp dinámico.
+- Líneas 604-610: Ajuste de filtrado de actividades para cumplimiento estricto del parcial vigente.
+
+Archivo: student-dashboard.html
+- Línea 159: Reemplazado texto "Vista Unificada de Asignaturas" por instrucción de selección de asignatura.
+
+Archivo: teacher-dashboard.html
+- Líneas 459-472: Agregado selector independiente para "Unidad Activa (Planificación)" y normalización de etiquetas de parcial.
+
+
+REGISTRO DE CAMBIOS - Thu Jul  2 2026 - CORRECCIÓN DE REGRESIÓN DE PERSISTENCIA v7.8.8
+
+Archivo: METODOLOGIA_DESARROLLO.md
+- Sección 4, Subfase 5.2: Fortalecimiento del protocolo de auditoría. Se exige validación de persistencia real en DB y reconstrucción de estado tras recarga.
+
+Archivo: backend/user-service/Code.gs
+- Líneas 1269-1290: getAcademicConfig ahora filtra registros vigentes (excluyendo aquellos con rango de fecha cerrado con guion).
+- Líneas 1346-1359: updateAcademicConfig ahora valida integridad solo contra registros vigentes.
+- Líneas 1367-1375: updateAcademicConfig ahora fuerza el cierre de parciales anteriores mediante rango de fecha, incluso si el cambio ocurre en el mismo mes calendario.
+
+Archivo: js/student.js
+- Líneas 192-198: fetchAllActivities ahora sincroniza el valor del selector de historial con el ParcialActual del GLOBAL_SCOPE antes del primer renderizado de actividades.
+
+
+REGISTRO DE CAMBIOS - FASE 6 Y OPTIMIZACIÓN v7.8.9 - Thu Jul  2 15:51:38 UTC 2026
+
+Módulo: Dashboard del Profesor
+- js/teacher.js:
+    - Implementada optimización de navegación: salta automáticamente el paso de 'Secciones' si el grado tiene una única sección configurada en el GLOBAL_SCOPE.
+    - Reforzado el filtrado de entregas y estudiantes: ahora utiliza estrictamente el parcial vigente del GLOBAL_SCOPE para evitar fugas de datos de períodos anteriores.
+    - Sincronización de la variable window.PARCIAL_ACTUAL con el GLOBAL_SCOPE en todos los puntos de entrada para garantizar consistencia.
+    - Eliminados fallbacks manuales de parcial en favor del normalizador global.
+
+Módulo: Metodología y Calidad
+- METODOLOGIA_DESARROLLO.md:
+    - Agregada norma 1.8: Prohibición absoluta de soluciones temporales o fallbacks que oculten causas raíz.
+    - Fortalecida la Subfase 5.2 (Verificación): Incorporado el "F5 Test" como requisito obligatorio para validar la reconstrucción de estado desde el backend.
+
+Módulo: Dashboard del Estudiante
+- js/student.js:
+    - Reforzada la sincronización del selector de historial tras la carga inicial para prevenir que el valor por defecto ('I parcial') prevalezca sobre la configuración real.
+
+REGISTRO DE CAMBIOS - PERSISTENCIA E IDEMPOTENCIA v7.9.0 - Fri Jul 03 2026
+
+Módulo: Persistencia Backend
+- backend/user-service/Code.gs:
+    - Refactorizada 'updateAcademicConfig' para implementar lógica de Upsert atómica, eliminando la duplicidad de registros en la hoja ConfiguracionAcademica.
+    - Actualizada 'saveToAcademicHistory' con validación de unicidad de 5 factores (Parcial, Grado, Sección, Asignatura, Profesor) para prevenir logs redundantes.
+    - Endurecida 'getAcademicConfig' para filtrar estrictamente por el contexto del estudiante, eliminando la visibilidad de configuraciones de otros docentes.
+
+Módulo: Configuración y Sincronización
+- js/config.js:
+    - Expandida 'syncAcademicScope' para inyectar automáticamente el Grado y Sección del usuario en la petición de configuración vigente.
+    - Implementada sincronización forzada del selector '#parcial-history-selector' con el estado real del servidor.
+    - Corregida 'normalizePartial' para resolver ambigüedades en la detección de parciales mediante chequeo descendente.
+
+Módulo: Dashboards y Navegación
+- js/teacher.js:
+    - Reforzada la integridad de 'renderAsignaturas', 'renderAlumnos' y 'renderDetallesAlumno' mediante filtrado estricto por el contexto completo del navStack.
+    - Optimizada la navegación para omitir el nivel de 'Secciones' cuando solo existe una unidad funcional configurada.
+- js/student.js:
+    - Refactorizada 'renderSubjectNavigation' para garantizar la visibilidad permanente de las materias autorizadas, mejorando el feedback de 'Carga completada'.
+
+REGISTRO DE CAMBIOS - OPTIMIZACIÓN DE NAVEGACIÓN Y PERSISTENCIA v7.9.1 - Fri Jul 03 2026
+
+Módulo: Backend (Google Apps Script)
+- Code.gs:
+    - Implementado LockService (30s) en updateAcademicConfig para prevenir colisiones de escritura.
+    - Refactorizada lógica de persistencia: ahora utiliza un mapa de reconciliación en memoria para realizar una única escritura atómica tras identificar registros existentes.
+    - getAcademicConfig ahora retorna un array 'GranularConfig' que facilita la toma de decisiones de navegación en el frontend.
+
+Módulo: Frontend - Dashboard Profesor
+- js/teacher.js:
+    - Implementada lógica de "Skip Secciones": el sistema detecta automáticamente si un grado tiene una sola sección configurada y avanza directamente a la lista de asignaturas.
+    - renderAsignaturas ahora utiliza GranularConfig para asegurar que solo se muestren las materias que corresponden exactamente a la sección seleccionada.
+    - Reforzado el filtrado en renderAlumnos para basarse estrictamente en la asignatura activa del navStack.
+
+Módulo: Frontend - Dashboard Estudiante
+- js/student.js:
+    - renderSubjectNavigation ahora es inclusivo: muestra todas las asignaturas autorizadas para el parcial, permitiendo al estudiante ver su historial de completación.
+    - Refinada la lógica de visualización de 'Pendientes' vs 'Al día' mediante indicadores visuales dinámicos en las tarjetas de materia.
+
+REGISTRO DE CAMBIOS - ESTABILIZACIÓN DE PERSISTENCIA v7.9.2 - Fri Jul 03 2026
+
+Módulo: Backend (Persistencia Hardened)
+- Code.gs:
+    - Asegurada atomicidad total en updateAcademicConfig mediante LockService y reconciliación en memoria.
+    - saveToAcademicHistory ahora valida el 100% de los factores (5) antes de registrar un cambio de período.
+    - Añadidos logs de auditoría: "[USER-SVC] Invocado updateAcademicConfig".
+
+Módulo: Frontend (Aislamiento de Datos)
+- js/student.js:
+    - Refactorizada lógica de filtrado de materias: ahora utiliza exclusivamente el GranularConfig pre-filtrado por el backend para el contexto del alumno.
+    - Se eliminó la dependencia de SUBJECT_GRADE_MAP para la construcción del tablero, delegando la autoridad al alcance académico vigente del servidor.
+
+REGISTRO DE CAMBIOS - ENDURECIMIENTO DE PERSISTENCIA v7.9.2 - Fri Jul 03 2026
+
+Módulo: Backend (Persistencia e Integridad)
+- Code.gs:
+    - Implementada Reconciliación Total en memoria en updateAcademicConfig.
+    - saveToAcademicHistory ahora realiza inserciones masivas (grouped writes) tras validación de 5 factores.
+    - Sincronizados logs de auditoría de servidor.
+- task-service/Code.gs & exam-service/Code.gs:
+    - Agregados campos 'grado' y 'seccion' a las respuestas de actividades de estudiante.
+
+Módulo: Frontend (Aislamiento de Contexto)
+- js/student.js:
+    - Refactorizado motor de renderizado de materias para usar GranularConfig y metadatos de actividad para filtrado estricto.
+    - Se garantiza que ninguna tarea o asignatura se filtre entre grados.

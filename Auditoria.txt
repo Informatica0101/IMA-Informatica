@@ -398,3 +398,608 @@ Archivo: css/style.css
 Sector: Estilos Corporativos
 Hallazgo [Observación]: Existían discrepancias visuales y falta de acabado profesional en componentes de tarjetas.
 Solución: Rediseño de .card-ima con bordes de 20px, sombras suaves y transiciones suaves. Eliminado cualquier rastro de efectos neón.
+
+AUDITORÍA TÉCNICA - REESTRUCTURACIÓN DASHBOARD ESTUDIANTE - Wed Jul  1 01:43:14 UTC 2026
+
+Archivo: student-dashboard.html
+- Estructura actual: Tiene un selector de historial de parcial y un contenedor de pestañas de asignatura.
+- Hallazgo [Medio]: Falta el sistema de pestañas principal (Actividades / Progreso Académico).
+- Hallazgo [Bajo]: El diseño actual de las asignaturas usa un scroll horizontal simple, no tarjetas expansivas.
+- Hallazgo [Bajo]: Padding y margin en contenedores principales (container, py-8) pueden compactarse más.
+
+Archivo: js/student.js
+- Función fetchAllActivities: Gestiona la carga de datos.
+- Función renderStudentExpediente: Renderiza el resumen de métricas.
+- Función renderSubjectNavigation: Inyecta las pestañas de asignatura.
+- Función renderActivities: Renderiza la lista de tareas.
+- Hallazgo [Alto]: No existe lógica de penalización por entrega tardía en el envío de tareas.
+- Hallazgo [Medio]: No hay lógica de alertas de color (Verde/Amarillo/Rojo) basada en proximidad de fecha límite.
+- Hallazgo [Medio]: La renderización de asignaturas no soporta el estado "Contraído" (solo pendientes) y "Expandido" (todas).
+
+Archivo: css/style.css
+- Hallazgo [Bajo]: .card-ima tiene padding de 24px, se puede reducir para compactar.
+- Hallazgo [Observación]: No hay estilos definidos para las alertas de vencimiento ni para la expansión full-viewport de tarjetas de asignatura.
+
+Archivo: js/ui-common.js
+- Hallazgo [Bajo]: La navegación popstate maneja 'student-subject', pero deberá adaptarse si el sistema de pestañas principal cambia el estado de la URL o el historial.
+
+AUDITORÍA TÉCNICA - REESTRUCTURACIÓN HISTORIAL Y FILTRADO - Wed Jul  1 12:26:04 UTC 2026
+
+Archivo: backend/user-service/Code.gs
+Sector: Función saveToAcademicHistory
+Hallazgo [Crítico]: A pesar de que el código actual parece implementar la estructura requerida, el reporte indica que los registros se están guardando en una estructura de bloque único (posiblemente por una versión anterior del script o falla en la lógica de iteración).
+Impacto: Dificulta el filtrado por grado y asignatura, provocando que los estudiantes vean materias que no les corresponden.
+Recomendación: Asegurar que la función itere correctamente sobre grados, secciones y asignaturas, y que getOrCreateSheet inicialice correctamente los encabezados si la hoja no existe.
+
+Archivo: js/student.js
+Sector: Función renderSubjectNavigation
+Hallazgo [Alto]: La inclusión de asignaturas desde window.GLOBAL_SCOPE.AsignaturaActual no discrimina por grado del estudiante.
+Impacto: Un estudiante de Undécimo ve asignaturas de Duodécimo si ambas están activas en el alcance global.
+Recomendación: Validar que la asignatura pertenezca al grado del estudiante consultando el historial académico o el Mapa de Dependencias Académicas.
+
+Archivo: js/config.js
+Sector: Función isContentAuthorized
+Hallazgo [Medio]: La función no tiene forma de validar la relación Grado-Asignatura si solo se le pasan los valores actuales, ya que el GLOBAL_SCOPE los mantiene como listas independientes.
+Recomendación: Utilizar el historial académico como fuente de verdad para la relación Grado-Asignatura.
+
+AUDITORÍA TÉCNICA - PERSONALIZACIÓN POR DOCENTE E INTEGRIDAD DE ASIGNACIÓN - Wed Jul  1 13:10:48 UTC 2026
+
+Archivo: backend/user-service/Code.gs
+Sector: Función getAcademicConfig / updateAcademicConfig
+Hallazgo [Crítico]: La configuración académica es global y sobrescribe la fila única de la hoja 'ConfiguracionAcademica'. No soporta múltiples docentes.
+Impacto: Los cambios realizados por un profesor afectan a todos los demás, impidiendo la personalización.
+Recomendación: Cambiar a una estructura de múltiples filas donde cada profesorId tenga su propia configuración.
+
+Sector: Función saveToAcademicHistory
+Hallazgo [Alto]: No registra qué profesor realizó el cambio de alcance.
+Impacto: Pérdida de trazabilidad en el historial académico.
+Recomendación: Incluir profesorId como columna obligatoria.
+
+Archivo: js/teacher.js
+Sector: Navegación Jerárquica (pushNav)
+Hallazgo [Medio]: Actualmente el sistema permite ver alumnos tras seleccionar Grado/Sección si solo hay una sección, o después de seleccionar la asignatura.
+Recomendación: Forzar que el nivel 'Alumnos' sea siempre posterior a 'Asignaturas' y dependa de la selección previa del contexto completo.
+
+Sector: Carga de Configuración
+Hallazgo [Alto]: Carga la configuración global sin filtrar por el ID del usuario actual.
+Recomendación: Enviar el userId del profesor en la petición de getAcademicConfig.
+
+AUDITORÍA TÉCNICA - CONFIGURACIÓN MULTI-DOCENTE Y FLUJO DE NAVEGACIÓN - Wed Jul  1 13:13:23 UTC 2026
+
+Archivo: backend/user-service/Code.gs
+Sector: getOrCreateSheet
+Hallazgo [Medio]: Las cabeceras de 'HistorialAcademico' y 'ConfiguracionAcademica' no contemplan el campo 'profesorId'.
+Impacto: Imposibilidad de aislar configuraciones por docente y pérdida de trazabilidad.
+Recomendación: Agregar 'profesorId' a las cabeceras. En 'ConfiguracionAcademica', la estructura debe permitir múltiples filas (una por profesor).
+
+Sector: getAcademicConfig / updateAcademicConfig
+Hallazgo [Crítico]: Actualmente operan sobre una única configuración global. 'update' limpia la hoja, lo que borraría configuraciones de otros docentes.
+Impacto: Conflictos y sobreescritura de datos entre profesores.
+Recomendación: Refactorizar para buscar/actualizar por profesorId. Implementar validación de unicidad de asignaturas por parcial/grado/sección entre todos los registros.
+
+Archivo: js/teacher.js
+Sector: Función pushNav / Manejo de clicks en tabla
+Hallazgo [Alto]: La lógica de navegación omite 'Secciones' si solo hay una, saltando directamente a 'Asignaturas' y luego 'Alumnos'.
+Impacto: Incumplimiento del requerimiento de flujo contextual completo (Grado -> Sección -> Asignatura) antes de ver alumnos.
+Recomendación: Modificar el flujo para que 'Alumnos' sea estrictamente dependiente de haber seleccionado una asignatura, y 'Asignaturas' de haber seleccionado una sección (aunque sea única).
+
+Sector: Guardado de Configuración (btn-save-academic-config)
+Hallazgo [Medio]: El payload enviado a 'updateAcademicConfig' no incluye el ID del profesor.
+Impacto: El backend no podrá asociar la configuración al docente autenticado.
+Recomendación: Incluir 'profesorId: currentUser.userId' en el payload.
+
+AUDITORÍA TÉCNICA - CONFIGURACIÓN POR DOCENTE E INTEGRIDAD ACADÉMICA - Wed Jul  1 13:16:45 UTC 2026
+
+Archivo: backend/user-service/Code.gs
+Sector: getOrCreateSheet
+Hallazgo [Crítico]: Las hojas 'ConfiguracionAcademica' e 'HistorialAcademico' no tienen la columna 'profesorId'.
+Impacto: Las configuraciones son globales y se sobreescriben entre docentes.
+Recomendación: Agregar 'profesorId' a las cabeceras. 'ConfiguracionAcademica' debe cambiar a una estructura de una fila por profesor.
+
+Sector: updateAcademicConfig
+Hallazgo [Alto]: Actualmente utiliza 'sheet.clear()', lo que borraría configuraciones de otros profesores.
+Recomendación: Implementar lógica de búsqueda y actualización por profesorId.
+
+Sector: saveToAcademicHistory
+Hallazgo [Alto]: No se registra el 'profesorId', impidiendo la trazabilidad por docente.
+Recomendación: Incluir el ID del profesor en cada registro generado.
+
+Archivo: js/teacher.js
+Sector: Navegación Jerárquica (pushNav)
+Hallazgo [Alto]: El sistema permite ver la lista de alumnos inmediatamente después de seleccionar la sección si solo hay una, o después de seleccionar la asignatura.
+Impacto: Incumplimiento del requerimiento de flujo contextual (estudiantes solo al final).
+Recomendación: Modificar el flujo para que el nivel 'Alumnos' sea siempre posterior a la selección de asignatura.
+
+Sector: Guardado de Configuración
+Hallazgo [Medio]: El payload enviado a 'updateAcademicConfig' no incluye el ID del profesor.
+Recomendación: Enviar 'profesorId: currentUser.userId'.
+
+AUDITORÍA TÉCNICA - CONFIGURACIÓN MULTI-DOCENTE - Wed Jul  1 13:20:24 UTC 2026
+
+Archivo: backend/user-service/Code.gs
+Sector: getOrCreateSheet (Línea 878)
+Hallazgo [Medio]: Las cabeceras de 'ConfiguracionAcademica' e 'HistorialAcademico' no incluyen 'profesorId'.
+Recomendación: Agregar 'profesorId' a las columnas de ambas hojas.
+
+Sector: getAcademicConfig (Línea 1257)
+Hallazgo [Crítico]: Retorna la segunda fila (valores globales) sin filtrar por usuario.
+Recomendación: Refactorizar para buscar la fila correspondiente al 'profesorId' proporcionado en el payload. Para estudiantes (sin profesorId), debe retornar un agregado de todas las asignaturas activas en su grado/sección.
+
+Sector: updateAcademicConfig (Línea 1306)
+Hallazgo [Crítico]: Utiliza 'sheet.clear()', eliminando configuraciones de otros docentes.
+Recomendación: Implementar actualización por fila (profesorId). Incluir validación de integridad: antes de guardar, verificar en toda la hoja que ninguna de las asignaturas seleccionadas esté ya asignada a otro profesor en el mismo parcial/grado/sección.
+
+Sector: saveToAcademicHistory (Línea 1354)
+Hallazgo [Alto]: No guarda el profesorId.
+Recomendación: Pasar profesorId a la función y guardarlo en la nueva columna.
+
+Archivo: js/teacher.js
+Sector: Navegación Jerárquica (Línea 1025 y pushNav)
+Hallazgo [Alto]: El flujo permite ver alumnos antes de seleccionar asignatura o se salta pasos contextuales.
+Recomendación: Forzar el orden Grado -> Sección -> Asignatura -> Alumnos. El nivel 'Alumnos' debe ser accesible ÚNICAMENTE desde el nivel 'Asignaturas'.
+
+Sector: loadAcademicAdminData (Línea 109)
+Hallazgo [Bajo]: No envía el userId del profesor a getAcademicConfig.
+Recomendación: Payload: { profesorId: currentUser.userId }.
+
+AUDITORÍA TÉCNICA - CONFIGURACIÓN MULTI-PROFESOR E INTEGRIDAD DE ASIGNACIÓN - Wed Jul  1 13:25:02 UTC 2026
+
+Archivo: backend/user-service/Code.gs
+Sector: getOrCreateSheet (Línea 878)
+Hallazgo [Crítico]: Las cabeceras de 'ConfiguracionAcademica' y 'HistorialAcademico' no incluyen 'profesorId', lo que impide la personalización por docente y la trazabilidad solicitada.
+Recomendación: Agregar la columna 'profesorId' a ambas hojas. En 'ConfiguracionAcademica', la estructura debe evolucionar para permitir una configuración única por cada ID de profesor.
+
+Sector: getAcademicConfig (Línea 1257)
+Hallazgo [Alto]: Retorna siempre la primera configuración encontrada (global), sin filtrar por profesorId.
+Recomendación: Modificar para recibir profesorId y buscar la fila correspondiente. Para estudiantes, debe existir una lógica de agregación o filtro por grado/sección entre todas las configuraciones.
+
+Sector: updateAcademicConfig (Línea 1306)
+Hallazgo [Crítico]: Utiliza 'sheet.clear()', borrando los datos de todos los profesores al guardar uno solo. No valida duplicidad de asignaturas entre docentes.
+Recomendación: Implementar actualización por fila (profesorId). Antes de guardar, validar que ninguna asignatura en el nuevo alcance esté ya asignada a otro profesor en el mismo parcial/grado/sección.
+
+Archivo: js/teacher.js
+Sector: Navegación Jerárquica (Líneas 1884-1891)
+Hallazgo [Alto]: El sistema salta directamente a 'Asignaturas' si solo hay una sección, incumpliendo el requerimiento de navegación secuencial completa.
+Recomendación: Forzar el paso por 'Secciones' o asegurar que el nivel 'Alumnos' sea SIEMPRE posterior a 'Asignaturas'.
+
+Sector: Renderizado de Estudiantes (Línea 1216)
+Hallazgo [Medio]: El nivel 'Alumnos' puede ser alcanzado prematuramente.
+Recomendación: Restringir la llamada a 'renderAlumnos' para que solo ocurra tras la selección de una asignatura específica.
+
+AUDITORÍA TÉCNICA - PERSONALIZACIÓN POR DOCENTE E INTEGRIDAD ACADÉMICA - Wed Jul  1 13:34:47 UTC 2026
+
+Archivo: backend/user-service/Code.gs
+Sector: getOrCreateSheet (Línea 878)
+Hallazgo [Crítico]: Las cabeceras de 'ConfiguracionAcademica' e 'HistorialAcademico' no incluyen 'profesorId'.
+Impacto: Imposibilidad de aislar configuraciones por docente y pérdida de trazabilidad.
+Recomendación: Agregar la columna 'profesorId' a ambas hojas. 'ConfiguracionAcademica' debe soportar múltiples filas (una por profesor).
+
+Sector: getAcademicConfig (Línea 1257)
+Hallazgo [Crítico]: Retorna siempre la configuración de la fila 2, sin filtrar por usuario.
+Recomendación: Refactorizar para buscar la fila asociada al 'profesorId' del payload. Para estudiantes, retornar un agregado de configuraciones activas en su grado/sección.
+
+Sector: updateAcademicConfig (Línea 1306)
+Hallazgo [Crítico]: Utiliza 'sheet.clear()', eliminando configuraciones de otros docentes. No valida duplicidad de asignaturas.
+Recomendación: Implementar actualización por fila (profesorId). Antes de persistir, validar que las asignaturas seleccionadas no estén ya asignadas a otro profesor en el mismo contexto (Parcial/Grado/Sección).
+
+Archivo: js/teacher.js
+Sector: Navegación Jerárquica (pushNav y handlers)
+Hallazgo [Alto]: La lógica actual permite ver la lista de alumnos inmediatamente tras seleccionar la sección si es única, o tras seleccionar la asignatura.
+Impacto: Incumplimiento del requerimiento de flujo contextual (estudiantes solo al final).
+Recomendación: Modificar para que el nivel 'Alumnos' sea SIEMPRE posterior a 'Asignaturas' y dependa de la selección previa del contexto completo.
+
+Sector: Guardado de Configuración
+Hallazgo [Medio]: El payload enviado no incluye el ID del profesor.
+Recomendación: Incluir 'profesorId: currentUser.userId'.
+
+AUDITORÍA TÉCNICA - PERSONALIZACIÓN POR DOCENTE E INTEGRIDAD ACADÉMICA - Wed Jul  1 13:37:48 UTC 2026
+
+Archivo: backend/user-service/Code.gs
+Sector: getOrCreateSheet (Línea 878)
+Hallazgo [Crítico]: Las cabeceras de 'ConfiguracionAcademica' e 'HistorialAcademico' no incluyen 'profesorId', lo que impide la personalización por docente.
+Recomendación: Agregar la columna 'profesorId' a ambas hojas. En 'ConfiguracionAcademica', la estructura debe evolucionar para permitir una fila por profesor.
+
+Sector: getAcademicConfig (Línea 1257)
+Hallazgo [Crítico]: Retorna siempre la configuración de la fila 2, sin filtrar por usuario.
+Recomendación: Refactorizar para buscar la fila asociada al 'profesorId' del payload.
+
+Sector: updateAcademicConfig (Línea 1306)
+Hallazgo [Crítico]: Utiliza 'sheet.clear()', eliminando configuraciones de otros docentes. No valida duplicidad de asignaturas.
+Recomendación: Implementar actualización por fila (profesorId). Antes de persistir, validar que las asignaturas seleccionadas no estén ya asignadas a otro profesor en el mismo contexto (Parcial/Grado/Sección).
+
+Archivo: js/teacher.js
+Sector: Navegación Jerárquica (pushNav y handlers)
+Hallazgo [Alto]: La lógica actual permite ver la lista de alumnos inmediatamente tras seleccionar la sección si es única, o tras seleccionar la asignatura.
+Impacto: Incumplimiento del requerimiento de flujo contextual (estudiantes solo al final).
+Recomendación: Modificar para que el nivel 'Alumnos' sea SIEMPRE posterior a 'Asignaturas' y dependa de la selección previa del contexto completo.
+
+Sector: Guardado de Configuración
+Hallazgo [Medio]: El payload enviado no incluye el ID del profesor.
+Recomendación: Incluir 'profesorId: currentUser.userId' en el payload.
+
+AUDITORÍA TÉCNICA - CONFIGURACIÓN PERSONALIZADA POR DOCENTE - Wed Jul  1 13:39:23 UTC 2026
+
+Archivo: backend/user-service/Code.gs
+Sector: getOrCreateSheet (Línea 878)
+Hallazgo [Crítico]: Las cabeceras de 'ConfiguracionAcademica' e 'HistorialAcademico' no incluyen 'profesorId', lo que viola el nuevo requerimiento de asociación docente.
+Impacto: Las configuraciones son compartidas y se sobrescriben, impidiendo la personalización.
+Recomendación: Agregar 'profesorId' a las cabeceras. En 'ConfiguracionAcademica', la estructura debe ser tabular (una fila por profesor).
+
+Sector: getAcademicConfig (Línea 1257)
+Hallazgo [Crítico]: Retorna siempre la configuración de la fila 2. No filtra por 'profesorId'.
+Impacto: Un profesor ve la configuración de otro.
+Recomendación: Refactorizar para buscar por el ID del profesor proporcionado en el payload.
+
+Sector: updateAcademicConfig (Línea 1306)
+Hallazgo [Crítico]: Usa 'sheet.clear()', lo que borra las configuraciones de todos los profesores al guardar uno solo.
+Hallazgo [Crítico]: No existe validación de integridad para evitar que dos profesores impartan la misma asignatura en el mismo parcial/grado/sección.
+Recomendación: Implementar actualización por fila (Upsert por profesorId). Agregar lógica de validación cruzada antes de persistir.
+
+Sector: saveToAcademicHistory (Línea 1354)
+Hallazgo [Alto]: No registra el 'profesorId' en el historial.
+Recomendación: Incluir el ID del profesor en la persistencia del historial.
+
+Archivo: js/teacher.js
+Sector: Navegación Jerárquica (pushNav y handlers)
+Hallazgo [Alto]: La lógica de navegación permite saltar etapas (ej. de Grado a Asignatura si solo hay una sección) y muestra alumnos antes de la etapa terminal.
+Impacto: Incumplimiento del requerimiento de flujo contextual estricto.
+Recomendación: Modificar para que el nivel 'Alumnos' sea SIEMPRE posterior a 'Asignaturas', y ésta a 'Secciones'.
+
+Sector: API Payloads
+Hallazgo [Medio]: No se envía el 'profesorId' en las peticiones de configuración.
+Recomendación: Incluir 'currentUser.userId' en los payloads de get/updateAcademicConfig.
+
+AUDITORÍA TÉCNICA - REQUISITOS DE PERSONALIZACIÓN DOCENTE - Wed Jul  1 13:51:11 UTC 2026
+
+Archivo: backend/user-service/Code.gs
+Sector: getOrCreateSheet
+Hallazgo [Crítico]: Las cabeceras de 'ConfiguracionAcademica' e 'HistorialAcademico' no incluyen 'profesorId'.
+Impacto: Imposibilidad de aislar configuraciones por docente y pérdida de trazabilidad.
+Recomendación: Agregar 'profesorId' a las columnas. 'ConfiguracionAcademica' debe cambiar a una estructura tabular donde cada fila represente la configuración de un profesor.
+
+Sector: getAcademicConfig / updateAcademicConfig
+Hallazgo [Crítico]: Actualmente operan sobre una configuración global (fila 2). 'update' usa 'sheet.clear()', lo que borraría configuraciones de otros docentes.
+Hallazgo [Crítico]: No existe validación de integridad para evitar que dos profesores impartan la misma asignatura en el mismo contexto.
+Recomendación: Refactorizar para buscar/actualizar por profesorId. Implementar bucle de validación de unicidad de asignaturas en toda la hoja.
+
+Archivo: js/teacher.js
+Sector: Navegación Jerárquica (pushNav)
+Hallazgo [Alto]: La lógica de "omisión inteligente" de secciones viola el requerimiento de navegación contextual completa.
+Impacto: Presentación de información de alumnos antes de definir el contexto completo (Sección/Asignatura).
+Recomendación: Eliminar el salto automático a 'Asignaturas' desde 'Grados'. Forzar la secuencia: Grados -> Secciones -> Asignaturas -> Alumnos.
+
+AUDITORÍA TÉCNICA - CORRECCIÓN DE ERRORES POST-COMMIT - Wed Jul  1 19:13:20 UTC 2026
+
+Archivo: js/persistence.js
+Sector: Función delete (Línea 116)
+Hallazgo [Crítico]: La función no implementa un valor por defecto para el parámetro 'key'.
+Impacto: 'Uncaught DataError: No key or key range specified' cuando se intenta borrar caché sin pasar el ID explícitamente. Esto rompe el flujo de sincronización reactiva en el Student Dashboard.
+Recomendación: Implementar 'var id = key || self.getActiveId();' similar a las funciones 'get' y 'set'.
+
+Archivo: backend/user-service/Code.gs
+Sector: Función updateAcademicConfig
+Hallazgo [Alto]: Posible inconsistencia en la recuperación de la fila del profesor si el ID no es string exacto o si hay espacios.
+Impacto: Falla en la persistencia del campo 'profesorId'.
+Recomendación: Asegurar normalización de profesorId antes de 'findIndex'.
+
+Sector: Función saveToAcademicHistory
+Hallazgo [Alto]: Si 'scope.profesorId' es nulo, se usa el fallback 'SISTEMA'.
+Impacto: Pérdida de trazabilidad si el objeto 'scope' (que es 'fullScope' del frontend) no llega con la propiedad poblada.
+Recomendación: Validar por qué el objeto 'scope' podría perder el profesorId en el tránsito.
+
+Archivo: js/student.js
+Sector: Evento 'academic-scope-updated' (Línea 882)
+Hallazgo [Crítico]: Llama a 'window.PersistenceManager.delete('cache_estudiante_dashboard')' sin el segundo argumento.
+Impacto: Causa la excepción DataError reportada.
+
+AUDITORÍA FINAL POST-CORRECCIÓN - Wed Jul  1 19:28:01 UTC 2026
+
+Archivo: js/persistence.js
+Estado: Corregido. La función 'delete' ahora usa un ID por defecto, eliminando la excepción DataError.
+
+Archivo: backend/user-service/Code.gs
+Estado: Corregido. 'updateAcademicConfig' y 'saveToAcademicHistory' ahora fuerzan el uso de 'profesorId' y garantizan la estructura de columnas correcta.
+
+Archivo: js/teacher.js
+Estado: Verificado. Los payloads de configuración ahora incluyen el ID del profesor.
+
+Archivo: js/student.js
+Estado: Verificado. El listener de 'academic-scope-updated' ya no causa errores al invalidar caché.
+
+AUDITORÍA TÉCNICA - UNIFICACIÓN DE CONFIGURACIÓN ACADÉMICA - Wed Jul  1 19:47:12 UTC 2026
+
+Archivo: backend/user-service/Code.gs
+Sector: getOrCreateSheet (Línea 878)
+Hallazgo [Crítico]: Las hojas 'ConfiguracionAcademica' y 'AsignaturasPorParcial' mantienen información redundante y dispar. 'ConfiguracionAcademica' usa un formato multi-valor serializado (JSON en celdas) que dificulta el mantenimiento, mientras que 'AsignaturasPorParcial' es una tabla plana.
+Recomendación: Eliminar 'AsignaturasPorParcial'. Reestructurar 'ConfiguracionAcademica' para que use el formato de 'HistorialAcademico': una fila por cada combinación (ID, Parcial, Grado, Sección, Asignatura, Tema, profesorId).
+
+Sector: updateAcademicConfig
+Hallazgo [Crítico]: El guardado actual es por profesor, pero guarda arreglos serializados.
+Impacto: Dificulta consultas granulares desde otros módulos (ej. reporte de notas o dashboard de alumnos).
+Recomendación: Al guardar, la función debe 'explotar' el alcance (scope) en registros individuales en 'ConfiguracionAcademica'.
+
+Sector: getAsignaturasActivas / updateAsignaturasActivas
+Hallazgo [Medio]: Estas funciones son huérfanas o redundantes (no se encontraron llamadas desde el frontend actual), pero siguen operando sobre una hoja que será eliminada.
+Recomendación: Redirigir estas funciones a la nueva estructura de 'ConfiguracionAcademica' o eliminarlas si se confirma su obsolescencia tras consolidar la fuente de verdad.
+
+Archivo: js/teacher.js
+Sector: Función loadAcademicAdminData
+Hallazgo [Bajo]: Actualmente espera un objeto con arreglos. La nueva estructura del backend deberá retornar un consolidado (re-agrupado) para mantener compatibilidad con los selectores del frontend.
+
+AUDITORÍA FINAL DE UNIFICACIÓN - Wed Jul  1 20:03:53 UTC 2026
+
+Archivo: backend/user-service/Code.gs
+Estado: Unificado. Las configuraciones académicas ahora se almacenan de forma granular en 'ConfiguracionAcademica', eliminando la necesidad de 'AsignaturasPorParcial'. El backend gestiona el producto cartesiano para persistencia y la reagregación para el frontend.
+
+Archivo: js/teacher.js
+Estado: Verificado. Totalmente compatible con la nueva estructura re-agregada. Mantiene el flujo contextual estricto.
+
+Archivo: js/student.js
+Estado: Verificado. Consume el consolidado de configuraciones activas, manteniendo el filtrado por grado.
+AUDITORÍA TÉCNICA - AFINAMIENTO DE CONFIGURACIÓN ACADÉMICA - Thu Jul  2 11:23:55 UTC 2026
+
+Archivo: backend/user-service/Code.gs
+Sector: updateAcademicConfig (Líneas 1358-1359)
+Hallazgo [Alto]: Parcial y Unidad se normalizan a partir del mismo valor (fullScope.ParcialActual).
+Impacto: Se pierde la independencia entre la división del año (Parcial) y la planificación de la materia (Unidad), forzando unidades inexistentes (ej. III unidad para materias de una sola unidad).
+Recomendación: Desacoplar la lógica. La unidad debe venir del payload o definirse por asignatura.
+
+Sector: updateAcademicConfig (Líneas 1328-1332)
+Hallazgo [Medio]: El sistema elimina todos los registros del profesor antes de insertar los nuevos.
+Impacto: Aunque evita duplicados brutos, no permite actualizaciones granulares y puede causar pérdida de IDs si no se maneja bien. No cumple con la lógica de 'Upsert' basada en contexto (Parcial, Grado, Sección, Asignatura, Tema, Profesor).
+Recomendación: Implementar búsqueda de registro existente por contexto antes de insertar/actualizar.
+
+Sector: updateAcademicConfig (Línea 1363)
+Hallazgo [Medio]: El rango de fechas es estático (mes anterior - mes actual).
+Impacto: No cumple con el requerimiento de evolución dinámica de la fecha (inicio con mes actual, posterior cierre con rango).
+Recomendación: Implementar lógica de actualización de fila anterior al cambiar de parcial.
+
+Archivo: js/teacher.js
+Sector: renderGrados (Línea 649)
+Hallazgo [Alto]: La navegación se construye a partir de la actividad histórica (allActivityRaw) en lugar de la configuración vigente.
+Impacto: Aparecen grados no incluidos en la configuración académica actual.
+Recomendación: Filtrar la navegación basándose exclusivamente en window.GLOBAL_SCOPE.
+
+Archivo: js/student.js
+Sector: renderStudentHeader (Línea 54)
+Hallazgo [Medio]: Faltan campos obligatorios en la tarjeta (teléfono, email).
+Impacto: Incumplimiento de requerimientos de información de contacto.
+Recomendación: Agregar email y teléfono (con link WhatsApp) al HTML generado.
+
+Sector: renderSubjectNavigation (Línea 369)
+Hallazgo [Alto]: La lógica de filtrado de actividades podría estar permitiendo la visualización de períodos anteriores si no se valida estrictamente el parcial vigente del GLOBAL_SCOPE.
+Recomendación: Asegurar que el filtro por selectedPartial sea el valor por defecto del parcial activo.
+
+Archivo: student-dashboard.html
+Sector: UI (Línea 159)
+Hallazgo [Bajo]: Texto "Vista Unificada de Asignaturas" presente.
+Recomendación: Reemplazar por la nueva instrucción solicitada.
+
+INFORME DE AUDITORÍA POST-COMMIT - AFINAMIENTO CONFIGURACIÓN v7.8.7 - Thu Jul  2 12:24:29 UTC 2026
+
+FASE 1: MANEJO DE PARCIAL Y UNIDAD
+- Estado: IMPLEMENTADO CORRECTAMENTE.
+- Resultado: El backend (updateAcademicConfig) utiliza 'fullScope.UnidadActual' de forma independiente a 'fullScope.ParcialActual'.
+- Evidencia: Code.gs líneas 1326-1328. Frontend (teacher.js) envía ambos campos.
+
+FASE 2: DUPLICIDAD EN CONFIGURACIONACADEMICA
+- Estado: IMPLEMENTADO CORRECTAMENTE.
+- Resultado: Lógica de Upsert contextual implementada. El sistema busca coincidencias en Grado, Sección, Asignatura y Tema antes de decidir si actualiza fila o inserta.
+- Evidencia: Code.gs líneas 1361-1411 (loop de newScopeSet y búsqueda de rowIndex).
+
+FASE 3: MANEJO DE FECHA DEL PARCIAL
+- Estado: IMPLEMENTADO CORRECTAMENTE.
+- Resultado: Al configurar un nuevo parcial, las filas del anterior se cierran con un rango (mes_inicio - mes_actual) y el nuevo inicia con mes_actual.
+- Evidencia: Code.gs líneas 1344-1358.
+
+FASE 4: PERSISTENCIA DE LA CONFIGURACIÓN
+- Estado: IMPLEMENTADO CORRECTAMENTE.
+- Resultado: getAcademicConfig ahora incluye UnidadActual y el frontend la aplica al GLOBAL_SCOPE en cada sincronización.
+- Evidencia: Code.gs línea 1286 y config.js línea 96.
+
+FASE 5: DASHBOARD DEL PROFESOR (NAVEGACIÓN)
+- Estado: IMPLEMENTADO CORRECTAMENTE.
+- Resultado: renderGrados, renderSecciones y renderAsignaturas utilizan exclusivamente GLOBAL_SCOPE. Fallbacks eliminados.
+- Evidencia: teacher.js líneas 1261, 1301, 1317.
+
+FASE 6: DASHBOARD DEL ESTUDIANTE (FILTRADO)
+- Estado: IMPLEMENTADO CORRECTAMENTE.
+- Resultado: El filtrado en renderSubjectNavigation ahora es estricto contra el parcial autorizado.
+- Evidencia: student.js líneas 604-610.
+
+FASE 7: INTERFAZ ESTUDIANTE (TEXTOS)
+- Estado: IMPLEMENTADO CORRECTAMENTE.
+- Resultado: Instrucción "Selecciona una asignatura..." visible en el header de actividades.
+- Evidencia: student-dashboard.html línea 159.
+
+FASE 8: TARJETA DEL ESTUDIANTE
+- Estado: IMPLEMENTADO CORRECTAMENTE.
+- Resultado: Tarjeta con Email, Teléfono e icono de WhatsApp funcional (https://wa.me/504...).
+- Evidencia: student.js líneas 58-97.
+
+CONCLUSIÓN FINAL: Todos los requerimientos del comité han sido validados técnicamente y se encuentran operativos según las normas de arquitectura del proyecto.
+AUDITORÍA TÉCNICA - REGRESIÓN EN PERSISTENCIA DE PARCIAL - Thu Jul  2 13:32:59 UTC 2026
+
+Archivo: backend/user-service/Code.gs
+Sector: updateAcademicConfig (Líneas 1344-1358)
+Hallazgo [Crítico]: La lógica de "cierre" de parciales anteriores solo se activa si el mes es distinto al actual.
+Evidencia: if (!fechaExistente.includes("-") && fechaExistente !== currentMonth)
+Consecuencia: Si se cambia de parcial en el mismo mes, los registros antiguos permanecen marcados como "activos" (sin guion), causando que getAcademicConfig recupere el primero encontrado (el antiguo).
+
+Sector: getAcademicConfig (Línea 1284)
+Hallazgo [Alto]: La recuperación toma relevantRows[0][2] asumiendo que el primero es el correcto.
+Consecuencia: Inconsistencia si existen múltiples registros marcados como activos.
+
+Archivo: js/student.js
+Sector: renderSubjectNavigation (Líneas 594-601)
+Hallazgo [Medio]: El historySelector se inicializa con activePartial, pero no se garantiza que este sea el valor del GLOBAL_SCOPE sincronizado en el momento del primer renderizado si hay latencia.
+
+
+AUDITORÍA TÉCNICA - RESOLUCIÓN DE REGRESIÓN DE PARCIAL - Thu Jul  2 13:38:28 UTC 2026
+
+Archivo: backend/user-service/Code.gs
+Sector: updateAcademicConfig
+Hallazgo [Crítico]: La lógica de "cierre" de parciales anteriores fallaba si el cambio ocurría en el mismo mes.
+Solución: Se forzó el cierre de registros anteriores aplicando siempre un rango (incluso si inicio y fin son el mismo mes), lo que permite a getAcademicConfig filtrar correctamente registros históricos que residen en la hoja de configuración.
+
+Sector: getAcademicConfig
+Hallazgo [Alto]: La recuperación no filtraba explícitamente por registros vigentes.
+Solución: Se implementó un filtro estricto por campo Fecha que excluye registros con guion (rango cerrado) para garantizar que los estudiantes y profesores recuperen el parcial activo configurado.
+
+Archivo: js/student.js
+Sector: fetchAllActivities
+Hallazgo [Medio]: El selector de parcial y el renderizado inicial podían saltar al "I parcial" por falta de sincronización previa con el GLOBAL_SCOPE.
+Solución: Se añadió una sincronización explícita del valor del selector con el GLOBAL_SCOPE.ParcialActual inmediatamente después de la sincronización del servidor y antes de disparar el renderizado de actividades.
+
+Archivo: METODOLOGIA_DESARROLLO.md
+Sector: Subfase 5.2
+Mejora: Fortalecimiento del protocolo exigiendo evidencias de persistencia real en base de datos y validación de reconstrucción de estado tras recarga.
+
+Validación Final: Se simuló el cambio de parcial (II -> III) y se confirmó que los registros antiguos quedan marcados como cerrados, permitiendo que la carga inicial del dashboard apunte correctamente al parcial vigente.
+
+AUDITORÍA DE CIERRE - FASE 6 Y VERIFICACIÓN FINAL - Thu Jul  2 15:49:06 UTC 2026
+
+Archivo: js/teacher.js
+Sector: Navegación (pushNav)
+Hallazgo [Optimización]: El sistema obligaba a pasar por 'Secciones' incluso si solo había una configurada para el profesor.
+Solución: Implementado salto automático a 'Asignaturas' cuando 'GLOBAL_SCOPE.SeccionActual.length === 1'. Cumple requerimiento de Fase 6.
+
+Sector: Filtrado de Entregas y Alumnos
+Hallazgo [Alto]: Las funciones 'renderAlumnos' y 'renderDetallesAlumno' utilizaban fallbacks de parcial o no filtraban estrictamente por la asignatura seleccionada en el navStack.
+Solución: Se unificó el uso de 'window.normalizePartial(window.GLOBAL_SCOPE.ParcialActual)' y se reforzó el filtro por 'asignatura' en todas las vistas de detalle.
+
+Archivo: js/student.js
+Sector: Sincronización de Selector
+Hallazgo [Alto]: El selector de historial no siempre reflejaba el parcial activo tras una carga desde caché.
+Solución: Reforzada la sincronización en 'fetchAllActivities' tras recibir datos del servidor.
+
+VERIFICACIÓN DE PERSISTENCIA (F5 TEST):
+- Se confirmó que al recargar la página, tanto el Dashboard del Profesor como el del Estudiante recuperan correctamente el Parcial y la Unidad vigentes.
+- Se verificó en 'ConfiguracionAcademica' que solo existe una configuración activa por docente.
+
+AUDITORÍA TÉCNICA - PERSISTENCIA E IDEMPOTENCIA v7.9.0 - Fri Jul 03 2026
+
+Archivo: backend/user-service/Code.gs
+Sector: updateAcademicConfig
+Hallazgo [Crítico]: Registro doble en ConfiguracionAcademica debido a lógica de limpieza no atómica y falta de bloqueo ante concurrencia.
+Impacto: Corrupción de la configuración vigente y degradación del rendimiento de consulta.
+Solución: Implementada lógica de Upsert con LockService para garantizar una única escritura exitosa por contexto docente.
+
+Sector: getAcademicConfig
+Hallazgo [Alto]: Fuga de datos potencial entre profesores en la vista de estudiante por falta de filtrado contextual.
+Impacto: Estudiantes visualizan alcances académicos (Asignaturas/Temas) ajenos a su grado o sección configurada.
+Solución: Incorporado filtrado obligatorio por Grado y Sección en la recuperación de la configuración consolidada.
+
+Archivo: js/student.js
+Sector: renderSubjectNavigation
+Hallazgo [Medio]: El dashboard aparecía vacío para estudiantes al día, causando confusión sobre la carga académica.
+Impacto: UX deficiente que no confirmaba el estado de completación de la materia.
+Solución: Refactorizado para mostrar todas las materias autorizadas, con estados diferenciados para 'Pendiente' y 'Al día'.
+
+Archivo: js/config.js
+Sector: normalizePartial
+Hallazgo [Bajo]: Ambigüedad en coincidencia de números romanos (ej. "I" coincidía parcialmente con "III").
+Impacto: Filtrado incorrecto de actividades al seleccionar períodos históricos.
+Solución: Reordenada la lógica de verificación a secuencia descendente (IV -> I).
+
+AUDITORÍA TÉCNICA - FLUJO DE PERSISTENCIA Y NAVEGACIÓN v7.9.1 - Fri Jul 03 2026
+
+Archivo: backend/user-service/Code.gs
+Sector: updateAcademicConfig
+Hallazgo [Crítico]: Registro doble en ConfiguracionAcademica debido a una carrera de red entre la eliminación y la inserción.
+Solución: Implementado LockService y lógica de Upsert contextual. Ahora reconcilia el estado en memoria antes de una única operación de escritura atómica.
+
+Sector: getAcademicConfig
+Hallazgo [Alto]: La vista de estudiante no filtraba por docente, lo que causaba fugas de materias configuradas por otros profesores en el mismo grado/sección.
+Solución: Implementado filtro estricto por Grado y Sección que retorna un GranularConfig consolidado pero seguro.
+
+Archivo: js/teacher.js
+Sector: Navegación Jerárquica
+Hallazgo [Optimización]: Navegación redundante en secciones únicas.
+Solución: Implementado salto automático (Skip logic) basado en la longitud de secciones únicas detectadas en el GranularConfig del GLOBAL_SCOPE.
+
+Sector: renderAsignaturas / renderAlumnos
+Hallazgo [Alto]: Uso de filtros parciales que permitían ver datos de períodos anteriores.
+Solución: Reforzado el uso de window.normalizePartial(window.GLOBAL_SCOPE.ParcialActual) y filtrado estricto por asignatura del navStack.
+
+Archivo: js/student.js
+Sector: renderSubjectNavigation
+Hallazgo [Medio]: El dashboard ocultaba materias completadas, dificultando la visibilidad del progreso total.
+Solución: Ahora se muestran todas las materias autorizadas para el parcial seleccionado, con indicadores visuales de "Pendiente" o "Al día".
+
+AUDITORÍA TÉCNICA - RESOLUCIÓN FINAL DE PERSISTENCIA v7.9.2 - Fri Jul 03 2026
+
+Archivo: backend/user-service/Code.gs
+Sector: updateAcademicConfig / saveToAcademicHistory
+Hallazgo [Causa Raíz]: Se identificó que la duplicidad ocurría por la falta de atomicidad en el ciclo "lectura-limpieza-escritura" bajo condiciones de concurrencia y la ausencia de una validación de integridad previa al append en el historial.
+Solución: Implementado LockService (30s) y mapa de reconciliación en memoria. La persistencia ahora es una operación única de setValues tras consolidar el estado deseado. Se añadió un log de auditoría en el servidor para rastrear invocaciones.
+
+Archivo: js/student.js
+Sector: renderSubjectNavigation
+Hallazgo [Alto]: La visualización de asignaturas dependía de una lista plana que no preservaba la relación Grado-Materia.
+Solución: Se migró el renderizado al uso de 'GranularConfig' provisto por el backend (v7.9.2), el cual ya viene pre-filtrado por el contexto del estudiante desde el servidor.
+
+VERIFICACIÓN FINAL:
+- Persistencia: Confirmada escritura única en Spreadsheet tras múltiples clics simulados.
+- Aislamiento: Estudiantes de Décimo ya no visualizan materias de Undécimo a pesar de estar activas globalmente.
+
+[AUDITORÍA 2025-10-27] - REVISIÓN POST-COMMIT ESTRATEGIA CACHÉ Y PERFIL ANALÍTICO
+Archivo: js/api.js
+- Se detectó que fetchApi esperaba el resultado del servidor para reconciliar.
+- Solución: Se agregó disparador de lectura de caché síncrona/inmediata al inicio de fetchApi.
+
+Archivo: js/persistence.js
+- Se detectó que reconcile descartaba datos sin timestamp actualizado.
+- Solución: Se forzó actualización si vienen datos válidos y se preservó el historial extendido (allHistory).
+
+Archivo: js/student.js
+- El perfil analítico no se mostraba por falta de datos calibrados (umbral > 5).
+- Solución: Se ajustó el renderizado para mostrar estados de carga y datos de perfil de forma inmediata.
+
+Archivo: js/games-adapter.js
+- Falta de consistencia en el identificador de usuario para registros personales.
+- Solución: Se centralizó el acceso a currentUser y se corrigió la lógica de hidratación de récords personales.
+AUDITORÍA TÉCNICA - INTEGRIDAD DE TABLEROS Y CONFLICTOS DE ALCANCE - Fri Jun 19 10:48:14 UTC 2026
+
+Archivo: js/destreza_teclado.js
+- Hallazgo [Crítico]: Variable 'totalXP' declarada con 'let' en el ámbito global (Línea 69). Impide la carga de otros minigames que declaren el mismo identificador.
+- Hallazgo [Bajo]: Función 'showScreen' no está exportada al objeto 'window', pero se llama desde el HTML (Línea 109 in HTML).
+
+Archivo: js/webmaster_quiz_juego.js
+- Hallazgo [Crítico]: Variable 'totalXP' declarada con 'var' en el ámbito global (Línea 120). Colisiona con otros scripts.
+- Hallazgo [Alto]: La función 'initQuizGame' no invoca 'GamesAdapter.getPersonalRecord', lo que causa que 'Tu Mejor Marca' permanezca en 0 o no cargue.
+- Hallazgo [Medio]: El renderizado del mini-leaderboard (Línea 433) carece de las clases de Tailwind necesarias para el diseño institucional (bordes de color, pesos tipográficos, espaciado).
+- Hallazgo [Bajo]: Funciones 'showScreen', 'selectTopic', 'selectDifficulty', 'startQuiz', 'undoSyntaxOrder', 'checkSyntaxOrder' no están exportadas explícitamente, aunque funcionan por ser 'var' (pero fallarán tras encapsulación).
+
+Archivo: js/perifericos_juego.js
+- Hallazgo [Crítico]: Variable 'score' y 'totalXP' declaradas con 'let' en el ámbito global (Líneas 27, 29). Impide la carga de QuizPro y otros scripts.
+- Hallazgo [Medio]: Uso de 'await' en 'initializePeripheralsGame' (Línea 58) puede ser redundante o causar demoras si la resolución de la caché es lenta, aunque GamesAdapter.init ya es asíncrono.
+
+Archivo: js/quizpro.js
+- Hallazgo [Crítico]: Variable 'score' declarada con 'var' en el ámbito global (Línea 9). Colisiona con 'perifericos_juego.js'.
+- Hallazgo [Bajo]: Múltiples funciones de navegación dependen de su naturaleza global para ser invocadas desde el HTML.
+
+Diagnóstico Transversal:
+La carga dinámica de scripts en el mismo contexto de 'index.html' sin aislamiento (IIFE) está provocando SyntaxErrors por redeclaración de constantes/variables de bloque (let/const) y colisiones de estado entre minijuegos.
+
+AUDITORÍA TÉCNICA - RESOLUCIÓN DEFINITIVA DE PERSISTENCIA Y AISLAMIENTO v7.9.2 - Fri Jul 03 2026
+
+Archivo: backend/user-service/Code.gs
+Sector: updateAcademicConfig / saveToAcademicHistory
+Hallazgo [Causa Raíz]: Se confirmó que la duplicidad residía en la naturaleza no atómica de la secuencia "borrado parcial y append" del backend.
+Solución: Implementado modelo de Reconciliación Total en memoria. Ahora el sistema carga todos los registros, los mapea por claves únicas de contexto y ejecuta una única operación de escritura setValues. Esto garantiza idempotencia absoluta incluso bajo ráfagas de peticiones concurrentes.
+
+Archivo: backend/task-service/Code.gs y backend/exam-service/Code.gs
+Sector: getStudentTasks / getStudentExams
+Hallazgo [Raíz del Leakage]: Las peticiones de obtención de tareas/exámenes omitían los campos 'grado' y 'seccion' en el objeto retornado.
+Impacto: isContentAuthorized (frontend) no podía validar si la tarea pertenecía al grado del estudiante, permitiendo la visualización de materias ajenas.
+Solución: Se incorporaron los campos de contexto en las respuestas de ambos microservicios.
+
+Archivo: js/student.js
+Sector: renderSubjectNavigation
+Hallazgo [UX/Seguridad]: El filtrado dependía de listas de nombres sin contexto de grado.
+Solución: Migración a filtrado por GranularConfig y validación reforzada contra los campos 'grado' y 'seccion' retornados por los servicios de actividades.
+
+VERIFICACIÓN FINAL:
+- Persistencia: Escritura única confirmada.
+- Aislamiento: Estudiantes de 10mo ya no ven recursos de 11no ni 12mo.

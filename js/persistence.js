@@ -136,10 +136,11 @@ window.PersistenceManager = {
     delete: function(store, key) {
         var self = this;
         return this.init().then(function() {
+            var id = key || self.getActiveId();
             return new Promise(function(resolve, reject) {
                 var transaction = self._db.transaction([store], 'readwrite');
                 var objectStore = transaction.objectStore(store);
-                var request = objectStore.delete(key);
+                var request = objectStore.delete(id);
 
                 request.onsuccess = function() { resolve(); };
                 request.onerror = function() { reject(request.error); };

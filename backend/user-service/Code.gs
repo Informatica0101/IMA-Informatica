@@ -138,6 +138,7 @@ function doPost(e) {
       case "saveQuestion": result = saveQuestion(payload); break;
       case "getAcademicConfig": result = getAcademicConfig(payload); break;
       case "updateAcademicConfig": result = updateAcademicConfig(payload); break;
+      case "getAcademicHistory": result = getAcademicHistory(payload); break;
       case "getAsignaturasActivas": result = getAsignaturasActivas(payload); break;
       case "updateAsignaturasActivas": result = updateAsignaturasActivas(payload); break;
       case "generateMigrationReport": result = generateMigrationReport(payload); break;
@@ -885,11 +886,7 @@ function getOrCreateSheet(ss, name) {
       sheet.appendRow(["PreguntaID", "Asignatura", "Nivel", "Tema", "TipoActividad", "Pregunta", "OpcionA", "OpcionB", "OpcionC", "OpcionD", "RespuestaCorrecta", "Explicacion", "Imagen", "VecesRespondida", "VecesCorrecta", "PorcentajeAcierto", "UltimaActualizacion", "Activa", "DificultadCalculada"]);
     }
     if (name === "ConfiguracionAcademica") {
-      sheet.appendRow(["Clave", "Valor"]);
-      sheet.appendRow(["ParcialActual", "I Parcial"]);
-    }
-    if (name === "AsignaturasPorParcial") {
-      sheet.appendRow(["Parcial", "Asignatura"]);
+      sheet.appendRow(["ID", "Fecha", "Parcial", "Grado", "Sección", "Asignatura", "Unidad", "Tema", "profesorId"]);
     }
     if (name === "QuizProAnalytics") {
       sheet.appendRow(["analyticsId", "fecha", "userId", "quizId", "gameId", "gameName", "asignatura", "grado", "nivel", "preguntaId", "respuestaSeleccionada", "respuestaCorrecta", "esCorrecta", "tiempoRespuesta", "tiempoPromedioHistorico", "tiempoRelativo", "cambiosRespuesta", "indiceConfianza", "indiceAdivinacion", "indiceDominio"]);
@@ -902,6 +899,9 @@ function getOrCreateSheet(ss, name) {
     }
     if (name === "LearningProfile") {
       sheet.appendRow(["profileId", "userId", "asignatura", "tema", "nivel", "intentos", "aciertos", "porcentajeAciertos", "indiceDominio", "ultimaActualizacion"]);
+    }
+    if (name === "HistorialAcademico") {
+      sheet.appendRow(["ID", "Fecha", "Parcial", "Grado", "Sección", "Asignatura", "Unidad", "profesorId"]);
     }
   }
   return sheet;
@@ -1247,124 +1247,358 @@ function saveQuestion(payload) {
 }
 
 /**
- * Recupera la configuración académica global (v7.7.5)
- * Soporta el formato Atómico de Filas (Fila 1: Cabeceras, Fila 2: Valores)
+ * Recupera la configuración académica VIGENTE (v7.8.9)
+ * REQ: ConfiguracionAcademica solo almacena la configuración actual (VIGENCIA ÚNICA).
  */
-function getAcademicConfig() {
+/**
+ * Recupera la configuración académica VIGENTE (v7.9.2)
+ * REQ: Filtrado estricto por grado/sección para estudiantes.
+ */
+function getAcademicConfig(payload) {
+  const { profesorId, grado, seccion } = payload || {};
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
   const sheet = getOrCreateSheet(ss, "ConfiguracionAcademica");
   const data = sheet.getDataRange().getValues();
 
   if (data.length < 2) {
-    // Si la hoja está vacía, retornar valores por defecto
     return {
       status: "success",
-      data: {
-        ParcialActual: "I Parcial",
-        GradoActual: ["Décimo"],
-        SeccionActual: ["A"],
-        AsignaturaActual: ["Informática I"],
-        TemaActual: ["General"]
-      }
+      data: { ParcialActual: "I parcial", GradoActual: [], SeccionActual: [], AsignaturaActual: [], TemaActual: ["General"], GranularConfig: [] }
     };
   }
 
-  const headers = data[0];
-  const values = data[1];
-  const config = {};
+  const rows = data.slice(1);
+  let relevantRows = [];
 
-  headers.forEach((h, i) => {
-    let val = values[i];
-    if (val === "" || val === undefined) {
-      config[h] = [];
-      return;
-    }
+  if (profesorId) {
+    relevantRows = rows.filter(r => String(r[8]).trim() === String(profesorId).trim());
+  } else {
+    // Para estudiantes: filtrar por su grado y sección para obtener el alcance autorizado
+    relevantRows = rows.filter(r => {
+      const matchGrado = !grado || normalizeString(r[3]) === normalizeString(grado);
+      const matchSeccion = !seccion || normalizeString(r[4]) === normalizeString(seccion);
+      return matchGrado && matchSeccion;
+    });
+  }
 
-    // Intentar parsear como JSON si parece un array/objeto stringificado
-    if (typeof val === 'string' && (val.startsWith('[') || val.startsWith('{'))) {
-      try {
-        config[h] = JSON.parse(val);
-      } catch (e) {
-        config[h] = val;
-      }
-    } else {
-      config[h] = val;
-    }
-  });
+  if (relevantRows.length === 0) {
+    return {
+      status: "success",
+      data: { ParcialActual: "I parcial", GradoActual: [], SeccionActual: [], AsignaturaActual: [], TemaActual: ["General"], GranularConfig: [] }
+    };
+  }
+
+  const lastRow = relevantRows[relevantRows.length - 1];
+
+  const config = {
+    ParcialActual: lastRow[2],
+    UnidadActual: lastRow[6] || lastRow[2].replace("parcial", "unidad"),
+    GradoActual: [...new Set(relevantRows.map(r => r[3]))].filter(Boolean),
+    SeccionActual: [...new Set(relevantRows.map(r => r[4]))].filter(Boolean),
+    AsignaturaActual: [...new Set(relevantRows.map(r => r[5]))].filter(Boolean),
+    TemaActual: [...new Set(relevantRows.map(r => r[7]))].filter(Boolean),
+    // REQ: GranularConfig para mapeo exacto Grado-Sección-Asignatura (v7.9.2)
+    GranularConfig: relevantRows.map(r => ({
+      parcial: r[2],
+      grado: r[3],
+      seccion: r[4],
+      asignatura: r[5],
+      unidad: r[6],
+      tema: r[7]
+    }))
+  };
+
+  if (config.TemaActual.length === 0) config.TemaActual = ["General"];
 
   return { status: "success", data: config };
 }
 
 /**
- * Actualiza la configuración académica global de forma atómica (v7.7.5)
- * Implementa el formato de almacenamiento escalable en Spreadsheet.
+ * Actualiza la configuración académica VIGENTE (v7.9.2)
+ * Implementa lógica de Upsert atómica con LockService y reconciliación total en memoria.
  */
 function updateAcademicConfig(payload) {
   const { fullScope } = payload || {};
-  if (!fullScope) {
-    throw new Error("Payload 'fullScope' no proporcionado para la actualización académica.");
+  const profesorId = fullScope?.profesorId ? String(fullScope.profesorId).trim() : null;
+
+  if (!fullScope || !profesorId) {
+    throw new Error("Payload 'fullScope' o 'profesorId' faltante.");
   }
 
-  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
-  const sheet = getOrCreateSheet(ss, "ConfiguracionAcademica");
+  // Tarea 1: Auditoría de invocaciones (Log para detección de disparos dobles)
+  console.log(`[USER-SVC] Invocado updateAcademicConfig por ${profesorId}. Payload: ${JSON.stringify(fullScope).substring(0, 200)}...`);
 
-  // Limpieza y Re-escritura atómica para garantizar integridad
-  sheet.clear();
+  const lock = LockService.getScriptLock();
+  try {
+    lock.waitLock(30000);
 
-  const headers = Object.keys(fullScope);
-  const values = headers.map(h => {
-    const val = fullScope[h];
-    // Persistir arrays como strings JSON para preservar multi-selección
-    return Array.isArray(val) ? JSON.stringify(val) : val;
-  });
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const sheet = getOrCreateSheet(ss, "ConfiguracionAcademica");
 
-  sheet.appendRow(headers);
-  sheet.appendRow(values);
+    // 1. CARGA TOTAL DE DATOS
+    const fullData = sheet.getDataRange().getValues();
+    const headers = fullData[0];
+    const rows = fullData.slice(1);
 
-  SpreadsheetApp.flush();
+    // Normalización de Parcial/Unidad
+    const getRomanStandard = (str, type) => {
+      if (!str) return "I " + type;
+      const s = str.toLowerCase();
+      if (s.indexOf("iv") !== -1 || s.indexOf("cuart") !== -1) return "IV " + type;
+      if (s.indexOf("iii") !== -1 || s.indexOf("tercer") !== -1) return "III " + type;
+      if (s.indexOf("ii") !== -1 || s.indexOf("segund") !== -1) return "II " + type;
+      return "I " + type;
+    };
 
-  logDebug("Configuración académica actualizada atómicamente", fullScope);
+    const parcialNorm = getRomanStandard(fullScope.ParcialActual, "parcial");
+    const unidadNorm = getRomanStandard(fullScope.UnidadActual || fullScope.ParcialActual, "unidad");
+    const currentMonth = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"][new Date().getMonth()];
 
-  // Recuperar los datos guardados para confirmar consistencia
-  const confirmedData = getAcademicConfig();
+    // Normalización de alcances
+    const parseList = (val) => Array.isArray(val) ? val : [val].filter(Boolean);
+    const grades = parseList(fullScope.GradoActual);
+    const sections = parseList(fullScope.SeccionActual);
+    const subjects = parseList(fullScope.AsignaturaActual);
+    const themes = parseList(fullScope.TemaActual);
 
-  return {
-    status: "success",
-    message: "Configuración global guardada en Spreadsheet.",
-    data: confirmedData.data,
-    updated_at: new Date().getTime()
-  };
+    // 2. VALIDACIÓN DE INTEGRIDAD CRUZADA (Evitar que dos profes impartan lo mismo)
+    rows.forEach(r => {
+      if (String(r[8]).trim() !== profesorId && r[2] === parcialNorm && grades.indexOf(r[3]) !== -1 && sections.indexOf(r[4]) !== -1 && subjects.indexOf(r[5]) !== -1) {
+        throw new Error(`Conflicto: La asignatura '${r[5]}' ya está asignada a otro docente.`);
+      }
+    });
+
+    // 3. RECONCILIACIÓN TOTAL EN MEMORIA
+    // Usamos un mapa para garantizar unicidad por combinación Grado|Sección|Asignatura|Tema|Profesor
+    const finalConfigMap = {};
+
+    // a) Preservar configuraciones de otros profesores (Aislamiento de Persistencia)
+    rows.forEach(r => {
+      if (String(r[8]).trim() !== profesorId) {
+        const key = `${r[3]}|${r[4]}|${r[5]}|${r[7]}|${r[8]}`;
+        finalConfigMap[key] = r;
+      }
+    });
+
+    // b) Calcular ID incremental base
+    let maxId = 0;
+    rows.forEach(r => {
+       const num = parseInt(String(r[0]).replace("conf-", ""));
+       if (!isNaN(num) && num > maxId) maxId = num;
+    });
+
+    // c) Generar registros para el profesor actual
+    grades.forEach(g => {
+      sections.forEach(s => {
+        subjects.forEach(asig => {
+          themes.forEach(t => {
+            const key = `${g}|${s}|${asig}|${t}|${profesorId}`;
+            // Buscar si ya existía para mantener el ID original
+            const oldRow = rows.find(r =>
+              String(r[8]).trim() === profesorId && r[3] === g && r[4] === s && r[5] === asig && r[7] === t
+            );
+
+            if (oldRow) {
+              const updated = [...oldRow];
+              updated[1] = currentMonth; updated[2] = parcialNorm; updated[6] = unidadNorm;
+              finalConfigMap[key] = updated;
+            } else {
+              maxId++;
+              const newId = "conf-" + maxId.toString().padStart(4, '0');
+              finalConfigMap[key] = [newId, currentMonth, parcialNorm, g, s, asig, unidadNorm, t, profesorId];
+            }
+          });
+        });
+      });
+    });
+
+    const finalRows = Object.values(finalConfigMap);
+
+    // 4. ESCRITURA ATÓMICA UNIFICADA
+    if (sheet.getLastRow() > 1) {
+        sheet.getRange(2, 1, sheet.getLastRow() - 1, headers.length).clearContent();
+    }
+    if (finalRows.length > 0) {
+        sheet.getRange(2, 1, finalRows.length, headers.length).setValues(finalRows);
+    }
+    SpreadsheetApp.flush();
+
+    console.log(`[USER-SVC] Persistencia exitosa en ConfiguracionAcademica. Registros: ${finalRows.length}`);
+
+    // 5. REGISTRO HISTÓRICO (Solo si hay cambios significativos de período)
+    try {
+      saveToAcademicHistory(fullScope);
+    } catch (e) {
+      console.error("[USER-SVC] Error en HistorialAcademico:", e);
+    }
+
+    return { status: "success", message: "Configuración global actualizada.", data: fullScope };
+
+  } finally {
+    lock.releaseLock();
+  }
 }
 
+/**
+ * Registra el estado actual de la configuración en un historial (Reorganizado v7.8.5)
+ * Estructura: ID | Fecha | Parcial | Grado | Sección | Asignatura | Unidad | profesorId
+ */
+/**
+ * Registra el estado actual de la configuración en un historial (v7.9.2)
+ * Implementa una validación estricta de 5 factores para evitar duplicidad redundante.
+ * Realiza una única operación de escritura agrupada.
+ */
+function saveToAcademicHistory(scope) {
+  const profesorId = scope.profesorId ? String(scope.profesorId).trim() : "SISTEMA";
+  console.log(`[USER-SVC] Invocado saveToAcademicHistory por ${profesorId}.`);
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "HistorialAcademico");
+
+  // 1. CARGA DE DATOS EXISTENTES
+  const fullData = sheet.getDataRange().getValues();
+  const headers = fullData[0];
+  const existingRows = fullData.slice(1);
+
+  if (fullData.length === 0 || headers[0] !== "ID") {
+    sheet.getRange(1, 1, 1, 8).setValues([["ID", "Fecha", "Parcial", "Grado", "Sección", "Asignatura", "Unidad", "profesorId"]]);
+  }
+
+  // 2. NORMALIZACIÓN
+  const getRomanStandard = (str, type) => {
+    const s = str.toLowerCase();
+    if (s.indexOf("iv") !== -1 || s.indexOf("cuart") !== -1) return "IV " + type;
+    if (s.indexOf("iii") !== -1 || s.indexOf("tercer") !== -1) return "III " + type;
+    if (s.indexOf("ii") !== -1 || s.indexOf("segund") !== -1) return "II " + type;
+    return "I " + type;
+  };
+
+  const parcialNorm = getRomanStandard(scope.ParcialActual || "I parcial", "parcial");
+  const unidadNorm = getRomanStandard(scope.UnidadActual || scope.ParcialActual || "I parcial", "unidad");
+  const currentMonth = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"][new Date().getMonth()];
+
+  const normalizeGradeLabel = (g) => {
+    const gn = normalizeString(g);
+    if (gn.includes("duodecimo") || gn.includes("12") || gn.includes("iiibtp")) return "duodécimo";
+    if (gn.includes("undecimo") || gn.includes("11") || gn.includes("iibtp")) return "undécimo";
+    if (gn.includes("decimo") || gn.includes("10") || gn.includes("ibtp")) return "décimo";
+    return String(g).toLowerCase();
+  };
+
+  const parseInput = (val) => Array.isArray(val) ? val : [val].filter(Boolean);
+  const grades = parseInput(scope.GradoActual);
+  const sections = parseInput(scope.SeccionActual);
+  const subjects = parseInput(scope.AsignaturaActual);
+
+  // 3. IDENTIFICAR ÚLTIMO ID
+  let lastIdNum = 0;
+  existingRows.forEach(r => {
+    const match = String(r[0]).match(/hist-(\d+)/);
+    if (match) {
+      const num = parseInt(match[1]);
+      if (num > lastIdNum) lastIdNum = num;
+    }
+  });
+
+  // 4. FILTRAR NUEVOS REGISTROS (Únicos por 5 factores)
+  const newEntries = [];
+  const existingKeys = new Set(existingRows.map(r => `${r[2]}|${r[3]}|${r[4]}|${r[5]}|${r[7]}`));
+
+  grades.forEach(rawGrado => {
+    const grado = normalizeGradeLabel(rawGrado);
+    sections.forEach(seccion => {
+      subjects.forEach(rawAsig => {
+        const asig = String(rawAsig).toLowerCase();
+        const key = `${parcialNorm}|${grado}|${seccion}|${asig}|${profesorId}`;
+
+        if (!existingKeys.has(key)) {
+          lastIdNum++;
+          const newId = "hist-" + lastIdNum.toString().padStart(4, '0');
+          newEntries.push([newId, currentMonth, parcialNorm, grado, seccion, asig, unidadNorm, profesorId]);
+          existingKeys.add(key); // Evitar duplicados dentro del mismo batch
+        }
+      });
+    });
+  });
+
+  // 5. INSERCIÓN MASIVA (setValues)
+  if (newEntries.length > 0) {
+    sheet.getRange(sheet.getLastRow() + 1, 1, newEntries.length, 8).setValues(newEntries);
+    console.log(`[USER-SVC] HistorialAcademico: Se agregaron ${newEntries.length} registros.`);
+  } else {
+    console.log(`[USER-SVC] HistorialAcademico: No hay cambios nuevos que registrar.`);
+  }
+}
+
+/**
+ * Recupera el historial académico filtrado por grado y sección (Normalizado v7.8.9)
+ * Incluye la Unidad para una reconstrucción fiel del contexto histórico.
+ */
+function getAcademicHistory(payload) {
+  const { grado, seccion } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = ss.getSheetByName("HistorialAcademico");
+  if (!sheet) return { status: "success", data: [] };
+
+  const data = sheet.getDataRange().getValues().slice(1);
+  const filtered = data.filter(r => {
+    const normalizeFilterGrade = (g) => {
+      const gn = normalizeString(g);
+      if (gn.includes("duodecimo") || gn.includes("12") || gn.includes("iiibtp")) return "duodécimo";
+      if (gn.includes("undecimo") || gn.includes("11") || gn.includes("iibtp")) return "undécimo";
+      if (gn.includes("decimo") || gn.includes("10") || gn.includes("ibtp")) return "décimo";
+      return gn;
+    };
+
+    const targetGrado = normalizeFilterGrade(grado);
+    const rowGrado = normalizeFilterGrade(r[3]);
+
+    const gradeMatch = !grado || rowGrado === targetGrado;
+    const sectionMatch = !seccion || normalizeString(r[4]) === normalizeString(seccion);
+    return gradeMatch && sectionMatch;
+  });
+
+  // Agrupar por parcial
+  const historyMap = {};
+  filtered.forEach(r => {
+    const parcial = r[2];
+    const unidad = r[6];
+    if (!historyMap[parcial]) {
+      historyMap[parcial] = {
+        fecha: r[1],
+        parcial: parcial,
+        unidad: unidad,
+        asignaturas: []
+      };
+    }
+    if (historyMap[parcial].asignaturas.indexOf(r[5]) === -1) {
+      historyMap[parcial].asignaturas.push(r[5]);
+    }
+  });
+
+  return { status: "success", data: Object.values(historyMap) };
+}
+
+/**
+ * Obsolescencia Programada: getAsignaturasActivas ahora consume de ConfiguracionAcademica (v7.8.6)
+ */
 function getAsignaturasActivas(payload) {
   const { parcial } = payload;
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
-  const sheet = getOrCreateSheet(ss, "AsignaturasPorParcial");
+  const sheet = ss.getSheetByName("ConfiguracionAcademica");
+  if (!sheet) return { status: "success", data: [] };
   const data = sheet.getDataRange().getValues().slice(1);
 
-  const asignaturas = data.filter(r => r[0] === parcial).map(r => r[1]);
+  const asignaturas = [...new Set(data.filter(r => r[2] === parcial).map(r => r[5]))];
   return { status: "success", data: asignaturas };
 }
 
+/**
+ * Obsolescencia Programada: updateAsignaturasActivas es ahora un NO-OP (v7.8.6)
+ * La configuración se gestiona exclusivamente vía updateAcademicConfig.
+ */
 function updateAsignaturasActivas(payload) {
-  const { parcial, asignaturas } = payload;
-  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
-  const sheet = getOrCreateSheet(ss, "AsignaturasPorParcial");
-
-  // Limpiar actuales para el parcial
-  const data = sheet.getDataRange().getValues();
-  for (let i = data.length - 1; i >= 1; i--) {
-    if (data[i][0] === parcial) {
-      sheet.deleteRow(i + 1);
-    }
-  }
-
-  // Insertar nuevas
-  asignaturas.forEach(asig => {
-    sheet.appendRow([parcial, asig]);
-  });
-
-  return { status: "success" };
+  return { status: "success", message: "Depreciado: Use updateAcademicConfig para sincronizar alcances académicos." };
 }
 
 /**

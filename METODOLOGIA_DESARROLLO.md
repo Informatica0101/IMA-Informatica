@@ -43,6 +43,9 @@ Toda verificación se ejecuta bajo hipótesis de error, omisiones y efectos cola
 ## 1.7 Escepticismo Técnico Permanente
 Todo elemento se considera potencialmente defectuoso hasta evidencia concluyente.
 
+## 1.8 Resolución de Causa Raíz
+Queda terminantemente prohibido implementar soluciones temporales, mecanismos de compensación, parches de "conveniencia" o fallbacks que oculten el problema original. Toda corrección debe identificar y resolver la causa raíz técnica del fallo.
+
 ---
 
 # 2. ROLES LÓGICOS Y PRINCIPIO DE DESDOBLAMIENTO
@@ -621,7 +624,12 @@ El flujo de trabajo se ejecutará de forma lineal, síncrona y obligatoria. Viol
 ### FASE 5 — Autoauditoría Posterior (Desdoblamiento Crítico)
  * **Acción:** Finalizada la codificación, el operador se despoja del rol de desarrollador y asume nuevamente el rol de *Auditor Técnico*.
  * **Subfase 5.1 - Comparación Post-Edición (Diff Manual):** Se confronta de forma manual el archivo modificado contra la copia de respaldo generada en la Fase 3. Se deben aislar visualmente todas las líneas eliminadas, modificadas y los bloques sobrescritos. Si se detecta un solo cambio ajeno, accidental o cosmético no solicitado por la tarea, se **REVERTIRÁ** inmediatamente esa sección y se reiniciará la comparación.
- * **Subfase 5.2 - Verificación de Integridad:** Se ejecutan pruebas manuales exhaustivas para certificar que la solución cumple el objetivo pedagógico o técnico, que no se han roto componentes adyacentes y que el sistema está completamente libre de regresiones o incrementos de latencia.
+ * **Subfase 5.2 - Verificación de Integridad Funcional y de Datos:** Se ejecutan pruebas manuales exhaustivas para certificar que la solución cumple el objetivo pedagógico o técnico. **Esta fase exige evidencia de comportamiento real, no solo visual.**
+   - **Validación de Persistencia (Cadena de Verdad):** Si la tarea involucra guardado de datos, el operador debe verificar manualmente en la base de datos (ej. Spreadsheet) que los registros se modificaron según lo esperado (correspondencia exacta de valores). **Se prohíbe dar por válida una persistencia basándose solo en el mensaje de éxito de la interfaz.**
+   - **Validación de Integridad de Registros:** Comprobar que no se generen registros duplicados, huérfanos o con valores inconsistentes tras la operación (ej. verificar que no existan filas redundantes en ConfiguracionAcademica).
+   - **Validación de Reconstrucción de Estado (F5 Test):** Tras realizar una persistencia exitosa, es OBLIGATORIO recargar la página (F5) y verificar que el sistema recupera el estado exacto (incluyendo selectores de parcial, unidad y visibilidad de componentes) desde el backend. Si el sistema vuelve a un estado inicial por defecto o "pierde" la configuración guardada, la tarea se considera FALLIDA.
+   - **Detección de Regresiones:** Asegurar que el sistema está completamente libre de regresiones o incrementos de latencia.
+   - **Prohibición de Supuestos:** Ningún cambio se considera correcto sin evidencia empírica de su efectividad funcional.
 ### FASE 6 — Revisión de Código Externa (Code Review)
  * **Acción:** El código y los registros son sometidos al escrutinio del *Revisor de Código*.
  * **Protocolo ante Observaciones (Reinicio del Ciclo):** Si el informe de Code Review detecta la más mínima falla, riesgo, omisión o comportamiento inesperado, se aplicará la regla de **Extensión Obligatoria**:

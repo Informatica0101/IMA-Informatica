@@ -116,6 +116,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function loadAcademicAdminData() {
         const parcialSelect = document.getElementById('admin-parcial-actual');
+        const unidadSelect = document.getElementById('admin-unidad-actual');
         if (!parcialSelect) return;
 
         const applyConfig = (data) => {
@@ -123,6 +124,7 @@ document.addEventListener('DOMContentLoaded', () => {
             console.log("[IMA-TEACHER] Aplicando configuración recibida:", data);
 
             if (data.ParcialActual) parcialSelect.value = data.ParcialActual;
+            if (data.UnidadActual && unidadSelect) unidadSelect.value = data.UnidadActual;
 
             // Normalización para visualización (v7.7.5)
             const grades = Array.isArray(data.GradoActual) ? data.GradoActual : [data.GradoActual].filter(Boolean);
@@ -140,7 +142,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 GradoActual: grades,
                 SeccionActual: sections,
                 AsignaturaActual: Array.isArray(data.AsignaturaActual) ? data.AsignaturaActual : [data.AsignaturaActual].filter(Boolean),
-                TemaActual: Array.isArray(data.TemaActual) ? data.TemaActual : [data.TemaActual].filter(Boolean)
+                TemaActual: Array.isArray(data.TemaActual) ? data.TemaActual : [data.TemaActual].filter(Boolean),
+                GranularConfig: data.GranularConfig || []
             };
             if (window.GLOBAL_SCOPE.TemaActual.length === 0) window.GLOBAL_SCOPE.TemaActual = ["General"];
             window.PARCIAL_ACTUAL = window.GLOBAL_SCOPE.ParcialActual;
@@ -148,23 +151,18 @@ document.addEventListener('DOMContentLoaded', () => {
             updateCascadingSelectors(window.GLOBAL_SCOPE.AsignaturaActual, window.GLOBAL_SCOPE.TemaActual);
         };
 
-        // REQ: Sync Global Scope from Server (v7.7.5 - Use unified syncAcademicScope)
-        if (window.syncAcademicScope) {
-            window.syncAcademicScope(applyConfig);
-        } else {
-            // Fallback si no está disponible (no debería ocurrir)
-            try {
-                const configRes = await fetchApi('USER', 'getAcademicConfig', {}, 0, {
-                    store: 'academic_stats',
-                    key: 'config',
-                    onUpdate: (data) => applyConfig(data)
-                });
-                if (configRes.status === 'success' && configRes.data) {
-                    applyConfig(configRes.data);
-                }
-            } catch (e) {
-                console.error("Error cargando config académica:", e);
+        // REQ: Sync Teacher-Specific Scope (v7.8.5)
+        try {
+            const configRes = await fetchApi('USER', 'getAcademicConfig', { profesorId: currentUser.userId }, 0, {
+                store: 'academic_stats',
+                key: 'config_' + currentUser.userId,
+                onUpdate: (data) => applyConfig(data)
+            });
+            if (configRes.status === 'success' && configRes.data) {
+                applyConfig(configRes.data);
             }
+        } catch (e) {
+            console.error("Error cargando config académica:", e);
         }
     }
 
@@ -273,7 +271,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         const fullScope = {
+            profesorId: currentUser.userId,
             ParcialActual: document.getElementById('admin-parcial-actual').value,
+            UnidadActual: document.getElementById('admin-unidad-actual')?.value || document.getElementById('admin-parcial-actual').value.replace('parcial', 'unidad'),
             GradoActual: selectedGrades,
             SeccionActual: selectedSections,
             AsignaturaActual: selectedAsigs,
@@ -744,7 +744,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     navId: navDashboard.id
                 }, '');
             }
-            renderCurrentLevel();
+            renderCurrentLevel('push');
         } finally {
             isNavigating = false;
         }
@@ -759,7 +759,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     history.back();
                 } else {
                     navStack.pop();
-                    renderCurrentLevel();
+                    renderCurrentLevel('pop');
                 }
             } catch (e) {
                 console.error("Error en popNav:", e);
@@ -771,7 +771,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (state.stack) {
             navStack = [...state.stack];
             // Ensure studentSearchInput is handled if needed
-            renderCurrentLevel();
+            renderCurrentLevel('pop');
         }
     };
 
@@ -1114,7 +1114,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }),
                 fetchApi('TASK', 'getAllTasks', payload),
                 fetchApi('EXAM', 'getAllExams', payload),
-                fetchApi('USER', 'getAcademicConfig')
+                fetchApi('USER', 'getAcademicConfig', { profesorId: currentUser.userId })
             ]);
 
             // Guardar para Offline-First (Modulo 1)
@@ -1139,6 +1139,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (configRes && configRes.status === 'success' && configRes.data && configRes.data.ParcialActual) {
                 window.PARCIAL_ACTUAL = configRes.data.ParcialActual;
+                // REQ: Asegurar que GLOBAL_SCOPE incluya GranularConfig tras carga inicial (v7.9.1)
+                window.GLOBAL_SCOPE = configRes.data;
             }
 
             const finalTaskDataArr = Array.isArray(taskSubmissions.data) ? taskSubmissions.data : [];
@@ -1171,20 +1173,22 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    function renderCurrentLevel() {
+    function renderCurrentLevel(direction) {
         const current = navStack[navStack.length - 1];
         let title = current.level;
+
+        // Tarea 3: Animación de Navegación
+        if (submissionsTableBody && direction) {
+            submissionsTableBody.classList.remove('nav-transition-push', 'nav-transition-pop');
+            void submissionsTableBody.offsetWidth; // Force reflow
+            submissionsTableBody.classList.add(direction === 'push' ? 'nav-transition-push' : 'nav-transition-pop');
+        }
 
         // Limpieza de estados visuales persistentes (A-72)
         const infoCard = document.getElementById('student-details-info-card');
         if (infoCard) infoCard.remove();
         const waContainer = document.querySelector('.bg-green-50');
         if (waContainer) waContainer.classList.add('hidden');
-
-        // Reiniciar buscador si volvemos a niveles superiores para evitar inconsistencias
-        if (current.level === 'Grados' && studentSearchInput && !isNavigating) {
-             // studentSearchInput.value = ''; // No limpiar forzosamente para permitir persistencia de búsqueda si el usuario lo desea, pero sincronizar
-        }
 
         if (current.level === 'Detalles') title = `Actividades de ${current.data.alumnoNombre}`;
         if (dashboardLevelTitle) dashboardLevelTitle.textContent = title;
@@ -1211,7 +1215,6 @@ document.addEventListener('DOMContentLoaded', () => {
             case 'Grados': renderGrados(searchTerm); break;
             case 'Secciones': renderSecciones(current.data.grado, searchTerm); break;
             case 'Asignaturas': renderAsignaturas(current.data.grado, current.data.seccion, searchTerm); break;
-            case 'Parciales': renderParciales(current.data.grado, current.data.seccion, current.data.asignatura, searchTerm); break;
             case 'Alumnos': renderAlumnos(current.data.grado, current.data.seccion, current.data.asignatura, searchTerm); break;
             case 'Detalles': renderDetallesAlumno(current.data.alumnoId, current.data.grado, current.data.seccion, current.data.asignatura, searchTerm); break;
         }
@@ -1256,14 +1259,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function renderGrados(search) {
         const fGrado = document.getElementById('filter-grado').value;
-        let grados = [...new Set([
-            ...allActivityRaw.map(item => item.grado),
-            ...allAssignmentsRaw.map(item => item.grado)
-        ].filter(g => g))];
+
+        // REQ: Navegación basada exclusivamente en GLOBAL_SCOPE (Fase 5)
+        // Eliminado fallback a actividad histórica para cumplir con norma de NO compensación.
+        let grados = (window.GLOBAL_SCOPE && window.GLOBAL_SCOPE.GradoActual) ? window.GLOBAL_SCOPE.GradoActual : [];
+
         if (fGrado) grados = grados.filter(g => norm(g) === norm(fGrado));
         const filtered = grados.filter(g => norm(g).includes(norm(search)));
         currentFilteredItems = filtered;
         dashboardTableHead.innerHTML = `<tr class="bg-gray-50 border-b border-gray-100"><th class="p-4 text-left font-medium text-gray-500 uppercase tracking-wider text-[0.7rem]">Grado Académico</th><th class="p-4 text-right font-medium text-gray-500 uppercase tracking-wider text-[0.7rem]">Navegación</th></tr>`;
+
         if (filtered.length === 0) {
             submissionsTableBody.innerHTML = `
                 <tr>
@@ -1276,7 +1281,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 </tr>`;
             return;
         }
-        submissionsTableBody.innerHTML = filtered.map((grado, idx) => `
+
+        submissionsTableBody.innerHTML = filtered.map((grado, idx) => {
+            return `
             <tr class="hover:bg-gray-50 transition-colors cursor-pointer nav-btn group" data-index="${idx}">
                 <td class="p-4">
                     <div class="flex items-center gap-3">
@@ -1285,64 +1292,95 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                 </td>
                 <td class="p-4 text-right"><span class="text-blue-600 font-semibold text-[9px] uppercase tracking-widest group-hover:underline transition-all">Ver Secciones &rsaquo;</span></td>
-            </tr>`).join('');
+            </tr>`;
+        }).join('');
     }
 
+    /**
+     * Renderiza la lista de secciones filtradas por el grado seleccionado (v7.9.1)
+     * REQ: Solo mostrar secciones que pertenecen al grado en el GLOBAL_SCOPE.
+     */
     function renderSecciones(grado, search) {
         const fSeccion = document.getElementById('filter-seccion').value;
-        let secciones = [...new Set([
-            ...allActivityRaw.filter(i => norm(i.grado) === norm(grado)).map(i => i.seccion),
-            ...allAssignmentsRaw.filter(i => norm(i.grado) === norm(grado)).map(i => i.seccion)
-        ].filter(s => s && norm(s) !== 'todas'))];
 
-        const hasTodas = allAssignmentsRaw.some(a => norm(a.grado) === norm(grado) && (norm(a.seccion) === 'todas' || !a.seccion));
-        if (hasTodas) {
-            ['A', 'B', 'C'].forEach(s => {
-                if (!secciones.includes(s)) secciones.push(s);
-            });
-        }
+        // REQ: Obtener secciones granulares para este grado específico
+        var granular = (window.GLOBAL_SCOPE && window.GLOBAL_SCOPE.GranularConfig) ? window.GLOBAL_SCOPE.GranularConfig : [];
+        var secciones = [...new Set(granular.filter(function(r) {
+            return norm(r.grado) === norm(grado);
+        }).map(function(r) { return r.seccion; }))].filter(Boolean);
 
         if (fSeccion) secciones = secciones.filter(s => norm(s) === norm(fSeccion));
         const filtered = secciones.filter(s => norm(s).includes(norm(search)));
         currentFilteredItems = filtered;
-        dashboardTableHead.innerHTML = `<tr class="bg-gray-50 border-b border-gray-100"><th class="p-4 text-left font-medium text-gray-500 uppercase tracking-wider text-[0.7rem]">Sección</th><th class="p-4 text-right font-medium text-gray-500 uppercase tracking-wider text-[0.7rem]">Acción</th></tr>`;
+
+        dashboardTableHead.innerHTML = `
+            <tr class="bg-gray-50 border-b border-gray-100">
+                <th class="p-4 text-left font-medium text-gray-500 uppercase tracking-wider text-[0.7rem]">Sección (${grado})</th>
+                <th class="p-4 text-right font-medium text-gray-500 uppercase tracking-wider text-[0.7rem]">Acción</th>
+            </tr>`;
+
         if (filtered.length === 0) {
-            submissionsTableBody.innerHTML = `<tr><td colspan="2" class="text-center p-12 text-gray-400 font-bold text-[10px] uppercase tracking-widest">No hay secciones registradas para este grado.</td></tr>`;
+            submissionsTableBody.innerHTML = `<tr><td colspan="2" class="text-center p-12 text-gray-400 font-bold text-[10px] uppercase tracking-widest">No hay secciones registradas para el grado ${grado}.</td></tr>`;
             return;
         }
-        submissionsTableBody.innerHTML = filtered.map((seccion, idx) => `<tr class="hover:bg-gray-50 transition-colors cursor-pointer nav-btn" data-index="${idx}"><td class="p-4 font-semibold text-gray-900 uppercase tracking-tighter">Sección ${seccion}</td><td class="p-4 text-right"><span class="text-blue-600 font-semibold text-[9px] uppercase tracking-widest">Ver Asignaturas &rsaquo;</span></td></tr>`).join('');
+        submissionsTableBody.innerHTML = filtered.map((seccion, idx) => `<tr class="hover:bg-gray-50 transition-colors cursor-pointer nav-btn group" data-index="${idx}"><td class="p-4 font-semibold text-gray-900 uppercase tracking-tighter">Sección ${seccion}</td><td class="p-4 text-right"><span class="text-blue-600 font-semibold text-[9px] uppercase tracking-widest group-hover:underline">Ver Asignaturas &rsaquo;</span></td></tr>`).join('');
     }
 
+    /**
+     * Renderiza la lista de asignaturas filtradas por el contexto actual (v7.9.0)
+     * REQ: Filtrado estricto por Parcial, Grado y Sección.
+     */
+    /**
+     * Renderiza la lista de asignaturas filtradas por el contexto actual (v7.9.1)
+     * REQ: Filtrado estricto por Parcial, Grado y Sección.
+     */
     function renderAsignaturas(grado, seccion, search) {
-        let asignaturas = [...new Set([
-            ...allActivityRaw.filter(i => norm(i.grado) === norm(grado) && norm(i.seccion) === norm(seccion)).map(i => i.asignatura),
-            ...allAssignmentsRaw.filter(i => norm(i.grado) === norm(grado) && (norm(i.seccion) === norm(seccion) || !i.seccion || norm(i.seccion) === 'todas')).map(i => i.asignatura)
-        ].filter(s => s))];
-        const filtered = asignaturas.filter(s => norm(s).includes(norm(search)));
+        const activePartial = window.GLOBAL_SCOPE ? window.GLOBAL_SCOPE.ParcialActual : window.PARCIAL_ACTUAL;
+
+        // REQ: Filtrado estricto por Parcial, Grado y Sección (v7.9.1)
+        // Utilizamos GranularConfig para obtener únicamente las materias que corresponden al contexto seleccionado.
+        var granular = (window.GLOBAL_SCOPE && window.GLOBAL_SCOPE.GranularConfig) ? window.GLOBAL_SCOPE.GranularConfig : [];
+        var authorizedAsigs = [...new Set(granular.filter(function(r) {
+            return norm(r.parcial) === norm(activePartial) &&
+                   norm(r.grado) === norm(grado) &&
+                   norm(r.seccion) === norm(seccion);
+        }).map(function(r) { return r.asignatura; }))].filter(Boolean);
+
+        const filtered = authorizedAsigs.filter(s => norm(s).includes(norm(search)));
         currentFilteredItems = filtered;
-        dashboardTableHead.innerHTML = `<tr class="bg-gray-50 border-b border-gray-100"><th class="p-4 text-left font-medium text-gray-500 uppercase tracking-wider text-[0.7rem]">Asignatura</th><th class="p-4 text-right font-medium text-gray-500 uppercase tracking-wider text-[0.7rem]">Acción</th></tr>`;
-        submissionsTableBody.innerHTML = filtered.map((asig, idx) => `<tr class="hover:bg-gray-50 transition-colors cursor-pointer nav-btn" data-index="${idx}"><td class="p-4 font-semibold text-gray-900 uppercase tracking-tighter">${asig}</td><td class="p-4 text-right"><span class="text-blue-600 font-semibold text-[9px] uppercase tracking-widest">Ver Parciales &rsaquo;</span></td></tr>`).join('');
+
+        dashboardTableHead.innerHTML = `
+            <tr class="bg-gray-50 border-b border-gray-100">
+                <th class="p-4 text-left font-medium text-gray-500 uppercase tracking-wider text-[0.7rem]">Asignatura (${activePartial})</th>
+                <th class="p-4 text-left font-medium text-gray-500 uppercase tracking-wider text-[0.7rem]">Contexto</th>
+                <th class="p-4 text-right font-medium text-gray-500 uppercase tracking-wider text-[0.7rem]">Acción</th>
+            </tr>`;
+
+        if (filtered.length === 0) {
+            submissionsTableBody.innerHTML = '<tr><td colspan="3" class="text-center p-8 text-gray-400 font-bold text-[10px] uppercase tracking-widest">No hay asignaturas configuradas para este contexto.</td></tr>';
+            return;
+        }
+
+        submissionsTableBody.innerHTML = filtered.map((asig, idx) => `
+            <tr class="hover:bg-gray-50 transition-colors cursor-pointer nav-btn group" data-index="${idx}">
+                <td class="p-4 font-semibold text-gray-900 uppercase tracking-tighter">${asig}</td>
+                <td class="p-4">
+                    <div class="text-[9px] font-bold text-gray-400 uppercase tracking-widest">${grado}</div>
+                    <div class="text-[9px] font-black text-blue-600 uppercase">Sección ${seccion}</div>
+                </td>
+                <td class="p-4 text-right">
+                    <span class="text-blue-600 font-semibold text-[9px] uppercase tracking-widest group-hover:underline">Ver Alumnos &rsaquo;</span>
+                </td>
+            </tr>`).join('');
     }
 
-    function renderParciales(grado, seccion, asignatura, search) {
-        let parciales = [...new Set([
-            ...allActivityRaw.filter(i => norm(i.grado) === norm(grado) && norm(i.seccion) === norm(seccion) && norm(i.asignatura) === norm(asignatura)).map(i => i.parcial),
-            ...allAssignmentsRaw.filter(i => norm(i.grado) === norm(grado) && (norm(i.seccion) === norm(seccion) || !i.seccion || norm(i.seccion) === 'todas') && norm(i.asignatura) === norm(asignatura)).map(i => i.parcial)
-        ].filter(p => p))];
-
-        const PARCIAL_ORDER = ['Primer Parcial', 'Segundo Parcial', 'Tercer Parcial', 'Cuarto Parcial'];
-        parciales.sort((a, b) => PARCIAL_ORDER.indexOf(a) - PARCIAL_ORDER.indexOf(b));
-
-        const filtered = parciales.filter(p => norm(p).includes(norm(search)));
-        currentFilteredItems = filtered;
-        dashboardTableHead.innerHTML = `<tr class="bg-gray-50 border-b border-gray-100"><th class="p-4 text-left font-medium text-gray-500 uppercase tracking-wider text-[0.7rem]">Parcial Académico</th><th class="p-4 text-right font-medium text-gray-500 uppercase tracking-wider text-[0.7rem]">Acción</th></tr>`;
-        submissionsTableBody.innerHTML = filtered.map((parcial, idx) => `<tr class="hover:bg-gray-50 transition-colors cursor-pointer nav-btn" data-index="${idx}"><td class="p-4 font-semibold text-gray-900 uppercase tracking-tighter">${parcial}</td><td class="p-4 text-right"><span class="text-blue-600 font-semibold text-[9px] uppercase tracking-widest">Ver Alumnos &rsaquo;</span></td></tr>`).join('');
-    }
-
+    /**
+     * Renderiza la lista de alumnos filtrada por el contexto académico COMPLETO (v7.9.0)
+     * REQ: Estricta adherencia a Grado, Sección, Asignatura y Parcial.
+     */
     function renderAlumnos(grado, seccion, asignatura, search) {
         const current = navStack[navStack.length - 1];
         const students = current.data.students || [];
-        const parcial = current.data.parcial;
 
         // WhatsApp Group Integration
         const waContainer = document.createElement('div');
@@ -1414,13 +1452,15 @@ document.addEventListener('DOMContentLoaded', () => {
         let filtered = students.filter(s => norm(s.nombre).includes(norm(search)));
 
         // Calcular estado y preparar datos
+        // REQ: El estado 'Pendiente' se basa estrictamente en la asignatura seleccionada (v7.9.0)
+        const activeParcial = window.normalizePartial(window.GLOBAL_SCOPE.ParcialActual);
         const studentsWithStatus = filtered.map(s => {
             const studentSubmissions = allActivityRaw.filter(sub =>
-                sub.alumnoId == s.userId &&
+                String(sub.alumnoId) === String(s.userId) &&
                 norm(sub.grado) === norm(grado) &&
                 norm(sub.seccion) === norm(seccion) &&
                 norm(sub.asignatura) === norm(asignatura) &&
-                norm(sub.parcial) === norm(parcial)
+                window.normalizePartial(sub.parcial) === activeParcial
             );
             const isPending = studentSubmissions.some(sub => {
                 const status = sub.estado;
@@ -1517,7 +1557,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Calcular carga académica total (A-73)
             // REQ: Filtro Estricto por Parcial (Incidencia 5)
-            const activeParcial = window.normalizePartial(window.PARCIAL_ACTUAL);
+            const activeParcial = window.normalizePartial(window.GLOBAL_SCOPE.ParcialActual);
 
             const subjectAssignments = allAssignmentsRaw.filter(a =>
                 norm(a.grado) === norm(grado) &&
@@ -1527,10 +1567,10 @@ document.addEventListener('DOMContentLoaded', () => {
             );
 
             const studentSubmissions = allActivityRaw.filter(sub =>
-                sub.alumnoId == alumnoId &&
+                String(sub.alumnoId) === String(alumnoId) &&
                 norm(sub.grado) === norm(grado) &&
                 norm(sub.seccion) === norm(seccion) &&
-                norm(sub.asignatura) === norm(asignatura) &&
+                (isGlobalSearch || norm(sub.asignatura) === norm(asignatura)) &&
                 (isGlobalSearch || window.normalizePartial(sub.parcial) === activeParcial)
             );
 
@@ -1706,9 +1746,13 @@ document.addEventListener('DOMContentLoaded', () => {
             if (table) table.parentNode.insertBefore(infoCard, table);
         }
 
+        // REQ: Filtrado estricto por asignatura y contexto (v7.9.0)
+        const activeParcial = window.normalizePartial(window.GLOBAL_SCOPE.ParcialActual);
         const filtered = allActivityRaw.filter(i =>
-            i.alumnoId == alumnoId &&
-            (isGlobalSearch || (norm(i.asignatura) === norm(asignatura) && norm(i.parcial) === norm(parcial))) &&
+            String(i.alumnoId) === String(alumnoId) &&
+            norm(i.grado) === norm(grado) &&
+            norm(i.seccion) === norm(seccion) &&
+            (isGlobalSearch || (norm(i.asignatura) === norm(asignatura) && window.normalizePartial(i.parcial) === activeParcial)) &&
             norm(i.titulo).includes(norm(search))
         );
         // Ordenar por fecha más reciente primero
@@ -1846,13 +1890,28 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
 
                 if (current.level === 'Grados') {
-                    await pushNav('Secciones', { grado: item });
+                    // REQ: Optimización de navegación (v7.9.1)
+                    // Filtramos GranularConfig para determinar cuántas secciones tiene REALMENTE este grado.
+                    var granular = (window.GLOBAL_SCOPE && window.GLOBAL_SCOPE.GranularConfig) ? window.GLOBAL_SCOPE.GranularConfig : [];
+                    var availableSections = [...new Set(granular.filter(function(r) {
+                        return norm(r.grado) === norm(item);
+                    }).map(function(r) { return r.seccion; }))].filter(Boolean);
+
+                    if (availableSections.length === 1) {
+                        await pushNav('Asignaturas', { grado: item, seccion: availableSections[0] });
+                    } else {
+                        await pushNav('Secciones', { grado: item });
+                    }
                 } else if (current.level === 'Secciones') {
                     await pushNav('Asignaturas', { grado: current.data.grado, seccion: item });
                 } else if (current.level === 'Asignaturas') {
-                    await pushNav('Parciales', { grado: current.data.grado, seccion: current.data.seccion, asignatura: item });
-                } else if (current.level === 'Parciales') {
-                    await pushNav('Alumnos', { grado: current.data.grado, seccion: current.data.seccion, asignatura: current.data.asignatura, parcial: item });
+                    // REQ: Alumnos solo en la etapa terminal (v7.8.5)
+                    await pushNav('Alumnos', {
+                        grado: current.data.grado,
+                        seccion: current.data.seccion,
+                        asignatura: item,
+                        parcial: window.PARCIAL_ACTUAL
+                    });
                 } else if (current.level === 'Alumnos') {
                     await pushNav('Detalles', {
                         alumnoId: item.userId,
@@ -1913,7 +1972,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const ws = XLSX.utils.aoa_to_sheet([headers, ...data]);
                 XLSX.utils.book_append_sheet(wb, ws, subject.substring(0, 31));
             });
-            const pNum = { 'Primer Parcial': '1', 'Segundo Parcial': '2', 'Tercer Parcial': '3', 'Cuarto Parcial': '4' }[parcial] || parcial;
+            const pNum = { 'I parcial': '1', 'II parcial': '2', 'III parcial': '3', 'IV parcial': '4' }[parcial] || parcial;
             XLSX.writeFile(wb, `${grado.normalize("NFD").replace(/[\u0300-\u036f]/g, "")}_seccion_${seccion}_parcial_${pNum}.xls`);
         } catch (error) { alert('Error: ' + error.message); }
         finally { btn.disabled = false; btn.innerHTML = '<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg><span>EXPORTAR REPORTE EXCEL</span>'; }
@@ -1974,13 +2033,17 @@ document.addEventListener('DOMContentLoaded', () => {
         // Ensure the grade is associated with the current theme for weighting
         const scope = window.GLOBAL_SCOPE || {};
 
+        // Tarea 5: Asegurar compatibilidad con estructuras de arreglo multi-factor
+        const temaVal = Array.isArray(scope.TemaActual) ? scope.TemaActual.join(', ') : (scope.TemaActual || "General");
+        const asigVal = Array.isArray(scope.AsignaturaActual) ? scope.AsignaturaActual.join(', ') : (scope.AsignaturaActual || "");
+
         const payload = {
             entregaId: currentEditingEntregaId,
             calificacion: document.getElementById('calificacion').value,
             estado: document.getElementById('estado').value,
             comentario: document.getElementById('comentario').value,
-            temaAsociado: scope.TemaActual || "General",
-            asignaturaAsociada: scope.AsignaturaActual || ""
+            temaAsociado: temaVal,
+            asignaturaAsociada: asigVal
         };
 
         // Bloqueo temporal del botón (Req 1.3)
