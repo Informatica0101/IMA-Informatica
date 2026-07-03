@@ -120,10 +120,10 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // Tarea 4: Recuperar historial de configuraciones académicas anteriores
+    // Tarea 4: Recuperar historial de configuraciones académicas anteriores (v7.9.3)
     async function fetchAcademicHistory() {
         try {
-            var res = await fetchApi('USER', 'getAcademicHistory', {
+            var res = await fetchApi('ACADEMIC', 'getAcademicHistory', {
                 grado: currentUser.grado,
                 seccion: currentUser.seccion
             });
@@ -537,10 +537,10 @@ document.addEventListener('DOMContentLoaded', function() {
             var waPhone = profInfo.telefono ? String(profInfo.telefono).replace(/\D/g, '') : '';
             var waLink = waPhone ? 'https://wa.me/504' + waPhone : null;
 
-            // Obtener enlace del grupo de WhatsApp por Grado (Lógica A-66 preservada)
+            // Obtener enlace del grupo de WhatsApp por Grado (v7.9.3)
             var groupLink = null;
             try {
-                var groupRes = await fetchApi('USER', 'getWhatsAppLink', { grado: currentUser.grado });
+                var groupRes = await fetchApi('ACADEMIC', 'getWhatsAppLink', { grado: currentUser.grado });
                 if (groupRes.status === 'success' && groupRes.link) {
                     groupLink = groupRes.link;
                 }
@@ -635,6 +635,8 @@ document.addEventListener('DOMContentLoaded', function() {
             var authorizedAsigs = [...new Set(granular.filter(function(r) {
                 var matchGrado = (window.parseGrade(r.grado) === window.parseGrade(currentUser.grado));
                 var matchSeccion = (!r.seccion || r.seccion === "Todas" || r.seccion === currentUser.seccion);
+                // REQ: Reparar variable matchParcial no definida y asegurar filtrado estricto (v7.9.3)
+                var matchParcial = window.normalizePartial(r.parcial) === window.normalizePartial(selectedPartial);
                 return matchGrado && matchSeccion && matchParcial;
             }).map(function(r) { return r.asignatura; }))].filter(Boolean);
 
@@ -1519,8 +1521,8 @@ document.addEventListener('DOMContentLoaded', function() {
         if (!waActive || !waDisabled) return;
 
         try {
-            // WhatsApp links are now assigned by GRADO only
-            var res = await fetchApi('USER', 'getWhatsAppLink', {
+            // WhatsApp links are now assigned by GRADO only (v7.9.3)
+            var res = await fetchApi('ACADEMIC', 'getWhatsAppLink', {
                 grado: currentUser.grado
             });
 

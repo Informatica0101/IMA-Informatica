@@ -535,3 +535,17 @@ Módulo: Frontend (Aislamiento de Contexto)
 - js/student.js:
     - Refactorizado motor de renderizado de materias para usar GranularConfig y metadatos de actividad para filtrado estricto.
     - Se garantiza que ninguna tarea o asignatura se filtre entre grados.
+## REGISTRO DE CAMBIOS - RESOLUCIÓN DE PERSISTENCIA Y FILTRADO (v7.9.3) - Fri Jul  3 11:51:24 UTC 2026
+
+Módulo: Modularización de Servicios
+- Creado 'backend/academic-service/Code.gs' para centralizar la lógica académica.
+- 'backend/user-service/Code.gs' refactorizado para mantener solo Autenticación, Perfil, Noticias y Analítica.
+- Mapeadas URLs y redireccionadas llamadas en 'js/config.js', 'js/teacher.js' y 'js/student.js'.
+
+Módulo: Persistencia Atómica (Incidencia: Duplicidad)
+- 'updateAcademicConfig' (ACADEMIC-SVC): Implementado mapa de reconciliación con normalización estricta y escritura única setValues.
+- 'saveToAcademicHistory' (ACADEMIC-SVC): Endurecida validación de 5 factores (Parcial, Grado, Sección, Asignatura, Profesor) con normalización para evitar registros redundantes.
+
+Módulo: Dashboard Estudiante (Incidencia: Filtrado)
+- 'js/student.js': Corregido ReferenceError de 'matchParcial' en 'renderSubjectNavigation'.
+- Reforzado el filtrado de asignaturas para utilizar el GranularConfig del backend, garantizando que el alumno solo visualice materias de su Grado, Sección y del Parcial seleccionado.

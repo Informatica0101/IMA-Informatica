@@ -13,6 +13,9 @@ window.SERVICE_URLS = {
   // Pega aquí la URL del despliegue del microservicio de usuarios. (v7.8.6)
   USER: 'https://script.google.com/macros/s/AKfycbwnRiJrWQ2ai71JvfsxCo4q0ht6qb44u6ojoyh8ULC_CYxvS1jXJXCWa9Bc8w2Lq6Sh/exec',
 
+  // REQ: Microservicio Académico Modularizado (v7.9.3)
+  ACADEMIC: 'https://script.google.com/macros/s/AKfycbwnRiJrWQ2ai71JvfsxCo4q0ht6qb44u6ojoyh8ULC_CYxvS1jXJXCWa9Bc8w2Lq6Sh/exec',
+
   // Pega aquí la URL del despliegie del microservicio de tareas.
   TASK: 'https://script.google.com/macros/s/AKfycbz0J9mpCzbNMoW1LAFNhJFWhhVF6Vp-bMUMWCQazshxNmMabFs2Lj5m4YbT6mx2c_rl/exec',
 
@@ -144,7 +147,8 @@ window.syncAcademicScope = function(callback) {
 
     // Retornamos una promesa para que el llamador pueda esperar a la sincronización REAL (desde el servidor)
     return new Promise(function(resolve) {
-        fetchApi('USER', 'getAcademicConfig', payload, 0, {
+        // REQ: Uso de Microservicio Académico Modularizado (v7.9.3)
+        fetchApi('ACADEMIC', 'getAcademicConfig', payload, 0, {
             store: 'academic_stats',
             key: 'config' + (currentUser ? '_' + currentUser.userId : ''),
             onUpdate: function(data) {

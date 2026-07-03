@@ -1003,3 +1003,24 @@ Solución: Migración a filtrado por GranularConfig y validación reforzada cont
 VERIFICACIÓN FINAL:
 - Persistencia: Escritura única confirmada.
 - Aislamiento: Estudiantes de 10mo ya no ven recursos de 11no ni 12mo.
+
+
+AUDITORÍA TÉCNICA - RESOLUCIÓN DE PERSISTENCIA Y FILTRADO - Fri Jul  3 11:31:45 UTC 2026
+AUDITORÍA TÉCNICA - RESOLUCIÓN DE PERSISTENCIA Y FILTRADO - Fri Jul  3 11:33:53 UTC 2026
+
+Archivo: backend/user-service/Code.gs
+Hallazgo [Crítico]: Duplicidad en la persistencia. Aunque se usa un Map para reconciliar en memoria, la inconsistencia en la normalización (mayúsculas/minúsculas) en 'saveToAcademicHistory' provoca que la validación de unicidad de 5 factores falle, insertando registros redundantes.
+Impacto: Corrupción del historial académico y degradación de rendimiento.
+Referencia: Líneas 1451-1500 (saveToAcademicHistory).
+
+Archivo: js/student.js
+Hallazgo [Crítico]: Error de referencia. La variable 'matchParcial' se utiliza en el filtro de 'renderSubjectNavigation' pero no está definida en el ámbito de la función.
+Impacto: El filtrado de asignaturas falla silenciosamente o lanza error, provocando la visualización de materias de otros parciales/grados.
+Referencia: Línea 638.
+
+Archivo: js/config.js
+Hallazgo [Medio]: Acoplamiento excesivo. El microservicio de usuarios gestiona autenticación, analítica y configuración académica, lo que incrementa el riesgo de errores de red (CORS/Timeout) y dificulta el mantenimiento.
+Referencia: window.SERVICE_URLS.USER.
+
+Archivo: js/api.js
+Hallazgo [Bajo]: El error 'TypeError: Failed to fetch' reportado puede deberse a que el microservicio de usuarios está excediendo el tiempo límite de ejecución de Google Apps Script al procesar demasiadas responsabilidades en una sola llamada 'doPost'.

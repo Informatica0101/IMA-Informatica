@@ -151,9 +151,9 @@ document.addEventListener('DOMContentLoaded', () => {
             updateCascadingSelectors(window.GLOBAL_SCOPE.AsignaturaActual, window.GLOBAL_SCOPE.TemaActual);
         };
 
-        // REQ: Sync Teacher-Specific Scope (v7.8.5)
+        // REQ: Sync Teacher-Specific Scope (v7.9.3)
         try {
-            const configRes = await fetchApi('USER', 'getAcademicConfig', { profesorId: currentUser.userId }, 0, {
+            const configRes = await fetchApi('ACADEMIC', 'getAcademicConfig', { profesorId: currentUser.userId }, 0, {
                 store: 'academic_stats',
                 key: 'config_' + currentUser.userId,
                 onUpdate: (data) => applyConfig(data)
@@ -284,7 +284,7 @@ document.addEventListener('DOMContentLoaded', () => {
         btn.textContent = 'Guardando...';
 
         try {
-            const res = await fetchApi('USER', 'updateAcademicConfig', { fullScope: fullScope });
+            const res = await fetchApi('ACADEMIC', 'updateAcademicConfig', { fullScope: fullScope });
             if (res.status === 'success') {
                 // Usar la respuesta del servidor para actualizar el caché (v7.7.5)
                 const confirmedScope = res.data || fullScope;
@@ -361,7 +361,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const chunkSize = 20;
             for (let i = 0; i < validQuestions.length; i += chunkSize) {
                 const chunk = validQuestions.slice(i, i + chunkSize);
-                await Promise.all(chunk.map(q => fetchApi('USER', 'saveQuestion', {
+                await Promise.all(chunk.map(q => fetchApi('ACADEMIC', 'saveQuestion', {
                     Asignatura: q.Asignatura,
                     Nivel: q.Nivel,
                     Tema: q.Tema || "General",
@@ -381,7 +381,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const statsRes = await fetch('migration_stats.json');
             const stats = await statsRes.json();
 
-            await fetchApi('USER', 'generateMigrationReport', {
+            await fetchApi('ACADEMIC', 'generateMigrationReport', {
                 stats: {
                     totalDetectadas: stats.totalDetectadas,
                     totalMigradas: successCount,
@@ -1114,7 +1114,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }),
                 fetchApi('TASK', 'getAllTasks', payload),
                 fetchApi('EXAM', 'getAllExams', payload),
-                fetchApi('USER', 'getAcademicConfig', { profesorId: currentUser.userId })
+                fetchApi('ACADEMIC', 'getAcademicConfig', { profesorId: currentUser.userId })
             ]);
 
             // Guardar para Offline-First (Modulo 1)
@@ -1407,8 +1407,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const btnEditWa = document.getElementById('btn-edit-wa');
         const btnSaveWa = document.getElementById('btn-save-wa');
 
-        // Fetch current link (by Grade as per A-66 memory)
-        fetchApi('USER', 'getWhatsAppLink', { grado }).then(res => {
+        // Fetch current link (by Grade) (v7.9.3)
+        fetchApi('ACADEMIC', 'getWhatsAppLink', { grado }).then(res => {
             if (res.status === 'success' && res.link) {
                 waInput.value = res.link;
             }
@@ -1431,7 +1431,7 @@ document.addEventListener('DOMContentLoaded', () => {
             btnSaveWa.disabled = true;
             btnSaveWa.textContent = 'Guardando...';
             try {
-                const res = await fetchApi('USER', 'saveWhatsAppLink', { grado, link });
+                const res = await fetchApi('ACADEMIC', 'saveWhatsAppLink', { grado, link });
                 if (res.status === 'success') {
                     waInput.readOnly = true;
                     waInput.classList.add('text-gray-500');
