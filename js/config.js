@@ -11,7 +11,7 @@
 
 window.SERVICE_URLS = {
   // Pega aquí la URL del despliegue del microservicio de usuarios. (v7.8.6)
-  USER: 'https://script.google.com/macros/s/AKfycbwJOQMHFdG9vS6dN6aFmeJ7MLqh7l45hSxEx_5X2FRzSjrXY0263d0E-3kDrXoGr1-U/exec',
+  USER: 'https://script.google.com/macros/s/AKfycbyICKM9LX1MN-Fo59xYPZY6Xr3mpoa4t6rPPKqT74_U9D3M48B3Hf-zrcwsL9O_z9YO/exec',
 
   // Pega aquí la URL del despliegie del microservicio de tareas.
   TASK: 'https://script.google.com/macros/s/AKfycbz4geYGjF7FCe17VuLL8uylHaKM1vwbDqnFmEMgZXQQFVhBkKt0GtT0LB-_u94IVGDZ/exec',
