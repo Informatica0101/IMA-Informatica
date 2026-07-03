@@ -253,6 +253,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 // REQ: Contextual authorization (v7.7.5)
                 var isAuthorized = window.isContentAuthorized ? window.isContentAuthorized(subjectData.unit, subjectData.name, null, window.selectedGradeData.grade, (currentUser ? currentUser.seccion : null)) : (subjectData.unit === targetPartial);
                 if (!isAuthorized) continue;
+
+                // REQ: Filtro por Unidad Activa para estudiantes (v7.9.8)
+                if (window.GLOBAL_SCOPE && window.GLOBAL_SCOPE.UnidadActual) {
+                    if (window.normalizePartial(subjectData.unit) !== window.normalizePartial(window.GLOBAL_SCOPE.UnidadActual)) continue;
+                }
             }
 
             if (targetSection && subjectData.sections) {
@@ -297,6 +302,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 // REQ: Contextual authorization (v7.7.5)
                 if (!window.isContentAuthorized(window.selectedSubjectData.partial, window.selectedSubjectData.name, topic.title, window.selectedGradeData.grade, (currentUser ? currentUser.seccion : null))) {
                     continue;
+                }
+
+                // REQ: Filtro estricto por Unidad Activa para estudiantes (v7.9.8)
+                // Solo se muestran temas que pertenezcan a la UnidadActual configurada en GLOBAL_SCOPE.
+                if (window.GLOBAL_SCOPE && window.GLOBAL_SCOPE.UnidadActual) {
+                    var activeUnit = window.normalizePartial(window.GLOBAL_SCOPE.UnidadActual);
+                    var subjectUnit = window.normalizePartial(window.selectedSubjectData.unit);
+                    if (subjectUnit !== activeUnit) continue;
                 }
             }
 

@@ -114,7 +114,31 @@ function updateAcademicConfig(payload) {
     const subjects = parseList(fullScope.AsignaturaActual);
     const themes = parseList(fullScope.TemaActual);
 
-    rows.forEach(r => { if (String(r[8]).trim() !== profesorId && r[2] === parcialNorm && grades.indexOf(r[3]) !== -1 && sections.indexOf(r[4]) !== -1 && subjects.indexOf(r[5]) !== -1) throw new Error(`Conflicto: La asignatura '${r[5]}' ya está asignada.`); });
+    // REQ: Validación de Unicidad Absoluta por Contexto (Fase 2)
+    // Impide que dos profesores tengan la misma combinación de parcial, grado, sección y asignatura.
+    if (fullScope.hierarchicalAssignments && Array.isArray(fullScope.hierarchicalAssignments)) {
+      fullScope.hierarchicalAssignments.forEach(entry => {
+        const { grado: g, seccion: s, asignatura: asig } = entry;
+        const conflict = rows.find(r =>
+          String(r[8]).trim() !== profesorId &&
+          r[2] === parcialNorm &&
+          normalizeString(r[3]) === normalizeString(g) &&
+          normalizeString(r[4]) === normalizeString(s) &&
+          normalizeString(r[5]) === normalizeString(asig)
+        );
+        if (conflict) {
+          throw new Error(`Conflicto: La asignatura '${asig}' para ${g} (Secc. ${s}) ya está asignada a otro profesor en el ${parcialNorm}.`);
+        }
+      });
+    } else {
+      // Fallback para estructura plana (Retrocompatibilidad)
+      rows.forEach(r => {
+        if (String(r[8]).trim() !== profesorId && r[2] === parcialNorm &&
+            grades.indexOf(r[3]) !== -1 && sections.indexOf(r[4]) !== -1 && subjects.indexOf(r[5]) !== -1) {
+          throw new Error(`Conflicto: La asignatura '${r[5]}' ya está asignada a otro docente en este parcial/grado.`);
+        }
+      });
+    }
 
     const finalConfigMap = {};
     rows.forEach(r => { if (String(r[8]).trim() !== profesorId) finalConfigMap[`${normalizeString(r[3])}|${normalizeString(r[4])}|${normalizeString(r[5])}|${normalizeString(r[7])}|${normalizeString(r[8])}`] = r; });

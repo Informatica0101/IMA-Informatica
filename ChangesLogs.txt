@@ -577,3 +577,63 @@ Módulo: Dashboard Estudiante
 
 Módulo: Seguridad
 - backend/user-service/Code.gs: Endurecida validación de firmas en recuperación de contraseña.
+
+REGISTRO DE CAMBIOS - REESTRUCTURACIÓN ACADÉMICA Y MODERNIZACIÓN UI (v7.9.8) - Fri Jul  3 17:44:32 UTC 2026
+
+Módulo: Administración (teacher-dashboard.html)
+- Reubicada la tarjeta de Gestión Académica antes del Cierre de Año para optimizar el flujo administrativo.
+- Rediseñado el formulario de configuración: reemplazados checkboxes por un Constructor de Asignaciones jerárquico (Grado -> Sección -> Asignatura -> Unidad).
+- Implementada lista de visualización para carga académica confirmada.
+
+Módulo: Lógica Docente (js/teacher.js)
+- Implementada población en cascada de selectores (Grado -> Sección -> Asignatura) basándose en window.presentationData.
+- Agregada gestión de estado para confirmedAssignments y validación local de duplicados.
+- Actualizado envío a fetchApi('ACADEMIC', 'updateAcademicConfig') con estructura hierarchicalAssignments.
+
+Módulo: Validación y Persistencia (backend/academic-service/Code.gs)
+- Refactorizada updateAcademicConfig para validar la unicidad absoluta de combinaciones parcial-grado-sección-asignatura entre todos los profesores.
+- Mejorados mensajes de error de colisión para ser descriptivos y preventivos.
+
+Módulo: Dashboard del Estudiante (js/student.js)
+- Refactorizada renderSubjectNavigation para utilizar GranularConfig como fuente de verdad única, garantizando visibilidad de materias sin actividades.
+- Implementado ordenamiento por fecha de vencimiento próxima en el snippet de "Próxima Pendiente".
+
+Módulo: Cierre de Ciclo (backend/task-service/Code.gs)
+- Actualizada closeAcademicYear para incluir la eliminación física de archivos y carpetas en Google Drive (setTrashed).
+- Añadida limpieza de registros en ConfiguracionAcademica durante el proceso de cierre por profesor o global.
+
+Módulo: Estilos y UX (css/style.css)
+- Implementado rediseño moderno de selectores: glassmorphism ligero, profundidad visual (box-shadow) y transiciones suaves.
+- Agregadas animaciones de entrada progresiva (slideInFade) e interactividad (ripple effect) para mejorar el feedback de usuario.
+
+REGISTRO DE CAMBIOS - REESTRUCTURACIÓN ACADÉMICA INTEGRAL (v7.9.8) - Fri Jul 03 2026
+
+Módulo: Administración (teacher-dashboard.html)
+- Reubicada la tarjeta de Gestión Académica antes del Cierre de Año.
+- Implementado Constructor de Asignaciones jerárquico (Grado -> Sección -> Asignatura -> Unidad).
+- Rediseño visual con Glassmorphism y profundidad para controles de configuración.
+
+Módulo: Lógica Docente (js/teacher.js)
+- Implementada población en cascada de selectores basada en window.presentationData.
+- Agregada gestión de confirmedAssignments para envío jerárquico al backend.
+- Eliminados mensajes de debug "Carga académica completada".
+
+Módulo: Dashboard Estudiante (js/student.js)
+- Refactorizada renderSubjectNavigation para usar GranularConfig como fuente de verdad única.
+- Asegurada persistencia de tarjetas de asignatura sin actividades.
+- Implementado filtrado de actividades: solo se muestran en el resumen las pendientes, rechazadas o incompletas.
+- Ordenamiento de actividades por proximidad de fecha de vencimiento.
+
+Módulo: Navegación de Recursos (js/index-ui.js)
+- Implementado filtrado estricto por Unidad Activa (GLOBAL_SCOPE.UnidadActual) para descargas de PDF.
+
+Módulo: Backend Académico (academic-service/Code.gs)
+- updateAcademicConfig: Implementada validación de unicidad absoluta (4-factores) entre profesores.
+- Asegurada persistencia atómica mediante setValues y deleteRows para evitar pérdida de datos.
+
+Módulo: Backend de Tareas y Cierre (task-service/Code.gs)
+- closeAcademicYear: Implementada eliminación física de archivos y carpetas en Google Drive (setTrashed).
+- Agregada limpieza de registros de configuración académica durante el cierre.
+
+Módulo: Configuración Global (js/config.js)
+- Actualizadas URLs de microservicios a versiones productivas (v7.9.8).
