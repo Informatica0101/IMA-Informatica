@@ -631,11 +631,17 @@ document.addEventListener('DOMContentLoaded', function() {
 
         if (isViewingActive) {
             // Caso 1: Parcial Vigente -> Fuente: ConfiguracionAcademica (GLOBAL_SCOPE)
-            var globalAsigs = window.GLOBAL_SCOPE ? window.GLOBAL_SCOPE.AsignaturaActual : [];
-            globalAsigs.forEach(function(asig) {
-                if (window.isContentAuthorized(selectedPartial, asig, null, currentUser.grado, currentUser.seccion)) {
-                    if (subjects.indexOf(asig) === -1) subjects.push(asig);
-                }
+            console.log("[DEBUG-STUDENT] Granular length:", granular.length);
+            var granular = (window.GLOBAL_SCOPE && window.GLOBAL_SCOPE.GranularConfig) ? window.GLOBAL_SCOPE.GranularConfig : [];
+            var authorizedAsigs = [...new Set(granular.filter(function(r) {
+                var matchGrado = (window.parseGrade(r.grado) === window.parseGrade(currentUser.grado));
+                var matchSeccion = (!r.seccion || r.seccion === "Todas" || r.seccion === currentUser.seccion);
+                console.log("[DEBUG-STUDENT] Row:", r.grado, r.seccion, r.parcial, "Match:", matchGrado, matchSeccion, matchParcial);
+                return matchGrado && matchSeccion && matchParcial;
+            }).map(function(r) { return r.asignatura; }))].filter(Boolean);
+
+            authorizedAsigs.forEach(function(asig) {
+                if (subjects.indexOf(asig) === -1) subjects.push(asig);
             });
         } else {
             // Caso 2: Parcial Histórico -> Fuente: HistorialAcademico (Fase 4)

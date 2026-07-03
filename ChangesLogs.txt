@@ -507,3 +507,16 @@ Módulo: Frontend - Dashboard Estudiante
 - js/student.js:
     - renderSubjectNavigation ahora es inclusivo: muestra todas las asignaturas autorizadas para el parcial, permitiendo al estudiante ver su historial de completación.
     - Refinada la lógica de visualización de 'Pendientes' vs 'Al día' mediante indicadores visuales dinámicos en las tarjetas de materia.
+
+REGISTRO DE CAMBIOS - ESTABILIZACIÓN DE PERSISTENCIA v7.9.2 - Fri Jul 03 2026
+
+Módulo: Backend (Persistencia Hardened)
+- Code.gs:
+    - Asegurada atomicidad total en updateAcademicConfig mediante LockService y reconciliación en memoria.
+    - saveToAcademicHistory ahora valida el 100% de los factores (5) antes de registrar un cambio de período.
+    - Añadidos logs de auditoría: "[USER-SVC] Invocado updateAcademicConfig".
+
+Módulo: Frontend (Aislamiento de Datos)
+- js/student.js:
+    - Refactorizada lógica de filtrado de materias: ahora utiliza exclusivamente el GranularConfig pre-filtrado por el backend para el contexto del alumno.
+    - Se eliminó la dependencia de SUBJECT_GRADE_MAP para la construcción del tablero, delegando la autoridad al alcance académico vigente del servidor.

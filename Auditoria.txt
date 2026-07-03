@@ -926,3 +926,19 @@ Archivo: js/student.js
 Sector: renderSubjectNavigation
 Hallazgo [Medio]: El dashboard ocultaba materias completadas, dificultando la visibilidad del progreso total.
 Solución: Ahora se muestran todas las materias autorizadas para el parcial seleccionado, con indicadores visuales de "Pendiente" o "Al día".
+
+AUDITORÍA TÉCNICA - RESOLUCIÓN FINAL DE PERSISTENCIA v7.9.2 - Fri Jul 03 2026
+
+Archivo: backend/user-service/Code.gs
+Sector: updateAcademicConfig / saveToAcademicHistory
+Hallazgo [Causa Raíz]: Se identificó que la duplicidad ocurría por la falta de atomicidad en el ciclo "lectura-limpieza-escritura" bajo condiciones de concurrencia y la ausencia de una validación de integridad previa al append en el historial.
+Solución: Implementado LockService (30s) y mapa de reconciliación en memoria. La persistencia ahora es una operación única de setValues tras consolidar el estado deseado. Se añadió un log de auditoría en el servidor para rastrear invocaciones.
+
+Archivo: js/student.js
+Sector: renderSubjectNavigation
+Hallazgo [Alto]: La visualización de asignaturas dependía de una lista plana que no preservaba la relación Grado-Materia.
+Solución: Se migró el renderizado al uso de 'GranularConfig' provisto por el backend (v7.9.2), el cual ya viene pre-filtrado por el contexto del estudiante desde el servidor.
+
+VERIFICACIÓN FINAL:
+- Persistencia: Confirmada escritura única en Spreadsheet tras múltiples clics simulados.
+- Aislamiento: Estudiantes de Décimo ya no visualizan materias de Undécimo a pesar de estar activas globalmente.
