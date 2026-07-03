@@ -11,10 +11,10 @@
 
 window.SERVICE_URLS = {
   // Pega aquí la URL del despliegue del microservicio de usuarios.
-  USER: 'https://script.google.com/macros/s/AKfycbyJ8avsUWB6l11G1WCHpSJUOgRoeuB45Ys0fm6O6pWRAnAJuO7DGSU9LKuht_wZVeLh/exec',
+  USER: 'https://script.google.com/macros/s/AKfycbwwJatltmNlynkPPTZtTL8TfRJWWL_1Ho9Xe7-AWAU2ZOv6QnvaATsCzvXJzYTyIGY/exec',
 
   // REQ: Microservicio Académico Modularizado (v7.9.6) - REEMPLAZAR con la URL del nuevo proyecto académico
-  ACADEMIC: 'https://script.google.com/macros/s/REEMPLAZAR_CON_URL_PROYECTO_ACADEMICO/exec',
+  ACADEMIC: 'https://script.google.com/macros/s/AKfycbxyM_ag5v7T571xuQMEMpGN6KnfKOWMNw5Mql-EPAfeYXWtKirzDy2l-79TUgQHwDqg/exec',
 
   // Pega aquí la URL del despliegie del microservicio de tareas.
   TASK: 'https://script.google.com/macros/s/AKfycbz0J9mpCzbNMoW1LAFNhJFWhhVF6Vp-bMUMWCQazshxNmMabFs2Lj5m4YbT6mx2c_rl/exec',
