@@ -342,7 +342,7 @@ function getStudentExams({ userId, grado, seccion }) {
           examenId: e[0],
           titulo: e[1],
           asignatura: e[2],
-          parcial: e[9] || "Primer Parcial",
+          parcial: e[9] || "Primer Parcial", grado: e[3], seccion: e[4],
           fechaLimite: e[5] ? new Date(e[5]).toISOString() : null,
           estado: estado,
           profesorId: e[8],

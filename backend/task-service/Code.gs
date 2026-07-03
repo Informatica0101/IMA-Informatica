@@ -233,7 +233,7 @@ function getStudentTasks(payload) {
     }
 
     return {
-      tareaId: task[0], tipo: task[1], titulo: task[2], descripcion: task[3], parcial: task[4],
+      tareaId: task[0], tipo: task[1], titulo: task[2], descripcion: task[3], parcial: task[4], grado: task[6], seccion: task[7],
       asignatura: task[5], fechaLimite: fechaLimite,
       profesorId: task[10],
       entrega: entrega ? {

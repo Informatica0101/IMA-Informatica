@@ -520,3 +520,18 @@ Módulo: Frontend (Aislamiento de Datos)
 - js/student.js:
     - Refactorizada lógica de filtrado de materias: ahora utiliza exclusivamente el GranularConfig pre-filtrado por el backend para el contexto del alumno.
     - Se eliminó la dependencia de SUBJECT_GRADE_MAP para la construcción del tablero, delegando la autoridad al alcance académico vigente del servidor.
+
+REGISTRO DE CAMBIOS - ENDURECIMIENTO DE PERSISTENCIA v7.9.2 - Fri Jul 03 2026
+
+Módulo: Backend (Persistencia e Integridad)
+- Code.gs:
+    - Implementada Reconciliación Total en memoria en updateAcademicConfig.
+    - saveToAcademicHistory ahora realiza inserciones masivas (grouped writes) tras validación de 5 factores.
+    - Sincronizados logs de auditoría de servidor.
+- task-service/Code.gs & exam-service/Code.gs:
+    - Agregados campos 'grado' y 'seccion' a las respuestas de actividades de estudiante.
+
+Módulo: Frontend (Aislamiento de Contexto)
+- js/student.js:
+    - Refactorizado motor de renderizado de materias para usar GranularConfig y metadatos de actividad para filtrado estricto.
+    - Se garantiza que ninguna tarea o asignatura se filtre entre grados.
