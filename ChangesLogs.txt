@@ -549,3 +549,18 @@ Módulo: Persistencia Atómica (Incidencia: Duplicidad)
 Módulo: Dashboard Estudiante (Incidencia: Filtrado)
 - 'js/student.js': Corregido ReferenceError de 'matchParcial' en 'renderSubjectNavigation'.
 - Reforzado el filtrado de asignaturas para utilizar el GranularConfig del backend, garantizando que el alumno solo visualice materias de su Grado, Sección y del Parcial seleccionado.
+
+REGISTRO DE CAMBIOS - MODULARIZACIÓN Y RESTAURACIÓN INTEGRAL v7.9.6 - Fri Jul  3 14:03:11 UTC 2026
+
+Módulo: Backend (Arquitectura Modular)
+- backend/academic-service/Code.gs:
+    - Implementada persistencia segura de configuración académica (setValues + deleteRows).
+    - Corregida duplicidad en historial mediante normalización bidireccional de llaves.
+- backend/user-service/Code.gs:
+    - Restaurada lógica avanzada de analítica psicométrica (ICR v3.1, GP v2.1).
+    - Restaurada migración completa de datos de invitados (Logros + Analítica).
+
+Módulo: Frontend
+- js/config.js: Preparada configuración para despliegue de microservicios independientes.
+- js/student.js: Corregido error de referencia 'matchParcial' y reforzado aislamiento de grado/sección.
+- js/api.js: Asegurados fallbacks para el nuevo servicio ACADEMIC.

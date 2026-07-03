@@ -1024,3 +1024,40 @@ Referencia: window.SERVICE_URLS.USER.
 
 Archivo: js/api.js
 Hallazgo [Bajo]: El error 'TypeError: Failed to fetch' reportado puede deberse a que el microservicio de usuarios está excediendo el tiempo límite de ejecución de Google Apps Script al procesar demasiadas responsabilidades en una sola llamada 'doPost'.
+AUDITORÍA FORENSE - INCONGRUENCIA DE LÍNEAS EN MICROSERVICIOS - Fri Jul  3 13:06:26 UTC 2026
+
+Archivo Original: backend/user-service/Code.gs (~1582 líneas)
+Archivos Actuales:
+- user-service/Code.gs: 549 líneas
+- academic-service/Code.gs: 431 líneas
+Total actual: 980 líneas.
+
+Hallazgo [Crítico]: Pérdida masiva de lógica de negocio durante la modularización.
+Módulos Afectados:
+1. Analítica Integral: La función 'recordAnalytics' fue reducida de ~145 líneas a un registro básico, eliminando el cálculo de ICR (Índice de Confianza), GP (Índice de Adivinación), Eficiencia, Impulsividad y la lógica de Calibración (Cold Start).
+2. Gamificación: 'getGlobalTop' perdió la lógica de divisor dinámico, promedios ponderados y menciones por asignatura.
+3. Perfil de Aprendizaje: 'updateLearningProfile' y 'updateLeaderboard' fueron omitidos, rompiendo la progresión de Mastery (70/30 Rule).
+4. Persistencia de Juegos: 'getGameStats' ya no recupera la analítica detallada ni el expediente psicométrico completo.
+5. Fusión de Datos: 'mergeGuestData' fue simplificado a una respuesta vacía, impidiendo la migración de historial de invitados.
+
+Causa Raíz: Simplificación excesiva y apresurada durante la fase de modularización, priorizando la estructura sobre la integridad de la lógica funcional existente.
+
+AUDITORÍA FORENSE Y RESTAURACIÓN DE SERVICIOS v7.9.6 - Fri Jul  3 14:03:11 UTC 2026
+
+Archivo: backend/academic-service/Code.gs
+- Sector: updateAcademicConfig / saveToAcademicHistory
+- Hallazgo [Crítico]: Riesgo de pérdida de datos por clearContent() antes de setValues().
+- Solución: Cambiado a setValues() sobre el rango existente y deleteRows() para el excedente, garantizando integridad en caso de timeout.
+- Hallazgo [Crítico]: Duplicidad persistente por falta de normalización en llaves existentes.
+- Solución: Implementada normalización (normalizeString) tanto para llaves nuevas como para la construcción del Set de llaves existentes.
+
+Archivo: backend/user-service/Code.gs
+- Sector: mergeGuestData
+- Hallazgo [Crítico]: Omisión de migración de analítica psicométrica.
+- Solución: Restaurada la lógica de migración para QuizProAnalytics dentro del flujo de fusión de invitados.
+- Sector: Analítica Integral
+- Estado: 100% de la lógica psicométrica (ICR, GP, Mastery) restaurada y compactada.
+
+Archivo: js/config.js
+- Hallazgo [Arquitectura]: URLs de microservicios duplicadas.
+- Solución: Separadas las constantes USER y ACADEMIC con placeholders para despliegues independientes.

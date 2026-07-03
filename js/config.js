@@ -10,11 +10,11 @@
 // ----------------------------------------------------------
 
 window.SERVICE_URLS = {
-  // Pega aquí la URL del despliegue del microservicio de usuarios. (v7.8.6)
-  USER: 'https://script.google.com/macros/s/AKfycbwxW9DeR_OHb8UEhmTJ_bOCkhel-KTf3hqmrpYL3cFG__g9t_ljMTtBDTk2HTj88HQy/exec',
+  // Pega aquí la URL del despliegue del microservicio de usuarios.
+  USER: 'https://script.google.com/macros/s/AKfycbyJ8avsUWB6l11G1WCHpSJUOgRoeuB45Ys0fm6O6pWRAnAJuO7DGSU9LKuht_wZVeLh/exec',
 
-  // REQ: Microservicio Académico Modularizado (v7.9.3)
-  ACADEMIC: 'https://script.google.com/macros/s/AKfycbzFIK7CmO4qfh0BaHmXxou3yVasaaC30x2hypMld9ZOI_8DET3lwD0gl7xyHkSskSwo/exec',
+  // REQ: Microservicio Académico Modularizado (v7.9.6) - REEMPLAZAR con la URL del nuevo proyecto académico
+  ACADEMIC: 'https://script.google.com/macros/s/REEMPLAZAR_CON_URL_PROYECTO_ACADEMICO/exec',
 
   // Pega aquí la URL del despliegie del microservicio de tareas.
   TASK: 'https://script.google.com/macros/s/AKfycbz0J9mpCzbNMoW1LAFNhJFWhhVF6Vp-bMUMWCQazshxNmMabFs2Lj5m4YbT6mx2c_rl/exec',
@@ -259,6 +259,11 @@ window.sanitizarHTMLTecnico = function(html) {
         return '<a ' + cleanAttrs + '>';
     });
     sanitized = sanitized.replace(/&lt;\/a&gt;/gi, '</a>');
+
+    sanitized = sanitized.replace(/&lt;img\s+(.*?)&gt;/gi, function(match, attrs) {
+        var cleanAttrs = attrs.replace(/&quot;/g, '"').replace(/\s*on\w+\s*=\s*(?:'[^']*'|"[^" ]*"|[^\s>]+)/gi, '');
+        return '<img ' + cleanAttrs + '>';
+    });
 
     sanitized = sanitized.replace(/&amp;(lt|gt|quot|apos|amp|nbsp);/g, '&$1;');
 
