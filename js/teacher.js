@@ -1746,8 +1746,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                 <div class="text-center py-1 relative z-10">
                                     ${pending === 0 && (totalAssigned - completed) === 0 && totalAssigned > 0 ?
                                         `<div class="inline-flex p-2 bg-green-500/20 text-green-400 rounded-xl mb-2 border border-green-500/30"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="4" d="M5 13l4 4L19 7"></path></svg></div>
-                                         <div class="text-base font-semibold text-white tracking-tight uppercase">AL DÍA</div>
-                                         <p class="text-[8px] text-gray-500 uppercase font-semibold tracking-widest mt-1">Carga académica completada</p>` :
+                                         <div class="text-base font-semibold text-white tracking-tight uppercase">AL DÍA</div>` :
                                         `<div class="inline-flex p-2 bg-yellow-500/20 text-yellow-400 rounded-xl mb-2 border border-yellow-500/30"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="4" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg></div>
                                          <div class="text-base font-semibold text-white tracking-tight uppercase">EN CURSO</div>
                                          <p class="text-[8px] text-gray-500 uppercase font-semibold tracking-widest mt-1">${pending} por calificar / ${totalAssigned - completed} faltantes</p>`
