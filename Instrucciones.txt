@@ -354,3 +354,15 @@ TAREAS PENDIENTES DE REVISIÓN
 - Tarea 7: Expansión y Saneamiento del Banco de Preguntas v5.1 (1200+ reactivos genuninos).
 - Tarea 8: Reingeniería de Sincronización Híbrida y Gamificación (v7.1) - Offline-First, Guest Sessions, Skeleton Screens, XP Engine Recalibration.
 - Tarea 10: Optimización de Persistencia Académica y Navegación Contextual v7.9.1 - Resolución de duplicidad en persistencia, lógica de salto de navegación (Skip Logic) y filtrado estricto multi-factor.
+
+TAREAS PENDIENTES DE REVISIÓN
+
+TAREAS PENDIENTES DE REVISIÓN
+- Tarea: Rediseño del Formulario de Configuración y Constructor de Asignaciones (Grado → Sección → Asignatura → Unidad) v7.9.8.
+- Tarea: Reorganización de Interfaz Administrativa y Flujo de Cierre de Año (Eliminación física de archivos en Drive) v7.9.8.
+- Tarea: Optimización de Dashboard Estudiante - Visibilidad de asignaturas basada en GranularConfig y orden por vencimiento v7.9.8.
+- Tarea: Modernización UI de Selectores y Controles de Configuración Académica (Glassmorphism & Animaciones) v7.9.8.
+- Tarea: Fortalecimiento de Validaciones de Unicidad Académica en Backend v7.9.8.
+- Implementación de Jerarquía Académica Estricta (hierarchicalAssignments) v7.9.7
+- Corrección de visibilidad de Dashboard Estudiante (Multi-section support)
+- Fortalecimiento de firma HMAC en microservicio de usuarios

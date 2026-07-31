@@ -10,11 +10,14 @@
 // ----------------------------------------------------------
 
 window.SERVICE_URLS = {
-  // Pega aquí la URL del despliegue del microservicio de usuarios. (v7.8.6)
-  USER: 'https://script.google.com/macros/s/AKfycbwnRiJrWQ2ai71JvfsxCo4q0ht6qb44u6ojoyh8ULC_CYxvS1jXJXCWa9Bc8w2Lq6Sh/exec',
+  // Pega aquí la URL del despliegue del microservicio de usuarios.
+  USER: 'https://script.google.com/macros/s/AKfycbwwJatltmNlynkPPTZtTL8TfRJWWL_1Ho9Xe7-AWAU2ZOv6QnvaATsCzvXJzYTyIGY/exec',
+
+  // REQ: Microservicio Académico Modularizado (v7.9.6) - REEMPLAZAR con la URL del nuevo proyecto académico
+  ACADEMIC: 'https://script.google.com/macros/s/AKfycbyrLQkH5QZemaTVbAbNfTB2MXgy7Aq4grSVxrwLegbGbnKshAAE1KEpAxqp9DuMW33s/exec',
 
   // Pega aquí la URL del despliegie del microservicio de tareas.
-  TASK: 'https://script.google.com/macros/s/AKfycbz0J9mpCzbNMoW1LAFNhJFWhhVF6Vp-bMUMWCQazshxNmMabFs2Lj5m4YbT6mx2c_rl/exec',
+  TASK: 'https://script.google.com/macros/s/AKfycbx5JaHQjBIJGY2k4QczQ0_QzRz8Iv3-gcVXbd8WRV_JQJaqyEyw6sTtZ-VgzTvM9E-X/exec',
 
   // Pega aquí la URL del despliegue del microservicio de exámenes. (v7.7.6)
   EXAM: 'https://script.google.com/macros/s/AKfycbwUlIlqEnkEFeCTrp_tgsyAydhNsLKx6h14A8SvWjbfxNFIj3vSciN5xAe93qtNV-g/exec'
@@ -144,7 +147,8 @@ window.syncAcademicScope = function(callback) {
 
     // Retornamos una promesa para que el llamador pueda esperar a la sincronización REAL (desde el servidor)
     return new Promise(function(resolve) {
-        fetchApi('USER', 'getAcademicConfig', payload, 0, {
+        // REQ: Uso de Microservicio Académico Modularizado (v7.9.3)
+        fetchApi('ACADEMIC', 'getAcademicConfig', payload, 0, {
             store: 'academic_stats',
             key: 'config' + (currentUser ? '_' + currentUser.userId : ''),
             onUpdate: function(data) {
@@ -255,6 +259,11 @@ window.sanitizarHTMLTecnico = function(html) {
         return '<a ' + cleanAttrs + '>';
     });
     sanitized = sanitized.replace(/&lt;\/a&gt;/gi, '</a>');
+
+    sanitized = sanitized.replace(/&lt;img\s+(.*?)&gt;/gi, function(match, attrs) {
+        var cleanAttrs = attrs.replace(/&quot;/g, '"').replace(/\s*on\w+\s*=\s*(?:'[^']*'|"[^" ]*"|[^\s>]+)/gi, '');
+        return '<img ' + cleanAttrs + '>';
+    });
 
     sanitized = sanitized.replace(/&amp;(lt|gt|quot|apos|amp|nbsp);/g, '&$1;');
 

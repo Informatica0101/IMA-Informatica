@@ -114,9 +114,10 @@ document.addEventListener('DOMContentLoaded', () => {
         loadAcademicAdminData();
     });
 
+    let confirmedAssignments = [];
+
     async function loadAcademicAdminData() {
         const parcialSelect = document.getElementById('admin-parcial-actual');
-        const unidadSelect = document.getElementById('admin-unidad-actual');
         if (!parcialSelect) return;
 
         const applyConfig = (data) => {
@@ -124,36 +125,27 @@ document.addEventListener('DOMContentLoaded', () => {
             console.log("[IMA-TEACHER] Aplicando configuración recibida:", data);
 
             if (data.ParcialActual) parcialSelect.value = data.ParcialActual;
-            if (data.UnidadActual && unidadSelect) unidadSelect.value = data.UnidadActual;
-
-            // Normalización para visualización (v7.7.5)
-            const grades = Array.isArray(data.GradoActual) ? data.GradoActual : [data.GradoActual].filter(Boolean);
-            document.querySelectorAll('input[name="admin-grado"]').forEach(cb => {
-                cb.checked = grades.includes(cb.value);
-            });
-
-            const sections = Array.isArray(data.SeccionActual) ? data.SeccionActual : [data.SeccionActual].filter(Boolean);
-            document.querySelectorAll('input[name="admin-seccion"]').forEach(cb => {
-                cb.checked = sections.includes(cb.value);
-            });
 
             window.GLOBAL_SCOPE = {
-                ParcialActual: parcialSelect.value,
-                GradoActual: grades,
-                SeccionActual: sections,
-                AsignaturaActual: Array.isArray(data.AsignaturaActual) ? data.AsignaturaActual : [data.AsignaturaActual].filter(Boolean),
-                TemaActual: Array.isArray(data.TemaActual) ? data.TemaActual : [data.TemaActual].filter(Boolean),
+                ParcialActual: data.ParcialActual || parcialSelect.value,
                 GranularConfig: data.GranularConfig || []
             };
-            if (window.GLOBAL_SCOPE.TemaActual.length === 0) window.GLOBAL_SCOPE.TemaActual = ["General"];
             window.PARCIAL_ACTUAL = window.GLOBAL_SCOPE.ParcialActual;
 
-            updateCascadingSelectors(window.GLOBAL_SCOPE.AsignaturaActual, window.GLOBAL_SCOPE.TemaActual);
+            // Mapear GranularConfig a confirmedAssignments (v7.9.8)
+            confirmedAssignments = (data.GranularConfig || []).map(r => ({
+                grado: r.grado,
+                seccion: r.seccion,
+                asignatura: r.asignatura,
+                unidad: r.unidad
+            }));
+
+            renderConfirmedAssignments();
+            initAssignmentBuilder();
         };
 
-        // REQ: Sync Teacher-Specific Scope (v7.8.5)
         try {
-            const configRes = await fetchApi('USER', 'getAcademicConfig', { profesorId: currentUser.userId }, 0, {
+            const configRes = await fetchApi('ACADEMIC', 'getAcademicConfig', { profesorId: currentUser.userId }, 0, {
                 store: 'academic_stats',
                 key: 'config_' + currentUser.userId,
                 onUpdate: (data) => applyConfig(data)
@@ -166,127 +158,158 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    function updateCascadingSelectors(selectedAsigs, selectedTemas) {
-        const selectedGrades = Array.from(document.querySelectorAll('input[name="admin-grado"]:checked')).map(cb => cb.value);
-        const selectedSections = Array.from(document.querySelectorAll('input[name="admin-seccion"]:checked')).map(cb => cb.value);
-        const asigContainer = document.getElementById('admin-asignaturas-container');
-        const temasContainer = document.getElementById('admin-temas-container');
+    function initAssignmentBuilder() {
+        const gSel = document.getElementById('builder-grado');
+        const sSel = document.getElementById('builder-seccion');
+        const aSel = document.getElementById('builder-asignatura');
+        const uSel = document.getElementById('builder-unidad');
+        const btnAdd = document.getElementById('btn-add-assignment');
 
-        if (!asigContainer || !temasContainer) return;
+        if (!gSel) return;
 
         const presentations = window.presentationData || [];
-        let availableSubjs = [];
 
-        selectedGrades.forEach(grado => {
-            const gradeObj = presentations.find(g => window.parseGrade(g.grade) === window.parseGrade(grado));
-            if (gradeObj) {
-                const subjs = gradeObj.subjects.filter(s => {
-                    return selectedSections.some(sec => window.checkSectionHelper(s.sections, sec));
+        gSel.onchange = () => {
+            const grado = gSel.value;
+            sSel.innerHTML = '<option value="">Seleccione Sección</option>';
+            aSel.innerHTML = '<option value="">Seleccione Asignatura</option>';
+            uSel.value = 'I unidad';
+
+            sSel.disabled = !grado;
+            aSel.disabled = true;
+            uSel.disabled = true;
+
+            if (grado) {
+                const sections = ["A", "B", "C"]; // Estándar ISEMED
+                sections.forEach(s => {
+                    const opt = document.createElement('option');
+                    opt.value = s; opt.textContent = `Sección ${s}`;
+                    sSel.appendChild(opt);
                 });
-                availableSubjs = availableSubjs.concat(subjs);
             }
-        });
+        };
 
-        // Unique subjects by name
-        const uniqueSubjsNames = [...new Set(availableSubjs.map(s => s.name))];
-        const selectedAsigArray = Array.isArray(selectedAsigs) ? selectedAsigs : [selectedAsigs].filter(Boolean);
+        sSel.onchange = () => {
+            const grado = gSel.value;
+            const seccion = sSel.value;
+            aSel.innerHTML = '<option value="">Seleccione Asignatura</option>';
+            aSel.disabled = !seccion;
+            uSel.disabled = true;
 
-        if (uniqueSubjsNames.length === 0) {
-            asigContainer.innerHTML = '<p class="text-[10px] text-gray-400 p-2">Seleccione grado y sección para ver asignaturas.</p>';
-            temasContainer.innerHTML = '<p class="text-[10px] text-gray-400 p-2">Seleccione una asignatura para ver sus temas.</p>';
-        } else {
-            asigContainer.innerHTML = uniqueSubjsNames.map(s => `
-                <label class="flex items-center gap-2 px-2 py-1 hover:bg-blue-50 rounded-lg cursor-pointer transition-colors">
-                    <input type="checkbox" name="admin-asignatura" value="${s}" class="w-4 h-4 text-blue-600 rounded" ${selectedAsigArray.includes(s) ? 'checked' : ''}>
-                    <span class="text-[10px] font-bold text-gray-700 uppercase">${s}</span>
-                </label>
-            `).join('');
-        }
+            if (seccion) {
+                const gradeObj = presentations.find(g => window.parseGrade(g.grade) === window.parseGrade(grado));
+                if (gradeObj) {
+                    const subjs = gradeObj.subjects.filter(s => window.checkSectionHelper(s.sections, seccion));
+                    subjs.forEach(s => {
+                        const opt = document.createElement('option');
+                        opt.value = s.name; opt.textContent = s.name;
+                        aSel.appendChild(opt);
+                    });
+                }
+            }
+        };
 
-        const updateTemas = () => {
-            const checkedAsigs = Array.from(document.querySelectorAll('input[name="admin-asignatura"]:checked')).map(cb => cb.value);
-            const selectedTemasArray = Array.isArray(selectedTemas) ? selectedTemas : [selectedTemas].filter(Boolean);
+        aSel.onchange = () => {
+            uSel.disabled = !aSel.value;
+        };
 
-            if (checkedAsigs.length === 0) {
-                temasContainer.innerHTML = '<p class="text-[10px] text-gray-400 p-2">Seleccione una asignatura para ver sus temas.</p>';
+        btnAdd.onclick = () => {
+            const assignment = {
+                grado: gSel.value,
+                seccion: sSel.value,
+                asignatura: aSel.value,
+                unidad: uSel.value
+            };
+
+            if (!assignment.grado || !assignment.seccion || !assignment.asignatura) {
+                alert("Debe completar todos los campos del constructor.");
                 return;
             }
 
-            let html = '';
-            checkedAsigs.forEach(asigName => {
-                const subjs = availableSubjs.filter(s => s.name === asigName);
-                const topics = [];
-                subjs.forEach(s => {
-                    if (s.topics) s.topics.forEach(t => {
-                        if (!topics.find(ex => ex.title === t.title)) topics.push(t);
-                    });
-                });
+            // Evitar duplicados locales
+            const exists = confirmedAssignments.some(a =>
+                a.grado === assignment.grado &&
+                a.seccion === assignment.seccion &&
+                a.asignatura === assignment.asignatura
+            );
 
-                if (topics.length > 0) {
-                    html += `<div class="mb-4">
-                        <h4 class="text-[11px] font-black text-blue-600 uppercase tracking-widest border-b border-blue-50 pb-1 mb-2">${asigName}</h4>
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                            <label class="flex items-center gap-2 px-2 py-1 bg-gray-50 rounded-lg cursor-pointer hover:bg-blue-50 transition-colors">
-                                <input type="checkbox" name="admin-tema" value="General" class="w-4 h-4 text-blue-600 rounded" ${selectedTemasArray.includes("General") ? 'checked' : ''}>
-                                <span class="text-[9px] font-bold text-gray-500 uppercase">General (Todos)</span>
-                            </label>
-                            ${topics.map(t => `
-                                <label class="flex items-center gap-2 px-2 py-1 bg-white border border-gray-100 rounded-lg cursor-pointer hover:bg-blue-50 transition-colors">
-                                    <input type="checkbox" name="admin-tema" value="${t.title}" class="w-4 h-4 text-blue-600 rounded" ${selectedTemasArray.includes(t.title) ? 'checked' : ''}>
-                                    <span class="text-[9px] font-bold text-gray-700 uppercase">${t.title}</span>
-                                </label>
-                            `).join('')}
-                        </div>
-                    </div>`;
-                }
-            });
+            if (exists) {
+                alert("Esta asignación ya está en su lista.");
+                return;
+            }
 
-            temasContainer.innerHTML = html || '<p class="text-[10px] text-gray-400 p-2">Sin temas disponibles para las asignaturas seleccionadas.</p>';
+            confirmedAssignments.push(assignment);
+            renderConfirmedAssignments();
+
+            // Resetear selectores inferiores
+            aSel.value = "";
+            uSel.value = "I unidad";
+            uSel.disabled = true;
         };
-
-        updateTemas();
-
-        // Add listeners to new checkboxes
-        asigContainer.querySelectorAll('input[name="admin-asignatura"]').forEach(cb => {
-            cb.addEventListener('change', updateTemas);
-        });
     }
 
-    document.querySelectorAll('input[name="admin-grado"], input[name="admin-seccion"]').forEach(cb => {
-        cb.addEventListener('change', () => updateCascadingSelectors());
-    });
+    function renderConfirmedAssignments() {
+        const listContainer = document.getElementById('admin-assignments-list');
+        const btnSave = document.getElementById('btn-save-academic-config');
+        if (!listContainer) return;
 
-
-    document.getElementById('btn-save-academic-config')?.addEventListener('click', async () => {
-        const btn = document.getElementById('btn-save-academic-config');
-
-        const selectedGrades = Array.from(document.querySelectorAll('input[name="admin-grado"]:checked')).map(cb => cb.value);
-        const selectedSections = Array.from(document.querySelectorAll('input[name="admin-seccion"]:checked')).map(cb => cb.value);
-        const selectedAsigs = Array.from(document.querySelectorAll('input[name="admin-asignatura"]:checked')).map(cb => cb.value);
-        const selectedTemas = Array.from(document.querySelectorAll('input[name="admin-tema"]:checked')).map(cb => cb.value);
-
-        if (selectedGrades.length === 0 || selectedSections.length === 0 || selectedAsigs.length === 0 || selectedTemas.length === 0) {
-            alert('Debe seleccionar al menos un grado, una sección, una asignatura y un tema.');
+        if (confirmedAssignments.length === 0) {
+            listContainer.innerHTML = '<p class="text-[10px] text-gray-400 italic p-4 text-center border-2 border-dashed border-gray-100 rounded-2xl">No ha añadido asignaciones aún.</p>';
+            btnSave.disabled = true;
             return;
         }
 
+        btnSave.disabled = false;
+        listContainer.innerHTML = confirmedAssignments.map((a, idx) => `
+            <div class="flex items-center justify-between p-3 bg-gray-50 rounded-2xl border border-gray-100 group hover:border-blue-200 transition-all">
+                <div>
+                    <div class="text-[10px] font-black text-blue-600 uppercase tracking-tighter">${a.asignatura}</div>
+                    <div class="text-[9px] font-bold text-gray-400 uppercase tracking-widest">${a.grado} - SECC. ${a.seccion} | ${a.unidad}</div>
+                </div>
+                <button onclick="window.removeAssignment(${idx})" class="w-7 h-7 bg-white text-red-400 rounded-full flex items-center justify-center shadow-sm border border-gray-100 hover:bg-red-50 hover:text-red-600 transition-all">
+                    <i class="fas fa-times text-xs"></i>
+                </button>
+            </div>
+        `).join('');
+    }
+
+    window.removeAssignment = (idx) => {
+        confirmedAssignments.splice(idx, 1);
+        renderConfirmedAssignments();
+    };
+
+    document.getElementById('btn-save-academic-config')?.addEventListener('click', async () => {
+        if (confirmedAssignments.length === 0) return;
+
+        const btn = document.getElementById('btn-save-academic-config');
+        const parcialActual = document.getElementById('admin-parcial-actual').value;
+
+        // Construcción del fullScope jerárquico (v7.9.8)
+        const hierarchicalAssignments = confirmedAssignments.map(a => ({
+            grado: a.grado,
+            seccion: a.seccion,
+            asignatura: a.asignatura,
+            temas: ["General"], // Por defecto en el constructor simplificado
+            unidad: a.unidad
+        }));
+
         const fullScope = {
             profesorId: currentUser.userId,
-            ParcialActual: document.getElementById('admin-parcial-actual').value,
-            UnidadActual: document.getElementById('admin-unidad-actual')?.value || document.getElementById('admin-parcial-actual').value.replace('parcial', 'unidad'),
-            GradoActual: selectedGrades,
-            SeccionActual: selectedSections,
-            AsignaturaActual: selectedAsigs,
-            TemaActual: selectedTemas
+            ParcialActual: parcialActual,
+            UnidadActual: confirmedAssignments[0]?.unidad || "I unidad",
+            GradoActual: [...new Set(confirmedAssignments.map(a => a.grado))],
+            SeccionActual: [...new Set(confirmedAssignments.map(a => a.seccion))],
+            AsignaturaActual: [...new Set(confirmedAssignments.map(a => a.asignatura))],
+            TemaActual: ["General"],
+            hierarchicalAssignments: hierarchicalAssignments
         };
 
         btn.disabled = true;
         btn.textContent = 'Guardando...';
 
         try {
-            const res = await fetchApi('USER', 'updateAcademicConfig', { fullScope: fullScope });
+            const res = await fetchApi('ACADEMIC', 'updateAcademicConfig', { fullScope: fullScope });
             if (res.status === 'success') {
-                // Usar la respuesta del servidor para actualizar el caché (v7.7.5)
                 const confirmedScope = res.data || fullScope;
                 if (window.PersistenceManager) {
                     await window.PersistenceManager.set('academic_stats', confirmedScope, 'config');
@@ -294,18 +317,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 window.GLOBAL_SCOPE = confirmedScope;
                 window.PARCIAL_ACTUAL = confirmedScope.ParcialActual;
-                alert('Configuración global actualizada correctamente.');
+                alert('Configuración académica guardada exitosamente.');
 
-                // Disparar evento para que otros componentes reaccionen
                 document.dispatchEvent(new CustomEvent('academic-scope-updated', { detail: confirmedScope }));
             } else {
                 throw new Error(res.message);
             }
         } catch (e) {
-            alert('Error al guardar configuración: ' + e.message);
+            alert('Error: ' + e.message);
         } finally {
             btn.disabled = false;
-            btn.textContent = 'Guardar Configuración';
+            btn.textContent = 'Guardar Configuración Final';
         }
     });
 
@@ -361,7 +383,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const chunkSize = 20;
             for (let i = 0; i < validQuestions.length; i += chunkSize) {
                 const chunk = validQuestions.slice(i, i + chunkSize);
-                await Promise.all(chunk.map(q => fetchApi('USER', 'saveQuestion', {
+                await Promise.all(chunk.map(q => fetchApi('ACADEMIC', 'saveQuestion', {
                     Asignatura: q.Asignatura,
                     Nivel: q.Nivel,
                     Tema: q.Tema || "General",
@@ -381,7 +403,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const statsRes = await fetch('migration_stats.json');
             const stats = await statsRes.json();
 
-            await fetchApi('USER', 'generateMigrationReport', {
+            await fetchApi('ACADEMIC', 'generateMigrationReport', {
                 stats: {
                     totalDetectadas: stats.totalDetectadas,
                     totalMigradas: successCount,
@@ -1114,7 +1136,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }),
                 fetchApi('TASK', 'getAllTasks', payload),
                 fetchApi('EXAM', 'getAllExams', payload),
-                fetchApi('USER', 'getAcademicConfig', { profesorId: currentUser.userId })
+                fetchApi('ACADEMIC', 'getAcademicConfig', { profesorId: currentUser.userId })
             ]);
 
             // Guardar para Offline-First (Modulo 1)
@@ -1407,8 +1429,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const btnEditWa = document.getElementById('btn-edit-wa');
         const btnSaveWa = document.getElementById('btn-save-wa');
 
-        // Fetch current link (by Grade as per A-66 memory)
-        fetchApi('USER', 'getWhatsAppLink', { grado }).then(res => {
+        // Fetch current link (by Grade) (v7.9.3)
+        fetchApi('ACADEMIC', 'getWhatsAppLink', { grado }).then(res => {
             if (res.status === 'success' && res.link) {
                 waInput.value = res.link;
             }
@@ -1431,7 +1453,7 @@ document.addEventListener('DOMContentLoaded', () => {
             btnSaveWa.disabled = true;
             btnSaveWa.textContent = 'Guardando...';
             try {
-                const res = await fetchApi('USER', 'saveWhatsAppLink', { grado, link });
+                const res = await fetchApi('ACADEMIC', 'saveWhatsAppLink', { grado, link });
                 if (res.status === 'success') {
                     waInput.readOnly = true;
                     waInput.classList.add('text-gray-500');
@@ -1724,8 +1746,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                 <div class="text-center py-1 relative z-10">
                                     ${pending === 0 && (totalAssigned - completed) === 0 && totalAssigned > 0 ?
                                         `<div class="inline-flex p-2 bg-green-500/20 text-green-400 rounded-xl mb-2 border border-green-500/30"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="4" d="M5 13l4 4L19 7"></path></svg></div>
-                                         <div class="text-base font-semibold text-white tracking-tight uppercase">AL DÍA</div>
-                                         <p class="text-[8px] text-gray-500 uppercase font-semibold tracking-widest mt-1">Carga académica completada</p>` :
+                                         <div class="text-base font-semibold text-white tracking-tight uppercase">AL DÍA</div>` :
                                         `<div class="inline-flex p-2 bg-yellow-500/20 text-yellow-400 rounded-xl mb-2 border border-yellow-500/30"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="4" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg></div>
                                          <div class="text-base font-semibold text-white tracking-tight uppercase">EN CURSO</div>
                                          <p class="text-[8px] text-gray-500 uppercase font-semibold tracking-widest mt-1">${pending} por calificar / ${totalAssigned - completed} faltantes</p>`

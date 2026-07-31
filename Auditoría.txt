@@ -1003,3 +1003,148 @@ Solución: Migración a filtrado por GranularConfig y validación reforzada cont
 VERIFICACIÓN FINAL:
 - Persistencia: Escritura única confirmada.
 - Aislamiento: Estudiantes de 10mo ya no ven recursos de 11no ni 12mo.
+
+
+AUDITORÍA TÉCNICA - RESOLUCIÓN DE PERSISTENCIA Y FILTRADO - Fri Jul  3 11:31:45 UTC 2026
+AUDITORÍA TÉCNICA - RESOLUCIÓN DE PERSISTENCIA Y FILTRADO - Fri Jul  3 11:33:53 UTC 2026
+
+Archivo: backend/user-service/Code.gs
+Hallazgo [Crítico]: Duplicidad en la persistencia. Aunque se usa un Map para reconciliar en memoria, la inconsistencia en la normalización (mayúsculas/minúsculas) en 'saveToAcademicHistory' provoca que la validación de unicidad de 5 factores falle, insertando registros redundantes.
+Impacto: Corrupción del historial académico y degradación de rendimiento.
+Referencia: Líneas 1451-1500 (saveToAcademicHistory).
+
+Archivo: js/student.js
+Hallazgo [Crítico]: Error de referencia. La variable 'matchParcial' se utiliza en el filtro de 'renderSubjectNavigation' pero no está definida en el ámbito de la función.
+Impacto: El filtrado de asignaturas falla silenciosamente o lanza error, provocando la visualización de materias de otros parciales/grados.
+Referencia: Línea 638.
+
+Archivo: js/config.js
+Hallazgo [Medio]: Acoplamiento excesivo. El microservicio de usuarios gestiona autenticación, analítica y configuración académica, lo que incrementa el riesgo de errores de red (CORS/Timeout) y dificulta el mantenimiento.
+Referencia: window.SERVICE_URLS.USER.
+
+Archivo: js/api.js
+Hallazgo [Bajo]: El error 'TypeError: Failed to fetch' reportado puede deberse a que el microservicio de usuarios está excediendo el tiempo límite de ejecución de Google Apps Script al procesar demasiadas responsabilidades en una sola llamada 'doPost'.
+AUDITORÍA FORENSE - INCONGRUENCIA DE LÍNEAS EN MICROSERVICIOS - Fri Jul  3 13:06:26 UTC 2026
+
+Archivo Original: backend/user-service/Code.gs (~1582 líneas)
+Archivos Actuales:
+- user-service/Code.gs: 549 líneas
+- academic-service/Code.gs: 431 líneas
+Total actual: 980 líneas.
+
+Hallazgo [Crítico]: Pérdida masiva de lógica de negocio durante la modularización.
+Módulos Afectados:
+1. Analítica Integral: La función 'recordAnalytics' fue reducida de ~145 líneas a un registro básico, eliminando el cálculo de ICR (Índice de Confianza), GP (Índice de Adivinación), Eficiencia, Impulsividad y la lógica de Calibración (Cold Start).
+2. Gamificación: 'getGlobalTop' perdió la lógica de divisor dinámico, promedios ponderados y menciones por asignatura.
+3. Perfil de Aprendizaje: 'updateLearningProfile' y 'updateLeaderboard' fueron omitidos, rompiendo la progresión de Mastery (70/30 Rule).
+4. Persistencia de Juegos: 'getGameStats' ya no recupera la analítica detallada ni el expediente psicométrico completo.
+5. Fusión de Datos: 'mergeGuestData' fue simplificado a una respuesta vacía, impidiendo la migración de historial de invitados.
+
+Causa Raíz: Simplificación excesiva y apresurada durante la fase de modularización, priorizando la estructura sobre la integridad de la lógica funcional existente.
+
+AUDITORÍA FORENSE Y RESTAURACIÓN DE SERVICIOS v7.9.6 - Fri Jul  3 14:03:11 UTC 2026
+
+Archivo: backend/academic-service/Code.gs
+- Sector: updateAcademicConfig / saveToAcademicHistory
+- Hallazgo [Crítico]: Riesgo de pérdida de datos por clearContent() antes de setValues().
+- Solución: Cambiado a setValues() sobre el rango existente y deleteRows() para el excedente, garantizando integridad en caso de timeout.
+- Hallazgo [Crítico]: Duplicidad persistente por falta de normalización en llaves existentes.
+- Solución: Implementada normalización (normalizeString) tanto para llaves nuevas como para la construcción del Set de llaves existentes.
+
+Archivo: backend/user-service/Code.gs
+- Sector: mergeGuestData
+- Hallazgo [Crítico]: Omisión de migración de analítica psicométrica.
+- Solución: Restaurada la lógica de migración para QuizProAnalytics dentro del flujo de fusión de invitados.
+- Sector: Analítica Integral
+- Estado: 100% de la lógica psicométrica (ICR, GP, Mastery) restaurada y compactada.
+
+Archivo: js/config.js
+- Hallazgo [Arquitectura]: URLs de microservicios duplicadas.
+- Solución: Separadas las constantes USER y ACADEMIC con placeholders para despliegues independientes.
+- Sector: Seguridad / Auth\n- Hallazgo: Vulnerabilidad por firma hardcodeada en resetPassword.\n- Solución: Restaurada firma HMAC SHA-256 usando SECRET_KEY.
+
+AUDITORÍA DE ESTABILIZACIÓN Y SEGURIDAD v7.9.7 - Fri Jul  3 15:57:36 UTC 2026
+
+Archivo: backend/user-service/Code.gs
+- Sector: requestPasswordRecovery / resetPassword
+- Hallazgo [Crítico]: Vulnerabilidad de firma de token hardcodeada ('SIG-REPLACEME').
+- Solución: Restaurada implementación HMAC SHA-256 utilizando SECRET_KEY.
+
+Archivo: js/student.js
+- Sector: renderSubjectNavigation
+- Hallazgo [Alto]: Error de renderizado en Dashboard Estudiante por falta de soporte a listas de secciones (csv).
+- Solución: Integrado window.checkSectionHelper para validar alcances granulares de sección.
+
+Archivo: backend/academic-service/Code.gs
+- Sector: updateAcademicConfig
+- Hallazgo [Causa Raíz]: Duplicidad por falta de normalización en la reconciliación y contaminación por producto cartesiano ciego.
+- Solución: Implementada 'hierarchicalAssignments' desde el frontend para forzar unicidad Grado-Asignatura-Tema. Normalización bidireccional aplicada a todas las búsquedas de llaves.
+
+AUDITORÍA TÉCNICA - REESTRUCTURACIÓN ACADÉMICA Y CIERRE DE CICLO - Fri Jul  3 16:56:56 UTC 2026
+
+Archivo: teacher-dashboard.html
+Sector: Panel de Administración (Líneas 410-515)
+Hallazgo [Medio]: El formulario de "Gestión Académica" se ubica después de "Finalizar Año Escolar".
+Impacto: Flujo de usuario inconsistente; las operaciones críticas administrativas deben ser el paso final.
+Recomendación: Reubicar el bloque de Gestión Académica antes del Cierre de Año.
+
+Sector: Formulario de Configuración (Líneas 474-510)
+Hallazgo [Crítico]: Uso de grupos de checkboxes para selección masiva de Grados, Secciones y Asignaturas.
+Impacto: Permite selecciones ambiguas que generan registros duplicados o incorrectos en el backend (ej. una asignatura asociada a múltiples grados erróneamente). No representa la jerarquía real Grado -> Sección -> Asignatura.
+Recomendación: Rediseñar a un flujo secuencial con selectores dependientes y una lista de asignaciones confirmadas.
+
+Archivo: js/teacher.js
+Sector: Lógica de Configuración (updateCascadingSelectors / btn-save-academic-config)
+Hallazgo [Alto]: La recolección de datos depende de estados de checkboxes que no garantizan la integridad de la relación jerárquica.
+Impacto: Generación de 'hierarchicalAssignments' propensa a errores por la naturaleza multi-selección de la UI actual.
+Recomendación: Implementar lógica para manejar un "Constructor de Asignaciones" paso a paso.
+
+Archivo: js/student.js
+Sector: renderSubjectNavigation (Línea 585)
+Hallazgo [Alto]: La generación de tarjetas de asignatura depende de la existencia de actividades en 'currentActivities'.
+Impacto: Si una asignatura configurada no tiene tareas publicadas, no se muestra en el dashboard, rompiendo la consistencia de navegación.
+Recomendación: Utilizar 'GranularConfig' como fuente primaria para renderizar todas las asignaturas autorizadas.
+
+Sector: renderSubjectNavigation (Snippet informativo)
+Hallazgo [Bajo]: El snippet de estado no prioriza visualmente la urgencia de las tareas.
+Recomendación: Ordenar actividades pendientes por fecha de vencimiento más próxima.
+
+Archivo: backend/academic-service/Code.gs
+Sector: updateAcademicConfig (Línea 88)
+Hallazgo [Alto]: La validación de unicidad (Líneas 112-113) es genérica sobre arreglos y no previene colisiones específicas en el producto cartesiano resultante si falla la estructura jerárquica.
+Recomendación: Endurecer la validación para verificar la combinación exacta (Parcial, Grado, Sección, Asignatura) contra todos los registros de otros profesores.
+
+Archivo: backend/task-service/Code.gs
+Sector: closeAcademicYear (Línea 135)
+Hallazgo [Crítico]: El proceso de cierre solo elimina registros en la Spreadsheet.
+Impacto: Los archivos de entregas permanecen ocupando espacio en Google Drive sin referencia, y la configuración académica vigente no se restablece.
+Recomendación: Implementar eliminación física de archivos vía DriveApp y limpieza de la hoja 'ConfiguracionAcademica'.
+
+AUDITORÍA TÉCNICA - ACTUALIZACIÓN DE MICROSERVICIOS Y REFINAMIENTO DE DASHBOARD - Fri Jul  3 19:01:19 UTC 2026
+
+Archivo: js/config.js
+Sector: SERVICE_URLS (Líneas 14-25)
+Hallazgo [Crítico]: Las URLs de los microservicios ACADEMIC y TASK están desactualizadas según los nuevos requerimientos de producción.
+Impacto: Fallos en la sincronización de datos y persistencia al apuntar a endpoints obsoletos.
+Recomendación: Actualizar ACADEMIC a '...DuMW33s/exec' y TASK a '...VgzTvM9E-X/exec'.
+
+Archivo: js/student.js
+Sector: renderSubjectNavigation / snippet informativo (Línea 706)
+Hallazgo [Bajo]: Presencia del mensaje de debug "Carga académica completada".
+Impacto: Mala experiencia de usuario al mostrar terminología técnica/debug en producción.
+Recomendación: Eliminar el mensaje y asegurar que el snippet solo muestre información relevante de fechas.
+
+Sector: Lógica de filtrado de actividades (Línea 671)
+Hallazgo [Medio]: El filtrado de actividades pendientes para el resumen de la tarjeta no es lo suficientemente restrictivo según las nuevas reglas.
+Impacto: Visualización de actividades que ya fueron cerradas/calificadas si el estado no coincide exactamente con las exclusiones actuales.
+Recomendación: Refinar el filtro para incluir explícitamente NO entregadas, rechazadas, incompletas y pendientes de calificación, excluyendo terminantemente las revisadas/calificadas.
+
+Archivo: js/index-ui.js
+Sector: renderDownloadTopics (Línea 278)
+Hallazgo [Alto]: La visualización de contenido descargable depende de la selección manual en el índice de recursos, pero no garantiza el filtrado automático por la unidad vigente del parcial actual configurado en GLOBAL_SCOPE.
+Impacto: Los estudiantes pueden acceder a materiales de unidades que no corresponden al período académico activo.
+Recomendación: Implementar un filtro estricto en la carga de contenidos descargables que valide la unidad y el parcial vigentes.
+
+Archivo: js/data.js
+Hallazgo [Observación]: La estructura de downloadContentData incluye campos 'unit' y 'parcial' (en algunos casos implícito por la jerarquía).
+Impacto: Si los metadatos no son coherentes con GLOBAL_SCOPE, el filtrado fallará.

@@ -107,4 +107,20 @@
 ### [POST-001] Validación de Rango de Fecha en Historial
 - **Severidad:** Observación.
 - **Descripción:** Verificar tras el próximo cambio de parcial real si el 'HistorialAcademico' también debe recibir la actualización de rango de fecha o si permanece como registro de hito (instantánea). Actualmente se guarda el mes de registro.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
+
+### [MOD-001] Modularización de Microservicio Académico
+- **Origen del Hallazgo:** Nueva Revisión Post-Commit.
+- **Severidad:** Alto.
+- **Descripción:** Separación de lógica académica del microservicio de usuarios.
+- **Estado:** [X] Completada
+
+### [FIX-002] Resolución de Duplicidad en Historial
+- **Origen del Hallazgo:** Incidencia crítica reportada.
+- **Descripción:** Normalización estricta en validación de 5 factores.
+- **Estado:** [X] Completada
+
+### [FIX-003] Reparación de Filtrado de Asignaturas (matchParcial)
+- **Origen del Hallazgo:** Error de consola detectado en auditoría.
+- **Descripción:** Definición de variable matchParcial en student.js.
+- **Estado:** [X] Completada
