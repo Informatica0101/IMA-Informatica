@@ -180,7 +180,7 @@ document.addEventListener('DOMContentLoaded', () => {
             uSel.disabled = true;
 
             if (grado) {
-                const sections = ["A", "B", "C"]; // Estándar ISEMED
+                const sections = ["A", "B", "C"]; // Estándar New Generation
                 sections.forEach(s => {
                     const opt = document.createElement('option');
                     opt.value = s; opt.textContent = `Sección ${s}`;
@@ -1667,7 +1667,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                 </div>
                             </div>
                             <div class="flex-grow">
-                                <span class="inline-block px-2 py-0.5 bg-blue-50 text-blue-600 rounded-full text-[8px] font-semibold uppercase tracking-widest mb-1">Expediente Académico ISEMED</span>
+                                <span class="inline-block px-2 py-0.5 bg-blue-50 text-blue-600 rounded-full text-[8px] font-semibold uppercase tracking-widest mb-1">Expediente Académico New Generation</span>
                                 <h3 class="text-xl md:text-2xl font-semibold text-gray-900 leading-tight tracking-tight">${studentInfo.nombre}</h3>
                                 <div class="flex flex-wrap items-center gap-x-4 gap-y-1 mt-1 text-[10px] text-gray-400 font-semibold uppercase tracking-[0.05em]">
                                     <span class="flex items-center gap-1"><div class="w-1.5 h-1.5 bg-blue-600 rounded-full"></div> ${grado} - ${seccion}</span>

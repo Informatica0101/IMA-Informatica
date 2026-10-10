@@ -1153,7 +1153,7 @@ REGISTRO DE AUDITORÍA - REGISTRO DE REQUERIMIENTOS DE DESARROLLO Y EXPANSIÓN -
 
 Archivo: Pendientes.md
 Sector: Módulo de Tareas Pendientes y Requerimientos de Expansión
-Hallazgo [Alto]: Necesidad de indexar y catalogar formalmente los 19 requerimientos de desarrollo y expansión institucional (New Generation Bilingual School and Institute) siguiendo la metodología oficial.
+Hallazgo [Alto]: Necesidad de indexar y catalogar formalmente los 19 requerimientos de desarrollo y expansión institucional (New Generation Christian Academy) siguiendo la metodología oficial.
 Impacto: Permite trazabilidad de las funcionalidades académicas consolidadas ([REQ-EXP-001] a [REQ-EXP-006]) y priorización clara de los módulos administrativos, financieros, laborales, de inventario y consola técnica ([REQ-EXP-007] a [REQ-EXP-019]).
 Recomendación: Mantenimiento del catálogo de tareas en Pendientes.md con actualización continua de estados según las normas de METODOLOGIA_DESARROLLO.md.
 
@@ -1161,6 +1161,26 @@ REGISTRO DE AUDITORÍA - REGISTRO DE ESPECIFICACIÓN DE GESTIÓN DOCENTE, CONTEN
 
 Archivo: Pendientes.md
 Sector: Módulo de Tareas Pendientes y Requerimientos Docentes
-Hallazgo [Alto]: Indexación y catalogación formal de los 12 requerimientos de la especificación "GESTIÓN DOCENTE, CONTENIDO DE CLASES, GUÍAS DE ESTUDIO Y TAREAS" para New Generation Bilingual School and Institute.
+Hallazgo [Alto]: Indexación y catalogación formal de los 12 requerimientos de la especificación "GESTIÓN DOCENTE, CONTENIDO DE CLASES, GUÍAS DE ESTUDIO Y TAREAS" para New Generation Christian Academy.
 Impacto: Se catalogan las tareas completadas ([REQ-DOC-002], [REQ-DOC-003], [REQ-DOC-004]) y los requerimientos pendientes ([REQ-DOC-001], [REQ-DOC-005] al [REQ-DOC-012]) para coordinar las siguientes etapas de desarrollo.
 Recomendación: Cumplir estrictamente el flujo de 8 fases de METODOLOGIA_DESARROLLO.md para la ejecución de cada requerimiento pendiente.
+
+AUDITORÍA TÉCNICA - RENOMBRADO INSTITUCIONAL E IDENTIDAD VISUAL PWA [REQ-EXP-007] - Sat Jul 4 2026
+
+Archivos: index.html, login.html, register.html, student-dashboard.html, teacher-dashboard.html, forgot-password.html, reset-password.html, exam.html, results.html, interactivo.html
+Sector: Encabezados, Títulos, Metadatos y Pies de página (Líneas Varias)
+Hallazgo [Alto]: Presencia de denominaciones institucionales obsoletas ("ISEMED", "Instituto María Auxiliadora", "Área de Informática ISEMED") en las etiquetas <title>, <meta description>, enlaces de favicon/apple-touch-icon ("IMA-Logo.png"), texto de encabezado <h1> y copyright en el pie de página.
+Impacto: Incoherencia institucional en la UI pública y desalineación con la identidad oficial "New Generation Christian Academy".
+Recomendación: Reemplazar todas las menciones obsoletas por "New Generation Christian Academy" y "New Generation", y actualizar referencias del logotipo a "imagenes/new-generation-logo.png".
+
+Archivo: manifest.json
+Sector: Configuración PWA (Líneas 2, 3, 4, 11, 16)
+Hallazgo [Alto]: El manifiesto de la aplicación PWA mantiene la descripción genérica anterior e íconos apuntando a "IMA-Logo.png".
+Impacto: La PWA instalada en dispositivos móviles muestra nombre y logotipos desactualizados.
+Recomendación: Actualizar 'name', 'short_name', 'description' e 'icons' para reflejar "New Generation Christian Academy" y "imagenes/new-generation-logo.png".
+
+Archivos: js/student.js, js/teacher.js
+Sector: Cadenas de Texto Institucionales (Líneas 519, 183, 1670)
+Hallazgo [Medio]: Menciones de "ISEMED" en metadatos y encabezados de reportes generados en JavaScript.
+Impacto: Exportaciones de expedientes y encabezados dinámicos muestran marcas institucionales anteriores.
+Recomendación: Actualizar constantes de nombre institucional a "New Generation Christian Academy".

@@ -516,8 +516,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
             // Info por defecto (Área de Informática)
             var profInfo = {
-                nombre: "ISEMED - Área de Informática",
-                email: "informatica@isemed.edu.hn",
+                nombre: "New Generation Christian Academy",
+                email: "info@newgeneration.edu.hn",
                 telefono: ""
             };
 

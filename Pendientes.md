@@ -127,7 +127,7 @@
 
 ---
 
-## REQUERIMIENTOS DE EXPANSIÓN Y DESARROLLO (New Generation Bilingual School and Institute)
+## REQUERIMIENTOS DE EXPANSIÓN Y DESARROLLO (New Generation Christian Academy)
 
 ### [REQ-EXP-001] Adopción de Metodología de Desarrollo y Auditoría (Sección 2)
 - **Origen del Hallazgo:** Requerimientos de Desarrollo y Expansión (Sección 2).
@@ -187,9 +187,9 @@
 - **Severidad/Clasificación:** Alto
 - **Archivos Involucrados:** `index.html`, `login.html`, `register.html`, `student-dashboard.html`, `teacher-dashboard.html`, `manifest.json`, `imagenes/new-generation-logo.png`
 - **Dependencias Expuestas:** Encabezados HTML, pies de página, manifiesto PWA, diálogos de login/registro.
-- **Descripción del Alcance:** Reemplazar todas las menciones institucionales anteriores por "New Generation Bilingual School and Institute", renombrar recurso de logotipo a `new-generation-logo.png` y actualizar PWA manifest.
+- **Descripción del Alcance:** Reemplazar todas las menciones institucionales anteriores por "New Generation Christian Academy", renombrar recurso de logotipo a `new-generation-logo.png` y actualizar PWA manifest.
 - **Criterios de Aceptación:** No existen referencias institucionales obsoletas en la UI pública. El logotipo carga correctamente en todas las vistas.
-- **Estado:** [ ] Pendiente
+- **Estado:** [ ] En Ejecución
 
 ### [REQ-EXP-008] Sistema de Roles y Permisos Granulares Servidor/RBAC (Sección 5)
 - **Origen del Hallazgo:** Requerimientos de Desarrollo y Expansión (Sección 5).
@@ -301,7 +301,7 @@
 
 ---
 
-## REQUERIMIENTOS DE GESTIÓN DOCENTE, CONTENIDOS, GUÍAS Y TAREAS (New Generation Bilingual School and Institute)
+## REQUERIMIENTOS DE GESTIÓN DOCENTE, CONTENIDOS, GUÍAS Y TAREAS (New Generation Christian Academy)
 
 ### [REQ-DOC-001] Gestión de Guías de Estudio por Asignatura y Parcial (Sección 3)
 - **Origen del Hallazgo:** Especificación de Gestión Docente y Tareas (Sección 3).
