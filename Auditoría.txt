@@ -1156,3 +1156,11 @@ Sector: Módulo de Tareas Pendientes y Requerimientos de Expansión
 Hallazgo [Alto]: Necesidad de indexar y catalogar formalmente los 19 requerimientos de desarrollo y expansión institucional (New Generation Bilingual School and Institute) siguiendo la metodología oficial.
 Impacto: Permite trazabilidad de las funcionalidades académicas consolidadas ([REQ-EXP-001] a [REQ-EXP-006]) y priorización clara de los módulos administrativos, financieros, laborales, de inventario y consola técnica ([REQ-EXP-007] a [REQ-EXP-019]).
 Recomendación: Mantenimiento del catálogo de tareas en Pendientes.md con actualización continua de estados según las normas de METODOLOGIA_DESARROLLO.md.
+
+REGISTRO DE AUDITORÍA - REGISTRO DE ESPECIFICACIÓN DE GESTIÓN DOCENTE, CONTENIDOS Y TAREAS - Fri Jul 3 2026
+
+Archivo: Pendientes.md
+Sector: Módulo de Tareas Pendientes y Requerimientos Docentes
+Hallazgo [Alto]: Indexación y catalogación formal de los 12 requerimientos de la especificación "GESTIÓN DOCENTE, CONTENIDO DE CLASES, GUÍAS DE ESTUDIO Y TAREAS" para New Generation Bilingual School and Institute.
+Impacto: Se catalogan las tareas completadas ([REQ-DOC-002], [REQ-DOC-003], [REQ-DOC-004]) y los requerimientos pendientes ([REQ-DOC-001], [REQ-DOC-005] al [REQ-DOC-012]) para coordinar las siguientes etapas de desarrollo.
+Recomendación: Cumplir estrictamente el flujo de 8 fases de METODOLOGIA_DESARROLLO.md para la ejecución de cada requerimiento pendiente.

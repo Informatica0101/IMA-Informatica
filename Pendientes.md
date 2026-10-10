@@ -251,7 +251,7 @@
 - **Archivos Involucrados:** `backend/user-service/Code.gs`
 - **Dependencias Expuestas:** Expedientes laborales, salarios, deducciones de ley en Honduras (IHSS, RAP, ISR).
 - **Descripción del Alcance:** Generar planillas periódicas, calcular horas extras, bonificaciones, deducciones, control de asistencia (entradas/salidas/tardanzas) e informes de costos laborales.
-- **Criterios de Aceptación:** Comprobantes de pago de planilla generados y acceso restringido estrictamente por rol.
+- **Criterios de Aceptación:** Comprobantes de pago de planilla generados y acceso restricted estrictamente por rol.
 - **Estado:** [ ] Pendiente
 
 ### [REQ-EXP-015] Módulo de Inventarios, Activos y Control de Proveedores (Sección 12)
@@ -297,4 +297,116 @@
 - **Dependencias Expuestas:** Drive API, automatización de respaldos de datos de la institución.
 - **Descripción del Alcance:** Crear respaldos manuales/programados, verificar integridad de archivos guardados, control de restauración protegida con confirmación doble y herramientas de mantenimiento seguro.
 - **Criterios de Aceptación:** Generación exitosa de respaldos verificables con políticas de retención.
+- **Estado:** [ ] Pendiente
+
+---
+
+## REQUERIMIENTOS DE GESTIÓN DOCENTE, CONTENIDOS, GUÍAS Y TAREAS (New Generation Bilingual School and Institute)
+
+### [REQ-DOC-001] Gestión de Guías de Estudio por Asignatura y Parcial (Sección 3)
+- **Origen del Hallazgo:** Especificación de Gestión Docente y Tareas (Sección 3).
+- **Severidad/Clasificación:** Alto
+- **Archivos Involucrados:** `teacher-dashboard.html`, `js/teacher.js`, `js/student.js`, `backend/academic-service/Code.gs`
+- **Dependencias Expuestas:** `getAcademicConfig`, subida de archivos, tipos MIME documentales autorizados (PDF, DOCX, TXT, XLSX, PPTX).
+- **Descripción del Alcance:** Permitir a los docentes crear, publicar, sustituir, consultar y desactivar guías de estudio por asignatura, grado, sección y parcial, con sanitización de contenido y visualización en el dashboard estudiantil.
+- **Criterios de Aceptación:** Las guías creadas se vinculan correctamente a la asignatura/parcial y se despliegan para alumnos autorizados.
+- **Estado:** [ ] Pendiente
+
+### [REQ-DOC-002] Registro de Contenido de Clases y Presentaciones por Tema (Sección 4 / 13.1 - 13.2)
+- **Origen del Hallazgo:** Especificación de Gestión Docente y Tareas (Sección 4 / 13.1 - 13.2).
+- **Severidad/Clasificación:** Alto
+- **Archivos Involucrados:** `js/teacher.js`, `js/config.js`, `teacher-dashboard.html`
+- **Dependencias Expuestas:** `PRESENTATION_INDEX`, `GLOBAL_SCOPE.TemaActual`, integración con Google Drive.
+- **Descripción del Alcance:** Organizar material pedagógico por tema (título, descripción, fecha de clase, contenido en editor enriquecido, presentación adjunta en Drive, documentos complementarios y tareas asociadas).
+- **Criterios de Aceptación:** Asociación temas-presentaciones-recursos almacenada y persistida tras recarga de página.
+- **Estado:** [X] Completada
+
+### [REQ-DOC-003] Creación de Tareas Polimórficas y Validación de Contenido Obligatorio (Sección 5.1 - 5.3)
+- **Origen del Hallazgo:** Especificación de Gestión Docente y Tareas (Sección 5.1 - 5.3).
+- **Severidad/Clasificación:** Crítico
+- **Archivos Involucrados:** `teacher-dashboard.html`, `js/teacher.js`, `backend/task-service/Code.gs`
+- **Dependencias Expuestas:** Editor Quill, modal de creación de tareas, validaciones de adjuntos.
+- **Descripción del Alcance:** Proveer tres modalidades de creación (A. Editor de texto enriquecido, B. Documento adjunto, C. Ejercicios a desarrollar). Validar que ninguna tarea se guarde sin contenido o sin fecha límite.
+- **Criterios de Aceptación:** Bloqueo de guardado ante tareas vacías y almacenamiento de instrucciones/archivos en backend.
+- **Estado:** [X] Completada
+
+### [REQ-DOC-004] Desacoplamiento de Guías de Estudio vs Tareas Evaluables (Sección 5.4)
+- **Origen del Hallazgo:** Especificación de Gestión Docente y Tareas (Sección 5.4).
+- **Severidad/Clasificación:** Alto
+- **Archivos Involucrados:** `js/teacher.js`, `js/student.js`, `backend/task-service/Code.gs`
+- **Dependencias Expuestas:** Clasificación de tipo de recurso (`tipoRecurso`).
+- **Descripción del Alcance:** Permitir indicar la función del material (tarea/actividad para entregar, ejercicios, guía de estudio, material de apoyo). Garantizar que las guías de estudio no aparezcan automáticamente como tareas pendientes.
+- **Criterios de Aceptación:** Distinción visual y lógica clara entre guías informativas y actividades evaluables que requieren entrega.
+- **Estado:** [X] Completada
+
+### [REQ-DOC-005] Programación de Publicación Posterior a Clase y Fecha Predeterminada (Sección 6.1 - 6.2)
+- **Origen del Hallazgo:** Especificación de Gestión Docente y Tareas (Sección 6.1 - 6.2).
+- **Severidad/Clasificación:** Medio
+- **Archivos Involucrados:** `js/teacher.js`, `teacher-dashboard.html`
+- **Dependencias Expuestas:** Cálculo de fechas en el formulario de creación de tareas.
+- **Descripción del Alcance:** Sugerir por defecto como fecha de entrega el día siguiente a la fecha de la clase impartida. Permitir al docente modificar la fecha y validar que la entrega no sea anterior a la fecha de clase.
+- **Criterios de Aceptación:** La fecha por defecto se calcula a partir de la fecha de la clase vinculada.
+- **Estado:** [ ] Pendiente
+
+### [REQ-DOC-006] Hora de Disponibilidad de Tareas Independiente de Fecha Límite (Sección 6.3 - 6.5)
+- **Origen del Hallazgo:** Especificación de Gestión Docente y Tareas (Sección 6.3 - 6.5).
+- **Severidad/Clasificación:** Crítico
+- **Archivos Involucrados:** `js/teacher.js`, `js/student.js`, `backend/task-service/Code.gs`
+- **Dependencias Expuestas:** Máquina de estados de la tarea (Borrador, Programada, Publicada, Disponible, Entregada, Vencida, Cerrada).
+- **Descripción del Alcance:** Manejar hora de disponibilidad configurada desde el panel administrativo de desarrollador. Ocultar el botón de entrega si la tarea aún está programada para el futuro tras la clase.
+- **Criterios de Aceptación:** Control de visibilidad y bloqueo de entregas antes de la hora de disponibilidad configurada.
+- **Estado:** [ ] Pendiente
+
+### [REQ-DOC-007] Visualización de Tareas y Recursos en Dashboard Estudiantil (Sección 7)
+- **Origen del Hallazgo:** Especificación de Gestión Docente y Tareas (Sección 7).
+- **Severidad/Clasificación:** Alto
+- **Archivos Involucrados:** `js/student.js`, `student-dashboard.html`
+- **Dependencias Expuestas:** `renderSubjectNavigation`, tarjetas expandibles de asignatura.
+- **Descripción del Alcance:** Mostrar tareas con título, asignatura, tema, parcial, fechas y estado (pendiente, entregada, vencida). Separar visualmente las guías de estudio de las tareas evaluables.
+- **Criterios de Aceptación:** Tarjetas desplegables por materia mostrando claramente guías y tareas sin confusión de estados.
+- **Estado:** [ ] Pendiente
+
+### [REQ-DOC-008] Estructura de Carpetas Jerárquica en Google Drive y Nomenclatura (Sección 8)
+- **Origen del Hallazgo:** Especificación de Gestión Docente y Tareas (Sección 8).
+- **Severidad/Clasificación:** Crítico
+- **Archivos Involucrados:** `backend/task-service/Code.gs`, `backend/academic-service/Code.gs`
+- **Dependencias Expuestas:** Google Drive API (`DriveApp`), jerarquía de carpetas por Asignatura/Año/Parcial.
+- **Descripción del Alcance:** Almacenar archivos en la estructura estandarizada `Área/New Generation/Docentes/Asignaturas/[Nombre]/[Año]/Parcial I..IV/[Tipo]`, previniendo duplicación por variaciones triviales y sanitizando nombres.
+- **Criterios de Aceptación:** Los archivos subidos se depositan en las subcarpetas correctas de Google Drive según el tipo y parcial.
+- **Estado:** [ ] Pendiente
+
+### [REQ-DOC-009] Registro de Metadatos Documentales en Spreadsheet (Sección 9)
+- **Origen del Hallazgo:** Especificación de Gestión Docente y Tareas (Sección 9).
+- **Severidad/Clasificación:** Alto
+- **Archivos Involucrados:** `backend/task-service/Code.gs`, `backend/academic-service/Code.gs`
+- **Dependencias Expuestas:** Hoja de cálculo de metadatos documentales.
+- **Descripción del Alcance:** Registrar metadatos completos por archivo (ID único, Título, Nombre original, Nombre físico, Tipo recurso, Asignatura, Grado, Sección, Parcial, Año, Tema, Tarea, Profesor, Fechas, Estado, Drive ID, Ruta, MIME, Tamaño).
+- **Criterios de Aceptación:** Registros tabulares completos en Spreadsheet sin guardar datos binarios en celdas.
+- **Estado:** [ ] Pendiente
+
+### [REQ-DOC-010] Panel Administrativo del Desarrollador, Consola Técnica y Exportación RAR/ZIP (Sección 10 / 11)
+- **Origen del Hallazgo:** Especificación de Gestión Docente y Tareas (Sección 10 / 11).
+- **Severidad/Clasificación:** Crítico
+- **Archivos Involucrados:** `teacher-dashboard.html`, `js/teacher.js`, `backend/academic-service/Code.gs`
+- **Dependencias Expuestas:** Consola técnica de administración, exportación documental por año lectivo.
+- **Descripción del Alcance:** Configurar horas de publicación e intervalo post-clase, monitoreo de salud de microservicios, visor de logs y exportación comprimida (ZIP/RAR) de archivos del año escolar seleccionado.
+- **Criterios de Aceptación:** Descarga de paquete comprimido respetando la estructura de carpetas sin bloquear la interfaz.
+- **Estado:** [ ] Pendiente
+
+### [REQ-DOC-011] Optimización del Análisis de Desempeño Estudiantil e Índice de Asistencia (Sección 12)
+- **Origen del Hallazgo:** Especificación de Gestión Docente/Tareas (Sección 12).
+- **Severidad/Clasificación:** Alto
+- **Archivos Involucrados:** `js/student.js`, `backend/user-service/Code.gs`
+- **Dependencias Expuestas:** Algoritmos de promedios, ponderaciones y métricas psicométricas (ICR, GP, Mastery).
+- **Descripción del Alcance:** Calcular rendimiento integral considerando notas por asignatura, tareas, proyectos, exámenes, entregas tardías (penalización 50%) e índice de asistencia por separado sin falsear datos ausentes como ceros.
+- **Criterios de Aceptación:** Reporte analítico claro que diferencia desempeño académico de control de asistencia.
+- **Estado:** [ ] Pendiente
+
+### [REQ-DOC-012] Seguridad en Servidor, Permisos y Trazabilidad de Contenidos (Sección 14)
+- **Origen del Hallazgo:** Especificación de Gestión Docente y Tareas (Sección 14).
+- **Severidad/Clasificación:** Crítico
+- **Archivos Involucrados:** `backend/academic-service/Code.gs`, `backend/task-service/Code.gs`, `js/api.js`
+- **Dependencias Expuestas:** Capa de autorización en microservicios backend.
+- **Descripción del Alcance:** Enforzar permisos en el servidor para evitar que docentes publiquen en asignaturas/secciones no asignadas. Proteger credenciales de Drive y registrar trazabilidad de fechas de entrega.
+- **Criterios de Aceptación:** Peticiones no autorizadas rechazadas en backend independientemente de la interfaz cliente.
 - **Estado:** [ ] Pendiente
