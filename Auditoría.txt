@@ -1148,3 +1148,11 @@ Recomendación: Implementar un filtro estricto en la carga de contenidos descarg
 Archivo: js/data.js
 Hallazgo [Observación]: La estructura de downloadContentData incluye campos 'unit' y 'parcial' (en algunos casos implícito por la jerarquía).
 Impacto: Si los metadatos no son coherentes con GLOBAL_SCOPE, el filtrado fallará.
+
+REGISTRO DE AUDITORÍA - REGISTRO DE REQUERIMIENTOS DE DESARROLLO Y EXPANSIÓN - Fri Jul 3 2026
+
+Archivo: Pendientes.md
+Sector: Módulo de Tareas Pendientes y Requerimientos de Expansión
+Hallazgo [Alto]: Necesidad de indexar y catalogar formalmente los 19 requerimientos de desarrollo y expansión institucional (New Generation Bilingual School and Institute) siguiendo la metodología oficial.
+Impacto: Permite trazabilidad de las funcionalidades académicas consolidadas ([REQ-EXP-001] a [REQ-EXP-006]) y priorización clara de los módulos administrativos, financieros, laborales, de inventario y consola técnica ([REQ-EXP-007] a [REQ-EXP-019]).
+Recomendación: Mantenimiento del catálogo de tareas en Pendientes.md con actualización continua de estados según las normas de METODOLOGIA_DESARROLLO.md.

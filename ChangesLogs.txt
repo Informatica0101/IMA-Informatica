@@ -637,3 +637,10 @@ Módulo: Backend de Tareas y Cierre (task-service/Code.gs)
 
 Módulo: Configuración Global (js/config.js)
 - Actualizadas URLs de microservicios a versiones productivas (v7.9.8).
+
+REGISTRO DE CAMBIOS - INDEXACIÓN DE REQUERIMIENTOS DE EXPANSIÓN PLATAFORMA - Fri Jul 03 2026
+
+Módulo: Gestión de Requerimientos y Pendientes (Pendientes.md)
+- Registrados e indexados formalmente los 19 requerimientos de desarrollo y expansión de la plataforma educativa para New Generation Bilingual School and Institute.
+- Mapeados y marcados como completados ([X] Completada) los requerimientos académicos consolidados ([REQ-EXP-001] a [REQ-EXP-006]).
+- Registrados como pendientes ([ ] Pendiente) los módulos de renombrado PWA, RBAC servidor, matrícula, finanzas, cobros, facturación, caja/bancos, planillas, inventarios, noticias y consola de administración técnica ([REQ-EXP-007] a [REQ-EXP-019]).
