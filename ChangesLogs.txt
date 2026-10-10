@@ -644,3 +644,10 @@ Módulo: Gestión de Requerimientos y Pendientes (Pendientes.md)
 - Registrados e indexados formalmente los 19 requerimientos de desarrollo y expansión de la plataforma educativa para New Generation Bilingual School and Institute.
 - Mapeados y marcados como completados ([X] Completada) los requerimientos académicos consolidados ([REQ-EXP-001] a [REQ-EXP-006]).
 - Registrados como pendientes ([ ] Pendiente) los módulos de renombrado PWA, RBAC servidor, matrícula, finanzas, cobros, facturación, caja/bancos, planillas, inventarios, noticias y consola de administración técnica ([REQ-EXP-007] a [REQ-EXP-019]).
+
+REGISTRO DE CAMBIOS - INDEXACIÓN DE REQUERIMIENTOS DE GESTIÓN DOCENTE Y TAREAS - Fri Jul 03 2026
+
+Módulo: Gestión de Requerimientos y Pendientes (Pendientes.md)
+- Registrada e indexada formalmente la sección "REQUERIMIENTOS DE GESTIÓN DOCENTE, CONTENIDOS, GUÍAS Y TAREAS" para New Generation Bilingual School and Institute ([REQ-DOC-001] a [REQ-DOC-012]).
+- Marcadas como completadas las tareas consolidadas de mapeo de contenidos/temas, creación de tareas enriquecidas y desacoplamiento de guías informativas vs tareas evaluables.
+- Registradas como pendientes las tareas de programación diferida por hora de disponibilidad, estructura de carpetas Drive, exportador RAR/ZIP en panel de desarrollador y análisis de desempeño integrado.
