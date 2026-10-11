@@ -1196,3 +1196,9 @@ Sector: Título Principal (Línea 1)
 Hallazgo [Bajo]: Título del repositorio referencia "ISEMED Área de Informática".
 Impacto: Documentación técnica con nombre institucional obsoleto.
 Recomendación: Actualizar a "New Generation Christian Academy".
+
+Archivo: imagenes/logo.png
+Sector: Recurso de Imagen de Splash Screen / Fallback
+Hallazgo [Alto]: El archivo de imagen 'imagenes/logo.png' conservaba el escudo institucional anterior (ISEMED), causando que pantallas de carga PWA/splash screen mostraran la imagen obsoleta.
+Impacto: Incoherencia de marca durante la pantalla de inicio/carga inicial de la PWA.
+Recomendación: Reemplazar el archivo 'imagenes/logo.png' por una copia del nuevo logotipo oficial 'imagenes/new-generation-logo.png'.
