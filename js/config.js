@@ -20,7 +20,10 @@ window.SERVICE_URLS = {
   TASK: 'https://script.google.com/macros/s/AKfycbx5JaHQjBIJGY2k4QczQ0_QzRz8Iv3-gcVXbd8WRV_JQJaqyEyw6sTtZ-VgzTvM9E-X/exec',
 
   // Pega aquí la URL del despliegue del microservicio de exámenes. (v7.7.6)
-  EXAM: 'https://script.google.com/macros/s/AKfycbwUlIlqEnkEFeCTrp_tgsyAydhNsLKx6h14A8SvWjbfxNFIj3vSciN5xAe93qtNV-g/exec'
+  EXAM: 'https://script.google.com/macros/s/AKfycbwUlIlqEnkEFeCTrp_tgsyAydhNsLKx6h14A8SvWjbfxNFIj3vSciN5xAe93qtNV-g/exec',
+
+  // Microservicio de Contabilidad y Planillas (v8.0.0)
+  ACCOUNTING: 'https://script.google.com/macros/s/AKfycbzAccountingSvc/exec'
 };
 
 // --- URL del sitio para CORS (si es necesario ajustarlo en el backend) ---

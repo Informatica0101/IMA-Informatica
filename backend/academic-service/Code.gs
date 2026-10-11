@@ -33,6 +33,8 @@ function getOrCreateSheet(ss, name) {
     if (name === "HistorialAcademico") sheet.appendRow(["ID", "Fecha", "Parcial", "Grado", "Sección", "Asignatura", "Unidad", "profesorId"]);
     if (name === "Clases") sheet.appendRow(["Grado", "Seccion", "WhatsAppLink"]);
     if (name === "BancoPreguntas") sheet.appendRow(["PreguntaID", "Asignatura", "Nivel", "Tema", "TipoActividad", "Pregunta", "OpcionA", "OpcionB", "OpcionC", "OpcionD", "RespuestaCorrecta", "Explicacion", "Imagen", "VecesRespondida", "VecesCorrecta", "PorcentajeAcierto", "UltimaActualizacion", "Activa", "DificultadCalculada"]);
+    if (name === "Matriculas") sheet.appendRow(["MatriculaID", "Fecha", "UserId", "Alumno", "Grado", "Seccion", "Periodo", "Tipo", "Estado", "BecaDescuento", "Observaciones"]);
+    if (name === "CargosEstudiante") sheet.appendRow(["CargoID", "Fecha", "UserId", "Concepto", "MontoBase", "Descuento", "MontoFinal", "Estado", "FechaVencimiento"]);
   }
   return sheet;
 }
@@ -49,15 +51,15 @@ function doGet() { return textResponse({ status: "success", message: "Microservi
 // ---------------------------------------------------------------------------
 const ROLE_PERMISSIONS = {
   "Administrador": ["*"],
-  "Director": ["getAcademicConfig", "getAcademicHistory", "getAsignaturasActivas", "getWhatsAppLink", "getQuestionBank", "generateMigrationReport"],
-  "Subdirector": ["getAcademicConfig", "getAcademicHistory", "getAsignaturasActivas", "getWhatsAppLink", "getQuestionBank"],
-  "Secretaría": ["getAcademicConfig", "getAsignaturasActivas"],
-  "Contador": ["getAcademicConfig"],
+  "Director": ["getAcademicConfig", "getAcademicHistory", "getAsignaturasActivas", "getWhatsAppLink", "getQuestionBank", "generateMigrationReport", "registerStudentEnrollment", "getStudentEnrollmentHistory"],
+  "Subdirector": ["getAcademicConfig", "getAcademicHistory", "getAsignaturasActivas", "getWhatsAppLink", "getQuestionBank", "registerStudentEnrollment", "getStudentEnrollmentHistory"],
+  "Secretaría": ["getAcademicConfig", "getAsignaturasActivas", "registerStudentEnrollment", "getStudentEnrollmentHistory"],
+  "Contador": ["getAcademicConfig", "registerStudentEnrollment", "getStudentEnrollmentHistory"],
   "Consejeros": ["getAcademicConfig"],
   "Profesor": ["getAcademicConfig", "updateAcademicConfig", "getAcademicHistory", "getAsignaturasActivas", "updateAsignaturasActivas", "saveWhatsAppLink", "getWhatsAppLink", "getQuestionBank", "saveQuestion", "generateMigrationReport"],
   "Asistente": ["getAcademicConfig", "getAsignaturasActivas", "getWhatsAppLink", "getQuestionBank"],
-  "Estudiante": ["getAcademicConfig", "getAcademicHistory", "getAsignaturasActivas", "getWhatsAppLink"],
-  "Alumno": ["getAcademicConfig", "getAcademicHistory", "getAsignaturasActivas", "getWhatsAppLink"]
+  "Estudiante": ["getAcademicConfig", "getAcademicHistory", "getAsignaturasActivas", "getWhatsAppLink", "getStudentEnrollmentHistory"],
+  "Alumno": ["getAcademicConfig", "getAcademicHistory", "getAsignaturasActivas", "getWhatsAppLink", "getStudentEnrollmentHistory"]
 };
 
 function validateRolePermission(action, payload) {
@@ -89,6 +91,8 @@ function doPost(e) {
       case "getQuestionBank": result = getQuestionBank(payload); break;
       case "saveQuestion": result = saveQuestion(payload); break;
       case "generateMigrationReport": result = generateMigrationReport(payload); break;
+      case "registerStudentEnrollment": result = registerStudentEnrollment(payload); break;
+      case "getStudentEnrollmentHistory": result = getStudentEnrollmentHistory(payload); break;
       default: result = { status: "error", message: `Acción no reconocida: ${action}` };
     }
     return textResponse(result);
@@ -377,4 +381,124 @@ function saveQuestion(payload) {
 function generateMigrationReport(payload) {
   getOrCreateSheet(SpreadsheetApp.openById(SPREADSHEET_ID), "MigrationLogs").appendRow([new Date(), payload.stats.totalDetectadas, payload.stats.totalMigradas, JSON.stringify(payload.stats.asignaturas), payload.stats.detalle]);
   return { status: "success" };
+}
+
+// REQ-EXP-009: Módulo de Matrícula y Control Financiero del Estudiante
+function registerStudentEnrollment(payload) {
+  const { userId, alumno, grado, seccion, periodo, tipo, becaDescuento, observaciones, cargos } = payload || {};
+  if (!userId || !grado || !periodo) throw new Error("Datos de matrícula incompletos.");
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const matSheet = getOrCreateSheet(ss, "Matriculas");
+  const cargosSheet = getOrCreateSheet(ss, "CargosEstudiante");
+
+  const matData = matSheet.getDataRange().getValues();
+  const sUserId = String(userId).trim();
+  const sPeriodo = String(periodo).trim();
+  const sGrado = String(grado).trim();
+
+  let existingIndex = matData.findIndex(r => String(r[2]).trim() === sUserId && String(r[6]).trim() === sPeriodo);
+  let matriculaId;
+  const now = new Date();
+
+  if (existingIndex !== -1) {
+    matriculaId = matData[existingIndex][0];
+    matSheet.getRange(existingIndex + 1, 1, 1, 11).setValues([[
+      matriculaId,
+      now,
+      sUserId,
+      alumno || matData[existingIndex][3],
+      sGrado,
+      seccion || matData[existingIndex][5],
+      sPeriodo,
+      tipo || matData[existingIndex][7] || "Ordinaria",
+      "Activa",
+      becaDescuento || 0,
+      observaciones || ""
+    ]]);
+  } else {
+    matriculaId = "MAT-" + now.getTime();
+    matSheet.appendRow([
+      matriculaId,
+      now,
+      sUserId,
+      alumno || "Estudiante",
+      sGrado,
+      seccion || "",
+      sPeriodo,
+      tipo || "Ordinaria",
+      "Activa",
+      becaDescuento || 0,
+      observaciones || ""
+    ]);
+  }
+
+  if (Array.isArray(cargos) && cargos.length > 0) {
+    const existingCargos = cargosSheet.getDataRange().getValues();
+    cargos.forEach(c => {
+      const concepto = c.concepto || "Matrícula/Colegiatura";
+      const dup = existingCargos.find(r => String(r[2]).trim() === sUserId && String(r[3]).trim() === concepto && String(r[7]) !== "Anulado");
+      if (!dup) {
+        const cargoId = "CRG-" + Date.now() + "-" + Math.floor(Math.random() * 1000);
+        const montoBase = parseFloat(c.montoBase || 0);
+        const descuento = parseFloat(c.descuento || becaDescuento || 0);
+        const montoFinal = Math.max(0, montoBase - descuento);
+        cargosSheet.appendRow([
+          cargoId,
+          now,
+          sUserId,
+          concepto,
+          montoBase,
+          descuento,
+          montoFinal,
+          c.estado || "Pendiente",
+          c.fechaVencimiento || ""
+        ]);
+      }
+    });
+  }
+
+  return { status: "success", matriculaId: matriculaId, message: "Matrícula registrada exitosamente." };
+}
+
+function getStudentEnrollmentHistory(payload) {
+  const { userId } = payload || {};
+  if (!userId) throw new Error("userId requerido.");
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sUserId = String(userId).trim();
+
+  const matRows = getOrCreateSheet(ss, "Matriculas").getDataRange().getValues().slice(1);
+  const userMatriculas = matRows.filter(r => String(r[2]).trim() === sUserId).map(r => ({
+    matriculaId: r[0],
+    fecha: r[1],
+    userId: r[2],
+    alumno: r[3],
+    grado: r[4],
+    seccion: r[5],
+    periodo: r[6],
+    tipo: r[7],
+    estado: r[8],
+    becaDescuento: r[9],
+    observaciones: r[10]
+  }));
+
+  const cargosRows = getOrCreateSheet(ss, "CargosEstudiante").getDataRange().getValues().slice(1);
+  const userCargos = cargosRows.filter(r => String(r[2]).trim() === sUserId).map(r => ({
+    cargoId: r[0],
+    fecha: r[1],
+    userId: r[2],
+    concepto: r[3],
+    montoBase: r[4],
+    descuento: r[5],
+    montoFinal: r[6],
+    estado: r[7],
+    fechaVencimiento: r[8]
+  }));
+
+  return {
+    status: "success",
+    data: {
+      matriculas: userMatriculas,
+      cargos: userCargos
+    }
+  };
 }

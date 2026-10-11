@@ -114,7 +114,7 @@ document.addEventListener('DOMContentLoaded', function() {
         var badgeContainer = document.getElementById('student-enrollment-badge');
         if (!badgeContainer) return;
 
-        fetchApi('USER', 'getStudentEnrollmentHistory', { userId: currentUser.userId })
+        fetchApi('ACADEMIC', 'getStudentEnrollmentHistory', { userId: currentUser.userId })
             .then(function(res) {
                 if (res && res.status === 'success' && res.data) {
                     var matriculas = res.data.matriculas || [];
