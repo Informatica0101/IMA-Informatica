@@ -1269,3 +1269,22 @@ Hallazgos:
    - [REQ-AMP-008] Protección Estricta de Privacidad de Datos Telefónicos y Comunicaciones.
    - [REQ-AMP-009] Módulo Contable Integral: Planillas, Deducciones, Cuentas por Cobrar/Pagar.
    - [REQ-AMP-010] Motor de Plantillas Reutilizables de Facturas, Recibos y Comprobantes Imprimibles/PDF.
+
+===========================================================
+AUDITORÍA DE CÓDIGO - REGISTRO DE AMPLIACIÓN DE REQUERIMIENTOS: CALENDARIO, DOCUMENTACIÓN, NOTIFICACIONES, PAGOS Y ARCHIVO
+===========================================================
+Archivos auditados:
+- Pendientes.md
+
+Hallazgos:
+1. Incorporación y estructuración de la ampliación de requerimientos funcionales para Calendario Académico, Documentación Docente, Notificaciones, Control de Pagos y Archivo Anual.
+2. Desglosados 9 requerimientos detallados con origen, severidad, archivos involucrados, dependencias expuestas, alcance y criterios de aceptación:
+   - [REQ-AMP2-001] Módulo de Calendario Académico, Exámenes y Fechas Institucionales.
+   - [REQ-AMP2-002] Sección de Documentación Académica Docente y Estructuración en Drive.
+   - [REQ-AMP2-003] Sistema de Notificaciones y Seguimiento de Obligaciones Docentes.
+   - [REQ-AMP2-004] Sistema Centralizado de Notificaciones Estudiantiles con Campana e Indicadores.
+   - [REQ-AMP2-005] Configuración Institucional de Fechas de Pago y Estado Financiero.
+   - [REQ-AMP2-006] Restricción de Visualización de Calificaciones por Pagos Pendientes.
+   - [REQ-AMP2-007] Separación Estricta entre Administración Personal e Institucional.
+   - [REQ-AMP2-008] Archivado Íntegro del Año Escolar en Nueva Spreadsheet Independiente.
+   - [REQ-AMP2-009] Seguridad, Permisos y Trazabilidad del Archivado Anual.

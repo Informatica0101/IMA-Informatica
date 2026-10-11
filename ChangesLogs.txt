@@ -711,3 +711,14 @@ Archivos modificados:
 
 2. `Auditoría.txt`:
    - Documentada la auditoría y estructuración de la ampliación de requerimientos funcionales.
+
+===========================================================
+REGISTRO DE CAMBIOS - ESTRUCTURACIÓN DE REQUERIMIENTOS AMPLIACIÓN CALENDARIO Y ARCHIVO ANUAL
+===========================================================
+Archivos modificados:
+1. `Pendientes.md`:
+   - Incorporación de la sección "AMPLIACIÓN DE REQUERIMIENTOS FUNCIONALES: CALENDARIO, DOCUMENTACIÓN DOCENTE, NOTIFICACIONES, CONTROL DE PAGOS Y ARCHIVO ANUAL".
+   - Registro de requerimientos REQ-AMP2-001 a REQ-AMP2-009 con especificación de origen, severidad, archivos involucrados, alcance y criterios de aceptación.
+
+2. `Auditoría.txt`:
+   - Documentada la estructuración de la ampliación de requerimientos funcionales de calendario, documentación docente, notificaciones, pagos y archivo anual.
