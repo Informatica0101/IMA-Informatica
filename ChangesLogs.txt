@@ -700,3 +700,14 @@ Archivos modificados:
 
 2. `Auditoría.txt`:
    - Documentada la auditoría y estructuración de los requerimientos de Dashboards Independientes.
+
+===========================================================
+REGISTRO DE CAMBIOS - ESTRUCTURACIÓN DE AMPLIACIÓN DE REQUERIMIENTOS FUNCIONALES
+===========================================================
+Archivos modificados:
+1. `Pendientes.md`:
+   - Incorporación de la sección "AMPLIACIÓN DE REQUERIMIENTOS FUNCIONALES".
+   - Registro detallado de requerimientos REQ-AMP-001 a REQ-AMP-010 con especificación de origen, severidad, archivos involucrados, alcance y criterios de aceptación.
+
+2. `Auditoría.txt`:
+   - Documentada la auditoría y estructuración de la ampliación de requerimientos funcionales.

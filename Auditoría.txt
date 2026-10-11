@@ -1249,3 +1249,23 @@ Hallazgos:
    - [REQ-DASH-007] Enrutamiento Post-Login y Separación Estricta de Navegación por URL.
    - [REQ-DASH-008] Matriz Granular de Permisos Backend por Operación.
    - [REQ-DASH-009] Registro de Auditoría de Acciones Sensibles e Intervenciones.
+
+===========================================================
+AUDITORÍA DE CÓDIGO - REGISTRO DE AMPLIACIÓN DE REQUERIMIENTOS FUNCIONALES
+===========================================================
+Archivos auditados:
+- Pendientes.md
+
+Hallazgos:
+1. Incorporación y estructuración formal de la "Ampliación de Requerimientos Funcionales" para New Generation Bilingual School and Institute.
+2. Desglosados 10 módulos técnicos con criterios de aceptación explícitos, severidad, archivos involucrados y dependencias expuestas:
+   - [REQ-AMP-001] Aislamiento Estricto de Datos entre Usuarios con el Mismo Rol.
+   - [REQ-AMP-002] Módulo de Detección de Duplicados, Inconsistencias y Contradicciones.
+   - [REQ-AMP-003] Gestión de Relevo Docente por Asignatura y Conservación Histórica.
+   - [REQ-AMP-004] Configuración Dinámica de Parciales según Pensum Académico.
+   - [REQ-AMP-005] Matrículas con Identificadores Únicos y Separación de Entidad Persona/Cuenta.
+   - [REQ-AMP-006] Gestión de Personal de Planilla con o sin Cuenta de Acceso.
+   - [REQ-AMP-007] Envío Automático de Invitaciones Seguras para Establecer Contraseña.
+   - [REQ-AMP-008] Protección Estricta de Privacidad de Datos Telefónicos y Comunicaciones.
+   - [REQ-AMP-009] Módulo Contable Integral: Planillas, Deducciones, Cuentas por Cobrar/Pagar.
+   - [REQ-AMP-010] Motor de Plantillas Reutilizables de Facturas, Recibos y Comprobantes Imprimibles/PDF.
