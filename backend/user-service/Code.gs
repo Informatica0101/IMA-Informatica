@@ -94,6 +94,8 @@ function getOrCreateSheet(ss, name) {
     if (name === "GameLeaderboards") sheet.appendRow(["leaderboardId", "gameId", "userId", "nombreAlumno", "grado", "asignatura", "mejorPuntuacion", "indiceDominioPromedio", "partidasJugadas", "ultimaActualizacion"]);
     if (name === "Matriculas") sheet.appendRow(["MatriculaID", "Fecha", "UserId", "Alumno", "Grado", "Seccion", "Periodo", "Tipo", "Estado", "BecaDescuento", "Observaciones"]);
     if (name === "CargosEstudiante") sheet.appendRow(["CargoID", "Fecha", "UserId", "Concepto", "MontoBase", "Descuento", "MontoFinal", "Estado", "FechaVencimiento"]);
+    if (name === "ConceptosCobro") sheet.appendRow(["ConceptoID", "Fecha", "NombreConcepto", "MontoBase", "AplicaAGrado", "PeriodoVigencia", "Estado", "Observaciones"]);
+    if (name === "PagosAbonos") sheet.appendRow(["PagoID", "Fecha", "UserId", "CargoID", "Concepto", "MontoAbono", "MetodoPago", "Referencia", "Estado", "ReciboID", "Observaciones"]);
   }
   return sheet;
 }
@@ -115,15 +117,15 @@ function doGet() { return textResponse({ status: "success", message: "Microservi
 // ---------------------------------------------------------------------------
 const ROLE_PERMISSIONS = {
   "Administrador": ["*"],
-  "Director": ["createNews", "uploadNewsImage", "getNews", "getStudents", "getStudentsByGradoSeccion", "getUserInfo", "saveGameResult", "getGameStats", "getGlobalTop", "recordAnalytics", "getLearningProfile", "mergeGuestData", "updateUserProfile", "registerStudentEnrollment", "getStudentEnrollmentHistory"],
-  "Subdirector": ["createNews", "uploadNewsImage", "getNews", "getStudents", "getStudentsByGradoSeccion", "getUserInfo", "saveGameResult", "getGameStats", "getGlobalTop", "recordAnalytics", "getLearningProfile", "mergeGuestData", "updateUserProfile", "registerStudentEnrollment", "getStudentEnrollmentHistory"],
-  "Secretaría": ["getStudents", "getStudentsByGradoSeccion", "getUserInfo", "updateUserProfile", "getNews", "registerStudentEnrollment", "getStudentEnrollmentHistory"],
-  "Contador": ["getStudents", "getUserInfo", "getNews", "registerStudentEnrollment", "getStudentEnrollmentHistory"],
+  "Director": ["createNews", "uploadNewsImage", "getNews", "getStudents", "getStudentsByGradoSeccion", "getUserInfo", "saveGameResult", "getGameStats", "getGlobalTop", "recordAnalytics", "getLearningProfile", "mergeGuestData", "updateUserProfile", "registerStudentEnrollment", "getStudentEnrollmentHistory", "configurePaymentConcept", "getStudentAccountStatement", "recordStudentPayment"],
+  "Subdirector": ["createNews", "uploadNewsImage", "getNews", "getStudents", "getStudentsByGradoSeccion", "getUserInfo", "saveGameResult", "getGameStats", "getGlobalTop", "recordAnalytics", "getLearningProfile", "mergeGuestData", "updateUserProfile", "registerStudentEnrollment", "getStudentEnrollmentHistory", "configurePaymentConcept", "getStudentAccountStatement", "recordStudentPayment"],
+  "Secretaría": ["getStudents", "getStudentsByGradoSeccion", "getUserInfo", "updateUserProfile", "getNews", "registerStudentEnrollment", "getStudentEnrollmentHistory", "configurePaymentConcept", "getStudentAccountStatement", "recordStudentPayment"],
+  "Contador": ["getStudents", "getUserInfo", "getNews", "registerStudentEnrollment", "getStudentEnrollmentHistory", "configurePaymentConcept", "getStudentAccountStatement", "recordStudentPayment"],
   "Consejeros": ["getStudents", "getStudentsByGradoSeccion", "getUserInfo", "getLearningProfile", "getNews"],
   "Profesor": ["getStudents", "getStudentsByGradoSeccion", "getUserInfo", "getNews", "createNews", "uploadNewsImage", "saveGameResult", "getGameStats", "getGlobalTop", "recordAnalytics", "getLearningProfile", "mergeGuestData"],
   "Asistente": ["getStudents", "getStudentsByGradoSeccion", "getUserInfo", "getNews", "getLearningProfile"],
-  "Estudiante": ["getUserInfo", "getNews", "saveGameResult", "getGameStats", "getGlobalTop", "recordAnalytics", "getLearningProfile", "mergeGuestData", "updateUserProfile", "getStudentEnrollmentHistory"],
-  "Alumno": ["getUserInfo", "getNews", "saveGameResult", "getGameStats", "getGlobalTop", "recordAnalytics", "getLearningProfile", "mergeGuestData", "updateUserProfile", "getStudentEnrollmentHistory"]
+  "Estudiante": ["getUserInfo", "getNews", "saveGameResult", "getGameStats", "getGlobalTop", "recordAnalytics", "getLearningProfile", "mergeGuestData", "updateUserProfile", "getStudentEnrollmentHistory", "getStudentAccountStatement"],
+  "Alumno": ["getUserInfo", "getNews", "saveGameResult", "getGameStats", "getGlobalTop", "recordAnalytics", "getLearningProfile", "mergeGuestData", "updateUserProfile", "getStudentEnrollmentHistory", "getStudentAccountStatement"]
 };
 
 const PUBLIC_ACTIONS = ["registerUser", "loginUser", "requestPasswordRecovery", "resetPassword"];
@@ -167,6 +169,9 @@ function doPost(e) {
       case "uploadNewsImage": result = uploadNewsImage(payload); break;
       case "registerStudentEnrollment": result = registerStudentEnrollment(payload); break;
       case "getStudentEnrollmentHistory": result = getStudentEnrollmentHistory(payload); break;
+      case "configurePaymentConcept": result = configurePaymentConcept(payload); break;
+      case "getStudentAccountStatement": result = getStudentAccountStatement(payload); break;
+      case "recordStudentPayment": result = recordStudentPayment(payload); break;
       default: result = { status: "error", message: `Acción no reconocida: ${action}` };
     }
     return textResponse(result);
@@ -599,5 +604,170 @@ function getStudentEnrollmentHistory(payload) {
       matriculas: userMatriculas,
       cargos: userCargos
     }
+  };
+}
+
+// REQ-EXP-010: Módulo Contable y Financiero - Conceptos, Mensualidades y Cobros
+function configurePaymentConcept(payload) {
+  const { conceptoId, nombreConcepto, montoBase, aplicaAGrado, periodoVigencia, estado, observaciones } = payload || {};
+  if (!nombreConcepto || montoBase === undefined) throw new Error("Nombre y monto base son requeridos.");
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "ConceptosCobro");
+  const data = sheet.getDataRange().getValues();
+  const now = new Date();
+
+  let cId = conceptoId;
+  let existingIndex = -1;
+  if (cId) {
+    existingIndex = data.findIndex(r => String(r[0]).trim() === String(cId).trim());
+  } else {
+    existingIndex = data.findIndex(r => String(r[2]).toLowerCase().trim() === String(nombreConcepto).toLowerCase().trim() && String(r[4]).trim() === String(aplicaAGrado || "Todos").trim());
+  }
+
+  if (existingIndex !== -1) {
+    cId = data[existingIndex][0];
+    sheet.getRange(existingIndex + 1, 1, 1, 8).setValues([[
+      cId,
+      now,
+      nombreConcepto,
+      parseFloat(montoBase || 0),
+      aplicaAGrado || "Todos",
+      periodoVigencia || "Anual",
+      estado || "Activo",
+      observaciones || ""
+    ]]);
+  } else {
+    cId = "CPT-" + now.getTime();
+    sheet.appendRow([
+      cId,
+      now,
+      nombreConcepto,
+      parseFloat(montoBase || 0),
+      aplicaAGrado || "Todos",
+      periodoVigencia || "Anual",
+      estado || "Activo",
+      observaciones || ""
+    ]);
+  }
+
+  return { status: "success", conceptoId: cId, message: "Concepto de cobro configurado correctamente." };
+}
+
+function getStudentAccountStatement(payload) {
+  const { userId } = payload || {};
+  if (!userId) throw new Error("userId requerido.");
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sUserId = String(userId).trim();
+
+  const cargosRows = getOrCreateSheet(ss, "CargosEstudiante").getDataRange().getValues().slice(1);
+  const pagosRows = getOrCreateSheet(ss, "PagosAbonos").getDataRange().getValues().slice(1);
+
+  const userCargos = cargosRows.filter(r => String(r[2]).trim() === sUserId && String(r[7]) !== "Anulado").map(r => ({
+    cargoId: r[0],
+    fecha: r[1],
+    userId: r[2],
+    concepto: r[3],
+    montoBase: parseFloat(r[4] || 0),
+    descuento: parseFloat(r[5] || 0),
+    montoFinal: parseFloat(r[6] || 0),
+    estado: r[7],
+    fechaVencimiento: r[8]
+  }));
+
+  const userPagos = pagosRows.filter(r => String(r[2]).trim() === sUserId && String(r[8]) !== "Anulado").map(r => ({
+    pagoId: r[0],
+    fecha: r[1],
+    userId: r[2],
+    cargoId: r[3],
+    concepto: r[4],
+    montoAbono: parseFloat(r[5] || 0),
+    metodoPago: r[6],
+    referencia: r[7],
+    estado: r[8],
+    reciboId: r[9],
+    observaciones: r[10]
+  }));
+
+  let totalCargos = 0;
+  let totalPagado = 0;
+
+  userCargos.forEach(c => { totalCargos += c.montoFinal; });
+  userPagos.forEach(p => { totalPagado += p.montoAbono; });
+
+  const saldoPendiente = Math.max(0, totalCargos - totalPagado);
+
+  return {
+    status: "success",
+    data: {
+      userId: sUserId,
+      totalCargos: totalCargos,
+      totalPagado: totalPagado,
+      saldoPendiente: saldoPendiente,
+      cargos: userCargos,
+      pagos: userPagos
+    }
+  };
+}
+
+function recordStudentPayment(payload) {
+  const { userId, cargoId, concepto, montoAbono, metodoPago, referencia, observaciones } = payload || {};
+  if (!userId || montoAbono === undefined || parseFloat(montoAbono) <= 0) throw new Error("userId y montoAbono válido son requeridos.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sUserId = String(userId).trim();
+  const abono = parseFloat(montoAbono);
+  const now = new Date();
+
+  const cargosSheet = getOrCreateSheet(ss, "CargosEstudiante");
+  const cargosData = cargosSheet.getDataRange().getValues();
+
+  let targetCargoIndex = -1;
+  let targetCargo = null;
+
+  if (cargoId) {
+    targetCargoIndex = cargosData.findIndex(r => String(r[0]).trim() === String(cargoId).trim());
+  } else if (concepto) {
+    targetCargoIndex = cargosData.findIndex(r => String(r[2]).trim() === sUserId && String(r[3]).toLowerCase().trim() === String(concepto).toLowerCase().trim() && r[7] !== "Pagado");
+  }
+
+  if (targetCargoIndex !== -1) {
+    targetCargo = cargosData[targetCargoIndex];
+  }
+
+  const pagoSheet = getOrCreateSheet(ss, "PagosAbonos");
+  const pagoId = "PAG-" + now.getTime();
+  const reciboId = "REC-" + Math.floor(100000 + Math.random() * 900000);
+
+  pagoSheet.appendRow([
+    pagoId,
+    now,
+    sUserId,
+    targetCargo ? targetCargo[0] : (cargoId || "GRAL"),
+    concepto || (targetCargo ? targetCargo[3] : "Abono a Cuenta"),
+    abono,
+    metodoPago || "Efectivo",
+    referencia || "Depósito/Transferencia",
+    "Confirmado",
+    reciboId,
+    observaciones || ""
+  ]);
+
+  if (targetCargoIndex !== -1 && targetCargo) {
+    const montoFinalCargo = parseFloat(targetCargo[6] || 0);
+    const pagosExistentes = pagoSheet.getDataRange().getValues().filter(r => String(r[2]).trim() === sUserId && String(r[3]).trim() === String(targetCargo[0]).trim() && r[8] === "Confirmado");
+    const totalAbonadoCargo = pagosExistentes.reduce((sum, r) => sum + parseFloat(r[5] || 0), 0);
+
+    let nuevoEstado = "Parcial";
+    if (totalAbonadoCargo >= montoFinalCargo) {
+      nuevoEstado = "Pagado";
+    }
+    cargosSheet.getRange(targetCargoIndex + 1, 8).setValue(nuevoEstado);
+  }
+
+  return {
+    status: "success",
+    pagoId: pagoId,
+    reciboId: reciboId,
+    message: "Pago/Abono registrado con éxito."
   };
 }

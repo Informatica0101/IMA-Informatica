@@ -216,7 +216,7 @@
 - **Dependencias Expuestas:** Cuentas por cobrar, importes por nivel/grado, pagos parciales.
 - **Descripción del Alcance:** Configurar conceptos de cobro (mensualidades, matrícula, libros, transporte), generar estados de cuenta y registrar pagos por múltiples métodos.
 - **Criterios de Aceptación:** Control de saldos pendientes, registro de abonos y trazabilidad de ajustes.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 ### [REQ-EXP-011] Portal Estudiantil de Pagos y Recibos Únicos en PDF (Sección 9.4 - 9.5)
 - **Origen del Hallazgo:** Requerimientos de Desarrollo y Expansión (Sección 9.4 - 9.5).

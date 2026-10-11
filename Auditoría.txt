@@ -1328,3 +1328,19 @@ Hallazgos:
 
 2. `js/student.js` & `student-dashboard.html`:
    - Se requiere incorporar visualización del estado de matrícula e historial de cargos financieros del estudiante en el expediente sin bloquear el acceso académico.
+
+===========================================================
+AUDITORÍA DE CÓDIGO - REQ-EXP-010: CONCEPTOS DE COBRO, ESTADO DE CUENTA Y ABONOS
+===========================================================
+Archivos auditados:
+- backend/user-service/Code.gs
+- js/config.js
+
+Hallazgos:
+1. `backend/user-service/Code.gs`:
+   - El microservicio carece de endpoints para parametrizar conceptos de cobro por grado (`configurePaymentConcept`), generar estado de cuenta con saldos y pagos parciales (`getStudentAccountStatement`) y registrar abonos con trazabilidad de ajustes (`recordStudentPayment`).
+   - Se deben inicializar las hojas `"ConceptosCobro"` y `"PagosAbonos"` en `getOrCreateSheet`.
+   - Se deben configurar los permisos en `ROLE_PERMISSIONS` y las opciones en `doPost`.
+
+2. `js/config.js`:
+   - Verificar la integración de funciones y constantes globales de la plataforma.

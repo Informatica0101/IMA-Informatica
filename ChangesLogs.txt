@@ -748,3 +748,15 @@ Archivos modificados:
 
 3. `Pendientes.md`:
    - Actualizada la tarea `[REQ-EXP-009]` al estado `[X] Completada`.
+
+===========================================================
+REGISTRO DE CAMBIOS - REQ-EXP-010: CONCEPTOS DE COBRO, ESTADO DE CUENTA Y ABONOS
+===========================================================
+Archivos modificados:
+1. `backend/user-service/Code.gs`:
+   - Incorporada creación e inicialización de hojas `"ConceptosCobro"` y `"PagosAbonos"` en `getOrCreateSheet`.
+   - Implementadas funciones `configurePaymentConcept`, `getStudentAccountStatement` y `recordStudentPayment` para la gestión de conceptos por grado, estado de cuenta consolidado con saldo pendiente y registro de abonos.
+   - Configuradas las acciones y permisos granulares en `ROLE_PERMISSIONS` y en la estructura de `doPost`.
+
+2. `Pendientes.md`:
+   - Actualizada la tarea `[REQ-EXP-010]` al estado `[X] Completada`.
