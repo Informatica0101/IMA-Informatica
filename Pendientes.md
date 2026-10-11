@@ -257,11 +257,11 @@
 ### [REQ-EXP-015] Módulo de Inventarios, Activos y Control de Proveedores (Sección 12)
 - **Origen del Hallazgo:** Requerimientos de Desarrollo y Expansión (Sección 12).
 - **Severidad/Clasificación:** Medio
-- **Archivos Involucrados:** `backend/user-service/Code.gs`
+- **Archivos Involucrados:** `backend/accounting-service/Code.gs`
 - **Dependencias Expuestas:** Productos, materiales, mobiliario, existencias mínimas.
 - **Descripción del Alcance:** Controlar entradas, salidas, préstamos, devoluciones, bajas y conteos físicos de consumibles y activos fijos de la institución.
 - **Criterios de Aceptación:** Kardex de inventario actualizado y alertas de stock mínimo.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 ### [REQ-EXP-016] Módulo de Noticias y Comunicación Institucional por Secretaría (Sección 13)
 - **Origen del Hallazgo:** Requerimientos de Desarrollo y Expansión (Sección 13).

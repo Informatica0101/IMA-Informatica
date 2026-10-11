@@ -713,6 +713,18 @@ Archivos modificados:
    - Documentada la auditoría y estructuración de la ampliación de requerimientos funcionales.
 
 ===========================================================
+REGISTRO DE CAMBIOS - REQ-EXP-015: INVENTARIOS, ACTIVOS Y PROVEEDORES
+===========================================================
+Archivos modificados:
+1. `backend/accounting-service/Code.gs`:
+   - Incorporada creación e inicialización de las hojas `"InventariosKardex"` y `"ProveedoresActivos"` en `getOrCreateSheet`.
+   - Implementadas las funciones `recordInventoryMovement` (entradas, salidas, préstamos, devoluciones, bajas y alertas automáticas de stock mínimo), `getInventoryKardex` y `registerSupplier`.
+   - Configuradas las acciones y permisos granulares en `ROLE_PERMISSIONS` y en el enrutador `doPost`.
+
+2. `Pendientes.md`:
+   - Actualizada la tarea `[REQ-EXP-015]` al estado `[X] Completada`.
+
+===========================================================
 REGISTRO DE CAMBIOS - ESTRUCTURACIÓN DE REQUERIMIENTOS AMPLIACIÓN CALENDARIO Y ARCHIVO ANUAL
 ===========================================================
 Archivos modificados:

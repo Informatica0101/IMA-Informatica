@@ -51,6 +51,8 @@ function getOrCreateSheet(ss, name) {
     if (name === "PlanillasNomenclatura") sheet.appendRow(["PlanillaID", "FechaGeneracion", "PeriodoMes", "EmpleadoId", "EmpleadoNombre", "CargoPuesto", "SalarioBase", "HorasExtras", "MontoHorasExtras", "Bonificaciones", "DeduccionIHSS", "DeduccionRAP", "DeduccionISR", "OtrasDeducciones", "SalarioNeto", "Estado"]);
     if (name === "DeduccionesAsistencia") sheet.appendRow(["AsistenciaID", "Fecha", "EmpleadoId", "EmpleadoNombre", "HoraEntrada", "HoraSalida", "MinutosTardanza", "EstadoAsistencia", "Observaciones"]);
     if (name === "BoletasPago") sheet.appendRow(["BoletaID", "PlanillaID", "FechaEmision", "EmpleadoId", "EmpleadoNombre", "PeriodoMes", "TotalDevengado", "TotalDeducciones", "NetoAPagar", "EstadoBoleta"]);
+    if (name === "InventariosKardex") sheet.appendRow(["KardexID", "Fecha", "ItemCodigo", "ItemNombre", "CategoriaTipo", "TipoMovimiento", "Cantidad", "StockAnterior", "StockNuevo", "StockMinimo", "UbicacionResponsable", "Observaciones"]);
+    if (name === "ProveedoresActivos") sheet.appendRow(["ProveedorID", "FechaRegistro", "NombreProveedor", "RTN", "Telefono", "Email", "RubroServicio", "Estado", "Observaciones"]);
   }
   return sheet;
 }
@@ -63,10 +65,10 @@ function doGet() { return textResponse({ status: "success", message: "Microservi
 
 const ROLE_PERMISSIONS = {
   "Administrador": ["*"],
-  "Director": ["configurePaymentConcept", "getStudentAccountStatement", "recordStudentPayment", "uploadPaymentVoucher", "generatePaymentReceiptPDF", "createFiscalInvoice", "getFiscalInvoices", "recordCashBankMovement", "closeCashSession", "getCashBankSummary", "generatePayrollPeriod", "recordStaffAttendance", "getStaffPayrollReceipt"],
-  "Subdirector": ["configurePaymentConcept", "getStudentAccountStatement", "recordStudentPayment", "uploadPaymentVoucher", "generatePaymentReceiptPDF", "createFiscalInvoice", "getFiscalInvoices", "recordCashBankMovement", "closeCashSession", "getCashBankSummary", "generatePayrollPeriod", "recordStaffAttendance", "getStaffPayrollReceipt"],
-  "Secretaría": ["configurePaymentConcept", "getStudentAccountStatement", "recordStudentPayment", "uploadPaymentVoucher", "generatePaymentReceiptPDF", "createFiscalInvoice", "getFiscalInvoices", "recordCashBankMovement", "getCashBankSummary", "recordStaffAttendance"],
-  "Contador": ["configurePaymentConcept", "getStudentAccountStatement", "recordStudentPayment", "uploadPaymentVoucher", "generatePaymentReceiptPDF", "createFiscalInvoice", "getFiscalInvoices", "recordCashBankMovement", "closeCashSession", "getCashBankSummary", "generatePayrollPeriod", "recordStaffAttendance", "getStaffPayrollReceipt"],
+  "Director": ["configurePaymentConcept", "getStudentAccountStatement", "recordStudentPayment", "uploadPaymentVoucher", "generatePaymentReceiptPDF", "createFiscalInvoice", "getFiscalInvoices", "recordCashBankMovement", "closeCashSession", "getCashBankSummary", "generatePayrollPeriod", "recordStaffAttendance", "getStaffPayrollReceipt", "recordInventoryMovement", "getInventoryKardex", "registerSupplier"],
+  "Subdirector": ["configurePaymentConcept", "getStudentAccountStatement", "recordStudentPayment", "uploadPaymentVoucher", "generatePaymentReceiptPDF", "createFiscalInvoice", "getFiscalInvoices", "recordCashBankMovement", "closeCashSession", "getCashBankSummary", "generatePayrollPeriod", "recordStaffAttendance", "getStaffPayrollReceipt", "recordInventoryMovement", "getInventoryKardex", "registerSupplier"],
+  "Secretaría": ["configurePaymentConcept", "getStudentAccountStatement", "recordStudentPayment", "uploadPaymentVoucher", "generatePaymentReceiptPDF", "createFiscalInvoice", "getFiscalInvoices", "recordCashBankMovement", "getCashBankSummary", "recordStaffAttendance", "recordInventoryMovement", "getInventoryKardex", "registerSupplier"],
+  "Contador": ["configurePaymentConcept", "getStudentAccountStatement", "recordStudentPayment", "uploadPaymentVoucher", "generatePaymentReceiptPDF", "createFiscalInvoice", "getFiscalInvoices", "recordCashBankMovement", "closeCashSession", "getCashBankSummary", "generatePayrollPeriod", "recordStaffAttendance", "getStaffPayrollReceipt", "recordInventoryMovement", "getInventoryKardex", "registerSupplier"],
   "Consejeros": [],
   "Profesor": [],
   "Asistente": [],
@@ -106,6 +108,9 @@ function doPost(e) {
       case "generatePayrollPeriod": result = generatePayrollPeriod(payload); break;
       case "recordStaffAttendance": result = recordStaffAttendance(payload); break;
       case "getStaffPayrollReceipt": result = getStaffPayrollReceipt(payload); break;
+      case "recordInventoryMovement": result = recordInventoryMovement(payload); break;
+      case "getInventoryKardex": result = getInventoryKardex(payload); break;
+      case "registerSupplier": result = registerSupplier(payload); break;
       default: result = { status: "error", message: `Acción no reconocida: ${action}` };
     }
     return textResponse(result);
@@ -752,5 +757,168 @@ function getStaffPayrollReceipt(payload) {
   return {
     status: "success",
     boletas: mappedReceipts
+  };
+}
+
+// REQ-EXP-015: Módulo de Inventarios, Activos y Control de Proveedores
+function recordInventoryMovement(payload) {
+  const { itemCodigo, itemNombre, categoriaTipo, tipoMovimiento, cantidad, stockMinimo, ubicacionResponsable, observaciones } = payload || {};
+  if (!itemCodigo || !itemNombre || cantidad === undefined || parseFloat(cantidad) <= 0) {
+    throw new Error("itemCodigo, itemNombre y cantidad válida requeridos.");
+  }
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "InventariosKardex");
+  const data = sheet.getDataRange().getValues().slice(1);
+  const sCodigo = String(itemCodigo).trim();
+  const tipoNorm = String(tipoMovimiento || "Entrada").trim();
+  const qty = parseFloat(cantidad);
+
+  let currentStock = 0;
+  data.forEach(r => {
+    if (String(r[2]).trim() === sCodigo) {
+      currentStock = parseFloat(r[8] || 0);
+    }
+  });
+
+  let newStock = currentStock;
+  if (tipoNorm === "Entrada" || tipoNorm === "Devolucion") {
+    newStock = currentStock + qty;
+  } else if (tipoNorm === "Salida" || tipoNorm === "Prestamo" || tipoNorm === "Baja") {
+    newStock = Math.max(0, currentStock - qty);
+  }
+
+  const minStock = parseFloat(stockMinimo || 5);
+  const now = new Date();
+  const kardexId = "KDX-" + now.getTime();
+
+  sheet.appendRow([
+    kardexId,
+    now,
+    sCodigo,
+    itemNombre,
+    categoriaTipo || "Consumible",
+    tipoNorm,
+    qty,
+    currentStock,
+    newStock,
+    minStock,
+    ubicacionResponsable || "Bodega General",
+    observaciones || ""
+  ]);
+
+  const alertStockBajo = newStock <= minStock;
+
+  return {
+    status: "success",
+    kardexId: kardexId,
+    itemCodigo: sCodigo,
+    stockAnterior: currentStock,
+    stockNuevo: newStock,
+    stockMinimo: minStock,
+    alertaStockMinimo: alertStockBajo,
+    message: alertStockBajo ? `Movimiento registrado. ¡ALERTA! El stock de '${itemNombre}' (${newStock}) está en o por debajo del mínimo (${minStock}).` : "Movimiento de inventario registrado con éxito."
+  };
+}
+
+function getInventoryKardex(payload) {
+  const { itemCodigo, categoriaTipo } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const rows = getOrCreateSheet(ss, "InventariosKardex").getDataRange().getValues().slice(1);
+
+  let filtered = rows;
+  if (itemCodigo) {
+    filtered = filtered.filter(r => String(r[2]).trim() === String(itemCodigo).trim());
+  }
+  if (categoriaTipo) {
+    filtered = filtered.filter(r => String(r[4]).toLowerCase().trim() === String(categoriaTipo).toLowerCase().trim());
+  }
+
+  const latestStockMap = {};
+  filtered.forEach(r => {
+    const code = String(r[2]).trim();
+    latestStockMap[code] = {
+      itemCodigo: code,
+      itemNombre: r[3],
+      categoriaTipo: r[4],
+      stockNuevo: parseFloat(r[8] || 0),
+      stockMinimo: parseFloat(r[9] || 0),
+      alertaStockMinimo: parseFloat(r[8] || 0) <= parseFloat(r[9] || 0),
+      ubicacionResponsable: r[10],
+      ultimaActualizacion: r[1]
+    };
+  });
+
+  const mapped = filtered.map(r => ({
+    kardexId: r[0],
+    fecha: r[1],
+    itemCodigo: r[2],
+    itemNombre: r[3],
+    categoriaTipo: r[4],
+    tipoMovimiento: r[5],
+    cantidad: parseFloat(r[6] || 0),
+    stockAnterior: parseFloat(r[7] || 0),
+    stockNuevo: parseFloat(r[8] || 0),
+    stockMinimo: parseFloat(r[9] || 0),
+    ubicacionResponsable: r[10],
+    observaciones: r[11]
+  }));
+
+  return {
+    status: "success",
+    data: mapped,
+    resumenExistencias: Object.values(latestStockMap)
+  };
+}
+
+function registerSupplier(payload) {
+  const { proveedorId, nombreProveedor, rtn, telefono, email, rubroServicio, estado, observaciones } = payload || {};
+  if (!nombreProveedor) throw new Error("Nombre de proveedor requerido.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "ProveedoresActivos");
+  const data = sheet.getDataRange().getValues();
+  const now = new Date();
+
+  let pId = proveedorId;
+  let existingIndex = -1;
+  if (pId) {
+    existingIndex = data.findIndex(r => String(r[0]).trim() === String(pId).trim());
+  } else {
+    existingIndex = data.findIndex(r => String(r[2]).toLowerCase().trim() === String(nombreProveedor).toLowerCase().trim());
+  }
+
+  if (existingIndex !== -1) {
+    pId = data[existingIndex][0];
+    sheet.getRange(existingIndex + 1, 1, 1, 9).setValues([[
+      pId,
+      now,
+      nombreProveedor,
+      rtn || "00000000000000",
+      telefono || "",
+      email || "",
+      rubroServicio || "General",
+      estado || "Activo",
+      observaciones || ""
+    ]]);
+  } else {
+    pId = "PRV-" + now.getTime();
+    sheet.appendRow([
+      pId,
+      now,
+      nombreProveedor,
+      rtn || "00000000000000",
+      telefono || "",
+      email || "",
+      rubroServicio || "General",
+      estado || "Activo",
+      observaciones || ""
+    ]);
+  }
+
+  return {
+    status: "success",
+    proveedorId: pId,
+    message: "Proveedor registrado/actualizado en catálogo con éxito."
   };
 }

@@ -1397,3 +1397,15 @@ Hallazgos:
    - El microservicio carece de estructuras y funciones para el cálculo de planillas salariales, deducciones de ley de Honduras (IHSS, RAP, ISR), horas extras, registro de asistencia del personal y generación de comprobantes de pago de planilla.
    - Se deben inicializar las hojas `"PlanillasNomenclatura"`, `"DeduccionesAsistencia"` y `"BoletasPago"` en `getOrCreateSheet`.
    - Mapear las acciones `generatePayrollPeriod`, `recordStaffAttendance` y `getStaffPayrollReceipt` en `ROLE_PERMISSIONS` y `doPost` restringiendo el acceso exclusivamente a roles administrativos.
+
+===========================================================
+AUDITORÍA DE CÓDIGO - REQ-EXP-015: INVENTARIOS, ACTIVOS Y PROVEEDORES
+===========================================================
+Archivos auditados:
+- backend/accounting-service/Code.gs
+
+Hallazgos:
+1. `backend/accounting-service/Code.gs`:
+   - Carece de la inicialización de hojas `"InventariosKardex"` y `"ProveedoresActivos"` para el control de inventario de consumibles, activos fijos y catálogo de proveedores.
+   - Requiere implementar los endpoints `recordInventoryMovement` (entradas, salidas, préstamos, devoluciones, bajas con cálculo de saldo y alerta de stock mínimo), `getInventoryKardex` y `registerSupplier`.
+   - Requiere configuración de permisos RBAC en `ROLE_PERMISSIONS` y casos en `doPost`.
