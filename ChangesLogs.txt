@@ -671,3 +671,21 @@ Módulo: Minijuegos y Documentación (juegos/quizpro.html, README.md)
 
 Módulo: Presentaciones y Lecciones HTML (Informatica_I, II_BTP_A, III_BTP_A)
 - Actualizadas las referencias de imagen del logotipo institucional de "imagenes/logo.png" a "imagenes/new-generation-logo.png" en todas las lecciones y presentaciones HTML del sistema.
+
+===========================================================
+REGISTRO DE CAMBIOS - REQ-EXP-008: SISTEMA RBAC SERVIDOR
+===========================================================
+Archivos modificados:
+1. `backend/user-service/Code.gs`:
+   - Líneas 110-143: Incorporación de matriz `ROLE_PERMISSIONS`, lista `PUBLIC_ACTIONS` y función `validateRolePermission`.
+   - Líneas 148-151: Validación previa a la ejecución de acciones en `doPost`. En caso de denegación, retorna respuesta con estado "error" y código "AUTH_PERMISSION_DENIED".
+
+2. `backend/academic-service/Code.gs`:
+   - Líneas 46-72: Incorporación de matriz `ROLE_PERMISSIONS` y función `validateRolePermission`.
+   - Líneas 77-80: Integración de control de permisos RBAC en `doPost`.
+
+3. `js/api.js`:
+   - Líneas 39-48: Inyección de `payload.authRole` extraído de la sesión activa (`usuario_actual` en `localStorage`) cuando no viene especificado explícitamente en el payload de `fetchApi`.
+
+4. `Pendientes.md`:
+   - Marcada como completada la tarea `[X] REQ-EXP-008`.

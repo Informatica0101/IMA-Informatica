@@ -43,10 +43,40 @@ function getOrCreateSheet(ss, name) {
 
 function doGet() { return textResponse({ status: "success", message: "Microservicio Académico operativo" }); }
 
+
+// ---------------------------------------------------------------------------
+// CONTROL DE ACCESO BASADO EN ROLES (RBAC SERVIDOR - REQ-EXP-008)
+// ---------------------------------------------------------------------------
+const ROLE_PERMISSIONS = {
+  "Administrador": ["*"],
+  "Director": ["getAcademicConfig", "getAcademicHistory", "getAsignaturasActivas", "getWhatsAppLink", "getQuestionBank", "generateMigrationReport"],
+  "Subdirector": ["getAcademicConfig", "getAcademicHistory", "getAsignaturasActivas", "getWhatsAppLink", "getQuestionBank"],
+  "Secretaría": ["getAcademicConfig", "getAsignaturasActivas"],
+  "Contador": ["getAcademicConfig"],
+  "Consejeros": ["getAcademicConfig"],
+  "Profesor": ["getAcademicConfig", "updateAcademicConfig", "getAcademicHistory", "getAsignaturasActivas", "updateAsignaturasActivas", "saveWhatsAppLink", "getWhatsAppLink", "getQuestionBank", "saveQuestion", "generateMigrationReport"],
+  "Asistente": ["getAcademicConfig", "getAsignaturasActivas", "getWhatsAppLink", "getQuestionBank"],
+  "Estudiante": ["getAcademicConfig", "getAcademicHistory", "getAsignaturasActivas", "getWhatsAppLink"],
+  "Alumno": ["getAcademicConfig", "getAcademicHistory", "getAsignaturasActivas", "getWhatsAppLink"]
+};
+
+function validateRolePermission(action, payload) {
+  const userRole = (payload && (payload.authRole || payload.rol)) || "Estudiante";
+  const permitted = ROLE_PERMISSIONS[userRole] || ROLE_PERMISSIONS["Estudiante"];
+  if (permitted.indexOf("*") !== -1 || permitted.indexOf(action) !== -1) {
+    return { authorized: true, role: userRole };
+  }
+  return { authorized: false, role: userRole };
+}
+
 function doPost(e) {
   try {
     if (!e || !e.postData || !e.postData.contents) return textResponse({ status: "error", message: "No se recibieron datos." });
     const { action, payload } = JSON.parse(e.postData.contents);
+    const authCheck = validateRolePermission(action, payload);
+    if (!authCheck.authorized) {
+      return textResponse({ status: "error", code: "AUTH_PERMISSION_DENIED", message: "Acceso denegado: El rol " + authCheck.role + " no tiene permiso para la acción " + action + "." });
+    }
     let result;
     switch (action) {
       case "getAcademicConfig": result = getAcademicConfig(payload); break;

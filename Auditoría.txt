@@ -1202,3 +1202,31 @@ Sector: Recurso de Imagen de Splash Screen / Fallback
 Hallazgo [Alto]: El archivo de imagen 'imagenes/logo.png' conservaba el escudo institucional anterior (ISEMED), causando que pantallas de carga PWA/splash screen mostraran la imagen obsoleta.
 Impacto: Incoherencia de marca durante la pantalla de inicio/carga inicial de la PWA.
 Recomendación: Reemplazar el archivo 'imagenes/logo.png' por una copia del nuevo logotipo oficial 'imagenes/new-generation-logo.png'.
+
+AUDITORÍA TÉCNICA - SISTEMA DE ROLES Y PERMISOS GRANULARES SERVIDOR/RBAC [REQ-EXP-008] - Sun Jul 5 2026
+
+Archivos: backend/user-service/Code.gs, backend/academic-service/Code.gs, js/config.js, js/api.js
+Sector: Manejo de Acciones y Validación de Autorización en Servidor (doPost)
+Hallazgo [Crítico]: Las llamadas POST a los endpoints del servidor aceptan la ejecución de acciones privilegiadas (como 'updateAcademicConfig', 'createNews', 'uploadNewsImage', 'saveQuestion', 'saveWhatsAppLink', 'updateAsignaturasActivas') sin validar el rol ni la identidad del emisor desde el servidor (reliquia de seguridad por ocultamiento en la UI cliente).
+Impacto: Vulnerabilidad de elevación de privilegios no autorizada e inyección de datos administrativos por usuarios con roles de 'Estudiante' o 'Invitado'.
+Recomendación: Implementar una matriz de autorización por rol (RBAC) en el servidor que verifique la identidad/rol del solicitante y responda con error explícito 'AUTH_PERMISSION_DENIED' en caso de falta de privilegios.
+
+===========================================================
+AUDITORÍA DE CÓDIGO - REQ-EXP-008: RBAC SERVIDOR
+===========================================================
+Archivos auditados:
+- backend/user-service/Code.gs
+- backend/academic-service/Code.gs
+- js/api.js
+
+Hallazgos:
+1. `backend/user-service/Code.gs`:
+   - `doPost` ejecutaba acciones administrativas (`createNews`, `uploadNewsImage`) sin validación de permisos por rol.
+   - Solución: Incorporada matriz de permisos `ROLE_PERMISSIONS` y función `validateRolePermission` en `doPost`. Peticiones no autorizadas retornan error con código `AUTH_PERMISSION_DENIED`.
+
+2. `backend/academic-service/Code.gs`:
+   - `doPost` permitía modificar la configuración académica (`updateAcademicConfig`, `updateAsignaturasActivas`, `saveWhatsAppLink`, `saveQuestion`) sin restringir el rol del solicitante.
+   - Solución: Implementado mecanismo RBAC en `doPost` con la matriz de roles y permisos del servicio académico.
+
+3. `js/api.js`:
+   - Inyección automática del contexto de usuario (`authRole`) desde `localStorage` (`usuario_actual`) en las llamadas `fetchApi` para garantizar que las peticiones del cliente porten la identidad requerida para la verificación en servidor.

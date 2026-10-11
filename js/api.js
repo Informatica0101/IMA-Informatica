@@ -36,6 +36,17 @@ function fetchApi(service, action, payload, retryCount, options) {
         timeoutId = setTimeout(function() { controller.abort(); }, 60000); // 60 segundos de límite
     }
 
+
+    // REQ-EXP-008: Inyectar authRole o rol desde sesión si no se ha especificado en el payload
+    if (payload && typeof payload === "object" && !payload.authRole) {
+        try {
+            var sessionUser = JSON.parse(localStorage.getItem("usuario_actual") || "{}");
+            if (sessionUser && sessionUser.rol) {
+                payload.authRole = sessionUser.rol;
+            }
+        } catch (_) {}
+    }
+
     var fetchOptions = {
         method: 'POST',
         headers: {
