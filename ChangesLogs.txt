@@ -664,3 +664,72 @@ Módulo: Páginas de Interfaz Pública (index.html, login.html, register.html, s
 
 Módulo: Controladores Frontend (js/student.js, js/teacher.js)
 - Actualizada información institucional por defecto y títulos de expediente académico a "New Generation Christian Academy".
+
+Módulo: Minijuegos y Documentación (juegos/quizpro.html, README.md)
+- Actualizadas referencias de "ISEMED", "Logo Institucional ISEMED" e "imagenes/logo.png" por "New Generation Christian Academy" y "imagenes/new-generation-logo.png" en la cabecera y pie de juegos/quizpro.html, agregando dimensiones adaptativas (h-10 md:h-12 w-auto) para prevenir desbordamientos de maquetación.
+- Actualizado título principal en README.md a "New Generation Christian Academy".
+
+Módulo: Presentaciones y Lecciones HTML (Informatica_I, II_BTP_A, III_BTP_A)
+- Actualizadas las referencias de imagen del logotipo institucional de "imagenes/logo.png" a "imagenes/new-generation-logo.png" en todas las lecciones y presentaciones HTML del sistema.
+
+===========================================================
+REGISTRO DE CAMBIOS - REQ-EXP-008: SISTEMA RBAC SERVIDOR
+===========================================================
+Archivos modificados:
+1. `backend/user-service/Code.gs`:
+   - Líneas 110-143: Incorporación de matriz `ROLE_PERMISSIONS`, lista `PUBLIC_ACTIONS` y función `validateRolePermission`.
+   - Líneas 148-151: Validación previa a la ejecución de acciones en `doPost`. En caso de denegación, retorna respuesta con estado "error" y código "AUTH_PERMISSION_DENIED".
+
+2. `backend/academic-service/Code.gs`:
+   - Líneas 46-72: Incorporación de matriz `ROLE_PERMISSIONS` y función `validateRolePermission`.
+   - Líneas 77-80: Integración de control de permisos RBAC en `doPost`.
+
+3. `js/api.js`:
+   - Líneas 39-48: Inyección de `payload.authRole` extraído de la sesión activa (`usuario_actual` en `localStorage`) cuando no viene especificado explícitamente en el payload de `fetchApi`.
+
+4. `Pendientes.md`:
+   - Marcada como completada la tarea `[X] REQ-EXP-008`.
+
+===========================================================
+REGISTRO DE CAMBIOS - ESTRUCTURACIÓN DE REQUERIMIENTO DASHBOARDS INDEPENDIENTES Y RBAC
+===========================================================
+Archivos modificados:
+1. `Pendientes.md`:
+   - Incorporación de la sección "REQUERIMIENTO: DASHBOARDS INDEPENDIENTES Y CONTROL DE ACCESO POR ROLES".
+   - Registro detallado de requerimientos REQ-DASH-001 a REQ-DASH-009 con especificación de origen, severidad, archivos involucrados, alcance y criterios de aceptación.
+
+2. `Auditoría.txt`:
+   - Documentada la auditoría y estructuración de los requerimientos de Dashboards Independientes.
+
+===========================================================
+REGISTRO DE CAMBIOS - ESTRUCTURACIÓN DE AMPLIACIÓN DE REQUERIMIENTOS FUNCIONALES
+===========================================================
+Archivos modificados:
+1. `Pendientes.md`:
+   - Incorporación de la sección "AMPLIACIÓN DE REQUERIMIENTOS FUNCIONALES".
+   - Registro detallado de requerimientos REQ-AMP-001 a REQ-AMP-010 con especificación de origen, severidad, archivos involucrados, alcance y criterios de aceptación.
+
+2. `Auditoría.txt`:
+   - Documentada la auditoría y estructuración de la ampliación de requerimientos funcionales.
+
+===========================================================
+REGISTRO DE CAMBIOS - ESTRUCTURACIÓN DE REQUERIMIENTOS AMPLIACIÓN CALENDARIO Y ARCHIVO ANUAL
+===========================================================
+Archivos modificados:
+1. `Pendientes.md`:
+   - Incorporación de la sección "AMPLIACIÓN DE REQUERIMIENTOS FUNCIONALES: CALENDARIO, DOCUMENTACIÓN DOCENTE, NOTIFICACIONES, CONTROL DE PAGOS Y ARCHIVO ANUAL".
+   - Registro de requerimientos REQ-AMP2-001 a REQ-AMP2-009 con especificación de origen, severidad, archivos involucrados, alcance y criterios de aceptación.
+
+2. `Auditoría.txt`:
+   - Documentada la estructuración de la ampliación de requerimientos funcionales de calendario, documentación docente, notificaciones, pagos y archivo anual.
+
+===========================================================
+REGISTRO DE CAMBIOS - ESTRUCTURACIÓN DE REQUERIMIENTOS DE SUPERVISIÓN Y FLUJO DOCUMENTAL
+===========================================================
+Archivos modificados:
+1. `Pendientes.md`:
+   - Incorporación de las secciones "REQUERIMIENTO: SUPERVISIÓN Y CONSULTA DE DOCUMENTACIÓN DOCENTE" y "REQUERIMIENTO TÉCNICO: ESTADOS Y TRANSICIONES DOCUMENTALES".
+   - Registro de requerimientos REQ-SUP-001 a REQ-SUP-006 y REQ-FLOW-001 a REQ-FLOW-007 con especificación de origen, severidad, archivos involucrados, alcance y criterios de aceptación.
+
+2. `Auditoría.txt`:
+   - Documentada la estructuración de la supervisión y flujo de estados documentales docentes.

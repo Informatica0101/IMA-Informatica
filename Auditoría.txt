@@ -1184,3 +1184,130 @@ Sector: Cadenas de Texto Institucionales (Líneas 519, 183, 1670)
 Hallazgo [Medio]: Menciones de "ISEMED" en metadatos y encabezados de reportes generados en JavaScript.
 Impacto: Exportaciones de expedientes y encabezados dinámicos muestran marcas institucionales anteriores.
 Recomendación: Actualizar constantes de nombre institucional a "New Generation Christian Academy".
+
+Archivo: juegos/quizpro.html
+Sector: Encabezado y Pie de página dinámicos (Líneas 206, 208, 564)
+Hallazgo [Alto]: Referencia a "Logo Institucional ISEMED", "imagenes/logo.png" e "ISEMED" en el encabezado standalone y pie de página de QuizPro.
+Impacto: Inconsistencia visual y de marca cuando el minijuego se ejecuta de forma independiente.
+Recomendación: Actualizar a "New Generation Christian Academy", "New Generation" e "imagenes/new-generation-logo.png".
+
+Archivo: README.md
+Sector: Título Principal (Línea 1)
+Hallazgo [Bajo]: Título del repositorio referencia "ISEMED Área de Informática".
+Impacto: Documentación técnica con nombre institucional obsoleto.
+Recomendación: Actualizar a "New Generation Christian Academy".
+
+Archivo: imagenes/logo.png
+Sector: Recurso de Imagen de Splash Screen / Fallback
+Hallazgo [Alto]: El archivo de imagen 'imagenes/logo.png' conservaba el escudo institucional anterior (ISEMED), causando que pantallas de carga PWA/splash screen mostraran la imagen obsoleta.
+Impacto: Incoherencia de marca durante la pantalla de inicio/carga inicial de la PWA.
+Recomendación: Reemplazar el archivo 'imagenes/logo.png' por una copia del nuevo logotipo oficial 'imagenes/new-generation-logo.png'.
+
+AUDITORÍA TÉCNICA - SISTEMA DE ROLES Y PERMISOS GRANULARES SERVIDOR/RBAC [REQ-EXP-008] - Sun Jul 5 2026
+
+Archivos: backend/user-service/Code.gs, backend/academic-service/Code.gs, js/config.js, js/api.js
+Sector: Manejo de Acciones y Validación de Autorización en Servidor (doPost)
+Hallazgo [Crítico]: Las llamadas POST a los endpoints del servidor aceptan la ejecución de acciones privilegiadas (como 'updateAcademicConfig', 'createNews', 'uploadNewsImage', 'saveQuestion', 'saveWhatsAppLink', 'updateAsignaturasActivas') sin validar el rol ni la identidad del emisor desde el servidor (reliquia de seguridad por ocultamiento en la UI cliente).
+Impacto: Vulnerabilidad de elevación de privilegios no autorizada e inyección de datos administrativos por usuarios con roles de 'Estudiante' o 'Invitado'.
+Recomendación: Implementar una matriz de autorización por rol (RBAC) en el servidor que verifique la identidad/rol del solicitante y responda con error explícito 'AUTH_PERMISSION_DENIED' en caso de falta de privilegios.
+
+===========================================================
+AUDITORÍA DE CÓDIGO - REQ-EXP-008: RBAC SERVIDOR
+===========================================================
+Archivos auditados:
+- backend/user-service/Code.gs
+- backend/academic-service/Code.gs
+- js/api.js
+
+Hallazgos:
+1. `backend/user-service/Code.gs`:
+   - `doPost` ejecutaba acciones administrativas (`createNews`, `uploadNewsImage`) sin validación de permisos por rol.
+   - Solución: Incorporada matriz de permisos `ROLE_PERMISSIONS` y función `validateRolePermission` en `doPost`. Peticiones no autorizadas retornan error con código `AUTH_PERMISSION_DENIED`.
+
+2. `backend/academic-service/Code.gs`:
+   - `doPost` permitía modificar la configuración académica (`updateAcademicConfig`, `updateAsignaturasActivas`, `saveWhatsAppLink`, `saveQuestion`) sin restringir el rol del solicitante.
+   - Solución: Implementado mecanismo RBAC en `doPost` con la matriz de roles y permisos del servicio académico.
+
+3. `js/api.js`:
+   - Inyección automática del contexto de usuario (`authRole`) desde `localStorage` (`usuario_actual`) en las llamadas `fetchApi` para garantizar que las peticiones del cliente porten la identidad requerida para la verificación en servidor.
+
+===========================================================
+AUDITORÍA DE CÓDIGO - REGISTRO DE REQUERIMIENTOS DASHBOARDS INDEPENDIENTES Y RBAC POR ROL
+===========================================================
+Archivos auditados:
+- Pendientes.md
+
+Hallazgos:
+1. Incorporación y estructuración formal del requerimiento "Dashboards Independientes y Control de Acceso por Roles" para New Generation Bilingual School and Institute.
+2. Desglosados 9 módulos con criterios de aceptación explícitos, severidad, archivos involucrados y dependencias expuestas:
+   - [REQ-DASH-001] Dashboard de Administrador/Desarrollador con Supervisión Global Auditable.
+   - [REQ-DASH-002] Dashboard Independiente de Dirección / Subdirección.
+   - [REQ-DASH-003] Dashboard Independiente de Secretaría.
+   - [REQ-DASH-004] Dashboard Independiente de Contabilidad y Módulos Financieros.
+   - [REQ-DASH-005] Conservación e Integración del Dashboard del Profesor.
+   - [REQ-DASH-006] Conservación e Integración del Dashboard del Estudiante.
+   - [REQ-DASH-007] Enrutamiento Post-Login y Separación Estricta de Navegación por URL.
+   - [REQ-DASH-008] Matriz Granular de Permisos Backend por Operación.
+   - [REQ-DASH-009] Registro de Auditoría de Acciones Sensibles e Intervenciones.
+
+===========================================================
+AUDITORÍA DE CÓDIGO - REGISTRO DE AMPLIACIÓN DE REQUERIMIENTOS FUNCIONALES
+===========================================================
+Archivos auditados:
+- Pendientes.md
+
+Hallazgos:
+1. Incorporación y estructuración formal de la "Ampliación de Requerimientos Funcionales" para New Generation Bilingual School and Institute.
+2. Desglosados 10 módulos técnicos con criterios de aceptación explícitos, severidad, archivos involucrados y dependencias expuestas:
+   - [REQ-AMP-001] Aislamiento Estricto de Datos entre Usuarios con el Mismo Rol.
+   - [REQ-AMP-002] Módulo de Detección de Duplicados, Inconsistencias y Contradicciones.
+   - [REQ-AMP-003] Gestión de Relevo Docente por Asignatura y Conservación Histórica.
+   - [REQ-AMP-004] Configuración Dinámica de Parciales según Pensum Académico.
+   - [REQ-AMP-005] Matrículas con Identificadores Únicos y Separación de Entidad Persona/Cuenta.
+   - [REQ-AMP-006] Gestión de Personal de Planilla con o sin Cuenta de Acceso.
+   - [REQ-AMP-007] Envío Automático de Invitaciones Seguras para Establecer Contraseña.
+   - [REQ-AMP-008] Protección Estricta de Privacidad de Datos Telefónicos y Comunicaciones.
+   - [REQ-AMP-009] Módulo Contable Integral: Planillas, Deducciones, Cuentas por Cobrar/Pagar.
+   - [REQ-AMP-010] Motor de Plantillas Reutilizables de Facturas, Recibos y Comprobantes Imprimibles/PDF.
+
+===========================================================
+AUDITORÍA DE CÓDIGO - REGISTRO DE AMPLIACIÓN DE REQUERIMIENTOS: CALENDARIO, DOCUMENTACIÓN, NOTIFICACIONES, PAGOS Y ARCHIVO
+===========================================================
+Archivos auditados:
+- Pendientes.md
+
+Hallazgos:
+1. Incorporación y estructuración de la ampliación de requerimientos funcionales para Calendario Académico, Documentación Docente, Notificaciones, Control de Pagos y Archivo Anual.
+2. Desglosados 9 requerimientos detallados con origen, severidad, archivos involucrados, dependencias expuestas, alcance y criterios de aceptación:
+   - [REQ-AMP2-001] Módulo de Calendario Académico, Exámenes y Fechas Institucionales.
+   - [REQ-AMP2-002] Sección de Documentación Académica Docente y Estructuración en Drive.
+   - [REQ-AMP2-003] Sistema de Notificaciones y Seguimiento de Obligaciones Docentes.
+   - [REQ-AMP2-004] Sistema Centralizado de Notificaciones Estudiantiles con Campana e Indicadores.
+   - [REQ-AMP2-005] Configuración Institucional de Fechas de Pago y Estado Financiero.
+   - [REQ-AMP2-006] Restricción de Visualización de Calificaciones por Pagos Pendientes.
+   - [REQ-AMP2-007] Separación Estricta entre Administración Personal e Institucional.
+   - [REQ-AMP2-008] Archivado Íntegro del Año Escolar en Nueva Spreadsheet Independiente.
+   - [REQ-AMP2-009] Seguridad, Permisos y Trazabilidad del Archivado Anual.
+
+===========================================================
+AUDITORÍA DE CÓDIGO - REGISTRO DE SUPERVISIÓN Y FLUJO TÉCNICO DE DOCUMENTACIÓN DOCENTE
+===========================================================
+Archivos auditados:
+- Pendientes.md
+
+Hallazgos:
+1. Incorporación y estructuración de las especificaciones "Supervisión y Consulta de Documentación Docente" y "Estados y Transiciones Documentales".
+2. Registrados 13 módulos técnicos adicionales con metadatos completos y criterios de aceptación explícitos:
+   - [REQ-SUP-001] Acceso al Perfil Docente y Consulta Documental.
+   - [REQ-SUP-002] Organización Jerárquica y Filtrado Preciso.
+   - [REQ-SUP-003] Impresión, Previsualización y Descarga Segura sin Alteración en Drive.
+   - [REQ-SUP-004] Acceso Restringido a Docentes Suplentes y Relevos Temporales.
+   - [REQ-SUP-005] Seguridad Backend y Enlaces Autenticados de Drive.
+   - [REQ-SUP-006] Resumen Administrativo de Cumplimiento Documental.
+   - [REQ-FLOW-001] Definición de Estados Oficiales y Muestra Polimórfica.
+   - [REQ-FLOW-002] Matriz de Transiciones Permitidas y Validación en Backend.
+   - [REQ-FLOW-003] Desacoplamiento entre Estado Operativo, Cumplimiento y Vencimiento.
+   - [REQ-FLOW-004] Control Estricto de Versiones e Inmutabilidad de Entregas.
+   - [REQ-FLOW-005] Asignación Granular de Permisos por Rol en el Flujo Documental.
+   - [REQ-FLOW-006] Gestión de Fechas Límite, Notificaciones y Recálculo.
+   - [REQ-FLOW-007] Registro Inmutable de Auditoría por Transición Documental.

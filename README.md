@@ -1,4 +1,4 @@
-# Plataforma de Gestión Educativa (PWA) - ISEMED Área de Informática
+# Plataforma de Gestión Educativa (PWA) - New Generation Christian Academy
 
 ## 1. Arquitectura General
 La plataforma es una **Aplicación Web Progresiva (PWA)** diseñada bajo una arquitectura de **Microservicios desacoplados** que interactúan mediante una capa de transporte de datos en formato JSON.
