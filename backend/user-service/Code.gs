@@ -92,6 +92,8 @@ function getOrCreateSheet(ss, name) {
     if (name === "QuizProAnalytics") sheet.appendRow(["analyticsId", "fecha", "userId", "quizId", "gameId", "gameName", "asignatura", "grado", "nivel", "preguntaId", "respuestaSeleccionada", "respuestaCorrecta", "esCorrecta", "tiempoRespuesta", "tiempoBase", "ratio", "cambiosRespuesta", "indiceConfianza", "indiceAdivinacion", "indiceDominio", "totalXP"]);
     if (name === "LearningProfile") sheet.appendRow(["profileId", "userId", "asignatura", "tema", "nivel", "intentos", "aciertos", "porcentajeAciertos", "indiceDominio", "ultimaActualizacion"]);
     if (name === "GameLeaderboards") sheet.appendRow(["leaderboardId", "gameId", "userId", "nombreAlumno", "grado", "asignatura", "mejorPuntuacion", "indiceDominioPromedio", "partidasJugadas", "ultimaActualizacion"]);
+    if (name === "Matriculas") sheet.appendRow(["MatriculaID", "Fecha", "UserId", "Alumno", "Grado", "Seccion", "Periodo", "Tipo", "Estado", "BecaDescuento", "Observaciones"]);
+    if (name === "CargosEstudiante") sheet.appendRow(["CargoID", "Fecha", "UserId", "Concepto", "MontoBase", "Descuento", "MontoFinal", "Estado", "FechaVencimiento"]);
   }
   return sheet;
 }
@@ -113,15 +115,15 @@ function doGet() { return textResponse({ status: "success", message: "Microservi
 // ---------------------------------------------------------------------------
 const ROLE_PERMISSIONS = {
   "Administrador": ["*"],
-  "Director": ["createNews", "uploadNewsImage", "getNews", "getStudents", "getStudentsByGradoSeccion", "getUserInfo", "saveGameResult", "getGameStats", "getGlobalTop", "recordAnalytics", "getLearningProfile", "mergeGuestData", "updateUserProfile"],
-  "Subdirector": ["createNews", "uploadNewsImage", "getNews", "getStudents", "getStudentsByGradoSeccion", "getUserInfo", "saveGameResult", "getGameStats", "getGlobalTop", "recordAnalytics", "getLearningProfile", "mergeGuestData", "updateUserProfile"],
-  "Secretaría": ["getStudents", "getStudentsByGradoSeccion", "getUserInfo", "updateUserProfile", "getNews"],
-  "Contador": ["getStudents", "getUserInfo", "getNews"],
+  "Director": ["createNews", "uploadNewsImage", "getNews", "getStudents", "getStudentsByGradoSeccion", "getUserInfo", "saveGameResult", "getGameStats", "getGlobalTop", "recordAnalytics", "getLearningProfile", "mergeGuestData", "updateUserProfile", "registerStudentEnrollment", "getStudentEnrollmentHistory"],
+  "Subdirector": ["createNews", "uploadNewsImage", "getNews", "getStudents", "getStudentsByGradoSeccion", "getUserInfo", "saveGameResult", "getGameStats", "getGlobalTop", "recordAnalytics", "getLearningProfile", "mergeGuestData", "updateUserProfile", "registerStudentEnrollment", "getStudentEnrollmentHistory"],
+  "Secretaría": ["getStudents", "getStudentsByGradoSeccion", "getUserInfo", "updateUserProfile", "getNews", "registerStudentEnrollment", "getStudentEnrollmentHistory"],
+  "Contador": ["getStudents", "getUserInfo", "getNews", "registerStudentEnrollment", "getStudentEnrollmentHistory"],
   "Consejeros": ["getStudents", "getStudentsByGradoSeccion", "getUserInfo", "getLearningProfile", "getNews"],
   "Profesor": ["getStudents", "getStudentsByGradoSeccion", "getUserInfo", "getNews", "createNews", "uploadNewsImage", "saveGameResult", "getGameStats", "getGlobalTop", "recordAnalytics", "getLearningProfile", "mergeGuestData"],
   "Asistente": ["getStudents", "getStudentsByGradoSeccion", "getUserInfo", "getNews", "getLearningProfile"],
-  "Estudiante": ["getUserInfo", "getNews", "saveGameResult", "getGameStats", "getGlobalTop", "recordAnalytics", "getLearningProfile", "mergeGuestData", "updateUserProfile"],
-  "Alumno": ["getUserInfo", "getNews", "saveGameResult", "getGameStats", "getGlobalTop", "recordAnalytics", "getLearningProfile", "mergeGuestData", "updateUserProfile"]
+  "Estudiante": ["getUserInfo", "getNews", "saveGameResult", "getGameStats", "getGlobalTop", "recordAnalytics", "getLearningProfile", "mergeGuestData", "updateUserProfile", "getStudentEnrollmentHistory"],
+  "Alumno": ["getUserInfo", "getNews", "saveGameResult", "getGameStats", "getGlobalTop", "recordAnalytics", "getLearningProfile", "mergeGuestData", "updateUserProfile", "getStudentEnrollmentHistory"]
 };
 
 const PUBLIC_ACTIONS = ["registerUser", "loginUser", "requestPasswordRecovery", "resetPassword"];
@@ -163,6 +165,8 @@ function doPost(e) {
       case "getNews": result = getNews(payload); break;
       case "createNews": result = createNews(payload); break;
       case "uploadNewsImage": result = uploadNewsImage(payload); break;
+      case "registerStudentEnrollment": result = registerStudentEnrollment(payload); break;
+      case "getStudentEnrollmentHistory": result = getStudentEnrollmentHistory(payload); break;
       default: result = { status: "error", message: `Acción no reconocida: ${action}` };
     }
     return textResponse(result);
@@ -477,3 +481,123 @@ function uploadNewsImage(payload) {
 }
 
 function getOrCreateFolderNews(parent, name) { const f = parent.getFoldersByName(name); return f.hasNext() ? f.next() : parent.createFolder(name); }
+
+// REQ-EXP-009: Módulo de Matrícula y Control Financiero del Estudiante
+function registerStudentEnrollment(payload) {
+  const { userId, alumno, grado, seccion, periodo, tipo, becaDescuento, observaciones, cargos } = payload || {};
+  if (!userId || !grado || !periodo) throw new Error("Datos de matrícula incompletos.");
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const matSheet = getOrCreateSheet(ss, "Matriculas");
+  const cargosSheet = getOrCreateSheet(ss, "CargosEstudiante");
+
+  const matData = matSheet.getDataRange().getValues();
+  const sUserId = String(userId).trim();
+  const sPeriodo = String(periodo).trim();
+  const sGrado = String(grado).trim();
+
+  let existingIndex = matData.findIndex(r => String(r[2]).trim() === sUserId && String(r[6]).trim() === sPeriodo);
+  let matriculaId;
+  const now = new Date();
+
+  if (existingIndex !== -1) {
+    matriculaId = matData[existingIndex][0];
+    matSheet.getRange(existingIndex + 1, 1, 1, 11).setValues([[
+      matriculaId,
+      now,
+      sUserId,
+      alumno || matData[existingIndex][3],
+      sGrado,
+      seccion || matData[existingIndex][5],
+      sPeriodo,
+      tipo || matData[existingIndex][7] || "Ordinaria",
+      "Activa",
+      becaDescuento || 0,
+      observaciones || ""
+    ]]);
+  } else {
+    matriculaId = "MAT-" + now.getTime();
+    matSheet.appendRow([
+      matriculaId,
+      now,
+      sUserId,
+      alumno || "Estudiante",
+      sGrado,
+      seccion || "",
+      sPeriodo,
+      tipo || "Ordinaria",
+      "Activa",
+      becaDescuento || 0,
+      observaciones || ""
+    ]);
+  }
+
+  if (Array.isArray(cargos) && cargos.length > 0) {
+    const existingCargos = cargosSheet.getDataRange().getValues();
+    cargos.forEach(c => {
+      const concepto = c.concepto || "Matrícula/Colegiatura";
+      const dup = existingCargos.find(r => String(r[2]).trim() === sUserId && String(r[3]).trim() === concepto && String(r[7]) !== "Anulado");
+      if (!dup) {
+        const cargoId = "CRG-" + Date.now() + "-" + Math.floor(Math.random() * 1000);
+        const montoBase = parseFloat(c.montoBase || 0);
+        const descuento = parseFloat(c.descuento || becaDescuento || 0);
+        const montoFinal = Math.max(0, montoBase - descuento);
+        cargosSheet.appendRow([
+          cargoId,
+          now,
+          sUserId,
+          concepto,
+          montoBase,
+          descuento,
+          montoFinal,
+          c.estado || "Pendiente",
+          c.fechaVencimiento || ""
+        ]);
+      }
+    });
+  }
+
+  return { status: "success", matriculaId: matriculaId, message: "Matrícula registrada exitosamente." };
+}
+
+function getStudentEnrollmentHistory(payload) {
+  const { userId } = payload || {};
+  if (!userId) throw new Error("userId requerido.");
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sUserId = String(userId).trim();
+
+  const matRows = getOrCreateSheet(ss, "Matriculas").getDataRange().getValues().slice(1);
+  const userMatriculas = matRows.filter(r => String(r[2]).trim() === sUserId).map(r => ({
+    matriculaId: r[0],
+    fecha: r[1],
+    userId: r[2],
+    alumno: r[3],
+    grado: r[4],
+    seccion: r[5],
+    periodo: r[6],
+    tipo: r[7],
+    estado: r[8],
+    becaDescuento: r[9],
+    observaciones: r[10]
+  }));
+
+  const cargosRows = getOrCreateSheet(ss, "CargosEstudiante").getDataRange().getValues().slice(1);
+  const userCargos = cargosRows.filter(r => String(r[2]).trim() === sUserId).map(r => ({
+    cargoId: r[0],
+    fecha: r[1],
+    userId: r[2],
+    concepto: r[3],
+    montoBase: r[4],
+    descuento: r[5],
+    montoFinal: r[6],
+    estado: r[7],
+    fechaVencimiento: r[8]
+  }));
+
+  return {
+    status: "success",
+    data: {
+      matriculas: userMatriculas,
+      cargos: userCargos
+    }
+  };
+}

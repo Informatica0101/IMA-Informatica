@@ -191,14 +191,14 @@
 - **Criterios de Aceptación:** No existen referencias institucionales obsoletas en la UI pública. El logotipo carga correctamente en todas las vistas.
 - **Estado:** [X] Completada
 
-### [X] [REQ-EXP-008] Sistema de Roles y Permisos Granulares Servidor/RBAC (Sección 5)
+### [REQ-EXP-008] Sistema de Roles y Permisos Granulares Servidor/RBAC (Sección 5)
 - **Origen del Hallazgo:** Requerimientos de Desarrollo y Expansión (Sección 5).
 - **Severidad/Clasificación:** Crítico
 - **Archivos Involucrados:** `backend/user-service/Code.gs`, `backend/academic-service/Code.gs`, `js/config.js`, `js/api.js`
 - **Dependencias Expuestas:** Matriz de autorización por rol (Administrador, Director, Subdirector, Secretaría, Contador, Consejeros, Profesor, Asistente, Alumnos/Padres).
 - **Descripción del Alcance:** Validar roles y permisos del lado del servidor en cada endpoint. Garantizar que ocultar botones en la interfaz no sea el único mecanismo de seguridad.
 - **Criterios de Aceptación:** Rechazo explícito en backend (`AUTH_PERMISSION_DENIED`) ante peticiones no autorizadas para la responsabilidad del usuario.
-- **Estado:** [ ] En Ejecución
+- **Estado:** [X] Completada
 
 ### [REQ-EXP-009] Módulo de Matrícula y Control Financiero del Estudiante (Sección 8)
 - **Origen del Hallazgo:** Requerimientos de Desarrollo y Expansión (Sección 8).
@@ -207,7 +207,7 @@
 - **Dependencias Expuestas:** Expediente del alumno, vinculación financiera-académica.
 - **Descripción del Alcance:** Registrar matrículas/rematrículas por periodo, asociar cargos, becas, descuentos y exoneraciones sin duplicar cobros ni bloquear inapropiadamente la visualización académica autorizada.
 - **Criterios de Aceptación:** Historial de matrícula independiente, cargos generados correctamente sin duplicaciones.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 ### [REQ-EXP-010] Módulo Contable y Financiero - Conceptos, Mensualidades y Cobros (Sección 9.1 - 9.3)
 - **Origen del Hallazgo:** Requerimientos de Desarrollo y Expansión (Sección 9.1 - 9.3).

@@ -733,3 +733,18 @@ Archivos modificados:
 
 2. `Auditoría.txt`:
    - Documentada la estructuración de la supervisión y flujo de estados documentales docentes.
+
+===========================================================
+REGISTRO DE CAMBIOS - REQ-EXP-009: MÓDULO DE MATRÍCULA Y CONTROL FINANCIERO
+===========================================================
+Archivos modificados:
+1. `backend/user-service/Code.gs`:
+   - Incorporada creación e inicialización de hojas `"Matriculas"` y `"CargosEstudiante"` en `getOrCreateSheet`.
+   - Implementadas funciones `registerStudentEnrollment` y `getStudentEnrollmentHistory` para la gestión de matrículas anuales, tipos, becas/descuentos y cargos financieros asociados.
+   - Integradas las acciones y permisos correspondientes en `ROLE_PERMISSIONS` y en el selector `doPost`.
+
+2. `js/student.js`:
+   - Creada e integrada la función `fetchAndRenderStudentEnrollment` para consultar el historial de matrícula y saldo pendiente del estudiante en el perfil.
+
+3. `Pendientes.md`:
+   - Actualizada la tarea `[REQ-EXP-009]` al estado `[X] Completada`.

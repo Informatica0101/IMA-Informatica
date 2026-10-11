@@ -1311,3 +1311,20 @@ Hallazgos:
    - [REQ-FLOW-005] Asignación Granular de Permisos por Rol en el Flujo Documental.
    - [REQ-FLOW-006] Gestión de Fechas Límite, Notificaciones y Recálculo.
    - [REQ-FLOW-007] Registro Inmutable de Auditoría por Transición Documental.
+
+===========================================================
+AUDITORÍA DE CÓDIGO - REQ-EXP-009: MÓDULO DE MATRÍCULA Y CONTROL FINANCIERO
+===========================================================
+Archivos auditados:
+- backend/user-service/Code.gs
+- js/student.js
+- student-dashboard.html
+
+Hallazgos:
+1. `backend/user-service/Code.gs`:
+   - El microservicio de usuario no cuenta con endpoints para registrar y consultar matrículas y cargos financieros asociados (`registerStudentEnrollment` y `getStudentEnrollmentHistory`).
+   - Requiere inicialización de hojas `"Matriculas"` y `"CargosEstudiante"` en `getOrCreateSheet`.
+   - Requiere inclusión de permisos RBAC para roles autorizados.
+
+2. `js/student.js` & `student-dashboard.html`:
+   - Se requiere incorporar visualización del estado de matrícula e historial de cargos financieros del estudiante en el expediente sin bloquear el acceso académico.

@@ -100,10 +100,56 @@ document.addEventListener('DOMContentLoaded', function() {
                             <!-- Mini-métricas -->
                         </div>
                     </div>
+                    <div id="student-enrollment-badge" class="flex flex-col lg:items-end justify-center gap-2">
+                        <!-- Estado de Matrícula y Control Financiero -->
+                    </div>
                 </div>
             </div>
         `;
+        fetchAndRenderStudentEnrollment();
     }
+
+    function fetchAndRenderStudentEnrollment() {
+        if (!currentUser || !currentUser.userId) return;
+        var badgeContainer = document.getElementById('student-enrollment-badge');
+        if (!badgeContainer) return;
+
+        fetchApi('USER', 'getStudentEnrollmentHistory', { userId: currentUser.userId })
+            .then(function(res) {
+                if (res && res.status === 'success' && res.data) {
+                    var matriculas = res.data.matriculas || [];
+                    var cargos = res.data.cargos || [];
+                    var activeMat = matriculas.find(function(m) { return m.estado === 'Activa'; }) || matriculas[0];
+
+                    var estadoText = activeMat ? activeMat.estado : 'Matriculado';
+                    var periodoText = activeMat ? activeMat.periodo : (new Date().getFullYear() + ' Lectivo');
+
+                    var pendientes = cargos.filter(function(c) { return c.estado === 'Pendiente'; });
+                    var totalPendiente = pendientes.reduce(function(sum, c) { return sum + (parseFloat(c.montoFinal) || 0); }, 0);
+
+                    badgeContainer.innerHTML = `
+                        <div class="flex flex-wrap items-center gap-2">
+                            <span class="px-3 py-1 text-xs font-bold rounded-full bg-emerald-50 text-emerald-600 border border-emerald-100">
+                                <i class="fas fa-user-check mr-1"></i> Matrícula ${estadoText} (${periodoText})
+                            </span>
+                            ${totalPendiente > 0 ? `
+                                <span class="px-3 py-1 text-xs font-bold rounded-full bg-amber-50 text-amber-600 border border-amber-100">
+                                    <i class="fas fa-file-invoice-dollar mr-1"></i> Saldo: L ${totalPendiente.toFixed(2)}
+                                </span>
+                            ` : `
+                                <span class="px-3 py-1 text-xs font-bold rounded-full bg-blue-50 text-blue-600 border border-blue-100">
+                                    <i class="fas fa-shield-alt mr-1"></i> Estado Financiero: Al día
+                                </span>
+                            `}
+                        </div>
+                    `;
+                }
+            })
+            .catch(function(err) {
+                console.warn("Información de matrícula diferida:", err);
+            });
+    }
+
     renderStudentHeader();
 
     function formatDate(isoString) {
