@@ -15,6 +15,41 @@ function logDebug(message, optionalParam) {
   }
 }
 
+function logFileMetadata(ss, meta) {
+  try {
+    let sheet = ss.getSheetByName("MetadatosArchivos");
+    if (!sheet) {
+      sheet = ss.insertSheet("MetadatosArchivos");
+      sheet.appendRow(["ID", "Titulo", "NombreOriginal", "NombreFisico", "TipoRecurso", "Asignatura", "Grado", "Seccion", "Parcial", "Anio", "Tema", "TareaId", "ProfesorId", "FechaSubida", "Estado", "DriveId", "RutaDrive", "MimeType", "TamanoBytes"]);
+    }
+    const metaId = "META-" + Date.now() + "-" + Math.floor(Math.random() * 1000);
+    const nowYear = new Date().getFullYear();
+    sheet.appendRow([
+      metaId,
+      meta.titulo || meta.fileName || "",
+      meta.fileName || "",
+      meta.fileName || "",
+      meta.tipoRecurso || "Entrega",
+      meta.asignatura || "General",
+      meta.grado || "General",
+      meta.seccion || "General",
+      meta.parcial || "I parcial",
+      nowYear,
+      meta.tema || "General",
+      meta.tareaId || "",
+      meta.profesorId || "",
+      new Date().toISOString(),
+      "Activo",
+      meta.fileId || "",
+      meta.fileUrl || "",
+      meta.mimeType || "",
+      meta.sizeBytes || 0
+    ]);
+  } catch (err) {
+    logDebug("Error logging file metadata:", err.message);
+  }
+}
+
 function getSheetOrThrow(ss, name) {
   const sheet = ss.getSheetByName(name);
   if (!sheet) {
@@ -354,6 +389,20 @@ function uploadFile(payload) {
   } catch (e) {
     logDebug("No se pudo establecer el permiso de compartir carpeta:", e.message);
   }
+
+  logFileMetadata(ss, {
+    fileName: fileName,
+    fileId: file.getId(),
+    fileUrl: file.getUrl(),
+    mimeType: mimeType,
+    sizeBytes: blob.getBytes().length,
+    tareaId: tareaId,
+    asignatura: sAsignatura,
+    parcial: sParcial,
+    grado: sGrado,
+    seccion: sSeccion,
+    profesorId: taskData[10] || ""
+  });
 
   return {
     status: "success",

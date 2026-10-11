@@ -873,3 +873,24 @@ Descripción de cambios:
 
 3. `Pendientes.md`:
    - Se actualizó el estado de `[REQ-EXP-018]` y `[REQ-EXP-019]` a `[X] Completada`.
+
+===========================================================
+REGISTRO DE CAMBIOS - REQ-DOC-001..012 Y REQ-MOD-001..011
+===========================================================
+Archivos modificados:
+- backend/task-service/Code.gs
+- js/student.js
+- MapaDependencias.md
+- Pendientes.md
+
+Descripción de cambios:
+1. `backend/task-service/Code.gs`:
+   - Se actualizó `createTask` y `getStudentTasks` para soportar `tipoRecurso` ('Tarea', 'Ejercicio', 'GuiaEstudio', 'MaterialApoyo'), `fechaClase` e `horaDisponible`.
+   - Se implementó la función `logFileMetadata` y el registro de metadatos documentales en la hoja `'MetadatosArchivos'`.
+2. `js/student.js`:
+   - Se adaptó `getActivityHtml` para renderizar las guías de estudio informativas de forma desacoplada de las actividades evaluables.
+   - Se agregó la verificación de disponibilidad por hora (`horaDisponible`) para deshabilitar botones de entrega en tareas programadas para el futuro.
+3. `MapaDependencias.md`:
+   - Se documentó la matriz de responsabilidades de los 5 microservicios modularizados (USER, ACADEMIC, ACCOUNTING, TASK, EXAM).
+4. `Pendientes.md`:
+   - Se marcaron como completadas las secciones `[REQ-DOC-001]` a `[REQ-DOC-012]` y `[REQ-MOD-001]` a `[REQ-MOD-011]`.

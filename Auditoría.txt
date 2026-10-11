@@ -1466,3 +1466,29 @@ Hallazgos:
 
 3. Frontend (`teacher-dashboard.html` & `js/teacher.js`):
    - Integrar interfaz de consulta de logs del sistema y panel de control para generación/verificación de copias de seguridad en la Consola Técnica.
+
+===========================================================
+AUDITORÍA DE CÓDIGO - REQ-DOC-001..012 Y REQ-MOD-001..011: GESTIÓN DE CONTENIDOS Y MAPEO DE MICROSERVICIOS
+===========================================================
+Archivos auditados:
+- backend/task-service/Code.gs
+- backend/academic-service/Code.gs
+- js/teacher.js
+- teacher-dashboard.html
+- js/student.js
+- student-dashboard.html
+- MapaDependencias.md
+
+Hallazgos:
+1. `backend/task-service/Code.gs`:
+   - `createTask` y `updateTask` deben soportar el desacoplamiento de tipos de recursos (`tipoRecurso`: 'Tarea', 'Ejercicio', 'GuiaEstudio', 'MaterialApoyo'), fecha de clase (`fechaClase`), e intervalo/hora de disponibilidad (`horaDisponible`).
+   - La subida de archivos debe depositar los documentos en subcarpetas jerárquicas en Drive (`New Generation/Docentes/Asignaturas/[Asignatura]/[Año]/Parcial I..IV/[Tipo]`) y registrar metadatos en la hoja `'MetadatosArchivos'`.
+
+2. `js/teacher.js` & `teacher-dashboard.html`:
+   - Incorporar formulario para creación de Guías de Estudio y Tareas Polimórficas con cálculo de fecha por defecto post-clase y hora de disponibilidad.
+
+3. `js/student.js` & `student-dashboard.html`:
+   - Separar visualmente las Guías de Estudio de las Tareas Evaluables y aplicar restricción de entrega antes de la `horaDisponible`.
+
+4. `MapaDependencias.md`:
+   - Documentar la matriz completa de funciones y contratos de API entre microservicios (USER, ACADEMIC, TASK, EXAM, ACCOUNTING).

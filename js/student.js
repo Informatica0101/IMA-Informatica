@@ -840,7 +840,11 @@ document.addEventListener('DOMContentLoaded', function() {
         var feedbackHtml = '';
         var actionButtonHtml = '';
 
-        if (activity.type === 'Tarea' || activity.type === 'Credito Extra' || activity.type === 'Crédito Extra') {
+        if (activity.tipoRecurso === 'GuiaEstudio' || activity.type === 'GuiaEstudio' || activity.tipoRecurso === 'MaterialApoyo') {
+            var downloadLink = activity.archivoUrl ? `<a href="${activity.archivoUrl}" target="_blank" class="btn-ima-primary bg-indigo-600 hover:bg-indigo-700 px-5 py-2 text-xs flex items-center gap-2"><i class="fas fa-file-pdf"></i> Descargar Guía</a>` : '<span class="text-xs text-gray-400 italic">Sin archivo adjunto</span>';
+            actionButtonHtml = downloadLink;
+            feedbackHtml = `<div class="mt-3 p-3 bg-indigo-50/50 rounded-xl border border-indigo-100 text-[11px] text-indigo-900 font-medium"><i class="fas fa-info-circle mr-1"></i> Guía informativa de estudio para preparación académica (no requiere entrega evaluable).</div>`;
+        } else if (activity.type === 'Tarea' || activity.type === 'Credito Extra' || activity.type === 'Crédito Extra') {
             if (activity.entrega) {
                 var status = activity.entrega.estado;
                 var isPending = (status === 'Pendiente de revisión' || status === 'Pendiente' || !status);
@@ -886,12 +890,25 @@ document.addEventListener('DOMContentLoaded', function() {
                         ${resubmitBtnHtml}
                     </div>`;
             } else {
-                actionButtonHtml = `<button class="btn-ima-primary px-5 py-2 text-xs open-submission-modal"
-                    data-task-id="${activity.tareaId}"
-                    data-task-title="${activity.titulo}"
-                    data-parcial="${activity.parcial || ''}"
-                    data-asignatura="${activity.asignatura || ''}"
-                    data-fecha-limite="${activity.fechaLimite || ''}">Entregar Tarea</button>`;
+                var now = new Date();
+                var isScheduledFuture = false;
+                if (activity.horaDisponible) {
+                    var availDate = new Date(activity.horaDisponible);
+                    if (!isNaN(availDate.getTime()) && now < availDate) {
+                        isScheduledFuture = true;
+                    }
+                }
+
+                if (isScheduledFuture) {
+                    actionButtonHtml = `<button class="bg-gray-100 text-gray-400 px-5 py-2 rounded-xl text-[10px] font-bold uppercase cursor-not-allowed" disabled><i class="fas fa-clock mr-1"></i> Programada para ${formatDate(activity.horaDisponible)}</button>`;
+                } else {
+                    actionButtonHtml = `<button class="btn-ima-primary px-5 py-2 text-xs open-submission-modal"
+                        data-task-id="${activity.tareaId}"
+                        data-task-title="${activity.titulo}"
+                        data-parcial="${activity.parcial || ''}"
+                        data-asignatura="${activity.asignatura || ''}"
+                        data-fecha-limite="${activity.fechaLimite || ''}">Entregar Tarea</button>`;
+                }
             }
         } else if (activity.type === 'Examen') {
             if (activity.entrega) {

@@ -18,11 +18,12 @@
 - persistence.js (DB v4) -> api.js (Silent Reconciliation).
 - api.js -> dashboard-modules (teacher.js, student.js, index-ui.js).
 - Stores: news, teacher_projects, logros_data, academic_reports, student_profiles.
-## Microservicios Modularizados (v7.9.3)
-- USER: Autenticación, Perfil, Noticias, Analítica y Logros.
-- ACADEMIC: Configuración Académica, Historial, Clases (WhatsApp) y Banco de Preguntas.
-- TASK: Gestión de Tareas y Proyectos.
-- EXAM: Gestión de Exámenes.
+## Microservicios Modularizados (v8.1.0)
+- USER: Autenticación, Usuarios, Perfiles, Noticias, Gamificación, Analítica Psicométrica (ICR, GP, Mastery) y LogsEstructurados.
+- ACADEMIC: Configuración Académica Granular, Historial Académico, Matrículas Estudiantiles, Guías de Estudio, Respaldos y Verificación.
+- ACCOUNTING: Contabilidad General, Conceptos de Cobro, Cuentas por Cobrar, Recibos PDF, Facturación SAR, Caja/Bancos, Planillas Hondureñas (IHSS, RAP, ISR), Asistencia y Kardex de Inventarios/Proveedores.
+- TASK: Tareas Polimórficas, Entregas, Calificaciones, Proyectos y MetadatosArchivos en Drive.
+- EXAM: Exámenes, Banco de Preguntas Evaluativas y Evaluaciones.
 
 ## Módulo Académico (v7.9.3)
 - academic-service/Code.gs -> Gestión atómica de ConfiguracionAcademica e HistorialAcademico.
