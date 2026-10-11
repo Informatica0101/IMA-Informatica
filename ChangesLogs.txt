@@ -689,3 +689,14 @@ Archivos modificados:
 
 4. `Pendientes.md`:
    - Marcada como completada la tarea `[X] REQ-EXP-008`.
+
+===========================================================
+REGISTRO DE CAMBIOS - ESTRUCTURACIÓN DE REQUERIMIENTO DASHBOARDS INDEPENDIENTES Y RBAC
+===========================================================
+Archivos modificados:
+1. `Pendientes.md`:
+   - Incorporación de la sección "REQUERIMIENTO: DASHBOARDS INDEPENDIENTES Y CONTROL DE ACCESO POR ROLES".
+   - Registro detallado de requerimientos REQ-DASH-001 a REQ-DASH-009 con especificación de origen, severidad, archivos involucrados, alcance y criterios de aceptación.
+
+2. `Auditoría.txt`:
+   - Documentada la auditoría y estructuración de los requerimientos de Dashboards Independientes.
