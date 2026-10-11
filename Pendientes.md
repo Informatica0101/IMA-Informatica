@@ -234,7 +234,7 @@
 - **Dependencias Expuestas:** Módulo fiscal independiente separado del recibo interno.
 - **Descripción del Alcance:** Incorporar gestión de documentos fiscales tributarios aplicables en Honduras, con trazabilidad hacia cargos y cobros sin confundir el recibo interno con la factura fiscal.
 - **Criterios de Aceptación:** Separación arquitectónica estricta entre control financiero interno y facturación fiscal.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 ### [REQ-EXP-013] Gestión de Caja, Bancos, Ingresos y Egresos (Sección 9.7 / 10.1 - 10.2)
 - **Origen del Hallazgo:** Requerimientos de Desarrollo y Expansión (Sección 9.7 / 10.1 - 10.2).

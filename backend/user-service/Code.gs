@@ -97,6 +97,7 @@ function getOrCreateSheet(ss, name) {
     if (name === "ConceptosCobro") sheet.appendRow(["ConceptoID", "Fecha", "NombreConcepto", "MontoBase", "AplicaAGrado", "PeriodoVigencia", "Estado", "Observaciones"]);
     if (name === "PagosAbonos") sheet.appendRow(["PagoID", "Fecha", "UserId", "CargoID", "Concepto", "MontoAbono", "MetodoPago", "Referencia", "Estado", "ReciboID", "Observaciones"]);
     if (name === "ComprobantesPago") sheet.appendRow(["ComprobanteID", "Fecha", "UserId", "Alumno", "CargoID", "MontoReportado", "MetodoPago", "Referencia", "ComprobanteUrl", "Estado", "Observaciones"]);
+    if (name === "FacturasFiscales") sheet.appendRow(["FacturaID", "FechaEmision", "CAI", "RangoInicial", "RangoFinal", "NumeroFactura", "UserId", "ClienteNombre", "ClienteRTN", "Concepto", "Subtotal", "ISV15", "Total", "Estado", "FechaLimiteEmision", "Observaciones"]);
   }
   return sheet;
 }
@@ -118,10 +119,10 @@ function doGet() { return textResponse({ status: "success", message: "Microservi
 // ---------------------------------------------------------------------------
 const ROLE_PERMISSIONS = {
   "Administrador": ["*"],
-  "Director": ["createNews", "uploadNewsImage", "getNews", "getStudents", "getStudentsByGradoSeccion", "getUserInfo", "saveGameResult", "getGameStats", "getGlobalTop", "recordAnalytics", "getLearningProfile", "mergeGuestData", "updateUserProfile", "registerStudentEnrollment", "getStudentEnrollmentHistory", "configurePaymentConcept", "getStudentAccountStatement", "recordStudentPayment"],
-  "Subdirector": ["createNews", "uploadNewsImage", "getNews", "getStudents", "getStudentsByGradoSeccion", "getUserInfo", "saveGameResult", "getGameStats", "getGlobalTop", "recordAnalytics", "getLearningProfile", "mergeGuestData", "updateUserProfile", "registerStudentEnrollment", "getStudentEnrollmentHistory", "configurePaymentConcept", "getStudentAccountStatement", "recordStudentPayment"],
-  "Secretaría": ["getStudents", "getStudentsByGradoSeccion", "getUserInfo", "updateUserProfile", "getNews", "registerStudentEnrollment", "getStudentEnrollmentHistory", "configurePaymentConcept", "getStudentAccountStatement", "recordStudentPayment"],
-  "Contador": ["getStudents", "getUserInfo", "getNews", "registerStudentEnrollment", "getStudentEnrollmentHistory", "configurePaymentConcept", "getStudentAccountStatement", "recordStudentPayment"],
+  "Director": ["createNews", "uploadNewsImage", "getNews", "getStudents", "getStudentsByGradoSeccion", "getUserInfo", "saveGameResult", "getGameStats", "getGlobalTop", "recordAnalytics", "getLearningProfile", "mergeGuestData", "updateUserProfile", "registerStudentEnrollment", "getStudentEnrollmentHistory", "configurePaymentConcept", "getStudentAccountStatement", "recordStudentPayment", "createFiscalInvoice", "getFiscalInvoices"],
+  "Subdirector": ["createNews", "uploadNewsImage", "getNews", "getStudents", "getStudentsByGradoSeccion", "getUserInfo", "saveGameResult", "getGameStats", "getGlobalTop", "recordAnalytics", "getLearningProfile", "mergeGuestData", "updateUserProfile", "registerStudentEnrollment", "getStudentEnrollmentHistory", "configurePaymentConcept", "getStudentAccountStatement", "recordStudentPayment", "createFiscalInvoice", "getFiscalInvoices"],
+  "Secretaría": ["getStudents", "getStudentsByGradoSeccion", "getUserInfo", "updateUserProfile", "getNews", "registerStudentEnrollment", "getStudentEnrollmentHistory", "configurePaymentConcept", "getStudentAccountStatement", "recordStudentPayment", "createFiscalInvoice", "getFiscalInvoices"],
+  "Contador": ["getStudents", "getUserInfo", "getNews", "registerStudentEnrollment", "getStudentEnrollmentHistory", "configurePaymentConcept", "getStudentAccountStatement", "recordStudentPayment", "createFiscalInvoice", "getFiscalInvoices"],
   "Consejeros": ["getStudents", "getStudentsByGradoSeccion", "getUserInfo", "getLearningProfile", "getNews"],
   "Profesor": ["getStudents", "getStudentsByGradoSeccion", "getUserInfo", "getNews", "createNews", "uploadNewsImage", "saveGameResult", "getGameStats", "getGlobalTop", "recordAnalytics", "getLearningProfile", "mergeGuestData"],
   "Asistente": ["getStudents", "getStudentsByGradoSeccion", "getUserInfo", "getNews", "getLearningProfile"],
@@ -175,6 +176,8 @@ function doPost(e) {
       case "recordStudentPayment": result = recordStudentPayment(payload); break;
       case "uploadPaymentVoucher": result = uploadPaymentVoucher(payload); break;
       case "generatePaymentReceiptPDF": result = generatePaymentReceiptPDF(payload); break;
+      case "createFiscalInvoice": result = createFiscalInvoice(payload); break;
+      case "getFiscalInvoices": result = getFiscalInvoices(payload); break;
       default: result = { status: "error", message: `Acción no reconocida: ${action}` };
     }
     return textResponse(result);
@@ -857,5 +860,85 @@ function generatePaymentReceiptPDF(payload) {
   return {
     status: "success",
     receipt: receiptData
+  };
+}
+
+// REQ-EXP-012: Módulo de Facturación Fiscal Hondureña (SAR)
+function createFiscalInvoice(payload) {
+  const { cai, rangoInicial, rangoFinal, numeroFactura, userId, clienteNombre, clienteRTN, concepto, subtotal, isv15, total, fechaLimiteEmision, observaciones } = payload || {};
+  if (!cai || !numeroFactura || !clienteNombre) throw new Error("CAI, Número de factura y Nombre de cliente son requeridos.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "FacturasFiscales");
+  const now = new Date();
+  const facturaId = "FCT-" + now.getTime();
+
+  const sub = parseFloat(subtotal || 0);
+  const isv = parseFloat(isv15 || 0);
+  const tot = parseFloat(total || (sub + isv));
+
+  sheet.appendRow([
+    facturaId,
+    now,
+    cai,
+    rangoInicial || "",
+    rangoFinal || "",
+    numeroFactura,
+    userId || "CLIENTE-VARIO",
+    clienteNombre,
+    clienteRTN || "00000000000000",
+    concepto || "Servicios Educativos",
+    sub,
+    isv,
+    tot,
+    "Emitida",
+    fechaLimiteEmision || "",
+    observaciones || ""
+  ]);
+
+  return {
+    status: "success",
+    facturaId: facturaId,
+    numeroFactura: numeroFactura,
+    cai: cai,
+    total: tot,
+    message: "Factura fiscal emitida exitosamente con estándares SAR."
+  };
+}
+
+function getFiscalInvoices(payload) {
+  const { userId, facturaId } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const rows = getOrCreateSheet(ss, "FacturasFiscales").getDataRange().getValues().slice(1);
+
+  let result = rows;
+  if (facturaId) {
+    result = result.filter(r => String(r[0]).trim() === String(facturaId).trim());
+  } else if (userId) {
+    result = result.filter(r => String(r[6]).trim() === String(userId).trim());
+  }
+
+  const mapped = result.map(r => ({
+    facturaId: r[0],
+    fechaEmision: r[1],
+    cai: r[2],
+    rangoInicial: r[3],
+    rangoFinal: r[4],
+    numeroFactura: r[5],
+    userId: r[6],
+    clienteNombre: r[7],
+    clienteRTN: r[8],
+    concepto: r[9],
+    subtotal: parseFloat(r[10] || 0),
+    isv15: parseFloat(r[11] || 0),
+    total: parseFloat(r[12] || 0),
+    estado: r[13],
+    fechaLimiteEmision: r[14],
+    observaciones: r[15]
+  }));
+
+  return {
+    status: "success",
+    data: mapped
   };
 }

@@ -1361,3 +1361,15 @@ Hallazgos:
 
 2. `js/student.js` & `student-dashboard.html`:
    - Requiere la integración visual en la interfaz del estudiante para consultar cargos vencidos/próximos, adjuntar comprobantes de depósito y descargar el recibo oficial correlativo.
+
+===========================================================
+AUDITORÍA DE CÓDIGO - REQ-EXP-012: MÓDULO DE FACTURACIÓN FISCAL HONDUREÑA
+===========================================================
+Archivos auditados:
+- backend/user-service/Code.gs
+
+Hallazgos:
+1. `backend/user-service/Code.gs`:
+   - El microservicio carece de un módulo independiente para facturación fiscal (SAR Hondureña: CAI, Rango Autorizado, RTN, Fecha Límite de Emisión), separado del recibo interno.
+   - Se debe inicializar la hoja `"FacturasFiscales"` en `getOrCreateSheet`.
+   - Se deben implementar las funciones `createFiscalInvoice` y `getFiscalInvoices` y actualizar `ROLE_PERMISSIONS` y `doPost`.
