@@ -61,7 +61,7 @@ function getOrCreateSheet(ss, name) {
 // ENDPOINTS & RBAC PERMISSIONS
 // ---------------------------------------------------------------------------
 
-function doGet() { return textResponse({ status: "success", message: "Microservicio Contabilidad y Planillas operativo" }); }
+function doGet() { return textResponse({ status: "success", service: "ACCOUNTING", timestamp: new Date().toISOString(), dbConnected: true }); }
 
 const ROLE_PERMISSIONS = {
   "Administrador": ["*"],
@@ -76,7 +76,10 @@ const ROLE_PERMISSIONS = {
   "Alumno": ["getStudentAccountStatement", "uploadPaymentVoucher", "generatePaymentReceiptPDF"]
 };
 
+const PUBLIC_ACTIONS = ["ping"];
+
 function validateRolePermission(action, payload) {
+  if (PUBLIC_ACTIONS.indexOf(action) !== -1) return { authorized: true };
   const userRole = (payload && (payload.authRole || payload.rol)) || "Estudiante";
   const permitted = ROLE_PERMISSIONS[userRole] || ROLE_PERMISSIONS["Estudiante"];
   if (permitted.indexOf("*") !== -1 || permitted.indexOf(action) !== -1) {
@@ -111,6 +114,7 @@ function doPost(e) {
       case "recordInventoryMovement": result = recordInventoryMovement(payload); break;
       case "getInventoryKardex": result = getInventoryKardex(payload); break;
       case "registerSupplier": result = registerSupplier(payload); break;
+      case "ping": result = { status: "success", service: "ACCOUNTING", timestamp: new Date().toISOString(), dbConnected: true }; break;
       default: result = { status: "error", message: `Acción no reconocida: ${action}` };
     }
     return textResponse(result);

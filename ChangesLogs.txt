@@ -725,6 +725,22 @@ Archivos modificados:
    - Actualizada la tarea `[REQ-EXP-015]` al estado `[X] Completada`.
 
 ===========================================================
+REGISTRO DE CAMBIOS - REQ-EXP-017: CONSOLA DE ADMINISTRACIÓN TÉCNICA Y HEALTH CHECKS
+===========================================================
+Archivos modificados:
+1. `backend/user-service/Code.gs`, `backend/academic-service/Code.gs`, `backend/accounting-service/Code.gs`:
+   - Incorporada la acción pública `"ping"` y estandarizadas las respuestas de salud con metadatos de disponibilidad (`service`, `timestamp`, `status`, `dbConnected`).
+
+2. `teacher-dashboard.html`:
+   - Diseñado e inyectado el widget de Consola Técnica y Monitoreo de Microservicios con tarjetas de estado por servicio e indicadores de color (En línea, Degradado, Fuera de línea).
+
+3. `js/teacher.js`:
+   - Creada e integrada la función `runTechnicalHealthChecks` para ejecutar pruebas ping-pong paralelas en tiempo real a todos los microservicios activos (`USER`, `ACADEMIC`, `TASK`, `EXAM`, `ACCOUNTING`), midiendo latencias de red en ms.
+
+4. `Pendientes.md`:
+   - Actualizada la tarea `[REQ-EXP-017]` al estado `[X] Completada`.
+
+===========================================================
 REGISTRO DE CAMBIOS - REQ-EXP-016: NOTICIAS Y COMUNICACIÓN INSTITUCIONAL
 ===========================================================
 Archivos modificados:

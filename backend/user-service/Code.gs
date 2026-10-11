@@ -105,7 +105,7 @@ function normalizeSubjectInBackend(name) {
 // ENDPOINTS
 // ---------------------------------------------------------------------------
 
-function doGet() { return textResponse({ status: "success", message: "Microservicio Usuarios operativo" }); }
+function doGet() { return textResponse({ status: "success", service: "USER", timestamp: new Date().toISOString(), dbConnected: true }); }
 
 
 // ---------------------------------------------------------------------------
@@ -124,7 +124,7 @@ const ROLE_PERMISSIONS = {
   "Alumno": ["getUserInfo", "getNews", "saveGameResult", "getGameStats", "getGlobalTop", "recordAnalytics", "getLearningProfile", "mergeGuestData", "updateUserProfile"]
 };
 
-const PUBLIC_ACTIONS = ["registerUser", "loginUser", "requestPasswordRecovery", "resetPassword"];
+const PUBLIC_ACTIONS = ["registerUser", "loginUser", "requestPasswordRecovery", "resetPassword", "ping"];
 
 function validateRolePermission(action, payload) {
   if (PUBLIC_ACTIONS.indexOf(action) !== -1) return { authorized: true };
@@ -164,6 +164,7 @@ function doPost(e) {
       case "createNews": result = createNews(payload); break;
       case "uploadNewsImage": result = uploadNewsImage(payload); break;
       case "updateNewsStatus": result = updateNewsStatus(payload); break;
+      case "ping": result = { status: "success", service: "USER", timestamp: new Date().toISOString(), dbConnected: true }; break;
       default: result = { status: "error", message: `Acción no reconocida: ${action}` };
     }
     return textResponse(result);

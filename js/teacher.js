@@ -331,6 +331,64 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    // REQ-EXP-017: Health Checks Ping-Pong en Consola Técnica
+    function runTechnicalHealthChecks() {
+        var services = ['USER', 'ACADEMIC', 'TASK', 'EXAM', 'ACCOUNTING'];
+        var btn = document.getElementById('btn-run-health-checks');
+        var timeLabel = document.getElementById('health-check-last-time');
+
+        if (btn) {
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verificando...';
+        }
+
+        var promises = services.map(function(svc) {
+            var el = document.getElementById('health-status-' + svc);
+            if (el) {
+                el.className = 'mt-2 text-xs font-bold text-blue-500 animate-pulse';
+                el.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Probando...';
+            }
+            var startTime = Date.now();
+            return fetchApi(svc, 'ping', {}, 0)
+                .then(function(res) {
+                    var latency = Date.now() - startTime;
+                    if (el) {
+                        if (res && res.status === 'success') {
+                            if (latency < 1200) {
+                                el.className = 'mt-2 text-xs font-bold text-emerald-600 flex items-center gap-1.5';
+                                el.innerHTML = '<span class="w-2 h-2 rounded-full bg-emerald-500 inline-block"></span> En línea (' + latency + 'ms)';
+                            } else {
+                                el.className = 'mt-2 text-xs font-bold text-amber-600 flex items-center gap-1.5';
+                                el.innerHTML = '<span class="w-2 h-2 rounded-full bg-amber-500 inline-block"></span> Degradado (' + latency + 'ms)';
+                            }
+                        } else {
+                            el.className = 'mt-2 text-xs font-bold text-red-600 flex items-center gap-1.5';
+                            el.innerHTML = '<span class="w-2 h-2 rounded-full bg-red-500 inline-block"></span> Error';
+                        }
+                    }
+                })
+                .catch(function(err) {
+                    if (el) {
+                        el.className = 'mt-2 text-xs font-bold text-red-600 flex items-center gap-1.5';
+                        el.innerHTML = '<span class="w-2 h-2 rounded-full bg-red-500 inline-block"></span> Fuera de línea';
+                    }
+                });
+        });
+
+        Promise.all(promises).then(function() {
+            if (btn) {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-heartbeat"></i> Probar Conectividad';
+            }
+            if (timeLabel) {
+                var now = new Date();
+                timeLabel.textContent = 'Última verificación: ' + now.toLocaleTimeString();
+            }
+        });
+    }
+
+    document.getElementById('btn-run-health-checks')?.addEventListener('click', runTechnicalHealthChecks);
+
     // Lógica de Migración del Banco de Preguntas (Fase 2)
     document.getElementById('btn-migrate-questions')?.addEventListener('click', async () => {
         if (!confirm('Esta acción escaneará el repositorio y migrará todas las preguntas detectadas al Banco Central en Google Sheets. ¿Deseas continuar?')) return;

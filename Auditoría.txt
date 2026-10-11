@@ -1425,3 +1425,20 @@ Hallazgos:
 
 2. `js/index-ui.js`:
    - Refactorizar el renderizado de noticias para enviar los parámetros de audiencia del estudiante activo y mostrar avisos segmentados.
+
+===========================================================
+AUDITORÍA DE CÓDIGO - REQ-EXP-017: CONSOLA DE ADMINISTRACIÓN TÉCNICA Y HEALTH CHECKS
+===========================================================
+Archivos auditados:
+- backend/user-service/Code.gs
+- backend/academic-service/Code.gs
+- backend/accounting-service/Code.gs
+- teacher-dashboard.html
+- js/teacher.js
+
+Hallazgos:
+1. Backend Microservices:
+   - Estandarizar respuestas del endpoint de salud y acción `ping` retornando metadatos de disponibilidad (`serviceName`, `timestamp`, `status`).
+
+2. Frontend (`teacher-dashboard.html` & `js/teacher.js`):
+   - Integrar panel de monitoreo técnico en tiempo real en la Consola de Administración que ejecute pruebas ping-pong contra todos los microservicios (`USER`, `ACADEMIC`, `TASK`, `EXAM`, `ACCOUNTING`), midiendo latencias en ms con indicadores de estado de salud.

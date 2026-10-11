@@ -556,6 +556,57 @@
                             <li class="flex items-center gap-2"><i class="fas fa-check-circle"></i> Historial archivado disponible para el docente.</li>
                         </ul>
                     </div>
+
+                    <!-- Tarjeta de Consola Técnica y Monitoreo Health Checks Ping-Pong (REQ-EXP-017) -->
+                    <div class="card-ima border-emerald-100 bg-emerald-50/30 p-8 rounded-[2.5rem] md:col-span-2">
+                        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+                            <div class="flex items-center gap-4">
+                                <div class="w-12 h-12 bg-emerald-600 text-white rounded-2xl flex items-center justify-center text-xl shadow-lg shadow-emerald-100">
+                                    <i class="fas fa-network-wired"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-xl font-bold text-gray-800">Consola Técnica & Health Checks</h3>
+                                    <p class="text-xs text-gray-500 font-medium">Monitoreo de estado y latencia de microservicios (Ping-Pong real)</p>
+                                </div>
+                            </div>
+                            <button id="btn-run-health-checks" class="bg-emerald-600 text-white px-5 py-2.5 rounded-xl font-bold text-xs uppercase tracking-widest hover:bg-emerald-700 transition-all shadow-md flex items-center gap-2">
+                                <i class="fas fa-heartbeat"></i> Probar Conectividad
+                            </button>
+                        </div>
+
+                        <div id="health-check-results-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+                            <!-- Tarjetas de estado por servicio -->
+                            <div class="p-4 bg-white rounded-2xl border border-gray-100 shadow-sm flex flex-col justify-between">
+                                <span class="text-xs font-bold text-gray-700 uppercase">USER</span>
+                                <div id="health-status-USER" class="mt-2 text-xs font-bold text-gray-400">Esperando prueba...</div>
+                            </div>
+                            <div class="p-4 bg-white rounded-2xl border border-gray-100 shadow-sm flex flex-col justify-between">
+                                <span class="text-xs font-bold text-gray-700 uppercase">ACADEMIC</span>
+                                <div id="health-status-ACADEMIC" class="mt-2 text-xs font-bold text-gray-400">Esperando prueba...</div>
+                            </div>
+                            <div class="p-4 bg-white rounded-2xl border border-gray-100 shadow-sm flex flex-col justify-between">
+                                <span class="text-xs font-bold text-gray-700 uppercase">TASK</span>
+                                <div id="health-status-TASK" class="mt-2 text-xs font-bold text-gray-400">Esperando prueba...</div>
+                            </div>
+                            <div class="p-4 bg-white rounded-2xl border border-gray-100 shadow-sm flex flex-col justify-between">
+                                <span class="text-xs font-bold text-gray-700 uppercase">EXAM</span>
+                                <div id="health-status-EXAM" class="mt-2 text-xs font-bold text-gray-400">Esperando prueba...</div>
+                            </div>
+                            <div class="p-4 bg-white rounded-2xl border border-gray-100 shadow-sm flex flex-col justify-between">
+                                <span class="text-xs font-bold text-gray-700 uppercase">ACCOUNTING</span>
+                                <div id="health-status-ACCOUNTING" class="mt-2 text-xs font-bold text-gray-400">Esperando prueba...</div>
+                            </div>
+                        </div>
+
+                        <div class="mt-4 flex flex-wrap items-center justify-between text-[11px] font-semibold text-gray-400 border-t border-gray-100 pt-3">
+                            <span id="health-check-last-time">Última verificación: N/A</span>
+                            <span class="flex items-center gap-3">
+                                <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-emerald-500"></span> En línea (&lt;1.2s)</span>
+                                <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-amber-500"></span> Degradado (&gt;1.2s)</span>
+                                <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-red-500"></span> Fuera de línea</span>
+                            </span>
+                        </div>
+                    </div>
                 </div>
             </section>
 
