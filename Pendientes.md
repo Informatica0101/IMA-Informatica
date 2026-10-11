@@ -288,7 +288,7 @@
 - **Dependencias Expuestas:** Visor de logs en Consola Técnica.
 - **Descripción del Alcance:** Registrar eventos con fecha, hora, severidad, servicio, función y códigos de error unívocos (ej. `AUTH_INVALID_CREDENTIALS`, `SHEETS_WRITE_FAILED`), con filtros por severidad y fecha.
 - **Criterios de Aceptación:** Logs detallados sin exponer información sensible ni contraseñas.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 ### [REQ-EXP-019] Módulo de Copias de Seguridad, Verificación y Mantenimiento Seguro (Sección 14.7 - 14.8)
 - **Origen del Hallazgo:** Requerimientos de Desarrollo y Expansión (Sección 14.7 - 14.8).
@@ -297,7 +297,7 @@
 - **Dependencias Expuestas:** Drive API, automatización de respaldos de datos de la institución.
 - **Descripción del Alcance:** Crear respaldos manuales/programados, verificar integridad de archivos guardados, control de restauración protegida con confirmación doble y herramientas de mantenimiento seguro.
 - **Criterios de Aceptación:** Generación exitosa de respaldos verificables con políticas de retención.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 ---
 

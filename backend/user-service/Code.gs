@@ -47,6 +47,98 @@ function logDebug(message, optionalParam) {
   } catch (_) {}
 }
 
+function sanitizePayloadForLog(payload) {
+  if (!payload || typeof payload !== "object") return String(payload || "");
+  try {
+    const clean = JSON.parse(JSON.stringify(payload));
+    const sensitiveKeys = ["password", "clave", "token", "secret", "credencial", "authorization"];
+    function maskObj(obj) {
+      if (!obj || typeof obj !== "object") return;
+      for (const k in obj) {
+        if (sensitiveKeys.some(sk => k.toLowerCase().includes(sk))) {
+          obj[k] = "***MASKED***";
+        } else if (typeof obj[k] === "object") {
+          maskObj(obj[k]);
+        }
+      }
+    }
+    maskObj(clean);
+    return JSON.stringify(clean);
+  } catch (_) {
+    return "[Unserializable Payload]";
+  }
+}
+
+function logStructuredEvent(serviceName, fnName, severity, errorCode, message, payload, userRole) {
+  try {
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    let sheet = ss.getSheetByName("LogsSistema");
+    if (!sheet) {
+      sheet = ss.insertSheet("LogsSistema");
+      sheet.appendRow(["ID", "Timestamp", "Servicio", "Función", "Severidad", "CódigoError", "Mensaje", "DatosPayload", "RolUsuario"]);
+    }
+    const logId = "LOG-" + Date.now() + "-" + Math.floor(Math.random() * 1000);
+    const timestamp = new Date().toISOString();
+    const sanitizedPayload = sanitizePayloadForLog(payload);
+    sheet.appendRow([
+      logId,
+      timestamp,
+      serviceName || "USER",
+      fnName || "unknown",
+      (severity || "INFO").toUpperCase(),
+      errorCode || "OK",
+      message || "",
+      sanitizedPayload,
+      userRole || "Sistema"
+    ]);
+  } catch (err) {
+    console.error("Error writing structured log:", err);
+  }
+}
+
+function getStructuredLogs(payload) {
+  try {
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const sheet = ss.getSheetByName("LogsSistema");
+    if (!sheet) return { status: "success", logs: [] };
+
+    const data = sheet.getDataRange().getValues();
+    if (data.length <= 1) return { status: "success", logs: [] };
+
+    const reqSeverity = (payload && payload.severity) ? String(payload.severity).toUpperCase() : "";
+    const startDate = (payload && payload.startDate) ? new Date(payload.startDate) : null;
+    const endDate = (payload && payload.endDate) ? new Date(payload.endDate) : null;
+
+    const logs = [];
+    for (let i = 1; i < data.length; i++) {
+      const row = data[i];
+      const logSev = String(row[4] || "").toUpperCase();
+      const logDate = new Date(row[1]);
+
+      if (reqSeverity && reqSeverity !== "ALL" && logSev !== reqSeverity) continue;
+      if (startDate && !isNaN(startDate.getTime()) && logDate < startDate) continue;
+      if (endDate && !isNaN(endDate.getTime()) && logDate > endDate) continue;
+
+      logs.push({
+        id: row[0],
+        timestamp: row[1],
+        service: row[2],
+        functionName: row[3],
+        severity: row[4],
+        errorCode: row[5],
+        message: row[6],
+        payload: row[7],
+        userRole: row[8]
+      });
+    }
+
+    return { status: "success", logs: logs.reverse().slice(0, 500) };
+  } catch (error) {
+    logStructuredEvent("USER", "getStructuredLogs", "ERROR", "LOGS_FETCH_FAILED", error.message, payload, payload && payload.authRole);
+    return { status: "error", message: error.message };
+  }
+}
+
 function getSheetOrThrow(ss, name) {
   const sheet = ss.getSheetByName(name);
   if (!sheet) {
@@ -164,6 +256,7 @@ function doPost(e) {
       case "createNews": result = createNews(payload); break;
       case "uploadNewsImage": result = uploadNewsImage(payload); break;
       case "updateNewsStatus": result = updateNewsStatus(payload); break;
+      case "getStructuredLogs": result = getStructuredLogs(payload); break;
       case "ping": result = { status: "success", service: "USER", timestamp: new Date().toISOString(), dbConnected: true }; break;
       default: result = { status: "error", message: `Acción no reconocida: ${action}` };
     }

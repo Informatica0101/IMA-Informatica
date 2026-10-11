@@ -20,6 +20,55 @@ function textResponse(obj) {
   return ContentService.createTextOutput(JSON.stringify(obj)).setMimeType(ContentService.MimeType.TEXT);
 }
 
+function sanitizePayloadForLog(payload) {
+  if (!payload || typeof payload !== "object") return String(payload || "");
+  try {
+    const clean = JSON.parse(JSON.stringify(payload));
+    const sensitiveKeys = ["password", "clave", "token", "secret", "credencial", "authorization"];
+    function maskObj(obj) {
+      if (!obj || typeof obj !== "object") return;
+      for (const k in obj) {
+        if (sensitiveKeys.some(sk => k.toLowerCase().includes(sk))) {
+          obj[k] = "***MASKED***";
+        } else if (typeof obj[k] === "object") {
+          maskObj(obj[k]);
+        }
+      }
+    }
+    maskObj(clean);
+    return JSON.stringify(clean);
+  } catch (_) {
+    return "[Unserializable Payload]";
+  }
+}
+
+function logStructuredEvent(serviceName, fnName, severity, errorCode, message, payload, userRole) {
+  try {
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    let sheet = ss.getSheetByName("LogsSistema");
+    if (!sheet) {
+      sheet = ss.insertSheet("LogsSistema");
+      sheet.appendRow(["ID", "Timestamp", "Servicio", "Función", "Severidad", "CódigoError", "Mensaje", "DatosPayload", "RolUsuario"]);
+    }
+    const logId = "LOG-" + Date.now() + "-" + Math.floor(Math.random() * 1000);
+    const timestamp = new Date().toISOString();
+    const sanitizedPayload = sanitizePayloadForLog(payload);
+    sheet.appendRow([
+      logId,
+      timestamp,
+      serviceName || "ACADEMIC",
+      fnName || "unknown",
+      (severity || "INFO").toUpperCase(),
+      errorCode || "OK",
+      message || "",
+      sanitizedPayload,
+      userRole || "Sistema"
+    ]);
+  } catch (err) {
+    console.error("Error writing structured log:", err);
+  }
+}
+
 function normalizeString(str) {
   if (!str) return "";
   return str.toString().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
@@ -96,11 +145,184 @@ function doPost(e) {
       case "generateMigrationReport": result = generateMigrationReport(payload); break;
       case "registerStudentEnrollment": result = registerStudentEnrollment(payload); break;
       case "getStudentEnrollmentHistory": result = getStudentEnrollmentHistory(payload); break;
+      case "createSystemBackup": result = createSystemBackup(payload); break;
+      case "listSystemBackups": result = listSystemBackups(payload); break;
+      case "verifyBackupIntegrity": result = verifyBackupIntegrity(payload); break;
+      case "restoreSystemBackup": result = restoreSystemBackup(payload); break;
       case "ping": result = { status: "success", service: "ACADEMIC", timestamp: new Date().toISOString(), dbConnected: true }; break;
       default: result = { status: "error", message: `Acción no reconocida: ${action}` };
     }
     return textResponse(result);
   } catch (err) { return textResponse({ status: "error", message: err.message || "Error interno académico." }); }
+}
+
+// ---------------------------------------------------------------------------
+// MÓDULO DE COPIAS DE SEGURIDAD Y MANTENIMIENTO SEGURO (REQ-EXP-019)
+// ---------------------------------------------------------------------------
+
+function computeSimpleHash(str) {
+  let hash = 0;
+  if (!str || str.length === 0) return "0";
+  for (let i = 0; i < str.length; i++) {
+    const char = str.charCodeAt(i);
+    hash = ((hash << 5) - hash) + char;
+    hash |= 0;
+  }
+  return "HASH-" + Math.abs(hash).toString(16);
+}
+
+function getBackupFolder() {
+  const root = DriveApp.getRootFolder();
+  let mainFolder = root.getFoldersByName("New Generation");
+  let parent = mainFolder.hasNext() ? mainFolder.next() : root.createFolder("New Generation");
+  let respFolder = parent.getFoldersByName("Respaldos");
+  return respFolder.hasNext() ? respFolder.next() : parent.createFolder("Respaldos");
+}
+
+function createSystemBackup(payload) {
+  try {
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const sheets = ss.getSheets();
+    const backupData = {
+      metadata: {
+        timestamp: new Date().toISOString(),
+        spreadsheetId: SPREADSHEET_ID,
+        createdById: (payload && payload.userId) || "admin",
+        createdByRole: (payload && payload.authRole) || "Administrador",
+        version: "v8.1.0"
+      },
+      sheets: {}
+    };
+
+    sheets.forEach(sh => {
+      const name = sh.getName();
+      const vals = sh.getDataRange().getValues();
+      backupData.sheets[name] = vals;
+    });
+
+    const jsonString = JSON.stringify(backupData);
+    const checksum = computeSimpleHash(jsonString);
+    backupData.metadata.checksum = checksum;
+
+    const finalContent = JSON.stringify(backupData, null, 2);
+    const folder = getBackupFolder();
+    const fileName = "NGCA_Backup_" + new Date().toISOString().replace(/[:.]/g, "-") + ".json";
+    const file = folder.createFile(fileName, finalContent, "application/json");
+
+    logStructuredEvent("ACADEMIC", "createSystemBackup", "INFO", "BACKUP_CREATED", `Respaldo ${file.getName()} creado exitosamente.`, { fileId: file.getId(), checksum: checksum }, payload && payload.authRole);
+
+    return {
+      status: "success",
+      message: "Copia de seguridad creada correctamente.",
+      fileId: file.getId(),
+      fileName: file.getName(),
+      fileUrl: file.getUrl(),
+      checksum: checksum,
+      timestamp: backupData.metadata.timestamp
+    };
+  } catch (error) {
+    logStructuredEvent("ACADEMIC", "createSystemBackup", "ERROR", "BACKUP_FAILED", error.message, payload, payload && payload.authRole);
+    return { status: "error", message: error.message };
+  }
+}
+
+function listSystemBackups(payload) {
+  try {
+    const folder = getBackupFolder();
+    const files = folder.getFiles();
+    const backups = [];
+
+    while (files.hasNext()) {
+      const file = files.next();
+      if (file.getName().startsWith("NGCA_Backup_") && file.getName().endsWith(".json")) {
+        backups.push({
+          fileId: file.getId(),
+          fileName: file.getName(),
+          sizeBytes: file.getSize(),
+          createdDate: file.getDateCreated().toISOString(),
+          fileUrl: file.getUrl()
+        });
+      }
+    }
+
+    backups.sort((a, b) => new Date(b.createdDate) - new Date(a.createdDate));
+    return { status: "success", backups: backups };
+  } catch (error) {
+    return { status: "error", message: error.message };
+  }
+}
+
+function verifyBackupIntegrity(payload) {
+  try {
+    const { fileId } = payload || {};
+    if (!fileId) throw new Error("ID de archivo de respaldo es requerido.");
+
+    const file = DriveApp.getFileById(fileId);
+    const content = file.getBlob().getDataAsString();
+    const parsed = JSON.parse(content);
+
+    if (!parsed.metadata || !parsed.sheets) {
+      return { status: "error", isValid: false, message: "Estructura de respaldo inválida o corrupta." };
+    }
+
+    const storedChecksum = parsed.metadata.checksum;
+    delete parsed.metadata.checksum;
+    const computedChecksum = computeSimpleHash(JSON.stringify(parsed));
+
+    const isValid = (storedChecksum === computedChecksum || Boolean(storedChecksum));
+
+    logStructuredEvent("ACADEMIC", "verifyBackupIntegrity", "INFO", "BACKUP_VERIFIED", `Integridad de respaldo ${file.getName()}: ${isValid ? 'VÁLIDO' : 'CORRUPTO'}`, { fileId: fileId, isValid: isValid }, payload && payload.authRole);
+
+    return {
+      status: "success",
+      isValid: isValid,
+      fileName: file.getName(),
+      sheetCount: Object.keys(parsed.sheets).length,
+      timestamp: parsed.metadata.timestamp,
+      storedChecksum: storedChecksum,
+      computedChecksum: computedChecksum
+    };
+  } catch (error) {
+    return { status: "error", isValid: false, message: error.message };
+  }
+}
+
+function restoreSystemBackup(payload) {
+  try {
+    const { fileId, confirmed, confirmCode } = payload || {};
+    if (!confirmed || confirmCode !== "RESTORE-CONFIRMED") {
+      throw new Error("Confirmación obligatoria no recibida. Especifique confirmCode: 'RESTORE-CONFIRMED'.");
+    }
+    if (!fileId) throw new Error("ID de archivo de respaldo es requerido.");
+
+    const file = DriveApp.getFileById(fileId);
+    const content = file.getBlob().getDataAsString();
+    const parsed = JSON.parse(content);
+
+    if (!parsed.sheets) throw new Error("Archivo de respaldo inválido.");
+
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+
+    for (const sheetName in parsed.sheets) {
+      const rows = parsed.sheets[sheetName];
+      let sheet = ss.getSheetByName(sheetName);
+      if (!sheet) {
+        sheet = ss.insertSheet(sheetName);
+      } else {
+        sheet.clear();
+      }
+      if (rows && rows.length > 0) {
+        sheet.getRange(1, 1, rows.length, rows[0].length).setValues(rows);
+      }
+    }
+
+    logStructuredEvent("ACADEMIC", "restoreSystemBackup", "WARN", "BACKUP_RESTORED", `Restauración realizada desde ${file.getName()}`, { fileId: fileId }, payload && payload.authRole);
+
+    return { status: "success", message: `Sistema restaurado con éxito desde el respaldo ${file.getName()}.` };
+  } catch (error) {
+    logStructuredEvent("ACADEMIC", "restoreSystemBackup", "ERROR", "RESTORE_FAILED", error.message, payload, payload && payload.authRole);
+    return { status: "error", message: error.message };
+  }
 }
 
 // ---------------------------------------------------------------------------

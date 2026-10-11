@@ -1442,3 +1442,27 @@ Hallazgos:
 
 2. Frontend (`teacher-dashboard.html` & `js/teacher.js`):
    - Integrar panel de monitoreo técnico en tiempo real en la Consola de Administración que ejecute pruebas ping-pong contra todos los microservicios (`USER`, `ACADEMIC`, `TASK`, `EXAM`, `ACCOUNTING`), midiendo latencias en ms con indicadores de estado de salud.
+
+===========================================================
+AUDITORÍA DE CÓDIGO - REQ-EXP-018: LOGS ESTRUCTURADOS Y REQ-EXP-019: RESPALDOS Y MANTENIMIENTO
+===========================================================
+Archivos auditados:
+- backend/user-service/Code.gs
+- backend/academic-service/Code.gs
+- backend/accounting-service/Code.gs
+- js/api.js
+- teacher-dashboard.html
+- js/teacher.js
+
+Hallazgos:
+1. Backend Microservices (`user-service`, `academic-service`, `accounting-service`):
+   - Implementar función reutilizable `logStructuredEvent(service, fn, severity, code, message, payload, userRole)` que persista en la hoja `'LogsSistema'` con estructura tabular: `ID | Timestamp | Servicio | Función | Severidad | CódigoError | Mensaje | DatosPayload | RolUsuario`.
+   - Aplicar enmascaramiento automático de campos sensibles (password, token, etc.).
+   - Exponer el endpoint `getStructuredLogs` para filtrado por severidad y rango de fechas.
+
+2. Módulo de Copias de Seguridad (`backend/academic-service/Code.gs`):
+   - Implementar `createSystemBackup`, `verifyBackupIntegrity`, `listSystemBackups` y `restoreSystemBackup`.
+   - Guardar respaldos formateados JSON/Spreadsheet en Google Drive bajo la carpeta `New Generation/Respaldos/` con hashes checksum para verificación.
+
+3. Frontend (`teacher-dashboard.html` & `js/teacher.js`):
+   - Integrar interfaz de consulta de logs del sistema y panel de control para generación/verificación de copias de seguridad en la Consola Técnica.

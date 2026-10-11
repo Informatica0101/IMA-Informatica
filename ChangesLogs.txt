@@ -851,3 +851,25 @@ Archivos modificados:
 
 2. `Pendientes.md`:
    - Actualizada la tarea `[REQ-EXP-014]` al estado `[X] Completada`.
+
+===========================================================
+REGISTRO DE CAMBIOS - REQ-EXP-018 & REQ-EXP-019
+===========================================================
+Archivos modificados:
+- backend/user-service/Code.gs
+- backend/academic-service/Code.gs
+- backend/accounting-service/Code.gs
+- Pendientes.md
+
+Descripción de cambios:
+1. `backend/user-service/Code.gs`, `backend/academic-service/Code.gs`, `backend/accounting-service/Code.gs`:
+   - Se agregaron las funciones `logStructuredEvent` y `sanitizePayloadForLog` para el registro unificado de logs estructurados en la hoja `'LogsSistema'`.
+   - Se implementó la enmascaración automática de campos con claves sensibles (password, clave, token, secret, credencial).
+   - Se agregó la función `getStructuredLogs` en `backend/user-service/Code.gs` para consultar y filtrar entradas por severidad (INFO, WARN, ERROR, CRITICAL) y rango de fechas.
+
+2. `backend/academic-service/Code.gs`:
+   - Se agregaron las funciones del Módulo de Copias de Seguridad y Mantenimiento Seguro: `createSystemBackup`, `listSystemBackups`, `verifyBackupIntegrity` y `restoreSystemBackup`.
+   - Se configuró la exportación y lectura de archivos de respaldo JSON en la carpeta de Google Drive `New Generation/Respaldos/` incorporando verificación por checksum y código de confirmación previa para la restauración.
+
+3. `Pendientes.md`:
+   - Se actualizó el estado de `[REQ-EXP-018]` y `[REQ-EXP-019]` a `[X] Completada`.

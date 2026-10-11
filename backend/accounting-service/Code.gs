@@ -25,6 +25,55 @@ function normalizeString(str) {
   return str.toString().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
 }
 
+function sanitizePayloadForLog(payload) {
+  if (!payload || typeof payload !== "object") return String(payload || "");
+  try {
+    const clean = JSON.parse(JSON.stringify(payload));
+    const sensitiveKeys = ["password", "clave", "token", "secret", "credencial", "authorization"];
+    function maskObj(obj) {
+      if (!obj || typeof obj !== "object") return;
+      for (const k in obj) {
+        if (sensitiveKeys.some(sk => k.toLowerCase().includes(sk))) {
+          obj[k] = "***MASKED***";
+        } else if (typeof obj[k] === "object") {
+          maskObj(obj[k]);
+        }
+      }
+    }
+    maskObj(clean);
+    return JSON.stringify(clean);
+  } catch (_) {
+    return "[Unserializable Payload]";
+  }
+}
+
+function logStructuredEvent(serviceName, fnName, severity, errorCode, message, payload, userRole) {
+  try {
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    let sheet = ss.getSheetByName("LogsSistema");
+    if (!sheet) {
+      sheet = ss.insertSheet("LogsSistema");
+      sheet.appendRow(["ID", "Timestamp", "Servicio", "Función", "Severidad", "CódigoError", "Mensaje", "DatosPayload", "RolUsuario"]);
+    }
+    const logId = "LOG-" + Date.now() + "-" + Math.floor(Math.random() * 1000);
+    const timestamp = new Date().toISOString();
+    const sanitizedPayload = sanitizePayloadForLog(payload);
+    sheet.appendRow([
+      logId,
+      timestamp,
+      serviceName || "ACCOUNTING",
+      fnName || "unknown",
+      (severity || "INFO").toUpperCase(),
+      errorCode || "OK",
+      message || "",
+      sanitizedPayload,
+      userRole || "Sistema"
+    ]);
+  } catch (err) {
+    console.error("Error writing structured log:", err);
+  }
+}
+
 function getParentDriveFolder() {
   try {
     const folderId = PropertiesService.getScriptProperties().getProperty('PARENT_FOLDER_ID');
