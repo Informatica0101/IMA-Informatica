@@ -88,7 +88,7 @@ function getOrCreateSheet(ss, name) {
   if (!sheet) {
     sheet = ss.insertSheet(name);
     if (name === "Logros") sheet.appendRow(["Fecha", "UserId", "Alumno", "Juego", "Asignatura", "Puntaje", "Nivel", "Grado", "XP"]);
-    if (name === "NoticiasPortal") sheet.appendRow(["Fecha", "Hora", "Título", "Contenido", "ImagenUrl", "Categoría"]);
+    if (name === "NoticiasPortal") sheet.appendRow(["NoticiaID", "Fecha", "Hora", "Título", "Contenido", "ImagenUrl", "Categoría", "GradoAudiencia", "SeccionAudiencia", "FechaInicio", "FechaFin", "Estado"]);
     if (name === "QuizProAnalytics") sheet.appendRow(["analyticsId", "fecha", "userId", "quizId", "gameId", "gameName", "asignatura", "grado", "nivel", "preguntaId", "respuestaSeleccionada", "respuestaCorrecta", "esCorrecta", "tiempoRespuesta", "tiempoBase", "ratio", "cambiosRespuesta", "indiceConfianza", "indiceAdivinacion", "indiceDominio", "totalXP"]);
     if (name === "LearningProfile") sheet.appendRow(["profileId", "userId", "asignatura", "tema", "nivel", "intentos", "aciertos", "porcentajeAciertos", "indiceDominio", "ultimaActualizacion"]);
     if (name === "GameLeaderboards") sheet.appendRow(["leaderboardId", "gameId", "userId", "nombreAlumno", "grado", "asignatura", "mejorPuntuacion", "indiceDominioPromedio", "partidasJugadas", "ultimaActualizacion"]);
@@ -113,9 +113,9 @@ function doGet() { return textResponse({ status: "success", message: "Microservi
 // ---------------------------------------------------------------------------
 const ROLE_PERMISSIONS = {
   "Administrador": ["*"],
-  "Director": ["createNews", "uploadNewsImage", "getNews", "getStudents", "getStudentsByGradoSeccion", "getUserInfo", "saveGameResult", "getGameStats", "getGlobalTop", "recordAnalytics", "getLearningProfile", "mergeGuestData", "updateUserProfile"],
-  "Subdirector": ["createNews", "uploadNewsImage", "getNews", "getStudents", "getStudentsByGradoSeccion", "getUserInfo", "saveGameResult", "getGameStats", "getGlobalTop", "recordAnalytics", "getLearningProfile", "mergeGuestData", "updateUserProfile"],
-  "Secretaría": ["getStudents", "getStudentsByGradoSeccion", "getUserInfo", "updateUserProfile", "getNews"],
+  "Director": ["createNews", "uploadNewsImage", "getNews", "updateNewsStatus", "getStudents", "getStudentsByGradoSeccion", "getUserInfo", "saveGameResult", "getGameStats", "getGlobalTop", "recordAnalytics", "getLearningProfile", "mergeGuestData", "updateUserProfile"],
+  "Subdirector": ["createNews", "uploadNewsImage", "getNews", "updateNewsStatus", "getStudents", "getStudentsByGradoSeccion", "getUserInfo", "saveGameResult", "getGameStats", "getGlobalTop", "recordAnalytics", "getLearningProfile", "mergeGuestData", "updateUserProfile"],
+  "Secretaría": ["createNews", "uploadNewsImage", "getNews", "updateNewsStatus", "getStudents", "getStudentsByGradoSeccion", "getUserInfo", "updateUserProfile"],
   "Contador": ["getStudents", "getUserInfo", "getNews"],
   "Consejeros": ["getStudents", "getStudentsByGradoSeccion", "getUserInfo", "getLearningProfile", "getNews"],
   "Profesor": ["getStudents", "getStudentsByGradoSeccion", "getUserInfo", "getNews", "createNews", "uploadNewsImage", "saveGameResult", "getGameStats", "getGlobalTop", "recordAnalytics", "getLearningProfile", "mergeGuestData"],
@@ -163,6 +163,7 @@ function doPost(e) {
       case "getNews": result = getNews(payload); break;
       case "createNews": result = createNews(payload); break;
       case "uploadNewsImage": result = uploadNewsImage(payload); break;
+      case "updateNewsStatus": result = updateNewsStatus(payload); break;
       default: result = { status: "error", message: `Acción no reconocida: ${action}` };
     }
     return textResponse(result);
@@ -458,15 +459,80 @@ function mergeGuestData(payload) {
 }
 
 function getNews(payload) {
+  const { grado, seccion, includeInactive } = payload || {};
   const data = getOrCreateSheet(SpreadsheetApp.openById(SPREADSHEET_ID), "NoticiasPortal").getDataRange().getValues().slice(1);
-  return { status: "success", data: data.filter(r => r[2] && r[3]).map(r => ({ fecha: r[0], hora: r[1], titulo: r[2], contenido: r[3], imagenUrl: r[4], categoria: r[5] || "General" })).sort((a,b) => new Date(b.fecha) - new Date(a.fecha) || b.hora.localeCompare(a.hora)) };
+  const nowStr = new Date().toISOString().split('T')[0];
+
+  const mapped = data.map(r => ({
+    noticiaId: r[0] || ("NWS-" + r[1]),
+    fecha: r[1],
+    hora: r[2],
+    titulo: r[3],
+    contenido: r[4],
+    imagenUrl: r[5],
+    categoria: r[6] || "General",
+    gradoAudiencia: r[7] || "Todos",
+    seccionAudiencia: r[8] || "Todas",
+    fechaInicio: r[9] || "",
+    fechaFin: r[10] || "",
+    estado: r[11] || "Activa"
+  }));
+
+  let filtered = mapped;
+  if (!includeInactive) {
+    filtered = filtered.filter(n => n.estado === "Activa");
+    filtered = filtered.filter(n => (!n.fechaInicio || n.fechaInicio <= nowStr) && (!n.fechaFin || n.fechaFin >= nowStr));
+  }
+
+  if (grado) {
+    const sGrado = normalizeString(grado);
+    filtered = filtered.filter(n => !n.gradoAudiencia || normalizeString(n.gradoAudiencia) === "todos" || normalizeString(n.gradoAudiencia) === sGrado);
+  }
+  if (seccion) {
+    const sSeccion = normalizeString(seccion);
+    filtered = filtered.filter(n => !n.seccionAudiencia || normalizeString(n.seccionAudiencia) === "todas" || normalizeString(n.seccionAudiencia) === sSeccion);
+  }
+
+  filtered.sort((a,b) => new Date(b.fecha) - new Date(a.fecha) || String(b.hora).localeCompare(String(a.hora)));
+  return { status: "success", data: filtered };
 }
 
 function createNews(payload) {
+  const { titulo, contenido, imagenUrl, categoria, gradoAudiencia, seccionAudiencia, fechaInicio, fechaFin } = payload || {};
+  if (!titulo || !contenido) throw new Error("Título y contenido requeridos.");
   const now = new Date();
-  let img = payload.imagenUrl || ""; if (img && !img.includes("http")) img = `https://lh3.googleusercontent.com/d/${img}`;
-  getOrCreateSheet(SpreadsheetApp.openById(SPREADSHEET_ID), "NoticiasPortal").appendRow([now.toISOString().split('T')[0], now.toTimeString().split(' ')[0], payload.titulo, payload.contenido, img, payload.categoria || "General"]);
-  return { status: "success" };
+  let img = imagenUrl || ""; if (img && !img.includes("http")) img = `https://lh3.googleusercontent.com/d/${img}`;
+  const noticiaId = "NWS-" + now.getTime();
+
+  getOrCreateSheet(SpreadsheetApp.openById(SPREADSHEET_ID), "NoticiasPortal").appendRow([
+    noticiaId,
+    now.toISOString().split('T')[0],
+    now.toTimeString().split(' ')[0],
+    titulo,
+    contenido,
+    img,
+    categoria || "General",
+    gradoAudiencia || "Todos",
+    seccionAudiencia || "Todas",
+    fechaInicio || now.toISOString().split('T')[0],
+    fechaFin || "",
+    "Activa"
+  ]);
+  return { status: "success", noticiaId: noticiaId, message: "Noticia publicada exitosamente." };
+}
+
+function updateNewsStatus(payload) {
+  const { noticiaId, estado } = payload || {};
+  if (!noticiaId || !estado) throw new Error("noticiaId y estado requeridos.");
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "NoticiasPortal");
+  const data = sheet.getDataRange().getValues();
+
+  const idx = data.findIndex(r => String(r[0]).trim() === String(noticiaId).trim() || String(r[3]).toLowerCase().trim() === String(noticiaId).toLowerCase().trim());
+  if (idx === -1) throw new Error("Noticia no encontrada.");
+
+  sheet.getRange(idx + 1, 12).setValue(estado);
+  return { status: "success", message: `Estado de la noticia actualizado a '${estado}'.` };
 }
 
 function getParentDriveFolder() {

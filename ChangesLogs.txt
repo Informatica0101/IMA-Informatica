@@ -725,6 +725,21 @@ Archivos modificados:
    - Actualizada la tarea `[REQ-EXP-015]` al estado `[X] Completada`.
 
 ===========================================================
+REGISTRO DE CAMBIOS - REQ-EXP-016: NOTICIAS Y COMUNICACIÓN INSTITUCIONAL
+===========================================================
+Archivos modificados:
+1. `backend/user-service/Code.gs`:
+   - Ampliada la estructura de la hoja `"NoticiasPortal"` en `getOrCreateSheet` para incluir audiencia (`GradoAudiencia`, `SeccionAudiencia`), vigencia de fechas (`FechaInicio`, `FechaFin`) y estado (`Activa`/`Retirada`).
+   - Refactorizada `getNews` para filtrar por audiencia y vigencia de fechas, e implementado `updateNewsStatus` para edición/retiro de noticias por Secretaría.
+   - Habilitados los permisos de gestión de noticias para `Secretaría` en `ROLE_PERMISSIONS`.
+
+2. `js/index-ui.js`:
+   - Refactorizado el consumo de `getNews` para inyectar los parámetros de audiencia del alumno activo.
+
+3. `Pendientes.md`:
+   - Actualizada la tarea `[REQ-EXP-016]` al estado `[X] Completada`.
+
+===========================================================
 REGISTRO DE CAMBIOS - ESTRUCTURACIÓN DE REQUERIMIENTOS AMPLIACIÓN CALENDARIO Y ARCHIVO ANUAL
 ===========================================================
 Archivos modificados:

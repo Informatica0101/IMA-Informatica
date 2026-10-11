@@ -750,7 +750,15 @@ document.addEventListener('DOMContentLoaded', function() {
                     renderInitialSkeleton();
                 }
 
-                fetchApi('USER', 'getNews', {}, 0, {
+                var activeUserRaw = localStorage.getItem("usuario_actual") || sessionStorage.getItem("usuario_actual");
+                var activeUser = activeUserRaw ? JSON.parse(activeUserRaw) : null;
+                var newsPayload = {};
+                if (activeUser) {
+                    if (activeUser.grado) newsPayload.grado = activeUser.grado;
+                    if (activeUser.seccion) newsPayload.seccion = activeUser.seccion;
+                }
+
+                fetchApi('USER', 'getNews', newsPayload, 0, {
                     store: 'news',
                     onUpdate: function(data) { renderNewsHTML(data); }
                 }).then(function(res) {

@@ -1409,3 +1409,19 @@ Hallazgos:
    - Carece de la inicialización de hojas `"InventariosKardex"` y `"ProveedoresActivos"` para el control de inventario de consumibles, activos fijos y catálogo de proveedores.
    - Requiere implementar los endpoints `recordInventoryMovement` (entradas, salidas, préstamos, devoluciones, bajas con cálculo de saldo y alerta de stock mínimo), `getInventoryKardex` y `registerSupplier`.
    - Requiere configuración de permisos RBAC en `ROLE_PERMISSIONS` y casos en `doPost`.
+
+===========================================================
+AUDITORÍA DE CÓDIGO - REQ-EXP-016: MÓDULO DE NOTICIAS Y COMUNICACIÓN INSTITUCIONAL
+===========================================================
+Archivos auditados:
+- backend/user-service/Code.gs
+- js/index-ui.js
+
+Hallazgos:
+1. `backend/user-service/Code.gs`:
+   - La hoja `"NoticiasPortal"` actual carece de campos para la segmentación de audiencia (`GradoAudiencia`, `SeccionAudiencia`), rango de vigencia (`FechaInicio`, `FechaFin`) y estado operativo (`Activa`/`Retirada`).
+   - `getNews` debe refactorizarse para filtrar por audiencia y vigencia de fechas, e implementar el endpoint `updateNewsStatus` para retiro/edición por Secretaría.
+   - Actualizar `ROLE_PERMISSIONS` para autorizar a Secretaría en la gestión completa de comunicaciones.
+
+2. `js/index-ui.js`:
+   - Refactorizar el renderizado de noticias para enviar los parámetros de audiencia del estudiante activo y mostrar avisos segmentados.
