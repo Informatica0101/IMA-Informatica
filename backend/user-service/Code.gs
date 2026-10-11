@@ -100,6 +100,9 @@ function getOrCreateSheet(ss, name) {
     if (name === "FacturasFiscales") sheet.appendRow(["FacturaID", "FechaEmision", "CAI", "RangoInicial", "RangoFinal", "NumeroFactura", "UserId", "ClienteNombre", "ClienteRTN", "Concepto", "Subtotal", "ISV15", "Total", "Estado", "FechaLimiteEmision", "Observaciones"]);
     if (name === "MovimientosCajaBancos") sheet.appendRow(["MovimientoID", "Fecha", "Tipo", "Categoria", "Monto", "MetodoPago", "ReferenciaBancaria", "ProveedorTercero", "ResponsableUserId", "Estado", "Observaciones"]);
     if (name === "CierresCaja") sheet.appendRow(["CierreID", "FechaCierre", "ResponsableUserId", "MontoInicial", "TotalIngresos", "TotalEgresos", "SaldoTeorico", "SaldoRealEfectivo", "Diferencia", "Estado", "Observaciones"]);
+    if (name === "PlanillasNomenclatura") sheet.appendRow(["PlanillaID", "FechaGeneracion", "PeriodoMes", "EmpleadoId", "EmpleadoNombre", "CargoPuesto", "SalarioBase", "HorasExtras", "MontoHorasExtras", "Bonificaciones", "DeduccionIHSS", "DeduccionRAP", "DeduccionISR", "OtrasDeducciones", "SalarioNeto", "Estado"]);
+    if (name === "DeduccionesAsistencia") sheet.appendRow(["AsistenciaID", "Fecha", "EmpleadoId", "EmpleadoNombre", "HoraEntrada", "HoraSalida", "MinutosTardanza", "EstadoAsistencia", "Observaciones"]);
+    if (name === "BoletasPago") sheet.appendRow(["BoletaID", "PlanillaID", "FechaEmision", "EmpleadoId", "EmpleadoNombre", "PeriodoMes", "TotalDevengado", "TotalDeducciones", "NetoAPagar", "EstadoBoleta"]);
   }
   return sheet;
 }
@@ -121,10 +124,10 @@ function doGet() { return textResponse({ status: "success", message: "Microservi
 // ---------------------------------------------------------------------------
 const ROLE_PERMISSIONS = {
   "Administrador": ["*"],
-  "Director": ["createNews", "uploadNewsImage", "getNews", "getStudents", "getStudentsByGradoSeccion", "getUserInfo", "saveGameResult", "getGameStats", "getGlobalTop", "recordAnalytics", "getLearningProfile", "mergeGuestData", "updateUserProfile", "registerStudentEnrollment", "getStudentEnrollmentHistory", "configurePaymentConcept", "getStudentAccountStatement", "recordStudentPayment", "createFiscalInvoice", "getFiscalInvoices", "recordCashBankMovement", "closeCashSession", "getCashBankSummary"],
-  "Subdirector": ["createNews", "uploadNewsImage", "getNews", "getStudents", "getStudentsByGradoSeccion", "getUserInfo", "saveGameResult", "getGameStats", "getGlobalTop", "recordAnalytics", "getLearningProfile", "mergeGuestData", "updateUserProfile", "registerStudentEnrollment", "getStudentEnrollmentHistory", "configurePaymentConcept", "getStudentAccountStatement", "recordStudentPayment", "createFiscalInvoice", "getFiscalInvoices", "recordCashBankMovement", "closeCashSession", "getCashBankSummary"],
-  "Secretaría": ["getStudents", "getStudentsByGradoSeccion", "getUserInfo", "updateUserProfile", "getNews", "registerStudentEnrollment", "getStudentEnrollmentHistory", "configurePaymentConcept", "getStudentAccountStatement", "recordStudentPayment", "createFiscalInvoice", "getFiscalInvoices", "recordCashBankMovement", "closeCashSession", "getCashBankSummary"],
-  "Contador": ["getStudents", "getUserInfo", "getNews", "registerStudentEnrollment", "getStudentEnrollmentHistory", "configurePaymentConcept", "getStudentAccountStatement", "recordStudentPayment", "createFiscalInvoice", "getFiscalInvoices", "recordCashBankMovement", "closeCashSession", "getCashBankSummary"],
+  "Director": ["createNews", "uploadNewsImage", "getNews", "getStudents", "getStudentsByGradoSeccion", "getUserInfo", "saveGameResult", "getGameStats", "getGlobalTop", "recordAnalytics", "getLearningProfile", "mergeGuestData", "updateUserProfile", "registerStudentEnrollment", "getStudentEnrollmentHistory", "configurePaymentConcept", "getStudentAccountStatement", "recordStudentPayment", "createFiscalInvoice", "getFiscalInvoices", "recordCashBankMovement", "closeCashSession", "getCashBankSummary", "generatePayrollPeriod", "recordStaffAttendance", "getStaffPayrollReceipt"],
+  "Subdirector": ["createNews", "uploadNewsImage", "getNews", "getStudents", "getStudentsByGradoSeccion", "getUserInfo", "saveGameResult", "getGameStats", "getGlobalTop", "recordAnalytics", "getLearningProfile", "mergeGuestData", "updateUserProfile", "registerStudentEnrollment", "getStudentEnrollmentHistory", "configurePaymentConcept", "getStudentAccountStatement", "recordStudentPayment", "createFiscalInvoice", "getFiscalInvoices", "recordCashBankMovement", "closeCashSession", "getCashBankSummary", "generatePayrollPeriod", "recordStaffAttendance", "getStaffPayrollReceipt"],
+  "Secretaría": ["getStudents", "getStudentsByGradoSeccion", "getUserInfo", "updateUserProfile", "getNews", "registerStudentEnrollment", "getStudentEnrollmentHistory", "configurePaymentConcept", "getStudentAccountStatement", "recordStudentPayment", "createFiscalInvoice", "getFiscalInvoices", "recordCashBankMovement", "closeCashSession", "getCashBankSummary", "generatePayrollPeriod", "recordStaffAttendance", "getStaffPayrollReceipt"],
+  "Contador": ["getStudents", "getUserInfo", "getNews", "registerStudentEnrollment", "getStudentEnrollmentHistory", "configurePaymentConcept", "getStudentAccountStatement", "recordStudentPayment", "createFiscalInvoice", "getFiscalInvoices", "recordCashBankMovement", "closeCashSession", "getCashBankSummary", "generatePayrollPeriod", "recordStaffAttendance", "getStaffPayrollReceipt"],
   "Consejeros": ["getStudents", "getStudentsByGradoSeccion", "getUserInfo", "getLearningProfile", "getNews"],
   "Profesor": ["getStudents", "getStudentsByGradoSeccion", "getUserInfo", "getNews", "createNews", "uploadNewsImage", "saveGameResult", "getGameStats", "getGlobalTop", "recordAnalytics", "getLearningProfile", "mergeGuestData"],
   "Asistente": ["getStudents", "getStudentsByGradoSeccion", "getUserInfo", "getNews", "getLearningProfile"],
@@ -183,6 +186,9 @@ function doPost(e) {
       case "recordCashBankMovement": result = recordCashBankMovement(payload); break;
       case "closeCashSession": result = closeCashSession(payload); break;
       case "getCashBankSummary": result = getCashBankSummary(payload); break;
+      case "generatePayrollPeriod": result = generatePayrollPeriod(payload); break;
+      case "recordStaffAttendance": result = recordStaffAttendance(payload); break;
+      case "getStaffPayrollReceipt": result = getStaffPayrollReceipt(payload); break;
       default: result = { status: "error", message: `Acción no reconocida: ${action}` };
     }
     return textResponse(result);
@@ -1092,5 +1098,156 @@ function getCashBankSummary(payload) {
       estado: r[9],
       observaciones: r[10]
     }))
+  };
+}
+
+// REQ-EXP-014: Módulo de Planillas, Deducciones y Asistencia de Personal
+function generatePayrollPeriod(payload) {
+  const { periodoMes, empleadosList } = payload || {};
+  if (!periodoMes || !Array.isArray(empleadosList) || empleadosList.length === 0) {
+    throw new Error("PeriodoMes y lista de empleados requeridos.");
+  }
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const planSheet = getOrCreateSheet(ss, "PlanillasNomenclatura");
+  const bolSheet = getOrCreateSheet(ss, "BoletasPago");
+  const now = new Date();
+  const planillaId = "PLN-" + now.getTime();
+
+  const processedRows = [];
+  const boletasRows = [];
+
+  empleadosList.forEach(e => {
+    const empId = e.empleadoId || e.userId || "EMP-" + Math.floor(Math.random() * 1000);
+    const empNombre = e.nombre || "Empleado";
+    const puesto = e.puesto || "Docente/Personal";
+    const salarioBase = parseFloat(e.salarioBase || 0);
+    const horasExtras = parseFloat(e.horasExtras || 0);
+    const montoHorasExtras = parseFloat(e.montoHorasExtras || (horasExtras * (salarioBase / 160) * 1.5));
+    const bonificaciones = parseFloat(e.bonificaciones || 0);
+
+    // Deducciones de Ley Honduras (IHSS, RAP, ISR)
+    const dedIHSS = parseFloat(e.deduccionIHSS || Math.min(salarioBase, 10317.38) * 0.035);
+    const dedRAP = parseFloat(e.deduccionRAP || Math.max(0, salarioBase - 10317.38) * 0.015);
+    const dedISR = parseFloat(e.deduccionISR || (salarioBase > 20000 ? (salarioBase - 20000) * 0.15 : 0));
+    const otrasDed = parseFloat(e.otrasDeducciones || 0);
+
+    const totalDevengado = salarioBase + montoHorasExtras + bonificaciones;
+    const totalDeducciones = dedIHSS + dedRAP + dedISR + otrasDed;
+    const salarioNeto = Math.max(0, totalDevengado - totalDeducciones);
+
+    processedRows.push([
+      planillaId,
+      now,
+      periodoMes,
+      empId,
+      empNombre,
+      puesto,
+      salarioBase,
+      horasExtras,
+      montoHorasExtras,
+      bonificaciones,
+      dedIHSS,
+      dedRAP,
+      dedISR,
+      otrasDed,
+      salarioNeto,
+      "Generada"
+    ]);
+
+    const boletaId = "BOL-" + Date.now() + "-" + Math.floor(Math.random() * 1000);
+    boletasRows.push([
+      boletaId,
+      planillaId,
+      now,
+      empId,
+      empNombre,
+      periodoMes,
+      totalDevengado,
+      totalDeducciones,
+      salarioNeto,
+      "Emitida"
+    ]);
+  });
+
+  if (processedRows.length > 0) {
+    planSheet.getRange(planSheet.getLastRow() + 1, 1, processedRows.length, 16).setValues(processedRows);
+    bolSheet.getRange(bolSheet.getLastRow() + 1, 1, boletasRows.length, 10).setValues(boletasRows);
+  }
+
+  return {
+    status: "success",
+    planillaId: planillaId,
+    periodoMes: periodoMes,
+    empleadosProcesados: processedRows.length,
+    message: "Planilla salarial con deducciones de ley procesada exitosamente."
+  };
+}
+
+function recordStaffAttendance(payload) {
+  const { empleadoId, empleadoNombre, horaEntrada, horaSalida, minutosTardanza, estadoAsistencia, observaciones } = payload || {};
+  if (!empleadoId) throw new Error("empleadoId requerido.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "DeduccionesAsistencia");
+  const now = new Date();
+  const asistenciaId = "AST-" + now.getTime();
+
+  sheet.appendRow([
+    asistenciaId,
+    now,
+    String(empleadoId).trim(),
+    empleadoNombre || "Personal",
+    horaEntrada || now.toTimeString().split(' ')[0],
+    horaSalida || "",
+    parseInt(minutosTardanza || 0),
+    estadoAsistencia || "Puntual",
+    observaciones || ""
+  ]);
+
+  return {
+    status: "success",
+    asistenciaId: asistenciaId,
+    message: "Registro de asistencia procesado con éxito."
+  };
+}
+
+function getStaffPayrollReceipt(payload) {
+  const { empleadoId, periodoMes, boletaId } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const bolRows = getOrCreateSheet(ss, "BoletasPago").getDataRange().getValues().slice(1);
+  const planRows = getOrCreateSheet(ss, "PlanillasNomenclatura").getDataRange().getValues().slice(1);
+
+  let targetPlan = planRows;
+  if (boletaId) {
+    const bol = bolRows.find(r => String(r[0]).trim() === String(boletaId).trim());
+    if (bol) targetPlan = targetPlan.filter(r => String(r[0]).trim() === String(bol[1]).trim() && String(r[3]).trim() === String(bol[3]).trim());
+  } else if (empleadoId) {
+    targetPlan = targetPlan.filter(r => String(r[3]).trim() === String(empleadoId).trim());
+    if (periodoMes) targetPlan = targetPlan.filter(r => String(r[2]).trim() === String(periodoMes).trim());
+  }
+
+  const mappedReceipts = targetPlan.map(r => ({
+    planillaId: r[0],
+    fechaGeneracion: r[1],
+    periodoMes: r[2],
+    empleadoId: r[3],
+    empleadoNombre: r[4],
+    puesto: r[5],
+    salarioBase: parseFloat(r[6] || 0),
+    horasExtras: parseFloat(r[7] || 0),
+    montoHorasExtras: parseFloat(r[8] || 0),
+    bonificaciones: parseFloat(r[9] || 0),
+    deduccionIHSS: parseFloat(r[10] || 0),
+    deduccionRAP: parseFloat(r[11] || 0),
+    deduccionISR: parseFloat(r[12] || 0),
+    otrasDeducciones: parseFloat(r[13] || 0),
+    salarioNeto: parseFloat(r[14] || 0),
+    estado: r[15]
+  }));
+
+  return {
+    status: "success",
+    boletas: mappedReceipts
   };
 }

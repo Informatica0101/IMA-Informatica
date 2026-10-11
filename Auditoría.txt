@@ -1385,3 +1385,15 @@ Hallazgos:
    - El microservicio no dispone de hojas ni funciones para el registro de ingresos y egresos de caja chica/bancos (`recordCashBankMovement`), arqueos y cierres cuadrados de caja (`closeCashSession`), ni resúmenes de conciliación periódica (`getCashBankSummary`).
    - Se deben inicializar las hojas `"MovimientosCajaBancos"` y `"CierresCaja"` en `getOrCreateSheet`.
    - Se deben actualizar los permisos RBAC en `ROLE_PERMISSIONS` y en el selector `doPost`.
+
+===========================================================
+AUDITORÍA DE CÓDIGO - REQ-EXP-014: MÓDULO DE PLANILLAS, DEDUCCIONES Y ASISTENCIA
+===========================================================
+Archivos auditados:
+- backend/user-service/Code.gs
+
+Hallazgos:
+1. `backend/user-service/Code.gs`:
+   - El microservicio carece de estructuras y funciones para el cálculo de planillas salariales, deducciones de ley de Honduras (IHSS, RAP, ISR), horas extras, registro de asistencia del personal y generación de comprobantes de pago de planilla.
+   - Se deben inicializar las hojas `"PlanillasNomenclatura"`, `"DeduccionesAsistencia"` y `"BoletasPago"` en `getOrCreateSheet`.
+   - Mapear las acciones `generatePayrollPeriod`, `recordStaffAttendance` y `getStaffPayrollReceipt` en `ROLE_PERMISSIONS` y `doPost` restringiendo el acceso exclusivamente a roles administrativos.

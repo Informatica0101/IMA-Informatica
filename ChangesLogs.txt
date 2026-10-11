@@ -796,3 +796,15 @@ Archivos modificados:
 
 2. `Pendientes.md`:
    - Actualizada la tarea `[REQ-EXP-013]` al estado `[X] Completada`.
+
+===========================================================
+REGISTRO DE CAMBIOS - REQ-EXP-014: PLANILLAS, DEDUCCIONES Y ASISTENCIA DE PERSONAL
+===========================================================
+Archivos modificados:
+1. `backend/user-service/Code.gs`:
+   - Incorporada creación e inicialización de las hojas `"PlanillasNomenclatura"`, `"DeduccionesAsistencia"` y `"BoletasPago"` en `getOrCreateSheet`.
+   - Implementadas las funciones `generatePayrollPeriod`, `recordStaffAttendance` y `getStaffPayrollReceipt` para el cálculo de sueldos, horas extras, deducciones laborales de Honduras (IHSS, RAP, ISR), control de tardanzas/asistencia y emisión de comprobantes de pago de planilla.
+   - Habilitados los permisos restrictivos por rol administrativo en `ROLE_PERMISSIONS` y registrados en `doPost`.
+
+2. `Pendientes.md`:
+   - Actualizada la tarea `[REQ-EXP-014]` al estado `[X] Completada`.
