@@ -1288,3 +1288,26 @@ Hallazgos:
    - [REQ-AMP2-007] Separación Estricta entre Administración Personal e Institucional.
    - [REQ-AMP2-008] Archivado Íntegro del Año Escolar en Nueva Spreadsheet Independiente.
    - [REQ-AMP2-009] Seguridad, Permisos y Trazabilidad del Archivado Anual.
+
+===========================================================
+AUDITORÍA DE CÓDIGO - REGISTRO DE SUPERVISIÓN Y FLUJO TÉCNICO DE DOCUMENTACIÓN DOCENTE
+===========================================================
+Archivos auditados:
+- Pendientes.md
+
+Hallazgos:
+1. Incorporación y estructuración de las especificaciones "Supervisión y Consulta de Documentación Docente" y "Estados y Transiciones Documentales".
+2. Registrados 13 módulos técnicos adicionales con metadatos completos y criterios de aceptación explícitos:
+   - [REQ-SUP-001] Acceso al Perfil Docente y Consulta Documental.
+   - [REQ-SUP-002] Organización Jerárquica y Filtrado Preciso.
+   - [REQ-SUP-003] Impresión, Previsualización y Descarga Segura sin Alteración en Drive.
+   - [REQ-SUP-004] Acceso Restringido a Docentes Suplentes y Relevos Temporales.
+   - [REQ-SUP-005] Seguridad Backend y Enlaces Autenticados de Drive.
+   - [REQ-SUP-006] Resumen Administrativo de Cumplimiento Documental.
+   - [REQ-FLOW-001] Definición de Estados Oficiales y Muestra Polimórfica.
+   - [REQ-FLOW-002] Matriz de Transiciones Permitidas y Validación en Backend.
+   - [REQ-FLOW-003] Desacoplamiento entre Estado Operativo, Cumplimiento y Vencimiento.
+   - [REQ-FLOW-004] Control Estricto de Versiones e Inmutabilidad de Entregas.
+   - [REQ-FLOW-005] Asignación Granular de Permisos por Rol en el Flujo Documental.
+   - [REQ-FLOW-006] Gestión de Fechas Límite, Notificaciones y Recálculo.
+   - [REQ-FLOW-007] Registro Inmutable de Auditoría por Transición Documental.

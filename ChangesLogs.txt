@@ -722,3 +722,14 @@ Archivos modificados:
 
 2. `Auditoría.txt`:
    - Documentada la estructuración de la ampliación de requerimientos funcionales de calendario, documentación docente, notificaciones, pagos y archivo anual.
+
+===========================================================
+REGISTRO DE CAMBIOS - ESTRUCTURACIÓN DE REQUERIMIENTOS DE SUPERVISIÓN Y FLUJO DOCUMENTAL
+===========================================================
+Archivos modificados:
+1. `Pendientes.md`:
+   - Incorporación de las secciones "REQUERIMIENTO: SUPERVISIÓN Y CONSULTA DE DOCUMENTACIÓN DOCENTE" y "REQUERIMIENTO TÉCNICO: ESTADOS Y TRANSICIONES DOCUMENTALES".
+   - Registro de requerimientos REQ-SUP-001 a REQ-SUP-006 y REQ-FLOW-001 a REQ-FLOW-007 con especificación de origen, severidad, archivos involucrados, alcance y criterios de aceptación.
+
+2. `Auditoría.txt`:
+   - Documentada la estructuración de la supervisión y flujo de estados documentales docentes.
