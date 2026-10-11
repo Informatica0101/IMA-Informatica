@@ -189,7 +189,7 @@
 - **Dependencias Expuestas:** Encabezados HTML, pies de página, manifiesto PWA, diálogos de login/registro.
 - **Descripción del Alcance:** Reemplazar todas las menciones institucionales anteriores por "New Generation Christian Academy", renombrar recurso de logotipo a `new-generation-logo.png` y actualizar PWA manifest.
 - **Criterios de Aceptación:** No existen referencias institucionales obsoletas en la UI pública. El logotipo carga correctamente en todas las vistas.
-- **Estado:** [ ] En Ejecución
+- **Estado:** [X] Completada
 
 ### [REQ-EXP-008] Sistema de Roles y Permisos Granulares Servidor/RBAC (Sección 5)
 - **Origen del Hallazgo:** Requerimientos de Desarrollo y Expansión (Sección 5).

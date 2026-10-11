@@ -1184,3 +1184,15 @@ Sector: Cadenas de Texto Institucionales (Líneas 519, 183, 1670)
 Hallazgo [Medio]: Menciones de "ISEMED" en metadatos y encabezados de reportes generados en JavaScript.
 Impacto: Exportaciones de expedientes y encabezados dinámicos muestran marcas institucionales anteriores.
 Recomendación: Actualizar constantes de nombre institucional a "New Generation Christian Academy".
+
+Archivo: juegos/quizpro.html
+Sector: Encabezado y Pie de página dinámicos (Líneas 206, 208, 564)
+Hallazgo [Alto]: Referencia a "Logo Institucional ISEMED", "imagenes/logo.png" e "ISEMED" en el encabezado standalone y pie de página de QuizPro.
+Impacto: Inconsistencia visual y de marca cuando el minijuego se ejecuta de forma independiente.
+Recomendación: Actualizar a "New Generation Christian Academy", "New Generation" e "imagenes/new-generation-logo.png".
+
+Archivo: README.md
+Sector: Título Principal (Línea 1)
+Hallazgo [Bajo]: Título del repositorio referencia "ISEMED Área de Informática".
+Impacto: Documentación técnica con nombre institucional obsoleto.
+Recomendación: Actualizar a "New Generation Christian Academy".

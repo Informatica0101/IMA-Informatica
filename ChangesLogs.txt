@@ -664,3 +664,7 @@ Módulo: Páginas de Interfaz Pública (index.html, login.html, register.html, s
 
 Módulo: Controladores Frontend (js/student.js, js/teacher.js)
 - Actualizada información institucional por defecto y títulos de expediente académico a "New Generation Christian Academy".
+
+Módulo: Minijuegos y Documentación (juegos/quizpro.html, README.md)
+- Actualizadas referencias de "ISEMED", "Logo Institucional ISEMED" e "imagenes/logo.png" por "New Generation Christian Academy" y "imagenes/new-generation-logo.png" en la cabecera y pie de juegos/quizpro.html.
+- Actualizado título principal en README.md a "New Generation Christian Academy".
