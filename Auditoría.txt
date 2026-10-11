@@ -1344,3 +1344,20 @@ Hallazgos:
 
 2. `js/config.js`:
    - Verificar la integración de funciones y constantes globales de la plataforma.
+
+===========================================================
+AUDITORÍA DE CÓDIGO - REQ-EXP-011: PORTAL ESTUDIANTIL DE PAGOS Y RECIBOS PDF
+===========================================================
+Archivos auditados:
+- backend/user-service/Code.gs
+- js/student.js
+- student-dashboard.html
+
+Hallazgos:
+1. `backend/user-service/Code.gs`:
+   - Carece de la hoja `"ComprobantesPago"` para registrar las solicitudes y transferencias adjuntas por los estudiantes.
+   - Requiere los endpoints `uploadPaymentVoucher` (almacenamiento en Drive y registro) y `generatePaymentReceiptPDF` (generación de plantilla de recibo oficial con numeración correlativa única no duplicable).
+   - Mapeo de permisos RBAC para `uploadPaymentVoucher` y `generatePaymentReceiptPDF`.
+
+2. `js/student.js` & `student-dashboard.html`:
+   - Requiere la integración visual en la interfaz del estudiante para consultar cargos vencidos/próximos, adjuntar comprobantes de depósito y descargar el recibo oficial correlativo.

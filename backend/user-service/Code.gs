@@ -96,6 +96,7 @@ function getOrCreateSheet(ss, name) {
     if (name === "CargosEstudiante") sheet.appendRow(["CargoID", "Fecha", "UserId", "Concepto", "MontoBase", "Descuento", "MontoFinal", "Estado", "FechaVencimiento"]);
     if (name === "ConceptosCobro") sheet.appendRow(["ConceptoID", "Fecha", "NombreConcepto", "MontoBase", "AplicaAGrado", "PeriodoVigencia", "Estado", "Observaciones"]);
     if (name === "PagosAbonos") sheet.appendRow(["PagoID", "Fecha", "UserId", "CargoID", "Concepto", "MontoAbono", "MetodoPago", "Referencia", "Estado", "ReciboID", "Observaciones"]);
+    if (name === "ComprobantesPago") sheet.appendRow(["ComprobanteID", "Fecha", "UserId", "Alumno", "CargoID", "MontoReportado", "MetodoPago", "Referencia", "ComprobanteUrl", "Estado", "Observaciones"]);
   }
   return sheet;
 }
@@ -124,8 +125,8 @@ const ROLE_PERMISSIONS = {
   "Consejeros": ["getStudents", "getStudentsByGradoSeccion", "getUserInfo", "getLearningProfile", "getNews"],
   "Profesor": ["getStudents", "getStudentsByGradoSeccion", "getUserInfo", "getNews", "createNews", "uploadNewsImage", "saveGameResult", "getGameStats", "getGlobalTop", "recordAnalytics", "getLearningProfile", "mergeGuestData"],
   "Asistente": ["getStudents", "getStudentsByGradoSeccion", "getUserInfo", "getNews", "getLearningProfile"],
-  "Estudiante": ["getUserInfo", "getNews", "saveGameResult", "getGameStats", "getGlobalTop", "recordAnalytics", "getLearningProfile", "mergeGuestData", "updateUserProfile", "getStudentEnrollmentHistory", "getStudentAccountStatement"],
-  "Alumno": ["getUserInfo", "getNews", "saveGameResult", "getGameStats", "getGlobalTop", "recordAnalytics", "getLearningProfile", "mergeGuestData", "updateUserProfile", "getStudentEnrollmentHistory", "getStudentAccountStatement"]
+  "Estudiante": ["getUserInfo", "getNews", "saveGameResult", "getGameStats", "getGlobalTop", "recordAnalytics", "getLearningProfile", "mergeGuestData", "updateUserProfile", "getStudentEnrollmentHistory", "getStudentAccountStatement", "uploadPaymentVoucher", "generatePaymentReceiptPDF"],
+  "Alumno": ["getUserInfo", "getNews", "saveGameResult", "getGameStats", "getGlobalTop", "recordAnalytics", "getLearningProfile", "mergeGuestData", "updateUserProfile", "getStudentEnrollmentHistory", "getStudentAccountStatement", "uploadPaymentVoucher", "generatePaymentReceiptPDF"]
 };
 
 const PUBLIC_ACTIONS = ["registerUser", "loginUser", "requestPasswordRecovery", "resetPassword"];
@@ -172,6 +173,8 @@ function doPost(e) {
       case "configurePaymentConcept": result = configurePaymentConcept(payload); break;
       case "getStudentAccountStatement": result = getStudentAccountStatement(payload); break;
       case "recordStudentPayment": result = recordStudentPayment(payload); break;
+      case "uploadPaymentVoucher": result = uploadPaymentVoucher(payload); break;
+      case "generatePaymentReceiptPDF": result = generatePaymentReceiptPDF(payload); break;
       default: result = { status: "error", message: `Acción no reconocida: ${action}` };
     }
     return textResponse(result);
@@ -769,5 +772,90 @@ function recordStudentPayment(payload) {
     pagoId: pagoId,
     reciboId: reciboId,
     message: "Pago/Abono registrado con éxito."
+  };
+}
+
+// REQ-EXP-011: Portal Estudiantil de Pagos y Recibos Únicos en PDF
+function uploadPaymentVoucher(payload) {
+  const { userId, alumno, cargoId, montoReportado, metodoPago, referencia, fileData, fileName, observaciones } = payload || {};
+  if (!userId || !montoReportado) throw new Error("userId y monto reportado son requeridos.");
+
+  let comprobanteUrl = "";
+  if (fileData && fileName) {
+    try {
+      const folder = getOrCreateFolderNews(DriveApp.getFolderById("1D-VlJ52-olcfcDUSSsVLDzkeT2SvkDcB"), "Comprobantes_Pago");
+      const mimeType = fileData.split(',')[0].match(/:(.*?);/)[1];
+      const base64Data = fileData.split(',')[1];
+      const file = folder.createFile(Utilities.newBlob(Utilities.base64Decode(base64Data), mimeType, fileName));
+      file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+      comprobanteUrl = `https://lh3.googleusercontent.com/d/${file.getId()}`;
+    } catch (e) {
+      logDebug("Error subida archivo comprobante:", e.message);
+    }
+  }
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const compSheet = getOrCreateSheet(ss, "ComprobantesPago");
+  const now = new Date();
+  const comprobanteId = "VCH-" + now.getTime();
+
+  compSheet.appendRow([
+    comprobanteId,
+    now,
+    String(userId).trim(),
+    alumno || "Estudiante",
+    cargoId || "GRAL",
+    parseFloat(montoReportado || 0),
+    metodoPago || "Transferencia Bancaria",
+    referencia || "SIN-REF",
+    comprobanteUrl,
+    "En Revisión",
+    observaciones || ""
+  ]);
+
+  return {
+    status: "success",
+    comprobanteId: comprobanteId,
+    comprobanteUrl: comprobanteUrl,
+    message: "Comprobante de pago adjuntado en revisión."
+  };
+}
+
+function generatePaymentReceiptPDF(payload) {
+  const { reciboId, pagoId, userId } = payload || {};
+  if (!reciboId && !pagoId) throw new Error("reciboId o pagoId requerido.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const pagosRows = getOrCreateSheet(ss, "PagosAbonos").getDataRange().getValues().slice(1);
+  const userRows = ss.getSheetByName("Usuarios") ? ss.getSheetByName("Usuarios").getDataRange().getValues().slice(1) : [];
+
+  const pago = pagosRows.find(r => (reciboId && String(r[9]).trim() === String(reciboId).trim()) || (pagoId && String(r[0]).trim() === String(pagoId).trim()));
+  if (!pago) throw new Error("Recibo/Pago no encontrado.");
+
+  const sUserId = String(pago[2]).trim();
+  const user = userRows.find(r => String(r[0]).trim() === sUserId);
+  const nombreAlumno = user ? user[1] : "Estudiante";
+  const gradoAlumno = user ? user[2] : "";
+  const seccionAlumno = user ? user[3] : "";
+
+  const receiptData = {
+    reciboId: pago[9] || ("REC-" + pago[0]),
+    pagoId: pago[0],
+    fecha: pago[1],
+    userId: sUserId,
+    alumno: nombreAlumno,
+    grado: gradoAlumno,
+    seccion: seccionAlumno,
+    concepto: pago[4],
+    montoAbono: parseFloat(pago[5] || 0),
+    metodoPago: pago[6],
+    referencia: pago[7],
+    estado: pago[8],
+    institucion: "New Generation Christian Academy"
+  };
+
+  return {
+    status: "success",
+    receipt: receiptData
   };
 }

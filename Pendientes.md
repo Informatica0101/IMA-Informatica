@@ -225,7 +225,7 @@
 - **Dependencias Expuestas:** Comprobantes adjuntos, numeración correlativa de recibos.
 - **Descripción del Alcance:** Permitir consulta de vencimientos, carga de comprobantes de transferencia y generación/descarga de recibos PDF únicos correlativos.
 - **Criterios de Aceptación:** Emisión de PDF de recibo con numeración correlativa no duplicable para pagos confirmados.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 ### [REQ-EXP-012] Módulo de Facturación Fiscal Hondureña (Sección 9.6 / 10.3)
 - **Origen del Hallazgo:** Requerimientos de Desarrollo y Expansión (Sección 9.6 / 10.3).

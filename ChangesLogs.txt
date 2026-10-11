@@ -760,3 +760,15 @@ Archivos modificados:
 
 2. `Pendientes.md`:
    - Actualizada la tarea `[REQ-EXP-010]` al estado `[X] Completada`.
+
+===========================================================
+REGISTRO DE CAMBIOS - REQ-EXP-011: PORTAL ESTUDIANTIL DE PAGOS Y RECIBOS PDF
+===========================================================
+Archivos modificados:
+1. `backend/user-service/Code.gs`:
+   - Incorporada la creación e inicialización de la hoja `"ComprobantesPago"` en `getOrCreateSheet`.
+   - Implementadas las funciones `uploadPaymentVoucher` (almacenamiento en Google Drive y registro de comprobantes) y `generatePaymentReceiptPDF` (generación de plantilla de recibo oficial con numeración correlativa única no duplicable).
+   - Configuradas las acciones y permisos correspondientes en `ROLE_PERMISSIONS` y en el enrutador `doPost`.
+
+2. `Pendientes.md`:
+   - Actualizada la tarea `[REQ-EXP-011]` al estado `[X] Completada`.
