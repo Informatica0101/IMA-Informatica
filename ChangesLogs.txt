@@ -784,3 +784,15 @@ Archivos modificados:
 
 2. `Pendientes.md`:
    - Actualizada la tarea `[REQ-EXP-012]` al estado `[X] Completada`.
+
+===========================================================
+REGISTRO DE CAMBIOS - REQ-EXP-013: GESTIÓN DE CAJA, BANCOS, INGRESOS Y EGRESOS
+===========================================================
+Archivos modificados:
+1. `backend/user-service/Code.gs`:
+   - Incorporada creación e inicialización de las hojas `"MovimientosCajaBancos"` y `"CierresCaja"` en `getOrCreateSheet`.
+   - Implementadas las funciones `recordCashBankMovement`, `closeCashSession` y `getCashBankSummary` para el control de ingresos, egresos, caja chica, transferencias bancarias, terceros/proveedores y arqueos/cierres cuadrados de caja.
+   - Habilitados los permisos en `ROLE_PERMISSIONS` y en la estructura `doPost`.
+
+2. `Pendientes.md`:
+   - Actualizada la tarea `[REQ-EXP-013]` al estado `[X] Completada`.

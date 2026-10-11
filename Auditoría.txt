@@ -1373,3 +1373,15 @@ Hallazgos:
    - El microservicio carece de un módulo independiente para facturación fiscal (SAR Hondureña: CAI, Rango Autorizado, RTN, Fecha Límite de Emisión), separado del recibo interno.
    - Se debe inicializar la hoja `"FacturasFiscales"` en `getOrCreateSheet`.
    - Se deben implementar las funciones `createFiscalInvoice` y `getFiscalInvoices` y actualizar `ROLE_PERMISSIONS` y `doPost`.
+
+===========================================================
+AUDITORÍA DE CÓDIGO - REQ-EXP-013: GESTIÓN DE CAJA, BANCOS, INGRESOS Y EGRESOS
+===========================================================
+Archivos auditados:
+- backend/user-service/Code.gs
+
+Hallazgos:
+1. `backend/user-service/Code.gs`:
+   - El microservicio no dispone de hojas ni funciones para el registro de ingresos y egresos de caja chica/bancos (`recordCashBankMovement`), arqueos y cierres cuadrados de caja (`closeCashSession`), ni resúmenes de conciliación periódica (`getCashBankSummary`).
+   - Se deben inicializar las hojas `"MovimientosCajaBancos"` y `"CierresCaja"` en `getOrCreateSheet`.
+   - Se deben actualizar los permisos RBAC en `ROLE_PERMISSIONS` y en el selector `doPost`.

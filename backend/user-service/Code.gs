@@ -98,6 +98,8 @@ function getOrCreateSheet(ss, name) {
     if (name === "PagosAbonos") sheet.appendRow(["PagoID", "Fecha", "UserId", "CargoID", "Concepto", "MontoAbono", "MetodoPago", "Referencia", "Estado", "ReciboID", "Observaciones"]);
     if (name === "ComprobantesPago") sheet.appendRow(["ComprobanteID", "Fecha", "UserId", "Alumno", "CargoID", "MontoReportado", "MetodoPago", "Referencia", "ComprobanteUrl", "Estado", "Observaciones"]);
     if (name === "FacturasFiscales") sheet.appendRow(["FacturaID", "FechaEmision", "CAI", "RangoInicial", "RangoFinal", "NumeroFactura", "UserId", "ClienteNombre", "ClienteRTN", "Concepto", "Subtotal", "ISV15", "Total", "Estado", "FechaLimiteEmision", "Observaciones"]);
+    if (name === "MovimientosCajaBancos") sheet.appendRow(["MovimientoID", "Fecha", "Tipo", "Categoria", "Monto", "MetodoPago", "ReferenciaBancaria", "ProveedorTercero", "ResponsableUserId", "Estado", "Observaciones"]);
+    if (name === "CierresCaja") sheet.appendRow(["CierreID", "FechaCierre", "ResponsableUserId", "MontoInicial", "TotalIngresos", "TotalEgresos", "SaldoTeorico", "SaldoRealEfectivo", "Diferencia", "Estado", "Observaciones"]);
   }
   return sheet;
 }
@@ -119,10 +121,10 @@ function doGet() { return textResponse({ status: "success", message: "Microservi
 // ---------------------------------------------------------------------------
 const ROLE_PERMISSIONS = {
   "Administrador": ["*"],
-  "Director": ["createNews", "uploadNewsImage", "getNews", "getStudents", "getStudentsByGradoSeccion", "getUserInfo", "saveGameResult", "getGameStats", "getGlobalTop", "recordAnalytics", "getLearningProfile", "mergeGuestData", "updateUserProfile", "registerStudentEnrollment", "getStudentEnrollmentHistory", "configurePaymentConcept", "getStudentAccountStatement", "recordStudentPayment", "createFiscalInvoice", "getFiscalInvoices"],
-  "Subdirector": ["createNews", "uploadNewsImage", "getNews", "getStudents", "getStudentsByGradoSeccion", "getUserInfo", "saveGameResult", "getGameStats", "getGlobalTop", "recordAnalytics", "getLearningProfile", "mergeGuestData", "updateUserProfile", "registerStudentEnrollment", "getStudentEnrollmentHistory", "configurePaymentConcept", "getStudentAccountStatement", "recordStudentPayment", "createFiscalInvoice", "getFiscalInvoices"],
-  "Secretaría": ["getStudents", "getStudentsByGradoSeccion", "getUserInfo", "updateUserProfile", "getNews", "registerStudentEnrollment", "getStudentEnrollmentHistory", "configurePaymentConcept", "getStudentAccountStatement", "recordStudentPayment", "createFiscalInvoice", "getFiscalInvoices"],
-  "Contador": ["getStudents", "getUserInfo", "getNews", "registerStudentEnrollment", "getStudentEnrollmentHistory", "configurePaymentConcept", "getStudentAccountStatement", "recordStudentPayment", "createFiscalInvoice", "getFiscalInvoices"],
+  "Director": ["createNews", "uploadNewsImage", "getNews", "getStudents", "getStudentsByGradoSeccion", "getUserInfo", "saveGameResult", "getGameStats", "getGlobalTop", "recordAnalytics", "getLearningProfile", "mergeGuestData", "updateUserProfile", "registerStudentEnrollment", "getStudentEnrollmentHistory", "configurePaymentConcept", "getStudentAccountStatement", "recordStudentPayment", "createFiscalInvoice", "getFiscalInvoices", "recordCashBankMovement", "closeCashSession", "getCashBankSummary"],
+  "Subdirector": ["createNews", "uploadNewsImage", "getNews", "getStudents", "getStudentsByGradoSeccion", "getUserInfo", "saveGameResult", "getGameStats", "getGlobalTop", "recordAnalytics", "getLearningProfile", "mergeGuestData", "updateUserProfile", "registerStudentEnrollment", "getStudentEnrollmentHistory", "configurePaymentConcept", "getStudentAccountStatement", "recordStudentPayment", "createFiscalInvoice", "getFiscalInvoices", "recordCashBankMovement", "closeCashSession", "getCashBankSummary"],
+  "Secretaría": ["getStudents", "getStudentsByGradoSeccion", "getUserInfo", "updateUserProfile", "getNews", "registerStudentEnrollment", "getStudentEnrollmentHistory", "configurePaymentConcept", "getStudentAccountStatement", "recordStudentPayment", "createFiscalInvoice", "getFiscalInvoices", "recordCashBankMovement", "closeCashSession", "getCashBankSummary"],
+  "Contador": ["getStudents", "getUserInfo", "getNews", "registerStudentEnrollment", "getStudentEnrollmentHistory", "configurePaymentConcept", "getStudentAccountStatement", "recordStudentPayment", "createFiscalInvoice", "getFiscalInvoices", "recordCashBankMovement", "closeCashSession", "getCashBankSummary"],
   "Consejeros": ["getStudents", "getStudentsByGradoSeccion", "getUserInfo", "getLearningProfile", "getNews"],
   "Profesor": ["getStudents", "getStudentsByGradoSeccion", "getUserInfo", "getNews", "createNews", "uploadNewsImage", "saveGameResult", "getGameStats", "getGlobalTop", "recordAnalytics", "getLearningProfile", "mergeGuestData"],
   "Asistente": ["getStudents", "getStudentsByGradoSeccion", "getUserInfo", "getNews", "getLearningProfile"],
@@ -178,6 +180,9 @@ function doPost(e) {
       case "generatePaymentReceiptPDF": result = generatePaymentReceiptPDF(payload); break;
       case "createFiscalInvoice": result = createFiscalInvoice(payload); break;
       case "getFiscalInvoices": result = getFiscalInvoices(payload); break;
+      case "recordCashBankMovement": result = recordCashBankMovement(payload); break;
+      case "closeCashSession": result = closeCashSession(payload); break;
+      case "getCashBankSummary": result = getCashBankSummary(payload); break;
       default: result = { status: "error", message: `Acción no reconocida: ${action}` };
     }
     return textResponse(result);
@@ -940,5 +945,152 @@ function getFiscalInvoices(payload) {
   return {
     status: "success",
     data: mapped
+  };
+}
+
+// REQ-EXP-013: Gestión de Caja, Bancos, Ingresos y Egresos
+function recordCashBankMovement(payload) {
+  const { tipo, categoria, monto, metodoPago, referenciaBancaria, proveedorTercero, responsableUserId, observaciones } = payload || {};
+  if (!tipo || monto === undefined || parseFloat(monto) <= 0) throw new Error("Tipo de movimiento y monto válido son requeridos.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "MovimientosCajaBancos");
+  const now = new Date();
+  const movimientoId = "MOV-" + now.getTime();
+
+  const tipoNorm = String(tipo).trim().toLowerCase() === "egreso" ? "Egreso" : "Ingreso";
+  const mnt = parseFloat(monto);
+
+  sheet.appendRow([
+    movimientoId,
+    now,
+    tipoNorm,
+    categoria || "Caja Chica",
+    mnt,
+    metodoPago || "Efectivo",
+    referenciaBancaria || "N/A",
+    proveedorTercero || "General",
+    responsableUserId || "SISTEMA",
+    "Registrado",
+    observaciones || ""
+  ]);
+
+  return {
+    status: "success",
+    movimientoId: movimientoId,
+    tipo: tipoNorm,
+    monto: mnt,
+    message: "Movimiento financiero de caja/banco registrado con éxito."
+  };
+}
+
+function closeCashSession(payload) {
+  const { responsableUserId, montoInicial, saldoRealEfectivo, observaciones } = payload || {};
+  if (!responsableUserId) throw new Error("responsableUserId requerido.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const movSheet = getOrCreateSheet(ss, "MovimientosCajaBancos");
+  const movRows = movSheet.getDataRange().getValues().slice(1);
+
+  const initAmount = parseFloat(montoInicial || 0);
+  const realCash = parseFloat(saldoRealEfectivo || 0);
+
+  let totalIngresos = 0;
+  let totalEgresos = 0;
+
+  movRows.forEach(r => {
+    if (r[9] === "Registrado") {
+      const tipo = String(r[2]).trim();
+      const m = parseFloat(r[4] || 0);
+      if (tipo === "Ingreso") totalIngresos += m;
+      if (tipo === "Egreso") totalEgresos += m;
+    }
+  });
+
+  const saldoTeorico = initAmount + totalIngresos - totalEgresos;
+  const diferencia = realCash - saldoTeorico;
+
+  const cierreSheet = getOrCreateSheet(ss, "CierresCaja");
+  const now = new Date();
+  const cierreId = "CRS-" + now.getTime();
+
+  cierreSheet.appendRow([
+    cierreId,
+    now,
+    String(responsableUserId).trim(),
+    initAmount,
+    totalIngresos,
+    totalEgresos,
+    saldoTeorico,
+    realCash,
+    diferencia,
+    Math.abs(diferencia) < 0.01 ? "Cuadrado" : "Con Diferencia",
+    observaciones || ""
+  ]);
+
+  return {
+    status: "success",
+    cierreId: cierreId,
+    saldoTeorico: saldoTeorico,
+    saldoRealEfectivo: realCash,
+    diferencia: diferencia,
+    estado: Math.abs(diferencia) < 0.01 ? "Cuadrado" : "Con Diferencia",
+    message: "Cierre de caja procesado correctamente."
+  };
+}
+
+function getCashBankSummary(payload) {
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const movRows = getOrCreateSheet(ss, "MovimientosCajaBancos").getDataRange().getValues().slice(1);
+  const cierresRows = getOrCreateSheet(ss, "CierresCaja").getDataRange().getValues().slice(1);
+
+  let totalIngresos = 0;
+  let totalEgresos = 0;
+
+  const mappedMovs = movRows.map(r => {
+    const tipo = String(r[2]).trim();
+    const m = parseFloat(r[4] || 0);
+    if (r[9] !== "Anulado") {
+      if (tipo === "Ingreso") totalIngresos += m;
+      if (tipo === "Egreso") totalEgresos += m;
+    }
+    return {
+      movimientoId: r[0],
+      fecha: r[1],
+      tipo: r[2],
+      categoria: r[3],
+      monto: m,
+      metodoPago: r[5],
+      referenciaBancaria: r[6],
+      proveedorTercero: r[7],
+      responsableUserId: r[8],
+      estado: r[9],
+      observaciones: r[10]
+    };
+  });
+
+  return {
+    status: "success",
+    summary: {
+      totalIngresos: totalIngresos,
+      totalEgresos: totalEgresos,
+      balanceNeto: totalIngresos - totalEgresos,
+      movimientosCount: mappedMovs.length,
+      cierresCount: cierresRows.length
+    },
+    movimientos: mappedMovs,
+    cierres: cierresRows.map(r => ({
+      cierreId: r[0],
+      fechaCierre: r[1],
+      responsableUserId: r[2],
+      montoInicial: parseFloat(r[3] || 0),
+      totalIngresos: parseFloat(r[4] || 0),
+      totalEgresos: parseFloat(r[5] || 0),
+      saldoTeorico: parseFloat(r[6] || 0),
+      saldoRealEfectivo: parseFloat(r[7] || 0),
+      diferencia: parseFloat(r[8] || 0),
+      estado: r[9],
+      observaciones: r[10]
+    }))
   };
 }
