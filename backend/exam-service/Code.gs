@@ -55,7 +55,7 @@ function doOptions() {
 }
 
 const PUBLIC_ACTIONS = [
-  "getStudentExams", "getExamQuestions", "getExamResult", "getAllExams", "getTeacherExamActivity", "getEvaluationCategories", "getRubrics", "getGradebookData", "getStudentRecoveries", "getStudentAcademicReport"
+  "getStudentExams", "getAllExams", "getEvaluationCategories", "getRubrics"
 ];
 
 const ROLE_PERMISSIONS = {
@@ -710,7 +710,8 @@ function getGradebookData(payload) {
 
   const califSheet = getOrCreateSheet(ss, "CalificacionesEstudiantes");
   const califData = califSheet.getDataRange().getValues();
-  const calificaciones = califData.length > 1 ? califData.slice(1).map(r => ({
+  const studentIds = new Set(alumnos.map(a => String(a.userId).trim()));
+  const calificaciones = califData.length > 1 ? califData.slice(1).filter(r => studentIds.has(String(r[2]).trim())).map(r => ({
     calificacionId: r[0],
     evaluacionId: r[1],
     userId: r[2],
@@ -758,26 +759,38 @@ function saveGradebookGrades(payload) {
   const now = new Date();
   const data = sheet.getDataRange().getValues();
 
+  const indexMap = {};
+  for (let i = 1; i < data.length; i++) {
+    const key = `${String(data[i][1]).trim()}_${String(data[i][2]).trim()}`;
+    indexMap[key] = i;
+  }
+
   let savedCount = 0;
   calificaciones.forEach(c => {
     const { evaluacionId, userId, notaObtenida, puntajePonderado, observaciones } = c;
     if (!evaluacionId || !userId) return;
 
-    const idx = data.findIndex(r => String(r[1]).trim() === String(evaluacionId).trim() && String(r[2]).trim() === String(userId).trim());
-
-    if (idx !== -1) {
-      sheet.getRange(idx + 1, 4).setValue(notaObtenida || 0);
-      sheet.getRange(idx + 1, 5).setValue(puntajePonderado || 0);
-      sheet.getRange(idx + 1, 6).setValue(esBorrador !== false);
-      sheet.getRange(idx + 1, 7).setValue(esPublicada === true);
-      sheet.getRange(idx + 1, 8).setValue(observaciones || "");
-      sheet.getRange(idx + 1, 9).setValue(now);
+    const key = `${String(evaluacionId).trim()}_${String(userId).trim()}`;
+    if (key in indexMap) {
+      const idx = indexMap[key];
+      data[idx][3] = notaObtenida || 0;
+      data[idx][4] = puntajePonderado || 0;
+      data[idx][5] = esBorrador !== false;
+      data[idx][6] = esPublicada === true;
+      data[idx][7] = observaciones || "";
+      data[idx][8] = now;
     } else {
       const cid = "CALIF-" + Date.now() + "-" + Math.floor(Math.random() * 1000);
-      sheet.appendRow([cid, evaluacionId, userId, notaObtenida || 0, puntajePonderado || 0, esBorrador !== false, esPublicada === true, observaciones || "", now]);
+      const newRow = [cid, evaluacionId, userId, notaObtenida || 0, puntajePonderado || 0, esBorrador !== false, esPublicada === true, observaciones || "", now];
+      data.push(newRow);
+      indexMap[key] = data.length - 1;
     }
     savedCount++;
   });
+
+  if (data.length > 1) {
+    sheet.getRange(1, 1, data.length, data[0].length).setValues(data);
+  }
 
   return { status: "success", message: `Se guardaron ${savedCount} calificaciones exitosamente.` };
 }

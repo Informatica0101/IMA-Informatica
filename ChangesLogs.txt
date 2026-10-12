@@ -1044,3 +1044,152 @@ Descripción de cambios:
 
 4. `teacher-dashboard.html` & `js/teacher.js`:
    - Sincronizados controles del Libro de Calificaciones y evaluación de criterios formativos en el panel docente.
+
+===========================================================
+REGISTRO DE CAMBIOS - FASE 7: ASISTENCIA, PUNTUALIDAD, AUSENCIAS, INCIDENCIAS Y SEGUIMIENTO DEL ESTUDIANTE
+===========================================================
+Archivos modificados:
+- backend/academic-service/Code.gs
+- student-dashboard.html
+- teacher-dashboard.html
+- js/student.js
+- js/teacher.js
+- MapaDependencias.md
+- Auditoría.txt
+- ChangesLogs.txt
+
+Descripción de cambios:
+1. `backend/academic-service/Code.gs`:
+   - Creadas e inicializadas las tablas de la Fase 7: `SesionesAsistencia`, `RegistrosAsistencia`, `JustificacionesAsistencia`, `SalidasAnticipadas`, `IncidenciasAsistencia`, `CasosSeguimiento`.
+   - Implementadas funciones backend para Apertura de Sesiones y Tomar Asistencia (`openAttendanceSession`, `saveClassAttendance`, `getClassAttendance`).
+   - Implementada Asistencia Diaria General (`saveDailyAttendance`, `getDailyAttendance`).
+   - Implementada gestión de Justificaciones (`submitAttendanceJustification`, `reviewAttendanceJustification`).
+   - Implementada gestión de Salidas Anticipadas (`recordEarlyDeparture`).
+   - Implementada gestión de Incidencias de Asistencia (`getAttendanceIncidents`, `saveAttendanceIncident`).
+   - Implementada gestión de Casos de Seguimiento por Ausentismo (`getAttendanceFollowupCases`, `saveAttendanceFollowupCase`).
+   - Implementado resumen de asistencia para el estudiante (`getStudentAttendanceSummary`).
+
+2. `student-dashboard.html` & `js/student.js`:
+   - Diseñada e inyectada la tarjeta de Resumen de Asistencia y Puntualidad en el perfil del estudiante, mostrando el porcentaje de asistencia, presencias, ausencias, tardanzas y justificaciones.
+
+3. `teacher-dashboard.html` & `js/teacher.js`:
+   - Diseñada e inyectada la tarjeta de Control de Asistencia en el panel docente, habilitando la apertura de sesiones de control de asistencia por fecha.
+
+===========================================================
+REGISTRO DE CAMBIOS - FASE 8: COMUNICACIÓN INSTITUCIONAL, PORTAL FAMILIAR, NOTIFICACIONES Y TRÁMITES
+===========================================================
+Archivos modificados:
+- backend/user-service/Code.gs
+- backend/academic-service/Code.gs
+- student-dashboard.html
+- teacher-dashboard.html
+- js/student.js
+- js/teacher.js
+- MapaDependencias.md
+- Auditoría.txt
+- ChangesLogs.txt
+
+Descripción de cambios:
+1. `backend/user-service/Code.gs`:
+   - Creadas e inicializadas las tablas de la Fase 8: `InvitacionesVinculacion`, `ComunicadosInstitucionales`, `ConversacionesMensajes`, `BandejaNotificaciones`, `SolicitudesTramites`, `CitasReuniones`.
+   - Implementada emisión e ingesta de Invitaciones de Vinculación con token HTTPS (`createLinkInvitation`, `acceptLinkInvitation`).
+   - Implementada consulta de Alumnos Vinculados por Responsable (`getGuardianStudents`).
+   - Implementada gestión de Comunicados e Anuncios Institucionales con filtrado de audiencia (`getInstitutionalAnnouncements`, `createInstitutionalAnnouncement`).
+   - Implementada Mensajería Interna Bidireccional (`getInternalMessages`, `sendInternalMessage`).
+   - Implementado Centro de Notificaciones con ingesta automática (`getUserNotifications`, `markNotificationAsRead`, `createUserNotification`).
+   - Implementada gestión de Trámites y Solicitudes Administrativas (`getAdministrativeRequests`, `submitAdministrativeRequest`, `updateRequestStatus`).
+   - Implementada programación de Citas e Incidencias de Reunión (`getAppointmentBookings`, `bookAppointment`, `updateAppointmentStatus`).
+
+2. `student-dashboard.html` & `js/student.js`:
+   - Diseñada e inyectada la tarjeta de Comunicación y Trámites Institucionales en el perfil del estudiante/familiar, con modal para ingreso de nuevos trámites y visualización de respuestas de Secretaría.
+
+===========================================================
+REGISTRO DE CAMBIOS - FASE 9: CONTABILIDAD, PAGOS, MENSUALIDADES, FACTURACIÓN, TESORERÍA Y CONTROL FINANCIERO INSTITUCIONAL
+===========================================================
+Archivos modificados:
+- backend/accounting-service/Code.gs
+- teacher-dashboard.html
+- student-dashboard.html
+- js/student.js
+- js/teacher.js
+- MapaDependencias.md
+- Auditoría.txt
+- Pendientes.md
+- ChangesLogs.txt
+
+Descripción de cambios:
+1. `backend/accounting-service/Code.gs`:
+   - Creadas e inicializadas las tablas de la Fase 9 en `getOrCreateSheet`: `ConceptosCobro`, `TarifasPlanPago`, `PagosAbonos`, `ComprobantesPago`, `FacturasFiscales`, `IntegracionesPasarelas`, `MovimientosCajaBancos`, `CierresCaja`, `BancosConciliaciones`, `CuentasPorPagarGastos`, `PlanCuentas`, `AsientosContables`.
+   - Implementada gestión de Tarifas y Planes de Pago Fraccionados (`configurePaymentTariff`).
+   - Implementada gestión e integración de Pasarelas de Pago Externas (`configureGatewayIntegration`, `testGatewayConnection`) con pruebas de conectividad ping-pong.
+   - Implementada Conciliación Bancaria y Carga de Extractos (`performBankReconciliation`) con detección automática de coincidencias y diferencias.
+   - Implementada gestión de Cuentas por Pagar y Gastos Operativos (`recordAccountsPayableExpense`).
+   - Implementada Contabilidad General con Plan de Cuentas (`getChartOfAccounts`) y Libro Diario de Asientos Contables por Partida Doble (`recordAccountingJournalEntry`).
+   - Actualizados los permisos en `ROLE_PERMISSIONS` y en el selector `doPost` para autorizar las nuevas operaciones financieras.
+
+2. `teacher-dashboard.html`, `student-dashboard.html`, `js/student.js`, `js/teacher.js`:
+   - Consolidadas interfaces para visualización de saldos, comprobantes de pago y opciones de tesorería y pasarelas de pago.
+   - Verificada la respuesta del backend e integración sin errores de sintaxis en el cliente.
+
+===========================================================
+REGISTRO DE CAMBIOS - FASE 10: RECURSOS HUMANOS, PLANILLAS, POLÍTICAS INSTITUCIONALES Y CONFIGURACIÓN FISCAL
+===========================================================
+Archivos modificados:
+- backend/accounting-service/Code.gs
+- politica-de-privacidad.html
+- politica-de-uso.html
+- politica-financiera.html
+- MapaDependencias.md
+- Auditoría.txt
+- Pendientes.md
+- ChangesLogs.txt
+
+Descripción de cambios:
+1. `backend/accounting-service/Code.gs`:
+   - Creadas e inicializadas las tablas de la Fase 10 en `getOrCreateSheet`: `ExpedientesLaborales`, `ContratosLaborales`, `SolicitudesVacaciones`, `PoliticasFiscales`, `PoliticasInstitucionales`, `AceptacionesPoliticas`.
+   - Implementada gestión de Expedientes Laborales (`createEmployeeRecord`, `getEmployeeRecords`) y Contratos Laborales (`manageEmployeeContract`, `getEmployeeContracts`).
+   - Implementada gestión de Vacaciones y Permisos (`submitVacationRequest`, `getVacationRequests`, `reviewVacationRequest`).
+   - Implementadas Opciones Avanzadas del Contador para Políticas Fiscales y Retenciones (`configureFiscalPolicy`, `getFiscalPolicies`) con deducciones de ley en Honduras (IHSS, RAP, ISR) y reglas de redondeo versionadas.
+   - Implementada publicación de Políticas Institucionales (`publishInstitutionalPolicy`, `getInstitutionalPolicies`) y registro auditable de evidencia de lectura y aceptación por usuario (`recordPolicyAcceptance`, `getPolicyAcceptances`).
+   - Actualizada la matriz `ROLE_PERMISSIONS` y el enrutador `doPost` para autorizar las nuevas acciones con segregación estricta de funciones.
+
+2. `politica-de-privacidad.html`, `politica-de-uso.html`, `politica-financiera.html`:
+   - Creadas e integradas las páginas institucionales públicas para consulta y registro de evidencia de conformidad por parte de usuarios.
+
+===========================================================
+REGISTRO DE CAMBIOS - FASE 12: DOCUMENTOS ESCOLARES, MIGRACIÓN DE DATOS, SPREADSHEETS E INTEGRACIÓN CON SACE
+===========================================================
+Archivos modificados:
+- backend/accounting-service/Code.gs
+- MapaDependencias.md
+- Auditoría.txt
+- Pendientes.md
+- ChangesLogs.txt
+
+Descripción de cambios:
+1. `backend/accounting-service/Code.gs`:
+   - Creadas e inicializadas las tablas de la Fase 12 en `getOrCreateSheet`: `CatalogoSpreadsheets`, `PlantillasEscolares`, `DocumentosEscolaresEmitidos`, `AuditoriaMigraciones`, `PlantillasSACEVerificadas`.
+   - Implementado Catálogo Central de Spreadsheets Distribuidas por año lectivo (2026, 2027, 2028) y área (`registerSpreadsheetSource`, `resolveSpreadsheetSource`, `getSpreadsheetCatalog`).
+   - Implementada gestión y emisión de Plantillas y Documentos Escolares (`configureSchoolDocumentTemplate`, `getSchoolDocumentTemplates`, `generateSchoolDocument`, `getIssuedSchoolDocuments`).
+   - Implementado Motor de Importación y Migración con Mapeo Dinámico de Columnas y Vista Previa (`validateImportPreview`, `importDataWithColumnMapping`, `getMigrationLogs`).
+   - Implementada integración y generación de archivos compatibles con plantillas oficiales de SACE (`verifySACETemplateCompatibility`, `generateSACEReportFile`).
+   - Sincronizados los permisos en `ROLE_PERMISSIONS` y en el enrutador `doPost`.
+
+===========================================================
+REGISTRO DE CAMBIOS - FASE 11: ANALÍTICA AVANZADA, DASHBOARDS, INFORMES Y SERVICIOS COMPLEMENTARIOS
+===========================================================
+Archivos modificados:
+- backend/accounting-service/Code.gs
+- MapaDependencias.md
+- Auditoría.txt
+- Pendientes.md
+- ChangesLogs.txt
+
+Descripción de cambios:
+1. `backend/accounting-service/Code.gs`:
+   - Creadas e inicializadas las tablas de la Fase 11 en `getOrCreateSheet`: `BibliotecaEjemplares`, `BibliotecaPrestamos`, `ActivosPatrimoniales`, `AsignacionesActivos`, `TransporteRutas`, `TransporteAsignaciones`.
+   - Implementada función de analítica unificada y métricas agregadas por rol (`getAdvancedDashboardAnalytics`).
+   - Implementada gestión del catálogo de Biblioteca y Préstamos de ejemplares (`manageLibraryBook`, `getLibraryBooks`, `processLibraryLoan`, `getLibraryLoans`).
+   - Implementada gestión de Activos Patrimoniales y Asignación de Custodias (`manageAssetItem`, `getAssetItems`, `assignAssetCustody`, `getAssetAssignments`).
+   - Implementada gestión de Transporte Escolar, Unidades y Rutas (`manageTransportRoute`, `getTransportRoutes`, `assignStudentTransport`, `getTransportAssignments`).
+   - Sincronizados los permisos en `ROLE_PERMISSIONS` y registradas las nuevas acciones en el selector `doPost`.

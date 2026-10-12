@@ -1,4 +1,4 @@
-# Mapa de Dependencias Académicas (v8.6.0 - Fase 6 Evaluación, Calificaciones y Módulo Formativo)
+# Mapa de Dependencias Académicas (v8.8.0 - Fase 8 Portal Familiar y Comunicación)
 
 ## Módulo de Tareas (Teacher/Student)
 - Entidad: Tarea (Regular) -> Impacta Progreso Base.
@@ -35,8 +35,8 @@
     7. Movimientos Estudiantiles (Cambios de Sección/Grado, Traslados Internos/Externos, Retiros y Reingresos) con conservación de historial.
     8. Parametrización Institucional, Años Lectivos, Períodos Jerárquicos, Oferta Académica, Asignaciones y Horarios con detección de conflictos.
 - **ACCOUNTING (Financial & Staff Payroll)**:
-  - Autoridad de Escritura: `ConceptosCobro`, `PagosAbonos`, `ComprobantesPago`, `FacturasFiscales`, `MovimientosCajaBancos`, `CierresCaja`, `PlanillasNomenclatura`, `DeduccionesAsistencia`, `BoletasPago`, `InventariosKardex`, `ProveedoresActivos`.
-  - Funciones: Contabilidad General, Cobros, Mensualidades, Comprobantes/Recibos PDF, Facturación SAR, Caja y Bancos, Planillas con Deducciones de Ley (IHSS, RAP, ISR), Asistencia y Kardex de Inventarios.
+  - Autoridad de Escritura: `ConceptosCobro`, `TarifasPlanPago`, `CargosEstudiante`, `PagosAbonos`, `ComprobantesPago`, `FacturasFiscales`, `IntegracionesPasarelas`, `MovimientosCajaBancos`, `CierresCaja`, `BancosConciliaciones`, `CuentasPorPagarGastos`, `PlanCuentas`, `AsientosContables`, `PlanillasNomenclatura`, `DeduccionesAsistencia`, `BoletasPago`, `InventariosKardex`, `ProveedoresActivos`.
+  - Funciones: Contabilidad General, Cobros, Mensualidades, Planes de Pago, Tarifas, Comprobantes/Recibos PDF, Pasarelas de Pago, Facturación SAR, Caja y Bancos, Conciliación Bancaria, Cuentas por Pagar, Asientos Contables, Planillas con Deducciones de Ley (IHSS, RAP, ISR), Asistencia y Kardex de Inventarios.
 - **TASK (Learning & Submissions)**:
   - Autoridad de Escritura: `Tareas`, `Entregas`, `MetadatosArchivos`.
   - Funciones: Tareas Polimórficas, Entregas de Alumnos, Calificaciones, Proyectos y Google Drive Storage.
@@ -72,3 +72,54 @@
 - `CriterioInstitucional`: Catálogo institucional de criterios de Comportamiento, Aseo personal/Higiene y Presentación personal.
 - `EvaluacionFormativa`: Evaluaciones e incidencias formativas del estudiante, independientes de las notas académicas.
 - `PlanAcompanamiento`: Planes de acompañamiento pedagógico confidenciales para seguimiento estudiante/padre.
+
+## Matriz de Entidades Centrales - Fase 7 (Asistencia y Seguimiento Estudiantil)
+- `SesionAsistencia`: Sesión de clase u orden de jornada abierta para tomar asistencia (Fecha, Grado, Sección, Asignatura, Docente).
+- `RegistroAsistencia`: Registro individual por estudiante (Presente, Ausente, Tardanza, MinutosTardanza, Justificado).
+- `JustificacionAsistencia`: Solicitud o comprobante de justificación de falta/tardanza con documento adjunto y revisión administrativa.
+- `SalidaAnticipada`: Registro de retiros de la institución antes de finalizar la jornada con autorización y acompañante.
+- `IncidenciaAsistencia`: Incidencias de puntualidad/ausentismo recurrentes reportadas por docentes/Secretaría.
+- `CasoSeguimiento`: Casos de acompañamiento preventivo por ausentismo recurrente o patrones de tardanza.
+
+## Matriz de Entidades Centrales - Fase 8 (Portal Familiar y Comunicación Institucional)
+- `InvitacionVinculacion`: Invitaciones temporales con token HTTPS para vinculación comprobada responsable-estudiante.
+- `ComunicadoInstitucional`: Comunicados y avisos con audiencia segmentada, fecha de vigencia y firmas/confirmaciones.
+- `ConversacionMensaje`: Mensajería institucional bidireccional entre responsable legal, docente, Secretaría u Orientación.
+- `BandejaNotificacion`: Notificaciones internas unificadas con control de lectura y enlaces de acción.
+- `SolicitudTramite`: Trámites y solicitudes administrativas (constancias, revisiones, solicitudes de justificante).
+- `CitaReunion`: Citas institucionales con confirmación de horario y estado de atención.
+
+## Matriz de Entidades Centrales - Fase 9 (Finanzas, Tesorería, Cobros y Pasarelas)
+- `ConceptoCobro`: Catálogo de rubros cobrables (Matrícula, Mensualidades, Mantenimiento, Transporte, Graduación).
+- `TarifaPlanPago`: Estructura de costos y planes de pago fraccionados por nivel académico, grado y año lectivo.
+- `CargoEstudiante`: Obligaciones de pago del estudiante con saldos, vencimientos, recargos y descuentos.
+- `PagoTransaccion`: Registros consolidados de pagos recibidos (Efectivo, Transferencia, Tarjeta, Cheque).
+- `ComprobantePago`: Comprobantes de transferencia/depósito cargados por familias con flujo de aprobación/rechazo.
+- `FacturaFiscal`: Facturas fiscales autorizadas por la SAR (CAI, Rango, RTN, ISV 15%) y notas de crédito.
+- `IntegracionPasarela`: Ajustes de conexión a pasarelas de pago externas (BAC, Ficohsa, Atlántida) con credenciales y token de prueba.
+- `ConciliacionBancaria`: Importación de extractos bancarios y conciliación con registros de caja/sistema.
+- `CuentaPorPagarGasto`: Registro de obligaciones de pago a proveedores, gastos operativos e integración de asientos.
+- `AsientoContable`: Libro diario y contabilidad general con partida doble de ingresos, egresos y pasivos.
+
+## Matriz de Entidades Centrales - Fase 10 (Recursos Humanos, Planillas, Políticas y Configuración Fiscal)
+- `ExpedienteLaboral`: Identidad laboral del empleado (`draft`, `pending_review`, `active`, `on_leave`, `suspended`, `terminated`, `archived`).
+- `ContratoLaboral`: Contratos de trabajo, vigencias, condiciones salariales e historial.
+- `SolicitudVacaciones`: Solicitudes de permisos y vacaciones con flujo de revisión y cálculo de saldos.
+- `PoliticaFiscal`: Reglas de impuestos, deducciones (IHSS, RAP, ISR), comisiones y redondeo desde Opciones avanzadas del Contador.
+- `PoliticaInstitucional`: Documentos institucionales de Privacidad, Uso/Condiciones y Política Financiera con control de versiones.
+- `AceptacionPolitica`: Evidencia de lectura y aceptación explícita de políticas por usuario con timestamp e IP.
+
+## Matriz de Entidades Centrales - Fase 11 (Analítica Avanzada, Dashboards, Servicios Complementarios)
+- `IndicadorAnalitico`: Metadatos y resúmenes de indicadores por rol (Académico, Asistencia, Financiero, Recursos Humanos).
+- `EjemplarBiblioteca`: Catálogo bibliográfico y ejemplares físicos (`available`, `reserved`, `on_loan`, `maintenance`, `lost`, `retired`).
+- `PrestamoBiblioteca`: Registro de préstamos, fechas devueltas, reservas y renovaciones (`requested`, `approved`, `on_loan`, `returned`, `overdue`).
+- `ActivoPatrimonial`: Ficha de bienes duraderos, código patrimonial, custodios, mantenimientos y bajas.
+- `RutaTransporte`: Unidades de transporte, rutas, paradas, capacidad máxima y asignación de estudiantes.
+- `PlantillaDocumental`: Repositorio de plantillas administrativas e informes oficiales exportables (PDF, XLSX, CSV).
+
+## Matriz de Entidades Centrales - Fase 12 (Documentos Escolares, Migración, Spreadsheets y SACE)
+- `CatalogoSpreadsheet`: Registro central de fuentes de datos distribuidas por año lectivo (2026, 2027, 2028) y área.
+- `PlantillaEscolar`: Diseños de constancias, excusas, justificaciones, permisos y formularios académicos/administrativos.
+- `DocumentoEscolarEmitido`: Solicitudes y constancias oficializadas con código único de verificación y metadatos.
+- `AuditoriaMigracion`: Registro de lotes de importación, mapeos de columna, validaciones por fila y log de errores.
+- `PlantillaSACEVerificada`: Formatos oficiales SACE verificados para completado automático de notas y recuperaciones.

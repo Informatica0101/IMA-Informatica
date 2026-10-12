@@ -108,6 +108,14 @@ function getOrCreateSheet(ss, name) {
     if (name === "DocumentosEstudiante") sheet.appendRow(["DocumentoID", "ExpedienteID", "SolicitudID", "TipoDocumento", "NombreArchivo", "DriveFileId", "DriveUrl", "FechaRecepcion", "FechaVencimiento", "EstadoRevision", "SubidoPor", "ValidadoPor", "Observaciones"]);
     if (name === "MovimientosEstudiante") sheet.appendRow(["MovimientoID", "ExpedienteID", "MatriculaID", "AnoLectivo", "TipoMovimiento", "GradoOrigen", "SeccionOrigen", "GradoDestino", "SeccionDestino", "FechaEfectiva", "Motivo", "AutorizadoPor", "Estado"]);
     if (name === "AntecedentesAcademicos") sheet.appendRow(["AntecedenteID", "ExpedienteID", "InstitucionOrigen", "GradoCompletado", "AnoCompletado", "PromedioObtenido", "EstadoVerificacion", "Observaciones"]);
+
+    // Nuevas Tablas Fase 7 - Asistencia y Seguimiento Estudiantil
+    if (name === "SesionesAsistencia") sheet.appendRow(["SesionID", "Fecha", "HoraInicio", "HoraFin", "Grado", "Seccion", "AsignaturaID", "DocenteUserId", "Estado", "Observaciones"]);
+    if (name === "RegistrosAsistencia") sheet.appendRow(["RegistroID", "SesionID", "UserId", "EstadoAsistencia", "HoraLlegada", "MinutosTardanza", "Justificado", "ObservacionDocente", "FechaRegistro"]);
+    if (name === "JustificacionesAsistencia") sheet.appendRow(["JustificacionID", "UserId", "FechaAfectada", "Periodo", "MotivoDeclarado", "AdjuntoUrl", "PresentadoPor", "EstadoRevision", "RevisadoPor", "ObservacionesAdmin", "FechaResolucion"]);
+    if (name === "SalidasAnticipadas") sheet.appendRow(["SalidaID", "UserId", "Fecha", "HoraSalida", "Motivo", "AutorizadoPor", "RetiradoPor", "RegresoHora", "Estado"]);
+    if (name === "IncidenciasAsistencia") sheet.appendRow(["IncidenciaID", "UserId", "TipoIncidencia", "Descripcion", "Fecha", "Estado", "ReportadoPor"]);
+    if (name === "CasosSeguimiento") sheet.appendRow(["CasoID", "UserId", "MotivoApertura", "ResumenAsistencia", "ResponsableID", "AccionesJSON", "Estado", "FechaApertura", "FechaCierre"]);
   }
   return sheet;
 }
@@ -155,13 +163,29 @@ const ROLE_PERMISSIONS = {
   ],
   "Contador": ["getAcademicConfig", "registerStudentEnrollment", "getStudentEnrollmentHistory", "getAcademicYears", "getAcademicOffers", "getStudentFile", "getStudentEnrollments"],
   "Consejeros": ["getAcademicConfig", "getAcademicYears", "getAcademicCalendar", "getClassSchedules", "getStudentFile", "getStudentTimeline", "getStudentGuardians"],
+  "Padre": [
+    "getAcademicConfig", "getAcademicHistory", "getAsignaturasActivas", "getWhatsAppLink", "getStudentEnrollmentHistory",
+    "getAcademicCalendar", "getClassSchedules", "getStudentFile", "getStudentTimeline", "getStudentDocuments", "getStudentEnrollments",
+    "getClassAttendance", "getDailyAttendance", "submitAttendanceJustification", "getStudentAttendanceSummary"
+  ],
+  "Tutor": [
+    "getAcademicConfig", "getAcademicHistory", "getAsignaturasActivas", "getWhatsAppLink", "getStudentEnrollmentHistory",
+    "getAcademicCalendar", "getClassSchedules", "getStudentFile", "getStudentTimeline", "getStudentDocuments", "getStudentEnrollments",
+    "getClassAttendance", "getDailyAttendance", "submitAttendanceJustification", "getStudentAttendanceSummary"
+  ],
+  "Responsable": [
+    "getAcademicConfig", "getAcademicHistory", "getAsignaturasActivas", "getWhatsAppLink", "getStudentEnrollmentHistory",
+    "getAcademicCalendar", "getClassSchedules", "getStudentFile", "getStudentTimeline", "getStudentDocuments", "getStudentEnrollments",
+    "getClassAttendance", "getDailyAttendance", "submitAttendanceJustification", "getStudentAttendanceSummary"
+  ],
   "Profesor": [
     "getAcademicConfig", "updateAcademicConfig", "getAcademicHistory", "getAsignaturasActivas", "updateAsignaturasActivas", "saveWhatsAppLink", "getWhatsAppLink", "getQuestionBank", "saveQuestion", "generateMigrationReport",
     "getAcademicYears", "getAcademicPeriods", "getSubjectCatalog", "getAcademicOffers", "getTeacherAssignments", "getAcademicCalendar", "getClassSchedules",
-    "getStudentFile", "getStudentTimeline", "getStudentEnrollments"
+    "getStudentFile", "getStudentTimeline", "getStudentEnrollments",
+    "openAttendanceSession", "saveClassAttendance", "getClassAttendance", "saveDailyAttendance", "getDailyAttendance", "submitAttendanceJustification", "reviewAttendanceJustification", "recordEarlyDeparture", "getAttendanceIncidents", "saveAttendanceIncident", "getAttendanceFollowupCases", "saveAttendanceFollowupCase", "getStudentAttendanceSummary"
   ],
-  "Asistente": ["getAcademicConfig", "getAsignaturasActivas", "getWhatsAppLink", "getQuestionBank", "getAcademicCalendar", "getClassSchedules", "getStudentFile"],
-  "Estudiante": ["getAcademicConfig", "getAcademicHistory", "getAsignaturasActivas", "getWhatsAppLink", "getStudentEnrollmentHistory", "getAcademicYears", "getAcademicPeriods", "getAcademicOffers", "getAcademicCalendar", "getClassSchedules", "getStudentFile", "getStudentTimeline", "getStudentDocuments", "getStudentEnrollments"],
+  "Asistente": ["getAcademicConfig", "getAsignaturasActivas", "getWhatsAppLink", "getQuestionBank", "getAcademicCalendar", "getClassSchedules", "getStudentTimeline", "getClassAttendance", "getStudentAttendanceSummary"],
+  "Estudiante": ["getAcademicConfig", "getAsignaturasActivas", "getWhatsAppLink", "getQuestionBank", "getStudentEnrollmentHistory", "getAcademicCalendar", "getClassSchedules", "getStudentFile", "getStudentTimeline", "getStudentDocuments", "getClassAttendance", "getDailyAttendance", "submitAttendanceJustification", "getStudentAttendanceSummary"],
   "Alumno": ["getAcademicConfig", "getAcademicHistory", "getAsignaturasActivas", "getWhatsAppLink", "getStudentEnrollmentHistory", "getAcademicYears", "getAcademicPeriods", "getAcademicOffers", "getAcademicCalendar", "getClassSchedules", "getStudentFile", "getStudentTimeline", "getStudentDocuments", "getStudentEnrollments"]
 };
 
@@ -255,6 +279,21 @@ function doPost(e) {
       case "recordStudentTransfer": result = recordStudentTransfer(payload); break;
       case "recordStudentWithdrawal": result = recordStudentWithdrawal(payload); break;
       case "processStudentReentry": result = processStudentReentry(payload); break;
+
+      // Endpoints Fase 7 - Asistencia y Seguimiento Estudiantil
+      case "openAttendanceSession": result = openAttendanceSession(payload); break;
+      case "saveClassAttendance": result = saveClassAttendance(payload); break;
+      case "getClassAttendance": result = getClassAttendance(payload); break;
+      case "saveDailyAttendance": result = saveDailyAttendance(payload); break;
+      case "getDailyAttendance": result = getDailyAttendance(payload); break;
+      case "submitAttendanceJustification": result = submitAttendanceJustification(payload); break;
+      case "reviewAttendanceJustification": result = reviewAttendanceJustification(payload); break;
+      case "recordEarlyDeparture": result = recordEarlyDeparture(payload); break;
+      case "getAttendanceIncidents": result = getAttendanceIncidents(payload); break;
+      case "saveAttendanceIncident": result = saveAttendanceIncident(payload); break;
+      case "getAttendanceFollowupCases": result = getAttendanceFollowupCases(payload); break;
+      case "saveAttendanceFollowupCase": result = saveAttendanceFollowupCase(payload); break;
+      case "getStudentAttendanceSummary": result = getStudentAttendanceSummary(payload); break;
 
       case "ping": result = { status: "success", service: "ACADEMIC", timestamp: new Date().toISOString(), dbConnected: true }; break;
       default: result = { status: "error", message: `Acción no reconocida: ${action}` };
@@ -1025,6 +1064,396 @@ function saveAcademicRule(payload) {
   return { status: "success", message: "Regla académica guardada." };
 }
 
+// --- FUNCIONES DE ASISTENCIA, PUNTUALIDAD Y SEGUIMIENTO ESTUDIANTIL (FASE 7) ---
+
+function openAttendanceSession(payload) {
+  const { fecha, horaInicio, horaFin, grado, seccion, asignaturaId, docenteUserId, observaciones } = payload || {};
+  if (!grado || !asignaturaId) throw new Error("Grado y Asignatura son requeridos.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "SesionesAsistencia");
+
+  const sesionId = "SES-AST-" + Date.now();
+  const now = new Date();
+
+  sheet.appendRow([
+    sesionId,
+    fecha || now.toISOString().split('T')[0],
+    horaInicio || "07:00",
+    horaFin || "08:00",
+    grado,
+    seccion || "A",
+    asignaturaId,
+    docenteUserId || "Docente",
+    "Abierta",
+    observaciones || ""
+  ]);
+
+  return { status: "success", message: "Sesión de asistencia abierta.", data: { sesionId } };
+}
+
+function saveClassAttendance(payload) {
+  const { sesionId, registros } = payload || {};
+  if (!sesionId || !Array.isArray(registros)) throw new Error("sesionId y lista de registros son requeridos.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const regSheet = getOrCreateSheet(ss, "RegistrosAsistencia");
+  if (regSheet.getLastRow() === 0) {
+    regSheet.appendRow(["RegistroID", "SesionID", "UserId", "EstadoAsistencia", "HoraLlegada", "MinutosTardanza", "Justificado", "ObservacionDocente", "FechaRegistro"]);
+  }
+
+  const data = regSheet.getDataRange().getValues();
+  const now = new Date();
+
+  const indexMap = {};
+  for (let i = 1; i < data.length; i++) {
+    const key = `${String(data[i][1]).trim()}_${String(data[i][2]).trim()}`;
+    indexMap[key] = i;
+  }
+
+  let savedCount = 0;
+  registros.forEach(r => {
+    const { userId, estadoAsistencia, horaLlegada, minutosTardanza, justificado, observacionDocente } = r;
+    if (!userId) return;
+
+    const key = `${String(sesionId).trim()}_${String(userId).trim()}`;
+    if (key in indexMap) {
+      const idx = indexMap[key];
+      data[idx][3] = estadoAsistencia || "Presente";
+      if (horaLlegada !== undefined) data[idx][4] = horaLlegada;
+      if (minutosTardanza !== undefined) data[idx][5] = minutosTardanza;
+      if (justificado !== undefined) data[idx][6] = justificado;
+      if (observacionDocente !== undefined) data[idx][7] = observacionDocente;
+    } else {
+      const regId = "REG-AST-" + Date.now() + "-" + Math.floor(Math.random() * 1000);
+      const newRow = [
+        regId,
+        sesionId,
+        userId,
+        estadoAsistencia || "Presente",
+        horaLlegada || "",
+        minutosTardanza || 0,
+        justificado || false,
+        observacionDocente || "",
+        now
+      ];
+      data.push(newRow);
+      indexMap[key] = data.length - 1;
+    }
+    savedCount++;
+  });
+
+  if (data.length > 1) {
+    regSheet.getRange(1, 1, data.length, data[0].length).setValues(data);
+  }
+
+  return { status: "success", message: `Asistencia guardada para ${savedCount} estudiantes.` };
+}
+
+function getClassAttendance(payload) {
+  const { sesionId, grado, seccion, asignaturaId, fecha } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const regSheet = getOrCreateSheet(ss, "RegistrosAsistencia");
+  const regData = regSheet.getDataRange().getValues();
+  if (regData.length <= 1) return { status: "success", data: [] };
+
+  const records = regData.slice(1).filter(r => {
+    if (sesionId && String(r[1]).trim() !== String(sesionId).trim()) return false;
+    return true;
+  }).map(r => ({
+    registroId: r[0],
+    sesionId: r[1],
+    userId: r[2],
+    estadoAsistencia: r[3],
+    horaLlegada: r[4],
+    minutosTardanza: r[5],
+    justificado: r[6] === true || String(r[6]).toLowerCase() === "true",
+    observacionDocente: r[7],
+    fechaRegistro: r[8] ? new Date(r[8]).toISOString() : null
+  }));
+
+  return { status: "success", data: records };
+}
+
+function saveDailyAttendance(payload) {
+  const { fecha, grado, seccion, registros } = payload || {};
+  if (!fecha || !Array.isArray(registros)) throw new Error("Fecha y lista de registros son requeridos.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const regSheet = getOrCreateSheet(ss, "RegistrosAsistencia");
+  const data = regSheet.getDataRange().getValues();
+  const now = new Date();
+
+  const dailySesionId = "SES-DIARIA-" + (fecha || now.toISOString().split('T')[0]) + "-" + (grado || "GEN") + "-" + (seccion || "A");
+
+  let savedCount = 0;
+  registros.forEach(r => {
+    const { userId, estadoAsistencia, horaLlegada, minutosTardanza, observacionDocente } = r;
+    if (!userId) return;
+
+    const idx = data.findIndex(row => String(row[1]).trim() === String(dailySesionId).trim() && String(row[2]).trim() === String(userId).trim());
+
+    if (idx !== -1) {
+      regSheet.getRange(idx + 1, 4).setValue(estadoAsistencia || "Presente");
+      if (horaLlegada) regSheet.getRange(idx + 1, 5).setValue(horaLlegada);
+    } else {
+      const regId = "REG-DIA-" + Date.now() + "-" + Math.floor(Math.random() * 1000);
+      regSheet.appendRow([
+        regId,
+        dailySesionId,
+        userId,
+        estadoAsistencia || "Presente",
+        horaLlegada || "",
+        minutosTardanza || 0,
+        false,
+        observacionDocente || "Registro Diario",
+        now
+      ]);
+    }
+    savedCount++;
+  });
+
+  return { status: "success", message: `Asistencia diaria registrada para ${savedCount} alumnos.` };
+}
+
+function getDailyAttendance(payload) {
+  const { fecha, grado, seccion } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const regSheet = getOrCreateSheet(ss, "RegistrosAsistencia");
+  const data = regSheet.getDataRange().getValues();
+  if (data.length <= 1) return { status: "success", data: [] };
+
+  const prefix = "SES-DIARIA-" + (fecha || new Date().toISOString().split('T')[0]);
+
+  const records = data.slice(1).filter(r => {
+    return String(r[1]).indexOf(prefix) !== -1;
+  }).map(r => ({
+    registroId: r[0],
+    sesionId: r[1],
+    userId: r[2],
+    estadoAsistencia: r[3],
+    horaLlegada: r[4],
+    minutosTardanza: r[5],
+    justificado: r[6] === true || String(r[6]).toLowerCase() === "true",
+    observacionDocente: r[7]
+  }));
+
+  return { status: "success", data: records };
+}
+
+function submitAttendanceJustification(payload) {
+  const { userId, fechaAfectada, periodo, motivoDeclarado, adjuntoUrl, presentadoPor } = payload || {};
+  if (!userId || !fechaAfectada || !motivoDeclarado) throw new Error("userId, fechaAfectada y motivoDeclarado son requeridos.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "JustificacionesAsistencia");
+
+  const justId = "JUST-" + Date.now();
+  const now = new Date();
+
+  sheet.appendRow([
+    justId,
+    userId,
+    fechaAfectada,
+    periodo || "I parcial",
+    motivoDeclarado,
+    adjuntoUrl || "",
+    presentadoPor || "Estudiante",
+    "Pendiente",
+    "",
+    "",
+    now
+  ]);
+
+  return { status: "success", message: "Justificación de asistencia enviada para revisión.", data: { justificacionId: justId } };
+}
+
+function reviewAttendanceJustification(payload) {
+  const { justificacionId, nuevoEstado, revisadoPor, observacionesAdmin } = payload || {};
+  if (!justificacionId || !nuevoEstado) throw new Error("justificacionId y nuevoEstado son requeridos.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "JustificacionesAsistencia");
+  const data = sheet.getDataRange().getValues();
+  const idx = data.findIndex(r => String(r[0]).trim() === String(justificacionId).trim());
+  if (idx === -1) throw new Error("Justificación no encontrada.");
+
+  sheet.getRange(idx + 1, 8).setValue(nuevoEstado); // EstadoRevision
+  sheet.getRange(idx + 1, 9).setValue(revisadoPor || "Secretaría");
+  sheet.getRange(idx + 1, 10).setValue(observacionesAdmin || "");
+  sheet.getRange(idx + 1, 11).setValue(new Date());
+
+  return { status: "success", message: `Justificación cambiada a ${nuevoEstado}.` };
+}
+
+function recordEarlyDeparture(payload) {
+  const { userId, fecha, horaSalida, motivo, autorizadoPor, retiradoPor } = payload || {};
+  if (!userId || !horaSalida) throw new Error("userId y horaSalida son requeridos.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "SalidasAnticipadas");
+
+  const salidaId = "SAL-" + Date.now();
+  const now = new Date();
+
+  sheet.appendRow([
+    salidaId,
+    userId,
+    fecha || now.toISOString().split('T')[0],
+    horaSalida,
+    motivo || "Salida autorizada",
+    autorizadoPor || "Secretaría",
+    retiradoPor || "Padre/Tutor",
+    "",
+    "Autorizada"
+  ]);
+
+  return { status: "success", message: "Salida anticipada registrada.", data: { salidaId } };
+}
+
+function getAttendanceIncidents(payload) {
+  const { userId } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "IncidenciasAsistencia");
+  const data = sheet.getDataRange().getValues();
+  if (data.length <= 1) return { status: "success", data: [] };
+
+  const incidents = data.slice(1).filter(r => {
+    if (userId && String(r[1]).trim() !== String(userId).trim()) return false;
+    return true;
+  }).map(r => ({
+    incidenciaId: r[0],
+    userId: r[1],
+    tipoIncidencia: r[2],
+    descripcion: r[3],
+    fecha: r[4] ? new Date(r[4]).toISOString() : null,
+    estado: r[5] || "Reportada",
+    reportadoPor: r[6]
+  }));
+
+  return { status: "success", data: incidents };
+}
+
+function saveAttendanceIncident(payload) {
+  const { userId, tipoIncidencia, descripcion, reportadoPor } = payload || {};
+  if (!userId || !tipoIncidencia) throw new Error("userId y tipoIncidencia son requeridos.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "IncidenciasAsistencia");
+
+  const incId = "INC-AST-" + Date.now();
+  const now = new Date();
+
+  sheet.appendRow([
+    incId,
+    userId,
+    tipoIncidencia,
+    descripcion || "",
+    now,
+    "Reportada",
+    reportadoPor || "Docente"
+  ]);
+
+  return { status: "success", message: "Incidencia de asistencia registrada.", data: { incidenciaId: incId } };
+}
+
+function getAttendanceFollowupCases(payload) {
+  const { userId } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "CasosSeguimiento");
+  const data = sheet.getDataRange().getValues();
+  if (data.length <= 1) return { status: "success", data: [] };
+
+  const cases = data.slice(1).filter(r => {
+    if (userId && String(r[1]).trim() !== String(userId).trim()) return false;
+    return true;
+  }).map(r => ({
+    casoId: r[0],
+    userId: r[1],
+    motivoApertura: r[2],
+    resumenAsistencia: r[3],
+    responsableId: r[4],
+    acciones: r[5] ? (typeof r[5] === 'string' ? JSON.parse(r[5]) : r[5]) : [],
+    estado: r[6] || "Abierto",
+    fechaApertura: r[7] ? new Date(r[7]).toISOString() : null,
+    fechaCierre: r[8] ? new Date(r[8]).toISOString() : null
+  }));
+
+  return { status: "success", data: cases };
+}
+
+function saveAttendanceFollowupCase(payload) {
+  const { casoId, userId, motivoApertura, resumenAsistencia, responsableId, acciones, estado } = payload || {};
+  if (!userId || !motivoApertura) throw new Error("userId y motivoApertura son requeridos.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "CasosSeguimiento");
+  if (sheet.getLastRow() === 0) {
+    sheet.appendRow(["CasoID", "UserId", "MotivoApertura", "ResumenAsistencia", "ResponsableID", "AccionesJSON", "Estado", "FechaApertura", "FechaCierre"]);
+  }
+
+  const cid = casoId || ("CASO-AST-" + Date.now());
+  const now = new Date();
+
+  sheet.appendRow([
+    cid,
+    userId,
+    motivoApertura,
+    resumenAsistencia || "Ausentismo/Tardanzas recurrentes",
+    responsableId || "Orientacion",
+    JSON.stringify(acciones || []),
+    estado || "Abierto",
+    now,
+    ""
+  ]);
+
+  return { status: "success", message: "Caso de seguimiento de asistencia guardado.", data: { casoId: cid } };
+}
+
+function getStudentAttendanceSummary(payload) {
+  const { userId } = payload || {};
+  if (!userId) throw new Error("userId es requerido.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const regSheet = getOrCreateSheet(ss, "RegistrosAsistencia");
+  const regData = regSheet.getDataRange().getValues();
+
+  const userRegs = regData.length > 1 ? regData.slice(1).filter(r => String(r[2]).trim() === String(userId).trim()) : [];
+
+  let presentes = 0;
+  let ausentes = 0;
+  let tardanzas = 0;
+  let salidasAnticipadas = 0;
+  let justificadas = 0;
+
+  userRegs.forEach(r => {
+    const st = String(r[3]).toLowerCase();
+    if (st === "presente") presentes++;
+    else if (st === "ausente") ausentes++;
+    else if (st === "tardanza") tardanzas++;
+    else if (st === "salidaanticipada") salidasAnticipadas++;
+
+    if (r[6] === true || String(r[6]).toLowerCase() === "true") justificadas++;
+  });
+
+  const total = userRegs.length;
+  const porcentajeAsistencia = total > 0 ? (((presentes + tardanzas) / total) * 100).toFixed(1) : "100.0";
+
+  return {
+    status: "success",
+    data: {
+      userId,
+      totalSesiones: total,
+      presentes,
+      ausentes,
+      tardanzas,
+      salidasAnticipadas,
+      justificadas,
+      porcentajeAsistencia: parseFloat(porcentajeAsistencia)
+    }
+  };
+}
+
 function updateStudentFile(payload) {
   const { expedienteId, fechaNacimiento, nacionalidad, direccionResidencia, fotografiaUrl, estadoExpediente, observaciones } = payload || {};
   if (!expedienteId) throw new Error("expedienteId es requerido.");
@@ -1321,7 +1750,6 @@ function uploadStudentDocument(payload) {
     const mimeType = fileData.split(',')[0].match(/:(.*?);/)[1];
     const base64Data = fileData.split(',')[1];
     const file = targetFolder.createFile(Utilities.newBlob(Utilities.base64Decode(base64Data), mimeType, fileName || `${tipoDocumento}_${Date.now()}`));
-    file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
 
     driveFileId = file.getId();
     driveUrl = `https://lh3.googleusercontent.com/d/${file.getId()}`;
@@ -1533,9 +1961,16 @@ function changeStudentSection(payload) {
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
   const targetAno = anolectivo || "2026";
 
+  let sUserId = userId ? String(userId).trim() : "";
+  if (!sUserId && expedienteId) {
+    const expSheet = getOrCreateSheet(ss, "ExpedientesEstudiantes");
+    const expData = expSheet.getDataRange().getValues();
+    const expRow = expData.find(r => String(r[0]).trim() === String(expedienteId).trim());
+    if (expRow && expRow[1]) sUserId = String(expRow[1]).trim();
+  }
+
   const matSheet = getOrCreateSheet(ss, "Matriculas");
   const matData = matSheet.getDataRange().getValues();
-  const sUserId = String(userId).trim();
 
   const idx = matData.findIndex(r => String(r[2]).trim() === sUserId && String(r[6]).trim() === String(targetAno).trim() && (r[8] === "Activa" || r[8] === "Confirmada"));
   if (idx === -1) throw new Error("Matrícula activa no encontrada para el estudiante en el año seleccionado.");
@@ -1575,9 +2010,16 @@ function recordStudentTransfer(payload) {
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
   const targetAno = anolectivo || "2026";
 
+  let sUserId = userId ? String(userId).trim() : "";
+  if (!sUserId && expedienteId) {
+    const expSheet = getOrCreateSheet(ss, "ExpedientesEstudiantes");
+    const expData = expSheet.getDataRange().getValues();
+    const expRow = expData.find(r => String(r[0]).trim() === String(expedienteId).trim());
+    if (expRow && expRow[1]) sUserId = String(expRow[1]).trim();
+  }
+
   const matSheet = getOrCreateSheet(ss, "Matriculas");
   const matData = matSheet.getDataRange().getValues();
-  const sUserId = String(userId).trim();
 
   const idx = matData.findIndex(r => String(r[2]).trim() === sUserId && String(r[6]).trim() === String(targetAno).trim());
   if (idx !== -1) {
@@ -1612,9 +2054,16 @@ function recordStudentWithdrawal(payload) {
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
   const targetAno = anolectivo || "2026";
 
+  let sUserId = userId ? String(userId).trim() : "";
+  if (!sUserId && expedienteId) {
+    const expSheet = getOrCreateSheet(ss, "ExpedientesEstudiantes");
+    const expData = expSheet.getDataRange().getValues();
+    const expRow = expData.find(r => String(r[0]).trim() === String(expedienteId).trim());
+    if (expRow && expRow[1]) sUserId = String(expRow[1]).trim();
+  }
+
   const matSheet = getOrCreateSheet(ss, "Matriculas");
   const matData = matSheet.getDataRange().getValues();
-  const sUserId = String(userId).trim();
 
   const idx = matData.findIndex(r => String(r[2]).trim() === sUserId && String(r[6]).trim() === String(targetAno).trim());
   if (idx !== -1) {

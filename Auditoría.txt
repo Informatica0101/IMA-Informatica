@@ -125,3 +125,225 @@ Archivos Auditados:
 4. RIESGOS DE COMPATIBILIDAD Y MITIGACIÓN
 - Las notas académicas existentes en `Entregas` y `EntregasExamen` se mantendrán intactas y se utilizarán como insumo inicial.
 - Se mantendrá la estricta separación arquitectónica entre las notas académicas de asignaturas y los módulos formativos de Comportamiento, Aseo y Presentación.
+
+AUDITORÍA TÉCNICA Y DIAGNÓSTICO DE SOLO LECTURA - FASE 7: ASISTENCIA, PUNTUALIDAD, AUSENCIAS, INCIDENCIAS Y SEGUIMIENTO DEL ESTUDIANTE - Sun Jul 5 2026
+
+Archivos Auditados:
+- backend/academic-service/Code.gs
+- backend/user-service/Code.gs
+- backend/accounting-service/Code.gs
+- js/teacher.js
+- js/student.js
+- teacher-dashboard.html
+- student-dashboard.html
+
+1. FUNCIONES EXISTENTES Y OPERATIVAS
+- Asistencia de Personal/Planillas: `recordStaffAttendance` en `backend/accounting-service/Code.gs` para colaboradores y nómina.
+- Matrículas e Identidad Estudiantil: `Matriculas`, `ExpedientesEstudiantes` y `CuentasUsuarios` en `ACADEMIC` y `USER` como fuente oficial de alumnos por grado/sección.
+
+2. FUNCIONES FALTANTES Y MEJORAS REQUERIDAS PARA FASE 7
+- Control de Asistencia por Clase y Jornada General: Apertura y cierre de sesiones de asistencia (`SesionesAsistencia`, `RegistrosAsistencia`) diferenciando estados (Presente, Ausente, Tardanza, SalidaAnticipada, Justificada, NoJustificada).
+- Control de Puntualidad y Tardanzas: Registro de hora prevista vs hora real de llegada con cálculo de minutos de retraso y tolerancias.
+- Gestión de Justificaciones (`JustificacionesAsistencia`): Registro de justificantes con documentos adjuntos, estados de revisión (Pendiente, Aprobada, Rechazada) e historial inmutable.
+- Salidas Anticipadas (`SalidasAnticipadas`): Registro de retiros prematuros con responsable autorizador y persona que retira al estudiante.
+- Incidencias y Patrones de Ausentismo (`IncidenciasAsistencia`, `CasosSeguimiento`): Detección preventiva de faltas consecutivas y planes de seguimiento sin diagnósticos no verificados.
+
+3. ESTRUCTURA DE TABLAS EN GOOGLE SHEETS
+- Hojas a Incorporar en ACADEMIC-SERVICE:
+  - `SesionesAsistencia` (SesionID | Fecha | HoraInicio | HoraFin | Grado | Seccion | AsignaturaID | DocenteUserId | Estado | Observaciones)
+  - `RegistrosAsistencia` (RegistroID | SesionID | UserId | EstadoAsistencia | HoraLlegada | MinutosTardanza | Justificado | ObservacionDocente | FechaRegistro)
+  - `JustificacionesAsistencia` (JustificacionID | UserId | FechaAfectada | Periodo | MotivoDeclarado | AdjuntoUrl | PresentadoPor | EstadoRevision | RevisadoPor | ObservacionesAdmin | FechaResolucion)
+  - `SalidasAnticipadas` (SalidaID | UserId | Fecha | HoraSalida | Motivo | AutorizadoPor | RetiradoPor | RegresoHora | Estado)
+  - `IncidenciasAsistencia` (IncidenciaID | UserId | TipoIncidencia | Descripcion | Fecha | Estado | ReportadoPor)
+  - `CasosSeguimiento` (CasoID | UserId | MotivoApertura | ResumenAsistencia | ResponsableID | AccionesJSON | Estado | FechaApertura | FechaCierre)
+
+4. RIESGOS DE COMPATIBILIDAD Y MITIGACIÓN
+- La asistencia del estudiante no alterará automáticamente las notas académicas de la Fase 6, preservando la independencia de dominios.
+- Se mantendrá la coincidencia por encabezados en Google Sheets para resiliencia ante adición de columnas.
+
+AUDITORÍA TÉCNICA Y DIAGNÓSTICO DE SOLO LECTURA - FASE 8: COMUNICACIÓN INSTITUCIONAL, PORTAL FAMILIAR, NOTIFICACIONES Y TRÁMITES - Sun Jul 5 2026
+
+Archivos Auditados:
+- backend/user-service/Code.gs
+- backend/academic-service/Code.gs
+- js/student.js
+- js/index-ui.js
+- student-dashboard.html
+- teacher-dashboard.html
+
+1. FUNCIONES EXISTENTES Y OPERATIVAS
+- Noticias y Avisos: `getNews`, `createNews`, `updateNewsStatus`, `uploadNewsImage` en `backend/user-service/Code.gs` operando sobre la hoja `'NoticiasPortal'`.
+- Tutores y Responsables Legales: `ResponsablesTutores` y `RelacionesEstudianteTutor` en `backend/academic-service/Code.gs` registrando vínculos y permisos.
+
+2. FUNCIONES FALTANTES Y MEJORAS REQUERIDAS PARA FASE 8
+- Portal Familiar Unificado: Selección de estudiante vinculado con cambio contextual en tiempo real y verificaciones de autorización en servidor.
+- Invitaciones de Vinculación (`InvitacionesVinculacion`): Emisión de invitaciones seguras con token de un solo uso, caducidad y estado.
+- Mensajería Interna Bidireccional (`ConversacionesMensajes`): Conversaciones estructuradas entre responsable legal, docente, Secretaría u Orientación sin exponer teléfonos personales.
+- Centro Unificado de Notificaciones (`BandejaNotificaciones`): Notificaciones multicanal con marcas de lectura y prevención de duplicados por idempotencia.
+- Gestión de Solicitudes y Trámites (`SolicitudesTramites`): Centro de trámites para constancias, justificaciones y revisiones con máquina de estados y plazos de atención.
+- Citas y Reuniones (`CitasReuniones`): Programación de citas con confirmaciones, estados y recordatorios.
+
+3. ESTRUCTURA DE TABLAS EN GOOGLE SHEETS
+- Hojas a Incorporar/Consolidar en USER-SERVICE / ACADEMIC-SERVICE:
+  - `InvitacionesVinculacion` (InvitacionID | ExpedienteID | EmailResponsable | Token | FechaEmision | FechaExpiracion | Estado | CreadoPor)
+  - `ComunicadosInstitucionales` (ComunicadoID | Titulo | Contenido | Categoria | AutorID | AudienciaJSON | RequiereFirma | FechaPublicacion | Estado)
+  - `ConversacionesMensajes` (MensajeID | ConversacionID | RemitenteID | DestinatarioID | EstudianteID | MensajeTexto | AdjuntoUrl | FechaEnvio | EstadoLectura)
+  - `BandejaNotificaciones` (NotificacionID | UserId | Titulo | Mensaje | Tipo | Categoria | Leido | EnlaceAccion | FechaRegistro)
+  - `SolicitudesTramites` (SolicitudID | UserId | EstudianteID | TipoTramite | Descripcion | AdjuntoUrl | Estado | AsignadoA | ObservacionesAdmin | FechaSolicitud | FechaResolucion)
+  - `CitasReuniones` (CitaID | SolicitanteID | EstudianteID | SolicitadoA | Motivo | FechaHora | Modalidad | Estado | Comentarios)
+
+4. RIESGOS DE COMPATIBILIDAD Y MITIGACIÓN
+- Las notas académicas (Fase 6) y asistencias (Fase 7) no serán alteradas directamente desde el portal familiar; cualquier trámite generará una solicitud de revisión/justificación.
+
+AUDITORÍA TÉCNICA Y DIAGNÓSTICO DE SOLO LECTURA - FASE 9: CONTABILIDAD, PAGOS, MENSUALIDADES, FACTURACIÓN, TESORERÍA Y CONTROL FINANCIERO INSTITUCIONAL - Sun Jul 5 2026
+
+Archivos Auditados:
+- backend/accounting-service/Code.gs
+- backend/user-service/Code.gs
+- backend/academic-service/Code.gs
+- js/student.js
+- js/teacher.js
+- student-dashboard.html
+- teacher-dashboard.html
+
+1. FUNCIONES EXISTENTES Y OPERATIVAS
+- Conceptos y Cargos: `configurePaymentConcept`, `getStudentAccountStatement` y `recordStudentPayment` en `backend/accounting-service/Code.gs`.
+- Comprobantes y Recibos: `uploadPaymentVoucher` y `generatePaymentReceiptPDF`.
+- Facturación SAR y Caja/Bancos: `createFiscalInvoice`, `recordCashBankMovement`, `closeCashSession` y `getCashBankSummary`.
+- Planillas e Inventarios: `generatePayrollPeriod`, `recordStaffAttendance`, `recordInventoryMovement` y `registerSupplier`.
+
+2. FUNCIONES FALTANTES Y MEJORAS REQUERIDAS PARA FASE 9
+- Configuración Centralizada de Fecha, Hora y Zona Horaria: Parámetro institucional único en `InstitucionParametros` para toda la plataforma.
+- Tarifas y Planes de Pago Fraccionados (`TarifasPlanPago`): Tarifas por grado/nivel y fraccionamiento atómico de mensualidades sin duplicidad.
+- Opciones Avanzadas Financieras: Control de parámetros globales (pagos parciales, recargos por mora, autorizaciones de descuento).
+- Integración de Pasarelas de Pago (`IntegracionesPasarelas`): Configuración de credenciales de tarjetas (BAC, Ficohsa, Atlántida) con prueba de conexión.
+- Banco y Conciliación Bancaria (`BancosConciliaciones`): Importación de extractos bancarios y cruce con ingresos internos.
+- Cuentas por Pagar y Gastos (`CuentasPorPagarGastos`): Control de compras, facturas de proveedores e integración con asientos de planilla.
+- Contabilidad General y Asientos Automáticos (`PlanCuentasAsientos`): Plan de cuentas jerárquico y generación idempotente de asientos contables equilibrados.
+
+3. ESTRUCTURA DE TABLAS EN GOOGLE SHEETS
+- Hojas a Incorporar/Consolidar en ACCOUNTING-SERVICE:
+  - `TarifasPlanPago` (TarifaID | AnoLectivo | NivelGrado | ConceptoID | MontoTotal | CuotasNum | VencimientoJSON | Estado)
+  - `IntegracionesPasarelas` (IntegracionID | NombreProveedor | TipoServicio | CredencialesJSON | UrlApi | EstadoConexion | UltimaPruebaFecha | Estado)
+  - `BancosConciliaciones` (ConciliacionID | CuentaBancariaID | FechaExtracto | ArchivoExtractoUrl | CoincidenciasJSON | DiferenciasJSON | Estado | CreadoPor)
+  - `CuentasPorPagarGastos` (ObligacionID | ProveedorID | NumeroFactura | Importe | Impuestos | FechaVencimiento | EstadoAprobacion | EstadoPago | AsientoID)
+  - `PlanCuentas` (CuentaID | CodigoCuenta | NombreCuenta | TipoCuenta | Naturaleza | Estado)
+  - `AsientosContables` (AsientoID | Fecha | Descripcion | OrigenModulo | ReferenciaID | LineasJSON | Estado)
+
+4. RIESGOS DE COMPATIBILIDAD Y MITIGACIÓN
+- Las transacciones financieras no alterarán los expedientes académicos ni bloquearán el acceso a la plataforma o asistencia.
+- La zona horaria y formato de fecha institucional se consumirán de forma centralizada sin configuraciones aisladas por módulo.
+
+AUDITORÍA TÉCNICA Y DIAGNÓSTICO DE SOLO LECTURA - FASE 10: RECURSOS HUMANOS, GESTIÓN DE EMPLEADOS, PLANILLAS, POLÍTICAS INSTITUCIONALES Y CONFIGURACIÓN FISCAL - Sun Jul 5 2026
+
+Archivos Auditados:
+- backend/accounting-service/Code.gs
+- backend/user-service/Code.gs
+- backend/academic-service/Code.gs
+- js/teacher.js
+- js/student.js
+- js/index-ui.js
+- teacher-dashboard.html
+- student-dashboard.html
+
+1. FUNCIONES EXISTENTES Y OPERATIVAS
+- Expedientes Laborales y Planillas: `generatePayrollPeriod`, `recordStaffAttendance`, `getStaffPayrollReceipt` en `backend/accounting-service/Code.gs`.
+- Identidad y Personas: `createPerson`, `findPersonMatches`, `linkPersonAccount` en `backend/user-service/Code.gs`.
+- Contabilidad y Reglas Fiscales: `getChartOfAccounts`, `recordAccountingJournalEntry`, `recordAccountsPayableExpense`, `createFiscalInvoice`.
+- Auditoría y Logs Estructurados: `logStructuredEvent` y `sanitizePayloadForLog`.
+
+2. FUNCIONES FALTANTE Y AMPLIACIONES REQUERIDAS PARA FASE 10
+- Expedientes Laborales (`ExpedientesLaborales`, `ContratosLaborales`): Registro de contratos, puestos, departamentos, fechas de vigencia y estados del ciclo de vida (`draft`, `pending_review`, `active`, `on_leave`, `suspended`, `terminated`, `archived`).
+- Asistencia del Personal, Permisos y Vacaciones (`AsistenciasPersonal`, `SolicitudesVacaciones`): Control de tardanzas, licencias, saldos de vacaciones y solicitudes con máquina de estados (`draft`, `submitted`, `under_review`, `approved`, `rejected`, `cancelled`, `completed`).
+- Opciones Avanzadas del Contador (`PoliticasFiscales`): Configuración de reglas de impuestos, retenciones (IHSS, RAP, ISR), comisiones, deducciones y redondeo determinista con versionado e historial.
+- Páginas y Contenidos de Políticas Institucionales (`PoliticasInstitucionales`, `ContenidoPoliticas`, `AceptacionesPoliticas`): Páginas institucionales de Política de Privacidad, Política de Uso y Condiciones, y Política Financiera con control de versiones y registro de aceptación por usuario.
+- Matriz RACI y Segregación de Funciones: Validación estricta en servidor de roles (Preparador, Revisor, Aprobador, Ejecutor) impidiendo que quien prepara apruebe sus propias operaciones o altere silenciosamente planillas cerradas.
+- Integración Idempotente con Fase 9: Generación de obligaciones de cuentas por pagar de nómina e integración con asientos contables sin duplicar cobros ni registros.
+
+3. ESTRUCTURA DE TABLAS EN GOOGLE SHEETS PARA FASE 10
+- `ExpedientesLaborales` (ExpedienteID | PersonaId | UserId | Puesto | Departamento | CentroCosto | FechaIngreso | FechaSalida | EstadoLaboral | Observaciones)
+- `ContratosLaborales` (ContratoID | ExpedienteID | TipoContrato | FechaInicio | FechaFin | SalarioBase | Jornada | EstadoContrato | Observaciones)
+- `SolicitudesVacaciones` (SolicitudID | ExpedienteID | Tipo | FechaInicio | FechaFin | DiasSolicitados | Estado | AprobadoPor | Observaciones)
+- `PoliticasFiscales` (PoliticaID | CodigoRegla | NombreRegla | Categoria | BaseCalculo | MetodoCalculo | TasaImporte | Estado | Version | Observaciones)
+- `PoliticasInstitucionales` (PoliticaInstID | TipoDocumento | Titulo | Version | ContenidoHTML | Estado | FechaPublicacion | Observaciones)
+- `AceptacionesPoliticas` (AceptacionID | UserId | PoliticaInstID | Version | FechaAceptacion | IpMetadata | Estado)
+
+4. RIESGOS DE COMPATIBILIDAD Y MITIGACIÓN
+- La separación entre Recursos Humanos (novedades y expediente), Planillas (cálculo oficial) y Contabilidad (asientos e impuestos) previene dobles pagos o asientos duplicados.
+- Ninguna cuenta de empleado desvinculado será borrada; conservará el expediente laboral y la trazabilidad histórica de auditoría.
+
+AUDITORÍA TÉCNICA Y DIAGNÓSTICO DE SOLO LECTURA - FASE 11: ANALÍTICA AVANZADA, DASHBOARDS, INFORMES Y SERVICIOS COMPLEMENTARIOS - Sun Jul 5 2026
+
+Archivos Auditados:
+- backend/accounting-service/Code.gs
+- backend/user-service/Code.gs
+- backend/academic-service/Code.gs
+- backend/task-service/Code.gs
+- backend/exam-service/Code.gs
+- js/teacher.js
+- js/student.js
+- teacher-dashboard.html
+- student-dashboard.html
+
+1. FUNCIONES EXISTENTES Y OPERATIVAS
+- Indicadores y Consola Técnica: `ping` e indicadores de salud en `backend/user-service/Code.gs`, `backend/academic-service/Code.gs`, `backend/accounting-service/Code.gs`, `backend/task-service/Code.gs`, `backend/exam-service/Code.gs`.
+- Inventario Kardex y Proveedores: `getInventoryKardex`, `recordInventoryMovement`, `registerSupplier` en `backend/accounting-service/Code.gs`.
+- Reportes e Informes: `getStudentAcademicReport` en `exam-service`, `getStructuredLogs` en `user-service`, `getCashBankSummary` en `accounting-service`.
+
+2. FUNCIONES FALTANTES Y AMPLIACIONES REQUERIDAS PARA FASE 11
+- Dashboards por Rol y Analítica Unificada (`getAdvancedDashboardAnalytics`): Agregación de indicadores de matrícula, rendimiento académico, asistencia, ejecución presupuestaria y cumplimiento laboral por rol.
+- Biblioteca y Recursos Educativos (`BibliotecaEjemplares`, `BibliotecaPrestamos`): Gestión de catálogo bibliográfico, disponibilidad de ejemplares, préstamos, reservas, devoluciones e historial.
+- Activos Institucionales y Asignaciones (`ActivosPatrimoniales`, `AsignacionesActivos`): Registro de bienes duraderos, código patrimonial, custodios, mantenimientos y bajas.
+- Transporte Escolar (`TransporteRutas`, `TransporteUnidades`, `TransporteAsignaciones`): Unidades, rutas, paradas, conductores y asignaciones de estudiantes con control de capacidad.
+- Centro de Informes y Plantillas Administrativas (`PlantillasDocumentales`, `ReportesOficiales`): Generación y exportación de reportes tabulares y ejecutivos en PDF, XLSX y CSV.
+- Integraciones Externas y Opciones Avanzadas del Administrador (`IntegracionesServicios`): Configuración de conectores externos (Google Drive, pasarelas, correo, SMS/WhatsApp) con monitoreo y reintentos idempotentes.
+
+3. ESTRUCTURA DE TABLAS EN GOOGLE SHEETS PARA FASE 11
+- `BibliotecaEjemplares` (EjemplarID | IsbnCodigo | Titulo | Autor | Categoria | UbicacionFisica | Estado | Observaciones)
+- `BibliotecaPrestamos` (PrestamoID | EjemplarID | UserId | FechaPrestamo | FechaDevolucionPrevista | FechaDevolucionReal | Estado | Observaciones)
+- `ActivosPatrimoniales` (ActivoID | CodigoPatrimonial | Nombre | Categoria | SerieModel | UbicacionActual | CustodioUserId | Estado | Observaciones)
+- `AsignacionesActivos` (AsignacionID | ActivoID | CustodioUserId | FechaEntrega | FechaDevolucion | EstadoActa | Observaciones)
+- `TransporteRutas` (RutaID | NombreRuta | UnidadCodigo | ConductorEmpleadoId | Capacidad | ParadasJSON | Estado | Observaciones)
+- `TransporteAsignaciones` (AsignacionTranspID | RutaID | EstudianteUserId | ParadaNombre | HorarioPlan | Estado)
+- `PlantillasDocumentales` (PlantillaID | Codigo | Titulo | AreaModulo | Version | ContenidoHTML | Estado | Observaciones)
+
+4. RIESGOS DE COMPATIBILIDAD Y MITIGACIÓN
+- La analítica avanzada actuará como capa de lectura sobre las fuentes oficiales de las Fases 2 a 10 sin duplicar bases de datos ni libros contables.
+- Toda exportación de datos aplicará los mismos controles RBAC que la consulta en pantalla, protegiendo información privada o confidencial.
+
+AUDITORÍA TÉCNICA Y DIAGNÓSTICO DE SOLO LECTURA - FASE 12: DOCUMENTOS ESCOLARES, MIGRACIÓN DE DATOS, ARQUITECTURA DE SPREADSHEETS E INTEGRACIÓN CON SACE - Sun Jul 5 2026
+
+Archivos Auditados:
+- backend/academic-service/Code.gs
+- backend/exam-service/Code.gs
+- backend/task-service/Code.gs
+- backend/accounting-service/Code.gs
+- backend/user-service/Code.gs
+- js/teacher.js
+- js/student.js
+- teacher-dashboard.html
+- student-dashboard.html
+
+1. FUNCIONES EXISTENTES Y OPERATIVAS
+- Respaldos y Archivado Anual: `createSystemBackup`, `listSystemBackups`, `restoreSystemBackup` y duplicado de spreadsheet en `backend/academic-service/Code.gs`.
+- Exportación Excel: Librería SheetJS (xlsx.full.min.js) en `teacher-dashboard.html` y `js/teacher.js`.
+- Exportación de Notas y Reportes: `getStudentAcademicReport`, `exportAcademicGrades` en `exam-service`.
+- Registro de Metadatos Documentales: `MetadatosArchivos` y `PlantillasDocumentales` en `task-service` y `accounting-service`.
+
+2. FUNCIONES FALTANTES Y AMPLIACIONES REQUERIDAS PARA FASE 12
+- Catálogo Central de Spreadsheets y Resolución de Fuentes (`CatálogoSpreadsheets`, `resolveSpreadsheetSource`): Registro de identificadores de Google Sheets por año lectivo (2026, 2027, 2028) y área funcional (Académico, Contable, RRHH) para descentralizar la base de datos sin duplicar la identidad de los estudiantes.
+- Motor de Importación y Migración Segura (`importDataWithColumnMapping`, `validateImportPreview`): Herramienta de mapeo dinamico de columnas para archivos XLSX/CSV/Sheets, validando cada fila contra identificadores únicos para evitar desplazamientos de notas entre estudiantes.
+- Diseñador de Plantillas y Formularios Escalares (`PlantillasEscolares`, `generateSchoolDocument`): Generación de constancias, excusas, justificaciones, permisos y solicitudes en línea y descargables en blanco o precargadas.
+- Integrador de Hojas de Calificaciones y Recuperación para SACE (`generateSACEReportFile`, `verifySACETemplateCompatibility`): Lector y completado automático de plantillas oficial de SACE preservando fórmulas, hojas auxiliares, identificadores y formato original.
+- Auditoría de Migraciones y Reversión Lógica (`AuditoriaMigraciones`): Registro idempotente de ejecuciones de importación con vista previa, validación previa, logs de error por fila y capacidades de reversión controlada.
+
+3. ESTRUCTURA DE TABLAS EN GOOGLE SHEETS PARA FASE 12
+- `CatálogoSpreadsheets` (FuenteID | DominioArea | AnoLectivo | SpreadsheetId | UrlAcceso | Estado | SchemaVersion | Observaciones)
+- `PlantillasEscolares` (PlantillaID | CodigoDocumento | Categoria | Titulo | CamposJSON | FlujoAprobacion | Estado | Version)
+- `DocumentosEscolaresEmitidos` (DocumentoID | PlantillaID | EstudianteUserId | SolicitanteUserId | DatosJSON | EstadoDoc | CodigoVerificacion | Observaciones)
+- `AuditoriaMigraciones` (EjecucionID | NombreArchivo | DestinoModulo | TotalFilas | Exitosas | Fallidas | MapeoJSON | ErroresJSON | Estado | CreadoPor)
+- `PlantillasSACEVerificadas` (PlantillaSaceID | NombreFormato | VersionSACE | ColumnasMapJSON | EstadoCompatibilidad | Observaciones)
+
+4. RIESGOS DE COMPATIBILIDAD Y MITIGACIÓN
+- La descentralización en spreadsheets por año mantendrá identificadores estables (`personaId`, `userId`, `expedienteId`) sin duplicar datos maestros.
+- La compatibilidad con SACE operará sobre copias de plantillas oficiales sin modificar la base de datos oficial SACE ni requerir credenciales externas.
