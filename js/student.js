@@ -1052,6 +1052,14 @@ document.addEventListener('DOMContentLoaded', function() {
         uploadedFilesContainer.classList.add('hidden');
         filePreviewContainer.classList.add('hidden');
         fileInput.value = '';
+
+        var textResp = document.getElementById('submission-text-response');
+        var extLink = document.getElementById('submission-external-link');
+        var privComment = document.getElementById('submission-private-comment');
+        if (textResp) { textResp.value = ''; textResp.oninput = updateConfirmButtonState; }
+        if (extLink) { extLink.value = ''; extLink.oninput = updateConfirmButtonState; }
+        if (privComment) { privComment.value = ''; }
+
         updateConfirmButtonState();
 
         submissionModal.classList.remove('hidden');
@@ -1086,7 +1094,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function updateConfirmButtonState() {
         if (!confirmSubmissionBtn) return;
-        if (uploadedFiles.length > 0 && activeUploads === 0) {
+        var textVal = document.getElementById('submission-text-response')?.value.trim() || '';
+        var linkVal = document.getElementById('submission-external-link')?.value.trim() || '';
+        var hasContent = uploadedFiles.length > 0 || textVal.length > 0 || linkVal.length > 0;
+
+        if (hasContent && activeUploads === 0) {
             confirmSubmissionBtn.disabled = false;
             confirmSubmissionBtn.classList.remove('opacity-50', 'cursor-not-allowed');
         } else {
@@ -1547,19 +1559,30 @@ document.addEventListener('DOMContentLoaded', function() {
                     finalMimeType = 'folder';
                 }
 
+                var textoRespuestaVal = document.getElementById('submission-text-response')?.value || '';
+                var enlaceExternoVal = document.getElementById('submission-external-link')?.value || '';
+                var observacionesVal = document.getElementById('submission-private-comment')?.value || '';
+
                 var payload = {
                     userId: currentUser.userId,
                     tareaId: currentTaskId,
                     fileId: finalFileId,
                     mimeType: finalMimeType,
-                    isLate: isLate // Informar al backend sobre la entrega tardía (Tarea 3)
+                    textoRespuesta: textoRespuestaVal,
+                    enlaceExterno: enlaceExternoVal,
+                    observaciones: observacionesVal,
+                    isLate: isLate
                 };
 
                 var result = await fetchApi('TASK', 'submitAssignment', payload);
                 if (result.status === 'success') {
                     // Operación exitosa: limpiar archivos para evitar advertencia (Caso 2)
                     uploadedFiles = [];
-                    alert('¡Tarea entregada exitosamente!');
+                    var confirmMsg = '¡Tarea entregada exitosamente!';
+                    if (result.data && result.data.submissionToken) {
+                        confirmMsg += '\nComprobante de entrega: ' + result.data.submissionToken;
+                    }
+                    alert(confirmMsg);
                     closeSubmissionModal();
                     fetchAllActivities();
                 } else {

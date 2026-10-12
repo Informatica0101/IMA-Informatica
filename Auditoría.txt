@@ -49,3 +49,39 @@ Archivos Auditados:
 5. RIESGOS DE COMPATIBILIDAD Y MITIGACIÓN
 - La función `getAcademicConfig` debe continuar retornando la estructura consolidada `ParcialActual`, `GradoActual`, `SeccionActual`, `AsignaturaActual`, `TemaActual`, `GranularConfig` para no romper `js/student.js` ni `js/teacher.js`.
 - Los datos de `ConfiguracionAcademica` e `HistorialAcademico` existentes se preservarán intactos.
+
+AUDITORÍA TÉCNICA Y DIAGNÓSTICO DE SOLO LECTURA - FASE 5: AULA VIRTUAL, CONTENIDOS Y ACTIVIDADES DE APRENDIZAJE - Sun Jul 5 2026
+
+Archivos Auditados:
+- backend/task-service/Code.gs
+- backend/academic-service/Code.gs
+- backend/user-service/Code.gs
+- js/student.js
+- js/teacher.js
+- student-dashboard.html
+- teacher-dashboard.html
+
+1. FUNCIONES EXISTENTES Y OPERATIVAS
+- Microservicio de Tareas (`backend/task-service/Code.gs`): Soporta `createTask`, `updateTask`, `deleteTask`, `getStudentTasks`, `uploadFile`, `submitAssignment`, `gradeSubmission`, `getTeacherActivity`, `getAllTasks`, `closeAcademicYear`.
+- Metadatos de Archivos: Función `logFileMetadata` registrando archivos subidos en la hoja `'MetadatosArchivos'`.
+- Integración de Entregas: `submitAssignment` registra el envío de archivos individuales con timestamps.
+
+2. FUNCIONES FALTANTES Y MEJORAS REQUERIDAS PARA FASE 5
+- Aulas Virtuales Vinculadas: Creación e inicio de aulas virtuales (`AulasVirtuales`) ligadas a la oferta académica (`OfertaAcademica`).
+- Anuncios y Publicaciones de Clase: Gestión de anuncios (`PublicacionesAnuncios`) con soporte para fijados, borradores, programación diferida por fecha/hora y archivos adjuntos.
+- Biblioteca de Materiales Educativos: Organización de recursos (`MaterialesEducativos`) por Parcial, Unidad y Tema, clasificando tipos (`PDF`, `DOCX`, `Video`, `Link`, `Guía`, etc.).
+- Control Avanzado de Tareas: Campos para fecha de apertura/disponibilidad (`fechaDisponible`), fecha de cierre estricto (`fechaCierre`), borradores, programación diferida, extensiones por estudiante y límites de archivos/formatos.
+- Entregas Multimodales y Control de Versiones: Soporte para entregas de texto enriquecido, enlaces externos y almacenamiento de versiones históricas (`EntregasVersiones`).
+- Comentarios Privados y Devolución para Corrección: Hilo de comentarios privados (`ComentariosEntregas`) entre docente y alumno, y flujo de devolución para corrección (`DevueltaCorrección`) sin perder entregas previas.
+
+3. ESTRUCTURA DE TABLAS GOOGLE SHEETS
+- Hojas a Incorporar/Consolidar en TASK-SERVICE:
+  - `AulasVirtuales` (AulaID | OfertaID | NombreClase | Grado | Seccion | Asignatura | ProfesorID | Estado | AnioLectivo | Periodo | CreadoEn)
+  - `PublicacionesAnuncios` (ID | AulaID | Titulo | Contenido | Categoria | AutorID | EsFijado | EsBorrador | FechaProgramada | FechaPublicacion | AdjuntosJSON | Audiencia | Estado)
+  - `MaterialesEducativos` (ID | AulaID | Titulo | Descripcion | TipoRecurso | Parcial | Unidad | Tema | ArchivoUrl | DriveId | AutorID | FechaPublicacion | Estado)
+  - `EntregasVersiones` (ID | EntregaID | TareaId | UserId | VersionNum | ArchivoUrl | FileId | MimeType | TextoRespuesta | EnlaceExterno | FechaEnvio | Estado | Observaciones)
+  - `ComentariosEntregas` (ID | EntregaID | TareaId | AutorID | RolAutor | Mensaje | EsPrivado | FechaCreacion)
+
+4. RIESGOS DE COMPATIBILIDAD Y MITIGACIÓN
+- Las acciones heredadas `getStudentTasks`, `createTask`, `submitAssignment` y `gradeSubmission` se mantendrán 100% compatibles, agregando propiedades adicionales de forma defensiva sin romper clientes existentes.
+- Los archivos en Google Drive seguirán organizándose en la jerarquía estándar por grado, sección, alumno y tarea.

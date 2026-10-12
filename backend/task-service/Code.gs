@@ -95,6 +95,19 @@ function doPost(e) {
       case "loadProject": response = loadProject(payload); break;
       case "getAllStudentProjects": response = getAllStudentProjects(payload); break;
       case "closeAcademicYear": response = closeAcademicYear(payload); break;
+      case "getVirtualClassrooms": response = getVirtualClassrooms(payload); break;
+      case "createVirtualClassroom": response = createVirtualClassroom(payload); break;
+      case "getPosts": response = getPosts(payload); break;
+      case "createPost": response = createPost(payload); break;
+      case "updatePost": response = updatePost(payload); break;
+      case "deletePost": response = deletePost(payload); break;
+      case "getStudyMaterials": response = getStudyMaterials(payload); break;
+      case "createStudyMaterial": response = createStudyMaterial(payload); break;
+      case "deleteStudyMaterial": response = deleteStudyMaterial(payload); break;
+      case "returnSubmissionForRevision": response = returnSubmissionForRevision(payload); break;
+      case "getSubmissionComments": response = getSubmissionComments(payload); break;
+      case "addSubmissionComment": response = addSubmissionComment(payload); break;
+      case "getSubmissionVersions": response = getSubmissionVersions(payload); break;
       default:
         response = { status: "error", message: `Acción no reconocida en Task-Service: ${action}` };
     }
@@ -109,13 +122,30 @@ function doPost(e) {
 
 // --- LÓGICA DEL SERVICIO ---
 function createTask(payload) {
-  const { tipo, titulo, descripcion, parcial, asignatura, gradoAsignado, seccionAsignada, fechaLimite, tareaOriginalId, profesorId, puntaje, archivoUrl } = payload;
+  const { tipo, titulo, descripcion, parcial, asignatura, gradoAsignado, seccionAsignada, fechaLimite, tareaOriginalId, profesorId, puntaje, archivoUrl, fechaDisponible, tipoRecurso } = payload || {};
   const tareaId = "TSK-" + new Date().getTime();
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
   const tareasSheet = getSheetOrThrow(ss, "Tareas");
-  // Columnas: 0:tareaId, 1:tipo, 2:titulo, 3:descripcion, 4:parcial, 5:asignatura, 6:grado, 7:seccion, 8:fecha, 9:originalId, 10:profesorId, 11:estado, 12:puntaje, 13:archivoUrl
-  tareasSheet.appendRow([tareaId, tipo, titulo, descripcion, parcial, asignatura, gradoAsignado, seccionAsignada, fechaLimite, tareaOriginalId || '', profesorId || '', 'Activa', puntaje || 100, archivoUrl || '']);
-  return { status: "success", message: "Tarea creada." };
+  // Columnas: 0:tareaId, 1:tipo, 2:titulo, 3:descripcion, 4:parcial, 5:asignatura, 6:grado, 7:seccion, 8:fecha, 9:originalId, 10:profesorId, 11:estado, 12:puntaje, 13:archivoUrl, 14:fechaDisponible, 15:tipoRecurso
+  tareasSheet.appendRow([
+    tareaId,
+    tipo || 'Tarea',
+    titulo,
+    descripcion,
+    parcial,
+    asignatura,
+    gradoAsignado,
+    seccionAsignada,
+    fechaLimite,
+    tareaOriginalId || '',
+    profesorId || '',
+    'Activa',
+    puntaje || 100,
+    archivoUrl || '',
+    fechaDisponible || '',
+    tipoRecurso || 'Tarea'
+  ]);
+  return { status: "success", message: "Tarea creada.", data: { tareaId } };
 }
 
 function updateTask(payload) {
@@ -308,8 +338,17 @@ function getStudentTasks(payload) {
     }
 
     return {
-      tareaId: task[0], tipo: task[1], titulo: task[2], descripcion: task[3], parcial: task[4], grado: task[6], seccion: task[7],
-      asignatura: task[5], fechaLimite: fechaLimite,
+      tareaId: task[0],
+      tipo: task[1],
+      titulo: task[2],
+      descripcion: task[3],
+      parcial: task[4],
+      grado: task[6],
+      seccion: task[7],
+      asignatura: task[5],
+      fechaLimite: fechaLimite,
+      fechaDisponible: task[14] ? new Date(task[14]).toISOString() : null,
+      tipoRecurso: task[15] || task[1] || 'Tarea',
       profesorId: task[10],
       entrega: entrega ? {
         entregaId: entrega[0],
@@ -516,30 +555,92 @@ function finishChunkedUpload(payload) {
 }
 
 function submitAssignment(payload) {
-  const { userId, tareaId, fileId, mimeType } = payload;
+  const { userId, tareaId, fileId, mimeType, textoRespuesta, enlaceExterno, observaciones } = payload || {};
+  if (!userId || !tareaId) throw new Error("userId y tareaId son requeridos para la entrega.");
+
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
   const entregasSheet = getSheetOrThrow(ss, "Entregas");
-
-  // Validación de duplicados (Req 3)
-  const data = entregasSheet.getDataRange().getValues();
-  // Verificar si ya existe una entrega para este usuario, tarea y archivo en los últimos 5 minutos
-  const now = new Date().getTime();
-  const duplicate = data.some(row => {
-    const rowUserId = row[2];
-    const rowTareaId = row[1];
-    const rowFileId = row[4];
-    const rowDate = new Date(row[3]).getTime();
-    return String(rowUserId) === String(userId) && String(rowTareaId) === String(tareaId) && String(rowFileId) === String(fileId) && (now - rowDate < 300000);
-  });
-
-  if (duplicate) {
-    return { status: "success", message: "La tarea ya fue entregada previamente." };
+  const versionesSheet = getOrCreateSheet(ss, "EntregasVersiones");
+  if (versionesSheet.getLastRow() === 0) {
+    versionesSheet.appendRow(["ID", "EntregaID", "TareaID", "UserID", "VersionNum", "ArchivoUrl", "FileID", "MimeType", "TextoRespuesta", "EnlaceExterno", "FechaEnvio", "Estado", "Observaciones"]);
   }
 
-  const entregaId = "ENT-" + new Date().getTime();
-  // Estado inicial: Pendiente de revisión
-  entregasSheet.appendRow([entregaId, tareaId, userId, new Date(), fileId, '', 'Pendiente de revisión', '', mimeType]);
-  return { status: "success", message: "Tarea entregada." };
+  const data = entregasSheet.getDataRange().getValues();
+  const now = new Date();
+
+  // Verificar si ya existe una entrega previa del usuario para esta tarea
+  const existingIdx = data.findIndex(row => String(row[2]).trim() === String(userId).trim() && String(row[1]).trim() === String(tareaId).trim());
+
+  let entregaId;
+  let versionNum = 1;
+  let estadoEntrega = "Pendiente de revisión";
+
+  // Verificar si la entrega es tardía
+  try {
+    const tareasSheet = getSheetOrThrow(ss, "Tareas");
+    const tareasData = tareasSheet.getDataRange().getValues();
+    const taskRow = tareasData.find(r => String(r[0]).trim() === String(tareaId).trim());
+    if (taskRow && taskRow[8]) {
+      const fechaLimite = new Date(taskRow[8]);
+      if (now.getTime() > fechaLimite.getTime()) {
+        estadoEntrega = "EntregadaTarde";
+      }
+    }
+  } catch (e) {
+    logDebug("Error al verificar fecha limite:", e.message);
+  }
+
+  if (existingIdx !== -1) {
+    entregaId = data[existingIdx][0];
+    const prevRow = data[existingIdx];
+
+    // Obtener número de versión anterior
+    const prevVersions = versionesSheet.getDataRange().getValues().filter(r => String(r[1]).trim() === String(entregaId).trim());
+    versionNum = prevVersions.length + 1;
+
+    // Actualizar registro principal
+    prevRow[3] = now;
+    if (fileId !== undefined) prevRow[4] = fileId;
+    prevRow[6] = estadoEntrega;
+    if (mimeType !== undefined) prevRow[8] = mimeType;
+
+    entregasSheet.getRange(existingIdx + 1, 1, 1, prevRow.length).setValues([prevRow]);
+  } else {
+    entregaId = "ENT-" + now.getTime();
+    entregasSheet.appendRow([entregaId, tareaId, userId, now, fileId || '', '', estadoEntrega, observaciones || '', mimeType || '']);
+  }
+
+  // Registrar versión histórica en EntregasVersiones
+  const versionId = "VER-" + now.getTime() + "-" + versionNum;
+  versionesSheet.appendRow([
+    versionId,
+    entregaId,
+    tareaId,
+    userId,
+    versionNum,
+    fileId ? `https://drive.google.com/file/d/${fileId}/view` : "",
+    fileId || "",
+    mimeType || "",
+    textoRespuesta || "",
+    enlaceExterno || "",
+    now,
+    estadoEntrega,
+    observaciones || ""
+  ]);
+
+  const submissionToken = "RECIEVED-" + Date.now() + "-" + Math.floor(1000 + Math.random() * 9000);
+
+  return {
+    status: "success",
+    message: "Tarea entregada y registrada en el servidor.",
+    data: {
+      entregaId: entregaId,
+      versionNum: versionNum,
+      submissionToken: submissionToken,
+      fechaRecepcion: now.toISOString(),
+      estado: estadoEntrega
+    }
+  };
 }
 
 /**
@@ -962,4 +1063,344 @@ function getOrCreateFolder(parentFolder, folderName) {
     logDebug(errorMsg);
     throw new Error(errorMsg);
   }
+}
+
+// --- FUNCIONES AULA VIRTUAL Y CONTENIDOS (FASE 5) ---
+
+function getVirtualClassrooms(payload) {
+  const { grado, seccion, profesorId, userId, rol } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "AulasVirtuales");
+  const data = sheet.getDataRange().getValues();
+  if (data.length <= 1) return { status: "success", data: [] };
+
+  const rows = data.slice(1);
+  const classrooms = rows.filter(r => {
+    if (r[7] === "Desactivada") return false;
+    if (profesorId && r[6] && String(r[6]).trim() !== String(profesorId).trim()) return false;
+    if (grado && normalizeString(r[3]) !== normalizeString(grado)) return false;
+    if (seccion && r[4] && normalizeString(r[4]) !== normalizeString(seccion)) return false;
+    return true;
+  }).map(r => ({
+    aulaId: r[0],
+    ofertaId: r[1],
+    nombreClase: r[2],
+    grado: r[3],
+    seccion: r[4],
+    asignatura: r[5],
+    profesorId: r[6],
+    estado: r[7] || "Activa",
+    anioLectivo: r[8],
+    periodo: r[9],
+    creadoEn: r[10] ? new Date(r[10]).toISOString() : null
+  }));
+
+  return { status: "success", data: classrooms };
+}
+
+function createVirtualClassroom(payload) {
+  const { ofertaId, nombreClase, grado, seccion, asignatura, profesorId, anioLectivo, periodo } = payload || {};
+  if (!grado || !asignatura) throw new Error("Grado y Asignatura son obligatorios para crear el aula.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "AulasVirtuales");
+  if (sheet.getLastRow() === 0) {
+    sheet.appendRow(["AulaID", "OfertaID", "NombreClase", "Grado", "Seccion", "Asignatura", "ProfesorID", "Estado", "AnioLectivo", "Periodo", "CreadoEn"]);
+  }
+
+  const aulaId = "AULA-" + Date.now();
+  const nombre = nombreClase || `${asignatura} - ${grado} ${seccion || 'A'}`;
+  const now = new Date();
+
+  sheet.appendRow([aulaId, ofertaId || "", nombre, grado, seccion || "A", asignatura, profesorId || "", "Activa", anioLectivo || now.getFullYear(), periodo || "I parcial", now]);
+
+  return { status: "success", message: "Aula virtual creada exitosamente.", data: { aulaId, nombreClase: nombre } };
+}
+
+function getPosts(payload) {
+  const { aulaId, grado, seccion, asignatura, includeDrafts } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "PublicacionesAnuncios");
+  const data = sheet.getDataRange().getValues();
+  if (data.length <= 1) return { status: "success", data: [] };
+
+  const now = new Date().getTime();
+  const posts = data.slice(1).filter(r => {
+    if (r[12] === "Eliminado") return false;
+    if (aulaId && String(r[1]).trim() !== String(aulaId).trim()) return false;
+    if (r[7] === true && !includeDrafts) return false; // EsBorrador
+    if (r[8] && new Date(r[8]).getTime() > now) return false; // FechaProgramada no alcanzada
+    return true;
+  }).map(r => ({
+    postId: r[0],
+    aulaId: r[1],
+    titulo: r[2],
+    contenido: r[3],
+    categoria: r[4] || "Anuncio",
+    autorId: r[5],
+    esFijado: r[6] === true || String(r[6]).toLowerCase() === "true",
+    esBorrador: r[7] === true || String(r[7]).toLowerCase() === "true",
+    fechaProgramada: r[8] ? new Date(r[8]).toISOString() : null,
+    fechaPublicacion: r[9] ? new Date(r[9]).toISOString() : null,
+    adjuntos: r[10] ? (typeof r[10] === 'string' ? JSON.parse(r[10]) : r[10]) : [],
+    audiencia: r[11] || "Todos",
+    estado: r[12] || "Publicado"
+  })).sort((a, b) => {
+    if (a.esFijado !== b.esFijado) return a.esFijado ? -1 : 1;
+    return new Date(b.fechaPublicacion) - new Date(a.fechaPublicacion);
+  });
+
+  return { status: "success", data: posts };
+}
+
+function createPost(payload) {
+  const { aulaId, titulo, contenido, categoria, autorId, esFijado, esBorrador, fechaProgramada, adjuntos, audiencia } = payload || {};
+  if (!titulo || !contenido) throw new Error("Título y Contenido son obligatorios para publicar.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "PublicacionesAnuncios");
+  if (sheet.getLastRow() === 0) {
+    sheet.appendRow(["ID", "AulaID", "Titulo", "Contenido", "Categoria", "AutorID", "EsFijado", "EsBorrador", "FechaProgramada", "FechaPublicacion", "AdjuntosJSON", "Audiencia", "Estado"]);
+  }
+
+  const postId = "POST-" + Date.now();
+  const now = new Date();
+  const adjJSON = JSON.stringify(adjuntos || []);
+
+  sheet.appendRow([
+    postId,
+    aulaId || "General",
+    titulo,
+    contenido,
+    categoria || "Anuncio",
+    autorId || "Profesor",
+    esFijado || false,
+    esBorrador || false,
+    fechaProgramada || "",
+    now,
+    adjJSON,
+    audiencia || "Todos",
+    "Publicado"
+  ]);
+
+  return { status: "success", message: "Publicación creada con éxito.", data: { postId } };
+}
+
+function updatePost(payload) {
+  const { postId, titulo, contenido, categoria, esFijado, esBorrador, adjuntos } = payload || {};
+  if (!postId) throw new Error("postId es requerido.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "PublicacionesAnuncios");
+  const data = sheet.getDataRange().getValues();
+  const idx = data.findIndex(r => String(r[0]).trim() === String(postId).trim());
+  if (idx === -1) throw new Error("Publicación no encontrada.");
+
+  const row = data[idx];
+  if (titulo !== undefined) row[2] = titulo;
+  if (contenido !== undefined) row[3] = contenido;
+  if (categoria !== undefined) row[4] = categoria;
+  if (esFijado !== undefined) row[6] = esFijado;
+  if (esBorrador !== undefined) row[7] = esBorrador;
+  if (adjuntos !== undefined) row[10] = JSON.stringify(adjuntos);
+
+  sheet.getRange(idx + 1, 1, 1, row.length).setValues([row]);
+  return { status: "success", message: "Publicación actualizada." };
+}
+
+function deletePost(payload) {
+  const { postId } = payload || {};
+  if (!postId) throw new Error("postId es requerido.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "PublicacionesAnuncios");
+  const data = sheet.getDataRange().getValues();
+  const idx = data.findIndex(r => String(r[0]).trim() === String(postId).trim());
+  if (idx === -1) throw new Error("Publicación no encontrada.");
+
+  sheet.getRange(idx + 1, 13).setValue("Eliminado");
+  return { status: "success", message: "Publicación eliminada." };
+}
+
+function getStudyMaterials(payload) {
+  const { aulaId, parcial, unidad, tema, asignatura, grado } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "MaterialesEducativos");
+  const data = sheet.getDataRange().getValues();
+  if (data.length <= 1) return { status: "success", data: [] };
+
+  const materials = data.slice(1).filter(r => {
+    if (r[12] === "Eliminado") return false;
+    if (aulaId && String(r[1]).trim() !== String(aulaId).trim()) return false;
+    if (parcial && normalizeString(r[5]) !== normalizeString(parcial)) return false;
+    if (unidad && normalizeString(r[6]) !== normalizeString(unidad)) return false;
+    if (tema && normalizeString(r[7]) !== normalizeString(tema)) return false;
+    return true;
+  }).map(r => ({
+    materialId: r[0],
+    aulaId: r[1],
+    titulo: r[2],
+    descripcion: r[3],
+    tipoRecurso: r[4] || "Documento",
+    parcial: r[5],
+    unidad: r[6],
+    tema: r[7],
+    archivoUrl: r[8],
+    driveId: r[9],
+    autorId: r[10],
+    fechaPublicacion: r[11] ? new Date(r[11]).toISOString() : null,
+    estado: r[12] || "Activo"
+  }));
+
+  return { status: "success", data: materials };
+}
+
+function createStudyMaterial(payload) {
+  const { aulaId, titulo, descripcion, tipoRecurso, parcial, unidad, tema, archivoUrl, driveId, autorId } = payload || {};
+  if (!titulo || !archivoUrl) throw new Error("Título y URL de archivo son obligatorios.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "MaterialesEducativos");
+  if (sheet.getLastRow() === 0) {
+    sheet.appendRow(["ID", "AulaID", "Titulo", "Descripcion", "TipoRecurso", "Parcial", "Unidad", "Tema", "ArchivoUrl", "DriveId", "AutorID", "FechaPublicacion", "Estado"]);
+  }
+
+  const matId = "MAT-" + Date.now();
+  const now = new Date();
+
+  sheet.appendRow([
+    matId,
+    aulaId || "General",
+    titulo,
+    descripcion || "",
+    tipoRecurso || "Documento",
+    parcial || "I parcial",
+    unidad || "Unidad 1",
+    tema || "Tema General",
+    archivoUrl,
+    driveId || "",
+    autorId || "Profesor",
+    now,
+    "Activo"
+  ]);
+
+  return { status: "success", message: "Material educativo publicado.", data: { materialId: matId } };
+}
+
+function deleteStudyMaterial(payload) {
+  const { materialId } = payload || {};
+  if (!materialId) throw new Error("materialId es requerido.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "MaterialesEducativos");
+  const data = sheet.getDataRange().getValues();
+  const idx = data.findIndex(r => String(r[0]).trim() === String(materialId).trim());
+  if (idx === -1) throw new Error("Material no encontrado.");
+
+  sheet.getRange(idx + 1, 13).setValue("Eliminado");
+  return { status: "success", message: "Material educativo eliminado." };
+}
+
+function returnSubmissionForRevision(payload) {
+  const { entregaId, comentario, profesorId } = payload || {};
+  if (!entregaId) throw new Error("entregaId es requerido.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const entregasSheet = getSheetOrThrow(ss, "Entregas");
+  const data = entregasSheet.getDataRange().getValues();
+  const idx = data.findIndex(r => String(r[0]).trim() === String(entregaId).trim());
+  if (idx === -1) throw new Error("Entrega no encontrada.");
+
+  const row = data[idx];
+  row[6] = "DevueltaCorrección";
+  if (comentario) row[7] = comentario;
+
+  entregasSheet.getRange(idx + 1, 1, 1, row.length).setValues([row]);
+
+  // Agregar comentario privado
+  if (comentario) {
+    addSubmissionComment({
+      entregaId: entregaId,
+      tareaId: row[1],
+      autorId: profesorId || "Profesor",
+      rolAutor: "Docente",
+      mensaje: comentario,
+      esPrivado: true
+    });
+  }
+
+  return { status: "success", message: "Tarea devuelta para corrección al estudiante." };
+}
+
+function getSubmissionComments(payload) {
+  const { entregaId, tareaId } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "ComentariosEntregas");
+  const data = sheet.getDataRange().getValues();
+  if (data.length <= 1) return { status: "success", data: [] };
+
+  const comments = data.slice(1).filter(r => {
+    if (entregaId && String(r[1]).trim() === String(entregaId).trim()) return true;
+    if (tareaId && String(r[2]).trim() === String(tareaId).trim()) return true;
+    return false;
+  }).map(r => ({
+    comentarioId: r[0],
+    entregaId: r[1],
+    tareaId: r[2],
+    autorId: r[3],
+    rolAutor: r[4] || "Usuario",
+    mensaje: r[5],
+    esPrivado: r[6] === true || String(r[6]).toLowerCase() === "true",
+    fechaCreacion: r[7] ? new Date(r[7]).toISOString() : null
+  }));
+
+  return { status: "success", data: comments };
+}
+
+function addSubmissionComment(payload) {
+  const { entregaId, tareaId, autorId, rolAutor, mensaje, esPrivado } = payload || {};
+  if (!mensaje) throw new Error("Mensaje de comentario es requerido.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "ComentariosEntregas");
+  if (sheet.getLastRow() === 0) {
+    sheet.appendRow(["ID", "EntregaID", "TareaID", "AutorID", "RolAutor", "Mensaje", "EsPrivado", "FechaCreacion"]);
+  }
+
+  const comId = "COM-" + Date.now();
+  const now = new Date();
+
+  sheet.appendRow([comId, entregaId || "", tareaId || "", autorId || "Usuario", rolAutor || "Estudiante", mensaje, esPrivado !== false, now]);
+
+  return { status: "success", message: "Comentario publicado.", data: { comentarioId: comId } };
+}
+
+function getSubmissionVersions(payload) {
+  const { entregaId, tareaId, userId } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "EntregasVersiones");
+  const data = sheet.getDataRange().getValues();
+  if (data.length <= 1) return { status: "success", data: [] };
+
+  const versions = data.slice(1).filter(r => {
+    if (entregaId && String(r[1]).trim() === String(entregaId).trim()) return true;
+    if (tareaId && userId && String(r[2]).trim() === String(tareaId).trim() && String(r[3]).trim() === String(userId).trim()) return true;
+    return false;
+  }).map(r => ({
+    versionId: r[0],
+    entregaId: r[1],
+    tareaId: r[2],
+    userId: r[3],
+    versionNum: r[4],
+    archivoUrl: r[5],
+    fileId: r[6],
+    mimeType: r[7],
+    textoRespuesta: r[8],
+    enlaceExterno: r[9],
+    fechaEnvio: r[10] ? new Date(r[10]).toISOString() : null,
+    estado: r[11],
+    observaciones: r[12]
+  }));
+
+  return { status: "success", data: versions };
 }

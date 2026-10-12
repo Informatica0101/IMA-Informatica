@@ -1,4 +1,4 @@
-# Mapa de Dependencias Académicas (v8.4.0 - Fase 4 Expedientes, Admisiones y Matrículas)
+# Mapa de Dependencias Académicas (v8.5.0 - Fase 5 Aula Virtual, Contenidos y Actividades)
 
 ## Módulo de Tareas (Teacher/Student)
 - Entidad: Tarea (Regular) -> Impacta Progreso Base.
@@ -53,3 +53,12 @@
 - `ResponsableTutor`: Tutores/Padres vinculados a uno o varios estudiantes con tipo de relación y alcance de permisos.
 - `DocumentoEstudiante`: Archivo cargado con metadatos, estado de revisión y enlace seguro a Drive.
 - `MovimientoEstudiante`: Historial inmutable de cambios de sección, traslados, retiros y reingresos.
+
+## Matriz de Entidades Centrales - Fase 5 (Aula Virtual y Contenidos)
+- `AulaVirtual`: Entidad vinculada a `OfertaAcademica` (Grado, Sección, Asignatura, ProfesorID, Año Lectivo, Estado).
+- `PublicacionAnuncio`: Anuncios de clase (Fijados, Borradores, Programados diferidos por fecha/hora, Categorías, AdjuntosJSON, Audiencia).
+- `MaterialEducativo`: Biblioteca de recursos de estudio (PDF, DOCX, Video, Link, Presentaciones, Guías) clasificados por Parcial, Unidad y Tema.
+- `TareaActividad`: Tareas enriquecidas con disponibilidad diferida (`fechaDisponible`), límite de entrega (`fechaLimite`), cierre definitivo (`fechaCierre`), borradores, extensiones por estudiante e indicaciones.
+- `EntregaEstudiante`: Entregas multimodales (Archivo Drive, Texto Enriquecido, Enlace Externo), estado (`Pendiente`, `Entregada`, `EntregadaTarde`, `DevueltaCorrección`, `Revisada`) y confirmación con token de recepción del servidor.
+- `EntregaVersion`: Historial de versiones de entregas anteriores tras reenvíos o devoluciones para corrección.
+- `ComentarioEntrega`: Hilo de comentarios privados entre docente y estudiante sobre trabajos específicos.

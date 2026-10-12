@@ -973,3 +973,36 @@ Descripción de cambios:
 
 2. `MapaDependencias.md`:
    - Actualizados los contratos de interfaz y esquemas de entidades para los componentes de la Fase 4.
+
+===========================================================
+REGISTRO DE CAMBIOS - FASE 5: AULA VIRTUAL, CONTENIDOS Y ACTIVIDADES DE APRENDIZAJE
+===========================================================
+Archivos modificados:
+- backend/task-service/Code.gs
+- backend/academic-service/Code.gs
+- student-dashboard.html
+- teacher-dashboard.html
+- js/student.js
+- js/teacher.js
+- MapaDependencias.md
+- Auditoría.txt
+- ChangesLogs.txt
+
+Descripción de cambios:
+1. `backend/task-service/Code.gs`:
+   - Implementadas funciones backend para Aulas Virtuales (`getVirtualClassrooms`, `createVirtualClassroom`).
+   - Implementada gestión de Anuncios y Publicaciones de Clase (`getPosts`, `createPost`, `updatePost`, `deletePost`) con fijado, borradores y programación diferida.
+   - Implementada Biblioteca de Materiales Educativos (`getStudyMaterials`, `createStudyMaterial`, `deleteStudyMaterial`) con clasificación por Parcial, Unidad y Tema.
+   - Ampliada `createTask` y `getStudentTasks` con soporte para `fechaDisponible`, `tipoRecurso` e indicadores de disponibilidad.
+   - Ampliada `submitAssignment` para soportar entregas multimodales (`textoRespuesta`, `enlaceExterno`), control de versiones en `EntregasVersiones` y generación de comprobante de entrega (`submissionToken`).
+   - Implementado flujo de devoluciones y comentarios privados (`returnSubmissionForRevision`, `getSubmissionComments`, `addSubmissionComment`, `getSubmissionVersions`).
+
+2. `backend/academic-service/Code.gs`:
+   - Completada la implementación de las 23 funciones backend de la Fase 3 (`getInstitutionParams`, `saveInstitutionParam`, `getAcademicYears`, `createAcademicYear`, `updateAcademicYearStatus`, `prepareNewAcademicYear`, `getAcademicPeriods`, `manageAcademicPeriod`, `getSubjectCatalog`, `createSubjectCatalogItem`, `getStudyPlans`, `createStudyPlan`, `getAcademicOffers`, `createAcademicOffer`, `getTeacherAssignments`, `assignTeacherToClass`, `createTeacherSubstitution`, `getAcademicCalendar`, `createCalendarEvent`, `getClassSchedules`, `createClassSchedule`, `getAcademicRules`, `saveAcademicRule`).
+
+3. `student-dashboard.html` & `js/student.js`:
+   - Ampliado el modal de entregas para incluir campos de respuesta de texto enriquecido, enlaces externos, comentarios privados para el docente y alerta de comprobante de recepción.
+   - Habilitada la validación dinámica de contenido para activar el botón de entrega ante respuesta escrita, enlace o archivos adjuntos.
+
+4. `teacher-dashboard.html` & `js/teacher.js`:
+   - Agregada opción de estado "Devuelta para Corrección" en el modal de calificación docente.
