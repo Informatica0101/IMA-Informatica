@@ -1,3 +1,37 @@
+AUDITORÍA TÉCNICA Y DIAGNÓSTICO DE SOLO LECTURA - FASE 1: AUDITORÍA Y PLANIFICACIÓN DE LA EXPANSIÓN INSTITUCIONAL - Sun Jul 5 2026
+
+Archivos y Módulos Auditados:
+- backend/user-service/Code.gs
+- backend/academic-service/Code.gs
+- backend/accounting-service/Code.gs
+- backend/task-service/Code.gs
+- backend/exam-service/Code.gs
+- index.html, login.html, register.html, student-dashboard.html, teacher-dashboard.html
+- js/api.js, js/config.js, js/auth.js, js/student.js, js/teacher.js, js/index-ui.js, js/ui-common.js
+- backend/Spreadsheet/AREA DE INFORMATICA IMA.xlsx
+
+1. INVENTARIO GLOBAL DE MÓDULOS Y SERVICIOS EXISTENTES
+- Microservicio USER (`backend/user-service/Code.gs`): Gestión de Identidad (`Personas`), Cuentas de Acceso (`CuentasUsuarios`), Autenticación, Noticias Institucionales (`NoticiasPortal`), Analítica Psicométrica, Gamificación y Logs Estructurados (`LogsSistema`).
+- Microservicio ACADEMIC (`backend/academic-service/Code.gs`): Estructura Institucional, Años Lectivos (`AnosLectivos`), Períodos (`PeriodosAcademicos`), Asignaturas, Oferta Académica, Asignaciones Docentes, Horarios, Expedientes Estudiantiles (`ExpedientesEstudiantes`), Admisiones (`SolicitudesAdmision`), Matrículas (`Matriculas`), Movimientos, Asistencia (`SesionesAsistencia`, `RegistrosAsistencia`) y Respaldos.
+- Microservicio ACCOUNTING (`backend/accounting-service/Code.gs`): Tarifas, Mensualidades, Pagos (`PagosAbonos`), Recibos PDF, Facturación SAR (`FacturasFiscales`), Pasarelas, Caja y Bancos, Cuentas por Pagar, Asientos Contables, Recursos Humanos, Planillas (`BoletasPago`), Inventarios, Activos, Biblioteca, Transporte Escolar y Migración/SACE.
+- Microservicio TASK (`backend/task-service/Code.gs`): Aulas Virtuales (`AulasVirtuales`), Anuncios (`PublicacionesAnuncios`), Materiales Educativos, Tareas Polimórficas, Entregas Multimodales y Almacenamiento Jerárquico en Google Drive.
+- Microservicio EXAM (`backend/exam-service/Code.gs`): Exámenes en línea, Libro de Calificaciones (`CalificacionesEstudiantes`), Categorías Ponderadas, Rúbricas Analíticas, Recuperaciones y Cierre de Períodos.
+
+2. MATRIZ DE DIAGNÓSTICO DE COBERTURA FUNCIONAL
+- Funciones Completadas y Operativas: Control de acceso por rol (RBAC servidor), Autenticación, Expediente único, Aulas virtuales, Entrega de tareas, Libro de calificaciones, Asistencia, Noticias, Portal de pagos, Facturación fiscal SAR, Planillas con deducciones de ley, Analítica psicométrica, Consola técnica de ping-pong, Respaldos automatizados en Google Drive.
+- Funciones Parciales o a Consolidar para la Expansión: Integración de pasarelas de pago externas con proveedores bancarios en vivo, Automatización completa de sincronización con SACE, Motor de flujos de trabajo transversales con cadenas de aprobación multinivel, Búsqueda global avanzada multidisciplinar.
+- Áreas de Oportunidad / Fases Futuras de la Expansión: Implementación del Motor de Flujos de Trabajo (Fase 23), Expansión de la Búsqueda Global y Paneles de Control Personalizados (Fase 3), Firma Electrónica Acreditada en la Gestión Documental (Fase 22).
+
+3. DEPENDENCIAS INTER-MÓDULOS Y SECUENCIA DE INTEROPERABILIDAD
+- Núcleo Identidad (USER/ACADEMIC) -> Admisiones/Matrículas -> Estructura Académica/Horarios -> Aula Virtual/Calificaciones -> Asistencia/Convivencia -> Cobros/Finanzas -> Planillas/Recursos Humanos -> Analítica/Informes.
+
+4. CRITERIOS DE CALIDAD, PRUEBAS Y ACEPTACIÓN
+- Verificación del 100% de la matriz de cobertura en `Pendientes.md`.
+- Garantía de Cero Regresiones mediante ejecución de pruebas de integración y seguridad RBAC.
+- Reutilización estricta del código existente sin reconstrucciones destructivas innecesarias.
+
+----------------------------------------------------------------------------------------------------
+
 AUDITORÍA TÉCNICA Y DIAGNÓSTICO DE SOLO LECTURA - FASE 3: CONFIGURACIÓN INSTITUCIONAL Y ESTRUCTURA ACADÉMICA - Sun Jul 5 2026
 
 Archivos Auditados:

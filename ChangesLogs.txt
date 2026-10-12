@@ -1193,3 +1193,26 @@ Descripción de cambios:
    - Implementada gestión de Activos Patrimoniales y Asignación de Custodias (`manageAssetItem`, `getAssetItems`, `assignAssetCustody`, `getAssetAssignments`).
    - Implementada gestión de Transporte Escolar, Unidades y Rutas (`manageTransportRoute`, `getTransportRoutes`, `assignStudentTransport`, `getTransportAssignments`).
    - Sincronizados los permisos en `ROLE_PERMISSIONS` y registradas las nuevas acciones en el selector `doPost`.
+
+===========================================================
+REGISTRO DE CAMBIOS - FASE 1: AUDITORÍA Y PLANIFICACIÓN DE LA EXPANSIÓN INSTITUCIONAL
+===========================================================
+Archivos modificados:
+- Auditoría.txt
+- Pendientes.md
+- MapaDependencias.md
+- README.md
+- backend/Spreadsheet/AREA DE INFORMATICA IMA.xlsx
+- ChangesLogs.txt
+
+Descripción de cambios:
+1. `Auditoría.txt`:
+   - Registrado el inventario exhaustivo del estado actual de módulos, microservicios, pantallas, bases de datos y permisos para la Fase 1 de la expansión institucional.
+2. `Pendientes.md`:
+   - Creada e indexada la sección de requerimientos de la Fase 1 (`[REQ-FASE1-001]` a `[REQ-FASE1-004]`) y actualizados sus estados a completados.
+3. `MapaDependencias.md`:
+   - Actualizado el plan general de 30 fases y sus relaciones de interoperabilidad y secuencia.
+4. `README.md`:
+   - Redactado compendio funcional comprensible de todas las capacidades y módulos de la plataforma institucional sin tecnicismos ni sintaxis de código.
+5. `backend/Spreadsheet/AREA DE INFORMATICA IMA.xlsx`:
+   - Actualizada la estructura de la base de datos de referencia con las 104 hojas de entidades y encabezados oficiales.

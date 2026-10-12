@@ -366,3 +366,4 @@ TAREAS PENDIENTES DE REVISIÓN
 - Implementación de Jerarquía Académica Estricta (hierarchicalAssignments) v7.9.7
 - Corrección de visibilidad de Dashboard Estudiante (Multi-section support)
 - Fortalecimiento de firma HMAC en microservicio de usuarios
+- Fase 1: Auditoría y Planificación de la Expansión Institucional - Inventario de Módulos, Matriz de Cobertura, Mapa de Interoperabilidad, README.md Funcional y Actualización de Hoja de Cálculo `backend/Spreadsheet/AREA DE INFORMATICA IMA.xlsx`
