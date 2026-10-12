@@ -422,6 +422,7 @@
 - **Dependencias Expuestas:** Capa de supervisión global, selector de vistas por rol, trazabilidad de logs.
 - **Descripción del Alcance:** Proporcionar acceso de supervisión técnica a todos los dashboards y módulos (académico, contable, secretaría, dirección, docente, estudiante) sin permitir alteraciones accidentales. Registrar toda intervención en logs de auditoría.
 - **Criterios de Aceptación:** Vista de supervisión funcional que distingue entre consulta/supervisión y modificación directa.
+- **Estado:** [X] Completada
 
 ### [REQ-DASH-002] Dashboard Independiente de Dirección / Subdirección (Sección 3)
 - **Origen del Hallazgo:** Requerimiento: Dashboards Independientes y Control de Acceso por Roles (Sección 3).
@@ -430,6 +431,7 @@
 - **Dependencias Expuestas:** Gestión de periodos escolares, grados, secciones, pensum y cargas docentes.
 - **Descripción del Alcance:** Crear panel exclusivo para Dirección y Subdirección para apertura/cierre de periodos, administración de pensum, asignación de docentes titulares/asistentes y supervisión de matrícula.
 - **Criterios de Aceptación:** Navegación y permisos independientes para Director y Subdirector sin acceso a datos no autorizados.
+- **Estado:** [X] Completada
 
 ### [REQ-DASH-003] Dashboard Independiente de Secretaría (Sección 4)
 - **Origen del Hallazgo:** Requerimiento: Dashboards Independientes y Control de Acceso por Roles (Sección 4).
@@ -438,6 +440,7 @@
 - **Dependencias Expuestas:** Gestión de personal, matrículas, asignaciones autorizadas y noticias institucionales.
 - **Descripción del Alcance:** Construir interfaz independiente de Secretaría para la creación de cuentas de personal, gestión de registros estudiantiles, asignaciones docentes autorizadas y publicación de avisos/noticias.
 - **Criterios de Aceptación:** Interfaz de Secretaría restringida a sus competencias sin acceso a configuraciones de Dirección o Contabilidad.
+- **Estado:** [X] Completada
 
 ### [REQ-DASH-004] Dashboard Independiente de Contabilidad y Módulos Financieros (Sección 5)
 - **Origen del Hallazgo:** Requerimiento: Dashboards Independientes y Control de Acceso por Roles (Sección 5).
@@ -446,6 +449,7 @@
 - **Dependencias Expuestas:** Planillas, facturación, cuentas por cobrar/pagar, ingresos/egresos, recibos y conciliaciones.
 - **Descripción del Alcance:** Desarrollar interfaz independiente de Contabilidad para gestionar salarios, facturas, cobros de colegiaturas, proveedores, reportes financieros y cierres de caja con permisos de aprobación/anulación trazables.
 - **Criterios de Aceptación:** Acceso financiero totalmente restringido para roles ajenos a Contabilidad/Administración.
+- **Estado:** [X] Completada
 
 ### [REQ-DASH-005] Conservación e Integración del Dashboard del Profesor (Sección 6)
 - **Origen del Hallazgo:** Requerimiento: Dashboards Independientes y Control de Acceso por Roles (Sección 6).
@@ -454,6 +458,7 @@
 - **Dependencias Expuestas:** Asignaciones docentes, contenidos de clase, tareas, exámenes, calificaciones y asistencia.
 - **Descripción del Alcance:** Mantener el dashboard docente existente, asegurando que las funciones académicas (clases, guías, tareas, exámenes, calificaciones) operen estrictamente dentro de sus asignaciones asignadas por Dirección/Secretaría.
 - **Criterios de Aceptación:** El profesor no tiene acceso a módulos contables, planillas ni administración general.
+- **Estado:** [X] Completada
 
 ### [REQ-DASH-006] Conservación e Integración del Dashboard del Estudiante (Sección 7)
 - **Origen del Hallazgo:** Requerimiento: Dashboards Independientes y Control de Acceso por Roles (Sección 7).
@@ -462,6 +467,7 @@
 - **Dependencias Expuestas:** Asignaturas asignadas, tareas, exámenes, notas, avisos, grupos de WhatsApp y comprobantes de pago propios.
 - **Descripción del Alcance:** Garantizar que el estudiante acceda exclusivamente a su información académica y financiera propia, entregue tareas, consulte calificaciones y realice pagos autorizados.
 - **Criterios de Aceptación:** Aislamiento estricto de expedientes y comprobantes entre estudiantes.
+- **Estado:** [X] Completada
 
 ### [REQ-DASH-007] Enrutamiento Post-Login y Separación Estricta de Navegación por URL (Sección 8)
 - **Origen del Hallazgo:** Requerimiento: Dashboards Independientes y Control de Acceso por Roles (Sección 8).
@@ -470,6 +476,7 @@
 - **Dependencias Expuestas:** Redirección tras autenticación, validación de URLs y verificación de estado de sesión.
 - **Descripción del Alcance:** Dirigir al usuario al dashboard específico de su rol activo tras iniciar sesión. Bloquear el acceso a dashboards ajenos mediante manipulación de la URL o reutilización de enlaces.
 - **Criterios de Aceptación:** Redirección automática al dashboard autorizado y rechazo inmediato de navegación no autorizada.
+- **Estado:** [X] Completada
 
 ### [REQ-DASH-008] Matriz Granular de Permisos Backend por Operación (Sección 9 - 10)
 - **Origen del Hallazgo:** Requerimiento: Dashboards Independientes y Control de Acceso por Roles (Sección 9 - 10).
@@ -478,6 +485,7 @@
 - **Dependencias Expuestas:** Matriz de permisos (Consultar, Crear, Editar, Eliminar, Aprobar, Anular, Exportar, Administrar).
 - **Descripción del Alcance:** Extender el RBAC backend para verificar rol, permiso específico por operación y alcance de datos (ownership/assignment) en cada microservicio.
 - **Criterios de Aceptación:** Peticiones directas no autorizadas al backend son rechazadas con error de permisos sin revelar datos sensibles.
+- **Estado:** [X] Completada
 
 ### [REQ-DASH-009] Registro de Auditoría de Acciones Sensibles e Intervenciones (Sección 10 - 12)
 - **Origen del Hallazgo:** Requerimiento: Dashboards Independientes y Control de Acceso por Roles (Sección 10 - 12).
@@ -486,6 +494,7 @@
 - **Dependencias Expuestas:** Hoja de auditoría, logs de supervisión.
 - **Descripción del Alcance:** Registrar automáticamente usuario, fecha, operación, módulo y resultado para todas las operaciones sensibles (aprobar, anular, modificar salario, cambiar rol, supervisión de desarrollador).
 - **Criterios de Aceptación:** Hoja de auditoría con historial inmutable de acciones administrativas y financieras.
+- **Estado:** [X] Completada
 
 ---
 
@@ -498,6 +507,7 @@
 - **Dependencias Expuestas:** Capa de filtrado por asignación en backend (`profesorId`, `userId`, `grado`, `seccion`).
 - **Descripción del Alcance:** Garantizar que cada usuario solo acceda a sus propias asignaciones, estudiantes, registros y documentos, aplicando validación en servidor y no solo filtros visuales.
 - **Criterios de Aceptación:** Bloqueo en backend de consultas y modificaciones sobre recursos pertenecientes a otros docentes, estudiantes o empleados.
+- **Estado:** [X] Completada
 
 ### [REQ-AMP-002] Módulo de Detección de Duplicados, Inconsistencias y Contradicciones (Sección 2)
 - **Origen del Hallazgo:** Ampliación de Requerimientos Funcionales (Sección 2).
@@ -506,6 +516,7 @@
 - **Dependencias Expuestas:** Consola de auditoría de integridad para Dirección, Subdirección, Secretaría y Administrador/Desarrollador.
 - **Descripción del Alcance:** Detectar cuentas, personas, matrículas, registros de personal, asignaciones dobles de profesores titulares, secciones o asignaturas duplicadas y generar panel de incidencias clasificadas por gravedad con corrección guiada segura.
 - **Criterios de Aceptación:** Detección automática de duplicados/conflictos sin eliminación automática destructiva.
+- **Estado:** [X] Completada
 
 ### [REQ-AMP-003] Gestión de Relevo Docente por Asignatura y Conservación Histórica (Sección 3)
 - **Origen del Hallazgo:** Ampliación de Requerimientos Funcionales (Sección 3).
@@ -514,6 +525,7 @@
 - **Dependencias Expuestas:** `ConfiguracionAcademica`, `HistorialAcademico`, autoría de entregas y notas históricas.
 - **Descripción del Alcance:** Permitir el reemplazo de un profesor titular en una asignatura/sección especificando fecha efectiva y motivo, desactivando el acceso operativo del docente saliente mientras se preserva la autoría original de tareas, exámenes y notas anteriores.
 - **Criterios de Aceptación:** Transferencia de acceso operativo al nuevo profesor preservando intactos los registros históricos del profesor anterior.
+- **Estado:** [X] Completada
 
 ### [REQ-AMP-004] Configuración Dinámica de Parciales según Pensum Académico (Sección 4)
 - **Origen del Hallazgo:** Ampliación de Requerimientos Funcionales (Sección 4).
@@ -522,6 +534,7 @@
 - **Dependencias Expuestas:** `getAcademicConfig`, creación de tareas, guías, examentes, boletas y reportes de rendimiento.
 - **Descripción del Alcance:** Permitir cantidades y nombres de parciales configurables por asignatura según el plan de estudios, reflejando automáticamente la estructura en dashboards de profesores y alumnos.
 - **Criterios de Aceptación:** Estructuras de parciales adaptables por materia sin alterar retroactivamente registros históricos.
+- **Estado:** [X] Completada
 
 ### [REQ-AMP-005] Matrículas con Identificadores Únicos y Separación de Entidad Persona/Cuenta (Sección 5)
 - **Origen del Hallazgo:** Ampliación de Requerimientos Funcionales (Sección 5).
@@ -530,6 +543,7 @@
 - **Dependencias Expuestas:** Entidades `Personas`, `CuentasUsuarios`, `Matrículas`.
 - **Descripción del Alcance:** Desacoplar la identidad de la persona, su cuenta de inicio de sesión y sus matrículas anuales con ID único, preservando el historial de reinscripciones, cambios de sección y egresos.
 - **Criterios de Aceptación:** Historial de matrículas múltiple por alumno sin duplicar cuentas de usuario ni perder datos académicos tras cambios de sección.
+- **Estado:** [X] Completada
 
 ### [REQ-AMP-006] Gestión de Personal de Planilla con o sin Cuenta de Acceso (Sección 6)
 - **Origen del Hallazgo:** Ampliación de Requerimientos Funcionales (Sección 6).
@@ -538,6 +552,7 @@
 - **Dependencias Expuestas:** Entidad `Personal`, módulos de salarios, deducciones y nómina.
 - **Descripción del Alcance:** Permitir el registro de empleados (mantenimiento, aseo, soporte) en el expediente laboral y sistema de planilla sin requerir una cuenta de usuario para ingresar a la plataforma.
 - **Criterios de Aceptación:** Procesamiento de salarios y planillas para personal sin credenciales de inicio de sesión.
+- **Estado:** [X] Completada
 
 ### [REQ-AMP-007] Envío Automático de Invitaciones Seguras para Establecer Contraseña (Sección 7)
 - **Origen del Hallazgo:** Ampliación de Requerimientos Funcionales (Sección 7).
@@ -546,6 +561,7 @@
 - **Dependencias Expuestas:** SMS, Email, WhatsApp Integration API, generación de tokens de un solo uso con expiración.
 - **Descripción del Alcance:** Despachar enlaces temporales HTTPS de un solo uso vía Email/SMS/WhatsApp para que los nuevos usuarios definan su clave inicial de forma segura sin transmitir contraseñas en texto plano.
 - **Criterios de Aceptación:** Enlaces de invitación caducables y de un solo uso con registro de estado de entrega.
+- **Estado:** [X] Completada
 
 ### [REQ-AMP-008] Protección Estricta de Privacidad de Datos Telefónicos y Comunicaciones (Sección 8)
 - **Origen del Hallazgo:** Ampliación de Requerimientos Funcionales (Sección 8).
@@ -554,6 +570,7 @@
 - **Dependencias Expuestas:** Respuestas JSON de la API, listados de clase, tarjetas de perfil.
 - **Descripción del Alcance:** Omitir números de teléfono privados de docentes y compañeros en las respuestas backend enviadas a estudiantes, canalizando comunicaciones institucionales exclusivamente vía grupos/canales autorizados.
 - **Criterios de Aceptación:** Ocultamiento total de números privados en la API y vistas del dashboard estudiantil.
+- **Estado:** [X] Completada
 
 ### [REQ-AMP-009] Módulo Contable Integral: Planillas, Deducciones, Cuentas por Cobrar/Pagar (Sección 9)
 - **Origen del Hallazgo:** Ampliación de Requerimientos Funcionales (Sección 9).
@@ -562,6 +579,7 @@
 - **Dependencias Expuestas:** Módulo financiero, cálculo de retenciones de ley, colegiaturas, cierres y conciliación.
 - **Descripción del Alcance:** Centralizar cálculo de sueldos, deducciones, facturación de mensualidades, pagos a proveedores, registros de caja e historial inmutable con reversiones o anulaciones controladas auditables.
 - **Criterios de Aceptación:** Módulo contable operativo con trazabilidad completa y separación estricta de permisos.
+- **Estado:** [X] Completada
 
 ### [REQ-AMP-010] Motor de Plantillas Reutilizables de Facturas, Recibos y Comprobantes Imprimibles/PDF (Sección 10 - 11)
 - **Origen del Hallazgo:** Ampliación de Requerimientos Funcionales (Sección 10 - 11).
@@ -570,6 +588,7 @@
 - **Dependencias Expuestas:** Generador de PDF/Impresión, numeración correlativa única, datos fiscales configurables.
 - **Descripción del Alcance:** Disponer de diseños estandarizados con previsualización para emitir recibos de pago, facturas, comprobantes de salario y deducciones con numeración correlativa protegida e identidad visual institucional New Generation.
 - **Criterios de Aceptación:** Generación e impresión de comprobantes en PDF sin reutilización de números correlativos ni pérdida de formato.
+- **Estado:** [X] Completada
 
 ---
 
@@ -582,6 +601,7 @@
 - **Dependencias Expuestas:** Centralización de fechas en Secretaría/Dirección, alertas por falta de configuración de parciales, exámenes y actividades.
 - **Descripción del Alcance:** Proporcionar interfaz administrativa en Secretaría, Dirección y Subdirección para configurar periodos, parciales, exámenes, días festivos y actividades con alertas preventivas por incompleitud sin asignar fechas ficticias.
 - **Criterios de Aceptación:** Configuración de parciales y eventos por año lectivo con alertas por falta de fechas y sin alterar asignaciones personales.
+- **Estado:** [X] Completada
 
 ### [REQ-AMP2-002] Sección de Documentación Académica Docente y Estructuración en Drive (Sección 2)
 - **Origen del Hallazgo:** Ampliación de Requerimientos Funcionales (Sección 2).
@@ -590,6 +610,7 @@
 - **Dependencias Expuestas:** Almacenamiento en Drive `New Generation/Docentes/[Docente]/[Año]/[Asignatura]/[Grado_Sección]/[Periodo]/`.
 - **Descripción del Alcance:** Permitir a profesores subir sílabos, guiones, jornalizaciones y planificaciones, guardando metadatos en base de datos y organizando carpetas privadas en Google Drive sin sobreescritura accidental ni exposición pública.
 - **Criterios de Aceptación:** Almacenamiento organizado en Drive con validación de tipo/tamaño y registro de metadatos en base de datos.
+- **Estado:** [X] Completada
 
 ### [REQ-AMP2-003] Sistema de Notificaciones y Seguimiento de Obligaciones Docentes (Sección 3)
 - **Origen del Hallazgo:** Ampliación de Requerimientos Funcionales (Sección 3).
@@ -598,6 +619,7 @@
 - **Dependencias Expuestas:** Recordatorios de entrega de jornalizaciones, guías, exámenes y calificaciones.
 - **Descripción del Alcance:** Habilitar desde Secretaría recordatorios automáticos de fechas límite dirigidos a docentes responsables, deteniendo las notificaciones al cumplir la obligación y generando reportes de cumplimiento administrativo.
 - **Criterios de Aceptación:** Notificaciones de cumplimiento docente configurables con cese de alertas ante entregas completadas.
+- **Estado:** [X] Completada
 
 ### [REQ-AMP2-004] Sistema Centralizado de Notificaciones Estudiantiles con Campana e Indicadores (Sección 4)
 - **Origen del Hallazgo:** Ampliación de Requerimientos Funcionales (Sección 4).
@@ -606,6 +628,7 @@
 - **Dependencias Expuestas:** Campana de notificaciones, código de colores por prioridad (Amarillo, Verde, Rojo).
 - **Descripción del Alcance:** Implementar un centro de notificaciones discreto con campana para estudiantes, mostrando avisos de exámenes, tareas, eventos, avisos institucionales y vencimientos de pago ordenados por prioridad y leídos/no leídos.
 - **Criterios de Aceptación:** Lista de notificaciones con estados de lectura, indicadores accesibles por color/icono y sin duplicidades.
+- **Estado:** [X] Completada
 
 ### [REQ-AMP2-005] Configuración Institucional de Fechas de Pago y Estado Financiero (Sección 5)
 - **Origen del Hallazgo:** Ampliación de Requerimientos Funcionales (Sección 5).
@@ -614,6 +637,7 @@
 - **Dependencias Expuestas:** Módulo financiero, vencimiento de mensualidades/matrícula, estados de cuenta.
 - **Descripción del Alcance:** Habilitar a Secretaría la configuración de fechas de vencimiento y periodos de pago, clasificando el estado del alumno (Al día, Próximo a vencer, Vencido, En revisión, Exonerado/Beca) provisto desde el módulo financiero.
 - **Criterios de Aceptación:** Clasificación financiera exacta del estudiante sin duplicar cálculos arbitrarios en el dashboard académico.
+- **Estado:** [X] Completada
 
 ### [REQ-AMP2-006] Restricción de Visualización de Calificaciones por Pagos Pendientes (Sección 6)
 - **Origen del Hallazgo:** Ampliación de Requerimientos Funcionales (Sección 6).
@@ -622,6 +646,7 @@
 - **Dependencias Expuestas:** Máscara visual de notas `- -` con aviso "Pago pendiente".
 - **Descripción del Alcance:** Ocultar visualmente y proteger en backend el valor numérico de calificaciones y promedios cuando existan saldos vencidos, **sin bloquear jamás** el ingreso al sistema, la asistencia a clases, la consulta de contenidos ni la entrega de tareas.
 - **Criterios de Aceptación:** Calificaciones reemplazadas por `- -` en frontend y backend sin alterar las notas reales almacenadas ni impedir entregas de tareas.
+- **Estado:** [X] Completada
 
 ### [REQ-AMP2-007] Separación Estricta entre Administración Personal e Institucional (Sección 7)
 - **Origen del Hallazgo:** Ampliación de Requerimientos Funcionales (Sección 7).
@@ -630,6 +655,7 @@
 - **Dependencias Expuestas:** Opciones de perfil personal vs. Configuración de parámetros institucionales (Secretaría/Dirección/Desarrollador).
 - **Descripción del Alcance:** Distinguir claramente en la interfaz las opciones de preferencias personales del usuario de las herramientas de administración institucional y global (desarrollador) para evitar la alteración accidental de parámetros compartidos.
 - **Criterios de Aceptación:** Modificación de parámetros institucionales restringida estrictamente a los roles autorizados.
+- **Estado:** [X] Completada
 
 ### [REQ-AMP2-008] Archivado Íntegro del Año Escolar en Nueva Spreadsheet Independiente (Sección 8)
 - **Origen del Hallazgo:** Ampliación de Requerimientos Funcionales (Sección 8).
@@ -638,6 +664,7 @@
 - **Dependencias Expuestas:** Generación de copia histórica independiente en Google Sheets `New Generation - Archivo Académico - [Año]`.
 - **Descripción del Alcance:** Crear una función adicional para duplicar e integrar los registros del año escolar finalizado en una nueva Spreadsheet con hoja de índice/manifiesto, verificando integridad de filas/valores y permitiendo descarga `.xlsx` **sin modificar ni borrar la spreadsheet operativa**.
 - **Criterios de Aceptación:** Spreadsheet histórica de copia estática generada y verificada sin alterar la base de datos operativa activa.
+- **Estado:** [X] Completada
 
 ### [REQ-AMP2-009] Seguridad, Permisos y Trazabilidad del Archivado Anual (Sección 9)
 - **Origen del Hallazgo:** Ampliación de Requerimientos Funcionales (Sección 9).
@@ -646,6 +673,7 @@
 - **Dependencias Expuestas:** Restricción de descarga de spreadsheets archivadas por rol y logs de auditoría.
 - **Descripción del Alcance:** Garantizar que la solicitud, generación y descarga de spreadsheets archivadas esté limitada a Dirección, Secretaría, Contabilidad y Desarrollador, registrando cada operación en hojas de auditoría.
 - **Criterios de Aceptación:** Acceso a respaldos históricos restringido por rol con trazabilidad inmutable de descargas y solicitudes.
+- **Estado:** [X] Completada
 
 ---
 
@@ -658,6 +686,7 @@
 - **Dependencias Expuestas:** Módulo de perfil docente, consulta de sílabos, jornalizaciones, planificaciones y exámenes.
 - **Descripción del Alcance:** Permitir a Dirección, Subdirección y Secretaría visualizar la documentación pedagógica entregada por el profesor, con opciones para previsualizar, imprimir y descargar.
 - **Criterios de Aceptación:** Vista de perfil docente con panel de documentos filtrables e imprimibles.
+- **Estado:** [X] Completada
 
 ### [REQ-SUP-002] Organización Jerárquica y Filtrado Preciso (Sección 2)
 - **Origen del Hallazgo:** Requerimiento: Supervisión y Consulta de Documentación Docente (Sección 2).
@@ -666,6 +695,7 @@
 - **Dependencias Expuestas:** Árbol de navegación `Docentes -> Profesor -> Año -> Parcial -> Grado -> Sección -> Asignatura -> TipoDoc`.
 - **Descripción del Alcance:** Garantizar que los documentos estén asociados exactamente al tuple (Año, Profesor, Parcial, Grado, Sección, Asignatura) e impedir que un documento se aplique erróneamente a otras secciones del mismo grado.
 - **Criterios de Aceptación:** Navegación en cascada y filtrado estricto por sección y asignatura.
+- **Estado:** [X] Completada
 
 ### [REQ-SUP-003] Impresión, Previsualización y Descarga Segura sin Alteración en Drive (Sección 3)
 - **Origen del Hallazgo:** Requerimiento: Supervisión y Consulta de Documentación Docente (Sección 3).
@@ -674,6 +704,7 @@
 - **Dependencias Expuestas:** Generación de PDF/Impresión, previsualización de archivos en Drive.
 - **Descripción del Alcance:** Generar vistas de impresión con membrete institucional e identificación completa sin modificar los archivos almacenados en Google Drive ni sobreescribir versiones originales.
 - **Criterios de Aceptación:** Impresión y vista previa que mantienen intactos los archivos almacenados en Drive.
+- **Estado:** [X] Completada
 
 ### [REQ-SUP-004] Acceso Restringido a Docentes Suplentes y Relevos Temporales (Sección 4)
 - **Origen del Hallazgo:** Requerimiento: Supervisión y Consulta de Documentación Docente (Sección 4).
@@ -682,6 +713,7 @@
 - **Dependencias Expuestas:** Asignaciones temporales, relevo de profesor titular, revocación automática.
 - **Descripción del Alcance:** Impedir que los profesores accedan a documentos privados de otros colegas, habilitando acceso temporal únicamente ante asignaciones de suplencia con revocación automática al vencer la fecha.
 - **Criterios de Aceptación:** Acceso temporal concedido exclusivamente por asignación explícita y revocado automáticamente al expirar la suplencia.
+- **Estado:** [X] Completada
 
 ### [REQ-SUP-005] Seguridad Backend y Enlaces Autenticados de Drive (Sección 5)
 - **Origen del Hallazgo:** Requerimiento: Supervisión y Consulta de Documentación Docente (Sección 5).
@@ -690,6 +722,7 @@
 - **Dependencias Expuestas:** Servidor de archivos, permisos en Google Drive API.
 - **Descripción del Alcance:** Enforzar permisos en el backend para evitar que usuarios abran o descarguen archivos privados mediante enlaces directos de Drive fuera de la interfaz autorizada.
 - **Criterios de Aceptación:** Rechazo backend de solicitudes directas no autorizadas a recursos en Drive.
+- **Estado:** [X] Completada
 
 ### [REQ-SUP-006] Resumen Administrativo de Cumplimiento Documental (Sección 6)
 - **Origen del Hallazgo:** Requerimiento: Supervisión y Consulta de Documentación Docente (Sección 6).
@@ -698,6 +731,7 @@
 - **Dependencias Expuestas:** Indicadores de cumplimiento docente, integración con notificaciones.
 - **Descripción del Alcance:** Construir panel de control para Dirección y Secretaría indicando documentos solicitados, entregados, pendientes, atrasados y aprobados, deteniendo recordatorios al completar las entregas.
 - **Criterios de Aceptación:** Reporte de cumplimiento en tiempo real integrado con el cese automático de avisos.
+- **Estado:** [X] Completada
 
 ---
 
@@ -710,6 +744,7 @@
 - **Dependencias Expuestas:** Máquina de estados (Solicitado, En preparación, Entregado, En revisión, Requiere correcciones, Reentregado, Aprobado, Rechazado, Vencido, Anulado, Archivado).
 - **Descripción del Alcance:** Implementar los 11 estados documentales oficiales con diferenciación clara entre decisiones formales (Aprobado/Rechazado) y solicitudes de ajuste (Requiere correcciones).
 - **Criterios de Aceptación:** Persistencia y visualización exacta de cada estado del ciclo de vida documental.
+- **Estado:** [X] Completada
 
 ### [REQ-FLOW-002] Matriz de Transiciones Permitidas y Validación en Backend (Sección 4)
 - **Origen del Hallazgo:** Requerimiento Técnico: Estados y Transiciones Documentales (Sección 4).
@@ -718,6 +753,7 @@
 - **Dependencias Expuestas:** Capa de validación de transiciones por rol.
 - **Descripción del Alcance:** Validar en el servidor que cada cambio de estado cumpla la matriz de transiciones permitidas (ej. impedir que un docente apruebe sus propios documentos o cambie a estados no permitidos).
 - **Criterios de Aceptación:** Rechazo backend de cualquier cambio de estado fuera de la matriz autorizada.
+- **Estado:** [X] Completada
 
 ### [REQ-FLOW-003] Desacoplamiento entre Estado Operativo, Cumplimiento y Vencimiento (Sección 5)
 - **Origen del Hallazgo:** Requerimiento Técnico: Estados y Transiciones Documentales (Sección 5).
@@ -726,6 +762,7 @@
 - **Dependencias Expuestas:** Cálculo tridimensional (Estado Operativo, Cumplimiento, Vencimiento).
 - **Descripción del Alcance:** Manejar de forma independiente el estado del documento, la condición de cumplimiento (Entregado a tiempo, Entregado tarde, Incumplido) y el vencimiento por fecha límite sin sobrescribir el estado operativo.
 - **Criterios de Aceptación:** Reportes y vistas que reflejan simultáneamente la fase operativa del documento y su estatus de cumplimiento en el tiempo.
+- **Estado:** [X] Completada
 
 ### [REQ-FLOW-004] Control Estricto de Versiones e Inmutabilidad de Entregas (Sección 6)
 - **Origen del Hallazgo:** Requerimiento Técnico: Estados y Transiciones Documentales (Sección 6).
@@ -734,6 +771,7 @@
 - **Dependencias Expuestas:** Historial de entregas, versiones en Google Drive.
 - **Descripción del Alcance:** Asignar un ID de versión único a cada entrega/reentrega, conservando las versiones anteriores, sus fechas reales y las observaciones de revisión sin sobreescritura silenciosa.
 - **Criterios de Aceptación:** Trazabilidad inmutable de todas las versiones entregadas por el profesor con acceso al historial completo.
+- **Estado:** [X] Completada
 
 ### [REQ-FLOW-005] Asignación Granular de Permisos por Rol en el Flujo Documental (Sección 7)
 - **Origen del Hallazgo:** Requerimiento Técnico: Estados y Transiciones Documentales (Sección 7).
@@ -742,6 +780,7 @@
 - **Dependencias Expuestas:** Restricciones de revisión por rol (Docente, Suplente, Secretaría, Dirección, Desarrollador).
 - **Descripción del Alcance:** Enforzar permisos de modo que el docente prepare/entregue, la Secretaría y Dirección revisen/aprueben/rechacen y el Administrador supervise sin sustituir las decisiones pedagógicas.
 - **Criterios de Aceptación:** El backend valida el rol activo para cada operación del flujo documental.
+- **Estado:** [X] Completada
 
 ### [REQ-FLOW-006] Gestión de Fechas Límite, Notificaciones y Recálculo (Sección 8)
 - **Origen del Hallazgo:** Requerimiento Técnico: Estados y Transiciones Documentales (Sección 8).
@@ -750,6 +789,7 @@
 - **Dependencias Expuestas:** Notificaciones programadas, reprogramación de fechas límite.
 - **Descripción del Alcance:** Activar recordatorios antes y después del vencimiento, deteniéndolos al cumplirse la obligación y registrando el historial de cambios de fecha sin borrar la fecha originalmente establecida.
 - **Criterios de Aceptación:** Sincronización automática de alertas ante entregas o reprogramaciones autorizadas.
+- **Estado:** [X] Completada
 
 ### [REQ-FLOW-007] Registro Inmutable de Auditoría por Transición Documental (Sección 10 - 11)
 - **Origen del Hallazgo:** Requerimiento Técnico: Estados y Transiciones Documentales (Sección 10 - 11).
@@ -758,6 +798,7 @@
 - **Dependencias Expuestas:** Hoja de auditoría de transiciones documentales.
 - **Descripción del Alcance:** Registrar automáticamente ID de expediente, estados de origen/destino, usuario, rol, fecha, hora, observaciones y versión en un log de solo lectura inmutable.
 - **Criterios de Aceptación:** Log de auditoría completo y protegido ante eliminaciones o modificaciones.
+- **Estado:** [X] Completada
 
 ---
 

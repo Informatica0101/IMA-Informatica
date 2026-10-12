@@ -894,3 +894,12 @@ Descripción de cambios:
    - Se documentó la matriz de responsabilidades de los 5 microservicios modularizados (USER, ACADEMIC, ACCOUNTING, TASK, EXAM).
 4. `Pendientes.md`:
    - Se marcaron como completadas las secciones `[REQ-DOC-001]` a `[REQ-DOC-012]` y `[REQ-MOD-001]` a `[REQ-MOD-011]`.
+
+===========================================================
+REGISTRO DE CAMBIOS - PENDIENTES.MD ESTADOS ACTUALIZADOS
+===========================================================
+Archivos modificados:
+- Pendientes.md
+
+Descripción de cambios:
+- Se actualizaron todos los bloques de requerimientos en Pendientes.md (REQ-DASH, REQ-AMP, REQ-AMP2, REQ-SUP, REQ-FLOW) para reflejar explícitamente el campo `- **Estado:** [X] Completada`.
