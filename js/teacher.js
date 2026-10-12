@@ -318,16 +318,50 @@ document.addEventListener('DOMContentLoaded', () => {
                 window.GLOBAL_SCOPE = confirmedScope;
                 window.PARCIAL_ACTUAL = confirmedScope.ParcialActual;
                 alert('Configuración académica guardada exitosamente.');
-
                 document.dispatchEvent(new CustomEvent('academic-scope-updated', { detail: confirmedScope }));
             } else {
                 throw new Error(res.message);
             }
         } catch (e) {
-            alert('Error: ' + e.message);
+            alert('Error al guardar configuración: ' + e.message);
         } finally {
             btn.disabled = false;
             btn.textContent = 'Guardar Configuración Final';
+        }
+    });
+
+    document.getElementById('btn-open-attendance-session')?.addEventListener('click', async () => {
+        const btn = document.getElementById('btn-open-attendance-session');
+        const sessionDate = document.getElementById('attendance-session-date')?.value || new Date().toISOString().split('T')[0];
+        const activeScope = window.GLOBAL_SCOPE || {};
+        const grado = Array.isArray(activeScope.GradoActual) ? activeScope.GradoActual[0] : (activeScope.GradoActual || "10mo Grado");
+        const seccion = Array.isArray(activeScope.SeccionActual) ? activeScope.SeccionActual[0] : (activeScope.SeccionActual || "A");
+        const asignatura = Array.isArray(activeScope.AsignaturaActual) ? activeScope.AsignaturaActual[0] : (activeScope.AsignaturaActual || "Informatica");
+
+        btn.disabled = true;
+        btn.textContent = 'Abriendo sesión...';
+
+        try {
+            const res = await fetchApi('ACADEMIC', 'openAttendanceSession', {
+                fecha: sessionDate,
+                horaInicio: "07:00",
+                horaFin: "08:00",
+                grado: grado,
+                seccion: seccion,
+                asignaturaId: asignatura,
+                docenteUserId: currentUser.userId
+            });
+
+            if (res.status === 'success') {
+                alert(`Sesión de asistencia abierta correctamente para ${asignatura} (${grado} ${seccion}). ID: ${res.data?.sesionId || 'SESION-OK'}`);
+            } else {
+                throw new Error(res.message);
+            }
+        } catch (e) {
+            alert('Error al abrir control de asistencia: ' + e.message);
+        } finally {
+            btn.disabled = false;
+            btn.textContent = 'Abrir Control de Asistencia';
         }
     });
 

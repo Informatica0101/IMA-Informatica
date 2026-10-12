@@ -1044,3 +1044,33 @@ Descripción de cambios:
 
 4. `teacher-dashboard.html` & `js/teacher.js`:
    - Sincronizados controles del Libro de Calificaciones y evaluación de criterios formativos en el panel docente.
+
+===========================================================
+REGISTRO DE CAMBIOS - FASE 7: ASISTENCIA, PUNTUALIDAD, AUSENCIAS, INCIDENCIAS Y SEGUIMIENTO DEL ESTUDIANTE
+===========================================================
+Archivos modificados:
+- backend/academic-service/Code.gs
+- student-dashboard.html
+- teacher-dashboard.html
+- js/student.js
+- js/teacher.js
+- MapaDependencias.md
+- Auditoría.txt
+- ChangesLogs.txt
+
+Descripción de cambios:
+1. `backend/academic-service/Code.gs`:
+   - Creadas e inicializadas las tablas de la Fase 7: `SesionesAsistencia`, `RegistrosAsistencia`, `JustificacionesAsistencia`, `SalidasAnticipadas`, `IncidenciasAsistencia`, `CasosSeguimiento`.
+   - Implementadas funciones backend para Apertura de Sesiones y Tomar Asistencia (`openAttendanceSession`, `saveClassAttendance`, `getClassAttendance`).
+   - Implementada Asistencia Diaria General (`saveDailyAttendance`, `getDailyAttendance`).
+   - Implementada gestión de Justificaciones (`submitAttendanceJustification`, `reviewAttendanceJustification`).
+   - Implementada gestión de Salidas Anticipadas (`recordEarlyDeparture`).
+   - Implementada gestión de Incidencias de Asistencia (`getAttendanceIncidents`, `saveAttendanceIncident`).
+   - Implementada gestión de Casos de Seguimiento por Ausentismo (`getAttendanceFollowupCases`, `saveAttendanceFollowupCase`).
+   - Implementado resumen de asistencia para el estudiante (`getStudentAttendanceSummary`).
+
+2. `student-dashboard.html` & `js/student.js`:
+   - Diseñada e inyectada la tarjeta de Resumen de Asistencia y Puntualidad en el perfil del estudiante, mostrando el porcentaje de asistencia, presencias, ausencias, tardanzas y justificaciones.
+
+3. `teacher-dashboard.html` & `js/teacher.js`:
+   - Diseñada e inyectada la tarjeta de Control de Asistencia en el panel docente, habilitando la apertura de sesiones de control de asistencia por fecha.

@@ -710,7 +710,8 @@ function getGradebookData(payload) {
 
   const califSheet = getOrCreateSheet(ss, "CalificacionesEstudiantes");
   const califData = califSheet.getDataRange().getValues();
-  const calificaciones = califData.length > 1 ? califData.slice(1).map(r => ({
+  const studentIds = new Set(alumnos.map(a => String(a.userId).trim()));
+  const calificaciones = califData.length > 1 ? califData.slice(1).filter(r => studentIds.has(String(r[2]).trim())).map(r => ({
     calificacionId: r[0],
     evaluacionId: r[1],
     userId: r[2],

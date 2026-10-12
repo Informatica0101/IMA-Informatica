@@ -125,3 +125,38 @@ Archivos Auditados:
 4. RIESGOS DE COMPATIBILIDAD Y MITIGACIÓN
 - Las notas académicas existentes en `Entregas` y `EntregasExamen` se mantendrán intactas y se utilizarán como insumo inicial.
 - Se mantendrá la estricta separación arquitectónica entre las notas académicas de asignaturas y los módulos formativos de Comportamiento, Aseo y Presentación.
+
+AUDITORÍA TÉCNICA Y DIAGNÓSTICO DE SOLO LECTURA - FASE 7: ASISTENCIA, PUNTUALIDAD, AUSENCIAS, INCIDENCIAS Y SEGUIMIENTO DEL ESTUDIANTE - Sun Jul 5 2026
+
+Archivos Auditados:
+- backend/academic-service/Code.gs
+- backend/user-service/Code.gs
+- backend/accounting-service/Code.gs
+- js/teacher.js
+- js/student.js
+- teacher-dashboard.html
+- student-dashboard.html
+
+1. FUNCIONES EXISTENTES Y OPERATIVAS
+- Asistencia de Personal/Planillas: `recordStaffAttendance` en `backend/accounting-service/Code.gs` para colaboradores y nómina.
+- Matrículas e Identidad Estudiantil: `Matriculas`, `ExpedientesEstudiantes` y `CuentasUsuarios` en `ACADEMIC` y `USER` como fuente oficial de alumnos por grado/sección.
+
+2. FUNCIONES FALTANTES Y MEJORAS REQUERIDAS PARA FASE 7
+- Control de Asistencia por Clase y Jornada General: Apertura y cierre de sesiones de asistencia (`SesionesAsistencia`, `RegistrosAsistencia`) diferenciando estados (Presente, Ausente, Tardanza, SalidaAnticipada, Justificada, NoJustificada).
+- Control de Puntualidad y Tardanzas: Registro de hora prevista vs hora real de llegada con cálculo de minutos de retraso y tolerancias.
+- Gestión de Justificaciones (`JustificacionesAsistencia`): Registro de justificantes con documentos adjuntos, estados de revisión (Pendiente, Aprobada, Rechazada) e historial inmutable.
+- Salidas Anticipadas (`SalidasAnticipadas`): Registro de retiros prematuros con responsable autorizador y persona que retira al estudiante.
+- Incidencias y Patrones de Ausentismo (`IncidenciasAsistencia`, `CasosSeguimiento`): Detección preventiva de faltas consecutivas y planes de seguimiento sin diagnósticos no verificados.
+
+3. ESTRUCTURA DE TABLAS EN GOOGLE SHEETS
+- Hojas a Incorporar en ACADEMIC-SERVICE:
+  - `SesionesAsistencia` (SesionID | Fecha | HoraInicio | HoraFin | Grado | Seccion | AsignaturaID | DocenteUserId | Estado | Observaciones)
+  - `RegistrosAsistencia` (RegistroID | SesionID | UserId | EstadoAsistencia | HoraLlegada | MinutosTardanza | Justificado | ObservacionDocente | FechaRegistro)
+  - `JustificacionesAsistencia` (JustificacionID | UserId | FechaAfectada | Periodo | MotivoDeclarado | AdjuntoUrl | PresentadoPor | EstadoRevision | RevisadoPor | ObservacionesAdmin | FechaResolucion)
+  - `SalidasAnticipadas` (SalidaID | UserId | Fecha | HoraSalida | Motivo | AutorizadoPor | RetiradoPor | RegresoHora | Estado)
+  - `IncidenciasAsistencia` (IncidenciaID | UserId | TipoIncidencia | Descripcion | Fecha | Estado | ReportadoPor)
+  - `CasosSeguimiento` (CasoID | UserId | MotivoApertura | ResumenAsistencia | ResponsableID | AccionesJSON | Estado | FechaApertura | FechaCierre)
+
+4. RIESGOS DE COMPATIBILIDAD Y MITIGACIÓN
+- La asistencia del estudiante no alterará automáticamente las notas académicas de la Fase 6, preservando la independencia de dominios.
+- Se mantendrá la coincidencia por encabezados en Google Sheets para resiliencia ante adición de columnas.

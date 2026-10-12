@@ -152,6 +152,44 @@ document.addEventListener('DOMContentLoaded', function() {
 
     renderStudentHeader();
     fetchAndRenderFormativeEvaluations();
+    fetchAndRenderStudentAttendanceSummary();
+
+    function fetchAndRenderStudentAttendanceSummary() {
+        var summaryContainer = document.getElementById('attendance-summary-container');
+        var badge = document.getElementById('attendance-percentage-badge');
+        if (!summaryContainer || !currentUser || !currentUser.userId) return;
+
+        fetchApi('ACADEMIC', 'getStudentAttendanceSummary', { userId: currentUser.userId })
+            .then(function(res) {
+                if (res && res.status === 'success' && res.data) {
+                    var summary = res.data;
+                    if (badge) {
+                        badge.innerHTML = `<i class="fas fa-chart-pie"></i> Asistencia: ${summary.porcentajeAsistencia}%`;
+                    }
+                    summaryContainer.innerHTML = `
+                        <div class="p-4 rounded-2xl bg-teal-50/50 border border-teal-100 text-center">
+                            <span class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest">Presencias</span>
+                            <span class="text-2xl font-black text-teal-600">${summary.presentes}</span>
+                        </div>
+                        <div class="p-4 rounded-2xl bg-amber-50/50 border border-amber-100 text-center">
+                            <span class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest">Tardanzas</span>
+                            <span class="text-2xl font-black text-amber-600">${summary.tardanzas}</span>
+                        </div>
+                        <div class="p-4 rounded-2xl bg-red-50/50 border border-red-100 text-center">
+                            <span class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest">Ausencias</span>
+                            <span class="text-2xl font-black text-red-600">${summary.ausentes}</span>
+                        </div>
+                        <div class="p-4 rounded-2xl bg-blue-50/50 border border-blue-100 text-center">
+                            <span class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest">Justificadas</span>
+                            <span class="text-2xl font-black text-blue-600">${summary.justificadas}</span>
+                        </div>
+                    `;
+                }
+            })
+            .catch(function(err) {
+                console.log('Error al cargar resumen de asistencia:', err);
+            });
+    }
 
     function fetchAndRenderFormativeEvaluations() {
         var container = document.getElementById('formative-logs-container');

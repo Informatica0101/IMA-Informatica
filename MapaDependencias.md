@@ -1,4 +1,4 @@
-# Mapa de Dependencias Académicas (v8.6.0 - Fase 6 Evaluación, Calificaciones y Módulo Formativo)
+# Mapa de Dependencias Académicas (v8.7.0 - Fase 7 Asistencia, Puntualidad y Seguimiento)
 
 ## Módulo de Tareas (Teacher/Student)
 - Entidad: Tarea (Regular) -> Impacta Progreso Base.
@@ -72,3 +72,11 @@
 - `CriterioInstitucional`: Catálogo institucional de criterios de Comportamiento, Aseo personal/Higiene y Presentación personal.
 - `EvaluacionFormativa`: Evaluaciones e incidencias formativas del estudiante, independientes de las notas académicas.
 - `PlanAcompanamiento`: Planes de acompañamiento pedagógico confidenciales para seguimiento estudiante/padre.
+
+## Matriz de Entidades Centrales - Fase 7 (Asistencia y Seguimiento Estudiantil)
+- `SesionAsistencia`: Sesión de clase u orden de jornada abierta para tomar asistencia (Fecha, Grado, Sección, Asignatura, Docente).
+- `RegistroAsistencia`: Registro individual por estudiante (Presente, Ausente, Tardanza, MinutosTardanza, Justificado).
+- `JustificacionAsistencia`: Solicitud o comprobante de justificación de falta/tardanza con documento adjunto y revisión administrativa.
+- `SalidaAnticipada`: Registro de retiros de la institución antes de finalizar la jornada con autorización y acompañante.
+- `IncidenciaAsistencia`: Incidencias de puntualidad/ausentismo recurrentes reportadas por docentes/Secretaría.
+- `CasoSeguimiento`: Casos de acompañamiento preventivo por ausentismo recurrente o patrones de tardanza.
