@@ -905,6 +905,64 @@
 
 ---
 
+## REQUERIMIENTOS FASE 3: EXPERIENCIA DE USUARIO, NAVEGACIÓN UNIFICADA Y DISEÑO CENTRADO EN LAS PERSONAS (New Generation Christian Academy)
+
+### [REQ-FASE3-001] Sistema de Diseño Institucional Unificado y Tokens de Diseño
+- **Origen del Hallazgo:** Fase 3. Experiencia de usuario, navegación unificada y diseño centrado en las personas.
+- **Severidad/Clasificación:** Alto
+- **Archivos Involucrados:** `css/style.css`, `student-dashboard.html`, `teacher-dashboard.html`, `index.html`
+- **Dependencias Expuestas:** Paleta institucional, botones, tarjetas, modales, badges y estados visuales.
+- **Descripción del Alcance:** Unificar colores, tipografías, botones, campos de texto, modales, alertas y estados visuales en toda la plataforma mediante tokens de diseño reusables.
+- **Criterios de Aceptación:** Interfaz visual coherente en todos los dashboards con componentes reusables y respuesta adaptable en escritorio, tableta y móvil.
+- **Estado:** [X] Completada
+
+### [REQ-FASE3-002] Navegación Global Unificada y Menús Personalizados por Rol
+- **Origen del Hallazgo:** Fase 3. Experiencia de usuario, navegación unificada y diseño centrado en las personas.
+- **Severidad/Clasificación:** Crítico
+- **Archivos Involucrados:** `js/ui-common.js`, `js/student.js`, `js/teacher.js`, `student-dashboard.html`, `teacher-dashboard.html`
+- **Dependencias Expuestas:** Enrutamiento por rol (Padres, Alumnos, Docentes, Secretaría, Contabilidad, Dirección).
+- **Descripción del Alcance:** Proporcionar una navegación global unificada que presente exactamente las opciones que corresponden al rol activo del usuario, preservando el contexto al navegar.
+- **Criterios de Aceptación:** Menús diferenciados por rol, navegación SPA con `pushState` e imposibilidad de pérdida de contexto al retroceder.
+- **Estado:** [X] Completada
+
+### [REQ-FASE3-003] Portal Familiar Prioritario y Selección de Estudiantes Vinculados
+- **Origen del Hallazgo:** Fase 3. Experiencia de usuario, navegación unificada y diseño centrado en las personas.
+- **Severidad/Clasificación:** Crítico
+- **Archivos Involucrados:** `student-dashboard.html`, `js/student.js`, `js/ui-common.js`
+- **Dependencias Expuestas:** Selección entre hijos vinculados, lenguaje sencillo, estados financieros y trámites.
+- **Descripción del Alcance:** Permitir a padres con múltiples hijos cambiar de estudiante sin cerrar sesión, presentando sus calificaciones, tareas, asistencia, pagos y trámites en un lenguaje humano no técnico.
+- **Criterios de Aceptación:** Selector de estudiante funcional en el portal familiar y estados claros orientados a la acción.
+- **Estado:** [X] Completada
+
+### [REQ-FASE3-004] Experiencia del Alumno Centrada en Asignaturas, Tareas y Entregas
+- **Origen del Hallazgo:** Fase 3. Experiencia de usuario, navegación unificada y diseño centrado en las personas.
+- **Severidad/Clasificación:** Alto
+- **Archivos Involucrados:** `student-dashboard.html`, `js/student.js`
+- **Dependencias Expuestas:** Tarjetas por asignatura, entregas multimodales, calendario y avisos.
+- **Descripción del Alcance:** Guiar al estudiante mediante una organización clara por asignatura, proceso paso a paso para la entrega de tareas, comprobante de recepción e indicadores visuales de vencimiento.
+- **Criterios de Aceptación:** Tarjetas desplegables por materia, modal de entrega paso a paso con token de confirmación y vista de progreso clara.
+- **Estado:** [X] Completada
+
+### [REQ-FASE3-005] Formularios Unificados, Confirmaciones Comprensibles y Ayudas Contextuales
+- **Origen del Hallazgo:** Fase 3. Experiencia de usuario, navegación unificada y diseño centrado en las personas.
+- **Severidad/Clasificación:** Alto
+- **Archivos Involucrados:** `student-dashboard.html`, `teacher-dashboard.html`, `js/student.js`, `js/teacher.js`, `js/ui-common.js`
+- **Dependencias Expuestas:** Explicaciones de campos (tooltips), confirmación en dos pasos para acciones sensibles y prevención de pérdida de datos.
+- **Descripción del Alcance:** Incorporar ayudas contextuales al pasar el cursor o al tocar en móviles, mensajes de confirmación claros para operaciones sensibles y validaciones cerca del campo afectado.
+- **Criterios de Aceptación:** Explicaciones comprensibles en formularios clave y diálogo de confirmación para acciones críticas.
+- **Estado:** [X] Completada
+
+### [REQ-FASE3-006] Centro Unificado de Notificaciones, Tareas Pendientes y Vistas Guardadas
+- **Origen del Hallazgo:** Fase 3. Experiencia de usuario, navegación unificada y diseño centrado en las personas.
+- **Severidad/Clasificación:** Alto
+- **Archivos Involucrados:** `student-dashboard.html`, `teacher-dashboard.html`, `js/student.js`, `js/teacher.js`
+- **Dependencias Expuestas:** Bandeja de notificaciones multicanal, filtros por parcial/grado y lista de tareas urgentes.
+- **Descripción del Alcance:** Unificar las notificaciones de los módulos en un centro de avisos con marcas de lectura y accesos directos a los registros correspondientes.
+- **Criterios de Aceptación:** Centro de notificaciones operativo con estados leídos/no leídos e indicadores de prioridad.
+- **Estado:** [X] Completada
+
+---
+
 ## REQUERIMIENTOS FASE 2: ARQUITECTURA INSTITUCIONAL, IDENTIDAD, INTEROPERABILIDAD Y COMUNICACIÓN (New Generation Christian Academy)
 
 ### [REQ-FASE2-001] Desacoplamiento de Entidad Persona y Identidad de Cuenta de Usuario
