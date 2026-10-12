@@ -108,6 +108,12 @@ function getOrCreateSheet(ss, name) {
     if (name === "BoletasPago") sheet.appendRow(["BoletaID", "PlanillaID", "FechaEmision", "EmpleadoId", "EmpleadoNombre", "PeriodoMes", "TotalDevengado", "TotalDeducciones", "NetoAPagar", "EstadoBoleta"]);
     if (name === "InventariosKardex") sheet.appendRow(["KardexID", "Fecha", "ItemCodigo", "ItemNombre", "CategoriaTipo", "TipoMovimiento", "Cantidad", "StockAnterior", "StockNuevo", "StockMinimo", "UbicacionResponsable", "Observaciones"]);
     if (name === "ProveedoresActivos") sheet.appendRow(["ProveedorID", "FechaRegistro", "NombreProveedor", "RTN", "Telefono", "Email", "RubroServicio", "Estado", "Observaciones"]);
+    if (name === "ExpedientesLaborales") sheet.appendRow(["ExpedienteID", "PersonaId", "UserId", "Puesto", "Departamento", "CentroCosto", "FechaIngreso", "FechaSalida", "EstadoLaboral", "Observaciones"]);
+    if (name === "ContratosLaborales") sheet.appendRow(["ContratoID", "ExpedienteID", "TipoContrato", "FechaInicio", "FechaFin", "SalarioBase", "Jornada", "EstadoContrato", "Observaciones"]);
+    if (name === "SolicitudesVacaciones") sheet.appendRow(["SolicitudID", "ExpedienteID", "Tipo", "FechaInicio", "FechaFin", "DiasSolicitados", "Estado", "AprobadoPor", "Observaciones"]);
+    if (name === "PoliticasFiscales") sheet.appendRow(["PoliticaID", "CodigoRegla", "NombreRegla", "Categoria", "BaseCalculo", "MetodoCalculo", "TasaImporte", "Estado", "Version", "Observaciones"]);
+    if (name === "PoliticasInstitucionales") sheet.appendRow(["PoliticaInstID", "TipoDocumento", "Titulo", "Version", "ContenidoHTML", "Estado", "FechaPublicacion", "Observaciones"]);
+    if (name === "AceptacionesPoliticas") sheet.appendRow(["AceptacionID", "UserId", "PoliticaInstID", "Version", "FechaAceptacion", "IpMetadata", "Estado"]);
   }
   return sheet;
 }
@@ -120,18 +126,18 @@ function doGet() { return textResponse({ status: "success", service: "ACCOUNTING
 
 const ROLE_PERMISSIONS = {
   "Administrador": ["*"],
-  "Director": ["configurePaymentConcept", "configurePaymentTariff", "getStudentAccountStatement", "recordStudentPayment", "uploadPaymentVoucher", "generatePaymentReceiptPDF", "createFiscalInvoice", "getFiscalInvoices", "configureGatewayIntegration", "testGatewayConnection", "recordCashBankMovement", "closeCashSession", "getCashBankSummary", "performBankReconciliation", "recordAccountsPayableExpense", "getChartOfAccounts", "recordAccountingJournalEntry", "generatePayrollPeriod", "recordStaffAttendance", "getStaffPayrollReceipt", "recordInventoryMovement", "getInventoryKardex", "registerSupplier"],
-  "Subdirector": ["configurePaymentConcept", "configurePaymentTariff", "getStudentAccountStatement", "recordStudentPayment", "uploadPaymentVoucher", "generatePaymentReceiptPDF", "createFiscalInvoice", "getFiscalInvoices", "configureGatewayIntegration", "testGatewayConnection", "recordCashBankMovement", "closeCashSession", "getCashBankSummary", "performBankReconciliation", "recordAccountsPayableExpense", "getChartOfAccounts", "recordAccountingJournalEntry", "generatePayrollPeriod", "recordStaffAttendance", "getStaffPayrollReceipt", "recordInventoryMovement", "getInventoryKardex", "registerSupplier"],
-  "Secretaría": ["configurePaymentConcept", "configurePaymentTariff", "getStudentAccountStatement", "recordStudentPayment", "uploadPaymentVoucher", "generatePaymentReceiptPDF", "createFiscalInvoice", "getFiscalInvoices", "recordCashBankMovement", "getCashBankSummary", "recordStaffAttendance", "recordInventoryMovement", "getInventoryKardex", "registerSupplier"],
-  "Contador": ["configurePaymentConcept", "configurePaymentTariff", "getStudentAccountStatement", "recordStudentPayment", "uploadPaymentVoucher", "generatePaymentReceiptPDF", "createFiscalInvoice", "getFiscalInvoices", "configureGatewayIntegration", "testGatewayConnection", "recordCashBankMovement", "closeCashSession", "getCashBankSummary", "performBankReconciliation", "recordAccountsPayableExpense", "getChartOfAccounts", "recordAccountingJournalEntry", "generatePayrollPeriod", "recordStaffAttendance", "getStaffPayrollReceipt", "recordInventoryMovement", "getInventoryKardex", "registerSupplier"],
-  "Consejeros": [],
-  "Profesor": [],
-  "Asistente": [],
-  "Estudiante": ["getStudentAccountStatement", "uploadPaymentVoucher", "generatePaymentReceiptPDF"],
-  "Alumno": ["getStudentAccountStatement", "uploadPaymentVoucher", "generatePaymentReceiptPDF"]
+  "Director": ["configurePaymentConcept", "configurePaymentTariff", "getStudentAccountStatement", "recordStudentPayment", "uploadPaymentVoucher", "generatePaymentReceiptPDF", "createFiscalInvoice", "getFiscalInvoices", "configureGatewayIntegration", "testGatewayConnection", "recordCashBankMovement", "closeCashSession", "getCashBankSummary", "performBankReconciliation", "recordAccountsPayableExpense", "getChartOfAccounts", "recordAccountingJournalEntry", "generatePayrollPeriod", "recordStaffAttendance", "getStaffPayrollReceipt", "recordInventoryMovement", "getInventoryKardex", "registerSupplier", "createEmployeeRecord", "getEmployeeRecords", "manageEmployeeContract", "getEmployeeContracts", "submitVacationRequest", "getVacationRequests", "reviewVacationRequest", "configureFiscalPolicy", "getFiscalPolicies", "publishInstitutionalPolicy", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances"],
+  "Subdirector": ["configurePaymentConcept", "configurePaymentTariff", "getStudentAccountStatement", "recordStudentPayment", "uploadPaymentVoucher", "generatePaymentReceiptPDF", "createFiscalInvoice", "getFiscalInvoices", "configureGatewayIntegration", "testGatewayConnection", "recordCashBankMovement", "closeCashSession", "getCashBankSummary", "performBankReconciliation", "recordAccountsPayableExpense", "getChartOfAccounts", "recordAccountingJournalEntry", "generatePayrollPeriod", "recordStaffAttendance", "getStaffPayrollReceipt", "recordInventoryMovement", "getInventoryKardex", "registerSupplier", "createEmployeeRecord", "getEmployeeRecords", "manageEmployeeContract", "getEmployeeContracts", "submitVacationRequest", "getVacationRequests", "reviewVacationRequest", "configureFiscalPolicy", "getFiscalPolicies", "publishInstitutionalPolicy", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances"],
+  "Secretaría": ["configurePaymentConcept", "configurePaymentTariff", "getStudentAccountStatement", "recordStudentPayment", "uploadPaymentVoucher", "generatePaymentReceiptPDF", "createFiscalInvoice", "getFiscalInvoices", "recordCashBankMovement", "getCashBankSummary", "recordStaffAttendance", "recordInventoryMovement", "getInventoryKardex", "registerSupplier", "createEmployeeRecord", "getEmployeeRecords", "manageEmployeeContract", "getEmployeeContracts", "submitVacationRequest", "getVacationRequests", "publishInstitutionalPolicy", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances"],
+  "Contador": ["configurePaymentConcept", "configurePaymentTariff", "getStudentAccountStatement", "recordStudentPayment", "uploadPaymentVoucher", "generatePaymentReceiptPDF", "createFiscalInvoice", "getFiscalInvoices", "configureGatewayIntegration", "testGatewayConnection", "recordCashBankMovement", "closeCashSession", "getCashBankSummary", "performBankReconciliation", "recordAccountsPayableExpense", "getChartOfAccounts", "recordAccountingJournalEntry", "generatePayrollPeriod", "recordStaffAttendance", "getStaffPayrollReceipt", "recordInventoryMovement", "getInventoryKardex", "registerSupplier", "createEmployeeRecord", "getEmployeeRecords", "manageEmployeeContract", "getEmployeeContracts", "submitVacationRequest", "getVacationRequests", "reviewVacationRequest", "configureFiscalPolicy", "getFiscalPolicies", "publishInstitutionalPolicy", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances"],
+  "Consejeros": ["getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances"],
+  "Profesor": ["getStaffPayrollReceipt", "submitVacationRequest", "getVacationRequests", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances"],
+  "Asistente": ["getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances"],
+  "Estudiante": ["getStudentAccountStatement", "uploadPaymentVoucher", "generatePaymentReceiptPDF", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances"],
+  "Alumno": ["getStudentAccountStatement", "uploadPaymentVoucher", "generatePaymentReceiptPDF", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances"]
 };
 
-const PUBLIC_ACTIONS = ["ping"];
+const PUBLIC_ACTIONS = ["ping", "getInstitutionalPolicies"];
 
 function validateRolePermission(action, payload) {
   if (PUBLIC_ACTIONS.indexOf(action) !== -1) return { authorized: true };
@@ -176,6 +182,19 @@ function doPost(e) {
       case "recordInventoryMovement": result = recordInventoryMovement(payload); break;
       case "getInventoryKardex": result = getInventoryKardex(payload); break;
       case "registerSupplier": result = registerSupplier(payload); break;
+      case "createEmployeeRecord": result = createEmployeeRecord(payload); break;
+      case "getEmployeeRecords": result = getEmployeeRecords(payload); break;
+      case "manageEmployeeContract": result = manageEmployeeContract(payload); break;
+      case "getEmployeeContracts": result = getEmployeeContracts(payload); break;
+      case "submitVacationRequest": result = submitVacationRequest(payload); break;
+      case "getVacationRequests": result = getVacationRequests(payload); break;
+      case "reviewVacationRequest": result = reviewVacationRequest(payload); break;
+      case "configureFiscalPolicy": result = configureFiscalPolicy(payload); break;
+      case "getFiscalPolicies": result = getFiscalPolicies(payload); break;
+      case "publishInstitutionalPolicy": result = publishInstitutionalPolicy(payload); break;
+      case "getInstitutionalPolicies": result = getInstitutionalPolicies(payload); break;
+      case "recordPolicyAcceptance": result = recordPolicyAcceptance(payload); break;
+      case "getPolicyAcceptances": result = getPolicyAcceptances(payload); break;
       case "ping": result = { status: "success", service: "ACCOUNTING", timestamp: new Date().toISOString(), dbConnected: true }; break;
       default: result = { status: "error", message: `Acción no reconocida: ${action}` };
     }
@@ -1307,5 +1326,487 @@ function recordAccountingJournalEntry(payload) {
     totalHaber: totalHaber,
     estado: "Asentado",
     message: "Asiento contable equilibrado por partida doble registrado exitosamente."
+  };
+}
+
+// ---------------------------------------------------------------------------
+// FASE 10: RECURSOS HUMANOS, EXPEDIENTES LABORALES Y CONTRATOS
+// ---------------------------------------------------------------------------
+
+function createEmployeeRecord(payload) {
+  const { personaId, userId, puesto, departamento, centroCosto, fechaIngreso, observaciones } = payload || {};
+  if (!puesto || !departamento) throw new Error("Puesto y departamento son requeridos.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "ExpedientesLaborales");
+  const data = sheet.getDataRange().getValues();
+  const now = new Date();
+
+  let sPersona = personaId ? String(personaId).trim() : "PERS-" + now.getTime();
+  let sUser = userId ? String(userId).trim() : "";
+
+  let existingIndex = -1;
+  if (sUser) existingIndex = data.findIndex(r => String(r[2]).trim() === sUser);
+
+  let expId;
+  if (existingIndex !== -1) {
+    expId = data[existingIndex][0];
+    sheet.getRange(existingIndex + 1, 1, 1, 10).setValues([[
+      expId,
+      sPersona,
+      sUser,
+      puesto,
+      departamento,
+      centroCosto || "General",
+      fechaIngreso || now,
+      "",
+      "active",
+      observaciones || ""
+    ]]);
+  } else {
+    expId = "EMP-" + now.getTime();
+    sheet.appendRow([
+      expId,
+      sPersona,
+      sUser,
+      puesto,
+      departamento,
+      centroCosto || "General",
+      fechaIngreso || now,
+      "",
+      "active",
+      observaciones || ""
+    ]);
+  }
+
+  return {
+    status: "success",
+    expedienteId: expId,
+    message: "Expediente laboral creado/actualizado exitosamente."
+  };
+}
+
+function getEmployeeRecords(payload) {
+  const { userId, expedienteId, estadoLaboral } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const rows = getOrCreateSheet(ss, "ExpedientesLaborales").getDataRange().getValues().slice(1);
+
+  let filtered = rows;
+  if (expedienteId) filtered = filtered.filter(r => String(r[0]).trim() === String(expedienteId).trim());
+  if (userId) filtered = filtered.filter(r => String(r[2]).trim() === String(userId).trim());
+  if (estadoLaboral) filtered = filtered.filter(r => String(r[8]).trim() === String(estadoLaboral).trim());
+
+  const mapped = filtered.map(r => ({
+    expedienteId: r[0],
+    personaId: r[1],
+    userId: r[2],
+    puesto: r[3],
+    departamento: r[4],
+    centroCosto: r[5],
+    fechaIngreso: r[6],
+    fechaSalida: r[7],
+    estadoLaboral: r[8],
+    observaciones: r[9]
+  }));
+
+  return {
+    status: "success",
+    expedientes: mapped
+  };
+}
+
+function manageEmployeeContract(payload) {
+  const { expedienteId, tipoContrato, fechaInicio, fechaFin, salarioBase, jornada, estadoContrato, observaciones } = payload || {};
+  if (!expedienteId || !salarioBase) throw new Error("expedienteId y salarioBase son requeridos.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "ContratosLaborales");
+  const now = new Date();
+  const contratoId = "CTR-" + now.getTime();
+
+  sheet.appendRow([
+    contratoId,
+    String(expedienteId).trim(),
+    tipoContrato || "Tiempo Indeterminado",
+    fechaInicio || now,
+    fechaFin || "",
+    parseFloat(salarioBase || 0),
+    jornada || "Completa",
+    estadoContrato || "active",
+    observaciones || ""
+  ]);
+
+  return {
+    status: "success",
+    contratoId: contratoId,
+    message: "Contrato laboral registrado exitosamente."
+  };
+}
+
+function getEmployeeContracts(payload) {
+  const { expedienteId } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const rows = getOrCreateSheet(ss, "ContratosLaborales").getDataRange().getValues().slice(1);
+
+  let filtered = rows;
+  if (expedienteId) filtered = filtered.filter(r => String(r[1]).trim() === String(expedienteId).trim());
+
+  const mapped = filtered.map(r => ({
+    contratoId: r[0],
+    expedienteId: r[1],
+    tipoContrato: r[2],
+    fechaInicio: r[3],
+    fechaFin: r[4],
+    salarioBase: parseFloat(r[5] || 0),
+    jornada: r[6],
+    estadoContrato: r[7],
+    observaciones: r[8]
+  }));
+
+  return {
+    status: "success",
+    contratos: mapped
+  };
+}
+
+// ---------------------------------------------------------------------------
+// PERMISOS Y VACACIONES
+// ---------------------------------------------------------------------------
+
+function submitVacationRequest(payload) {
+  const { expedienteId, tipo, fechaInicio, fechaFin, diasSolicitados, observaciones } = payload || {};
+  if (!expedienteId || !fechaInicio || !fechaFin) throw new Error("expedienteId, fechaInicio y fechaFin requeridos.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "SolicitudesVacaciones");
+  const now = new Date();
+  const solicitudId = "VAC-" + now.getTime();
+
+  sheet.appendRow([
+    solicitudId,
+    String(expedienteId).trim(),
+    tipo || "Vacaciones Ordinarias",
+    fechaInicio,
+    fechaFin,
+    parseInt(diasSolicitados || 1),
+    "submitted",
+    "",
+    observaciones || ""
+  ]);
+
+  return {
+    status: "success",
+    solicitudId: solicitudId,
+    estado: "submitted",
+    message: "Solicitud de vacaciones/permiso enviada a Recursos Humanos."
+  };
+}
+
+function getVacationRequests(payload) {
+  const { expedienteId, estado } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const rows = getOrCreateSheet(ss, "SolicitudesVacaciones").getDataRange().getValues().slice(1);
+
+  let filtered = rows;
+  if (expedienteId) filtered = filtered.filter(r => String(r[1]).trim() === String(expedienteId).trim());
+  if (estado) filtered = filtered.filter(r => String(r[6]).trim() === String(estado).trim());
+
+  const mapped = filtered.map(r => ({
+    solicitudId: r[0],
+    expedienteId: r[1],
+    tipo: r[2],
+    fechaInicio: r[3],
+    fechaFin: r[4],
+    diasSolicitados: parseInt(r[5] || 0),
+    estado: r[6],
+    aprobadoPor: r[7],
+    observaciones: r[8]
+  }));
+
+  return {
+    status: "success",
+    solicitudes: mapped
+  };
+}
+
+function reviewVacationRequest(payload) {
+  const { solicitudId, nuevoEstado, observaciones, authRole } = payload || {};
+  if (!solicitudId || !nuevoEstado) throw new Error("solicitudId y nuevoEstado son requeridos.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "SolicitudesVacaciones");
+  const data = sheet.getDataRange().getValues();
+
+  const idx = data.findIndex(r => String(r[0]).trim() === String(solicitudId).trim());
+  if (idx === -1) throw new Error("Solicitud no encontrada.");
+
+  sheet.getRange(idx + 1, 7).setValue(nuevoEstado);
+  sheet.getRange(idx + 1, 8).setValue(authRole || "Aprobador");
+  if (observaciones) sheet.getRange(idx + 1, 9).setValue(observaciones);
+
+  return {
+    status: "success",
+    solicitudId: solicitudId,
+    estado: nuevoEstado,
+    message: "Estado de la solicitud de vacaciones actualizado a " + nuevoEstado
+  };
+}
+
+// ---------------------------------------------------------------------------
+// OPCIONES AVANZADAS DEL CONTADOR: REGLAS Y POLÍTICAS FISCALES
+// ---------------------------------------------------------------------------
+
+function configureFiscalPolicy(payload) {
+  const { politicaId, codigoRegla, nombreRegla, categoria, baseCalculo, metodoCalculo, tasaImporte, estado, version, observaciones } = payload || {};
+  if (!codigoRegla || !nombreRegla) throw new Error("codigoRegla y nombreRegla son requeridos.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "PoliticasFiscales");
+  const data = sheet.getDataRange().getValues();
+
+  let pId = politicaId;
+  let existingIndex = -1;
+
+  if (pId) {
+    existingIndex = data.findIndex(r => String(r[0]).trim() === String(pId).trim());
+  } else {
+    existingIndex = data.findIndex(r => String(r[1]).trim() === String(codigoRegla).trim());
+  }
+
+  if (existingIndex !== -1) {
+    pId = data[existingIndex][0];
+    sheet.getRange(existingIndex + 1, 1, 1, 10).setValues([[
+      pId,
+      String(codigoRegla).trim(),
+      String(nombreRegla).trim(),
+      categoria || "Retenciones",
+      baseCalculo || "Salario Base",
+      metodoCalculo || "Porcentaje",
+      parseFloat(tasaImporte || 0),
+      estado || "active",
+      version || "1.0",
+      observaciones || ""
+    ]]);
+  } else {
+    pId = "POL-" + Date.now();
+    sheet.appendRow([
+      pId,
+      String(codigoRegla).trim(),
+      String(nombreRegla).trim(),
+      categoria || "Retenciones",
+      baseCalculo || "Salario Base",
+      metodoCalculo || "Porcentaje",
+      parseFloat(tasaImporte || 0),
+      estado || "active",
+      version || "1.0",
+      observaciones || ""
+    ]);
+  }
+
+  return {
+    status: "success",
+    politicaId: pId,
+    codigoRegla: codigoRegla,
+    message: "Política fiscal/financiera configurada exitosamente desde Opciones Avanzadas del Contador."
+  };
+}
+
+function getFiscalPolicies(payload) {
+  const { categoria, estado } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  let rows = getOrCreateSheet(ss, "PoliticasFiscales").getDataRange().getValues().slice(1);
+
+  if (rows.length === 0) {
+    // Cargar políticas fiscales hondureñas por defecto (IHSS, RAP, ISR)
+    const defaults = [
+      ["POL-IHSS", "IHSS-EMP", "Retención IHSS Empleado 3.5%", "Retenciones", "Salario Base (Tope L 10,317.38)", "Porcentaje", 0.035, "active", "1.0", "Ley del Seguro Social Honduras"],
+      ["POL-RAP", "RAP-EMP", "Aportación RAP Empleado 1.5%", "Aportaciones", "Excedente L 10,317.38", "Porcentaje", 0.015, "active", "1.0", "Régimen de Aportaciones Privadas"],
+      ["POL-ISR", "ISR-RET", "Impuesto Sobre la Renta (ISR)", "Impuestos", "Proyección Anual Gravable", "Tramos Gravables", 0.15, "active", "1.0", "Código Tributario Honduras"]
+    ];
+    const sheet = getOrCreateSheet(ss, "PoliticasFiscales");
+    sheet.getRange(2, 1, defaults.length, 10).setValues(defaults);
+    rows = defaults;
+  }
+
+  let filtered = rows;
+  if (categoria) filtered = filtered.filter(r => String(r[3]).toLowerCase().trim() === String(categoria).toLowerCase().trim());
+  if (estado) filtered = filtered.filter(r => String(r[7]).trim() === String(estado).trim());
+
+  const mapped = filtered.map(r => ({
+    politicaId: r[0],
+    codigoRegla: r[1],
+    nombreRegla: r[2],
+    categoria: r[3],
+    baseCalculo: r[4],
+    metodoCalculo: r[5],
+    tasaImporte: parseFloat(r[6] || 0),
+    estado: r[7],
+    version: r[8],
+    observaciones: r[9]
+  }));
+
+  return {
+    status: "success",
+    politicas: mapped
+  };
+}
+
+// ---------------------------------------------------------------------------
+// PÁGINAS E INSTITUCIONALES DE POLÍTICAS Y ACEPTACIONES
+// ---------------------------------------------------------------------------
+
+function publishInstitutionalPolicy(payload) {
+  const { tipoDocumento, titulo, version, contenidoHTML, observaciones } = payload || {};
+  if (!tipoDocumento || !titulo || !contenidoHTML) {
+    throw new Error("tipoDocumento, titulo y contenidoHTML son requeridos.");
+  }
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "PoliticasInstitucionales");
+  const data = sheet.getDataRange().getValues();
+  const now = new Date();
+
+  // Marcar versiones anteriores como superseded si se publica nueva versión
+  const sTipo = String(tipoDocumento).trim();
+  data.forEach((r, i) => {
+    if (i > 0 && String(r[1]).trim() === sTipo && r[5] === "published") {
+      sheet.getRange(i + 1, 6).setValue("superseded");
+    }
+  });
+
+  const pInstId = "DOC-" + now.getTime();
+  sheet.appendRow([
+    pInstId,
+    sTipo,
+    titulo,
+    version || "1.0",
+    contenidoHTML,
+    "published",
+    now,
+    observaciones || ""
+  ]);
+
+  return {
+    status: "success",
+    politicaInstId: pInstId,
+    tipoDocumento: sTipo,
+    version: version || "1.0",
+    message: "Política institucional publicada exitosamente."
+  };
+}
+
+function getInstitutionalPolicies(payload) {
+  const { tipoDocumento } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  let rows = getOrCreateSheet(ss, "PoliticasInstitucionales").getDataRange().getValues().slice(1);
+
+  if (rows.length === 0) {
+    // Cargar contenidos por defecto
+    const defaults = [
+      [
+        "DOC-PRIV",
+        "Privacidad",
+        "Política de Privacidad - New Generation Christian Academy",
+        "1.0",
+        "<h3>Política de Privacidad</h3><p>New Generation Christian Academy protege rigurosamente los datos personales de estudiantes, tutores y empleados conforme a las mejores prácticas institucionales y normativas legales vigentes.</p>",
+        "published",
+        new Date(),
+        "Versión Institucional Inicial"
+      ],
+      [
+        "DOC-USO",
+        "UsoCondiciones",
+        "Política de Uso y Condiciones de la Plataforma",
+        "1.0",
+        "<h3>Condiciones de Uso</h3><p>El acceso a la plataforma educativa New Generation Christian Academy está reservado a estudiantes, docentes y personal autorizado. Se prohíbe el uso indebido de credenciales.</p>",
+        "published",
+        new Date(),
+        "Versión Institucional Inicial"
+      ],
+      [
+        "DOC-FIN",
+        "PoliticaFinanciera",
+        "Política Financiera e Institucional de Pagos",
+        "1.0",
+        "<h3>Política Financiera</h3><p>Los pagos de colegiatura y matrículas deben realizarse dentro de los primeros 5 días hábiles de cada mes. Todos los recibos y facturas fiscales se emiten con numeración correlativa no duplicable.</p>",
+        "published",
+        new Date(),
+        "Versión Institucional Inicial"
+      ]
+    ];
+    const sheet = getOrCreateSheet(ss, "PoliticasInstitucionales");
+    sheet.getRange(2, 1, defaults.length, 8).setValues(defaults);
+    rows = defaults;
+  }
+
+  let filtered = rows;
+  if (tipoDocumento) {
+    filtered = filtered.filter(r => String(r[1]).toLowerCase().trim() === String(tipoDocumento).toLowerCase().trim());
+  }
+
+  const mapped = filtered.map(r => ({
+    politicaInstId: r[0],
+    tipoDocumento: r[1],
+    titulo: r[2],
+    version: r[3],
+    contenidoHTML: r[4],
+    estado: r[5],
+    fechaPublicacion: r[6],
+    observaciones: r[7]
+  }));
+
+  return {
+    status: "success",
+    politicas: mapped
+  };
+}
+
+function recordPolicyAcceptance(payload) {
+  const { userId, politicaInstId, version, ipMetadata } = payload || {};
+  if (!userId || !politicaInstId) throw new Error("userId y politicaInstId son requeridos.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "AceptacionesPoliticas");
+  const now = new Date();
+  const aceptacionId = "ACP-" + now.getTime();
+
+  sheet.appendRow([
+    aceptacionId,
+    String(userId).trim(),
+    String(politicaInstId).trim(),
+    version || "1.0",
+    now,
+    ipMetadata || "127.0.0.1",
+    "Aceptado"
+  ]);
+
+  return {
+    status: "success",
+    aceptacionId: aceptacionId,
+    message: "Aceptación de política institucional registrada como evidencia auditable."
+  };
+}
+
+function getPolicyAcceptances(payload) {
+  const { userId } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const rows = getOrCreateSheet(ss, "AceptacionesPoliticas").getDataRange().getValues().slice(1);
+
+  let filtered = rows;
+  if (userId) filtered = filtered.filter(r => String(r[1]).trim() === String(userId).trim());
+
+  const mapped = filtered.map(r => ({
+    aceptacionId: r[0],
+    userId: r[1],
+    politicaInstId: r[2],
+    version: r[3],
+    fechaAceptacion: r[4],
+    ipMetadata: r[5],
+    estado: r[6]
+  }));
+
+  return {
+    status: "success",
+    aceptaciones: mapped
   };
 }

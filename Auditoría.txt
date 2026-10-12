@@ -233,3 +233,41 @@ Archivos Auditados:
 4. RIESGOS DE COMPATIBILIDAD Y MITIGACIÓN
 - Las transacciones financieras no alterarán los expedientes académicos ni bloquearán el acceso a la plataforma o asistencia.
 - La zona horaria y formato de fecha institucional se consumirán de forma centralizada sin configuraciones aisladas por módulo.
+
+AUDITORÍA TÉCNICA Y DIAGNÓSTICO DE SOLO LECTURA - FASE 10: RECURSOS HUMANOS, GESTIÓN DE EMPLEADOS, PLANILLAS, POLÍTICAS INSTITUCIONALES Y CONFIGURACIÓN FISCAL - Sun Jul 5 2026
+
+Archivos Auditados:
+- backend/accounting-service/Code.gs
+- backend/user-service/Code.gs
+- backend/academic-service/Code.gs
+- js/teacher.js
+- js/student.js
+- js/index-ui.js
+- teacher-dashboard.html
+- student-dashboard.html
+
+1. FUNCIONES EXISTENTES Y OPERATIVAS
+- Expedientes Laborales y Planillas: `generatePayrollPeriod`, `recordStaffAttendance`, `getStaffPayrollReceipt` en `backend/accounting-service/Code.gs`.
+- Identidad y Personas: `createPerson`, `findPersonMatches`, `linkPersonAccount` en `backend/user-service/Code.gs`.
+- Contabilidad y Reglas Fiscales: `getChartOfAccounts`, `recordAccountingJournalEntry`, `recordAccountsPayableExpense`, `createFiscalInvoice`.
+- Auditoría y Logs Estructurados: `logStructuredEvent` y `sanitizePayloadForLog`.
+
+2. FUNCIONES FALTANTE Y AMPLIACIONES REQUERIDAS PARA FASE 10
+- Expedientes Laborales (`ExpedientesLaborales`, `ContratosLaborales`): Registro de contratos, puestos, departamentos, fechas de vigencia y estados del ciclo de vida (`draft`, `pending_review`, `active`, `on_leave`, `suspended`, `terminated`, `archived`).
+- Asistencia del Personal, Permisos y Vacaciones (`AsistenciasPersonal`, `SolicitudesVacaciones`): Control de tardanzas, licencias, saldos de vacaciones y solicitudes con máquina de estados (`draft`, `submitted`, `under_review`, `approved`, `rejected`, `cancelled`, `completed`).
+- Opciones Avanzadas del Contador (`PoliticasFiscales`): Configuración de reglas de impuestos, retenciones (IHSS, RAP, ISR), comisiones, deducciones y redondeo determinista con versionado e historial.
+- Páginas y Contenidos de Políticas Institucionales (`PoliticasInstitucionales`, `ContenidoPoliticas`, `AceptacionesPoliticas`): Páginas institucionales de Política de Privacidad, Política de Uso y Condiciones, y Política Financiera con control de versiones y registro de aceptación por usuario.
+- Matriz RACI y Segregación de Funciones: Validación estricta en servidor de roles (Preparador, Revisor, Aprobador, Ejecutor) impidiendo que quien prepara apruebe sus propias operaciones o altere silenciosamente planillas cerradas.
+- Integración Idempotente con Fase 9: Generación de obligaciones de cuentas por pagar de nómina e integración con asientos contables sin duplicar cobros ni registros.
+
+3. ESTRUCTURA DE TABLAS EN GOOGLE SHEETS PARA FASE 10
+- `ExpedientesLaborales` (ExpedienteID | PersonaId | UserId | Puesto | Departamento | CentroCosto | FechaIngreso | FechaSalida | EstadoLaboral | Observaciones)
+- `ContratosLaborales` (ContratoID | ExpedienteID | TipoContrato | FechaInicio | FechaFin | SalarioBase | Jornada | EstadoContrato | Observaciones)
+- `SolicitudesVacaciones` (SolicitudID | ExpedienteID | Tipo | FechaInicio | FechaFin | DiasSolicitados | Estado | AprobadoPor | Observaciones)
+- `PoliticasFiscales` (PoliticaID | CodigoRegla | NombreRegla | Categoria | BaseCalculo | MetodoCalculo | TasaImporte | Estado | Version | Observaciones)
+- `PoliticasInstitucionales` (PoliticaInstID | TipoDocumento | Titulo | Version | ContenidoHTML | Estado | FechaPublicacion | Observaciones)
+- `AceptacionesPoliticas` (AceptacionID | UserId | PoliticaInstID | Version | FechaAceptacion | IpMetadata | Estado)
+
+4. RIESGOS DE COMPATIBILIDAD Y MITIGACIÓN
+- La separación entre Recursos Humanos (novedades y expediente), Planillas (cálculo oficial) y Contabilidad (asientos e impuestos) previene dobles pagos o asientos duplicados.
+- Ninguna cuenta de empleado desvinculado será borrada; conservará el expediente laboral y la trazabilidad histórica de auditoría.

@@ -1130,3 +1130,28 @@ Descripción de cambios:
 2. `teacher-dashboard.html`, `student-dashboard.html`, `js/student.js`, `js/teacher.js`:
    - Consolidadas interfaces para visualización de saldos, comprobantes de pago y opciones de tesorería y pasarelas de pago.
    - Verificada la respuesta del backend e integración sin errores de sintaxis en el cliente.
+
+===========================================================
+REGISTRO DE CAMBIOS - FASE 10: RECURSOS HUMANOS, PLANILLAS, POLÍTICAS INSTITUCIONALES Y CONFIGURACIÓN FISCAL
+===========================================================
+Archivos modificados:
+- backend/accounting-service/Code.gs
+- politica-de-privacidad.html
+- politica-de-uso.html
+- politica-financiera.html
+- MapaDependencias.md
+- Auditoría.txt
+- Pendientes.md
+- ChangesLogs.txt
+
+Descripción de cambios:
+1. `backend/accounting-service/Code.gs`:
+   - Creadas e inicializadas las tablas de la Fase 10 en `getOrCreateSheet`: `ExpedientesLaborales`, `ContratosLaborales`, `SolicitudesVacaciones`, `PoliticasFiscales`, `PoliticasInstitucionales`, `AceptacionesPoliticas`.
+   - Implementada gestión de Expedientes Laborales (`createEmployeeRecord`, `getEmployeeRecords`) y Contratos Laborales (`manageEmployeeContract`, `getEmployeeContracts`).
+   - Implementada gestión de Vacaciones y Permisos (`submitVacationRequest`, `getVacationRequests`, `reviewVacationRequest`).
+   - Implementadas Opciones Avanzadas del Contador para Políticas Fiscales y Retenciones (`configureFiscalPolicy`, `getFiscalPolicies`) con deducciones de ley en Honduras (IHSS, RAP, ISR) y reglas de redondeo versionadas.
+   - Implementada publicación de Políticas Institucionales (`publishInstitutionalPolicy`, `getInstitutionalPolicies`) y registro auditable de evidencia de lectura y aceptación por usuario (`recordPolicyAcceptance`, `getPolicyAcceptances`).
+   - Actualizada la matriz `ROLE_PERMISSIONS` y el enrutador `doPost` para autorizar las nuevas acciones con segregación estricta de funciones.
+
+2. `politica-de-privacidad.html`, `politica-de-uso.html`, `politica-financiera.html`:
+   - Creadas e integradas las páginas institucionales públicas para consulta y registro de evidencia de conformidad por parte de usuarios.

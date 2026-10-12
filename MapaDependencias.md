@@ -100,3 +100,11 @@
 - `ConciliacionBancaria`: Importación de extractos bancarios y conciliación con registros de caja/sistema.
 - `CuentaPorPagarGasto`: Registro de obligaciones de pago a proveedores, gastos operativos e integración de asientos.
 - `AsientoContable`: Libro diario y contabilidad general con partida doble de ingresos, egresos y pasivos.
+
+## Matriz de Entidades Centrales - Fase 10 (Recursos Humanos, Planillas, Políticas y Configuración Fiscal)
+- `ExpedienteLaboral`: Identidad laboral del empleado (`draft`, `pending_review`, `active`, `on_leave`, `suspended`, `terminated`, `archived`).
+- `ContratoLaboral`: Contratos de trabajo, vigencias, condiciones salariales e historial.
+- `SolicitudVacaciones`: Solicitudes de permisos y vacaciones con flujo de revisión y cálculo de saldos.
+- `PoliticaFiscal`: Reglas de impuestos, deducciones (IHSS, RAP, ISR), comisiones y redondeo desde Opciones avanzadas del Contador.
+- `PoliticaInstitucional`: Documentos institucionales de Privacidad, Uso/Condiciones y Política Financiera con control de versiones.
+- `AceptacionPolitica`: Evidencia de lectura y aceptación explícita de políticas por usuario con timestamp e IP.
