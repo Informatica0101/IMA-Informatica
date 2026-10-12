@@ -264,6 +264,12 @@ function doPost(e) {
       case "uploadNewsImage": result = uploadNewsImage(payload); break;
       case "updateNewsStatus": result = updateNewsStatus(payload); break;
       case "getStructuredLogs": result = getStructuredLogs(payload); break;
+      case "getInstitutionalCriteria": result = getInstitutionalCriteria(payload); break;
+      case "saveInstitutionalCriterion": result = saveInstitutionalCriterion(payload); break;
+      case "getFormativeEvaluations": result = getFormativeEvaluations(payload); break;
+      case "saveFormativeEvaluation": result = saveFormativeEvaluation(payload); break;
+      case "getSupportPlans": result = getSupportPlans(payload); break;
+      case "saveSupportPlan": result = saveSupportPlan(payload); break;
       case "ping": result = { status: "success", service: "USER", timestamp: new Date().toISOString(), dbConnected: true }; break;
       default: result = { status: "error", message: `Acción no reconocida: ${action}` };
     }
@@ -775,6 +781,175 @@ function getNews(payload) {
 
   filtered.sort((a,b) => new Date(b.fecha) - new Date(a.fecha) || String(b.hora).localeCompare(String(a.hora)));
   return { status: "success", data: filtered };
+}
+
+// --- MÓDULO FORMATIVO E INSTITUCIONAL INDEPENDIENTE (FASE 6) ---
+
+function getInstitutionalCriteria(payload) {
+  const { dominio } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "CriteriosInstitucionales");
+  const data = sheet.getDataRange().getValues();
+
+  if (data.length <= 1) {
+    const defaultCriteria = [
+      ["CRIT-1", "Comportamiento", "Convivencia y Respeto", "Cumple acuerdos de convivencia y respeta a compañeros y docentes.", JSON.stringify(["Siempre", "Frecuentemente", "AlgunasVeces", "RequiereAcompañamiento"]), "Global", "Activo"],
+      ["CRIT-2", "Comportamiento", "Responsabilidad y Colaboración", "Demuestra disposición colaborativa y asume responsabilidades.", JSON.stringify(["Siempre", "Frecuentemente", "AlgunasVeces", "RequiereAcompañamiento"]), "Global", "Activo"],
+      ["CRIT-3", "AseoHigiene", "Hábitos de Higiene y Cuidado Personal", "Mantiene rutinas adecuadas de higiene personal y cuidado de sus elementos.", JSON.stringify(["Cumple", "CumpleParcialmente", "RequiereAcompañamiento", "NoEvaluado"]), "Global", "Activo"],
+      ["CRIT-4", "PresentacionPersonal", "Uso del Uniforme e Identificación", "Cumple las normas institucionales sobre uso del uniforme e identificación escolar.", JSON.stringify(["Cumple", "CumpleParcialmente", "IncumplimientoObservado", "ExcepcionAutorizada"]), "Global", "Activo"]
+    ];
+    sheet.appendRow(["CriterioID", "Dominio", "Nombre", "Descripcion", "EscalaJSON", "AmbitoNivel", "Estado"]);
+    defaultCriteria.forEach(c => sheet.appendRow(c));
+    return {
+      status: "success",
+      data: defaultCriteria.map(c => ({
+        criterioId: c[0], dominio: c[1], nombre: c[2], descripcion: c[3], escala: JSON.parse(c[4]), ambitoNivel: c[5], estado: c[6]
+      }))
+    };
+  }
+
+  const criteria = data.slice(1).filter(r => {
+    if (dominio && normalizeString(r[1]) !== normalizeString(dominio)) return false;
+    if (r[6] === "Inactivo") return false;
+    return true;
+  }).map(r => ({
+    criterioId: r[0],
+    dominio: r[1],
+    nombre: r[2],
+    descripcion: r[3],
+    escala: r[4] ? (typeof r[4] === 'string' ? JSON.parse(r[4]) : r[4]) : [],
+    ambitoNivel: r[5] || "Global",
+    estado: r[6] || "Activo"
+  }));
+
+  return { status: "success", data: criteria };
+}
+
+function saveInstitutionalCriterion(payload) {
+  const { criterioId, dominio, nombre, descripcion, escala, ambitoNivel } = payload || {};
+  if (!nombre || !dominio) throw new Error("Nombre y Dominio son requeridos.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "CriteriosInstitucionales");
+  if (sheet.getLastRow() === 0) {
+    sheet.appendRow(["CriterioID", "Dominio", "Nombre", "Descripcion", "EscalaJSON", "AmbitoNivel", "Estado"]);
+  }
+
+  const cid = criterioId || ("CRIT-" + Date.now());
+  const escJSON = JSON.stringify(escala || ["Cumple", "CumpleParcialmente", "RequiereAcompañamiento"]);
+
+  const data = sheet.getDataRange().getValues();
+  const idx = data.findIndex(r => String(r[0]).trim() === String(cid).trim());
+
+  if (idx !== -1) {
+    sheet.getRange(idx + 1, 2).setValue(dominio);
+    sheet.getRange(idx + 1, 3).setValue(nombre);
+    sheet.getRange(idx + 1, 4).setValue(descripcion || "");
+    sheet.getRange(idx + 1, 5).setValue(escJSON);
+  } else {
+    sheet.appendRow([cid, dominio, nombre, descripcion || "", escJSON, ambitoNivel || "Global", "Activo"]);
+  }
+
+  return { status: "success", message: "Criterio institucional guardado.", data: { criterioId: cid } };
+}
+
+function getFormativeEvaluations(payload) {
+  const { userId, dominio, grado, seccion, parcial } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "EvaluacionesFormativas");
+  const data = sheet.getDataRange().getValues();
+  if (data.length <= 1) return { status: "success", data: [] };
+
+  const evaluations = data.slice(1).filter(r => {
+    if (userId && String(r[1]).trim() !== String(userId).trim()) return false;
+    if (dominio && normalizeString(r[2]) !== normalizeString(dominio)) return false;
+    return true;
+  }).map(r => ({
+    evaluacionId: r[0],
+    userId: r[1],
+    dominio: r[2],
+    criterioId: r[3],
+    calificacionValor: r[4],
+    observacionObjetiva: r[5],
+    contexto: r[6],
+    autorId: r[7],
+    visibilidadBoletin: r[8] === true || String(r[8]).toLowerCase() === "true",
+    fechaRegistro: r[9] ? new Date(r[9]).toISOString() : null
+  }));
+
+  return { status: "success", data: evaluations };
+}
+
+function saveFormativeEvaluation(payload) {
+  const { userId, dominio, criterioId, calificacionValor, observacionObjetiva, contexto, autorId, visibilidadBoletin } = payload || {};
+  if (!userId || !dominio || !calificacionValor) throw new Error("userId, dominio y calificacionValor son requeridos.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "EvaluacionesFormativas");
+  if (sheet.getLastRow() === 0) {
+    sheet.appendRow(["ID", "UserID", "Dominio", "CriterioID", "CalificacionValor", "ObservacionObjetiva", "Contexto", "AutorID", "VisibilidadBoletin", "FechaRegistro"]);
+  }
+
+  const evalId = "EVF-" + Date.now();
+  const now = new Date();
+
+  sheet.appendRow([
+    evalId,
+    userId,
+    dominio,
+    criterioId || "CRIT-GENERAL",
+    calificacionValor,
+    observacionObjetiva || "",
+    contexto || "Rutinario",
+    autorId || "Docente",
+    visibilidadBoletin !== false,
+    now
+  ]);
+
+  return { status: "success", message: "Evaluación formativa registrada.", data: { evaluacionId: evalId } };
+}
+
+function getSupportPlans(payload) {
+  const { userId } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "PlanesAcompanamiento");
+  const data = sheet.getDataRange().getValues();
+  if (data.length <= 1) return { status: "success", data: [] };
+
+  const plans = data.slice(1).filter(r => {
+    if (userId && String(r[1]).trim() !== String(userId).trim()) return false;
+    return true;
+  }).map(r => ({
+    planId: r[0],
+    userId: r[1],
+    situacionMeliorar: r[2],
+    objetivos: r[3] ? (typeof r[3] === 'string' ? JSON.parse(r[3]) : r[3]) : [],
+    responsableId: r[4],
+    fechaInicio: r[5] ? new Date(r[5]).toISOString() : null,
+    fechaRevision: r[6] ? new Date(r[6]).toISOString() : null,
+    estado: r[7] || "Activo"
+  }));
+
+  return { status: "success", data: plans };
+}
+
+function saveSupportPlan(payload) {
+  const { planId, userId, situacionMeliorar, objetivos, responsableId, fechaRevision } = payload || {};
+  if (!userId || !situacionMeliorar) throw new Error("userId y situacionMeliorar son requeridos.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "PlanesAcompanamiento");
+  if (sheet.getLastRow() === 0) {
+    sheet.appendRow(["PlanID", "UserID", "SituacionMeliorar", "ObjetivosJSON", "ResponsableID", "FechaInicio", "FechaRevision", "Estado"]);
+  }
+
+  const pid = planId || ("PLAN-ACOMP-" + Date.now());
+  const objJSON = JSON.stringify(objetivos || []);
+  const now = new Date();
+
+  sheet.appendRow([pid, userId, situacionMeliorar, objJSON, responsableId || "Orientacion", now, fechaRevision || "", "Activo"]);
+
+  return { status: "success", message: "Plan de acompañamiento guardado.", data: { planId: pid } };
 }
 
 function createNews(payload) {

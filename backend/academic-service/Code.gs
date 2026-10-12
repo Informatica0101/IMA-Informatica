@@ -380,7 +380,8 @@ function convertAdmissionToStudent(payload) {
   const expData = expSheet.getDataRange().getValues();
 
   let expId;
-  let dupExp = expData.find(r => normalizeString(`${r[1]}`) === normalizeString(userId) || (identificacion && String(r[2]).trim() === String(identificacion).trim()));
+  const targetPersonaId = userId || ("PER-" + Date.now());
+  let dupExp = expData.find(r => normalizeString(`${r[1]}`) === normalizeString(targetPersonaId));
 
   const now = new Date();
   const code = codigoInstitucional || ("STU-" + now.getFullYear() + "-" + Math.floor(1000 + Math.random() * 9000));
@@ -389,18 +390,20 @@ function convertAdmissionToStudent(payload) {
     expId = dupExp[0];
   } else {
     expId = "EXP-" + now.getTime();
+    const telContacto = row[9] || "";
+    const emailContacto = row[10] || "";
     expSheet.appendRow([
       expId,
-      userId || ("PER-" + Date.now()),
+      targetPersonaId,
       code,
       fechaNac || "",
       "Hondureña",
-      row[10] || "",
-      "",
+      "", // DireccionResidencia (se completa en ficha médica/estudiantil)
+      "", // FotografiaUrl
       "Activo",
       now,
       now,
-      `Admisión aprobada desde solicitud ${solicitudId}`
+      `Admisión aprobada desde solicitud ${solicitudId}. Tel: ${telContacto}, Email: ${emailContacto}`
     ]);
   }
 

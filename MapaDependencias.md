@@ -1,4 +1,4 @@
-# Mapa de Dependencias Académicas (v8.5.0 - Fase 5 Aula Virtual, Contenidos y Actividades)
+# Mapa de Dependencias Académicas (v8.6.0 - Fase 6 Evaluación, Calificaciones y Módulo Formativo)
 
 ## Módulo de Tareas (Teacher/Student)
 - Entidad: Tarea (Regular) -> Impacta Progreso Base.
@@ -62,3 +62,13 @@
 - `EntregaEstudiante`: Entregas multimodales (Archivo Drive, Texto Enriquecido, Enlace Externo), estado (`Pendiente`, `Entregada`, `EntregadaTarde`, `DevueltaCorrección`, `Revisada`) y confirmación con token de recepción del servidor.
 - `EntregaVersion`: Historial de versiones de entregas anteriores tras reenvíos o devoluciones para corrección.
 - `ComentarioEntrega`: Hilo de comentarios privados entre docente y estudiante sobre trabajos específicos.
+
+## Matriz de Entidades Centrales - Fase 6 (Evaluación y Módulo Formativo)
+- `CategoriaEvaluacion`: Categorías ponderadas de evaluación académica (Tareas %, Exámenes %, Proyectos %, Prácticas %).
+- `CalificacionEstudiante`: Registro atómico de notas académicas por estudiante, evaluación, ponderación y borrador/publicado.
+- `RubricaEvaluacion`: Rúbricas de evaluación analíticas por competencias y criterios observables.
+- `RecuperacionEstudiante`: Intentos de recuperación/reposición con historial de nota original y nota alcanzada.
+- `CierrePeriodo`: Control del cierre oficial de calificaciones por parcial, asignatura y grupo.
+- `CriterioInstitucional`: Catálogo institucional de criterios de Comportamiento, Aseo personal/Higiene y Presentación personal.
+- `EvaluacionFormativa`: Evaluaciones e incidencias formativas del estudiante, independientes de las notas académicas.
+- `PlanAcompanamiento`: Planes de acompañamiento pedagógico confidenciales para seguimiento estudiante/padre.
