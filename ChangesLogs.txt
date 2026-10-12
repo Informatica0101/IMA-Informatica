@@ -1216,3 +1216,23 @@ Descripción de cambios:
    - Redactado compendio funcional comprensible de todas las capacidades y módulos de la plataforma institucional sin tecnicismos ni sintaxis de código.
 5. `backend/Spreadsheet/AREA DE INFORMATICA IMA.xlsx`:
    - Actualizada la estructura de la base de datos de referencia con las 104 hojas de entidades y encabezados oficiales.
+
+===========================================================
+REGISTRO DE CAMBIOS - FASE 2: ARQUITECTURA INSTITUCIONAL, IDENTIDAD, INTEROPERABILIDAD Y COMUNICACIÓN
+===========================================================
+Archivos modificados:
+- Auditoría.txt
+- Pendientes.md
+- MapaDependencias.md
+- ChangesLogs.txt
+- Instrucciones.txt
+
+Descripción de cambios:
+1. `Auditoría.txt`:
+   - Registrado el diagnóstico técnico de arquitectura para la Fase 2, abordando la separación entre Persona e Identidad de Cuenta, matriz de propiedad de datos por microservicio, resolutor de fuentes, contratos de respuesta e idempotencia.
+2. `Pendientes.md`:
+   - Creados e indexados los requerimientos específicos de la Fase 2 (`[REQ-FASE2-001]` a `[REQ-FASE2-005]`) y actualizados sus estados a completados.
+3. `MapaDependencias.md`:
+   - Consolidado el modelo de relaciones centrales de identidad (Persona, CuentaUsuario, ExpedienteEstudiante, ExpedienteLaboral, Matrícula), la matriz de propiedad funcional de datos entre los 5 microservicios y el protocolo de contratos de comunicación e idempotencia.
+4. `Instrucciones.txt`:
+   - Registrada la tarea completada en el bloque correspondiente.

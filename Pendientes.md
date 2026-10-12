@@ -905,6 +905,55 @@
 
 ---
 
+## REQUERIMIENTOS FASE 2: ARQUITECTURA INSTITUCIONAL, IDENTIDAD, INTEROPERABILIDAD Y COMUNICACIÓN (New Generation Christian Academy)
+
+### [REQ-FASE2-001] Desacoplamiento de Entidad Persona y Identidad de Cuenta de Usuario
+- **Origen del Hallazgo:** Fase 2. Arquitectura institucional, identidad, interoperabilidad y comunicación entre servicios.
+- **Severidad/Clasificación:** Crítico
+- **Archivos Involucrados:** `backend/user-service/Code.gs`, `js/api.js`, `MapaDependencias.md`
+- **Dependencias Expuestas:** Tablas `Personas`, `Usuarios`, `RelacionesFamiliares`.
+- **Descripción del Alcance:** Distinguir la persona humana de sus cuentas de inicio de sesión y registros operativos, permitiendo múltiples cuentas históricas o relaciones sin duplicar datos personales.
+- **Criterios de Aceptación:** Funciones de búsqueda de coincidencias, creación de persona, vinculación y estados granulares de cuenta operativos en backend.
+- **Estado:** [X] Completada
+
+### [REQ-FASE2-002] Matriz de Propiedad de Datos y Regla de Escritura Única entre Microservicios
+- **Origen del Hallazgo:** Fase 2. Arquitectura institucional, identidad, interoperabilidad y comunicación entre servicios.
+- **Severidad/Clasificación:** Crítico
+- **Archivos Involucrados:** `backend/*/Code.gs`, `MapaDependencias.md`
+- **Dependencias Expuestas:** Los 5 microservicios (USER, ACADEMIC, ACCOUNTING, TASK, EXAM).
+- **Descripción del Alcance:** Asignar una única autoridad de escritura para cada entidad y prohibir escrituras directas cruzadas entre tablas de distintos dominios.
+- **Criterios de Aceptación:** Matriz de propiedad de datos mapeada y verificada en el backend.
+- **Estado:** [X] Completada
+
+### [REQ-FASE2-003] Resolutor Central de Fuentes de Datos y Definición de Identificadores Estables
+- **Origen del Hallazgo:** Fase 2. Arquitectura institucional, identidad, interoperabilidad y comunicación entre servicios.
+- **Severidad/Clasificación:** Alto
+- **Archivos Involucrados:** `js/config.js`, `js/api.js`, `backend/*/Code.gs`
+- **Dependencias Expuestas:** Mapeo de microservicios y generación de identificadores `PER-`, `USR-`, `EXP-`, `MAT-`, `CRG-`, `PAG-`, `FAC-`.
+- **Descripción del Alcance:** Resolver dinámicamente endpoints y hojas de datos mediante el catálogo central, utilizando claves internas estables desacopladas de las etiquetas visibles.
+- **Criterios de Aceptación:** Enrutamiento central de servicios mediante `SERVICE_URLS` e identificadores estables desacoplados de referencias estéticas.
+- **Estado:** [X] Completada
+
+### [REQ-FASE2-004] Estandarización de Contratos de API, Manejo de Errores e Idempotencia
+- **Origen del Hallazgo:** Fase 2. Arquitectura institucional, identidad, interoperabilidad y comunicación entre servicios.
+- **Severidad/Clasificación:** Crítico
+- **Archivos Involucrados:** `js/api.js`, `backend/*/Code.gs`
+- **Dependencias Expuestas:** Transporte JSON, taxonomía de códigos de error y prevención de ejecuciones duplicadas.
+- **Descripción del Alcance:** Implementar sobres de petición/respuesta uniformes, códigos de error estándar (VALIDATION_ERROR, UNAUTHORIZED, CONFLICT, etc.) e idempotencia con bloqueos para operaciones críticas.
+- **Criterios de Aceptación:** Ingesta de errores estandarizada, timeout de 60s, reintentos progresivos y prevención de registros duplicados en backend.
+- **Estado:** [X] Completada
+
+### [REQ-FASE2-005] Seguridad RBAC en Servidor y Trazabilidad de Auditoría Estructurada
+- **Origen del Hallazgo:** Fase 2. Arquitectura institucional, identidad, interoperabilidad y comunicación entre servicios.
+- **Severidad/Clasificación:** Crítico
+- **Archivos Involucrados:** `backend/*/Code.gs`, `js/api.js`
+- **Dependencias Expuestas:** Matriz `ROLE_PERMISSIONS` y tabla `LogsSistema`.
+- **Descripción del Alcance:** Validar roles y permisos del lado del servidor para cada acción recibida y registrar eventos estructurados sanitizando claves sensibles.
+- **Criterios de Aceptación:** Rechazo explícito `AUTH_PERMISSION_DENIED` para acciones no autorizadas y enmascaramiento automático de secretos en `LogsSistema`.
+- **Estado:** [X] Completada
+
+---
+
 ## REQUERIMIENTOS FASE 1: AUDITORÍA Y PLANIFICACIÓN DE LA EXPANSIÓN (New Generation Christian Academy)
 
 ### [REQ-FASE1-001] Inventario Exhaustivo de Módulos, Pantallas y Servicios Backend (Fundación)

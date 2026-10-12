@@ -235,7 +235,10 @@ function doPost(e) {
       default: result = { status: "error", message: `Acción no reconocida: ${action}` };
     }
     return textResponse(result);
-  } catch (err) { return textResponse({ status: "error", message: err.message || "Error interno contabilidad." }); }
+  } catch (err) {
+    logStructuredEvent("ACCOUNTING", "doPost", "ERROR", "UNHANDLED_EXCEPTION", err.message, e ? e.postData : null, "Sistema");
+    return textResponse({ status: "error", code: "INTERNAL_ERROR", message: err.message || "Error interno contabilidad." });
+  }
 }
 
 // ---------------------------------------------------------------------------
