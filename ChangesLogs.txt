@@ -455,7 +455,7 @@ REGISTRO DE CAMBIOS - FASE 6 Y OPTIMIZACIÓN v7.8.9 - Thu Jul  2 15:51:38 UTC 20
 Módulo: Dashboard del Profesor
 - js/teacher.js:
     - Implementada optimización de navegación: salta automáticamente el paso de 'Secciones' si el grado tiene una única sección configurada en el GLOBAL_SCOPE.
-    - Reforzado el filtrado de entregas y estudiantes: ahora utiliza estrictamente el parcial vigente del GLOBAL_SCOPE para evitar fugas de datos de períodos anteriores.
+    - Reforzado el filtrado de entregas y estudiantes: ahora utiliza strictly el parcial vigente del GLOBAL_SCOPE para evitar fugas de datos de períodos anteriores.
     - Sincronización de la variable window.PARCIAL_ACTUAL con el GLOBAL_SCOPE en todos los puntos de entrada para garantizar consistencia.
     - Eliminados fallbacks manuales de parcial en favor del normalizador global.
 
@@ -903,3 +903,26 @@ Archivos modificados:
 
 Descripción de cambios:
 - Se actualizaron todos los bloques de requerimientos en Pendientes.md (REQ-DASH, REQ-AMP, REQ-AMP2, REQ-SUP, REQ-FLOW) para reflejar explícitamente el campo `- **Estado:** [X] Completada`.
+
+===========================================================
+REGISTRO DE CAMBIOS - FASE 2: ARQUITECTURA Y MODELO CENTRAL DE IDENTIDAD
+===========================================================
+Archivos modificados:
+- backend/user-service/Code.gs
+- js/api.js
+- MapaDependencias.md
+
+Descripción de cambios:
+1. `backend/user-service/Code.gs`:
+   - Incorporadas hojas e inicialización de entidades `'Personas'` y `'RelacionesFamiliares'`.
+   - Creadas las funciones backend `findPersonMatches`, `createPerson`, `linkPersonAccount` y `manageAccountState`.
+   - Modificado `registerUser` para admitir `personaId` e inicializar estados de cuenta (`"Activa"`, `"Pendiente"`, etc.).
+   - Refactorizado `loginUser` para bloquear explícitamente el acceso a cuentas con estados `"Suspendida"`, `"Desactivada"` o `"Bloqueada"` e inyectar el timestamp de último acceso.
+   - Actualizadas las funciones de búsqueda de estudiantes (`getStudents`, `getStudentsByGradoSeccion`) para excluir cuentas con estado `"Desactivada"`.
+   - Incorporados permisos granulares de gestión de identidad (`findPersonMatches`, `createPerson`, `linkPersonAccount`, `manageAccountState`) en la matriz `ROLE_PERMISSIONS`.
+
+2. `js/api.js`:
+   - Actualizada la inyección automática de `authRole` en `fetchApi` buscando la sesión en `localStorage.getItem("currentUser")` o `sessionStorage.getItem("currentUser")`.
+
+3. `MapaDependencias.md`:
+   - Documentado el mapa de entidades de la Fase 2 (`Persona`, `CuentaUsuario`, `ExpedienteEstudiante`, `ExpedienteLaboral`, `RelacionesFamiliares`), propietarios de datos por microservicio (USER, ACADEMIC, ACCOUNTING, TASK, EXAM) y contratos de interfaz.

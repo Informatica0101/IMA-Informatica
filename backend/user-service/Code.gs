@@ -1,6 +1,6 @@
 // NOTA: Las URLs de los microservicios solo se deben actualizar en el frontend (js/config.js), no en este archivo.
 // ============================================================================
-// MICROSERVICIO DE USUARIOS (VERSIÓN MODULAR RESTAURADA v7.9.6)
+// MICROSERVICIO DE USUARIOS (VERSIÓN MODULAR RESTAURADA v8.2.0 - FASE 2)
 // ============================================================================
 
 const SPREADSHEET_ID = "1txfudU4TR4AhVtvFgGRT5Wtmwjl78hK4bfR4XbRwwww";
@@ -37,7 +37,7 @@ const ANALYTICS_CONFIG = {
 };
 
 // ---------------------------------------------------------------------------
-// UTILIDADES
+// UTILIDADES Y SANITIZACIÓN
 // ---------------------------------------------------------------------------
 
 function logDebug(message, optionalParam) {
@@ -179,6 +179,9 @@ function getOrCreateSheet(ss, name) {
   let sheet = ss.getSheetByName(name);
   if (!sheet) {
     sheet = ss.insertSheet(name);
+    if (name === "Personas") sheet.appendRow(["PersonaID", "Nombres", "Apellidos", "Identificacion", "EmailContacto", "TelefonoContacto", "EstadoPersona", "FechaCreacion", "FechaActualizacion", "Observaciones"]);
+    if (name === "Usuarios") sheet.appendRow(["UserId", "Nombre", "Grado", "Seccion", "Email", "PasswordHash", "Rol", "Telefono", "NumeroLista", "PersonaID", "EstadoCuenta", "FechaCreacion", "UltimoAcceso"]);
+    if (name === "RelacionesFamiliares") sheet.appendRow(["RelacionID", "PersonaEstudianteID", "PersonaResponsableID", "TipoParentesco", "EstadoAutorizacion", "FechaInicio", "FechaFin", "Observaciones"]);
     if (name === "Logros") sheet.appendRow(["Fecha", "UserId", "Alumno", "Juego", "Asignatura", "Puntaje", "Nivel", "Grado", "XP"]);
     if (name === "NoticiasPortal") sheet.appendRow(["NoticiaID", "Fecha", "Hora", "Título", "Contenido", "ImagenUrl", "Categoría", "GradoAudiencia", "SeccionAudiencia", "FechaInicio", "FechaFin", "Estado"]);
     if (name === "QuizProAnalytics") sheet.appendRow(["analyticsId", "fecha", "userId", "quizId", "gameId", "gameName", "asignatura", "grado", "nivel", "preguntaId", "respuestaSeleccionada", "respuestaCorrecta", "esCorrecta", "tiempoRespuesta", "tiempoBase", "ratio", "cambiosRespuesta", "indiceConfianza", "indiceAdivinacion", "indiceDominio", "totalXP"]);
@@ -199,15 +202,14 @@ function normalizeSubjectInBackend(name) {
 
 function doGet() { return textResponse({ status: "success", service: "USER", timestamp: new Date().toISOString(), dbConnected: true }); }
 
-
 // ---------------------------------------------------------------------------
-// CONTROL DE ACCESO BASADO EN ROLES (RBAC SERVIDOR - REQ-EXP-008)
+// CONTROL DE ACCESO BASADO EN ROLES (RBAC SERVIDOR - REQ-EXP-008 & FASE 2)
 // ---------------------------------------------------------------------------
 const ROLE_PERMISSIONS = {
   "Administrador": ["*"],
-  "Director": ["createNews", "uploadNewsImage", "getNews", "updateNewsStatus", "getStudents", "getStudentsByGradoSeccion", "getUserInfo", "saveGameResult", "getGameStats", "getGlobalTop", "recordAnalytics", "getLearningProfile", "mergeGuestData", "updateUserProfile"],
-  "Subdirector": ["createNews", "uploadNewsImage", "getNews", "updateNewsStatus", "getStudents", "getStudentsByGradoSeccion", "getUserInfo", "saveGameResult", "getGameStats", "getGlobalTop", "recordAnalytics", "getLearningProfile", "mergeGuestData", "updateUserProfile"],
-  "Secretaría": ["createNews", "uploadNewsImage", "getNews", "updateNewsStatus", "getStudents", "getStudentsByGradoSeccion", "getUserInfo", "updateUserProfile"],
+  "Director": ["createNews", "uploadNewsImage", "getNews", "updateNewsStatus", "getStudents", "getStudentsByGradoSeccion", "getUserInfo", "saveGameResult", "getGameStats", "getGlobalTop", "recordAnalytics", "getLearningProfile", "mergeGuestData", "updateUserProfile", "findPersonMatches", "createPerson", "linkPersonAccount", "manageAccountState"],
+  "Subdirector": ["createNews", "uploadNewsImage", "getNews", "updateNewsStatus", "getStudents", "getStudentsByGradoSeccion", "getUserInfo", "saveGameResult", "getGameStats", "getGlobalTop", "recordAnalytics", "getLearningProfile", "mergeGuestData", "updateUserProfile", "findPersonMatches"],
+  "Secretaría": ["createNews", "uploadNewsImage", "getNews", "updateNewsStatus", "getStudents", "getStudentsByGradoSeccion", "getUserInfo", "updateUserProfile", "findPersonMatches", "createPerson", "linkPersonAccount", "manageAccountState"],
   "Contador": ["getStudents", "getUserInfo", "getNews"],
   "Consejeros": ["getStudents", "getStudentsByGradoSeccion", "getUserInfo", "getLearningProfile", "getNews"],
   "Profesor": ["getStudents", "getStudentsByGradoSeccion", "getUserInfo", "getNews", "createNews", "uploadNewsImage", "saveGameResult", "getGameStats", "getGlobalTop", "recordAnalytics", "getLearningProfile", "mergeGuestData"],
@@ -234,6 +236,7 @@ function doPost(e) {
     const { action, payload } = JSON.parse(e.postData.contents);
     const authCheck = validateRolePermission(action, payload);
     if (!authCheck.authorized) {
+      logStructuredEvent("USER", action, "WARN", "AUTH_PERMISSION_DENIED", `Acceso denegado a acción ${action} para rol ${authCheck.role}`, payload, authCheck.role);
       return textResponse({ status: "error", code: "AUTH_PERMISSION_DENIED", message: "Acceso denegado: El rol " + authCheck.role + " no tiene permiso para la acción " + action + "." });
     }
     let result;
@@ -246,6 +249,10 @@ function doPost(e) {
       case "requestPasswordRecovery": result = requestPasswordRecovery(payload); break;
       case "resetPassword": result = resetPassword(payload); break;
       case "updateUserProfile": result = updateUserProfile(payload); break;
+      case "findPersonMatches": result = findPersonMatches(payload); break;
+      case "createPerson": result = createPerson(payload); break;
+      case "linkPersonAccount": result = linkPersonAccount(payload); break;
+      case "manageAccountState": result = manageAccountState(payload); break;
       case "saveGameResult": result = saveGameResult(payload); break;
       case "getGameStats": result = getGameStats(payload); break;
       case "getGlobalTop": result = getGlobalTop(payload); break;
@@ -261,7 +268,122 @@ function doPost(e) {
       default: result = { status: "error", message: `Acción no reconocida: ${action}` };
     }
     return textResponse(result);
-  } catch (err) { return textResponse({ status: "error", message: err.message || "Error interno usuarios." }); }
+  } catch (err) {
+    logStructuredEvent("USER", "doPost", "ERROR", "UNHANDLED_EXCEPTION", err.message, e ? e.postData : null, "Sistema");
+    return textResponse({ status: "error", message: err.message || "Error interno usuarios." });
+  }
+}
+
+// ---------------------------------------------------------------------------
+// FASE 2: MODELO CENTRAL DE IDENTIDAD (PERSONAS & CUENTAS)
+// ---------------------------------------------------------------------------
+
+function findPersonMatches(payload) {
+  const { nombres, apellidos, identificacion, emailContacto } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "Personas");
+  const data = sheet.getDataRange().getValues().slice(1);
+
+  const normIdent = normalizeString(identificacion);
+  const normEmail = normalizeString(emailContacto);
+  const normFullName = normalizeString(`${nombres || ''} ${apellidos || ''}`);
+
+  const matches = [];
+
+  data.forEach(r => {
+    const pId = r[0];
+    const pNombres = r[1];
+    const pApellidos = r[2];
+    const pIdent = r[3];
+    const pEmail = r[4];
+
+    let matchType = null;
+    if (normIdent && normalizeString(pIdent) === normIdent) {
+      matchType = "IDENTIFICACION_EXACTA";
+    } else if (normEmail && normalizeString(pEmail) === normEmail) {
+      matchType = "EMAIL_EXACTO";
+    } else if (normFullName && normalizeString(`${pNombres} ${pApellidos}`) === normFullName) {
+      matchType = "COINCIDENCIA_NOMBRE";
+    }
+
+    if (matchType) {
+      matches.push({
+        personaId: pId,
+        nombres: pNombres,
+        apellidos: pApellidos,
+        identificacion: pIdent,
+        emailContacto: pEmail,
+        estadoPersona: r[6],
+        tipoCoincidencia: matchType
+      });
+    }
+  });
+
+  return { status: "success", matches: matches };
+}
+
+function createPerson(payload) {
+  const { nombres, apellidos, identificacion, emailContacto, telefonoContacto, observaciones } = payload || {};
+  if (!nombres || !apellidos) throw new Error("Nombres y apellidos son requeridos para crear una Persona.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "Personas");
+  const now = new Date();
+  const personaId = "PER-" + now.getTime();
+
+  sheet.appendRow([
+    personaId,
+    nombres.trim(),
+    apellidos.trim(),
+    identificacion ? String(identificacion).trim() : "",
+    emailContacto ? String(emailContacto).trim().toLowerCase() : "",
+    telefonoContacto ? String(telefonoContacto).trim() : "",
+    "Activa",
+    now,
+    now,
+    observaciones || ""
+  ]);
+
+  logStructuredEvent("USER", "createPerson", "INFO", "PERSON_CREATED", `Persona ${personaId} creada exitosamente`, { personaId, nombres, apellidos }, payload && payload.authRole);
+
+  return { status: "success", personaId: personaId, message: "Registro central de Persona creado exitosamente." };
+}
+
+function linkPersonAccount(payload) {
+  const { userId, personaId } = payload || {};
+  if (!userId || !personaId) throw new Error("userId y personaId requeridos.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getSheetOrThrow(ss, "Usuarios");
+  const data = sheet.getDataRange().getValues();
+
+  const idx = data.findIndex(r => String(r[0]).trim() === String(userId).trim());
+  if (idx === -1) throw new Error("Cuenta de usuario no encontrada.");
+
+  sheet.getRange(idx + 1, 10).setValue(personaId);
+
+  return { status: "success", message: `Cuenta ${userId} vinculada exitosamente a Persona ${personaId}.` };
+}
+
+function manageAccountState(payload) {
+  const { userId, newState, motivo } = payload || {};
+  if (!userId || !newState) throw new Error("userId y newState son requeridos.");
+
+  const validStates = ["Pendiente", "InvitacionEnviada", "Activa", "Suspendida", "Bloqueada", "Desactivada"];
+  if (validStates.indexOf(newState) === -1) throw new Error(`Estado inválido. Debe ser uno de: ${validStates.join(", ")}`);
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getSheetOrThrow(ss, "Usuarios");
+  const data = sheet.getDataRange().getValues();
+
+  const idx = data.findIndex(r => String(r[0]).trim() === String(userId).trim());
+  if (idx === -1) throw new Error("Cuenta de usuario no encontrada.");
+
+  sheet.getRange(idx + 1, 11).setValue(newState);
+
+  logStructuredEvent("USER", "manageAccountState", "WARN", "ACCOUNT_STATE_CHANGED", `Estado de cuenta ${userId} cambiado a ${newState}. Motivo: ${motivo || 'N/A'}`, { userId, newState, motivo }, payload && payload.authRole);
+
+  return { status: "success", userId: userId, newState: newState, message: `Estado de la cuenta actualizado a '${newState}'.` };
 }
 
 // ---------------------------------------------------------------------------
@@ -269,7 +391,7 @@ function doPost(e) {
 // ---------------------------------------------------------------------------
 
 function registerUser(payload) {
-  const { nombre, grado, seccion, email, password, telefono, numeroLista, forceUpdate } = payload || {};
+  const { nombre, grado, seccion, email, password, telefono, numeroLista, forceUpdate, personaId } = payload || {};
   if (!nombre || !email || !password) throw new Error("Datos obligatorios faltantes.");
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
   const sheet = getSheetOrThrow(ss, "Usuarios");
@@ -277,33 +399,97 @@ function registerUser(payload) {
   const lowerEmail = email.toLowerCase().trim();
   let existingIndex = -1;
   for (let i = 1; i < data.length; i++) { if (data[i][4]?.toString().toLowerCase().trim() === lowerEmail) { existingIndex = i; break; } }
+  const now = new Date();
+
   if (existingIndex !== -1) {
     if (forceUpdate) {
       const userId = data[existingIndex][0];
       const hashedPassword = Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, password).map(b => ('0' + (b & 0xFF).toString(16)).slice(-2)).join('');
-      sheet.getRange(existingIndex + 1, 1, 1, 9).setValues([[userId, nombre, grado || "", seccion || "", email, hashedPassword, "Estudiante", telefono || "", numeroLista || ""]]);
+      sheet.getRange(existingIndex + 1, 1, 1, 13).setValues([[
+        userId,
+        nombre,
+        grado || "",
+        seccion || "",
+        email,
+        hashedPassword,
+        "Estudiante",
+        telefono || "",
+        numeroLista || "",
+        personaId || data[existingIndex][9] || "",
+        "Activa",
+        data[existingIndex][11] || now,
+        now
+      ]]);
       return { status: "success", userId, message: "Cuenta actualizada." };
     }
     return { status: "error", exists: true, message: "Email ya registrado.", data: { nombre: data[existingIndex][1], gradoActual: data[existingIndex][2], seccionActual: data[existingIndex][3] } };
   }
-  const userId = "USR-" + new Date().getTime();
+  const userId = "USR-" + now.getTime();
   const hashedPassword = Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, password).map(b => ('0' + (b & 0xFF).toString(16)).slice(-2)).join('');
-  sheet.appendRow([userId, nombre, grado || "", seccion || "", email, hashedPassword, "Estudiante", telefono || "", numeroLista || ""]);
+  sheet.appendRow([
+    userId,
+    nombre,
+    grado || "",
+    seccion || "",
+    email,
+    hashedPassword,
+    "Estudiante",
+    telefono || "",
+    numeroLista || "",
+    personaId || "",
+    "Activa",
+    now,
+    now
+  ]);
   return { status: "success", userId };
 }
 
 function loginUser(payload) {
   const { identifier, password } = payload || {};
-  const data = getSheetOrThrow(SpreadsheetApp.openById(SPREADSHEET_ID), "Usuarios").getDataRange().getValues();
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getSheetOrThrow(ss, "Usuarios");
+  const data = sheet.getDataRange().getValues();
   const hp = Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, password).map(b => ('0' + (b & 0xFF).toString(16)).slice(-2)).join('');
   const id = identifier.toLowerCase().trim();
-  for (let i = 1; i < data.length; i++) { if ((data[i][4]?.toString().toLowerCase().trim() === id || data[i][1]?.toString().toLowerCase().trim() === id) && data[i][5] === hp) { return { status: "success", data: { userId: data[i][0], nombre: data[i][1], grado: data[i][2], seccion: data[i][3], email: data[i][4], rol: data[i][6], telefono: data[i][7] || "", numeroLista: data[i][8] || "" } }; } }
+
+  for (let i = 1; i < data.length; i++) {
+    const row = data[i];
+    const uEmail = row[4]?.toString().toLowerCase().trim();
+    const uNombre = row[1]?.toString().toLowerCase().trim();
+    const state = row[10] || "Activa";
+
+    if ((uEmail === id || uNombre === id) && row[5] === hp) {
+      if (state === "Suspendida" || state === "Desactivada" || state === "Bloqueada") {
+        logStructuredEvent("USER", "loginUser", "WARN", "LOGIN_BLOCKED", `Intento de inicio de sesión en cuenta ${state}`, { identifier, userId: row[0], state }, "Sistema");
+        return { status: "error", message: `Su cuenta se encuentra en estado '${state}'. Por favor contacte a la administración.` };
+      }
+
+      // Actualizar Último Acceso
+      sheet.getRange(i + 1, 13).setValue(new Date());
+
+      return {
+        status: "success",
+        data: {
+          userId: row[0],
+          nombre: row[1],
+          grado: row[2],
+          seccion: row[3],
+          email: row[4],
+          rol: row[6],
+          telefono: row[7] || "",
+          numeroLista: row[8] || "",
+          personaId: row[9] || "",
+          estadoCuenta: state
+        }
+      };
+    }
+  }
   return { status: "error", message: "Credenciales incorrectas." };
 }
 
 function getStudents(payload) {
   const data = getSheetOrThrow(SpreadsheetApp.openById(SPREADSHEET_ID), "Usuarios").getDataRange().getValues().slice(1);
-  return { status: "success", data: data.filter(r => r[6] === 'Estudiante').map(r => ({ userId: r[0], nombre: r[1], numeroLista: r[8] || "" })) };
+  return { status: "success", data: data.filter(r => r[6] === 'Estudiante' && r[10] !== 'Desactivada').map(r => ({ userId: r[0], nombre: r[1], numeroLista: r[8] || "" })) };
 }
 
 function getStudentsByGradoSeccion(payload) {
@@ -311,7 +497,7 @@ function getStudentsByGradoSeccion(payload) {
   const data = getSheetOrThrow(SpreadsheetApp.openById(SPREADSHEET_ID), "Usuarios").getDataRange().getValues().slice(1);
   const sGrado = normalizeString(grado);
   const sSeccion = normalizeString(seccion);
-  const students = data.filter(r => String(r[6]).trim() === 'Estudiante' && normalizeString(r[2]) === sGrado && (!seccion || normalizeString(r[3]) === sSeccion)).map(r => ({ userId: r[0], nombre: r[1], grado: r[2], seccion: r[3], email: r[4], telefono: r[7] || "", numeroLista: r[8] || "" }));
+  const students = data.filter(r => String(r[6]).trim() === 'Estudiante' && normalizeString(r[2]) === sGrado && (!seccion || normalizeString(r[3]) === sSeccion) && r[10] !== 'Desactivada').map(r => ({ userId: r[0], nombre: r[1], grado: r[2], seccion: r[3], email: r[4], telefono: r[7] || "", numeroLista: r[8] || "" }));
   students.sort((a, b) => (parseInt(a.numeroLista) || 999) - (parseInt(b.numeroLista) || 999));
   return { status: "success", data: students };
 }
@@ -319,7 +505,7 @@ function getStudentsByGradoSeccion(payload) {
 function getUserInfo(payload) {
   const r = getSheetOrThrow(SpreadsheetApp.openById(SPREADSHEET_ID), "Usuarios").getDataRange().getValues().find(r => String(r[0]) === String(payload.userId));
   if (!r) throw new Error("Usuario no encontrado.");
-  return { status: "success", data: { userId: r[0], nombre: r[1], email: r[4], rol: r[6], telefono: r[7] || "" } };
+  return { status: "success", data: { userId: r[0], nombre: r[1], email: r[4], rol: r[6], telefono: r[7] || "", personaId: r[9] || "", estadoCuenta: r[10] || "Activa" } };
 }
 
 function requestPasswordRecovery(payload) {
@@ -366,7 +552,7 @@ function updateUserProfile(payload) {
   if (email) userRow[4] = email.toLowerCase().trim();
   if (telefono !== undefined) userRow[7] = String(telefono).trim();
   if (numeroLista !== undefined) userRow[8] = String(numeroLista).trim();
-  sheet.getRange(idx + 1, 1, 1, 9).setValues([userRow]);
+  sheet.getRange(idx + 1, 1, 1, userRow.length).setValues([userRow]);
   return { status: "success", message: "Perfil actualizado." };
 }
 
@@ -543,7 +729,7 @@ function mergeGuestData(payload) {
     if (data.puntaje !== undefined && data.juego) {
       saveGameResult({ userId, nombreAlumno: data.nombreAlumno, juego: data.juego, asignatura: data.asignatura, puntaje: data.puntaje, nivel: data.nivel, grado: data.grado, xpGanada: data.xpGanada || 0 });
     }
-    // 2. Migrar Analítica (RESTAURADO)
+    // 2. Migrar Analítica
     if (data.preguntaId) {
       const aId = "ANL-MERGE-" + Date.now() + "-" + Math.floor(Math.random() * 1000);
       analyticsSheet.appendRow([aId, new Date(item.updated_at || Date.now()), userId, data.quizId || "", data.gameId || "QuizPro", data.gameName || "QuizPro", data.asignatura, data.grado, data.nivel, data.preguntaId, data.respuestaSeleccionada, data.respuestaCorrecta, data.esCorrecta, data.tiempoRespuesta, 0, 0, data.cambiosRespuesta, 0, 0, 0, 0]);
