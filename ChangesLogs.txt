@@ -951,3 +951,25 @@ Descripción de cambios:
 
 2. `MapaDependencias.md`:
    - Actualizado el inventario de servicios y autoridades de escritura para los componentes de la Fase 3.
+
+===========================================================
+REGISTRO DE CAMBIOS - FASE 4: EXPEDIENTES ESTUDIANTILES, ADMISIONES, MATRÍCULAS Y MOVIMIENTOS
+===========================================================
+Archivos modificados:
+- backend/academic-service/Code.gs
+- MapaDependencias.md
+- ChangesLogs.txt
+
+Descripción de cambios:
+1. `backend/academic-service/Code.gs`:
+   - Creadas e inicializadas las tablas de la Fase 4 en `getOrCreateSheet`: `'ExpedientesEstudiantes'`, `'SolicitudesAdmision'`, `'ResponsablesTutores'`, `'RelacionesEstudianteTutor'`, `'DocumentosEstudiante'`, `'MovimientosEstudiante'`, `'AntecedentesAcademicos'`.
+   - Implementadas funciones backend para Solicitudes de Admisión (`createAdmissionRequest`, `getAdmissionRequests`, `updateAdmissionStatus`, `convertAdmissionToStudent`).
+   - Implementado Expediente Digital Unificado del Estudiante (`getStudentFile`, `updateStudentFile`, `getStudentTimeline`, `findDuplicateStudents`, `mergeStudentFiles`).
+   - Implementada Gestión de Tutores / Responsables Legales (`getStudentGuardians`, `saveStudentGuardian`, `unlinkStudentGuardian`).
+   - Implementada Gestión Documental del Estudiante (`uploadStudentDocument`, `getStudentDocuments`, `updateDocumentStatus`).
+   - Implementado Flujo de Matrículas, Cupos y Promoción (`createStudentEnrollment`, `getStudentEnrollments`, `renewStudentEnrollment`, `checkEnrollmentCapacity`).
+   - Implementado Registro de Movimientos de Estudiantes (`changeStudentSection`, `recordStudentTransfer`, `recordStudentWithdrawal`, `processStudentReentry`).
+   - Actualizados permisos RBAC en `ROLE_PERMISSIONS` y en el selector `doPost` para autorizar las acciones de la Fase 4.
+
+2. `MapaDependencias.md`:
+   - Actualizados los contratos de interfaz y esquemas de entidades para los componentes de la Fase 4.
