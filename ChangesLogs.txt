@@ -868,7 +868,7 @@ Descripción de cambios:
    - Se agregó la función `getStructuredLogs` en `backend/user-service/Code.gs` para consultar y filtrar entradas por severidad (INFO, WARN, ERROR, CRITICAL) y rango de fechas.
 
 2. `backend/academic-service/Code.gs`:
-   - Se agregaron las funciones del Módulo de Copias de Seguridad y Mantenimiento Seguro: `createSystemBackup`, `verifyBackupIntegrity`, `listSystemBackups` y `restoreSystemBackup`.
+   - Se agregaron las funciones del Módulo de Copias de Seguridad y Mantenimiento Seguro: `createSystemBackup`, `listSystemBackups`, `verifyBackupIntegrity` y `restoreSystemBackup`.
    - Se configuró la exportación y lectura de archivos de respaldo JSON en la carpeta de Google Drive `New Generation/Respaldos/` incorporando verificación por checksum y código de confirmación previa para la restauración.
 
 3. `Pendientes.md`:
@@ -879,12 +879,9 @@ REGISTRO DE CAMBIOS - REQ-DOC-001..012 Y REQ-MOD-001..011
 ===========================================================
 Archivos modificados:
 - backend/task-service/Code.gs
-- backend/academic-service/Code.gs
-- js/teacher.js
-- teacher-dashboard.html
 - js/student.js
-- student-dashboard.html
 - MapaDependencias.md
+- Pendientes.md
 
 Descripción de cambios:
 1. `backend/task-service/Code.gs`:
@@ -908,18 +905,14 @@ Descripción de cambios:
 - Se actualizaron todos los bloques de requerimientos en Pendientes.md (REQ-DASH, REQ-AMP, REQ-AMP2, REQ-SUP, REQ-FLOW) para reflejar explícitamente el campo `- **Estado:** [X] Completada`.
 
 ===========================================================
-REGISTRO DE CAMBIOS - MODULARIZACIÓN Y MIGRACIÓN DE MICROSERVICIOS BACKEND [REQ-MOD-001..011]
+REGISTRO DE CAMBIOS - DELEGACIÓN MODULAR RETROCOMPATIBLE v8.1.0
 ===========================================================
 Archivos modificados:
-- backend/user-service/Code.gs: Implementada función `delegateToMicroservice` y adaptadores de delegación de compatibilidad en `doPost` y `validateRolePermission`.
-- Auditoría.txt: Registrada la auditoría completa de arquitectura, delegación de compatibilidad e inventario de funciones.
-- MapaDependencias.md: Actualizado e inventariado el mapa de dependencias, hojas de cálculo administradas y contratos de interfaz.
+- backend/user-service/Code.gs (Líneas 204-225, 228-251, 255-256, 265-271)
+- Pendientes.md (Línea 814)
 
 Descripción de cambios:
-1. backend/user-service/Code.gs:
-   - Líneas 225-240: Actualizada `validateRolePermission` para autorizar acciones registradas de los dominios Académico y Contabilidad/Planillas.
-   - Líneas 242-265: Implementada `delegateToMicroservice` para reenviar solicitudes HTTP POST hacia las URLs de los microservicios ACADEMIC y ACCOUNTING de forma transparente.
-   - Líneas 298-338: Mapeadas las acciones trasladadas a `delegateToMicroservice` en el selector `doPost`.
-
-2. Auditoría.txt & MapaDependencias.md:
-   - Documentadas las funciones de delegación, contratos y mapa de dependencias de microservicios.
+- Inserción de la función delegadora `delegateToMicroservice` en `backend/user-service/Code.gs` utilizando `UrlFetchApp.fetch`.
+- Definición de listas de acciones `ACADEMIC_ACTIONS` y `ACCOUNTING_ACTIONS` para enrutamiento atómico hacia `ACADEMIC_SERVICE_URL` y `ACCOUNTING_SERVICE_URL` en `doPost`.
+- Actualización de la matriz `ROLE_PERMISSIONS` en `backend/user-service/Code.gs` para autorizar las acciones delegadas según el rol del usuario.
+- Actualización del estado de `[REQ-MOD-001]` en `Pendientes.md`.

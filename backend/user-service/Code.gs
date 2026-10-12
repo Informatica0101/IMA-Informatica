@@ -201,61 +201,13 @@ function doGet() { return textResponse({ status: "success", service: "USER", tim
 
 
 // ---------------------------------------------------------------------------
-// CONTROL DE ACCESO BASADO EN ROLES (RBAC SERVIDOR - REQ-EXP-008)
+// DELEGACIÓN A MICROSERVICIOS DE DOMINIO (ADAPTADOR RETROCOMPATIBLE v8.1.0)
 // ---------------------------------------------------------------------------
-const ROLE_PERMISSIONS = {
-  "Administrador": ["*"],
-  "Director": ["createNews", "uploadNewsImage", "getNews", "updateNewsStatus", "getStudents", "getStudentsByGradoSeccion", "getUserInfo", "saveGameResult", "getGameStats", "getGlobalTop", "recordAnalytics", "getLearningProfile", "mergeGuestData", "updateUserProfile"],
-  "Subdirector": ["createNews", "uploadNewsImage", "getNews", "updateNewsStatus", "getStudents", "getStudentsByGradoSeccion", "getUserInfo", "saveGameResult", "getGameStats", "getGlobalTop", "recordAnalytics", "getLearningProfile", "mergeGuestData", "updateUserProfile"],
-  "Secretaría": ["createNews", "uploadNewsImage", "getNews", "updateNewsStatus", "getStudents", "getStudentsByGradoSeccion", "getUserInfo", "updateUserProfile"],
-  "Contador": ["getStudents", "getUserInfo", "getNews"],
-  "Consejeros": ["getStudents", "getStudentsByGradoSeccion", "getUserInfo", "getLearningProfile", "getNews"],
-  "Profesor": ["getStudents", "getStudentsByGradoSeccion", "getUserInfo", "getNews", "createNews", "uploadNewsImage", "saveGameResult", "getGameStats", "getGlobalTop", "recordAnalytics", "getLearningProfile", "mergeGuestData"],
-  "Asistente": ["getStudents", "getStudentsByGradoSeccion", "getUserInfo", "getNews", "getLearningProfile"],
-  "Estudiante": ["getUserInfo", "getNews", "saveGameResult", "getGameStats", "getGlobalTop", "recordAnalytics", "getLearningProfile", "mergeGuestData", "updateUserProfile"],
-  "Alumno": ["getUserInfo", "getNews", "saveGameResult", "getGameStats", "getGlobalTop", "recordAnalytics", "getLearningProfile", "mergeGuestData", "updateUserProfile"]
-};
+const ACADEMIC_SERVICE_URL = PropertiesService.getScriptProperties().getProperty('ACADEMIC_SERVICE_URL') || "https://script.google.com/macros/s/AKfycbyrLQkH5QZemaTVbAbNfTB2MXgy7Aq4grSVxrwLegbGbnKshAAE1KEpAxqp9DuMW33s/exec";
+const ACCOUNTING_SERVICE_URL = PropertiesService.getScriptProperties().getProperty('ACCOUNTING_SERVICE_URL') || "https://script.google.com/macros/s/AKfycbzAccountingSvc/exec";
 
-const PUBLIC_ACTIONS = ["registerUser", "loginUser", "requestPasswordRecovery", "resetPassword", "ping"];
-
-function validateRolePermission(action, payload) {
-  if (PUBLIC_ACTIONS.indexOf(action) !== -1) return { authorized: true };
-  const userRole = (payload && (payload.authRole || payload.rol)) || "Estudiante";
-  const permitted = ROLE_PERMISSIONS[userRole] || ROLE_PERMISSIONS["Estudiante"];
-  if (permitted.indexOf("*") !== -1 || permitted.indexOf(action) !== -1) {
-    return { authorized: true, role: userRole };
-  }
-  // Permitir delegación de compatibilidad para acciones migradas
-  const isMigratedAction = [
-    "getAcademicConfig", "updateAcademicConfig", "getAcademicHistory", "getAsignaturasActivas",
-    "updateAsignaturasActivas", "saveWhatsAppLink", "getWhatsAppLink", "getQuestionBank",
-    "saveQuestion", "generateMigrationReport", "registerStudentEnrollment", "getStudentEnrollmentHistory",
-    "createSystemBackup", "listSystemBackups", "verifyBackupIntegrity", "restoreSystemBackup",
-    "configurePaymentConcept", "getStudentAccountStatement", "recordStudentPayment", "uploadPaymentVoucher",
-    "generatePaymentReceiptPDF", "createFiscalInvoice", "getFiscalInvoices", "recordCashBankMovement",
-    "closeCashSession", "getCashBankSummary", "generatePayrollPeriod", "recordStaffAttendance",
-    "getStaffPayrollReceipt", "recordInventoryMovement", "getInventoryKardex", "registerSupplier"
-  ].indexOf(action) !== -1;
-
-  if (isMigratedAction) {
-    return { authorized: true, role: userRole, isDelegated: true };
-  }
-
-  return { authorized: false, role: userRole };
-}
-
-function delegateToMicroservice(serviceName, action, payload) {
+function delegateToMicroservice(targetUrl, action, payload) {
   try {
-    const urls = {
-      ACADEMIC: PropertiesService.getScriptProperties().getProperty('ACADEMIC_SERVICE_URL') || "https://script.google.com/macros/s/AKfycbyrLQkH5QZemaTVbAbNfTB2MXgy7Aq4grSVxrwLegbGbnKshAAE1KEpAxqp9DuMW33s/exec",
-      ACCOUNTING: PropertiesService.getScriptProperties().getProperty('ACCOUNTING_SERVICE_URL')
-    };
-    const targetUrl = urls[serviceName];
-    if (!targetUrl) {
-      logDebug(`URL para delegar ${action} a ${serviceName} no configurada.`);
-      return { status: "error", code: "SERVICE_NOT_CONFIGURED", message: `El servicio ${serviceName} requiere invocación directa mediante su endpoint dedicado.` };
-    }
-
     const options = {
       method: "post",
       contentType: "text/plain",
@@ -265,9 +217,40 @@ function delegateToMicroservice(serviceName, action, payload) {
     const response = UrlFetchApp.fetch(targetUrl, options);
     return JSON.parse(response.getContentText());
   } catch (err) {
-    logDebug(`Error en delegación de ${action} hacia ${serviceName}:`, err.message);
-    return { status: "error", code: "DELEGATION_FAILED", message: `Error delegando acción ${action} a ${serviceName}: ${err.message}` };
+    logStructuredEvent("USER", "delegateToMicroservice", "ERROR", "DELEGATION_FAILED", err.message, { action: action, targetUrl: targetUrl }, payload && payload.authRole);
+    return { status: "error", message: "Error al delegar acción " + action + ": " + err.message };
   }
+}
+
+// ---------------------------------------------------------------------------
+// CONTROL DE ACCESO BASADO EN ROLES (RBAC SERVIDOR - REQ-EXP-008)
+// ---------------------------------------------------------------------------
+const ROLE_PERMISSIONS = {
+  "Administrador": ["*"],
+  "Director": ["createNews", "uploadNewsImage", "getNews", "updateNewsStatus", "getStudents", "getStudentsByGradoSeccion", "getUserInfo", "saveGameResult", "getGameStats", "getGlobalTop", "recordAnalytics", "getLearningProfile", "mergeGuestData", "updateUserProfile", "getAcademicConfig", "getAcademicHistory", "getAsignaturasActivas", "getWhatsAppLink", "getQuestionBank", "generateMigrationReport", "registerStudentEnrollment", "getStudentEnrollmentHistory", "configurePaymentConcept", "getStudentAccountStatement", "recordStudentPayment", "uploadPaymentVoucher", "generatePaymentReceiptPDF", "createFiscalInvoice", "getFiscalInvoices", "recordCashBankMovement", "closeCashSession", "getCashBankSummary", "generatePayrollPeriod", "recordStaffAttendance", "getStaffPayrollReceipt", "recordInventoryMovement", "getInventoryKardex", "registerSupplier"],
+  "Subdirector": ["createNews", "uploadNewsImage", "getNews", "updateNewsStatus", "getStudents", "getStudentsByGradoSeccion", "getUserInfo", "saveGameResult", "getGameStats", "getGlobalTop", "recordAnalytics", "getLearningProfile", "mergeGuestData", "updateUserProfile", "getAcademicConfig", "getAcademicHistory", "getAsignaturasActivas", "getWhatsAppLink", "getQuestionBank", "registerStudentEnrollment", "getStudentEnrollmentHistory", "configurePaymentConcept", "getStudentAccountStatement", "recordStudentPayment", "uploadPaymentVoucher", "generatePaymentReceiptPDF", "createFiscalInvoice", "getFiscalInvoices", "recordCashBankMovement", "closeCashSession", "getCashBankSummary", "generatePayrollPeriod", "recordStaffAttendance", "getStaffPayrollReceipt", "recordInventoryMovement", "getInventoryKardex", "registerSupplier"],
+  "Secretaría": ["createNews", "uploadNewsImage", "getNews", "updateNewsStatus", "getStudents", "getStudentsByGradoSeccion", "getUserInfo", "updateUserProfile", "getAcademicConfig", "getAsignaturasActivas", "registerStudentEnrollment", "getStudentEnrollmentHistory", "configurePaymentConcept", "getStudentAccountStatement", "recordStudentPayment", "uploadPaymentVoucher", "generatePaymentReceiptPDF", "createFiscalInvoice", "getFiscalInvoices", "recordCashBankMovement", "getCashBankSummary", "recordStaffAttendance", "recordInventoryMovement", "getInventoryKardex", "registerSupplier"],
+  "Contador": ["getStudents", "getUserInfo", "getNews", "getAcademicConfig", "registerStudentEnrollment", "getStudentEnrollmentHistory", "configurePaymentConcept", "getStudentAccountStatement", "recordStudentPayment", "uploadPaymentVoucher", "generatePaymentReceiptPDF", "createFiscalInvoice", "getFiscalInvoices", "recordCashBankMovement", "closeCashSession", "getCashBankSummary", "generatePayrollPeriod", "recordStaffAttendance", "getStaffPayrollReceipt", "recordInventoryMovement", "getInventoryKardex", "registerSupplier"],
+  "Consejeros": ["getStudents", "getStudentsByGradoSeccion", "getUserInfo", "getLearningProfile", "getNews", "getAcademicConfig"],
+  "Profesor": ["getStudents", "getStudentsByGradoSeccion", "getUserInfo", "getNews", "createNews", "uploadNewsImage", "saveGameResult", "getGameStats", "getGlobalTop", "recordAnalytics", "getLearningProfile", "mergeGuestData", "getAcademicConfig", "updateAcademicConfig", "getAcademicHistory", "getAsignaturasActivas", "updateAsignaturasActivas", "saveWhatsAppLink", "getWhatsAppLink", "getQuestionBank", "saveQuestion", "generateMigrationReport"],
+  "Asistente": ["getStudents", "getStudentsByGradoSeccion", "getUserInfo", "getNews", "getLearningProfile", "getAcademicConfig", "getAsignaturasActivas", "getWhatsAppLink", "getQuestionBank"],
+  "Estudiante": ["getUserInfo", "getNews", "saveGameResult", "getGameStats", "getGlobalTop", "recordAnalytics", "getLearningProfile", "mergeGuestData", "updateUserProfile", "getAcademicConfig", "getAcademicHistory", "getAsignaturasActivas", "getWhatsAppLink", "getStudentEnrollmentHistory", "getStudentAccountStatement", "uploadPaymentVoucher", "generatePaymentReceiptPDF"],
+  "Alumno": ["getUserInfo", "getNews", "saveGameResult", "getGameStats", "getGlobalTop", "recordAnalytics", "getLearningProfile", "mergeGuestData", "updateUserProfile", "getAcademicConfig", "getAcademicHistory", "getAsignaturasActivas", "getWhatsAppLink", "getStudentEnrollmentHistory", "getStudentAccountStatement", "uploadPaymentVoucher", "generatePaymentReceiptPDF"]
+};
+
+const PUBLIC_ACTIONS = ["registerUser", "loginUser", "requestPasswordRecovery", "resetPassword", "ping"];
+
+const ACADEMIC_ACTIONS = ["getAcademicConfig", "updateAcademicConfig", "getAcademicHistory", "getAsignaturasActivas", "updateAsignaturasActivas", "saveWhatsAppLink", "getWhatsAppLink", "getQuestionBank", "saveQuestion", "generateMigrationReport", "registerStudentEnrollment", "getStudentEnrollmentHistory", "createSystemBackup", "listSystemBackups", "verifyBackupIntegrity", "restoreSystemBackup"];
+const ACCOUNTING_ACTIONS = ["configurePaymentConcept", "getStudentAccountStatement", "recordStudentPayment", "uploadPaymentVoucher", "generatePaymentReceiptPDF", "createFiscalInvoice", "getFiscalInvoices", "recordCashBankMovement", "closeCashSession", "getCashBankSummary", "generatePayrollPeriod", "recordStaffAttendance", "getStaffPayrollReceipt", "recordInventoryMovement", "getInventoryKardex", "registerSupplier"];
+
+function validateRolePermission(action, payload) {
+  if (PUBLIC_ACTIONS.indexOf(action) !== -1) return { authorized: true };
+  const userRole = (payload && (payload.authRole || payload.rol)) || "Estudiante";
+  const permitted = ROLE_PERMISSIONS[userRole] || ROLE_PERMISSIONS["Estudiante"];
+  if (permitted.indexOf("*") !== -1 || permitted.indexOf(action) !== -1) {
+    return { authorized: true, role: userRole };
+  }
+  return { authorized: false, role: userRole };
 }
 
 function doPost(e) {
@@ -278,6 +261,14 @@ function doPost(e) {
     if (!authCheck.authorized) {
       return textResponse({ status: "error", code: "AUTH_PERMISSION_DENIED", message: "Acceso denegado: El rol " + authCheck.role + " no tiene permiso para la acción " + action + "." });
     }
+
+    if (ACADEMIC_ACTIONS.indexOf(action) !== -1) {
+      return textResponse(delegateToMicroservice(ACADEMIC_SERVICE_URL, action, payload));
+    }
+    if (ACCOUNTING_ACTIONS.indexOf(action) !== -1) {
+      return textResponse(delegateToMicroservice(ACCOUNTING_SERVICE_URL, action, payload));
+    }
+
     let result;
     switch (action) {
       case "registerUser": result = registerUser(payload); break;
@@ -300,47 +291,6 @@ function doPost(e) {
       case "updateNewsStatus": result = updateNewsStatus(payload); break;
       case "getStructuredLogs": result = getStructuredLogs(payload); break;
       case "ping": result = { status: "success", service: "USER", timestamp: new Date().toISOString(), dbConnected: true }; break;
-
-      // Adaptadores de delegación de compatibilidad para acciones académicas (REQ-MOD-011)
-      case "getAcademicConfig":
-      case "updateAcademicConfig":
-      case "getAcademicHistory":
-      case "getAsignaturasActivas":
-      case "updateAsignaturasActivas":
-      case "saveWhatsAppLink":
-      case "getWhatsAppLink":
-      case "getQuestionBank":
-      case "saveQuestion":
-      case "generateMigrationReport":
-      case "registerStudentEnrollment":
-      case "getStudentEnrollmentHistory":
-      case "createSystemBackup":
-      case "listSystemBackups":
-      case "verifyBackupIntegrity":
-      case "restoreSystemBackup":
-        result = delegateToMicroservice("ACADEMIC", action, payload);
-        break;
-
-      // Adaptadores de delegación de compatibilidad para acciones contables y financieras (REQ-MOD-011)
-      case "configurePaymentConcept":
-      case "getStudentAccountStatement":
-      case "recordStudentPayment":
-      case "uploadPaymentVoucher":
-      case "generatePaymentReceiptPDF":
-      case "createFiscalInvoice":
-      case "getFiscalInvoices":
-      case "recordCashBankMovement":
-      case "closeCashSession":
-      case "getCashBankSummary":
-      case "generatePayrollPeriod":
-      case "recordStaffAttendance":
-      case "getStaffPayrollReceipt":
-      case "recordInventoryMovement":
-      case "getInventoryKardex":
-      case "registerSupplier":
-        result = delegateToMicroservice("ACCOUNTING", action, payload);
-        break;
-
       default: result = { status: "error", message: `Acción no reconocida: ${action}` };
     }
     return textResponse(result);
