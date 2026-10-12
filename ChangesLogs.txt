@@ -562,7 +562,7 @@ Módulo: Backend (Arquitectura Modular)
 
 Módulo: Frontend
 - js/config.js: Preparada configuración para despliegue de microservicios independientes.
-- js/student.js: Corregido error de referencia 'matchParcial' y reforzado aislamiento de grado/sección.
+- js/student.js: Corregido error de referencia 'matchParcial' y reinforced aislamiento de grado/sección.
 - js/api.js: Asegurados fallbacks para el nuevo servicio ACADEMIC.
 Módulo: Seguridad\n- backend/user-service/Code.gs: Corregida validación de tokens de recuperación de contraseña.
 
@@ -903,3 +903,73 @@ Archivos modificados:
 
 Descripción de cambios:
 - Se actualizaron todos los bloques de requerimientos en Pendientes.md (REQ-DASH, REQ-AMP, REQ-AMP2, REQ-SUP, REQ-FLOW) para reflejar explícitamente el campo `- **Estado:** [X] Completada`.
+
+===========================================================
+REGISTRO DE CAMBIOS - FASE 2: ARQUITECTURA Y MODELO CENTRAL DE IDENTIDAD
+===========================================================
+Archivos modificados:
+- backend/user-service/Code.gs
+- js/api.js
+- MapaDependencias.md
+
+Descripción de cambios:
+1. `backend/user-service/Code.gs`:
+   - Incorporadas hojas e inicialización de entidades `'Personas'` y `'RelacionesFamiliares'`.
+   - Creadas las funciones backend `findPersonMatches`, `createPerson`, `linkPersonAccount` y `manageAccountState`.
+   - Modificado `registerUser` para admitir `personaId` e inicializar estados de cuenta (`"Activa"`, `"Pendiente"`, etc.).
+   - Refactorizado `loginUser` para bloquear explícitamente el acceso a cuentas con estados `"Suspendida"`, `"Desactivada"` o `"Bloqueada"` e inyectar el timestamp de último acceso.
+   - Actualizadas las funciones de búsqueda de estudiantes (`getStudents`, `getStudentsByGradoSeccion`) para excluir cuentas con estado `"Desactivada"`.
+   - Incorporados permisos granulares de gestión de identidad (`findPersonMatches`, `createPerson`, `linkPersonAccount`, `manageAccountState`) en la matriz `ROLE_PERMISSIONS`.
+
+2. `js/api.js`:
+   - Actualizada la inyección automática de `authRole` en `fetchApi` buscando la sesión en `localStorage.getItem("currentUser")` o `sessionStorage.getItem("currentUser")`.
+
+3. `MapaDependencias.md`:
+   - Documentado el mapa de entidades de la Fase 2 (`Persona`, `CuentaUsuario`, `ExpedienteEstudiante`, `ExpedienteLaboral`, `RelacionesFamiliares`), propietarios de datos por microservicio (USER, ACADEMIC, ACCOUNTING, TASK, EXAM) y contratos de interfaz.
+
+===========================================================
+REGISTRO DE CAMBIOS - FASE 3: CONFIGURACIÓN INSTITUCIONAL Y ESTRUCTURA ACADÉMICA
+===========================================================
+Archivos modificados:
+- backend/academic-service/Code.gs
+- MapaDependencias.md
+- ChangesLogs.txt
+
+Descripción de cambios:
+1. `backend/academic-service/Code.gs`:
+   - Creadas e inicializadas las tablas de la Fase 3 en `getOrCreateSheet`: `'InstitucionParametros'`, `'SedesAulas'`, `'AnosLectivos'`, `'PeriodosAcademicos'`, `'CatalogoAsignaturas'`, `'PlanesEstudio'`, `'PlanAsignaturas'`, `'OfertaAcademica'`, `'AsignacionesDocentes'`, `'CalendarioAcademico'`, `'HorariosClase'`, `'ReglasAcademicas'`.
+   - Implementadas funciones backend para Parametrización Institucional (`getInstitutionParams`, `saveInstitutionParam`).
+   - Implementados Años Lectivos con estados controlados (`Borrador`, `EnPreparacion`, `Activo`, `Cerrado`, `Archivado`) y Asistente de Preparación Anual (`getAcademicYears`, `createAcademicYear`, `updateAcademicYearStatus`, `prepareNewAcademicYear`).
+   - Implementada jerarquía de Períodos Académicos (`getAcademicPeriods`, `manageAcademicPeriod`).
+   - Implementado Catálogo de Asignaturas y Planes de Estudio (`getSubjectCatalog`, `createSubjectCatalogItem`, `getStudyPlans`, `createStudyPlan`).
+   - Implementada Oferta Académica/Clases (`getAcademicOffers`, `createAcademicOffer`).
+   - Implementadas Asignaciones Docentes con roles (Titular, Asistente, Sustituto, Colaborador) y Sustituciones Temporales (`getTeacherAssignments`, `assignTeacherToClass`, `createTeacherSubstitution`).
+   - Implementado Calendario Académico Institucional (`getAcademicCalendar`, `createCalendarEvent`).
+   - Implementados Horarios de Clase con motor de prevención de conflictos por solapamiento de docente u aula (`getClassSchedules`, `createClassSchedule`, `checkScheduleConflict`).
+   - Implementadas Reglas Académicas Institucionales (`getAcademicRules`, `saveAcademicRule`).
+   - Actualizados permisos RBAC en `ROLE_PERMISSIONS` y en el selector `doPost` para autorizar las nuevas acciones administrativas según el rol emisor.
+
+2. `MapaDependencias.md`:
+   - Actualizado el inventario de servicios y autoridades de escritura para los componentes de la Fase 3.
+
+===========================================================
+REGISTRO DE CAMBIOS - FASE 4: EXPEDIENTES ESTUDIANTILES, ADMISIONES, MATRÍCULAS Y MOVIMIENTOS
+===========================================================
+Archivos modificados:
+- backend/academic-service/Code.gs
+- MapaDependencias.md
+- ChangesLogs.txt
+
+Descripción de cambios:
+1. `backend/academic-service/Code.gs`:
+   - Creadas e inicializadas las tablas de la Fase 4 en `getOrCreateSheet`: `'ExpedientesEstudiantes'`, `'SolicitudesAdmision'`, `'ResponsablesTutores'`, `'RelacionesEstudianteTutor'`, `'DocumentosEstudiante'`, `'MovimientosEstudiante'`, `'AntecedentesAcademicos'`.
+   - Implementadas funciones backend para Solicitudes de Admisión (`createAdmissionRequest`, `getAdmissionRequests`, `updateAdmissionStatus`, `convertAdmissionToStudent`).
+   - Implementado Expediente Digital Unificado del Estudiante (`getStudentFile`, `updateStudentFile`, `getStudentTimeline`, `findDuplicateStudents`, `mergeStudentFiles`).
+   - Implementada Gestión de Tutores / Responsables Legales (`getStudentGuardians`, `saveStudentGuardian`, `unlinkStudentGuardian`).
+   - Implementada Gestión Documental del Estudiante (`uploadStudentDocument`, `getStudentDocuments`, `updateDocumentStatus`).
+   - Implementado Flujo de Matrículas, Cupos y Promoción (`createStudentEnrollment`, `getStudentEnrollments`, `renewStudentEnrollment`, `checkEnrollmentCapacity`).
+   - Implementado Registro de Movimientos de Estudiantes (`changeStudentSection`, `recordStudentTransfer`, `recordStudentWithdrawal`, `processStudentReentry`).
+   - Actualizados permisos RBAC en `ROLE_PERMISSIONS` y en el selector `doPost` para autorizar las acciones de la Fase 4.
+
+2. `MapaDependencias.md`:
+   - Actualizados los contratos de interfaz y esquemas de entidades para los componentes de la Fase 4.

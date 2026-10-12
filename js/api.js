@@ -40,7 +40,7 @@ function fetchApi(service, action, payload, retryCount, options) {
     // REQ-EXP-008: Inyectar authRole o rol desde sesión si no se ha especificado en el payload
     if (payload && typeof payload === "object" && !payload.authRole) {
         try {
-            var sessionUser = JSON.parse(localStorage.getItem("usuario_actual") || "{}");
+            var sessionUser = JSON.parse(localStorage.getItem("currentUser") || sessionStorage.getItem("currentUser") || localStorage.getItem("usuario_actual") || "{}");
             if (sessionUser && sessionUser.rol) {
                 payload.authRole = sessionUser.rol;
             }
