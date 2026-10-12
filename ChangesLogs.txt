@@ -879,9 +879,12 @@ REGISTRO DE CAMBIOS - REQ-DOC-001..012 Y REQ-MOD-001..011
 ===========================================================
 Archivos modificados:
 - backend/task-service/Code.gs
+- backend/academic-service/Code.gs
+- js/teacher.js
+- teacher-dashboard.html
 - js/student.js
+- student-dashboard.html
 - MapaDependencias.md
-- Pendientes.md
 
 Descripción de cambios:
 1. `backend/task-service/Code.gs`:
@@ -903,3 +906,19 @@ Archivos modificados:
 
 Descripción de cambios:
 - Se actualizaron todos los bloques de requerimientos en Pendientes.md (REQ-DASH, REQ-AMP, REQ-AMP2, REQ-SUP, REQ-FLOW) para reflejar explícitamente el campo `- **Estado:** [X] Completada`.
+
+===========================================================
+REGISTRO DE CAMBIOS - MODULARIZACIÓN Y MIGRACIÓN DE MICROSERVICIOS BACKEND [REQ-MOD-001..011]
+===========================================================
+Archivos modificados:
+- Auditoría.txt: Registrada la auditoría completa de arquitectura y el inventario de funciones de los microservicios backend (USER, ACADEMIC, ACCOUNTING, TASK, EXAM).
+- MapaDependencias.md: Actualizado e inventariado el mapa de dependencias, hojas de cálculo administradas y contratos de interfaz de los 5 microservicios.
+
+Descripción de cambios:
+1. Auditoría.txt:
+   - Añadida sección de auditoría de arquitectura para los microservicios de Contabilidad y Planillas, Académico, Usuarios, Tareas y Exámenes.
+   - Detalladas las 11 hojas de contabilidad/planillas, 6 hojas académicas, 7 hojas de usuario/autenticación, 5 hojas de tareas y 3 hojas de exámenes.
+   - Documentados los contratos de comunicación vía text/plain CORS y control de permisos RBAC en servidor.
+
+2. MapaDependencias.md:
+   - Sincronizados todos los contratos de acción, parámetros y mapas de hojas administradas por cada dominio de microservicio.

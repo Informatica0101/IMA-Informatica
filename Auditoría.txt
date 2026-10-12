@@ -1207,7 +1207,7 @@ AUDITORÍA TÉCNICA - SISTEMA DE ROLES Y PERMISOS GRANULARES SERVIDOR/RBAC [REQ-
 
 Archivos: backend/user-service/Code.gs, backend/academic-service/Code.gs, js/config.js, js/api.js
 Sector: Manejo de Acciones y Validación de Autorización en Servidor (doPost)
-Hallazgo [Crítico]: Las llamadas POST a los endpoints del servidor aceptan la ejecución de acciones privilegiadas (como 'updateAcademicConfig', 'createNews', 'uploadNewsImage', 'saveQuestion', 'saveWhatsAppLink', 'updateAsignaturasActivas') sin validar el rol ni la identidad del emisor desde el servidor (reliquia de seguridad por ocultamiento en la UI cliente).
+Hallazgo [Crítico]: Las llamadas POST a los endpoints del servidor aceptan la ejecución de acciones privileged (como 'updateAcademicConfig', 'createNews', 'uploadNewsImage', 'saveQuestion', 'saveWhatsAppLink', 'updateAsignaturasActivas') sin validar el rol ni la identidad del emisor desde el servidor (reliquia de seguridad por ocultamiento en la UI cliente).
 Impacto: Vulnerabilidad de elevación de privilegios no autorizada e inyección de datos administrativos por usuarios con roles de 'Estudiante' o 'Invitado'.
 Recomendación: Implementar una matriz de autorización por rol (RBAC) en el servidor que verifique la identidad/rol del solicitante y responda con error explícito 'AUTH_PERMISSION_DENIED' en caso de falta de privilegios.
 
@@ -1492,3 +1492,46 @@ Hallazgos:
 
 4. `MapaDependencias.md`:
    - Documentar la matriz completa de funciones y contratos de API entre microservicios (USER, ACADEMIC, TASK, EXAM, ACCOUNTING).
+
+===========================================================
+AUDITORÍA DE ARQUITECTURA - MODULARIZACIÓN Y MIGRACIÓN DE MICROSERVICIOS BACKEND
+===========================================================
+Fecha de auditoría: Mon Jul 06 2026
+Módulos auditados:
+- backend/accounting-service/Code.gs
+- backend/academic-service/Code.gs
+- backend/user-service/Code.gs
+- backend/task-service/Code.gs
+- backend/exam-service/Code.gs
+- js/config.js
+- js/api.js
+
+Hallazgos e Inventario de Arquitectura:
+1. Microservicio de Contabilidad y Planillas (backend/accounting-service/Code.gs):
+   - Responsabilidad: Autoridad funcional sobre operaciones contables, financieras, cobros, mensualidades, facturación fiscal SAR, caja y bancos, planillas salariales de Honduras, asistencia de personal e inventario y proveedores.
+   - Hojas administradas: ConceptosCobro, PagosAbonos, ComprobantesPago, FacturasFiscales, MovimientosCajaBancos, CierresCaja, PlanillasNomenclatura, DeduccionesAsistencia, BoletasPago, InventariosKardex, ProveedoresActivos.
+   - Puntos de entrada y acciones: configurePaymentConcept, getStudentAccountStatement, recordStudentPayment, uploadPaymentVoucher, generatePaymentReceiptPDF, createFiscalInvoice, getFiscalInvoices, recordCashBankMovement, closeCashSession, getCashBankSummary, generatePayrollPeriod, recordStaffAttendance, getStaffPayrollReceipt, recordInventoryMovement, getInventoryKardex, registerSupplier, ping.
+   - Permisos y RBAC: doPost verifica la matriz ROLE_PERMISSIONS antes de procesar cualquier acción sensible.
+
+2. Microservicio Académico (backend/academic-service/Code.gs):
+   - Responsabilidad: Autoridad sobre la estructura académica, matrículas anuales, grados, secciones, asignaturas, pensum, asignaciones docentes, banco de preguntas y copias de seguridad de la institución.
+   - Hojas administradas: ConfiguracionAcademica, HistorialAcademico, Clases, BancoPreguntas, Matriculas, CargosEstudiante.
+   - Puntos de entrada y acciones: getAcademicConfig, updateAcademicConfig, getAcademicHistory, getAsignaturasActivas, updateAsignaturasActivas, saveWhatsAppLink, getWhatsAppLink, getQuestionBank, saveQuestion, generateMigrationReport, registerStudentEnrollment, getStudentEnrollmentHistory, createSystemBackup, listSystemBackups, verifyBackupIntegrity, restoreSystemBackup, ping.
+   - Control de atomicidad: updateAcademicConfig utiliza LockService (30s) y escrituras atómicas setValues y deleteRows para prevenir duplicación o inconsistencias de datos.
+
+3. Microservicio de Usuarios y Autenticación (backend/user-service/Code.gs):
+   - Responsabilidad: Identidad de usuario, autenticación, restablecimiento de clave, perfiles, noticias institucionales, gamificación, analítica psicométrica (ICR, GP, Mastery) y registros de auditoría del sistema.
+   - Hojas administradas: Usuarios, Logros, NoticiasPortal, QuizProAnalytics, LearningProfile, GameLeaderboards, LogsSistema.
+   - Puntos de entrada y acciones: registerUser, loginUser, getStudents, getStudentsByGradoSeccion, getUserInfo, requestPasswordRecovery, resetPassword, updateUserProfile, saveGameResult, getGameStats, getGlobalTop, recordAnalytics, getLearningProfile, mergeGuestData, getNews, createNews, uploadNewsImage, updateNewsStatus, getStructuredLogs, ping.
+
+4. Microservicio de Tareas y Recursos (backend/task-service/Code.gs):
+   - Responsabilidad: Tareas evaluables, guías de estudio, entregas, calificaciones, subida de archivos polimórficos a Google Drive, metadatos de archivos, proyectos PSeInt y cierre de año escolar.
+   - Hojas administradas: Tareas, Entregas, MetadatosArchivos, pseudocode, Log_Cierres.
+
+5. Microservicio de Exámenes (backend/exam-service/Code.gs):
+   - Responsabilidad: Creación y gestión de exámenes, preguntas evaluativas, entregas, calificación automática y detallada.
+   - Hojas administradas: Examenes, PreguntasExamen, EntregasExamen.
+
+6. Contratos de Comunicación y Tolerancia a Fallos:
+   - Todas las llamadas entre el cliente y los microservicios se realizan vía js/api.js utilizando Content-Type: text/plain para evitar preflight CORS.
+   - Respuestas estandarizadas en formato JSON.
