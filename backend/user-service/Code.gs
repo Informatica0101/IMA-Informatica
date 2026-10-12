@@ -207,6 +207,10 @@ const ACADEMIC_SERVICE_URL = PropertiesService.getScriptProperties().getProperty
 const ACCOUNTING_SERVICE_URL = PropertiesService.getScriptProperties().getProperty('ACCOUNTING_SERVICE_URL') || "https://script.google.com/macros/s/AKfycbzAccountingSvc/exec";
 
 function delegateToMicroservice(targetUrl, action, payload) {
+  if (!targetUrl || targetUrl.includes("AccountingSvc") || targetUrl.includes("REPLACE")) {
+    logStructuredEvent("USER", "delegateToMicroservice", "WARN", "SERVICE_NOT_CONFIGURED", "Microservicio de destino no configurado en Script Properties para acción: " + action, { action: action, targetUrl: targetUrl }, payload && payload.authRole);
+    return { status: "error", code: "SERVICE_NOT_CONFIGURED", message: "El microservicio de destino para la acción '" + action + "' debe configurarse en Script Properties (ACCOUNTING_SERVICE_URL o ACADEMIC_SERVICE_URL)." };
+  }
   try {
     const options = {
       method: "post",
@@ -215,7 +219,11 @@ function delegateToMicroservice(targetUrl, action, payload) {
       muteHttpExceptions: true
     };
     const response = UrlFetchApp.fetch(targetUrl, options);
-    return JSON.parse(response.getContentText());
+    const content = response.getContentText();
+    if (!content || content.indexOf("{") !== 0) {
+      throw new Error("Respuesta no válida del microservicio de destino.");
+    }
+    return JSON.parse(content);
   } catch (err) {
     logStructuredEvent("USER", "delegateToMicroservice", "ERROR", "DELEGATION_FAILED", err.message, { action: action, targetUrl: targetUrl }, payload && payload.authRole);
     return { status: "error", message: "Error al delegar acción " + action + ": " + err.message };
