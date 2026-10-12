@@ -190,6 +190,12 @@ function getOrCreateSheet(ss, name) {
     if (name === "CriteriosInstitucionales") sheet.appendRow(["CriterioID", "Dominio", "Nombre", "Descripcion", "EscalaJSON", "AmbitoNivel", "Estado"]);
     if (name === "EvaluacionesFormativas") sheet.appendRow(["ID", "UserID", "Dominio", "CriterioID", "CalificacionValor", "ObservacionObjetiva", "Contexto", "AutorID", "VisibilidadBoletin", "FechaRegistro"]);
     if (name === "PlanesAcompanamiento") sheet.appendRow(["PlanID", "UserID", "SituacionMeliorar", "ObjetivosJSON", "ResponsableID", "FechaInicio", "FechaRevision", "Estado"]);
+    if (name === "InvitacionesVinculacion") sheet.appendRow(["InvitacionID", "ExpedienteID", "EmailResponsable", "Token", "FechaEmision", "FechaExpiracion", "Estado", "CreadoPor"]);
+    if (name === "ComunicadosInstitucionales") sheet.appendRow(["ComunicadoID", "Titulo", "Contenido", "Categoria", "AutorID", "AudienciaJSON", "RequiereFirma", "FechaPublicacion", "Estado"]);
+    if (name === "ConversacionesMensajes") sheet.appendRow(["MensajeID", "ConversacionID", "RemitenteID", "DestinatarioID", "EstudianteID", "MensajeTexto", "AdjuntoUrl", "FechaEnvio", "EstadoLectura"]);
+    if (name === "BandejaNotificaciones") sheet.appendRow(["NotificacionID", "UserId", "Titulo", "Mensaje", "Tipo", "Categoria", "Leido", "EnlaceAccion", "FechaRegistro"]);
+    if (name === "SolicitudesTramites") sheet.appendRow(["SolicitudID", "UserId", "EstudianteID", "TipoTramite", "Descripcion", "AdjuntoUrl", "Estado", "AsignadoA", "ObservacionesAdmin", "FechaSolicitud", "FechaResolucion"]);
+    if (name === "CitasReuniones") sheet.appendRow(["CitaID", "SolicitanteID", "EstudianteID", "SolicitadoA", "Motivo", "FechaHora", "Modalidad", "Estado", "Comentarios"]);
   }
   return sheet;
 }
@@ -208,20 +214,59 @@ function doGet() { return textResponse({ status: "success", service: "USER", tim
 // ---------------------------------------------------------------------------
 // CONTROL DE ACCESO BASADO EN ROLES (RBAC SERVIDOR - REQ-EXP-008 & FASE 2)
 // ---------------------------------------------------------------------------
+const PUBLIC_ACTIONS = [
+  "registerUser", "loginUser", "requestPasswordRecovery", "resetPassword", "ping", "getNews", "getInstitutionalAnnouncements"
+];
+
 const ROLE_PERMISSIONS = {
   "Administrador": ["*"],
-  "Director": ["createNews", "uploadNewsImage", "getNews", "updateNewsStatus", "getStudents", "getStudentsByGradoSeccion", "getUserInfo", "saveGameResult", "getGameStats", "getGlobalTop", "recordAnalytics", "getLearningProfile", "mergeGuestData", "updateUserProfile", "findPersonMatches", "createPerson", "linkPersonAccount", "manageAccountState"],
-  "Subdirector": ["createNews", "uploadNewsImage", "getNews", "updateNewsStatus", "getStudents", "getStudentsByGradoSeccion", "getUserInfo", "saveGameResult", "getGameStats", "getGlobalTop", "recordAnalytics", "getLearningProfile", "mergeGuestData", "updateUserProfile", "findPersonMatches"],
-  "Secretaría": ["createNews", "uploadNewsImage", "getNews", "updateNewsStatus", "getStudents", "getStudentsByGradoSeccion", "getUserInfo", "updateUserProfile", "findPersonMatches", "createPerson", "linkPersonAccount", "manageAccountState"],
-  "Contador": ["getStudents", "getUserInfo", "getNews"],
-  "Consejeros": ["getStudents", "getStudentsByGradoSeccion", "getUserInfo", "getLearningProfile", "getNews"],
-  "Profesor": ["getStudents", "getStudentsByGradoSeccion", "getUserInfo", "getNews", "createNews", "uploadNewsImage", "saveGameResult", "getGameStats", "getGlobalTop", "recordAnalytics", "getLearningProfile", "mergeGuestData"],
-  "Asistente": ["getStudents", "getStudentsByGradoSeccion", "getUserInfo", "getNews", "getLearningProfile"],
-  "Estudiante": ["getUserInfo", "getNews", "saveGameResult", "getGameStats", "getGlobalTop", "recordAnalytics", "getLearningProfile", "mergeGuestData", "updateUserProfile"],
-  "Alumno": ["getUserInfo", "getNews", "saveGameResult", "getGameStats", "getGlobalTop", "recordAnalytics", "getLearningProfile", "mergeGuestData", "updateUserProfile"]
+  "Desarrollador": ["*"],
+  "Padre": [
+    "getUserInfo", "getNews", "getInstitutionalCriteria", "getFormativeEvaluations", "getSupportPlans",
+    "acceptLinkInvitation", "getGuardianStudents", "getInstitutionalAnnouncements", "getInternalMessages", "sendInternalMessage", "getUserNotifications", "markNotificationAsRead", "getAdministrativeRequests", "submitAdministrativeRequest", "getAppointmentBookings", "bookAppointment"
+  ],
+  "Tutor": [
+    "getUserInfo", "getNews", "getInstitutionalCriteria", "getFormativeEvaluations", "getSupportPlans",
+    "acceptLinkInvitation", "getGuardianStudents", "getInstitutionalAnnouncements", "getInternalMessages", "sendInternalMessage", "getUserNotifications", "markNotificationAsRead", "getAdministrativeRequests", "submitAdministrativeRequest", "getAppointmentBookings", "bookAppointment"
+  ],
+  "Responsable": [
+    "getUserInfo", "getNews", "getInstitutionalCriteria", "getFormativeEvaluations", "getSupportPlans",
+    "acceptLinkInvitation", "getGuardianStudents", "getInstitutionalAnnouncements", "getInternalMessages", "sendInternalMessage", "getUserNotifications", "markNotificationAsRead", "getAdministrativeRequests", "submitAdministrativeRequest", "getAppointmentBookings", "bookAppointment"
+  ],
+  "Director": [
+    "createNews", "uploadNewsImage", "getNews", "updateNewsStatus", "getStudents", "getStudentsByGradoSeccion", "getUserInfo", "saveGameResult", "getGameStats", "getGlobalTop", "recordAnalytics", "getLearningProfile", "mergeGuestData", "updateUserProfile", "findPersonMatches", "createPerson", "linkPersonAccount", "manageAccountState",
+    "getInstitutionalCriteria", "saveInstitutionalCriterion", "getFormativeEvaluations", "saveFormativeEvaluation", "getSupportPlans", "saveSupportPlan",
+    "createLinkInvitation", "acceptLinkInvitation", "getGuardianStudents", "getInstitutionalAnnouncements", "createInstitutionalAnnouncement", "getInternalMessages", "sendInternalMessage", "getUserNotifications", "markNotificationAsRead", "createUserNotification", "getAdministrativeRequests", "submitAdministrativeRequest", "updateRequestStatus", "getAppointmentBookings", "bookAppointment", "updateAppointmentStatus"
+  ],
+  "Subdirector": [
+    "createNews", "uploadNewsImage", "getNews", "updateNewsStatus", "getStudents", "getStudentsByGradoSeccion", "getUserInfo", "saveGameResult", "getGameStats", "getGlobalTop", "recordAnalytics", "getLearningProfile", "mergeGuestData", "updateUserProfile", "findPersonMatches",
+    "getInstitutionalCriteria", "getFormativeEvaluations", "saveFormativeEvaluation", "getSupportPlans", "saveSupportPlan",
+    "createLinkInvitation", "getGuardianStudents", "getInstitutionalAnnouncements", "createInstitutionalAnnouncement", "getInternalMessages", "sendInternalMessage", "getUserNotifications", "markNotificationAsRead", "getAdministrativeRequests", "updateRequestStatus", "getAppointmentBookings", "updateAppointmentStatus"
+  ],
+  "Secretaría": [
+    "createNews", "uploadNewsImage", "getNews", "updateNewsStatus", "getStudents", "getStudentsByGradoSeccion", "getUserInfo", "updateUserProfile", "findPersonMatches", "createPerson", "linkPersonAccount", "manageAccountState",
+    "getInstitutionalCriteria", "getFormativeEvaluations", "saveFormativeEvaluation", "getSupportPlans", "saveSupportPlan",
+    "createLinkInvitation", "acceptLinkInvitation", "getGuardianStudents", "getInstitutionalAnnouncements", "createInstitutionalAnnouncement", "getInternalMessages", "sendInternalMessage", "getUserNotifications", "markNotificationAsRead", "createUserNotification", "getAdministrativeRequests", "submitAdministrativeRequest", "updateRequestStatus", "getAppointmentBookings", "bookAppointment", "updateAppointmentStatus"
+  ],
+  "Contador": ["getStudents", "getUserInfo", "getNews", "getInstitutionalAnnouncements", "getUserNotifications", "markNotificationAsRead", "getAdministrativeRequests", "submitAdministrativeRequest"],
+  "Consejeros": ["getStudents", "getStudentsByGradoSeccion", "getUserInfo", "getLearningProfile", "getNews", "getInstitutionalCriteria", "getFormativeEvaluations", "saveFormativeEvaluation", "getSupportPlans", "saveSupportPlan", "getInstitutionalAnnouncements", "getInternalMessages", "sendInternalMessage", "getUserNotifications", "markNotificationAsRead", "getAppointmentBookings", "updateAppointmentStatus"],
+  "Profesor": [
+    "getStudents", "getStudentsByGradoSeccion", "getUserInfo", "getNews", "createNews", "uploadNewsImage", "saveGameResult", "getGameStats", "getGlobalTop", "recordAnalytics", "getLearningProfile", "mergeGuestData",
+    "getInstitutionalCriteria", "getFormativeEvaluations", "saveFormativeEvaluation", "getSupportPlans",
+    "getGuardianStudents", "getInstitutionalAnnouncements", "getInternalMessages", "sendInternalMessage", "getUserNotifications", "markNotificationAsRead", "createUserNotification", "getAdministrativeRequests", "submitAdministrativeRequest", "getAppointmentBookings", "bookAppointment", "updateAppointmentStatus"
+  ],
+  "Asistente": ["getStudents", "getStudentsByGradoSeccion", "getUserInfo", "getNews", "getLearningProfile", "getInstitutionalCriteria", "getFormativeEvaluations", "getInstitutionalAnnouncements", "getUserNotifications"],
+  "Estudiante": [
+    "getUserInfo", "getNews", "saveGameResult", "getGameStats", "getGlobalTop", "recordAnalytics", "getLearningProfile", "mergeGuestData", "updateUserProfile",
+    "getInstitutionalCriteria", "getFormativeEvaluations", "getSupportPlans",
+    "acceptLinkInvitation", "getGuardianStudents", "getInstitutionalAnnouncements", "getInternalMessages", "sendInternalMessage", "getUserNotifications", "markNotificationAsRead", "getAdministrativeRequests", "submitAdministrativeRequest", "getAppointmentBookings", "bookAppointment"
+  ],
+  "Alumno": [
+    "getUserInfo", "getNews", "saveGameResult", "getGameStats", "getGlobalTop", "recordAnalytics", "getLearningProfile", "mergeGuestData", "updateUserProfile",
+    "getInstitutionalCriteria", "getFormativeEvaluations", "getSupportPlans",
+    "acceptLinkInvitation", "getGuardianStudents", "getInstitutionalAnnouncements", "getInternalMessages", "sendInternalMessage", "getUserNotifications", "markNotificationAsRead", "getAdministrativeRequests", "submitAdministrativeRequest", "getAppointmentBookings", "bookAppointment"
+  ]
 };
-
-const PUBLIC_ACTIONS = ["registerUser", "loginUser", "requestPasswordRecovery", "resetPassword", "ping"];
 
 function validateRolePermission(action, payload) {
   if (PUBLIC_ACTIONS.indexOf(action) !== -1) return { authorized: true };
@@ -273,6 +318,25 @@ function doPost(e) {
       case "saveFormativeEvaluation": result = saveFormativeEvaluation(payload); break;
       case "getSupportPlans": result = getSupportPlans(payload); break;
       case "saveSupportPlan": result = saveSupportPlan(payload); break;
+
+      // Endpoints Fase 8 - Portal Familiar y Comunicación Institucional
+      case "createLinkInvitation": result = createLinkInvitation(payload); break;
+      case "acceptLinkInvitation": result = acceptLinkInvitation(payload); break;
+      case "getGuardianStudents": result = getGuardianStudents(payload); break;
+      case "getInstitutionalAnnouncements": result = getInstitutionalAnnouncements(payload); break;
+      case "createInstitutionalAnnouncement": result = createInstitutionalAnnouncement(payload); break;
+      case "getInternalMessages": result = getInternalMessages(payload); break;
+      case "sendInternalMessage": result = sendInternalMessage(payload); break;
+      case "getUserNotifications": result = getUserNotifications(payload); break;
+      case "markNotificationAsRead": result = markNotificationAsRead(payload); break;
+      case "createUserNotification": result = createUserNotification(payload); break;
+      case "getAdministrativeRequests": result = getAdministrativeRequests(payload); break;
+      case "submitAdministrativeRequest": result = submitAdministrativeRequest(payload); break;
+      case "updateRequestStatus": result = updateRequestStatus(payload); break;
+      case "getAppointmentBookings": result = getAppointmentBookings(payload); break;
+      case "bookAppointment": result = bookAppointment(payload); break;
+      case "updateAppointmentStatus": result = updateAppointmentStatus(payload); break;
+
       case "ping": result = { status: "success", service: "USER", timestamp: new Date().toISOString(), dbConnected: true }; break;
       default: result = { status: "error", message: `Acción no reconocida: ${action}` };
     }
@@ -792,7 +856,11 @@ function getInstitutionalCriteria(payload) {
   const { dominio } = payload || {};
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
   const sheet = getOrCreateSheet(ss, "CriteriosInstitucionales");
-  const data = sheet.getDataRange().getValues();
+  if (sheet.getLastRow() === 0) {
+    sheet.appendRow(["CriterioID", "Dominio", "Nombre", "Descripcion", "EscalaJSON", "AmbitoNivel", "Estado"]);
+  }
+
+  let data = sheet.getDataRange().getValues();
 
   if (data.length <= 1) {
     const defaultCriteria = [
@@ -801,29 +869,32 @@ function getInstitutionalCriteria(payload) {
       ["CRIT-3", "AseoHigiene", "Hábitos de Higiene y Cuidado Personal", "Mantiene rutinas adecuadas de higiene personal y cuidado de sus elementos.", JSON.stringify(["Cumple", "CumpleParcialmente", "RequiereAcompañamiento", "NoEvaluado"]), "Global", "Activo"],
       ["CRIT-4", "PresentacionPersonal", "Uso del Uniforme e Identificación", "Cumple las normas institucionales sobre uso del uniforme e identificación escolar.", JSON.stringify(["Cumple", "CumpleParcialmente", "IncumplimientoObservado", "ExcepcionAutorizada"]), "Global", "Activo"]
     ];
-    sheet.appendRow(["CriterioID", "Dominio", "Nombre", "Descripcion", "EscalaJSON", "AmbitoNivel", "Estado"]);
     defaultCriteria.forEach(c => sheet.appendRow(c));
-    return {
-      status: "success",
-      data: defaultCriteria.map(c => ({
-        criterioId: c[0], dominio: c[1], nombre: c[2], descripcion: c[3], escala: JSON.parse(c[4]), ambitoNivel: c[5], estado: c[6]
-      }))
-    };
+    data = sheet.getDataRange().getValues();
   }
 
   const criteria = data.slice(1).filter(r => {
+    if (r[0] === "CriterioID" || r[0] === "ID") return false;
     if (dominio && normalizeString(r[1]) !== normalizeString(dominio)) return false;
     if (r[6] === "Inactivo") return false;
     return true;
-  }).map(r => ({
-    criterioId: r[0],
-    dominio: r[1],
-    nombre: r[2],
-    descripcion: r[3],
-    escala: r[4] ? (typeof r[4] === 'string' ? JSON.parse(r[4]) : r[4]) : [],
-    ambitoNivel: r[5] || "Global",
-    estado: r[6] || "Activo"
-  }));
+  }).map(r => {
+    let esc = [];
+    try {
+      esc = r[4] ? (typeof r[4] === 'string' ? JSON.parse(r[4]) : r[4]) : [];
+    } catch (_) {
+      esc = ["Cumple", "CumpleParcialmente", "RequiereAcompañamiento"];
+    }
+    return {
+      criterioId: r[0],
+      dominio: r[1],
+      nombre: r[2],
+      descripcion: r[3],
+      escala: esc,
+      ambitoNivel: r[5] || "Global",
+      estado: r[6] || "Activo"
+    };
+  });
 
   return { status: "success", data: criteria };
 }
@@ -953,6 +1024,450 @@ function saveSupportPlan(payload) {
   sheet.appendRow([pid, userId, situacionMeliorar, objJSON, responsableId || "Orientacion", now, fechaRevision || "", "Activo"]);
 
   return { status: "success", message: "Plan de acompañamiento guardado.", data: { planId: pid } };
+}
+
+// --- FUNCIONES PORTAL FAMILIAR Y COMUNICACIÓN INSTITUCIONAL (FASE 8) ---
+
+function createLinkInvitation(payload) {
+  const { expedienteId, emailResponsable, creadoPor } = payload || {};
+  if (!expedienteId || !emailResponsable) throw new Error("expedienteId y emailResponsable son requeridos.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "InvitacionesVinculacion");
+
+  const invId = "INV-" + Date.now();
+  const token = "TOK-" + Utilities.getUuid();
+  const now = new Date();
+  const expDate = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
+
+  sheet.appendRow([
+    invId,
+    expedienteId,
+    emailResponsable,
+    token,
+    now,
+    expDate,
+    "Activa",
+    creadoPor || "Secretaría"
+  ]);
+
+  return { status: "success", message: "Invitación de vinculación emitida.", data: { invitacionId: invId, token } };
+}
+
+function acceptLinkInvitation(payload) {
+  const { token, userIdResponsable } = payload || {};
+  if (!token || !userIdResponsable) throw new Error("Token e Identificador de Responsable son requeridos.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "InvitacionesVinculacion");
+  const data = sheet.getDataRange().getValues();
+  const idx = data.findIndex(r => String(r[3]).trim() === String(token).trim() && r[6] === "Activa");
+
+  if (idx === -1) throw new Error("Invitación no encontrada o expirada.");
+
+  const row = data[idx];
+  const now = new Date();
+  const expDate = new Date(row[5]);
+  if (now.getTime() > expDate.getTime()) {
+    sheet.getRange(idx + 1, 7).setValue("Expirada");
+    throw new Error("La invitación ha expirado.");
+  }
+
+  sheet.getRange(idx + 1, 7).setValue("Utilizada");
+
+  const relSheet = getOrCreateSheet(ss, "RelacionesFamiliares");
+  const relId = "REL-" + Date.now();
+  relSheet.appendRow([
+    relId,
+    row[1],
+    userIdResponsable,
+    "Padre/Tutor",
+    "Verificada",
+    now,
+    "",
+    "Vinculación aceptada mediante invitación con token."
+  ]);
+
+  return { status: "success", message: "Vinculación familiar completada exitosamente." };
+}
+
+function getGuardianStudents(payload) {
+  const { userIdResponsable } = payload || {};
+  if (!userIdResponsable) throw new Error("userIdResponsable es requerido.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const relSheet = getOrCreateSheet(ss, "RelacionesFamiliares");
+  const relData = relSheet.getDataRange().getValues();
+
+  let verifiedStudents = [];
+  if (relData.length > 1) {
+    verifiedStudents = relData.slice(1).filter(r => {
+      return String(r[2]).trim() === String(userIdResponsable).trim() && (r[4] === "Verificada" || r[4] === "Activa");
+    }).map(r => ({
+      relacionId: r[0],
+      expedienteEstudianteId: r[1],
+      tipoParentesco: r[3],
+      estado: r[4]
+    }));
+  }
+
+  // Fallback / Sync con RelacionesEstudianteTutor
+  if (verifiedStudents.length === 0) {
+    const tutorRelSheet = getOrCreateSheet(ss, "RelacionesEstudianteTutor");
+    const tutorData = tutorRelSheet.getDataRange().getValues();
+    if (tutorData.length > 1) {
+      verifiedStudents = tutorData.slice(1).filter(r => {
+        return String(r[2]).trim() === String(userIdResponsable).trim() && (r[9] === "Verificada" || r[9] === "Activa");
+      }).map(r => ({
+        relacionId: r[0],
+        expedienteEstudianteId: r[1],
+        tipoParentesco: r[3],
+        estado: r[9]
+      }));
+    }
+  }
+
+  return { status: "success", data: verifiedStudents };
+}
+
+function getInstitutionalAnnouncements(payload) {
+  const { rol, audiencia } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "ComunicadosInstitucionales");
+  const data = sheet.getDataRange().getValues();
+  if (data.length <= 1) return { status: "success", data: [] };
+
+  const userAud = normalizeString(audiencia || rol || "TodaLaComunidad");
+
+  const announcements = data.slice(1).filter(r => {
+    if (r[8] === "Retirado") return false;
+    const audStr = normalizeString(typeof r[5] === 'string' ? r[5] : JSON.stringify(r[5]));
+    if (audStr.indexOf("todalacomunidad") !== -1 || audStr === "" || audStr === userAud || (userAud && audStr.indexOf(userAud) !== -1)) {
+      return true;
+    }
+    return false;
+  }).map(r => ({
+    comunicadoId: r[0],
+    titulo: r[1],
+    contenido: r[2],
+    categoria: r[3] || "General",
+    autorId: r[4],
+    audiencia: r[5] ? (typeof r[5] === 'string' ? JSON.parse(r[5]) : r[5]) : "TodaLaComunidad",
+    requiereFirma: r[6] === true || String(r[6]).toLowerCase() === "true",
+    fechaPublicacion: r[7] ? new Date(r[7]).toISOString() : null,
+    estado: r[8] || "Publicado"
+  }));
+
+  return { status: "success", data: announcements };
+}
+
+function createInstitutionalAnnouncement(payload) {
+  const { titulo, contenido, categoria, autorId, audiencia, requiereFirma } = payload || {};
+  if (!titulo || !contenido) throw new Error("Título y Contenido son requeridos.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "ComunicadosInstitucionales");
+
+  const comId = "COMUN-" + Date.now();
+  const now = new Date();
+
+  sheet.appendRow([
+    comId,
+    titulo,
+    contenido,
+    categoria || "General",
+    autorId || "Dirección",
+    JSON.stringify(audiencia || "TodaLaComunidad"),
+    requiereFirma || false,
+    now,
+    "Publicado"
+  ]);
+
+  return { status: "success", message: "Comunicado institucional publicado.", data: { comunicadoId: comId } };
+}
+
+function getInternalMessages(payload) {
+  const { conversacionId, userId } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "ConversacionesMensajes");
+  const data = sheet.getDataRange().getValues();
+  if (data.length <= 1) return { status: "success", data: [] };
+
+  const messages = data.slice(1).filter(r => {
+    if (conversacionId && String(r[1]).trim() === String(conversacionId).trim()) return true;
+    if (userId && (String(r[2]).trim() === String(userId).trim() || String(r[3]).trim() === String(userId).trim())) return true;
+    return false;
+  }).map(r => ({
+    mensajeId: r[0],
+    conversacionId: r[1],
+    remitenteId: r[2],
+    destinatarioId: r[3],
+    estudianteId: r[4],
+    mensajeTexto: r[5],
+    adjuntoUrl: r[6],
+    fechaEnvio: r[7] ? new Date(r[7]).toISOString() : null,
+    estadoLectura: r[8] || "Enviado"
+  }));
+
+  return { status: "success", data: messages };
+}
+
+function sendInternalMessage(payload) {
+  const { conversacionId, remitenteId, destinatarioId, estudianteId, mensajeTexto, adjuntoUrl } = payload || {};
+  if (!remitenteId || !destinatarioId || !mensajeTexto) throw new Error("Remitente, Destinatario y Mensaje son requeridos.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "ConversacionesMensajes");
+
+  const msgId = "MSG-" + Date.now();
+  const convId = conversacionId || ("CONV-" + [remitenteId, destinatarioId].sort().join("-"));
+  const now = new Date();
+
+  sheet.appendRow([
+    msgId,
+    convId,
+    remitenteId,
+    destinatarioId,
+    estudianteId || "",
+    mensajeTexto,
+    adjuntoUrl || "",
+    now,
+    "Enviado"
+  ]);
+
+  try {
+    createUserNotification({
+      userId: destinatarioId,
+      titulo: "Nuevo Mensaje Institucional",
+      mensaje: `Ha recibido un mensaje: "${mensajeTexto.substring(0, 50)}..."`,
+      tipo: "Mensaje",
+      categoria: "Comunicacion"
+    });
+  } catch (e) {
+    logDebug("Error creando notificacion de mensaje:", e.message);
+  }
+
+  return { status: "success", message: "Mensaje interno enviado.", data: { mensajeId: msgId, conversacionId: convId } };
+}
+
+function getUserNotifications(payload) {
+  const { userId } = payload || {};
+  if (!userId) throw new Error("userId es requerido.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "BandejaNotificaciones");
+  const data = sheet.getDataRange().getValues();
+  if (data.length <= 1) return { status: "success", data: [] };
+
+  const notifications = data.slice(1).filter(r => {
+    return String(r[1]).trim() === String(userId).trim();
+  }).map(r => ({
+    notificacionId: r[0],
+    userId: r[1],
+    titulo: r[2],
+    mensaje: r[3],
+    tipo: r[4] || "Informativa",
+    categoria: r[5] || "General",
+    leido: r[6] === true || String(r[6]).toLowerCase() === "true",
+    enlaceAccion: r[7] || "",
+    fechaRegistro: r[8] ? new Date(r[8]).toISOString() : null
+  }));
+
+  return { status: "success", data: notifications };
+}
+
+function markNotificationAsRead(payload) {
+  const { notificacionId } = payload || {};
+  if (!notificacionId) throw new Error("notificacionId es requerido.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "BandejaNotificaciones");
+  const data = sheet.getDataRange().getValues();
+  const idx = data.findIndex(r => String(r[0]).trim() === String(notificacionId).trim());
+  if (idx === -1) throw new Error("Notificación no encontrada.");
+
+  sheet.getRange(idx + 1, 7).setValue(true);
+  return { status: "success", message: "Notificación marcada como leída." };
+}
+
+function createUserNotification(payload) {
+  const { userId, titulo, mensaje, tipo, categoria, enlaceAccion } = payload || {};
+  if (!userId || !titulo || !mensaje) return { status: "error", message: "userId, titulo y mensaje son requeridos." };
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "BandejaNotificaciones");
+  if (sheet.getLastRow() === 0) {
+    sheet.appendRow(["NotificacionID", "UserId", "Titulo", "Mensaje", "Tipo", "Categoria", "Leido", "EnlaceAccion", "FechaRegistro"]);
+  }
+
+  const notifId = "NOTIF-" + Date.now() + "-" + Math.floor(Math.random() * 1000);
+  const now = new Date();
+
+  sheet.appendRow([
+    notifId,
+    userId,
+    titulo,
+    mensaje,
+    tipo || "Informativa",
+    categoria || "General",
+    false,
+    enlaceAccion || "",
+    now
+  ]);
+
+  return { status: "success", message: "Notificación registrada.", data: { notificacionId: notifId } };
+}
+
+function getAdministrativeRequests(payload) {
+  const { userId, estudianteId } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "SolicitudesTramites");
+  const data = sheet.getDataRange().getValues();
+  if (data.length <= 1) return { status: "success", data: [] };
+
+  const requests = data.slice(1).filter(r => {
+    if (userId && String(r[1]).trim() !== String(userId).trim()) return false;
+    if (estudianteId && String(r[2]).trim() !== String(estudianteId).trim()) return false;
+    return true;
+  }).map(r => ({
+    solicitudId: r[0],
+    userId: r[1],
+    estudianteId: r[2],
+    tipoTramite: r[3],
+    descripcion: r[4],
+    adjuntoUrl: r[5],
+    estado: r[6] || "Enviada",
+    asignadoA: r[7] || "Secretaría",
+    observacionesAdmin: r[8] || "",
+    fechaSolicitud: r[9] ? new Date(r[9]).toISOString() : null,
+    fechaResolucion: r[10] ? new Date(r[10]).toISOString() : null
+  }));
+
+  return { status: "success", data: requests };
+}
+
+function submitAdministrativeRequest(payload) {
+  const { userId, estudianteId, tipoTramite, descripcion, adjuntoUrl } = payload || {};
+  if (!userId || !tipoTramite || !descripcion) throw new Error("userId, tipoTramite y descripcion son requeridos.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "SolicitudesTramites");
+
+  const solId = "TRAM-" + Date.now();
+  const now = new Date();
+
+  sheet.appendRow([
+    solId,
+    userId,
+    estudianteId || "",
+    tipoTramite,
+    descripcion,
+    adjuntoUrl || "",
+    "Enviada",
+    "Secretaría",
+    "",
+    now,
+    ""
+  ]);
+
+  try {
+    createUserNotification({
+      userId: userId,
+      titulo: "Trámite Registrado",
+      mensaje: `Su solicitud de ${tipoTramite} ha sido ingresada en Secretaría.`,
+      tipo: "Tramite",
+      categoria: "Administrativa"
+    });
+  } catch (e) {
+    logDebug("Error creando notificacion de tramite:", e.message);
+  }
+
+  return { status: "success", message: "Trámite/Solicitud ingresado correctamente.", data: { solicitudId: solId } };
+}
+
+function updateRequestStatus(payload) {
+  const { solicitudId, nuevoEstado, observacionesAdmin, asignadoA } = payload || {};
+  if (!solicitudId || !nuevoEstado) throw new Error("solicitudId y nuevoEstado son requeridos.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "SolicitudesTramites");
+  const data = sheet.getDataRange().getValues();
+  const idx = data.findIndex(r => String(r[0]).trim() === String(solicitudId).trim());
+  if (idx === -1) throw new Error("Solicitud no encontrada.");
+
+  sheet.getRange(idx + 1, 7).setValue(nuevoEstado);
+  if (observacionesAdmin) sheet.getRange(idx + 1, 9).setValue(observacionesAdmin);
+  if (asignadoA) sheet.getRange(idx + 1, 8).setValue(asignadoA);
+  sheet.getRange(idx + 1, 11).setValue(new Date());
+
+  return { status: "success", message: `Estado de la solicitud actualizado a ${nuevoEstado}.` };
+}
+
+function getAppointmentBookings(payload) {
+  const { solicitanteId, estudianteId, solicitadoA } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "CitasReuniones");
+  const data = sheet.getDataRange().getValues();
+  if (data.length <= 1) return { status: "success", data: [] };
+
+  const appointments = data.slice(1).filter(r => {
+    if (solicitanteId && String(r[1]).trim() !== String(solicitanteId).trim()) return false;
+    if (estudianteId && String(r[2]).trim() !== String(estudianteId).trim()) return false;
+    if (solicitadoA && String(r[3]).trim() !== String(solicitadoA).trim()) return false;
+    return true;
+  }).map(r => ({
+    citaId: r[0],
+    solicitanteId: r[1],
+    estudianteId: r[2],
+    solicitadoA: r[3],
+    motivo: r[4],
+    fechaHora: r[5] ? new Date(r[5]).toISOString() : null,
+    modalidad: r[6] || "Presencial",
+    estado: r[7] || "Solicitada",
+    comentarios: r[8] || ""
+  }));
+
+  return { status: "success", data: appointments };
+}
+
+function bookAppointment(payload) {
+  const { solicitanteId, estudianteId, solicitadoA, motivo, fechaHora, modalidad } = payload || {};
+  if (!solicitanteId || !solicitadoA || !motivo || !fechaHora) throw new Error("Solicitante, Destinatario, Motivo y Fecha/Hora son requeridos.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "CitasReuniones");
+
+  const citaId = "CITA-" + Date.now();
+
+  sheet.appendRow([
+    citaId,
+    solicitanteId,
+    estudianteId || "",
+    solicitadoA,
+    motivo,
+    fechaHora,
+    modalidad || "Presencial",
+    "Solicitada",
+    ""
+  ]);
+
+  return { status: "success", message: "Solicitud de cita/reunión enviada.", data: { citaId } };
+}
+
+function updateAppointmentStatus(payload) {
+  const { citaId, nuevoEstado, comentarios } = payload || {};
+  if (!citaId || !nuevoEstado) throw new Error("citaId y nuevoEstado son requeridos.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "CitasReuniones");
+  const data = sheet.getDataRange().getValues();
+  const idx = data.findIndex(r => String(r[0]).trim() === String(citaId).trim());
+  if (idx === -1) throw new Error("Cita no encontrada.");
+
+  sheet.getRange(idx + 1, 8).setValue(nuevoEstado);
+  if (comentarios) sheet.getRange(idx + 1, 9).setValue(comentarios);
+
+  return { status: "success", message: `Estado de la cita cambiado a ${nuevoEstado}.` };
 }
 
 function createNews(payload) {

@@ -153,6 +153,72 @@ document.addEventListener('DOMContentLoaded', function() {
     renderStudentHeader();
     fetchAndRenderFormativeEvaluations();
     fetchAndRenderStudentAttendanceSummary();
+    fetchAndRenderStudentAdministrativeRequests();
+
+    document.getElementById('btn-open-request-modal')?.addEventListener('click', function() {
+        var tipo = prompt('Ingrese el tipo de trámite o solicitud (Ej: Constancia de Estudios, Solicitud de Justificante, Revisión de Nota):', 'Constancia de Estudios');
+        if (!tipo) return;
+        var desc = prompt('Ingrese los detalles o la descripción de su solicitud:', 'Solicitud presentada desde el Portal Familiar');
+        if (!desc) return;
+
+        fetchApi('USER', 'submitAdministrativeRequest', {
+            userId: currentUser.userId,
+            tipoTramite: tipo,
+            descripcion: desc
+        }).then(function(res) {
+            if (res && res.status === 'success') {
+                alert('Solicitud enviada exitosamente a Secretaría.');
+                fetchAndRenderStudentAdministrativeRequests();
+            } else {
+                alert('Error al enviar solicitud: ' + (res.message || 'Error desconocido'));
+            }
+        }).catch(function(err) {
+            alert('Error al enviar solicitud: ' + err.message);
+        });
+    });
+
+    function fetchAndRenderStudentAdministrativeRequests() {
+        var container = document.getElementById('family-portal-requests-container');
+        if (!container || !currentUser || !currentUser.userId) return;
+
+        fetchApi('USER', 'getAdministrativeRequests', { userId: currentUser.userId })
+            .then(function(res) {
+                if (res && res.status === 'success' && res.data) {
+                    var reqs = res.data;
+                    if (reqs.length === 0) {
+                        container.innerHTML = `
+                            <div class="col-span-2 text-center py-6 text-gray-400 italic text-xs border-2 border-dashed border-gray-100 rounded-2xl">
+                                No se registran trámites ni solicitudes administrativas pendientes.
+                            </div>
+                        `;
+                        return;
+                    }
+
+                    var html = '';
+                    reqs.slice(0, 4).forEach(function(item) {
+                        html += `
+                            <div class="p-4 rounded-2xl bg-gray-50 border border-gray-100 flex flex-col justify-between">
+                                <div>
+                                    <div class="flex items-center justify-between mb-2">
+                                        <span class="text-xs font-bold text-gray-800">${item.tipoTramite}</span>
+                                        <span class="px-3 py-1 text-[10px] font-bold rounded-full bg-indigo-50 text-indigo-600 border border-indigo-100 uppercase">${item.estado}</span>
+                                    </div>
+                                    <p class="text-[11px] text-gray-600 leading-relaxed mb-2">${item.descripcion}</p>
+                                    ${item.observacionesAdmin ? `<p class="text-[10px] text-indigo-600 font-medium italic">Nota Secretaría: ${item.observacionesAdmin}</p>` : ''}
+                                </div>
+                                <div class="mt-3 pt-2 border-t border-gray-100 text-[9px] font-bold text-gray-400">
+                                    <span>Solicitado el: ${item.fechaSolicitud ? new Date(item.fechaSolicitud).toLocaleDateString() : 'N/A'}</span>
+                                </div>
+                            </div>
+                        `;
+                    });
+                    container.innerHTML = html;
+                }
+            })
+            .catch(function(err) {
+                console.log('Error al cargar trámites:', err);
+            });
+    }
 
     function fetchAndRenderStudentAttendanceSummary() {
         var summaryContainer = document.getElementById('attendance-summary-container');

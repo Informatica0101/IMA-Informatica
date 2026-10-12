@@ -163,6 +163,21 @@ const ROLE_PERMISSIONS = {
   ],
   "Contador": ["getAcademicConfig", "registerStudentEnrollment", "getStudentEnrollmentHistory", "getAcademicYears", "getAcademicOffers", "getStudentFile", "getStudentEnrollments"],
   "Consejeros": ["getAcademicConfig", "getAcademicYears", "getAcademicCalendar", "getClassSchedules", "getStudentFile", "getStudentTimeline", "getStudentGuardians"],
+  "Padre": [
+    "getAcademicConfig", "getAcademicHistory", "getAsignaturasActivas", "getWhatsAppLink", "getStudentEnrollmentHistory",
+    "getAcademicCalendar", "getClassSchedules", "getStudentFile", "getStudentTimeline", "getStudentDocuments", "getStudentEnrollments",
+    "getClassAttendance", "getDailyAttendance", "submitAttendanceJustification", "getStudentAttendanceSummary"
+  ],
+  "Tutor": [
+    "getAcademicConfig", "getAcademicHistory", "getAsignaturasActivas", "getWhatsAppLink", "getStudentEnrollmentHistory",
+    "getAcademicCalendar", "getClassSchedules", "getStudentFile", "getStudentTimeline", "getStudentDocuments", "getStudentEnrollments",
+    "getClassAttendance", "getDailyAttendance", "submitAttendanceJustification", "getStudentAttendanceSummary"
+  ],
+  "Responsable": [
+    "getAcademicConfig", "getAcademicHistory", "getAsignaturasActivas", "getWhatsAppLink", "getStudentEnrollmentHistory",
+    "getAcademicCalendar", "getClassSchedules", "getStudentFile", "getStudentTimeline", "getStudentDocuments", "getStudentEnrollments",
+    "getClassAttendance", "getDailyAttendance", "submitAttendanceJustification", "getStudentAttendanceSummary"
+  ],
   "Profesor": [
     "getAcademicConfig", "updateAcademicConfig", "getAcademicHistory", "getAsignaturasActivas", "updateAsignaturasActivas", "saveWhatsAppLink", "getWhatsAppLink", "getQuestionBank", "saveQuestion", "generateMigrationReport",
     "getAcademicYears", "getAcademicPeriods", "getSubjectCatalog", "getAcademicOffers", "getTeacherAssignments", "getAcademicCalendar", "getClassSchedules",
@@ -1083,25 +1098,35 @@ function saveClassAttendance(payload) {
 
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
   const regSheet = getOrCreateSheet(ss, "RegistrosAsistencia");
+  if (regSheet.getLastRow() === 0) {
+    regSheet.appendRow(["RegistroID", "SesionID", "UserId", "EstadoAsistencia", "HoraLlegada", "MinutosTardanza", "Justificado", "ObservacionDocente", "FechaRegistro"]);
+  }
+
   const data = regSheet.getDataRange().getValues();
   const now = new Date();
+
+  const indexMap = {};
+  for (let i = 1; i < data.length; i++) {
+    const key = `${String(data[i][1]).trim()}_${String(data[i][2]).trim()}`;
+    indexMap[key] = i;
+  }
 
   let savedCount = 0;
   registros.forEach(r => {
     const { userId, estadoAsistencia, horaLlegada, minutosTardanza, justificado, observacionDocente } = r;
     if (!userId) return;
 
-    const idx = data.findIndex(row => String(row[1]).trim() === String(sesionId).trim() && String(row[2]).trim() === String(userId).trim());
-
-    if (idx !== -1) {
-      regSheet.getRange(idx + 1, 4).setValue(estadoAsistencia || "Presente");
-      if (horaLlegada !== undefined) regSheet.getRange(idx + 1, 5).setValue(horaLlegada);
-      if (minutosTardanza !== undefined) regSheet.getRange(idx + 1, 6).setValue(minutosTardanza);
-      if (justificado !== undefined) regSheet.getRange(idx + 1, 7).setValue(justificado);
-      if (observacionDocente !== undefined) regSheet.getRange(idx + 1, 8).setValue(observacionDocente);
+    const key = `${String(sesionId).trim()}_${String(userId).trim()}`;
+    if (key in indexMap) {
+      const idx = indexMap[key];
+      data[idx][3] = estadoAsistencia || "Presente";
+      if (horaLlegada !== undefined) data[idx][4] = horaLlegada;
+      if (minutosTardanza !== undefined) data[idx][5] = minutosTardanza;
+      if (justificado !== undefined) data[idx][6] = justificado;
+      if (observacionDocente !== undefined) data[idx][7] = observacionDocente;
     } else {
       const regId = "REG-AST-" + Date.now() + "-" + Math.floor(Math.random() * 1000);
-      regSheet.appendRow([
+      const newRow = [
         regId,
         sesionId,
         userId,
@@ -1111,10 +1136,16 @@ function saveClassAttendance(payload) {
         justificado || false,
         observacionDocente || "",
         now
-      ]);
+      ];
+      data.push(newRow);
+      indexMap[key] = data.length - 1;
     }
     savedCount++;
   });
+
+  if (data.length > 1) {
+    regSheet.getRange(1, 1, data.length, data[0].length).setValues(data);
+  }
 
   return { status: "success", message: `Asistencia guardada para ${savedCount} estudiantes.` };
 }
@@ -1719,7 +1750,6 @@ function uploadStudentDocument(payload) {
     const mimeType = fileData.split(',')[0].match(/:(.*?);/)[1];
     const base64Data = fileData.split(',')[1];
     const file = targetFolder.createFile(Utilities.newBlob(Utilities.base64Decode(base64Data), mimeType, fileName || `${tipoDocumento}_${Date.now()}`));
-    file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
 
     driveFileId = file.getId();
     driveUrl = `https://lh3.googleusercontent.com/d/${file.getId()}`;

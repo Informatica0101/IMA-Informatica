@@ -1074,3 +1074,31 @@ Descripción de cambios:
 
 3. `teacher-dashboard.html` & `js/teacher.js`:
    - Diseñada e inyectada la tarjeta de Control de Asistencia en el panel docente, habilitando la apertura de sesiones de control de asistencia por fecha.
+
+===========================================================
+REGISTRO DE CAMBIOS - FASE 8: COMUNICACIÓN INSTITUCIONAL, PORTAL FAMILIAR, NOTIFICACIONES Y TRÁMITES
+===========================================================
+Archivos modificados:
+- backend/user-service/Code.gs
+- backend/academic-service/Code.gs
+- student-dashboard.html
+- teacher-dashboard.html
+- js/student.js
+- js/teacher.js
+- MapaDependencias.md
+- Auditoría.txt
+- ChangesLogs.txt
+
+Descripción de cambios:
+1. `backend/user-service/Code.gs`:
+   - Creadas e inicializadas las tablas de la Fase 8: `InvitacionesVinculacion`, `ComunicadosInstitucionales`, `ConversacionesMensajes`, `BandejaNotificaciones`, `SolicitudesTramites`, `CitasReuniones`.
+   - Implementada emisión e ingesta de Invitaciones de Vinculación con token HTTPS (`createLinkInvitation`, `acceptLinkInvitation`).
+   - Implementada consulta de Alumnos Vinculados por Responsable (`getGuardianStudents`).
+   - Implementada gestión de Comunicados e Anuncios Institucionales con filtrado de audiencia (`getInstitutionalAnnouncements`, `createInstitutionalAnnouncement`).
+   - Implementada Mensajería Interna Bidireccional (`getInternalMessages`, `sendInternalMessage`).
+   - Implementado Centro de Notificaciones con ingesta automática (`getUserNotifications`, `markNotificationAsRead`, `createUserNotification`).
+   - Implementada gestión de Trámites y Solicitudes Administrativas (`getAdministrativeRequests`, `submitAdministrativeRequest`, `updateRequestStatus`).
+   - Implementada programación de Citas e Incidencias de Reunión (`getAppointmentBookings`, `bookAppointment`, `updateAppointmentStatus`).
+
+2. `student-dashboard.html` & `js/student.js`:
+   - Diseñada e inyectada la tarjeta de Comunicación y Trámites Institucionales en el perfil del estudiante/familiar, con modal para ingreso de nuevos trámites y visualización de respuestas de Secretaría.

@@ -1,4 +1,4 @@
-# Mapa de Dependencias Académicas (v8.7.0 - Fase 7 Asistencia, Puntualidad y Seguimiento)
+# Mapa de Dependencias Académicas (v8.8.0 - Fase 8 Portal Familiar y Comunicación)
 
 ## Módulo de Tareas (Teacher/Student)
 - Entidad: Tarea (Regular) -> Impacta Progreso Base.
@@ -80,3 +80,11 @@
 - `SalidaAnticipada`: Registro de retiros de la institución antes de finalizar la jornada con autorización y acompañante.
 - `IncidenciaAsistencia`: Incidencias de puntualidad/ausentismo recurrentes reportadas por docentes/Secretaría.
 - `CasoSeguimiento`: Casos de acompañamiento preventivo por ausentismo recurrente o patrones de tardanza.
+
+## Matriz de Entidades Centrales - Fase 8 (Portal Familiar y Comunicación Institucional)
+- `InvitacionVinculacion`: Invitaciones temporales con token HTTPS para vinculación comprobada responsable-estudiante.
+- `ComunicadoInstitucional`: Comunicados y avisos con audiencia segmentada, fecha de vigencia y firmas/confirmaciones.
+- `ConversacionMensaje`: Mensajería institucional bidireccional entre responsable legal, docente, Secretaría u Orientación.
+- `BandejaNotificacion`: Notificaciones internas unificadas con control de lectura y enlaces de acción.
+- `SolicitudTramite`: Trámites y solicitudes administrativas (constancias, revisiones, solicitudes de justificante).
+- `CitaReunion`: Citas institucionales con confirmación de horario y estado de atención.

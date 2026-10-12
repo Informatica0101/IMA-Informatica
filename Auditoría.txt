@@ -160,3 +160,37 @@ Archivos Auditados:
 4. RIESGOS DE COMPATIBILIDAD Y MITIGACIÓN
 - La asistencia del estudiante no alterará automáticamente las notas académicas de la Fase 6, preservando la independencia de dominios.
 - Se mantendrá la coincidencia por encabezados en Google Sheets para resiliencia ante adición de columnas.
+
+AUDITORÍA TÉCNICA Y DIAGNÓSTICO DE SOLO LECTURA - FASE 8: COMUNICACIÓN INSTITUCIONAL, PORTAL FAMILIAR, NOTIFICACIONES Y TRÁMITES - Sun Jul 5 2026
+
+Archivos Auditados:
+- backend/user-service/Code.gs
+- backend/academic-service/Code.gs
+- js/student.js
+- js/index-ui.js
+- student-dashboard.html
+- teacher-dashboard.html
+
+1. FUNCIONES EXISTENTES Y OPERATIVAS
+- Noticias y Avisos: `getNews`, `createNews`, `updateNewsStatus`, `uploadNewsImage` en `backend/user-service/Code.gs` operando sobre la hoja `'NoticiasPortal'`.
+- Tutores y Responsables Legales: `ResponsablesTutores` y `RelacionesEstudianteTutor` en `backend/academic-service/Code.gs` registrando vínculos y permisos.
+
+2. FUNCIONES FALTANTES Y MEJORAS REQUERIDAS PARA FASE 8
+- Portal Familiar Unificado: Selección de estudiante vinculado con cambio contextual en tiempo real y verificaciones de autorización en servidor.
+- Invitaciones de Vinculación (`InvitacionesVinculacion`): Emisión de invitaciones seguras con token de un solo uso, caducidad y estado.
+- Mensajería Interna Bidireccional (`ConversacionesMensajes`): Conversaciones estructuradas entre responsable legal, docente, Secretaría u Orientación sin exponer teléfonos personales.
+- Centro Unificado de Notificaciones (`BandejaNotificaciones`): Notificaciones multicanal con marcas de lectura y prevención de duplicados por idempotencia.
+- Gestión de Solicitudes y Trámites (`SolicitudesTramites`): Centro de trámites para constancias, justificaciones y revisiones con máquina de estados y plazos de atención.
+- Citas y Reuniones (`CitasReuniones`): Programación de citas con confirmaciones, estados y recordatorios.
+
+3. ESTRUCTURA DE TABLAS EN GOOGLE SHEETS
+- Hojas a Incorporar/Consolidar en USER-SERVICE / ACADEMIC-SERVICE:
+  - `InvitacionesVinculacion` (InvitacionID | ExpedienteID | EmailResponsable | Token | FechaEmision | FechaExpiracion | Estado | CreadoPor)
+  - `ComunicadosInstitucionales` (ComunicadoID | Titulo | Contenido | Categoria | AutorID | AudienciaJSON | RequiereFirma | FechaPublicacion | Estado)
+  - `ConversacionesMensajes` (MensajeID | ConversacionID | RemitenteID | DestinatarioID | EstudianteID | MensajeTexto | AdjuntoUrl | FechaEnvio | EstadoLectura)
+  - `BandejaNotificaciones` (NotificacionID | UserId | Titulo | Mensaje | Tipo | Categoria | Leido | EnlaceAccion | FechaRegistro)
+  - `SolicitudesTramites` (SolicitudID | UserId | EstudianteID | TipoTramite | Descripcion | AdjuntoUrl | Estado | AsignadoA | ObservacionesAdmin | FechaSolicitud | FechaResolucion)
+  - `CitasReuniones` (CitaID | SolicitanteID | EstudianteID | SolicitadoA | Motivo | FechaHora | Modalidad | Estado | Comentarios)
+
+4. RIESGOS DE COMPATIBILIDAD Y MITIGACIÓN
+- Las notas académicas (Fase 6) y asistencias (Fase 7) no serán alteradas directamente desde el portal familiar; cualquier trámite generará una solicitud de revisión/justificación.

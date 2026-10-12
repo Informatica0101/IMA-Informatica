@@ -72,12 +72,15 @@ function doOptions(e) {
 }
 
 const PUBLIC_ACTIONS = [
-  "getStudentTasks", "getAllTasks", "getTeacherActivity", "listProjects", "loadProject", "getAllStudentProjects", "getVirtualClassrooms", "getPosts", "getStudyMaterials", "getSubmissionComments", "getSubmissionVersions"
+  "getStudentTasks", "getAllTasks", "listProjects", "loadProject", "getAllStudentProjects", "getVirtualClassrooms", "getPosts", "getStudyMaterials"
 ];
 
 const ROLE_PERMISSIONS = {
   "Administrador": ["*"],
   "Desarrollador": ["*"],
+  "Padre": ["getStudentTasks", "getVirtualClassrooms", "getPosts", "getStudyMaterials", "getSubmissionComments"],
+  "Tutor": ["getStudentTasks", "getVirtualClassrooms", "getPosts", "getStudyMaterials", "getSubmissionComments"],
+  "Responsable": ["getStudentTasks", "getVirtualClassrooms", "getPosts", "getStudyMaterials", "getSubmissionComments"],
   "Dirección": ["*"],
   "Secretaría": ["*"],
   "Profesor": [
