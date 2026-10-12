@@ -151,6 +151,58 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     renderStudentHeader();
+    fetchAndRenderFormativeEvaluations();
+
+    function fetchAndRenderFormativeEvaluations() {
+        var container = document.getElementById('formative-logs-container');
+        if (!container || !currentUser || !currentUser.userId) return;
+
+        fetchApi('USER', 'getFormativeEvaluations', { userId: currentUser.userId })
+            .then(function(res) {
+                if (res && res.status === 'success' && res.data) {
+                    var evals = res.data;
+                    if (evals.length === 0) {
+                        container.innerHTML = `
+                            <div class="col-span-3 text-center py-6 text-gray-400 italic text-xs border-2 border-dashed border-gray-100 rounded-2xl">
+                                No se registran observaciones formativas para el período actual.
+                            </div>
+                        `;
+                        return;
+                    }
+
+                    var html = '';
+                    var dominiosMap = {
+                        'Comportamiento': { icon: 'fa-user-shield', label: 'Comportamiento y Convivencia' },
+                        'AseoHigiene': { icon: 'fa-soap', label: 'Aseo e Higiene Personal' },
+                        'PresentacionPersonal': { icon: 'fa-user-tie', label: 'Presentación y Uniforme' }
+                    };
+
+                    evals.slice(0, 6).forEach(function(item) {
+                        var info = dominiosMap[item.dominio] || { icon: 'fa-info-circle', label: item.dominio };
+                        html += `
+                            <div class="p-4 rounded-2xl bg-gray-50 border border-gray-100 flex flex-col justify-between">
+                                <div>
+                                    <div class="flex items-center gap-2 mb-2 text-emerald-600 font-bold text-xs">
+                                        <i class="fas ${info.icon}"></i>
+                                        <span>${info.label}</span>
+                                    </div>
+                                    <p class="text-xs font-semibold text-gray-800 mb-1">Valoración: <span class="uppercase text-blue-600">${item.calificacionValor}</span></p>
+                                    <p class="text-[11px] text-gray-600 leading-relaxed">${item.observacionObjetiva || 'Desempeño adecuado conforme a las normas institucionales.'}</p>
+                                </div>
+                                <div class="mt-3 pt-2 border-t border-gray-100 flex justify-between items-center text-[9px] font-bold text-gray-400">
+                                    <span>Contexto: ${item.contexto || 'Rutinario'}</span>
+                                    <span>${item.fechaRegistro ? new Date(item.fechaRegistro).toLocaleDateString() : ''}</span>
+                                </div>
+                            </div>
+                        `;
+                    });
+                    container.innerHTML = html;
+                }
+            })
+            .catch(function(err) {
+                console.log('Error al cargar evaluaciones formativas:', err);
+            });
+    }
 
     function formatDate(isoString) {
         if (!isoString) return 'N/A';
@@ -1052,6 +1104,14 @@ document.addEventListener('DOMContentLoaded', function() {
         uploadedFilesContainer.classList.add('hidden');
         filePreviewContainer.classList.add('hidden');
         fileInput.value = '';
+
+        var textResp = document.getElementById('submission-text-response');
+        var extLink = document.getElementById('submission-external-link');
+        var privComment = document.getElementById('submission-private-comment');
+        if (textResp) { textResp.value = ''; textResp.oninput = updateConfirmButtonState; }
+        if (extLink) { extLink.value = ''; extLink.oninput = updateConfirmButtonState; }
+        if (privComment) { privComment.value = ''; }
+
         updateConfirmButtonState();
 
         submissionModal.classList.remove('hidden');
@@ -1086,7 +1146,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function updateConfirmButtonState() {
         if (!confirmSubmissionBtn) return;
-        if (uploadedFiles.length > 0 && activeUploads === 0) {
+        var textVal = document.getElementById('submission-text-response')?.value.trim() || '';
+        var linkVal = document.getElementById('submission-external-link')?.value.trim() || '';
+        var hasContent = uploadedFiles.length > 0 || textVal.length > 0 || linkVal.length > 0;
+
+        if (hasContent && activeUploads === 0) {
             confirmSubmissionBtn.disabled = false;
             confirmSubmissionBtn.classList.remove('opacity-50', 'cursor-not-allowed');
         } else {
@@ -1547,19 +1611,30 @@ document.addEventListener('DOMContentLoaded', function() {
                     finalMimeType = 'folder';
                 }
 
+                var textoRespuestaVal = document.getElementById('submission-text-response')?.value || '';
+                var enlaceExternoVal = document.getElementById('submission-external-link')?.value || '';
+                var observacionesVal = document.getElementById('submission-private-comment')?.value || '';
+
                 var payload = {
                     userId: currentUser.userId,
                     tareaId: currentTaskId,
                     fileId: finalFileId,
                     mimeType: finalMimeType,
-                    isLate: isLate // Informar al backend sobre la entrega tardía (Tarea 3)
+                    textoRespuesta: textoRespuestaVal,
+                    enlaceExterno: enlaceExternoVal,
+                    observaciones: observacionesVal,
+                    isLate: isLate
                 };
 
                 var result = await fetchApi('TASK', 'submitAssignment', payload);
                 if (result.status === 'success') {
                     // Operación exitosa: limpiar archivos para evitar advertencia (Caso 2)
                     uploadedFiles = [];
-                    alert('¡Tarea entregada exitosamente!');
+                    var confirmMsg = '¡Tarea entregada exitosamente!';
+                    if (result.data && result.data.submissionToken) {
+                        confirmMsg += '\nComprobante de entrega: ' + result.data.submissionToken;
+                    }
+                    alert(confirmMsg);
                     closeSubmissionModal();
                     fetchAllActivities();
                 } else {

@@ -49,3 +49,79 @@ Archivos Auditados:
 5. RIESGOS DE COMPATIBILIDAD Y MITIGACIÓN
 - La función `getAcademicConfig` debe continuar retornando la estructura consolidada `ParcialActual`, `GradoActual`, `SeccionActual`, `AsignaturaActual`, `TemaActual`, `GranularConfig` para no romper `js/student.js` ni `js/teacher.js`.
 - Los datos de `ConfiguracionAcademica` e `HistorialAcademico` existentes se preservarán intactos.
+
+AUDITORÍA TÉCNICA Y DIAGNÓSTICO DE SOLO LECTURA - FASE 5: AULA VIRTUAL, CONTENIDOS Y ACTIVIDADES DE APRENDIZAJE - Sun Jul 5 2026
+
+Archivos Auditados:
+- backend/task-service/Code.gs
+- backend/academic-service/Code.gs
+- backend/user-service/Code.gs
+- js/student.js
+- js/teacher.js
+- student-dashboard.html
+- teacher-dashboard.html
+
+1. FUNCIONES EXISTENTES Y OPERATIVAS
+- Microservicio de Tareas (`backend/task-service/Code.gs`): Soporta `createTask`, `updateTask`, `deleteTask`, `getStudentTasks`, `uploadFile`, `submitAssignment`, `gradeSubmission`, `getTeacherActivity`, `getAllTasks`, `closeAcademicYear`.
+- Metadatos de Archivos: Función `logFileMetadata` registrando archivos subidos en la hoja `'MetadatosArchivos'`.
+- Integración de Entregas: `submitAssignment` registra el envío de archivos individuales con timestamps.
+
+2. FUNCIONES FALTANTES Y MEJORAS REQUERIDAS PARA FASE 5
+- Aulas Virtuales Vinculadas: Creación e inicio de aulas virtuales (`AulasVirtuales`) ligadas a la oferta académica (`OfertaAcademica`).
+- Anuncios y Publicaciones de Clase: Gestión de anuncios (`PublicacionesAnuncios`) con soporte para fijados, borradores, programación diferida por fecha/hora y archivos adjuntos.
+- Biblioteca de Materiales Educativos: Organización de recursos (`MaterialesEducativos`) por Parcial, Unidad y Tema, clasificando tipos (`PDF`, `DOCX`, `Video`, `Link`, `Guía`, etc.).
+- Control Avanzado de Tareas: Campos para fecha de apertura/disponibilidad (`fechaDisponible`), fecha de cierre estricto (`fechaCierre`), borradores, programación diferida, extensiones por estudiante y límites de archivos/formatos.
+- Entregas Multimodales y Control de Versiones: Soporte para entregas de texto enriquecido, enlaces externos y almacenamiento de versiones históricas (`EntregasVersiones`).
+- Comentarios Privados y Devolución para Corrección: Hilo de comentarios privados (`ComentariosEntregas`) entre docente y alumno, y flujo de devolución para corrección (`DevueltaCorrección`) sin perder entregas previas.
+
+3. ESTRUCTURA DE TABLAS GOOGLE SHEETS
+- Hojas a Incorporar/Consolidar en TASK-SERVICE:
+  - `AulasVirtuales` (AulaID | OfertaID | NombreClase | Grado | Seccion | Asignatura | ProfesorID | Estado | AnioLectivo | Periodo | CreadoEn)
+  - `PublicacionesAnuncios` (ID | AulaID | Titulo | Contenido | Categoria | AutorID | EsFijado | EsBorrador | FechaProgramada | FechaPublicacion | AdjuntosJSON | Audiencia | Estado)
+  - `MaterialesEducativos` (ID | AulaID | Titulo | Descripcion | TipoRecurso | Parcial | Unidad | Tema | ArchivoUrl | DriveId | AutorID | FechaPublicacion | Estado)
+  - `EntregasVersiones` (ID | EntregaID | TareaId | UserId | VersionNum | ArchivoUrl | FileId | MimeType | TextoRespuesta | EnlaceExterno | FechaEnvio | Estado | Observaciones)
+  - `ComentariosEntregas` (ID | EntregaID | TareaId | AutorID | RolAutor | Mensaje | EsPrivado | FechaCreacion)
+
+4. RIESGOS DE COMPATIBILIDAD Y MITIGACIÓN
+- Las acciones heredadas `getStudentTasks`, `createTask`, `submitAssignment` y `gradeSubmission` se mantendrán 100% compatibles, agregando propiedades adicionales de forma defensiva sin romper clientes existentes.
+- Los archivos en Google Drive seguirán organizándose en la jerarquía estándar por grado, sección, alumno y tarea.
+
+AUDITORÍA TÉCNICA Y DIAGNÓSTICO DE SOLO LECTURA - FASE 6: EVALUACIÓN, CALIFICACIONES, COMPORTAMIENTO, ASEO, PRESENTACIÓN Y TRAYECTORIA ACADÉMICA - Sun Jul 5 2026
+
+Archivos Auditados:
+- backend/exam-service/Code.gs
+- backend/task-service/Code.gs
+- backend/academic-service/Code.gs
+- backend/user-service/Code.gs
+- js/teacher.js
+- js/student.js
+- teacher-dashboard.html
+- student-dashboard.html
+
+1. FUNCIONES EXISTENTES Y OPERATIVAS
+- Exámenes y Tareas: Endpoints de entrega y calificación individual (`gradeSubmission`, `gradeExamSubmission`) registrando nota y comentarios.
+- Historial Académico: `saveToAcademicHistory` guardando snapshots en la hoja `'HistorialAcademico'`.
+
+2. FUNCIONES FALTANTES Y MEJORAS REQUERIDAS PARA FASE 6
+- Libro de Calificaciones Consolidado (`LibroCalificaciones` / `CalificacionesEstudiantes`): Matriz masiva de notas por docente, asignatura, grado, sección, parcial y año lectivo.
+- Categorías y Ponderaciones (`CategoriasEvaluacion`): Configuración de porcentajes (tareas %, exámenes %, proyectos %, prácticas %) con validación de suma al 100% y conversión de escalas.
+- Rúbricas de Evaluación (`RubricasEvaluacion`): Rúbricas analíticas con criterios, niveles de desempeño, descriptores y cálculo de puntos.
+- Módulo de Recuperaciones y Reposiciones (`RecuperacionesEstudiante`): Registro de intentos de recuperación con nota original, nota recuperada, regla de sustitución/promedio e historial inmutable.
+- Cierre de Períodos y Promoción (`CierresPeriodos`): Bloqueo formal del libro de calificaciones por parcial y cálculo definitivo de la trayectoria académica.
+- Módulo Formativo Independiente (`EvaluacionesFormativas` / `CriteriosInstitucionales`): Evaluación desacoplada de Comportamiento, Aseo personal/Higiene y Presentación personal (uniformes/vestimenta) sin alterar las notas académicas del alumno.
+- Planes de Acompañamiento Reservados (`PlanesAcompanamiento`): Seguimiento pedagógico y confidencial para alumnos con necesidades de apoyo formativo.
+
+3. ESTRUCTURA DE TABLAS EN GOOGLE SHEETS
+- Hojas a Incorporar/Consolidar en EXAM-SERVICE / ACADEMIC-SERVICE:
+  - `CategoriasEvaluacion` (ID | Nombre | Ambito | PorcentajePonderacion | EscalaID | Estado)
+  - `CalificacionesEstudiantes` (ID | EvaluacionID | UserId | NotaObtenida | PuntajePonderado | EsBorrador | EsPublicada | Observaciones | FechaRegistro)
+  - `RubricasEvaluacion` (ID | Titulo | Asignatura | CriteriosJSON | Estado)
+  - `RecuperacionesEstudiante` (ID | EvaluacionID | UserId | NotaOriginal | NotaRecuperada | NotaFinalCalculada | MetodoAplicado | AutorizadoPor | Estado)
+  - `CierresPeriodos` (CierreID | AnoID | PeriodoID | Grado | Seccion | Asignatura | ProfesorID | Estado | FechaCierre)
+  - `CriteriosInstitucionales` (CriterioID | Dominio | Nombre | Descripcion | EscalaJSON | AmbitoNivel | Estado)
+  - `EvaluacionesFormativas` (ID | UserId | Dominio | CriterioID | CalificacionValor | ObservacionObjetiva | Contexto | AutorID | VisibilidadBoletin | FechaRegistro)
+  - `PlanesAcompanamiento` (PlanID | UserId | SituacionMeliorar | ObjetivosJSON | ResponsableID | FechaInicio | FechaRevision | Estado)
+
+4. RIESGOS DE COMPATIBILIDAD Y MITIGACIÓN
+- Las notas académicas existentes en `Entregas` y `EntregasExamen` se mantendrán intactas y se utilizarán como insumo inicial.
+- Se mantendrá la estricta separación arquitectónica entre las notas académicas de asignaturas y los módulos formativos de Comportamiento, Aseo y Presentación.

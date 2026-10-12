@@ -380,7 +380,8 @@ function convertAdmissionToStudent(payload) {
   const expData = expSheet.getDataRange().getValues();
 
   let expId;
-  let dupExp = expData.find(r => normalizeString(`${r[1]}`) === normalizeString(userId) || (identificacion && String(r[2]).trim() === String(identificacion).trim()));
+  const targetPersonaId = userId || ("PER-" + Date.now());
+  let dupExp = expData.find(r => normalizeString(`${r[1]}`) === normalizeString(targetPersonaId));
 
   const now = new Date();
   const code = codigoInstitucional || ("STU-" + now.getFullYear() + "-" + Math.floor(1000 + Math.random() * 9000));
@@ -389,18 +390,20 @@ function convertAdmissionToStudent(payload) {
     expId = dupExp[0];
   } else {
     expId = "EXP-" + now.getTime();
+    const telContacto = row[9] || "";
+    const emailContacto = row[10] || "";
     expSheet.appendRow([
       expId,
-      userId || ("PER-" + Date.now()),
+      targetPersonaId,
       code,
       fechaNac || "",
       "Hondureña",
-      row[10] || "",
-      "",
+      "", // DireccionResidencia (se completa en ficha médica/estudiantil)
+      "", // FotografiaUrl
       "Activo",
       now,
       now,
-      `Admisión aprobada desde solicitud ${solicitudId}`
+      `Admisión aprobada desde solicitud ${solicitudId}. Tel: ${telContacto}, Email: ${emailContacto}`
     ]);
   }
 
@@ -433,7 +436,7 @@ function convertAdmissionToStudent(payload) {
     "", "", grado, seccion || "A",
     now,
     `Admisión y Matrícula Inicial`,
-    (payload && payload.userId) || "Secretaría",
+    (payload && (payload.actorId || payload.adminId)) || "Secretaría",
     "Confirmado"
   ]);
 
@@ -551,6 +554,475 @@ function getStudentFile(payload) {
       movements: moves
     }
   };
+}
+
+// --- FUNCIONES DE CONFIGURACIÓN INSTITUCIONAL Y ESTRUCTURA ACADÉMICA (FASE 3) ---
+
+function getInstitutionParams(payload) {
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "InstitucionParametros");
+  const data = sheet.getDataRange().getValues();
+  if (data.length <= 1) return { status: "success", data: [] };
+
+  const params = data.slice(1).map(r => ({
+    clave: r[0],
+    nombre: r[1],
+    valor: r[2],
+    tipoDato: r[3] || "String",
+    ambito: r[4] || "Global",
+    estado: r[5] || "Activo"
+  }));
+  return { status: "success", data: params };
+}
+
+function saveInstitutionParam(payload) {
+  const { clave, nombre, valor, tipoDato, ambito } = payload || {};
+  if (!clave) throw new Error("clave es requerida.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "InstitucionParametros");
+  if (sheet.getLastRow() === 0) {
+    sheet.appendRow(["Clave", "Nombre", "Valor", "TipoDato", "Ambito", "Estado"]);
+  }
+
+  const data = sheet.getDataRange().getValues();
+  const idx = data.findIndex(r => String(r[0]).trim() === String(clave).trim());
+
+  if (idx !== -1) {
+    sheet.getRange(idx + 1, 3).setValue(valor);
+    if (nombre) sheet.getRange(idx + 1, 2).setValue(nombre);
+  } else {
+    sheet.appendRow([clave, nombre || clave, valor, tipoDato || "String", ambito || "Global", "Activo"]);
+  }
+
+  return { status: "success", message: "Parámetro institucional guardado." };
+}
+
+function getAcademicYears(payload) {
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "AnosLectivos");
+  const data = sheet.getDataRange().getValues();
+  if (data.length <= 1) return { status: "success", data: [] };
+
+  const years = data.slice(1).map(r => ({
+    anoId: r[0],
+    nombre: r[1],
+    fechaInicio: r[2] ? new Date(r[2]).toISOString() : null,
+    fechaFin: r[3] ? new Date(r[3]).toISOString() : null,
+    estado: r[4] || "Borrador",
+    creadoPor: r[5]
+  }));
+  return { status: "success", data: years };
+}
+
+function createAcademicYear(payload) {
+  const { nombre, fechaInicio, fechaFin, creadoPor } = payload || {};
+  if (!nombre) throw new Error("Nombre del año lectivo es requerido.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "AnosLectivos");
+  if (sheet.getLastRow() === 0) {
+    sheet.appendRow(["AnoID", "Nombre", "FechaInicio", "FechaFin", "Estado", "CreadoPor"]);
+  }
+
+  const anoId = "ANO-" + Date.now();
+  sheet.appendRow([anoId, nombre, fechaInicio || "", fechaFin || "", "Borrador", creadoPor || "Secretaría"]);
+
+  return { status: "success", message: "Año lectivo registrado.", data: { anoId } };
+}
+
+function updateAcademicYearStatus(payload) {
+  const { anoId, nuevoEstado } = payload || {};
+  if (!anoId || !nuevoEstado) throw new Error("anoId y nuevoEstado son requeridos.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "AnosLectivos");
+  const data = sheet.getDataRange().getValues();
+  const idx = data.findIndex(r => String(r[0]).trim() === String(anoId).trim());
+  if (idx === -1) throw new Error("Año lectivo no encontrado.");
+
+  sheet.getRange(idx + 1, 5).setValue(nuevoEstado);
+  return { status: "success", message: `Estado de año lectivo cambiado a ${nuevoEstado}.` };
+}
+
+function prepareNewAcademicYear(payload) {
+  const { sourceAnoId, targetAnoNombre, creadoPor } = payload || {};
+  if (!targetAnoNombre) throw new Error("Nombre del nuevo año es requerido.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "AnosLectivos");
+  if (sheet.getLastRow() === 0) {
+    sheet.appendRow(["AnoID", "Nombre", "FechaInicio", "FechaFin", "Estado", "CreadoPor"]);
+  }
+
+  const newAnoId = "ANO-" + Date.now();
+  sheet.appendRow([newAnoId, targetAnoNombre, "", "", "EnPreparacion", creadoPor || "Secretaría"]);
+
+  return { status: "success", message: `Asistente de preparación anual inicializado para ${targetAnoNombre}.`, data: { newAnoId } };
+}
+
+function getAcademicPeriods(payload) {
+  const { anoId } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "PeriodosAcademicos");
+  const data = sheet.getDataRange().getValues();
+  if (data.length <= 1) return { status: "success", data: [] };
+
+  const periods = data.slice(1).filter(r => {
+    if (anoId && String(r[1]).trim() !== String(anoId).trim()) return false;
+    return true;
+  }).map(r => ({
+    periodoId: r[0],
+    anoId: r[1],
+    nombre: r[2],
+    tipo: r[3],
+    fechaInicio: r[4] ? new Date(r[4]).toISOString() : null,
+    fechaFin: r[5] ? new Date(r[5]).toISOString() : null,
+    orden: r[6],
+    estado: r[7] || "Inactivo"
+  }));
+  return { status: "success", data: periods };
+}
+
+function manageAcademicPeriod(payload) {
+  const { periodoId, anoId, nombre, tipo, fechaInicio, fechaFin, orden, estado } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "PeriodosAcademicos");
+  if (sheet.getLastRow() === 0) {
+    sheet.appendRow(["PeriodoID", "AnoID", "Nombre", "Tipo", "FechaInicio", "FechaFin", "Orden", "Estado"]);
+  }
+
+  const data = sheet.getDataRange().getValues();
+  let pid = periodoId;
+
+  if (pid) {
+    const idx = data.findIndex(r => String(r[0]).trim() === String(pid).trim());
+    if (idx !== -1) {
+      if (nombre) sheet.getRange(idx + 1, 3).setValue(nombre);
+      if (estado) sheet.getRange(idx + 1, 8).setValue(estado);
+      return { status: "success", message: "Período académico actualizado." };
+    }
+  }
+
+  pid = "PER-" + Date.now();
+  sheet.appendRow([pid, anoId || "ANO-CURRENT", nombre || "I parcial", tipo || "Parcial", fechaInicio || "", fechaFin || "", orden || 1, estado || "Activo"]);
+  return { status: "success", message: "Período académico creado.", data: { periodoId: pid } };
+}
+
+function getSubjectCatalog(payload) {
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "CatalogoAsignaturas");
+  const data = sheet.getDataRange().getValues();
+  if (data.length <= 1) return { status: "success", data: [] };
+
+  const subjects = data.slice(1).map(r => ({
+    asignaturaId: r[0],
+    nombreOficial: r[1],
+    codigo: r[2],
+    areaAcademica: r[3],
+    estado: r[4] || "Activo"
+  }));
+  return { status: "success", data: subjects };
+}
+
+function createSubjectCatalogItem(payload) {
+  const { nombreOficial, codigo, areaAcademica } = payload || {};
+  if (!nombreOficial) throw new Error("Nombre oficial de la asignatura es requerido.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "CatalogoAsignaturas");
+  if (sheet.getLastRow() === 0) {
+    sheet.appendRow(["AsignaturaID", "NombreOficial", "Codigo", "AreaAcademica", "Estado"]);
+  }
+
+  const asigId = "ASIG-" + Date.now();
+  sheet.appendRow([asigId, nombreOficial, codigo || asigId, areaAcademica || "General", "Activo"]);
+
+  return { status: "success", message: "Asignatura agregada al catálogo.", data: { asignaturaId: asigId } };
+}
+
+function getStudyPlans(payload) {
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "PlanesEstudio");
+  const data = sheet.getDataRange().getValues();
+  if (data.length <= 1) return { status: "success", data: [] };
+
+  const plans = data.slice(1).map(r => ({
+    planId: r[0],
+    nombre: r[1],
+    version: r[2],
+    grado: r[3],
+    estado: r[4] || "Vigente",
+    vigencia: r[5]
+  }));
+  return { status: "success", data: plans };
+}
+
+function createStudyPlan(payload) {
+  const { nombre, version, grado, vigencia } = payload || {};
+  if (!nombre || !grado) throw new Error("Nombre y Grado son requeridos.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "PlanesEstudio");
+  if (sheet.getLastRow() === 0) {
+    sheet.appendRow(["PlanID", "Nombre", "Version", "Grado", "Estado", "Vigencia"]);
+  }
+
+  const planId = "PLAN-" + Date.now();
+  sheet.appendRow([planId, nombre, version || "1.0", grado, "Vigente", vigencia || new Date().getFullYear()]);
+
+  return { status: "success", message: "Plan de estudio registrado.", data: { planId } };
+}
+
+function getAcademicOffers(payload) {
+  const { anoId, grado, seccion } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "OfertaAcademica");
+  const data = sheet.getDataRange().getValues();
+  if (data.length <= 1) return { status: "success", data: [] };
+
+  const offers = data.slice(1).filter(r => {
+    if (anoId && String(r[1]).trim() !== String(anoId).trim()) return false;
+    if (grado && normalizeString(r[2]) !== normalizeString(grado)) return false;
+    if (seccion && String(r[3]).trim() !== String(seccion).trim()) return false;
+    return true;
+  }).map(r => ({
+    ofertaId: r[0],
+    anoId: r[1],
+    grado: r[2],
+    seccion: r[3],
+    asignaturaId: r[4],
+    planId: r[5],
+    estado: r[6] || "Activa"
+  }));
+  return { status: "success", data: offers };
+}
+
+function createAcademicOffer(payload) {
+  const { anoId, grado, seccion, asignaturaId, planId } = payload || {};
+  if (!grado || !asignaturaId) throw new Error("Grado y Asignatura son requeridos.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "OfertaAcademica");
+  if (sheet.getLastRow() === 0) {
+    sheet.appendRow(["OfertaID", "AnoID", "Grado", "Seccion", "AsignaturaID", "PlanID", "Estado"]);
+  }
+
+  const ofertaId = "OFE-" + Date.now();
+  sheet.appendRow([ofertaId, anoId || "ANO-CURRENT", grado, seccion || "A", asignaturaId, planId || "PLAN-DEFAULT", "Activa"]);
+
+  return { status: "success", message: "Oferta académica registrada.", data: { ofertaId } };
+}
+
+function getTeacherAssignments(payload) {
+  const { docenteUserId, ofertaId } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "AsignacionesDocentes");
+  const data = sheet.getDataRange().getValues();
+  if (data.length <= 1) return { status: "success", data: [] };
+
+  const assignments = data.slice(1).filter(r => {
+    if (docenteUserId && String(r[2]).trim() !== String(docenteUserId).trim()) return false;
+    if (ofertaId && String(r[1]).trim() !== String(ofertaId).trim()) return false;
+    return true;
+  }).map(r => ({
+    asignacionId: r[0],
+    ofertaId: r[1],
+    docenteUserId: r[2],
+    rolDocente: r[3] || "Titular",
+    fechaInicio: r[4] ? new Date(r[4]).toISOString() : null,
+    fechaFin: r[5] ? new Date(r[5]).toISOString() : null,
+    estado: r[6] || "Activo",
+    autorizadoPor: r[7]
+  }));
+  return { status: "success", data: assignments };
+}
+
+function assignTeacherToClass(payload) {
+  const { ofertaId, docenteUserId, rolDocente, fechaInicio, fechaFin, autorizadoPor } = payload || {};
+  if (!ofertaId || !docenteUserId) throw new Error("ofertaId y docenteUserId son requeridos.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "AsignacionesDocentes");
+  if (sheet.getLastRow() === 0) {
+    sheet.appendRow(["AsignacionID", "OfertaID", "DocenteUserId", "RolDocente", "FechaInicio", "FechaFin", "Estado", "AutorizadoPor"]);
+  }
+
+  const asigId = "ASGD-" + Date.now();
+  sheet.appendRow([asigId, ofertaId, docenteUserId, rolDocente || "Titular", fechaInicio || new Date(), fechaFin || "", "Activo", autorizadoPor || "Secretaría"]);
+
+  return { status: "success", message: "Docente asignado a la clase exitosamente.", data: { asignacionId: asigId } };
+}
+
+function createTeacherSubstitution(payload) {
+  const { ofertaId, sustitutoUserId, fechaInicio, fechaFin, motivo, autorizadoPor } = payload || {};
+  if (!ofertaId || !sustitutoUserId) throw new Error("ofertaId y sustitutoUserId son requeridos.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "AsignacionesDocentes");
+  if (sheet.getLastRow() === 0) {
+    sheet.appendRow(["AsignacionID", "OfertaID", "DocenteUserId", "RolDocente", "FechaInicio", "FechaFin", "Estado", "AutorizadoPor"]);
+  }
+
+  const asigId = "SUB-" + Date.now();
+  sheet.appendRow([asigId, ofertaId, sustitutoUserId, "Sustituto", fechaInicio || new Date(), fechaFin || "", "Temporal", autorizadoPor || "Secretaría"]);
+
+  return { status: "success", message: "Sustitución docente registrada.", data: { asignacionId: asigId } };
+}
+
+function getAcademicCalendar(payload) {
+  const { anoId } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "CalendarioAcademico");
+  const data = sheet.getDataRange().getValues();
+  if (data.length <= 1) return { status: "success", data: [] };
+
+  const events = data.slice(1).filter(r => {
+    if (anoId && String(r[1]).trim() !== String(anoId).trim()) return false;
+    return true;
+  }).map(r => ({
+    eventoId: r[0],
+    anoId: r[1],
+    nombre: r[2],
+    tipoDia: r[3],
+    fechaInicio: r[4] ? new Date(r[4]).toISOString() : null,
+    fechaFin: r[5] ? new Date(r[5]).toISOString() : null,
+    visibilidad: r[6] || "Todos",
+    estado: r[7] || "Activo"
+  }));
+  return { status: "success", data: events };
+}
+
+function createCalendarEvent(payload) {
+  const { anoId, nombre, tipoDia, fechaInicio, fechaFin, visibilidad } = payload || {};
+  if (!nombre || !fechaInicio) throw new Error("Nombre y fecha de inicio son requeridos.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "CalendarioAcademico");
+  if (sheet.getLastRow() === 0) {
+    sheet.appendRow(["EventoID", "AnoID", "Nombre", "TipoDia", "FechaInicio", "FechaFin", "Visibilidad", "Estado"]);
+  }
+
+  const evId = "CAL-" + Date.now();
+  sheet.appendRow([evId, anoId || "ANO-CURRENT", nombre, tipoDia || "Academico", fechaInicio, fechaFin || fechaInicio, visibilidad || "Todos", "Activo"]);
+
+  return { status: "success", message: "Evento registrado en el calendario.", data: { eventoId: evId } };
+}
+
+function getClassSchedules(payload) {
+  const { ofertaId, docenteUserId, aulaCodigo } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "HorariosClase");
+  const data = sheet.getDataRange().getValues();
+  if (data.length <= 1) return { status: "success", data: [] };
+
+  const schedules = data.slice(1).filter(r => {
+    if (ofertaId && String(r[1]).trim() !== String(ofertaId).trim()) return false;
+    if (docenteUserId && String(r[6]).trim() !== String(docenteUserId).trim()) return false;
+    if (aulaCodigo && String(r[5]).trim() !== String(aulaCodigo).trim()) return false;
+    return true;
+  }).map(r => ({
+    horarioId: r[0],
+    ofertaId: r[1],
+    diaSemana: r[2],
+    horaInicio: r[3],
+    horaFin: r[4],
+    aulaCodigo: r[5],
+    docenteUserId: r[6],
+    estado: r[7] || "Activo"
+  }));
+  return { status: "success", data: schedules };
+}
+
+function createClassSchedule(payload) {
+  const { ofertaId, diaSemana, horaInicio, horaFin, aulaCodigo, docenteUserId } = payload || {};
+  if (!diaSemana || !horaInicio || !horaFin) throw new Error("Día, hora de inicio y hora de fin son requeridos.");
+
+  // Motor de prevención de conflictos por solapamiento de docente u aula
+  const conflict = checkScheduleConflict({ diaSemana, horaInicio, horaFin, aulaCodigo, docenteUserId });
+  if (conflict.hasConflict) {
+    throw new Error(`Conflicto de horario detectado: ${conflict.reason}`);
+  }
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "HorariosClase");
+  if (sheet.getLastRow() === 0) {
+    sheet.appendRow(["HorarioID", "OfertaID", "DiaSemana", "HoraInicio", "HoraFin", "AulaCodigo", "DocenteUserId", "Estado"]);
+  }
+
+  const horId = "HOR-" + Date.now();
+  sheet.appendRow([horId, ofertaId || "OFE-DEFAULT", diaSemana, horaInicio, horaFin, aulaCodigo || "AULA-1", docenteUserId || "", "Activo"]);
+
+  return { status: "success", message: "Horario asignado correctamente.", data: { horarioId: horId } };
+}
+
+function checkScheduleConflict(params) {
+  const { diaSemana, horaInicio, horaFin, aulaCodigo, docenteUserId } = params || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "HorariosClase");
+  const data = sheet.getDataRange().getValues();
+  if (data.length <= 1) return { hasConflict: false };
+
+  const rows = data.slice(1);
+  for (let r of rows) {
+    if (r[7] === "Inactivo") continue;
+    if (normalizeString(r[2]) === normalizeString(diaSemana)) {
+      const exStart = String(r[3]);
+      const exEnd = String(r[4]);
+      const isOverlap = (horaInicio < exEnd && horaFin > exStart);
+
+      if (isOverlap) {
+        if (aulaCodigo && String(r[5]).trim() === String(aulaCodigo).trim()) {
+          return { hasConflict: true, reason: `El aula ${aulaCodigo} ya está ocupada el ${diaSemana} de ${exStart} a ${exEnd}.` };
+        }
+        if (docenteUserId && String(r[6]).trim() === String(docenteUserId).trim()) {
+          return { hasConflict: true, reason: `El docente ya tiene una clase asignada el ${diaSemana} de ${exStart} a ${exEnd}.` };
+        }
+      }
+    }
+  }
+
+  return { hasConflict: false };
+}
+
+function getAcademicRules(payload) {
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "ReglasAcademicas");
+  const data = sheet.getDataRange().getValues();
+  if (data.length <= 1) return { status: "success", data: [] };
+
+  const rules = data.slice(1).map(r => ({
+    reglaId: r[0],
+    ambito: r[1],
+    tipoRegla: r[2],
+    clave: r[3],
+    valor: r[4],
+    estado: r[5] || "Activo"
+  }));
+  return { status: "success", data: rules };
+}
+
+function saveAcademicRule(payload) {
+  const { clave, valor, ambito, tipoRegla } = payload || {};
+  if (!clave) throw new Error("clave es requerida.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "ReglasAcademicas");
+  if (sheet.getLastRow() === 0) {
+    sheet.appendRow(["ReglaID", "Ambito", "TipoRegla", "Clave", "Valor", "Estado"]);
+  }
+
+  const data = sheet.getDataRange().getValues();
+  const idx = data.findIndex(r => String(r[3]).trim() === String(clave).trim());
+
+  if (idx !== -1) {
+    sheet.getRange(idx + 1, 5).setValue(valor);
+  } else {
+    const regId = "REG-" + Date.now();
+    sheet.appendRow([regId, ambito || "Global", tipoRegla || "Evaluacion", clave, valor, "Activo"]);
+  }
+
+  return { status: "success", message: "Regla académica guardada." };
 }
 
 function updateStudentFile(payload) {
