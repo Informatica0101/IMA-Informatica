@@ -71,10 +71,54 @@ function doOptions(e) {
   return ContentService.createTextOutput("");
 }
 
+const PUBLIC_ACTIONS = [
+  "getStudentTasks", "getAllTasks", "getTeacherActivity", "listProjects", "loadProject", "getAllStudentProjects", "getVirtualClassrooms", "getPosts", "getStudyMaterials", "getSubmissionComments", "getSubmissionVersions"
+];
+
+const ROLE_PERMISSIONS = {
+  "Administrador": ["*"],
+  "Desarrollador": ["*"],
+  "Dirección": ["*"],
+  "Secretaría": ["*"],
+  "Profesor": [
+    "createTask", "updateTask", "deleteTask", "uploadFile", "gradeSubmission", "deleteSubmission",
+    "getStudentTasks", "getAllTasks", "getTeacherActivity", "closeAcademicYear",
+    "getVirtualClassrooms", "createVirtualClassroom", "getPosts", "createPost", "updatePost", "deletePost",
+    "getStudyMaterials", "createStudyMaterial", "deleteStudyMaterial", "returnSubmissionForRevision",
+    "getSubmissionComments", "addSubmissionComment", "getSubmissionVersions"
+  ],
+  "Estudiante": [
+    "getStudentTasks", "submitAssignment", "uploadFile", "uploadChunk", "finishChunkedUpload", "deleteFile",
+    "saveProject", "deleteProject", "listProjects", "loadProject", "getAllStudentProjects",
+    "getVirtualClassrooms", "getPosts", "getStudyMaterials", "getSubmissionComments", "addSubmissionComment", "getSubmissionVersions"
+  ]
+};
+
+function validateRolePermission(action, payload) {
+  if (PUBLIC_ACTIONS.indexOf(action) !== -1) return { authorized: true };
+  const userRole = (payload && (payload.authRole || payload.rol)) || "Estudiante";
+  const permitted = ROLE_PERMISSIONS[userRole] || ROLE_PERMISSIONS["Estudiante"];
+  if (permitted.indexOf("*") !== -1 || permitted.indexOf(action) !== -1) {
+    return { authorized: true, role: userRole };
+  }
+  return { authorized: false, role: userRole };
+}
+
 function doPost(e) {
   let response;
   try {
+    if (!e || !e.postData || !e.postData.contents) {
+      return ContentService.createTextOutput(JSON.stringify({ status: "error", message: "No se recibieron datos." })).setMimeType(ContentService.MimeType.JSON);
+    }
     const { action, payload } = JSON.parse(e.postData.contents);
+    const authCheck = validateRolePermission(action, payload);
+    if (!authCheck.authorized) {
+      return ContentService.createTextOutput(JSON.stringify({
+        status: "error",
+        code: "AUTH_PERMISSION_DENIED",
+        message: "Acceso denegado: El rol " + authCheck.role + " no tiene permiso para la acción " + action + "."
+      })).setMimeType(ContentService.MimeType.JSON);
+    }
     switch (action) {
       case "createTask": response = createTask(payload); break;
       case "getStudentTasks": response = getStudentTasks(payload); break;

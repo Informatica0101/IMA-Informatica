@@ -54,9 +54,48 @@ function doOptions() {
   return textResponse({ status: "ok" });
 }
 
+const PUBLIC_ACTIONS = [
+  "getStudentExams", "getExamQuestions", "getExamResult", "getAllExams", "getTeacherExamActivity", "getEvaluationCategories", "getRubrics", "getGradebookData", "getStudentRecoveries", "getStudentAcademicReport"
+];
+
+const ROLE_PERMISSIONS = {
+  "Administrador": ["*"],
+  "Desarrollador": ["*"],
+  "Dirección": ["*"],
+  "Secretaría": ["*"],
+  "Profesor": [
+    "createExam", "updateExam", "updateExamStatus", "deleteExam", "gradeExamSubmission", "deleteExamSubmission",
+    "getAllExams", "getTeacherExamActivity", "getExamQuestions", "getStudentExams", "getExamResult",
+    "getGradebookData", "saveGradebookGrades", "getEvaluationCategories", "saveEvaluationCategory",
+    "getRubrics", "saveRubric", "saveStudentRecovery", "getStudentRecoveries", "closePeriodGradebook", "reopenPeriodGradebook", "getStudentAcademicReport"
+  ],
+  "Estudiante": [
+    "getStudentExams", "getExamQuestions", "submitExam", "getExamResult", "getEvaluationCategories", "getRubrics", "getStudentRecoveries", "getStudentAcademicReport"
+  ]
+};
+
+function validateRolePermission(action, payload) {
+  if (PUBLIC_ACTIONS.indexOf(action) !== -1) return { authorized: true };
+  const userRole = (payload && (payload.authRole || payload.rol)) || "Estudiante";
+  const permitted = ROLE_PERMISSIONS[userRole] || ROLE_PERMISSIONS["Estudiante"];
+  if (permitted.indexOf("*") !== -1 || permitted.indexOf(action) !== -1) {
+    return { authorized: true, role: userRole };
+  }
+  return { authorized: false, role: userRole };
+}
+
 function doPost(e) {
   try {
+    if (!e || !e.postData || !e.postData.contents) return textResponse({ status: "error", message: "No se recibieron datos." });
     const { action, payload } = JSON.parse(e.postData.contents);
+    const authCheck = validateRolePermission(action, payload);
+    if (!authCheck.authorized) {
+      return textResponse({
+        status: "error",
+        code: "AUTH_PERMISSION_DENIED",
+        message: "Acceso denegado: El rol " + authCheck.role + " no tiene permiso para la acción " + action + "."
+      });
+    }
     let result;
 
     switch (action) {

@@ -187,6 +187,9 @@ function getOrCreateSheet(ss, name) {
     if (name === "QuizProAnalytics") sheet.appendRow(["analyticsId", "fecha", "userId", "quizId", "gameId", "gameName", "asignatura", "grado", "nivel", "preguntaId", "respuestaSeleccionada", "respuestaCorrecta", "esCorrecta", "tiempoRespuesta", "tiempoBase", "ratio", "cambiosRespuesta", "indiceConfianza", "indiceAdivinacion", "indiceDominio", "totalXP"]);
     if (name === "LearningProfile") sheet.appendRow(["profileId", "userId", "asignatura", "tema", "nivel", "intentos", "aciertos", "porcentajeAciertos", "indiceDominio", "ultimaActualizacion"]);
     if (name === "GameLeaderboards") sheet.appendRow(["leaderboardId", "gameId", "userId", "nombreAlumno", "grado", "asignatura", "mejorPuntuacion", "indiceDominioPromedio", "partidasJugadas", "ultimaActualizacion"]);
+    if (name === "CriteriosInstitucionales") sheet.appendRow(["CriterioID", "Dominio", "Nombre", "Descripcion", "EscalaJSON", "AmbitoNivel", "Estado"]);
+    if (name === "EvaluacionesFormativas") sheet.appendRow(["ID", "UserID", "Dominio", "CriterioID", "CalificacionValor", "ObservacionObjetiva", "Contexto", "AutorID", "VisibilidadBoletin", "FechaRegistro"]);
+    if (name === "PlanesAcompanamiento") sheet.appendRow(["PlanID", "UserID", "SituacionMeliorar", "ObjetivosJSON", "ResponsableID", "FechaInicio", "FechaRevision", "Estado"]);
   }
   return sheet;
 }
