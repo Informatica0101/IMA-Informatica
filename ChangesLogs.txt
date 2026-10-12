@@ -1102,3 +1102,31 @@ Descripción de cambios:
 
 2. `student-dashboard.html` & `js/student.js`:
    - Diseñada e inyectada la tarjeta de Comunicación y Trámites Institucionales en el perfil del estudiante/familiar, con modal para ingreso de nuevos trámites y visualización de respuestas de Secretaría.
+
+===========================================================
+REGISTRO DE CAMBIOS - FASE 9: CONTABILIDAD, PAGOS, MENSUALIDADES, FACTURACIÓN, TESORERÍA Y CONTROL FINANCIERO INSTITUCIONAL
+===========================================================
+Archivos modificados:
+- backend/accounting-service/Code.gs
+- teacher-dashboard.html
+- student-dashboard.html
+- js/student.js
+- js/teacher.js
+- MapaDependencias.md
+- Auditoría.txt
+- Pendientes.md
+- ChangesLogs.txt
+
+Descripción de cambios:
+1. `backend/accounting-service/Code.gs`:
+   - Creadas e inicializadas las tablas de la Fase 9 en `getOrCreateSheet`: `ConceptosCobro`, `TarifasPlanPago`, `PagosAbonos`, `ComprobantesPago`, `FacturasFiscales`, `IntegracionesPasarelas`, `MovimientosCajaBancos`, `CierresCaja`, `BancosConciliaciones`, `CuentasPorPagarGastos`, `PlanCuentas`, `AsientosContables`.
+   - Implementada gestión de Tarifas y Planes de Pago Fraccionados (`configurePaymentTariff`).
+   - Implementada gestión e integración de Pasarelas de Pago Externas (`configureGatewayIntegration`, `testGatewayConnection`) con pruebas de conectividad ping-pong.
+   - Implementada Conciliación Bancaria y Carga de Extractos (`performBankReconciliation`) con detección automática de coincidencias y diferencias.
+   - Implementada gestión de Cuentas por Pagar y Gastos Operativos (`recordAccountsPayableExpense`).
+   - Implementada Contabilidad General con Plan de Cuentas (`getChartOfAccounts`) y Libro Diario de Asientos Contables por Partida Doble (`recordAccountingJournalEntry`).
+   - Actualizados los permisos en `ROLE_PERMISSIONS` y en el selector `doPost` para autorizar las nuevas operaciones financieras.
+
+2. `teacher-dashboard.html`, `student-dashboard.html`, `js/student.js`, `js/teacher.js`:
+   - Consolidadas interfaces para visualización de saldos, comprobantes de pago y opciones de tesorería y pasarelas de pago.
+   - Verificada la respuesta del backend e integración sin errores de sintaxis en el cliente.

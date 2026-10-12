@@ -194,3 +194,42 @@ Archivos Auditados:
 
 4. RIESGOS DE COMPATIBILIDAD Y MITIGACIÓN
 - Las notas académicas (Fase 6) y asistencias (Fase 7) no serán alteradas directamente desde el portal familiar; cualquier trámite generará una solicitud de revisión/justificación.
+
+AUDITORÍA TÉCNICA Y DIAGNÓSTICO DE SOLO LECTURA - FASE 9: CONTABILIDAD, PAGOS, MENSUALIDADES, FACTURACIÓN, TESORERÍA Y CONTROL FINANCIERO INSTITUCIONAL - Sun Jul 5 2026
+
+Archivos Auditados:
+- backend/accounting-service/Code.gs
+- backend/user-service/Code.gs
+- backend/academic-service/Code.gs
+- js/student.js
+- js/teacher.js
+- student-dashboard.html
+- teacher-dashboard.html
+
+1. FUNCIONES EXISTENTES Y OPERATIVAS
+- Conceptos y Cargos: `configurePaymentConcept`, `getStudentAccountStatement` y `recordStudentPayment` en `backend/accounting-service/Code.gs`.
+- Comprobantes y Recibos: `uploadPaymentVoucher` y `generatePaymentReceiptPDF`.
+- Facturación SAR y Caja/Bancos: `createFiscalInvoice`, `recordCashBankMovement`, `closeCashSession` y `getCashBankSummary`.
+- Planillas e Inventarios: `generatePayrollPeriod`, `recordStaffAttendance`, `recordInventoryMovement` y `registerSupplier`.
+
+2. FUNCIONES FALTANTES Y MEJORAS REQUERIDAS PARA FASE 9
+- Configuración Centralizada de Fecha, Hora y Zona Horaria: Parámetro institucional único en `InstitucionParametros` para toda la plataforma.
+- Tarifas y Planes de Pago Fraccionados (`TarifasPlanPago`): Tarifas por grado/nivel y fraccionamiento atómico de mensualidades sin duplicidad.
+- Opciones Avanzadas Financieras: Control de parámetros globales (pagos parciales, recargos por mora, autorizaciones de descuento).
+- Integración de Pasarelas de Pago (`IntegracionesPasarelas`): Configuración de credenciales de tarjetas (BAC, Ficohsa, Atlántida) con prueba de conexión.
+- Banco y Conciliación Bancaria (`BancosConciliaciones`): Importación de extractos bancarios y cruce con ingresos internos.
+- Cuentas por Pagar y Gastos (`CuentasPorPagarGastos`): Control de compras, facturas de proveedores e integración con asientos de planilla.
+- Contabilidad General y Asientos Automáticos (`PlanCuentasAsientos`): Plan de cuentas jerárquico y generación idempotente de asientos contables equilibrados.
+
+3. ESTRUCTURA DE TABLAS EN GOOGLE SHEETS
+- Hojas a Incorporar/Consolidar en ACCOUNTING-SERVICE:
+  - `TarifasPlanPago` (TarifaID | AnoLectivo | NivelGrado | ConceptoID | MontoTotal | CuotasNum | VencimientoJSON | Estado)
+  - `IntegracionesPasarelas` (IntegracionID | NombreProveedor | TipoServicio | CredencialesJSON | UrlApi | EstadoConexion | UltimaPruebaFecha | Estado)
+  - `BancosConciliaciones` (ConciliacionID | CuentaBancariaID | FechaExtracto | ArchivoExtractoUrl | CoincidenciasJSON | DiferenciasJSON | Estado | CreadoPor)
+  - `CuentasPorPagarGastos` (ObligacionID | ProveedorID | NumeroFactura | Importe | Impuestos | FechaVencimiento | EstadoAprobacion | EstadoPago | AsientoID)
+  - `PlanCuentas` (CuentaID | CodigoCuenta | NombreCuenta | TipoCuenta | Naturaleza | Estado)
+  - `AsientosContables` (AsientoID | Fecha | Descripcion | OrigenModulo | ReferenciaID | LineasJSON | Estado)
+
+4. RIESGOS DE COMPATIBILIDAD Y MITIGACIÓN
+- Las transacciones financieras no alterarán los expedientes académicos ni bloquearán el acceso a la plataforma o asistencia.
+- La zona horaria y formato de fecha institucional se consumirán de forma centralizada sin configuraciones aisladas por módulo.

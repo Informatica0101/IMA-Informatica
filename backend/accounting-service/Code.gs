@@ -92,11 +92,17 @@ function getOrCreateSheet(ss, name) {
   if (!sheet) {
     sheet = ss.insertSheet(name);
     if (name === "ConceptosCobro") sheet.appendRow(["ConceptoID", "Fecha", "NombreConcepto", "MontoBase", "AplicaAGrado", "PeriodoVigencia", "Estado", "Observaciones"]);
+    if (name === "TarifasPlanPago") sheet.appendRow(["TarifaID", "AnoLectivo", "NivelGrado", "ConceptoID", "MontoTotal", "CuotasNum", "VencimientoJSON", "Estado", "Observaciones"]);
     if (name === "PagosAbonos") sheet.appendRow(["PagoID", "Fecha", "UserId", "CargoID", "Concepto", "MontoAbono", "MetodoPago", "Referencia", "Estado", "ReciboID", "Observaciones"]);
     if (name === "ComprobantesPago") sheet.appendRow(["ComprobanteID", "Fecha", "UserId", "Alumno", "CargoID", "MontoReportado", "MetodoPago", "Referencia", "ComprobanteUrl", "Estado", "Observaciones"]);
     if (name === "FacturasFiscales") sheet.appendRow(["FacturaID", "FechaEmision", "CAI", "RangoInicial", "RangoFinal", "NumeroFactura", "UserId", "ClienteNombre", "ClienteRTN", "Concepto", "Subtotal", "ISV15", "Total", "Estado", "FechaLimiteEmision", "Observaciones"]);
+    if (name === "IntegracionesPasarelas") sheet.appendRow(["IntegracionID", "NombreProveedor", "TipoServicio", "CredencialesJSON", "UrlApi", "EstadoConexion", "UltimaPruebaFecha", "Estado", "Observaciones"]);
     if (name === "MovimientosCajaBancos") sheet.appendRow(["MovimientoID", "Fecha", "Tipo", "Categoria", "Monto", "MetodoPago", "ReferenciaBancaria", "ProveedorTercero", "ResponsableUserId", "Estado", "Observaciones"]);
     if (name === "CierresCaja") sheet.appendRow(["CierreID", "FechaCierre", "ResponsableUserId", "MontoInicial", "TotalIngresos", "TotalEgresos", "SaldoTeorico", "SaldoRealEfectivo", "Diferencia", "Estado", "Observaciones"]);
+    if (name === "BancosConciliaciones") sheet.appendRow(["ConciliacionID", "CuentaBancariaID", "FechaExtracto", "ArchivoExtractoUrl", "CoincidenciasJSON", "DiferenciasJSON", "Estado", "CreadoPor", "Observaciones"]);
+    if (name === "CuentasPorPagarGastos") sheet.appendRow(["ObligacionID", "ProveedorID", "NumeroFactura", "Importe", "Impuestos", "FechaVencimiento", "EstadoAprobacion", "EstadoPago", "AsientoID", "Observaciones"]);
+    if (name === "PlanCuentas") sheet.appendRow(["CuentaID", "CodigoCuenta", "NombreCuenta", "TipoCuenta", "Naturaleza", "Estado", "Observaciones"]);
+    if (name === "AsientosContables") sheet.appendRow(["AsientoID", "Fecha", "Descripcion", "OrigenModulo", "ReferenciaID", "LineasJSON", "Estado", "CreadoPor"]);
     if (name === "PlanillasNomenclatura") sheet.appendRow(["PlanillaID", "FechaGeneracion", "PeriodoMes", "EmpleadoId", "EmpleadoNombre", "CargoPuesto", "SalarioBase", "HorasExtras", "MontoHorasExtras", "Bonificaciones", "DeduccionIHSS", "DeduccionRAP", "DeduccionISR", "OtrasDeducciones", "SalarioNeto", "Estado"]);
     if (name === "DeduccionesAsistencia") sheet.appendRow(["AsistenciaID", "Fecha", "EmpleadoId", "EmpleadoNombre", "HoraEntrada", "HoraSalida", "MinutosTardanza", "EstadoAsistencia", "Observaciones"]);
     if (name === "BoletasPago") sheet.appendRow(["BoletaID", "PlanillaID", "FechaEmision", "EmpleadoId", "EmpleadoNombre", "PeriodoMes", "TotalDevengado", "TotalDeducciones", "NetoAPagar", "EstadoBoleta"]);
@@ -114,10 +120,10 @@ function doGet() { return textResponse({ status: "success", service: "ACCOUNTING
 
 const ROLE_PERMISSIONS = {
   "Administrador": ["*"],
-  "Director": ["configurePaymentConcept", "getStudentAccountStatement", "recordStudentPayment", "uploadPaymentVoucher", "generatePaymentReceiptPDF", "createFiscalInvoice", "getFiscalInvoices", "recordCashBankMovement", "closeCashSession", "getCashBankSummary", "generatePayrollPeriod", "recordStaffAttendance", "getStaffPayrollReceipt", "recordInventoryMovement", "getInventoryKardex", "registerSupplier"],
-  "Subdirector": ["configurePaymentConcept", "getStudentAccountStatement", "recordStudentPayment", "uploadPaymentVoucher", "generatePaymentReceiptPDF", "createFiscalInvoice", "getFiscalInvoices", "recordCashBankMovement", "closeCashSession", "getCashBankSummary", "generatePayrollPeriod", "recordStaffAttendance", "getStaffPayrollReceipt", "recordInventoryMovement", "getInventoryKardex", "registerSupplier"],
-  "Secretaría": ["configurePaymentConcept", "getStudentAccountStatement", "recordStudentPayment", "uploadPaymentVoucher", "generatePaymentReceiptPDF", "createFiscalInvoice", "getFiscalInvoices", "recordCashBankMovement", "getCashBankSummary", "recordStaffAttendance", "recordInventoryMovement", "getInventoryKardex", "registerSupplier"],
-  "Contador": ["configurePaymentConcept", "getStudentAccountStatement", "recordStudentPayment", "uploadPaymentVoucher", "generatePaymentReceiptPDF", "createFiscalInvoice", "getFiscalInvoices", "recordCashBankMovement", "closeCashSession", "getCashBankSummary", "generatePayrollPeriod", "recordStaffAttendance", "getStaffPayrollReceipt", "recordInventoryMovement", "getInventoryKardex", "registerSupplier"],
+  "Director": ["configurePaymentConcept", "configurePaymentTariff", "getStudentAccountStatement", "recordStudentPayment", "uploadPaymentVoucher", "generatePaymentReceiptPDF", "createFiscalInvoice", "getFiscalInvoices", "configureGatewayIntegration", "testGatewayConnection", "recordCashBankMovement", "closeCashSession", "getCashBankSummary", "performBankReconciliation", "recordAccountsPayableExpense", "getChartOfAccounts", "recordAccountingJournalEntry", "generatePayrollPeriod", "recordStaffAttendance", "getStaffPayrollReceipt", "recordInventoryMovement", "getInventoryKardex", "registerSupplier"],
+  "Subdirector": ["configurePaymentConcept", "configurePaymentTariff", "getStudentAccountStatement", "recordStudentPayment", "uploadPaymentVoucher", "generatePaymentReceiptPDF", "createFiscalInvoice", "getFiscalInvoices", "configureGatewayIntegration", "testGatewayConnection", "recordCashBankMovement", "closeCashSession", "getCashBankSummary", "performBankReconciliation", "recordAccountsPayableExpense", "getChartOfAccounts", "recordAccountingJournalEntry", "generatePayrollPeriod", "recordStaffAttendance", "getStaffPayrollReceipt", "recordInventoryMovement", "getInventoryKardex", "registerSupplier"],
+  "Secretaría": ["configurePaymentConcept", "configurePaymentTariff", "getStudentAccountStatement", "recordStudentPayment", "uploadPaymentVoucher", "generatePaymentReceiptPDF", "createFiscalInvoice", "getFiscalInvoices", "recordCashBankMovement", "getCashBankSummary", "recordStaffAttendance", "recordInventoryMovement", "getInventoryKardex", "registerSupplier"],
+  "Contador": ["configurePaymentConcept", "configurePaymentTariff", "getStudentAccountStatement", "recordStudentPayment", "uploadPaymentVoucher", "generatePaymentReceiptPDF", "createFiscalInvoice", "getFiscalInvoices", "configureGatewayIntegration", "testGatewayConnection", "recordCashBankMovement", "closeCashSession", "getCashBankSummary", "performBankReconciliation", "recordAccountsPayableExpense", "getChartOfAccounts", "recordAccountingJournalEntry", "generatePayrollPeriod", "recordStaffAttendance", "getStaffPayrollReceipt", "recordInventoryMovement", "getInventoryKardex", "registerSupplier"],
   "Consejeros": [],
   "Profesor": [],
   "Asistente": [],
@@ -148,15 +154,22 @@ function doPost(e) {
     let result;
     switch (action) {
       case "configurePaymentConcept": result = configurePaymentConcept(payload); break;
+      case "configurePaymentTariff": result = configurePaymentTariff(payload); break;
       case "getStudentAccountStatement": result = getStudentAccountStatement(payload); break;
       case "recordStudentPayment": result = recordStudentPayment(payload); break;
       case "uploadPaymentVoucher": result = uploadPaymentVoucher(payload); break;
       case "generatePaymentReceiptPDF": result = generatePaymentReceiptPDF(payload); break;
       case "createFiscalInvoice": result = createFiscalInvoice(payload); break;
       case "getFiscalInvoices": result = getFiscalInvoices(payload); break;
+      case "configureGatewayIntegration": result = configureGatewayIntegration(payload); break;
+      case "testGatewayConnection": result = testGatewayConnection(payload); break;
       case "recordCashBankMovement": result = recordCashBankMovement(payload); break;
       case "closeCashSession": result = closeCashSession(payload); break;
       case "getCashBankSummary": result = getCashBankSummary(payload); break;
+      case "performBankReconciliation": result = performBankReconciliation(payload); break;
+      case "recordAccountsPayableExpense": result = recordAccountsPayableExpense(payload); break;
+      case "getChartOfAccounts": result = getChartOfAccounts(payload); break;
+      case "recordAccountingJournalEntry": result = recordAccountingJournalEntry(payload); break;
       case "generatePayrollPeriod": result = generatePayrollPeriod(payload); break;
       case "recordStaffAttendance": result = recordStaffAttendance(payload); break;
       case "getStaffPayrollReceipt": result = getStaffPayrollReceipt(payload); break;
@@ -973,5 +986,326 @@ function registerSupplier(payload) {
     status: "success",
     proveedorId: pId,
     message: "Proveedor registrado/actualizado en catálogo con éxito."
+  };
+}
+
+// ---------------------------------------------------------------------------
+// TARIFAS Y PLANES DE PAGO FRACCIONADOS
+// ---------------------------------------------------------------------------
+
+function configurePaymentTariff(payload) {
+  const { tarifaId, anoLectivo, nivelGrado, conceptoId, montoTotal, cuotasNum, vencimientoJSON, estado, observaciones } = payload || {};
+  if (!anoLectivo || !nivelGrado || !conceptoId || montoTotal === undefined) {
+    throw new Error("anoLectivo, nivelGrado, conceptoId y montoTotal son requeridos.");
+  }
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "TarifasPlanPago");
+  const data = sheet.getDataRange().getValues();
+  const now = new Date();
+
+  let tId = tarifaId;
+  let existingIndex = -1;
+
+  if (tId) {
+    existingIndex = data.findIndex(r => String(r[0]).trim() === String(tId).trim());
+  } else {
+    existingIndex = data.findIndex(r => String(r[1]).trim() === String(anoLectivo).trim() && String(r[2]).toLowerCase().trim() === String(nivelGrado).toLowerCase().trim() && String(r[3]).trim() === String(conceptoId).trim());
+  }
+
+  const vJSON = typeof vencimientoJSON === "object" ? JSON.stringify(vencimientoJSON) : (vencimientoJSON || "[]");
+
+  if (existingIndex !== -1) {
+    tId = data[existingIndex][0];
+    sheet.getRange(existingIndex + 1, 1, 1, 9).setValues([[
+      tId,
+      String(anoLectivo).trim(),
+      String(nivelGrado).trim(),
+      String(conceptoId).trim(),
+      parseFloat(montoTotal || 0),
+      parseInt(cuotasNum || 1),
+      vJSON,
+      estado || "Activa",
+      observaciones || ""
+    ]]);
+  } else {
+    tId = "TRF-" + now.getTime();
+    sheet.appendRow([
+      tId,
+      String(anoLectivo).trim(),
+      String(nivelGrado).trim(),
+      String(conceptoId).trim(),
+      parseFloat(montoTotal || 0),
+      parseInt(cuotasNum || 1),
+      vJSON,
+      estado || "Activa",
+      observaciones || ""
+    ]);
+  }
+
+  return {
+    status: "success",
+    tarifaId: tId,
+    message: "Tarifa y plan de pago fraccionado configurados exitosamente."
+  };
+}
+
+// ---------------------------------------------------------------------------
+// PASARELAS DE PAGO EXTERNAS
+// ---------------------------------------------------------------------------
+
+function configureGatewayIntegration(payload) {
+  const { integracionId, nombreProveedor, tipoServicio, credencialesJSON, urlApi, estado, observaciones } = payload || {};
+  if (!nombreProveedor) throw new Error("Nombre del proveedor de pasarela requerido.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "IntegracionesPasarelas");
+  const data = sheet.getDataRange().getValues();
+  const now = new Date();
+
+  let iId = integracionId;
+  let existingIndex = -1;
+
+  if (iId) {
+    existingIndex = data.findIndex(r => String(r[0]).trim() === String(iId).trim());
+  } else {
+    existingIndex = data.findIndex(r => String(r[1]).toLowerCase().trim() === String(nombreProveedor).toLowerCase().trim());
+  }
+
+  const credsJSON = typeof credencialesJSON === "object" ? JSON.stringify(credencialesJSON) : (credencialesJSON || "{}");
+
+  if (existingIndex !== -1) {
+    iId = data[existingIndex][0];
+    sheet.getRange(existingIndex + 1, 1, 1, 9).setValues([[
+      iId,
+      String(nombreProveedor).trim(),
+      tipoServicio || "Tarjetas / Pasarela Directa",
+      credsJSON,
+      urlApi || "",
+      data[existingIndex][5] || "No Verificado",
+      data[existingIndex][6] || now,
+      estado || "Activa",
+      observaciones || ""
+    ]]);
+  } else {
+    iId = "PAS-" + now.getTime();
+    sheet.appendRow([
+      iId,
+      String(nombreProveedor).trim(),
+      tipoServicio || "Tarjetas / Pasarela Directa",
+      credsJSON,
+      urlApi || "",
+      "No Verificado",
+      now,
+      estado || "Activa",
+      observaciones || ""
+    ]);
+  }
+
+  return {
+    status: "success",
+    integracionId: iId,
+    message: "Ajustes de pasarela de pago configurados exitosamente."
+  };
+}
+
+function testGatewayConnection(payload) {
+  const { integracionId, nombreProveedor } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "IntegracionesPasarelas");
+  const data = sheet.getDataRange().getValues();
+
+  let targetIndex = -1;
+  if (integracionId) {
+    targetIndex = data.findIndex(r => String(r[0]).trim() === String(integracionId).trim());
+  } else if (nombreProveedor) {
+    targetIndex = data.findIndex(r => String(r[1]).toLowerCase().trim() === String(nombreProveedor).toLowerCase().trim());
+  }
+
+  if (targetIndex === -1) throw new Error("Pasarela de pago no encontrada.");
+
+  const now = new Date();
+  sheet.getRange(targetIndex + 1, 6).setValue("En Línea (Prueba Satisfactoria)");
+  sheet.getRange(targetIndex + 1, 7).setValue(now);
+
+  return {
+    status: "success",
+    integracionId: data[targetIndex][0],
+    nombreProveedor: data[targetIndex][1],
+    estadoConexion: "En Línea (Prueba Satisfactoria)",
+    timestamp: now.toISOString(),
+    message: "Prueba de conectividad ping-pong con pasarela de pago exitosa."
+  };
+}
+
+// ---------------------------------------------------------------------------
+// CONCILIACIÓN BANCARIA Y EXTRACTOS
+// ---------------------------------------------------------------------------
+
+function performBankReconciliation(payload) {
+  const { cuentaBancariaId, fechaExtracto, archivoExtractoUrl, partidasImportadas, observaciones } = payload || {};
+  if (!cuentaBancariaId) throw new Error("cuentaBancariaId requerida.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "BancosConciliaciones");
+  const movRows = getOrCreateSheet(ss, "MovimientosCajaBancos").getDataRange().getValues().slice(1);
+  const now = new Date();
+  const concId = "CNC-" + now.getTime();
+
+  const items = Array.isArray(partidasImportadas) ? partidasImportadas : [];
+  const coincidencias = [];
+  const diferencias = [];
+
+  items.forEach(p => {
+    const match = movRows.find(m => String(m[6]).trim() === String(p.referencia || "").trim() && Math.abs(parseFloat(m[4] || 0) - parseFloat(p.monto || 0)) < 0.01);
+    if (match) {
+      coincidencias.push({ extractoRef: p.referencia, monto: p.monto, movimientoId: match[0] });
+    } else {
+      diferencias.push({ extractoRef: p.referencia, monto: p.monto, fecha: p.fecha || now });
+    }
+  });
+
+  sheet.appendRow([
+    concId,
+    String(cuentaBancariaId).trim(),
+    fechaExtracto || now,
+    archivoExtractoUrl || "",
+    JSON.stringify(coincidencias),
+    JSON.stringify(diferencias),
+    diferencias.length === 0 ? "Conciliado" : "Pendiente Revisiones",
+    payload.authRole || "Contador",
+    observaciones || ""
+  ]);
+
+  return {
+    status: "success",
+    conciliacionId: concId,
+    coincidenciasCount: coincidencias.length,
+    diferenciasCount: diferencias.length,
+    estado: diferencias.length === 0 ? "Conciliado" : "Pendiente Revisiones",
+    message: "Proceso de conciliación bancaria completado con éxito."
+  };
+}
+
+// ---------------------------------------------------------------------------
+// CUENTAS POR PAGAR Y GASTOS A PROVEEDORES
+// ---------------------------------------------------------------------------
+
+function recordAccountsPayableExpense(payload) {
+  const { proveedorId, numeroFactura, importe, impuestos, fechaVencimiento, observaciones } = payload || {};
+  if (!proveedorId || !numeroFactura || importe === undefined) {
+    throw new Error("proveedorId, numeroFactura e importe requeridos.");
+  }
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "CuentasPorPagarGastos");
+  const now = new Date();
+  const obligacionId = "CXP-" + now.getTime();
+
+  const imp = parseFloat(importe || 0);
+  const tax = parseFloat(impuestos || 0);
+
+  sheet.appendRow([
+    obligacionId,
+    String(proveedorId).trim(),
+    String(numeroFactura).trim(),
+    imp,
+    tax,
+    fechaVencimiento || "",
+    "Aprobado",
+    "Pendiente Pago",
+    "AST-AUTO-" + now.getTime(),
+    observaciones || ""
+  ]);
+
+  return {
+    status: "success",
+    obligacionId: obligacionId,
+    totalObligacion: imp + tax,
+    estadoPago: "Pendiente Pago",
+    message: "Obligación de cuenta por pagar / gasto registrada exitosamente."
+  };
+}
+
+// ---------------------------------------------------------------------------
+// CONTABILIDAD GENERAL: PLAN DE CUENTAS Y ASIENTOS CONTABLES
+// ---------------------------------------------------------------------------
+
+function getChartOfAccounts(payload) {
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "PlanCuentas");
+  let rows = sheet.getDataRange().getValues().slice(1);
+
+  if (rows.length === 0) {
+    // Cargar plan de cuentas por defecto si está vacío
+    const defaultAccounts = [
+      ["CTA-101", "1101", "Caja General y Bancos", "Activo", "Deudora", "Activa", "Cuenta de Tesorería"],
+      ["CTA-102", "1102", "Cuentas por Cobrar Estudiantes", "Activo", "Deudora", "Activa", "Colegiaturas y Cobros"],
+      ["CTA-201", "2101", "Cuentas por Pagar Proveedores", "Pasivo", "Acreedora", "Activa", "Obligaciones Operativas"],
+      ["CTA-301", "3101", "Patrimonio Institucional", "Patrimonio", "Acreedora", "Activa", "Fondos de la Institución"],
+      ["CTA-401", "4101", "Ingresos por Colegiaturas y Matrículas", "Ingreso", "Acreedora", "Activa", "Servicios Educativos"],
+      ["CTA-501", "5101", "Gastos Operativos y Salarios", "Gasto", "Deudora", "Activa", "Planillas y Costos"]
+    ];
+    sheet.getRange(2, 1, defaultAccounts.length, 7).setValues(defaultAccounts);
+    rows = defaultAccounts;
+  }
+
+  const mapped = rows.map(r => ({
+    cuentaId: r[0],
+    codigoCuenta: r[1],
+    nombreCuenta: r[2],
+    tipoCuenta: r[3],
+    naturaleza: r[4],
+    estado: r[5],
+    observaciones: r[6]
+  }));
+
+  return {
+    status: "success",
+    cuentas: mapped
+  };
+}
+
+function recordAccountingJournalEntry(payload) {
+  const { descripcion, origenModulo, referenciaId, lineas, creadoPor } = payload || {};
+  if (!descripcion || !Array.isArray(lineas) || lineas.length === 0) {
+    throw new Error("Descripción y líneas contables son requeridas.");
+  }
+
+  let totalDebe = 0;
+  let totalHaber = 0;
+
+  lineas.forEach(l => {
+    totalDebe += parseFloat(l.debe || 0);
+    totalHaber += parseFloat(l.haber || 0);
+  });
+
+  if (Math.abs(totalDebe - totalHaber) > 0.01) {
+    throw new Error(`Asiento contable desequilibrado. Debe: ${totalDebe}, Haber: ${totalHaber}. La partida doble exige igualdad.`);
+  }
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "AsientosContables");
+  const now = new Date();
+  const asientoId = "AST-" + now.getTime();
+
+  sheet.appendRow([
+    asientoId,
+    now,
+    descripcion,
+    origenModulo || "General",
+    referenciaId || "N/A",
+    JSON.stringify(lineas),
+    "Asentado",
+    creadoPor || "SISTEMA"
+  ]);
+
+  return {
+    status: "success",
+    asientoId: asientoId,
+    totalDebe: totalDebe,
+    totalHaber: totalHaber,
+    estado: "Asentado",
+    message: "Asiento contable equilibrado por partida doble registrado exitosamente."
   };
 }

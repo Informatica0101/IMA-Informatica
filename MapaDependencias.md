@@ -35,8 +35,8 @@
     7. Movimientos Estudiantiles (Cambios de Sección/Grado, Traslados Internos/Externos, Retiros y Reingresos) con conservación de historial.
     8. Parametrización Institucional, Años Lectivos, Períodos Jerárquicos, Oferta Académica, Asignaciones y Horarios con detección de conflictos.
 - **ACCOUNTING (Financial & Staff Payroll)**:
-  - Autoridad de Escritura: `ConceptosCobro`, `PagosAbonos`, `ComprobantesPago`, `FacturasFiscales`, `MovimientosCajaBancos`, `CierresCaja`, `PlanillasNomenclatura`, `DeduccionesAsistencia`, `BoletasPago`, `InventariosKardex`, `ProveedoresActivos`.
-  - Funciones: Contabilidad General, Cobros, Mensualidades, Comprobantes/Recibos PDF, Facturación SAR, Caja y Bancos, Planillas con Deducciones de Ley (IHSS, RAP, ISR), Asistencia y Kardex de Inventarios.
+  - Autoridad de Escritura: `ConceptosCobro`, `TarifasPlanPago`, `CargosEstudiante`, `PagosAbonos`, `ComprobantesPago`, `FacturasFiscales`, `IntegracionesPasarelas`, `MovimientosCajaBancos`, `CierresCaja`, `BancosConciliaciones`, `CuentasPorPagarGastos`, `PlanCuentas`, `AsientosContables`, `PlanillasNomenclatura`, `DeduccionesAsistencia`, `BoletasPago`, `InventariosKardex`, `ProveedoresActivos`.
+  - Funciones: Contabilidad General, Cobros, Mensualidades, Planes de Pago, Tarifas, Comprobantes/Recibos PDF, Pasarelas de Pago, Facturación SAR, Caja y Bancos, Conciliación Bancaria, Cuentas por Pagar, Asientos Contables, Planillas con Deducciones de Ley (IHSS, RAP, ISR), Asistencia y Kardex de Inventarios.
 - **TASK (Learning & Submissions)**:
   - Autoridad de Escritura: `Tareas`, `Entregas`, `MetadatosArchivos`.
   - Funciones: Tareas Polimórficas, Entregas de Alumnos, Calificaciones, Proyectos y Google Drive Storage.
@@ -88,3 +88,15 @@
 - `BandejaNotificacion`: Notificaciones internas unificadas con control de lectura y enlaces de acción.
 - `SolicitudTramite`: Trámites y solicitudes administrativas (constancias, revisiones, solicitudes de justificante).
 - `CitaReunion`: Citas institucionales con confirmación de horario y estado de atención.
+
+## Matriz de Entidades Centrales - Fase 9 (Finanzas, Tesorería, Cobros y Pasarelas)
+- `ConceptoCobro`: Catálogo de rubros cobrables (Matrícula, Mensualidades, Mantenimiento, Transporte, Graduación).
+- `TarifaPlanPago`: Estructura de costos y planes de pago fraccionados por nivel académico, grado y año lectivo.
+- `CargoEstudiante`: Obligaciones de pago del estudiante con saldos, vencimientos, recargos y descuentos.
+- `PagoTransaccion`: Registros consolidados de pagos recibidos (Efectivo, Transferencia, Tarjeta, Cheque).
+- `ComprobantePago`: Comprobantes de transferencia/depósito cargados por familias con flujo de aprobación/rechazo.
+- `FacturaFiscal`: Facturas fiscales autorizadas por la SAR (CAI, Rango, RTN, ISV 15%) y notas de crédito.
+- `IntegracionPasarela`: Ajustes de conexión a pasarelas de pago externas (BAC, Ficohsa, Atlántida) con credenciales y token de prueba.
+- `ConciliacionBancaria`: Importación de extractos bancarios y conciliación con registros de caja/sistema.
+- `CuentaPorPagarGasto`: Registro de obligaciones de pago a proveedores, gastos operativos e integración de asientos.
+- `AsientoContable`: Libro diario y contabilidad general con partida doble de ingresos, egresos y pasivos.
