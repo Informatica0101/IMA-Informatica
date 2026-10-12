@@ -116,3 +116,10 @@
 - `ActivoPatrimonial`: Ficha de bienes duraderos, código patrimonial, custodios, mantenimientos y bajas.
 - `RutaTransporte`: Unidades de transporte, rutas, paradas, capacidad máxima y asignación de estudiantes.
 - `PlantillaDocumental`: Repositorio de plantillas administrativas e informes oficiales exportables (PDF, XLSX, CSV).
+
+## Matriz de Entidades Centrales - Fase 12 (Documentos Escolares, Migración, Spreadsheets y SACE)
+- `CatalogoSpreadsheet`: Registro central de fuentes de datos distribuidas por año lectivo (2026, 2027, 2028) y área.
+- `PlantillaEscolar`: Diseños de constancias, excusas, justificaciones, permisos y formularios académicos/administrativos.
+- `DocumentoEscolarEmitido`: Solicitudes y constancias oficializadas con código único de verificación y metadatos.
+- `AuditoriaMigracion`: Registro de lotes de importación, mapeos de columna, validaciones por fila y log de errores.
+- `PlantillaSACEVerificada`: Formatos oficiales SACE verificados para completado automático de notas y recuperaciones.

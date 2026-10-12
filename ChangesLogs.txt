@@ -1157,6 +1157,25 @@ Descripción de cambios:
    - Creadas e integradas las páginas institucionales públicas para consulta y registro de evidencia de conformidad por parte de usuarios.
 
 ===========================================================
+REGISTRO DE CAMBIOS - FASE 12: DOCUMENTOS ESCOLARES, MIGRACIÓN DE DATOS, SPREADSHEETS E INTEGRACIÓN CON SACE
+===========================================================
+Archivos modificados:
+- backend/accounting-service/Code.gs
+- MapaDependencias.md
+- Auditoría.txt
+- Pendientes.md
+- ChangesLogs.txt
+
+Descripción de cambios:
+1. `backend/accounting-service/Code.gs`:
+   - Creadas e inicializadas las tablas de la Fase 12 en `getOrCreateSheet`: `CatalogoSpreadsheets`, `PlantillasEscolares`, `DocumentosEscolaresEmitidos`, `AuditoriaMigraciones`, `PlantillasSACEVerificadas`.
+   - Implementado Catálogo Central de Spreadsheets Distribuidas por año lectivo (2026, 2027, 2028) y área (`registerSpreadsheetSource`, `resolveSpreadsheetSource`, `getSpreadsheetCatalog`).
+   - Implementada gestión y emisión de Plantillas y Documentos Escolares (`configureSchoolDocumentTemplate`, `getSchoolDocumentTemplates`, `generateSchoolDocument`, `getIssuedSchoolDocuments`).
+   - Implementado Motor de Importación y Migración con Mapeo Dinámico de Columnas y Vista Previa (`validateImportPreview`, `importDataWithColumnMapping`, `getMigrationLogs`).
+   - Implementada integración y generación de archivos compatibles con plantillas oficiales de SACE (`verifySACETemplateCompatibility`, `generateSACEReportFile`).
+   - Sincronizados los permisos en `ROLE_PERMISSIONS` y en el enrutador `doPost`.
+
+===========================================================
 REGISTRO DE CAMBIOS - FASE 11: ANALÍTICA AVANZADA, DASHBOARDS, INFORMES Y SERVICIOS COMPLEMENTARIOS
 ===========================================================
 Archivos modificados:

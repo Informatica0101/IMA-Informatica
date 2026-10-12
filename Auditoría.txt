@@ -310,3 +310,40 @@ Archivos Auditados:
 4. RIESGOS DE COMPATIBILIDAD Y MITIGACIÓN
 - La analítica avanzada actuará como capa de lectura sobre las fuentes oficiales de las Fases 2 a 10 sin duplicar bases de datos ni libros contables.
 - Toda exportación de datos aplicará los mismos controles RBAC que la consulta en pantalla, protegiendo información privada o confidencial.
+
+AUDITORÍA TÉCNICA Y DIAGNÓSTICO DE SOLO LECTURA - FASE 12: DOCUMENTOS ESCOLARES, MIGRACIÓN DE DATOS, ARQUITECTURA DE SPREADSHEETS E INTEGRACIÓN CON SACE - Sun Jul 5 2026
+
+Archivos Auditados:
+- backend/academic-service/Code.gs
+- backend/exam-service/Code.gs
+- backend/task-service/Code.gs
+- backend/accounting-service/Code.gs
+- backend/user-service/Code.gs
+- js/teacher.js
+- js/student.js
+- teacher-dashboard.html
+- student-dashboard.html
+
+1. FUNCIONES EXISTENTES Y OPERATIVAS
+- Respaldos y Archivado Anual: `createSystemBackup`, `listSystemBackups`, `restoreSystemBackup` y duplicado de spreadsheet en `backend/academic-service/Code.gs`.
+- Exportación Excel: Librería SheetJS (xlsx.full.min.js) en `teacher-dashboard.html` y `js/teacher.js`.
+- Exportación de Notas y Reportes: `getStudentAcademicReport`, `exportAcademicGrades` en `exam-service`.
+- Registro de Metadatos Documentales: `MetadatosArchivos` y `PlantillasDocumentales` en `task-service` y `accounting-service`.
+
+2. FUNCIONES FALTANTES Y AMPLIACIONES REQUERIDAS PARA FASE 12
+- Catálogo Central de Spreadsheets y Resolución de Fuentes (`CatálogoSpreadsheets`, `resolveSpreadsheetSource`): Registro de identificadores de Google Sheets por año lectivo (2026, 2027, 2028) y área funcional (Académico, Contable, RRHH) para descentralizar la base de datos sin duplicar la identidad de los estudiantes.
+- Motor de Importación y Migración Segura (`importDataWithColumnMapping`, `validateImportPreview`): Herramienta de mapeo dinamico de columnas para archivos XLSX/CSV/Sheets, validando cada fila contra identificadores únicos para evitar desplazamientos de notas entre estudiantes.
+- Diseñador de Plantillas y Formularios Escalares (`PlantillasEscolares`, `generateSchoolDocument`): Generación de constancias, excusas, justificaciones, permisos y solicitudes en línea y descargables en blanco o precargadas.
+- Integrador de Hojas de Calificaciones y Recuperación para SACE (`generateSACEReportFile`, `verifySACETemplateCompatibility`): Lector y completado automático de plantillas oficial de SACE preservando fórmulas, hojas auxiliares, identificadores y formato original.
+- Auditoría de Migraciones y Reversión Lógica (`AuditoriaMigraciones`): Registro idempotente de ejecuciones de importación con vista previa, validación previa, logs de error por fila y capacidades de reversión controlada.
+
+3. ESTRUCTURA DE TABLAS EN GOOGLE SHEETS PARA FASE 12
+- `CatálogoSpreadsheets` (FuenteID | DominioArea | AnoLectivo | SpreadsheetId | UrlAcceso | Estado | SchemaVersion | Observaciones)
+- `PlantillasEscolares` (PlantillaID | CodigoDocumento | Categoria | Titulo | CamposJSON | FlujoAprobacion | Estado | Version)
+- `DocumentosEscolaresEmitidos` (DocumentoID | PlantillaID | EstudianteUserId | SolicitanteUserId | DatosJSON | EstadoDoc | CodigoVerificacion | Observaciones)
+- `AuditoriaMigraciones` (EjecucionID | NombreArchivo | DestinoModulo | TotalFilas | Exitosas | Fallidas | MapeoJSON | ErroresJSON | Estado | CreadoPor)
+- `PlantillasSACEVerificadas` (PlantillaSaceID | NombreFormato | VersionSACE | ColumnasMapJSON | EstadoCompatibilidad | Observaciones)
+
+4. RIESGOS DE COMPATIBILIDAD Y MITIGACIÓN
+- La descentralización en spreadsheets por año mantendrá identificadores estables (`personaId`, `userId`, `expedienteId`) sin duplicar datos maestros.
+- La compatibilidad con SACE operará sobre copias de plantillas oficiales sin modificar la base de datos oficial SACE ni requerir credenciales externas.
