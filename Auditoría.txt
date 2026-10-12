@@ -866,7 +866,7 @@ Solución: Implementado salto automático a 'Asignaturas' cuando 'GLOBAL_SCOPE.S
 
 Sector: Filtrado de Entregas y Alumnos
 Hallazgo [Alto]: Las funciones 'renderAlumnos' y 'renderDetallesAlumno' utilizaban fallbacks de parcial o no filtraban estrictamente por la asignatura seleccionada en el navStack.
-Solución: Se unificó el uso de 'window.normalizePartial(window.GLOBAL_SCOPE.ParcialActual)' y se reforzó el filtro por 'asignatura' en todas las vistas de detalle.
+Solución: Se unificó el uso de 'window.normalizePartial(window.GLOBAL_SCOPE.ParcialActual)' y se reforzado el filtro por 'asignatura' en todas las vistas de detalle.
 
 Archivo: js/student.js
 Sector: Sincronización de Selector
@@ -1535,3 +1535,18 @@ Hallazgos e Inventario de Arquitectura:
 6. Contratos de Comunicación y Tolerancia a Fallos:
    - Todas las llamadas entre el cliente y los microservicios se realizan vía js/api.js utilizando Content-Type: text/plain para evitar preflight CORS.
    - Respuestas estandarizadas en formato JSON.
+
+===========================================================
+AUDITORÍA DE CÓDIGO - DELEGACIÓN DE COMPATIBILIDAD Y ADAPTADORES BACKEND (REQ-MOD-011)
+===========================================================
+Fecha de auditoría: Mon Jul 06 2026
+Archivo auditado: backend/user-service/Code.gs
+
+Hallazgos e Implementación:
+1. Función validateRolePermission (Líneas 225-240):
+   - Se incorporó la lista de acciones pertenecientes a los dominios Académico y Contable para permitir la delegación de compatibilidad sin bloqueos de RBAC ante peticiones heredadas hacia el servicio de Usuarios.
+2. Función delegateToMicroservice (Líneas 242-265):
+   - Implementada función de delegación que reenvía peticiones HTTP POST hacia las URLs de los microservicios ACADEMIC y ACCOUNTING cuando un cliente o proceso automático invoca una acción trasladada sobre el servicio USER.
+   - Preserva la firma de los contratos de entrada y salida, evitando la duplicidad de lógica de negocio y garantizando la compatibilidad con clientes existentes.
+3. Selector doPost (Líneas 298-338):
+   - Mapeadas las acciones académicas y contables hacia la función delegateToMicroservice.

@@ -868,7 +868,7 @@ Descripción de cambios:
    - Se agregó la función `getStructuredLogs` en `backend/user-service/Code.gs` para consultar y filtrar entradas por severidad (INFO, WARN, ERROR, CRITICAL) y rango de fechas.
 
 2. `backend/academic-service/Code.gs`:
-   - Se agregaron las funciones del Módulo de Copias de Seguridad y Mantenimiento Seguro: `createSystemBackup`, `listSystemBackups`, `verifyBackupIntegrity` y `restoreSystemBackup`.
+   - Se agregaron las funciones del Módulo de Copias de Seguridad y Mantenimiento Seguro: `createSystemBackup`, `verifyBackupIntegrity`, `listSystemBackups` y `restoreSystemBackup`.
    - Se configuró la exportación y lectura de archivos de respaldo JSON en la carpeta de Google Drive `New Generation/Respaldos/` incorporando verificación por checksum y código de confirmación previa para la restauración.
 
 3. `Pendientes.md`:
@@ -911,14 +911,15 @@ Descripción de cambios:
 REGISTRO DE CAMBIOS - MODULARIZACIÓN Y MIGRACIÓN DE MICROSERVICIOS BACKEND [REQ-MOD-001..011]
 ===========================================================
 Archivos modificados:
-- Auditoría.txt: Registrada la auditoría completa de arquitectura y el inventario de funciones de los microservicios backend (USER, ACADEMIC, ACCOUNTING, TASK, EXAM).
-- MapaDependencias.md: Actualizado e inventariado el mapa de dependencias, hojas de cálculo administradas y contratos de interfaz de los 5 microservicios.
+- backend/user-service/Code.gs: Implementada función `delegateToMicroservice` y adaptadores de delegación de compatibilidad en `doPost` y `validateRolePermission`.
+- Auditoría.txt: Registrada la auditoría completa de arquitectura, delegación de compatibilidad e inventario de funciones.
+- MapaDependencias.md: Actualizado e inventariado el mapa de dependencias, hojas de cálculo administradas y contratos de interfaz.
 
 Descripción de cambios:
-1. Auditoría.txt:
-   - Añadida sección de auditoría de arquitectura para los microservicios de Contabilidad y Planillas, Académico, Usuarios, Tareas y Exámenes.
-   - Detalladas las 11 hojas de contabilidad/planillas, 6 hojas académicas, 7 hojas de usuario/autenticación, 5 hojas de tareas y 3 hojas de exámenes.
-   - Documentados los contratos de comunicación vía text/plain CORS y control de permisos RBAC en servidor.
+1. backend/user-service/Code.gs:
+   - Líneas 225-240: Actualizada `validateRolePermission` para autorizar acciones registradas de los dominios Académico y Contabilidad/Planillas.
+   - Líneas 242-265: Implementada `delegateToMicroservice` para reenviar solicitudes HTTP POST hacia las URLs de los microservicios ACADEMIC y ACCOUNTING de forma transparente.
+   - Líneas 298-338: Mapeadas las acciones trasladadas a `delegateToMicroservice` en el selector `doPost`.
 
-2. MapaDependencias.md:
-   - Sincronizados todos los contratos de acción, parámetros y mapas de hojas administradas por cada dominio de microservicio.
+2. Auditoría.txt & MapaDependencias.md:
+   - Documentadas las funciones de delegación, contratos y mapa de dependencias de microservicios.

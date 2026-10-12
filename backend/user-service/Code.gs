@@ -225,7 +225,49 @@ function validateRolePermission(action, payload) {
   if (permitted.indexOf("*") !== -1 || permitted.indexOf(action) !== -1) {
     return { authorized: true, role: userRole };
   }
+  // Permitir delegación de compatibilidad para acciones migradas
+  const isMigratedAction = [
+    "getAcademicConfig", "updateAcademicConfig", "getAcademicHistory", "getAsignaturasActivas",
+    "updateAsignaturasActivas", "saveWhatsAppLink", "getWhatsAppLink", "getQuestionBank",
+    "saveQuestion", "generateMigrationReport", "registerStudentEnrollment", "getStudentEnrollmentHistory",
+    "createSystemBackup", "listSystemBackups", "verifyBackupIntegrity", "restoreSystemBackup",
+    "configurePaymentConcept", "getStudentAccountStatement", "recordStudentPayment", "uploadPaymentVoucher",
+    "generatePaymentReceiptPDF", "createFiscalInvoice", "getFiscalInvoices", "recordCashBankMovement",
+    "closeCashSession", "getCashBankSummary", "generatePayrollPeriod", "recordStaffAttendance",
+    "getStaffPayrollReceipt", "recordInventoryMovement", "getInventoryKardex", "registerSupplier"
+  ].indexOf(action) !== -1;
+
+  if (isMigratedAction) {
+    return { authorized: true, role: userRole, isDelegated: true };
+  }
+
   return { authorized: false, role: userRole };
+}
+
+function delegateToMicroservice(serviceName, action, payload) {
+  try {
+    const urls = {
+      ACADEMIC: PropertiesService.getScriptProperties().getProperty('ACADEMIC_SERVICE_URL') || "https://script.google.com/macros/s/AKfycbyrLQkH5QZemaTVbAbNfTB2MXgy7Aq4grSVxrwLegbGbnKshAAE1KEpAxqp9DuMW33s/exec",
+      ACCOUNTING: PropertiesService.getScriptProperties().getProperty('ACCOUNTING_SERVICE_URL')
+    };
+    const targetUrl = urls[serviceName];
+    if (!targetUrl) {
+      logDebug(`URL para delegar ${action} a ${serviceName} no configurada.`);
+      return { status: "error", code: "SERVICE_NOT_CONFIGURED", message: `El servicio ${serviceName} requiere invocación directa mediante su endpoint dedicado.` };
+    }
+
+    const options = {
+      method: "post",
+      contentType: "text/plain",
+      payload: JSON.stringify({ action: action, payload: payload }),
+      muteHttpExceptions: true
+    };
+    const response = UrlFetchApp.fetch(targetUrl, options);
+    return JSON.parse(response.getContentText());
+  } catch (err) {
+    logDebug(`Error en delegación de ${action} hacia ${serviceName}:`, err.message);
+    return { status: "error", code: "DELEGATION_FAILED", message: `Error delegando acción ${action} a ${serviceName}: ${err.message}` };
+  }
 }
 
 function doPost(e) {
@@ -258,6 +300,47 @@ function doPost(e) {
       case "updateNewsStatus": result = updateNewsStatus(payload); break;
       case "getStructuredLogs": result = getStructuredLogs(payload); break;
       case "ping": result = { status: "success", service: "USER", timestamp: new Date().toISOString(), dbConnected: true }; break;
+
+      // Adaptadores de delegación de compatibilidad para acciones académicas (REQ-MOD-011)
+      case "getAcademicConfig":
+      case "updateAcademicConfig":
+      case "getAcademicHistory":
+      case "getAsignaturasActivas":
+      case "updateAsignaturasActivas":
+      case "saveWhatsAppLink":
+      case "getWhatsAppLink":
+      case "getQuestionBank":
+      case "saveQuestion":
+      case "generateMigrationReport":
+      case "registerStudentEnrollment":
+      case "getStudentEnrollmentHistory":
+      case "createSystemBackup":
+      case "listSystemBackups":
+      case "verifyBackupIntegrity":
+      case "restoreSystemBackup":
+        result = delegateToMicroservice("ACADEMIC", action, payload);
+        break;
+
+      // Adaptadores de delegación de compatibilidad para acciones contables y financieras (REQ-MOD-011)
+      case "configurePaymentConcept":
+      case "getStudentAccountStatement":
+      case "recordStudentPayment":
+      case "uploadPaymentVoucher":
+      case "generatePaymentReceiptPDF":
+      case "createFiscalInvoice":
+      case "getFiscalInvoices":
+      case "recordCashBankMovement":
+      case "closeCashSession":
+      case "getCashBankSummary":
+      case "generatePayrollPeriod":
+      case "recordStaffAttendance":
+      case "getStaffPayrollReceipt":
+      case "recordInventoryMovement":
+      case "getInventoryKardex":
+      case "registerSupplier":
+        result = delegateToMicroservice("ACCOUNTING", action, payload);
+        break;
+
       default: result = { status: "error", message: `Acción no reconocida: ${action}` };
     }
     return textResponse(result);
