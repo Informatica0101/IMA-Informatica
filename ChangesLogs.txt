@@ -1155,3 +1155,22 @@ Descripción de cambios:
 
 2. `politica-de-privacidad.html`, `politica-de-uso.html`, `politica-financiera.html`:
    - Creadas e integradas las páginas institucionales públicas para consulta y registro de evidencia de conformidad por parte de usuarios.
+
+===========================================================
+REGISTRO DE CAMBIOS - FASE 11: ANALÍTICA AVANZADA, DASHBOARDS, INFORMES Y SERVICIOS COMPLEMENTARIOS
+===========================================================
+Archivos modificados:
+- backend/accounting-service/Code.gs
+- MapaDependencias.md
+- Auditoría.txt
+- Pendientes.md
+- ChangesLogs.txt
+
+Descripción de cambios:
+1. `backend/accounting-service/Code.gs`:
+   - Creadas e inicializadas las tablas de la Fase 11 en `getOrCreateSheet`: `BibliotecaEjemplares`, `BibliotecaPrestamos`, `ActivosPatrimoniales`, `AsignacionesActivos`, `TransporteRutas`, `TransporteAsignaciones`.
+   - Implementada función de analítica unificada y métricas agregadas por rol (`getAdvancedDashboardAnalytics`).
+   - Implementada gestión del catálogo de Biblioteca y Préstamos de ejemplares (`manageLibraryBook`, `getLibraryBooks`, `processLibraryLoan`, `getLibraryLoans`).
+   - Implementada gestión de Activos Patrimoniales y Asignación de Custodias (`manageAssetItem`, `getAssetItems`, `assignAssetCustody`, `getAssetAssignments`).
+   - Implementada gestión de Transporte Escolar, Unidades y Rutas (`manageTransportRoute`, `getTransportRoutes`, `assignStudentTransport`, `getTransportAssignments`).
+   - Sincronizados los permisos en `ROLE_PERMISSIONS` y registradas las nuevas acciones en el selector `doPost`.

@@ -108,3 +108,11 @@
 - `PoliticaFiscal`: Reglas de impuestos, deducciones (IHSS, RAP, ISR), comisiones y redondeo desde Opciones avanzadas del Contador.
 - `PoliticaInstitucional`: Documentos institucionales de Privacidad, Uso/Condiciones y Política Financiera con control de versiones.
 - `AceptacionPolitica`: Evidencia de lectura y aceptación explícita de políticas por usuario con timestamp e IP.
+
+## Matriz de Entidades Centrales - Fase 11 (Analítica Avanzada, Dashboards, Servicios Complementarios)
+- `IndicadorAnalitico`: Metadatos y resúmenes de indicadores por rol (Académico, Asistencia, Financiero, Recursos Humanos).
+- `EjemplarBiblioteca`: Catálogo bibliográfico y ejemplares físicos (`available`, `reserved`, `on_loan`, `maintenance`, `lost`, `retired`).
+- `PrestamoBiblioteca`: Registro de préstamos, fechas devueltas, reservas y renovaciones (`requested`, `approved`, `on_loan`, `returned`, `overdue`).
+- `ActivoPatrimonial`: Ficha de bienes duraderos, código patrimonial, custodios, mantenimientos y bajas.
+- `RutaTransporte`: Unidades de transporte, rutas, paradas, capacidad máxima y asignación de estudiantes.
+- `PlantillaDocumental`: Repositorio de plantillas administrativas e informes oficiales exportables (PDF, XLSX, CSV).

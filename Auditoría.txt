@@ -271,3 +271,42 @@ Archivos Auditados:
 4. RIESGOS DE COMPATIBILIDAD Y MITIGACIÓN
 - La separación entre Recursos Humanos (novedades y expediente), Planillas (cálculo oficial) y Contabilidad (asientos e impuestos) previene dobles pagos o asientos duplicados.
 - Ninguna cuenta de empleado desvinculado será borrada; conservará el expediente laboral y la trazabilidad histórica de auditoría.
+
+AUDITORÍA TÉCNICA Y DIAGNÓSTICO DE SOLO LECTURA - FASE 11: ANALÍTICA AVANZADA, DASHBOARDS, INFORMES Y SERVICIOS COMPLEMENTARIOS - Sun Jul 5 2026
+
+Archivos Auditados:
+- backend/accounting-service/Code.gs
+- backend/user-service/Code.gs
+- backend/academic-service/Code.gs
+- backend/task-service/Code.gs
+- backend/exam-service/Code.gs
+- js/teacher.js
+- js/student.js
+- teacher-dashboard.html
+- student-dashboard.html
+
+1. FUNCIONES EXISTENTES Y OPERATIVAS
+- Indicadores y Consola Técnica: `ping` e indicadores de salud en `backend/user-service/Code.gs`, `backend/academic-service/Code.gs`, `backend/accounting-service/Code.gs`, `backend/task-service/Code.gs`, `backend/exam-service/Code.gs`.
+- Inventario Kardex y Proveedores: `getInventoryKardex`, `recordInventoryMovement`, `registerSupplier` en `backend/accounting-service/Code.gs`.
+- Reportes e Informes: `getStudentAcademicReport` en `exam-service`, `getStructuredLogs` en `user-service`, `getCashBankSummary` en `accounting-service`.
+
+2. FUNCIONES FALTANTES Y AMPLIACIONES REQUERIDAS PARA FASE 11
+- Dashboards por Rol y Analítica Unificada (`getAdvancedDashboardAnalytics`): Agregación de indicadores de matrícula, rendimiento académico, asistencia, ejecución presupuestaria y cumplimiento laboral por rol.
+- Biblioteca y Recursos Educativos (`BibliotecaEjemplares`, `BibliotecaPrestamos`): Gestión de catálogo bibliográfico, disponibilidad de ejemplares, préstamos, reservas, devoluciones e historial.
+- Activos Institucionales y Asignaciones (`ActivosPatrimoniales`, `AsignacionesActivos`): Registro de bienes duraderos, código patrimonial, custodios, mantenimientos y bajas.
+- Transporte Escolar (`TransporteRutas`, `TransporteUnidades`, `TransporteAsignaciones`): Unidades, rutas, paradas, conductores y asignaciones de estudiantes con control de capacidad.
+- Centro de Informes y Plantillas Administrativas (`PlantillasDocumentales`, `ReportesOficiales`): Generación y exportación de reportes tabulares y ejecutivos en PDF, XLSX y CSV.
+- Integraciones Externas y Opciones Avanzadas del Administrador (`IntegracionesServicios`): Configuración de conectores externos (Google Drive, pasarelas, correo, SMS/WhatsApp) con monitoreo y reintentos idempotentes.
+
+3. ESTRUCTURA DE TABLAS EN GOOGLE SHEETS PARA FASE 11
+- `BibliotecaEjemplares` (EjemplarID | IsbnCodigo | Titulo | Autor | Categoria | UbicacionFisica | Estado | Observaciones)
+- `BibliotecaPrestamos` (PrestamoID | EjemplarID | UserId | FechaPrestamo | FechaDevolucionPrevista | FechaDevolucionReal | Estado | Observaciones)
+- `ActivosPatrimoniales` (ActivoID | CodigoPatrimonial | Nombre | Categoria | SerieModel | UbicacionActual | CustodioUserId | Estado | Observaciones)
+- `AsignacionesActivos` (AsignacionID | ActivoID | CustodioUserId | FechaEntrega | FechaDevolucion | EstadoActa | Observaciones)
+- `TransporteRutas` (RutaID | NombreRuta | UnidadCodigo | ConductorEmpleadoId | Capacidad | ParadasJSON | Estado | Observaciones)
+- `TransporteAsignaciones` (AsignacionTranspID | RutaID | EstudianteUserId | ParadaNombre | HorarioPlan | Estado)
+- `PlantillasDocumentales` (PlantillaID | Codigo | Titulo | AreaModulo | Version | ContenidoHTML | Estado | Observaciones)
+
+4. RIESGOS DE COMPATIBILIDAD Y MITIGACIÓN
+- La analítica avanzada actuará como capa de lectura sobre las fuentes oficiales de las Fases 2 a 10 sin duplicar bases de datos ni libros contables.
+- Toda exportación de datos aplicará los mismos controles RBAC que la consulta en pantalla, protegiendo información privada o confidencial.

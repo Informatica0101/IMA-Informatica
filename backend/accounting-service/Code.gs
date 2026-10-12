@@ -114,6 +114,12 @@ function getOrCreateSheet(ss, name) {
     if (name === "PoliticasFiscales") sheet.appendRow(["PoliticaID", "CodigoRegla", "NombreRegla", "Categoria", "BaseCalculo", "MetodoCalculo", "TasaImporte", "Estado", "Version", "Observaciones"]);
     if (name === "PoliticasInstitucionales") sheet.appendRow(["PoliticaInstID", "TipoDocumento", "Titulo", "Version", "ContenidoHTML", "Estado", "FechaPublicacion", "Observaciones"]);
     if (name === "AceptacionesPoliticas") sheet.appendRow(["AceptacionID", "UserId", "PoliticaInstID", "Version", "FechaAceptacion", "IpMetadata", "Estado"]);
+    if (name === "BibliotecaEjemplares") sheet.appendRow(["EjemplarID", "IsbnCodigo", "Titulo", "Autor", "Categoria", "UbicacionFisica", "Estado", "Observaciones"]);
+    if (name === "BibliotecaPrestamos") sheet.appendRow(["PrestamoID", "EjemplarID", "UserId", "FechaPrestamo", "FechaDevolucionPrevista", "FechaDevolucionReal", "Estado", "Observaciones"]);
+    if (name === "ActivosPatrimoniales") sheet.appendRow(["ActivoID", "CodigoPatrimonial", "Nombre", "Categoria", "SerieModel", "UbicacionActual", "CustodioUserId", "Estado", "Observaciones"]);
+    if (name === "AsignacionesActivos") sheet.appendRow(["AsignacionID", "ActivoID", "CustodioUserId", "FechaEntrega", "FechaDevolucion", "EstadoActa", "Observaciones"]);
+    if (name === "TransporteRutas") sheet.appendRow(["RutaID", "NombreRuta", "UnidadCodigo", "ConductorEmpleadoId", "Capacidad", "ParadasJSON", "Estado", "Observaciones"]);
+    if (name === "TransporteAsignaciones") sheet.appendRow(["AsignacionTranspID", "RutaID", "EstudianteUserId", "ParadaNombre", "HorarioPlan", "Estado"]);
   }
   return sheet;
 }
@@ -126,15 +132,15 @@ function doGet() { return textResponse({ status: "success", service: "ACCOUNTING
 
 const ROLE_PERMISSIONS = {
   "Administrador": ["*"],
-  "Director": ["configurePaymentConcept", "configurePaymentTariff", "getStudentAccountStatement", "recordStudentPayment", "uploadPaymentVoucher", "generatePaymentReceiptPDF", "createFiscalInvoice", "getFiscalInvoices", "configureGatewayIntegration", "testGatewayConnection", "recordCashBankMovement", "closeCashSession", "getCashBankSummary", "performBankReconciliation", "recordAccountsPayableExpense", "getChartOfAccounts", "recordAccountingJournalEntry", "generatePayrollPeriod", "recordStaffAttendance", "getStaffPayrollReceipt", "recordInventoryMovement", "getInventoryKardex", "registerSupplier", "createEmployeeRecord", "getEmployeeRecords", "manageEmployeeContract", "getEmployeeContracts", "submitVacationRequest", "getVacationRequests", "reviewVacationRequest", "configureFiscalPolicy", "getFiscalPolicies", "publishInstitutionalPolicy", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances"],
-  "Subdirector": ["configurePaymentConcept", "configurePaymentTariff", "getStudentAccountStatement", "recordStudentPayment", "uploadPaymentVoucher", "generatePaymentReceiptPDF", "createFiscalInvoice", "getFiscalInvoices", "configureGatewayIntegration", "testGatewayConnection", "recordCashBankMovement", "closeCashSession", "getCashBankSummary", "performBankReconciliation", "recordAccountsPayableExpense", "getChartOfAccounts", "recordAccountingJournalEntry", "generatePayrollPeriod", "recordStaffAttendance", "getStaffPayrollReceipt", "recordInventoryMovement", "getInventoryKardex", "registerSupplier", "createEmployeeRecord", "getEmployeeRecords", "manageEmployeeContract", "getEmployeeContracts", "submitVacationRequest", "getVacationRequests", "reviewVacationRequest", "configureFiscalPolicy", "getFiscalPolicies", "publishInstitutionalPolicy", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances"],
-  "Secretaría": ["configurePaymentConcept", "configurePaymentTariff", "getStudentAccountStatement", "recordStudentPayment", "uploadPaymentVoucher", "generatePaymentReceiptPDF", "createFiscalInvoice", "getFiscalInvoices", "recordCashBankMovement", "getCashBankSummary", "recordStaffAttendance", "recordInventoryMovement", "getInventoryKardex", "registerSupplier", "createEmployeeRecord", "getEmployeeRecords", "manageEmployeeContract", "getEmployeeContracts", "submitVacationRequest", "getVacationRequests", "publishInstitutionalPolicy", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances"],
-  "Contador": ["configurePaymentConcept", "configurePaymentTariff", "getStudentAccountStatement", "recordStudentPayment", "uploadPaymentVoucher", "generatePaymentReceiptPDF", "createFiscalInvoice", "getFiscalInvoices", "configureGatewayIntegration", "testGatewayConnection", "recordCashBankMovement", "closeCashSession", "getCashBankSummary", "performBankReconciliation", "recordAccountsPayableExpense", "getChartOfAccounts", "recordAccountingJournalEntry", "generatePayrollPeriod", "recordStaffAttendance", "getStaffPayrollReceipt", "recordInventoryMovement", "getInventoryKardex", "registerSupplier", "createEmployeeRecord", "getEmployeeRecords", "manageEmployeeContract", "getEmployeeContracts", "submitVacationRequest", "getVacationRequests", "reviewVacationRequest", "configureFiscalPolicy", "getFiscalPolicies", "publishInstitutionalPolicy", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances"],
-  "Consejeros": ["getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances"],
-  "Profesor": ["getStaffPayrollReceipt", "submitVacationRequest", "getVacationRequests", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances"],
-  "Asistente": ["getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances"],
-  "Estudiante": ["getStudentAccountStatement", "uploadPaymentVoucher", "generatePaymentReceiptPDF", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances"],
-  "Alumno": ["getStudentAccountStatement", "uploadPaymentVoucher", "generatePaymentReceiptPDF", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances"]
+  "Director": ["configurePaymentConcept", "configurePaymentTariff", "getStudentAccountStatement", "recordStudentPayment", "uploadPaymentVoucher", "generatePaymentReceiptPDF", "createFiscalInvoice", "getFiscalInvoices", "configureGatewayIntegration", "testGatewayConnection", "recordCashBankMovement", "closeCashSession", "getCashBankSummary", "performBankReconciliation", "recordAccountsPayableExpense", "getChartOfAccounts", "recordAccountingJournalEntry", "generatePayrollPeriod", "recordStaffAttendance", "getStaffPayrollReceipt", "recordInventoryMovement", "getInventoryKardex", "registerSupplier", "createEmployeeRecord", "getEmployeeRecords", "manageEmployeeContract", "getEmployeeContracts", "submitVacationRequest", "getVacationRequests", "reviewVacationRequest", "configureFiscalPolicy", "getFiscalPolicies", "publishInstitutionalPolicy", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getAdvancedDashboardAnalytics", "manageLibraryBook", "getLibraryBooks", "processLibraryLoan", "getLibraryLoans", "manageAssetItem", "getAssetItems", "assignAssetCustody", "getAssetAssignments", "manageTransportRoute", "getTransportRoutes", "assignStudentTransport", "getTransportAssignments"],
+  "Subdirector": ["configurePaymentConcept", "configurePaymentTariff", "getStudentAccountStatement", "recordStudentPayment", "uploadPaymentVoucher", "generatePaymentReceiptPDF", "createFiscalInvoice", "getFiscalInvoices", "configureGatewayIntegration", "testGatewayConnection", "recordCashBankMovement", "closeCashSession", "getCashBankSummary", "performBankReconciliation", "recordAccountsPayableExpense", "getChartOfAccounts", "recordAccountingJournalEntry", "generatePayrollPeriod", "recordStaffAttendance", "getStaffPayrollReceipt", "recordInventoryMovement", "getInventoryKardex", "registerSupplier", "createEmployeeRecord", "getEmployeeRecords", "manageEmployeeContract", "getEmployeeContracts", "submitVacationRequest", "getVacationRequests", "reviewVacationRequest", "configureFiscalPolicy", "getFiscalPolicies", "publishInstitutionalPolicy", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getAdvancedDashboardAnalytics", "manageLibraryBook", "getLibraryBooks", "processLibraryLoan", "getLibraryLoans", "manageAssetItem", "getAssetItems", "assignAssetCustody", "getAssetAssignments", "manageTransportRoute", "getTransportRoutes", "assignStudentTransport", "getTransportAssignments"],
+  "Secretaría": ["configurePaymentConcept", "configurePaymentTariff", "getStudentAccountStatement", "recordStudentPayment", "uploadPaymentVoucher", "generatePaymentReceiptPDF", "createFiscalInvoice", "getFiscalInvoices", "recordCashBankMovement", "getCashBankSummary", "recordStaffAttendance", "recordInventoryMovement", "getInventoryKardex", "registerSupplier", "createEmployeeRecord", "getEmployeeRecords", "manageEmployeeContract", "getEmployeeContracts", "submitVacationRequest", "getVacationRequests", "publishInstitutionalPolicy", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getAdvancedDashboardAnalytics", "manageLibraryBook", "getLibraryBooks", "processLibraryLoan", "getLibraryLoans", "manageTransportRoute", "getTransportRoutes", "assignStudentTransport", "getTransportAssignments"],
+  "Contador": ["configurePaymentConcept", "configurePaymentTariff", "getStudentAccountStatement", "recordStudentPayment", "uploadPaymentVoucher", "generatePaymentReceiptPDF", "createFiscalInvoice", "getFiscalInvoices", "configureGatewayIntegration", "testGatewayConnection", "recordCashBankMovement", "closeCashSession", "getCashBankSummary", "performBankReconciliation", "recordAccountsPayableExpense", "getChartOfAccounts", "recordAccountingJournalEntry", "generatePayrollPeriod", "recordStaffAttendance", "getStaffPayrollReceipt", "recordInventoryMovement", "getInventoryKardex", "registerSupplier", "createEmployeeRecord", "getEmployeeRecords", "manageEmployeeContract", "getEmployeeContracts", "submitVacationRequest", "getVacationRequests", "reviewVacationRequest", "configureFiscalPolicy", "getFiscalPolicies", "publishInstitutionalPolicy", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getAdvancedDashboardAnalytics", "manageAssetItem", "getAssetItems", "assignAssetCustody", "getAssetAssignments"],
+  "Consejeros": ["getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getLibraryBooks", "getTransportRoutes"],
+  "Profesor": ["getStaffPayrollReceipt", "submitVacationRequest", "getVacationRequests", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getLibraryBooks", "getTransportRoutes"],
+  "Asistente": ["getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getLibraryBooks"],
+  "Estudiante": ["getStudentAccountStatement", "uploadPaymentVoucher", "generatePaymentReceiptPDF", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getLibraryBooks", "getTransportRoutes", "getTransportAssignments"],
+  "Alumno": ["getStudentAccountStatement", "uploadPaymentVoucher", "generatePaymentReceiptPDF", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getLibraryBooks", "getTransportRoutes", "getTransportAssignments"]
 };
 
 const PUBLIC_ACTIONS = ["ping", "getInstitutionalPolicies"];
@@ -195,6 +201,19 @@ function doPost(e) {
       case "getInstitutionalPolicies": result = getInstitutionalPolicies(payload); break;
       case "recordPolicyAcceptance": result = recordPolicyAcceptance(payload); break;
       case "getPolicyAcceptances": result = getPolicyAcceptances(payload); break;
+      case "getAdvancedDashboardAnalytics": result = getAdvancedDashboardAnalytics(payload); break;
+      case "manageLibraryBook": result = manageLibraryBook(payload); break;
+      case "getLibraryBooks": result = getLibraryBooks(payload); break;
+      case "processLibraryLoan": result = processLibraryLoan(payload); break;
+      case "getLibraryLoans": result = getLibraryLoans(payload); break;
+      case "manageAssetItem": result = manageAssetItem(payload); break;
+      case "getAssetItems": result = getAssetItems(payload); break;
+      case "assignAssetCustody": result = assignAssetCustody(payload); break;
+      case "getAssetAssignments": result = getAssetAssignments(payload); break;
+      case "manageTransportRoute": result = manageTransportRoute(payload); break;
+      case "getTransportRoutes": result = getTransportRoutes(payload); break;
+      case "assignStudentTransport": result = assignStudentTransport(payload); break;
+      case "getTransportAssignments": result = getTransportAssignments(payload); break;
       case "ping": result = { status: "success", service: "ACCOUNTING", timestamp: new Date().toISOString(), dbConnected: true }; break;
       default: result = { status: "error", message: `Acción no reconocida: ${action}` };
     }
@@ -1808,5 +1827,508 @@ function getPolicyAcceptances(payload) {
   return {
     status: "success",
     aceptaciones: mapped
+  };
+}
+
+// ---------------------------------------------------------------------------
+// FASE 11: ANALÍTICA AVANZADA Y DASHBOARDS POR ROL
+// ---------------------------------------------------------------------------
+
+function getAdvancedDashboardAnalytics(payload) {
+  const { authRole } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+
+  const usersCount = ss.getSheetByName("Usuarios") ? ss.getSheetByName("Usuarios").getDataRange().getValues().length - 1 : 0;
+  const movRows = getOrCreateSheet(ss, "MovimientosCajaBancos").getDataRange().getValues().slice(1);
+  const planRows = getOrCreateSheet(ss, "PlanillasNomenclatura").getDataRange().getValues().slice(1);
+  const kardexRows = getOrCreateSheet(ss, "InventariosKardex").getDataRange().getValues().slice(1);
+  const booksRows = getOrCreateSheet(ss, "BibliotecaEjemplares").getDataRange().getValues().slice(1);
+  const loansRows = getOrCreateSheet(ss, "BibliotecaPrestamos").getDataRange().getValues().slice(1);
+  const assetsRows = getOrCreateSheet(ss, "ActivosPatrimoniales").getDataRange().getValues().slice(1);
+  const routesRows = getOrCreateSheet(ss, "TransporteRutas").getDataRange().getValues().slice(1);
+
+  let totalIngresos = 0;
+  let totalEgresos = 0;
+  movRows.forEach(r => {
+    if (r[9] !== "Anulado") {
+      const m = parseFloat(r[4] || 0);
+      if (r[2] === "Ingreso") totalIngresos += m;
+      if (r[2] === "Egreso") totalEgresos += m;
+    }
+  });
+
+  const activeLoans = loansRows.filter(r => r[6] === "on_loan").length;
+  const activeAssets = assetsRows.filter(r => r[7] === "available" || r[7] === "assigned").length;
+
+  return {
+    status: "success",
+    role: authRole || "General",
+    timestamp: new Date().toISOString(),
+    metrics: {
+      totalUsuariosRegistrados: Math.max(0, usersCount),
+      totalIngresosFinancieros: totalIngresos,
+      totalEgresosFinancieros: totalEgresos,
+      balanceNeto: totalIngresos - totalEgresos,
+      planillasProcesadasCount: planRows.length,
+      inventarioKardexCount: kardexRows.length,
+      librosBibliotecaCount: booksRows.length,
+      prestamosActivosCount: activeLoans,
+      activosPatrimonialesCount: activeAssets,
+      rutasTransporteCount: routesRows.length
+    }
+  };
+}
+
+// ---------------------------------------------------------------------------
+// FASE 11: BIBLIOTECA Y RECURSOS EDUCATIVOS
+// ---------------------------------------------------------------------------
+
+function manageLibraryBook(payload) {
+  const { ejemplarId, isbnCodigo, titulo, autor, categoria, ubicacionFisica, estado, observaciones } = payload || {};
+  if (!titulo || !autor) throw new Error("Título y autor son requeridos.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "BibliotecaEjemplares");
+  const data = sheet.getDataRange().getValues();
+  const now = new Date();
+
+  let eId = ejemplarId;
+  let existingIndex = -1;
+
+  if (eId) {
+    existingIndex = data.findIndex(r => String(r[0]).trim() === String(eId).trim());
+  } else if (isbnCodigo) {
+    existingIndex = data.findIndex(r => String(r[1]).trim() === String(isbnCodigo).trim());
+  }
+
+  if (existingIndex !== -1) {
+    eId = data[existingIndex][0];
+    sheet.getRange(existingIndex + 1, 1, 1, 8).setValues([[
+      eId,
+      isbnCodigo || "",
+      titulo,
+      autor,
+      categoria || "General",
+      ubicacionFisica || "Estante A1",
+      estado || "available",
+      observaciones || ""
+    ]]);
+  } else {
+    eId = "LIB-" + now.getTime();
+    sheet.appendRow([
+      eId,
+      isbnCodigo || "",
+      titulo,
+      autor,
+      categoria || "General",
+      ubicacionFisica || "Estante A1",
+      "available",
+      observaciones || ""
+    ]);
+  }
+
+  return {
+    status: "success",
+    ejemplarId: eId,
+    message: "Ejemplar bibliográfico registrado/actualizado exitosamente."
+  };
+}
+
+function getLibraryBooks(payload) {
+  const { categoria, estado } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  let rows = getOrCreateSheet(ss, "BibliotecaEjemplares").getDataRange().getValues().slice(1);
+
+  if (rows.length === 0) {
+    const defaults = [
+      ["LIB-101", "978-0131103627", "El Lenguaje de Programación C", "Brian W. Kernighan", "Informática", "Estante B2", "available", "Biblioteca Central"],
+      ["LIB-102", "978-0201633610", "Design Patterns: Elements of Reusable Object-Oriented Software", "Erich Gamma", "Software", "Estante B3", "available", "Biblioteca Central"]
+    ];
+    const sheet = getOrCreateSheet(ss, "BibliotecaEjemplares");
+    sheet.getRange(2, 1, defaults.length, 8).setValues(defaults);
+    rows = defaults;
+  }
+
+  let filtered = rows;
+  if (categoria) filtered = filtered.filter(r => String(r[4]).toLowerCase().trim() === String(categoria).toLowerCase().trim());
+  if (estado) filtered = filtered.filter(r => String(r[6]).trim() === String(estado).trim());
+
+  const mapped = filtered.map(r => ({
+    ejemplarId: r[0],
+    isbnCodigo: r[1],
+    titulo: r[2],
+    autor: r[3],
+    categoria: r[4],
+    ubicacionFisica: r[5],
+    estado: r[6],
+    observaciones: r[7]
+  }));
+
+  return {
+    status: "success",
+    libros: mapped
+  };
+}
+
+function processLibraryLoan(payload) {
+  const { ejemplarId, userId, fechaDevolucionPrevista, accion, observaciones } = payload || {};
+  if (!ejemplarId || !userId) throw new Error("ejemplarId y userId requeridos.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const bookSheet = getOrCreateSheet(ss, "BibliotecaEjemplares");
+  const loanSheet = getOrCreateSheet(ss, "BibliotecaPrestamos");
+  const now = new Date();
+
+  const books = bookSheet.getDataRange().getValues();
+  const bIdx = books.findIndex(r => String(r[0]).trim() === String(ejemplarId).trim());
+  if (bIdx === -1) throw new Error("Ejemplar bibliográfico no encontrado.");
+
+  if (accion === "Devolucion") {
+    bookSheet.getRange(bIdx + 1, 7).setValue("available");
+    const loans = loanSheet.getDataRange().getValues();
+    const lIdx = loans.findIndex(r => String(r[1]).trim() === String(ejemplarId).trim() && r[6] === "on_loan");
+    if (lIdx !== -1) {
+      loanSheet.getRange(lIdx + 1, 5).setValue(now);
+      loanSheet.getRange(lIdx + 1, 7).setValue("returned");
+    }
+    return { status: "success", message: "Devolución de ejemplar registrada exitosamente." };
+  } else {
+    // Préstamo
+    if (books[bIdx][6] === "on_loan") throw new Error("El ejemplar ya se encuentra prestado.");
+
+    bookSheet.getRange(bIdx + 1, 7).setValue("on_loan");
+    const prestamoId = "LNM-" + now.getTime();
+    loanSheet.appendRow([
+      prestamoId,
+      String(ejemplarId).trim(),
+      String(userId).trim(),
+      now,
+      fechaDevolucionPrevista || new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000),
+      "",
+      "on_loan",
+      observaciones || ""
+    ]);
+
+    return {
+      status: "success",
+      prestamoId: prestamoId,
+      message: "Préstamo de ejemplar bibliográfico otorgado con éxito."
+    };
+  }
+}
+
+function getLibraryLoans(payload) {
+  const { userId, estado } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const rows = getOrCreateSheet(ss, "BibliotecaPrestamos").getDataRange().getValues().slice(1);
+
+  let filtered = rows;
+  if (userId) filtered = filtered.filter(r => String(r[2]).trim() === String(userId).trim());
+  if (estado) filtered = filtered.filter(r => String(r[6]).trim() === String(estado).trim());
+
+  const mapped = filtered.map(r => ({
+    prestamoId: r[0],
+    ejemplarId: r[1],
+    userId: r[2],
+    fechaPrestamo: r[3],
+    fechaDevolucionPrevista: r[4],
+    fechaDevolucionReal: r[5],
+    estado: r[6],
+    observaciones: r[7]
+  }));
+
+  return {
+    status: "success",
+    prestamos: mapped
+  };
+}
+
+// ---------------------------------------------------------------------------
+// FASE 11: ACTIVOS PATRIMONIALES Y CUSTODIAS
+// ---------------------------------------------------------------------------
+
+function manageAssetItem(payload) {
+  const { activoId, codigoPatrimonial, nombre, categoria, serieModel, ubicacionActual, custodioUserId, estado, observaciones } = payload || {};
+  if (!codigoPatrimonial || !nombre) throw new Error("codigoPatrimonial y nombre son requeridos.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "ActivosPatrimoniales");
+  const data = sheet.getDataRange().getValues();
+  const now = new Date();
+
+  let aId = activoId;
+  let existingIndex = -1;
+
+  if (aId) {
+    existingIndex = data.findIndex(r => String(r[0]).trim() === String(aId).trim());
+  } else {
+    existingIndex = data.findIndex(r => String(r[1]).trim() === String(codigoPatrimonial).trim());
+  }
+
+  if (existingIndex !== -1) {
+    aId = data[existingIndex][0];
+    sheet.getRange(existingIndex + 1, 1, 1, 9).setValues([[
+      aId,
+      String(codigoPatrimonial).trim(),
+      nombre,
+      categoria || "Equipo Computacional",
+      serieModel || "N/A",
+      ubicacionActual || "Laboratorio de Cómputo",
+      custodioUserId || "",
+      estado || "available",
+      observaciones || ""
+    ]]);
+  } else {
+    aId = "ACT-" + now.getTime();
+    sheet.appendRow([
+      aId,
+      String(codigoPatrimonial).trim(),
+      nombre,
+      categoria || "Equipo Computacional",
+      serieModel || "N/A",
+      ubicacionActual || "Laboratorio de Cómputo",
+      custodioUserId || "",
+      "available",
+      observaciones || ""
+    ]);
+  }
+
+  return {
+    status: "success",
+    activoId: aId,
+    codigoPatrimonial: codigoPatrimonial,
+    message: "Activo patrimonial registrado/actualizado en catálogo."
+  };
+}
+
+function getAssetItems(payload) {
+  const { categoria, estado } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  let rows = getOrCreateSheet(ss, "ActivosPatrimoniales").getDataRange().getValues().slice(1);
+
+  if (rows.length === 0) {
+    const defaults = [
+      ["ACT-001", "PAT-LAB-01", "Computadora HP All-in-One Core i5", "Equipo Computacional", "HP ProOne 400", "Lab Cómputo 1", "EMP-01", "assigned", "Asignado para Docencia"],
+      ["ACT-002", "PAT-PROY-01", "Proyector Epson PowerLite 3300", "Audiovisual", "Epson X41+", "Salón de Usos Múltiples", "", "available", "Disponible"]
+    ];
+    const sheet = getOrCreateSheet(ss, "ActivosPatrimoniales");
+    sheet.getRange(2, 1, defaults.length, 9).setValues(defaults);
+    rows = defaults;
+  }
+
+  let filtered = rows;
+  if (categoria) filtered = filtered.filter(r => String(r[3]).toLowerCase().trim() === String(categoria).toLowerCase().trim());
+  if (estado) filtered = filtered.filter(r => String(r[7]).trim() === String(estado).trim());
+
+  const mapped = filtered.map(r => ({
+    activoId: r[0],
+    codigoPatrimonial: r[1],
+    nombre: r[2],
+    categoria: r[3],
+    serieModel: r[4],
+    ubicacionActual: r[5],
+    custodioUserId: r[6],
+    estado: r[7],
+    observaciones: r[8]
+  }));
+
+  return {
+    status: "success",
+    activos: mapped
+  };
+}
+
+function assignAssetCustody(payload) {
+  const { activoId, custodioUserId, observaciones } = payload || {};
+  if (!activoId || !custodioUserId) throw new Error("activoId y custodioUserId son requeridos.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const assetSheet = getOrCreateSheet(ss, "ActivosPatrimoniales");
+  const asgnSheet = getOrCreateSheet(ss, "AsignacionesActivos");
+  const now = new Date();
+
+  const assets = assetSheet.getDataRange().getValues();
+  const idx = assets.findIndex(r => String(r[0]).trim() === String(activoId).trim());
+  if (idx === -1) throw new Error("Activo patrimonial no encontrado.");
+
+  assetSheet.getRange(idx + 1, 7).setValue(String(custodioUserId).trim());
+  assetSheet.getRange(idx + 1, 8).setValue("assigned");
+
+  const asignacionId = "ASG-" + now.getTime();
+  asgnSheet.appendRow([
+    asignacionId,
+    String(activoId).trim(),
+    String(custodioUserId).trim(),
+    now,
+    "",
+    "Acta Firmada",
+    observaciones || ""
+  ]);
+
+  return {
+    status: "success",
+    asignacionId: asignacionId,
+    message: "Custodia de activo patrimonial asignada correctamente."
+  };
+}
+
+function getAssetAssignments(payload) {
+  const { custodioUserId } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const rows = getOrCreateSheet(ss, "AsignacionesActivos").getDataRange().getValues().slice(1);
+
+  let filtered = rows;
+  if (custodioUserId) filtered = filtered.filter(r => String(r[2]).trim() === String(custodioUserId).trim());
+
+  const mapped = filtered.map(r => ({
+    asignacionId: r[0],
+    activoId: r[1],
+    custodioUserId: r[2],
+    fechaEntrega: r[3],
+    fechaDevolucion: r[4],
+    estadoActa: r[5],
+    observaciones: r[6]
+  }));
+
+  return {
+    status: "success",
+    asignaciones: mapped
+  };
+}
+
+// ---------------------------------------------------------------------------
+// FASE 11: TRANSPORTE ESCOLAR Y RUTAS
+// ---------------------------------------------------------------------------
+
+function manageTransportRoute(payload) {
+  const { rutaId, nombreRuta, unidadCodigo, conductorEmpleadoId, capacidad, paradasJSON, estado, observaciones } = payload || {};
+  if (!nombreRuta || !unidadCodigo) throw new Error("nombreRuta y unidadCodigo son requeridos.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "TransporteRutas");
+  const data = sheet.getDataRange().getValues();
+  const now = new Date();
+
+  let rId = rutaId;
+  let existingIndex = -1;
+
+  if (rId) {
+    existingIndex = data.findIndex(r => String(r[0]).trim() === String(rId).trim());
+  } else {
+    existingIndex = data.findIndex(r => String(r[1]).toLowerCase().trim() === String(nombreRuta).toLowerCase().trim());
+  }
+
+  const pJSON = typeof paradasJSON === "object" ? JSON.stringify(paradasJSON) : (paradasJSON || "[]");
+
+  if (existingIndex !== -1) {
+    rId = data[existingIndex][0];
+    sheet.getRange(existingIndex + 1, 1, 1, 8).setValues([[
+      rId,
+      String(nombreRuta).trim(),
+      String(unidadCodigo).trim(),
+      conductorEmpleadoId || "EMP-BUS-01",
+      parseInt(capacidad || 25),
+      pJSON,
+      estado || "active",
+      observaciones || ""
+    ]]);
+  } else {
+    rId = "RUT-" + now.getTime();
+    sheet.appendRow([
+      rId,
+      String(nombreRuta).trim(),
+      String(unidadCodigo).trim(),
+      conductorEmpleadoId || "EMP-BUS-01",
+      parseInt(capacidad || 25),
+      pJSON,
+      "active",
+      observaciones || ""
+    ]);
+  }
+
+  return {
+    status: "success",
+    rutaId: rId,
+    message: "Ruta de transporte escolar registrada/actualizada exitosamente."
+  };
+}
+
+function getTransportRoutes(payload) {
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  let rows = getOrCreateSheet(ss, "TransporteRutas").getDataRange().getValues().slice(1);
+
+  if (rows.length === 0) {
+    const defaults = [
+      ["RUT-01", "Ruta Principal Anillo Periférico", "BUS-01", "EMP-CONDUCTOR-01", 30, '[{"parada":"Plaza Miraflores","hora":"06:30 AM"},{"parada":"Residencial Las Uvas","hora":"06:45 AM"}]', "active", "Ruta de Mañana"],
+      ["RUT-02", "Ruta Bulevar Morazán", "BUS-02", "EMP-CONDUCTOR-02", 25, '[{"parada":"Mall Multiplaza","hora":"06:25 AM"},{"parada":"Colonia Palmira","hora":"06:40 AM"}]', "active", "Ruta de Mañana"]
+    ];
+    const sheet = getOrCreateSheet(ss, "TransporteRutas");
+    sheet.getRange(2, 1, defaults.length, 8).setValues(defaults);
+    rows = defaults;
+  }
+
+  const mapped = rows.map(r => ({
+    rutaId: r[0],
+    nombreRuta: r[1],
+    unidadCodigo: r[2],
+    conductorEmpleadoId: r[3],
+    capacidad: parseInt(r[4] || 0),
+    paradasJSON: r[5],
+    estado: r[6],
+    observaciones: r[7]
+  }));
+
+  return {
+    status: "success",
+    rutas: mapped
+  };
+}
+
+function assignStudentTransport(payload) {
+  const { rutaId, estudianteUserId, paradaNombre, horarioPlan } = payload || {};
+  if (!rutaId || !estudianteUserId) throw new Error("rutaId y estudianteUserId son requeridos.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "TransporteAsignaciones");
+  const now = new Date();
+  const asgnId = "TRN-" + now.getTime();
+
+  sheet.appendRow([
+    asgnId,
+    String(rutaId).trim(),
+    String(estudianteUserId).trim(),
+    paradaNombre || "Parada Principal",
+    horarioPlan || "06:30 AM",
+    "active"
+  ]);
+
+  return {
+    status: "success",
+    asignacionTranspId: asgnId,
+    message: "Estudiante asignado a ruta de transporte escolar con éxito."
+  };
+}
+
+function getTransportAssignments(payload) {
+  const { estudianteUserId, rutaId } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const rows = getOrCreateSheet(ss, "TransporteAsignaciones").getDataRange().getValues().slice(1);
+
+  let filtered = rows;
+  if (estudianteUserId) filtered = filtered.filter(r => String(r[2]).trim() === String(estudianteUserId).trim());
+  if (rutaId) filtered = filtered.filter(r => String(r[1]).trim() === String(rutaId).trim());
+
+  const mapped = filtered.map(r => ({
+    asignacionTranspId: r[0],
+    rutaId: r[1],
+    estudianteUserId: r[2],
+    paradaNombre: r[3],
+    horarioPlan: r[4],
+    estado: r[5]
+  }));
+
+  return {
+    status: "success",
+    asignaciones: mapped
   };
 }
