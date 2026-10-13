@@ -118,6 +118,7 @@
                 <button id="nav-dashboard" class="flex-none px-4 py-2 rounded-xl font-semibold transition-all text-[10px] uppercase tracking-widest bg-blue-600 text-white">Entregas</button>
                 <button id="nav-gradebook" class="flex-none px-4 py-2 rounded-xl font-semibold transition-all text-[10px] uppercase tracking-widest bg-gray-100 text-gray-500">Libro de Calificaciones</button>
                 <button id="nav-attendance" class="flex-none px-4 py-2 rounded-xl font-semibold transition-all text-[10px] uppercase tracking-widest bg-gray-100 text-gray-500">Asistencia y Convivencia</button>
+                <button id="nav-comunicados" class="flex-none px-4 py-2 rounded-xl font-semibold transition-all text-[10px] uppercase tracking-widest bg-gray-100 text-gray-500">Comunicados e Integración</button>
                 <button id="nav-reportes" class="flex-none px-4 py-2 rounded-xl font-semibold transition-all text-[10px] uppercase tracking-widest bg-gray-100 text-gray-500">Reportes</button>
                 <button id="nav-tareas" class="flex-none px-4 py-2 rounded-xl font-semibold transition-all text-[10px] uppercase tracking-widest bg-gray-100 text-gray-500">Actividades</button>
                 <button id="nav-proyectos" class="flex-none px-4 py-2 rounded-xl font-semibold transition-all text-[10px] uppercase tracking-widest bg-gray-100 text-gray-500">Proyectos</button>
@@ -983,6 +984,72 @@
                         <div id="att-incidents-container" class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div class="text-center py-6 text-gray-400 italic text-xs border-2 border-dashed border-gray-100 rounded-2xl col-span-full">
                                 Cargar incidencias para el grupo seleccionado.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Sección de Comunicados y Colaboración Institucional -->
+            <section id="section-comunicados" class="hidden animate-fade-in-up space-y-6">
+                <div class="bg-white rounded-3xl p-6 shadow-xl border border-gray-100">
+                    <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-6">
+                        <div>
+                            <span class="inline-block px-3 py-1 bg-indigo-50 text-indigo-700 text-xs font-semibold rounded-full mb-2">Canal Oficial Institucional</span>
+                            <h2 class="text-2xl font-bold text-gray-800">Centro de Comunicados e Integración</h2>
+                            <p class="text-xs text-gray-500 mt-1">Emisión de circulares segmentadas, seguimiento de acuses de recibo e hilos de conversación con familias.</p>
+                        </div>
+                    </div>
+
+                    <!-- Formularios y Listado de Comunicados -->
+                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                        <div class="lg:col-span-5 bg-gray-50 p-5 rounded-2xl border border-gray-100 space-y-4">
+                            <h3 class="text-sm font-bold text-gray-800 uppercase tracking-tight flex items-center gap-2">
+                                <i class="fas fa-paper-plane text-indigo-600"></i> Redactar Comunicado Oficial
+                            </h3>
+                            <div>
+                                <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Título del Comunicado</label>
+                                <input type="text" id="com-titulo" class="w-full text-xs p-2.5 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-400 font-medium" placeholder="Ej. Circular Informativa de Exámenes">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Categoría</label>
+                                <select id="com-categoria" class="w-full text-xs p-2.5 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-400 font-medium">
+                                    <option value="General">General / Informativo</option>
+                                    <option value="Academico">Académico</option>
+                                    <option value="Administrativo">Administrativo / Secretaría</option>
+                                    <option value="Urgente">Urgente / Importante</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Audiencia Target</label>
+                                <select id="com-audiencia" class="w-full text-xs p-2.5 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-400 font-medium">
+                                    <option value="TodaLaComunidad">Toda la Comunidad</option>
+                                    <option value="Padres">Padres y Tutores</option>
+                                    <option value="Estudiantes">Estudiantes</option>
+                                    <option value="Docentes">Cuerpo Docente</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Contenido del Mensaje</label>
+                                <textarea id="com-contenido" rows="4" class="w-full text-xs p-2.5 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-400 font-medium" placeholder="Escriba el comunicado institucional..."></textarea>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <input type="checkbox" id="com-requiere-firma" class="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500">
+                                <label for="com-requiere-firma" class="text-xs font-semibold text-gray-700">Requiere Acuse de Recibo / Confirmación Explicita</label>
+                            </div>
+                            <button id="btn-pub-comunicado" class="w-full py-3 bg-indigo-600 text-white rounded-xl font-bold text-xs uppercase tracking-widest hover:bg-indigo-700 transition-all shadow-md">
+                                Publicar Comunicado
+                            </button>
+                        </div>
+
+                        <div class="lg:col-span-7 space-y-4">
+                            <h3 class="text-sm font-bold text-gray-800 uppercase tracking-tight flex items-center gap-2">
+                                <i class="fas fa-bullhorn text-indigo-600"></i> Historial de Comunicados Emitidos
+                            </h3>
+                            <div id="comunicados-list-container" class="space-y-3 max-h-[500px] overflow-y-auto scroll-minimalist">
+                                <div class="text-center py-8 text-gray-400 italic text-xs border-2 border-dashed border-gray-100 rounded-2xl">
+                                    Cargando comunicados emitidos...
+                                </div>
                             </div>
                         </div>
                     </div>

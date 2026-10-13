@@ -2418,11 +2418,75 @@ document.addEventListener('DOMContentLoaded', function() {
 
     document.getElementById('btn-refresh-academic-results')?.addEventListener('click', loadStudentAcademicResults);
 
-    // Carga inicial de resultados académicos si la pestaña de progreso está activa
+    // --- CIRCULARES Y COMUNICADOS CON ACUSE DE RECIBO (FASE 11) ---
+    async function loadStudentAnnouncements() {
+        const container = document.getElementById('student-announcements-container');
+        if (!container) return;
+
+        container.innerHTML = '<div class="text-center py-6 text-gray-400 italic text-xs"><i class="fas fa-spinner fa-spin mr-1"></i>Cargando comunicados oficiales...</div>';
+
+        try {
+            const res = await fetchApi('USER', 'getInstitutionalAnnouncements', { rol: currentUser.rol, audiencia: "TodaLaComunidad" });
+            if (res.status === 'success' && Array.isArray(res.data)) {
+                const comms = res.data;
+                if (comms.length === 0) {
+                    container.innerHTML = '<div class="p-4 rounded-2xl bg-gray-50 text-center text-gray-400 text-xs italic">No hay comunicados generales emitidos.</div>';
+                    return;
+                }
+
+                container.innerHTML = comms.map(c => `
+                    <div class="p-4 rounded-2xl bg-indigo-50/40 border border-indigo-100 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                        <div>
+                            <div class="flex items-center gap-2 mb-1">
+                                <span class="px-2.5 py-0.5 bg-indigo-100 text-indigo-800 text-[8px] font-black uppercase rounded">${c.categoria}</span>
+                                <span class="text-[9px] text-gray-400 font-bold">${c.fechaPublicacion ? new Date(c.fechaPublicacion).toLocaleDateString() : ''}</span>
+                            </div>
+                            <h4 class="text-xs font-bold text-gray-900 uppercase tracking-tight">${c.titulo}</h4>
+                            <p class="text-xs text-gray-600 mt-1 leading-relaxed">${c.contenido}</p>
+                        </div>
+                        <div class="flex-shrink-0">
+                            ${c.requiereFirma ? `
+                                <button onclick="window.confirmAnnouncementReceipt('${c.comunicadoId}')" class="px-4 py-2 bg-indigo-600 text-white hover:bg-indigo-700 rounded-xl text-[10px] font-bold uppercase tracking-widest flex items-center gap-1 shadow-sm">
+                                    <i class="fas fa-check-circle"></i> Confirmar Acuse
+                                </button>
+                            ` : '<span class="text-[9px] text-emerald-600 font-bold uppercase"><i class="fas fa-eye"></i> Informativo</span>'}
+                        </div>
+                    </div>
+                `).join('');
+            } else {
+                container.innerHTML = '<div class="p-4 text-center text-gray-400 text-xs italic">No hay comunicados disponibles.</div>';
+            }
+        } catch (e) {
+            container.innerHTML = `<div class="p-4 text-center text-red-500 text-xs italic">Error al cargar comunicados: ${e.message}</div>`;
+        }
+    }
+
+    window.confirmAnnouncementReceipt = async function(comunicadoId) {
+        try {
+            const res = await fetchApi('USER', 'submitAnnouncementReceiptConfirmation', {
+                comunicadoId: comunicadoId,
+                userId: currentUser.userId
+            });
+
+            if (res.status === 'success') {
+                alert("Acuse de recibo de comunicado registrado con éxito.");
+                loadStudentAnnouncements();
+            } else {
+                alert("Error: " + res.message);
+            }
+        } catch (e) {
+            alert("Error al confirmar lectura: " + e.message);
+        }
+    };
+
+    document.getElementById('btn-refresh-announcements')?.addEventListener('click', loadStudentAnnouncements);
+
+    // Carga inicial de resultados académicos y comunicados si la pestaña de progreso está activa
     const tabProgressBtn = document.getElementById('tab-progress');
     if (tabProgressBtn) {
         tabProgressBtn.addEventListener('click', () => {
             loadStudentAcademicResults();
+            loadStudentAnnouncements();
         });
     }
 

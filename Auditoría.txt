@@ -1,3 +1,35 @@
+AUDITORÍA TÉCNICA Y DIAGNÓSTICO DE ARQUITECTURA - FASE 11: COMUNICACIÓN Y COLABORACIÓN INSTITUCIONAL - Sun Jul 5 2026
+
+Archivos y Módulos Auditados:
+- backend/user-service/Code.gs
+- teacher-dashboard.html
+- student-dashboard.html
+- js/teacher.js
+- js/student.js
+- js/index-ui.js
+- js/api.js
+
+1. DIAGNÓSTICO Y REUTILIZACIÓN DE ESTRUCTURAS DE DATOS EXISTENTES
+- Tablas y Endpoints en `backend/user-service/Code.gs`:
+  * `NoticiasPortal`: Publicaciones institucionales para el portal público y tableros (`createNews`, `getNews`, `updateNewsStatus`).
+  * `ComunicadosInstitucionales`: Circulares y comunicados con segmentación por audiencias (`createInstitutionalAnnouncement`, `getInstitutionalAnnouncements`).
+  * `ConfirmacionesLecturaComunicados`: Confirmaciones de lectura explícitas e implícitas por usuario (`confirmAnnouncementReceipt`, `getAnnouncementReceiptStatus`).
+  * `ConversacionesMensajes`: Mensajería interna e hilos vinculados a un estudiante, trámite o documento (`sendMessageInConversation`, `getConversationMessages`).
+  * `BandejaNotificaciones`: Ingesta unificada de avisos (`sendMultiChannelNotification`, `getUnifiedNotifications`, `markNotificationAsRead`).
+
+2. HALLAZGOS Y PLAN DE IMPLEMENTACIÓN PARA LA FASE 11
+- Backend (`backend/user-service/Code.gs`):
+  * Reforzar `createInstitutionalAnnouncement` para admitir segmentación por audiencias complejas (Grados, Secciones, Roles, Departamentos), fijación de avisos importantes y requerimiento de acuse de recibo.
+  * Extender `confirmAnnouncementReceipt` para guardar confirmación explícita con timestamp e IP/metadata.
+  * Consolidar `getConversationMessages` y `sendMessageInConversation` para permitir que padres, docentes y administración mantengan hilos de mensajería contextualizados por estudiante.
+- Interfaz Docente y Administrativa (`teacher-dashboard.html`, `js/teacher.js`):
+  * Crear el "Centro de Comunicados e Integración Institucional" en el panel docente/administrativo para redactar comunicados institucionales, publicar circulares, seleccionar audiencia segmentada y monitorear el porcentaje de acuses de recibo en tiempo real.
+- Interfaz Estudiante y Portal Familiar (`student-dashboard.html`, `js/student.js`):
+  * Integrar la sección de "Circulares y Comunicados Institucionales" con botón para "Marcar como Leído / Confirmar Acuse de Recibo".
+  * Reforzar el módulo de "Conversaciones y Mensajes Directos" con los docentes/orientación.
+
+----------------------------------------------------------------------------------------------------
+
 AUDITORÍA TÉCNICA Y DIAGNÓSTICO DE ARQUITECTURA - FASE 10: ASISTENCIA, DISCIPLINA Y CONVIVENCIA ESCOLAR - Sun Jul 5 2026
 
 Archivos y Módulos Auditados:
@@ -33,145 +65,3 @@ Archivos y Módulos Auditados:
 - Interfaz Estudiante y Portal Familiar (`student-dashboard.html`, `js/student.js`):
   * Reforzar la tarjeta "Registro de Asistencia y Puntualidad" con desglose de clases asistidas, faltas y tardanzas.
   * Habilitar el flujo de solicitud de justificante con opción de adjuntar justificante/constancia médica y consultar el estado de aprobación en tiempo real.
-
-----------------------------------------------------------------------------------------------------
-
-AUDITORÍA TÉCNICA Y DIAGNÓSTICO DE ARQUITECTURA - FASE 9: EVALUACIONES, CALIFICACIONES Y RESULTADOS ACADÉMICOS - Sun Jul 5 2026
-
-Archivos y Módulos Auditados:
-- backend/exam-service/Code.gs
-- backend/task-service/Code.gs
-- backend/academic-service/Code.gs
-- teacher-dashboard.html
-- student-dashboard.html
-- js/teacher.js
-- js/student.js
-- js/api.js
-
-1. DIAGNÓSTICO Y REUTILIZACIÓN DE ESTRUCTURAS DE DATOS EXISTENTES
-- Tablas y Endpoints existentes en `backend/exam-service/Code.gs`:
-  * `CategoriasEvaluacion`: Categorías de evaluación y ponderaciones (CAT-1, CAT-2, etc.) (`getEvaluationCategories`, `saveEvaluationCategory`).
-  * `CalificacionesEstudiantes`: Registro centralizado de notas por evaluación y estudiante (`getGradebookData`, `saveGradebookGrades`).
-  * `RubricasEvaluacion`: Rúbricas y criterios de desempeño (`getRubrics`, `saveRubric`).
-  * `RecuperacionesEstudiante`: Registro de notas de recuperación y métodos de sustitución/promedio/mayor (`saveStudentRecovery`, `getStudentRecoveries`).
-  * `CierresPeriodos`: Estado de cierre por parcial, grado, sección y asignatura (`closePeriodGradebook`, `reopenPeriodGradebook`).
-  * `Examenes` & `EntregasExamen`: Exámenes en línea y calificaciones automáticas (`getStudentExams`, `submitExam`, `gradeExamSubmission`).
-- Tablas y Endpoints en `backend/task-service/Code.gs`:
-  * `Tareas` & `Entregas`: Tareas, trabajos y entregas calificadas por docentes (`getStudentTasks`, `getTeacherActivity`).
-
-2. HALLAZGOS Y PLAN DE CONSOLIDACIÓN PARA LA FASE 9
-- Motor Backend (`backend/exam-service/Code.gs`):
-  * Consolidar `getGradebookData` para que reúna automáticamente en una sola llamada: 1) Estudiantes del grado/sección, 2) Categorías de evaluación y ponderaciones, 3) Tareas y exámenes de la asignatura/parcial, 4) Entregas y notas registradas en `CalificacionesEstudiantes` y `RecuperacionesEstudiante`, 5) Estado de cierre de período (`CierresPeriodos`).
-  * Integrar el cálculo automático centralizado de promedios ponderados en backend con redondeo institucional a 1 decimal, aplicando reglas de sustitución/promedio/mayor de recuperaciones y estado de aprobación (Nota >= 70 = Aprobado).
-  * Robustecer `closePeriodGradebook` para marcar `esPublicada = true` en todas las calificaciones del período y restringir publicaciones no autorizadas.
-  * Garantizar en `getStudentAcademicReport` que los estudiantes y responsables solo puedan consultar notas publicadas (`esPublicada === true` o período cerrado).
-- Interfaz Docente y Libro de Calificaciones (`teacher-dashboard.html`, `js/teacher.js`):
-  * Crear la sección e interfaz gráfica interactiva "Libro de Calificaciones" en el panel docente con matices por categoría, edición fluida de notas, cálculo en tiempo real, banderas de estado (Provisional vs Publicado), modal de configuración de ponderaciones (con validación de suma al 100%) y modal para registro trazable de recuperaciones.
-- Interfaz Estudiante y Portal Familiar (`student-dashboard.html`, `js/student.js`):
-  * Integrar tarjeta/pestaña de "Resultados Académicos" con desglose por asignatura, parcial, categorías, actividades evaluadas, observaciones del docente, desglose de recuperaciones y nota final calculada con badge de estado de aprobación.
-
-----------------------------------------------------------------------------------------------------
-
-AUDITORÍA TÉCNICA Y DIAGNÓSTICO DE ARQUITECTURA - FASE 8: AULA VIRTUAL Y GESTIÓN AVANZADA DEL APRENDIZAJE - Sun Jul 5 2026
-
-Archivos y Módulos Auditados:
-- backend/task-service/Code.gs
-- teacher-dashboard.html
-- student-dashboard.html
-- js/teacher.js
-- js/student.js
-- js/api.js
-
-1. DIAGNÓSTICO Y REUTILIZACIÓN DE ESTRUCTURAS DE DATOS EXISTENTES
-- Tablas existentes en `backend/task-service/Code.gs`:
-  * `AulasVirtuales`: Aulas virtuales por oferta académica, grado, sección, asignatura y docente responsable (`getVirtualClassrooms`, `createVirtualClassroom`).
-  * `PublicacionesAnuncios`: Anuncios y publicaciones del aula virtual con soporte de borradores, fecha programada, elementos fijados y adjuntos JSON (`getPosts`, `createPost`, `updatePost`, `deletePost`).
-  * `MaterialesEducativos`: Recursos y guías de estudio organizados por unidad, tema, parcial y URL/Drive (`getStudyMaterials`, `createStudyMaterial`, `deleteStudyMaterial`).
-  * `Tareas` & `Entregas`: Módulo oficial de asignaciones y recepción multimodal de trabajos (`createTask`, `submitAssignment`, `getStudentTasks`, `getTeacherActivity`).
-  * `EntregasVersiones` & `ComentariosEntregas`: Historial inmutable de entregas y comentarios privados/correcciones (`getSubmissionVersions`, `getSubmissionComments`, `addSubmissionComment`, `returnSubmissionForRevision`).
-  * `MetadatosArchivos`: Trazabilidad de archivos en Google Drive con metadatos por asignatura, grado y parcial.
-
-2. HALLAZGOS Y OPORTUNIDADES DE MEJORA EN FASE 8
-- Backend (`backend/task-service/Code.gs`):
-  * La infraestructura de `AulasVirtuales`, `PublicacionesAnuncios` y `MaterialesEducativos` ya cuenta con endpoints base.
-  * Se requiere asegurar que las publicaciones y materiales respeten la visibilidad de borradores (`esBorrador`) y fechas programadas (`fechaProgramada`) en servidor según el rol autenticado (`authRole`).
-  * Garantizar que la consulta de materiales educativos soporte filtrado contextual por `grado`, `seccion`, `asignatura` y `parcial`.
-- Frontend Estudiante (`student-dashboard.html`, `js/student.js`):
-  * Ampliar el panel del estudiante para mostrar una sección de Anuncios y Materiales Educativos del Aula Virtual dentro de las asignaturas seleccionadas.
-- Frontend Docente (`teacher-dashboard.html`, `js/teacher.js`):
-  * Proporcionar interfaz para que el docente cree y gestione anuncios del aula virtual, diferencie borradores de contenidos publicados y adjunte recursos digitales.
-
-----------------------------------------------------------------------------------------------------
-
-AUDITORÍA TÉCNICA Y DIAGNÓSTICO DE ARQUITECTURA - FASE 7: PLANIFICACIÓN ACADÉMICA, HORARIOS, SUSTITUCIONES Y RECURSOS - Sun Jul 5 2026
-
-Archivos y Módulos Auditados:
-- backend/academic-service/Code.gs
-- teacher-dashboard.html
-- student-dashboard.html
-- js/teacher.js
-- js/student.js
-- js/api.js
-
-1. DIAGNÓSTICO Y REUTILIZACIÓN DE ESTRUCTURAS DE DATOS EXISTENTES
-- Tablas existentes en `backend/academic-service/Code.gs`:
-  * `AnosLectivos`: Ciclos lectivos con estado (`Borrador`, `EnPreparacion`, `Activo`, `Cerrado`).
-  * `PeriodosAcademicos`: Parciales/Semestres jerárquicos con fechas de inicio/fin y aperturas docentes.
-  * `CatalogoAsignaturas`: Catálogo unificado de asignaturas institucionales.
-  * `PlanesEstudio` & `PlanAsignaturas`: Planes de estudio por grado y carga horaria.
-  * `OfertaAcademica`: Oferta por año lectivo, grado, sección y asignatura.
-  * `AsignacionesDocentes`: Asignación de docentes titulares y sustitutos temporales.
-  * `CalendarioAcademico`: Eventos del calendario institucional, feriados y exámenes.
-  * `SedesAulas`: Espacios físicos, aulas, laboratorios, capacidad y tipo de espacio.
-  * `HorariosClase`: Franjas horarias por día de semana, hora inicio/fin, aula y docente.
-  * `ReglasAcademicas`: Parámetros de colisión y reglas académicas institucionales.
-
-2. HALLAZGOS Y OPORTUNIDADES DE MEJORA
-- Motor Backend (`backend/academic-service/Code.gs`):
-  * La función `checkScheduleConflict` valida colisiones simples de aula y docente. Se requiere expandir la prevención de conflictos para validar simultáneamente: 1) Colisión de docente, 2) Colisión de aula/espacio físico, 3) Colisión de grado y sección (evitar asignar 2 clases al mismo grupo en la misma franja).
-  * Soporte para guardar borradores de horarios y publicación oficial por grado/sección.
-  * Endpoints para consulta de horarios consolidados por estudiante/padre y por docente.
-  * Registro y gestión de sustituciones docentes temporales con fechas de inicio y fin.
-  * Catálogo y gestión de aulas/recursos compartidos (`SedesAulas`).
-- Interfaz Docente y Administrativa (`teacher-dashboard.html`, `js/teacher.js`):
-  * Extender el panel administrativo con un diseñador visual de horarios por sección y docente, incluyendo la detección en tiempo real de colisiones antes de guardar.
-  * Modal/Gestor de sustituciones docentes temporales.
-- Interfaz de Estudiante y Portal Familiar (`student-dashboard.html`, `js/student.js`):
-  * Vista de horario de clases semanal interactivo con indicación de hora, asignatura, docente y aula, resaltando el día actual.
-
-----------------------------------------------------------------------------------------------------
-
-AUDITORÍA TÉCNICA Y DIAGNÓSTICO DE ARQUITECTURA - FASE 4: EXPANSIÓN FINANCIERA, DESCUENTOS, BECAS, INVENTARIOS, TIENDA ESCOLAR Y CAFETERÍA - Sun Jul 5 2026
-
-Archivos Auditados e Implementados:
-- backend/accounting-service/Code.gs
-- backend/user-service/Code.gs
-- backend/academic-service/Code.gs
-- backend/task-service/Code.gs
-- teacher-dashboard.html, student-dashboard.html, index.html
-- js/api.js, js/config.js, js/ui-common.js, js/student.js, js/teacher.js
-
-1. DIAGNÓSTICO Y REUTILIZACIÓN DE SERVICIOS Y ENTIDADES EXISTENTES
-- Servicio de Contabilidad (`backend/accounting-service/Code.gs`): Ofrece infraestructura para `ConceptosCobro`, `TarifasPlanPago`, `PagosAbonos`, `ComprobantesPago`, `FacturasFiscales`, `MovimientosCajaBancos`, `CierresCaja`, `CuentasPorPagarGastos`, `InventariosKardex` y `ProveedoresActivos`.
-- Reutilización de Identidad y Permisos (`backend/user-service/Code.gs`): Mantiene `Personas`, `Usuarios`, `RelacionesFamiliares`, `ROLE_PERMISSIONS` y enrutamiento RBAC en servidor.
-- Notificaciones y Auditoría: Ingesta unificada en `LogsSistema` y `BandejaNotificaciones`.
-
-2. NUEVAS ENTIDADES Y TABLAS REQUERIDAS PARA FASE 4
-- `DescuentosBecas`: Reglas de beneficios (Porcentaje/Fijo, Tipo: Promocional/Individual/Beca/Grupo/Producto/Combo, Vigencia, Conceptos elegibles, Acumulable, Prioridad).
-- `SolicitudesDescuentoBeca`: Solicitudes creadas por Secretaría/Contabilidad con adjuntos, estado (`Borrador`, `PendienteAprobacion`, `Aprobado`, `Rechazado`, `Devuelto`) y aprobador de Dirección.
-- `RecargosMoras`: Reglas de mora (Días de gracia, Porcentaje/Monto, Frecuencia, Límite máximo, Exoneración).
-- `TiendaProductos`: Catálogo de la tienda escolar y útiles (Código, Imagen URL obligatoria, Nombre, Precio, Stock, Estado, Categoría).
-- `TiendaOrdenes`: Pedidos y compras en línea de útiles/libros (Número de Orden, UserId, DetalleJSON, Total, MétodoPago, EstadoPago, EstadoEntrega, PDFComprobanteUrl).
-- `CafeteriaMenu`: Menú diario, platos especiales, combos y bebidas (Categoría, Imagen URL obligatoria, Precio, StockDiario, Alérgenos, Estado).
-- `CafeteriaPedidos`: Pedidos de comida realizados por familias/alumnos (PedidoID, EstudianteUserId, ResponsableUserId, DetalleJSON, TurnoEntrega, Total, MétodoPago, Estado).
-- `CreditoFamiliarAutorizaciones`: Configuración de crédito por el tutor (ResponsableUserId, EstudianteUserId, LimiteDiario, LimiteMensual, SaldoUsado, Estado, Vencimiento).
-- `CreditoFamiliarMovimientos`: Transacciones a crédito realizadas en cafetería/tienda con trazabilidad de cuenta familiar vs alumno.
-- `CarruselPromociones`: Configuración de carrusel horizontal en `index.html` (Título, ProductoID/PromocionID, ImagenURL, Precio, Vigencia, OrdenDisplay, Estado).
-
-3. MAPA DE ARCHIVOS HTML Y DASHBOARDS POR DEPARTAMENTO
-- `dashboard-contabilidad.html`: Panel financiero, cuentas por cobrar, recargos, becas, inventario y reportes.
-- `dashboard-secretaria.html`: Solicitudes de becas/descuentos, consulta de promociones y soporte a familias.
-- `dashboard-direccion.html`: Aprobaciones de becas, descuentos, campañas promocionales y supervisión global.
-- `dashboard-tienda.html`: Gestor de tienda escolar, útiles, kardex y despacho de órdenes.
-- `dashboard-cafeteria.html`: Encargado de cafetería, menú diario, platos especiales y preparación de pedidos.
-- `dashboard-encargado.html` / `student-dashboard.html`: Portal familiar de compras, selección de menú, pedidos y gestión de crédito familiar autorizado.

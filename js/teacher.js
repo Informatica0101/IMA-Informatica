@@ -19,6 +19,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const navDashboard = document.getElementById('nav-dashboard');
     const navGradebook = document.getElementById('nav-gradebook');
     const navAttendance = document.getElementById('nav-attendance');
+    const navComunicados = document.getElementById('nav-comunicados');
     const navTareas = document.getElementById('nav-tareas');
     const navProyectos = document.getElementById('nav-proyectos');
     const navLogros = document.getElementById('nav-logros');
@@ -29,6 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const sectionAcademicReports = document.getElementById('section-dashboard');
     const sectionGradebook = document.getElementById('section-gradebook');
     const sectionAttendance = document.getElementById('section-attendance');
+    const sectionComunicados = document.getElementById('section-comunicados');
     const sectionTareas = document.getElementById('section-tareas');
     const sectionProyectos = document.getElementById('section-proyectos');
     const sectionLogros = document.getElementById('section-logros');
@@ -58,8 +60,8 @@ document.addEventListener('DOMContentLoaded', () => {
     let isNavigating = false;
     let studentSort = { column: 'nombre', direction: 'asc' };
 
-    const allSections = [sectionAcademicReports, sectionGradebook, sectionAttendance, sectionTareas, sectionProyectos, sectionLogros, sectionNews, sectionAdmin, sectionReportes];
-    const allNavLinks = [navDashboard, navGradebook, navAttendance, navTareas, navProyectos, navLogros, navNews, navAdmin, navReportsOld];
+    const allSections = [sectionAcademicReports, sectionGradebook, sectionAttendance, sectionComunicados, sectionTareas, sectionProyectos, sectionLogros, sectionNews, sectionAdmin, sectionReportes];
+    const allNavLinks = [navDashboard, navGradebook, navAttendance, navComunicados, navTareas, navProyectos, navLogros, navNews, navAdmin, navReportsOld];
 
     // Auxiliar para normalizar strings (trim, lowercase y sin acentos) para comparaciones robustas
     const norm = (s) => (s || "").toString().trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
@@ -102,6 +104,10 @@ document.addEventListener('DOMContentLoaded', () => {
     navAttendance?.addEventListener('click', () => {
         window.navigateTo(sectionAttendance, navAttendance);
         initAttendanceModule();
+    });
+    navComunicados?.addEventListener('click', () => {
+        window.navigateTo(sectionComunicados, navComunicados);
+        loadInstitutionalAnnouncementsModule();
     });
     navTareas.addEventListener('click', () => {
         window.navigateTo(sectionTareas, navTareas);
@@ -3353,6 +3359,86 @@ function toBase64(file) {
             }
         } catch (e) {
             alert("Error registrando incidencia: " + e.message);
+        }
+    });
+
+    // --- MÓDULO DE COMUNICADOS E INTEGRACIÓN INSTITUCIONAL (FASE 11) ---
+    async function loadInstitutionalAnnouncementsModule() {
+        const container = document.getElementById('comunicados-list-container');
+        if (!container) return;
+
+        container.innerHTML = '<div class="text-center py-8 text-gray-400 italic text-xs"><i class="fas fa-spinner fa-spin mr-2"></i>Cargando comunicados emitidos...</div>';
+
+        try {
+            const res = await fetchApi('USER', 'getInstitutionalAnnouncements', { rol: currentUser.rol });
+            if (res.status === 'success' && Array.isArray(res.data)) {
+                const comms = res.data;
+                if (comms.length === 0) {
+                    container.innerHTML = '<div class="text-center py-8 text-gray-400 italic text-xs border-2 border-dashed border-gray-100 rounded-2xl">No se han emitido comunicados institucionales aún.</div>';
+                    return;
+                }
+
+                container.innerHTML = comms.map(c => `
+                    <div class="p-4 bg-white border border-gray-100 rounded-2xl shadow-sm hover:border-indigo-200 transition-all">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="px-2.5 py-0.5 bg-indigo-100 text-indigo-800 text-[9px] font-bold uppercase rounded-full">${c.categoria}</span>
+                            <span class="text-[9px] font-mono text-gray-400">${c.fechaPublicacion ? new Date(c.fechaPublicacion).toLocaleDateString() : ''}</span>
+                        </div>
+                        <h4 class="text-xs font-bold text-gray-900 uppercase tracking-tight mb-1">${c.titulo}</h4>
+                        <p class="text-xs text-gray-600 leading-relaxed mb-3">${c.contenido}</p>
+                        <div class="flex items-center justify-between text-[9px] text-gray-500 pt-2 border-t border-gray-50">
+                            <span>Audiencia: <strong>${typeof c.audiencia === 'object' ? JSON.stringify(c.audiencia) : c.audiencia}</strong></span>
+                            ${c.requiereFirma ? '<span class="text-indigo-600 font-bold"><i class="fas fa-file-signature"></i> Requiere Acuse</span>' : ''}
+                        </div>
+                    </div>
+                `).join('');
+            } else {
+                container.innerHTML = '<div class="text-center py-6 text-red-500 text-xs">Error al obtener comunicados.</div>';
+            }
+        } catch (e) {
+            container.innerHTML = `<div class="text-center py-6 text-red-500 text-xs">Error de conexión: ${e.message}</div>`;
+        }
+    }
+
+    document.getElementById('btn-pub-comunicado')?.addEventListener('click', async () => {
+        const titulo = document.getElementById('com-titulo')?.value.trim();
+        const categoria = document.getElementById('com-categoria')?.value;
+        const audiencia = document.getElementById('com-audiencia')?.value;
+        const contenido = document.getElementById('com-contenido')?.value.trim();
+        const requiereFirma = document.getElementById('com-requiere-firma')?.checked;
+
+        if (!titulo || !contenido) {
+            alert("Debe completar el título y el contenido del comunicado.");
+            return;
+        }
+
+        const btn = document.getElementById('btn-pub-comunicado');
+        btn.disabled = true;
+        btn.textContent = "Publicando...";
+
+        try {
+            const res = await fetchApi('USER', 'createInstitutionalAnnouncement', {
+                titulo: titulo,
+                contenido: contenido,
+                categoria: categoria,
+                autorId: currentUser.nombre || "Dirección",
+                audiencia: audiencia,
+                requiereFirma: requiereFirma
+            });
+
+            if (res.status === 'success') {
+                alert("¡Comunicado institucional publicado exitosamente!");
+                document.getElementById('com-titulo').value = "";
+                document.getElementById('com-contenido').value = "";
+                loadInstitutionalAnnouncementsModule();
+            } else {
+                alert("Error: " + res.message);
+            }
+        } catch (e) {
+            alert("Error al publicar comunicado: " + e.message);
+        } finally {
+            btn.disabled = false;
+            btn.textContent = "Publicar Comunicado";
         }
     });
 
