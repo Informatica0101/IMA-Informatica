@@ -1,3 +1,40 @@
+AUDITORÍA TÉCNICA Y DIAGNÓSTICO DE ARQUITECTURA - FASE 4: EXPANSIÓN FINANCIERA, DESCUENTOS, BECAS, INVENTARIOS, TIENDA ESCOLAR Y CAFETERÍA - Sun Jul 5 2026
+
+Archivos y Módulos Auditados:
+- backend/accounting-service/Code.gs
+- backend/user-service/Code.gs
+- backend/academic-service/Code.gs
+- backend/task-service/Code.gs
+- teacher-dashboard.html, student-dashboard.html, index.html
+- js/api.js, js/config.js, js/ui-common.js, js/student.js, js/teacher.js
+
+1. DIAGNÓSTICO Y REUTILIZACIÓN DE SERVICIOS Y ENTIDADES EXISTENTES
+- Servicio de Contabilidad (`backend/accounting-service/Code.gs`): Ofrece infraestructura para `ConceptosCobro`, `TarifasPlanPago`, `PagosAbonos`, `ComprobantesPago`, `FacturasFiscales`, `MovimientosCajaBancos`, `CierresCaja`, `CuentasPorPagarGastos`, `InventariosKardex` y `ProveedoresActivos`.
+- Reutilización de Identidad y Permisos (`backend/user-service/Code.gs`): Mantiene `Personas`, `Usuarios`, `RelacionesFamiliares`, `ROLE_PERMISSIONS` y enrutamiento RBAC en servidor.
+- Notificaciones y Auditoría: Ingesta unificada en `LogsSistema` y `BandejaNotificaciones`.
+
+2. NUEVAS ENTIDADES Y TABLAS REQUERIDAS PARA FASE 4
+- `DescuentosBecas`: Reglas de beneficios (Porcentaje/Fijo, Tipo: Promocional/Individual/Beca/Grupo/Producto/Combo, Vigencia, Conceptos elegibles, Acumulable, Prioridad).
+- `SolicitudesDescuentoBeca`: Solicitudes creadas por Secretaría/Contabilidad con adjuntos, estado (`Borrador`, `PendienteAprobacion`, `Aprobado`, `Rechazado`, `Devuelto`) y aprobador de Dirección.
+- `RecargosMoras`: Reglas de mora (Días de gracia, Porcentaje/Monto, Frecuencia, Límite máximo, Exoneración).
+- `TiendaProductos`: Catálogo de la tienda escolar y útiles (Código, Imagen URL obligatoria, Nombre, Precio, Stock, Estado, Categoría).
+- `TiendaOrdenes`: Pedidos y compras en línea de útiles/libros (Número de Orden, UserId, DetalleJSON, Total, MétodoPago, EstadoPago, EstadoEntrega, PDFComprobanteUrl).
+- `CafeteriaMenu`: Menú diario, platos especiales, combos y bebidas (Categoría, Imagen URL obligatoria, Precio, StockDiario, Alérgenos, Estado).
+- `CafeteriaPedidos`: Pedidos de comida realizados por familias/alumnos (PedidoID, EstudianteUserId, ResponsableUserId, DetalleJSON, TurnoEntrega, Total, MétodoPago, Estado).
+- `CreditoFamiliarAutorizaciones`: Configuración de crédito por el tutor (ResponsableUserId, EstudianteUserId, LimiteDiario, LimiteMensual, SaldoUsado, Estado, Vencimiento).
+- `CreditoFamiliarMovimientos`: Transacciones a crédito realizadas en cafetería/tienda con trazabilidad de cuenta familiar vs alumno.
+- `CarruselPromociones`: Configuración de carrusel horizontal en `index.html` (Título, ProductoID/PromocionID, ImagenURL, Precio, Vigencia, OrdenDisplay, Estado).
+
+3. MAPA DE ARCHIVOS HTML Y DASHBOARDS POR DEPARTAMENTO
+- `dashboard-contabilidad.html`: Panel financiero, cuentas por cobrar, recargos, becas, inventario y reportes.
+- `dashboard-secretaria.html`: Solicitudes de becas/descuentos, consulta de promociones y soporte a familias.
+- `dashboard-direccion.html`: Aprobaciones de becas, descuentos, campañas promocionales y supervisión global.
+- `dashboard-tienda.html`: Gestor de tienda escolar, útiles, kardex y despacho de órdenes.
+- `dashboard-cafeteria.html`: Encargado de cafetería, menú diario, platos especiales y preparación de pedidos.
+- `dashboard-encargado.html` / `student-dashboard.html`: Portal familiar de compras, selección de menú, pedidos y gestión de crédito familiar autorizado.
+
+----------------------------------------------------------------------------------------------------
+
 AUDITORÍA DE IMPLEMENTACIÓN Y VERIFICACIÓN DE CÓDIGO FUNCIONAL - FASE 2 Y FASE 3 - Sun Jul 5 2026
 
 Archivos Auditados e Implementados:
