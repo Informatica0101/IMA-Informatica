@@ -243,7 +243,7 @@
                     </div>
                 </div>
 
-                <!-- Portal Familiar, Comunicados y Trámites (Fase 8) -->
+                <!-- Portal Familiar, Comunicados y Trámites (Fase 8 & Fase 6) -->
                 <div id="student-family-portal-card" class="bg-white p-6 md:p-8 rounded-[2.5rem] shadow-sm border border-gray-100 mb-10">
                     <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
                         <div class="flex items-center gap-4">
@@ -251,16 +251,52 @@
                                 <i class="fas fa-handshake"></i>
                             </div>
                             <div>
-                                <h3 class="text-xl font-bold text-gray-800">Comunicación y Trámites Institucionales</h3>
-                                <p class="text-xs text-gray-500 font-medium">Comunicados oficiales, trámites de Secretaría y solicitudes de citas</p>
+                                <h3 class="text-xl font-bold text-gray-800">Comunicación & Trámites Institucionales</h3>
+                                <p class="text-xs text-gray-500 font-medium">Comunicados oficiales, justificación de ausencias, trámites de Secretaría y citas</p>
                             </div>
                         </div>
-                        <button id="btn-open-request-modal" class="px-5 py-2.5 bg-indigo-600 text-white rounded-xl font-bold text-xs uppercase tracking-widest hover:bg-indigo-700 transition-all shadow-md flex items-center gap-2">
-                            <i class="fas fa-plus-circle"></i> Nuevo Trámite / Solicitud
-                        </button>
+                        <div class="flex flex-wrap gap-2">
+                            <button id="btn-open-justification-modal" class="px-4 py-2.5 bg-amber-600 text-white rounded-xl font-bold text-xs uppercase tracking-widest hover:bg-amber-700 transition-all shadow-md flex items-center gap-2">
+                                <i class="fas fa-file-signature"></i> Justificar Ausencia
+                            </button>
+                            <button id="btn-open-request-modal" class="px-4 py-2.5 bg-indigo-600 text-white rounded-xl font-bold text-xs uppercase tracking-widest hover:bg-indigo-700 transition-all shadow-md flex items-center gap-2">
+                                <i class="fas fa-plus-circle"></i> Nuevo Trámite
+                            </button>
+                        </div>
                     </div>
                     <div id="family-portal-requests-container" class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <!-- Carga dinámica -->
+                    </div>
+                </div>
+
+                <!-- Tienda Escolar, Libros & Servicios de Cafetería para Alumnos y Familias -->
+                <div id="student-services-card" class="bg-white p-6 md:p-8 rounded-[2.5rem] shadow-sm border border-gray-100 mb-10">
+                    <div class="flex items-center gap-4 mb-6">
+                        <div class="w-12 h-12 bg-amber-600 text-white rounded-2xl flex items-center justify-center text-xl shadow-lg shadow-amber-100">
+                            <i class="fas fa-store"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold text-gray-800">Servicios Escolares: Útiles, Libros & Cafetería</h3>
+                            <p class="text-xs text-gray-500 font-medium">Accede al catálogo de útiles y solicita tu almuerzo con Crédito Familiar Autorizado</p>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                        <a href="dashboard-tienda.html" class="p-6 bg-amber-50/50 rounded-2xl border border-amber-100 flex items-center justify-between group hover:bg-amber-100/50 transition-all">
+                            <div>
+                                <span class="px-2.5 py-0.5 bg-amber-200 text-amber-900 rounded text-[9px] font-black uppercase">Tienda Escolar</span>
+                                <h4 class="text-sm font-bold text-gray-900 mt-2">Catálogo de Libros & Útiles</h4>
+                                <p class="text-xs text-gray-500 mt-1">Revisa existencias y paquetes para tu grado.</p>
+                            </div>
+                            <span class="w-8 h-8 bg-amber-600 text-white rounded-full flex items-center justify-center group-hover:scale-110 transition-transform"><i class="fas fa-arrow-right text-xs"></i></span>
+                        </a>
+                        <a href="dashboard-cafeteria.html" class="p-6 bg-red-50/50 rounded-2xl border border-red-100 flex items-center justify-between group hover:bg-red-100/50 transition-all">
+                            <div>
+                                <span class="px-2.5 py-0.5 bg-red-200 text-red-900 rounded text-[9px] font-black uppercase">Cafetería</span>
+                                <h4 class="text-sm font-bold text-gray-900 mt-2">Menú del Día & Almuerzos</h4>
+                                <p class="text-xs text-gray-500 mt-1">Realiza tu pedido con saldo autorizado.</p>
+                            </div>
+                            <span class="w-8 h-8 bg-red-600 text-white rounded-full flex items-center justify-center group-hover:scale-110 transition-transform"><i class="fas fa-arrow-right text-xs"></i></span>
+                        </a>
                     </div>
                 </div>
             </div>

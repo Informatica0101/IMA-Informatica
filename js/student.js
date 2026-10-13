@@ -188,6 +188,31 @@ document.addEventListener('DOMContentLoaded', function() {
     fetchAndRenderStudentAttendanceSummary();
     fetchAndRenderStudentAdministrativeRequests();
 
+    document.getElementById('btn-open-justification-modal')?.addEventListener('click', function() {
+        var fecha = prompt('Ingrese la fecha de la ausencia (AAAA-MM-DD):', new Date().toISOString().split('T')[0]);
+        if (!fecha) return;
+        var motivo = prompt('Ingrese el motivo de la ausencia (Médico, Familiar, Personal):', 'Motivo Médico');
+        if (!motivo) return;
+        var obs = prompt('Observaciones o detalles adicionales:', 'Justificante presentado desde el Portal Familiar');
+
+        fetchApi('USER', 'submitStudentAbsenceJustification', {
+            userId: currentUser.userId,
+            estudianteId: currentUser.userId,
+            fechaAusencia: fecha,
+            motivo: motivo,
+            observaciones: obs
+        }).then(function(res) {
+            if (res && res.status === 'success') {
+                alert('Justificación de ausencia enviada a Orientación y Secretaría.');
+                fetchAndRenderStudentAdministrativeRequests();
+            } else {
+                alert('Error al enviar justificación: ' + (res.message || 'Error desconocido'));
+            }
+        }).catch(function(err) {
+            alert('Error al enviar justificación: ' + err.message);
+        });
+    });
+
     document.getElementById('btn-open-request-modal')?.addEventListener('click', function() {
         var tipo = prompt('Ingrese el tipo de trámite o solicitud (Ej: Constancia de Estudios, Solicitud de Justificante, Revisión de Nota):', 'Constancia de Estudios');
         if (!tipo) return;

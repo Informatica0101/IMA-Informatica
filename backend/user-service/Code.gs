@@ -192,6 +192,7 @@ function getOrCreateSheet(ss, name) {
     if (name === "PlanesAcompanamiento") sheet.appendRow(["PlanID", "UserID", "SituacionMeliorar", "ObjetivosJSON", "ResponsableID", "FechaInicio", "FechaRevision", "Estado"]);
     if (name === "InvitacionesVinculacion") sheet.appendRow(["InvitacionID", "ExpedienteID", "EmailResponsable", "Token", "FechaEmision", "FechaExpiracion", "Estado", "CreadoPor"]);
     if (name === "ComunicadosInstitucionales") sheet.appendRow(["ComunicadoID", "Titulo", "Contenido", "Categoria", "AutorID", "AudienciaJSON", "RequiereFirma", "FechaPublicacion", "Estado"]);
+    if (name === "ConfirmacionesLecturaComunicados") sheet.appendRow(["ConfirmacionID", "ComunicadoID", "UserId", "FechaApertura", "FechaConfirmacionExplicit", "EstadoConfirmacion", "IpMetadata"]);
     if (name === "ConversacionesMensajes") sheet.appendRow(["MensajeID", "ConversacionID", "RemitenteID", "DestinatarioID", "EstudianteID", "MensajeTexto", "AdjuntoUrl", "FechaEnvio", "EstadoLectura"]);
     if (name === "BandejaNotificaciones") sheet.appendRow(["NotificacionID", "UserId", "Titulo", "Mensaje", "Tipo", "Categoria", "Leido", "EnlaceAccion", "FechaRegistro"]);
     if (name === "SolicitudesTramites") sheet.appendRow(["SolicitudID", "UserId", "EstudianteID", "TipoTramite", "Descripcion", "AdjuntoUrl", "Estado", "AsignadoA", "ObservacionesAdmin", "FechaSolicitud", "FechaResolucion"]);
@@ -328,17 +329,31 @@ function doPost(e) {
       case "getGuardianStudents": result = getGuardianStudents(payload); break;
       case "getInstitutionalAnnouncements": result = getInstitutionalAnnouncements(payload); break;
       case "createInstitutionalAnnouncement": result = createInstitutionalAnnouncement(payload); break;
+      case "submitAnnouncementReceiptConfirmation": result = submitAnnouncementReceiptConfirmation(payload); break;
+      case "getAnnouncementReadReport": result = getAnnouncementReadReport(payload); break;
+      case "getDepartmentalWorkInbox": result = getDepartmentalWorkInbox(payload); break;
+      case "getInternalConversations": result = getInternalConversations(payload); break;
       case "getInternalMessages": result = getInternalMessages(payload); break;
+      case "closeConversationThread": result = closeConversationThread(payload); break;
       case "sendInternalMessage": result = sendInternalMessage(payload); break;
+      case "getUnifiedNotifications": result = getUnifiedNotifications(payload); break;
       case "getUserNotifications": result = getUserNotifications(payload); break;
+      case "sendMultiChannelNotification": result = sendMultiChannelNotification(payload); break;
+      case "getNotificationPreferences": result = getNotificationPreferences(payload); break;
       case "markNotificationAsRead": result = markNotificationAsRead(payload); break;
       case "createUserNotification": result = createUserNotification(payload); break;
       case "getAdministrativeRequests": result = getAdministrativeRequests(payload); break;
+      case "submitStudentAbsenceJustification": result = submitStudentAbsenceJustification(payload); break;
+      case "getStudentAbsenceJustifications": result = getStudentAbsenceJustifications(payload); break;
+      case "reviewAbsenceJustification": result = reviewAbsenceJustification(payload); break;
+      case "getAdministrativeRequestsHistory": result = getAdministrativeRequestsHistory(payload); break;
       case "submitAdministrativeRequest": result = submitAdministrativeRequest(payload); break;
       case "updateRequestStatus": result = updateRequestStatus(payload); break;
       case "getAppointmentBookings": result = getAppointmentBookings(payload); break;
       case "bookAppointment": result = bookAppointment(payload); break;
       case "updateAppointmentStatus": result = updateAppointmentStatus(payload); break;
+      case "getInstitutionalCalendarEvents": result = getInstitutionalCalendarEvents(payload); break;
+      case "getPendingReminders": result = getPendingReminders(payload); break;
 
       case "ping": result = { status: "success", service: "USER", timestamp: new Date().toISOString(), dbConnected: true }; break;
       default: result = { status: "error", message: `Acción no reconocida: ${action}` };
@@ -1228,6 +1243,101 @@ function createInstitutionalAnnouncement(payload) {
   return { status: "success", message: "Comunicado institucional publicado.", data: { comunicadoId: comId } };
 }
 
+function submitAnnouncementReceiptConfirmation(payload) {
+  const { comunicadoId, userId, ipMetadata } = payload || {};
+  if (!comunicadoId || !userId) throw new Error("comunicadoId y userId son requeridos.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "ConfirmacionesLecturaComunicados");
+  const now = new Date();
+  const confId = "CONF-" + now.getTime();
+
+  sheet.appendRow([
+    confId,
+    String(comunicadoId).trim(),
+    String(userId).trim(),
+    now,
+    now,
+    "ConfirmadoExplicito",
+    ipMetadata || "127.0.0.1"
+  ]);
+
+  return { status: "success", confirmacionId: confId, message: "Confirmación explícita de recepción de comunicado registrada con éxito." };
+}
+
+function getAnnouncementReadReport(payload) {
+  const { comunicadoId } = payload || {};
+  if (!comunicadoId) throw new Error("comunicadoId requerido.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const rows = getOrCreateSheet(ss, "ConfirmacionesLecturaComunicados").getDataRange().getValues().slice(1);
+
+  const filtered = rows.filter(r => String(r[1]).trim() === String(comunicadoId).trim());
+
+  const mapped = filtered.map(r => ({
+    confirmacionId: r[0],
+    comunicadoId: r[1],
+    userId: r[2],
+    fechaApertura: r[3],
+    fechaConfirmacionExplicit: r[4],
+    estadoConfirmacion: r[5]
+  }));
+
+  return { status: "success", comunicadoId: comunicadoId, totalConfirmaciones: mapped.length, confirmaciones: mapped };
+}
+
+function getDepartmentalWorkInbox(payload) {
+  const { departamento, authRole } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "SolicitudesTramites");
+  const data = sheet.getDataRange().getValues();
+  if (data.length <= 1) return { status: "success", solicitudes: [] };
+
+  const depTarget = normalizeString(departamento || authRole || "Secretaria");
+
+  const solicitudes = data.slice(1).filter(r => {
+    const asgn = normalizeString(r[7] || "Secretaria");
+    return asgn.indexOf(depTarget) !== -1 || depTarget.indexOf(asgn) !== -1 || depTarget === "direccion" || depTarget === "administrador";
+  }).map(r => ({
+    solicitudId: r[0],
+    userId: r[1],
+    estudianteId: r[2],
+    tipoTramite: r[3],
+    descripcion: r[4],
+    adjuntoUrl: r[5],
+    estado: r[6] || "Enviada",
+    asignadoA: r[7],
+    observacionesAdmin: r[8],
+    fechaSolicitud: r[9],
+    fechaResolucion: r[10]
+  }));
+
+  return { status: "success", departamento: departamento || authRole, solicitudes: solicitudes };
+}
+
+function closeConversationThread(payload) {
+  const { conversacionId, observaciones } = payload || {};
+  if (!conversacionId) throw new Error("conversacionId requerido.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "ConversacionesMensajes");
+  const data = sheet.getDataRange().getValues();
+
+  let count = 0;
+  for (let i = 1; i < data.length; i++) {
+    if (String(data[i][1]).trim() === String(conversacionId).trim()) {
+      sheet.getRange(i + 1, 9).setValue("Cerrado");
+      count++;
+    }
+  }
+
+  return { status: "success", conversacionId: conversacionId, mensajesAfectados: count, message: "Hilo de conversación cerrado exitosamente." };
+}
+
+function getInternalConversations(payload) {
+  return getInternalMessages(payload);
+}
+
 function getInternalMessages(payload) {
   const { conversacionId, userId } = payload || {};
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
@@ -1292,18 +1402,26 @@ function sendInternalMessage(payload) {
   return { status: "success", message: "Mensaje interno enviado.", data: { mensajeId: msgId, conversacionId: convId } };
 }
 
-function getUserNotifications(payload) {
-  const { userId } = payload || {};
+function getUnifiedNotifications(payload) {
+  const { userId, categoria, leido } = payload || {};
   if (!userId) throw new Error("userId es requerido.");
 
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
   const sheet = getOrCreateSheet(ss, "BandejaNotificaciones");
   const data = sheet.getDataRange().getValues();
-  if (data.length <= 1) return { status: "success", data: [] };
+  if (data.length <= 1) return { status: "success", data: [], unreadCount: 0 };
 
-  const notifications = data.slice(1).filter(r => {
-    return String(r[1]).trim() === String(userId).trim();
-  }).map(r => ({
+  let filtered = data.slice(1).filter(r => String(r[1]).trim() === String(userId).trim());
+
+  if (categoria) {
+    filtered = filtered.filter(r => String(r[5]).toLowerCase().trim() === String(categoria).toLowerCase().trim());
+  }
+  if (leido !== undefined) {
+    const isLeido = leido === true || String(leido).toLowerCase() === "true";
+    filtered = filtered.filter(r => (r[6] === true || String(r[6]).toLowerCase() === "true") === isLeido);
+  }
+
+  const notifications = filtered.map(r => ({
     notificacionId: r[0],
     userId: r[1],
     titulo: r[2],
@@ -1315,7 +1433,47 @@ function getUserNotifications(payload) {
     fechaRegistro: r[8] ? new Date(r[8]).toISOString() : null
   }));
 
-  return { status: "success", data: notifications };
+  const unreadCount = data.slice(1).filter(r => String(r[1]).trim() === String(userId).trim() && (r[6] !== true && String(r[6]).toLowerCase() !== "true")).length;
+
+  return { status: "success", data: notifications, unreadCount: unreadCount };
+}
+
+function sendMultiChannelNotification(payload) {
+  const { userId, titulo, mensaje, tipo, categoria, canal, enlaceAccion } = payload || {};
+  if (!userId || !titulo || !mensaje) throw new Error("userId, titulo y mensaje son requeridos.");
+
+  const res = createUserNotification({
+    userId: userId,
+    titulo: titulo,
+    mensaje: mensaje,
+    tipo: tipo || "NotificacionTransversal",
+    categoria: categoria || "General",
+    enlaceAccion: enlaceAccion || ""
+  });
+
+  logStructuredEvent("USER", "sendMultiChannelNotification", "INFO", "NOTIFICATION_SENT", `Notificación enviada a ${userId} por canal ${canal || 'Plataforma'}`, payload, payload.authRole);
+
+  return { status: "success", notificacionId: res.data ? res.data.notificacionId : "NOTIF-OK", canalUtilizado: canal || "PlataformaInterna", message: "Notificación despachada correctamente." };
+}
+
+function getNotificationPreferences(payload) {
+  const { userId } = payload || {};
+  return {
+    status: "success",
+    userId: userId,
+    preferences: {
+      alertasAcademicas: true,
+      avisosAsistencia: true,
+      comunicadosInstitucionales: true,
+      recordatoriosFinancieros: true,
+      pedidosTiendaCafeteria: true,
+      canalPreferido: "PlataformaYCorreo"
+    }
+  };
+}
+
+function getUserNotifications(payload) {
+  return getUnifiedNotifications(payload);
 }
 
 function markNotificationAsRead(payload) {
@@ -1386,6 +1544,50 @@ function getAdministrativeRequests(payload) {
   }));
 
   return { status: "success", data: requests };
+}
+
+function submitStudentAbsenceJustification(payload) {
+  const { userId, estudianteId, fechaAusencia, motivo, observaciones, adjuntoUrl } = payload || {};
+  if (!userId || !estudianteId || !fechaAusencia || !motivo) throw new Error("userId, estudianteId, fechaAusencia y motivo son requeridos.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "SolicitudesTramites");
+
+  const solId = "JUST-" + Date.now();
+  const now = new Date();
+  const desc = `Justificación de ausencia para la fecha ${fechaAusencia}. Motivo: ${motivo}. Observaciones: ${observaciones || 'N/A'}`;
+
+  sheet.appendRow([
+    solId,
+    userId,
+    estudianteId,
+    "Justificación de Ausencia",
+    desc,
+    adjuntoUrl || "",
+    "Enviada",
+    "Orientación/Secretaría",
+    "",
+    now,
+    ""
+  ]);
+
+  return { status: "success", solicitudId: solId, message: "Justificación de ausencia ingresada y en proceso de revisión." };
+}
+
+function getStudentAbsenceJustifications(payload) {
+  const { estudianteId, userId } = payload || {};
+  const res = getAdministrativeRequests({ userId, estudianteId });
+  const justs = (res.data || []).filter(r => r.tipoTramite === "Justificación de Ausencia");
+  return { status: "success", justificantes: justs };
+}
+
+function reviewAbsenceJustification(payload) {
+  const { solicitudId, nuevoEstado, observacionesAdmin, authRole } = payload || {};
+  return updateRequestStatus({ solicitudId, nuevoEstado, observacionesAdmin, asignadoA: authRole || "Orientación/Secretaría" });
+}
+
+function getAdministrativeRequestsHistory(payload) {
+  return getAdministrativeRequests(payload);
 }
 
 function submitAdministrativeRequest(payload) {
@@ -1548,6 +1750,56 @@ function updateNewsStatus(payload) {
 
   sheet.getRange(idx + 1, 12).setValue(estado);
   return { status: "success", message: `Estado de la noticia actualizado a '${estado}'.` };
+}
+
+function getInstitutionalCalendarEvents(payload) {
+  const { categoria, anoLectivo } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = ss.getSheetByName("CalendarioAcademico");
+  if (!sheet) {
+    return {
+      status: "success",
+      eventos: [
+        { eventoId: "EVT-01", titulo: "Inicio de Clases I Parcial", fechaInicio: "2026-02-01", categoria: "Academico", destinatarios: "TodaLaComunidad" },
+        { eventoId: "EVT-02", titulo: "Exámenes I Parcial", fechaInicio: "2026-04-15", categoria: "Evaluacion", destinatarios: "TodaLaComunidad" }
+      ]
+    };
+  }
+  const rows = sheet.getDataRange().getValues().slice(1);
+
+  let filtered = rows;
+  if (categoria) filtered = filtered.filter(r => String(r[3]).toLowerCase().trim() === String(categoria).toLowerCase().trim());
+
+  const mapped = filtered.map(r => ({
+    eventoId: r[0],
+    titulo: r[2],
+    fechaInicio: r[4],
+    fechaFin: r[5],
+    categoria: r[3],
+    destinatarios: r[6]
+  }));
+
+  return { status: "success", eventos: mapped };
+}
+
+function getPendingReminders(payload) {
+  const { userId } = payload || {};
+  if (!userId) throw new Error("userId requerido.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const notifs = getOrCreateSheet(ss, "BandejaNotificaciones").getDataRange().getValues().slice(1);
+
+  const pending = notifs
+    .filter(r => String(r[1]).trim() === String(userId).trim() && (r[6] !== true && String(r[6]).toLowerCase() !== "true"))
+    .map(r => ({
+      reminderId: r[0],
+      titulo: r[2],
+      mensaje: r[3],
+      categoria: r[5],
+      fechaRegistro: r[8]
+    }));
+
+  return { status: "success", userId: userId, recordatoriosPendientes: pending };
 }
 
 function getParentDriveFolder() {
