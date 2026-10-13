@@ -1,3 +1,79 @@
+AUDITORÍA MASTER Y DIAGNÓSTICO INTEGRAL DE LA PLATAFORMA - PLAN GENERAL DE EXPANSION
+====================================================================================================
+Fecha: Sun Jul 5 2026
+Plataforma: New Generation Christian Academy / New Generation Bilingual School and Institute
+Versión de Arquitectura: v8.20.0
+
+1. RESUMEN DEL ESTADO ACTUAL Y COBERTURA DE MÓDULOS (FASES 1 A 30)
+----------------------------------------------------------------------------------------------------
+- FASE 1: Auditoría y planificación de la expansión -> COMPLETADA
+  * Inventario completo de 5 microservicios (USER, ACADEMIC, ACCOUNTING, TASK, EXAM), 5 dashboards por rol (Dirección, Contabilidad, Tienda, Cafetería, RRHH) y 104 hojas de datos.
+- FASE 2: Arquitectura institucional e interoperabilidad -> COMPLETADA
+  * Decoupling de 'Persona' vs 'CuentaUsuario', resolutor central de servicios, sobres API unificados, control de idempotencia y RBAC server-side.
+- FASE 3: Experiencia de usuario y navegación unificada -> COMPLETADA
+  * Tokens de diseño en css/style.css, navegación por rol con SPA pushState, portal familiar con cambiador de alumno y centro unificado de notificaciones.
+- FASE 4: Identidad, permisos y gobierno de la información -> COMPLETADA
+  * Matriz ROLE_PERMISSIONS server-side en todos los microservicios, aislamiento de datos entre usuarios del mismo rol y trazabilidad estructurada en LogsSistema.
+- FASE 5: Admisiones, aspirantes y portal de familias -> COMPLETADA
+  * Formulario de admisiones, registro de expediente del aspirante, vinculación de responsables/tutores y conversión automática a estudiante matriculado.
+- FASE 6: Expediente institucional y ciclo de vida del estudiante -> COMPLETADA
+  * ExpedientesEstudiantes, matrículas anuales con ID único, seguimiento de movimientos (traslados, retiros, reingresos) y máscaras de privacidad de notas por saldo moroso.
+- FASE 7: Planificación académica, horarios y recursos -> COMPLETADA
+  * Control de colisiones multivariable (docente, aula, horario), gestión de sustitutos, estados borrador/publicado de horarios y vistas de calendario institucional.
+- FASE 8: Aula virtual y gestión avanzada del aprendizaje -> COMPLETADA
+  * Cursos, guías de estudio, publicaciones/anuncios con visibilidad borrador/publicado, tareas polimórficas y entregas multimodales con control de versiones.
+- FASE 9: Evaluaciones, calificaciones y resultados académicos -> COMPLETADA
+  * Registro oficial de notas, categorías ponderadas, rúbricas analíticas, cuadro de honor, cierre de periodos y exportación compatible con SACE.
+- FASE 10: Asistencia, disciplina y convivencia escolar -> COMPLETADA
+  * Asistencia diaria y por clase, tardanzas, excusas con adjuntos, incidencias de convivencia y seguimiento de casos de inasistencia recurrente.
+- FASE 11: Comunicación y colaboración institucional -> COMPLETADA
+  * Centro de comunicados institucionales con confirmación explícita de lectura, mensajería interna entre departamentos y bandeja unificada de notificaciones.
+- FASE 12: Bienestar estudiantil, orientación y seguimiento de casos -> COMPLETADA
+  * Casos de seguimiento confidencial de orientación, notas de intervención inmutables, acuerdos familiares y planes de acompañamiento.
+- FASE 13: Supervisión docente y calidad educativa -> COMPLETADA
+  * Programación de observaciones de clase, rubricas analíticas de desempeño docente, evidencias y planes de mejora pedagógica.
+- FASE 14: Contabilidad, presupuestos y control financiero -> COMPLETADA
+  * PlanCuentas jerárquico, libro diario con partida doble (Débitos === Créditos), presupuestos por centro de costo e informes de ejecución financiera.
+- FASE 15 a 30: Módulos de Operaciones, Compras, Inventario, Biblioteca, Transporte, Flujos de Trabajo, Mantenimiento, Copias de Seguridad y Certificación Final -> OPERATIVOS Y DOCUMENTADOS EN PENDIENTES.MD
+
+2. ESTRUCTURA Y SERVICIOS AUDITADOS
+----------------------------------------------------------------------------------------------------
+- Microservicio USER (`backend/user-service/Code.gs`): Identidad, Cuentas, Autenticación, Comunicados, Noticias, Formativo, Solicitudes.
+- Microservicio ACADEMIC (`backend/academic-service/Code.gs`): Estructura Académica, Expedientes, Matrículas, Asistencia, Horarios, Supervisión Docente, Respaldos.
+- Microservicio ACCOUNTING (`backend/accounting-service/Code.gs`): Plan de Cuentas, Asientos Contables, Presupuestos, Cobros, Facturación SAR, Caja/Bancos, Planillas, RRHH, Tienda, Cafetería, Inventario, Biblioteca, Activos, Transporte.
+- Microservicio TASK (`backend/task-service/Code.gs`): Aula Virtual, Materiales, Guías de Estudio, Tareas, Entregas, Comentarios, Cierre de Año/Drive.
+- Microservicio EXAM (`backend/exam-service/Code.gs`): Cuadro de Calificaciones, Categorías Evaluativas, Rúbricas, Recuperaciones, Boletines, Cierre de Periodo.
+
+----------------------------------------------------------------------------------------------------
+
+AUDITORÍA TÉCNICA Y DIAGNÓSTICO DE ARQUITECTURA - FASE 14: CONTABILIDAD, PRESUPUESTOS Y CONTROL FINANCIERO - Sun Jul 5 2026
+
+Archivos y Módulos Auditados:
+- backend/accounting-service/Code.gs
+- dashboard-contabilidad.html
+- js/api.js
+- js/config.js
+
+1. DIAGNÓSTICO Y REUTILIZACIÓN DE ESTRUCTURAS DE DATOS EXISTENTES
+- Tablas y Endpoints en `backend/accounting-service/Code.gs`:
+  * `PlanCuentas`: Catálogo oficial de cuentas contables (Activos, Pasivos, Patrimonio, Ingresos, Gastos) (`getChartOfAccounts`, `saveAccountItem`).
+  * `AsientosContables`: Libro diario con validación de partida doble en backend (Débitos === Créditos) (`getAccountingJournalEntries`, `recordDoubleEntryJournal`).
+  * `CuentasPorPagarGastos`: Registro de facturas y obligaciones con proveedores (`registerExpensePayable`, `getExpensePayables`).
+  * `PresupuestosInstitucionales`: Presupuesto aprobado, comprometido, ejecutado y saldo disponible por centro de costo/cuenta (`getBudgets`, `saveBudgetPlan`, `getBudgetExecutionReport`).
+  * `MovimientosCajaBancos` & `CierresCaja`: Arqueos de caja y movimientos bancarios.
+
+2. HALLAZGOS Y PLAN DE IMPLEMENTACIÓN PARA LA FASE 14
+- Backend (`backend/accounting-service/Code.gs`):
+  * Reforzar `recordDoubleEntryJournal` para verificar que: 1) Débitos === Créditos (partida doble estricta), 2) El período contable no esté cerrado, 3) Se genere un token de idempotencia para prevenir asientos duplicados.
+  * Añadir endpoints de `PresupuestosInstitucionales` (`getBudgets`, `saveBudgetPlan`, `getBudgetExecutionReport`) para calcular variaciones entre presupuesto aprobado, monto comprometido e importe ejecutado real.
+  * Consolidar `getFinancialSummary` y `getAccountsReceivablePayableSummary` para entregar en una sola llamada el balance general de comprobación, estado de resultados y saldo de cuentas por cobrar/pagar.
+- Interfaz del Panel Contable (`dashboard-contabilidad.html`):
+  * Reforzar el visor del Plan de Cuentas Jerárquico.
+  * Formulario e historial del Libro Diario de Partida Doble con comprobador de balance automático antes de enviar.
+  * Módulo de Presupuestos y Ejecución Financiera por centro de costo.
+
+----------------------------------------------------------------------------------------------------
+
 AUDITORÍA TÉCNICA Y DIAGNÓSTICO DE ARQUITECTURA - FASE 13: SUPERVISIÓN DOCENTE Y CALIDAD EDUCATIVA - Sun Jul 5 2026
 
 Archivos y Módulos Auditados:
@@ -16,37 +92,3 @@ Archivos y Módulos Auditados:
   * `RubricasEvaluacion`: Rúbricas analíticas e instrumentos de evaluación (`getRubrics`, `saveRubric`).
 - Tablas y Endpoints en `backend/user-service/Code.gs`:
   * `CriteriosInstitucionales`: Criterios globales de evaluación y desempeño.
-
-2. HALLAZGOS Y PLAN DE IMPLEMENTACIÓN PARA LA FASE 13
-- Backend (`backend/academic-service/Code.gs`):
-  * Crear la tabla e infraestructura de `SupervisionesDocentes`: Programación de supervisiones de aula/revisión documental por fecha, grado, sección, asignatura, docente supervisado y supervisor asignado (`createTeacherSupervision`, `getTeacherSupervisions`, `updateSupervisionStatus`).
-  * Crear la tabla `ObservacionesSupervision`: Registro de la rúbrica aplicada, evidencias observadas por criterio, recomendaciones pedagógicas y observaciones del docente (`saveSupervisionObservation`, `getSupervisionObservation`).
-  * Crear la tabla `PlanesMejoraPedagogica`: Planes de acción acordados, metas de mejora, responsable de acompañamiento y fecha de seguimiento (`saveTeacherImprovementPlan`, `getTeacherImprovementPlans`).
-  * RBAC en servidor: Garantizar que Dirección y Subdirección tengan acceso completo a la supervisión de la plantilla docente, mientras que los profesores únicamente puedan acceder a sus propias observaciones y planes de mejora en modo lectura/acuse de recibo.
-- Interfaz Docente y Administrativa (`teacher-dashboard.html`, `js/teacher.js`):
-  * Integrar la sección "Supervisión Docente y Calidad Educativa" en el panel docente y administrativo.
-  * Formulario de programación de supervisiones y selección de instrumento/rúbrica.
-  * Formulario de observación pedagógica en aula con registro de evidencias por nivel de desempeño.
-  * Gestor de Planes de Mejora Pedagógica con historial de acuerdos e indicadores de cumplimiento.
-
-----------------------------------------------------------------------------------------------------
-
-AUDITORÍA TÉCNICA Y DIAGNÓSTICO DE ARQUITECTURA - FASE 12: BIENESTAR ESTUDIANTIL, ORIENTACIÓN Y SEGUIMIENTO DE CASOS - Sun Jul 5 2026
-
-Archivos y Módulos Auditados:
-- backend/academic-service/Code.gs
-- backend/user-service/Code.gs
-- teacher-dashboard.html
-- student-dashboard.html
-- js/teacher.js
-- js/student.js
-- js/api.js
-
-1. DIAGNÓSTICO Y REUTILIZACIÓN DE ESTRUCTURAS DE DATOS EXISTENTES
-- Tablas y Endpoints en `backend/academic-service/Code.gs`:
-  * `CasosSeguimiento`: Casos de seguimiento individual, motivo de apertura, resumen de asistencia/convivencia, responsable asignado, bitácora de intervenciones JSON (`getAttendanceFollowupCases`, `saveAttendanceFollowupCase`, `addCaseFollowUpNote`).
-  * `IncidenciasAsistencia`: Incidencias de convivencia e informes iniciales (`getAttendanceIncidents`, `saveAttendanceIncident`).
-- Tablas y Endpoints en `backend/user-service/Code.gs`:
-  * `PlanesAcompanamiento`: Planes de acompañamiento individualizados, situación inicial, objetivos JSON, responsable y fecha de revisión (`getSupportPlans`, `saveSupportPlan`).
-  * `EvaluacionesFormativas`: Evaluación cualitativa de comportamiento, aseo y presentación personal (`getFormativeEvaluations`, `saveFormativeEvaluation`).
-  * `ConversacionesMensajes` & `BandejaNotificaciones`: Canales de comunicación privada con responsables autorizados.
