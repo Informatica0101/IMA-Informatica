@@ -119,6 +119,7 @@
                 <button id="nav-gradebook" class="flex-none px-4 py-2 rounded-xl font-semibold transition-all text-[10px] uppercase tracking-widest bg-gray-100 text-gray-500">Libro de Calificaciones</button>
                 <button id="nav-attendance" class="flex-none px-4 py-2 rounded-xl font-semibold transition-all text-[10px] uppercase tracking-widest bg-gray-100 text-gray-500">Asistencia y Convivencia</button>
                 <button id="nav-comunicados" class="flex-none px-4 py-2 rounded-xl font-semibold transition-all text-[10px] uppercase tracking-widest bg-gray-100 text-gray-500">Comunicados e Integración</button>
+                <button id="nav-orientacion" class="flex-none px-4 py-2 rounded-xl font-semibold transition-all text-[10px] uppercase tracking-widest bg-gray-100 text-gray-500">Bienestar y Orientación</button>
                 <button id="nav-reportes" class="flex-none px-4 py-2 rounded-xl font-semibold transition-all text-[10px] uppercase tracking-widest bg-gray-100 text-gray-500">Reportes</button>
                 <button id="nav-tareas" class="flex-none px-4 py-2 rounded-xl font-semibold transition-all text-[10px] uppercase tracking-widest bg-gray-100 text-gray-500">Actividades</button>
                 <button id="nav-proyectos" class="flex-none px-4 py-2 rounded-xl font-semibold transition-all text-[10px] uppercase tracking-widest bg-gray-100 text-gray-500">Proyectos</button>
@@ -1049,6 +1050,68 @@
                             <div id="comunicados-list-container" class="space-y-3 max-h-[500px] overflow-y-auto scroll-minimalist">
                                 <div class="text-center py-8 text-gray-400 italic text-xs border-2 border-dashed border-gray-100 rounded-2xl">
                                     Cargando comunicados emitidos...
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Sección de Bienestar Estudiantil, Orientación y Seguimiento de Casos -->
+            <section id="section-orientacion" class="hidden animate-fade-in-up space-y-6">
+                <div class="bg-white rounded-3xl p-6 shadow-xl border border-gray-100">
+                    <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-6">
+                        <div>
+                            <span class="inline-block px-3 py-1 bg-purple-50 text-purple-700 text-xs font-semibold rounded-full mb-2">Expedientes de Orientación & Apoyo</span>
+                            <h2 class="text-2xl font-bold text-gray-800">Centro de Bienestar Estudiantil y Orientación</h2>
+                            <p class="text-xs text-gray-500 mt-1">Gestión confidencial de casos de acompañamiento, acuerdos institucionales y planes individualizados.</p>
+                        </div>
+                        <div class="flex flex-wrap items-center gap-2">
+                            <button id="btn-ori-new-case" class="bg-purple-600 text-white px-4 py-2 rounded-xl text-xs font-semibold hover:bg-purple-700 transition-all flex items-center gap-1.5 shadow-sm">
+                                <i class="fas fa-folder-plus"></i>
+                                Abrir Nuevo Caso
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Filtros e Hilos de Seguimiento -->
+                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                        <div class="lg:col-span-5 bg-gray-50 p-5 rounded-2xl border border-gray-100 space-y-4">
+                            <h3 class="text-sm font-bold text-gray-800 uppercase tracking-tight flex items-center gap-2">
+                                <i class="fas fa-search text-purple-600"></i> Buscar Estudiante
+                            </h3>
+                            <div class="flex gap-2">
+                                <input type="text" id="ori-student-id" class="w-full text-xs p-2.5 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-400 font-medium" placeholder="ID o Usuario del estudiante...">
+                                <button id="btn-ori-search-student" class="bg-purple-600 text-white px-4 py-2.5 rounded-xl font-bold text-xs hover:bg-purple-700 transition-all">
+                                    Buscar
+                                </button>
+                            </div>
+
+                            <div id="ori-case-form-container" class="hidden border-t border-gray-200 pt-4 space-y-3">
+                                <h4 class="text-xs font-bold text-purple-900 uppercase">Registrar Intervención / Nota Confidencial</h4>
+                                <div>
+                                    <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Caso Seleccionado</label>
+                                    <select id="ori-case-selector" class="w-full text-xs p-2 bg-white border border-gray-200 rounded-xl font-medium">
+                                        <!-- Dinámico -->
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Nota de Intervención / Acuerdo</label>
+                                    <textarea id="ori-case-note" rows="3" class="w-full text-xs p-2.5 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-400 font-medium" placeholder="Escriba los detalles de la reunión o acuerdo..."></textarea>
+                                </div>
+                                <button id="btn-ori-add-note" class="w-full py-2.5 bg-purple-600 text-white rounded-xl font-bold text-xs uppercase tracking-widest hover:bg-purple-700 transition-all">
+                                    Agregar Nota al Caso
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="lg:col-span-7 space-y-4">
+                            <h3 class="text-sm font-bold text-gray-800 uppercase tracking-tight flex items-center gap-2">
+                                <i class="fas fa-clipboard-list text-purple-600"></i> Casos y Acompañamientos Activos
+                            </h3>
+                            <div id="ori-cases-list-container" class="space-y-3 max-h-[500px] overflow-y-auto scroll-minimalist">
+                                <div class="text-center py-8 text-gray-400 italic text-xs border-2 border-dashed border-gray-100 rounded-2xl">
+                                    Ingrese un ID de estudiante para consultar sus casos de seguimiento.
                                 </div>
                             </div>
                         </div>

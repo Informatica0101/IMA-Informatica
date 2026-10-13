@@ -1628,7 +1628,7 @@ function getAttendanceFollowupCases(payload) {
 }
 
 function saveAttendanceFollowupCase(payload) {
-  const { casoId, userId, motivoApertura, resumenAsistencia, responsableId, acciones, estado } = payload || {};
+  const { casoId, userId, motivoApertura, resumenAsistencia, responsableId, acciones, estado, categoriaCaso } = payload || {};
   if (!userId || !motivoApertura) throw new Error("userId y motivoApertura son requeridos.");
 
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
@@ -1637,22 +1637,38 @@ function saveAttendanceFollowupCase(payload) {
     sheet.appendRow(["CasoID", "UserId", "MotivoApertura", "ResumenAsistencia", "ResponsableID", "AccionesJSON", "Estado", "FechaApertura", "FechaCierre"]);
   }
 
+  const data = sheet.getDataRange().getValues();
   const cid = casoId || ("CASO-AST-" + Date.now());
   const now = new Date();
 
-  sheet.appendRow([
-    cid,
-    userId,
-    motivoApertura,
-    resumenAsistencia || "Ausentismo/Tardanzas recurrentes",
-    responsableId || "Orientacion",
-    JSON.stringify(acciones || []),
-    estado || "Abierto",
-    now,
-    ""
-  ]);
+  const idx = data.findIndex(r => String(r[0]).trim() === String(cid).trim());
 
-  return { status: "success", message: "Caso de seguimiento de asistencia guardado.", data: { casoId: cid } };
+  if (idx !== -1) {
+    sheet.getRange(idx + 1, 3).setValue(motivoApertura);
+    if (resumenAsistencia) sheet.getRange(idx + 1, 4).setValue(resumenAsistencia);
+    if (responsableId) sheet.getRange(idx + 1, 5).setValue(responsableId);
+    if (acciones) sheet.getRange(idx + 1, 6).setValue(JSON.stringify(acciones));
+    if (estado) {
+      sheet.getRange(idx + 1, 7).setValue(estado);
+      if (estado === "Cerrado") sheet.getRange(idx + 1, 9).setValue(now);
+    }
+  } else {
+    sheet.appendRow([
+      cid,
+      userId,
+      motivoApertura,
+      resumenAsistencia || (categoriaCaso ? `Categoría: ${categoriaCaso}` : "Acompañamiento e intervención institucional"),
+      responsableId || "Orientacion",
+      JSON.stringify(acciones || []),
+      estado || "Abierto",
+      now,
+      ""
+    ]);
+  }
+
+  logStructuredEvent("ACADEMIC", "saveAttendanceFollowupCase", "INFO", "CASE_SAVED", `Caso de seguimiento ${cid} guardado para ${userId}`, { cid, estado: estado || "Abierto" }, payload && payload.authRole);
+
+  return { status: "success", message: "Caso de seguimiento guardado exitosamente.", data: { casoId: cid } };
 }
 
 function getStudentAttendanceSummary(payload) {

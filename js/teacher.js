@@ -20,6 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const navGradebook = document.getElementById('nav-gradebook');
     const navAttendance = document.getElementById('nav-attendance');
     const navComunicados = document.getElementById('nav-comunicados');
+    const navOrientacion = document.getElementById('nav-orientacion');
     const navTareas = document.getElementById('nav-tareas');
     const navProyectos = document.getElementById('nav-proyectos');
     const navLogros = document.getElementById('nav-logros');
@@ -31,6 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const sectionGradebook = document.getElementById('section-gradebook');
     const sectionAttendance = document.getElementById('section-attendance');
     const sectionComunicados = document.getElementById('section-comunicados');
+    const sectionOrientacion = document.getElementById('section-orientacion');
     const sectionTareas = document.getElementById('section-tareas');
     const sectionProyectos = document.getElementById('section-proyectos');
     const sectionLogros = document.getElementById('section-logros');
@@ -60,8 +62,8 @@ document.addEventListener('DOMContentLoaded', () => {
     let isNavigating = false;
     let studentSort = { column: 'nombre', direction: 'asc' };
 
-    const allSections = [sectionAcademicReports, sectionGradebook, sectionAttendance, sectionComunicados, sectionTareas, sectionProyectos, sectionLogros, sectionNews, sectionAdmin, sectionReportes];
-    const allNavLinks = [navDashboard, navGradebook, navAttendance, navComunicados, navTareas, navProyectos, navLogros, navNews, navAdmin, navReportsOld];
+    const allSections = [sectionAcademicReports, sectionGradebook, sectionAttendance, sectionComunicados, sectionOrientacion, sectionTareas, sectionProyectos, sectionLogros, sectionNews, sectionAdmin, sectionReportes];
+    const allNavLinks = [navDashboard, navGradebook, navAttendance, navComunicados, navOrientacion, navTareas, navProyectos, navLogros, navNews, navAdmin, navReportsOld];
 
     // Auxiliar para normalizar strings (trim, lowercase y sin acentos) para comparaciones robustas
     const norm = (s) => (s || "").toString().trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
@@ -108,6 +110,10 @@ document.addEventListener('DOMContentLoaded', () => {
     navComunicados?.addEventListener('click', () => {
         window.navigateTo(sectionComunicados, navComunicados);
         loadInstitutionalAnnouncementsModule();
+    });
+    navOrientacion?.addEventListener('click', () => {
+        window.navigateTo(sectionOrientacion, navOrientacion);
+        initOrientationModule();
     });
     navTareas.addEventListener('click', () => {
         window.navigateTo(sectionTareas, navTareas);
@@ -3441,6 +3447,143 @@ function toBase64(file) {
             btn.textContent = "Publicar Comunicado";
         }
     });
+
+    // --- MÓDULO DE BIENESTAR ESTUDIANTIL Y ORIENTACIÓN (FASE 12) ---
+    let currentOrientationCases = [];
+
+    async function initOrientationModule() {
+        const studentIdInp = document.getElementById('ori-student-id');
+        if (!studentIdInp) return;
+
+        document.getElementById('btn-ori-search-student')?.addEventListener('click', () => {
+            const sId = studentIdInp.value.trim();
+            if (sId) loadStudentOrientationCases(sId);
+        });
+
+        document.getElementById('btn-ori-new-case')?.addEventListener('click', () => {
+            const userId = prompt("Ingrese el ID del estudiante para abrir un caso:");
+            if (!userId) return;
+
+            const motivo = prompt("Ingrese el motivo de apertura del caso (Ej. Dificultades de adaptación, Seguimiento académico):", "Acompañamiento e intervención institucional");
+            if (!motivo) return;
+
+            const resumen = prompt("Ingrese un resumen o antecedentes iniciales del estudiante:", "Caso abierto desde el Centro de Orientación");
+
+            saveNewFollowupCase(userId, motivo, resumen);
+        });
+
+        document.getElementById('btn-ori-add-note')?.addEventListener('click', () => {
+            const caseId = document.getElementById('ori-case-selector')?.value;
+            const note = document.getElementById('ori-case-note')?.value.trim();
+
+            if (!caseId || !note) {
+                alert("Debe seleccionar un caso e ingresar una nota de intervención.");
+                return;
+            }
+
+            addNoteToCase(caseId, note);
+        });
+    }
+
+    async function loadStudentOrientationCases(userId) {
+        const container = document.getElementById('ori-cases-list-container');
+        const caseSelector = document.getElementById('ori-case-selector');
+        const formContainer = document.getElementById('ori-case-form-container');
+
+        if (!container) return;
+
+        container.innerHTML = '<div class="text-center py-8 text-gray-400 italic text-xs"><i class="fas fa-spinner fa-spin mr-2"></i>Cargando casos de orientación...</div>';
+
+        try {
+            const res = await fetchApi('ACADEMIC', 'getAttendanceFollowupCases', { userId: userId });
+            if (res.status === 'success' && Array.isArray(res.data)) {
+                const cases = res.data;
+                currentOrientationCases = cases;
+
+                if (cases.length === 0) {
+                    container.innerHTML = `<div class="text-center py-8 text-gray-400 italic text-xs border-2 border-dashed border-gray-100 rounded-2xl">No hay casos registrados para el estudiante ${userId}.</div>`;
+                    if (formContainer) formContainer.classList.add('hidden');
+                    return;
+                }
+
+                if (caseSelector) {
+                    caseSelector.innerHTML = cases.map(c => `<option value="${c.casoId}">${c.casoId} - ${c.motivoApertura} (${c.estado})</option>`).join('');
+                }
+                if (formContainer) formContainer.classList.remove('hidden');
+
+                container.innerHTML = cases.map(c => `
+                    <div class="p-4 bg-white border border-gray-100 rounded-2xl shadow-sm hover:border-purple-200 transition-all">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="px-2.5 py-0.5 bg-purple-100 text-purple-800 text-[9px] font-bold uppercase rounded-full">${c.estado}</span>
+                            <span class="text-[9px] font-mono text-gray-400">Apertura: ${c.fechaApertura ? new Date(c.fechaApertura).toLocaleDateString() : ''}</span>
+                        </div>
+                        <h4 class="text-xs font-bold text-gray-900 uppercase tracking-tight mb-1">${c.motivoApertura}</h4>
+                        <p class="text-xs text-gray-600 mb-3">${c.resumenAsistencia}</p>
+
+                        <!-- Bitácora de Acciones / Intervenciones -->
+                        <div class="border-t border-gray-50 pt-2 space-y-2">
+                            <span class="text-[9px] font-bold text-purple-700 uppercase">Bitácora de Intervenciones:</span>
+                            ${Array.isArray(c.acciones) && c.acciones.length > 0 ? c.acciones.map(a => `
+                                <div class="p-2 bg-purple-50/50 rounded-lg text-[10px] text-gray-700 border border-purple-100/50">
+                                    <div class="flex justify-between font-bold text-purple-900 text-[9px]">
+                                        <span>${a.autor || 'Orientación'}</span>
+                                        <span>${a.fecha ? new Date(a.fecha).toLocaleString() : ''}</span>
+                                    </div>
+                                    <p class="mt-1 leading-relaxed">${a.nota || a.accion || ''}</p>
+                                </div>
+                            `).join('') : '<p class="text-[10px] text-gray-400 italic">Sin intervenciones registradas aún.</p>'}
+                        </div>
+                    </div>
+                `).join('');
+            } else {
+                container.innerHTML = '<div class="text-center py-6 text-red-500 text-xs">Error al consultar casos.</div>';
+            }
+        } catch (e) {
+            container.innerHTML = `<div class="text-center py-6 text-red-500 text-xs">Error de conexión: ${e.message}</div>`;
+        }
+    }
+
+    async function saveNewFollowupCase(userId, motivo, resumen) {
+        try {
+            const res = await fetchApi('ACADEMIC', 'saveAttendanceFollowupCase', {
+                userId: userId,
+                motivoApertura: motivo,
+                resumenAsistencia: resumen,
+                responsableId: currentUser.nombre || "Orientación",
+                estado: "Abierto"
+            });
+
+            if (res.status === 'success') {
+                alert("¡Caso de acompañamiento abierto exitosamente!");
+                loadStudentOrientationCases(userId);
+            } else {
+                alert("Error: " + res.message);
+            }
+        } catch (e) {
+            alert("Error al abrir caso: " + e.message);
+        }
+    }
+
+    async function addNoteToCase(casoId, note) {
+        try {
+            const res = await fetchApi('ACADEMIC', 'addCaseFollowUpNote', {
+                casoId: casoId,
+                nota: note,
+                autorId: currentUser.nombre || "Orientación"
+            });
+
+            if (res.status === 'success') {
+                alert("¡Nota agregada a la bitácora del caso!");
+                document.getElementById('ori-case-note').value = "";
+                const sId = document.getElementById('ori-student-id')?.value.trim();
+                if (sId) loadStudentOrientationCases(sId);
+            } else {
+                alert("Error: " + res.message);
+            }
+        } catch (e) {
+            alert("Error al guardar nota: " + e.message);
+        }
+    }
 
     // Inicialización automática de la sección de entregas (A-73)
     // Usar replaceState para el estado inicial incluyendo el stack jerárquico (v7.6.4)
