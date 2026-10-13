@@ -188,10 +188,98 @@ document.addEventListener('DOMContentLoaded', function() {
     fetchAndRenderStudentAttendanceSummary();
     fetchAndRenderStudentAdministrativeRequests();
     fetchAndRenderStudentSchedule();
+    fetchAndRenderVirtualClassroom();
 
     document.getElementById('btn-refresh-student-schedule')?.addEventListener('click', function() {
         fetchAndRenderStudentSchedule();
     });
+
+    document.getElementById('btn-refresh-virtual-classroom')?.addEventListener('click', function() {
+        fetchAndRenderVirtualClassroom();
+    });
+
+    function fetchAndRenderVirtualClassroom(subjectFilter) {
+        var postsContainer = document.getElementById('classroom-posts-container');
+        var materialsContainer = document.getElementById('classroom-materials-container');
+        if (!postsContainer || !materialsContainer || !currentUser) return;
+
+        postsContainer.innerHTML = '<div class="text-center py-6 text-gray-400 italic text-xs"><i class="fas fa-spinner fa-spin mr-1"></i>Cargando anuncios...</div>';
+        materialsContainer.innerHTML = '<div class="text-center py-6 text-gray-400 italic text-xs"><i class="fas fa-spinner fa-spin mr-1"></i>Cargando materiales...</div>';
+
+        // 1. Cargar Anuncios
+        fetchApi('TASK', 'getPosts', {
+            grado: currentUser.grado,
+            seccion: currentUser.seccion,
+            asignatura: subjectFilter || null
+        }).then(function(res) {
+            if (res && res.status === 'success' && Array.isArray(res.data)) {
+                var posts = res.data;
+                if (posts.length === 0) {
+                    postsContainer.innerHTML = '<div class="p-4 rounded-2xl bg-gray-50 text-center text-gray-400 text-xs italic">No hay anuncios publicados en esta clase.</div>';
+                    return;
+                }
+                postsContainer.innerHTML = posts.map(function(p) {
+                    return `
+                        <div class="p-4 rounded-2xl bg-indigo-50/40 border border-indigo-100/60 shadow-sm hover:border-indigo-200 transition-all">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="px-2.5 py-0.5 bg-indigo-100 text-indigo-700 text-[9px] font-bold uppercase rounded-full">${p.categoria}</span>
+                                <span class="text-[9px] text-gray-400 font-bold">${p.fechaPublicacion ? new Date(p.fechaPublicacion).toLocaleDateString() : 'Reciente'}</span>
+                            </div>
+                            <h5 class="text-xs font-bold text-gray-900 mb-1 uppercase tracking-tight">${p.titulo}</h5>
+                            <p class="text-xs text-gray-600 leading-relaxed mb-2">${p.contenido}</p>
+                            ${Array.isArray(p.adjuntos) && p.adjuntos.length > 0 ? `
+                                <div class="mt-2 pt-2 border-t border-indigo-100/50 flex flex-wrap gap-2">
+                                    ${p.adjuntos.map(function(att) {
+                                        return `<a href="${att.url || '#'}" target="_blank" class="text-[10px] font-bold text-indigo-600 hover:underline flex items-center gap-1"><i class="fas fa-paperclip"></i> ${att.nombre || 'Adjunto'}</a>`;
+                                    }).join('')}
+                                </div>
+                            ` : ''}
+                        </div>
+                    `;
+                }).join('');
+            } else {
+                postsContainer.innerHTML = '<div class="p-4 text-center text-gray-400 text-xs italic">No hay publicaciones disponibles.</div>';
+            }
+        }).catch(function() {
+            postsContainer.innerHTML = '<div class="p-4 text-center text-gray-400 text-xs italic">No hay publicaciones disponibles.</div>';
+        });
+
+        // 2. Cargar Materiales Educativos y Guías
+        fetchApi('TASK', 'getStudyMaterials', {
+            grado: currentUser.grado,
+            parcial: window.GLOBAL_SCOPE ? window.GLOBAL_SCOPE.ParcialActual : null,
+            asignatura: subjectFilter || null
+        }).then(function(res) {
+            if (res && res.status === 'success' && Array.isArray(res.data)) {
+                var materials = res.data;
+                if (materials.length === 0) {
+                    materialsContainer.innerHTML = '<div class="p-4 rounded-2xl bg-gray-50 text-center text-gray-400 text-xs italic">No hay materiales educativos publicados.</div>';
+                    return;
+                }
+                materialsContainer.innerHTML = materials.map(function(m) {
+                    return `
+                        <div class="p-4 rounded-2xl bg-emerald-50/40 border border-emerald-100/60 shadow-sm flex items-center justify-between gap-4 hover:border-emerald-200 transition-all">
+                            <div class="truncate">
+                                <div class="flex items-center gap-2 mb-1">
+                                    <span class="px-2 py-0.5 bg-emerald-100 text-emerald-800 text-[8px] font-black uppercase rounded">${m.tipoRecurso}</span>
+                                    <span class="text-[9px] font-bold text-gray-400 uppercase">${m.parcial || 'General'}</span>
+                                </div>
+                                <h5 class="text-xs font-bold text-gray-900 truncate uppercase tracking-tight">${m.titulo}</h5>
+                                <p class="text-[10px] text-gray-500 truncate">${m.descripcion || 'Recurso educativo oficial'}</p>
+                            </div>
+                            <a href="${m.archivoUrl}" target="_blank" class="px-3 py-2 bg-emerald-600 text-white hover:bg-emerald-700 rounded-xl text-[10px] font-bold uppercase tracking-widest flex items-center gap-1 shadow-sm flex-shrink-0">
+                                <i class="fas fa-download"></i> Abrir
+                            </a>
+                        </div>
+                    `;
+                }).join('');
+            } else {
+                materialsContainer.innerHTML = '<div class="p-4 text-center text-gray-400 text-xs italic">Sin materiales en esta sección.</div>';
+            }
+        }).catch(function() {
+            materialsContainer.innerHTML = '<div class="p-4 text-center text-gray-400 text-xs italic">Sin materiales en esta sección.</div>';
+        });
+    }
 
     function fetchAndRenderStudentSchedule() {
         var container = document.getElementById('student-schedule-container');

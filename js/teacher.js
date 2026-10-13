@@ -492,6 +492,63 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    // Handler para Publicador de Aula Virtual (Fase 8)
+    document.getElementById('virtual-classroom-publisher-form')?.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const btn = document.getElementById('btn-submit-virtual-post');
+        const tipo = document.getElementById('vc-tipo').value;
+        const titulo = document.getElementById('vc-titulo').value;
+        const url = document.getElementById('vc-url').value;
+        const contenido = document.getElementById('vc-contenido').value;
+        const esBorrador = document.getElementById('vc-es-borrador').checked;
+
+        btn.disabled = true;
+        btn.textContent = 'Procesando...';
+
+        try {
+            if (tipo === "Anuncio") {
+                const res = await fetchApi('TASK', 'createPost', {
+                    titulo,
+                    contenido,
+                    categoria: "Anuncio",
+                    autorId: currentUser.userId,
+                    esBorrador,
+                    adjuntos: url ? [{ nombre: "Recurso Adjunto", url: url }] : []
+                });
+
+                if (res.status === 'success') {
+                    alert(esBorrador ? "Borrador de anuncio guardado." : "Anuncio publicado en el Aula Virtual con éxito.");
+                    e.target.reset();
+                } else {
+                    throw new Error(res.message);
+                }
+            } else {
+                const res = await fetchApi('TASK', 'createStudyMaterial', {
+                    titulo,
+                    descripcion: contenido,
+                    tipoRecurso: tipo,
+                    parcial: window.GLOBAL_SCOPE ? window.GLOBAL_SCOPE.ParcialActual : "I parcial",
+                    unidad: "Unidad 1",
+                    tema: "Tema General",
+                    archivoUrl: url || "https://drive.google.com",
+                    autorId: currentUser.userId
+                });
+
+                if (res.status === 'success') {
+                    alert("Material educativo / guía publicado con éxito.");
+                    e.target.reset();
+                } else {
+                    throw new Error(res.message);
+                }
+            }
+        } catch (err) {
+            alert("Error al publicar en el Aula Virtual:\n" + err.message);
+        } finally {
+            btn.disabled = false;
+            btn.textContent = 'Publicar en Aula Virtual';
+        }
+    });
+
     // REQ-EXP-017: Health Checks Ping-Pong en Consola Técnica
     function runTechnicalHealthChecks() {
         var services = ['USER', 'ACADEMIC', 'TASK', 'EXAM', 'ACCOUNTING'];

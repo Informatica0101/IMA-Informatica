@@ -94,6 +94,11 @@ const ROLE_PERMISSIONS = {
     "getStudentTasks", "submitAssignment", "uploadFile", "uploadChunk", "finishChunkedUpload", "deleteFile",
     "saveProject", "deleteProject", "listProjects", "loadProject", "getAllStudentProjects",
     "getVirtualClassrooms", "getPosts", "getStudyMaterials", "getSubmissionComments", "addSubmissionComment", "getSubmissionVersions"
+  ],
+  "Alumno": [
+    "getStudentTasks", "submitAssignment", "uploadFile", "uploadChunk", "finishChunkedUpload", "deleteFile",
+    "saveProject", "deleteProject", "listProjects", "loadProject", "getAllStudentProjects",
+    "getVirtualClassrooms", "getPosts", "getStudyMaterials", "getSubmissionComments", "addSubmissionComment", "getSubmissionVersions"
   ]
 };
 
@@ -1165,18 +1170,19 @@ function createVirtualClassroom(payload) {
 }
 
 function getPosts(payload) {
-  const { aulaId, grado, seccion, asignatura, includeDrafts } = payload || {};
+  const { aulaId, grado, seccion, asignatura, includeDrafts, authRole } = payload || {};
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
   const sheet = getOrCreateSheet(ss, "PublicacionesAnuncios");
   const data = sheet.getDataRange().getValues();
   if (data.length <= 1) return { status: "success", data: [] };
 
+  const isTeacherOrAdmin = (authRole === "Profesor" || authRole === "Administrador" || authRole === "Dirección" || authRole === "Secretaría");
   const now = new Date().getTime();
   const posts = data.slice(1).filter(r => {
     if (r[12] === "Eliminado") return false;
     if (aulaId && String(r[1]).trim() !== String(aulaId).trim()) return false;
-    if (r[7] === true && !includeDrafts) return false; // EsBorrador
-    if (r[8] && new Date(r[8]).getTime() > now) return false; // FechaProgramada no alcanzada
+    if (r[7] === true && (!includeDrafts || !isTeacherOrAdmin)) return false; // EsBorrador
+    if (r[8] && new Date(r[8]).getTime() > now && !isTeacherOrAdmin) return false; // FechaProgramada no alcanzada
     return true;
   }).map(r => ({
     postId: r[0],

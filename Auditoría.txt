@@ -1,3 +1,34 @@
+AUDITORÍA TÉCNICA Y DIAGNÓSTICO DE ARQUITECTURA - FASE 8: AULA VIRTUAL Y GESTIÓN AVANZADA DEL APRENDIZAJE - Sun Jul 5 2026
+
+Archivos y Módulos Auditados:
+- backend/task-service/Code.gs
+- teacher-dashboard.html
+- student-dashboard.html
+- js/teacher.js
+- js/student.js
+- js/api.js
+
+1. DIAGNÓSTICO Y REUTILIZACIÓN DE ESTRUCTURAS DE DATOS EXISTENTES
+- Tablas existentes en `backend/task-service/Code.gs`:
+  * `AulasVirtuales`: Aulas virtuales por oferta académica, grado, sección, asignatura y docente responsable (`getVirtualClassrooms`, `createVirtualClassroom`).
+  * `PublicacionesAnuncios`: Anuncios y publicaciones del aula virtual con soporte de borradores, fecha programada, elementos fijados y adjuntos JSON (`getPosts`, `createPost`, `updatePost`, `deletePost`).
+  * `MaterialesEducativos`: Recursos y guías de estudio organizados por unidad, tema, parcial y URL/Drive (`getStudyMaterials`, `createStudyMaterial`, `deleteStudyMaterial`).
+  * `Tareas` & `Entregas`: Módulo oficial de asignaciones y recepción multimodal de trabajos (`createTask`, `submitAssignment`, `getStudentTasks`, `getTeacherActivity`).
+  * `EntregasVersiones` & `ComentariosEntregas`: Historial inmutable de entregas y comentarios privados/correcciones (`getSubmissionVersions`, `getSubmissionComments`, `addSubmissionComment`, `returnSubmissionForRevision`).
+  * `MetadatosArchivos`: Trazabilidad de archivos en Google Drive con metadatos por asignatura, grado y parcial.
+
+2. HALLAZGOS Y OPORTUNIDADES DE MEJORA EN FASE 8
+- Backend (`backend/task-service/Code.gs`):
+  * La infraestructura de `AulasVirtuales`, `PublicacionesAnuncios` y `MaterialesEducativos` ya cuenta con endpoints base.
+  * Se requiere asegurar que las publicaciones y materiales respeten la visibilidad de borradores (`esBorrador`) y fechas programadas (`fechaProgramada`) en servidor según el rol autenticado (`authRole`).
+  * Garantizar que la consulta de materiales educativos soporte filtrado contextual por `grado`, `seccion`, `asignatura` y `parcial`.
+- Frontend Estudiante (`student-dashboard.html`, `js/student.js`):
+  * Ampliar el panel del estudiante para mostrar una sección de Anuncios y Materiales Educativos del Aula Virtual dentro de las asignaturas seleccionadas.
+- Frontend Docente (`teacher-dashboard.html`, `js/teacher.js`):
+  * Proporcionar interfaz para que el docente cree y gestione anuncios del aula virtual, diferencie borradores de contenidos publicados y adjunte recursos digitales.
+
+----------------------------------------------------------------------------------------------------
+
 AUDITORÍA TÉCNICA Y DIAGNÓSTICO DE ARQUITECTURA - FASE 7: PLANIFICACIÓN ACADÉMICA, HORARIOS, SUSTITUCIONES Y RECURSOS - Sun Jul 5 2026
 
 Archivos y Módulos Auditados:

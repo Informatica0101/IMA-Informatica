@@ -196,6 +196,50 @@
                             <!-- Se poblará vía js/student.js -->
                         </div>
                     </section>
+
+                    <!-- Sección de Novedades, Anuncios y Materiales Educativos del Aula Virtual (Fase 8) -->
+                    <section id="virtual-classroom-section" class="bg-white p-6 md:p-8 rounded-[2.5rem] shadow-sm border border-gray-100">
+                        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+                            <div class="flex items-center gap-4">
+                                <div class="w-12 h-12 bg-indigo-600 text-white rounded-2xl flex items-center justify-center text-xl shadow-lg shadow-indigo-100">
+                                    <i class="fas fa-chalkboard"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-xl font-bold text-gray-800">Aula Virtual: Materiales & Anuncios</h3>
+                                    <p class="text-xs text-gray-500 font-medium">Anuncios de clase, guías de estudio y recursos digitales de tus asignaturas</p>
+                                </div>
+                            </div>
+                            <button id="btn-refresh-virtual-classroom" class="px-4 py-2 bg-indigo-50 text-indigo-600 hover:bg-indigo-100 rounded-xl font-bold text-xs uppercase tracking-widest transition-all">
+                                <i class="fas fa-sync-alt mr-1"></i> Actualizar Aula
+                            </button>
+                        </div>
+
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                            <!-- Columna 1: Anuncios y Novedades -->
+                            <div>
+                                <h4 class="text-xs font-black text-indigo-700 uppercase tracking-widest mb-4 flex items-center gap-2">
+                                    <i class="fas fa-bullhorn"></i> Anuncios y Novedades de la Clase
+                                </h4>
+                                <div id="classroom-posts-container" class="space-y-4">
+                                    <div class="text-center py-6 text-gray-400 italic text-xs border-2 border-dashed border-gray-100 rounded-2xl">
+                                        Selecciona una asignatura o actualiza para ver anuncios.
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Columna 2: Materiales Educativos y Guías -->
+                            <div>
+                                <h4 class="text-xs font-black text-indigo-700 uppercase tracking-widest mb-4 flex items-center gap-2">
+                                    <i class="fas fa-folder-open"></i> Materiales Educativos y Recursos
+                                </h4>
+                                <div id="classroom-materials-container" class="space-y-4">
+                                    <div class="text-center py-6 text-gray-400 italic text-xs border-2 border-dashed border-gray-100 rounded-2xl">
+                                        Selecciona una asignatura o actualiza para ver materiales.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
                 </div>
             </div>
 
