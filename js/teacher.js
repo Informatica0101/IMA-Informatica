@@ -21,6 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const navAttendance = document.getElementById('nav-attendance');
     const navComunicados = document.getElementById('nav-comunicados');
     const navOrientacion = document.getElementById('nav-orientacion');
+    const navSupervision = document.getElementById('nav-supervision');
     const navTareas = document.getElementById('nav-tareas');
     const navProyectos = document.getElementById('nav-proyectos');
     const navLogros = document.getElementById('nav-logros');
@@ -33,6 +34,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const sectionAttendance = document.getElementById('section-attendance');
     const sectionComunicados = document.getElementById('section-comunicados');
     const sectionOrientacion = document.getElementById('section-orientacion');
+    const sectionSupervision = document.getElementById('section-supervision');
     const sectionTareas = document.getElementById('section-tareas');
     const sectionProyectos = document.getElementById('section-proyectos');
     const sectionLogros = document.getElementById('section-logros');
@@ -62,8 +64,8 @@ document.addEventListener('DOMContentLoaded', () => {
     let isNavigating = false;
     let studentSort = { column: 'nombre', direction: 'asc' };
 
-    const allSections = [sectionAcademicReports, sectionGradebook, sectionAttendance, sectionComunicados, sectionOrientacion, sectionTareas, sectionProyectos, sectionLogros, sectionNews, sectionAdmin, sectionReportes];
-    const allNavLinks = [navDashboard, navGradebook, navAttendance, navComunicados, navOrientacion, navTareas, navProyectos, navLogros, navNews, navAdmin, navReportsOld];
+    const allSections = [sectionAcademicReports, sectionGradebook, sectionAttendance, sectionComunicados, sectionOrientacion, sectionSupervision, sectionTareas, sectionProyectos, sectionLogros, sectionNews, sectionAdmin, sectionReportes];
+    const allNavLinks = [navDashboard, navGradebook, navAttendance, navComunicados, navOrientacion, navSupervision, navTareas, navProyectos, navLogros, navNews, navAdmin, navReportsOld];
 
     // Auxiliar para normalizar strings (trim, lowercase y sin acentos) para comparaciones robustas
     const norm = (s) => (s || "").toString().trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
@@ -114,6 +116,10 @@ document.addEventListener('DOMContentLoaded', () => {
     navOrientacion?.addEventListener('click', () => {
         window.navigateTo(sectionOrientacion, navOrientacion);
         initOrientationModule();
+    });
+    navSupervision?.addEventListener('click', () => {
+        window.navigateTo(sectionSupervision, navSupervision);
+        loadSupervisionModule();
     });
     navTareas.addEventListener('click', () => {
         window.navigateTo(sectionTareas, navTareas);
@@ -3584,6 +3590,127 @@ function toBase64(file) {
             alert("Error al guardar nota: " + e.message);
         }
     }
+
+    // --- MÓDULO DE SUPERVISIÓN DOCENTE Y CALIDAD EDUCATIVA (FASE 13) ---
+    async function loadSupervisionModule() {
+        const supContainer = document.getElementById('sup-list-container');
+        const activeSelect = document.getElementById('sup-select-active');
+        if (!supContainer) return;
+
+        supContainer.innerHTML = '<div class="text-center py-8 text-gray-400 italic text-xs"><i class="fas fa-spinner fa-spin mr-2"></i>Cargando supervisiones...</div>';
+
+        try {
+            const res = await fetchApi('ACADEMIC', 'getTeacherSupervisions', {
+                docenteUserId: currentUser.rol === 'Profesor' ? currentUser.userId : null
+            });
+
+            if (res.status === 'success' && Array.isArray(res.data)) {
+                const sups = res.data;
+                if (sups.length === 0) {
+                    supContainer.innerHTML = '<div class="text-center py-8 text-gray-400 italic text-xs border-2 border-dashed border-gray-100 rounded-2xl">No hay supervisiones programadas registradas.</div>';
+                    if (activeSelect) activeSelect.innerHTML = '<option value="">No hay supervisiones activas</option>';
+                    return;
+                }
+
+                if (activeSelect) {
+                    const activeSups = sups.filter(s => s.estado !== 'Finalizada');
+                    activeSelect.innerHTML = activeSups.length > 0
+                        ? activeSups.map(s => `<option value="${s.supervisionId}">${s.supervisionId} - ${s.tipoSupervision} (${s.grado} ${s.seccion})</option>`).join('')
+                        : '<option value="">Sin supervisiones pendientes</option>';
+                }
+
+                supContainer.innerHTML = sups.map(s => `
+                    <div class="p-4 bg-white border border-gray-100 rounded-2xl shadow-sm hover:border-emerald-200 transition-all">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="px-2.5 py-0.5 bg-emerald-100 text-emerald-800 text-[9px] font-bold uppercase rounded-full">${s.estado}</span>
+                            <span class="text-[9px] font-mono text-gray-400">${s.fechaProgramada ? new Date(s.fechaProgramada).toLocaleDateString() : ''}</span>
+                        </div>
+                        <h4 class="text-xs font-bold text-gray-900 uppercase tracking-tight mb-1">${s.tipoSupervision}</h4>
+                        <p class="text-xs text-gray-600 mb-2">Docente: <strong>${s.docenteUserId}</strong> | Clase: ${s.asignatura} (${s.grado} ${s.seccion})</p>
+                        <div class="text-[9px] text-gray-500 pt-2 border-t border-gray-50">Supervisor: ${s.supervisorUserId || 'Dirección'}</div>
+                    </div>
+                `).join('');
+            } else {
+                supContainer.innerHTML = '<div class="text-center py-6 text-red-500 text-xs">Error al cargar supervisiones.</div>';
+            }
+        } catch (e) {
+            supContainer.innerHTML = `<div class="text-center py-6 text-red-500 text-xs">Error de conexión: ${e.message}</div>`;
+        }
+    }
+
+    document.getElementById('btn-sup-new-schedule')?.addEventListener('click', async () => {
+        const docId = prompt("Ingrese el ID o Usuario del Docente a supervisar:");
+        if (!docId) return;
+
+        const tipo = prompt("Tipo de supervisión:\n1. ObservacionAula (Observación de clase)\n2. RevisiónPlanificacion\n3. AcompañamientoPedagogico", "ObservacionAula");
+        if (!tipo) return;
+
+        const grado = prompt("Grado:", "10mo Grado");
+        const seccion = prompt("Sección:", "A");
+        const asig = prompt("Asignatura:", "Informática");
+
+        try {
+            const res = await fetchApi('ACADEMIC', 'createTeacherSupervision', {
+                docenteUserId: docId,
+                supervisorUserId: currentUser.nombre || "Dirección",
+                fechaProgramada: new Date().toISOString().split('T')[0],
+                grado: grado || "General",
+                seccion: seccion || "A",
+                asignatura: asig || "General",
+                tipoSupervision: tipo
+            });
+
+            if (res.status === 'success') {
+                alert("¡Supervisión programada con éxito!");
+                loadSupervisionModule();
+            } else {
+                alert("Error: " + res.message);
+            }
+        } catch (e) {
+            alert("Error al programar supervisión: " + e.message);
+        }
+    });
+
+    document.getElementById('btn-sup-save-observation')?.addEventListener('click', async () => {
+        const supId = document.getElementById('sup-select-active')?.value;
+        const evidencias = document.getElementById('sup-obs-evidencias')?.value.trim();
+        const fortalezas = document.getElementById('sup-obs-fortalezas')?.value.trim();
+        const oportunidades = document.getElementById('sup-obs-oportunidades')?.value.trim();
+
+        if (!supId || !evidencias) {
+            alert("Debe seleccionar una supervisión e ingresar las evidencias observadas.");
+            return;
+        }
+
+        const btn = document.getElementById('btn-sup-save-observation');
+        btn.disabled = true;
+        btn.textContent = "Guardando...";
+
+        try {
+            const res = await fetchApi('ACADEMIC', 'saveSupervisionObservation', {
+                supervisionId: supId,
+                respuestasRubrica: { resultadoGlobal: "Satisfecho" },
+                evidenciasTexto: evidencias,
+                fortalezasTexto: fortalezas,
+                oportunidadesMejora: oportunidades
+            });
+
+            if (res.status === 'success') {
+                alert("Observación pedagógica guardada correctamente.");
+                document.getElementById('sup-obs-evidencias').value = "";
+                document.getElementById('sup-obs-fortalezas').value = "";
+                document.getElementById('sup-obs-oportunidades').value = "";
+                loadSupervisionModule();
+            } else {
+                alert("Error: " + res.message);
+            }
+        } catch (e) {
+            alert("Error al guardar observación: " + e.message);
+        } finally {
+            btn.disabled = false;
+            btn.textContent = "Guardar Observación y Finalizar";
+        }
+    });
 
     // Inicialización automática de la sección de entregas (A-73)
     // Usar replaceState para el estado inicial incluyendo el stack jerárquico (v7.6.4)

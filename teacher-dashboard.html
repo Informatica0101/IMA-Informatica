@@ -120,6 +120,7 @@
                 <button id="nav-attendance" class="flex-none px-4 py-2 rounded-xl font-semibold transition-all text-[10px] uppercase tracking-widest bg-gray-100 text-gray-500">Asistencia y Convivencia</button>
                 <button id="nav-comunicados" class="flex-none px-4 py-2 rounded-xl font-semibold transition-all text-[10px] uppercase tracking-widest bg-gray-100 text-gray-500">Comunicados e Integración</button>
                 <button id="nav-orientacion" class="flex-none px-4 py-2 rounded-xl font-semibold transition-all text-[10px] uppercase tracking-widest bg-gray-100 text-gray-500">Bienestar y Orientación</button>
+                <button id="nav-supervision" class="flex-none px-4 py-2 rounded-xl font-semibold transition-all text-[10px] uppercase tracking-widest bg-gray-100 text-gray-500">Supervisión Docente</button>
                 <button id="nav-reportes" class="flex-none px-4 py-2 rounded-xl font-semibold transition-all text-[10px] uppercase tracking-widest bg-gray-100 text-gray-500">Reportes</button>
                 <button id="nav-tareas" class="flex-none px-4 py-2 rounded-xl font-semibold transition-all text-[10px] uppercase tracking-widest bg-gray-100 text-gray-500">Actividades</button>
                 <button id="nav-proyectos" class="flex-none px-4 py-2 rounded-xl font-semibold transition-all text-[10px] uppercase tracking-widest bg-gray-100 text-gray-500">Proyectos</button>
@@ -1112,6 +1113,80 @@
                             <div id="ori-cases-list-container" class="space-y-3 max-h-[500px] overflow-y-auto scroll-minimalist">
                                 <div class="text-center py-8 text-gray-400 italic text-xs border-2 border-dashed border-gray-100 rounded-2xl">
                                     Ingrese un ID de estudiante para consultar sus casos de seguimiento.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Sección de Supervisión Docente y Calidad Educativa (Fase 13) -->
+            <section id="section-supervision" class="hidden animate-fade-in-up space-y-6">
+                <div class="bg-white rounded-3xl p-6 shadow-xl border border-gray-100">
+                    <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-6">
+                        <div>
+                            <span class="inline-block px-3 py-1 bg-emerald-50 text-emerald-700 text-xs font-semibold rounded-full mb-2">Desarrollo Profesional & Calidad Educativa</span>
+                            <h2 class="text-2xl font-bold text-gray-800">Supervisión Docente y Acompañamiento Pedagógico</h2>
+                            <p class="text-xs text-gray-500 mt-1">Observación de aula, revisión de planificaciones, rúbricas institucionales y planes de mejora continua.</p>
+                        </div>
+                        <div class="flex flex-wrap items-center gap-2">
+                            <button id="btn-sup-new-schedule" class="bg-emerald-600 text-white px-4 py-2 rounded-xl text-xs font-semibold hover:bg-emerald-700 transition-all flex items-center gap-1.5 shadow-sm">
+                                <i class="fas fa-calendar-plus"></i>
+                                Programar Supervisión
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                        <!-- Panel Izquierdo: Formulario de Observación y Rúbrica -->
+                        <div class="lg:col-span-5 bg-gray-50 p-5 rounded-2xl border border-gray-100 space-y-4">
+                            <h3 class="text-sm font-bold text-gray-800 uppercase tracking-tight flex items-center gap-2">
+                                <i class="fas fa-clipboard-check text-emerald-600"></i> Registrar Observación Pedagógica
+                            </h3>
+                            <div>
+                                <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Supervisión ID</label>
+                                <select id="sup-select-active" class="w-full text-xs p-2.5 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-400 font-medium">
+                                    <option value="">Seleccione supervisión programada...</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Evidencias Observadas en Aula</label>
+                                <textarea id="sup-obs-evidencias" rows="3" class="w-full text-xs p-2.5 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-400 font-medium" placeholder="Escriba los hechos y evidencias pedagógicas observadas..."></textarea>
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Fortalezas Destacables</label>
+                                <textarea id="sup-obs-fortalezas" rows="2" class="w-full text-xs p-2.5 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-400 font-medium" placeholder="Prácticas pedagógicas sobresalientes..."></textarea>
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Oportunidades de Mejora y Acuerdos</label>
+                                <textarea id="sup-obs-oportunidades" rows="2" class="w-full text-xs p-2.5 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-400 font-medium" placeholder="Recomendaciones concretas de desarrollo..."></textarea>
+                            </div>
+                            <button id="btn-sup-save-observation" class="w-full py-3 bg-emerald-600 text-white rounded-xl font-bold text-xs uppercase tracking-widest hover:bg-emerald-700 transition-all shadow-md">
+                                Guardar Observación y Finalizar
+                            </button>
+                        </div>
+
+                        <!-- Panel Derecho: Lista de Supervisiones y Planes de Mejora -->
+                        <div class="lg:col-span-7 space-y-6">
+                            <div>
+                                <h3 class="text-sm font-bold text-gray-800 uppercase tracking-tight flex items-center gap-2 mb-3">
+                                    <i class="fas fa-list-alt text-emerald-600"></i> Supervisiones y Acompañamientos Registrados
+                                </h3>
+                                <div id="sup-list-container" class="space-y-3 max-h-[350px] overflow-y-auto scroll-minimalist">
+                                    <div class="text-center py-8 text-gray-400 italic text-xs border-2 border-dashed border-gray-100 rounded-2xl">
+                                        Cargando registro de supervisiones...
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="border-t border-gray-100 pt-4">
+                                <h3 class="text-sm font-bold text-gray-800 uppercase tracking-tight flex items-center gap-2 mb-3">
+                                    <i class="fas fa-chart-line text-emerald-600"></i> Planes de Mejora Pedagógica
+                                </h3>
+                                <div id="sup-plans-container" class="space-y-3 max-h-[250px] overflow-y-auto scroll-minimalist">
+                                    <div class="text-center py-6 text-gray-400 italic text-xs border-2 border-dashed border-gray-100 rounded-2xl">
+                                        No hay planes de mejora pedagógica activos registrados.
+                                    </div>
                                 </div>
                             </div>
                         </div>

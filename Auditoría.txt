@@ -1,3 +1,36 @@
+AUDITORÍA TÉCNICA Y DIAGNÓSTICO DE ARQUITECTURA - FASE 13: SUPERVISIÓN DOCENTE Y CALIDAD EDUCATIVA - Sun Jul 5 2026
+
+Archivos y Módulos Auditados:
+- backend/academic-service/Code.gs
+- backend/user-service/Code.gs
+- backend/exam-service/Code.gs
+- teacher-dashboard.html
+- js/teacher.js
+- js/api.js
+
+1. DIAGNÓSTICO Y REUTILIZACIÓN DE ESTRUCTURAS DE DATOS EXISTENTES
+- Tablas y Endpoints en `backend/academic-service/Code.gs`:
+  * `AsignacionesDocentes`: Asignaciones oficiales por docente, grado, sección y asignatura (`getTeacherAssignments`, `assignTeacherToClass`).
+  * `PlanesEstudio` & `PlanAsignaturas`: Planes de estudio institucionales y cargas horarias.
+- Tablas y Endpoints en `backend/exam-service/Code.gs`:
+  * `RubricasEvaluacion`: Rúbricas analíticas e instrumentos de evaluación (`getRubrics`, `saveRubric`).
+- Tablas y Endpoints en `backend/user-service/Code.gs`:
+  * `CriteriosInstitucionales`: Criterios globales de evaluación y desempeño.
+
+2. HALLAZGOS Y PLAN DE IMPLEMENTACIÓN PARA LA FASE 13
+- Backend (`backend/academic-service/Code.gs`):
+  * Crear la tabla e infraestructura de `SupervisionesDocentes`: Programación de supervisiones de aula/revisión documental por fecha, grado, sección, asignatura, docente supervisado y supervisor asignado (`createTeacherSupervision`, `getTeacherSupervisions`, `updateSupervisionStatus`).
+  * Crear la tabla `ObservacionesSupervision`: Registro de la rúbrica aplicada, evidencias observadas por criterio, recomendaciones pedagógicas y observaciones del docente (`saveSupervisionObservation`, `getSupervisionObservation`).
+  * Crear la tabla `PlanesMejoraPedagogica`: Planes de acción acordados, metas de mejora, responsable de acompañamiento y fecha de seguimiento (`saveTeacherImprovementPlan`, `getTeacherImprovementPlans`).
+  * RBAC en servidor: Garantizar que Dirección y Subdirección tengan acceso completo a la supervisión de la plantilla docente, mientras que los profesores únicamente puedan acceder a sus propias observaciones y planes de mejora en modo lectura/acuse de recibo.
+- Interfaz Docente y Administrativa (`teacher-dashboard.html`, `js/teacher.js`):
+  * Integrar la sección "Supervisión Docente y Calidad Educativa" en el panel docente y administrativo.
+  * Formulario de programación de supervisiones y selección de instrumento/rúbrica.
+  * Formulario de observación pedagógica en aula con registro de evidencias por nivel de desempeño.
+  * Gestor de Planes de Mejora Pedagógica con historial de acuerdos e indicadores de cumplimiento.
+
+----------------------------------------------------------------------------------------------------
+
 AUDITORÍA TÉCNICA Y DIAGNÓSTICO DE ARQUITECTURA - FASE 12: BIENESTAR ESTUDIANTIL, ORIENTACIÓN Y SEGUIMIENTO DE CASOS - Sun Jul 5 2026
 
 Archivos y Módulos Auditados:
@@ -17,50 +50,3 @@ Archivos y Módulos Auditados:
   * `PlanesAcompanamiento`: Planes de acompañamiento individualizados, situación inicial, objetivos JSON, responsable y fecha de revisión (`getSupportPlans`, `saveSupportPlan`).
   * `EvaluacionesFormativas`: Evaluación cualitativa de comportamiento, aseo y presentación personal (`getFormativeEvaluations`, `saveFormativeEvaluation`).
   * `ConversacionesMensajes` & `BandejaNotificaciones`: Canales de comunicación privada con responsables autorizados.
-
-2. HALLAZGOS Y PLAN DE IMPLEMENTACIÓN PARA LA FASE 12
-- Backend (`backend/academic-service/Code.gs` & `backend/user-service/Code.gs`):
-  * Reforzar la función `saveAttendanceFollowupCase` para permitir apertura de casos desde Orientación/Consejeros con categorías institucionales (Adaptación Escolar, Dificultades de Integración, Ausentismo Recurrente, Orientación Académica, Convivencia).
-  * Extender `addCaseFollowUpNote` para guardar de forma inmutable notas de intervención, reuniones con familias y acuerdos con firmas de tiempo y autor.
-  * Consolidar `saveSupportPlan` para estructurar objetivos específicos, compromisos de partes y fecha de revisión programada.
-  * Mantener RBAC estricto en servidor de forma que el rol `Consejeros`, `Director` y `Subdirector` tengan acceso exclusivo a la bitácora confidencial, restringiendo su exposición en búsquedas o listados generales de docentes.
-- Interfaz Docente y Orientación (`teacher-dashboard.html`, `js/teacher.js`):
-  * Crear la sección e interfaz interactiva "Centro de Orientación, Bienestar y Seguimiento de Casos":
-    1) Panel de expediente confidencial por estudiante con lista de casos abiertos/cerrados.
-    2) Formulario de apertura de caso y asignación de responsable principal.
-    3) Bitácora interactiva de intervenciones y acuerdos con la familia.
-    4) Módulo de creación y revisión de Planes de Acompañamiento Individualizado.
-- Interfaz Estudiante y Portal Familiar (`student-dashboard.html`, `js/student.js`):
-  * Exponer en el Portal Familiar únicamente la vista autorizada de Acuerdos y Solicitudes de Orientación, garantizando que las notas internas y detalles confidenciales permanezcan protegidos en servidor.
-
-----------------------------------------------------------------------------------------------------
-
-AUDITORÍA TÉCNICA Y DIAGNÓSTICO DE ARQUITECTURA - FASE 11: COMUNICACIÓN Y COLABORACIÓN INSTITUCIONAL - Sun Jul 5 2026
-
-Archivos y Módulos Auditados:
-- backend/user-service/Code.gs
-- teacher-dashboard.html
-- student-dashboard.html
-- js/teacher.js
-- js/student.js
-- js/index-ui.js
-- js/api.js
-
-1. DIAGNÓSTICO Y REUTILIZACIÓN DE ESTRUCTURAS DE DATOS EXISTENTES
-- Tablas y Endpoints en `backend/user-service/Code.gs`:
-  * `NoticiasPortal`: Publicaciones institucionales para el portal público y tableros (`createNews`, `getNews`, `updateNewsStatus`).
-  * `ComunicadosInstitucionales`: Circulares y comunicados con segmentación por audiencias (`createInstitutionalAnnouncement`, `getInstitutionalAnnouncements`).
-  * `ConfirmacionesLecturaComunicados`: Confirmaciones de lectura explícitas e implícitas por usuario (`confirmAnnouncementReceipt`, `getAnnouncementReadReport`).
-  * `ConversacionesMensajes`: Mensajería interna e hilos vinculados a un estudiante, trámite o documento (`sendInternalMessage`, `getInternalMessages`).
-  * `BandejaNotificaciones`: Ingesta unificada de avisos (`sendMultiChannelNotification`, `getUnifiedNotifications`, `markNotificationAsRead`).
-
-2. HALLAZGOS Y PLAN DE IMPLEMENTACIÓN PARA LA FASE 11
-- Backend (`backend/user-service/Code.gs`):
-  * Reforzar `createInstitutionalAnnouncement` para admitir segmentación por audiencias complejas (Grados, Secciones, Roles, Departamentos), fijación de avisos importantes y requerimiento de acuse de recibo.
-  * Extender `confirmAnnouncementReceipt` para guardar confirmación explícita con timestamp e IP/metadata.
-  * Consolidar `getConversationMessages` y `sendMessageInConversation` para permitir que padres, docentes y administración mantengan hilos de mensajería contextualizados por estudiante.
-- Interfaz Docente y Administrativa (`teacher-dashboard.html`, `js/teacher.js`):
-  * Crear el "Centro de Comunicados e Integración Institucional" en el panel docente/administrativo para redactar comunicados institucionales, publicar circulares, seleccionar audiencia segmentada y monitorear el porcentaje de acuses de recibo en tiempo real.
-- Interfaz Estudiante y Portal Familiar (`student-dashboard.html`, `js/student.js`):
-  * Integrar la sección de "Circulares y Comunicados Institucionales" con botón para "Marcar como Leído / Confirmar Acuse de Recibo".
-  * Reforzar el módulo de "Conversaciones y Mensajes Directos" con los docentes/orientación.

@@ -116,6 +116,11 @@ function getOrCreateSheet(ss, name) {
     if (name === "SalidasAnticipadas") sheet.appendRow(["SalidaID", "UserId", "Fecha", "HoraSalida", "Motivo", "AutorizadoPor", "RetiradoPor", "RegresoHora", "Estado"]);
     if (name === "IncidenciasAsistencia") sheet.appendRow(["IncidenciaID", "UserId", "TipoIncidencia", "Descripcion", "Fecha", "Estado", "ReportadoPor"]);
     if (name === "CasosSeguimiento") sheet.appendRow(["CasoID", "UserId", "MotivoApertura", "ResumenAsistencia", "ResponsableID", "AccionesJSON", "Estado", "FechaApertura", "FechaCierre"]);
+
+    // Nuevas Tablas Fase 13 - Supervisión Docente y Calidad Educativa
+    if (name === "SupervisionesDocentes") sheet.appendRow(["SupervisionID", "DocenteUserId", "SupervisorUserId", "FechaProgramada", "Grado", "Seccion", "Asignatura", "TipoSupervision", "RubricaID", "Estado", "ObservacionesAdmin", "FechaCreacion"]);
+    if (name === "ObservacionesSupervision") sheet.appendRow(["ObservacionID", "SupervisionID", "RespuestasRubricaJSON", "EvidenciasTexto", "FortalezasTexto", "OportunidadesMejora", "ComentarioDocente", "FechaRegistro"]);
+    if (name === "PlanesMejoraPedagogica") sheet.appendRow(["PlanID", "SupervisionID", "DocenteUserId", "ObjetivoMejora", "AccionesJSON", "ResponsableAcompanamiento", "FechaInicio", "FechaObjetivo", "Estado", "FechaRevision"]);
   }
   return sheet;
 }
@@ -144,7 +149,8 @@ const ROLE_PERMISSIONS = {
     "getStudentGuardians", "saveStudentGuardian", "unlinkStudentGuardian", "uploadStudentDocument", "getStudentDocuments", "updateDocumentStatus",
     "createStudentEnrollment", "getStudentEnrollments", "renewStudentEnrollment", "checkEnrollmentCapacity",
     "changeStudentSection", "recordStudentTransfer", "recordStudentWithdrawal", "processStudentReentry",
-    "openAttendanceSession", "saveClassAttendance", "getClassAttendance", "saveDailyAttendance", "getDailyAttendance", "submitAttendanceJustification", "reviewAttendanceJustification", "recordEarlyDeparture", "getAttendanceIncidents", "saveAttendanceIncident", "getAttendanceFollowupCases", "saveAttendanceFollowupCase", "addCaseFollowUpNote", "getStudentAttendanceSummary"
+    "openAttendanceSession", "saveClassAttendance", "getClassAttendance", "saveDailyAttendance", "getDailyAttendance", "submitAttendanceJustification", "reviewAttendanceJustification", "recordEarlyDeparture", "getAttendanceIncidents", "saveAttendanceIncident", "getAttendanceFollowupCases", "saveAttendanceFollowupCase", "addCaseFollowUpNote", "getStudentAttendanceSummary",
+    "createTeacherSupervision", "getTeacherSupervisions", "updateSupervisionStatus", "saveSupervisionObservation", "getSupervisionObservation", "saveTeacherImprovementPlan", "getTeacherImprovementPlans"
   ],
   "Subdirector": [
     "getAcademicConfig", "getAcademicHistory", "getAsignaturasActivas", "getWhatsAppLink", "getQuestionBank", "registerStudentEnrollment", "getStudentEnrollmentHistory",
@@ -153,7 +159,8 @@ const ROLE_PERMISSIONS = {
     "getClassroomResources", "saveClassroomResource", "getStudentSchedule",
     "createAdmissionRequest", "getAdmissionRequests", "updateAdmissionStatus", "getStudentFile", "getStudentTimeline", "findDuplicateStudents",
     "getStudentGuardians", "getStudentDocuments", "getStudentEnrollments", "checkEnrollmentCapacity",
-    "openAttendanceSession", "saveClassAttendance", "getClassAttendance", "saveDailyAttendance", "getDailyAttendance", "submitAttendanceJustification", "reviewAttendanceJustification", "recordEarlyDeparture", "getAttendanceIncidents", "saveAttendanceIncident", "getAttendanceFollowupCases", "saveAttendanceFollowupCase", "addCaseFollowUpNote", "getStudentAttendanceSummary"
+    "openAttendanceSession", "saveClassAttendance", "getClassAttendance", "saveDailyAttendance", "getDailyAttendance", "submitAttendanceJustification", "reviewAttendanceJustification", "recordEarlyDeparture", "getAttendanceIncidents", "saveAttendanceIncident", "getAttendanceFollowupCases", "saveAttendanceFollowupCase", "addCaseFollowUpNote", "getStudentAttendanceSummary",
+    "createTeacherSupervision", "getTeacherSupervisions", "updateSupervisionStatus", "saveSupervisionObservation", "getSupervisionObservation", "saveTeacherImprovementPlan", "getTeacherImprovementPlans"
   ],
   "Secretaría": [
     "getAcademicConfig", "getAsignaturasActivas", "registerStudentEnrollment", "getStudentEnrollmentHistory",
@@ -188,7 +195,8 @@ const ROLE_PERMISSIONS = {
     "getAcademicConfig", "updateAcademicConfig", "getAcademicHistory", "getAsignaturasActivas", "updateAsignaturasActivas", "saveWhatsAppLink", "getWhatsAppLink", "getQuestionBank", "saveQuestion", "generateMigrationReport",
     "getAcademicYears", "getAcademicPeriods", "getSubjectCatalog", "getAcademicOffers", "getTeacherAssignments", "createTeacherSubstitution", "getAcademicCalendar", "getClassSchedules", "createClassSchedule", "deleteClassSchedule", "getClassroomResources", "getStudentSchedule",
     "getStudentFile", "getStudentTimeline", "getStudentEnrollments",
-    "openAttendanceSession", "saveClassAttendance", "getClassAttendance", "saveDailyAttendance", "getDailyAttendance", "submitAttendanceJustification", "reviewAttendanceJustification", "recordEarlyDeparture", "getAttendanceIncidents", "saveAttendanceIncident", "getAttendanceFollowupCases", "saveAttendanceFollowupCase", "addCaseFollowUpNote", "getStudentAttendanceSummary"
+    "openAttendanceSession", "saveClassAttendance", "getClassAttendance", "saveDailyAttendance", "getDailyAttendance", "submitAttendanceJustification", "reviewAttendanceJustification", "recordEarlyDeparture", "getAttendanceIncidents", "saveAttendanceIncident", "getAttendanceFollowupCases", "saveAttendanceFollowupCase", "addCaseFollowUpNote", "getStudentAttendanceSummary",
+    "getTeacherSupervisions", "getSupervisionObservation", "getTeacherImprovementPlans"
   ],
   "Asistente": ["getAcademicConfig", "getAsignaturasActivas", "getWhatsAppLink", "getQuestionBank", "getAcademicCalendar", "getClassSchedules", "getStudentSchedule", "getStudentTimeline", "getClassAttendance", "getStudentAttendanceSummary"],
   "Estudiante": ["getAcademicConfig", "getAsignaturasActivas", "getWhatsAppLink", "getQuestionBank", "getStudentEnrollmentHistory", "getAcademicCalendar", "getClassSchedules", "getStudentSchedule", "getStudentFile", "getStudentTimeline", "getStudentDocuments", "getClassAttendance", "getDailyAttendance", "submitAttendanceJustification", "getStudentAttendanceSummary", "getAttendanceIncidents"],
@@ -305,6 +313,15 @@ function doPost(e) {
       case "saveAttendanceFollowupCase": result = saveAttendanceFollowupCase(payload); break;
       case "addCaseFollowUpNote": result = addCaseFollowUpNote(payload); break;
       case "getStudentAttendanceSummary": result = getStudentAttendanceSummary(payload); break;
+
+      // Endpoints Fase 13 - Supervisión Docente y Calidad Educativa
+      case "createTeacherSupervision": result = createTeacherSupervision(payload); break;
+      case "getTeacherSupervisions": result = getTeacherSupervisions(payload); break;
+      case "updateSupervisionStatus": result = updateSupervisionStatus(payload); break;
+      case "saveSupervisionObservation": result = saveSupervisionObservation(payload); break;
+      case "getSupervisionObservation": result = getSupervisionObservation(payload); break;
+      case "saveTeacherImprovementPlan": result = saveTeacherImprovementPlan(payload); break;
+      case "getTeacherImprovementPlans": result = getTeacherImprovementPlans(payload); break;
 
       case "ping": result = { status: "success", service: "ACADEMIC", timestamp: new Date().toISOString(), dbConnected: true }; break;
       default: result = { status: "error", message: `Acción no reconocida: ${action}` };
@@ -604,6 +621,216 @@ function getStudentFile(payload) {
       movements: moves
     }
   };
+}
+
+// ---------------------------------------------------------------------------
+// LÓGICA DE SUPERVISIÓN DOCENTE Y CALIDAD EDUCATIVA (FASE 13)
+// ---------------------------------------------------------------------------
+
+function createTeacherSupervision(payload) {
+  const { docenteUserId, supervisorUserId, fechaProgramada, grado, seccion, asignatura, tipoSupervision, rubricaId, observacionesAdmin } = payload || {};
+  if (!docenteUserId || !tipoSupervision) throw new Error("docenteUserId y tipoSupervision son requeridos.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "SupervisionesDocentes");
+
+  const supId = "SUP-" + Date.now();
+  const now = new Date();
+
+  sheet.appendRow([
+    supId,
+    docenteUserId,
+    supervisorUserId || "Dirección",
+    fechaProgramada || now.toISOString().split('T')[0],
+    grado || "General",
+    seccion || "A",
+    asignatura || "General",
+    tipoSupervision,
+    rubricaId || "RUB-SUPERVISION-GENERAL",
+    "Planificada",
+    observacionesAdmin || "",
+    now
+  ]);
+
+  logStructuredEvent("ACADEMIC", "createTeacherSupervision", "INFO", "SUPERVISION_CREATED", `Supervisión ${supId} programada para docente ${docenteUserId}`, { supId, tipoSupervision }, payload && payload.authRole);
+
+  return { status: "success", message: "Supervisión docente programada exitosamente.", data: { supervisionId: supId } };
+}
+
+function getTeacherSupervisions(payload) {
+  const { docenteUserId, supervisorUserId, estado } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "SupervisionesDocentes");
+  const data = sheet.getDataRange().getValues();
+  if (data.length <= 1) return { status: "success", data: [] };
+
+  const supervisions = data.slice(1).filter(r => {
+    if (docenteUserId && String(r[1]).trim() !== String(docenteUserId).trim()) return false;
+    if (supervisorUserId && String(r[2]).trim() !== String(supervisorUserId).trim()) return false;
+    if (estado && String(r[9]).trim() !== String(estado).trim()) return false;
+    return true;
+  }).map(r => ({
+    supervisionId: r[0],
+    docenteUserId: r[1],
+    supervisorUserId: r[2],
+    fechaProgramada: r[3] ? new Date(r[3]).toISOString() : null,
+    grado: r[4],
+    seccion: r[5],
+    asignatura: r[6],
+    tipoSupervision: r[7],
+    rubricaId: r[8],
+    estado: r[9] || "Planificada",
+    observacionesAdmin: r[10],
+    fechaCreacion: r[11] ? new Date(r[11]).toISOString() : null
+  }));
+
+  return { status: "success", data: supervisions };
+}
+
+function updateSupervisionStatus(payload) {
+  const { supervisionId, nuevoEstado, observacionesAdmin } = payload || {};
+  if (!supervisionId || !nuevoEstado) throw new Error("supervisionId y nuevoEstado son requeridos.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "SupervisionesDocentes");
+  const data = sheet.getDataRange().getValues();
+  const idx = data.findIndex(r => String(r[0]).trim() === String(supervisionId).trim());
+  if (idx === -1) throw new Error("Supervisión no encontrada.");
+
+  sheet.getRange(idx + 1, 10).setValue(nuevoEstado);
+  if (observacionesAdmin) sheet.getRange(idx + 1, 11).setValue(observacionesAdmin);
+
+  return { status: "success", message: `Estado de supervisión actualizado a ${nuevoEstado}.` };
+}
+
+function saveSupervisionObservation(payload) {
+  const { supervisionId, respuestasRubrica, evidenciasTexto, fortalezasTexto, oportunidadesMejora, comentarioDocente } = payload || {};
+  if (!supervisionId) throw new Error("supervisionId es requerido.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "ObservacionesSupervision");
+  const supSheet = getOrCreateSheet(ss, "SupervisionesDocentes");
+
+  const data = sheet.getDataRange().getValues();
+  const idx = data.findIndex(r => String(r[1]).trim() === String(supervisionId).trim());
+
+  const now = new Date();
+  const respJSON = JSON.stringify(respuestasRubrica || {});
+
+  if (idx !== -1) {
+    sheet.getRange(idx + 1, 3).setValue(respJSON);
+    if (evidenciasTexto) sheet.getRange(idx + 1, 4).setValue(evidenciasTexto);
+    if (fortalezasTexto) sheet.getRange(idx + 1, 5).setValue(fortalezasTexto);
+    if (oportunidadesMejora) sheet.getRange(idx + 1, 6).setValue(oportunidadesMejora);
+    if (comentarioDocente) sheet.getRange(idx + 1, 7).setValue(comentarioDocente);
+    sheet.getRange(idx + 1, 8).setValue(now);
+  } else {
+    const obsId = "OBS-SUP-" + Date.now();
+    sheet.appendRow([
+      obsId,
+      supervisionId,
+      respJSON,
+      evidenciasTexto || "",
+      fortalezasTexto || "",
+      oportunidadesMejora || "",
+      comentarioDocente || "",
+      now
+    ]);
+  }
+
+  // Actualizar estado de supervisión a Finalizada
+  updateSupervisionStatus({ supervisionId, nuevoEstado: "Finalizada" });
+
+  return { status: "success", message: "Observaciones de la supervisión guardadas exitosamente." };
+}
+
+function getSupervisionObservation(payload) {
+  const { supervisionId } = payload || {};
+  if (!supervisionId) throw new Error("supervisionId es requerido.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "ObservacionesSupervision");
+  const data = sheet.getDataRange().getValues();
+  if (data.length <= 1) return { status: "success", data: null };
+
+  const obsRow = data.slice(1).find(r => String(r[1]).trim() === String(supervisionId).trim());
+  if (!obsRow) return { status: "success", data: null };
+
+  return {
+    status: "success",
+    data: {
+      observacionId: obsRow[0],
+      supervisionId: obsRow[1],
+      respuestasRubrica: obsRow[2] ? (typeof obsRow[2] === 'string' ? JSON.parse(obsRow[2]) : obsRow[2]) : {},
+      evidenciasTexto: obsRow[3],
+      fortalezasTexto: obsRow[4],
+      oportunidadesMejora: obsRow[5],
+      comentarioDocente: obsRow[6],
+      fechaRegistro: obsRow[7] ? new Date(obsRow[7]).toISOString() : null
+    }
+  };
+}
+
+function saveTeacherImprovementPlan(payload) {
+  const { planId, supervisionId, docenteUserId, objetivoMejora, acciones, responsableAcompanamiento, fechaInicio, fechaObjetivo, estado } = payload || {};
+  if (!docenteUserId || !objetivoMejora) throw new Error("docenteUserId y objetivoMejora son requeridos.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "PlanesMejoraPedagogica");
+
+  const pid = planId || ("PLAN-MEJORA-" + Date.now());
+  const now = new Date();
+  const data = sheet.getDataRange().getValues();
+  const idx = data.findIndex(r => String(r[0]).trim() === String(pid).trim());
+
+  if (idx !== -1) {
+    sheet.getRange(idx + 1, 4).setValue(objetivoMejora);
+    if (acciones) sheet.getRange(idx + 1, 5).setValue(JSON.stringify(acciones));
+    if (estado) sheet.getRange(idx + 1, 9).setValue(estado);
+    sheet.getRange(idx + 1, 10).setValue(now);
+  } else {
+    sheet.appendRow([
+      pid,
+      supervisionId || "",
+      docenteUserId,
+      objetivoMejora,
+      JSON.stringify(acciones || []),
+      responsableAcompanamiento || "Coordinación Pedagógica",
+      fechaInicio || now.toISOString().split('T')[0],
+      fechaObjetivo || "",
+      estado || "EnCurso",
+      now
+    ]);
+  }
+
+  return { status: "success", message: "Plan de mejora pedagógica guardado exitosamente.", data: { planId: pid } };
+}
+
+function getTeacherImprovementPlans(payload) {
+  const { docenteUserId, supervisionId } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "PlanesMejoraPedagogica");
+  const data = sheet.getDataRange().getValues();
+  if (data.length <= 1) return { status: "success", data: [] };
+
+  const plans = data.slice(1).filter(r => {
+    if (docenteUserId && String(r[2]).trim() !== String(docenteUserId).trim()) return false;
+    if (supervisionId && String(r[1]).trim() !== String(supervisionId).trim()) return false;
+    return true;
+  }).map(r => ({
+    planId: r[0],
+    supervisionId: r[1],
+    docenteUserId: r[2],
+    objetivoMejora: r[3],
+    acciones: r[4] ? (typeof r[4] === 'string' ? JSON.parse(r[4]) : r[4]) : [],
+    responsableAcompanamiento: r[5],
+    fechaInicio: r[6] ? new Date(r[6]).toISOString() : null,
+    fechaObjetivo: r[7] ? new Date(r[7]).toISOString() : null,
+    estado: r[8] || "EnCurso",
+    fechaRevision: r[9] ? new Date(r[9]).toISOString() : null
+  }));
+
+  return { status: "success", data: plans };
 }
 
 // --- FUNCIONES DE CONFIGURACIÓN INSTITUCIONAL Y ESTRUCTURA ACADÉMICA (FASE 3) ---
