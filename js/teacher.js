@@ -439,7 +439,28 @@ document.addEventListener('DOMContentLoaded', () => {
         btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-1"></i> Verificando colisiones...';
 
         try {
-            const ofertaId = `OFE-${grado.substring(0,3).toUpperCase()}-${seccion}`;
+            let ofertaId = "";
+            try {
+                const offerRes = await fetchApi('ACADEMIC', 'getAcademicOffers', { grado, seccion });
+                if (offerRes && offerRes.status === 'success' && Array.isArray(offerRes.data) && offerRes.data.length > 0) {
+                    ofertaId = offerRes.data[0].ofertaId;
+                }
+            } catch (_) {}
+
+            if (!ofertaId) {
+                const createOfferRes = await fetchApi('ACADEMIC', 'createAcademicOffer', {
+                    grado: grado,
+                    seccion: seccion,
+                    asignaturaId: "ASIG-GENERAL",
+                    planId: "PLAN-2026"
+                });
+                if (createOfferRes && createOfferRes.status === 'success' && createOfferRes.data?.ofertaId) {
+                    ofertaId = createOfferRes.data.ofertaId;
+                } else {
+                    ofertaId = `OFE-${grado.substring(0,3).toUpperCase()}-${seccion}`;
+                }
+            }
+
             const res = await fetchApi('ACADEMIC', 'createClassSchedule', {
                 ofertaId,
                 diaSemana,
@@ -468,8 +489,34 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('btn-open-substitution-modal')?.addEventListener('click', async () => {
         const sustitutoUserId = prompt("Ingrese el ID o Correo del Docente Sustituto:");
         if (!sustitutoUserId) return;
-        const ofertaId = prompt("Ingrese el ID de la Oferta Académica / Clase (Ej. OFE-DÉC-A):", "OFE-DÉC-A");
-        if (!ofertaId) return;
+
+        const gradoInput = prompt("Ingrese el Grado para la sustitución (Ej. Décimo, Undécimo, Duodécimo):", "Décimo");
+        if (!gradoInput) return;
+        const seccionInput = prompt("Ingrese la Sección (Ej. A, B, C):", "A");
+        if (!seccionInput) return;
+
+        let ofertaId = "";
+        try {
+            const offerRes = await fetchApi('ACADEMIC', 'getAcademicOffers', { grado: gradoInput, seccion: seccionInput });
+            if (offerRes && offerRes.status === 'success' && Array.isArray(offerRes.data) && offerRes.data.length > 0) {
+                ofertaId = offerRes.data[0].ofertaId;
+            }
+        } catch (_) {}
+
+        if (!ofertaId) {
+            const createOfferRes = await fetchApi('ACADEMIC', 'createAcademicOffer', {
+                grado: gradoInput,
+                seccion: seccionInput,
+                asignaturaId: "ASIG-GENERAL",
+                planId: "PLAN-2026"
+            });
+            if (createOfferRes && createOfferRes.status === 'success' && createOfferRes.data?.ofertaId) {
+                ofertaId = createOfferRes.data.ofertaId;
+            } else {
+                ofertaId = `OFE-${gradoInput.substring(0,3).toUpperCase()}-${seccionInput}`;
+            }
+        }
+
         const motivo = prompt("Motivo de la sustitución temporal:", "Licencia Médica / Permiso");
 
         try {
