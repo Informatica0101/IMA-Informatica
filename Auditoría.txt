@@ -1,3 +1,30 @@
+AUDITORÍA TÉCNICA Y DIAGNÓSTICO DE ARQUITECTURA - FASE 16: RECURSOS HUMANOS Y ADMINISTRACIÓN DEL PERSONAL - Sun Jul 5 2026
+
+Archivos y Módulos Auditados:
+- backend/accounting-service/Code.gs
+- dashboard-recursos-humanos.html
+- js/teacher.js
+- js/api.js
+
+1. DIAGNÓSTICO Y REUTILIZACIÓN DE ESTRUCTURAS DE DATOS EXISTENTES
+- Tablas y Endpoints en `backend/accounting-service/Code.gs`:
+  * `ExpedientesLaborales`: Registro de expediente del personal desacoplado de la cuenta de usuario (`createEmployeeRecord`, `getEmployeeRecords`, `updateEmployeeLaborStatus`).
+  * `ContratosLaborales`: Contratos de trabajo, vigencias, tipo de jornada y salario base (`manageEmployeeContract`, `getEmployeeContracts`).
+  * `SolicitudesVacaciones` & `IncapacidadesMedicas`: Permisos, licencias y ausencias con cálculo de saldos en días (`submitLeaveVacationRequest`, `getVacationRequests`, `reviewVacationRequest`, `calculateVacationBalances`, `recordMedicalLeave`).
+  * `DocumentosLaborales`: Repositorio privado de documentos del personal en Google Drive (`uploadEmployeeDocument`, `getEmployeeDocuments`).
+  * `HorariosLaborales` & `DeduccionesAsistencia`: Horarios y registros de asistencia/tardanzas del personal (`configureWorkSchedule`, `recordStaffCheckIn`, `getStaffAttendanceLogs`, `submitAttendanceCorrection`, `reviewAttendanceCorrection`).
+  * `AnticiposPrestamosEmpleado`: Anticipos de salario y préstamos con amortización (`requestEmployeeLoanAdvance`, `getEmployeeLoansAdvances`, `approveEmployeeLoanAdvance`).
+
+2. HALLAZGOS Y PLAN DE REFUERZO PARA LA FASE 16
+- Backend (`backend/accounting-service/Code.gs`):
+  * Garantizar la inmutabilidad de los registros históricos tras cambios de estado laboral (Puesto, Departamento, Retirado).
+  * Validar en el servidor que la desactivación de un acceso digital de usuario no borre el expediente laboral ni los contratos vigentes.
+  * Verificar que los permisos RBAC para `RecursosHumanos`, `Director`, `Subdirector` y `Empleado` restrinjan los campos confidenciales (diagnósticos médicos, salarios) según el rol solicitante.
+- Interfaz del Panel de RRHH (`dashboard-recursos-humanos.html` / `js/teacher.js`):
+  * Consola de administración de personal con indicadores clave de empleados activos, permisos pendientes, contratos a vencer y accesos directos para la carga de documentos privados.
+
+====================================================================================================
+
 AUDITORÍA TÉCNICA Y DIAGNÓSTICO DE ARQUITECTURA - FASE 15: PAGOS ESCOLARES, COBROS Y FACTURACIÓN - Sun Jul 5 2026
 
 Archivos y Módulos Auditados:
@@ -52,4 +79,5 @@ Versión de Arquitectura: v8.20.0
 - FASE 12: Bienestar estudiantil, orientación y seguimiento de casos -> COMPLETADA
 - FASE 13: Supervisión docente y calidad educativa -> COMPLETADA
 - FASE 14: Contabilidad, presupuestos y control financiero -> COMPLETADA
-- FASE 15: Pagos escolares, cobros y facturación -> EN PROCESO DE REFUERZO
+- FASE 15: Pagos escolares, cobros y facturación -> COMPLETADA
+- FASE 16: Recursos humanos y administración del personal -> EN PROCESO DE REFUERZO
