@@ -17,6 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Elementos de Navegación y Secciones ---
     const navDashboard = document.getElementById('nav-dashboard');
+    const navGradebook = document.getElementById('nav-gradebook');
     const navTareas = document.getElementById('nav-tareas');
     const navProyectos = document.getElementById('nav-proyectos');
     const navLogros = document.getElementById('nav-logros');
@@ -25,6 +26,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const navReportsOld = document.getElementById('nav-reportes');
 
     const sectionAcademicReports = document.getElementById('section-dashboard');
+    const sectionGradebook = document.getElementById('section-gradebook');
     const sectionTareas = document.getElementById('section-tareas');
     const sectionProyectos = document.getElementById('section-proyectos');
     const sectionLogros = document.getElementById('section-logros');
@@ -54,8 +56,8 @@ document.addEventListener('DOMContentLoaded', () => {
     let isNavigating = false;
     let studentSort = { column: 'nombre', direction: 'asc' };
 
-    const allSections = [sectionAcademicReports, sectionTareas, sectionProyectos, sectionLogros, sectionNews, sectionAdmin, sectionReportes];
-    const allNavLinks = [navDashboard, navTareas, navProyectos, navLogros, navNews, navAdmin, navReportsOld];
+    const allSections = [sectionAcademicReports, sectionGradebook, sectionTareas, sectionProyectos, sectionLogros, sectionNews, sectionAdmin, sectionReportes];
+    const allNavLinks = [navDashboard, navGradebook, navTareas, navProyectos, navLogros, navNews, navAdmin, navReportsOld];
 
     // Auxiliar para normalizar strings (trim, lowercase y sin acentos) para comparaciones robustas
     const norm = (s) => (s || "").toString().trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
@@ -90,6 +92,10 @@ document.addEventListener('DOMContentLoaded', () => {
     navDashboard.addEventListener('click', () => {
         window.navigateTo(sectionAcademicReports, navDashboard);
         fetchTeacherActivity();
+    });
+    navGradebook?.addEventListener('click', () => {
+        window.navigateTo(sectionGradebook, navGradebook);
+        initGradebookModule();
     });
     navTareas.addEventListener('click', () => {
         window.navigateTo(sectionTareas, navTareas);
@@ -2864,6 +2870,275 @@ function toBase64(file) {
         reader.onerror = error => reject(error);
     });
 }
+
+    // --- LÓGICA DEL LIBRO OFICIAL DE CALIFICACIONES (FASE 9) ---
+    let currentGradebookData = { alumnos: [], calificaciones: [], recuperaciones: [], categories: [], estadoPeriodo: "Abierto" };
+
+    async function initGradebookModule() {
+        const selGrado = document.getElementById('gb-filter-grado');
+        const selSeccion = document.getElementById('gb-filter-seccion');
+        const selAsignatura = document.getElementById('gb-filter-asignatura');
+        const selParcial = document.getElementById('gb-filter-parcial');
+
+        if (!selGrado) return;
+
+        // Cargar opciones de filtros desde GLOBAL_SCOPE
+        const scope = window.GLOBAL_SCOPE || {};
+        const granular = scope.GranularConfig || [];
+
+        const grados = Array.isArray(scope.GradoActual) ? scope.GradoActual : (scope.GradoActual ? [scope.GradoActual] : ["10mo Grado"]);
+        selGrado.innerHTML = grados.map(g => `<option value="${g}">${g}</option>`).join('');
+
+        const updateAsignaturasFilter = () => {
+            const gVal = selGrado.value;
+            const sVal = selSeccion.value;
+            const matches = granular.filter(r => norm(r.grado) === norm(gVal) && norm(r.seccion) === norm(sVal));
+            const asigs = [...new Set(matches.map(r => r.asignatura))].filter(Boolean);
+            if (asigs.length === 0) {
+                selAsignatura.innerHTML = '<option value="General">General</option>';
+            } else {
+                selAsignatura.innerHTML = asigs.map(a => `<option value="${a}">${a}</option>`).join('');
+            }
+        };
+
+        selGrado.onchange = () => { updateAsignaturasFilter(); fetchGradebookData(); };
+        selSeccion.onchange = () => { updateAsignaturasFilter(); fetchGradebookData(); };
+        selAsignatura.onchange = () => fetchGradebookData();
+        selParcial.onchange = () => fetchGradebookData();
+
+        updateAsignaturasFilter();
+        await fetchGradebookData();
+    }
+
+    async function fetchGradebookData() {
+        const tbody = document.getElementById('gb-table-body');
+        const selGrado = document.getElementById('gb-filter-grado');
+        const selSeccion = document.getElementById('gb-filter-seccion');
+        const selAsignatura = document.getElementById('gb-filter-asignatura');
+        const selParcial = document.getElementById('gb-filter-parcial');
+
+        if (!tbody) return;
+
+        tbody.innerHTML = '<tr><td colspan="9" class="p-6 text-center text-gray-400 italic"><i class="fas fa-spinner fa-spin mr-2"></i>Cargando calificaciones del período...</td></tr>';
+
+        const payload = {
+            grado: selGrado ? selGrado.value : "10mo Grado",
+            seccion: selSeccion ? selSeccion.value : "A",
+            asignatura: selAsignatura ? selAsignatura.value : "General",
+            parcial: selParcial ? selParcial.value : "I parcial",
+            profesorId: currentUser.userId
+        };
+
+        try {
+            const res = await fetchApi('EXAM', 'getGradebookData', payload);
+            if (res.status === 'success' && res.data) {
+                currentGradebookData = res.data;
+                renderGradebookTable();
+            } else {
+                tbody.innerHTML = `<tr><td colspan="9" class="p-6 text-center text-red-500">${res.message || 'Error al obtener libro de calificaciones'}</td></tr>`;
+            }
+        } catch (e) {
+            tbody.innerHTML = `<tr><td colspan="9" class="p-6 text-center text-red-500">Error de conexión: ${e.message}</td></tr>`;
+        }
+    }
+
+    function renderGradebookTable() {
+        const tbody = document.getElementById('gb-table-body');
+        const bannerText = document.getElementById('gb-status-text');
+        const bannerBadge = document.getElementById('gb-status-badge');
+        if (!tbody) return;
+
+        const { alumnos, calificaciones, recuperaciones, categories, estadoPeriodo } = currentGradebookData;
+
+        if (bannerText && bannerBadge) {
+            if (estadoPeriodo === 'Cerrado') {
+                bannerText.textContent = "Estado del Parcial: CERRADO Y PUBLICADO OFICIALMENTE";
+                bannerBadge.textContent = "Publicado";
+                bannerBadge.className = "px-2.5 py-0.5 rounded-full text-[10px] bg-emerald-200 text-emerald-900 uppercase font-bold";
+            } else {
+                bannerText.textContent = "Estado del Parcial: Abierto (Permite registro y edición de notas)";
+                bannerBadge.textContent = "Abierto";
+                bannerBadge.className = "px-2.5 py-0.5 rounded-full text-[10px] bg-blue-200 text-blue-800 uppercase font-bold";
+            }
+        }
+
+        if (!alumnos || alumnos.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="9" class="p-6 text-center text-gray-400 italic">No hay estudiantes inscritos en el grupo seleccionado.</td></tr>';
+            return;
+        }
+
+        tbody.innerHTML = alumnos.map((al, idx) => {
+            const studentCalifs = (calificaciones || []).filter(c => String(c.userId).trim() === String(al.userId).trim());
+            const studentRecs = (recuperaciones || []).filter(r => String(r.userId).trim() === String(al.userId).trim());
+
+            // Ponderaciones predeterminadas (35% tareas, 40% exámenes, 15% proyectos, 10% participación)
+            const cTareas = studentCalifs.find(c => c.evaluacionId === 'CAT-1')?.notaObtenida || 0;
+            const cExamenes = studentCalifs.find(c => c.evaluacionId === 'CAT-2')?.notaObtenida || 0;
+            const cProyectos = studentCalifs.find(c => c.evaluacionId === 'CAT-3')?.notaObtenida || 0;
+            const cPartic = studentCalifs.find(c => c.evaluacionId === 'CAT-4')?.notaObtenida || 0;
+
+            let scoreRaw = (cTareas * 0.35) + (cExamenes * 0.40) + (cProyectos * 0.15) + (cPartic * 0.10);
+
+            // Si tiene recuperación registrada, sustituir/ajustar
+            let recBadge = '-';
+            if (studentRecs.length > 0) {
+                const latestRec = studentRecs[studentRecs.length - 1];
+                scoreRaw = Math.max(scoreRaw, latestRec.notaFinalCalculada);
+                recBadge = `<span class="px-2 py-0.5 bg-indigo-100 text-indigo-800 rounded font-bold text-[10px]" title="Original: ${latestRec.notaOriginal}">+${latestRec.notaFinalCalculada} (${latestRec.metodoAplicado})</span>`;
+            }
+
+            const finalScore = parseFloat(scoreRaw.toFixed(1));
+            const isApproved = finalScore >= 70;
+
+            return `
+                <tr class="hover:bg-gray-50/80 transition-colors">
+                    <td class="p-3 font-semibold text-gray-800">
+                        <div>${al.nombreCompleto}</div>
+                        <div class="text-[9px] text-gray-400 font-mono">${al.userId}</div>
+                    </td>
+                    <td class="p-2 text-center">
+                        <input type="number" min="0" max="100" class="w-16 text-center text-xs p-1.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-purple-400 gb-score-input" data-userid="${al.userId}" data-cat="CAT-1" value="${cTareas}">
+                    </td>
+                    <td class="p-2 text-center">
+                        <input type="number" min="0" max="100" class="w-16 text-center text-xs p-1.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-purple-400 gb-score-input" data-userid="${al.userId}" data-cat="CAT-2" value="${cExamenes}">
+                    </td>
+                    <td class="p-2 text-center">
+                        <input type="number" min="0" max="100" class="w-16 text-center text-xs p-1.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-purple-400 gb-score-input" data-userid="${al.userId}" data-cat="CAT-3" value="${cProyectos}">
+                    </td>
+                    <td class="p-2 text-center">
+                        <input type="number" min="0" max="100" class="w-16 text-center text-xs p-1.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-purple-400 gb-score-input" data-userid="${al.userId}" data-cat="CAT-4" value="${cPartic}">
+                    </td>
+                    <td class="p-3 text-center font-bold text-sm bg-purple-50/50 ${isApproved ? 'text-purple-700' : 'text-red-600'}">
+                        ${finalScore}%
+                    </td>
+                    <td class="p-3 text-center bg-indigo-50/30">
+                        ${recBadge}
+                    </td>
+                    <td class="p-3 text-center">
+                        <span class="px-2.5 py-1 rounded-full text-[9px] font-bold uppercase tracking-wider ${isApproved ? 'bg-emerald-100 text-emerald-800' : 'bg-red-100 text-red-800'}">
+                            ${isApproved ? 'Aprobado' : 'Reprobado'}
+                        </span>
+                    </td>
+                    <td class="p-3 text-center">
+                        <button onclick="window.quickRecoveryPrompt('${al.userId}', '${al.nombreCompleto}', ${finalScore})" class="px-2 py-1 bg-indigo-50 text-indigo-600 hover:bg-indigo-100 rounded text-[9px] font-bold uppercase transition-colors">
+                            Recuperación
+                        </button>
+                    </td>
+                </tr>
+            `;
+        }).join('');
+    }
+
+    window.quickRecoveryPrompt = async function(userId, nombre, notaActual) {
+        const notaRec = prompt(`Registrar recuperación para ${nombre}.\nNota Calculada Actual: ${notaActual}%\n\nIngrese la nueva nota obtenida (0-100):`);
+        if (!notaRec || isNaN(parseFloat(notaRec))) return;
+
+        const metodo = prompt("Seleccione el método de aplicación:\n1. Sustitucion (Reemplaza nota anterior)\n2. Promedio (Promedia nota original y nueva)\n3. Mayor (Conserva la nota más alta)", "Sustitucion");
+
+        try {
+            const res = await fetchApi('EXAM', 'saveStudentRecovery', {
+                evaluacionId: "CAT-GLOBAL",
+                userId: userId,
+                notaOriginal: notaActual,
+                notaRecuperada: parseFloat(notaRec),
+                metodoAplicado: metodo || "Sustitucion",
+                autorizadoPor: currentUser.nombre
+            });
+
+            if (res.status === 'success') {
+                alert(`Recuperación registrada con éxito para ${nombre}. Nueva nota final: ${res.data?.notaFinalCalculada}`);
+                fetchGradebookData();
+            } else {
+                alert("Error: " + res.message);
+            }
+        } catch (e) {
+            alert("Error al guardar recuperación: " + e.message);
+        }
+    };
+
+    document.getElementById('btn-gb-save-all')?.addEventListener('click', async () => {
+        const inputs = document.querySelectorAll('.gb-score-input');
+        const califsToSave = [];
+
+        inputs.forEach(inp => {
+            const userId = inp.dataset.userid;
+            const catId = inp.dataset.cat;
+            const score = parseFloat(inp.value) || 0;
+            califsToSave.push({
+                evaluacionId: catId,
+                userId: userId,
+                notaObtenida: score,
+                puntajePonderado: score,
+                observaciones: "Actualizado desde Libro de Calificaciones"
+            });
+        });
+
+        const btn = document.getElementById('btn-gb-save-all');
+        btn.disabled = true;
+        btn.textContent = "Guardando...";
+
+        try {
+            const res = await fetchApi('EXAM', 'saveGradebookGrades', {
+                calificaciones: califsToSave,
+                esBorrador: false,
+                esPublicada: true,
+                profesorId: currentUser.userId
+            });
+
+            if (res.status === 'success') {
+                alert("¡Calificaciones guardadas exitosamente en el servidor!");
+                fetchGradebookData();
+            } else {
+                alert("Error al guardar: " + res.message);
+            }
+        } catch (e) {
+            alert("Error de conexión al guardar calificaciones: " + e.message);
+        } finally {
+            btn.disabled = false;
+            btn.textContent = "Guardar Cambios del Libro";
+        }
+    });
+
+    document.getElementById('btn-gb-close-period')?.addEventListener('click', async () => {
+        const selGrado = document.getElementById('gb-filter-grado')?.value;
+        const selSeccion = document.getElementById('gb-filter-seccion')?.value;
+        const selAsignatura = document.getElementById('gb-filter-asignatura')?.value;
+        const selParcial = document.getElementById('gb-filter-parcial')?.value;
+
+        if (!confirm(`¿Confirma el CIERRE OFICIAL y PUBLICACIÓN del período ${selParcial} para la asignatura ${selAsignatura} (${selGrado} ${selSeccion})?\n\nLas notas quedarán consolidadas y visibles para estudiantes y padres.`)) {
+            return;
+        }
+
+        try {
+            const res = await fetchApi('EXAM', 'closePeriodGradebook', {
+                anoId: "2026",
+                periodoId: selParcial,
+                grado: selGrado,
+                seccion: selSeccion,
+                asignatura: selAsignatura,
+                profesorId: currentUser.userId
+            });
+
+            if (res.status === 'success') {
+                alert(res.message);
+                fetchGradebookData();
+            } else {
+                alert("Error: " + res.message);
+            }
+        } catch (e) {
+            alert("Error de cierre: " + e.message);
+        }
+    });
+
+    document.getElementById('btn-gb-config-weights')?.addEventListener('click', () => {
+        alert("Distribución porcentual institucional del New Generation:\n\n- Tareas y Trabajos (CAT-1): 35%\n- Exámenes y Pruebas (CAT-2): 40%\n- Proyectos e Investigaciones (CAT-3): 15%\n- Prácticas y Participación (CAT-4): 10%\n\nSuma total: 100%");
+    });
+
+    document.getElementById('btn-gb-register-recovery')?.addEventListener('click', () => {
+        const userId = prompt("Ingrese el ID del estudiante para recuperación:");
+        if (!userId) return;
+        window.quickRecoveryPrompt(userId, "Estudiante " + userId, 65);
+    });
 
     // Inicialización automática de la sección de entregas (A-73)
     // Usar replaceState para el estado inicial incluyendo el stack jerárquico (v7.6.4)

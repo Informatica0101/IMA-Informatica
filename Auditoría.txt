@@ -1,3 +1,39 @@
+AUDITORÍA TÉCNICA Y DIAGNÓSTICO DE ARQUITECTURA - FASE 9: EVALUACIONES, CALIFICACIONES Y RESULTADOS ACADÉMICOS - Sun Jul 5 2026
+
+Archivos y Módulos Auditados:
+- backend/exam-service/Code.gs
+- backend/task-service/Code.gs
+- backend/academic-service/Code.gs
+- teacher-dashboard.html
+- student-dashboard.html
+- js/teacher.js
+- js/student.js
+- js/api.js
+
+1. DIAGNÓSTICO Y REUTILIZACIÓN DE ESTRUCTURAS DE DATOS EXISTENTES
+- Tablas y Endpoints existentes en `backend/exam-service/Code.gs`:
+  * `CategoriasEvaluacion`: Categorías de evaluación y ponderaciones (CAT-1, CAT-2, etc.) (`getEvaluationCategories`, `saveEvaluationCategory`).
+  * `CalificacionesEstudiantes`: Registro centralizado de notas por evaluación y estudiante (`getGradebookData`, `saveGradebookGrades`).
+  * `RubricasEvaluacion`: Rúbricas y criterios de desempeño (`getRubrics`, `saveRubric`).
+  * `RecuperacionesEstudiante`: Registro de notas de recuperación y métodos de sustitución/promedio/mayor (`saveStudentRecovery`, `getStudentRecoveries`).
+  * `CierresPeriodos`: Estado de cierre por parcial, grado, sección y asignatura (`closePeriodGradebook`, `reopenPeriodGradebook`).
+  * `Examenes` & `EntregasExamen`: Exámenes en línea y calificaciones automáticas (`getStudentExams`, `submitExam`, `gradeExamSubmission`).
+- Tablas y Endpoints en `backend/task-service/Code.gs`:
+  * `Tareas` & `Entregas`: Tareas, trabajos y entregas calificadas por docentes (`getStudentTasks`, `getTeacherActivity`).
+
+2. HALLAZGOS Y PLAN DE CONSOLIDACIÓN PARA LA FASE 9
+- Motor Backend (`backend/exam-service/Code.gs`):
+  * Consolidar `getGradebookData` para que reúna automáticamente en una sola llamada: 1) Estudiantes del grado/sección, 2) Categorías de evaluación y ponderaciones, 3) Tareas y exámenes de la asignatura/parcial, 4) Entregas y notas registradas en `CalificacionesEstudiantes` y `RecuperacionesEstudiante`, 5) Estado de cierre de período (`CierresPeriodos`).
+  * Integrar el cálculo automático centralizado de promedios ponderados en backend con redondeo institucional a 1 decimal, aplicando reglas de sustitución/promedio/mayor de recuperaciones y estado de aprobación (Nota >= 70 = Aprobado).
+  * Robustecer `closePeriodGradebook` para marcar `esPublicada = true` en todas las calificaciones del período y restringir publicaciones no autorizadas.
+  * Garantizar en `getStudentAcademicReport` que los estudiantes y responsables solo puedan consultar notas publicadas (`esPublicada === true` o período cerrado).
+- Interfaz Docente y Libro de Calificaciones (`teacher-dashboard.html`, `js/teacher.js`):
+  * Crear la sección e interfaz gráfica interactiva "Libro de Calificaciones" en el panel docente con matices por categoría, edición fluida de notas, cálculo en tiempo real, banderas de estado (Provisional vs Publicado), modal de configuración de ponderaciones (con validación de suma al 100%) y modal para registro trazable de recuperaciones.
+- Interfaz Estudiante y Portal Familiar (`student-dashboard.html`, `js/student.js`):
+  * Integrar tarjeta/pestaña de "Resultados Académicos" con desglose por asignatura, parcial, categorías, actividades evaluadas, observaciones del docente, desglose de recuperaciones y nota final calculada con badge de estado de aprobación.
+
+----------------------------------------------------------------------------------------------------
+
 AUDITORÍA TÉCNICA Y DIAGNÓSTICO DE ARQUITECTURA - FASE 8: AULA VIRTUAL Y GESTIÓN AVANZADA DEL APRENDIZAJE - Sun Jul 5 2026
 
 Archivos y Módulos Auditados:

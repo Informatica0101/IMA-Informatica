@@ -61,6 +61,9 @@ const PUBLIC_ACTIONS = [
 const ROLE_PERMISSIONS = {
   "Administrador": ["*"],
   "Desarrollador": ["*"],
+  "Padre": ["getStudentExams", "getExamQuestions", "getExamResult", "getEvaluationCategories", "getRubrics", "getStudentRecoveries", "getStudentAcademicReport"],
+  "Tutor": ["getStudentExams", "getExamQuestions", "getExamResult", "getEvaluationCategories", "getRubrics", "getStudentRecoveries", "getStudentAcademicReport"],
+  "Responsable": ["getStudentExams", "getExamQuestions", "getExamResult", "getEvaluationCategories", "getRubrics", "getStudentRecoveries", "getStudentAcademicReport"],
   "Dirección": ["*"],
   "Secretaría": ["*"],
   "Profesor": [
@@ -70,6 +73,9 @@ const ROLE_PERMISSIONS = {
     "getRubrics", "saveRubric", "saveStudentRecovery", "getStudentRecoveries", "closePeriodGradebook", "reopenPeriodGradebook", "getStudentAcademicReport"
   ],
   "Estudiante": [
+    "getStudentExams", "getExamQuestions", "submitExam", "getExamResult", "getEvaluationCategories", "getRubrics", "getStudentRecoveries", "getStudentAcademicReport"
+  ],
+  "Alumno": [
     "getStudentExams", "getExamQuestions", "submitExam", "getExamResult", "getEvaluationCategories", "getRubrics", "getStudentRecoveries", "getStudentAcademicReport"
   ]
 };
@@ -723,6 +729,23 @@ function getGradebookData(payload) {
     fechaRegistro: r[8] ? new Date(r[8]).toISOString() : null
   })) : [];
 
+  const recSheet = getOrCreateSheet(ss, "RecuperacionesEstudiante");
+  const recData = recSheet.getDataRange().getValues();
+  const recuperaciones = recData.length > 1 ? recData.slice(1).filter(r => studentIds.has(String(r[2]).trim())).map(r => ({
+    recuperacionId: r[0],
+    evaluacionId: r[1],
+    userId: r[2],
+    notaOriginal: parseFloat(r[3]) || 0,
+    notaRecuperada: parseFloat(r[4]) || 0,
+    notaFinalCalculada: parseFloat(r[5]) || 0,
+    metodoAplicado: r[6],
+    autorizadoPor: r[7],
+    fecha: r[8] ? new Date(r[8]).toISOString() : null
+  })) : [];
+
+  const catRes = getEvaluationCategories({});
+  const categories = catRes && catRes.data ? catRes.data : [];
+
   const cierresSheet = getOrCreateSheet(ss, "CierresPeriodos");
   const cierresData = cierresSheet.getDataRange().getValues();
   const cierreRow = cierresData.slice(1).find(r =>
@@ -739,6 +762,8 @@ function getGradebookData(payload) {
     data: {
       alumnos,
       calificaciones,
+      recuperaciones,
+      categories,
       estadoPeriodo
     }
   };
@@ -862,6 +887,20 @@ function closePeriodGradebook(payload) {
 
   sheet.appendRow([cierreId, anoId || "ANO-CURRENT", periodoId, grado, seccion || "A", asignatura, profesorId || "Docente", "Cerrado", now]);
 
+  try {
+    const califSheet = getOrCreateSheet(ss, "CalificacionesEstudiantes");
+    const califData = califSheet.getDataRange().getValues();
+    if (califData.length > 1) {
+      for (let i = 1; i < califData.length; i++) {
+        califData[i][5] = false; // esBorrador = false
+        califData[i][6] = true;  // esPublicada = true
+      }
+      califSheet.getRange(1, 1, califData.length, califData[0].length).setValues(califData);
+    }
+  } catch (err) {
+    logDebug("Error actualizando estados de publicación al cerrar período", err.message);
+  }
+
   return { status: "success", message: `Período ${periodoId} cerrado oficialmente para ${asignatura} (${grado} ${seccion || 'A'}).` };
 }
 
@@ -891,21 +930,45 @@ function getStudentAcademicReport(payload) {
 
   const califSheet = getOrCreateSheet(ss, "CalificacionesEstudiantes");
   const califData = califSheet.getDataRange().getValues();
-  const userCalificaciones = califData.length > 1 ? califData.slice(1).filter(r => String(r[2]).trim() === String(userId).trim()).map(r => ({
+  const userCalificaciones = califData.length > 1 ? califData.slice(1).filter(r => {
+    if (String(r[2]).trim() !== String(userId).trim()) return false;
+    const esBorrador = r[5] === true || String(r[5]).toLowerCase() === "true";
+    const esPublicada = r[6] === true || String(r[6]).toLowerCase() === "true";
+    return esPublicada || !esBorrador;
+  }).map(r => ({
     calificacionId: r[0],
     evaluacionId: r[1],
     notaObtenida: parseFloat(r[3]) || 0,
     puntajePonderado: parseFloat(r[4]) || 0,
+    esPublicada: r[6] === true || String(r[6]).toLowerCase() === "true",
     observaciones: r[7] || "",
     fechaRegistro: r[8] ? new Date(r[8]).toISOString() : null
   })) : [];
+
+  const recSheet = getOrCreateSheet(ss, "RecuperacionesEstudiante");
+  const recData = recSheet.getDataRange().getValues();
+  const userRecuperaciones = recData.length > 1 ? recData.slice(1).filter(r => String(r[2]).trim() === String(userId).trim()).map(r => ({
+    recuperacionId: r[0],
+    evaluacionId: r[1],
+    notaOriginal: parseFloat(r[3]) || 0,
+    notaRecuperada: parseFloat(r[4]) || 0,
+    notaFinalCalculada: parseFloat(r[5]) || 0,
+    metodoAplicado: r[6],
+    autorizadoPor: r[7],
+    fecha: r[8] ? new Date(r[8]).toISOString() : null
+  })) : [];
+
+  const catRes = getEvaluationCategories({});
+  const categories = catRes && catRes.data ? catRes.data : [];
 
   return {
     status: "success",
     data: {
       userId: userId,
       matriculas: userMatriculas.map(r => ({ matriculaId: r[0], fecha: r[1], grado: r[4], seccion: r[5], periodo: r[6], estado: r[8] })),
-      calificaciones: userCalificaciones
+      calificaciones: userCalificaciones,
+      recuperaciones: userRecuperaciones,
+      categories: categories
     }
   };
 }

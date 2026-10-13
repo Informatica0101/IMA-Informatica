@@ -245,6 +245,30 @@
 
             <!-- Vista de Progreso Académico -->
             <div id="view-progress" class="hidden animate-fade-in">
+                <!-- Resultados Académicos Oficiales del Estudiante (Fase 9) -->
+                <div id="student-academic-results-card" class="bg-white p-6 md:p-8 rounded-[2.5rem] shadow-sm border border-gray-100 mb-10">
+                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 bg-purple-600 text-white rounded-2xl flex items-center justify-center text-xl shadow-lg shadow-purple-100">
+                                <i class="fas fa-graduation-cap"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-bold text-gray-800">Boletín y Resultados Académicos Oficiales</h3>
+                                <p class="text-xs text-gray-500 font-medium">Calificaciones publicadas, recuperaciones registradas y estado de aprobación</p>
+                            </div>
+                        </div>
+                        <button id="btn-refresh-academic-results" class="px-4 py-2 bg-purple-50 text-purple-600 hover:bg-purple-100 rounded-xl font-bold text-xs uppercase tracking-widest transition-all">
+                            <i class="fas fa-sync-alt mr-1"></i> Actualizar Boletín
+                        </button>
+                    </div>
+
+                    <div id="student-academic-results-container" class="space-y-6">
+                        <div class="text-center py-8 text-gray-400 italic text-xs border-2 border-dashed border-gray-100 rounded-2xl">
+                            Cargando calificaciones oficiales publicadas...
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Expediente Académico (Task 4) -->
                 <div id="student-expediente" class="mb-10">
                     <!-- Inyectado dinámicamente desde student.js -->

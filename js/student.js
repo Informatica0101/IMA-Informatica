@@ -2355,6 +2355,77 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    // --- CONSULTA DE RESULTADOS ACADÉMICOS OFICIALES Y BOLETÍN (FASE 9) ---
+    async function loadStudentAcademicResults() {
+        const container = document.getElementById('student-academic-results-container');
+        if (!container) return;
+
+        container.innerHTML = '<div class="text-center py-8 text-gray-400 italic text-xs"><i class="fas fa-spinner fa-spin mr-2"></i>Cargando resultados oficiales del instituto...</div>';
+
+        try {
+            const res = await fetchApi('EXAM', 'getStudentAcademicReport', { userId: currentUser.userId });
+            if (res.status === 'success' && res.data) {
+                const califs = res.data.calificaciones || [];
+                const recs = res.data.recuperaciones || [];
+
+                if (califs.length === 0) {
+                    container.innerHTML = `
+                        <div class="text-center py-8 text-gray-500 text-xs bg-gray-50 rounded-2xl p-6 border border-gray-100">
+                            <i class="fas fa-info-circle text-2xl text-purple-400 mb-2 block"></i>
+                            No hay calificaciones oficiales publicadas para el período actual. Los resultados aparecerán una vez que el docente realice el cierre de parcial.
+                        </div>
+                    `;
+                    return;
+                }
+
+                container.innerHTML = `
+                    <div class="overflow-x-auto rounded-2xl border border-gray-100 bg-white">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="bg-gray-100 text-gray-700 text-[10px] uppercase tracking-wider">
+                                    <th class="p-3">Evaluación / Categoría</th>
+                                    <th class="p-3 text-center">Nota Obtenida</th>
+                                    <th class="p-3 text-center">Puntaje Ponderado</th>
+                                    <th class="p-3 text-center">Observaciones</th>
+                                    <th class="p-3 text-center">Estado</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-100 text-xs">
+                                ${califs.map(c => `
+                                    <tr class="hover:bg-purple-50/30 transition-colors">
+                                        <td class="p-3 font-semibold text-gray-800">${c.evaluacionId}</td>
+                                        <td class="p-3 text-center font-bold text-gray-900">${c.notaObtenida}%</td>
+                                        <td class="p-3 text-center font-bold text-purple-700">${c.puntajePonderado}%</td>
+                                        <td class="p-3 text-center text-gray-500">${c.observaciones || '-'}</td>
+                                        <td class="p-3 text-center">
+                                            <span class="px-2.5 py-0.5 rounded-full text-[9px] font-bold uppercase bg-emerald-100 text-emerald-800">
+                                                Publicada
+                                            </span>
+                                        </td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                `;
+            } else {
+                container.innerHTML = `<div class="text-center py-6 text-red-500 text-xs">${res.message || 'Error al obtener resultados'}</div>`;
+            }
+        } catch (e) {
+            container.innerHTML = `<div class="text-center py-6 text-red-500 text-xs">Error de conexión: ${e.message}</div>`;
+        }
+    }
+
+    document.getElementById('btn-refresh-academic-results')?.addEventListener('click', loadStudentAcademicResults);
+
+    // Carga inicial de resultados académicos si la pestaña de progreso está activa
+    const tabProgressBtn = document.getElementById('tab-progress');
+    if (tabProgressBtn) {
+        tabProgressBtn.addEventListener('click', () => {
+            loadStudentAcademicResults();
+        });
+    }
+
     window.addEventListener('beforeunload', function(e) {
         if (!isSubmitting && (activeUploads > 0 || uploadedFiles.length > 0)) {
             e.preventDefault();
