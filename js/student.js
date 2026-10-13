@@ -150,7 +150,40 @@ document.addEventListener('DOMContentLoaded', function() {
             });
     }
 
+    // Portal Familiar: Cargar estudiantes vinculados para tutores/padres (Fase 3)
+    function initFamilyStudentSwitcher() {
+        var switcherContainer = document.getElementById('family-student-switcher-container');
+        var switcherSelect = document.getElementById('family-student-switcher');
+        if (!switcherContainer || !switcherSelect || !currentUser) return;
+
+        fetchApi('USER', 'getGuardianStudents', { userId: currentUser.userId })
+            .then(function(res) {
+                if (res && res.status === 'success' && Array.isArray(res.data) && res.data.length > 0) {
+                    switcherContainer.classList.remove('hidden');
+                    switcherSelect.innerHTML = res.data.map(function(st) {
+                        var selected = (st.userId === currentUser.userId) ? 'selected' : '';
+                        return '<option value="' + st.userId + '" ' + selected + '>' + st.nombre + ' (' + (st.grado || '') + ' ' + (st.seccion || '') + ')</option>';
+                    }).join('');
+
+                    switcherSelect.onchange = function() {
+                        var selectedId = switcherSelect.value;
+                        var selectedStudent = res.data.find(function(s) { return s.userId === selectedId; });
+                        if (selectedStudent) {
+                            currentUser = selectedStudent;
+                            localStorage.setItem('currentUser', JSON.stringify(selectedStudent));
+                            renderStudentHeader();
+                            fetchAllActivities();
+                        }
+                    };
+                }
+            })
+            .catch(function(err) {
+                console.warn("Familiar student switcher deferred:", err);
+            });
+    }
+
     renderStudentHeader();
+    initFamilyStudentSwitcher();
     fetchAndRenderFormativeEvaluations();
     fetchAndRenderStudentAttendanceSummary();
     fetchAndRenderStudentAdministrativeRequests();
