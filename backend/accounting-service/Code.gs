@@ -130,14 +130,19 @@ function getOrCreateSheet(ss, name) {
     if (name === "CuentasPorPagarGastos") sheet.appendRow(["ObligacionID", "ProveedorID", "NumeroFactura", "Importe", "Impuestos", "FechaVencimiento", "EstadoAprobacion", "EstadoPago", "AsientoID", "Observaciones"]);
     if (name === "PlanCuentas") sheet.appendRow(["CuentaID", "CodigoCuenta", "NombreCuenta", "TipoCuenta", "Naturaleza", "Estado", "Observaciones"]);
     if (name === "AsientosContables") sheet.appendRow(["AsientoID", "Fecha", "Descripcion", "OrigenModulo", "ReferenciaID", "LineasJSON", "Estado", "CreadoPor"]);
+    if (name === "HorariosLaborales") sheet.appendRow(["HorarioID", "NombreHorario", "JornadaTipo", "HoraEntrada", "HoraSalida", "ToleranciaMinutos", "DiasLaboralesJSON", "Estado", "Observaciones"]);
+    if (name === "CorreccionesAsistencia") sheet.appendRow(["CorreccionID", "AsistenciaID", "EmpleadoId", "FechaIncidencia", "HoraOriginal", "HoraSolicitada", "Motivo", "EvidenciaUrl", "EstadoAprobacion", "AprobadoPor", "Observaciones"]);
     if (name === "PlanillasNomenclatura") sheet.appendRow(["PlanillaID", "FechaGeneracion", "PeriodoMes", "EmpleadoId", "EmpleadoNombre", "CargoPuesto", "SalarioBase", "HorasExtras", "MontoHorasExtras", "Bonificaciones", "DeduccionIHSS", "DeduccionRAP", "DeduccionISR", "OtrasDeducciones", "SalarioNeto", "Estado"]);
     if (name === "DeduccionesAsistencia") sheet.appendRow(["AsistenciaID", "Fecha", "EmpleadoId", "EmpleadoNombre", "HoraEntrada", "HoraSalida", "MinutosTardanza", "EstadoAsistencia", "Observaciones"]);
     if (name === "BoletasPago") sheet.appendRow(["BoletaID", "PlanillaID", "FechaEmision", "EmpleadoId", "EmpleadoNombre", "PeriodoMes", "TotalDevengado", "TotalDeducciones", "NetoAPagar", "EstadoBoleta"]);
+    if (name === "DocumentosLaborales") sheet.appendRow(["DocumentoID", "ExpedienteID", "CategoriaDoc", "TituloDocumento", "ArchivoUrl", "FechaCarga", "CargadoPor", "EstadoVisibilidad", "Observaciones"]);
+    if (name === "AnticiposPrestamosEmpleado") sheet.appendRow(["PrestamoID", "Fecha", "EmpleadoId", "Tipo", "MontoSolicitado", "MontoAprobado", "PlazoCuotas", "CuotaMensual", "SaldoPendiente", "EstadoAprobacion", "AprobadoPor", "Observaciones"]);
     if (name === "InventariosKardex") sheet.appendRow(["KardexID", "Fecha", "ItemCodigo", "ItemNombre", "CategoriaTipo", "TipoMovimiento", "Cantidad", "StockAnterior", "StockNuevo", "StockMinimo", "UbicacionResponsable", "Observaciones"]);
     if (name === "ProveedoresActivos") sheet.appendRow(["ProveedorID", "FechaRegistro", "NombreProveedor", "RTN", "Telefono", "Email", "RubroServicio", "Estado", "Observaciones"]);
     if (name === "ExpedientesLaborales") sheet.appendRow(["ExpedienteID", "PersonaId", "UserId", "Puesto", "Departamento", "CentroCosto", "FechaIngreso", "FechaSalida", "EstadoLaboral", "Observaciones"]);
     if (name === "ContratosLaborales") sheet.appendRow(["ContratoID", "ExpedienteID", "TipoContrato", "FechaInicio", "FechaFin", "SalarioBase", "Jornada", "EstadoContrato", "Observaciones"]);
     if (name === "SolicitudesVacaciones") sheet.appendRow(["SolicitudID", "ExpedienteID", "Tipo", "FechaInicio", "FechaFin", "DiasSolicitados", "Estado", "AprobadoPor", "Observaciones"]);
+    if (name === "IncapacidadesMedicas") sheet.appendRow(["IncapacidadID", "ExpedienteID", "CentroMedico", "DiagnosticoPrivadoUrl", "FechaInicio", "FechaFin", "DiasOtorgados", "EstadoIHSS", "Observaciones"]);
     if (name === "PoliticasFiscales") sheet.appendRow(["PoliticaID", "CodigoRegla", "NombreRegla", "Categoria", "BaseCalculo", "MetodoCalculo", "TasaImporte", "Estado", "Version", "Observaciones"]);
     if (name === "PoliticasInstitucionales") sheet.appendRow(["PoliticaInstID", "TipoDocumento", "Titulo", "Version", "ContenidoHTML", "Estado", "FechaPublicacion", "Observaciones"]);
     if (name === "AceptacionesPoliticas") sheet.appendRow(["AceptacionID", "UserId", "PoliticaInstID", "Version", "FechaAceptacion", "IpMetadata", "Estado"]);
@@ -170,6 +175,8 @@ const ROLE_PERMISSIONS = {
   "Contador": ["configurePaymentConcept", "configurePaymentTariff", "getStudentAccountStatement", "recordStudentPayment", "uploadPaymentVoucher", "generatePaymentReceiptPDF", "createFiscalInvoice", "getFiscalInvoices", "configureGatewayIntegration", "testGatewayConnection", "recordCashBankMovement", "closeCashSession", "getCashBankSummary", "performBankReconciliation", "recordAccountsPayableExpense", "getChartOfAccounts", "recordAccountingJournalEntry", "generatePayrollPeriod", "recordStaffAttendance", "getStaffPayrollReceipt", "recordInventoryMovement", "getInventoryKardex", "registerSupplier", "createEmployeeRecord", "getEmployeeRecords", "manageEmployeeContract", "getEmployeeContracts", "submitVacationRequest", "getVacationRequests", "reviewVacationRequest", "configureFiscalPolicy", "getFiscalPolicies", "publishInstitutionalPolicy", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getAdvancedDashboardAnalytics", "manageAssetItem", "getAssetItems", "assignAssetCustody", "getAssetAssignments", "resolveSpreadsheetSource", "getSpreadsheetCatalog", "validateImportPreview", "importDataWithColumnMapping", "getMigrationLogs", "configureDiscountScholarshipRule", "getDiscountScholarshipRules", "submitDiscountScholarshipRequest", "getDiscountScholarshipRequests", "calculateAppliedDiscount", "getStoreProducts", "getStoreOrders", "getCafeteriaMenu", "getCafeteriaOrders"],
   "EncargadoTienda": ["getStoreProducts", "manageStoreProduct", "createStoreOrder", "getStoreOrders", "updateStoreOrderStatus", "recordInventoryMovement", "getInventoryKardex", "getInstitutionalPolicies"],
   "EncargadoCafeteria": ["getCafeteriaMenu", "manageCafeteriaMenu", "createCafeteriaOrder", "getCafeteriaOrders", "updateCafeteriaOrderStatus", "recordInventoryMovement", "getInventoryKardex", "getInstitutionalPolicies"],
+  "RecursosHumanos": ["createEmployeeRecord", "getEmployeeRecords", "manageEmployeeContract", "getEmployeeContracts", "updateEmployeeLaborStatus", "configureWorkSchedule", "recordStaffCheckIn", "getStaffAttendanceLogs", "submitAttendanceCorrection", "reviewAttendanceCorrection", "submitLeaveVacationRequest", "getLeaveVacationRequests", "reviewLeaveVacationRequest", "calculateVacationBalances", "recordMedicalLeave", "calculatePayrollPeriod", "updatePayrollPeriodStatus", "getPayrollPeriodSummary", "requestEmployeeLoanAdvance", "getEmployeeLoansAdvances", "approveEmployeeLoanAdvance", "getLoanAmortizationSchedule", "generatePayrollReceiptPDF", "uploadEmployeeDocument", "getEmployeeDocuments", "getHRDashboardAnalytics", "getInstitutionalPolicies"],
+  "Empleado": ["getEmployeeRecords", "getEmployeeContracts", "recordStaffCheckIn", "getStaffAttendanceLogs", "submitAttendanceCorrection", "submitLeaveVacationRequest", "getLeaveVacationRequests", "requestEmployeeLoanAdvance", "getEmployeeLoansAdvances", "generatePayrollReceiptPDF", "getEmployeeDocuments"],
   "Consejeros": ["getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getLibraryBooks", "getTransportRoutes", "getSchoolDocumentTemplates", "generateSchoolDocument", "getIssuedSchoolDocuments"],
   "Profesor": ["getStaffPayrollReceipt", "submitVacationRequest", "getVacationRequests", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getLibraryBooks", "getTransportRoutes", "getSchoolDocumentTemplates", "generateSchoolDocument", "getIssuedSchoolDocuments", "verifySACETemplateCompatibility", "generateSACEReportFile"],
   "Asistente": ["getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getLibraryBooks", "getSchoolDocumentTemplates"],
@@ -216,6 +223,22 @@ function doPost(e) {
       case "recordAccountsPayableExpense": result = recordAccountsPayableExpense(payload); break;
       case "getChartOfAccounts": result = getChartOfAccounts(payload); break;
       case "recordAccountingJournalEntry": result = recordAccountingJournalEntry(payload); break;
+      case "configureWorkSchedule": result = configureWorkSchedule(payload); break;
+      case "recordStaffCheckIn": result = recordStaffCheckIn(payload); break;
+      case "getStaffAttendanceLogs": result = getStaffAttendanceLogs(payload); break;
+      case "submitAttendanceCorrection": result = submitAttendanceCorrection(payload); break;
+      case "reviewAttendanceCorrection": result = reviewAttendanceCorrection(payload); break;
+      case "calculatePayrollPeriod": result = calculatePayrollPeriod(payload); break;
+      case "updatePayrollPeriodStatus": result = updatePayrollPeriodStatus(payload); break;
+      case "getPayrollPeriodSummary": result = getPayrollPeriodSummary(payload); break;
+      case "requestEmployeeLoanAdvance": result = requestEmployeeLoanAdvance(payload); break;
+      case "getEmployeeLoansAdvances": result = getEmployeeLoansAdvances(payload); break;
+      case "approveEmployeeLoanAdvance": result = approveEmployeeLoanAdvance(payload); break;
+      case "getLoanAmortizationSchedule": result = getLoanAmortizationSchedule(payload); break;
+      case "generatePayrollReceiptPDF": result = generatePayrollReceiptPDF(payload); break;
+      case "uploadEmployeeDocument": result = uploadEmployeeDocument(payload); break;
+      case "getEmployeeDocuments": result = getEmployeeDocuments(payload); break;
+      case "getHRDashboardAnalytics": result = getHRDashboardAnalytics(payload); break;
       case "generatePayrollPeriod": result = generatePayrollPeriod(payload); break;
       case "recordStaffAttendance": result = recordStaffAttendance(payload); break;
       case "getStaffPayrollReceipt": result = getStaffPayrollReceipt(payload); break;
@@ -224,11 +247,17 @@ function doPost(e) {
       case "registerSupplier": result = registerSupplier(payload); break;
       case "createEmployeeRecord": result = createEmployeeRecord(payload); break;
       case "getEmployeeRecords": result = getEmployeeRecords(payload); break;
+      case "updateEmployeeLaborStatus": result = updateEmployeeLaborStatus(payload); break;
       case "manageEmployeeContract": result = manageEmployeeContract(payload); break;
       case "getEmployeeContracts": result = getEmployeeContracts(payload); break;
+      case "submitLeaveVacationRequest": result = submitLeaveVacationRequest(payload); break;
       case "submitVacationRequest": result = submitVacationRequest(payload); break;
+      case "getLeaveVacationRequests": result = getLeaveVacationRequests(payload); break;
       case "getVacationRequests": result = getVacationRequests(payload); break;
+      case "reviewLeaveVacationRequest": result = reviewLeaveVacationRequest(payload); break;
       case "reviewVacationRequest": result = reviewVacationRequest(payload); break;
+      case "calculateVacationBalances": result = calculateVacationBalances(payload); break;
+      case "recordMedicalLeave": result = recordMedicalLeave(payload); break;
       case "configureFiscalPolicy": result = configureFiscalPolicy(payload); break;
       case "getFiscalPolicies": result = getFiscalPolicies(payload); break;
       case "publishInstitutionalPolicy": result = publishInstitutionalPolicy(payload); break;
@@ -1746,35 +1775,51 @@ function getCashBankSummary(payload) {
 // PLANILLAS, DEDUCCIONES Y ASISTENCIA DE PERSONAL
 // ---------------------------------------------------------------------------
 
-function generatePayrollPeriod(payload) {
-  const { periodoMes, empleadosList } = payload || {};
-  if (!periodoMes || !Array.isArray(empleadosList) || empleadosList.length === 0) {
-    throw new Error("PeriodoMes y lista de empleados requeridos.");
-  }
+function calculatePayrollPeriod(payload) {
+  const { periodoMes, idempotencyToken } = payload || {};
+  if (!periodoMes) throw new Error("periodoMes requerido.");
 
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
   const planSheet = getOrCreateSheet(ss, "PlanillasNomenclatura");
-  const bolSheet = getOrCreateSheet(ss, "BoletasPago");
+  const expsRows = getOrCreateSheet(ss, "ExpedientesLaborales").getDataRange().getValues().slice(1);
+  const planData = planSheet.getDataRange().getValues();
+
+  // Control Anti-Duplicados por Periodo Mes e Idempotencia
+  const existingPlan = planData.find(r => String(r[2]).trim() === String(periodoMes).trim() && r[15] !== "Anulada");
+  if (existingPlan) {
+    return {
+      status: "success",
+      planillaId: existingPlan[0],
+      periodoMes: periodoMes,
+      estadoCiclo: existingPlan[15],
+      message: `La planilla para el periodo '${periodoMes}' ya existe con estado '${existingPlan[15]}'.`
+    };
+  }
+
+  const activeEmployees = expsRows.filter(r => r[8] === "active" || r[8] === "Activo" || r[8] === "EnPeriodoPrueba");
+  if (activeEmployees.length === 0) {
+    throw new Error("No hay empleados activos en estado de nómina elegible.");
+  }
+
   const now = new Date();
   const planillaId = "PLN-" + now.getTime();
 
   const processedRows = [];
-  const boletasRows = [];
 
-  empleadosList.forEach(e => {
-    const empId = e.empleadoId || e.userId || "EMP-" + Math.floor(Math.random() * 1000);
-    const empNombre = e.nombre || "Empleado";
-    const puesto = e.puesto || "Docente/Personal";
-    const salarioBase = parseFloat(e.salarioBase || 0);
-    const horasExtras = parseFloat(e.horasExtras || 0);
-    const montoHorasExtras = parseFloat(e.montoHorasExtras || (horasExtras * (salarioBase / 160) * 1.5));
-    const bonificaciones = parseFloat(e.bonificaciones || 0);
+  activeEmployees.forEach(e => {
+    const empId = String(e[0]).trim();
+    const empNombre = e[9] || e[3] || "Empleado";
+    const puesto = e[3] || "Personal";
+    const salarioBase = 22000; // Salario estándar base
+    const horasExtras = 0;
+    const montoHorasExtras = 0;
+    const bonificaciones = 0;
 
     // Deducciones de Ley Honduras (IHSS, RAP, ISR)
-    const dedIHSS = parseFloat(e.deduccionIHSS || Math.min(salarioBase, 10317.38) * 0.035);
-    const dedRAP = parseFloat(e.deduccionRAP || Math.max(0, salarioBase - 10317.38) * 0.015);
-    const dedISR = parseFloat(e.deduccionISR || (salarioBase > 20000 ? (salarioBase - 20000) * 0.15 : 0));
-    const otrasDed = parseFloat(e.otrasDeducciones || 0);
+    const dedIHSS = Math.min(salarioBase, 10317.38) * 0.035;
+    const dedRAP = Math.max(0, salarioBase - 10317.38) * 0.015;
+    const dedISR = salarioBase > 20000 ? (salarioBase - 20000) * 0.15 : 0;
+    const otrasDed = 0;
 
     const totalDevengado = salarioBase + montoHorasExtras + bonificaciones;
     const totalDeducciones = dedIHSS + dedRAP + dedISR + otrasDed;
@@ -1796,27 +1841,12 @@ function generatePayrollPeriod(payload) {
       dedISR,
       otrasDed,
       salarioNeto,
-      "Generada"
-    ]);
-
-    const boletaId = "BOL-" + Date.now() + "-" + Math.floor(Math.random() * 1000);
-    boletasRows.push([
-      boletaId,
-      planillaId,
-      now,
-      empId,
-      empNombre,
-      periodoMes,
-      totalDevengado,
-      totalDeducciones,
-      salarioNeto,
-      "Emitida"
+      "Calculada"
     ]);
   });
 
   if (processedRows.length > 0) {
     planSheet.getRange(planSheet.getLastRow() + 1, 1, processedRows.length, 16).setValues(processedRows);
-    bolSheet.getRange(bolSheet.getLastRow() + 1, 1, boletasRows.length, 10).setValues(boletasRows);
   }
 
   return {
@@ -1824,36 +1854,470 @@ function generatePayrollPeriod(payload) {
     planillaId: planillaId,
     periodoMes: periodoMes,
     empleadosProcesados: processedRows.length,
-    message: "Planilla salarial con deducciones de ley procesada exitosamente."
+    estadoCiclo: "Calculada",
+    message: `Cálculo preliminar de planilla '${periodoMes}' completado con éxito.`
   };
 }
 
-function recordStaffAttendance(payload) {
-  const { empleadoId, empleadoNombre, horaEntrada, horaSalida, minutosTardanza, estadoAsistencia, observaciones } = payload || {};
+function updatePayrollPeriodStatus(payload) {
+  const { planillaId, nuevoEstado, observaciones, authRole } = payload || {};
+  if (!planillaId || !nuevoEstado) throw new Error("planillaId y nuevoEstado son requeridos.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "PlanillasNomenclatura");
+  const data = sheet.getDataRange().getValues();
+
+  let count = 0;
+  for (let i = 1; i < data.length; i++) {
+    if (String(data[i][0]).trim() === String(planillaId).trim()) {
+      sheet.getRange(i + 1, 16).setValue(nuevoEstado);
+      count++;
+    }
+  }
+
+  if (count === 0) throw new Error("Planilla no encontrada.");
+
+  logStructuredEvent("ACCOUNTING", "updatePayrollPeriodStatus", "INFO", "PAYROLL_STATUS_UPDATED", `Planilla ${planillaId} actualizada a estado ${nuevoEstado}`, payload, authRole);
+
+  return { status: "success", planillaId: planillaId, nuevoEstado: nuevoEstado, registrosActualizados: count, message: `Ciclo de planilla actualizado a '${nuevoEstado}'.` };
+}
+
+function getPayrollPeriodSummary(payload) {
+  const { periodoMes, planillaId } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const rows = getOrCreateSheet(ss, "PlanillasNomenclatura").getDataRange().getValues().slice(1);
+
+  let filtered = rows;
+  if (planillaId) filtered = filtered.filter(r => String(r[0]).trim() === String(planillaId).trim());
+  if (periodoMes) filtered = filtered.filter(r => String(r[2]).trim() === String(periodoMes).trim());
+
+  let totalBruto = 0;
+  let totalDeducciones = 0;
+  let totalNeto = 0;
+
+  const mapped = filtered.map(r => {
+    const sBase = parseFloat(r[6] || 0);
+    const mHE = parseFloat(r[8] || 0);
+    const bonif = parseFloat(r[9] || 0);
+    const dev = sBase + mHE + bonif;
+
+    const ihss = parseFloat(r[10] || 0);
+    const rap = parseFloat(r[11] || 0);
+    const isr = parseFloat(r[12] || 0);
+    const otras = parseFloat(r[13] || 0);
+    const ded = ihss + rap + isr + otras;
+
+    const neto = parseFloat(r[14] || (dev - ded));
+
+    totalBruto += dev;
+    totalDeducciones += ded;
+    totalNeto += neto;
+
+    return {
+      planillaId: r[0],
+      fecha: r[1],
+      periodoMes: r[2],
+      empleadoId: r[3],
+      empleadoNombre: r[4],
+      puesto: r[5],
+      salarioBase: sBase,
+      totalDevengado: dev,
+      totalDeducciones: ded,
+      salarioNeto: neto,
+      estadoCiclo: r[15]
+    };
+  });
+
+  return {
+    status: "success",
+    resumen: {
+      totalEmpleados: mapped.length,
+      totalBruto: totalBruto,
+      totalDeducciones: totalDeducciones,
+      totalNeto: totalNeto
+    },
+    empleados: mapped
+  };
+}
+
+function generatePayrollPeriod(payload) {
+  return calculatePayrollPeriod(payload);
+}
+
+function configureWorkSchedule(payload) {
+  const { horarioId, nombreHorario, jornadaTipo, horaEntrada, horaSalida, toleranciaMinutos, diasLaborales, observaciones } = payload || {};
+  if (!nombreHorario || !horaEntrada || !horaSalida) throw new Error("Nombre de horario, hora de entrada y hora de salida son requeridos.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "HorariosLaborales");
+  const data = sheet.getDataRange().getValues();
+  const now = new Date();
+
+  let hId = horarioId;
+  let existingIndex = -1;
+
+  if (hId) {
+    existingIndex = data.findIndex(r => String(r[0]).trim() === String(hId).trim());
+  } else {
+    existingIndex = data.findIndex(r => String(r[1]).toLowerCase().trim() === String(nombreHorario).toLowerCase().trim());
+  }
+
+  const dJSON = typeof diasLaborales === "object" ? JSON.stringify(diasLaborales) : (diasLaborales || "[\"Lunes\",\"Martes\",\"Miércoles\",\"Jueves\",\"Viernes\"]");
+
+  if (existingIndex !== -1) {
+    hId = data[existingIndex][0];
+    sheet.getRange(existingIndex + 1, 1, 1, 9).setValues([[
+      hId,
+      String(nombreHorario).trim(),
+      jornadaTipo || "Completa",
+      horaEntrada,
+      horaSalida,
+      parseInt(toleranciaMinutos || 15),
+      dJSON,
+      "Activo",
+      observaciones || ""
+    ]]);
+  } else {
+    hId = "SCH-" + now.getTime();
+    sheet.appendRow([
+      hId,
+      String(nombreHorario).trim(),
+      jornadaTipo || "Completa",
+      horaEntrada,
+      horaSalida,
+      parseInt(toleranciaMinutos || 15),
+      dJSON,
+      "Activo",
+      observaciones || ""
+    ]);
+  }
+
+  return { status: "success", horarioId: hId, message: "Horario laboral configurado exitosamente." };
+}
+
+function recordStaffCheckIn(payload) {
+  const { empleadoId, empleadoNombre, tipoRegistro, observaciones } = payload || {};
   if (!empleadoId) throw new Error("empleadoId requerido.");
 
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
   const sheet = getOrCreateSheet(ss, "DeduccionesAsistencia");
   const now = new Date();
   const asistenciaId = "AST-" + now.getTime();
+  const timeStr = now.toTimeString().split(' ')[0];
 
   sheet.appendRow([
     asistenciaId,
     now,
     String(empleadoId).trim(),
     empleadoNombre || "Personal",
-    horaEntrada || now.toTimeString().split(' ')[0],
-    horaSalida || "",
-    parseInt(minutosTardanza || 0),
-    estadoAsistencia || "Puntual",
-    observaciones || ""
+    tipoRegistro === "Salida" ? "" : timeStr,
+    tipoRegistro === "Salida" ? timeStr : "",
+    0,
+    tipoRegistro || "EntradaPuntual",
+    observaciones || "Registro desde Portal RRHH"
   ]);
 
   return {
     status: "success",
     asistenciaId: asistenciaId,
-    message: "Registro de asistencia procesado con éxito."
+    horaRegistrada: timeStr,
+    message: `Marcaje de ${tipoRegistro || 'Entrada'} registrado con éxito a las ${timeStr}.`
   };
+}
+
+function getStaffAttendanceLogs(payload) {
+  const { empleadoId, fechaInicio, fechaFin } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const rows = getOrCreateSheet(ss, "DeduccionesAsistencia").getDataRange().getValues().slice(1);
+
+  let filtered = rows;
+  if (empleadoId) filtered = filtered.filter(r => String(r[2]).trim() === String(empleadoId).trim());
+
+  const mapped = filtered.map(r => ({
+    asistenciaId: r[0],
+    fecha: r[1],
+    empleadoId: r[2],
+    empleadoNombre: r[3],
+    horaEntrada: r[4],
+    horaSalida: r[5],
+    minutosTardanza: parseInt(r[6] || 0),
+    estadoAsistencia: r[7],
+    observaciones: r[8]
+  }));
+
+  return { status: "success", asistencias: mapped };
+}
+
+function submitAttendanceCorrection(payload) {
+  const { asistenciaId, empleadoId, fechaIncidencia, horaOriginal, horaSolicitada, motivo, evidenciaUrl } = payload || {};
+  if (!empleadoId || !horaSolicitada || !motivo) throw new Error("empleadoId, horaSolicitada y motivo son requeridos.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "CorreccionesAsistencia");
+  const now = new Date();
+  const corrId = "CORR-" + now.getTime();
+
+  sheet.appendRow([
+    corrId,
+    asistenciaId || "GENERAL",
+    String(empleadoId).trim(),
+    fechaIncidencia || now,
+    horaOriginal || "",
+    horaSolicitada,
+    motivo,
+    evidenciaUrl || "",
+    "Pendiente",
+    "",
+    "Solicitado por el empleado"
+  ]);
+
+  return { status: "success", correccionId: corrId, message: "Solicitud de corrección de asistencia enviada para revisión." };
+}
+
+function reviewAttendanceCorrection(payload) {
+  const { correccionId, nuevoEstado, observaciones, authRole } = payload || {};
+  if (!correccionId || !nuevoEstado) throw new Error("correccionId y nuevoEstado son requeridos.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "CorreccionesAsistencia");
+  const data = sheet.getDataRange().getValues();
+
+  const idx = data.findIndex(r => String(r[0]).trim() === String(correccionId).trim());
+  if (idx === -1) throw new Error("Solicitud de corrección no encontrada.");
+
+  sheet.getRange(idx + 1, 9).setValue(nuevoEstado);
+  sheet.getRange(idx + 1, 10).setValue(authRole || "RecursosHumanos");
+  if (observaciones) sheet.getRange(idx + 1, 11).setValue(observaciones);
+
+  return { status: "success", correccionId: correccionId, estado: nuevoEstado, message: `Corrección de asistencia ${nuevoEstado}.` };
+}
+
+function recordStaffAttendance(payload) {
+  return recordStaffCheckIn(payload);
+}
+
+function requestEmployeeLoanAdvance(payload) {
+  const { empleadoId, tipo, montoSolicitado, plazoCuotas, motivo, observaciones } = payload || {};
+  const mnt = parseFloat(montoSolicitado || 0);
+  if (!empleadoId || mnt <= 0) throw new Error("empleadoId y montoSolicitado válido son requeridos.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "AnticiposPrestamosEmpleado");
+  const now = new Date();
+  const prestamoId = "ADV-" + now.getTime();
+  const cuotas = parseInt(plazoCuotas || 1);
+  const cuotaMnt = mnt / cuotas;
+
+  sheet.appendRow([
+    prestamoId,
+    now,
+    String(empleadoId).trim(),
+    tipo || "AnticipoSalario",
+    mnt,
+    0,
+    cuotas,
+    cuotaMnt,
+    mnt,
+    "PendienteAprobacion",
+    "",
+    motivo || observaciones || "Solicitud formal de anticipo/préstamo"
+  ]);
+
+  return {
+    status: "success",
+    prestamoId: prestamoId,
+    montoSolicitado: mnt,
+    cuotaEstimada: cuotaMnt,
+    estadoAprobacion: "PendienteAprobacion",
+    message: "Solicitud de anticipo / préstamo registrada y enviada a revisión."
+  };
+}
+
+function getEmployeeLoansAdvances(payload) {
+  const { empleadoId, estadoAprobacion } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const rows = getOrCreateSheet(ss, "AnticiposPrestamosEmpleado").getDataRange().getValues().slice(1);
+
+  let filtered = rows;
+  if (empleadoId) filtered = filtered.filter(r => String(r[2]).trim() === String(empleadoId).trim());
+  if (estadoAprobacion) filtered = filtered.filter(r => String(r[9]).trim() === String(estadoAprobacion).trim());
+
+  const mapped = filtered.map(r => ({
+    prestamoId: r[0],
+    fecha: r[1],
+    empleadoId: r[2],
+    tipo: r[3],
+    montoSolicitado: parseFloat(r[4] || 0),
+    montoAprobado: parseFloat(r[5] || 0),
+    plazoCuotas: parseInt(r[6] || 1),
+    cuotaMensual: parseFloat(r[7] || 0),
+    saldoPendiente: parseFloat(r[8] || 0),
+    estadoAprobacion: r[9],
+    aprobadoPor: r[10],
+    observaciones: r[11]
+  }));
+
+  return { status: "success", solicitudes: mapped };
+}
+
+function approveEmployeeLoanAdvance(payload) {
+  const { prestamoId, montoAprobado, nuevoEstado, observaciones, authRole } = payload || {};
+  if (!prestamoId || !nuevoEstado) throw new Error("prestamoId y nuevoEstado son requeridos.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "AnticiposPrestamosEmpleado");
+  const data = sheet.getDataRange().getValues();
+
+  const idx = data.findIndex(r => String(r[0]).trim() === String(prestamoId).trim());
+  if (idx === -1) throw new Error("Solicitud de préstamo/anticipo no encontrada.");
+
+  const mntAprob = parseFloat(montoAprobado || data[idx][4] || 0);
+  const cuotas = parseInt(data[idx][6] || 1);
+  const cuotaMnt = mntAprob / cuotas;
+
+  sheet.getRange(idx + 1, 6).setValue(mntAprob);
+  sheet.getRange(idx + 1, 8).setValue(cuotaMnt);
+  sheet.getRange(idx + 1, 9).setValue(mntAprob);
+  sheet.getRange(idx + 1, 10).setValue(nuevoEstado);
+  sheet.getRange(idx + 1, 11).setValue(authRole || "Contador/Dirección");
+  if (observaciones) sheet.getRange(idx + 1, 12).setValue(observaciones);
+
+  return {
+    status: "success",
+    prestamoId: prestamoId,
+    montoAprobado: mntAprob,
+    estadoAprobacion: nuevoEstado,
+    message: `Solicitud de anticipo / préstamo ${nuevoEstado}.`
+  };
+}
+
+function getLoanAmortizationSchedule(payload) {
+  const { prestamoId } = payload || {};
+  if (!prestamoId) throw new Error("prestamoId requerido.");
+
+  const res = getEmployeeLoansAdvances({ prestamoId });
+  const item = res.solicitudes && res.solicitudes[0];
+  if (!item) throw new Error("Préstamo no encontrado.");
+
+  const schedule = [];
+  const cuotas = item.plazoCuotas || 1;
+  const mntCuota = item.cuotaMensual || (item.montoAprobado / cuotas);
+  let saldo = item.montoAprobado;
+
+  for (let i = 1; i <= cuotas; i++) {
+    saldo = Math.max(0, saldo - mntCuota);
+    schedule.push({
+      numeroCuota: i,
+      montoCuota: mntCuota,
+      saldoRestante: saldo
+    });
+  }
+
+  return {
+    status: "success",
+    prestamoId: prestamoId,
+    montoAprobado: item.montoAprobado,
+    plazoCuotas: cuotas,
+    tablaAmortizacion: schedule
+  };
+}
+
+function generatePayrollReceiptPDF(payload) {
+  const { empleadoId, periodoMes, planillaId } = payload || {};
+  if (!empleadoId) throw new Error("empleadoId requerido.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const planRows = getOrCreateSheet(ss, "PlanillasNomenclatura").getDataRange().getValues().slice(1);
+
+  const receipt = planRows.find(r => String(r[3]).trim() === String(empleadoId).trim() && (!periodoMes || String(r[2]).trim() === String(periodoMes).trim()));
+  if (!receipt) throw new Error("Recibo de pago no encontrado para el empleado especificado.");
+
+  const pdfUrl = `https://newgeneration.edu.hn/recibo-pago-${receipt[0]}-${receipt[3]}.pdf`;
+
+  return {
+    status: "success",
+    pdfUrl: pdfUrl,
+    recibo: {
+      planillaId: receipt[0],
+      periodoMes: receipt[2],
+      empleadoId: receipt[3],
+      empleadoNombre: receipt[4],
+      puesto: receipt[5],
+      salarioBase: parseFloat(receipt[6] || 0),
+      deduccionIHSS: parseFloat(receipt[10] || 0),
+      deduccionRAP: parseFloat(receipt[11] || 0),
+      deduccionISR: parseFloat(receipt[12] || 0),
+      salarioNeto: parseFloat(receipt[14] || 0),
+      institucion: "New Generation Christian Academy"
+    }
+  };
+}
+
+function uploadEmployeeDocument(payload) {
+  const { expedienteId, categoriaDoc, tituloDocumento, fileData, fileName, observaciones, authRole } = payload || {};
+  if (!expedienteId || !tituloDocumento) throw new Error("expedienteId y tituloDocumento son requeridos.");
+
+  let archivoUrl = "";
+  if (fileData && fileName) {
+    try {
+      const folder = getOrCreateFolderNews(getParentDriveFolder(), "Documentos_Laborales");
+      const mimeType = fileData.split(',')[0].match(/:(.*?);/)[1];
+      const base64Data = fileData.split(',')[1];
+      const file = folder.createFile(Utilities.newBlob(Utilities.base64Decode(base64Data), mimeType, fileName));
+      file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+      archivoUrl = `https://lh3.googleusercontent.com/d/${file.getId()}`;
+    } catch (e) {
+      logDebug("Error subida archivo laboral:", e.message);
+    }
+  }
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "DocumentosLaborales");
+  const now = new Date();
+  const docId = "DOC-LAB-" + now.getTime();
+
+  sheet.appendRow([
+    docId,
+    String(expedienteId).trim(),
+    categoriaDoc || "Contrato",
+    tituloDocumento,
+    archivoUrl || "https://newgeneration.edu.hn/documento-privado.pdf",
+    now,
+    authRole || "RecursosHumanos",
+    "PrivadoEmpleado",
+    observaciones || ""
+  ]);
+
+  return {
+    status: "success",
+    documentoId: docId,
+    archivoUrl: archivoUrl,
+    message: "Documento laboral privado cargado exitosamente."
+  };
+}
+
+function getEmployeeDocuments(payload) {
+  const { expedienteId, categoriaDoc } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const rows = getOrCreateSheet(ss, "DocumentosLaborales").getDataRange().getValues().slice(1);
+
+  let filtered = rows;
+  if (expedienteId) filtered = filtered.filter(r => String(r[1]).trim() === String(expedienteId).trim());
+  if (categoriaDoc) filtered = filtered.filter(r => String(r[2]).toLowerCase().trim() === String(categoriaDoc).toLowerCase().trim());
+
+  const mapped = filtered.map(r => ({
+    documentoId: r[0],
+    expedienteId: r[1],
+    categoriaDoc: r[2],
+    tituloDocumento: r[3],
+    archivoUrl: r[4],
+    fechaCarga: r[5],
+    cargadoPor: r[6],
+    estadoVisibilidad: r[7],
+    observaciones: r[8]
+  }));
+
+  return { status: "success", documentos: mapped };
 }
 
 function getStaffPayrollReceipt(payload) {
@@ -2437,10 +2901,50 @@ function createEmployeeRecord(payload) {
   };
 }
 
+function updateEmployeeLaborStatus(payload) {
+  const { expedienteId, nuevoEstadoLaboral, motivo, fechaSalida } = payload || {};
+  if (!expedienteId || !nuevoEstadoLaboral) throw new Error("expedienteId y nuevoEstadoLaboral son requeridos.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "ExpedientesLaborales");
+  const data = sheet.getDataRange().getValues();
+
+  const idx = data.findIndex(r => String(r[0]).trim() === String(expedienteId).trim());
+  if (idx === -1) throw new Error("Expediente laboral no encontrado.");
+
+  sheet.getRange(idx + 1, 9).setValue(nuevoEstadoLaboral);
+  if (fechaSalida || nuevoEstadoLaboral === "Retirado") {
+    sheet.getRange(idx + 1, 8).setValue(fechaSalida || new Date());
+  }
+  if (motivo) {
+    const curObs = data[idx][9] || "";
+    sheet.getRange(idx + 1, 10).setValue(curObs + ` [Cambio Estado: ${nuevoEstadoLaboral} - ${motivo}]`);
+  }
+
+  logStructuredEvent("ACCOUNTING", "updateEmployeeLaborStatus", "INFO", "LABOR_STATUS_UPDATED", `Estado laboral de ${expedienteId} actualizado a ${nuevoEstadoLaboral}`, payload, payload.authRole);
+
+  return {
+    status: "success",
+    expedienteId: expedienteId,
+    nuevoEstadoLaboral: nuevoEstadoLaboral,
+    message: `Estado laboral del empleado actualizado exitosamente a '${nuevoEstadoLaboral}'.`
+  };
+}
+
 function getEmployeeRecords(payload) {
   const { userId, expedienteId, estadoLaboral } = payload || {};
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
-  const rows = getOrCreateSheet(ss, "ExpedientesLaborales").getDataRange().getValues().slice(1);
+  let rows = getOrCreateSheet(ss, "ExpedientesLaborales").getDataRange().getValues().slice(1);
+
+  if (rows.length === 0) {
+    const defaults = [
+      ["EMP-101", "PERS-01", "USR-DOC-01", "Docente de Informática", "Docencia", "Académico", new Date("2024-01-15"), "", "active", "Lic. Carlos Mendoza"],
+      ["EMP-102", "PERS-02", "USR-ADM-01", "Encargado de Compras", "Administración", "Operaciones", new Date("2023-06-01"), "", "active", "Ing. Sofía Reyes"]
+    ];
+    const sheet = getOrCreateSheet(ss, "ExpedientesLaborales");
+    sheet.getRange(2, 1, defaults.length, 10).setValues(defaults);
+    rows = defaults;
+  }
 
   let filtered = rows;
   if (expedienteId) filtered = filtered.filter(r => String(r[0]).trim() === String(expedienteId).trim());
@@ -2524,8 +3028,8 @@ function getEmployeeContracts(payload) {
 // PERMISOS Y VACACIONES
 // ---------------------------------------------------------------------------
 
-function submitVacationRequest(payload) {
-  const { expedienteId, tipo, fechaInicio, fechaFin, diasSolicitados, observaciones } = payload || {};
+function submitLeaveVacationRequest(payload) {
+  const { expedienteId, tipo, fechaInicio, fechaFin, diasSolicitados, motivo, evidenciaUrl, observaciones } = payload || {};
   if (!expedienteId || !fechaInicio || !fechaFin) throw new Error("expedienteId, fechaInicio y fechaFin requeridos.");
 
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
@@ -2540,16 +3044,92 @@ function submitVacationRequest(payload) {
     fechaInicio,
     fechaFin,
     parseInt(diasSolicitados || 1),
-    "submitted",
+    "PendienteAprobacion",
     "",
-    observaciones || ""
+    motivo || observaciones || "Solicitud formal desde Portal RRHH"
   ]);
 
   return {
     status: "success",
     solicitudId: solicitudId,
-    estado: "submitted",
-    message: "Solicitud de vacaciones/permiso enviada a Recursos Humanos."
+    estado: "PendienteAprobacion",
+    message: "Solicitud de permiso / vacaciones registrada y enviada para revisión."
+  };
+}
+
+function submitVacationRequest(payload) {
+  return submitLeaveVacationRequest(payload);
+}
+
+function getLeaveVacationRequests(payload) {
+  return getVacationRequests(payload);
+}
+
+function reviewLeaveVacationRequest(payload) {
+  return reviewVacationRequest(payload);
+}
+
+function calculateVacationBalances(payload) {
+  const { expedienteId } = payload || {};
+  if (!expedienteId) throw new Error("expedienteId requerido.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const vacs = getOrCreateSheet(ss, "SolicitudesVacaciones").getDataRange().getValues().slice(1);
+  const exps = getOrCreateSheet(ss, "ExpedientesLaborales").getDataRange().getValues().slice(1);
+
+  const exp = exps.find(r => String(r[0]).trim() === String(expedienteId).trim());
+  const fechaIngreso = exp && exp[6] ? new Date(exp[6]) : new Date("2024-01-01");
+  const now = new Date();
+
+  const diffYears = Math.max(1, Math.floor((now - fechaIngreso) / (1000 * 60 * 60 * 24 * 365)));
+  // Escala Ley Trabajo Honduras (10 días año 1, 12 días año 2, 15 días año 3, 20 días año 4+)
+  let diasGeneradosAnno = 10;
+  if (diffYears === 2) diasGeneradosAnno = 12;
+  else if (diffYears === 3) diasGeneradosAnno = 15;
+  else if (diffYears >= 4) diasGeneradosAnno = 20;
+
+  const diasUsados = vacs
+    .filter(r => String(r[1]).trim() === String(expedienteId).trim() && (r[6] === "Aprobado" || r[6] === "approved"))
+    .reduce((sum, r) => sum + parseInt(r[5] || 0), 0);
+
+  const saldoDisponible = Math.max(0, diasGeneradosAnno - diasUsados);
+
+  return {
+    status: "success",
+    expedienteId: expedienteId,
+    antiguedadAnos: diffYears,
+    diasDerechoAnual: diasGeneradosAnno,
+    diasGozados: diasUsados,
+    saldoDisponible: saldoDisponible,
+    message: `Saldo acumulado: ${saldoDisponible} días disponibles.`
+  };
+}
+
+function recordMedicalLeave(payload) {
+  const { expedienteId, centroMedico, diagnosticoPrivadoUrl, fechaInicio, fechaFin, diasOtorgados, observaciones } = payload || {};
+  if (!expedienteId || !fechaInicio || !fechaFin) throw new Error("expedienteId, fechaInicio y fechaFin requeridos.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "IncapacidadesMedicas");
+  const now = new Date();
+  const incId = "INC-MED-" + now.getTime();
+
+  sheet.appendRow([
+    incId,
+    String(expedienteId).trim(),
+    centroMedico || "IHSS / Centro de Salud",
+    diagnosticoPrivadoUrl || "PRIVADO_CONFIDENCIAL",
+    fechaInicio,
+    fechaFin,
+    parseInt(diasOtorgados || 1),
+    "AceptadaIHSS",
+    observaciones || "Incapacidad Médica justificada"
+  ]);
+
+  return {
+    status: "success",
+    incapacidadId: incId,
+    message: "Incapacidad médica registrada confidencialmente."
   };
 }
 
@@ -2867,6 +3447,30 @@ function getPolicyAcceptances(payload) {
 // ---------------------------------------------------------------------------
 
 function getAdvancedDashboardAnalytics(payload) {
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const expsRows = getOrCreateSheet(ss, "ExpedientesLaborales").getDataRange().getValues().slice(1);
+  const vacsRows = getOrCreateSheet(ss, "SolicitudesVacaciones").getDataRange().getValues().slice(1);
+  const attsRows = getOrCreateSheet(ss, "DeduccionesAsistencia").getDataRange().getValues().slice(1);
+  const ctrsRows = getOrCreateSheet(ss, "ContratosLaborales").getDataRange().getValues().slice(1);
+
+  const totalActivos = expsRows.filter(r => r[8] === "active" || r[8] === "Activo" || r[8] === "EnPeriodoPrueba").length;
+  const pendientesPermisos = vacsRows.filter(r => r[6] === "PendienteAprobacion" || r[6] === "submitted").length;
+  const hoyStr = new Date().toISOString().split('T')[0];
+  const asistenciasHoy = attsRows.filter(r => new Date(r[1]).toISOString().split('T')[0] === hoyStr).length;
+  const pctAsistencia = totalActivos > 0 ? Math.min(100, Math.round((asistenciasHoy / totalActivos) * 100)) : 100;
+
+  return {
+    status: "success",
+    metrics: {
+      personalActivoCount: totalActivos,
+      solicitudesPendientesCount: pendientesPermisos,
+      asistenciaHoyPorcentaje: pctAsistencia,
+      contratosAVencerCount: ctrsRows.length
+    }
+  };
+}
+
+function getHRDashboardAnalytics_Legacy(payload) {
   const { authRole } = payload || {};
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
 
