@@ -37,14 +37,20 @@ function fetchApi(service, action, payload, retryCount, options) {
     }
 
 
-    // REQ-EXP-008: Inyectar authRole o rol desde sesión si no se ha especificado en el payload
-    if (payload && typeof payload === "object" && !payload.authRole) {
-        try {
-            var sessionUser = JSON.parse(localStorage.getItem("currentUser") || sessionStorage.getItem("currentUser") || localStorage.getItem("usuario_actual") || "{}");
-            if (sessionUser && sessionUser.rol) {
-                payload.authRole = sessionUser.rol;
-            }
-        } catch (_) {}
+    // REQ-EXP-008 & FASE 2: Inyectar authRole e idempotencyToken para acciones de escritura
+    if (payload && typeof payload === "object") {
+        if (!payload.authRole) {
+            try {
+                var sessionUser = JSON.parse(localStorage.getItem("currentUser") || sessionStorage.getItem("currentUser") || localStorage.getItem("usuario_actual") || "{}");
+                if (sessionUser && sessionUser.rol) {
+                    payload.authRole = sessionUser.rol;
+                }
+            } catch (_) {}
+        }
+        // FASE 2: Inyectar token de idempotencia único para operaciones no de lectura (write/mutation)
+        if (action.indexOf('get') !== 0 && !payload.idempotencyToken) {
+            payload.idempotencyToken = 'IDEM-' + Date.now() + '-' + Math.floor(Math.random() * 10000);
+        }
     }
 
     var fetchOptions = {

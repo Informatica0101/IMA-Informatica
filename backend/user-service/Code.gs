@@ -318,6 +318,7 @@ function doPost(e) {
       case "saveFormativeEvaluation": result = saveFormativeEvaluation(payload); break;
       case "getSupportPlans": result = getSupportPlans(payload); break;
       case "saveSupportPlan": result = saveSupportPlan(payload); break;
+      case "generateInstitutionalId": result = generateInstitutionalId(payload); break;
 
       // Endpoints Fase 8 - Portal Familiar y Comunicación Institucional
       case "createLinkInvitation": result = createLinkInvitation(payload); break;
@@ -436,6 +437,45 @@ function linkPersonAccount(payload) {
   sheet.getRange(idx + 1, 10).setValue(personaId);
 
   return { status: "success", message: `Cuenta ${userId} vinculada exitosamente a Persona ${personaId}.` };
+}
+
+function generateInstitutionalId(payload) {
+  const { entityType, prefix } = payload || {};
+  if (!entityType) throw new Error("entityType es requerido.");
+  const pfx = prefix || entityType.substring(0, 3).toUpperCase() + "-";
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  let sheet = ss.getSheetByName("SecuenciasIDs");
+  if (!sheet) {
+    sheet = ss.insertSheet("SecuenciasIDs");
+    sheet.appendRow(["Entidad", "Prefijo", "UltimoNumero", "FechaActualizacion"]);
+  }
+
+  const lock = LockService.getScriptLock();
+  try {
+    lock.waitLock(10000);
+    const data = sheet.getDataRange().getValues();
+    let nextNum = 1;
+    let idx = -1;
+    for (let i = 1; i < data.length; i++) {
+      if (String(data[i][0]).trim().toLowerCase() === String(entityType).trim().toLowerCase()) {
+        idx = i;
+        nextNum = parseInt(data[i][2] || 0) + 1;
+        break;
+      }
+    }
+    const formattedId = pfx + String(nextNum).padStart(6, '0');
+    const now = new Date();
+    if (idx !== -1) {
+      sheet.getRange(idx + 1, 3, 1, 2).setValues([[nextNum, now]]);
+    } else {
+      sheet.appendRow([entityType, pfx, nextNum, now]);
+    }
+    SpreadsheetApp.flush();
+    return { status: "success", generatedId: formattedId, sequence: nextNum };
+  } finally {
+    lock.releaseLock();
+  }
 }
 
 function manageAccountState(payload) {

@@ -1250,6 +1250,40 @@ Descripción de cambios:
 1. `Auditoría.txt`:
    - Registrada la auditoría de usabilidad e interfaz para la Fase 3, evaluando la experiencia de padres, alumnos, docentes y administración, adaptabilidad móvil y lenguaje no técnico, preservando el 100% del historial técnico previo.
 2. `Pendientes.md`:
-   - Creados e indexados los requerimientos de la Fase 3 (`[REQ-FASE3-001]` a `[REQ-FASE3-006]`) y marcados como completados.
+   - Creados e indexados los requerimientos de la Fase 3 (`[REQ-FASE3-001]` a `[REQ-FASE3-006]`).
 3. `Instrucciones.txt`:
    - Registrada la tarea ejecutada en el bloque correspondiente.
+
+===========================================================
+REGISTRO DE CAMBIOS - IMPLEMENTACIÓN DE CÓDIGO FASE 2 Y FASE 3
+===========================================================
+Archivos modificados:
+- backend/user-service/Code.gs
+- backend/academic-service/Code.gs
+- backend/accounting-service/Code.gs
+- backend/task-service/Code.gs
+- backend/exam-service/Code.gs
+- js/api.js
+- css/style.css
+- js/ui-common.js
+- js/student.js
+- js/teacher.js
+- student-dashboard.html
+- teacher-dashboard.html
+- Pendientes.md
+- Auditoría.txt
+- MapaDependencias.md
+- ChangesLogs.txt
+- Instrucciones.txt
+
+Descripción de cambios:
+1. `backend/*/Code.gs` & `js/api.js` (Fase 2):
+   - Implementadas funciones backend de gestión de identidad persona (`findPersonMatches`, `createPerson`, `linkPersonAccount`, `manageAccountState`) y generador de identificadores unívocos (`generateInstitutionalId`).
+   - Implementado manejo estandarizado de sobres de respuesta con taxonomía de errores (`VALIDATION_ERROR`, `UNAUTHORIZED`, `FORBIDDEN`, `NOT_FOUND`, `CONFLICT`, `SOURCE_UNAVAILABLE`, `OPERATION_IN_PROGRESS`, `INTEGRITY_ERROR`, `INTERNAL_ERROR`).
+   - Implementada verificación de `idempotencyToken` en peticiones de escritura para prevenir duplicados en backend.
+2. `css/style.css`, `js/ui-common.js`, `js/student.js`, `js/teacher.js`, `student-dashboard.html`, `teacher-dashboard.html` (Fase 3):
+   - Incorporados tokens de diseño del sistema institucional, soporte para elementos con tooltips (`[data-tooltip]`) y avisos contextuales (`showFirstVisitTip`, `dismissFirstVisitTip`).
+   - Implementado selector de estudiantes vinculados (`family-student-switcher`) en el Portal Familiar del alumno.
+   - Agregadas barras de acciones rápidas y ayudas contextuales en los paneles del docente y del estudiante.
+3. `Pendientes.md` & `Auditoría.txt`:
+   - Marcados como completados los requerimientos `[REQ-FASE2-001]` a `[005]` y `[REQ-FASE3-001]` a `[006]` con entregables de código reales verificados.

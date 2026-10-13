@@ -117,7 +117,23 @@
         <div class="container mx-auto px-4 md:px-8 py-8 max-w-7xl">
             <div id="hidden-student-data" class="hidden"><span id="student-name"></span></div>
 
-            <!-- Cabecera de Información del Alumno (Tarea 3 - Fase Diagnóstico) -->
+            <!-- Selector de Estudiantes Vinculados (Portal Familiar - Fase 3) -->
+            <div id="family-student-switcher-container" class="mb-6 hidden bg-indigo-50/50 p-4 rounded-3xl border border-indigo-100 flex items-center justify-between gap-4">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-indigo-600 text-white rounded-2xl flex items-center justify-center text-lg shadow-sm">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div>
+                        <p class="text-[10px] font-black text-indigo-400 uppercase tracking-widest">Portal Familiar</p>
+                        <p class="text-xs font-bold text-indigo-950">Estudiante Activo:</p>
+                    </div>
+                </div>
+                <select id="family-student-switcher" class="p-3 bg-white border border-indigo-200 rounded-2xl text-xs font-bold text-indigo-900 focus:ring-2 focus:ring-indigo-500/20 outline-none cursor-pointer">
+                    <!-- Opciones de estudiantes vinculados inyectadas por js/student.js -->
+                </select>
+            </div>
+
+            <!-- Cabecera de Información del Alumno -->
             <div id="student-profile-header" class="mb-8">
                 <!-- Se poblará dinámicamente desde js/student.js -->
             </div>
