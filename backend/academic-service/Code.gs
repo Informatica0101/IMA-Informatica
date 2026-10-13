@@ -137,7 +137,8 @@ const ROLE_PERMISSIONS = {
     "getInstitutionParams", "saveInstitutionParam", "getAcademicYears", "createAcademicYear", "updateAcademicYearStatus", "prepareNewAcademicYear",
     "getAcademicPeriods", "manageAcademicPeriod", "getSubjectCatalog", "createSubjectCatalogItem", "getStudyPlans", "createStudyPlan",
     "getAcademicOffers", "createAcademicOffer", "getTeacherAssignments", "assignTeacherToClass", "createTeacherSubstitution",
-    "getAcademicCalendar", "createCalendarEvent", "getClassSchedules", "createClassSchedule", "getAcademicRules", "saveAcademicRule",
+    "getAcademicCalendar", "createCalendarEvent", "getClassSchedules", "createClassSchedule", "deleteClassSchedule", "getAcademicRules", "saveAcademicRule",
+    "getClassroomResources", "saveClassroomResource", "getStudentSchedule",
     "createAdmissionRequest", "getAdmissionRequests", "updateAdmissionStatus", "convertAdmissionToStudent",
     "getStudentFile", "updateStudentFile", "getStudentTimeline", "findDuplicateStudents", "mergeStudentFiles",
     "getStudentGuardians", "saveStudentGuardian", "unlinkStudentGuardian", "uploadStudentDocument", "getStudentDocuments", "updateDocumentStatus",
@@ -147,14 +148,16 @@ const ROLE_PERMISSIONS = {
   "Subdirector": [
     "getAcademicConfig", "getAcademicHistory", "getAsignaturasActivas", "getWhatsAppLink", "getQuestionBank", "registerStudentEnrollment", "getStudentEnrollmentHistory",
     "getInstitutionParams", "getAcademicYears", "getAcademicPeriods", "getSubjectCatalog", "getStudyPlans", "getAcademicOffers",
-    "getTeacherAssignments", "assignTeacherToClass", "createTeacherSubstitution", "getAcademicCalendar", "createCalendarEvent", "getClassSchedules", "createClassSchedule",
+    "getTeacherAssignments", "assignTeacherToClass", "createTeacherSubstitution", "getAcademicCalendar", "createCalendarEvent", "getClassSchedules", "createClassSchedule", "deleteClassSchedule",
+    "getClassroomResources", "saveClassroomResource", "getStudentSchedule",
     "createAdmissionRequest", "getAdmissionRequests", "updateAdmissionStatus", "getStudentFile", "getStudentTimeline", "findDuplicateStudents",
     "getStudentGuardians", "getStudentDocuments", "getStudentEnrollments", "checkEnrollmentCapacity"
   ],
   "Secretaría": [
     "getAcademicConfig", "getAsignaturasActivas", "registerStudentEnrollment", "getStudentEnrollmentHistory",
     "getInstitutionParams", "getAcademicYears", "getAcademicPeriods", "getSubjectCatalog", "getStudyPlans", "getAcademicOffers",
-    "createAcademicOffer", "getTeacherAssignments", "assignTeacherToClass", "getAcademicCalendar", "createCalendarEvent", "getClassSchedules",
+    "createAcademicOffer", "getTeacherAssignments", "assignTeacherToClass", "createTeacherSubstitution", "getAcademicCalendar", "createCalendarEvent", "getClassSchedules", "createClassSchedule", "deleteClassSchedule",
+    "getClassroomResources", "saveClassroomResource", "getStudentSchedule",
     "createAdmissionRequest", "getAdmissionRequests", "updateAdmissionStatus", "convertAdmissionToStudent",
     "getStudentFile", "updateStudentFile", "getStudentTimeline", "findDuplicateStudents",
     "getStudentGuardians", "saveStudentGuardian", "unlinkStudentGuardian", "uploadStudentDocument", "getStudentDocuments", "updateDocumentStatus",
@@ -162,31 +165,31 @@ const ROLE_PERMISSIONS = {
     "changeStudentSection", "recordStudentTransfer", "recordStudentWithdrawal", "processStudentReentry"
   ],
   "Contador": ["getAcademicConfig", "registerStudentEnrollment", "getStudentEnrollmentHistory", "getAcademicYears", "getAcademicOffers", "getStudentFile", "getStudentEnrollments"],
-  "Consejeros": ["getAcademicConfig", "getAcademicYears", "getAcademicCalendar", "getClassSchedules", "getStudentFile", "getStudentTimeline", "getStudentGuardians"],
+  "Consejeros": ["getAcademicConfig", "getAcademicYears", "getAcademicCalendar", "getClassSchedules", "getStudentSchedule", "getStudentFile", "getStudentTimeline", "getStudentGuardians"],
   "Padre": [
     "getAcademicConfig", "getAcademicHistory", "getAsignaturasActivas", "getWhatsAppLink", "getStudentEnrollmentHistory",
-    "getAcademicCalendar", "getClassSchedules", "getStudentFile", "getStudentTimeline", "getStudentDocuments", "getStudentEnrollments",
+    "getAcademicCalendar", "getClassSchedules", "getStudentSchedule", "getStudentFile", "getStudentTimeline", "getStudentDocuments", "getStudentEnrollments",
     "getClassAttendance", "getDailyAttendance", "submitAttendanceJustification", "getStudentAttendanceSummary"
   ],
   "Tutor": [
     "getAcademicConfig", "getAcademicHistory", "getAsignaturasActivas", "getWhatsAppLink", "getStudentEnrollmentHistory",
-    "getAcademicCalendar", "getClassSchedules", "getStudentFile", "getStudentTimeline", "getStudentDocuments", "getStudentEnrollments",
+    "getAcademicCalendar", "getClassSchedules", "getStudentSchedule", "getStudentFile", "getStudentTimeline", "getStudentDocuments", "getStudentEnrollments",
     "getClassAttendance", "getDailyAttendance", "submitAttendanceJustification", "getStudentAttendanceSummary"
   ],
   "Responsable": [
     "getAcademicConfig", "getAcademicHistory", "getAsignaturasActivas", "getWhatsAppLink", "getStudentEnrollmentHistory",
-    "getAcademicCalendar", "getClassSchedules", "getStudentFile", "getStudentTimeline", "getStudentDocuments", "getStudentEnrollments",
+    "getAcademicCalendar", "getClassSchedules", "getStudentSchedule", "getStudentFile", "getStudentTimeline", "getStudentDocuments", "getStudentEnrollments",
     "getClassAttendance", "getDailyAttendance", "submitAttendanceJustification", "getStudentAttendanceSummary"
   ],
   "Profesor": [
     "getAcademicConfig", "updateAcademicConfig", "getAcademicHistory", "getAsignaturasActivas", "updateAsignaturasActivas", "saveWhatsAppLink", "getWhatsAppLink", "getQuestionBank", "saveQuestion", "generateMigrationReport",
-    "getAcademicYears", "getAcademicPeriods", "getSubjectCatalog", "getAcademicOffers", "getTeacherAssignments", "getAcademicCalendar", "getClassSchedules",
+    "getAcademicYears", "getAcademicPeriods", "getSubjectCatalog", "getAcademicOffers", "getTeacherAssignments", "createTeacherSubstitution", "getAcademicCalendar", "getClassSchedules", "createClassSchedule", "deleteClassSchedule", "getClassroomResources", "getStudentSchedule",
     "getStudentFile", "getStudentTimeline", "getStudentEnrollments",
     "openAttendanceSession", "saveClassAttendance", "getClassAttendance", "saveDailyAttendance", "getDailyAttendance", "submitAttendanceJustification", "reviewAttendanceJustification", "recordEarlyDeparture", "getAttendanceIncidents", "saveAttendanceIncident", "getAttendanceFollowupCases", "saveAttendanceFollowupCase", "getStudentAttendanceSummary"
   ],
-  "Asistente": ["getAcademicConfig", "getAsignaturasActivas", "getWhatsAppLink", "getQuestionBank", "getAcademicCalendar", "getClassSchedules", "getStudentTimeline", "getClassAttendance", "getStudentAttendanceSummary"],
-  "Estudiante": ["getAcademicConfig", "getAsignaturasActivas", "getWhatsAppLink", "getQuestionBank", "getStudentEnrollmentHistory", "getAcademicCalendar", "getClassSchedules", "getStudentFile", "getStudentTimeline", "getStudentDocuments", "getClassAttendance", "getDailyAttendance", "submitAttendanceJustification", "getStudentAttendanceSummary"],
-  "Alumno": ["getAcademicConfig", "getAcademicHistory", "getAsignaturasActivas", "getWhatsAppLink", "getStudentEnrollmentHistory", "getAcademicYears", "getAcademicPeriods", "getAcademicOffers", "getAcademicCalendar", "getClassSchedules", "getStudentFile", "getStudentTimeline", "getStudentDocuments", "getStudentEnrollments"]
+  "Asistente": ["getAcademicConfig", "getAsignaturasActivas", "getWhatsAppLink", "getQuestionBank", "getAcademicCalendar", "getClassSchedules", "getStudentSchedule", "getStudentTimeline", "getClassAttendance", "getStudentAttendanceSummary"],
+  "Estudiante": ["getAcademicConfig", "getAsignaturasActivas", "getWhatsAppLink", "getQuestionBank", "getStudentEnrollmentHistory", "getAcademicCalendar", "getClassSchedules", "getStudentSchedule", "getStudentFile", "getStudentTimeline", "getStudentDocuments", "getClassAttendance", "getDailyAttendance", "submitAttendanceJustification", "getStudentAttendanceSummary"],
+  "Alumno": ["getAcademicConfig", "getAcademicHistory", "getAsignaturasActivas", "getWhatsAppLink", "getStudentEnrollmentHistory", "getAcademicYears", "getAcademicPeriods", "getAcademicOffers", "getAcademicCalendar", "getClassSchedules", "getStudentSchedule", "getStudentFile", "getStudentTimeline", "getStudentDocuments", "getStudentEnrollments"]
 };
 
 const PUBLIC_ACTIONS = ["ping", "createAdmissionRequest"];
@@ -252,6 +255,10 @@ function doPost(e) {
       case "createCalendarEvent": result = createCalendarEvent(payload); break;
       case "getClassSchedules": result = getClassSchedules(payload); break;
       case "createClassSchedule": result = createClassSchedule(payload); break;
+      case "deleteClassSchedule": result = deleteClassSchedule(payload); break;
+      case "getClassroomResources": result = getClassroomResources(payload); break;
+      case "saveClassroomResource": result = saveClassroomResource(payload); break;
+      case "getStudentSchedule": result = getStudentSchedule(payload); break;
       case "getAcademicRules": result = getAcademicRules(payload); break;
       case "saveAcademicRule": result = saveAcademicRule(payload); break;
 
@@ -974,29 +981,67 @@ function getClassSchedules(payload) {
 }
 
 function createClassSchedule(payload) {
-  const { ofertaId, diaSemana, horaInicio, horaFin, aulaCodigo, docenteUserId } = payload || {};
+  const { ofertaId, diaSemana, horaInicio, horaFin, aulaCodigo, docenteUserId, borrador, horarioId } = payload || {};
   if (!diaSemana || !horaInicio || !horaFin) throw new Error("Día, hora de inicio y hora de fin son requeridos.");
 
-  // Motor de prevención de conflictos por solapamiento de docente u aula
-  const conflict = checkScheduleConflict({ diaSemana, horaInicio, horaFin, aulaCodigo, docenteUserId });
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "HorariosClase");
+  const data = sheet.getDataRange().getValues();
+
+  // Motor de prevención de conflictos por solapamiento de docente, aula u oferta académica
+  const conflict = checkScheduleConflict({ diaSemana, horaInicio, horaFin, aulaCodigo, docenteUserId, ofertaId, excludeHorarioId: horarioId });
   if (conflict.hasConflict) {
     throw new Error(`Conflicto de horario detectado: ${conflict.reason}`);
   }
 
-  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
-  const sheet = getOrCreateSheet(ss, "HorariosClase");
   if (sheet.getLastRow() === 0) {
     sheet.appendRow(["HorarioID", "OfertaID", "DiaSemana", "HoraInicio", "HoraFin", "AulaCodigo", "DocenteUserId", "Estado"]);
   }
 
-  const horId = "HOR-" + Date.now();
-  sheet.appendRow([horId, ofertaId || "OFE-DEFAULT", diaSemana, horaInicio, horaFin, aulaCodigo || "AULA-1", docenteUserId || "", "Activo"]);
+  let horId = horarioId;
+  const targetEstado = borrador ? "Borrador" : "Activo";
 
-  return { status: "success", message: "Horario asignado correctamente.", data: { horarioId: horId } };
+  if (horId) {
+    const idx = data.findIndex(r => String(r[0]).trim() === String(horId).trim());
+    if (idx !== -1) {
+      sheet.getRange(idx + 1, 2, 1, 7).setValues([[
+        ofertaId || "OFE-DEFAULT",
+        diaSemana,
+        horaInicio,
+        horaFin,
+        aulaCodigo || "AULA-1",
+        docenteUserId || "",
+        targetEstado
+      ]]);
+      return { status: "success", message: "Horario de clase actualizado correctamente.", data: { horarioId: horId } };
+    }
+  }
+
+  horId = "HOR-" + Date.now();
+  sheet.appendRow([horId, ofertaId || "OFE-DEFAULT", diaSemana, horaInicio, horaFin, aulaCodigo || "AULA-1", docenteUserId || "", targetEstado]);
+
+  logStructuredEvent("ACADEMIC", "createClassSchedule", "INFO", "SCHEDULE_SAVED", `Horario ${horId} guardado (${targetEstado}) para oferta ${ofertaId}`, { horId, diaSemana, horaInicio, horaFin, aulaCodigo }, payload && payload.authRole);
+
+  return { status: "success", message: borrador ? "Borrador de horario guardado." : "Horario asignado y publicado correctamente.", data: { horarioId: horId } };
+}
+
+function deleteClassSchedule(payload) {
+  const { horarioId } = payload || {};
+  if (!horarioId) throw new Error("horarioId es requerido.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "HorariosClase");
+  const data = sheet.getDataRange().getValues();
+
+  const idx = data.findIndex(r => String(r[0]).trim() === String(horarioId).trim());
+  if (idx === -1) throw new Error("Horario no encontrado.");
+
+  sheet.getRange(idx + 1, 8).setValue("Inactivo");
+  return { status: "success", message: "Bloque de horario desactivado correctamente." };
 }
 
 function checkScheduleConflict(params) {
-  const { diaSemana, horaInicio, horaFin, aulaCodigo, docenteUserId } = params || {};
+  const { diaSemana, horaInicio, horaFin, aulaCodigo, docenteUserId, ofertaId, excludeHorarioId } = params || {};
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
   const sheet = getOrCreateSheet(ss, "HorariosClase");
   const data = sheet.getDataRange().getValues();
@@ -1004,24 +1049,182 @@ function checkScheduleConflict(params) {
 
   const rows = data.slice(1);
   for (let r of rows) {
+    if (excludeHorarioId && String(r[0]).trim() === String(excludeHorarioId).trim()) continue;
     if (r[7] === "Inactivo") continue;
+
     if (normalizeString(r[2]) === normalizeString(diaSemana)) {
       const exStart = String(r[3]);
       const exEnd = String(r[4]);
       const isOverlap = (horaInicio < exEnd && horaFin > exStart);
 
       if (isOverlap) {
-        if (aulaCodigo && String(r[5]).trim() === String(aulaCodigo).trim()) {
+        if (aulaCodigo && String(r[5]).trim() !== "" && String(r[5]).trim() === String(aulaCodigo).trim()) {
           return { hasConflict: true, reason: `El aula ${aulaCodigo} ya está ocupada el ${diaSemana} de ${exStart} a ${exEnd}.` };
         }
-        if (docenteUserId && String(r[6]).trim() === String(docenteUserId).trim()) {
+        if (docenteUserId && String(r[6]).trim() !== "" && String(r[6]).trim() === String(docenteUserId).trim()) {
           return { hasConflict: true, reason: `El docente ya tiene una clase asignada el ${diaSemana} de ${exStart} a ${exEnd}.` };
+        }
+        if (ofertaId && String(r[1]).trim() !== "" && String(r[1]).trim() === String(ofertaId).trim()) {
+          return { hasConflict: true, reason: `Esta sección/oferta ya tiene otra clase asignada el ${diaSemana} de ${exStart} a ${exEnd}.` };
         }
       }
     }
   }
 
   return { hasConflict: false };
+}
+
+function getClassroomResources(payload) {
+  const { sedeId } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "SedesAulas");
+  const data = sheet.getDataRange().getValues();
+  if (data.length <= 1) {
+    // Si la tabla está vacía, sembrar aulas institucionales por defecto
+    const defaultAulas = [
+      ["SED-MAIN", "Campus Principal", "AULA-101", "Aula 101 - Informática", 35, "Aula", "Activo"],
+      ["SED-MAIN", "Campus Principal", "AULA-102", "Aula 102 - Multiusos", 35, "Aula", "Activo"],
+      ["SED-MAIN", "Campus Principal", "LAB-COMP", "Laboratorio de Cómputo", 30, "Laboratorio", "Activo"],
+      ["SED-MAIN", "Campus Principal", "LAB-CIEN", "Laboratorio de Ciencias", 25, "Laboratorio", "Activo"],
+      ["SED-MAIN", "Campus Principal", "AUDITORIO", "Auditorio Institucional", 150, "Auditorio", "Activo"],
+      ["SED-MAIN", "Campus Principal", "CANCHA-1", "Cancha Polideportiva", 100, "Deportes", "Activo"]
+    ];
+    defaultAulas.forEach(row => sheet.appendRow(row));
+    return {
+      status: "success",
+      data: defaultAulas.map(r => ({
+        sedeId: r[0], nombreSede: r[1], aulaCodigo: r[2], nombreAula: r[3], capacidad: r[4], tipoEspacio: r[5], estado: r[6]
+      }))
+    };
+  }
+
+  const classrooms = data.slice(1).filter(r => {
+    if (sedeId && String(r[0]).trim() !== String(sedeId).trim()) return false;
+    return r[6] !== "Inactivo";
+  }).map(r => ({
+    sedeId: r[0],
+    nombreSede: r[1],
+    aulaCodigo: r[2],
+    nombreAula: r[3],
+    capacidad: r[4],
+    tipoEspacio: r[5],
+    estado: r[6] || "Activo"
+  }));
+
+  return { status: "success", data: classrooms };
+}
+
+function saveClassroomResource(payload) {
+  const { aulaCodigo, nombreAula, capacidad, tipoEspacio, sedeId, nombreSede } = payload || {};
+  if (!aulaCodigo || !nombreAula) throw new Error("aulaCodigo y nombreAula son requeridos.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "SedesAulas");
+  const data = sheet.getDataRange().getValues();
+
+  const idx = data.findIndex(r => String(r[2]).trim() === String(aulaCodigo).trim());
+  if (idx !== -1) {
+    sheet.getRange(idx + 1, 4).setValue(nombreAula);
+    if (capacidad) sheet.getRange(idx + 1, 5).setValue(capacidad);
+    if (tipoEspacio) sheet.getRange(idx + 1, 6).setValue(tipoEspacio);
+  } else {
+    sheet.appendRow([
+      sedeId || "SED-MAIN",
+      nombreSede || "Campus Principal",
+      aulaCodigo,
+      nombreAula,
+      capacidad || 30,
+      tipoEspacio || "Aula",
+      "Activo"
+    ]);
+  }
+
+  return { status: "success", message: "Espacio/Aula registrada exitosamente." };
+}
+
+function getStudentSchedule(payload) {
+  const { userId, grado, seccion } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+
+  let targetGrado = grado;
+  let targetSeccion = seccion;
+
+  // Si no vienen grado y sección explícitos pero sí el userId, buscar su última matrícula activa
+  if ((!targetGrado || !targetSeccion) && userId) {
+    const matRows = getOrCreateSheet(ss, "Matriculas").getDataRange().getValues().slice(1);
+    const userMat = matRows.filter(r => String(r[2]).trim() === String(userId).trim() && (r[8] === "Activa" || r[8] === "Confirmada"));
+    if (userMat.length > 0) {
+      const lastMat = userMat[userMat.length - 1];
+      targetGrado = targetGrado || lastMat[4];
+      targetSeccion = targetSeccion || lastMat[5];
+    }
+  }
+
+  const horRows = getOrCreateSheet(ss, "HorariosClase").getDataRange().getValues().slice(1);
+  const offerRows = getOrCreateSheet(ss, "OfertaAcademica").getDataRange().getValues().slice(1);
+  const asigRows = getOrCreateSheet(ss, "CatalogoAsignaturas").getDataRange().getValues().slice(1);
+  const teacherAsigRows = getOrCreateSheet(ss, "AsignacionesDocentes").getDataRange().getValues().slice(1);
+  const userRows = ss.getSheetByName("Usuarios") ? ss.getSheetByName("Usuarios").getDataRange().getValues().slice(1) : [];
+
+  // Filtrar ofertas que coincidan con grado y sección
+  const activeOffers = offerRows.filter(r => {
+    return (!targetGrado || normalizeString(r[2]) === normalizeString(targetGrado)) &&
+           (!targetSeccion || normalizeString(r[3]) === normalizeString(targetSeccion)) &&
+           r[6] !== "Inactiva";
+  });
+
+  const offerIds = activeOffers.map(o => String(o[0]).trim());
+
+  // Filtrar bloques de horario activos para las ofertas seleccionadas
+  const studentSchedules = horRows.filter(r => {
+    if (r[7] === "Inactivo") return false;
+    if (offerIds.length > 0) return offerIds.indexOf(String(r[1]).trim()) !== -1;
+    return false;
+  }).map(r => {
+    const offer = activeOffers.find(o => String(o[0]).trim() === String(r[1]).trim());
+    const asigId = offer ? offer[4] : "";
+    const catalogItem = asigRows.find(a => String(a[0]).trim() === String(asigId).trim());
+    const asignaturaNombre = catalogItem ? catalogItem[1] : (asigId || "Asignatura General");
+
+    // Buscar sustitución o titular
+    const docUserId = r[6];
+    const subMatch = teacherAsigRows.find(ta => String(ta[1]).trim() === String(r[1]).trim() && ta[3] === "Sustituto" && ta[6] === "Temporal");
+    const actualDocUserId = subMatch ? subMatch[2] : docUserId;
+
+    const docUser = userRows.find(u => String(u[0]).trim() === String(actualDocUserId).trim());
+    const docenteNombre = docUser ? docUser[1] : "Docente Asignado";
+
+    return {
+      horarioId: r[0],
+      ofertaId: r[1],
+      diaSemana: r[2],
+      horaInicio: r[3],
+      horaFin: r[4],
+      aulaCodigo: r[5],
+      docenteUserId: actualDocUserId,
+      docenteNombre: docenteNombre,
+      esSustituto: Boolean(subMatch),
+      asignaturaNombre: asignaturaNombre,
+      grado: offer ? offer[2] : targetGrado,
+      seccion: offer ? offer[3] : targetSeccion,
+      estado: r[7]
+    };
+  });
+
+  studentSchedules.sort((a, b) => {
+    const days = ["Lunes", "Martes", "Miércoles", "Miercoles", "Jueves", "Viernes", "Sábado", "Sabado"];
+    const dA = days.indexOf(a.diaSemana);
+    const dB = days.indexOf(b.diaSemana);
+    if (dA !== dB) return dA - dB;
+    return String(a.horaInicio).localeCompare(String(b.horaInicio));
+  });
+
+  return {
+    status: "success",
+    grado: targetGrado || "General",
+    seccion: targetSeccion || "A",
+    schedules: studentSchedules
+  };
 }
 
 function getAcademicRules(payload) {

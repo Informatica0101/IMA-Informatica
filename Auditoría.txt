@@ -1,3 +1,41 @@
+AUDITORÍA TÉCNICA Y DIAGNÓSTICO DE ARQUITECTURA - FASE 7: PLANIFICACIÓN ACADÉMICA, HORARIOS, SUSTITUCIONES Y RECURSOS - Sun Jul 5 2026
+
+Archivos y Módulos Auditados:
+- backend/academic-service/Code.gs
+- teacher-dashboard.html
+- student-dashboard.html
+- js/teacher.js
+- js/student.js
+- js/api.js
+
+1. DIAGNÓSTICO Y REUTILIZACIÓN DE ESTRUCTURAS DE DATOS EXISTENTES
+- Tablas existentes en `backend/academic-service/Code.gs`:
+  * `AnosLectivos`: Ciclos lectivos con estado (`Borrador`, `EnPreparacion`, `Activo`, `Cerrado`).
+  * `PeriodosAcademicos`: Parciales/Semestres jerárquicos con fechas de inicio/fin y aperturas docentes.
+  * `CatalogoAsignaturas`: Catálogo unificado de asignaturas institucionales.
+  * `PlanesEstudio` & `PlanAsignaturas`: Planes de estudio por grado y carga horaria.
+  * `OfertaAcademica`: Oferta por año lectivo, grado, sección y asignatura.
+  * `AsignacionesDocentes`: Asignación de docentes titulares y sustitutos temporales.
+  * `CalendarioAcademico`: Eventos del calendario institucional, feriados y exámenes.
+  * `SedesAulas`: Espacios físicos, aulas, laboratorios, capacidad y tipo de espacio.
+  * `HorariosClase`: Franjas horarias por día de semana, hora inicio/fin, aula y docente.
+  * `ReglasAcademicas`: Parámetros de colisión y reglas académicas institucionales.
+
+2. HALLAZGOS Y OPORTUNIDADES DE MEJORA
+- Motor Backend (`backend/academic-service/Code.gs`):
+  * La función `checkScheduleConflict` valida colisiones simples de aula y docente. Se requiere expandir la prevención de conflictos para validar simultáneamente: 1) Colisión de docente, 2) Colisión de aula/espacio físico, 3) Colisión de grado y sección (evitar asignar 2 clases al mismo grupo en la misma franja).
+  * Soporte para guardar borradores de horarios y publicación oficial por grado/sección.
+  * Endpoints para consulta de horarios consolidados por estudiante/padre y por docente.
+  * Registro y gestión de sustituciones docentes temporales con fechas de inicio y fin.
+  * Catálogo y gestión de aulas/recursos compartidos (`SedesAulas`).
+- Interfaz Docente y Administrativa (`teacher-dashboard.html`, `js/teacher.js`):
+  * Extender el panel administrativo con un diseñador visual de horarios por sección y docente, incluyendo la detección en tiempo real de colisiones antes de guardar.
+  * Modal/Gestor de sustituciones docentes temporales.
+- Interfaz de Estudiante y Portal Familiar (`student-dashboard.html`, `js/student.js`):
+  * Vista de horario de clases semanal interactivo con indicación de hora, asignatura, docente y aula, resaltando el día actual.
+
+----------------------------------------------------------------------------------------------------
+
 AUDITORÍA TÉCNICA Y DIAGNÓSTICO DE ARQUITECTURA - FASE 4: EXPANSIÓN FINANCIERA, DESCUENTOS, BECAS, INVENTARIOS, TIENDA ESCOLAR Y CAFETERÍA - Sun Jul 5 2026
 
 Archivos y Módulos Auditados:

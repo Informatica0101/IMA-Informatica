@@ -187,6 +187,73 @@ document.addEventListener('DOMContentLoaded', function() {
     fetchAndRenderFormativeEvaluations();
     fetchAndRenderStudentAttendanceSummary();
     fetchAndRenderStudentAdministrativeRequests();
+    fetchAndRenderStudentSchedule();
+
+    document.getElementById('btn-refresh-student-schedule')?.addEventListener('click', function() {
+        fetchAndRenderStudentSchedule();
+    });
+
+    function fetchAndRenderStudentSchedule() {
+        var container = document.getElementById('student-schedule-container');
+        if (!container || !currentUser || !currentUser.userId) return;
+
+        container.innerHTML = '<div class="col-span-5 text-center py-8 text-gray-400 font-bold text-xs uppercase tracking-widest animate-pulse"><i class="fas fa-spinner fa-spin mr-2"></i>Cargando horario semanal...</div>';
+
+        fetchApi('ACADEMIC', 'getStudentSchedule', {
+            userId: currentUser.userId,
+            grado: currentUser.grado,
+            seccion: currentUser.seccion
+        }).then(function(res) {
+            if (res && res.status === 'success' && Array.isArray(res.schedules)) {
+                var schedules = res.schedules;
+                var days = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes"];
+
+                if (schedules.length === 0) {
+                    container.innerHTML = `
+                        <div class="col-span-5 text-center py-8 text-gray-400 italic text-xs border-2 border-dashed border-gray-100 rounded-2xl">
+                            No hay bloques de horario oficial publicados para ${currentUser.grado} Sección ${currentUser.seccion}.
+                        </div>
+                    `;
+                    return;
+                }
+
+                var html = '';
+                days.forEach(function(day) {
+                    var daySchedules = schedules.filter(function(s) {
+                        return s.diaSemana.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "") === day.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+                    });
+
+                    html += `
+                        <div class="bg-gray-50 rounded-2xl p-4 border border-gray-100 flex flex-col h-full">
+                            <div class="flex justify-between items-center mb-3 pb-2 border-b border-gray-200">
+                                <span class="text-xs font-black text-indigo-700 uppercase tracking-widest">${day}</span>
+                                <span class="px-2 py-0.5 bg-indigo-100 text-indigo-800 text-[9px] font-bold rounded-full">${daySchedules.length} clases</span>
+                            </div>
+                            <div class="space-y-3 flex-grow">
+                                ${daySchedules.length > 0 ? daySchedules.map(function(b) {
+                                    return `
+                                        <div class="p-3 bg-white rounded-xl border border-gray-100 shadow-sm hover:border-indigo-200 transition-all">
+                                            <p class="text-[9px] font-black text-indigo-500 uppercase tracking-widest">${b.horaInicio} - ${b.horaFin}</p>
+                                            <p class="text-xs font-bold text-gray-900 leading-tight mt-0.5">${b.asignaturaNombre}</p>
+                                            <div class="mt-2 pt-2 border-t border-gray-50 flex flex-col gap-0.5 text-[9px] font-semibold text-gray-500">
+                                                <span class="truncate"><i class="fas fa-chalkboard-teacher text-indigo-400 mr-1"></i>${b.docenteNombre} ${b.esSustituto ? '<span class="text-purple-600 font-bold">(Sustituto)</span>' : ''}</span>
+                                                <span><i class="fas fa-door-open text-teal-400 mr-1"></i>Aula: ${b.aulaCodigo || 'General'}</span>
+                                            </div>
+                                        </div>
+                                    `;
+                                }).join('') : '<p class="text-[10px] text-gray-400 italic py-4 text-center">Sin clases</p>'}
+                            </div>
+                        </div>
+                    `;
+                });
+                container.innerHTML = html;
+            } else {
+                container.innerHTML = '<div class="col-span-5 text-center py-6 text-red-500 text-xs font-bold uppercase">No se pudo obtener el horario.</div>';
+            }
+        }).catch(function(err) {
+            container.innerHTML = '<div class="col-span-5 text-center py-6 text-red-500 text-xs font-bold uppercase">Error al cargar horario: ' + err.message + '</div>';
+        });
+    }
 
     document.getElementById('btn-open-justification-modal')?.addEventListener('click', function() {
         var fecha = prompt('Ingrese la fecha de la ausencia (AAAA-MM-DD):', new Date().toISOString().split('T')[0]);

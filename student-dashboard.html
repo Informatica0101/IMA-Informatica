@@ -222,6 +222,27 @@
                     </div>
                 </div>
 
+                <!-- Horario Oficial de Clases Semanal (Fase 7) -->
+                <div id="student-schedule-card" class="bg-white p-6 md:p-8 rounded-[2.5rem] shadow-sm border border-gray-100 mb-10">
+                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 bg-indigo-600 text-white rounded-2xl flex items-center justify-center text-xl shadow-lg shadow-indigo-100">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-bold text-gray-800">Horario Oficial de Clases</h3>
+                                <p class="text-xs text-gray-500 font-medium">Programación semanal con aula, asignatura y docente asignado</p>
+                            </div>
+                        </div>
+                        <button id="btn-refresh-student-schedule" class="px-4 py-2 bg-indigo-50 text-indigo-600 hover:bg-indigo-100 rounded-xl font-bold text-xs uppercase tracking-widest transition-all">
+                            <i class="fas fa-sync-alt mr-1"></i> Actualizar
+                        </button>
+                    </div>
+                    <div id="student-schedule-container" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-4">
+                        <!-- Carga dinámica por días de la semana -->
+                    </div>
+                </div>
+
                 <!-- Resumen de Asistencia y Puntualidad (Fase 7) -->
                 <div id="student-attendance-card" class="bg-white p-6 md:p-8 rounded-[2.5rem] shadow-sm border border-gray-100 mb-10">
                     <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">

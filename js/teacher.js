@@ -365,6 +365,133 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    // --- LÓGICA CONSTRUCTOR DE HORARIOS Y SUSTITUCIONES DOCENTES (FASE 7) ---
+    async function loadMasterSchedules() {
+        const tbody = document.getElementById('schedules-table-body');
+        const badge = document.getElementById('schedule-count-badge');
+        if (!tbody) return;
+
+        tbody.innerHTML = '<tr><td colspan="6" class="p-6 text-center text-gray-400 italic"><i class="fas fa-spinner fa-spin mr-2"></i>Cargando matriz de horarios...</td></tr>';
+
+        try {
+            const res = await fetchApi('ACADEMIC', 'getClassSchedules', { docenteUserId: currentUser.userId });
+            if (res.status === 'success') {
+                const schedules = res.data || [];
+                if (badge) badge.textContent = `${schedules.length} Bloques`;
+
+                if (schedules.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="6" class="p-6 text-center text-gray-400 italic">No hay bloques de horario registrados para este docente. Utilice el formulario superior para programar sus clases.</td></tr>';
+                    return;
+                }
+
+                tbody.innerHTML = schedules.map(s => `
+                    <tr class="hover:bg-indigo-50/40 transition-colors">
+                        <td class="p-3 font-bold text-gray-800">
+                            <span class="px-2 py-0.5 bg-indigo-50 text-indigo-700 rounded-md uppercase text-[9px] mr-1.5">${s.diaSemana}</span>
+                            <span>${s.horaInicio} - ${s.horaFin}</span>
+                        </td>
+                        <td class="p-3 font-semibold text-gray-700">${s.ofertaId}</td>
+                        <td class="p-3 text-gray-600 font-medium">Grado / Secc. Asignada</td>
+                        <td class="p-3 font-mono text-gray-600">${s.aulaCodigo || 'N/A'}</td>
+                        <td class="p-3 text-gray-600">${s.docenteUserId || currentUser.nombre}</td>
+                        <td class="p-3 text-right">
+                            <button onclick="window.deleteScheduleBlock('${s.horarioId}')" class="px-2.5 py-1 bg-red-50 text-red-600 hover:bg-red-100 rounded-lg text-[10px] font-bold uppercase transition-colors">
+                                <i class="fas fa-trash-alt mr-1"></i>Eliminar
+                            </button>
+                        </td>
+                    </tr>
+                `).join('');
+            } else {
+                tbody.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-red-500">${res.message || 'Error al cargar horarios'}</td></tr>`;
+            }
+        } catch (err) {
+            tbody.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-red-500">Error de conexión: ${err.message}</td></tr>`;
+        }
+    }
+
+    window.deleteScheduleBlock = async function(horarioId) {
+        if (!confirm("¿Desea desactivar este bloque de horario?")) return;
+        try {
+            const res = await fetchApi('ACADEMIC', 'deleteClassSchedule', { horarioId });
+            if (res.status === 'success') {
+                alert("Bloque de horario eliminado.");
+                loadMasterSchedules();
+            } else {
+                alert("Error: " + res.message);
+            }
+        } catch (e) {
+            alert("Error al eliminar horario: " + e.message);
+        }
+    };
+
+    document.getElementById('schedule-builder-form')?.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const btn = document.getElementById('btn-save-class-schedule');
+        const diaSemana = document.getElementById('sch-dia').value;
+        const horaInicio = document.getElementById('sch-hora-inicio').value;
+        const horaFin = document.getElementById('sch-hora-fin').value;
+        const aulaCodigo = document.getElementById('sch-aula').value;
+        const grado = document.getElementById('sch-grado').value;
+        const seccion = document.getElementById('sch-seccion').value;
+        const docenteUserId = document.getElementById('sch-docente-id').value || currentUser.userId;
+
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-1"></i> Verificando colisiones...';
+
+        try {
+            const ofertaId = `OFE-${grado.substring(0,3).toUpperCase()}-${seccion}`;
+            const res = await fetchApi('ACADEMIC', 'createClassSchedule', {
+                ofertaId,
+                diaSemana,
+                horaInicio,
+                horaFin,
+                aulaCodigo,
+                docenteUserId
+            });
+
+            if (res.status === 'success') {
+                alert(`¡Horario asignado con éxito! ID: ${res.data?.horarioId || 'OK'}`);
+                loadMasterSchedules();
+            } else {
+                throw new Error(res.message);
+            }
+        } catch (err) {
+            alert("Conflicto / Error en asignación de horario:\n" + err.message);
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-check mr-1"></i> Publicar Horario';
+        }
+    });
+
+    document.getElementById('btn-load-schedules-list')?.addEventListener('click', loadMasterSchedules);
+
+    document.getElementById('btn-open-substitution-modal')?.addEventListener('click', async () => {
+        const sustitutoUserId = prompt("Ingrese el ID o Correo del Docente Sustituto:");
+        if (!sustitutoUserId) return;
+        const ofertaId = prompt("Ingrese el ID de la Oferta Académica / Clase (Ej. OFE-DÉC-A):", "OFE-DÉC-A");
+        if (!ofertaId) return;
+        const motivo = prompt("Motivo de la sustitución temporal:", "Licencia Médica / Permiso");
+
+        try {
+            const res = await fetchApi('ACADEMIC', 'createTeacherSubstitution', {
+                ofertaId,
+                sustitutoUserId,
+                fechaInicio: new Date().toISOString().split('T')[0],
+                fechaFin: "",
+                motivo,
+                autorizadoPor: currentUser.nombre
+            });
+
+            if (res.status === 'success') {
+                alert(`Sustitución docente registrada exitosamente para ${sustitutoUserId}.`);
+            } else {
+                alert("Error: " + res.message);
+            }
+        } catch (e) {
+            alert("Error registrando sustitución: " + e.message);
+        }
+    });
+
     // REQ-EXP-017: Health Checks Ping-Pong en Consola Técnica
     function runTechnicalHealthChecks() {
         var services = ['USER', 'ACADEMIC', 'TASK', 'EXAM', 'ACCOUNTING'];
