@@ -117,6 +117,7 @@
             <nav class="flex flex-nowrap overflow-x-auto gap-2 md:gap-3 mb-6 pb-2 scroll-horizontal-clean">
                 <button id="nav-dashboard" class="flex-none px-4 py-2 rounded-xl font-semibold transition-all text-[10px] uppercase tracking-widest bg-blue-600 text-white">Entregas</button>
                 <button id="nav-gradebook" class="flex-none px-4 py-2 rounded-xl font-semibold transition-all text-[10px] uppercase tracking-widest bg-gray-100 text-gray-500">Libro de Calificaciones</button>
+                <button id="nav-attendance" class="flex-none px-4 py-2 rounded-xl font-semibold transition-all text-[10px] uppercase tracking-widest bg-gray-100 text-gray-500">Asistencia y Convivencia</button>
                 <button id="nav-reportes" class="flex-none px-4 py-2 rounded-xl font-semibold transition-all text-[10px] uppercase tracking-widest bg-gray-100 text-gray-500">Reportes</button>
                 <button id="nav-tareas" class="flex-none px-4 py-2 rounded-xl font-semibold transition-all text-[10px] uppercase tracking-widest bg-gray-100 text-gray-500">Actividades</button>
                 <button id="nav-proyectos" class="flex-none px-4 py-2 rounded-xl font-semibold transition-all text-[10px] uppercase tracking-widest bg-gray-100 text-gray-500">Proyectos</button>
@@ -902,6 +903,88 @@
                         <button id="btn-gb-save-all" class="bg-blue-600 text-white px-5 py-2.5 rounded-xl text-xs font-bold hover:bg-blue-700 transition-all shadow-md">
                             Guardar Cambios del Libro
                         </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Sección de Asistencia y Convivencia Escolar -->
+            <section id="section-attendance" class="hidden animate-fade-in-up space-y-6">
+                <div class="bg-white rounded-3xl p-6 shadow-xl border border-gray-100">
+                    <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-6">
+                        <div>
+                            <span class="inline-block px-3 py-1 bg-teal-50 text-teal-700 text-xs font-semibold rounded-full mb-2">Puntualidad & Disciplina</span>
+                            <h2 class="text-2xl font-bold text-gray-800">Control de Asistencia y Convivencia Escolar</h2>
+                            <p class="text-xs text-gray-500 mt-1">Registro rápido de asistencia por clase, revisión de justificantes y reporte de incidencias disciplinarias.</p>
+                        </div>
+                        <div class="flex flex-wrap items-center gap-2">
+                            <button id="btn-att-new-incident" class="bg-amber-600 text-white px-4 py-2 rounded-xl text-xs font-semibold hover:bg-amber-700 transition-all flex items-center gap-1.5 shadow-sm">
+                                <i class="fas fa-exclamation-triangle"></i>
+                                Reportar Incidencia
+                            </button>
+                            <button id="btn-att-save-attendance" class="bg-teal-600 text-white px-4 py-2 rounded-xl text-xs font-semibold hover:bg-teal-700 transition-all flex items-center gap-1.5 shadow-sm">
+                                <i class="fas fa-check-double"></i>
+                                Guardar Pase de Lista
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Filtros del pase de lista -->
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-3 bg-gray-50 p-4 rounded-2xl mb-6">
+                        <div>
+                            <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Fecha</label>
+                            <input type="date" id="att-filter-date" class="w-full text-xs p-2.5 bg-white border border-gray-200 rounded-xl font-medium focus:ring-2 focus:ring-teal-400">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Grado</label>
+                            <select id="att-filter-grado" class="w-full text-xs p-2.5 bg-white border border-gray-200 rounded-xl font-medium focus:ring-2 focus:ring-teal-400">
+                                <!-- Dinámico -->
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Sección</label>
+                            <select id="att-filter-seccion" class="w-full text-xs p-2.5 bg-white border border-gray-200 rounded-xl font-medium focus:ring-2 focus:ring-teal-400">
+                                <option value="A">A</option>
+                                <option value="B">B</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Asignatura</label>
+                            <select id="att-filter-asignatura" class="w-full text-xs p-2.5 bg-white border border-gray-200 rounded-xl font-medium focus:ring-2 focus:ring-teal-400">
+                                <!-- Dinámico -->
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Grilla de pase de lista rápido -->
+                    <div class="overflow-x-auto rounded-2xl border border-gray-100 shadow-inner bg-white mb-8">
+                        <table class="w-full text-left border-collapse" id="att-table">
+                            <thead>
+                                <tr class="bg-gray-100 text-gray-700 text-[10px] uppercase tracking-wider">
+                                    <th class="p-3 border-b border-gray-200">No. Lista / Estudiante</th>
+                                    <th class="p-3 border-b border-gray-200 text-center">Estado Asistencia</th>
+                                    <th class="p-3 border-b border-gray-200 text-center">Hora Llegada / Tardanza</th>
+                                    <th class="p-3 border-b border-gray-200 text-center">Observaciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="att-table-body" class="divide-y divide-gray-100 text-xs">
+                                <tr>
+                                    <td colspan="4" class="p-6 text-center text-gray-400">Cargando lista de asistencia...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Sección de Incidencias y Convivencia Escolar -->
+                    <div class="border-t border-gray-100 pt-6">
+                        <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
+                            <i class="fas fa-shield-alt text-amber-500"></i>
+                            Incidencias y Casos de Convivencia Escolar
+                        </h3>
+                        <div id="att-incidents-container" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="text-center py-6 text-gray-400 italic text-xs border-2 border-dashed border-gray-100 rounded-2xl col-span-full">
+                                Cargar incidencias para el grupo seleccionado.
+                            </div>
+                        </div>
                     </div>
                 </div>
             </section>

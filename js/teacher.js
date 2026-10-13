@@ -18,6 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Elementos de Navegación y Secciones ---
     const navDashboard = document.getElementById('nav-dashboard');
     const navGradebook = document.getElementById('nav-gradebook');
+    const navAttendance = document.getElementById('nav-attendance');
     const navTareas = document.getElementById('nav-tareas');
     const navProyectos = document.getElementById('nav-proyectos');
     const navLogros = document.getElementById('nav-logros');
@@ -27,6 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const sectionAcademicReports = document.getElementById('section-dashboard');
     const sectionGradebook = document.getElementById('section-gradebook');
+    const sectionAttendance = document.getElementById('section-attendance');
     const sectionTareas = document.getElementById('section-tareas');
     const sectionProyectos = document.getElementById('section-proyectos');
     const sectionLogros = document.getElementById('section-logros');
@@ -56,8 +58,8 @@ document.addEventListener('DOMContentLoaded', () => {
     let isNavigating = false;
     let studentSort = { column: 'nombre', direction: 'asc' };
 
-    const allSections = [sectionAcademicReports, sectionGradebook, sectionTareas, sectionProyectos, sectionLogros, sectionNews, sectionAdmin, sectionReportes];
-    const allNavLinks = [navDashboard, navGradebook, navTareas, navProyectos, navLogros, navNews, navAdmin, navReportsOld];
+    const allSections = [sectionAcademicReports, sectionGradebook, sectionAttendance, sectionTareas, sectionProyectos, sectionLogros, sectionNews, sectionAdmin, sectionReportes];
+    const allNavLinks = [navDashboard, navGradebook, navAttendance, navTareas, navProyectos, navLogros, navNews, navAdmin, navReportsOld];
 
     // Auxiliar para normalizar strings (trim, lowercase y sin acentos) para comparaciones robustas
     const norm = (s) => (s || "").toString().trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
@@ -96,6 +98,10 @@ document.addEventListener('DOMContentLoaded', () => {
     navGradebook?.addEventListener('click', () => {
         window.navigateTo(sectionGradebook, navGradebook);
         initGradebookModule();
+    });
+    navAttendance?.addEventListener('click', () => {
+        window.navigateTo(sectionAttendance, navAttendance);
+        initAttendanceModule();
     });
     navTareas.addEventListener('click', () => {
         window.navigateTo(sectionTareas, navTareas);
@@ -3138,6 +3144,216 @@ function toBase64(file) {
         const userId = prompt("Ingrese el ID del estudiante para recuperación:");
         if (!userId) return;
         window.quickRecoveryPrompt(userId, "Estudiante " + userId, 65);
+    });
+
+    // --- MÓDULO DE CONTROL DE ASISTENCIA Y CONVIVENCIA ESCOLAR (FASE 10) ---
+    let currentAttendanceStudents = [];
+
+    async function initAttendanceModule() {
+        const selGrado = document.getElementById('att-filter-grado');
+        const selSeccion = document.getElementById('att-filter-seccion');
+        const selAsignatura = document.getElementById('att-filter-asignatura');
+        const inputDate = document.getElementById('att-filter-date');
+
+        if (!selGrado) return;
+
+        if (inputDate && !inputDate.value) {
+            inputDate.value = new Date().toISOString().split('T')[0];
+        }
+
+        const scope = window.GLOBAL_SCOPE || {};
+        const granular = scope.GranularConfig || [];
+
+        const grados = Array.isArray(scope.GradoActual) ? scope.GradoActual : (scope.GradoActual ? [scope.GradoActual] : ["10mo Grado"]);
+        selGrado.innerHTML = grados.map(g => `<option value="${g}">${g}</option>`).join('');
+
+        const updateAsignaturasFilter = () => {
+            const gVal = selGrado.value;
+            const sVal = selSeccion.value;
+            const matches = granular.filter(r => norm(r.grado) === norm(gVal) && norm(r.seccion) === norm(sVal));
+            const asigs = [...new Set(matches.map(r => r.asignatura))].filter(Boolean);
+            if (asigs.length === 0) {
+                selAsignatura.innerHTML = '<option value="General">General</option>';
+            } else {
+                selAsignatura.innerHTML = asigs.map(a => `<option value="${a}">${a}</option>`).join('');
+            }
+        };
+
+        selGrado.onchange = () => { updateAsignaturasFilter(); loadAttendanceSheet(); };
+        selSeccion.onchange = () => { updateAsignaturasFilter(); loadAttendanceSheet(); };
+        selAsignatura.onchange = () => loadAttendanceSheet();
+        inputDate.onchange = () => loadAttendanceSheet();
+
+        updateAsignaturasFilter();
+        await loadAttendanceSheet();
+    }
+
+    async function loadAttendanceSheet() {
+        const tbody = document.getElementById('att-table-body');
+        const selGrado = document.getElementById('att-filter-grado')?.value;
+        const selSeccion = document.getElementById('att-filter-seccion')?.value;
+        const selDate = document.getElementById('att-filter-date')?.value || new Date().toISOString().split('T')[0];
+
+        if (!tbody) return;
+
+        tbody.innerHTML = '<tr><td colspan="4" class="p-6 text-center text-gray-400 italic"><i class="fas fa-spinner fa-spin mr-2"></i>Cargando lista de asistencia del grupo...</td></tr>';
+
+        try {
+            const [stRes, attRes] = await Promise.all([
+                fetchApi('USER', 'getStudentsByGradoSeccion', { grado: selGrado, seccion: selSeccion }),
+                fetchApi('ACADEMIC', 'getDailyAttendance', { fecha: selDate, grado: selGrado, seccion: selSeccion })
+            ]);
+
+            const students = stRes.status === 'success' ? (stRes.data || []) : [];
+            const existingRegs = attRes.status === 'success' ? (attRes.data || []) : [];
+
+            currentAttendanceStudents = students;
+
+            if (students.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="4" class="p-6 text-center text-gray-400 italic">No hay estudiantes registrados en esta sección.</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = students.map((s, idx) => {
+                const reg = existingRegs.find(r => String(r.userId).trim() === String(s.userId).trim());
+                const estadoActual = reg ? reg.estadoAsistencia : "Presente";
+                const horaLlegada = reg ? (reg.horaLlegada || "") : "";
+                const obs = reg ? (reg.observacionDocente || "") : "";
+
+                return `
+                    <tr class="hover:bg-gray-50/80 transition-colors">
+                        <td class="p-3 font-semibold text-gray-800">
+                            <div>${s.nombre}</div>
+                            <div class="text-[9px] text-gray-400 font-mono">LISTA #${s.numeroLista || idx + 1} | ${s.userId}</div>
+                        </td>
+                        <td class="p-2 text-center">
+                            <select class="p-2 text-xs border border-gray-200 rounded-xl font-bold att-status-select" data-userid="${s.userId}">
+                                <option value="Presente" ${estadoActual === "Presente" ? "selected" : ""}>Presente</option>
+                                <option value="Ausente" ${estadoActual === "Ausente" ? "selected" : ""}>Ausente</option>
+                                <option value="Tardanza" ${estadoActual === "Tardanza" ? "selected" : ""}>Tardanza</option>
+                                <option value="Justificada" ${estadoActual === "Justificada" ? "selected" : ""}>Justificada</option>
+                                <option value="SalidaAnticipada" ${estadoActual === "SalidaAnticipada" ? "selected" : ""}>Salida Anticipada</option>
+                            </select>
+                        </td>
+                        <td class="p-2 text-center">
+                            <input type="time" class="p-1.5 border border-gray-200 rounded-lg text-xs att-time-input" data-userid="${s.userId}" value="${horaLlegada}">
+                        </td>
+                        <td class="p-2 text-center">
+                            <input type="text" placeholder="Observaciones..." class="w-full p-1.5 border border-gray-200 rounded-lg text-xs att-obs-input" data-userid="${s.userId}" value="${obs}">
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+
+            await loadDisciplinaryIncidents();
+        } catch (e) {
+            tbody.innerHTML = `<tr><td colspan="4" class="p-6 text-center text-red-500">Error al cargar datos: ${e.message}</td></tr>`;
+        }
+    }
+
+    async function loadDisciplinaryIncidents() {
+        const container = document.getElementById('att-incidents-container');
+        if (!container) return;
+
+        try {
+            const res = await fetchApi('ACADEMIC', 'getAttendanceIncidents', {});
+            if (res.status === 'success' && Array.isArray(res.data)) {
+                const incs = res.data;
+                if (incs.length === 0) {
+                    container.innerHTML = '<div class="text-center py-6 text-gray-400 italic text-xs border-2 border-dashed border-gray-100 rounded-2xl col-span-full">No se han registrado incidencias para este grupo.</div>';
+                    return;
+                }
+
+                container.innerHTML = incs.map(i => `
+                    <div class="p-4 bg-amber-50/50 border border-amber-100 rounded-2xl">
+                        <div class="flex items-center justify-between mb-1">
+                            <span class="px-2 py-0.5 bg-amber-200 text-amber-900 rounded font-bold text-[9px] uppercase">${i.tipoIncidencia}</span>
+                            <span class="text-[9px] text-gray-400 font-mono">${i.fecha ? new Date(i.fecha).toLocaleDateString() : ''}</span>
+                        </div>
+                        <p class="text-xs font-semibold text-gray-800 mt-1">${i.descripcion || 'Sin detalle'}</p>
+                        <div class="text-[9px] text-gray-500 mt-2">Reportado por: ${i.reportadoPor || 'Docente'} | Estado: <strong>${i.estado}</strong></div>
+                    </div>
+                `).join('');
+            }
+        } catch (e) {
+            container.innerHTML = '<div class="text-center py-6 text-red-500 text-xs col-span-full">Error al cargar incidencias disciplinarias.</div>';
+        }
+    }
+
+    document.getElementById('btn-att-save-attendance')?.addEventListener('click', async () => {
+        const selDate = document.getElementById('att-filter-date')?.value || new Date().toISOString().split('T')[0];
+        const selGrado = document.getElementById('att-filter-grado')?.value;
+        const selSeccion = document.getElementById('att-filter-seccion')?.value;
+
+        const selects = document.querySelectorAll('.att-status-select');
+        const registros = [];
+
+        selects.forEach(sel => {
+            const uId = sel.dataset.userid;
+            const timeInp = document.querySelector(`.att-time-input[data-userid="${uId}"]`);
+            const obsInp = document.querySelector(`.att-obs-input[data-userid="${uId}"]`);
+
+            registros.push({
+                userId: uId,
+                estadoAsistencia: sel.value,
+                horaLlegada: timeInp ? timeInp.value : "",
+                observacionDocente: obsInp ? obsInp.value : ""
+            });
+        });
+
+        const btn = document.getElementById('btn-att-save-attendance');
+        btn.disabled = true;
+        btn.textContent = "Guardando...";
+
+        try {
+            const res = await fetchApi('ACADEMIC', 'saveDailyAttendance', {
+                fecha: selDate,
+                grado: selGrado,
+                seccion: selSeccion,
+                registros: registros
+            });
+
+            if (res.status === 'success') {
+                alert("¡Pase de lista guardado exitosamente!");
+                loadAttendanceSheet();
+            } else {
+                alert("Error: " + res.message);
+            }
+        } catch (e) {
+            alert("Error al guardar asistencia: " + e.message);
+        } finally {
+            btn.disabled = false;
+            btn.textContent = "Guardar Pase de Lista";
+        }
+    });
+
+    document.getElementById('btn-att-new-incident')?.addEventListener('click', async () => {
+        const userId = prompt("Ingrese el ID del estudiante involucrado:");
+        if (!userId) return;
+
+        const tipo = prompt("Seleccione el Tipo de Incidencia:\n1. Leve (Tardanza recurrente, faltas menores)\n2. Grave (Incumplimiento de normas, falta de respeto)\n3. Muy Grave (Conducta crítica)", "Leve");
+        if (!tipo) return;
+
+        const desc = prompt("Escriba una descripción objetiva de los hechos:");
+        if (!desc) return;
+
+        try {
+            const res = await fetchApi('ACADEMIC', 'saveAttendanceIncident', {
+                userId: userId,
+                tipoIncidencia: tipo,
+                descripcion: desc,
+                reportadoPor: currentUser.nombre
+            });
+
+            if (res.status === 'success') {
+                alert("Incidencia de convivencia registrada exitosamente.");
+                loadAttendanceSheet();
+            } else {
+                alert("Error: " + res.message);
+            }
+        } catch (e) {
+            alert("Error registrando incidencia: " + e.message);
+        }
     });
 
     // Inicialización automática de la sección de entregas (A-73)
