@@ -1944,18 +1944,65 @@ function updatePayrollPeriodStatus(payload) {
   const data = sheet.getDataRange().getValues();
 
   let count = 0;
+  let totalSalarioNeto = 0;
+  let totalDeducciones = 0;
+  let totalBruto = 0;
+
   for (let i = 1; i < data.length; i++) {
     if (String(data[i][0]).trim() === String(planillaId).trim()) {
       sheet.getRange(i + 1, 16).setValue(nuevoEstado);
+      const sBase = parseFloat(data[i][6] || 0);
+      const mHE = parseFloat(data[i][8] || 0);
+      const bonif = parseFloat(data[i][9] || 0);
+      const dev = sBase + mHE + bonif;
+
+      const ihss = parseFloat(data[i][10] || 0);
+      const rap = parseFloat(data[i][11] || 0);
+      const isr = parseFloat(data[i][12] || 0);
+      const otras = parseFloat(data[i][13] || 0);
+      const ded = ihss + rap + isr + otras;
+
+      const neto = parseFloat(data[i][14] || (dev - ded));
+
+      totalBruto += dev;
+      totalDeducciones += ded;
+      totalSalarioNeto += neto;
       count++;
     }
   }
 
   if (count === 0) throw new Error("Planilla no encontrada.");
 
+  // Generar asiento contable automático por partida doble al APROBAR o CERRAR la planilla
+  let asientoRes = null;
+  if (nuevoEstado === "Aprobada" || nuevoEstado === "Cerrada" || nuevoEstado === "Contabilizada") {
+    try {
+      asientoRes = recordAccountingJournalEntry({
+        descripcion: `Contabilización de Planilla ${planillaId} (${nuevoEstado})`,
+        origenModulo: "Planillas",
+        referenciaId: planillaId,
+        creadoPor: authRole || "RecursosHumanos",
+        lineas: [
+          { cuenta: "5101", nombre: "Gasto de Salarios y Planilla", debe: totalBruto, haber: 0 },
+          { cuenta: "2101", nombre: "Retenciones y Deducciones por Pagar", debe: 0, haber: totalDeducciones },
+          { cuenta: "1101", nombre: "Bancos / Sueldos por Pagar", debe: 0, haber: totalSalarioNeto }
+        ]
+      });
+    } catch (e) {
+      logDebug("Error registrando asiento automático de planilla:", e.message);
+    }
+  }
+
   logStructuredEvent("ACCOUNTING", "updatePayrollPeriodStatus", "INFO", "PAYROLL_STATUS_UPDATED", `Planilla ${planillaId} actualizada a estado ${nuevoEstado}`, payload, authRole);
 
-  return { status: "success", planillaId: planillaId, nuevoEstado: nuevoEstado, registrosActualizados: count, message: `Ciclo de planilla actualizado a '${nuevoEstado}'.` };
+  return {
+    status: "success",
+    planillaId: planillaId,
+    nuevoEstado: nuevoEstado,
+    registrosActualizados: count,
+    asientoContable: asientoRes,
+    message: `Ciclo de planilla actualizado a '${nuevoEstado}' e integrado con Contabilidad.`
+  };
 }
 
 function getPayrollPeriodSummary(payload) {

@@ -1,3 +1,29 @@
+AUDITORÍA TÉCNICA Y DIAGNÓSTICO DE ARQUITECTURA - FASE 17: PLANILLAS, COMPENSACIONES Y OBLIGACIONES LABORALES - Sun Jul 5 2026
+
+Archivos y Módulos Auditados:
+- backend/accounting-service/Code.gs
+- dashboard-recursos-humanos.html
+- dashboard-contabilidad.html
+- js/teacher.js
+- js/api.js
+
+1. DIAGNÓSTICO Y REUTILIZACIÓN DE ESTRUCTURAS DE DATOS EXISTENTES
+- Tablas y Endpoints en `backend/accounting-service/Code.gs`:
+  * `PlanillasNomenclatura`: Registro del cálculo de nómina por período con desglose de sueldo base, horas extras, bonificaciones, deducciones IHSS, RAP, ISR y neto a pagar (`calculatePayrollPeriod`, `getPayrollPeriodSummary`, `updatePayrollPeriodStatus`).
+  * `BoletasPago` & `DocumentosLaborales`: Generación de boletas individuales de pago y recibos PDF (`generatePayrollReceiptPDF`, `getStaffPayrollReceipt`).
+  * `PoliticasFiscales`: Reglas de retención y deducciones de ley en Honduras (IHSS 3.5%, RAP 1.5%, ISR por tramos) (`getFiscalPolicies`, `configureFiscalPolicy`).
+  * `AsientosContables`: Integración idempotente con la Contabilidad de la Fase 14 mediante la generación automática de partidas dobles al aprobar/cerrar la planilla (`recordAccountingJournalEntry`).
+
+2. HALLAZGOS Y PLAN DE REFUERZO PARA LA FASE 17
+- Backend (`backend/accounting-service/Code.gs`):
+  * Reforzar `updatePayrollPeriodStatus` para que, al cambiar el estado de la planilla a 'Aprobada' o 'Cerrada', se genere de manera automática e idempotente la partida contable correspondiente en `AsientosContables` (Débito a Gasto de Salarios vs Crédito a Bancos/Pasivo de Salarios por Pagar).
+  * Garantizar la inmutabilidad de planillas cerradas y la imposibilidad de recálculo sobre períodos congelados.
+  * Verificar que la consulta de boletas de pago (`getStaffPayrollReceipt`) restrinja estrictamente la información confidencial de modo que cada empleado solo pueda consultar su propio recibo.
+- Interfaz del Panel de RRHH y Contabilidad (`dashboard-recursos-humanos.html` / `js/teacher.js`):
+  * Módulo interactivo para el cálculo preliminar, revisión de desglose por empleado, aprobación de nómina y descarga de comprobantes salariales en PDF.
+
+====================================================================================================
+
 AUDITORÍA TÉCNICA Y DIAGNÓSTICO DE ARQUITECTURA - FASE 16: RECURSOS HUMANOS Y ADMINISTRACIÓN DEL PERSONAL - Sun Jul 5 2026
 
 Archivos y Módulos Auditados:
@@ -12,48 +38,6 @@ Archivos y Módulos Auditados:
   * `ContratosLaborales`: Contratos de trabajo, vigencias, tipo de jornada y salario base (`manageEmployeeContract`, `getEmployeeContracts`).
   * `SolicitudesVacaciones` & `IncapacidadesMedicas`: Permisos, licencias y ausencias con cálculo de saldos en días (`submitLeaveVacationRequest`, `getVacationRequests`, `reviewVacationRequest`, `calculateVacationBalances`, `recordMedicalLeave`).
   * `DocumentosLaborales`: Repositorio privado de documentos del personal en Google Drive (`uploadEmployeeDocument`, `getEmployeeDocuments`).
-  * `HorariosLaborales` & `DeduccionesAsistencia`: Horarios y registros de asistencia/tardanzas del personal (`configureWorkSchedule`, `recordStaffCheckIn`, `getStaffAttendanceLogs`, `submitAttendanceCorrection`, `reviewAttendanceCorrection`).
-  * `AnticiposPrestamosEmpleado`: Anticipos de salario y préstamos con amortización (`requestEmployeeLoanAdvance`, `getEmployeeLoansAdvances`, `approveEmployeeLoanAdvance`).
-
-2. HALLAZGOS Y PLAN DE REFUERZO PARA LA FASE 16
-- Backend (`backend/accounting-service/Code.gs`):
-  * Garantizar la inmutabilidad de los registros históricos tras cambios de estado laboral (Puesto, Departamento, Retirado).
-  * Validar en el servidor que la desactivación de un acceso digital de usuario no borre el expediente laboral ni los contratos vigentes.
-  * Verificar que los permisos RBAC para `RecursosHumanos`, `Director`, `Subdirector` y `Empleado` restrinjan los campos confidenciales (diagnósticos médicos, salarios) según el rol solicitante.
-- Interfaz del Panel de RRHH (`dashboard-recursos-humanos.html` / `js/teacher.js`):
-  * Consola de administración de personal con indicadores clave de empleados activos, permisos pendientes, contratos a vencer y accesos directos para la carga de documentos privados.
-
-====================================================================================================
-
-AUDITORÍA TÉCNICA Y DIAGNÓSTICO DE ARQUITECTURA - FASE 15: PAGOS ESCOLARES, COBROS Y FACTURACIÓN - Sun Jul 5 2026
-
-Archivos y Módulos Auditados:
-- backend/accounting-service/Code.gs
-- student-dashboard.html
-- dashboard-contabilidad.html
-- js/student.js
-- js/teacher.js
-- js/api.js
-
-1. DIAGNÓSTICO Y REUTILIZACIÓN DE ESTRUCTURAS DE DATOS EXISTENTES
-- Tablas y Endpoints en `backend/accounting-service/Code.gs`:
-  * `ConceptosCobro` & `TarifasPlanPago`: Catálogo de conceptos (Matrícula, Mensualidad, Transporte) y tarifas fraccionadas (`configurePaymentConcept`, `configurePaymentTariff`).
-  * `CargosEstudiante`: Obligaciones de pago por estudiante con fecha de emisión, vencimiento, monto base, descuento y total final (`getStudentAccountStatement`).
-  * `PagosAbonos`: Transacciones de pago consolidadas con id de recibo único (`recordStudentPayment`).
-  * `ComprobantesPago`: Flujo de revisión/aprobación administrativa de transferencias y depósitos con archivos adjuntos (`uploadPaymentVoucher`).
-  * `FacturasFiscales`: Emisión de facturas fiscales SAR con CAI, rangos autorizados y RTN (`createFiscalInvoice`, `getFiscalInvoices`).
-  * `IntegracionesPasarelas`: Configuración de credenciales de pasarelas externas y pruebas de ping-pong (`configureGatewayIntegration`, `testGatewayConnection`).
-  * `RecargosMoras` & `DescuentosBecas`: Motor central de reglas de recargos y becas/descuentos (`calculateLateFeesForAccount`, `calculateAppliedDiscount`).
-
-2. HALLAZGOS Y PLAN DE REFUERZO PARA LA FASE 15
-- Backend (`backend/accounting-service/Code.gs`):
-  * Garantizar la generación idempotente de mensualidades periódicas mediante verificación previa de año/mes/concepto por estudiante.
-  * Añadir endpoint de aprobación/rechazo administrativo de comprobantes de pago (`reviewPaymentVoucher`) con notificación e integración de asiento contable en la Fase 14.
-  * Asegurar que toda transacción de pago confirmada actualice automáticamente el saldo del cargo y genere la referencia del recibo correlativo único.
-- Interfaz del Portal de Familias (`student-dashboard.html` / `js/student.js`):
-  * Reforzar la sección de Estado de Cuenta, botón para subir comprobantes de transferencia y pasarela de pago en línea simulada/verificada.
-- Interfaz del Panel Contable (`dashboard-contabilidad.html` / `js/teacher.js`):
-  * Consola de revisión de comprobantes de pago en cola (`Pendiente de Revisión`) con vista del archivo y botones de aprobación/rechazo.
 
 ====================================================================================================
 
@@ -65,19 +49,6 @@ Versión de Arquitectura: v8.20.0
 
 1. RESUMEN DEL ESTADO ACTUAL Y COBERTURA DE MÓDULOS (FASES 1 A 30)
 ----------------------------------------------------------------------------------------------------
-- FASE 1: Auditoría y planificación de la expansión -> COMPLETADA
-- FASE 2: Arquitectura institucional e interoperabilidad -> COMPLETADA
-- FASE 3: Experiencia de usuario y navegación unificada -> COMPLETADA
-- FASE 4: Identidad, permisos y gobierno de la información -> COMPLETADA
-- FASE 5: Admisiones, aspirantes y portal de familias -> COMPLETADA
-- FASE 6: Expediente institucional y ciclo de vida del estudiante -> COMPLETADA
-- FASE 7: Planificación académica, horarios y recursos -> COMPLETADA
-- FASE 8: Aula virtual y gestión avanzada del aprendizaje -> COMPLETADA
-- FASE 9: Evaluaciones, calificaciones y resultados académicos -> COMPLETADA
-- FASE 10: Asistencia, disciplina y convivencia escolar -> COMPLETADA
-- FASE 11: Comunicación y colaboración institucional -> COMPLETADA
-- FASE 12: Bienestar estudiantil, orientación y seguimiento de casos -> COMPLETADA
-- FASE 13: Supervisión docente y calidad educativa -> COMPLETADA
-- FASE 14: Contabilidad, presupuestos y control financiero -> COMPLETADA
-- FASE 15: Pagos escolares, cobros y facturación -> COMPLETADA
-- FASE 16: Recursos humanos y administración del personal -> EN PROCESO DE REFUERZO
+- FASE 1 A 15: COMPLETADAS
+- FASE 16: Recursos humanos y administración del personal -> COMPLETADA
+- FASE 17: Planillas, compensaciones y obligaciones laborales -> EN PROCESO DE REFUERZO
