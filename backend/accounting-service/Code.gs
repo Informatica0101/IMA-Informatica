@@ -154,6 +154,11 @@ function getOrCreateSheet(ss, name) {
     if (name === "BibliotecaPrestamos") sheet.appendRow(["PrestamoID", "EjemplarID", "UserId", "FechaPrestamo", "FechaDevolucionPrevista", "FechaDevolucionReal", "Estado", "Observaciones"]);
     if (name === "ActivosPatrimoniales") sheet.appendRow(["ActivoID", "CodigoPatrimonial", "Nombre", "Categoria", "SerieModel", "UbicacionActual", "CustodioUserId", "Estado", "Observaciones"]);
     if (name === "AsignacionesActivos") sheet.appendRow(["AsignacionID", "ActivoID", "CustodioUserId", "FechaEntrega", "FechaDevolucion", "EstadoActa", "Observaciones"]);
+    if (name === "AlmacenesUbicaciones") sheet.appendRow(["UbicacionID", "SedeCod", "NombreUbicacion", "TipoArea", "ResponsableUserId", "Estado", "Observaciones"]);
+    if (name === "MaterialesSolicitudes") sheet.appendRow(["SolicitudMatID", "Fecha", "Departamento", "SolicitanteUserId", "ArticulosJSON", "Motivo", "EstadoAprobacion", "AprobadoPor", "EntregadoPor", "Observaciones"]);
+    if (name === "InventariosConteosFisicos") sheet.appendRow(["ConteoID", "FechaInicio", "AlmacenUbicacionId", "ResponsableUserId", "ArticulosDetalleJSON", "DiferenciasJSON", "EstadoConteo", "AprobadoPor", "Observaciones"]);
+    if (name === "MantenimientoOrdenes") sheet.appendRow(["OrdenMaintID", "FechaReporte", "ActivoIdUbicacion", "TipoMantenimiento", "DescripcionFalla", "Prioridad", "ReportadoPorUserId", "AsignadoAEmpleadoId", "RepuestosConsumidosJSON", "CostoEstimado", "CostoReal", "EstadoOrden", "FechaResolucion", "Observaciones"]);
+    if (name === "BajasBienes") sheet.appendRow(["BajaID", "FechaBaja", "TipoBien", "BienIdCodigo", "NombreBien", "MotivoBaja", "ValorLibros", "AutorizadoPorUserId", "DocumentoActaUrl", "Estado", "Observaciones"]);
     if (name === "TransporteRutas") sheet.appendRow(["RutaID", "NombreRuta", "UnidadCodigo", "ConductorEmpleadoId", "Capacidad", "ParadasJSON", "Estado", "Observaciones"]);
     if (name === "TransporteAsignaciones") sheet.appendRow(["AsignacionTranspID", "RutaID", "EstudianteUserId", "ParadaNombre", "HorarioPlan", "Estado"]);
     if (name === "CatalogoSpreadsheets") sheet.appendRow(["FuenteID", "DominioArea", "AnoLectivo", "SpreadsheetId", "UrlAcceso", "Estado", "SchemaVersion", "Observaciones"]);
@@ -173,9 +178,9 @@ function doGet() { return textResponse({ status: "success", service: "ACCOUNTING
 
 const ROLE_PERMISSIONS = {
   "Administrador": ["*"],
-  "Director": ["configurePaymentConcept", "configurePaymentTariff", "getStudentAccountStatement", "recordStudentPayment", "uploadPaymentVoucher", "getPaymentVouchers", "reviewPaymentVoucher", "generatePaymentReceiptPDF", "createFiscalInvoice", "getFiscalInvoices", "configureGatewayIntegration", "testGatewayConnection", "recordCashBankMovement", "closeCashSession", "getCashBankSummary", "performBankReconciliation", "recordAccountsPayableExpense", "getChartOfAccounts", "saveAccountItem", "recordAccountingJournalEntry", "getAccountingJournalEntries", "getBudgets", "saveBudgetPlan", "getBudgetExecutionReport", "getFinancialSummary", "getAccountsReceivablePayableSummary", "generatePayrollPeriod", "recordStaffAttendance", "getStaffPayrollReceipt", "recordInventoryMovement", "getInventoryKardex", "registerSupplier", "createEmployeeRecord", "getEmployeeRecords", "manageEmployeeContract", "getEmployeeContracts", "submitVacationRequest", "getVacationRequests", "reviewVacationRequest", "configureFiscalPolicy", "getFiscalPolicies", "publishInstitutionalPolicy", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getAdvancedDashboardAnalytics", "manageLibraryBook", "getLibraryBooks", "processLibraryLoan", "getLibraryLoans", "manageAssetItem", "getAssetItems", "assignAssetCustody", "getAssetAssignments", "manageTransportRoute", "getTransportRoutes", "assignStudentTransport", "getTransportAssignments", "registerSpreadsheetSource", "resolveSpreadsheetSource", "getSpreadsheetCatalog", "configureSchoolDocumentTemplate", "getSchoolDocumentTemplates", "generateSchoolDocument", "getIssuedSchoolDocuments", "validateImportPreview", "importDataWithColumnMapping", "getMigrationLogs", "verifySACETemplateCompatibility", "generateSACEReportFile", "configureDiscountScholarshipRule", "getDiscountScholarshipRules", "submitDiscountScholarshipRequest", "getDiscountScholarshipRequests", "approveDiscountScholarshipRequest", "calculateAppliedDiscount", "configureLateFeeRule", "getLateFeeRules", "calculateLateFeesForAccount", "manageStoreProduct", "getStoreProducts", "createStoreOrder", "getStoreOrders", "updateStoreOrderStatus", "manageCafeteriaMenu", "getCafeteriaMenu", "createCafeteriaOrder", "getCafeteriaOrders", "updateCafeteriaOrderStatus", "configureFamilyCreditAuthorization", "getFamilyCreditAuthorizations", "processFamilyCreditPurchase", "createPurchaseRequest", "getPurchaseRequests", "submitPurchaseQuotation", "getPurchaseQuotations", "createPurchaseOrder", "approvePurchaseOrder", "getPurchaseOrders", "recordPurchaseReceipt"],
-  "Subdirector": ["configurePaymentConcept", "configurePaymentTariff", "getStudentAccountStatement", "recordStudentPayment", "uploadPaymentVoucher", "getPaymentVouchers", "reviewPaymentVoucher", "generatePaymentReceiptPDF", "createFiscalInvoice", "getFiscalInvoices", "configureGatewayIntegration", "testGatewayConnection", "recordCashBankMovement", "closeCashSession", "getCashBankSummary", "performBankReconciliation", "recordAccountsPayableExpense", "getChartOfAccounts", "saveAccountItem", "recordAccountingJournalEntry", "getAccountingJournalEntries", "getBudgets", "saveBudgetPlan", "getBudgetExecutionReport", "getFinancialSummary", "getAccountsReceivablePayableSummary", "generatePayrollPeriod", "recordStaffAttendance", "getStaffPayrollReceipt", "recordInventoryMovement", "getInventoryKardex", "registerSupplier", "createEmployeeRecord", "getEmployeeRecords", "manageEmployeeContract", "getEmployeeContracts", "submitVacationRequest", "getVacationRequests", "reviewVacationRequest", "configureFiscalPolicy", "getFiscalPolicies", "publishInstitutionalPolicy", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getAdvancedDashboardAnalytics", "manageLibraryBook", "getLibraryBooks", "processLibraryLoan", "getLibraryLoans", "manageAssetItem", "getAssetItems", "assignAssetCustody", "getAssetAssignments", "manageTransportRoute", "getTransportRoutes", "assignStudentTransport", "getTransportAssignments", "registerSpreadsheetSource", "resolveSpreadsheetSource", "getSpreadsheetCatalog", "configureSchoolDocumentTemplate", "getSchoolDocumentTemplates", "generateSchoolDocument", "getIssuedSchoolDocuments", "validateImportPreview", "importDataWithColumnMapping", "getMigrationLogs", "verifySACETemplateCompatibility", "generateSACEReportFile", "configureDiscountScholarshipRule", "getDiscountScholarshipRules", "submitDiscountScholarshipRequest", "getDiscountScholarshipRequests", "approveDiscountScholarshipRequest", "calculateAppliedDiscount", "createPurchaseRequest", "getPurchaseRequests", "submitPurchaseQuotation", "getPurchaseQuotations", "createPurchaseOrder", "approvePurchaseOrder", "getPurchaseOrders", "recordPurchaseReceipt"],
-  "Contador": ["configurePaymentConcept", "configurePaymentTariff", "getStudentAccountStatement", "recordStudentPayment", "uploadPaymentVoucher", "getPaymentVouchers", "reviewPaymentVoucher", "generatePaymentReceiptPDF", "createFiscalInvoice", "getFiscalInvoices", "configureGatewayIntegration", "testGatewayConnection", "recordCashBankMovement", "closeCashSession", "getCashBankSummary", "performBankReconciliation", "recordAccountsPayableExpense", "getChartOfAccounts", "saveAccountItem", "recordAccountingJournalEntry", "getAccountingJournalEntries", "getBudgets", "saveBudgetPlan", "getBudgetExecutionReport", "getFinancialSummary", "getAccountsReceivablePayableSummary", "generatePayrollPeriod", "recordStaffAttendance", "getStaffPayrollReceipt", "recordInventoryMovement", "getInventoryKardex", "registerSupplier", "createEmployeeRecord", "getEmployeeRecords", "manageEmployeeContract", "getEmployeeContracts", "submitVacationRequest", "getVacationRequests", "reviewVacationRequest", "configureFiscalPolicy", "getFiscalPolicies", "publishInstitutionalPolicy", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getAdvancedDashboardAnalytics", "manageAssetItem", "getAssetItems", "assignAssetCustody", "getAssetAssignments", "resolveSpreadsheetSource", "getSpreadsheetCatalog", "validateImportPreview", "importDataWithColumnMapping", "getMigrationLogs", "configureDiscountScholarshipRule", "getDiscountScholarshipRules", "submitDiscountScholarshipRequest", "getDiscountScholarshipRequests", "calculateAppliedDiscount", "getStoreProducts", "getStoreOrders", "getCafeteriaMenu", "getCafeteriaOrders", "createPurchaseRequest", "getPurchaseRequests", "submitPurchaseQuotation", "getPurchaseQuotations", "createPurchaseOrder", "approvePurchaseOrder", "getPurchaseOrders", "recordPurchaseReceipt"],
+  "Director": ["configurePaymentConcept", "configurePaymentTariff", "getStudentAccountStatement", "recordStudentPayment", "uploadPaymentVoucher", "getPaymentVouchers", "reviewPaymentVoucher", "generatePaymentReceiptPDF", "createFiscalInvoice", "getFiscalInvoices", "configureGatewayIntegration", "testGatewayConnection", "recordCashBankMovement", "closeCashSession", "getCashBankSummary", "performBankReconciliation", "recordAccountsPayableExpense", "getChartOfAccounts", "saveAccountItem", "recordAccountingJournalEntry", "getAccountingJournalEntries", "getBudgets", "saveBudgetPlan", "getBudgetExecutionReport", "getFinancialSummary", "getAccountsReceivablePayableSummary", "generatePayrollPeriod", "recordStaffAttendance", "getStaffPayrollReceipt", "recordInventoryMovement", "getInventoryKardex", "registerSupplier", "createEmployeeRecord", "getEmployeeRecords", "manageEmployeeContract", "getEmployeeContracts", "submitVacationRequest", "getVacationRequests", "reviewVacationRequest", "configureFiscalPolicy", "getFiscalPolicies", "publishInstitutionalPolicy", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getAdvancedDashboardAnalytics", "manageLibraryBook", "getLibraryBooks", "processLibraryLoan", "getLibraryLoans", "manageAssetItem", "getAssetItems", "assignAssetCustody", "getAssetAssignments", "manageTransportRoute", "getTransportRoutes", "assignStudentTransport", "getTransportAssignments", "registerSpreadsheetSource", "resolveSpreadsheetSource", "getSpreadsheetCatalog", "configureSchoolDocumentTemplate", "getSchoolDocumentTemplates", "generateSchoolDocument", "getIssuedSchoolDocuments", "validateImportPreview", "importDataWithColumnMapping", "getMigrationLogs", "verifySACETemplateCompatibility", "generateSACEReportFile", "configureDiscountScholarshipRule", "getDiscountScholarshipRules", "submitDiscountScholarshipRequest", "getDiscountScholarshipRequests", "approveDiscountScholarshipRequest", "calculateAppliedDiscount", "configureLateFeeRule", "getLateFeeRules", "calculateLateFeesForAccount", "manageStoreProduct", "getStoreProducts", "createStoreOrder", "getStoreOrders", "updateStoreOrderStatus", "manageCafeteriaMenu", "getCafeteriaMenu", "createCafeteriaOrder", "getCafeteriaOrders", "updateCafeteriaOrderStatus", "configureFamilyCreditAuthorization", "getFamilyCreditAuthorizations", "processFamilyCreditPurchase", "createPurchaseRequest", "getPurchaseRequests", "submitPurchaseQuotation", "getPurchaseQuotations", "createPurchaseOrder", "approvePurchaseOrder", "getPurchaseOrders", "recordPurchaseReceipt", "manageWarehouseLocation", "getWarehouseLocations", "transferInventoryStock", "createMaterialRequisition", "getMaterialRequisitions", "deliverMaterialRequisition", "createPhysicalInventoryCount", "getPhysicalInventoryCounts", "reconcilePhysicalCount", "manageMaintenanceOrder", "getMaintenanceOrders", "registerAssetDisposal", "getAssetDisposals"],
+  "Subdirector": ["configurePaymentConcept", "configurePaymentTariff", "getStudentAccountStatement", "recordStudentPayment", "uploadPaymentVoucher", "getPaymentVouchers", "reviewPaymentVoucher", "generatePaymentReceiptPDF", "createFiscalInvoice", "getFiscalInvoices", "configureGatewayIntegration", "testGatewayConnection", "recordCashBankMovement", "closeCashSession", "getCashBankSummary", "performBankReconciliation", "recordAccountsPayableExpense", "getChartOfAccounts", "saveAccountItem", "recordAccountingJournalEntry", "getAccountingJournalEntries", "getBudgets", "saveBudgetPlan", "getBudgetExecutionReport", "getFinancialSummary", "getAccountsReceivablePayableSummary", "generatePayrollPeriod", "recordStaffAttendance", "getStaffPayrollReceipt", "recordInventoryMovement", "getInventoryKardex", "registerSupplier", "createEmployeeRecord", "getEmployeeRecords", "manageEmployeeContract", "getEmployeeContracts", "submitVacationRequest", "getVacationRequests", "reviewVacationRequest", "configureFiscalPolicy", "getFiscalPolicies", "publishInstitutionalPolicy", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getAdvancedDashboardAnalytics", "manageLibraryBook", "getLibraryBooks", "processLibraryLoan", "getLibraryLoans", "manageAssetItem", "getAssetItems", "assignAssetCustody", "getAssetAssignments", "manageTransportRoute", "getTransportRoutes", "assignStudentTransport", "getTransportAssignments", "registerSpreadsheetSource", "resolveSpreadsheetSource", "getSpreadsheetCatalog", "configureSchoolDocumentTemplate", "getSchoolDocumentTemplates", "generateSchoolDocument", "getIssuedSchoolDocuments", "validateImportPreview", "importDataWithColumnMapping", "getMigrationLogs", "verifySACETemplateCompatibility", "generateSACEReportFile", "configureDiscountScholarshipRule", "getDiscountScholarshipRules", "submitDiscountScholarshipRequest", "getDiscountScholarshipRequests", "approveDiscountScholarshipRequest", "calculateAppliedDiscount", "createPurchaseRequest", "getPurchaseRequests", "submitPurchaseQuotation", "getPurchaseQuotations", "createPurchaseOrder", "approvePurchaseOrder", "getPurchaseOrders", "recordPurchaseReceipt", "manageWarehouseLocation", "getWarehouseLocations", "transferInventoryStock", "createMaterialRequisition", "getMaterialRequisitions", "deliverMaterialRequisition", "createPhysicalInventoryCount", "getPhysicalInventoryCounts", "reconcilePhysicalCount", "manageMaintenanceOrder", "getMaintenanceOrders", "registerAssetDisposal", "getAssetDisposals"],
+  "Contador": ["configurePaymentConcept", "configurePaymentTariff", "getStudentAccountStatement", "recordStudentPayment", "uploadPaymentVoucher", "getPaymentVouchers", "reviewPaymentVoucher", "generatePaymentReceiptPDF", "createFiscalInvoice", "getFiscalInvoices", "configureGatewayIntegration", "testGatewayConnection", "recordCashBankMovement", "closeCashSession", "getCashBankSummary", "performBankReconciliation", "recordAccountsPayableExpense", "getChartOfAccounts", "saveAccountItem", "recordAccountingJournalEntry", "getAccountingJournalEntries", "getBudgets", "saveBudgetPlan", "getBudgetExecutionReport", "getFinancialSummary", "getAccountsReceivablePayableSummary", "generatePayrollPeriod", "recordStaffAttendance", "getStaffPayrollReceipt", "recordInventoryMovement", "getInventoryKardex", "registerSupplier", "createEmployeeRecord", "getEmployeeRecords", "manageEmployeeContract", "getEmployeeContracts", "submitVacationRequest", "getVacationRequests", "reviewVacationRequest", "configureFiscalPolicy", "getFiscalPolicies", "publishInstitutionalPolicy", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getAdvancedDashboardAnalytics", "manageAssetItem", "getAssetItems", "assignAssetCustody", "getAssetAssignments", "resolveSpreadsheetSource", "getSpreadsheetCatalog", "validateImportPreview", "importDataWithColumnMapping", "getMigrationLogs", "configureDiscountScholarshipRule", "getDiscountScholarshipRules", "submitDiscountScholarshipRequest", "getDiscountScholarshipRequests", "calculateAppliedDiscount", "getStoreProducts", "getStoreOrders", "getCafeteriaMenu", "getCafeteriaOrders", "createPurchaseRequest", "getPurchaseRequests", "submitPurchaseQuotation", "getPurchaseQuotations", "createPurchaseOrder", "approvePurchaseOrder", "getPurchaseOrders", "recordPurchaseReceipt", "manageWarehouseLocation", "getWarehouseLocations", "transferInventoryStock", "createMaterialRequisition", "getMaterialRequisitions", "deliverMaterialRequisition", "createPhysicalInventoryCount", "getPhysicalInventoryCounts", "reconcilePhysicalCount", "manageMaintenanceOrder", "getMaintenanceOrders", "registerAssetDisposal", "getAssetDisposals"],
   // REVISIÓN RBAC: Habilitar permiso processFamilyCreditPurchase para personal de tienda, cafetería, tutores y estudiantes
   "EncargadoTienda": ["getStoreProducts", "manageStoreProduct", "createStoreOrder", "getStoreOrders", "updateStoreOrderStatus", "recordInventoryMovement", "getInventoryKardex", "getInstitutionalPolicies", "processFamilyCreditPurchase"],
   "EncargadoCafeteria": ["getCafeteriaMenu", "manageCafeteriaMenu", "createCafeteriaOrder", "getCafeteriaOrders", "updateCafeteriaOrderStatus", "recordInventoryMovement", "getInventoryKardex", "getInstitutionalPolicies", "processFamilyCreditPurchase"],
@@ -269,6 +274,19 @@ function doPost(e) {
       case "approvePurchaseOrder": result = approvePurchaseOrder(payload); break;
       case "getPurchaseOrders": result = getPurchaseOrders(payload); break;
       case "recordPurchaseReceipt": result = recordPurchaseReceipt(payload); break;
+      case "manageWarehouseLocation": result = manageWarehouseLocation(payload); break;
+      case "getWarehouseLocations": result = getWarehouseLocations(payload); break;
+      case "transferInventoryStock": result = transferInventoryStock(payload); break;
+      case "createMaterialRequisition": result = createMaterialRequisition(payload); break;
+      case "getMaterialRequisitions": result = getMaterialRequisitions(payload); break;
+      case "deliverMaterialRequisition": result = deliverMaterialRequisition(payload); break;
+      case "createPhysicalInventoryCount": result = createPhysicalInventoryCount(payload); break;
+      case "getPhysicalInventoryCounts": result = getPhysicalInventoryCounts(payload); break;
+      case "reconcilePhysicalCount": result = reconcilePhysicalCount(payload); break;
+      case "manageMaintenanceOrder": result = manageMaintenanceOrder(payload); break;
+      case "getMaintenanceOrders": result = getMaintenanceOrders(payload); break;
+      case "registerAssetDisposal": result = registerAssetDisposal(payload); break;
+      case "getAssetDisposals": result = getAssetDisposals(payload); break;
       case "createEmployeeRecord": result = createEmployeeRecord(payload); break;
       case "getEmployeeRecords": result = getEmployeeRecords(payload); break;
       case "updateEmployeeLaborStatus": result = updateEmployeeLaborStatus(payload); break;
@@ -2520,8 +2538,11 @@ function recordInventoryMovement(payload) {
   let newStock = currentStock;
   if (tipoNorm === "Entrada" || tipoNorm === "Devolucion") {
     newStock = currentStock + qty;
-  } else if (tipoNorm === "Salida" || tipoNorm === "Prestamo" || tipoNorm === "Baja") {
-    newStock = Math.max(0, currentStock - qty);
+  } else if (tipoNorm === "Salida" || tipoNorm === "Prestamo" || tipoNorm === "Baja" || tipoNorm === "TransferenciaSalida") {
+    if (currentStock < qty) {
+      throw new Error(`Stock insuficiente para '${itemNombre}' (Código: ${sCodigo}). Stock disponible: ${currentStock}, Solicitado: ${qty}.`);
+    }
+    newStock = currentStock - qty;
   }
 
   const minStock = parseFloat(stockMinimo || 5);
@@ -4208,6 +4229,511 @@ function getAssetAssignments(payload) {
   return {
     status: "success",
     asignaciones: mapped
+  };
+}
+
+// ---------------------------------------------------------------------------
+// REQ-EXP-015 / FASE 19: INVENTARIOS, ACTIVOS FIJOS Y MANTENIMIENTO
+// ---------------------------------------------------------------------------
+
+function manageWarehouseLocation(payload) {
+  const { ubicacionId, sedeCod, nombreUbicacion, tipoArea, responsableUserId, estado, observaciones } = payload || {};
+  if (!nombreUbicacion) throw new Error("nombreUbicacion es requerido.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "AlmacenesUbicaciones");
+  const data = sheet.getDataRange().getValues();
+
+  const uId = ubicacionId || ("LOC-" + Date.now());
+  const idx = data.findIndex(r => String(r[0]).trim() === String(uId).trim());
+
+  if (idx !== -1) {
+    sheet.getRange(idx + 1, 2).setValue(sedeCod || "Sede Principal");
+    sheet.getRange(idx + 1, 3).setValue(nombreUbicacion);
+    sheet.getRange(idx + 1, 4).setValue(tipoArea || "Bodega");
+    if (responsableUserId) sheet.getRange(idx + 1, 5).setValue(responsableUserId);
+    sheet.getRange(idx + 1, 6).setValue(estado || "Activo");
+    sheet.getRange(idx + 1, 7).setValue(observaciones || "");
+  } else {
+    sheet.appendRow([
+      uId,
+      sedeCod || "Sede Principal",
+      nombreUbicacion,
+      tipoArea || "Bodega",
+      responsableUserId || "",
+      estado || "Activo",
+      observaciones || ""
+    ]);
+  }
+
+  return {
+    status: "success",
+    ubicacionId: uId,
+    message: "Ubicación de almacén registrada/actualizada correctamente."
+  };
+}
+
+function getWarehouseLocations(payload) {
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const rows = getOrCreateSheet(ss, "AlmacenesUbicaciones").getDataRange().getValues().slice(1);
+
+  if (rows.length === 0) {
+    const defaults = [
+      ["LOC-001", "SEDE-CENTRAL", "Bodega General de Materiales", "Bodega", "EMP-01", "Activo", "Almacén central de insumos"],
+      ["LOC-002", "SEDE-CENTRAL", "Laboratorio de Cómputo 1", "Laboratorio", "EMP-02", "Activo", "Área de equipos informáticos"]
+    ];
+    const sheet = getOrCreateSheet(ss, "AlmacenesUbicaciones");
+    sheet.getRange(2, 1, defaults.length, 7).setValues(defaults);
+    rows.push(...defaults);
+  }
+
+  const mapped = rows.map(r => ({
+    ubicacionId: r[0],
+    sedeCod: r[1],
+    nombreUbicacion: r[2],
+    tipoArea: r[3],
+    responsableUserId: r[4],
+    estado: r[5],
+    observaciones: r[6]
+  }));
+
+  return {
+    status: "success",
+    ubicaciones: mapped
+  };
+}
+
+function transferInventoryStock(payload) {
+  const { itemCodigo, itemNombre, cantidad, ubicacionOrigen, ubicacionDestino, responsableUserId, observaciones } = payload || {};
+  if (!itemCodigo || !cantidad || !ubicacionOrigen || !ubicacionDestino) {
+    throw new Error("itemCodigo, cantidad, ubicacionOrigen y ubicacionDestino son requeridos.");
+  }
+
+  const qty = parseFloat(cantidad);
+  if (qty <= 0) throw new Error("La cantidad debe ser mayor a cero.");
+
+  // Registrar Salida por transferencia en Ubicación Origen
+  recordInventoryMovement({
+    itemCodigo,
+    itemNombre: itemNombre || itemCodigo,
+    tipoMovimiento: "TransferenciaSalida",
+    cantidad: qty,
+    ubicacionResponsable: ubicacionOrigen,
+    observaciones: `Transferencia hacia ${ubicacionDestino}. ${observaciones || ""}`
+  });
+
+  // Registrar Entrada por transferencia en Ubicación Destino
+  recordInventoryMovement({
+    itemCodigo,
+    itemNombre: itemNombre || itemCodigo,
+    tipoMovimiento: "Entrada",
+    cantidad: qty,
+    ubicacionResponsable: ubicacionDestino,
+    observaciones: `Transferencia recibida desde ${ubicacionOrigen}. ${observaciones || ""}`
+  });
+
+  return {
+    status: "success",
+    message: `Transferencia de ${qty} unidades de '${itemNombre || itemCodigo}' desde '${ubicacionOrigen}' hacia '${ubicacionDestino}' realizada correctamente.`
+  };
+}
+
+function createMaterialRequisition(payload) {
+  const { departamento, solicitanteUserId, articulosJSON, motivo, observaciones } = payload || {};
+  if (!departamento || !solicitanteUserId || !articulosJSON) {
+    throw new Error("departamento, solicitanteUserId y articulosJSON son requeridos.");
+  }
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "MaterialesSolicitudes");
+  const now = new Date();
+  const solId = "REQ-MAT-" + now.getTime();
+
+  let itemsStr = typeof articulosJSON === "string" ? articulosJSON : JSON.stringify(articulosJSON);
+
+  sheet.appendRow([
+    solId,
+    now,
+    departamento,
+    solicitanteUserId,
+    itemsStr,
+    motivo || "Consumo Operativo",
+    "PendienteAprobacion",
+    "",
+    "",
+    observaciones || ""
+  ]);
+
+  return {
+    status: "success",
+    solicitudMatId: solId,
+    message: "Solicitud interna de materiales registrada en estado PendienteAprobacion."
+  };
+}
+
+function getMaterialRequisitions(payload) {
+  const { departamento, estadoAprobacion } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const rows = getOrCreateSheet(ss, "MaterialesSolicitudes").getDataRange().getValues().slice(1);
+
+  let filtered = rows;
+  if (departamento) filtered = filtered.filter(r => String(r[2]).toLowerCase().trim() === String(departamento).toLowerCase().trim());
+  if (estadoAprobacion) filtered = filtered.filter(r => String(r[6]).trim() === String(estadoAprobacion).trim());
+
+  const mapped = filtered.map(r => ({
+    solicitudMatId: r[0],
+    fecha: r[1],
+    departamento: r[2],
+    solicitanteUserId: r[3],
+    articulosJSON: r[4],
+    motivo: r[5],
+    estadoAprobacion: r[6],
+    aprobadoPor: r[7],
+    entregadoPor: r[8],
+    observaciones: r[9]
+  }));
+
+  return {
+    status: "success",
+    solicitudes: mapped
+  };
+}
+
+function deliverMaterialRequisition(payload) {
+  const { solicitudMatId, entregadoPorUserId, observaciones } = payload || {};
+  if (!solicitudMatId) throw new Error("solicitudMatId es requerido.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "MaterialesSolicitudes");
+  const data = sheet.getDataRange().getValues();
+
+  const idx = data.findIndex(r => String(r[0]).trim() === String(solicitudMatId).trim());
+  if (idx === -1) throw new Error("Solicitud de material no encontrada.");
+
+  const currentStatus = String(data[idx][6]).trim();
+  if (currentStatus === "Entregado") throw new Error("La solicitud ya ha sido entregada previamente.");
+
+  let itemsArr = [];
+  try {
+    itemsArr = typeof data[idx][4] === "string" ? JSON.parse(data[idx][4]) : data[idx][4];
+  } catch (e) {
+    itemsArr = [];
+  }
+
+  if (Array.isArray(itemsArr)) {
+    itemsArr.forEach(item => {
+      if (item.itemCodigo && item.cantidad) {
+        recordInventoryMovement({
+          itemCodigo: item.itemCodigo,
+          itemNombre: item.itemNombre || item.itemCodigo,
+          tipoMovimiento: "Salida",
+          cantidad: parseFloat(item.cantidad),
+          ubicacionResponsable: data[idx][2] || "Departamento Solicitante",
+          observaciones: `Entrega por Solicitud ${solicitudMatId}`
+        });
+      }
+    });
+  }
+
+  sheet.getRange(idx + 1, 7).setValue("Entregado");
+  sheet.getRange(idx + 1, 9).setValue(entregadoPorUserId || "Bodega");
+  if (observaciones) sheet.getRange(idx + 1, 10).setValue(observaciones);
+
+  return {
+    status: "success",
+    solicitudMatId: solicitudMatId,
+    message: "Materiales entregados y descontados correctamente del inventario."
+  };
+}
+
+function createPhysicalInventoryCount(payload) {
+  const { almacenUbicacionId, responsableUserId, observaciones } = payload || {};
+  if (!almacenUbicacionId) throw new Error("almacenUbicacionId es requerido.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "InventariosConteosFisicos");
+  const now = new Date();
+  const conteoId = "CNT-" + now.getTime();
+
+  sheet.appendRow([
+    conteoId,
+    now,
+    almacenUbicacionId,
+    responsableUserId || "",
+    "[]",
+    "[]",
+    "EnConteo",
+    "",
+    observaciones || ""
+  ]);
+
+  return {
+    status: "success",
+    conteoId: conteoId,
+    message: "Proceso de conteo físico programado/iniciado."
+  };
+}
+
+function getPhysicalInventoryCounts(payload) {
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const rows = getOrCreateSheet(ss, "InventariosConteosFisicos").getDataRange().getValues().slice(1);
+
+  const mapped = rows.map(r => ({
+    conteoId: r[0],
+    fechaInicio: r[1],
+    almacenUbicacionId: r[2],
+    responsableUserId: r[3],
+    articulosDetalleJSON: r[4],
+    diferenciasJSON: r[5],
+    estadoConteo: r[6],
+    aprobadoPor: r[7],
+    observaciones: r[8]
+  }));
+
+  return {
+    status: "success",
+    conteos: mapped
+  };
+}
+
+function reconcilePhysicalCount(payload) {
+  const { conteoId, articulosDetalleJSON, aprobadoPorUserId, observaciones } = payload || {};
+  if (!conteoId || !articulosDetalleJSON) throw new Error("conteoId y articulosDetalleJSON son requeridos.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "InventariosConteosFisicos");
+  const data = sheet.getDataRange().getValues();
+
+  const idx = data.findIndex(r => String(r[0]).trim() === String(conteoId).trim());
+  if (idx === -1) throw new Error("Conteo físico no encontrado.");
+
+  const itemsArr = typeof articulosDetalleJSON === "string" ? JSON.parse(articulosDetalleJSON) : articulosDetalleJSON;
+  const kardexRows = getOrCreateSheet(ss, "InventariosKardex").getDataRange().getValues().slice(1);
+
+  const diferencias = [];
+  if (Array.isArray(itemsArr)) {
+    itemsArr.forEach(item => {
+      const code = String(item.itemCodigo).trim();
+      const cantidadContada = parseFloat(item.cantidadContada || 0);
+
+      let stockTeorico = 0;
+      kardexRows.forEach(kr => {
+        if (String(kr[2]).trim() === code) stockTeorico = parseFloat(kr[8] || 0);
+      });
+
+      const dif = cantidadContada - stockTeorico;
+      if (dif !== 0) {
+        diferencias.push({
+          itemCodigo: code,
+          itemNombre: item.itemNombre || code,
+          stockTeorico: stockTeorico,
+          cantidadContada: cantidadContada,
+          diferencia: dif
+        });
+
+        // Generar movimiento de ajuste autorizado
+        recordInventoryMovement({
+          itemCodigo: code,
+          itemNombre: item.itemNombre || code,
+          tipoMovimiento: dif > 0 ? "Entrada" : "Baja",
+          cantidad: Math.abs(dif),
+          ubicacionResponsable: data[idx][2] || "Almacén Central",
+          observaciones: `Ajuste por Conteo Físico ${conteoId}. Diferencia: ${dif}`
+        });
+      }
+    });
+  }
+
+  sheet.getRange(idx + 1, 5).setValue(typeof articulosDetalleJSON === "string" ? articulosDetalleJSON : JSON.stringify(articulosDetalleJSON));
+  sheet.getRange(idx + 1, 6).setValue(JSON.stringify(diferencias));
+  sheet.getRange(idx + 1, 7).setValue("ConciliadoAprobado");
+  sheet.getRange(idx + 1, 8).setValue(aprobadoPorUserId || "Auditoría");
+  if (observaciones) sheet.getRange(idx + 1, 9).setValue(observaciones);
+
+  return {
+    status: "success",
+    conteoId: conteoId,
+    totalDiferencias: diferencias.length,
+    diferencias: diferencias,
+    message: "Conteo físico conciliado y ajustes de inventario aplicados correctamente."
+  };
+}
+
+function manageMaintenanceOrder(payload) {
+  const { ordenMaintId, activoIdUbicacion, tipoMantenimiento, descripcionFalla, prioridad, reportadoPorUserId, asignadoAEmpleadoId, repuestosConsumidosJSON, costoEstimado, costoReal, estadoOrden, fechaResolucion, observaciones } = payload || {};
+  if (!activoIdUbicacion || !descripcionFalla) throw new Error("activoIdUbicacion y descripcionFalla son requeridos.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "MantenimientoOrdenes");
+  const data = sheet.getDataRange().getValues();
+
+  const oId = ordenMaintId || ("MNT-" + Date.now());
+  const idx = data.findIndex(r => String(r[0]).trim() === String(oId).trim());
+  const now = new Date();
+
+  let repuestStr = repuestosConsumidosJSON ? (typeof repuestosConsumidosJSON === "string" ? repuestosConsumidosJSON : JSON.stringify(repuestosConsumidosJSON)) : "[]";
+
+  if (idx !== -1) {
+    if (tipoMantenimiento) sheet.getRange(idx + 1, 4).setValue(tipoMantenimiento);
+    sheet.getRange(idx + 1, 5).setValue(descripcionFalla);
+    if (prioridad) sheet.getRange(idx + 1, 6).setValue(prioridad);
+    if (asignadoAEmpleadoId) sheet.getRange(idx + 1, 8).setValue(asignadoAEmpleadoId);
+    sheet.getRange(idx + 1, 9).setValue(repuestStr);
+    if (costoEstimado !== undefined) sheet.getRange(idx + 1, 10).setValue(costoEstimado);
+    if (costoReal !== undefined) sheet.getRange(idx + 1, 11).setValue(costoReal);
+    if (estadoOrden) sheet.getRange(idx + 1, 12).setValue(estadoOrden);
+    if (fechaResolucion || estadoOrden === "Resuelto" || estadoOrden === "Completado") {
+      sheet.getRange(idx + 1, 13).setValue(fechaResolucion || now);
+    }
+    sheet.getRange(idx + 1, 14).setValue(observaciones || "");
+  } else {
+    sheet.appendRow([
+      oId,
+      now,
+      activoIdUbicacion,
+      tipoMantenimiento || "Correctivo",
+      descripcionFalla,
+      prioridad || "Media",
+      reportadoPorUserId || "",
+      asignadoAEmpleadoId || "",
+      repuestStr,
+      costoEstimado || 0,
+      costoReal || 0,
+      estadoOrden || "Reportado",
+      "",
+      observaciones || ""
+    ]);
+  }
+
+  // Descontar repuestos si se completó la orden
+  if ((estadoOrden === "Resuelto" || estadoOrden === "Completado") && repuestosConsumidosJSON) {
+    const repArr = typeof repuestosConsumidosJSON === "string" ? JSON.parse(repuestosConsumidosJSON) : repuestosConsumidosJSON;
+    if (Array.isArray(repArr)) {
+      repArr.forEach(rp => {
+        if (rp.itemCodigo && rp.cantidad) {
+          recordInventoryMovement({
+            itemCodigo: rp.itemCodigo,
+            itemNombre: rp.itemNombre || rp.itemCodigo,
+            tipoMovimiento: "Salida",
+            cantidad: parseFloat(rp.cantidad),
+            ubicacionResponsable: "Mantenimiento / " + activoIdUbicacion,
+            observaciones: `Consumo de repuesto por Orden Mantenimiento ${oId}`
+          });
+        }
+      });
+    }
+  }
+
+  return {
+    status: "success",
+    ordenMaintId: oId,
+    message: "Orden de mantenimiento registrada/actualizada correctamente."
+  };
+}
+
+function getMaintenanceOrders(payload) {
+  const { estadoOrden, tipoMantenimiento } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const rows = getOrCreateSheet(ss, "MantenimientoOrdenes").getDataRange().getValues().slice(1);
+
+  let filtered = rows;
+  if (estadoOrden) filtered = filtered.filter(r => String(r[11]).trim() === String(estadoOrden).trim());
+  if (tipoMantenimiento) filtered = filtered.filter(r => String(r[3]).trim() === String(tipoMantenimiento).trim());
+
+  const mapped = filtered.map(r => ({
+    ordenMaintId: r[0],
+    fechaReporte: r[1],
+    activoIdUbicacion: r[2],
+    tipoMantenimiento: r[3],
+    descripcionFalla: r[4],
+    prioridad: r[5],
+    reportadoPorUserId: r[6],
+    asignadoAEmpleadoId: r[7],
+    repuestosConsumidosJSON: r[8],
+    costoEstimado: parseFloat(r[9] || 0),
+    costoReal: parseFloat(r[10] || 0),
+    estadoOrden: r[11],
+    fechaResolucion: r[12],
+    observaciones: r[13]
+  }));
+
+  return {
+    status: "success",
+    ordenes: mapped
+  };
+}
+
+function registerAssetDisposal(payload) {
+  const { tipoBien, bienIdCodigo, nombreBien, motivoBaja, valorLibros, autorizadoPorUserId, documentoActaUrl, observaciones } = payload || {};
+  if (!bienIdCodigo || !motivoBaja) throw new Error("bienIdCodigo y motivoBaja son requeridos.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "BajasBienes");
+  const now = new Date();
+  const bajaId = "DISP-" + now.getTime();
+
+  sheet.appendRow([
+    bajaId,
+    now,
+    tipoBien || "ActivoFijo",
+    bienIdCodigo,
+    nombreBien || bienIdCodigo,
+    motivoBaja,
+    valorLibros || 0,
+    autorizadoPorUserId || "",
+    documentoActaUrl || "",
+    "BajaConfirmada",
+    observaciones || ""
+  ]);
+
+  // Si es un Activo Fijo, actualizar estado en ActivosPatrimoniales a Disposed sin eliminar historial
+  if ((tipoBien || "ActivoFijo") === "ActivoFijo") {
+    const assetSheet = getOrCreateSheet(ss, "ActivosPatrimoniales");
+    const aData = assetSheet.getDataRange().getValues();
+    const aIdx = aData.findIndex(r => String(r[0]).trim() === String(bienIdCodigo).trim() || String(r[1]).trim() === String(bienIdCodigo).trim());
+    if (aIdx !== -1) {
+      assetSheet.getRange(aIdx + 1, 8).setValue("Disposed");
+      assetSheet.getRange(aIdx + 1, 9).setValue(`Baja procesada mediante acta ${bajaId}. Motivo: ${motivoBaja}`);
+    }
+  } else if (tipoBien === "Inventario") {
+    recordInventoryMovement({
+      itemCodigo: bienIdCodigo,
+      itemNombre: nombreBien || bienIdCodigo,
+      tipoMovimiento: "Baja",
+      cantidad: parseFloat(payload.cantidad || 1),
+      ubicacionResponsable: "Almacén de Bajas",
+      observaciones: `Baja de inventario por acta ${bajaId}. Motivo: ${motivoBaja}`
+    });
+  }
+
+  return {
+    status: "success",
+    bajaId: bajaId,
+    message: "Baja de bien/material registrada correctamente con preservación del historial contable."
+  };
+}
+
+function getAssetDisposals(payload) {
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const rows = getOrCreateSheet(ss, "BajasBienes").getDataRange().getValues().slice(1);
+
+  const mapped = rows.map(r => ({
+    bajaId: r[0],
+    fechaBaja: r[1],
+    tipoBien: r[2],
+    bienIdCodigo: r[3],
+    nombreBien: r[4],
+    motivoBaja: r[5],
+    valorLibros: parseFloat(r[6] || 0),
+    autorizadoPorUserId: r[7],
+    documentoActaUrl: r[8],
+    estado: r[9],
+    observaciones: r[10]
+  }));
+
+  return {
+    status: "success",
+    bajas: mapped
   };
 }
 

@@ -1,3 +1,31 @@
+AUDITORÍA TÉCNICA Y DIAGNÓSTICO DE ARQUITECTURA - FASE 19: INVENTARIO, ACTIVOS FIJOS Y MANTENIMIENTO - Sun Jul 5 2026
+
+Archivos y Módulos Auditados:
+- backend/accounting-service/Code.gs
+- dashboard-contabilidad.html
+- js/teacher.js
+- js/api.js
+
+1. DIAGNÓSTICO Y REUTILIZACIÓN DE ESTRUCTURAS DE DATOS EXISTENTES
+- Tablas y Endpoints en `backend/accounting-service/Code.gs`:
+  * `InventariosKardex`: Hoja de movimientos Kardex de existencias (`recordInventoryMovement`, `getInventoryKardex`).
+  * `ActivosPatrimoniales`: Registro individual de activos patrimoniales institucionales (`manageAssetItem`, `getAssetItems`).
+  * `AsignacionesActivos`: Historial de entregas y custodias de activos a empleados/departamentos (`assignAssetCustody`, `getAssetAssignments`).
+  * `ProveedoresActivos` & `RecepcionesCompra`: Integración con Compras de la Fase 18 (`recordPurchaseReceipt`).
+  * `CuentasPorPagarGastos` & `AsientosContables`: Integración con la Contabilidad de la Fase 14.
+
+2. HALLAZGOS Y PLAN DE IMPLEMENTACIÓN PARA LA FASE 19
+- Backend (`backend/accounting-service/Code.gs`):
+  * Crear tabla `AlmacenesUbicaciones`: Maestro de sedes, bodegas, aulas y áreas de almacenamiento (`manageWarehouseLocation`, `getWarehouseLocations`).
+  * Ampliar `InventariosKardex` con prevención estricta de saldos negativos, solicitudes/entregas internas (`createMaterialRequisition`, `deliverMaterialRequisition`) y transferencias entre ubicaciones (`transferInventoryStock`).
+  * Crear tabla `InventariosConteosFisicos`: Programación, conteos ciegos/reales, conciliaciones y ajustes autorizados (`createPhysicalInventoryCount`, `reconcilePhysicalCount`).
+  * Crear tabla `MantenimientoOrdenes`: Ordenes de mantenimiento preventivo y correctivo con diagnóstico, repuestos consumidos de inventario y estado (`manageMaintenanceOrder`, `getMaintenanceOrders`).
+  * Crear tabla `BajasBienes`: Historial y actas de baja de bienes e insumos con preservación de trazabilidad histórica sin eliminación de registros (`registerAssetDisposal`, `getAssetDisposals`).
+- Frontend & UI (`dashboard-contabilidad.html` / `js/teacher.js`):
+  * Sub-pestaña interactiva en el panel contable para Inventarios (Kardex, Almacenes, Solicitudes/Transferencias, Conteos), Activos Fijos (Asignación/Custodia, Bajas) y Órdenes de Mantenimiento.
+
+====================================================================================================
+
 AUDITORÍA TÉCNICA Y DIAGNÓSTICO DE ARQUITECTURA - FASE 18: COMPRAS, PROVEEDORES Y CONTRATACIÓN DE SERVICIOS - Sun Jul 5 2026
 
 Archivos y Módulos Auditados:
@@ -49,6 +77,5 @@ Versión de Arquitectura: v8.20.0
 
 1. RESUMEN DEL ESTADO ACTUAL Y COBERTURA DE MÓDULOS (FASES 1 A 30)
 ----------------------------------------------------------------------------------------------------
-- FASE 1 A 16: COMPLETADAS
-- FASE 17: Planillas, compensaciones y obligaciones laborales -> COMPLETADA
-- FASE 18: Compras, proveedores y contratación de servicios -> EN PROCESO DE IMPLEMENTACIÓN
+- FASE 1 A 18: COMPLETADAS
+- FASE 19: Inventario, activos fijos y mantenimiento -> EN PROCESO DE IMPLEMENTACIÓN
