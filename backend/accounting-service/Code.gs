@@ -139,6 +139,10 @@ function getOrCreateSheet(ss, name) {
     if (name === "AnticiposPrestamosEmpleado") sheet.appendRow(["PrestamoID", "Fecha", "EmpleadoId", "Tipo", "MontoSolicitado", "MontoAprobado", "PlazoCuotas", "CuotaMensual", "SaldoPendiente", "EstadoAprobacion", "AprobadoPor", "Observaciones"]);
     if (name === "InventariosKardex") sheet.appendRow(["KardexID", "Fecha", "ItemCodigo", "ItemNombre", "CategoriaTipo", "TipoMovimiento", "Cantidad", "StockAnterior", "StockNuevo", "StockMinimo", "UbicacionResponsable", "Observaciones"]);
     if (name === "ProveedoresActivos") sheet.appendRow(["ProveedorID", "FechaRegistro", "NombreProveedor", "RTN", "Telefono", "Email", "RubroServicio", "Estado", "Observaciones"]);
+    if (name === "SolicitudesCompra") sheet.appendRow(["SolicitudID", "Fecha", "Departamento", "SolicitanteUserId", "Justificacion", "Categoria", "DetalleItemsJSON", "MontoEstimado", "CentroCosto", "EstadoAprobacion", "Observaciones"]);
+    if (name === "CotizacionesCompra") sheet.appendRow(["CotizacionID", "SolicitudID", "ProveedorID", "FechaRecepcion", "VigenciaOferta", "PrecioTotal", "PlazoEntregaDias", "CondicionesPago", "DocumentoAdjuntoUrl", "EstadoSelection", "Observaciones"]);
+    if (name === "OrdenesCompra") sheet.appendRow(["OrdenCompraID", "SolicitudID", "CotizacionID", "ProveedorID", "FechaEmision", "FechaEntregaEstimada", "DetalleItemsJSON", "MontoTotal", "CentroCosto", "EstadoOrden", "AprobadoPor", "Observaciones"]);
+    if (name === "RecepcionesCompra") sheet.appendRow(["RecepcionID", "OrdenCompraID", "FechaRecepcion", "ReceptorUserId", "DetalleRecibidoJSON", "EstadoConformidad", "RegistradoEnInventario", "AsientoID", "Observaciones"]);
     if (name === "ExpedientesLaborales") sheet.appendRow(["ExpedienteID", "PersonaId", "UserId", "Puesto", "Departamento", "CentroCosto", "FechaIngreso", "FechaSalida", "EstadoLaboral", "Observaciones"]);
     if (name === "ContratosLaborales") sheet.appendRow(["ContratoID", "ExpedienteID", "TipoContrato", "FechaInicio", "FechaFin", "SalarioBase", "Jornada", "EstadoContrato", "Observaciones"]);
     if (name === "SolicitudesVacaciones") sheet.appendRow(["SolicitudID", "ExpedienteID", "Tipo", "FechaInicio", "FechaFin", "DiasSolicitados", "Estado", "AprobadoPor", "Observaciones"]);
@@ -169,21 +173,21 @@ function doGet() { return textResponse({ status: "success", service: "ACCOUNTING
 
 const ROLE_PERMISSIONS = {
   "Administrador": ["*"],
-  "Director": ["configurePaymentConcept", "configurePaymentTariff", "getStudentAccountStatement", "recordStudentPayment", "uploadPaymentVoucher", "getPaymentVouchers", "reviewPaymentVoucher", "generatePaymentReceiptPDF", "createFiscalInvoice", "getFiscalInvoices", "configureGatewayIntegration", "testGatewayConnection", "recordCashBankMovement", "closeCashSession", "getCashBankSummary", "performBankReconciliation", "recordAccountsPayableExpense", "getChartOfAccounts", "saveAccountItem", "recordAccountingJournalEntry", "getAccountingJournalEntries", "getBudgets", "saveBudgetPlan", "getBudgetExecutionReport", "getFinancialSummary", "getAccountsReceivablePayableSummary", "generatePayrollPeriod", "recordStaffAttendance", "getStaffPayrollReceipt", "recordInventoryMovement", "getInventoryKardex", "registerSupplier", "createEmployeeRecord", "getEmployeeRecords", "manageEmployeeContract", "getEmployeeContracts", "submitVacationRequest", "getVacationRequests", "reviewVacationRequest", "configureFiscalPolicy", "getFiscalPolicies", "publishInstitutionalPolicy", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getAdvancedDashboardAnalytics", "manageLibraryBook", "getLibraryBooks", "processLibraryLoan", "getLibraryLoans", "manageAssetItem", "getAssetItems", "assignAssetCustody", "getAssetAssignments", "manageTransportRoute", "getTransportRoutes", "assignStudentTransport", "getTransportAssignments", "registerSpreadsheetSource", "resolveSpreadsheetSource", "getSpreadsheetCatalog", "configureSchoolDocumentTemplate", "getSchoolDocumentTemplates", "generateSchoolDocument", "getIssuedSchoolDocuments", "validateImportPreview", "importDataWithColumnMapping", "getMigrationLogs", "verifySACETemplateCompatibility", "generateSACEReportFile", "configureDiscountScholarshipRule", "getDiscountScholarshipRules", "submitDiscountScholarshipRequest", "getDiscountScholarshipRequests", "approveDiscountScholarshipRequest", "calculateAppliedDiscount", "configureLateFeeRule", "getLateFeeRules", "calculateLateFeesForAccount", "manageStoreProduct", "getStoreProducts", "createStoreOrder", "getStoreOrders", "updateStoreOrderStatus", "manageCafeteriaMenu", "getCafeteriaMenu", "createCafeteriaOrder", "getCafeteriaOrders", "updateCafeteriaOrderStatus", "configureFamilyCreditAuthorization", "getFamilyCreditAuthorizations", "processFamilyCreditPurchase"],
-  "Subdirector": ["configurePaymentConcept", "configurePaymentTariff", "getStudentAccountStatement", "recordStudentPayment", "uploadPaymentVoucher", "getPaymentVouchers", "reviewPaymentVoucher", "generatePaymentReceiptPDF", "createFiscalInvoice", "getFiscalInvoices", "configureGatewayIntegration", "testGatewayConnection", "recordCashBankMovement", "closeCashSession", "getCashBankSummary", "performBankReconciliation", "recordAccountsPayableExpense", "getChartOfAccounts", "saveAccountItem", "recordAccountingJournalEntry", "getAccountingJournalEntries", "getBudgets", "saveBudgetPlan", "getBudgetExecutionReport", "getFinancialSummary", "getAccountsReceivablePayableSummary", "generatePayrollPeriod", "recordStaffAttendance", "getStaffPayrollReceipt", "recordInventoryMovement", "getInventoryKardex", "registerSupplier", "createEmployeeRecord", "getEmployeeRecords", "manageEmployeeContract", "getEmployeeContracts", "submitVacationRequest", "getVacationRequests", "reviewVacationRequest", "configureFiscalPolicy", "getFiscalPolicies", "publishInstitutionalPolicy", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getAdvancedDashboardAnalytics", "manageLibraryBook", "getLibraryBooks", "processLibraryLoan", "getLibraryLoans", "manageAssetItem", "getAssetItems", "assignAssetCustody", "getAssetAssignments", "manageTransportRoute", "getTransportRoutes", "assignStudentTransport", "getTransportAssignments", "registerSpreadsheetSource", "resolveSpreadsheetSource", "getSpreadsheetCatalog", "configureSchoolDocumentTemplate", "getSchoolDocumentTemplates", "generateSchoolDocument", "getIssuedSchoolDocuments", "validateImportPreview", "importDataWithColumnMapping", "getMigrationLogs", "verifySACETemplateCompatibility", "generateSACEReportFile", "configureDiscountScholarshipRule", "getDiscountScholarshipRules", "submitDiscountScholarshipRequest", "getDiscountScholarshipRequests", "approveDiscountScholarshipRequest", "calculateAppliedDiscount"],
-  "Contador": ["configurePaymentConcept", "configurePaymentTariff", "getStudentAccountStatement", "recordStudentPayment", "uploadPaymentVoucher", "getPaymentVouchers", "reviewPaymentVoucher", "generatePaymentReceiptPDF", "createFiscalInvoice", "getFiscalInvoices", "configureGatewayIntegration", "testGatewayConnection", "recordCashBankMovement", "closeCashSession", "getCashBankSummary", "performBankReconciliation", "recordAccountsPayableExpense", "getChartOfAccounts", "saveAccountItem", "recordAccountingJournalEntry", "getAccountingJournalEntries", "getBudgets", "saveBudgetPlan", "getBudgetExecutionReport", "getFinancialSummary", "getAccountsReceivablePayableSummary", "generatePayrollPeriod", "recordStaffAttendance", "getStaffPayrollReceipt", "recordInventoryMovement", "getInventoryKardex", "registerSupplier", "createEmployeeRecord", "getEmployeeRecords", "manageEmployeeContract", "getEmployeeContracts", "submitVacationRequest", "getVacationRequests", "reviewVacationRequest", "configureFiscalPolicy", "getFiscalPolicies", "publishInstitutionalPolicy", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getAdvancedDashboardAnalytics", "manageAssetItem", "getAssetItems", "assignAssetCustody", "getAssetAssignments", "resolveSpreadsheetSource", "getSpreadsheetCatalog", "validateImportPreview", "importDataWithColumnMapping", "getMigrationLogs", "configureDiscountScholarshipRule", "getDiscountScholarshipRules", "submitDiscountScholarshipRequest", "getDiscountScholarshipRequests", "calculateAppliedDiscount", "getStoreProducts", "getStoreOrders", "getCafeteriaMenu", "getCafeteriaOrders"],
-  "EncargadoTienda": ["getStoreProducts", "manageStoreProduct", "createStoreOrder", "getStoreOrders", "updateStoreOrderStatus", "recordInventoryMovement", "getInventoryKardex", "getInstitutionalPolicies"],
-  "EncargadoCafeteria": ["getCafeteriaMenu", "manageCafeteriaMenu", "createCafeteriaOrder", "getCafeteriaOrders", "updateCafeteriaOrderStatus", "recordInventoryMovement", "getInventoryKardex", "getInstitutionalPolicies"],
+  "Director": ["configurePaymentConcept", "configurePaymentTariff", "getStudentAccountStatement", "recordStudentPayment", "uploadPaymentVoucher", "getPaymentVouchers", "reviewPaymentVoucher", "generatePaymentReceiptPDF", "createFiscalInvoice", "getFiscalInvoices", "configureGatewayIntegration", "testGatewayConnection", "recordCashBankMovement", "closeCashSession", "getCashBankSummary", "performBankReconciliation", "recordAccountsPayableExpense", "getChartOfAccounts", "saveAccountItem", "recordAccountingJournalEntry", "getAccountingJournalEntries", "getBudgets", "saveBudgetPlan", "getBudgetExecutionReport", "getFinancialSummary", "getAccountsReceivablePayableSummary", "generatePayrollPeriod", "recordStaffAttendance", "getStaffPayrollReceipt", "recordInventoryMovement", "getInventoryKardex", "registerSupplier", "createEmployeeRecord", "getEmployeeRecords", "manageEmployeeContract", "getEmployeeContracts", "submitVacationRequest", "getVacationRequests", "reviewVacationRequest", "configureFiscalPolicy", "getFiscalPolicies", "publishInstitutionalPolicy", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getAdvancedDashboardAnalytics", "manageLibraryBook", "getLibraryBooks", "processLibraryLoan", "getLibraryLoans", "manageAssetItem", "getAssetItems", "assignAssetCustody", "getAssetAssignments", "manageTransportRoute", "getTransportRoutes", "assignStudentTransport", "getTransportAssignments", "registerSpreadsheetSource", "resolveSpreadsheetSource", "getSpreadsheetCatalog", "configureSchoolDocumentTemplate", "getSchoolDocumentTemplates", "generateSchoolDocument", "getIssuedSchoolDocuments", "validateImportPreview", "importDataWithColumnMapping", "getMigrationLogs", "verifySACETemplateCompatibility", "generateSACEReportFile", "configureDiscountScholarshipRule", "getDiscountScholarshipRules", "submitDiscountScholarshipRequest", "getDiscountScholarshipRequests", "approveDiscountScholarshipRequest", "calculateAppliedDiscount", "configureLateFeeRule", "getLateFeeRules", "calculateLateFeesForAccount", "manageStoreProduct", "getStoreProducts", "createStoreOrder", "getStoreOrders", "updateStoreOrderStatus", "manageCafeteriaMenu", "getCafeteriaMenu", "createCafeteriaOrder", "getCafeteriaOrders", "updateCafeteriaOrderStatus", "configureFamilyCreditAuthorization", "getFamilyCreditAuthorizations", "processFamilyCreditPurchase", "createPurchaseRequest", "getPurchaseRequests", "submitPurchaseQuotation", "getPurchaseQuotations", "createPurchaseOrder", "approvePurchaseOrder", "getPurchaseOrders", "recordPurchaseReceipt"],
+  "Subdirector": ["configurePaymentConcept", "configurePaymentTariff", "getStudentAccountStatement", "recordStudentPayment", "uploadPaymentVoucher", "getPaymentVouchers", "reviewPaymentVoucher", "generatePaymentReceiptPDF", "createFiscalInvoice", "getFiscalInvoices", "configureGatewayIntegration", "testGatewayConnection", "recordCashBankMovement", "closeCashSession", "getCashBankSummary", "performBankReconciliation", "recordAccountsPayableExpense", "getChartOfAccounts", "saveAccountItem", "recordAccountingJournalEntry", "getAccountingJournalEntries", "getBudgets", "saveBudgetPlan", "getBudgetExecutionReport", "getFinancialSummary", "getAccountsReceivablePayableSummary", "generatePayrollPeriod", "recordStaffAttendance", "getStaffPayrollReceipt", "recordInventoryMovement", "getInventoryKardex", "registerSupplier", "createEmployeeRecord", "getEmployeeRecords", "manageEmployeeContract", "getEmployeeContracts", "submitVacationRequest", "getVacationRequests", "reviewVacationRequest", "configureFiscalPolicy", "getFiscalPolicies", "publishInstitutionalPolicy", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getAdvancedDashboardAnalytics", "manageLibraryBook", "getLibraryBooks", "processLibraryLoan", "getLibraryLoans", "manageAssetItem", "getAssetItems", "assignAssetCustody", "getAssetAssignments", "manageTransportRoute", "getTransportRoutes", "assignStudentTransport", "getTransportAssignments", "registerSpreadsheetSource", "resolveSpreadsheetSource", "getSpreadsheetCatalog", "configureSchoolDocumentTemplate", "getSchoolDocumentTemplates", "generateSchoolDocument", "getIssuedSchoolDocuments", "validateImportPreview", "importDataWithColumnMapping", "getMigrationLogs", "verifySACETemplateCompatibility", "generateSACEReportFile", "configureDiscountScholarshipRule", "getDiscountScholarshipRules", "submitDiscountScholarshipRequest", "getDiscountScholarshipRequests", "approveDiscountScholarshipRequest", "calculateAppliedDiscount", "createPurchaseRequest", "getPurchaseRequests", "submitPurchaseQuotation", "getPurchaseQuotations", "createPurchaseOrder", "approvePurchaseOrder", "getPurchaseOrders", "recordPurchaseReceipt"],
+  "Contador": ["configurePaymentConcept", "configurePaymentTariff", "getStudentAccountStatement", "recordStudentPayment", "uploadPaymentVoucher", "getPaymentVouchers", "reviewPaymentVoucher", "generatePaymentReceiptPDF", "createFiscalInvoice", "getFiscalInvoices", "configureGatewayIntegration", "testGatewayConnection", "recordCashBankMovement", "closeCashSession", "getCashBankSummary", "performBankReconciliation", "recordAccountsPayableExpense", "getChartOfAccounts", "saveAccountItem", "recordAccountingJournalEntry", "getAccountingJournalEntries", "getBudgets", "saveBudgetPlan", "getBudgetExecutionReport", "getFinancialSummary", "getAccountsReceivablePayableSummary", "generatePayrollPeriod", "recordStaffAttendance", "getStaffPayrollReceipt", "recordInventoryMovement", "getInventoryKardex", "registerSupplier", "createEmployeeRecord", "getEmployeeRecords", "manageEmployeeContract", "getEmployeeContracts", "submitVacationRequest", "getVacationRequests", "reviewVacationRequest", "configureFiscalPolicy", "getFiscalPolicies", "publishInstitutionalPolicy", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getAdvancedDashboardAnalytics", "manageAssetItem", "getAssetItems", "assignAssetCustody", "getAssetAssignments", "resolveSpreadsheetSource", "getSpreadsheetCatalog", "validateImportPreview", "importDataWithColumnMapping", "getMigrationLogs", "configureDiscountScholarshipRule", "getDiscountScholarshipRules", "submitDiscountScholarshipRequest", "getDiscountScholarshipRequests", "calculateAppliedDiscount", "getStoreProducts", "getStoreOrders", "getCafeteriaMenu", "getCafeteriaOrders", "createPurchaseRequest", "getPurchaseRequests", "submitPurchaseQuotation", "getPurchaseQuotations", "createPurchaseOrder", "approvePurchaseOrder", "getPurchaseOrders", "recordPurchaseReceipt"],
+  "EncargadoTienda": ["getStoreProducts", "manageStoreProduct", "createStoreOrder", "getStoreOrders", "updateStoreOrderStatus", "recordInventoryMovement", "getInventoryKardex", "getInstitutionalPolicies", "processFamilyCreditPurchase"],
+  "EncargadoCafeteria": ["getCafeteriaMenu", "manageCafeteriaMenu", "createCafeteriaOrder", "getCafeteriaOrders", "updateCafeteriaOrderStatus", "recordInventoryMovement", "getInventoryKardex", "getInstitutionalPolicies", "processFamilyCreditPurchase"],
   "RecursosHumanos": ["createEmployeeRecord", "getEmployeeRecords", "manageEmployeeContract", "getEmployeeContracts", "updateEmployeeLaborStatus", "configureWorkSchedule", "recordStaffCheckIn", "getStaffAttendanceLogs", "submitAttendanceCorrection", "reviewAttendanceCorrection", "submitLeaveVacationRequest", "getLeaveVacationRequests", "reviewLeaveVacationRequest", "calculateVacationBalances", "recordMedicalLeave", "calculatePayrollPeriod", "updatePayrollPeriodStatus", "getPayrollPeriodSummary", "requestEmployeeLoanAdvance", "getEmployeeLoansAdvances", "approveEmployeeLoanAdvance", "getLoanAmortizationSchedule", "generatePayrollReceiptPDF", "uploadEmployeeDocument", "getEmployeeDocuments", "getHRDashboardAnalytics", "getInstitutionalPolicies"],
   "Empleado": ["getEmployeeRecords", "getEmployeeContracts", "recordStaffCheckIn", "getStaffAttendanceLogs", "submitAttendanceCorrection", "submitLeaveVacationRequest", "getLeaveVacationRequests", "requestEmployeeLoanAdvance", "getEmployeeLoansAdvances", "generatePayrollReceiptPDF", "getEmployeeDocuments"],
-  "Padre": ["getStudentAccountStatement", "uploadPaymentVoucher", "getPaymentVouchers", "generatePaymentReceiptPDF", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getLibraryBooks", "getTransportRoutes", "getTransportAssignments", "getSchoolDocumentTemplates", "generateSchoolDocument", "getIssuedSchoolDocuments", "getStoreProducts", "createStoreOrder", "getStoreOrders", "getCafeteriaMenu", "createCafeteriaOrder", "getCafeteriaOrders", "getFamilyCreditAuthorizations", "configureFamilyCreditAuthorization"],
-  "Tutor": ["getStudentAccountStatement", "uploadPaymentVoucher", "getPaymentVouchers", "generatePaymentReceiptPDF", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getLibraryBooks", "getTransportRoutes", "getTransportAssignments", "getSchoolDocumentTemplates", "generateSchoolDocument", "getIssuedSchoolDocuments", "getStoreProducts", "createStoreOrder", "getStoreOrders", "getCafeteriaMenu", "createCafeteriaOrder", "getCafeteriaOrders", "getFamilyCreditAuthorizations", "configureFamilyCreditAuthorization"],
-  "Responsable": ["getStudentAccountStatement", "uploadPaymentVoucher", "getPaymentVouchers", "generatePaymentReceiptPDF", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getLibraryBooks", "getTransportRoutes", "getTransportAssignments", "getSchoolDocumentTemplates", "generateSchoolDocument", "getIssuedSchoolDocuments", "getStoreProducts", "createStoreOrder", "getStoreOrders", "getCafeteriaMenu", "createCafeteriaOrder", "getCafeteriaOrders", "getFamilyCreditAuthorizations", "configureFamilyCreditAuthorization"],
+  "Padre": ["getStudentAccountStatement", "uploadPaymentVoucher", "getPaymentVouchers", "generatePaymentReceiptPDF", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getLibraryBooks", "getTransportRoutes", "getTransportAssignments", "getSchoolDocumentTemplates", "generateSchoolDocument", "getIssuedSchoolDocuments", "getStoreProducts", "createStoreOrder", "getStoreOrders", "getCafeteriaMenu", "createCafeteriaOrder", "getCafeteriaOrders", "getFamilyCreditAuthorizations", "configureFamilyCreditAuthorization", "processFamilyCreditPurchase"],
+  "Tutor": ["getStudentAccountStatement", "uploadPaymentVoucher", "getPaymentVouchers", "generatePaymentReceiptPDF", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getLibraryBooks", "getTransportRoutes", "getTransportAssignments", "getSchoolDocumentTemplates", "generateSchoolDocument", "getIssuedSchoolDocuments", "getStoreProducts", "createStoreOrder", "getStoreOrders", "getCafeteriaMenu", "createCafeteriaOrder", "getCafeteriaOrders", "getFamilyCreditAuthorizations", "configureFamilyCreditAuthorization", "processFamilyCreditPurchase"],
+  "Responsable": ["getStudentAccountStatement", "uploadPaymentVoucher", "getPaymentVouchers", "generatePaymentReceiptPDF", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getLibraryBooks", "getTransportRoutes", "getTransportAssignments", "getSchoolDocumentTemplates", "generateSchoolDocument", "getIssuedSchoolDocuments", "getStoreProducts", "createStoreOrder", "getStoreOrders", "getCafeteriaMenu", "createCafeteriaOrder", "getCafeteriaOrders", "getFamilyCreditAuthorizations", "configureFamilyCreditAuthorization", "processFamilyCreditPurchase"],
   "Consejeros": ["getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getLibraryBooks", "getTransportRoutes", "getSchoolDocumentTemplates", "generateSchoolDocument", "getIssuedSchoolDocuments"],
   "Profesor": ["getStaffPayrollReceipt", "submitVacationRequest", "getVacationRequests", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getLibraryBooks", "getTransportRoutes", "getSchoolDocumentTemplates", "generateSchoolDocument", "getIssuedSchoolDocuments", "verifySACETemplateCompatibility", "generateSACEReportFile"],
   "Asistente": ["getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getLibraryBooks", "getSchoolDocumentTemplates"],
-  "Estudiante": ["getStudentAccountStatement", "uploadPaymentVoucher", "getPaymentVouchers", "generatePaymentReceiptPDF", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getLibraryBooks", "getTransportRoutes", "getTransportAssignments", "getSchoolDocumentTemplates", "generateSchoolDocument", "getIssuedSchoolDocuments", "getStoreProducts", "createStoreOrder", "getStoreOrders", "getCafeteriaMenu", "createCafeteriaOrder", "getCafeteriaOrders", "getFamilyCreditAuthorizations"],
-  "Alumno": ["getStudentAccountStatement", "uploadPaymentVoucher", "getPaymentVouchers", "generatePaymentReceiptPDF", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getLibraryBooks", "getTransportRoutes", "getTransportAssignments", "getSchoolDocumentTemplates", "generateSchoolDocument", "getIssuedSchoolDocuments", "getStoreProducts", "createStoreOrder", "getStoreOrders", "getCafeteriaMenu", "createCafeteriaOrder", "getCafeteriaOrders", "getFamilyCreditAuthorizations"]
+  "Estudiante": ["getStudentAccountStatement", "uploadPaymentVoucher", "getPaymentVouchers", "generatePaymentReceiptPDF", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getLibraryBooks", "getTransportRoutes", "getTransportAssignments", "getSchoolDocumentTemplates", "generateSchoolDocument", "getIssuedSchoolDocuments", "getStoreProducts", "createStoreOrder", "getStoreOrders", "getCafeteriaMenu", "createCafeteriaOrder", "getCafeteriaOrders", "getFamilyCreditAuthorizations", "processFamilyCreditPurchase"],
+  "Alumno": ["getStudentAccountStatement", "uploadPaymentVoucher", "getPaymentVouchers", "generatePaymentReceiptPDF", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getLibraryBooks", "getTransportRoutes", "getTransportAssignments", "getSchoolDocumentTemplates", "generateSchoolDocument", "getIssuedSchoolDocuments", "getStoreProducts", "createStoreOrder", "getStoreOrders", "getCafeteriaMenu", "createCafeteriaOrder", "getCafeteriaOrders", "getFamilyCreditAuthorizations", "processFamilyCreditPurchase"]
 };
 
 const PUBLIC_ACTIONS = ["ping", "getInstitutionalPolicies"];
@@ -256,6 +260,14 @@ function doPost(e) {
       case "recordInventoryMovement": result = recordInventoryMovement(payload); break;
       case "getInventoryKardex": result = getInventoryKardex(payload); break;
       case "registerSupplier": result = registerSupplier(payload); break;
+      case "createPurchaseRequest": result = createPurchaseRequest(payload); break;
+      case "getPurchaseRequests": result = getPurchaseRequests(payload); break;
+      case "submitPurchaseQuotation": result = submitPurchaseQuotation(payload); break;
+      case "getPurchaseQuotations": result = getPurchaseQuotations(payload); break;
+      case "createPurchaseOrder": result = createPurchaseOrder(payload); break;
+      case "approvePurchaseOrder": result = approvePurchaseOrder(payload); break;
+      case "getPurchaseOrders": result = getPurchaseOrders(payload); break;
+      case "recordPurchaseReceipt": result = recordPurchaseReceipt(payload); break;
       case "createEmployeeRecord": result = createEmployeeRecord(payload); break;
       case "getEmployeeRecords": result = getEmployeeRecords(payload); break;
       case "updateEmployeeLaborStatus": result = updateEmployeeLaborStatus(payload); break;
@@ -2647,6 +2659,248 @@ function registerSupplier(payload) {
 }
 
 // ---------------------------------------------------------------------------
+// FASE 18: COMPRAS, PROVEEDORES Y CONTRATACIÓN DE SERVICIOS
+// ---------------------------------------------------------------------------
+
+function createPurchaseRequest(payload) {
+  const { departamento, solicitanteUserId, justificacion, categoria, detalleItems, montoEstimado, centroCosto, observaciones } = payload || {};
+  if (!departamento || !justificacion) throw new Error("Departamento y justificación son requeridos.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "SolicitudesCompra");
+  const now = new Date();
+  const solId = "REQ-CMP-" + now.getTime();
+
+  sheet.appendRow([
+    solId,
+    now,
+    departamento,
+    solicitanteUserId || "COMPRADOR",
+    justificacion,
+    categoria || "Materiales/Insumos",
+    JSON.stringify(detalleItems || []),
+    parseFloat(montoEstimado || 0),
+    centroCosto || "Operaciones",
+    "PendienteAprobacion",
+    observaciones || ""
+  ]);
+
+  return { status: "success", solicitudId: solId, message: "Solicitud de compra registrada exitosamente." };
+}
+
+function getPurchaseRequests(payload) {
+  const { departamento, estadoAprobacion } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const rows = getOrCreateSheet(ss, "SolicitudesCompra").getDataRange().getValues().slice(1);
+
+  let filtered = rows;
+  if (departamento) filtered = filtered.filter(r => String(r[2]).toLowerCase().trim() === String(departamento).toLowerCase().trim());
+  if (estadoAprobacion) filtered = filtered.filter(r => String(r[9]).trim() === String(estadoAprobacion).trim());
+
+  const mapped = filtered.map(r => ({
+    solicitudId: r[0],
+    fecha: r[1],
+    departamento: r[2],
+    solicitanteUserId: r[3],
+    justificacion: r[4],
+    categoria: r[5],
+    detalleItems: r[6] ? (typeof r[6] === 'string' ? JSON.parse(r[6]) : r[6]) : [],
+    montoEstimado: parseFloat(r[7] || 0),
+    centroCosto: r[8],
+    estadoAprobacion: r[9],
+    observaciones: r[10]
+  }));
+
+  return { status: "success", solicitudes: mapped };
+}
+
+function submitPurchaseQuotation(payload) {
+  const { solicitudId, proveedorId, vigenciaOferta, precioTotal, plazoEntregaDias, condicionesPago, documentoAdjuntoUrl, observaciones } = payload || {};
+  if (!solicitudId || !proveedorId || precioTotal === undefined) throw new Error("solicitudId, proveedorId y precioTotal son requeridos.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "CotizacionesCompra");
+  const now = new Date();
+  const cotId = "COT-" + now.getTime();
+
+  sheet.appendRow([
+    cotId,
+    solicitudId,
+    proveedorId,
+    now,
+    vigenciaOferta || "30 días",
+    parseFloat(precioTotal || 0),
+    parseInt(plazoEntregaDias || 5),
+    condicionesPago || "Contado",
+    documentoAdjuntoUrl || "",
+    "EnRevision",
+    observaciones || ""
+  ]);
+
+  return { status: "success", cotizacionId: cotId, message: "Cotización registrada exitosamente." };
+}
+
+function getPurchaseQuotations(payload) {
+  const { solicitudId } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const rows = getOrCreateSheet(ss, "CotizacionesCompra").getDataRange().getValues().slice(1);
+
+  let filtered = rows;
+  if (solicitudId) filtered = filtered.filter(r => String(r[1]).trim() === String(solicitudId).trim());
+
+  const mapped = filtered.map(r => ({
+    cotizacionId: r[0],
+    solicitudId: r[1],
+    proveedorId: r[2],
+    fechaRecepcion: r[3],
+    vigenciaOferta: r[4],
+    precioTotal: parseFloat(r[5] || 0),
+    plazoEntregaDias: parseInt(r[6] || 0),
+    condicionesPago: r[7],
+    documentoAdjuntoUrl: r[8],
+    estadoSelection: r[9],
+    observaciones: r[10]
+  }));
+
+  return { status: "success", cotizaciones: mapped };
+}
+
+function createPurchaseOrder(payload) {
+  const { solicitudId, cotizacionId, proveedorId, fechaEntregaEstimada, detalleItems, montoTotal, centroCosto, observaciones } = payload || {};
+  if (!solicitudId || !proveedorId || montoTotal === undefined) throw new Error("solicitudId, proveedorId y montoTotal son requeridos.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "OrdenesCompra");
+  const now = new Date();
+  const ordenId = "ORD-CMP-" + now.getTime();
+
+  sheet.appendRow([
+    ordenId,
+    solicitudId,
+    cotizacionId || "",
+    proveedorId,
+    now,
+    fechaEntregaEstimada || "",
+    JSON.stringify(detalleItems || []),
+    parseFloat(montoTotal || 0),
+    centroCosto || "Operaciones",
+    "PendienteAprobacion",
+    "",
+    observaciones || ""
+  ]);
+
+  return { status: "success", ordenCompraId: ordenId, message: "Órden de compra emitida en borrador." };
+}
+
+function approvePurchaseOrder(payload) {
+  const { ordenCompraId, nuevoEstado, observacionesAdmin, authRole } = payload || {};
+  if (!ordenCompraId || !nuevoEstado) throw new Error("ordenCompraId y nuevoEstado son requeridos.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "OrdenesCompra");
+  const data = sheet.getDataRange().getValues();
+
+  const idx = data.findIndex(r => String(r[0]).trim() === String(ordenCompraId).trim());
+  if (idx === -1) throw new Error("Órden de compra no encontrada.");
+
+  sheet.getRange(idx + 1, 10).setValue(nuevoEstado);
+  sheet.getRange(idx + 1, 11).setValue(authRole || "Dirección/Contabilidad");
+  if (observacionesAdmin) sheet.getRange(idx + 1, 12).setValue(observacionesAdmin);
+
+  return { status: "success", ordenCompraId: ordenCompraId, nuevoEstado: nuevoEstado, message: `Órden de compra ${nuevoEstado} exitosamente.` };
+}
+
+function getPurchaseOrders(payload) {
+  const { estadoOrden, proveedorId } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const rows = getOrCreateSheet(ss, "OrdenesCompra").getDataRange().getValues().slice(1);
+
+  let filtered = rows;
+  if (proveedorId) filtered = filtered.filter(r => String(r[3]).trim() === String(proveedorId).trim());
+  if (estadoOrden) filtered = filtered.filter(r => String(r[9]).trim() === String(estadoOrden).trim());
+
+  const mapped = filtered.map(r => ({
+    ordenCompraId: r[0],
+    solicitudId: r[1],
+    cotizacionId: r[2],
+    proveedorId: r[3],
+    fechaEmision: r[4],
+    fechaEntregaEstimada: r[5],
+    detalleItems: r[6] ? (typeof r[6] === 'string' ? JSON.parse(r[6]) : r[6]) : [],
+    montoTotal: parseFloat(r[7] || 0),
+    centroCosto: r[8],
+    estadoOrden: r[9],
+    aprobadoPor: r[10],
+    observaciones: r[11]
+  }));
+
+  return { status: "success", ordenes: mapped };
+}
+
+function recordPurchaseReceipt(payload) {
+  const { ordenCompraId, receptorUserId, detalleRecibido, estadoConformidad, registrarEnInventario, observaciones } = payload || {};
+  if (!ordenCompraId) throw new Error("ordenCompraId es requerido.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "RecepcionesCompra");
+  const ordSheet = getOrCreateSheet(ss, "OrdenesCompra");
+  const ordData = ordSheet.getDataRange().getValues();
+
+  const oIdx = ordData.findIndex(r => String(r[0]).trim() === String(ordenCompraId).trim());
+  if (oIdx === -1) throw new Error("Órden de compra no encontrada.");
+
+  const now = new Date();
+  const recId = "REC-CMP-" + now.getTime();
+
+  // Integrar de forma automática con Cuentas por Pagar (Fase 14)
+  const ordRow = ordData[oIdx];
+  const obligacionRes = recordAccountsPayableExpense({
+    proveedorId: ordRow[3],
+    numeroFactura: "FCT-" + recId,
+    importe: ordRow[7],
+    observaciones: `Registro de gasto derivado de recepción de compra ${recId}`
+  });
+
+  // Si procede registrar en inventario
+  if (registrarEnInventario && Array.isArray(detalleRecibido)) {
+    detalleRecibido.forEach(item => {
+      if (item.codigoItem && item.cantidad) {
+        recordInventoryMovement({
+          itemCodigo: item.codigoItem,
+          itemNombre: item.nombreItem || "Artículo de Compra",
+          categoriaTipo: "Consumible",
+          tipoMovimiento: "Entrada",
+          cantidad: item.cantidad,
+          observaciones: `Entrada desde Recepción de Compra ${recId}`
+        });
+      }
+    });
+  }
+
+  // Actualizar estado de la Orden de Compra a RecibidaTotal
+  ordSheet.getRange(oIdx + 1, 10).setValue("RecibidaTotal");
+
+  sheet.appendRow([
+    recId,
+    ordenCompraId,
+    now,
+    receptorUserId || "RECEPTOR",
+    JSON.stringify(detalleRecibido || []),
+    estadoConformidad || "Conforme",
+    registrarEnInventario ? true : false,
+    obligacionRes ? obligacionRes.obligacionId : "",
+    observaciones || ""
+  ]);
+
+  return {
+    status: "success",
+    recepcionId: recId,
+    obligacionContable: obligacionRes,
+    message: "Recepción de compra e integración con Cuentas por Pagar e Inventario procesada con éxito."
+  };
+}
+
+// ---------------------------------------------------------------------------
 // TARIFAS Y PLANES DE PAGO FRACCIONADOS
 // ---------------------------------------------------------------------------
 
@@ -3579,7 +3833,7 @@ function getAdvancedDashboardAnalytics(payload) {
   const totalActivos = expsRows.filter(r => r[8] === "active" || r[8] === "Activo" || r[8] === "EnPeriodoPrueba").length;
   const pendientesPermisos = vacsRows.filter(r => r[6] === "PendienteAprobacion" || r[6] === "submitted").length;
   const hoyStr = new Date().toISOString().split('T')[0];
-  const asistenciasHoy = attsRows.filter(r => new Date(r[1]).toISOString().split('T')[0] === hoyStr).length;
+  const asistenciasHoy = attsRows.filter(r => r[1] && !isNaN(new Date(r[1]).getTime()) && new Date(r[1]).toISOString().split('T')[0] === hoyStr).length;
   const pctAsistencia = totalActivos > 0 ? Math.min(100, Math.round((asistenciasHoy / totalActivos) * 100)) : 100;
 
   return {

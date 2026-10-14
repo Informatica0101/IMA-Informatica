@@ -1,3 +1,28 @@
+AUDITORÍA TÉCNICA Y DIAGNÓSTICO DE ARQUITECTURA - FASE 18: COMPRAS, PROVEEDORES Y CONTRATACIÓN DE SERVICIOS - Sun Jul 5 2026
+
+Archivos y Módulos Auditados:
+- backend/accounting-service/Code.gs
+- dashboard-contabilidad.html
+- js/teacher.js
+- js/api.js
+
+1. DIAGNÓSTICO Y REUTILIZACIÓN DE ESTRUCTURAS DE DATOS EXISTENTES
+- Tablas y Endpoints en `backend/accounting-service/Code.gs`:
+  * `ProveedoresActivos`: Registro maestro de proveedores institucionales (`registerSupplier`, `getSuppliers`).
+  * `CuentasPorPagarGastos`: Registro de facturas y obligaciones con proveedores (`recordAccountsPayableExpense`).
+  * `InventariosKardex`: Registro de recepción e inventario kardex (`recordInventoryMovement`).
+  * `PresupuestosInstitucionales`: Validación presupuestaria por centro de costo de la Fase 14 (`getBudgets`, `getBudgetExecutionReport`).
+
+2. HALLAZGOS Y PLAN DE IMPLEMENTACIÓN PARA LA FASE 18
+- Backend (`backend/accounting-service/Code.gs`):
+  * Crear tabla `SolicitudesCompra`: Solicitudes internas por departamento con justificación, centro de costo e importe estimado (`createPurchaseRequest`, `getPurchaseRequests`).
+  * Crear tabla `CotizacionesCompra`: Cotizaciones recibidas de proveedores con desglose de precios, plazo de entrega y adjuntos (`submitPurchaseQuotation`, `getPurchaseQuotations`).
+  * Crear tabla `OrdenesCompra`: Órdenes de compra aprobadas con flujo de estados (Borrador, PendienteAprobacion, Aprobada, Emitida, RecibidaParcial, RecibidaTotal, Anulada) e integración directa con Cuentas por Pagar e Inventario (`createPurchaseOrder`, `approvePurchaseOrder`, `getPurchaseOrders`, `recordPurchaseReceipt`).
+- Interfaz del Panel Contable (`dashboard-contabilidad.html` / `js/teacher.js`):
+  * Consola interactiva de compras con sub-pestaña para gestión de Solicitudes, Cotizaciones comparativas, Aprobación de Órdenes de Compra y Recepción de Bienes/Servicios.
+
+====================================================================================================
+
 AUDITORÍA TÉCNICA Y DIAGNÓSTICO DE ARQUITECTURA - FASE 17: PLANILLAS, COMPENSACIONES Y OBLIGACIONES LABORALES - Sun Jul 5 2026
 
 Archivos y Módulos Auditados:
@@ -14,31 +39,6 @@ Archivos y Módulos Auditados:
   * `PoliticasFiscales`: Reglas de retención y deducciones de ley en Honduras (IHSS 3.5%, RAP 1.5%, ISR por tramos) (`getFiscalPolicies`, `configureFiscalPolicy`).
   * `AsientosContables`: Integración idempotente con la Contabilidad de la Fase 14 mediante la generación automática de partidas dobles al aprobar/cerrar la planilla (`recordAccountingJournalEntry`).
 
-2. HALLAZGOS Y PLAN DE REFUERZO PARA LA FASE 17
-- Backend (`backend/accounting-service/Code.gs`):
-  * Reforzar `updatePayrollPeriodStatus` para que, al cambiar el estado de la planilla a 'Aprobada' o 'Cerrada', se genere de manera automática e idempotente la partida contable correspondiente en `AsientosContables` (Débito a Gasto de Salarios vs Crédito a Bancos/Pasivo de Salarios por Pagar).
-  * Garantizar la inmutabilidad de planillas cerradas y la imposibilidad de recálculo sobre períodos congelados.
-  * Verificar que la consulta de boletas de pago (`getStaffPayrollReceipt`) restrinja estrictamente la información confidencial de modo que cada empleado solo pueda consultar su propio recibo.
-- Interfaz del Panel de RRHH y Contabilidad (`dashboard-recursos-humanos.html` / `js/teacher.js`):
-  * Módulo interactivo para el cálculo preliminar, revisión de desglose por empleado, aprobación de nómina y descarga de comprobantes salariales en PDF.
-
-====================================================================================================
-
-AUDITORÍA TÉCNICA Y DIAGNÓSTICO DE ARQUITECTURA - FASE 16: RECURSOS HUMANOS Y ADMINISTRACIÓN DEL PERSONAL - Sun Jul 5 2026
-
-Archivos y Módulos Auditados:
-- backend/accounting-service/Code.gs
-- dashboard-recursos-humanos.html
-- js/teacher.js
-- js/api.js
-
-1. DIAGNÓSTICO Y REUTILIZACIÓN DE ESTRUCTURAS DE DATOS EXISTENTES
-- Tablas y Endpoints en `backend/accounting-service/Code.gs`:
-  * `ExpedientesLaborales`: Registro de expediente del personal desacoplado de la cuenta de usuario (`createEmployeeRecord`, `getEmployeeRecords`, `updateEmployeeLaborStatus`).
-  * `ContratosLaborales`: Contratos de trabajo, vigencias, tipo de jornada y salario base (`manageEmployeeContract`, `getEmployeeContracts`).
-  * `SolicitudesVacaciones` & `IncapacidadesMedicas`: Permisos, licencias y ausencias con cálculo de saldos en días (`submitLeaveVacationRequest`, `getVacationRequests`, `reviewVacationRequest`, `calculateVacationBalances`, `recordMedicalLeave`).
-  * `DocumentosLaborales`: Repositorio privado de documentos del personal en Google Drive (`uploadEmployeeDocument`, `getEmployeeDocuments`).
-
 ====================================================================================================
 
 AUDITORÍA MASTER Y DIAGNÓSTICO INTEGRAL DE LA PLATAFORMA - PLAN GENERAL DE EXPANSION
@@ -49,6 +49,6 @@ Versión de Arquitectura: v8.20.0
 
 1. RESUMEN DEL ESTADO ACTUAL Y COBERTURA DE MÓDULOS (FASES 1 A 30)
 ----------------------------------------------------------------------------------------------------
-- FASE 1 A 15: COMPLETADAS
-- FASE 16: Recursos humanos y administración del personal -> COMPLETADA
-- FASE 17: Planillas, compensaciones y obligaciones laborales -> EN PROCESO DE REFUERZO
+- FASE 1 A 16: COMPLETADAS
+- FASE 17: Planillas, compensaciones y obligaciones laborales -> COMPLETADA
+- FASE 18: Compras, proveedores y contratación de servicios -> EN PROCESO DE IMPLEMENTACIÓN
