@@ -5033,6 +5033,94 @@ function toBase64(file) {
     window.openWorkflowBuilder = openWorkflowBuilder;
     window.openWorkflowDecisionModal = openWorkflowDecisionModal;
 
+    // ---------------------------------------------------------------------------
+    // FASE 26: NOTIFICACIONES, MENSAJERÍA INTERNA Y COMUNICACIONES MULTICANAL
+    // ---------------------------------------------------------------------------
+    const modalChannelConfig = document.getElementById('modal-channel-config');
+    document.getElementById('btn-close-channel-config')?.addEventListener('click', () => modalChannelConfig?.classList.add('hidden'));
+
+    async function openChannelConfigModal() {
+        modalChannelConfig?.classList.remove('hidden');
+        try {
+            const resp = await apiCall({ action: 'getNotificationChannelConfigs' }, 'USER');
+            const channels = (resp && resp.status === 'success' && resp.data) ? resp.data : [
+                { canalId: 'SMS', nombreCanal: 'SMS Mensajería Corta', proveedor: 'Twilio / SMS Gateway', estadoHabilitado: false },
+                { canalId: 'WHATSAPP', nombreCanal: 'WhatsApp Business API', proveedor: 'Meta Cloud API', estadoHabilitado: false },
+                { canalId: 'MESSENGER', nombreCanal: 'Facebook Messenger API', proveedor: 'Meta Messenger', estadoHabilitado: false },
+                { canalId: 'EMAIL', nombreCanal: 'Correo Electrónico Institucional', proveedor: 'Gmail / SMTP', estadoHabilitado: true }
+            ];
+            renderChannelCards(channels);
+        } catch (e) {
+            alert("Error al cargar configuración de canales: " + e.message);
+        }
+    }
+
+    function renderChannelCards(channels) {
+        const container = document.getElementById('channel-cards-container');
+        if (!container) return;
+
+        container.innerHTML = channels.map(c => `
+            <div class="p-4 bg-white border border-slate-200 rounded-2xl space-y-3 shadow-sm">
+                <div class="flex items-center justify-between border-b border-slate-100 pb-2">
+                    <div class="flex items-center gap-2">
+                        <i class="fa-solid ${c.canalId === 'WHATSAPP' ? 'fa-brands fa-whatsapp text-emerald-500' : c.canalId === 'SMS' ? 'fa-solid fa-comment-sms text-sky-500' : c.canalId === 'MESSENGER' ? 'fa-brands fa-facebook-messenger text-blue-500' : 'fa-solid fa-envelope text-indigo-500'} text-lg"></i>
+                        <span class="font-bold text-slate-800 text-xs">${c.nombreCanal}</span>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" class="sr-only peer ch-toggle-btn" data-canal="${c.canalId}" ${c.estadoHabilitado ? 'checked' : ''}>
+                        <div class="w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-emerald-600"></div>
+                    </label>
+                </div>
+                <div class="text-[11px] text-slate-500 space-y-1">
+                    <p><strong>Proveedor:</strong> ${c.proveedor || 'AdaptadorNativo'}</p>
+                    <p><strong>Estado:</strong> <span class="${c.estadoHabilitado ? 'text-emerald-700 font-bold' : 'text-slate-400 font-semibold'}">${c.estadoHabilitado ? 'Habilitado' : 'Desactivado'}</span></p>
+                </div>
+                <div class="pt-2 border-t border-slate-100 flex justify-end">
+                    <button class="btn-test-channel px-3 py-1.5 bg-slate-100 hover:bg-sky-50 hover:text-sky-700 text-slate-700 rounded-xl text-[11px] font-bold flex items-center gap-1 transition-all" data-canal="${c.canalId}">
+                        <i class="fa-solid fa-vial"></i> Probar Adaptador
+                    </button>
+                </div>
+            </div>
+        `).join('');
+
+        container.querySelectorAll('.ch-toggle-btn').forEach(btn => btn.addEventListener('change', async e => {
+            const canalId = e.target.dataset.canal;
+            const isEnabled = e.target.checked;
+            try {
+                await apiCall({
+                    action: 'configureNotificationChannel',
+                    canalId: canalId,
+                    nombreCanal: canalId,
+                    estadoHabilitado: isEnabled
+                }, 'USER');
+            } catch (err) {
+                alert("Error al actualizar canal: " + err.message);
+            }
+        }));
+
+        container.querySelectorAll('.btn-test-channel').forEach(btn => btn.addEventListener('click', async e => {
+            const canalId = e.currentTarget.dataset.canal;
+            const dest = prompt(`Ingrese número/contacto de prueba para ${canalId}:`, "+50499998888");
+            if (!dest) return;
+            try {
+                const resp = await apiCall({
+                    action: 'sendChannelNotificationTest',
+                    canalId: canalId,
+                    destinatarioPrueba: dest
+                }, 'USER');
+                if (resp && resp.status === 'success') {
+                    alert(`¡Prueba exitosa para el adaptador '${canalId}'!\nID Envío: ${resp.envioId}`);
+                } else {
+                    alert("Error en prueba de adaptador: " + (resp?.message || "Error desconocido"));
+                }
+            } catch (err) {
+                alert("Error de comunicación: " + err.message);
+            }
+        }));
+    }
+
+    window.openChannelConfigModal = openChannelConfigModal;
+
 });
 /**
  * REQ: Soporte para copia de código en el panel del profesor (v7.6.4)

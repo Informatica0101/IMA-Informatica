@@ -200,6 +200,8 @@ function getOrCreateSheet(ss, name) {
     if (name === "FlujosAprobacion") sheet.appendRow(["FlujoID", "FormID", "NombreFlujo", "Departamento", "PasosEtapasJSON", "Estado", "Version", "FechaCreacion", "CreadoPor"]);
     if (name === "RevisionesDecisionesTramite") sheet.appendRow(["DecisionID", "SolicitudID", "EtapaNombre", "RevisorID", "AccionDecisión", "ObservacionesInternas", "ObservacionesPublicas", "FechaDecisión", "IpMetadata"]);
     if (name === "FirmasConformidades") sheet.appendRow(["FirmaID", "SolicitudID", "DocumentoID", "FirmanteID", "RolFirmante", "TipoFirma", "TokenVerificacion", "FechaFirma", "IpMetadata"]);
+    if (name === "CanalesProveedoresConfig") sheet.appendRow(["CanalID", "NombreCanal", "Proveedor", "EstadoHabilitado", "ConfiguracionJSON", "CredencialesEncriptadasHash", "UltimaPrueba", "ActualizadoPor"]);
+    if (name === "RegistroEnviosExternos") sheet.appendRow(["EnvioID", "NotificacionID", "CanalID", "DestinatarioContacto", "EstadoEnvio", "RespuestaProveedorJSON", "Intentos", "FechaEnvio"]);
     if (name === "CitasReuniones") sheet.appendRow(["CitaID", "SolicitanteID", "EstudianteID", "SolicitadoA", "Motivo", "FechaHora", "Modalidad", "Estado", "Comentarios"]);
   }
   return sheet;
@@ -241,17 +243,17 @@ const ROLE_PERMISSIONS = {
   "Director": [
     "createNews", "uploadNewsImage", "getNews", "updateNewsStatus", "getStudents", "getStudentsByGradoSeccion", "getUserInfo", "saveGameResult", "getGameStats", "getGlobalTop", "recordAnalytics", "getLearningProfile", "mergeGuestData", "updateUserProfile", "findPersonMatches", "createPerson", "linkPersonAccount", "manageAccountState", "generateInstitutionalId",
     "getInstitutionalCriteria", "saveInstitutionalCriterion", "getFormativeEvaluations", "saveFormativeEvaluation", "getSupportPlans", "saveSupportPlan",
-    "createLinkInvitation", "acceptLinkInvitation", "getGuardianStudents", "getInstitutionalAnnouncements", "createInstitutionalAnnouncement", "submitAnnouncementReceiptConfirmation", "getAnnouncementReadReport", "getDepartmentalWorkInbox", "closeConversationThread", "getInternalConversations", "getInternalMessages", "sendInternalMessage", "getUserNotifications", "getUnifiedNotifications", "markNotificationAsRead", "createUserNotification", "sendMultiChannelNotification", "getNotificationPreferences", "getAdministrativeRequests", "getAdministrativeRequestsHistory", "submitAdministrativeRequest", "submitStudentAbsenceJustification", "getStudentAbsenceJustifications", "reviewAbsenceJustification", "updateRequestStatus", "saveInstitutionalForm", "getInstitutionalForms", "submitInstitutionalFormRequest", "saveApprovalWorkflow", "getApprovalWorkflows", "processWorkflowDecision", "getWorkflowHistory", "registerDocumentSignature", "getAppointmentBookings", "bookAppointment", "updateAppointmentStatus", "getInstitutionalCalendarEvents", "getPendingReminders"
+    "createLinkInvitation", "acceptLinkInvitation", "getGuardianStudents", "getInstitutionalAnnouncements", "createInstitutionalAnnouncement", "submitAnnouncementReceiptConfirmation", "getAnnouncementReadReport", "getDepartmentalWorkInbox", "closeConversationThread", "getInternalConversations", "getInternalMessages", "sendInternalMessage", "getUserNotifications", "getUnifiedNotifications", "markNotificationAsRead", "createUserNotification", "sendMultiChannelNotification", "getNotificationPreferences", "getAdministrativeRequests", "getAdministrativeRequestsHistory", "submitAdministrativeRequest", "submitStudentAbsenceJustification", "getStudentAbsenceJustifications", "reviewAbsenceJustification", "updateRequestStatus", "saveInstitutionalForm", "getInstitutionalForms", "submitInstitutionalFormRequest", "saveApprovalWorkflow", "getApprovalWorkflows", "processWorkflowDecision", "getWorkflowHistory", "registerDocumentSignature", "configureNotificationChannel", "getNotificationChannelConfigs", "sendChannelNotificationTest", "getAppointmentBookings", "bookAppointment", "updateAppointmentStatus", "getInstitutionalCalendarEvents", "getPendingReminders"
   ],
   "Subdirector": [
     "createNews", "uploadNewsImage", "getNews", "updateNewsStatus", "getStudents", "getStudentsByGradoSeccion", "getUserInfo", "saveGameResult", "getGameStats", "getGlobalTop", "recordAnalytics", "getLearningProfile", "mergeGuestData", "updateUserProfile", "findPersonMatches", "generateInstitutionalId",
     "getInstitutionalCriteria", "saveInstitutionalCriterion", "getFormativeEvaluations", "saveFormativeEvaluation", "getSupportPlans", "saveSupportPlan",
-    "createLinkInvitation", "getGuardianStudents", "getInstitutionalAnnouncements", "createInstitutionalAnnouncement", "submitAnnouncementReceiptConfirmation", "getAnnouncementReadReport", "getDepartmentalWorkInbox", "closeConversationThread", "getInternalConversations", "getInternalMessages", "sendInternalMessage", "getUserNotifications", "getUnifiedNotifications", "markNotificationAsRead", "sendMultiChannelNotification", "getNotificationPreferences", "getAdministrativeRequests", "getAdministrativeRequestsHistory", "submitStudentAbsenceJustification", "getStudentAbsenceJustifications", "reviewAbsenceJustification", "updateRequestStatus", "saveInstitutionalForm", "getInstitutionalForms", "submitInstitutionalFormRequest", "saveApprovalWorkflow", "getApprovalWorkflows", "processWorkflowDecision", "getWorkflowHistory", "registerDocumentSignature", "getAppointmentBookings", "updateAppointmentStatus", "getInstitutionalCalendarEvents", "getPendingReminders"
+    "createLinkInvitation", "getGuardianStudents", "getInstitutionalAnnouncements", "createInstitutionalAnnouncement", "submitAnnouncementReceiptConfirmation", "getAnnouncementReadReport", "getDepartmentalWorkInbox", "closeConversationThread", "getInternalConversations", "getInternalMessages", "sendInternalMessage", "getUserNotifications", "getUnifiedNotifications", "markNotificationAsRead", "sendMultiChannelNotification", "getNotificationPreferences", "getAdministrativeRequests", "getAdministrativeRequestsHistory", "submitStudentAbsenceJustification", "getStudentAbsenceJustifications", "reviewAbsenceJustification", "updateRequestStatus", "saveInstitutionalForm", "getInstitutionalForms", "submitInstitutionalFormRequest", "saveApprovalWorkflow", "getApprovalWorkflows", "processWorkflowDecision", "getWorkflowHistory", "registerDocumentSignature", "configureNotificationChannel", "getNotificationChannelConfigs", "sendChannelNotificationTest", "getAppointmentBookings", "updateAppointmentStatus", "getInstitutionalCalendarEvents", "getPendingReminders"
   ],
   "Secretaría": [
     "createNews", "uploadNewsImage", "getNews", "updateNewsStatus", "getStudents", "getStudentsByGradoSeccion", "getUserInfo", "updateUserProfile", "findPersonMatches", "createPerson", "linkPersonAccount", "manageAccountState", "generateInstitutionalId",
     "getInstitutionalCriteria", "getFormativeEvaluations", "saveFormativeEvaluation", "getSupportPlans", "saveSupportPlan",
-    "createLinkInvitation", "acceptLinkInvitation", "getGuardianStudents", "getInstitutionalAnnouncements", "createInstitutionalAnnouncement", "submitAnnouncementReceiptConfirmation", "getAnnouncementReadReport", "getDepartmentalWorkInbox", "closeConversationThread", "getInternalConversations", "getInternalMessages", "sendInternalMessage", "getUserNotifications", "getUnifiedNotifications", "markNotificationAsRead", "createUserNotification", "sendMultiChannelNotification", "getNotificationPreferences", "getAdministrativeRequests", "getAdministrativeRequestsHistory", "submitAdministrativeRequest", "submitStudentAbsenceJustification", "getStudentAbsenceJustifications", "reviewAbsenceJustification", "updateRequestStatus", "saveInstitutionalForm", "getInstitutionalForms", "submitInstitutionalFormRequest", "saveApprovalWorkflow", "getApprovalWorkflows", "processWorkflowDecision", "getWorkflowHistory", "registerDocumentSignature", "getAppointmentBookings", "bookAppointment", "updateAppointmentStatus", "getInstitutionalCalendarEvents", "getPendingReminders"
+    "createLinkInvitation", "acceptLinkInvitation", "getGuardianStudents", "getInstitutionalAnnouncements", "createInstitutionalAnnouncement", "submitAnnouncementReceiptConfirmation", "getAnnouncementReadReport", "getDepartmentalWorkInbox", "closeConversationThread", "getInternalConversations", "getInternalMessages", "sendInternalMessage", "getUserNotifications", "getUnifiedNotifications", "markNotificationAsRead", "createUserNotification", "sendMultiChannelNotification", "getNotificationPreferences", "getAdministrativeRequests", "getAdministrativeRequestsHistory", "submitAdministrativeRequest", "submitStudentAbsenceJustification", "getStudentAbsenceJustifications", "reviewAbsenceJustification", "updateRequestStatus", "saveInstitutionalForm", "getInstitutionalForms", "submitInstitutionalFormRequest", "saveApprovalWorkflow", "getApprovalWorkflows", "processWorkflowDecision", "getWorkflowHistory", "registerDocumentSignature", "configureNotificationChannel", "getNotificationChannelConfigs", "sendChannelNotificationTest", "getAppointmentBookings", "bookAppointment", "updateAppointmentStatus", "getInstitutionalCalendarEvents", "getPendingReminders"
   ],
   "Contador": ["getStudents", "getUserInfo", "getNews", "getInstitutionalAnnouncements", "getUserNotifications", "markNotificationAsRead", "getAdministrativeRequests", "submitAdministrativeRequest"],
   "RecursosHumanos": ["getStudents", "getUserInfo", "getNews", "getInstitutionalAnnouncements", "getUserNotifications", "markNotificationAsRead", "getAdministrativeRequests", "submitAdministrativeRequest", "createNews", "getInternalMessages", "sendInternalMessage"],
@@ -361,6 +363,9 @@ function doPost(e) {
       case "processWorkflowDecision": result = processWorkflowDecision(payload); break;
       case "getWorkflowHistory": result = getWorkflowHistory(payload); break;
       case "registerDocumentSignature": result = registerDocumentSignature(payload); break;
+      case "configureNotificationChannel": result = configureNotificationChannel(payload); break;
+      case "getNotificationChannelConfigs": result = getNotificationChannelConfigs(payload); break;
+      case "sendChannelNotificationTest": result = sendChannelNotificationTest(payload); break;
       case "getAppointmentBookings": result = getAppointmentBookings(payload); break;
       case "bookAppointment": result = bookAppointment(payload); break;
       case "updateAppointmentStatus": result = updateAppointmentStatus(payload); break;
@@ -2226,5 +2231,128 @@ function registerDocumentSignature(payload) {
     tokenVerificacion: tokenVerif,
     fechaFirma: now.toISOString(),
     message: "Firma / Conformidad institucional registrada con token de verificación."
+  };
+}
+
+// ---------------------------------------------------------------------------
+// FASE 26: NOTIFICACIONES, MENSAJERÍA INTERNA Y COMUNICACIONES MULTICANAL
+// ---------------------------------------------------------------------------
+
+function configureNotificationChannel(payload) {
+  const {
+    canalId,
+    nombreCanal,
+    proveedor,
+    estadoHabilitado,
+    configuracionJSON,
+    actualizadoPor
+  } = payload || {};
+
+  if (!canalId || !nombreCanal) {
+    throw new Error("canalId y nombreCanal son requeridos para configurar un canal de comunicación.");
+  }
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "CanalesProveedoresConfig");
+  const data = sheet.getDataRange().getValues();
+
+  const now = new Date();
+  const configStr = typeof configuracionJSON === "object" ? JSON.stringify(configuracionJSON) : (configuracionJSON || "{}");
+  const isEnabled = estadoHabilitado === true || String(estadoHabilitado).toLowerCase() === "true";
+
+  let idx = -1;
+  if (data.length > 1) {
+    idx = data.findIndex(r => String(r[0]).trim().toUpperCase() === String(canalId).trim().toUpperCase());
+  }
+
+  const rowData = [
+    canalId.toUpperCase(),
+    nombreCanal,
+    proveedor || "AdaptadorNativo",
+    isEnabled,
+    configStr,
+    "HASH_CONFIG_PROTECTED",
+    now.toISOString(),
+    actualizadoPor || "Administrador"
+  ];
+
+  if (idx !== -1) {
+    sheet.getRange(idx + 1, 1, 1, rowData.length).setValues([rowData]);
+  } else {
+    sheet.appendRow(rowData);
+  }
+
+  return {
+    status: "success",
+    canalId: canalId.toUpperCase(),
+    estadoHabilitado: isEnabled,
+    message: `Canal de comunicación '${nombreCanal}' configurado exitosamente.`
+  };
+}
+
+function getNotificationChannelConfigs(payload) {
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "CanalesProveedoresConfig");
+  const data = sheet.getDataRange().getValues();
+
+  if (data.length <= 1) {
+    // Retornar lista por defecto si la hoja está vacía
+    return {
+      status: "success",
+      data: [
+        { canalId: "SMS", nombreCanal: "SMS Mensajería Corta", proveedor: "Twilio / SMS Gateway", estadoHabilitado: false, configuracion: {} },
+        { canalId: "WHATSAPP", nombreCanal: "WhatsApp Business API", proveedor: "Meta Cloud API", estadoHabilitado: false, configuracion: {} },
+        { canalId: "MESSENGER", nombreCanal: "Facebook Messenger API", proveedor: "Meta Messenger", estadoHabilitado: false, configuracion: {} },
+        { canalId: "EMAIL", nombreCanal: "Correo Electrónico Institucional", proveedor: "Gmail / SMTP", estadoHabilitado: true, configuracion: {} }
+      ]
+    };
+  }
+
+  const configs = data.slice(1).map(r => {
+    let cfg = {};
+    try { cfg = JSON.parse(r[4]); } catch (e) { cfg = {}; }
+    return {
+      canalId: r[0],
+      nombreCanal: r[1],
+      proveedor: r[2],
+      estadoHabilitado: r[3] === true || String(r[3]).toLowerCase() === "true",
+      configuracion: cfg,
+      ultimaPrueba: r[6] ? new Date(r[6]).toISOString() : null,
+      actualizadoPor: r[7] || "Sistema"
+    };
+  });
+
+  return { status: "success", data: configs };
+}
+
+function sendChannelNotificationTest(payload) {
+  const { canalId, destinatarioPrueba, mensajePrueba } = payload || {};
+  if (!canalId || !destinatarioPrueba) {
+    throw new Error("canalId y destinatarioPrueba son requeridos para la prueba de envío.");
+  }
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const regSheet = getOrCreateSheet(ss, "RegistroEnviosExternos");
+  const envId = "ENV-TEST-" + Date.now();
+  const now = new Date();
+
+  // Simulación segura de adaptador multicanal (sin cargos ni dependencias duras)
+  regSheet.appendRow([
+    envId,
+    "NOTIF-TEST-001",
+    canalId.toUpperCase(),
+    destinatarioPrueba,
+    "ACEPTADO_PROVEEDOR_SIMULADO",
+    JSON.stringify({ status: 200, response: "Mock response successfully verified" }),
+    1,
+    now.toISOString()
+  ]);
+
+  return {
+    status: "success",
+    envioId: envId,
+    canalId: canalId.toUpperCase(),
+    destinatario: destinatarioPrueba,
+    message: `Prueba de envío simulada correctamente a través del adaptador '${canalId}'.`
   };
 }

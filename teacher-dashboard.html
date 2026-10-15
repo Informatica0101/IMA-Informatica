@@ -2273,6 +2273,37 @@
         </div>
     </div>
 
+    <!-- MODAL: Configuración de Canales y Proveedores Multicanal (Fase 26) -->
+    <div id="modal-channel-config" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-[85] flex items-center justify-center p-2 md:p-4 hidden">
+        <div class="bg-white rounded-3xl shadow-2xl max-w-4xl w-full max-h-[90vh] flex flex-col overflow-hidden border border-slate-200">
+            <div class="p-4 bg-slate-900 text-white flex items-center justify-between border-b border-slate-800">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-2xl bg-sky-500/20 text-sky-400 flex items-center justify-center text-lg">
+                        <i class="fa-solid fa-tower-cell"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-sm md:text-base font-black uppercase tracking-tight text-white">Canales y Proveedores Multicanal</h3>
+                        <p class="text-[11px] text-slate-400 font-medium">Gestione adaptadores externos para SMS, WhatsApp, Messenger y Correo.</p>
+                    </div>
+                </div>
+                <button id="btn-close-channel-config" class="p-2 text-slate-400 hover:text-white rounded-xl hover:bg-slate-800 text-lg transition-all">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <div class="p-5 overflow-y-auto space-y-4 text-xs bg-slate-50">
+                <div class="p-3 bg-amber-50 border border-amber-200 text-amber-900 rounded-2xl font-medium flex items-start gap-2 text-xs">
+                    <i class="fa-solid fa-shield-halved text-amber-600 text-base mt-0.5"></i>
+                    <span><strong>Arquitectura Resiliente:</strong> Las notificaciones internas de la plataforma funcionan siempre de forma independiente. Desactivar o fallar en un canal externo no interrumpe los avisos internos.</span>
+                </div>
+
+                <div id="channel-cards-container" class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <!-- Dynamic channel cards populated by JS -->
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Libraries for PDF Visual Designer & Overlay Editor (Phase 23) -->
     <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
