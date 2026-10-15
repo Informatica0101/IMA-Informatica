@@ -380,6 +380,11 @@ window.setupCommonUI = function() {
             });
         };
     }
+
+    // --- Universal Settings Modal Initialization (Fase 27) ---
+    if (typeof window.initGlobalDashboardSettings === 'function') {
+        window.initGlobalDashboardSettings();
+    }
 };
 
 /**
@@ -1202,3 +1207,535 @@ window.renderUnifiedAnalyticsCard = function(containerId, gameId, stats) {
         });
     }, 100);
 };
+
+// ---------------------------------------------------------------------------
+// CONTROLES UNIVERSALES DE CONFIGURACIÓN Y MENÚ DE OPCIONES (FASE 27)
+// ---------------------------------------------------------------------------
+
+window.initGlobalDashboardSettings = function() {
+    var openBtn = document.getElementById('btn-global-dashboard-settings');
+    if (openBtn) {
+        openBtn.onclick = function(e) {
+            e.preventDefault();
+            window.openDashboardSettingsModal();
+        };
+    }
+};
+
+window.ensureDashboardSettingsModalExists = function() {
+    if (document.getElementById('modal-dashboard-settings')) return;
+
+    var modalHtml = `
+<div id="modal-dashboard-settings" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-[95] flex items-center justify-center p-2 md:p-4 hidden">
+    <div class="bg-white rounded-[2rem] shadow-2xl w-full max-w-4xl max-h-[92vh] flex flex-col overflow-hidden border border-slate-100">
+        <div class="px-6 py-4 bg-slate-900 text-white flex items-center justify-between border-b border-slate-800">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-blue-600/20 text-blue-400 flex items-center justify-center text-lg font-bold">
+                    <i class="fa-solid fa-gear"></i>
+                </div>
+                <div>
+                    <h3 class="text-sm md:text-base font-black uppercase tracking-tight text-white flex items-center gap-2">
+                        Opciones & Configuración
+                        <span id="settings-role-badge" class="px-2.5 py-0.5 bg-blue-500/20 text-blue-300 text-[10px] font-black uppercase rounded-lg border border-blue-500/30">Cargando...</span>
+                    </h3>
+                    <p class="text-[11px] text-slate-400 font-medium">Gestión de preferencias personales, opciones del rol e integraciones autorizadas.</p>
+                </div>
+            </div>
+            <button id="btn-close-dashboard-settings" class="p-2 text-slate-400 hover:text-white rounded-xl hover:bg-slate-800 text-lg transition-all" aria-label="Cerrar opciones">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+
+        <div class="px-6 bg-slate-50 border-b border-slate-200 flex items-center gap-2 overflow-x-auto text-xs font-bold uppercase tracking-wider">
+            <button id="tab-btn-user-settings" class="settings-tab-btn py-3 px-4 border-b-2 border-blue-600 text-blue-600 font-black flex items-center gap-2">
+                <i class="fa-solid fa-bell"></i> Notificaciones Internas
+            </button>
+            <button id="tab-btn-role-settings" class="settings-tab-btn py-3 px-4 border-b-2 border-transparent text-slate-500 hover:text-slate-800 flex items-center gap-2">
+                <i class="fa-solid fa-sliders"></i> Opciones del Rol
+            </button>
+            <button id="tab-btn-provider-settings" class="settings-tab-btn py-3 px-4 border-b-2 border-transparent text-slate-500 hover:text-slate-800 flex items-center gap-2 hidden">
+                <i class="fa-solid fa-network-wired"></i> Proveedores & Pasarelas
+            </button>
+        </div>
+
+        <div class="p-6 overflow-y-auto flex-grow space-y-6">
+            <div id="tab-panel-user-settings" class="space-y-6">
+                <div class="p-4 bg-blue-50 border border-blue-100 rounded-2xl flex items-start gap-3">
+                    <i class="fa-solid fa-shield-halved text-blue-600 text-lg mt-0.5"></i>
+                    <div class="text-xs text-blue-900 leading-relaxed font-medium">
+                        <strong>Nivel de Preferencias Personales:</strong> Las notificaciones internas dentro de la plataforma funcionan de forma autónoma. Personalice qué avisos desea recibir en su bandeja interna sin alterar las políticas institucionales.
+                    </div>
+                </div>
+
+                <div class="space-y-4">
+                    <h4 class="text-xs font-black uppercase text-slate-500 tracking-wider">Categorías de Notificaciones Internas</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs font-semibold">
+                        <label class="flex items-center justify-between p-3.5 bg-slate-50 rounded-2xl border border-slate-200 hover:bg-slate-100/80 transition-all cursor-pointer">
+                            <span class="flex items-center gap-2 text-slate-700"><i class="fa-solid fa-graduation-cap text-blue-600"></i> Avisos Académicos & Notas</span>
+                            <input type="checkbox" id="pref-cat-academico" checked class="w-4 h-4 rounded text-blue-600 focus:ring-blue-500">
+                        </label>
+                        <label class="flex items-center justify-between p-3.5 bg-slate-50 rounded-2xl border border-slate-200 hover:bg-slate-100/80 transition-all cursor-pointer">
+                            <span class="flex items-center gap-2 text-slate-700"><i class="fa-solid fa-file-invoice text-emerald-600"></i> Trámites & Documentos</span>
+                            <input type="checkbox" id="pref-cat-administrativo" checked class="w-4 h-4 rounded text-blue-600 focus:ring-blue-500">
+                        </label>
+                        <label class="flex items-center justify-between p-3.5 bg-slate-50 rounded-2xl border border-slate-200 hover:bg-slate-100/80 transition-all cursor-pointer">
+                            <span class="flex items-center gap-2 text-slate-700"><i class="fa-solid fa-comments text-purple-600"></i> Mensajería Interna</span>
+                            <input type="checkbox" id="pref-cat-mensajes" checked class="w-4 h-4 rounded text-blue-600 focus:ring-blue-500">
+                        </label>
+                        <label class="flex items-center justify-between p-3.5 bg-slate-50 rounded-2xl border border-slate-200 hover:bg-slate-100/80 transition-all cursor-pointer">
+                            <span class="flex items-center gap-2 text-slate-700"><i class="fa-solid fa-user-check text-amber-600"></i> Asistencia & Puntualidad</span>
+                            <input type="checkbox" id="pref-cat-asistencia" checked class="w-4 h-4 rounded text-blue-600 focus:ring-blue-500">
+                        </label>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs font-semibold pt-2">
+                    <div>
+                        <label class="block font-bold text-slate-700 mb-1">Preferencia de Avisos Externos Opción</label>
+                        <select id="pref-ext-channel" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl font-medium">
+                            <option value="NINGUNO">Ninguno (Solo plataforma web)</option>
+                            <option value="SOLO_CORREO">Correo Electrónico Institucional</option>
+                            <option value="SMS_SOLO_URGENTE">SMS (Solo alertas de urgencia)</option>
+                            <option value="WHATSAPP_SOLO_URGENTE">WhatsApp (Solo alertas de urgencia)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block font-bold text-slate-700 mb-1">Frecuencia de Notificación</label>
+                        <select id="pref-frequency" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl font-medium">
+                            <option value="INMEDIATA">Inmediata (Al recibir la acción)</option>
+                            <option value="RESUMEN_DIARIO">Resumen Diario</option>
+                            <option value="SOLO_SEMANAL">Resumen Semanal</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div id="tab-panel-role-settings" class="space-y-6 hidden">
+                <div id="role-settings-dynamic-container" class="space-y-4"></div>
+            </div>
+
+            <div id="tab-panel-provider-settings" class="space-y-6 hidden">
+                <div class="p-4 bg-amber-50 border border-amber-200 rounded-2xl flex items-start gap-3">
+                    <i class="fa-solid fa-lock text-amber-700 text-lg mt-0.5"></i>
+                    <div class="text-xs text-amber-900 leading-relaxed font-medium">
+                        <strong>Administración Restringida (Nivel A):</strong> Solo la Dirección Institucional y la Administración Técnica pueden habilitar, probar o parametrizar las pasarelas de pago y adaptadores multicanal (Twilio SMS, Meta WhatsApp, Messenger, SMTP).
+                    </div>
+                </div>
+
+                <div id="provider-integrations-list" class="space-y-3">
+                    <p class="text-xs text-slate-400 italic">Cargando integraciones de proveedores...</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="px-6 py-4 bg-slate-50 border-t border-slate-200 flex items-center justify-between">
+            <span class="text-[11px] text-slate-400 font-bold uppercase">New Generation Christian Academy</span>
+            <div class="flex items-center gap-3">
+                <button id="btn-cancel-dashboard-settings" class="px-4 py-2.5 bg-slate-200 text-slate-700 rounded-xl font-bold text-xs uppercase tracking-wider hover:bg-slate-300 transition-all">
+                    Cancelar
+                </button>
+                <button id="btn-save-dashboard-settings" class="px-5 py-2.5 bg-blue-600 text-white rounded-xl font-bold text-xs uppercase tracking-wider hover:bg-blue-700 transition-all shadow-md shadow-blue-100">
+                    <i class="fa-solid fa-floppy-disk mr-1.5"></i> Guardar Opciones
+                </button>
+            </div>
+        </div>
+    </div>
+</div>`;
+    document.body.insertAdjacentHTML('beforeend', modalHtml);
+    window.bindDashboardSettingsModalEvents();
+};
+
+window.bindDashboardSettingsModalEvents = function() {
+    var closeBtn = document.getElementById('btn-close-dashboard-settings');
+    var cancelBtn = document.getElementById('btn-cancel-dashboard-settings');
+    var saveBtn = document.getElementById('btn-save-dashboard-settings');
+
+    if (closeBtn) closeBtn.onclick = window.closeDashboardSettingsModal;
+    if (cancelBtn) cancelBtn.onclick = window.closeDashboardSettingsModal;
+    if (saveBtn) saveBtn.onclick = window.saveDashboardSettingsModal;
+
+    var tab1 = document.getElementById('tab-btn-user-settings');
+    var tab2 = document.getElementById('tab-btn-role-settings');
+    var tab3 = document.getElementById('tab-btn-provider-settings');
+
+    if (tab1) tab1.onclick = function() { window.switchSettingsTab('user'); };
+    if (tab2) tab2.onclick = function() { window.switchSettingsTab('role'); };
+    if (tab3) tab3.onclick = function() { window.switchSettingsTab('provider'); };
+};
+
+window.switchSettingsTab = function(tabName) {
+    var p1 = document.getElementById('tab-panel-user-settings');
+    var p2 = document.getElementById('tab-panel-role-settings');
+    var p3 = document.getElementById('tab-panel-provider-settings');
+
+    var b1 = document.getElementById('tab-btn-user-settings');
+    var b2 = document.getElementById('tab-btn-role-settings');
+    var b3 = document.getElementById('tab-btn-provider-settings');
+
+    if (p1) p1.classList.toggle('hidden', tabName !== 'user');
+    if (p2) p2.classList.toggle('hidden', tabName !== 'role');
+    if (p3) p3.classList.toggle('hidden', tabName !== 'provider');
+
+    var activeClass = 'border-blue-600 text-blue-600 font-black';
+    var inactiveClass = 'border-transparent text-slate-500 hover:text-slate-800';
+
+    if (b1) b1.className = 'settings-tab-btn py-3 px-4 border-b-2 flex items-center gap-2 ' + (tabName === 'user' ? activeClass : inactiveClass);
+    if (b2) b2.className = 'settings-tab-btn py-3 px-4 border-b-2 flex items-center gap-2 ' + (tabName === 'role' ? activeClass : inactiveClass);
+    if (b3) b3.className = 'settings-tab-btn py-3 px-4 border-b-2 flex items-center gap-2 ' + (tabName === 'provider' ? activeClass : inactiveClass);
+
+    if (tabName === 'provider') {
+        window.loadProviderIntegrationsInModal();
+    }
+};
+
+window.openDashboardSettingsModal = function() {
+    window.ensureDashboardSettingsModalExists();
+    var modal = document.getElementById('modal-dashboard-settings');
+    if (!modal) return;
+
+    var user = null;
+    try {
+        user = JSON.parse(localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser') || localStorage.getItem('usuario_actual') || '{}');
+    } catch(e) { user = {}; }
+
+    var role = user.authRole || user.rol || user.role || 'Estudiante';
+    var badge = document.getElementById('settings-role-badge');
+    if (badge) badge.textContent = role;
+
+    var tab3Btn = document.getElementById('tab-btn-provider-settings');
+    if (tab3Btn) {
+        var canManageProviders = (role === 'Administrador' || role === 'Director' || role === 'Subdirector' || role === 'Desarrollador');
+        tab3Btn.classList.toggle('hidden', !canManageProviders);
+    }
+
+    window.switchSettingsTab('user');
+    window.loadUserSettingsInModal(user);
+    window.renderRoleSettingsInModal(role, user);
+
+    modal.classList.remove('hidden');
+};
+
+window.closeDashboardSettingsModal = function() {
+    var modal = document.getElementById('modal-dashboard-settings');
+    if (modal) modal.classList.add('hidden');
+};
+
+window.loadUserSettingsInModal = function(user) {
+    var userId = user.userId || user.id || 'USER-001';
+    if (window.fetchApi) {
+        fetchApi('USER', 'getUserSettings', { userId: userId, currentUser: user }).then(function(res) {
+            if (res && res.status === 'success' && res.data) {
+                var cats = res.data.categories || {};
+                var ac = document.getElementById('pref-cat-academico');
+                var ad = document.getElementById('pref-cat-administrativo');
+                var me = document.getElementById('pref-cat-mensajes');
+                var as = document.getElementById('pref-cat-asistencia');
+                if (ac) ac.checked = cats.academico !== false;
+                if (ad) ad.checked = cats.administrativo !== false;
+                if (me) me.checked = cats.mensajes !== false;
+                if (as) as.checked = cats.asistencia !== false;
+
+                var extSelect = document.getElementById('pref-ext-channel');
+                var freqSelect = document.getElementById('pref-frequency');
+                if (extSelect) extSelect.value = res.data.externalChannelPreference || 'NINGUNO';
+                if (freqSelect) freqSelect.value = res.data.frequency || 'INMEDIATA';
+            }
+        }).catch(function(err) {
+            console.warn('Fallback local settings:', err);
+        });
+    }
+};
+
+window.renderRoleSettingsInModal = function(role, user) {
+    var container = document.getElementById('role-settings-dynamic-container');
+    if (!container) return;
+
+    var html = '';
+    if (role === 'Profesor') {
+        html = `
+            <div class="p-4 bg-purple-50 border border-purple-100 rounded-2xl flex items-start gap-3">
+                <i class="fa-solid fa-chalkboard-user text-purple-600 text-lg mt-0.5"></i>
+                <div class="text-xs text-purple-900 leading-relaxed font-medium">
+                    <strong>Configuración del Espacio Docente:</strong> Administre la presentación de sus asignaturas asignadas, tolerancia de entrega para tareas propias y reglas de evaluación del aula.
+                    <br><span class="text-[11px] text-purple-700 italic">Aviso: El calendario oficial del instituto y los periodos académicos son gestionados de forma central por la Dirección.</span>
+                </div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs font-semibold">
+                <div>
+                    <label class="block font-bold text-slate-700 mb-1">Escala por Defecto en Rúbricas</label>
+                    <select id="role-cfg-rubric-scale" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl">
+                        <option value="PORCENTAJE">Porcentaje Numérico (0 - 100%)</option>
+                        <option value="CUALITATIVO">Cualitativo (Excelente, Muy Bueno, En Proceso)</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block font-bold text-slate-700 mb-1">Prórroga Automática de Tareas</label>
+                    <select id="role-cfg-grace-period" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl">
+                        <option value="SIN_PRORROGA">Sin Prórroga (Pena del 50% inmediata)</option>
+                        <option value="24_HORAS">24 Horas de Tolerancia</option>
+                        <option value="48_HORAS">48 Horas de Tolerancia</option>
+                    </select>
+                </div>
+            </div>
+        `;
+    } else if (role === 'Director' || role === 'Administrador' || role === 'Subdirector') {
+        html = `
+            <div class="p-4 bg-blue-50 border border-blue-100 rounded-2xl flex items-start gap-3">
+                <i class="fa-solid fa-building-columns text-blue-600 text-lg mt-0.5"></i>
+                <div class="text-xs text-blue-900 leading-relaxed font-medium">
+                    <strong>Parámetros Institucionales del Sistema:</strong> Reglas generales del instituto, ciclo lectivo activo y avisos globales para todos los departamentos.
+                </div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs font-semibold">
+                <div>
+                    <label class="block font-bold text-slate-700 mb-1">Año Lectivo Institucional Activo</label>
+                    <input type="text" id="role-cfg-academic-year" value="Año Lectivo 2026" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl font-bold">
+                </div>
+                <div>
+                    <label class="block font-bold text-slate-700 mb-1">Modo del Sistema</label>
+                    <select id="role-cfg-sys-mode" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl">
+                        <option value="OPERACION_ORDINARIA">Operación Ordinaria (Lectivo)</option>
+                        <option value="MATRICULA_ABIERTA">Período de Matrícula Abierta</option>
+                        <option value="CIERRE_EVALUATIVO">Período de Cierre Evaluativo</option>
+                    </select>
+                </div>
+            </div>
+        `;
+    } else if (role === 'Secretaría') {
+        html = `
+            <div class="p-4 bg-teal-50 border border-teal-100 rounded-2xl flex items-start gap-3">
+                <i class="fa-solid fa-file-signature text-teal-600 text-lg mt-0.5"></i>
+                <div class="text-xs text-teal-900 leading-relaxed font-medium">
+                    <strong>Configuración de Trámites y Admisiones:</strong> Parámetros de recepción de excusas, avisos de documentación pendiente y reglas de constancias.
+                </div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs font-semibold">
+                <div>
+                    <label class="block font-bold text-slate-700 mb-1">Auto-asignación de Trámites</label>
+                    <select id="role-cfg-auto-assign" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl">
+                        <option value="VENTANILLA_GENERAL">Ventanilla Única General</option>
+                        <option value="POR_GRADO">Por Grado Académico</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block font-bold text-slate-700 mb-1">Días Hábiles Máximos de Resolución</label>
+                    <input type="number" id="role-cfg-max-days" value="3" min="1" max="10" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl font-bold">
+                </div>
+            </div>
+        `;
+    } else if (role === 'Contador') {
+        html = `
+            <div class="p-4 bg-emerald-50 border border-emerald-100 rounded-2xl flex items-start gap-3">
+                <i class="fa-solid fa-calculator text-emerald-600 text-lg mt-0.5"></i>
+                <div class="text-xs text-emerald-900 leading-relaxed font-medium">
+                    <strong>Configuración de Cobros y Facturación:</strong> Textos al pie de recibos de pago y notificaciones de estados de cuenta.
+                </div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs font-semibold">
+                <div>
+                    <label class="block font-bold text-slate-700 mb-1">Leyenda en Comprobantes de Pago</label>
+                    <input type="text" id="role-cfg-receipt-footer" value="Gracias por su pago puntualmente en New Generation Christian Academy" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl font-medium">
+                </div>
+                <div>
+                    <label class="block font-bold text-slate-700 mb-1">Día Límite de Recargo de Colegiatura</label>
+                    <input type="number" id="role-cfg-surcharge-day" value="10" min="1" max="28" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl font-bold">
+                </div>
+            </div>
+        `;
+    } else if (role === 'EncargadoTienda' || role === 'EncargadoCafeteria') {
+        html = `
+            <div class="p-4 bg-amber-50 border border-amber-100 rounded-2xl flex items-start gap-3">
+                <i class="fa-solid fa-store text-amber-600 text-lg mt-0.5"></i>
+                <div class="text-xs text-amber-900 leading-relaxed font-medium">
+                    <strong>Configuración Operativa de Tienda / Cafetería:</strong> Alertas de existencias bajas y formato de recibo comercial.
+                </div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs font-semibold">
+                <div>
+                    <label class="block font-bold text-slate-700 mb-1">Umbral de Alerta de Stock Bajo</label>
+                    <input type="number" id="role-cfg-low-stock" value="5" min="1" max="50" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl font-bold">
+                </div>
+                <div>
+                    <label class="block font-bold text-slate-700 mb-1">Vista del Menú / Catálogo</label>
+                    <select id="role-cfg-catalog-view" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl">
+                        <option value="TARJETAS_GRID">Tarjetas con Foto</option>
+                        <option value="LISTA_COMPACTA">Lista Compacta</option>
+                    </select>
+                </div>
+            </div>
+        `;
+    } else {
+        html = `
+            <div class="p-4 bg-slate-50 border border-slate-200 rounded-2xl flex items-start gap-3">
+                <i class="fa-solid fa-user text-slate-600 text-lg mt-0.5"></i>
+                <div class="text-xs text-slate-700 leading-relaxed font-medium">
+                    <strong>Configuración del Estudiante / Tutor:</strong> Seleccione las preferencias de visualización académica e interfaz para su sesión.
+                </div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs font-semibold">
+                <div>
+                    <label class="block font-bold text-slate-700 mb-1">Vista de Actividades Pendientes</label>
+                    <select id="role-cfg-student-view" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl">
+                        <option value="ORDEN_FECHA">Por Fecha de Vencimiento</option>
+                        <option value="ORDEN_ASIGNATURA">Agrupado por Asignatura</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block font-bold text-slate-700 mb-1">Formato de Calendario Semanal</label>
+                    <select id="role-cfg-calendar-format" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl">
+                        <option value="VISTA_SEMANAL">Vista Semanal Guiada</option>
+                        <option value="VISTA_LISTA">Lista Cronológica</option>
+                    </select>
+                </div>
+            </div>
+        `;
+    }
+
+    container.innerHTML = html;
+};
+
+window.loadProviderIntegrationsInModal = function() {
+    var listContainer = document.getElementById('provider-integrations-list');
+    if (!listContainer) return;
+
+    var user = null;
+    try {
+        user = JSON.parse(localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser') || localStorage.getItem('usuario_actual') || '{}');
+    } catch(e) { user = {}; }
+
+    var role = user.authRole || user.rol || user.role || 'Estudiante';
+
+    var defaultProviders = [
+        { integrationId: "INT-SMS", providerType: "SMS", providerName: "Twilio / SMS Gateway", serviceCategory: "Mensajería", enabled: false, environment: "Sandbox", status: "DESACTIVADO" },
+        { integrationId: "INT-WA", providerType: "WHATSAPP", providerName: "Meta Cloud API", serviceCategory: "Mensajería", enabled: false, environment: "Production", status: "DESACTIVADO" },
+        { integrationId: "INT-MSG", providerType: "MESSENGER", providerName: "Facebook Messenger API", serviceCategory: "Mensajería", enabled: false, environment: "Production", status: "DESACTIVADO" },
+        { integrationId: "INT-EMAIL", providerType: "EMAIL", providerName: "Gmail / SMTP", serviceCategory: "Correo Institucional", enabled: true, environment: "Production", status: "ACTIVO" },
+        { integrationId: "INT-PAY-BAC", providerType: "PASARELA_PAGO", providerName: "BAC Credomatic Pasarela", serviceCategory: "Cobros Financieros", enabled: false, environment: "Test", status: "CONFIGURADO" }
+    ];
+
+    if (window.fetchApi) {
+        fetchApi('USER', 'getProviderIntegrations', { authRole: role }).then(function(res) {
+            if (res && res.status === 'success' && res.data && res.data.length > 0) {
+                window.renderProviderCardsInModal(res.data);
+            } else {
+                window.renderProviderCardsInModal(defaultProviders);
+            }
+        }).catch(function(err) {
+            window.renderProviderCardsInModal(defaultProviders);
+        });
+    } else {
+        window.renderProviderCardsInModal(defaultProviders);
+    }
+};
+
+window.renderProviderCardsInModal = function(list) {
+    var listContainer = document.getElementById('provider-integrations-list');
+    if (!listContainer) return;
+
+    var html = '';
+    list.forEach(function(item) {
+        var isEnabled = item.enabled;
+        html += `
+            <div class="p-4 bg-slate-50 border border-slate-200 rounded-2xl flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 rounded-xl ${isEnabled ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-200 text-slate-500'} flex items-center justify-center font-bold text-base">
+                        <i class="fa-solid ${item.providerType === 'PASARELA_PAGO' ? 'fa-credit-card' : 'fa-comment-sms'}"></i>
+                    </div>
+                    <div>
+                        <h5 class="text-xs font-black text-slate-800 uppercase leading-none">${item.providerName}</h5>
+                        <p class="text-[11px] text-slate-500 mt-1">Categoría: ${item.serviceCategory} | Entorno: <span class="font-bold text-slate-700">${item.environment}</span></p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-3 justify-end">
+                    <span class="px-2.5 py-1 rounded-lg text-[10px] font-black uppercase ${isEnabled ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-200 text-slate-600'}">
+                        ${item.status || (isEnabled ? 'ACTIVO' : 'DESACTIVADO')}
+                    </span>
+                    <button onclick="window.testProviderIntegration('${item.integrationId}', '${item.providerType}')" class="px-3 py-1.5 bg-slate-800 text-white rounded-xl text-xs font-bold hover:bg-slate-900 transition-all">
+                        <i class="fa-solid fa-vial mr-1"></i> Probar Conexión
+                    </button>
+                </div>
+            </div>
+        `;
+    });
+
+    listContainer.innerHTML = html;
+};
+
+window.testProviderIntegration = function(integrationId, providerType) {
+    if (window.fetchApi) {
+        fetchApi('USER', 'sendChannelNotificationTest', { canalId: providerType, destinatarioPrueba: '9999-0000' }).then(function(res) {
+            alert(res.message || 'Prueba de conexión completada exitosamente.');
+        }).catch(function(err) {
+            alert('Error en la prueba: ' + err.message);
+        });
+    }
+};
+
+window.saveDashboardSettingsModal = function() {
+    var user = null;
+    try {
+        user = JSON.parse(localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser') || localStorage.getItem('usuario_actual') || '{}');
+    } catch(e) { user = {}; }
+
+    var userId = user.userId || user.id || 'USER-001';
+    var role = user.authRole || user.rol || user.role || 'Estudiante';
+
+    var ac = document.getElementById('pref-cat-academico');
+    var ad = document.getElementById('pref-cat-administrativo');
+    var me = document.getElementById('pref-cat-mensajes');
+    var as = document.getElementById('pref-cat-asistencia');
+
+    var extSelect = document.getElementById('pref-ext-channel');
+    var freqSelect = document.getElementById('pref-frequency');
+
+    var preferences = {
+        categories: {
+            academico: ac ? ac.checked : true,
+            administrativo: ad ? ad.checked : true,
+            mensajes: me ? me.checked : true,
+            asistencia: as ? as.checked : true,
+            comercial: false
+        },
+        inAppEnabled: true,
+        externalChannelPreference: extSelect ? extSelect.value : 'NINGUNO',
+        frequency: freqSelect ? freqSelect.value : 'INMEDIATA'
+    };
+
+    var saveBtn = document.getElementById('btn-save-dashboard-settings');
+    if (saveBtn) {
+        saveBtn.disabled = true;
+        saveBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-1.5"></i> Guardando...';
+    }
+
+    if (window.fetchApi) {
+        fetchApi('USER', 'saveUserSettings', { userId: userId, preferences: preferences, currentUser: user, authRole: role }).then(function(res) {
+            if (saveBtn) {
+                saveBtn.disabled = false;
+                saveBtn.innerHTML = '<i class="fa-solid fa-floppy-disk mr-1.5"></i> Guardar Opciones';
+            }
+            alert(res.message || 'Preferencias guardadas con éxito.');
+            window.closeDashboardSettingsModal();
+        }).catch(function(err) {
+            if (saveBtn) {
+                saveBtn.disabled = false;
+                saveBtn.innerHTML = '<i class="fa-solid fa-floppy-disk mr-1.5"></i> Guardar Opciones';
+            }
+            alert('Error al guardar: ' + err.message);
+        });
+    } else {
+        if (saveBtn) {
+            saveBtn.disabled = false;
+            saveBtn.innerHTML = '<i class="fa-solid fa-floppy-disk mr-1.5"></i> Guardar Opciones';
+        }
+        window.closeDashboardSettingsModal();
+    }
+};
+
+// Auto-inicialización resiliente de UI común
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', function() {
+        if (window.setupCommonUI) window.setupCommonUI();
+    });
+} else {
+    if (window.setupCommonUI) window.setupCommonUI();
+}

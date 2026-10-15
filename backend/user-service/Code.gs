@@ -203,6 +203,12 @@ function getOrCreateSheet(ss, name) {
     if (name === "CanalesProveedoresConfig") sheet.appendRow(["CanalID", "NombreCanal", "Proveedor", "EstadoHabilitado", "ConfiguracionJSON", "CredencialesEncriptadasHash", "UltimaPrueba", "ActualizadoPor"]);
     if (name === "RegistroEnviosExternos") sheet.appendRow(["EnvioID", "NotificacionID", "CanalID", "DestinatarioContacto", "EstadoEnvio", "RespuestaProveedorJSON", "Intentos", "FechaEnvio"]);
     if (name === "CitasReuniones") sheet.appendRow(["CitaID", "SolicitanteID", "EstudianteID", "SolicitadoA", "Motivo", "FechaHora", "Modalidad", "Estado", "Comentarios"]);
+    if (name === "ConfiguracionSistema") sheet.appendRow(["ConfigID", "Clave", "Valor", "Tipo", "Categoria", "Descripcion", "Ambito", "EditablePor", "Estado", "Version", "UpdatedAt", "UpdatedBy"]);
+    if (name === "ConfiguracionRoles") sheet.appendRow(["PermissionID", "RoleId", "Resource", "Action", "Scope", "Allowed", "ConditionsRef", "UpdatedAt", "UpdatedBy"]);
+    if (name === "ConfiguracionDashboard") sheet.appendRow(["DashboardConfigID", "RoleId", "SectionKey", "OptionKey", "OptionType", "DefaultValue", "VisibilityRule", "PermissionID", "Status", "Version"]);
+    if (name === "PreferenciasNotificacion") sheet.appendRow(["PreferenceID", "UserId", "NotificationCategory", "InAppEnabled", "ExternalChannelPreference", "Frequency", "UpdatedAt", "UpdatedBy"]);
+    if (name === "IntegracionesProveedores") sheet.appendRow(["IntegrationID", "ProviderType", "ProviderName", "ServiceCategory", "Enabled", "Environment", "ConfigurationRef", "SecretRef", "Status", "LastCheckAt", "LastError", "UpdatedAt", "UpdatedBy"]);
+    if (name === "CatalogoOpciones") sheet.appendRow(["OptionKey", "Label", "Description", "ValueType", "AllowedValuesRef", "DefaultValue", "Scope", "RequiredPermission", "IsSensitive", "ValidationRule", "Version"]);
   }
   return sheet;
 }
@@ -243,7 +249,8 @@ const ROLE_PERMISSIONS = {
   "Director": [
     "createNews", "uploadNewsImage", "getNews", "updateNewsStatus", "getStudents", "getStudentsByGradoSeccion", "getUserInfo", "saveGameResult", "getGameStats", "getGlobalTop", "recordAnalytics", "getLearningProfile", "mergeGuestData", "updateUserProfile", "findPersonMatches", "createPerson", "linkPersonAccount", "manageAccountState", "generateInstitutionalId",
     "getInstitutionalCriteria", "saveInstitutionalCriterion", "getFormativeEvaluations", "saveFormativeEvaluation", "getSupportPlans", "saveSupportPlan",
-    "createLinkInvitation", "acceptLinkInvitation", "getGuardianStudents", "getInstitutionalAnnouncements", "createInstitutionalAnnouncement", "submitAnnouncementReceiptConfirmation", "getAnnouncementReadReport", "getDepartmentalWorkInbox", "closeConversationThread", "getInternalConversations", "getInternalMessages", "sendInternalMessage", "getUserNotifications", "getUnifiedNotifications", "markNotificationAsRead", "createUserNotification", "sendMultiChannelNotification", "getNotificationPreferences", "getAdministrativeRequests", "getAdministrativeRequestsHistory", "submitAdministrativeRequest", "submitStudentAbsenceJustification", "getStudentAbsenceJustifications", "reviewAbsenceJustification", "updateRequestStatus", "saveInstitutionalForm", "getInstitutionalForms", "submitInstitutionalFormRequest", "saveApprovalWorkflow", "getApprovalWorkflows", "processWorkflowDecision", "getWorkflowHistory", "registerDocumentSignature", "configureNotificationChannel", "getNotificationChannelConfigs", "sendChannelNotificationTest", "getAppointmentBookings", "bookAppointment", "updateAppointmentStatus", "getInstitutionalCalendarEvents", "getPendingReminders"
+    "createLinkInvitation", "acceptLinkInvitation", "getGuardianStudents", "getInstitutionalAnnouncements", "createInstitutionalAnnouncement", "submitAnnouncementReceiptConfirmation", "getAnnouncementReadReport", "getDepartmentalWorkInbox", "closeConversationThread", "getInternalConversations", "getInternalMessages", "sendInternalMessage", "getUserNotifications", "getUnifiedNotifications", "markNotificationAsRead", "createUserNotification", "sendMultiChannelNotification", "getNotificationPreferences", "getAdministrativeRequests", "getAdministrativeRequestsHistory", "submitAdministrativeRequest", "submitStudentAbsenceJustification", "getStudentAbsenceJustifications", "reviewAbsenceJustification", "updateRequestStatus", "saveInstitutionalForm", "getInstitutionalForms", "submitInstitutionalFormRequest", "saveApprovalWorkflow", "getApprovalWorkflows", "processWorkflowDecision", "getWorkflowHistory", "registerDocumentSignature", "configureNotificationChannel", "getNotificationChannelConfigs", "sendChannelNotificationTest", "getAppointmentBookings", "bookAppointment", "updateAppointmentStatus", "getInstitutionalCalendarEvents", "getPendingReminders",
+    "getUserSettings", "saveUserSettings", "getSystemConfigurations", "saveSystemConfiguration", "getProviderIntegrations", "configureProviderIntegration"
   ],
   "Subdirector": [
     "createNews", "uploadNewsImage", "getNews", "updateNewsStatus", "getStudents", "getStudentsByGradoSeccion", "getUserInfo", "saveGameResult", "getGameStats", "getGlobalTop", "recordAnalytics", "getLearningProfile", "mergeGuestData", "updateUserProfile", "findPersonMatches", "generateInstitutionalId",
@@ -371,6 +378,14 @@ function doPost(e) {
       case "updateAppointmentStatus": result = updateAppointmentStatus(payload); break;
       case "getInstitutionalCalendarEvents": result = getInstitutionalCalendarEvents(payload); break;
       case "getPendingReminders": result = getPendingReminders(payload); break;
+
+      // Endpoints Fase 27 - Configuración Central, Opciones por Rol y Proveedores
+      case "getUserSettings": result = getUserSettings(payload); break;
+      case "saveUserSettings": result = saveUserSettings(payload); break;
+      case "getSystemConfigurations": result = getSystemConfigurations(payload); break;
+      case "saveSystemConfiguration": result = saveSystemConfiguration(payload); break;
+      case "getProviderIntegrations": result = getProviderIntegrations(payload); break;
+      case "configureProviderIntegration": result = configureProviderIntegration(payload); break;
 
       case "ping": result = { status: "success", service: "USER", timestamp: new Date().toISOString(), dbConnected: true }; break;
       default: result = { status: "error", message: `Acción no reconocida: ${action}` };
@@ -2354,5 +2369,299 @@ function sendChannelNotificationTest(payload) {
     canalId: canalId.toUpperCase(),
     destinatario: destinatarioPrueba,
     message: `Prueba de envío simulada correctamente a través del adaptador '${canalId}'.`
+  };
+}
+
+// ---------------------------------------------------------------------------
+// HANDLERS FASE 27: CONFIGURACIÓN CENTRAL, OPCIONES POR ROL Y PROVEEDORES
+// ---------------------------------------------------------------------------
+
+function getUserSettings(payload) {
+  const userId = (payload && payload.userId) || (payload && payload.currentUser && payload.currentUser.userId);
+  if (!userId) {
+    return { status: "error", message: "userId es requerido." };
+  }
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const prefSheet = getOrCreateSheet(ss, "PreferenciasNotificacion");
+  const data = prefSheet.getDataRange().getValues();
+
+  let userPrefs = {
+    userId: userId,
+    categories: {
+      academico: true,
+      administrativo: true,
+      mensajes: true,
+      asistencia: true,
+      comercial: false
+    },
+    inAppEnabled: true,
+    externalChannelPreference: "NINGUNO",
+    frequency: "INMEDIATA",
+    uiTheme: "light"
+  };
+
+  if (data.length > 1) {
+    const userRow = data.slice(1).find(r => String(r[1]) === String(userId));
+    if (userRow) {
+      try {
+        const catObj = JSON.parse(userRow[2]);
+        if (catObj && typeof catObj === 'object') userPrefs.categories = catObj;
+      } catch(e) {}
+      userPrefs.inAppEnabled = userRow[3] === true || String(userRow[3]).toLowerCase() === 'true';
+      userPrefs.externalChannelPreference = userRow[4] || "NINGUNO";
+      userPrefs.frequency = userRow[5] || "INMEDIATA";
+    }
+  }
+
+  return { status: "success", data: userPrefs };
+}
+
+function saveUserSettings(payload) {
+  const { userId, preferences, authRole } = payload || {};
+  const callerId = (payload && payload.currentUser && payload.currentUser.userId) || userId;
+  if (!userId || !preferences) {
+    throw new Error("userId y preferences son requeridos.");
+  }
+
+  if (String(userId) !== String(callerId) && authRole !== "Administrador" && authRole !== "Director") {
+    throw new Error("No tiene permisos para modificar las preferencias de otro usuario.");
+  }
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const prefSheet = getOrCreateSheet(ss, "PreferenciasNotificacion");
+  const data = prefSheet.getDataRange().getValues();
+  const now = new Date().toISOString();
+  const categoriesStr = JSON.stringify(preferences.categories || {});
+  const inApp = preferences.inAppEnabled !== false;
+  const extPref = preferences.externalChannelPreference || "NINGUNO";
+  const freq = preferences.frequency || "INMEDIATA";
+
+  let updated = false;
+  for (let i = 1; i < data.length; i++) {
+    if (String(data[i][1]) === String(userId)) {
+      prefSheet.getRange(i + 1, 3, 1, 6).setValues([[
+        categoriesStr,
+        inApp,
+        extPref,
+        freq,
+        now,
+        callerId || userId
+      ]]);
+      updated = true;
+      break;
+    }
+  }
+
+  if (!updated) {
+    const prefId = "PREF-" + Date.now();
+    prefSheet.appendRow([
+      prefId,
+      userId,
+      categoriesStr,
+      inApp,
+      extPref,
+      freq,
+      now,
+      callerId || userId
+    ]);
+  }
+
+  return { status: "success", message: "Preferencias guardadas exitosamente." };
+}
+
+function getSystemConfigurations(payload) {
+  const authRole = (payload && payload.authRole) || "Estudiante";
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const configSheet = getOrCreateSheet(ss, "ConfiguracionSistema");
+  const dashSheet = getOrCreateSheet(ss, "ConfiguracionDashboard");
+
+  const sysData = configSheet.getDataRange().getValues();
+  const dashData = dashSheet.getDataRange().getValues();
+
+  const configs = sysData.slice(1).map(r => ({
+    configId: r[0],
+    clave: r[1],
+    valor: r[2],
+    tipo: r[3],
+    categoria: r[4],
+    descripcion: r[5],
+    ambito: r[6],
+    editablePor: r[7],
+    estado: r[8]
+  }));
+
+  const dashConfigs = dashData.slice(1)
+    .filter(r => String(r[1]) === authRole || String(r[1]) === "*")
+    .map(r => ({
+      dashboardConfigId: r[0],
+      roleId: r[1],
+      sectionKey: r[2],
+      optionKey: r[3],
+      optionType: r[4],
+      defaultValue: r[5],
+      visibilityRule: r[6],
+      status: r[8]
+    }));
+
+  return {
+    status: "success",
+    data: {
+      role: authRole,
+      systemConfigurations: configs,
+      dashboardConfigurations: dashConfigs
+    }
+  };
+}
+
+function saveSystemConfiguration(payload) {
+  const { clave, valor, tipo, categoria, descripcion, ambito, editablePor, authRole } = payload || {};
+  if (!clave) throw new Error("La clave de configuración es obligatoria.");
+
+  if ((!ambito || ambito === "GLOBAL") && authRole !== "Administrador" && authRole !== "Director") {
+    throw new Error("Solo Administrador o Director pueden modificar configuraciones globales del sistema.");
+  }
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const configSheet = getOrCreateSheet(ss, "ConfiguracionSistema");
+  const data = configSheet.getDataRange().getValues();
+  const now = new Date().toISOString();
+
+  let updated = false;
+  for (let i = 1; i < data.length; i++) {
+    if (String(data[i][1]) === String(clave)) {
+      configSheet.getRange(i + 1, 3, 1, 10).setValues([[
+        valor,
+        tipo || "TEXTO",
+        categoria || "GENERAL",
+        descripcion || "",
+        ambito || "GLOBAL",
+        editablePor || "Administrador",
+        "ACTIVO",
+        "1.0",
+        now,
+        authRole
+      ]]);
+      updated = true;
+      break;
+    }
+  }
+
+  if (!updated) {
+    const configId = "CFG-" + Date.now();
+    configSheet.appendRow([
+      configId,
+      clave,
+      valor,
+      tipo || "TEXTO",
+      categoria || "GENERAL",
+      descripcion || "",
+      ambito || "GLOBAL",
+      editablePor || "Administrador",
+      "ACTIVO",
+      "1.0",
+      now,
+      authRole
+    ]);
+  }
+
+  return { status: "success", message: `Configuración '${clave}' guardada exitosamente.` };
+}
+
+function getProviderIntegrations(payload) {
+  const authRole = (payload && payload.authRole) || "Estudiante";
+  if (authRole !== "Administrador" && authRole !== "Director" && authRole !== "Desarrollador" && authRole !== "Subdirector") {
+    throw new Error("Acceso denegado: Solo la Dirección o Administración Técnica pueden consultar las integraciones de proveedores.");
+  }
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "IntegracionesProveedores");
+  const data = sheet.getDataRange().getValues();
+
+  if (data.length <= 1) {
+    return {
+      status: "success",
+      data: [
+        { integrationId: "INT-SMS", providerType: "SMS", providerName: "Twilio / SMS Gateway", serviceCategory: "Mensajería", enabled: false, environment: "Sandbox", secretRef: "***PROTECTED***", status: "DESACTIVADO" },
+        { integrationId: "INT-WA", providerType: "WHATSAPP", providerName: "Meta Cloud API", serviceCategory: "Mensajería", enabled: false, environment: "Production", secretRef: "***PROTECTED***", status: "DESACTIVADO" },
+        { integrationId: "INT-MSG", providerType: "MESSENGER", providerName: "Facebook Messenger API", serviceCategory: "Mensajería", enabled: false, environment: "Production", secretRef: "***PROTECTED***", status: "DESACTIVADO" },
+        { integrationId: "INT-EMAIL", providerType: "EMAIL", providerName: "Gmail / SMTP", serviceCategory: "Correo Institucional", enabled: true, environment: "Production", secretRef: "***PROTECTED***", status: "ACTIVO" },
+        { integrationId: "INT-PAY-BAC", providerType: "PASARELA_PAGO", providerName: "BAC Credomatic Pasarela", serviceCategory: "Cobros Financieros", enabled: false, environment: "Test", secretRef: "***PROTECTED***", status: "CONFIGURADO" }
+      ]
+    };
+  }
+
+  const list = data.slice(1).map(r => ({
+    integrationId: r[0],
+    providerType: r[1],
+    providerName: r[2],
+    serviceCategory: r[3],
+    enabled: r[4] === true || String(r[4]).toLowerCase() === "true",
+    environment: r[5],
+    secretRef: "***PROTECTED***",
+    status: r[8],
+    lastCheckAt: r[9] ? new Date(r[9]).toISOString() : null,
+    lastError: r[10] || null,
+    updatedAt: r[11] ? new Date(r[11]).toISOString() : null,
+    updatedBy: r[12] || "Sistema"
+  }));
+
+  return { status: "success", data: list };
+}
+
+function configureProviderIntegration(payload) {
+  const { integrationId, providerType, providerName, enabled, environment, configuration, authRole } = payload || {};
+  if (authRole !== "Administrador" && authRole !== "Director" && authRole !== "Desarrollador" && authRole !== "Subdirector") {
+    throw new Error("Acceso denegado: Solo la Dirección o Administración Técnica pueden administrar proveedores externos o pasarelas de pago.");
+  }
+  if (!providerType) throw new Error("providerType es requerido.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "IntegracionesProveedores");
+  const data = sheet.getDataRange().getValues();
+  const now = new Date().toISOString();
+
+  let updated = false;
+  for (let i = 1; i < data.length; i++) {
+    if (String(data[i][0]) === String(integrationId) || String(data[i][1]) === String(providerType)) {
+      sheet.getRange(i + 1, 3, 1, 11).setValues([[
+        providerName || data[i][2],
+        "ServicioExterno",
+        enabled === true || String(enabled).toLowerCase() === "true",
+        environment || "Sandbox",
+        JSON.stringify(configuration || {}),
+        "HASH_CONFIG_PROTECTED",
+        enabled ? "ACTIVO" : "DESACTIVADO",
+        now,
+        "",
+        now,
+        authRole
+      ]]);
+      updated = true;
+      break;
+    }
+  }
+
+  if (!updated) {
+    const newId = integrationId || ("INT-" + Date.now());
+    sheet.appendRow([
+      newId,
+      providerType,
+      providerName || providerType,
+      "ServicioExterno",
+      enabled === true || String(enabled).toLowerCase() === "true",
+      environment || "Sandbox",
+      JSON.stringify(configuration || {}),
+      "HASH_CONFIG_PROTECTED",
+      enabled ? "ACTIVO" : "DESACTIVADO",
+      now,
+      "",
+      now,
+      authRole
+    ]);
+  }
+
+  return {
+    status: "success",
+    message: `Proveedor/Pasarela '${providerName || providerType}' configurado correctamente.`
   };
 }
