@@ -1227,3 +1227,10 @@ Descripción de cambios:
    - Implementada gestión de Activos Patrimoniales y Asignación de Custodias (`manageAssetItem`, `getAssetItems`, `assignAssetCustody`, `getAssetAssignments`).
    - Implementada gestión de Transporte Escolar, Unidades y Rutas (`manageTransportRoute`, `getTransportRoutes`, `assignStudentTransport`, `getTransportAssignments`).
    - Sincronizados los permisos en `ROLE_PERMISSIONS` y registradas las nuevas acciones en el selector `doPost`.
+
+## [Fase 23] - 2026-10-15
+### Agregado
+- `teacher-dashboard.html`: Modal `#modal-pdf-overlay-editor`, lienzo de renderizado de lienzo PDF `#pdf-render-canvas`, capa de edición `#pdf-overlay-layer`, panel de propiedades del campo, botones de zoom y navegación, y scripts CDN oficiales de PDF.js y pdf-lib.
+- `js/teacher.js`: Módulo del Editor Visual de PDF, renderizado de páginas con PDF.js, arrastre (`initDragField`) y redimensionamiento (`initResizeField`), conversión de coordenadas ratio `(xRatio, yRatio, wRatio, hRatio)`, panel de propiedades con sincronización y catálogo de fuentes dinámicas autorizadas (`populatePropSourceTags`), e integración con la API backend.
+- `backend/accounting-service/Code.gs`: Soporte para plantillas de salida `PDF_OVERLAY` en `configureSchoolDocumentTemplate` con preservación de metadatos de configuración en `ConfigFormatoJSON`.
+- `Pendientes.md`, `Auditoría.txt`, `MapaDependencias.md`: Actualizados los registros de la Fase 23, estado de requerimientos `[REQ-PDF-001]` al `[REQ-PDF-006]` e inventario de entidades.

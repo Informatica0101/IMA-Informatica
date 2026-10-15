@@ -4165,6 +4165,483 @@ function toBase64(file) {
         });
     }
 
+    // ---------------------------------------------------------------------------
+    // FASE 23: EDITOR VISUAL DE PDF Y CAMPOS SUPERPUESTOS
+    // ---------------------------------------------------------------------------
+    let currentPdfDoc = null;
+    let currentPdfArrayBuffer = null;
+    let currentPdfNumPages = 1;
+    let currentPdfPage = 1;
+    let currentPdfScale = 1.0;
+    let overlayFields = [];
+    let selectedFieldId = null;
+
+    const modalPdfEditor = document.getElementById('modal-pdf-overlay-editor');
+    const btnOpenPdfEditor = document.getElementById('btn-open-pdf-overlay-editor');
+    const btnClosePdfEditor = document.getElementById('btn-close-pdf-editor');
+    const pdfFileInput = document.getElementById('pdf-file-input');
+    const pdfPageContainer = document.getElementById('pdf-page-container');
+    const pdfRenderCanvas = document.getElementById('pdf-render-canvas');
+    const pdfOverlayLayer = document.getElementById('pdf-overlay-layer');
+
+    if (btnOpenPdfEditor && modalPdfEditor) {
+        btnOpenPdfEditor.addEventListener('click', () => {
+            openPdfOverlayEditor();
+        });
+    }
+
+    if (btnClosePdfEditor && modalPdfEditor) {
+        btnClosePdfEditor.addEventListener('click', () => {
+            modalPdfEditor.classList.add('hidden');
+        });
+    }
+
+    async function openPdfOverlayEditor(tpl = null) {
+        if (!modalPdfEditor) return;
+        overlayFields = [];
+        selectedFieldId = null;
+        currentPdfDoc = null;
+        currentPdfArrayBuffer = null;
+        currentPdfPage = 1;
+        currentPdfScale = 1.0;
+
+        document.getElementById('pdf-tpl-title').value = tpl?.titulo || '';
+        document.getElementById('pdf-tpl-category').value = tpl?.categoria || 'Constancias';
+        document.getElementById('pdf-editor-title').textContent = tpl ? `Editor Visual PDF - ${tpl.titulo}` : 'Editor Visual de PDF - Campos Superpuestos';
+
+        // Load dynamic fields into property panel drop-down
+        populatePropSourceTags();
+
+        modalPdfEditor.classList.remove('hidden');
+        updateFieldPropsPanel();
+
+        // If template has overlayFields, load them
+        if (tpl && tpl.configFormatoJSON) {
+            try {
+                const fmt = typeof tpl.configFormatoJSON === 'string' ? JSON.parse(tpl.configFormatoJSON) : tpl.configFormatoJSON;
+                if (Array.isArray(fmt.overlayFields)) {
+                    overlayFields = fmt.overlayFields;
+                }
+            } catch (e) {
+                console.error("Error parsing pdf overlay config:", e);
+            }
+        }
+
+        // Render blank sample page if no PDF is loaded yet
+        renderSampleBlankPdf();
+    }
+
+    async function populatePropSourceTags() {
+        const select = document.getElementById('prop-field-source-tag');
+        if (!select) return;
+
+        const defaultFields = [
+            { clave: "{{estudiante.nombreCompleto}}", etiqueta: "Nombre Estudiante", categoria: "Estudiante" },
+            { clave: "{{estudiante.identidad}}", etiqueta: "Número DNI / Identidad", categoria: "Estudiante" },
+            { clave: "{{estudiante.grado}}", etiqueta: "Grado Académico", categoria: "Estudiante" },
+            { clave: "{{estudiante.seccion}}", etiqueta: "Sección", categoria: "Estudiante" },
+            { clave: "{{estudiante.codigoMatricula}}", etiqueta: "Código Matrícula", categoria: "Estudiante" },
+            { clave: "{{institucion.nombre}}", etiqueta: "Nombre Institución", categoria: "Institucional" },
+            { clave: "{{institucion.anoLectivo}}", etiqueta: "Año Lectivo", categoria: "Institucional" },
+            { clave: "{{tramite.fechaEmision}}", etiqueta: "Fecha de Emisión", categoria: "Trámite" },
+            { clave: "{{tramite.motivo}}", etiqueta: "Motivo / Finalidad", categoria: "Trámite" },
+            { clave: "{{documento.codigoVerificacion}}", etiqueta: "Token Verificación (VERIF-XXXXXX)", categoria: "Seguridad" }
+        ];
+
+        try {
+            const resp = await apiCall({ action: 'getAvailableDynamicFields' }, 'ACCOUNTING');
+            if (resp && resp.status === 'success' && Array.isArray(resp.campos) && resp.campos.length > 0) {
+                select.innerHTML = `<option value="">-- Sin Vinculación Dinámica --</option>` +
+                    resp.campos.map(c => `<option value="${c.clave}">${c.categoria}: ${c.etiqueta} (${c.clave})</option>`).join('');
+                return;
+            }
+        } catch (e) {
+            console.warn("Uso de catálogo de fuentes dinámicas de respaldo para PDF Overlay");
+        }
+
+        select.innerHTML = `<option value="">-- Sin Vinculación Dinámica --</option>` +
+            defaultFields.map(c => `<option value="${c.clave}">${c.categoria}: ${c.etiqueta} (${c.clave})</option>`).join('');
+    }
+
+    // Handle File Input selection
+    if (pdfFileInput) {
+        pdfFileInput.addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            if (!file || file.type !== 'application/pdf') {
+                alert("Por favor seleccione un archivo PDF válido.");
+                return;
+            }
+
+            try {
+                const arrayBuffer = await file.arrayBuffer();
+                currentPdfArrayBuffer = arrayBuffer;
+                await loadPdfFromArrayBuffer(arrayBuffer);
+            } catch (err) {
+                alert("Error al cargar el PDF: " + err.message);
+            }
+        });
+    }
+
+    async function loadPdfFromArrayBuffer(arrayBuffer) {
+        if (!window.pdfjsLib) {
+            alert("Biblioteca PDF.js no disponible.");
+            return;
+        }
+
+        try {
+            const loadingTask = window.pdfjsLib.getDocument({ data: new Uint8Array(arrayBuffer) });
+            currentPdfDoc = await loadingTask.promise;
+            currentPdfNumPages = currentPdfDoc.numPages;
+            currentPdfPage = 1;
+
+            document.getElementById('pdf-total-pages').textContent = currentPdfNumPages;
+            await renderPdfPage(currentPdfPage);
+        } catch (e) {
+            console.error("Error loading PDF with pdfjs:", e);
+            alert("No se pudo renderizar la vista previa del PDF.");
+        }
+    }
+
+    async function renderPdfPage(pageNum) {
+        if (!currentPdfDoc || !pdfRenderCanvas) return;
+
+        try {
+            const page = await currentPdfDoc.getPage(pageNum);
+            const viewport = page.getViewport({ scale: currentPdfScale });
+
+            const ctx = pdfRenderCanvas.getContext('2d');
+            pdfRenderCanvas.height = viewport.height;
+            pdfRenderCanvas.width = viewport.width;
+
+            pdfPageContainer.style.width = viewport.width + 'px';
+            pdfPageContainer.style.height = viewport.height + 'px';
+
+            const renderContext = {
+                canvasContext: ctx,
+                viewport: viewport
+            };
+
+            await page.render(renderContext).promise;
+
+            document.getElementById('pdf-curr-page').textContent = pageNum;
+            document.getElementById('pdf-zoom-display').textContent = Math.round(currentPdfScale * 100) + '%';
+
+            renderOverlayFieldsForCurrentPage();
+        } catch (e) {
+            console.error("Error rendering PDF page:", e);
+        }
+    }
+
+    function renderSampleBlankPdf() {
+        if (!pdfRenderCanvas || currentPdfDoc) return;
+        const width = 612 * currentPdfScale;
+        const height = 792 * currentPdfScale;
+
+        pdfRenderCanvas.width = width;
+        pdfRenderCanvas.height = height;
+        pdfPageContainer.style.width = width + 'px';
+        pdfPageContainer.style.height = height + 'px';
+
+        const ctx = pdfRenderCanvas.getContext('2d');
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0, 0, width, height);
+
+        ctx.strokeStyle = '#cbd5e1';
+        ctx.lineWidth = 2;
+        ctx.strokeRect(10, 10, width - 20, height - 20);
+
+        ctx.fillStyle = '#94a3b8';
+        ctx.font = 'bold 16px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText("VISTA PREVIA DE LIENZO PDF", width / 2, height / 2 - 20);
+        ctx.font = '12px sans-serif';
+        ctx.fillText("Seleccione un archivo PDF base para renderizar las páginas reales.", width / 2, height / 2 + 10);
+
+        renderOverlayFieldsForCurrentPage();
+    }
+
+    // PDF Navigation & Zoom Handlers
+    document.getElementById('btn-pdf-prev-page')?.addEventListener('click', () => {
+        if (currentPdfPage > 1) {
+            currentPdfPage--;
+            renderPdfPage(currentPdfPage);
+        }
+    });
+
+    document.getElementById('btn-pdf-next-page')?.addEventListener('click', () => {
+        if (currentPdfPage < currentPdfNumPages) {
+            currentPdfPage++;
+            renderPdfPage(currentPdfPage);
+        }
+    });
+
+    document.getElementById('btn-pdf-zoom-in')?.addEventListener('click', () => {
+        currentPdfScale = Math.min(2.5, currentPdfScale + 0.15);
+        if (currentPdfDoc) renderPdfPage(currentPdfPage); else renderSampleBlankPdf();
+    });
+
+    document.getElementById('btn-pdf-zoom-out')?.addEventListener('click', () => {
+        currentPdfScale = Math.max(0.5, currentPdfScale - 0.15);
+        if (currentPdfDoc) renderPdfPage(currentPdfPage); else renderSampleBlankPdf();
+    });
+
+    document.getElementById('btn-pdf-fit-width')?.addEventListener('click', () => {
+        const workspaceWidth = document.getElementById('pdf-canvas-workspace')?.clientWidth || 600;
+        currentPdfScale = Math.max(0.6, (workspaceWidth - 60) / 612);
+        if (currentPdfDoc) renderPdfPage(currentPdfPage); else renderSampleBlankPdf();
+    });
+
+    // Add Field Tool Listeners
+    document.querySelectorAll('.btn-add-overlay-field').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const type = btn.getAttribute('data-field-type') || 'texto';
+            addOverlayField(type);
+        });
+    });
+
+    function addOverlayField(type) {
+        const fieldId = 'fld_' + Date.now() + '_' + Math.floor(Math.random() * 100);
+        const labels = {
+            texto: 'Texto Línea',
+            multiline: 'Texto Multilínea',
+            fecha: 'Fecha Emisión',
+            checkbox: 'Casilla Verificación',
+            firma: 'Espacio de Firma'
+        };
+
+        const newField = {
+            id: fieldId,
+            page: currentPdfPage,
+            xRatio: 0.15,
+            yRatio: 0.15 + (overlayFields.length * 0.05) % 0.6,
+            wRatio: type === 'checkbox' ? 0.05 : 0.40,
+            hRatio: type === 'multiline' ? 0.10 : (type === 'firma' ? 0.08 : 0.04),
+            type: type,
+            key: 'campo_' + Math.floor(1000 + Math.random() * 9000),
+            label: labels[type] || 'Nuevo Campo',
+            sourceTag: '',
+            fontSize: 11,
+            align: 'left',
+            sampleVal: labels[type] || 'Muestra',
+            required: false
+        };
+
+        overlayFields.push(newField);
+        selectedFieldId = fieldId;
+        renderOverlayFieldsForCurrentPage();
+        updateFieldPropsPanel();
+    }
+
+    function renderOverlayFieldsForCurrentPage() {
+        if (!pdfOverlayLayer) return;
+        pdfOverlayLayer.innerHTML = '';
+
+        const pageFields = overlayFields.filter(f => f.page === currentPdfPage);
+
+        pageFields.forEach(f => {
+            const el = document.createElement('div');
+            el.className = `absolute group border-2 ${f.id === selectedFieldId ? 'border-indigo-600 bg-indigo-500/20 shadow-lg z-30' : 'border-blue-400 bg-blue-500/10 hover:border-blue-600 z-20'} rounded cursor-move flex items-center justify-between p-1 transition-all select-none`;
+            el.style.left = (f.xRatio * 100) + '%';
+            el.style.top = (f.yRatio * 100) + '%';
+            el.style.width = (f.wRatio * 100) + '%';
+            el.style.height = (f.hRatio * 100) + '%';
+
+            const txt = document.createElement('span');
+            txt.className = 'text-[10px] font-bold truncate text-indigo-950 pointer-events-none px-1';
+            txt.textContent = f.sourceTag ? `${f.label} (${f.sourceTag})` : (f.sampleVal || f.label);
+            el.appendChild(txt);
+
+            // Resize handle
+            const resizeHandle = document.createElement('div');
+            resizeHandle.className = 'absolute right-0 bottom-0 w-3 h-3 bg-indigo-600 rounded-tl cursor-se-resize opacity-0 group-hover:opacity-100 transition-opacity';
+            el.appendChild(resizeHandle);
+
+            // Mouse events for selection, dragging, resizing
+            el.addEventListener('mousedown', (e) => {
+                e.stopPropagation();
+                selectedFieldId = f.id;
+                renderOverlayFieldsForCurrentPage();
+                updateFieldPropsPanel();
+
+                if (e.target === resizeHandle) {
+                    initResizeField(e, f);
+                } else {
+                    initDragField(e, f);
+                }
+            });
+
+            pdfOverlayLayer.appendChild(el);
+        });
+    }
+
+    function initDragField(e, f) {
+        const containerRect = pdfPageContainer.getBoundingClientRect();
+        const startX = e.clientX;
+        const startY = e.clientY;
+        const initialXRatio = f.xRatio;
+        const initialYRatio = f.yRatio;
+
+        function onMouseMove(moveEv) {
+            const deltaX = (moveEv.clientX - startX) / containerRect.width;
+            const deltaY = (moveEv.clientY - startY) / containerRect.height;
+
+            f.xRatio = Math.max(0, Math.min(1 - f.wRatio, initialXRatio + deltaX));
+            f.yRatio = Math.max(0, Math.min(1 - f.hRatio, initialYRatio + deltaY));
+
+            renderOverlayFieldsForCurrentPage();
+            updateFieldPropsPanel();
+        }
+
+        function onMouseUp() {
+            window.removeEventListener('mousemove', onMouseMove);
+            window.removeEventListener('mouseup', onMouseUp);
+        }
+
+        window.addEventListener('mousemove', onMouseMove);
+        window.addEventListener('mouseup', onMouseUp);
+    }
+
+    function initResizeField(e, f) {
+        e.stopPropagation();
+        const containerRect = pdfPageContainer.getBoundingClientRect();
+        const startX = e.clientX;
+        const startY = e.clientY;
+        const initialWRatio = f.wRatio;
+        const initialHRatio = f.hRatio;
+
+        function onMouseMove(moveEv) {
+            const deltaX = (moveEv.clientX - startX) / containerRect.width;
+            const deltaY = (moveEv.clientY - startY) / containerRect.height;
+
+            f.wRatio = Math.max(0.02, Math.min(1 - f.xRatio, initialWRatio + deltaX));
+            f.hRatio = Math.max(0.02, Math.min(1 - f.yRatio, initialHRatio + deltaY));
+
+            renderOverlayFieldsForCurrentPage();
+            updateFieldPropsPanel();
+        }
+
+        function onMouseUp() {
+            window.removeEventListener('mousemove', onMouseMove);
+            window.removeEventListener('mouseup', onMouseUp);
+        }
+
+        window.addEventListener('mousemove', onMouseMove);
+        window.addEventListener('mouseup', onMouseUp);
+    }
+
+    function updateFieldPropsPanel() {
+        const emptyState = document.getElementById('field-props-empty-state');
+        const form = document.getElementById('field-props-form');
+        if (!emptyState || !form) return;
+
+        const f = overlayFields.find(field => field.id === selectedFieldId);
+
+        if (!f) {
+            emptyState.classList.remove('hidden');
+            form.classList.add('hidden');
+            return;
+        }
+
+        emptyState.classList.add('hidden');
+        form.classList.remove('hidden');
+
+        document.getElementById('prop-field-key').value = f.key || '';
+        document.getElementById('prop-field-label').value = f.label || '';
+        document.getElementById('prop-field-source-tag').value = f.sourceTag || '';
+        document.getElementById('prop-field-font-size').value = f.fontSize || 11;
+        document.getElementById('prop-field-align').value = f.align || 'left';
+        document.getElementById('prop-field-sample-val').value = f.sampleVal || '';
+        document.getElementById('prop-field-required').checked = !!f.required;
+
+        document.getElementById('prop-field-page-display').textContent = f.page;
+        document.getElementById('prop-field-x-display').textContent = Math.round(f.xRatio * 100) + '%';
+        document.getElementById('prop-field-y-display').textContent = Math.round(f.yRatio * 100) + '%';
+        document.getElementById('prop-field-w-display').textContent = Math.round(f.wRatio * 100) + '%';
+        document.getElementById('prop-field-h-display').textContent = Math.round(f.hRatio * 100) + '%';
+    }
+
+    // Property Panel Input Event Listeners
+    ['prop-field-key', 'prop-field-label', 'prop-field-source-tag', 'prop-field-font-size', 'prop-field-align', 'prop-field-sample-val', 'prop-field-required'].forEach(id => {
+        document.getElementById(id)?.addEventListener('input', syncPropFormToSelectedField);
+        document.getElementById(id)?.addEventListener('change', syncPropFormToSelectedField);
+    });
+
+    function syncPropFormToSelectedField() {
+        const f = overlayFields.find(field => field.id === selectedFieldId);
+        if (!f) return;
+
+        f.key = document.getElementById('prop-field-key').value.trim();
+        f.label = document.getElementById('prop-field-label').value.trim();
+        f.sourceTag = document.getElementById('prop-field-source-tag').value;
+        f.fontSize = parseInt(document.getElementById('prop-field-font-size').value || '11', 10);
+        f.align = document.getElementById('prop-field-align').value;
+        f.sampleVal = document.getElementById('prop-field-sample-val').value;
+        f.required = document.getElementById('prop-field-required').checked;
+
+        renderOverlayFieldsForCurrentPage();
+    }
+
+    document.getElementById('btn-delete-overlay-field')?.addEventListener('click', () => {
+        if (!selectedFieldId) return;
+        overlayFields = overlayFields.filter(f => f.id !== selectedFieldId);
+        selectedFieldId = null;
+        renderOverlayFieldsForCurrentPage();
+        updateFieldPropsPanel();
+    });
+
+    // Save & Publish PDF Overlay Template Listeners
+    document.getElementById('btn-save-pdf-template-draft')?.addEventListener('click', () => savePdfOverlayTemplate('borrador'));
+    document.getElementById('btn-publish-pdf-template')?.addEventListener('click', () => savePdfOverlayTemplate('publicada'));
+
+    async function savePdfOverlayTemplate(state = 'publicada') {
+        const title = document.getElementById('pdf-tpl-title')?.value.trim();
+        const category = document.getElementById('pdf-tpl-category')?.value || 'Constancias';
+
+        if (!title) {
+            alert("Ingrese un título para la plantilla PDF.");
+            return;
+        }
+
+        if (overlayFields.length === 0) {
+            if (!confirm("No ha colocado ningún campo superpuesto. ¿Desea guardar la plantilla en blanco?")) return;
+        }
+
+        const code = 'PDF-TPL-' + Math.floor(1000 + Math.random() * 9000);
+
+        try {
+            const resp = await apiCall({
+                action: 'configureSchoolDocumentTemplate',
+                codigoDocumento: code,
+                titulo: title,
+                categoria: category,
+                departamento: 'Secretaría General',
+                tipoSalida: 'PDF_OVERLAY',
+                estado: state,
+                configFormatoJSON: {
+                    overlayFields: overlayFields,
+                    numPages: currentPdfNumPages
+                },
+                camposJSON: overlayFields.map(f => ({
+                    clave: f.sourceTag || f.key,
+                    etiqueta: f.label,
+                    pagina: f.page,
+                    xRatio: f.xRatio,
+                    yRatio: f.yRatio
+                }))
+            }, 'ACCOUNTING');
+
+            if (resp && resp.status === 'success') {
+                alert(`¡Plantilla PDF (${state}) guardada con éxito!\n\nID: ${resp.plantillaId}\nVersión: v${resp.version}`);
+                modalPdfEditor?.classList.add('hidden');
+                loadTemplateDesignerCatalog();
+            } else {
+                alert("No se pudo guardar la plantilla PDF: " + (resp?.message || "Error desconocido"));
+            }
+        } catch (e) {
+            alert("Error al guardar plantilla PDF: " + e.message);
+        }
+    }
+
     // Search and Filters
     ['template-search-input', 'template-category-filter', 'template-state-filter'].forEach(id => {
         document.getElementById(id)?.addEventListener('input', () => renderTemplateCatalog(loadedTemplatesCache));

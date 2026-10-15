@@ -427,3 +427,25 @@ ARCHIVOS EVALUADOS E IMPLEMENTADOS:
 - Generación de códigos únicos e inmutables de verificación ('VERIF-XXXXXX') para autenticidad documental.
 - Desacoplamiento de datos sensibles y preservación histórica de documentos previamente emitidos al modificar o versionar plantillas.
 - Verificación sintáctica limpia mediante 'node -c' e inspección visual aprobada con ejecutor Playwright y captura de evidencia en '/home/jules/verification/screenshots/verification.png'.
+
+===============================================================================
+AUDITORÍA DE IMPLEMENTACIÓN - FASE 23: EDITOR VISUAL DE PDF Y CAMPOS SUPERPUESTOS
+===============================================================================
+FECHA: 2026-10-15
+MÓDULO: Editor Visual de PDF, Visor Canvas, Capa de Capas Superpuestas y Coordenadas Normalizadas
+ARCHIVOS EVALUADOS E IMPLEMENTADOS:
+- teacher-dashboard.html
+- js/teacher.js
+- backend/accounting-service/Code.gs
+
+1. EVALUACIÓN Y HALLAZGOS TÉCNICOS
+- Se desarrolló el modal '#modal-pdf-overlay-editor' en 'teacher-dashboard.html' e integró las bibliotecas 'PDF.js' y 'pdf-lib' mediante CDN oficiales de costo cero.
+- Se implementó el sistema de coordenadas de posición normalizadas 'xRatio', 'yRatio', 'wRatio', 'hRatio' para garantizar alineación exacta e independiente de la resolución o escala del visor.
+- Se agregó arrastre y redimensionamiento de cajas de campos mediante 'initDragField' e 'initResizeField'.
+- Se habilitó el panel de propiedades del campo superpuesto con vinculación a la lista de variables dinámicas autorizadas con fallback resiliente en 'populatePropSourceTags'.
+- Se integró el guardado y publicación de plantillas 'PDF_OVERLAY' en 'configureSchoolDocumentTemplate' de 'backend/accounting-service/Code.gs'.
+
+2. VERIFICACIÓN DE SEGURIDAD Y INTEGRIDAD
+- Verificación sintáctica aprobada con 'node -c' en todos los scripts frontend y backend.
+- Verificación visual mediante Playwright completada con captura de evidencia en '/home/jules/verification/screenshots/verification.png' y video '/home/jules/verification/videos/49aeeb011fb3e9593adb539fdc6611be.webm'.
+- Aprobación en Code Review obtenida con calificación #Correct#.

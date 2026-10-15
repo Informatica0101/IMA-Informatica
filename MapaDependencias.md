@@ -155,3 +155,8 @@
 - `DocumentoEscolarEmitido`: Solicitudes y constancias oficializadas con código único de verificación y metadatos.
 - `AuditoriaMigracion`: Registro de lotes de importación, mapeos de columna, validaciones por fila y log de errores.
 - `PlantillaSACEVerificada`: Formatos oficiales SACE verificados para completado automático de notas y recuperaciones.
+
+## Matriz de Entidades Centrales - Fase 23 (Editor Visual de PDF y Campos Superpuestos)
+- `PDFOverlayEditor`: Interfaz visual `#modal-pdf-overlay-editor` con renderizado PDF.js y capa de lienzo interactivo.
+- `PDFOverlayField`: Definición de campo superpuesto en coordenadas ratio `(xRatio, yRatio, wRatio, hRatio)` para alineación independiente del visor.
+- `PDFTemplateConfig`: Metadatos de plantilla `PDF_OVERLAY` integrados en `PlantillasEscolares` en `backend/accounting-service/Code.gs`.

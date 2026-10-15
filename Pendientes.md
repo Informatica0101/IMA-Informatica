@@ -1115,3 +1115,13 @@
 - [X] `[REQ-DOC3-004]` Resolución de campos dinámicos en backend, previsualización con resaltado de marcas pendientes e importación de bases documentales.
 - [X] `[REQ-DOC3-005]` Generación de documentos oficiales con código inmutable de verificación (`VERIF-XXXXXX`) e indexación en Google Drive.
 - [X] `[REQ-DOC3-006]` Trazabilidad total de emisiones, desvinculación retroactiva y desacoplamiento de datos sensibles.
+
+---
+
+## REQUERIMIENTOS DE EDITOR VISUAL DE PDF Y CAMPOS SUPERPUESTOS (FASE 23)
+- [X] `[REQ-PDF-001]` Importación y Carga de PDF Base para Diseñador (Selección local o Drive, preservación del original).
+- [X] `[REQ-PDF-002]` Visor Multipágina e Interfaz de Capas Superpuestas con renderizado PDF interactivo y controles de zoom/ancho.
+- [X] `[REQ-PDF-003]` Sistema de Coordenadas Normalizadas `(xRatio, yRatio, wRatio, hRatio)` para alineación perfecta e independiente del visor.
+- [X] `[REQ-PDF-004]` Panel de Propiedades y Vinculación con Fuentes Institucionales Autorizadas (`{{estudiante.nombreCompleto}}`, etc.).
+- [X] `[REQ-PDF-005]` Estampado y Generación Oficial de PDF con Datos Reales, Token `VERIF-XXXXXX` e indexación en Google Drive.
+- [X] `[REQ-PDF-006]` Trazabilidad total, auditoría backend, gestión de versiones y resiliencia ante errores de almacenamiento.
