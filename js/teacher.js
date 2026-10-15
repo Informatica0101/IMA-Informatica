@@ -487,7 +487,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (createOfferRes && createOfferRes.status === 'success' && createOfferRes.data?.ofertaId) {
                     ofertaId = createOfferRes.data.ofertaId;
                 } else {
-                    ofertaId = `OFE-${grado.substring(0,3).toUpperCase()}-${seccion}`;
+                    const cleanGrado = (grado || "DEC").normalize("NFD").replace(/[\u0300-\u036f]/g, "").substring(0, 3).toUpperCase();
+                    ofertaId = `OFE-${cleanGrado}-${seccion}`;
                 }
             }
 
@@ -543,7 +544,8 @@ document.addEventListener('DOMContentLoaded', () => {
             if (createOfferRes && createOfferRes.status === 'success' && createOfferRes.data?.ofertaId) {
                 ofertaId = createOfferRes.data.ofertaId;
             } else {
-                ofertaId = `OFE-${gradoInput.substring(0,3).toUpperCase()}-${seccionInput}`;
+                const cleanGradoInput = (gradoInput || "DEC").normalize("NFD").replace(/[\u0300-\u036f]/g, "").substring(0, 3).toUpperCase();
+                ofertaId = `OFE-${cleanGradoInput}-${seccionInput}`;
             }
         }
 

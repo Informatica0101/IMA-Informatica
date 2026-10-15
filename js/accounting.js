@@ -776,6 +776,450 @@ function renderComprasModule(container) {
   `;
 }
 
+// ---------------------------------------------------------------------------
+// MÓDULO DE BIBLIOTECA Y RECURSOS EDUCATIVOS (FASE 20)
+// ---------------------------------------------------------------------------
+
+let currentBibliotecaSubtab = 'libros';
+
+function renderBibliotecaModule(container) {
+  container.innerHTML = `
+    <div class="space-y-6">
+      <div class="flex flex-wrap items-center justify-between gap-3 bg-gray-50 p-4 rounded-2xl border border-gray-200">
+        <h4 class="text-base font-black uppercase text-gray-800 flex items-center gap-2">
+          <i class="fas fa-book-reader text-indigo-600"></i> Biblioteca & Recursos Educativos (Fase 20)
+        </h4>
+        <div class="flex flex-wrap gap-2 text-xs font-bold uppercase">
+          <button onclick="switchBibliotecaSubtab('libros')" id="btn-bib-libros" class="px-3 py-1.5 rounded-xl transition-all shadow-sm bg-indigo-600 text-white">Catálogo & Ejemplares</button>
+          <button onclick="switchBibliotecaSubtab('prestamos')" id="btn-bib-prestamos" class="px-3 py-1.5 rounded-xl transition-all shadow-sm bg-white text-gray-700 hover:bg-gray-100">Préstamos</button>
+          <button onclick="switchBibliotecaSubtab('reservas')" id="btn-bib-reservas" class="px-3 py-1.5 rounded-xl transition-all shadow-sm bg-white text-gray-700 hover:bg-gray-100">Reservas</button>
+          <button onclick="switchBibliotecaSubtab('incidencias')" id="btn-bib-incidencias" class="px-3 py-1.5 rounded-xl transition-all shadow-sm bg-white text-gray-700 hover:bg-gray-100">Incidencias</button>
+          <button onclick="switchBibliotecaSubtab('digitales')" id="btn-bib-digitales" class="px-3 py-1.5 rounded-xl transition-all shadow-sm bg-white text-gray-700 hover:bg-gray-100">Recursos Digitales</button>
+        </div>
+      </div>
+
+      <div id="biblioteca-subtab-container" class="space-y-4">
+        <div class="text-center py-6 text-gray-400 text-xs font-bold uppercase">Cargando biblioteca...</div>
+      </div>
+    </div>
+  `;
+  switchBibliotecaSubtab('libros');
+}
+
+window.switchBibliotecaSubtab = function (subtab) {
+  currentBibliotecaSubtab = subtab;
+  ['libros', 'prestamos', 'reservas', 'incidencias', 'digitales'].forEach(s => {
+    const btn = document.getElementById(`btn-bib-${s}`);
+    if (btn) {
+      if (s === subtab) {
+        btn.className = "px-3 py-1.5 rounded-xl transition-all shadow-sm bg-indigo-600 text-white font-bold";
+      } else {
+        btn.className = "px-3 py-1.5 rounded-xl transition-all shadow-sm bg-white text-gray-700 hover:bg-gray-100 font-bold";
+      }
+    }
+  });
+
+  const subContainer = document.getElementById('biblioteca-subtab-container');
+  if (!subContainer) return;
+
+  if (subtab === 'libros') renderLibrosView(subContainer);
+  else if (subtab === 'prestamos') renderPrestamosBibView(subContainer);
+  else if (subtab === 'reservas') renderReservasBibView(subContainer);
+  else if (subtab === 'incidencias') renderIncidenciasBibView(subContainer);
+  else if (subtab === 'digitales') renderDigitalesBibView(subContainer);
+};
+
+function renderLibrosView(container) {
+  container.innerHTML = `
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div class="bg-gray-50 p-5 rounded-2xl border border-gray-200">
+        <h5 class="font-black text-xs uppercase text-gray-800 mb-3"><i class="fas fa-book text-indigo-600"></i> Registrar Obra / Ejemplar</h5>
+        <form id="form-libro" onsubmit="handleSaveLibro(event)" class="space-y-3 text-xs">
+          <div>
+            <label class="block font-bold text-gray-600 mb-1">Título de la Obra *</label>
+            <input type="text" id="bib-titulo" required class="w-full p-2 border border-gray-300 rounded-xl font-bold" placeholder="EJ: Cien Años de Soledad">
+          </div>
+          <div>
+            <label class="block font-bold text-gray-600 mb-1">Autor *</label>
+            <input type="text" id="bib-autor" required class="w-full p-2 border border-gray-300 rounded-xl" placeholder="EJ: Gabriel García Márquez">
+          </div>
+          <div>
+            <label class="block font-bold text-gray-600 mb-1">Código ISBN</label>
+            <input type="text" id="bib-isbn" class="w-full p-2 border border-gray-300 rounded-xl" placeholder="EJ: 978-0307474728">
+          </div>
+          <div>
+            <label class="block font-bold text-gray-600 mb-1">Categoría Temática</label>
+            <input type="text" id="bib-categoria" value="Literatura" class="w-full p-2 border border-gray-300 rounded-xl">
+          </div>
+          <div>
+            <label class="block font-bold text-gray-600 mb-1">Ubicación Física / Estante</label>
+            <input type="text" id="bib-ubicacion" value="Estante A1" class="w-full p-2 border border-gray-300 rounded-xl">
+          </div>
+          <button type="submit" class="w-full py-2.5 bg-indigo-600 text-white font-bold rounded-xl hover:bg-indigo-700 transition-all uppercase">
+            Guardar en Catálogo
+          </button>
+        </form>
+      </div>
+
+      <div class="md:col-span-2 bg-white p-5 rounded-2xl border border-gray-200">
+        <div class="flex justify-between items-center mb-4">
+          <h5 class="font-black text-xs uppercase text-gray-800"><i class="fas fa-search text-indigo-600"></i> Catálogo Bibliográfico</h5>
+          <button onclick="loadLibrosData()" class="px-3 py-1 bg-gray-100 text-gray-700 rounded-lg text-xs font-bold hover:bg-gray-200"><i class="fas fa-sync"></i> Actualizar</button>
+        </div>
+        <div id="libros-table-container" class="overflow-x-auto text-xs">
+          <div class="text-center py-6 text-gray-400 font-bold uppercase">Cargando libros...</div>
+        </div>
+      </div>
+    </div>
+  `;
+  loadLibrosData();
+}
+
+window.loadLibrosData = function () {
+  const container = document.getElementById('libros-table-container');
+  if (!container) return;
+
+  fetchApi('ACCOUNTING', 'getLibraryBooks', {})
+    .then(res => {
+      const books = (res && res.libros) ? res.libros : [];
+      if (books.length === 0) {
+        container.innerHTML = `<div class="p-4 text-center text-gray-400 font-bold uppercase">No hay libros registrados en catálogo.</div>`;
+        return;
+      }
+      let html = `
+        <table class="w-full text-left border-collapse">
+          <thead>
+            <tr class="bg-gray-50 border-b border-gray-200 text-gray-600 font-bold uppercase">
+              <th class="p-2">Ejemplar ID</th>
+              <th class="p-2">Título</th>
+              <th class="p-2">Autor</th>
+              <th class="p-2">Ubicación</th>
+              <th class="p-2">Estado</th>
+              <th class="p-2 text-right">Acciones</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-100">
+      `;
+      books.forEach(b => {
+        const isDisp = b.estado === 'available';
+        html += `
+          <tr class="hover:bg-gray-50">
+            <td class="p-2 font-mono font-bold text-indigo-600">${b.ejemplarId}</td>
+            <td class="p-2 font-bold text-gray-800">${b.titulo}</td>
+            <td class="p-2 text-gray-600">${b.autor}</td>
+            <td class="p-2 text-gray-500">${b.ubicacionFisica}</td>
+            <td class="p-2"><span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${isDisp ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}">${b.estado}</span></td>
+            <td class="p-2 text-right flex justify-end gap-1">
+              ${isDisp ? `<button onclick="handlePrestarLibro('${b.ejemplarId}')" class="px-2 py-1 bg-indigo-600 text-white rounded font-bold text-[10px] hover:bg-indigo-700 uppercase">Prestar</button>` : ''}
+              <button onclick="handleReservarLibro('${b.ejemplarId}')" class="px-2 py-1 bg-gray-100 text-gray-700 rounded font-bold text-[10px] hover:bg-gray-200 uppercase">Reservar</button>
+            </td>
+          </tr>
+        `;
+      });
+      html += `</tbody></table>`;
+      container.innerHTML = html;
+    })
+    .catch(err => {
+      container.innerHTML = `<div class="p-4 text-rose-600 font-bold text-center">Error al cargar libros: ${err.message}</div>`;
+    });
+};
+
+window.handleSaveLibro = function (e) {
+  e.preventDefault();
+  const payload = {
+    titulo: document.getElementById('bib-titulo').value,
+    autor: document.getElementById('bib-autor').value,
+    isbnCodigo: document.getElementById('bib-isbn').value,
+    categoria: document.getElementById('bib-categoria').value,
+    ubicacionFisica: document.getElementById('bib-ubicacion').value
+  };
+
+  fetchApi('ACCOUNTING', 'manageLibraryBook', payload)
+    .then(res => {
+      alert(res.message || "Ejemplar bibliográfico registrado con éxito.");
+      document.getElementById('form-libro').reset();
+      loadLibrosData();
+    })
+    .catch(err => alert("Error: " + err.message));
+};
+
+window.handlePrestarLibro = function (ejemplarId) {
+  const uId = prompt("Ingrese el UserId del prestatario (EJ: EST-01 / EMP-01):");
+  if (!uId) return;
+
+  fetchApi('ACCOUNTING', 'processLibraryLoan', { ejemplarId: ejemplarId, userId: uId, accion: 'Prestamo' })
+    .then(res => {
+      alert(res.message || "Préstamo registrado exitosamente.");
+      loadLibrosData();
+    })
+    .catch(err => alert("Error: " + err.message));
+};
+
+window.handleReservarLibro = function (ejemplarId) {
+  const uId = prompt("Ingrese el UserId para la reserva:");
+  if (!uId) return;
+
+  fetchApi('ACCOUNTING', 'reserveLibraryBook', { ejemplarId: ejemplarId, userId: uId })
+    .then(res => {
+      alert(res.message || "Reserva registrada con éxito.");
+    })
+    .catch(err => alert("Error: " + err.message));
+};
+
+function renderPrestamosBibView(container) {
+  container.innerHTML = `
+    <div class="bg-white p-5 rounded-2xl border border-gray-200">
+      <div class="flex justify-between items-center mb-4">
+        <h5 class="font-black text-xs uppercase text-gray-800"><i class="fas fa-exchange-alt text-indigo-600"></i> Registro de Préstamos Activos</h5>
+        <button onclick="loadPrestamosBibData()" class="px-3 py-1 bg-gray-100 text-gray-700 rounded-lg text-xs font-bold hover:bg-gray-200"><i class="fas fa-sync"></i> Actualizar</button>
+      </div>
+      <div id="prestamos-table-container" class="overflow-x-auto text-xs">
+        <div class="text-center py-6 text-gray-400 font-bold uppercase">Cargando préstamos...</div>
+      </div>
+    </div>
+  `;
+  loadPrestamosBibData();
+}
+
+window.loadPrestamosBibData = function () {
+  const container = document.getElementById('prestamos-table-container');
+  if (!container) return;
+
+  fetchApi('ACCOUNTING', 'getLibraryLoans', {})
+    .then(res => {
+      const loans = (res && res.prestamos) ? res.prestamos : [];
+      if (loans.length === 0) {
+        container.innerHTML = `<div class="p-4 text-center text-gray-400 font-bold uppercase">No hay préstamos activos.</div>`;
+        return;
+      }
+      let html = `
+        <table class="w-full text-left border-collapse">
+          <thead>
+            <tr class="bg-gray-50 border-b border-gray-200 text-gray-600 font-bold uppercase">
+              <th class="p-2">ID Préstamo</th>
+              <th class="p-2">Ejemplar ID</th>
+              <th class="p-2">Prestatario (UserId)</th>
+              <th class="p-2">Fecha Préstamo</th>
+              <th class="p-2">Devolución Prevista</th>
+              <th class="p-2">Estado</th>
+              <th class="p-2 text-right">Acción</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-100">
+      `;
+      loans.forEach(l => {
+        const isActivo = l.estado === 'on_loan';
+        html += `
+          <tr class="hover:bg-gray-50">
+            <td class="p-2 font-mono font-bold text-indigo-600">${l.prestamoId}</td>
+            <td class="p-2 font-bold text-gray-800">${l.ejemplarId}</td>
+            <td class="p-2 text-gray-600">${l.userId}</td>
+            <td class="p-2 text-gray-500">${new Date(l.fechaPrestamo).toLocaleDateString()}</td>
+            <td class="p-2 text-gray-500">${new Date(l.fechaDevolucionPrevista).toLocaleDateString()}</td>
+            <td class="p-2"><span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${isActivo ? 'bg-amber-100 text-amber-800' : 'bg-emerald-100 text-emerald-800'}">${l.estado}</span></td>
+            <td class="p-2 text-right">
+              ${isActivo ? `<button onclick="handleDevolverLibro('${l.ejemplarId}', '${l.userId}')" class="px-2.5 py-1 bg-emerald-600 text-white rounded font-bold text-[10px] hover:bg-emerald-700 uppercase">Devolver</button>` : '<span class="text-gray-400 text-[10px]">Devuelto</span>'}
+            </td>
+          </tr>
+        `;
+      });
+      html += `</tbody></table>`;
+      container.innerHTML = html;
+    })
+    .catch(err => {
+      container.innerHTML = `<div class="p-4 text-rose-600 font-bold text-center">Error al cargar préstamos: ${err.message}</div>`;
+    });
+};
+
+window.handleDevolverLibro = function (ejemplarId, userId) {
+  if (!confirm(`¿Confirmar recepción y devolución del ejemplar ${ejemplarId}?`)) return;
+
+  fetchApi('ACCOUNTING', 'processLibraryLoan', { ejemplarId: ejemplarId, userId: userId, accion: 'Devolucion' })
+    .then(res => {
+      alert(res.message || "Devolución registrada.");
+      loadPrestamosBibData();
+    })
+    .catch(err => alert("Error: " + err.message));
+};
+
+function renderReservasBibView(container) {
+  container.innerHTML = `
+    <div class="bg-white p-5 rounded-2xl border border-gray-200">
+      <div class="flex justify-between items-center mb-4">
+        <h5 class="font-black text-xs uppercase text-gray-800"><i class="fas fa-bookmark text-indigo-600"></i> Reservas & Lista de Espera</h5>
+        <button onclick="loadReservasBibData()" class="px-3 py-1 bg-gray-100 text-gray-700 rounded-lg text-xs font-bold hover:bg-gray-200"><i class="fas fa-sync"></i> Actualizar</button>
+      </div>
+      <div id="reservas-table-container" class="overflow-x-auto text-xs">
+        <div class="text-center py-6 text-gray-400 font-bold uppercase">Cargando reservas...</div>
+      </div>
+    </div>
+  `;
+  loadReservasBibData();
+}
+
+window.loadReservasBibData = function () {
+  const container = document.getElementById('reservas-table-container');
+  if (!container) return;
+
+  fetchApi('ACCOUNTING', 'getLibraryReservations', {})
+    .then(res => {
+      const resv = (res && res.reservas) ? res.reservas : [];
+      if (resv.length === 0) {
+        container.innerHTML = `<div class="p-4 text-center text-gray-400 font-bold uppercase">No hay reservas registradas.</div>`;
+        return;
+      }
+      let html = `
+        <table class="w-full text-left border-collapse">
+          <thead>
+            <tr class="bg-gray-50 border-b border-gray-200 text-gray-600 font-bold uppercase">
+              <th class="p-2">ID Reserva</th>
+              <th class="p-2">Ejemplar ID</th>
+              <th class="p-2">Usuario</th>
+              <th class="p-2">Fecha Solicitud</th>
+              <th class="p-2">Estado</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-100">
+      `;
+      resv.forEach(r => {
+        html += `
+          <tr class="hover:bg-gray-50">
+            <td class="p-2 font-mono font-bold text-indigo-600">${r.reservaId}</td>
+            <td class="p-2 font-bold text-gray-800">${r.ejemplarId}</td>
+            <td class="p-2 text-gray-600">${r.userId}</td>
+            <td class="p-2 text-gray-500">${new Date(r.fechaSolicitud).toLocaleDateString()}</td>
+            <td class="p-2"><span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-indigo-100 text-indigo-800">${r.estadoReserva}</span></td>
+          </tr>
+        `;
+      });
+      html += `</tbody></table>`;
+      container.innerHTML = html;
+    })
+    .catch(err => {
+      container.innerHTML = `<div class="p-4 text-rose-600 font-bold text-center">Error al cargar reservas: ${err.message}</div>`;
+    });
+};
+
+function renderIncidenciasBibView(container) {
+  container.innerHTML = `
+    <div class="bg-white p-5 rounded-2xl border border-gray-200">
+      <div class="flex justify-between items-center mb-4">
+        <h5 class="font-black text-xs uppercase text-gray-800"><i class="fas fa-exclamation-triangle text-rose-600"></i> Incidencias Bibliotecarias (Daños / Pérdidas)</h5>
+        <button onclick="loadIncidenciasBibData()" class="px-3 py-1 bg-gray-100 text-gray-700 rounded-lg text-xs font-bold hover:bg-gray-200"><i class="fas fa-sync"></i> Actualizar</button>
+      </div>
+      <div id="incidencias-table-container" class="overflow-x-auto text-xs">
+        <div class="text-center py-6 text-gray-400 font-bold uppercase">Cargando incidencias...</div>
+      </div>
+    </div>
+  `;
+  loadIncidenciasBibData();
+}
+
+window.loadIncidenciasBibData = function () {
+  const container = document.getElementById('incidencias-table-container');
+  if (!container) return;
+
+  fetchApi('ACCOUNTING', 'getLibraryIncidents', {})
+    .then(res => {
+      const incs = (res && res.incidencias) ? res.incidencias : [];
+      if (incs.length === 0) {
+        container.innerHTML = `<div class="p-4 text-center text-gray-400 font-bold uppercase">No hay incidencias reportadas.</div>`;
+        return;
+      }
+      let html = `
+        <table class="w-full text-left border-collapse">
+          <thead>
+            <tr class="bg-gray-50 border-b border-gray-200 text-gray-600 font-bold uppercase">
+              <th class="p-2">ID Incidencia</th>
+              <th class="p-2">Ejemplar ID</th>
+              <th class="p-2">Usuario</th>
+              <th class="p-2">Tipo</th>
+              <th class="p-2">Descripción</th>
+              <th class="p-2">Estado</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-100">
+      `;
+      incs.forEach(i => {
+        html += `
+          <tr class="hover:bg-gray-50">
+            <td class="p-2 font-mono font-bold text-rose-600">${i.incidenciaId}</td>
+            <td class="p-2 font-bold text-gray-800">${i.ejemplarId}</td>
+            <td class="p-2 text-gray-600">${i.userId}</td>
+            <td class="p-2 font-bold text-rose-700">${i.tipoIncidencia}</td>
+            <td class="p-2 text-gray-600">${i.descripcion}</td>
+            <td class="p-2"><span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-100 text-rose-800">${i.estado}</span></td>
+          </tr>
+        `;
+      });
+      html += `</tbody></table>`;
+      container.innerHTML = html;
+    })
+    .catch(err => {
+      container.innerHTML = `<div class="p-4 text-rose-600 font-bold text-center">Error al cargar incidencias: ${err.message}</div>`;
+    });
+};
+
+function renderDigitalesBibView(container) {
+  container.innerHTML = `
+    <div class="bg-white p-5 rounded-2xl border border-gray-200">
+      <div class="flex justify-between items-center mb-4">
+        <h5 class="font-black text-xs uppercase text-gray-800"><i class="fas fa-cloud-download-alt text-indigo-600"></i> Recursos Educativos Digitales</h5>
+        <button onclick="loadDigitalesBibData()" class="px-3 py-1 bg-gray-100 text-gray-700 rounded-lg text-xs font-bold hover:bg-gray-200"><i class="fas fa-sync"></i> Actualizar</button>
+      </div>
+      <div id="digitales-table-container" class="overflow-x-auto text-xs">
+        <div class="text-center py-6 text-gray-400 font-bold uppercase">Cargando recursos digitales...</div>
+      </div>
+    </div>
+  `;
+  loadDigitalesBibData();
+}
+
+window.loadDigitalesBibData = function () {
+  const container = document.getElementById('digitales-table-container');
+  if (!container) return;
+
+  fetchApi('ACCOUNTING', 'getDigitalResources', {})
+    .then(res => {
+      const recs = (res && res.recursos) ? res.recursos : [];
+      if (recs.length === 0) {
+        container.innerHTML = `<div class="p-4 text-center text-gray-400 font-bold uppercase">No hay recursos digitales cargados.</div>`;
+        return;
+      }
+      let html = `
+        <table class="w-full text-left border-collapse">
+          <thead>
+            <tr class="bg-gray-50 border-b border-gray-200 text-gray-600 font-bold uppercase">
+              <th class="p-2">ID Recurso</th>
+              <th class="p-2">Título</th>
+              <th class="p-2">Autor / Editorial</th>
+              <th class="p-2">Categoría</th>
+              <th class="p-2 text-right">Enlace / Acceso</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-100">
+      `;
+      recs.forEach(r => {
+        html += `
+          <tr class="hover:bg-gray-50">
+            <td class="p-2 font-mono font-bold text-indigo-600">${r.recursoId}</td>
+            <td class="p-2 font-bold text-gray-800">${r.titulo}</td>
+            <td class="p-2 text-gray-600">${r.autorColaboradores}</td>
+            <td class="p-2 text-gray-500">${r.categoria}</td>
+            <td class="p-2 text-right">
+              <a href="${r.formatoUrl}" target="_blank" class="px-2.5 py-1 bg-indigo-600 text-white rounded font-bold text-[10px] hover:bg-indigo-700 uppercase"><i class="fas fa-external-link-alt"></i> Abrir</a>
+            </td>
+          </tr>
+        `;
+      });
+      html += `</tbody></table>`;
+      container.innerHTML = html;
+    })
+    .catch(err => {
+      container.innerHTML = `<div class="p-4 text-rose-600 font-bold text-center">Error al cargar recursos digitales: ${err.message}</div>`;
+    });
+};
+
 function renderDiarioModule(container) {
   container.innerHTML = `
     <div class="bg-white p-6 rounded-2xl border border-gray-100 space-y-4">
