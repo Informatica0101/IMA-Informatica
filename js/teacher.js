@@ -4642,6 +4642,192 @@ function toBase64(file) {
         }
     }
 
+    // ---------------------------------------------------------------------------
+    // FASE 24: CONSTRUCTOR DE FORMULARIOS INSTITUCIONALES Y TRÁMITES
+    // ---------------------------------------------------------------------------
+    let builderFields = [];
+    const modalFormBuilder = document.getElementById('modal-form-builder');
+    const btnOpenFormBuilder = document.getElementById('btn-open-form-builder');
+    const btnCloseFormBuilder = document.getElementById('btn-close-form-builder');
+
+    if (btnOpenFormBuilder && modalFormBuilder) {
+        btnOpenFormBuilder.addEventListener('click', () => {
+            openInstitutionalFormBuilder();
+        });
+    }
+
+    if (btnCloseFormBuilder && modalFormBuilder) {
+        btnCloseFormBuilder.addEventListener('click', () => {
+            modalFormBuilder.classList.add('hidden');
+        });
+    }
+
+    function openInstitutionalFormBuilder(formObj = null) {
+        if (!modalFormBuilder) return;
+        builderFields = [];
+
+        document.getElementById('builder-form-title').value = formObj?.titulo || '';
+        document.getElementById('builder-form-dept').value = formObj?.departamento || 'Secretaría';
+        document.getElementById('builder-form-desc').value = formObj?.descripcion || '';
+
+        if (formObj && formObj.definicionJSON) {
+            try {
+                const fields = typeof formObj.definicionJSON === 'string' ? JSON.parse(formObj.definicionJSON) : formObj.definicionJSON;
+                if (Array.isArray(fields)) builderFields = fields;
+            } catch (e) {
+                console.error("Error parsing form definition:", e);
+            }
+        }
+
+        renderBuilderFields();
+        modalFormBuilder.classList.remove('hidden');
+    }
+
+    // Add Field Listeners for Form Builder
+    document.querySelectorAll('.btn-add-form-field').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const type = btn.getAttribute('data-form-field-type') || 'text';
+            addFormFieldToBuilder(type);
+        });
+    });
+
+    function addFormFieldToBuilder(type) {
+        const fieldId = 'fld_' + Date.now();
+        const defaultLabels = {
+            text: 'Campo de Texto',
+            textarea: 'Descripción / Justificación',
+            select: 'Seleccione Opciones',
+            date: 'Fecha Requerida',
+            file: 'Adjunto Requerido (PDF/Imagen)'
+        };
+
+        builderFields.push({
+            id: fieldId,
+            type: type,
+            label: defaultLabels[type] || 'Nuevo Campo',
+            placeholder: 'Ingrese datos...',
+            required: true,
+            options: type === 'select' ? ['Opción 1', 'Opción 2', 'Opción 3'] : []
+        });
+
+        renderBuilderFields();
+    }
+
+    function renderBuilderFields() {
+        const container = document.getElementById('builder-fields-container');
+        if (!container) return;
+
+        if (builderFields.length === 0) {
+            container.innerHTML = `
+                <div class="p-8 text-center text-slate-400 bg-white rounded-2xl border border-dashed border-slate-300">
+                    <i class="fa-solid fa-wpforms text-4xl mb-2 text-slate-300"></i>
+                    <p class="text-xs font-semibold">No hay campos en el formulario. Utilice el panel izquierdo para añadir campos.</p>
+                </div>`;
+            return;
+        }
+
+        container.innerHTML = builderFields.map((f, idx) => `
+            <div class="p-3.5 bg-white rounded-2xl border border-slate-200 shadow-sm space-y-2 text-xs" data-field-id="${f.id}">
+                <div class="flex items-center justify-between gap-2 border-b border-slate-100 pb-2">
+                    <span class="font-mono text-[10px] font-bold text-emerald-700 uppercase bg-emerald-50 px-2 py-0.5 rounded-lg">#${idx + 1} - ${f.type.toUpperCase()}</span>
+                    <button class="btn-remove-builder-field text-red-500 hover:text-red-700 text-xs font-bold" data-id="${f.id}">
+                        <i class="fa-solid fa-trash-can mr-1"></i> Eliminar
+                    </button>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+                    <div>
+                        <label class="block text-[10px] font-bold text-slate-600 uppercase">Etiqueta del Campo</label>
+                        <input type="text" class="field-label-input w-full px-2.5 py-1.5 border border-slate-300 rounded-xl font-semibold" data-id="${f.id}" value="${f.label}">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold text-slate-600 uppercase">Texto de Ayuda / Placeholder</label>
+                        <input type="text" class="field-ph-input w-full px-2.5 py-1.5 border border-slate-300 rounded-xl font-medium" data-id="${f.id}" value="${f.placeholder}">
+                    </div>
+                </div>
+                ${f.type === 'select' ? `
+                <div>
+                    <label class="block text-[10px] font-bold text-slate-600 uppercase">Opciones (separadas por coma)</label>
+                    <input type="text" class="field-options-input w-full px-2.5 py-1.5 border border-slate-300 rounded-xl font-medium" data-id="${f.id}" value="${f.options.join(', ')}">
+                </div>` : ''}
+                <div class="flex items-center gap-2 pt-1">
+                    <input type="checkbox" class="field-req-input w-4 h-4 rounded text-emerald-600" data-id="${f.id}" ${f.required ? 'checked' : ''}>
+                    <label class="text-xs font-bold text-slate-700">Campo Obligatorio</label>
+                </div>
+            </div>
+        `).join('');
+
+        // Attach field change listeners
+        container.querySelectorAll('.field-label-input').forEach(inp => inp.addEventListener('input', e => {
+            const f = builderFields.find(x => x.id === e.target.dataset.id);
+            if (f) f.label = e.target.value;
+        }));
+
+        container.querySelectorAll('.field-ph-input').forEach(inp => inp.addEventListener('input', e => {
+            const f = builderFields.find(x => x.id === e.target.dataset.id);
+            if (f) f.placeholder = e.target.value;
+        }));
+
+        container.querySelectorAll('.field-options-input').forEach(inp => inp.addEventListener('input', e => {
+            const f = builderFields.find(x => x.id === e.target.dataset.id);
+            if (f) f.options = e.target.value.split(',').map(s => s.trim()).filter(Boolean);
+        }));
+
+        container.querySelectorAll('.field-req-input').forEach(inp => inp.addEventListener('change', e => {
+            const f = builderFields.find(x => x.id === e.target.dataset.id);
+            if (f) f.required = e.target.checked;
+        }));
+
+        container.querySelectorAll('.btn-remove-builder-field').forEach(btn => btn.addEventListener('click', e => {
+            const id = btn.dataset.id || btn.closest('button').dataset.id;
+            builderFields = builderFields.filter(x => x.id !== id);
+            renderBuilderFields();
+        }));
+    }
+
+    // Save & Publish Form
+    document.getElementById('btn-save-form-draft')?.addEventListener('click', () => saveFormDefinition('borrador'));
+    document.getElementById('btn-publish-form')?.addEventListener('click', () => saveFormDefinition('publicado'));
+
+    async function saveFormDefinition(state = 'publicado') {
+        const title = document.getElementById('builder-form-title')?.value.trim();
+        const dept = document.getElementById('builder-form-dept')?.value || 'Secretaría';
+        const desc = document.getElementById('builder-form-desc')?.value.trim();
+
+        if (!title) {
+            alert("Ingrese un título para el formulario.");
+            return;
+        }
+
+        if (builderFields.length === 0) {
+            alert("Añada al menos un campo al formulario antes de guardar.");
+            return;
+        }
+
+        const code = 'FRM-' + Math.floor(1000 + Math.random() * 9000);
+
+        try {
+            const resp = await apiCall({
+                action: 'saveInstitutionalForm',
+                codigoFormulario: code,
+                titulo: title,
+                descripcion: desc,
+                departamento: dept,
+                definicionJSON: builderFields,
+                estado: state,
+                version: '1.0'
+            }, 'USER');
+
+            if (resp && resp.status === 'success') {
+                alert(`¡Formulario Institucional (${state}) guardado con éxito!\n\nID: ${resp.formId}\nVersión: v${resp.version}`);
+                modalFormBuilder?.classList.add('hidden');
+            } else {
+                alert("Error al guardar formulario: " + (resp?.message || "Error desconocido"));
+            }
+        } catch (e) {
+            alert("Error de comunicación: " + e.message);
+        }
+    }
+
     // Search and Filters
     ['template-search-input', 'template-category-filter', 'template-state-filter'].forEach(id => {
         document.getElementById(id)?.addEventListener('input', () => renderTemplateCatalog(loadedTemplatesCache));

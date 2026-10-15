@@ -196,6 +196,7 @@ function getOrCreateSheet(ss, name) {
     if (name === "ConversacionesMensajes") sheet.appendRow(["MensajeID", "ConversacionID", "RemitenteID", "DestinatarioID", "EstudianteID", "MensajeTexto", "AdjuntoUrl", "FechaEnvio", "EstadoLectura"]);
     if (name === "BandejaNotificaciones") sheet.appendRow(["NotificacionID", "UserId", "Titulo", "Mensaje", "Tipo", "Categoria", "Leido", "EnlaceAccion", "FechaRegistro"]);
     if (name === "SolicitudesTramites") sheet.appendRow(["SolicitudID", "UserId", "EstudianteID", "TipoTramite", "Descripcion", "AdjuntoUrl", "Estado", "AsignadoA", "ObservacionesAdmin", "FechaSolicitud", "FechaResolucion"]);
+    if (name === "FormulariosInstitucionales") sheet.appendRow(["FormID", "CodigoFormulario", "Titulo", "Descripcion", "Departamento", "DefinicionJSON", "Estado", "Version", "RequiereFirma", "PlantillaDocumentoId", "FechaCreacion", "CreadoPor"]);
     if (name === "CitasReuniones") sheet.appendRow(["CitaID", "SolicitanteID", "EstudianteID", "SolicitadoA", "Motivo", "FechaHora", "Modalidad", "Estado", "Comentarios"]);
   }
   return sheet;
@@ -228,26 +229,26 @@ const ROLE_PERMISSIONS = {
   ],
   "Tutor": [
     "getUserInfo", "getNews", "getInstitutionalCriteria", "getFormativeEvaluations", "getSupportPlans",
-    "acceptLinkInvitation", "getGuardianStudents", "getInstitutionalAnnouncements", "getInternalMessages", "sendInternalMessage", "getUserNotifications", "getUnifiedNotifications", "markNotificationAsRead", "getAdministrativeRequests", "submitAdministrativeRequest", "submitStudentAbsenceJustification", "getStudentAbsenceJustifications", "getAppointmentBookings", "bookAppointment", "getInstitutionalCalendarEvents", "getPendingReminders"
+    "acceptLinkInvitation", "getGuardianStudents", "getInstitutionalAnnouncements", "getInternalMessages", "sendInternalMessage", "getUserNotifications", "getUnifiedNotifications", "markNotificationAsRead", "getAdministrativeRequests", "submitAdministrativeRequest", "submitStudentAbsenceJustification", "getStudentAbsenceJustifications", "getInstitutionalForms", "submitInstitutionalFormRequest", "getAppointmentBookings", "bookAppointment", "getInstitutionalCalendarEvents", "getPendingReminders"
   ],
   "Responsable": [
     "getUserInfo", "getNews", "getInstitutionalCriteria", "getFormativeEvaluations", "getSupportPlans",
-    "acceptLinkInvitation", "getGuardianStudents", "getInstitutionalAnnouncements", "getInternalMessages", "sendInternalMessage", "getUserNotifications", "getUnifiedNotifications", "markNotificationAsRead", "getAdministrativeRequests", "submitAdministrativeRequest", "submitStudentAbsenceJustification", "getStudentAbsenceJustifications", "getAppointmentBookings", "bookAppointment", "getInstitutionalCalendarEvents", "getPendingReminders"
+    "acceptLinkInvitation", "getGuardianStudents", "getInstitutionalAnnouncements", "getInternalMessages", "sendInternalMessage", "getUserNotifications", "getUnifiedNotifications", "markNotificationAsRead", "getAdministrativeRequests", "submitAdministrativeRequest", "submitStudentAbsenceJustification", "getStudentAbsenceJustifications", "getInstitutionalForms", "submitInstitutionalFormRequest", "getAppointmentBookings", "bookAppointment", "getInstitutionalCalendarEvents", "getPendingReminders"
   ],
   "Director": [
     "createNews", "uploadNewsImage", "getNews", "updateNewsStatus", "getStudents", "getStudentsByGradoSeccion", "getUserInfo", "saveGameResult", "getGameStats", "getGlobalTop", "recordAnalytics", "getLearningProfile", "mergeGuestData", "updateUserProfile", "findPersonMatches", "createPerson", "linkPersonAccount", "manageAccountState", "generateInstitutionalId",
     "getInstitutionalCriteria", "saveInstitutionalCriterion", "getFormativeEvaluations", "saveFormativeEvaluation", "getSupportPlans", "saveSupportPlan",
-    "createLinkInvitation", "acceptLinkInvitation", "getGuardianStudents", "getInstitutionalAnnouncements", "createInstitutionalAnnouncement", "submitAnnouncementReceiptConfirmation", "getAnnouncementReadReport", "getDepartmentalWorkInbox", "closeConversationThread", "getInternalConversations", "getInternalMessages", "sendInternalMessage", "getUserNotifications", "getUnifiedNotifications", "markNotificationAsRead", "createUserNotification", "sendMultiChannelNotification", "getNotificationPreferences", "getAdministrativeRequests", "getAdministrativeRequestsHistory", "submitAdministrativeRequest", "submitStudentAbsenceJustification", "getStudentAbsenceJustifications", "reviewAbsenceJustification", "updateRequestStatus", "getAppointmentBookings", "bookAppointment", "updateAppointmentStatus", "getInstitutionalCalendarEvents", "getPendingReminders"
+    "createLinkInvitation", "acceptLinkInvitation", "getGuardianStudents", "getInstitutionalAnnouncements", "createInstitutionalAnnouncement", "submitAnnouncementReceiptConfirmation", "getAnnouncementReadReport", "getDepartmentalWorkInbox", "closeConversationThread", "getInternalConversations", "getInternalMessages", "sendInternalMessage", "getUserNotifications", "getUnifiedNotifications", "markNotificationAsRead", "createUserNotification", "sendMultiChannelNotification", "getNotificationPreferences", "getAdministrativeRequests", "getAdministrativeRequestsHistory", "submitAdministrativeRequest", "submitStudentAbsenceJustification", "getStudentAbsenceJustifications", "reviewAbsenceJustification", "updateRequestStatus", "saveInstitutionalForm", "getInstitutionalForms", "submitInstitutionalFormRequest", "getAppointmentBookings", "bookAppointment", "updateAppointmentStatus", "getInstitutionalCalendarEvents", "getPendingReminders"
   ],
   "Subdirector": [
     "createNews", "uploadNewsImage", "getNews", "updateNewsStatus", "getStudents", "getStudentsByGradoSeccion", "getUserInfo", "saveGameResult", "getGameStats", "getGlobalTop", "recordAnalytics", "getLearningProfile", "mergeGuestData", "updateUserProfile", "findPersonMatches", "generateInstitutionalId",
     "getInstitutionalCriteria", "saveInstitutionalCriterion", "getFormativeEvaluations", "saveFormativeEvaluation", "getSupportPlans", "saveSupportPlan",
-    "createLinkInvitation", "getGuardianStudents", "getInstitutionalAnnouncements", "createInstitutionalAnnouncement", "submitAnnouncementReceiptConfirmation", "getAnnouncementReadReport", "getDepartmentalWorkInbox", "closeConversationThread", "getInternalConversations", "getInternalMessages", "sendInternalMessage", "getUserNotifications", "getUnifiedNotifications", "markNotificationAsRead", "sendMultiChannelNotification", "getNotificationPreferences", "getAdministrativeRequests", "getAdministrativeRequestsHistory", "submitStudentAbsenceJustification", "getStudentAbsenceJustifications", "reviewAbsenceJustification", "updateRequestStatus", "getAppointmentBookings", "updateAppointmentStatus", "getInstitutionalCalendarEvents", "getPendingReminders"
+    "createLinkInvitation", "getGuardianStudents", "getInstitutionalAnnouncements", "createInstitutionalAnnouncement", "submitAnnouncementReceiptConfirmation", "getAnnouncementReadReport", "getDepartmentalWorkInbox", "closeConversationThread", "getInternalConversations", "getInternalMessages", "sendInternalMessage", "getUserNotifications", "getUnifiedNotifications", "markNotificationAsRead", "sendMultiChannelNotification", "getNotificationPreferences", "getAdministrativeRequests", "getAdministrativeRequestsHistory", "submitStudentAbsenceJustification", "getStudentAbsenceJustifications", "reviewAbsenceJustification", "updateRequestStatus", "saveInstitutionalForm", "getInstitutionalForms", "submitInstitutionalFormRequest", "getAppointmentBookings", "updateAppointmentStatus", "getInstitutionalCalendarEvents", "getPendingReminders"
   ],
   "Secretaría": [
     "createNews", "uploadNewsImage", "getNews", "updateNewsStatus", "getStudents", "getStudentsByGradoSeccion", "getUserInfo", "updateUserProfile", "findPersonMatches", "createPerson", "linkPersonAccount", "manageAccountState", "generateInstitutionalId",
     "getInstitutionalCriteria", "getFormativeEvaluations", "saveFormativeEvaluation", "getSupportPlans", "saveSupportPlan",
-    "createLinkInvitation", "acceptLinkInvitation", "getGuardianStudents", "getInstitutionalAnnouncements", "createInstitutionalAnnouncement", "submitAnnouncementReceiptConfirmation", "getAnnouncementReadReport", "getDepartmentalWorkInbox", "closeConversationThread", "getInternalConversations", "getInternalMessages", "sendInternalMessage", "getUserNotifications", "getUnifiedNotifications", "markNotificationAsRead", "createUserNotification", "sendMultiChannelNotification", "getNotificationPreferences", "getAdministrativeRequests", "getAdministrativeRequestsHistory", "submitAdministrativeRequest", "submitStudentAbsenceJustification", "getStudentAbsenceJustifications", "reviewAbsenceJustification", "updateRequestStatus", "getAppointmentBookings", "bookAppointment", "updateAppointmentStatus", "getInstitutionalCalendarEvents", "getPendingReminders"
+    "createLinkInvitation", "acceptLinkInvitation", "getGuardianStudents", "getInstitutionalAnnouncements", "createInstitutionalAnnouncement", "submitAnnouncementReceiptConfirmation", "getAnnouncementReadReport", "getDepartmentalWorkInbox", "closeConversationThread", "getInternalConversations", "getInternalMessages", "sendInternalMessage", "getUserNotifications", "getUnifiedNotifications", "markNotificationAsRead", "createUserNotification", "sendMultiChannelNotification", "getNotificationPreferences", "getAdministrativeRequests", "getAdministrativeRequestsHistory", "submitAdministrativeRequest", "submitStudentAbsenceJustification", "getStudentAbsenceJustifications", "reviewAbsenceJustification", "updateRequestStatus", "saveInstitutionalForm", "getInstitutionalForms", "submitInstitutionalFormRequest", "getAppointmentBookings", "bookAppointment", "updateAppointmentStatus", "getInstitutionalCalendarEvents", "getPendingReminders"
   ],
   "Contador": ["getStudents", "getUserInfo", "getNews", "getInstitutionalAnnouncements", "getUserNotifications", "markNotificationAsRead", "getAdministrativeRequests", "submitAdministrativeRequest"],
   "RecursosHumanos": ["getStudents", "getUserInfo", "getNews", "getInstitutionalAnnouncements", "getUserNotifications", "markNotificationAsRead", "getAdministrativeRequests", "submitAdministrativeRequest", "createNews", "getInternalMessages", "sendInternalMessage"],
@@ -349,6 +350,9 @@ function doPost(e) {
       case "getAdministrativeRequestsHistory": result = getAdministrativeRequestsHistory(payload); break;
       case "submitAdministrativeRequest": result = submitAdministrativeRequest(payload); break;
       case "updateRequestStatus": result = updateRequestStatus(payload); break;
+      case "saveInstitutionalForm": result = saveInstitutionalForm(payload); break;
+      case "getInstitutionalForms": result = getInstitutionalForms(payload); break;
+      case "submitInstitutionalFormRequest": result = submitInstitutionalFormRequest(payload); break;
       case "getAppointmentBookings": result = getAppointmentBookings(payload); break;
       case "bookAppointment": result = bookAppointment(payload); break;
       case "updateAppointmentStatus": result = updateAppointmentStatus(payload); break;
@@ -1645,6 +1649,172 @@ function updateRequestStatus(payload) {
   sheet.getRange(idx + 1, 11).setValue(new Date());
 
   return { status: "success", message: `Estado de la solicitud actualizado a ${nuevoEstado}.` };
+}
+
+// ---------------------------------------------------------------------------
+// FASE 24: FORMULARIOS INSTITUCIONALES Y TRÁMITES DIGITALES
+// ---------------------------------------------------------------------------
+
+function saveInstitutionalForm(payload) {
+  const {
+    formId,
+    codigoFormulario,
+    titulo,
+    descripcion,
+    departamento,
+    definicionJSON,
+    estado,
+    version,
+    requiereFirma,
+    plantillaDocumentoId,
+    creadoPor
+  } = payload || {};
+
+  if (!titulo) throw new Error("El título del formulario es requerido.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "FormulariosInstitucionales");
+  const data = sheet.getDataRange().getValues();
+
+  let fId = formId;
+  let code = codigoFormulario || ("FRM-" + Math.floor(1000 + Math.random() * 9000));
+  let existingIdx = -1;
+
+  if (fId) {
+    existingIdx = data.findIndex(r => String(r[0]).trim() === String(fId).trim());
+  } else {
+    existingIdx = data.findIndex(r => String(r[1]).trim() === String(code).trim());
+  }
+
+  const defJSON = typeof definicionJSON === "object" ? JSON.stringify(definicionJSON) : (definicionJSON || "[]");
+  const nowISO = new Date().toISOString();
+  let finalVersion = version || "1.0";
+  let finalState = estado || "publicado";
+
+  if (existingIdx !== -1) {
+    fId = data[existingIdx][0];
+    const prevVersion = data[existingIdx][7] || "1.0";
+    if (finalState === "publicado" && data[existingIdx][6] === "publicado" && !version) {
+      const vParts = String(prevVersion).split(".");
+      const minor = parseInt(vParts[1] || "0", 10) + 1;
+      finalVersion = (vParts[0] || "1") + "." + minor;
+    }
+
+    sheet.getRange(existingIdx + 1, 1, 1, 12).setValues([[
+      fId,
+      code,
+      titulo,
+      descripcion || "",
+      departamento || "Secretaría",
+      defJSON,
+      finalState,
+      finalVersion,
+      requiereFirma ? "SI" : "NO",
+      plantillaDocumentoId || "",
+      nowISO,
+      creadoPor || "Sistema"
+    ]]);
+  } else {
+    fId = "FORM-" + Date.now();
+    sheet.appendRow([
+      fId,
+      code,
+      titulo,
+      descripcion || "",
+      departamento || "Secretaría",
+      defJSON,
+      finalState,
+      finalVersion,
+      requiereFirma ? "SI" : "NO",
+      plantillaDocumentoId || "",
+      nowISO,
+      creadoPor || "Sistema"
+    ]);
+  }
+
+  return {
+    status: "success",
+    formId: fId,
+    version: finalVersion,
+    estado: finalState,
+    message: "Formulario institucional guardado y publicado con éxito."
+  };
+}
+
+function getInstitutionalForms(payload) {
+  const { departamento, estado } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "FormulariosInstitucionales");
+  const rows = sheet.getDataRange().getValues().slice(1);
+
+  let filtered = rows;
+  if (departamento) filtered = filtered.filter(r => String(r[4]).toLowerCase() === String(departamento).toLowerCase());
+  if (estado) filtered = filtered.filter(r => String(r[6]).toLowerCase() === String(estado).toLowerCase());
+
+  const mapped = filtered.map(r => ({
+    formId: r[0],
+    codigoFormulario: r[1],
+    titulo: r[2],
+    descripcion: r[3],
+    departamento: r[4],
+    definicionJSON: r[5],
+    estado: r[6],
+    version: r[7],
+    requiereFirma: r[8] === "SI",
+    plantillaDocumentoId: r[9],
+    fechaCreacion: r[10],
+    creadoPor: r[11]
+  }));
+
+  return {
+    status: "success",
+    formularios: mapped
+  };
+}
+
+function submitInstitutionalFormRequest(payload) {
+  const {
+    userId,
+    estudianteId,
+    formId,
+    tipoTramite,
+    respuestasFormularioJSON,
+    adjuntoUrl,
+    adjuntoFileId,
+    observaciones
+  } = payload || {};
+
+  if (!userId || !tipoTramite) throw new Error("userId y tipoTramite son requeridos.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "SolicitudesTramites");
+
+  const solId = "SOL-FRM-" + Date.now();
+  const now = new Date();
+  const respStr = typeof respuestasFormularioJSON === "object" ? JSON.stringify(respuestasFormularioJSON) : (respuestasFormularioJSON || "{}");
+
+  const desc = `Solicitud mediante formulario [${formId || 'N/A'}]: ${respStr}. Observaciones: ${observaciones || 'Sin observaciones'}`;
+
+  sheet.appendRow([
+    solId,
+    userId,
+    estudianteId || "N/A",
+    tipoTramite,
+    desc,
+    adjuntoUrl || (adjuntoFileId ? "https://drive.google.com/uc?id=" + adjuntoFileId : ""),
+    "Enviada",
+    "Secretaría/Orientación",
+    "",
+    now.toISOString(),
+    ""
+  ]);
+
+  return {
+    status: "success",
+    solicitudId: solId,
+    fechaSolicitud: now.toISOString(),
+    message: "Trámite digital enviado con éxito para revisión oficial."
+  };
 }
 
 function getAppointmentBookings(payload) {
