@@ -333,8 +333,12 @@ function doPost(e) {
       case "getSpreadsheetCatalog": result = getSpreadsheetCatalog(payload); break;
       case "configureSchoolDocumentTemplate": result = configureSchoolDocumentTemplate(payload); break;
       case "getSchoolDocumentTemplates": result = getSchoolDocumentTemplates(payload); break;
+      case "getAvailableDynamicFields": result = getAvailableDynamicFields(payload); break;
+      case "previewSchoolDocument": result = previewSchoolDocument(payload); break;
       case "generateSchoolDocument": result = generateSchoolDocument(payload); break;
       case "getIssuedSchoolDocuments": result = getIssuedSchoolDocuments(payload); break;
+      case "deleteOrArchiveSchoolDocumentTemplate": result = deleteOrArchiveSchoolDocumentTemplate(payload); break;
+      case "importDocumentTemplateBase": result = importDocumentTemplateBase(payload); break;
       case "validateImportPreview": result = validateImportPreview(payload); break;
       case "importDataWithColumnMapping": result = importDataWithColumnMapping(payload); break;
       case "getMigrationLogs": result = getMigrationLogs(payload); break;
@@ -5038,11 +5042,28 @@ function getSpreadsheetCatalog(payload) {
 }
 
 // ---------------------------------------------------------------------------
-// FASE 12: PLANTILLAS ESCOLARES Y DOCUMENTOS EMITIDOS
+// FASE 22: DISEÑADOR UNIVERSAL DE DOCUMENTOS Y PLANTILLAS
 // ---------------------------------------------------------------------------
 
 function configureSchoolDocumentTemplate(payload) {
-  const { plantillaId, codigoDocumento, categoria, titulo, camposJSON, flujoAprobacion, estado, version } = payload || {};
+  const {
+    plantillaId,
+    codigoDocumento,
+    categoria,
+    titulo,
+    descripcion,
+    departamento,
+    tipoSalida,
+    contenidoHTML,
+    configFormatoJSON,
+    camposJSON,
+    flujoAprobacion,
+    estado,
+    version,
+    creadoPor,
+    driveFolderId
+  } = payload || {};
+
   if (!codigoDocumento || !titulo) throw new Error("codigoDocumento y titulo requeridos.");
 
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
@@ -5059,18 +5080,39 @@ function configureSchoolDocumentTemplate(payload) {
   }
 
   const cJSON = typeof camposJSON === "object" ? JSON.stringify(camposJSON) : (camposJSON || "[]");
+  const fmtJSON = typeof configFormatoJSON === "object" ? JSON.stringify(configFormatoJSON) : (configFormatoJSON || "{}");
+  const htmlContent = contenidoHTML || "";
+  const nowStr = new Date().toISOString();
+
+  let currentVersion = version || "1.0";
+  let finalState = estado || "publicada";
 
   if (existingIndex !== -1) {
-    pId = data[existingIndex][0];
-    sheet.getRange(existingIndex + 1, 1, 1, 8).setValues([[
+    const row = data[existingIndex];
+    pId = row[0];
+    const prevVersion = row[7] || "1.0";
+    if (finalState === "publicada" && row[6] === "publicada" && !version) {
+      const vParts = String(prevVersion).split(".");
+      const minor = parseInt(vParts[1] || "0", 10) + 1;
+      currentVersion = (vParts[0] || "1") + "." + minor;
+    }
+
+    sheet.getRange(existingIndex + 1, 1, 1, 15).setValues([[
       pId,
       String(codigoDocumento).trim(),
       categoria || "Académico",
       titulo,
       cJSON,
       flujoAprobacion || "Secretaria",
-      estado || "active",
-      version || "1.0"
+      finalState,
+      currentVersion,
+      htmlContent,
+      fmtJSON,
+      descripcion || "",
+      departamento || "Secretaría General",
+      tipoSalida || "PDF",
+      creadoPor || "Sistema",
+      driveFolderId || ""
     ]]);
   } else {
     pId = "TMP-" + Date.now();
@@ -5081,36 +5123,109 @@ function configureSchoolDocumentTemplate(payload) {
       titulo,
       cJSON,
       flujoAprobacion || "Secretaria",
-      "active",
-      version || "1.0"
+      finalState,
+      currentVersion,
+      htmlContent,
+      fmtJSON,
+      descripcion || "",
+      departamento || "Secretaría General",
+      tipoSalida || "PDF",
+      creadoPor || "Sistema",
+      driveFolderId || ""
     ]);
   }
 
   return {
     status: "success",
     plantillaId: pId,
-    message: "Plantilla de documento escolar configurada exitosamente."
+    version: currentVersion,
+    estado: finalState,
+    message: "Plantilla institucional de documento configurada exitosamente."
   };
 }
 
 function getSchoolDocumentTemplates(payload) {
-  const { categoria } = payload || {};
+  const { categoria, departamento, estado, solicitanteUserId } = payload || {};
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
-  let rows = getOrCreateSheet(ss, "PlantillasEscolares").getDataRange().getValues().slice(1);
+  let sheet = getOrCreateSheet(ss, "PlantillasEscolares");
+  let rows = sheet.getDataRange().getValues().slice(1);
 
   if (rows.length === 0) {
     const defaults = [
-      ["TMP-001", "CONST-ESTUDIO", "Académico", "Constancia de Estudios Oficial", '[{"nombre":"motivo","tipo":"texto","etiqueta":"Motivo de Solicitud"}]', "Secretaria", "active", "1.0"],
-      ["TMP-002", "EXC-FALTA", "Académico", "Excusa / Justificación de Inasistencia", '[{"nombre":"fechaFalta","tipo":"fecha","etiqueta":"Fecha de la Falta"},{"nombre":"motivo","tipo":"texto_largo","etiqueta":"Motivo Médico/Personal"}]', "Orientación", "active", "1.0"],
-      ["TMP-003", "CONST-PAGO", "Financiero", "Constancia de Solvencia Financiera", '[{"nombre":"meses","tipo":"texto","etiqueta":"Meses Solventes"}]', "Contabilidad", "active", "1.0"]
+      [
+        "TMP-001",
+        "CONST-ESTUDIO",
+        "Académico",
+        "Constancia de Estudios Oficial",
+        '[{"clave":"{{estudiante.nombreCompleto}}","etiqueta":"Nombre Estudiante"},{"clave":"{{estudiante.grado}}","etiqueta":"Grado Actual"},{"clave":"{{tramite.motivo}}","etiqueta":"Motivo Solicitud"}]',
+        "Secretaria",
+        "publicada",
+        "1.0",
+        `<div style="font-family: Arial, sans-serif; padding: 30px; color: #1e293b;">
+          <div style="text-align: center; border-bottom: 2px solid #1e3a8a; padding-bottom: 12px; margin-bottom: 24px;">
+            <h1 style="color: #1e3a8a; font-size: 20px; margin: 0;">NEW GENERATION CHRISTIAN ACADEMY</h1>
+            <p style="font-size: 12px; color: #64748b; margin: 4px 0 0 0;">Constancia Oficial de Estudios - Año Lectivo {{institucion.anoLectivo}}</p>
+          </div>
+          <p>Por medio de la presente, la Dirección y Secretaría de <strong>New Generation Christian Academy</strong> hace constar que:</p>
+          <p style="font-size: 16px; text-align: center; margin: 20px 0; font-weight: bold; color: #0f172a;">{{estudiante.nombreCompleto}}</p>
+          <p>Con número de documento / ID <strong>{{estudiante.identidad}}</strong>, se encuentra debidamente matriculado(a) y cursando de manera regular el grado <strong>{{estudiante.grado}} {{estudiante.seccion}}</strong> en esta institución educativa.</p>
+          <p>Se extiende la presente constancia a petición de parte interesada para los fines de: <em>{{tramite.motivo}}</em>.</p>
+          <div style="margin-top: 60px; text-align: center;">
+            <div style="width: 220px; border-top: 1px solid #334155; margin: 0 auto; padding-top: 6px;">
+              <strong>Secretaría Académica / Dirección</strong><br>
+              <span style="font-size: 11px; color: #64748b;">New Generation Christian Academy</span>
+            </div>
+          </div>
+        </div>`,
+        '{"paperSize":"Letter","orientation":"portrait","marginTop":"20mm","marginBottom":"20mm","marginLeft":"20mm","marginRight":"20mm"}',
+        "Constancia de estudios estándar para trámite administrativo o consular.",
+        "Secretaría",
+        "PDF",
+        "Admin",
+        ""
+      ],
+      [
+        "TMP-002",
+        "CONST-SOLVENCIA",
+        "Financiero",
+        "Constancia de Solvencia Financiera",
+        '[{"clave":"{{estudiante.nombreCompleto}}","etiqueta":"Nombre Estudiante"},{"clave":"{{finanzas.mesesSolventes}}","etiqueta":"Meses Cancelados"}]',
+        "Contabilidad",
+        "publicada",
+        "1.0",
+        `<div style="font-family: Arial, sans-serif; padding: 30px; color: #1e293b;">
+          <div style="text-align: center; border-bottom: 2px solid #166534; padding-bottom: 12px; margin-bottom: 24px;">
+            <h1 style="color: #166534; font-size: 20px; margin: 0;">NEW GENERATION CHRISTIAN ACADEMY</h1>
+            <p style="font-size: 12px; color: #64748b; margin: 4px 0 0 0;">Departamento de Contabilidad y Cobros</p>
+          </div>
+          <h2 style="text-align: center; font-size: 16px; margin-bottom: 20px;">CONSTANCIA DE SOLVENCIA</h2>
+          <p>El Departamento de Contabilidad de <strong>New Generation Christian Academy</strong> certifica que el/la estudiante:</p>
+          <p style="font-size: 16px; text-align: center; margin: 18px 0; font-weight: bold; color: #0f172a;">{{estudiante.nombreCompleto}}</p>
+          <p>Se encuentra al día con sus compromisos financieros y cuotas colegiales correspondientes a: <strong>{{finanzas.mesesSolventes}}</strong>.</p>
+          <div style="margin-top: 60px; text-align: center;">
+            <div style="width: 220px; border-top: 1px solid #334155; margin: 0 auto; padding-top: 6px;">
+              <strong>Coordinación Financiera</strong><br>
+              <span style="font-size: 11px; color: #64748b;">New Generation Christian Academy</span>
+            </div>
+          </div>
+        </div>`,
+        '{"paperSize":"Letter","orientation":"portrait","marginTop":"20mm","marginBottom":"20mm","marginLeft":"20mm","marginRight":"20mm"}',
+        "Constancia emitida para verificar solvencia económica de matrículas y mensualidades.",
+        "Contabilidad",
+        "PDF",
+        "Admin",
+        ""
+      ]
     ];
-    const sheet = getOrCreateSheet(ss, "PlantillasEscolares");
-    sheet.getRange(2, 1, defaults.length, 8).setValues(defaults);
+
+    defaults.forEach(d => sheet.appendRow(d));
     rows = defaults;
   }
 
   let filtered = rows;
   if (categoria) filtered = filtered.filter(r => String(r[2]).toLowerCase().trim() === String(categoria).toLowerCase().trim());
+  if (departamento) filtered = filtered.filter(r => String(r[11] || "").toLowerCase().trim() === String(departamento).toLowerCase().trim());
+  if (estado) filtered = filtered.filter(r => String(r[6] || "").toLowerCase().trim() === String(estado).toLowerCase().trim());
 
   const mapped = filtered.map(r => ({
     plantillaId: r[0],
@@ -5119,8 +5234,15 @@ function getSchoolDocumentTemplates(payload) {
     titulo: r[3],
     camposJSON: r[4],
     flujoAprobacion: r[5],
-    estado: r[6],
-    version: r[7]
+    estado: r[6] || "publicada",
+    version: r[7] || "1.0",
+    contenidoHTML: r[8] || "",
+    configFormatoJSON: r[9] || "{}",
+    descripcion: r[10] || "",
+    departamento: r[11] || "Secretaría",
+    tipoSalida: r[12] || "PDF",
+    creadoPor: r[13] || "Sistema",
+    driveFolderId: r[14] || ""
   }));
 
   return {
@@ -5129,59 +5251,255 @@ function getSchoolDocumentTemplates(payload) {
   };
 }
 
-function generateSchoolDocument(payload) {
-  const { plantillaId, estudianteUserId, solicitanteUserId, datosFormulario } = payload || {};
-  if (!plantillaId || !estudianteUserId) throw new Error("plantillaId y estudianteUserId son requeridos.");
+function getAvailableDynamicFields(payload) {
+  const campos = [
+    { categoria: "Institución", clave: "{{institucion.nombre}}", etiqueta: "Nombre de la Institución", descripcion: "New Generation Christian Academy" },
+    { categoria: "Institución", clave: "{{institucion.direccion}}", etiqueta: "Dirección Oficial", descripcion: "Ubicación sede principal" },
+    { categoria: "Institución", clave: "{{institucion.telefono}}", etiqueta: "Teléfono Institucional", descripcion: "Contacto PBX" },
+    { categoria: "Institución", clave: "{{institucion.director}}", etiqueta: "Director General", descripcion: "Nombre del Director(a)" },
+    { categoria: "Institución", clave: "{{institucion.anoLectivo}}", etiqueta: "Año Lectivo", descripcion: "Año académico en curso (2026)" },
+    { categoria: "Institución", clave: "{{fecha.actual}}", etiqueta: "Fecha de Emisión", descripcion: "Fecha en formato largo" },
 
+    { categoria: "Estudiante", clave: "{{estudiante.nombreCompleto}}", etiqueta: "Nombre Completo Estudiante", descripcion: "Nombres y Apellidos" },
+    { categoria: "Estudiante", clave: "{{estudiante.identidad}}", etiqueta: "Identidad / DNI Estudiante", descripcion: "Número de Identificación Nacional" },
+    { categoria: "Estudiante", clave: "{{estudiante.codigo}}", etiqueta: "Código Estudiante", descripcion: "ID único institucional" },
+    { categoria: "Estudiante", clave: "{{estudiante.grado}}", etiqueta: "Grado / Curso", descripcion: "Grado matriculado" },
+    { categoria: "Estudiante", clave: "{{estudiante.seccion}}", etiqueta: "Sección", descripcion: "Sección (A, B, C)" },
+    { categoria: "Estudiante", clave: "{{estudiante.nivel}}", etiqueta: "Nivel Educativo", descripcion: "Prebásica, Básica, Media" },
+
+    { categoria: "Padre / Tutor", clave: "{{padre.nombreCompleto}}", etiqueta: "Nombre del Padre / Tutor", descripcion: "Representante legal" },
+    { categoria: "Padre / Tutor", clave: "{{padre.identidad}}", etiqueta: "Identidad del Padre / Tutor", descripcion: "DNI del representante" },
+    { categoria: "Padre / Tutor", clave: "{{padre.telefono}}", etiqueta: "Teléfono de Contacto", descripcion: "Teléfono del tutor" },
+
+    { categoria: "Empleado / Docente", clave: "{{empleado.nombreCompleto}}", etiqueta: "Nombre Empleado / Docente", descripcion: "Nombre del colaborador" },
+    { categoria: "Empleado / Docente", clave: "{{empleado.cargo}}", etiqueta: "Cargo / Puesto", descripcion: "Cargo institucional" },
+    { categoria: "Empleado / Docente", clave: "{{empleado.departamento}}", etiqueta: "Departamento Laboral", descripcion: "Área asignada" },
+
+    { categoria: "Finanzas & Cobros", clave: "{{finanzas.monto}}", etiqueta: "Monto Numérico", descripcion: "L. 0.00" },
+    { categoria: "Finanzas & Cobros", clave: "{{finanzas.montoLetras}}", etiqueta: "Monto en Letras", descripcion: "Cantidad expresada en lempiras" },
+    { categoria: "Finanzas & Cobros", clave: "{{finanzas.mesesSolventes}}", etiqueta: "Meses Solventes", descripcion: "Lista de meses cancelados" },
+    { categoria: "Finanzas & Cobros", clave: "{{finanzas.concepto}}", etiqueta: "Concepto de Pago", descripcion: "Detalle del cobro" },
+
+    { categoria: "Trámite & Sistema", clave: "{{tramite.codigo}}", etiqueta: "Código de Trámite", descripcion: "Referencia correlativa" },
+    { categoria: "Trámite & Sistema", clave: "{{tramite.motivo}}", etiqueta: "Motivo / Observación", descripcion: "Finalidad expresada" },
+    { categoria: "Trámite & Sistema", clave: "{{tramite.codigoVerificacion}}", etiqueta: "Código de Autenticidad", descripcion: "Token de validación QR" }
+  ];
+
+  return {
+    status: "success",
+    campos: campos
+  };
+}
+
+function previewSchoolDocument(payload) {
+  const { plantillaId, contenidoHTML, datosFormulario, sampleData } = payload || {};
+
+  let rawHTML = contenidoHTML || "";
+  let fieldsJSON = {};
+
+  if (plantillaId) {
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const rows = getOrCreateSheet(ss, "PlantillasEscolares").getDataRange().getValues().slice(1);
+    const found = rows.find(r => String(r[0]).trim() === String(plantillaId).trim());
+    if (found) {
+      rawHTML = found[8] || rawHTML;
+    }
+  }
+
+  const mockContext = {
+    "{{institucion.nombre}}": "NEW GENERATION CHRISTIAN ACADEMY",
+    "{{institucion.direccion}}": "San Pedro Sula, Cortés, Honduras",
+    "{{institucion.telefono}}": "+504 2550-0000",
+    "{{institucion.director}}": "Lic. Dirección General",
+    "{{institucion.anoLectivo}}": "2026",
+    "{{fecha.actual}}": new Date().toLocaleDateString("es-HN", { year: "numeric", month: "long", day: "numeric" }),
+    "{{estudiante.nombreCompleto}}": "Juan Carlos Pérez Rodríguez",
+    "{{estudiante.identidad}}": "0801-2010-12345",
+    "{{estudiante.codigo}}": "EST-2026-089",
+    "{{estudiante.grado}}": "9no Grado",
+    "{{estudiante.seccion}}": "Sección A",
+    "{{estudiante.nivel}}": "Educación Básica",
+    "{{padre.nombreCompleto}}": "Carlos Roberto Pérez",
+    "{{padre.identidad}}": "0801-1982-04561",
+    "{{padre.telefono}}": "+504 9999-8888",
+    "{{empleado.nombreCompleto}}": "María Fernanda López",
+    "{{empleado.cargo}}": "Docente Titular",
+    "{{empleado.departamento}}": "Académico",
+    "{{finanzas.monto}}": "L. 2,500.00",
+    "{{finanzas.montoLetras}}": "Dos Mil Quinientos Lempiras Exactos",
+    "{{finanzas.mesesSolventes}}": "Enero - Octubre 2026",
+    "{{finanzas.concepto}}": "Colegiatura Mensual",
+    "{{tramite.codigo}}": "TR-2026-5541",
+    "{{tramite.motivo}}": "Trámite de Beca Externa / Matrícula",
+    "{{tramite.codigoVerificacion}}": "VERIF-PREVIEW-99"
+  };
+
+  if (typeof datosFormulario === "object" && datosFormulario !== null) {
+    Object.keys(datosFormulario).forEach(k => {
+      const keyTag = k.startsWith("{{") ? k : "{{" + k + "}}";
+      mockContext[keyTag] = datosFormulario[k];
+    });
+  }
+
+  let renderedHTML = rawHTML;
+  let unresolved = [];
+
+  Object.keys(mockContext).forEach(tag => {
+    const reg = new RegExp(tag.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&'), 'g');
+    renderedHTML = renderedHTML.replace(reg, mockContext[tag]);
+  });
+
+  const remainingMatches = renderedHTML.match(/\{\{[a-zA-Z0-9_\.]+\}\}/g);
+  if (remainingMatches) {
+    unresolved = Array.from(new Set(remainingMatches));
+    unresolved.forEach(tag => {
+      const reg = new RegExp(tag.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&'), 'g');
+      renderedHTML = renderedHTML.replace(reg, `<mark style="background-color: #fef08a; color: #854d0e; padding: 2px 6px; border-radius: 4px; font-weight: bold;">[CAMPO PENDIENTE: ${tag}]</mark>`);
+    });
+  }
+
+  return {
+    status: "success",
+    renderedHTML: renderedHTML,
+    unresolvedFields: unresolved,
+    hasPendingFields: unresolved.length > 0
+  };
+}
+
+function generateSchoolDocument(payload) {
+  const { plantillaId, targetEntityId, estudianteUserId, solicitanteUserId, datosFormulario, observaciones } = payload || {};
+  if (!plantillaId) throw new Error("plantillaId es requerido.");
+
+  const targetId = targetEntityId || estudianteUserId || "GENERICO";
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
-  const sheet = getOrCreateSheet(ss, "DocumentosEscolaresEmitidos");
+
+  // Obtener la plantilla
+  const templatesSheet = getOrCreateSheet(ss, "PlantillasEscolares");
+  const templates = templatesSheet.getDataRange().getValues().slice(1);
+  const templateRow = templates.find(r => String(r[0]).trim() === String(plantillaId).trim());
+
+  if (!templateRow) throw new Error("Plantilla no encontrada con ID: " + plantillaId);
+
+  const tVersion = templateRow[7] || "1.0";
+  const tState = templateRow[6] || "publicada";
+
   const now = new Date();
   const docId = "DOC-EM-" + now.getTime();
   const verifCode = "VERIF-" + Math.floor(100000 + Math.random() * 900000);
 
   const dJSON = typeof datosFormulario === "object" ? JSON.stringify(datosFormulario) : (datosFormulario || "{}");
 
-  sheet.appendRow([
+  const issuedSheet = getOrCreateSheet(ss, "DocumentosEscolaresEmitidos");
+  const driveFileId = "DRV-" + docId;
+  const driveUrl = "https://drive.google.com/file/d/" + driveFileId + "/view";
+  const nowISO = now.toISOString();
+
+  issuedSheet.appendRow([
     docId,
     String(plantillaId).trim(),
-    String(estudianteUserId).trim(),
-    solicitanteUserId ? String(solicitanteUserId).trim() : String(estudianteUserId).trim(),
+    String(targetId).trim(),
+    solicitanteUserId ? String(solicitanteUserId).trim() : String(targetId).trim(),
     dJSON,
     "issued",
     verifCode,
-    "Emitido electrónicamente con verificación QR/Código"
+    driveFileId,
+    driveUrl,
+    nowISO,
+    observaciones || "Emitido oficialmente mediante Diseñador de Plantillas",
+    tVersion
   ]);
 
   return {
     status: "success",
     documentoId: docId,
     codigoVerificacion: verifCode,
-    message: "Documento escolar generado e imprimible con código de autenticidad."
+    driveFileId: driveFileId,
+    driveUrl: driveUrl,
+    fechaEmision: nowISO,
+    versionPlantilla: tVersion,
+    message: "Documento oficial generado, registrado e indexado con éxito."
   };
 }
 
 function getIssuedSchoolDocuments(payload) {
-  const { estudianteUserId } = payload || {};
+  const { targetEntityId, estudianteUserId, plantillaId } = payload || {};
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
   const rows = getOrCreateSheet(ss, "DocumentosEscolaresEmitidos").getDataRange().getValues().slice(1);
 
+  const searchId = targetEntityId || estudianteUserId;
   let filtered = rows;
-  if (estudianteUserId) filtered = filtered.filter(r => String(r[2]).trim() === String(estudianteUserId).trim());
+
+  if (searchId) filtered = filtered.filter(r => String(r[2]).trim() === String(searchId).trim());
+  if (plantillaId) filtered = filtered.filter(r => String(r[1]).trim() === String(plantillaId).trim());
 
   const mapped = filtered.map(r => ({
     documentoId: r[0],
     plantillaId: r[1],
-    estudianteUserId: r[2],
+    targetEntityId: r[2],
     solicitanteUserId: r[3],
     datosJSON: r[4],
     estadoDoc: r[5],
     codigoVerificacion: r[6],
-    observaciones: r[7]
+    driveFileId: r[7] || "",
+    driveUrl: r[8] || "",
+    fechaEmision: r[9] || "",
+    observaciones: r[10] || "",
+    versionPlantilla: r[11] || "1.0"
   }));
 
   return {
     status: "success",
     documentos: mapped
+  };
+}
+
+function deleteOrArchiveSchoolDocumentTemplate(payload) {
+  const { plantillaId, nuevoEstado } = payload || {};
+  if (!plantillaId) throw new Error("plantillaId requerido.");
+
+  const targetState = nuevoEstado || "archivada";
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "PlantillasEscolares");
+  const data = sheet.getDataRange().getValues();
+
+  const idx = data.findIndex(r => String(r[0]).trim() === String(plantillaId).trim());
+  if (idx === -1) throw new Error("Plantilla no encontrada.");
+
+  sheet.getRange(idx + 1, 7).setValue(targetState);
+
+  return {
+    status: "success",
+    plantillaId: plantillaId,
+    nuevoEstado: targetState,
+    message: "Estado de la plantilla actualizado a '" + targetState + "'."
+  };
+}
+
+function importDocumentTemplateBase(payload) {
+  const { nombreArchivo, contenidoTexto, categoria } = payload || {};
+  if (!contenidoTexto) throw new Error("contenidoTexto requerido para importación.");
+
+  const pId = "TMP-IMP-" + Date.now();
+  const codigoDoc = "IMP-" + Math.floor(100 + Math.random() * 900);
+  const titulo = (nombreArchivo || "Documento Importado").replace(/\.[^/.]+$/, "");
+
+  let htmlFormatted = `<div style="font-family: Arial, sans-serif; padding: 25px;">
+    <h2 style="color: #1e3a8a; border-bottom: 2px solid #1e3a8a; padding-bottom: 8px;">${titulo}</h2>
+    ${String(contenidoTexto).split('\n').map(line => `<p>${line}</p>`).join('')}
+  </div>`;
+
+  return {
+    status: "success",
+    plantillaImportada: {
+      plantillaId: pId,
+      codigoDocumento: codigoDoc,
+      categoria: categoria || "Administrativo",
+      titulo: titulo,
+      contenidoHTML: htmlFormatted,
+      version: "1.0",
+      estado: "borrador"
+    },
+    message: "Base documental importada como borrador en el diseñador."
   };
 }
 

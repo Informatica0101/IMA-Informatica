@@ -127,6 +127,7 @@
                 <button id="nav-logros" class="flex-none px-4 py-2 rounded-xl font-semibold transition-all text-[10px] uppercase tracking-widest bg-gray-100 text-gray-500">Logros</button>
                 <button id="nav-news" class="flex-none px-4 py-2 rounded-xl font-semibold transition-all text-[10px] uppercase tracking-widest bg-gray-100 text-gray-500">Noticias</button>
                 <button id="nav-admin" class="flex-none px-4 py-2 rounded-xl font-semibold transition-all text-[10px] uppercase tracking-widest bg-gray-100 text-gray-500">Administración</button>
+                <button id="nav-plantillas" class="flex-none px-4 py-2 rounded-xl font-semibold transition-all text-[10px] uppercase tracking-widest bg-gray-100 text-gray-500"><i class="fa-solid fa-file-pen mr-1"></i> Diseñador de Plantillas</button>
             </nav>
 
             <!-- Sección de Dashboard (Entregas Operativas) -->
@@ -1246,6 +1247,58 @@
                     </table>
                 </div>
             </section>
+
+            <!-- SECTION PLANTILLAS: Diseñador Universal de Documentos y Plantillas -->
+            <section id="section-plantillas" class="animate-fade-in-up hidden">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6 bg-white p-6 rounded-3xl border border-gray-100 shadow-sm">
+                    <div>
+                        <span class="px-3 py-1 bg-indigo-50 text-indigo-700 rounded-full text-[10px] font-black uppercase tracking-widest">Fase 22 · Módulo Institucional</span>
+                        <h2 class="text-xl md:text-2xl font-black text-gray-900 uppercase tracking-tight mt-1">Diseñador Universal de Documentos y Plantillas</h2>
+                        <p class="text-xs text-gray-500 font-medium">Administración, edición, previsualización y generación de constancias, certificados y documentos institucionales.</p>
+                    </div>
+                    <div class="flex flex-wrap items-center gap-2">
+                        <button id="btn-import-template-base" class="px-4 py-2.5 bg-gray-100 text-gray-700 rounded-2xl font-bold text-xs uppercase tracking-wider hover:bg-gray-200 transition-all">
+                            <i class="fa-solid fa-file-import mr-1"></i> Importar Base
+                        </button>
+                        <button id="btn-open-template-editor" class="px-5 py-2.5 bg-blue-600 text-white rounded-2xl font-bold text-xs uppercase tracking-wider hover:bg-blue-700 transition-all shadow-md">
+                            <i class="fa-solid fa-plus mr-1"></i> Nueva Plantilla
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Filtros y Búsqueda -->
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+                    <div class="md:col-span-2 relative">
+                        <i class="fa-solid fa-magnifying-glass absolute left-4 top-3.5 text-gray-400 text-sm"></i>
+                        <input type="text" id="template-search-input" placeholder="Buscar por título, código o departamento..." class="w-full pl-10 pr-4 py-3 bg-white border border-gray-200 rounded-2xl text-xs font-semibold focus:outline-none focus:border-blue-500 shadow-sm">
+                    </div>
+                    <div>
+                        <select id="template-category-filter" class="w-full px-4 py-3 bg-white border border-gray-200 rounded-2xl text-xs font-semibold focus:outline-none focus:border-blue-500 shadow-sm">
+                            <option value="">Todas las Categorías</option>
+                            <option value="Académico">Académico</option>
+                            <option value="Financiero">Financiero</option>
+                            <option value="Administrativo">Administrativo</option>
+                            <option value="Legal / Matrícula">Legal / Matrícula</option>
+                        </select>
+                    </div>
+                    <div>
+                        <select id="template-state-filter" class="w-full px-4 py-3 bg-white border border-gray-200 rounded-2xl text-xs font-semibold focus:outline-none focus:border-blue-500 shadow-sm">
+                            <option value="">Todos los Estados</option>
+                            <option value="publicada">Publicadas</option>
+                            <option value="borrador">Borradores</option>
+                            <option value="suspendida">Suspendidas</option>
+                            <option value="archivada">Archivadas</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Grid de Tarjetas de Plantillas -->
+                <div id="templates-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div class="col-span-full text-center py-12 text-gray-400 font-bold text-xs uppercase">
+                        Cargando catálogo de plantillas institucionales...
+                    </div>
+                </div>
+            </section>
         </div>
     </main>
 
@@ -1598,6 +1651,190 @@
                     <button type="submit" class="btn-ima-primary flex-1 py-3">Guardar Cambios</button>
                 </div>
             </form>
+        </div>
+    </div>
+
+    <!-- MODAL EDITOR DE PLANTILLAS -->
+    <div id="modal-template-editor" class="fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center hidden z-[80] backdrop-blur-sm p-4 overflow-y-auto">
+        <div class="bg-white rounded-3xl shadow-2xl w-full max-w-5xl my-8 overflow-hidden animate-fade-in-up flex flex-col max-h-[90vh]">
+            <div class="p-6 bg-slate-900 text-white flex justify-between items-center">
+                <div>
+                    <span class="px-2.5 py-0.5 bg-blue-500 text-white text-[10px] font-black uppercase rounded-full">Diseñador de Plantilla</span>
+                    <h3 id="editor-modal-title" class="text-lg font-black uppercase tracking-tight mt-1">Configurar Plantilla Institucional</h3>
+                </div>
+                <button id="close-template-editor" class="text-slate-400 hover:text-white text-xl p-2"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+
+            <div class="p-6 overflow-y-auto space-y-6 flex-grow">
+                <input type="hidden" id="editor-template-id">
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 bg-slate-50 p-4 rounded-2xl border border-slate-200">
+                    <div>
+                        <label class="block text-[11px] font-bold uppercase text-slate-700 mb-1">Código de Plantilla *</label>
+                        <input type="text" id="editor-code" placeholder="Ej: CONST-ESTUDIO" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-xl font-semibold uppercase">
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-bold uppercase text-slate-700 mb-1">Título de la Plantilla *</label>
+                        <input type="text" id="editor-title" placeholder="Ej: Constancia Oficial de Estudios" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-xl font-semibold">
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-bold uppercase text-slate-700 mb-1">Categoría Documental</label>
+                        <select id="editor-category" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-xl font-semibold">
+                            <option value="Académico">Académico</option>
+                            <option value="Financiero">Financiero</option>
+                            <option value="Administrativo">Administrativo</option>
+                            <option value="Legal / Matrícula">Legal / Matrícula</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-bold uppercase text-slate-700 mb-1">Departamento Propietario</label>
+                        <input type="text" id="editor-department" value="Secretaría General" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-xl font-semibold">
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-bold uppercase text-slate-700 mb-1">Tipo de Formato Salida</label>
+                        <select id="editor-output-type" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-xl font-semibold">
+                            <option value="PDF">PDF Oficial Imprimible</option>
+                            <option value="HTML">Documento HTML Interactivo</option>
+                            <option value="Editable">Formulario Editable</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-bold uppercase text-slate-700 mb-1">Estado del Ciclo de Vida</label>
+                        <select id="editor-state" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-xl font-semibold">
+                            <option value="publicada">Publicada (Activa)</option>
+                            <option value="borrador">Borrador</option>
+                            <option value="suspendida">Suspendida</option>
+                            <option value="archivada">Archivada</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="bg-blue-50/50 p-4 rounded-2xl border border-blue-100 grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div>
+                        <label class="block text-[10px] font-bold uppercase text-blue-900 mb-1">Tamaño Hoja</label>
+                        <select id="editor-paper-size" class="w-full px-2.5 py-1.5 text-xs border border-blue-200 rounded-lg">
+                            <option value="Letter">Carta (Letter - 8.5 x 11 in)</option>
+                            <option value="A4">A4 (210 x 297 mm)</option>
+                            <option value="Legal">Oficio (Legal - 8.5 x 14 in)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold uppercase text-blue-900 mb-1">Orientación</label>
+                        <select id="editor-orientation" class="w-full px-2.5 py-1.5 text-xs border border-blue-200 rounded-lg">
+                            <option value="portrait">Vertical (Portrait)</option>
+                            <option value="landscape">Horizontal (Landscape)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold uppercase text-blue-900 mb-1">Márgenes (mm)</label>
+                        <input type="text" id="editor-margins" value="20mm" class="w-full px-2.5 py-1.5 text-xs border border-blue-200 rounded-lg">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold uppercase text-blue-900 mb-1">Versión Actual</label>
+                        <input type="text" id="editor-version" value="1.0" readonly class="w-full px-2.5 py-1.5 text-xs bg-gray-100 border border-gray-200 rounded-lg font-bold text-blue-700">
+                    </div>
+                </div>
+
+                <div class="space-y-2">
+                    <div class="flex items-center justify-between">
+                        <label class="block text-xs font-black uppercase text-slate-800">Campos Dinámicos Disponibles ({{...}})</label>
+                        <span class="text-[10px] text-gray-500 font-medium">Seleccione e inserte variables oficiales de la base de datos</span>
+                    </div>
+                    <div class="flex gap-2">
+                        <select id="dynamic-fields-select" class="flex-grow px-3 py-2 border border-slate-300 rounded-xl text-xs font-semibold">
+                            <!-- Se carga vía js/teacher.js -->
+                        </select>
+                        <button id="btn-insert-dynamic-field" class="px-4 py-2 bg-slate-800 text-white rounded-xl text-xs font-bold uppercase tracking-wider hover:bg-slate-700">
+                            + Insertar Variable
+                        </button>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-black uppercase text-slate-800 mb-2">Cuerpo y Estructura HTML de la Plantilla</label>
+                    <textarea id="editor-html-content" rows="12" class="w-full p-4 font-mono text-xs border border-slate-300 rounded-2xl focus:border-blue-500 focus:outline-none bg-slate-900 text-emerald-400 font-semibold" placeholder="Ingrese el diseño HTML de la plantilla con sus etiquetas {{...}}"></textarea>
+                </div>
+            </div>
+
+            <div class="p-4 bg-slate-100 border-t border-slate-200 flex flex-wrap justify-between items-center gap-2">
+                <button id="btn-preview-from-editor" class="px-4 py-2 bg-indigo-600 text-white rounded-xl font-bold text-xs uppercase tracking-wider hover:bg-indigo-700">
+                    <i class="fa-solid fa-eye mr-1"></i> Vista Previa
+                </button>
+                <div class="flex items-center gap-2">
+                    <button id="btn-close-editor-cancel" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-xl font-bold text-xs uppercase tracking-wider hover:bg-gray-300">
+                        Cancelar
+                    </button>
+                    <button id="btn-save-template" class="px-5 py-2 bg-blue-600 text-white rounded-xl font-bold text-xs uppercase tracking-wider hover:bg-blue-700 shadow-md">
+                        <i class="fa-solid fa-floppy-disk mr-1"></i> Guardar Plantilla
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL VISTA PREVIA -->
+    <div id="modal-template-preview" class="fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center hidden z-[90] backdrop-blur-sm p-4">
+        <div class="bg-white rounded-3xl shadow-2xl w-full max-w-4xl my-8 overflow-hidden animate-fade-in-up flex flex-col max-h-[92vh]">
+            <div class="p-5 bg-indigo-900 text-white flex justify-between items-center">
+                <div class="flex items-center gap-2">
+                    <i class="fa-solid fa-file-lines text-indigo-300 text-xl"></i>
+                    <div>
+                        <h3 class="text-sm font-black uppercase tracking-tight">Vista Previa de Documento</h3>
+                        <p class="text-[10px] text-indigo-200">Previsualización inocua con resolución dinámica de variables</p>
+                    </div>
+                </div>
+                <button id="close-template-preview" class="text-indigo-300 hover:text-white text-xl p-2"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div id="preview-pending-warning" class="hidden px-6 py-2.5 bg-amber-50 border-b border-amber-200 text-amber-800 text-xs font-bold flex items-center gap-2">
+                <i class="fa-solid fa-triangle-exclamation text-amber-600"></i>
+                <span id="preview-pending-text">Hay campos sin resolver identificados con [CAMPO PENDIENTE]</span>
+            </div>
+            <div class="p-6 overflow-y-auto flex-grow bg-slate-200">
+                <div id="preview-render-canvas" class="bg-white p-8 rounded-2xl shadow-md min-h-[500px] border border-slate-300">
+                    <!-- HTML Renderizado -->
+                </div>
+            </div>
+            <div class="p-4 bg-slate-100 border-t border-slate-200 flex justify-between items-center">
+                <button id="btn-back-to-editor" class="px-4 py-2 bg-slate-700 text-white rounded-xl font-bold text-xs uppercase hover:bg-slate-800">
+                    <i class="fa-solid fa-pen-to-square mr-1"></i> Volver al Editor
+                </button>
+                <button id="close-preview-btn" class="px-5 py-2 bg-gray-300 text-gray-800 rounded-xl font-bold text-xs uppercase hover:bg-gray-400">
+                    Cerrar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL GENERADOR DE DOCUMENTOS OFICIALES -->
+    <div id="modal-document-generator" class="fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center hidden z-[85] backdrop-blur-sm p-4">
+        <div class="bg-white rounded-3xl shadow-2xl w-full max-w-lg overflow-hidden animate-fade-in-up">
+            <div class="p-6 bg-slate-900 text-white flex justify-between items-center">
+                <div>
+                    <span class="px-2.5 py-0.5 bg-emerald-500 text-white text-[10px] font-black uppercase rounded-full">Emisión de Documento</span>
+                    <h3 id="generator-modal-title" class="text-base font-black uppercase mt-1">Generar Documento Oficial</h3>
+                </div>
+                <button id="close-document-generator" class="text-slate-400 hover:text-white text-xl p-2"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="p-6 space-y-4">
+                <input type="hidden" id="generator-template-id">
+                <div>
+                    <label class="block text-xs font-bold uppercase text-slate-700 mb-1">ID / DNI del Destinatario (Estudiante / Empleado)</label>
+                    <input type="text" id="generator-target-id" placeholder="Ej: EST-2026-089 o DNI 0801-2010-12345" class="w-full px-3 py-2.5 text-xs border border-slate-300 rounded-xl font-semibold">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold uppercase text-slate-700 mb-1">Motivo / Finalidad de la Solicitud</label>
+                    <textarea id="generator-reason" rows="3" placeholder="Ej: Trámite de Beca Externa / Solicitud Consular / Transferencia" class="w-full p-3 text-xs border border-slate-300 rounded-xl font-medium"></textarea>
+                </div>
+                <div class="p-3 bg-emerald-50 rounded-xl border border-emerald-200 text-emerald-900 text-[11px] font-semibold">
+                    <i class="fa-solid fa-shield-halved text-emerald-600 mr-1"></i> El documento se emitirá con un token único de verificación (`VERIF-XXXXXX`) e indexación automática en Google Drive.
+                </div>
+            </div>
+            <div class="p-4 bg-slate-100 border-t border-slate-200 flex justify-end gap-2">
+                <button id="btn-cancel-generation" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-xl font-bold text-xs uppercase">Cancelar</button>
+                <button id="btn-confirm-generate" class="px-5 py-2 bg-emerald-600 text-white rounded-xl font-bold text-xs uppercase hover:bg-emerald-700 shadow-md">
+                    <i class="fa-solid fa-circle-check mr-1"></i> Emitir Documento
+                </button>
+            </div>
         </div>
     </div>
 

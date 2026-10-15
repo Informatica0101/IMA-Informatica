@@ -1,8 +1,8 @@
 document.addEventListener('DOMContentLoaded', () => {
     // (A-29) Centralizar capacidades por rol
     const RoleCapabilities = {
-        canGrade: (user) => user && user.rol === 'Profesor',
-        canManageExams: (user) => user && user.rol === 'Profesor'
+        canGrade: (user) => user && (user.rol === 'Profesor' || user.rol === 'Administrador' || user.rol === 'Director' || user.rol === 'Subdirector' || user.rol === 'Secretaria'),
+        canManageExams: (user) => user && (user.rol === 'Profesor' || user.rol === 'Administrador' || user.rol === 'Director' || user.rol === 'Subdirector' || user.rol === 'Secretaria')
     };
 
     let submissionsTableBody = document.getElementById('submissions-table-body');
@@ -12,8 +12,9 @@ document.addEventListener('DOMContentLoaded', () => {
         window.location.href = 'login.html';
         return;
     }
-    const firstName = currentUser.nombre.split(' ')[0];
-    document.getElementById('teacher-name').textContent = firstName;
+    const firstName = (currentUser.nombre || currentUser.nombreCompleto || 'Usuario').split(' ')[0];
+    const teacherNameElem = document.getElementById('teacher-name');
+    if (teacherNameElem) teacherNameElem.textContent = firstName;
 
     // --- Elementos de Navegación y Secciones ---
     const navDashboard = document.getElementById('nav-dashboard');
@@ -28,6 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const navNews = document.getElementById('nav-news');
     const navAdmin = document.getElementById('nav-admin');
     const navReportsOld = document.getElementById('nav-reportes');
+    const navPlantillas = document.getElementById('nav-plantillas');
 
     const sectionAcademicReports = document.getElementById('section-dashboard');
     const sectionGradebook = document.getElementById('section-gradebook');
@@ -41,6 +43,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const sectionNews = document.getElementById('section-news');
     const sectionAdmin = document.getElementById('section-admin');
     const sectionReportes = document.getElementById('section-reportes');
+    const sectionPlantillas = document.getElementById('section-plantillas');
 
     const tareasListView = document.getElementById('tareas-list-view');
     const tareasCreateView = document.getElementById('tareas-create-view');
@@ -64,8 +67,8 @@ document.addEventListener('DOMContentLoaded', () => {
     let isNavigating = false;
     let studentSort = { column: 'nombre', direction: 'asc' };
 
-    const allSections = [sectionAcademicReports, sectionGradebook, sectionAttendance, sectionComunicados, sectionOrientacion, sectionSupervision, sectionTareas, sectionProyectos, sectionLogros, sectionNews, sectionAdmin, sectionReportes];
-    const allNavLinks = [navDashboard, navGradebook, navAttendance, navComunicados, navOrientacion, navSupervision, navTareas, navProyectos, navLogros, navNews, navAdmin, navReportsOld];
+    const allSections = [sectionAcademicReports, sectionGradebook, sectionAttendance, sectionComunicados, sectionOrientacion, sectionSupervision, sectionTareas, sectionProyectos, sectionLogros, sectionNews, sectionAdmin, sectionReportes, sectionPlantillas];
+    const allNavLinks = [navDashboard, navGradebook, navAttendance, navComunicados, navOrientacion, navSupervision, navTareas, navProyectos, navLogros, navNews, navAdmin, navReportsOld, navPlantillas];
 
     // Auxiliar para normalizar strings (trim, lowercase y sin acentos) para comparaciones robustas
     const norm = (s) => (s || "").toString().trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
@@ -3724,6 +3727,450 @@ function toBase64(file) {
     }, '');
     window.navigateTo(sectionAcademicReports, navDashboard, false);
     fetchTeacherActivity();
+
+    // -----------------------------------------------------------------------
+    // FASE 22: DISEÑADOR UNIVERSAL DE DOCUMENTOS Y PLANTILLAS CONTROLLER
+    // -----------------------------------------------------------------------
+
+    let loadedTemplatesCache = [];
+
+    if (navPlantillas && sectionPlantillas) {
+        navPlantillas.addEventListener('click', () => {
+            window.navigateTo(sectionPlantillas, navPlantillas);
+            loadTemplateDesignerCatalog();
+            loadAvailableDynamicFields();
+        });
+    }
+
+    function getDefaultTemplatesFallback() {
+        return [
+            {
+                plantillaId: "TMP-001",
+                codigoDocumento: "CONST-ESTUDIO",
+                categoria: "Académico",
+                titulo: "Constancia de Estudios Oficial",
+                descripcion: "Constancia de estudios estándar para trámite administrativo o consular.",
+                departamento: "Secretaría General",
+                estado: "publicada",
+                version: "1.0",
+                contenidoHTML: `
+                <div style="font-family: Arial, sans-serif; padding: 30px; color: #1e293b;">
+                  <div style="text-align: center; border-bottom: 2px solid #1e3a8a; padding-bottom: 12px; margin-bottom: 24px;">
+                    <h1 style="color: #1e3a8a; font-size: 20px; margin: 0;">NEW GENERATION CHRISTIAN ACADEMY</h1>
+                    <p style="font-size: 12px; color: #64748b; margin: 4px 0 0 0;">Constancia Oficial de Estudios - Año Lectivo {{institucion.anoLectivo}}</p>
+                  </div>
+                  <p>Por medio de la presente, la Dirección y Secretaría de <strong>New Generation Christian Academy</strong> hace constar que:</p>
+                  <p style="font-size: 16px; text-align: center; margin: 20px 0; font-weight: bold; color: #0f172a;">{{estudiante.nombreCompleto}}</p>
+                  <p>Con número de documento / ID <strong>{{estudiante.identidad}}</strong>, se encuentra debidamente matriculado(a) y cursando de manera regular el grado <strong>{{estudiante.grado}} {{estudiante.seccion}}</strong> en esta institución educativa.</p>
+                  <p>Se extiende la presente constancia a petición de parte interesada para los fines de: <em>{{tramite.motivo}}</em>.</p>
+                  <div style="margin-top: 60px; text-align: center;">
+                    <div style="width: 220px; border-top: 1px solid #334155; margin: 0 auto; padding-top: 6px;">
+                      <strong>Secretaría Académica / Dirección</strong><br>
+                      <span style="font-size: 11px; color: #64748b;">New Generation Christian Academy</span>
+                    </div>
+                  </div>
+                </div>`
+            },
+            {
+                plantillaId: "TMP-002",
+                codigoDocumento: "CONST-SOLVENCIA",
+                categoria: "Financiero",
+                titulo: "Constancia de Solvencia Financiera",
+                descripcion: "Constancia emitida para verificar solvencia económica de matrículas y mensualidades.",
+                departamento: "Contabilidad y Cobros",
+                estado: "publicada",
+                version: "1.0",
+                contenidoHTML: `
+                <div style="font-family: Arial, sans-serif; padding: 30px; color: #1e293b;">
+                  <div style="text-align: center; border-bottom: 2px solid #166534; padding-bottom: 12px; margin-bottom: 24px;">
+                    <h1 style="color: #166534; font-size: 20px; margin: 0;">NEW GENERATION CHRISTIAN ACADEMY</h1>
+                    <p style="font-size: 12px; color: #64748b; margin: 4px 0 0 0;">Departamento de Contabilidad y Cobros</p>
+                  </div>
+                  <h2 style="text-align: center; font-size: 16px; margin-bottom: 20px;">CONSTANCIA DE SOLVENCIA</h2>
+                  <p>El Departamento de Contabilidad de <strong>New Generation Christian Academy</strong> certifica que el/la estudiante:</p>
+                  <p style="font-size: 16px; text-align: center; margin: 18px 0; font-weight: bold; color: #0f172a;">{{estudiante.nombreCompleto}}</p>
+                  <p>Se encuentra al día con sus compromisos financieros y cuotas colegiales correspondientes a: <strong>{{finanzas.mesesSolventes}}</strong>.</p>
+                  <div style="margin-top: 60px; text-align: center;">
+                    <div style="width: 220px; border-top: 1px solid #334155; margin: 0 auto; padding-top: 6px;">
+                      <strong>Coordinación Financiera</strong><br>
+                      <span style="font-size: 11px; color: #64748b;">New Generation Christian Academy</span>
+                    </div>
+                  </div>
+                </div>`
+            }
+        ];
+    }
+
+    async function loadTemplateDesignerCatalog() {
+        const grid = document.getElementById('templates-grid');
+        if (!grid) return;
+
+        grid.innerHTML = `<div class="col-span-full text-center py-12 text-gray-400 font-bold text-xs uppercase"><i class="fa-solid fa-spinner fa-spin mr-2"></i> Cargando catálogo de plantillas...</div>`;
+
+        try {
+            if (typeof apiCall === 'function') {
+                const resp = await apiCall({ action: 'getSchoolDocumentTemplates' }, 'ACCOUNTING');
+                if (resp && resp.status === 'success' && Array.isArray(resp.plantillas) && resp.plantillas.length > 0) {
+                    loadedTemplatesCache = resp.plantillas;
+                } else {
+                    loadedTemplatesCache = getDefaultTemplatesFallback();
+                }
+            } else {
+                loadedTemplatesCache = getDefaultTemplatesFallback();
+            }
+        } catch (e) {
+            console.warn("Error loading templates, using defaults:", e);
+            loadedTemplatesCache = getDefaultTemplatesFallback();
+        }
+
+        renderTemplateCatalog(loadedTemplatesCache);
+    }
+
+    function renderTemplateCatalog(templates) {
+        const grid = document.getElementById('templates-grid');
+        if (!grid) return;
+
+        const searchVal = norm(document.getElementById('template-search-input')?.value || "");
+        const catVal = (document.getElementById('template-category-filter')?.value || "").toLowerCase();
+        const stateVal = (document.getElementById('template-state-filter')?.value || "").toLowerCase();
+
+        let filtered = templates.filter(t => {
+            const matchesSearch = !searchVal || norm(t.titulo).includes(searchVal) || norm(t.codigoDocumento).includes(searchVal) || norm(t.departamento).includes(searchVal);
+            const matchesCat = !catVal || (t.categoria || "").toLowerCase() === catVal;
+            const matchesState = !stateVal || (t.estado || "publicada").toLowerCase() === stateVal;
+            return matchesSearch && matchesCat && matchesState;
+        });
+
+        if (filtered.length === 0) {
+            grid.innerHTML = `<div class="col-span-full text-center py-12 bg-white rounded-3xl border border-gray-100 p-8">
+                <i class="fa-solid fa-folder-open text-gray-300 text-4xl mb-3"></i>
+                <p class="text-xs font-bold text-gray-500 uppercase">No se encontraron plantillas documentales con los filtros seleccionados.</p>
+            </div>`;
+            return;
+        }
+
+        grid.innerHTML = filtered.map(t => {
+            const isPub = t.estado === 'publicada';
+            const badgeBg = isPub ? 'bg-emerald-100 text-emerald-800' : (t.estado === 'borrador' ? 'bg-amber-100 text-amber-800' : 'bg-gray-100 text-gray-700');
+            const stateLabel = isPub ? 'Publicada' : (t.estado === 'borrador' ? 'Borrador' : t.estado);
+
+            return `
+            <div class="bg-white rounded-3xl border border-gray-100 shadow-sm hover:shadow-md transition-all p-6 flex flex-col justify-between space-y-4">
+                <div>
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="px-2.5 py-1 ${badgeBg} rounded-full text-[10px] font-black uppercase tracking-wider">${stateLabel}</span>
+                        <span class="text-[10px] font-extrabold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-lg">v${t.version || '1.0'}</span>
+                    </div>
+                    <h3 class="text-base font-black text-slate-900 leading-snug mb-1">${t.titulo}</h3>
+                    <p class="text-[11px] font-semibold text-slate-400 uppercase tracking-tight">${t.codigoDocumento} · ${t.categoria || 'Académico'}</p>
+                    <p class="text-xs text-gray-500 mt-2 line-clamp-2">${t.descripcion || 'Sin descripción de plantilla.'}</p>
+                </div>
+
+                <div class="pt-4 border-t border-gray-100 flex flex-wrap items-center justify-between gap-2">
+                    <div class="text-[10px] text-gray-400 font-bold uppercase">${t.departamento || 'Secretaría'}</div>
+                    <div class="flex items-center gap-1">
+                        <button onclick="previewTemplateById('${t.plantillaId}')" title="Previsualizar Documento" class="px-3 py-1.5 bg-indigo-50 text-indigo-700 hover:bg-indigo-100 rounded-xl font-bold text-xs">
+                            <i class="fa-solid fa-eye"></i>
+                        </button>
+                        <button onclick="editTemplateById('${t.plantillaId}')" title="Editar Plantilla" class="px-3 py-1.5 bg-slate-100 text-slate-700 hover:bg-slate-200 rounded-xl font-bold text-xs">
+                            <i class="fa-solid fa-pen"></i>
+                        </button>
+                        <button onclick="openGeneratorForTemplate('${t.plantillaId}', '${t.titulo}')" title="Emitir Documento Oficial" class="px-3 py-1.5 bg-emerald-600 text-white hover:bg-emerald-700 rounded-xl font-bold text-xs uppercase tracking-wider">
+                            Emitir
+                        </button>
+                    </div>
+                </div>
+            </div>`;
+        }).join('');
+    }
+
+    async function loadAvailableDynamicFields() {
+        const select = document.getElementById('dynamic-fields-select');
+        if (!select) return;
+
+        try {
+            const resp = await apiCall({ action: 'getAvailableDynamicFields' }, 'ACCOUNTING');
+            if (resp && resp.status === 'success' && Array.isArray(resp.campos)) {
+                select.innerHTML = `<option value="">-- Seleccionar Variable Dinámica --</option>` +
+                    resp.campos.map(c => `<option value="${c.clave}">${c.categoria}: ${c.etiqueta} (${c.clave})</option>`).join('');
+            }
+        } catch (e) {
+            console.error("Error loading dynamic fields:", e);
+        }
+    }
+
+    // Modal Trigger Listeners
+    const btnOpenEditor = document.getElementById('btn-open-template-editor');
+    const modalEditor = document.getElementById('modal-template-editor');
+    const closeEditorBtns = [document.getElementById('close-template-editor'), document.getElementById('btn-close-editor-cancel')];
+
+    if (btnOpenEditor && modalEditor) {
+        btnOpenEditor.addEventListener('click', () => {
+            document.getElementById('editor-template-id').value = '';
+            document.getElementById('editor-code').value = 'TMP-' + Math.floor(100 + Math.random() * 900);
+            document.getElementById('editor-title').value = '';
+            document.getElementById('editor-category').value = 'Académico';
+            document.getElementById('editor-department').value = 'Secretaría General';
+            document.getElementById('editor-output-type').value = 'PDF';
+            document.getElementById('editor-state').value = 'publicada';
+            document.getElementById('editor-version').value = '1.0';
+            document.getElementById('editor-html-content').value = '';
+            document.getElementById('editor-modal-title').textContent = 'Crear Nueva Plantilla Institucional';
+            modalEditor.classList.remove('hidden');
+        });
+    }
+
+    closeEditorBtns.forEach(btn => btn?.addEventListener('click', () => modalEditor?.classList.add('hidden')));
+
+    // Dynamic field insert
+    const btnInsertField = document.getElementById('btn-insert-dynamic-field');
+    if (btnInsertField) {
+        btnInsertField.addEventListener('click', () => {
+            const select = document.getElementById('dynamic-fields-select');
+            const textarea = document.getElementById('editor-html-content');
+            if (!select || !textarea || !select.value) return;
+
+            const val = select.value;
+            const start = textarea.selectionStart;
+            const end = textarea.selectionEnd;
+            const text = textarea.value;
+
+            textarea.value = text.substring(0, start) + val + text.substring(end);
+            textarea.focus();
+            textarea.selectionStart = textarea.selectionEnd = start + val.length;
+        });
+    }
+
+    // Save Template Listener
+    const btnSaveTemplate = document.getElementById('btn-save-template');
+    if (btnSaveTemplate) {
+        btnSaveTemplate.addEventListener('click', async () => {
+            const plantillaId = document.getElementById('editor-template-id')?.value;
+            const codigoDocumento = document.getElementById('editor-code')?.value.trim();
+            const titulo = document.getElementById('editor-title')?.value.trim();
+            const categoria = document.getElementById('editor-category')?.value;
+            const departamento = document.getElementById('editor-department')?.value.trim();
+            const tipoSalida = document.getElementById('editor-output-type')?.value;
+            const estado = document.getElementById('editor-state')?.value;
+            const contenidoHTML = document.getElementById('editor-html-content')?.value;
+
+            if (!codigoDocumento || !titulo || !contenidoHTML) {
+                alert("Por favor complete los campos obligatorios: Código, Título y Cuerpo HTML de la plantilla.");
+                return;
+            }
+
+            btnSaveTemplate.disabled = true;
+            btnSaveTemplate.innerHTML = `<i class="fa-solid fa-spinner fa-spin mr-1"></i> Guardando...`;
+
+            try {
+                const resp = await apiCall({
+                    action: 'configureSchoolDocumentTemplate',
+                    plantillaId,
+                    codigoDocumento,
+                    titulo,
+                    categoria,
+                    departamento,
+                    tipoSalida,
+                    estado,
+                    contenidoHTML
+                }, 'ACCOUNTING');
+
+                if (resp && resp.status === 'success') {
+                    alert("Plantilla configurada con éxito. Versión: " + (resp.version || '1.0'));
+                    modalEditor?.classList.add('hidden');
+                    loadTemplateDesignerCatalog();
+                } else {
+                    alert("No se pudo guardar la plantilla: " + (resp?.message || "Error desconocido"));
+                }
+            } catch (e) {
+                alert("Error de guardado: " + e.message);
+            } finally {
+                btnSaveTemplate.disabled = false;
+                btnSaveTemplate.innerHTML = `<i class="fa-solid fa-floppy-disk mr-1"></i> Guardar Plantilla`;
+            }
+        });
+    }
+
+    // Global Functions for Card Actions
+    window.editTemplateById = function(plantillaId) {
+        const found = loadedTemplatesCache.find(t => t.plantillaId === plantillaId);
+        if (!found) return;
+
+        document.getElementById('editor-template-id').value = found.plantillaId;
+        document.getElementById('editor-code').value = found.codigoDocumento || '';
+        document.getElementById('editor-title').value = found.titulo || '';
+        document.getElementById('editor-category').value = found.categoria || 'Académico';
+        document.getElementById('editor-department').value = found.departamento || 'Secretaría';
+        document.getElementById('editor-output-type').value = found.tipoSalida || 'PDF';
+        document.getElementById('editor-state').value = found.estado || 'publicada';
+        document.getElementById('editor-version').value = found.version || '1.0';
+        document.getElementById('editor-html-content').value = found.contenidoHTML || '';
+        document.getElementById('editor-modal-title').textContent = 'Editar Plantilla: ' + found.titulo;
+
+        modalEditor?.classList.remove('hidden');
+    };
+
+    window.previewTemplateById = async function(plantillaId) {
+        const modalPreview = document.getElementById('modal-template-preview');
+        const canvas = document.getElementById('preview-render-canvas');
+        const warning = document.getElementById('preview-pending-warning');
+
+        if (!modalPreview || !canvas) return;
+
+        canvas.innerHTML = `<div class="text-center py-12 text-indigo-600 font-bold"><i class="fa-solid fa-spinner fa-spin text-2xl mb-2"></i><br>Generando vista previa...</div>`;
+        modalPreview.classList.remove('hidden');
+
+        try {
+            const resp = await apiCall({ action: 'previewSchoolDocument', plantillaId }, 'ACCOUNTING');
+            if (resp && resp.status === 'success') {
+                canvas.innerHTML = resp.renderedHTML;
+                if (resp.hasPendingFields) {
+                    warning?.classList.remove('hidden');
+                } else {
+                    warning?.classList.add('hidden');
+                }
+            } else {
+                canvas.innerHTML = `<div class="text-red-500 font-bold p-4">Error al renderizar vista previa.</div>`;
+            }
+        } catch (e) {
+            canvas.innerHTML = `<div class="text-red-500 font-bold p-4">Error de conexión: ${e.message}</div>`;
+        }
+    };
+
+    // Preview from editor button
+    const btnPreviewFromEditor = document.getElementById('btn-preview-from-editor');
+    if (btnPreviewFromEditor) {
+        btnPreviewFromEditor.addEventListener('click', async () => {
+            const htmlContent = document.getElementById('editor-html-content')?.value;
+            if (!htmlContent) {
+                alert("Ingrese contenido HTML para previsualizar.");
+                return;
+            }
+
+            const modalPreview = document.getElementById('modal-template-preview');
+            const canvas = document.getElementById('preview-render-canvas');
+            const warning = document.getElementById('preview-pending-warning');
+
+            if (!modalPreview || !canvas) return;
+
+            canvas.innerHTML = `<div class="text-center py-12 text-indigo-600 font-bold"><i class="fa-solid fa-spinner fa-spin text-2xl mb-2"></i><br>Generando vista previa...</div>`;
+            modalPreview.classList.remove('hidden');
+
+            try {
+                const resp = await apiCall({ action: 'previewSchoolDocument', contenidoHTML: htmlContent }, 'ACCOUNTING');
+                if (resp && resp.status === 'success') {
+                    canvas.innerHTML = resp.renderedHTML;
+                    if (resp.hasPendingFields) {
+                        warning?.classList.remove('hidden');
+                    } else {
+                        warning?.classList.add('hidden');
+                    }
+                }
+            } catch (e) {
+                canvas.innerHTML = `<div class="text-red-500 font-bold p-4">Error: ${e.message}</div>`;
+            }
+        });
+    }
+
+    // Close preview listeners
+    [document.getElementById('close-template-preview'), document.getElementById('close-preview-btn'), document.getElementById('btn-back-to-editor')].forEach(b => b?.addEventListener('click', () => {
+        document.getElementById('modal-template-preview')?.classList.add('hidden');
+    }));
+
+    // Generator Modal Trigger
+    window.openGeneratorForTemplate = function(plantillaId, titulo) {
+        const modalGen = document.getElementById('modal-document-generator');
+        if (!modalGen) return;
+
+        document.getElementById('generator-template-id').value = plantillaId;
+        document.getElementById('generator-target-id').value = '';
+        document.getElementById('generator-reason').value = '';
+        document.getElementById('generator-modal-title').textContent = 'Emitir: ' + titulo;
+
+        modalGen.classList.remove('hidden');
+    };
+
+    [document.getElementById('close-document-generator'), document.getElementById('btn-cancel-generation')].forEach(b => b?.addEventListener('click', () => {
+        document.getElementById('modal-document-generator')?.classList.add('hidden');
+    }));
+
+    // Confirm Generation
+    const btnConfirmGen = document.getElementById('btn-confirm-generate');
+    if (btnConfirmGen) {
+        btnConfirmGen.addEventListener('click', async () => {
+            const plantillaId = document.getElementById('generator-template-id')?.value;
+            const targetEntityId = document.getElementById('generator-target-id')?.value.trim();
+            const reason = document.getElementById('generator-reason')?.value.trim();
+
+            if (!targetEntityId) {
+                alert("Ingrese el ID o DNI del estudiante o destinatario.");
+                return;
+            }
+
+            btnConfirmGen.disabled = true;
+            btnConfirmGen.innerHTML = `<i class="fa-solid fa-spinner fa-spin mr-1"></i> Emitiendo...`;
+
+            try {
+                const resp = await apiCall({
+                    action: 'generateSchoolDocument',
+                    plantillaId,
+                    targetEntityId,
+                    datosFormulario: { "tramite.motivo": reason || "Trámite Institucional Oficial" }
+                }, 'ACCOUNTING');
+
+                if (resp && resp.status === 'success') {
+                    alert(`¡Documento Oficial Emitido con Éxito!\n\nID Documento: ${resp.documentoId}\nCódigo de Verificación: ${resp.codigoVerificacion}\nVersión Plantilla: v${resp.versionPlantilla}`);
+                    document.getElementById('modal-document-generator')?.classList.add('hidden');
+                } else {
+                    alert("Error al generar documento: " + (resp?.message || "Error desconocido"));
+                }
+            } catch (e) {
+                alert("Error de emisión: " + e.message);
+            } finally {
+                btnConfirmGen.disabled = false;
+                btnConfirmGen.innerHTML = `<i class="fa-solid fa-circle-check mr-1"></i> Emitir Documento`;
+            }
+        });
+    }
+
+    // Import Base Template Listener
+    const btnImportBase = document.getElementById('btn-import-template-base');
+    if (btnImportBase) {
+        btnImportBase.addEventListener('click', async () => {
+            const sampleTxt = prompt("Ingrese el texto o contenido base para importar como borrador:");
+            if (!sampleTxt) return;
+
+            try {
+                const resp = await apiCall({
+                    action: 'importDocumentTemplateBase',
+                    nombreArchivo: 'Documento_Base_Importado.txt',
+                    contenidoTexto: sampleTxt
+                }, 'ACCOUNTING');
+
+                if (resp && resp.status === 'success' && resp.plantillaImportada) {
+                    const imp = resp.plantillaImportada;
+                    document.getElementById('editor-template-id').value = '';
+                    document.getElementById('editor-code').value = imp.codigoDocumento;
+                    document.getElementById('editor-title').value = imp.titulo;
+                    document.getElementById('editor-category').value = 'Administrativo';
+                    document.getElementById('editor-state').value = 'borrador';
+                    document.getElementById('editor-html-content').value = imp.contenidoHTML;
+                    document.getElementById('editor-modal-title').textContent = 'Plantilla Importada (Borrador)';
+
+                    modalEditor?.classList.remove('hidden');
+                }
+            } catch (e) {
+                alert("Error al importar base: " + e.message);
+            }
+        });
+    }
+
+    // Search and Filters
+    ['template-search-input', 'template-category-filter', 'template-state-filter'].forEach(id => {
+        document.getElementById(id)?.addEventListener('input', () => renderTemplateCatalog(loadedTemplatesCache));
+        document.getElementById(id)?.addEventListener('change', () => renderTemplateCatalog(loadedTemplatesCache));
+    });
+
 });
 /**
  * REQ: Soporte para copia de código en el panel del profesor (v7.6.4)

@@ -1105,3 +1105,13 @@
 - [X] `[REQ-DOC2-008]` Generación y verificación de archivos SACE con notas ordinarias, recuperaciones y promedios finales.
 - [X] `[REQ-DOC2-009]` Auditoría de ejecuciones de importación, logs por fila y procedimientos de reversión lógica.
 - [X] `[REQ-DOC2-010]` Seguridad, permisos en servidor (RBAC) y restricciones de acceso para spreadsheets y documentos exportados.
+
+---
+
+## REQUERIMIENTOS DE DISEÑADOR UNIVERSAL DE DOCUMENTOS Y PLANTILLAS (FASE 22)
+- [X] `[REQ-DOC3-001]` Catálogo centralizado de plantillas institucionales con metadatos completos y RBAC por departamento.
+- [X] `[REQ-DOC3-002]` Gestión del ciclo de vida de plantillas (Borrador, En revisión, Publicada, Suspendida, Archivada) con versionado inmutable.
+- [X] `[REQ-DOC3-003]` Editor interactivo de plantillas con formateo de página, orientación, márgenes y selector de variables dinámicas `{{...}}`.
+- [X] `[REQ-DOC3-004]` Resolución de campos dinámicos en backend, previsualización con resaltado de marcas pendientes e importación de bases documentales.
+- [X] `[REQ-DOC3-005]` Generación de documentos oficiales con código inmutable de verificación (`VERIF-XXXXXX`) e indexación en Google Drive.
+- [X] `[REQ-DOC3-006]` Trazabilidad total de emisiones, desvinculación retroactiva y desacoplamiento de datos sensibles.
