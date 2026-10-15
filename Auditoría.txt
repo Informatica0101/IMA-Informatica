@@ -449,3 +449,24 @@ ARCHIVOS EVALUADOS E IMPLEMENTADOS:
 - Verificación sintáctica aprobada con 'node -c' en todos los scripts frontend y backend.
 - Verificación visual mediante Playwright completada con captura de evidencia en '/home/jules/verification/screenshots/verification.png' y video '/home/jules/verification/videos/49aeeb011fb3e9593adb539fdc6611be.webm'.
 - Aprobación en Code Review obtenida con calificación #Correct#.
+
+===============================================================================
+AUDITORÍA DE IMPLEMENTACIÓN - FASE 24 & FASE 25: FORMULARIOS INSTITUCIONALES, FLUJOS DE APROBACIÓN Y FIRMA INSTITUCIONAL
+===============================================================================
+FECHA: 2026-10-15
+MÓDULO: Diseñador de Formularios, Diseñador de Flujos de Aprobación, Gestor de Decisiones y Firmas Institucionales
+ARCHIVOS EVALUADOS E IMPLEMENTADOS:
+- teacher-dashboard.html
+- js/teacher.js
+- backend/user-service/Code.gs
+
+1. EVALUACIÓN Y HALLAZGOS TÉCNICOS
+- Se diseñaron e implementaron los modales '#modal-form-builder' (Fase 24), '#modal-workflow-builder' y '#modal-workflow-decision' (Fase 25) en 'teacher-dashboard.html'.
+- Se desarrollaron los controladores JS en 'js/teacher.js' para crear/editar campos de formulario, definir secuencias de etapas de revisión por departamento y procesar decisiones de trámite (Aprobar, Rechazar, Devolver, Derivar).
+- Se implementaron las hojas 'FormulariosInstitucionales', 'FlujosAprobacion', 'RevisionesDecisionesTramite' y 'FirmasConformidades' en 'backend/user-service/Code.gs'.
+- Se crearon y registraron los endpoints 'saveInstitutionalForm', 'getInstitutionalForms', 'submitInstitutionalFormRequest', 'saveApprovalWorkflow', 'getApprovalWorkflows', 'processWorkflowDecision', 'getWorkflowHistory' y 'registerDocumentSignature'.
+- Se integró la emisión de conformidad digital con token único de verificación ('VERIF-XXXXXX').
+
+2. VERIFICACIÓN DE SEGURIDAD Y INTEGRIDAD
+- Verificación sintáctica con 'node --input-type=module -c' y 'node -c' en frontend y backend aprobada sin errores.
+- Verificación visual mediante Playwright completada con capturas de pantalla en '/home/jules/verification/screenshots/workflow_builder.png' y '/home/jules/verification/screenshots/workflow_decision.png'.

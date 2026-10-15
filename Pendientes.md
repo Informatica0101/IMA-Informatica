@@ -800,6 +800,33 @@
 - **Criterios de Aceptación:** Log de auditoría completo y protegido ante eliminaciones o modificaciones.
 - **Estado:** [X] Completada
 
+### [REQ-FLOW-008] Diseñador de Flujos de Aprobación Institucionales (Fase 25)
+- **Origen del Hallazgo:** Especificación Fase 25: Flujos de Aprobación, Revisión y Firma Institucional.
+- **Severidad/Clasificación:** Alto
+- **Archivos Involucrados:** `backend/user-service/Code.gs`, `teacher-dashboard.html`, `js/teacher.js`
+- **Dependencias Expuestas:** Hoja `FlujosAprobacion`, `#modal-workflow-builder`.
+- **Descripción del Alcance:** Constructor visual para definir secuencias de etapas de revisión, roles asignados y requisitos de conformidad por departamento.
+- **Criterios de Aceptación:** Creación, edición, versionado y publicación de flujos multietapa persistidos en backend.
+- **Estado:** [X] Completada
+
+### [REQ-FLOW-009] Registro Inmutable de Decisiones de Revisión (Fase 25)
+- **Origen del Hallazgo:** Especificación Fase 25: Flujos de Aprobación, Revisión y Firma Institucional.
+- **Severidad/Clasificación:** Crítico
+- **Archivos Involucrados:** `backend/user-service/Code.gs`, `js/teacher.js`
+- **Dependencias Expuestas:** Hoja `RevisionesDecisionesTramite`, `processWorkflowDecision`.
+- **Descripción del Alcance:** Registrar formalmente decisiones de revisión (Aprobar, Rechazar, Devolver, Derivar) con observaciones públicas e internas.
+- **Criterios de Aceptación:** Trazabilidad completa por solicitud sin permitir sobreescritura silenciosa de historial.
+- **Estado:** [X] Completada
+
+### [REQ-FLOW-010] Conformidad Digital e Integridad de Firma Institucional (Fase 25)
+- **Origen del Hallazgo:** Especificación Fase 25: Flujos de Aprobación, Revisión y Firma Institucional.
+- **Severidad/Clasificación:** Crítico
+- **Archivos Involucrados:** `backend/user-service/Code.gs`, `js/teacher.js`
+- **Dependencias Expuestas:** Hoja `FirmasConformidades`, `registerDocumentSignature`.
+- **Descripción del Alcance:** Emitir tokens únicos de verificación (`VERIF-XXXXXX`) vinculados a decisiones oficiales y documentos firmados.
+- **Criterios de Aceptación:** Firma registrada con timestamp, rol e IP de auditoría sin exponer claves secretas.
+- **Estado:** [X] Completada
+
 ---
 
 ## NUEVOS REQUERIMIENTOS TÉCNICOS: MODULARIZACIÓN Y MIGRACIÓN DE MICROSERVICIOS DEL BACKEND (New Generation Bilingual School and Institute)

@@ -4834,6 +4834,205 @@ function toBase64(file) {
         document.getElementById(id)?.addEventListener('change', () => renderTemplateCatalog(loadedTemplatesCache));
     });
 
+    // ---------------------------------------------------------------------------
+    // FASE 25: FLUJOS DE APROBACIÓN, REVISIÓN Y FIRMA INSTITUCIONAL
+    // ---------------------------------------------------------------------------
+    let currentWorkflowStages = [];
+    let editingWorkflowId = null;
+    let activeDecisionSolicitudId = null;
+
+    const modalWorkflowBuilder = document.getElementById('modal-workflow-builder');
+    const modalWorkflowDecision = document.getElementById('modal-workflow-decision');
+
+    document.getElementById('btn-close-workflow-builder')?.addEventListener('click', () => modalWorkflowBuilder?.classList.add('hidden'));
+    document.getElementById('btn-close-workflow-decision')?.addEventListener('click', () => modalWorkflowDecision?.classList.add('hidden'));
+    document.getElementById('btn-cancel-workflow-decision')?.addEventListener('click', () => modalWorkflowDecision?.classList.add('hidden'));
+
+    document.getElementById('btn-add-workflow-stage')?.addEventListener('click', addWorkflowStage);
+    document.getElementById('btn-save-workflow')?.addEventListener('click', saveWorkflowDefinition);
+    document.getElementById('btn-submit-workflow-decision')?.addEventListener('click', submitWorkflowDecision);
+
+    function openWorkflowBuilder(wfObj = null) {
+        editingWorkflowId = wfObj?.flujoId || null;
+        currentWorkflowStages = wfObj?.pasosEtapas ? JSON.parse(JSON.stringify(wfObj.pasosEtapas)) : [
+            { id: 'stg-1', nombre: 'Revisión Documental', rolRevisor: 'Secretaría', requiereFirma: false }
+        ];
+
+        document.getElementById('workflow-name-input').value = wfObj?.nombreFlujo || '';
+        document.getElementById('workflow-dept-select').value = wfObj?.departamento || 'Secretaría';
+
+        renderWorkflowStages();
+        modalWorkflowBuilder?.classList.remove('hidden');
+    }
+
+    function addWorkflowStage() {
+        const id = 'stg-' + Date.now();
+        currentWorkflowStages.push({
+            id: id,
+            nombre: `Etapa ${currentWorkflowStages.length + 1}`,
+            rolRevisor: 'Secretaría',
+            requiereFirma: false
+        });
+        renderWorkflowStages();
+    }
+
+    function renderWorkflowStages() {
+        const container = document.getElementById('workflow-stages-container');
+        if (!container) return;
+
+        if (!currentWorkflowStages.length) {
+            container.innerHTML = `
+                <div class="p-8 text-center text-slate-400 bg-white rounded-2xl border border-dashed border-slate-300">
+                    <i class="fa-solid fa-sitemap text-4xl mb-2 text-slate-300"></i>
+                    <p class="text-xs font-semibold">No hay etapas en el flujo. Haga clic en "Añadir Etapa de Revisión" para comenzar.</p>
+                </div>
+            `;
+            return;
+        }
+
+        container.innerHTML = currentWorkflowStages.map((s, idx) => `
+            <div class="p-3 bg-white border border-slate-200 rounded-2xl space-y-2 text-xs" data-stage-id="${s.id}">
+                <div class="flex items-center justify-between border-b border-slate-100 pb-2">
+                    <span class="font-mono text-[10px] font-bold text-indigo-700 uppercase bg-indigo-50 px-2 py-0.5 rounded-lg">Paso #${idx + 1}</span>
+                    <button class="btn-remove-stage text-rose-500 hover:text-rose-700 text-xs font-bold" data-id="${s.id}">
+                        <i class="fa-solid fa-trash-can mr-1"></i> Eliminar
+                    </button>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+                    <div>
+                        <label class="block text-[10px] font-bold text-slate-600 uppercase">Nombre de la Etapa</label>
+                        <input type="text" class="stage-name-input w-full px-2.5 py-1.5 border border-slate-300 rounded-xl font-semibold" data-id="${s.id}" value="${s.nombre}">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold text-slate-600 uppercase">Rol Revisor Responsable</label>
+                        <select class="stage-role-select w-full px-2.5 py-1.5 border border-slate-300 rounded-xl font-medium" data-id="${s.id}">
+                            <option value="Secretaría" ${s.rolRevisor === 'Secretaría' ? 'selected' : ''}>Secretaría</option>
+                            <option value="Orientación" ${s.rolRevisor === 'Orientación' ? 'selected' : ''}>Orientación</option>
+                            <option value="Contabilidad" ${s.rolRevisor === 'Contabilidad' ? 'selected' : ''}>Contabilidad</option>
+                            <option value="Director" ${s.rolRevisor === 'Director' ? 'selected' : ''}>Dirección</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2 pt-1">
+                    <input type="checkbox" class="stage-signature-input w-4 h-4 rounded text-indigo-600" data-id="${s.id}" ${s.requiereFirma ? 'checked' : ''}>
+                    <label class="text-xs font-bold text-slate-700">Requiere Firma / Conformidad Digital Institucional</label>
+                </div>
+            </div>
+        `).join('');
+
+        container.querySelectorAll('.stage-name-input').forEach(inp => inp.addEventListener('input', e => {
+            const s = currentWorkflowStages.find(x => x.id === e.target.dataset.id);
+            if (s) s.nombre = e.target.value;
+        }));
+
+        container.querySelectorAll('.stage-role-select').forEach(sel => sel.addEventListener('change', e => {
+            const s = currentWorkflowStages.find(x => x.id === e.target.dataset.id);
+            if (s) s.rolRevisor = e.target.value;
+        }));
+
+        container.querySelectorAll('.stage-signature-input').forEach(inp => inp.addEventListener('change', e => {
+            const s = currentWorkflowStages.find(x => x.id === e.target.dataset.id);
+            if (s) s.requiereFirma = e.target.checked;
+        }));
+
+        container.querySelectorAll('.btn-remove-stage').forEach(btn => btn.addEventListener('click', e => {
+            const id = e.currentTarget.dataset.id;
+            currentWorkflowStages = currentWorkflowStages.filter(x => x.id !== id);
+            renderWorkflowStages();
+        }));
+    }
+
+    async function saveWorkflowDefinition() {
+        const name = document.getElementById('workflow-name-input')?.value?.trim();
+        const dept = document.getElementById('workflow-dept-select')?.value;
+        const formId = document.getElementById('workflow-form-select')?.value || '';
+
+        if (!name) {
+            alert("Por favor ingrese un nombre para el flujo de aprobación.");
+            return;
+        }
+
+        try {
+            const resp = await apiCall({
+                action: 'saveApprovalWorkflow',
+                flujoId: editingWorkflowId,
+                formId: formId,
+                nombreFlujo: name,
+                departamento: dept,
+                pasosEtapasJSON: currentWorkflowStages,
+                estado: 'Publicado'
+            }, 'USER');
+
+            if (resp && resp.status === 'success') {
+                alert(`¡Flujo de aprobación guardado con éxito!\n\nID: ${resp.flujoId}\nVersión: v${resp.version}`);
+                modalWorkflowBuilder?.classList.add('hidden');
+            } else {
+                alert("Error al guardar flujo: " + (resp?.message || "Error desconocido"));
+            }
+        } catch (e) {
+            alert("Error de comunicación: " + e.message);
+        }
+    }
+
+    function openWorkflowDecisionModal(solicitudId, data = {}) {
+        activeDecisionSolicitudId = solicitudId;
+        document.getElementById('decision-solicitud-id').innerText = solicitudId;
+        document.getElementById('decision-solicitud-estado').innerText = data.estado || 'En Revisión';
+        document.getElementById('decision-solicitud-desc').innerText = data.descripcion || 'Detalle del trámite...';
+
+        const adjContainer = document.getElementById('decision-solicitud-adjunto');
+        if (data.adjuntoUrl) {
+            adjContainer.innerHTML = `<a href="${data.adjuntoUrl}" target="_blank" class="text-emerald-700 font-bold underline inline-flex items-center gap-1"><i class="fa-solid fa-paperclip"></i> Ver Documento / Adjunto</a>`;
+        } else {
+            adjContainer.innerHTML = `<span class="text-slate-400 italic">Sin archivo adjunto</span>`;
+        }
+
+        modalWorkflowDecision?.classList.remove('hidden');
+    }
+
+    async function submitWorkflowDecision() {
+        if (!activeDecisionSolicitudId) return;
+
+        const action = document.querySelector('input[name="decision-action"]:checked')?.value || 'APROBADO';
+        const obsPublic = document.getElementById('decision-obs-public')?.value || '';
+        const obsPrivate = document.getElementById('decision-obs-private')?.value || '';
+        const includeSignature = document.getElementById('decision-include-signature')?.checked || false;
+
+        try {
+            const resp = await apiCall({
+                action: 'processWorkflowDecision',
+                solicitudId: activeDecisionSolicitudId,
+                etapaNombre: 'Revisión Oficial',
+                revisorId: currentUser?.nombre || 'Revisor Institucional',
+                accionDecision: action,
+                observacionesInternas: obsPrivate,
+                observacionesPublicas: obsPublic
+            }, 'USER');
+
+            if (resp && resp.status === 'success') {
+                if (includeSignature) {
+                    await apiCall({
+                        action: 'registerDocumentSignature',
+                        solicitudId: activeDecisionSolicitudId,
+                        firmanteId: currentUser?.nombre || 'Autoridad Institucional',
+                        rolFirmante: currentUser?.rol || 'Secretaría',
+                        tipoFirma: 'Conformidad Digital Institucional'
+                    }, 'USER');
+                }
+                alert(`Decisión '${action}' procesada correctamente para la solicitud ${activeDecisionSolicitudId}.`);
+                modalWorkflowDecision?.classList.add('hidden');
+            } else {
+                alert("Error al procesar decisión: " + (resp?.message || "Error desconocido"));
+            }
+        } catch (e) {
+            alert("Error de comunicación: " + e.message);
+        }
+    }
+
+    // Export helpers globally if needed
+    window.openWorkflowBuilder = openWorkflowBuilder;
+    window.openWorkflowDecisionModal = openWorkflowDecisionModal;
+
 });
 /**
  * REQ: Soporte para copia de código en el panel del profesor (v7.6.4)

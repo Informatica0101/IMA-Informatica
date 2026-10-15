@@ -1234,3 +1234,13 @@ Descripción de cambios:
 - `js/teacher.js`: Módulo del Editor Visual de PDF, renderizado de páginas con PDF.js, arrastre (`initDragField`) y redimensionamiento (`initResizeField`), conversión de coordenadas ratio `(xRatio, yRatio, wRatio, hRatio)`, panel de propiedades con sincronización y catálogo de fuentes dinámicas autorizadas (`populatePropSourceTags`), e integración con la API backend.
 - `backend/accounting-service/Code.gs`: Soporte para plantillas de salida `PDF_OVERLAY` en `configureSchoolDocumentTemplate` con preservación de metadatos de configuración en `ConfigFormatoJSON`.
 - `Pendientes.md`, `Auditoría.txt`, `MapaDependencias.md`: Actualizados los registros de la Fase 23, estado de requerimientos `[REQ-PDF-001]` al `[REQ-PDF-006]` e inventario de entidades.
+
+## [Fase 24 & Fase 25] - 2026-10-15
+### Agregado
+- `teacher-dashboard.html`: Modales `#modal-form-builder` (Diseñador de Formularios Institucionales), `#modal-workflow-builder` (Diseñador de Flujos de Aprobación), y `#modal-workflow-decision` (Procesamiento de Decisiones y Firma de Trámite).
+- `js/teacher.js`: Controlador del Diseñador de Formularios (`openInstitutionalFormBuilder`, `renderBuilderFields`, `saveFormDefinition`), Controlador del Diseñador de Flujos (`openWorkflowBuilder`, `renderWorkflowStages`, `saveWorkflowDefinition`), y Gestor de Decisiones y Firmas (`openWorkflowDecisionModal`, `submitWorkflowDecision`).
+- `backend/user-service/Code.gs`:
+  - Tablas e inicialización de hojas: `FormulariosInstitucionales`, `FlujosAprobacion`, `RevisionesDecisionesTramite`, `FirmasConformidades`.
+  - Endpoints: `saveInstitutionalForm`, `getInstitutionalForms`, `submitInstitutionalFormRequest`, `saveApprovalWorkflow`, `getApprovalWorkflows`, `processWorkflowDecision`, `getWorkflowHistory`, `registerDocumentSignature`.
+  - Integración de permisos en `ROLE_PERMISSIONS` y enrutamiento en `doPost`.
+- `Pendientes.md`, `Auditoría.txt`, `MapaDependencias.md`: Registrados los requerimientos de la Fase 24 (`[REQ-FRM-001]` al `[REQ-FRM-006]`) y Fase 25 (`[REQ-FLOW-008]` al `[REQ-FLOW-010]`).

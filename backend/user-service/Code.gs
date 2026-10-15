@@ -197,6 +197,9 @@ function getOrCreateSheet(ss, name) {
     if (name === "BandejaNotificaciones") sheet.appendRow(["NotificacionID", "UserId", "Titulo", "Mensaje", "Tipo", "Categoria", "Leido", "EnlaceAccion", "FechaRegistro"]);
     if (name === "SolicitudesTramites") sheet.appendRow(["SolicitudID", "UserId", "EstudianteID", "TipoTramite", "Descripcion", "AdjuntoUrl", "Estado", "AsignadoA", "ObservacionesAdmin", "FechaSolicitud", "FechaResolucion"]);
     if (name === "FormulariosInstitucionales") sheet.appendRow(["FormID", "CodigoFormulario", "Titulo", "Descripcion", "Departamento", "DefinicionJSON", "Estado", "Version", "RequiereFirma", "PlantillaDocumentoId", "FechaCreacion", "CreadoPor"]);
+    if (name === "FlujosAprobacion") sheet.appendRow(["FlujoID", "FormID", "NombreFlujo", "Departamento", "PasosEtapasJSON", "Estado", "Version", "FechaCreacion", "CreadoPor"]);
+    if (name === "RevisionesDecisionesTramite") sheet.appendRow(["DecisionID", "SolicitudID", "EtapaNombre", "RevisorID", "AccionDecisión", "ObservacionesInternas", "ObservacionesPublicas", "FechaDecisión", "IpMetadata"]);
+    if (name === "FirmasConformidades") sheet.appendRow(["FirmaID", "SolicitudID", "DocumentoID", "FirmanteID", "RolFirmante", "TipoFirma", "TokenVerificacion", "FechaFirma", "IpMetadata"]);
     if (name === "CitasReuniones") sheet.appendRow(["CitaID", "SolicitanteID", "EstudianteID", "SolicitadoA", "Motivo", "FechaHora", "Modalidad", "Estado", "Comentarios"]);
   }
   return sheet;
@@ -238,17 +241,17 @@ const ROLE_PERMISSIONS = {
   "Director": [
     "createNews", "uploadNewsImage", "getNews", "updateNewsStatus", "getStudents", "getStudentsByGradoSeccion", "getUserInfo", "saveGameResult", "getGameStats", "getGlobalTop", "recordAnalytics", "getLearningProfile", "mergeGuestData", "updateUserProfile", "findPersonMatches", "createPerson", "linkPersonAccount", "manageAccountState", "generateInstitutionalId",
     "getInstitutionalCriteria", "saveInstitutionalCriterion", "getFormativeEvaluations", "saveFormativeEvaluation", "getSupportPlans", "saveSupportPlan",
-    "createLinkInvitation", "acceptLinkInvitation", "getGuardianStudents", "getInstitutionalAnnouncements", "createInstitutionalAnnouncement", "submitAnnouncementReceiptConfirmation", "getAnnouncementReadReport", "getDepartmentalWorkInbox", "closeConversationThread", "getInternalConversations", "getInternalMessages", "sendInternalMessage", "getUserNotifications", "getUnifiedNotifications", "markNotificationAsRead", "createUserNotification", "sendMultiChannelNotification", "getNotificationPreferences", "getAdministrativeRequests", "getAdministrativeRequestsHistory", "submitAdministrativeRequest", "submitStudentAbsenceJustification", "getStudentAbsenceJustifications", "reviewAbsenceJustification", "updateRequestStatus", "saveInstitutionalForm", "getInstitutionalForms", "submitInstitutionalFormRequest", "getAppointmentBookings", "bookAppointment", "updateAppointmentStatus", "getInstitutionalCalendarEvents", "getPendingReminders"
+    "createLinkInvitation", "acceptLinkInvitation", "getGuardianStudents", "getInstitutionalAnnouncements", "createInstitutionalAnnouncement", "submitAnnouncementReceiptConfirmation", "getAnnouncementReadReport", "getDepartmentalWorkInbox", "closeConversationThread", "getInternalConversations", "getInternalMessages", "sendInternalMessage", "getUserNotifications", "getUnifiedNotifications", "markNotificationAsRead", "createUserNotification", "sendMultiChannelNotification", "getNotificationPreferences", "getAdministrativeRequests", "getAdministrativeRequestsHistory", "submitAdministrativeRequest", "submitStudentAbsenceJustification", "getStudentAbsenceJustifications", "reviewAbsenceJustification", "updateRequestStatus", "saveInstitutionalForm", "getInstitutionalForms", "submitInstitutionalFormRequest", "saveApprovalWorkflow", "getApprovalWorkflows", "processWorkflowDecision", "getWorkflowHistory", "registerDocumentSignature", "getAppointmentBookings", "bookAppointment", "updateAppointmentStatus", "getInstitutionalCalendarEvents", "getPendingReminders"
   ],
   "Subdirector": [
     "createNews", "uploadNewsImage", "getNews", "updateNewsStatus", "getStudents", "getStudentsByGradoSeccion", "getUserInfo", "saveGameResult", "getGameStats", "getGlobalTop", "recordAnalytics", "getLearningProfile", "mergeGuestData", "updateUserProfile", "findPersonMatches", "generateInstitutionalId",
     "getInstitutionalCriteria", "saveInstitutionalCriterion", "getFormativeEvaluations", "saveFormativeEvaluation", "getSupportPlans", "saveSupportPlan",
-    "createLinkInvitation", "getGuardianStudents", "getInstitutionalAnnouncements", "createInstitutionalAnnouncement", "submitAnnouncementReceiptConfirmation", "getAnnouncementReadReport", "getDepartmentalWorkInbox", "closeConversationThread", "getInternalConversations", "getInternalMessages", "sendInternalMessage", "getUserNotifications", "getUnifiedNotifications", "markNotificationAsRead", "sendMultiChannelNotification", "getNotificationPreferences", "getAdministrativeRequests", "getAdministrativeRequestsHistory", "submitStudentAbsenceJustification", "getStudentAbsenceJustifications", "reviewAbsenceJustification", "updateRequestStatus", "saveInstitutionalForm", "getInstitutionalForms", "submitInstitutionalFormRequest", "getAppointmentBookings", "updateAppointmentStatus", "getInstitutionalCalendarEvents", "getPendingReminders"
+    "createLinkInvitation", "getGuardianStudents", "getInstitutionalAnnouncements", "createInstitutionalAnnouncement", "submitAnnouncementReceiptConfirmation", "getAnnouncementReadReport", "getDepartmentalWorkInbox", "closeConversationThread", "getInternalConversations", "getInternalMessages", "sendInternalMessage", "getUserNotifications", "getUnifiedNotifications", "markNotificationAsRead", "sendMultiChannelNotification", "getNotificationPreferences", "getAdministrativeRequests", "getAdministrativeRequestsHistory", "submitStudentAbsenceJustification", "getStudentAbsenceJustifications", "reviewAbsenceJustification", "updateRequestStatus", "saveInstitutionalForm", "getInstitutionalForms", "submitInstitutionalFormRequest", "saveApprovalWorkflow", "getApprovalWorkflows", "processWorkflowDecision", "getWorkflowHistory", "registerDocumentSignature", "getAppointmentBookings", "updateAppointmentStatus", "getInstitutionalCalendarEvents", "getPendingReminders"
   ],
   "Secretaría": [
     "createNews", "uploadNewsImage", "getNews", "updateNewsStatus", "getStudents", "getStudentsByGradoSeccion", "getUserInfo", "updateUserProfile", "findPersonMatches", "createPerson", "linkPersonAccount", "manageAccountState", "generateInstitutionalId",
     "getInstitutionalCriteria", "getFormativeEvaluations", "saveFormativeEvaluation", "getSupportPlans", "saveSupportPlan",
-    "createLinkInvitation", "acceptLinkInvitation", "getGuardianStudents", "getInstitutionalAnnouncements", "createInstitutionalAnnouncement", "submitAnnouncementReceiptConfirmation", "getAnnouncementReadReport", "getDepartmentalWorkInbox", "closeConversationThread", "getInternalConversations", "getInternalMessages", "sendInternalMessage", "getUserNotifications", "getUnifiedNotifications", "markNotificationAsRead", "createUserNotification", "sendMultiChannelNotification", "getNotificationPreferences", "getAdministrativeRequests", "getAdministrativeRequestsHistory", "submitAdministrativeRequest", "submitStudentAbsenceJustification", "getStudentAbsenceJustifications", "reviewAbsenceJustification", "updateRequestStatus", "saveInstitutionalForm", "getInstitutionalForms", "submitInstitutionalFormRequest", "getAppointmentBookings", "bookAppointment", "updateAppointmentStatus", "getInstitutionalCalendarEvents", "getPendingReminders"
+    "createLinkInvitation", "acceptLinkInvitation", "getGuardianStudents", "getInstitutionalAnnouncements", "createInstitutionalAnnouncement", "submitAnnouncementReceiptConfirmation", "getAnnouncementReadReport", "getDepartmentalWorkInbox", "closeConversationThread", "getInternalConversations", "getInternalMessages", "sendInternalMessage", "getUserNotifications", "getUnifiedNotifications", "markNotificationAsRead", "createUserNotification", "sendMultiChannelNotification", "getNotificationPreferences", "getAdministrativeRequests", "getAdministrativeRequestsHistory", "submitAdministrativeRequest", "submitStudentAbsenceJustification", "getStudentAbsenceJustifications", "reviewAbsenceJustification", "updateRequestStatus", "saveInstitutionalForm", "getInstitutionalForms", "submitInstitutionalFormRequest", "saveApprovalWorkflow", "getApprovalWorkflows", "processWorkflowDecision", "getWorkflowHistory", "registerDocumentSignature", "getAppointmentBookings", "bookAppointment", "updateAppointmentStatus", "getInstitutionalCalendarEvents", "getPendingReminders"
   ],
   "Contador": ["getStudents", "getUserInfo", "getNews", "getInstitutionalAnnouncements", "getUserNotifications", "markNotificationAsRead", "getAdministrativeRequests", "submitAdministrativeRequest"],
   "RecursosHumanos": ["getStudents", "getUserInfo", "getNews", "getInstitutionalAnnouncements", "getUserNotifications", "markNotificationAsRead", "getAdministrativeRequests", "submitAdministrativeRequest", "createNews", "getInternalMessages", "sendInternalMessage"],
@@ -353,6 +356,11 @@ function doPost(e) {
       case "saveInstitutionalForm": result = saveInstitutionalForm(payload); break;
       case "getInstitutionalForms": result = getInstitutionalForms(payload); break;
       case "submitInstitutionalFormRequest": result = submitInstitutionalFormRequest(payload); break;
+      case "saveApprovalWorkflow": result = saveApprovalWorkflow(payload); break;
+      case "getApprovalWorkflows": result = getApprovalWorkflows(payload); break;
+      case "processWorkflowDecision": result = processWorkflowDecision(payload); break;
+      case "getWorkflowHistory": result = getWorkflowHistory(payload); break;
+      case "registerDocumentSignature": result = registerDocumentSignature(payload); break;
       case "getAppointmentBookings": result = getAppointmentBookings(payload); break;
       case "bookAppointment": result = bookAppointment(payload); break;
       case "updateAppointmentStatus": result = updateAppointmentStatus(payload); break;
@@ -1988,3 +1996,235 @@ function uploadNewsImage(payload) {
 }
 
 function getOrCreateFolderNews(parent, name) { const f = parent.getFoldersByName(name); return f.hasNext() ? f.next() : parent.createFolder(name); }
+
+// ---------------------------------------------------------------------------
+// FASE 25: FLUJOS DE APROBACIÓN, REVISIÓN Y FIRMA INSTITUCIONAL
+// ---------------------------------------------------------------------------
+
+function saveApprovalWorkflow(payload) {
+  const {
+    flujoId,
+    formId,
+    nombreFlujo,
+    departamento,
+    pasosEtapasJSON,
+    estado,
+    creadoPor
+  } = payload || {};
+
+  if (!nombreFlujo || !departamento) {
+    throw new Error("nombreFlujo y departamento son requeridos para guardar un flujo de aprobación.");
+  }
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "FlujosAprobacion");
+  const data = sheet.getDataRange().getValues();
+
+  const fid = flujoId || "FLOW-" + Date.now();
+  const now = new Date();
+  const pasosStr = typeof pasosEtapasJSON === "object" ? JSON.stringify(pasosEtapasJSON) : (pasosEtapasJSON || "[]");
+
+  let existingIndex = -1;
+  let version = 1;
+
+  if (data.length > 1) {
+    existingIndex = data.findIndex(r => String(r[0]).trim() === String(fid).trim());
+    if (existingIndex !== -1) {
+      version = (parseInt(data[existingIndex][6]) || 1) + 1;
+    }
+  }
+
+  const rowData = [
+    fid,
+    formId || "",
+    nombreFlujo,
+    departamento,
+    pasosStr,
+    estado || "Publicado",
+    version,
+    now.toISOString(),
+    creadoPor || "Sistema"
+  ];
+
+  if (existingIndex !== -1) {
+    sheet.getRange(existingIndex + 1, 1, 1, rowData.length).setValues([rowData]);
+  } else {
+    sheet.appendRow(rowData);
+  }
+
+  return {
+    status: "success",
+    flujoId: fid,
+    version: version,
+    message: `Flujo de aprobación '${nombreFlujo}' guardado correctamente.`
+  };
+}
+
+function getApprovalWorkflows(payload) {
+  const { formId, departamento, estado } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "FlujosAprobacion");
+  const data = sheet.getDataRange().getValues();
+
+  if (data.length <= 1) return { status: "success", data: [] };
+
+  const workflows = data.slice(1).filter(r => {
+    if (formId && String(r[1]).trim() !== String(formId).trim()) return false;
+    if (departamento && String(r[3]).trim().toLowerCase() !== String(departamento).trim().toLowerCase()) return false;
+    if (estado && String(r[5]).trim().toLowerCase() !== String(estado).trim().toLowerCase()) return false;
+    return true;
+  }).map(r => {
+    let pasos = [];
+    try { pasos = JSON.parse(r[4]); } catch (e) { pasos = []; }
+    return {
+      flujoId: r[0],
+      formId: r[1],
+      nombreFlujo: r[2],
+      departamento: r[3],
+      pasosEtapas: pasos,
+      estado: r[5] || "Publicado",
+      version: r[6] || 1,
+      fechaCreacion: r[7] ? new Date(r[7]).toISOString() : null,
+      creadoPor: r[8] || "Sistema"
+    };
+  });
+
+  return { status: "success", data: workflows };
+}
+
+function processWorkflowDecision(payload) {
+  const {
+    solicitudId,
+    etapaNombre,
+    revisorId,
+    accionDecision,
+    observacionesInternas,
+    observacionesPublicas,
+    siguienteAsignadoA,
+    nuevoEstadoSolicitud
+  } = payload || {};
+
+  if (!solicitudId || !accionDecision) {
+    throw new Error("solicitudId y accionDecision son requeridos para procesar la revisión.");
+  }
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+
+  // 1. Registrar decisión
+  const decSheet = getOrCreateSheet(ss, "RevisionesDecisionesTramite");
+  const decId = "DEC-" + Date.now();
+  const now = new Date();
+
+  decSheet.appendRow([
+    decId,
+    solicitudId,
+    etapaNombre || "Revisión General",
+    revisorId || "Revisor",
+    accionDecision, // 'APROBADO', 'RECHAZADO', 'DEVUELTO_CORRECCION', 'DERIVADO'
+    observacionesInternas || "",
+    observacionesPublicas || "",
+    now.toISOString(),
+    "127.0.0.1"
+  ]);
+
+  // 2. Actualizar estado de la solicitud en SolicitudesTramites
+  const solSheet = getOrCreateSheet(ss, "SolicitudesTramites");
+  const solData = solSheet.getDataRange().getValues();
+  const idx = solData.findIndex(r => String(r[0]).trim() === String(solicitudId).trim());
+
+  let estadoFinal = nuevoEstadoSolicitud || "En Revisión";
+  if (accionDecision === "APROBADO") estadoFinal = "Aprobada";
+  else if (accionDecision === "RECHAZADO") estadoFinal = "Rechazada";
+  else if (accionDecision === "DEVUELTO_CORRECCION") estadoFinal = "Requiere Corrección";
+
+  if (idx !== -1) {
+    solSheet.getRange(idx + 1, 7).setValue(estadoFinal);
+    if (siguienteAsignadoA) solSheet.getRange(idx + 1, 8).setValue(siguienteAsignadoA);
+    if (observacionesPublicas) solSheet.getRange(idx + 1, 9).setValue(observacionesPublicas);
+    solSheet.getRange(idx + 1, 11).setValue(now);
+  }
+
+  return {
+    status: "success",
+    decisionId: decId,
+    nuevoEstado: estadoFinal,
+    message: `Decisión '${accionDecision}' registrada exitosamente para la solicitud ${solicitudId}.`
+  };
+}
+
+function getWorkflowHistory(payload) {
+  const { solicitudId } = payload || {};
+  if (!solicitudId) throw new Error("solicitudId es requerido.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+
+  // Decisiones
+  const decSheet = getOrCreateSheet(ss, "RevisionesDecisionesTramite");
+  const decData = decSheet.getDataRange().getValues();
+  const history = (decData.length > 1) ? decData.slice(1).filter(r => String(r[1]).trim() === String(solicitudId).trim()).map(r => ({
+    decisionId: r[0],
+    solicitudId: r[1],
+    etapaNombre: r[2],
+    revisorId: r[3],
+    accionDecision: r[4],
+    observacionesInternas: r[5],
+    observacionesPublicas: r[6],
+    fechaDecision: r[7] ? new Date(r[7]).toISOString() : null
+  })) : [];
+
+  // Firmas
+  const firmSheet = getOrCreateSheet(ss, "FirmasConformidades");
+  const firmData = firmSheet.getDataRange().getValues();
+  const signatures = (firmData.length > 1) ? firmData.slice(1).filter(r => String(r[1]).trim() === String(solicitudId).trim()).map(r => ({
+    firmaId: r[0],
+    solicitudId: r[1],
+    documentoId: r[2],
+    firmanteId: r[3],
+    rolFirmante: r[4],
+    tipoFirma: r[5],
+    tokenVerificacion: r[6],
+    fechaFirma: r[7] ? new Date(r[7]).toISOString() : null
+  })) : [];
+
+  return { status: "success", historialDecisiones: history, firmas: signatures };
+}
+
+function registerDocumentSignature(payload) {
+  const {
+    solicitudId,
+    documentoId,
+    firmanteId,
+    rolFirmante,
+    tipoFirma
+  } = payload || {};
+
+  if (!solicitudId || !firmanteId) {
+    throw new Error("solicitudId y firmanteId son requeridos para registrar la firma/conformidad.");
+  }
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "FirmasConformidades");
+  const fid = "SIG-" + Date.now();
+  const now = new Date();
+  const tokenVerif = "VERIF-" + Math.random().toString(36).substring(2, 10).toUpperCase();
+
+  sheet.appendRow([
+    fid,
+    solicitudId,
+    documentoId || "DOC-N/A",
+    firmanteId,
+    rolFirmante || "Autoridad Institucional",
+    tipoFirma || "Conformidad Digital Institucional",
+    tokenVerif,
+    now.toISOString(),
+    "127.0.0.1"
+  ]);
+
+  return {
+    status: "success",
+    firmaId: fid,
+    tokenVerificacion: tokenVerif,
+    fechaFirma: now.toISOString(),
+    message: "Firma / Conformidad institucional registrada con token de verificación."
+  };
+}
