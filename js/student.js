@@ -150,10 +150,223 @@ document.addEventListener('DOMContentLoaded', function() {
             });
     }
 
+    // Portal Familiar: Cargar estudiantes vinculados para tutores/padres (Fase 3)
+    function initFamilyStudentSwitcher() {
+        var switcherContainer = document.getElementById('family-student-switcher-container');
+        var switcherSelect = document.getElementById('family-student-switcher');
+        if (!switcherContainer || !switcherSelect || !currentUser) return;
+
+        fetchApi('USER', 'getGuardianStudents', { userId: currentUser.userId })
+            .then(function(res) {
+                if (res && res.status === 'success' && Array.isArray(res.data) && res.data.length > 0) {
+                    switcherContainer.classList.remove('hidden');
+                    switcherSelect.innerHTML = res.data.map(function(st) {
+                        var selected = (st.userId === currentUser.userId) ? 'selected' : '';
+                        return '<option value="' + st.userId + '" ' + selected + '>' + st.nombre + ' (' + (st.grado || '') + ' ' + (st.seccion || '') + ')</option>';
+                    }).join('');
+
+                    switcherSelect.onchange = function() {
+                        var selectedId = switcherSelect.value;
+                        var selectedStudent = res.data.find(function(s) { return s.userId === selectedId; });
+                        if (selectedStudent) {
+                            currentUser = selectedStudent;
+                            localStorage.setItem('currentUser', JSON.stringify(selectedStudent));
+                            renderStudentHeader();
+                            fetchAllActivities();
+                        }
+                    };
+                }
+            })
+            .catch(function(err) {
+                console.warn("Familiar student switcher deferred:", err);
+            });
+    }
+
     renderStudentHeader();
+    initFamilyStudentSwitcher();
     fetchAndRenderFormativeEvaluations();
     fetchAndRenderStudentAttendanceSummary();
     fetchAndRenderStudentAdministrativeRequests();
+    fetchAndRenderStudentSchedule();
+    fetchAndRenderVirtualClassroom();
+
+    document.getElementById('btn-refresh-student-schedule')?.addEventListener('click', function() {
+        fetchAndRenderStudentSchedule();
+    });
+
+    document.getElementById('btn-refresh-virtual-classroom')?.addEventListener('click', function() {
+        fetchAndRenderVirtualClassroom();
+    });
+
+    function fetchAndRenderVirtualClassroom(subjectFilter) {
+        var postsContainer = document.getElementById('classroom-posts-container');
+        var materialsContainer = document.getElementById('classroom-materials-container');
+        if (!postsContainer || !materialsContainer || !currentUser) return;
+
+        postsContainer.innerHTML = '<div class="text-center py-6 text-gray-400 italic text-xs"><i class="fas fa-spinner fa-spin mr-1"></i>Cargando anuncios...</div>';
+        materialsContainer.innerHTML = '<div class="text-center py-6 text-gray-400 italic text-xs"><i class="fas fa-spinner fa-spin mr-1"></i>Cargando materiales...</div>';
+
+        // 1. Cargar Anuncios
+        fetchApi('TASK', 'getPosts', {
+            grado: currentUser.grado,
+            seccion: currentUser.seccion,
+            asignatura: subjectFilter || null
+        }).then(function(res) {
+            if (res && res.status === 'success' && Array.isArray(res.data)) {
+                var posts = res.data;
+                if (posts.length === 0) {
+                    postsContainer.innerHTML = '<div class="p-4 rounded-2xl bg-gray-50 text-center text-gray-400 text-xs italic">No hay anuncios publicados en esta clase.</div>';
+                    return;
+                }
+                postsContainer.innerHTML = posts.map(function(p) {
+                    return `
+                        <div class="p-4 rounded-2xl bg-indigo-50/40 border border-indigo-100/60 shadow-sm hover:border-indigo-200 transition-all">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="px-2.5 py-0.5 bg-indigo-100 text-indigo-700 text-[9px] font-bold uppercase rounded-full">${p.categoria}</span>
+                                <span class="text-[9px] text-gray-400 font-bold">${p.fechaPublicacion ? new Date(p.fechaPublicacion).toLocaleDateString() : 'Reciente'}</span>
+                            </div>
+                            <h5 class="text-xs font-bold text-gray-900 mb-1 uppercase tracking-tight">${p.titulo}</h5>
+                            <p class="text-xs text-gray-600 leading-relaxed mb-2">${p.contenido}</p>
+                            ${Array.isArray(p.adjuntos) && p.adjuntos.length > 0 ? `
+                                <div class="mt-2 pt-2 border-t border-indigo-100/50 flex flex-wrap gap-2">
+                                    ${p.adjuntos.map(function(att) {
+                                        return `<a href="${att.url || '#'}" target="_blank" class="text-[10px] font-bold text-indigo-600 hover:underline flex items-center gap-1"><i class="fas fa-paperclip"></i> ${att.nombre || 'Adjunto'}</a>`;
+                                    }).join('')}
+                                </div>
+                            ` : ''}
+                        </div>
+                    `;
+                }).join('');
+            } else {
+                postsContainer.innerHTML = '<div class="p-4 text-center text-gray-400 text-xs italic">No hay publicaciones disponibles.</div>';
+            }
+        }).catch(function() {
+            postsContainer.innerHTML = '<div class="p-4 text-center text-gray-400 text-xs italic">No hay publicaciones disponibles.</div>';
+        });
+
+        // 2. Cargar Materiales Educativos y Guías
+        fetchApi('TASK', 'getStudyMaterials', {
+            grado: currentUser.grado,
+            parcial: window.GLOBAL_SCOPE ? window.GLOBAL_SCOPE.ParcialActual : null,
+            asignatura: subjectFilter || null
+        }).then(function(res) {
+            if (res && res.status === 'success' && Array.isArray(res.data)) {
+                var materials = res.data;
+                if (materials.length === 0) {
+                    materialsContainer.innerHTML = '<div class="p-4 rounded-2xl bg-gray-50 text-center text-gray-400 text-xs italic">No hay materiales educativos publicados.</div>';
+                    return;
+                }
+                materialsContainer.innerHTML = materials.map(function(m) {
+                    return `
+                        <div class="p-4 rounded-2xl bg-emerald-50/40 border border-emerald-100/60 shadow-sm flex items-center justify-between gap-4 hover:border-emerald-200 transition-all">
+                            <div class="truncate">
+                                <div class="flex items-center gap-2 mb-1">
+                                    <span class="px-2 py-0.5 bg-emerald-100 text-emerald-800 text-[8px] font-black uppercase rounded">${m.tipoRecurso}</span>
+                                    <span class="text-[9px] font-bold text-gray-400 uppercase">${m.parcial || 'General'}</span>
+                                </div>
+                                <h5 class="text-xs font-bold text-gray-900 truncate uppercase tracking-tight">${m.titulo}</h5>
+                                <p class="text-[10px] text-gray-500 truncate">${m.descripcion || 'Recurso educativo oficial'}</p>
+                            </div>
+                            <a href="${m.archivoUrl}" target="_blank" class="px-3 py-2 bg-emerald-600 text-white hover:bg-emerald-700 rounded-xl text-[10px] font-bold uppercase tracking-widest flex items-center gap-1 shadow-sm flex-shrink-0">
+                                <i class="fas fa-download"></i> Abrir
+                            </a>
+                        </div>
+                    `;
+                }).join('');
+            } else {
+                materialsContainer.innerHTML = '<div class="p-4 text-center text-gray-400 text-xs italic">Sin materiales en esta sección.</div>';
+            }
+        }).catch(function() {
+            materialsContainer.innerHTML = '<div class="p-4 text-center text-gray-400 text-xs italic">Sin materiales en esta sección.</div>';
+        });
+    }
+
+    function fetchAndRenderStudentSchedule() {
+        var container = document.getElementById('student-schedule-container');
+        if (!container || !currentUser || !currentUser.userId) return;
+
+        container.innerHTML = '<div class="col-span-5 text-center py-8 text-gray-400 font-bold text-xs uppercase tracking-widest animate-pulse"><i class="fas fa-spinner fa-spin mr-2"></i>Cargando horario semanal...</div>';
+
+        fetchApi('ACADEMIC', 'getStudentSchedule', {
+            userId: currentUser.userId,
+            grado: currentUser.grado,
+            seccion: currentUser.seccion
+        }).then(function(res) {
+            if (res && res.status === 'success' && Array.isArray(res.schedules)) {
+                var schedules = res.schedules;
+                var days = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes"];
+
+                if (schedules.length === 0) {
+                    container.innerHTML = `
+                        <div class="col-span-5 text-center py-8 text-gray-400 italic text-xs border-2 border-dashed border-gray-100 rounded-2xl">
+                            No hay bloques de horario oficial publicados para ${currentUser.grado} Sección ${currentUser.seccion}.
+                        </div>
+                    `;
+                    return;
+                }
+
+                var html = '';
+                days.forEach(function(day) {
+                    var daySchedules = schedules.filter(function(s) {
+                        return s.diaSemana.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "") === day.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+                    });
+
+                    html += `
+                        <div class="bg-gray-50 rounded-2xl p-4 border border-gray-100 flex flex-col h-full">
+                            <div class="flex justify-between items-center mb-3 pb-2 border-b border-gray-200">
+                                <span class="text-xs font-black text-indigo-700 uppercase tracking-widest">${day}</span>
+                                <span class="px-2 py-0.5 bg-indigo-100 text-indigo-800 text-[9px] font-bold rounded-full">${daySchedules.length} clases</span>
+                            </div>
+                            <div class="space-y-3 flex-grow">
+                                ${daySchedules.length > 0 ? daySchedules.map(function(b) {
+                                    return `
+                                        <div class="p-3 bg-white rounded-xl border border-gray-100 shadow-sm hover:border-indigo-200 transition-all">
+                                            <p class="text-[9px] font-black text-indigo-500 uppercase tracking-widest">${b.horaInicio} - ${b.horaFin}</p>
+                                            <p class="text-xs font-bold text-gray-900 leading-tight mt-0.5">${b.asignaturaNombre}</p>
+                                            <div class="mt-2 pt-2 border-t border-gray-50 flex flex-col gap-0.5 text-[9px] font-semibold text-gray-500">
+                                                <span class="truncate"><i class="fas fa-chalkboard-teacher text-indigo-400 mr-1"></i>${b.docenteNombre} ${b.esSustituto ? '<span class="text-purple-600 font-bold">(Sustituto)</span>' : ''}</span>
+                                                <span><i class="fas fa-door-open text-teal-400 mr-1"></i>Aula: ${b.aulaCodigo || 'General'}</span>
+                                            </div>
+                                        </div>
+                                    `;
+                                }).join('') : '<p class="text-[10px] text-gray-400 italic py-4 text-center">Sin clases</p>'}
+                            </div>
+                        </div>
+                    `;
+                });
+                container.innerHTML = html;
+            } else {
+                container.innerHTML = '<div class="col-span-5 text-center py-6 text-red-500 text-xs font-bold uppercase">No se pudo obtener el horario.</div>';
+            }
+        }).catch(function(err) {
+            container.innerHTML = '<div class="col-span-5 text-center py-6 text-red-500 text-xs font-bold uppercase">Error al cargar horario: ' + err.message + '</div>';
+        });
+    }
+
+    document.getElementById('btn-open-justification-modal')?.addEventListener('click', function() {
+        var fecha = prompt('Ingrese la fecha de la ausencia (AAAA-MM-DD):', new Date().toISOString().split('T')[0]);
+        if (!fecha) return;
+        var motivo = prompt('Ingrese el motivo de la ausencia (Médico, Familiar, Personal):', 'Motivo Médico');
+        if (!motivo) return;
+        var obs = prompt('Observaciones o detalles adicionales:', 'Justificante presentado desde el Portal Familiar');
+
+        fetchApi('USER', 'submitStudentAbsenceJustification', {
+            userId: currentUser.userId,
+            estudianteId: currentUser.userId,
+            fechaAusencia: fecha,
+            motivo: motivo,
+            observaciones: obs
+        }).then(function(res) {
+            if (res && res.status === 'success') {
+                alert('Justificación de ausencia enviada a Orientación y Secretaría.');
+                fetchAndRenderStudentAdministrativeRequests();
+            } else {
+                alert('Error al enviar justificación: ' + (res.message || 'Error desconocido'));
+            }
+        }).catch(function(err) {
+            alert('Error al enviar justificación: ' + err.message);
+        });
+    });
 
     document.getElementById('btn-open-request-modal')?.addEventListener('click', function() {
         var tipo = prompt('Ingrese el tipo de trámite o solicitud (Ej: Constancia de Estudios, Solicitud de Justificante, Revisión de Nota):', 'Constancia de Estudios');
@@ -2139,6 +2352,141 @@ document.addEventListener('DOMContentLoaded', function() {
                 },
                 plugins: { legend: { display: false } }
             }
+        });
+    }
+
+    // --- CONSULTA DE RESULTADOS ACADÉMICOS OFICIALES Y BOLETÍN (FASE 9) ---
+    async function loadStudentAcademicResults() {
+        const container = document.getElementById('student-academic-results-container');
+        if (!container) return;
+
+        container.innerHTML = '<div class="text-center py-8 text-gray-400 italic text-xs"><i class="fas fa-spinner fa-spin mr-2"></i>Cargando resultados oficiales del instituto...</div>';
+
+        try {
+            const res = await fetchApi('EXAM', 'getStudentAcademicReport', { userId: currentUser.userId });
+            if (res.status === 'success' && res.data) {
+                const califs = res.data.calificaciones || [];
+                const recs = res.data.recuperaciones || [];
+
+                if (califs.length === 0) {
+                    container.innerHTML = `
+                        <div class="text-center py-8 text-gray-500 text-xs bg-gray-50 rounded-2xl p-6 border border-gray-100">
+                            <i class="fas fa-info-circle text-2xl text-purple-400 mb-2 block"></i>
+                            No hay calificaciones oficiales publicadas para el período actual. Los resultados aparecerán una vez que el docente realice el cierre de parcial.
+                        </div>
+                    `;
+                    return;
+                }
+
+                container.innerHTML = `
+                    <div class="overflow-x-auto rounded-2xl border border-gray-100 bg-white">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="bg-gray-100 text-gray-700 text-[10px] uppercase tracking-wider">
+                                    <th class="p-3">Evaluación / Categoría</th>
+                                    <th class="p-3 text-center">Nota Obtenida</th>
+                                    <th class="p-3 text-center">Puntaje Ponderado</th>
+                                    <th class="p-3 text-center">Observaciones</th>
+                                    <th class="p-3 text-center">Estado</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-100 text-xs">
+                                ${califs.map(c => `
+                                    <tr class="hover:bg-purple-50/30 transition-colors">
+                                        <td class="p-3 font-semibold text-gray-800">${c.evaluacionId}</td>
+                                        <td class="p-3 text-center font-bold text-gray-900">${c.notaObtenida}%</td>
+                                        <td class="p-3 text-center font-bold text-purple-700">${c.puntajePonderado}%</td>
+                                        <td class="p-3 text-center text-gray-500">${c.observaciones || '-'}</td>
+                                        <td class="p-3 text-center">
+                                            <span class="px-2.5 py-0.5 rounded-full text-[9px] font-bold uppercase bg-emerald-100 text-emerald-800">
+                                                Publicada
+                                            </span>
+                                        </td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                `;
+            } else {
+                container.innerHTML = `<div class="text-center py-6 text-red-500 text-xs">${res.message || 'Error al obtener resultados'}</div>`;
+            }
+        } catch (e) {
+            container.innerHTML = `<div class="text-center py-6 text-red-500 text-xs">Error de conexión: ${e.message}</div>`;
+        }
+    }
+
+    document.getElementById('btn-refresh-academic-results')?.addEventListener('click', loadStudentAcademicResults);
+
+    // --- CIRCULARES Y COMUNICADOS CON ACUSE DE RECIBO (FASE 11) ---
+    async function loadStudentAnnouncements() {
+        const container = document.getElementById('student-announcements-container');
+        if (!container) return;
+
+        container.innerHTML = '<div class="text-center py-6 text-gray-400 italic text-xs"><i class="fas fa-spinner fa-spin mr-1"></i>Cargando comunicados oficiales...</div>';
+
+        try {
+            const res = await fetchApi('USER', 'getInstitutionalAnnouncements', { rol: currentUser.rol, audiencia: "TodaLaComunidad" });
+            if (res.status === 'success' && Array.isArray(res.data)) {
+                const comms = res.data;
+                if (comms.length === 0) {
+                    container.innerHTML = '<div class="p-4 rounded-2xl bg-gray-50 text-center text-gray-400 text-xs italic">No hay comunicados generales emitidos.</div>';
+                    return;
+                }
+
+                container.innerHTML = comms.map(c => `
+                    <div class="p-4 rounded-2xl bg-indigo-50/40 border border-indigo-100 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                        <div>
+                            <div class="flex items-center gap-2 mb-1">
+                                <span class="px-2.5 py-0.5 bg-indigo-100 text-indigo-800 text-[8px] font-black uppercase rounded">${c.categoria}</span>
+                                <span class="text-[9px] text-gray-400 font-bold">${c.fechaPublicacion ? new Date(c.fechaPublicacion).toLocaleDateString() : ''}</span>
+                            </div>
+                            <h4 class="text-xs font-bold text-gray-900 uppercase tracking-tight">${c.titulo}</h4>
+                            <p class="text-xs text-gray-600 mt-1 leading-relaxed">${c.contenido}</p>
+                        </div>
+                        <div class="flex-shrink-0">
+                            ${c.requiereFirma ? `
+                                <button onclick="window.confirmAnnouncementReceipt('${c.comunicadoId}')" class="px-4 py-2 bg-indigo-600 text-white hover:bg-indigo-700 rounded-xl text-[10px] font-bold uppercase tracking-widest flex items-center gap-1 shadow-sm">
+                                    <i class="fas fa-check-circle"></i> Confirmar Acuse
+                                </button>
+                            ` : '<span class="text-[9px] text-emerald-600 font-bold uppercase"><i class="fas fa-eye"></i> Informativo</span>'}
+                        </div>
+                    </div>
+                `).join('');
+            } else {
+                container.innerHTML = '<div class="p-4 text-center text-gray-400 text-xs italic">No hay comunicados disponibles.</div>';
+            }
+        } catch (e) {
+            container.innerHTML = `<div class="p-4 text-center text-red-500 text-xs italic">Error al cargar comunicados: ${e.message}</div>`;
+        }
+    }
+
+    window.confirmAnnouncementReceipt = async function(comunicadoId) {
+        try {
+            const res = await fetchApi('USER', 'submitAnnouncementReceiptConfirmation', {
+                comunicadoId: comunicadoId,
+                userId: currentUser.userId
+            });
+
+            if (res.status === 'success') {
+                alert("Acuse de recibo de comunicado registrado con éxito.");
+                loadStudentAnnouncements();
+            } else {
+                alert("Error: " + res.message);
+            }
+        } catch (e) {
+            alert("Error al confirmar lectura: " + e.message);
+        }
+    };
+
+    document.getElementById('btn-refresh-announcements')?.addEventListener('click', loadStudentAnnouncements);
+
+    // Carga inicial de resultados académicos y comunicados si la pestaña de progreso está activa
+    const tabProgressBtn = document.getElementById('tab-progress');
+    if (tabProgressBtn) {
+        tabProgressBtn.addEventListener('click', () => {
+            loadStudentAcademicResults();
+            loadStudentAnnouncements();
         });
     }
 

@@ -1,4 +1,36 @@
-# Mapa de Dependencias Académicas (v8.8.0 - Fase 8 Portal Familiar y Comunicación)
+# Mapa de Dependencias Académicas (v8.9.0 - Plan General de Expansión e Interoperabilidad)
+
+## Plan General de Implementación de la Expansión (30 Fases)
+1. **Fase 1. Auditoría y planificación de la expansión**: Matriz de cobertura, inventario y mapeo de dependencias.
+2. **Fase 2. Arquitectura institucional e interoperabilidad**: Identificadores únicos institucionales, sincronización e interoperabilidad.
+3. **Fase 3. Experiencia de usuario y navegación unificada**: Navegación SPA por rol, búsqueda global y centro de notificaciones.
+4. **Fase 4. Identidad, permisos y gobierno de la información**: RBAC granular servidor, delegaciones y auditoría.
+5. **Fase 5. Admisiones, aspirantes y portal de familias**: Proceso de ingreso, entrevistas, listas de espera y conversión automática a estudiante.
+6. **Fase 6. Expediente institucional y ciclo de vida del estudiante**: Ficha única, traslados, promociones e historial inmutable.
+7. **Fase 7. Planificación académica, horarios y recursos**: Asignación docente, detección de conflictos de aula/horario y calendarios.
+8. **Fase 8. Aula virtual y gestión avanzada del aprendizaje**: Cursos, anuncios, entregas multimodales y comentarios privados.
+9. **Fase 9. Evaluaciones, calificaciones y resultados académicos**: Libro de calificaciones, ponderaciones, rúbricas y boletines.
+10. **Fase 10. Asistencia, disciplina y convivencia escolar**: Asistencia diaria/clase, tardanzas, justificantes e incidencias.
+11. **Fase 11. Comunicación y colaboración institucional**: Comunicados, avisos segmentados y mensajes bidireccionales.
+12. **Fase 12. Bienestar estudiantil, orientación y seguimiento de casos**: Citas de orientación, planes pedagógicos y privacidad.
+13. **Fase 13. Supervisión docente y calidad educativa**: Jornalizaciones, sílabos, observaciones y reemplazos.
+14. **Fase 14. Contabilidad, presupuestos y control financiero**: Cuentas contables, presupuestos, asientos y conciliación bancaria.
+15. **Fase 15. Pagos escolares, cobros y facturación**: Colegiaturas, recargos, pasarelas de pago, recibos y facturación SAR.
+16. **Fase 16. Recursos humanos y administración del personal**: Expedientes laborales, contratos, asistencia y vacaciones de personal.
+17. **Fase 17. Planillas, compensaciones y obligaciones laborales**: Nómina, deducciones de ley (IHSS, RAP, ISR) y boletas.
+18. **Fase 18. Compras, proveedores y contratación de servicios**: Solicitudes de compra, órdenes, proveedores y cuentas por pagar.
+19. **Fase 19. Inventario, activos fijos y mantenimiento**: Kardex, stock mínimo, activos patrimoniales y custodias.
+20. **Fase 20. Biblioteca y recursos educativos**: Catálogo bibliográfico, préstamos, reservas y devoluciones.
+21. **Fase 21. Transporte escolar y servicios complementarios**: Rutas, vehículos, paradas, conductores y capacidad.
+22. **Fase 22. Gestión documental, formularios y firma electrónica**: Repositorio de plantillas, constancias y solicitudes.
+23. **Fase 23. Motor institucional de flujos de trabajo**: Transiciones de estados, aprobaciones multinivel y bandejas de tarea.
+24. **Fase 24. Informes, indicadores y análisis institucional**: Analítica avanzada, tableros ejecutivos y reportes exportables.
+25. **Fase 25. Integraciones externas y compatibilidad institucional**: Importación Excel/CSV, Google Drive, pasarelas y compatibilidad SACE.
+26. **Fase 26. Configuración institucional y personalización**: Zona horaria, moneda, calendarios y parámetros generales.
+27. **Fase 27. Plataforma técnica, continuidad y recuperación**: Monitoreo ping-pong, respaldos JSON y restauración segura.
+28. **Fase 28. Accesibilidad, movilidad y continuidad de trabajo**: Interfaz adaptativa móvil, navegación por teclado y optimización de carga.
+29. **Fase 29. Migración, validación y transición operativa**: Mapeo de columnas, validación previa, conciliación e importaciones.
+30. **Fase 30. Consolidación, certificación interna y mejora continua**: Pruebas integrales inter-departamentales y capacitación.
 
 ## Módulo de Tareas (Teacher/Student)
 - Entidad: Tarea (Regular) -> Impacta Progreso Base.

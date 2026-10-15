@@ -1,3 +1,58 @@
+AUDITORÍA TÉCNICA Y DIAGNÓSTICO DE ARQUITECTURA - FASE 20: BIBLIOTECA Y RECURSOS EDUCATIVOS - Sun Jul 5 2026
+
+Archivos y Módulos Auditados:
+- backend/accounting-service/Code.gs
+- backend/task-service/Code.gs
+- dashboard-contabilidad.html
+- js/accounting.js
+- js/api.js
+
+1. DIAGNÓSTICO Y REUTILIZACIÓN DE ESTRUCTURAS DE DATOS EXISTENTES
+- Tablas y Endpoints en `backend/accounting-service/Code.gs`:
+  * `BibliotecaEjemplares`: Ficha y catálogo de ejemplares bibliográficos (`manageLibraryBook`, `getLibraryBooks`).
+  * `BibliotecaPrestamos`: Registro de préstamos y devoluciones de ejemplares (`processLibraryLoan`, `getLibraryLoans`).
+  * `AulasVirtuales` / `MaterialesEducativos`: Recursos digitales de aprendizaje de la Fase 8 en `backend/task-service/Code.gs`.
+
+2. HALLAZGOS Y PLAN DE IMPLEMENTACIÓN PARA LA FASE 20
+- Backend (`backend/accounting-service/Code.gs`):
+  * Ampliar `BibliotecaEjemplares` para diferenciar Obra (Título/Autor/ISBN), Edición y Ejemplar físico con su código y ubicación.
+  * Ampliar `BibliotecaPrestamos` con renovaciones (`returnLibraryLoan` / `renewLibraryLoan`), límites de préstamos simultáneos por rol y verificación de disponibilidad backend.
+  * Crear tabla `BibliotecaReservas`: Gestión de reservas con lista de espera y control de fecha de expiración (`reserveLibraryBook`, `getLibraryReservations`).
+  * Crear tabla `BibliotecaIncidencias`: Registro de pérdidas, daños, reparaciones e incidencias con trazabilidad (`recordLibraryIncident`, `getLibraryIncidents`).
+  * Crear tabla `RecursosDigitalesBiblioteca`: Catálogo de recursos educativos digitales con metadatos, licencias/permisos por rol o grado (`manageDigitalResource`, `getDigitalResources`).
+- Frontend & UI (`js/accounting.js` / `dashboard-contabilidad.html`):
+  * Crear módulo y sub-pestañas de Biblioteca (Catálogo de Búsqueda, Préstamos/Devoluciones, Reservas, Incidencias y Recursos Digitales) integrado al ecosistema institucional.
+
+====================================================================================================
+
+AUDITORÍA TÉCNICA Y DIAGNÓSTICO DE ARQUITECTURA - FASE 19: INVENTARIO, ACTIVOS FIJOS Y MANTENIMIENTO - Sun Jul 5 2026
+
+Archivos y Módulos Auditados:
+- backend/accounting-service/Code.gs
+- dashboard-contabilidad.html
+- js/teacher.js
+- js/api.js
+
+1. DIAGNÓSTICO Y REUTILIZACIÓN DE ESTRUCTURAS DE DATOS EXISTENTES
+- Tablas y Endpoints en `backend/accounting-service/Code.gs`:
+  * `InventariosKardex`: Hoja de movimientos Kardex de existencias (`recordInventoryMovement`, `getInventoryKardex`).
+  * `ActivosPatrimoniales`: Registro individual de activos patrimoniales institucionales (`manageAssetItem`, `getAssetItems`).
+  * `AsignacionesActivos`: Historial de entregas y custodias de activos a empleados/departamentos (`assignAssetCustody`, `getAssetAssignments`).
+  * `ProveedoresActivos` & `RecepcionesCompra`: Integración con Compras de la Fase 18 (`recordPurchaseReceipt`).
+  * `CuentasPorPagarGastos` & `AsientosContables`: Integración con la Contabilidad de la Fase 14.
+
+2. HALLAZGOS Y PLAN DE IMPLEMENTACIÓN PARA LA FASE 19
+- Backend (`backend/accounting-service/Code.gs`):
+  * Crear tabla `AlmacenesUbicaciones`: Maestro de sedes, bodegas, aulas y áreas de almacenamiento (`manageWarehouseLocation`, `getWarehouseLocations`).
+  * Ampliar `InventariosKardex` con prevención estricta de saldos negativos, solicitudes/entregas internas (`createMaterialRequisition`, `deliverMaterialRequisition`) y transferencias entre ubicaciones (`transferInventoryStock`).
+  * Crear tabla `InventariosConteosFisicos`: Programación, conteos ciegos/reales, conciliaciones y ajustes autorizados (`createPhysicalInventoryCount`, `reconcilePhysicalCount`).
+  * Crear tabla `MantenimientoOrdenes`: Ordenes de mantenimiento preventivo y correctivo con diagnóstico, repuestos consumidos de inventario y estado (`manageMaintenanceOrder`, `getMaintenanceOrders`).
+  * Crear tabla `BajasBienes`: Historial y actas de baja de bienes e insumos con preservación de trazabilidad histórica sin eliminación de registros (`registerAssetDisposal`, `getAssetDisposals`).
+- Frontend & UI (`dashboard-contabilidad.html` / `js/teacher.js`):
+  * Sub-pestaña interactiva en el panel contable para Inventarios (Kardex, Almacenes, Solicitudes/Transferencias, Conteos), Activos Fijos (Asignación/Custodia, Bajas) y Órdenes de Mantenimiento.
+
+====================================================================================================
+
 AUDITORÍA TÉCNICA Y DIAGNÓSTICO DE SOLO LECTURA - FASE 3: CONFIGURACIÓN INSTITUCIONAL Y ESTRUCTURA ACADÉMICA - Sun Jul 5 2026
 
 Archivos Auditados:

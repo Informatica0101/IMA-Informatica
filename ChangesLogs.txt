@@ -1,3 +1,37 @@
+REGISTRO DE CAMBIOS - FASE 20: BIBLIOTECA Y RECURSOS EDUCATIVOS - Sun Jul 5 2026
+
+Módulo: Backend (Gestión de Biblioteca y Recursos Educativos)
+- backend/accounting-service/Code.gs:
+    - Agregadas las tablas `BibliotecaReservas`, `BibliotecaIncidencias` y `RecursosDigitalesBiblioteca` en la rutina `getOrCreateSheet`.
+    - Agregados y mapeados los endpoints `reserveLibraryBook`, `getLibraryReservations`, `recordLibraryIncident`, `getLibraryIncidents`, `manageDigitalResource` y `getDigitalResources`.
+    - Habilitados los permisos RBAC correspondientes para `Director`, `Subdirector`, `Contador`, `Profesor`, `Estudiante`, `Alumno`, `Padre`, `Tutor` y `Responsable` en `ROLE_PERMISSIONS`.
+
+Módulo: Frontend & Panel Contable (Biblioteca & Recursos Educativos)
+- js/accounting.js:
+    - Agregadas vistas e interfaz para Catálogo Bibliográfico, Préstamos y Devoluciones, Reservas en Lista de Espera, Incidencias (Daños/Pérdidas) y Recursos Educativos Digitales.
+- dashboard-contabilidad.html:
+    - Agregado botón de submenú "Biblioteca & Recursos" en la retícula de navegación del dashboard contable.
+
+====================================================================================================
+
+REGISTRO DE CAMBIOS - FASE 19: INVENTARIO, ACTIVOS FIJOS Y MANTENIMIENTO - Sun Jul 5 2026
+
+Módulo: Backend (Gestión de Inventario, Activos Fijos y Mantenimiento)
+- backend/accounting-service/Code.gs:
+    - Agregadas las tablas `AlmacenesUbicaciones`, `MaterialesSolicitudes`, `InventariosConteosFisicos`, `MantenimientoOrdenes` y `BajasBienes` en la rutina `getOrCreateSheet`.
+    - Agregados y mapeados los endpoints `manageWarehouseLocation`, `getWarehouseLocations`, `transferInventoryStock`, `createMaterialRequisition`, `getMaterialRequisitions`, `deliverMaterialRequisition`, `createPhysicalInventoryCount`, `getPhysicalInventoryCounts`, `reconcilePhysicalCount`, `manageMaintenanceOrder`, `getMaintenanceOrders`, `registerAssetDisposal` y `getAssetDisposals`.
+    - Implementadas validaciones strictly en `recordInventoryMovement` para prevenir saldos negativos de existencias.
+    - Habilitados los permisos RBAC correspondientes para `Director`, `Subdirector` y `Contador` en `ROLE_PERMISSIONS`.
+
+Módulo: Frontend & Panel Contable (Inventarios & Mantenimiento)
+- js/accounting.js:
+    - Creado controlador para la gestión del panel contable e inventario institucional con sub-pestañas para Kardex de existencias, Almacenes y ubicaciones, Solicitudes y entregas de materiales, Activos patrimoniales y custodias, Órdenes de mantenimiento preventivo/correctivo y Bajas de bienes.
+- dashboard-contabilidad.html:
+    - Agregado botón de submenú "Inventario & Activos" en la retícula de navegación del dashboard contable.
+    - Vinculado script controlador `js/accounting.js`.
+
+====================================================================================================
+
 REGISTRO DE CAMBIOS FINAL (Versión Navegación y Cache) - Sun Jun 14 22:37:41 UTC 2026
 
 Módulo: Index y Navegación de Contenidos

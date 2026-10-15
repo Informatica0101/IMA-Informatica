@@ -116,6 +116,11 @@
 
             <nav class="flex flex-nowrap overflow-x-auto gap-2 md:gap-3 mb-6 pb-2 scroll-horizontal-clean">
                 <button id="nav-dashboard" class="flex-none px-4 py-2 rounded-xl font-semibold transition-all text-[10px] uppercase tracking-widest bg-blue-600 text-white">Entregas</button>
+                <button id="nav-gradebook" class="flex-none px-4 py-2 rounded-xl font-semibold transition-all text-[10px] uppercase tracking-widest bg-gray-100 text-gray-500">Libro de Calificaciones</button>
+                <button id="nav-attendance" class="flex-none px-4 py-2 rounded-xl font-semibold transition-all text-[10px] uppercase tracking-widest bg-gray-100 text-gray-500">Asistencia y Convivencia</button>
+                <button id="nav-comunicados" class="flex-none px-4 py-2 rounded-xl font-semibold transition-all text-[10px] uppercase tracking-widest bg-gray-100 text-gray-500">Comunicados e Integración</button>
+                <button id="nav-orientacion" class="flex-none px-4 py-2 rounded-xl font-semibold transition-all text-[10px] uppercase tracking-widest bg-gray-100 text-gray-500">Bienestar y Orientación</button>
+                <button id="nav-supervision" class="flex-none px-4 py-2 rounded-xl font-semibold transition-all text-[10px] uppercase tracking-widest bg-gray-100 text-gray-500">Supervisión Docente</button>
                 <button id="nav-reportes" class="flex-none px-4 py-2 rounded-xl font-semibold transition-all text-[10px] uppercase tracking-widest bg-gray-100 text-gray-500">Reportes</button>
                 <button id="nav-tareas" class="flex-none px-4 py-2 rounded-xl font-semibold transition-all text-[10px] uppercase tracking-widest bg-gray-100 text-gray-500">Actividades</button>
                 <button id="nav-proyectos" class="flex-none px-4 py-2 rounded-xl font-semibold transition-all text-[10px] uppercase tracking-widest bg-gray-100 text-gray-500">Proyectos</button>
@@ -491,6 +496,173 @@
                         </div>
                     </div>
 
+                    <!-- Tarjeta de Planificación de Horarios, Recursos y Sustituciones (Fase 7) -->
+                    <div class="card-ima border-indigo-100 bg-indigo-50/30 p-8 rounded-[2.5rem] md:col-span-2">
+                        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+                            <div class="flex items-center gap-4">
+                                <div class="w-12 h-12 bg-indigo-600 text-white rounded-2xl flex items-center justify-center text-xl shadow-lg shadow-indigo-100">
+                                    <i class="fas fa-calendar-alt"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-xl font-bold text-gray-800">Diseñador de Horarios & Sustituciones Docentes</h3>
+                                    <p class="text-xs text-gray-500 font-medium">Asignación de clases, aulas, recursos y prevención automática de colisiones</p>
+                                </div>
+                            </div>
+                            <div class="flex gap-2">
+                                <button id="btn-load-schedules-list" class="bg-indigo-600 text-white px-4 py-2.5 rounded-xl font-bold text-xs uppercase tracking-widest hover:bg-indigo-700 transition-all shadow-md">
+                                    <i class="fas fa-sync-alt mr-1"></i> Actualizar
+                                </button>
+                                <button id="btn-open-substitution-modal" class="bg-purple-600 text-white px-4 py-2.5 rounded-xl font-bold text-xs uppercase tracking-widest hover:bg-purple-700 transition-all shadow-md">
+                                    <i class="fas fa-user-friends mr-1"></i> Nueva Sustitución
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Formulario Constructor de Bloques de Horario -->
+                        <div class="bg-white p-6 rounded-3xl border border-indigo-100 shadow-sm mb-6">
+                            <h4 class="text-xs font-black text-indigo-600 uppercase tracking-widest mb-4"><i class="fas fa-plus-circle mr-1"></i> Crear / Asignar Bloque de Horario</h4>
+                            <form id="schedule-builder-form" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                                <div>
+                                    <label class="block text-[9px] font-bold text-gray-400 uppercase tracking-widest mb-1">Día de la Semana</label>
+                                    <select id="sch-dia" class="w-full p-2.5 bg-gray-50 border border-gray-100 rounded-xl text-xs font-semibold outline-none focus:ring-2 focus:ring-indigo-400" required>
+                                        <option value="Lunes">Lunes</option>
+                                        <option value="Martes">Martes</option>
+                                        <option value="Miércoles">Miércoles</option>
+                                        <option value="Jueves">Jueves</option>
+                                        <option value="Viernes">Viernes</option>
+                                        <option value="Sábado">Sábado</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-[9px] font-bold text-gray-400 uppercase tracking-widest mb-1">Hora Inicio</label>
+                                    <input type="time" id="sch-hora-inicio" class="w-full p-2.5 bg-gray-50 border border-gray-100 rounded-xl text-xs font-semibold outline-none focus:ring-2 focus:ring-indigo-400" required value="07:00">
+                                </div>
+                                <div>
+                                    <label class="block text-[9px] font-bold text-gray-400 uppercase tracking-widest mb-1">Hora Fin</label>
+                                    <input type="time" id="sch-hora-fin" class="w-full p-2.5 bg-gray-50 border border-gray-100 rounded-xl text-xs font-semibold outline-none focus:ring-2 focus:ring-indigo-400" required value="08:00">
+                                </div>
+                                <div>
+                                    <label class="block text-[9px] font-bold text-gray-400 uppercase tracking-widest mb-1">Aula / Espacio</label>
+                                    <select id="sch-aula" class="w-full p-2.5 bg-gray-50 border border-gray-100 rounded-xl text-xs font-semibold outline-none focus:ring-2 focus:ring-indigo-400">
+                                        <option value="AULA-101">Aula 101 - Informática</option>
+                                        <option value="AULA-102">Aula 102 - Multiusos</option>
+                                        <option value="LAB-COMP">Laboratorio de Cómputo</option>
+                                        <option value="LAB-CIEN">Laboratorio de Ciencias</option>
+                                        <option value="AUDITORIO">Auditorio Institucional</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-[9px] font-bold text-gray-400 uppercase tracking-widest mb-1">Grado Target</label>
+                                    <select id="sch-grado" class="w-full p-2.5 bg-gray-50 border border-gray-100 rounded-xl text-xs font-semibold outline-none focus:ring-2 focus:ring-indigo-400" required>
+                                        <option value="Décimo">Décimo</option>
+                                        <option value="Undécimo">Undécimo</option>
+                                        <option value="Duodécimo">Duodécimo</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-[9px] font-bold text-gray-400 uppercase tracking-widest mb-1">Sección Target</label>
+                                    <select id="sch-seccion" class="w-full p-2.5 bg-gray-50 border border-gray-100 rounded-xl text-xs font-semibold outline-none focus:ring-2 focus:ring-indigo-400" required>
+                                        <option value="A">Sección A</option>
+                                        <option value="B">Sección B</option>
+                                        <option value="C">Sección C</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-[9px] font-bold text-gray-400 uppercase tracking-widest mb-1">Docente Asignado</label>
+                                    <input type="text" id="sch-docente-id" class="w-full p-2.5 bg-gray-50 border border-gray-100 rounded-xl text-xs font-semibold outline-none focus:ring-2 focus:ring-indigo-400" placeholder="ID Docente o Docente Actual">
+                                </div>
+                                <div class="flex items-end gap-2">
+                                    <button type="submit" id="btn-save-class-schedule" class="w-full py-2.5 bg-indigo-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-indigo-700 transition-all shadow-md">
+                                        <i class="fas fa-check mr-1"></i> Publicar Horario
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+
+                        <!-- Lista de Horarios Programados -->
+                        <div class="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden">
+                            <div class="p-4 bg-gray-50 border-b border-gray-100 flex justify-between items-center">
+                                <h4 class="text-xs font-bold text-gray-700 uppercase tracking-widest">Matriz de Horarios Institucionales Programados</h4>
+                                <span id="schedule-count-badge" class="px-2.5 py-1 bg-indigo-100 text-indigo-700 rounded-full text-[10px] font-bold">0 Bloques</span>
+                            </div>
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-left border-collapse">
+                                    <thead>
+                                        <tr class="bg-gray-50/50 text-[9px] font-bold text-gray-400 uppercase tracking-widest border-b border-gray-100">
+                                            <th class="p-3">Día / Horario</th>
+                                            <th class="p-3">Asignatura / Oferta</th>
+                                            <th class="p-3">Grado & Sección</th>
+                                            <th class="p-3">Aula / Recurso</th>
+                                            <th class="p-3">Docente</th>
+                                            <th class="p-3 text-right">Acciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="schedules-table-body" class="divide-y divide-gray-100 text-xs">
+                                        <tr>
+                                            <td colspan="6" class="p-6 text-center text-gray-400 italic">No hay horarios cargados. Presione 'Actualizar' para obtener la matriz.</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tarjeta de Gestión de Aula Virtual & Publicador de Materiales (Fase 8) -->
+                    <div class="card-ima border-purple-100 bg-purple-50/30 p-8 rounded-[2.5rem] md:col-span-2">
+                        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+                            <div class="flex items-center gap-4">
+                                <div class="w-12 h-12 bg-purple-600 text-white rounded-2xl flex items-center justify-center text-xl shadow-lg shadow-purple-100">
+                                    <i class="fas fa-chalkboard-teacher"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-xl font-bold text-gray-800">Aula Virtual: Publicaciones & Materiales Educativos</h3>
+                                    <p class="text-xs text-gray-500 font-medium">Publicación de guías de estudio, anuncios de clase, recursos descargables y borradores</p>
+                                </div>
+                            </div>
+                            <button id="btn-open-material-publisher" class="bg-purple-600 text-white px-5 py-2.5 rounded-xl font-bold text-xs uppercase tracking-widest hover:bg-purple-700 transition-all shadow-md">
+                                <i class="fas fa-plus mr-1"></i> Publicar Recursos / Anuncio
+                            </button>
+                        </div>
+
+                        <!-- Formulario de Publicación de Aula Virtual -->
+                        <div class="bg-white p-6 rounded-3xl border border-purple-100 shadow-sm">
+                            <h4 class="text-xs font-black text-purple-700 uppercase tracking-widest mb-4"><i class="fas fa-edit mr-1"></i> Publicar Nuevo Anuncio o Material Digital</h4>
+                            <form id="virtual-classroom-publisher-form" class="space-y-4">
+                                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                                    <div>
+                                        <label class="block text-[9px] font-bold text-gray-400 uppercase tracking-widest mb-1">Tipo de Publicación</label>
+                                        <select id="vc-tipo" class="w-full p-2.5 bg-gray-50 border border-gray-100 rounded-xl text-xs font-semibold outline-none focus:ring-2 focus:ring-purple-400">
+                                            <option value="Anuncio">Anuncio de Clase</option>
+                                            <option value="GuiaEstudio">Guía de Estudio</option>
+                                            <option value="MaterialApoyo">Material de Apoyo / PDF</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="block text-[9px] font-bold text-gray-400 uppercase tracking-widest mb-1">Título de la Publicación</label>
+                                        <input type="text" id="vc-titulo" class="w-full p-2.5 bg-gray-50 border border-gray-100 rounded-xl text-xs font-semibold outline-none focus:ring-2 focus:ring-purple-400" required placeholder="Ej: Guía No. 1 - Algoritmos y Diagramas">
+                                    </div>
+                                    <div>
+                                        <label class="block text-[9px] font-bold text-gray-400 uppercase tracking-widest mb-1">URL de Recurso (Drive / Enlace)</label>
+                                        <input type="text" id="vc-url" class="w-full p-2.5 bg-gray-50 border border-gray-100 rounded-xl text-xs font-semibold outline-none focus:ring-2 focus:ring-purple-400" placeholder="https://drive.google.com/...">
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block text-[9px] font-bold text-gray-400 uppercase tracking-widest mb-1">Descripción / Instrucciones</label>
+                                    <textarea id="vc-contenido" rows="3" class="w-full p-2.5 bg-gray-50 border border-gray-100 rounded-xl text-xs font-medium outline-none focus:ring-2 focus:ring-purple-400" placeholder="Escriba las instrucciones o detalles del anuncio para sus alumnos..." required></textarea>
+                                </div>
+                                <div class="flex items-center justify-between pt-2">
+                                    <label class="flex items-center gap-2 cursor-pointer">
+                                        <input type="checkbox" id="vc-es-borrador" class="w-4 h-4 text-purple-600 rounded">
+                                        <span class="text-xs font-bold text-gray-600 uppercase tracking-widest">Guardar como Borrador (No visible aún para alumnos)</span>
+                                    </label>
+                                    <button type="submit" id="btn-submit-virtual-post" class="px-8 py-3 bg-purple-600 text-white rounded-xl font-bold text-xs uppercase tracking-widest hover:bg-purple-700 transition-all shadow-md">
+                                        Publicar en Aula Virtual
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
                     <!-- Tarjeta de Cierre de Año -->
                     <div class="card-ima border-red-100 bg-red-50/30 p-8 rounded-[2.5rem]">
                         <div class="flex items-center gap-4 mb-6">
@@ -638,6 +810,385 @@
                                 <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-amber-500"></span> Degradado (&gt;1.2s)</span>
                                 <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-red-500"></span> Fuera de línea</span>
                             </span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Sección de Libro de Calificaciones -->
+            <section id="section-gradebook" class="hidden animate-fade-in-up space-y-6">
+                <div class="bg-white rounded-3xl p-6 shadow-xl border border-gray-100">
+                    <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-6">
+                        <div>
+                            <span class="inline-block px-3 py-1 bg-purple-50 text-purple-700 text-xs font-semibold rounded-full mb-2">Evaluación Institucional</span>
+                            <h2 class="text-2xl font-bold text-gray-800">Libro Oficial de Calificaciones</h2>
+                            <p class="text-xs text-gray-500 mt-1">Gestión de notas ponderadas, recuperaciones y cierre de parciales por asignatura.</p>
+                        </div>
+                        <div class="flex flex-wrap items-center gap-2">
+                            <button id="btn-gb-config-weights" class="bg-purple-600 text-white px-4 py-2 rounded-xl text-xs font-semibold hover:bg-purple-700 transition-all flex items-center gap-1.5 shadow-sm">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path></svg>
+                                Ponderaciones
+                            </button>
+                            <button id="btn-gb-register-recovery" class="bg-indigo-600 text-white px-4 py-2 rounded-xl text-xs font-semibold hover:bg-indigo-700 transition-all flex items-center gap-1.5 shadow-sm">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                                Registrar Recuperación
+                            </button>
+                            <button id="btn-gb-close-period" class="bg-emerald-600 text-white px-4 py-2 rounded-xl text-xs font-semibold hover:bg-emerald-700 transition-all flex items-center gap-1.5 shadow-sm">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                Cerrar y Publicar
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Filtros contextuales del libro -->
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-3 bg-gray-50 p-4 rounded-2xl mb-6">
+                        <div>
+                            <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Parcial</label>
+                            <select id="gb-filter-parcial" class="w-full text-xs p-2.5 bg-white border border-gray-200 rounded-xl font-medium focus:ring-2 focus:ring-purple-400">
+                                <option value="I parcial">I parcial</option>
+                                <option value="II parcial">II parcial</option>
+                                <option value="III parcial">III parcial</option>
+                                <option value="IV parcial">IV parcial</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Grado</label>
+                            <select id="gb-filter-grado" class="w-full text-xs p-2.5 bg-white border border-gray-200 rounded-xl font-medium focus:ring-2 focus:ring-purple-400">
+                                <!-- Dinámico -->
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Sección</label>
+                            <select id="gb-filter-seccion" class="w-full text-xs p-2.5 bg-white border border-gray-200 rounded-xl font-medium focus:ring-2 focus:ring-purple-400">
+                                <option value="A">A</option>
+                                <option value="B">B</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Asignatura</label>
+                            <select id="gb-filter-asignatura" class="w-full text-xs p-2.5 bg-white border border-gray-200 rounded-xl font-medium focus:ring-2 focus:ring-purple-400">
+                                <!-- Dinámico -->
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Indicador de Cierre de Período -->
+                    <div id="gb-status-banner" class="mb-4 p-3.5 rounded-2xl text-xs font-semibold flex items-center justify-between bg-blue-50 text-blue-700 border border-blue-100">
+                        <span id="gb-status-text">Estado del Parcial: Abierto (Permite edición de notas)</span>
+                        <span id="gb-status-badge" class="px-2.5 py-0.5 rounded-full text-[10px] bg-blue-200 text-blue-800 uppercase font-bold">Abierto</span>
+                    </div>
+
+                    <!-- Tabla del Libro de Calificaciones -->
+                    <div class="overflow-x-auto rounded-2xl border border-gray-100 shadow-inner bg-white">
+                        <table class="w-full text-left border-collapse" id="gb-table">
+                            <thead>
+                                <tr class="bg-gray-100 text-gray-700 text-[10px] uppercase tracking-wider">
+                                    <th class="p-3 border-b border-gray-200">Estudiante</th>
+                                    <th class="p-3 border-b border-gray-200 text-center">Tareas (35%)</th>
+                                    <th class="p-3 border-b border-gray-200 text-center">Exámenes (40%)</th>
+                                    <th class="p-3 border-b border-gray-200 text-center">Proyectos (15%)</th>
+                                    <th class="p-3 border-b border-gray-200 text-center">Participación (10%)</th>
+                                    <th class="p-3 border-b border-gray-200 text-center bg-purple-50 text-purple-900">Nota Calculada</th>
+                                    <th class="p-3 border-b border-gray-200 text-center bg-indigo-50 text-indigo-900">Recuperación</th>
+                                    <th class="p-3 border-b border-gray-200 text-center">Estado</th>
+                                    <th class="p-3 border-b border-gray-200 text-center">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="gb-table-body" class="divide-y divide-gray-100 text-xs">
+                                <tr>
+                                    <td colspan="9" class="p-6 text-center text-gray-400">Cargando libro de calificaciones...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="mt-4 flex justify-end gap-2">
+                        <button id="btn-gb-save-all" class="bg-blue-600 text-white px-5 py-2.5 rounded-xl text-xs font-bold hover:bg-blue-700 transition-all shadow-md">
+                            Guardar Cambios del Libro
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Sección de Asistencia y Convivencia Escolar -->
+            <section id="section-attendance" class="hidden animate-fade-in-up space-y-6">
+                <div class="bg-white rounded-3xl p-6 shadow-xl border border-gray-100">
+                    <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-6">
+                        <div>
+                            <span class="inline-block px-3 py-1 bg-teal-50 text-teal-700 text-xs font-semibold rounded-full mb-2">Puntualidad & Disciplina</span>
+                            <h2 class="text-2xl font-bold text-gray-800">Control de Asistencia y Convivencia Escolar</h2>
+                            <p class="text-xs text-gray-500 mt-1">Registro rápido de asistencia por clase, revisión de justificantes y reporte de incidencias disciplinarias.</p>
+                        </div>
+                        <div class="flex flex-wrap items-center gap-2">
+                            <button id="btn-att-new-incident" class="bg-amber-600 text-white px-4 py-2 rounded-xl text-xs font-semibold hover:bg-amber-700 transition-all flex items-center gap-1.5 shadow-sm">
+                                <i class="fas fa-exclamation-triangle"></i>
+                                Reportar Incidencia
+                            </button>
+                            <button id="btn-att-save-attendance" class="bg-teal-600 text-white px-4 py-2 rounded-xl text-xs font-semibold hover:bg-teal-700 transition-all flex items-center gap-1.5 shadow-sm">
+                                <i class="fas fa-check-double"></i>
+                                Guardar Pase de Lista
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Filtros del pase de lista -->
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-3 bg-gray-50 p-4 rounded-2xl mb-6">
+                        <div>
+                            <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Fecha</label>
+                            <input type="date" id="att-filter-date" class="w-full text-xs p-2.5 bg-white border border-gray-200 rounded-xl font-medium focus:ring-2 focus:ring-teal-400">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Grado</label>
+                            <select id="att-filter-grado" class="w-full text-xs p-2.5 bg-white border border-gray-200 rounded-xl font-medium focus:ring-2 focus:ring-teal-400">
+                                <!-- Dinámico -->
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Sección</label>
+                            <select id="att-filter-seccion" class="w-full text-xs p-2.5 bg-white border border-gray-200 rounded-xl font-medium focus:ring-2 focus:ring-teal-400">
+                                <option value="A">A</option>
+                                <option value="B">B</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Asignatura</label>
+                            <select id="att-filter-asignatura" class="w-full text-xs p-2.5 bg-white border border-gray-200 rounded-xl font-medium focus:ring-2 focus:ring-teal-400">
+                                <!-- Dinámico -->
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Grilla de pase de lista rápido -->
+                    <div class="overflow-x-auto rounded-2xl border border-gray-100 shadow-inner bg-white mb-8">
+                        <table class="w-full text-left border-collapse" id="att-table">
+                            <thead>
+                                <tr class="bg-gray-100 text-gray-700 text-[10px] uppercase tracking-wider">
+                                    <th class="p-3 border-b border-gray-200">No. Lista / Estudiante</th>
+                                    <th class="p-3 border-b border-gray-200 text-center">Estado Asistencia</th>
+                                    <th class="p-3 border-b border-gray-200 text-center">Hora Llegada / Tardanza</th>
+                                    <th class="p-3 border-b border-gray-200 text-center">Observaciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="att-table-body" class="divide-y divide-gray-100 text-xs">
+                                <tr>
+                                    <td colspan="4" class="p-6 text-center text-gray-400">Cargando lista de asistencia...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Sección de Incidencias y Convivencia Escolar -->
+                    <div class="border-t border-gray-100 pt-6">
+                        <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
+                            <i class="fas fa-shield-alt text-amber-500"></i>
+                            Incidencias y Casos de Convivencia Escolar
+                        </h3>
+                        <div id="att-incidents-container" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="text-center py-6 text-gray-400 italic text-xs border-2 border-dashed border-gray-100 rounded-2xl col-span-full">
+                                Cargar incidencias para el grupo seleccionado.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Sección de Comunicados y Colaboración Institucional -->
+            <section id="section-comunicados" class="hidden animate-fade-in-up space-y-6">
+                <div class="bg-white rounded-3xl p-6 shadow-xl border border-gray-100">
+                    <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-6">
+                        <div>
+                            <span class="inline-block px-3 py-1 bg-indigo-50 text-indigo-700 text-xs font-semibold rounded-full mb-2">Canal Oficial Institucional</span>
+                            <h2 class="text-2xl font-bold text-gray-800">Centro de Comunicados e Integración</h2>
+                            <p class="text-xs text-gray-500 mt-1">Emisión de circulares segmentadas, seguimiento de acuses de recibo e hilos de conversación con familias.</p>
+                        </div>
+                    </div>
+
+                    <!-- Formularios y Listado de Comunicados -->
+                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                        <div class="lg:col-span-5 bg-gray-50 p-5 rounded-2xl border border-gray-100 space-y-4">
+                            <h3 class="text-sm font-bold text-gray-800 uppercase tracking-tight flex items-center gap-2">
+                                <i class="fas fa-paper-plane text-indigo-600"></i> Redactar Comunicado Oficial
+                            </h3>
+                            <div>
+                                <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Título del Comunicado</label>
+                                <input type="text" id="com-titulo" class="w-full text-xs p-2.5 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-400 font-medium" placeholder="Ej. Circular Informativa de Exámenes">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Categoría</label>
+                                <select id="com-categoria" class="w-full text-xs p-2.5 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-400 font-medium">
+                                    <option value="General">General / Informativo</option>
+                                    <option value="Academico">Académico</option>
+                                    <option value="Administrativo">Administrativo / Secretaría</option>
+                                    <option value="Urgente">Urgente / Importante</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Audiencia Target</label>
+                                <select id="com-audiencia" class="w-full text-xs p-2.5 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-400 font-medium">
+                                    <option value="TodaLaComunidad">Toda la Comunidad</option>
+                                    <option value="Padres">Padres y Tutores</option>
+                                    <option value="Estudiantes">Estudiantes</option>
+                                    <option value="Docentes">Cuerpo Docente</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Contenido del Mensaje</label>
+                                <textarea id="com-contenido" rows="4" class="w-full text-xs p-2.5 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-400 font-medium" placeholder="Escriba el comunicado institucional..."></textarea>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <input type="checkbox" id="com-requiere-firma" class="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500">
+                                <label for="com-requiere-firma" class="text-xs font-semibold text-gray-700">Requiere Acuse de Recibo / Confirmación Explicita</label>
+                            </div>
+                            <button id="btn-pub-comunicado" class="w-full py-3 bg-indigo-600 text-white rounded-xl font-bold text-xs uppercase tracking-widest hover:bg-indigo-700 transition-all shadow-md">
+                                Publicar Comunicado
+                            </button>
+                        </div>
+
+                        <div class="lg:col-span-7 space-y-4">
+                            <h3 class="text-sm font-bold text-gray-800 uppercase tracking-tight flex items-center gap-2">
+                                <i class="fas fa-bullhorn text-indigo-600"></i> Historial de Comunicados Emitidos
+                            </h3>
+                            <div id="comunicados-list-container" class="space-y-3 max-h-[500px] overflow-y-auto scroll-minimalist">
+                                <div class="text-center py-8 text-gray-400 italic text-xs border-2 border-dashed border-gray-100 rounded-2xl">
+                                    Cargando comunicados emitidos...
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Sección de Bienestar Estudiantil, Orientación y Seguimiento de Casos -->
+            <section id="section-orientacion" class="hidden animate-fade-in-up space-y-6">
+                <div class="bg-white rounded-3xl p-6 shadow-xl border border-gray-100">
+                    <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-6">
+                        <div>
+                            <span class="inline-block px-3 py-1 bg-purple-50 text-purple-700 text-xs font-semibold rounded-full mb-2">Expedientes de Orientación & Apoyo</span>
+                            <h2 class="text-2xl font-bold text-gray-800">Centro de Bienestar Estudiantil y Orientación</h2>
+                            <p class="text-xs text-gray-500 mt-1">Gestión confidencial de casos de acompañamiento, acuerdos institucionales y planes individualizados.</p>
+                        </div>
+                        <div class="flex flex-wrap items-center gap-2">
+                            <button id="btn-ori-new-case" class="bg-purple-600 text-white px-4 py-2 rounded-xl text-xs font-semibold hover:bg-purple-700 transition-all flex items-center gap-1.5 shadow-sm">
+                                <i class="fas fa-folder-plus"></i>
+                                Abrir Nuevo Caso
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Filtros e Hilos de Seguimiento -->
+                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                        <div class="lg:col-span-5 bg-gray-50 p-5 rounded-2xl border border-gray-100 space-y-4">
+                            <h3 class="text-sm font-bold text-gray-800 uppercase tracking-tight flex items-center gap-2">
+                                <i class="fas fa-search text-purple-600"></i> Buscar Estudiante
+                            </h3>
+                            <div class="flex gap-2">
+                                <input type="text" id="ori-student-id" class="w-full text-xs p-2.5 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-400 font-medium" placeholder="ID o Usuario del estudiante...">
+                                <button id="btn-ori-search-student" class="bg-purple-600 text-white px-4 py-2.5 rounded-xl font-bold text-xs hover:bg-purple-700 transition-all">
+                                    Buscar
+                                </button>
+                            </div>
+
+                            <div id="ori-case-form-container" class="hidden border-t border-gray-200 pt-4 space-y-3">
+                                <h4 class="text-xs font-bold text-purple-900 uppercase">Registrar Intervención / Nota Confidencial</h4>
+                                <div>
+                                    <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Caso Seleccionado</label>
+                                    <select id="ori-case-selector" class="w-full text-xs p-2 bg-white border border-gray-200 rounded-xl font-medium">
+                                        <!-- Dinámico -->
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Nota de Intervención / Acuerdo</label>
+                                    <textarea id="ori-case-note" rows="3" class="w-full text-xs p-2.5 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-400 font-medium" placeholder="Escriba los detalles de la reunión o acuerdo..."></textarea>
+                                </div>
+                                <button id="btn-ori-add-note" class="w-full py-2.5 bg-purple-600 text-white rounded-xl font-bold text-xs uppercase tracking-widest hover:bg-purple-700 transition-all">
+                                    Agregar Nota al Caso
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="lg:col-span-7 space-y-4">
+                            <h3 class="text-sm font-bold text-gray-800 uppercase tracking-tight flex items-center gap-2">
+                                <i class="fas fa-clipboard-list text-purple-600"></i> Casos y Acompañamientos Activos
+                            </h3>
+                            <div id="ori-cases-list-container" class="space-y-3 max-h-[500px] overflow-y-auto scroll-minimalist">
+                                <div class="text-center py-8 text-gray-400 italic text-xs border-2 border-dashed border-gray-100 rounded-2xl">
+                                    Ingrese un ID de estudiante para consultar sus casos de seguimiento.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Sección de Supervisión Docente y Calidad Educativa (Fase 13) -->
+            <section id="section-supervision" class="hidden animate-fade-in-up space-y-6">
+                <div class="bg-white rounded-3xl p-6 shadow-xl border border-gray-100">
+                    <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-6">
+                        <div>
+                            <span class="inline-block px-3 py-1 bg-emerald-50 text-emerald-700 text-xs font-semibold rounded-full mb-2">Desarrollo Profesional & Calidad Educativa</span>
+                            <h2 class="text-2xl font-bold text-gray-800">Supervisión Docente y Acompañamiento Pedagógico</h2>
+                            <p class="text-xs text-gray-500 mt-1">Observación de aula, revisión de planificaciones, rúbricas institucionales y planes de mejora continua.</p>
+                        </div>
+                        <div class="flex flex-wrap items-center gap-2">
+                            <button id="btn-sup-new-schedule" class="bg-emerald-600 text-white px-4 py-2 rounded-xl text-xs font-semibold hover:bg-emerald-700 transition-all flex items-center gap-1.5 shadow-sm">
+                                <i class="fas fa-calendar-plus"></i>
+                                Programar Supervisión
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                        <!-- Panel Izquierdo: Formulario de Observación y Rúbrica -->
+                        <div class="lg:col-span-5 bg-gray-50 p-5 rounded-2xl border border-gray-100 space-y-4">
+                            <h3 class="text-sm font-bold text-gray-800 uppercase tracking-tight flex items-center gap-2">
+                                <i class="fas fa-clipboard-check text-emerald-600"></i> Registrar Observación Pedagógica
+                            </h3>
+                            <div>
+                                <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Supervisión ID</label>
+                                <select id="sup-select-active" class="w-full text-xs p-2.5 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-400 font-medium">
+                                    <option value="">Seleccione supervisión programada...</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Evidencias Observadas en Aula</label>
+                                <textarea id="sup-obs-evidencias" rows="3" class="w-full text-xs p-2.5 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-400 font-medium" placeholder="Escriba los hechos y evidencias pedagógicas observadas..."></textarea>
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Fortalezas Destacables</label>
+                                <textarea id="sup-obs-fortalezas" rows="2" class="w-full text-xs p-2.5 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-400 font-medium" placeholder="Prácticas pedagógicas sobresalientes..."></textarea>
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Oportunidades de Mejora y Acuerdos</label>
+                                <textarea id="sup-obs-oportunidades" rows="2" class="w-full text-xs p-2.5 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-400 font-medium" placeholder="Recomendaciones concretas de desarrollo..."></textarea>
+                            </div>
+                            <button id="btn-sup-save-observation" class="w-full py-3 bg-emerald-600 text-white rounded-xl font-bold text-xs uppercase tracking-widest hover:bg-emerald-700 transition-all shadow-md">
+                                Guardar Observación y Finalizar
+                            </button>
+                        </div>
+
+                        <!-- Panel Derecho: Lista de Supervisiones y Planes de Mejora -->
+                        <div class="lg:col-span-7 space-y-6">
+                            <div>
+                                <h3 class="text-sm font-bold text-gray-800 uppercase tracking-tight flex items-center gap-2 mb-3">
+                                    <i class="fas fa-list-alt text-emerald-600"></i> Supervisiones y Acompañamientos Registrados
+                                </h3>
+                                <div id="sup-list-container" class="space-y-3 max-h-[350px] overflow-y-auto scroll-minimalist">
+                                    <div class="text-center py-8 text-gray-400 italic text-xs border-2 border-dashed border-gray-100 rounded-2xl">
+                                        Cargando registro de supervisiones...
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="border-t border-gray-100 pt-4">
+                                <h3 class="text-sm font-bold text-gray-800 uppercase tracking-tight flex items-center gap-2 mb-3">
+                                    <i class="fas fa-chart-line text-emerald-600"></i> Planes de Mejora Pedagógica
+                                </h3>
+                                <div id="sup-plans-container" class="space-y-3 max-h-[250px] overflow-y-auto scroll-minimalist">
+                                    <div class="text-center py-6 text-gray-400 italic text-xs border-2 border-dashed border-gray-100 rounded-2xl">
+                                        No hay planes de mejora pedagógica activos registrados.
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

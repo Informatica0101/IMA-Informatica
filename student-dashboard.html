@@ -117,7 +117,23 @@
         <div class="container mx-auto px-4 md:px-8 py-8 max-w-7xl">
             <div id="hidden-student-data" class="hidden"><span id="student-name"></span></div>
 
-            <!-- Cabecera de Información del Alumno (Tarea 3 - Fase Diagnóstico) -->
+            <!-- Selector de Estudiantes Vinculados (Portal Familiar - Fase 3) -->
+            <div id="family-student-switcher-container" class="mb-6 hidden bg-indigo-50/50 p-4 rounded-3xl border border-indigo-100 flex items-center justify-between gap-4">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-indigo-600 text-white rounded-2xl flex items-center justify-center text-lg shadow-sm">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div>
+                        <p class="text-[10px] font-black text-indigo-400 uppercase tracking-widest">Portal Familiar</p>
+                        <p class="text-xs font-bold text-indigo-950">Estudiante Activo:</p>
+                    </div>
+                </div>
+                <select id="family-student-switcher" class="p-3 bg-white border border-indigo-200 rounded-2xl text-xs font-bold text-indigo-900 focus:ring-2 focus:ring-indigo-500/20 outline-none cursor-pointer">
+                    <!-- Opciones de estudiantes vinculados inyectadas por js/student.js -->
+                </select>
+            </div>
+
+            <!-- Cabecera de Información del Alumno -->
             <div id="student-profile-header" class="mb-8">
                 <!-- Se poblará dinámicamente desde js/student.js -->
             </div>
@@ -180,11 +196,79 @@
                             <!-- Se poblará vía js/student.js -->
                         </div>
                     </section>
+
+                    <!-- Sección de Novedades, Anuncios y Materiales Educativos del Aula Virtual (Fase 8) -->
+                    <section id="virtual-classroom-section" class="bg-white p-6 md:p-8 rounded-[2.5rem] shadow-sm border border-gray-100">
+                        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+                            <div class="flex items-center gap-4">
+                                <div class="w-12 h-12 bg-indigo-600 text-white rounded-2xl flex items-center justify-center text-xl shadow-lg shadow-indigo-100">
+                                    <i class="fas fa-chalkboard"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-xl font-bold text-gray-800">Aula Virtual: Materiales & Anuncios</h3>
+                                    <p class="text-xs text-gray-500 font-medium">Anuncios de clase, guías de estudio y recursos digitales de tus asignaturas</p>
+                                </div>
+                            </div>
+                            <button id="btn-refresh-virtual-classroom" class="px-4 py-2 bg-indigo-50 text-indigo-600 hover:bg-indigo-100 rounded-xl font-bold text-xs uppercase tracking-widest transition-all">
+                                <i class="fas fa-sync-alt mr-1"></i> Actualizar Aula
+                            </button>
+                        </div>
+
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                            <!-- Columna 1: Anuncios y Novedades -->
+                            <div>
+                                <h4 class="text-xs font-black text-indigo-700 uppercase tracking-widest mb-4 flex items-center gap-2">
+                                    <i class="fas fa-bullhorn"></i> Anuncios y Novedades de la Clase
+                                </h4>
+                                <div id="classroom-posts-container" class="space-y-4">
+                                    <div class="text-center py-6 text-gray-400 italic text-xs border-2 border-dashed border-gray-100 rounded-2xl">
+                                        Selecciona una asignatura o actualiza para ver anuncios.
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Columna 2: Materiales Educativos y Guías -->
+                            <div>
+                                <h4 class="text-xs font-black text-indigo-700 uppercase tracking-widest mb-4 flex items-center gap-2">
+                                    <i class="fas fa-folder-open"></i> Materiales Educativos y Recursos
+                                </h4>
+                                <div id="classroom-materials-container" class="space-y-4">
+                                    <div class="text-center py-6 text-gray-400 italic text-xs border-2 border-dashed border-gray-100 rounded-2xl">
+                                        Selecciona una asignatura o actualiza para ver materiales.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
                 </div>
             </div>
 
             <!-- Vista de Progreso Académico -->
             <div id="view-progress" class="hidden animate-fade-in">
+                <!-- Resultados Académicos Oficiales del Estudiante (Fase 9) -->
+                <div id="student-academic-results-card" class="bg-white p-6 md:p-8 rounded-[2.5rem] shadow-sm border border-gray-100 mb-10">
+                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 bg-purple-600 text-white rounded-2xl flex items-center justify-center text-xl shadow-lg shadow-purple-100">
+                                <i class="fas fa-graduation-cap"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-bold text-gray-800">Boletín y Resultados Académicos Oficiales</h3>
+                                <p class="text-xs text-gray-500 font-medium">Calificaciones publicadas, recuperaciones registradas y estado de aprobación</p>
+                            </div>
+                        </div>
+                        <button id="btn-refresh-academic-results" class="px-4 py-2 bg-purple-50 text-purple-600 hover:bg-purple-100 rounded-xl font-bold text-xs uppercase tracking-widest transition-all">
+                            <i class="fas fa-sync-alt mr-1"></i> Actualizar Boletín
+                        </button>
+                    </div>
+
+                    <div id="student-academic-results-container" class="space-y-6">
+                        <div class="text-center py-8 text-gray-400 italic text-xs border-2 border-dashed border-gray-100 rounded-2xl">
+                            Cargando calificaciones oficiales publicadas...
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Expediente Académico (Task 4) -->
                 <div id="student-expediente" class="mb-10">
                     <!-- Inyectado dinámicamente desde student.js -->
@@ -203,6 +287,27 @@
                     </div>
                     <div id="formative-logs-container" class="grid grid-cols-1 md:grid-cols-3 gap-6">
                         <!-- Carga dinámica -->
+                    </div>
+                </div>
+
+                <!-- Horario Oficial de Clases Semanal (Fase 7) -->
+                <div id="student-schedule-card" class="bg-white p-6 md:p-8 rounded-[2.5rem] shadow-sm border border-gray-100 mb-10">
+                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 bg-indigo-600 text-white rounded-2xl flex items-center justify-center text-xl shadow-lg shadow-indigo-100">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-bold text-gray-800">Horario Oficial de Clases</h3>
+                                <p class="text-xs text-gray-500 font-medium">Programación semanal con aula, asignatura y docente asignado</p>
+                            </div>
+                        </div>
+                        <button id="btn-refresh-student-schedule" class="px-4 py-2 bg-indigo-50 text-indigo-600 hover:bg-indigo-100 rounded-xl font-bold text-xs uppercase tracking-widest transition-all">
+                            <i class="fas fa-sync-alt mr-1"></i> Actualizar
+                        </button>
+                    </div>
+                    <div id="student-schedule-container" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-4">
+                        <!-- Carga dinámica por días de la semana -->
                     </div>
                 </div>
 
@@ -227,7 +332,30 @@
                     </div>
                 </div>
 
-                <!-- Portal Familiar, Comunicados y Trámites (Fase 8) -->
+                <!-- Circulares y Comunicados Institucionales (Fase 11) -->
+                <div id="student-announcements-card" class="bg-white p-6 md:p-8 rounded-[2.5rem] shadow-sm border border-gray-100 mb-10">
+                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 bg-indigo-600 text-white rounded-2xl flex items-center justify-center text-xl shadow-lg shadow-indigo-100">
+                                <i class="fas fa-bullhorn"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-bold text-gray-800">Circulares y Comunicados Oficiales</h3>
+                                <p class="text-xs text-gray-500 font-medium">Avisos institucionales, normativas y acuses de recibo para familias y estudiantes</p>
+                            </div>
+                        </div>
+                        <button id="btn-refresh-announcements" class="px-4 py-2 bg-indigo-50 text-indigo-600 hover:bg-indigo-100 rounded-xl font-bold text-xs uppercase tracking-widest transition-all">
+                            <i class="fas fa-sync-alt mr-1"></i> Actualizar
+                        </button>
+                    </div>
+                    <div id="student-announcements-container" class="space-y-4">
+                        <div class="text-center py-6 text-gray-400 italic text-xs border-2 border-dashed border-gray-100 rounded-2xl">
+                            Cargando comunicados oficiales...
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Portal Familiar, Comunicados y Trámites (Fase 8 & Fase 6) -->
                 <div id="student-family-portal-card" class="bg-white p-6 md:p-8 rounded-[2.5rem] shadow-sm border border-gray-100 mb-10">
                     <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
                         <div class="flex items-center gap-4">
@@ -235,16 +363,52 @@
                                 <i class="fas fa-handshake"></i>
                             </div>
                             <div>
-                                <h3 class="text-xl font-bold text-gray-800">Comunicación y Trámites Institucionales</h3>
-                                <p class="text-xs text-gray-500 font-medium">Comunicados oficiales, trámites de Secretaría y solicitudes de citas</p>
+                                <h3 class="text-xl font-bold text-gray-800">Comunicación & Trámites Institucionales</h3>
+                                <p class="text-xs text-gray-500 font-medium">Comunicados oficiales, justificación de ausencias, trámites de Secretaría y citas</p>
                             </div>
                         </div>
-                        <button id="btn-open-request-modal" class="px-5 py-2.5 bg-indigo-600 text-white rounded-xl font-bold text-xs uppercase tracking-widest hover:bg-indigo-700 transition-all shadow-md flex items-center gap-2">
-                            <i class="fas fa-plus-circle"></i> Nuevo Trámite / Solicitud
-                        </button>
+                        <div class="flex flex-wrap gap-2">
+                            <button id="btn-open-justification-modal" class="px-4 py-2.5 bg-amber-600 text-white rounded-xl font-bold text-xs uppercase tracking-widest hover:bg-amber-700 transition-all shadow-md flex items-center gap-2">
+                                <i class="fas fa-file-signature"></i> Justificar Ausencia
+                            </button>
+                            <button id="btn-open-request-modal" class="px-4 py-2.5 bg-indigo-600 text-white rounded-xl font-bold text-xs uppercase tracking-widest hover:bg-indigo-700 transition-all shadow-md flex items-center gap-2">
+                                <i class="fas fa-plus-circle"></i> Nuevo Trámite
+                            </button>
+                        </div>
                     </div>
                     <div id="family-portal-requests-container" class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <!-- Carga dinámica -->
+                    </div>
+                </div>
+
+                <!-- Tienda Escolar, Libros & Servicios de Cafetería para Alumnos y Familias -->
+                <div id="student-services-card" class="bg-white p-6 md:p-8 rounded-[2.5rem] shadow-sm border border-gray-100 mb-10">
+                    <div class="flex items-center gap-4 mb-6">
+                        <div class="w-12 h-12 bg-amber-600 text-white rounded-2xl flex items-center justify-center text-xl shadow-lg shadow-amber-100">
+                            <i class="fas fa-store"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold text-gray-800">Servicios Escolares: Útiles, Libros & Cafetería</h3>
+                            <p class="text-xs text-gray-500 font-medium">Accede al catálogo de útiles y solicita tu almuerzo con Crédito Familiar Autorizado</p>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                        <a href="dashboard-tienda.html" class="p-6 bg-amber-50/50 rounded-2xl border border-amber-100 flex items-center justify-between group hover:bg-amber-100/50 transition-all">
+                            <div>
+                                <span class="px-2.5 py-0.5 bg-amber-200 text-amber-900 rounded text-[9px] font-black uppercase">Tienda Escolar</span>
+                                <h4 class="text-sm font-bold text-gray-900 mt-2">Catálogo de Libros & Útiles</h4>
+                                <p class="text-xs text-gray-500 mt-1">Revisa existencias y paquetes para tu grado.</p>
+                            </div>
+                            <span class="w-8 h-8 bg-amber-600 text-white rounded-full flex items-center justify-center group-hover:scale-110 transition-transform"><i class="fas fa-arrow-right text-xs"></i></span>
+                        </a>
+                        <a href="dashboard-cafeteria.html" class="p-6 bg-red-50/50 rounded-2xl border border-red-100 flex items-center justify-between group hover:bg-red-100/50 transition-all">
+                            <div>
+                                <span class="px-2.5 py-0.5 bg-red-200 text-red-900 rounded text-[9px] font-black uppercase">Cafetería</span>
+                                <h4 class="text-sm font-bold text-gray-900 mt-2">Menú del Día & Almuerzos</h4>
+                                <p class="text-xs text-gray-500 mt-1">Realiza tu pedido con saldo autorizado.</p>
+                            </div>
+                            <span class="w-8 h-8 bg-red-600 text-white rounded-full flex items-center justify-center group-hover:scale-110 transition-transform"><i class="fas fa-arrow-right text-xs"></i></span>
+                        </a>
                     </div>
                 </div>
             </div>

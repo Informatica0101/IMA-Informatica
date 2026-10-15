@@ -25,6 +25,24 @@ function normalizeString(str) {
   return str.toString().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
 }
 
+function extractDriveFileId(url) {
+  if (!url) return "";
+  const match = url.toString().match(/\/d\/([a-zA-Z0-9_-]+)/) || url.toString().match(/id=([a-zA-Z0-9_-]+)/);
+  if (match && match[1]) return match[1];
+  if (/^[a-zA-Z0-9_-]{25,}$/.test(url.toString().trim())) return url.toString().trim();
+  return "";
+}
+
+function processDriveImageUrl(url, size) {
+  if (!url) return "imagenes/new-generation-logo.png";
+  const fileId = extractDriveFileId(url);
+  if (fileId) {
+    const sz = size === "small" || size === "thumb" ? "=s300" : (size === "medium" || size === "detail" ? "=s800" : "=s500");
+    return `https://lh3.googleusercontent.com/d/${fileId}${sz}`;
+  }
+  return url.toString().trim();
+}
+
 function sanitizePayloadForLog(payload) {
   if (!payload || typeof payload !== "object") return String(payload || "");
   try {
@@ -92,6 +110,15 @@ function getOrCreateSheet(ss, name) {
   if (!sheet) {
     sheet = ss.insertSheet(name);
     if (name === "ConceptosCobro") sheet.appendRow(["ConceptoID", "Fecha", "NombreConcepto", "MontoBase", "AplicaAGrado", "PeriodoVigencia", "Estado", "Observaciones"]);
+    if (name === "CreditoFamiliarAutorizaciones") sheet.appendRow(["AutorizacionID", "Fecha", "ResponsableUserId", "EstudianteUserId", "LimiteDiario", "LimiteMensual", "SaldoUsado", "Estado", "FechaVencimiento", "Observaciones"]);
+    if (name === "CreditoFamiliarMovimientos") sheet.appendRow(["MovimientoCreditoID", "Fecha", "AutorizacionID", "EstudianteUserId", "ResponsableUserId", "Establecimiento", "Monto", "OrigenRefId", "Estado", "Observaciones"]);
+    if (name === "CafeteriaMenu") sheet.appendRow(["PlatoID", "FechaPublicacion", "NombrePlato", "Precio", "StockDiario", "Categoria", "ImagenUrl", "Allergenos", "HorariosDisponibilidad", "Estado", "Observaciones"]);
+    if (name === "CafeteriaPedidos") sheet.appendRow(["PedidoID", "Fecha", "EstudianteUserId", "ResponsableUserId", "DetalleJSON", "TurnoEntrega", "MontoTotal", "MetodoPago", "Estado", "Observaciones"]);
+    if (name === "TiendaProductos") sheet.appendRow(["ProductoID", "FechaCreacion", "ItemCodigo", "ImagenUrl", "Nombre", "PrecioVenta", "StockDisponible", "UnidadMedida", "Estado", "Marca", "Categoria", "Descripcion", "Observaciones"]);
+    if (name === "TiendaOrdenes") sheet.appendRow(["OrdenID", "Fecha", "UserId", "CompradorNombre", "DetalleJSON", "MontoTotal", "MetodoPago", "EstadoPago", "EstadoEntrega", "MetodoEntrega", "PDFComprobanteUrl", "Observaciones"]);
+    if (name === "DescuentosBecas") sheet.appendRow(["DescuentoID", "FechaCreacion", "NombreInterno", "CodigoRegla", "TipoBeneficio", "PorcentajeOImporte", "Valor", "ImporteMaximo", "ConceptosElegiblesJSON", "CriteriosElegibilidadJSON", "Acumulable", "Prioridad", "Estado", "CreadoPor", "AprobadoPor", "Observaciones"]);
+    if (name === "SolicitudesDescuentoBeca") sheet.appendRow(["SolicitudID", "FechaSolicitud", "DescuentoID", "BeneficiarioTipo", "BeneficiarioTargetId", "ConceptoAfectado", "MontoCalculado", "DocumentoAdjuntoUrl", "EstadoAprobacion", "SolicitadoPor", "AprobadoPor", "MotivoRevision"]);
+    if (name === "RecargosMoras") sheet.appendRow(["RecargoID", "FechaCreacion", "NombreRegla", "ConceptoAfectado", "TipoCalculo", "ValorRecargo", "DiasGracia", "Frecuencia", "LimiteMaximo", "Estado", "Observaciones"]);
     if (name === "TarifasPlanPago") sheet.appendRow(["TarifaID", "AnoLectivo", "NivelGrado", "ConceptoID", "MontoTotal", "CuotasNum", "VencimientoJSON", "Estado", "Observaciones"]);
     if (name === "PagosAbonos") sheet.appendRow(["PagoID", "Fecha", "UserId", "CargoID", "Concepto", "MontoAbono", "MetodoPago", "Referencia", "Estado", "ReciboID", "Observaciones"]);
     if (name === "ComprobantesPago") sheet.appendRow(["ComprobanteID", "Fecha", "UserId", "Alumno", "CargoID", "MontoReportado", "MetodoPago", "Referencia", "ComprobanteUrl", "Estado", "Observaciones"]);
@@ -103,21 +130,38 @@ function getOrCreateSheet(ss, name) {
     if (name === "CuentasPorPagarGastos") sheet.appendRow(["ObligacionID", "ProveedorID", "NumeroFactura", "Importe", "Impuestos", "FechaVencimiento", "EstadoAprobacion", "EstadoPago", "AsientoID", "Observaciones"]);
     if (name === "PlanCuentas") sheet.appendRow(["CuentaID", "CodigoCuenta", "NombreCuenta", "TipoCuenta", "Naturaleza", "Estado", "Observaciones"]);
     if (name === "AsientosContables") sheet.appendRow(["AsientoID", "Fecha", "Descripcion", "OrigenModulo", "ReferenciaID", "LineasJSON", "Estado", "CreadoPor"]);
+    if (name === "HorariosLaborales") sheet.appendRow(["HorarioID", "NombreHorario", "JornadaTipo", "HoraEntrada", "HoraSalida", "ToleranciaMinutos", "DiasLaboralesJSON", "Estado", "Observaciones"]);
+    if (name === "CorreccionesAsistencia") sheet.appendRow(["CorreccionID", "AsistenciaID", "EmpleadoId", "FechaIncidencia", "HoraOriginal", "HoraSolicitada", "Motivo", "EvidenciaUrl", "EstadoAprobacion", "AprobadoPor", "Observaciones"]);
     if (name === "PlanillasNomenclatura") sheet.appendRow(["PlanillaID", "FechaGeneracion", "PeriodoMes", "EmpleadoId", "EmpleadoNombre", "CargoPuesto", "SalarioBase", "HorasExtras", "MontoHorasExtras", "Bonificaciones", "DeduccionIHSS", "DeduccionRAP", "DeduccionISR", "OtrasDeducciones", "SalarioNeto", "Estado"]);
     if (name === "DeduccionesAsistencia") sheet.appendRow(["AsistenciaID", "Fecha", "EmpleadoId", "EmpleadoNombre", "HoraEntrada", "HoraSalida", "MinutosTardanza", "EstadoAsistencia", "Observaciones"]);
     if (name === "BoletasPago") sheet.appendRow(["BoletaID", "PlanillaID", "FechaEmision", "EmpleadoId", "EmpleadoNombre", "PeriodoMes", "TotalDevengado", "TotalDeducciones", "NetoAPagar", "EstadoBoleta"]);
+    if (name === "DocumentosLaborales") sheet.appendRow(["DocumentoID", "ExpedienteID", "CategoriaDoc", "TituloDocumento", "ArchivoUrl", "FechaCarga", "CargadoPor", "EstadoVisibilidad", "Observaciones"]);
+    if (name === "AnticiposPrestamosEmpleado") sheet.appendRow(["PrestamoID", "Fecha", "EmpleadoId", "Tipo", "MontoSolicitado", "MontoAprobado", "PlazoCuotas", "CuotaMensual", "SaldoPendiente", "EstadoAprobacion", "AprobadoPor", "Observaciones"]);
     if (name === "InventariosKardex") sheet.appendRow(["KardexID", "Fecha", "ItemCodigo", "ItemNombre", "CategoriaTipo", "TipoMovimiento", "Cantidad", "StockAnterior", "StockNuevo", "StockMinimo", "UbicacionResponsable", "Observaciones"]);
     if (name === "ProveedoresActivos") sheet.appendRow(["ProveedorID", "FechaRegistro", "NombreProveedor", "RTN", "Telefono", "Email", "RubroServicio", "Estado", "Observaciones"]);
+    if (name === "SolicitudesCompra") sheet.appendRow(["SolicitudID", "Fecha", "Departamento", "SolicitanteUserId", "Justificacion", "Categoria", "DetalleItemsJSON", "MontoEstimado", "CentroCosto", "EstadoAprobacion", "Observaciones"]);
+    if (name === "CotizacionesCompra") sheet.appendRow(["CotizacionID", "SolicitudID", "ProveedorID", "FechaRecepcion", "VigenciaOferta", "PrecioTotal", "PlazoEntregaDias", "CondicionesPago", "DocumentoAdjuntoUrl", "EstadoSelection", "Observaciones"]);
+    if (name === "OrdenesCompra") sheet.appendRow(["OrdenCompraID", "SolicitudID", "CotizacionID", "ProveedorID", "FechaEmision", "FechaEntregaEstimada", "DetalleItemsJSON", "MontoTotal", "CentroCosto", "EstadoOrden", "AprobadoPor", "Observaciones"]);
+    if (name === "RecepcionesCompra") sheet.appendRow(["RecepcionID", "OrdenCompraID", "FechaRecepcion", "ReceptorUserId", "DetalleRecibidoJSON", "EstadoConformidad", "RegistradoEnInventario", "AsientoID", "Observaciones"]);
     if (name === "ExpedientesLaborales") sheet.appendRow(["ExpedienteID", "PersonaId", "UserId", "Puesto", "Departamento", "CentroCosto", "FechaIngreso", "FechaSalida", "EstadoLaboral", "Observaciones"]);
     if (name === "ContratosLaborales") sheet.appendRow(["ContratoID", "ExpedienteID", "TipoContrato", "FechaInicio", "FechaFin", "SalarioBase", "Jornada", "EstadoContrato", "Observaciones"]);
     if (name === "SolicitudesVacaciones") sheet.appendRow(["SolicitudID", "ExpedienteID", "Tipo", "FechaInicio", "FechaFin", "DiasSolicitados", "Estado", "AprobadoPor", "Observaciones"]);
+    if (name === "IncapacidadesMedicas") sheet.appendRow(["IncapacidadID", "ExpedienteID", "CentroMedico", "DiagnosticoPrivadoUrl", "FechaInicio", "FechaFin", "DiasOtorgados", "EstadoIHSS", "Observaciones"]);
     if (name === "PoliticasFiscales") sheet.appendRow(["PoliticaID", "CodigoRegla", "NombreRegla", "Categoria", "BaseCalculo", "MetodoCalculo", "TasaImporte", "Estado", "Version", "Observaciones"]);
     if (name === "PoliticasInstitucionales") sheet.appendRow(["PoliticaInstID", "TipoDocumento", "Titulo", "Version", "ContenidoHTML", "Estado", "FechaPublicacion", "Observaciones"]);
     if (name === "AceptacionesPoliticas") sheet.appendRow(["AceptacionID", "UserId", "PoliticaInstID", "Version", "FechaAceptacion", "IpMetadata", "Estado"]);
     if (name === "BibliotecaEjemplares") sheet.appendRow(["EjemplarID", "IsbnCodigo", "Titulo", "Autor", "Categoria", "UbicacionFisica", "Estado", "Observaciones"]);
     if (name === "BibliotecaPrestamos") sheet.appendRow(["PrestamoID", "EjemplarID", "UserId", "FechaPrestamo", "FechaDevolucionPrevista", "FechaDevolucionReal", "Estado", "Observaciones"]);
+    if (name === "BibliotecaReservas") sheet.appendRow(["ReservaID", "EjemplarID", "UserId", "FechaSolicitud", "FechaExpiracion", "EstadoReserva", "Observaciones"]);
+    if (name === "BibliotecaIncidencias") sheet.appendRow(["IncidenciaID", "PrestamoID", "EjemplarID", "UserId", "TipoIncidencia", "Descripcion", "Estado", "Resolucion", "Observaciones"]);
+    if (name === "RecursosDigitalesBiblioteca") sheet.appendRow(["RecursoID", "Titulo", "AutorColaboradores", "Categoria", "FormatoUrl", "NivelPermisosJSON", "Estado", "Observaciones"]);
     if (name === "ActivosPatrimoniales") sheet.appendRow(["ActivoID", "CodigoPatrimonial", "Nombre", "Categoria", "SerieModel", "UbicacionActual", "CustodioUserId", "Estado", "Observaciones"]);
     if (name === "AsignacionesActivos") sheet.appendRow(["AsignacionID", "ActivoID", "CustodioUserId", "FechaEntrega", "FechaDevolucion", "EstadoActa", "Observaciones"]);
+    if (name === "AlmacenesUbicaciones") sheet.appendRow(["UbicacionID", "SedeCod", "NombreUbicacion", "TipoArea", "ResponsableUserId", "Estado", "Observaciones"]);
+    if (name === "MaterialesSolicitudes") sheet.appendRow(["SolicitudMatID", "Fecha", "Departamento", "SolicitanteUserId", "ArticulosJSON", "Motivo", "EstadoAprobacion", "AprobadoPor", "EntregadoPor", "Observaciones"]);
+    if (name === "InventariosConteosFisicos") sheet.appendRow(["ConteoID", "FechaInicio", "AlmacenUbicacionId", "ResponsableUserId", "ArticulosDetalleJSON", "DiferenciasJSON", "EstadoConteo", "AprobadoPor", "Observaciones"]);
+    if (name === "MantenimientoOrdenes") sheet.appendRow(["OrdenMaintID", "FechaReporte", "ActivoIdUbicacion", "TipoMantenimiento", "DescripcionFalla", "Prioridad", "ReportadoPorUserId", "AsignadoAEmpleadoId", "RepuestosConsumidosJSON", "CostoEstimado", "CostoReal", "EstadoOrden", "FechaResolucion", "Observaciones"]);
+    if (name === "BajasBienes") sheet.appendRow(["BajaID", "FechaBaja", "TipoBien", "BienIdCodigo", "NombreBien", "MotivoBaja", "ValorLibros", "AutorizadoPorUserId", "DocumentoActaUrl", "Estado", "Observaciones"]);
     if (name === "TransporteRutas") sheet.appendRow(["RutaID", "NombreRuta", "UnidadCodigo", "ConductorEmpleadoId", "Capacidad", "ParadasJSON", "Estado", "Observaciones"]);
     if (name === "TransporteAsignaciones") sheet.appendRow(["AsignacionTranspID", "RutaID", "EstudianteUserId", "ParadaNombre", "HorarioPlan", "Estado"]);
     if (name === "CatalogoSpreadsheets") sheet.appendRow(["FuenteID", "DominioArea", "AnoLectivo", "SpreadsheetId", "UrlAcceso", "Estado", "SchemaVersion", "Observaciones"]);
@@ -137,15 +181,22 @@ function doGet() { return textResponse({ status: "success", service: "ACCOUNTING
 
 const ROLE_PERMISSIONS = {
   "Administrador": ["*"],
-  "Director": ["configurePaymentConcept", "configurePaymentTariff", "getStudentAccountStatement", "recordStudentPayment", "uploadPaymentVoucher", "generatePaymentReceiptPDF", "createFiscalInvoice", "getFiscalInvoices", "configureGatewayIntegration", "testGatewayConnection", "recordCashBankMovement", "closeCashSession", "getCashBankSummary", "performBankReconciliation", "recordAccountsPayableExpense", "getChartOfAccounts", "recordAccountingJournalEntry", "generatePayrollPeriod", "recordStaffAttendance", "getStaffPayrollReceipt", "recordInventoryMovement", "getInventoryKardex", "registerSupplier", "createEmployeeRecord", "getEmployeeRecords", "manageEmployeeContract", "getEmployeeContracts", "submitVacationRequest", "getVacationRequests", "reviewVacationRequest", "configureFiscalPolicy", "getFiscalPolicies", "publishInstitutionalPolicy", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getAdvancedDashboardAnalytics", "manageLibraryBook", "getLibraryBooks", "processLibraryLoan", "getLibraryLoans", "manageAssetItem", "getAssetItems", "assignAssetCustody", "getAssetAssignments", "manageTransportRoute", "getTransportRoutes", "assignStudentTransport", "getTransportAssignments", "registerSpreadsheetSource", "resolveSpreadsheetSource", "getSpreadsheetCatalog", "configureSchoolDocumentTemplate", "getSchoolDocumentTemplates", "generateSchoolDocument", "getIssuedSchoolDocuments", "validateImportPreview", "importDataWithColumnMapping", "getMigrationLogs", "verifySACETemplateCompatibility", "generateSACEReportFile"],
-  "Subdirector": ["configurePaymentConcept", "configurePaymentTariff", "getStudentAccountStatement", "recordStudentPayment", "uploadPaymentVoucher", "generatePaymentReceiptPDF", "createFiscalInvoice", "getFiscalInvoices", "configureGatewayIntegration", "testGatewayConnection", "recordCashBankMovement", "closeCashSession", "getCashBankSummary", "performBankReconciliation", "recordAccountsPayableExpense", "getChartOfAccounts", "recordAccountingJournalEntry", "generatePayrollPeriod", "recordStaffAttendance", "getStaffPayrollReceipt", "recordInventoryMovement", "getInventoryKardex", "registerSupplier", "createEmployeeRecord", "getEmployeeRecords", "manageEmployeeContract", "getEmployeeContracts", "submitVacationRequest", "getVacationRequests", "reviewVacationRequest", "configureFiscalPolicy", "getFiscalPolicies", "publishInstitutionalPolicy", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getAdvancedDashboardAnalytics", "manageLibraryBook", "getLibraryBooks", "processLibraryLoan", "getLibraryLoans", "manageAssetItem", "getAssetItems", "assignAssetCustody", "getAssetAssignments", "manageTransportRoute", "getTransportRoutes", "assignStudentTransport", "getTransportAssignments", "registerSpreadsheetSource", "resolveSpreadsheetSource", "getSpreadsheetCatalog", "configureSchoolDocumentTemplate", "getSchoolDocumentTemplates", "generateSchoolDocument", "getIssuedSchoolDocuments", "validateImportPreview", "importDataWithColumnMapping", "getMigrationLogs", "verifySACETemplateCompatibility", "generateSACEReportFile"],
-  "Secretaría": ["configurePaymentConcept", "configurePaymentTariff", "getStudentAccountStatement", "recordStudentPayment", "uploadPaymentVoucher", "generatePaymentReceiptPDF", "createFiscalInvoice", "getFiscalInvoices", "recordCashBankMovement", "getCashBankSummary", "recordStaffAttendance", "recordInventoryMovement", "getInventoryKardex", "registerSupplier", "createEmployeeRecord", "getEmployeeRecords", "manageEmployeeContract", "getEmployeeContracts", "submitVacationRequest", "getVacationRequests", "publishInstitutionalPolicy", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getAdvancedDashboardAnalytics", "manageLibraryBook", "getLibraryBooks", "processLibraryLoan", "getLibraryLoans", "manageTransportRoute", "getTransportRoutes", "assignStudentTransport", "getTransportAssignments", "registerSpreadsheetSource", "resolveSpreadsheetSource", "getSpreadsheetCatalog", "configureSchoolDocumentTemplate", "getSchoolDocumentTemplates", "generateSchoolDocument", "getIssuedSchoolDocuments", "validateImportPreview", "importDataWithColumnMapping", "getMigrationLogs", "verifySACETemplateCompatibility", "generateSACEReportFile"],
-  "Contador": ["configurePaymentConcept", "configurePaymentTariff", "getStudentAccountStatement", "recordStudentPayment", "uploadPaymentVoucher", "generatePaymentReceiptPDF", "createFiscalInvoice", "getFiscalInvoices", "configureGatewayIntegration", "testGatewayConnection", "recordCashBankMovement", "closeCashSession", "getCashBankSummary", "performBankReconciliation", "recordAccountsPayableExpense", "getChartOfAccounts", "recordAccountingJournalEntry", "generatePayrollPeriod", "recordStaffAttendance", "getStaffPayrollReceipt", "recordInventoryMovement", "getInventoryKardex", "registerSupplier", "createEmployeeRecord", "getEmployeeRecords", "manageEmployeeContract", "getEmployeeContracts", "submitVacationRequest", "getVacationRequests", "reviewVacationRequest", "configureFiscalPolicy", "getFiscalPolicies", "publishInstitutionalPolicy", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getAdvancedDashboardAnalytics", "manageAssetItem", "getAssetItems", "assignAssetCustody", "getAssetAssignments", "resolveSpreadsheetSource", "getSpreadsheetCatalog", "validateImportPreview", "importDataWithColumnMapping", "getMigrationLogs"],
-  "Consejeros": ["getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getLibraryBooks", "getTransportRoutes", "getSchoolDocumentTemplates", "generateSchoolDocument", "getIssuedSchoolDocuments"],
-  "Profesor": ["getStaffPayrollReceipt", "submitVacationRequest", "getVacationRequests", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getLibraryBooks", "getTransportRoutes", "getSchoolDocumentTemplates", "generateSchoolDocument", "getIssuedSchoolDocuments", "verifySACETemplateCompatibility", "generateSACEReportFile"],
-  "Asistente": ["getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getLibraryBooks", "getSchoolDocumentTemplates"],
-  "Estudiante": ["getStudentAccountStatement", "uploadPaymentVoucher", "generatePaymentReceiptPDF", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getLibraryBooks", "getTransportRoutes", "getTransportAssignments", "getSchoolDocumentTemplates", "generateSchoolDocument", "getIssuedSchoolDocuments"],
-  "Alumno": ["getStudentAccountStatement", "uploadPaymentVoucher", "generatePaymentReceiptPDF", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getLibraryBooks", "getTransportRoutes", "getTransportAssignments", "getSchoolDocumentTemplates", "generateSchoolDocument", "getIssuedSchoolDocuments"]
+  "Director": ["configurePaymentConcept", "configurePaymentTariff", "getStudentAccountStatement", "recordStudentPayment", "uploadPaymentVoucher", "getPaymentVouchers", "reviewPaymentVoucher", "generatePaymentReceiptPDF", "createFiscalInvoice", "getFiscalInvoices", "configureGatewayIntegration", "testGatewayConnection", "recordCashBankMovement", "closeCashSession", "getCashBankSummary", "performBankReconciliation", "recordAccountsPayableExpense", "getChartOfAccounts", "saveAccountItem", "recordAccountingJournalEntry", "getAccountingJournalEntries", "getBudgets", "saveBudgetPlan", "getBudgetExecutionReport", "getFinancialSummary", "getAccountsReceivablePayableSummary", "generatePayrollPeriod", "recordStaffAttendance", "getStaffPayrollReceipt", "recordInventoryMovement", "getInventoryKardex", "registerSupplier", "createEmployeeRecord", "getEmployeeRecords", "manageEmployeeContract", "getEmployeeContracts", "submitVacationRequest", "getVacationRequests", "reviewVacationRequest", "configureFiscalPolicy", "getFiscalPolicies", "publishInstitutionalPolicy", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getAdvancedDashboardAnalytics", "manageLibraryBook", "getLibraryBooks", "processLibraryLoan", "getLibraryLoans", "reserveLibraryBook", "getLibraryReservations", "recordLibraryIncident", "getLibraryIncidents", "manageDigitalResource", "getDigitalResources", "manageAssetItem", "getAssetItems", "assignAssetCustody", "getAssetAssignments", "manageTransportRoute", "getTransportRoutes", "assignStudentTransport", "getTransportAssignments", "registerSpreadsheetSource", "resolveSpreadsheetSource", "getSpreadsheetCatalog", "configureSchoolDocumentTemplate", "getSchoolDocumentTemplates", "generateSchoolDocument", "getIssuedSchoolDocuments", "validateImportPreview", "importDataWithColumnMapping", "getMigrationLogs", "verifySACETemplateCompatibility", "generateSACEReportFile", "configureDiscountScholarshipRule", "getDiscountScholarshipRules", "submitDiscountScholarshipRequest", "getDiscountScholarshipRequests", "approveDiscountScholarshipRequest", "calculateAppliedDiscount", "configureLateFeeRule", "getLateFeeRules", "calculateLateFeesForAccount", "manageStoreProduct", "getStoreProducts", "createStoreOrder", "getStoreOrders", "updateStoreOrderStatus", "manageCafeteriaMenu", "getCafeteriaMenu", "createCafeteriaOrder", "getCafeteriaOrders", "updateCafeteriaOrderStatus", "configureFamilyCreditAuthorization", "getFamilyCreditAuthorizations", "processFamilyCreditPurchase", "createPurchaseRequest", "getPurchaseRequests", "submitPurchaseQuotation", "getPurchaseQuotations", "createPurchaseOrder", "approvePurchaseOrder", "getPurchaseOrders", "recordPurchaseReceipt", "manageWarehouseLocation", "getWarehouseLocations", "transferInventoryStock", "createMaterialRequisition", "getMaterialRequisitions", "deliverMaterialRequisition", "createPhysicalInventoryCount", "getPhysicalInventoryCounts", "reconcilePhysicalCount", "manageMaintenanceOrder", "getMaintenanceOrders", "registerAssetDisposal", "getAssetDisposals"],
+  "Subdirector": ["configurePaymentConcept", "configurePaymentTariff", "getStudentAccountStatement", "recordStudentPayment", "uploadPaymentVoucher", "getPaymentVouchers", "reviewPaymentVoucher", "generatePaymentReceiptPDF", "createFiscalInvoice", "getFiscalInvoices", "configureGatewayIntegration", "testGatewayConnection", "recordCashBankMovement", "closeCashSession", "getCashBankSummary", "performBankReconciliation", "recordAccountsPayableExpense", "getChartOfAccounts", "saveAccountItem", "recordAccountingJournalEntry", "getAccountingJournalEntries", "getBudgets", "saveBudgetPlan", "getBudgetExecutionReport", "getFinancialSummary", "getAccountsReceivablePayableSummary", "generatePayrollPeriod", "recordStaffAttendance", "getStaffPayrollReceipt", "recordInventoryMovement", "getInventoryKardex", "registerSupplier", "createEmployeeRecord", "getEmployeeRecords", "manageEmployeeContract", "getEmployeeContracts", "submitVacationRequest", "getVacationRequests", "reviewVacationRequest", "configureFiscalPolicy", "getFiscalPolicies", "publishInstitutionalPolicy", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getAdvancedDashboardAnalytics", "manageLibraryBook", "getLibraryBooks", "processLibraryLoan", "getLibraryLoans", "reserveLibraryBook", "getLibraryReservations", "recordLibraryIncident", "getLibraryIncidents", "manageDigitalResource", "getDigitalResources", "manageAssetItem", "getAssetItems", "assignAssetCustody", "getAssetAssignments", "manageTransportRoute", "getTransportRoutes", "assignStudentTransport", "getTransportAssignments", "registerSpreadsheetSource", "resolveSpreadsheetSource", "getSpreadsheetCatalog", "configureSchoolDocumentTemplate", "getSchoolDocumentTemplates", "generateSchoolDocument", "getIssuedSchoolDocuments", "validateImportPreview", "importDataWithColumnMapping", "getMigrationLogs", "verifySACETemplateCompatibility", "generateSACEReportFile", "configureDiscountScholarshipRule", "getDiscountScholarshipRules", "submitDiscountScholarshipRequest", "getDiscountScholarshipRequests", "approveDiscountScholarshipRequest", "calculateAppliedDiscount", "createPurchaseRequest", "getPurchaseRequests", "submitPurchaseQuotation", "getPurchaseQuotations", "createPurchaseOrder", "approvePurchaseOrder", "getPurchaseOrders", "recordPurchaseReceipt", "manageWarehouseLocation", "getWarehouseLocations", "transferInventoryStock", "createMaterialRequisition", "getMaterialRequisitions", "deliverMaterialRequisition", "createPhysicalInventoryCount", "getPhysicalInventoryCounts", "reconcilePhysicalCount", "manageMaintenanceOrder", "getMaintenanceOrders", "registerAssetDisposal", "getAssetDisposals"],
+  "Contador": ["configurePaymentConcept", "configurePaymentTariff", "getStudentAccountStatement", "recordStudentPayment", "uploadPaymentVoucher", "getPaymentVouchers", "reviewPaymentVoucher", "generatePaymentReceiptPDF", "createFiscalInvoice", "getFiscalInvoices", "configureGatewayIntegration", "testGatewayConnection", "recordCashBankMovement", "closeCashSession", "getCashBankSummary", "performBankReconciliation", "recordAccountsPayableExpense", "getChartOfAccounts", "saveAccountItem", "recordAccountingJournalEntry", "getAccountingJournalEntries", "getBudgets", "saveBudgetPlan", "getBudgetExecutionReport", "getFinancialSummary", "getAccountsReceivablePayableSummary", "generatePayrollPeriod", "recordStaffAttendance", "getStaffPayrollReceipt", "recordInventoryMovement", "getInventoryKardex", "registerSupplier", "createEmployeeRecord", "getEmployeeRecords", "manageEmployeeContract", "getEmployeeContracts", "submitVacationRequest", "getVacationRequests", "reviewVacationRequest", "configureFiscalPolicy", "getFiscalPolicies", "publishInstitutionalPolicy", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getAdvancedDashboardAnalytics", "manageLibraryBook", "getLibraryBooks", "processLibraryLoan", "getLibraryLoans", "reserveLibraryBook", "getLibraryReservations", "recordLibraryIncident", "getLibraryIncidents", "manageDigitalResource", "getDigitalResources", "manageAssetItem", "getAssetItems", "assignAssetCustody", "getAssetAssignments", "resolveSpreadsheetSource", "getSpreadsheetCatalog", "validateImportPreview", "importDataWithColumnMapping", "getMigrationLogs", "configureDiscountScholarshipRule", "getDiscountScholarshipRules", "submitDiscountScholarshipRequest", "getDiscountScholarshipRequests", "calculateAppliedDiscount", "getStoreProducts", "getStoreOrders", "getCafeteriaMenu", "getCafeteriaOrders", "createPurchaseRequest", "getPurchaseRequests", "submitPurchaseQuotation", "getPurchaseQuotations", "createPurchaseOrder", "approvePurchaseOrder", "getPurchaseOrders", "recordPurchaseReceipt", "manageWarehouseLocation", "getWarehouseLocations", "transferInventoryStock", "createMaterialRequisition", "getMaterialRequisitions", "deliverMaterialRequisition", "createPhysicalInventoryCount", "getPhysicalInventoryCounts", "reconcilePhysicalCount", "manageMaintenanceOrder", "getMaintenanceOrders", "registerAssetDisposal", "getAssetDisposals"],
+  // REVISIÓN RBAC: Habilitar permiso processFamilyCreditPurchase para personal de tienda, cafetería, tutores y estudiantes
+  "EncargadoTienda": ["getStoreProducts", "manageStoreProduct", "createStoreOrder", "getStoreOrders", "updateStoreOrderStatus", "recordInventoryMovement", "getInventoryKardex", "getInstitutionalPolicies", "processFamilyCreditPurchase"],
+  "EncargadoCafeteria": ["getCafeteriaMenu", "manageCafeteriaMenu", "createCafeteriaOrder", "getCafeteriaOrders", "updateCafeteriaOrderStatus", "recordInventoryMovement", "getInventoryKardex", "getInstitutionalPolicies", "processFamilyCreditPurchase"],
+  "RecursosHumanos": ["createEmployeeRecord", "getEmployeeRecords", "manageEmployeeContract", "getEmployeeContracts", "updateEmployeeLaborStatus", "configureWorkSchedule", "recordStaffCheckIn", "getStaffAttendanceLogs", "submitAttendanceCorrection", "reviewAttendanceCorrection", "submitLeaveVacationRequest", "getLeaveVacationRequests", "reviewLeaveVacationRequest", "calculateVacationBalances", "recordMedicalLeave", "calculatePayrollPeriod", "updatePayrollPeriodStatus", "getPayrollPeriodSummary", "requestEmployeeLoanAdvance", "getEmployeeLoansAdvances", "approveEmployeeLoanAdvance", "getLoanAmortizationSchedule", "generatePayrollReceiptPDF", "uploadEmployeeDocument", "getEmployeeDocuments", "getHRDashboardAnalytics", "getInstitutionalPolicies"],
+  "Empleado": ["getEmployeeRecords", "getEmployeeContracts", "recordStaffCheckIn", "getStaffAttendanceLogs", "submitAttendanceCorrection", "submitLeaveVacationRequest", "getLeaveVacationRequests", "requestEmployeeLoanAdvance", "getEmployeeLoansAdvances", "generatePayrollReceiptPDF", "getEmployeeDocuments"],
+  "Padre": ["getStudentAccountStatement", "uploadPaymentVoucher", "getPaymentVouchers", "generatePaymentReceiptPDF", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getLibraryBooks", "getLibraryLoans", "reserveLibraryBook", "getLibraryReservations", "getDigitalResources", "getTransportRoutes", "getTransportAssignments", "getSchoolDocumentTemplates", "generateSchoolDocument", "getIssuedSchoolDocuments", "getStoreProducts", "createStoreOrder", "getStoreOrders", "getCafeteriaMenu", "createCafeteriaOrder", "getCafeteriaOrders", "getFamilyCreditAuthorizations", "configureFamilyCreditAuthorization", "processFamilyCreditPurchase"],
+  "Tutor": ["getStudentAccountStatement", "uploadPaymentVoucher", "getPaymentVouchers", "generatePaymentReceiptPDF", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getLibraryBooks", "getLibraryLoans", "reserveLibraryBook", "getLibraryReservations", "getDigitalResources", "getTransportRoutes", "getTransportAssignments", "getSchoolDocumentTemplates", "generateSchoolDocument", "getIssuedSchoolDocuments", "getStoreProducts", "createStoreOrder", "getStoreOrders", "getCafeteriaMenu", "createCafeteriaOrder", "getCafeteriaOrders", "getFamilyCreditAuthorizations", "configureFamilyCreditAuthorization", "processFamilyCreditPurchase"],
+  "Responsable": ["getStudentAccountStatement", "uploadPaymentVoucher", "getPaymentVouchers", "generatePaymentReceiptPDF", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getLibraryBooks", "getLibraryLoans", "reserveLibraryBook", "getLibraryReservations", "getDigitalResources", "getTransportRoutes", "getTransportAssignments", "getSchoolDocumentTemplates", "generateSchoolDocument", "getIssuedSchoolDocuments", "getStoreProducts", "createStoreOrder", "getStoreOrders", "getCafeteriaMenu", "createCafeteriaOrder", "getCafeteriaOrders", "getFamilyCreditAuthorizations", "configureFamilyCreditAuthorization", "processFamilyCreditPurchase"],
+  "Consejeros": ["getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getLibraryBooks", "getLibraryLoans", "reserveLibraryBook", "getLibraryReservations", "getDigitalResources", "getTransportRoutes", "getSchoolDocumentTemplates", "generateSchoolDocument", "getIssuedSchoolDocuments"],
+  "Profesor": ["getStaffPayrollReceipt", "submitVacationRequest", "getVacationRequests", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getLibraryBooks", "getLibraryLoans", "reserveLibraryBook", "getLibraryReservations", "getDigitalResources", "getTransportRoutes", "getSchoolDocumentTemplates", "generateSchoolDocument", "getIssuedSchoolDocuments", "verifySACETemplateCompatibility", "generateSACEReportFile"],
+  "Asistente": ["getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getLibraryBooks", "getLibraryLoans", "getDigitalResources", "getSchoolDocumentTemplates"],
+  "Estudiante": ["getStudentAccountStatement", "uploadPaymentVoucher", "getPaymentVouchers", "generatePaymentReceiptPDF", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getLibraryBooks", "getLibraryLoans", "reserveLibraryBook", "getLibraryReservations", "getDigitalResources", "getTransportRoutes", "getTransportAssignments", "getSchoolDocumentTemplates", "generateSchoolDocument", "getIssuedSchoolDocuments", "getStoreProducts", "createStoreOrder", "getStoreOrders", "getCafeteriaMenu", "createCafeteriaOrder", "getCafeteriaOrders", "getFamilyCreditAuthorizations", "processFamilyCreditPurchase"],
+  "Alumno": ["getStudentAccountStatement", "uploadPaymentVoucher", "getPaymentVouchers", "generatePaymentReceiptPDF", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getLibraryBooks", "getLibraryLoans", "reserveLibraryBook", "getLibraryReservations", "getDigitalResources", "getTransportRoutes", "getTransportAssignments", "getSchoolDocumentTemplates", "generateSchoolDocument", "getIssuedSchoolDocuments", "getStoreProducts", "createStoreOrder", "getStoreOrders", "getCafeteriaMenu", "createCafeteriaOrder", "getCafeteriaOrders", "getFamilyCreditAuthorizations", "processFamilyCreditPurchase"]
 };
 
 const PUBLIC_ACTIONS = ["ping", "getInstitutionalPolicies"];
@@ -175,6 +226,8 @@ function doPost(e) {
       case "getStudentAccountStatement": result = getStudentAccountStatement(payload); break;
       case "recordStudentPayment": result = recordStudentPayment(payload); break;
       case "uploadPaymentVoucher": result = uploadPaymentVoucher(payload); break;
+      case "getPaymentVouchers": result = getPaymentVouchers(payload); break;
+      case "reviewPaymentVoucher": result = reviewPaymentVoucher(payload); break;
       case "generatePaymentReceiptPDF": result = generatePaymentReceiptPDF(payload); break;
       case "createFiscalInvoice": result = createFiscalInvoice(payload); break;
       case "getFiscalInvoices": result = getFiscalInvoices(payload); break;
@@ -186,20 +239,70 @@ function doPost(e) {
       case "performBankReconciliation": result = performBankReconciliation(payload); break;
       case "recordAccountsPayableExpense": result = recordAccountsPayableExpense(payload); break;
       case "getChartOfAccounts": result = getChartOfAccounts(payload); break;
+      case "saveAccountItem": result = saveAccountItem(payload); break;
       case "recordAccountingJournalEntry": result = recordAccountingJournalEntry(payload); break;
+      case "getAccountingJournalEntries": result = getAccountingJournalEntries(payload); break;
+      case "getBudgets": result = getBudgets(payload); break;
+      case "saveBudgetPlan": result = saveBudgetPlan(payload); break;
+      case "getBudgetExecutionReport": result = getBudgetExecutionReport(payload); break;
+      case "getFinancialSummary": result = getFinancialSummary(payload); break;
+      case "getAccountsReceivablePayableSummary": result = getAccountsReceivablePayableSummary(payload); break;
+      case "configureWorkSchedule": result = configureWorkSchedule(payload); break;
+      case "recordStaffCheckIn": result = recordStaffCheckIn(payload); break;
+      case "getStaffAttendanceLogs": result = getStaffAttendanceLogs(payload); break;
+      case "submitAttendanceCorrection": result = submitAttendanceCorrection(payload); break;
+      case "reviewAttendanceCorrection": result = reviewAttendanceCorrection(payload); break;
+      case "calculatePayrollPeriod": result = calculatePayrollPeriod(payload); break;
+      case "updatePayrollPeriodStatus": result = updatePayrollPeriodStatus(payload); break;
+      case "getPayrollPeriodSummary": result = getPayrollPeriodSummary(payload); break;
+      case "requestEmployeeLoanAdvance": result = requestEmployeeLoanAdvance(payload); break;
+      case "getEmployeeLoansAdvances": result = getEmployeeLoansAdvances(payload); break;
+      case "approveEmployeeLoanAdvance": result = approveEmployeeLoanAdvance(payload); break;
+      case "getLoanAmortizationSchedule": result = getLoanAmortizationSchedule(payload); break;
+      case "generatePayrollReceiptPDF": result = generatePayrollReceiptPDF(payload); break;
+      case "uploadEmployeeDocument": result = uploadEmployeeDocument(payload); break;
+      case "getEmployeeDocuments": result = getEmployeeDocuments(payload); break;
+      case "getHRDashboardAnalytics": result = getHRDashboardAnalytics(payload); break;
       case "generatePayrollPeriod": result = generatePayrollPeriod(payload); break;
       case "recordStaffAttendance": result = recordStaffAttendance(payload); break;
       case "getStaffPayrollReceipt": result = getStaffPayrollReceipt(payload); break;
       case "recordInventoryMovement": result = recordInventoryMovement(payload); break;
       case "getInventoryKardex": result = getInventoryKardex(payload); break;
       case "registerSupplier": result = registerSupplier(payload); break;
+      case "createPurchaseRequest": result = createPurchaseRequest(payload); break;
+      case "getPurchaseRequests": result = getPurchaseRequests(payload); break;
+      case "submitPurchaseQuotation": result = submitPurchaseQuotation(payload); break;
+      case "getPurchaseQuotations": result = getPurchaseQuotations(payload); break;
+      case "createPurchaseOrder": result = createPurchaseOrder(payload); break;
+      case "approvePurchaseOrder": result = approvePurchaseOrder(payload); break;
+      case "getPurchaseOrders": result = getPurchaseOrders(payload); break;
+      case "recordPurchaseReceipt": result = recordPurchaseReceipt(payload); break;
+      case "manageWarehouseLocation": result = manageWarehouseLocation(payload); break;
+      case "getWarehouseLocations": result = getWarehouseLocations(payload); break;
+      case "transferInventoryStock": result = transferInventoryStock(payload); break;
+      case "createMaterialRequisition": result = createMaterialRequisition(payload); break;
+      case "getMaterialRequisitions": result = getMaterialRequisitions(payload); break;
+      case "deliverMaterialRequisition": result = deliverMaterialRequisition(payload); break;
+      case "createPhysicalInventoryCount": result = createPhysicalInventoryCount(payload); break;
+      case "getPhysicalInventoryCounts": result = getPhysicalInventoryCounts(payload); break;
+      case "reconcilePhysicalCount": result = reconcilePhysicalCount(payload); break;
+      case "manageMaintenanceOrder": result = manageMaintenanceOrder(payload); break;
+      case "getMaintenanceOrders": result = getMaintenanceOrders(payload); break;
+      case "registerAssetDisposal": result = registerAssetDisposal(payload); break;
+      case "getAssetDisposals": result = getAssetDisposals(payload); break;
       case "createEmployeeRecord": result = createEmployeeRecord(payload); break;
       case "getEmployeeRecords": result = getEmployeeRecords(payload); break;
+      case "updateEmployeeLaborStatus": result = updateEmployeeLaborStatus(payload); break;
       case "manageEmployeeContract": result = manageEmployeeContract(payload); break;
       case "getEmployeeContracts": result = getEmployeeContracts(payload); break;
+      case "submitLeaveVacationRequest": result = submitLeaveVacationRequest(payload); break;
       case "submitVacationRequest": result = submitVacationRequest(payload); break;
+      case "getLeaveVacationRequests": result = getLeaveVacationRequests(payload); break;
       case "getVacationRequests": result = getVacationRequests(payload); break;
+      case "reviewLeaveVacationRequest": result = reviewLeaveVacationRequest(payload); break;
       case "reviewVacationRequest": result = reviewVacationRequest(payload); break;
+      case "calculateVacationBalances": result = calculateVacationBalances(payload); break;
+      case "recordMedicalLeave": result = recordMedicalLeave(payload); break;
       case "configureFiscalPolicy": result = configureFiscalPolicy(payload); break;
       case "getFiscalPolicies": result = getFiscalPolicies(payload); break;
       case "publishInstitutionalPolicy": result = publishInstitutionalPolicy(payload); break;
@@ -211,6 +314,12 @@ function doPost(e) {
       case "getLibraryBooks": result = getLibraryBooks(payload); break;
       case "processLibraryLoan": result = processLibraryLoan(payload); break;
       case "getLibraryLoans": result = getLibraryLoans(payload); break;
+      case "reserveLibraryBook": result = reserveLibraryBook(payload); break;
+      case "getLibraryReservations": result = getLibraryReservations(payload); break;
+      case "recordLibraryIncident": result = recordLibraryIncident(payload); break;
+      case "getLibraryIncidents": result = getLibraryIncidents(payload); break;
+      case "manageDigitalResource": result = manageDigitalResource(payload); break;
+      case "getDigitalResources": result = getDigitalResources(payload); break;
       case "manageAssetItem": result = manageAssetItem(payload); break;
       case "getAssetItems": result = getAssetItems(payload); break;
       case "assignAssetCustody": result = assignAssetCustody(payload); break;
@@ -231,11 +340,997 @@ function doPost(e) {
       case "getMigrationLogs": result = getMigrationLogs(payload); break;
       case "verifySACETemplateCompatibility": result = verifySACETemplateCompatibility(payload); break;
       case "generateSACEReportFile": result = generateSACEReportFile(payload); break;
+      case "configureDiscountScholarshipRule": result = configureDiscountScholarshipRule(payload); break;
+      case "getDiscountScholarshipRules": result = getDiscountScholarshipRules(payload); break;
+      case "submitDiscountScholarshipRequest": result = submitDiscountScholarshipRequest(payload); break;
+      case "getDiscountScholarshipRequests": result = getDiscountScholarshipRequests(payload); break;
+      case "approveDiscountScholarshipRequest": result = approveDiscountScholarshipRequest(payload); break;
+      case "calculateAppliedDiscount": result = calculateAppliedDiscount(payload); break;
+      case "configureLateFeeRule": result = configureLateFeeRule(payload); break;
+      case "getLateFeeRules": result = getLateFeeRules(payload); break;
+      case "calculateLateFeesForAccount": result = calculateLateFeesForAccount(payload); break;
+      case "manageStoreProduct": result = manageStoreProduct(payload); break;
+      case "getStoreProducts": result = getStoreProducts(payload); break;
+      case "createStoreOrder": result = createStoreOrder(payload); break;
+      case "getStoreOrders": result = getStoreOrders(payload); break;
+      case "updateStoreOrderStatus": result = updateStoreOrderStatus(payload); break;
+      case "manageCafeteriaMenu": result = manageCafeteriaMenu(payload); break;
+      case "getCafeteriaMenu": result = getCafeteriaMenu(payload); break;
+      case "createCafeteriaOrder": result = createCafeteriaOrder(payload); break;
+      case "getCafeteriaOrders": result = getCafeteriaOrders(payload); break;
+      case "updateCafeteriaOrderStatus": result = updateCafeteriaOrderStatus(payload); break;
+      case "configureFamilyCreditAuthorization": result = configureFamilyCreditAuthorization(payload); break;
+      case "getFamilyCreditAuthorizations": result = getFamilyCreditAuthorizations(payload); break;
+      case "processFamilyCreditPurchase": result = processFamilyCreditPurchase(payload); break;
       case "ping": result = { status: "success", service: "ACCOUNTING", timestamp: new Date().toISOString(), dbConnected: true }; break;
       default: result = { status: "error", message: `Acción no reconocida: ${action}` };
     }
     return textResponse(result);
-  } catch (err) { return textResponse({ status: "error", message: err.message || "Error interno contabilidad." }); }
+  } catch (err) {
+    logStructuredEvent("ACCOUNTING", "doPost", "ERROR", "UNHANDLED_EXCEPTION", err.message, e ? e.postData : null, "Sistema");
+    return textResponse({ status: "error", code: "INTERNAL_ERROR", message: err.message || "Error interno contabilidad." });
+  }
+}
+
+// ---------------------------------------------------------------------------
+// FASE 4: MOTOR CENTRALIZADO DE DESCUENTOS, BECAS Y APROBACIONES
+// ---------------------------------------------------------------------------
+
+function configureDiscountScholarshipRule(payload) {
+  const { descuentoId, nombreInterno, codigoRegla, tipoBeneficio, porcentajeOImporte, valor, importeMaximo, conceptosElegibles, criteriosElegibilidad, acumulable, prioridad, estado, observaciones } = payload || {};
+  if (!nombreInterno || valor === undefined) throw new Error("Nombre interno y valor del beneficio son requeridos.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "DescuentosBecas");
+  const data = sheet.getDataRange().getValues();
+  const now = new Date();
+
+  let dId = descuentoId;
+  let existingIndex = -1;
+
+  if (dId) {
+    existingIndex = data.findIndex(r => String(r[0]).trim() === String(dId).trim());
+  } else if (codigoRegla) {
+    existingIndex = data.findIndex(r => String(r[3]).toLowerCase().trim() === String(codigoRegla).toLowerCase().trim());
+  }
+
+  const concJSON = typeof conceptosElegibles === "object" ? JSON.stringify(conceptosElegibles) : (conceptosElegibles || "[\"Matricula\",\"Mensualidad\"]");
+  const critJSON = typeof criteriosElegibilidad === "object" ? JSON.stringify(criteriosElegibilidad) : (criteriosElegibilidad || "{}");
+
+  if (existingIndex !== -1) {
+    dId = data[existingIndex][0];
+    sheet.getRange(existingIndex + 1, 1, 1, 16).setValues([[
+      dId,
+      now,
+      nombreInterno,
+      codigoRegla || ("DSC-" + Math.floor(1000 + Math.random() * 9000)),
+      tipoBeneficio || "DescuentoPromocional",
+      porcentajeOImporte || "Porcentaje",
+      parseFloat(valor || 0),
+      parseFloat(importeMaximo || 0),
+      concJSON,
+      critJSON,
+      acumulable ? true : false,
+      parseInt(prioridad || 1),
+      estado || "Aprobado",
+      payload.authRole || "Contador",
+      "Direccion",
+      observaciones || ""
+    ]]);
+  } else {
+    dId = "DSC-" + now.getTime();
+    sheet.appendRow([
+      dId,
+      now,
+      nombreInterno,
+      codigoRegla || ("DSC-" + Math.floor(1000 + Math.random() * 9000)),
+      tipoBeneficio || "DescuentoPromocional",
+      porcentajeOImporte || "Porcentaje",
+      parseFloat(valor || 0),
+      parseFloat(importeMaximo || 0),
+      concJSON,
+      critJSON,
+      acumulable ? true : false,
+      parseInt(prioridad || 1),
+      estado || "Aprobado",
+      payload.authRole || "Contador",
+      "Direccion",
+      observaciones || ""
+    ]);
+  }
+
+  return {
+    status: "success",
+    descuentoId: dId,
+    message: "Regla de descuento / beca configurada exitosamente."
+  };
+}
+
+function getDiscountScholarshipRules(payload) {
+  const { tipoBeneficio, estado } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  let rows = getOrCreateSheet(ss, "DescuentosBecas").getDataRange().getValues().slice(1);
+
+  if (rows.length === 0) {
+    const defaults = [
+      ["DSC-101", new Date(), "Matrícula Anticipada 25%", "PROM-MAT-25", "DescuentoPromocional", "Porcentaje", 25, 0, '["Matricula"]', '{"rangoFechas":{"inicio":"2026-01-01","fin":"2026-12-31"}}', false, 1, "Aprobado", "Contabilidad", "Direccion", "Promoción automática de matrícula"],
+      ["DSC-102", new Date(), "Beca Mérito Académico 50%", "BECA-MERITO-50", "Beca", "Porcentaje", 50, 0, '["Mensualidad"]', '{"requiereAprobacion":true}', false, 2, "Aprobado", "Secretaria", "Direccion", "Beca individual sujeta a aprobación"]
+    ];
+    const sheet = getOrCreateSheet(ss, "DescuentosBecas");
+    sheet.getRange(2, 1, defaults.length, 16).setValues(defaults);
+    rows = defaults;
+  }
+
+  let filtered = rows;
+  if (tipoBeneficio) filtered = filtered.filter(r => String(r[4]).toLowerCase().trim() === String(tipoBeneficio).toLowerCase().trim());
+  if (estado) filtered = filtered.filter(r => String(r[12]).trim() === String(estado).trim());
+
+  const mapped = filtered.map(r => ({
+    descuentoId: r[0],
+    fechaCreacion: r[1],
+    nombreInterno: r[2],
+    codigoRegla: r[3],
+    tipoBeneficio: r[4],
+    porcentajeOImporte: r[5],
+    valor: parseFloat(r[6] || 0),
+    importeMaximo: parseFloat(r[7] || 0),
+    conceptosElegiblesJSON: r[8],
+    criteriosElegibilidadJSON: r[9],
+    acumulable: r[10],
+    prioridad: parseInt(r[11] || 1),
+    estado: r[12],
+    creadoPor: r[13],
+    aprobadoPor: r[14],
+    observaciones: r[15]
+  }));
+
+  return {
+    status: "success",
+    rules: mapped
+  };
+}
+
+function submitDiscountScholarshipRequest(payload) {
+  const { descuentoId, beneficiarioTipo, beneficiarioTargetId, conceptoAfectado, montoCalculado, documentoAdjuntoUrl, motivo } = payload || {};
+  if (!descuentoId || !beneficiarioTargetId) throw new Error("descuentoId y beneficiarioTargetId son requeridos.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "SolicitudesDescuentoBeca");
+  const now = new Date();
+  const solicitudId = "SOL-" + now.getTime();
+
+  sheet.appendRow([
+    solicitudId,
+    now,
+    String(descuentoId).trim(),
+    beneficiarioTipo || "Alumno",
+    String(beneficiarioTargetId).trim(),
+    conceptoAfectado || "Matricula",
+    parseFloat(montoCalculado || 0),
+    documentoAdjuntoUrl || "",
+    "PendienteAprobacion",
+    payload.authRole || "Secretaría",
+    "",
+    motivo || "Solicitud de beca / descuento individual"
+  ]);
+
+  return {
+    status: "success",
+    solicitudId: solicitudId,
+    estadoAprobacion: "PendienteAprobacion",
+    message: "Solicitud enviada a Dirección para autorización."
+  };
+}
+
+function getDiscountScholarshipRequests(payload) {
+  const { estadoAprobacion, beneficiarioTargetId } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const rows = getOrCreateSheet(ss, "SolicitudesDescuentoBeca").getDataRange().getValues().slice(1);
+
+  let filtered = rows;
+  if (estadoAprobacion) filtered = filtered.filter(r => String(r[8]).trim() === String(estadoAprobacion).trim());
+  if (beneficiarioTargetId) filtered = filtered.filter(r => String(r[4]).trim() === String(beneficiarioTargetId).trim());
+
+  const mapped = filtered.map(r => ({
+    solicitudId: r[0],
+    fechaSolicitud: r[1],
+    descuentoId: r[2],
+    beneficiarioTipo: r[3],
+    beneficiarioTargetId: r[4],
+    conceptoAfectado: r[5],
+    montoCalculado: parseFloat(r[6] || 0),
+    documentoAdjuntoUrl: r[7],
+    estadoAprobacion: r[8],
+    solicitadoPor: r[9],
+    aprobadoPor: r[10],
+    motivoRevision: r[11]
+  }));
+
+  return {
+    status: "success",
+    solicitudes: mapped
+  };
+}
+
+function approveDiscountScholarshipRequest(payload) {
+  const { solicitudId, nuevoEstado, motivoRevision } = payload || {};
+  if (!solicitudId || !nuevoEstado) throw new Error("solicitudId y nuevoEstado son requeridos.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "SolicitudesDescuentoBeca");
+  const data = sheet.getDataRange().getValues();
+
+  const idx = data.findIndex(r => String(r[0]).trim() === String(solicitudId).trim());
+  if (idx === -1) throw new Error("Solicitud no encontrada.");
+
+  sheet.getRange(idx + 1, 9).setValue(nuevoEstado);
+  sheet.getRange(idx + 1, 11).setValue(payload.authRole || "Dirección");
+  if (motivoRevision) sheet.getRange(idx + 1, 12).setValue(motivoRevision);
+
+  return {
+    status: "success",
+    solicitudId: solicitudId,
+    estadoAprobacion: nuevoEstado,
+    message: "Solicitud de beneficio " + nuevoEstado + " exitosamente por Dirección."
+  };
+}
+
+function configureLateFeeRule(payload) {
+  const { recargoId, nombreRegla, conceptoAfectado, tipoCalculo, valorRecargo, diasGracia, frecuencia, limiteMaximo, estado, observaciones } = payload || {};
+  if (!nombreRegla || valorRecargo === undefined) throw new Error("Nombre de regla y valor de recargo son requeridos.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "RecargosMoras");
+  const data = sheet.getDataRange().getValues();
+  const now = new Date();
+
+  let rId = recargoId;
+  let existingIndex = -1;
+
+  if (rId) {
+    existingIndex = data.findIndex(r => String(r[0]).trim() === String(rId).trim());
+  } else {
+    existingIndex = data.findIndex(r => String(r[2]).toLowerCase().trim() === String(nombreRegla).toLowerCase().trim());
+  }
+
+  if (existingIndex !== -1) {
+    rId = data[existingIndex][0];
+    sheet.getRange(existingIndex + 1, 1, 1, 11).setValues([[
+      rId,
+      now,
+      nombreRegla,
+      conceptoAfectado || "Mensualidad",
+      tipoCalculo || "Porcentaje",
+      parseFloat(valorRecargo || 0),
+      parseInt(diasGracia || 5),
+      frecuencia || "Mensual",
+      parseFloat(limiteMaximo || 0),
+      estado || "Activo",
+      observaciones || ""
+    ]]);
+  } else {
+    rId = "RCG-" + now.getTime();
+    sheet.appendRow([
+      rId,
+      now,
+      nombreRegla,
+      conceptoAfectado || "Mensualidad",
+      tipoCalculo || "Porcentaje",
+      parseFloat(valorRecargo || 0),
+      parseInt(diasGracia || 5),
+      frecuencia || "Mensual",
+      parseFloat(limiteMaximo || 0),
+      estado || "Activo",
+      observaciones || ""
+    ]);
+  }
+
+  return {
+    status: "success",
+    recargoId: rId,
+    message: "Regla de mora / recargo configurada correctamente."
+  };
+}
+
+function getLateFeeRules(payload) {
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  let rows = getOrCreateSheet(ss, "RecargosMoras").getDataRange().getValues().slice(1);
+
+  if (rows.length === 0) {
+    const defaults = [
+      ["RCG-101", new Date(), "Mora Mensualidad 5%", "Mensualidad", "Porcentaje", 5, 5, "Mensual", 500, "Activo", "Mora automática tras 5 días de gracia"]
+    ];
+    const sheet = getOrCreateSheet(ss, "RecargosMoras");
+    sheet.getRange(2, 1, defaults.length, 11).setValues(defaults);
+    rows = defaults;
+  }
+
+  const mapped = rows.map(r => ({
+    recargoId: r[0],
+    fechaCreacion: r[1],
+    nombreRegla: r[2],
+    conceptoAfectado: r[3],
+    tipoCalculo: r[4],
+    valorRecargo: parseFloat(r[5] || 0),
+    diasGracia: parseInt(r[6] || 5),
+    frecuencia: r[7],
+    limiteMaximo: parseFloat(r[8] || 0),
+    estado: r[9],
+    observaciones: r[10]
+  }));
+
+  return {
+    status: "success",
+    recargos: mapped
+  };
+}
+
+function calculateLateFeesForAccount(payload) {
+  const { userId } = payload || {};
+  if (!userId) throw new Error("userId requerido.");
+
+  const statementRes = getStudentAccountStatement(payload);
+  const statement = statementRes.data || {};
+  const cargos = statement.cargos || [];
+  const rulesRes = getLateFeeRules(payload);
+  const rules = rulesRes.recargos || [];
+
+  const now = new Date();
+  let totalRecargosGenerados = 0;
+  const cargosRecargados = [];
+
+  cargos.forEach(c => {
+    if (c.estado !== "Pagado" && c.fechaVencimiento) {
+      const vencDate = new Date(c.fechaVencimiento);
+      if (!isNaN(vencDate.getTime()) && now > vencDate) {
+        const diffDays = Math.floor((now - vencDate) / (1000 * 60 * 60 * 24));
+        const rule = rules.find(r => r.conceptoAfectado.toLowerCase() === c.concepto.toLowerCase() && r.estado === "Activo") || rules[0];
+
+        if (rule && diffDays > rule.diasGracia) {
+          let fee = 0;
+          if (rule.tipoCalculo === "Porcentaje") {
+            fee = c.montoFinal * (rule.valorRecargo / 100);
+          } else {
+            fee = rule.valorRecargo;
+          }
+          if (rule.limiteMaximo > 0 && fee > rule.limiteMaximo) fee = rule.limiteMaximo;
+
+          totalRecargosGenerados += fee;
+          cargosRecargados.push({
+            cargoId: c.cargoId,
+            concepto: c.concepto,
+            montoBase: c.montoFinal,
+            diasMora: diffDays,
+            montoRecargo: fee,
+            totalConMora: c.montoFinal + fee
+          });
+        }
+      }
+    }
+  });
+
+  return {
+    status: "success",
+    userId: userId,
+    totalRecargosCalculados: totalRecargosGenerados,
+    cargosRecargados: cargosRecargados
+  };
+}
+
+function calculateAppliedDiscount(payload) {
+  const { montoOriginal, descuentoId, concepto } = payload || {};
+  const orig = parseFloat(montoOriginal || 0);
+  if (orig <= 0) return { status: "success", montoOriginal: 0, montoDescuento: 0, montoFinal: 0 };
+
+  const rulesRes = getDiscountScholarshipRules(payload);
+  const rules = rulesRes.rules || [];
+  const rule = rules.find(r => String(r.descuentoId).trim() === String(descuentoId).trim() && r.estado === "Aprobado");
+
+  if (!rule) {
+    return { status: "success", montoOriginal: orig, montoDescuento: 0, montoFinal: orig, message: "Sin beneficio aplicable." };
+  }
+
+  let desc = 0;
+  if (rule.porcentajeOImporte === "Porcentaje") {
+    desc = orig * (rule.valor / 100);
+  } else {
+    desc = rule.valor;
+  }
+
+  if (rule.importeMaximo > 0 && desc > rule.importeMaximo) desc = rule.importeMaximo;
+  desc = Math.min(orig, desc);
+  const finalPrice = Math.max(0, orig - desc);
+
+  return {
+    status: "success",
+    descuentoId: rule.descuentoId,
+    nombreInterno: rule.nombreInterno,
+    montoOriginal: orig,
+    montoDescuento: desc,
+    montoFinal: finalPrice,
+    idempotentHash: "CALC-" + orig + "-" + rule.descuentoId
+  };
+}
+
+// ---------------------------------------------------------------------------
+// FASE 4: TIENDA ESCOLAR, ÚTILES Y VENTAS EN LÍNEA
+// ---------------------------------------------------------------------------
+
+function manageStoreProduct(payload) {
+  const { productoId, itemCodigo, imagenUrl, nombre, precioVenta, stockDisponible, unidadMedida, estado, marca, categoria, descripcion, observaciones } = payload || {};
+  if (!nombre || !precioVenta || !imagenUrl) {
+    throw new Error("Nombre del producto, precio de venta e imagen URL obligatoria son requeridos.");
+  }
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "TiendaProductos");
+  const data = sheet.getDataRange().getValues();
+  const now = new Date();
+
+  let pId = productoId;
+  let existingIndex = -1;
+
+  if (pId) {
+    existingIndex = data.findIndex(r => String(r[0]).trim() === String(pId).trim());
+  } else if (itemCodigo) {
+    existingIndex = data.findIndex(r => String(r[2]).toLowerCase().trim() === String(itemCodigo).toLowerCase().trim());
+  }
+
+  const cleanImgUrl = processDriveImageUrl(imagenUrl, "medium");
+
+  if (existingIndex !== -1) {
+    pId = data[existingIndex][0];
+    sheet.getRange(existingIndex + 1, 1, 1, 13).setValues([[
+      pId,
+      now,
+      itemCodigo || ("PRD-" + Math.floor(1000 + Math.random() * 9000)),
+      cleanImgUrl,
+      nombre,
+      parseFloat(precioVenta || 0),
+      parseInt(stockDisponible || 0),
+      unidadMedida || "Unidad",
+      estado || "disponible",
+      marca || "Genérica",
+      categoria || "Útiles Escolares",
+      descripcion || "",
+      observaciones || ""
+    ]]);
+  } else {
+    pId = "PRD-" + now.getTime();
+    sheet.appendRow([
+      pId,
+      now,
+      itemCodigo || ("PRD-" + Math.floor(1000 + Math.random() * 9000)),
+      cleanImgUrl,
+      nombre,
+      parseFloat(precioVenta || 0),
+      parseInt(stockDisponible || 0),
+      unidadMedida || "Unidad",
+      estado || "disponible",
+      marca || "Genérica",
+      categoria || "Útiles Escolares",
+      descripcion || "",
+      observaciones || ""
+    ]);
+  }
+
+  return {
+    status: "success",
+    productoId: pId,
+    message: "Producto de tienda escolar registrado/actualizado con éxito."
+  };
+}
+
+function getStoreProducts(payload) {
+  const { categoria, estado } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  let rows = getOrCreateSheet(ss, "TiendaProductos").getDataRange().getValues().slice(1);
+
+  if (rows.length === 0) {
+    const defaults = [
+      ["PRD-101", new Date(), "LIBR-MATH-10", "imagenes/new-generation-logo.png", "Libro de Matemáticas 10mo Grado", 450, 50, "Unidad", "disponible", "Editorial NG", "Libros", "Libro texto oficial 10mo", "Edición 2026"],
+      ["PRD-102", new Date(), "CUAD-STDN-100", "imagenes/new-generation-logo.png", "Cuaderno Espiral 100 Hojas", 60, 200, "Unidad", "disponible", "NG Stationeries", "Útiles", "Cuaderno único espiral", "Logotipo impreso"]
+    ];
+    const sheet = getOrCreateSheet(ss, "TiendaProductos");
+    sheet.getRange(2, 1, defaults.length, 13).setValues(defaults);
+    rows = defaults;
+  }
+
+  let filtered = rows;
+  if (categoria) filtered = filtered.filter(r => String(r[10]).toLowerCase().trim() === String(categoria).toLowerCase().trim());
+  if (estado) filtered = filtered.filter(r => String(r[8]).trim() === String(estado).trim());
+
+  const mapped = filtered.map(r => {
+    const rawImg = r[3];
+    return {
+      productoId: r[0],
+      fechaCreacion: r[1],
+      itemCodigo: r[2],
+      imagenUrl: processDriveImageUrl(rawImg, "medium"),
+      imagenUrlThumb: processDriveImageUrl(rawImg, "thumb"),
+      imagenUrlDetail: processDriveImageUrl(rawImg, "detail"),
+      nombre: r[4],
+      precioVenta: parseFloat(r[5] || 0),
+      stockDisponible: parseInt(r[6] || 0),
+      unidadMedida: r[7],
+      estado: r[8],
+      marca: r[9],
+      categoria: r[10],
+      descripcion: r[11],
+      observaciones: r[12]
+    };
+  });
+
+  return {
+    status: "success",
+    productos: mapped
+  };
+}
+
+function createStoreOrder(payload) {
+  const { userId, compradorNombre, detalleItems, metodoPago, metodoEntrega, observaciones } = payload || {};
+  if (!userId || !Array.isArray(detalleItems) || detalleItems.length === 0) {
+    throw new Error("userId y lista de productos (detalleItems) son requeridos.");
+  }
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const prodSheet = getOrCreateSheet(ss, "TiendaProductos");
+  const orderSheet = getOrCreateSheet(ss, "TiendaOrdenes");
+  const prodsData = prodSheet.getDataRange().getValues();
+  const now = new Date();
+
+  let totalCalculado = 0;
+  const processedItems = [];
+
+  detalleItems.forEach(item => {
+    const pIdx = prodsData.findIndex(r => String(r[0]).trim() === String(item.productoId).trim());
+    if (pIdx !== -1) {
+      const pName = prodsData[pIdx][4];
+      const pPrice = parseFloat(prodsData[pIdx][5] || 0);
+      const qty = parseInt(item.cantidad || 1);
+      const sub = pPrice * qty;
+      totalCalculado += sub;
+
+      // Descontar inventario
+      const stockCur = parseInt(prodsData[pIdx][6] || 0);
+      const stockNew = Math.max(0, stockCur - qty);
+      prodSheet.getRange(pIdx + 1, 7).setValue(stockNew);
+      if (stockNew === 0) prodSheet.getRange(pIdx + 1, 9).setValue("agotado");
+
+      processedItems.push({ productoId: item.productoId, nombre: pName, precio: pPrice, cantidad: qty, subtotal: sub });
+    }
+  });
+
+  const ordenId = "ORD-" + now.getTime();
+  const pdfUrl = "https://newgeneration.edu.hn/comprobante-orden-" + ordenId + ".pdf";
+
+  orderSheet.appendRow([
+    ordenId,
+    now,
+    String(userId).trim(),
+    compradorNombre || "Comprador",
+    JSON.stringify(processedItems),
+    totalCalculado,
+    metodoPago || "Transferencia",
+    metodoPago === "CreditoFamiliar" ? "Confirmado" : "Pendiente",
+    "PendientePreparacion",
+    metodoEntrega || "RecogidaEnTienda",
+    pdfUrl,
+    observaciones || ""
+  ]);
+
+  return {
+    status: "success",
+    ordenId: ordenId,
+    totalCalculado: totalCalculado,
+    itemsProcesados: processedItems.length,
+    pdfComprobanteUrl: pdfUrl,
+    message: "Orden de tienda escolar registrada exitosamente."
+  };
+}
+
+function getStoreOrders(payload) {
+  const { userId, ordenId } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const rows = getOrCreateSheet(ss, "TiendaOrdenes").getDataRange().getValues().slice(1);
+
+  let filtered = rows;
+  if (ordenId) filtered = filtered.filter(r => String(r[0]).trim() === String(ordenId).trim());
+  if (userId) filtered = filtered.filter(r => String(r[2]).trim() === String(userId).trim());
+
+  const mapped = filtered.map(r => ({
+    ordenId: r[0],
+    fecha: r[1],
+    userId: r[2],
+    compradorNombre: r[3],
+    detalleJSON: r[4],
+    montoTotal: parseFloat(r[5] || 0),
+    metodoPago: r[6],
+    estadoPago: r[7],
+    estadoEntrega: r[8],
+    metodoEntrega: r[9],
+    pdfComprobanteUrl: r[10],
+    observaciones: r[11]
+  }));
+
+  return {
+    status: "success",
+    ordenes: mapped
+  };
+}
+
+function updateStoreOrderStatus(payload) {
+  const { ordenId, estadoPago, estadoEntrega, observaciones } = payload || {};
+  if (!ordenId) throw new Error("ordenId requerido.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "TiendaOrdenes");
+  const data = sheet.getDataRange().getValues();
+
+  const idx = data.findIndex(r => String(r[0]).trim() === String(ordenId).trim());
+  if (idx === -1) throw new Error("Orden no encontrada.");
+
+  if (estadoPago) sheet.getRange(idx + 1, 8).setValue(estadoPago);
+  if (estadoEntrega) sheet.getRange(idx + 1, 9).setValue(estadoEntrega);
+  if (observaciones) sheet.getRange(idx + 1, 12).setValue(observaciones);
+
+  return {
+    status: "success",
+    ordenId: ordenId,
+    message: "Estado de orden de tienda actualizado correctamente."
+  };
+}
+
+// ---------------------------------------------------------------------------
+// FASE 4: CAFETERÍA, MENÚ DIARIO Y PEDIDOS DE ALIMENTOS
+// ---------------------------------------------------------------------------
+
+function manageCafeteriaMenu(payload) {
+  const { platoId, nombrePlato, precio, stockDiario, categoria, imagenUrl, allergenos, horariosDisponibilidad, estado, observaciones } = payload || {};
+  if (!nombrePlato || !precio || !imagenUrl) {
+    throw new Error("Nombre del plato, precio e imagen URL obligatoria son requeridos.");
+  }
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "CafeteriaMenu");
+  const data = sheet.getDataRange().getValues();
+  const now = new Date();
+
+  let pId = platoId;
+  let existingIndex = -1;
+
+  if (pId) {
+    existingIndex = data.findIndex(r => String(r[0]).trim() === String(pId).trim());
+  } else {
+    existingIndex = data.findIndex(r => String(r[2]).toLowerCase().trim() === String(nombrePlato).toLowerCase().trim());
+  }
+
+  const cleanImgUrl = processDriveImageUrl(imagenUrl, "medium");
+
+  if (existingIndex !== -1) {
+    pId = data[existingIndex][0];
+    sheet.getRange(existingIndex + 1, 1, 1, 11).setValues([[
+      pId,
+      now,
+      nombrePlato,
+      parseFloat(precio || 0),
+      parseInt(stockDiario || 0),
+      categoria || "Almuerzo",
+      cleanImgUrl,
+      allergenos || "Ninguno",
+      horariosDisponibilidad || "11:30 AM - 01:30 PM",
+      estado || "disponible",
+      observaciones || ""
+    ]]);
+  } else {
+    pId = "PLT-" + now.getTime();
+    sheet.appendRow([
+      pId,
+      now,
+      nombrePlato,
+      parseFloat(precio || 0),
+      parseInt(stockDiario || 0),
+      categoria || "Almuerzo",
+      cleanImgUrl,
+      allergenos || "Ninguno",
+      horariosDisponibilidad || "11:30 AM - 01:30 PM",
+      estado || "disponible",
+      observaciones || ""
+    ]);
+  }
+
+  return {
+    status: "success",
+    platoId: pId,
+    message: "Plato de cafetería publicado/actualizado con éxito."
+  };
+}
+
+function getCafeteriaMenu(payload) {
+  const { categoria, estado } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  let rows = getOrCreateSheet(ss, "CafeteriaMenu").getDataRange().getValues().slice(1);
+
+  if (rows.length === 0) {
+    const defaults = [
+      ["PLT-101", new Date(), "Almuerzo Ejecutivo: Pollo a la Plancha con Arroz y Ensalada", 120, 40, "Almuerzo Especial", "imagenes/new-generation-logo.png", "Lácteos, Gluten", "11:30 AM - 01:30 PM", "disponible", "Menú del Día"],
+      ["PLT-102", new Date(), "Sándwich de Jamón y Queso", 45, 60, "Bocadillos", "imagenes/new-generation-logo.png", "Gluten", "08:00 AM - 02:00 PM", "disponible", "Plato rápido"]
+    ];
+    const sheet = getOrCreateSheet(ss, "CafeteriaMenu");
+    sheet.getRange(2, 1, defaults.length, 11).setValues(defaults);
+    rows = defaults;
+  }
+
+  let filtered = rows;
+  if (categoria) filtered = filtered.filter(r => String(r[5]).toLowerCase().trim() === String(categoria).toLowerCase().trim());
+  if (estado) filtered = filtered.filter(r => String(r[9]).trim() === String(estado).trim());
+
+  const mapped = filtered.map(r => {
+    const rawImg = r[6];
+    return {
+      platoId: r[0],
+      fechaPublicacion: r[1],
+      nombrePlato: r[2],
+      precio: parseFloat(r[3] || 0),
+      stockDiario: parseInt(r[4] || 0),
+      categoria: r[5],
+      imagenUrl: processDriveImageUrl(rawImg, "medium"),
+      imagenUrlThumb: processDriveImageUrl(rawImg, "thumb"),
+      imagenUrlDetail: processDriveImageUrl(rawImg, "detail"),
+      allergenos: r[7],
+      horariosDisponibilidad: r[8],
+      estado: r[9],
+      observaciones: r[10]
+    };
+  });
+
+  return {
+    status: "success",
+    menu: mapped
+  };
+}
+
+function createCafeteriaOrder(payload) {
+  const { estudianteUserId, responsableUserId, detalleItems, turnoEntrega, metodoPago, observaciones } = payload || {};
+  if (!estudianteUserId || !Array.isArray(detalleItems) || detalleItems.length === 0) {
+    throw new Error("estudianteUserId y lista de alimentos (detalleItems) son requeridos.");
+  }
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const menuSheet = getOrCreateSheet(ss, "CafeteriaMenu");
+  const orderSheet = getOrCreateSheet(ss, "CafeteriaPedidos");
+  const menuData = menuSheet.getDataRange().getValues();
+  const now = new Date();
+
+  let totalCalculado = 0;
+  const processedItems = [];
+
+  detalleItems.forEach(item => {
+    const pIdx = menuData.findIndex(r => String(r[0]).trim() === String(item.platoId).trim());
+    if (pIdx !== -1) {
+      const pName = menuData[pIdx][2];
+      const pPrice = parseFloat(menuData[pIdx][3] || 0);
+      const qty = parseInt(item.cantidad || 1);
+      const sub = pPrice * qty;
+      totalCalculado += sub;
+
+      // Descontar inventario del menú diario
+      const stockCur = parseInt(menuData[pIdx][4] || 0);
+      const stockNew = Math.max(0, stockCur - qty);
+      menuSheet.getRange(pIdx + 1, 5).setValue(stockNew);
+      if (stockNew === 0) menuSheet.getRange(pIdx + 1, 10).setValue("agotado");
+
+      processedItems.push({ platoId: item.platoId, nombre: pName, precio: pPrice, cantidad: qty, subtotal: sub });
+    }
+  });
+
+  const pedidoId = "CAF-" + now.getTime();
+
+  orderSheet.appendRow([
+    pedidoId,
+    now,
+    String(estudianteUserId).trim(),
+    responsableUserId ? String(responsableUserId).trim() : String(estudianteUserId).trim(),
+    JSON.stringify(processedItems),
+    turnoEntrega || "Almuerzo Principal",
+    totalCalculado,
+    metodoPago || "CreditoFamiliar",
+    "Confirmado",
+    observaciones || ""
+  ]);
+
+  return {
+    status: "success",
+    pedidoId: pedidoId,
+    montoTotal: totalCalculado,
+    itemsProcesados: processedItems.length,
+    message: "Pedido de cafetería registrado exitosamente."
+  };
+}
+
+function getCafeteriaOrders(payload) {
+  const { estudianteUserId, responsableUserId, pedidoId } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const rows = getOrCreateSheet(ss, "CafeteriaPedidos").getDataRange().getValues().slice(1);
+
+  let filtered = rows;
+  if (pedidoId) filtered = filtered.filter(r => String(r[0]).trim() === String(pedidoId).trim());
+  if (estudianteUserId) filtered = filtered.filter(r => String(r[2]).trim() === String(estudianteUserId).trim());
+  if (responsableUserId) filtered = filtered.filter(r => String(r[3]).trim() === String(responsableUserId).trim());
+
+  const mapped = filtered.map(r => ({
+    pedidoId: r[0],
+    fecha: r[1],
+    estudianteUserId: r[2],
+    responsableUserId: r[3],
+    detalleJSON: r[4],
+    turnoEntrega: r[5],
+    montoTotal: parseFloat(r[6] || 0),
+    metodoPago: r[7],
+    estado: r[8],
+    observaciones: r[9]
+  }));
+
+  return {
+    status: "success",
+    pedidos: mapped
+  };
+}
+
+function updateCafeteriaOrderStatus(payload) {
+  const { pedidoId, nuevoEstado, observaciones } = payload || {};
+  if (!pedidoId || !nuevoEstado) throw new Error("pedidoId y nuevoEstado son requeridos.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "CafeteriaPedidos");
+  const data = sheet.getDataRange().getValues();
+
+  const idx = data.findIndex(r => String(r[0]).trim() === String(pedidoId).trim());
+  if (idx === -1) throw new Error("Pedido no encontrado.");
+
+  sheet.getRange(idx + 1, 9).setValue(nuevoEstado);
+  if (observaciones) sheet.getRange(idx + 1, 10).setValue(observaciones);
+
+  return {
+    status: "success",
+    pedidoId: pedidoId,
+    estado: nuevoEstado,
+    message: "Estado de pedido de cafetería actualizado a " + nuevoEstado
+  };
+}
+
+// ---------------------------------------------------------------------------
+// FASE 4: CRÉDITO FAMILIAR Y AUTORIZACIONES
+// ---------------------------------------------------------------------------
+
+function configureFamilyCreditAuthorization(payload) {
+  const { responsableUserId, estudianteUserId, limiteDiario, limiteMensual, fechaVencimiento, estado, observaciones } = payload || {};
+  if (!responsableUserId || !estudianteUserId) throw new Error("responsableUserId y estudianteUserId son requeridos.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "CreditoFamiliarAutorizaciones");
+  const data = sheet.getDataRange().getValues();
+  const now = new Date();
+
+  const sResp = String(responsableUserId).trim();
+  const sEst = String(estudianteUserId).trim();
+
+  let existingIndex = data.findIndex(r => String(r[2]).trim() === sResp && String(r[3]).trim() === sEst);
+  let autId;
+
+  if (existingIndex !== -1) {
+    autId = data[existingIndex][0];
+    sheet.getRange(existingIndex + 1, 1, 1, 10).setValues([[
+      autId,
+      now,
+      sResp,
+      sEst,
+      parseFloat(limiteDiario || 100),
+      parseFloat(limiteMensual || 1500),
+      parseFloat(data[existingIndex][6] || 0),
+      estado || "Activa",
+      fechaVencimiento || "",
+      observaciones || ""
+    ]]);
+  } else {
+    autId = "AUT-CRD-" + now.getTime();
+    sheet.appendRow([
+      autId,
+      now,
+      sResp,
+      sEst,
+      parseFloat(limiteDiario || 100),
+      parseFloat(limiteMensual || 1500),
+      0,
+      estado || "Activa",
+      fechaVencimiento || "",
+      observaciones || ""
+    ]);
+  }
+
+  return {
+    status: "success",
+    autorizacionId: autId,
+    message: "Autorización de crédito familiar configurada con éxito."
+  };
+}
+
+function getFamilyCreditAuthorizations(payload) {
+  const { responsableUserId, estudianteUserId } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const rows = getOrCreateSheet(ss, "CreditoFamiliarAutorizaciones").getDataRange().getValues().slice(1);
+
+  let filtered = rows;
+  if (responsableUserId) filtered = filtered.filter(r => String(r[2]).trim() === String(responsableUserId).trim());
+  if (estudianteUserId) filtered = filtered.filter(r => String(r[3]).trim() === String(estudianteUserId).trim());
+
+  const mapped = filtered.map(r => ({
+    autorizacionId: r[0],
+    fecha: r[1],
+    responsableUserId: r[2],
+    estudianteUserId: r[3],
+    limiteDiario: parseFloat(r[4] || 0),
+    limiteMensual: parseFloat(r[5] || 0),
+    saldoUsado: parseFloat(r[6] || 0),
+    estado: r[7],
+    fechaVencimiento: r[8],
+    observaciones: r[9]
+  }));
+
+  return {
+    status: "success",
+    autorizaciones: mapped
+  };
+}
+
+function processFamilyCreditPurchase(payload) {
+  const { estudianteUserId, monto, establecimiento, origenRefId, observaciones } = payload || {};
+  const mnt = parseFloat(monto || 0);
+  if (!estudianteUserId || mnt <= 0) throw new Error("estudianteUserId y monto válido requeridos.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const authSheet = getOrCreateSheet(ss, "CreditoFamiliarAutorizaciones");
+  const movSheet = getOrCreateSheet(ss, "CreditoFamiliarMovimientos");
+  const auths = authSheet.getDataRange().getValues();
+
+  const sEst = String(estudianteUserId).trim();
+  const idx = auths.findIndex(r => String(r[3]).trim() === sEst && r[7] === "Activa");
+
+  if (idx === -1) throw new Error("El alumno no cuenta con una autorización de crédito familiar activa.");
+
+  const limDiario = parseFloat(auths[idx][4] || 0);
+  const limMensual = parseFloat(auths[idx][5] || 0);
+  const saldoUsadoCur = parseFloat(auths[idx][6] || 0);
+
+  if (mnt > limDiario) throw new Error(`La compra de L. ${mnt.toFixed(2)} excede el límite diario autorizado de L. ${limDiario.toFixed(2)}.`);
+  if (saldoUsadoCur + mnt > limMensual) throw new Error(`La compra excede el límite mensual autorizado.`);
+
+  const newSaldoUsado = saldoUsadoCur + mnt;
+  authSheet.getRange(idx + 1, 7).setValue(newSaldoUsado);
+
+  const now = new Date();
+  const movId = "MOV-CRD-" + now.getTime();
+
+  movSheet.appendRow([
+    movId,
+    now,
+    auths[idx][0],
+    sEst,
+    auths[idx][2],
+    establecimiento || "Cafetería/Tienda",
+    mnt,
+    origenRefId || "COMPRA-OK",
+    "Aprobado",
+    observaciones || ""
+  ]);
+
+  return {
+    status: "success",
+    movimientoCreditoId: movId,
+    saldoUsado: newSaldoUsado,
+    limiteMensual: limMensual,
+    message: "Compra a crédito procesada correctamente."
+  };
 }
 
 // ---------------------------------------------------------------------------
@@ -452,6 +1547,71 @@ function uploadPaymentVoucher(payload) {
     comprobanteId: comprobanteId,
     comprobanteUrl: comprobanteUrl,
     message: "Comprobante de pago adjuntado en revisión."
+  };
+}
+
+function getPaymentVouchers(payload) {
+  const { userId, estado } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const rows = getOrCreateSheet(ss, "ComprobantesPago").getDataRange().getValues().slice(1);
+
+  let filtered = rows;
+  if (userId) filtered = filtered.filter(r => String(r[2]).trim() === String(userId).trim());
+  if (estado) filtered = filtered.filter(r => String(r[9]).toLowerCase().trim() === String(estado).toLowerCase().trim());
+
+  const mapped = filtered.map(r => ({
+    comprobanteId: r[0],
+    fecha: r[1],
+    userId: r[2],
+    alumno: r[3],
+    cargoId: r[4],
+    montoReportado: parseFloat(r[5] || 0),
+    metodoPago: r[6],
+    referencia: r[7],
+    comprobanteUrl: r[8],
+    estado: r[9],
+    observaciones: r[10]
+  }));
+
+  return { status: "success", comprobantes: mapped };
+}
+
+function reviewPaymentVoucher(payload) {
+  const { comprobanteId, nuevoEstado, observacionesAdmin, authRole } = payload || {};
+  if (!comprobanteId || !nuevoEstado) throw new Error("comprobanteId y nuevoEstado son requeridos.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "ComprobantesPago");
+  const data = sheet.getDataRange().getValues();
+
+  const idx = data.findIndex(r => String(r[0]).trim() === String(comprobanteId).trim());
+  if (idx === -1) throw new Error("Comprobante de pago no encontrado.");
+
+  const row = data[idx];
+  sheet.getRange(idx + 1, 10).setValue(nuevoEstado);
+  if (observacionesAdmin) sheet.getRange(idx + 1, 11).setValue(observacionesAdmin);
+
+  // Si fue Aprobado, registrar automáticamente el pago en PagosAbonos
+  let pagoRes = null;
+  if (nuevoEstado === "Aprobado" || nuevoEstado === "Confirmado") {
+    pagoRes = recordStudentPayment({
+      userId: row[2],
+      cargoId: row[4],
+      montoAbono: row[5],
+      metodoPago: row[6],
+      referencia: row[7],
+      observaciones: `Aprobado administrativamente desde comprobante ${comprobanteId}. ${observacionesAdmin || ''}`
+    });
+  }
+
+  logStructuredEvent("ACCOUNTING", "reviewPaymentVoucher", "INFO", "VOUCHER_REVIEWED", `Comprobante ${comprobanteId} revisado a estado ${nuevoEstado}`, payload, authRole);
+
+  return {
+    status: "success",
+    comprobanteId: comprobanteId,
+    nuevoEstado: nuevoEstado,
+    pagoProcesado: pagoRes,
+    message: `Comprobante de pago ${nuevoEstado} exitosamente.`
   };
 }
 
@@ -731,35 +1891,51 @@ function getCashBankSummary(payload) {
 // PLANILLAS, DEDUCCIONES Y ASISTENCIA DE PERSONAL
 // ---------------------------------------------------------------------------
 
-function generatePayrollPeriod(payload) {
-  const { periodoMes, empleadosList } = payload || {};
-  if (!periodoMes || !Array.isArray(empleadosList) || empleadosList.length === 0) {
-    throw new Error("PeriodoMes y lista de empleados requeridos.");
-  }
+function calculatePayrollPeriod(payload) {
+  const { periodoMes, idempotencyToken } = payload || {};
+  if (!periodoMes) throw new Error("periodoMes requerido.");
 
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
   const planSheet = getOrCreateSheet(ss, "PlanillasNomenclatura");
-  const bolSheet = getOrCreateSheet(ss, "BoletasPago");
+  const expsRows = getOrCreateSheet(ss, "ExpedientesLaborales").getDataRange().getValues().slice(1);
+  const planData = planSheet.getDataRange().getValues();
+
+  // Control Anti-Duplicados por Periodo Mes e Idempotencia
+  const existingPlan = planData.find(r => String(r[2]).trim() === String(periodoMes).trim() && r[15] !== "Anulada");
+  if (existingPlan) {
+    return {
+      status: "success",
+      planillaId: existingPlan[0],
+      periodoMes: periodoMes,
+      estadoCiclo: existingPlan[15],
+      message: `La planilla para el periodo '${periodoMes}' ya existe con estado '${existingPlan[15]}'.`
+    };
+  }
+
+  const activeEmployees = expsRows.filter(r => r[8] === "active" || r[8] === "Activo" || r[8] === "EnPeriodoPrueba");
+  if (activeEmployees.length === 0) {
+    throw new Error("No hay empleados activos en estado de nómina elegible.");
+  }
+
   const now = new Date();
   const planillaId = "PLN-" + now.getTime();
 
   const processedRows = [];
-  const boletasRows = [];
 
-  empleadosList.forEach(e => {
-    const empId = e.empleadoId || e.userId || "EMP-" + Math.floor(Math.random() * 1000);
-    const empNombre = e.nombre || "Empleado";
-    const puesto = e.puesto || "Docente/Personal";
-    const salarioBase = parseFloat(e.salarioBase || 0);
-    const horasExtras = parseFloat(e.horasExtras || 0);
-    const montoHorasExtras = parseFloat(e.montoHorasExtras || (horasExtras * (salarioBase / 160) * 1.5));
-    const bonificaciones = parseFloat(e.bonificaciones || 0);
+  activeEmployees.forEach(e => {
+    const empId = String(e[0]).trim();
+    const empNombre = e[9] || e[3] || "Empleado";
+    const puesto = e[3] || "Personal";
+    const salarioBase = 22000; // Salario estándar base
+    const horasExtras = 0;
+    const montoHorasExtras = 0;
+    const bonificaciones = 0;
 
     // Deducciones de Ley Honduras (IHSS, RAP, ISR)
-    const dedIHSS = parseFloat(e.deduccionIHSS || Math.min(salarioBase, 10317.38) * 0.035);
-    const dedRAP = parseFloat(e.deduccionRAP || Math.max(0, salarioBase - 10317.38) * 0.015);
-    const dedISR = parseFloat(e.deduccionISR || (salarioBase > 20000 ? (salarioBase - 20000) * 0.15 : 0));
-    const otrasDed = parseFloat(e.otrasDeducciones || 0);
+    const dedIHSS = Math.min(salarioBase, 10317.38) * 0.035;
+    const dedRAP = Math.max(0, salarioBase - 10317.38) * 0.015;
+    const dedISR = salarioBase > 20000 ? (salarioBase - 20000) * 0.15 : 0;
+    const otrasDed = 0;
 
     const totalDevengado = salarioBase + montoHorasExtras + bonificaciones;
     const totalDeducciones = dedIHSS + dedRAP + dedISR + otrasDed;
@@ -781,27 +1957,12 @@ function generatePayrollPeriod(payload) {
       dedISR,
       otrasDed,
       salarioNeto,
-      "Generada"
-    ]);
-
-    const boletaId = "BOL-" + Date.now() + "-" + Math.floor(Math.random() * 1000);
-    boletasRows.push([
-      boletaId,
-      planillaId,
-      now,
-      empId,
-      empNombre,
-      periodoMes,
-      totalDevengado,
-      totalDeducciones,
-      salarioNeto,
-      "Emitida"
+      "Calculada"
     ]);
   });
 
   if (processedRows.length > 0) {
     planSheet.getRange(planSheet.getLastRow() + 1, 1, processedRows.length, 16).setValues(processedRows);
-    bolSheet.getRange(bolSheet.getLastRow() + 1, 1, boletasRows.length, 10).setValues(boletasRows);
   }
 
   return {
@@ -809,36 +1970,517 @@ function generatePayrollPeriod(payload) {
     planillaId: planillaId,
     periodoMes: periodoMes,
     empleadosProcesados: processedRows.length,
-    message: "Planilla salarial con deducciones de ley procesada exitosamente."
+    estadoCiclo: "Calculada",
+    message: `Cálculo preliminar de planilla '${periodoMes}' completado con éxito.`
   };
 }
 
-function recordStaffAttendance(payload) {
-  const { empleadoId, empleadoNombre, horaEntrada, horaSalida, minutosTardanza, estadoAsistencia, observaciones } = payload || {};
+function updatePayrollPeriodStatus(payload) {
+  const { planillaId, nuevoEstado, observaciones, authRole } = payload || {};
+  if (!planillaId || !nuevoEstado) throw new Error("planillaId y nuevoEstado son requeridos.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "PlanillasNomenclatura");
+  const data = sheet.getDataRange().getValues();
+
+  let count = 0;
+  let totalSalarioNeto = 0;
+  let totalDeducciones = 0;
+  let totalBruto = 0;
+
+  for (let i = 1; i < data.length; i++) {
+    if (String(data[i][0]).trim() === String(planillaId).trim()) {
+      sheet.getRange(i + 1, 16).setValue(nuevoEstado);
+      const sBase = parseFloat(data[i][6] || 0);
+      const mHE = parseFloat(data[i][8] || 0);
+      const bonif = parseFloat(data[i][9] || 0);
+      const dev = sBase + mHE + bonif;
+
+      const ihss = parseFloat(data[i][10] || 0);
+      const rap = parseFloat(data[i][11] || 0);
+      const isr = parseFloat(data[i][12] || 0);
+      const otras = parseFloat(data[i][13] || 0);
+      const ded = ihss + rap + isr + otras;
+
+      const neto = parseFloat(data[i][14] || (dev - ded));
+
+      totalBruto += dev;
+      totalDeducciones += ded;
+      totalSalarioNeto += neto;
+      count++;
+    }
+  }
+
+  if (count === 0) throw new Error("Planilla no encontrada.");
+
+  // Generar asiento contable automático por partida doble al APROBAR o CERRAR la planilla
+  let asientoRes = null;
+  if (nuevoEstado === "Aprobada" || nuevoEstado === "Cerrada" || nuevoEstado === "Contabilizada") {
+    try {
+      asientoRes = recordAccountingJournalEntry({
+        descripcion: `Contabilización de Planilla ${planillaId} (${nuevoEstado})`,
+        origenModulo: "Planillas",
+        referenciaId: planillaId,
+        creadoPor: authRole || "RecursosHumanos",
+        lineas: [
+          { cuenta: "5101", nombre: "Gasto de Salarios y Planilla", debe: totalBruto, haber: 0 },
+          { cuenta: "2101", nombre: "Retenciones y Deducciones por Pagar", debe: 0, haber: totalDeducciones },
+          { cuenta: "1101", nombre: "Bancos / Sueldos por Pagar", debe: 0, haber: totalSalarioNeto }
+        ]
+      });
+    } catch (e) {
+      logDebug("Error registrando asiento automático de planilla:", e.message);
+    }
+  }
+
+  logStructuredEvent("ACCOUNTING", "updatePayrollPeriodStatus", "INFO", "PAYROLL_STATUS_UPDATED", `Planilla ${planillaId} actualizada a estado ${nuevoEstado}`, payload, authRole);
+
+  return {
+    status: "success",
+    planillaId: planillaId,
+    nuevoEstado: nuevoEstado,
+    registrosActualizados: count,
+    asientoContable: asientoRes,
+    message: `Ciclo de planilla actualizado a '${nuevoEstado}' e integrado con Contabilidad.`
+  };
+}
+
+function getPayrollPeriodSummary(payload) {
+  const { periodoMes, planillaId } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const rows = getOrCreateSheet(ss, "PlanillasNomenclatura").getDataRange().getValues().slice(1);
+
+  let filtered = rows;
+  if (planillaId) filtered = filtered.filter(r => String(r[0]).trim() === String(planillaId).trim());
+  if (periodoMes) filtered = filtered.filter(r => String(r[2]).trim() === String(periodoMes).trim());
+
+  let totalBruto = 0;
+  let totalDeducciones = 0;
+  let totalNeto = 0;
+
+  const mapped = filtered.map(r => {
+    const sBase = parseFloat(r[6] || 0);
+    const mHE = parseFloat(r[8] || 0);
+    const bonif = parseFloat(r[9] || 0);
+    const dev = sBase + mHE + bonif;
+
+    const ihss = parseFloat(r[10] || 0);
+    const rap = parseFloat(r[11] || 0);
+    const isr = parseFloat(r[12] || 0);
+    const otras = parseFloat(r[13] || 0);
+    const ded = ihss + rap + isr + otras;
+
+    const neto = parseFloat(r[14] || (dev - ded));
+
+    totalBruto += dev;
+    totalDeducciones += ded;
+    totalNeto += neto;
+
+    return {
+      planillaId: r[0],
+      fecha: r[1],
+      periodoMes: r[2],
+      empleadoId: r[3],
+      empleadoNombre: r[4],
+      puesto: r[5],
+      salarioBase: sBase,
+      totalDevengado: dev,
+      totalDeducciones: ded,
+      salarioNeto: neto,
+      estadoCiclo: r[15]
+    };
+  });
+
+  return {
+    status: "success",
+    resumen: {
+      totalEmpleados: mapped.length,
+      totalBruto: totalBruto,
+      totalDeducciones: totalDeducciones,
+      totalNeto: totalNeto
+    },
+    empleados: mapped
+  };
+}
+
+function generatePayrollPeriod(payload) {
+  return calculatePayrollPeriod(payload);
+}
+
+function configureWorkSchedule(payload) {
+  const { horarioId, nombreHorario, jornadaTipo, horaEntrada, horaSalida, toleranciaMinutos, diasLaborales, observaciones } = payload || {};
+  if (!nombreHorario || !horaEntrada || !horaSalida) throw new Error("Nombre de horario, hora de entrada y hora de salida son requeridos.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "HorariosLaborales");
+  const data = sheet.getDataRange().getValues();
+  const now = new Date();
+
+  let hId = horarioId;
+  let existingIndex = -1;
+
+  if (hId) {
+    existingIndex = data.findIndex(r => String(r[0]).trim() === String(hId).trim());
+  } else {
+    existingIndex = data.findIndex(r => String(r[1]).toLowerCase().trim() === String(nombreHorario).toLowerCase().trim());
+  }
+
+  const dJSON = typeof diasLaborales === "object" ? JSON.stringify(diasLaborales) : (diasLaborales || "[\"Lunes\",\"Martes\",\"Miércoles\",\"Jueves\",\"Viernes\"]");
+
+  if (existingIndex !== -1) {
+    hId = data[existingIndex][0];
+    sheet.getRange(existingIndex + 1, 1, 1, 9).setValues([[
+      hId,
+      String(nombreHorario).trim(),
+      jornadaTipo || "Completa",
+      horaEntrada,
+      horaSalida,
+      parseInt(toleranciaMinutos || 15),
+      dJSON,
+      "Activo",
+      observaciones || ""
+    ]]);
+  } else {
+    hId = "SCH-" + now.getTime();
+    sheet.appendRow([
+      hId,
+      String(nombreHorario).trim(),
+      jornadaTipo || "Completa",
+      horaEntrada,
+      horaSalida,
+      parseInt(toleranciaMinutos || 15),
+      dJSON,
+      "Activo",
+      observaciones || ""
+    ]);
+  }
+
+  return { status: "success", horarioId: hId, message: "Horario laboral configurado exitosamente." };
+}
+
+function recordStaffCheckIn(payload) {
+  const { empleadoId, empleadoNombre, tipoRegistro, observaciones } = payload || {};
   if (!empleadoId) throw new Error("empleadoId requerido.");
 
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
   const sheet = getOrCreateSheet(ss, "DeduccionesAsistencia");
   const now = new Date();
   const asistenciaId = "AST-" + now.getTime();
+  const timeStr = now.toTimeString().split(' ')[0];
 
   sheet.appendRow([
     asistenciaId,
     now,
     String(empleadoId).trim(),
     empleadoNombre || "Personal",
-    horaEntrada || now.toTimeString().split(' ')[0],
-    horaSalida || "",
-    parseInt(minutosTardanza || 0),
-    estadoAsistencia || "Puntual",
-    observaciones || ""
+    tipoRegistro === "Salida" ? "" : timeStr,
+    tipoRegistro === "Salida" ? timeStr : "",
+    0,
+    tipoRegistro || "EntradaPuntual",
+    observaciones || "Registro desde Portal RRHH"
   ]);
 
   return {
     status: "success",
     asistenciaId: asistenciaId,
-    message: "Registro de asistencia procesado con éxito."
+    horaRegistrada: timeStr,
+    message: `Marcaje de ${tipoRegistro || 'Entrada'} registrado con éxito a las ${timeStr}.`
   };
+}
+
+function getStaffAttendanceLogs(payload) {
+  const { empleadoId, fechaInicio, fechaFin } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const rows = getOrCreateSheet(ss, "DeduccionesAsistencia").getDataRange().getValues().slice(1);
+
+  let filtered = rows;
+  if (empleadoId) filtered = filtered.filter(r => String(r[2]).trim() === String(empleadoId).trim());
+
+  const mapped = filtered.map(r => ({
+    asistenciaId: r[0],
+    fecha: r[1],
+    empleadoId: r[2],
+    empleadoNombre: r[3],
+    horaEntrada: r[4],
+    horaSalida: r[5],
+    minutosTardanza: parseInt(r[6] || 0),
+    estadoAsistencia: r[7],
+    observaciones: r[8]
+  }));
+
+  return { status: "success", asistencias: mapped };
+}
+
+function submitAttendanceCorrection(payload) {
+  const { asistenciaId, empleadoId, fechaIncidencia, horaOriginal, horaSolicitada, motivo, evidenciaUrl } = payload || {};
+  if (!empleadoId || !horaSolicitada || !motivo) throw new Error("empleadoId, horaSolicitada y motivo son requeridos.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "CorreccionesAsistencia");
+  const now = new Date();
+  const corrId = "CORR-" + now.getTime();
+
+  sheet.appendRow([
+    corrId,
+    asistenciaId || "GENERAL",
+    String(empleadoId).trim(),
+    fechaIncidencia || now,
+    horaOriginal || "",
+    horaSolicitada,
+    motivo,
+    evidenciaUrl || "",
+    "Pendiente",
+    "",
+    "Solicitado por el empleado"
+  ]);
+
+  return { status: "success", correccionId: corrId, message: "Solicitud de corrección de asistencia enviada para revisión." };
+}
+
+function reviewAttendanceCorrection(payload) {
+  const { correccionId, nuevoEstado, observaciones, authRole } = payload || {};
+  if (!correccionId || !nuevoEstado) throw new Error("correccionId y nuevoEstado son requeridos.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "CorreccionesAsistencia");
+  const data = sheet.getDataRange().getValues();
+
+  const idx = data.findIndex(r => String(r[0]).trim() === String(correccionId).trim());
+  if (idx === -1) throw new Error("Solicitud de corrección no encontrada.");
+
+  sheet.getRange(idx + 1, 9).setValue(nuevoEstado);
+  sheet.getRange(idx + 1, 10).setValue(authRole || "RecursosHumanos");
+  if (observaciones) sheet.getRange(idx + 1, 11).setValue(observaciones);
+
+  return { status: "success", correccionId: correccionId, estado: nuevoEstado, message: `Corrección de asistencia ${nuevoEstado}.` };
+}
+
+function recordStaffAttendance(payload) {
+  return recordStaffCheckIn(payload);
+}
+
+function requestEmployeeLoanAdvance(payload) {
+  const { empleadoId, tipo, montoSolicitado, plazoCuotas, motivo, observaciones } = payload || {};
+  const mnt = parseFloat(montoSolicitado || 0);
+  if (!empleadoId || mnt <= 0) throw new Error("empleadoId y montoSolicitado válido son requeridos.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "AnticiposPrestamosEmpleado");
+  const now = new Date();
+  const prestamoId = "ADV-" + now.getTime();
+  const cuotas = parseInt(plazoCuotas || 1);
+  const cuotaMnt = mnt / cuotas;
+
+  sheet.appendRow([
+    prestamoId,
+    now,
+    String(empleadoId).trim(),
+    tipo || "AnticipoSalario",
+    mnt,
+    0,
+    cuotas,
+    cuotaMnt,
+    mnt,
+    "PendienteAprobacion",
+    "",
+    motivo || observaciones || "Solicitud formal de anticipo/préstamo"
+  ]);
+
+  return {
+    status: "success",
+    prestamoId: prestamoId,
+    montoSolicitado: mnt,
+    cuotaEstimada: cuotaMnt,
+    estadoAprobacion: "PendienteAprobacion",
+    message: "Solicitud de anticipo / préstamo registrada y enviada a revisión."
+  };
+}
+
+function getEmployeeLoansAdvances(payload) {
+  const { empleadoId, estadoAprobacion } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const rows = getOrCreateSheet(ss, "AnticiposPrestamosEmpleado").getDataRange().getValues().slice(1);
+
+  let filtered = rows;
+  if (empleadoId) filtered = filtered.filter(r => String(r[2]).trim() === String(empleadoId).trim());
+  if (estadoAprobacion) filtered = filtered.filter(r => String(r[9]).trim() === String(estadoAprobacion).trim());
+
+  const mapped = filtered.map(r => ({
+    prestamoId: r[0],
+    fecha: r[1],
+    empleadoId: r[2],
+    tipo: r[3],
+    montoSolicitado: parseFloat(r[4] || 0),
+    montoAprobado: parseFloat(r[5] || 0),
+    plazoCuotas: parseInt(r[6] || 1),
+    cuotaMensual: parseFloat(r[7] || 0),
+    saldoPendiente: parseFloat(r[8] || 0),
+    estadoAprobacion: r[9],
+    aprobadoPor: r[10],
+    observaciones: r[11]
+  }));
+
+  return { status: "success", solicitudes: mapped };
+}
+
+function approveEmployeeLoanAdvance(payload) {
+  const { prestamoId, montoAprobado, nuevoEstado, observaciones, authRole } = payload || {};
+  if (!prestamoId || !nuevoEstado) throw new Error("prestamoId y nuevoEstado son requeridos.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "AnticiposPrestamosEmpleado");
+  const data = sheet.getDataRange().getValues();
+
+  const idx = data.findIndex(r => String(r[0]).trim() === String(prestamoId).trim());
+  if (idx === -1) throw new Error("Solicitud de préstamo/anticipo no encontrada.");
+
+  const mntAprob = parseFloat(montoAprobado || data[idx][4] || 0);
+  const cuotas = parseInt(data[idx][6] || 1);
+  const cuotaMnt = mntAprob / cuotas;
+
+  sheet.getRange(idx + 1, 6).setValue(mntAprob);
+  sheet.getRange(idx + 1, 8).setValue(cuotaMnt);
+  sheet.getRange(idx + 1, 9).setValue(mntAprob);
+  sheet.getRange(idx + 1, 10).setValue(nuevoEstado);
+  sheet.getRange(idx + 1, 11).setValue(authRole || "Contador/Dirección");
+  if (observaciones) sheet.getRange(idx + 1, 12).setValue(observaciones);
+
+  return {
+    status: "success",
+    prestamoId: prestamoId,
+    montoAprobado: mntAprob,
+    estadoAprobacion: nuevoEstado,
+    message: `Solicitud de anticipo / préstamo ${nuevoEstado}.`
+  };
+}
+
+function getLoanAmortizationSchedule(payload) {
+  const { prestamoId } = payload || {};
+  if (!prestamoId) throw new Error("prestamoId requerido.");
+
+  const res = getEmployeeLoansAdvances({ prestamoId });
+  const item = res.solicitudes && res.solicitudes[0];
+  if (!item) throw new Error("Préstamo no encontrado.");
+
+  const schedule = [];
+  const cuotas = item.plazoCuotas || 1;
+  const mntCuota = item.cuotaMensual || (item.montoAprobado / cuotas);
+  let saldo = item.montoAprobado;
+
+  for (let i = 1; i <= cuotas; i++) {
+    saldo = Math.max(0, saldo - mntCuota);
+    schedule.push({
+      numeroCuota: i,
+      montoCuota: mntCuota,
+      saldoRestante: saldo
+    });
+  }
+
+  return {
+    status: "success",
+    prestamoId: prestamoId,
+    montoAprobado: item.montoAprobado,
+    plazoCuotas: cuotas,
+    tablaAmortizacion: schedule
+  };
+}
+
+function generatePayrollReceiptPDF(payload) {
+  const { empleadoId, periodoMes, planillaId } = payload || {};
+  if (!empleadoId) throw new Error("empleadoId requerido.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const planRows = getOrCreateSheet(ss, "PlanillasNomenclatura").getDataRange().getValues().slice(1);
+
+  const receipt = planRows.find(r => String(r[3]).trim() === String(empleadoId).trim() && (!periodoMes || String(r[2]).trim() === String(periodoMes).trim()));
+  if (!receipt) throw new Error("Recibo de pago no encontrado para el empleado especificado.");
+
+  const pdfUrl = `https://newgeneration.edu.hn/recibo-pago-${receipt[0]}-${receipt[3]}.pdf`;
+
+  return {
+    status: "success",
+    pdfUrl: pdfUrl,
+    recibo: {
+      planillaId: receipt[0],
+      periodoMes: receipt[2],
+      empleadoId: receipt[3],
+      empleadoNombre: receipt[4],
+      puesto: receipt[5],
+      salarioBase: parseFloat(receipt[6] || 0),
+      deduccionIHSS: parseFloat(receipt[10] || 0),
+      deduccionRAP: parseFloat(receipt[11] || 0),
+      deduccionISR: parseFloat(receipt[12] || 0),
+      salarioNeto: parseFloat(receipt[14] || 0),
+      institucion: "New Generation Christian Academy"
+    }
+  };
+}
+
+function uploadEmployeeDocument(payload) {
+  const { expedienteId, categoriaDoc, tituloDocumento, fileData, fileName, observaciones, authRole } = payload || {};
+  if (!expedienteId || !tituloDocumento) throw new Error("expedienteId y tituloDocumento son requeridos.");
+
+  let archivoUrl = "";
+  if (fileData && fileName) {
+    try {
+      const folder = getOrCreateFolderNews(getParentDriveFolder(), "Documentos_Laborales");
+      const mimeType = fileData.split(',')[0].match(/:(.*?);/)[1];
+      const base64Data = fileData.split(',')[1];
+      const file = folder.createFile(Utilities.newBlob(Utilities.base64Decode(base64Data), mimeType, fileName));
+      file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+      archivoUrl = `https://lh3.googleusercontent.com/d/${file.getId()}`;
+    } catch (e) {
+      logDebug("Error subida archivo laboral:", e.message);
+    }
+  }
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "DocumentosLaborales");
+  const now = new Date();
+  const docId = "DOC-LAB-" + now.getTime();
+
+  sheet.appendRow([
+    docId,
+    String(expedienteId).trim(),
+    categoriaDoc || "Contrato",
+    tituloDocumento,
+    archivoUrl || "https://newgeneration.edu.hn/documento-privado.pdf",
+    now,
+    authRole || "RecursosHumanos",
+    "PrivadoEmpleado",
+    observaciones || ""
+  ]);
+
+  return {
+    status: "success",
+    documentoId: docId,
+    archivoUrl: archivoUrl,
+    message: "Documento laboral privado cargado exitosamente."
+  };
+}
+
+function getEmployeeDocuments(payload) {
+  const { expedienteId, categoriaDoc } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const rows = getOrCreateSheet(ss, "DocumentosLaborales").getDataRange().getValues().slice(1);
+
+  let filtered = rows;
+  if (expedienteId) filtered = filtered.filter(r => String(r[1]).trim() === String(expedienteId).trim());
+  if (categoriaDoc) filtered = filtered.filter(r => String(r[2]).toLowerCase().trim() === String(categoriaDoc).toLowerCase().trim());
+
+  const mapped = filtered.map(r => ({
+    documentoId: r[0],
+    expedienteId: r[1],
+    categoriaDoc: r[2],
+    tituloDocumento: r[3],
+    archivoUrl: r[4],
+    fechaCarga: r[5],
+    cargadoPor: r[6],
+    estadoVisibilidad: r[7],
+    observaciones: r[8]
+  }));
+
+  return { status: "success", documentos: mapped };
 }
 
 function getStaffPayrollReceipt(payload) {
@@ -905,8 +2547,11 @@ function recordInventoryMovement(payload) {
   let newStock = currentStock;
   if (tipoNorm === "Entrada" || tipoNorm === "Devolucion") {
     newStock = currentStock + qty;
-  } else if (tipoNorm === "Salida" || tipoNorm === "Prestamo" || tipoNorm === "Baja") {
-    newStock = Math.max(0, currentStock - qty);
+  } else if (tipoNorm === "Salida" || tipoNorm === "Prestamo" || tipoNorm === "Baja" || tipoNorm === "TransferenciaSalida") {
+    if (currentStock < qty) {
+      throw new Error(`Stock insuficiente para '${itemNombre}' (Código: ${sCodigo}). Stock disponible: ${currentStock}, Solicitado: ${qty}.`);
+    }
+    newStock = currentStock - qty;
   }
 
   const minStock = parseFloat(stockMinimo || 5);
@@ -1041,6 +2686,248 @@ function registerSupplier(payload) {
     status: "success",
     proveedorId: pId,
     message: "Proveedor registrado/actualizado en catálogo con éxito."
+  };
+}
+
+// ---------------------------------------------------------------------------
+// FASE 18: COMPRAS, PROVEEDORES Y CONTRATACIÓN DE SERVICIOS
+// ---------------------------------------------------------------------------
+
+function createPurchaseRequest(payload) {
+  const { departamento, solicitanteUserId, justificacion, categoria, detalleItems, montoEstimado, centroCosto, observaciones } = payload || {};
+  if (!departamento || !justificacion) throw new Error("Departamento y justificación son requeridos.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "SolicitudesCompra");
+  const now = new Date();
+  const solId = "REQ-CMP-" + now.getTime();
+
+  sheet.appendRow([
+    solId,
+    now,
+    departamento,
+    solicitanteUserId || "COMPRADOR",
+    justificacion,
+    categoria || "Materiales/Insumos",
+    JSON.stringify(detalleItems || []),
+    parseFloat(montoEstimado || 0),
+    centroCosto || "Operaciones",
+    "PendienteAprobacion",
+    observaciones || ""
+  ]);
+
+  return { status: "success", solicitudId: solId, message: "Solicitud de compra registrada exitosamente." };
+}
+
+function getPurchaseRequests(payload) {
+  const { departamento, estadoAprobacion } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const rows = getOrCreateSheet(ss, "SolicitudesCompra").getDataRange().getValues().slice(1);
+
+  let filtered = rows;
+  if (departamento) filtered = filtered.filter(r => String(r[2]).toLowerCase().trim() === String(departamento).toLowerCase().trim());
+  if (estadoAprobacion) filtered = filtered.filter(r => String(r[9]).trim() === String(estadoAprobacion).trim());
+
+  const mapped = filtered.map(r => ({
+    solicitudId: r[0],
+    fecha: r[1],
+    departamento: r[2],
+    solicitanteUserId: r[3],
+    justificacion: r[4],
+    categoria: r[5],
+    detalleItems: r[6] ? (typeof r[6] === 'string' ? JSON.parse(r[6]) : r[6]) : [],
+    montoEstimado: parseFloat(r[7] || 0),
+    centroCosto: r[8],
+    estadoAprobacion: r[9],
+    observaciones: r[10]
+  }));
+
+  return { status: "success", solicitudes: mapped };
+}
+
+function submitPurchaseQuotation(payload) {
+  const { solicitudId, proveedorId, vigenciaOferta, precioTotal, plazoEntregaDias, condicionesPago, documentoAdjuntoUrl, observaciones } = payload || {};
+  if (!solicitudId || !proveedorId || precioTotal === undefined) throw new Error("solicitudId, proveedorId y precioTotal son requeridos.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "CotizacionesCompra");
+  const now = new Date();
+  const cotId = "COT-" + now.getTime();
+
+  sheet.appendRow([
+    cotId,
+    solicitudId,
+    proveedorId,
+    now,
+    vigenciaOferta || "30 días",
+    parseFloat(precioTotal || 0),
+    parseInt(plazoEntregaDias || 5),
+    condicionesPago || "Contado",
+    documentoAdjuntoUrl || "",
+    "EnRevision",
+    observaciones || ""
+  ]);
+
+  return { status: "success", cotizacionId: cotId, message: "Cotización registrada exitosamente." };
+}
+
+function getPurchaseQuotations(payload) {
+  const { solicitudId } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const rows = getOrCreateSheet(ss, "CotizacionesCompra").getDataRange().getValues().slice(1);
+
+  let filtered = rows;
+  if (solicitudId) filtered = filtered.filter(r => String(r[1]).trim() === String(solicitudId).trim());
+
+  const mapped = filtered.map(r => ({
+    cotizacionId: r[0],
+    solicitudId: r[1],
+    proveedorId: r[2],
+    fechaRecepcion: r[3],
+    vigenciaOferta: r[4],
+    precioTotal: parseFloat(r[5] || 0),
+    plazoEntregaDias: parseInt(r[6] || 0),
+    condicionesPago: r[7],
+    documentoAdjuntoUrl: r[8],
+    estadoSelection: r[9],
+    observaciones: r[10]
+  }));
+
+  return { status: "success", cotizaciones: mapped };
+}
+
+function createPurchaseOrder(payload) {
+  const { solicitudId, cotizacionId, proveedorId, fechaEntregaEstimada, detalleItems, montoTotal, centroCosto, observaciones } = payload || {};
+  if (!solicitudId || !proveedorId || montoTotal === undefined) throw new Error("solicitudId, proveedorId y montoTotal son requeridos.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "OrdenesCompra");
+  const now = new Date();
+  const ordenId = "ORD-CMP-" + now.getTime();
+
+  sheet.appendRow([
+    ordenId,
+    solicitudId,
+    cotizacionId || "",
+    proveedorId,
+    now,
+    fechaEntregaEstimada || "",
+    JSON.stringify(detalleItems || []),
+    parseFloat(montoTotal || 0),
+    centroCosto || "Operaciones",
+    "PendienteAprobacion",
+    "",
+    observaciones || ""
+  ]);
+
+  return { status: "success", ordenCompraId: ordenId, message: "Órden de compra emitida en borrador." };
+}
+
+function approvePurchaseOrder(payload) {
+  const { ordenCompraId, nuevoEstado, observacionesAdmin, authRole } = payload || {};
+  if (!ordenCompraId || !nuevoEstado) throw new Error("ordenCompraId y nuevoEstado son requeridos.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "OrdenesCompra");
+  const data = sheet.getDataRange().getValues();
+
+  const idx = data.findIndex(r => String(r[0]).trim() === String(ordenCompraId).trim());
+  if (idx === -1) throw new Error("Órden de compra no encontrada.");
+
+  sheet.getRange(idx + 1, 10).setValue(nuevoEstado);
+  sheet.getRange(idx + 1, 11).setValue(authRole || "Dirección/Contabilidad");
+  if (observacionesAdmin) sheet.getRange(idx + 1, 12).setValue(observacionesAdmin);
+
+  return { status: "success", ordenCompraId: ordenCompraId, nuevoEstado: nuevoEstado, message: `Órden de compra ${nuevoEstado} exitosamente.` };
+}
+
+function getPurchaseOrders(payload) {
+  const { estadoOrden, proveedorId } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const rows = getOrCreateSheet(ss, "OrdenesCompra").getDataRange().getValues().slice(1);
+
+  let filtered = rows;
+  if (proveedorId) filtered = filtered.filter(r => String(r[3]).trim() === String(proveedorId).trim());
+  if (estadoOrden) filtered = filtered.filter(r => String(r[9]).trim() === String(estadoOrden).trim());
+
+  const mapped = filtered.map(r => ({
+    ordenCompraId: r[0],
+    solicitudId: r[1],
+    cotizacionId: r[2],
+    proveedorId: r[3],
+    fechaEmision: r[4],
+    fechaEntregaEstimada: r[5],
+    detalleItems: r[6] ? (typeof r[6] === 'string' ? JSON.parse(r[6]) : r[6]) : [],
+    montoTotal: parseFloat(r[7] || 0),
+    centroCosto: r[8],
+    estadoOrden: r[9],
+    aprobadoPor: r[10],
+    observaciones: r[11]
+  }));
+
+  return { status: "success", ordenes: mapped };
+}
+
+function recordPurchaseReceipt(payload) {
+  const { ordenCompraId, receptorUserId, detalleRecibido, estadoConformidad, registrarEnInventario, observaciones } = payload || {};
+  if (!ordenCompraId) throw new Error("ordenCompraId es requerido.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "RecepcionesCompra");
+  const ordSheet = getOrCreateSheet(ss, "OrdenesCompra");
+  const ordData = ordSheet.getDataRange().getValues();
+
+  const oIdx = ordData.findIndex(r => String(r[0]).trim() === String(ordenCompraId).trim());
+  if (oIdx === -1) throw new Error("Órden de compra no encontrada.");
+
+  const now = new Date();
+  const recId = "REC-CMP-" + now.getTime();
+
+  // Integrar de forma automática con Cuentas por Pagar (Fase 14)
+  const ordRow = ordData[oIdx];
+  const obligacionRes = recordAccountsPayableExpense({
+    proveedorId: ordRow[3],
+    numeroFactura: "FCT-" + recId,
+    importe: ordRow[7],
+    observaciones: `Registro de gasto derivado de recepción de compra ${recId}`
+  });
+
+  // Si procede registrar en inventario
+  if (registrarEnInventario && Array.isArray(detalleRecibido)) {
+    detalleRecibido.forEach(item => {
+      if (item.codigoItem && item.cantidad) {
+        recordInventoryMovement({
+          itemCodigo: item.codigoItem,
+          itemNombre: item.nombreItem || "Artículo de Compra",
+          categoriaTipo: "Consumible",
+          tipoMovimiento: "Entrada",
+          cantidad: item.cantidad,
+          observaciones: `Entrada desde Recepción de Compra ${recId}`
+        });
+      }
+    });
+  }
+
+  // Actualizar estado de la Orden de Compra a RecibidaTotal
+  ordSheet.getRange(oIdx + 1, 10).setValue("RecibidaTotal");
+
+  sheet.appendRow([
+    recId,
+    ordenCompraId,
+    now,
+    receptorUserId || "RECEPTOR",
+    JSON.stringify(detalleRecibido || []),
+    estadoConformidad || "Conforme",
+    registrarEnInventario ? true : false,
+    obligacionRes ? obligacionRes.obligacionId : "",
+    observaciones || ""
+  ]);
+
+  return {
+    status: "success",
+    recepcionId: recId,
+    obligacionContable: obligacionRes,
+    message: "Recepción de compra e integración con Cuentas por Pagar e Inventario procesada con éxito."
   };
 }
 
@@ -1422,10 +3309,50 @@ function createEmployeeRecord(payload) {
   };
 }
 
+function updateEmployeeLaborStatus(payload) {
+  const { expedienteId, nuevoEstadoLaboral, motivo, fechaSalida } = payload || {};
+  if (!expedienteId || !nuevoEstadoLaboral) throw new Error("expedienteId y nuevoEstadoLaboral son requeridos.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "ExpedientesLaborales");
+  const data = sheet.getDataRange().getValues();
+
+  const idx = data.findIndex(r => String(r[0]).trim() === String(expedienteId).trim());
+  if (idx === -1) throw new Error("Expediente laboral no encontrado.");
+
+  sheet.getRange(idx + 1, 9).setValue(nuevoEstadoLaboral);
+  if (fechaSalida || nuevoEstadoLaboral === "Retirado") {
+    sheet.getRange(idx + 1, 8).setValue(fechaSalida || new Date());
+  }
+  if (motivo) {
+    const curObs = data[idx][9] || "";
+    sheet.getRange(idx + 1, 10).setValue(curObs + ` [Cambio Estado: ${nuevoEstadoLaboral} - ${motivo}]`);
+  }
+
+  logStructuredEvent("ACCOUNTING", "updateEmployeeLaborStatus", "INFO", "LABOR_STATUS_UPDATED", `Estado laboral de ${expedienteId} actualizado a ${nuevoEstadoLaboral}`, payload, payload.authRole);
+
+  return {
+    status: "success",
+    expedienteId: expedienteId,
+    nuevoEstadoLaboral: nuevoEstadoLaboral,
+    message: `Estado laboral del empleado actualizado exitosamente a '${nuevoEstadoLaboral}'.`
+  };
+}
+
 function getEmployeeRecords(payload) {
   const { userId, expedienteId, estadoLaboral } = payload || {};
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
-  const rows = getOrCreateSheet(ss, "ExpedientesLaborales").getDataRange().getValues().slice(1);
+  let rows = getOrCreateSheet(ss, "ExpedientesLaborales").getDataRange().getValues().slice(1);
+
+  if (rows.length === 0) {
+    const defaults = [
+      ["EMP-101", "PERS-01", "USR-DOC-01", "Docente de Informática", "Docencia", "Académico", new Date("2024-01-15"), "", "active", "Lic. Carlos Mendoza"],
+      ["EMP-102", "PERS-02", "USR-ADM-01", "Encargado de Compras", "Administración", "Operaciones", new Date("2023-06-01"), "", "active", "Ing. Sofía Reyes"]
+    ];
+    const sheet = getOrCreateSheet(ss, "ExpedientesLaborales");
+    sheet.getRange(2, 1, defaults.length, 10).setValues(defaults);
+    rows = defaults;
+  }
 
   let filtered = rows;
   if (expedienteId) filtered = filtered.filter(r => String(r[0]).trim() === String(expedienteId).trim());
@@ -1509,8 +3436,8 @@ function getEmployeeContracts(payload) {
 // PERMISOS Y VACACIONES
 // ---------------------------------------------------------------------------
 
-function submitVacationRequest(payload) {
-  const { expedienteId, tipo, fechaInicio, fechaFin, diasSolicitados, observaciones } = payload || {};
+function submitLeaveVacationRequest(payload) {
+  const { expedienteId, tipo, fechaInicio, fechaFin, diasSolicitados, motivo, evidenciaUrl, observaciones } = payload || {};
   if (!expedienteId || !fechaInicio || !fechaFin) throw new Error("expedienteId, fechaInicio y fechaFin requeridos.");
 
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
@@ -1525,16 +3452,92 @@ function submitVacationRequest(payload) {
     fechaInicio,
     fechaFin,
     parseInt(diasSolicitados || 1),
-    "submitted",
+    "PendienteAprobacion",
     "",
-    observaciones || ""
+    motivo || observaciones || "Solicitud formal desde Portal RRHH"
   ]);
 
   return {
     status: "success",
     solicitudId: solicitudId,
-    estado: "submitted",
-    message: "Solicitud de vacaciones/permiso enviada a Recursos Humanos."
+    estado: "PendienteAprobacion",
+    message: "Solicitud de permiso / vacaciones registrada y enviada para revisión."
+  };
+}
+
+function submitVacationRequest(payload) {
+  return submitLeaveVacationRequest(payload);
+}
+
+function getLeaveVacationRequests(payload) {
+  return getVacationRequests(payload);
+}
+
+function reviewLeaveVacationRequest(payload) {
+  return reviewVacationRequest(payload);
+}
+
+function calculateVacationBalances(payload) {
+  const { expedienteId } = payload || {};
+  if (!expedienteId) throw new Error("expedienteId requerido.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const vacs = getOrCreateSheet(ss, "SolicitudesVacaciones").getDataRange().getValues().slice(1);
+  const exps = getOrCreateSheet(ss, "ExpedientesLaborales").getDataRange().getValues().slice(1);
+
+  const exp = exps.find(r => String(r[0]).trim() === String(expedienteId).trim());
+  const fechaIngreso = exp && exp[6] ? new Date(exp[6]) : new Date("2024-01-01");
+  const now = new Date();
+
+  const diffYears = Math.max(1, Math.floor((now - fechaIngreso) / (1000 * 60 * 60 * 24 * 365)));
+  // Escala Ley Trabajo Honduras (10 días año 1, 12 días año 2, 15 días año 3, 20 días año 4+)
+  let diasGeneradosAnno = 10;
+  if (diffYears === 2) diasGeneradosAnno = 12;
+  else if (diffYears === 3) diasGeneradosAnno = 15;
+  else if (diffYears >= 4) diasGeneradosAnno = 20;
+
+  const diasUsados = vacs
+    .filter(r => String(r[1]).trim() === String(expedienteId).trim() && (r[6] === "Aprobado" || r[6] === "approved"))
+    .reduce((sum, r) => sum + parseInt(r[5] || 0), 0);
+
+  const saldoDisponible = Math.max(0, diasGeneradosAnno - diasUsados);
+
+  return {
+    status: "success",
+    expedienteId: expedienteId,
+    antiguedadAnos: diffYears,
+    diasDerechoAnual: diasGeneradosAnno,
+    diasGozados: diasUsados,
+    saldoDisponible: saldoDisponible,
+    message: `Saldo acumulado: ${saldoDisponible} días disponibles.`
+  };
+}
+
+function recordMedicalLeave(payload) {
+  const { expedienteId, centroMedico, diagnosticoPrivadoUrl, fechaInicio, fechaFin, diasOtorgados, observaciones } = payload || {};
+  if (!expedienteId || !fechaInicio || !fechaFin) throw new Error("expedienteId, fechaInicio y fechaFin requeridos.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "IncapacidadesMedicas");
+  const now = new Date();
+  const incId = "INC-MED-" + now.getTime();
+
+  sheet.appendRow([
+    incId,
+    String(expedienteId).trim(),
+    centroMedico || "IHSS / Centro de Salud",
+    diagnosticoPrivadoUrl || "PRIVADO_CONFIDENCIAL",
+    fechaInicio,
+    fechaFin,
+    parseInt(diasOtorgados || 1),
+    "AceptadaIHSS",
+    observaciones || "Incapacidad Médica justificada"
+  ]);
+
+  return {
+    status: "success",
+    incapacidadId: incId,
+    message: "Incapacidad médica registrada confidencialmente."
   };
 }
 
@@ -1852,6 +3855,31 @@ function getPolicyAcceptances(payload) {
 // ---------------------------------------------------------------------------
 
 function getAdvancedDashboardAnalytics(payload) {
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const expsRows = getOrCreateSheet(ss, "ExpedientesLaborales").getDataRange().getValues().slice(1);
+  const vacsRows = getOrCreateSheet(ss, "SolicitudesVacaciones").getDataRange().getValues().slice(1);
+  const attsRows = getOrCreateSheet(ss, "DeduccionesAsistencia").getDataRange().getValues().slice(1);
+  const ctrsRows = getOrCreateSheet(ss, "ContratosLaborales").getDataRange().getValues().slice(1);
+
+  const totalActivos = expsRows.filter(r => r[8] === "active" || r[8] === "Activo" || r[8] === "EnPeriodoPrueba").length;
+  const pendientesPermisos = vacsRows.filter(r => r[6] === "PendienteAprobacion" || r[6] === "submitted").length;
+  const hoyStr = new Date().toISOString().split('T')[0];
+  // REVISIÓN DATE PARSING: Guarda de seguridad para evitar RangeError: Invalid time value en registros de fecha vacíos o corruptos
+  const asistenciasHoy = attsRows.filter(r => r[1] && !isNaN(new Date(r[1]).getTime()) && new Date(r[1]).toISOString().split('T')[0] === hoyStr).length;
+  const pctAsistencia = totalActivos > 0 ? Math.min(100, Math.round((asistenciasHoy / totalActivos) * 100)) : 100;
+
+  return {
+    status: "success",
+    metrics: {
+      personalActivoCount: totalActivos,
+      solicitudesPendientesCount: pendientesPermisos,
+      asistenciaHoyPorcentaje: pctAsistencia,
+      contratosAVencerCount: ctrsRows.length
+    }
+  };
+}
+
+function getHRDashboardAnalytics(payload) {
   const { authRole } = payload || {};
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
 
@@ -2210,6 +4238,692 @@ function getAssetAssignments(payload) {
   return {
     status: "success",
     asignaciones: mapped
+  };
+}
+
+// ---------------------------------------------------------------------------
+// REQ-EXP-015 / FASE 19: INVENTARIOS, ACTIVOS FIJOS Y MANTENIMIENTO
+// ---------------------------------------------------------------------------
+
+function manageWarehouseLocation(payload) {
+  const { ubicacionId, sedeCod, nombreUbicacion, tipoArea, responsableUserId, estado, observaciones } = payload || {};
+  if (!nombreUbicacion) throw new Error("nombreUbicacion es requerido.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "AlmacenesUbicaciones");
+  const data = sheet.getDataRange().getValues();
+
+  const uId = ubicacionId || ("LOC-" + Date.now());
+  const idx = data.findIndex(r => String(r[0]).trim() === String(uId).trim());
+
+  if (idx !== -1) {
+    sheet.getRange(idx + 1, 2).setValue(sedeCod || "Sede Principal");
+    sheet.getRange(idx + 1, 3).setValue(nombreUbicacion);
+    sheet.getRange(idx + 1, 4).setValue(tipoArea || "Bodega");
+    if (responsableUserId) sheet.getRange(idx + 1, 5).setValue(responsableUserId);
+    sheet.getRange(idx + 1, 6).setValue(estado || "Activo");
+    sheet.getRange(idx + 1, 7).setValue(observaciones || "");
+  } else {
+    sheet.appendRow([
+      uId,
+      sedeCod || "Sede Principal",
+      nombreUbicacion,
+      tipoArea || "Bodega",
+      responsableUserId || "",
+      estado || "Activo",
+      observaciones || ""
+    ]);
+  }
+
+  return {
+    status: "success",
+    ubicacionId: uId,
+    message: "Ubicación de almacén registrada/actualizada correctamente."
+  };
+}
+
+function getWarehouseLocations(payload) {
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const rows = getOrCreateSheet(ss, "AlmacenesUbicaciones").getDataRange().getValues().slice(1);
+
+  if (rows.length === 0) {
+    const defaults = [
+      ["LOC-001", "SEDE-CENTRAL", "Bodega General de Materiales", "Bodega", "EMP-01", "Activo", "Almacén central de insumos"],
+      ["LOC-002", "SEDE-CENTRAL", "Laboratorio de Cómputo 1", "Laboratorio", "EMP-02", "Activo", "Área de equipos informáticos"]
+    ];
+    const sheet = getOrCreateSheet(ss, "AlmacenesUbicaciones");
+    sheet.getRange(2, 1, defaults.length, 7).setValues(defaults);
+    rows.push(...defaults);
+  }
+
+  const mapped = rows.map(r => ({
+    ubicacionId: r[0],
+    sedeCod: r[1],
+    nombreUbicacion: r[2],
+    tipoArea: r[3],
+    responsableUserId: r[4],
+    estado: r[5],
+    observaciones: r[6]
+  }));
+
+  return {
+    status: "success",
+    ubicaciones: mapped
+  };
+}
+
+function transferInventoryStock(payload) {
+  const { itemCodigo, itemNombre, cantidad, ubicacionOrigen, ubicacionDestino, responsableUserId, observaciones } = payload || {};
+  if (!itemCodigo || !cantidad || !ubicacionOrigen || !ubicacionDestino) {
+    throw new Error("itemCodigo, cantidad, ubicacionOrigen y ubicacionDestino son requeridos.");
+  }
+
+  const qty = parseFloat(cantidad);
+  if (qty <= 0) throw new Error("La cantidad debe ser mayor a cero.");
+
+  // Registrar Salida por transferencia en Ubicación Origen
+  recordInventoryMovement({
+    itemCodigo,
+    itemNombre: itemNombre || itemCodigo,
+    tipoMovimiento: "TransferenciaSalida",
+    cantidad: qty,
+    ubicacionResponsable: ubicacionOrigen,
+    observaciones: `Transferencia hacia ${ubicacionDestino}. ${observaciones || ""}`
+  });
+
+  // Registrar Entrada por transferencia en Ubicación Destino
+  recordInventoryMovement({
+    itemCodigo,
+    itemNombre: itemNombre || itemCodigo,
+    tipoMovimiento: "Entrada",
+    cantidad: qty,
+    ubicacionResponsable: ubicacionDestino,
+    observaciones: `Transferencia recibida desde ${ubicacionOrigen}. ${observaciones || ""}`
+  });
+
+  return {
+    status: "success",
+    message: `Transferencia de ${qty} unidades de '${itemNombre || itemCodigo}' desde '${ubicacionOrigen}' hacia '${ubicacionDestino}' realizada correctamente.`
+  };
+}
+
+function createMaterialRequisition(payload) {
+  const { departamento, solicitanteUserId, articulosJSON, motivo, observaciones } = payload || {};
+  if (!departamento || !solicitanteUserId || !articulosJSON) {
+    throw new Error("departamento, solicitanteUserId y articulosJSON son requeridos.");
+  }
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "MaterialesSolicitudes");
+  const now = new Date();
+  const solId = "REQ-MAT-" + now.getTime();
+
+  let itemsStr = typeof articulosJSON === "string" ? articulosJSON : JSON.stringify(articulosJSON);
+
+  sheet.appendRow([
+    solId,
+    now,
+    departamento,
+    solicitanteUserId,
+    itemsStr,
+    motivo || "Consumo Operativo",
+    "PendienteAprobacion",
+    "",
+    "",
+    observaciones || ""
+  ]);
+
+  return {
+    status: "success",
+    solicitudMatId: solId,
+    message: "Solicitud interna de materiales registrada en estado PendienteAprobacion."
+  };
+}
+
+function getMaterialRequisitions(payload) {
+  const { departamento, estadoAprobacion } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const rows = getOrCreateSheet(ss, "MaterialesSolicitudes").getDataRange().getValues().slice(1);
+
+  let filtered = rows;
+  if (departamento) filtered = filtered.filter(r => String(r[2]).toLowerCase().trim() === String(departamento).toLowerCase().trim());
+  if (estadoAprobacion) filtered = filtered.filter(r => String(r[6]).trim() === String(estadoAprobacion).trim());
+
+  const mapped = filtered.map(r => ({
+    solicitudMatId: r[0],
+    fecha: r[1],
+    departamento: r[2],
+    solicitanteUserId: r[3],
+    articulosJSON: r[4],
+    motivo: r[5],
+    estadoAprobacion: r[6],
+    aprobadoPor: r[7],
+    entregadoPor: r[8],
+    observaciones: r[9]
+  }));
+
+  return {
+    status: "success",
+    solicitudes: mapped
+  };
+}
+
+function deliverMaterialRequisition(payload) {
+  const { solicitudMatId, entregadoPorUserId, observaciones } = payload || {};
+  if (!solicitudMatId) throw new Error("solicitudMatId es requerido.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "MaterialesSolicitudes");
+  const data = sheet.getDataRange().getValues();
+
+  const idx = data.findIndex(r => String(r[0]).trim() === String(solicitudMatId).trim());
+  if (idx === -1) throw new Error("Solicitud de material no encontrada.");
+
+  const currentStatus = String(data[idx][6]).trim();
+  if (currentStatus === "Entregado") throw new Error("La solicitud ya ha sido entregada previamente.");
+
+  let itemsArr = [];
+  try {
+    itemsArr = typeof data[idx][4] === "string" ? JSON.parse(data[idx][4]) : data[idx][4];
+  } catch (e) {
+    itemsArr = [];
+  }
+
+  if (Array.isArray(itemsArr)) {
+    itemsArr.forEach(item => {
+      if (item.itemCodigo && item.cantidad) {
+        recordInventoryMovement({
+          itemCodigo: item.itemCodigo,
+          itemNombre: item.itemNombre || item.itemCodigo,
+          tipoMovimiento: "Salida",
+          cantidad: parseFloat(item.cantidad),
+          ubicacionResponsable: data[idx][2] || "Departamento Solicitante",
+          observaciones: `Entrega por Solicitud ${solicitudMatId}`
+        });
+      }
+    });
+  }
+
+  sheet.getRange(idx + 1, 7).setValue("Entregado");
+  sheet.getRange(idx + 1, 9).setValue(entregadoPorUserId || "Bodega");
+  if (observaciones) sheet.getRange(idx + 1, 10).setValue(observaciones);
+
+  return {
+    status: "success",
+    solicitudMatId: solicitudMatId,
+    message: "Materiales entregados y descontados correctamente del inventario."
+  };
+}
+
+function createPhysicalInventoryCount(payload) {
+  const { almacenUbicacionId, responsableUserId, observaciones } = payload || {};
+  if (!almacenUbicacionId) throw new Error("almacenUbicacionId es requerido.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "InventariosConteosFisicos");
+  const now = new Date();
+  const conteoId = "CNT-" + now.getTime();
+
+  sheet.appendRow([
+    conteoId,
+    now,
+    almacenUbicacionId,
+    responsableUserId || "",
+    "[]",
+    "[]",
+    "EnConteo",
+    "",
+    observaciones || ""
+  ]);
+
+  return {
+    status: "success",
+    conteoId: conteoId,
+    message: "Proceso de conteo físico programado/iniciado."
+  };
+}
+
+function getPhysicalInventoryCounts(payload) {
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const rows = getOrCreateSheet(ss, "InventariosConteosFisicos").getDataRange().getValues().slice(1);
+
+  const mapped = rows.map(r => ({
+    conteoId: r[0],
+    fechaInicio: r[1],
+    almacenUbicacionId: r[2],
+    responsableUserId: r[3],
+    articulosDetalleJSON: r[4],
+    diferenciasJSON: r[5],
+    estadoConteo: r[6],
+    aprobadoPor: r[7],
+    observaciones: r[8]
+  }));
+
+  return {
+    status: "success",
+    conteos: mapped
+  };
+}
+
+function reconcilePhysicalCount(payload) {
+  const { conteoId, articulosDetalleJSON, aprobadoPorUserId, observaciones } = payload || {};
+  if (!conteoId || !articulosDetalleJSON) throw new Error("conteoId y articulosDetalleJSON son requeridos.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "InventariosConteosFisicos");
+  const data = sheet.getDataRange().getValues();
+
+  const idx = data.findIndex(r => String(r[0]).trim() === String(conteoId).trim());
+  if (idx === -1) throw new Error("Conteo físico no encontrado.");
+
+  const itemsArr = typeof articulosDetalleJSON === "string" ? JSON.parse(articulosDetalleJSON) : articulosDetalleJSON;
+  const kardexRows = getOrCreateSheet(ss, "InventariosKardex").getDataRange().getValues().slice(1);
+
+  const diferencias = [];
+  if (Array.isArray(itemsArr)) {
+    itemsArr.forEach(item => {
+      const code = String(item.itemCodigo).trim();
+      const cantidadContada = parseFloat(item.cantidadContada || 0);
+
+      let stockTeorico = 0;
+      kardexRows.forEach(kr => {
+        if (String(kr[2]).trim() === code) stockTeorico = parseFloat(kr[8] || 0);
+      });
+
+      const dif = cantidadContada - stockTeorico;
+      if (dif !== 0) {
+        diferencias.push({
+          itemCodigo: code,
+          itemNombre: item.itemNombre || code,
+          stockTeorico: stockTeorico,
+          cantidadContada: cantidadContada,
+          diferencia: dif
+        });
+
+        // Generar movimiento de ajuste autorizado
+        recordInventoryMovement({
+          itemCodigo: code,
+          itemNombre: item.itemNombre || code,
+          tipoMovimiento: dif > 0 ? "Entrada" : "Baja",
+          cantidad: Math.abs(dif),
+          ubicacionResponsable: data[idx][2] || "Almacén Central",
+          observaciones: `Ajuste por Conteo Físico ${conteoId}. Diferencia: ${dif}`
+        });
+      }
+    });
+  }
+
+  sheet.getRange(idx + 1, 5).setValue(typeof articulosDetalleJSON === "string" ? articulosDetalleJSON : JSON.stringify(articulosDetalleJSON));
+  sheet.getRange(idx + 1, 6).setValue(JSON.stringify(diferencias));
+  sheet.getRange(idx + 1, 7).setValue("ConciliadoAprobado");
+  sheet.getRange(idx + 1, 8).setValue(aprobadoPorUserId || "Auditoría");
+  if (observaciones) sheet.getRange(idx + 1, 9).setValue(observaciones);
+
+  return {
+    status: "success",
+    conteoId: conteoId,
+    totalDiferencias: diferencias.length,
+    diferencias: diferencias,
+    message: "Conteo físico conciliado y ajustes de inventario aplicados correctamente."
+  };
+}
+
+function manageMaintenanceOrder(payload) {
+  const { ordenMaintId, activoIdUbicacion, tipoMantenimiento, descripcionFalla, prioridad, reportadoPorUserId, asignadoAEmpleadoId, repuestosConsumidosJSON, costoEstimado, costoReal, estadoOrden, fechaResolucion, observaciones } = payload || {};
+  if (!activoIdUbicacion || !descripcionFalla) throw new Error("activoIdUbicacion y descripcionFalla son requeridos.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "MantenimientoOrdenes");
+  const data = sheet.getDataRange().getValues();
+
+  const oId = ordenMaintId || ("MNT-" + Date.now());
+  const idx = data.findIndex(r => String(r[0]).trim() === String(oId).trim());
+  const now = new Date();
+
+  let repuestStr = repuestosConsumidosJSON ? (typeof repuestosConsumidosJSON === "string" ? repuestosConsumidosJSON : JSON.stringify(repuestosConsumidosJSON)) : "[]";
+
+  if (idx !== -1) {
+    if (tipoMantenimiento) sheet.getRange(idx + 1, 4).setValue(tipoMantenimiento);
+    sheet.getRange(idx + 1, 5).setValue(descripcionFalla);
+    if (prioridad) sheet.getRange(idx + 1, 6).setValue(prioridad);
+    if (asignadoAEmpleadoId) sheet.getRange(idx + 1, 8).setValue(asignadoAEmpleadoId);
+    sheet.getRange(idx + 1, 9).setValue(repuestStr);
+    if (costoEstimado !== undefined) sheet.getRange(idx + 1, 10).setValue(costoEstimado);
+    if (costoReal !== undefined) sheet.getRange(idx + 1, 11).setValue(costoReal);
+    if (estadoOrden) sheet.getRange(idx + 1, 12).setValue(estadoOrden);
+    if (fechaResolucion || estadoOrden === "Resuelto" || estadoOrden === "Completado") {
+      sheet.getRange(idx + 1, 13).setValue(fechaResolucion || now);
+    }
+    sheet.getRange(idx + 1, 14).setValue(observaciones || "");
+  } else {
+    sheet.appendRow([
+      oId,
+      now,
+      activoIdUbicacion,
+      tipoMantenimiento || "Correctivo",
+      descripcionFalla,
+      prioridad || "Media",
+      reportadoPorUserId || "",
+      asignadoAEmpleadoId || "",
+      repuestStr,
+      costoEstimado || 0,
+      costoReal || 0,
+      estadoOrden || "Reportado",
+      "",
+      observaciones || ""
+    ]);
+  }
+
+  // Descontar repuestos si se completó la orden
+  if ((estadoOrden === "Resuelto" || estadoOrden === "Completado") && repuestosConsumidosJSON) {
+    const repArr = typeof repuestosConsumidosJSON === "string" ? JSON.parse(repuestosConsumidosJSON) : repuestosConsumidosJSON;
+    if (Array.isArray(repArr)) {
+      repArr.forEach(rp => {
+        if (rp.itemCodigo && rp.cantidad) {
+          recordInventoryMovement({
+            itemCodigo: rp.itemCodigo,
+            itemNombre: rp.itemNombre || rp.itemCodigo,
+            tipoMovimiento: "Salida",
+            cantidad: parseFloat(rp.cantidad),
+            ubicacionResponsable: "Mantenimiento / " + activoIdUbicacion,
+            observaciones: `Consumo de repuesto por Orden Mantenimiento ${oId}`
+          });
+        }
+      });
+    }
+  }
+
+  return {
+    status: "success",
+    ordenMaintId: oId,
+    message: "Orden de mantenimiento registrada/actualizada correctamente."
+  };
+}
+
+function getMaintenanceOrders(payload) {
+  const { estadoOrden, tipoMantenimiento } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const rows = getOrCreateSheet(ss, "MantenimientoOrdenes").getDataRange().getValues().slice(1);
+
+  let filtered = rows;
+  if (estadoOrden) filtered = filtered.filter(r => String(r[11]).trim() === String(estadoOrden).trim());
+  if (tipoMantenimiento) filtered = filtered.filter(r => String(r[3]).trim() === String(tipoMantenimiento).trim());
+
+  const mapped = filtered.map(r => ({
+    ordenMaintId: r[0],
+    fechaReporte: r[1],
+    activoIdUbicacion: r[2],
+    tipoMantenimiento: r[3],
+    descripcionFalla: r[4],
+    prioridad: r[5],
+    reportadoPorUserId: r[6],
+    asignadoAEmpleadoId: r[7],
+    repuestosConsumidosJSON: r[8],
+    costoEstimado: parseFloat(r[9] || 0),
+    costoReal: parseFloat(r[10] || 0),
+    estadoOrden: r[11],
+    fechaResolucion: r[12],
+    observaciones: r[13]
+  }));
+
+  return {
+    status: "success",
+    ordenes: mapped
+  };
+}
+
+function registerAssetDisposal(payload) {
+  const { tipoBien, bienIdCodigo, nombreBien, motivoBaja, valorLibros, autorizadoPorUserId, documentoActaUrl, observaciones } = payload || {};
+  if (!bienIdCodigo || !motivoBaja) throw new Error("bienIdCodigo y motivoBaja son requeridos.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "BajasBienes");
+  const now = new Date();
+  const bajaId = "DISP-" + now.getTime();
+
+  sheet.appendRow([
+    bajaId,
+    now,
+    tipoBien || "ActivoFijo",
+    bienIdCodigo,
+    nombreBien || bienIdCodigo,
+    motivoBaja,
+    valorLibros || 0,
+    autorizadoPorUserId || "",
+    documentoActaUrl || "",
+    "BajaConfirmada",
+    observaciones || ""
+  ]);
+
+  // Si es un Activo Fijo, actualizar estado en ActivosPatrimoniales a Disposed sin eliminar historial
+  if ((tipoBien || "ActivoFijo") === "ActivoFijo") {
+    const assetSheet = getOrCreateSheet(ss, "ActivosPatrimoniales");
+    const aData = assetSheet.getDataRange().getValues();
+    const aIdx = aData.findIndex(r => String(r[0]).trim() === String(bienIdCodigo).trim() || String(r[1]).trim() === String(bienIdCodigo).trim());
+    if (aIdx !== -1) {
+      assetSheet.getRange(aIdx + 1, 8).setValue("Disposed");
+      assetSheet.getRange(aIdx + 1, 9).setValue(`Baja procesada mediante acta ${bajaId}. Motivo: ${motivoBaja}`);
+    }
+  } else if (tipoBien === "Inventario") {
+    recordInventoryMovement({
+      itemCodigo: bienIdCodigo,
+      itemNombre: nombreBien || bienIdCodigo,
+      tipoMovimiento: "Baja",
+      cantidad: parseFloat(payload.cantidad || 1),
+      ubicacionResponsable: "Almacén de Bajas",
+      observaciones: `Baja de inventario por acta ${bajaId}. Motivo: ${motivoBaja}`
+    });
+  }
+
+  return {
+    status: "success",
+    bajaId: bajaId,
+    message: "Baja de bien/material registrada correctamente con preservación del historial contable."
+  };
+}
+
+function getAssetDisposals(payload) {
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const rows = getOrCreateSheet(ss, "BajasBienes").getDataRange().getValues().slice(1);
+
+  const mapped = rows.map(r => ({
+    bajaId: r[0],
+    fechaBaja: r[1],
+    tipoBien: r[2],
+    bienIdCodigo: r[3],
+    nombreBien: r[4],
+    motivoBaja: r[5],
+    valorLibros: parseFloat(r[6] || 0),
+    autorizadoPorUserId: r[7],
+    documentoActaUrl: r[8],
+    estado: r[9],
+    observaciones: r[10]
+  }));
+
+  return {
+    status: "success",
+    bajas: mapped
+  };
+}
+
+// ---------------------------------------------------------------------------
+// LÓGICA DE PRESUPUESTOS Y CONTROL FINANCIERO (FASE 14)
+// ---------------------------------------------------------------------------
+
+function saveAccountItem(payload) {
+  const { cuentaId, codigoCuenta, nombreCuenta, tipoCuenta, naturaleza, observaciones } = payload || {};
+  if (!codigoCuenta || !nombreCuenta) throw new Error("codigoCuenta y nombreCuenta son requeridos.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "PlanCuentas");
+  const data = sheet.getDataRange().getValues();
+
+  const cId = cuentaId || ("ACC-" + Date.now());
+  const idx = data.findIndex(r => String(r[0]).trim() === String(cId).trim() || String(r[1]).trim() === String(codigoCuenta).trim());
+
+  if (idx !== -1) {
+    sheet.getRange(idx + 1, 3).setValue(nombreCuenta);
+    if (tipoCuenta) sheet.getRange(idx + 1, 4).setValue(tipoCuenta);
+    if (naturaleza) sheet.getRange(idx + 1, 5).setValue(naturaleza);
+  } else {
+    sheet.appendRow([
+      cId,
+      String(codigoCuenta).trim(),
+      String(nombreCuenta).trim(),
+      tipoCuenta || "Gasto",
+      naturaleza || "Debito",
+      "Activo",
+      observaciones || ""
+    ]);
+  }
+
+  return { status: "success", message: "Cuenta contable registrada/actualizada exitosamente." };
+}
+
+function getAccountingJournalEntries(payload) {
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const rows = getOrCreateSheet(ss, "AsientosContables").getDataRange().getValues().slice(1);
+
+  const entries = rows.map(r => ({
+    asientoId: r[0],
+    fecha: r[1] ? new Date(r[1]).toISOString() : null,
+    descripcion: r[2],
+    origenModulo: r[3] || "General",
+    referenciaId: r[4],
+    lineas: r[5] ? (typeof r[5] === 'string' ? JSON.parse(r[5]) : r[5]) : [],
+    estado: r[6] || "Contabilizado",
+    creadoPor: r[7]
+  }));
+
+  return { status: "success", data: entries };
+}
+
+function getBudgets(payload) {
+  const { anoId, centroCosto } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "PresupuestosInstitucionales");
+  const data = sheet.getDataRange().getValues();
+  if (data.length <= 1) return { status: "success", data: [] };
+
+  const budgets = data.slice(1).filter(r => {
+    if (anoId && String(r[1]).trim() !== String(anoId).trim()) return false;
+    if (centroCosto && normalizeString(r[2]) !== normalizeString(centroCosto)) return false;
+    return true;
+  }).map(r => ({
+    presupuestoId: r[0],
+    anoId: r[1],
+    centroCosto: r[2],
+    partidaCodigo: r[3],
+    montoAprobado: parseFloat(r[4]) || 0,
+    montoComprometido: parseFloat(r[5]) || 0,
+    montoEjecutado: parseFloat(r[6]) || 0,
+    estado: r[7] || "Aprobado"
+  }));
+
+  return { status: "success", data: budgets };
+}
+
+function saveBudgetPlan(payload) {
+  const { presupuestoId, anoId, centroCosto, partidaCodigo, montoAprobado } = payload || {};
+  if (!centroCosto || !partidaCodigo) throw new Error("centroCosto y partidaCodigo son requeridos.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "PresupuestosInstitucionales");
+  if (sheet.getLastRow() === 0) {
+    sheet.appendRow(["PresupuestoID", "AnoID", "CentroCosto", "PartidaCodigo", "MontoAprobado", "MontoComprometido", "MontoEjecutado", "Estado"]);
+  }
+
+  const pId = presupuestoId || ("PRE-" + Date.now());
+  const data = sheet.getDataRange().getValues();
+  const idx = data.findIndex(r => String(r[0]).trim() === String(pId).trim());
+
+  if (idx !== -1) {
+    sheet.getRange(idx + 1, 5).setValue(parseFloat(montoAprobado) || 0);
+  } else {
+    sheet.appendRow([
+      pId,
+      anoId || "2026",
+      centroCosto,
+      partidaCodigo,
+      parseFloat(montoAprobado) || 0,
+      0,
+      0,
+      "Aprobado"
+    ]);
+  }
+
+  return { status: "success", message: "Partida presupuestaria registrada exitosamente.", data: { presupuestoId: pId } };
+}
+
+function getBudgetExecutionReport(payload) {
+  const res = getBudgets(payload);
+  const budgets = res.data || [];
+
+  const report = budgets.map(b => {
+    const disponible = b.montoAprobado - b.montoEjecutado;
+    const porcentajeEjecucion = b.montoAprobado > 0 ? ((b.montoEjecutado / b.montoAprobado) * 100).toFixed(1) : "0.0";
+
+    return {
+      ...b,
+      saldoDisponible: disponible,
+      porcentajeEjecucion: parseFloat(porcentajeEjecucion)
+    };
+  });
+
+  return { status: "success", report: report };
+}
+
+function getFinancialSummary(payload) {
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+
+  const entriesRes = getAccountingJournalEntries({});
+  const entries = entriesRes.data || [];
+
+  let totalDebitos = 0;
+  let totalCreditos = 0;
+
+  entries.forEach(e => {
+    if (Array.isArray(e.lineas)) {
+      e.lineas.forEach(l => {
+        totalDebitos += parseFloat(l.debito || 0);
+        totalCreditos += parseFloat(l.credito || 0);
+      });
+    }
+  });
+
+  return {
+    status: "success",
+    data: {
+      totalDebitos: parseFloat(totalDebitos.toFixed(2)),
+      totalCreditos: parseFloat(totalCreditos.toFixed(2)),
+      asientosContabilizados: entries.length,
+      balanceado: Math.abs(totalDebitos - totalCreditos) < 0.01
+    }
+  };
+}
+
+function getAccountsReceivablePayableSummary(payload) {
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+
+  const cargosRows = getOrCreateSheet(ss, "CargosEstudiante").getDataRange().getValues().slice(1);
+  const gastosRows = getOrCreateSheet(ss, "CuentasPorPagarGastos").getDataRange().getValues().slice(1);
+
+  let porCobrarTotal = 0;
+  cargosRows.forEach(r => {
+    if (r[7] === "Pendiente") porCobrarTotal += parseFloat(r[6] || 0);
+  });
+
+  let porPagarTotal = 0;
+  gastosRows.forEach(r => {
+    if (r[7] === "Pendiente") porPagarTotal += parseFloat(r[3] || 0);
+  });
+
+  return {
+    status: "success",
+    data: {
+      cuentasPorCobrar: parseFloat(porCobrarTotal.toFixed(2)),
+      cuentasPorPagar: parseFloat(porPagarTotal.toFixed(2))
+    }
   };
 }
 

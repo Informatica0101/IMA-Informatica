@@ -968,6 +968,49 @@ window.QuizProApp.handleHeaderAction = window.handleHeaderAction;
 window.QuizProApp.openAcademicHierarchy = window.openAcademicHierarchy;
 
 /**
+ * FASE 3: Consejos Discretos de Primera Visita (Onboarding Tips)
+ */
+window.showFirstVisitTip = function(tipId, title, message, targetContainerId) {
+    if (!tipId || !message) return;
+    var seenKey = 'ngca_tip_seen_' + tipId;
+    if (localStorage.getItem(seenKey) === 'true') return;
+
+    var container = targetContainerId ? document.getElementById(targetContainerId) : document.querySelector('main .container');
+    if (!container) return;
+
+    var tipCard = document.createElement('div');
+    tipCard.className = 'onboarding-tip-card mb-6 flex items-start gap-4 animate-fade-in-up';
+    tipCard.id = 'tip-card-' + tipId;
+    tipCard.innerHTML =
+        '<div class="w-10 h-10 bg-indigo-600 text-white rounded-xl flex items-center justify-center text-lg flex-shrink-0 shadow-md">' +
+            '<i class="fas fa-lightbulb"></i>' +
+        '</div>' +
+        '<div class="flex-grow">' +
+            '<h4 class="text-sm font-bold text-indigo-950 mb-1">' + (title || 'Consejo Útil') + '</h4>' +
+            '<p class="text-xs text-indigo-900 leading-relaxed font-medium">' + message + '</p>' +
+        '</div>' +
+        '<button onclick="window.dismissFirstVisitTip(\'' + tipId + '\')" class="text-indigo-400 hover:text-indigo-800 text-sm p-1 transition-colors">' +
+            '<i class="fas fa-times"></i>' +
+        '</button>';
+
+    container.insertBefore(tipCard, container.firstChild);
+};
+
+window.dismissFirstVisitTip = function(tipId) {
+    var seenKey = 'ngca_tip_seen_' + tipId;
+    localStorage.setItem(seenKey, 'true');
+    var el = document.getElementById('tip-card-' + tipId);
+    if (el && el.parentNode) {
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(-10px)';
+        el.style.transition = 'all 0.3s ease';
+        setTimeout(function() {
+            if (el.parentNode) el.parentNode.removeChild(el);
+        }, 300);
+    }
+};
+
+/**
  * Inyecta botones de copiado en los bloques de código (v7.6.4)
  */
 window.setupCodeCopyButtons = function() {

@@ -17,6 +17,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Elementos de Navegación y Secciones ---
     const navDashboard = document.getElementById('nav-dashboard');
+    const navGradebook = document.getElementById('nav-gradebook');
+    const navAttendance = document.getElementById('nav-attendance');
+    const navComunicados = document.getElementById('nav-comunicados');
+    const navOrientacion = document.getElementById('nav-orientacion');
+    const navSupervision = document.getElementById('nav-supervision');
     const navTareas = document.getElementById('nav-tareas');
     const navProyectos = document.getElementById('nav-proyectos');
     const navLogros = document.getElementById('nav-logros');
@@ -25,6 +30,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const navReportsOld = document.getElementById('nav-reportes');
 
     const sectionAcademicReports = document.getElementById('section-dashboard');
+    const sectionGradebook = document.getElementById('section-gradebook');
+    const sectionAttendance = document.getElementById('section-attendance');
+    const sectionComunicados = document.getElementById('section-comunicados');
+    const sectionOrientacion = document.getElementById('section-orientacion');
+    const sectionSupervision = document.getElementById('section-supervision');
     const sectionTareas = document.getElementById('section-tareas');
     const sectionProyectos = document.getElementById('section-proyectos');
     const sectionLogros = document.getElementById('section-logros');
@@ -54,8 +64,8 @@ document.addEventListener('DOMContentLoaded', () => {
     let isNavigating = false;
     let studentSort = { column: 'nombre', direction: 'asc' };
 
-    const allSections = [sectionAcademicReports, sectionTareas, sectionProyectos, sectionLogros, sectionNews, sectionAdmin, sectionReportes];
-    const allNavLinks = [navDashboard, navTareas, navProyectos, navLogros, navNews, navAdmin, navReportsOld];
+    const allSections = [sectionAcademicReports, sectionGradebook, sectionAttendance, sectionComunicados, sectionOrientacion, sectionSupervision, sectionTareas, sectionProyectos, sectionLogros, sectionNews, sectionAdmin, sectionReportes];
+    const allNavLinks = [navDashboard, navGradebook, navAttendance, navComunicados, navOrientacion, navSupervision, navTareas, navProyectos, navLogros, navNews, navAdmin, navReportsOld];
 
     // Auxiliar para normalizar strings (trim, lowercase y sin acentos) para comparaciones robustas
     const norm = (s) => (s || "").toString().trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
@@ -90,6 +100,26 @@ document.addEventListener('DOMContentLoaded', () => {
     navDashboard.addEventListener('click', () => {
         window.navigateTo(sectionAcademicReports, navDashboard);
         fetchTeacherActivity();
+    });
+    navGradebook?.addEventListener('click', () => {
+        window.navigateTo(sectionGradebook, navGradebook);
+        initGradebookModule();
+    });
+    navAttendance?.addEventListener('click', () => {
+        window.navigateTo(sectionAttendance, navAttendance);
+        initAttendanceModule();
+    });
+    navComunicados?.addEventListener('click', () => {
+        window.navigateTo(sectionComunicados, navComunicados);
+        loadInstitutionalAnnouncementsModule();
+    });
+    navOrientacion?.addEventListener('click', () => {
+        window.navigateTo(sectionOrientacion, navOrientacion);
+        initOrientationModule();
+    });
+    navSupervision?.addEventListener('click', () => {
+        window.navigateTo(sectionSupervision, navSupervision);
+        loadSupervisionModule();
     });
     navTareas.addEventListener('click', () => {
         window.navigateTo(sectionTareas, navTareas);
@@ -362,6 +392,239 @@ document.addEventListener('DOMContentLoaded', () => {
         } finally {
             btn.disabled = false;
             btn.textContent = 'Abrir Control de Asistencia';
+        }
+    });
+
+    // --- LÓGICA CONSTRUCTOR DE HORARIOS Y SUSTITUCIONES DOCENTES (FASE 7) ---
+    async function loadMasterSchedules() {
+        const tbody = document.getElementById('schedules-table-body');
+        const badge = document.getElementById('schedule-count-badge');
+        if (!tbody) return;
+
+        tbody.innerHTML = '<tr><td colspan="6" class="p-6 text-center text-gray-400 italic"><i class="fas fa-spinner fa-spin mr-2"></i>Cargando matriz de horarios...</td></tr>';
+
+        try {
+            const res = await fetchApi('ACADEMIC', 'getClassSchedules', { docenteUserId: currentUser.userId });
+            if (res.status === 'success') {
+                const schedules = res.data || [];
+                if (badge) badge.textContent = `${schedules.length} Bloques`;
+
+                if (schedules.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="6" class="p-6 text-center text-gray-400 italic">No hay bloques de horario registrados para este docente. Utilice el formulario superior para programar sus clases.</td></tr>';
+                    return;
+                }
+
+                tbody.innerHTML = schedules.map(s => `
+                    <tr class="hover:bg-indigo-50/40 transition-colors">
+                        <td class="p-3 font-bold text-gray-800">
+                            <span class="px-2 py-0.5 bg-indigo-50 text-indigo-700 rounded-md uppercase text-[9px] mr-1.5">${s.diaSemana}</span>
+                            <span>${s.horaInicio} - ${s.horaFin}</span>
+                        </td>
+                        <td class="p-3 font-semibold text-gray-700">${s.ofertaId}</td>
+                        <td class="p-3 text-gray-600 font-medium">Grado / Secc. Asignada</td>
+                        <td class="p-3 font-mono text-gray-600">${s.aulaCodigo || 'N/A'}</td>
+                        <td class="p-3 text-gray-600">${s.docenteUserId || currentUser.nombre}</td>
+                        <td class="p-3 text-right">
+                            <button onclick="window.deleteScheduleBlock('${s.horarioId}')" class="px-2.5 py-1 bg-red-50 text-red-600 hover:bg-red-100 rounded-lg text-[10px] font-bold uppercase transition-colors">
+                                <i class="fas fa-trash-alt mr-1"></i>Eliminar
+                            </button>
+                        </td>
+                    </tr>
+                `).join('');
+            } else {
+                tbody.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-red-500">${res.message || 'Error al cargar horarios'}</td></tr>`;
+            }
+        } catch (err) {
+            tbody.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-red-500">Error de conexión: ${err.message}</td></tr>`;
+        }
+    }
+
+    window.deleteScheduleBlock = async function(horarioId) {
+        if (!confirm("¿Desea desactivar este bloque de horario?")) return;
+        try {
+            const res = await fetchApi('ACADEMIC', 'deleteClassSchedule', { horarioId });
+            if (res.status === 'success') {
+                alert("Bloque de horario eliminado.");
+                loadMasterSchedules();
+            } else {
+                alert("Error: " + res.message);
+            }
+        } catch (e) {
+            alert("Error al eliminar horario: " + e.message);
+        }
+    };
+
+    document.getElementById('schedule-builder-form')?.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const btn = document.getElementById('btn-save-class-schedule');
+        const diaSemana = document.getElementById('sch-dia').value;
+        const horaInicio = document.getElementById('sch-hora-inicio').value;
+        const horaFin = document.getElementById('sch-hora-fin').value;
+        const aulaCodigo = document.getElementById('sch-aula').value;
+        const grado = document.getElementById('sch-grado').value;
+        const seccion = document.getElementById('sch-seccion').value;
+        const docenteUserId = document.getElementById('sch-docente-id').value || currentUser.userId;
+
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-1"></i> Verificando colisiones...';
+
+        try {
+            let ofertaId = "";
+            try {
+                const offerRes = await fetchApi('ACADEMIC', 'getAcademicOffers', { grado, seccion });
+                if (offerRes && offerRes.status === 'success' && Array.isArray(offerRes.data) && offerRes.data.length > 0) {
+                    ofertaId = offerRes.data[0].ofertaId;
+                }
+            } catch (_) {}
+
+            if (!ofertaId) {
+                const createOfferRes = await fetchApi('ACADEMIC', 'createAcademicOffer', {
+                    grado: grado,
+                    seccion: seccion,
+                    asignaturaId: "ASIG-GENERAL",
+                    planId: "PLAN-2026"
+                });
+                if (createOfferRes && createOfferRes.status === 'success' && createOfferRes.data?.ofertaId) {
+                    ofertaId = createOfferRes.data.ofertaId;
+                } else {
+                    const cleanGrado = (grado || "DEC").normalize("NFD").replace(/[\u0300-\u036f]/g, "").substring(0, 3).toUpperCase();
+                    ofertaId = `OFE-${cleanGrado}-${seccion}`;
+                }
+            }
+
+            const res = await fetchApi('ACADEMIC', 'createClassSchedule', {
+                ofertaId,
+                diaSemana,
+                horaInicio,
+                horaFin,
+                aulaCodigo,
+                docenteUserId
+            });
+
+            if (res.status === 'success') {
+                alert(`¡Horario asignado con éxito! ID: ${res.data?.horarioId || 'OK'}`);
+                loadMasterSchedules();
+            } else {
+                throw new Error(res.message);
+            }
+        } catch (err) {
+            alert("Conflicto / Error en asignación de horario:\n" + err.message);
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-check mr-1"></i> Publicar Horario';
+        }
+    });
+
+    document.getElementById('btn-load-schedules-list')?.addEventListener('click', loadMasterSchedules);
+
+    document.getElementById('btn-open-substitution-modal')?.addEventListener('click', async () => {
+        const sustitutoUserId = prompt("Ingrese el ID o Correo del Docente Sustituto:");
+        if (!sustitutoUserId) return;
+
+        const gradoInput = prompt("Ingrese el Grado para la sustitución (Ej. Décimo, Undécimo, Duodécimo):", "Décimo");
+        if (!gradoInput) return;
+        const seccionInput = prompt("Ingrese la Sección (Ej. A, B, C):", "A");
+        if (!seccionInput) return;
+
+        let ofertaId = "";
+        try {
+            const offerRes = await fetchApi('ACADEMIC', 'getAcademicOffers', { grado: gradoInput, seccion: seccionInput });
+            if (offerRes && offerRes.status === 'success' && Array.isArray(offerRes.data) && offerRes.data.length > 0) {
+                ofertaId = offerRes.data[0].ofertaId;
+            }
+        } catch (_) {}
+
+        if (!ofertaId) {
+            const createOfferRes = await fetchApi('ACADEMIC', 'createAcademicOffer', {
+                grado: gradoInput,
+                seccion: seccionInput,
+                asignaturaId: "ASIG-GENERAL",
+                planId: "PLAN-2026"
+            });
+            if (createOfferRes && createOfferRes.status === 'success' && createOfferRes.data?.ofertaId) {
+                ofertaId = createOfferRes.data.ofertaId;
+            } else {
+                const cleanGradoInput = (gradoInput || "DEC").normalize("NFD").replace(/[\u0300-\u036f]/g, "").substring(0, 3).toUpperCase();
+                ofertaId = `OFE-${cleanGradoInput}-${seccionInput}`;
+            }
+        }
+
+        const motivo = prompt("Motivo de la sustitución temporal:", "Licencia Médica / Permiso");
+
+        try {
+            const res = await fetchApi('ACADEMIC', 'createTeacherSubstitution', {
+                ofertaId,
+                sustitutoUserId,
+                fechaInicio: new Date().toISOString().split('T')[0],
+                fechaFin: "",
+                motivo,
+                autorizadoPor: currentUser.nombre
+            });
+
+            if (res.status === 'success') {
+                alert(`Sustitución docente registrada exitosamente para ${sustitutoUserId}.`);
+            } else {
+                alert("Error: " + res.message);
+            }
+        } catch (e) {
+            alert("Error registrando sustitución: " + e.message);
+        }
+    });
+
+    // Handler para Publicador de Aula Virtual (Fase 8)
+    document.getElementById('virtual-classroom-publisher-form')?.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const btn = document.getElementById('btn-submit-virtual-post');
+        const tipo = document.getElementById('vc-tipo').value;
+        const titulo = document.getElementById('vc-titulo').value;
+        const url = document.getElementById('vc-url').value;
+        const contenido = document.getElementById('vc-contenido').value;
+        const esBorrador = document.getElementById('vc-es-borrador').checked;
+
+        btn.disabled = true;
+        btn.textContent = 'Procesando...';
+
+        try {
+            if (tipo === "Anuncio") {
+                const res = await fetchApi('TASK', 'createPost', {
+                    titulo,
+                    contenido,
+                    categoria: "Anuncio",
+                    autorId: currentUser.userId,
+                    esBorrador,
+                    adjuntos: url ? [{ nombre: "Recurso Adjunto", url: url }] : []
+                });
+
+                if (res.status === 'success') {
+                    alert(esBorrador ? "Borrador de anuncio guardado." : "Anuncio publicado en el Aula Virtual con éxito.");
+                    e.target.reset();
+                } else {
+                    throw new Error(res.message);
+                }
+            } else {
+                const res = await fetchApi('TASK', 'createStudyMaterial', {
+                    titulo,
+                    descripcion: contenido,
+                    tipoRecurso: tipo,
+                    parcial: window.GLOBAL_SCOPE ? window.GLOBAL_SCOPE.ParcialActual : "I parcial",
+                    unidad: "Unidad 1",
+                    tema: "Tema General",
+                    archivoUrl: url || "https://drive.google.com",
+                    autorId: currentUser.userId
+                });
+
+                if (res.status === 'success') {
+                    alert("Material educativo / guía publicado con éxito.");
+                    e.target.reset();
+                } else {
+                    throw new Error(res.message);
+                }
+            }
+        } catch (err) {
+            alert("Error al publicar en el Aula Virtual:\n" + err.message);
+        } finally {
+            btn.disabled = false;
+            btn.textContent = 'Publicar en Aula Virtual';
         }
     });
 
@@ -2633,6 +2896,823 @@ function toBase64(file) {
         reader.onerror = error => reject(error);
     });
 }
+
+    // --- LÓGICA DEL LIBRO OFICIAL DE CALIFICACIONES (FASE 9) ---
+    let currentGradebookData = { alumnos: [], calificaciones: [], recuperaciones: [], categories: [], estadoPeriodo: "Abierto" };
+
+    async function initGradebookModule() {
+        const selGrado = document.getElementById('gb-filter-grado');
+        const selSeccion = document.getElementById('gb-filter-seccion');
+        const selAsignatura = document.getElementById('gb-filter-asignatura');
+        const selParcial = document.getElementById('gb-filter-parcial');
+
+        if (!selGrado) return;
+
+        // Cargar opciones de filtros desde GLOBAL_SCOPE
+        const scope = window.GLOBAL_SCOPE || {};
+        const granular = scope.GranularConfig || [];
+
+        const grados = Array.isArray(scope.GradoActual) ? scope.GradoActual : (scope.GradoActual ? [scope.GradoActual] : ["10mo Grado"]);
+        selGrado.innerHTML = grados.map(g => `<option value="${g}">${g}</option>`).join('');
+
+        const updateAsignaturasFilter = () => {
+            const gVal = selGrado.value;
+            const sVal = selSeccion.value;
+            const matches = granular.filter(r => norm(r.grado) === norm(gVal) && norm(r.seccion) === norm(sVal));
+            const asigs = [...new Set(matches.map(r => r.asignatura))].filter(Boolean);
+            if (asigs.length === 0) {
+                selAsignatura.innerHTML = '<option value="General">General</option>';
+            } else {
+                selAsignatura.innerHTML = asigs.map(a => `<option value="${a}">${a}</option>`).join('');
+            }
+        };
+
+        selGrado.onchange = () => { updateAsignaturasFilter(); fetchGradebookData(); };
+        selSeccion.onchange = () => { updateAsignaturasFilter(); fetchGradebookData(); };
+        selAsignatura.onchange = () => fetchGradebookData();
+        selParcial.onchange = () => fetchGradebookData();
+
+        updateAsignaturasFilter();
+        await fetchGradebookData();
+    }
+
+    async function fetchGradebookData() {
+        const tbody = document.getElementById('gb-table-body');
+        const selGrado = document.getElementById('gb-filter-grado');
+        const selSeccion = document.getElementById('gb-filter-seccion');
+        const selAsignatura = document.getElementById('gb-filter-asignatura');
+        const selParcial = document.getElementById('gb-filter-parcial');
+
+        if (!tbody) return;
+
+        tbody.innerHTML = '<tr><td colspan="9" class="p-6 text-center text-gray-400 italic"><i class="fas fa-spinner fa-spin mr-2"></i>Cargando calificaciones del período...</td></tr>';
+
+        const payload = {
+            grado: selGrado ? selGrado.value : "10mo Grado",
+            seccion: selSeccion ? selSeccion.value : "A",
+            asignatura: selAsignatura ? selAsignatura.value : "General",
+            parcial: selParcial ? selParcial.value : "I parcial",
+            profesorId: currentUser.userId
+        };
+
+        try {
+            const res = await fetchApi('EXAM', 'getGradebookData', payload);
+            if (res.status === 'success' && res.data) {
+                currentGradebookData = res.data;
+                renderGradebookTable();
+            } else {
+                tbody.innerHTML = `<tr><td colspan="9" class="p-6 text-center text-red-500">${res.message || 'Error al obtener libro de calificaciones'}</td></tr>`;
+            }
+        } catch (e) {
+            tbody.innerHTML = `<tr><td colspan="9" class="p-6 text-center text-red-500">Error de conexión: ${e.message}</td></tr>`;
+        }
+    }
+
+    function renderGradebookTable() {
+        const tbody = document.getElementById('gb-table-body');
+        const bannerText = document.getElementById('gb-status-text');
+        const bannerBadge = document.getElementById('gb-status-badge');
+        if (!tbody) return;
+
+        const { alumnos, calificaciones, recuperaciones, categories, estadoPeriodo } = currentGradebookData;
+
+        if (bannerText && bannerBadge) {
+            if (estadoPeriodo === 'Cerrado') {
+                bannerText.textContent = "Estado del Parcial: CERRADO Y PUBLICADO OFICIALMENTE";
+                bannerBadge.textContent = "Publicado";
+                bannerBadge.className = "px-2.5 py-0.5 rounded-full text-[10px] bg-emerald-200 text-emerald-900 uppercase font-bold";
+            } else {
+                bannerText.textContent = "Estado del Parcial: Abierto (Permite registro y edición de notas)";
+                bannerBadge.textContent = "Abierto";
+                bannerBadge.className = "px-2.5 py-0.5 rounded-full text-[10px] bg-blue-200 text-blue-800 uppercase font-bold";
+            }
+        }
+
+        if (!alumnos || alumnos.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="9" class="p-6 text-center text-gray-400 italic">No hay estudiantes inscritos en el grupo seleccionado.</td></tr>';
+            return;
+        }
+
+        tbody.innerHTML = alumnos.map((al, idx) => {
+            const studentCalifs = (calificaciones || []).filter(c => String(c.userId).trim() === String(al.userId).trim());
+            const studentRecs = (recuperaciones || []).filter(r => String(r.userId).trim() === String(al.userId).trim());
+
+            // Ponderaciones predeterminadas (35% tareas, 40% exámenes, 15% proyectos, 10% participación)
+            const cTareas = studentCalifs.find(c => c.evaluacionId === 'CAT-1')?.notaObtenida || 0;
+            const cExamenes = studentCalifs.find(c => c.evaluacionId === 'CAT-2')?.notaObtenida || 0;
+            const cProyectos = studentCalifs.find(c => c.evaluacionId === 'CAT-3')?.notaObtenida || 0;
+            const cPartic = studentCalifs.find(c => c.evaluacionId === 'CAT-4')?.notaObtenida || 0;
+
+            let scoreRaw = (cTareas * 0.35) + (cExamenes * 0.40) + (cProyectos * 0.15) + (cPartic * 0.10);
+
+            // Si tiene recuperación registrada, sustituir/ajustar
+            let recBadge = '-';
+            if (studentRecs.length > 0) {
+                const latestRec = studentRecs[studentRecs.length - 1];
+                scoreRaw = Math.max(scoreRaw, latestRec.notaFinalCalculada);
+                recBadge = `<span class="px-2 py-0.5 bg-indigo-100 text-indigo-800 rounded font-bold text-[10px]" title="Original: ${latestRec.notaOriginal}">+${latestRec.notaFinalCalculada} (${latestRec.metodoAplicado})</span>`;
+            }
+
+            const finalScore = parseFloat(scoreRaw.toFixed(1));
+            const isApproved = finalScore >= 70;
+
+            return `
+                <tr class="hover:bg-gray-50/80 transition-colors">
+                    <td class="p-3 font-semibold text-gray-800">
+                        <div>${al.nombreCompleto}</div>
+                        <div class="text-[9px] text-gray-400 font-mono">${al.userId}</div>
+                    </td>
+                    <td class="p-2 text-center">
+                        <input type="number" min="0" max="100" class="w-16 text-center text-xs p-1.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-purple-400 gb-score-input" data-userid="${al.userId}" data-cat="CAT-1" value="${cTareas}">
+                    </td>
+                    <td class="p-2 text-center">
+                        <input type="number" min="0" max="100" class="w-16 text-center text-xs p-1.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-purple-400 gb-score-input" data-userid="${al.userId}" data-cat="CAT-2" value="${cExamenes}">
+                    </td>
+                    <td class="p-2 text-center">
+                        <input type="number" min="0" max="100" class="w-16 text-center text-xs p-1.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-purple-400 gb-score-input" data-userid="${al.userId}" data-cat="CAT-3" value="${cProyectos}">
+                    </td>
+                    <td class="p-2 text-center">
+                        <input type="number" min="0" max="100" class="w-16 text-center text-xs p-1.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-purple-400 gb-score-input" data-userid="${al.userId}" data-cat="CAT-4" value="${cPartic}">
+                    </td>
+                    <td class="p-3 text-center font-bold text-sm bg-purple-50/50 ${isApproved ? 'text-purple-700' : 'text-red-600'}">
+                        ${finalScore}%
+                    </td>
+                    <td class="p-3 text-center bg-indigo-50/30">
+                        ${recBadge}
+                    </td>
+                    <td class="p-3 text-center">
+                        <span class="px-2.5 py-1 rounded-full text-[9px] font-bold uppercase tracking-wider ${isApproved ? 'bg-emerald-100 text-emerald-800' : 'bg-red-100 text-red-800'}">
+                            ${isApproved ? 'Aprobado' : 'Reprobado'}
+                        </span>
+                    </td>
+                    <td class="p-3 text-center">
+                        <button onclick="window.quickRecoveryPrompt('${al.userId}', '${al.nombreCompleto}', ${finalScore})" class="px-2 py-1 bg-indigo-50 text-indigo-600 hover:bg-indigo-100 rounded text-[9px] font-bold uppercase transition-colors">
+                            Recuperación
+                        </button>
+                    </td>
+                </tr>
+            `;
+        }).join('');
+    }
+
+    window.quickRecoveryPrompt = async function(userId, nombre, notaActual) {
+        const notaRec = prompt(`Registrar recuperación para ${nombre}.\nNota Calculada Actual: ${notaActual}%\n\nIngrese la nueva nota obtenida (0-100):`);
+        if (!notaRec || isNaN(parseFloat(notaRec))) return;
+
+        const metodo = prompt("Seleccione el método de aplicación:\n1. Sustitucion (Reemplaza nota anterior)\n2. Promedio (Promedia nota original y nueva)\n3. Mayor (Conserva la nota más alta)", "Sustitucion");
+
+        try {
+            const res = await fetchApi('EXAM', 'saveStudentRecovery', {
+                evaluacionId: "CAT-GLOBAL",
+                userId: userId,
+                notaOriginal: notaActual,
+                notaRecuperada: parseFloat(notaRec),
+                metodoAplicado: metodo || "Sustitucion",
+                autorizadoPor: currentUser.nombre
+            });
+
+            if (res.status === 'success') {
+                alert(`Recuperación registrada con éxito para ${nombre}. Nueva nota final: ${res.data?.notaFinalCalculada}`);
+                fetchGradebookData();
+            } else {
+                alert("Error: " + res.message);
+            }
+        } catch (e) {
+            alert("Error al guardar recuperación: " + e.message);
+        }
+    };
+
+    document.getElementById('btn-gb-save-all')?.addEventListener('click', async () => {
+        const inputs = document.querySelectorAll('.gb-score-input');
+        const califsToSave = [];
+
+        inputs.forEach(inp => {
+            const userId = inp.dataset.userid;
+            const catId = inp.dataset.cat;
+            const score = parseFloat(inp.value) || 0;
+            califsToSave.push({
+                evaluacionId: catId,
+                userId: userId,
+                notaObtenida: score,
+                puntajePonderado: score,
+                observaciones: "Actualizado desde Libro de Calificaciones"
+            });
+        });
+
+        const btn = document.getElementById('btn-gb-save-all');
+        btn.disabled = true;
+        btn.textContent = "Guardando...";
+
+        try {
+            const res = await fetchApi('EXAM', 'saveGradebookGrades', {
+                calificaciones: califsToSave,
+                esBorrador: false,
+                esPublicada: true,
+                profesorId: currentUser.userId
+            });
+
+            if (res.status === 'success') {
+                alert("¡Calificaciones guardadas exitosamente en el servidor!");
+                fetchGradebookData();
+            } else {
+                alert("Error al guardar: " + res.message);
+            }
+        } catch (e) {
+            alert("Error de conexión al guardar calificaciones: " + e.message);
+        } finally {
+            btn.disabled = false;
+            btn.textContent = "Guardar Cambios del Libro";
+        }
+    });
+
+    document.getElementById('btn-gb-close-period')?.addEventListener('click', async () => {
+        const selGrado = document.getElementById('gb-filter-grado')?.value;
+        const selSeccion = document.getElementById('gb-filter-seccion')?.value;
+        const selAsignatura = document.getElementById('gb-filter-asignatura')?.value;
+        const selParcial = document.getElementById('gb-filter-parcial')?.value;
+
+        if (!confirm(`¿Confirma el CIERRE OFICIAL y PUBLICACIÓN del período ${selParcial} para la asignatura ${selAsignatura} (${selGrado} ${selSeccion})?\n\nLas notas quedarán consolidadas y visibles para estudiantes y padres.`)) {
+            return;
+        }
+
+        try {
+            const res = await fetchApi('EXAM', 'closePeriodGradebook', {
+                anoId: "2026",
+                periodoId: selParcial,
+                grado: selGrado,
+                seccion: selSeccion,
+                asignatura: selAsignatura,
+                profesorId: currentUser.userId
+            });
+
+            if (res.status === 'success') {
+                alert(res.message);
+                fetchGradebookData();
+            } else {
+                alert("Error: " + res.message);
+            }
+        } catch (e) {
+            alert("Error de cierre: " + e.message);
+        }
+    });
+
+    document.getElementById('btn-gb-config-weights')?.addEventListener('click', () => {
+        alert("Distribución porcentual institucional del New Generation:\n\n- Tareas y Trabajos (CAT-1): 35%\n- Exámenes y Pruebas (CAT-2): 40%\n- Proyectos e Investigaciones (CAT-3): 15%\n- Prácticas y Participación (CAT-4): 10%\n\nSuma total: 100%");
+    });
+
+    document.getElementById('btn-gb-register-recovery')?.addEventListener('click', () => {
+        const userId = prompt("Ingrese el ID del estudiante para recuperación:");
+        if (!userId) return;
+        window.quickRecoveryPrompt(userId, "Estudiante " + userId, 65);
+    });
+
+    // --- MÓDULO DE CONTROL DE ASISTENCIA Y CONVIVENCIA ESCOLAR (FASE 10) ---
+    let currentAttendanceStudents = [];
+
+    async function initAttendanceModule() {
+        const selGrado = document.getElementById('att-filter-grado');
+        const selSeccion = document.getElementById('att-filter-seccion');
+        const selAsignatura = document.getElementById('att-filter-asignatura');
+        const inputDate = document.getElementById('att-filter-date');
+
+        if (!selGrado) return;
+
+        if (inputDate && !inputDate.value) {
+            inputDate.value = new Date().toISOString().split('T')[0];
+        }
+
+        const scope = window.GLOBAL_SCOPE || {};
+        const granular = scope.GranularConfig || [];
+
+        const grados = Array.isArray(scope.GradoActual) ? scope.GradoActual : (scope.GradoActual ? [scope.GradoActual] : ["10mo Grado"]);
+        selGrado.innerHTML = grados.map(g => `<option value="${g}">${g}</option>`).join('');
+
+        const updateAsignaturasFilter = () => {
+            const gVal = selGrado.value;
+            const sVal = selSeccion.value;
+            const matches = granular.filter(r => norm(r.grado) === norm(gVal) && norm(r.seccion) === norm(sVal));
+            const asigs = [...new Set(matches.map(r => r.asignatura))].filter(Boolean);
+            if (asigs.length === 0) {
+                selAsignatura.innerHTML = '<option value="General">General</option>';
+            } else {
+                selAsignatura.innerHTML = asigs.map(a => `<option value="${a}">${a}</option>`).join('');
+            }
+        };
+
+        selGrado.onchange = () => { updateAsignaturasFilter(); loadAttendanceSheet(); };
+        selSeccion.onchange = () => { updateAsignaturasFilter(); loadAttendanceSheet(); };
+        selAsignatura.onchange = () => loadAttendanceSheet();
+        inputDate.onchange = () => loadAttendanceSheet();
+
+        updateAsignaturasFilter();
+        await loadAttendanceSheet();
+    }
+
+    async function loadAttendanceSheet() {
+        const tbody = document.getElementById('att-table-body');
+        const selGrado = document.getElementById('att-filter-grado')?.value;
+        const selSeccion = document.getElementById('att-filter-seccion')?.value;
+        const selDate = document.getElementById('att-filter-date')?.value || new Date().toISOString().split('T')[0];
+
+        if (!tbody) return;
+
+        tbody.innerHTML = '<tr><td colspan="4" class="p-6 text-center text-gray-400 italic"><i class="fas fa-spinner fa-spin mr-2"></i>Cargando lista de asistencia del grupo...</td></tr>';
+
+        try {
+            const [stRes, attRes] = await Promise.all([
+                fetchApi('USER', 'getStudentsByGradoSeccion', { grado: selGrado, seccion: selSeccion }),
+                fetchApi('ACADEMIC', 'getDailyAttendance', { fecha: selDate, grado: selGrado, seccion: selSeccion })
+            ]);
+
+            const students = stRes.status === 'success' ? (stRes.data || []) : [];
+            const existingRegs = attRes.status === 'success' ? (attRes.data || []) : [];
+
+            currentAttendanceStudents = students;
+
+            if (students.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="4" class="p-6 text-center text-gray-400 italic">No hay estudiantes registrados en esta sección.</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = students.map((s, idx) => {
+                const reg = existingRegs.find(r => String(r.userId).trim() === String(s.userId).trim());
+                const estadoActual = reg ? reg.estadoAsistencia : "Presente";
+                const horaLlegada = reg ? (reg.horaLlegada || "") : "";
+                const obs = reg ? (reg.observacionDocente || "") : "";
+
+                return `
+                    <tr class="hover:bg-gray-50/80 transition-colors">
+                        <td class="p-3 font-semibold text-gray-800">
+                            <div>${s.nombre}</div>
+                            <div class="text-[9px] text-gray-400 font-mono">LISTA #${s.numeroLista || idx + 1} | ${s.userId}</div>
+                        </td>
+                        <td class="p-2 text-center">
+                            <select class="p-2 text-xs border border-gray-200 rounded-xl font-bold att-status-select" data-userid="${s.userId}">
+                                <option value="Presente" ${estadoActual === "Presente" ? "selected" : ""}>Presente</option>
+                                <option value="Ausente" ${estadoActual === "Ausente" ? "selected" : ""}>Ausente</option>
+                                <option value="Tardanza" ${estadoActual === "Tardanza" ? "selected" : ""}>Tardanza</option>
+                                <option value="Justificada" ${estadoActual === "Justificada" ? "selected" : ""}>Justificada</option>
+                                <option value="SalidaAnticipada" ${estadoActual === "SalidaAnticipada" ? "selected" : ""}>Salida Anticipada</option>
+                            </select>
+                        </td>
+                        <td class="p-2 text-center">
+                            <input type="time" class="p-1.5 border border-gray-200 rounded-lg text-xs att-time-input" data-userid="${s.userId}" value="${horaLlegada}">
+                        </td>
+                        <td class="p-2 text-center">
+                            <input type="text" placeholder="Observaciones..." class="w-full p-1.5 border border-gray-200 rounded-lg text-xs att-obs-input" data-userid="${s.userId}" value="${obs}">
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+
+            await loadDisciplinaryIncidents();
+        } catch (e) {
+            tbody.innerHTML = `<tr><td colspan="4" class="p-6 text-center text-red-500">Error al cargar datos: ${e.message}</td></tr>`;
+        }
+    }
+
+    async function loadDisciplinaryIncidents() {
+        const container = document.getElementById('att-incidents-container');
+        if (!container) return;
+
+        try {
+            const res = await fetchApi('ACADEMIC', 'getAttendanceIncidents', {});
+            if (res.status === 'success' && Array.isArray(res.data)) {
+                const incs = res.data;
+                if (incs.length === 0) {
+                    container.innerHTML = '<div class="text-center py-6 text-gray-400 italic text-xs border-2 border-dashed border-gray-100 rounded-2xl col-span-full">No se han registrado incidencias para este grupo.</div>';
+                    return;
+                }
+
+                container.innerHTML = incs.map(i => `
+                    <div class="p-4 bg-amber-50/50 border border-amber-100 rounded-2xl">
+                        <div class="flex items-center justify-between mb-1">
+                            <span class="px-2 py-0.5 bg-amber-200 text-amber-900 rounded font-bold text-[9px] uppercase">${i.tipoIncidencia}</span>
+                            <span class="text-[9px] text-gray-400 font-mono">${i.fecha ? new Date(i.fecha).toLocaleDateString() : ''}</span>
+                        </div>
+                        <p class="text-xs font-semibold text-gray-800 mt-1">${i.descripcion || 'Sin detalle'}</p>
+                        <div class="text-[9px] text-gray-500 mt-2">Reportado por: ${i.reportadoPor || 'Docente'} | Estado: <strong>${i.estado}</strong></div>
+                    </div>
+                `).join('');
+            }
+        } catch (e) {
+            container.innerHTML = '<div class="text-center py-6 text-red-500 text-xs col-span-full">Error al cargar incidencias disciplinarias.</div>';
+        }
+    }
+
+    document.getElementById('btn-att-save-attendance')?.addEventListener('click', async () => {
+        const selDate = document.getElementById('att-filter-date')?.value || new Date().toISOString().split('T')[0];
+        const selGrado = document.getElementById('att-filter-grado')?.value;
+        const selSeccion = document.getElementById('att-filter-seccion')?.value;
+
+        const selects = document.querySelectorAll('.att-status-select');
+        const registros = [];
+
+        selects.forEach(sel => {
+            const uId = sel.dataset.userid;
+            const timeInp = document.querySelector(`.att-time-input[data-userid="${uId}"]`);
+            const obsInp = document.querySelector(`.att-obs-input[data-userid="${uId}"]`);
+
+            registros.push({
+                userId: uId,
+                estadoAsistencia: sel.value,
+                horaLlegada: timeInp ? timeInp.value : "",
+                observacionDocente: obsInp ? obsInp.value : ""
+            });
+        });
+
+        const btn = document.getElementById('btn-att-save-attendance');
+        btn.disabled = true;
+        btn.textContent = "Guardando...";
+
+        try {
+            const res = await fetchApi('ACADEMIC', 'saveDailyAttendance', {
+                fecha: selDate,
+                grado: selGrado,
+                seccion: selSeccion,
+                registros: registros
+            });
+
+            if (res.status === 'success') {
+                alert("¡Pase de lista guardado exitosamente!");
+                loadAttendanceSheet();
+            } else {
+                alert("Error: " + res.message);
+            }
+        } catch (e) {
+            alert("Error al guardar asistencia: " + e.message);
+        } finally {
+            btn.disabled = false;
+            btn.textContent = "Guardar Pase de Lista";
+        }
+    });
+
+    document.getElementById('btn-att-new-incident')?.addEventListener('click', async () => {
+        const userId = prompt("Ingrese el ID del estudiante involucrado:");
+        if (!userId) return;
+
+        const tipo = prompt("Seleccione el Tipo de Incidencia:\n1. Leve (Tardanza recurrente, faltas menores)\n2. Grave (Incumplimiento de normas, falta de respeto)\n3. Muy Grave (Conducta crítica)", "Leve");
+        if (!tipo) return;
+
+        const desc = prompt("Escriba una descripción objetiva de los hechos:");
+        if (!desc) return;
+
+        try {
+            const res = await fetchApi('ACADEMIC', 'saveAttendanceIncident', {
+                userId: userId,
+                tipoIncidencia: tipo,
+                descripcion: desc,
+                reportadoPor: currentUser.nombre
+            });
+
+            if (res.status === 'success') {
+                alert("Incidencia de convivencia registrada exitosamente.");
+                loadAttendanceSheet();
+            } else {
+                alert("Error: " + res.message);
+            }
+        } catch (e) {
+            alert("Error registrando incidencia: " + e.message);
+        }
+    });
+
+    // --- MÓDULO DE COMUNICADOS E INTEGRACIÓN INSTITUCIONAL (FASE 11) ---
+    async function loadInstitutionalAnnouncementsModule() {
+        const container = document.getElementById('comunicados-list-container');
+        if (!container) return;
+
+        container.innerHTML = '<div class="text-center py-8 text-gray-400 italic text-xs"><i class="fas fa-spinner fa-spin mr-2"></i>Cargando comunicados emitidos...</div>';
+
+        try {
+            const res = await fetchApi('USER', 'getInstitutionalAnnouncements', { rol: currentUser.rol });
+            if (res.status === 'success' && Array.isArray(res.data)) {
+                const comms = res.data;
+                if (comms.length === 0) {
+                    container.innerHTML = '<div class="text-center py-8 text-gray-400 italic text-xs border-2 border-dashed border-gray-100 rounded-2xl">No se han emitido comunicados institucionales aún.</div>';
+                    return;
+                }
+
+                container.innerHTML = comms.map(c => `
+                    <div class="p-4 bg-white border border-gray-100 rounded-2xl shadow-sm hover:border-indigo-200 transition-all">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="px-2.5 py-0.5 bg-indigo-100 text-indigo-800 text-[9px] font-bold uppercase rounded-full">${c.categoria}</span>
+                            <span class="text-[9px] font-mono text-gray-400">${c.fechaPublicacion ? new Date(c.fechaPublicacion).toLocaleDateString() : ''}</span>
+                        </div>
+                        <h4 class="text-xs font-bold text-gray-900 uppercase tracking-tight mb-1">${c.titulo}</h4>
+                        <p class="text-xs text-gray-600 leading-relaxed mb-3">${c.contenido}</p>
+                        <div class="flex items-center justify-between text-[9px] text-gray-500 pt-2 border-t border-gray-50">
+                            <span>Audiencia: <strong>${typeof c.audiencia === 'object' ? JSON.stringify(c.audiencia) : c.audiencia}</strong></span>
+                            ${c.requiereFirma ? '<span class="text-indigo-600 font-bold"><i class="fas fa-file-signature"></i> Requiere Acuse</span>' : ''}
+                        </div>
+                    </div>
+                `).join('');
+            } else {
+                container.innerHTML = '<div class="text-center py-6 text-red-500 text-xs">Error al obtener comunicados.</div>';
+            }
+        } catch (e) {
+            container.innerHTML = `<div class="text-center py-6 text-red-500 text-xs">Error de conexión: ${e.message}</div>`;
+        }
+    }
+
+    document.getElementById('btn-pub-comunicado')?.addEventListener('click', async () => {
+        const titulo = document.getElementById('com-titulo')?.value.trim();
+        const categoria = document.getElementById('com-categoria')?.value;
+        const audiencia = document.getElementById('com-audiencia')?.value;
+        const contenido = document.getElementById('com-contenido')?.value.trim();
+        const requiereFirma = document.getElementById('com-requiere-firma')?.checked;
+
+        if (!titulo || !contenido) {
+            alert("Debe completar el título y el contenido del comunicado.");
+            return;
+        }
+
+        const btn = document.getElementById('btn-pub-comunicado');
+        btn.disabled = true;
+        btn.textContent = "Publicando...";
+
+        try {
+            const res = await fetchApi('USER', 'createInstitutionalAnnouncement', {
+                titulo: titulo,
+                contenido: contenido,
+                categoria: categoria,
+                autorId: currentUser.nombre || "Dirección",
+                audiencia: audiencia,
+                requiereFirma: requiereFirma
+            });
+
+            if (res.status === 'success') {
+                alert("¡Comunicado institucional publicado exitosamente!");
+                document.getElementById('com-titulo').value = "";
+                document.getElementById('com-contenido').value = "";
+                loadInstitutionalAnnouncementsModule();
+            } else {
+                alert("Error: " + res.message);
+            }
+        } catch (e) {
+            alert("Error al publicar comunicado: " + e.message);
+        } finally {
+            btn.disabled = false;
+            btn.textContent = "Publicar Comunicado";
+        }
+    });
+
+    // --- MÓDULO DE BIENESTAR ESTUDIANTIL Y ORIENTACIÓN (FASE 12) ---
+    let currentOrientationCases = [];
+
+    async function initOrientationModule() {
+        const studentIdInp = document.getElementById('ori-student-id');
+        if (!studentIdInp) return;
+
+        document.getElementById('btn-ori-search-student')?.addEventListener('click', () => {
+            const sId = studentIdInp.value.trim();
+            if (sId) loadStudentOrientationCases(sId);
+        });
+
+        document.getElementById('btn-ori-new-case')?.addEventListener('click', () => {
+            const userId = prompt("Ingrese el ID del estudiante para abrir un caso:");
+            if (!userId) return;
+
+            const motivo = prompt("Ingrese el motivo de apertura del caso (Ej. Dificultades de adaptación, Seguimiento académico):", "Acompañamiento e intervención institucional");
+            if (!motivo) return;
+
+            const resumen = prompt("Ingrese un resumen o antecedentes iniciales del estudiante:", "Caso abierto desde el Centro de Orientación");
+
+            saveNewFollowupCase(userId, motivo, resumen);
+        });
+
+        document.getElementById('btn-ori-add-note')?.addEventListener('click', () => {
+            const caseId = document.getElementById('ori-case-selector')?.value;
+            const note = document.getElementById('ori-case-note')?.value.trim();
+
+            if (!caseId || !note) {
+                alert("Debe seleccionar un caso e ingresar una nota de intervención.");
+                return;
+            }
+
+            addNoteToCase(caseId, note);
+        });
+    }
+
+    async function loadStudentOrientationCases(userId) {
+        const container = document.getElementById('ori-cases-list-container');
+        const caseSelector = document.getElementById('ori-case-selector');
+        const formContainer = document.getElementById('ori-case-form-container');
+
+        if (!container) return;
+
+        container.innerHTML = '<div class="text-center py-8 text-gray-400 italic text-xs"><i class="fas fa-spinner fa-spin mr-2"></i>Cargando casos de orientación...</div>';
+
+        try {
+            const res = await fetchApi('ACADEMIC', 'getAttendanceFollowupCases', { userId: userId });
+            if (res.status === 'success' && Array.isArray(res.data)) {
+                const cases = res.data;
+                currentOrientationCases = cases;
+
+                if (cases.length === 0) {
+                    container.innerHTML = `<div class="text-center py-8 text-gray-400 italic text-xs border-2 border-dashed border-gray-100 rounded-2xl">No hay casos registrados para el estudiante ${userId}.</div>`;
+                    if (formContainer) formContainer.classList.add('hidden');
+                    return;
+                }
+
+                if (caseSelector) {
+                    caseSelector.innerHTML = cases.map(c => `<option value="${c.casoId}">${c.casoId} - ${c.motivoApertura} (${c.estado})</option>`).join('');
+                }
+                if (formContainer) formContainer.classList.remove('hidden');
+
+                container.innerHTML = cases.map(c => `
+                    <div class="p-4 bg-white border border-gray-100 rounded-2xl shadow-sm hover:border-purple-200 transition-all">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="px-2.5 py-0.5 bg-purple-100 text-purple-800 text-[9px] font-bold uppercase rounded-full">${c.estado}</span>
+                            <span class="text-[9px] font-mono text-gray-400">Apertura: ${c.fechaApertura ? new Date(c.fechaApertura).toLocaleDateString() : ''}</span>
+                        </div>
+                        <h4 class="text-xs font-bold text-gray-900 uppercase tracking-tight mb-1">${c.motivoApertura}</h4>
+                        <p class="text-xs text-gray-600 mb-3">${c.resumenAsistencia}</p>
+
+                        <!-- Bitácora de Acciones / Intervenciones -->
+                        <div class="border-t border-gray-50 pt-2 space-y-2">
+                            <span class="text-[9px] font-bold text-purple-700 uppercase">Bitácora de Intervenciones:</span>
+                            ${Array.isArray(c.acciones) && c.acciones.length > 0 ? c.acciones.map(a => `
+                                <div class="p-2 bg-purple-50/50 rounded-lg text-[10px] text-gray-700 border border-purple-100/50">
+                                    <div class="flex justify-between font-bold text-purple-900 text-[9px]">
+                                        <span>${a.autor || 'Orientación'}</span>
+                                        <span>${a.fecha ? new Date(a.fecha).toLocaleString() : ''}</span>
+                                    </div>
+                                    <p class="mt-1 leading-relaxed">${a.nota || a.accion || ''}</p>
+                                </div>
+                            `).join('') : '<p class="text-[10px] text-gray-400 italic">Sin intervenciones registradas aún.</p>'}
+                        </div>
+                    </div>
+                `).join('');
+            } else {
+                container.innerHTML = '<div class="text-center py-6 text-red-500 text-xs">Error al consultar casos.</div>';
+            }
+        } catch (e) {
+            container.innerHTML = `<div class="text-center py-6 text-red-500 text-xs">Error de conexión: ${e.message}</div>`;
+        }
+    }
+
+    async function saveNewFollowupCase(userId, motivo, resumen) {
+        try {
+            const res = await fetchApi('ACADEMIC', 'saveAttendanceFollowupCase', {
+                userId: userId,
+                motivoApertura: motivo,
+                resumenAsistencia: resumen,
+                responsableId: currentUser.nombre || "Orientación",
+                estado: "Abierto"
+            });
+
+            if (res.status === 'success') {
+                alert("¡Caso de acompañamiento abierto exitosamente!");
+                loadStudentOrientationCases(userId);
+            } else {
+                alert("Error: " + res.message);
+            }
+        } catch (e) {
+            alert("Error al abrir caso: " + e.message);
+        }
+    }
+
+    async function addNoteToCase(casoId, note) {
+        try {
+            const res = await fetchApi('ACADEMIC', 'addCaseFollowUpNote', {
+                casoId: casoId,
+                nota: note,
+                autorId: currentUser.nombre || "Orientación"
+            });
+
+            if (res.status === 'success') {
+                alert("¡Nota agregada a la bitácora del caso!");
+                document.getElementById('ori-case-note').value = "";
+                const sId = document.getElementById('ori-student-id')?.value.trim();
+                if (sId) loadStudentOrientationCases(sId);
+            } else {
+                alert("Error: " + res.message);
+            }
+        } catch (e) {
+            alert("Error al guardar nota: " + e.message);
+        }
+    }
+
+    // --- MÓDULO DE SUPERVISIÓN DOCENTE Y CALIDAD EDUCATIVA (FASE 13) ---
+    async function loadSupervisionModule() {
+        const supContainer = document.getElementById('sup-list-container');
+        const activeSelect = document.getElementById('sup-select-active');
+        if (!supContainer) return;
+
+        supContainer.innerHTML = '<div class="text-center py-8 text-gray-400 italic text-xs"><i class="fas fa-spinner fa-spin mr-2"></i>Cargando supervisiones...</div>';
+
+        try {
+            const res = await fetchApi('ACADEMIC', 'getTeacherSupervisions', {
+                docenteUserId: currentUser.rol === 'Profesor' ? currentUser.userId : null
+            });
+
+            if (res.status === 'success' && Array.isArray(res.data)) {
+                const sups = res.data;
+                if (sups.length === 0) {
+                    supContainer.innerHTML = '<div class="text-center py-8 text-gray-400 italic text-xs border-2 border-dashed border-gray-100 rounded-2xl">No hay supervisiones programadas registradas.</div>';
+                    if (activeSelect) activeSelect.innerHTML = '<option value="">No hay supervisiones activas</option>';
+                    return;
+                }
+
+                if (activeSelect) {
+                    const activeSups = sups.filter(s => s.estado !== 'Finalizada');
+                    activeSelect.innerHTML = activeSups.length > 0
+                        ? activeSups.map(s => `<option value="${s.supervisionId}">${s.supervisionId} - ${s.tipoSupervision} (${s.grado} ${s.seccion})</option>`).join('')
+                        : '<option value="">Sin supervisiones pendientes</option>';
+                }
+
+                supContainer.innerHTML = sups.map(s => `
+                    <div class="p-4 bg-white border border-gray-100 rounded-2xl shadow-sm hover:border-emerald-200 transition-all">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="px-2.5 py-0.5 bg-emerald-100 text-emerald-800 text-[9px] font-bold uppercase rounded-full">${s.estado}</span>
+                            <span class="text-[9px] font-mono text-gray-400">${s.fechaProgramada ? new Date(s.fechaProgramada).toLocaleDateString() : ''}</span>
+                        </div>
+                        <h4 class="text-xs font-bold text-gray-900 uppercase tracking-tight mb-1">${s.tipoSupervision}</h4>
+                        <p class="text-xs text-gray-600 mb-2">Docente: <strong>${s.docenteUserId}</strong> | Clase: ${s.asignatura} (${s.grado} ${s.seccion})</p>
+                        <div class="text-[9px] text-gray-500 pt-2 border-t border-gray-50">Supervisor: ${s.supervisorUserId || 'Dirección'}</div>
+                    </div>
+                `).join('');
+            } else {
+                supContainer.innerHTML = '<div class="text-center py-6 text-red-500 text-xs">Error al cargar supervisiones.</div>';
+            }
+        } catch (e) {
+            supContainer.innerHTML = `<div class="text-center py-6 text-red-500 text-xs">Error de conexión: ${e.message}</div>`;
+        }
+    }
+
+    document.getElementById('btn-sup-new-schedule')?.addEventListener('click', async () => {
+        const docId = prompt("Ingrese el ID o Usuario del Docente a supervisar:");
+        if (!docId) return;
+
+        const tipo = prompt("Tipo de supervisión:\n1. ObservacionAula (Observación de clase)\n2. RevisiónPlanificacion\n3. AcompañamientoPedagogico", "ObservacionAula");
+        if (!tipo) return;
+
+        const grado = prompt("Grado:", "10mo Grado");
+        const seccion = prompt("Sección:", "A");
+        const asig = prompt("Asignatura:", "Informática");
+
+        try {
+            const res = await fetchApi('ACADEMIC', 'createTeacherSupervision', {
+                docenteUserId: docId,
+                supervisorUserId: currentUser.nombre || "Dirección",
+                fechaProgramada: new Date().toISOString().split('T')[0],
+                grado: grado || "General",
+                seccion: seccion || "A",
+                asignatura: asig || "General",
+                tipoSupervision: tipo
+            });
+
+            if (res.status === 'success') {
+                alert("¡Supervisión programada con éxito!");
+                loadSupervisionModule();
+            } else {
+                alert("Error: " + res.message);
+            }
+        } catch (e) {
+            alert("Error al programar supervisión: " + e.message);
+        }
+    });
+
+    document.getElementById('btn-sup-save-observation')?.addEventListener('click', async () => {
+        const supId = document.getElementById('sup-select-active')?.value;
+        const evidencias = document.getElementById('sup-obs-evidencias')?.value.trim();
+        const fortalezas = document.getElementById('sup-obs-fortalezas')?.value.trim();
+        const oportunidades = document.getElementById('sup-obs-oportunidades')?.value.trim();
+
+        if (!supId || !evidencias) {
+            alert("Debe seleccionar una supervisión e ingresar las evidencias observadas.");
+            return;
+        }
+
+        const btn = document.getElementById('btn-sup-save-observation');
+        btn.disabled = true;
+        btn.textContent = "Guardando...";
+
+        try {
+            const res = await fetchApi('ACADEMIC', 'saveSupervisionObservation', {
+                supervisionId: supId,
+                respuestasRubrica: { resultadoGlobal: "Satisfecho" },
+                evidenciasTexto: evidencias,
+                fortalezasTexto: fortalezas,
+                oportunidadesMejora: oportunidades
+            });
+
+            if (res.status === 'success') {
+                alert("Observación pedagógica guardada correctamente.");
+                document.getElementById('sup-obs-evidencias').value = "";
+                document.getElementById('sup-obs-fortalezas').value = "";
+                document.getElementById('sup-obs-oportunidades').value = "";
+                loadSupervisionModule();
+            } else {
+                alert("Error: " + res.message);
+            }
+        } catch (e) {
+            alert("Error al guardar observación: " + e.message);
+        } finally {
+            btn.disabled = false;
+            btn.textContent = "Guardar Observación y Finalizar";
+        }
+    });
 
     // Inicialización automática de la sección de entregas (A-73)
     // Usar replaceState para el estado inicial incluyendo el stack jerárquico (v7.6.4)

@@ -366,3 +366,7 @@ TAREAS PENDIENTES DE REVISIÓN
 - Implementación de Jerarquía Académica Estricta (hierarchicalAssignments) v7.9.7
 - Corrección de visibilidad de Dashboard Estudiante (Multi-section support)
 - Fortalecimiento de firma HMAC en microservicio de usuarios
+- Fase 1: Auditoría y Planificación de la Expansión Institucional - Inventario de Módulos, Matriz de Cobertura, Mapa de Interoperabilidad, README.md Funcional y Actualización de Hoja de Cálculo `backend/Spreadsheet/AREA DE INFORMATICA IMA.xlsx`
+- Fase 2: Arquitectura Institucional, Identidad, Interoperabilidad y Comunicación entre Servicios - Desacoplamiento Persona/Cuenta, Matriz de Propiedad de Datos, Resolutor de Fuentes, Contratos Unificados de API, Idempotencia y Códigos de Error Estandarizados
+- Fase 3: Experiencia de Usuario, Navegación Unificada y Diseño Centrado en las Personas - Sistema de Diseño Institucional, Portal Familiar Prioritario, Navegación por Rol, Ayudas Contextuales y Lenguaje No Técnico
+- Implementación de Código para Fase 2 (Arquitectura, Identidad Persona/Cuenta, Errores Estandarizados e Idempotencia) y Fase 3 (UX, Tokens de Diseño, Portal Familiar, Ayudas Contextuales y Navegación Unificada)
