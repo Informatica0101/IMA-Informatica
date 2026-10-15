@@ -5033,6 +5033,9 @@ function toBase64(file) {
     window.openWorkflowBuilder = openWorkflowBuilder;
     window.openWorkflowDecisionModal = openWorkflowDecisionModal;
 
+    document.getElementById('btn-open-workflow-builder')?.addEventListener('click', () => openWorkflowBuilder());
+    document.getElementById('btn-open-workflow-decision')?.addEventListener('click', () => openWorkflowDecisionModal('REQ-DEMO-101', { titulo: 'Trámite Solicitud General', solicitanteNombre: 'Estudiante Ejemplo' }));
+
     // ---------------------------------------------------------------------------
     // FASE 26: NOTIFICACIONES, MENSAJERÍA INTERNA Y COMUNICACIONES MULTICANAL
     // ---------------------------------------------------------------------------
@@ -5120,6 +5123,8 @@ function toBase64(file) {
     }
 
     window.openChannelConfigModal = openChannelConfigModal;
+
+    document.getElementById('btn-open-channel-config')?.addEventListener('click', () => openChannelConfigModal());
 
 });
 /**

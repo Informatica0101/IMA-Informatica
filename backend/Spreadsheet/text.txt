@@ -1,1 +1,355 @@
+================================================================================
+ESQUEMA OFICIAL DE BASE DE DATOS Y ESTRUCTURA DE HOJAS (SPREADSHEET CATALOG)
+NEW GENERATION CHRISTIAN ACADEMY - PLATAFORMA INSTITUCIONAL UNIFICADA
+================================================================================
 
+Total de entidades / Hojas registradas: 116
+
+HOJA: Usuarios
+COLUMNAS (10): UserId, PersonaId, Username, PasswordHash, NombreCompleto, Email, Telefono, Rol, EstadoCuenta, UltimoAcceso
+--------------------------------------------------------------------------------
+HOJA: Log_Cierres
+COLUMNAS (5): 2026-07-31 16:30:26.031000, USR-1769133865031, BACKUP-1785537026031, ZIP, Cierre exitoso. 0 archivos eliminados físicamente.
+--------------------------------------------------------------------------------
+HOJA: HistorialAcademico
+COLUMNAS (8): ID, Fecha, Parcial, Grado, Seccion, Asignatura, Unidad, profesorId
+--------------------------------------------------------------------------------
+HOJA: MigrationLogs
+COLUMNAS (5): Fecha, TotalDetectadas, TotalMigradas, Asignaturas, Detalle
+--------------------------------------------------------------------------------
+HOJA: BancoPreguntas
+COLUMNAS (19): PreguntaID, Asignatura, Nivel, TipoActividad, Enunciado, OpcionesJSON, RespuestaCorrecta, Tema, OpcionC, OpcionD, RespuestaCorrecta, Explicacion, Imagen, VecesRespondida, VecesCorrecta, PorcentajeAcierto, UltimaActualizacion, Activa, DificultadCalculada
+--------------------------------------------------------------------------------
+HOJA: AsignaturasPorParcial
+COLUMNAS (3): Parcial, Asignatura, profesorId
+--------------------------------------------------------------------------------
+HOJA: ConfiguracionAcademica
+COLUMNAS (9): ID, Fecha, Parcial, Grado, Seccion, Asignatura, Unidad, Tema, profesorId
+--------------------------------------------------------------------------------
+HOJA: Clases
+COLUMNAS (3): Grado, Seccion, WhatsAppLink
+--------------------------------------------------------------------------------
+HOJA: Logros
+COLUMNAS (9): Fecha, UserId, Alumno, Juego, Logro, Puntaje, nivel, Grado, xp
+--------------------------------------------------------------------------------
+HOJA: Tareas
+COLUMNAS (15): ID, TareaId, Titulo, Descripcion, Asignatura, Grado, Seccion, Parcial, Unidad, Tema, profesorId, fechaLimite, fechaDisponible, tipoRecurso, estado
+--------------------------------------------------------------------------------
+HOJA: Entregas
+COLUMNAS (13): ID, EntregaID, TareaId, UserId, ArchivoUrl, FileId, MimeType, TextoRespuesta, EnlaceExterno, FechaEnvio, Estado, Calificacion, Comentarios
+--------------------------------------------------------------------------------
+HOJA: Examenes
+COLUMNAS (10): ExamenID, Titulo, Asignatura, Grado, Seccion, Parcial, profesorId, FechaInicio, FechaFin, Estado
+--------------------------------------------------------------------------------
+HOJA: PreguntasExamen
+COLUMNAS (8): PreguntaID, ExamenID, Enunciado, OpcionesJSON, RespuestaCorrecta, Puntos, opciones3, respuestaCorrecta
+--------------------------------------------------------------------------------
+HOJA: EntregasExamen
+COLUMNAS (8): ID, ExamenID, UserId, RespuestasJSON, NotaObtenida, FechaEntrega, Estado, profesorId
+--------------------------------------------------------------------------------
+HOJA: NoticiasPortal
+COLUMNAS (11): ID, Titulo, Contenido, ImagenUrl, Autor, Fecha, GradoAudiencia, SeccionAudiencia, FechaInicio, FechaFin, Estado
+--------------------------------------------------------------------------------
+HOJA: pseudocode
+COLUMNAS (5): UserID, nombreArchivo, ArchivoUrl, codigo, editor
+--------------------------------------------------------------------------------
+HOJA: QuizProAnalytics
+COLUMNAS (21): analyticsId, esCorrecta, tiempoRespuesta, indiceConfianza, indiceAdivinacion, timestamp, asignatura, grado, nivel, preguntaId, respuestaSeleccionada, respuestaCorrecta, esCorrecta, tiempoRespuesta, precision, tiempoPromedioHistorico, tiempoRelativo, cambiosRespuesta, indiceConfianza, indiceAdivinacion, indiceDominio
+--------------------------------------------------------------------------------
+HOJA: GameLeaderboards
+COLUMNAS (10): rankingId, userId, minijuego, puntajeMaximo, nivelAlcanzado, fecha, mejorPuntuacion, indiceDominioPromedio, partidasJugadas, ultimaActualizacion
+--------------------------------------------------------------------------------
+HOJA: LearningProfile
+COLUMNAS (10): userId, tema, intentos, aciertos, indiceDominio, intentos, aciertos, porcentajeAciertos, indiceDominio, ultimaActualizacion
+--------------------------------------------------------------------------------
+HOJA: GameStatistics
+COLUMNAS (7): statId, userId, partidasJugadas, victorias, tiempoTotalMs, promedioTiempo, ultimaActualizacion
+--------------------------------------------------------------------------------
+HOJA: Personas
+COLUMNAS (10): PersonaId, Nombres, Apellidos, Identificacion, FechaNacimiento, Genero, EmailPersonal, TelefonoPersonal, Direccion, Estado
+--------------------------------------------------------------------------------
+HOJA: RelacionesFamiliares
+COLUMNAS (7): RelacionId, PersonaEstudianteId, PersonaTutorId, TipoRelacion, EsResponsableFinanciero, EsTutorAcademico, Estado
+--------------------------------------------------------------------------------
+HOJA: InstitucionParametros
+COLUMNAS (6): Clave, Nombre, Valor, TipoDato, Ambito, Estado
+--------------------------------------------------------------------------------
+HOJA: SedesAulas
+COLUMNAS (5): SedeID, Nombre, AulaCodigo, Capacidad, Estado
+--------------------------------------------------------------------------------
+HOJA: AnosLectivos
+COLUMNAS (6): AnoID, Nombre, FechaInicio, FechaFin, Estado, CreadoPor
+--------------------------------------------------------------------------------
+HOJA: PeriodosAcademicos
+COLUMNAS (8): PeriodoID, AnoID, Nombre, Tipo, FechaInicio, FechaFin, Orden, Estado
+--------------------------------------------------------------------------------
+HOJA: CatalogoAsignaturas
+COLUMNAS (5): AsignaturaID, NombreOficial, Codigo, AreaAcademica, Estado
+--------------------------------------------------------------------------------
+HOJA: PlanesEstudio
+COLUMNAS (6): PlanID, Nombre, Version, Grado, Estado, Vigencia
+--------------------------------------------------------------------------------
+HOJA: OfertaAcademica
+COLUMNAS (7): OfertaID, AnoID, Grado, Seccion, AsignaturaID, PlanID, Estado
+--------------------------------------------------------------------------------
+HOJA: AsignacionesDocentes
+COLUMNAS (8): AsignacionID, OfertaID, DocenteUserId, RolDocente, FechaInicio, FechaFin, Estado, AutorizadoPor
+--------------------------------------------------------------------------------
+HOJA: CalendarioAcademico
+COLUMNAS (8): EventoID, AnoID, Nombre, TipoDia, FechaInicio, FechaFin, Visibilidad, Estado
+--------------------------------------------------------------------------------
+HOJA: HorariosClase
+COLUMNAS (8): HorarioID, OfertaID, DiaSemana, HoraInicio, HoraFin, AulaCodigo, DocenteUserId, Estado
+--------------------------------------------------------------------------------
+HOJA: ReglasAcademicas
+COLUMNAS (6): ReglaID, Ambito, TipoRegla, Clave, Valor, Estado
+--------------------------------------------------------------------------------
+HOJA: ExpedientesEstudiantes
+COLUMNAS (8): ExpedienteID, PersonaId, CodigoEstudiantil, FichaMedica, Alergias, ContactoEmergencia, EstadoExpediente, Observaciones
+--------------------------------------------------------------------------------
+HOJA: SolicitudesAdmision
+COLUMNAS (8): SolicitudID, PersonaId, AnoLectivo, GradoSolicitado, EmailEncargado, EstadoSolicitud, FechaSolicitud, Observaciones
+--------------------------------------------------------------------------------
+HOJA: ResponsablesTutores
+COLUMNAS (6): TutorID, PersonaId, Ocupacion, LugarTrabajo, TelefonoTrabajo, Estado
+--------------------------------------------------------------------------------
+HOJA: RelacionesEstudianteTutor
+COLUMNAS (7): RelacionId, ExpedienteID, TutorID, Parentesco, PermisoRetiro, RecibeReportes, Estado
+--------------------------------------------------------------------------------
+HOJA: DocumentosEstudiante
+COLUMNAS (7): DocumentoID, ExpedienteID, TipoDocumento, NombreArchivo, DriveId, EstadoRevision, FechaCarga
+--------------------------------------------------------------------------------
+HOJA: Matriculas
+COLUMNAS (7): MatriculaID, ExpedienteID, AnoLectivo, Grado, Seccion, EstadoMatricula, FechaMatricula
+--------------------------------------------------------------------------------
+HOJA: MovimientosEstudiante
+COLUMNAS (9): MovimientoID, ExpedienteID, TipoMovimiento, GradoOrigen, SeccionOrigen, GradoDestino, SeccionDestino, Fecha, Motivo
+--------------------------------------------------------------------------------
+HOJA: AulasVirtuales
+COLUMNAS (10): AulaID, OfertaID, NombreClase, Grado, Seccion, Asignatura, ProfesorID, Estado, AnioLectivo, Periodo
+--------------------------------------------------------------------------------
+HOJA: PublicacionesAnuncios
+COLUMNAS (11): ID, AulaID, Titulo, Contenido, Categoria, AutorID, EsFijado, EsBorrador, FechaProgramada, FechaPublicacion, AdjuntosJSON
+--------------------------------------------------------------------------------
+HOJA: MaterialesEducativos
+COLUMNAS (12): ID, AulaID, Titulo, Descripcion, TipoRecurso, Parcial, Unidad, Tema, ArchivoUrl, DriveId, AutorID, FechaPublicacion
+--------------------------------------------------------------------------------
+HOJA: EntregasVersiones
+COLUMNAS (12): ID, EntregaID, TareaId, UserId, VersionNum, ArchivoUrl, FileId, MimeType, TextoRespuesta, EnlaceExterno, FechaEnvio, Estado
+--------------------------------------------------------------------------------
+HOJA: ComentariosEntregas
+COLUMNAS (8): ID, EntregaID, TareaId, AutorID, RolAutor, Mensaje, EsPrivado, FechaCreacion
+--------------------------------------------------------------------------------
+HOJA: MetadatosArchivos
+COLUMNAS (12): ID, ArchivoId, Titulo, NombreOriginal, TipoRecurso, Asignatura, Grado, Seccion, Parcial, DriveId, MimeType, Tamanio
+--------------------------------------------------------------------------------
+HOJA: CategoriasEvaluacion
+COLUMNAS (6): ID, Nombre, Ambito, PorcentajePonderacion, EscalaID, Estado
+--------------------------------------------------------------------------------
+HOJA: CalificacionesEstudiantes
+COLUMNAS (9): ID, EvaluacionID, UserId, NotaObtenida, PuntajePonderado, EsBorrador, EsPublicada, Observaciones, FechaRegistro
+--------------------------------------------------------------------------------
+HOJA: RubricasEvaluacion
+COLUMNAS (5): ID, Titulo, Asignatura, CriteriosJSON, Estado
+--------------------------------------------------------------------------------
+HOJA: RecuperacionesEstudiante
+COLUMNAS (9): ID, EvaluacionID, UserId, NotaOriginal, NotaRecuperada, NotaFinalCalculada, MetodoAplicado, AutorizadoPor, Estado
+--------------------------------------------------------------------------------
+HOJA: CierresPeriodos
+COLUMNAS (9): CierreID, AnoID, PeriodoID, Grado, Seccion, Asignatura, ProfesorID, Estado, FechaCierre
+--------------------------------------------------------------------------------
+HOJA: CriteriosInstitucionales
+COLUMNAS (7): CriterioID, Dominio, Nombre, Descripcion, EscalaJSON, AmbitoNivel, Estado
+--------------------------------------------------------------------------------
+HOJA: EvaluacionesFormativas
+COLUMNAS (10): ID, UserId, Dominio, CriterioID, CalificacionValor, ObservacionObjetiva, Contexto, AutorID, VisibilidadBoletin, FechaRegistro
+--------------------------------------------------------------------------------
+HOJA: PlanesAcompanamiento
+COLUMNAS (8): PlanID, UserId, SituacionMeliorar, ObjetivosJSON, ResponsableID, FechaInicio, FechaRevision, Estado
+--------------------------------------------------------------------------------
+HOJA: SesionesAsistencia
+COLUMNAS (10): SesionID, Fecha, HoraInicio, HoraFin, Grado, Seccion, AsignaturaID, DocenteUserId, Estado, Observaciones
+--------------------------------------------------------------------------------
+HOJA: RegistrosAsistencia
+COLUMNAS (9): RegistroID, SesionID, UserId, EstadoAsistencia, HoraLlegada, MinutosTardanza, Justificado, ObservacionDocente, FechaRegistro
+--------------------------------------------------------------------------------
+HOJA: JustificacionesAsistencia
+COLUMNAS (9): JustificacionID, UserId, FechaAfectada, Periodo, MotivoDeclarado, AdjuntoUrl, PresentadoPor, EstadoRevision, RevisadoPor
+--------------------------------------------------------------------------------
+HOJA: SalidasAnticipadas
+COLUMNAS (9): SalidaID, UserId, Fecha, HoraSalida, Motivo, AutorizadoPor, RetiradoPor, RegresoHora, Estado
+--------------------------------------------------------------------------------
+HOJA: IncidenciasAsistencia
+COLUMNAS (7): IncidenciaID, UserId, TipoIncidencia, Descripcion, Fecha, Estado, ReportadoPor
+--------------------------------------------------------------------------------
+HOJA: CasosSeguimiento
+COLUMNAS (8): CasoID, UserId, MotivoApertura, ResumenAsistencia, ResponsableID, AccionesJSON, Estado, FechaApertura
+--------------------------------------------------------------------------------
+HOJA: InvitacionesVinculacion
+COLUMNAS (8): InvitacionID, ExpedienteID, EmailResponsable, Token, FechaEmision, FechaExpiracion, Estado, CreadoPor
+--------------------------------------------------------------------------------
+HOJA: ComunicadosInstitucionales
+COLUMNAS (9): ComunicadoID, Titulo, Contenido, Categoria, AutorID, AudienciaJSON, RequiereFirma, FechaPublicacion, Estado
+--------------------------------------------------------------------------------
+HOJA: ConversacionesMensajes
+COLUMNAS (9): MensajeID, ConversacionID, RemitenteID, DestinatarioID, EstudianteID, MensajeTexto, AdjuntoUrl, FechaEnvio, EstadoLectura
+--------------------------------------------------------------------------------
+HOJA: BandejaNotificaciones
+COLUMNAS (9): NotificacionID, UserId, Titulo, Mensaje, Tipo, Categoria, Leido, EnlaceAccion, FechaRegistro
+--------------------------------------------------------------------------------
+HOJA: SolicitudesTramites
+COLUMNAS (9): SolicitudID, UserId, EstudianteID, TipoTramite, Descripcion, AdjuntoUrl, Estado, AsignadoA, ObservacionesAdmin
+--------------------------------------------------------------------------------
+HOJA: CitasReuniones
+COLUMNAS (9): CitaID, SolicitanteID, EstudianteID, SolicitadoA, Motivo, FechaHora, Modalidad, Estado, Comentarios
+--------------------------------------------------------------------------------
+HOJA: ConceptosCobro
+COLUMNAS (8): ConceptoID, NombreConcepto, TipoConcepto, MontoBase, Moneda, AplicaMora, Periodicidad, Estado
+--------------------------------------------------------------------------------
+HOJA: TarifasPlanPago
+COLUMNAS (8): TarifaID, AnoLectivo, NivelGrado, ConceptoID, MontoTotal, CuotasNum, VencimientoJSON, Estado
+--------------------------------------------------------------------------------
+HOJA: CargosEstudiante
+COLUMNAS (12): CargoID, UserId, ConceptoID, AnoLectivo, Parcial, MontoOriginal, Descuento, RecargoMora, MontoNeto, SaldoPendiente, FechaVencimiento, EstadoPago
+--------------------------------------------------------------------------------
+HOJA: PagosAbonos
+COLUMNAS (10): PagoID, CargoID, UserId, MontoPagado, MetodoPago, ReferenciaBanco, FechaPago, ReciboNumero, RegistradoPor, Estado
+--------------------------------------------------------------------------------
+HOJA: ComprobantesPago
+COLUMNAS (10): ComprobanteID, UserId, CargoID, MontoDeclarado, BancoOrigen, ReferenciaTransferencia, ComprobanteUrl, DriveId, FechaCarga, EstadoRevision
+--------------------------------------------------------------------------------
+HOJA: FacturasFiscales
+COLUMNAS (11): FacturaID, CAI, RangoAutorizado, NumeroFactura, RTNCliente, NombreCliente, FechaEmision, Subtotal, ISV15, Total, Estado
+--------------------------------------------------------------------------------
+HOJA: IntegracionesPasarelas
+COLUMNAS (8): IntegracionID, NombreProveedor, TipoServicio, CredencialesJSON, UrlApi, EstadoConexion, UltimaPruebaFecha, Estado
+--------------------------------------------------------------------------------
+HOJA: MovimientosCajaBancos
+COLUMNAS (10): MovimientoID, TipoMovimiento, Categoria, Monto, Moneda, MetodoPago, Referencia, Concepto, RegistradoPor, Fecha
+--------------------------------------------------------------------------------
+HOJA: CierresCaja
+COLUMNAS (10): CierreID, FechaCierre, MontoInicial, IngresosEfectivo, EgresosEfectivo, SaldoFinalCalculado, SaldoFinalReal, Diferencia, CajeroUserId, Estado
+--------------------------------------------------------------------------------
+HOJA: BancosConciliaciones
+COLUMNAS (8): ConciliacionID, CuentaBancariaID, FechaExtracto, ArchivoExtractoUrl, CoincidenciasJSON, DiferenciasJSON, Estado, CreadoPor
+--------------------------------------------------------------------------------
+HOJA: CuentasPorPagarGastos
+COLUMNAS (9): ObligacionID, ProveedorID, NumeroFactura, Importe, Impuestos, FechaVencimiento, EstadoAprobacion, EstadoPago, AsientoID
+--------------------------------------------------------------------------------
+HOJA: PlanCuentas
+COLUMNAS (6): CuentaID, CodigoCuenta, NombreCuenta, TipoCuenta, Naturaleza, Estado
+--------------------------------------------------------------------------------
+HOJA: AsientosContables
+COLUMNAS (7): AsientoID, Fecha, Descripcion, OrigenModulo, ReferenciaID, LineasJSON, Estado
+--------------------------------------------------------------------------------
+HOJA: ExpedientesLaborales
+COLUMNAS (10): ExpedienteID, PersonaId, UserId, Puesto, Departamento, CentroCosto, FechaIngreso, FechaSalida, EstadoLaboral, Observaciones
+--------------------------------------------------------------------------------
+HOJA: ContratosLaborales
+COLUMNAS (9): ContratoID, ExpedienteID, TipoContrato, FechaInicio, FechaFin, SalarioBase, Jornada, EstadoContrato, Observaciones
+--------------------------------------------------------------------------------
+HOJA: SolicitudesVacaciones
+COLUMNAS (9): SolicitudID, ExpedienteID, Tipo, FechaInicio, FechaFin, DiasSolicitados, Estado, AprobadoPor, Observaciones
+--------------------------------------------------------------------------------
+HOJA: PoliticasFiscales
+COLUMNAS (10): PoliticaID, CodigoRegla, NombreRegla, Categoria, BaseCalculo, MetodoCalculo, TasaImporte, Estado, Version, Observaciones
+--------------------------------------------------------------------------------
+HOJA: PoliticasInstitucionales
+COLUMNAS (8): PoliticaInstID, TipoDocumento, Titulo, Version, ContenidoHTML, Estado, FechaPublicacion, Observaciones
+--------------------------------------------------------------------------------
+HOJA: AceptacionesPoliticas
+COLUMNAS (7): AceptacionID, UserId, PoliticaInstID, Version, FechaAceptacion, IpMetadata, Estado
+--------------------------------------------------------------------------------
+HOJA: PlanillasNomenclatura
+COLUMNAS (9): PlanillaID, PeriodoNombre, FechaInicio, FechaFin, TotalDevengado, TotalDeducciones, TotalNeto, Estado, ProcesadoPor
+--------------------------------------------------------------------------------
+HOJA: DeduccionesAsistencia
+COLUMNAS (10): DeduccionID, ExpedienteID, Periodo, IHSS, RAP, ISR, Anticipos, OtrDeducciones, HorasExtras, TotalDeducciones
+--------------------------------------------------------------------------------
+HOJA: BoletasPago
+COLUMNAS (8): BoletaID, PlanillaID, ExpedienteID, SalarioBruto, TotalDeducciones, SalarioNeto, FechaEmision, Estado
+--------------------------------------------------------------------------------
+HOJA: InventariosKardex
+COLUMNAS (11): MovimientoID, ProductoID, NombreProducto, Categoria, TipoMovimiento, Cantidad, StockAnterior, StockNuevo, Ubicacion, RegistradoPor, Fecha
+--------------------------------------------------------------------------------
+HOJA: ProveedoresActivos
+COLUMNAS (8): ProveedorID, NombreEmpresa, RTN, ContactoNombre, Telefono, Email, Direccion, Estado
+--------------------------------------------------------------------------------
+HOJA: BibliotecaEjemplares
+COLUMNAS (8): EjemplarID, IsbnCodigo, Titulo, Autor, Categoria, UbicacionFisica, Estado, Observaciones
+--------------------------------------------------------------------------------
+HOJA: BibliotecaPrestamos
+COLUMNAS (8): PrestamoID, EjemplarID, UserId, FechaPrestamo, FechaDevolucionPrevista, FechaDevolucionReal, Estado, Observaciones
+--------------------------------------------------------------------------------
+HOJA: ActivosPatrimoniales
+COLUMNAS (9): ActivoID, CodigoPatrimonial, Nombre, Categoria, SerieModel, UbicacionActual, CustodioUserId, Estado, Observaciones
+--------------------------------------------------------------------------------
+HOJA: AsignacionesActivos
+COLUMNAS (7): AsignacionID, ActivoID, CustodioUserId, FechaEntrega, FechaDevolucion, EstadoActa, Observaciones
+--------------------------------------------------------------------------------
+HOJA: TransporteRutas
+COLUMNAS (8): RutaID, NombreRuta, UnidadCodigo, ConductorEmpleadoId, Capacidad, ParadasJSON, Estado, Observaciones
+--------------------------------------------------------------------------------
+HOJA: TransporteAsignaciones
+COLUMNAS (6): AsignacionTranspID, RutaID, EstudianteUserId, ParadaNombre, HorarioPlan, Estado
+--------------------------------------------------------------------------------
+HOJA: PlantillasDocumentales
+COLUMNAS (8): PlantillaID, Codigo, Titulo, AreaModulo, Version, ContenidoHTML, Estado, Observaciones
+--------------------------------------------------------------------------------
+HOJA: CatalogoSpreadsheets
+COLUMNAS (8): FuenteID, DominioArea, AnoLectivo, SpreadsheetId, UrlAcceso, Estado, SchemaVersion, Observaciones
+--------------------------------------------------------------------------------
+HOJA: PlantillasEscolares
+COLUMNAS (8): PlantillaID, CodigoDocumento, Categoria, Titulo, CamposJSON, FlujoAprobacion, Estado, Version
+--------------------------------------------------------------------------------
+HOJA: DocumentosEscolaresEmitidos
+COLUMNAS (8): DocumentoID, PlantillaID, EstudianteUserId, SolicitanteUserId, DatosJSON, EstadoDoc, CodigoVerificacion, Observaciones
+--------------------------------------------------------------------------------
+HOJA: AuditoriaMigraciones
+COLUMNAS (10): EjecucionID, NombreArchivo, DestinoModulo, TotalFilas, Exitosas, Fallidas, MapeoJSON, ErroresJSON, Estado, CreadoPor
+--------------------------------------------------------------------------------
+HOJA: PlantillasSACEVerificadas
+COLUMNAS (6): PlantillaSaceID, NombreFormato, VersionSACE, ColumnasMapJSON, EstadoCompatibilidad, Observaciones
+--------------------------------------------------------------------------------
+HOJA: LogsSistema
+COLUMNAS (9): ID, Timestamp, Servicio, Funcion, Severidad, CodigoError, Mensaje, DatosPayload, RolUsuario
+--------------------------------------------------------------------------------
+HOJA: Respaldos
+COLUMNAS (8): RespaldoID, NombreArchivo, DriveId, Checksum, Tamanio, FechaCreacion, CreadoPor, Estado
+--------------------------------------------------------------------------------
+HOJA: ConfiguracionSistema
+COLUMNAS (12): ConfigID, Clave, Valor, Tipo, Categoria, Descripcion, Ambito, EditablePor, Estado, Version, FechaModificacion, UltimoResponsable
+--------------------------------------------------------------------------------
+HOJA: ConfiguracionRoles
+COLUMNAS (7): RolID, NombreRol, NivelJerarquico, ModulosPermitidos, AccionesSensibles, Estado, FechaModificacion
+--------------------------------------------------------------------------------
+HOJA: ConfiguracionDashboard
+COLUMNAS (10): DashboardConfigID, RoleId, SectionKey, OptionKey, OptionType, DefaultValue, VisibilityRule, EditableBy, Status, UpdatedAt
+--------------------------------------------------------------------------------
+HOJA: PreferenciasNotificacion
+COLUMNAS (8): PrefID, UserID, CategoriesJson, InAppEnabled, ExternalChannelPreference, Frequency, FechaActualizacion, ModificadoPor
+--------------------------------------------------------------------------------
+HOJA: IntegracionesProveedores
+COLUMNAS (13): IntegrationID, ProviderType, ProviderName, Category, Enabled, Environment, ConfigurationJson, SecretRef, Status, LastCheckAt, LastError, UpdatedAt, UpdatedBy
+--------------------------------------------------------------------------------
+HOJA: CatalogoOpciones
+COLUMNAS (6): OpcionID, Grupo, Clave, Etiqueta, Orden, Estado
+--------------------------------------------------------------------------------
+HOJA: FormulariosInstitucionales
+COLUMNAS (12): FormularioID, CodigoFormulario, NombreFormulario, Descripcion, DepartamentoPropietario, CamposDefinicionJson, ReglasValidacionJson, Estado, Version, FechaCreacion, FechaModificacion, CreadoPor
+--------------------------------------------------------------------------------
+HOJA: FlujosAprobacion
+COLUMNAS (11): WorkflowID, CodigoWorkflow, NombreWorkflow, Descripcion, DepartamentoPropietario, EtapasJson, Estado, Version, FechaCreacion, FechaModificacion, CreadoPor
+--------------------------------------------------------------------------------
+HOJA: RevisionesDecisionesTramite
+COLUMNAS (10): RevisionID, SolicitudID, WorkflowID, EtapaActual, RevisorID, AccionTomada, Observaciones, FirmadoDigitalmente, TokenFirmado, FechaDecision
+--------------------------------------------------------------------------------
+HOJA: FirmasConformidades
+COLUMNAS (9): FirmaID, DocumentoRefID, TipoDocumento, FirmanteID, NombreFirmante, RolFirmante, TokenVerificacion, HashContenido, FechaFirma
+--------------------------------------------------------------------------------
+HOJA: CanalesProveedoresConfig
+COLUMNAS (7): CanalID, NombreCanal, Proveedor, CredencialesHash, EstadoHabilitado, UltimaPruebaAt, UltimoResultadoPrueba
+--------------------------------------------------------------------------------
+HOJA: RegistroEnviosExternos
+COLUMNAS (7): EnvioID, CanalID, Destinatario, ContenidoResumido, EstadoEnvio, FechaEnvio, DetalleRespuesta
+--------------------------------------------------------------------------------

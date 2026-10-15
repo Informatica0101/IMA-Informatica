@@ -284,9 +284,37 @@ const ROLE_PERMISSIONS = {
   ]
 };
 
+function getUserVerifiedRole(payload) {
+  if (!payload) return "Estudiante";
+  const declaredRole = payload.authRole || payload.rol || (payload.currentUser && payload.currentUser.rol);
+  const userId = payload.userId || (payload.currentUser && payload.currentUser.userId);
+  const email = payload.email || (payload.currentUser && payload.currentUser.email);
+
+  if (userId || email) {
+    try {
+      const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+      const sheet = ss.getSheetByName("Usuarios");
+      if (sheet) {
+        const data = sheet.getDataRange().getValues();
+        for (let i = 1; i < data.length; i++) {
+          const rUserId = String(data[i][0]).trim();
+          const rEmail = String(data[i][4]).toLowerCase().trim();
+          if ((userId && rUserId === String(userId).trim()) || (email && rEmail === String(email).toLowerCase().trim())) {
+            const trueRole = data[i][6];
+            if (trueRole) return String(trueRole).trim();
+          }
+        }
+      }
+    } catch (e) {
+      logDebug("Error consultando rol verificado en backend: " + e.message);
+    }
+  }
+  return declaredRole || "Estudiante";
+}
+
 function validateRolePermission(action, payload) {
   if (PUBLIC_ACTIONS.indexOf(action) !== -1) return { authorized: true };
-  const userRole = (payload && (payload.authRole || payload.rol)) || "Estudiante";
+  const userRole = getUserVerifiedRole(payload);
   const permitted = ROLE_PERMISSIONS[userRole] || ROLE_PERMISSIONS["Estudiante"];
   if (permitted.indexOf("*") !== -1 || permitted.indexOf(action) !== -1) {
     return { authorized: true, role: userRole };
@@ -2417,13 +2445,14 @@ function getUserSettings(payload) {
 }
 
 function saveUserSettings(payload) {
-  const { userId, preferences, authRole } = payload || {};
+  const { userId, preferences } = payload || {};
   const callerId = (payload && payload.currentUser && payload.currentUser.userId) || userId;
+  const verifiedRole = getUserVerifiedRole(payload);
   if (!userId || !preferences) {
     throw new Error("userId y preferences son requeridos.");
   }
 
-  if (String(userId) !== String(callerId) && authRole !== "Administrador" && authRole !== "Director") {
+  if (String(userId) !== String(callerId) && verifiedRole !== "Administrador" && verifiedRole !== "Director") {
     throw new Error("No tiene permisos para modificar las preferencias de otro usuario.");
   }
 
@@ -2470,7 +2499,7 @@ function saveUserSettings(payload) {
 }
 
 function getSystemConfigurations(payload) {
-  const authRole = (payload && payload.authRole) || "Estudiante";
+  const verifiedRole = getUserVerifiedRole(payload);
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
   const configSheet = getOrCreateSheet(ss, "ConfiguracionSistema");
   const dashSheet = getOrCreateSheet(ss, "ConfiguracionDashboard");
@@ -2491,7 +2520,7 @@ function getSystemConfigurations(payload) {
   }));
 
   const dashConfigs = dashData.slice(1)
-    .filter(r => String(r[1]) === authRole || String(r[1]) === "*")
+    .filter(r => String(r[1]) === verifiedRole || String(r[1]) === "*")
     .map(r => ({
       dashboardConfigId: r[0],
       roleId: r[1],
@@ -2506,7 +2535,7 @@ function getSystemConfigurations(payload) {
   return {
     status: "success",
     data: {
-      role: authRole,
+      role: verifiedRole,
       systemConfigurations: configs,
       dashboardConfigurations: dashConfigs
     }
@@ -2514,10 +2543,11 @@ function getSystemConfigurations(payload) {
 }
 
 function saveSystemConfiguration(payload) {
-  const { clave, valor, tipo, categoria, descripcion, ambito, editablePor, authRole } = payload || {};
+  const { clave, valor, tipo, categoria, descripcion, ambito, editablePor } = payload || {};
+  const verifiedRole = getUserVerifiedRole(payload);
   if (!clave) throw new Error("La clave de configuración es obligatoria.");
 
-  if ((!ambito || ambito === "GLOBAL") && authRole !== "Administrador" && authRole !== "Director") {
+  if ((!ambito || ambito === "GLOBAL") && verifiedRole !== "Administrador" && verifiedRole !== "Director") {
     throw new Error("Solo Administrador o Director pueden modificar configuraciones globales del sistema.");
   }
 
@@ -2568,8 +2598,8 @@ function saveSystemConfiguration(payload) {
 }
 
 function getProviderIntegrations(payload) {
-  const authRole = (payload && payload.authRole) || "Estudiante";
-  if (authRole !== "Administrador" && authRole !== "Director" && authRole !== "Desarrollador" && authRole !== "Subdirector") {
+  const verifiedRole = getUserVerifiedRole(payload);
+  if (verifiedRole !== "Administrador" && verifiedRole !== "Director" && verifiedRole !== "Desarrollador" && verifiedRole !== "Subdirector") {
     throw new Error("Acceso denegado: Solo la Dirección o Administración Técnica pueden consultar las integraciones de proveedores.");
   }
 
@@ -2609,8 +2639,9 @@ function getProviderIntegrations(payload) {
 }
 
 function configureProviderIntegration(payload) {
-  const { integrationId, providerType, providerName, enabled, environment, configuration, authRole } = payload || {};
-  if (authRole !== "Administrador" && authRole !== "Director" && authRole !== "Desarrollador" && authRole !== "Subdirector") {
+  const { integrationId, providerType, providerName, enabled, environment, configuration } = payload || {};
+  const verifiedRole = getUserVerifiedRole(payload);
+  if (verifiedRole !== "Administrador" && verifiedRole !== "Director" && verifiedRole !== "Desarrollador" && verifiedRole !== "Subdirector") {
     throw new Error("Acceso denegado: Solo la Dirección o Administración Técnica pueden administrar proveedores externos o pasarelas de pago.");
   }
   if (!providerType) throw new Error("providerType es requerido.");

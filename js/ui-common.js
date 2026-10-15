@@ -837,7 +837,7 @@ window.renderCommonNav = function() {
                     if (!studentSubjGroups[s.name]) studentSubjGroups[s.name] = { topics: [] };
                     for (var stIdx = 0; stIdx < s.topics.length; stIdx++) {
                         var stTopic = s.topics[stIdx];
-                        if (window.isContentAuthorized(s.partial, s.name, stTopic.title, grade.grade, currentUser.seccion)) {
+                        if (window.isContentAuthorized(s.partial, s.name, stTopic.title, grade.grade, (currentUser && currentUser.seccion) || "")) {
                             if (!studentSubjGroups[s.name].topics.find(function(ex){ return ex.title === stTopic.title; })) {
                                 studentSubjGroups[s.name].topics.push(stTopic);
                             }
@@ -927,7 +927,7 @@ window.renderCommonNav = function() {
                     if (!mobileStudentSubjGroups[sub.name]) mobileStudentSubjGroups[sub.name] = { topics: [] };
                     for (var mstIdx = 0; mstIdx < sub.topics.length; mstIdx++) {
                         var mstTopic = sub.topics[mstIdx];
-                        if (window.isContentAuthorized(sub.partial, sub.name, mstTopic.title, grade.grade, currentUser.seccion)) {
+                        if (window.isContentAuthorized(sub.partial, sub.name, mstTopic.title, grade.grade, (currentUser && currentUser.seccion) || "")) {
                              if (!mobileStudentSubjGroups[sub.name].topics.find(function(ex){ return ex.title === mstTopic.title; })) {
                                 mobileStudentSubjGroups[sub.name].topics.push(mstTopic);
                              }

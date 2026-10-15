@@ -1244,3 +1244,17 @@ Descripción de cambios:
   - Endpoints: `saveInstitutionalForm`, `getInstitutionalForms`, `submitInstitutionalFormRequest`, `saveApprovalWorkflow`, `getApprovalWorkflows`, `processWorkflowDecision`, `getWorkflowHistory`, `registerDocumentSignature`.
   - Integración de permisos en `ROLE_PERMISSIONS` y enrutamiento en `doPost`.
 - `Pendientes.md`, `Auditoría.txt`, `MapaDependencias.md`: Registrados los requerimientos de la Fase 24 (`[REQ-FRM-001]` al `[REQ-FRM-006]`) y Fase 25 (`[REQ-FLOW-008]` al `[REQ-FLOW-010]`).
+
+## [Resolución de Blocking Issues & Fase 27] - 2026-10-15
+### Agregado y Corregido
+- `backend/user-service/Code.gs`:
+  - Implementada la función de verificación server-side `getUserVerifiedRole` para consultar el rol real del usuario desde la hoja `Usuarios` por `userId` o `email`, eliminando la vulnerabilidad de elusión de permisos RBAC por `authRole` manipulable en el payload de cliente.
+  - Actualizados los endpoints `validateRolePermission`, `saveUserSettings`, `getSystemConfigurations`, `saveSystemConfiguration`, `getProviderIntegrations`, `configureProviderIntegration` para usar exclusivamente el rol verificado en backend.
+- `teacher-dashboard.html` y `js/teacher.js`:
+  - Agregados disparadores de interfaz explícitos (`#btn-open-workflow-builder`, `#btn-open-workflow-decision`, `#btn-open-channel-config`) en la sección de gestión de plantillas.
+  - Enlazados los manejadores de eventos correspondientes a `openWorkflowBuilder()`, `openWorkflowDecisionModal()` y `openChannelConfigModal()`.
+- `backend/Spreadsheet/AREA DE INFORMATICA IMA.xlsx` y `backend/Spreadsheet/text.txt`:
+  - Incorporadas las 12 hojas de base de datos requeridas por las Fases 24, 25, 26 y 27 (`ConfiguracionSistema`, `IntegracionesProveedores`, `ConfiguracionRoles`, `ConfiguracionDashboard`, `PreferenciasNotificacion`, `CatalogoOpciones`, `FormulariosInstitucionales`, `FlujosAprobacion`, `RevisionesDecisionesTramite`, `FirmasConformidades`, `CanalesProveedoresConfig`, `RegistroEnviosExternos`).
+  - Regenerada la documentación técnica estructurada en `text.txt`.
+- `js/ui-common.js`:
+  - Protegidas las referencias a `currentUser.seccion` para evitar excepciones por nulos en previsualizaciones sin sesión activa.
