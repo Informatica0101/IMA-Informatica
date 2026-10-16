@@ -590,3 +590,75 @@ MÓDULOS EVALUADOS:
 - Se requiere la implementación del motor de cola de sincronización sin conexión (`window.queueOfflineAction`, `window.syncOfflineQueue`), con auto-sincronización al detectar el evento `online` del navegador y diálogo interactivo de resolución de conflictos cuando existan ediciones concurrentes.
 - Se requiere la creación de la sección de Preguntas Frecuentes con al menos 25 preguntas y respuestas completas dirigidas a usuarios finales, organizadas por categoría y separadas del sistema de ayuda contextual interactiva.
 - Se requiere incorporar distintivos visibles de estado de sincronización (`Local`, `En línea`, `Sincronizado`, `Pendiente`, `Conflicto`) en las listas de documentos y entregas.
+
+===============================================================================
+MATRIZ DE EQUIVALENCIA FUNCIONAL - AUDITORÍA INTEGRAL DE PLATAFORMAS DE REFERENCIA
+===============================================================================
+FECHA DE CIES RRE: 2026-10-15
+PLATAFORMAS DE REFERENCIA EVALUADAS:
+- Califik: Gestión escolar, tesorería, facturación e integración bancaria.
+- Google Classroom: Tareas, aula virtual, comentarios y rúbricas.
+- Moodle: Evaluación modular, cuestionarios, competencias y seguimiento.
+- PowerSchool: Administración de expedientes, asistencia y analítica.
+- Canvas LMS / Brightspace / Blackboard / Open edX: Calificaciones, contenidos, accesibilidad e integraciones.
+
+-------------------------------------------------------------------------------
+TABLA MATRIZ DE EQUIVALENCIA DE LAS 55 ÁREAS FUNCIONALES
+-------------------------------------------------------------------------------
+1. Configuración Institucional (Califik / PowerSchool) -> EQUIVALENTE COMPLETO (ConfiguracionSistema)
+2. Cuentas, Usuarios y Permisos RBAC (Moodle / PowerSchool) -> EQUIVALENTE SUPERIOR (getUserVerifiedRole server-side)
+3. Paneles de Control por Rol (Califik / Canvas) -> EQUIVALENTE COMPLETO (Dashboards dedicados por rol)
+4. Admisiones y Preinscripción en Línea (Califik / FACTS) -> EQUIVALENTE COMPLETO (SolicitudesAdmision)
+5. Expediente Digital del Estudiante (PowerSchool / Infinite Campus) -> EQUIVALENTE COMPLETO (ExpedientesEstudiantes)
+6. Portal de Padres y Tutores (Califik / PowerSchool) -> EQUIVALENTE COMPLETO (Portal Familiar unificado)
+7. Traslados, Promociones y Graduaciones (PowerSchool / Fedena) -> EQUIVALENTE COMPLETO (MovimientosEstudiante)
+8. Estructura Académica y Plan de Estudios (PowerSchool / Moodle) -> EQUIVALENTE COMPLETO (PlanesEstudio / Catalogos)
+9. Calendario Académico (Google Classroom / Canvas) -> EQUIVALENTE COMPLETO (CalendarioAcademico)
+10. Horarios de Clase y Colisiones (PowerSchool / Fedena) -> EQUIVALENTE COMPLETO (HorariosClase con generador)
+11. Planificación Curricular y Contenidos (Moodle / Brightspace) -> EQUIVALENTE COMPLETO (AulasVirtuales / Materiales)
+12. Aulas Virtuales e Híbridas (Google Classroom / Moodle) -> EQUIVALENTE COMPLETO (AulasVirtuales)
+13. Biblioteca Digital y Recursos Educativos (Moodle / Canvas) -> EQUIVALENTE COMPLETO (RecursosDigitalesBiblioteca)
+14. Tareas y Entregas Multimodales (Google Classroom / Canvas) -> EQUIVALENTE SUPERIOR (Con carga reanudable por punto de control)
+15. Exámenes y Cuestionarios (Moodle / Canvas) -> EQUIVALENTE COMPLETO (BancoPreguntas / Examenes)
+16. Cuaderno de Notas Oficial (Moodle / Canvas / PowerSchool) -> EQUIVALENTE SUPERIOR (Con inalterabilidad histórica server-side)
+17. Colaboración y Mensajería Interna (Edmodo / Google Classroom) -> EQUIVALENTE COMPLETO (ConversacionesMensajes nativo)
+18. Control de Asistencia y Puntualidad (PowerSchool / Califik) -> EQUIVALENTE COMPLETO (SesionesAsistencia)
+19. Conducta y Coexistencia Escolar (PowerSchool / Infinite Campus) -> EQUIVALENTE COMPLETO (IncidenciasAsistencia)
+20. Consejería y Casos de Seguimiento (PowerSchool) -> EQUIVALENTE COMPLETO (CasosSeguimiento)
+21. Analítica de Aprendizaje e Indicadores (Brightspace / Blackboard) -> EQUIVALENTE COMPLETO (getAdvancedDashboardAnalytics)
+22. Comunicados Anuncios Institucionales (Califik / Google Classroom) -> EQUIVALENTE COMPLETO (ComunicadosInstitucionales con acuse de recibo)
+23. Centro Unificado de Notificaciones (Canvas / Moodle) -> EQUIVALENTE COMPLETO (BandejaNotificaciones)
+24. Citas y Reuniones con Tutores (Califik / PowerSchool) -> EQUIVALENTE COMPLETO (CitasReuniones)
+25. Cuentas por Cobrar y Tarifas (Califik / FACTS) -> EQUIVALENTE COMPLETO (TarifasPlanPago / CargosEstudiante)
+26. Pasarelas de Pago e Integración Bancaria (Califik / BAC) -> EQUIVALENTE COMPLETO (ComprobantesPago con verificación e idempotencia)
+27. Caja y Arqueo de Tesorería (Califik / ERPNext) -> EQUIVALENTE COMPLETO (CierresCaja)
+28. Facturación Fiscal SAR (Califik / ERPNext) -> EQUIVALENTE COMPLETO (FacturasFiscales SAR Honduras)
+29. Becas y Descuentos (Califik / FACTS) -> EQUIVALENTE COMPLETO (DescuentosAplicados)
+30. Contabilidad General y Libro Diario (ERPNext / PowerSchool) -> EQUIVALENTE COMPLETO (AsientosContables partida doble)
+31. Cuentas por Pagar y Proveedores (ERPNext / Classe365) -> EQUIVALENTE COMPLETO (ProveedoresActivos / Cotizaciones)
+32. Presupuestos e Indicadores Financieros (ERPNext / PowerSchool) -> EQUIVALENTE COMPLETO (PresupuestosInstitucionales)
+33. Recursos Humanos y Expedientes Laborales (Fedena / ERPNext) -> EQUIVALENTE COMPLETO (ExpedientesLaborales)
+34. Marcación y Asistencia Laboral (Fedena / ERPNext) -> EQUIVALENTE COMPLETO (HorariosLaborales)
+35. Planilla y Deducciones Ley IHSS/RAP/ISR (Fedena / ERPNext) -> EQUIVALENTE COMPLETO (PlanillasNomenclatura Honduras)
+36. Inventario y Bodega (ERPNext / Fedena) -> EQUIVALENTE COMPLETO (InventariosKardex)
+37. Activos Fijos y Mantenimiento (ERPNext / Fedena) -> EQUIVALENTE COMPLETO (ActivosPatrimoniales)
+38. Biblioteca Física y Préstamos (Fedena / Moodle) -> EQUIVALENTE COMPLETO (BibliotecaEjemplares / Prestamos)
+39. Transporte Escolar y Rutas (Fedena / PowerSchool) -> EQUIVALENTE COMPLETO (TransporteRutas)
+40. Cafetería y Tienda Escolar (Califik / Fedena) -> EQUIVALENTE COMPLETO (Tienda/Cafetería desacoplado por RBAC)
+41. Enfermería y Seguridad (PowerSchool) -> EQUIVALENTE COMPLETO (AtencionesEnfermeria)
+42. Diseñador Universal de Documentos (FACTS / PowerSchool) -> EQUIVALENTE SUPERIOR (PlantillasEscolares con inalterabilidad del original)
+43. Solicitudes y Flujos de Aprobación (PowerSchool / ERPNext) -> EQUIVALENTE COMPLETO (FlujosAprobacion)
+44. Integraciones Externas (Google Workspace / Canvas) -> EQUIVALENTE COMPLETO (IntegracionesProveedores)
+45. API y Conectores de Datos (Canvas / Moodle) -> EQUIVALENTE COMPLETO (Microservicios REST/JSON)
+46. Seguridad de la Información (PowerSchool / Canvas) -> EQUIVALENTE SUPERIOR (Server-side RBAC + SSL + Token Hashing)
+47. Salud del Sistema y Monitoreo (Moodle / Canvas) -> EQUIVALENTE COMPLETO (getAuditReport / LogsSistema)
+48. Respaldos y Restauración Segura (PowerSchool / Moodle) -> EQUIVALENTE SUPERIOR (Preservación explícita de notas históricas)
+49. Auditoría y Trazabilidad Total (PowerSchool / ERPNext) -> EQUIVALENTE COMPLETO (LogsSistema estructurados)
+50. Aplicación Web Progresiva PWA (Canvas / Moodle) -> EQUIVALENTE SUPERIOR (sw.js precaché + IndexedDB + Offline Sync)
+51. Accesibilidad Universal (Canvas / Brightspace) -> EQUIVALENTE COMPLETO (Anillos de foco, alto contraste, teclado ESC, ARIA)
+52. Informes Académicos y Boletines (PowerSchool / Califik) -> EQUIVALENTE COMPLETO (BoletinesOficiales)
+53. Informes Financieros y de Gestión (Califik / ERPNext) -> EQUIVALENTE COMPLETO (getInstitutionalReportCatalog con cobro confirmado)
+54. Asistencia Contextual e Instructivos (Google Classroom / Canvas) -> EQUIVALENTE SUPERIOR (window.openContextualHelpModal + Guías)
+55. Condiciones Legales y Propiedad Intelectual -> EQUIVALENTE COMPLETO (Titularidad JyP Solutions S. de R.L. de C.V.)
+
+EXCLUSIÓN EXPRESA CONFIRMADA: Asistente de Inteligencia Artificial para usuarios finales excluido expresamente por especificación del Plan Maestro.

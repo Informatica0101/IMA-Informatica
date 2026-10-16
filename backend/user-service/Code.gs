@@ -2785,6 +2785,7 @@ function purgeStructuredLogs(payload) {
   } catch (error) {
     return { status: "error", message: error.message };
   }
+}
 
 // ---------------------------------------------------------------------------
 // FUNCIONES FASE 32 - DOCUMENTOS LEGALES, PROPIEDAD INTELECTUAL Y AYUDA
@@ -2969,7 +2970,6 @@ function getHelpGuidesCatalog(payload) {
   } catch (error) {
     return { status: "error", message: error.message };
   }
-}
 }
 
 function getAuditReport(payload) {
