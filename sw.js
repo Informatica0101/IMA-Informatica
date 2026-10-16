@@ -1,23 +1,31 @@
 /**
- * Service Worker v7.5 - Offline-First Engine
+ * Service Worker v8.0 - Offline-First Engine
  * ES5 Compliance Mandatory for maximum compatibility.
  */
 
-var CACHE_NAME = 'informatic-app-v4.0';
+var CACHE_NAME = 'ngca-app-v8.0';
 var ASSETS = [
   './',
   './index.html',
-  './login.html',
   './student-dashboard.html',
   './teacher-dashboard.html',
-  './css/styles.css',
+  './dashboard-direccion.html',
+  './dashboard-contabilidad.html',
+  './dashboard-recursos-humanos.html',
+  './dashboard-tienda.html',
+  './dashboard-cafeteria.html',
+  './politica-de-privacidad.html',
+  './politica-de-uso.html',
+  './politica-financiera.html',
+  './css/style.css',
   './js/config.js',
   './js/api.js',
   './js/persistence.js',
   './js/ui-common.js',
   './js/index-ui.js',
   './js/student.js',
-  './js/teacher.js'
+  './js/teacher.js',
+  './js/accounting.js'
 ];
 
 self.addEventListener('install', function(event) {
@@ -26,6 +34,9 @@ self.addEventListener('install', function(event) {
       .then(function(cache) {
         console.log('[SW] Pre-caching critical assets');
         return cache.addAll(ASSETS);
+      })
+      .then(function() {
+        return self.skipWaiting();
       })
   );
 });
@@ -41,12 +52,13 @@ self.addEventListener('activate', function(event) {
           }
         })
       );
+    }).then(function() {
+      return self.clients.claim();
     })
   );
 });
 
 self.addEventListener('fetch', function(event) {
-  // Ignorar peticiones de API (Google Scripts) y otras externas
   if (event.request.url.indexOf('script.google.com') !== -1 || event.request.method !== 'GET') {
     return;
   }

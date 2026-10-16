@@ -574,3 +574,19 @@ MÓDULOS EVALUADOS:
 - Se identificó la necesidad de un sistema de ayuda contextual interactiva con filtrado dinámico según el panel y los permisos del rol del usuario, activable mediante la primera orientación o el icono '?'.
 - Se confirmó que el diseñador de plantillas y la generación de documentos oficiales conservan 100% inalterados los archivos originales de referencia.
 - Se revisaron las fuentes legales hondureñas vigentes (Ley de Derecho de Autor, Ley de Comercio Electrónico y Ley de Protección al Consumidor) para establecer cláusulas contractuales claras y transparentes en borrador listo para revisión jurídica.
+
+===============================================================================
+AUDITORÍA DE IMPLEMENTACIÓN - FASE ADICIONAL: MODO SIN CONEXIÓN, ALMACENAMIENTO LOCAL Y SINCRONIZACIÓN
+===============================================================================
+FECHA: 2026-10-15
+MÓDULOS EVALUADOS:
+- manifest.json, sw.js
+- index.html, student-dashboard.html, teacher-dashboard.html, dashboard-contabilidad.html, dashboard-direccion.html, dashboard-recursos-humanos.html
+- js/ui-common.js, js/student.js, js/teacher.js, js/accounting.js
+
+1. HALLAZGOS DE AUDITORÍA
+- Se constató la presencia de `sw.js` y `manifest.json`, requiriendo actualización de la lista de activos precacheados para incluir todas las vistas HTML de la plataforma, estilos CSS y scripts controladores.
+- Se requiere implementar la base de datos privada IndexedDB (`ngca_offline_db`) con almacenes para `documents`, `sync_queue`, `configs` y `faq`.
+- Se requiere la implementación del motor de cola de sincronización sin conexión (`window.queueOfflineAction`, `window.syncOfflineQueue`), con auto-sincronización al detectar el evento `online` del navegador y diálogo interactivo de resolución de conflictos cuando existan ediciones concurrentes.
+- Se requiere la creación de la sección de Preguntas Frecuentes con al menos 25 preguntas y respuestas completas dirigidas a usuarios finales, organizadas por categoría y separadas del sistema de ayuda contextual interactiva.
+- Se requiere incorporar distintivos visibles de estado de sincronización (`Local`, `En línea`, `Sincronizado`, `Pendiente`, `Conflicto`) en las listas de documentos y entregas.

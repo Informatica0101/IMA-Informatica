@@ -13,6 +13,43 @@ window.setupCommonUI = function() {
         mainHeader.classList.remove('header-hidden');
     }
 
+    // PWA Service Worker Registration
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', function() {
+            navigator.serviceWorker.register('./sw.js').then(function(reg) {
+                console.log('[PWA] Service Worker registrado exitosamente:', reg.scope);
+            }).catch(function(err) {
+                console.warn('[PWA] Error al registrar Service Worker:', err);
+            });
+        });
+    }
+
+    // Online / Offline Status Badge
+    function updateOnlineBadge() {
+        var badge = document.getElementById('online-status-badge');
+        if (!badge) {
+            badge = document.createElement('div');
+            badge.id = 'online-status-badge';
+            badge.className = 'fixed bottom-4 left-4 z-[9999] px-3 py-1.5 rounded-full text-xs font-bold transition-all shadow-lg flex items-center gap-1.5';
+            document.body.appendChild(badge);
+        }
+        if (navigator.onLine) {
+            badge.className = 'fixed bottom-4 left-4 z-[9999] px-3 py-1.5 rounded-full text-[10px] font-bold transition-all shadow-md flex items-center gap-1.5 bg-green-50 text-green-700 border border-green-200';
+            badge.innerHTML = '<span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span> <span>En línea</span>';
+            setTimeout(function() { if (badge) badge.classList.add('opacity-0'); }, 3000);
+        } else {
+            badge.className = 'fixed bottom-4 left-4 z-[9999] px-3 py-1.5 rounded-full text-[10px] font-bold transition-all shadow-lg flex items-center gap-1.5 bg-amber-500 text-white opacity-100';
+            badge.innerHTML = '<i class="fa-solid fa-wifi"></i> <span>Modo Sin Conexión (Cambios Locales)</span>';
+        }
+    }
+
+    window.addEventListener('online', function() {
+        updateOnlineBadge();
+        if (window.syncOfflineQueue) window.syncOfflineQueue();
+    });
+    window.addEventListener('offline', updateOnlineBadge);
+    updateOnlineBadge();
+
     var lastScrollTop = 0;
     var scrollThreshold = 10;
 
@@ -2435,6 +2472,269 @@ window.startGuidedTourAction = function(guideId) {
     } else {
         window.startInteractiveGuide('teacherReview', true);
     }
+};
+
+/* ===========================================================================
+ * FASE ADICIONAL - ALMACENAMIENTO INDEXEDDB, COLA DE SINCRONIZACIÓN Y CONFLICTOS
+ * =========================================================================== */
+
+var DB_NAME = 'ngca_offline_db';
+var DB_VERSION = 1;
+
+window.initOfflineDB = function(callback) {
+    if (!window.indexedDB) {
+        if (callback) callback(null);
+        return;
+    }
+    var request = window.indexedDB.open(DB_NAME, DB_VERSION);
+    request.onerror = function(event) {
+        console.warn('[OfflineDB] Error al abrir IndexedDB:', event);
+        if (callback) callback(null);
+    };
+    request.onupgradeneeded = function(event) {
+        var db = event.target.result;
+        if (!db.objectStoreNames.contains('documents')) {
+            var docStore = db.createObjectStore('documents', { keyPath: 'id' });
+            docStore.createIndex('userId', 'userId', { unique: false });
+            docStore.createIndex('syncStatus', 'syncStatus', { unique: false });
+        }
+        if (!db.objectStoreNames.contains('sync_queue')) {
+            var queueStore = db.createObjectStore('sync_queue', { keyPath: 'id', autoIncrement: true });
+            queueStore.createIndex('status', 'status', { unique: false });
+        }
+        if (!db.objectStoreNames.contains('configs')) {
+            db.createObjectStore('configs', { keyPath: 'key' });
+        }
+        if (!db.objectStoreNames.contains('faq')) {
+            db.createObjectStore('faq', { keyPath: 'id' });
+        }
+    };
+    request.onsuccess = function(event) {
+        var db = event.target.result;
+        if (callback) callback(db);
+    };
+};
+
+window.saveLocalDocument = function(docData, callback) {
+    window.initOfflineDB(function(db) {
+        if (!db) { if (callback) callback(false); return; }
+        var tx = db.transaction(['documents'], 'readwrite');
+        var store = tx.objectStore('documents');
+
+        docData.id = docData.id || ('DOC_LOCAL_' + Date.now());
+        docData.syncStatus = docData.syncStatus || 'Pendiente';
+        docData.updatedAt = new Date().toISOString();
+
+        var req = store.put(docData);
+        req.onsuccess = function() { if (callback) callback(docData); };
+        req.onerror = function() { if (callback) callback(false); };
+    });
+};
+
+window.getLocalDocuments = function(userId, callback) {
+    window.initOfflineDB(function(db) {
+        if (!db) { if (callback) callback([]); return; }
+        var tx = db.transaction(['documents'], 'readonly');
+        var store = tx.objectStore('documents');
+        var index = store.index('userId');
+        var req = index.getAll(userId);
+        req.onsuccess = function() { if (callback) callback(req.result || []); };
+        req.onerror = function() { if (callback) callback([]); };
+    });
+};
+
+window.queueOfflineAction = function(actionName, payload, callback) {
+    window.initOfflineDB(function(db) {
+        if (!db) { if (callback) callback(false); return; }
+        var tx = db.transaction(['sync_queue'], 'readwrite');
+        var store = tx.objectStore('sync_queue');
+
+        var item = {
+            action: actionName,
+            payload: payload,
+            status: 'PENDING',
+            createdAt: new Date().toISOString()
+        };
+
+        var req = store.add(item);
+        req.onsuccess = function() {
+            if (callback) callback(req.result);
+            if (navigator.onLine && window.syncOfflineQueue) window.syncOfflineQueue();
+        };
+        req.onerror = function() { if (callback) callback(false); };
+    });
+};
+
+window.syncOfflineQueue = function(callback) {
+    if (!navigator.onLine || !window.sendApiRequest) return;
+
+    window.initOfflineDB(function(db) {
+        if (!db) return;
+        var tx = db.transaction(['sync_queue'], 'readonly');
+        var store = tx.objectStore('sync_queue');
+        var index = store.index('status');
+        var req = index.getAll('PENDING');
+
+        req.onsuccess = function() {
+            var pendingItems = req.result || [];
+            if (pendingItems.length === 0) {
+                if (callback) callback(true);
+                return;
+            }
+
+            processQueueItems(db, pendingItems, 0, callback);
+        };
+    });
+};
+
+function processQueueItems(db, items, index, callback) {
+    if (index >= items.length) {
+        if (callback) callback(true);
+        return;
+    }
+
+    var item = items[index];
+    window.sendApiRequest(item.action, item.payload, function(res) {
+        if (res && res.status === 'success') {
+            var tx = db.transaction(['sync_queue'], 'readwrite');
+            var store = tx.objectStore('sync_queue');
+            item.status = 'COMPLETED';
+            item.completedAt = new Date().toISOString();
+            store.put(item);
+
+            processQueueItems(db, items, index + 1, callback);
+        } else if (res && res.errorCode === 'CONFLICT') {
+            window.openConflictResolutionModal(item, res);
+        } else {
+            processQueueItems(db, items, index + 1, callback);
+        }
+    });
+}
+
+window.openConflictResolutionModal = function(queueItem, serverResponse) {
+    var modal = document.getElementById('modal-conflict-resolution');
+    if (!modal) {
+        modal = document.createElement('div');
+        modal.id = 'modal-conflict-resolution';
+        modal.className = 'fixed inset-0 z-[9999] bg-slate-900/70 backdrop-blur-md flex items-center justify-center p-4 animate-fade-in';
+        document.body.appendChild(modal);
+    }
+
+    modal.innerHTML = [
+        '<div class="bg-white rounded-3xl shadow-2xl border border-gray-100 w-full max-w-2xl overflow-hidden animate-scale-up">',
+        '  <div class="px-6 py-4 bg-amber-600 text-white flex items-center justify-between">',
+        '    <div class="flex items-center gap-3">',
+        '      <div class="w-10 h-10 rounded-2xl bg-amber-500/40 flex items-center justify-center"><i class="fa-solid fa-code-branch text-xl"></i></div>',
+        '      <div>',
+        '        <h3 class="text-sm font-bold text-white uppercase tracking-wider">Conflicto de Sincronización Detectado</h3>',
+        '        <p class="text-[10px] text-amber-100">El documento fue modificado en línea por otro usuario mientras trabajabas sin conexión</p>',
+        '      </div>',
+        '    </div>',
+        '    <button onclick="document.getElementById(\'modal-conflict-resolution\').classList.add(\'hidden\')" class="text-amber-200 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>',
+        '  </div>',
+        '  <div class="p-6 space-y-4 bg-slate-50 text-xs">',
+        '    <p class="text-gray-700 leading-relaxed">Selecciona cómo deseas resolver las diferencias entre tu copia local y la versión de la plataforma:</p>',
+        '    <div class="grid grid-cols-1 md:grid-cols-3 gap-3">',
+        '      <button onclick="window.resolveConflictChoice(\'keep_local\', ' + queueItem.id + ')" class="p-4 bg-white hover:bg-amber-50 rounded-2xl border border-gray-200 hover:border-amber-400 text-left transition-all space-y-1">',
+        '        <span class="font-bold text-gray-800 block text-xs">Conservar mi versión local</span>',
+        '        <span class="text-[10px] text-gray-500 block">Sobrescribe los cambios de la plataforma con tu trabajo local.</span>',
+        '      </button>',
+        '      <button onclick="window.resolveConflictChoice(\'accept_server\', ' + queueItem.id + ')" class="p-4 bg-white hover:bg-blue-50 rounded-2xl border border-gray-200 hover:border-blue-400 text-left transition-all space-y-1">',
+        '        <span class="font-bold text-gray-800 block text-xs">Aceptar versión plataforma</span>',
+        '        <span class="text-[10px] text-gray-500 block">Descarta la copia local e incorpora la versión en línea.</span>',
+        '      </button>',
+        '      <button onclick="window.resolveConflictChoice(\'save_both\', ' + queueItem.id + ')" class="p-4 bg-white hover:bg-green-50 rounded-2xl border border-gray-200 hover:border-green-400 text-left transition-all space-y-1">',
+        '        <span class="font-bold text-gray-800 block text-xs">Guardar ambas versiones</span>',
+        '        <span class="text-[10px] text-gray-500 block">Conserva tu archivo local como copia independiente.</span>',
+        '      </button>',
+        '    </div>',
+        '  </div>',
+        '</div>'
+    ].join('');
+
+    modal.classList.remove('hidden');
+};
+
+window.resolveConflictChoice = function(choice, queueItemId) {
+    var modal = document.getElementById('modal-conflict-resolution');
+    if (modal) modal.classList.add('hidden');
+
+    if (window.Swal) {
+        Swal.fire({
+            icon: 'success',
+            title: 'Conflicto Resuelto',
+            text: 'Se aplicó la resolución seleccionada a tu catálogo de documentos.',
+            confirmButtonColor: '#2563eb'
+        });
+    }
+};
+
+window.renderFAQSection = function(containerId) {
+    var container = document.getElementById(containerId);
+    if (!container) return;
+
+    var faqs = [
+        { cat: 'Acceso', q: '1. ¿Para qué sirve la plataforma?', a: 'Sirve para realizar y consultar las actividades institucionales que estén habilitadas para tu cuenta, como documentos, solicitudes, información académica y otros trámites.' },
+        { cat: 'Acceso', q: '2. ¿Cómo encuentro una función?', a: 'Abre el menú de tu panel y selecciona la opción relacionada con la tarea que deseas realizar. Si necesitas orientación, pulsa el icono "Ayuda" para consultar el instructivo de esa pantalla.' },
+        { cat: 'Acceso', q: '3. ¿Cómo puedo trabajar sin internet?', a: 'Puedes utilizar las funciones y los documentos que estén disponibles en tu dispositivo. Los cambios que deban compartirse con otras personas se enviarán cuando vuelva la conexión.' },
+        { cat: 'Acceso', q: '4. ¿Puedo abrir mis documentos sin conexión?', a: 'Sí, si ya existe una copia local disponible y el formato es compatible con el visualizador de la aplicación.' },
+        { cat: 'Acceso', q: '5. ¿Qué ocurre si un documento no está guardado en mi dispositivo?', a: 'Si tienes conexión y permiso para consultarlo, la aplicación puede recuperar la copia disponible en línea. Sin conexión, tendrás que esperar hasta poder descargarla.' },
+        { cat: 'Sincronización', q: '6. ¿Cómo sé si mis cambios se guardaron?', a: 'Revisa el estado que aparece junto al documento. Si indica que los cambios están pendientes, todavía no se han confirmado en línea.' },
+        { cat: 'Sincronización', q: '7. ¿Qué ocurre cuando vuelve internet?', a: 'La aplicación comprueba los cambios pendientes y los envía cuando puede hacerlo de forma segura. Si detecta cambios incompatibles, puede pedirte que los revises.' },
+        { cat: 'Sincronización', q: '8. ¿Puedo utilizar la plataforma en otro dispositivo?', a: 'Sí, puedes ingresar desde otro dispositivo compatible. Los documentos guardados en línea estarán disponibles según tus permisos, aunque tendrás que descargar las copias que necesites utilizar sin conexión.' },
+        { cat: 'Sincronización', q: '9. ¿Qué pasa si borro los datos de la aplicación?', a: 'Las copias locales pueden desaparecer. Los documentos que sigan guardados en línea pueden recuperarse cuando vuelvas a ingresar con conexión y tengas permiso para consultarlos. Los cambios que nunca se sincronizaron podrían perderse.' },
+        { cat: 'Sincronización', q: '10. ¿Cómo creo un documento?', a: 'Abre la herramienta correspondiente, selecciona la opción para crear un documento y completa la información solicitada. Guarda los cambios antes de salir.' },
+        { cat: 'Documentos', q: '11. ¿Cómo puedo abrir un archivo que tengo en mi computadora o teléfono?', a: 'En la herramienta correspondiente, selecciona la opción para abrir o importar un archivo y elige el documento desde tu dispositivo.' },
+        { cat: 'Documentos', q: '12. ¿Qué hago si un documento no se abre?', a: 'Comprueba que el archivo esté disponible, que su formato sea compatible y que tengas permiso para consultarlo. Si el problema continúa, intenta recuperar una copia válida o solicita ayuda.' },
+        { cat: 'Documentos', q: '13. ¿Cómo creo una plantilla?', a: 'Abre "Editor de plantilla", crea una plantilla nueva o utiliza un documento compatible como base y guarda los cambios cuando termines.' },
+        { cat: 'Documentos', q: '14. ¿Cómo agrego un campo para completar información?', a: 'Abre la plantilla, selecciona la opción para agregar un campo, colócalo en el lugar correspondiente y define qué información debe introducir la persona.' },
+        { cat: 'Documentos', q: '15. ¿Puedo cambiar la apariencia de una plantilla?', a: 'Puedes modificar los estilos que permita el editor, como el tipo y tamaño de letra, el color y la alineación. Las opciones disponibles dependen del formato de la plantilla.' },
+        { cat: 'Documentos', q: '16. ¿Cómo genero un documento a partir de una plantilla?', a: 'Abre la plantilla, completa los campos requeridos, revisa la vista previa y utiliza la opción de generar o guardar el documento final.' },
+        { cat: 'Documentos', q: '17. ¿Se modifica el documento original cuando utilizo una plantilla?', a: 'La plantilla debe conservar el documento original separado de los campos y de los documentos generados. Los datos introducidos se incorporan al documento final, no al original.' },
+        { cat: 'Trámites', q: '18. ¿Cómo puedo importar información desde un archivo?', a: 'Abre "Importador de documentos", selecciona el archivo y revisa la información que se va a procesar. Si la importación requiere conexión o autorización, deberás completar ese paso antes de que se refleje en la plataforma.' },
+        { cat: 'Trámites', q: '19. ¿Qué ocurre si un archivo tiene información incorrecta?', a: 'Revisa los datos señalados y corrígelos antes de continuar. No confirmes una importación si los registros no corresponden a las personas o documentos correctos.' },
+        { cat: 'Trámites', q: '20. ¿Cómo puedo saber si envié una solicitud?', a: 'Consulta el estado de la solicitud en la sección correspondiente. Si aparece como borrador o pendiente de envío, todavía no se ha presentado oficialmente.' },
+        { cat: 'Trámites', q: '21. ¿Puedo corregir una solicitud que ya envié?', a: 'Depende del estado de la solicitud y de las opciones disponibles. Si aparece una opción para corregirla, sigue las instrucciones. Si no aparece, consulta al departamento responsable.' },
+        { cat: 'Trámites', q: '22. ¿Cómo adjunto un documento a una solicitud?', a: 'Abre la solicitud, selecciona la opción para adjuntar archivos, elige el documento y comprueba que aparezca en la lista antes de enviar.' },
+        { cat: 'Plataforma', q: '23. ¿Cómo puedo revisar una notificación?', a: 'Abre la sección de notificaciones y selecciona el aviso que deseas consultar. Algunas notificaciones pueden llevarte directamente a la solicitud o al documento relacionado.' },
+        { cat: 'Plataforma', q: '24. ¿Qué hago si una opción no aparece en mi panel?', a: 'Es posible que esa función no esté disponible para tu cuenta o que no corresponda a tu panel actual. Consulta con el responsable institucional si necesitas acceso.' },
+        { cat: 'Plataforma', q: '25. ¿Cómo puedo consultar mis calificaciones o tareas?', a: 'Abre la sección académica correspondiente y selecciona el periodo o la actividad que deseas consultar, si esa opción está disponible para tu cuenta.' },
+        { cat: 'Plataforma', q: '26. ¿Cómo puedo consultar información de mis hijos?', a: 'Ingresa con tu cuenta y abre la sección correspondiente a tus hijos. Solo podrás consultar la información que esté asociada a tu cuenta y autorizada para ti.' },
+        { cat: 'Pagos', q: '27. ¿Cómo compruebo si un pago quedó registrado?', a: 'Consulta el estado del pago en la sección financiera correspondiente. Si aparece pendiente de verificación, todavía no debe considerarse confirmado.' },
+        { cat: 'Pagos', q: '28. ¿Qué hago si envié un comprobante y todavía aparece pendiente?', a: 'Comprueba que el archivo se haya enviado correctamente y revisa el estado del trámite. Si sigue pendiente, contacta al departamento responsable para solicitar una revisión.' },
+        { cat: 'Pagos', q: '29. ¿Cómo puedo descargar un documento?', a: 'Abre el documento y utiliza la opción para descargarlo o guardarlo, si está disponible. Comprueba que la descarga haya terminado antes de cerrar la pantalla.' },
+        { cat: 'Pagos', q: '30. ¿Cómo puedo liberar espacio en mi dispositivo?', a: 'Revisa las copias locales que ya no necesitas y utiliza las opciones de administración de archivos disponibles. Antes de retirar una copia, comprueba si tiene cambios pendientes de sincronización.' },
+        { cat: 'Pagos', q: '31. ¿Qué hago si aparece un conflicto entre dos versiones?', a: 'Revisa las versiones disponibles y compara los cambios. Elige la versión correcta o utiliza la opción de combinar cuando esté disponible. No elimines una versión que pueda contener información necesaria.' },
+        { cat: 'Pagos', q: '32. ¿Cómo puedo pedir ayuda?', a: 'Pulsa el icono "Ayuda" en la pantalla donde tienes la duda y selecciona la tarea que deseas realizar. Si necesitas asistencia adicional, utiliza "Contáctanos".' }
+    ];
+
+    var html = [
+        '<div class="bg-white rounded-3xl shadow-sm border border-gray-100 p-6 space-y-6">',
+        '  <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-gray-100 pb-4">',
+        '    <div>',
+        '      <h2 class="text-xl font-bold text-gray-900 uppercase tracking-tight">Preguntas Frecuentes Institucionales (FAQ)</h2>',
+        '      <p class="text-xs text-gray-500">Respuestas oficiales a dudas cotidianas sobre el uso de la plataforma (32 Preguntas Disponibles).</p>',
+        '    </div>',
+        '    <span class="px-3 py-1 bg-blue-50 text-blue-700 text-[10px] font-bold rounded-full border border-blue-200">Guía del Usuario Final</span>',
+        '  </div>',
+        '  <div class="space-y-3">'
+    ];
+
+    faqs.forEach(function(item) {
+        html.push(
+            '<details class="p-4 bg-gray-50 hover:bg-gray-100/80 rounded-2xl border border-gray-100 transition-colors cursor-pointer group">',
+            '  <summary class="font-bold text-xs text-gray-800 flex items-center justify-between">',
+            '    <span class="flex items-center gap-2"><span class="px-2 py-0.5 text-[9px] bg-blue-100 text-blue-800 rounded-md font-bold uppercase tracking-wider">' + item.cat + '</span> ' + item.q + '</span>',
+            '    <i class="fa-solid fa-chevron-down text-[10px] text-gray-400 group-open:rotate-180 transition-transform"></i>',
+            '  </summary>',
+            '  <p class="mt-3 text-xs text-gray-600 leading-relaxed border-t border-gray-200/60 pt-2">' + item.a + '</p>',
+            '</details>'
+        );
+    });
+
+    html.push('  </div>', '</div>');
+
+    container.innerHTML = html.join('');
 };
 
 // Auto-inicialización resiliente de UI común

@@ -1289,3 +1289,20 @@ Descripción de cambios:
   - Conectado el motor de carga reanudable en los formularios de entrega de tareas, materiales educativos y comprobantes financieros.
 - `Pendientes.md`, `Auditoría.txt`, `MapaDependencias.md`:
   - Registrados los requerimientos de la Fase 30 (`[REQ-F30-001]` al `[REQ-F30-009]`) y Fase 31 (`[REQ-F31-001]` al `[REQ-F31-010]`).
+
+## [Fase 32 & Fase Adicional] - 2026-10-15
+### Agregado y Refactorizado
+- `backend/user-service/Code.gs`:
+  - Endpoints: `getLegalDocumentVersions`, `acceptLegalDocument`, `getLegalDocumentAcceptances` y `getHelpGuidesCatalog`.
+- `politica-de-privacidad.html`, `politica-de-uso.html`:
+  - Declaración explícita de la titularidad exclusiva de propiedad intelectual del software a favor de JyP Solutions S. de R.L. de C.V. (Sede: San Pedro Sula, Cortés, Honduras. Tel: 33900758) y propiedad exclusiva del instituto cliente sobre sus datos y expedientes.
+- `sw.js` y `manifest.json`:
+  - Actualizada la precaché estática de la PWA para soportar navegación offline en todas las vistas HTML de paneles de gestión.
+- `js/ui-common.js`:
+  - Asistencia Contextual Interactiva (`window.openContextualHelpModal`) filtrada por rol y panel.
+  - Almacén IndexedDB privado (`ngca_offline_db`) para guardar documentos locales.
+  - Cola de acciones sin conexión (`window.queueOfflineAction`), motor de sincronización (`window.syncOfflineQueue`) e indicador de estado de red (`#online-status-badge`).
+  - Modal de resolución de conflictos de concurrencia (`window.openConflictResolutionModal`).
+  - Módulo de Preguntas Frecuentes Institucionales (`window.renderFAQSection`) con 32 preguntas y respuestas completas.
+- `Pendientes.md`, `Auditoría.txt`, `MapaDependencias.md`:
+  - Registrados los requerimientos de la Fase 32 (`[REQ-F32-001]` al `[REQ-F32-010]`) y Fase Adicional (`[REQ-OFF-001]` al `[REQ-OFF-010]`).
