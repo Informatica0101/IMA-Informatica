@@ -533,3 +533,23 @@ MÓDULOS EVALUADOS:
 - Para la regla "Empezar de nuevo", se determinó que las partes anteriores deben conservarse intactas hasta que los nuevos bloques reemplazantes queden 100% confirmados en backend.
 - Se identificó la necesidad de un Visor Unificado de Documentos (`window.openDocumentReader`) con ordenamiento numérico natural estricto (Evitando que 'Parte 10' aparezca antes que 'Parte 2') y soporte para documentos antiguos de Word (`.doc`, `.docx`, `.rtf`, `.txt`, `.odt`) con extracción limpia de contenido y tablas.
 - El cliente de carga en frontend debe presentar estimación de tiempo restante (ETA), porcentaje de avance real, avisos de prevención ante cambio de pestaña y diálogos simples de error en lenguaje comprensible sin exponer detalles técnicos ni identificadores internos.
+
+===============================================================================
+AUDITORÍA DE IMPLEMENTACIÓN - FASE 31: INTEGRACIÓN TRANSVERSAL, EXPERIENCIA DE USUARIO, ACCESIBILIDAD Y VALIDACIÓN INTEGRAL DE LA PLATAFORMA
+===============================================================================
+FECHA: 2026-10-15
+MÓDULOS EVALUADOS:
+- backend/user-service/Code.gs
+- backend/academic-service/Code.gs
+- backend/accounting-service/Code.gs
+- backend/exam-service/Code.gs
+- backend/task-service/Code.gs
+- teacher-dashboard.html, student-dashboard.html, dashboard-direccion.html, dashboard-contabilidad.html, dashboard-recursos-humanos.html, dashboard-tienda.html, dashboard-cafeteria.html
+- js/teacher.js, js/student.js, js/accounting.js, js/ui-common.js
+
+1. HALLAZGOS DE AUDITORÍA
+- Se verificó la coherencia transversal de los flujos entre identidad (USER), estructura académica (ACADEMIC), contabilidad y cobranzas (ACCOUNTING), evaluaciones (EXAM) y aula virtual (TASK).
+- Se confirmó que los controles de acceso RBAC se validan server-side en backend mediante `getUserVerifiedRole`, impidiendo la manipulación de roles desde el cliente.
+- Se constató que las notificaciones internas y mensajería en bandeja operan de forma autónoma y 100% nativa sin depender de proveedores externos de mensajería (SMS/WhatsApp).
+- Se verificó que las calificaciones de años escolares anteriores permanecen inalterables en backend para todos los roles de la institución.
+- Se verificó el cumplimiento de las normas de accesibilidad (foco visible, contraste, etiquetas descriptivas, navegación por teclado y diseño adaptable a pantallas móviles/tabletas) y la aplicación estricta de la Política de Lenguaje Comprensible en todas las vistas del sistema.

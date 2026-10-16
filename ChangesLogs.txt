@@ -1272,3 +1272,20 @@ Descripción de cambios:
   - Centro de Informes Institucionales (`window.renderReportsCenterUI`, `window.triggerReportGeneration`, `window.displayReportModal`) aplicando regla de cobranza confirmada activa.
 - `teacher-dashboard.html` y `student-dashboard.html`:
   - Agregado botón `#btn-start-interactive-guide` en cabecera principal y contenedor `#reports-center-container` en la sección de reportes.
+
+## [Fase 30 & Fase 31] - 2026-10-15
+### Agregado y Refactorizado
+- `backend/task-service/Code.gs`:
+  - Implementada la suite de endpoints de carga reanudable (`initiateResumableUpload`, `uploadChunk`, `getUploadProgress`, `cancelUploadSession`, `reconstructFileParts`) con ensamblado automático de chunks.
+  - Implementado `readLegacyDocument` para extracción estructurada de contenido en documentos Word y de oficina antiguos (`.doc`, `.docx`, `.rtf`, `.txt`, `.odt`).
+  - Implementado `getMultiPartFolderFiles` con ordenamiento numérico estricto de fragmentos.
+- `backend/user-service/Code.gs`:
+  - Agregada la función `delegateToTaskService` para enrutamiento seguro de peticiones delegadas desde `USER` hacia `TASK` service.
+- `js/ui-common.js`:
+  - Cliente unificado de Carga Reanudable (`window.uploadResumableFile`) con cálculo de estimación de tiempo (ETA), porcentaje de avance real y diálogo para reintentar o reemplazar progresivamente.
+  - Agregado escuchador de eventos de teclado global (`Escape`) para el cierre accesible de todos los modales del sistema.
+  - Ampliado `window.openDocumentReader` para vista previa continua de carpetas multi-parte y extracción de documentos de Word antiguos.
+- `js/student.js`, `js/teacher.js`, `js/accounting.js`:
+  - Conectado el motor de carga reanudable en los formularios de entrega de tareas, materiales educativos y comprobantes financieros.
+- `Pendientes.md`, `Auditoría.txt`, `MapaDependencias.md`:
+  - Registrados los requerimientos de la Fase 30 (`[REQ-F30-001]` al `[REQ-F30-009]`) y Fase 31 (`[REQ-F31-001]` al `[REQ-F31-010]`).

@@ -34,6 +34,34 @@ window.setupCommonUI = function() {
         });
     }
 
+    // --- Accessibility: Global Escape Key Listener for Modals ---
+    window.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' || e.keyCode === 27) {
+            var activeModals = [
+                'profile-modal',
+                'modal-dashboard-settings',
+                'modal-document-reader',
+                'modal-submission-comparer',
+                'modal-report-viewer',
+                'modal-pdf-overlay-editor',
+                'modal-form-builder',
+                'modal-workflow-builder',
+                'modal-workflow-decision',
+                'modal-channel-config',
+                'modal-excel-importer'
+            ];
+            activeModals.forEach(function(modalId) {
+                var el = document.getElementById(modalId);
+                if (el && !el.classList.contains('hidden')) {
+                    el.classList.add('hidden');
+                }
+            });
+            if (window.closeInteractiveGuide) {
+                window.closeInteractiveGuide();
+            }
+        }
+    });
+
     // --- Mobile Menu Logic (Redirect to Academic Modal A-73/74) ---
     window.openMobileMenu = function(section) {
         window.openAcademicMenu();
