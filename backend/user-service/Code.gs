@@ -431,6 +431,12 @@ function doPost(e) {
         result = delegateToTaskService(action, payload);
         break;
 
+      // Endpoints Fase 32 - Condiciones Legales, Propiedad Intelectual y Ayuda
+      case "getLegalDocumentVersions": result = getLegalDocumentVersions(payload); break;
+      case "acceptLegalDocument": result = acceptLegalDocument(payload); break;
+      case "getLegalDocumentAcceptances": result = getLegalDocumentAcceptances(payload); break;
+      case "getHelpGuidesCatalog": result = getHelpGuidesCatalog(payload); break;
+
       case "ping": result = { status: "success", service: "USER", timestamp: new Date().toISOString(), dbConnected: true }; break;
       default: result = { status: "error", message: `Acción no reconocida: ${action}` };
     }
@@ -2779,6 +2785,191 @@ function purgeStructuredLogs(payload) {
   } catch (error) {
     return { status: "error", message: error.message };
   }
+
+// ---------------------------------------------------------------------------
+// FUNCIONES FASE 32 - DOCUMENTOS LEGALES, PROPIEDAD INTELECTUAL Y AYUDA
+// ---------------------------------------------------------------------------
+
+function getLegalDocumentVersions(payload) {
+  try {
+    const documents = [
+      {
+        id: "DOC-COND-USO",
+        title: "Acuerdo de Condiciones de Uso y Licencia de Software",
+        version: "v1.0-2026",
+        effectiveDate: "2026-01-01",
+        providerOwner: "JyP Solutions S. de R.L. de C.V.",
+        providerAddress: "San Pedro Sula, Cortés, Honduras",
+        providerPhone: "33900758",
+        summary: "Define los términos de la licencia de uso otorgada a la institución. Aclara que la propiedad intelectual del software pertenece exclusivamente a JyP Solutions S. de R.L. de C.V., mientras que los datos, expedientes y documentos institucionales son propiedad exclusiva del cliente."
+      },
+      {
+        id: "DOC-AVISO-USO",
+        title: "Aviso de Condiciones de Uso y Responsabilidades",
+        version: "v1.0-2026",
+        effectiveDate: "2026-01-01",
+        providerOwner: "JyP Solutions S. de R.L. de C.V.",
+        summary: "Aviso informativo sobre las normas de uso de la plataforma, responsabilidad de credenciales e identificación del titular del software."
+      },
+      {
+        id: "DOC-PRIV",
+        title: "Política de Privacidad y Tratamiento de Información",
+        version: "v1.0-2026",
+        effectiveDate: "2026-01-01",
+        providerOwner: "JyP Solutions S. de R.L. de C.V.",
+        summary: "Establece las reglas de recopilación, almacenamiento seguro en servidores institucionales y protección de datos académicos, personales y financieros."
+      },
+      {
+        id: "DOC-SEG",
+        title: "Política de Seguridad y Uso Responsable",
+        version: "v1.0-2026",
+        effectiveDate: "2026-01-01",
+        providerOwner: "JyP Solutions S. de R.L. de C.V.",
+        summary: "Define las medidas de seguridad, custodia de contraseñas, prevención de accesos no autorizados e inalterabilidad de registros oficiales."
+      },
+      {
+        id: "DOC-IP-LICENCIA",
+        title: "Aviso de Propiedad Intelectual y Alcance de Licencia",
+        version: "v1.0-2026",
+        effectiveDate: "2026-01-01",
+        providerOwner: "JyP Solutions S. de R.L. de C.V.",
+        summary: "Declara la titularidad exclusiva del código fuente y tecnología a favor de JyP Solutions S. de R.L. de C.V. y el alcance de la autorización de uso concedida al instituto cliente."
+      }
+    ];
+
+    return { status: "success", documents: documents };
+  } catch (error) {
+    return { status: "error", message: error.message };
+  }
+}
+
+function acceptLegalDocument(payload) {
+  try {
+    const verifiedRole = getUserVerifiedRole(payload);
+    const { documentId, version, userId } = payload || {};
+
+    if (!documentId || !userId) {
+      throw new Error("ID de documento y ID de usuario obligatorios.");
+    }
+
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const sheet = getOrCreateSheet(ss, "AceptacionesPoliticas");
+    if (sheet.getLastRow() === 0) {
+      sheet.appendRow(["AceptacionID", "UserID", "DocumentoID", "Version", "RolUsuario", "FechaAceptacion", "Estado"]);
+    }
+
+    const acceptId = "ACEPT-" + Date.now();
+    const now = new Date().toISOString();
+
+    sheet.appendRow([
+      acceptId,
+      userId,
+      documentId,
+      version || "v1.0-2026",
+      verifiedRole,
+      now,
+      "ACEPTADO"
+    ]);
+
+    logStructuredEvent("USER", "acceptLegalDocument", "INFO", "LEGAL_DOC_ACCEPTED", `Documento ${documentId} aceptado por usuario ${userId}`, { documentId, version }, verifiedRole);
+
+    return {
+      status: "success",
+      message: "Aceptación registrada correctamente.",
+      acceptId: acceptId,
+      timestamp: now
+    };
+  } catch (error) {
+    return { status: "error", message: error.message };
+  }
+}
+
+function getLegalDocumentAcceptances(payload) {
+  try {
+    const { userId } = payload || {};
+    if (!userId) throw new Error("ID de usuario requerido.");
+
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const sheet = ss.getSheetByName("AceptacionesPoliticas");
+    if (!sheet) return { status: "success", acceptances: [] };
+
+    const data = sheet.getDataRange().getValues();
+    const acceptances = [];
+
+    for (let i = 1; i < data.length; i++) {
+      if (String(data[i][1]) === String(userId)) {
+        acceptances.push({
+          acceptId: data[i][0],
+          userId: data[i][1],
+          documentId: data[i][2],
+          version: data[i][3],
+          role: data[i][4],
+          acceptedAt: data[i][5],
+          status: data[i][6]
+        });
+      }
+    }
+
+    return { status: "success", acceptances: acceptances };
+  } catch (error) {
+    return { status: "error", message: error.message };
+  }
+}
+
+function getHelpGuidesCatalog(payload) {
+  try {
+    const verifiedRole = getUserVerifiedRole(payload);
+    const { panelKey } = payload || {};
+
+    const guides = [
+      {
+        id: "GUIDE-TEACHER-GRADEBOOK",
+        panelKey: "gradebook",
+        role: "Profesor",
+        title: "Cuaderno de Notas y Evaluaciones",
+        description: "Aprenda a ingresar calificaciones, aplicar rúbricas y publicar resultados oficiales.",
+        steps: [
+          { stepNum: 1, title: "Seleccionar Grado y Sección", text: "Elija el grupo académico en el selector superior." },
+          { stepNum: 2, title: "Ingresar Calificaciones", text: "Escriba la nota correspondiente en la celda del estudiante." },
+          { stepNum: 3, title: "Guardar Cuaderno", text: "Haga clic en 'Guardar Calificaciones' para actualizar el registro oficial." }
+        ]
+      },
+      {
+        id: "GUIDE-TEMPLATES-DESIGN",
+        panelKey: "plantillas",
+        role: "Profesor",
+        title: "Diseñador de Plantillas y Documentos",
+        description: "Creación de plantillas institucionales sin alterar el archivo original de referencia.",
+        steps: [
+          { stepNum: 1, title: "Importar o Seleccionar Documento Base", text: "Seleccione un archivo DOCX o PDF de referencia. El archivo original se mantendrá inalterado." },
+          { stepNum: 2, title: "Agregar Campos Rellenables", text: "Haga clic en 'Agregar Campo' e indique la etiqueta visible y su posición." },
+          { stepNum: 3, title: "Previsualizar y Generar", text: "Generar la salida oficial en PDF combinando los datos reales del estudiante." }
+        ]
+      },
+      {
+        id: "GUIDE-STUDENT-TASKS",
+        panelKey: "tareas",
+        role: "Estudiante",
+        title: "Entregas de Tareas y Actividades",
+        description: "Cómo subir archivos grandes, reanudar cargas y confirmar la entrega.",
+        steps: [
+          { stepNum: 1, title: "Seleccionar Tarea", text: "Navegue a 'Tareas y Actividades' y seleccione el trabajo correspondiente." },
+          { stepNum: 2, title: "Adjuntar Archivo Reanudable", text: "Seleccione su archivo. Si la carga se interrumpe, el sistema le permitirá reanudarla desde la última parte confirmada." },
+          { stepNum: 3, title: "Confirmar Envío", text: "Haga clic en 'Confirmar Entrega' y verifique el estado 'Entregado'." }
+        ]
+      }
+    ];
+
+    const filtered = guides.filter(g => {
+      if (panelKey && g.panelKey !== panelKey) return false;
+      return true;
+    });
+
+    return { status: "success", guides: filtered, userRole: verifiedRole };
+  } catch (error) {
+    return { status: "error", message: error.message };
+  }
+}
 }
 
 function getAuditReport(payload) {

@@ -2342,6 +2342,101 @@ window.displayReportModal = function(reportData) {
     modal.classList.remove('hidden');
 };
 
+/* ===========================================================================
+ * FASE 32 - SISTEMA DE AYUDA CONTEXTUAL INTERACTIVA Y FAQ
+ * =========================================================================== */
+
+window.openContextualHelpModal = function(panelKey) {
+    panelKey = panelKey || 'general';
+    var userRole = (window.currentUser && window.currentUser.rol) ? window.currentUser.rol : 'Estudiante';
+
+    var modal = document.getElementById('modal-interactive-help');
+    if (!modal) {
+        modal = document.createElement('div');
+        modal.id = 'modal-interactive-help';
+        modal.className = 'fixed inset-0 z-[9995] bg-slate-900/70 backdrop-blur-md flex items-center justify-center p-4 animate-fade-in';
+        document.body.appendChild(modal);
+    }
+
+    modal.innerHTML = [
+        '<div class="bg-white rounded-3xl shadow-2xl border border-gray-100 w-full max-w-4xl max-h-[90vh] flex flex-col overflow-hidden animate-scale-up">',
+        '  <div class="px-6 py-4 bg-slate-900 text-white flex items-center justify-between border-b border-slate-800">',
+        '    <div class="flex items-center gap-3">',
+        '      <div class="w-10 h-10 rounded-2xl bg-indigo-600/30 text-indigo-400 flex items-center justify-center"><i class="fa-solid fa-circle-question text-xl"></i></div>',
+        '      <div>',
+        '        <h3 class="text-sm font-bold text-white uppercase tracking-wider">Asistencia Contextual Interactiva</h3>',
+        '        <p class="text-[10px] text-slate-400">Guías Paso a Paso, Preguntas Frecuentes y Contacto Institucional</p>',
+        '      </div>',
+        '    </div>',
+        '    <button onclick="document.getElementById(\'modal-interactive-help\').classList.add(\'hidden\')" class="text-slate-400 hover:text-white p-2 rounded-xl"><i class="fa-solid fa-xmark text-lg"></i></button>',
+        '  </div>',
+        '  <div class="p-6 overflow-y-auto flex-grow bg-slate-50 space-y-6">',
+        '    <div class="bg-indigo-50/60 p-4 rounded-2xl border border-indigo-100 flex items-center justify-between">',
+        '      <div>',
+        '        <span class="text-[10px] font-bold text-indigo-600 uppercase tracking-widest block">Panel Activo: ' + panelKey.toUpperCase() + '</span>',
+        '        <h4 class="text-sm font-bold text-slate-800">¿Qué deseas hacer en esta sección?</h4>',
+        '      </div>',
+        '      <a href="tel:33900758" class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs rounded-xl transition-all flex items-center gap-1 shadow-sm"><i class="fa-solid fa-phone text-[10px]"></i> Soporte: 33900758</a>',
+        '    </div>',
+        '    <div id="help-guides-container" class="grid grid-cols-1 md:grid-cols-2 gap-4">',
+        '      <div class="p-6 text-center text-gray-400 text-xs col-span-2"><i class="fa-solid fa-spinner fa-spin text-2xl mb-2"></i><br>Cargando guías contextuales disponibles...</div>',
+        '    </div>',
+        '    <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm space-y-3">',
+        '      <h4 class="text-xs font-bold text-gray-800 uppercase tracking-wider border-b border-gray-100 pb-2">Preguntas Frecuentes Institucionales (FAQ)</h4>',
+        '      <div class="space-y-2 text-xs text-gray-600">',
+        '        <details class="p-3 bg-gray-50 rounded-xl cursor-pointer hover:bg-gray-100 transition-colors"><summary class="font-bold text-gray-800">¿Quién es el titular de la plataforma y el código fuente?</summary><p class="mt-2 text-gray-600 leading-relaxed">El código fuente y la tecnología pertenecen exclusivamente a <strong>JyP Solutions S. de R.L. de C.V.</strong> (Sede: San Pedro Sula, Cortés, Honduras. Tel: 33900758). El instituto cliente recibe una licencia de uso y conserva la titularidad exclusiva de sus datos y documentos.</p></details>',
+        '        <details class="p-3 bg-gray-50 rounded-xl cursor-pointer hover:bg-gray-100 transition-colors"><summary class="font-bold text-gray-800">¿Se modifican los archivos originales al crear plantillas o documentos?</summary><p class="mt-2 text-gray-600 leading-relaxed">No. El archivo original de referencia permanece 100% inalterado. Los campos y configuraciones se guardan por separado y los documentos emitidos se generan como derivados sin modificar la plantilla base.</p></details>',
+        '        <details class="p-3 bg-gray-50 rounded-xl cursor-pointer hover:bg-gray-100 transition-colors"><summary class="font-bold text-gray-800">¿Qué hago si mi subida de archivo se interrumpe por problemas de red?</summary><p class="mt-2 text-gray-600 leading-relaxed">El cliente de carga reanudable detecta la interrupción y te permite elegir entre "Reintentar Carga" para continuar desde la última parte confirmada o "Empezar de nuevo" reemplazando progresivamente las partes anteriores.</p></details>',
+        '      </div>',
+        '    </div>',
+        '  </div>',
+        '  <div class="px-6 py-4 bg-white border-t border-gray-100 flex items-center justify-between text-xs text-gray-500">',
+        '    <span>JyP Solutions S. de R.L. de C.V. — San Pedro Sula, Honduras. Tel: 33900758</span>',
+        '    <button onclick="document.getElementById(\'modal-interactive-help\').classList.add(\'hidden\')" class="px-5 py-2 font-bold text-xs text-white bg-indigo-600 hover:bg-indigo-700 rounded-xl transition-all">Cerrar Ayuda</button>',
+        '  </div>',
+        '</div>'
+    ].join('');
+
+    modal.classList.remove('hidden');
+
+    if (window.sendApiRequest) {
+        window.sendApiRequest('getHelpGuidesCatalog', { panelKey: panelKey }, function(res) {
+            var container = document.getElementById('help-guides-container');
+            if (!container) return;
+
+            if (res && res.status === 'success' && res.guides && res.guides.length > 0) {
+                var html = '';
+                res.guides.forEach(function(guide) {
+                    html += [
+                        '<div class="p-4 bg-white rounded-2xl border border-gray-200 hover:border-indigo-300 hover:shadow-md transition-all flex flex-col justify-between gap-3">',
+                        '  <div>',
+                        '    <span class="text-[9px] font-bold uppercase tracking-wider text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-md mb-2 inline-block">' + guide.role + '</span>',
+                        '    <h4 class="text-xs font-bold text-gray-800 mb-1">' + guide.title + '</h4>',
+                        '    <p class="text-[11px] text-gray-500 leading-relaxed">' + guide.description + '</p>',
+                        '  </div>',
+                        '  <button onclick="window.startGuidedTourAction(\'' + guide.id + '\')" class="w-full py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs rounded-xl shadow-sm transition-all flex items-center justify-center gap-1"><i class="fa-solid fa-location-arrow text-[10px]"></i> Iniciar Guía Paso a Paso</button>',
+                        '</div>'
+                    ].join('');
+                });
+                container.innerHTML = html;
+            } else {
+                container.innerHTML = '<div class="p-6 text-center text-gray-500 text-xs col-span-2">Selecciona una de las preguntas frecuentes o contacta a soporte si necesitas asistencia en este panel.</div>';
+            }
+        });
+    }
+};
+
+window.startGuidedTourAction = function(guideId) {
+    var modal = document.getElementById('modal-interactive-help');
+    if (modal) modal.classList.add('hidden');
+
+    if (guideId === 'GUIDE-STUDENT-TASKS') {
+        window.startInteractiveGuide('studentSubmission', true);
+    } else {
+        window.startInteractiveGuide('teacherReview', true);
+    }
+};
+
 // Auto-inicialización resiliente de UI común
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', function() {
