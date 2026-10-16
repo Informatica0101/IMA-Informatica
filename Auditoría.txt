@@ -492,3 +492,25 @@ MÓDULOS EVALUADOS:
 - Se constató la necesidad del rol y dashboard del Coordinador Académico, asignación docente (1 sección principal por profesor por año lectivo), maestría guía y generador de horarios con bloques continuos de asignaturas multi-unidad.
 - Se identificó el módulo de importación universal de Excel (.xlsx) con mapeo de columnas y pre-validación.
 - Se identificó la necesidad de idempotencia en pagos financieros y de sanitización de textos para política de lenguaje comprensible.
+
+===============================================================================
+AUDITORÍA DE IMPLEMENTACIÓN - FASE 29: INFORMES INSTITUCIONALES, AUDITORÍA, COPIAS DE SEGURIDAD Y RECUPERACIÓN DE DATOS
+===============================================================================
+FECHA: 2026-10-15
+MÓDULOS EVALUADOS:
+- backend/user-service/Code.gs
+- backend/academic-service/Code.gs
+- backend/accounting-service/Code.gs
+- backend/exam-service/Code.gs
+- backend/task-service/Code.gs
+- teacher-dashboard.html, student-dashboard.html
+- js/teacher.js, js/student.js, js/ui-common.js
+
+1. HALLAZGOS DE AUDITORÍA
+- Se requiere un Centro Unificado de Informes Institucionales con filtro por área (Académica, Secretaría, Asistencia, Contabilidad, Tienda, Cafetería, Recursos Humanos, Plataforma), asegurando que los ingresos reportados excluyan pagos pendientes o cancelados.
+- Se requiere un registro de auditoría estructurado (`getStructuredLogs`, `getAuditReport`) protegido en backend para evitar modificaciones o eliminaciones no autorizadas.
+- El sistema de respaldos y restauración de seguridad (`createSystemBackup`, `verifyBackupIntegrity`, `restoreSystemBackup`) debe garantizar explícitamente que las calificaciones históricas de los estudiantes (`CalificacionesEstudiantes` y `RecuperacionesEstudiante`) jamás sean sobrescritas o eliminadas durante la restauración de copias de seguridad.
+- Se identificó la necesidad de guías interactivas y tutoriales paso a paso (`window.startInteractiveGuide`) para estudiantes (cómo adjuntar archivos y entregar tareas) y docentes (cómo calificar y comparar entregas), almacenando el avance en `localStorage`.
+- Se requiere un Visor Integrado de Documentos (PDF, Word, Imágenes) en modal y una Herramienta de Comparación de Entregas ("Comparar con otra tarea") que permita contrastar dos entregas lado a lado o en pila con notas de observación y calificación directa.
+- Se requiere potenciar el Importador Universal de Excel con soporte de importación adaptado por rol y reconocimiento de encabezados multinivel/agrupados.
+- Todas las etiquetas, guías y mensajes deben cumplir estrictamente con la Política de Lenguaje Comprensible para usuarios no técnicos.

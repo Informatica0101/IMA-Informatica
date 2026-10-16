@@ -91,7 +91,11 @@
                 <button id="open-profile-btn" class="nav-link-desktop">Mi perfil</button>
             </nav>
 
-            <div class="flex items-center gap-4">
+            <div class="flex items-center gap-3">
+                <button id="btn-start-interactive-guide" class="px-3 py-1.5 text-indigo-700 bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 shadow-sm" title="Guía Tutorial Paso a Paso" onclick="window.startInteractiveGuide('teacherReview', true)">
+                    <i class="fa-solid fa-circle-question text-sm"></i>
+                    <span class="hidden sm:inline">Tutorial</span>
+                </button>
                 <button id="btn-global-dashboard-settings" class="p-2 text-slate-600 hover:text-slate-900 rounded-xl hover:bg-slate-100 text-lg transition-all focus:outline-none focus:ring-2 focus:ring-blue-500" title="Opciones y Configuración del Dashboard" aria-label="Opciones y Configuración">
                     <i class="fa-solid fa-gear"></i>
                 </button>
@@ -1199,10 +1203,11 @@
                 </div>
             </section>
 
-            <!-- Sección de Reportes (Académico) -->
+            <!-- Sección de Reportes (Académico e Institucional) -->
             <section id="section-reportes" class="hidden animate-fade-in-up">
+                <div id="reports-center-container" class="mb-8"></div>
                 <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
-                    <h2 class="text-2xl font-medium text-gray-800">Reportes Académicos</h2>
+                    <h2 class="text-2xl font-medium text-gray-800">Reportes Académicos Específicos</h2>
                     <button id="export-excel-btn" class="bg-green-600 text-white px-6 py-3 rounded-2xl font-semibold shadow-lg hover:bg-green-700 transition-all flex items-center gap-2">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                         EXPORTAR REPORTE EXCEL

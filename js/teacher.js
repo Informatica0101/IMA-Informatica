@@ -862,6 +862,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     navReportsOld.addEventListener('click', () => {
         window.navigateTo(sectionReportes, navReportsOld);
+        if (window.renderReportsCenterUI) window.renderReportsCenterUI('reports-center-container');
     });
 
     // --- Mi Perfil (Centralizado en ui-common.js) ---

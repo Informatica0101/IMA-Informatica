@@ -243,6 +243,8 @@ function doPost(e) {
       case "listSystemBackups": result = listSystemBackups(payload); break;
       case "verifyBackupIntegrity": result = verifyBackupIntegrity(payload); break;
       case "restoreSystemBackup": result = restoreSystemBackup(payload); break;
+      case "getInstitutionalReportCatalog": result = getInstitutionalReportCatalog(payload); break;
+      case "generateInstitutionalReport": result = generateInstitutionalReport(payload); break;
 
       // Endpoints Fase 3
       case "getInstitutionParams": result = getInstitutionParams(payload); break;
@@ -2806,7 +2808,7 @@ function verifyBackupIntegrity(payload) {
 
 function restoreSystemBackup(payload) {
   try {
-    const { fileId, confirmed, confirmCode } = payload || {};
+    const { fileId, confirmed, confirmCode, preserveHistoricGrades = true } = payload || {};
     if (!confirmed || confirmCode !== "RESTORE-CONFIRMED") {
       throw new Error("Confirmación obligatoria no recibida. Especifique confirmCode: 'RESTORE-CONFIRMED'.");
     }
@@ -2819,13 +2821,30 @@ function restoreSystemBackup(payload) {
     if (!parsed.sheets) throw new Error("Archivo de respaldo inválido.");
 
     const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const protectedGradeSheets = ["CalificacionesEstudiantes", "RecuperacionesEstudiante"];
 
     for (const sheetName in parsed.sheets) {
-      const rows = parsed.sheets[sheetName];
+      let rows = parsed.sheets[sheetName];
       let sheet = ss.getSheetByName(sheetName);
       if (!sheet) {
         sheet = ss.insertSheet(sheetName);
       } else {
+        if (preserveHistoricGrades && protectedGradeSheets.includes(sheetName)) {
+          // Explicit preservation: Merge existing live grades with backup rows to prevent loss of historic official grades
+          const existingData = sheet.getDataRange().getValues();
+          if (existingData && existingData.length > 1 && rows && rows.length > 0) {
+            const backupKeys = new Set();
+            for (let r = 1; r < rows.length; r++) {
+              backupKeys.add(String(rows[r][0]));
+            }
+            for (let e = 1; e < existingData.length; e++) {
+              const liveId = String(existingData[e][0]);
+              if (!backupKeys.has(liveId)) {
+                rows.push(existingData[e]);
+              }
+            }
+          }
+        }
         sheet.clear();
       }
       if (rows && rows.length > 0) {
@@ -2833,9 +2852,9 @@ function restoreSystemBackup(payload) {
       }
     }
 
-    logStructuredEvent("ACADEMIC", "restoreSystemBackup", "WARN", "BACKUP_RESTORED", `Restauración realizada desde ${file.getName()}`, { fileId: fileId }, payload && payload.authRole);
+    logStructuredEvent("ACADEMIC", "restoreSystemBackup", "WARN", "BACKUP_RESTORED", `Restauración realizada desde ${file.getName()} (Calificaciones históricas preservadas)`, { fileId: fileId }, payload && payload.authRole);
 
-    return { status: "success", message: `Sistema restaurado con éxito desde el respaldo ${file.getName()}.` };
+    return { status: "success", message: `Sistema restaurado con éxito desde el respaldo ${file.getName()}. Calificaciones históricas preservadas.` };
   } catch (error) {
     logStructuredEvent("ACADEMIC", "restoreSystemBackup", "ERROR", "RESTORE_FAILED", error.message, payload, payload && payload.authRole);
     return { status: "error", message: error.message };

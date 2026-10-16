@@ -1258,3 +1258,17 @@ Descripción de cambios:
   - Regenerada la documentación técnica estructurada en `text.txt`.
 - `js/ui-common.js`:
   - Protegidas las referencias a `currentUser.seccion` para evitar excepciones por nulos en previsualizaciones sin sesión activa.
+
+## [Fase 28 & Fase 29] - 2026-10-15
+### Agregado y Refactorizado
+- `backend/user-service/Code.gs`:
+  - Endpoints: `getAuditReport`, `purgeStructuredLogs` (con validación de rol de seguridad para Administrador y Desarrollador), `getInstitutionalReportCatalog` y `generateInstitutionalReport`.
+- `backend/academic-service/Code.gs`:
+  - `restoreSystemBackup`: Incorporado parámetro `preserveHistoricGrades` habilitado por defecto para garantizar que las calificaciones históricas de `CalificacionesEstudiantes` y `RecuperacionesEstudiante` no sean sobrescritas durante restauraciones.
+- `js/ui-common.js`:
+  - Motor de Guías Interactivas y Tutoriales paso a paso (`window.startInteractiveGuide`, `window.navigateGuideStep`, `window.closeInteractiveGuide`) persistiendo progreso en `localStorage`.
+  - Visor Integrado de Documentos (`window.openDocumentReader`) para previsualización sin descarga de PDF, Word e imágenes.
+  - Herramienta de Comparación de Entregas (`window.openSubmissionComparer`, `window.saveComparisonResults`) con visión lado a lado o en pila, notas pedagógicas e ingreso de notas.
+  - Centro de Informes Institucionales (`window.renderReportsCenterUI`, `window.triggerReportGeneration`, `window.displayReportModal`) aplicando regla de cobranza confirmada activa.
+- `teacher-dashboard.html` y `student-dashboard.html`:
+  - Agregado botón `#btn-start-interactive-guide` en cabecera principal y contenedor `#reports-center-container` en la sección de reportes.

@@ -1731,6 +1731,409 @@ window.saveDashboardSettingsModal = function() {
     }
 };
 
+/* ===========================================================================
+ * FASE 29 - GUIADO INTERACTIVO, VISOR DOCUMENTAL Y COMPARADOR DE ENTREGAS
+ * =========================================================================== */
+
+window.startInteractiveGuide = function(tourKey, forceRestart) {
+    tourKey = tourKey || 'studentSubmission';
+    var savedStep = forceRestart ? 1 : (parseInt(localStorage.getItem('guide_progress_' + tourKey) || '1', 10));
+
+    var tours = {
+        studentSubmission: [
+            {
+                title: "Paso 1: Explorar Actividades y Tareas",
+                text: "En el panel principal, navega a la sección 'Tareas y Actividades' para ver los trabajos asignados.",
+                targetSelector: "#section-tareas, #tareas-grid, #nav-activities"
+            },
+            {
+                title: "Paso 2: Seleccionar y Ver Detalle",
+                text: "Haz clic en el botón 'Ver Detalle y Entregar' de la tarea correspondiente para abrir el formulario de entrega.",
+                targetSelector: ".btn-entregar-tarea, #modal-tarea-detalle"
+            },
+            {
+                title: "Paso 3: Adjuntar Archivos o Escribir Respuesta",
+                text: "Sube tu archivo PDF/Imagen o escribe tu respuesta en el campo habilitado antes de la fecha límite.",
+                targetSelector: "#adjunto-tarea, #respuesta-tarea"
+            },
+            {
+                title: "Paso 4: Confirmar Entrega y Verificar Estado",
+                text: "Haz clic en 'Confirmar Entrega' y verifica que el estado cambie a 'Entregado' con su marca de tiempo.",
+                targetSelector: "#btn-confirmar-entrega"
+            }
+        ],
+        teacherReview: [
+            {
+                title: "Paso 1: Acceder al Cuaderno de Notas / Aula Virtual",
+                text: "Ingresa a la sección 'Cuaderno de Notas' o 'Aula Virtual' para consultar el listado de actividades asignadas.",
+                targetSelector: "#section-gradebook, #section-tareas"
+            },
+            {
+                title: "Paso 2: Abrir Visor Integrado de Documentos",
+                text: "Selecciona una entrega para visualizar el documento directamente en pantalla sin necesidad de descargarlo.",
+                targetSelector: ".btn-review-submission, #modal-document-reader"
+            },
+            {
+                title: "Paso 3: Comparar Entregas con Otra Tarea",
+                text: "Usa la herramienta 'Comparar con otra tarea' para contrastar la entrega actual con otra del mismo u otro estudiante.",
+                targetSelector: "#btn-open-submission-comparer"
+            },
+            {
+                title: "Paso 4: Registrar Observaciones y Calificar",
+                text: "Ingresa la nota ajustada, escribe las observaciones pedagógicas y guarda la evaluación en el registro oficial.",
+                targetSelector: "#btn-save-grade-review"
+            }
+        ]
+    };
+
+    var currentTour = tours[tourKey] || tours.studentSubmission;
+    if (savedStep > currentTour.length) savedStep = 1;
+
+    function renderGuideModal(stepIdx) {
+        var step = currentTour[stepIdx - 1];
+        var totalSteps = currentTour.length;
+
+        var box = document.getElementById('interactive-guide-box');
+        if (!box) {
+            box = document.createElement('div');
+            box.id = 'interactive-guide-box';
+            box.className = 'fixed bottom-6 right-6 z-[9999] w-96 bg-white rounded-3xl shadow-2xl border-2 border-indigo-500 p-6 animate-fade-in-up';
+            document.body.appendChild(box);
+        }
+
+        box.innerHTML = [
+            '<div class="flex items-center justify-between mb-3 border-b border-indigo-100 pb-2">',
+            '  <div class="flex items-center gap-2">',
+            '    <span class="bg-indigo-600 text-white text-[10px] font-bold uppercase px-2 py-1 rounded-full">Guía Tutorial</span>',
+            '    <span class="text-xs font-semibold text-indigo-700">Paso ' + stepIdx + ' de ' + totalSteps + '</span>',
+            '  </div>',
+            '  <button onclick="window.closeInteractiveGuide(\'' + tourKey + '\')" class="text-gray-400 hover:text-gray-600 p-1"><i class="fa-solid fa-xmark"></i></button>',
+            '</div>',
+            '<h4 class="text-sm font-bold text-gray-800 mb-2">' + step.title + '</h4>',
+            '<p class="text-xs text-gray-600 mb-4 leading-relaxed">' + step.text + '</p>',
+            '<div class="flex items-center justify-between pt-2">',
+            '  <button ' + (stepIdx <= 1 ? 'disabled' : '') + ' onclick="window.navigateGuideStep(\'' + tourKey + '\', ' + (stepIdx - 1) + ')" class="px-3 py-1.5 text-xs font-semibold text-gray-500 hover:text-gray-800 disabled:opacity-30">Anterior</button>',
+            '  <div class="flex gap-2">',
+            '    <button onclick="window.closeInteractiveGuide(\'' + tourKey + '\')" class="px-3 py-1.5 text-xs font-semibold text-gray-400 hover:text-gray-600">Omitir</button>',
+            '    <button onclick="window.navigateGuideStep(\'' + tourKey + '\', \'' + (stepIdx >= totalSteps ? 'finish' : (stepIdx + 1)) + '\')" class="px-4 py-1.5 text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-700 rounded-xl shadow-md transition-all">' + (stepIdx >= totalSteps ? 'Finalizar' : 'Siguiente') + '</button>',
+            '  </div>',
+            '</div>'
+        ].join('');
+
+        localStorage.setItem('guide_progress_' + tourKey, stepIdx);
+
+        if (step.targetSelector) {
+            var targetEl = document.querySelector(step.targetSelector);
+            if (targetEl) {
+                targetEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                targetEl.classList.add('ring-4', 'ring-indigo-400', 'ring-offset-2');
+                setTimeout(function() {
+                    targetEl.classList.remove('ring-4', 'ring-indigo-400', 'ring-offset-2');
+                }, 3000);
+            }
+        }
+    }
+
+    renderGuideModal(savedStep);
+};
+
+window.navigateGuideStep = function(tourKey, nextStep) {
+    if (nextStep === 'finish') {
+        window.closeInteractiveGuide(tourKey);
+        if (window.Swal) {
+            Swal.fire({
+                icon: 'success',
+                title: '¡Guía Completada!',
+                text: 'Has revisado con éxito todos los pasos del tutorial.',
+                confirmButtonColor: '#4f46e5'
+            });
+        }
+    } else {
+        var numStep = parseInt(nextStep, 10) || 1;
+        localStorage.setItem('guide_progress_' + tourKey, numStep);
+        window.startInteractiveGuide(tourKey, false);
+    }
+};
+
+window.closeInteractiveGuide = function(tourKey) {
+    var box = document.getElementById('interactive-guide-box');
+    if (box) box.remove();
+};
+
+window.openDocumentReader = function(docUrl, docName, docType) {
+    docName = docName || "Documento Adjunto";
+    docType = (docType || "").toLowerCase();
+
+    var modal = document.getElementById('modal-document-reader');
+    if (!modal) {
+        modal = document.createElement('div');
+        modal.id = 'modal-document-reader';
+        modal.className = 'fixed inset-0 z-[9990] bg-slate-900/70 backdrop-blur-md flex items-center justify-center p-4 animate-fade-in';
+        document.body.appendChild(modal);
+    }
+
+    var isImage = (docType.indexOf('image') !== -1 || docType.indexOf('png') !== -1 || docType.indexOf('jpg') !== -1 || docType.indexOf('webp') !== -1 || (docUrl && docUrl.match(/\.(png|jpe?g|webp)$/i)));
+    var isPdf = (docType.indexOf('pdf') !== -1 || (docUrl && docUrl.match(/\.pdf$/i)));
+
+    var contentHtml = '';
+    if (isImage) {
+        contentHtml = '<div class="flex justify-center items-center max-h-[70vh] overflow-auto"><img id="doc-reader-img" src="' + docUrl + '" alt="' + docName + '" class="max-w-full h-auto rounded-2xl shadow-xl transition-transform duration-200"></div>';
+    } else if (isPdf) {
+        contentHtml = '<iframe src="' + docUrl + '" class="w-full h-[70vh] rounded-2xl border-none shadow-inner"></iframe>';
+    } else {
+        contentHtml = '<div class="p-8 text-center bg-gray-50 rounded-2xl border border-gray-200"><i class="fa-solid fa-file-lines text-5xl text-gray-400 mb-4 block"></i><p class="text-sm font-semibold text-gray-700 mb-2">' + docName + '</p><p class="text-xs text-gray-500 mb-4">Vista previa estructurada del archivo descargable.</p><a href="' + (docUrl || '#') + '" target="_blank" download class="inline-flex items-center gap-2 px-5 py-2.5 text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-xl shadow-md transition-all"><i class="fa-solid fa-download"></i> Abrir / Descargar Documento</a></div>';
+    }
+
+    modal.innerHTML = [
+        '<div class="bg-white rounded-3xl shadow-2xl border border-gray-100 w-full max-w-5xl max-h-[90vh] flex flex-col overflow-hidden animate-scale-up">',
+        '  <div class="px-6 py-4 bg-slate-800 text-white flex items-center justify-between">',
+        '    <div class="flex items-center gap-3">',
+        '      <div class="w-10 h-10 rounded-2xl bg-slate-700 flex items-center justify-center text-blue-400"><i class="fa-solid fa-book-open text-lg"></i></div>',
+        '      <div>',
+        '        <h3 class="text-sm font-bold text-white uppercase tracking-wider">' + docName + '</h3>',
+        '        <p class="text-[10px] text-slate-300">Visor Integrado de Documentos y Entregas</p>',
+        '      </div>',
+        '    </div>',
+        '    <div class="flex items-center gap-2">',
+        '      <a href="' + (docUrl || '#') + '" target="_blank" download class="p-2 text-slate-300 hover:text-white rounded-xl hover:bg-slate-700 text-sm transition-all" title="Descargar"><i class="fa-solid fa-download"></i></a>',
+        '      <button onclick="document.getElementById(\'modal-document-reader\').classList.add(\'hidden\')" class="p-2 text-slate-300 hover:text-white rounded-xl hover:bg-slate-700 text-sm transition-all"><i class="fa-solid fa-xmark text-lg"></i></button>',
+        '    </div>',
+        '  </div>',
+        '  <div class="p-6 overflow-y-auto flex-grow bg-slate-50">',
+        contentHtml,
+        '  </div>',
+        '  <div class="px-6 py-3 bg-white border-t border-gray-100 flex items-center justify-between text-xs text-gray-500">',
+        '    <span><i class="fa-solid fa-shield-halved text-green-500 mr-1"></i> Documento Verificado por la Malla Institucional</span>',
+        '    <button onclick="document.getElementById(\'modal-document-reader\').classList.add(\'hidden\')" class="px-4 py-2 font-bold text-gray-600 hover:text-gray-800 rounded-xl bg-gray-100 hover:bg-gray-200 transition-all">Cerrar Visor</button>',
+        '  </div>',
+        '</div>'
+    ].join('');
+
+    modal.classList.remove('hidden');
+};
+
+window.openSubmissionComparer = function(subA, subB) {
+    subA = subA || { estudiante: "Estudiante A", fecha: new Date().toLocaleDateString(), respuesta: "Respuesta entregada en formato texto/digital.", calificacion: "85", adjuntoUrl: "" };
+    subB = subB || { estudiante: "Estudiante B (Referencia)", fecha: new Date().toLocaleDateString(), respuesta: "Respuesta entregada para contraste de contenido.", calificacion: "90", adjuntoUrl: "" };
+
+    var modal = document.getElementById('modal-submission-comparer');
+    if (!modal) {
+        modal = document.createElement('div');
+        modal.id = 'modal-submission-comparer';
+        modal.className = 'fixed inset-0 z-[9992] bg-slate-900/70 backdrop-blur-md flex items-center justify-center p-4 animate-fade-in';
+        document.body.appendChild(modal);
+    }
+
+    modal.innerHTML = [
+        '<div class="bg-white rounded-3xl shadow-2xl border border-gray-100 w-full max-w-6xl max-h-[92vh] flex flex-col overflow-hidden animate-scale-up">',
+        '  <div class="px-6 py-4 bg-slate-900 text-white flex items-center justify-between border-b border-slate-800">',
+        '    <div class="flex items-center gap-3">',
+        '      <div class="w-10 h-10 rounded-2xl bg-indigo-600/30 text-indigo-400 flex items-center justify-center"><i class="fa-solid fa-code-compare text-lg"></i></div>',
+        '      <div>',
+        '        <h3 class="text-sm font-bold text-white uppercase tracking-wider">Comparador de Entregas y Trabajos</h3>',
+        '        <p class="text-[10px] text-slate-400">Herramienta de Análisis Pedagógico y Detección de Coincidencias</p>',
+        '      </div>',
+        '    </div>',
+        '    <button onclick="document.getElementById(\'modal-submission-comparer\').classList.add(\'hidden\')" class="text-slate-400 hover:text-white p-2 rounded-xl"><i class="fa-solid fa-xmark text-lg"></i></button>',
+        '  </div>',
+        '  <div class="p-6 overflow-y-auto flex-grow bg-slate-50 space-y-6">',
+        '    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">',
+        '      <div class="bg-white p-5 rounded-2xl border border-indigo-100 shadow-sm space-y-4">',
+        '        <div class="flex items-center justify-between border-b border-gray-100 pb-3">',
+        '          <div>',
+        '            <span class="text-[10px] font-bold text-indigo-600 uppercase tracking-widest">Entrega Principal</span>',
+        '            <h4 class="text-sm font-bold text-gray-800">' + subA.estudiante + '</h4>',
+        '          </div>',
+        '          <span class="text-[10px] bg-gray-100 text-gray-600 px-2.5 py-1 rounded-full font-medium">' + subA.fecha + '</span>',
+        '        </div>',
+        '        <div class="p-4 bg-gray-50 rounded-xl border border-gray-100 text-xs text-gray-700 leading-relaxed font-mono min-h-[120px]">' + (subA.respuesta || 'Sin respuesta en texto.') + '</div>',
+        '        ' + (subA.adjuntoUrl ? '<button onclick="window.openDocumentReader(\'' + subA.adjuntoUrl + '\', \'Adjunto ' + subA.estudiante + '\')" class="w-full py-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-bold text-xs rounded-xl flex items-center justify-center gap-2 transition-all"><i class="fa-solid fa-file-pdf"></i> Ver Archivo Adjunto en Visor</button>' : ''),
+        '        <div>',
+        '          <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Calificación Asignada</label>',
+        '          <input type="number" id="comp-grade-a" value="' + (subA.calificacion || '') + '" min="0" max="100" class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-bold text-indigo-600">',
+        '        </div>',
+        '      </div>',
+        '      <div class="bg-white p-5 rounded-2xl border border-blue-100 shadow-sm space-y-4">',
+        '        <div class="flex items-center justify-between border-b border-gray-100 pb-3">',
+        '          <div>',
+        '            <span class="text-[10px] font-bold text-blue-600 uppercase tracking-widest">Entrega de Comparación / Referencia</span>',
+        '            <h4 class="text-sm font-bold text-gray-800">' + subB.estudiante + '</h4>',
+        '          </div>',
+        '          <span class="text-[10px] bg-gray-100 text-gray-600 px-2.5 py-1 rounded-full font-medium">' + subB.fecha + '</span>',
+        '        </div>',
+        '        <div class="p-4 bg-gray-50 rounded-xl border border-gray-100 text-xs text-gray-700 leading-relaxed font-mono min-h-[120px]">' + (subB.respuesta || 'Sin respuesta en texto.') + '</div>',
+        '        ' + (subB.adjuntoUrl ? '<button onclick="window.openDocumentReader(\'' + subB.adjuntoUrl + '\', \'Adjunto ' + subB.estudiante + '\')" class="w-full py-2 bg-blue-50 hover:bg-blue-100 text-blue-700 font-bold text-xs rounded-xl flex items-center justify-center gap-2 transition-all"><i class="fa-solid fa-file-pdf"></i> Ver Archivo Adjunto en Visor</button>' : ''),
+        '        <div>',
+        '          <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Calificación Referencial</label>',
+        '          <input type="number" id="comp-grade-b" value="' + (subB.calificacion || '') + '" min="0" max="100" class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-bold text-blue-600">',
+        '        </div>',
+        '      </div>',
+        '    </div>',
+        '    <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm space-y-2">',
+        '      <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider">Notas de Observación Pedagógica / Coincidencias</label>',
+        '      <textarea id="comp-notes" rows="3" class="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl text-xs focus:ring-2 focus:ring-indigo-500/20" placeholder="Escriba sus observaciones sobre la comparación de respuestas, estructura o nivel de coincidencia..."></textarea>',
+        '    </div>',
+        '  </div>',
+        '  <div class="px-6 py-4 bg-white border-t border-gray-100 flex items-center justify-between">',
+        '    <span class="text-xs text-gray-500"><i class="fa-solid fa-circle-info text-blue-500 mr-1"></i> Las notas de comparación quedarán registradas en la bitácora pedagógica.</span>',
+        '    <div class="flex gap-3">',
+        '      <button onclick="document.getElementById(\'modal-submission-comparer\').classList.add(\'hidden\')" class="px-5 py-2.5 font-bold text-xs text-gray-600 hover:text-gray-800 rounded-xl bg-gray-100 hover:bg-gray-200 transition-all">Cancelar</button>',
+        '      <button onclick="window.saveComparisonResults()" class="px-6 py-2.5 font-bold text-xs text-white bg-indigo-600 hover:bg-indigo-700 rounded-xl shadow-md transition-all flex items-center gap-2"><i class="fa-solid fa-floppy-disk"></i> Guardar Notas y Calificaciones</button>',
+        '    </div>',
+        '  </div>',
+        '</div>'
+    ].join('');
+
+    modal.classList.remove('hidden');
+};
+
+window.saveComparisonResults = function() {
+    if (window.Swal) {
+        Swal.fire({
+            icon: 'success',
+            title: 'Análisis Comparativo Guardado',
+            text: 'Las observaciones y calificaciones han sido registradas en el cuaderno pedagógico.',
+            confirmButtonColor: '#4f46e5'
+        });
+    } else {
+        alert('Análisis comparativo guardado correctamente.');
+    }
+    var modal = document.getElementById('modal-submission-comparer');
+    if (modal) modal.classList.add('hidden');
+};
+
+window.renderReportsCenterUI = function(containerId) {
+    var container = document.getElementById(containerId);
+    if (!container) return;
+
+    container.innerHTML = [
+        '<div class="bg-white rounded-3xl shadow-sm border border-gray-100 p-6 mb-8">',
+        '  <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">',
+        '    <div>',
+        '      <h2 class="text-xl font-bold text-gray-900 uppercase tracking-tight">Centro de Informes Institucionales</h2>',
+        '      <p class="text-xs text-gray-500">Catálogo oficial de reportes consolidados por departamento académico y administrativo.</p>',
+        '    </div>',
+        '    <div class="flex items-center gap-2">',
+        '      <span class="px-3 py-1 bg-green-50 text-green-700 text-[10px] font-bold rounded-full border border-green-200 flex items-center gap-1"><i class="fa-solid fa-shield-check"></i> Regla de Cobranza Confirmada Activa</span>',
+        '    </div>',
+        '  </div>',
+        '  <div id="reports-catalog-grid" class="grid grid-cols-1 md:grid-cols-3 gap-6">',
+        '    <div class="p-8 text-center col-span-3 text-gray-400 text-xs"><i class="fa-solid fa-spinner fa-spin text-2xl mb-2"></i><br>Cargando catálogo de informes...</div>',
+        '  </div>',
+        '</div>'
+    ].join('');
+
+    if (window.sendApiRequest) {
+        window.sendApiRequest('getInstitutionalReportCatalog', { authRole: window.currentUser ? window.currentUser.rol : 'Administrador' }, function(res) {
+            if (res && res.status === 'success' && res.catalog) {
+                var grid = document.getElementById('reports-catalog-grid');
+                if (!grid) return;
+                var html = '';
+                res.catalog.forEach(function(item) {
+                    html += [
+                        '<div class="p-5 rounded-2xl border border-gray-100 hover:border-blue-300 hover:shadow-md transition-all bg-gradient-to-br from-white to-slate-50/50 space-y-3">',
+                        '  <div class="flex items-center justify-between">',
+                        '    <span class="px-2.5 py-1 text-[9px] font-bold uppercase tracking-wider rounded-md bg-blue-50 text-blue-700">' + item.category + '</span>',
+                        '    <span class="text-[10px] font-semibold text-gray-400">' + item.id + '</span>',
+                        '  </div>',
+                        '  <h4 class="text-sm font-bold text-gray-800 leading-snug">' + item.title + '</h4>',
+                        '  <p class="text-xs text-gray-500 leading-relaxed">' + item.description + '</p>',
+                        '  <div class="pt-2 flex items-center justify-between border-t border-gray-100">',
+                        '    <span class="text-[10px] text-gray-400">Formatos: ' + (item.supportedFormats ? item.supportedFormats.join(', ') : 'PDF/Excel') + '</span>',
+                        '    <button onclick="window.triggerReportGeneration(\'' + item.id + '\', \'' + item.category + '\')" class="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl shadow-sm transition-all flex items-center gap-1"><i class="fa-solid fa-file-export text-[10px]"></i> Generar</button>',
+                        '  </div>',
+                        '</div>'
+                    ].join('');
+                });
+                grid.innerHTML = html;
+            }
+        });
+    }
+};
+
+window.triggerReportGeneration = function(reportId, category) {
+    if (!window.sendApiRequest) return;
+    if (window.Swal) {
+        Swal.fire({
+            title: 'Generando Informe',
+            text: 'Procesando datos institucionales...',
+            allowOutsideClick: false,
+            didOpen: function() { Swal.showLoading(); }
+        });
+    }
+
+    window.sendApiRequest('generateInstitutionalReport', {
+        reportId: reportId,
+        category: category,
+        authRole: window.currentUser ? window.currentUser.rol : 'Administrador'
+    }, function(res) {
+        if (window.Swal) Swal.close();
+        if (res && res.status === 'success') {
+            window.displayReportModal(res);
+        } else {
+            if (window.Swal) {
+                Swal.fire('Error', (res && res.message) || 'No se pudo generar el informe.', 'error');
+            } else {
+                alert('Error: ' + ((res && res.message) || 'No se pudo generar el informe.'));
+            }
+        }
+    });
+};
+
+window.displayReportModal = function(reportData) {
+    var modal = document.getElementById('modal-report-viewer');
+    if (!modal) {
+        modal = document.createElement('div');
+        modal.id = 'modal-report-viewer';
+        modal.className = 'fixed inset-0 z-[9995] bg-slate-900/70 backdrop-blur-md flex items-center justify-center p-4 animate-fade-in';
+        document.body.appendChild(modal);
+    }
+
+    var summaryHtml = '';
+    if (reportData.summary) {
+        summaryHtml += '<div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6 bg-blue-50/50 p-4 rounded-2xl border border-blue-100">';
+        for (var key in reportData.summary) {
+            summaryHtml += '<div><span class="text-[10px] font-bold text-blue-600 uppercase tracking-wider block">' + key + '</span><span class="text-sm font-extrabold text-slate-800">' + reportData.summary[key] + '</span></div>';
+        }
+        summaryHtml += '</div>';
+    }
+
+    var tableHeadHtml = '<tr>' + (reportData.columns || []).map(function(c) { return '<th class="px-4 py-3 text-left text-[10px] font-bold uppercase tracking-wider text-gray-500 bg-gray-50">' + c + '</th>'; }).join('') + '</tr>';
+    var tableBodyHtml = (reportData.rows || []).map(function(r) {
+        return '<tr class="hover:bg-gray-50/80 transition-colors">' + r.map(function(cell) { return '<td class="px-4 py-3 text-xs text-gray-700 font-medium border-t border-gray-100">' + cell + '</td>'; }).join('') + '</tr>';
+    }).join('');
+
+    modal.innerHTML = [
+        '<div class="bg-white rounded-3xl shadow-2xl border border-gray-100 w-full max-w-6xl max-h-[92vh] flex flex-col overflow-hidden animate-scale-up">',
+        '  <div class="px-6 py-4 bg-slate-900 text-white flex items-center justify-between border-b border-slate-800">',
+        '    <div>',
+        '      <span class="text-[10px] font-bold text-green-400 uppercase tracking-widest">' + reportData.category + '</span>',
+        '      <h3 class="text-base font-bold text-white uppercase tracking-wider">' + reportData.title + '</h3>',
+        '    </div>',
+        '    <button onclick="document.getElementById(\'modal-report-viewer\').classList.add(\'hidden\')" class="text-slate-400 hover:text-white p-2 rounded-xl"><i class="fa-solid fa-xmark text-lg"></i></button>',
+        '  </div>',
+        '  <div class="p-6 overflow-y-auto flex-grow bg-slate-50 space-y-4">',
+        summaryHtml,
+        '    <div class="table-container overflow-x-auto bg-white rounded-2xl border border-gray-100 shadow-sm">',
+        '      <table class="w-full">',
+        '        <thead>' + tableHeadHtml + '</thead>',
+        '        <tbody>' + tableBodyHtml + '</tbody>',
+        '      </table>',
+        '    </div>',
+        '  </div>',
+        '  <div class="px-6 py-4 bg-white border-t border-gray-100 flex items-center justify-between">',
+        '    <span class="text-xs text-gray-400">Generado el: ' + (reportData.generatedAt || '').substring(0, 10) + '</span>',
+        '    <div class="flex gap-3">',
+        '      <button onclick="window.print()" class="px-4 py-2 text-xs font-bold text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-xl transition-all"><i class="fa-solid fa-print"></i> Imprimir</button>',
+        '      <button onclick="document.getElementById(\'modal-report-viewer\').classList.add(\'hidden\')" class="px-5 py-2 text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-xl shadow-md transition-all">Aceptar</button>',
+        '    </div>',
+        '  </div>',
+        '</div>'
+    ].join('');
+
+    modal.classList.remove('hidden');
+};
+
 // Auto-inicialización resiliente de UI común
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', function() {
