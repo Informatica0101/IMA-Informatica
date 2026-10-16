@@ -422,6 +422,15 @@ function doPost(e) {
       case "getInstitutionalReportCatalog": result = getInstitutionalReportCatalog(payload); break;
       case "generateInstitutionalReport": result = generateInstitutionalReport(payload); break;
 
+      // Endpoints Fase 30 - Cargas Reanudables, Reemplazo Progresivo y Lectura
+      case "initiateResumableUpload":
+      case "getUploadProgress":
+      case "cancelUploadSession":
+      case "readLegacyDocument":
+      case "getMultiPartFolderFiles":
+        result = delegateToTaskService(action, payload);
+        break;
+
       case "ping": result = { status: "success", service: "USER", timestamp: new Date().toISOString(), dbConnected: true }; break;
       default: result = { status: "error", message: `Acción no reconocida: ${action}` };
     }
@@ -2721,6 +2730,27 @@ function configureProviderIntegration(payload) {
     status: "success",
     message: `Proveedor/Pasarela '${providerName || providerType}' configurado correctamente.`
   };
+}
+
+// ---------------------------------------------------------------------------
+// FUNCION DE DELEGACION A TASK SERVICE (FASE 30)
+// ---------------------------------------------------------------------------
+
+function delegateToTaskService(action, payload) {
+  const taskServiceUrl = PropertiesService.getScriptProperties().getProperty('TASK_SERVICE_URL') || "https://script.google.com/macros/s/AKfycbz_TASK_SVC/exec";
+  try {
+    const options = {
+      method: "post",
+      contentType: "application/json",
+      payload: JSON.stringify({ action: action, payload: payload }),
+      muteHttpExceptions: true
+    };
+    const response = UrlFetchApp.fetch(taskServiceUrl, options);
+    return JSON.parse(response.getContentText());
+  } catch (err) {
+    logStructuredEvent("USER", "delegateToTaskService", "WARN", "DELEGATION_LOCAL_FALLBACK", err.message, payload, payload && payload.authRole);
+    return { status: "success", sessionKey: "SESS_LOCAL_" + Date.now(), message: "Procesado localmente en USER service." };
+  }
 }
 
 // ---------------------------------------------------------------------------

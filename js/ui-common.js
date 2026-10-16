@@ -1860,7 +1860,7 @@ window.closeInteractiveGuide = function(tourKey) {
     if (box) box.remove();
 };
 
-window.openDocumentReader = function(docUrl, docName, docType) {
+window.openDocumentReader = function(docUrl, docName, docType, fileId) {
     docName = docName || "Documento Adjunto";
     docType = (docType || "").toLowerCase();
 
@@ -1874,15 +1874,10 @@ window.openDocumentReader = function(docUrl, docName, docType) {
 
     var isImage = (docType.indexOf('image') !== -1 || docType.indexOf('png') !== -1 || docType.indexOf('jpg') !== -1 || docType.indexOf('webp') !== -1 || (docUrl && docUrl.match(/\.(png|jpe?g|webp)$/i)));
     var isPdf = (docType.indexOf('pdf') !== -1 || (docUrl && docUrl.match(/\.pdf$/i)));
+    var isFolder = (docType === 'folder' || docType.indexOf('folder') !== -1);
+    var isLegacyWord = (docType.indexOf('doc') !== -1 || docType.indexOf('rtf') !== -1 || docType.indexOf('odt') !== -1 || docType.indexOf('txt') !== -1);
 
-    var contentHtml = '';
-    if (isImage) {
-        contentHtml = '<div class="flex justify-center items-center max-h-[70vh] overflow-auto"><img id="doc-reader-img" src="' + docUrl + '" alt="' + docName + '" class="max-w-full h-auto rounded-2xl shadow-xl transition-transform duration-200"></div>';
-    } else if (isPdf) {
-        contentHtml = '<iframe src="' + docUrl + '" class="w-full h-[70vh] rounded-2xl border-none shadow-inner"></iframe>';
-    } else {
-        contentHtml = '<div class="p-8 text-center bg-gray-50 rounded-2xl border border-gray-200"><i class="fa-solid fa-file-lines text-5xl text-gray-400 mb-4 block"></i><p class="text-sm font-semibold text-gray-700 mb-2">' + docName + '</p><p class="text-xs text-gray-500 mb-4">Vista previa estructurada del archivo descargable.</p><a href="' + (docUrl || '#') + '" target="_blank" download class="inline-flex items-center gap-2 px-5 py-2.5 text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-xl shadow-md transition-all"><i class="fa-solid fa-download"></i> Abrir / Descargar Documento</a></div>';
-    }
+    var contentHtml = '<div class="p-8 text-center text-gray-400 text-xs"><i class="fa-solid fa-spinner fa-spin text-3xl mb-2"></i><br>Cargando vista previa continua del documento...</div>';
 
     modal.innerHTML = [
         '<div class="bg-white rounded-3xl shadow-2xl border border-gray-100 w-full max-w-5xl max-h-[90vh] flex flex-col overflow-hidden animate-scale-up">',
@@ -1891,7 +1886,7 @@ window.openDocumentReader = function(docUrl, docName, docType) {
         '      <div class="w-10 h-10 rounded-2xl bg-slate-700 flex items-center justify-center text-blue-400"><i class="fa-solid fa-book-open text-lg"></i></div>',
         '      <div>',
         '        <h3 class="text-sm font-bold text-white uppercase tracking-wider">' + docName + '</h3>',
-        '        <p class="text-[10px] text-slate-300">Visor Integrado de Documentos y Entregas</p>',
+        '        <p class="text-[10px] text-slate-300">Visor Unificado de Documentos Continuos</p>',
         '      </div>',
         '    </div>',
         '    <div class="flex items-center gap-2">',
@@ -1899,7 +1894,7 @@ window.openDocumentReader = function(docUrl, docName, docType) {
         '      <button onclick="document.getElementById(\'modal-document-reader\').classList.add(\'hidden\')" class="p-2 text-slate-300 hover:text-white rounded-xl hover:bg-slate-700 text-sm transition-all"><i class="fa-solid fa-xmark text-lg"></i></button>',
         '    </div>',
         '  </div>',
-        '  <div class="p-6 overflow-y-auto flex-grow bg-slate-50">',
+        '  <div id="doc-reader-body" class="p-6 overflow-y-auto flex-grow bg-slate-50 space-y-4">',
         contentHtml,
         '  </div>',
         '  <div class="px-6 py-3 bg-white border-t border-gray-100 flex items-center justify-between text-xs text-gray-500">',
@@ -1910,6 +1905,191 @@ window.openDocumentReader = function(docUrl, docName, docType) {
     ].join('');
 
     modal.classList.remove('hidden');
+
+    var bodyEl = document.getElementById('doc-reader-body');
+
+    if (isFolder && fileId && window.sendApiRequest) {
+        // Multi-part folder rendering continuously
+        window.sendApiRequest('getMultiPartFolderFiles', { folderId: fileId }, function(res) {
+            if (res && res.status === 'success' && res.files && res.files.length > 0) {
+                var streamHtml = '<div class="space-y-6">';
+                res.files.forEach(function(f, idx) {
+                    streamHtml += [
+                        '<div class="p-4 bg-white rounded-2xl border border-gray-200 shadow-sm space-y-2">',
+                        '  <div class="flex items-center justify-between text-[10px] text-gray-400 border-b border-gray-100 pb-1">',
+                        '    <span class="font-bold text-indigo-600 uppercase">Sección ' + (idx + 1) + ' de ' + res.files.length + '</span>',
+                        '    <span>' + f.name + '</span>',
+                        '  </div>',
+                        '  <iframe src="' + f.url + '" class="w-full h-[60vh] rounded-xl border-none"></iframe>',
+                        '</div>'
+                    ].join('');
+                });
+                streamHtml += '</div>';
+                if (bodyEl) bodyEl.innerHTML = streamHtml;
+            } else {
+                if (bodyEl) bodyEl.innerHTML = '<div class="p-6 text-center text-gray-500 text-xs">No se pudieron cargar las partes del documento.</div>';
+            }
+        });
+    } else if (isLegacyWord && window.sendApiRequest) {
+        // Legacy Word format extraction
+        window.sendApiRequest('readLegacyDocument', { fileId: fileId, fileUrl: docUrl, format: docType }, function(res) {
+            if (res && res.status === 'success') {
+                if (bodyEl) {
+                    bodyEl.innerHTML = '<div class="p-6 bg-white rounded-2xl border border-gray-200 text-xs font-mono text-gray-800 leading-relaxed overflow-auto max-h-[70vh] whitespace-pre-wrap">' + (res.content || "Sin contenido de texto.") + '</div>';
+                }
+            } else if (res && res.errorCode === 'CORRUPTED_FILE') {
+                if (bodyEl) {
+                    bodyEl.innerHTML = [
+                        '<div class="p-8 text-center bg-amber-50 rounded-2xl border border-amber-200 space-y-3">',
+                        '  <i class="fa-solid fa-triangle-exclamation text-4xl text-amber-500"></i>',
+                        '  <h4 class="text-sm font-bold text-amber-800">No se pudo abrir el archivo de forma directa</h4>',
+                        '  <p class="text-xs text-amber-700">El documento puede estar protegido con contraseña o en un formato antiguo dañado. Puedes descargarlo para abrirlo en tu aplicación local.</p>',
+                        '  <a href="' + (res.downloadUrl || docUrl || '#') + '" target="_blank" download class="inline-flex items-center gap-2 px-5 py-2 bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs rounded-xl shadow-md transition-all"><i class="fa-solid fa-download"></i> Descargar Documento Original</a>',
+                        '</div>'
+                    ].join('');
+                }
+            } else {
+                if (bodyEl) bodyEl.innerHTML = '<div class="p-8 text-center text-gray-500 text-xs">No se pudo generar la vista previa. Abre o descarga el archivo directamente.</div>';
+            }
+        });
+    } else if (isImage) {
+        if (bodyEl) bodyEl.innerHTML = '<div class="flex justify-center items-center max-h-[70vh] overflow-auto"><img src="' + docUrl + '" alt="' + docName + '" class="max-w-full h-auto rounded-2xl shadow-xl"></div>';
+    } else if (isPdf) {
+        if (bodyEl) bodyEl.innerHTML = '<iframe src="' + docUrl + '" class="w-full h-[70vh] rounded-2xl border-none shadow-inner"></iframe>';
+    } else {
+        if (bodyEl) bodyEl.innerHTML = '<div class="p-8 text-center bg-gray-50 rounded-2xl border border-gray-200"><i class="fa-solid fa-file-lines text-5xl text-gray-400 mb-4 block"></i><p class="text-sm font-semibold text-gray-700 mb-2">' + docName + '</p><p class="text-xs text-gray-500 mb-4">Vista previa de lectura continua.</p><a href="' + (docUrl || '#') + '" target="_blank" download class="inline-flex items-center gap-2 px-5 py-2.5 text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-xl shadow-md transition-all"><i class="fa-solid fa-download"></i> Abrir / Descargar Documento</a></div>';
+    }
+};
+
+/**
+ * Cliente Unificado de Carga Reanudable por Puntos de Control (Fase 30)
+ */
+window.uploadResumableFile = function(file, options, callbacks) {
+    options = options || {};
+    callbacks = callbacks || {};
+
+    var chunkSize = options.chunkSize || (5 * 1024 * 1024);
+    var fileSize = file.size;
+    var fileName = file.name;
+    var totalChunks = Math.ceil(fileSize / chunkSize);
+    var userId = options.userId || (window.currentUser ? window.currentUser.id : 'usuario_anonimo');
+
+    var fileHash = fileName + "_" + fileSize + "_" + userId;
+    var localStorageKey = "upload_session_" + btoa(fileHash).replace(/=/g, '');
+    var savedSessionKey = localStorage.getItem(localStorageKey);
+
+    function startUploadSession(sessionKeyToUse, isReplace) {
+        if (callbacks.onProgress) callbacks.onProgress(0, "Iniciando carga reanudable...", 0);
+
+        window.sendApiRequest('initiateResumableUpload', {
+            userId: userId,
+            fileName: fileName,
+            fileSize: fileSize,
+            totalChunks: totalChunks,
+            mimeType: file.type || 'application/octet-stream',
+            fileHash: fileHash,
+            resumeSessionKey: (!isReplace && sessionKeyToUse) ? sessionKeyToUse : null,
+            replaceSessionKey: (isReplace && sessionKeyToUse) ? sessionKeyToUse : null
+        }, function(initRes) {
+            if (!initRes || initRes.status !== 'success') {
+                if (callbacks.onError) callbacks.onError((initRes && initRes.message) || "No se pudo iniciar la sesión de carga.");
+                return;
+            }
+
+            var sessionKey = initRes.sessionKey;
+            localStorage.setItem(localStorageKey, sessionKey);
+            var confirmedChunks = initRes.confirmedChunks || [];
+
+            processChunkQueue(sessionKey, confirmedChunks, 0, Date.now());
+        });
+    }
+
+    function processChunkQueue(sessionKey, confirmedChunks, chunkIndex, startTime) {
+        if (chunkIndex >= totalChunks) {
+            localStorage.removeItem(localStorageKey);
+            if (callbacks.onSuccess) callbacks.onSuccess({ sessionKey: sessionKey, totalChunks: totalChunks, isCompleted: true });
+            return;
+        }
+
+        if (confirmedChunks.indexOf(chunkIndex) !== -1) {
+            var percent = Math.round(((confirmedChunks.length) / totalChunks) * 100);
+            if (callbacks.onProgress) callbacks.onProgress(percent, "Parte " + (chunkIndex + 1) + " ya confirmada.", 0);
+            processChunkQueue(sessionKey, confirmedChunks, chunkIndex + 1, startTime);
+            return;
+        }
+
+        var start = chunkIndex * chunkSize;
+        var end = Math.min(start + chunkSize, fileSize);
+        var blobChunk = file.slice(start, end);
+
+        var reader = new FileReader();
+        reader.onload = function(e) {
+            var chunkData = e.target.result.split(',')[1];
+            var currentPercent = Math.round((chunkIndex / totalChunks) * 100);
+
+            if (callbacks.onProgress) callbacks.onProgress(currentPercent, "Subiendo parte " + (chunkIndex + 1) + " de " + totalChunks + "...", 30);
+
+            window.sendApiRequest('uploadChunk', {
+                sessionKey: sessionKey,
+                chunkIndex: chunkIndex,
+                totalChunks: totalChunks,
+                chunkData: chunkData,
+                fileName: fileName
+            }, function(chunkRes) {
+                if (chunkRes && chunkRes.status === 'success') {
+                    confirmedChunks = chunkRes.confirmedChunks || confirmedChunks;
+                    var elapsedMs = Date.now() - startTime;
+                    var chunksDone = confirmedChunks.length;
+                    var remainingChunks = totalChunks - chunksDone;
+                    var avgChunkMs = elapsedMs / (chunksDone || 1);
+                    var etaSec = Math.round((remainingChunks * avgChunkMs) / 1000);
+
+                    var etaText = etaSec > 60 ? ("Quedan aprox. " + Math.ceil(etaSec / 60) + " minutos") : ("Quedan aprox. " + etaSec + " segundos");
+                    var updatedPercent = Math.round((chunksDone / totalChunks) * 100);
+
+                    if (callbacks.onProgress) callbacks.onProgress(updatedPercent, "Parte " + (chunkIndex + 1) + " confirmada. " + etaText, etaSec);
+
+                    processChunkQueue(sessionKey, confirmedChunks, chunkIndex + 1, startTime);
+                } else {
+                    var errorMsg = (chunkRes && chunkRes.message) || "Se perdió la conexión durante la transferencia de la parte " + (chunkIndex + 1) + ".";
+                    if (callbacks.onError) callbacks.onError(errorMsg, sessionKey, chunkIndex);
+                }
+            });
+        };
+        reader.onerror = function() {
+            if (callbacks.onError) callbacks.onError("Error al leer el archivo local.");
+        };
+        reader.readAsDataURL(blobChunk);
+    }
+
+    if (savedSessionKey) {
+        if (window.Swal) {
+            Swal.fire({
+                title: 'Carga Interrumpida Detectada',
+                text: 'Se encontró una subida previa de "' + fileName + '". ¿Deseas reanudarla desde el último punto o empezar de nuevo?',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonText: 'Reintentar Carga',
+                cancelButtonText: 'Empezar de nuevo',
+                confirmButtonColor: '#2563eb',
+                cancelButtonColor: '#dc2626'
+            }).then(function(result) {
+                if (result.isConfirmed) {
+                    startUploadSession(savedSessionKey, false); // RESUME saved session
+                } else if (result.dismiss === Swal.DismissReason.cancel) {
+                    startUploadSession(savedSessionKey, true); // REPLACE old session
+                }
+            });
+        } else {
+            if (confirm('Se encontró una subida previa de "' + fileName + '". ¿Deseas reanudar la carga?')) {
+                startUploadSession(savedSessionKey, false);
+            } else {
+                startUploadSession(savedSessionKey, true);
+            }
+        }
+    } else {
+        startUploadSession(null, false);
+    }
 };
 
 window.openSubmissionComparer = function(subA, subB) {

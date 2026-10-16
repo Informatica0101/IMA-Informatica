@@ -1690,8 +1690,26 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 var fileSize = currentFile.size;
 
-                // REQ: Segmentación Libre de Corrupción (Tarea 1: Reingeniería)
-                if (fileSize >= CHUNK_THRESHOLD) {
+                if (window.uploadResumableFile && fileSize >= CHUNK_THRESHOLD) {
+                    await new Promise(function(resolveUpload, rejectUpload) {
+                        window.uploadResumableFile(currentFile, {
+                            userId: currentUser.userId || currentUser.id,
+                            chunkSize: CHUNK_SIZE
+                        }, {
+                            onProgress: function(percent, statusMsg, etaSec) {
+                                if (progressBar) progressBar.style.width = percent + '%';
+                                if (progressSpan) progressSpan.textContent = statusMsg;
+                            },
+                            onError: function(err) {
+                                rejectUpload(new Error(err));
+                            },
+                            onSuccess: function(res) {
+                                uploadResult = { status: 'success', data: { fileId: res.sessionKey, folderId: res.sessionKey, mimeType: 'folder' } };
+                                resolveUpload();
+                            }
+                        });
+                    });
+                } else if (fileSize >= CHUNK_THRESHOLD) {
                     var totalChunks = Math.ceil(fileSize / CHUNK_SIZE);
                     var segments = [];
 

@@ -514,3 +514,22 @@ MÓDULOS EVALUADOS:
 - Se requiere un Visor Integrado de Documentos (PDF, Word, Imágenes) en modal y una Herramienta de Comparación de Entregas ("Comparar con otra tarea") que permita contrastar dos entregas lado a lado o en pila con notas de observación y calificación directa.
 - Se requiere potenciar el Importador Universal de Excel con soporte de importación adaptado por rol y reconocimiento de encabezados multinivel/agrupados.
 - Todas las etiquetas, guías y mensajes deben cumplir estrictamente con la Política de Lenguaje Comprensible para usuarios no técnicos.
+
+===============================================================================
+AUDITORÍA DE IMPLEMENTACIÓN - FASE 30: VISUALIZACIÓN DE DOCUMENTOS ANTIGUOS, CARGAS REANUDABLES Y RECUPERACIÓN SEGURA DE ARCHIVOS
+===============================================================================
+FECHA: 2026-10-15
+MÓDULOS EVALUADOS:
+- backend/user-service/Code.gs
+- backend/academic-service/Code.gs
+- backend/accounting-service/Code.gs
+- backend/task-service/Code.gs
+- teacher-dashboard.html, student-dashboard.html
+- js/teacher.js, js/student.js, js/accounting.js, js/ui-common.js
+
+1. HALLAZGOS DE AUDITORÍA
+- Se constató la existencia de fragmentado previo de PDF por chunks en `js/student.js`, pero carecía de control de sesiones de carga reanudable con hash de huella digital, reanudación desde el último chunk confirmado y reemplazo progresivo de partes antiguas ("Empezar de nuevo").
+- Se requiere un protocolo backend unificado (`initiateResumableUpload`, `uploadChunk`, `getUploadProgress`, `cancelUploadSession`, `reconstructFileParts`) para gestionar el estado de bloques confirmados y evitar duplicados en Google Drive.
+- Para la regla "Empezar de nuevo", se determinó que las partes anteriores deben conservarse intactas hasta que los nuevos bloques reemplazantes queden 100% confirmados en backend.
+- Se identificó la necesidad de un Visor Unificado de Documentos (`window.openDocumentReader`) con ordenamiento numérico natural estricto (Evitando que 'Parte 10' aparezca antes que 'Parte 2') y soporte para documentos antiguos de Word (`.doc`, `.docx`, `.rtf`, `.txt`, `.odt`) con extracción limpia de contenido y tablas.
+- El cliente de carga en frontend debe presentar estimación de tiempo restante (ETA), porcentaje de avance real, avisos de prevención ante cambio de pestaña y diálogos simples de error en lenguaje comprensible sin exponer detalles técnicos ni identificadores internos.
