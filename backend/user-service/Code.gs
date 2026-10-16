@@ -265,6 +265,7 @@ const ROLE_PERMISSIONS = {
   "Contador": ["getStudents", "getUserInfo", "getNews", "getInstitutionalAnnouncements", "getUserNotifications", "markNotificationAsRead", "getAdministrativeRequests", "submitAdministrativeRequest"],
   "RecursosHumanos": ["getStudents", "getUserInfo", "getNews", "getInstitutionalAnnouncements", "getUserNotifications", "markNotificationAsRead", "getAdministrativeRequests", "submitAdministrativeRequest", "createNews", "getInternalMessages", "sendInternalMessage"],
   "Empleado": ["getUserInfo", "getNews", "getInstitutionalAnnouncements", "getUserNotifications", "markNotificationAsRead", "getAdministrativeRequests", "submitAdministrativeRequest", "getInternalMessages", "sendInternalMessage"],
+  "Coordinador": ["getStudents", "getStudentsByGradoSeccion", "getUserInfo", "getLearningProfile", "getNews", "getInstitutionalCriteria", "getFormativeEvaluations", "getSupportPlans", "getInstitutionalAnnouncements", "getInternalMessages", "sendInternalMessage", "getUserNotifications", "markNotificationAsRead", "getAppointmentBookings", "updateAppointmentStatus", "getCoordinatorOverview", "assignTeacherToSection", "designateGuideTeacher", "saveClassSchedules", "generateAutoSchedules"],
   "Consejeros": ["getStudents", "getStudentsByGradoSeccion", "getUserInfo", "getLearningProfile", "getNews", "getInstitutionalCriteria", "getFormativeEvaluations", "saveFormativeEvaluation", "getSupportPlans", "saveSupportPlan", "getInstitutionalAnnouncements", "getInternalMessages", "sendInternalMessage", "getUserNotifications", "markNotificationAsRead", "getAppointmentBookings", "updateAppointmentStatus"],
   "Profesor": [
     "getStudents", "getStudentsByGradoSeccion", "getUserInfo", "getNews", "createNews", "uploadNewsImage", "saveGameResult", "getGameStats", "getGlobalTop", "recordAnalytics", "getLearningProfile", "mergeGuestData",
@@ -695,6 +696,25 @@ function getStudentsByGradoSeccion(payload) {
 function getUserInfo(payload) {
   const r = getSheetOrThrow(SpreadsheetApp.openById(SPREADSHEET_ID), "Usuarios").getDataRange().getValues().find(r => String(r[0]) === String(payload.userId));
   if (!r) throw new Error("Usuario no encontrado.");
+  const callerRole = getUserVerifiedRole(payload);
+  const callerId = payload && payload.currentUser && payload.currentUser.userId;
+  const isTargetAdmin = (r[6] === "Administrador" || r[6] === "Desarrollador");
+
+  if (isTargetAdmin && callerRole !== "Administrador" && callerRole !== "Desarrollador" && String(callerId) !== String(r[0])) {
+    return {
+      status: "success",
+      data: {
+        userId: r[0],
+        nombre: "Administrador del Sistema",
+        email: "***PROTEGIDO***",
+        rol: r[6],
+        telefono: "***PROTEGIDO***",
+        personaId: "***PROTEGIDO***",
+        estadoCuenta: "Activa"
+      }
+    };
+  }
+
   return { status: "success", data: { userId: r[0], nombre: r[1], email: r[4], rol: r[6], telefono: r[7] || "", personaId: r[9] || "", estadoCuenta: r[10] || "Activa" } };
 }
 
@@ -2569,7 +2589,7 @@ function saveSystemConfiguration(payload) {
         "ACTIVO",
         "1.0",
         now,
-        authRole
+        verifiedRole
       ]]);
       updated = true;
       break;
@@ -2590,7 +2610,7 @@ function saveSystemConfiguration(payload) {
       "ACTIVO",
       "1.0",
       now,
-      authRole
+      verifiedRole
     ]);
   }
 
@@ -2665,7 +2685,7 @@ function configureProviderIntegration(payload) {
         now,
         "",
         now,
-        authRole
+        verifiedRole
       ]]);
       updated = true;
       break;
@@ -2687,7 +2707,7 @@ function configureProviderIntegration(payload) {
       now,
       "",
       now,
-      authRole
+      verifiedRole
     ]);
   }
 

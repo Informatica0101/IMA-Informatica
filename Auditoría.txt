@@ -470,3 +470,25 @@ ARCHIVOS EVALUADOS E IMPLEMENTADOS:
 2. VERIFICACIÓN DE SEGURIDAD Y INTEGRIDAD
 - Verificación sintáctica con 'node --input-type=module -c' y 'node -c' en frontend y backend aprobada sin errores.
 - Verificación visual mediante Playwright completada con capturas de pantalla en '/home/jules/verification/screenshots/workflow_builder.png' y '/home/jules/verification/screenshots/workflow_decision.png'.
+
+===============================================================================
+AUDITORÍA DE IMPLEMENTACIÓN - FASE 28: CONTROL ACADÉMICO, HISTORIAL DE CALIFICACIONES, ROLES, HORARIOS, IMPORTACIÓN DE EXCEL E INTEGRACIÓN FINANCIERA
+===============================================================================
+FECHA: 2026-10-15
+MÓDULOS EVALUADOS:
+- backend/user-service/Code.gs
+- backend/academic-service/Code.gs
+- backend/accounting-service/Code.gs
+- backend/exam-service/Code.gs
+- backend/task-service/Code.gs
+- teacher-dashboard.html, dashboard-direccion.html, dashboard-contabilidad.html
+- js/teacher.js, js/accounting.js, js/ui-common.js
+
+1. HALLAZGOS DE AUDITORÍA
+- Se identificó la necesidad de separar el archivado operativo anual (.zip) de la preservación de calificaciones oficiales, asegurando que las notas históricas nunca se eliminen.
+- Se verificó que las calificaciones de años escolares anteriores deben ser 100% inalterables en backend para TODOS los roles.
+- Se identificó la regla de protección de calificaciones para docentes que también son padres de sus propios alumnos.
+- Se identificó la protección de privacidad de la cuenta Administrador/Desarrollador.
+- Se constató la necesidad del rol y dashboard del Coordinador Académico, asignación docente (1 sección principal por profesor por año lectivo), maestría guía y generador de horarios con bloques continuos de asignaturas multi-unidad.
+- Se identificó el módulo de importación universal de Excel (.xlsx) con mapeo de columnas y pre-validación.
+- Se identificó la necesidad de idempotencia en pagos financieros y de sanitización de textos para política de lenguaje comprensible.

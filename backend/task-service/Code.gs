@@ -146,6 +146,7 @@ function doPost(e) {
       case "listProjects": response = listProjects(payload); break;
       case "loadProject": response = loadProject(payload); break;
       case "getAllStudentProjects": response = getAllStudentProjects(payload); break;
+      case "generateAcademicArchiveZip": response = generateAcademicArchiveZip(payload); break;
       case "closeAcademicYear": response = closeAcademicYear(payload); break;
       case "getVirtualClassrooms": response = getVirtualClassrooms(payload); break;
       case "createVirtualClassroom": response = createVirtualClassroom(payload); break;

@@ -1443,13 +1443,30 @@ function getStudentAccountStatement(payload) {
 }
 
 function recordStudentPayment(payload) {
-  const { userId, cargoId, concepto, montoAbono, metodoPago, referencia, observaciones } = payload || {};
+  const { userId, cargoId, concepto, montoAbono, metodoPago, referencia, idempotencyKey, tokenTransaccion, observaciones } = payload || {};
   if (!userId || montoAbono === undefined || parseFloat(montoAbono) <= 0) throw new Error("userId y montoAbono válido son requeridos.");
 
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
   const sUserId = String(userId).trim();
   const abono = parseFloat(montoAbono);
   const now = new Date();
+  const key = idempotencyKey || tokenTransaccion || referencia;
+
+  const pagoSheet = getOrCreateSheet(ss, "PagosAbonos");
+  const pagosData = pagoSheet.getDataRange().getValues();
+
+  if (key && String(key).trim() !== "") {
+    const existing = pagosData.slice(1).find(r => String(r[7]).trim() === String(key).trim() || String(r[0]).trim() === String(key).trim());
+    if (existing) {
+      return {
+        status: "success",
+        idempotentReplay: true,
+        pagoId: existing[0],
+        reciboId: existing[9] || ("REC-" + existing[0]),
+        message: "Transacción de pago ya procesada anteriormente."
+      };
+    }
+  }
 
   const cargosSheet = getOrCreateSheet(ss, "CargosEstudiante");
   const cargosData = cargosSheet.getDataRange().getValues();
@@ -1467,7 +1484,6 @@ function recordStudentPayment(payload) {
     targetCargo = cargosData[targetCargoIndex];
   }
 
-  const pagoSheet = getOrCreateSheet(ss, "PagosAbonos");
   const pagoId = "PAG-" + now.getTime();
   const reciboId = "REC-" + Math.floor(100000 + Math.random() * 900000);
 
@@ -1479,7 +1495,7 @@ function recordStudentPayment(payload) {
     concepto || (targetCargo ? targetCargo[3] : "Abono a Cuenta"),
     abono,
     metodoPago || "Efectivo",
-    referencia || "Depósito/Transferencia",
+    key || referencia || "Depósito/Transferencia",
     "Confirmado",
     reciboId,
     observaciones || ""

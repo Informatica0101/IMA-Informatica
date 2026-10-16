@@ -130,6 +130,7 @@
                 <button id="nav-logros" class="flex-none px-4 py-2 rounded-xl font-semibold transition-all text-[10px] uppercase tracking-widest bg-gray-100 text-gray-500">Logros</button>
                 <button id="nav-news" class="flex-none px-4 py-2 rounded-xl font-semibold transition-all text-[10px] uppercase tracking-widest bg-gray-100 text-gray-500">Noticias</button>
                 <button id="nav-admin" class="flex-none px-4 py-2 rounded-xl font-semibold transition-all text-[10px] uppercase tracking-widest bg-gray-100 text-gray-500">Administración</button>
+                <button id="nav-coordinacion" class="flex-none px-4 py-2 rounded-xl font-semibold transition-all text-[10px] uppercase tracking-widest bg-gray-100 text-gray-500"><i class="fa-solid fa-graduation-cap mr-1"></i> Coordinación y Horarios</button>
                 <button id="nav-plantillas" class="flex-none px-4 py-2 rounded-xl font-semibold transition-all text-[10px] uppercase tracking-widest bg-gray-100 text-gray-500"><i class="fa-solid fa-file-pen mr-1"></i> Diseñador de Plantillas</button>
             </nav>
 
@@ -1251,6 +1252,81 @@
                 </div>
             </section>
 
+            <!-- SECTION COORDINACIÓN Y HORARIOS -->
+            <section id="section-coordinacion" class="animate-fade-in-up hidden space-y-6">
+                <div class="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div>
+                        <span class="px-3 py-1 bg-blue-50 text-blue-700 rounded-full text-[10px] font-black uppercase tracking-widest">Coordinación Académica & Horarios</span>
+                        <h2 class="text-xl md:text-2xl font-black text-gray-900 uppercase tracking-tight mt-1">Gestión de Cargas Lectivas, Maestros Guía y Horarios</h2>
+                        <p class="text-xs text-gray-500 font-medium">Asignación docente (1 sección principal por profesor), distribución de unidades consecutivas y resolución de conflictos.</p>
+                    </div>
+                    <div class="flex flex-wrap items-center gap-2">
+                        <button id="btn-open-auto-scheduler" class="px-4 py-2.5 bg-indigo-600 text-white rounded-2xl font-bold text-xs uppercase tracking-wider hover:bg-indigo-700 transition-all shadow-md">
+                            <i class="fa-solid fa-wand-magic-sparkles mr-1"></i> Generador Automático
+                        </button>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Formulario de Asignación Docente -->
+                    <div class="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm space-y-4">
+                        <h3 class="text-sm font-bold text-gray-800 uppercase tracking-wider border-b border-gray-100 pb-2">
+                            <i class="fa-solid fa-user-plus text-blue-600 mr-1"></i> Asignar Encargado o Maestro Guía
+                        </h3>
+                        <div>
+                            <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Año Lectivo</label>
+                            <input type="text" id="coord-ano-lectivo" value="2025" class="w-full text-xs p-2.5 bg-gray-50 border border-gray-200 rounded-xl font-medium">
+                        </div>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Grado</label>
+                                <select id="coord-grado-select" class="w-full text-xs p-2.5 bg-white border border-gray-200 rounded-xl font-medium">
+                                    <option value="Séptimo">7° Grado</option>
+                                    <option value="Octavo">8° Grado</option>
+                                    <option value="Noveno">9° Grado</option>
+                                    <option value="Décimo">10° Grado</option>
+                                    <option value="Undécimo">11° Grado</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Sección</label>
+                                <select id="coord-seccion-select" class="w-full text-xs p-2.5 bg-white border border-gray-200 rounded-xl font-medium">
+                                    <option value="A">Sección A</option>
+                                    <option value="B">Sección B</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Docente Asignado</label>
+                            <input type="text" id="coord-docente-id" placeholder="ID del Docente (ej: USR-DOC-01)" class="w-full text-xs p-2.5 bg-white border border-gray-200 rounded-xl font-medium">
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <input type="checkbox" id="coord-es-maestro-guia" class="rounded border-gray-300 text-blue-600">
+                            <label for="coord-es-maestro-guia" class="text-xs font-semibold text-gray-700">Designar como Maestro Guía Principal de la Sección</label>
+                        </div>
+                        <button id="btn-save-coord-assignment" class="w-full py-3 bg-blue-600 text-white rounded-xl font-bold text-xs uppercase tracking-widest hover:bg-blue-700 transition-all shadow-md">
+                            Guardar Asignación Docente
+                        </button>
+                    </div>
+
+                    <!-- Resumen de Horarios y Conflictos -->
+                    <div class="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm space-y-4">
+                        <h3 class="text-sm font-bold text-gray-800 uppercase tracking-wider border-b border-gray-100 pb-2">
+                            <i class="fa-solid fa-calendar-days text-indigo-600 mr-1"></i> Estado del Horario Institucional
+                        </h3>
+                        <div class="p-4 bg-slate-50 border border-slate-200 rounded-2xl text-xs space-y-2">
+                            <p class="font-bold text-slate-800">Parámetros Lectivos Activos:</p>
+                            <p class="text-slate-600"><strong>Duración Unidad Académica:</strong> 45 minutos</p>
+                            <p class="text-slate-600"><strong>Hora Inicio Lectiva:</strong> 07:30 AM</p>
+                            <p class="text-slate-600"><strong>Regla Bloques Consecutivos:</strong> Habilitada para asignaturas de 2+ unidades.</p>
+                        </div>
+                        <div id="coord-overview-summary" class="p-4 bg-emerald-50 border border-emerald-200 rounded-2xl text-xs text-emerald-800">
+                            <strong>Estado:</strong> Sin conflictos de horarios ni aula detectados.
+                        </div>
+                    </div>
+                </div>
+            </section>
+
             <!-- SECTION PLANTILLAS: Diseñador Universal de Documentos y Plantillas -->
             <section id="section-plantillas" class="animate-fade-in-up hidden">
                 <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6 bg-white p-6 rounded-3xl border border-gray-100 shadow-sm">
@@ -1260,6 +1336,9 @@
                         <p class="text-xs text-gray-500 font-medium">Administración, edición, previsualización y generación de constancias, certificados y documentos institucionales.</p>
                     </div>
                     <div class="flex flex-wrap items-center gap-2">
+                        <button id="btn-open-excel-importer" class="px-4 py-2.5 bg-emerald-600 text-white rounded-2xl font-bold text-xs uppercase tracking-wider hover:bg-emerald-700 transition-all shadow-md">
+                            <i class="fa-solid fa-file-excel mr-1"></i> Importar Excel (.xlsx)
+                        </button>
                         <button id="btn-import-template-base" class="px-4 py-2.5 bg-gray-100 text-gray-700 rounded-2xl font-bold text-xs uppercase tracking-wider hover:bg-gray-200 transition-all">
                             <i class="fa-solid fa-file-import mr-1"></i> Importar Base
                         </button>
@@ -2273,7 +2352,7 @@
 
                     <div class="pt-2 border-t border-slate-100 flex items-center gap-2">
                         <input type="checkbox" id="decision-include-signature" class="rounded border-slate-300 text-emerald-600 focus:ring-emerald-500">
-                        <label for="decision-include-signature" class="font-bold text-slate-700 text-xs">Emitir Conformidad Digital Institucional con Token Único de Verificación</label>
+                        <label for="decision-include-signature" class="font-bold text-slate-700 text-xs">Generar constancia de aprobación digital con código de verificación</label>
                     </div>
                 </div>
             </div>
@@ -2316,7 +2395,45 @@
         </div>
     </div>
 
-    <!-- Libraries for PDF Visual Designer & Overlay Editor (Phase 23) -->
+    <!-- Modal Importador Universal de Excel (.xlsx) (Fase 28) -->
+    <div id="modal-excel-importer" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-[90] flex items-center justify-center p-2 md:p-4 hidden">
+        <div class="bg-white rounded-3xl max-w-2xl w-full p-6 shadow-2xl border border-slate-100 space-y-4 animate-fade-in-up">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                <div class="flex items-center gap-2">
+                    <i class="fa-solid fa-file-excel text-emerald-600 text-xl"></i>
+                    <h3 class="font-bold text-slate-800 text-sm">Importador Universal de Archivos Excel (.xlsx)</h3>
+                </div>
+                <button id="btn-close-excel-importer" class="text-slate-400 hover:text-slate-600 p-1"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            <div class="space-y-3">
+                <div>
+                    <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Módulo Destino</label>
+                    <select id="excel-target-module" class="w-full text-xs p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-medium">
+                        <option value="Docentes">Docentes / Calificaciones</option>
+                        <option value="Secretaria">Secretaría / Matrícula & Expedientes</option>
+                        <option value="Contabilidad">Contabilidad / Cobros & Transacciones</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Seleccionar Archivo Excel (.xlsx)</label>
+                    <input type="file" id="excel-file-input" accept=".xlsx, .xls, .csv" class="w-full text-xs p-2 bg-white border border-slate-200 rounded-xl">
+                </div>
+                <div id="excel-preview-container" class="hidden space-y-2">
+                    <h4 class="text-xs font-bold text-slate-700">Vista Previa e Inspección de Filas:</h4>
+                    <div id="excel-preview-summary" class="p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-600">
+                        Cargando archivo...
+                    </div>
+                </div>
+            </div>
+            <div class="pt-3 border-t border-slate-100 flex justify-end gap-2">
+                <button id="btn-cancel-excel-import" class="px-4 py-2 bg-slate-100 text-slate-600 rounded-xl font-bold text-xs uppercase hover:bg-slate-200">Cancelar</button>
+                <button id="btn-submit-excel-import" class="px-5 py-2 bg-emerald-600 text-white rounded-xl font-bold text-xs uppercase hover:bg-emerald-700 shadow-md">Confirmar Importación</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Libraries for PDF Visual Designer & Overlay Editor (Phase 23) and SheetJS (Phase 28) -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
     <script>

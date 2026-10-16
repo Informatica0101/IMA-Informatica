@@ -1152,3 +1152,16 @@
 - [X] `[REQ-PDF-004]` Panel de Propiedades y Vinculación con Fuentes Institucionales Autorizadas (`{{estudiante.nombreCompleto}}`, etc.).
 - [X] `[REQ-PDF-005]` Estampado y Generación Oficial de PDF con Datos Reales, Token `VERIF-XXXXXX` e indexación en Google Drive.
 - [X] `[REQ-PDF-006]` Trazabilidad total, auditoría backend, gestión de versiones y resiliencia ante errores de almacenamiento.
+
+---
+
+## REQUERIMIENTOS DE CONTROL ACADÉMICO, HISTORIAL DE CALIFICACIONES, ROLES, HORARIOS, IMPORTACIÓN DE EXCEL E INTEGRACIÓN FINANCIERA (FASE 28)
+- [X] `[REQ-F28-001]` Conservación y archivado anual de contenido operativo (.zip) con manifiesto de integridad sin alterar el libro de notas oficial.
+- [X] `[REQ-F28-002]` Inalterabilidad absoluta de calificaciones de años escolares anteriores en backend para todos los roles de la plataforma.
+- [X] `[REQ-F28-003]` Bloqueo de calificaciones al cerrar periodos de evaluación y protección de edición para cuentas con doble rol (Docente + Padre).
+- [X] `[REQ-F28-004]` Protección estricta de la privacidad de la cuenta del Administrador/Desarrollador principal frente a consultas de usuarios ordinarios.
+- [X] `[REQ-F28-005]` Módulo y dashboard de Coordinación Académica para asignación docente (límite 1 sección principal por profesor por año lectivo) y maestro guía.
+- [X] `[REQ-F28-006]` Generador y validador de horarios de clase con distribución de unidades consecutivas, prevención de colisiones de docentes/aulas y eventos especiales.
+- [X] `[REQ-F28-007]` Importador universal de archivos Excel (.xlsx) con flujo de mapeo de columnas, vista previa pre-validada y verificación en servidor.
+- [X] `[REQ-F28-008]` Idempotencia en transacciones financieras para evitar cobros o abonos duplicados en reintentos o eventos repetidos.
+- [X] `[REQ-F28-009]` Aplicación obligatoria de la Política de Lenguaje Comprensible (Plain Language) en todos los textos e interfaces visibles para el usuario final.

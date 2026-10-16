@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // (A-29) Centralizar capacidades por rol
     const RoleCapabilities = {
         canGrade: (user) => user && (user.rol === 'Profesor' || user.rol === 'Administrador' || user.rol === 'Director' || user.rol === 'Subdirector' || user.rol === 'Secretaria'),
-        canManageExams: (user) => user && (user.rol === 'Profesor' || user.rol === 'Administrador' || user.rol === 'Director' || user.rol === 'Subdirector' || user.rol === 'Secretaria')
+        canManageExams: (user) => user && (user.rol === 'Profesor' || user.rol === 'Coordinador' || user.rol === 'Administrador' || user.rol === 'Director' || user.rol === 'Subdirector' || user.rol === 'Secretaria')
     };
 
     let submissionsTableBody = document.getElementById('submissions-table-body');
@@ -28,6 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const navLogros = document.getElementById('nav-logros');
     const navNews = document.getElementById('nav-news');
     const navAdmin = document.getElementById('nav-admin');
+    const navCoordinacion = document.getElementById('nav-coordinacion');
     const navReportsOld = document.getElementById('nav-reportes');
     const navPlantillas = document.getElementById('nav-plantillas');
 
@@ -43,6 +44,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const sectionNews = document.getElementById('section-news');
     const sectionAdmin = document.getElementById('section-admin');
     const sectionReportes = document.getElementById('section-reportes');
+    const sectionCoordinacion = document.getElementById('section-coordinacion');
     const sectionPlantillas = document.getElementById('section-plantillas');
 
     const tareasListView = document.getElementById('tareas-list-view');
@@ -145,6 +147,58 @@ document.addEventListener('DOMContentLoaded', () => {
     navAdmin.addEventListener('click', () => {
         window.navigateTo(sectionAdmin, navAdmin);
         loadAcademicAdminData();
+    });
+
+    navCoordinacion?.addEventListener('click', () => {
+        window.navigateTo(sectionCoordinacion, navCoordinacion);
+    });
+
+    navPlantillas?.addEventListener('click', () => {
+        window.navigateTo(sectionPlantillas, navPlantillas);
+    });
+
+    document.getElementById('btn-save-coord-assignment')?.addEventListener('click', async () => {
+        const anoLectivo = document.getElementById('coord-ano-lectivo')?.value || '2025';
+        const grado = document.getElementById('coord-grado-select')?.value;
+        const seccion = document.getElementById('coord-seccion-select')?.value;
+        const docenteUserId = document.getElementById('coord-docente-id')?.value;
+        const esMaestroGuia = document.getElementById('coord-es-maestro-guia')?.checked;
+
+        if (!docenteUserId) {
+            alert('Por favor ingrese el ID del docente.');
+            return;
+        }
+
+        try {
+            const resp = await apiCall({
+                action: 'assignTeacherToSection',
+                anoLectivo, grado, seccion, docenteUserId, esMaestroGuia
+            }, 'ACADEMIC');
+
+            if (resp && resp.status === 'success') {
+                alert(resp.message || 'Asignación guardada con éxito.');
+            } else {
+                alert('Error al guardar asignación: ' + (resp?.message || 'Error desconocido'));
+            }
+        } catch (e) {
+            alert('Error de asignación: ' + e.message);
+        }
+    });
+
+    document.getElementById('btn-open-auto-scheduler')?.addEventListener('click', async () => {
+        try {
+            const resp = await apiCall({
+                action: 'generateAutoSchedules',
+                anoLectivo: '2025',
+                duracionUnidadMinutos: 45,
+                horaInicioLectiva: '07:30'
+            }, 'ACADEMIC');
+            if (resp && resp.status === 'success') {
+                alert('Generador de Horarios: ' + resp.message);
+            }
+        } catch (e) {
+            alert('Error en generador de horarios: ' + e.message);
+        }
     });
 
     let confirmedAssignments = [];
@@ -5125,6 +5179,80 @@ function toBase64(file) {
     window.openChannelConfigModal = openChannelConfigModal;
 
     document.getElementById('btn-open-channel-config')?.addEventListener('click', () => openChannelConfigModal());
+
+    // ---------------------------------------------------------------------------
+    // FASE 28: IMPORTADOR UNIVERSAL DE ARCHIVOS EXCEL (.xlsx) Y BINDINGS
+    // ---------------------------------------------------------------------------
+    const modalExcelImporter = document.getElementById('modal-excel-importer');
+    const fileInputExcel = document.getElementById('excel-file-input');
+    let parsedExcelData = [];
+
+    document.getElementById('btn-open-excel-importer')?.addEventListener('click', () => {
+        parsedExcelData = [];
+        if (fileInputExcel) fileInputExcel.value = '';
+        document.getElementById('excel-preview-container')?.classList.add('hidden');
+        modalExcelImporter?.classList.remove('hidden');
+    });
+
+    document.getElementById('btn-close-excel-importer')?.addEventListener('click', () => modalExcelImporter?.classList.add('hidden'));
+    document.getElementById('btn-cancel-excel-import')?.addEventListener('click', () => modalExcelImporter?.classList.add('hidden'));
+
+    fileInputExcel?.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = (evt) => {
+            try {
+                if (window.XLSX) {
+                    const data = new Uint8Array(evt.target.result);
+                    const workbook = XLSX.read(data, { type: 'array' });
+                    const firstSheetName = workbook.SheetNames[0];
+                    const worksheet = workbook.Sheets[firstSheetName];
+                    parsedExcelData = XLSX.utils.sheet_to_json(worksheet, { defval: "" });
+
+                    const summaryElem = document.getElementById('excel-preview-summary');
+                    const previewContainer = document.getElementById('excel-preview-container');
+                    if (summaryElem) {
+                        summaryElem.innerHTML = `<strong>Total de Filas Leídas:</strong> ${parsedExcelData.length}<br><strong>Columnas Detectadas:</strong> ${Object.keys(parsedExcelData[0] || {}).join(', ')}`;
+                    }
+                    if (previewContainer) previewContainer.classList.remove('hidden');
+                } else {
+                    alert("Biblioteca XLSX no disponible.");
+                }
+            } catch (err) {
+                alert("Error al leer archivo Excel: " + err.message);
+            }
+        };
+        reader.readAsArrayBuffer(file);
+    });
+
+    document.getElementById('btn-submit-excel-import')?.addEventListener('click', async () => {
+        if (!parsedExcelData || parsedExcelData.length === 0) {
+            alert("Por favor seleccione un archivo Excel válido con datos.");
+            return;
+        }
+
+        const targetModule = document.getElementById('excel-target-module')?.value || 'Docentes';
+        try {
+            const resp = await apiCall({
+                action: 'importDataWithColumnMapping',
+                nombreArchivo: 'importacion.xlsx',
+                destinoModulo: targetModule,
+                columnaMapeo: { identificador: Object.keys(parsedExcelData[0] || {})[0] || 'ID' },
+                filasData: parsedExcelData
+            }, 'ACCOUNTING');
+
+            if (resp && resp.status === 'success') {
+                alert(`¡Importación Completada!\nFilas Procesadas Exitosamente: ${resp.exitosas || parsedExcelData.length}`);
+                modalExcelImporter?.classList.add('hidden');
+            } else {
+                alert('Error al importar datos: ' + (resp?.message || 'Error desconocido'));
+            }
+        } catch (err) {
+            alert('Error al procesar importación: ' + err.message);
+        }
+    });
 
 });
 /**
