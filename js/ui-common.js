@@ -3784,3 +3784,242 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }, 1200);
 });
+
+/* ==========================================================================
+   UNIVERSAL CONFIGURABLE CHART COMPONENT (FASE GRÁFICAS E INDICADORES)
+   ========================================================================== */
+window.chartPalettes = {
+    'institucional': { primary: '#2563eb', bg: 'rgba(37, 99, 235, 0.15)', border: '#1d4ed8', list: ['#2563eb', '#10b981', '#f59e0b', '#8b5cf6', '#ec4899', '#06b6d4'] },
+    'esmeralda': { primary: '#10b981', bg: 'rgba(16, 185, 129, 0.15)', border: '#047857', list: ['#10b981', '#059669', '#047857', '#34d399', '#6ee7b7', '#a7f3d0'] },
+    'indigo': { primary: '#6366f1', bg: 'rgba(99, 102, 241, 0.15)', border: '#4338ca', list: ['#6366f1', '#4f46e5', '#3730a3', '#818cf8', '#a5b4fc', '#c7d2fe'] },
+    'amber': { primary: '#f59e0b', bg: 'rgba(245, 158, 11, 0.15)', border: '#b45309', list: ['#f59e0b', '#d97706', '#b45309', '#fbbf24', '#fde68a', '#fef3c7'] },
+    'monocromo': { primary: '#475569', bg: 'rgba(71, 85, 105, 0.15)', border: '#1e293b', list: ['#334155', '#475569', '#64748b', '#94a3b8', '#cbd5e1', '#e2e8f0'] }
+};
+
+window.activeUniversalCharts = window.activeUniversalCharts || {};
+
+window.renderUniversalConfigurableChart = function(containerId, options) {
+    var container = document.getElementById(containerId);
+    if (!container) return;
+
+    options = options || {};
+    var category = options.chartCategory || 'ACADEMICO';
+    var title = options.title || 'Indicador de Rendimiento';
+    var subtitle = options.subtitle || 'Visualización de datos institucionales';
+    var labels = options.labels || [];
+    var rawData = options.data || [];
+    var defaultType = options.defaultType || 'bar';
+    var currentPaletteKey = options.paletteKey || 'institucional';
+    var isTableView = !!options.showTableFirst;
+
+    var chartKey = containerId + '_chart';
+
+    var html = '' +
+        '<div class="bg-white p-5 md:p-6 rounded-[2rem] border border-slate-200 shadow-sm space-y-4">' +
+            '<div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-slate-100 pb-3">' +
+                '<div>' +
+                    '<span class="inline-block px-2.5 py-0.5 bg-slate-100 text-slate-600 rounded-full text-[10px] font-black uppercase tracking-wider mb-1">' +
+                        category +
+                    '</span>' +
+                    '<h4 class="text-sm md:text-base font-black text-slate-900 uppercase tracking-tight">' + title + '</h4>' +
+                    '<p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">' + subtitle + '</p>' +
+                '</div>' +
+                '<!-- Controles de Configuración de Gráfica -->' +
+                '<div class="flex flex-wrap items-center gap-2 text-xs font-bold">' +
+                    '<select id="ctrl-type-' + containerId + '" class="p-1.5 bg-slate-50 border border-slate-200 rounded-lg font-bold text-slate-700 text-[11px] outline-none">' +
+                        '<option value="bar" ' + (defaultType==='bar'?'selected':'') + '>📊 Barras Verticales</option>' +
+                        '<option value="horizontalBar" ' + (defaultType==='horizontalBar'?'selected':'') + '>📏 Barras Horizontales</option>' +
+                        '<option value="line" ' + (defaultType==='line'?'selected':'') + '>📈 Líneas de Tendencia</option>' +
+                        '<option value="doughnut" ' + (defaultType==='doughnut'?'selected':'') + '>🍩 Sectores / Dona</option>' +
+                        '<option value="radar" ' + (defaultType==='radar'?'selected':'') + '>🕸️ Radial Multidimensional</option>' +
+                    '</select>' +
+                    '<select id="ctrl-palette-' + containerId + '" class="p-1.5 bg-slate-50 border border-slate-200 rounded-lg font-bold text-slate-700 text-[11px] outline-none">' +
+                        '<option value="institucional" ' + (currentPaletteKey==='institucional'?'selected':'') + '>🎨 Azul Institucional</option>' +
+                        '<option value="esmeralda" ' + (currentPaletteKey==='esmeralda'?'selected':'') + '>🌿 Verde Esmeralda</option>' +
+                        '<option value="indigo" ' + (currentPaletteKey==='indigo'?'selected':'') + '>🔮 Índigo Noble</option>' +
+                        '<option value="amber" ' + (currentPaletteKey==='amber'?'selected':'') + '>📙 Ámbar Cobre</option>' +
+                        '<option value="monocromo" ' + (currentPaletteKey==='monocromo'?'selected':'') + '>🔘 Monocromo Sobrio</option>' +
+                    '</select>' +
+                    '<button id="btn-toggle-view-' + containerId + '" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-[11px] uppercase tracking-wider transition-all flex items-center gap-1">' +
+                        '<i class="fas ' + (isTableView ? 'fa-chart-bar' : 'fa-table') + '"></i> ' + (isTableView ? 'Gráfica' : 'Tabla') +
+                    '</button>' +
+                '</div>' +
+            '</div>' +
+
+            '<!-- Area de Gráfica / Tabla -->' +
+            '<div id="view-chart-area-' + containerId + '" class="' + (isTableView ? 'hidden' : '') + ' h-64 md:h-72 relative">' +
+                '<canvas id="canvas-' + containerId + '"></canvas>' +
+            '</div>' +
+
+            '<div id="view-table-area-' + containerId + '" class="' + (isTableView ? '' : 'hidden') + ' max-h-64 overflow-y-auto border border-slate-100 rounded-xl p-2 bg-slate-50/50">' +
+                '<table class="w-full text-left text-xs font-semibold text-slate-700">' +
+                    '<thead class="text-[10px] uppercase font-black text-slate-400 border-b border-slate-200 bg-slate-100">' +
+                        '<tr><th class="p-2">Categoría / Ítem</th><th class="p-2 text-right">Valor / Resultado</th></tr>' +
+                    '</thead>' +
+                    '<tbody>' +
+                        (labels.map(function(lbl, idx) {
+                            var val = (rawData[idx] !== undefined && rawData[idx] !== null) ? rawData[idx] : 'N/A';
+                            return '<tr class="border-b border-slate-100 hover:bg-white"><td class="p-2 font-bold">' + lbl + '</td><td class="p-2 text-right font-black text-slate-900">' + val + '</td></tr>';
+                        }).join('') || '<tr><td colspan="2" class="p-4 text-center text-slate-400">Sin datos para mostrar en la tabla.</td></tr>') +
+                    '</tbody>' +
+                '</table>' +
+            '</div>' +
+        '</div>';
+
+    container.innerHTML = html;
+
+    if (!labels || labels.length === 0 || !rawData || rawData.length === 0) {
+        var chartArea = document.getElementById('view-chart-area-' + containerId);
+        if (chartArea) {
+            chartArea.innerHTML = '<div class="h-full flex items-center justify-center text-slate-400 text-xs font-bold uppercase tracking-wider bg-slate-50/50 rounded-2xl border border-dashed border-slate-200"><i class="fas fa-info-circle mr-2 text-slate-300"></i> No existen registros suficientes para esta categoría</div>';
+        }
+        return;
+    }
+
+    function renderChartInstance(type, paletteKey) {
+        var ctx = document.getElementById('canvas-' + containerId)?.getContext('2d');
+        if (!ctx) return;
+
+        if (window.activeUniversalCharts[chartKey]) {
+            window.activeUniversalCharts[chartKey].destroy();
+        }
+
+        var pal = window.chartPalettes[paletteKey] || window.chartPalettes['institucional'];
+        var isHorizontal = type === 'horizontalBar';
+        var actualType = isHorizontal ? 'bar' : type;
+
+        var bgColors = (actualType === 'doughnut' || actualType === 'pie' || actualType === 'polarArea') ? pal.list : pal.bg;
+        var borderColors = (actualType === 'doughnut' || actualType === 'pie' || actualType === 'polarArea') ? '#ffffff' : pal.border;
+
+        var chartConfig = {
+            type: actualType,
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: title,
+                    data: rawData,
+                    backgroundColor: bgColors,
+                    borderColor: borderColors,
+                    borderWidth: 2,
+                    tension: 0.35,
+                    fill: actualType === 'line'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                indexAxis: isHorizontal ? 'y' : 'x',
+                plugins: {
+                    legend: {
+                        display: (actualType === 'doughnut' || actualType === 'pie' || actualType === 'radar'),
+                        position: 'bottom',
+                        labels: { font: { family: 'Inter', size: 10, weight: 'bold' } }
+                    }
+                },
+                scales: (actualType === 'doughnut' || actualType === 'pie' || actualType === 'radar') ? {} : {
+                    y: { beginAtZero: true, grid: { color: 'rgba(226, 232, 240, 0.6)' }, ticks: { font: { family: 'Inter', size: 10, weight: 'bold' } } },
+                    x: { grid: { display: false }, ticks: { font: { family: 'Inter', size: 10, weight: 'bold' } } }
+                }
+            }
+        };
+
+        window.activeUniversalCharts[chartKey] = new Chart(ctx, chartConfig);
+    }
+
+    if (!isTableView) {
+        renderChartInstance(defaultType, currentPaletteKey);
+    }
+
+    // Handlers
+    var typeSelect = document.getElementById('ctrl-type-' + containerId);
+    var paletteSelect = document.getElementById('ctrl-palette-' + containerId);
+    var toggleBtn = document.getElementById('btn-toggle-view-' + containerId);
+
+    if (typeSelect) {
+        typeSelect.addEventListener('change', function() {
+            renderChartInstance(typeSelect.value, paletteSelect ? paletteSelect.value : 'institucional');
+        });
+    }
+
+    if (paletteSelect) {
+        paletteSelect.addEventListener('change', function() {
+            renderChartInstance(typeSelect ? typeSelect.value : 'bar', paletteSelect.value);
+        });
+    }
+
+    if (toggleBtn) {
+        toggleBtn.addEventListener('click', function() {
+            var chartView = document.getElementById('view-chart-area-' + containerId);
+            var tableView = document.getElementById('view-table-area-' + containerId);
+            if (!chartView || !tableView) return;
+
+            if (chartView.classList.contains('hidden')) {
+                chartView.classList.remove('hidden');
+                tableView.classList.add('hidden');
+                toggleBtn.innerHTML = '<i class="fas fa-table mr-1"></i> Tabla';
+                renderChartInstance(typeSelect ? typeSelect.value : 'bar', paletteSelect ? paletteSelect.value : 'institucional');
+            } else {
+                chartView.classList.add('hidden');
+                tableView.classList.remove('hidden');
+                toggleBtn.innerHTML = '<i class="fas fa-chart-bar mr-1"></i> Gráfica';
+            }
+        });
+    }
+};
+
+window.openAnalyticsChartModal = function(chartCategory) {
+    chartCategory = chartCategory || 'DESEMPEÑO ACADÉMICO';
+    var modalId = 'modal-universal-analytics-chart';
+    var modal = document.getElementById(modalId);
+    if (!modal) {
+        modal = document.createElement('div');
+        modal.id = modalId;
+        modal.className = 'fixed inset-0 z-[9995] bg-slate-900/80 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto';
+        modal.innerHTML = '' +
+            '<div class="bg-white rounded-[2rem] border border-slate-100 shadow-2xl max-w-3xl w-full p-6 md:p-8 space-y-6 relative animate-fade-in">' +
+                '<div class="flex items-center justify-between border-b border-slate-100 pb-4">' +
+                    '<div>' +
+                        '<span class="inline-block px-3 py-1 bg-blue-50 text-blue-600 rounded-full text-[10px] font-black uppercase tracking-widest mb-1">Módulo Analítico</span>' +
+                        '<h3 class="text-xl font-black text-slate-900 uppercase tracking-tight" id="analytics-modal-title">Gráficas e Indicadores</h3>' +
+                    '</div>' +
+                    '<button onclick="document.getElementById(\'' + modalId + '\').classList.add(\'hidden\')" class="w-8 h-8 rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200 flex items-center justify-center font-bold text-sm transition-all">' +
+                        '<i class="fas fa-times"></i>' +
+                    '</button>' +
+                '</div>' +
+                '<div id="modal-chart-widget-container">' +
+                    '<!-- Componente rendered por renderUniversalConfigurableChart -->' +
+                '</div>' +
+                '<div class="pt-2 border-t border-slate-100 text-right">' +
+                    '<button onclick="document.getElementById(\'' + modalId + '\').classList.add(\'hidden\')" class="px-5 py-2.5 bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs uppercase tracking-wider rounded-xl shadow-md transition-all">' +
+                        'Cerrar' +
+                    '</button>' +
+                '</div>' +
+            '</div>';
+        document.body.appendChild(modal);
+    } else {
+        modal.classList.remove('hidden');
+    }
+
+    var sampleLabels = ['Español', 'Matemáticas', 'Inglés', 'Ciencias Naturales', 'Estudios Sociales', 'Informática'];
+    var sampleData = [88, 92, 85, 90, 87, 96];
+
+    if (chartCategory === 'ASISTENCIA') {
+        sampleLabels = ['Asistencia Presencial', 'Excusas Justificadas', 'Tardanzas', 'Inasistencias'];
+        sampleData = [94, 3, 2, 1];
+    } else if (chartCategory === 'PARTICIPACION') {
+        sampleLabels = ['Tareas Entregadas a Tiempo', 'Entregas Tardías (50%)', 'Guías Consultadas', 'Exámenes Completados'];
+        sampleData = [18, 2, 12, 4];
+    } else if (chartCategory === 'ADMINISTRATIVO') {
+        sampleLabels = ['I Parcial', 'II Parcial', 'III Parcial', 'IV Parcial'];
+        sampleData = [89.5, 91.2, 93.0, 94.8];
+    }
+
+    window.renderUniversalConfigurableChart('modal-chart-widget-container', {
+        chartCategory: chartCategory,
+        title: 'Indicadores de ' + chartCategory,
+        subtitle: 'Análisis detallado de rendimiento e indicadores institucionales',
+        labels: sampleLabels,
+        data: sampleData,
+        defaultType: chartCategory === 'ASISTENCIA' ? 'doughnut' : 'bar'
+    });
+};

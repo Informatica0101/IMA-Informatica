@@ -1,5 +1,30 @@
 ## TAREAS PENDIENTES
 
+## TAREAS PENDIENTES DE REVISIÓN
+
+### [REQ-FAM-001] Gestión Familiar Multiestudiante y Sistema de Gráficas e Indicadores Configurables
+- **Origen del Hallazgo:** Auditoria.txt (Mon Jul 6 2026 - Nueva Fase de Gestión Familiar Multiestudiante y Gráficas Configurables)
+- **Severidad/Clasificación:** Crítico
+- **Archivos Involucrados:** `student-dashboard.html`, `teacher-dashboard.html`, `dashboard-contabilidad.html`, `js/student.js`, `js/teacher.js`, `js/accounting.js`, `js/ui-common.js`, `backend/user-service/Code.gs`, `backend/academic-service/Code.gs`, `backend/accounting-service/Code.gs`
+- **Dependencias Expuestas:** `ResponsablesTutores`, `RelacionesEstudianteTutor`, `PagosAbonos`, `TarifasPlanPago`, `CargosEstudiante`, `Chart.js`, `student-radar-chart`
+- **Descripción del Alcance:**
+  1. Permitir la gestión unificada de familias con múltiples estudiantes desde el Portal Familiar (`js/student.js`, `student-dashboard.html`). Selector de hijos visible con fotos, grado, sección, estado de matrícula e indicadores de pendientes.
+  2. Implementar la Vista Familiar Consolidada (resumen general con recuento de tareas, saldos, notas, solicitudes y becas) manteniendo el origen individual de cada dato.
+  3. Desglosar la gestión económica familiar: resumen consolidado, estados de cuenta individuales por estudiante, distribución explícita de pagos conjuntos sin duplicar saldos y consulta/solicitud de becas y descuentos familiares e individuales.
+  4. Clasificar y separar las 5 categorías de gráficas (A. Minijuegos, B. Desempeño Académico, C. Participación, D. Asistencia y Comportamiento, E. Informes Administrativos).
+  5. Preservar la funcionalidad del gráfico radial existente sin reemplazarlo ni duplicarlo.
+  6. Crear un componente de gráficas e indicadores configurables reutilizable (`window.renderUniversalConfigurableChart`) con opciones de personalización de tipo, colores, escalas, vistas tabulares alternativas y controles responsive para móviles/escritorio.
+  7. Aplicar permisos por rol (RBAC) en servidor y cliente para asegurar el aislamiento de datos.
+- **Criterios de Aceptación:**
+  - Selector de estudiante y resumen consolidado familiar operando sin mezclar expedientes individuales.
+  - Pagos conjuntos multihijo distribuidos explícitamente sin duplicar importes en los estados de cuenta.
+  - Becas y descuentos diferenciados por alcance (individual vs. familiar).
+  - Componente de gráficas dinámicas con tipos múltiples (barras, líneas, áreas, sectores, radial), personalización de colores y alternativas tabulares.
+  - Separación estricta entre estadísticas de minijuegos y notas oficiales.
+  - Gráfico radial conservado e integrado.
+  - Permisos por rol validados en backend.
+- **Estado:** [/] Pendiente de Revisión
+
 ### [REQ-LEGAL-001] Términos y Condiciones de Uso v1.0 y Modal de Aceptación Obligatoria al Iniciar Sesión
 - **Origen del Hallazgo:** Auditoria.txt (Mon Jul 6 2026 - Módulo de Términos y Condiciones de Uso)
 - **Severidad/Clasificación:** Crítico
@@ -15,9 +40,7 @@
   - El modal de primer inicio de sesión aparece de forma preventiva y no se puede cerrar sin presionar "Aceptar Términos".
   - El enlace a los términos abre la lectura completa y permite retornar.
   - La aceptación se registra en `AceptacionesPoliticas` mediante `acceptLegalDocument`.
-- **Estado:** [ ] En Ejecución
-
-## TAREAS PENDIENTES DE REVISIÓN
+- **Estado:** [/] Pendiente de Revisión
 
 ### [REQ-SCHED-001] Configuración del Año Escolar, Jornadas, Horarios, Control Laboral, Horas Extras y Actividades Institucionales
 - **Origen del Hallazgo:** Auditoria.txt (Mon Jul 6 2026 - Nueva Fase de Configuración del Año Escolar, Horarios, Control Laboral y Actividades)

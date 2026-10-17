@@ -672,7 +672,7 @@ const ROLE_PERMISSIONS = {
   ],
   "Responsable": [
     "getUserInfo", "getNews", "getInstitutionalCriteria", "getFormativeEvaluations", "getSupportPlans",
-    "acceptLinkInvitation", "getGuardianStudents", "getInstitutionalAnnouncements", "getInternalMessages", "sendInternalMessage", "getUserNotifications", "getUnifiedNotifications", "markNotificationAsRead", "getAdministrativeRequests", "submitAdministrativeRequest", "submitStudentAbsenceJustification", "getStudentAbsenceJustifications", "getInstitutionalForms", "submitInstitutionalFormRequest", "getAppointmentBookings", "bookAppointment", "getInstitutionalCalendarEvents", "getPendingReminders"
+    "acceptLinkInvitation", "getGuardianStudents", "getFamilyConsolidatedSummary", "submitJointFamilyPayment", "getFamilyScholarships", "submitFamilyScholarshipApplication", "getInstitutionalAnnouncements", "getInternalMessages", "sendInternalMessage", "getUserNotifications", "getUnifiedNotifications", "markNotificationAsRead", "getAdministrativeRequests", "submitAdministrativeRequest", "submitStudentAbsenceJustification", "getStudentAbsenceJustifications", "getInstitutionalForms", "submitInstitutionalFormRequest", "getAppointmentBookings", "bookAppointment", "getInstitutionalCalendarEvents", "getPendingReminders"
   ],
   "Director": [
     "createNews", "uploadNewsImage", "getNews", "updateNewsStatus", "getStudents", "getStudentsByGradoSeccion", "getUserInfo", "saveGameResult", "getGameStats", "getGlobalTop", "recordAnalytics", "getLearningProfile", "mergeGuestData", "updateUserProfile", "findPersonMatches", "createPerson", "linkPersonAccount", "manageAccountState", "generateInstitutionalId",
@@ -801,6 +801,10 @@ function doPost(e) {
       case "createLinkInvitation": result = createLinkInvitation(payload); break;
       case "acceptLinkInvitation": result = acceptLinkInvitation(payload); break;
       case "getGuardianStudents": result = getGuardianStudents(payload); break;
+      case "getFamilyConsolidatedSummary": result = getFamilyConsolidatedSummary(payload); break;
+      case "submitJointFamilyPayment": result = submitJointFamilyPayment(payload); break;
+      case "getFamilyScholarships": result = getFamilyScholarships(payload); break;
+      case "submitFamilyScholarshipApplication": result = submitFamilyScholarshipApplication(payload); break;
       case "getInstitutionalAnnouncements": result = getInstitutionalAnnouncements(payload); break;
       case "createInstitutionalAnnouncement": result = createInstitutionalAnnouncement(payload); break;
       case "submitAnnouncementReceiptConfirmation": result = submitAnnouncementReceiptConfirmation(payload); break;
@@ -1691,23 +1695,50 @@ function acceptLinkInvitation(payload) {
 }
 
 function getGuardianStudents(payload) {
-  const { userIdResponsable } = payload || {};
-  if (!userIdResponsable) throw new Error("userIdResponsable es requerido.");
+  const { userIdResponsable, userId } = payload || {};
+  const uid = userIdResponsable || userId;
+  if (!uid) throw new Error("userIdResponsable es requerido.");
 
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const usersSheet = getOrCreateSheet(ss, "Usuarios");
+  const usersData = usersSheet.getDataRange().getValues().slice(1);
+  const usersMap = {};
+  usersData.forEach(u => {
+    usersMap[String(u[0]).trim()] = {
+      userId: u[0],
+      nombre: u[1],
+      grado: u[2] || '',
+      seccion: u[3] || '',
+      email: u[4] || '',
+      rol: u[6] || 'Estudiante',
+      telefono: u[7] || '',
+      personaId: u[9] || '',
+      estadoCuenta: u[10] || 'Activa'
+    };
+  });
+
   const relSheet = getOrCreateSheet(ss, "RelacionesFamiliares");
   const relData = relSheet.getDataRange().getValues();
 
   let verifiedStudents = [];
   if (relData.length > 1) {
     verifiedStudents = relData.slice(1).filter(r => {
-      return String(r[2]).trim() === String(userIdResponsable).trim() && (r[4] === "Verificada" || r[4] === "Activa");
-    }).map(r => ({
-      relacionId: r[0],
-      expedienteEstudianteId: r[1],
-      tipoParentesco: r[3],
-      estado: r[4]
-    }));
+      return String(r[2]).trim() === String(uid).trim() && (r[4] === "Verificada" || r[4] === "Activa" || r[4] === "Aprobada");
+    }).map(r => {
+      const studentId = String(r[1]).trim();
+      const u = usersMap[studentId] || { userId: studentId, nombre: "Estudiante " + studentId, grado: "", seccion: "" };
+      return {
+        relacionId: r[0],
+        expedienteEstudianteId: r[1],
+        userId: u.userId,
+        nombre: u.nombre,
+        grado: u.grado,
+        seccion: u.seccion,
+        tipoParentesco: r[3],
+        estadoMatricula: u.estadoCuenta || "Activa",
+        estado: r[4]
+      };
+    });
   }
 
   // Fallback / Sync con RelacionesEstudianteTutor
@@ -1716,17 +1747,199 @@ function getGuardianStudents(payload) {
     const tutorData = tutorRelSheet.getDataRange().getValues();
     if (tutorData.length > 1) {
       verifiedStudents = tutorData.slice(1).filter(r => {
-        return String(r[2]).trim() === String(userIdResponsable).trim() && (r[9] === "Verificada" || r[9] === "Activa");
-      }).map(r => ({
-        relacionId: r[0],
-        expedienteEstudianteId: r[1],
-        tipoParentesco: r[3],
-        estado: r[9]
-      }));
+        return String(r[2]).trim() === String(uid).trim() && (r[9] === "Verificada" || r[9] === "Activa" || r[9] === "Aprobada");
+      }).map(r => {
+        const studentId = String(r[1]).trim();
+        const u = usersMap[studentId] || { userId: studentId, nombre: "Estudiante " + studentId, grado: "", seccion: "" };
+        return {
+          relacionId: r[0],
+          expedienteEstudianteId: r[1],
+          userId: u.userId,
+          nombre: u.nombre,
+          grado: u.grado,
+          seccion: u.seccion,
+          tipoParentesco: r[3],
+          estadoMatricula: u.estadoCuenta || "Activa",
+          estado: r[9]
+        };
+      });
     }
   }
 
   return { status: "success", data: verifiedStudents };
+}
+
+function getFamilyConsolidatedSummary(payload) {
+  const { userIdResponsable, userId } = payload || {};
+  const uid = userIdResponsable || userId;
+  if (!uid) throw new Error("userIdResponsable es requerido.");
+
+  const studentsRes = getGuardianStudents({ userIdResponsable: uid });
+  const students = (studentsRes && studentsRes.data) ? studentsRes.data : [];
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+
+  // Cargos y pagos
+  const compSheet = getOrCreateSheet(ss, "ComprobantesPago");
+  const compRows = compSheet.getDataRange().getValues().slice(1);
+  const cargosSheet = getOrCreateSheet(ss, "CargosEstudiante");
+  const cargosRows = cargosSheet.getDataRange().getValues().slice(1);
+
+  let totalCargosPendientes = 0;
+  let totalPagosRevision = 0;
+
+  const studentDetails = students.map(s => {
+    let studentCargos = 0;
+    cargosRows.forEach(c => {
+      if (String(c[1]).trim() === String(s.userId).trim() && (c[6] === "Pendiente" || c[6] === "Vencido")) {
+        const monto = parseFloat(c[4]) || 0;
+        studentCargos += monto;
+      }
+    });
+
+    let studentPagosRev = 0;
+    compRows.forEach(p => {
+      if (String(p[2]).trim() === String(s.userId).trim() && (p[9] === "En revision" || p[9] === "Pendiente")) {
+        studentPagosRev += parseFloat(p[5]) || 0;
+      }
+    });
+
+    totalCargosPendientes += studentCargos;
+    totalPagosRevision += studentPagosRev;
+
+    return {
+      userId: s.userId,
+      nombre: s.nombre,
+      grado: s.grado,
+      seccion: s.seccion,
+      estadoMatricula: s.estadoMatricula || "Activa",
+      saldoPendiente: studentCargos,
+      pagosEnRevision: studentPagosRev,
+      tareasPendientesCount: 0
+    };
+  });
+
+  return {
+    status: "success",
+    data: {
+      totalEstudiantes: students.length,
+      totalCargosPendientes: totalCargosPendientes,
+      totalPagosRevision: totalPagosRevision,
+      estudiantes: studentDetails
+    }
+  };
+}
+
+function submitJointFamilyPayment(payload) {
+  const { userIdResponsable, comprobanteUrl, bancoOrigen, numeroReferencia, montoTotal, distribuciones, observaciones } = payload || {};
+  if (!userIdResponsable || !montoTotal || !Array.isArray(distribuciones) || distribuciones.length === 0) {
+    throw new Error("Datos de pago conjunto incompletos.");
+  }
+
+  let sumaDist = 0;
+  distribuciones.forEach(d => {
+    sumaDist += parseFloat(d.montoAplicado) || 0;
+  });
+
+  if (Math.abs(sumaDist - parseFloat(montoTotal)) > 0.01) {
+    throw new Error("La suma de las distribuciones (L. " + sumaDist.toFixed(2) + ") debe ser igual al monto total del pago (L. " + parseFloat(montoTotal).toFixed(2) + ").");
+  }
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const compSheet = getOrCreateSheet(ss, "ComprobantesPago");
+  const distSheet = getOrCreateSheet(ss, "DistribucionPagosConjuntos");
+
+  const pagoId = "PAGO-CONJUNTO-" + Date.now();
+  const fecha = new Date().toISOString();
+
+  // Registrar comprobante general
+  compSheet.appendRow([
+    pagoId,
+    fecha,
+    userIdResponsable,
+    "Pago Conjunto Familiar (" + distribuciones.length + " estudiantes)",
+    "CARGO-CONJUNTO",
+    montoTotal,
+    "Transferencia / Depósito",
+    numeroReferencia || "REF-PAGO",
+    comprobanteUrl || "",
+    "En revision",
+    observaciones || "Pago conjunto distribuido entre varios hijos"
+  ]);
+
+  // Registrar cada distribución individual
+  distribuciones.forEach(d => {
+    distSheet.appendRow([
+      pagoId,
+      userIdResponsable,
+      d.estudianteId,
+      d.cargoId || "CARGO-GENERAL",
+      d.concepto || "Colegiatura / Servicios",
+      parseFloat(d.montoAplicado) || 0,
+      fecha,
+      "En revision"
+    ]);
+  });
+
+  return {
+    status: "success",
+    pagoId: pagoId,
+    message: "Pago conjunto familiar registrado exitosamente y enviado a revisión."
+  };
+}
+
+function getFamilyScholarships(payload) {
+  const { userIdResponsable, userId } = payload || {};
+  const uid = userIdResponsable || userId;
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "BecasYDescuentosFamiliares");
+  const rows = sheet.getDataRange().getValues().slice(1);
+
+  const list = rows.filter(r => String(r[1]).trim() === String(uid).trim()).map(r => ({
+    solicitudId: r[0],
+    padreId: r[1],
+    estudiantesIds: r[2],
+    tipoBeneficio: r[3],
+    alcance: r[4],
+    motivo: r[5],
+    montoPorcentaje: r[6],
+    estado: r[7],
+    fechaSolicitud: r[8],
+    observaciones: r[9]
+  }));
+
+  return { status: "success", data: list };
+}
+
+function submitFamilyScholarshipApplication(payload) {
+  const { userIdResponsable, estudiantesIds, tipoBeneficio, alcance, motivo, montoPorcentaje, documentosUrl } = payload || {};
+  if (!userIdResponsable || !tipoBeneficio || !motivo) {
+    throw new Error("Campos obligatorios incompletos para la solicitud de beca/descuento.");
+  }
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "BecasYDescuentosFamiliares");
+  const solId = "BEC-" + Date.now();
+  const fecha = new Date().toISOString();
+
+  sheet.appendRow([
+    solId,
+    userIdResponsable,
+    Array.isArray(estudiantesIds) ? estudiantesIds.join(", ") : (estudiantesIds || "Todos"),
+    tipoBeneficio,
+    alcance || "Familiar",
+    motivo,
+    montoPorcentaje || "Por evaluar",
+    "Pendiente",
+    fecha,
+    documentosUrl || ""
+  ]);
+
+  return {
+    status: "success",
+    solicitudId: solId,
+    message: "Solicitud de beneficio familiar enviada exitosamente para revisión."
+  };
 }
 
 function getInstitutionalAnnouncements(payload) {

@@ -1350,3 +1350,21 @@ Descripción de cambios:
   - Implementación de `window.checkAndShowFirstLoginTermsModal` para verificar la evidencia de aceptación de la versión 1.0 en `AceptacionesPoliticas`.
   - Integración del modal `#modal-first-login-terms` que se despliega automáticamente en el primer inicio de sesión o carga del dashboard y requiere la aceptación explícita antes de cerrarse, conectándolo con `acceptLegalDocument` en el servidor.
   - Corrección en la vinculación del ID de propuesta de paleta activa en `window.submitPaletteProposal` y `window.approvePaletteProposal`.
+
+## [Fase: Gestión Familiar Multiestudiante y Sistema de Gráficas e Indicadores Configurables] - 2026-10-17
+### Agregado y Refactorizado
+- `backend/user-service/Code.gs`:
+  - Enriquecimiento de `getGuardianStudents` con datos de perfil de usuario (nombre, grado, sección, estado de matrícula).
+  - Endpoints con RBAC: `getFamilyConsolidatedSummary`, `submitJointFamilyPayment`, `getFamilyScholarships`, `submitFamilyScholarshipApplication`.
+  - Hojas de cálculo: `DistribucionPagosConjuntos` y `BecasYDescuentosFamiliares`.
+- `student-dashboard.html` & `js/student.js`:
+  - Selector enriquecido de estudiantes vinculados `#family-student-switcher` con tarjetas indicadoras.
+  - Vista Familiar Consolidada `#family-consolidated-summary-container` con métricas consolidadas e individuales por estudiante.
+  - Modales e interfaces interactivas: `#modal-joint-payment` (Pago conjunto multihijo con validación de suma distribuida) y `#modal-family-scholarship` (Solicitud de becas/descuentos familiares o individuales).
+- `js/ui-common.js`:
+  - Componente de Gráficas e Indicadores Configurables `window.renderUniversalConfigurableChart` compatible con 5 categorías (Minijuegos, Desempeño Académico, Participación, Asistencia/Comportamiento, Informes Administrativos).
+  - Selección de tipos de gráfico (barras verticales/horizontales, líneas, sectores/dona, radial), temas de paletas de color (`chartPalettes`), alternancia a tabla de datos textual y estados vacíos informativos.
+  - Visor modal analítico `window.openAnalyticsChartModal` accesible por rol.
+  - Preservación intacta del gráfico radial existente (`#student-radar-chart` y `#teacher-radar-chart`) y aislamiento de estadísticas de minijuegos.
+- `Pendientes.md`, `Auditoría.txt`, `MapaDependencias.md`:
+  - Registrado el requerimiento `[REQ-FAM-001]` y actualizados los esquemas de dependencias.

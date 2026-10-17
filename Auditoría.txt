@@ -762,3 +762,26 @@ Archivos y Módulos Auditados:
 - Actualizar `politica-de-uso.html` con la redacción completa de los 17 numerales legales.
 - Implementar `#modal-first-login-terms` en `js/ui-common.js` con bloqueo de cierre automático (solo cerrable mediante el botón "Aceptar Términos").
 - Registrar la aceptación en `localStorage` y en la hoja `AceptacionesPoliticas` del microservicio `USER`.
+
+====================================================================================================
+
+AUDITORÍA TÉCNICA Y DIAGNÓSTICO DE ARQUITECTURA - NUEVA FASE: GESTIÓN FAMILIAR MULTIESTUDIANTE Y SISTEMA DE GRÁFICAS CONFIGURABLES - Mon Jul 6 2026
+
+Archivos y Módulos Auditados:
+- student-dashboard.html, teacher-dashboard.html, dashboard-contabilidad.html
+- js/student.js, js/teacher.js, js/accounting.js, js/ui-common.js
+- backend/user-service/Code.gs, backend/academic-service/Code.gs, backend/accounting-service/Code.gs
+
+1. DIAGNÓSTICO Y COMPONENTES EXISTENTES
+- Gestión Familiar Multiestudiante:
+  * Existan tablas de soporte `ResponsablesTutores` y `RelacionesEstudianteTutor` en `backend/academic-service/Code.gs` e integraciones de vinculación en `backend/user-service/Code.gs`.
+  * `js/student.js` cuenta con un inicializador básico de switcher de estudiante, pero carece de un selector enriquecido con estado de matrícula, fotos e indicadores consolidados de tareas/saldos pendientes, resumen económico familiar consolidado, pagos conjuntos multihijo con distribución explícita de importes, y desglose de becas/descuentos familiares vs individuales.
+- Sistema de Gráficas e Indicadores:
+  * `js/student.js` y `js/teacher.js` incluyen inicializaciones para `student-radar-chart` (gráfico radial de áreas de evaluación) y `student-trend-chart` (línea de promedios por parcial).
+  * `Chart.js` (v3+) está cargado globalmente mediante CDN en `student-dashboard.html` y `teacher-dashboard.html`.
+  * Se requiere desacoplar y clasificar formalmente las 5 categorías de gráficas (A. Minijuegos, B. Desempeño Académico, C. Participación, D. Asistencia y Comportamiento, E. Informes Administrativos), preservando la funcionalidad e identidad del gráfico radial existente, e implementando un componente visual configurable reutilizable (`window.renderUniversalConfigurableChart`) con soporte para personalización de colores, escalas, tipos de gráficos (barras, líneas, áreas, sectores, radial) y vistas tabulares/textuales alternativas.
+
+2. PLAN DE IMPLEMENTACIÓN Y ACCIONES
+- Extender `js/student.js` con el Selector Enriquecido de Estudiantes (`#family-student-selector`) y la Vista Familiar Consolidada (`#family-consolidated-summary`).
+- Extender la gestión económica familiar para calcular correctamente importes individuales y familiares, soportando la distribución de pagos conjuntos (`distribuirPagoConjuntoFamiliar`) y el desglose de becas/descuentos sin duplicar totales.
+- Implementar en `js/ui-common.js` / `js/student.js` / `js/teacher.js` el componente de Gráficas Universales Configurables con filtros por parcial/grado/sección, paletas personalizadas, adaptabilidad móvil y permisos RBAC rigurosos en backend y frontend.
