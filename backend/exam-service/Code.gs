@@ -770,7 +770,30 @@ function getGradebookData(payload) {
 }
 
 function saveGradebookGrades(payload) {
-  const { calificaciones, esBorrador, esPublicada, profesorId } = payload || {};
+  const { calificaciones, esBorrador, esPublicada, profesorId, anoLectivo, esAnoHistoricoAnterior, esPadreDeEstudiante, authRole, periodoId, asignatura, grado, seccion } = payload || {};
+
+  if (esAnoHistoricoAnterior === true) {
+    throw new Error("Las calificaciones de años escolares anteriores son inalterables y no pueden modificarse por ningún rol dentro de la plataforma.");
+  }
+
+  if (esPadreDeEstudiante === true) {
+    throw new Error("Un docente no puede modificar las calificaciones de su propio hijo fuera de las reglas ordinarias de cierre de periodo.");
+  }
+
+  if (periodoId) {
+    const ssCheck = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const cierresSheet = getOrCreateSheet(ssCheck, "CierresPeriodos");
+    const cierresData = cierresSheet.getDataRange().getValues();
+    const isClosed = cierresData.slice(1).some(r =>
+      String(r[2]).trim() === String(periodoId).trim() &&
+      String(r[7]).trim() === "Cerrado" &&
+      (!asignatura || String(r[5]).trim() === String(asignatura).trim())
+    );
+    if (isClosed && authRole !== "Secretaría" && authRole !== "Administrador" && authRole !== "Director") {
+      throw new Error("El periodo de evaluación se encuentra cerrado. Para modificar notas registradas se requiere autorización explícita de Secretaría.");
+    }
+  }
+
   if (!Array.isArray(calificaciones) || calificaciones.length === 0) {
     throw new Error("Se requiere una lista de calificaciones para guardar.");
   }

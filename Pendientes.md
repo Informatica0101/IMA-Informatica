@@ -800,6 +800,33 @@
 - **Criterios de Aceptación:** Log de auditoría completo y protegido ante eliminaciones o modificaciones.
 - **Estado:** [X] Completada
 
+### [REQ-FLOW-008] Diseñador de Flujos de Aprobación Institucionales (Fase 25)
+- **Origen del Hallazgo:** Especificación Fase 25: Flujos de Aprobación, Revisión y Firma Institucional.
+- **Severidad/Clasificación:** Alto
+- **Archivos Involucrados:** `backend/user-service/Code.gs`, `teacher-dashboard.html`, `js/teacher.js`
+- **Dependencias Expuestas:** Hoja `FlujosAprobacion`, `#modal-workflow-builder`.
+- **Descripción del Alcance:** Constructor visual para definir secuencias de etapas de revisión, roles asignados y requisitos de conformidad por departamento.
+- **Criterios de Aceptación:** Creación, edición, versionado y publicación de flujos multietapa persistidos en backend.
+- **Estado:** [X] Completada
+
+### [REQ-FLOW-009] Registro Inmutable de Decisiones de Revisión (Fase 25)
+- **Origen del Hallazgo:** Especificación Fase 25: Flujos de Aprobación, Revisión y Firma Institucional.
+- **Severidad/Clasificación:** Crítico
+- **Archivos Involucrados:** `backend/user-service/Code.gs`, `js/teacher.js`
+- **Dependencias Expuestas:** Hoja `RevisionesDecisionesTramite`, `processWorkflowDecision`.
+- **Descripción del Alcance:** Registrar formalmente decisiones de revisión (Aprobar, Rechazar, Devolver, Derivar) con observaciones públicas e internas.
+- **Criterios de Aceptación:** Trazabilidad completa por solicitud sin permitir sobreescritura silenciosa de historial.
+- **Estado:** [X] Completada
+
+### [REQ-FLOW-010] Conformidad Digital e Integridad de Firma Institucional (Fase 25)
+- **Origen del Hallazgo:** Especificación Fase 25: Flujos de Aprobación, Revisión y Firma Institucional.
+- **Severidad/Clasificación:** Crítico
+- **Archivos Involucrados:** `backend/user-service/Code.gs`, `js/teacher.js`
+- **Dependencias Expuestas:** Hoja `FirmasConformidades`, `registerDocumentSignature`.
+- **Descripción del Alcance:** Emitir tokens únicos de verificación (`VERIF-XXXXXX`) vinculados a decisiones oficiales y documentos firmados.
+- **Criterios de Aceptación:** Firma registrada con timestamp, rol e IP de auditoría sin exponer claves secretas.
+- **Estado:** [X] Completada
+
 ---
 
 ## NUEVOS REQUERIMIENTOS TÉCNICOS: MODULARIZACIÓN Y MIGRACIÓN DE MICROSERVICIOS DEL BACKEND (New Generation Bilingual School and Institute)
@@ -1105,3 +1132,104 @@
 - [X] `[REQ-DOC2-008]` Generación y verificación de archivos SACE con notas ordinarias, recuperaciones y promedios finales.
 - [X] `[REQ-DOC2-009]` Auditoría de ejecuciones de importación, logs por fila y procedimientos de reversión lógica.
 - [X] `[REQ-DOC2-010]` Seguridad, permisos en servidor (RBAC) y restricciones de acceso para spreadsheets y documentos exportados.
+
+---
+
+## REQUERIMIENTOS DE DISEÑADOR UNIVERSAL DE DOCUMENTOS Y PLANTILLAS (FASE 22)
+- [X] `[REQ-DOC3-001]` Catálogo centralizado de plantillas institucionales con metadatos completos y RBAC por departamento.
+- [X] `[REQ-DOC3-002]` Gestión del ciclo de vida de plantillas (Borrador, En revisión, Publicada, Suspendida, Archivada) con versionado inmutable.
+- [X] `[REQ-DOC3-003]` Editor interactivo de plantillas con formateo de página, orientación, márgenes y selector de variables dinámicas `{{...}}`.
+- [X] `[REQ-DOC3-004]` Resolución de campos dinámicos en backend, previsualización con resaltado de marcas pendientes e importación de bases documentales.
+- [X] `[REQ-DOC3-005]` Generación de documentos oficiales con código inmutable de verificación (`VERIF-XXXXXX`) e indexación en Google Drive.
+- [X] `[REQ-DOC3-006]` Trazabilidad total de emisiones, desvinculación retroactiva y desacoplamiento de datos sensibles.
+
+---
+
+## REQUERIMIENTOS DE EDITOR VISUAL DE PDF Y CAMPOS SUPERPUESTOS (FASE 23)
+- [X] `[REQ-PDF-001]` Importación y Carga de PDF Base para Diseñador (Selección local o Drive, preservación del original).
+- [X] `[REQ-PDF-002]` Visor Multipágina e Interfaz de Capas Superpuestas con renderizado PDF interactivo y controles de zoom/ancho.
+- [X] `[REQ-PDF-003]` Sistema de Coordenadas Normalizadas `(xRatio, yRatio, wRatio, hRatio)` para alineación perfecta e independiente del visor.
+- [X] `[REQ-PDF-004]` Panel de Propiedades y Vinculación con Fuentes Institucionales Autorizadas (`{{estudiante.nombreCompleto}}`, etc.).
+- [X] `[REQ-PDF-005]` Estampado y Generación Oficial de PDF con Datos Reales, Token `VERIF-XXXXXX` e indexación en Google Drive.
+- [X] `[REQ-PDF-006]` Trazabilidad total, auditoría backend, gestión de versiones y resiliencia ante errores de almacenamiento.
+
+---
+
+## REQUERIMIENTOS DE CONTROL ACADÉMICO, HISTORIAL DE CALIFICACIONES, ROLES, HORARIOS, IMPORTACIÓN DE EXCEL E INTEGRACIÓN FINANCIERA (FASE 28)
+- [X] `[REQ-F28-001]` Conservación y archivado anual de contenido operativo (.zip) con manifiesto de integridad sin alterar el libro de notas oficial.
+- [X] `[REQ-F28-002]` Inalterabilidad absoluta de calificaciones de años escolares anteriores en backend para todos los roles de la plataforma.
+- [X] `[REQ-F28-003]` Bloqueo de calificaciones al cerrar periodos de evaluación y protección de edición para cuentas con doble rol (Docente + Padre).
+- [X] `[REQ-F28-004]` Protección estricta de la privacidad de la cuenta del Administrador/Desarrollador principal frente a consultas de usuarios ordinarios.
+- [X] `[REQ-F28-005]` Módulo y dashboard de Coordinación Académica para asignación docente (límite 1 sección principal por profesor por año lectivo) y maestro guía.
+- [X] `[REQ-F28-006]` Generador y validador de horarios de clase con distribución de unidades consecutivas, prevención de colisiones de docentes/aulas y eventos especiales.
+- [X] `[REQ-F28-007]` Importador universal de archivos Excel (.xlsx) con flujo de mapeo de columnas, vista previa pre-validada y verificación en servidor.
+- [X] `[REQ-F28-008]` Idempotencia en transacciones financieras para evitar cobros o abonos duplicados en reintentos o eventos repetidos.
+- [X] `[REQ-F28-009]` Aplicación obligatoria de la Política de Lenguaje Comprensible (Plain Language) en todos los textos e interfaces visibles para el usuario final.
+
+---
+
+## REQUERIMIENTOS DE INFORMES INSTITUCIONALES, AUDITORÍA, COPIAS DE SEGURIDAD Y RECUPERACIÓN DE DATOS (FASE 29)
+- [X] `[REQ-F29-001]` Centro Unificado de Informes Institucionales por departamento (Académica, Secretaría, Asistencia, Contabilidad, Tienda, Cafetería, Recursos Humanos, Plataforma).
+- [X] `[REQ-F29-002]` Regla de cálculo financiero estricto: exclusión obligatoria de valores pendientes o cancelados en ingresos y totales confirmados.
+- [X] `[REQ-F29-003]` Registro de auditoría estructurado (`getStructuredLogs`, `getAuditReport`) con protección backend contra alteraciones o purgas no autorizadas.
+- [X] `[REQ-F29-004]` Copias de seguridad y restauración del sistema (`createSystemBackup`, `verifyBackupIntegrity`, `restoreSystemBackup`) con preservación explícita de calificaciones históricas oficiales (`CalificacionesEstudiantes`, `RecuperacionesEstudiante`).
+- [X] `[REQ-F29-005]` Motor de guías interactivas y tutoriales paso a paso (`window.startInteractiveGuide`) para estudiantes (entregas) y profesores (calificación/revisión), persistiendo avance en `localStorage`.
+- [X] `[REQ-F29-006]` Visor integrado de documentos (PDF, Word, Imágenes) en modal para revisión sin descargas obligatorias.
+- [X] `[REQ-F29-007]` Herramienta de comparación de entregas ("Comparar con otra tarea") lado a lado o en pila con notas pedagógicas y asignación de calificaciones.
+- [X] `[REQ-F29-008]` Importador universal de Excel potenciado por rol con reconocimiento de encabezados multinivel/agrupados y asistente de mapeo.
+- [X] `[REQ-F29-009]` Aplicación integral de la Política de Lenguaje Comprensible en todas las guías, mensajes y centros de informes.
+
+---
+
+## REQUERIMIENTOS DE VISUALIZACIÓN DE DOCUMENTOS ANTIGUOS, CARGAS REANUDABLES Y RECUPERACIÓN SEGURA DE ARCHIVOS (FASE 30)
+- [X] `[REQ-F30-001]` Lectura y extracción estructurada de documentos de Word y oficina antiguos (`.doc`, `.docx`, `.rtf`, `.txt`, `.odt`).
+- [X] `[REQ-F30-002]` Visor unificado de documentos grandes fragmentados presentados de forma continua sin fisuras visuales.
+- [X] `[REQ-F30-003]` Protocolo backend de carga reanudable (`initiateResumableUpload`, `uploadChunk`, `getUploadProgress`, `cancelUploadSession`, `reconstructFileParts`) por punto de control.
+- [X] `[REQ-F30-004]` Regla de reemplazo progresivo en "Empezar de nuevo" preservando los archivos antiguos hasta confirmar la subida de los nuevos bloques.
+- [X] `[REQ-F30-005]` Ordenamiento numérico natural estricto para partes fragmentadas (`Parte 1`, `Parte 2`, ..., `Parte 10`).
+- [X] `[REQ-F30-006]` Cliente JS unificado (`window.uploadResumableFile`) con estimación de tiempo restante (ETA), porcentaje de avance real y diálogo de reanudación.
+- [X] `[REQ-F30-007]` Prevención de pérdida de progreso ante cambios de pestaña y avisos al usuario.
+- [X] `[REQ-F30-008]` Integración de la carga reanudable en entregas de tareas, materiales docentes, comprobantes financieros y formularios.
+- [X] `[REQ-F30-009]` Mensajes de error en lenguaje claro sin exposición de rutas ni detalles técnicos.
+
+---
+
+## REQUERIMIENTOS DE INTEGRACIÓN TRANSVERSAL, EXPERIENCIA DE USUARIO, ACCESIBILIDAD Y VALIDACIÓN INTEGRAL (FASE 31)
+- [X] `[REQ-F31-001]` Coherencia e integración transversal completa entre los microservicios de la plataforma (USER, ACADEMIC, ACCOUNTING, EXAM, TASK).
+- [X] `[REQ-F31-002]` Validación server-side estricta de permisos RBAC mediante `getUserVerifiedRole` en backend.
+- [X] `[REQ-F31-003]` Autonomía 100% nativa de la mensajería interna y notificaciones en bandeja sin dependencia obligatoria de proveedores externos.
+- [X] `[REQ-F31-004]` Inalterabilidad garantizada de calificaciones históricas de estudiantes en todos los módulos y operaciones del sistema.
+- [X] `[REQ-F31-005]` Accesibilidad universal con anillos de foco visibles, alto contraste, etiquetas ARIA y navegación completa por teclado (escuchador global ESC).
+- [X] `[REQ-F31-006]` Diseño adaptable y responsivo para dispositivos móviles, tabletas y computadoras en todos los paneles.
+- [X] `[REQ-F31-007]` Aplicación integral de la Política de Lenguaje Comprensible en todas las interfaces, guías y avisos de la plataforma.
+- [X] `[REQ-F31-008]` Verificación end-to-end de recorridos completos por rol (Estudiante, Docente, Coordinación, Dirección, Contabilidad, Secretaría, Recursos Humanos).
+- [X] `[REQ-F31-009]` Preservación de la privacidad de cuentas de administración/desarrollo frente a consultas de usuarios ordinarios.
+- [X] `[REQ-F31-010]` Idempotencia en transacciones financieras para evitar cobros o abonos duplicados en reintentos.
+
+---
+
+## REQUERIMIENTOS DE CIERRE DEL PLAN MAESTRO, CONDICIONES LEGALES, PROPIEDAD INTELECTUAL Y ASISTENCIA CONTEXTUAL (FASE 32)
+- [X] `[REQ-F32-001]` Acuerdo de condiciones de uso con declaración explícita de propiedad intelectual del software a favor de JyP Solutions S. de R.L. de C.V. y propiedad de datos/expedientes para el cliente.
+- [X] `[REQ-F32-002]` Aviso de condiciones de uso e identificación del proveedor (Sede: San Pedro Sula, Cortés, Honduras. Tel: 33900758).
+- [X] `[REQ-F32-003]` Política de privacidad y tratamiento seguro de información personal, académica y financiera.
+- [X] `[REQ-F32-004]` Política de seguridad y uso responsable con inalterabilidad de registros oficiales.
+- [X] `[REQ-F32-005]` Aviso de propiedad intelectual y alcance de la licencia de uso.
+- [X] `[REQ-F32-006]` Apartado "Contáctanos" con datos confirmados y enlace telefónico interactivo.
+- [X] `[REQ-F32-007]` Preguntas Frecuentes oficiales dirigidas a usuarios finales organizadas por categorías.
+- [X] `[REQ-F32-008]` Gestión de versiones de documentos legales y registro de aceptaciones en backend (`AceptacionesPoliticas`).
+- [X] `[REQ-F32-009]` Sistema de asistencia contextual interactiva (`window.openContextualHelpModal`) con guías paso a paso filtradas por rol y panel.
+- [X] `[REQ-F32-010]` Garantía de inalterabilidad de archivos originales en el diseñador de plantillas y generación documental.
+
+---
+
+## REQUERIMIENTOS DE MODO SIN CONEXIÓN, ALMACENAMIENTO LOCAL Y SINCRONIZACIÓN (FASE ADICIONAL)
+- [X] `[REQ-OFF-001]` Aplicación Web Progresiva (PWA) con Service Worker (`sw.js`) y precaché estático offline para inicio sin internet.
+- [X] `[REQ-OFF-002]` Navegación y consulta de documentos guardados localmente sin solicitudes innecesarias al servidor.
+- [X] `[REQ-OFF-003]` Almacén privado IndexedDB (`ngca_offline_db`) con catálogos de documentos, configuraciones, cola de acciones y preguntas frecuentes.
+- [X] `[REQ-OFF-004]` Cola de sincronización de operaciones pendientes (`window.queueOfflineAction`, `window.syncOfflineQueue`) al detectar reconexión.
+- [X] `[REQ-OFF-005]` Detección de conflictos de concurrencia y modal interactivo de resolución de versiones (`window.openConflictResolutionModal`).
+- [X] `[REQ-OFF-006]` Distintivos visibles de estado de sincronización (`Local`, `En línea`, `Sincronizado`, `Pendiente`, `Conflicto`).
+- [X] `[REQ-OFF-007]` Preservación de la copia en línea en Google Drive manteniendo el procedimiento de respaldo institucional.
+- [X] `[REQ-OFF-008]` Indicador dinámico de estado de red (`#online-status-badge`).
+- [X] `[REQ-OFF-009]` Módulo de Preguntas Frecuentes Institucionales (`window.renderFAQSection`) con 32 preguntas y respuestas completas.
+- [X] `[REQ-OFF-010]` Sincronización automática de configuraciones globales y preferencias por rol.

@@ -91,7 +91,14 @@
                 <button id="open-profile-btn" class="nav-link-desktop">Mi perfil</button>
             </nav>
 
-            <div class="flex items-center gap-4">
+            <div class="flex items-center gap-3">
+                <button id="btn-start-interactive-guide" class="px-3 py-1.5 text-indigo-700 bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 shadow-sm" title="Ayuda Contextual e Instructivos" onclick="window.openContextualHelpModal('docente')">
+                    <i class="fa-solid fa-circle-question text-sm"></i>
+                    <span class="hidden sm:inline">Ayuda</span>
+                </button>
+                <button id="btn-global-dashboard-settings" class="p-2 text-slate-600 hover:text-slate-900 rounded-xl hover:bg-slate-100 text-lg transition-all focus:outline-none focus:ring-2 focus:ring-blue-500" title="Opciones y Configuración del Dashboard" aria-label="Opciones y Configuración">
+                    <i class="fa-solid fa-gear"></i>
+                </button>
                 <img src="imagenes/bandera-de-honduras.png" alt="Bandera Nacional de Honduras" width="24" class="opacity-100 block">
             </div>
         </div>
@@ -127,6 +134,8 @@
                 <button id="nav-logros" class="flex-none px-4 py-2 rounded-xl font-semibold transition-all text-[10px] uppercase tracking-widest bg-gray-100 text-gray-500">Logros</button>
                 <button id="nav-news" class="flex-none px-4 py-2 rounded-xl font-semibold transition-all text-[10px] uppercase tracking-widest bg-gray-100 text-gray-500">Noticias</button>
                 <button id="nav-admin" class="flex-none px-4 py-2 rounded-xl font-semibold transition-all text-[10px] uppercase tracking-widest bg-gray-100 text-gray-500">Administración</button>
+                <button id="nav-coordinacion" class="flex-none px-4 py-2 rounded-xl font-semibold transition-all text-[10px] uppercase tracking-widest bg-gray-100 text-gray-500"><i class="fa-solid fa-graduation-cap mr-1"></i> Coordinación y Horarios</button>
+                <button id="nav-plantillas" class="flex-none px-4 py-2 rounded-xl font-semibold transition-all text-[10px] uppercase tracking-widest bg-gray-100 text-gray-500"><i class="fa-solid fa-file-pen mr-1"></i> Diseñador de Plantillas</button>
             </nav>
 
             <!-- Sección de Dashboard (Entregas Operativas) -->
@@ -1194,10 +1203,11 @@
                 </div>
             </section>
 
-            <!-- Sección de Reportes (Académico) -->
+            <!-- Sección de Reportes (Académico e Institucional) -->
             <section id="section-reportes" class="hidden animate-fade-in-up">
+                <div id="reports-center-container" class="mb-8"></div>
                 <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
-                    <h2 class="text-2xl font-medium text-gray-800">Reportes Académicos</h2>
+                    <h2 class="text-2xl font-medium text-gray-800">Reportes Académicos Específicos</h2>
                     <button id="export-excel-btn" class="bg-green-600 text-white px-6 py-3 rounded-2xl font-semibold shadow-lg hover:bg-green-700 transition-all flex items-center gap-2">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                         EXPORTAR REPORTE EXCEL
@@ -1244,6 +1254,151 @@
                             <!-- Se poblará vía js/teacher.js -->
                         </tbody>
                     </table>
+                </div>
+            </section>
+
+            <!-- SECTION COORDINACIÓN Y HORARIOS -->
+            <section id="section-coordinacion" class="animate-fade-in-up hidden space-y-6">
+                <div class="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div>
+                        <span class="px-3 py-1 bg-blue-50 text-blue-700 rounded-full text-[10px] font-black uppercase tracking-widest">Coordinación Académica & Horarios</span>
+                        <h2 class="text-xl md:text-2xl font-black text-gray-900 uppercase tracking-tight mt-1">Gestión de Cargas Lectivas, Maestros Guía y Horarios</h2>
+                        <p class="text-xs text-gray-500 font-medium">Asignación docente (1 sección principal por profesor), distribución de unidades consecutivas y resolución de conflictos.</p>
+                    </div>
+                    <div class="flex flex-wrap items-center gap-2">
+                        <button id="btn-open-auto-scheduler" class="px-4 py-2.5 bg-indigo-600 text-white rounded-2xl font-bold text-xs uppercase tracking-wider hover:bg-indigo-700 transition-all shadow-md">
+                            <i class="fa-solid fa-wand-magic-sparkles mr-1"></i> Generador Automático
+                        </button>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Formulario de Asignación Docente -->
+                    <div class="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm space-y-4">
+                        <h3 class="text-sm font-bold text-gray-800 uppercase tracking-wider border-b border-gray-100 pb-2">
+                            <i class="fa-solid fa-user-plus text-blue-600 mr-1"></i> Asignar Encargado o Maestro Guía
+                        </h3>
+                        <div>
+                            <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Año Lectivo</label>
+                            <input type="text" id="coord-ano-lectivo" value="2025" class="w-full text-xs p-2.5 bg-gray-50 border border-gray-200 rounded-xl font-medium">
+                        </div>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Grado</label>
+                                <select id="coord-grado-select" class="w-full text-xs p-2.5 bg-white border border-gray-200 rounded-xl font-medium">
+                                    <option value="Séptimo">7° Grado</option>
+                                    <option value="Octavo">8° Grado</option>
+                                    <option value="Noveno">9° Grado</option>
+                                    <option value="Décimo">10° Grado</option>
+                                    <option value="Undécimo">11° Grado</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Sección</label>
+                                <select id="coord-seccion-select" class="w-full text-xs p-2.5 bg-white border border-gray-200 rounded-xl font-medium">
+                                    <option value="A">Sección A</option>
+                                    <option value="B">Sección B</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-gray-500 uppercase mb-1">Docente Asignado</label>
+                            <input type="text" id="coord-docente-id" placeholder="ID del Docente (ej: USR-DOC-01)" class="w-full text-xs p-2.5 bg-white border border-gray-200 rounded-xl font-medium">
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <input type="checkbox" id="coord-es-maestro-guia" class="rounded border-gray-300 text-blue-600">
+                            <label for="coord-es-maestro-guia" class="text-xs font-semibold text-gray-700">Designar como Maestro Guía Principal de la Sección</label>
+                        </div>
+                        <button id="btn-save-coord-assignment" class="w-full py-3 bg-blue-600 text-white rounded-xl font-bold text-xs uppercase tracking-widest hover:bg-blue-700 transition-all shadow-md">
+                            Guardar Asignación Docente
+                        </button>
+                    </div>
+
+                    <!-- Resumen de Horarios y Conflictos -->
+                    <div class="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm space-y-4">
+                        <h3 class="text-sm font-bold text-gray-800 uppercase tracking-wider border-b border-gray-100 pb-2">
+                            <i class="fa-solid fa-calendar-days text-indigo-600 mr-1"></i> Estado del Horario Institucional
+                        </h3>
+                        <div class="p-4 bg-slate-50 border border-slate-200 rounded-2xl text-xs space-y-2">
+                            <p class="font-bold text-slate-800">Parámetros Lectivos Activos:</p>
+                            <p class="text-slate-600"><strong>Duración Unidad Académica:</strong> 45 minutos</p>
+                            <p class="text-slate-600"><strong>Hora Inicio Lectiva:</strong> 07:30 AM</p>
+                            <p class="text-slate-600"><strong>Regla Bloques Consecutivos:</strong> Habilitada para asignaturas de 2+ unidades.</p>
+                        </div>
+                        <div id="coord-overview-summary" class="p-4 bg-emerald-50 border border-emerald-200 rounded-2xl text-xs text-emerald-800">
+                            <strong>Estado:</strong> Sin conflictos de horarios ni aula detectados.
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION PLANTILLAS: Diseñador Universal de Documentos y Plantillas -->
+            <section id="section-plantillas" class="animate-fade-in-up hidden">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6 bg-white p-6 rounded-3xl border border-gray-100 shadow-sm">
+                    <div>
+                        <span class="px-3 py-1 bg-indigo-50 text-indigo-700 rounded-full text-[10px] font-black uppercase tracking-widest">Fase 22 · Módulo Institucional</span>
+                        <h2 class="text-xl md:text-2xl font-black text-gray-900 uppercase tracking-tight mt-1">Diseñador Universal de Documentos y Plantillas</h2>
+                        <p class="text-xs text-gray-500 font-medium">Administración, edición, previsualización y generación de constancias, certificados y documentos institucionales.</p>
+                    </div>
+                    <div class="flex flex-wrap items-center gap-2">
+                        <button id="btn-open-excel-importer" class="px-4 py-2.5 bg-emerald-600 text-white rounded-2xl font-bold text-xs uppercase tracking-wider hover:bg-emerald-700 transition-all shadow-md">
+                            <i class="fa-solid fa-file-excel mr-1"></i> Importar Excel (.xlsx)
+                        </button>
+                        <button id="btn-import-template-base" class="px-4 py-2.5 bg-gray-100 text-gray-700 rounded-2xl font-bold text-xs uppercase tracking-wider hover:bg-gray-200 transition-all">
+                            <i class="fa-solid fa-file-import mr-1"></i> Importar Base
+                        </button>
+                        <button id="btn-open-form-builder" class="px-4 py-2.5 bg-emerald-600 text-white rounded-2xl font-bold text-xs uppercase tracking-wider hover:bg-emerald-700 transition-all shadow-md">
+                            <i class="fa-solid fa-wpforms mr-1"></i> Diseñador Formularios (Fase 24)
+                        </button>
+                        <button id="btn-open-workflow-builder" class="px-4 py-2.5 bg-purple-600 text-white rounded-2xl font-bold text-xs uppercase tracking-wider hover:bg-purple-700 transition-all shadow-md">
+                            <i class="fa-solid fa-diagram-project mr-1"></i> Flujos de Aprobación (Fase 25)
+                        </button>
+                        <button id="btn-open-workflow-decision" class="px-4 py-2.5 bg-amber-600 text-white rounded-2xl font-bold text-xs uppercase tracking-wider hover:bg-amber-700 transition-all shadow-md">
+                            <i class="fa-solid fa-signature mr-1"></i> Revisión y Firma (Fase 25)
+                        </button>
+                        <button id="btn-open-channel-config" class="px-4 py-2.5 bg-teal-600 text-white rounded-2xl font-bold text-xs uppercase tracking-wider hover:bg-teal-700 transition-all shadow-md">
+                            <i class="fa-solid fa-tower-cell mr-1"></i> Adaptadores Canales (Fase 26)
+                        </button>
+                        <button id="btn-open-pdf-overlay-editor" class="px-4 py-2.5 bg-red-600 text-white rounded-2xl font-bold text-xs uppercase tracking-wider hover:bg-red-700 transition-all shadow-md">
+                            <i class="fa-solid fa-file-pdf mr-1"></i> Editor PDF (Fase 23)
+                        </button>
+                        <button id="btn-open-template-editor" class="px-5 py-2.5 bg-blue-600 text-white rounded-2xl font-bold text-xs uppercase tracking-wider hover:bg-blue-700 transition-all shadow-md">
+                            <i class="fa-solid fa-plus mr-1"></i> Nueva Plantilla
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Filtros y Búsqueda -->
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+                    <div class="md:col-span-2 relative">
+                        <i class="fa-solid fa-magnifying-glass absolute left-4 top-3.5 text-gray-400 text-sm"></i>
+                        <input type="text" id="template-search-input" placeholder="Buscar por título, código o departamento..." class="w-full pl-10 pr-4 py-3 bg-white border border-gray-200 rounded-2xl text-xs font-semibold focus:outline-none focus:border-blue-500 shadow-sm">
+                    </div>
+                    <div>
+                        <select id="template-category-filter" class="w-full px-4 py-3 bg-white border border-gray-200 rounded-2xl text-xs font-semibold focus:outline-none focus:border-blue-500 shadow-sm">
+                            <option value="">Todas las Categorías</option>
+                            <option value="Académico">Académico</option>
+                            <option value="Financiero">Financiero</option>
+                            <option value="Administrativo">Administrativo</option>
+                            <option value="Legal / Matrícula">Legal / Matrícula</option>
+                        </select>
+                    </div>
+                    <div>
+                        <select id="template-state-filter" class="w-full px-4 py-3 bg-white border border-gray-200 rounded-2xl text-xs font-semibold focus:outline-none focus:border-blue-500 shadow-sm">
+                            <option value="">Todos los Estados</option>
+                            <option value="publicada">Publicadas</option>
+                            <option value="borrador">Borradores</option>
+                            <option value="suspendida">Suspendidas</option>
+                            <option value="archivada">Archivadas</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Grid de Tarjetas de Plantillas -->
+                <div id="templates-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div class="col-span-full text-center py-12 text-gray-400 font-bold text-xs uppercase">
+                        Cargando catálogo de plantillas institucionales...
+                    </div>
                 </div>
             </section>
         </div>
@@ -1601,6 +1756,696 @@
         </div>
     </div>
 
+    <!-- MODAL EDITOR DE PLANTILLAS -->
+    <div id="modal-template-editor" class="fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center hidden z-[80] backdrop-blur-sm p-4 overflow-y-auto">
+        <div class="bg-white rounded-3xl shadow-2xl w-full max-w-5xl my-8 overflow-hidden animate-fade-in-up flex flex-col max-h-[90vh]">
+            <div class="p-6 bg-slate-900 text-white flex justify-between items-center">
+                <div>
+                    <span class="px-2.5 py-0.5 bg-blue-500 text-white text-[10px] font-black uppercase rounded-full">Diseñador de Plantilla</span>
+                    <h3 id="editor-modal-title" class="text-lg font-black uppercase tracking-tight mt-1">Configurar Plantilla Institucional</h3>
+                </div>
+                <button id="close-template-editor" class="text-slate-400 hover:text-white text-xl p-2"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+
+            <div class="p-6 overflow-y-auto space-y-6 flex-grow">
+                <input type="hidden" id="editor-template-id">
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 bg-slate-50 p-4 rounded-2xl border border-slate-200">
+                    <div>
+                        <label class="block text-[11px] font-bold uppercase text-slate-700 mb-1">Código de Plantilla *</label>
+                        <input type="text" id="editor-code" placeholder="Ej: CONST-ESTUDIO" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-xl font-semibold uppercase">
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-bold uppercase text-slate-700 mb-1">Título de la Plantilla *</label>
+                        <input type="text" id="editor-title" placeholder="Ej: Constancia Oficial de Estudios" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-xl font-semibold">
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-bold uppercase text-slate-700 mb-1">Categoría Documental</label>
+                        <select id="editor-category" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-xl font-semibold">
+                            <option value="Académico">Académico</option>
+                            <option value="Financiero">Financiero</option>
+                            <option value="Administrativo">Administrativo</option>
+                            <option value="Legal / Matrícula">Legal / Matrícula</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-bold uppercase text-slate-700 mb-1">Departamento Propietario</label>
+                        <input type="text" id="editor-department" value="Secretaría General" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-xl font-semibold">
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-bold uppercase text-slate-700 mb-1">Tipo de Formato Salida</label>
+                        <select id="editor-output-type" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-xl font-semibold">
+                            <option value="PDF">PDF Oficial Imprimible</option>
+                            <option value="HTML">Documento HTML Interactivo</option>
+                            <option value="Editable">Formulario Editable</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-bold uppercase text-slate-700 mb-1">Estado del Ciclo de Vida</label>
+                        <select id="editor-state" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-xl font-semibold">
+                            <option value="publicada">Publicada (Activa)</option>
+                            <option value="borrador">Borrador</option>
+                            <option value="suspendida">Suspendida</option>
+                            <option value="archivada">Archivada</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="bg-blue-50/50 p-4 rounded-2xl border border-blue-100 grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div>
+                        <label class="block text-[10px] font-bold uppercase text-blue-900 mb-1">Tamaño Hoja</label>
+                        <select id="editor-paper-size" class="w-full px-2.5 py-1.5 text-xs border border-blue-200 rounded-lg">
+                            <option value="Letter">Carta (Letter - 8.5 x 11 in)</option>
+                            <option value="A4">A4 (210 x 297 mm)</option>
+                            <option value="Legal">Oficio (Legal - 8.5 x 14 in)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold uppercase text-blue-900 mb-1">Orientación</label>
+                        <select id="editor-orientation" class="w-full px-2.5 py-1.5 text-xs border border-blue-200 rounded-lg">
+                            <option value="portrait">Vertical (Portrait)</option>
+                            <option value="landscape">Horizontal (Landscape)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold uppercase text-blue-900 mb-1">Márgenes (mm)</label>
+                        <input type="text" id="editor-margins" value="20mm" class="w-full px-2.5 py-1.5 text-xs border border-blue-200 rounded-lg">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold uppercase text-blue-900 mb-1">Versión Actual</label>
+                        <input type="text" id="editor-version" value="1.0" readonly class="w-full px-2.5 py-1.5 text-xs bg-gray-100 border border-gray-200 rounded-lg font-bold text-blue-700">
+                    </div>
+                </div>
+
+                <div class="space-y-2">
+                    <div class="flex items-center justify-between">
+                        <label class="block text-xs font-black uppercase text-slate-800">Campos Dinámicos Disponibles ({{...}})</label>
+                        <span class="text-[10px] text-gray-500 font-medium">Seleccione e inserte variables oficiales de la base de datos</span>
+                    </div>
+                    <div class="flex gap-2">
+                        <select id="dynamic-fields-select" class="flex-grow px-3 py-2 border border-slate-300 rounded-xl text-xs font-semibold">
+                            <!-- Se carga vía js/teacher.js -->
+                        </select>
+                        <button id="btn-insert-dynamic-field" class="px-4 py-2 bg-slate-800 text-white rounded-xl text-xs font-bold uppercase tracking-wider hover:bg-slate-700">
+                            + Insertar Variable
+                        </button>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-black uppercase text-slate-800 mb-2">Cuerpo y Estructura HTML de la Plantilla</label>
+                    <textarea id="editor-html-content" rows="12" class="w-full p-4 font-mono text-xs border border-slate-300 rounded-2xl focus:border-blue-500 focus:outline-none bg-slate-900 text-emerald-400 font-semibold" placeholder="Ingrese el diseño HTML de la plantilla con sus etiquetas {{...}}"></textarea>
+                </div>
+            </div>
+
+            <div class="p-4 bg-slate-100 border-t border-slate-200 flex flex-wrap justify-between items-center gap-2">
+                <button id="btn-preview-from-editor" class="px-4 py-2 bg-indigo-600 text-white rounded-xl font-bold text-xs uppercase tracking-wider hover:bg-indigo-700">
+                    <i class="fa-solid fa-eye mr-1"></i> Vista Previa
+                </button>
+                <div class="flex items-center gap-2">
+                    <button id="btn-close-editor-cancel" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-xl font-bold text-xs uppercase tracking-wider hover:bg-gray-300">
+                        Cancelar
+                    </button>
+                    <button id="btn-save-template" class="px-5 py-2 bg-blue-600 text-white rounded-xl font-bold text-xs uppercase tracking-wider hover:bg-blue-700 shadow-md">
+                        <i class="fa-solid fa-floppy-disk mr-1"></i> Guardar Plantilla
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL VISTA PREVIA -->
+    <div id="modal-template-preview" class="fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center hidden z-[90] backdrop-blur-sm p-4">
+        <div class="bg-white rounded-3xl shadow-2xl w-full max-w-4xl my-8 overflow-hidden animate-fade-in-up flex flex-col max-h-[92vh]">
+            <div class="p-5 bg-indigo-900 text-white flex justify-between items-center">
+                <div class="flex items-center gap-2">
+                    <i class="fa-solid fa-file-lines text-indigo-300 text-xl"></i>
+                    <div>
+                        <h3 class="text-sm font-black uppercase tracking-tight">Vista Previa de Documento</h3>
+                        <p class="text-[10px] text-indigo-200">Previsualización inocua con resolución dinámica de variables</p>
+                    </div>
+                </div>
+                <button id="close-template-preview" class="text-indigo-300 hover:text-white text-xl p-2"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div id="preview-pending-warning" class="hidden px-6 py-2.5 bg-amber-50 border-b border-amber-200 text-amber-800 text-xs font-bold flex items-center gap-2">
+                <i class="fa-solid fa-triangle-exclamation text-amber-600"></i>
+                <span id="preview-pending-text">Hay campos sin resolver identificados con [CAMPO PENDIENTE]</span>
+            </div>
+            <div class="p-6 overflow-y-auto flex-grow bg-slate-200">
+                <div id="preview-render-canvas" class="bg-white p-8 rounded-2xl shadow-md min-h-[500px] border border-slate-300">
+                    <!-- HTML Renderizado -->
+                </div>
+            </div>
+            <div class="p-4 bg-slate-100 border-t border-slate-200 flex justify-between items-center">
+                <button id="btn-back-to-editor" class="px-4 py-2 bg-slate-700 text-white rounded-xl font-bold text-xs uppercase hover:bg-slate-800">
+                    <i class="fa-solid fa-pen-to-square mr-1"></i> Volver al Editor
+                </button>
+                <button id="close-preview-btn" class="px-5 py-2 bg-gray-300 text-gray-800 rounded-xl font-bold text-xs uppercase hover:bg-gray-400">
+                    Cerrar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL GENERADOR DE DOCUMENTOS OFICIALES -->
+    <div id="modal-document-generator" class="fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center hidden z-[85] backdrop-blur-sm p-4">
+        <div class="bg-white rounded-3xl shadow-2xl w-full max-w-lg overflow-hidden animate-fade-in-up">
+            <div class="p-6 bg-slate-900 text-white flex justify-between items-center">
+                <div>
+                    <span class="px-2.5 py-0.5 bg-emerald-500 text-white text-[10px] font-black uppercase rounded-full">Emisión de Documento</span>
+                    <h3 id="generator-modal-title" class="text-base font-black uppercase mt-1">Generar Documento Oficial</h3>
+                </div>
+                <button id="close-document-generator" class="text-slate-400 hover:text-white text-xl p-2"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="p-6 space-y-4">
+                <input type="hidden" id="generator-template-id">
+                <div>
+                    <label class="block text-xs font-bold uppercase text-slate-700 mb-1">ID / DNI del Destinatario (Estudiante / Empleado)</label>
+                    <input type="text" id="generator-target-id" placeholder="Ej: EST-2026-089 o DNI 0801-2010-12345" class="w-full px-3 py-2.5 text-xs border border-slate-300 rounded-xl font-semibold">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold uppercase text-slate-700 mb-1">Motivo / Finalidad de la Solicitud</label>
+                    <textarea id="generator-reason" rows="3" placeholder="Ej: Trámite de Beca Externa / Solicitud Consular / Transferencia" class="w-full p-3 text-xs border border-slate-300 rounded-xl font-medium"></textarea>
+                </div>
+                <div class="p-3 bg-emerald-50 rounded-xl border border-emerald-200 text-emerald-900 text-[11px] font-semibold">
+                    <i class="fa-solid fa-shield-halved text-emerald-600 mr-1"></i> El documento se emitirá con un token único de verificación (`VERIF-XXXXXX`) e indexación automática en Google Drive.
+                </div>
+            </div>
+            <div class="p-4 bg-slate-100 border-t border-slate-200 flex justify-end gap-2">
+                <button id="btn-cancel-generation" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-xl font-bold text-xs uppercase">Cancelar</button>
+                <button id="btn-confirm-generate" class="px-5 py-2 bg-emerald-600 text-white rounded-xl font-bold text-xs uppercase hover:bg-emerald-700 shadow-md">
+                    <i class="fa-solid fa-circle-check mr-1"></i> Emitir Documento
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: Editor Visual de PDF y Campos Superpuestos (Fase 23) -->
+    <div id="modal-pdf-overlay-editor" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-50 flex items-center justify-center p-2 md:p-4 hidden">
+        <div class="bg-white rounded-3xl shadow-2xl max-w-7xl w-full max-h-[96vh] flex flex-col overflow-hidden border border-slate-200">
+            <!-- Header -->
+            <div class="p-4 bg-slate-900 text-white flex items-center justify-between border-b border-slate-800">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-2xl bg-red-500/20 text-red-400 flex items-center justify-center text-lg">
+                        <i class="fa-solid fa-file-pdf"></i>
+                    </div>
+                    <div>
+                        <h3 id="pdf-editor-title" class="text-sm md:text-base font-black uppercase tracking-tight text-white">Editor Visual de PDF - Campos Superpuestos</h3>
+                        <p class="text-[11px] text-slate-400 font-medium">Coloque, mueva y configure campos dinámicos sobre las páginas del documento PDF base.</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button id="btn-save-pdf-template-draft" class="px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-xl text-xs font-bold uppercase transition-all">
+                        <i class="fa-solid fa-floppy-disk mr-1"></i> Borrador
+                    </button>
+                    <button id="btn-publish-pdf-template" class="px-5 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-xs font-bold uppercase shadow-md transition-all">
+                        <i class="fa-solid fa-cloud-arrow-up mr-1"></i> Publicar
+                    </button>
+                    <button id="btn-close-pdf-editor" class="p-2 text-slate-400 hover:text-white rounded-xl hover:bg-slate-800 text-lg transition-all">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Main Editor Body: 3-column layout -->
+            <div class="flex-grow flex flex-col md:flex-row overflow-hidden bg-slate-100">
+
+                <!-- Left Toolbar -->
+                <div class="w-full md:w-64 bg-white border-r border-slate-200 p-4 flex flex-col gap-4 overflow-y-auto">
+                    <div>
+                        <label class="block text-[11px] font-black uppercase tracking-wider text-slate-500 mb-1">Cargar PDF Base</label>
+                        <input type="file" id="pdf-file-input" accept="application/pdf" class="w-full text-xs text-slate-600 file:mr-2 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 cursor-pointer">
+                    </div>
+
+                    <hr class="border-slate-100">
+
+                    <div>
+                        <span class="block text-[11px] font-black uppercase tracking-wider text-slate-500 mb-2">Herramientas de Campos</span>
+                        <div class="grid grid-cols-1 gap-1.5">
+                            <button data-field-type="texto" class="btn-add-overlay-field p-2.5 bg-slate-50 hover:bg-indigo-50 border border-slate-200 hover:border-indigo-200 rounded-xl text-left flex items-center gap-2 text-xs font-bold text-slate-700 hover:text-indigo-700 transition-all">
+                                <i class="fa-solid fa-font text-indigo-500 w-4"></i> Texto Línea
+                            </button>
+                            <button data-field-type="multiline" class="btn-add-overlay-field p-2.5 bg-slate-50 hover:bg-indigo-50 border border-slate-200 hover:border-indigo-200 rounded-xl text-left flex items-center gap-2 text-xs font-bold text-slate-700 hover:text-indigo-700 transition-all">
+                                <i class="fa-solid fa-align-left text-blue-500 w-4"></i> Texto Multilínea
+                            </button>
+                            <button data-field-type="fecha" class="btn-add-overlay-field p-2.5 bg-slate-50 hover:bg-indigo-50 border border-slate-200 hover:border-indigo-200 rounded-xl text-left flex items-center gap-2 text-xs font-bold text-slate-700 hover:text-indigo-700 transition-all">
+                                <i class="fa-solid fa-calendar-days text-emerald-500 w-4"></i> Fecha
+                            </button>
+                            <button data-field-type="checkbox" class="btn-add-overlay-field p-2.5 bg-slate-50 hover:bg-indigo-50 border border-slate-200 hover:border-indigo-200 rounded-xl text-left flex items-center gap-2 text-xs font-bold text-slate-700 hover:text-indigo-700 transition-all">
+                                <i class="fa-solid fa-square-check text-purple-500 w-4"></i> Casilla Check
+                            </button>
+                            <button data-field-type="firma" class="btn-add-overlay-field p-2.5 bg-slate-50 hover:bg-indigo-50 border border-slate-200 hover:border-indigo-200 rounded-xl text-left flex items-center gap-2 text-xs font-bold text-slate-700 hover:text-indigo-700 transition-all">
+                                <i class="fa-solid fa-signature text-amber-500 w-4"></i> Espacio Firma
+                            </button>
+                        </div>
+                    </div>
+
+                    <hr class="border-slate-100">
+
+                    <div>
+                        <span class="block text-[11px] font-black uppercase tracking-wider text-slate-500 mb-2">Metadatos de Plantilla</span>
+                        <div class="space-y-2">
+                            <div>
+                                <label class="block text-[10px] font-bold text-slate-600 uppercase">Título</label>
+                                <input type="text" id="pdf-tpl-title" placeholder="Ej: Solicitud de Matrícula PDF" class="w-full px-2.5 py-1.5 text-xs border border-slate-300 rounded-xl font-medium">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold text-slate-600 uppercase">Categoría</label>
+                                <select id="pdf-tpl-category" class="w-full px-2.5 py-1.5 text-xs border border-slate-300 rounded-xl font-medium">
+                                    <option value="Constancias">Constancias</option>
+                                    <option value="Certificados">Certificados</option>
+                                    <option value="Solicitudes">Solicitudes</option>
+                                    <option value="Matricula">Matrícula</option>
+                                    <option value="Administrativo">Administrativo</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Center: PDF Canvas Viewer & Overlay Layer -->
+                <div class="flex-grow flex flex-col overflow-hidden relative bg-slate-200">
+                    <!-- Viewer Navigation Controls -->
+                    <div class="p-2.5 bg-white border-b border-slate-200 flex flex-wrap items-center justify-between gap-2 text-xs font-bold text-slate-700 shadow-sm z-10">
+                        <div class="flex items-center gap-2">
+                            <button id="btn-pdf-prev-page" class="p-1.5 hover:bg-slate-100 rounded-lg text-slate-600 disabled:opacity-40">
+                                <i class="fa-solid fa-chevron-left"></i>
+                            </button>
+                            <span id="pdf-page-num-display" class="font-mono text-slate-800">Página <b id="pdf-curr-page">1</b> de <b id="pdf-total-pages">1</b></span>
+                            <button id="btn-pdf-next-page" class="p-1.5 hover:bg-slate-100 rounded-lg text-slate-600 disabled:opacity-40">
+                                <i class="fa-solid fa-chevron-right"></i>
+                            </button>
+                        </div>
+
+                        <div class="flex items-center gap-2">
+                            <button id="btn-pdf-zoom-out" class="p-1.5 hover:bg-slate-100 rounded-lg text-slate-600" title="Alejar">
+                                <i class="fa-solid fa-magnifying-glass-minus"></i>
+                            </button>
+                            <span id="pdf-zoom-display" class="font-mono text-slate-800">100%</span>
+                            <button id="btn-pdf-zoom-in" class="p-1.5 hover:bg-slate-100 rounded-lg text-slate-600" title="Acercar">
+                                <i class="fa-solid fa-magnifying-glass-plus"></i>
+                            </button>
+                            <button id="btn-pdf-fit-width" class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-[11px] uppercase font-bold">
+                                Ajustar Ancho
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Canvas Workspace Scroll Area -->
+                    <div id="pdf-canvas-workspace" class="flex-grow overflow-auto p-4 flex justify-center items-start relative">
+                        <div id="pdf-page-container" class="relative shadow-2xl bg-white border border-slate-300 rounded-sm select-none" style="min-width: 300px; min-height: 400px;">
+                            <!-- PDF rendered canvas -->
+                            <canvas id="pdf-render-canvas" class="block w-full h-full"></canvas>
+                            <!-- Overlay Interactive Layer for Drag/Resize Boxes -->
+                            <div id="pdf-overlay-layer" class="absolute inset-0 z-20 pointer-events-auto overflow-hidden">
+                                <!-- Dynamic overlay field divs created by JS -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Property Panel -->
+                <div class="w-full md:w-72 bg-white border-l border-slate-200 p-4 flex flex-col gap-3 overflow-y-auto">
+                    <span class="block text-[11px] font-black uppercase tracking-wider text-slate-500 border-b border-slate-100 pb-2">Propiedades del Campo</span>
+
+                    <div id="field-props-empty-state" class="p-6 text-center text-slate-400 my-auto">
+                        <i class="fa-solid fa-arrow-pointer text-3xl mb-2 text-slate-300"></i>
+                        <p class="text-xs font-semibold">Seleccione un campo superpuesto sobre la página para configurar sus propiedades.</p>
+                    </div>
+
+                    <div id="field-props-form" class="hidden space-y-3 text-xs">
+                        <div>
+                            <label class="block text-[10px] font-black uppercase text-slate-600 mb-1">Nombre / Identificador</label>
+                            <input type="text" id="prop-field-key" class="w-full px-2.5 py-1.5 border border-slate-300 rounded-xl font-bold font-mono text-indigo-700">
+                        </div>
+
+                        <div>
+                            <label class="block text-[10px] font-black uppercase text-slate-600 mb-1">Etiqueta Visible</label>
+                            <input type="text" id="prop-field-label" class="w-full px-2.5 py-1.5 border border-slate-300 rounded-xl font-semibold">
+                        </div>
+
+                        <div>
+                            <label class="block text-[10px] font-black uppercase text-slate-600 mb-1">Fuente Dinámica Autorizada</label>
+                            <select id="prop-field-source-tag" class="w-full px-2.5 py-1.5 border border-slate-300 rounded-xl font-semibold bg-slate-50">
+                                <!-- Dynamically populated by JS -->
+                            </select>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-2">
+                            <div>
+                                <label class="block text-[10px] font-black uppercase text-slate-600 mb-1">Tamaño Fuente</label>
+                                <input type="number" id="prop-field-font-size" min="8" max="36" value="11" class="w-full px-2.5 py-1.5 border border-slate-300 rounded-xl font-bold">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-black uppercase text-slate-600 mb-1">Alineación</label>
+                                <select id="prop-field-align" class="w-full px-2.5 py-1.5 border border-slate-300 rounded-xl font-semibold">
+                                    <option value="left">Izquierda</option>
+                                    <option value="center">Centro</option>
+                                    <option value="right">Derecha</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-[10px] font-black uppercase text-slate-600 mb-1">Valor de Prueba / Muestra</label>
+                            <input type="text" id="prop-field-sample-val" placeholder="Ej: Juan Pérez" class="w-full px-2.5 py-1.5 border border-slate-300 rounded-xl font-medium">
+                        </div>
+
+                        <div class="flex items-center gap-2 pt-1">
+                            <input type="checkbox" id="prop-field-required" class="w-4 h-4 rounded text-indigo-600 focus:ring-indigo-500">
+                            <label for="prop-field-required" class="text-xs font-bold text-slate-700">Campo Obligatorio</label>
+                        </div>
+
+                        <div class="p-2.5 bg-slate-50 rounded-xl border border-slate-200 text-[10px] font-mono text-slate-600 space-y-1">
+                            <div><b>Página:</b> <span id="prop-field-page-display">1</span></div>
+                            <div><b>Posición X:</b> <span id="prop-field-x-display">0%</span> | <b>Y:</b> <span id="prop-field-y-display">0%</span></div>
+                            <div><b>Ancho:</b> <span id="prop-field-w-display">0%</span> | <b>Alto:</b> <span id="prop-field-h-display">0%</span></div>
+                        </div>
+
+                        <div class="pt-2 flex justify-between gap-2 border-t border-slate-100">
+                            <button id="btn-delete-overlay-field" class="w-full py-2 bg-red-50 hover:bg-red-100 text-red-600 rounded-xl font-bold text-xs uppercase transition-all">
+                                <i class="fa-solid fa-trash-can mr-1"></i> Eliminar Campo
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: Constructor de Formularios Institucionales (Fase 24) -->
+    <div id="modal-form-builder" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-[70] flex items-center justify-center p-2 md:p-4 hidden">
+        <div class="bg-white rounded-3xl shadow-2xl max-w-6xl w-full max-h-[90vh] flex flex-col overflow-hidden border border-slate-200 mt-12">
+            <div class="p-4 bg-slate-900 text-white flex items-center justify-between border-b border-slate-800">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-2xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-lg">
+                        <i class="fa-solid fa-wpforms"></i>
+                    </div>
+                    <div>
+                        <h3 id="form-builder-modal-title" class="text-sm md:text-base font-black uppercase tracking-tight text-white">Diseñador de Formularios y Trámites Digitales</h3>
+                        <p class="text-[11px] text-slate-400 font-medium">Configure campos, validaciones y reglas para trámites de estudiantes y familias.</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button id="btn-save-form-draft" class="px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-xl text-xs font-bold uppercase transition-all">
+                        <i class="fa-solid fa-floppy-disk mr-1"></i> Borrador
+                    </button>
+                    <button id="btn-publish-form" class="px-5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-bold uppercase shadow-md transition-all">
+                        <i class="fa-solid fa-cloud-arrow-up mr-1"></i> Publicar
+                    </button>
+                    <button id="btn-close-form-builder" class="p-2 text-slate-400 hover:text-white rounded-xl hover:bg-slate-800 text-lg transition-all">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="flex-grow flex flex-col md:flex-row overflow-hidden bg-slate-100">
+                <!-- Left: Field Tool Palette & Form Metadatos -->
+                <div class="w-full md:w-72 bg-white border-r border-slate-200 p-4 flex flex-col gap-4 overflow-y-auto">
+                    <div>
+                        <span class="block text-[11px] font-black uppercase tracking-wider text-slate-500 mb-2">Metadatos del Trámite</span>
+                        <div class="space-y-2 text-xs">
+                            <div>
+                                <label class="block text-[10px] font-bold text-slate-600 uppercase">Título del Formulario</label>
+                                <input type="text" id="builder-form-title" placeholder="Ej: Solicitud de Beca Escolar" class="w-full px-2.5 py-1.5 border border-slate-300 rounded-xl font-medium">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold text-slate-600 uppercase">Departamento Responsable</label>
+                                <select id="builder-form-dept" class="w-full px-2.5 py-1.5 border border-slate-300 rounded-xl font-medium">
+                                    <option value="Secretaría">Secretaría</option>
+                                    <option value="Orientación">Orientación</option>
+                                    <option value="Contabilidad">Contabilidad</option>
+                                    <option value="Dirección">Dirección</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold text-slate-600 uppercase">Descripción / Instrucciones</label>
+                                <textarea id="builder-form-desc" rows="2" placeholder="Instrucciones para la familia..." class="w-full p-2 border border-slate-300 rounded-xl font-medium text-[11px]"></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr class="border-slate-100">
+
+                    <div>
+                        <span class="block text-[11px] font-black uppercase tracking-wider text-slate-500 mb-2">Añadir Campo al Formulario</span>
+                        <div class="grid grid-cols-1 gap-1.5 text-xs">
+                            <button data-form-field-type="text" class="btn-add-form-field p-2 bg-slate-50 hover:bg-emerald-50 border border-slate-200 hover:border-emerald-300 rounded-xl text-left flex items-center gap-2 font-bold text-slate-700 hover:text-emerald-700">
+                                <i class="fa-solid fa-font text-emerald-500 w-4"></i> Texto Corto
+                            </button>
+                            <button data-form-field-type="textarea" class="btn-add-form-field p-2 bg-slate-50 hover:bg-emerald-50 border border-slate-200 hover:border-emerald-300 rounded-xl text-left flex items-center gap-2 font-bold text-slate-700 hover:text-emerald-700">
+                                <i class="fa-solid fa-align-left text-blue-500 w-4"></i> Texto Multilínea
+                            </button>
+                            <button data-form-field-type="select" class="btn-add-form-field p-2 bg-slate-50 hover:bg-emerald-50 border border-slate-200 hover:border-emerald-300 rounded-xl text-left flex items-center gap-2 font-bold text-slate-700 hover:text-emerald-700">
+                                <i class="fa-solid fa-list-check text-purple-500 w-4"></i> Lista Desplegable
+                            </button>
+                            <button data-form-field-type="date" class="btn-add-form-field p-2 bg-slate-50 hover:bg-emerald-50 border border-slate-200 hover:border-emerald-300 rounded-xl text-left flex items-center gap-2 font-bold text-slate-700 hover:text-emerald-700">
+                                <i class="fa-solid fa-calendar-days text-amber-500 w-4"></i> Selector de Fecha
+                            </button>
+                            <button data-form-field-type="file" class="btn-add-form-field p-2 bg-slate-50 hover:bg-emerald-50 border border-slate-200 hover:border-emerald-300 rounded-xl text-left flex items-center gap-2 font-bold text-slate-700 hover:text-emerald-700">
+                                <i class="fa-solid fa-paperclip text-rose-500 w-4"></i> Adjunto Documento / Imagen
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Center: Interactive Form Canvas / Field List -->
+                <div class="flex-grow flex flex-col p-4 overflow-y-auto bg-slate-50">
+                    <span class="block text-[11px] font-black uppercase tracking-wider text-slate-500 mb-3">Estructura y Campos Configurados</span>
+                    <div id="builder-fields-container" class="space-y-3">
+                        <!-- Dynamic list of field edit blocks rendered by JS -->
+                        <div class="p-8 text-center text-slate-400 bg-white rounded-2xl border border-dashed border-slate-300">
+                            <i class="fa-solid fa-wpforms text-4xl mb-2 text-slate-300"></i>
+                            <p class="text-xs font-semibold">No hay campos en el formulario. Utilice el panel izquierdo para añadir campos.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: Diseñador de Flujos de Aprobación Institucional (Fase 25) -->
+    <div id="modal-workflow-builder" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-[75] flex items-center justify-center p-2 md:p-4 hidden">
+        <div class="bg-white rounded-3xl shadow-2xl max-w-5xl w-full max-h-[90vh] flex flex-col overflow-hidden border border-slate-200 mt-10">
+            <div class="p-4 bg-slate-900 text-white flex items-center justify-between border-b border-slate-800">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-2xl bg-indigo-500/20 text-indigo-400 flex items-center justify-center text-lg">
+                        <i class="fa-solid fa-diagram-project"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-sm md:text-base font-black uppercase tracking-tight text-white">Diseñador de Flujos de Aprobación y Revisión</h3>
+                        <p class="text-[11px] text-slate-400 font-medium">Configure etapas, roles revisores, firmas y reglas de derivación institucional.</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button id="btn-save-workflow" class="px-5 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-bold uppercase shadow-md transition-all">
+                        <i class="fa-solid fa-floppy-disk mr-1"></i> Guardar Flujo
+                    </button>
+                    <button id="btn-close-workflow-builder" class="p-2 text-slate-400 hover:text-white rounded-xl hover:bg-slate-800 text-lg transition-all">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="flex-grow flex flex-col md:flex-row overflow-hidden bg-slate-100">
+                <!-- Metadatos del Flujo -->
+                <div class="w-full md:w-72 bg-white border-r border-slate-200 p-4 flex flex-col gap-4 overflow-y-auto">
+                    <span class="block text-[11px] font-black uppercase tracking-wider text-slate-500">Configuración del Flujo</span>
+                    <div class="space-y-3 text-xs">
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-600 uppercase">Nombre del Flujo</label>
+                            <input type="text" id="workflow-name-input" placeholder="Ej: Flujo Beca Escolar 2026" class="w-full px-2.5 py-1.5 border border-slate-300 rounded-xl font-medium">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-600 uppercase">Departamento Propietario</label>
+                            <select id="workflow-dept-select" class="w-full px-2.5 py-1.5 border border-slate-300 rounded-xl font-medium">
+                                <option value="Secretaría">Secretaría</option>
+                                <option value="Orientación">Orientación</option>
+                                <option value="Contabilidad">Contabilidad</option>
+                                <option value="Dirección">Dirección</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-600 uppercase">Formulario Vinculado</label>
+                            <select id="workflow-form-select" class="w-full px-2.5 py-1.5 border border-slate-300 rounded-xl font-medium">
+                                <option value="">-- Ninguno (Trámite General) --</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <hr class="border-slate-100">
+
+                    <button id="btn-add-workflow-stage" class="w-full p-2.5 bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 rounded-xl text-indigo-700 font-bold text-xs flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-plus"></i> Añadir Etapa de Revisión
+                    </button>
+                </div>
+
+                <!-- Lista de Etapas Configurada -->
+                <div class="flex-grow p-4 overflow-y-auto">
+                    <span class="block text-[11px] font-black uppercase tracking-wider text-slate-500 mb-3">Secuencia de Etapas y Reglas</span>
+                    <div id="workflow-stages-container" class="space-y-3">
+                        <div class="p-8 text-center text-slate-400 bg-white rounded-2xl border border-dashed border-slate-300">
+                            <i class="fa-solid fa-sitemap text-4xl mb-2 text-slate-300"></i>
+                            <p class="text-xs font-semibold">No hay etapas en el flujo. Haga clic en "Añadir Etapa de Revisión" para comenzar.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: Procesar Decisión y Firma de Trámite (Fase 25) -->
+    <div id="modal-workflow-decision" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-[80] flex items-center justify-center p-2 md:p-4 hidden">
+        <div class="bg-white rounded-3xl shadow-2xl max-w-3xl w-full max-h-[90vh] flex flex-col overflow-hidden border border-slate-200">
+            <div class="p-4 bg-slate-900 text-white flex items-center justify-between border-b border-slate-800">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-2xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-lg">
+                        <i class="fa-solid fa-stamp"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-sm md:text-base font-black uppercase tracking-tight text-white">Revisión y Firma de Trámite Digital</h3>
+                        <p id="decision-solicitud-subtitle" class="text-[11px] text-slate-400 font-medium">Evalúe los datos ingresados y registre la decisión institucional.</p>
+                    </div>
+                </div>
+                <button id="btn-close-workflow-decision" class="p-2 text-slate-400 hover:text-white rounded-xl hover:bg-slate-800 text-lg transition-all">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <div class="p-5 overflow-y-auto space-y-4 text-xs bg-slate-50">
+                <!-- Contenido de la Solicitud -->
+                <div class="p-4 bg-white border border-slate-200 rounded-2xl space-y-2">
+                    <div class="flex justify-between items-center">
+                        <span id="decision-solicitud-id" class="font-black text-slate-800 uppercase text-xs">SOL-00000</span>
+                        <span id="decision-solicitud-estado" class="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase bg-amber-100 text-amber-800">En Revisión</span>
+                    </div>
+                    <p id="decision-solicitud-desc" class="text-slate-600 text-xs font-medium">Detalle de la solicitud...</p>
+                    <div id="decision-solicitud-adjunto" class="pt-1"></div>
+                </div>
+
+                <!-- Formulario de Decisión -->
+                <div class="p-4 bg-white border border-slate-200 rounded-2xl space-y-3">
+                    <span class="block text-[11px] font-black uppercase tracking-wider text-slate-700">Decisión Oficial</span>
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                        <label class="p-2 border border-slate-200 rounded-xl flex items-center gap-2 cursor-pointer hover:bg-emerald-50 font-bold text-slate-700">
+                            <input type="radio" name="decision-action" value="APROBADO" checked class="text-emerald-600 focus:ring-emerald-500">
+                            <span>Aprobar</span>
+                        </label>
+                        <label class="p-2 border border-slate-200 rounded-xl flex items-center gap-2 cursor-pointer hover:bg-rose-50 font-bold text-slate-700">
+                            <input type="radio" name="decision-action" value="RECHAZADO" class="text-rose-600 focus:ring-rose-500">
+                            <span>Rechazar</span>
+                        </label>
+                        <label class="p-2 border border-slate-200 rounded-xl flex items-center gap-2 cursor-pointer hover:bg-amber-50 font-bold text-slate-700">
+                            <input type="radio" name="decision-action" value="DEVUELTO_CORRECCION" class="text-amber-600 focus:ring-amber-500">
+                            <span>Devolver</span>
+                        </label>
+                        <label class="p-2 border border-slate-200 rounded-xl flex items-center gap-2 cursor-pointer hover:bg-indigo-50 font-bold text-slate-700">
+                            <input type="radio" name="decision-action" value="DERIVADO" class="text-indigo-600 focus:ring-indigo-500">
+                            <span>Derivar</span>
+                        </label>
+                    </div>
+
+                    <div>
+                        <label class="block text-[10px] font-bold text-slate-600 uppercase mb-1">Observaciones Públicas (visibles para la familia)</label>
+                        <textarea id="decision-obs-public" rows="2" placeholder="Instrucciones o motivo para el solicitante..." class="w-full p-2 border border-slate-300 rounded-xl font-medium"></textarea>
+                    </div>
+
+                    <div>
+                        <label class="block text-[10px] font-bold text-slate-600 uppercase mb-1">Observaciones Internas (privadas de auditoría)</label>
+                        <textarea id="decision-obs-private" rows="2" placeholder="Notas internas para el equipo administrativo..." class="w-full p-2 border border-slate-300 rounded-xl font-medium"></textarea>
+                    </div>
+
+                    <div class="pt-2 border-t border-slate-100 flex items-center gap-2">
+                        <input type="checkbox" id="decision-include-signature" class="rounded border-slate-300 text-emerald-600 focus:ring-emerald-500">
+                        <label for="decision-include-signature" class="font-bold text-slate-700 text-xs">Generar constancia de aprobación digital con código de verificación</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="p-4 bg-slate-100 border-t border-slate-200 flex justify-end gap-2">
+                <button id="btn-cancel-workflow-decision" class="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold rounded-xl text-xs uppercase">Cancelar</button>
+                <button id="btn-submit-workflow-decision" class="px-5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl text-xs uppercase shadow-md transition-all">Procesar Decisión</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: Configuración de Canales y Proveedores Multicanal (Fase 26) -->
+    <div id="modal-channel-config" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-[85] flex items-center justify-center p-2 md:p-4 hidden">
+        <div class="bg-white rounded-3xl shadow-2xl max-w-4xl w-full max-h-[90vh] flex flex-col overflow-hidden border border-slate-200">
+            <div class="p-4 bg-slate-900 text-white flex items-center justify-between border-b border-slate-800">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-2xl bg-sky-500/20 text-sky-400 flex items-center justify-center text-lg">
+                        <i class="fa-solid fa-tower-cell"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-sm md:text-base font-black uppercase tracking-tight text-white">Canales y Proveedores Multicanal</h3>
+                        <p class="text-[11px] text-slate-400 font-medium">Gestione adaptadores externos para SMS, WhatsApp, Messenger y Correo.</p>
+                    </div>
+                </div>
+                <button id="btn-close-channel-config" class="p-2 text-slate-400 hover:text-white rounded-xl hover:bg-slate-800 text-lg transition-all">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <div class="p-5 overflow-y-auto space-y-4 text-xs bg-slate-50">
+                <div class="p-3 bg-amber-50 border border-amber-200 text-amber-900 rounded-2xl font-medium flex items-start gap-2 text-xs">
+                    <i class="fa-solid fa-shield-halved text-amber-600 text-base mt-0.5"></i>
+                    <span><strong>Arquitectura Resiliente:</strong> Las notificaciones internas de la plataforma funcionan siempre de forma independiente. Desactivar o fallar en un canal externo no interrumpe los avisos internos.</span>
+                </div>
+
+                <div id="channel-cards-container" class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <!-- Dynamic channel cards populated by JS -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Importador Universal de Excel (.xlsx) (Fase 28) -->
+    <div id="modal-excel-importer" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-[90] flex items-center justify-center p-2 md:p-4 hidden">
+        <div class="bg-white rounded-3xl max-w-2xl w-full p-6 shadow-2xl border border-slate-100 space-y-4 animate-fade-in-up">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                <div class="flex items-center gap-2">
+                    <i class="fa-solid fa-file-excel text-emerald-600 text-xl"></i>
+                    <h3 class="font-bold text-slate-800 text-sm">Importador Universal de Archivos Excel (.xlsx)</h3>
+                </div>
+                <button id="btn-close-excel-importer" class="text-slate-400 hover:text-slate-600 p-1"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            <div class="space-y-3">
+                <div>
+                    <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Módulo Destino</label>
+                    <select id="excel-target-module" class="w-full text-xs p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-medium">
+                        <option value="Docentes">Docentes / Calificaciones</option>
+                        <option value="Secretaria">Secretaría / Matrícula & Expedientes</option>
+                        <option value="Contabilidad">Contabilidad / Cobros & Transacciones</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Seleccionar Archivo Excel (.xlsx)</label>
+                    <input type="file" id="excel-file-input" accept=".xlsx, .xls, .csv" class="w-full text-xs p-2 bg-white border border-slate-200 rounded-xl">
+                </div>
+                <div id="excel-preview-container" class="hidden space-y-2">
+                    <h4 class="text-xs font-bold text-slate-700">Vista Previa e Inspección de Filas:</h4>
+                    <div id="excel-preview-summary" class="p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-600">
+                        Cargando archivo...
+                    </div>
+                </div>
+            </div>
+            <div class="pt-3 border-t border-slate-100 flex justify-end gap-2">
+                <button id="btn-cancel-excel-import" class="px-4 py-2 bg-slate-100 text-slate-600 rounded-xl font-bold text-xs uppercase hover:bg-slate-200">Cancelar</button>
+                <button id="btn-submit-excel-import" class="px-5 py-2 bg-emerald-600 text-white rounded-xl font-bold text-xs uppercase hover:bg-emerald-700 shadow-md">Confirmar Importación</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Libraries for PDF Visual Designer & Overlay Editor (Phase 23) and SheetJS (Phase 28) -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script>
+        if (window.pdfjsLib) {
+            window.pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+        }
+    </script>
     <script src="js/config.js?v=22"></script>
     <script src="js/persistence.js?v=22"></script>
     <script src="js/api.js?v=22"></script>

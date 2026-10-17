@@ -176,6 +176,14 @@ function fetchApi(service, action, payload, retryCount, options) {
             if (action === 'getNews') return { status: 'success', data: [], isFallback: true };
             if (action === 'getGlobalTop') return { status: 'success', global: [], subjectTops: {}, isFallback: true };
             if (action === 'getAcademicConfig') return { status: 'success', data: { ParcialActual: "I parcial", GradoActual: [], SeccionActual: [], AsignaturaActual: [], TemaActual: ["General"] }, isFallback: true };
+            if (action === 'getUserSettings') return { status: 'success', data: { userId: 'USER-001', categories: { academico: true, administrativo: true, mensajes: true, asistencia: true, comercial: false }, inAppEnabled: true, externalChannelPreference: 'NINGUNO', frequency: 'INMEDIATA' }, isFallback: true };
+            if (action === 'getProviderIntegrations') return { status: 'success', data: [
+                { integrationId: "INT-SMS", providerType: "SMS", providerName: "Twilio / SMS Gateway", serviceCategory: "Mensajería", enabled: false, environment: "Sandbox", secretRef: "***PROTECTED***", status: "DESACTIVADO" },
+                { integrationId: "INT-WA", providerType: "WHATSAPP", providerName: "Meta Cloud API", serviceCategory: "Mensajería", enabled: false, environment: "Production", secretRef: "***PROTECTED***", status: "DESACTIVADO" },
+                { integrationId: "INT-MSG", providerType: "MESSENGER", providerName: "Facebook Messenger API", serviceCategory: "Mensajería", enabled: false, environment: "Production", secretRef: "***PROTECTED***", status: "DESACTIVADO" },
+                { integrationId: "INT-EMAIL", providerType: "EMAIL", providerName: "Gmail / SMTP", serviceCategory: "Correo Institucional", enabled: true, environment: "Production", secretRef: "***PROTECTED***", status: "ACTIVO" },
+                { integrationId: "INT-PAY-BAC", providerType: "PASARELA_PAGO", providerName: "BAC Credomatic Pasarela", serviceCategory: "Cobros Financieros", enabled: false, environment: "Test", secretRef: "***PROTECTED***", status: "CONFIGURADO" }
+            ], isFallback: true };
             if (action.indexOf('get') === 0) return { status: 'success', data: [], isFallback: true };
             if (action === 'loginUser') return { status: 'error', message: 'Servicio de autenticación no disponible.', isFallback: true };
 

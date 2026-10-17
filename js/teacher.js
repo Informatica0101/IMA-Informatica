@@ -1,8 +1,8 @@
 document.addEventListener('DOMContentLoaded', () => {
     // (A-29) Centralizar capacidades por rol
     const RoleCapabilities = {
-        canGrade: (user) => user && user.rol === 'Profesor',
-        canManageExams: (user) => user && user.rol === 'Profesor'
+        canGrade: (user) => user && (user.rol === 'Profesor' || user.rol === 'Administrador' || user.rol === 'Director' || user.rol === 'Subdirector' || user.rol === 'Secretaria'),
+        canManageExams: (user) => user && (user.rol === 'Profesor' || user.rol === 'Coordinador' || user.rol === 'Administrador' || user.rol === 'Director' || user.rol === 'Subdirector' || user.rol === 'Secretaria')
     };
 
     let submissionsTableBody = document.getElementById('submissions-table-body');
@@ -12,8 +12,9 @@ document.addEventListener('DOMContentLoaded', () => {
         window.location.href = 'login.html';
         return;
     }
-    const firstName = currentUser.nombre.split(' ')[0];
-    document.getElementById('teacher-name').textContent = firstName;
+    const firstName = (currentUser.nombre || currentUser.nombreCompleto || 'Usuario').split(' ')[0];
+    const teacherNameElem = document.getElementById('teacher-name');
+    if (teacherNameElem) teacherNameElem.textContent = firstName;
 
     // --- Elementos de Navegación y Secciones ---
     const navDashboard = document.getElementById('nav-dashboard');
@@ -27,7 +28,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const navLogros = document.getElementById('nav-logros');
     const navNews = document.getElementById('nav-news');
     const navAdmin = document.getElementById('nav-admin');
+    const navCoordinacion = document.getElementById('nav-coordinacion');
     const navReportsOld = document.getElementById('nav-reportes');
+    const navPlantillas = document.getElementById('nav-plantillas');
 
     const sectionAcademicReports = document.getElementById('section-dashboard');
     const sectionGradebook = document.getElementById('section-gradebook');
@@ -41,6 +44,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const sectionNews = document.getElementById('section-news');
     const sectionAdmin = document.getElementById('section-admin');
     const sectionReportes = document.getElementById('section-reportes');
+    const sectionCoordinacion = document.getElementById('section-coordinacion');
+    const sectionPlantillas = document.getElementById('section-plantillas');
 
     const tareasListView = document.getElementById('tareas-list-view');
     const tareasCreateView = document.getElementById('tareas-create-view');
@@ -64,8 +69,8 @@ document.addEventListener('DOMContentLoaded', () => {
     let isNavigating = false;
     let studentSort = { column: 'nombre', direction: 'asc' };
 
-    const allSections = [sectionAcademicReports, sectionGradebook, sectionAttendance, sectionComunicados, sectionOrientacion, sectionSupervision, sectionTareas, sectionProyectos, sectionLogros, sectionNews, sectionAdmin, sectionReportes];
-    const allNavLinks = [navDashboard, navGradebook, navAttendance, navComunicados, navOrientacion, navSupervision, navTareas, navProyectos, navLogros, navNews, navAdmin, navReportsOld];
+    const allSections = [sectionAcademicReports, sectionGradebook, sectionAttendance, sectionComunicados, sectionOrientacion, sectionSupervision, sectionTareas, sectionProyectos, sectionLogros, sectionNews, sectionAdmin, sectionReportes, sectionPlantillas];
+    const allNavLinks = [navDashboard, navGradebook, navAttendance, navComunicados, navOrientacion, navSupervision, navTareas, navProyectos, navLogros, navNews, navAdmin, navReportsOld, navPlantillas];
 
     // Auxiliar para normalizar strings (trim, lowercase y sin acentos) para comparaciones robustas
     const norm = (s) => (s || "").toString().trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
@@ -142,6 +147,58 @@ document.addEventListener('DOMContentLoaded', () => {
     navAdmin.addEventListener('click', () => {
         window.navigateTo(sectionAdmin, navAdmin);
         loadAcademicAdminData();
+    });
+
+    navCoordinacion?.addEventListener('click', () => {
+        window.navigateTo(sectionCoordinacion, navCoordinacion);
+    });
+
+    navPlantillas?.addEventListener('click', () => {
+        window.navigateTo(sectionPlantillas, navPlantillas);
+    });
+
+    document.getElementById('btn-save-coord-assignment')?.addEventListener('click', async () => {
+        const anoLectivo = document.getElementById('coord-ano-lectivo')?.value || '2025';
+        const grado = document.getElementById('coord-grado-select')?.value;
+        const seccion = document.getElementById('coord-seccion-select')?.value;
+        const docenteUserId = document.getElementById('coord-docente-id')?.value;
+        const esMaestroGuia = document.getElementById('coord-es-maestro-guia')?.checked;
+
+        if (!docenteUserId) {
+            alert('Por favor ingrese el ID del docente.');
+            return;
+        }
+
+        try {
+            const resp = await apiCall({
+                action: 'assignTeacherToSection',
+                anoLectivo, grado, seccion, docenteUserId, esMaestroGuia
+            }, 'ACADEMIC');
+
+            if (resp && resp.status === 'success') {
+                alert(resp.message || 'Asignación guardada con éxito.');
+            } else {
+                alert('Error al guardar asignación: ' + (resp?.message || 'Error desconocido'));
+            }
+        } catch (e) {
+            alert('Error de asignación: ' + e.message);
+        }
+    });
+
+    document.getElementById('btn-open-auto-scheduler')?.addEventListener('click', async () => {
+        try {
+            const resp = await apiCall({
+                action: 'generateAutoSchedules',
+                anoLectivo: '2025',
+                duracionUnidadMinutos: 45,
+                horaInicioLectiva: '07:30'
+            }, 'ACADEMIC');
+            if (resp && resp.status === 'success') {
+                alert('Generador de Horarios: ' + resp.message);
+            }
+        } catch (e) {
+            alert('Error en generador de horarios: ' + e.message);
+        }
     });
 
     let confirmedAssignments = [];
@@ -805,6 +862,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     navReportsOld.addEventListener('click', () => {
         window.navigateTo(sectionReportes, navReportsOld);
+        if (window.renderReportsCenterUI) window.renderReportsCenterUI('reports-center-container');
     });
 
     // --- Mi Perfil (Centralizado en ui-common.js) ---
@@ -3724,6 +3782,1479 @@ function toBase64(file) {
     }, '');
     window.navigateTo(sectionAcademicReports, navDashboard, false);
     fetchTeacherActivity();
+
+    // -----------------------------------------------------------------------
+    // FASE 22: DISEÑADOR UNIVERSAL DE DOCUMENTOS Y PLANTILLAS CONTROLLER
+    // -----------------------------------------------------------------------
+
+    let loadedTemplatesCache = [];
+
+    if (navPlantillas && sectionPlantillas) {
+        navPlantillas.addEventListener('click', () => {
+            window.navigateTo(sectionPlantillas, navPlantillas);
+            loadTemplateDesignerCatalog();
+            loadAvailableDynamicFields();
+        });
+    }
+
+    function getDefaultTemplatesFallback() {
+        return [
+            {
+                plantillaId: "TMP-001",
+                codigoDocumento: "CONST-ESTUDIO",
+                categoria: "Académico",
+                titulo: "Constancia de Estudios Oficial",
+                descripcion: "Constancia de estudios estándar para trámite administrativo o consular.",
+                departamento: "Secretaría General",
+                estado: "publicada",
+                version: "1.0",
+                contenidoHTML: `
+                <div style="font-family: Arial, sans-serif; padding: 30px; color: #1e293b;">
+                  <div style="text-align: center; border-bottom: 2px solid #1e3a8a; padding-bottom: 12px; margin-bottom: 24px;">
+                    <h1 style="color: #1e3a8a; font-size: 20px; margin: 0;">NEW GENERATION CHRISTIAN ACADEMY</h1>
+                    <p style="font-size: 12px; color: #64748b; margin: 4px 0 0 0;">Constancia Oficial de Estudios - Año Lectivo {{institucion.anoLectivo}}</p>
+                  </div>
+                  <p>Por medio de la presente, la Dirección y Secretaría de <strong>New Generation Christian Academy</strong> hace constar que:</p>
+                  <p style="font-size: 16px; text-align: center; margin: 20px 0; font-weight: bold; color: #0f172a;">{{estudiante.nombreCompleto}}</p>
+                  <p>Con número de documento / ID <strong>{{estudiante.identidad}}</strong>, se encuentra debidamente matriculado(a) y cursando de manera regular el grado <strong>{{estudiante.grado}} {{estudiante.seccion}}</strong> en esta institución educativa.</p>
+                  <p>Se extiende la presente constancia a petición de parte interesada para los fines de: <em>{{tramite.motivo}}</em>.</p>
+                  <div style="margin-top: 60px; text-align: center;">
+                    <div style="width: 220px; border-top: 1px solid #334155; margin: 0 auto; padding-top: 6px;">
+                      <strong>Secretaría Académica / Dirección</strong><br>
+                      <span style="font-size: 11px; color: #64748b;">New Generation Christian Academy</span>
+                    </div>
+                  </div>
+                </div>`
+            },
+            {
+                plantillaId: "TMP-002",
+                codigoDocumento: "CONST-SOLVENCIA",
+                categoria: "Financiero",
+                titulo: "Constancia de Solvencia Financiera",
+                descripcion: "Constancia emitida para verificar solvencia económica de matrículas y mensualidades.",
+                departamento: "Contabilidad y Cobros",
+                estado: "publicada",
+                version: "1.0",
+                contenidoHTML: `
+                <div style="font-family: Arial, sans-serif; padding: 30px; color: #1e293b;">
+                  <div style="text-align: center; border-bottom: 2px solid #166534; padding-bottom: 12px; margin-bottom: 24px;">
+                    <h1 style="color: #166534; font-size: 20px; margin: 0;">NEW GENERATION CHRISTIAN ACADEMY</h1>
+                    <p style="font-size: 12px; color: #64748b; margin: 4px 0 0 0;">Departamento de Contabilidad y Cobros</p>
+                  </div>
+                  <h2 style="text-align: center; font-size: 16px; margin-bottom: 20px;">CONSTANCIA DE SOLVENCIA</h2>
+                  <p>El Departamento de Contabilidad de <strong>New Generation Christian Academy</strong> certifica que el/la estudiante:</p>
+                  <p style="font-size: 16px; text-align: center; margin: 18px 0; font-weight: bold; color: #0f172a;">{{estudiante.nombreCompleto}}</p>
+                  <p>Se encuentra al día con sus compromisos financieros y cuotas colegiales correspondientes a: <strong>{{finanzas.mesesSolventes}}</strong>.</p>
+                  <div style="margin-top: 60px; text-align: center;">
+                    <div style="width: 220px; border-top: 1px solid #334155; margin: 0 auto; padding-top: 6px;">
+                      <strong>Coordinación Financiera</strong><br>
+                      <span style="font-size: 11px; color: #64748b;">New Generation Christian Academy</span>
+                    </div>
+                  </div>
+                </div>`
+            }
+        ];
+    }
+
+    async function loadTemplateDesignerCatalog() {
+        const grid = document.getElementById('templates-grid');
+        if (!grid) return;
+
+        grid.innerHTML = `<div class="col-span-full text-center py-12 text-gray-400 font-bold text-xs uppercase"><i class="fa-solid fa-spinner fa-spin mr-2"></i> Cargando catálogo de plantillas...</div>`;
+
+        try {
+            if (typeof apiCall === 'function') {
+                const resp = await apiCall({ action: 'getSchoolDocumentTemplates' }, 'ACCOUNTING');
+                if (resp && resp.status === 'success' && Array.isArray(resp.plantillas) && resp.plantillas.length > 0) {
+                    loadedTemplatesCache = resp.plantillas;
+                } else {
+                    loadedTemplatesCache = getDefaultTemplatesFallback();
+                }
+            } else {
+                loadedTemplatesCache = getDefaultTemplatesFallback();
+            }
+        } catch (e) {
+            console.warn("Error loading templates, using defaults:", e);
+            loadedTemplatesCache = getDefaultTemplatesFallback();
+        }
+
+        renderTemplateCatalog(loadedTemplatesCache);
+    }
+
+    function renderTemplateCatalog(templates) {
+        const grid = document.getElementById('templates-grid');
+        if (!grid) return;
+
+        const searchVal = norm(document.getElementById('template-search-input')?.value || "");
+        const catVal = (document.getElementById('template-category-filter')?.value || "").toLowerCase();
+        const stateVal = (document.getElementById('template-state-filter')?.value || "").toLowerCase();
+
+        let filtered = templates.filter(t => {
+            const matchesSearch = !searchVal || norm(t.titulo).includes(searchVal) || norm(t.codigoDocumento).includes(searchVal) || norm(t.departamento).includes(searchVal);
+            const matchesCat = !catVal || (t.categoria || "").toLowerCase() === catVal;
+            const matchesState = !stateVal || (t.estado || "publicada").toLowerCase() === stateVal;
+            return matchesSearch && matchesCat && matchesState;
+        });
+
+        if (filtered.length === 0) {
+            grid.innerHTML = `<div class="col-span-full text-center py-12 bg-white rounded-3xl border border-gray-100 p-8">
+                <i class="fa-solid fa-folder-open text-gray-300 text-4xl mb-3"></i>
+                <p class="text-xs font-bold text-gray-500 uppercase">No se encontraron plantillas documentales con los filtros seleccionados.</p>
+            </div>`;
+            return;
+        }
+
+        grid.innerHTML = filtered.map(t => {
+            const isPub = t.estado === 'publicada';
+            const badgeBg = isPub ? 'bg-emerald-100 text-emerald-800' : (t.estado === 'borrador' ? 'bg-amber-100 text-amber-800' : 'bg-gray-100 text-gray-700');
+            const stateLabel = isPub ? 'Publicada' : (t.estado === 'borrador' ? 'Borrador' : t.estado);
+
+            return `
+            <div class="bg-white rounded-3xl border border-gray-100 shadow-sm hover:shadow-md transition-all p-6 flex flex-col justify-between space-y-4">
+                <div>
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="px-2.5 py-1 ${badgeBg} rounded-full text-[10px] font-black uppercase tracking-wider">${stateLabel}</span>
+                        <span class="text-[10px] font-extrabold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-lg">v${t.version || '1.0'}</span>
+                    </div>
+                    <h3 class="text-base font-black text-slate-900 leading-snug mb-1">${t.titulo}</h3>
+                    <p class="text-[11px] font-semibold text-slate-400 uppercase tracking-tight">${t.codigoDocumento} · ${t.categoria || 'Académico'}</p>
+                    <p class="text-xs text-gray-500 mt-2 line-clamp-2">${t.descripcion || 'Sin descripción de plantilla.'}</p>
+                </div>
+
+                <div class="pt-4 border-t border-gray-100 flex flex-wrap items-center justify-between gap-2">
+                    <div class="text-[10px] text-gray-400 font-bold uppercase">${t.departamento || 'Secretaría'}</div>
+                    <div class="flex items-center gap-1">
+                        <button onclick="previewTemplateById('${t.plantillaId}')" title="Previsualizar Documento" class="px-3 py-1.5 bg-indigo-50 text-indigo-700 hover:bg-indigo-100 rounded-xl font-bold text-xs">
+                            <i class="fa-solid fa-eye"></i>
+                        </button>
+                        <button onclick="editTemplateById('${t.plantillaId}')" title="Editar Plantilla" class="px-3 py-1.5 bg-slate-100 text-slate-700 hover:bg-slate-200 rounded-xl font-bold text-xs">
+                            <i class="fa-solid fa-pen"></i>
+                        </button>
+                        <button onclick="openGeneratorForTemplate('${t.plantillaId}', '${t.titulo}')" title="Emitir Documento Oficial" class="px-3 py-1.5 bg-emerald-600 text-white hover:bg-emerald-700 rounded-xl font-bold text-xs uppercase tracking-wider">
+                            Emitir
+                        </button>
+                    </div>
+                </div>
+            </div>`;
+        }).join('');
+    }
+
+    async function loadAvailableDynamicFields() {
+        const select = document.getElementById('dynamic-fields-select');
+        if (!select) return;
+
+        try {
+            const resp = await apiCall({ action: 'getAvailableDynamicFields' }, 'ACCOUNTING');
+            if (resp && resp.status === 'success' && Array.isArray(resp.campos)) {
+                select.innerHTML = `<option value="">-- Seleccionar Variable Dinámica --</option>` +
+                    resp.campos.map(c => `<option value="${c.clave}">${c.categoria}: ${c.etiqueta} (${c.clave})</option>`).join('');
+            }
+        } catch (e) {
+            console.error("Error loading dynamic fields:", e);
+        }
+    }
+
+    // Modal Trigger Listeners
+    const btnOpenEditor = document.getElementById('btn-open-template-editor');
+    const modalEditor = document.getElementById('modal-template-editor');
+    const closeEditorBtns = [document.getElementById('close-template-editor'), document.getElementById('btn-close-editor-cancel')];
+
+    if (btnOpenEditor && modalEditor) {
+        btnOpenEditor.addEventListener('click', () => {
+            document.getElementById('editor-template-id').value = '';
+            document.getElementById('editor-code').value = 'TMP-' + Math.floor(100 + Math.random() * 900);
+            document.getElementById('editor-title').value = '';
+            document.getElementById('editor-category').value = 'Académico';
+            document.getElementById('editor-department').value = 'Secretaría General';
+            document.getElementById('editor-output-type').value = 'PDF';
+            document.getElementById('editor-state').value = 'publicada';
+            document.getElementById('editor-version').value = '1.0';
+            document.getElementById('editor-html-content').value = '';
+            document.getElementById('editor-modal-title').textContent = 'Crear Nueva Plantilla Institucional';
+            modalEditor.classList.remove('hidden');
+        });
+    }
+
+    closeEditorBtns.forEach(btn => btn?.addEventListener('click', () => modalEditor?.classList.add('hidden')));
+
+    // Dynamic field insert
+    const btnInsertField = document.getElementById('btn-insert-dynamic-field');
+    if (btnInsertField) {
+        btnInsertField.addEventListener('click', () => {
+            const select = document.getElementById('dynamic-fields-select');
+            const textarea = document.getElementById('editor-html-content');
+            if (!select || !textarea || !select.value) return;
+
+            const val = select.value;
+            const start = textarea.selectionStart;
+            const end = textarea.selectionEnd;
+            const text = textarea.value;
+
+            textarea.value = text.substring(0, start) + val + text.substring(end);
+            textarea.focus();
+            textarea.selectionStart = textarea.selectionEnd = start + val.length;
+        });
+    }
+
+    // Save Template Listener
+    const btnSaveTemplate = document.getElementById('btn-save-template');
+    if (btnSaveTemplate) {
+        btnSaveTemplate.addEventListener('click', async () => {
+            const plantillaId = document.getElementById('editor-template-id')?.value;
+            const codigoDocumento = document.getElementById('editor-code')?.value.trim();
+            const titulo = document.getElementById('editor-title')?.value.trim();
+            const categoria = document.getElementById('editor-category')?.value;
+            const departamento = document.getElementById('editor-department')?.value.trim();
+            const tipoSalida = document.getElementById('editor-output-type')?.value;
+            const estado = document.getElementById('editor-state')?.value;
+            const contenidoHTML = document.getElementById('editor-html-content')?.value;
+
+            if (!codigoDocumento || !titulo || !contenidoHTML) {
+                alert("Por favor complete los campos obligatorios: Código, Título y Cuerpo HTML de la plantilla.");
+                return;
+            }
+
+            btnSaveTemplate.disabled = true;
+            btnSaveTemplate.innerHTML = `<i class="fa-solid fa-spinner fa-spin mr-1"></i> Guardando...`;
+
+            try {
+                const resp = await apiCall({
+                    action: 'configureSchoolDocumentTemplate',
+                    plantillaId,
+                    codigoDocumento,
+                    titulo,
+                    categoria,
+                    departamento,
+                    tipoSalida,
+                    estado,
+                    contenidoHTML
+                }, 'ACCOUNTING');
+
+                if (resp && resp.status === 'success') {
+                    alert("Plantilla configurada con éxito. Versión: " + (resp.version || '1.0'));
+                    modalEditor?.classList.add('hidden');
+                    loadTemplateDesignerCatalog();
+                } else {
+                    alert("No se pudo guardar la plantilla: " + (resp?.message || "Error desconocido"));
+                }
+            } catch (e) {
+                alert("Error de guardado: " + e.message);
+            } finally {
+                btnSaveTemplate.disabled = false;
+                btnSaveTemplate.innerHTML = `<i class="fa-solid fa-floppy-disk mr-1"></i> Guardar Plantilla`;
+            }
+        });
+    }
+
+    // Global Functions for Card Actions
+    window.editTemplateById = function(plantillaId) {
+        const found = loadedTemplatesCache.find(t => t.plantillaId === plantillaId);
+        if (!found) return;
+
+        document.getElementById('editor-template-id').value = found.plantillaId;
+        document.getElementById('editor-code').value = found.codigoDocumento || '';
+        document.getElementById('editor-title').value = found.titulo || '';
+        document.getElementById('editor-category').value = found.categoria || 'Académico';
+        document.getElementById('editor-department').value = found.departamento || 'Secretaría';
+        document.getElementById('editor-output-type').value = found.tipoSalida || 'PDF';
+        document.getElementById('editor-state').value = found.estado || 'publicada';
+        document.getElementById('editor-version').value = found.version || '1.0';
+        document.getElementById('editor-html-content').value = found.contenidoHTML || '';
+        document.getElementById('editor-modal-title').textContent = 'Editar Plantilla: ' + found.titulo;
+
+        modalEditor?.classList.remove('hidden');
+    };
+
+    window.previewTemplateById = async function(plantillaId) {
+        const modalPreview = document.getElementById('modal-template-preview');
+        const canvas = document.getElementById('preview-render-canvas');
+        const warning = document.getElementById('preview-pending-warning');
+
+        if (!modalPreview || !canvas) return;
+
+        canvas.innerHTML = `<div class="text-center py-12 text-indigo-600 font-bold"><i class="fa-solid fa-spinner fa-spin text-2xl mb-2"></i><br>Generando vista previa...</div>`;
+        modalPreview.classList.remove('hidden');
+
+        try {
+            const resp = await apiCall({ action: 'previewSchoolDocument', plantillaId }, 'ACCOUNTING');
+            if (resp && resp.status === 'success') {
+                canvas.innerHTML = resp.renderedHTML;
+                if (resp.hasPendingFields) {
+                    warning?.classList.remove('hidden');
+                } else {
+                    warning?.classList.add('hidden');
+                }
+            } else {
+                canvas.innerHTML = `<div class="text-red-500 font-bold p-4">Error al renderizar vista previa.</div>`;
+            }
+        } catch (e) {
+            canvas.innerHTML = `<div class="text-red-500 font-bold p-4">Error de conexión: ${e.message}</div>`;
+        }
+    };
+
+    // Preview from editor button
+    const btnPreviewFromEditor = document.getElementById('btn-preview-from-editor');
+    if (btnPreviewFromEditor) {
+        btnPreviewFromEditor.addEventListener('click', async () => {
+            const htmlContent = document.getElementById('editor-html-content')?.value;
+            if (!htmlContent) {
+                alert("Ingrese contenido HTML para previsualizar.");
+                return;
+            }
+
+            const modalPreview = document.getElementById('modal-template-preview');
+            const canvas = document.getElementById('preview-render-canvas');
+            const warning = document.getElementById('preview-pending-warning');
+
+            if (!modalPreview || !canvas) return;
+
+            canvas.innerHTML = `<div class="text-center py-12 text-indigo-600 font-bold"><i class="fa-solid fa-spinner fa-spin text-2xl mb-2"></i><br>Generando vista previa...</div>`;
+            modalPreview.classList.remove('hidden');
+
+            try {
+                const resp = await apiCall({ action: 'previewSchoolDocument', contenidoHTML: htmlContent }, 'ACCOUNTING');
+                if (resp && resp.status === 'success') {
+                    canvas.innerHTML = resp.renderedHTML;
+                    if (resp.hasPendingFields) {
+                        warning?.classList.remove('hidden');
+                    } else {
+                        warning?.classList.add('hidden');
+                    }
+                }
+            } catch (e) {
+                canvas.innerHTML = `<div class="text-red-500 font-bold p-4">Error: ${e.message}</div>`;
+            }
+        });
+    }
+
+    // Close preview listeners
+    [document.getElementById('close-template-preview'), document.getElementById('close-preview-btn'), document.getElementById('btn-back-to-editor')].forEach(b => b?.addEventListener('click', () => {
+        document.getElementById('modal-template-preview')?.classList.add('hidden');
+    }));
+
+    // Generator Modal Trigger
+    window.openGeneratorForTemplate = function(plantillaId, titulo) {
+        const modalGen = document.getElementById('modal-document-generator');
+        if (!modalGen) return;
+
+        document.getElementById('generator-template-id').value = plantillaId;
+        document.getElementById('generator-target-id').value = '';
+        document.getElementById('generator-reason').value = '';
+        document.getElementById('generator-modal-title').textContent = 'Emitir: ' + titulo;
+
+        modalGen.classList.remove('hidden');
+    };
+
+    [document.getElementById('close-document-generator'), document.getElementById('btn-cancel-generation')].forEach(b => b?.addEventListener('click', () => {
+        document.getElementById('modal-document-generator')?.classList.add('hidden');
+    }));
+
+    // Confirm Generation
+    const btnConfirmGen = document.getElementById('btn-confirm-generate');
+    if (btnConfirmGen) {
+        btnConfirmGen.addEventListener('click', async () => {
+            const plantillaId = document.getElementById('generator-template-id')?.value;
+            const targetEntityId = document.getElementById('generator-target-id')?.value.trim();
+            const reason = document.getElementById('generator-reason')?.value.trim();
+
+            if (!targetEntityId) {
+                alert("Ingrese el ID o DNI del estudiante o destinatario.");
+                return;
+            }
+
+            btnConfirmGen.disabled = true;
+            btnConfirmGen.innerHTML = `<i class="fa-solid fa-spinner fa-spin mr-1"></i> Emitiendo...`;
+
+            try {
+                const resp = await apiCall({
+                    action: 'generateSchoolDocument',
+                    plantillaId,
+                    targetEntityId,
+                    datosFormulario: { "tramite.motivo": reason || "Trámite Institucional Oficial" }
+                }, 'ACCOUNTING');
+
+                if (resp && resp.status === 'success') {
+                    alert(`¡Documento Oficial Emitido con Éxito!\n\nID Documento: ${resp.documentoId}\nCódigo de Verificación: ${resp.codigoVerificacion}\nVersión Plantilla: v${resp.versionPlantilla}`);
+                    document.getElementById('modal-document-generator')?.classList.add('hidden');
+                } else {
+                    alert("Error al generar documento: " + (resp?.message || "Error desconocido"));
+                }
+            } catch (e) {
+                alert("Error de emisión: " + e.message);
+            } finally {
+                btnConfirmGen.disabled = false;
+                btnConfirmGen.innerHTML = `<i class="fa-solid fa-circle-check mr-1"></i> Emitir Documento`;
+            }
+        });
+    }
+
+    // Import Base Template Listener
+    const btnImportBase = document.getElementById('btn-import-template-base');
+    if (btnImportBase) {
+        btnImportBase.addEventListener('click', async () => {
+            const sampleTxt = prompt("Ingrese el texto o contenido base para importar como borrador:");
+            if (!sampleTxt) return;
+
+            try {
+                const resp = await apiCall({
+                    action: 'importDocumentTemplateBase',
+                    nombreArchivo: 'Documento_Base_Importado.txt',
+                    contenidoTexto: sampleTxt
+                }, 'ACCOUNTING');
+
+                if (resp && resp.status === 'success' && resp.plantillaImportada) {
+                    const imp = resp.plantillaImportada;
+                    document.getElementById('editor-template-id').value = '';
+                    document.getElementById('editor-code').value = imp.codigoDocumento;
+                    document.getElementById('editor-title').value = imp.titulo;
+                    document.getElementById('editor-category').value = 'Administrativo';
+                    document.getElementById('editor-state').value = 'borrador';
+                    document.getElementById('editor-html-content').value = imp.contenidoHTML;
+                    document.getElementById('editor-modal-title').textContent = 'Plantilla Importada (Borrador)';
+
+                    modalEditor?.classList.remove('hidden');
+                }
+            } catch (e) {
+                alert("Error al importar base: " + e.message);
+            }
+        });
+    }
+
+    // ---------------------------------------------------------------------------
+    // FASE 23: EDITOR VISUAL DE PDF Y CAMPOS SUPERPUESTOS
+    // ---------------------------------------------------------------------------
+    let currentPdfDoc = null;
+    let currentPdfArrayBuffer = null;
+    let currentPdfNumPages = 1;
+    let currentPdfPage = 1;
+    let currentPdfScale = 1.0;
+    let overlayFields = [];
+    let selectedFieldId = null;
+
+    const modalPdfEditor = document.getElementById('modal-pdf-overlay-editor');
+    const btnOpenPdfEditor = document.getElementById('btn-open-pdf-overlay-editor');
+    const btnClosePdfEditor = document.getElementById('btn-close-pdf-editor');
+    const pdfFileInput = document.getElementById('pdf-file-input');
+    const pdfPageContainer = document.getElementById('pdf-page-container');
+    const pdfRenderCanvas = document.getElementById('pdf-render-canvas');
+    const pdfOverlayLayer = document.getElementById('pdf-overlay-layer');
+
+    if (btnOpenPdfEditor && modalPdfEditor) {
+        btnOpenPdfEditor.addEventListener('click', () => {
+            openPdfOverlayEditor();
+        });
+    }
+
+    if (btnClosePdfEditor && modalPdfEditor) {
+        btnClosePdfEditor.addEventListener('click', () => {
+            modalPdfEditor.classList.add('hidden');
+        });
+    }
+
+    async function openPdfOverlayEditor(tpl = null) {
+        if (!modalPdfEditor) return;
+        overlayFields = [];
+        selectedFieldId = null;
+        currentPdfDoc = null;
+        currentPdfArrayBuffer = null;
+        currentPdfPage = 1;
+        currentPdfScale = 1.0;
+
+        document.getElementById('pdf-tpl-title').value = tpl?.titulo || '';
+        document.getElementById('pdf-tpl-category').value = tpl?.categoria || 'Constancias';
+        document.getElementById('pdf-editor-title').textContent = tpl ? `Editor Visual PDF - ${tpl.titulo}` : 'Editor Visual de PDF - Campos Superpuestos';
+
+        // Load dynamic fields into property panel drop-down
+        populatePropSourceTags();
+
+        modalPdfEditor.classList.remove('hidden');
+        updateFieldPropsPanel();
+
+        // If template has overlayFields, load them
+        if (tpl && tpl.configFormatoJSON) {
+            try {
+                const fmt = typeof tpl.configFormatoJSON === 'string' ? JSON.parse(tpl.configFormatoJSON) : tpl.configFormatoJSON;
+                if (Array.isArray(fmt.overlayFields)) {
+                    overlayFields = fmt.overlayFields;
+                }
+            } catch (e) {
+                console.error("Error parsing pdf overlay config:", e);
+            }
+        }
+
+        // Render blank sample page if no PDF is loaded yet
+        renderSampleBlankPdf();
+    }
+
+    async function populatePropSourceTags() {
+        const select = document.getElementById('prop-field-source-tag');
+        if (!select) return;
+
+        const defaultFields = [
+            { clave: "{{estudiante.nombreCompleto}}", etiqueta: "Nombre Estudiante", categoria: "Estudiante" },
+            { clave: "{{estudiante.identidad}}", etiqueta: "Número DNI / Identidad", categoria: "Estudiante" },
+            { clave: "{{estudiante.grado}}", etiqueta: "Grado Académico", categoria: "Estudiante" },
+            { clave: "{{estudiante.seccion}}", etiqueta: "Sección", categoria: "Estudiante" },
+            { clave: "{{estudiante.codigoMatricula}}", etiqueta: "Código Matrícula", categoria: "Estudiante" },
+            { clave: "{{institucion.nombre}}", etiqueta: "Nombre Institución", categoria: "Institucional" },
+            { clave: "{{institucion.anoLectivo}}", etiqueta: "Año Lectivo", categoria: "Institucional" },
+            { clave: "{{tramite.fechaEmision}}", etiqueta: "Fecha de Emisión", categoria: "Trámite" },
+            { clave: "{{tramite.motivo}}", etiqueta: "Motivo / Finalidad", categoria: "Trámite" },
+            { clave: "{{documento.codigoVerificacion}}", etiqueta: "Token Verificación (VERIF-XXXXXX)", categoria: "Seguridad" }
+        ];
+
+        try {
+            const resp = await apiCall({ action: 'getAvailableDynamicFields' }, 'ACCOUNTING');
+            if (resp && resp.status === 'success' && Array.isArray(resp.campos) && resp.campos.length > 0) {
+                select.innerHTML = `<option value="">-- Sin Vinculación Dinámica --</option>` +
+                    resp.campos.map(c => `<option value="${c.clave}">${c.categoria}: ${c.etiqueta} (${c.clave})</option>`).join('');
+                return;
+            }
+        } catch (e) {
+            console.warn("Uso de catálogo de fuentes dinámicas de respaldo para PDF Overlay");
+        }
+
+        select.innerHTML = `<option value="">-- Sin Vinculación Dinámica --</option>` +
+            defaultFields.map(c => `<option value="${c.clave}">${c.categoria}: ${c.etiqueta} (${c.clave})</option>`).join('');
+    }
+
+    // Handle File Input selection
+    if (pdfFileInput) {
+        pdfFileInput.addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            if (!file || file.type !== 'application/pdf') {
+                alert("Por favor seleccione un archivo PDF válido.");
+                return;
+            }
+
+            try {
+                const arrayBuffer = await file.arrayBuffer();
+                currentPdfArrayBuffer = arrayBuffer;
+                await loadPdfFromArrayBuffer(arrayBuffer);
+            } catch (err) {
+                alert("Error al cargar el PDF: " + err.message);
+            }
+        });
+    }
+
+    async function loadPdfFromArrayBuffer(arrayBuffer) {
+        if (!window.pdfjsLib) {
+            alert("Biblioteca PDF.js no disponible.");
+            return;
+        }
+
+        try {
+            const loadingTask = window.pdfjsLib.getDocument({ data: new Uint8Array(arrayBuffer) });
+            currentPdfDoc = await loadingTask.promise;
+            currentPdfNumPages = currentPdfDoc.numPages;
+            currentPdfPage = 1;
+
+            document.getElementById('pdf-total-pages').textContent = currentPdfNumPages;
+            await renderPdfPage(currentPdfPage);
+        } catch (e) {
+            console.error("Error loading PDF with pdfjs:", e);
+            alert("No se pudo renderizar la vista previa del PDF.");
+        }
+    }
+
+    async function renderPdfPage(pageNum) {
+        if (!currentPdfDoc || !pdfRenderCanvas) return;
+
+        try {
+            const page = await currentPdfDoc.getPage(pageNum);
+            const viewport = page.getViewport({ scale: currentPdfScale });
+
+            const ctx = pdfRenderCanvas.getContext('2d');
+            pdfRenderCanvas.height = viewport.height;
+            pdfRenderCanvas.width = viewport.width;
+
+            pdfPageContainer.style.width = viewport.width + 'px';
+            pdfPageContainer.style.height = viewport.height + 'px';
+
+            const renderContext = {
+                canvasContext: ctx,
+                viewport: viewport
+            };
+
+            await page.render(renderContext).promise;
+
+            document.getElementById('pdf-curr-page').textContent = pageNum;
+            document.getElementById('pdf-zoom-display').textContent = Math.round(currentPdfScale * 100) + '%';
+
+            renderOverlayFieldsForCurrentPage();
+        } catch (e) {
+            console.error("Error rendering PDF page:", e);
+        }
+    }
+
+    function renderSampleBlankPdf() {
+        if (!pdfRenderCanvas || currentPdfDoc) return;
+        const width = 612 * currentPdfScale;
+        const height = 792 * currentPdfScale;
+
+        pdfRenderCanvas.width = width;
+        pdfRenderCanvas.height = height;
+        pdfPageContainer.style.width = width + 'px';
+        pdfPageContainer.style.height = height + 'px';
+
+        const ctx = pdfRenderCanvas.getContext('2d');
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0, 0, width, height);
+
+        ctx.strokeStyle = '#cbd5e1';
+        ctx.lineWidth = 2;
+        ctx.strokeRect(10, 10, width - 20, height - 20);
+
+        ctx.fillStyle = '#94a3b8';
+        ctx.font = 'bold 16px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText("VISTA PREVIA DE LIENZO PDF", width / 2, height / 2 - 20);
+        ctx.font = '12px sans-serif';
+        ctx.fillText("Seleccione un archivo PDF base para renderizar las páginas reales.", width / 2, height / 2 + 10);
+
+        renderOverlayFieldsForCurrentPage();
+    }
+
+    // PDF Navigation & Zoom Handlers
+    document.getElementById('btn-pdf-prev-page')?.addEventListener('click', () => {
+        if (currentPdfPage > 1) {
+            currentPdfPage--;
+            renderPdfPage(currentPdfPage);
+        }
+    });
+
+    document.getElementById('btn-pdf-next-page')?.addEventListener('click', () => {
+        if (currentPdfPage < currentPdfNumPages) {
+            currentPdfPage++;
+            renderPdfPage(currentPdfPage);
+        }
+    });
+
+    document.getElementById('btn-pdf-zoom-in')?.addEventListener('click', () => {
+        currentPdfScale = Math.min(2.5, currentPdfScale + 0.15);
+        if (currentPdfDoc) renderPdfPage(currentPdfPage); else renderSampleBlankPdf();
+    });
+
+    document.getElementById('btn-pdf-zoom-out')?.addEventListener('click', () => {
+        currentPdfScale = Math.max(0.5, currentPdfScale - 0.15);
+        if (currentPdfDoc) renderPdfPage(currentPdfPage); else renderSampleBlankPdf();
+    });
+
+    document.getElementById('btn-pdf-fit-width')?.addEventListener('click', () => {
+        const workspaceWidth = document.getElementById('pdf-canvas-workspace')?.clientWidth || 600;
+        currentPdfScale = Math.max(0.6, (workspaceWidth - 60) / 612);
+        if (currentPdfDoc) renderPdfPage(currentPdfPage); else renderSampleBlankPdf();
+    });
+
+    // Add Field Tool Listeners
+    document.querySelectorAll('.btn-add-overlay-field').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const type = btn.getAttribute('data-field-type') || 'texto';
+            addOverlayField(type);
+        });
+    });
+
+    function addOverlayField(type) {
+        const fieldId = 'fld_' + Date.now() + '_' + Math.floor(Math.random() * 100);
+        const labels = {
+            texto: 'Texto Línea',
+            multiline: 'Texto Multilínea',
+            fecha: 'Fecha Emisión',
+            checkbox: 'Casilla Verificación',
+            firma: 'Espacio de Firma'
+        };
+
+        const newField = {
+            id: fieldId,
+            page: currentPdfPage,
+            xRatio: 0.15,
+            yRatio: 0.15 + (overlayFields.length * 0.05) % 0.6,
+            wRatio: type === 'checkbox' ? 0.05 : 0.40,
+            hRatio: type === 'multiline' ? 0.10 : (type === 'firma' ? 0.08 : 0.04),
+            type: type,
+            key: 'campo_' + Math.floor(1000 + Math.random() * 9000),
+            label: labels[type] || 'Nuevo Campo',
+            sourceTag: '',
+            fontSize: 11,
+            align: 'left',
+            sampleVal: labels[type] || 'Muestra',
+            required: false
+        };
+
+        overlayFields.push(newField);
+        selectedFieldId = fieldId;
+        renderOverlayFieldsForCurrentPage();
+        updateFieldPropsPanel();
+    }
+
+    function renderOverlayFieldsForCurrentPage() {
+        if (!pdfOverlayLayer) return;
+        pdfOverlayLayer.innerHTML = '';
+
+        const pageFields = overlayFields.filter(f => f.page === currentPdfPage);
+
+        pageFields.forEach(f => {
+            const el = document.createElement('div');
+            el.className = `absolute group border-2 ${f.id === selectedFieldId ? 'border-indigo-600 bg-indigo-500/20 shadow-lg z-30' : 'border-blue-400 bg-blue-500/10 hover:border-blue-600 z-20'} rounded cursor-move flex items-center justify-between p-1 transition-all select-none`;
+            el.style.left = (f.xRatio * 100) + '%';
+            el.style.top = (f.yRatio * 100) + '%';
+            el.style.width = (f.wRatio * 100) + '%';
+            el.style.height = (f.hRatio * 100) + '%';
+
+            const txt = document.createElement('span');
+            txt.className = 'text-[10px] font-bold truncate text-indigo-950 pointer-events-none px-1';
+            txt.textContent = f.sourceTag ? `${f.label} (${f.sourceTag})` : (f.sampleVal || f.label);
+            el.appendChild(txt);
+
+            // Resize handle
+            const resizeHandle = document.createElement('div');
+            resizeHandle.className = 'absolute right-0 bottom-0 w-3 h-3 bg-indigo-600 rounded-tl cursor-se-resize opacity-0 group-hover:opacity-100 transition-opacity';
+            el.appendChild(resizeHandle);
+
+            // Mouse events for selection, dragging, resizing
+            el.addEventListener('mousedown', (e) => {
+                e.stopPropagation();
+                selectedFieldId = f.id;
+                renderOverlayFieldsForCurrentPage();
+                updateFieldPropsPanel();
+
+                if (e.target === resizeHandle) {
+                    initResizeField(e, f);
+                } else {
+                    initDragField(e, f);
+                }
+            });
+
+            pdfOverlayLayer.appendChild(el);
+        });
+    }
+
+    function initDragField(e, f) {
+        const containerRect = pdfPageContainer.getBoundingClientRect();
+        const startX = e.clientX;
+        const startY = e.clientY;
+        const initialXRatio = f.xRatio;
+        const initialYRatio = f.yRatio;
+
+        function onMouseMove(moveEv) {
+            const deltaX = (moveEv.clientX - startX) / containerRect.width;
+            const deltaY = (moveEv.clientY - startY) / containerRect.height;
+
+            f.xRatio = Math.max(0, Math.min(1 - f.wRatio, initialXRatio + deltaX));
+            f.yRatio = Math.max(0, Math.min(1 - f.hRatio, initialYRatio + deltaY));
+
+            renderOverlayFieldsForCurrentPage();
+            updateFieldPropsPanel();
+        }
+
+        function onMouseUp() {
+            window.removeEventListener('mousemove', onMouseMove);
+            window.removeEventListener('mouseup', onMouseUp);
+        }
+
+        window.addEventListener('mousemove', onMouseMove);
+        window.addEventListener('mouseup', onMouseUp);
+    }
+
+    function initResizeField(e, f) {
+        e.stopPropagation();
+        const containerRect = pdfPageContainer.getBoundingClientRect();
+        const startX = e.clientX;
+        const startY = e.clientY;
+        const initialWRatio = f.wRatio;
+        const initialHRatio = f.hRatio;
+
+        function onMouseMove(moveEv) {
+            const deltaX = (moveEv.clientX - startX) / containerRect.width;
+            const deltaY = (moveEv.clientY - startY) / containerRect.height;
+
+            f.wRatio = Math.max(0.02, Math.min(1 - f.xRatio, initialWRatio + deltaX));
+            f.hRatio = Math.max(0.02, Math.min(1 - f.yRatio, initialHRatio + deltaY));
+
+            renderOverlayFieldsForCurrentPage();
+            updateFieldPropsPanel();
+        }
+
+        function onMouseUp() {
+            window.removeEventListener('mousemove', onMouseMove);
+            window.removeEventListener('mouseup', onMouseUp);
+        }
+
+        window.addEventListener('mousemove', onMouseMove);
+        window.addEventListener('mouseup', onMouseUp);
+    }
+
+    function updateFieldPropsPanel() {
+        const emptyState = document.getElementById('field-props-empty-state');
+        const form = document.getElementById('field-props-form');
+        if (!emptyState || !form) return;
+
+        const f = overlayFields.find(field => field.id === selectedFieldId);
+
+        if (!f) {
+            emptyState.classList.remove('hidden');
+            form.classList.add('hidden');
+            return;
+        }
+
+        emptyState.classList.add('hidden');
+        form.classList.remove('hidden');
+
+        document.getElementById('prop-field-key').value = f.key || '';
+        document.getElementById('prop-field-label').value = f.label || '';
+        document.getElementById('prop-field-source-tag').value = f.sourceTag || '';
+        document.getElementById('prop-field-font-size').value = f.fontSize || 11;
+        document.getElementById('prop-field-align').value = f.align || 'left';
+        document.getElementById('prop-field-sample-val').value = f.sampleVal || '';
+        document.getElementById('prop-field-required').checked = !!f.required;
+
+        document.getElementById('prop-field-page-display').textContent = f.page;
+        document.getElementById('prop-field-x-display').textContent = Math.round(f.xRatio * 100) + '%';
+        document.getElementById('prop-field-y-display').textContent = Math.round(f.yRatio * 100) + '%';
+        document.getElementById('prop-field-w-display').textContent = Math.round(f.wRatio * 100) + '%';
+        document.getElementById('prop-field-h-display').textContent = Math.round(f.hRatio * 100) + '%';
+    }
+
+    // Property Panel Input Event Listeners
+    ['prop-field-key', 'prop-field-label', 'prop-field-source-tag', 'prop-field-font-size', 'prop-field-align', 'prop-field-sample-val', 'prop-field-required'].forEach(id => {
+        document.getElementById(id)?.addEventListener('input', syncPropFormToSelectedField);
+        document.getElementById(id)?.addEventListener('change', syncPropFormToSelectedField);
+    });
+
+    function syncPropFormToSelectedField() {
+        const f = overlayFields.find(field => field.id === selectedFieldId);
+        if (!f) return;
+
+        f.key = document.getElementById('prop-field-key').value.trim();
+        f.label = document.getElementById('prop-field-label').value.trim();
+        f.sourceTag = document.getElementById('prop-field-source-tag').value;
+        f.fontSize = parseInt(document.getElementById('prop-field-font-size').value || '11', 10);
+        f.align = document.getElementById('prop-field-align').value;
+        f.sampleVal = document.getElementById('prop-field-sample-val').value;
+        f.required = document.getElementById('prop-field-required').checked;
+
+        renderOverlayFieldsForCurrentPage();
+    }
+
+    document.getElementById('btn-delete-overlay-field')?.addEventListener('click', () => {
+        if (!selectedFieldId) return;
+        overlayFields = overlayFields.filter(f => f.id !== selectedFieldId);
+        selectedFieldId = null;
+        renderOverlayFieldsForCurrentPage();
+        updateFieldPropsPanel();
+    });
+
+    // Save & Publish PDF Overlay Template Listeners
+    document.getElementById('btn-save-pdf-template-draft')?.addEventListener('click', () => savePdfOverlayTemplate('borrador'));
+    document.getElementById('btn-publish-pdf-template')?.addEventListener('click', () => savePdfOverlayTemplate('publicada'));
+
+    async function savePdfOverlayTemplate(state = 'publicada') {
+        const title = document.getElementById('pdf-tpl-title')?.value.trim();
+        const category = document.getElementById('pdf-tpl-category')?.value || 'Constancias';
+
+        if (!title) {
+            alert("Ingrese un título para la plantilla PDF.");
+            return;
+        }
+
+        if (overlayFields.length === 0) {
+            if (!confirm("No ha colocado ningún campo superpuesto. ¿Desea guardar la plantilla en blanco?")) return;
+        }
+
+        const code = 'PDF-TPL-' + Math.floor(1000 + Math.random() * 9000);
+
+        try {
+            const resp = await apiCall({
+                action: 'configureSchoolDocumentTemplate',
+                codigoDocumento: code,
+                titulo: title,
+                categoria: category,
+                departamento: 'Secretaría General',
+                tipoSalida: 'PDF_OVERLAY',
+                estado: state,
+                configFormatoJSON: {
+                    overlayFields: overlayFields,
+                    numPages: currentPdfNumPages
+                },
+                camposJSON: overlayFields.map(f => ({
+                    clave: f.sourceTag || f.key,
+                    etiqueta: f.label,
+                    pagina: f.page,
+                    xRatio: f.xRatio,
+                    yRatio: f.yRatio
+                }))
+            }, 'ACCOUNTING');
+
+            if (resp && resp.status === 'success') {
+                alert(`¡Plantilla PDF (${state}) guardada con éxito!\n\nID: ${resp.plantillaId}\nVersión: v${resp.version}`);
+                modalPdfEditor?.classList.add('hidden');
+                loadTemplateDesignerCatalog();
+            } else {
+                alert("No se pudo guardar la plantilla PDF: " + (resp?.message || "Error desconocido"));
+            }
+        } catch (e) {
+            alert("Error al guardar plantilla PDF: " + e.message);
+        }
+    }
+
+    // ---------------------------------------------------------------------------
+    // FASE 24: CONSTRUCTOR DE FORMULARIOS INSTITUCIONALES Y TRÁMITES
+    // ---------------------------------------------------------------------------
+    let builderFields = [];
+    const modalFormBuilder = document.getElementById('modal-form-builder');
+    const btnOpenFormBuilder = document.getElementById('btn-open-form-builder');
+    const btnCloseFormBuilder = document.getElementById('btn-close-form-builder');
+
+    if (btnOpenFormBuilder && modalFormBuilder) {
+        btnOpenFormBuilder.addEventListener('click', () => {
+            openInstitutionalFormBuilder();
+        });
+    }
+
+    if (btnCloseFormBuilder && modalFormBuilder) {
+        btnCloseFormBuilder.addEventListener('click', () => {
+            modalFormBuilder.classList.add('hidden');
+        });
+    }
+
+    function openInstitutionalFormBuilder(formObj = null) {
+        if (!modalFormBuilder) return;
+        builderFields = [];
+
+        document.getElementById('builder-form-title').value = formObj?.titulo || '';
+        document.getElementById('builder-form-dept').value = formObj?.departamento || 'Secretaría';
+        document.getElementById('builder-form-desc').value = formObj?.descripcion || '';
+
+        if (formObj && formObj.definicionJSON) {
+            try {
+                const fields = typeof formObj.definicionJSON === 'string' ? JSON.parse(formObj.definicionJSON) : formObj.definicionJSON;
+                if (Array.isArray(fields)) builderFields = fields;
+            } catch (e) {
+                console.error("Error parsing form definition:", e);
+            }
+        }
+
+        renderBuilderFields();
+        modalFormBuilder.classList.remove('hidden');
+    }
+
+    // Add Field Listeners for Form Builder
+    document.querySelectorAll('.btn-add-form-field').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const type = btn.getAttribute('data-form-field-type') || 'text';
+            addFormFieldToBuilder(type);
+        });
+    });
+
+    function addFormFieldToBuilder(type) {
+        const fieldId = 'fld_' + Date.now();
+        const defaultLabels = {
+            text: 'Campo de Texto',
+            textarea: 'Descripción / Justificación',
+            select: 'Seleccione Opciones',
+            date: 'Fecha Requerida',
+            file: 'Adjunto Requerido (PDF/Imagen)'
+        };
+
+        builderFields.push({
+            id: fieldId,
+            type: type,
+            label: defaultLabels[type] || 'Nuevo Campo',
+            placeholder: 'Ingrese datos...',
+            required: true,
+            options: type === 'select' ? ['Opción 1', 'Opción 2', 'Opción 3'] : []
+        });
+
+        renderBuilderFields();
+    }
+
+    function renderBuilderFields() {
+        const container = document.getElementById('builder-fields-container');
+        if (!container) return;
+
+        if (builderFields.length === 0) {
+            container.innerHTML = `
+                <div class="p-8 text-center text-slate-400 bg-white rounded-2xl border border-dashed border-slate-300">
+                    <i class="fa-solid fa-wpforms text-4xl mb-2 text-slate-300"></i>
+                    <p class="text-xs font-semibold">No hay campos en el formulario. Utilice el panel izquierdo para añadir campos.</p>
+                </div>`;
+            return;
+        }
+
+        container.innerHTML = builderFields.map((f, idx) => `
+            <div class="p-3.5 bg-white rounded-2xl border border-slate-200 shadow-sm space-y-2 text-xs" data-field-id="${f.id}">
+                <div class="flex items-center justify-between gap-2 border-b border-slate-100 pb-2">
+                    <span class="font-mono text-[10px] font-bold text-emerald-700 uppercase bg-emerald-50 px-2 py-0.5 rounded-lg">#${idx + 1} - ${f.type.toUpperCase()}</span>
+                    <button class="btn-remove-builder-field text-red-500 hover:text-red-700 text-xs font-bold" data-id="${f.id}">
+                        <i class="fa-solid fa-trash-can mr-1"></i> Eliminar
+                    </button>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+                    <div>
+                        <label class="block text-[10px] font-bold text-slate-600 uppercase">Etiqueta del Campo</label>
+                        <input type="text" class="field-label-input w-full px-2.5 py-1.5 border border-slate-300 rounded-xl font-semibold" data-id="${f.id}" value="${f.label}">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold text-slate-600 uppercase">Texto de Ayuda / Placeholder</label>
+                        <input type="text" class="field-ph-input w-full px-2.5 py-1.5 border border-slate-300 rounded-xl font-medium" data-id="${f.id}" value="${f.placeholder}">
+                    </div>
+                </div>
+                ${f.type === 'select' ? `
+                <div>
+                    <label class="block text-[10px] font-bold text-slate-600 uppercase">Opciones (separadas por coma)</label>
+                    <input type="text" class="field-options-input w-full px-2.5 py-1.5 border border-slate-300 rounded-xl font-medium" data-id="${f.id}" value="${f.options.join(', ')}">
+                </div>` : ''}
+                <div class="flex items-center gap-2 pt-1">
+                    <input type="checkbox" class="field-req-input w-4 h-4 rounded text-emerald-600" data-id="${f.id}" ${f.required ? 'checked' : ''}>
+                    <label class="text-xs font-bold text-slate-700">Campo Obligatorio</label>
+                </div>
+            </div>
+        `).join('');
+
+        // Attach field change listeners
+        container.querySelectorAll('.field-label-input').forEach(inp => inp.addEventListener('input', e => {
+            const f = builderFields.find(x => x.id === e.target.dataset.id);
+            if (f) f.label = e.target.value;
+        }));
+
+        container.querySelectorAll('.field-ph-input').forEach(inp => inp.addEventListener('input', e => {
+            const f = builderFields.find(x => x.id === e.target.dataset.id);
+            if (f) f.placeholder = e.target.value;
+        }));
+
+        container.querySelectorAll('.field-options-input').forEach(inp => inp.addEventListener('input', e => {
+            const f = builderFields.find(x => x.id === e.target.dataset.id);
+            if (f) f.options = e.target.value.split(',').map(s => s.trim()).filter(Boolean);
+        }));
+
+        container.querySelectorAll('.field-req-input').forEach(inp => inp.addEventListener('change', e => {
+            const f = builderFields.find(x => x.id === e.target.dataset.id);
+            if (f) f.required = e.target.checked;
+        }));
+
+        container.querySelectorAll('.btn-remove-builder-field').forEach(btn => btn.addEventListener('click', e => {
+            const id = btn.dataset.id || btn.closest('button').dataset.id;
+            builderFields = builderFields.filter(x => x.id !== id);
+            renderBuilderFields();
+        }));
+    }
+
+    // Save & Publish Form
+    document.getElementById('btn-save-form-draft')?.addEventListener('click', () => saveFormDefinition('borrador'));
+    document.getElementById('btn-publish-form')?.addEventListener('click', () => saveFormDefinition('publicado'));
+
+    async function saveFormDefinition(state = 'publicado') {
+        const title = document.getElementById('builder-form-title')?.value.trim();
+        const dept = document.getElementById('builder-form-dept')?.value || 'Secretaría';
+        const desc = document.getElementById('builder-form-desc')?.value.trim();
+
+        if (!title) {
+            alert("Ingrese un título para el formulario.");
+            return;
+        }
+
+        if (builderFields.length === 0) {
+            alert("Añada al menos un campo al formulario antes de guardar.");
+            return;
+        }
+
+        const code = 'FRM-' + Math.floor(1000 + Math.random() * 9000);
+
+        try {
+            const resp = await apiCall({
+                action: 'saveInstitutionalForm',
+                codigoFormulario: code,
+                titulo: title,
+                descripcion: desc,
+                departamento: dept,
+                definicionJSON: builderFields,
+                estado: state,
+                version: '1.0'
+            }, 'USER');
+
+            if (resp && resp.status === 'success') {
+                alert(`¡Formulario Institucional (${state}) guardado con éxito!\n\nID: ${resp.formId}\nVersión: v${resp.version}`);
+                modalFormBuilder?.classList.add('hidden');
+            } else {
+                alert("Error al guardar formulario: " + (resp?.message || "Error desconocido"));
+            }
+        } catch (e) {
+            alert("Error de comunicación: " + e.message);
+        }
+    }
+
+    // Search and Filters
+    ['template-search-input', 'template-category-filter', 'template-state-filter'].forEach(id => {
+        document.getElementById(id)?.addEventListener('input', () => renderTemplateCatalog(loadedTemplatesCache));
+        document.getElementById(id)?.addEventListener('change', () => renderTemplateCatalog(loadedTemplatesCache));
+    });
+
+    // ---------------------------------------------------------------------------
+    // FASE 25: FLUJOS DE APROBACIÓN, REVISIÓN Y FIRMA INSTITUCIONAL
+    // ---------------------------------------------------------------------------
+    let currentWorkflowStages = [];
+    let editingWorkflowId = null;
+    let activeDecisionSolicitudId = null;
+
+    const modalWorkflowBuilder = document.getElementById('modal-workflow-builder');
+    const modalWorkflowDecision = document.getElementById('modal-workflow-decision');
+
+    document.getElementById('btn-close-workflow-builder')?.addEventListener('click', () => modalWorkflowBuilder?.classList.add('hidden'));
+    document.getElementById('btn-close-workflow-decision')?.addEventListener('click', () => modalWorkflowDecision?.classList.add('hidden'));
+    document.getElementById('btn-cancel-workflow-decision')?.addEventListener('click', () => modalWorkflowDecision?.classList.add('hidden'));
+
+    document.getElementById('btn-add-workflow-stage')?.addEventListener('click', addWorkflowStage);
+    document.getElementById('btn-save-workflow')?.addEventListener('click', saveWorkflowDefinition);
+    document.getElementById('btn-submit-workflow-decision')?.addEventListener('click', submitWorkflowDecision);
+
+    function openWorkflowBuilder(wfObj = null) {
+        editingWorkflowId = wfObj?.flujoId || null;
+        currentWorkflowStages = wfObj?.pasosEtapas ? JSON.parse(JSON.stringify(wfObj.pasosEtapas)) : [
+            { id: 'stg-1', nombre: 'Revisión Documental', rolRevisor: 'Secretaría', requiereFirma: false }
+        ];
+
+        document.getElementById('workflow-name-input').value = wfObj?.nombreFlujo || '';
+        document.getElementById('workflow-dept-select').value = wfObj?.departamento || 'Secretaría';
+
+        renderWorkflowStages();
+        modalWorkflowBuilder?.classList.remove('hidden');
+    }
+
+    function addWorkflowStage() {
+        const id = 'stg-' + Date.now();
+        currentWorkflowStages.push({
+            id: id,
+            nombre: `Etapa ${currentWorkflowStages.length + 1}`,
+            rolRevisor: 'Secretaría',
+            requiereFirma: false
+        });
+        renderWorkflowStages();
+    }
+
+    function renderWorkflowStages() {
+        const container = document.getElementById('workflow-stages-container');
+        if (!container) return;
+
+        if (!currentWorkflowStages.length) {
+            container.innerHTML = `
+                <div class="p-8 text-center text-slate-400 bg-white rounded-2xl border border-dashed border-slate-300">
+                    <i class="fa-solid fa-sitemap text-4xl mb-2 text-slate-300"></i>
+                    <p class="text-xs font-semibold">No hay etapas en el flujo. Haga clic en "Añadir Etapa de Revisión" para comenzar.</p>
+                </div>
+            `;
+            return;
+        }
+
+        container.innerHTML = currentWorkflowStages.map((s, idx) => `
+            <div class="p-3 bg-white border border-slate-200 rounded-2xl space-y-2 text-xs" data-stage-id="${s.id}">
+                <div class="flex items-center justify-between border-b border-slate-100 pb-2">
+                    <span class="font-mono text-[10px] font-bold text-indigo-700 uppercase bg-indigo-50 px-2 py-0.5 rounded-lg">Paso #${idx + 1}</span>
+                    <button class="btn-remove-stage text-rose-500 hover:text-rose-700 text-xs font-bold" data-id="${s.id}">
+                        <i class="fa-solid fa-trash-can mr-1"></i> Eliminar
+                    </button>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+                    <div>
+                        <label class="block text-[10px] font-bold text-slate-600 uppercase">Nombre de la Etapa</label>
+                        <input type="text" class="stage-name-input w-full px-2.5 py-1.5 border border-slate-300 rounded-xl font-semibold" data-id="${s.id}" value="${s.nombre}">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold text-slate-600 uppercase">Rol Revisor Responsable</label>
+                        <select class="stage-role-select w-full px-2.5 py-1.5 border border-slate-300 rounded-xl font-medium" data-id="${s.id}">
+                            <option value="Secretaría" ${s.rolRevisor === 'Secretaría' ? 'selected' : ''}>Secretaría</option>
+                            <option value="Orientación" ${s.rolRevisor === 'Orientación' ? 'selected' : ''}>Orientación</option>
+                            <option value="Contabilidad" ${s.rolRevisor === 'Contabilidad' ? 'selected' : ''}>Contabilidad</option>
+                            <option value="Director" ${s.rolRevisor === 'Director' ? 'selected' : ''}>Dirección</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2 pt-1">
+                    <input type="checkbox" class="stage-signature-input w-4 h-4 rounded text-indigo-600" data-id="${s.id}" ${s.requiereFirma ? 'checked' : ''}>
+                    <label class="text-xs font-bold text-slate-700">Requiere Firma / Conformidad Digital Institucional</label>
+                </div>
+            </div>
+        `).join('');
+
+        container.querySelectorAll('.stage-name-input').forEach(inp => inp.addEventListener('input', e => {
+            const s = currentWorkflowStages.find(x => x.id === e.target.dataset.id);
+            if (s) s.nombre = e.target.value;
+        }));
+
+        container.querySelectorAll('.stage-role-select').forEach(sel => sel.addEventListener('change', e => {
+            const s = currentWorkflowStages.find(x => x.id === e.target.dataset.id);
+            if (s) s.rolRevisor = e.target.value;
+        }));
+
+        container.querySelectorAll('.stage-signature-input').forEach(inp => inp.addEventListener('change', e => {
+            const s = currentWorkflowStages.find(x => x.id === e.target.dataset.id);
+            if (s) s.requiereFirma = e.target.checked;
+        }));
+
+        container.querySelectorAll('.btn-remove-stage').forEach(btn => btn.addEventListener('click', e => {
+            const id = e.currentTarget.dataset.id;
+            currentWorkflowStages = currentWorkflowStages.filter(x => x.id !== id);
+            renderWorkflowStages();
+        }));
+    }
+
+    async function saveWorkflowDefinition() {
+        const name = document.getElementById('workflow-name-input')?.value?.trim();
+        const dept = document.getElementById('workflow-dept-select')?.value;
+        const formId = document.getElementById('workflow-form-select')?.value || '';
+
+        if (!name) {
+            alert("Por favor ingrese un nombre para el flujo de aprobación.");
+            return;
+        }
+
+        try {
+            const resp = await apiCall({
+                action: 'saveApprovalWorkflow',
+                flujoId: editingWorkflowId,
+                formId: formId,
+                nombreFlujo: name,
+                departamento: dept,
+                pasosEtapasJSON: currentWorkflowStages,
+                estado: 'Publicado'
+            }, 'USER');
+
+            if (resp && resp.status === 'success') {
+                alert(`¡Flujo de aprobación guardado con éxito!\n\nID: ${resp.flujoId}\nVersión: v${resp.version}`);
+                modalWorkflowBuilder?.classList.add('hidden');
+            } else {
+                alert("Error al guardar flujo: " + (resp?.message || "Error desconocido"));
+            }
+        } catch (e) {
+            alert("Error de comunicación: " + e.message);
+        }
+    }
+
+    function openWorkflowDecisionModal(solicitudId, data = {}) {
+        activeDecisionSolicitudId = solicitudId;
+        document.getElementById('decision-solicitud-id').innerText = solicitudId;
+        document.getElementById('decision-solicitud-estado').innerText = data.estado || 'En Revisión';
+        document.getElementById('decision-solicitud-desc').innerText = data.descripcion || 'Detalle del trámite...';
+
+        const adjContainer = document.getElementById('decision-solicitud-adjunto');
+        if (data.adjuntoUrl) {
+            adjContainer.innerHTML = `<a href="${data.adjuntoUrl}" target="_blank" class="text-emerald-700 font-bold underline inline-flex items-center gap-1"><i class="fa-solid fa-paperclip"></i> Ver Documento / Adjunto</a>`;
+        } else {
+            adjContainer.innerHTML = `<span class="text-slate-400 italic">Sin archivo adjunto</span>`;
+        }
+
+        modalWorkflowDecision?.classList.remove('hidden');
+    }
+
+    async function submitWorkflowDecision() {
+        if (!activeDecisionSolicitudId) return;
+
+        const action = document.querySelector('input[name="decision-action"]:checked')?.value || 'APROBADO';
+        const obsPublic = document.getElementById('decision-obs-public')?.value || '';
+        const obsPrivate = document.getElementById('decision-obs-private')?.value || '';
+        const includeSignature = document.getElementById('decision-include-signature')?.checked || false;
+
+        try {
+            const resp = await apiCall({
+                action: 'processWorkflowDecision',
+                solicitudId: activeDecisionSolicitudId,
+                etapaNombre: 'Revisión Oficial',
+                revisorId: currentUser?.nombre || 'Revisor Institucional',
+                accionDecision: action,
+                observacionesInternas: obsPrivate,
+                observacionesPublicas: obsPublic
+            }, 'USER');
+
+            if (resp && resp.status === 'success') {
+                if (includeSignature) {
+                    await apiCall({
+                        action: 'registerDocumentSignature',
+                        solicitudId: activeDecisionSolicitudId,
+                        firmanteId: currentUser?.nombre || 'Autoridad Institucional',
+                        rolFirmante: currentUser?.rol || 'Secretaría',
+                        tipoFirma: 'Conformidad Digital Institucional'
+                    }, 'USER');
+                }
+                alert(`Decisión '${action}' procesada correctamente para la solicitud ${activeDecisionSolicitudId}.`);
+                modalWorkflowDecision?.classList.add('hidden');
+            } else {
+                alert("Error al procesar decisión: " + (resp?.message || "Error desconocido"));
+            }
+        } catch (e) {
+            alert("Error de comunicación: " + e.message);
+        }
+    }
+
+    // Export helpers globally if needed
+    window.openWorkflowBuilder = openWorkflowBuilder;
+    window.openWorkflowDecisionModal = openWorkflowDecisionModal;
+
+    document.getElementById('btn-open-workflow-builder')?.addEventListener('click', () => openWorkflowBuilder());
+    document.getElementById('btn-open-workflow-decision')?.addEventListener('click', () => openWorkflowDecisionModal('REQ-DEMO-101', { titulo: 'Trámite Solicitud General', solicitanteNombre: 'Estudiante Ejemplo' }));
+
+    // ---------------------------------------------------------------------------
+    // FASE 26: NOTIFICACIONES, MENSAJERÍA INTERNA Y COMUNICACIONES MULTICANAL
+    // ---------------------------------------------------------------------------
+    const modalChannelConfig = document.getElementById('modal-channel-config');
+    document.getElementById('btn-close-channel-config')?.addEventListener('click', () => modalChannelConfig?.classList.add('hidden'));
+
+    async function openChannelConfigModal() {
+        modalChannelConfig?.classList.remove('hidden');
+        try {
+            const resp = await apiCall({ action: 'getNotificationChannelConfigs' }, 'USER');
+            const channels = (resp && resp.status === 'success' && resp.data) ? resp.data : [
+                { canalId: 'SMS', nombreCanal: 'SMS Mensajería Corta', proveedor: 'Twilio / SMS Gateway', estadoHabilitado: false },
+                { canalId: 'WHATSAPP', nombreCanal: 'WhatsApp Business API', proveedor: 'Meta Cloud API', estadoHabilitado: false },
+                { canalId: 'MESSENGER', nombreCanal: 'Facebook Messenger API', proveedor: 'Meta Messenger', estadoHabilitado: false },
+                { canalId: 'EMAIL', nombreCanal: 'Correo Electrónico Institucional', proveedor: 'Gmail / SMTP', estadoHabilitado: true }
+            ];
+            renderChannelCards(channels);
+        } catch (e) {
+            alert("Error al cargar configuración de canales: " + e.message);
+        }
+    }
+
+    function renderChannelCards(channels) {
+        const container = document.getElementById('channel-cards-container');
+        if (!container) return;
+
+        container.innerHTML = channels.map(c => `
+            <div class="p-4 bg-white border border-slate-200 rounded-2xl space-y-3 shadow-sm">
+                <div class="flex items-center justify-between border-b border-slate-100 pb-2">
+                    <div class="flex items-center gap-2">
+                        <i class="fa-solid ${c.canalId === 'WHATSAPP' ? 'fa-brands fa-whatsapp text-emerald-500' : c.canalId === 'SMS' ? 'fa-solid fa-comment-sms text-sky-500' : c.canalId === 'MESSENGER' ? 'fa-brands fa-facebook-messenger text-blue-500' : 'fa-solid fa-envelope text-indigo-500'} text-lg"></i>
+                        <span class="font-bold text-slate-800 text-xs">${c.nombreCanal}</span>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" class="sr-only peer ch-toggle-btn" data-canal="${c.canalId}" ${c.estadoHabilitado ? 'checked' : ''}>
+                        <div class="w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-emerald-600"></div>
+                    </label>
+                </div>
+                <div class="text-[11px] text-slate-500 space-y-1">
+                    <p><strong>Proveedor:</strong> ${c.proveedor || 'AdaptadorNativo'}</p>
+                    <p><strong>Estado:</strong> <span class="${c.estadoHabilitado ? 'text-emerald-700 font-bold' : 'text-slate-400 font-semibold'}">${c.estadoHabilitado ? 'Habilitado' : 'Desactivado'}</span></p>
+                </div>
+                <div class="pt-2 border-t border-slate-100 flex justify-end">
+                    <button class="btn-test-channel px-3 py-1.5 bg-slate-100 hover:bg-sky-50 hover:text-sky-700 text-slate-700 rounded-xl text-[11px] font-bold flex items-center gap-1 transition-all" data-canal="${c.canalId}">
+                        <i class="fa-solid fa-vial"></i> Probar Adaptador
+                    </button>
+                </div>
+            </div>
+        `).join('');
+
+        container.querySelectorAll('.ch-toggle-btn').forEach(btn => btn.addEventListener('change', async e => {
+            const canalId = e.target.dataset.canal;
+            const isEnabled = e.target.checked;
+            try {
+                await apiCall({
+                    action: 'configureNotificationChannel',
+                    canalId: canalId,
+                    nombreCanal: canalId,
+                    estadoHabilitado: isEnabled
+                }, 'USER');
+            } catch (err) {
+                alert("Error al actualizar canal: " + err.message);
+            }
+        }));
+
+        container.querySelectorAll('.btn-test-channel').forEach(btn => btn.addEventListener('click', async e => {
+            const canalId = e.currentTarget.dataset.canal;
+            const dest = prompt(`Ingrese número/contacto de prueba para ${canalId}:`, "+50499998888");
+            if (!dest) return;
+            try {
+                const resp = await apiCall({
+                    action: 'sendChannelNotificationTest',
+                    canalId: canalId,
+                    destinatarioPrueba: dest
+                }, 'USER');
+                if (resp && resp.status === 'success') {
+                    alert(`¡Prueba exitosa para el adaptador '${canalId}'!\nID Envío: ${resp.envioId}`);
+                } else {
+                    alert("Error en prueba de adaptador: " + (resp?.message || "Error desconocido"));
+                }
+            } catch (err) {
+                alert("Error de comunicación: " + err.message);
+            }
+        }));
+    }
+
+    window.openChannelConfigModal = openChannelConfigModal;
+
+    document.getElementById('btn-open-channel-config')?.addEventListener('click', () => openChannelConfigModal());
+
+    // ---------------------------------------------------------------------------
+    // FASE 28: IMPORTADOR UNIVERSAL DE ARCHIVOS EXCEL (.xlsx) Y BINDINGS
+    // ---------------------------------------------------------------------------
+    const modalExcelImporter = document.getElementById('modal-excel-importer');
+    const fileInputExcel = document.getElementById('excel-file-input');
+    let parsedExcelData = [];
+
+    document.getElementById('btn-open-excel-importer')?.addEventListener('click', () => {
+        parsedExcelData = [];
+        if (fileInputExcel) fileInputExcel.value = '';
+        document.getElementById('excel-preview-container')?.classList.add('hidden');
+        modalExcelImporter?.classList.remove('hidden');
+    });
+
+    document.getElementById('btn-close-excel-importer')?.addEventListener('click', () => modalExcelImporter?.classList.add('hidden'));
+    document.getElementById('btn-cancel-excel-import')?.addEventListener('click', () => modalExcelImporter?.classList.add('hidden'));
+
+    fileInputExcel?.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = (evt) => {
+            try {
+                if (window.XLSX) {
+                    const data = new Uint8Array(evt.target.result);
+                    const workbook = XLSX.read(data, { type: 'array' });
+                    const firstSheetName = workbook.SheetNames[0];
+                    const worksheet = workbook.Sheets[firstSheetName];
+                    parsedExcelData = XLSX.utils.sheet_to_json(worksheet, { defval: "" });
+
+                    const summaryElem = document.getElementById('excel-preview-summary');
+                    const previewContainer = document.getElementById('excel-preview-container');
+                    if (summaryElem) {
+                        summaryElem.innerHTML = `<strong>Total de Filas Leídas:</strong> ${parsedExcelData.length}<br><strong>Columnas Detectadas:</strong> ${Object.keys(parsedExcelData[0] || {}).join(', ')}`;
+                    }
+                    if (previewContainer) previewContainer.classList.remove('hidden');
+                } else {
+                    alert("Biblioteca XLSX no disponible.");
+                }
+            } catch (err) {
+                alert("Error al leer archivo Excel: " + err.message);
+            }
+        };
+        reader.readAsArrayBuffer(file);
+    });
+
+    document.getElementById('btn-submit-excel-import')?.addEventListener('click', async () => {
+        if (!parsedExcelData || parsedExcelData.length === 0) {
+            alert("Por favor seleccione un archivo Excel válido con datos.");
+            return;
+        }
+
+        const targetModule = document.getElementById('excel-target-module')?.value || 'Docentes';
+        try {
+            const resp = await apiCall({
+                action: 'importDataWithColumnMapping',
+                nombreArchivo: 'importacion.xlsx',
+                destinoModulo: targetModule,
+                columnaMapeo: { identificador: Object.keys(parsedExcelData[0] || {})[0] || 'ID' },
+                filasData: parsedExcelData
+            }, 'ACCOUNTING');
+
+            if (resp && resp.status === 'success') {
+                alert(`¡Importación Completada!\nFilas Procesadas Exitosamente: ${resp.exitosas || parsedExcelData.length}`);
+                modalExcelImporter?.classList.add('hidden');
+            } else {
+                alert('Error al importar datos: ' + (resp?.message || 'Error desconocido'));
+            }
+        } catch (err) {
+            alert('Error al procesar importación: ' + err.message);
+        }
+    });
+
 });
 /**
  * REQ: Soporte para copia de código en el panel del profesor (v7.6.4)

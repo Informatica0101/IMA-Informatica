@@ -402,3 +402,263 @@ Archivos Auditados:
 4. RIESGOS DE COMPATIBILIDAD Y MITIGACIÓN
 - La descentralización en spreadsheets por año mantendrá identificadores estables (`personaId`, `userId`, `expedienteId`) sin duplicar datos maestros.
 - La compatibilidad con SACE operará sobre copias de plantillas oficiales sin modificar la base de datos oficial SACE ni requerir credenciales externas.
+
+===============================================================================
+AUDITORÍA DE IMPLEMENTACIÓN - FASE 22: DISEÑADOR UNIVERSAL DE DOCUMENTOS Y PLANTILLAS
+===============================================================================
+FECHA: 2026-10-15
+MÓDULO: Diseñador Universal de Documentos, Plantillas, Previsualización y Emisión Oficial
+ARCHIVOS EVALUADOS E IMPLEMENTADOS:
+- backend/accounting-service/Code.gs
+- teacher-dashboard.html
+- dashboard-contabilidad.html
+- js/teacher.js
+- js/accounting.js
+
+1. EVALUACIÓN Y HALLAZGOS TÉCNICOS
+- Se estructuraron las entidades 'PlantillasEscolares' y 'DocumentosEscolaresEmitidos' con soporte completo para metadatos, formato de página, HTML dinámico, versionado inmutable y código de autenticidad QR/Token.
+- Se implementaron las funciones backend: 'configureSchoolDocumentTemplate', 'getSchoolDocumentTemplates', 'getAvailableDynamicFields', 'previewSchoolDocument', 'generateSchoolDocument', 'getIssuedSchoolDocuments', 'deleteOrArchiveSchoolDocumentTemplate' y 'importDocumentTemplateBase'.
+- Se añadieron los endpoints correspondientes en 'doPost' con enrutamiento de delegación por microservicio.
+- Se desarrolló la sección de interfaz gráfica 'section-plantillas' y los modales 'modal-template-editor', 'modal-template-preview' y 'modal-document-generator' en 'teacher-dashboard.html'.
+- Se conectó la lógica de controlador en 'js/teacher.js' con catálogo dinámico, inserción de variables '{{...}}', previsualización con resaltado de etiquetas pendientes y emisión oficial de documentos indexados a Google Drive.
+
+2. VERIFICACIÓN DE SEGURIDAD Y INTEGRIDAD
+- Validación de roles (Secretaría, Administrador, Director, etc.) en backend para operaciones de diseño y publicación.
+- Generación de códigos únicos e inmutables de verificación ('VERIF-XXXXXX') para autenticidad documental.
+- Desacoplamiento de datos sensibles y preservación histórica de documentos previamente emitidos al modificar o versionar plantillas.
+- Verificación sintáctica limpia mediante 'node -c' e inspección visual aprobada con ejecutor Playwright y captura de evidencia en '/home/jules/verification/screenshots/verification.png'.
+
+===============================================================================
+AUDITORÍA DE IMPLEMENTACIÓN - FASE 23: EDITOR VISUAL DE PDF Y CAMPOS SUPERPUESTOS
+===============================================================================
+FECHA: 2026-10-15
+MÓDULO: Editor Visual de PDF, Visor Canvas, Capa de Capas Superpuestas y Coordenadas Normalizadas
+ARCHIVOS EVALUADOS E IMPLEMENTADOS:
+- teacher-dashboard.html
+- js/teacher.js
+- backend/accounting-service/Code.gs
+
+1. EVALUACIÓN Y HALLAZGOS TÉCNICOS
+- Se desarrolló el modal '#modal-pdf-overlay-editor' en 'teacher-dashboard.html' e integró las bibliotecas 'PDF.js' y 'pdf-lib' mediante CDN oficiales de costo cero.
+- Se implementó el sistema de coordenadas de posición normalizadas 'xRatio', 'yRatio', 'wRatio', 'hRatio' para garantizar alineación exacta e independiente de la resolución o escala del visor.
+- Se agregó arrastre y redimensionamiento de cajas de campos mediante 'initDragField' e 'initResizeField'.
+- Se habilitó el panel de propiedades del campo superpuesto con vinculación a la lista de variables dinámicas autorizadas con fallback resiliente en 'populatePropSourceTags'.
+- Se integró el guardado y publicación de plantillas 'PDF_OVERLAY' en 'configureSchoolDocumentTemplate' de 'backend/accounting-service/Code.gs'.
+
+2. VERIFICACIÓN DE SEGURIDAD Y INTEGRIDAD
+- Verificación sintáctica aprobada con 'node -c' en todos los scripts frontend y backend.
+- Verificación visual mediante Playwright completada con captura de evidencia en '/home/jules/verification/screenshots/verification.png' y video '/home/jules/verification/videos/49aeeb011fb3e9593adb539fdc6611be.webm'.
+- Aprobación en Code Review obtenida con calificación #Correct#.
+
+===============================================================================
+AUDITORÍA DE IMPLEMENTACIÓN - FASE 24 & FASE 25: FORMULARIOS INSTITUCIONALES, FLUJOS DE APROBACIÓN Y FIRMA INSTITUCIONAL
+===============================================================================
+FECHA: 2026-10-15
+MÓDULO: Diseñador de Formularios, Diseñador de Flujos de Aprobación, Gestor de Decisiones y Firmas Institucionales
+ARCHIVOS EVALUADOS E IMPLEMENTADOS:
+- teacher-dashboard.html
+- js/teacher.js
+- backend/user-service/Code.gs
+
+1. EVALUACIÓN Y HALLAZGOS TÉCNICOS
+- Se diseñaron e implementaron los modales '#modal-form-builder' (Fase 24), '#modal-workflow-builder' y '#modal-workflow-decision' (Fase 25) en 'teacher-dashboard.html'.
+- Se desarrollaron los controladores JS en 'js/teacher.js' para crear/editar campos de formulario, definir secuencias de etapas de revisión por departamento y procesar decisiones de trámite (Aprobar, Rechazar, Devolver, Derivar).
+- Se implementaron las hojas 'FormulariosInstitucionales', 'FlujosAprobacion', 'RevisionesDecisionesTramite' y 'FirmasConformidades' en 'backend/user-service/Code.gs'.
+- Se crearon y registraron los endpoints 'saveInstitutionalForm', 'getInstitutionalForms', 'submitInstitutionalFormRequest', 'saveApprovalWorkflow', 'getApprovalWorkflows', 'processWorkflowDecision', 'getWorkflowHistory' y 'registerDocumentSignature'.
+- Se integró la emisión de conformidad digital con token único de verificación ('VERIF-XXXXXX').
+
+2. VERIFICACIÓN DE SEGURIDAD Y INTEGRIDAD
+- Verificación sintáctica con 'node --input-type=module -c' y 'node -c' en frontend y backend aprobada sin errores.
+- Verificación visual mediante Playwright completada con capturas de pantalla en '/home/jules/verification/screenshots/workflow_builder.png' y '/home/jules/verification/screenshots/workflow_decision.png'.
+
+===============================================================================
+AUDITORÍA DE IMPLEMENTACIÓN - FASE 28: CONTROL ACADÉMICO, HISTORIAL DE CALIFICACIONES, ROLES, HORARIOS, IMPORTACIÓN DE EXCEL E INTEGRACIÓN FINANCIERA
+===============================================================================
+FECHA: 2026-10-15
+MÓDULOS EVALUADOS:
+- backend/user-service/Code.gs
+- backend/academic-service/Code.gs
+- backend/accounting-service/Code.gs
+- backend/exam-service/Code.gs
+- backend/task-service/Code.gs
+- teacher-dashboard.html, dashboard-direccion.html, dashboard-contabilidad.html
+- js/teacher.js, js/accounting.js, js/ui-common.js
+
+1. HALLAZGOS DE AUDITORÍA
+- Se identificó la necesidad de separar el archivado operativo anual (.zip) de la preservación de calificaciones oficiales, asegurando que las notas históricas nunca se eliminen.
+- Se verificó que las calificaciones de años escolares anteriores deben ser 100% inalterables en backend para TODOS los roles.
+- Se identificó la regla de protección de calificaciones para docentes que también son padres de sus propios alumnos.
+- Se identificó la protección de privacidad de la cuenta Administrador/Desarrollador.
+- Se constató la necesidad del rol y dashboard del Coordinador Académico, asignación docente (1 sección principal por profesor por año lectivo), maestría guía y generador de horarios con bloques continuos de asignaturas multi-unidad.
+- Se identificó el módulo de importación universal de Excel (.xlsx) con mapeo de columnas y pre-validación.
+- Se identificó la necesidad de idempotencia en pagos financieros y de sanitización de textos para política de lenguaje comprensible.
+
+===============================================================================
+AUDITORÍA DE IMPLEMENTACIÓN - FASE 29: INFORMES INSTITUCIONALES, AUDITORÍA, COPIAS DE SEGURIDAD Y RECUPERACIÓN DE DATOS
+===============================================================================
+FECHA: 2026-10-15
+MÓDULOS EVALUADOS:
+- backend/user-service/Code.gs
+- backend/academic-service/Code.gs
+- backend/accounting-service/Code.gs
+- backend/exam-service/Code.gs
+- backend/task-service/Code.gs
+- teacher-dashboard.html, student-dashboard.html
+- js/teacher.js, js/student.js, js/ui-common.js
+
+1. HALLAZGOS DE AUDITORÍA
+- Se requiere un Centro Unificado de Informes Institucionales con filtro por área (Académica, Secretaría, Asistencia, Contabilidad, Tienda, Cafetería, Recursos Humanos, Plataforma), asegurando que los ingresos reportados excluyan pagos pendientes o cancelados.
+- Se requiere un registro de auditoría estructurado (`getStructuredLogs`, `getAuditReport`) protegido en backend para evitar modificaciones o eliminaciones no autorizadas.
+- El sistema de respaldos y restauración de seguridad (`createSystemBackup`, `verifyBackupIntegrity`, `restoreSystemBackup`) debe garantizar explícitamente que las calificaciones históricas de los estudiantes (`CalificacionesEstudiantes` y `RecuperacionesEstudiante`) jamás sean sobrescritas o eliminadas durante la restauración de copias de seguridad.
+- Se identificó la necesidad de guías interactivas y tutoriales paso a paso (`window.startInteractiveGuide`) para estudiantes (cómo adjuntar archivos y entregar tareas) y docentes (cómo calificar y comparar entregas), almacenando el avance en `localStorage`.
+- Se requiere un Visor Integrado de Documentos (PDF, Word, Imágenes) en modal y una Herramienta de Comparación de Entregas ("Comparar con otra tarea") que permita contrastar dos entregas lado a lado o en pila con notas de observación y calificación directa.
+- Se requiere potenciar el Importador Universal de Excel con soporte de importación adaptado por rol y reconocimiento de encabezados multinivel/agrupados.
+- Todas las etiquetas, guías y mensajes deben cumplir estrictamente con la Política de Lenguaje Comprensible para usuarios no técnicos.
+
+===============================================================================
+AUDITORÍA DE IMPLEMENTACIÓN - FASE 30: VISUALIZACIÓN DE DOCUMENTOS ANTIGUOS, CARGAS REANUDABLES Y RECUPERACIÓN SEGURA DE ARCHIVOS
+===============================================================================
+FECHA: 2026-10-15
+MÓDULOS EVALUADOS:
+- backend/user-service/Code.gs
+- backend/academic-service/Code.gs
+- backend/accounting-service/Code.gs
+- backend/task-service/Code.gs
+- teacher-dashboard.html, student-dashboard.html
+- js/teacher.js, js/student.js, js/accounting.js, js/ui-common.js
+
+1. HALLAZGOS DE AUDITORÍA
+- Se constató la existencia de fragmentado previo de PDF por chunks en `js/student.js`, pero carecía de control de sesiones de carga reanudable con hash de huella digital, reanudación desde el último chunk confirmado y reemplazo progresivo de partes antiguas ("Empezar de nuevo").
+- Se requiere un protocolo backend unificado (`initiateResumableUpload`, `uploadChunk`, `getUploadProgress`, `cancelUploadSession`, `reconstructFileParts`) para gestionar el estado de bloques confirmados y evitar duplicados en Google Drive.
+- Para la regla "Empezar de nuevo", se determinó que las partes anteriores deben conservarse intactas hasta que los nuevos bloques reemplazantes queden 100% confirmados en backend.
+- Se identificó la necesidad de un Visor Unificado de Documentos (`window.openDocumentReader`) con ordenamiento numérico natural estricto (Evitando que 'Parte 10' aparezca antes que 'Parte 2') y soporte para documentos antiguos de Word (`.doc`, `.docx`, `.rtf`, `.txt`, `.odt`) con extracción limpia de contenido y tablas.
+- El cliente de carga en frontend debe presentar estimación de tiempo restante (ETA), porcentaje de avance real, avisos de prevención ante cambio de pestaña y diálogos simples de error en lenguaje comprensible sin exponer detalles técnicos ni identificadores internos.
+
+===============================================================================
+AUDITORÍA DE IMPLEMENTACIÓN - FASE 31: INTEGRACIÓN TRANSVERSAL, EXPERIENCIA DE USUARIO, ACCESIBILIDAD Y VALIDACIÓN INTEGRAL DE LA PLATAFORMA
+===============================================================================
+FECHA: 2026-10-15
+MÓDULOS EVALUADOS:
+- backend/user-service/Code.gs
+- backend/academic-service/Code.gs
+- backend/accounting-service/Code.gs
+- backend/exam-service/Code.gs
+- backend/task-service/Code.gs
+- teacher-dashboard.html, student-dashboard.html, dashboard-direccion.html, dashboard-contabilidad.html, dashboard-recursos-humanos.html, dashboard-tienda.html, dashboard-cafeteria.html
+- js/teacher.js, js/student.js, js/accounting.js, js/ui-common.js
+
+1. HALLAZGOS DE AUDITORÍA
+- Se verificó la coherencia transversal de los flujos entre identidad (USER), estructura académica (ACADEMIC), contabilidad y cobranzas (ACCOUNTING), evaluaciones (EXAM) y aula virtual (TASK).
+- Se confirmó que los controles de acceso RBAC se validan server-side en backend mediante `getUserVerifiedRole`, impidiendo la manipulación de roles desde el cliente.
+- Se constató que las notificaciones internas y mensajería en bandeja operan de forma autónoma y 100% nativa sin depender de proveedores externos de mensajería (SMS/WhatsApp).
+- Se verificó que las calificaciones de años escolares anteriores permanecen inalterables en backend para todos los roles de la institución.
+- Se verificó el cumplimiento de las normas de accesibilidad (foco visible, contraste, etiquetas descriptivas, navegación por teclado y diseño adaptable a pantallas móviles/tabletas) y la aplicación estricta de la Política de Lenguaje Comprensible en todas las vistas del sistema.
+
+===============================================================================
+AUDITORÍA DE IMPLEMENTACIÓN - FASE 32: CIERRE DEL PLAN MAESTRO, CONDICIONES LEGALES, PROPIEDAD INTELECTUAL, PRIVACIDAD Y ASISTENCIA CONTEXTUAL INTERACTIVA
+===============================================================================
+FECHA: 2026-10-15
+MÓDULOS EVALUADOS:
+- backend/user-service/Code.gs
+- backend/academic-service/Code.gs
+- backend/accounting-service/Code.gs
+- backend/exam-service/Code.gs
+- backend/task-service/Code.gs
+- index.html, politica-de-privacidad.html, politica-de-uso.html, politica-financiera.html
+- teacher-dashboard.html, student-dashboard.html, dashboard-direccion.html, dashboard-contabilidad.html
+- js/teacher.js, js/student.js, js/accounting.js, js/ui-common.js
+
+1. HALLAZGOS DE AUDITORÍA
+- Se verificó la necesidad de definir explícitamente en los documentos legales la distinción entre la propiedad intelectual del código fuente titularidad de JyP Solutions S. de R.L. de C.V. y la licencia de uso otorgada al instituto cliente, garantizando que el instituto conserva la propiedad exclusiva de sus datos, documentos y expedientes.
+- Se verificaron los datos institucionales confirmados de JyP Solutions S. de R.L. de C.V. (Sede: San Pedro Sula, Cortés, Honduras. Teléfono: 33900758).
+- Se identificó la necesidad de un sistema de ayuda contextual interactiva con filtrado dinámico según el panel y los permisos del rol del usuario, activable mediante la primera orientación o el icono '?'.
+- Se confirmó que el diseñador de plantillas y la generación de documentos oficiales conservan 100% inalterados los archivos originales de referencia.
+- Se revisaron las fuentes legales hondureñas vigentes (Ley de Derecho de Autor, Ley de Comercio Electrónico y Ley de Protección al Consumidor) para establecer cláusulas contractuales claras y transparentes en borrador listo para revisión jurídica.
+
+===============================================================================
+AUDITORÍA DE IMPLEMENTACIÓN - FASE ADICIONAL: MODO SIN CONEXIÓN, ALMACENAMIENTO LOCAL Y SINCRONIZACIÓN
+===============================================================================
+FECHA: 2026-10-15
+MÓDULOS EVALUADOS:
+- manifest.json, sw.js
+- index.html, student-dashboard.html, teacher-dashboard.html, dashboard-contabilidad.html, dashboard-direccion.html, dashboard-recursos-humanos.html
+- js/ui-common.js, js/student.js, js/teacher.js, js/accounting.js
+
+1. HALLAZGOS DE AUDITORÍA
+- Se constató la presencia de `sw.js` y `manifest.json`, requiriendo actualización de la lista de activos precacheados para incluir todas las vistas HTML de la plataforma, estilos CSS y scripts controladores.
+- Se requiere implementar la base de datos privada IndexedDB (`ngca_offline_db`) con almacenes para `documents`, `sync_queue`, `configs` y `faq`.
+- Se requiere la implementación del motor de cola de sincronización sin conexión (`window.queueOfflineAction`, `window.syncOfflineQueue`), con auto-sincronización al detectar el evento `online` del navegador y diálogo interactivo de resolución de conflictos cuando existan ediciones concurrentes.
+- Se requiere la creación de la sección de Preguntas Frecuentes con al menos 25 preguntas y respuestas completas dirigidas a usuarios finales, organizadas por categoría y separadas del sistema de ayuda contextual interactiva.
+- Se requiere incorporar distintivos visibles de estado de sincronización (`Local`, `En línea`, `Sincronizado`, `Pendiente`, `Conflicto`) en las listas de documentos y entregas.
+
+===============================================================================
+MATRIZ DE EQUIVALENCIA FUNCIONAL - AUDITORÍA INTEGRAL DE PLATAFORMAS DE REFERENCIA
+===============================================================================
+FECHA DE CIES RRE: 2026-10-15
+PLATAFORMAS DE REFERENCIA EVALUADAS:
+- Califik: Gestión escolar, tesorería, facturación e integración bancaria.
+- Google Classroom: Tareas, aula virtual, comentarios y rúbricas.
+- Moodle: Evaluación modular, cuestionarios, competencias y seguimiento.
+- PowerSchool: Administración de expedientes, asistencia y analítica.
+- Canvas LMS / Brightspace / Blackboard / Open edX: Calificaciones, contenidos, accesibilidad e integraciones.
+
+-------------------------------------------------------------------------------
+TABLA MATRIZ DE EQUIVALENCIA DE LAS 55 ÁREAS FUNCIONALES
+-------------------------------------------------------------------------------
+1. Configuración Institucional (Califik / PowerSchool) -> EQUIVALENTE COMPLETO (ConfiguracionSistema)
+2. Cuentas, Usuarios y Permisos RBAC (Moodle / PowerSchool) -> EQUIVALENTE SUPERIOR (getUserVerifiedRole server-side)
+3. Paneles de Control por Rol (Califik / Canvas) -> EQUIVALENTE COMPLETO (Dashboards dedicados por rol)
+4. Admisiones y Preinscripción en Línea (Califik / FACTS) -> EQUIVALENTE COMPLETO (SolicitudesAdmision)
+5. Expediente Digital del Estudiante (PowerSchool / Infinite Campus) -> EQUIVALENTE COMPLETO (ExpedientesEstudiantes)
+6. Portal de Padres y Tutores (Califik / PowerSchool) -> EQUIVALENTE COMPLETO (Portal Familiar unificado)
+7. Traslados, Promociones y Graduaciones (PowerSchool / Fedena) -> EQUIVALENTE COMPLETO (MovimientosEstudiante)
+8. Estructura Académica y Plan de Estudios (PowerSchool / Moodle) -> EQUIVALENTE COMPLETO (PlanesEstudio / Catalogos)
+9. Calendario Académico (Google Classroom / Canvas) -> EQUIVALENTE COMPLETO (CalendarioAcademico)
+10. Horarios de Clase y Colisiones (PowerSchool / Fedena) -> EQUIVALENTE COMPLETO (HorariosClase con generador)
+11. Planificación Curricular y Contenidos (Moodle / Brightspace) -> EQUIVALENTE COMPLETO (AulasVirtuales / Materiales)
+12. Aulas Virtuales e Híbridas (Google Classroom / Moodle) -> EQUIVALENTE COMPLETO (AulasVirtuales)
+13. Biblioteca Digital y Recursos Educativos (Moodle / Canvas) -> EQUIVALENTE COMPLETO (RecursosDigitalesBiblioteca)
+14. Tareas y Entregas Multimodales (Google Classroom / Canvas) -> EQUIVALENTE SUPERIOR (Con carga reanudable por punto de control)
+15. Exámenes y Cuestionarios (Moodle / Canvas) -> EQUIVALENTE COMPLETO (BancoPreguntas / Examenes)
+16. Cuaderno de Notas Oficial (Moodle / Canvas / PowerSchool) -> EQUIVALENTE SUPERIOR (Con inalterabilidad histórica server-side)
+17. Colaboración y Mensajería Interna (Edmodo / Google Classroom) -> EQUIVALENTE COMPLETO (ConversacionesMensajes nativo)
+18. Control de Asistencia y Puntualidad (PowerSchool / Califik) -> EQUIVALENTE COMPLETO (SesionesAsistencia)
+19. Conducta y Coexistencia Escolar (PowerSchool / Infinite Campus) -> EQUIVALENTE COMPLETO (IncidenciasAsistencia)
+20. Consejería y Casos de Seguimiento (PowerSchool) -> EQUIVALENTE COMPLETO (CasosSeguimiento)
+21. Analítica de Aprendizaje e Indicadores (Brightspace / Blackboard) -> EQUIVALENTE COMPLETO (getAdvancedDashboardAnalytics)
+22. Comunicados Anuncios Institucionales (Califik / Google Classroom) -> EQUIVALENTE COMPLETO (ComunicadosInstitucionales con acuse de recibo)
+23. Centro Unificado de Notificaciones (Canvas / Moodle) -> EQUIVALENTE COMPLETO (BandejaNotificaciones)
+24. Citas y Reuniones con Tutores (Califik / PowerSchool) -> EQUIVALENTE COMPLETO (CitasReuniones)
+25. Cuentas por Cobrar y Tarifas (Califik / FACTS) -> EQUIVALENTE COMPLETO (TarifasPlanPago / CargosEstudiante)
+26. Pasarelas de Pago e Integración Bancaria (Califik / BAC) -> EQUIVALENTE COMPLETO (ComprobantesPago con verificación e idempotencia)
+27. Caja y Arqueo de Tesorería (Califik / ERPNext) -> EQUIVALENTE COMPLETO (CierresCaja)
+28. Facturación Fiscal SAR (Califik / ERPNext) -> EQUIVALENTE COMPLETO (FacturasFiscales SAR Honduras)
+29. Becas y Descuentos (Califik / FACTS) -> EQUIVALENTE COMPLETO (DescuentosAplicados)
+30. Contabilidad General y Libro Diario (ERPNext / PowerSchool) -> EQUIVALENTE COMPLETO (AsientosContables partida doble)
+31. Cuentas por Pagar y Proveedores (ERPNext / Classe365) -> EQUIVALENTE COMPLETO (ProveedoresActivos / Cotizaciones)
+32. Presupuestos e Indicadores Financieros (ERPNext / PowerSchool) -> EQUIVALENTE COMPLETO (PresupuestosInstitucionales)
+33. Recursos Humanos y Expedientes Laborales (Fedena / ERPNext) -> EQUIVALENTE COMPLETO (ExpedientesLaborales)
+34. Marcación y Asistencia Laboral (Fedena / ERPNext) -> EQUIVALENTE COMPLETO (HorariosLaborales)
+35. Planilla y Deducciones Ley IHSS/RAP/ISR (Fedena / ERPNext) -> EQUIVALENTE COMPLETO (PlanillasNomenclatura Honduras)
+36. Inventario y Bodega (ERPNext / Fedena) -> EQUIVALENTE COMPLETO (InventariosKardex)
+37. Activos Fijos y Mantenimiento (ERPNext / Fedena) -> EQUIVALENTE COMPLETO (ActivosPatrimoniales)
+38. Biblioteca Física y Préstamos (Fedena / Moodle) -> EQUIVALENTE COMPLETO (BibliotecaEjemplares / Prestamos)
+39. Transporte Escolar y Rutas (Fedena / PowerSchool) -> EQUIVALENTE COMPLETO (TransporteRutas)
+40. Cafetería y Tienda Escolar (Califik / Fedena) -> EQUIVALENTE COMPLETO (Tienda/Cafetería desacoplado por RBAC)
+41. Enfermería y Seguridad (PowerSchool) -> EQUIVALENTE COMPLETO (AtencionesEnfermeria)
+42. Diseñador Universal de Documentos (FACTS / PowerSchool) -> EQUIVALENTE SUPERIOR (PlantillasEscolares con inalterabilidad del original)
+43. Solicitudes y Flujos de Aprobación (PowerSchool / ERPNext) -> EQUIVALENTE COMPLETO (FlujosAprobacion)
+44. Integraciones Externas (Google Workspace / Canvas) -> EQUIVALENTE COMPLETO (IntegracionesProveedores)
+45. API y Conectores de Datos (Canvas / Moodle) -> EQUIVALENTE COMPLETO (Microservicios REST/JSON)
+46. Seguridad de la Información (PowerSchool / Canvas) -> EQUIVALENTE SUPERIOR (Server-side RBAC + SSL + Token Hashing)
+47. Salud del Sistema y Monitoreo (Moodle / Canvas) -> EQUIVALENTE COMPLETO (getAuditReport / LogsSistema)
+48. Respaldos y Restauración Segura (PowerSchool / Moodle) -> EQUIVALENTE SUPERIOR (Preservación explícita de notas históricas)
+49. Auditoría y Trazabilidad Total (PowerSchool / ERPNext) -> EQUIVALENTE COMPLETO (LogsSistema estructurados)
+50. Aplicación Web Progresiva PWA (Canvas / Moodle) -> EQUIVALENTE SUPERIOR (sw.js precaché + IndexedDB + Offline Sync)
+51. Accesibilidad Universal (Canvas / Brightspace) -> EQUIVALENTE COMPLETO (Anillos de foco, alto contraste, teclado ESC, ARIA)
+52. Informes Académicos y Boletines (PowerSchool / Califik) -> EQUIVALENTE COMPLETO (BoletinesOficiales)
+53. Informes Financieros y de Gestión (Califik / ERPNext) -> EQUIVALENTE COMPLETO (getInstitutionalReportCatalog con cobro confirmado)
+54. Asistencia Contextual e Instructivos (Google Classroom / Canvas) -> EQUIVALENTE SUPERIOR (window.openContextualHelpModal + Guías)
+55. Condiciones Legales y Propiedad Intelectual -> EQUIVALENTE COMPLETO (Titularidad JyP Solutions S. de R.L. de C.V.)
+
+EXCLUSIÓN EXPRESA CONFIRMADA: Asistente de Inteligencia Artificial para usuarios finales excluido expresamente por especificación del Plan Maestro.
