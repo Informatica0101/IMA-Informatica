@@ -662,3 +662,103 @@ TABLA MATRIZ DE EQUIVALENCIA DE LAS 55 ÁREAS FUNCIONALES
 55. Condiciones Legales y Propiedad Intelectual -> EQUIVALENTE COMPLETO (Titularidad JyP Solutions S. de R.L. de C.V.)
 
 EXCLUSIÓN EXPRESA CONFIRMADA: Asistente de Inteligencia Artificial para usuarios finales excluido expresamente por especificación del Plan Maestro.
+
+====================================================================================================
+
+AUDITORÍA TÉCNICA Y DIAGNÓSTICO DE ARQUITECTURA - NUEVA FASE: DISEÑO INSTITUCIONAL, PERSONALIZACIÓN GLOBAL, REPORTE DE PROBLEMAS Y CONTROL DE VERSIONES - Mon Jul 6 2026
+
+Archivos y Módulos Auditados:
+- css/style.css
+- js/ui-common.js
+- js/teacher.js
+- js/student.js
+- js/api.js
+- backend/user-service/Code.gs
+- index.html
+- login.html
+- teacher-dashboard.html
+- student-dashboard.html
+- README.md
+
+1. DIAGNÓSTICO Y REUTILIZACIÓN DE ESTRUCTURAS DE DATOS EXISTENTES
+- Tablas y Endpoints en `backend/user-service/Code.gs`:
+  * `ConfiguracionSistema`: Hoja existente de parámetros globales. Se extenderá para almacenar la paleta de colores activa (`ConfiguracionVisualGlobal`) y las propuestas de diseño (`PropuestasPaletasVisuales`).
+  * `ROLE_PERMISSIONS`: Matriz de autorización por rol existente. Se incorporarán los nuevos endpoints: `submitProblemTicket`, `getProblemTickets`, `updateTicketStatus`, `replyProblemTicket`, `saveVisualPaletteProposal`, `approveVisualPaletteProposal`, `getActiveVisualPalette`.
+- Frontend & UI:
+  * `js/ui-common.js`: Contiene modal `#modal-dashboard-settings` y componentes compartidos globales. Se añadirá el inicializador global del botón de soporte/tickets `#btn-global-report-issue`, el modal `#modal-report-issue`, el visualizador de tickets "Mis Reportes" y la gestión de paletas visuales con previsualización.
+  * `css/style.css`: Posee variables CSS de diseño en `:root`. Se extenderán con los tokens del sistema visual institucional sobrio y armónico y las clases para dinamizar las paletas activas.
+  * `login.html`: Contiene el formulario de acceso y la presentación del logotipo institucional. Se ajustará el contenedor sin contornos, fondo transparente, proporciones originales y sombra sutil sin neón.
+  * `README.md`: Se actualizará para reflejar la versión global `1.0`, las reglas de incremento estricto manual y las capacidades reales verificadas del sistema.
+
+2. HALLAZGOS Y PLAN DE IMPLEMENTACIÓN
+- Backend:
+  * Crear tablas `TicketsReporteProblemas` e `HistorialMensajesTickets` en `backend/user-service/Code.gs`.
+  * Generar IDs únicos de tickets `TICK-XXXXXX` en servidor con recolección de contexto confiable (UserId, Nombre, Rol, Función/Área, Versión 1.0, PWA/Escritorio, Timestamps).
+  * Implementar máquina de estados oficial: Enviado, En revisión, Se necesita información, Información recibida, Solucionado, Cerrado.
+  * Crear flujo de propuesta y aprobación de paletas visuales: Administrador propone (`Pendiente`), Dirección aprueba (`Aprobada`) -> Publicación global inmediata a todos los usuarios.
+- Frontend:
+  * Botón global de reporte de problemas disponible en todas las vistas de la plataforma.
+  * Modal de reporte con auto-selección de área y validación estricta de 2 campos descriptivos (>= 20 caracteres significativos sin espacios en blanco).
+  * Módulo de gestión administrativa exclusiva de tickets para el Administrador/Desarrollador con notas internas, cambios de estado y respuestas al usuario.
+  * Fijación de versión global pública en `1.0`.
+
+====================================================================================================
+
+AUDITORÍA TÉCNICA Y DIAGNÓSTICO DE ARQUITECTURA - NUEVA FASE: CONFIGURACIÓN DEL AÑO ESCOLAR, JORNADAS, HORARIOS, CONTROL LABORAL Y ACTIVIDADES INSTITUCIONALES - Mon Jul 6 2026
+
+Archivos y Módulos Auditados:
+- backend/academic-service/Code.gs
+- backend/accounting-service/Code.gs
+- backend/user-service/Code.gs
+- js/teacher.js
+- js/student.js
+- js/ui-common.js
+- teacher-dashboard.html
+- student-dashboard.html
+- dashboard-recursos-humanos.html
+
+1. DIAGNÓSTICO Y REUTILIZACIÓN DE ESTRUCTURAS DE DATOS EXISTENTES
+- Tablas y Endpoints Existentes:
+  * `AnosLectivos` en `backend/academic-service/Code.gs`: Almacena el año escolar. Se ampliará para soportar el Tipo de Calendario (Sistema Americano, Año Calendario, Personalizado), Primer/Último día de clases, Fecha de Cierre Administrativo y Fechas Límite de Calificaciones.
+  * `CalendarioAcademico` en `backend/academic-service/Code.gs`: Registro de eventos. Se ampliará para categorizar tipos de días (Hábil, Festivo, Receso, Capacitación, Evaluación, Actividad Especial) y coordinar excepciones.
+  * `HorariosClase` en `backend/academic-service/Code.gs`: Generador y validador de horarios (`checkScheduleConflict`). Se extenderá para asociar jornadas, bloques consecutivos, descansos/recreos y aulas.
+  * `HorariosLaborales` & `MarcacionesPersonal` en `backend/accounting-service/Code.gs`: Registro de asistencia de personal. Se ampliarán con turnos de almuerzo escalonados, descansos, tolerancias y solicitudes/aprobaciones de horas extras.
+- Nuevas Tablas de Soporte Necesarias:
+  * `JornadasAcademicas` (`backend/academic-service/Code.gs`): Configuración de jornadas (Matutina, Vespertina, Nocturna, A distancia, Mixta), horas-clase, recesos y transiciones.
+  * `MallaCurricularDist` (`backend/academic-service/Code.gs`): Reglas de distribución semanal/diaria de asignaturas, bloques consecutivos y restricciones de horario.
+  * `ActividadesInstitucionales` (`backend/academic-service/Code.gs`): Registro de actos, asambleas, ferias y excursiones con estrategia de afectación de clases (Desplazar, Reducir, Reemplazar, Reprogramar).
+  * `ActividadesExtracurriculares` (`backend/academic-service/Code.gs`): Gestión de talleres, clubes y deportes con supervisores, estados y evidencias digitales en Drive.
+  * `TurnosAlmuerzo` (`backend/accounting-service/Code.gs`): Franjas de descanso y almuerzo laboral por departamento/empleado.
+  * `AprobacionHorasExtras` (`backend/accounting-service/Code.gs`): Registro, cálculo, revisión y aprobación de horas extras con vinculación a fechas de corte de nómina.
+
+2. HALLAZGOS Y PLAN DE IMPLEMENTACIÓN
+- Backend:
+  * Implementar en `backend/academic-service/Code.gs` las funciones y endpoints con RBAC para la gestión avanzada del Año Escolar, Jornadas, Malla Curricular, Generación/Edición de Horarios con colisiones, Actividades Institucionales y Extracurriculares.
+  * Implementar en `backend/accounting-service/Code.gs` los endpoints para Horarios Laborales, Almuerzos Escalonados, Marcaciones de Entrada/Salida/Receso y Motor de Cálculo/Aprobación de Horas Extras con trazabilidad.
+- Frontend:
+  * Crear interfaces de administración en `teacher-dashboard.html` / `dashboard-recursos-humanos.html` / `js/teacher.js` para configurar el Calendario Escolar, Jornadas, Malla Curricular, Generador de Horarios con colisiones, Horarios del Personal, Horas Extras, Actividades Institucionales y Extracurriculares.
+  * Integrar el Calendario Institucional Unificado y la consulta de Horarios de Clase en `student-dashboard.html` y `js/student.js`.
+
+====================================================================================================
+
+AUDITORÍA TÉCNICA Y DIAGNÓSTICO DE ARQUITECTURA - MÓDULO DE TÉRMINOS Y CONDICIONES DE USO CON MODAL DE PRIMER INICIO DE SESIÓN - Mon Jul 6 2026
+
+Archivos y Módulos Auditados:
+- politica-de-uso.html
+- js/ui-common.js
+- js/auth.js
+- backend/user-service/Code.gs
+
+1. DIAGNÓSTICO Y REUTILIZACIÓN DE ESTRUCTURAS DE DATOS EXISTENTES
+- Tablas y Endpoints Existentes:
+  * `AceptacionesPoliticas` en `backend/user-service/Code.gs`: Hoja existente donde el endpoint `acceptLegalDocument` guarda el registro de aceptación (AceptacionID, UserID, DocumentoID, Version, RolUsuario, FechaAceptacion, Estado).
+  * `getLegalDocumentAcceptances`: Endpoint para verificar la lista de aceptaciones registradas por usuario.
+- Frontend & UI:
+  * `politica-de-uso.html`: Página oficial de Condiciones de Uso. Se actualizará íntegramente con los 17 apartados legales proporcionados de JyP Solutions & New Generation Bilingual School and Institute (Versión 1.0).
+  * `js/ui-common.js`: Se implementará el inicializador `window.checkAndShowFirstLoginTermsModal()`, creando `#modal-first-login-terms`.
+  * El modal mostrará el aviso explícito de aceptación con el enlace interactivo hacia `politica-de-uso.html` y se cerrará únicamente al presionar "Aceptar Términos", enviando el registro al servidor mediante `acceptLegalDocument`.
+
+2. HALLAZGOS Y PLAN DE IMPLEMENTACIÓN
+- Actualizar `politica-de-uso.html` con la redacción completa de los 17 numerales legales.
+- Implementar `#modal-first-login-terms` en `js/ui-common.js` con bloqueo de cierre automático (solo cerrable mediante el botón "Aceptar Términos").
+- Registrar la aceptación en `localStorage` y en la hoja `AceptacionesPoliticas` del microservicio `USER`.

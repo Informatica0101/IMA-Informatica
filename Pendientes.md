@@ -1,4 +1,66 @@
+## TAREAS PENDIENTES
+
+### [REQ-LEGAL-001] Términos y Condiciones de Uso v1.0 y Modal de Aceptación Obligatoria al Iniciar Sesión
+- **Origen del Hallazgo:** Auditoria.txt (Mon Jul 6 2026 - Módulo de Términos y Condiciones de Uso)
+- **Severidad/Clasificación:** Crítico
+- **Archivos Involucrados:** `politica-de-uso.html`, `js/ui-common.js`, `js/auth.js`, `backend/user-service/Code.gs`
+- **Dependencias Expuestas:** `AceptacionesPoliticas`, `acceptLegalDocument`, `modal-first-login-terms`
+- **Descripción del Alcance:**
+  1. Actualizar `politica-de-uso.html` con los 17 apartados legales completos de Términos y Condiciones de Uso de la Plataforma de New Generation Bilingual School and Institute y JyP Solutions (Versión 1.0).
+  2. Implementar `#modal-first-login-terms` en `js/ui-common.js` que se muestra en el primer inicio de sesión o carga de dashboard si no existe evidencia de aceptación de la Versión 1.0.
+  3. Incluir el enlace interactivo hacia `politica-de-uso.html`, permitiendo regresar al modal y cerrándose **únicamente** al presionar el botón "Aceptar Términos".
+  4. Registrar la aceptación con timestamp, versión e IP en la hoja `AceptacionesPoliticas` del servidor y en `localStorage`.
+- **Criterios de Aceptación:**
+  - `politica-de-uso.html` contiene el texto legal completo estructurado.
+  - El modal de primer inicio de sesión aparece de forma preventiva y no se puede cerrar sin presionar "Aceptar Términos".
+  - El enlace a los términos abre la lectura completa y permite retornar.
+  - La aceptación se registra en `AceptacionesPoliticas` mediante `acceptLegalDocument`.
+- **Estado:** [ ] En Ejecución
+
 ## TAREAS PENDIENTES DE REVISIÓN
+
+### [REQ-SCHED-001] Configuración del Año Escolar, Jornadas, Horarios, Control Laboral, Horas Extras y Actividades Institucionales
+- **Origen del Hallazgo:** Auditoria.txt (Mon Jul 6 2026 - Nueva Fase de Configuración del Año Escolar, Horarios, Control Laboral y Actividades)
+- **Severidad/Clasificación:** Crítico
+- **Archivos Involucrados:** `backend/academic-service/Code.gs`, `backend/accounting-service/Code.gs`, `backend/user-service/Code.gs`, `js/teacher.js`, `js/student.js`, `js/ui-common.js`, `teacher-dashboard.html`, `student-dashboard.html`, `dashboard-recursos-humanos.html`
+- **Dependencias Expuestas:** `AnosLectivos`, `CalendarioAcademico`, `HorariosClase`, `HorariosLaborales`, `MarcacionesPersonal`, `ROLE_PERMISSIONS`
+- **Descripción del Alcance:**
+  1. Configuración del Año Escolar con soporte para modelos de calendario (Sistema Americano, Año Calendario, Personalizado), fechas clave y validaciones de solapamiento.
+  2. Gestión de Jornadas Académicas (Matutina, Vespertina, Nocturna, A Distancia, Mixta), horas-clase, recreos, almuerzos y transiciones.
+  3. Malla Curricular con distribución semanal/diaria, bloques consecutivos y generador/editor de horarios con detección de colisiones de docentes/aulas/secciones.
+  4. Horarios Laborales del Personal por departamento/empleado, franjas de almuerzo escalonadas, marcaciones de entrada/salida y motor de cálculo y aprobación de Horas Extras con fechas de corte de nómina.
+  5. Programación de Actividades Institucionales con estrategias de afectación de clases (Desplazar, Reducir, Reemplazar, Reprogramar) y Actividades Extracurriculares con gestión de supervisores, estados y evidencias digitales en Drive.
+  6. Integración del Calendario Institucional Unificado con filtrado por rol y permisos.
+- **Criterios de Aceptación:**
+  - Tipos de año escolar configurables con fechas clave validadas.
+  - Jornadas múltiples con tiempos de clase, recreos y almuerzos parametrizados.
+  - Generador/editor de horarios funcional con validación de conflictos de docentes y aulas.
+  - Horarios laborales, marcaciones y flujo de aprobación de horas extras con corte de nómina.
+  - Actividades institucionales y extracurriculares con afectación explícita de clases y evidencias.
+  - Calendario unificado filtrado por rol en todos los dashboards.
+- **Estado:** [/] Pendiente de Revisión
+
+### [REQ-DESIGN-001] Renovación Visual Institucional, Personalización Global, Sistema de Tickets y Control de Versiones v1.0
+- **Origen del Hallazgo:** Auditoria.txt (Mon Jul 6 2026 - Nueva Fase de Diseño, Personalización, Tickets y Versionado)
+- **Severidad/Clasificación:** Crítico
+- **Archivos Involucrados:** `css/style.css`, `js/ui-common.js`, `js/teacher.js`, `js/student.js`, `js/api.js`, `backend/user-service/Code.gs`, `index.html`, `login.html`, `teacher-dashboard.html`, `student-dashboard.html`, `README.md`
+- **Dependencias Expuestas:** `ConfiguracionSistema`, `ROLE_PERMISSIONS`, `doPost`, `modal-dashboard-settings`, `style.css`
+- **Descripción del Alcance:**
+  1. Renovar el estilo visual con un sistema de diseño sobrio, profesional, accesible (WCAG 2.2 AA) y libre de tonos neón/infantiles.
+  2. Implementar gestión de paletas institucionales con flujo de propuesta por Administrador y aprobación por Dirección antes de publicación global.
+  3. Formatear la presentación del logotipo institucional en el inicio de sesión con fondo transparente, proporciones intactas y sombra sutil.
+  4. Crear el botón global de reporte de problemas, modal de envío con validación >= 20 caracteres significativos y recopilación contextual automática.
+  5. Implementar el módulo de tickets (`TICK-XXXXXX`) con seguimiento de estados ("Mis Reportes" para cliente, panel de gestión exclusiva con notas internas para Administrador/Desarrollador).
+  6. Fijar la versión global en 1.0 con la regla estricta de incremento únicamente por solicitud explícita.
+  7. Actualizar `README.md` con las funciones verificadas y especificaciones reales.
+- **Criterios de Aceptación:**
+  - Paletas con previsualización y aprobación por Dirección publicadas globalmente.
+  - Logotipo de inicio de sesión con estilo transparente y sutil.
+  - Formulario de reporte disponible globalmente con validación de 20 caracteres mínimos.
+  - Tickets únicos con respuestas, notas internas y máquina de estados funcional en servidor.
+  - Versión global confirmada en 1.0.
+  - Permisos RBAC validados en servidor.
+- **Estado:** [/] Pendiente de Revisión
 
 ### [UNIF-001] Unificación de Configuración Académica
 - **Origen del Hallazgo:** Nueva Tarea Adicional.

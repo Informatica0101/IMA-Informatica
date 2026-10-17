@@ -139,6 +139,430 @@ function getStructuredLogs(payload) {
   }
 }
 
+// ---------------------------------------------------------------------------
+// MÓDULO DE REPORTE DE PROBLEMAS (TICKETS) Y PALETA VISUAL INSTITUCIONAL
+// ---------------------------------------------------------------------------
+
+function submitProblemTicket(payload) {
+  try {
+    if (!payload) return { status: "error", message: "Payload no provisto." };
+    const desc = (payload.descripcion || "").trim();
+    const respEsperado = (payload.resultadoEsperado || "").trim();
+
+    if (!desc || desc.length < 20) {
+      return { status: "error", code: "VALIDATION_ERROR", message: "La descripción del problema debe contener al menos 20 caracteres significativos." };
+    }
+    if (!respEsperado || respEsperado.length < 20) {
+      return { status: "error", code: "VALIDATION_ERROR", message: "La explicación del resultado esperado debe contener al menos 20 caracteres significativos." };
+    }
+
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const ticketsSheet = getOrCreateSheet(ss, "TicketsReporteProblemas");
+    const msgsSheet = getOrCreateSheet(ss, "HistorialMensajesTickets");
+
+    const ticketId = "TICK-" + Math.floor(100000 + Math.random() * 900000);
+    const userId = payload.userId || (payload.currentUser && payload.currentUser.userId) || "ANON";
+    const nombreUsuario = payload.nombreUsuario || (payload.currentUser && payload.currentUser.nombre) || "Usuario";
+    const verifiedRole = getUserVerifiedRole(payload);
+    const areaFuncion = payload.areaFuncion || "General";
+    const seccionPagina = payload.seccionPagina || "";
+    const versionGlobal = "1.0";
+    const tipoApp = payload.tipoApp || "Desconocido";
+    const now = new Date().toISOString();
+
+    ticketsSheet.appendRow([
+      ticketId,
+      userId,
+      nombreUsuario,
+      verifiedRole,
+      areaFuncion,
+      seccionPagina,
+      versionGlobal,
+      tipoApp,
+      desc,
+      respEsperado,
+      "Enviado",
+      now,
+      now
+    ]);
+
+    const msgId = "MSG-" + Math.floor(100000 + Math.random() * 900000);
+    msgsSheet.appendRow([
+      msgId,
+      ticketId,
+      userId,
+      nombreUsuario,
+      verifiedRole,
+      false,
+      `PROBLEMA: ${desc}\n\nRESULTADO ESPERADO: ${respEsperado}`,
+      now
+    ]);
+
+    logStructuredEvent("USER", "submitProblemTicket", "INFO", "TICKET_CREATED", `Ticket ${ticketId} creado por ${nombreUsuario}`, { ticketId, areaFuncion }, verifiedRole);
+
+    return {
+      status: "success",
+      ticketId: ticketId,
+      estado: "Enviado",
+      creadoEn: now,
+      message: `Su reporte fue registrado correctamente con el número de ticket ${ticketId}.`
+    };
+  } catch (error) {
+    logStructuredEvent("USER", "submitProblemTicket", "ERROR", "TICKET_CREATE_FAILED", error.message, payload, payload && payload.authRole);
+    return { status: "error", message: error.message };
+  }
+}
+
+function getProblemTickets(payload) {
+  try {
+    const verifiedRole = getUserVerifiedRole(payload);
+    const currentUserId = payload.userId || (payload.currentUser && payload.currentUser.userId);
+    const isAdmin = ["Administrador", "Desarrollador", "Director"].indexOf(verifiedRole) !== -1;
+
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const ticketsSheet = getOrCreateSheet(ss, "TicketsReporteProblemas");
+    const msgsSheet = getOrCreateSheet(ss, "HistorialMensajesTickets");
+
+    const rawTickets = ticketsSheet.getDataRange().getValues();
+    if (rawTickets.length <= 1) {
+      return { status: "success", tickets: [] };
+    }
+
+    const rawMsgs = msgsSheet.getDataRange().getValues();
+    const msgsByTicket = {};
+    for (let i = 1; i < rawMsgs.length; i++) {
+      const r = rawMsgs[i];
+      const tId = String(r[1]).trim();
+      if (!msgsByTicket[tId]) msgsByTicket[tId] = [];
+      const esNotaInterna = r[5] === true || String(r[5]).toLowerCase() === "true";
+      if (!isAdmin && esNotaInterna) continue;
+
+      msgsByTicket[tId].push({
+        mensajeId: r[0],
+        ticketId: r[1],
+        autorUserId: r[2],
+        autorNombre: r[3],
+        tipoAutor: r[4],
+        esNotaInterna: esNotaInterna,
+        mensaje: r[6],
+        timestamp: r[7]
+      });
+    }
+
+    const tickets = [];
+    for (let i = 1; i < rawTickets.length; i++) {
+      const r = rawTickets[i];
+      const tUserId = String(r[1]).trim();
+
+      if (!isAdmin && currentUserId && tUserId !== String(currentUserId).trim()) {
+        continue;
+      }
+
+      const ticketId = String(r[0]).trim();
+      tickets.push({
+        ticketId: ticketId,
+        userId: r[1],
+        nombreUsuario: r[2],
+        rolActivo: r[3],
+        areaFuncion: r[4],
+        seccionPagina: r[5],
+        versionGlobal: r[6] || "1.0",
+        tipoApp: r[7] || "Desconocido",
+        descripcion: r[8],
+        resultadoEsperado: r[9],
+        estado: r[10] || "Enviado",
+        creadoEn: r[11],
+        actualizadoEn: r[12],
+        mensajes: msgsByTicket[ticketId] || []
+      });
+    }
+
+    tickets.sort((a, b) => new Date(b.creadoEn || 0) - new Date(a.creadoEn || 0));
+
+    return { status: "success", tickets: tickets };
+  } catch (error) {
+    logStructuredEvent("USER", "getProblemTickets", "ERROR", "TICKET_FETCH_FAILED", error.message, payload, payload && payload.authRole);
+    return { status: "error", message: error.message };
+  }
+}
+
+function updateTicketStatus(payload) {
+  try {
+    const verifiedRole = getUserVerifiedRole(payload);
+    if (["Administrador", "Desarrollador", "Director"].indexOf(verifiedRole) === -1) {
+      return { status: "error", code: "AUTH_PERMISSION_DENIED", message: "Solo administradores pueden cambiar el estado de un ticket." };
+    }
+
+    const { ticketId, nuevoEstado, notaInterna, mensajeUsuario } = payload || {};
+    if (!ticketId || !nuevoEstado) {
+      return { status: "error", code: "VALIDATION_ERROR", message: "ticketId y nuevoEstado son obligatorios." };
+    }
+
+    const validStates = ["Enviado", "En revisión", "Se necesita información", "Información recibida", "Solucionado", "Cerrado"];
+    if (validStates.indexOf(nuevoEstado) === -1) {
+      return { status: "error", code: "VALIDATION_ERROR", message: "Estado inválido. Debe ser uno de: " + validStates.join(", ") };
+    }
+
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const ticketsSheet = getOrCreateSheet(ss, "TicketsReporteProblemas");
+    const msgsSheet = getOrCreateSheet(ss, "HistorialMensajesTickets");
+
+    const data = ticketsSheet.getDataRange().getValues();
+    let foundIndex = -1;
+    for (let i = 1; i < data.length; i++) {
+      if (String(data[i][0]).trim() === String(ticketId).trim()) {
+        foundIndex = i + 1;
+        break;
+      }
+    }
+
+    if (foundIndex === -1) {
+      return { status: "error", code: "NOT_FOUND", message: "Ticket no encontrado." };
+    }
+
+    const now = new Date().toISOString();
+    ticketsSheet.getRange(foundIndex, 11).setValue(nuevoEstado);
+    ticketsSheet.getRange(foundIndex, 13).setValue(now);
+
+    const adminUserId = payload.userId || (payload.currentUser && payload.currentUser.userId) || "ADMIN";
+    const adminNombre = payload.nombreUsuario || (payload.currentUser && payload.currentUser.nombre) || "Administrador";
+
+    if (notaInterna && String(notaInterna).trim().length > 0) {
+      const msgId = "MSG-" + Math.floor(100000 + Math.random() * 900000);
+      msgsSheet.appendRow([msgId, ticketId, adminUserId, adminNombre, verifiedRole, true, String(notaInterna).trim(), now]);
+    }
+
+    if (mensajeUsuario && String(mensajeUsuario).trim().length > 0) {
+      const msgId = "MSG-" + Math.floor(100000 + Math.random() * 900000);
+      msgsSheet.appendRow([msgId, ticketId, adminUserId, adminNombre, verifiedRole, false, String(mensajeUsuario).trim(), now]);
+    }
+
+    logStructuredEvent("USER", "updateTicketStatus", "INFO", "TICKET_UPDATED", `Ticket ${ticketId} actualizado a ${nuevoEstado}`, { ticketId, nuevoEstado }, verifiedRole);
+
+    return { status: "success", ticketId: ticketId, nuevoEstado: nuevoEstado, actualizadoEn: now };
+  } catch (error) {
+    logStructuredEvent("USER", "updateTicketStatus", "ERROR", "TICKET_UPDATE_FAILED", error.message, payload, payload && payload.authRole);
+    return { status: "error", message: error.message };
+  }
+}
+
+function replyProblemTicket(payload) {
+  try {
+    const verifiedRole = getUserVerifiedRole(payload);
+    const { ticketId, mensaje } = payload || {};
+    const text = (mensaje || "").trim();
+    if (!ticketId || !text) {
+      return { status: "error", code: "VALIDATION_ERROR", message: "ticketId y mensaje son obligatorios." };
+    }
+
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const ticketsSheet = getOrCreateSheet(ss, "TicketsReporteProblemas");
+    const msgsSheet = getOrCreateSheet(ss, "HistorialMensajesTickets");
+
+    const data = ticketsSheet.getDataRange().getValues();
+    let foundIndex = -1;
+    let ticketRow = null;
+    for (let i = 1; i < data.length; i++) {
+      if (String(data[i][0]).trim() === String(ticketId).trim()) {
+        foundIndex = i + 1;
+        ticketRow = data[i];
+        break;
+      }
+    }
+
+    if (foundIndex === -1) {
+      return { status: "error", code: "NOT_FOUND", message: "Ticket no encontrado." };
+    }
+
+    const currentUserId = payload.userId || (payload.currentUser && payload.currentUser.userId);
+    const isAdmin = ["Administrador", "Desarrollador", "Director"].indexOf(verifiedRole) !== -1;
+    const ticketUserId = String(ticketRow[1]).trim();
+
+    if (!isAdmin && currentUserId && ticketUserId !== String(currentUserId).trim()) {
+      return { status: "error", code: "AUTH_PERMISSION_DENIED", message: "No tiene autorización para responder a este ticket." };
+    }
+
+    const now = new Date().toISOString();
+    const msgId = "MSG-" + Math.floor(100000 + Math.random() * 900000);
+    const authorName = payload.nombreUsuario || (payload.currentUser && payload.currentUser.nombre) || "Usuario";
+
+    msgsSheet.appendRow([msgId, ticketId, currentUserId || "USER", authorName, verifiedRole, false, text, now]);
+
+    let updatedStatus = ticketRow[10];
+    if (!isAdmin && String(updatedStatus) === "Se necesita información") {
+      updatedStatus = "Información recibida";
+      ticketsSheet.getRange(foundIndex, 11).setValue(updatedStatus);
+    }
+    ticketsSheet.getRange(foundIndex, 13).setValue(now);
+
+    logStructuredEvent("USER", "replyProblemTicket", "INFO", "TICKET_REPLIED", `Respuesta añadida al ticket ${ticketId}`, { ticketId, updatedStatus }, verifiedRole);
+
+    return { status: "success", ticketId: ticketId, estado: updatedStatus, timestamp: now };
+  } catch (error) {
+    logStructuredEvent("USER", "replyProblemTicket", "ERROR", "TICKET_REPLY_FAILED", error.message, payload, payload && payload.authRole);
+    return { status: "error", message: error.message };
+  }
+}
+
+function saveVisualPaletteProposal(payload) {
+  try {
+    const verifiedRole = getUserVerifiedRole(payload);
+    if (["Administrador", "Desarrollador"].indexOf(verifiedRole) === -1) {
+      return { status: "error", code: "AUTH_PERMISSION_DENIED", message: "Solo el administrador puede proponer paletas visuales." };
+    }
+
+    const { paletaNombre, coloresJSON, observaciones } = payload || {};
+    if (!paletaNombre || !coloresJSON) {
+      return { status: "error", code: "VALIDATION_ERROR", message: "paletaNombre y coloresJSON son obligatorios." };
+    }
+
+    const colorsObj = typeof coloresJSON === "string" ? JSON.parse(coloresJSON) : coloresJSON;
+
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const propSheet = getOrCreateSheet(ss, "PropuestasPaletasVisuales");
+
+    const propuestaId = "PAL-" + Math.floor(100000 + Math.random() * 900000);
+    const authorId = payload.userId || (payload.currentUser && payload.currentUser.userId) || "ADMIN";
+    const now = new Date().toISOString();
+
+    propSheet.appendRow([
+      propuestaId,
+      String(paletaNombre).trim(),
+      JSON.stringify(colorsObj),
+      authorId,
+      "Pendiente",
+      "",
+      "",
+      observaciones || "",
+      now
+    ]);
+
+    logStructuredEvent("USER", "saveVisualPaletteProposal", "INFO", "PALETTE_PROPOSAL_SAVED", `Propuesta de paleta ${paletaNombre} guardada (${propuestaId})`, { propuestaId }, verifiedRole);
+
+    return { status: "success", propuestaId: propuestaId, paletaNombre: paletaNombre, estado: "Pendiente" };
+  } catch (error) {
+    logStructuredEvent("USER", "saveVisualPaletteProposal", "ERROR", "PALETTE_PROPOSAL_FAILED", error.message, payload, payload && payload.authRole);
+    return { status: "error", message: error.message };
+  }
+}
+
+function approveVisualPaletteProposal(payload) {
+  try {
+    const verifiedRole = getUserVerifiedRole(payload);
+    if (["Director", "Administrador", "Desarrollador"].indexOf(verifiedRole) === -1) {
+      return { status: "error", code: "AUTH_PERMISSION_DENIED", message: "Solo Dirección o Administración pueden aprobar propuestas visuales." };
+    }
+
+    const { propuestaId, accion, observaciones } = payload || {};
+    if (!propuestaId || (accion !== "Aprobar" && accion !== "Rechazar")) {
+      return { status: "error", code: "VALIDATION_ERROR", message: "propuestaId y accion ('Aprobar' o 'Rechazar') son obligatorios." };
+    }
+
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const propSheet = getOrCreateSheet(ss, "PropuestasPaletasVisuales");
+    const globalSheet = getOrCreateSheet(ss, "ConfiguracionVisualGlobal");
+
+    const props = propSheet.getDataRange().getValues();
+    let foundIndex = -1;
+    let propRow = null;
+    for (let i = 1; i < props.length; i++) {
+      if (String(props[i][0]).trim() === String(propuestaId).trim()) {
+        foundIndex = i + 1;
+        propRow = props[i];
+        break;
+      }
+    }
+
+    if (foundIndex === -1) {
+      return { status: "error", code: "NOT_FOUND", message: "Propuesta de paleta no encontrada." };
+    }
+
+    const approver = payload.userId || (payload.currentUser && payload.currentUser.userId) || "DIRECTOR";
+    const now = new Date().toISOString();
+    const newStatus = accion === "Aprobar" ? "Aprobada" : "Rechazada";
+
+    propSheet.getRange(foundIndex, 5).setValue(newStatus);
+    propSheet.getRange(foundIndex, 6).setValue(approver);
+    propSheet.getRange(foundIndex, 7).setValue(now);
+    if (observaciones) propSheet.getRange(foundIndex, 8).setValue(observaciones);
+
+    if (accion === "Aprobar") {
+      const paletaNombre = propRow[1];
+      const coloresJSON = propRow[2];
+      const cfgData = globalSheet.getDataRange().getValues();
+      if (cfgData.length > 1) {
+        globalSheet.getRange(2, 1).setValue("CFG-VISUAL-1");
+        globalSheet.getRange(2, 2).setValue(paletaNombre);
+        globalSheet.getRange(2, 3).setValue(coloresJSON);
+        globalSheet.getRange(2, 4).setValue(now);
+        globalSheet.getRange(2, 5).setValue(approver);
+        globalSheet.getRange(2, 6).setValue(now);
+      } else {
+        globalSheet.appendRow(["CFG-VISUAL-1", paletaNombre, coloresJSON, now, approver, now]);
+      }
+    }
+
+    logStructuredEvent("USER", "approveVisualPaletteProposal", "INFO", "PALETTE_APPROVED", `Propuesta ${propuestaId} ${newStatus}`, { propuestaId, newStatus }, verifiedRole);
+
+    return { status: "success", propuestaId: propuestaId, estado: newStatus, aprobadoEn: now };
+  } catch (error) {
+    logStructuredEvent("USER", "approveVisualPaletteProposal", "ERROR", "PALETTE_APPROVAL_FAILED", error.message, payload, payload && payload.authRole);
+    return { status: "error", message: error.message };
+  }
+}
+
+function getActiveVisualPalette(payload) {
+  try {
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const globalSheet = getOrCreateSheet(ss, "ConfiguracionVisualGlobal");
+    const data = globalSheet.getDataRange().getValues();
+
+    const defaultPalette = {
+      paletaNombre: "Azul Institucional",
+      colores: {
+        primary: "#0d6efd",
+        primaryDark: "#0b5ed7",
+        primaryLight: "#e7f1ff",
+        secondary: "#4b5563",
+        background: "#f8fafc",
+        surface: "#ffffff",
+        textPrimary: "#1f2937",
+        textSecondary: "#6b7280",
+        border: "#e5e7eb",
+        accent: "#3b82f6",
+        success: "#10b981",
+        warning: "#f59e0b",
+        danger: "#ef4444",
+        info: "#3b82f6"
+      },
+      version: "1.0"
+    };
+
+    if (data.length <= 1) {
+      return { status: "success", palette: defaultPalette };
+    }
+
+    const row = data[1];
+    let parsedColores = defaultPalette.colores;
+    try {
+      if (row[2]) parsedColores = JSON.parse(row[2]);
+    } catch (e) {}
+
+    return {
+      status: "success",
+      palette: {
+        paletaNombre: row[1] || "Azul Institucional",
+        colores: parsedColores,
+        version: row[3] || "1.0",
+        aprobadoPor: row[4] || "",
+        fechaPublicacion: row[5] || ""
+      }
+    };
+  } catch (error) {
+    return { status: "error", message: error.message };
+  }
+}
+
 function getSheetOrThrow(ss, name) {
   const sheet = ss.getSheetByName(name);
   if (!sheet) {
@@ -179,6 +603,10 @@ function getOrCreateSheet(ss, name) {
   let sheet = ss.getSheetByName(name);
   if (!sheet) {
     sheet = ss.insertSheet(name);
+    if (name === "PropuestasPaletasVisuales") sheet.appendRow(["PropuestaID", "PaletaNombre", "ColoresJSON", "CreadoPor", "Estado", "AprobadoPor", "FechaAprobacion", "Observaciones", "FechaCreacion"]);
+    if (name === "ConfiguracionVisualGlobal") sheet.appendRow(["ConfigVisualID", "PaletaNombre", "ColoresJSON", "Version", "AprobadoPor", "FechaPublicacion"]);
+    if (name === "TicketsReporteProblemas") sheet.appendRow(["TicketID", "UserId", "NombreUsuario", "RolActivo", "AreaFuncion", "SeccionPagina", "VersionGlobal", "TipoApp", "Descripcion", "ResultadoEsperado", "Estado", "CreadoEn", "ActualizadoEn"]);
+    if (name === "HistorialMensajesTickets") sheet.appendRow(["MensajeID", "TicketID", "AutorUserId", "AutorNombre", "TipoAutor", "EsNotaInterna", "Mensaje", "Timestamp"]);
     if (name === "Personas") sheet.appendRow(["PersonaID", "Nombres", "Apellidos", "Identificacion", "EmailContacto", "TelefonoContacto", "EstadoPersona", "FechaCreacion", "FechaActualizacion", "Observaciones"]);
     if (name === "Usuarios") sheet.appendRow(["UserId", "Nombre", "Grado", "Seccion", "Email", "PasswordHash", "Rol", "Telefono", "NumeroLista", "PersonaID", "EstadoCuenta", "FechaCreacion", "UltimoAcceso"]);
     if (name === "RelacionesFamiliares") sheet.appendRow(["RelacionID", "PersonaEstudianteID", "PersonaResponsableID", "TipoParentesco", "EstadoAutorizacion", "FechaInicio", "FechaFin", "Observaciones"]);
@@ -228,7 +656,7 @@ function doGet() { return textResponse({ status: "success", service: "USER", tim
 // CONTROL DE ACCESO BASADO EN ROLES (RBAC SERVIDOR - REQ-EXP-008 & FASE 2)
 // ---------------------------------------------------------------------------
 const PUBLIC_ACTIONS = [
-  "registerUser", "loginUser", "requestPasswordRecovery", "resetPassword", "ping", "getNews", "getInstitutionalAnnouncements"
+  "registerUser", "loginUser", "requestPasswordRecovery", "resetPassword", "ping", "getNews", "getInstitutionalAnnouncements", "getActiveVisualPalette"
 ];
 
 const ROLE_PERMISSIONS = {
@@ -250,7 +678,8 @@ const ROLE_PERMISSIONS = {
     "createNews", "uploadNewsImage", "getNews", "updateNewsStatus", "getStudents", "getStudentsByGradoSeccion", "getUserInfo", "saveGameResult", "getGameStats", "getGlobalTop", "recordAnalytics", "getLearningProfile", "mergeGuestData", "updateUserProfile", "findPersonMatches", "createPerson", "linkPersonAccount", "manageAccountState", "generateInstitutionalId",
     "getInstitutionalCriteria", "saveInstitutionalCriterion", "getFormativeEvaluations", "saveFormativeEvaluation", "getSupportPlans", "saveSupportPlan",
     "createLinkInvitation", "acceptLinkInvitation", "getGuardianStudents", "getInstitutionalAnnouncements", "createInstitutionalAnnouncement", "submitAnnouncementReceiptConfirmation", "getAnnouncementReadReport", "getDepartmentalWorkInbox", "closeConversationThread", "getInternalConversations", "getInternalMessages", "sendInternalMessage", "getUserNotifications", "getUnifiedNotifications", "markNotificationAsRead", "createUserNotification", "sendMultiChannelNotification", "getNotificationPreferences", "getAdministrativeRequests", "getAdministrativeRequestsHistory", "submitAdministrativeRequest", "submitStudentAbsenceJustification", "getStudentAbsenceJustifications", "reviewAbsenceJustification", "updateRequestStatus", "saveInstitutionalForm", "getInstitutionalForms", "submitInstitutionalFormRequest", "saveApprovalWorkflow", "getApprovalWorkflows", "processWorkflowDecision", "getWorkflowHistory", "registerDocumentSignature", "configureNotificationChannel", "getNotificationChannelConfigs", "sendChannelNotificationTest", "getAppointmentBookings", "bookAppointment", "updateAppointmentStatus", "getInstitutionalCalendarEvents", "getPendingReminders",
-    "getUserSettings", "saveUserSettings", "getSystemConfigurations", "saveSystemConfiguration", "getProviderIntegrations", "configureProviderIntegration"
+    "getUserSettings", "saveUserSettings", "getSystemConfigurations", "saveSystemConfiguration", "getProviderIntegrations", "configureProviderIntegration",
+    "updateTicketStatus", "saveVisualPaletteProposal", "approveVisualPaletteProposal"
   ],
   "Subdirector": [
     "createNews", "uploadNewsImage", "getNews", "updateNewsStatus", "getStudents", "getStudentsByGradoSeccion", "getUserInfo", "saveGameResult", "getGameStats", "getGlobalTop", "recordAnalytics", "getLearningProfile", "mergeGuestData", "updateUserProfile", "findPersonMatches", "generateInstitutionalId",
@@ -316,6 +745,9 @@ function getUserVerifiedRole(payload) {
 function validateRolePermission(action, payload) {
   if (PUBLIC_ACTIONS.indexOf(action) !== -1) return { authorized: true };
   const userRole = getUserVerifiedRole(payload);
+  if (["submitProblemTicket", "getProblemTickets", "replyProblemTicket"].indexOf(action) !== -1) {
+    return { authorized: true, role: userRole };
+  }
   const permitted = ROLE_PERMISSIONS[userRole] || ROLE_PERMISSIONS["Estudiante"];
   if (permitted.indexOf("*") !== -1 || permitted.indexOf(action) !== -1) {
     return { authorized: true, role: userRole };
@@ -436,6 +868,15 @@ function doPost(e) {
       case "acceptLegalDocument": result = acceptLegalDocument(payload); break;
       case "getLegalDocumentAcceptances": result = getLegalDocumentAcceptances(payload); break;
       case "getHelpGuidesCatalog": result = getHelpGuidesCatalog(payload); break;
+
+      // Endpoints Nueva Fase - Tickets de Problemas y Paleta Visual
+      case "submitProblemTicket": result = submitProblemTicket(payload); break;
+      case "getProblemTickets": result = getProblemTickets(payload); break;
+      case "updateTicketStatus": result = updateTicketStatus(payload); break;
+      case "replyProblemTicket": result = replyProblemTicket(payload); break;
+      case "saveVisualPaletteProposal": result = saveVisualPaletteProposal(payload); break;
+      case "approveVisualPaletteProposal": result = approveVisualPaletteProposal(payload); break;
+      case "getActiveVisualPalette": result = getActiveVisualPalette(payload); break;
 
       case "ping": result = { status: "success", service: "USER", timestamp: new Date().toISOString(), dbConnected: true }; break;
       default: result = { status: "error", message: `Acción no reconocida: ${action}` };

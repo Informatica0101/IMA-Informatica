@@ -517,12 +517,21 @@
                                     <p class="text-xs text-gray-500 font-medium">Asignación de clases, aulas, recursos y prevención automática de colisiones</p>
                                 </div>
                             </div>
-                            <div class="flex gap-2">
-                                <button id="btn-load-schedules-list" class="bg-indigo-600 text-white px-4 py-2.5 rounded-xl font-bold text-xs uppercase tracking-widest hover:bg-indigo-700 transition-all shadow-md">
-                                    <i class="fas fa-sync-alt mr-1"></i> Actualizar
+                            <div class="flex flex-wrap gap-2">
+                                <button onclick="window.openSchoolYearConfigModal()" class="bg-blue-600 text-white px-3.5 py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider hover:bg-blue-700 transition-all shadow-md">
+                                    <i class="fas fa-calendar-check mr-1"></i> Año Escolar
                                 </button>
-                                <button id="btn-open-substitution-modal" class="bg-purple-600 text-white px-4 py-2.5 rounded-xl font-bold text-xs uppercase tracking-widest hover:bg-purple-700 transition-all shadow-md">
-                                    <i class="fas fa-user-friends mr-1"></i> Nueva Sustitución
+                                <button onclick="window.openAcademicJornadasModal()" class="bg-purple-600 text-white px-3.5 py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider hover:bg-purple-700 transition-all shadow-md">
+                                    <i class="fas fa-clock mr-1"></i> Jornadas
+                                </button>
+                                <button onclick="window.openInstitutionalActivitiesModal()" class="bg-amber-600 text-white px-3.5 py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider hover:bg-amber-700 transition-all shadow-md">
+                                    <i class="fas fa-flag mr-1"></i> Actividades
+                                </button>
+                                <button onclick="window.openHROvertimeModal()" class="bg-emerald-600 text-white px-3.5 py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider hover:bg-emerald-700 transition-all shadow-md">
+                                    <i class="fas fa-business-time mr-1"></i> Horas Extras
+                                </button>
+                                <button id="btn-load-schedules-list" class="bg-indigo-600 text-white px-3.5 py-2.5 rounded-xl font-bold text-xs uppercase tracking-widest hover:bg-indigo-700 transition-all shadow-md">
+                                    <i class="fas fa-sync-alt mr-1"></i> Actualizar
                                 </button>
                             </div>
                         </div>
