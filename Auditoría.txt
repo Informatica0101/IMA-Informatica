@@ -662,3 +662,42 @@ TABLA MATRIZ DE EQUIVALENCIA DE LAS 55 ÁREAS FUNCIONALES
 55. Condiciones Legales y Propiedad Intelectual -> EQUIVALENTE COMPLETO (Titularidad JyP Solutions S. de R.L. de C.V.)
 
 EXCLUSIÓN EXPRESA CONFIRMADA: Asistente de Inteligencia Artificial para usuarios finales excluido expresamente por especificación del Plan Maestro.
+
+====================================================================================================
+
+AUDITORÍA TÉCNICA Y DIAGNÓSTICO DE ARQUITECTURA - NUEVA FASE: DISEÑO INSTITUCIONAL, PERSONALIZACIÓN GLOBAL, REPORTE DE PROBLEMAS Y CONTROL DE VERSIONES - Mon Jul 6 2026
+
+Archivos y Módulos Auditados:
+- css/style.css
+- js/ui-common.js
+- js/teacher.js
+- js/student.js
+- js/api.js
+- backend/user-service/Code.gs
+- index.html
+- login.html
+- teacher-dashboard.html
+- student-dashboard.html
+- README.md
+
+1. DIAGNÓSTICO Y REUTILIZACIÓN DE ESTRUCTURAS DE DATOS EXISTENTES
+- Tablas y Endpoints en `backend/user-service/Code.gs`:
+  * `ConfiguracionSistema`: Hoja existente de parámetros globales. Se extenderá para almacenar la paleta de colores activa (`ConfiguracionVisualGlobal`) y las propuestas de diseño (`PropuestasPaletasVisuales`).
+  * `ROLE_PERMISSIONS`: Matriz de autorización por rol existente. Se incorporarán los nuevos endpoints: `submitProblemTicket`, `getProblemTickets`, `updateTicketStatus`, `replyProblemTicket`, `saveVisualPaletteProposal`, `approveVisualPaletteProposal`, `getActiveVisualPalette`.
+- Frontend & UI:
+  * `js/ui-common.js`: Contiene modal `#modal-dashboard-settings` y componentes compartidos globales. Se añadirá el inicializador global del botón de soporte/tickets `#btn-global-report-issue`, el modal `#modal-report-issue`, el visualizador de tickets "Mis Reportes" y la gestión de paletas visuales con previsualización.
+  * `css/style.css`: Posee variables CSS de diseño en `:root`. Se extenderán con los tokens del sistema visual institucional sobrio y armónico y las clases para dinamizar las paletas activas.
+  * `login.html`: Contiene el formulario de acceso y la presentación del logotipo institucional. Se ajustará el contenedor sin contornos, fondo transparente, proporciones originales y sombra sutil sin neón.
+  * `README.md`: Se actualizará para reflejar la versión global `1.0`, las reglas de incremento estricto manual y las capacidades reales verificadas del sistema.
+
+2. HALLAZGOS Y PLAN DE IMPLEMENTACIÓN
+- Backend:
+  * Crear tablas `TicketsReporteProblemas` e `HistorialMensajesTickets` en `backend/user-service/Code.gs`.
+  * Generar IDs únicos de tickets `TICK-XXXXXX` en servidor con recolección de contexto confiable (UserId, Nombre, Rol, Función/Área, Versión 1.0, PWA/Escritorio, Timestamps).
+  * Implementar máquina de estados oficial: Enviado, En revisión, Se necesita información, Información recibida, Solucionado, Cerrado.
+  * Crear flujo de propuesta y aprobación de paletas visuales: Administrador propone (`Pendiente`), Dirección aprueba (`Aprobada`) -> Publicación global inmediata a todos los usuarios.
+- Frontend:
+  * Botón global de reporte de problemas disponible en todas las vistas de la plataforma.
+  * Modal de reporte con auto-selección de área y validación estricta de 2 campos descriptivos (>= 20 caracteres significativos sin espacios en blanco).
+  * Módulo de gestión administrativa exclusiva de tickets para el Administrador/Desarrollador con notas internas, cambios de estado y respuestas al usuario.
+  * Fijación de versión global pública en `1.0`.

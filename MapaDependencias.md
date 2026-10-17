@@ -1,5 +1,22 @@
 # Mapa de Dependencias Académicas (v8.9.0 - Plan General de Expansión e Interoperabilidad)
 
+## MÓDULO DE DISEÑO INSTITUCIONAL, TICKETS Y VERSIONADO (NUEVA FASE)
+- **Hojas de Cálculo / Tablas:**
+  - `PropuestasPaletasVisuales`: Armacena propuestas de paletas visuales (PropuestaID, PaletaNombre, ColoresJSON, CreadoPor, Estado, AprobadoPor, FechaAprobacion, Observaciones).
+  - `ConfiguracionVisualGlobal`: Almacena la paleta activa aprobada de aplicación global.
+  - `TicketsReporteProblemas`: Almacena el reporte inicial (TicketID, UserId, NombreUsuario, RolActivo, AreaFuncion, SeccionPagina, VersionGlobal, TipoApp, Descripcion, ResultadoEsperado, Estado, CreadoEn, ActualizadoEn).
+  - `HistorialMensajesTickets`: Registro inmutable de mensajes, notas internas y respuestas entre el Administrador y el Usuario (MensajeID, TicketID, AutorUserId, AutorNombre, TipoAutor, EsNotaInterna, Mensaje, Timestamp).
+- **Funciones Backend (`backend/user-service/Code.gs`):**
+  - `getActiveVisualPalette()`
+  - `saveVisualPaletteProposal(payload, user)`
+  - `approveVisualPaletteProposal(payload, user)`
+  - `submitProblemTicket(payload, user)`
+  - `getProblemTickets(payload, user)`
+  - `updateTicketStatus(payload, user)`
+  - `replyProblemTicket(payload, user)`
+- **Constantes de Versionado:**
+  - `GLOBAL_PLATFORM_VERSION`: "1.0" (Invariable sin autorización explícita).
+
 ## Plan General de Implementación de la Expansión (30 Fases)
 1. **Fase 1. Auditoría y planificación de la expansión**: Matriz de cobertura, inventario y mapeo de dependencias.
 2. **Fase 2. Arquitectura institucional e interoperabilidad**: Identificadores únicos institucionales, sincronización e interoperabilidad.

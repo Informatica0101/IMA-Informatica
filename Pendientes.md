@@ -1,5 +1,27 @@
 ## TAREAS PENDIENTES DE REVISIÓN
 
+### [REQ-DESIGN-001] Renovación Visual Institucional, Personalización Global, Sistema de Tickets y Control de Versiones v1.0
+- **Origen del Hallazgo:** Auditoria.txt (Mon Jul 6 2026 - Nueva Fase de Diseño, Personalización, Tickets y Versionado)
+- **Severidad/Clasificación:** Crítico
+- **Archivos Involucrados:** `css/style.css`, `js/ui-common.js`, `js/teacher.js`, `js/student.js`, `js/api.js`, `backend/user-service/Code.gs`, `index.html`, `login.html`, `teacher-dashboard.html`, `student-dashboard.html`, `README.md`
+- **Dependencias Expuestas:** `ConfiguracionSistema`, `ROLE_PERMISSIONS`, `doPost`, `modal-dashboard-settings`, `style.css`
+- **Descripción del Alcance:**
+  1. Renovar el estilo visual con un sistema de diseño sobrio, profesional, accesible (WCAG 2.2 AA) y libre de tonos neón/infantiles.
+  2. Implementar gestión de paletas institucionales con flujo de propuesta por Administrador y aprobación por Dirección antes de publicación global.
+  3. Formatear la presentación del logotipo institucional en el inicio de sesión con fondo transparente, proporciones intactas y sombra sutil.
+  4. Crear el botón global de reporte de problemas, modal de envío con validación >= 20 caracteres significativos y recopilación contextual automática.
+  5. Implementar el módulo de tickets (`TICK-XXXXXX`) con seguimiento de estados ("Mis Reportes" para cliente, panel de gestión exclusiva con notas internas para Administrador/Desarrollador).
+  6. Fijar la versión global en 1.0 con la regla estricta de incremento únicamente por solicitud explícita.
+  7. Actualizar `README.md` con las funciones verificadas y especificaciones reales.
+- **Criterios de Aceptación:**
+  - Paletas con previsualización y aprobación por Dirección publicadas globalmente.
+  - Logotipo de inicio de sesión con estilo transparente y sutil.
+  - Formulario de reporte disponible globalmente con validación de 20 caracteres mínimos.
+  - Tickets únicos con respuestas, notas internas y máquina de estados funcional en servidor.
+  - Versión global confirmada en 1.0.
+  - Permisos RBAC validados en servidor.
+- **Estado:** [/] Pendiente de Revisión
+
 ### [UNIF-001] Unificación de Configuración Académica
 - **Origen del Hallazgo:** Nueva Tarea Adicional.
 - **Severidad:** Crítico.

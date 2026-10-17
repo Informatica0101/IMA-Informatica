@@ -1,13 +1,62 @@
 /* Global scale and Anti-Template Typography */
 :root {
-    --blue-institutional: #3b82f6; /* More muted blue */
-    --blue-grayish: #94a3b8; /* Lighter gray-blue */
-    --gray-light: #f1f5f9; /* Neutral light background */
-    --gray-dark: #334155; /* Less aggressive dark text */
+    /* Centralized Institutional Color System (WCAG 2.2 AA Compliant) */
+    --color-primary: #0d6efd;
+    --color-primary-dark: #0b5ed7;
+    --color-primary-light: #e7f1ff;
+    --color-secondary: #4b5563;
+    --color-background: #f8fafc;
+    --color-surface: #ffffff;
+    --color-text-primary: #1f2937;
+    --color-text-secondary: #6b7280;
+    --color-text-disabled: #9ca3af;
+    --color-border: #e5e7eb;
+    --color-border-subtle: #f1f5f9;
+    --color-accent: #3b82f6;
+    --color-success: #10b981;
+    --color-warning: #f59e0b;
+    --color-danger: #ef4444;
+    --color-info: #3b82f6;
+
+    /* Discrete & Delicate Actions */
+    --color-btn-cancel-bg: #f3f4f6;
+    --color-btn-cancel-text: #374151;
+    --color-btn-danger-bg: #dc2626;
+    --color-btn-danger-text: #ffffff;
+
+    --blue-institutional: var(--color-primary);
+    --blue-grayish: #94a3b8;
+    --gray-light: var(--color-background);
+    --gray-dark: var(--color-text-primary);
     --white: #ffffff;
     --pink-pastel: rgba(254, 226, 226, 0.6);
     --pink-text: #b91c1c;
     --anim-speed: 200ms;
+}
+
+/* Preset Institutional Themes */
+[data-theme="verde-sobrio"] {
+    --color-primary: #15803d;
+    --color-primary-dark: #166534;
+    --color-primary-light: #f0fdf4;
+    --color-secondary: #475569;
+    --color-accent: #16a34a;
+}
+
+[data-theme="gris-azulado"] {
+    --color-primary: #334155;
+    --color-primary-dark: #1e293b;
+    --color-primary-light: #f1f5f9;
+    --color-secondary: #64748b;
+    --color-accent: #475569;
+}
+
+[data-theme="borgona-profesional"] {
+    --color-primary: #881337;
+    --color-primary-dark: #4c0519;
+    --color-primary-light: #fff1f2;
+    --color-secondary: #57534e;
+    --color-accent: #9f1239;
 }
 
 html {
@@ -249,23 +298,34 @@ p { font-size: 0.875rem; line-height: 1.6; color: #1f2937; font-weight: 400; }
 }
 
 .btn-ima-primary {
-    background-color: var(--blue-institutional);
+    background-color: var(--color-primary);
     color: var(--white);
 }
 
 .btn-ima-primary:hover {
-    background-color: #2563eb;
+    background-color: var(--color-primary-dark);
     transform: translateY(-1px);
 }
 
 .btn-ima-cancel {
-    background-color: var(--pink-pastel);
-    color: var(--pink-text);
+    background-color: var(--color-btn-cancel-bg);
+    color: var(--color-btn-cancel-text);
+    border: 1px solid var(--color-border);
 }
 
 .btn-ima-cancel:hover {
-    background-color: rgba(253, 242, 242, 1);
-    transform: scale(1.02);
+    background-color: #e5e7eb;
+    transform: translateY(-1px);
+}
+
+.btn-ima-danger {
+    background-color: var(--color-btn-danger-bg);
+    color: var(--color-btn-danger-text);
+}
+
+.btn-ima-danger:hover {
+    background-color: #b91c1c;
+    transform: translateY(-1px);
 }
 
 /* Transparencias Estilizadas (Tarea 2) */
@@ -869,4 +929,15 @@ select:disabled {
     padding: 1rem 1.25rem;
     position: relative;
     box-shadow: 0 4px 12px rgba(99, 102, 241, 0.08);
+}
+
+/* Logotipo Institucional Sobrio */
+.logo-subtle-shadow {
+    filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.08));
+}
+
+.logo-login-container {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
 }
