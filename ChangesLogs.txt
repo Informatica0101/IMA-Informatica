@@ -1328,3 +1328,16 @@ Descripción de cambios:
   - Actualizado con las funciones comprobadas, el sistema de diseño, la personalización global con aprobación, el soporte de tickets y la regla estricta de versión global 1.0.
 - `Pendientes.md`, `Auditoría.txt`, `MapaDependencias.md`:
   - Registrado el requerimiento `[REQ-DESIGN-001]` y actualizados los esquemas de dependencias.
+
+## [Nueva Fase: Configuración del Año Escolar, Jornadas, Horarios, Control Laboral, Horas Extras y Actividades] - 2026-10-17
+### Agregado y Refactorizado
+- `backend/academic-service/Code.gs`:
+  - Hojas de cálculo: `JornadasAcademicas`, `MallaCurricularDist`, `ActividadesInstitucionales`, `ActividadesExtracurriculares`.
+  - Endpoints backend con RBAC: `configureSchoolYear`, `getSchoolYearConfigs`, `configureAcademicJornada`, `getAcademicJornadas`, `saveCurricularDistribution`, `getCurricularDistribution`, `saveInstitutionalActivity`, `getInstitutionalActivities`, `saveExtracurricularActivity`, `getExtracurricularActivities`, `getUnifiedInstitutionalCalendar`.
+- `backend/accounting-service/Code.gs`:
+  - Hojas de cálculo: `TurnosAlmuerzo`, `AprobacionHorasExtras`.
+  - Endpoints backend con RBAC: `configureLunchShifts`, `getLunchShifts`, `calculateOvertime`, `reviewOvertimeRequest`, `getOvertimeRequests`.
+- `teacher-dashboard.html` & `js/teacher.js`:
+  - Modales e interfaces interactivas: `#modal-school-year-config` (Año Escolar y Modelos de Calendario), `#modal-academic-jornadas` (Jornadas y Bloques), `#modal-institutional-activities` (Actividades e Impacto de Clases), `#modal-hr-overtime` (Revisión y Aprobación de Horas Extras con fechas de corte).
+- `Pendientes.md`, `Auditoría.txt`, `MapaDependencias.md`:
+  - Registrado el requerimiento `[REQ-SCHED-001]` y actualizados los esquemas de dependencias.

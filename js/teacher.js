@@ -5267,3 +5267,382 @@ document.addEventListener('DOMContentLoaded', () => {
     const panels = document.querySelectorAll('.dashboard-card, #submissions-table-body');
     panels.forEach(p => observer.observe(p, { childList: true, subtree: true }));
 });
+
+// ==========================================================================
+// NUEVA FASE: CONFIGURACIÓN DE AÑO ESCOLAR, JORNADAS, HORARIOS Y ACTIVIDADES
+// ==========================================================================
+
+window.ensureSchoolYearConfigModalExists = function() {
+    if (document.getElementById('modal-school-year-config')) return;
+
+    const modalHtml = `
+<div id="modal-school-year-config" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-[95] flex items-center justify-center p-3 md:p-4 hidden">
+    <div class="bg-white rounded-[2rem] shadow-2xl w-full max-w-2xl max-h-[92vh] flex flex-col overflow-hidden border border-slate-100">
+        <div class="px-6 py-4 bg-slate-900 text-white flex items-center justify-between border-b border-slate-800">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-blue-500/20 text-blue-400 flex items-center justify-center text-lg font-bold">
+                    <i class="fa-solid fa-calendar-days"></i>
+                </div>
+                <div>
+                    <h3 class="text-sm md:text-base font-black uppercase tracking-tight text-white">Configuración del Año Escolar</h3>
+                    <p class="text-[11px] text-slate-400 font-medium">Modelos de calendario (Americano, Año Calendario, Personalizado) y fechas clave.</p>
+                </div>
+            </div>
+            <button onclick="document.getElementById('modal-school-year-config').classList.add('hidden')" class="p-2 text-slate-400 hover:text-white rounded-xl hover:bg-slate-800 text-lg transition-all">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+
+        <form id="form-school-year-config" onsubmit="window.saveSchoolYearConfigForm(event)" class="p-6 overflow-y-auto space-y-4 flex-grow text-xs">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block font-bold text-slate-700 mb-1">Nombre del Año Escolar *</label>
+                    <input type="text" id="sy-nombre" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-semibold" placeholder="ej. Año Lectivo 2026-2027" required>
+                </div>
+                <div>
+                    <label class="block font-bold text-slate-700 mb-1">Modelo de Calendario *</label>
+                    <select id="sy-tipo-cal" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-semibold">
+                        <option value="Sistema Americano">Sistema Americano (Agosto - Junio / 42 Semanas)</option>
+                        <option value="Año Calendario">Año Calendario (Enero - Noviembre)</option>
+                        <option value="Personalizado">Personalizado (Fechas Flexibles)</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block font-bold text-slate-700 mb-1">Fecha de Inicio Oficial *</label>
+                    <input type="date" id="sy-fecha-inicio" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-semibold" required>
+                </div>
+                <div>
+                    <label class="block font-bold text-slate-700 mb-1">Fecha de Fin Oficial *</label>
+                    <input type="date" id="sy-fecha-fin" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-semibold" required>
+                </div>
+                <div>
+                    <label class="block font-bold text-slate-700 mb-1">Primer Día de Clases</label>
+                    <input type="date" id="sy-inicio-clases" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-semibold">
+                </div>
+                <div>
+                    <label class="block font-bold text-slate-700 mb-1">Último Día de Clases</label>
+                    <input type="date" id="sy-fin-clases" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-semibold">
+                </div>
+                <div>
+                    <label class="block font-bold text-slate-700 mb-1">Cierre Administrativo</label>
+                    <input type="date" id="sy-fin-admin" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-semibold">
+                </div>
+                <div>
+                    <label class="block font-bold text-slate-700 mb-1">Límite Ingreso Notas</label>
+                    <input type="date" id="sy-limite-calif" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-semibold">
+                </div>
+            </div>
+
+            <div class="pt-2 flex items-center justify-end gap-2 border-t border-slate-100">
+                <button type="button" onclick="document.getElementById('modal-school-year-config').classList.add('hidden')" class="btn-ima-cancel px-4 py-2 text-xs uppercase font-bold rounded-xl">Cancelar</button>
+                <button type="submit" class="btn-ima-primary px-5 py-2 text-xs uppercase font-bold rounded-xl shadow-md"><i class="fa-solid fa-floppy-disk mr-1"></i> Guardar Configuración</button>
+            </div>
+        </form>
+    </div>
+</div>`;
+    document.body.insertAdjacentHTML('beforeend', modalHtml);
+};
+
+window.openSchoolYearConfigModal = function() {
+    window.ensureSchoolYearConfigModalExists();
+    document.getElementById('modal-school-year-config')?.classList.remove('hidden');
+};
+
+window.saveSchoolYearConfigForm = function(e) {
+    if (e) e.preventDefault();
+    const payload = {
+        nombre: document.getElementById('sy-nombre')?.value,
+        tipoCalendario: document.getElementById('sy-tipo-cal')?.value,
+        fechaInicio: document.getElementById('sy-fecha-inicio')?.value,
+        fechaFin: document.getElementById('sy-fecha-fin')?.value,
+        inicioClases: document.getElementById('sy-inicio-clases')?.value,
+        finClases: document.getElementById('sy-fin-clases')?.value,
+        finAdministrativo: document.getElementById('sy-fin-admin')?.value,
+        limiteIngresoCalificaciones: document.getElementById('sy-limite-calif')?.value,
+        estado: 'Activo'
+    };
+
+    fetchApi('ACADEMIC', 'configureSchoolYear', payload).then(res => {
+        if (res && res.status === 'success') {
+            alert('¡Año Escolar guardado exitosamente!');
+            document.getElementById('modal-school-year-config')?.classList.add('hidden');
+        } else {
+            alert('Error: ' + (res?.message || 'Error al guardar'));
+        }
+    }).catch(err => alert('Fallo de red: ' + err.message));
+};
+
+window.ensureAcademicJornadasModalExists = function() {
+    if (document.getElementById('modal-academic-jornadas')) return;
+
+    const modalHtml = `
+<div id="modal-academic-jornadas" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-[95] flex items-center justify-center p-3 md:p-4 hidden">
+    <div class="bg-white rounded-[2rem] shadow-2xl w-full max-w-2xl max-h-[92vh] flex flex-col overflow-hidden border border-slate-100">
+        <div class="px-6 py-4 bg-slate-900 text-white flex items-center justify-between border-b border-slate-800">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-purple-500/20 text-purple-400 flex items-center justify-center text-lg font-bold">
+                    <i class="fa-solid fa-clock"></i>
+                </div>
+                <div>
+                    <h3 class="text-sm md:text-base font-black uppercase tracking-tight text-white">Jornadas Académicas & Horarios de Clase</h3>
+                    <p class="text-[11px] text-slate-400 font-medium">Configuración de turnos, bloques de clase, recesos y almuerzos.</p>
+                </div>
+            </div>
+            <button onclick="document.getElementById('modal-academic-jornadas').classList.add('hidden')" class="p-2 text-slate-400 hover:text-white rounded-xl hover:bg-slate-800 text-lg transition-all">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+
+        <form id="form-academic-jornada" onsubmit="window.saveAcademicJornadaForm(event)" class="p-6 overflow-y-auto space-y-4 flex-grow text-xs">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block font-bold text-slate-700 mb-1">Nombre de la Jornada *</label>
+                    <input type="text" id="jor-nombre" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-semibold" placeholder="ej. Jornada Matutina Oficial" required>
+                </div>
+                <div>
+                    <label class="block font-bold text-slate-700 mb-1">Tipo de Jornada *</label>
+                    <select id="jor-tipo" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-semibold">
+                        <option value="Matutina">Matutina</option>
+                        <option value="Vespertina">Vespertina</option>
+                        <option value="Nocturna">Nocturna</option>
+                        <option value="A distancia">A distancia / Virtual</option>
+                        <option value="Mixta">Mixta / Doble Jornada</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block font-bold text-slate-700 mb-1">Hora de Primera Clase *</label>
+                    <input type="time" id="jor-hora-inicio" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-semibold" value="07:00" required>
+                </div>
+                <div>
+                    <label class="block font-bold text-slate-700 mb-1">Hora de Última Clase *</label>
+                    <input type="time" id="jor-hora-fin" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-semibold" value="12:30" required>
+                </div>
+                <div>
+                    <label class="block font-bold text-slate-700 mb-1">Duración Hora-Clase (Minutos)</label>
+                    <input type="number" id="jor-dur-clase" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-semibold" value="45">
+                </div>
+                <div>
+                    <label class="block font-bold text-slate-700 mb-1">Duración Receso (Minutos)</label>
+                    <input type="number" id="jor-dur-receso" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-semibold" value="20">
+                </div>
+            </div>
+
+            <div class="pt-2 flex items-center justify-end gap-2 border-t border-slate-100">
+                <button type="button" onclick="document.getElementById('modal-academic-jornadas').classList.add('hidden')" class="btn-ima-cancel px-4 py-2 text-xs uppercase font-bold rounded-xl">Cancelar</button>
+                <button type="submit" class="btn-ima-primary px-5 py-2 text-xs uppercase font-bold rounded-xl shadow-md"><i class="fa-solid fa-floppy-disk mr-1"></i> Guardar Jornada</button>
+            </div>
+        </form>
+    </div>
+</div>`;
+    document.body.insertAdjacentHTML('beforeend', modalHtml);
+};
+
+window.openAcademicJornadasModal = function() {
+    window.ensureAcademicJornadasModalExists();
+    document.getElementById('modal-academic-jornadas')?.classList.remove('hidden');
+};
+
+window.saveAcademicJornadaForm = function(e) {
+    if (e) e.preventDefault();
+    const payload = {
+        nombreJornada: document.getElementById('jor-nombre')?.value,
+        tipoJornada: document.getElementById('jor-tipo')?.value,
+        horaInicio: document.getElementById('jor-hora-inicio')?.value,
+        horaFin: document.getElementById('jor-hora-fin')?.value,
+        duracionClaseMin: document.getElementById('jor-dur-clase')?.value,
+        duracionRecesoMin: document.getElementById('jor-dur-receso')?.value,
+        estado: 'Activa'
+    };
+
+    fetchApi('ACADEMIC', 'configureAcademicJornada', payload).then(res => {
+        if (res && res.status === 'success') {
+            alert('¡Jornada académica guardada exitosamente!');
+            document.getElementById('modal-academic-jornadas')?.classList.add('hidden');
+        } else {
+            alert('Error: ' + (res?.message || 'Error al guardar'));
+        }
+    }).catch(err => alert('Fallo de red: ' + err.message));
+};
+
+window.ensureInstitutionalActivitiesModalExists = function() {
+    if (document.getElementById('modal-institutional-activities')) return;
+
+    const modalHtml = `
+<div id="modal-institutional-activities" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-[95] flex items-center justify-center p-3 md:p-4 hidden">
+    <div class="bg-white rounded-[2rem] shadow-2xl w-full max-w-2xl max-h-[92vh] flex flex-col overflow-hidden border border-slate-100">
+        <div class="px-6 py-4 bg-slate-900 text-white flex items-center justify-between border-b border-slate-800">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center text-lg font-bold">
+                    <i class="fa-solid fa-flag"></i>
+                </div>
+                <div>
+                    <h3 class="text-sm md:text-base font-black uppercase tracking-tight text-white">Actividades Institucionales & Extracurriculares</h3>
+                    <p class="text-[11px] text-slate-400 font-medium">Programación de eventos, ferias, asambleas y estrategias de afectación de clases.</p>
+                </div>
+            </div>
+            <button onclick="document.getElementById('modal-institutional-activities').classList.add('hidden')" class="p-2 text-slate-400 hover:text-white rounded-xl hover:bg-slate-800 text-lg transition-all">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+
+        <form id="form-inst-activity" onsubmit="window.saveInstitutionalActivityForm(event)" class="p-6 overflow-y-auto space-y-4 flex-grow text-xs">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block font-bold text-slate-700 mb-1">Título de la Actividad *</label>
+                    <input type="text" id="act-titulo" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-semibold" placeholder="ej. Feria de Ciencias e Innovación 2026" required>
+                </div>
+                <div>
+                    <label class="block font-bold text-slate-700 mb-1">Tipo de Actividad *</label>
+                    <select id="act-tipo" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-semibold">
+                        <option value="Acto Cívico">Acto Cívico</option>
+                        <option value="Asamblea Informativa">Asamblea Informativa</option>
+                        <option value="Feria Educativa">Feria Educativa</option>
+                        <option value="Excursión">Excursión / Salida Pedagógica</option>
+                        <option value="Capacitación">Capacitación Docente</option>
+                        <option value="Evento Deportivo">Evento Deportivo / Cultural</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block font-bold text-slate-700 mb-1">Fecha de Inicio *</label>
+                    <input type="date" id="act-fecha-inicio" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-semibold" required>
+                </div>
+                <div>
+                    <label class="block font-bold text-slate-700 mb-1">Fecha de Fin</label>
+                    <input type="date" id="act-fecha-fin" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-semibold">
+                </div>
+                <div>
+                    <label class="block font-bold text-slate-700 mb-1">Estrategia de Afectación de Clases *</label>
+                    <select id="act-estrategia" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-semibold">
+                        <option value="Desplazar">Desplazar clases afectadas manteniendo su orden</option>
+                        <option value="Reducir">Reducir la duración proporcional de las horas-clase</option>
+                        <option value="Reemplazar">Reemplazar las clases por la actividad</option>
+                        <option value="Reprogramar">Reprogramar las clases a otro horario autorizado</option>
+                        <option value="Exceder Horario">Programar después de la jornada normal</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="pt-2 flex items-center justify-end gap-2 border-t border-slate-100">
+                <button type="button" onclick="document.getElementById('modal-institutional-activities').classList.add('hidden')" class="btn-ima-cancel px-4 py-2 text-xs uppercase font-bold rounded-xl">Cancelar</button>
+                <button type="submit" class="btn-ima-primary px-5 py-2 text-xs uppercase font-bold rounded-xl shadow-md"><i class="fa-solid fa-paper-plane mr-1"></i> Programar Actividad</button>
+            </div>
+        </form>
+    </div>
+</div>`;
+    document.body.insertAdjacentHTML('beforeend', modalHtml);
+};
+
+window.openInstitutionalActivitiesModal = function() {
+    window.ensureInstitutionalActivitiesModalExists();
+    document.getElementById('modal-institutional-activities')?.classList.remove('hidden');
+};
+
+window.saveInstitutionalActivityForm = function(e) {
+    if (e) e.preventDefault();
+    const payload = {
+        titulo: document.getElementById('act-titulo')?.value,
+        tipoActividad: document.getElementById('act-tipo')?.value,
+        fechaInicio: document.getElementById('act-fecha-inicio')?.value,
+        fechaFin: document.getElementById('act-fecha-fin')?.value,
+        estrategiaAfectacion: document.getElementById('act-estrategia')?.value,
+        estado: 'Programada'
+    };
+
+    fetchApi('ACADEMIC', 'saveInstitutionalActivity', payload).then(res => {
+        if (res && res.status === 'success') {
+            alert('¡Actividad institucional programada exitosamente!');
+            document.getElementById('modal-institutional-activities')?.classList.add('hidden');
+        } else {
+            alert('Error: ' + (res?.message || 'Error al guardar'));
+        }
+    }).catch(err => alert('Fallo de red: ' + err.message));
+};
+
+window.ensureHROvertimeModalExists = function() {
+    if (document.getElementById('modal-hr-overtime')) return;
+
+    const modalHtml = `
+<div id="modal-hr-overtime" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-[95] flex items-center justify-center p-3 md:p-4 hidden">
+    <div class="bg-white rounded-[2rem] shadow-2xl w-full max-w-3xl max-h-[92vh] flex flex-col overflow-hidden border border-slate-100">
+        <div class="px-6 py-4 bg-slate-900 text-white flex items-center justify-between border-b border-slate-800">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-lg font-bold">
+                    <i class="fa-solid fa-business-time"></i>
+                </div>
+                <div>
+                    <h3 class="text-sm md:text-base font-black uppercase tracking-tight text-white">Gestión de Almuerzos & Horas Extras</h3>
+                    <p class="text-[11px] text-slate-400 font-medium">Revisión, aprobación y corte de nómina de tiempo adicional.</p>
+                </div>
+            </div>
+            <button onclick="document.getElementById('modal-hr-overtime').classList.add('hidden')" class="p-2 text-slate-400 hover:text-white rounded-xl hover:bg-slate-800 text-lg transition-all">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+
+        <div class="p-6 overflow-y-auto space-y-4 flex-grow text-xs">
+            <div id="hr-overtime-list-container" class="space-y-3">
+                <p class="text-slate-400 text-center py-6 italic font-medium"><i class="fa-solid fa-spinner fa-spin mr-2"></i>Cargando solicitudes de horas extras...</p>
+            </div>
+        </div>
+
+        <div class="px-6 py-3 bg-slate-50 border-t border-slate-200 flex justify-end">
+            <button onclick="document.getElementById('modal-hr-overtime').classList.add('hidden')" class="btn-ima-cancel px-4 py-2 text-xs uppercase font-bold rounded-xl">Cerrar</button>
+        </div>
+    </div>
+</div>`;
+    document.body.insertAdjacentHTML('beforeend', modalHtml);
+};
+
+window.openHROvertimeModal = function() {
+    window.ensureHROvertimeModalExists();
+    document.getElementById('modal-hr-overtime')?.classList.remove('hidden');
+    window.renderHROvertimeUI();
+};
+
+window.renderHROvertimeUI = function() {
+    const container = document.getElementById('hr-overtime-list-container');
+    if (!container) return;
+
+    fetchApi('ACCOUNTING', 'getOvertimeRequests', {}).then(res => {
+        if (!res || res.status !== 'success' || !res.overtimeRequests || res.overtimeRequests.length === 0) {
+            container.innerHTML = '<div class="text-center py-8 text-slate-400 font-medium"><p>No hay registros de horas extras pendientes de revisión.</p></div>';
+            return;
+        }
+
+        const html = [];
+        res.overtimeRequests.forEach(r => {
+            html.push(
+                '<div class="p-3.5 bg-slate-50 border border-slate-200 rounded-2xl flex flex-wrap items-center justify-between gap-3 text-xs">',
+                '  <div>',
+                '    <span class="font-black text-slate-900 block">' + r.nombreEmpleado + ' (' + r.userId + ')</span>',
+                '    <span class="text-[10px] text-slate-500 font-medium">Fecha: ' + r.fechaTrabajada + ' | Registradas: ' + r.horasRegistradas + ' hrs</span>',
+                '    <p class="text-[11px] text-slate-600 italic mt-0.5">' + r.motivo + '</p>',
+                '  </div>',
+                '  <div class="flex items-center gap-2">',
+                '    <input type="number" id="ovt-app-hrs-' + r.overtimeId + '" value="' + r.horasRegistradas + '" class="w-16 p-1.5 bg-white border border-slate-200 rounded-lg text-xs font-bold text-center">',
+                '    <button onclick="window.reviewOvertimeAction(\'' + r.overtimeId + '\', \'Aprobar\')" class="px-3 py-1.5 bg-emerald-600 text-white font-bold rounded-xl text-xs hover:bg-emerald-700">Aprobar</button>',
+                '    <button onclick="window.reviewOvertimeAction(\'' + r.overtimeId + '\', \'Rechazar\')" class="btn-ima-cancel px-3 py-1.5 text-xs font-bold rounded-xl">Rechazar</button>',
+                '  </div>',
+                '</div>'
+            );
+        });
+
+        container.innerHTML = html.join('');
+    }).catch(err => {
+        container.innerHTML = '<p class="text-red-500 text-center py-4 font-bold">Error: ' + err.message + '</p>';
+    });
+};
+
+window.reviewOvertimeAction = function(overtimeId, accion) {
+    const input = document.getElementById('ovt-app-hrs-' + overtimeId);
+    const hrs = input ? input.value : 0;
+
+    fetchApi('ACCOUNTING', 'reviewOvertimeRequest', { overtimeId: overtimeId, accion: accion, horasAprobadas: hrs }).then(res => {
+        if (res && res.status === 'success') {
+            alert('¡Registro de horas extras ' + (accion === 'Aprobar' ? 'aprobado' : 'rechazado') + '!');
+            window.renderHROvertimeUI();
+        } else {
+            alert('Error: ' + (res?.message || 'Desconocido'));
+        }
+    }).catch(err => alert('Fallo de red: ' + err.message));
+};

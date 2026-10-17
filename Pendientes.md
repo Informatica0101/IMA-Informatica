@@ -1,5 +1,26 @@
 ## TAREAS PENDIENTES DE REVISIÓN
 
+### [REQ-SCHED-001] Configuración del Año Escolar, Jornadas, Horarios, Control Laboral, Horas Extras y Actividades Institucionales
+- **Origen del Hallazgo:** Auditoria.txt (Mon Jul 6 2026 - Nueva Fase de Configuración del Año Escolar, Horarios, Control Laboral y Actividades)
+- **Severidad/Clasificación:** Crítico
+- **Archivos Involucrados:** `backend/academic-service/Code.gs`, `backend/accounting-service/Code.gs`, `backend/user-service/Code.gs`, `js/teacher.js`, `js/student.js`, `js/ui-common.js`, `teacher-dashboard.html`, `student-dashboard.html`, `dashboard-recursos-humanos.html`
+- **Dependencias Expuestas:** `AnosLectivos`, `CalendarioAcademico`, `HorariosClase`, `HorariosLaborales`, `MarcacionesPersonal`, `ROLE_PERMISSIONS`
+- **Descripción del Alcance:**
+  1. Configuración del Año Escolar con soporte para modelos de calendario (Sistema Americano, Año Calendario, Personalizado), fechas clave y validaciones de solapamiento.
+  2. Gestión de Jornadas Académicas (Matutina, Vespertina, Nocturna, A Distancia, Mixta), horas-clase, recreos, almuerzos y transiciones.
+  3. Malla Curricular con distribución semanal/diaria, bloques consecutivos y generador/editor de horarios con detección de colisiones de docentes/aulas/secciones.
+  4. Horarios Laborales del Personal por departamento/empleado, franjas de almuerzo escalonadas, marcaciones de entrada/salida y motor de cálculo y aprobación de Horas Extras con fechas de corte de nómina.
+  5. Programación de Actividades Institucionales con estrategias de afectación de clases (Desplazar, Reducir, Reemplazar, Reprogramar) y Actividades Extracurriculares con gestión de supervisores, estados y evidencias digitales en Drive.
+  6. Integración del Calendario Institucional Unificado con filtrado por rol y permisos.
+- **Criterios de Aceptación:**
+  - Tipos de año escolar configurables con fechas clave validadas.
+  - Jornadas múltiples con tiempos de clase, recreos y almuerzos parametrizados.
+  - Generador/editor de horarios funcional con validación de conflictos de docentes y aulas.
+  - Horarios laborales, marcaciones y flujo de aprobación de horas extras con corte de nómina.
+  - Actividades institucionales y extracurriculares con afectación explícita de clases y evidencias.
+  - Calendario unificado filtrado por rol en todos los dashboards.
+- **Estado:** [/] Pendiente de Revisión
+
 ### [REQ-DESIGN-001] Renovación Visual Institucional, Personalización Global, Sistema de Tickets y Control de Versiones v1.0
 - **Origen del Hallazgo:** Auditoria.txt (Mon Jul 6 2026 - Nueva Fase de Diseño, Personalización, Tickets y Versionado)
 - **Severidad/Clasificación:** Crítico

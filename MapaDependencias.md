@@ -1,5 +1,23 @@
 # Mapa de Dependencias Académicas (v8.9.0 - Plan General de Expansión e Interoperabilidad)
 
+## MÓDULO DE CONFIGURACIÓN DEL AÑO ESCOLAR, JORNADAS, HORARIOS, CONTROL LABORAL Y ACTIVIDADES
+- **Hojas de Cálculo / Tablas:**
+  - `JornadasAcademicas`: Configuración de jornadas (JornadaID, NombreJornada, TipoJornada, HoraInicio, HoraFin, DuracionClaseMin, DuracionRecesoMin, DuracionAlmuerzoMin, Estado).
+  - `MallaCurricularDist`: Distribución semanal/diaria (MallaID, OfertaID, AsignaturaID, HorasSemana, HorasDia, RequiereBloqueConsecutivo, DiasPermitidosJSON, Estado).
+  - `ActividadesInstitucionales`: Eventos e hitos institucionales (ActividadID, Titulo, TipoActividad, FechaInicio, FechaFin, EstrategiaAfectacion, ClasesAfectadasJSON, Estado, AutorizadoPor).
+  - `ActividadesExtracurriculares`: Talleres, clubes y deportes (ExtracurricularID, Nombre, Categoria, HorarioJSON, EncargadosJSON, Estado, EvidenciasDriveFolderId).
+  - `TurnosAlmuerzo`: Franjas de almuerzo laboral (TurnoID, Departamento, RolNombre, HoraInicio, HoraFin, CoberturaMinima, Estado).
+  - `AprobacionHorasExtras`: Registro y flujo de horas extras (OvertimeID, UserId, NombreEmpleado, FechaTrabajada, HorasSugeridas, HorasAprobadas, EstadoAprobacion, AprobadoPor, PeriodoNominaId, EstadoPago, Timestamps).
+- **Funciones Backend (`backend/academic-service/Code.gs` & `backend/accounting-service/Code.gs`):**
+  - `configureSchoolYear(payload, user)` / `getSchoolYearConfigs(payload, user)`
+  - `configureAcademicJornada(payload, user)` / `getAcademicJornadas(payload, user)`
+  - `saveCurricularDistribution(payload, user)` / `getCurricularDistribution(payload, user)`
+  - `generateClassSchedulesAdvanced(payload, user)` / `saveClassSchedules(payload, user)`
+  - `configureLunchShifts(payload, user)` / `getLunchShifts(payload, user)`
+  - `recordStaffCheckInAdvanced(payload, user)` / `calculateOvertime(payload, user)` / `reviewOvertimeRequest(payload, user)`
+  - `saveInstitutionalActivity(payload, user)` / `saveExtracurricularActivity(payload, user)`
+  - `getUnifiedInstitutionalCalendar(payload, user)`
+
 ## MÓDULO DE DISEÑO INSTITUCIONAL, TICKETS Y VERSIONADO (NUEVA FASE)
 - **Hojas de Cálculo / Tablas:**
   - `PropuestasPaletasVisuales`: Armacena propuestas de paletas visuales (PropuestaID, PaletaNombre, ColoresJSON, CreadoPor, Estado, AprobadoPor, FechaAprobacion, Observaciones).

@@ -701,3 +701,40 @@ Archivos y Módulos Auditados:
   * Modal de reporte con auto-selección de área y validación estricta de 2 campos descriptivos (>= 20 caracteres significativos sin espacios en blanco).
   * Módulo de gestión administrativa exclusiva de tickets para el Administrador/Desarrollador con notas internas, cambios de estado y respuestas al usuario.
   * Fijación de versión global pública en `1.0`.
+
+====================================================================================================
+
+AUDITORÍA TÉCNICA Y DIAGNÓSTICO DE ARQUITECTURA - NUEVA FASE: CONFIGURACIÓN DEL AÑO ESCOLAR, JORNADAS, HORARIOS, CONTROL LABORAL Y ACTIVIDADES INSTITUCIONALES - Mon Jul 6 2026
+
+Archivos y Módulos Auditados:
+- backend/academic-service/Code.gs
+- backend/accounting-service/Code.gs
+- backend/user-service/Code.gs
+- js/teacher.js
+- js/student.js
+- js/ui-common.js
+- teacher-dashboard.html
+- student-dashboard.html
+- dashboard-recursos-humanos.html
+
+1. DIAGNÓSTICO Y REUTILIZACIÓN DE ESTRUCTURAS DE DATOS EXISTENTES
+- Tablas y Endpoints Existentes:
+  * `AnosLectivos` en `backend/academic-service/Code.gs`: Almacena el año escolar. Se ampliará para soportar el Tipo de Calendario (Sistema Americano, Año Calendario, Personalizado), Primer/Último día de clases, Fecha de Cierre Administrativo y Fechas Límite de Calificaciones.
+  * `CalendarioAcademico` en `backend/academic-service/Code.gs`: Registro de eventos. Se ampliará para categorizar tipos de días (Hábil, Festivo, Receso, Capacitación, Evaluación, Actividad Especial) y coordinar excepciones.
+  * `HorariosClase` en `backend/academic-service/Code.gs`: Generador y validador de horarios (`checkScheduleConflict`). Se extenderá para asociar jornadas, bloques consecutivos, descansos/recreos y aulas.
+  * `HorariosLaborales` & `MarcacionesPersonal` en `backend/accounting-service/Code.gs`: Registro de asistencia de personal. Se ampliarán con turnos de almuerzo escalonados, descansos, tolerancias y solicitudes/aprobaciones de horas extras.
+- Nuevas Tablas de Soporte Necesarias:
+  * `JornadasAcademicas` (`backend/academic-service/Code.gs`): Configuración de jornadas (Matutina, Vespertina, Nocturna, A distancia, Mixta), horas-clase, recesos y transiciones.
+  * `MallaCurricularDist` (`backend/academic-service/Code.gs`): Reglas de distribución semanal/diaria de asignaturas, bloques consecutivos y restricciones de horario.
+  * `ActividadesInstitucionales` (`backend/academic-service/Code.gs`): Registro de actos, asambleas, ferias y excursiones con estrategia de afectación de clases (Desplazar, Reducir, Reemplazar, Reprogramar).
+  * `ActividadesExtracurriculares` (`backend/academic-service/Code.gs`): Gestión de talleres, clubes y deportes con supervisores, estados y evidencias digitales en Drive.
+  * `TurnosAlmuerzo` (`backend/accounting-service/Code.gs`): Franjas de descanso y almuerzo laboral por departamento/empleado.
+  * `AprobacionHorasExtras` (`backend/accounting-service/Code.gs`): Registro, cálculo, revisión y aprobación de horas extras con vinculación a fechas de corte de nómina.
+
+2. HALLAZGOS Y PLAN DE IMPLEMENTACIÓN
+- Backend:
+  * Implementar en `backend/academic-service/Code.gs` las funciones y endpoints con RBAC para la gestión avanzada del Año Escolar, Jornadas, Malla Curricular, Generación/Edición de Horarios con colisiones, Actividades Institucionales y Extracurriculares.
+  * Implementar en `backend/accounting-service/Code.gs` los endpoints para Horarios Laborales, Almuerzos Escalonados, Marcaciones de Entrada/Salida/Receso y Motor de Cálculo/Aprobación de Horas Extras con trazabilidad.
+- Frontend:
+  * Crear interfaces de administración en `teacher-dashboard.html` / `dashboard-recursos-humanos.html` / `js/teacher.js` para configurar el Calendario Escolar, Jornadas, Malla Curricular, Generador de Horarios con colisiones, Horarios del Personal, Horas Extras, Actividades Institucionales y Extracurriculares.
+  * Integrar el Calendario Institucional Unificado y la consulta de Horarios de Clase en `student-dashboard.html` y `js/student.js`.
