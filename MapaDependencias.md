@@ -1,5 +1,16 @@
 # Mapa de Dependencias Académicas (v8.9.0 - Plan General de Expansión e Interoperabilidad)
 
+## MÓDULO DE TÉRMINOS Y CONDICIONES DE USO V1.0 Y ACEPTACIÓN
+- **Páginas y Vistas:**
+  - `politica-de-uso.html`: Texto completo oficial de Términos y Condiciones de Uso de la Plataforma (17 Numerales).
+- **Componentes Frontend (`js/ui-common.js`):**
+  - `#modal-first-login-terms`: Modal de aceptación obligatoria al iniciar sesión o cargar dashboard sin evidencia de la Versión 1.0.
+  - `window.checkAndShowFirstLoginTermsModal()`
+  - `window.acceptTermsAndConditionsAction()`
+- **Backend & Almacenamiento (`backend/user-service/Code.gs`):**
+  - Tabla `AceptacionesPoliticas`: AceptacionID, UserID, DocumentoID, Version, RolUsuario, FechaAceptacion, Estado.
+  - Endpoint `acceptLegalDocument(payload)` / `getLegalDocumentAcceptances(payload)`.
+
 ## MÓDULO DE CONFIGURACIÓN DEL AÑO ESCOLAR, JORNADAS, HORARIOS, CONTROL LABORAL Y ACTIVIDADES
 - **Hojas de Cálculo / Tablas:**
   - `JornadasAcademicas`: Configuración de jornadas (JornadaID, NombreJornada, TipoJornada, HoraInicio, HoraFin, DuracionClaseMin, DuracionRecesoMin, DuracionAlmuerzoMin, Estado).

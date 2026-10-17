@@ -2914,6 +2914,7 @@ window.submitPaletteProposal = function() {
 
     fetchApi('USER', 'saveVisualPaletteProposal', payload).then(function(res) {
         if (res && res.status === 'success') {
+            window.activePaletteProposalId = res.propuestaId;
             alert('¡Propuesta de paleta "' + p.paletaNombre + '" enviada exitosamente!\n\nID Propuesta: ' + (res.propuestaId || '') + '\n\nQueda pendiente de revisión y aprobación por Dirección.');
         } else {
             alert('Error al enviar propuesta: ' + (res ? res.message : 'Desconocido'));
@@ -2934,6 +2935,8 @@ window.approvePaletteProposal = function(accion) {
 
     var payload = {
         propuestaId: window.activePaletteProposalId || 'PAL-LATEST',
+        paletaNombre: p.paletaNombre,
+        coloresJSON: p.colores,
         accion: accion || 'Aprobar',
         userId: currentUser.userId || currentUser.id,
         authRole: currentUser.rol || 'Director',
@@ -3649,3 +3652,135 @@ window.adminSubmitTicketReply = function(ticketId) {
         alert('Fallo de red: ' + err.message);
     });
 };
+
+/* ==========================================================================
+   TERMS AND CONDITIONS FIRST-LOGIN MODAL WORKFLOW
+   ========================================================================== */
+window.checkAndShowFirstLoginTermsModal = function() {
+    var currentUser = {};
+    try {
+        currentUser = JSON.parse(localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser') || localStorage.getItem('usuario_actual') || '{}');
+    } catch (_) {}
+
+    if (!currentUser || (!currentUser.userId && !currentUser.id)) return;
+    var uid = currentUser.userId || currentUser.id;
+
+    fetchApi('ACCOUNTING', 'getPolicyAcceptances', { userId: uid })
+        .then(function(res) {
+            var accepted = false;
+            if (res && res.status === 'success' && res.aceptaciones) {
+                accepted = res.aceptaciones.some(function(a) {
+                    return a.politicaInstId === 'DOC-USO' || a.politicaInstId === 'TERMINOS-1.0' || a.tipoDocumento === 'TERMS_AND_CONDITIONS';
+                });
+            }
+            if (!accepted) {
+                window.openFirstLoginTermsModal();
+            }
+        })
+        .catch(function(err) {
+            console.warn('No se pudo verificar la aceptación de términos:', err);
+        });
+};
+
+window.openFirstLoginTermsModal = function() {
+    var modalId = 'modal-first-login-terms';
+    var modal = document.getElementById(modalId);
+    if (!modal) {
+        modal = document.createElement('div');
+        modal.id = modalId;
+        modal.className = 'fixed inset-0 z-[10000] bg-slate-900/80 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto';
+        modal.innerHTML = '' +
+            '<div class="bg-white rounded-[2rem] border border-slate-100 shadow-2xl max-w-2xl w-full p-6 md:p-8 space-y-6 relative animate-fade-in">' +
+                '<div class="text-center space-y-2 border-b border-slate-100 pb-4">' +
+                    '<div class="w-12 h-12 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center mx-auto text-xl shadow-inner">' +
+                        '<i class="fas fa-file-contract"></i>' +
+                    '</div>' +
+                    '<h3 class="text-xl font-black text-slate-900 uppercase tracking-tight">Términos y Condiciones de Uso</h3>' +
+                    '<p class="text-xs font-bold text-slate-400 uppercase tracking-widest">Aviso Legal Obligatorio — Versión Global 1.0</p>' +
+                '</div>' +
+                '<div class="text-xs text-slate-600 space-y-3 leading-relaxed max-h-60 overflow-y-auto p-4 bg-slate-50 rounded-2xl border border-slate-100">' +
+                    '<p class="font-bold text-slate-800">Bienvenido a la plataforma oficial de New Generation Bilingual School and Institute.</p>' +
+                    '<p>Para hacer uso de los servicios de la plataforma, es requisito indispensable leer y aceptar libremente los Términos y Condiciones de Uso del Software titularidad exclusiva de <strong>JyP Solutions S. de R.L. de C.V.</strong> otorgado bajo licencia de uso a la Institución.</p>' +
+                    '<p>El uso de la plataforma incluye el acceso al expediente escolar, notas, aulas virtuales, pagos y notificaciones multicanal. El usuario declara que sus credenciales son personales e intransferibles.</p>' +
+                    '<div class="pt-2">' +
+                        '<a href="politica-de-uso.html" target="_blank" class="inline-flex items-center text-blue-600 font-bold hover:underline gap-1 text-xs">' +
+                            '<i class="fas fa-external-link-alt"></i> Leer Términos y Condiciones Completos (17 Artículos)' +
+                        '</a>' +
+                    '</div>' +
+                '</div>' +
+                '<div class="pt-2 flex flex-col sm:flex-row items-center justify-end gap-3 border-t border-slate-100">' +
+                    '<button onclick="window.closeFirstLoginTermsModalAndLogout()" class="w-full sm:w-auto px-5 py-2.5 rounded-xl border border-slate-200 text-slate-600 font-bold text-xs hover:bg-slate-50 uppercase tracking-wider transition-all">' +
+                        'Volver / Salir' +
+                    '</button>' +
+                    '<button id="btn-modal-accept-terms" onclick="window.acceptTermsFromModal()" class="w-full sm:w-auto px-6 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs uppercase tracking-wider shadow-lg transition-all flex items-center justify-center gap-2">' +
+                        '<i class="fas fa-check-circle"></i> Aceptar Términos' +
+                    '</button>' +
+                '</div>' +
+            '</div>';
+        document.body.appendChild(modal);
+    } else {
+        modal.classList.remove('hidden');
+    }
+};
+
+window.closeFirstLoginTermsModalAndLogout = function() {
+    var modal = document.getElementById('modal-first-login-terms');
+    if (modal) modal.classList.add('hidden');
+    if (typeof window.logout === 'function') {
+        window.logout();
+    } else {
+        localStorage.clear();
+        sessionStorage.clear();
+        window.location.href = 'index.html';
+    }
+};
+
+window.acceptTermsFromModal = function() {
+    var currentUser = {};
+    try {
+        currentUser = JSON.parse(localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser') || localStorage.getItem('usuario_actual') || '{}');
+    } catch (_) {}
+
+    var uid = currentUser.userId || currentUser.id;
+    if (!uid) {
+        alert('Debe estar autenticado para registrar su conformidad.');
+        return;
+    }
+
+    var btn = document.getElementById('btn-modal-accept-terms');
+    if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Registrando...';
+    }
+
+    fetchApi('USER', 'acceptLegalDocument', {
+        userId: uid,
+        docType: 'TERMS_AND_CONDITIONS',
+        version: '1.0'
+    }).then(function(res) {
+        if (res && res.status === 'success') {
+            var modal = document.getElementById('modal-first-login-terms');
+            if (modal) modal.classList.add('hidden');
+        } else {
+            alert('Error al guardar la aceptación: ' + (res ? res.message : 'Error desconocido'));
+            if (btn) {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-check-circle"></i> Aceptar Términos';
+            }
+        }
+    }).catch(function(err) {
+        alert('Error de conexión al procesar la aceptación.');
+        if (btn) {
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-check-circle"></i> Aceptar Términos';
+        }
+    });
+};
+
+document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(function() {
+        if (typeof window.checkAndShowFirstLoginTermsModal === 'function') {
+            window.checkAndShowFirstLoginTermsModal();
+        }
+    }, 1200);
+});

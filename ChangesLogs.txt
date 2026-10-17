@@ -1341,3 +1341,12 @@ Descripción de cambios:
   - Modales e interfaces interactivas: `#modal-school-year-config` (Año Escolar y Modelos de Calendario), `#modal-academic-jornadas` (Jornadas y Bloques), `#modal-institutional-activities` (Actividades e Impacto de Clases), `#modal-hr-overtime` (Revisión y Aprobación de Horas Extras con fechas de corte).
 - `Pendientes.md`, `Auditoría.txt`, `MapaDependencias.md`:
   - Registrado el requerimiento `[REQ-SCHED-001]` y actualizados los esquemas de dependencias.
+
+## [Fase: Términos y Condiciones de Uso y Aceptación Obligatoria al Iniciar Sesión] - 2026-10-17
+### Agregado y Refactorizado
+- `politica-de-uso.html`:
+  - Actualización completa del documento legal de Términos y Condiciones de Uso con los 17 artículos requeridos, declarando la titularidad de propiedad intelectual exclusiva de JyP Solutions S. de R.L. de C.V., la licencia de uso otorgada a New Generation Bilingual School and Institute y la propiedad del instituto sobre los datos académicos.
+- `js/ui-common.js`:
+  - Implementación de `window.checkAndShowFirstLoginTermsModal` para verificar la evidencia de aceptación de la versión 1.0 en `AceptacionesPoliticas`.
+  - Integración del modal `#modal-first-login-terms` que se despliega automáticamente en el primer inicio de sesión o carga del dashboard y requiere la aceptación explícita antes de cerrarse, conectándolo con `acceptLegalDocument` en el servidor.
+  - Corrección en la vinculación del ID de propuesta de paleta activa en `window.submitPaletteProposal` y `window.approvePaletteProposal`.

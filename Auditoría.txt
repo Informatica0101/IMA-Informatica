@@ -738,3 +738,27 @@ Archivos y Módulos Auditados:
 - Frontend:
   * Crear interfaces de administración en `teacher-dashboard.html` / `dashboard-recursos-humanos.html` / `js/teacher.js` para configurar el Calendario Escolar, Jornadas, Malla Curricular, Generador de Horarios con colisiones, Horarios del Personal, Horas Extras, Actividades Institucionales y Extracurriculares.
   * Integrar el Calendario Institucional Unificado y la consulta de Horarios de Clase en `student-dashboard.html` y `js/student.js`.
+
+====================================================================================================
+
+AUDITORÍA TÉCNICA Y DIAGNÓSTICO DE ARQUITECTURA - MÓDULO DE TÉRMINOS Y CONDICIONES DE USO CON MODAL DE PRIMER INICIO DE SESIÓN - Mon Jul 6 2026
+
+Archivos y Módulos Auditados:
+- politica-de-uso.html
+- js/ui-common.js
+- js/auth.js
+- backend/user-service/Code.gs
+
+1. DIAGNÓSTICO Y REUTILIZACIÓN DE ESTRUCTURAS DE DATOS EXISTENTES
+- Tablas y Endpoints Existentes:
+  * `AceptacionesPoliticas` en `backend/user-service/Code.gs`: Hoja existente donde el endpoint `acceptLegalDocument` guarda el registro de aceptación (AceptacionID, UserID, DocumentoID, Version, RolUsuario, FechaAceptacion, Estado).
+  * `getLegalDocumentAcceptances`: Endpoint para verificar la lista de aceptaciones registradas por usuario.
+- Frontend & UI:
+  * `politica-de-uso.html`: Página oficial de Condiciones de Uso. Se actualizará íntegramente con los 17 apartados legales proporcionados de JyP Solutions & New Generation Bilingual School and Institute (Versión 1.0).
+  * `js/ui-common.js`: Se implementará el inicializador `window.checkAndShowFirstLoginTermsModal()`, creando `#modal-first-login-terms`.
+  * El modal mostrará el aviso explícito de aceptación con el enlace interactivo hacia `politica-de-uso.html` y se cerrará únicamente al presionar "Aceptar Términos", enviando el registro al servidor mediante `acceptLegalDocument`.
+
+2. HALLAZGOS Y PLAN DE IMPLEMENTACIÓN
+- Actualizar `politica-de-uso.html` con la redacción completa de los 17 numerales legales.
+- Implementar `#modal-first-login-terms` en `js/ui-common.js` con bloqueo de cierre automático (solo cerrable mediante el botón "Aceptar Términos").
+- Registrar la aceptación en `localStorage` y en la hoja `AceptacionesPoliticas` del microservicio `USER`.
