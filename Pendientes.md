@@ -5038,3 +5038,53 @@ Al concluir las tareas, entregar:
 7. Documentación actualizada conforme a la metodología del proyecto.
 
 No declarar completada una tarea solo porque sus archivos o interfaces hayan sido creados. La finalización requiere evidencia del comportamiento esperado y de la compatibilidad con los procesos existentes.
+
+---
+
+# PLAN DE IMPLEMENTACIÓN DETALLADO - FASE 6: OPERACIONES FÍSICAS DEL INSTITUTO
+
+### REQ-OP-001: Módulo UI de Transporte Escolar y Rutas
+- **Objetivo:** Construir la interfaz completa de usuario para la administración de transporte escolar, vehículos, conductores, rutas, paradas y asignación de estudiantes.
+- **Backend Reutilizado:** `manageTransportRoute`, `getTransportRoutes`, `assignStudentTransport`, `getTransportAssignments` en `backend/accounting-service/Code.gs`.
+- **Archivos a Modificar:** `js/accounting.js`, `dashboard-contabilidad.html`, `teacher-dashboard.html`, `student-dashboard.html`.
+- **Tareas Concretas:**
+  1. Crear la pestaña de UI "Transporte Escolar" dentro del módulo operativo.
+  2. Implementar formulario para creación/edición de rutas con paradas en formato JSON interactivo, asignación de vehículo y conductor.
+  3. Crear selector de estudiantes para asignación de ruta y parada específica con control de capacidad disponible por vehículo.
+  4. Agregar vista de consulta de transporte escolar para estudiantes y padres en `student-dashboard.html`.
+
+### REQ-OP-002: Portal de Auto-Servicio para Reporte de Reparaciones y Fallas por Docentes
+- **Objetivo:** Permitir a docentes y personal administrativo reportar fallas en instalaciones o activos directamente desde su panel sin requerir permisos de contabilidad.
+- **Backend Reutilizado:** `manageMaintenanceOrder`, `getMaintenanceOrders` en `backend/accounting-service/Code.gs`.
+- **Archivos a Modificar:** `teacher-dashboard.html`, `js/teacher.js`.
+- **Tareas Concretas:**
+  1. Añadir botón y modal "Reportar Incidencia de Infraestructura / Equipo" en `teacher-dashboard.html`.
+  2. Diseñar formulario con selección de aula/activo, categoría de falla, nivel de prioridad y descripción de la incidencia.
+  3. Vincular el formulario con la creación de una orden en estado `Pendiente_Revision` en `MantenimientoOrdenes`.
+  4. Renderizar bandeja "Mis Reportes de Mantenimiento" con seguimiento del estado de la reparación en tiempo real.
+
+### REQ-OP-003: Panel UI de Reservas e Incidencias de Biblioteca
+- **Objetivo:** Completar la interfaz de usuario para reservación previa de ejemplares, registro de daños/pérdidas e incidencias bibliográficas.
+- **Backend Reutilizado:** `reserveLibraryBook`, `getLibraryReservations`, `recordLibraryIncident`, `getLibraryIncidents` en `backend/accounting-service/Code.gs`.
+- **Archivos a Modificar:** `dashboard-contabilidad.html`, `js/accounting.js`, `student-dashboard.html`.
+- **Tareas Concretas:**
+  1. Crear modal y pestaña de "Reservas de Biblioteca" para gestionar cola de espera con expiración automática.
+  2. Implementar panel de "Incidencias de Biblioteca" para reportar libros extraviados o deteriorados con opción de cobro o reposición.
+  3. Permitir a estudiantes en `student-dashboard.html` buscar libros en el catálogo y solicitar reservas online.
+
+### REQ-OP-004: Vinculación Automática de Recepción de Compras con Activos Patrimoniales
+- **Objetivo:** Automatizar la creación de registros de activos patrimoniales cuando se recibe una compra de equipos o bienes duraderos.
+- **Backend Reutilizado:** `recordPurchaseReceipt`, `manageAssetItem` en `backend/accounting-service/Code.gs`.
+- **Archivos a Modificar:** `backend/accounting-service/Code.gs`, `js/accounting.js`.
+- **Tareas Concretas:**
+  1. Modificar `recordPurchaseReceipt` para detectar si la categoría del artículo recibido corresponde a "Equipo/Activo Fijo".
+  2. Generar automáticamente un borrador de Activo Patrimonial en estado `por_etiquetar` con su código provisional.
+  3. Crear vista de validación en la pestaña de Activos para asignar número de serie, modelo definitivo y custodio inicial.
+
+### REQ-OP-005: Integración de Custodia, Biblioteca y Transporte en el Expediente Digital del Estudiante
+- **Objetivo:** Reflejar en el expediente unificado del estudiante sus préstamos activos de biblioteca, ruta de transporte asignada y activos custodiados.
+- **Backend Reutilizado:** `getLibraryLoans`, `getTransportAssignments`, `getAssetAssignments` en `backend/accounting-service/Code.gs`.
+- **Archivos a Modificar:** `teacher-dashboard.html`, `js/teacher.js`.
+- **Tareas Concretas:**
+  1. Agregar la pestaña "Recursos & Operaciones Físicas" dentro del modal de Expediente del Estudiante.
+  2. Consolidar la información de libros prestados, estado de devoluciones, ruta de bus asignada con parada/horario y equipos/tablets entregados en custodia.

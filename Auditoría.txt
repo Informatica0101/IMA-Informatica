@@ -973,3 +973,22 @@ Archivos y Módulos Auditados:
   * Ausencia de catálogo e historial de capacitaciones de personal (`CapacitacionesEmpleado`).
   * Ausencia de bitácora formal de medidas disciplinarias (`IncidenciasDisciplinariasLaborales`).
   * Desconexión en UI: `dashboard-recursos-humanos.html` posee las tablas y maquetación visual, pero los controladores JS carecen de la conexión directa a los endpoints de expedientes, contratos y vacaciones.
+
+===============================================================================
+REGISTRO DE AUDITORÍA FUNCIONAL INTEGRAL: FASE 6 (OPERACIONES FÍSICAS DEL INSTITUTO)
+===============================================================================
+Fecha: Mayo 2024
+Módulo Auditado: Operaciones Físicas del Instituto (Ampliación Fase 11 del Plan General)
+Componentes e Inspección:
+  - backend/accounting-service/Code.gs (Gestión de almacenes, Kardex, compras, biblioteca, activos, mantenimiento, transporte)
+  - backend/academic-service/Code.gs (Catálogo de aulas y sedes)
+  - js/accounting.js, js/teacher.js, js/student.js
+  - dashboard-contabilidad.html, teacher-dashboard.html, student-dashboard.html
+
+Hallazgos Principales:
+1. Cobertura de Persistencia GAS: 11 tablas Google Sheets operativas (BibliotecaEjemplares, BibliotecaPrestamos, BibliotecaReservas, BibliotecaIncidencias, ActivosPatrimoniales, AsignacionesActivos, AlmacenesUbicaciones, MaterialesSolicitudes, InventariosConteosFisicos, MantenimientoOrdenes, TransporteRutas, TransporteAsignaciones, BajasBienes).
+2. Endpoints Backend: 21 funciones de servidor activas y verificadas.
+3. Brecha Crítica en Transporte Escolar (OP-08): Módulo backend funcional (manageTransportRoute, assignStudentTransport), pero 0% de interfaz de usuario en el frontend.
+4. Brecha en Reporte de Reparaciones para Docentes (OP-05): Falta portal de auto-servicio de reporte de fallas en teacher-dashboard.html sin requerir permisos de contabilidad.
+5. Biblioteca (OP-01): Funciones de préstamos y catálogo operativas, pero faltan paneles de gestión UI para reservas, incidencias y catálogo estructurado de títulos vs. ejemplares físicos.
+6. Integración de Expedientes (OP-12): Se requiere reflejar custodia de libros, transporte y equipos en el expediente digital del estudiante.
