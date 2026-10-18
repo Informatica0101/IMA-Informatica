@@ -254,6 +254,7 @@ function doPost(e) {
       case "restoreSystemBackup": result = restoreSystemBackup(payload); break;
       case "getInstitutionalReportCatalog": result = getInstitutionalReportCatalog(payload); break;
       case "generateInstitutionalReport": result = generateInstitutionalReport(payload); break;
+      case "getSectionEquivalences": result = getSectionEquivalences(payload); break;
 
       // Endpoints Fase 3
       case "getInstitutionParams": result = getInstitutionParams(payload); break;
@@ -3733,5 +3734,26 @@ function getStudentEnrollmentHistory(payload) {
       matriculas: userMatriculas,
       cargos: userCargos
     }
+  };
+}
+
+function resolveSectionEquivalence(secInput, targetFormat) {
+  if (!secInput) return "A";
+  const clean = String(secInput).trim().toUpperCase().replace("SECCIÓN", "").replace("SECCION", "").replace("SEC", "").trim();
+  const mapNumToAlpha = { "1": "A", "2": "B", "3": "C", "4": "D", "5": "E" };
+  const mapAlphaToNum = { "A": "1", "B": "2", "C": "3", "D": "4", "E": "5" };
+  if (targetFormat === "NUMERIC") {
+    return mapAlphaToNum[clean] || clean;
+  }
+  return mapNumToAlpha[clean] || clean;
+}
+
+function getSectionEquivalences(payload) {
+  const { seccion, formato } = payload || {};
+  const equivalente = resolveSectionEquivalence(seccion, formato);
+  return {
+    status: "success",
+    seccionOriginal: seccion,
+    seccionEquivalente: equivalente
   };
 }

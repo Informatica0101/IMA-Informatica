@@ -2960,10 +2960,10 @@ window.initProblemReportingUI = function() {
         var btn = document.createElement('button');
         btn.id = 'btn-global-report-issue';
         btn.onclick = function() { window.openReportIssueModal(); };
-        btn.className = 'fixed bottom-4 right-4 z-[9990] bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold px-3.5 py-2.5 rounded-full shadow-xl flex items-center gap-2 border border-slate-700 transition-all hover:scale-105 active:scale-95';
+        btn.className = 'fixed bottom-4 right-4 z-[9990] bg-slate-900/90 hover:bg-slate-900 text-white w-9 h-9 rounded-full shadow-lg flex items-center justify-center border border-slate-700/60 transition-all hover:scale-110 active:scale-95';
         btn.title = 'Reportar un problema';
         btn.setAttribute('aria-label', 'Reportar un problema');
-        btn.innerHTML = '<i class="fa-solid fa-circle-exclamation text-amber-400 text-sm"></i> <span class="hidden md:inline font-bold uppercase tracking-wider text-[11px]">Reportar problema</span>';
+        btn.innerHTML = '<i class="fa-solid fa-circle-exclamation text-amber-400 text-sm"></i>';
         document.body.appendChild(btn);
     }
 
@@ -4023,3 +4023,176 @@ window.openAnalyticsChartModal = function(chartCategory) {
         defaultType: chartCategory === 'ASISTENCIA' ? 'doughnut' : 'bar'
     });
 };
+
+/* ==========================================================================
+   ROLE NAVIGATION MENU & ACCORDION SIDEBAR / HAMBURGER DRAWER SYSTEM
+   ========================================================================== */
+window.loadCommercialUnitNames = function() {
+    var storeName = localStorage.getItem('storeUnitName') || 'Tiendita Escolar';
+    var cafeName = localStorage.getItem('cafeUnitName') || 'Cafetería';
+
+    var storeEl = document.getElementById('store-dashboard-title');
+    if (storeEl) storeEl.textContent = storeName;
+
+    var cafeEl = document.getElementById('cafeteria-dashboard-title');
+    if (cafeEl) cafeEl.textContent = cafeName;
+};
+
+window.saveCommercialUnitNames = function(storeName, cafeName) {
+    if (storeName) localStorage.setItem('storeUnitName', storeName.trim());
+    if (cafeName) localStorage.setItem('cafeUnitName', cafeName.trim());
+    window.loadCommercialUnitNames();
+};
+
+window.toggleRoleMenuAccordionSection = function(sectionId, containerId) {
+    var container = document.getElementById(containerId);
+    if (!container) return;
+    var sections = container.querySelectorAll('.accordion-section-content');
+    sections.forEach(function(sec) {
+        if (sec.id === sectionId) {
+            sec.classList.toggle('hidden');
+        } else {
+            sec.classList.add('hidden'); // Auto close sister sections
+        }
+    });
+};
+
+window.initRoleNavigationMenu = function() {
+    var currentUser = {};
+    try {
+        currentUser = JSON.parse(localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser') || localStorage.getItem('usuario_actual') || '{}');
+    } catch (_) {}
+
+    var role = currentUser.rol || 'Estudiante';
+
+    var desktopBtn = document.getElementById('btn-desktop-sidebar-toggle');
+    if (desktopBtn) {
+        desktopBtn.onclick = function() {
+            var sidebar = document.getElementById('desktop-sidebar-container');
+            if (sidebar) sidebar.classList.toggle('hidden');
+        };
+    }
+
+    var mobileBtn = document.getElementById('btn-mobile-hamburger-menu');
+    if (!mobileBtn) {
+        var headerNav = document.querySelector('#main-header nav') || document.querySelector('#main-header .container');
+        if (headerNav) {
+            mobileBtn = document.createElement('button');
+            mobileBtn.id = 'btn-mobile-hamburger-menu';
+            mobileBtn.className = 'md:hidden px-3 py-2 bg-slate-100 text-slate-700 rounded-xl font-bold text-xs flex items-center gap-1.5 hover:bg-slate-200 transition-all';
+            mobileBtn.title = 'Menú de Navegación';
+            mobileBtn.setAttribute('aria-label', 'Menú de Navegación');
+            mobileBtn.innerHTML = '<i class="fas fa-bars text-sm"></i> <span class="text-[10px] uppercase font-black">Menú</span>';
+            mobileBtn.onclick = function() { window.openMobileHamburgerDrawer(); };
+            headerNav.appendChild(mobileBtn);
+        }
+    } else {
+        mobileBtn.onclick = function() { window.openMobileHamburgerDrawer(); };
+    }
+
+    window.loadCommercialUnitNames();
+    window.initNoLoopHistoryManager();
+};
+
+window.openMobileHamburgerDrawer = function() {
+    var drawerId = 'mobile-hamburger-drawer';
+    var drawer = document.getElementById(drawerId);
+    if (!drawer) {
+        drawer = document.createElement('div');
+        drawer.id = drawerId;
+        drawer.className = 'fixed inset-0 z-[9998] bg-slate-900/80 backdrop-blur-sm flex justify-start animate-fade-in md:hidden';
+
+        var currentUser = {};
+        try {
+            currentUser = JSON.parse(localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser') || localStorage.getItem('usuario_actual') || '{}');
+        } catch (_) {}
+
+        var role = currentUser.rol || 'Estudiante';
+
+        drawer.innerHTML = '' +
+            '<div class="w-80 bg-white h-full shadow-2xl p-6 space-y-6 flex flex-col justify-between overflow-y-auto pb-24">' +
+                '<div class="space-y-4">' +
+                    '<div class="flex items-center justify-between border-b border-slate-100 pb-4">' +
+                        '<div class="flex items-center gap-2.5">' +
+                            '<img src="imagenes/new-generation-logo.png" class="w-8 h-8 object-contain">' +
+                            '<div>' +
+                                '<h4 class="text-xs font-black text-slate-900 uppercase">New Generation</h4>' +
+                                '<p class="text-[9px] font-bold text-blue-600 uppercase tracking-widest">' + role + '</p>' +
+                            '</div>' +
+                        '</div>' +
+                        '<button onclick="document.getElementById(\'' + drawerId + '\').classList.add(\'hidden\')" class="w-8 h-8 rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200 flex items-center justify-center font-bold text-xs">' +
+                            '<i class="fas fa-times"></i>' +
+                        '</button>' +
+                    '</div>' +
+
+                    '<!-- Menú Acordeón por Rol -->' +
+                    '<div id="drawer-accordion-container" class="space-y-2 text-xs font-bold text-slate-700">' +
+                        '<div class="rounded-2xl border border-slate-100 overflow-hidden">' +
+                            '<button onclick="window.toggleRoleMenuAccordionSection(\'sec-drawer-academic\', \'drawer-accordion-container\')" class="w-full p-3 bg-slate-50 hover:bg-slate-100 flex items-center justify-between font-black uppercase text-[11px] text-slate-800">' +
+                                '<span><i class="fas fa-graduation-cap mr-2 text-blue-600"></i> Académico & Clases</span>' +
+                                '<i class="fas fa-chevron-down text-[10px]"></i>' +
+                            '</button>' +
+                            '<div id="sec-drawer-academic" class="accordion-section-content hidden p-3 bg-white space-y-2 border-t border-slate-100 text-[11px]">' +
+                                '<a href="student-dashboard.html" class="block p-2 hover:bg-blue-50 text-slate-700 hover:text-blue-600 rounded-lg">👨‍🎓 Portal del Estudiante</a>' +
+                                '<a href="teacher-dashboard.html" class="block p-2 hover:bg-blue-50 text-slate-700 hover:text-blue-600 rounded-lg">👨‍🏫 Portal Docente & Clases</a>' +
+                                '<a href="javascript:void(0)" onclick="window.openAnalyticsChartModal(\'DESEMPEÑO ACADÉMICO\')" class="block p-2 hover:bg-blue-50 text-slate-700 hover:text-blue-600 rounded-lg">📊 Gráficas de Rendimiento</a>' +
+                            '</div>' +
+                        '</div>' +
+
+                        '<div class="rounded-2xl border border-slate-100 overflow-hidden">' +
+                            '<button onclick="window.toggleRoleMenuAccordionSection(\'sec-drawer-admin\', \'drawer-accordion-container\')" class="w-full p-3 bg-slate-50 hover:bg-slate-100 flex items-center justify-between font-black uppercase text-[11px] text-slate-800">' +
+                                '<span><i class="fas fa-building-columns mr-2 text-emerald-600"></i> Gestión & Secretaría</span>' +
+                                '<i class="fas fa-chevron-down text-[10px]"></i>' +
+                            '</button>' +
+                            '<div id="sec-drawer-admin" class="accordion-section-content hidden p-3 bg-white space-y-2 border-t border-slate-100 text-[11px]">' +
+                                '<a href="dashboard-contabilidad.html" class="block p-2 hover:bg-emerald-50 text-slate-700 hover:text-emerald-600 rounded-lg">💼 Área de Contaduría</a>' +
+                                '<a href="dashboard-recursos-humanos.html" class="block p-2 hover:bg-emerald-50 text-slate-700 hover:text-emerald-600 rounded-lg">👥 Recursos Humanos</a>' +
+                                '<a href="politica-de-uso.html" target="_blank" class="block p-2 hover:bg-emerald-50 text-slate-700 hover:text-emerald-600 rounded-lg">📜 Términos & Políticas</a>' +
+                            '</div>' +
+                        '</div>' +
+
+                        '<div class="rounded-2xl border border-slate-100 overflow-hidden">' +
+                            '<button onclick="window.toggleRoleMenuAccordionSection(\'sec-drawer-services\', \'drawer-accordion-container\')" class="w-full p-3 bg-slate-50 hover:bg-slate-100 flex items-center justify-between font-black uppercase text-[11px] text-slate-800">' +
+                                '<span><i class="fas fa-store mr-2 text-amber-600"></i> Servicios & Unidades</span>' +
+                                '<i class="fas fa-chevron-down text-[10px]"></i>' +
+                            '</button>' +
+                            '<div id="sec-drawer-services" class="accordion-section-content hidden p-3 bg-white space-y-2 border-t border-slate-100 text-[11px]">' +
+                                '<a href="dashboard-tienda.html" class="block p-2 hover:bg-amber-50 text-slate-700 hover:text-amber-600 rounded-lg">🛍️ Tiendita Escolar</a>' +
+                                '<a href="dashboard-cafeteria.html" class="block p-2 hover:bg-amber-50 text-slate-700 hover:text-amber-600 rounded-lg">🥪 Cafetería</a>' +
+                            '</div>' +
+                        '</div>' +
+                    '</div>' +
+                '</div>' +
+
+                '<div class="pt-4 border-t border-slate-100 space-y-2 text-xs font-bold text-slate-500">' +
+                    '<button onclick="window.openReportIssueModal()" class="w-full p-2.5 bg-slate-100 hover:bg-slate-200 text-slate-800 rounded-xl flex items-center justify-center gap-2 uppercase tracking-wider font-black">' +
+                        '<i class="fa-solid fa-circle-exclamation text-amber-500"></i> Reportar Problema' +
+                    '</button>' +
+                '</div>' +
+            '</div>';
+        document.body.appendChild(drawer);
+    } else {
+        drawer.classList.remove('hidden');
+    }
+};
+
+window.initNoLoopHistoryManager = function() {
+    if (window.noLoopHistoryInitialized) return;
+    window.noLoopHistoryInitialized = true;
+
+    window.addEventListener('popstate', function(event) {
+        if (event.state && event.state.view) {
+            if (typeof window.switchActiveView === 'function') {
+                window.switchActiveView(event.state.view, false);
+            }
+        }
+    });
+};
+
+document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(function() {
+        if (typeof window.initRoleNavigationMenu === 'function') {
+            window.initRoleNavigationMenu();
+        }
+    }, 600);
+});

@@ -1,5 +1,30 @@
 ## TAREAS PENDIENTES
 
+### [REQ-DASH-ADAPT-001] Adaptación Integral de Dashboards, Menús por Rol, Configuración Académica y Catálogo de Herramientas
+- **Origen del Hallazgo:** Auditoria.txt (Mon Jul 6 2026 - Fase Adaptación Integral de Dashboards y Menús)
+- **Severidad/Clasificación:** Crítico
+- **Archivos Involucrados:** `index.html`, `student-dashboard.html`, `teacher-dashboard.html`, `dashboard-contabilidad.html`, `dashboard-recursos-humanos.html`, `dashboard-tienda.html`, `dashboard-cafeteria.html`, `exam.html`, `forgot-password.html`, `reset-password.html`, `results.html`, `js/ui-common.js`, `js/teacher.js`, `js/student.js`, `js/accounting.js`, `backend/user-service/Code.gs`, `backend/academic-service/Code.gs`
+- **Dependencias Expuestas:** `ConfiguracionSistema`, `ConfiguracionDashboard`, `ROLE_PERMISSIONS`, `history.pushState`, `popstate`, `sw.js`
+- **Descripción del Alcance:**
+  1. Corregir títulos visibles: «Área de Contaduría» en contabilidad, «Secretaría» como título principal, y remover «Área de informática» de la UI general.
+  2. Rediseñar el botón de reporte de problemas `#btn-global-report-issue` a un icono discreto sin texto visible con tooltip accesibilidad.
+  3. Condicionar la aparición del carrusel de cafetería en `index.html` a la verificación de encargado activo + productos disponibles.
+  4. Configuración editable e independiente de nombres para «Tiendita Escolar» y «Cafetería» persistida en backend.
+  5. Implementar sistema de menús lateral de escritorio acordeón (auto-cierre de secciones hermanas) y menú hamburguesa móvil/PWA equivalente, conservando el menú inferior PWA.
+  6. Prevenir bucles infinitos en el historial del navegador (`pushState` / `popstate`) y retroceso de Android.
+  7. Configuración académica global (grados/niveles adaptables) y resolución de equivalencias de secciones (1/A, 2/B, 3/C) con identificadores estables.
+  8. Auditar e integrar las 18 secciones del catálogo de referencia, construyendo la matriz completa de auditoría y la lista de funciones faltantes/parciales.
+- **Criterios de Aceptación:**
+  - Títulos corregidos en todas las vistas.
+  - Botón de reporte de problemas discreto (solo icono + tooltip).
+  - Carrusel de cafetería oculto automáticamente cuando falta encargado o productos.
+  - Nombres de Tiendita Escolar y Cafetería editables y persistentes.
+  - Panel lateral acordeón y menú hamburguesa funcional por rol sin afectar la barra PWA inferior.
+  - Botón de retroceso opera sin ciclos ni bucles.
+  - Equivalencias 1/A, 2/B, 3/C operativas en matrícula y reportes.
+  - Matriz de auditoría de las 18 secciones del catálogo completada en el entregable.
+- **Estado:** [ ] En Ejecución
+
 ## TAREAS PENDIENTES DE REVISIÓN
 
 ### [REQ-FAM-001] Gestión Familiar Multiestudiante y Sistema de Gráficas e Indicadores Configurables

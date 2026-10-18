@@ -6,6 +6,7 @@
 document.addEventListener('DOMContentLoaded', function() {
     // REQ: Priorización de Carga (Ticket 4)
     loadNews();
+    loadCafeteriaIndexCarousel();
 
     // Setup Common UI (Header, Scroll, Logout)
     if (window.setupCommonUI) window.setupCommonUI();
@@ -40,6 +41,38 @@ document.addEventListener('DOMContentLoaded', function() {
     var gameListMenu = document.getElementById('game-list-menu');
     var backToMainActivitiesButton = document.getElementById('back-to-main-activities-button');
     var dynamicallyLoadedGameContainer = document.getElementById('dynamically-loaded-game-container');
+
+    function loadCafeteriaIndexCarousel() {
+        var section = document.getElementById('institutional-carousel-section');
+        var container = document.getElementById('promo-carousel-container');
+        if (!section || !container) return;
+
+        fetchApi('ACCOUNTING', 'getCafeteriaMenu', { estado: 'disponible' })
+            .then(function(res) {
+                if (res && res.status === 'success' && Array.isArray(res.data) && res.data.length > 0) {
+                    var items = res.data;
+                    section.classList.remove('hidden');
+                    container.innerHTML = items.map(function(item) {
+                        var img = item.imagenUrlThumb || item.imagenUrl || 'imagenes/new-generation-logo.png';
+                        return '' +
+                            '<div class="flex-none w-64 p-4 bg-white rounded-2xl border border-amber-100 shadow-sm flex items-center gap-3">' +
+                                '<img src="' + img + '" alt="' + (item.nombrePlato || 'Alimento') + '" class="w-12 h-12 object-contain rounded-xl bg-amber-50 p-1" onerror="this.src=\'imagenes/new-generation-logo.png\'">' +
+                                '<div>' +
+                                    '<span class="px-2 py-0.5 bg-amber-100 text-amber-800 rounded text-[8px] font-black uppercase">' + (item.categoria || 'Cafetería') + '</span>' +
+                                    '<h3 class="text-xs font-bold text-gray-900 line-clamp-1 mt-1">' + item.nombrePlato + '</h3>' +
+                                    '<p class="text-[10px] font-black text-amber-600 mt-0.5">L. ' + (parseFloat(item.precio) || 0).toFixed(2) + '</p>' +
+                                '</div>' +
+                            '</div>';
+                    }).join('');
+                } else {
+                    section.classList.add('hidden');
+                }
+            })
+            .catch(function(err) {
+                console.warn('Carrusel de cafetería oculto:', err);
+                section.classList.add('hidden');
+            });
+    }
 
     // --- State Variables ---
     var currentContentView = 'initial';

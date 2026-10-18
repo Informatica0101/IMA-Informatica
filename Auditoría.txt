@@ -785,3 +785,42 @@ Archivos y Módulos Auditados:
 - Extender `js/student.js` con el Selector Enriquecido de Estudiantes (`#family-student-selector`) y la Vista Familiar Consolidada (`#family-consolidated-summary`).
 - Extender la gestión económica familiar para calcular correctamente importes individuales y familiares, soportando la distribución de pagos conjuntos (`distribuirPagoConjuntoFamiliar`) y el desglose de becas/descuentos sin duplicar totales.
 - Implementar en `js/ui-common.js` / `js/student.js` / `js/teacher.js` el componente de Gráficas Universales Configurables con filtros por parcial/grado/sección, paletas personalizadas, adaptabilidad móvil y permisos RBAC rigurosos en backend y frontend.
+
+====================================================================================================
+
+AUDITORÍA TÉCNICA Y DIAGNÓSTICO DE ARQUITECTURA - FASE: ADAPTACIÓN INTEGRAL DE DASHBOARDS, MENÚS POR ROL, CONFIGURACIÓN ACADÉMICA Y AUDITORÍA DE HERRAMIENTAS - Mon Jul 6 2026
+
+Archivos y Módulos Auditados:
+- HTML Vistas: index.html, student-dashboard.html, teacher-dashboard.html, dashboard-contabilidad.html, dashboard-recursos-humanos.html, dashboard-tienda.html, dashboard-cafeteria.html, exam.html, forgot-password.html, reset-password.html, results.html
+- Scripts Cliente: js/ui-common.js, js/teacher.js, js/student.js, js/accounting.js, js/auth.js, js/api.js, js/config.js, sw.js
+- Backend: backend/user-service/Code.gs, backend/academic-service/Code.gs, backend/accounting-service/Code.gs, backend/task-service/Code.gs, backend/exam-service/Code.gs
+
+1. DIAGNÓSTICO Y CORRECCIONES REQUERIDAS
+- Títulos Visibles:
+  * `dashboard-contabilidad.html`: Sustituir «Gestión Contable & Descuentos» por «Área de Contaduría».
+  * `teacher-dashboard.html` / Secretaría: Título principal «Secretaría» al conmutar a rol Secretaría.
+  * Remoción de «Área de informática» en `exam.html`, `forgot-password.html`, `reset-password.html`, `results.html` y encabezados generales donde identificaba erróneamente la plataforma completa.
+- Botón de Reporte de Problemas:
+  * Modificar `#btn-global-report-issue` en `js/ui-common.js` para mostrar únicamente un icono discreto (`<i class="fa-solid fa-circle-exclamation text-amber-400"></i>`), eliminando el texto visible «Reportar problema», manteniendo el tooltip y aria-label accesibles y conservando intacta su funcionalidad y validación de 20 caracteres mínimos.
+- Carrusel de Cafetería en `index.html`:
+  * Modificar `#promo-carousel-container` para condicionar su despliegue a la DOBLE VERIFICACIÓN: 1) Existe usuario activo con rol `EncargadoCafeteria` / `Cafeteria`, y 2) Existen productos de cafetería registrados y disponibles. Si falta cualquiera, ocultar la sección sin mostrar productos estáticos ni vacíos.
+- Configuración Nombres Tienda Escolar y Cafetería:
+  * Títulos predeterminados: «Tiendita Escolar» y «Cafetería». Opciones editables guardadas en `ConfiguracionSistema` / `ConfiguracionDashboard` y aplicadas de forma transversal.
+- Sistema de Menús Lateral y Hamburguesa Móvil por Rol:
+  * Implementar panel lateral desplegable en escritorio con menú tipo acordeón (animación fluida, auto-cierre de secciones hermanas, máximo 1 abierta).
+  * Menú hamburguesa móvil y PWA equivalente con iconografía y jerarquía por rol, conservando el menú inferior PWA.
+- Historial y Navegación de Retroceso:
+  * Refactorizar gestión de historial (`window.history.pushState` y `popstate`) en `js/ui-common.js` para evitar bucles infinitos en retroceso del navegador o Android.
+- Configuración Académica (Grados, Secciones, Equivalencias):
+  * Permitir niveles/grados configurables por institución sin forzar prebásica ni bachilleratos.
+  * Resolución de equivalencias de secciones (1 / A, 2 / B, 3 / C) manteniendo identidades estables en backend.
+- Catálogo de Referencia de 18 Secciones:
+  * Auditoría e integración del catálogo completo de herramientas (Matrículas, Secretaría, Carga académica, Notas, Comunicaciones, Tareas, Reportes, Aula Virtual, Jornalización, Gestiones, Disciplina, Logros, Seguimiento, LandingBox, Reportes, Documentos, Configuración) y elaboración de la matriz de auditoría con clasificación de estados.
+
+2. PLAN DE TRABAJO
+- Modificar títulos en HTML y JS (`dashboard-contabilidad.html`, `exam.html`, etc.).
+- Convertir `#btn-global-report-issue` a icono discreto en `js/ui-common.js`.
+- Programar verificación dinámica de cafetería en `index.html` / `js/ui-common.js`.
+- Programar sidebar acordeón, menú hamburguesa y prevención de bucles en retroceso.
+- Extender la configuración académica con equivalencias 1/A, 2/B y 3/C.
+- Mapear e integrar las herramientas del catálogo en la matriz de auditoría.
