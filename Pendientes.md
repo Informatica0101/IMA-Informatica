@@ -5679,3 +5679,52 @@ La Fase 6 se considerará implementada cuando:
 - Las pruebas de regresión no revelen daños en las funciones previamente operativas.
 
 Si alguna condición no puede completarse por falta de infraestructura o de servicios existentes, debe quedar identificada como pendiente con evidencia y explicación concreta. No debe declararse finalizada toda la fase mientras queden brechas críticas sin resolver.
+
+---
+
+# PLAN DE IMPLEMENTACIÓN DETALLADO - FASE 7: BIENESTAR ESTUDIANTIL Y ORIENTACIÓN
+
+### REQ-BS-001: Módulo UI de Orientación y Bienestar Estudiantil
+- **Objetivo:** Construir el panel interfaz principal para orientadores y docentes para gestionar el expediente psicopedagógico, incidencias de conducta y casos de seguimiento.
+- **Backend Reutilizado:** `getAttendanceFollowupCases`, `saveAttendanceFollowupCase`, `addCaseFollowUpNote` en `backend/academic-service/Code.gs`.
+- **Archivos a Modificar:** `js/teacher.js`, `teacher-dashboard.html`.
+- **Tareas Concretas:**
+  1. Crear la pestaña "Bienestar & Orientación" en `teacher-dashboard.html`.
+  2. Implementar vista de lista de casos activos con filtros por estado (`Abierto`, `En_Proceso`, `Cerrado`), nivel de prioridad y motivo de apertura.
+  3. Diseñar modal de detalle de caso con historial cronológico de notas de seguimiento, fecha de revisión y responsable.
+  4. Agregar formulario para registro de incidentes de conducta graduados por gravedad (`Leve`, `Grave`, `Muy Grave`) con adjuntos y evidencias.
+
+### REQ-BS-002: Motor de Alertas Preventivas de Ausentismo, Rendimiento y Riesgo de Deserción
+- **Objetivo:** Implementar la lógica automatizada backend para detectar patrones de faltas, materias reprobadas y riesgo de abandono escolar.
+- **Backend Reutilizado:** `getStudentAttendanceSummary` en `backend/academic-service/Code.gs`, `getStudentAcademicReport` en `backend/exam-service/Code.gs`.
+- **Archivos a Modificar:** `backend/academic-service/Code.gs`, `js/teacher.js`.
+- **Tareas Concretas:**
+  1. Crear función `evaluateStudentRiskAlerts` para analizar faltas injustificadas consecutivas (> 3) o acumuladas en el periodo (> 5).
+  2. Evaluar estudiantes con 2 o más asignaturas con promedio menor a 70% para disparar alerta de bajo rendimiento.
+  3. Generar la alerta preventiva de riesgo de deserción en la hoja `AlertasBienestar` e informar en el panel del orientador.
+
+### REQ-BS-003: Módulo de Derivaciones Psicopedagógicas y Flujo de Remisión
+- **Objetivo:** Permitir a docentes remitir un estudiante al equipo de Orientación o Psicología Escolar con acuse de recibo y seguimiento.
+- **Backend Reutilizado:** `saveAttendanceFollowupCase` en `backend/academic-service/Code.gs`.
+- **Archivos a Modificar:** `backend/academic-service/Code.gs`, `js/teacher.js`, `teacher-dashboard.html`.
+- **Tareas Concretas:**
+  1. Crear la función backend `submitGuidanceReferral` para registrar la solicitud de derivación enviada por un docente.
+  2. Implementar la bandeja "Derivaciones Recibidas" para el rol de Orientación con acciones de `Aceptar`, `Solicitar_Informacion` o `Reasignar`.
+  3. Notificar al docente sobre la aceptación de la derivación y la apertura del caso de seguimiento correspondiente.
+
+### REQ-BS-004: Gestión de Planes de Acompañamiento y Evaluación de Progreso
+- **Objetivo:** Permitir la edición, actualización y medición del porcentaje de cumplimiento de los objetivos de un plan de acompañamiento.
+- **Backend Reutilizado:** `saveSupportPlan`, `getSupportPlans` en `backend/user-service/Code.gs`.
+- **Archivos a Modificar:** `backend/user-service/Code.gs`, `js/teacher.js`, `teacher-dashboard.html`.
+- **Tareas Concretas:**
+  1. Refactorizar `saveSupportPlan` para actualizar el plan existente por `planId` en lugar de duplicar filas.
+  2. Agregar interfaz interactiva para marcar objetivos cumplidos y registrar el porcentaje de avance global.
+  3. Permitir adjuntar actas de compromiso y firmas digitales de estudiantes y padres de familia.
+
+### REQ-BS-005: Reforzar Privacidad, Cifrado y Control RBAC de Expedientes Confidenciales
+- **Objetivo:** Garantizar que las notas psicopedagógicas sensibles solo sean accesibles por usuarios con el rol `Orientador`, `Psicologo` o `Director`.
+- **Backend Reutilizado:** `checkAuthorization_` en `backend/academic-service/Code.gs`.
+- **Archivos a Modificar:** `backend/academic-service/Code.gs`, `backend/user-service/Code.gs`.
+- **Tareas Concretas:**
+  1. Filtrar las notas confidenciales en `getAttendanceFollowupCases` si el usuario no posee el permiso especial `VIEW_CONFIDENTIAL_NOTES`.
+  2. Registrar en la bitácora de auditoría estructurada (`RegistrosAuditoria`) cada acceso o consulta realizada a expedientes confidenciales de bienestar.

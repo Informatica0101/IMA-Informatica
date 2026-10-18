@@ -992,3 +992,22 @@ Hallazgos Principales:
 4. Brecha en Reporte de Reparaciones para Docentes (OP-05): Falta portal de auto-servicio de reporte de fallas en teacher-dashboard.html sin requerir permisos de contabilidad.
 5. Biblioteca (OP-01): Funciones de préstamos y catálogo operativas, pero faltan paneles de gestión UI para reservas, incidencias y catálogo estructurado de títulos vs. ejemplares físicos.
 6. Integración de Expedientes (OP-12): Se requiere reflejar custodia de libros, transporte y equipos en el expediente digital del estudiante.
+
+===============================================================================
+REGISTRO DE AUDITORÍA FUNCIONAL INTEGRAL: FASE 7 (BIENESTAR ESTUDIANTIL Y ORIENTACIÓN)
+===============================================================================
+Fecha: Mayo 2024
+Módulo Auditado: Bienestar Estudiantil y Orientación (Ampliación Fase 12 del Plan General)
+Componentes e Inspección:
+  - backend/academic-service/Code.gs (CasosSeguimiento, IncidenciasAsistencia, SalidasAnticipadas, addCaseFollowUpNote)
+  - backend/user-service/Code.gs (PlanesAcompanamiento, saveSupportPlan, getSupportPlans)
+  - js/teacher.js, js/student.js, js/ui-common.js
+  - teacher-dashboard.html, student-dashboard.html
+
+Hallazgos Principales:
+1. Cobertura de Persistencia GAS: 4 tablas en Google Sheets operativas (CasosSeguimiento, PlanesAcompanamiento, IncidenciasAsistencia, SalidasAnticipadas).
+2. Endpoints Backend: 8 funciones de servidor activas para casos de seguimiento, notas cronológicas, planes de acompañamiento e incidencias.
+3. Brecha de UI Frontend: Inexistencia de un panel o portal dedicado de Orientación y Bienestar Estudiantil para docentes y orientadores.
+4. Privacidad y Confidencialidad (BS-10/BS-11): Las notas confidenciales de seguimiento se sirven sin restricción explícita de rol psicopedagógico especializado.
+5. Ausencia de Motor de Alertas Preventivas (BS-06, BS-07, BS-08): No existen rutinas para detección automática de riesgo de deserción, ausentismo o bajo rendimiento recurrente.
+6. Ausencia de Flujo de Derivaciones y Citas (BS-03, BS-05, BS-12): No hay flujos para remisión de casos entre docentes y orientadores ni actas de reuniones con familias.
