@@ -1089,3 +1089,37 @@ Hallazgos Principales:
 4. Ausencia de Métricas de Deserción y Retención (INT-03): Falta de fórmulas y tableros para medir tasa de deserción inter-anual y retención por cohorte.
 5. Ausencia de Simuladores y Proyecciones (INT-07/INT-08/INT-09): Inexistencia de modelos cuantitativos de proyección de demanda de cupos, proyección de ingresos futuros y necesidades de personal.
 6. Ausencia de Auditoría de Calidad de Datos (INT-10): Sin rutinas en segundo plano para detección automática de datos atípicos o inconsistencias (notas > 100, pagos negativos).
+
+
+===============================================================================
+AUDITORÍA FUNCIONAL Y DIAGNÓSTICO DE INFRAESTRUCTURA TRANSVERSAL
+===============================================================================
+FECHA: 2026-10-18
+MÓDULO: Infraestructura Transversal y Capacidades del Ecosistema Educativo
+ARCHIVOS AUDITADOS:
+- backend/user-service/Code.gs
+- backend/academic-service/Code.gs
+- backend/accounting-service/Code.gs
+- backend/task-service/Code.gs
+- backend/exam-service/Code.gs
+- js/ui-common.js
+- js/api.js
+- js/teacher.js
+- js/student.js
+- js/persistence.js
+- sw.js, manifest.json
+- teacher-dashboard.html, student-dashboard.html
+
+RESUMEN DE LAS 12 CAPACIDADES TRANSVERSALES EVALUADAS:
+1. Identidad única: Completa y verificada. Desacoplamiento de Persona (personaId: PER-XXXXXX) y CuentaUsuario. Búsqueda y fusión auditada de expedientes duplicados (findPersonMatches, createPerson, linkPersonAccount, findDuplicateStudents, mergeStudentFiles).
+2. Permisos granulares: Completa y verificada. Validación server-side mediante getUserVerifiedRole(payload) y ROLE_PERMISSIONS en todos los microservicios. Rechazo explícito con AUTH_PERMISSION_DENIED.
+3. Auditoría de operaciones: Completa y verificada. logStructuredEvent guardando en RegistrosAuditoria con actor, fecha, hora, IP, servicio y severidad. Endpoints protegidos getStructuredLogs y purgeStructuredLogs.
+4. Historial y versionado: Completa y verificada. Hojas HistorialAcademico, EntregasVersiones, RevisionesDecisionesTramite y AceptacionesPoliticas conservando trazabilidad inmutable.
+5. Búsqueda global: Implementada parcialmente / Requiere mejoras. Búsqueda local por modulo (#student-search, findDuplicateStudents, getInstitutionalReportCatalog) operativa, pendiente omnibox unificada global multi-módulo.
+6. Formularios configurables: Completa y verificada. FormulariosInstitucionales con Diseñador visual #modal-form-builder en teacher-dashboard.html y controladores JS (saveInstitutionalForm, getInstitutionalForms, submitInstitutionalFormRequest).
+7. Importación y exportación: Completa y verificada. Importador universal con mapeo de columnas y pre-validación fila por fila (importDataWithColumnMapping, validateImportPreview). Exportación SheetJS XLSX, PDF y CSV.
+8. API e integraciones: Completa y verificada. Microservicios REST/JSON Apps Script (doPost) con wrapper client-side fetchApi en js/api.js y gestión de adaptadores de proveedores externos (configureProviderIntegration).
+9. Respaldo y recuperación: Completa y verificada. Respaldo y restauración de seguridad (createSystemBackup, verifyBackupIntegrity, restoreSystemBackup) con preservación explícita e inalterable de calificaciones históricas.
+10. Accesibilidad: Completa y verificada. Tokens WCAG 2.2 AA en css/style.css, navegación por teclado global ESC, guía interactiva (window.startInteractiveGuide) y ayuda contextual (window.openContextualHelpModal).
+11. Operación sin conexión: Completa y verificada. sw.js precaché, IndexedDB (ngca_offline_db), cola de sincronización (queueOfflineAction, syncOfflineQueue) y diálogo de resolución de conflictos.
+12. Configuración central: Completa y verificada. ConfiguracionSistema, ConfiguracionRoles, ConfiguracionDashboard y modal de ajustes #modal-dashboard-settings en js/ui-common.js.
