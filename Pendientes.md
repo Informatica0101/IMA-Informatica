@@ -6928,3 +6928,43 @@ Instrucción final: implementa exclusivamente GD-IMP-01, realiza las pruebas pos
 - **Tareas Concretas:**
   1. Permitir definir reglas del tipo `SI Monto > 50000 ENTONCES Requiere_Aprobacion_Director`.
   2. Evaluar dinámicamente los campos de la respuesta JSON del trámite al momento de determinar la siguiente etapa del flujo.
+
+---
+
+# PLAN DE IMPLEMENTACIÓN DETALLADO - FASE 11: COMUNICACIÓN INSTITUCIONAL MULTICANAL
+
+### REQ-COM-001: Token de Idempotencia y Deduplicación de Envíos Multicanal (COM-19)
+- **Objetivo:** Prevenir el envío duplicado de mensajes a apoderados y alumnos ante reintentos de red o detonantes simultáneos.
+- **Backend Reutilizado:** `sendMultiChannelNotification` en `backend/user-service/Code.gs`.
+- **Archivos a Modificar:** `backend/user-service/Code.gs`.
+- **Tareas Concretas:**
+  1. Modificar `sendMultiChannelNotification` para aceptar un `eventId` o `idempotencyKey` opcional.
+  2. Consultar en `RegistroEnviosExternos` si ya existe un envío exitoso con el mismo `eventId` y destinatario en las últimas 24 horas.
+  3. Descartar envíos duplicados retornando la respuesta del primer despacho exitoso.
+
+### REQ-COM-002: Módulo UI de Agendamiento de Citas y Reuniones Familiares (COM-12)
+- **Objetivo:** Crear una interfaz para coordinar citas entre padres de familia y docentes con gestión de disponibilidad horaria y confirmación.
+- **Backend Reutilizado:** `getUnifiedNotifications` en `backend/user-service/Code.gs`.
+- **Archivos a Modificar:** `backend/user-service/Code.gs`, `js/teacher.js`, `js/student.js`, `teacher-dashboard.html`, `student-dashboard.html`.
+- **Tareas Concretas:**
+  1. Crear la hoja de cálculo `CitasReuniones` para registrar `[CitaID, SolicitanteUserId, DocenteUserId, EstudianteUserId, FechaHoraInicio, FechaHoraFin, Modalidad, Estado, Observaciones]`.
+  2. Implementar los endpoints `scheduleFamilyAppointment` y `getFamilyAppointments`.
+  3. Construir la vista "Agenda de Citas" en los paneles de docentes y padres con botones de `Aceptar`, `Reprogramar` o `Cancelar`.
+
+### REQ-COM-003: Botón de Conformidad Firmada para Circulares Institucionales Urgentes (COM-07)
+- **Objetivo:** Exigir un acuse de recibo y conformidad formal firmada por el apoderado al leer comunicados críticos o circulares normativas.
+- **Backend Reutilizado:** `ConfirmacionesLecturaComunicados` en `backend/user-service/Code.gs`.
+- **Archivos a Modificar:** `backend/user-service/Code.gs`, `js/student.js`, `student-dashboard.html`.
+- **Tareas Concretas:**
+  1. Extender `ComunicadosInstitucionales` para incluir la casilla `RequiereConformidadFirmada`.
+  2. Mostrar un modal de lectura obligatoria en `student-dashboard.html` cuando exista un comunicado urgente con solicitud de conformidad pendiente.
+  3. Registrar en `ConfirmacionesLecturaComunicados` la marca de tiempo, dirección IP y aceptación formal del padre de familia.
+
+### REQ-COM-004: Editor Visual de Plantillas de Mensajes e Inserción de Variables Dinámicas (COM-17)
+- **Objetivo:** Permitir a administradores personalizar el texto y diseño HTML de los correos y mensajes automáticos.
+- **Backend Reutilizado:** `configureNotificationChannel` en `backend/user-service/Code.gs`.
+- **Archivos a Modificar:** `backend/user-service/Code.gs`, `js/teacher.js`, `teacher-dashboard.html`.
+- **Tareas Concretas:**
+  1. Crear la hoja de cálculo `PlantillasMensajes` con etiquetas dinámicas `{{NOMBRE_ESTUDIANTE}}`, `{{ASIGNATURA}}`, `{{FECHA_EVENTO}}`.
+  2. Diseñar la interfaz "Editor de Plantillas de Notificación" dentro del panel de configuración central en `teacher-dashboard.html`.
+  3. Rutar el motor de renderizado de `sendMultiChannelNotification` para utilizar las plantillas almacenadas en la base de datos.

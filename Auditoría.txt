@@ -1050,3 +1050,22 @@ Hallazgos Principales:
 4. Brecha en Asignación Dinámica y Suplencias (WF-03/WF-06): Falta resolución por Jerarquía Orgánica / Rol y configuración de suplente por licencias médicas o vacaciones.
 5. Ausencia de SLA y Escalamiento Automático (WF-05/WF-07): Sin temporizadores de vencimiento por etapa ni reasignación automática al superior jerárquico.
 6. Falta de Transaccionalidad (WF-13): Escritura no atómica entre decisiones y solicitudes requiere protección con LockService.
+
+===============================================================================
+REGISTRO DE AUDITORÍA FUNCIONAL INTEGRAL: FASE 11 (COMUNICACIÓN INSTITUCIONAL MULTICANAL)
+===============================================================================
+Fecha: Mayo 2024
+Módulo Auditado: Comunicación Institucional Multicanal (Ampliación Fase 26 del Plan General)
+Componentes e Inspección:
+  - backend/user-service/Code.gs (getUnifiedNotifications, sendMultiChannelNotification, configureNotificationChannel, getNotificationChannelConfigs, sendChannelNotificationTest, createInstitutionalAnnouncement, sendInternalMessage)
+  - backend/accounting-service/Code.gs, backend/academic-service/Code.gs
+  - js/teacher.js, js/student.js, js/ui-common.js
+  - teacher-dashboard.html, student-dashboard.html
+
+Hallazgos Principales:
+1. Cobertura de Persistencia GAS: 7 tablas en Google Sheets operativas (CanalesProveedoresConfig, RegistroEnviosExternos, ComunicadosInstitucionales, ConfirmacionesLecturaComunicados, ConversacionesMensajes, BandejaNotificaciones, PreferenciasNotificacion).
+2. Endpoints Backend: 10 funciones clave de servidor activas para despacho unificado multicanal, mensajería interna, anuncios por audiencias, notificaciones in-app y configuración de adaptadores externos.
+3. Despachador Unificado (COM-01/COM-11): Sistema rutea mensajes a través de adaptadores (SMS, WhatsApp, Messenger, Email) aplicando preferencias por categoría del usuario.
+4. Ausencia de Token de Deduplicación (COM-19): Falta clave de idempotencia en sendMultiChannelNotification que evite envíos duplicados por reintentos de red.
+5. Ausencia de Agenda de Citas Familiares (COM-12): No hay tablas ni endpoints para agendar reuniones apoderado-docente ni confirmar asistencias.
+6. Falta de Conformidad Firmada en Circulares (COM-07): Registro de lectura se limita a apertura; falta botón de acuse/conformidad formal para circulares críticas.
