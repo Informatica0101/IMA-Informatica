@@ -4061,3 +4061,405 @@ Al completar estas tareas, la institución deberá poder preparar horarios media
 Las funciones existentes deben seguir operativas y los cambios deben conservar la integridad de los datos académicos, los permisos y el historial institucional.
 
 Importante: implementa las tareas individualmente y respeta sus dependencias. No declares completa toda la Fase 3 cuando solamente se haya terminado una parte. Informa el estado real de cada tarea y de sus criterios de aceptación.
+
+---
+
+PLAN DE IMPLEMENTACIÓN: FASE 4 - ERP FINANCIERO Y PRESUPUESTARIO COMPLETO
+
+Plataforma: Ecosistema Educativo New Generation Christian Academy
+Fase: 4. ERP financiero y presupuestario completo
+Ampliación del plan general: Fase 9
+Documento de referencia: Informe de Auditoría Funcional Integral de la Fase 4
+Objetivo: Completar las funciones parciales e implementar las mejoras identificadas, reutilizando los módulos existentes y preservando la compatibilidad con la plataforma actual.
+
+INSTRUCCIONES GENERALES PARA JULES
+
+Antes de comenzar, consulta "METODOLOGIA_DESARROLLO.md", las instrucciones vigentes del proyecto y los documentos de seguimiento existentes. Examina el código real relacionado con cada tarea antes de decidir cómo implementarla.
+
+La auditoría informa que el sistema ya dispone de funciones operativas para presupuestos anuales, cuentas por cobrar, becas, recargos, comprobantes de pago, facturación fiscal, conciliación bancaria, cierres de caja, compras, inventarios, proveedores, contabilidad de partida doble y consultas financieras por ejercicio. Estas funciones deben conservarse y aprovecharse.
+
+No reconstruyas módulos que ya están implementados ni sustituyas funciones existentes sin una justificación técnica verificable. No asumas que una función está correctamente conectada a la interfaz solo porque existe en el servidor.
+
+Reglas obligatorias
+
+1. Cada tarea debe implementarse de forma independiente, con sus propias pruebas y criterios de aceptación.
+2. No modificar módulos ajenos a la tarea, salvo dependencias directas necesarias para su funcionamiento.
+3. Mantener la compatibilidad con las hojas de Google Sheets, las funciones del servidor, los controladores JavaScript y las interfaces existentes.
+4. Mantener las validaciones de permisos en el servidor. Ocultar un botón no constituye una medida de seguridad suficiente.
+5. Preservar la partida doble, la trazabilidad de los movimientos, la integridad de los saldos y la prevención de operaciones duplicadas.
+6. No efectuar cobros, pagos, transferencias ni operaciones financieras reales durante las pruebas.
+7. No inventar integraciones bancarias ni conexiones con servicios fiscales externos que no existan. Distinguir entre generar un documento fiscal y transmitirlo o validarlo ante una autoridad externa.
+8. Toda operación financiera que afecte saldos debe validar los datos antes de guardar y evitar registros parciales o duplicados.
+9. La interfaz debe utilizar español claro para personal administrativo y familias, sin exponer términos de programación, procesos internos ni detalles técnicos innecesarios.
+10. Registrar los resultados reales de las pruebas y declarar cualquier limitación que impida verificar una función.
+
+---
+
+TAREA 1. REESTRUCTURACIÓN DE CONVENIOS Y PLANES DE PAGO FAMILIARES
+
+Prioridad: Alta
+Área: Contabilidad, cuentas por cobrar y gestión de familias.
+
+Situación identificada
+
+El sistema permite consultar las autorizaciones y los movimientos de crédito familiar mediante "getFamilyCreditAuthorizations" y las estructuras "CreditoFamiliarAutorizaciones" y "CreditoFamiliarMovimientos". Sin embargo, la auditoría señala que falta una interfaz para reestructurar deudas mediante cuotas mensuales personalizadas.
+
+Objetivo
+
+Permitir al personal autorizado consultar, crear y modificar convenios de pago individuales con condiciones explícitas, calendario de cuotas y seguimiento del cumplimiento, utilizando los saldos existentes como base.
+
+Requisitos funcionales
+
+1. Incorporar en la interfaz financiera una opción para consultar los convenios de una familia o cuenta de estudiante.
+2. Mostrar el saldo pendiente que puede incluirse en el convenio, los pagos registrados y los recargos o descuentos aplicables.
+3. Permitir crear un convenio con:
+   - Familia y estudiantes incluidos, según los permisos y las reglas vigentes.
+   - Saldo inicial sujeto al convenio.
+   - Fecha de formalización.
+   - Cantidad de cuotas.
+   - Importe de cada cuota.
+   - Fecha de vencimiento de cada cuota.
+   - Observaciones y condiciones autorizadas.
+4. Permitir una distribución personalizada de cuotas, siempre que la suma de las cuotas corresponda al importe acordado y las diferencias de redondeo se resuelvan de forma explícita.
+5. Mostrar una vista previa del calendario de pagos antes de confirmar el convenio.
+6. Registrar el convenio aprobado y generar sus cuotas sin duplicar los cargos originales.
+7. Identificar cuotas pendientes, pagadas, vencidas y parcialmente abonadas.
+8. Aplicar los pagos a las cuotas correspondientes sin duplicar abonos ni alterar el historial contable.
+9. Definir qué ocurre cuando se registra un pago parcial, un pago anticipado o una cuota vencida. Reutilizar las reglas de cobro existentes y no inventar penalizaciones nuevas.
+10. Si se modifica un convenio con cuotas pendientes, conservar el historial anterior y registrar quién autorizó el cambio, cuándo se realizó y cuáles fueron las condiciones anteriores y nuevas.
+11. No permitir que una modificación borre pagos ya recibidos o reduzca artificialmente el saldo de la cuenta.
+12. Restringir las operaciones según los permisos financieros existentes.
+
+Criterios de aceptación
+
+- Un usuario autorizado puede crear un convenio con varias cuotas y visualizar su calendario completo.
+- La suma de las cuotas coincide con el importe convenido, con tratamiento explícito de cualquier ajuste de redondeo.
+- Los pagos se reflejan en las cuotas y en el saldo correspondiente sin registrarse dos veces.
+- Un usuario sin autorización no puede crear ni modificar convenios mediante llamadas directas al servidor.
+- Los cambios conservan el historial y la trazabilidad.
+- Se prueban cuotas pagadas, pendientes, vencidas, pagos parciales y modificaciones de convenios.
+- La operación no altera indebidamente los cargos originales ni los asientos contables.
+
+---
+
+TAREA 2. PROYECCIONES PRESUPUESTARIAS PLURIANUALES
+
+Prioridad: Media
+Área: Presupuesto institucional.
+
+Situación identificada
+
+"getBudgets", "saveBudgetPlan" y "getBudgetExecutionReport" gestionan presupuestos por departamento y centro de costo, pero la auditoría no identifica una herramienta de proyección para varios años fiscales.
+
+Objetivo
+
+Incorporar una herramienta que permita planificar escenarios presupuestarios de varios ejercicios sin modificar los presupuestos oficiales ni los registros contables históricos.
+
+Requisitos funcionales
+
+1. Permitir seleccionar un ejercicio fiscal de referencia y uno o varios años futuros.
+2. Organizar las proyecciones por departamento, centro de costo y partida presupuestaria, según las estructuras existentes.
+3. Permitir introducir estimaciones futuras de ingresos, gastos y asignaciones presupuestarias.
+4. Permitir utilizar un importe manual o un porcentaje de variación sobre un ejercicio anterior.
+5. Mostrar claramente los importes históricos, el presupuesto aprobado, la ejecución disponible y las cifras proyectadas, sin confundirlos.
+6. Permitir comparar escenarios diferentes, por ejemplo, conservador, esperado y de crecimiento, si estos se pueden implementar reutilizando la estructura existente.
+7. Calcular las variaciones absolutas y porcentuales entre ejercicios.
+8. Mostrar alertas informativas cuando las estimaciones superen límites presupuestarios definidos o generen saldos proyectados negativos.
+9. Permitir guardar, consultar y actualizar escenarios sin convertirlos automáticamente en presupuestos aprobados.
+10. Permitir que el personal autorizado apruebe formalmente un presupuesto futuro cuando corresponda, conservando el escenario original y el historial de cambios.
+11. No modificar asientos, pagos, compromisos ni saldos históricos como consecuencia de crear o editar una proyección.
+
+Criterios de aceptación
+
+- Se pueden generar y guardar proyecciones para varios ejercicios fiscales.
+- Los escenarios se distinguen visualmente de los presupuestos aprobados y de los importes ejecutados.
+- Los cálculos de variación coinciden con los datos de prueba.
+- Editar una proyección no modifica la contabilidad ni los presupuestos históricos.
+- Los escenarios pueden consultarse posteriormente por ejercicio, departamento y centro de costo.
+- Se prueban valores nulos, porcentajes negativos, presupuestos sin ejecución previa y cifras que produzcan saldos negativos.
+
+---
+
+TAREA 3. ALERTAS POR VENCIMIENTO DE CONTRATOS DE PROVEEDORES
+
+Prioridad: Media
+Área: Proveedores y compromisos institucionales.
+
+Situación identificada
+
+"ProveedoresActivos" permite gestionar proveedores y condiciones de pago. La auditoría identifica la ausencia de alertas automáticas por vencimiento de contratos de servicios.
+
+Objetivo
+
+Permitir registrar fechas de vigencia contractual y avisar con anticipación al personal autorizado cuando un contrato esté próximo a vencer o haya vencido.
+
+Requisitos funcionales
+
+1. Examinar primero si existe una estructura para contratos de proveedores. Reutilizarla si está disponible; crear una nueva únicamente si es necesario.
+2. Registrar o consultar, como mínimo:
+   - Proveedor.
+   - Descripción del contrato.
+   - Fecha de inicio.
+   - Fecha de vencimiento.
+   - Responsable institucional.
+   - Estado contractual.
+   - Observaciones.
+3. Permitir configurar anticipaciones de aviso, con valores predeterminados razonables que puedan modificarse.
+4. Mostrar los contratos próximos a vencer, vencidos y vigentes en una vista accesible para los responsables autorizados.
+5. Evitar avisos duplicados para el mismo contrato y período de anticipación.
+6. Identificar contratos renovados, terminados o sustituidos para evitar alertas que ya no correspondan.
+7. Integrar las alertas con el sistema de notificaciones existente, si resulta compatible.
+8. Si no existe un mecanismo de ejecución programada disponible, implementar primero una consulta de vencimientos al abrir el módulo y documentar esa limitación, sin afirmar que existen avisos automáticos en segundo plano.
+9. Registrar los cambios de fechas, renovaciones y estados contractuales.
+
+Criterios de aceptación
+
+- Un contrato con fecha de vencimiento futura aparece cuando entra en el período de aviso configurado.
+- Un contrato vencido se identifica correctamente.
+- Un contrato renovado deja de generar avisos correspondientes a su vencimiento anterior.
+- Los avisos no se duplican de forma injustificada.
+- Solo el personal autorizado puede consultar información contractual restringida o modificarla.
+- Se prueban fechas límite, contratos sin fecha de vencimiento y cambios de estado.
+
+---
+
+TAREA 4. PROYECCIÓN DEL FLUJO DE CAJA A SEIS MESES
+
+Prioridad: Alta
+Área: Tesorería y planificación financiera.
+
+Situación identificada
+
+"getCashBankSummary", "getFinancialSummary" y "getAccountsReceivablePayableSummary" permiten consultar liquidez y obligaciones actuales. No se identifica un motor para proyectar escenarios de flujo de caja a seis meses.
+
+Objetivo
+
+Crear una herramienta de previsión que estime la evolución futura de la liquidez institucional a partir de los saldos y obligaciones registrados, distinguiendo los datos confirmados de las estimaciones.
+
+Requisitos funcionales
+
+1. Consultar los saldos iniciales disponibles y los movimientos existentes mediante las funciones financieras actuales.
+2. Organizar la proyección por mes durante un horizonte de seis meses.
+3. Incluir, cuando los datos estén disponibles:
+   - Saldos iniciales.
+   - Cobros previstos de cuentas por cobrar.
+   - Pagos previstos a proveedores.
+   - Gastos recurrentes.
+   - Compromisos aprobados.
+   - Ingresos y egresos extraordinarios introducidos por usuarios autorizados.
+4. Evitar contabilizar dos veces un mismo ingreso o egreso al combinar cargos, cuentas por cobrar, movimientos bancarios, órdenes de compra y cuentas por pagar.
+5. Diferenciar los movimientos confirmados de los previstos, estimados o sujetos a aprobación.
+6. Permitir modificar supuestos de proyección sin alterar los registros oficiales.
+7. Calcular el saldo de caja proyectado por mes y señalar los períodos en que pueda existir déficit.
+8. Permitir comparar al menos un escenario base con escenarios alternativos, siempre que los datos disponibles permitan sustentarlos.
+9. Mostrar la fecha de actualización y explicar de forma comprensible los supuestos que afectan el resultado.
+10. No presentar estimaciones como garantías de cobro o pago.
+11. No alterar movimientos bancarios, asientos contables ni saldos reales al guardar escenarios.
+
+Criterios de aceptación
+
+- La herramienta muestra seis meses consecutivos de proyección.
+- Los cálculos parten del saldo inicial correcto y aplican cada entrada y salida una sola vez.
+- Las estimaciones se identifican claramente y pueden distinguirse de los movimientos confirmados.
+- Los escenarios pueden modificarse sin alterar la contabilidad oficial.
+- Se genera una advertencia cuando un saldo proyectado es negativo.
+- Las pruebas incluyen meses sin movimientos, cuentas por cobrar vencidas, compromisos de compra, pagos extraordinarios y escenarios con déficit.
+
+---
+
+TAREA 5. BITÁCORA DE GESTIONES DE COBRO
+
+Prioridad: Alta
+Área: Morosidad y cuentas por cobrar.
+
+Situación identificada
+
+"calculateLateFeesForAccount" permite calcular recargos por mora y clasificar cuentas según antigüedad de la deuda. Falta una bitácora visual para registrar las gestiones realizadas con familias o responsables de pago.
+
+Objetivo
+
+Incorporar un historial organizado de las acciones de seguimiento de cobro, vinculado a las cuentas correspondientes y sin sustituir los registros financieros oficiales.
+
+Requisitos funcionales
+
+1. Incorporar una sección de gestiones de cobro en la ficha financiera autorizada de cada cuenta.
+2. Registrar:
+   - Cuenta o estudiante relacionado.
+   - Fecha y hora de la gestión.
+   - Responsable de la gestión.
+   - Medio utilizado, como llamada, correo, reunión o comunicación escrita.
+   - Motivo de contacto.
+   - Resultado de la gestión.
+   - Compromiso de pago, cuando exista.
+   - Fecha acordada para el seguimiento.
+   - Observaciones necesarias.
+3. Permitir consultar el historial cronológico de gestiones.
+4. Mostrar compromisos de pago pendientes de seguimiento.
+5. Relacionar la gestión con las deudas existentes sin modificar automáticamente el saldo.
+6. Registrar el cumplimiento, incumplimiento o modificación de un compromiso.
+7. Restringir el acceso según los permisos financieros y de protección de datos existentes.
+8. No guardar datos sensibles innecesarios ni incluir detalles personales ajenos a la finalidad de cobro.
+9. Registrar modificaciones relevantes para mantener trazabilidad.
+
+Criterios de aceptación
+
+- Un usuario autorizado puede registrar y consultar gestiones de cobro.
+- El historial aparece ordenado cronológicamente.
+- Los compromisos pendientes pueden identificarse por su fecha de seguimiento.
+- Registrar una gestión no genera por sí solo un pago, cargo, recargo o asiento contable.
+- Los usuarios no autorizados no pueden consultar ni modificar la bitácora mediante llamadas directas al servidor.
+- Se prueban registros incompletos, fechas inválidas, compromisos cumplidos y compromisos vencidos.
+
+---
+
+TAREA 6. COMPARACIÓN FINANCIERA VISUAL ENTRE EJERCICIOS FISCALES
+
+Prioridad: Media
+Área: Informes contables y consolidación fiscal.
+
+Situación identificada
+
+"getFinancialSummary" permite consultar información de distintos ejercicios fiscales, pero la auditoría identifica que no existe una vista comparativa que presente varios ejercicios lado a lado.
+
+Objetivo
+
+Facilitar la comparación financiera entre ejercicios fiscales sin alterar los datos históricos ni cambiar las reglas contables existentes.
+
+Requisitos funcionales
+
+1. Incorporar una vista comparativa en el panel financiero.
+2. Permitir seleccionar dos o más ejercicios fiscales disponibles.
+3. Mostrar, según la información existente:
+   - Ingresos.
+   - Gastos.
+   - Resultado del ejercicio.
+   - Cuentas por cobrar.
+   - Cuentas por pagar.
+   - Saldos de caja y bancos.
+   - Presupuesto aprobado y ejecución.
+4. Mostrar variaciones absolutas y porcentuales cuando existan datos comparables.
+5. Diferenciar claramente los ejercicios completos de los que aún están en curso.
+6. Evitar comparar períodos de distinta duración sin advertirlo.
+7. Mantener los criterios de inclusión de movimientos y clasificación contable de los informes originales.
+8. Permitir consultar el detalle que sustenta cada total mediante los informes existentes.
+9. Respetar los filtros por año fiscal, centro de costo y permisos de acceso cuando sean aplicables.
+10. No modificar balances ni consolidar ejercicios mediante la alteración de registros históricos.
+
+Criterios de aceptación
+
+- Se pueden seleccionar y comparar al menos dos ejercicios.
+- Los totales coinciden con los informes financieros individuales para los mismos criterios.
+- Las variaciones porcentuales se calculan correctamente y se muestran de manera apropiada cuando el valor de referencia es cero.
+- Los períodos incompletos se identifican como tales.
+- La comparación no modifica registros contables.
+- Se prueban ejercicios sin movimientos, ejercicios en curso y variaciones negativas.
+
+---
+
+TAREA 7. PROYECCIONES PRESUPUESTARIAS Y FINANCIERAS: COHERENCIA ENTRE INFORMES
+
+Prioridad: Media
+Área: Integración entre presupuesto, tesorería y contabilidad.
+
+Situación identificada
+
+La auditoría identifica funciones separadas para presupuesto, ejecución, liquidez y cuentas por cobrar y pagar. Las nuevas proyecciones deben aprovechar estos datos sin duplicarlos ni confundir sus significados.
+
+Objetivo
+
+Garantizar que las proyecciones presupuestarias y de caja presenten cifras coherentes y que el usuario pueda distinguir los montos aprobados, comprometidos, ejecutados y previstos.
+
+Requisitos funcionales
+
+1. Documentar el significado de los importes existentes antes de conectarlos a las nuevas vistas.
+2. Mantener diferenciados:
+   - Presupuesto aprobado.
+   - Monto comprometido.
+   - Monto ejecutado.
+   - Saldo disponible.
+   - Flujo de caja real.
+   - Flujo de caja proyectado.
+3. Verificar que una orden de compra aprobada no se contabilice como egreso de efectivo antes de que corresponda según el estado de pago.
+4. Verificar que una recepción de bienes, una factura de proveedor y su pago no se sumen como tres gastos independientes.
+5. Verificar que los cobros previstos no se presenten como efectivo recibido.
+6. Reutilizar las funciones existentes de presupuesto, contabilidad y tesorería en lugar de duplicar reglas de cálculo.
+7. Documentar las limitaciones de los datos que no permitan calcular una proyección fiable.
+8. Si una cifra no puede obtenerse con suficiente respaldo, mostrarla como no disponible en lugar de inventarla.
+
+Criterios de aceptación
+
+- Los informes mantienen una distinción inequívoca entre presupuesto, ejecución y caja.
+- Los compromisos y los pagos no se contabilizan dos veces.
+- Los valores reales coinciden con las fuentes financieras originales.
+- Las estimaciones quedan identificadas como estimaciones.
+- Las pruebas cubren órdenes aprobadas, recepciones parciales, facturas pendientes y pagos efectuados.
+
+---
+
+TAREA 8. VERIFICACIÓN DE INTEGRIDAD CONTABLE EN LAS NUEVAS FUNCIONES
+
+Prioridad: Crítica
+Área: Seguridad financiera y consistencia de datos.
+
+Objetivo
+
+Garantizar que las nuevas funciones de convenios, proyecciones, gestiones de cobro y comparaciones no alteren indebidamente los movimientos financieros existentes ni debiliten las protecciones contables.
+
+Requisitos funcionales
+
+1. Conservar la validación de partida doble en "recordAccountingJournalEntry", incluyendo el rechazo de asientos desequilibrados y la tolerancia monetaria que el sistema ya aplique.
+2. Conservar los controles de autorización del servidor para todas las operaciones nuevas.
+3. Mantener los mecanismos existentes de prevención de solicitudes duplicadas, incluido el tratamiento de reintentos idempotentes donde corresponda.
+4. Verificar el tratamiento de importes monetarios, redondeos, valores nulos y datos inválidos.
+5. Evitar que una operación que falle deje pagos, cuotas, convenios o asientos parcialmente registrados.
+6. Mantener trazabilidad de las operaciones que cambien información financiera.
+7. Garantizar que una consulta o una proyección no genere movimientos contables por el mero hecho de ejecutarse.
+8. No modificar ni eliminar registros históricos para hacer coincidir los resultados de los nuevos informes.
+9. Utilizar bloqueos y controles de concurrencia existentes cuando una operación pueda modificar simultáneamente el mismo saldo o registro.
+10. Verificar las relaciones entre cargos, abonos, convenios y asientos contables antes de habilitar nuevas operaciones financieras.
+
+Criterios de aceptación
+
+- Las nuevas funciones rechazan solicitudes no autorizadas.
+- Los reintentos no duplican operaciones financieras.
+- Los fallos no dejan registros parciales ni saldos inconsistentes.
+- Los informes y las proyecciones no crean movimientos contables inesperados.
+- Las pruebas de partida doble siguen aprobándose para asientos equilibrados y rechazándose para asientos desequilibrados.
+- Las operaciones concurrentes no duplican pagos ni alteran indebidamente los saldos.
+- Las pruebas se realizan con datos controlados, sin ejecutar transacciones financieras reales.
+
+---
+
+ORDEN RECOMENDADO DE IMPLEMENTACIÓN
+
+1. Tarea 8: Verificación de integridad contable en las nuevas funciones, como requisito transversal de seguridad.
+2. Tarea 1: Convenios y planes de pago familiares.
+3. Tarea 5: Bitácora de gestiones de cobro.
+4. Tarea 4: Proyección del flujo de caja a seis meses.
+5. Tarea 2: Proyecciones presupuestarias plurianuales.
+6. Tarea 6: Comparación financiera visual entre ejercicios.
+7. Tarea 3: Alertas por vencimiento de contratos.
+8. Tarea 7: Verificación de coherencia entre informes y proyecciones.
+
+Este orden es una propuesta de implementación, no una autorización para ejecutar todas las tareas en una sola modificación. Cada tarea debe completarse, probarse y documentarse antes de continuar con la siguiente, salvo que la metodología del proyecto establezca una secuencia diferente.
+
+ENTREGABLES POR TAREA
+
+Para cada tarea implementada, Jules debe proporcionar:
+
+- Resumen de lo implementado y su ubicación.
+- Archivos y funciones modificados o creados.
+- Cambios realizados en las estructuras de datos, si fueron necesarios.
+- Validaciones de permisos y reglas financieras incorporadas.
+- Pruebas ejecutadas, con datos controlados, resultado esperado y resultado observado.
+- Resultado de las pruebas de regresión pertinentes.
+- Limitaciones pendientes, si las hubiera.
+- Confirmación de que no se realizaron operaciones financieras reales.
+
+No marcar una tarea como completada si solo se creó la interfaz, si únicamente se añadieron funciones sin conectarlas o si no se verificó el comportamiento real.
+
+CONDICIÓN FINAL
+
+Implementar únicamente las tareas definidas en este documento, respetando el alcance de cada una. Conservar las capacidades existentes que la auditoría calificó como funcionales y evitar modificaciones no relacionadas.
+
+No afirmar que existe una integración, una alerta automática, una validación o una prueba si no se implementó y verificó realmente.
