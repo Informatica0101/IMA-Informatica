@@ -4463,3 +4463,578 @@ CONDICIÓN FINAL
 Implementar únicamente las tareas definidas en este documento, respetando el alcance de cada una. Conservar las capacidades existentes que la auditoría calificó como funcionales y evitar modificaciones no relacionadas.
 
 No afirmar que existe una integración, una alerta automática, una validación o una prueba si no se implementó y verificó realmente.
+
+---
+
+FASE 5. RECURSOS HUMANOS AVANZADO
+
+Plan de implementación derivado de la auditoría
+
+Plataforma: Ecosistema Educativo New Generation Christian Academy
+Módulo ampliado: Fase 10, Recursos Humanos
+Objetivo: Completar las funciones de gestión laboral, conectar las interfaces con los servicios existentes y desarrollar los submódulos ausentes identificados durante la auditoría.
+
+Instrucciones generales para Jules
+
+Antes de comenzar, lee "METODOLOGIA_DESARROLLO.md" y la documentación de desarrollo disponible. Revisa también los resultados de la auditoría de la Fase 5.
+
+Trabaja directamente sobre la implementación existente. No reconstruyas el módulo de Recursos Humanos desde cero ni crees servicios, hojas de cálculo o funciones duplicadas cuando ya existan componentes reutilizables.
+
+La auditoría identificó como componentes relevantes:
+
+- "backend/accounting-service/Code.gs"
+- "backend/user-service/Code.gs"
+- "dashboard-recursos-humanos.html"
+- "js/accounting.js"
+- "js/teacher.js"
+- "js/ui-common.js"
+- "ExpedientesLaborales"
+- "ContratosLaborales"
+- "SolicitudesVacaciones"
+- "IncapacidadesMedicas"
+- "PlanillasNomenclatura"
+- "AnticiposPrestamosEmpleado"
+- "AprobacionHorasExtras"
+- "DocumentosLaborales"
+
+Esta lista es el punto de partida de la auditoría, no una autorización para asumir que los componentes siguen exactamente como se describieron. Comprueba los nombres, las funciones, los argumentos, las respuestas y las dependencias en el código actual antes de utilizarlos.
+
+Reglas obligatorias
+
+1. Mantener la compatibilidad con los módulos existentes y la arquitectura actual de la plataforma.
+2. Reutilizar los servicios y las estructuras de datos existentes siempre que satisfagan los requisitos.
+3. No modificar los cálculos de nómina, las retenciones, las vacaciones ni las reglas contables por conveniencia. Si se detecta una deficiencia normativa, documentarla y verificar la fuente oficial vigente antes de cambiar las reglas.
+4. Validar los permisos en las operaciones del servidor, no solamente ocultando botones en la interfaz.
+5. Proteger la información de salarios, documentos personales, incapacidades médicas, evaluaciones e incidencias disciplinarias.
+6. Utilizar el idioma español y explicaciones comprensibles para personal administrativo y empleados. No mostrar nombres de funciones, errores internos ni términos de programación en la interfaz.
+7. No declarar una función terminada hasta comprobar su funcionamiento mediante pruebas apropiadas.
+8. No realizar cambios ajenos a esta fase, salvo correcciones indispensables para completar sus dependencias directas.
+9. Si una tarea descubre que una función descrita en la auditoría no existe o funciona de manera diferente, detenerse en el punto afectado, documentar la discrepancia y adaptar la implementación sin inventar capacidades.
+10. Al terminar cada tarea, entregar un resumen de archivos modificados, comportamiento implementado, pruebas ejecutadas y problemas pendientes.
+
+---
+
+TAREA RH-01. Conectar el panel de Recursos Humanos con los servicios existentes
+
+Prioridad: Crítica para completar la experiencia administrativa.
+Dependencia: Ninguna. Debe ser la primera tarea.
+
+Objetivo
+
+Conectar "dashboard-recursos-humanos.html" con las funciones de Recursos Humanos que ya existen en los servicios de la plataforma.
+
+La auditoría informa que el backend permite gestionar expedientes, contratos, vacaciones, nómina y otros procesos, pero que la interfaz no invoca correctamente varias de estas funciones.
+
+Alcance
+
+Inspeccionar los controladores actuales y conectar, según corresponda y previa verificación, las siguientes operaciones:
+
+- Consulta y registro de expedientes laborales mediante "getEmployeeRecords" y "createEmployeeRecord".
+- Consulta y gestión de contratos mediante "getEmployeeContracts" y "manageEmployeeContract".
+- Solicitudes y revisión de vacaciones mediante "submitVacationRequest" y "reviewVacationRequest".
+- Consulta de boletas de pago mediante "getStaffPayrollReceipt".
+- Gestión de horas extra mediante las funciones existentes de cálculo, solicitud y revisión.
+- Consulta y gestión de documentos laborales.
+- Consulta de incidencias y licencias médicas con acceso restringido.
+- Consulta de horarios y registros de asistencia cuando estén disponibles para este panel.
+
+No crear automáticamente una interfaz para cada función del servidor. Determinar primero cuáles son necesarias para los procesos que corresponden al rol de Recursos Humanos.
+
+Requisitos funcionales
+
+1. Las tablas deben cargar datos reales del servicio correspondiente.
+2. Los formularios existentes deben guardar los datos mediante las operaciones autorizadas.
+3. Después de crear, modificar, aprobar o rechazar un registro, la pantalla debe reflejar el resultado real.
+4. Mostrar estados de carga, confirmaciones, errores comprensibles y pantallas vacías cuando no existan registros.
+5. Validar los campos obligatorios y las fechas antes de enviar una solicitud.
+6. Evitar que los usuarios ejecuten varias veces una misma operación por hacer clic repetidamente.
+7. Respetar los permisos de cada rol tanto en la interfaz como en el servidor.
+8. No permitir que el panel de Recursos Humanos exponga información médica o salarial a usuarios que no estén autorizados.
+9. Mantener los datos históricos y evitar duplicar registros al conectar la interfaz.
+10. No reemplazar servicios funcionales por datos ficticios ni valores estáticos.
+
+Criterios de aceptación
+
+- El personal autorizado puede consultar los expedientes registrados.
+- Puede crear un expediente válido y consultarlo después de guardarlo.
+- Los formularios de contratos y vacaciones utilizan las funciones existentes.
+- Los errores de validación se presentan de forma comprensible.
+- Un usuario sin permisos no puede consultar ni modificar información restringida.
+- Los registros guardados permanecen disponibles después de recargar la pantalla.
+- Las operaciones no generan duplicados al repetir una solicitud.
+- Las pruebas demuestran que la interfaz y los servicios trabajan con los mismos datos.
+
+---
+
+TAREA RH-02. Implementar avisos de vencimiento de contratos y documentos laborales
+
+Prioridad: Alta.
+Dependencia: RH-01 para la integración con el panel.
+
+Objetivo
+
+Permitir que Recursos Humanos identifique oportunamente los contratos y documentos laborales que están próximos a vencer o que ya han vencido.
+
+Requisitos funcionales
+
+1. Aprovechar los registros existentes de "ContratosLaborales" y "DocumentosLaborales".
+2. Consultar las fechas de inicio, finalización y vencimiento disponibles.
+3. Identificar al menos los siguientes estados:
+   - Vigente.
+   - Próximo a vencer.
+   - Vencido.
+   - Renovado o cerrado, cuando corresponda al modelo existente.
+4. Permitir consultar los vencimientos por periodo, empleado, tipo de documento y estado.
+5. Permitir configurar anticipaciones de aviso, por ejemplo, 30, 15 y 7 días, si estas opciones son compatibles con la configuración actual.
+6. Identificar a la persona responsable de dar seguimiento a cada vencimiento.
+7. Registrar si el aviso fue generado, atendido o resuelto.
+8. Evitar avisos duplicados para el mismo documento y periodo de notificación.
+9. Cuando exista un mecanismo compatible de notificaciones automáticas, integrarlo sin crear un sistema paralelo.
+10. Si no existe un mecanismo de ejecución automática, identificar la limitación y proponer la integración mínima compatible con la plataforma.
+
+Seguridad e integridad
+
+- Los avisos no deben revelar salarios ni datos personales innecesarios.
+- No modificar contratos automáticamente por el hecho de que venzan.
+- No interpretar una alerta como una renovación, una terminación contractual ni una decisión legal.
+- Mantener el historial de las acciones realizadas sobre cada aviso.
+
+Criterios de aceptación
+
+- Los contratos próximos a vencer aparecen en el listado correspondiente.
+- Los contratos vencidos se distinguen de los vigentes.
+- Los documentos con fechas de expiración se incluyen cuando corresponda.
+- Los avisos se generan según la configuración establecida.
+- Las notificaciones no se duplican de manera injustificada.
+- Las renovaciones o cierres actualizan el estado mostrado.
+- Las pruebas verifican los límites de fechas, incluidos los días exactos de vencimiento.
+
+---
+
+TAREA RH-03. Crear el módulo de reclutamiento y selección de personal
+
+Prioridad: Alta.
+Dependencia: RH-01 para la integración con Recursos Humanos.
+
+Objetivo
+
+Implementar un proceso para administrar las vacantes de la institución y dar seguimiento a las personas candidatas hasta la decisión final de selección.
+
+Requisitos funcionales
+
+1. Crear, consultar, modificar, publicar internamente, cerrar y archivar vacantes.
+2. Registrar el puesto, departamento, requisitos, cantidad de plazas, fecha de publicación, fecha límite y responsable de selección.
+3. Permitir registrar candidatos y asociarlos a las vacantes correspondientes.
+4. Registrar la información necesaria para evaluar cada candidatura sin solicitar datos personales innecesarios.
+5. Permitir adjuntar currículos y documentos de respaldo cuando proceda.
+6. Definir y mantener un estado para cada candidatura, por ejemplo:
+   - Recibida.
+   - En revisión.
+   - Preseleccionada.
+   - En proceso de entrevista.
+   - Seleccionada.
+   - No seleccionada.
+   - Retirada.
+7. Registrar observaciones de selección con acceso restringido.
+8. Detectar posibles candidaturas duplicadas sin fusionar registros automáticamente.
+9. Consultar el historial de cada candidato y sus postulaciones.
+10. Restringir el acceso a las vacantes y candidaturas al personal autorizado.
+
+Conversión de candidato a empleado
+
+Cuando una persona sea seleccionada:
+
+- Permitir iniciar su incorporación como empleado.
+- Reutilizar los datos que ya se hayan registrado y que sean pertinentes.
+- Crear el expediente laboral mediante el procedimiento existente.
+- Evitar duplicar personas o cuentas de usuario.
+- Solicitar los datos laborales que falten para completar el expediente.
+- No activar automáticamente cuentas, salarios ni contratos sin las validaciones y autorizaciones correspondientes.
+
+Criterios de aceptación
+
+- Es posible crear una vacante y asociarle candidatos.
+- El estado de cada candidatura puede actualizarse y consultarse.
+- Una vacante cerrada no admite nuevas postulaciones salvo que un usuario autorizado la reabra.
+- Los documentos de los candidatos no quedan expuestos a usuarios no autorizados.
+- La incorporación de una persona seleccionada reutiliza los registros existentes sin generar duplicados.
+- El historial de selección permanece disponible según las políticas de conservación aprobadas.
+
+---
+
+TAREA RH-04. Implementar la agenda y el seguimiento de entrevistas
+
+Prioridad: Alta.
+Dependencia: RH-03.
+
+Objetivo
+
+Administrar las entrevistas asociadas al proceso de selección y registrar sus resultados.
+
+Requisitos funcionales
+
+1. Programar entrevistas vinculadas a una candidatura y una vacante.
+2. Registrar fecha, hora, modalidad, participantes y responsable.
+3. Permitir reprogramar y cancelar entrevistas con un motivo.
+4. Detectar conflictos de horario cuando existan datos suficientes de disponibilidad.
+5. Registrar si el candidato asistió, no asistió o solicitó reprogramación.
+6. Permitir a los evaluadores autorizados registrar comentarios y resultados.
+7. Mantener un historial de las entrevistas y sus modificaciones.
+8. Actualizar el seguimiento de la candidatura sin eliminar su historial.
+9. Integrar las notificaciones disponibles para comunicar cambios a las personas autorizadas.
+10. No exponer las observaciones privadas de los evaluadores al candidato ni a otros usuarios sin permiso.
+
+Criterios de aceptación
+
+- Cada entrevista está asociada a una candidatura válida.
+- No se aceptan fechas u horarios inválidos.
+- Los conflictos detectados se muestran antes de confirmar una cita.
+- Las reprogramaciones y cancelaciones conservan el historial.
+- Los resultados de las entrevistas solo son visibles para usuarios autorizados.
+- El estado de la candidatura refleja correctamente el avance del proceso.
+
+---
+
+TAREA RH-05. Implementar la evaluación del desempeño de los empleados
+
+Prioridad: Media-alta.
+Dependencia: RH-01.
+
+Objetivo
+
+Crear un módulo para planificar, registrar, revisar y consultar evaluaciones del desempeño laboral.
+
+Requisitos funcionales
+
+1. Permitir definir periodos de evaluación.
+2. Configurar criterios según el puesto o la familia de puestos.
+3. Asociar evaluaciones a empleados y evaluadores autorizados.
+4. Permitir registrar calificaciones, observaciones, fortalezas y aspectos por mejorar.
+5. Permitir registrar objetivos y compromisos de seguimiento.
+6. Diferenciar evaluaciones en preparación, pendientes de revisión y cerradas.
+7. Permitir corregir una evaluación mediante un proceso autorizado y trazable.
+8. Registrar quién realizó, revisó o modificó cada evaluación.
+9. Conservar el historial de periodos anteriores.
+10. Generar resúmenes e informes para los responsables autorizados.
+11. Permitir registrar la revisión o conformidad del empleado cuando la política institucional lo contemple.
+12. Evitar que una calificación o comentario se modifique silenciosamente después del cierre.
+
+Reglas
+
+- No utilizar criterios idénticos para todos los puestos sin permitir la configuración necesaria.
+- No convertir automáticamente una evaluación en una sanción, despido, cambio salarial o decisión laboral.
+- Mantener separadas las observaciones de acceso restringido y la información que corresponda compartir con el empleado.
+- No inventar escalas de calificación institucionales: permitir su configuración o documentar las decisiones pendientes.
+
+Criterios de aceptación
+
+- Se puede crear un periodo de evaluación y asignar evaluadores.
+- Los criterios pueden adaptarse al puesto.
+- Las evaluaciones quedan vinculadas al expediente correcto.
+- Las evaluaciones cerradas conservan su historial.
+- Los informes solo son accesibles para los roles autorizados.
+- Se puede consultar la evolución del desempeño sin alterar evaluaciones anteriores.
+
+---
+
+TAREA RH-06. Implementar el registro de capacitación y desarrollo profesional
+
+Prioridad: Media.
+Dependencia: RH-01.
+
+Objetivo
+
+Gestionar las actividades formativas de los empleados y mantener un historial de su capacitación profesional.
+
+Requisitos funcionales
+
+1. Crear un catálogo de cursos, talleres y actividades formativas.
+2. Registrar proveedor o responsable, fechas, duración, modalidad y requisitos.
+3. Asociar capacitaciones a puestos, departamentos o empleados.
+4. Gestionar inscripciones y listas de participantes.
+5. Registrar asistencia, finalización y resultados cuando correspondan.
+6. Adjuntar certificados y documentos de respaldo.
+7. Registrar fechas de emisión y vencimiento de certificados cuando existan.
+8. Consultar el historial de capacitación de cada empleado.
+9. Identificar capacitaciones pendientes y certificados próximos a vencer.
+10. Permitir definir objetivos de desarrollo profesional y registrar su seguimiento.
+11. Generar informes por empleado, departamento, curso y periodo.
+12. Restringir el acceso a los documentos y registros de cada persona.
+
+Criterios de aceptación
+
+- Se pueden registrar cursos y asignar participantes.
+- La asistencia y finalización se distinguen de una simple inscripción.
+- Los certificados quedan asociados al empleado y a la actividad correspondiente.
+- Los vencimientos se detectan cuando el certificado dispone de una fecha válida.
+- El historial formativo se consulta desde el expediente laboral sin duplicar información.
+- Los informes coinciden con los registros guardados.
+
+---
+
+TAREA RH-07. Completar el registro de incidencias laborales y medidas disciplinarias
+
+Prioridad: Alta por la sensibilidad de la información.
+Dependencia: RH-01.
+
+Objetivo
+
+Completar el requisito RH-08 creando un registro específico de incidencias laborales y medidas disciplinarias autorizadas, sin confundirlo con las incapacidades médicas existentes.
+
+Requisitos funcionales
+
+1. Revisar primero los registros de incidencias que ya existan. Si hay una estructura reutilizable, ampliarla en lugar de crear otra innecesariamente.
+2. Permitir registrar fecha, categoría, descripción objetiva, empleado relacionado y responsable del registro.
+3. Distinguir incidencias registradas, casos en revisión, actuaciones realizadas y casos cerrados.
+4. Permitir adjuntar documentación pertinente con acceso restringido.
+5. Registrar las acciones de seguimiento y las personas responsables.
+6. Cuando corresponda, registrar medidas disciplinarias aprobadas, con su fecha, fundamento documentado, responsable de aprobación y estado.
+7. Diferenciar una alegación o reporte inicial de una decisión formal.
+8. Permitir agregar correcciones o aclaraciones sin borrar silenciosamente el historial.
+9. Mantener trazabilidad de consultas y modificaciones cuando la infraestructura actual lo permita.
+10. Restringir el acceso a Recursos Humanos y a los responsables expresamente autorizados.
+11. Evitar que las incapacidades médicas, diagnósticos o datos clínicos aparezcan en los informes disciplinarios, salvo que exista una necesidad legítima y una autorización válida.
+12. Definir reglas de conservación y archivo conforme a las políticas institucionales y obligaciones aplicables.
+
+Criterios de aceptación
+
+- Una incapacidad médica no se registra automáticamente como falta disciplinaria.
+- Se puede registrar una incidencia sin afirmar que la responsabilidad ya está establecida.
+- Las medidas disciplinarias requieren el flujo de autorización correspondiente.
+- Las consultas y modificaciones respetan los permisos.
+- Los cambios quedan trazables.
+- Un docente, estudiante u otro usuario sin autorización no puede consultar estos registros.
+- Los informes no muestran información médica confidencial innecesaria.
+
+---
+
+TAREA RH-08. Implementar la planificación de necesidades de personal
+
+Prioridad: Media-alta.
+Dependencias: RH-01 y acceso de consulta a los datos académicos y de horarios pertinentes.
+
+Objetivo
+
+Permitir a la dirección y a Recursos Humanos comparar la plantilla disponible con las necesidades de personal de la institución para cada periodo.
+
+Requisitos funcionales
+
+1. Consultar los empleados activos y sus puestos, departamentos y asignaciones relevantes.
+2. Obtener, cuando existan permisos e integraciones disponibles, los datos académicos necesarios: matrícula, secciones, asignaturas y horarios.
+3. Permitir registrar necesidades de personal por puesto, área y periodo.
+4. Comparar las necesidades previstas con los recursos disponibles.
+5. Identificar plazas vacantes, posibles déficits y excedentes de cobertura.
+6. Considerar la disponibilidad, los horarios y las asignaciones de los empleados cuando existan datos confiables.
+7. Permitir comparar diferentes escenarios de matrícula o crecimiento institucional.
+8. Mostrar los datos y criterios utilizados para producir cada resultado.
+9. Generar informes que permitan justificar necesidades de contratación.
+10. Vincular las necesidades identificadas con las vacantes existentes, sin publicar automáticamente una plaza.
+11. Diferenciar los datos reales de las estimaciones y proyecciones.
+12. Indicar cuándo faltan datos suficientes para calcular una necesidad con fiabilidad.
+
+Reglas
+
+- No inventar una cantidad óptima universal de docentes por estudiante.
+- No utilizar una proyección como si fuera un dato real de matrícula.
+- No crear automáticamente contratos ni vacantes como consecuencia de una estimación.
+- No modificar horarios académicos existentes desde este módulo sin pasar por los procesos autorizados.
+
+Criterios de aceptación
+
+- Se puede consultar la plantilla por departamento y puesto.
+- Las necesidades de personal se comparan con los recursos disponibles.
+- Los informes identifican los datos faltantes.
+- Los resultados pueden reproducirse con los mismos datos y criterios.
+- Las proyecciones se identifican claramente como estimaciones.
+- Los datos académicos se consultan mediante las integraciones existentes y con permisos adecuados.
+
+---
+
+TAREA RH-09. Completar la gestión visual de turnos y sustituciones
+
+Prioridad: Media-alta.
+Dependencia: RH-01.
+
+Objetivo
+
+Completar la experiencia administrativa para consultar y gestionar los turnos, las horas extra y las sustituciones, reutilizando las funciones que la auditoría identificó como existentes.
+
+Requisitos funcionales
+
+1. Inspeccionar las funciones existentes para horarios, sustituciones y horas extra antes de añadir nuevas operaciones.
+2. Crear una vista que permita consultar los turnos por empleado, departamento y periodo.
+3. Mostrar las sustituciones registradas con empleado sustituido, sustituto, fechas y estado.
+4. Mostrar las solicitudes de horas extra y su estado de aprobación.
+5. Permitir las acciones autorizadas de creación, revisión, aprobación y cancelación cuando correspondan al proceso existente.
+6. Detectar conflictos de horario utilizando los datos disponibles.
+7. Evitar asignar al mismo empleado a actividades incompatibles en el mismo periodo.
+8. Mostrar diferencias entre una solicitud pendiente y una asignación confirmada.
+9. Mantener el historial de cambios.
+10. Preparar información consistente para los procesos de asistencia y nómina existentes.
+
+Criterios de aceptación
+
+- Los turnos y sustituciones reflejan los datos reales del sistema.
+- Los conflictos se detectan antes de confirmar una asignación cuando los datos permiten comprobarlos.
+- Las solicitudes de horas extra respetan el flujo de aprobación existente.
+- Los cambios se reflejan en las consultas posteriores.
+- No se generan asignaciones duplicadas ni se altera la nómina sin pasar por sus operaciones autorizadas.
+
+---
+
+TAREA RH-10. Verificar y completar el portal de autoservicio del empleado
+
+Prioridad: Alta.
+Dependencia: RH-01.
+
+Objetivo
+
+Asegurar que los empleados puedan consultar sus propios documentos y realizar sus trámites laborales mediante las interfaces disponibles, sin acceder a la información de otros trabajadores.
+
+Requisitos funcionales
+
+1. Inspeccionar las interfaces existentes para el empleado y determinar cuáles están conectadas realmente.
+2. Permitir consultar la propia boleta de pago mediante la función existente "getStaffPayrollReceipt", si se confirma su contrato de uso.
+3. Permitir consultar los contratos propios mediante las funciones existentes.
+4. Consultar el estado de solicitudes de vacaciones y otros trámites autorizados.
+5. Presentar los turnos, sustituciones, capacitaciones y avisos que correspondan al empleado cuando estas funciones estén integradas.
+6. Permitir descargar recibos y documentos autorizados.
+7. Mostrar estados claros: pendiente, en revisión, aprobado, rechazado o cerrado, según el proceso.
+8. Integrar las notificaciones existentes cuando estén disponibles.
+9. Evitar mostrar información confidencial de otros empleados incluso si se modifica manualmente un identificador en una solicitud.
+10. Aplicar los permisos del servidor a cada consulta y descarga.
+
+Criterios de aceptación
+
+- Cada empleado consulta únicamente sus propios datos, salvo acceso adicional expresamente autorizado.
+- Los documentos descargados corresponden a su expediente.
+- Las solicitudes muestran el estado registrado en el servicio.
+- Los cambios realizados por personal autorizado aparecen correctamente en el portal.
+- Los intentos de consultar información ajena son rechazados por el servidor.
+- El portal no presenta enlaces a documentos que el usuario no tenga autorización para abrir.
+
+---
+
+TAREA RH-11. Verificar la preparación de información laboral y fiscal
+
+Prioridad: Alta para la confiabilidad de la información.
+Dependencia: RH-01.
+
+Objetivo
+
+Verificar que los datos generados por los procesos laborales y de nómina puedan utilizarse de forma consistente para preparar informes y obligaciones aplicables en Honduras.
+
+Esta tarea no consiste en reemplazar el motor de nómina existente ni en declarar automáticamente que cumple con toda la normativa.
+
+Requisitos funcionales
+
+1. Inspeccionar "calculatePayrollPeriod", "PlanillasNomenclatura", las funciones de generación de recibos y la integración con "AsientosContables".
+2. Verificar la correspondencia entre los importes de nómina, las deducciones, los registros contables y los recibos generados.
+3. Identificar los informes y exportaciones existentes.
+4. Determinar qué datos faltan para los informes laborales o fiscales que realmente correspondan a la institución.
+5. Verificar las reglas de cálculo con fuentes oficiales hondureñas vigentes y documentar las fechas de referencia de los parámetros legales.
+6. No inventar tasas, límites, formularios ni fechas límite.
+7. No cambiar las fórmulas existentes sin pruebas de regresión y justificación documentada.
+8. Registrar las diferencias entre los resultados calculados y los resultados esperados con casos de prueba verificables.
+9. Permitir identificar datos faltantes o inconsistencias antes de preparar un informe.
+10. Distinguir claramente los informes internos de los documentos presentados oficialmente ante una autoridad.
+11. No afirmar que existe transmisión electrónica oficial si no se ha implementado y verificado.
+
+Criterios de aceptación
+
+- Los totales de nómina pueden conciliarse con los registros contables correspondientes.
+- Los recibos reflejan los importes guardados.
+- Los parámetros legales utilizados están identificados y cuentan con una fuente de verificación.
+- Las discrepancias detectadas se documentan.
+- Las pruebas de regresión demuestran que las correcciones no alteran indebidamente los cálculos existentes.
+- El sistema no presenta como presentado oficialmente un informe que solo ha sido generado internamente.
+
+---
+
+TAREA RH-12. Pruebas de integración y regresión de Recursos Humanos
+
+Prioridad: Obligatoria antes de dar por concluida la fase.
+Dependencias: Todas las tareas anteriores que se hayan implementado.
+
+Objetivo
+
+Comprobar que las nuevas funciones y las conexiones de interfaz trabajan correctamente junto con los procesos de Recursos Humanos que ya existían.
+
+Pruebas mínimas
+
+1. Crear un empleado y consultar su expediente desde el panel.
+2. Registrar y consultar un contrato.
+3. Detectar un contrato próximo a vencer y verificar su aviso.
+4. Crear una vacante, registrar una candidatura y programar una entrevista.
+5. Registrar y cerrar una evaluación de desempeño.
+6. Registrar una capacitación y asociar un certificado.
+7. Registrar una incidencia y verificar sus restricciones de acceso.
+8. Generar un informe de necesidades de personal utilizando datos de prueba.
+9. Consultar una boleta de pago desde el portal del empleado.
+10. Presentar y aprobar una solicitud de vacaciones.
+11. Registrar y revisar horas extra.
+12. Consultar una sustitución y comprobar los conflictos de horario pertinentes.
+13. Verificar que los procesos de nómina y sus asientos contables siguen funcionando.
+14. Intentar consultar información de otro empleado y confirmar el rechazo.
+15. Intentar ejecutar operaciones con roles no autorizados.
+16. Repetir operaciones para comprobar que no se generan registros duplicados.
+17. Verificar que los errores de guardado no dejan información inconsistente.
+18. Comprobar la trazabilidad de cambios y aprobaciones.
+
+Evidencia requerida
+
+Para cada prueba, registrar:
+
+- Identificador.
+- Objetivo.
+- Datos utilizados.
+- Pasos ejecutados.
+- Resultado esperado.
+- Resultado observado.
+- Estado: aprobado, fallido, bloqueado o no ejecutado.
+- Evidencia y limitaciones.
+
+No utilizar datos personales reales para pruebas destructivas. No declarar aprobada una prueba que solo haya sido revisada estáticamente.
+
+Criterios de aceptación
+
+- Los procesos existentes de Recursos Humanos siguen funcionando.
+- Las interfaces nuevas no duplican los registros de los servicios existentes.
+- Los permisos se aplican en las operaciones del servidor.
+- Las integraciones con asistencia, nómina y contabilidad mantienen la coherencia de los datos.
+- Las pruebas fallidas se documentan y no se ocultan mediante resultados simulados.
+- Los problemas pendientes se identifican antes de declarar finalizada la fase.
+
+---
+
+Orden recomendado de ejecución
+
+Orden| Tarea| Motivo
+1| RH-01. Conectar el panel existente| Habilita las funciones laborales ya implementadas.
+2| RH-02. Avisos de vencimiento| Aprovecha los contratos y documentos existentes.
+3| RH-03. Reclutamiento| Crea el flujo de vacantes y candidaturas.
+4| RH-04. Entrevistas| Completa el seguimiento de selección.
+5| RH-05. Evaluación del desempeño| Añade el ciclo de evaluación laboral.
+6| RH-06. Capacitación| Añade el historial de desarrollo profesional.
+7| RH-07. Incidencias laborales| Completa el registro confidencial y su trazabilidad.
+8| RH-08. Planificación de personal| Aprovecha los datos laborales y académicos existentes.
+9| RH-09. Turnos y sustituciones| Mejora la gestión visual de procesos existentes.
+10| RH-10. Portal del empleado| Completa las operaciones de autoservicio pendientes.
+11| RH-11. Información laboral y fiscal| Comprueba la consistencia de los datos y los informes.
+12| RH-12. Pruebas de integración| Verifica el conjunto antes de dar la fase por terminada.
+
+El orden puede ajustarse si Jules descubre dependencias reales que lo justifiquen. Cualquier cambio debe explicarse y no debe utilizarse para omitir las pruebas.
+
+Entrega final de la Fase 5
+
+Al concluir las tareas, entregar:
+
+1. Resumen de las funciones implementadas.
+2. Lista de archivos y estructuras de datos modificados.
+3. Descripción de las integraciones realizadas.
+4. Resultados reales de las pruebas funcionales, de seguridad y de regresión.
+5. Lista de incidencias pendientes y limitaciones conocidas.
+6. Confirmación de qué funciones existentes se conservaron sin cambios.
+7. Documentación actualizada conforme a la metodología del proyecto.
+
+No declarar completada una tarea solo porque sus archivos o interfaces hayan sido creados. La finalización requiere evidencia del comportamiento esperado y de la compatibilidad con los procesos existentes.
