@@ -824,3 +824,43 @@ Archivos y Módulos Auditados:
 - Programar sidebar acordeón, menú hamburguesa y prevención de bucles en retroceso.
 - Extender la configuración académica con equivalencias 1/A, 2/B y 3/C.
 - Mapear e integrar las herramientas del catálogo en la matriz de auditoría.
+
+====================================================================================================
+
+AUDITORÍA TÉCNICA Y DIAGNÓSTICO DE ARQUITECTURA - FASE 1: AUDITORÍA FUNCIONAL INTEGRAL DEL REGISTRO Y EXPEDIENTE DE ESTUDIANTES - Mon Jul 6 2026
+
+Archivos y Módulos Auditados:
+- Backend: backend/academic-service/Code.gs (v8.4.0 / Phase 4)
+- Backend Central Identity: backend/user-service/Code.gs
+- HTML Vistas: teacher-dashboard.html, student-dashboard.html, register.html, index.html
+- Controller JS: js/teacher.js, js/student.js, js/ui-common.js, js/auth.js, js/api.js
+
+1. DIAGNÓSTICO DE LA HERRAMIENTA DE REGISTRO Y EXPEDIENTE DE ESTUDIANTES
+- Ubicación y Roles:
+  * Denominación Visible: Secretaría / Matrícula & Expedientes, Expedientes de Estudiantes, Expediente Digital Unificado, Búsqueda de Expedientes.
+  * Ubicación en Navegación:
+    - Panel Administrativo / Secretaría (`teacher-dashboard.html`): Entrada de búsqueda de expediente (`#student-search`) y sección de Secretaría/Orientación.
+    - Portal del Estudiante / Familia (`student-dashboard.html`): Sección de Expediente Académico (`#student-expediente`).
+    - Formulario de Autorregistro (`register.html`): Creación de cuenta de usuario con rol Estudiante.
+  * Roles Autorizados: Administrador, Director, Secretaría (gestión completa), Docente/Profesor (lectura y seguimiento), Estudiante/Alumno (consulta personal), Padre/Tutor/Responsable (consulta de hijos vinculados).
+
+- Estado de Implementación Backend (100% Presente en backend/academic-service/Code.gs):
+  * Base de datos Google Sheets: Hoja `ExpedientesEstudiantes`, `SolicitudesAdmision`, `ResponsablesTutores`, `RelacionesEstudianteTutor`, `DocumentosEstudiante`, `MovimientosEstudiante`.
+  * Endpoints Backend Implementados (23 Acciones):
+    1. `createAdmissionRequest`, `getAdmissionRequests`, `updateAdmissionStatus`, `convertAdmissionToStudent`
+    2. `getStudentFile`, `updateStudentFile`, `getStudentTimeline`
+    3. `findDuplicateStudents`, `mergeStudentFiles`
+    4. `getStudentGuardians`, `saveStudentGuardian`, `unlinkStudentGuardian`
+    5. `uploadStudentDocument`, `getStudentDocuments`, `updateDocumentStatus`
+    6. `createStudentEnrollment`, `getStudentEnrollments`, `renewStudentEnrollment`, `checkEnrollmentCapacity`
+    7. `changeStudentSection`, `recordStudentTransfer`, `recordStudentWithdrawal`, `processStudentReentry`
+
+- Estado de Implementación Frontend (Brecha Principal):
+  * En la interfaz de usuario (`js/teacher.js` y `teacher-dashboard.html`), NINGUNO de los 23 endpoints de la Fase 4 para la gestión del Expediente Digital Unificado, Búsqueda/Fusión de Duplicados, Registro de Tutores Legales, Expediente Documental (Drive) o Registro de Retiros/Traslados/Reingresos está conectado a ventanas modales o controles interactivos de edición/gestión.
+  * El campo de búsqueda `#student-search` se limita a filtrar la lista local de usuarios cargada en memoria (`getStudentsByGradoSeccion`), sin invocar `getStudentFile` ni consultar la ficha completa del estudiante.
+  * La creación de usuarios desde `register.html` crea registros en la hoja `Usuarios`, pero no inicializa de forma automática el `ExpedienteID` en `ExpedientesEstudiantes` salvo que se tramite mediante solicitud de admisión (`convertAdmissionToStudent`).
+
+2. TAREAS Y PLAN DE MEJORA
+- Crear Módulo de UI de Expediente Digital Unificado en `teacher-dashboard.html` y `js/teacher.js`:
+  * Modal `#modal-student-file` con pestañas: 1. Datos Personales, 2. Tutores y Responsables Legales, 3. Documentos Adjuntos (Google Drive), 4. Historial/Línea de Tiempo y Movimientos, 5. Duplicados y Fusión.
+- Conectar los endpoints backend existentes en `js/teacher.js` para permitir la creación, consulta, edición, adjunción de documentos, asignación de tutores y gestión de estados/movimientos del expediente sin duplicar lógica ni reconstruir el backend.

@@ -1,5 +1,27 @@
 ## TAREAS PENDIENTES
 
+### [REQ-EXP-001] Interfaz de Usuario e Integración del Expediente Digital Unificado del Estudiante
+- **Origen del Hallazgo:** Auditoría.txt (Mon Jul 6 2026 - Fase 1: Auditoría Funcional Integral del Registro y Expediente de Estudiantes)
+- **Severidad/Clasificación:** Crítico
+- **Archivos Involucrados:** `teacher-dashboard.html`, `student-dashboard.html`, `js/teacher.js`, `js/student.js`, `backend/academic-service/Code.gs`
+- **Dependencias Expuestas:** `ExpedientesEstudiantes`, `SolicitudesAdmision`, `ResponsablesTutores`, `RelacionesEstudianteTutor`, `DocumentosEstudiante`, `MovimientosEstudiante`, `getStudentFile`, `updateStudentFile`, `findDuplicateStudents`, `mergeStudentFiles`, `saveStudentGuardian`, `uploadStudentDocument`
+- **Descripción del Alcance:**
+  1. Diseñar e implementar en `teacher-dashboard.html` y `js/teacher.js` el componente modal interactivo `#modal-student-file` (Expediente Digital Unificado) con las siguientes 5 pestañas funcionales:
+     a) Ficha de Datos Personales (consulta y edición de fecha de nacimiento, nacionalidad, dirección, foto, observaciones y estado).
+     b) Tutores y Responsables Legales (listado, vinculación, desvinculación y asignación de atributos como representante legal, contacto de emergencia, responsable financiero, autorización pick-up y acceso a portal).
+     c) Expediente Documental (subida de archivos PDF e imágenes con almacenamiento directo en Google Drive Folder `New Generation/Documentos_Estudiantes`, generación de URLs de visualización directa y revisión de estado).
+     d) Historial Académico y Movimientos (línea de tiempo unificada con fechas de creación, matrículas, cambios de sección, retiros, traslados y reingresos).
+     e) Detección y Fusión de Duplicados (herramienta de búsqueda automática por ID/email/nombre e inicio del flujo de fusión auditada que re-vincula documentos y movimientos al expediente principal).
+  2. Conectar el campo de búsqueda `#student-search` en `teacher-dashboard.html` para permitir abrir directamente el expediente digital completo mediante `getStudentFile` al seleccionar un estudiante de los resultados.
+  3. Asegurar que las actualizaciones parciales conserven los campos no modificados y respeten la matriz RBAC del servidor.
+- **Criterios de Aceptación:**
+  - Modal `#modal-student-file` operativo en `teacher-dashboard.html` y manejado por `js/teacher.js`.
+  - Invocación exitosa de los 23 endpoints de la Fase 4 sin duplicar funciones backend.
+  - Subida de documentos adjuntos directo a Google Drive y generación de enlaces de vista previa.
+  - Fusión de expediente re-vinculando documentos/movimientos y marcando expediente origen como "Fusionado".
+  - Búsqueda `#student-search` integrada con apertura de expediente digital.
+- **Estado:** [ ] Pendiente
+
 ### [REQ-DASH-ADAPT-001] Adaptación Integral de Dashboards, Menús por Rol, Configuración Académica y Catálogo de Herramientas
 - **Origen del Hallazgo:** Auditoria.txt (Mon Jul 6 2026 - Fase Adaptación Integral de Dashboards y Menús)
 - **Severidad/Clasificación:** Crítico
