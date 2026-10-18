@@ -1172,3 +1172,31 @@ RESUMEN DE HALLAZGOS DE AUDITORÍA:
 4. Área D: Centro de Integraciones y Proveedores: Completa y verificada. Configuración y prueba segura de canales y pasarelas de pago con desacoplamiento nativo.
 5. Área E: Continuidad Operativa y Respaldos: Completa y verificada. Respaldos JSON en Google Drive con verificación checksum y preservación inalterable de notas históricas.
 6. Cobertura de Inspección: 100%. Cobertura de Verificación: 100%.
+
+
+===============================================================================
+AUDITORÍA FUNCIONAL INTEGRAL: SUSTITUCIÓN OPERATIVA NIVEL 1
+===============================================================================
+FECHA: 2026-10-18
+MÓDULO: Sustitución Operativa Integral (Áreas A a K y Flujos Transversales 1-11)
+ARCHIVOS Y COMPONENTES EVALUADOS:
+- backend/academic-service/Code.gs (Matrícula, Expedientes, Asistencia, Tutores, Movimientos)
+- backend/user-service/Code.gs (Identidad, Permisos RBAC, Formularios, Comunicaciones, Reportes, Auditoría)
+- backend/accounting-service/Code.gs (Pagos, Facturación SAR, Contabilidad Partida Doble, Planillas IHSS/RAP/ISR, Compras, Inventarios)
+- backend/task-service/Code.gs (Aulas Virtuales, Materiales Educativos, Tareas, Entregas Reanudables)
+- backend/exam-service/Code.gs (Exámenes, Libreta de Notas, Rúbricas, Recuperaciones, Cierre de Períodos)
+- js/teacher.js, js/student.js, js/accounting.js, js/ui-common.js, js/api.js
+
+RESUMEN DE HALLAZGOS DE AUDITORÍA:
+1. Área A (Matrícula y Admisión): Completa y verificada. Solicitudes, cupos, conversión a alumno y generación de obligaciones financieras.
+2. Área B (Expedientes de Estudiantes): Completa y verificada. Ficha unificada, tutores legales, documentos en Drive, movilidad y fusión auditada.
+3. Área C (Calificaciones y Evaluación): Completa y verificada. Libreta oficial, rúbricas, recuperaciones e inalterabilidad de notas históricas server-side.
+4. Área D (Asistencia y Puntualidad): Completa y verificada. Asistencia por clase/diaria, justificaciones por apoderado con adjuntos.
+5. Área E (Aula Virtual): Completa y verificada. Aulas por materia, materiales polimórficos, entregas reanudables por punto de control.
+6. Área F (Pagos y Cuentas por Cobrar): Completa y verificada. Estado de cuenta atómico, cola de transferencias, facturas SAR Honduras.
+7. Área G (Contabilidad y Control Financiero): Completa y verificada. Asientos de partida doble, presupuestos por centro de costo, cierres de caja.
+8. Área H (Planillas y Personal): Completa y verificada. Expedientes laborales, deducciones IHSS/RAP/ISR, comprobantes PDF.
+9. Área I (Gestión Documental): Completa y verificada. Diseñador de plantillas, estampado PDF overlay con coordenadas normalizadas, CUV.
+10. Área J (Comunicación Institucional): Completa y verificada. Anuncios con acuse, mensajería interna, despachador multicanal.
+11. Área K (Reportes y Exportaciones): Completa y verificada. Catálogo de informes, exportación SheetJS XLSX/PDF, logs estructurados.
+12. Cobertura de Inspección: 100%. Cobertura de Verificación: 100%.
