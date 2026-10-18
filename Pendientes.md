@@ -6348,3 +6348,51 @@ La Fase 7 podrá considerarse completa cuando las herramientas pertinentes cumpl
 - Los permisos se aplican en el servidor y se comprueban con pruebas.
 - Las funciones académicas existentes continúan operativas.
 - Las tareas no verificables o bloqueadas están identificadas y no se presentan como completadas.
+
+---
+
+# PLAN DE IMPLEMENTACIÓN DETALLADO - FASE 8: CALIDAD EDUCATIVA Y SUPERVISIÓN DOCENTE
+
+### REQ-CE-001: Bitácora de Clases e Impartición Real de Contenidos (CE-04, CE-05)
+- **Objetivo:** Permitir a los docentes registrar diariamente los contenidos realmente desarrollados en cada sesión de clase para compararlos con la planificación inicial.
+- **Backend Reutilizado:** `getSchoolYearConfigs` en `backend/academic-service/Code.gs`.
+- **Archivos a Modificar:** `backend/academic-service/Code.gs`, `js/teacher.js`, `teacher-dashboard.html`.
+- **Tareas Concretas:**
+  1. Crear la hoja de cálculo `BitacoraClasesImpartidas` para registrar `[BitacoraID, AsignaturaID, SeccionID, DocenteUserId, Fecha, ContenidoPlanificado, ContenidoImpartido, EstadoTema, Observaciones]`.
+  2. Implementar las funciones backend `saveClassBitacora` y `getClassBitacoraHistory`.
+  3. Agregar la interfaz de "Bitácora de Clase" en `teacher-dashboard.html` donde el docente marque los temas como `Completado`, `Parcial` o `Pendiente`.
+
+### REQ-CE-002: Semáforo de Supervisión de Entrega de Notas y Tareas (CE-08, CE-10)
+- **Objetivo:** Construir una matriz de control para Dirección y Coordinación Académica que muestre el cumplimiento en tiempo y forma de la entrega de notas y tareas por parte de cada docente.
+- **Backend Reutilizado:** `getGradebookData` en `backend/exam-service/Code.gs`, `getTeacherSupervisions` en `backend/academic-service/Code.gs`.
+- **Archivos a Modificar:** `js/teacher.js`, `teacher-dashboard.html`.
+- **Tareas Concretas:**
+  1. Crear la vista "Semáforo de Cumplimiento Docente" en el panel administrativo.
+  2. Mostrar indicadores de color (Verde: Al día, Amarillo: Próximo a vencer, Rojo: En mora) por docente y asignatura para el ingreso de notas de parcial.
+  3. Habilitar el envío de recordatorios institucionales a docentes con entregas pendientes.
+
+### REQ-CE-003: Flujo de Aprobación Pedagógica de Guías y Materiales Didácticos (CE-09)
+- **Objetivo:** Implementar un flujo de revisión donde las guías de estudio deban ser aprobadas por la Coordinación Académica antes de ser publicadas a los estudiantes.
+- **Backend Reutilizado:** `MaterialesEducativos` en `backend/task-service/Code.gs`.
+- **Archivos a Modificar:** `backend/task-service/Code.gs`, `js/teacher.js`, `teacher-dashboard.html`.
+- **Tareas Concretas:**
+  1. Extender los estados de `MaterialesEducativos` para incluir `Borrador`, `En_Revision`, `Aprobado` y `Rechazado`.
+  2. Crear la bandeja "Revisión de Guías Didácticas" para el rol de Coordinación Académica con acciones de `Aprobar` o `Devolver_con_Comentarios`.
+  3. Asegurar que los estudiantes solo visualicen materiales que se encuentren en estado `Aprobado`.
+
+### REQ-CE-004: Tablero de Indicadores de Avance Curricular por Asignatura (CE-11)
+- **Objetivo:** Calcular y visualizar el porcentaje de avance curricular real por asignatura, grado y sección.
+- **Backend Reutilizado:** `getClassBitacoraHistory` en `backend/academic-service/Code.gs`.
+- **Archivos a Modificar:** `backend/academic-service/Code.gs`, `js/teacher.js`, `teacher-dashboard.html`.
+- **Tareas Concretas:**
+  1. Crear el endpoint `getCurricularProgressReport` que calcule `(Temas Impartidos / Temas Planificados Total) * 100`.
+  2. Diseñar el panel gráfico de "Avance Curricular Institucional" con barras de progreso por departamento académico.
+  3. Generar alertas para asignaturas con un retraso mayor al 15% respecto a la fecha del calendario escolar.
+
+### REQ-CE-005: Firma Digital de Conformidad y Evaluación 360 del Desempeño Docente (CE-01, CE-06)
+- **Objetivo:** Agregar la firma digital de enterado del docente al finalizar una observación de clase y estructurar la evaluación integral de desempeño.
+- **Backend Reutilizado:** `saveSupervisionObservation` en `backend/academic-service/Code.gs`.
+- **Archivos a Modificar:** `backend/academic-service/Code.gs`, `js/teacher.js`, `teacher-dashboard.html`.
+- **Tareas Concretas:**
+  1. Modificar `ObservacionesSupervision` para capturar la firma canvas y comentarios de réplica del docente observado.
+  2. Crear el consolidado de "Evaluación Anual de Desempeño Docente" que integre los resultados de observaciones, cumplimiento de entregas y avance curricular.

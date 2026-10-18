@@ -1011,3 +1011,23 @@ Hallazgos Principales:
 4. Privacidad y Confidencialidad (BS-10/BS-11): Las notas confidenciales de seguimiento se sirven sin restricción explícita de rol psicopedagógico especializado.
 5. Ausencia de Motor de Alertas Preventivas (BS-06, BS-07, BS-08): No existen rutinas para detección automática de riesgo de deserción, ausentismo o bajo rendimiento recurrente.
 6. Ausencia de Flujo de Derivaciones y Citas (BS-03, BS-05, BS-12): No hay flujos para remisión de casos entre docentes y orientadores ni actas de reuniones con familias.
+
+===============================================================================
+REGISTRO DE AUDITORÍA FUNCIONAL INTEGRAL: FASE 8 (CALIDAD EDUCATIVA Y SUPERVISIÓN DOCENTE)
+===============================================================================
+Fecha: Mayo 2024
+Módulo Auditado: Calidad Educativa y Supervisión Docente (Ampliación Fase 13 del Plan General)
+Componentes e Inspección:
+  - backend/academic-service/Code.gs (SupervisionesDocentes, ObservacionesSupervision, PlanesMejoraPedagogica)
+  - backend/exam-service/Code.gs (Calificaciones, supervisión de notas)
+  - backend/task-service/Code.gs (MaterialesEducativos, AulasVirtuales)
+  - js/teacher.js, js/student.js, js/ui-common.js
+  - teacher-dashboard.html, student-dashboard.html
+
+Hallazgos Principales:
+1. Cobertura de Persistencia GAS: 3 tablas en Google Sheets operativas (SupervisionesDocentes, ObservacionesSupervision, PlanesMejoraPedagogica).
+2. Endpoints Backend: 7 funciones de servidor activas para programación de observaciones de clase, registro de rúbricas y planes de mejora pedagógica.
+3. Brecha en Contenido Impartido vs. Planificado (CE-04, CE-05): Ausencia de bitácora diaria de clases donde el docente registre los temas realmente desarrollados.
+4. Ausencia de Indicadores de Avance Curricular (CE-11): Sin motor ni tablero de medición del porcentaje de cobertura curricular por materia/grado.
+5. Ausencia de Aprobación de Guías (CE-09): Los docentes publican materiales sin revisión previa por Coordinación Pedagógica.
+6. Supervisión de Entregas (CE-08, CE-10): Se requiere un semáforo administrativo para auditar entregas puntuales de notas y tareas por docente.
