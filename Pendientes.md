@@ -5088,3 +5088,594 @@ No declarar completada una tarea solo porque sus archivos o interfaces hayan sid
 - **Tareas Concretas:**
   1. Agregar la pestaña "Recursos & Operaciones Físicas" dentro del modal de Expediente del Estudiante.
   2. Consolidar la información de libros prestados, estado de devoluciones, ruta de bus asignada con parada/horario y equipos/tablets entregados en custodia.
+
+---
+
+PLAN DE IMPLEMENTACIÓN: FASE 6. OPERACIONES FÍSICAS DEL INSTITUTO
+
+Plataforma: Ecosistema Educativo New Generation Christian Academy
+Fase: 6. Operaciones físicas del instituto
+Base: Informe de auditoría funcional integral de la Fase 6
+Objetivo: Completar las funciones pendientes, conectar las capacidades existentes con sus interfaces correspondientes y asegurar que los procesos de biblioteca, inventario, activos, mantenimiento, espacios y transporte funcionen de manera integrada.
+
+1. INSTRUCCIONES GENERALES PARA JULES
+
+Implementa las tareas descritas en este documento utilizando el repositorio actual como fuente de verdad.
+
+Antes de modificar archivos:
+
+1. Lee "METODOLOGIA_DESARROLLO.md" y los archivos de instrucciones, documentación y registro de cambios aplicables al proyecto.
+2. Comprueba el estado actual del repositorio y las funciones existentes en "backend/accounting-service/Code.gs", "backend/academic-service/Code.gs", "js/accounting.js", "js/teacher.js", "js/student.js", "dashboard-contabilidad.html", "teacher-dashboard.html" y "student-dashboard.html".
+3. Revisa las firmas, parámetros, respuestas, permisos y efectos secundarios de los servicios identificados en la auditoría. No des por hecho que una función hace algo solo por su nombre.
+4. Identifica qué componentes, tablas, estilos, modales, mecanismos de navegación, validaciones y controles de acceso pueden reutilizarse.
+5. Ejecuta las tareas en orden de prioridad, respetando las dependencias entre ellas.
+
+Reglas obligatorias
+
+- No reconstruyas los módulos que la auditoría calificó como funcionales.
+- No dupliques hojas, endpoints, funciones de negocio ni registros que ya existan.
+- No reemplaces datos históricos ni cambies nombres de columnas, contratos de servicios o estructuras compartidas sin demostrar que el cambio es necesario y compatible.
+- No crees una segunda fuente de verdad cuando los datos ya estén almacenados en Google Sheets.
+- Conserva la separación entre las funciones de contabilidad, biblioteca, mantenimiento, administración académica y transporte.
+- Los controles de permisos deben aplicarse en el servidor. Ocultar botones en la interfaz no constituye una autorización suficiente.
+- Utiliza los mecanismos de protección frente a solicitudes duplicadas que ya existan y agrega controles de concurrencia cuando sean necesarios.
+- No registres información sensible de estudiantes, familias o empleados en mensajes de error, registros de depuración ni notificaciones dirigidas a usuarios no autorizados.
+- Toda la interfaz visible debe utilizar español claro y comprensible para personal administrativo, docentes, estudiantes y familias. No mostrar términos de programación, nombres de funciones, tokens, estructuras internas ni mensajes técnicos.
+- No afirmes que una prueba pasó si no la ejecutaste. Distingue las pruebas automatizadas, las verificaciones manuales y las pruebas que requieren acceso real al entorno.
+- No inventes resultados ni presentes simulaciones como operaciones reales.
+- No elimines funciones existentes para simplificar una implementación.
+- Si una tarea depende de un dato, permiso o servicio que no está disponible, documenta el impedimento y continúa con las tareas independientes.
+
+2. ORDEN DE PRIORIDAD
+
+Prioridad crítica
+
+- OP-08: Transporte escolar y asignación de rutas.
+- OP-05: Portal de solicitudes de reparación y mantenimiento para docentes.
+
+Prioridad alta
+
+- OP-01: Catálogo, ejemplares, reservas e incidencias de biblioteca.
+- OP-09: Entrega y devolución de activos con comprobantes.
+- OP-11 y OP-12: Permisos e integración con los expedientes de estudiantes.
+
+Prioridad media
+
+- OP-02: Alertas de reorden y unidades fraccionarias.
+- OP-03 y OP-06: Compras, activos patrimoniales y garantías.
+- OP-04: Programación recurrente de mantenimiento y costos acumulados.
+- OP-07: Reservas de espacios y cierres por mantenimiento.
+- OP-10: Concurrencia y protección de movimientos de inventario.
+
+---
+
+3. TAREAS DE IMPLEMENTACIÓN
+
+OP-IMP-01. Crear el módulo de transporte escolar
+
+Prioridad: Crítica
+Problema: El servidor ya permite registrar rutas y asignar estudiantes, pero no existe una interfaz funcional para utilizar estos servicios.
+
+Archivos de referencia: "backend/accounting-service/Code.gs", "js/accounting.js", "js/teacher.js", "js/student.js", "dashboard-contabilidad.html", "teacher-dashboard.html", "student-dashboard.html".
+
+Trabajo requerido
+
+1. Crear una sección de transporte escolar en el dashboard administrativo adecuado, reutilizando los componentes de navegación, tablas, formularios y modales existentes.
+2. Implementar las vistas necesarias para:
+   - Consultar las rutas registradas.
+   - Crear y editar rutas, respetando los permisos.
+   - Registrar y consultar vehículos, conductores, capacidad y paradas, de acuerdo con las capacidades reales del servicio existente.
+   - Consultar las asignaciones de estudiantes.
+   - Asignar estudiantes a rutas y paradas.
+   - Cambiar o retirar una asignación cuando esté permitido, conservando el historial.
+   - Consultar la ocupación de cada ruta y advertir cuando se alcance su capacidad.
+3. Conectar la interfaz con "manageTransportRoute", "assignStudentTransport" y los servicios de consulta que ya existan. Antes de agregar un endpoint, comprueba si existe una función equivalente.
+4. Añadir búsqueda y filtros por ruta, estudiante, estado y otros campos que realmente estén disponibles.
+5. Incorporar estados vacíos, mensajes de confirmación, errores comprensibles y prevención de envíos repetidos.
+6. En el dashboard del estudiante, mostrar su ruta y parada asignadas, únicamente si existe una asignación vigente.
+7. En el dashboard del docente, mostrar únicamente la información de transporte que corresponda a sus responsabilidades y permisos. No conceder acceso administrativo al transporte por el mero hecho de ser docente.
+8. Preparar la consulta de información para familias o responsables legales si el sistema dispone de ese rol. Si no existe una identidad o autorización verificable para ellos, documentar la dependencia en vez de exponer información mediante un acceso improvisado.
+
+Validaciones obligatorias
+
+- No permitir asignar estudiantes a rutas inexistentes o inactivas.
+- Impedir que la capacidad se exceda mediante asignaciones concurrentes.
+- Evitar asignaciones duplicadas para el mismo estudiante y periodo.
+- Validar las paradas y la pertenencia de cada parada a la ruta correspondiente.
+- Verificar permisos tanto en la interfaz como en el servidor.
+- No exponer listas completas de estudiantes, teléfonos, direcciones u otros datos personales a usuarios sin autorización.
+- Conservar el historial cuando se cambia una ruta o una asignación.
+
+Criterios de aceptación
+
+- El personal autorizado puede administrar rutas y asignaciones desde la interfaz.
+- Los estudiantes autorizados pueden consultar su propia asignación.
+- Los cambios persisten correctamente y se reflejan en las consultas posteriores.
+- Los usuarios no autorizados reciben una respuesta de acceso denegado.
+- Las asignaciones respetan capacidad, estado y restricciones existentes.
+
+---
+
+OP-IMP-02. Crear el portal de solicitudes de reparación para docentes
+
+Prioridad: Crítica
+Problema: Las solicitudes de mantenimiento están concentradas en el panel contable, por lo que un docente no puede reportar una avería mediante un flujo sencillo y autorizado.
+
+Archivos de referencia: "backend/accounting-service/Code.gs", "js/accounting.js", "js/teacher.js", "teacher-dashboard.html".
+
+Trabajo requerido
+
+1. Incorporar en el dashboard docente una opción visible para reportar un problema.
+2. Crear un formulario sencillo con los campos que admita el modelo existente:
+   - Aula, espacio o ubicación afectada.
+   - Equipo o activo relacionado, cuando corresponda.
+   - Categoría del problema.
+   - Descripción de la falla.
+   - Prioridad sugerida.
+   - Fecha y hora, si son necesarias y compatibles con el servicio.
+   - Fotografías o archivos adjuntos únicamente si existe un mecanismo seguro y compatible para gestionarlos.
+3. Reutilizar "MantenimientoOrdenes", "MaterialesSolicitudes" y "manageMaintenanceOrder" cuando correspondan, sin registrar dos veces la misma solicitud.
+4. Permitir al docente consultar el estado de sus propios reportes y las respuestas que tenga autorización para ver.
+5. Incorporar estados comprensibles, por ejemplo: recibida, en revisión, asignada, en proceso, resuelta o rechazada. Adapta los nombres al modelo real para evitar incompatibilidades.
+6. En el panel de mantenimiento, permitir que el personal autorizado revise, clasifique, asigne y actualice las solicitudes.
+7. Registrar quién creó, asignó y cerró cada solicitud cuando el modelo actual lo permita o pueda ampliarse de forma compatible.
+
+Validaciones obligatorias
+
+- El docente no necesita permisos de contabilidad para reportar una falla.
+- El docente no puede aprobar compras, consumir existencias, asignar técnicos ni cerrar órdenes administrativas si su rol no lo permite.
+- No aceptar ubicaciones inexistentes cuando el sistema pueda validarlas.
+- Evitar la creación accidental de solicitudes duplicadas.
+- No permitir que un docente consulte reportes privados de otros docentes sin autorización.
+- Si la solicitud requiere un cambio de estado que corresponde al personal de mantenimiento, impedir que el solicitante lo ejecute.
+
+Criterios de aceptación
+
+- Un docente puede crear un reporte desde su dashboard.
+- El personal autorizado puede recibirlo y gestionarlo en el módulo existente.
+- El solicitante puede consultar el estado de su propio reporte.
+- La resolución conserva el historial y, cuando proceda, descuenta los repuestos utilizados mediante la lógica existente del Kardex.
+
+---
+
+OP-IMP-03. Completar el catálogo y los préstamos de biblioteca
+
+Prioridad: Alta
+Problema: La biblioteca registra ejemplares físicos, pero no separa formalmente los títulos bibliográficos de sus copias. Además, faltan interfaces para reservas e incidencias.
+
+Archivos de referencia: "backend/accounting-service/Code.gs", "js/accounting.js", "dashboard-contabilidad.html".
+
+Trabajo requerido
+
+1. Revisar "manageLibraryBook", "getLibraryBooks", "processLibraryLoan", "reserveLibraryBook" y "recordLibraryIncident".
+2. Separar conceptualmente:
+   - Catálogo: título, autor, ISBN, editorial, edición y demás metadatos bibliográficos disponibles.
+   - Ejemplar: código individual, ubicación, estado físico, disponibilidad y vínculo con el título.
+3. Antes de crear nuevas hojas, verificar si se puede ampliar de forma compatible el esquema actual. Si hace falta separar catálogo y ejemplares, diseñar una migración que conserve los identificadores y los préstamos históricos.
+4. Crear o adaptar las pantallas para:
+   - Buscar títulos por nombre, autor, ISBN y otros campos disponibles.
+   - Ver cuántos ejemplares existen y su disponibilidad.
+   - Registrar nuevos títulos y ejemplares.
+   - Prestar y devolver ejemplares.
+   - Reservar títulos o ejemplares.
+   - Consultar y administrar reservas.
+   - Registrar daños, pérdidas y otras incidencias.
+   - Consultar el historial de préstamos e incidencias según permisos.
+5. Diferenciar claramente el título bibliográfico de cada copia física en la interfaz.
+6. Incorporar estados vacíos, validaciones, confirmaciones y mensajes claros.
+7. Respetar el comportamiento existente que impide prestar dos veces un ejemplar que ya está prestado.
+
+Validaciones obligatorias
+
+- Cada ejemplar debe tener un identificador único.
+- Cada ejemplar debe estar asociado a un título válido.
+- No prestar ejemplares dañados, perdidos, retirados o reservados para otra persona cuando las reglas existentes lo impidan.
+- Evitar reservas duplicadas incompatibles.
+- Definir y aplicar un orden consistente para atender las reservas.
+- Evitar inconsistencias cuando dos personas intenten reservar o prestar el mismo ejemplar al mismo tiempo.
+- Registrar quién realizó el préstamo, devolución o modificación.
+- Mantener los préstamos históricos y no reemplazar identificadores existentes durante la migración.
+
+Criterios de aceptación
+
+- Un título puede tener múltiples ejemplares sin duplicar sus metadatos bibliográficos.
+- El personal autorizado puede administrar reservas e incidencias desde la interfaz.
+- Los préstamos y devoluciones actualizan los estados correspondientes.
+- Las operaciones concurrentes no permiten prestar dos veces el mismo ejemplar.
+- Los datos históricos continúan consultables.
+
+---
+
+OP-IMP-04. Incorporar alertas de reorden para consumibles
+
+Prioridad: Media
+Problema: El inventario registra existencias, pero no genera alertas operativas cuando un artículo llega al nivel mínimo de reposición.
+
+Archivos de referencia: "backend/accounting-service/Code.gs", "js/accounting.js", "dashboard-contabilidad.html".
+
+Trabajo requerido
+
+1. Revisar el modelo de artículos, las ubicaciones, el Kardex y las requisiciones existentes.
+2. Comprobar si ya existe un campo para stock mínimo, punto de reorden o cantidad de reposición.
+3. Si no existe, ampliar el modelo de manera compatible y permitir configurar el umbral por artículo y ubicación cuando sea necesario.
+4. Mostrar alertas en el módulo de almacenes para artículos con existencias iguales o inferiores al umbral configurado.
+5. Permitir revisar el saldo disponible, las solicitudes pendientes y las compras en curso antes de sugerir una reposición.
+6. Ofrecer una acción para iniciar una requisición o solicitud de compra mediante los servicios existentes. La alerta no debe generar compras automáticamente sin una autorización explícita.
+7. Evitar alertas repetitivas sin cambios relevantes. Si el sistema cuenta con notificaciones, reutilizarlas; de lo contrario, implementar un registro mínimo y compatible del estado de la alerta.
+
+Unidades fraccionarias
+
+- Inspeccionar cómo se almacenan y validan las cantidades actuales.
+- Admitir cantidades fraccionarias únicamente para artículos cuyas unidades lo permitan, como litros o kilogramos.
+- Mantener unidades enteras para artículos que se cuentan individualmente, como computadoras, sillas o paquetes indivisibles.
+- Validar que las conversiones entre unidades no provoquen pérdidas de precisión ni saldos negativos.
+- No cambiar la interpretación de movimientos históricos.
+
+Criterios de aceptación
+
+- Los artículos por debajo del umbral se identifican correctamente.
+- Las alertas consideran la ubicación y las unidades del artículo.
+- El personal puede iniciar una reposición desde la alerta.
+- No se crean órdenes de compra ni movimientos de inventario sin autorización.
+
+---
+
+OP-IMP-05. Vincular compras con activos patrimoniales y garantías
+
+Prioridad: Media
+Problema: La recepción de una compra actualiza el inventario, pero no ofrece un flujo completo para convertir los bienes duraderos recibidos en activos patrimoniales.
+
+Archivos de referencia: "backend/accounting-service/Code.gs", "js/accounting.js", "dashboard-contabilidad.html".
+
+Trabajo requerido
+
+1. Revisar "createPurchaseOrder", "recordPurchaseReceipt", "manageAssetItem" y el modelo de activos existente.
+2. Añadir una clasificación de recepción que permita distinguir entre consumibles y bienes duraderos, siempre que la orden o el artículo no cuenten ya con una clasificación equivalente.
+3. Para bienes duraderos, ofrecer la creación de un borrador de activo patrimonial a partir de los datos de la recepción.
+4. Permitir al personal autorizado completar el código patrimonial, ubicación, custodio, serie, marca, modelo, fecha de adquisición y demás datos que correspondan.
+5. Incorporar los datos de garantía disponibles: proveedor, fecha de inicio, vencimiento, cobertura y referencia documental.
+6. Si la compra contiene varios bienes físicos, permitir generar un registro individual por unidad cuando el control patrimonial lo requiera.
+7. Relacionar el activo con la orden y la recepción de origen para facilitar la trazabilidad.
+8. Mantener la recepción contable y el Kardex existentes sin crear movimientos duplicados.
+
+Validaciones obligatorias
+
+- Crear borradores de activos no debe registrar nuevamente la recepción ni duplicar asientos contables.
+- Evitar la creación repetida de activos desde una misma unidad recibida.
+- No asignar automáticamente un custodio si no está definido o autorizado.
+- Permitir corregir o cancelar un borrador antes de confirmar el alta definitiva.
+- Mantener una referencia verificable a la compra de origen.
+
+Criterios de aceptación
+
+- Una compra de bienes duraderos puede convertirse en uno o varios borradores de activos.
+- Los activos confirmados se consultan en el módulo patrimonial.
+- Las garantías pueden consultarse y vincularse al activo.
+- El Kardex y los asientos contables conservan el comportamiento actual.
+
+---
+
+OP-IMP-06. Completar mantenimiento preventivo y costos acumulados
+
+Prioridad: Media
+Problema: Se pueden crear órdenes de mantenimiento, pero no se ha verificado un sistema completo de recurrencia automática ni un resumen fiable del costo acumulado.
+
+Archivos de referencia: "backend/accounting-service/Code.gs", "js/accounting.js", "dashboard-contabilidad.html".
+
+Trabajo requerido
+
+1. Revisar el modelo de órdenes y el comportamiento real de "manageMaintenanceOrder" y "getMaintenanceOrders".
+2. Incorporar, si no existe, una programación preventiva por activo o espacio, con frecuencia, próxima fecha, responsable y estado.
+3. Reutilizar los mecanismos de tareas programadas disponibles en el proyecto si existen. Si no existe un mecanismo fiable para ejecutar procesos periódicos, documentar la dependencia y evitar afirmar que la recurrencia es automática.
+4. Prevenir la creación de varias órdenes para el mismo activo y periodo de mantenimiento.
+5. Registrar los costos de mano de obra, repuestos y otros conceptos que el modelo pueda justificar.
+6. Calcular el costo acumulado por activo y permitir consultar el historial de órdenes.
+7. Mostrar las órdenes vencidas, próximas y completadas mediante filtros comprensibles.
+8. Conservar el descuento de repuestos del Kardex que ya se realiza al cerrar órdenes, evitando descontarlos más de una vez.
+
+Criterios de aceptación
+
+- Las programaciones preventivas permiten identificar los próximos mantenimientos.
+- Las órdenes se generan con el periodo correcto y sin duplicaciones.
+- Los costos se calculan a partir de registros verificables, sin inventar importes.
+- Los repuestos consumidos se reflejan correctamente en el inventario.
+- Las órdenes correctivas y su historial no se pierden.
+
+---
+
+OP-IMP-07. Completar la gestión de aulas y espacios físicos
+
+Prioridad: Media
+Problema: El sistema académico controla choques de horarios, pero no existe una herramienta completa para reservar temporalmente espacios no académicos ni registrar cierres por mantenimiento.
+
+Archivos de referencia: "backend/academic-service/Code.gs", "js/accounting.js", vistas administrativas existentes.
+
+Trabajo requerido
+
+1. Revisar "SedesAulas", "getSedesAulas" y "checkScheduleConflict".
+2. Reutilizar el catálogo actual de espacios en lugar de crear una lista independiente.
+3. Implementar reservas temporales para espacios que puedan utilizarse fuera de la programación académica ordinaria, como auditorios, canchas, laboratorios y salas de reuniones.
+4. Registrar responsable, finalidad, fecha, hora de inicio, hora de finalización y estado de la reserva, según el modelo de datos disponible.
+5. Verificar los conflictos con las reservas existentes y con los horarios académicos.
+6. Incorporar cierres temporales por mantenimiento, daños, seguridad u otras causas autorizadas.
+7. Evitar nuevas reservas durante un cierre vigente.
+8. Permitir consultar las reservas y cierres según el rol del usuario.
+
+Validaciones obligatorias
+
+- La hora de finalización debe ser posterior al inicio.
+- No aceptar reservas incompatibles para el mismo espacio y periodo.
+- Verificar conflictos de forma consistente en el servidor.
+- Evitar que una reserva sobrescriba horarios académicos.
+- Conservar el historial de cancelaciones y cierres.
+
+Criterios de aceptación
+
+- El personal autorizado puede reservar espacios no académicos.
+- El sistema detecta los conflictos relevantes.
+- Los espacios cerrados no pueden reservarse durante el periodo de cierre.
+- Los horarios académicos continúan funcionando sin regresiones.
+
+---
+
+OP-IMP-08. Completar la entrega y devolución de activos
+
+Prioridad: Alta
+Problema: El sistema conserva registros de custodia, pero no dispone de un proceso completo de devolución que registre el estado físico y genere un comprobante descargable.
+
+Archivos de referencia: "backend/accounting-service/Code.gs", "js/accounting.js", "dashboard-contabilidad.html".
+
+Trabajo requerido
+
+1. Revisar "assignAssetCustody", "getAssetAssignments" y "registerAssetDisposal". No utilizar la baja patrimonial como sustituto de una devolución.
+2. Crear o adaptar un flujo explícito de entrega y devolución de activos.
+3. Al entregar, registrar el activo, la persona responsable, la fecha, la ubicación y las observaciones correspondientes.
+4. Al devolver, incluir una lista de comprobación de condición física:
+   - Estado general.
+   - Accesorios entregados y devueltos.
+   - Daños observados.
+   - Faltantes.
+   - Observaciones.
+5. Permitir registrar la confirmación de entrega o devolución mediante los mecanismos de aceptación disponibles.
+6. Si existe un componente de firma digital compatible, reutilizarlo. En caso contrario, evaluar una captura de firma manuscrita dibujada en pantalla, con consentimiento y almacenamiento seguro.
+7. Generar un comprobante PDF cuando las capacidades existentes lo permitan, con identificador del movimiento, activo, responsables, fechas, observaciones y confirmaciones.
+8. Vincular cada comprobante al historial de custodia.
+
+Validaciones obligatorias
+
+- Un activo no puede tener custodios incompatibles simultáneamente.
+- Una devolución no debe marcar el activo como dado de baja.
+- Los daños deben quedar documentados sin alterar automáticamente el historial anterior.
+- No presentar una firma dibujada como firma electrónica certificada.
+- Restringir el acceso a comprobantes que contengan datos personales.
+- Impedir que una solicitud duplicada genere dos devoluciones o dos movimientos de custodia.
+
+Criterios de aceptación
+
+- El personal autorizado puede registrar entregas y devoluciones.
+- El retorno conserva el estado físico y las observaciones.
+- El historial muestra la cadena de custodia.
+- Los comprobantes se generan correctamente cuando se habilite esa capacidad.
+- La baja patrimonial sigue siendo una operación independiente.
+
+---
+
+OP-IMP-09. Integrar la información operativa con el expediente del estudiante
+
+Prioridad: Alta
+Problema: La información sobre préstamos de biblioteca, transporte y activos bajo custodia no está reunida en una vista del expediente del estudiante.
+
+Archivos de referencia: "backend/accounting-service/Code.gs", "backend/academic-service/Code.gs", "js/student.js", "student-dashboard.html" y los servicios de expedientes existentes.
+
+Trabajo requerido
+
+1. Identificar la fuente oficial del identificador del estudiante y comprobar cómo se relaciona con préstamos, asignaciones de transporte y custodias de activos.
+2. Incorporar una sección de información operativa en el expediente administrativo o en la vista del estudiante, según el rol y los permisos.
+3. Mostrar, cuando corresponda:
+   - Libros prestados, fecha de devolución prevista y estado.
+   - Reservas de biblioteca propias.
+   - Ruta y parada de transporte asignadas.
+   - Equipos bajo custodia.
+   - Historial de entrega y devolución que el usuario tenga autorización para consultar.
+4. En la vista administrativa, permitir consultar los datos necesarios para la gestión institucional.
+5. En la vista del estudiante, mostrar solamente sus propios datos.
+6. Si existen roles de padres o responsables legales, aplicar la relación de tutela y los permisos existentes antes de mostrar datos del estudiante.
+7. Evitar almacenar copias redundantes de los datos operativos en el expediente.
+
+Criterios de aceptación
+
+- Los datos se obtienen de sus fuentes oficiales.
+- Los cambios de préstamos, rutas y custodias se reflejan en la consulta posterior.
+- Un estudiante no puede consultar información de otro.
+- Los usuarios administrativos solo acceden a los datos necesarios para su función.
+- No se rompe el formato actual del expediente.
+
+---
+
+OP-IMP-10. Completar la separación de permisos por área
+
+Prioridad: Alta
+Problema: Las funciones operativas están concentradas en el panel contable, aunque biblioteca, bodega, mantenimiento y transporte pueden necesitar responsables diferentes.
+
+Trabajo requerido
+
+1. Revisar "checkAuthorization_" y los roles disponibles en el sistema.
+2. Identificar si ya existen permisos específicos para biblioteca, almacén, activos, mantenimiento y transporte.
+3. Reutilizar el sistema de roles y permisos existente. No crear un sistema paralelo.
+4. Organizar las pantallas según las responsabilidades:
+   - Biblioteca: catálogo, ejemplares, préstamos, reservas e incidencias.
+   - Almacén: existencias, movimientos y requisiciones.
+   - Mantenimiento: reportes, órdenes, asignaciones y cierre de reparaciones.
+   - Activos: registro, ubicación, custodia, devolución y baja.
+   - Transporte: rutas, capacidad y asignaciones.
+5. Mantener el panel contable para las funciones financieras y los procesos que le correspondan.
+6. Aplicar permisos por operación, no únicamente por pantalla.
+7. Verificar las llamadas directas a los servicios desde usuarios sin autorización.
+
+Criterios de aceptación
+
+- Los usuarios autorizados acceden a las funciones de su área.
+- Los docentes pueden reportar fallas sin obtener permisos contables.
+- Los responsables de biblioteca o bodega no reciben permisos financieros innecesarios.
+- Las llamadas no autorizadas son rechazadas en el servidor.
+- Los cambios no alteran los permisos de módulos ajenos a esta fase.
+
+---
+
+OP-IMP-11. Reforzar la integridad de los movimientos de inventario
+
+Prioridad: Alta
+Problema: La auditoría recomienda revisar las transferencias concurrentes para evitar que dos operaciones simultáneas alteren los saldos de forma inconsistente.
+
+Trabajo requerido
+
+1. Revisar el uso actual de "LockService", la validación de idempotencia y las funciones de transferencia, recepción y entrega de materiales.
+2. Determinar en qué operaciones puede producirse una actualización concurrente del mismo artículo o ubicación.
+3. Aplicar el bloqueo más específico compatible con la arquitectura existente, liberándolo correctamente incluso ante errores.
+4. Mantener las validaciones de existencias, unidades y permisos dentro del área protegida por el mecanismo de concurrencia cuando corresponda.
+5. Verificar que las operaciones repetidas con la misma clave de idempotencia no dupliquen movimientos.
+6. Revisar las consecuencias de errores parciales entre Kardex, existencias y asientos contables.
+7. No presentar varias escrituras en Google Sheets como una transacción atómica si no existe una garantía real que lo respalde.
+
+Criterios de aceptación
+
+- Las transferencias y salidas no generan saldos negativos por concurrencia.
+- Las solicitudes duplicadas no producen movimientos adicionales.
+- Los errores no dejan estados incoherentes sin detectar.
+- Se conserva el historial de movimientos.
+- Las funciones contables existentes continúan operativas.
+
+---
+
+OP-IMP-12. Completar las notificaciones y consultas operativas
+
+Prioridad: Media
+Objetivo: Facilitar el seguimiento de tareas sin duplicar los mecanismos de notificación del sistema.
+
+Trabajo requerido
+
+Revisar si existen servicios de notificaciones, tareas programadas y preferencias de usuario. Reutilizarlos para avisar a los usuarios autorizados sobre:
+
+- Artículos que alcanzan el nivel mínimo de existencias.
+- Órdenes de mantenimiento preventivo próximas o vencidas.
+- Solicitudes de reparación recibidas, asignadas o resueltas.
+- Garantías de activos próximas a vencer.
+- Reservas de biblioteca disponibles o próximas a expirar, si se define esa regla.
+- Cambios relevantes en rutas o asignaciones de transporte, cuando corresponda.
+
+Las notificaciones deben llevar al usuario a la sección adecuada, no exponer datos personales ni información de otras áreas.
+
+Si el proyecto no cuenta con un servicio de correo o notificaciones programadas, documentar la dependencia y ofrecer inicialmente avisos dentro de la plataforma cuando sea viable. No afirmar que se envían correos si no existe una integración real.
+
+Criterios de aceptación
+
+- Las alertas se generan a partir de condiciones verificables.
+- No se envían notificaciones repetidas sin control.
+- Cada usuario recibe únicamente avisos autorizados.
+- El estado de las notificaciones se gestiona mediante mecanismos existentes cuando estén disponibles.
+
+---
+
+4. PRUEBAS DE ACEPTACIÓN Y REGRESIÓN
+
+Jules debe ejecutar las pruebas que permita el entorno y documentar por separado las que requieran acceso al sistema desplegado.
+
+Transporte escolar
+
+- Crear una ruta y consultar sus datos desde la interfaz.
+- Asignar un estudiante válido a una ruta y parada.
+- Intentar asignar un estudiante a una ruta inexistente.
+- Intentar exceder la capacidad.
+- Intentar crear una asignación duplicada.
+- Comprobar que el estudiante solo puede consultar su propia asignación.
+- Verificar que un usuario sin permisos no puede administrar rutas.
+
+Solicitudes de reparación
+
+- Crear una solicitud desde el dashboard docente.
+- Consultar el reporte con una cuenta de mantenimiento autorizada.
+- Cambiar el estado y comprobar que se conserva el historial.
+- Intentar consultar el reporte desde otra cuenta docente sin autorización.
+- Resolver una orden con repuestos y comprobar que el Kardex se actualiza una sola vez.
+
+Biblioteca
+
+- Crear un título con varios ejemplares.
+- Prestar un ejemplar y comprobar que no se puede prestar de nuevo.
+- Registrar una devolución.
+- Crear y cancelar una reserva.
+- Registrar un daño y verificar que afecta únicamente al ejemplar correspondiente.
+- Verificar la conservación de los préstamos históricos tras cualquier migración.
+
+Inventario y compras
+
+- Configurar un nivel mínimo y comprobar la alerta.
+- Recibir una compra y verificar Kardex y asiento contable.
+- Crear un borrador de activo desde una recepción y confirmar que no se duplica la compra.
+- Comprobar las unidades fraccionarias permitidas y rechazar las inválidas.
+- Ejecutar transferencias concurrentes y verificar los saldos resultantes.
+
+Mantenimiento y espacios
+
+- Programar un mantenimiento preventivo.
+- Comprobar que se identifica la próxima fecha.
+- Intentar generar una orden duplicada para el mismo periodo.
+- Reservar un espacio y detectar una reserva incompatible.
+- Cerrar temporalmente un espacio y comprobar que no se reserva durante el cierre.
+
+Activos y expedientes
+
+- Entregar un activo y registrar su custodio.
+- Devolverlo con observaciones de estado físico.
+- Comprobar que una devolución no ejecuta una baja patrimonial.
+- Consultar el historial y el comprobante generado.
+- Verificar que los datos operativos del estudiante corresponden al expediente correcto.
+- Probar accesos con roles distintos.
+
+Regresión obligatoria
+
+Volver a comprobar, como mínimo:
+
+- Préstamo y devolución de biblioteca.
+- Entradas y salidas del Kardex.
+- Recepción de compras y cuentas por pagar.
+- Integración de compras con asientos contables.
+- Registro y asignación de activos.
+- Órdenes de mantenimiento y consumo de repuestos.
+- Detección de choques de horarios académicos.
+- Restricciones de acceso por rol.
+
+---
+
+5. ENTREGA Y DOCUMENTACIÓN FINAL
+
+Al finalizar, entregar:
+
+1. Resumen de cambios: qué se implementó y qué archivos se modificaron.
+2. Trazabilidad: relación entre cada tarea OP-IMP-01 a OP-IMP-12 y los cambios realizados.
+3. Pruebas: comandos o procedimientos ejecutados, resultados observados y limitaciones.
+4. Seguridad: permisos comprobados y casos de acceso denegado.
+5. Persistencia: hojas reutilizadas, columnas añadidas y migraciones realizadas, si las hubo.
+6. Compatibilidad: confirmación de que se preservaron las funciones anteriores y los contratos compartidos.
+7. Pendientes: tareas bloqueadas, dependencias externas y funciones que aún no están completas.
+8. Evidencias: referencias a archivos, funciones y pruebas concretas que respalden las afirmaciones.
+
+No marques una tarea como terminada únicamente porque existe un formulario o porque el backend responde. Debe comprobarse el flujo completo: interfaz, autorización, validación, persistencia, actualización de estado y consulta posterior.
+
+6. DEFINICIÓN DE FINALIZACIÓN DE LA FASE
+
+La Fase 6 se considerará implementada cuando:
+
+- El transporte escolar pueda gestionarse desde una interfaz real y segura.
+- Los docentes puedan reportar fallas sin permisos contables.
+- La biblioteca permita administrar títulos, ejemplares, préstamos, reservas e incidencias.
+- El inventario tenga alertas de reorden y mantenga saldos consistentes.
+- Las compras puedan vincularse con los activos patrimoniales sin duplicar movimientos contables.
+- El mantenimiento preventivo tenga seguimiento verificable.
+- Los espacios admitan reservas y cierres sin conflictos.
+- La entrega y devolución de activos conserve un historial completo.
+- El expediente del estudiante muestre los datos operativos que correspondan a cada usuario autorizado.
+- Los permisos se apliquen tanto en la interfaz como en el servidor.
+- Las pruebas de regresión no revelen daños en las funciones previamente operativas.
+
+Si alguna condición no puede completarse por falta de infraestructura o de servicios existentes, debe quedar identificada como pendiente con evidencia y explicación concreta. No debe declararse finalizada toda la fase mientras queden brechas críticas sin resolver.
