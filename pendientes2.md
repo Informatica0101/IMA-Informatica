@@ -520,3 +520,1005 @@ Si durante las comprobaciones se identifica una vulnerabilidad crítica, pérdid
 Al terminar el backlog, la plataforma deberá disponer de una búsqueda global integrada, segura, accesible y eficiente, con resultados relevantes y navegación contextual, además de pruebas de regresión que preserven las garantías existentes de identidad, permisos, trazabilidad, persistencia e integridad.
 
 Las tareas de endurecimiento no presuponen que las capacidades clasificadas como completas sean defectuosas. Su finalidad es mantener esas garantías, detectar posibles brechas no evidenciadas en el resumen de auditoría y proporcionar pruebas repetibles para futuras modificaciones.
+
+
+BACKLOG TÉCNICO Y FUNCIONAL
+
+Búsqueda global, autorización y arquitectura de fuentes de datos
+
+Proyecto: Plataforma Integral de Gestión Educativa — New Generation Christian Academy / Instituto María Auxiliadora
+Responsable de desarrollo: JyP Solutions
+Entorno descrito en la auditoría: Google Apps Script, microservicios y PWA
+Base de trabajo: Informe de auditoría transversal del 18 de octubre de 2026
+Objetivo: Completar la búsqueda global, mejorar la localización de información institucional y establecer una arquitectura escalable para consultar múltiples hojas de cálculo sin dispersar sus identificadores por el código.
+
+1. Reglas de ejecución
+
+Antes de implementar cada tarea, Jules deberá comprobar que el problema sigue presente en la versión actual del repositorio. El informe de auditoría es el punto de partida, no una sustitución de la inspección del código ni de las pruebas.
+
+Cada tarea debe cerrarse con evidencias reproducibles, criterios de aceptación superados y pruebas de regresión pertinentes.
+
+Los estados iniciales de las tareas son propuestas de trabajo, no declaraciones de que ya existan defectos adicionales.
+
+Prioridades
+
+- P0: vulnerabilidad crítica o riesgo inmediato de exposición o pérdida grave de datos.
+- P1: problema grave de autorización, integridad, recuperación o continuidad operativa.
+- P2: capacidad funcional importante pendiente, arquitectura insuficiente demostrada u optimización relevante.
+- P3: mejora complementaria o de usabilidad que no bloquea las funciones principales.
+
+Una vulnerabilidad de seguridad demostrada debe escalarse a P0 o P1 según su impacto, aunque se descubra durante una tarea P2.
+
+Restricciones
+
+1. No introducir nombres de archivos, funciones o componentes nuevos hasta inspeccionar la estructura real y determinar dónde corresponde integrarlos.
+2. No duplicar servicios de búsqueda, autorización, configuración o acceso a hojas de cálculo que ya cumplan la función necesaria.
+3. No migrar la plataforma completa a otra base de datos sin mediciones que justifiquen esa decisión.
+4. No exponer datos financieros, académicos, personales o contractuales mediante resultados, sugerencias, exportaciones o mensajes de error.
+5. No realizar migraciones destructivas ni pruebas de carga sobre producción sin autorización.
+6. No considerar terminada una tarea por el mero hecho de que el código compile o se haya añadido una interfaz.
+
+---
+
+ÉPICA E01. Búsqueda global institucional
+
+T05-01. Definir el contrato funcional de búsqueda global
+
+Prioridad: P2
+Tipo: Especificación y análisis
+Dependencias: Ninguna. Es la tarea inicial.
+
+Problema
+
+La auditoría identifica búsquedas especializadas por pantalla, pero no una experiencia global unificada. Antes de implementarla, es necesario definir qué tipos de registros se consultarán, qué datos pueden utilizarse para buscarlos y qué información se devolverá según los permisos del usuario.
+
+Requisitos funcionales
+
+La búsqueda debe admitir, en la medida en que los módulos correspondientes existan:
+
+- Estudiantes por nombre, identidad o código institucional.
+- Matrículas por estudiante y año escolar.
+- Calificaciones por estudiante, asignatura, período y año.
+- Recibos, pagos y transacciones.
+- Empleados y contratos.
+- Solicitudes y trámites.
+- Constancias y documentos emitidos.
+- Activos institucionales.
+- Accesos a páginas o herramientas institucionales, si resulta útil.
+
+Cada categoría debe definir sus campos consultables, criterios de coincidencia, filtros, información visible, permisos y destino de navegación.
+
+Cambios necesarios
+
+1. Inventariar las búsquedas existentes y sus servicios de consulta.
+2. Identificar los módulos que poseen cada tipo de registro.
+3. Definir un contrato común para solicitudes y respuestas de búsqueda.
+4. Establecer qué categorías pueden habilitarse por rol y por configuración.
+5. Documentar las categorías que no tengan implementación real.
+6. Identificar las dependencias obligatorias y los datos de prueba necesarios.
+
+Comportamiento esperado
+
+Una única búsqueda podrá consultar distintas categorías sin exigir que todas tengan la misma estructura de datos. Cada categoría conservará sus reglas de negocio y autorización.
+
+Criterios de aceptación
+
+- Existe una especificación documentada para cada categoría.
+- Cada categoría identifica el servicio real responsable de consultar sus datos.
+- Se definen campos de búsqueda, filtros, información visible y permisos.
+- Las categorías inexistentes se identifican como pendientes de implementación, no como funciones disponibles.
+- Se define cómo representar resultados parciales, errores y fuentes no disponibles.
+- La especificación diferencia las capacidades obligatorias de las mejoras opcionales.
+
+Entregable
+
+Contrato funcional de búsqueda global, inventario de categorías y matriz de permisos por tipo de resultado.
+
+---
+
+T05-02. Implementar o completar el servicio de búsqueda global
+
+Prioridad: P2
+Tipo: Implementación funcional
+Dependencias: T05-01 y los servicios de consulta existentes.
+
+Problema
+
+La búsqueda actual está segmentada. Se necesita una capa común que reciba una consulta y coordine las categorías autorizadas sin replicar la lógica de los módulos.
+
+Requisitos funcionales
+
+- Recibir una consulta validada y los filtros admitidos.
+- Identificar las categorías que el usuario puede consultar.
+- Invocar los servicios de consulta correspondientes.
+- Normalizar los resultados en una estructura común.
+- Conservar el identificador, la categoría y la referencia al registro original.
+- Aplicar límites de resultados.
+- Manejar errores individuales sin ocultar que la respuesta está incompleta.
+- Evitar ejecutar operaciones de escritura o modificar registros durante una búsqueda.
+
+Cambios necesarios
+
+- Reutilizar los servicios existentes cuando sean adecuados.
+- Crear un coordinador común únicamente si el inventario demuestra que hace falta.
+- Definir un adaptador por categoría cuando los módulos utilicen formatos distintos.
+- Centralizar la validación de la consulta y el tratamiento de errores.
+- Evitar que el servicio dependa de identificadores de archivos dispersos en su código.
+
+Comportamiento esperado
+
+Una consulta puede devolver resultados de varias categorías en una única respuesta, manteniendo el origen y el contexto de cada resultado.
+
+Si una categoría falla, el sistema debe diferenciar los resultados obtenidos de los que no pudieron verificarse. No debe presentar una respuesta parcial como si fuera completa.
+
+Criterios de aceptación
+
+- Una consulta válida devuelve resultados de las categorías habilitadas y autorizadas.
+- Una consulta vacía o excesivamente larga se trata según las reglas definidas.
+- Los resultados conservan su identificador y referencia original.
+- Las categorías sin coincidencias no generan registros ficticios.
+- El fallo de una categoría no provoca que otra devuelva registros incorrectos.
+- Se aplican límites de resultados y se documenta la paginación cuando sea necesaria.
+- La búsqueda no modifica datos ni ejecuta acciones propias de los módulos.
+- Las pruebas demuestran que los servicios existentes no han perdido sus funciones anteriores.
+
+Entregable
+
+Servicio de búsqueda global probado e integrado con las categorías disponibles.
+
+---
+
+T05-03. Integrar la barra de búsqueda en la interfaz institucional
+
+Prioridad: P2
+Tipo: Interfaz y navegación
+Dependencias: T05-01 y T05-02.
+
+Problema
+
+Los usuarios deben navegar entre pantallas para localizar registros de distintos módulos. Se necesita un punto de acceso uniforme.
+
+Requisitos funcionales
+
+- Barra de búsqueda accesible desde las áreas principales que correspondan.
+- Entrada de texto y presentación de sugerencias o resultados.
+- Resultados agrupados por categoría.
+- Navegación al registro correspondiente.
+- Estados de carga, ausencia de resultados, error y consulta incompleta.
+- Funcionamiento en móviles y escritorio.
+- Navegación mediante teclado.
+- Posibilidad de cerrar la búsqueda y regresar al contexto anterior.
+
+Puede evaluarse un atajo de teclado como Ctrl+K o Cmd+K, siempre que no interfiera con las funciones existentes.
+
+Cambios necesarios
+
+- Reutilizar los componentes de interfaz y estilos existentes.
+- Conectar la barra al servicio de búsqueda.
+- Implementar apertura, cierre, selección y navegación.
+- Mantener los filtros y el contexto cuando corresponda.
+- Evitar duplicar barras o servicios que ya resuelvan una parte de esta experiencia.
+
+Comportamiento esperado
+
+El usuario podrá comenzar una búsqueda desde una ubicación común y abrir un resultado autorizado sin recorrer manualmente el módulo de origen.
+
+Criterios de aceptación
+
+- La barra está disponible en las vistas previstas.
+- La consulta se envía al servicio y los resultados corresponden a ella.
+- Seleccionar un resultado abre el destino correcto.
+- Los enlaces conservan la referencia al registro original.
+- Cerrar la búsqueda no altera el formulario ni los datos de la pantalla anterior.
+- El atajo, si se implementa, funciona sin interferir con campos de texto ni atajos existentes.
+- La interfaz se puede utilizar con teclado y en dispositivos móviles.
+- Los errores se muestran de forma comprensible y no se presentan como resultados vacíos válidos.
+
+Entregable
+
+Barra global integrada, navegable y accesible.
+
+---
+
+T05-04. Incorporar relevancia, filtros y desambiguación
+
+Prioridad: P2
+Tipo: Mejora funcional
+Dependencias: T05-02 y T05-03.
+
+Problema
+
+Una búsqueda global puede producir resultados ambiguos, especialmente cuando hay homónimos, registros históricos o coincidencias de distintos módulos.
+
+Requisitos funcionales
+
+- Priorizar coincidencias exactas cuando corresponda.
+- Permitir coincidencias parciales en los campos adecuados.
+- Agrupar por tipo de registro.
+- Distinguir registros activos e históricos cuando el módulo maneje esos estados.
+- Filtrar por año escolar, ejercicio fiscal, estado, fecha o categoría cuando sean aplicables.
+- Mostrar información de desambiguación autorizada.
+- Permitir limitar la búsqueda a una categoría.
+
+Cambios necesarios
+
+- Definir una estrategia de relevancia determinista.
+- Normalizar texto sin alterar los identificadores originales.
+- Evitar que los resultados históricos oculten coincidencias activas más relevantes.
+- Incorporar filtros compatibles con cada categoría.
+- No asumir que todos los módulos comparten los mismos campos o estados.
+
+Comportamiento esperado
+
+Los resultados más pertinentes aparecen primero, los homónimos se distinguen mediante información permitida y los filtros no cambian el significado de la consulta.
+
+Criterios de aceptación
+
+- Una coincidencia exacta tiene la prioridad definida en el contrato.
+- Los homónimos se pueden distinguir sin revelar datos confidenciales.
+- Los filtros no incluyen resultados que incumplan sus condiciones.
+- Los registros históricos se identifican correctamente.
+- Los filtros no eluden permisos ni amplían el acceso.
+- La ordenación es estable ante consultas equivalentes.
+- Los resultados no se duplican por pertenecer a varias fuentes.
+
+Entregable
+
+Búsqueda con ordenación, filtros y presentación contextual.
+
+---
+
+T05-05. Optimizar el rendimiento y la gestión de consultas
+
+Prioridad: P2
+Tipo: Rendimiento
+Dependencias: T05-02 y una línea base de rendimiento.
+
+Problema
+
+Consultar varias categorías y múltiples fuentes puede aumentar el número de llamadas a servicios, el tiempo de respuesta y el consumo de cuotas de Apps Script.
+
+Requisitos funcionales
+
+- Limitar la cantidad de resultados por consulta.
+- Evitar lecturas completas e innecesarias de las hojas.
+- Agrupar operaciones cuando el mecanismo utilizado lo permita.
+- Reducir llamadas repetidas a servicios externos.
+- Evaluar caché para datos apropiados.
+- Cancelar o descartar resultados de consultas anteriores cuando el usuario cambie rápidamente de búsqueda.
+- Registrar métricas de rendimiento sin incluir información sensible innecesaria.
+
+Cambios necesarios
+
+- Medir latencia y llamadas antes de optimizar.
+- Identificar los servicios más costosos.
+- Reutilizar datos obtenidos durante la misma ejecución cuando sea seguro.
+- Aplicar paginación o continuación si el volumen lo requiere.
+- Definir caducidad e invalidación para la caché, si se utiliza.
+- Implementar límites y tratamiento de errores transitorios.
+
+Comportamiento esperado
+
+La búsqueda utiliza recursos de forma proporcional a la consulta y no lee indiscriminadamente todos los registros históricos en cada solicitud sin justificación.
+
+Criterios de aceptación
+
+- Existe una línea base reproducible.
+- Se mide la duración de consultas representativas.
+- Se registra el número de fuentes y llamadas realizadas.
+- Se demuestra que las optimizaciones no cambian los resultados correctos.
+- La caché no permite devolver datos de otro usuario ni eludir permisos.
+- Los resultados obsoletos se detectan o se invalidan según la política definida.
+- Los fallos de una fuente se distinguen de la ausencia de coincidencias.
+- Los objetivos de latencia se fijan a partir de las mediciones y las necesidades reales.
+
+Entregable
+
+Informe de rendimiento y mejoras justificadas mediante mediciones.
+
+---
+
+T05-06. Asegurar la autorización por categoría y registro
+
+Prioridad: P1 como control obligatorio de seguridad; P0 si se demuestra una exposición crítica.
+Tipo: Seguridad
+Dependencias: T05-01 y T05-02. Debe verificarse antes de publicar la búsqueda global.
+
+Problema
+
+La búsqueda combina información de módulos con niveles de confidencialidad diferentes. Un control visual no es suficiente para impedir que un usuario consulte registros mediante llamadas directas.
+
+Requisitos funcionales
+
+- Validación de permisos en el servidor.
+- Reutilización de las reglas del módulo de origen.
+- Control de acceso por rol y ámbito de datos cuando corresponda.
+- Denegación por defecto si no existe una autorización explícita.
+- Nueva comprobación al abrir un resultado.
+- Protección de campos confidenciales.
+- Control independiente de los permisos de descarga o exportación.
+- Registro de eventos de seguridad conforme a las políticas existentes.
+
+Cambios necesarios
+
+- Integrar los mecanismos de autorización existentes.
+- Revisar los puntos de entrada de la búsqueda y los servicios que consulta.
+- Evitar que el cliente pueda determinar arbitrariamente el rol efectivo.
+- Añadir pruebas negativas para usuarios no autorizados.
+- Revisar sugerencias, recuentos, mensajes de error y fragmentos de resultados.
+
+Comportamiento esperado
+
+Un usuario solo recibe información que podría consultar legítimamente en el módulo de origen. Encontrar un registro no concede permisos adicionales.
+
+Criterios de aceptación
+
+- Un usuario autorizado obtiene los resultados permitidos.
+- Un usuario no autorizado no obtiene datos restringidos mediante llamadas directas.
+- Manipular identificadores o filtros no amplía el acceso.
+- Los datos financieros no se muestran a usuarios exclusivamente académicos.
+- Los datos contractuales y personales respetan sus permisos específicos.
+- Los errores no revelan información confidencial.
+- Los enlaces vuelven a comprobar los permisos.
+- Las pruebas se ejecutan con cuentas y datos de prueba controlados.
+
+Entregable
+
+Matriz de permisos y pruebas de seguridad aprobadas.
+
+---
+
+T05-07. Completar la búsqueda de categorías prioritarias
+
+Prioridad: P2
+Tipo: Ampliación funcional
+Dependencias: T05-01, T05-02 y T05-06.
+
+Problema
+
+El informe no demuestra que todas las categorías solicitadas estén disponibles desde una búsqueda común. Es necesario incorporar las categorías que falten sin duplicar sus módulos.
+
+Requisitos funcionales
+
+Implementar adaptadores para las categorías que el inventario confirme como necesarias y todavía no estén conectadas:
+
+1. Estudiantes.
+2. Matrículas por año escolar.
+3. Calificaciones por estudiante, asignatura y período.
+4. Recibos y pagos.
+5. Empleados y contratos.
+6. Solicitudes y trámites.
+7. Constancias y documentos emitidos.
+8. Activos institucionales, si existe el módulo correspondiente.
+
+Cambios necesarios
+
+- Comprobar la existencia y estado de cada módulo.
+- Identificar su servicio de consulta real.
+- Reutilizar sus validaciones y permisos.
+- Definir los campos de búsqueda de cada categoría.
+- Registrar expresamente las categorías no disponibles y las dependencias que falten.
+
+Comportamiento esperado
+
+Cada categoría implementada puede consultarse desde la barra global, con resultados fieles a su fuente original y sin alterar las operaciones del módulo.
+
+Criterios de aceptación
+
+- Cada categoría tiene pruebas positivas y negativas.
+- Los registros se identifican correctamente.
+- Los permisos corresponden al módulo de origen.
+- Los resultados conservan el año, período o ejercicio fiscal pertinente.
+- No se presentan datos ficticios para categorías ausentes.
+- Una categoría no disponible genera un estado identificable.
+- No se duplican registros ni se modifican datos al buscar.
+
+Entregable
+
+Matriz de cobertura funcional por categoría y adaptadores integrados.
+
+---
+
+T05-08. Validar accesibilidad, compatibilidad y regresiones
+
+Prioridad: P2
+Tipo: Calidad y cierre
+Dependencias: T05-03 a T05-07.
+
+Problema
+
+Una búsqueda puede funcionar técnicamente y aun así resultar inaccesible, inconsistente o perjudicial para las funciones de navegación existentes.
+
+Requisitos funcionales
+
+- Navegación por teclado.
+- Foco visible y gestión correcta del foco en la apertura y cierre.
+- Etiquetas accesibles y anuncios adecuados del estado de búsqueda.
+- Diseño adaptable a móviles.
+- Compatibilidad con los patrones de interfaz existentes.
+- Conservación de las búsquedas especializadas anteriores.
+
+Cambios necesarios
+
+- Probar el componente con teclado y tecnologías de asistencia disponibles.
+- Revisar los estilos y componentes existentes.
+- Ejecutar regresiones sobre los módulos conectados.
+- Corregir problemas introducidos por la integración.
+
+Criterios de aceptación
+
+- Se puede abrir, utilizar y cerrar la búsqueda sin ratón.
+- El usuario puede identificar el estado de carga, los resultados y los errores.
+- La interfaz mantiene un comportamiento utilizable en pantallas pequeñas.
+- Las búsquedas especializadas siguen funcionando.
+- Los enlaces y formularios anteriores no quedan bloqueados por la nueva interfaz.
+- Los errores de accesibilidad detectados tienen corrección o justificación documentada.
+
+Entregable
+
+Informe de regresión y validación de accesibilidad.
+
+---
+
+ÉPICA E02. Catálogo y resolución de fuentes de datos
+
+Esta épica se activa con base en los resultados de la inspección. El informe transversal no demuestra por sí solo que exista una brecha en la resolución de IDs; por ello, TDS-01 es una tarea de diagnóstico obligatorio y las implementaciones posteriores deben justificarse con evidencias.
+
+TDS-01. Auditar la gestión actual de fuentes e identificadores
+
+Prioridad: P2 para el diagnóstico; P1 si se demuestra riesgo de pérdida o exposición de datos.
+Tipo: Inspección técnica
+Dependencias: Ninguna.
+
+Problema
+
+No hay evidencia suficiente en el informe para determinar si los IDs de las hojas están centralizados o dispersos entre microservicios, ni si existe un mecanismo común para resolver fuentes históricas.
+
+Requisitos funcionales
+
+- Inventariar los archivos de datos y sus dominios.
+- Identificar cómo se configura cada ID.
+- Localizar referencias a IDs en el código.
+- Identificar fuentes activas e históricas.
+- Determinar cómo se seleccionan los años escolares y ejercicios fiscales.
+- Identificar los permisos y mecanismos de acceso a cada fuente.
+- Documentar los consumidores de cada fuente.
+
+Cambios necesarios
+
+Durante esta tarea no se modifica el sistema. Se realiza una inspección documentada y se construye un mapa de fuentes, consumidores, identificadores y dependencias.
+
+Criterios de aceptación
+
+- Se identifica la fuente de configuración principal real.
+- Se documentan los mecanismos de resolución actuales.
+- Se identifican las referencias dispersas que puedan causar mantenimiento manual.
+- Se distingue entre archivos detectados, archivos verificados y archivos inaccesibles.
+- Se identifica qué módulos consultan fuentes históricas.
+- Se documentan los bloqueos de acceso y las evidencias pendientes.
+
+Entregable
+
+Inventario de fuentes, mapa de dependencias y decisión sobre la necesidad de TDS-02.
+
+---
+
+TDS-02. Implementar un catálogo central de fuentes, si la auditoría lo justifica
+
+Prioridad: P2
+Tipo: Arquitectura
+Dependencias: TDS-01 y T12, configuración central.
+
+Problema
+
+Si los identificadores de los archivos están dispersos por el código, agregar un año escolar o ejercicio fiscal puede exigir cambios repetidos y propensos a errores.
+
+Requisitos funcionales
+
+El catálogo deberá permitir registrar y resolver, según las necesidades reales:
+
+- Identificador lógico estable.
+- Dominio de datos.
+- Año escolar o ejercicio fiscal, cuando corresponda.
+- ID real de Google Sheets.
+- Estado de la fuente.
+- Versión del esquema.
+- Referencia a políticas de acceso.
+- Información de validación y mantenimiento.
+
+Estos campos son requisitos de diseño, no nombres de columnas que deban incorporarse literalmente.
+
+Cambios necesarios
+
+- Reutilizar el sistema de configuración central existente.
+- Definir un registro único por fuente.
+- Implementar validaciones al registrar o modificar una fuente.
+- Establecer quién puede administrar el catálogo.
+- Evitar introducir IDs individuales en cada servicio consumidor.
+- Diseñar una estrategia de compatibilidad con las fuentes actuales.
+
+Comportamiento esperado
+
+Los servicios consumidores solicitan una fuente por su identificador lógico y los criterios de negocio correspondientes. El catálogo resuelve el ID real y valida que la fuente esté registrada y habilitada.
+
+Criterios de aceptación
+
+- Puede registrarse una nueva fuente mediante el mecanismo autorizado sin editar múltiples consumidores.
+- Un ID inválido o inaccesible no se considera una fuente válida.
+- Las fuentes deshabilitadas no se consultan.
+- La configuración no concede permisos sobre datos por sí sola.
+- Los cambios del catálogo quedan auditados conforme a las políticas del proyecto.
+- Las fuentes actuales siguen funcionando durante la transición.
+- Existe una estrategia de recuperación ante un catálogo inconsistente.
+
+Entregable
+
+Catálogo central integrado y validado, solo si se demuestra que es necesario.
+
+---
+
+TDS-03. Implementar un servicio común de resolución de fuentes
+
+Prioridad: P2
+Tipo: Arquitectura e integración
+Dependencias: TDS-01 y TDS-02, si se requiere el catálogo.
+
+Problema
+
+Sin un mecanismo común, distintos módulos pueden seleccionar archivos de forma divergente o consultar una fuente equivocada para un período determinado.
+
+Requisitos funcionales
+
+- Resolver fuentes por dominio y período.
+- Diferenciar fuentes activas e históricas.
+- Validar el estado y la estructura de la fuente.
+- Respetar la autorización del usuario y del servicio.
+- Manejar fuentes inaccesibles.
+- Conservar la procedencia de los resultados.
+- Evitar que el cliente suministre IDs arbitrarios para seleccionar datos.
+
+Cambios necesarios
+
+- Reutilizar los mecanismos de acceso a Sheets ya existentes.
+- Centralizar la selección de fuentes cuando se demuestre que aporta valor.
+- Definir respuestas explícitas para fuente inexistente, deshabilitada o incompatible.
+- Actualizar progresivamente los consumidores afectados, evitando refactorizaciones ajenas al alcance.
+
+Comportamiento esperado
+
+Una consulta identifica la fuente correcta según el dominio y el período sin depender de IDs incrustados en cada función.
+
+Criterios de aceptación
+
+- Una consulta académica selecciona la fuente del año solicitado.
+- Una consulta financiera selecciona el ejercicio correspondiente.
+- Una fuente no disponible no se sustituye silenciosamente por otra.
+- Las consultas históricas conservan su procedencia.
+- No se concede acceso por conocer el ID de un archivo.
+- Los módulos no pierden compatibilidad durante la integración.
+- Las pruebas cubren períodos activos, históricos y fuentes no disponibles.
+
+Entregable
+
+Resolución centralizada de fuentes y pruebas de integración.
+
+---
+
+TDS-04. Garantizar la continuidad académica y financiera entre períodos
+
+Prioridad: P1 si hay pérdida, mezcla o alteración de datos; en otro caso P2.
+Tipo: Integridad de datos
+Dependencias: TDS-01 y, si se implementan, TDS-02 y TDS-03.
+
+Problema
+
+Separar archivos por año escolar o ejercicio fiscal no garantiza por sí solo que el historial pueda consultarse correctamente.
+
+Requisitos funcionales
+
+- Conservar identificadores estables entre períodos.
+- Relacionar matrículas y calificaciones con su año escolar.
+- Relacionar movimientos financieros con su ejercicio correspondiente.
+- Mantener acceso autorizado a los registros históricos.
+- Evitar mezclar datos de períodos distintos.
+- Conservar la trazabilidad entre registros y fuentes originales.
+
+Cambios necesarios
+
+- Verificar las relaciones actuales.
+- Completar metadatos de período solo cuando falten y sea seguro incorporarlos.
+- Definir validaciones para nuevas fuentes.
+- Identificar y documentar inconsistencias históricas.
+
+Criterios de aceptación
+
+- Un estudiante puede tener registros en varios años sin duplicar indebidamente su identidad.
+- Las calificaciones se atribuyen al año y período correctos.
+- Los pagos no se mezclan entre ejercicios.
+- Los registros históricos no se alteran por cambiar de período activo.
+- Las consultas respetan los permisos de cada registro.
+- Las inconsistencias detectadas pueden identificarse y conciliarse.
+
+Entregable
+
+Pruebas de continuidad histórica y plan de corrección de inconsistencias.
+
+---
+
+ÉPICA E03. Consulta histórica e indexación
+
+TDS-05. Definir e implementar una estrategia eficiente de búsqueda histórica
+
+Prioridad: P2
+Tipo: Rendimiento y arquitectura
+Dependencias: T05-02 y TDS-01.
+
+Problema
+
+Si la búsqueda debe recorrer muchas hojas en cada consulta, el rendimiento puede degradarse. Sin embargo, la auditoría no demuestra todavía que este problema exista, por lo que primero debe medirse.
+
+Requisitos funcionales
+
+Evaluar las siguientes alternativas:
+
+- Consultar directamente las fuentes pertinentes.
+- Resolver las fuentes mediante un catálogo.
+- Mantener un índice central de metadatos.
+- Mantener un índice incremental de búsqueda.
+- Migrar selectivamente consultas críticas a una base de datos.
+
+Cambios necesarios
+
+Seleccionar la alternativa con mejor equilibrio entre rendimiento, complejidad, consistencia, permisos y mantenimiento. No crear un índice nuevo si la consulta directa es suficiente.
+
+Comportamiento esperado
+
+La estrategia elegida permite localizar registros históricos sin consultar innecesariamente todas las fuentes, cuando la medición demuestre que esta optimización es necesaria.
+
+Criterios de aceptación
+
+- La elección se basa en mediciones y no solo en estimaciones.
+- El diseño conserva las referencias originales.
+- Un índice no concede permisos sobre los datos que representa.
+- Los resultados pueden validarse contra la fuente oficial.
+- Se documenta la frecuencia de actualización y la estrategia de conciliación.
+- Si no se necesita indexación, queda documentada la justificación para descartarla.
+
+Entregable
+
+Decisión técnica y, si procede, implementación de la estrategia seleccionada.
+
+---
+
+TDS-06. Mantener la consistencia de índices y fuentes originales
+
+Prioridad: P2; P1 si una inconsistencia puede causar decisiones académicas o financieras incorrectas.
+Tipo: Integridad y consistencia
+Dependencias: TDS-05, únicamente si se implementa un índice.
+
+Problema
+
+Un índice puede contener referencias obsoletas o incompletas cuando los registros cambian, se archivan o se eliminan.
+
+Requisitos funcionales
+
+- Actualizar el índice después de las operaciones pertinentes.
+- Detectar referencias rotas.
+- Identificar registros duplicados.
+- Diferenciar un resultado indexado de un registro confirmado en la fuente.
+- Conciliar los datos con la fuente original.
+- Permitir construir el índice si se corrompe.
+
+Cambios necesarios
+
+- Definir eventos o procesos de actualización.
+- Establecer una estrategia de reintentos.
+- Registrar fallos de sincronización.
+- Crear un proceso de conciliación y reconstrucción.
+- Evitar actualizaciones duplicadas.
+
+Criterios de aceptación
+
+- Los cambios en registros se reflejan dentro del plazo definido.
+- Una referencia rota se detecta.
+- Los reintentos no generan duplicados.
+- La conciliación identifica discrepancias entre índice y fuente.
+- La reconstrucción produce un índice coherente.
+- Los resultados obsoletos no se presentan como confirmados.
+
+Entregable
+
+Mecanismo de sincronización, conciliación y recuperación del índice.
+
+---
+
+ÉPICA E04. Exportación y descarga de históricos
+
+TDS-07. Garantizar la exportación autorizada de resultados históricos
+
+Prioridad: P2; P1 si se demuestra exposición de información restringida.
+Tipo: Funcionalidad e integridad
+Dependencias: T05-02, T05-06 y la infraestructura de exportación existente.
+
+Problema
+
+La búsqueda global debe facilitar la consulta histórica y, cuando proceda, su descarga en Excel o PDF. Una exportación incorrecta puede mezclar períodos o incluir campos confidenciales.
+
+Requisitos funcionales
+
+- Exportar únicamente los registros solicitados y autorizados.
+- Mantener filtros y criterios de consulta.
+- Conservar la procedencia y el período.
+- Admitir los formatos que ya soporte la plataforma.
+- Informar de fuentes incompletas o fallos de generación.
+- Aplicar límites a exportaciones grandes.
+
+Cambios necesarios
+
+- Reutilizar las funciones de exportación existentes.
+- Conectar la búsqueda con la exportación sin duplicar lógica.
+- Validar permisos antes de generar el archivo.
+- Evitar columnas ocultas o campos sensibles no autorizados.
+- Definir el comportamiento ante una fuente inaccesible.
+
+Criterios de aceptación
+
+- El archivo coincide con los registros y filtros seleccionados.
+- Los datos corresponden al período correcto.
+- No se incluyen campos restringidos.
+- Los permisos se vuelven a comprobar al descargar.
+- Un fallo de generación no produce un archivo aparentemente válido pero incompleto.
+- Los registros originales no se modifican.
+- La exportación de resultados históricos conserva su procedencia.
+
+Entregable
+
+Exportación histórica integrada y pruebas de integridad y autorización.
+
+---
+
+ÉPICA E05. Rendimiento, cuotas y continuidad operativa
+
+TDS-08. Medir y optimizar el consumo de recursos
+
+Prioridad: P2
+Tipo: Optimización técnica
+Dependencias: T05-05 y TDS-01.
+
+Problema
+
+El uso de múltiples fuentes puede aumentar las llamadas a Sheets, el tiempo de ejecución y la posibilidad de alcanzar límites de Apps Script.
+
+Requisitos funcionales
+
+- Medir consultas representativas.
+- Identificar llamadas repetidas.
+- Evitar lecturas completas innecesarias.
+- Aplicar operaciones agrupadas cuando sean adecuadas.
+- Controlar volumen de resultados.
+- Evaluar caché y paginación.
+- Registrar errores transitorios y tiempos de ejecución.
+
+Cambios necesarios
+
+- Crear mediciones reproducibles.
+- Optimizar los cuellos de botella demostrados.
+- Establecer límites y políticas de reintento.
+- Documentar las cuotas que corresponden al servicio realmente utilizado.
+- Evaluar una base de datos transaccional solo si las métricas revelan limitaciones importantes.
+
+Criterios de aceptación
+
+- Existe una línea base antes de los cambios.
+- Se demuestra una mejora medible en los cuellos de botella abordados.
+- No se degradan la exactitud ni los permisos.
+- Las consultas incompletas se identifican.
+- Las pruebas concurrentes no provocan duplicados ni datos mezclados.
+- Las cuotas y límites aplicables están documentados.
+- No se afirma que el sistema escala sin pruebas representativas.
+
+Entregable
+
+Informe de rendimiento antes y después, con decisiones de optimización justificadas.
+
+---
+
+TDS-09. Verificar respaldo, restauración y recuperación de fuentes
+
+Prioridad: P2; P1 si la auditoría descubre que no se puede recuperar información crítica.
+Tipo: Continuidad operativa
+Dependencias: TDS-01 y los mecanismos de respaldo existentes.
+
+Problema
+
+Al incorporar múltiples fuentes, un respaldo puede dejar fuera archivos o metadatos necesarios para reconstruir la relación entre registros y fuentes.
+
+Requisitos funcionales
+
+- Identificar las fuentes incluidas en cada respaldo.
+- Conservar el catálogo y las referencias necesarias.
+- Detectar fuentes ausentes.
+- Verificar integridad.
+- Restaurar en un entorno aislado.
+- Conciliar datos restaurados con los originales.
+
+Cambios necesarios
+
+- Revisar las funciones existentes de respaldo y restauración.
+- Añadir validaciones únicamente donde se demuestre una brecha.
+- Definir pruebas periódicas de recuperación.
+- Documentar la relación entre archivos restaurados y catálogo de fuentes.
+
+Criterios de aceptación
+
+- Se identifica el alcance real de cada respaldo.
+- La verificación detecta archivos ausentes o corruptos.
+- La restauración de prueba conserva las relaciones entre fuentes y registros.
+- No se sobrescribe producción durante la validación.
+- La integridad académica y financiera puede comprobarse después de restaurar.
+- Las limitaciones de recuperación quedan documentadas.
+
+Entregable
+
+Informe de recuperación y pruebas verificables de respaldo.
+
+---
+
+ÉPICA E06. Integración, observabilidad y cierre
+
+T05-09. Integrar la búsqueda con auditoría y observabilidad
+
+Prioridad: P2
+Tipo: Operación y mantenimiento
+Dependencias: T05-02 y T05-06.
+
+Problema
+
+La búsqueda global necesita permitir el diagnóstico de errores sin almacenar información confidencial innecesaria.
+
+Requisitos funcionales
+
+- Registrar errores de búsqueda y fallos de fuentes.
+- Identificar categoría, servicio y resultado de ejecución.
+- Medir duración y cantidad de fuentes consultadas.
+- Diferenciar fallos de autorización, errores técnicos y resultados vacíos.
+- Evitar almacenar consultas sensibles o datos personales completos sin justificación.
+- Respetar los permisos de acceso a los registros técnicos.
+
+Cambios necesarios
+
+- Reutilizar el sistema de auditoría existente.
+- Definir eventos relevantes.
+- Incorporar métricas mínimas de rendimiento.
+- Establecer reglas de retención y acceso a los registros.
+- Evitar registrar credenciales, tokens o datos financieros completos.
+
+Criterios de aceptación
+
+- Un fallo reproducible puede diagnosticarse mediante los registros permitidos.
+- Los resultados vacíos no se confunden con errores técnicos.
+- Las consultas no generan registros excesivos o innecesarios.
+- Los datos sensibles se omiten o se minimizan.
+- Los eventos de autorización siguen las reglas de acceso existentes.
+- Las métricas permiten identificar fuentes lentas o inaccesibles.
+
+Entregable
+
+Registro operativo de búsqueda con controles de privacidad.
+
+---
+
+T05-10. Ejecutar pruebas de integración y regresión de extremo a extremo
+
+Prioridad: P2; P1 si las pruebas descubren fallos graves de seguridad o integridad.
+Tipo: Validación final
+Dependencias: Todas las tareas implementadas que formen parte del alcance.
+
+Problema
+
+La integración de una búsqueda transversal puede afectar simultáneamente a permisos, navegación, fuentes de datos, exportación y rendimiento.
+
+Requisitos funcionales
+
+Preparar pruebas que cubran:
+
+- Búsqueda de estudiantes.
+- Matrículas de distintos años.
+- Calificaciones por período.
+- Pagos y recibos.
+- Empleados y contratos.
+- Solicitudes.
+- Constancias.
+- Activos, si existe el módulo.
+- Fuentes históricas.
+- Fuentes no disponibles.
+- Resultados parciales.
+- Usuarios con distintos permisos.
+- Exportaciones.
+- Consultas repetidas y concurrentes.
+- Errores de servicio.
+- Regresión de las búsquedas especializadas existentes.
+
+Cambios necesarios
+
+- Crear o adaptar las pruebas al entorno disponible.
+- Utilizar datos de prueba controlados.
+- Registrar las condiciones iniciales y los resultados.
+- Corregir regresiones dentro del alcance autorizado.
+- Mantener una lista de pruebas bloqueadas por falta de entorno o permisos.
+
+Criterios de aceptación
+
+- Cada requisito implementado tiene al menos una prueba pertinente.
+- Los escenarios negativos de autorización pasan.
+- Los resultados coinciden con las fuentes originales.
+- Los errores y resultados parciales se representan correctamente.
+- Las funciones anteriores continúan operativas.
+- Los bloqueos están documentados y no se contabilizan como pruebas satisfactorias.
+- Las tareas no se cierran únicamente porque el código compile.
+
+Entregable
+
+Informe final de integración y regresión, con resultados y pendientes.
+
+---
+
+2. Orden recomendado de ejecución
+
+Orden| Tarea| Prioridad| Motivo
+1| T05-01| P2| Define el alcance funcional.
+2| TDS-01| P2| Determina cómo se administran actualmente las fuentes.
+3| T05-06| P1 preventivo| Verifica la autorización antes de exponer nuevas categorías.
+4| T05-02| P2| Construye el servicio común.
+5| TDS-02| P2 condicional| Centraliza fuentes si se demuestra la necesidad.
+6| TDS-03| P2 condicional| Unifica la resolución de fuentes.
+7| T05-03| P2| Integra la barra de búsqueda.
+8| T05-07| P2| Conecta las categorías pendientes.
+9| T05-04| P2| Añade filtros y relevancia.
+10| T05-05| P2| Optimiza las consultas medidas.
+11| TDS-04| P1/P2| Verifica la continuidad histórica.
+12| TDS-05| P2| Selecciona la estrategia de búsqueda histórica.
+13| TDS-06| P1/P2| Mantiene la consistencia, si hay índice.
+14| TDS-07| P1/P2| Integra exportación histórica.
+15| TDS-08| P2| Optimiza recursos y cuotas.
+16| TDS-09| P1/P2| Verifica recuperación de fuentes.
+17| T05-09| P2| Mejora el diagnóstico operativo.
+18| T05-08| P2| Valida accesibilidad y regresiones de interfaz.
+19| T05-10| P2| Cierra con pruebas de extremo a extremo.
+
+Regla de dependencia: si la auditoría demuestra que el catálogo o el servicio de resolución ya existen y cumplen los requisitos, TDS-02 y TDS-03 no deben reconstruirse. Se documentará la evidencia y se continuará con la siguiente tarea aplicable.
+
+La seguridad debe validarse antes de habilitar nuevas categorías para usuarios reales, independientemente del orden administrativo del backlog.
+
+3. Lista maestra de seguimiento
+
+Jules deberá mantener una fila por tarea y por subcapacidad, con los siguientes campos:
+
+Campo| Contenido requerido
+ID| Identificador estable de la tarea.
+Estado funcional| Categoría definida por la metodología del proyecto.
+Avance| No iniciada, en inspección, en desarrollo, en pruebas, bloqueada o cerrada.
+Evidencia| Archivos reales, funciones identificadas, pruebas y resultados.
+Dependencias| Tareas y servicios requeridos.
+Riesgo| Seguridad, integridad, rendimiento o regresión.
+Prioridad| P0, P1, P2 o P3.
+Próximo paso| Acción concreta y verificable.
+
+No se debe confundir el estado funcional con el avance del trabajo. Una función puede estar defectuosa y tener su auditoría documentada por completo.
+
+4. Definición del cierre del proyecto
+
+El conjunto de tareas podrá considerarse completado cuando:
+
+1. Las categorías previstas estén conectadas o exista una justificación documentada de por qué no aplican.
+2. La búsqueda respete los permisos de cada módulo.
+3. Las fuentes históricas se resuelvan de forma correcta.
+4. La arquitectura permita incorporar nuevos períodos sin cambios manuales repetidos, si esa necesidad se confirma en la auditoría.
+5. Los resultados mantengan la trazabilidad hacia sus registros originales.
+6. Las exportaciones respeten los filtros y permisos.
+7. El rendimiento se haya medido y las optimizaciones estén justificadas.
+8. Las pruebas de integración y regresión estén documentadas.
+9. Los bloqueos y riesgos pendientes estén explícitos.
+10. No existan vulnerabilidades críticas conocidas sin resolver antes de la puesta en producción.
+
+Resultado esperado: una búsqueda global útil, segura y extensible, con una arquitectura de datos cuya complejidad responda a las necesidades reales del instituto y no a una migración innecesaria.
