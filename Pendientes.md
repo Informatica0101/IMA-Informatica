@@ -2508,3 +2508,1013 @@ Fin del plan de tareas derivadas de la Fase 1.
 - [X] `[REQ-OFF-008]` Indicador dinámico de estado de red (`#online-status-badge`).
 - [X] `[REQ-OFF-009]` Módulo de Preguntas Frecuentes Institucionales (`window.renderFAQSection`) con 32 preguntas y respuestas completas.
 - [X] `[REQ-OFF-010]` Sincronización automática de configuraciones globales y preferencias por rol.
+
+---
+
+FASE 2. LMS AVANZADO Y APRENDIZAJE DIGITAL
+
+Ampliación de la Fase 5 de la Plataforma Integral de Gestión Educativa
+
+Objetivo general
+
+Completar y ampliar las capacidades de aprendizaje digital de la plataforma New Generation Christian Academy, aprovechando las funciones existentes de aulas virtuales, materiales educativos, tareas, entregas, exámenes, rúbricas, calificaciones y seguimiento académico.
+
+Las implementaciones deben integrarse con el funcionamiento actual de la plataforma. No deben duplicar servicios, reemplazar herramientas que ya funcionan ni modificar módulos ajenos al alcance de cada tarea.
+
+Requisitos generales de implementación
+
+- Seguir el procedimiento de desarrollo establecido en "METODOLOGIA_DESARROLLO.md".
+- Revisar "Pendientes.md" para respetar las tareas, dependencias e identificadores existentes.
+- Reutilizar las funciones, servicios, estructuras de datos y componentes existentes cuando sean adecuados.
+- Verificar los contratos de las operaciones que se utilicen antes de modificarlas o ampliarlas.
+- Aplicar los permisos tanto en las operaciones que proporcionan o modifican datos como en las interfaces.
+- Mantener la compatibilidad con los cursos, tareas, entregas, exámenes y calificaciones existentes.
+- No eliminar información académica histórica como consecuencia de una modificación de estructura, curso, rúbrica o evaluación.
+- Evitar cambios innecesarios en las hojas de cálculo, los servicios compartidos y las interfaces ajenas a cada tarea.
+- Mantener los textos visibles en español claro, comprensible para estudiantes, familias y docentes.
+- Implementar estados de carga, confirmación, ausencia de resultados y errores recuperables cuando correspondan.
+- No presentar como terminada una función que únicamente tenga una interfaz visual sin operaciones funcionales.
+- Ejecutar pruebas reales de los cambios y comunicar los archivos modificados, los resultados obtenidos y las limitaciones pendientes.
+
+---
+
+REQ-LMS-001. Organización jerárquica de unidades, temas y lecciones
+
+Prioridad: Alta.
+
+Objetivo: Sustituir la organización limitada a etiquetas de texto por una estructura visual y funcional que permita organizar el contenido de los cursos y controlar el avance de los estudiantes.
+
+Alcance funcional
+
+Implementar una estructura jerárquica de aprendizaje:
+
+Curso → Unidad → Tema → Lección → Recursos y actividades.
+
+La estructura debe integrarse con las aulas virtuales y los materiales educativos existentes.
+
+Requisitos
+
+1. Permitir que los docentes autorizados creen, editen, ordenen y publiquen unidades, temas y lecciones dentro de sus cursos.
+2. Permitir cambiar el orden de los elementos sin perder sus materiales, actividades ni relaciones existentes.
+3. Mostrar la estructura en un árbol desplegable, acordeón u otro componente de navegación equivalente que funcione en teléfonos y computadoras.
+4. Permitir agregar a una lección los materiales y actividades que ya admite la plataforma, incluidos documentos, enlaces, videos, imágenes, tareas y evaluaciones compatibles.
+5. Diferenciar claramente los elementos publicados de los borradores.
+6. Permitir que el estudiante consulte únicamente el contenido al que tiene acceso.
+7. Mantener la relación con el curso, la asignatura, el grado, la sección y el período académico cuando esos datos formen parte del modelo existente.
+8. Permitir reordenar y editar contenidos sin alterar las entregas ni las calificaciones históricas.
+9. Mantener la compatibilidad con los materiales existentes que solo tengan unidad y tema como etiquetas. Los registros anteriores deben seguir siendo accesibles y no deben desaparecer por la incorporación de la nueva estructura.
+10. Si se necesita convertir materiales antiguos a la nueva organización, utilizar una asociación controlada que preserve su identificador y contenido original.
+11. Incorporar una vista previa del contenido antes de publicarlo.
+12. Mostrar mensajes comprensibles cuando una lección todavía no esté publicada, no esté disponible o haya sido retirada.
+
+Requisitos de disponibilidad secuencial
+
+13. Permitir configurar prerrequisitos para una lección, cuando el docente necesite que se complete una actividad o lección anterior.
+14. Permitir que el docente decida si una lección es de acceso libre o requiere completar un prerrequisito.
+15. Impedir que el estudiante acceda anticipadamente a una lección restringida, comprobando esta condición en la operación que entrega el contenido.
+16. Evitar bloqueos permanentes cuando un prerrequisito haya sido eliminado, sustituido o dejado de ser válido. En esos casos debe mostrarse un estado comprensible y permitir que el docente autorizado corrija la configuración.
+17. No considerar completado un prerrequisito solo porque el estudiante haya abierto el material.
+
+Seguimiento de finalización
+
+18. Incorporar una acción para marcar una lección como completada cuando las condiciones de la actividad lo permitan.
+19. Guardar la finalización por estudiante y por lección, evitando duplicar registros cuando se repita la acción.
+20. Mostrar el progreso individual y el avance del curso.
+21. Diferenciar entre contenido no iniciado, en progreso, completado y no disponible.
+22. Si una actividad requiere una entrega o una calificación, respetar las reglas correspondientes antes de considerarla completada.
+23. Permitir que el docente consulte el progreso de sus estudiantes autorizados.
+
+Permisos
+
+- Administrador y dirección: según los permisos institucionales existentes.
+- Docentes: gestionar el contenido de sus cursos asignados.
+- Estudiantes: consultar el contenido disponible y registrar su progreso.
+- Padres o tutores: consultar el progreso de los estudiantes vinculados, cuando sus permisos lo permitan.
+
+Criterios de aceptación
+
+- Un docente puede crear una unidad, agregar temas y lecciones, ordenar los elementos y publicarlos.
+- El estudiante ve la estructura correcta de su curso y no accede a lecciones restringidas.
+- La finalización se conserva al volver a entrar a la plataforma.
+- El progreso mostrado coincide con los registros reales.
+- Los materiales existentes continúan disponibles después de incorporar la nueva estructura.
+- Un usuario sin autorización no puede modificar la organización del curso ni acceder a contenido restringido.
+
+Pruebas
+
+Probar creación, edición, publicación, reordenamiento, acceso por rol, prerrequisitos, finalización duplicada, contenido no disponible, errores de guardado y compatibilidad con materiales anteriores.
+
+---
+
+REQ-LMS-002. Ampliación del banco de preguntas y de los tipos de evaluación
+
+Prioridad: Alta.
+
+Objetivo: Ampliar el banco de preguntas existente, que actualmente utiliza preguntas de opción múltiple, para permitir evaluaciones con distintos formatos y combinar corrección automática y manual.
+
+Alcance funcional
+
+Ampliar el banco de preguntas y los componentes de evaluación existentes sin reemplazar el catálogo actual ni invalidar exámenes anteriores.
+
+Tipos de preguntas requeridos
+
+1. Opción múltiple con una respuesta correcta.
+2. Verdadero o falso.
+3. Respuesta corta.
+4. Respuesta extensa o ensayo con calificación manual.
+5. Emparejamiento de elementos.
+6. Ordenamiento de elementos.
+7. Completar espacios, cuando el formato de respuesta pueda validarse de manera inequívoca.
+
+Cada tipo debe tener una configuración apropiada, controles de respuesta, validaciones y reglas de calificación.
+
+Requisitos del banco
+
+8. Permitir crear, editar, clasificar y reutilizar preguntas.
+9. Conservar la clasificación por asignatura, tema y nivel de dificultad existente.
+10. Permitir relacionar preguntas con unidades, competencias u objetivos de aprendizaje cuando estén disponibles.
+11. Validar que una pregunta tenga los campos obligatorios para su tipo.
+12. Permitir configurar puntuación, respuesta correcta, criterios de corrección y retroalimentación según el tipo.
+13. Mantener las 771 preguntas existentes, sin cambiar sus respuestas correctas durante la ampliación.
+14. Evitar que la edición de una pregunta cambie retroactivamente el resultado de un examen que ya haya sido realizado.
+15. Mantener la protección de respuestas correctas y explicaciones que no deban mostrarse antes de la entrega o publicación de resultados.
+
+Requisitos de evaluación
+
+16. Adaptar el creador de exámenes para seleccionar los tipos de preguntas que admite cada evaluación.
+17. Permitir combinar preguntas de corrección automática y manual.
+18. Aplicar corrección automática únicamente a los tipos cuya respuesta pueda evaluarse con reglas definidas.
+19. En las respuestas cortas, permitir establecer criterios explícitos de comparación y normalización, cuando proceda. No considerar equivalentes respuestas distintas sin una regla definida.
+20. Las respuestas extensas deben quedar pendientes de calificación hasta que un docente autorizado las evalúe.
+21. Mostrar la puntuación obtenida y la puntuación máxima de cada pregunta según las reglas de publicación configuradas.
+22. Evitar publicar una nota final como definitiva mientras existan preguntas obligatorias pendientes de calificación manual, salvo que el sistema existente contemple expresamente una nota provisional.
+23. Conservar el detalle de las respuestas entregadas y de la puntuación asignada.
+
+Compatibilidad
+
+24. Los exámenes existentes deben continuar funcionando con sus preguntas de opción múltiple.
+25. Los formatos nuevos deben identificarse de forma inequívoca para que la interfaz no interprete una pregunta de un tipo como si perteneciera a otro.
+26. Si una pregunta utiliza un formato que una pantalla antigua no admite, debe mostrarse un mensaje comprensible y evitar la pérdida de la respuesta.
+27. Los resultados históricos deben conservar la puntuación y la versión de la pregunta utilizada en el momento de la evaluación.
+
+Permisos
+
+- Administrador y dirección: según los permisos institucionales.
+- Docentes autorizados: crear preguntas y configurar evaluaciones.
+- Estudiantes: responder evaluaciones disponibles y consultar los resultados publicados.
+- Ningún estudiante debe poder consultar la clave de respuestas antes del momento permitido.
+
+Criterios de aceptación
+
+- Se pueden crear, guardar y utilizar preguntas de cada tipo implementado.
+- Las preguntas objetivas se corrigen conforme a sus reglas.
+- Las preguntas que requieren criterio docente quedan pendientes de calificación.
+- Las preguntas existentes siguen funcionando.
+- Las respuestas correctas no quedan expuestas en las consultas destinadas al estudiante.
+- Las notas históricas no cambian por editar el banco.
+
+Pruebas
+
+Probar cada tipo de pregunta, validaciones, puntuación parcial si está soportada, respuestas inválidas, publicación de resultados, permisos, edición posterior de preguntas y compatibilidad con exámenes anteriores.
+
+---
+
+REQ-LMS-003. Recuperación de exámenes interrumpidos y políticas de intentos
+
+Prioridad: Alta.
+
+Objetivo: Permitir que los exámenes administren de forma controlada los intentos, el guardado de respuestas y la recuperación ante interrupciones, sin alterar la integridad de las evaluaciones.
+
+Requisitos de configuración
+
+1. Permitir configurar el número de intentos de una evaluación.
+2. Mantener el comportamiento de intento único en los exámenes existentes, salvo que un docente autorizado cambie expresamente su configuración.
+3. Permitir definir la política de calificación entre las opciones que se implementen, como nota más alta o promedio de intentos.
+4. Definir cuándo se permite iniciar otro intento: después de entregar el anterior, después de publicar la nota o en otro momento configurado.
+5. Respetar la fecha de apertura, fecha de cierre y duración del examen.
+6. No permitir que una modificación de configuración amplíe retroactivamente un plazo vencido sin una acción autorizada.
+
+Guardado y recuperación
+
+7. Guardar periódicamente las respuestas durante un intento activo.
+8. Indicar claramente al estudiante si las respuestas están guardadas o si existe un problema de conexión.
+9. Recuperar las respuestas guardadas cuando el estudiante vuelva a entrar, siempre que el intento siga siendo válido.
+10. Registrar el intento y asociarlo de forma inequívoca con el estudiante y el examen.
+11. Evitar la creación de intentos duplicados por doble clic, recarga o reintento de una solicitud.
+12. Conservar las respuestas entregadas y la hora efectiva de finalización.
+13. Si el plazo vence, aplicar la regla de cierre definida para el examen y comunicar el resultado al estudiante.
+14. No permitir que el estudiante altere manualmente el tiempo oficial ni reabra un intento cerrado.
+15. Cuando se pierda la conexión, conservar localmente las respuestas pendientes de envío solo si la solución puede implementarse de forma segura; al recuperar la conexión, sincronizarlas sin duplicar ni sobrescribir respuestas más recientes.
+16. Informar al estudiante si no es posible recuperar una respuesta y qué opciones autorizadas tiene.
+
+Integridad de las evaluaciones
+
+17. Diferenciar los estados de intento en curso, entregado, vencido, pendiente de calificación y calificado, según corresponda.
+18. Evitar que una respuesta guardada después del cierre sea aceptada como válida sin cumplir las reglas del examen.
+19. Mantener el historial de intentos y sus puntuaciones.
+20. Calcular la nota final según la política seleccionada y las reglas de calificación manual aplicables.
+
+Criterios de aceptación
+
+- Un examen configurado con un intento no permite iniciar intentos adicionales.
+- Un examen configurado con varios intentos respeta su límite.
+- Una interrupción recuperable no provoca la pérdida de respuestas ya guardadas.
+- La nota final corresponde a la política configurada.
+- No se crean intentos ni entregas duplicadas por acciones repetidas.
+- El vencimiento del examen se aplica de forma consistente.
+
+Pruebas
+
+Probar pérdida de conexión, recarga, cierre de sesión, vencimiento del tiempo, doble envío, intentos máximos, cambios de política, preguntas pendientes de corrección y recuperación de respuestas.
+
+---
+
+REQ-LMS-004. Programación de clases virtuales
+
+Prioridad: Media.
+
+Objetivo: Incorporar un calendario funcional para programar sesiones virtuales asociadas con cursos, asignaturas, docentes y estudiantes.
+
+Requisitos funcionales
+
+1. Permitir a los docentes autorizados crear, editar, consultar y cancelar sesiones virtuales de sus cursos.
+2. Registrar el título, descripción, curso, asignatura, docente responsable, fecha, hora de inicio, hora de finalización y enlace de acceso.
+3. Mostrar las próximas sesiones en las vistas del docente y del estudiante.
+4. Mostrar los horarios según la zona horaria institucional configurada.
+5. Permitir modificar el horario y notificar a los participantes afectados cuando el sistema de notificaciones existente lo permita.
+6. Impedir que una sesión termine antes de comenzar y validar los campos obligatorios.
+7. Diferenciar entre sesión programada, realizada y cancelada, cuando esos estados sean necesarios.
+8. Mantener el historial de cambios relevantes.
+9. Permitir enlaces manuales para proveedores externos cuando no exista una integración automática.
+10. Validar que el enlace tenga un formato aceptable y que solo lo consulten usuarios autorizados.
+11. Evitar que un estudiante consulte enlaces de clases de cursos a los que no pertenece.
+
+Integración con videoconferencias
+
+12. Preparar la programación para utilizar el proveedor de videoconferencias que la institución autorice.
+13. Si se requiere Google Meet, utilizar una integración oficial compatible con la cuenta institucional y los permisos concedidos.
+14. No simular la creación automática de reuniones guardando simplemente un enlace manual.
+15. Si se requiere Zoom u otro proveedor, mantener su integración separada y documentar los requisitos de autorización.
+16. No almacenar credenciales privadas en archivos públicos del frontend.
+17. Si no hay autorización o configuración disponible, permitir el uso de enlaces manuales y mostrar el estado real de la integración.
+
+Asistencia y grabaciones
+
+18. No marcar automáticamente a un estudiante como presente solo porque haya abierto el enlace.
+19. Incorporar asistencia automatizada únicamente si el proveedor autorizado ofrece datos fiables y existe permiso para utilizarlos.
+20. Gestionar grabaciones únicamente cuando el proveedor, las licencias y la configuración institucional lo permitan.
+
+Criterios de aceptación
+
+- Un docente puede programar una sesión y los estudiantes autorizados pueden verla.
+- Los cambios de horario se reflejan en las pantallas correspondientes.
+- Las sesiones canceladas no aparecen como próximas clases activas.
+- Los enlaces están restringidos a los participantes autorizados.
+- El sistema distingue claramente entre enlaces manuales y reuniones creadas mediante una integración real.
+
+Pruebas
+
+Probar creación, edición, cancelación, zona horaria, permisos, horarios inválidos, enlaces incorrectos, notificaciones y comportamiento cuando el proveedor no está disponible.
+
+---
+
+REQ-LMS-005. Guardado de borradores de tareas y recuperación de entregas
+
+Prioridad: Alta.
+
+Objetivo: Permitir que los estudiantes preparen una entrega sin enviarla inmediatamente y recuperen el trabajo guardado antes de la entrega definitiva.
+
+Requisitos funcionales
+
+1. Incorporar un estado de borrador para las entregas de tareas, diferenciándolo de una entrega enviada.
+2. Permitir guardar texto y los datos que la actividad admita sin finalizar la entrega.
+3. Permitir continuar editando un borrador mientras la tarea y el período de entrega lo permitan.
+4. Indicar claramente la fecha y hora del último guardado.
+5. Evitar que un borrador se publique o se califique como entrega definitiva.
+6. Permitir que el estudiante revise el contenido antes de confirmar el envío.
+7. Solicitar confirmación antes de enviar una entrega definitiva cuando la acción no pueda deshacerse libremente.
+8. Mantener las reglas existentes para archivos, enlaces y entregas multimodales.
+9. Conservar la compatibilidad con el historial de versiones de entregas.
+10. Evitar que un borrador nuevo sobrescriba una entrega ya enviada sin seguir el procedimiento de sustitución permitido.
+11. Aplicar las fechas límite de la tarea y definir el comportamiento de los borradores al vencer el plazo.
+12. Restringir los borradores al estudiante propietario y al personal autorizado que deba gestionarlos.
+13. Informar si el guardado falla y evitar mostrar un borrador como guardado cuando la operación no se haya confirmado.
+14. Si se implementa almacenamiento temporal en el dispositivo, protegerlo frente a la exposición de información a otros usuarios del mismo dispositivo.
+
+Criterios de aceptación
+
+- Un estudiante puede guardar un borrador, salir y recuperarlo.
+- El borrador no aparece como entrega definitiva.
+- El envío definitivo genera una versión identificable y conserva la fecha de entrega.
+- Un error de guardado no borra silenciosamente el contenido que el estudiante todavía tiene disponible.
+- Las entregas históricas siguen consultándose correctamente.
+
+Pruebas
+
+Probar guardado, edición, cierre y reapertura, pérdida de conexión, envío definitivo, vencimiento del plazo, sustitución de entregas y permisos.
+
+---
+
+REQ-LMS-006. Políticas configurables para entregas tardías
+
+Prioridad: Media.
+
+Objetivo: Permitir que los docentes definan reglas explícitas para las entregas posteriores a la fecha límite.
+
+Requisitos
+
+1. Incorporar una configuración de entrega tardía por tarea, respetando las reglas institucionales que se definan.
+2. Permitir habilitar o deshabilitar penalizaciones.
+3. Permitir definir una tasa de deducción por período de retraso, con un límite máximo de descuento.
+4. Permitir definir si se acepta la entrega después del vencimiento y hasta qué momento.
+5. Diferenciar una entrega tardía aceptada de una entrega no permitida.
+6. Calcular la penalización a partir de la fecha límite y la fecha de recepción confirmada.
+7. Definir cómo se redondea la penalización y cómo se calcula la nota final.
+8. Evitar que el descuento produzca una nota inferior al mínimo permitido por la regla configurada.
+9. No aplicar una penalización a tareas cuya política la desactive.
+10. Mostrar al estudiante la fecha límite y la política de retraso antes de la entrega.
+11. Mostrar al docente la hora efectiva de recepción y el cálculo de la penalización.
+12. Conservar la puntuación original, la penalización y la nota final por separado cuando sea necesario para explicar el resultado.
+13. Registrar los cambios en la política y evitar que se alteren silenciosamente las notas históricas.
+14. Permitir excepciones autorizadas y justificadas si las reglas institucionales lo requieren.
+
+Criterios de aceptación
+
+- Una tarea sin penalización no aplica descuentos.
+- Una tarea con penalización calcula el descuento de acuerdo con su configuración.
+- El mismo envío no recibe penalizaciones duplicadas.
+- El docente puede explicar cómo se obtuvo la nota final.
+- Las modificaciones posteriores no alteran resultados históricos sin un procedimiento autorizado.
+
+Pruebas
+
+Probar entregas puntuales, tardías, vencidas, rechazadas, excepciones autorizadas, límites de descuento y redondeo.
+
+---
+
+REQ-LMS-007. Estados de evaluación y registro de cambios de calificaciones
+
+Prioridad: Alta.
+
+Objetivo: Mejorar la claridad de los resultados y conservar la trazabilidad de las calificaciones publicadas y modificadas.
+
+Estados de evaluación
+
+1. Diferenciar al menos entre pendiente, calificada, ausente y exento/no aplicable, siempre que estos estados sean compatibles con las reglas académicas institucionales.
+2. Diferenciar un cero obtenido de una ausencia de entrega y de una evaluación pendiente.
+3. Evitar que los estados se conviertan automáticamente en una nota numérica sin una regla institucional expresa.
+4. Mostrar etiquetas comprensibles en las vistas de docentes, estudiantes y tutores autorizados.
+5. Asegurar que los cálculos de promedios respeten el tratamiento definido para cada estado.
+6. Mantener la compatibilidad con las calificaciones oficiales existentes.
+
+Historial de modificaciones
+
+7. Registrar cada modificación relevante de una nota previamente guardada o publicada.
+8. Conservar el valor anterior, el nuevo valor, la fecha, el usuario responsable y el motivo cuando sea obligatorio.
+9. Restringir la modificación a usuarios autorizados.
+10. Solicitar una justificación cuando se modifique una nota ya publicada, según las reglas institucionales.
+11. Actualizar los resultados derivados cuando corresponda, sin eliminar el historial anterior.
+12. Evitar que el registro histórico sea editable por usuarios que solo pueden consultar calificaciones.
+13. Permitir que el personal autorizado consulte el historial de cambios.
+14. No exponer al estudiante información interna que no corresponda a su perfil.
+
+Criterios de aceptación
+
+- La plataforma distingue cero, pendiente, ausente y exento.
+- Los promedios respetan las reglas definidas para cada estado.
+- Cada modificación de una nota publicada deja un registro consultable por usuarios autorizados.
+- La nota vigente y el historial de cambios son coherentes.
+- Los estudiantes solo ven los resultados y comentarios autorizados para ellos.
+
+Pruebas
+
+Probar cada estado, cálculo de promedios, modificación de notas, justificación, permisos, publicación y consulta del historial.
+
+---
+
+REQ-LMS-008. Visor de rúbricas y conservación de versiones
+
+Prioridad: Media.
+
+Objetivo: Permitir que los estudiantes consulten las rúbricas de sus actividades y garantizar que las evaluaciones históricas conserven los criterios utilizados originalmente.
+
+Visor para estudiantes
+
+1. Mostrar la rúbrica asociada a una tarea o evaluación antes de la entrega cuando el docente haya autorizado su publicación.
+2. Mostrar criterios, niveles de desempeño, descripciones y puntuaciones de forma legible.
+3. Adaptar la presentación a dispositivos móviles.
+4. Mostrar la rúbrica utilizada en una evaluación ya calificada.
+5. Diferenciar la rúbrica informativa de la puntuación efectivamente asignada al estudiante.
+6. Restringir la consulta a las actividades y cursos a los que el estudiante tenga acceso.
+
+Conservación de versiones
+
+7. Conservar una versión identificable de la rúbrica aplicada cuando una entrega sea evaluada.
+8. Evitar que una edición posterior de la plantilla cambie los criterios de una evaluación histórica.
+9. Registrar los cambios relevantes en las rúbricas.
+10. Permitir reutilizar una rúbrica sin alterar las versiones que ya están vinculadas a evaluaciones anteriores.
+11. Cuando una rúbrica se modifique durante una actividad activa, definir si los cambios aplican solo a nuevas evaluaciones o si requieren una actualización autorizada y documentada.
+
+Criterios de aceptación
+
+- El estudiante puede consultar la rúbrica cuando está habilitada.
+- La puntuación se puede relacionar con los criterios aplicados.
+- Una rúbrica editada posteriormente no altera evaluaciones históricas.
+- Los usuarios sin permisos no pueden modificar las rúbricas.
+
+Pruebas
+
+Probar publicación, acceso por rol, edición de plantillas, evaluación histórica, reutilización y cambios durante actividades activas.
+
+---
+
+REQ-LMS-009. Proyectos grupales y entregas colaborativas
+
+Prioridad: Media.
+
+Objetivo: Permitir la creación de grupos de trabajo, la entrega de proyectos compartidos y la evaluación individual o grupal.
+
+Gestión de grupos
+
+1. Permitir a docentes autorizados crear grupos dentro de sus cursos.
+2. Permitir asignar integrantes manualmente.
+3. Mantener la relación de cada grupo con su curso, actividad y período académico.
+4. Evitar que un estudiante pertenezca a grupos incompatibles para la misma actividad, salvo que la configuración lo permita.
+5. Permitir cambios autorizados de integrantes conservando el historial.
+6. Restringir la consulta y edición del grupo a sus integrantes y al personal autorizado.
+
+Entregas grupales
+
+7. Permitir que una actividad se configure como individual o grupal.
+8. Permitir que un integrante autorizado envíe la entrega en nombre del grupo.
+9. Vincular la entrega con el grupo y registrar quién realizó el envío.
+10. Mostrar la entrega compartida a los integrantes autorizados.
+11. Conservar versiones, archivos, comentarios y fechas de entrega.
+12. Evitar duplicar la misma entrega cuando varios integrantes intenten enviarla simultáneamente.
+13. Respetar las fechas límite y las políticas de entrega tardía de la actividad.
+
+Evaluación
+
+14. Permitir calificación común del grupo.
+15. Permitir calificaciones individuales diferenciadas cuando el docente lo necesite.
+16. Permitir comentarios generales y comentarios individuales.
+17. No asumir que todos los integrantes reciben la misma nota si se ha configurado una evaluación individual.
+18. Si se incorpora evaluación entre compañeros, permitir que el docente configure la actividad y controlar quién puede consultar cada valoración.
+19. No publicar evaluaciones entre compañeros sin las reglas de visibilidad correspondientes.
+
+Criterios de aceptación
+
+- Un docente puede crear un grupo y asignar integrantes.
+- Un integrante autorizado puede entregar un proyecto grupal.
+- La entrega queda vinculada al grupo y a su autor de envío.
+- El docente puede calificar al grupo y, cuando corresponda, individualmente.
+- Los estudiantes no pueden modificar grupos ni entregas ajenos sin autorización.
+
+Pruebas
+
+Probar creación, cambios de integrantes, envío simultáneo, entrega tardía, calificación grupal e individual, permisos y conservación del historial.
+
+---
+
+REQ-LMS-010. Portafolio de evidencias del estudiante
+
+Prioridad: Media.
+
+Objetivo: Crear un espacio organizado donde los estudiantes puedan reunir evidencias de aprendizaje y seleccionar trabajos destacados de sus cursos.
+
+Requisitos funcionales
+
+1. Incorporar una sección de portafolio en el panel del estudiante.
+2. Permitir agregar evidencias a partir de trabajos, proyectos y recursos que el estudiante esté autorizado a utilizar.
+3. Mantener la referencia al trabajo original, cuando corresponda, para evitar duplicar archivos innecesariamente.
+4. Permitir agregar una descripción y organizar las evidencias por asignatura, curso, unidad, período o competencia cuando esos datos estén disponibles.
+5. Permitir seleccionar y retirar trabajos destacados.
+6. Diferenciar los trabajos privados, compartidos con docentes y visibles para tutores autorizados.
+7. Permitir que docentes autorizados añadan comentarios o valoraciones cuando el flujo pedagógico lo requiera.
+8. Conservar las evidencias históricas cuando finalice un curso o cambie la matrícula.
+9. Evitar que la retirada de una evidencia del portafolio elimine el trabajo original de la tarea.
+10. Respetar los permisos de acceso a archivos y documentos.
+11. Si se permite compartir el portafolio con padres o tutores, limitar la consulta a las relaciones familiares autorizadas.
+12. Proporcionar una vista organizada y adaptable a dispositivos móviles.
+
+Criterios de aceptación
+
+- El estudiante puede seleccionar evidencias y organizarlas en su portafolio.
+- Retirar una evidencia no elimina la entrega original.
+- Los docentes y tutores solo ven el contenido que sus permisos permiten.
+- El portafolio conserva sus referencias y organización después de cerrar el curso.
+
+Pruebas
+
+Probar incorporación, retiro, selección de destacados, permisos, cambio de curso, archivos no disponibles y conservación de evidencias.
+
+---
+
+REQ-LMS-011. Duplicación de cursos y cierre de períodos
+
+Prioridad: Media.
+
+Objetivo: Facilitar la reutilización de cursos y mantener ordenados los contenidos de períodos académicos anteriores.
+
+Duplicación de cursos
+
+1. Permitir a usuarios autorizados crear un curso nuevo a partir de un curso anterior.
+2. Permitir seleccionar qué elementos se copiarán: estructura, unidades, temas, lecciones, materiales, tareas, rúbricas y configuraciones compatibles.
+3. No copiar automáticamente calificaciones, entregas, intentos de examen, comentarios privados ni datos personales de los estudiantes del curso original.
+4. No reutilizar fechas vencidas sin advertirlo y permitir que el responsable las actualice.
+5. Mantener identificadores nuevos para las entidades que deban ser independientes.
+6. Preservar los vínculos con recursos compartidos cuando sea seguro y correcto hacerlo.
+7. Evitar duplicaciones accidental mediante confirmación y controles de identidad del curso de destino.
+8. Mostrar un resumen de los elementos seleccionados antes de confirmar la copia.
+9. Informar del resultado y de cualquier elemento que no se haya podido copiar.
+
+Cierre y archivo
+
+10. Permitir cerrar o archivar un curso cuando finalice el período académico.
+11. Diferenciar el archivo del curso de su eliminación.
+12. Conservar el acceso histórico que corresponda a docentes, estudiantes y personal autorizado.
+13. Evitar que un curso archivado reciba nuevas entregas o modificaciones ordinarias, salvo que se reabra mediante una acción autorizada.
+14. Mantener las calificaciones, entregas y reportes históricos.
+15. Permitir que el personal autorizado consulte los cursos archivados.
+
+Criterios de aceptación
+
+- Un curso puede copiarse sin copiar las calificaciones ni las entregas personales.
+- El curso nuevo tiene sus propias relaciones y configuración.
+- Archivar un curso no elimina su contenido ni su historial.
+- Las reglas de acceso cambian de acuerdo con el estado del curso.
+
+Pruebas
+
+Probar duplicación parcial y completa, recursos compartidos, fechas, cursos duplicados, archivo, consulta histórica y permisos.
+
+---
+
+REQ-LMS-012. Profesores colaboradores y sustitutos
+
+Prioridad: Media.
+
+Objetivo: Permitir asignar más de un docente a un aula virtual con permisos diferenciados.
+
+Requisitos
+
+1. Permitir a los usuarios institucionales autorizados añadir o retirar profesores colaboradores de un curso.
+2. Permitir asignar un docente sustituto durante un período determinado, si la institución lo necesita.
+3. Registrar la función del docente en el curso y, cuando corresponda, las fechas de inicio y finalización de su participación.
+4. Definir permisos diferenciados para consultar, publicar materiales, crear tareas, calificar y modificar evaluaciones.
+5. Impedir que un colaborador realice operaciones que no estén incluidas en sus permisos.
+6. Evitar asignaciones duplicadas.
+7. Aplicar los cambios de permisos en las operaciones que entregan o modifican los datos.
+8. Conservar el historial de las actividades y calificaciones realizadas por cada docente.
+9. Al finalizar una sustitución, retirar los permisos temporales sin borrar el trabajo realizado.
+10. Informar cuando un usuario no esté autorizado para gestionar un curso.
+
+Criterios de aceptación
+
+- Se pueden asignar colaboradores autorizados.
+- Cada docente solo realiza las acciones permitidas.
+- La sustitución temporal finaliza en las condiciones configuradas.
+- Los registros históricos conservan el autor real de cada acción.
+
+Pruebas
+
+Probar asignación, retirada, fechas de vigencia, permisos diferenciados, operaciones prohibidas y conservación del historial.
+
+---
+
+REQ-LMS-013. Competencias y objetivos de aprendizaje
+
+Prioridad: Alta.
+
+Objetivo: Relacionar las actividades y evaluaciones del LMS con las competencias y los objetivos de aprendizaje para ofrecer un seguimiento pedagógico más completo.
+
+Catálogo de competencias
+
+1. Permitir gestionar competencias y objetivos de aprendizaje según las atribuciones institucionales.
+2. Organizar las competencias por asignatura, nivel educativo, grado o programa cuando corresponda.
+3. Registrar descripciones y criterios observables de logro.
+4. Permitir asociar competencias y objetivos con unidades, lecciones, tareas, preguntas y evaluaciones.
+5. Evitar crear catálogos duplicados si la plataforma ya cuenta con registros reutilizables.
+6. Mantener la relación entre los objetivos y las asignaturas oficiales.
+
+Evidencias y seguimiento
+
+7. Registrar las evidencias de aprendizaje que respaldan la evaluación de una competencia.
+8. Permitir que los docentes consulten los resultados de las competencias de sus estudiantes.
+9. Mostrar el progreso por estudiante, curso, asignatura y período, según los datos disponibles.
+10. Diferenciar entre competencia no evaluada, sin evidencia suficiente y no alcanzada.
+11. Permitir definir niveles de logro con criterios explícitos, sin imponer una escala institucional no aprobada.
+12. Si se utiliza una taxonomía educativa como Bloom, tratarla como una clasificación complementaria de objetivos, no como una calificación automática del estudiante.
+13. Mantener el historial de las evidencias y evaluaciones de períodos anteriores.
+14. Evitar inferir que una competencia está dominada solo porque el estudiante completó una lección.
+15. Relacionar los resultados con las evaluaciones y actividades que los originaron.
+
+Criterios de aceptación
+
+- Una actividad puede vincularse con competencias y objetivos definidos.
+- El seguimiento muestra las evidencias reales disponibles.
+- Se distinguen competencias no evaluadas de competencias no alcanzadas.
+- Las modificaciones al catálogo no alteran indebidamente los registros históricos.
+- Solo usuarios autorizados pueden modificar el catálogo o las valoraciones.
+
+Pruebas
+
+Probar creación de competencias, asociación con actividades, evaluación, consultas por período, datos insuficientes y permisos.
+
+---
+
+REQ-LMS-014. Alertas automáticas de refuerzo académico
+
+Prioridad: Alta.
+
+Objetivo: Identificar situaciones que requieren atención docente a partir de reglas explícitas y de los datos académicos disponibles.
+
+Configuración de reglas
+
+1. Permitir definir reglas institucionales para generar alertas académicas.
+2. Incluir como posibles indicadores el promedio de evaluaciones válidas, las tareas omitidas y las competencias no alcanzadas.
+3. Permitir configurar los umbrales, el período de cálculo y las condiciones de aplicación según las atribuciones institucionales.
+4. No fijar permanentemente el 70 % de promedio ni tres tareas omitidas como reglas universales.
+5. Definir qué evaluaciones entran en el cálculo y cómo se tratan las actividades pendientes, ausencias, exenciones y tareas anuladas.
+6. Evitar que una tarea no vencida se cuente como omitida.
+7. No generar una alerta por un promedio provisional cuando todavía falten evaluaciones necesarias, salvo que la regla indique expresamente que debe advertirse esa situación.
+
+Generación y seguimiento
+
+8. Generar alertas cuando se cumplan las reglas activas.
+9. Indicar el motivo concreto de cada alerta y los datos que la originaron.
+10. Asociar la alerta con el estudiante, el curso, la asignatura y el período que correspondan.
+11. Evitar crear alertas duplicadas para la misma condición mientras siga activa.
+12. Permitir que los usuarios autorizados revisen, atiendan, actualicen y cierren alertas.
+13. Permitir registrar acciones de apoyo, observaciones, responsables y fechas de seguimiento cuando exista ese flujo.
+14. Actualizar la alerta si la situación mejora o deja de cumplir la condición.
+15. Conservar el historial de alertas atendidas.
+16. No convertir automáticamente una alerta en un diagnóstico ni en una etiqueta permanente del estudiante.
+17. Restringir la información según el rol y la relación autorizada con el estudiante.
+18. Utilizar las herramientas existentes de seguimiento y planes de apoyo cuando sean compatibles.
+
+Notificaciones
+
+19. Integrar las alertas con el sistema de notificaciones existente si corresponde.
+20. Evitar notificaciones repetidas por la misma alerta.
+21. Definir quién recibe cada tipo de aviso según las reglas institucionales.
+22. No divulgar información académica sensible a usuarios que no tengan autorización.
+
+Criterios de aceptación
+
+- Una regla activa genera una alerta cuando se cumple su condición.
+- La alerta muestra el motivo y los datos que la originaron.
+- Las tareas no vencidas no se cuentan como omitidas.
+- Las alertas dejan de estar activas cuando la condición ya no se cumple, según la política configurada.
+- Los responsables autorizados pueden registrar y consultar las acciones de apoyo.
+- No se duplican alertas ni notificaciones por la misma condición.
+
+Pruebas
+
+Probar umbrales, cambios de notas, tareas vencidas, actividades pendientes, cierre de alertas, notificaciones, permisos y cambios de período.
+
+---
+
+REQ-LMS-015. Compatibilidad con SCORM y otros estándares educativos
+
+Prioridad: Pendiente de decisión institucional.
+
+Objetivo: Preparar una solución compatible con paquetes educativos externos únicamente si existe una necesidad institucional confirmada.
+
+Requisitos de planificación
+
+1. No incorporar un procesador SCORM ni dependencias de ejecución sin confirmar la necesidad de la institución.
+2. Si se autoriza su implementación, definir previamente las versiones y características que deben admitirse.
+3. Determinar los requisitos de almacenamiento, extracción segura de archivos, ejecución de contenido y comunicación de resultados.
+4. Evaluar el tratamiento del manifiesto "imsmanifest.xml" y la estructura de los paquetes.
+5. Definir los datos de seguimiento que se deben conservar, como estado, progreso, puntuación y tiempo, según el estándar admitido.
+6. Definir cómo se relacionará el contenido externo con cursos, estudiantes, actividades y calificaciones.
+7. Aislar la ejecución de contenido externo para evitar que pueda acceder a información o funciones no autorizadas.
+8. Validar los archivos antes de procesarlos y establecer límites apropiados.
+9. Definir cómo se manejarán los paquetes inválidos, incompatibles o incompletos.
+10. Evitar que un paquete externo modifique calificaciones oficiales sin pasar por las reglas institucionales autorizadas.
+11. Documentar las licencias, los costos, los servicios externos y las dependencias de infraestructura.
+12. Evaluar otros formatos o estándares solo si responden a una necesidad educativa real.
+
+Criterios de aceptación para una futura implementación autorizada
+
+- La institución ha aprobado el estándar y el alcance requerido.
+- Se han definido las versiones y los datos que deben conservarse.
+- Los paquetes se validan y se ejecutan bajo condiciones de seguridad apropiadas.
+- El progreso se asocia al estudiante y al curso correctos.
+- Los resultados no alteran las calificaciones oficiales sin autorización.
+- La compatibilidad se demuestra con paquetes de prueba representativos.
+
+Esta tarea no autoriza por sí sola a incorporar SCORM. Su implementación queda condicionada a la decisión institucional y a la aprobación de los requisitos correspondientes.
+
+---
+
+REQ-LMS-016. Integridad de la integración entre el LMS y las calificaciones oficiales
+
+Prioridad: Alta.
+
+Objetivo: Garantizar que las actividades, evaluaciones y notas digitales se relacionen correctamente con el registro académico institucional, sin duplicar ni alterar datos oficiales de forma indebida.
+
+Requisitos
+
+1. Mantener la relación entre estudiantes, asignaturas, cursos, grados, secciones y períodos utilizando los identificadores institucionales disponibles.
+2. Diferenciar las calificaciones de actividades formativas de las notas oficiales cuando no tengan el mismo propósito.
+3. Definir qué evaluaciones pueden alimentar el libro de calificaciones oficial y bajo qué condiciones.
+4. Evitar que una evaluación se registre más de una vez por reintentos de envío o sincronización.
+5. Conservar la relación entre la nota oficial y la actividad que la originó.
+6. Respetar los permisos para crear, publicar, modificar y consultar notas.
+7. No reemplazar una nota oficial con una calificación provisional o una evaluación todavía pendiente de corrección.
+8. Tratar explícitamente las evaluaciones anuladas, exentas y no aplicables.
+9. Mantener las notas históricas cuando un estudiante cambie de grado, sección o período.
+10. Evitar que los cambios de matrícula concedan acceso a cursos anteriores que el estudiante no esté autorizado a consultar.
+11. Informar los errores de sincronización y permitir su resolución por personal autorizado.
+12. Conservar un historial de las modificaciones relevantes.
+13. Si la actualización de varias operaciones no puede realizarse de manera conjunta, establecer un procedimiento seguro de recuperación para evitar resultados parcialmente aplicados.
+14. Mantener coherencia con las reglas institucionales de ponderación, redondeo y cierre de notas.
+
+Criterios de aceptación
+
+- Una evaluación autorizada puede relacionarse con su nota institucional sin generar duplicados.
+- Las actividades formativas no alteran las notas oficiales sin una regla expresa.
+- Los cambios de matrícula no borran las calificaciones históricas.
+- Los errores de sincronización pueden identificarse y resolverse sin duplicar registros.
+- Las consultas respetan los permisos y la relación actual del estudiante con el curso.
+
+Pruebas
+
+Probar publicación de notas, envíos repetidos, errores de sincronización, cambios de sección, cierre de períodos, evaluaciones pendientes y permisos.
+
+---
+
+REQ-LMS-017. Accesibilidad y uso móvil de las herramientas de aprendizaje
+
+Prioridad: Media.
+
+Objetivo: Garantizar que las nuevas funciones del LMS puedan utilizarse correctamente desde teléfonos, tabletas y computadoras.
+
+Requisitos
+
+1. Adaptar las nuevas pantallas, formularios, árboles de contenidos, rúbricas, evaluaciones y portafolios a los tamaños de pantalla admitidos por la plataforma.
+2. Mantener textos legibles y controles suficientemente accesibles para su uso táctil.
+3. Incorporar etiquetas comprensibles para los campos, botones y controles.
+4. Permitir la navegación mediante teclado donde corresponda.
+5. Mantener indicadores visibles de carga, guardado, envío y error.
+6. Evitar que un error recuperable borre silenciosamente información introducida por el usuario.
+7. Solicitar confirmación antes de acciones que puedan provocar pérdida de datos o cerrar una entrega.
+8. Mantener consistencia con los componentes y estilos ya utilizados por la plataforma.
+9. Redactar todos los mensajes para usuarios finales en español claro y no técnico.
+10. No exponer nombres internos de funciones, detalles de servicios, claves, credenciales ni información privada en los mensajes visibles.
+
+Criterios de aceptación
+
+- Las funciones nuevas pueden utilizarse en pantallas móviles y de escritorio.
+- Los controles esenciales se pueden identificar y utilizar de forma accesible.
+- Los errores indican qué ocurrió y qué puede hacer el usuario.
+- Los datos introducidos se conservan cuando sea posible recuperarlos de forma segura.
+
+Pruebas
+
+Probar tamaños de pantalla representativos, teclado, navegación, mensajes, formularios extensos, pérdida de conexión y acciones que requieren confirmación.
+
+---
+
+REQ-LMS-018. Informes de progreso y seguimiento del aprendizaje
+
+Prioridad: Media.
+
+Objetivo: Mejorar los informes del LMS para que representen fielmente el progreso de los estudiantes, las entregas, las evaluaciones y las competencias.
+
+Requisitos
+
+1. Utilizar los datos reales de cursos, tareas, entregas, evaluaciones y finalización de recursos.
+2. Mostrar el progreso por estudiante, curso, asignatura y período según la información disponible.
+3. Diferenciar tareas entregadas, pendientes, tardías y no aceptadas.
+4. Mostrar resultados de evaluaciones y estados de calificación sin confundir un cero con una actividad pendiente.
+5. Mostrar el progreso de las lecciones cuando exista seguimiento de finalización.
+6. Incorporar resultados por competencia cuando el modelo de competencias esté disponible.
+7. Permitir consultar los detalles que originan un indicador agregado.
+8. Mostrar el período y los criterios que se utilizaron para calcular los resultados.
+9. Evitar sumar registros duplicados o incluir actividades que no correspondan al estudiante.
+10. Mantener las restricciones de acceso según el rol.
+11. Permitir exportar informes únicamente mediante los formatos y permisos admitidos por la plataforma.
+12. No incluir información personal innecesaria en los informes exportados.
+13. Aprovechar el generador de informes y los componentes de gráficas existentes cuando sean compatibles.
+14. No mostrar indicadores de progreso que todavía no estén respaldados por registros reales.
+
+Criterios de aceptación
+
+- Los indicadores coinciden con los registros que los originan.
+- Los filtros por período, curso y estudiante funcionan correctamente.
+- El usuario puede entender cómo se obtuvo un resultado.
+- Los informes respetan los permisos y no mezclan estudiantes o cursos.
+- Las exportaciones contienen los datos correspondientes a los filtros seleccionados.
+
+Pruebas
+
+Probar filtros, totales, porcentajes, datos faltantes, registros duplicados, períodos históricos, exportaciones y permisos.
+
+---
+
+REQ-LMS-019. Gestión de contenidos, recursos y enlaces educativos
+
+Prioridad: Media.
+
+Objetivo: Mejorar la administración de los recursos educativos existentes y evitar que los estudiantes encuentren materiales inaccesibles o publicados en condiciones incorrectas.
+
+Requisitos
+
+1. Mantener la compatibilidad con los materiales educativos existentes.
+2. Permitir clasificar los recursos por curso, unidad, tema y lección cuando esa estructura esté disponible.
+3. Validar los campos obligatorios y el formato de los enlaces.
+4. Mostrar al docente el estado del recurso y su disponibilidad.
+5. Permitir retirar o sustituir un recurso sin borrar el historial de las actividades que lo utilizaron.
+6. Informar cuando un enlace o archivo no esté disponible, sin exponer información interna.
+7. Respetar las restricciones de acceso al curso y al material.
+8. Evitar que una modificación de recurso cambie retroactivamente una entrega o evaluación ya completada.
+9. Permitir que los recursos se reutilicen en diferentes cursos cuando el diseño existente lo permita.
+10. Mantener la organización y los permisos de los archivos institucionales.
+11. No convertir el hecho de abrir un enlace en prueba automática de que el estudiante completó o comprendió el recurso.
+12. Integrar la disponibilidad del recurso con las reglas de publicación y prerrequisitos definidas en "REQ-LMS-001".
+
+Criterios de aceptación
+
+- Los recursos pueden organizarse y consultarse desde los cursos correspondientes.
+- Los enlaces inválidos producen mensajes claros.
+- Retirar un recurso no elimina el historial académico.
+- Los materiales restringidos no son accesibles desde cuentas no autorizadas.
+
+Pruebas
+
+Probar recursos existentes, enlaces inválidos, archivos retirados, restricciones de acceso, reutilización y conservación del historial.
+
+---
+
+REQ-LMS-020. Gestión de notificaciones del aprendizaje digital
+
+Prioridad: Media.
+
+Objetivo: Garantizar que los avisos del LMS se generen a partir de acontecimientos reales y lleguen únicamente a las personas autorizadas.
+
+Requisitos
+
+1. Reutilizar el sistema de notificaciones existente.
+2. Generar avisos para eventos relevantes, como nuevas tareas, evaluaciones programadas, cambios de horario, entregas devueltas y calificaciones publicadas.
+3. Incorporar avisos sobre progreso o refuerzo académico cuando la configuración institucional lo permita.
+4. Definir los destinatarios según el curso, la actividad y los permisos.
+5. Evitar notificaciones duplicadas por reintentos de una misma operación.
+6. No enviar una notificación de calificación publicada antes de que el resultado sea realmente visible para el estudiante.
+7. Respetar las preferencias y canales de notificación que admita el sistema existente.
+8. Evitar incluir notas, comentarios privados u otros datos sensibles en mensajes visibles para destinatarios no autorizados.
+9. Manejar fallos de envío sin invalidar la operación académica que originó el aviso.
+10. Mostrar el estado de lectura cuando esa función esté disponible.
+
+Criterios de aceptación
+
+- Los avisos se originan en acontecimientos reales.
+- Los destinatarios corresponden a los usuarios autorizados.
+- No se duplican avisos por una misma operación.
+- Los errores de notificación no provocan pérdida de tareas, notas o entregas.
+
+Pruebas
+
+Probar eventos, destinatarios, duplicados, publicación de calificaciones, fallos de envío y permisos.
+
+---
+
+REQ-LMS-021. Mejoras de consulta y navegación del LMS por rol
+
+Prioridad: Media.
+
+Objetivo: Mantener una navegación coherente entre cursos, contenidos, tareas, exámenes, rúbricas y progreso, de acuerdo con las responsabilidades de cada usuario.
+
+Requisitos
+
+1. Integrar las nuevas funciones con las vistas existentes del docente y del estudiante.
+2. Evitar crear pantallas duplicadas para funciones que ya tengan una ubicación adecuada.
+3. Mostrar a los docentes únicamente los cursos y estudiantes que pueden gestionar.
+4. Mostrar a los estudiantes únicamente los cursos, contenidos, tareas y resultados a los que tienen acceso.
+5. Mantener la consulta de hijos vinculados para padres y tutores, de acuerdo con los permisos existentes.
+6. Mantener las funciones administrativas según las atribuciones institucionales.
+7. Facilitar el acceso a tareas pendientes, evaluaciones disponibles, próximas clases y contenidos en progreso.
+8. Mantener filtros y navegación al volver desde el detalle de una actividad, cuando sea posible.
+9. Mostrar estados vacíos comprensibles cuando no haya cursos, tareas o resultados disponibles.
+10. Evitar que ocultar un botón sea la única medida de seguridad.
+11. Mantener el comportamiento de navegación existente que ya funcione correctamente.
+
+Criterios de aceptación
+
+- Cada rol ve las opciones que le corresponden.
+- La navegación entre curso, contenido, tarea y evaluación conserva el contexto necesario.
+- Los usuarios no autorizados no pueden acceder a datos mediante operaciones directas.
+- Las nuevas funciones se integran en la navegación actual sin duplicaciones innecesarias.
+
+Pruebas
+
+Probar los flujos principales de docente, estudiante, tutor y administrador; acceso directo a pantallas; filtros; navegación de regreso y permisos.
+
+---
+
+REQ-LMS-022. Validación de archivos y recuperación de operaciones de aprendizaje
+
+Prioridad: Alta.
+
+Objetivo: Reducir la pérdida de información y los registros incompletos durante la subida de archivos, entrega de tareas y guardado de respuestas.
+
+Requisitos
+
+1. Reutilizar los mecanismos de subida reanudable existentes cuando sean adecuados.
+2. Mantener los límites de tamaño y formatos admitidos por el servicio real.
+3. Validar archivos antes de procesarlos y mostrar al usuario los formatos admitidos.
+4. Informar el progreso de la subida y su resultado.
+5. Diferenciar una subida en curso de una subida completada.
+6. Evitar crear entregas duplicadas por reintentos.
+7. Permitir recuperar una operación interrumpida cuando el mecanismo existente lo admita.
+8. No eliminar archivos ya confirmados debido a un error posterior en una operación diferente.
+9. Mantener las referencias entre archivos, entregas, estudiantes y tareas.
+10. Restringir la descarga de archivos según los permisos.
+11. Evitar enlaces públicos no autorizados a entregas o materiales privados.
+12. Manejar fallos de almacenamiento sin mostrar una entrega como completada si el archivo no se guardó correctamente.
+13. Conservar las versiones anteriores cuando una nueva entrega sustituya a otra.
+14. Evitar introducir límites nuevos que contradigan los servicios actuales sin una justificación funcional.
+
+Criterios de aceptación
+
+- Los archivos válidos se almacenan y vinculan con la actividad correcta.
+- Los archivos no admitidos generan un mensaje claro.
+- Las interrupciones recuperables no generan entregas duplicadas.
+- Los errores no producen entregas falsas ni referencias rotas.
+- Los archivos privados no quedan accesibles públicamente sin autorización.
+
+Pruebas
+
+Probar archivos válidos e inválidos, límites, interrupciones, reintentos, sustitución de entregas, permisos y fallos de almacenamiento.
+
+---
+
+REQ-LMS-023. Cierre funcional y pruebas de aceptación de las ampliaciones
+
+Prioridad: Alta.
+
+Objetivo: Verificar que las funciones implementadas en las tareas de esta fase operen de manera integrada sin regresiones en las herramientas existentes.
+
+Esta tarea no sustituye las pruebas individuales obligatorias de cada requisito. Su alcance se limita a las funciones LMS modificadas en esta ampliación.
+
+Requisitos
+
+1. Preparar pruebas de aceptación para las funciones implementadas y sus dependencias directas.
+2. Comprobar los flujos de creación y publicación de contenido, consulta del estudiante, entrega de tareas, realización de evaluaciones, corrección y seguimiento.
+3. Verificar la conservación de los datos y las relaciones históricas.
+4. Comprobar los permisos de lectura y modificación para cada rol implicado.
+5. Verificar que los cambios no rompan el banco de preguntas, exámenes, tareas, rúbricas y aulas virtuales existentes.
+6. Probar los estados de error, las operaciones repetidas y las interrupciones recuperables.
+7. Verificar el funcionamiento desde dispositivos móviles y de escritorio.
+8. Confirmar que los indicadores de progreso y las calificaciones se calculan con datos reales.
+9. Registrar los errores encontrados y corregir los que estén dentro del alcance de las tareas implementadas.
+10. No ampliar la revisión a módulos ajenos a la Fase 2 salvo cuando exista una dependencia directa y necesaria.
+
+Criterios de aceptación
+
+- Todas las pruebas de aceptación asociadas con las tareas terminadas tienen un resultado documentado.
+- No quedan errores críticos conocidos en los flujos modificados.
+- Los datos históricos y las funciones existentes permanecen operativos.
+- Los permisos se verifican tanto en las interfaces como en las operaciones correspondientes.
+- Se informa de cualquier prueba no ejecutada y del motivo.
+- El informe final diferencia claramente los cambios implementados, las pruebas realmente realizadas y las limitaciones pendientes.
+
+---
+
+Dependencias y orden recomendado de implementación
+
+1. REQ-LMS-001: organización de contenidos y seguimiento de finalización.
+2. REQ-LMS-019: gestión de recursos, coordinada con la estructura de contenidos.
+3. REQ-LMS-002: nuevos tipos de preguntas.
+4. REQ-LMS-003: recuperación de exámenes y políticas de intentos.
+5. REQ-LMS-005: borradores de tareas y recuperación de entregas.
+6. REQ-LMS-006: políticas de entregas tardías.
+7. REQ-LMS-007: estados de evaluación e historial de calificaciones.
+8. REQ-LMS-008: rúbricas visibles y versiones históricas.
+9. REQ-LMS-013: competencias y objetivos de aprendizaje.
+10. REQ-LMS-014: alertas de refuerzo académico.
+11. REQ-LMS-016: integración con calificaciones oficiales.
+12. REQ-LMS-004: programación de clases virtuales.
+13. REQ-LMS-009: proyectos grupales.
+14. REQ-LMS-010: portafolios estudiantiles.
+15. REQ-LMS-011: duplicación y archivo de cursos.
+16. REQ-LMS-012: profesores colaboradores y sustitutos.
+17. REQ-LMS-018: informes de progreso.
+18. REQ-LMS-020: notificaciones de aprendizaje.
+19. REQ-LMS-021: navegación integrada por rol.
+20. REQ-LMS-022: validación y recuperación de operaciones con archivos.
+21. REQ-LMS-017: accesibilidad y experiencia móvil, aplicadas durante todo el desarrollo y completadas en esta etapa.
+22. REQ-LMS-015: estándares educativos externos, únicamente después de una decisión institucional.
+23. REQ-LMS-023: pruebas de aceptación de las ampliaciones implementadas.
+
+El orden es orientativo. Las dependencias reales deben respetarse cuando una tarea requiera que otra esté implementada. No es necesario retrasar una tarea independiente solo porque aparezca después en esta lista.
+
+Condiciones de finalización de la Fase 2
+
+La ampliación se considerará terminada cuando las tareas aprobadas hayan cumplido sus criterios de aceptación, las pruebas correspondientes se hayan ejecutado y los flujos afectados sigan funcionando correctamente.
+
+Las funciones condicionadas a decisiones institucionales, como SCORM o la creación automática de reuniones mediante proveedores externos, deben permanecer identificadas como pendientes de aprobación y no deben declararse implementadas.
+
+Cada entrega debe informar los archivos modificados, las funciones incorporadas, las pruebas ejecutadas y sus resultados reales, así como cualquier limitación que siga pendiente.
