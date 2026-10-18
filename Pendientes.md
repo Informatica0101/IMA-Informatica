@@ -9001,3 +9001,1214 @@ Al finalizar cada tarea, se debe entregar:
 * Estado de entrega: terminado, parcialmente terminado o pendiente, sin declarar completada una función que solo esté disponible visualmente.
 
 Instrucción final para la ejecución: antes de modificar el proyecto, revisar la implementación real de cada componente señalado en la auditoría y confirmar si la carencia sigue existiendo. La auditoría constituye el punto de partida, no una autorización para asumir que toda la evidencia descrita continúa vigente. Las tareas deben ejecutarse sobre los componentes existentes cuando corresponda, preservar las capacidades funcionales ya verificadas y documentar cualquier diferencia entre los hallazgos de la auditoría y el estado actual del sistema.
+
+
+PLAN MAESTRO DE TAREAS PARA RESOLUCIÓN, COMPLETADO Y OPTIMIZACIÓN
+
+Plataforma Integral de Gestión Educativa
+
+Proyecto: New Generation Christian Academy / Instituto María Auxiliadora
+Desarrollo: JyP Solutions
+Base: Informe de auditoría funcional integral del 18 de octubre de 2026
+Objetivo: convertir los hallazgos de auditoría en un backlog priorizado, trazable y verificable.
+
+1. Instrucciones obligatorias para Jules
+
+Antes de ejecutar cualquier tarea:
+
+1. Leer "METODOLOGIA_DESARROLLO.md" y las instrucciones vigentes del repositorio.
+2. Localizar los componentes reales correspondientes a cada área y comprobar que el informe de auditoría coincide con el código actual.
+3. Identificar las pruebas existentes, los requisitos documentados y las dependencias.
+4. Conservar las funciones que ya cumplen sus requisitos.
+5. No inventar defectos ni presentar mejoras propuestas como deficiencias confirmadas.
+6. No cambiar componentes sin justificar la necesidad y delimitar el impacto.
+7. Añadir pruebas que permitan comprobar cada cambio.
+8. No utilizar datos reales de estudiantes o familias en pruebas automatizadas.
+9. Registrar los archivos modificados, resultados de pruebas, limitaciones y riesgos residuales.
+10. No implementar el asistente con IA salvo que se cumpla íntegramente la condición de viabilidad definida en la tarea IA-01 y se respete la configuración obligatoria de IA-02.
+
+Interpretación del informe de auditoría
+
+Las áreas B, C, D y E figuran como completas y verificadas en el informe. Por tanto, las tareas que siguen son principalmente de endurecimiento, optimización, ampliación y pruebas de regresión, salvo que la revalidación encuentre defectos concretos.
+
+El área A está ausente por decisión del plan maestro. No se considera un defecto que deba corregirse de forma automática.
+
+Los nombres internos y las ubicaciones de implementación deben descubrirse en el repositorio. Los identificadores de este backlog son referencias de seguimiento y no nombres de archivos ni funciones.
+
+---
+
+2. Priorización general
+
+Prioridad| Significado| Condición
+P0| Crítica| Pérdida de datos, exposición grave de información o riesgo inmediato comprobado
+P1| Alta| Integridad, seguridad, continuidad o funciones institucionales críticas
+P2| Media| Optimización funcional, diagnóstico, experiencia de usuario o capacidad importante
+P3| Evolutiva| Características opcionales, ampliaciones y mejoras de valor adicional
+
+La prioridad inicial no reemplaza la evaluación real. Si una prueba descubre un defecto crítico, Jules deberá elevar su prioridad y documentar la evidencia.
+
+2.1. Orden de ejecución
+
+1. Revalidación de los hallazgos y creación de una línea base.
+2. Integridad, autorización, observabilidad y recuperación.
+3. Optimización de automatizaciones.
+4. Optimización de PWA y sincronización.
+5. Robustecimiento del centro de integraciones.
+6. Mejoras de continuidad y restauración.
+7. Evaluación de viabilidad de IA, sin implementación automática.
+8. Validación integral, pruebas de regresión y cierre.
+
+---
+
+3. Área transversal: control de calidad y trazabilidad
+
+T-001. Revalidar el inventario y los resultados de la auditoría
+
+Prioridad: P1
+Tipo: Verificación y diagnóstico
+Dependencias: Ninguna
+
+Problema o necesidad
+
+El informe declara una cobertura del 100 % y estados completos en cuatro áreas, pero contiene nombres de componentes vacíos. Es necesario confirmar que las capacidades descritas existen realmente en la versión actual del proyecto y que las pruebas documentadas son reproducibles.
+
+Requisitos funcionales
+
+- Localizar las implementaciones reales de las áreas B, C, D y E.
+- Confirmar las funciones de recordatorios, prevención de duplicados, sincronización móvil, gestión de proveedores, respaldos y restauración.
+- Identificar pruebas automatizadas y manuales existentes.
+- Distinguir entre inspección del código, ejecución y verificación satisfactoria.
+- Registrar las limitaciones del entorno de pruebas.
+
+Cambios necesarios
+
+- Completar el inventario real.
+- Vincular cada capacidad con su ubicación y prueba correspondiente.
+- Corregir afirmaciones del informe que no puedan reproducirse.
+- Crear una lista de comprobaciones pendientes cuando falten evidencias.
+
+Comportamiento esperado
+
+El equipo dispone de una línea base verificable antes de modificar las funciones.
+
+Criterios de aceptación
+
+- Cada capacidad declarada como existente tiene una implementación localizada.
+- Cada estado completo y verificado tiene evidencia suficiente.
+- Las pruebas bloqueadas están identificadas.
+- No se inventan nombres internos ni resultados.
+- Se entrega una matriz de estado inicial.
+
+Entregables
+
+Inventario actualizado, matriz de evidencias y lista maestra inicial.
+
+---
+
+T-002. Establecer una matriz de regresión de las cinco áreas
+
+Prioridad: P1
+Tipo: Calidad y prevención de regresiones
+Dependencias: T-001
+
+Problema o necesidad
+
+Las mejoras pueden afectar funciones que actualmente se consideran operativas, especialmente cuando comparten autenticación, almacenamiento, notificaciones o servicios externos.
+
+Requisitos funcionales
+
+- Identificar las funciones esenciales de cada área.
+- Registrar los casos de prueba existentes.
+- Incorporar pruebas para los escenarios de integración.
+- Distinguir pruebas superadas, fallidas y bloqueadas.
+
+Cambios necesarios
+
+- Crear o ampliar la suite de pruebas.
+- Automatizar los escenarios repetibles cuando la arquitectura lo permita.
+- Documentar las pruebas manuales que no puedan automatizarse.
+
+Comportamiento esperado
+
+Cada cambio puede validarse contra una línea base y sus dependencias.
+
+Criterios de aceptación
+
+- Las funciones críticas disponen de pruebas reproducibles.
+- Las pruebas detectan fallos de autorización, duplicación, sincronización y restauración.
+- Cada fallo muestra el resultado esperado y el obtenido.
+- Ningún cambio se declara verificado si sus pruebas esenciales están bloqueadas.
+
+Entregables
+
+Matriz de regresión, casos de prueba y resultados iniciales.
+
+---
+
+4. Área B: automatización de tareas y recordatorios
+
+B-001. Mejorar la observabilidad de las automatizaciones
+
+Prioridad: P1
+Tipo: Optimización operativa
+Dependencias: T-001
+
+Problema o necesidad
+
+La auditoría confirma el funcionamiento de recordatorios e idempotencia, pero el informe no acredita que exista una vista unificada para diagnosticar ejecuciones fallidas, tareas atrasadas y reintentos agotados.
+
+Requisitos funcionales
+
+- Identificar cada ejecución con un identificador trazable.
+- Registrar tipo de tarea, hora, resultado y causa del fallo.
+- Diferenciar ejecución pendiente, en curso, completada, fallida y bloqueada.
+- Registrar los reintentos sin duplicar el efecto de negocio.
+- Evitar datos personales innecesarios en los registros.
+
+Cambios necesarios
+
+- Completar los registros técnicos existentes.
+- Incorporar consultas o una vista de diagnóstico para los responsables autorizados.
+- Añadir filtros por período, tipo de tarea y resultado, cuando sean pertinentes.
+- Establecer reglas de retención de registros.
+
+Comportamiento esperado
+
+El administrador puede localizar una tarea fallida, comprender su estado y determinar si requiere intervención.
+
+Criterios de aceptación
+
+- Una ejecución correcta queda identificada como completada.
+- Una ejecución fallida registra una causa diagnosticable.
+- Los reintentos pueden relacionarse con la ejecución original.
+- Los registros no exponen credenciales ni datos sensibles innecesarios.
+- Una ejecución bloqueada no se presenta como completada.
+
+---
+
+B-002. Endurecer los reintentos, la idempotencia y la recuperación de tareas
+
+Prioridad: P1
+Tipo: Robustez
+Dependencias: B-001
+
+Problema o necesidad
+
+El informe declara que existe prevención de duplicados, pero no detalla todos los escenarios de concurrencia, pérdida de respuesta o recuperación tras interrupciones.
+
+Requisitos funcionales
+
+- Definir la identidad lógica de cada operación.
+- Distinguir entre una operación no ejecutada y una operación ejecutada cuya respuesta se perdió.
+- Aplicar reintentos limitados y controlados.
+- Evitar efectos duplicados en notificaciones y operaciones sensibles.
+- Facilitar la recuperación de tareas fallidas sin repetir las que ya se completaron.
+
+Cambios necesarios
+
+- Revisar los mecanismos actuales de idempotencia.
+- Añadir pruebas de concurrencia y repetición de eventos.
+- Implementar únicamente las protecciones que se demuestren ausentes.
+- Documentar las políticas de reintento por tipo de operación.
+
+Comportamiento esperado
+
+Las tareas se recuperan de errores transitorios sin generar duplicados ni ocultar fallos persistentemente.
+
+Criterios de aceptación
+
+- Dos eventos idénticos no producen dos efectos cuando la operación debe ser única.
+- Una respuesta perdida no provoca la repetición ciega de una operación crítica.
+- Los reintentos tienen un límite definido.
+- Los fallos agotados se identifican para revisión.
+- Los resultados son reproducibles mediante pruebas.
+
+---
+
+B-003. Optimizar la gestión de vencimientos y pendientes institucionales
+
+Prioridad: P2
+Tipo: Ampliación funcional
+Dependencias: B-001, B-002
+
+Problema o necesidad
+
+La automatización está verificada, pero puede resultar más útil si las tareas pendientes se organizan según su urgencia, estado y responsable.
+
+Requisitos funcionales
+
+- Consolidar las categorías de pendientes que realmente utiliza la institución.
+- Diferenciar próximas fechas límite, vencimientos, retrasos y tareas resueltas.
+- Permitir filtrar por categoría, período, responsable y estado, cuando corresponda.
+- Evitar avisos de registros ya resueltos o cancelados.
+- Respetar permisos y preferencias de notificación.
+
+Cambios necesarios
+
+- Mejorar los filtros y la presentación de pendientes.
+- Revisar las reglas de vencimiento.
+- Añadir indicadores de antigüedad y estado cuando aporten valor.
+- Incorporar un historial de notificaciones relacionado con la tarea, si no existe.
+
+Comportamiento esperado
+
+Los responsables pueden identificar qué requiere atención, por qué está pendiente y cuál es el siguiente paso.
+
+Criterios de aceptación
+
+- Los filtros devuelven los registros correspondientes.
+- Los registros resueltos dejan de aparecer como pendientes activos.
+- Los avisos respetan la autorización y los canales configurados.
+- No se generan duplicados por actualizar los filtros o consultar nuevamente.
+- La mejora no altera las reglas institucionales existentes sin autorización.
+
+---
+
+B-004. Controlar cuotas y límites de ejecución
+
+Prioridad: P1
+Tipo: Continuidad operativa
+Dependencias: B-001
+
+Problema o necesidad
+
+Las ejecuciones automáticas pueden depender de cuotas, límites de tiempo y restricciones de proveedores externos. Estos límites deben conocerse y gestionarse para evitar interrupciones silenciosas.
+
+Requisitos funcionales
+
+- Identificar los límites aplicables a los servicios realmente utilizados.
+- Registrar errores por cuota o exceso de tiempo.
+- Evitar ciclos de reintentos que agraven la saturación.
+- Detectar tareas atrasadas.
+- Permitir la recuperación controlada cuando el servicio vuelva a estar disponible.
+
+Cambios necesarios
+
+- Documentar cuotas y restricciones.
+- Ajustar procesamiento por lotes y reintentos solo cuando la implementación actual lo requiera.
+- Añadir alertas o indicadores de saturación.
+- Revisar las tareas que excedan los límites disponibles.
+
+Comportamiento esperado
+
+La plataforma identifica la saturación y conserva un estado recuperable de las tareas pendientes.
+
+Criterios de aceptación
+
+- Los errores de cuota quedan diferenciados de los errores de negocio.
+- Las tareas no desaparecen silenciosamente por agotamiento de recursos.
+- Los reintentos no son infinitos.
+- La recuperación posterior no duplica los efectos completados.
+- Los límites conocidos quedan documentados y se pueden revisar.
+
+---
+
+5. Área C: PWA y portal móvil
+
+C-001. Mejorar el diagnóstico de sincronización
+
+Prioridad: P1
+Tipo: Optimización de experiencia y confiabilidad
+Dependencias: T-001, T-002
+
+Problema o necesidad
+
+El informe confirma la cola de operaciones pendientes y la resolución de conflictos. Se propone mejorar la transparencia de esos estados para que el usuario pueda distinguir entre guardado local y confirmación del servidor.
+
+Requisitos funcionales
+
+- Mostrar el estado de conexión.
+- Diferenciar operaciones guardadas localmente, pendientes, sincronizadas, fallidas y en conflicto.
+- Mostrar cuándo se produjo el último intento.
+- Permitir reintentar las operaciones recuperables.
+- Explicar al usuario qué debe hacer ante un conflicto.
+
+Cambios necesarios
+
+- Mejorar la interfaz de estado de sincronización.
+- Conectar la presentación con los estados reales de la cola.
+- Evitar que la interfaz muestre confirmaciones antes de recibir evidencia suficiente del servidor.
+- Añadir diagnóstico técnico para los responsables autorizados.
+
+Comportamiento esperado
+
+El usuario conoce el estado de sus operaciones y no confunde la persistencia local con la confirmación institucional.
+
+Criterios de aceptación
+
+- Cada operación muestra un estado coherente con la cola.
+- Una operación fallida no aparece como sincronizada.
+- Un reintento no duplica operaciones ya confirmadas.
+- Los errores muestran un siguiente paso comprensible.
+- Los cambios se prueban con conexión estable, intermitente y ausente.
+
+---
+
+C-002. Endurecer la sincronización y la resolución de conflictos
+
+Prioridad: P1
+Tipo: Integridad de datos
+Dependencias: C-001
+
+Problema o necesidad
+
+La sincronización y el diálogo de conflictos se declaran operativos, pero se requiere comprobar la consistencia ante sesiones caducadas, cambios concurrentes y pérdida de respuesta.
+
+Requisitos funcionales
+
+- Identificar las operaciones pendientes de forma única.
+- Detectar modificaciones concurrentes.
+- Aplicar reglas de resolución explícitas según el tipo de dato.
+- No sobrescribir silenciosamente cambios incompatibles.
+- Volver a comprobar permisos antes de ejecutar operaciones pendientes.
+- Conservar un estado recuperable cuando la sincronización falle.
+
+Cambios necesarios
+
+- Revisar el modelo de versiones o control de concurrencia existente.
+- Añadir pruebas de sincronización repetida.
+- Completar las reglas de conflicto cuando se identifiquen carencias.
+- Documentar qué operaciones pueden realizarse sin conexión y cuáles no.
+
+Comportamiento esperado
+
+La sincronización preserva la integridad y solicita intervención cuando no puede resolver un conflicto de forma segura.
+
+Criterios de aceptación
+
+- Dos modificaciones incompatibles no se sobrescriben sin una regla autorizada.
+- La sincronización repetida no duplica operaciones.
+- Una sesión caducada no ejecuta acciones con permisos obsoletos.
+- Los conflictos se presentan de forma comprensible.
+- Las operaciones pendientes sobreviven a un cierre y reapertura de la aplicación, dentro de las garantías definidas.
+
+---
+
+C-003. Fortalecer la caché, las actualizaciones y la privacidad local
+
+Prioridad: P1
+Tipo: Seguridad y mantenimiento
+Dependencias: C-001, C-002
+
+Problema o necesidad
+
+El precaché facilita el acceso rápido, pero debe comprobarse que no conserve datos privados indebidamente ni mezcle recursos incompatibles tras una actualización.
+
+Requisitos funcionales
+
+- Diferenciar recursos estáticos de información privada.
+- Definir qué datos pueden almacenarse localmente y durante cuánto tiempo.
+- Limpiar o invalidar los datos que ya no deben estar disponibles tras cerrar sesión.
+- Mantener coherencia entre las versiones de recursos.
+- Informar sobre errores de actualización cuando afecten al uso.
+
+Cambios necesarios
+
+- Auditar las reglas de caché y almacenamiento local.
+- Corregir las políticas inseguras que se demuestren.
+- Añadir pruebas de cierre de sesión, cambio de usuario y actualización.
+- Documentar las limitaciones de los navegadores compatibles.
+
+Comportamiento esperado
+
+La PWA conserva su capacidad de carga rápida sin exponer información privada ni utilizar recursos incompatibles.
+
+Criterios de aceptación
+
+- Un usuario nuevo no puede recuperar datos privados del anterior.
+- Los datos sensibles respetan la política de almacenamiento.
+- La actualización no deja una combinación incoherente de archivos.
+- Los recursos privados no se almacenan en cachés públicas.
+- Las pruebas cubren cierre de sesión, modo sin conexión y actualización.
+
+---
+
+C-004. Mejorar las notificaciones móviles y su trazabilidad
+
+Prioridad: P2
+Tipo: Mejora funcional
+Dependencias: B-001, C-001
+
+Problema o necesidad
+
+Las notificaciones deben poder diagnosticarse cuando no llegan o cuando el proveedor no confirma la entrega.
+
+Requisitos funcionales
+
+- Diferenciar notificación generada, enviada, aceptada por el proveedor y entregada cuando el proveedor permita verificarlo.
+- Registrar fallos y reintentos.
+- Evitar duplicados por un mismo evento lógico.
+- Respetar permisos y preferencias.
+- Abrir el destino correcto al seleccionar una notificación.
+
+Cambios necesarios
+
+- Revisar los estados y registros existentes.
+- Añadir únicamente los estados que puedan comprobarse realmente.
+- Mejorar los mensajes de error.
+- Incorporar pruebas de navegación desde notificaciones.
+
+Comportamiento esperado
+
+Los usuarios reciben avisos conforme a la capacidad del canal y los responsables pueden diagnosticar fallos sin atribuir al sistema garantías inexistentes.
+
+Criterios de aceptación
+
+- No se marca como leída una notificación solo por haber sido enviada.
+- Los fallos de entrega se diferencian de los fallos de generación.
+- La selección abre el destino correcto.
+- Los permisos denegados no inutilizan el resto de la aplicación.
+- Los reintentos no duplican avisos innecesariamente.
+
+---
+
+C-005. Optimizar la experiencia móvil de las funciones educativas
+
+Prioridad: P2
+Tipo: Ampliación y usabilidad
+Dependencias: C-001, C-003
+
+Problema o necesidad
+
+Una PWA operativa puede mejorar su utilidad mediante un acceso más claro a notas, tareas, pagos, documentos, avisos y solicitudes.
+
+Requisitos funcionales
+
+- Revisar la navegación móvil de los módulos existentes.
+- Priorizar tareas pendientes y fechas relevantes.
+- Facilitar la consulta del estado de una operación.
+- Mantener la autorización existente.
+- Aplicar criterios de accesibilidad y adaptación a pantallas pequeñas.
+
+Cambios necesarios
+
+- Identificar puntos de fricción mediante pruebas de uso.
+- Simplificar recorridos largos cuando exista una mejora demostrable.
+- Corregir problemas de accesibilidad y navegación.
+- Evitar duplicar módulos solo para crear una interfaz móvil distinta.
+
+Comportamiento esperado
+
+El usuario completa las tareas habituales con menos pasos innecesarios y sin perder claridad sobre los resultados.
+
+Criterios de aceptación
+
+- Las funciones principales pueden utilizarse en los tamaños de pantalla soportados.
+- Los controles tienen etiquetas y estados comprensibles.
+- No se omiten controles de autorización.
+- Las mejoras se validan mediante escenarios de uso definidos.
+- Las funciones no disponibles se identifican claramente.
+
+---
+
+6. Área D: centro de integraciones y proveedores
+
+D-001. Consolidar el estado real de las integraciones
+
+Prioridad: P1
+Tipo: Observabilidad
+Dependencias: T-001
+
+Problema o necesidad
+
+El informe confirma configuraciones y pruebas de conexión, pero debe garantizarse que el estado mostrado distingue entre credenciales configuradas y servicio realmente operativo.
+
+Requisitos funcionales
+
+- Identificar cada proveedor y sus capacidades habilitadas.
+- Mostrar el resultado y la fecha de la última comprobación.
+- Diferenciar configurado, operativo, degradado, no disponible y no comprobado cuando sean estados aplicables.
+- Registrar errores sin exponer secretos.
+- Aislar el estado de cada proveedor.
+
+Cambios necesarios
+
+- Revisar los diagnósticos existentes.
+- Completar los estados que falten.
+- Incorporar un resumen de salud de las integraciones.
+- Mantener el sistema nativo operativo cuando un proveedor externo falle.
+
+Comportamiento esperado
+
+El administrador puede determinar qué conexión funciona y cuáles requieren intervención.
+
+Criterios de aceptación
+
+- Una conexión no se marca como operativa únicamente porque existan credenciales.
+- Cada comprobación tiene un resultado verificable.
+- Los fallos de un proveedor no cambian falsamente el estado de otros.
+- No se muestran secretos en la interfaz ni en los registros.
+- La indisponibilidad externa no bloquea las funciones independientes.
+
+---
+
+D-002. Fortalecer la gestión del ciclo de vida de credenciales
+
+Prioridad: P1
+Tipo: Seguridad
+Dependencias: D-001
+
+Problema o necesidad
+
+Las credenciales permiten activar servicios externos y deben gestionarse durante su configuración, uso, rotación y revocación.
+
+Requisitos funcionales
+
+- Restringir la configuración a los roles autorizados.
+- Evitar la exposición de secretos en cliente, registros y exportaciones.
+- Permitir reemplazar y revocar credenciales.
+- Validar el estado de configuración sin devolver el secreto.
+- Evitar que una credencial revocada siga utilizándose en nuevas operaciones.
+
+Cambios necesarios
+
+- Auditar el almacenamiento real de credenciales.
+- Corregir exposiciones verificadas.
+- Documentar las operaciones de rotación y revocación.
+- Añadir pruebas de permisos y errores de autenticación.
+
+Comportamiento esperado
+
+La configuración de proveedores es segura, diagnosticable y reversible sin revelar secretos.
+
+Criterios de aceptación
+
+- Un usuario sin permiso no puede modificar credenciales.
+- Los secretos no aparecen en respuestas, registros ni mensajes de error.
+- Una credencial inválida produce un estado claro.
+- Una credencial revocada deja de utilizarse.
+- La prueba se ejecuta con credenciales no productivas.
+
+---
+
+D-003. Normalizar los errores y los reintentos de proveedores
+
+Prioridad: P1
+Tipo: Robustez
+Dependencias: D-001, D-002
+
+Problema o necesidad
+
+Los proveedores pueden fallar por red, cuotas, autenticación o respuestas inválidas. La plataforma necesita diferenciar esos casos y evitar reintentos peligrosos.
+
+Requisitos funcionales
+
+- Clasificar errores recuperables y permanentes.
+- Aplicar tiempos de espera y límites de reintento.
+- Registrar el resultado de cada intento.
+- Evitar operaciones duplicadas.
+- Aislar fallos entre proveedores.
+
+Cambios necesarios
+
+- Revisar los adaptadores existentes.
+- Unificar los estados de error cuando aporte valor.
+- Añadir pruebas para tiempos de espera, errores HTTP, respuestas malformadas y límites.
+- Corregir los mecanismos deficientes que se encuentren.
+
+Comportamiento esperado
+
+Los fallos externos no producen operaciones duplicadas ni ocultan el resultado real.
+
+Criterios de aceptación
+
+- Los errores de autenticación se distinguen de los errores de red.
+- Los reintentos tienen límites definidos.
+- Las operaciones con resultado incierto no se repiten ciegamente.
+- Las respuestas inválidas no se aceptan como éxito.
+- El fallo de una integración no bloquea servicios independientes.
+
+---
+
+D-004. Endurecer las operaciones críticas y los webhooks
+
+Prioridad: P1
+Tipo: Seguridad e integridad
+Dependencias: D-003
+
+Problema o necesidad
+
+Las operaciones externas que producen efectos reales necesitan controles de idempotencia, autenticidad y conciliación de resultados.
+
+Requisitos funcionales
+
+- Identificar las operaciones externas que pueden producir efectos irreversibles.
+- Utilizar mecanismos de idempotencia cuando estén disponibles.
+- Verificar la autenticidad de eventos entrantes si existen webhooks.
+- Detectar eventos repetidos.
+- Conservar la relación entre evento recibido, operación ejecutada y resultado.
+- No registrar secretos ni cargas sensibles innecesarias.
+
+Cambios necesarios
+
+- Inventariar las operaciones críticas.
+- Revisar las protecciones existentes.
+- Añadir controles solo donde se demuestren ausentes.
+- Incorporar pruebas de repetición de eventos y pérdida de respuesta.
+
+Comportamiento esperado
+
+Las operaciones críticas son rastreables y resistentes a la repetición accidental.
+
+Criterios de aceptación
+
+- Un evento repetido no produce un segundo efecto cuando no corresponde.
+- Los webhooks no autenticados se rechazan cuando el proveedor requiere autenticación.
+- Los resultados inciertos quedan pendientes de conciliación.
+- Las operaciones completadas no se repiten por un reintento posterior.
+- Cada resultado puede relacionarse con su evento original.
+
+---
+
+D-005. Mejorar el diagnóstico de consumo, límites y disponibilidad
+
+Prioridad: P2
+Tipo: Optimización operativa
+Dependencias: D-001, D-003
+
+Problema o necesidad
+
+El centro de integraciones puede ofrecer una visión más útil si identifica cuotas, errores recurrentes y servicios degradados.
+
+Requisitos funcionales
+
+- Mostrar métricas disponibles por proveedor.
+- Registrar fallos recurrentes.
+- Identificar límites documentados.
+- Alertar sobre indisponibilidad persistente.
+- Evitar presentar estimaciones como datos medidos.
+
+Cambios necesarios
+
+- Añadir métricas y alertas cuando la API o el proveedor ofrezca datos suficientes.
+- Documentar límites conocidos.
+- Proporcionar filtros por período y tipo de error.
+- Definir retención de registros.
+
+Comportamiento esperado
+
+El administrador identifica degradaciones antes de que se conviertan en interrupciones prolongadas.
+
+Criterios de aceptación
+
+- Las métricas proceden de datos reales.
+- Las alertas tienen condiciones documentadas.
+- Los límites desconocidos se identifican como tales.
+- Los registros no contienen credenciales.
+- El sistema distingue entre ausencia de datos y estado correcto.
+
+---
+
+7. Área E: continuidad operativa y recuperación
+
+E-001. Verificar integridad y cobertura de los respaldos
+
+Prioridad: P1
+Tipo: Protección de datos
+Dependencias: T-001
+
+Problema o necesidad
+
+El informe declara respaldos JSON y checksums, pero es necesario comprobar que el conjunto restaurable incluye los datos y las relaciones indispensables, y que las comprobaciones de integridad se ejecutan realmente.
+
+Requisitos funcionales
+
+- Identificar los datos y metadatos cubiertos.
+- Registrar fecha, resultado y alcance de cada respaldo.
+- Verificar integridad de los archivos.
+- Detectar respaldos incompletos.
+- Diferenciar un checksum correcto de una restauración funcional.
+
+Cambios necesarios
+
+- Revisar el mecanismo actual de respaldo.
+- Corregir brechas de cobertura verificadas.
+- Añadir un manifiesto del contenido y resultado de validación, si no existe.
+- Documentar las exclusiones.
+
+Comportamiento esperado
+
+El equipo conoce qué se respaldó, si el archivo está íntegro y qué queda fuera de la copia.
+
+Criterios de aceptación
+
+- Cada respaldo tiene un resultado de validación.
+- Los archivos incompletos o alterados se detectan.
+- La cobertura de datos está documentada.
+- La integridad del archivo no se confunde con una restauración satisfactoria.
+- No se exponen credenciales innecesarias.
+
+---
+
+E-002. Automatizar la validación de restauraciones en un entorno aislado
+
+Prioridad: P1
+Tipo: Recuperación ante desastres
+Dependencias: E-001
+
+Problema o necesidad
+
+Una copia válida no garantiza que el servicio pueda restaurarse correctamente. Es necesario probar la recuperación periódicamente sin alterar producción.
+
+Requisitos funcionales
+
+- Restaurar copias de prueba en un entorno aislado.
+- Validar registros, identificadores, relaciones y archivos.
+- Comprobar la coherencia de datos académicos y financieros.
+- Conservar las reglas de protección de calificaciones históricas.
+- Informar los fallos de restauración.
+
+Cambios necesarios
+
+- Crear un procedimiento reproducible de restauración de prueba.
+- Automatizar validaciones seguras cuando sea posible.
+- Definir datos de referencia para comparar el resultado.
+- Documentar dependencias y pasos manuales.
+
+Comportamiento esperado
+
+La institución puede comprobar que los respaldos no solo existen, sino que permiten recuperar información coherente.
+
+Criterios de aceptación
+
+- La restauración se ejecuta sin sobrescribir producción.
+- Los datos de referencia coinciden con los resultados esperados.
+- Las relaciones y los identificadores esenciales se conservan.
+- Las calificaciones históricas permanecen protegidas según las reglas existentes.
+- Una restauración parcial o fallida no se declara exitosa.
+
+---
+
+E-003. Fortalecer la restauración selectiva y las protecciones contra sobrescritura
+
+Prioridad: P1
+Tipo: Integridad
+Dependencias: E-002
+
+Problema o necesidad
+
+La restauración debe impedir la sustitución accidental de datos ajenos al objetivo de recuperación y conservar las restricciones especiales de los registros oficiales.
+
+Requisitos funcionales
+
+- Definir el alcance antes de restaurar.
+- Identificar dependencias del conjunto de datos.
+- Mantener las confirmaciones y roles autorizados.
+- Conservar las protecciones de calificaciones históricas.
+- Generar un resumen de los cambios que produciría la restauración antes de ejecutarla, cuando resulte viable.
+
+Cambios necesarios
+
+- Revisar la lógica existente de restauración.
+- Añadir validación previa y resumen de alcance si no existen.
+- Crear pruebas con datos ficticios.
+- Corregir las brechas comprobadas sin retirar controles existentes.
+
+Comportamiento esperado
+
+La restauración actúa únicamente sobre el alcance autorizado y hace visibles los riesgos antes de confirmar.
+
+Criterios de aceptación
+
+- Una restauración no altera registros ajenos al alcance previsto.
+- Las operaciones sensibles requieren los permisos y confirmaciones existentes.
+- Las calificaciones históricas conservan la protección requerida.
+- Los errores de validación bloquean la operación.
+- Se documentan los elementos que no pueden recuperarse de manera independiente.
+
+---
+
+E-004. Definir objetivos y procedimientos de recuperación
+
+Prioridad: P2
+Tipo: Continuidad operativa
+Dependencias: E-002, E-003
+
+Problema o necesidad
+
+El informe no especifica objetivos cuantificados de recuperación ni tiempos medidos.
+
+Requisitos funcionales
+
+- Proponer tiempos de recuperación y pérdida máxima de datos tolerable.
+- Identificar responsables y dependencias.
+- Definir procedimientos ante pérdida de acceso, corrupción y caída de proveedores.
+- Medir tiempos reales durante las pruebas.
+- Separar objetivos propuestos de objetivos aprobados.
+
+Cambios necesarios
+
+- Elaborar un plan de recuperación.
+- Solicitar aprobación institucional de los objetivos.
+- Documentar pasos, responsables y requisitos de acceso.
+- Registrar resultados de los simulacros.
+
+Comportamiento esperado
+
+La recuperación deja de depender exclusivamente del conocimiento informal de una persona.
+
+Criterios de aceptación
+
+- Los objetivos están documentados y aprobados o claramente pendientes de aprobación.
+- Los tiempos reales se miden.
+- Las desviaciones se registran.
+- Los procedimientos identifican responsables y dependencias.
+- Los simulacros no modifican producción sin autorización.
+
+---
+
+E-005. Comprobar la continuidad de las integraciones y tareas pendientes
+
+Prioridad: P1
+Tipo: Recuperación transversal
+Dependencias: B-002, D-003, E-002
+
+Problema o necesidad
+
+Tras una interrupción pueden existir operaciones pendientes cuyo resultado externo sea incierto. Recuperar los datos no basta si la plataforma duplica o pierde esas operaciones.
+
+Requisitos funcionales
+
+- Identificar operaciones pendientes al interrumpirse el servicio.
+- Distinguir operaciones confirmadas de las de resultado incierto.
+- Conciliar los resultados externos antes de reintentar cuando corresponda.
+- Evitar reactivar credenciales revocadas.
+- Mantener la integridad de las colas y sus identificadores.
+
+Cambios necesarios
+
+- Definir procedimientos de conciliación.
+- Añadir pruebas de interrupción y recuperación.
+- Corregir duplicaciones o pérdidas verificadas.
+- Documentar las limitaciones de los proveedores.
+
+Comportamiento esperado
+
+La plataforma retoma las operaciones pendientes de forma controlada y sin repetir efectos confirmados.
+
+Criterios de aceptación
+
+- Las operaciones completadas no se duplican.
+- Las operaciones inciertas quedan identificadas.
+- Las tareas pendientes pueden recuperarse o se documenta por qué no es posible.
+- Las credenciales revocadas no se reactivan automáticamente.
+- La conciliación deja evidencia de los resultados.
+
+---
+
+8. Área A: asistente institucional con IA, sujeto a autorización condicional
+
+IA-01. Evaluar una solución de IA local o autoalojada, sin integrar todavía
+
+Prioridad: P3 para la evaluación; no autoriza la implementación
+Tipo: Investigación técnica y análisis de viabilidad
+Dependencias: T-001
+
+Problema o necesidad
+
+La plataforma no tiene un asistente generativo, y su ausencia fue expresamente decidida en el plan maestro. No se debe introducir un servicio de IA que genere costes recurrentes, imponga límites de uso incompatibles con el requisito o dependa de un proveedor comercial no autorizado.
+
+Condición obligatoria del propietario
+
+No integrar IA salvo que se encuentre una solución que cumpla al menos una de estas condiciones:
+
+1. Un servidor o API de IA de código abierto que pueda utilizarse sin tarifas de licencia ni cuotas de uso impuestas por un proveedor, con capacidad operativa suficiente para la institución; o
+2. Un repositorio público de GitHub que proporcione un servidor o API de IA configurable y autoalojable, adecuado a la lógica de negocio de la plataforma, con licencia compatible y sin dependencia obligatoria de una API comercial de pago.
+
+La evaluación debe considerar el coste real de hardware, alojamiento, electricidad, mantenimiento, seguridad y actualizaciones. La expresión “sin límite de uso” no debe interpretarse como recursos computacionales infinitos: un servicio autoalojado sigue limitado por su capacidad física.
+
+Requisitos funcionales de la evaluación
+
+- Localizar el repositorio oficial y comprobar su licencia.
+- Verificar si la solución puede ejecutarse sin una API comercial obligatoria.
+- Comprobar la posibilidad de alojarla en infraestructura controlada por la institución.
+- Verificar si expone una API configurable.
+- Evaluar los requisitos de hardware y memoria.
+- Evaluar la compatibilidad con el entorno real de la plataforma.
+- Determinar cómo se aplicarían autenticación, permisos y protección de datos.
+- Comprobar si puede funcionar sin enviar información institucional a terceros.
+- Estimar los costes operativos, sin asumir que autoalojado equivale a coste cero.
+
+Cambios permitidos
+
+Únicamente investigación, documentación y pruebas aisladas que no afecten a producción. No incorporar dependencias, servicios, pantallas ni endpoints de IA a la plataforma durante esta tarea.
+
+Comportamiento esperado
+
+La institución recibe una recomendación fundamentada sobre si existe una alternativa viable y si conviene aprobar una fase posterior.
+
+Criterios de aceptación
+
+- Existe un candidato concreto y verificable o se concluye que no se encontró uno que cumpla los requisitos.
+- La licencia y las dependencias están documentadas.
+- Se distingue entre software gratuito y coste de infraestructura.
+- Se verifica si el uso local evita cuotas de un proveedor externo.
+- Se documentan los límites de rendimiento.
+- Si no existe una opción que cumpla los requisitos, no se implementa IA y se conserva la ayuda contextual, los tutoriales y las FAQ existentes.
+
+Regla de cierre
+
+La tarea puede cerrarse con una decisión negativa. No encontrar una solución que cumpla las condiciones no autoriza a sustituirlas por una API comercial.
+
+---
+
+IA-02. Diseñar el control de activación y desactivación por el desarrollador
+
+Prioridad: P3, condicionada a IA-01
+Tipo: Diseño técnico, sin integración operativa
+Dependencias: IA-01
+
+Problema o necesidad
+
+Si en el futuro se aprueba una integración, el desarrollador debe poder desactivar el servicio para los usuarios sin retirar la ayuda institucional determinista.
+
+Requisitos funcionales
+
+Diseñar, sin implementarlo todavía, un mecanismo de configuración controlado por el desarrollador que permita:
+
+- Activar o desactivar globalmente la IA.
+- Mantenerla desactivada por defecto.
+- Impedir que usuarios ordinarios modifiquen el interruptor global.
+- Gestionar la ausencia o indisponibilidad del servidor.
+- Mantener operativas las FAQ, la ayuda contextual y los tutoriales.
+- Evitar que una IA desactivada siga recibiendo solicitudes.
+
+La configuración debe residir en el mecanismo seguro de configuración del entorno, no depender únicamente de ocultar un botón en el navegador.
+
+Cambios permitidos
+
+Solo documentación de arquitectura y criterios de aceptación. No crear aún la integración, endpoints, pantallas o almacenamiento de IA.
+
+Comportamiento esperado
+
+Si la integración llegara a aprobarse, podría deshabilitarse centralmente y el resto de la plataforma continuaría funcionando.
+
+Criterios de aceptación
+
+- Existe un diseño de configuración global controlado por el desarrollador.
+- El estado predeterminado es desactivado.
+- La configuración no puede modificarse desde el cliente por usuarios sin autorización.
+- La desactivación impide solicitudes al servicio.
+- Las funciones de ayuda existentes siguen disponibles.
+- La tarea no introduce código de integración de IA.
+
+---
+
+IA-03. Implementación futura del asistente institucional, únicamente tras aprobación expresa
+
+Prioridad: No asignada hasta cumplir las condiciones previas
+Tipo: Desarrollo condicional
+Dependencias: IA-01 aprobada, IA-02 aprobada y autorización expresa del propietario
+
+Regla de no implementación
+
+Esta tarea no forma parte del desarrollo autorizado por defecto. Solo podrá activarse cuando se haya demostrado la viabilidad de una solución compatible con IA-01 y se haya aprobado explícitamente su implementación.
+
+Requisitos funcionales mínimos si se autoriza
+
+- Buscar documentos y procedimientos institucionales.
+- Responder con base en fuentes autorizadas.
+- Indicar la procedencia de la información cuando corresponda.
+- Reconocer la ausencia de información.
+- Respetar los permisos del usuario.
+- No utilizar la IA para eludir las autorizaciones del servidor.
+- No ejecutar automáticamente decisiones sobre calificaciones, pagos, sanciones o expedientes.
+- Mantener registros de diagnóstico con protección de datos.
+- Permitir desactivación global desde la configuración del desarrollador.
+- Mantener las funciones deterministas si el servicio no está disponible.
+
+Criterios de aceptación
+
+- La integración utiliza la solución previamente aprobada.
+- No existe una dependencia obligatoria de una API comercial de pago.
+- El servicio puede desactivarse globalmente.
+- Las consultas respetan los permisos del usuario.
+- Las respuestas se pueden contrastar con las fuentes.
+- Las preguntas sin respuesta no generan datos inventados.
+- Las operaciones sensibles requieren autorización independiente.
+- La indisponibilidad de la IA no bloquea las funciones esenciales.
+
+Regla de cancelación
+
+Si no se cumplen las condiciones de IA-01, la tarea permanece no autorizada y no debe implementarse.
+
+---
+
+9. Mejoras transversales y capacidades complementarias
+
+X-001. Consolidar un panel de salud operativa
+
+Prioridad: P2
+Dependencias: B-001, C-001, D-001, E-001
+
+Objetivo
+
+Ofrecer a los responsables autorizados una visión unificada de la salud de las automatizaciones, sincronización, integraciones y respaldos.
+
+Requisitos funcionales
+
+- Mostrar estados reales de las áreas supervisadas.
+- Identificar última comprobación y errores recientes.
+- Diferenciar indisponibilidad, degradación y ausencia de datos.
+- No exponer información sensible.
+- Evitar duplicar paneles existentes sin necesidad.
+
+Criterios de aceptación
+
+- Cada indicador tiene una fuente verificable.
+- Los estados no se calculan a partir de valores inventados.
+- Los fallos críticos son identificables.
+- Los usuarios solo ven los detalles permitidos por sus roles.
+- El panel no se considera sustituto de los registros técnicos.
+
+---
+
+X-002. Establecer una política de retención y minimización de registros
+
+Prioridad: P2
+Dependencias: B-001, D-001, E-001
+
+Objetivo
+
+Mejorar la capacidad de diagnóstico sin conservar información personal o secretos innecesarios.
+
+Requisitos funcionales
+
+- Identificar los registros generados por cada área.
+- Definir finalidad y período de retención.
+- Eliminar o anonimizar los datos que ya no sean necesarios.
+- Proteger el acceso a los registros.
+- Conservar la trazabilidad de operaciones críticas según las necesidades institucionales.
+
+Criterios de aceptación
+
+- Cada categoría de registro tiene una política documentada.
+- No se registran secretos en texto claro.
+- Los registros de prueba no contienen datos reales innecesarios.
+- El acceso a los registros está restringido.
+- La eliminación respeta las necesidades de auditoría y las obligaciones aplicables.
+
+---
+
+X-003. Validar accesibilidad y consistencia de estados en todas las áreas
+
+Prioridad: P2
+Dependencias: T-002, C-005
+
+Objetivo
+
+Garantizar que las funciones se entiendan y utilicen de forma consistente en escritorio y móvil.
+
+Requisitos funcionales
+
+- Estados claros de carga, éxito, error y espera.
+- Etiquetas comprensibles para los controles.
+- Navegación por teclado donde corresponda.
+- Mensajes que indiquen el siguiente paso.
+- Consistencia entre los estados mostrados y los resultados reales del servidor.
+
+Criterios de aceptación
+
+- Los controles principales pueden utilizarse con los mecanismos de navegación previstos.
+- Los errores no se comunican solo mediante color.
+- Los estados visibles coinciden con los estados reales.
+- Las pruebas documentan problemas y resultados.
+- Las correcciones no cambian reglas de negocio sin autorización.
+
+---
+
+10. Validación integral y cierre
+
+V-001. Ejecutar las pruebas de extremo a extremo
+
+Prioridad: P1
+Dependencias: Todas las tareas aprobadas de B, C, D y E
+
+Objetivo
+
+Verificar que las capacidades trabajan de forma coherente cuando comparten operaciones y dependencias.
+
+Escenarios obligatorios
+
+1. Una automatización genera una notificación y se registra su resultado.
+2. Una notificación abre la función correcta en la PWA.
+3. Una operación sin conexión se sincroniza sin duplicarse.
+4. Un proveedor externo falla y se recupera.
+5. Se revoca una credencial y se comprueba que deja de utilizarse.
+6. Se restaura un respaldo en un entorno aislado.
+7. Una operación pendiente se concilia después de una interrupción.
+8. Un usuario pierde permisos mientras tiene operaciones pendientes.
+9. Se verifica que las calificaciones históricas conservan su protección.
+10. Se confirma que los cambios no afectan las funciones esenciales existentes.
+
+Criterios de aceptación
+
+- Cada escenario tiene resultado esperado y observado.
+- Las pruebas fallidas generan tareas correctivas identificadas.
+- Los bloqueos se documentan.
+- Las operaciones sensibles se prueban con datos ficticios.
+- No se declara superado un escenario que no se ejecutó.
+
+---
+
+V-002. Actualizar el backlog y emitir el informe final
+
+Prioridad: P1
+Dependencias: V-001
+
+Objetivo
+
+Entregar un registro preciso del trabajo realizado y del estado real de la plataforma.
+
+Requisitos funcionales
+
+- Actualizar estado de cada tarea.
+- Documentar los archivos y componentes modificados.
+- Vincular los resultados con las pruebas.
+- Identificar riesgos residuales.
+- Separar capacidades verificadas de mejoras pendientes.
+- Registrar la decisión sobre la viabilidad de IA sin asumir su implementación.
+
+Criterios de aceptación
+
+- Todas las tareas tienen estado y evidencia.
+- Los cambios están vinculados a requisitos concretos.
+- Los defectos no resueltos tienen prioridad y próximo paso.
+- Los porcentajes de avance reflejan pruebas reales.
+- El informe distingue entre tareas completadas, bloqueadas, canceladas y no autorizadas.
+- La ausencia del asistente de IA no se registra como defecto si no se cumplen las condiciones de implementación.
+
+---
+
+11. Reglas de cierre por tarea
+
+Una tarea solo puede marcarse como completada cuando:
+
+1. El problema o la oportunidad está descrito.
+2. Los requisitos aplicables están identificados.
+3. Los cambios autorizados están implementados.
+4. Los criterios de aceptación se han ejecutado.
+5. Las pruebas esenciales han sido superadas.
+6. Las regresiones pertinentes están comprobadas.
+7. Los riesgos residuales y limitaciones están documentados.
+8. Las evidencias están vinculadas a la tarea.
+
+Si una tarea se limita a investigar o evaluar viabilidad, puede cerrarse con una decisión documentada sin implementar código.
+
+Si una capacidad ya satisface todos sus requisitos, debe conservarse y documentarse; no se exige una modificación artificial para cerrar una tarea.
+
+12. Resultado final esperado
+
+El resultado debe ser un plan de trabajo trazable que permita:
+
+- Conservar las capacidades existentes que ya funcionan.
+- Corregir defectos reales cuando se demuestren.
+- Endurecer las garantías de integridad, seguridad y recuperación.
+- Mejorar la utilidad de las automatizaciones.
+- Hacer más transparente la sincronización móvil.
+- Mejorar el diagnóstico de integraciones.
+- Comprobar periódicamente la restaurabilidad de los respaldos.
+- Añadir mejoras de calidad y experiencia cuando exista valor demostrable.
+- Mantener fuera del alcance la integración de IA mientras no cumpla las condiciones establecidas.
+
+Instrucción final a Jules: ejecuta primero la revalidación y las tareas de prioridad alta. No conviertas las mejoras propuestas en defectos confirmados, no alteres funciones verificadas sin justificación y no implementes IA por iniciativa propia. Entrega evidencias reproducibles y actualiza el estado de cada tarea antes de declarar el trabajo completado.
