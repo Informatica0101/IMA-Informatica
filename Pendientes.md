@@ -6968,3 +6968,745 @@ Instrucción final: implementa exclusivamente GD-IMP-01, realiza las pruebas pos
   1. Crear la hoja de cálculo `PlantillasMensajes` con etiquetas dinámicas `{{NOMBRE_ESTUDIANTE}}`, `{{ASIGNATURA}}`, `{{FECHA_EVENTO}}`.
   2. Diseñar la interfaz "Editor de Plantillas de Notificación" dentro del panel de configuración central en `teacher-dashboard.html`.
   3. Rutar el motor de renderizado de `sendMultiChannelNotification` para utilizar las plantillas almacenadas en la base de datos.
+
+---
+
+PLAN DE IMPLEMENTACIÓN Y MEJORA FUNCIONAL
+
+Fase 11. Comunicación institucional multicanal
+
+Plataforma: Ecosistema Educativo New Generation Christian Academy
+
+1. Objetivo general
+
+Resolver los defectos detectados en la auditoría, completar las funciones parcialmente implementadas, desarrollar las capacidades ausentes y optimizar las funciones existentes para obtener un sistema de comunicación institucional integrado, seguro, trazable, eficiente y sencillo de utilizar.
+
+El trabajo debe conservar las ventajas existentes: mensajería interna, comunicados segmentados, preferencias personales, bandeja de notificaciones, adaptadores multicanal y configuración institucional de proveedores.
+
+La implementación debe priorizar la prevención de duplicados, la integridad de los registros, la privacidad, la facilidad de uso y la continuidad operativa.
+
+2. Reglas generales para todas las tareas
+
+1. Antes de intervenir, leer "METODOLOGIA_DESARROLLO.md" y las instrucciones vigentes del repositorio.
+2. Verificar la existencia y el contenido actual de cada archivo, función, hoja y componente mencionado en el informe. Las rutas y líneas de la auditoría son referencias iniciales, no garantías de que el código siga igual.
+3. No reemplazar funciones existentes sin demostrar que el cambio es necesario. Reutilizar los servicios compartidos cuando corresponda.
+4. No crear un segundo despachador de notificaciones, una segunda fuente de preferencias o registros paralelos que fragmenten la información.
+5. Mantener la compatibilidad con las funciones actuales y documentar cualquier migración de datos necesaria.
+6. Aplicar los permisos según el rol, la relación entre usuarios y el contexto de la comunicación.
+7. La interfaz debe utilizar español claro para personal administrativo, docentes, estudiantes y familias. No exponer términos técnicos innecesarios.
+8. No enviar mensajes reales, contactar familias, modificar datos productivos ni generar costos durante las pruebas. Usar simulaciones o destinatarios de prueba autorizados.
+9. No declarar una tarea terminada únicamente porque sus funciones existan. Ejecutar las pruebas pertinentes y presentar evidencias verificables.
+10. Ejecutar únicamente la tarea asignada a Jules. Al finalizar, presentar resultados, pruebas, archivos modificados, limitaciones y pendientes. Detenerse y esperar autorización antes de comenzar otra tarea.
+
+3. Criterios de prioridad
+
+- P0: riesgo crítico de duplicación, integridad de datos o costos.
+- P1: seguridad, trazabilidad formal y funciones esenciales ausentes.
+- P2: capacidades operativas ausentes o incompletas que afectan la gestión cotidiana.
+- P3: mejoras de eficiencia, análisis, accesibilidad y experiencia de uso.
+
+---
+
+BLOQUE A. INTEGRIDAD Y SEGURIDAD DE LOS ENVÍOS
+
+COM-IMP-01. Deduplicación e idempotencia multicanal
+
+Prioridad: P0, crítica.
+
+Hallazgo: COM-19 está defectuoso. Las pruebas informan que dos solicitudes simultáneas de un mismo evento producen dos envíos externos.
+
+Objetivo: impedir que la repetición de una solicitud o de un evento institucional genere mensajes duplicados.
+
+Requisitos funcionales:
+
+1. Cada evento notificable debe disponer de un identificador estable y una clave de idempotencia.
+2. La clave debe distinguir los mensajes legítimamente diferentes, pero reconocer los reintentos del mismo evento, destinatario, propósito y canal.
+3. Deben contemplarse eventos académicos, administrativos, asistencia y otros orígenes que utilicen el servicio común.
+4. Las solicitudes concurrentes deben resolverse de forma segura.
+5. Debe existir un registro persistente del estado de procesamiento y del resultado de cada intento.
+6. Debe distinguirse entre solicitud recibida, envío iniciado, aceptación del proveedor, entrega confirmada, lectura confirmada y fallo. No se deben equiparar estados que el proveedor no permita verificar.
+7. Debe contemplarse el caso en el que el proveedor acepte un mensaje, pero se pierda la respuesta antes de que la plataforma pueda registrarla.
+8. Los reintentos deben reutilizar la misma clave cuando se trate de la misma operación lógica.
+9. La clave no debe permitir que un evento legítimo nuevo quede bloqueado por coincidir con uno antiguo.
+
+Cambios necesarios:
+
+- Revisar "sendMultiChannelNotification" y el registro "RegistroEnviosExternos".
+- Incorporar una política de idempotencia persistente y segura frente a concurrencia.
+- Definir estados, transiciones y reglas de reintento.
+- Aprovechar mecanismos de idempotencia del proveedor cuando estén disponibles.
+- Definir cómo actuar cuando un proveedor no admite idempotencia y el resultado de una solicitud es incierto.
+- Incorporar controles de expiración o retención de claves sin permitir que mensajes antiguos se dupliquen por eliminar prematuramente sus registros.
+- Revisar cómo los eventos de asistencia y otros módulos generan solicitudes de notificación.
+
+Comportamiento esperado: si una misma falta de asistencia origina dos solicitudes simultáneas para el mismo destinatario y canal, solo debe ejecutarse una operación de envío lógica. Una notificación nueva, correspondiente a un evento diferente, debe poder enviarse normalmente.
+
+Criterios de aceptación:
+
+- 20 solicitudes concurrentes con la misma clave generan una sola operación de envío lógico.
+- Repetir la solicitud después de una respuesta satisfactoria devuelve el resultado registrado sin volver a enviar el mensaje.
+- Un fallo anterior al envío puede reintentarse de forma segura.
+- Ante un resultado externo incierto, la plataforma no realiza automáticamente un reenvío que pueda duplicar el mensaje sin evaluar el mecanismo de recuperación disponible.
+- Dos eventos diferentes no se confunden aunque correspondan al mismo estudiante.
+- El registro permite reconstruir las solicitudes, intentos y resultados.
+- Las pruebas no generan mensajes reales ni costos.
+- Se verifica que el comportamiento anterior del servicio se conserve para solicitudes válidas.
+
+Dependencias: servicio común de comunicación, registro de envíos, almacenamiento persistente y mecanismos de concurrencia disponibles.
+
+Resultado: servicio de envío resistente a solicitudes repetidas, concurrencia y fallos recuperables.
+
+---
+
+COM-IMP-02. Máquina de estados, reintentos y recuperación de envíos
+
+Prioridad: P1. Depende de COM-IMP-01.
+
+Hallazgo: se registran intentos, pero no existe un mecanismo integral demostrado para recuperar fallos sin duplicar mensajes.
+
+Objetivo: proporcionar una gestión fiable del ciclo de vida de las notificaciones.
+
+Requisitos funcionales:
+
+1. Definir estados consistentes para todas las salidas multicanal.
+2. Registrar fecha, canal, destinatario autorizado, identificador del evento, intento, resultado y código de error disponible.
+3. Diferenciar fallos permanentes de fallos transitorios.
+4. Aplicar límites de intentos y espera progresiva entre reintentos.
+5. Permitir que personal autorizado consulte los envíos fallidos y solicite un nuevo intento cuando sea seguro.
+6. Procesar confirmaciones de entrega de proveedores cuando estos las ofrezcan.
+7. Detectar intentos que quedaron incompletos por una interrupción.
+8. Evitar que una operación de recuperación vuelva a ejecutar una notificación ya completada.
+9. Mantener un historial auditable de las acciones manuales y automáticas.
+
+Cambios necesarios: completar el modelo de estados de "RegistroEnviosExternos", centralizar las reglas de recuperación y proporcionar una vista administrativa de errores y reintentos.
+
+Comportamiento esperado: un error temporal se recupera automáticamente dentro de límites configurados. Un error permanente se muestra al administrador con una explicación útil y sin repetir indefinidamente el envío.
+
+Criterios de aceptación:
+
+- Las pruebas verifican fallos transitorios, permanentes, tiempos de espera y recuperación tras una interrupción.
+- El número de intentos nunca supera el límite configurado.
+- Los mensajes ya completados no se reenvían al recuperar el proceso.
+- Los estados que no puedan confirmarse permanecen identificados como desconocidos o pendientes, sin presentarlos como entregados.
+- Los registros permiten identificar la causa de cada fallo sin exponer credenciales ni información privada innecesaria.
+
+Dependencias: COM-IMP-01 y servicio común de comunicación.
+
+Resultado: recuperación controlada, trazabilidad de fallos y menor intervención manual.
+
+---
+
+BLOQUE B. COMUNICACIÓN FORMAL Y ATENCIÓN A LAS FAMILIAS
+
+COM-IMP-03. Confirmación explícita de recepción de comunicados urgentes
+
+Prioridad: P1.
+
+Hallazgo: COM-07 registra la apertura del comunicado, pero no ofrece una acción explícita para confirmar recepción o conformidad.
+
+Objetivo: diferenciar la lectura de un comunicado de la confirmación expresa realizada por el usuario.
+
+Requisitos funcionales:
+
+1. Mantener el registro de apertura y crear un registro independiente de confirmación.
+2. Permitir que los comunicados autorizados requieran confirmación expresa.
+3. Mostrar acciones claramente diferenciadas, por ejemplo, “Confirmar recepción” y, cuando corresponda, “Manifestar conformidad”.
+4. Registrar el usuario autenticado, comunicado, fecha, versión del contenido y tipo de confirmación.
+5. Mostrar a los responsables el estado de cada destinatario: pendiente, leído, confirmado o con incidencia.
+6. Permitir recordatorios a quienes no hayan confirmado, respetando las preferencias y las reglas institucionales aplicables.
+7. Impedir confirmaciones en nombre de otra persona, salvo que exista una representación autorizada y quede registrada.
+8. Permitir consultar y exportar un comprobante de la confirmación.
+9. Si se modifica sustancialmente un comunicado, definir si la nueva versión requiere una confirmación nueva.
+10. No presentar una confirmación de recepción como aceptación contractual o firma electrónica jurídicamente válida sin una evaluación legal específica.
+
+Cambios necesarios: ampliar el modelo de confirmaciones, incorporar acciones en la interfaz y desarrollar una vista administrativa de seguimiento.
+
+Comportamiento esperado: abrir un comunicado no marca automáticamente su recepción como confirmada. El usuario realiza una acción expresa y puede consultar el estado resultante.
+
+Criterios de aceptación:
+
+- Abrir un comunicado registra lectura, pero no conformidad.
+- Confirmar registra una constancia asociada a la versión exacta del comunicado.
+- Repetir la acción no genera confirmaciones duplicadas.
+- Un usuario no puede confirmar por otro usuario sin autorización.
+- Los responsables pueden identificar destinatarios pendientes y consultar las constancias permitidas por su rol.
+- La modificación de una versión no altera el historial de las confirmaciones anteriores.
+- Se prueban permisos, reintentos y registros históricos.
+
+Dependencias: comunicados institucionales, autenticación, permisos y centro de comunicaciones.
+
+Resultado: seguimiento fiable de recepción y conformidad explícita, con alcance claramente definido.
+
+---
+
+COM-IMP-04. Agenda de reuniones entre familias y personal docente
+
+Prioridad: P1.
+
+Hallazgo: COM-12 está ausente. No hay un sistema estructurado de disponibilidad, reserva y confirmación de reuniones.
+
+Objetivo: permitir que las familias soliciten y gestionen reuniones sin conflictos de horario ni coordinación dispersa en mensajes.
+
+Requisitos funcionales:
+
+1. Los docentes y responsables autorizados deben poder definir su disponibilidad, duración de reuniones, horarios de atención y anticipación mínima para reservar.
+2. Las familias deben poder consultar únicamente los horarios disponibles de los profesionales con quienes están autorizadas a reunirse.
+3. Permitir solicitar, confirmar, rechazar, cancelar y reprogramar citas.
+4. Impedir reservas incompatibles sobre el mismo horario.
+5. Permitir indicar el motivo general de la reunión y seleccionar al estudiante relacionado, cuando corresponda.
+6. Incorporar estados: solicitada, confirmada, rechazada, cancelada, completada y no asistió.
+7. Enviar notificaciones y recordatorios mediante el servicio común, sin duplicados.
+8. Permitir configurar reuniones presenciales o virtuales y registrar instrucciones de asistencia.
+9. Mantener un historial de cambios, cancelaciones y confirmaciones.
+10. Proteger el motivo de la reunión y los datos del estudiante.
+11. Facilitar la consulta de citas próximas y anteriores.
+12. Si se integra un calendario externo, verificar disponibilidad, permisos y sincronización antes de confirmar una reserva.
+
+Cambios necesarios: crear el modelo de citas, las operaciones de disponibilidad y reserva, las interfaces correspondientes y su integración con las notificaciones existentes.
+
+Comportamiento esperado: una familia elige un horario disponible, solicita o confirma la cita según las reglas del centro y recibe información clara sobre su estado. Un horario ocupado no puede asignarse a otra reunión incompatible.
+
+Criterios de aceptación:
+
+- Dos solicitudes simultáneas para el mismo espacio horario no generan dos citas confirmadas incompatibles.
+- Una cita cancelada libera el horario según las reglas configuradas.
+- Una reprogramación conserva el historial y notifica los cambios.
+- Las familias solo ven las citas y disponibilidades autorizadas.
+- Los recordatorios no se duplican al reintentar el proceso.
+- Se prueban reservas, cancelaciones, cambios de horario, zonas horarias si aplican y fallos de notificación.
+
+Dependencias: usuarios, relaciones familiares, roles, calendario y COM-IMP-01.
+
+Resultado: agenda institucional confiable, con reserva de turnos, confirmaciones y recordatorios.
+
+---
+
+COM-IMP-05. Registro de llamadas telefónicas institucionales
+
+Prioridad: P2.
+
+Hallazgo: COM-13 está ausente. No existe una bitácora estructurada de llamadas efectuadas por secretaría o personal autorizado.
+
+Objetivo: registrar las gestiones telefónicas necesarias para dar continuidad a la atención de las familias.
+
+Requisitos funcionales:
+
+1. Registrar fecha y hora, usuario responsable, contacto relacionado, motivo general, resultado y próxima acción.
+2. Permitir registrar llamadas entrantes y salientes, atendidas, no contestadas y pendientes de devolución.
+3. Vincular la llamada con un estudiante, una cita o un caso cuando exista autorización.
+4. Permitir programar una devolución de llamada y recibir un recordatorio.
+5. Evitar que los usuarios sin permisos accedan a observaciones privadas.
+6. Registrar cambios relevantes y quién los realizó.
+7. Permitir búsquedas por fecha, responsable, estado y contacto autorizado.
+8. No grabar audio ni registrar contenido excesivo por defecto. Cualquier grabación debe evaluarse y autorizarse por separado, conforme a la normativa aplicable.
+
+Cambios necesarios: crear el registro de llamadas, las operaciones de consulta y actualización, y una interfaz para personal autorizado.
+
+Comportamiento esperado: una llamada queda documentada sin necesidad de utilizar hojas independientes o mensajes informales como único registro.
+
+Criterios de aceptación:
+
+- Se pueden crear, consultar y actualizar llamadas según permisos.
+- Una llamada puede asociarse a un caso o cita sin duplicar el registro original.
+- Las devoluciones pendientes se distinguen de las llamadas completadas.
+- Los cambios quedan registrados.
+- Un docente o una familia no puede consultar observaciones administrativas restringidas.
+
+Dependencias: usuarios, permisos, relaciones familiares y COM-IMP-06.
+
+Resultado: historial institucional de contactos telefónicos y acciones pendientes.
+
+---
+
+COM-IMP-06. Gestión y seguimiento de casos de comunicación
+
+Prioridad: P1.
+
+Hallazgo: COM-14 está ausente. Las consultas, quejas y solicitudes de las familias no cuentan con un seguimiento estructurado.
+
+Objetivo: convertir las gestiones que requieren seguimiento en casos con responsable, estado y resolución.
+
+Requisitos funcionales:
+
+1. Crear un caso desde un mensaje, llamada o gestión autorizada.
+2. Asignar un identificador, categoría, prioridad, responsable y estado.
+3. Permitir asignación, reasignación, comentarios internos, solicitudes de información y respuesta a la familia.
+4. Distinguir las notas internas de los mensajes visibles para la familia.
+5. Registrar fechas de creación, cambios de responsable, respuestas y resolución.
+6. Permitir establecer plazos de atención configurables y avisos de vencimiento.
+7. Admitir estados como nuevo, asignado, en atención, esperando respuesta, resuelto y cerrado.
+8. Permitir reabrir un caso cuando existan motivos válidos.
+9. Asociar citas y llamadas al mismo caso.
+10. Evitar duplicar casos cuando se repita una solicitud idéntica por un error de interfaz o de red.
+11. Restringir el acceso según el departamento, la función y la relación con el caso.
+12. Ofrecer una consulta de casos pendientes y vencidos para los responsables autorizados.
+
+Cambios necesarios: crear el modelo de casos, los cambios de estado, las reglas de asignación, el historial y las interfaces de seguimiento.
+
+Comportamiento esperado: cada solicitud que requiera seguimiento tiene un responsable identificable y un estado actualizado. La familia puede recibir información sobre el avance sin acceder a notas internas.
+
+Criterios de aceptación:
+
+- Cada caso tiene un identificador único y un historial.
+- Los cambios de responsable y estado quedan registrados.
+- Los plazos vencidos se identifican correctamente.
+- Las notas internas no se muestran en las respuestas externas.
+- Las personas no autorizadas no pueden leer ni modificar casos restringidos.
+- Un caso resuelto puede consultarse históricamente y reabrirse conforme a las reglas.
+- Las notificaciones asociadas respetan COM-IMP-01.
+
+Dependencias: COM-IMP-05, mensajería, permisos y servicio común de notificaciones.
+
+Resultado: atención institucional trazable, con responsabilidades y seguimiento de principio a fin.
+
+---
+
+BLOQUE C. EXPERIENCIA UNIFICADA Y PERSONALIZACIÓN
+
+COM-IMP-07. Centro de comunicaciones unificado
+
+Prioridad: P2.
+
+Hallazgo: COM-15 está parcialmente implementado. Los mensajes, comunicados y notificaciones aparecen dispersos entre distintas vistas.
+
+Objetivo: ofrecer un punto de acceso coherente a las comunicaciones que corresponden a cada usuario.
+
+Requisitos funcionales:
+
+1. Reunir mensajes individuales, conversaciones grupales, comunicados, notificaciones, citas y casos autorizados.
+2. Separar visualmente mensajes, avisos oficiales, tareas pendientes y confirmaciones requeridas.
+3. Permitir filtrar por categoría, fecha, estado y remitente cuando corresponda.
+4. Mostrar estados de lectura y confirmación sin confundirlos.
+5. Mantener contadores coherentes y evitar contar dos veces el mismo elemento.
+6. Permitir abrir el contenido y acceder a la acción relacionada desde la misma vista.
+7. Conservar las pantallas y accesos actuales cuando sean necesarios para no romper la navegación.
+8. Ajustar los elementos visibles según el rol del usuario.
+9. Proporcionar estados vacíos, errores comprensibles y acciones claras para resolver incidencias.
+10. Evitar cargar innecesariamente todo el historial en cada apertura.
+
+Cambios necesarios: crear o completar la vista central, integrar las fuentes existentes y normalizar las acciones de lectura y navegación.
+
+Comportamiento esperado: el usuario identifica desde un solo lugar qué mensajes tiene, qué avisos requieren atención y qué acciones siguen pendientes.
+
+Criterios de aceptación:
+
+- Los elementos existentes aparecen una sola vez, salvo que se muestren deliberadamente en categorías diferentes con identidad compartida.
+- Los contadores coinciden con los registros autorizados y sus estados.
+- Marcar como leído desde una vista se refleja en las demás vistas que representen el mismo elemento.
+- Los usuarios no ven comunicaciones ajenas a sus permisos.
+- La interfaz funciona en móvil y escritorio.
+- Las funciones existentes siguen accesibles durante la transición.
+
+Dependencias: COM-01, COM-02, COM-06, COM-08, COM-09 y, progresivamente, COM-IMP-03 a COM-IMP-06.
+
+Resultado: experiencia unificada sin duplicar servicios ni datos.
+
+---
+
+COM-IMP-08. Editor visual de plantillas institucionales
+
+Prioridad: P2.
+
+Hallazgo: COM-17 está parcialmente implementado. Las plantillas están definidas en el código y no pueden gestionarse completamente desde una interfaz administrativa.
+
+Objetivo: permitir que personal autorizado personalice los mensajes institucionales sin modificar el código de la aplicación.
+
+Requisitos funcionales:
+
+1. Crear, consultar, editar, duplicar, activar, desactivar y versionar plantillas.
+2. Admitir plantillas de correo, notificaciones internas y canales externos que permitan ese formato.
+3. Definir asunto, texto, contenido HTML cuando proceda y variables autorizadas.
+4. Incorporar una vista previa con datos de ejemplo.
+5. Validar las variables utilizadas y señalar las que no existen o no están disponibles.
+6. Permitir definir idioma, categoría, finalidad y canal compatible.
+7. Conservar una versión anterior y permitir restaurarla.
+8. Registrar quién modificó y aprobó cada versión.
+9. Evitar que una plantilla pueda insertar contenido ejecutable o alterar la página al mostrarse.
+10. Respetar las limitaciones de formato, longitud y aprobación de cada proveedor externo.
+11. Permitir probar la plantilla sin enviar mensajes reales.
+12. Restringir la edición a roles autorizados.
+
+Cambios necesarios: desarrollar el almacenamiento de plantillas, la interfaz de edición, el sistema de variables, las vistas previas y la integración con el despachador común.
+
+Comportamiento esperado: un administrador autorizado puede actualizar una plantilla, previsualizarla y activar la versión aprobada sin tener que cambiar el código de la aplicación.
+
+Criterios de aceptación:
+
+- Una plantilla puede editarse y previsualizarse con datos ficticios.
+- Las variables desconocidas se detectan antes de activar la plantilla.
+- Las versiones anteriores permanecen consultables y recuperables.
+- Los mensajes históricos conservan la información necesaria para interpretar qué contenido se utilizó.
+- Los cambios de usuarios no autorizados son rechazados.
+- Las pruebas no generan envíos reales.
+- Los canales que no admiten HTML reciben una versión de texto compatible.
+
+Dependencias: COM-01, configuración institucional, permisos y proveedores de canales.
+
+Resultado: mantenimiento sencillo de mensajes, coherencia institucional y menor dependencia de cambios manuales en el código.
+
+---
+
+COM-IMP-09. Programación y automatización de comunicaciones
+
+Prioridad: P2.
+
+Hallazgo: COM-18 está parcialmente implementado. Existen notificaciones por eventos, pero no se ha demostrado un sistema completo para programar mensajes a futuro.
+
+Objetivo: permitir el envío programado y controlado de comunicaciones recurrentes o puntuales.
+
+Requisitos funcionales:
+
+1. Programar fecha, hora, audiencia, canales y plantilla.
+2. Permitir revisar, modificar, pausar y cancelar comunicaciones pendientes.
+3. Admitir zonas horarias institucionales definidas y horarios de envío permitidos.
+4. Validar los destinatarios y sus permisos en el momento de preparar el envío.
+5. Aplicar las preferencias de cada usuario y las reglas de las comunicaciones obligatorias cuando corresponda.
+6. Permitir programar recordatorios de citas, confirmaciones pendientes y comunicaciones institucionales.
+7. Prevenir la ejecución repetida de una misma programación.
+8. Registrar la persona que creó, aprobó, modificó o canceló el envío.
+9. Ofrecer una vista previa del contenido y del alcance estimado de la audiencia.
+10. Definir límites de frecuencia y evitar que un usuario reciba recordatorios excesivos.
+11. Permitir programaciones recurrentes solo cuando exista una regla clara de repetición y finalización.
+12. Mantener separadas las reglas automáticas de los mensajes que requieren aprobación humana.
+
+Cambios necesarios: crear o completar el registro de programaciones, el proceso de ejecución, las reglas de cancelación y la interfaz administrativa.
+
+Comportamiento esperado: un mensaje aprobado se envía en el momento configurado, a los destinatarios autorizados y por los canales habilitados. Cancelar una programación pendiente impide su ejecución posterior.
+
+Criterios de aceptación:
+
+- Se comprueban envíos futuros, cancelación previa, modificación y programación recurrente.
+- Los mensajes no se ejecutan dos veces por una interrupción o repetición del proceso.
+- Los destinatarios se recalculan o validan de acuerdo con la política definida.
+- Los errores quedan registrados y pueden consultarse.
+- La programación respeta preferencias, permisos y límites configurados.
+- Las pruebas se ejecutan con un reloj simulado o un entorno de pruebas, sin comunicaciones reales.
+
+Dependencias: COM-IMP-01, COM-IMP-02, COM-IMP-08 y servicio común de comunicación.
+
+Resultado: comunicaciones oportunas y automatizadas con control administrativo.
+
+---
+
+COM-IMP-10. Gestión completa de grupos de mensajería
+
+Prioridad: P2.
+
+Hallazgo: COM-03 está parcialmente implementado. Existe mensajería, pero no se ha demostrado una gestión completa de grupos nombrados y su ciclo de vida.
+
+Objetivo: facilitar conversaciones de grupo sin depender de listas manuales de destinatarios en cada mensaje.
+
+Requisitos funcionales:
+
+1. Crear grupos con nombre, descripción, finalidad y responsable.
+2. Añadir o retirar participantes según los permisos correspondientes.
+3. Permitir grupos vinculados a grado, sección, asignatura o equipo de trabajo cuando corresponda.
+4. Definir quién puede publicar, responder, administrar miembros y cerrar el grupo.
+5. Gestionar el acceso de nuevos integrantes y la salida de miembros.
+6. Mantener un historial de pertenencia y evitar revelar contactos privados innecesariamente.
+7. Permitir silenciar o configurar notificaciones de grupo cuando la política institucional lo admita.
+8. Evitar enviar un mismo mensaje varias veces a una persona que pertenezca a más de un grupo incluido en una misma operación masiva.
+9. Conservar los mensajes históricos según las reglas de acceso y retención.
+10. Permitir reportar contenido inapropiado y moderar grupos cuando corresponda.
+
+Cambios necesarios: completar el modelo de grupos, su administración, la membresía y la integración con los mensajes actuales.
+
+Comportamiento esperado: un usuario autorizado crea o administra un grupo, y sus miembros reciben las comunicaciones correspondientes sin duplicados causados por la composición de la audiencia.
+
+Criterios de aceptación:
+
+- Los permisos de creación, publicación y administración se aplican correctamente.
+- Los usuarios retirados no reciben mensajes futuros del grupo.
+- Las modificaciones de membresía quedan registradas.
+- Una comunicación dirigida a varios grupos no duplica mensajes al mismo destinatario por la misma operación.
+- Los grupos vinculados a cursos reflejan los permisos y relaciones académicas vigentes.
+- Los mensajes anteriores respetan las políticas de acceso establecidas.
+
+Dependencias: mensajería interna, usuarios, roles, relaciones académicas y COM-IMP-01.
+
+Resultado: mensajería grupal administrable y adaptada a la estructura escolar.
+
+---
+
+BLOQUE D. INFORMES, CALIDAD Y GOBERNANZA
+
+COM-IMP-11. Informes de actividad y rendimiento de las comunicaciones
+
+Prioridad: P3.
+
+Hallazgo: COM-20 está parcialmente implementado. Existen registros de envíos, pero no informes operativos claros sobre resultados, fallos y evolución.
+
+Objetivo: transformar los registros disponibles en información útil para supervisar el servicio.
+
+Requisitos funcionales:
+
+1. Mostrar volúmenes de mensajes por período, canal, categoría y estado.
+2. Diferenciar aceptados por el proveedor, entregados, leídos y fallidos cuando existan datos suficientes.
+3. Calcular tasas con denominadores explícitos y excluir los estados no verificables de las métricas que no puedan sostener.
+4. Mostrar intentos, errores frecuentes, tiempos de procesamiento y reintentos.
+5. Permitir filtrar por fecha y tipo de comunicación.
+6. Mostrar resultados de las confirmaciones de comunicados y asistencia a reuniones según permisos.
+7. Ofrecer exportaciones para responsables autorizados.
+8. Evitar mostrar el contenido privado de los mensajes en los informes generales.
+9. Identificar datos incompletos y diferencias entre proveedores.
+10. Proporcionar una vista de incidencias que facilite la investigación de fallos.
+
+Cambios necesarios: desarrollar consultas, agregaciones, indicadores y vistas de informes reutilizando los registros existentes.
+
+Comportamiento esperado: los responsables pueden evaluar el estado de las comunicaciones sin revisar manualmente toda la hoja de envíos.
+
+Criterios de aceptación:
+
+- Las cifras de prueba coinciden con los registros de origen.
+- Las tasas identifican claramente qué estados se incluyen en el cálculo.
+- Los filtros producen resultados coherentes.
+- Los usuarios solo acceden a los datos correspondientes a su función.
+- Los informes no presentan mensajes aceptados por el proveedor como entregados si no existe evidencia.
+- La consulta de informes no altera los registros originales.
+
+Dependencias: COM-IMP-01, COM-IMP-02, registros de confirmaciones y permisos.
+
+Resultado: supervisión operativa fiable y decisiones basadas en información verificable.
+
+---
+
+COM-IMP-12. Auditoría de seguridad y privacidad de todas las comunicaciones
+
+Prioridad: P1, transversal.
+
+Hallazgo: COM-16 figura como funcional, pero la auditoría no demuestra exhaustivamente que todos los flujos, grupos, citas, llamadas, casos y confirmaciones apliquen los mismos controles.
+
+Objetivo: verificar y reforzar la privacidad en todo el ciclo de comunicación.
+
+Requisitos funcionales:
+
+1. Verificar permisos de lectura, creación, edición, eliminación lógica, exportación y administración.
+2. Validar las relaciones entre padres, tutores, estudiantes y personal.
+3. Impedir el acceso a mensajes, citas y casos de personas no relacionadas o no autorizadas.
+4. Evitar que el frontend sea la única barrera de seguridad; los servicios deben validar los permisos.
+5. Proteger las credenciales y configuraciones de proveedores.
+6. Minimizar los datos personales almacenados en registros y errores.
+7. Definir reglas de conservación, archivo y eliminación conforme a la política institucional y la normativa aplicable.
+8. Revisar accesos a datos sensibles, exportaciones y modificaciones administrativas.
+9. Verificar que los registros técnicos no contengan tokens, contraseñas ni datos personales innecesarios.
+10. Revisar el uso de datos de contacto en servicios externos y documentar qué información sale de la plataforma.
+11. Validar las autorizaciones y condiciones de uso de proveedores externos.
+12. Definir el comportamiento ante la baja de una cuenta, la pérdida de una relación familiar o la retirada de permisos.
+
+Cambios necesarios: realizar pruebas de autorización por rol y por recurso, corregir los controles insuficientes que se demuestren y documentar los límites de acceso.
+
+Comportamiento esperado: cada usuario consulta y modifica únicamente la información para la que dispone de autorización vigente.
+
+Criterios de aceptación:
+
+- Se ejecutan pruebas negativas con usuarios de distintos roles.
+- Se comprueba que cambiar identificadores en una solicitud no permite acceder a registros ajenos.
+- Los permisos se validan en el servicio que procesa cada operación.
+- Las exportaciones y vistas administrativas aplican controles equivalentes.
+- Las configuraciones sensibles no aparecen en respuestas ni registros ordinarios.
+- Las revocaciones de acceso tienen efecto en los flujos aplicables.
+- Las deficiencias encontradas se corrigen y se vuelven a probar antes de cerrar la tarea.
+
+Dependencias: modelo de usuarios, permisos y todos los módulos de comunicación.
+
+Resultado: controles consistentes para comunicaciones internas y externas.
+
+---
+
+COM-IMP-13. Mejora de accesibilidad y experiencia de uso
+
+Prioridad: P3.
+
+Hallazgo: COM-21 figura como funcional por su diseño adaptable, pero eso no acredita por sí solo accesibilidad completa ni facilidad de uso en todos los flujos.
+
+Objetivo: facilitar que estudiantes, familias y personal utilicen las comunicaciones desde distintos dispositivos y con diferentes necesidades de acceso.
+
+Requisitos funcionales:
+
+1. Revisar navegación por teclado, foco visible, etiquetas, contraste y mensajes de error.
+2. Asegurar que los botones y controles tengan nombres comprensibles.
+3. Diferenciar visualmente los estados sin depender exclusivamente del color.
+4. Proporcionar confirmaciones claras después de acciones relevantes.
+5. Evitar que un toque accidental provoque envíos o confirmaciones irreversibles.
+6. Solicitar confirmación antes de acciones de consecuencias importantes, cuando corresponda.
+7. Mantener una presentación adecuada en móviles, tabletas y escritorio.
+8. Evitar que los indicadores de mensajes pendientes desaparezcan antes de que el estado haya sido actualizado correctamente.
+9. Proporcionar textos de ayuda breves y claros.
+10. Revisar la experiencia de usuarios con distintos roles y permisos.
+
+Cambios necesarios: corregir los problemas de interfaz detectados en las pruebas de uso y aplicar criterios de accesibilidad apropiados, tomando WCAG como referencia cuando corresponda.
+
+Comportamiento esperado: los usuarios pueden identificar las acciones disponibles, entender sus consecuencias y completar los flujos de comunicación sin confusión innecesaria.
+
+Criterios de aceptación:
+
+- Los flujos principales se pueden completar con teclado.
+- Los controles tienen etiquetas comprensibles y foco visible.
+- Los estados de lectura, confirmación, error y espera se distinguen claramente.
+- Las vistas se utilizan correctamente en las resoluciones compatibles.
+- Las pruebas de uso identifican y corrigen los obstáculos que impiden completar tareas habituales.
+- Los errores se explican con lenguaje claro y una acción posible para resolverlos.
+
+Dependencias: centro de comunicaciones y las interfaces de cada módulo.
+
+Resultado: interfaz accesible, consistente y comprensible para la comunidad educativa.
+
+---
+
+COM-IMP-14. Normalización de preferencias y reglas de notificación
+
+Prioridad: P2.
+
+Hallazgo: COM-09 figura como funcional, pero deben comprobarse los efectos reales de las preferencias sobre todos los canales y tipos de evento.
+
+Objetivo: asegurar que las preferencias personales y las reglas institucionales se apliquen de forma coherente en el servicio común.
+
+Requisitos funcionales:
+
+1. Centralizar la lectura y aplicación de preferencias sin crear configuraciones paralelas por módulo.
+2. Permitir configurar categorías y canales compatibles.
+3. Diferenciar preferencias personales, restricciones del canal y comunicaciones institucionales obligatorias autorizadas por política.
+4. Explicar qué comunicaciones puede desactivar el usuario y cuáles están sujetas a reglas institucionales.
+5. Definir qué sucede cuando el canal preferido no está disponible.
+6. No cambiar automáticamente a otro canal que el usuario no haya autorizado, salvo que exista una regla institucional válida y previamente informada.
+7. Registrar los motivos de una decisión de envío o de no envío.
+8. Evitar que el mismo mensaje llegue repetidamente por varios canales sin una política explícita.
+9. Aplicar cambios de preferencias de manera consistente a las nuevas notificaciones.
+
+Cambios necesarios: revisar "getUserSettings", "saveUserSettings", "PreferenciasNotificacion" y el despachador unificado; corregir las diferencias verificadas.
+
+Comportamiento esperado: cada comunicación se procesa de acuerdo con las preferencias vigentes y las reglas aplicables, sin ignorarlas ni duplicar notificaciones.
+
+Criterios de aceptación:
+
+- Las preferencias se mantienen al cerrar y volver a abrir la sesión.
+- Desactivar un canal impide nuevos envíos por ese canal cuando la comunicación esté sujeta a la preferencia.
+- Las excepciones institucionales están definidas, autorizadas y documentadas.
+- Los cambios de preferencia se reflejan de forma consistente en todos los módulos.
+- Los registros permiten explicar por qué se eligió o descartó un canal.
+
+Dependencias: COM-01, COM-IMP-01 y COM-IMP-12.
+
+Resultado: preferencias predecibles y políticas de notificación consistentes.
+
+---
+
+COM-IMP-15. Verificación integral de proveedores externos y modo de pruebas
+
+Prioridad: P2.
+
+Hallazgo: COM-11 y COM-22 figuran como funcionales, pero una prueba simulada no demuestra que una integración real esté configurada, autorizada, disponible o correctamente conectada.
+
+Objetivo: distinguir con claridad los canales simulados de los canales realmente operativos y facilitar su diagnóstico seguro.
+
+Requisitos funcionales:
+
+1. Identificar cada canal, proveedor, estado de configuración y fecha de última comprobación.
+2. Distinguir entre modo de prueba, configuración incompleta y conexión operativa verificada.
+3. Comprobar únicamente los aspectos que el proveedor permita validar de manera segura.
+4. No mostrar credenciales en la interfaz ni en los registros.
+5. Informar al administrador de errores de configuración con mensajes útiles.
+6. Mantener el envío simulado aislado de los envíos reales.
+7. Evitar que un botón de prueba genere accidentalmente mensajes o costos reales.
+8. Documentar los requisitos vigentes de cada proveedor, las limitaciones y los servicios externos contratados.
+9. Verificar el tratamiento de fallos, límites de envío y confirmaciones de entrega de cada proveedor.
+10. No presentar SMS, WhatsApp o Messenger como operativos únicamente porque exista un adaptador en el código.
+
+Cambios necesarios: completar la información de estado, las comprobaciones de configuración y las protecciones de las pruebas.
+
+Comportamiento esperado: el administrador puede saber si un canal está simulado, pendiente de configuración o verificado, y qué acción corresponde para resolver un problema.
+
+Criterios de aceptación:
+
+- Las pruebas simuladas no realizan envíos externos.
+- Las configuraciones incompletas se identifican claramente.
+- Las credenciales no aparecen en la interfaz ni en los registros ordinarios.
+- Los fallos de proveedor se distinguen de los errores de configuración interna.
+- Se documenta qué se comprobó y qué no pudo verificarse.
+- La disponibilidad de cada canal se confirma con pruebas autorizadas y sin asumir que todos los proveedores ofrecen las mismas funciones.
+
+Dependencias: configuración de proveedores, COM-IMP-01, COM-IMP-02 y permisos administrativos.
+
+Resultado: canales verificables, diagnósticos claros y pruebas seguras.
+
+---
+
+BLOQUE E. CIERRE Y CONSOLIDACIÓN
+
+COM-IMP-16. Pruebas de integración y regresión de la Fase 11
+
+Prioridad: P1 antes de declarar cerrada la fase.
+
+Hallazgo: las pruebas individuales documentadas no demuestran que todas las funciones trabajen correctamente en conjunto.
+
+Objetivo: comprobar que las mejoras no rompen la mensajería, los comunicados, las preferencias, las notificaciones ni los permisos existentes.
+
+Requisitos funcionales:
+
+1. Preparar pruebas de integración entre el despachador, los canales, las preferencias, los grupos y el centro de comunicaciones.
+2. Probar flujos completos de citas, llamadas, casos y confirmaciones.
+3. Probar reintentos, concurrencia, interrupciones y recuperación.
+4. Probar permisos positivos y negativos con distintos roles.
+5. Verificar las transiciones de estado y la consistencia de los registros.
+6. Probar la migración y compatibilidad de los registros existentes cuando haya cambios en las hojas.
+7. Verificar el comportamiento de los canales simulados y las integraciones autorizadas.
+8. Registrar defectos encontrados y corregidos, así como los casos pendientes.
+9. Mantener pruebas reproducibles que puedan ejecutarse después de futuras modificaciones.
+10. No declarar aprobado un escenario que no se haya ejecutado.
+
+Cambios necesarios: crear o ampliar las pruebas automatizadas o reproducibles y corregir los defectos que se encuentren dentro del alcance autorizado.
+
+Comportamiento esperado: los flujos principales funcionan de manera integrada y las mejoras conservan las capacidades previas que deban mantenerse.
+
+Criterios de aceptación:
+
+- Todos los escenarios críticos definidos para la fase se ejecutan y tienen resultado documentado.
+- Los defectos críticos y altos que afecten al alcance están corregidos y reprobados satisfactoriamente.
+- Se verifican los permisos y la prevención de duplicados.
+- No se presentan como aprobadas pruebas simuladas que pretendan demostrar una entrega externa real.
+- Los cambios en datos y configuraciones quedan documentados.
+- Se presenta un informe de cobertura, defectos pendientes y limitaciones conocidas.
+
+Dependencias: las tareas anteriores que hayan sido aprobadas para su integración.
+
+Resultado: evidencia verificable de estabilidad e integración.
+
+---
+
+# PLAN DE IMPLEMENTACIÓN DETALLADO - FASE 12: INTELIGENCIA INSTITUCIONAL
+
+### REQ-INT-001: Motor de Cálculo de Tasa de Retención, Deserción y Promoción (INT-03)
+- **Objetivo:** Implementar las fórmulas matemáticas y tableros para medir la tasa de deserción, retención por cohorte y porcentaje de promoción escolar.
+- **Backend Reutilizado:** `getInstitutionalReportCatalog` en `backend/user-service/Code.gs`.
+- **Archivos a Modificar:** `backend/user-service/Code.gs`, `js/ui-common.js`, `teacher-dashboard.html`.
+- **Tareas Concretas:**
+  1. Crear la función `getAcademicRetentionMetrics` en `user-service` para calcular la tasa de retención inter-anual excluyendo traslados justificados.
+  2. Implementar la fórmula de deserción escolar ponderada por grado y sección.
+  3. Agregar la tarjeta "Métricas de Retención y Promoción" en el panel de Inteligencia Institucional en `teacher-dashboard.html`.
+
+### REQ-INT-002: Rutina de Auditoría de Calidad de Datos y Detección de Anomalías (INT-10)
+- **Objetivo:** Ejecutar controles automáticos para identificar calificaciones fuera de escala, pagos negativos o inconsistencias de identidad en los registros.
+- **Backend Reutilizado:** `getStructuredLogs` en `backend/user-service/Code.gs`.
+- **Archivos a Modificar:** `backend/user-service/Code.gs`, `js/ui-common.js`.
+- **Tareas Concretas:**
+  1. Crear la función `auditDataQualityAnomalies` que verifique notas mayores a 100, pagos contables negativos o estudiantes sin DNI válido.
+  2. Generar el reporte "Avisos de Inconsistencia de Datos" accesible únicamente para el rol `Administrador` y `Desarrollador`.
+  3. Notificar a secretaría sobre registros incompletos que requieren subsanación.
+
+### REQ-INT-003: Simulador de Proyección de Matrícula, Demanda de Cupos e Ingresos Futuros (INT-07, INT-08)
+- **Objetivo:** Permitir a la junta directiva proyectar escenarios de demanda de matrículas, ingresos esperados y capacidad de aulas para los próximos 3 años.
+- **Backend Reutilizado:** `getHRDashboardAnalytics` en `backend/accounting-service/Code.gs`.
+- **Archivos a Modificar:** `backend/accounting-service/Code.gs`, `js/ui-common.js`, `teacher-dashboard.html`.
+- **Tareas Concretas:**
+  1. Crear la función `getFinancialEnrollmentProjections` con parámetros configurables (porcentaje de crecimiento estimado, tasa de morosidad proyectada).
+  2. Diseñar el simulador interactivo "Proyección de Cupos y Flujo de Caja" con deslizadores (*sliders*) para ajustar variables de mercado.
+  3. Etiquetar claramente las cifras como *Estimaciones Proyectadas* con indicación de margen de error.
+
+### REQ-INT-004: Tablero de Análisis Longitudinal y Rendimiento Académico por Cohortes (INT-04)
+- **Objetivo:** Evaluar la evolución del rendimiento académico de una cohorte generacional a lo largo de su trayectoria escolar.
+- **Backend Reutilizado:** `getStudentAcademicReport` en `backend/exam-service/Code.gs`.
+- **Archivos a Modificar:** `backend/user-service/Code.gs`, `js/ui-common.js`.
+- **Tareas Concretas:**
+  1. Crear la función `getCohortAcademicEvolution` agrupando estudiantes por año de ingreso a la institución.
+  2. Generar gráficos comparativos de rendimiento promedio desde 1er Grado hasta 11vo Grado.
+  3. Ofrecer exportación detallada a Excel/CSV con el desglose por asignaturas clave (Matemáticas, Español, Inglés).

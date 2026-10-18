@@ -1069,3 +1069,23 @@ Hallazgos Principales:
 4. Ausencia de Token de Deduplicación (COM-19): Falta clave de idempotencia en sendMultiChannelNotification que evite envíos duplicados por reintentos de red.
 5. Ausencia de Agenda de Citas Familiares (COM-12): No hay tablas ni endpoints para agendar reuniones apoderado-docente ni confirmar asistencias.
 6. Falta de Conformidad Firmada en Circulares (COM-07): Registro de lectura se limita a apertura; falta botón de acuse/conformidad formal para circulares críticas.
+
+===============================================================================
+REGISTRO DE AUDITORÍA FUNCIONAL INTEGRAL: FASE 12 (INTELIGENCIA INSTITUCIONAL)
+===============================================================================
+Fecha: Mayo 2024
+Módulo Auditado: Inteligencia Institucional (Ampliación Fase 29 del Plan General)
+Componentes e Inspección:
+  - backend/user-service/Code.gs (getInstitutionalReportCatalog, generateInstitutionalReport, getStructuredLogs)
+  - backend/accounting-service/Code.gs (getAdvancedDashboardAnalytics, getHRDashboardAnalytics)
+  - backend/academic-service/Code.gs, backend/exam-service/Code.gs
+  - js/ui-common.js (renderUniversalConfigurableChart, openAnalyticsChartModal, renderReportsCenterUI)
+  - teacher-dashboard.html, student-dashboard.html
+
+Hallazgos Principales:
+1. Cobertura de Persistencia GAS: Integración con ConfiguracionSistema, RegistrosAuditoria, CalificacionesEstudiantes, ExpedientesEstudiantes y MovimientosCajaBancos.
+2. Endpoints Backend: 5 funciones de servidor activas para catálogo centralizado de reportes institucionales, analítica HR/financiera y bitácora estructurada de accesos.
+3. Motor Gráfico Universal (INT-01/INT-14): Implementación de renderUniversalConfigurableChart en js/ui-common.js con 5 categorías de gráficos, 5 formatos visuales y vista tabular de texto accesible (WCAG AA).
+4. Ausencia de Métricas de Deserción y Retención (INT-03): Falta de fórmulas y tableros para medir tasa de deserción inter-anual y retención por cohorte.
+5. Ausencia de Simuladores y Proyecciones (INT-07/INT-08/INT-09): Inexistencia de modelos cuantitativos de proyección de demanda de cupos, proyección de ingresos futuros y necesidades de personal.
+6. Ausencia de Auditoría de Calidad de Datos (INT-10): Sin rutinas en segundo plano para detección automática de datos atípicos o inconsistencias (notas > 100, pagos negativos).
