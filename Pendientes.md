@@ -1,5 +1,1148 @@
 ## TAREAS PENDIENTES
 
+PLAN DE IMPLEMENTACIÓN DE HALLAZGOS: FASE 1, REGISTRO Y EXPEDIENTE DE ESTUDIANTES
+
+Proyecto: Ecosistema Educativo New Generation Christian Academy
+Origen: Informe de Auditoría Funcional Integral del Registro y Expediente de Estudiantes, Fase 1
+Objetivo general: Resolver las brechas identificadas entre los servicios existentes y la interfaz administrativa, completar las operaciones de gestión del expediente que estén ausentes y establecer una herramienta de importación y exportación específica para este ámbito.
+
+INSTRUCCIONES GENERALES PARA TODAS LAS TAREAS
+
+Estas instrucciones se aplican a cada tarea de este documento.
+
+1. Antes de modificar archivos, leer "METODOLOGIA_DESARROLLO.md" y revisar las instrucciones vigentes del proyecto, así como "README.md", "Pendientes.md" y los registros de cambios disponibles que sean pertinentes.
+2. Inspeccionar el código actual de los archivos involucrados. No asumir que el informe de auditoría refleja necesariamente el estado actual del repositorio.
+3. Identificar las funciones, componentes, servicios, estructuras de datos y controles existentes que puedan reutilizarse. No crear una segunda implementación de una función que ya exista y funcione correctamente.
+4. Verificar las firmas, los parámetros, las respuestas y los permisos reales de cada operación antes de conectarla a la interfaz. Los nombres de funciones mencionados en el informe son referencias que deben comprobarse.
+5. Limitar cada tarea al objetivo funcional indicado. No implementar tareas posteriores, reconstruir módulos ajenos ni modificar funciones independientes. Solo se permiten cambios auxiliares strictly necesarios para la integración directa, la seguridad, la compatibilidad o las pruebas de la tarea actual.
+6. No alterar innecesariamente los contratos de los servicios existentes, la estructura de las hojas de Google Sheets, los identificadores institucionales, los datos históricos, los permisos ni las integraciones operativas.
+7. No utilizar cambios directos en las hojas de Google Sheets como sustituto de las operaciones oficiales de la plataforma. Las modificaciones deben seguir los mecanismos autorizados del sistema.
+8. No considerar funcional una operación por el mero hecho de que exista un botón, un formulario, una función de servidor o una respuesta simulada. Debe comprobarse el recorrido completo desde la interfaz hasta el almacenamiento y la consulta posterior.
+9. Conservar el control de acceso en el servidor. Ocultar un botón en la interfaz no sustituye la autorización de cada operación.
+10. Todas las etiquetas, instrucciones, mensajes de error, confirmaciones, notificaciones y ayudas visibles deben estar redactadas en español claro y no técnico. Deben explicar qué puede hacer el usuario, qué información necesita y cuáles serán las consecuencias de una acción.
+11. Las pruebas deben utilizar datos de prueba identificables y controlados. No modificar ni eliminar expedientes reales para demostrar un resultado. No utilizar personas reales como datos ficticios ni dejar registros de prueba en la información institucional.
+12. Ejecutar las pruebas pertinentes de forma real y registrar sus resultados. Si una prueba requiere credenciales, servicios externos, permisos o datos que no están disponibles, declararlo expresamente y no marcarla como aprobada.
+13. Al terminar cada tarea, entregar un informe con los archivos modificados, el comportamiento implementado, las pruebas ejecutadas, los resultados observados, los problemas pendientes y cualquier cambio adicional necesario. No afirmar que se ejecutaron pruebas que no se realizaron.
+14. No iniciar automáticamente la tarea siguiente. Cada tarea debe poder revisarse y aprobarse por separado.
+15. Registrar los cambios en el lugar que establezca el procedimiento del proyecto, evitando duplicar entradas o modificar tareas ajenas.
+
+---
+
+TAREA REQ-EXP-001: CONSULTA Y VISUALIZACIÓN DEL EXPEDIENTE DIGITAL DEL ESTUDIANTE
+
+1. Objetivo
+
+Permitir que el personal institucional autorizado abra el expediente digital de un estudiante desde la lista administrativa y consulte su información mediante una vista organizada, utilizando los servicios existentes que hayan sido verificados.
+
+Esta tarea constituye la base visual para las funciones de gestión posteriores. No debe implementar todavía la edición, la gestión de tutores, la carga de documentos, la fusión de expedientes, los retiros, los traslados, la importación ni la exportación.
+
+2. Alcance
+
+- Inspeccionar las listas de estudiantes y sus mecanismos actuales de selección.
+- Verificar el servicio de consulta integral del expediente, identificado en el informe como "getStudentFile".
+- Crear o reutilizar una ventana de consulta del expediente.
+- Conectar la selección de un estudiante con la consulta del expediente correcto.
+- Mostrar los datos personales disponibles, el identificador institucional y el estado actual.
+- Mostrar información académica básica que ya devuelva el servicio, siempre que su inclusión sea pertinente para identificar al estudiante y no implique desarrollar otro módulo.
+- Proporcionar estados de carga, ausencia de datos y error.
+- Preparar una estructura ampliable para futuras secciones, sin presentar como funcionales pestañas que todavía no tengan comportamiento real.
+
+3. Requisitos funcionales
+
+RF-001. Apertura del expediente
+
+Al seleccionar un estudiante en la lista administrativa, el sistema debe permitir abrir su expediente. Si existe un mecanismo de apertura apropiado, reutilizarlo. Si no existe, incorporarlo sin alterar innecesariamente la navegación actual.
+
+RF-002. Identificación inequívoca
+
+La consulta debe utilizar el identificador estable del expediente o un identificador institucional validado por el servicio oficial. No debe depender exclusivamente del nombre del estudiante ni del número de fila de una hoja.
+
+RF-003. Consulta oficial
+
+La interfaz debe obtener los datos mediante el servicio autorizado de consulta. No debe reconstruir el expediente a partir de fragmentos de la tabla visible cuando exista un servicio oficial que entregue la información completa.
+
+RF-004. Información mostrada
+
+Mostrar, cuando los datos estén disponibles y el usuario tenga autorización:
+
+- Nombre completo.
+- Código institucional.
+- Identificador del expediente, cuando corresponda.
+- Grado y sección actuales, si están disponibles.
+- Estado del expediente.
+- Fecha de nacimiento, nacionalidad, dirección y demás datos personales devueltos y autorizados para ese usuario.
+- Indicadores comprensibles para campos que todavía no estén registrados.
+
+No inventar valores, completar información mediante suposiciones ni mostrar identificadores internos innecesarios al usuario final.
+
+RF-005. Organización visual
+
+Organizar la información en secciones legibles. Reutilizar los estilos, componentes y patrones de navegación de la plataforma.
+
+RF-006. Carga y errores
+
+Mientras se consulta el expediente, mostrar un indicador de espera. Si la consulta falla, mostrar un mensaje comprensible y permitir reintentar sin recargar toda la aplicación.
+
+RF-007. Datos inexistentes
+
+Si el expediente no existe o el usuario no puede acceder a él, manejar la respuesta de forma segura. No mostrar datos parciales de otra persona ni confundir un error de permisos con un expediente válido.
+
+RF-008. Cierre de la vista
+
+Permitir cerrar la ventana y regresar a la lista sin alterar datos ni perder innecesariamente los filtros y la posición de navegación.
+
+RF-009. Adaptación de pantalla
+
+La vista debe ser utilizable en computadoras, tabletas y teléfonos compatibles con la plataforma.
+
+4. Permisos y protección de datos
+
+- Verificar las reglas reales de consulta de cada rol en el servidor.
+- Un estudiante solo podrá consultar su propio expediente.
+- Un padre o tutor solo podrá consultar los expedientes de estudiantes vinculados y autorizados.
+- El personal institucional solo podrá consultar la información que le corresponda según sus permisos.
+- No confiar en un identificador enviado por el navegador como prueba de autorización.
+- No exponer contraseñas, hashes, credenciales, datos internos innecesarios ni información de terceros.
+- No conceder acceso adicional a docentes, orientadores, familiares u otros roles para facilitar la implementación.
+
+5. Criterios de aceptación
+
+- La selección de un estudiante abre el expediente correcto.
+- La información mostrada corresponde al resultado real del servicio autorizado.
+- Los campos ausentes se presentan claramente, sin errores visuales.
+- La carga, el error, el reintento y el cierre funcionan.
+- Los usuarios no autorizados no pueden consultar expedientes ajenos.
+- La interfaz funciona en los tamaños de pantalla admitidos.
+- No se implementan acciones de edición ni operaciones de otras tareas.
+- Las pruebas demuestran que no se mezclan los datos de dos estudiantes.
+
+6. Pruebas obligatorias
+
+1. Abrir un expediente válido.
+2. Abrir otro expediente y comprobar que se sustituyen correctamente los datos.
+3. Consultar un identificador inexistente.
+4. Simular un fallo de conexión o una respuesta de error.
+5. Intentar consultar un expediente sin autorización.
+6. Verificar el acceso de un estudiante a su propio expediente.
+7. Verificar el acceso de un padre o tutor a un estudiante no vinculado.
+8. Cerrar la vista y comprobar que la lista sigue operativa.
+9. Comprobar la adaptación a pantalla pequeña.
+10. Confirmar que ninguna operación de escritura se ejecuta al consultar.
+
+7. Entregables
+
+- Vista funcional de consulta del expediente.
+- Integración con el servicio real verificado.
+- Archivos modificados identificados.
+- Evidencia de las pruebas ejecutadas.
+- Informe de resultados y limitaciones.
+
+---
+
+TAREA REQ-EXP-002: EDICIÓN DE DATOS PERSONALES DEL EXPEDIENTE
+
+1. Objetivo
+
+Permitir que los usuarios institucionales autorizados modifiquen los datos personales del estudiante mediante un formulario claro y validado, preservando toda la información que no hayan decidido cambiar.
+
+2. Alcance
+
+Esta tarea se limita a los datos personales del expediente. No incluye la modificación de tutores, documentos, matrículas, calificaciones, estados de movilidad ni información financiera.
+
+3. Requisitos funcionales
+
+RF-001. Acceso a la edición
+
+Añadir la acción «Editar datos personales» en la vista del expediente. Mostrarla únicamente a los roles autorizados, sin depender de la ocultación visual como mecanismo de seguridad.
+
+RF-002. Carga de valores actuales
+
+El formulario debe mostrar los valores existentes obtenidos de la consulta oficial del expediente. No debe presentar campos vacíos cuando existen datos guardados.
+
+RF-003. Campos editables
+
+Verificar los campos realmente admitidos por el servicio existente. Incluir, cuando estén soportados:
+
+- Nombres y apellidos.
+- Fecha de nacimiento.
+- Sexo, si el modelo institucional lo contempla.
+- Nacionalidad.
+- Dirección de residencia.
+- Teléfono y correo de contacto, si pertenecen al expediente.
+- Observaciones institucionales autorizadas.
+
+Los campos no confirmados en el modelo de datos no deben incorporarse mediante suposiciones.
+
+RF-004. Campos protegidos
+
+Los identificadores estables del expediente y el código institucional no deben modificarse mediante el formulario ordinario. Si algún dato de identidad se gestiona en otra entidad oficial, respetar ese mecanismo y evitar duplicar su almacenamiento.
+
+RF-005. Validación
+
+Validar los campos obligatorios, las fechas, los formatos de correo y los demás valores admitidos. La validación del servidor debe seguir siendo definitiva.
+
+RF-006. Guardado
+
+Utilizar la operación oficial de actualización, identificada en el informe como "updateStudentFile" si se confirma su existencia y contrato. Enviar únicamente los campos que se pretende modificar.
+
+RF-007. Preservación de datos
+
+Los campos omitidos deben conservar sus valores. No convertir automáticamente campos omitidos en cadenas vacías, valores predeterminados o datos nulos.
+
+RF-008. Cancelación
+
+Permitir cancelar sin guardar. Si el usuario realizó cambios, solicitar confirmación antes de descartarlos.
+
+RF-009. Confirmación del resultado
+
+Mostrar un mensaje de éxito solo después de confirmar que el servidor aceptó y guardó la operación. Ante un error, conservar los cambios introducidos para que el usuario pueda corregirlos o reintentar.
+
+RF-010. Actualización de la vista
+
+Después de guardar, consultar de nuevo el expediente y mostrar los valores realmente almacenados.
+
+4. Reglas de negocio y seguridad
+
+- Solo los roles autorizados por las reglas institucionales pueden editar datos personales.
+- El servidor debe validar el rol y la propiedad del expediente en cada solicitud.
+- No permitir que un cambio de datos personales modifique indirectamente matrículas, estados, tutores o información académica.
+- No registrar contraseñas ni datos confidenciales innecesarios en mensajes o registros de error.
+- Si existen restricciones sobre cambios de identidad, respetarlas y explicar al usuario cómo proceder.
+
+5. Criterios de aceptación
+
+- El formulario carga los valores actuales.
+- Los campos admitidos pueden modificarse y guardarse.
+- Los datos omitidos permanecen intactos.
+- Los identificadores protegidos no pueden alterarse.
+- La cancelación descarta los cambios no guardados.
+- Los errores de validación se muestran junto al campo o en un mensaje comprensible.
+- La consulta posterior refleja los valores persistidos.
+- Los usuarios no autorizados no pueden guardar cambios.
+
+6. Pruebas obligatorias
+
+1. Modificar un campo y comprobar su persistencia.
+2. Modificar un solo campo y verificar que los demás permanecen intactos.
+3. Introducir una fecha inválida.
+4. Introducir un correo con formato incorrecto, si el campo admite correo.
+5. Intentar guardar campos obligatorios vacíos.
+6. Cancelar con cambios pendientes.
+7. Simular un fallo de guardado.
+8. Intentar actualizar mediante una solicitud no autorizada.
+9. Intentar cambiar un identificador protegido.
+10. Verificar la consulta posterior a una actualización correcta.
+
+7. Entregables
+
+- Formulario de edición funcional.
+- Validaciones de cliente y servidor compatibles con el modelo existente.
+- Pruebas documentadas.
+- Relación de archivos modificados y resultados.
+
+---
+
+TAREA REQ-EXP-003: GESTIÓN DE PADRES, TUTORES Y RESPONSABLES
+
+1. Objetivo
+
+Permitir que Secretaría y los demás roles institucionales autorizados consulten, vinculen y administren correctamente las relaciones entre un estudiante y sus padres, tutores o responsables, utilizando los registros existentes.
+
+2. Alcance
+
+Esta tarea comprende la gestión de las relaciones estudiante-tutor y los datos necesarios para establecerlas. No incluye la implementación completa del portal familiar ni la gestión de cobros, aunque debe preservar los atributos que otros módulos autorizados utilizan.
+
+3. Requisitos funcionales
+
+RF-001. Consulta de responsables
+
+Mostrar los responsables vinculados al expediente, incluyendo los datos de contacto que el usuario esté autorizado a consultar.
+
+RF-002. Identificación del responsable
+
+Permitir buscar un responsable existente por número de identidad, correo u otros identificadores admitidos por el sistema. Mostrar suficientes datos para distinguir coincidencias sin exponer información innecesaria.
+
+RF-003. Reutilización de registros
+
+Antes de crear un responsable nuevo, buscar coincidencias en el directorio oficial. Si existe un responsable válido, permitir vincularlo al estudiante en lugar de crear una ficha duplicada.
+
+RF-004. Creación de responsable
+
+Si no existe un registro coincidente y el usuario tiene autorización, permitir crear un responsable con los campos obligatorios definidos por el modelo vigente.
+
+RF-005. Relación con el estudiante
+
+Permitir establecer la relación de parentesco o responsabilidad utilizando los valores admitidos por el sistema.
+
+RF-006. Atributos de la relación
+
+Mostrar y permitir gestionar, cuando corresponda y esté autorizado:
+
+- Representante legal.
+- Contacto de emergencia.
+- Responsable financiero.
+- Autorización para retirar físicamente al estudiante.
+- Acceso al portal familiar.
+
+Estos atributos deben mantenerse independientes. No inferir que una persona autorizada para retirar al estudiante es automáticamente su representante legal o responsable financiero.
+
+RF-007. Varios responsables y varios estudiantes
+
+Permitir que un estudiante tenga varios responsables y que un responsable pueda estar vinculado a varios estudiantes, siempre que el modelo institucional lo permita.
+
+RF-008. Actualización de vínculos
+
+Permitir modificar los atributos de una relación existente sin crear otra relación duplicada.
+
+RF-009. Desvinculación
+
+Permitir desactivar o desvincular una relación cuando corresponda, utilizando la operación oficial. No eliminar físicamente registros históricos si la política vigente exige conservarlos.
+
+RF-010. Confirmaciones
+
+Solicitar confirmación antes de desvincular una relación o cambiar atributos de especial importancia. Informar claramente qué relación se modificará.
+
+RF-011. Actualización posterior
+
+Después de guardar, consultar de nuevo las relaciones y mostrar los datos confirmados por el servidor.
+
+4. Reglas de negocio y permisos
+
+- Respetar la autorización específica para crear, editar, vincular y desvincular responsables.
+- No conceder automáticamente acceso al portal familiar solo por crear una relación.
+- No crear cuentas de acceso sin seguir el proceso de identidad y autenticación vigente.
+- No modificar registros de un responsable compartido de forma que se altere accidentalmente la información de otros estudiantes.
+- No confundir la ficha personal del responsable con sus atributos particulares de relación con cada estudiante.
+- No cambiar operaciones financieras, aunque se gestione el atributo de responsable financiero.
+- Validar en el servidor la existencia del expediente, del responsable y de la relación antes de cada modificación.
+
+5. Criterios de aceptación
+
+- Se muestran los responsables vinculados al estudiante correcto.
+- Es posible localizar y reutilizar un responsable existente.
+- No se crean duplicados cuando se utiliza un responsable ya registrado.
+- Se pueden gestionar los atributos admitidos de la relación.
+- Un responsable compartido conserva sus vínculos con otros estudiantes.
+- La desvinculación respeta las reglas de conservación histórica.
+- Los permisos se aplican en el servidor.
+- Los cambios se reflejan después de consultar de nuevo el expediente.
+
+6. Pruebas obligatorias
+
+1. Consultar un expediente con varios responsables.
+2. Vincular un responsable existente.
+3. Intentar crear un responsable con identidad o correo coincidente.
+4. Crear y vincular un responsable nuevo.
+5. Modificar un atributo de la relación y comprobar que los demás no cambian.
+6. Verificar un responsable vinculado a dos estudiantes.
+7. Desvincular una relación de prueba y comprobar la conservación histórica.
+8. Intentar modificar relaciones con un rol no autorizado.
+9. Verificar que crear una relación no concede acceso al portal automáticamente.
+10. Comprobar que los errores no producen relaciones parciales o duplicadas.
+
+7. Entregables
+
+- Sección de responsables funcional.
+- Búsqueda y reutilización de registros existentes.
+- Operaciones de relación integradas con los servicios verificados.
+- Evidencia de pruebas e informe de resultados.
+
+---
+
+TAREA REQ-EXP-004: GESTIÓN DE DOCUMENTOS Y FOTOGRAFÍAS DEL ESTUDIANTE
+
+1. Objetivo
+
+Permitir consultar los documentos asociados al expediente y realizar las operaciones de carga y actualización que estén autorizadas, con validación de archivos y acceso controlado a sus contenidos.
+
+2. Alcance
+
+Esta tarea cubre fotografías y documentos del expediente estudiantil. No incluye un editor general de documentos institucionales, reconocimiento óptico de caracteres, digitalización masiva ni importación de expedientes.
+
+3. Requisitos funcionales
+
+RF-001. Lista de documentos
+
+Mostrar los documentos asociados al expediente mediante los metadatos reales disponibles, por ejemplo:
+
+- Nombre del archivo.
+- Tipo de documento.
+- Fecha de recepción o carga.
+- Estado de revisión, si existe.
+- Acción disponible para visualizar o descargar.
+
+RF-002. Clasificación
+
+Utilizar los tipos documentales existentes en el sistema. No inventar categorías incompatibles con los valores almacenados.
+
+RF-003. Selección de archivos
+
+Incorporar un selector de archivos accesible. La función de arrastrar y soltar podrá añadirse si es compatible con los componentes y dispositivos admitidos, pero no debe ser la única forma de seleccionar archivos.
+
+RF-004. Validación de archivos
+
+Comprobar el tamaño máximo permitido, el tipo de archivo, la extensión y la consistencia del contenido antes de iniciar la carga. Confirmar en el código el límite real admitido por el servicio; no asumir que es de 10 MB únicamente porque el informe lo recomienda.
+
+RF-005. Carga
+
+Utilizar el servicio oficial de carga de documentos, identificado en el informe como "uploadStudentDocument" si se confirma su contrato. Asociar el archivo al expediente correcto y enviar únicamente los metadatos necesarios.
+
+RF-006. Progreso y resultado
+
+Mostrar el estado de la carga y confirmar el éxito solo cuando el servicio confirme que el archivo y sus metadatos fueron registrados correctamente.
+
+RF-007. Fallos
+
+Si la carga falla, informar al usuario y evitar que la interfaz presente el archivo como guardado. Si el servicio puede dejar archivos huérfanos o registros parciales, verificar y resolver ese comportamiento dentro del alcance directo de la operación.
+
+RF-008. Visualización y descarga
+
+Permitir abrir o descargar documentos mediante mecanismos compatibles con los permisos institucionales. No asumir que una URL de Google Drive es pública ni que conocerla autoriza el acceso.
+
+RF-009. Fotografía
+
+Mostrar la fotografía existente cuando esté disponible. Permitir sustituirla si el servicio y los permisos lo permiten. Mantener una imagen alternativa comprensible cuando no exista una fotografía o no pueda cargarse.
+
+RF-010. Sustitución documental
+
+Si se admite sustituir un documento, conservar el historial y los metadatos previos conforme a las reglas vigentes. No sobrescribir ni eliminar el documento anterior sin verificar la política institucional.
+
+RF-011. Accesibilidad
+
+Incluir nombres descriptivos, etiquetas de controles, estados de carga y mensajes de error comprensibles.
+
+4. Reglas de almacenamiento e imágenes
+
+- Verificar cómo se guardan actualmente los identificadores de Drive y las referencias de los archivos.
+- No utilizar URLs públicas como sustituto de la autorización institucional.
+- No introducir contraseñas, tokens ni credenciales en enlaces o registros visibles.
+- Respetar la estrategia de imágenes del proyecto: las imágenes de la interfaz no deben servirse desde Google Apps Script. Cuando corresponda, reutilizar el mecanismo de conversión del frontend para construir las URLs de miniaturas de Google Drive a partir de las referencias almacenadas, sin inventar formatos de URL nuevos.
+- Comprobar que la visualización de fotografías sea compatible con los permisos de acceso y la configuración real de Drive.
+- No modificar la organización general del almacenamiento documental fuera de lo necesario para esta función.
+
+5. Criterios de aceptación
+
+- Los documentos del expediente correcto se muestran con sus metadatos.
+- Los archivos válidos pueden cargarse y quedan asociados al expediente correcto.
+- Los archivos no admitidos se rechazan con un mensaje comprensible.
+- Los fallos no se presentan como cargas exitosas.
+- Las fotografías pueden visualizarse y sustituirse cuando esté autorizado.
+- Los enlaces no permiten eludir los controles de acceso.
+- La sustitución conserva el historial exigido.
+- No se exponen archivos de otros estudiantes.
+
+6. Pruebas obligatorias
+
+1. Consultar un expediente con documentos.
+2. Consultar un expediente sin documentos.
+3. Cargar un documento válido de prueba.
+4. Intentar cargar un archivo que exceda el límite confirmado.
+5. Intentar cargar un tipo no admitido.
+6. Simular un fallo del servicio de almacenamiento.
+7. Verificar la asociación del documento con el expediente correcto.
+8. Abrir un documento como usuario autorizado.
+9. Intentar acceder al documento como usuario no autorizado.
+10. Visualizar un expediente sin fotografía.
+11. Sustituir una fotografía de prueba y comprobar la referencia almacenada.
+12. Verificar la conservación de versiones documentales, si está implementada.
+
+7. Entregables
+
+- Sección documental funcional.
+- Carga y visualización integradas con los servicios existentes.
+- Validaciones verificadas.
+- Pruebas e informe de resultados.
+
+---
+
+TAREA REQ-EXP-005: CONSULTA DE LA LÍNEA DE TIEMPO E HISTORIAL DEL ESTUDIANTE
+
+1. Objetivo
+
+Mostrar en el expediente una secuencia cronológica de los eventos registrados en la trayectoria institucional del estudiante, sin alterar ni reconstruir artificialmente el historial.
+
+2. Alcance
+
+Esta tarea se limita a la consulta y presentación del historial disponible. No implementa operaciones para generar nuevos movimientos, cambiar secciones, retirar estudiantes ni procesar reingresos.
+
+3. Requisitos funcionales
+
+RF-001. Consulta del historial
+
+Verificar y reutilizar el servicio existente, identificado como "getStudentTimeline" en el informe, o el mecanismo oficial que corresponda.
+
+RF-002. Eventos
+
+Mostrar los tipos de evento que realmente existan en los registros, por ejemplo:
+
+- Apertura del expediente.
+- Matrículas registradas.
+- Cambios de sección.
+- Recepción de documentos.
+- Retiros.
+- Traslados.
+- Reingresos.
+
+La lista no debe implicar que todos estos eventos están implementados o registrados si no se confirma su existencia.
+
+RF-003. Información de cada evento
+
+Mostrar, cuando estén disponibles y autorizados:
+
+- Fecha del evento.
+- Tipo de movimiento.
+- Descripción comprensible.
+- Estado o resultado.
+- Autor responsable, cuando la política de permisos permita mostrarlo.
+
+RF-004. Orden cronológico
+
+Verificar el formato de las fechas y ordenar los eventos correctamente. El orden debe ser consistente incluso si existen fechas iguales o registros históricos incompletos.
+
+RF-005. Ausencia de historial
+
+Mostrar un mensaje de que no existen movimientos registrados cuando corresponda, sin confundirlo con un fallo de consulta.
+
+RF-006. Integridad histórica
+
+La interfaz debe ser de consulta. No debe permitir editar o eliminar eventos mediante esta tarea.
+
+RF-007. Presentación
+
+Utilizar una línea de tiempo o lista cronológica legible, adaptable a dispositivos y con distinción comprensible entre los tipos de evento.
+
+4. Reglas de negocio y permisos
+
+- Solo mostrar el historial que el usuario esté autorizado a consultar.
+- No exponer notas internas restringidas ni datos personales innecesarios.
+- No crear eventos ficticios para completar espacios en la secuencia.
+- No interpretar un dato ausente como evidencia de que el evento nunca ocurrió.
+- Si se detectan registros inconsistentes, documentarlos en el informe en lugar de modificarlos automáticamente.
+
+5. Criterios de aceptación
+
+- El historial corresponde al expediente consultado.
+- Los eventos se presentan en orden cronológico correcto.
+- Los datos faltantes se manejan sin errores.
+- Los usuarios no autorizados no pueden consultar movimientos restringidos.
+- La interfaz no permite alterar el historial.
+- Las fechas y descripciones reflejan los registros reales.
+
+6. Pruebas obligatorias
+
+1. Consultar un expediente con varios eventos.
+2. Verificar el orden de fechas.
+3. Consultar un expediente sin movimientos.
+4. Comprobar el manejo de fechas iguales o incompletas.
+5. Verificar que no se mezclan movimientos de distintos expedientes.
+6. Intentar consultar el historial con un rol no autorizado.
+7. Confirmar que la consulta no modifica las hojas ni los registros históricos.
+
+7. Entregables
+
+- Vista de historial funcional.
+- Integración con el servicio verificado.
+- Pruebas documentadas.
+- Informe de resultados y limitaciones.
+
+---
+
+TAREA REQ-EXP-006: PREVENCIÓN Y RESOLUCIÓN CONTROLADA DE DUPLICADOS
+
+1. Objetivo
+
+Incorporar a la interfaz administrativa la detección de posibles estudiantes duplicados antes de crear un nuevo expediente o convertir una solicitud de admisión, permitiendo revisar coincidencias y evitar registros redundantes.
+
+2. Alcance
+
+Esta tarea comprende la detección, la presentación de candidatos y la orientación al usuario para decidir cómo continuar. La fusión efectiva de expedientes debe tratarse como una operación crítica con sus propias verificaciones y confirmaciones.
+
+3. Requisitos funcionales
+
+RF-001. Consulta preventiva
+
+Verificar y reutilizar el servicio existente de detección de duplicados, identificado en el informe como "findDuplicateStudents".
+
+RF-002. Momento de comprobación
+
+Ejecutar la comprobación antes de confirmar la creación de un expediente o convertir una solicitud de admisión, siempre que el flujo correspondiente invoque esta tarea.
+
+RF-003. Criterios de coincidencia
+
+Utilizar los criterios reales del servicio, como identificación exacta, correo electrónico y similitud de nombre, si están efectivamente implementados.
+
+RF-004. Presentación de candidatos
+
+Mostrar una lista de posibles coincidencias con los datos mínimos necesarios para que un usuario autorizado pueda distinguirlas, junto con el motivo de coincidencia cuando esté disponible.
+
+RF-005. Diferenciación entre coincidencia exacta y aproximada
+
+Distinguir claramente una coincidencia exacta de una similitud aproximada. Una similitud de nombre no debe tratarse automáticamente como prueba de que dos registros pertenecen a la misma persona.
+
+RF-006. Decisión del usuario
+
+Ofrecer opciones comprensibles para revisar un expediente existente, volver al formulario para corregir datos o continuar cuando la regla institucional permita hacerlo.
+
+RF-007. Coincidencias inequívocas
+
+Si el sistema ya impide crear duplicados inequívocos, conservar esa protección y verificar que la interfaz comunique el motivo del bloqueo.
+
+RF-008. Revisión antes de continuar
+
+No crear un expediente nuevo silenciosamente cuando se haya detectado una coincidencia que requiera revisión.
+
+RF-009. Prevención de fusión accidental
+
+No fusionar automáticamente expedientes por coincidencia de nombre, correo o identificación. La fusión requiere autorización, selección explícita de origen y destino, confirmación de consecuencias y validaciones del servidor.
+
+RF-010. Registro del resultado
+
+Si existe una bitácora oficial para estas decisiones, utilizarla conforme a sus reglas. No crear registros de auditoría paralelos sin necesidad.
+
+4. Reglas de negocio y seguridad
+
+- La comprobación preventiva no sustituye las validaciones definitivas del servidor.
+- Las restricciones de creación y fusión deben seguir aplicándose en el backend.
+- La fusión debe permanecer reservada a los roles autorizados por la política institucional confirmada.
+- No mostrar a un usuario información de candidatos que no tenga permiso para consultar.
+- No bloquear automáticamente una admisión legítima solo por similitud aproximada.
+- No alterar expedientes existentes durante la búsqueda de coincidencias.
+
+5. Criterios de aceptación
+
+- La comprobación se realiza antes de confirmar las operaciones correspondientes.
+- Las coincidencias se muestran con información suficiente y permisos correctos.
+- Los motivos de coincidencia se distinguen correctamente.
+- Los duplicados inequívocos siguen sujetos a las restricciones vigentes.
+- La similitud aproximada no provoca una fusión ni un bloqueo automático injustificado.
+- La interfaz no crea expedientes duplicados silenciosamente.
+- No se ejecutan fusiones sin autorización y confirmación explícita.
+
+6. Pruebas obligatorias
+
+1. Buscar una coincidencia exacta de identificación.
+2. Buscar una coincidencia exacta de correo.
+3. Buscar un nombre parecido que corresponda a otra persona.
+4. Comprobar el comportamiento sin coincidencias.
+5. Intentar crear un duplicado inequívoco.
+6. Verificar que una coincidencia aproximada permite revisión.
+7. Intentar consultar candidatos sin permiso.
+8. Comprobar que una comprobación no modifica expedientes.
+9. Verificar que la fusión no se activa automáticamente.
+10. Comprobar el tratamiento de errores del servicio de detección.
+
+7. Entregables
+
+- Flujo visual de prevención de duplicados.
+- Integración con el servicio verificado.
+- Pruebas de coincidencias exactas y aproximadas.
+- Informe de resultados.
+
+---
+
+TAREA REQ-EXP-007: BÚSQUEDA INSTITUCIONAL DE EXPEDIENTES
+
+1. Objetivo
+
+Mejorar la búsqueda administrativa para localizar estudiantes y abrir sus expedientes sin depender exclusivamente de la lista actualmente cargada en memoria o de la sección seleccionada.
+
+2. Alcance
+
+Esta tarea comprende la búsqueda y presentación de resultados. No incluye la construcción de un motor de búsqueda general para todos los módulos de la plataforma.
+
+3. Requisitos funcionales
+
+RF-001. Inspección de la búsqueda actual
+
+Revisar el funcionamiento real de "#student-search" y conservar los filtros que ya funcionen correctamente.
+
+RF-002. Criterios de búsqueda
+
+Permitir buscar por los identificadores y campos que el servicio institucional admita, por ejemplo:
+
+- Nombre y apellidos.
+- Código institucional.
+- Identificador del expediente.
+- Correo o número de identidad, únicamente cuando esté autorizado y el servicio lo soporte.
+
+No enviar criterios que el servicio no pueda procesar.
+
+RF-003. Alcance institucional
+
+Permitir localizar estudiantes fuera de la lista local actual cuando el usuario tenga permiso para consultarlos.
+
+RF-004. Integración con la consulta
+
+Los resultados deben permitir abrir el expediente correcto mediante el mecanismo implementado en REQ-EXP-001.
+
+RF-005. Resultados múltiples
+
+Cuando existan varios resultados, mostrarlos de forma distinguible y permitir seleccionar el expediente correcto. No abrir automáticamente un candidato arbitrario.
+
+RF-006. Estados de búsqueda
+
+Mostrar estados claros de carga, resultados encontrados, ausencia de coincidencias y error. Evitar solicitudes repetidas innecesarias mientras el usuario escribe.
+
+RF-007. Filtros existentes
+
+Preservar los filtros actuales por grado, sección y estado cuando sigan siendo útiles. Definir claramente cómo se combinan con la búsqueda global.
+
+RF-008. Rendimiento
+
+Usar el mecanismo de consulta más apropiado que ya exista. Evitar descargar indiscriminadamente todos los expedientes si el servicio permite consultas específicas.
+
+RF-009. Privacidad
+
+No mostrar campos sensibles en la lista de resultados cuando no sean necesarios para identificar al estudiante.
+
+RF-010. Navegación
+
+Mantener el estado razonable de la lista y permitir regresar a los resultados después de consultar un expediente.
+
+4. Reglas de negocio y permisos
+
+- El servidor debe aplicar los permisos antes de devolver resultados.
+- Los usuarios no deben poder consultar registros de otras personas mediante la modificación manual de parámetros.
+- La búsqueda por datos personales sensibles debe limitarse a roles y finalidades autorizados.
+- No confundir la búsqueda de duplicados con la búsqueda general de expedientes: son operaciones diferentes y deben conservar sus respectivas reglas.
+
+5. Criterios de aceptación
+
+- La búsqueda local existente sigue funcionando.
+- Se pueden localizar estudiantes fuera de la lista cargada cuando el rol lo permite.
+- Los códigos y los identificadores se procesan según el contrato del servicio.
+- Los resultados múltiples son distinguibles.
+- Es posible abrir el expediente desde los resultados.
+- Los estados vacíos y los errores son comprensibles.
+- No se exponen expedientes fuera del alcance de autorización.
+
+6. Pruebas obligatorias
+
+1. Buscar por nombre.
+2. Buscar por código institucional.
+3. Buscar por identificador de expediente.
+4. Buscar un estudiante de otro grado o sección.
+5. Buscar un registro inexistente.
+6. Procesar varias coincidencias.
+7. Combinar búsqueda con filtros existentes.
+8. Simular un fallo del servicio.
+9. Intentar una búsqueda con un rol limitado.
+10. Verificar que se abre el expediente seleccionado y no otro.
+
+7. Entregables
+
+- Búsqueda institucional integrada.
+- Preservación de filtros existentes.
+- Pruebas de búsqueda y permisos.
+- Informe de resultados.
+
+---
+
+TAREA REQ-EXP-008: ESTADOS Y MOVILIDAD DEL ESTUDIANTE
+
+1. Objetivo
+
+Proporcionar una interfaz administrativa para consultar y ejecutar los cambios de estado y los movimientos de estudiantes que estén implementados en el sistema, preservando el historial y la integridad de los registros.
+
+2. Alcance
+
+Esta tarea incluye las operaciones de estado, retiro, traslado y reingreso que se confirmen en el código. No incluye desarrollar el proceso completo de matrícula anual ni modificar los cálculos académicos o financieros asociados.
+
+3. Requisitos funcionales
+
+RF-001. Estado actual
+
+Mostrar el estado vigente del expediente mediante etiquetas comprensibles, utilizando los valores reales admitidos por el sistema.
+
+RF-002. Operaciones disponibles
+
+Verificar qué operaciones oficiales existen, entre ellas:
+
+- Inactivación.
+- Retiro.
+- Traslado.
+- Reingreso.
+- Consulta de movimientos históricos.
+
+No asumir que estas operaciones son equivalentes ni sustituibles entre sí.
+
+RF-003. Acciones según estado
+
+Mostrar únicamente las acciones válidas para el estado actual del expediente y el rol del usuario.
+
+RF-004. Datos obligatorios del movimiento
+
+Solicitar los datos exigidos por cada operación, como motivo, fecha efectiva, destino del traslado u otra información definida por las reglas vigentes.
+
+RF-005. Confirmación
+
+Antes de ejecutar una operación crítica, presentar un resumen claro del estudiante, la operación y sus consecuencias. Exigir confirmación explícita.
+
+RF-006. Procesamiento
+
+Utilizar las operaciones oficiales existentes, verificando sus contratos. El informe menciona "recordStudentWithdrawal", "recordStudentTransfer" y "processStudentReentry"; confirmar su existencia y funcionamiento antes de utilizarlas.
+
+RF-007. Conservación histórica
+
+No eliminar físicamente expedientes ni movimientos históricos cuando la política vigente exige conservarlos.
+
+RF-008. Reingreso
+
+Antes de reactivar un expediente, comprobar las condiciones requeridas por el servicio oficial. No asumir que reactivar el expediente equivale a completar todas las operaciones de matrícula.
+
+RF-009. Resultado
+
+Mostrar el resultado confirmado por el servidor y actualizar el estado visible mediante una nueva consulta.
+
+RF-010. Errores y operaciones repetidas
+
+Evitar que un doble clic o una repetición accidental genere movimientos duplicados. Si el resultado es incierto por un fallo de comunicación, comprobar el estado antes de repetir la operación.
+
+4. Reglas de negocio y permisos
+
+- Mantener las restricciones institucionales sobre quién puede cambiar el estado.
+- Verificar los estados previos y las transiciones permitidas en el servidor.
+- No permitir retiros, traslados o reingresos por una simple modificación visual del estado.
+- No borrar matrículas ni movimientos para ocultar una operación anterior.
+- No modificar cobros, saldos o calificaciones como consecuencia indirecta, salvo que exista una dependencia explícita y autorizada. En ese caso, documentarla y limitarse a respetar el mecanismo existente.
+- Si una transición no está definida en las reglas actuales, no inventarla: documentar el caso y solicitar aclaración antes de implementarlo.
+
+5. Criterios de aceptación
+
+- Se muestra el estado correcto.
+- Las acciones disponibles dependen del estado y los permisos.
+- Los movimientos requieren los datos obligatorios.
+- Las operaciones críticas solicitan confirmación.
+- El historial se conserva.
+- Las acciones inválidas se rechazan.
+- Los resultados se reflejan después de consultar el estado.
+- Los fallos de comunicación no provocan operaciones duplicadas.
+
+6. Pruebas obligatorias
+
+1. Consultar expedientes en distintos estados existentes.
+2. Ejecutar un movimiento válido sobre un expediente de prueba.
+3. Intentar una transición no permitida.
+4. Intentar una operación sin los datos obligatorios.
+5. Cancelar una confirmación.
+6. Intentar ejecutar una operación con un rol no autorizado.
+7. Verificar la conservación del expediente y su historial.
+8. Simular una repetición de la misma solicitud.
+9. Simular una respuesta incierta y comprobar el estado antes de reintentar.
+10. Verificar el estado y los movimientos después de cada operación.
+
+7. Entregables
+
+- Interfaz de estados y movimientos.
+- Integración con los servicios oficiales confirmados.
+- Pruebas de transiciones y permisos.
+- Informe de resultados y dependencias detectadas.
+
+---
+
+TAREA REQ-EXP-009: EXPORTACIÓN AUTORIZADA DEL EXPEDIENTE A PDF
+
+1. Objetivo
+
+Permitir generar una copia legible del expediente de un estudiante en PDF, con la información autorizada y un formato adecuado para consulta, impresión y trámites institucionales.
+
+2. Alcance
+
+Esta tarea se limita a la exportación de un expediente individual. No incluye informes generales de rendimiento, certificados oficiales, plantillas documentales universales ni exportaciones masivas.
+
+3. Requisitos funcionales
+
+RF-001. Acción de exportación
+
+Incorporar la opción «Exportar expediente a PDF» en la vista del expediente, disponible únicamente para los roles autorizados.
+
+RF-002. Fuente de información
+
+Generar el documento a partir de los datos oficiales consultados y autorizados. No construir el documento exclusivamente con datos parciales o modificables del navegador.
+
+RF-003. Contenido
+
+Incluir los apartados que la institución haya definido para la ficha general, por ejemplo:
+
+- Identificación del estudiante.
+- Datos personales autorizados.
+- Grado, sección y estado actual, cuando corresponda.
+- Información de responsables que el usuario pueda exportar.
+- Fecha de generación del documento.
+
+No incluir automáticamente documentos adjuntos completos, contraseñas, credenciales, notas internas restringidas ni datos de otros estudiantes.
+
+RF-004. Formato
+
+Producir un PDF legible, con títulos, identificación clara del estudiante, paginación cuando sea necesaria y tratamiento adecuado de textos largos.
+
+RF-005. Datos ausentes
+
+Representar los campos vacíos de forma clara, sin inventar valores.
+
+RF-006. Identificación del documento
+
+Incluir la fecha de generación y los datos institucionales que ya estén definidos en la plataforma. No inventar sellos, firmas, certificaciones ni declaraciones de validez oficial.
+
+RF-007. Resultado
+
+Permitir abrir o descargar el PDF. Informar si la generación falla y no presentar archivos incompletos como exitosos.
+
+RF-008. Seguridad
+
+Verificar los permisos en el servidor antes de generar o entregar el documento. Evitar que un usuario pueda modificar un identificador y exportar el expediente de otra persona.
+
+RF-009. Reutilización
+
+Inspeccionar el generador documental o motor de reportes existente antes de implementar una solución nueva. Reutilizarlo si satisface los requisitos sin alterar su comportamiento general.
+
+4. Reglas de negocio y permisos
+
+- La autorización para consultar un expediente no implica automáticamente autorización para exportar todos sus datos.
+- La exportación debe respetar las mismas restricciones de privacidad aplicables a la consulta y las restricciones adicionales que existan.
+- No publicar el archivo en una ubicación accesible sin autorización.
+- No almacenar copias permanentes adicionales si el sistema no las necesita.
+- No modificar la ficha original al generar el PDF.
+
+5. Criterios de aceptación
+
+- El PDF se genera a partir de los datos oficiales.
+- El contenido corresponde al estudiante seleccionado.
+- El formato es legible en pantalla e impresión.
+- Los campos ausentes se manejan correctamente.
+- No se incluyen datos restringidos.
+- Los usuarios no autorizados no pueden exportar.
+- Los errores se comunican correctamente.
+- La generación no altera el expediente.
+
+6. Pruebas obligatorias
+
+1. Exportar un expediente de prueba completo.
+2. Exportar un expediente con campos vacíos.
+3. Comprobar la correspondencia de los datos del PDF con el expediente.
+4. Verificar la paginación y los textos largos.
+5. Intentar exportar con un rol no autorizado.
+6. Intentar solicitar un expediente distinto mediante parámetros modificados.
+7. Simular un error del generador.
+8. Comprobar que no se modifican registros al exportar.
+9. Verificar que el archivo puede abrirse con un lector de PDF.
+
+7. Entregables
+
+- Exportación individual a PDF.
+- Reutilización documentada del mecanismo de generación.
+- Pruebas e informe de resultados.
+
+---
+
+TAREA REQ-EXP-010: IMPORTACIÓN MASIVA DE EXPEDIENTES DESDE CSV Y XLSX
+
+1. Objetivo
+
+Diseñar e implementar una herramienta específica para importar expedientes de estudiantes desde archivos CSV y XLSX, con vista previa, correspondencia de columnas, validaciones, detección de duplicados y un informe de resultados.
+
+La herramienta debe reducir la carga manual sin comprometer la integridad de los expedientes ni crear registros duplicados.
+
+2. Alcance
+
+Esta tarea se limita a la importación inicial o actualización controlada de datos personales de expedientes de estudiantes. No debe convertirse en un importador universal para matrículas, calificaciones, asistencia, tutores, pagos, inventarios u otros módulos.
+
+No importar documentos binarios, fotografías ni archivos adjuntos como parte de esta tarea, salvo que el modelo existente disponga de una referencia documental compatible y la importación de esas referencias se autorice expresamente.
+
+3. Requisitos funcionales
+
+RF-001. Acceso restringido
+
+Mostrar la herramienta únicamente a los roles institucionales autorizados para importar expedientes. Aplicar también la autorización en el servidor.
+
+RF-002. Selección de archivo
+
+Permitir seleccionar archivos CSV y XLSX dentro de los límites de tamaño confirmados por la plataforma. Rechazar archivos dañados, vacíos o de formato no admitido con mensajes comprensibles.
+
+RF-003. Lectura inicial
+
+Leer las cabeceras y las filas del archivo sin escribir todavía en las hojas oficiales.
+
+RF-004. Vista previa
+
+Mostrar una vista previa de las filas que se van a procesar, permitiendo al usuario comprobar si el archivo fue interpretado correctamente.
+
+RF-005. Correspondencia de columnas
+
+Permitir relacionar las columnas del archivo con los campos admitidos del expediente. Utilizar nombres claros para usuarios administrativos, aunque los nombres internos de los campos sean diferentes.
+
+RF-006. Sugerencias de correspondencia
+
+Cuando sea posible, sugerir correspondencias por similitud de nombre, pero requerir revisión del usuario antes de confirmar un mapeo ambiguo.
+
+RF-007. Campos obligatorios
+
+Identificar los campos obligatorios según las reglas reales del servicio de creación o actualización. No inventar requisitos ni aceptar registros que el servicio oficial rechazaría.
+
+RF-008. Validación de filas
+
+Validar, antes de escribir:
+
+- Campos obligatorios.
+- Formatos de fechas.
+- Correos electrónicos, cuando correspondan.
+- Identificadores institucionales y personales.
+- Valores admitidos.
+- Duplicados dentro del archivo.
+- Coincidencias con los expedientes existentes.
+- Datos que no pueden actualizarse por importación.
+
+RF-009. Clasificación de resultados preliminares
+
+Clasificar las filas, como mínimo, en:
+
+- Válidas para creación.
+- Válidas para actualización, cuando se permita.
+- Requieren revisión.
+- Duplicadas.
+- Inválidas.
+
+Mostrar el motivo de cada clasificación.
+
+RF-010. Modo de validación
+
+Ofrecer un modo que permita validar el archivo y descargar el resultado sin escribir registros en la base de datos.
+
+RF-011. Confirmación de importación
+
+Antes de ejecutar la importación, presentar un resumen con el número de filas válidas, rechazadas, duplicadas y pendientes de revisión. Requerir confirmación explícita.
+
+RF-012. Creación y actualización
+
+Utilizar los servicios oficiales de creación o actualización. No escribir directamente en Google Sheets si eso omite validaciones, identificadores, movimientos o reglas de integridad del sistema.
+
+RF-013. Prevención de duplicados
+
+No crear expedientes nuevos cuando exista una coincidencia inequívoca que deba resolverse. Las coincidencias aproximadas deben marcarse para revisión. No fusionar expedientes automáticamente durante una importación.
+
+RF-014. Errores por fila
+
+Si una fila falla, registrar su número de origen, el motivo del error y el resultado. No mostrar información confidencial de otros estudiantes en los informes.
+
+RF-015. Resultado final
+
+Al concluir, mostrar un resumen con:
+
+- Filas procesadas.
+- Expedientes creados.
+- Expedientes actualizados, si la actualización está permitida.
+- Filas rechazadas.
+- Duplicados detectados.
+- Filas que requieren revisión.
+- Errores ocurridos durante la operación.
+
+RF-016. Informe descargable
+
+Permitir descargar un informe de validación o importación con el resultado por fila. No incluir contraseñas, credenciales ni datos sensibles innecesarios.
+
+RF-017. Reintentos seguros
+
+Evitar que repetir la importación cree duplicados. Si una operación se interrumpe, identificar qué filas se procesaron correctamente antes de permitir reanudarla o volver a ejecutarla.
+
+RF-018. Perfil de mapeo
+
+Si se implementan perfiles reutilizables de correspondencia, almacenarlos sin incorporar información personal del archivo a un perfil que deba ser reutilizable. Esta función solo se incluirá si no compromete el alcance ni la seguridad de la importación básica.
+
+4. Reglas de negocio y seguridad
+
+- Los identificadores estables del expediente no deben generarse mediante reglas improvisadas en el navegador.
+- Utilizar el mecanismo institucional oficial para crear identificadores.
+- No actualizar automáticamente un expediente solo porque coincida el nombre.
+- No reemplazar datos existentes por celdas vacías del archivo sin una regla explícita y confirmada.
+- No modificar matrículas, calificaciones, asistencia, tutores, pagos ni estados de movilidad.
+- Si una fila requiere datos que pertenecen a otra herramienta, marcarla como pendiente de revisión y explicar el motivo.
+- Preservar la estructura, las cabeceras y las reglas de las hojas oficiales. No recrear hojas ni cambiar sus formatos para adaptar el sistema al archivo importado.
+- La importación debe respetar los controles de acceso, la trazabilidad y los mecanismos de concurrencia existentes.
+- Si no es posible garantizar la reversión completa de una operación parcial, no prometer que la importación es transaccional. Definir y documentar cómo se identifican los registros procesados y cómo se recupera una operación interrumpida.
+- No dejar importaciones de prueba en datos reales.
+- La importación debe ser idempotente o contar con controles equivalentes para impedir duplicados por reintento.
+
+5. Criterios de aceptación
+
+- Se admiten CSV y XLSX válidos dentro de los límites confirmados.
+- La vista previa no modifica datos.
+- Las columnas pueden mapearse de manera explícita.
+- Las validaciones identifican errores y duplicados antes de confirmar.
+- El modo de validación no escribe en la base de datos.
+- La confirmación muestra un resumen claro.
+- Los registros se crean o actualizan mediante las operaciones oficiales.
+- Los errores por fila quedan identificados.
+- El informe final coincide con los resultados realmente almacenados.
+- Los reintentos no generan duplicados.
+- Las operaciones respetan los permisos institucionales.
+- Los módulos ajenos permanecen intactos.
+
+6. Pruebas obligatorias
+
+1. Importar un CSV válido en un entorno de prueba.
+2. Importar un XLSX válido.
+3. Procesar un archivo con columnas desconocidas.
+4. Procesar un archivo con campos obligatorios vacíos.
+5. Procesar fechas y correos inválidos.
+6. Detectar filas duplicadas dentro del archivo.
+7. Detectar coincidencias con expedientes existentes.
+8. Verificar que el modo de validación no escribe datos.
+9. Cancelar antes de confirmar y comprobar que no se realizaron cambios.
+10. Ejecutar una importación confirmada y verificar los registros almacenados.
+11. Simular un fallo durante el procesamiento.
+12. Repetir la operación y comprobar que no se crean duplicados.
+13. Verificar que el informe descargable refleja los resultados reales.
+14. Intentar importar con un rol no autorizado.
+15. Verificar que no se modifican matrículas, calificaciones, asistencia, tutores ni pagos.
+
+7. Entregables
+
+- Herramienta de importación de expedientes.
+- Vista previa y mapeo de columnas.
+- Validación previa y detección de duplicados.
+- Modo de validación sin escritura.
+- Informe descargable por fila.
+- Pruebas reales e informe de resultados.
+- Documentación de límites, recuperación de fallos y dependencias.
+
+---
+
+CRITERIO GENERAL DE CIERRE DEL CONJUNTO DE TAREAS
+
+Cada tarea debe completarse, probarse y revisarse de forma independiente. La implementación de una tarea no autoriza a marcar como terminadas las demás.
+
+Al finalizar cada una, Jules debe entregar:
+
+1. Resultado: qué comportamiento quedó implementado.
+2. Estado previo confirmado: qué existía realmente antes de los cambios.
+3. Archivos modificados: rutas y propósito de cada modificación.
+4. Servicios reutilizados: funciones existentes verificadas y forma en que se integraron.
+5. Pruebas: casos ejecutados, resultado esperado, resultado real y estado.
+6. Seguridad: comprobaciones de permisos y protección de datos efectuadas.
+7. Compatibilidad: efectos comprobados sobre las funciones existentes relacionadas.
+8. Limitaciones: pruebas no ejecutadas, dependencias pendientes y problemas no resueltos.
+9. Cambios de alcance: cualquier necesidad adicional detectada debe documentarse y quedar pendiente de autorización, sin implementarse automáticamente.
+10. Cierre: indicar expresamente si la tarea está completa, parcialmente completa o bloqueada, justificando el estado con evidencia.
+
+Orden de ejecución
+
+1. REQ-EXP-001: Consulta y visualización del expediente.
+2. REQ-EXP-002: Edición de datos personales.
+3. REQ-EXP-003: Gestión de tutores y responsables.
+4. REQ-EXP-004: Documentos y fotografías.
+5. REQ-EXP-005: Línea de tiempo e historial.
+6. REQ-EXP-006: Prevención y resolución de duplicados.
+7. REQ-EXP-007: Búsqueda institucional.
+8. REQ-EXP-008: Estados y movilidad estudiantil.
+9. REQ-EXP-009: Exportación del expediente a PDF.
+10. REQ-EXP-010: Importación masiva de expedientes.
+
+Este orden es una propuesta inicial. Si la inspección del repositorio descubre una dependencia directa que impida ejecutar una tarea, Jules debe documentarla y proponer el ajuste mínimo al orden, sin ampliar automáticamente el alcance de las tareas.
+
+Fin del plan de tareas derivadas de la Fase 1.
+
+---
+
 ### [REQ-EXP-001] Interfaz de Usuario e Integración del Expediente Digital Unificado del Estudiante
 - **Origen del Hallazgo:** Auditoría.txt (Mon Jul 6 2026 - Fase 1: Auditoría Funcional Integral del Registro y Expediente de Estudiantes)
 - **Severidad/Clasificación:** Crítico
