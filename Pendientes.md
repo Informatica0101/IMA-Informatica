@@ -5728,3 +5728,623 @@ Si alguna condición no puede completarse por falta de infraestructura o de serv
 - **Tareas Concretas:**
   1. Filtrar las notas confidenciales en `getAttendanceFollowupCases` si el usuario no posee el permiso especial `VIEW_CONFIDENTIAL_NOTES`.
   2. Registrar en la bitácora de auditoría estructurada (`RegistrosAuditoria`) cada acceso o consulta realizada a expedientes confidenciales de bienestar.
+
+---
+
+PLAN DE IMPLEMENTACIÓN FUNCIONAL: FASE 7
+
+Bienestar estudiantil y orientación
+
+Plataforma: Ecosistema Educativo New Generation Christian Academy
+Fase: 7. Bienestar estudiantil y orientación
+Base: Informe de auditoría funcional integral de la Fase 7
+Objetivo: Completar las herramientas de bienestar estudiantil una por una, corregir los defectos comprobados, proteger los expedientes confidenciales y establecer criterios verificables para cada función.
+
+1. INSTRUCCIÓN PRINCIPAL PARA JULES
+
+Implementa las tareas de este documento respetando el orden indicado y trabajando una herramienta o función por ejecución.
+
+No intentes implementar toda la fase en un solo cambio. Cada tarea tiene un alcance delimitado y debe completarse, probarse y documentarse antes de iniciar la siguiente.
+
+En cada ejecución:
+
+1. Lee "METODOLOGIA_DESARROLLO.md" y las instrucciones pertinentes del repositorio.
+2. Inspecciona la implementación real de la función específica que vas a modificar.
+3. Revisa sus dependencias directas y reutiliza los componentes existentes.
+4. Implementa únicamente la tarea seleccionada y los cambios estrictamente necesarios para que funcione.
+5. Ejecuta las pruebas pertinentes y comprueba que los datos persisten correctamente.
+6. Comprueba los permisos y la protección de datos cuando corresponda.
+7. Entrega un informe con los archivos modificados, pruebas realizadas, resultados, limitaciones y pendientes.
+8. Detente al terminar esa tarea. No avances automáticamente a la siguiente.
+
+La primera tarea es BS-IMP-01: corregir el acceso no autorizado a los expedientes confidenciales de bienestar. Este problema debe resolverse antes de construir interfaces que permitan consultar o modificar esos registros.
+
+Si una tarea no puede completarse, explica qué la bloquea y aporta evidencia. No la marques como terminada ni la sustituyas por una solución visual que no resuelva el problema real.
+
+Reglas generales
+
+- No reconstruyas servicios que ya funcionan.
+- No dupliques funciones, hojas, registros ni mecanismos de permisos.
+- Conserva los datos históricos y los identificadores existentes.
+- No alteres módulos académicos, de asistencia o matrícula fuera de los cambios estrictamente necesarios para la función seleccionada.
+- No cambies las calificaciones oficiales ni las reglas académicas para implementar alertas de bienestar.
+- No conviertas automáticamente una alerta en una sanción, un diagnóstico o una decisión definitiva sobre un estudiante.
+- No expongas información sensible en notificaciones, mensajes de error, registros técnicos o interfaces que no tengan autorización.
+- Toda interfaz visible debe usar español claro y comprensible para personal escolar y familias.
+- No declares que una función está operativa por el simple hecho de que exista un botón, un formulario o una función de servidor.
+- No afirmes que ejecutaste pruebas que no se realizaron.
+- Si un servicio externo, mecanismo de cifrado o proceso programado no existe, verifica primero las capacidades disponibles y documenta la dependencia en lugar de simular su funcionamiento.
+
+---
+
+2. ORDEN DE IMPLEMENTACIÓN
+
+Orden| ID| Herramienta| Prioridad
+1| BS-IMP-01| Privacidad y aislamiento de expedientes sensibles| Crítica
+2| BS-IMP-02| Corrección y actualización de planes de acompañamiento| Alta
+3| BS-IMP-03| Interfaz de registro de incidencias de conducta| Alta
+4| BS-IMP-04| Gestión y seguimiento de casos| Alta
+5| BS-IMP-05| Registro de actuaciones y resultados| Alta
+6| BS-IMP-06| Planes de apoyo, objetivos y compromisos| Alta
+7| BS-IMP-07| Derivaciones a orientación escolar| Alta
+8| BS-IMP-08| Alertas preventivas de ausentismo| Alta
+9| BS-IMP-09| Alertas preventivas de bajo rendimiento| Alta
+10| BS-IMP-10| Alertas de riesgo de abandono escolar| Alta
+11| BS-IMP-11| Reuniones con responsables y actas| Media
+12| BS-IMP-12| Citas y agenda de orientación| Media
+13| BS-IMP-13| Auditoría de accesos y modificaciones sensibles| Alta
+14| BS-IMP-14| Integración del panel de bienestar y orientación| Alta
+15| BS-IMP-15| Pruebas finales de aceptación y regresión| Alta
+
+Las tareas pueden tener dependencias directas. Jules debe respetarlas, pero no ampliar cada tarea para modificar todas las herramientas relacionadas.
+
+---
+
+3. TAREAS DE IMPLEMENTACIÓN
+
+BS-IMP-01. Corregir el acceso a expedientes confidenciales
+
+Prioridad: Crítica
+Herramienta: BS-10 y BS-11
+Archivos de referencia: "backend/academic-service/Code.gs", "backend/user-service/Code.gs" y los controladores que consulten casos o planes de acompañamiento.
+
+Problema confirmado
+
+La auditoría indica que "getAttendanceFollowupCases" devuelve notas confidenciales sin aplicar un filtro específico de confidencialidad. El acceso general a los casos no distingue adecuadamente entre docentes ordinarios y personal autorizado de orientación.
+
+Trabajo requerido
+
+1. Inspecciona "checkAuthorization_", "getAttendanceFollowupCases", "getSupportPlans", "saveAttendanceFollowupCase", "addCaseFollowUpNote" y cualquier otra función que permita consultar o modificar los mismos registros.
+2. Identifica todos los puntos de entrada que pueden revelar información confidencial. No te limites a corregir una sola función si existen otras rutas de acceso al mismo contenido.
+3. Determina qué roles existen realmente y cómo se verifican en el servidor. Comprueba si puede utilizarse el sistema de permisos actual para definir un rol de orientación o permisos equivalentes.
+4. Implementa autorización en el servidor para cada operación sensible:
+   - Consultar información confidencial.
+   - Crear un registro sensible.
+   - Añadir notas privadas.
+   - Modificar un caso.
+   - Asignar o reasignar responsables.
+   - Cerrar o reabrir un caso.
+   - Consultar archivos o documentos asociados.
+5. Separa la información general de seguimiento de las notas confidenciales cuando la estructura actual permita que se filtren juntas.
+6. Define qué información mínima puede consultar un docente ordinario y qué información queda restringida al personal de orientación autorizado.
+7. Comprueba la identidad y los permisos de la persona que realiza cada solicitud en el servidor. No confíes en el "userId", rol o identificador de estudiante enviado desde la interfaz sin validarlo.
+8. Evita que un usuario pueda acceder a un expediente confidencial cambiando manualmente el identificador del estudiante o del caso.
+9. Inspecciona las exportaciones, consultas generales y respuestas de los servicios para comprobar que no revelen notas privadas indirectamente.
+10. Evalúa la protección de los datos almacenados. No afirmes que existe cifrado si los datos están guardados en texto legible. Si se requiere cifrado, determina primero qué mecanismo es compatible con la infraestructura actual, cómo se administrarán las claves y cómo se mantendrá el acceso autorizado a los datos existentes.
+11. Conserva los registros históricos. No elimines ni sobrescribas las notas existentes para solucionar el problema de permisos.
+
+Criterios de aceptación
+
+- Un docente ordinario no puede leer notas privadas de orientación mediante "getAttendanceFollowupCases" ni mediante otro acceso equivalente.
+- Un usuario sin permisos no puede consultar ni modificar datos sensibles mediante llamadas directas al servidor.
+- El personal de orientación autorizado puede acceder a la información necesaria para su función.
+- Las autorizaciones se comprueban en el servidor.
+- La respuesta de un servicio no incluye campos confidenciales que el usuario no esté autorizado a consultar.
+- Los registros existentes continúan disponibles para los usuarios autorizados.
+- Las pruebas incluyen intentos de acceso con identificadores de estudiantes y casos ajenos.
+- Los resultados y limitaciones del mecanismo de protección de datos quedan documentados.
+
+No advances a la siguiente tarea hasta haber corregido y probado este problema.
+
+---
+
+BS-IMP-02. Corregir la actualización de planes de acompañamiento
+
+Prioridad: Alta
+Herramienta: BS-04
+Archivo principal: "backend/user-service/Code.gs"
+
+Problema confirmado
+
+Según la auditoría, "saveSupportPlan" inserta una nueva fila al guardar cambios en un plan existente. Esto provoca duplicados y dificulta conservar la continuidad de las revisiones.
+
+Trabajo requerido
+
+1. Inspecciona "saveSupportPlan", "getSupportPlans" y la estructura de "PlanesAcompanamiento".
+2. Define claramente la diferencia entre crear un plan nuevo y actualizar uno existente.
+3. Cuando se proporcione un "PlanID" válido, localiza el plan existente y actualiza el registro correspondiente, en lugar de insertar otro.
+4. Cuando se cree un plan nuevo, genera un identificador único siguiendo las convenciones existentes.
+5. Conserva el historial de modificaciones mediante un mecanismo compatible con el proyecto. No sobrescribas información histórica que deba permanecer disponible.
+6. Comprueba los permisos para crear, actualizar, consultar y cerrar planes.
+7. Valida los objetivos, el responsable, las fechas y el estado antes de guardar.
+8. Evita que un identificador inexistente provoque la actualización accidental de otro registro.
+9. Revisa el comportamiento de solicitudes repetidas para evitar duplicados.
+10. Si los registros históricos ya contienen duplicados, identifícalos y documenta cómo deben tratarse. No los elimines automáticamente.
+
+Criterios de aceptación
+
+- Crear un plan genera un único registro.
+- Actualizar un plan conserva su "PlanID" y modifica el plan correcto.
+- El historial de revisiones se mantiene de acuerdo con el diseño existente.
+- Las consultas devuelven los planes correspondientes sin duplicados generados por las actualizaciones.
+- Un usuario sin autorización no puede modificar un plan.
+- Los registros históricos se conservan.
+
+---
+
+BS-IMP-03. Crear la interfaz de registro de incidencias de conducta
+
+Prioridad: Alta
+Herramienta: BS-01
+Archivos de referencia: "backend/academic-service/Code.gs", "js/teacher.js", "teacher-dashboard.html".
+
+Trabajo requerido
+
+1. Revisa "saveAttendanceIncident" y "IncidenciasAsistencia" antes de modificar el modelo de datos.
+2. Determina si la función actual sirve realmente para incidencias de conducta o si solo admite incidentes relacionados con asistencia.
+3. Conserva la función de asistencia existente y evita convertirla en un registro genérico que mezcle información incompatible.
+4. Diseña un formulario de incidencias de conducta con los campos necesarios, según las capacidades reales del sistema:
+   - Estudiante.
+   - Fecha y ubicación.
+   - Categoría del incidente.
+   - Descripción objetiva de lo observado.
+   - Persona que registra el incidente.
+   - Personas involucradas y testigos, si corresponde.
+   - Gravedad inicial.
+   - Documentos o evidencias, únicamente si existe un mecanismo seguro.
+   - Estado de revisión.
+5. Permite consultar el historial de incidencias únicamente a usuarios autorizados.
+6. Distingue entre una incidencia reportada, una incidencia en revisión y una conclusión confirmada.
+7. Si se requieren nuevas categorías o campos, amplía la estructura de forma compatible y conserva los datos existentes.
+8. Incorpora validaciones, mensajes claros y prevención de registros duplicados.
+
+Criterios de aceptación
+
+- El usuario autorizado puede registrar una incidencia y consultarla posteriormente.
+- Los campos obligatorios se validan.
+- Las incidencias de conducta no se confunden con las incidencias de asistencia.
+- Las modificaciones relevantes conservan trazabilidad.
+- Los usuarios sin permisos no pueden consultar la información confidencial.
+- La interfaz no convierte automáticamente una denuncia en una sanción.
+
+---
+
+BS-IMP-04. Completar la gestión de casos de seguimiento
+
+Prioridad: Alta
+Herramienta: BS-02
+Archivo principal: "backend/academic-service/Code.gs".
+
+Trabajo requerido
+
+1. Reutiliza "saveAttendanceFollowupCase", "getAttendanceFollowupCases" y "addCaseFollowUpNote".
+2. Crea una interfaz para que el personal autorizado consulte y gestione los casos de seguimiento.
+3. Permite buscar y filtrar por estado, responsable, fecha y prioridad cuando esos campos estén disponibles.
+4. Implementa la asignación y reasignación de responsables, respetando los permisos.
+5. Permite cambiar el estado del caso mediante transiciones válidas.
+6. Muestra la cronología de actuaciones y las fechas relevantes.
+7. Incorpora la próxima acción y la fecha prevista de seguimiento, si no existen ya.
+8. Permite registrar el motivo de cierre y reabrir casos cuando esté autorizado.
+9. Evita duplicar casos cuando se actualiza un registro existente.
+10. Aplica los controles de confidencialidad de BS-IMP-01 en todas las consultas y modificaciones.
+
+Criterios de aceptación
+
+- Los casos pueden consultarse, asignarse, actualizarse y cerrarse según los permisos.
+- Los cambios de estado quedan registrados.
+- El historial no desaparece al cambiar de responsable.
+- Las consultas aplican los filtros y permisos correctos.
+- Los datos privados no aparecen en vistas generales de usuarios no autorizados.
+
+---
+
+BS-IMP-05. Completar el registro de actuaciones y resultados
+
+Prioridad: Alta
+Herramienta: BS-09
+Archivo de referencia: "backend/academic-service/Code.gs".
+
+Trabajo requerido
+
+1. Revisa "AccionesJSON" y "addCaseFollowUpNote".
+2. Determina qué actuaciones ya pueden registrarse y qué información se pierde al almacenarlas como texto plano.
+3. Amplía el modelo, si resulta necesario, para registrar cada actuación con campos definidos:
+   - Identificador.
+   - Caso relacionado.
+   - Tipo de actuación.
+   - Fecha.
+   - Responsable.
+   - Descripción.
+   - Resultado observado.
+   - Próxima acción.
+   - Fecha prevista de revisión.
+   - Estado de cumplimiento.
+4. Conserva las notas históricas existentes y garantiza que puedan consultarse.
+5. Evita almacenar el mismo evento tanto en el historial del caso como en un registro independiente sin una relación clara.
+6. Permite consultar la cronología de actuaciones desde la gestión del caso.
+7. Aplica los permisos de confidencialidad existentes.
+
+Criterios de aceptación
+
+- Las actuaciones pueden registrarse con fechas y responsables.
+- Las próximas revisiones pueden identificarse y consultarse.
+- Las actuaciones permanecen vinculadas al caso correcto.
+- Los registros históricos continúan disponibles.
+- Las actuaciones no autorizadas no pueden crearse ni modificarse.
+
+---
+
+BS-IMP-06. Completar los planes de apoyo y compromisos
+
+Prioridad: Alta
+Herramienta: BS-04
+Dependencia directa: BS-IMP-02.
+
+Trabajo requerido
+
+1. Reutiliza la estructura y los servicios de "PlanesAcompanamiento".
+2. Añade una interfaz de consulta y edición de planes.
+3. Permite gestionar objetivos individuales, responsables, fechas y estados.
+4. Define un método verificable para registrar el progreso de cada objetivo.
+5. Muestra los objetivos pendientes, en progreso, cumplidos o que requieren revisión, adaptando los estados al modelo existente.
+6. Permite documentar compromisos y responsables.
+7. Incorpora fechas de revisión y resultados observados.
+8. Permite ajustar un plan sin borrar las revisiones anteriores.
+9. Distingue los compromisos del estudiante, los de la familia y los del personal institucional cuando corresponda.
+10. No exijas una firma digital certificada si el proyecto no dispone de esa capacidad. Si se requiere una confirmación, registra de forma precisa qué persona confirmó qué acuerdo y mediante qué mecanismo.
+
+Criterios de aceptación
+
+- Los planes pueden consultarse y actualizarse sin generar duplicados.
+- El avance de los objetivos se puede verificar.
+- Las revisiones anteriores permanecen disponibles.
+- Los responsables y las fechas son visibles para los usuarios autorizados.
+- Los compromisos no se presentan como aceptados si no existe una confirmación real.
+
+---
+
+BS-IMP-07. Implementar las derivaciones a orientación escolar
+
+Prioridad: Alta
+Herramienta: BS-05.
+
+Trabajo requerido
+
+1. Comprueba los roles y permisos existentes antes de incorporar un flujo nuevo.
+2. Implementa un procedimiento para que un docente u otro usuario autorizado remita una situación a orientación.
+3. Registra la información mínima necesaria para explicar el motivo de la derivación.
+4. Permite asignar la derivación a un orientador autorizado.
+5. Implementa estados claros: enviada, recibida, en revisión, requiere información adicional, atendida y cerrada, adaptados al flujo real.
+6. Registra la confirmación de recepción.
+7. Permite devolver una derivación para aclaraciones sin perder su historial.
+8. Vincula la derivación al caso de seguimiento cuando corresponda.
+9. Restringe las notas internas del orientador al personal autorizado.
+10. No expongas el expediente completo al remitente cuando solo necesite conocer el estado de la derivación.
+
+Criterios de aceptación
+
+- El remitente puede crear una derivación autorizada.
+- El orientador puede recibirla y gestionarla.
+- El remitente puede conocer el estado permitido, sin acceder automáticamente a las notas confidenciales.
+- La derivación conserva su historial.
+- Las operaciones se autorizan en el servidor.
+
+---
+
+BS-IMP-08. Implementar alertas preventivas de ausentismo
+
+Prioridad: Alta
+Herramienta: BS-07
+Dependencia directa: registros de asistencia existentes.
+
+Trabajo requerido
+
+1. Identifica la fuente oficial de asistencia y cómo distingue las ausencias justificadas, injustificadas, los registros pendientes y los días sin actividad académica.
+2. No utilices "resumenAsistencia" como única fuente si no permite comprobar el detalle y el periodo de las ausencias.
+3. Define reglas configurables para identificar patrones de ausentismo. No impongas un umbral institucional arbitrario sin documentar que debe ser validado por la institución.
+4. Permite detectar, según las reglas aprobadas, ausencias injustificadas consecutivas o recurrentes.
+5. Registra el motivo de cada alerta, el periodo analizado y la fecha de generación.
+6. Evita generar alertas duplicadas por el mismo patrón mientras no haya un cambio relevante.
+7. Permite revisar, clasificar y cerrar alertas.
+8. Registra las acciones de seguimiento asociadas a una alerta.
+9. Determina si existe un mecanismo de ejecución periódica. Si no existe, documenta la dependencia antes de afirmar que las alertas se generan automáticamente.
+10. Evita modificar o corregir automáticamente los registros oficiales de asistencia.
+
+Criterios de aceptación
+
+- Las alertas se generan conforme a reglas explícitas y verificables.
+- Las ausencias justificadas y los periodos sin clases se tratan correctamente.
+- Cada alerta explica por qué se generó.
+- El personal autorizado puede revisar y documentar el seguimiento.
+- La ejecución repetida no crea alertas duplicadas sin justificación.
+- Los registros oficiales de asistencia permanecen intactos.
+
+---
+
+BS-IMP-09. Implementar alertas preventivas de bajo rendimiento
+
+Prioridad: Alta
+Herramienta: BS-08
+Dependencia directa: fuentes oficiales de calificaciones y evaluaciones.
+
+Trabajo requerido
+
+1. Identifica las fuentes oficiales de calificaciones, asignaturas, periodos y estados de evaluación.
+2. Determina cómo se representan las evaluaciones pendientes, las calificaciones faltantes y las asignaturas reprobadas.
+3. Permite configurar reglas institucionales para detectar resultados que requieran seguimiento.
+4. Implementa el criterio de dos o más asignaturas reprobadas como regla configurable de partida, sujeto a la validación de la institución, y no como un valor universal e inmodificable.
+5. Registra las asignaturas y el periodo que originaron la alerta.
+6. Permite revisar la alerta, documentar acciones de apoyo y consultar la evolución posterior.
+7. Evita duplicados y actualiza el estado de una alerta cuando cambian las calificaciones de origen.
+8. No modifiques las calificaciones ni los cálculos académicos oficiales.
+9. No presentes una alerta académica como diagnóstico psicológico o como prueba de una causa concreta.
+
+Criterios de aceptación
+
+- Las alertas se basan en datos oficiales y reglas configuradas.
+- Los datos faltantes no se interpretan automáticamente como reprobación.
+- La alerta identifica las asignaturas y el periodo correspondiente.
+- Los cambios en los datos de origen pueden reflejarse en el estado de seguimiento.
+- Las alertas no modifican las calificaciones oficiales.
+
+---
+
+BS-IMP-10. Implementar alertas de riesgo de abandono escolar
+
+Prioridad: Alta
+Herramienta: BS-06
+Dependencias directas: alertas de ausentismo y bajo rendimiento, si ambas se encuentran disponibles y se autoriza su uso.
+
+Trabajo requerido
+
+1. Define qué información institucional puede utilizarse para detectar posibles señales de abandono escolar.
+2. Reutiliza únicamente datos autorizados y pertinentes, evitando copiar expedientes completos.
+3. Diseña reglas transparentes y configurables que puedan combinar señales relevantes, como patrones de ausentismo y dificultades académicas.
+4. Documenta los factores considerados y la forma en que contribuyen a la alerta.
+5. Si se utiliza una puntuación de riesgo, explica su significado, sus límites y cómo se calcula. No la presentes como una probabilidad estadística validada si no ha sido evaluada con datos adecuados.
+6. Permite que personal autorizado revise la alerta antes de tomar medidas.
+7. Registra la decisión del revisor, las acciones de apoyo y el resultado del seguimiento.
+8. Permite corregir alertas originadas por información errónea.
+9. Evita duplicados y conserva el historial.
+10. No adoptes decisiones automáticas de sanción, exclusión, baja o restricción académica basadas únicamente en una alerta.
+
+Criterios de aceptación
+
+- Cada alerta identifica los factores verificables que la originaron.
+- Los usuarios autorizados pueden revisar y documentar la decisión.
+- Las alertas no generan sanciones automáticas.
+- Las reglas se pueden ajustar sin modificar arbitrariamente los registros de origen.
+- Las limitaciones de los indicadores quedan documentadas.
+
+---
+
+BS-IMP-11. Implementar reuniones con responsables y actas
+
+Prioridad: Media
+Herramienta: BS-03
+Dependencia directa: expediente del estudiante y relación autorizada con responsables legales.
+
+Trabajo requerido
+
+1. Inspecciona el sistema de usuarios y responsables legales antes de diseñar el formulario.
+2. Implementa el registro de reuniones de bienestar con fecha, participantes, motivo, modalidad y estado.
+3. Permite registrar asistencia, acuerdos, responsables de los compromisos y fechas de revisión.
+4. Distingue entre un acta compartible con los participantes y las notas privadas de orientación.
+5. Permite reprogramar o cancelar reuniones sin eliminar el historial.
+6. Si existe un canal de notificación, reutilízalo para avisos autorizados. No afirmes que se enviaron invitaciones si no existe una entrega comprobada.
+7. Implementa confirmación de asistencia cuando el sistema lo permita.
+8. Aplica las restricciones de acceso a datos confidenciales.
+
+Criterios de aceptación
+
+- El personal autorizado puede registrar y consultar reuniones.
+- Los acuerdos tienen responsables y fechas cuando corresponda.
+- Las cancelaciones y reprogramaciones conservan el historial.
+- Los responsables legales solo acceden a la información que están autorizados a consultar.
+- Las notas internas no se exponen automáticamente en el acta compartida.
+
+---
+
+BS-IMP-12. Implementar citas y agenda de orientación
+
+Prioridad: Media
+Herramienta: BS-12
+Dependencia directa: calendario existente, solo si puede reutilizarse sin mezclar datos confidenciales.
+
+Trabajo requerido
+
+1. Revisa los mecanismos actuales de calendario y eventos.
+2. Determina si pueden reutilizarse para citas privadas sin exponer el motivo de la consulta a usuarios no autorizados.
+3. Permite registrar citas con orientador, fecha, duración, modalidad y estado.
+4. Comprueba la disponibilidad del orientador cuando existan datos de agenda suficientes.
+5. Evita reservar dos citas incompatibles para el mismo profesional y horario.
+6. Permite confirmar, cancelar y reprogramar citas.
+7. Registra los avisos enviados únicamente cuando exista evidencia de su envío.
+8. Separa la información necesaria para organizar la agenda de las notas confidenciales del caso.
+9. Limita las consultas a los participantes autorizados.
+
+Criterios de aceptación
+
+- El personal autorizado puede programar y administrar citas.
+- Los conflictos de horario se detectan correctamente.
+- Las cancelaciones y reprogramaciones se conservan.
+- El calendario no expone el motivo confidencial de la cita a usuarios no autorizados.
+- Las citas no se presentan como confirmadas sin una confirmación real.
+
+---
+
+BS-IMP-13. Crear una bitácora de accesos y modificaciones sensibles
+
+Prioridad: Alta
+Herramienta: BS-11
+Dependencia directa: mecanismos de auditoría existentes.
+
+Trabajo requerido
+
+1. Inspecciona si ya existe un registro de auditoría reutilizable.
+2. Si existe, amplíalo de forma compatible. Si no existe, documenta y diseña el mecanismo mínimo necesario para registrar eventos de seguridad.
+3. Registra, según corresponda:
+   - Quién accedió a un expediente confidencial.
+   - Qué operación realizó.
+   - Sobre qué tipo de registro.
+   - Fecha y hora.
+   - Si la operación fue autorizada o denegada.
+   - Resultado general de la operación.
+4. Registra cambios relevantes en los permisos y en la asignación de responsables.
+5. No copies las notas confidenciales completas dentro de la bitácora.
+6. Restringe el acceso a la bitácora y evita que los usuarios ordinarios puedan modificarla o borrarla.
+7. Comprueba cómo se comporta el sistema cuando no puede registrar un evento de auditoría importante y documenta el riesgo.
+8. Evita introducir una segunda bitácora si ya existe un mecanismo institucional equivalente.
+
+Criterios de aceptación
+
+- Las operaciones sensibles dejan trazabilidad suficiente.
+- Los eventos registrados no contienen innecesariamente el contenido de las notas privadas.
+- Los usuarios sin autorización no pueden alterar la bitácora.
+- Las consultas de auditoría están restringidas.
+- Los resultados pueden utilizarse para investigar accesos indebidos.
+
+---
+
+BS-IMP-14. Integrar el panel de bienestar y orientación
+
+Prioridad: Alta
+Herramientas: interfaz de acceso para BS-01 a BS-12.
+
+Trabajo requerido
+
+1. Inspecciona la estructura real de "teacher-dashboard.html", "js/teacher.js" y los componentes de interfaz existentes.
+2. Reutiliza los patrones visuales y de navegación de la plataforma.
+3. Crea una sección de bienestar accesible únicamente a los roles autorizados.
+4. Organiza las herramientas en opciones separadas, con nombres comprensibles:
+   - Incidencias.
+   - Casos de seguimiento.
+   - Planes de apoyo.
+   - Derivaciones.
+   - Alertas preventivas.
+   - Reuniones y citas.
+5. Muestra solo las opciones permitidas para el rol del usuario.
+6. Mantén separadas las vistas generales de seguimiento y los expedientes confidenciales.
+7. Incorpora búsquedas, filtros y estados que respondan a las necesidades reales de cada herramienta.
+8. Añade estados vacíos, confirmaciones y mensajes comprensibles.
+9. No coloques notas confidenciales en el dashboard general del docente.
+10. Comprueba la navegación en teléfonos y computadoras.
+
+Criterios de aceptación
+
+- Cada herramienta puede abrirse desde una interfaz real y utilizar sus servicios correspondientes.
+- Las opciones disponibles coinciden con los permisos del usuario.
+- Los registros se consultan y actualizan desde la interfaz.
+- Los errores se muestran de forma comprensible sin exponer información sensible.
+- La interfaz no sustituye los controles de autorización del servidor.
+
+---
+
+BS-IMP-15. Ejecutar pruebas finales de aceptación y regresión
+
+Prioridad: Alta
+Condición: Ejecutar esta tarea cuando las tareas anteriores que correspondan estén implementadas.
+
+Pruebas de privacidad
+
+- Intentar consultar un caso confidencial con un docente ordinario.
+- Intentar modificar una nota privada sin autorización.
+- Intentar consultar el caso de otro estudiante alterando su identificador.
+- Comprobar que las consultas generales no exponen campos privados.
+- Verificar las restricciones de exportaciones y adjuntos cuando existan.
+- Confirmar que el personal autorizado puede acceder a sus casos.
+
+Pruebas de planes de apoyo
+
+- Crear un plan.
+- Actualizarlo usando el mismo identificador.
+- Comprobar que no se crea una fila duplicada.
+- Verificar que las revisiones anteriores se conservan.
+- Intentar modificar el plan con un usuario no autorizado.
+
+Pruebas de casos y derivaciones
+
+- Crear un caso.
+- Asignar un responsable.
+- Registrar una actuación.
+- Programar una revisión.
+- Crear una derivación.
+- Confirmar su recepción.
+- Cerrar o reabrir el caso según los permisos.
+- Verificar la persistencia y el historial.
+
+Pruebas de alertas
+
+- Probar los umbrales configurados de ausentismo.
+- Comprobar el tratamiento de ausencias justificadas.
+- Probar las reglas configuradas de bajo rendimiento.
+- Verificar el tratamiento de evaluaciones pendientes.
+- Comprobar que una misma condición no genera duplicados sin justificación.
+- Confirmar que las alertas no modifican los registros académicos de origen.
+- Verificar que el riesgo de abandono se presenta como una señal para revisión humana.
+
+Pruebas de reuniones y citas
+
+- Programar una reunión.
+- Registrar sus acuerdos.
+- Reprogramarla y comprobar el historial.
+- Crear una cita de orientación.
+- Intentar reservar el mismo horario para el mismo orientador.
+- Verificar que los motivos confidenciales no aparecen en calendarios públicos o vistas generales.
+
+Pruebas de regresión
+
+Comprobar que continúan funcionando:
+
+- Consultas de expedientes académicos ordinarios.
+- Registros de asistencia.
+- Calificaciones y evaluaciones.
+- Historiales existentes de seguimiento.
+- Registro de salidas anticipadas.
+- Permisos de los roles ajenos a esta fase.
+
+No realices pruebas destructivas sobre datos reales de estudiantes. Utiliza datos ficticios o un entorno de prueba seguro.
+
+---
+
+4. FORMATO OBLIGATORIO DE ENTREGA POR TAREA
+
+Al terminar cada tarea, entrega un informe con:
+
+1. Tarea completada: identificador y objetivo.
+2. Archivos modificados: rutas y propósito de cada cambio.
+3. Funciones reutilizadas: servicios y componentes que se conservaron.
+4. Cambios realizados: descripción concreta del comportamiento implementado.
+5. Pruebas ejecutadas: procedimiento, resultado esperado y resultado observado.
+6. Seguridad y permisos: casos comprobados y limitaciones.
+7. Persistencia: datos, hojas o columnas afectadas.
+8. Compatibilidad: comprobaciones de regresión realizadas.
+9. Pendientes: cualquier requisito que siga incompleto.
+10. Conclusión: funcional, parcialmente funcional, bloqueada o no verificable, con justificación.
+
+No marques una tarea como completa si solo se implementó la interfaz, si los datos no persisten, si no se comprobaron los permisos requeridos o si existe un defecto que impide el flujo principal.
+
+5. DEFINICIÓN DE FINALIZACIÓN DE LA FASE
+
+La Fase 7 podrá considerarse completa cuando las herramientas pertinentes cumplan sus criterios individuales y se haya verificado que:
+
+- Los expedientes confidenciales están protegidos frente a accesos no autorizados.
+- Los planes de acompañamiento pueden actualizarse sin duplicar registros y conservan su historial.
+- Las incidencias, casos y actuaciones pueden gestionarse mediante interfaces adecuadas.
+- Las derivaciones y las citas disponen de flujos verificables.
+- Las alertas preventivas se generan mediante reglas explícitas, comprensibles y configurables.
+- Las alertas no se convierten automáticamente en sanciones ni en diagnósticos.
+- Los registros sensibles mantienen la confidencialidad y la trazabilidad necesarias.
+- Los permisos se aplican en el servidor y se comprueban con pruebas.
+- Las funciones académicas existentes continúan operativas.
+- Las tareas no verificables o bloqueadas están identificadas y no se presentan como completadas.
