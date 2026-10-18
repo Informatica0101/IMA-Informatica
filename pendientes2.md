@@ -1522,3 +1522,26 @@ El conjunto de tareas podrá considerarse completado cuando:
 10. No existan vulnerabilidades críticas conocidas sin resolver antes de la puesta en producción.
 
 Resultado esperado: una búsqueda global útil, segura y extensible, con una arquitectura de datos cuya complejidad responda a las necesidades reales del instituto y no a una migración innecesaria.
+
+
+BACKLOG TÉCNICO DE CAPACIDADES AVANZADAS (PLAN DE RESOLUCIÓN)
+
+ÉPICA E07. Monitoreo y Diagnóstico de Sincronización PWA/Offline
+
+TR-15. Implementar Visor de Estado de Cola de Sincronización Local
+Prioridad: P3
+Tipo: Usabilidad y Observabilidad
+Dependencias: Área C (PWA e IndexedDB).
+
+Problema:
+Los usuarios no cuentan con un panel gráfico dentro del modal de estado offline para consultar el desglose de acciones pendientes almacenadas en .
+
+Requisitos Funcionales:
+1. Crear el visor  en  para mostrar el listado de acciones encoladas con su timestamp y tipo.
+2. Permitir forzar reintento manual mediante .
+3. Ofrecer botón para descarte manual de acciones fallidas previa confirmación.
+
+Criterios de Aceptación:
+- El modal visualiza correctamente las acciones pendientes de la cola IndexedDB.
+- La ejecución manual de la sincronización procesa la cola y actualiza la UI.
+- No modifica ni elimina datos de producción durante el estado offline.

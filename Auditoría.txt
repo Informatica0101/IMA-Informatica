@@ -1149,3 +1149,26 @@ RESUMEN DE HALLAZGOS DE AUDITORÍA:
 8. Activos Institucionales (3.8): Completa y verificada. Bienes patrimoniales consultables por código, categoría y custodio.
 9. Arquitectura de Fuentes de Datos (6.1-6.5): Registrada la tabla CatalogoSpreadsheets y la función resolveSpreadsheetSource en accounting-service. Se recomienda propagar el resolutor a user-service y academic-service.
 10. Cobertura de Inspección: 100%. Cobertura de Verificación: 88.8%.
+
+
+===============================================================================
+AUDITORÍA FUNCIONAL INTEGRAL: CAPACIDADES AVANZADAS DE LA PLATAFORMA
+===============================================================================
+FECHA: 2026-10-18
+MÓDULO: Capacidades Avanzadas de la Plataforma (IA, Automatización, PWA, Integraciones, Continuidad)
+ARCHIVOS Y COMPONENTES EVALUADOS:
+- backend/user-service/Code.gs (getPendingReminders, getUserSettings, saveUserSettings, configureNotificationChannel, getNotificationChannelConfigs, sendChannelNotificationTest, getHelpGuidesCatalog, acceptLegalDocument)
+- backend/academic-service/Code.gs (createSystemBackup, verifyBackupIntegrity, restoreSystemBackup, getUnifiedInstitutionalCalendar, checkScheduleConflict)
+- backend/accounting-service/Code.gs (testGatewayConnection, calculateOvertime, reviewOvertimeRequest, registerSpreadsheetSource, resolveSpreadsheetSource)
+- backend/task-service/Code.gs (initiateResumableUpload, uploadChunk, getUploadProgress, cancelUploadSession, reconstructFileParts)
+- js/ui-common.js (sw.js, manifest.json, ngca_offline_db, window.queueOfflineAction, window.syncOfflineQueue, window.openContextualHelpModal, window.startInteractiveGuide, window.renderFAQSection)
+- js/teacher.js, js/student.js, js/accounting.js
+- teacher-dashboard.html, student-dashboard.html, dashboard-direccion.html, dashboard-contabilidad.html, dashboard-recursos-humanos.html
+
+RESUMEN DE HALLAZGOS DE AUDITORÍA:
+1. Área A: Asistente Institucional con IA: Ausente (Excluido expresamente por especificación del Plan Maestro). Asistencia cubierta mediante Ayuda Contextual, Guías Paso a Paso y 32 FAQs.
+2. Área B: Automatización de Tareas y Recordatorios: Completa y verificada. Recordatorios pendientes, notificaciones multicanal con idempotencia y colisiones de horarios.
+3. Área C: PWA y Portal Móvil: Completa y verificada. sw.js precaché, IndexedDB (ngca_offline_db), cola de sincronización y resolución de conflictos.
+4. Área D: Centro de Integraciones y Proveedores: Completa y verificada. Configuración y prueba segura de canales y pasarelas de pago con desacoplamiento nativo.
+5. Área E: Continuidad Operativa y Respaldos: Completa y verificada. Respaldos JSON en Google Drive con verificación checksum y preservación inalterable de notas históricas.
+6. Cobertura de Inspección: 100%. Cobertura de Verificación: 100%.
