@@ -6713,3 +6713,179 @@ No declares que el trabajo está completo basándote únicamente en que el códi
 Ejecuta únicamente CE-IMP-01.
 
 Cuando termines, entrega el informe de resultados y detente. No comiences la siguiente tarea, no implementes el motor de comparación ni adelantes otros módulos hasta recibir una instrucción explícita.
+
+---
+
+TAREA DE IMPLEMENTACIÓN GD-IMP-01: Numeración documental segura y prevención de códigos duplicados
+
+Proyecto: Ecosistema Educativo New Generation Christian Academy
+Fase: 9. Gestión documental y firma electrónica
+Prioridad: Crítica
+Alcance: Corregir la generación concurrente de números y códigos documentales, manteniendo la compatibilidad con los documentos y funciones existentes.
+
+1. Objetivo
+
+Corregir el riesgo de duplicación de números oficiales y códigos únicos de verificación (CUV) cuando varias personas generan documentos simultáneamente.
+
+La solución debe garantizar que dos solicitudes concurrentes no obtengan el mismo número dentro del ámbito de unicidad correspondiente, incluso durante emisiones masivas o solicitudes recibidas en el mismo milisegundo.
+
+Esta tarea se limita a la numeración documental. No implementes todavía las alertas de vencimiento, los cambios en la firma electrónica avanzada ni otros módulos de la Fase 9.
+
+2. Lectura y verificación obligatoria
+
+Antes de modificar archivos:
+
+1. Lee "METODOLOGIA_DESARROLLO.md" y sigue sus procedimientos.
+2. Inspecciona "backend/accounting-service/Code.gs", especialmente "configureSchoolDocumentTemplate", "generateSchoolDocument", la generación del CUV y la función que actualmente asigna los correlativos.
+3. Busca todos los lugares del proyecto que generen, modifiquen, reutilicen o validen:
+   - Códigos únicos de verificación.
+   - Números de constancias y documentos oficiales.
+   - Identificadores de emisiones documentales.
+   - Códigos construidos mediante marcas de tiempo, conteo de filas o valores de "getLastRow()".
+4. Revisa las cabeceras reales de las hojas involucradas, en particular "PlantillasEscolares" y "DocumentosEscolaresEmitidos", así como cualquier otra hoja que participe en la numeración.
+5. Comprueba cómo se consultan los documentos históricos y cómo se valida actualmente un CUV.
+
+Verifica las observaciones del informe de auditoría contra el código actual. No des por confirmado un defecto únicamente porque aparezca descrito en el informe.
+
+3. Requisitos funcionales
+
+GD-IMP-01.1. Identificar los diferentes tipos de códigos
+
+Distingue expresamente entre:
+
+- ID interno: identificador utilizado para relacionar registros.
+- Número correlativo oficial: número visible de una constancia o documento, si corresponde.
+- CUV: código único que permite localizar o verificar un documento emitido.
+
+No asumas que estos tres valores son equivalentes ni cambies sus formatos indiscriminadamente.
+
+Documenta cuáles deben ser únicos globalmente y cuáles pueden reiniciarse por año, categoría, tipo documental u otro criterio ya establecido en el proyecto.
+
+Si las reglas actuales son ambiguas, conserva el comportamiento existente y documenta la decisión pendiente. No inventes nuevas convenciones institucionales.
+
+GD-IMP-01.2. Asignación segura bajo concurrencia
+
+Implementa una operación de asignación que impida que dos ejecuciones simultáneas reserven el mismo correlativo.
+
+Cuando corresponda al entorno de Google Apps Script, utiliza "LockService.getScriptLock()" para coordinar las ejecuciones que comparten el mismo proyecto de Apps Script.
+
+La solución debe:
+
+1. Adquirir el bloqueo antes de leer o modificar el estado que determina el siguiente correlativo.
+2. Comprobar el último valor válido mediante el mecanismo de numeración establecido.
+3. Reservar o registrar el siguiente número sin permitir que otra ejecución obtenga el mismo valor.
+4. Liberar el bloqueo mediante un bloque "finally", incluso cuando ocurra un error.
+5. Gestionar el tiempo de espera para adquirir el bloqueo sin continuar como si la reserva hubiera sido exitosa.
+6. Evitar que las operaciones que no afectan la numeración mantengan el bloqueo innecesariamente.
+7. Mantener la compatibilidad con las funciones y los documentos existentes.
+
+No implementes una solución basada únicamente en "getLastRow()", una marca de tiempo o una lectura seguida de una escritura sin protección contra concurrencia.
+
+Importante: El bloqueo solo coordina las ejecuciones que utilizan el mismo mecanismo de bloqueo. Verifica que todos los caminos de generación relevantes respeten la misma regla.
+
+GD-IMP-01.3. Evitar duplicados en el registro definitivo
+
+La generación del documento debe mantener la relación correcta entre su identificador, el número asignado, el CUV y el registro guardado en "DocumentosEscolaresEmitidos".
+
+Revisa especialmente qué ocurre si:
+
+- Dos usuarios emiten documentos al mismo tiempo.
+- Se produce un error después de reservar el número, pero antes de guardar el documento.
+- El archivo PDF se genera correctamente, pero falla el registro en la hoja.
+- La persona repite una solicitud porque no recibió respuesta.
+- Se reintenta una operación que ya había creado un documento.
+
+Evita emitir dos documentos diferentes con el mismo CUV.
+
+No prometas que una operación completa es transaccional si Google Sheets y Google Drive no permiten garantizarlo en las condiciones utilizadas. Si no es posible evitar todos los registros incompletos, gestiona los errores de forma controlada y documenta las limitaciones.
+
+No reutilices automáticamente números previamente emitidos solo porque una operación haya fallado. Mantén una secuencia consistente con las reglas documentales existentes.
+
+GD-IMP-01.4. Compatibilidad con el historial
+
+Los cambios deben conservar la capacidad de consultar y verificar documentos emitidos anteriormente.
+
+En particular:
+
+- No regeneres los CUV históricos.
+- No cambies indiscriminadamente los números de documentos existentes.
+- No alteres las cabeceras de las hojas sin una necesidad demostrada.
+- No rompas "getIssuedSchoolDocuments" ni los flujos actuales de consulta por CUV.
+- No cambies el formato de los documentos emitidos ni sus enlaces de descarga, salvo que sea estrictamente necesario para corregir la numeración y esté justificado.
+
+Si detectas códigos históricos duplicados, no los corrijas silenciosamente. Informa los casos encontrados y propón un procedimiento separado de revisión y reparación.
+
+4. Requisitos técnicos y de seguridad
+
+- Reutiliza las funciones existentes cuando sea razonable.
+- Mantén las validaciones y comprobaciones de permisos que ya protegen la emisión documental.
+- No confíes en que el frontend envíe un CUV o correlativo correcto: la asignación debe controlarse en el servicio responsable.
+- No expongas información privada de estudiantes o empleados mediante los códigos de verificación.
+- No registres contraseñas, tokens ni datos personales innecesarios en los mensajes de error.
+- No añadas dependencias externas ni cambies la estructura general de los servicios sin una justificación concreta.
+- No introduzcas una nueva hoja de numeración o una nueva arquitectura si el mecanismo actual puede corregirse de manera segura. Si una estructura adicional resulta indispensable, explica primero por qué y cómo se conservarán los datos existentes.
+
+5. Pruebas obligatorias
+
+Ejecuta las pruebas que sean realmente posibles en el entorno disponible. Si no tienes acceso a un entorno de Google Apps Script con persistencia real, distingue claramente las pruebas automatizadas, las simulaciones y las comprobaciones estáticas.
+
+Como mínimo, verifica estos escenarios:
+
+Prueba| Resultado esperado
+Emisión de un documento individual| Recibe un identificador y un CUV válidos.
+Emisión de varios documentos consecutivos| Cada documento obtiene un código distinto.
+Solicitudes simultáneas| Ninguna reserva dos veces el mismo correlativo.
+Dos emisiones en el mismo milisegundo| Los códigos continúan siendo distintos.
+Tiempo de espera agotado al adquirir el bloqueo| La operación no continúa sin una reserva segura.
+Error durante el registro| El bloqueo se libera y el error se gestiona correctamente.
+Error después de generar el PDF| No se declara una emisión exitosa si falta el registro requerido.
+Consulta de documentos antiguos| Los CUV existentes continúan funcionando.
+Reintento de una solicitud| Se evita la duplicación cuando puede identificarse de manera fiable una operación previamente completada.
+Emisiones de diferentes tipos documentales| Se respeta el ámbito de unicidad definido para cada código.
+
+Para la prueba de concurrencia, utiliza múltiples ejecuciones reales o una prueba automatizada que permita demostrar que el mecanismo de reserva está protegido. Una inspección visual del código no es suficiente para afirmar que la concurrencia quedó probada.
+
+No ejecutes pruebas destructivas sobre documentos reales ni alteres datos de producción para simular errores.
+
+6. Criterios de aceptación
+
+La tarea solo podrá declararse terminada si:
+
+1. Se identificaron todos los caminos relevantes de asignación de códigos.
+2. La reserva del correlativo está protegida contra concurrencia.
+3. El bloqueo se libera correctamente ante errores.
+4. Los CUV y correlativos nuevos respetan sus reglas de unicidad.
+5. Las consultas históricas siguen funcionando.
+6. Las pruebas ejecutadas y sus resultados están documentados con honestidad.
+7. No se modificaron funciones ajenas al alcance, excepto dependencias directas justificadas.
+
+Si algún criterio no puede verificarse, indícalo explícitamente. No marques la tarea como completamente validada.
+
+7. Informe final obligatorio
+
+Al terminar, presenta:
+
+1. Resultado: completado, parcial o bloqueado.
+2. Archivos modificados: rutas y motivo de cada cambio.
+3. Funciones modificadas o nuevas: nombre y responsabilidad.
+4. Mecanismo de numeración: cómo se obtiene el siguiente valor y cómo se evita la duplicación.
+5. Compatibilidad: impacto sobre documentos históricos y consultas por CUV.
+6. Pruebas: escenario, procedimiento, resultado observado y evidencia disponible.
+7. Limitaciones pendientes: especialmente las que no pudieron comprobarse en un entorno real.
+8. Riesgos residuales: cualquier posibilidad de registros incompletos, reintentos duplicados o colisiones fuera del mecanismo protegido.
+
+No afirmes que las pruebas pasaron si no fueron ejecutadas.
+
+8. Límites de esta tarea
+
+No implementes en esta ejecución:
+
+- GD-IMP-02: alertas automáticas de vencimiento documental.
+- Integración con certificados digitales X.509 o proveedores de firma electrónica.
+- Nuevos mecanismos de firma o sellado de tiempo.
+- Nuevos portales públicos de verificación o cambios al QR.
+- Nuevos sistemas de versionado de plantillas.
+- Cambios generales en los expedientes de estudiantes o empleados.
+- Refactorizaciones ajenas a la numeración documental.
+
+Instrucción final: implementa exclusivamente GD-IMP-01, realiza las pruebas posibles y entrega el informe. Después, detente y espera nuevas instrucciones. No comiences la siguiente tarea por iniciativa propia.
