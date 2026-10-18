@@ -897,3 +897,28 @@ Archivos y Módulos Auditados:
 
 2. PLAN DE TRABAJO INYECTADO EN PENDIENTES.MD
 - Registrar las 10 tareas detalladas (REQ-EXP-001 a REQ-EXP-010) aprobadas por la metodología.
+
+====================================================================================================
+
+AUDITORÍA TÉCNICA Y DIAGNÓSTICO DE ARQUITECTURA - FASE 3: PLANIFICACIÓN ACADÉMICA Y HORARIOS - Mon Jul 6 2026
+
+Archivos y Módulos Auditados:
+- Backend Servicios: `backend/academic-service/Code.gs` (HorariosClase, SedesAulas, AsignacionesDocentes, CalendarioAcademico, ReglasAcademicas)
+- Backend Recursos Humanos / Horas: `backend/accounting-service/Code.gs` (AprobacionHorasExtras, TurnosAlmuerzo)
+- Frontend Vistas: `teacher-dashboard.html`, `student-dashboard.html`
+- Controllers JS: `js/teacher.js`, `js/student.js`, `js/ui-common.js`
+
+1. DIAGNÓSTICO DEL MÓDULO DE PLANIFICACIÓN ACADÉMICA Y HORARIOS
+- Capacidades Funcionales Existentes:
+  * Motor de Prevención de Conflictos de Horario (`checkScheduleConflict`): Valida en tiempo real solapamientos de docente (`docenteUserId`), aula (`aulaCodigo`) y sección (`ofertaId`) previniendo colisiones de horario.
+  * Gestión de Bloques y Estados (`createClassSchedule`, `getClassSchedules`, `deleteClassSchedule`): Soporta estados `Borrador` y `Activo` con creación, edición y desactivación.
+  * Consulta de Horario Estudiantil (`getStudentSchedule`): Integra la oferta académica, resuelve sustituciones docentes temporales y ordena los bloques cronológicamente por día de la semana e hora de inicio.
+  * Gestión de Aulas y Recursos (`getClassroomResources`, `saveClassroomResource`): Sembrado automático de aulas, laboratorios, auditorio y canchas de la sede `SED-MAIN` con control de capacidad.
+  * Sustituciones Docentes (`createTeacherSubstitution`): Registra sustitutos temporales reflejándose dinámicamente en las vistas de horario.
+  * Calendario Académico (`createCalendarEvent`, `getAcademicCalendar`): Registro de días lectivos y eventos especiales.
+
+- Deficiencias y Funciones Faltantes Detectadas:
+  * Ausencia de algoritmo de generación automática de horarios (solver multivariable de restricciones).
+  * Ausencia de control de validación de capacidad de aula vs cantidad de alumnos matriculados.
+  * Ausencia de registro y motor de recuperación de clases canceladas (`HorasImpartidas`, `RecuperacionClases`).
+  * Desconexión en UI para la creación de eventos de calendario y gestión de recursos desde la vista de profesor/planificador.
