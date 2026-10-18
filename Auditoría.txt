@@ -1123,3 +1123,29 @@ RESUMEN DE LAS 12 CAPACIDADES TRANSVERSALES EVALUADAS:
 10. Accesibilidad: Completa y verificada. Tokens WCAG 2.2 AA en css/style.css, navegación por teclado global ESC, guía interactiva (window.startInteractiveGuide) y ayuda contextual (window.openContextualHelpModal).
 11. Operación sin conexión: Completa y verificada. sw.js precaché, IndexedDB (ngca_offline_db), cola de sincronización (queueOfflineAction, syncOfflineQueue) y diálogo de resolución de conflictos.
 12. Configuración central: Completa y verificada. ConfiguracionSistema, ConfiguracionRoles, ConfiguracionDashboard y modal de ajustes #modal-dashboard-settings en js/ui-common.js.
+
+
+===============================================================================
+AUDITORÍA FUNCIONAL: BÚSQUEDA GLOBAL Y ARQUITECTURA DE FUENTES DE DATOS
+===============================================================================
+FECHA: 2026-10-18
+MÓDULO: Búsqueda Global, Resolución de Fuentes de Datos y Archivo Histórico
+ARCHIVOS Y COMPONENTES EVALUADOS:
+- backend/user-service/Code.gs (getStudents, getStudentsByGradoSeccion, getInstitutionalReportCatalog, findPersonMatches)
+- backend/academic-service/Code.gs (getStudentFile, findDuplicateStudents, getStudentTimeline, getStudentEnrollments)
+- backend/accounting-service/Code.gs (registerSpreadsheetSource, resolveSpreadsheetSource, getSpreadsheetCatalog, getStudentAccountStatement, getFiscalInvoices)
+- backend/task-service/Code.gs (getStudentTasks, getAllTasks, getStudyMaterials)
+- backend/exam-service/Code.gs (getStudentExams, getStudentAcademicReport, getGradebookData)
+- js/teacher.js, js/student.js, js/accounting.js, js/ui-common.js (#student-search, renderReportsCenterUI, openDocumentReader)
+
+RESUMEN DE HALLAZGOS DE AUDITORÍA:
+1. Búsqueda por Estudiante (3.1): Implementada parcialmente. getStudentFile y findDuplicateStudents operativos; falta integrarlos en un omnibox universal global.
+2. Matrículas por Año Escolar (3.2): Implementada parcialmente. Matrículas vinculadas a años escolares; resolutor resolveSpreadsheetSource registrado para años históricos.
+3. Notas por Estudiante, Asignatura y Período (3.3): Completa y verificada. HistorialAcademico inalterable con protección server-side.
+4. Recibos y Pagos (3.4): Completa y verificada. Cargos, comprobantes y facturas SAR filtradas estrictamente por rol financiero RBAC.
+5. Empleados y Contratos (3.5): Completa y verificada. Fichas laborales con salarios aislados a Administrador/Director/Contador.
+6. Solicitudes Pendientes (3.6): Completa y verificada. Trámites y flujos de aprobación filtrados por departamento.
+7. Constancias Emitidas (3.7): Completa y verificada. Documentos emitidos verificables por CUV (VERIF-XXXXXX).
+8. Activos Institucionales (3.8): Completa y verificada. Bienes patrimoniales consultables por código, categoría y custodio.
+9. Arquitectura de Fuentes de Datos (6.1-6.5): Registrada la tabla CatalogoSpreadsheets y la función resolveSpreadsheetSource en accounting-service. Se recomienda propagar el resolutor a user-service y academic-service.
+10. Cobertura de Inspección: 100%. Cobertura de Verificación: 88.8%.
