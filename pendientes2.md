@@ -2165,3 +2165,498 @@ Criterios de Aceptación:
 - **Estado:** Pendiente
 - **Archivos:** `js/config.js`, `ChangesLogs.txt`
 - **Acción:** Congelamiento formal del release 1.0 y generación de versión final documentada.
+
+
+---
+
+# PLAN DE TRABAJO: RESOLUCIÓN Y OPTIMIZACIÓN DE SUSTITUACIÓN ADMINISTRATIVA
+
+Proyecto: Plataforma Integral de Gestión Educativa — New Generation Christian Academy
+Base: Informe de Auditoría Funcional de Sustitución Administrativa, versión 1.0, del 18 de octubre de 2026.
+Modalidad: implementación posterior, condicionada a autorización.
+Objetivo: resolver las siete brechas documentadas, preservar las capacidades verificadas y elevar la seguridad, integridad, usabilidad y automatización de los servicios administrativos.
+
+Reglas generales de ejecución
+
+Antes de comenzar cada tarea:
+
+1. Lee "METODOLOGIA_DESARROLLO.md" y la documentación de requisitos vigente.
+2. Comprueba que la brecha siga existiendo en la versión actual del repositorio.
+3. Identifica los archivos, componentes, endpoints, servicios, estructuras de datos y pruebas reales afectados.
+4. Comprueba los contratos de entrada y salida, las autorizaciones, las dependencias y los efectos secundarios.
+5. Define las pruebas necesarias antes de modificar el código.
+6. Implementa únicamente el alcance autorizado y conserva el comportamiento existente que no sea incompatible con la corrección.
+7. Ejecuta las pruebas pertinentes y registra evidencias del resultado.
+8. No declares una tarea terminada por haber modificado el código: deben aprobarse sus criterios de aceptación.
+
+Las rutas y los nombres técnicos citados en este documento proceden del informe de auditoría. Confirma su vigencia antes de utilizarlos y descubre las ubicaciones reales si han cambiado.
+
+---
+
+TAREA ADM-00. Validación previa de las brechas y preparación de pruebas
+
+Prioridad: obligatoria.
+Tipo: preparación y control de calidad.
+Dependencias: ninguna.
+
+Problema
+
+El plan de resolución se basa en un informe de auditoría que registra siete brechas, pero antes de corregirlas es necesario comprobar que siguen presentes en la versión que se va a modificar y que los criterios de aceptación corresponden al comportamiento real del proyecto.
+
+Objetivo
+
+Establecer una línea base verificable para resolver los defectos sin duplicar funcionalidades, introducir incompatibilidades ni alterar servicios que ya funcionan.
+
+Requisitos
+
+- Revisar las evidencias de las siete brechas.
+- Identificar las pruebas existentes y las carencias de cobertura.
+- Comprobar las relaciones entre los servicios administrativos.
+- Identificar los datos y entornos seguros para las pruebas.
+- Documentar los comportamientos actuales que deban preservarse.
+- Preparar pruebas de regresión para las operaciones afectadas.
+
+Criterios de aceptación
+
+- CA-00.1: cada brecha dispone de evidencia actualizada o queda marcada como no reproducida.
+- CA-00.2: las ubicaciones y dependencias reales están identificadas.
+- CA-00.3: las pruebas previstas cubren los escenarios normales, los errores y los permisos.
+- CA-00.4: las operaciones de prueba no pueden modificar accidentalmente datos de producción.
+- CA-00.5: existe una línea base para comparar el comportamiento anterior y posterior.
+- CA-00.6: ninguna brecha deja de atenderse silenciosamente; las discrepancias se documentan y se someten a decisión antes de ampliar o reducir el alcance.
+
+Resultado esperado: plan de pruebas preparado y brechas confirmadas para su resolución.
+
+---
+
+TAREA ADM-01. Bloquear la autoaprobación de solicitudes
+
+Brecha: GAP-ADM-03.
+Prioridad: P1, seguridad e integridad del proceso.
+Dependencias: ADM-00.
+
+Problema
+
+El proceso de aprobación no impide explícitamente que el solicitante apruebe su propia solicitud. El informe identifica el proceso "processWorkflowDecision" en "backend/user-service/Code.gs" como punto de inspección inicial.
+
+Objetivo
+
+Garantizar la separación entre quien solicita una operación y quien la autoriza, sin depender de datos de identidad controlados por el cliente.
+
+Requisitos funcionales
+
+1. Obtener la identidad autenticada del usuario mediante el mecanismo de autenticación real del proyecto.
+2. Determinar en el servidor quién es el solicitante original y quién ejecuta la decisión.
+3. No aceptar como identidad autenticada un "revisorId", rol o identificador enviado libremente por el cliente.
+4. Rechazar la decisión cuando el aprobador efectivo sea el mismo usuario que inició la solicitud.
+5. Mantener las reglas existentes de roles, etapas, estados y autorizaciones.
+6. Registrar las decisiones rechazadas cuando corresponda, sin modificar el estado de la solicitud.
+7. Evitar que solicitudes directas al endpoint o reintentos permitan eludir la regla.
+
+Cambios necesarios
+
+- Inspeccionar el flujo completo de autenticación y autorización.
+- Corregir la validación en el servidor y los puntos de entrada alternativos que permitan tomar la misma decisión.
+- Reutilizar las utilidades de identidad y permisos existentes cuando sean seguras.
+- Incorporar pruebas automatizadas o reproducibles para las decisiones permitidas y denegadas.
+- Evitar refactorizaciones generales del motor de aprobaciones.
+
+Criterios de aceptación
+
+- CA-01.1: un usuario puede aprobar solicitudes ajenas cuando dispone de los permisos correspondientes.
+- CA-01.2: el solicitante no puede aprobar su propia solicitud, aunque manipule los datos enviados por el cliente.
+- CA-01.3: cambiar el identificador del revisor en la petición no altera la identidad efectiva.
+- CA-01.4: un usuario sin permisos no puede aprobar ni rechazar solicitudes.
+- CA-01.5: los rechazos por autoaprobación no modifican el estado ni la información de la solicitud.
+- CA-01.6: las decisiones legítimas mantienen el funcionamiento del flujo multinivel.
+- CA-01.7: dos decisiones concurrentes no producen resultados contradictorios ni registran dos aprobaciones definitivas.
+- CA-01.8: los intentos rechazados no exponen información sensible.
+
+Resultado esperado: el control de autoaprobación queda aplicado en el servidor y verificado mediante pruebas positivas, negativas y de regresión.
+
+---
+
+TAREA ADM-02. Proteger la confidencialidad de los informes de orientación educativa
+
+Brecha: GAP-ADM-07.
+Prioridad: P1, protección de información sensible.
+Dependencias: ADM-00.
+
+Problema
+
+El informe identifica un riesgo de exposición de notas confidenciales en reportes y exportaciones masivas relacionados con "backend/academic-service/Code.gs", los casos de seguimiento y los campos de notas o acciones acumuladas.
+
+Objetivo
+
+Garantizar que la exportación de información de orientación respete los permisos, el propósito de la consulta y la confidencialidad de cada campo.
+
+Requisitos funcionales
+
+1. Inventariar los informes, exportaciones, consultas masivas y servicios que recuperen datos de orientación.
+2. Clasificar los campos según su sensibilidad y las autorizaciones requeridas.
+3. Aplicar los permisos en el servidor antes de construir la respuesta exportable.
+4. Excluir, anonimizar o restringir las notas confidenciales según el rol y el propósito autorizado.
+5. Evitar que los datos privados aparezcan indirectamente en otras columnas, metadatos, archivos temporales o mensajes de error.
+6. Mantener la información necesaria para los usuarios expresamente autorizados.
+7. No anonimizar indiscriminadamente datos que los profesionales autorizados necesitan para realizar su trabajo.
+8. Aplicar los controles a todos los formatos de exportación realmente existentes.
+
+Cambios necesarios
+
+- Identificar las rutas de lectura individual y masiva.
+- Centralizar o reutilizar las reglas de autorización y filtrado de campos cuando sea viable.
+- Revisar los reportes generados en el servidor y los formatos de exportación.
+- Crear datos ficticios de prueba con notas confidenciales claramente identificables.
+- Comprobar los resultados tanto en la interfaz como en las respuestas directas del backend.
+
+Criterios de aceptación
+
+- CA-02.1: los usuarios no autorizados no pueden recuperar notas confidenciales mediante consultas individuales ni masivas.
+- CA-02.2: las exportaciones destinadas a usuarios sin autorización omiten o anonimizan los campos restringidos conforme a la política definida.
+- CA-02.3: los usuarios autorizados conservan el acceso legítimo a los datos necesarios.
+- CA-02.4: las restricciones se mantienen al cambiar parámetros, identificadores, filtros o formatos de exportación.
+- CA-02.5: los datos confidenciales no se filtran mediante errores, registros técnicos o campos derivados.
+- CA-02.6: los informes conservan su estructura y utilidad para los usuarios autorizados.
+- CA-02.7: los cambios no degradan los permisos ni la consulta de otros módulos académicos.
+- CA-02.8: las pruebas no requieren copiar expedientes reales al entorno de desarrollo.
+
+Resultado esperado: las exportaciones y consultas de orientación respetan los permisos efectivos y la confidencialidad de los datos.
+
+---
+
+TAREA ADM-03. Desarrollar la interfaz administrativa de transporte escolar
+
+Brecha: GAP-ADM-01.
+Prioridad: P1, capacidad operativa incompleta.
+Dependencias: ADM-00. La integración con ADM-04 debe realizarse antes de habilitar asignaciones definitivas.
+
+Problema
+
+El informe indica que existen operaciones de backend para rutas y asignaciones, pero no una interfaz dedicada que permita a los usuarios autorizados gestionar estas operaciones de forma integral.
+
+Objetivo
+
+Proporcionar una interfaz funcional para administrar rutas, unidades, conductores, paradas y asignaciones de estudiantes, reutilizando los servicios existentes y evitando duplicar la lógica de negocio.
+
+Requisitos funcionales
+
+1. Identificar los roles reales que deben administrar el transporte.
+2. Descubrir la navegación y el patrón de interfaz adecuados dentro del proyecto.
+3. Permitir consultar rutas y sus datos relacionados.
+4. Permitir crear o modificar rutas cuando el usuario tenga autorización.
+5. Consultar unidades, conductores, paradas y capacidad disponible.
+6. Consultar las asignaciones de estudiantes por ruta.
+7. Permitir asignar o retirar estudiantes conforme a las reglas del proyecto.
+8. Mostrar estados de operación, validaciones, errores y confirmaciones.
+9. Incorporar búsqueda, filtros y estados vacíos comprensibles.
+10. Adaptar la interfaz a pantallas móviles y de escritorio.
+11. No mostrar información personal de estudiantes a roles que no estén autorizados.
+12. Integrar las validaciones del servidor, sin sustituirlas por comprobaciones de interfaz.
+
+Cambios necesarios
+
+- Inspeccionar los servicios de transporte existentes y sus contratos.
+- Identificar las pantallas administrativas existentes y los patrones reutilizables.
+- Incorporar la interfaz en la ubicación real descubierta. El informe propone revisar "teacher-dashboard.html" y "js/teacher.js", pero no obliga a usarlos si no son los puntos de entrada correctos.
+- Conectar las acciones con los endpoints existentes o documentar la dependencia real si alguno necesita ampliarse.
+- Implementar estados de carga, error, éxito y ausencia de datos.
+- Evitar una segunda implementación de las reglas de asignación en el frontend.
+
+Criterios de aceptación
+
+- CA-03.1: los usuarios autorizados pueden consultar las rutas y sus asignaciones.
+- CA-03.2: las operaciones de alta, edición y asignación disponibles funcionan de extremo a extremo.
+- CA-03.3: los usuarios sin permisos no pueden realizar estas operaciones mediante llamadas directas.
+- CA-03.4: la interfaz muestra errores comprensibles cuando falla una operación.
+- CA-03.5: una operación fallida no produce una confirmación falsa ni una asignación parcial no detectada.
+- CA-03.6: la información presentada coincide con los datos recuperados del servidor.
+- CA-03.7: la interfaz permite identificar rutas sin unidad, sin conductor o sin estudiantes asignados.
+- CA-03.8: las asignaciones quedan sujetas a los controles de capacidad definidos en ADM-04.
+- CA-03.9: los cambios no rompen la navegación ni las funciones existentes del panel.
+- CA-03.10: las pruebas móviles y de escritorio verifican formularios, tablas, navegación y mensajes.
+
+Resultado esperado: un panel de transporte escolar integrado, utilizable y protegido por permisos, con sus operaciones validadas en el servidor.
+
+---
+
+TAREA ADM-04. Validar la capacidad de las unidades de transporte
+
+Brecha: GAP-ADM-02.
+Prioridad: P2, integridad de las asignaciones.
+Dependencias: ADM-00; integración funcional con ADM-03.
+
+Problema
+
+El proceso de asignación puede registrar estudiantes sin comprobar de forma activa que la cantidad total respete la capacidad máxima de la unidad.
+
+Objetivo
+
+Evitar el sobrecupo y las asignaciones incompatibles, garantizando que las validaciones se apliquen al confirmar la operación.
+
+Requisitos funcionales
+
+1. Identificar dónde se almacena la capacidad autorizada de cada unidad.
+2. Definir cómo se cuentan las asignaciones activas y qué estados consumen una plaza.
+3. Validar que la unidad exista, esté activa y pueda utilizarse.
+4. Rechazar nuevas asignaciones cuando se alcance la capacidad permitida.
+5. Definir el comportamiento ante una capacidad inexistente, inválida o no configurada.
+6. Recalcular la disponibilidad en el momento de confirmar la operación.
+7. Gestionar solicitudes concurrentes para evitar que dos asignaciones simultáneas ocupen la misma plaza.
+8. Mantener coherencia entre el backend y los indicadores de capacidad de la interfaz.
+
+Cambios necesarios
+
+- Inspeccionar "assignStudentTransport" y sus dependencias reales.
+- Verificar cómo se representan las unidades, las rutas y las asignaciones activas.
+- Incorporar validaciones de servidor y manejo de concurrencia.
+- Si los datos se almacenan en Google Sheets, evaluar el uso apropiado de "LockService" para proteger la sección crítica de la asignación.
+- Evitar mantener un contador de plazas que pueda quedar desincronizado respecto de las asignaciones reales.
+
+Criterios de aceptación
+
+- CA-04.1: una asignación válida se acepta si existe capacidad disponible.
+- CA-04.2: una asignación que supera la capacidad es rechazada en el servidor.
+- CA-04.3: una unidad con capacidad desconocida o inválida no admite nuevas asignaciones hasta resolver la condición conforme a la política definida.
+- CA-04.4: retirar o cancelar una asignación libera la plaza cuando corresponda.
+- CA-04.5: dos solicitudes concurrentes para la última plaza no pueden aprobarse ambas.
+- CA-04.6: la capacidad restante que muestra la interfaz coincide con las asignaciones activas.
+- CA-04.7: cambiar los datos enviados por el cliente no permite eludir el control.
+- CA-04.8: se mantienen las reglas de permisos y las relaciones existentes entre estudiante, ruta y unidad.
+
+Resultado esperado: asignaciones coherentes con la capacidad real, sin sobrecupo causado por operaciones normales, manipulación del cliente o concurrencia.
+
+---
+
+TAREA ADM-05. Incorporar control presupuestario a las solicitudes de compra
+
+Brecha: GAP-ADM-04.
+Prioridad: P2, integridad financiera.
+Dependencias: ADM-00.
+
+Problema
+
+El sistema calcula importes comprometidos y ejecutados, pero el informe señala que la creación de solicitudes no aplica una advertencia o restricción cuando el importe previsto supera el presupuesto disponible.
+
+Objetivo
+
+Integrar el presupuesto con el flujo de compras, de forma que la disponibilidad presupuestaria sea visible, coherente y respetada por las operaciones autorizadas.
+
+Requisitos funcionales
+
+1. Identificar la relación entre centro de costo, partida, período presupuestario y solicitud de compra.
+2. Determinar cómo se calculan los importes presupuestados, comprometidos, ejecutados y disponibles.
+3. Definir cuándo una solicitud compromete presupuesto: al crearla, enviarla, aprobarla o generar el pedido.
+4. Evitar contar dos veces un mismo importe al pasar entre estados.
+5. Aplicar la política de exceso configurada: advertencia, bloqueo o excepción autorizada.
+6. Permitir excepciones únicamente a los roles autorizados y registrar su justificación.
+7. Actualizar la disponibilidad conforme a los cambios de estado, cancelaciones y reversiones.
+8. Comprobar la disponibilidad al confirmar la operación, no solamente al cargar el formulario.
+9. Proteger las operaciones concurrentes para evitar que dos compras consuman el mismo saldo.
+10. Mantener informes consistentes con los movimientos reales.
+
+Cambios necesarios
+
+- Inspeccionar "createPurchaseRequest", "saveBudgetPlan", "getBudgets" y "getBudgetExecutionReport", confirmando las ubicaciones actuales.
+- Identificar la fuente oficial del saldo disponible y las reglas vigentes de compromiso presupuestario.
+- Integrar las validaciones sin duplicar cálculos ni alterar la contabilidad existente.
+- Definir mensajes que indiquen el saldo, el exceso y la acción requerida sin exponer datos ajenos al usuario.
+- Incorporar pruebas para solicitudes nuevas, modificaciones, aprobaciones, cancelaciones y operaciones concurrentes.
+
+Criterios de aceptación
+
+- CA-05.1: una solicitud dentro del límite se procesa conforme al flujo habitual.
+- CA-05.2: una solicitud que excede el límite recibe la advertencia o el bloqueo definido por la política.
+- CA-05.3: un usuario sin permisos no puede eludir el control mediante una llamada directa.
+- CA-05.4: una excepción presupuestaria autorizada deja constancia del responsable y la justificación requerida.
+- CA-05.5: cancelar una solicitud libera el compromiso cuando las reglas lo determinen.
+- CA-05.6: modificar una solicitud recalcula correctamente el importe comprometido.
+- CA-05.7: las solicitudes concurrentes no producen sobreasignación silenciosa del presupuesto.
+- CA-05.8: los informes coinciden con el saldo calculado a partir de los registros pertinentes.
+- CA-05.9: los importes se manejan con precisión monetaria apropiada.
+- CA-05.10: se conservan los procesos existentes de recepción, cuentas por pagar e inventario.
+
+Resultado esperado: control presupuestario coherente y trazable, con reglas de exceso explícitas y protección frente a duplicidades.
+
+---
+
+TAREA ADM-06. Restringir nuevas operaciones con proveedores inactivos
+
+Brecha: GAP-ADM-05.
+Prioridad: P2, integridad administrativa.
+Dependencias: ADM-00.
+
+Problema
+
+El sistema conserva el estado del proveedor, pero no rechaza explícitamente todas las operaciones nuevas que intenten utilizar un proveedor inactivo.
+
+Objetivo
+
+Impedir nuevas compras no autorizadas con proveedores inactivos sin eliminar sus registros ni romper el historial de operaciones anteriores.
+
+Requisitos funcionales
+
+1. Identificar el campo y los valores reales que representan el estado del proveedor.
+2. Establecer una única regla de interpretación del estado activo.
+3. Aplicar la validación en todos los puntos de entrada que creen o confirmen operaciones nuevas.
+4. Verificar el proveedor en el servidor y no confiar únicamente en el filtro de la interfaz.
+5. Permitir consultar las compras históricas asociadas a proveedores inactivos.
+6. Definir el tratamiento de las cotizaciones y órdenes que ya existían cuando el proveedor fue desactivado.
+7. Evitar la reactivación o modificación del estado por usuarios sin autorización.
+8. Proporcionar un mensaje claro cuando se rechace una operación.
+
+Cambios necesarios
+
+- Inspeccionar "registerSupplier", "getSuppliers", "submitPurchaseQuotation", "createPurchaseOrder" y los demás puntos de entrada reales.
+- Aplicar la regla a las operaciones pertinentes sin duplicar validaciones contradictorias.
+- Mantener los identificadores y las relaciones históricas.
+- Comprobar el comportamiento ante estados vacíos, desconocidos o inconsistentes.
+
+Criterios de aceptación
+
+- CA-06.1: las nuevas cotizaciones u órdenes no se aceptan cuando la política prohíbe utilizar un proveedor inactivo.
+- CA-06.2: el control se aplica en el servidor aunque el cliente envíe manualmente el identificador del proveedor.
+- CA-06.3: las operaciones históricas siguen siendo consultables.
+- CA-06.4: la desactivación de un proveedor no elimina sus relaciones ni documentos.
+- CA-06.5: las operaciones existentes siguen su tratamiento definido sin cancelaciones automáticas inesperadas.
+- CA-06.6: los estados inválidos no se interpretan silenciosamente como activos.
+- CA-06.7: la reactivación requiere los permisos correspondientes.
+- CA-06.8: los controles de compras, presupuestos, recepción e inventario siguen funcionando.
+
+Resultado esperado: selección y uso coherentes de proveedores, con historial preservado y validaciones aplicadas a todas las operaciones pertinentes.
+
+---
+
+TAREA ADM-07. Automatizar el mantenimiento preventivo
+
+Brecha: GAP-ADM-06.
+Prioridad: P3, mejora operativa.
+Dependencias: ADM-00; integración con las órdenes de mantenimiento existentes.
+
+Problema
+
+El mantenimiento preventivo depende del registro manual de las intervenciones y no dispone del mecanismo automatizado identificado como mejora en la auditoría.
+
+Objetivo
+
+Permitir programar intervenciones periódicas y generar las órdenes correspondientes sin duplicar tareas ni alterar las órdenes correctivas existentes.
+
+Requisitos funcionales
+
+1. Determinar si el modelo actual permite definir planes, frecuencias, activos, responsables y próximas fechas.
+2. Definir las unidades de frecuencia y la regla de cálculo de la próxima intervención.
+3. Establecer cómo se comportan las tareas vencidas, omitidas, canceladas o completadas.
+4. Generar órdenes mediante una ejecución programada segura.
+5. Evitar generar varias órdenes para el mismo activo y período.
+6. Conservar la relación entre el plan preventivo y cada orden generada.
+7. Registrar los errores de ejecución y permitir identificar las órdenes que no se pudieron crear.
+8. Respetar las autorizaciones y las reglas existentes para cerrar órdenes.
+9. Evitar que una tarea preventiva consuma repuestos antes de que exista una intervención que lo justifique.
+10. Hacer configurable la frecuencia y las reglas de programación sin requerir cambios de código para cada plan.
+
+Cambios necesarios
+
+- Inspeccionar "manageMaintenanceOrder", "getMaintenanceOrders" y el modelo de activos.
+- Determinar si existe ya un mecanismo de programación que pueda reutilizarse.
+- Si se utiliza Google Apps Script, evaluar los disparadores instalables de tiempo, sus permisos, límites y comportamiento ante errores.
+- Diseñar una clave de idempotencia o mecanismo equivalente para impedir órdenes duplicadas.
+- Establecer un procedimiento seguro de instalación, supervisión y retirada del disparador.
+- Mantener separados los registros del plan, la ejecución programada y las órdenes generadas.
+
+Criterios de aceptación
+
+- CA-07.1: un plan válido permite calcular la próxima intervención conforme a la frecuencia configurada.
+- CA-07.2: la ejecución programada genera las órdenes previstas que todavía no existen.
+- CA-07.3: ejecutar dos veces el proceso no duplica las órdenes del mismo período.
+- CA-07.4: los planes desactivados o los activos dados de baja no generan nuevas órdenes, conforme a las reglas definidas.
+- CA-07.5: una orden completada o cancelada se trata según la política de recurrencia establecida.
+- CA-07.6: los errores quedan registrados sin impedir que se procesen otros planes independientes cuando sea seguro continuar.
+- CA-07.7: la ejecución repetida y los fallos de conectividad no dejan registros inconsistentes.
+- CA-07.8: las órdenes preventivas mantienen la compatibilidad con el descuento de repuestos y el historial de mantenimiento.
+- CA-07.9: los usuarios autorizados pueden consultar el plan y sus órdenes generadas.
+- CA-07.10: las pruebas verifican la programación, la idempotencia, los errores y la regresión del mantenimiento correctivo.
+
+Resultado esperado: mantenimiento preventivo programable, trazable y resistente a duplicidades, integrado con las órdenes existentes.
+
+---
+
+3. Requisitos transversales para todas las tareas
+
+Seguridad
+
+- Las autorizaciones deben comprobarse en el servidor.
+- La identidad efectiva no debe depender de campos modificables por el cliente.
+- Los errores no deben exponer credenciales, datos confidenciales ni detalles internos innecesarios.
+- Los cambios deben conservar los permisos de los demás módulos.
+
+Integridad de datos
+
+- Evitar operaciones duplicadas y modificaciones parciales no detectadas.
+- Verificar relaciones entre registros y conservación de historiales.
+- Controlar las operaciones concurrentes que consumen recursos compartidos.
+- Evitar migraciones o modificaciones del esquema salvo que sean indispensables y estén autorizadas.
+
+Experiencia de usuario
+
+- Mostrar mensajes claros de validación, éxito y error.
+- Mantener coherencia entre la interfaz y el estado persistido.
+- Evitar formularios que permitan iniciar operaciones imposibles de completar.
+- Facilitar la consulta de registros pendientes, vencidos o rechazados.
+- Verificar el funcionamiento en escritorio y dispositivos móviles cuando haya cambios de interfaz.
+
+Rendimiento y mantenibilidad
+
+- Reutilizar las funciones existentes cuando sean adecuadas.
+- Evitar consultas repetitivas innecesarias a Google Sheets.
+- No introducir automatizaciones que superen los límites de ejecución o cuotas de la plataforma.
+- Mantener una única fuente de verdad para las reglas críticas.
+- Documentar las decisiones que afecten a futuras ampliaciones.
+
+---
+
+4. Pruebas obligatorias de regresión
+
+Antes de declarar completada cada tarea, verifica las operaciones relacionadas:
+
+- ADM-01: aprobación normal, rechazo, flujo multinivel, permisos y consulta del historial.
+- ADM-02: consulta individual, exportación masiva, informes, permisos de orientación y acceso de profesionales autorizados.
+- ADM-03: navegación del panel, consulta de rutas, asignaciones, formularios, permisos y manejo de errores.
+- ADM-04: asignación, retirada, capacidad máxima, concurrencia y visualización de plazas disponibles.
+- ADM-05: solicitud, cotización, orden, aprobación, recepción, cuentas por pagar, inventario y ejecución presupuestaria.
+- ADM-06: altas y bajas de proveedores, nuevas operaciones, órdenes anteriores y consulta histórica.
+- ADM-07: creación manual de órdenes, consumo de repuestos, cierre de intervenciones, programación y ejecuciones repetidas.
+
+No es necesario repetir pruebas ajenas al alcance si no existe una dependencia real. Documenta cualquier excepción.
+
+---
+
+5. Condiciones para cerrar una tarea
+
+Una tarea solo puede marcarse como completada cuando:
+
+1. El problema original se ha corregido o la decisión técnica justifica de manera documentada una solución diferente.
+2. Se han satisfecho todos los criterios de aceptación aplicables.
+3. Las pruebas de regresión pertinentes han sido aprobadas.
+4. No quedan errores críticos o altos sin resolver dentro del alcance de la tarea.
+5. Los cambios están limitados al alcance autorizado.
+6. Se han documentado los archivos y componentes modificados.
+7. Existe evidencia de los resultados observados.
+8. Las limitaciones o criterios pendientes están identificados expresamente.
+
+Si una prueba no puede ejecutarse, no declares el resultado como verificado. Registra el bloqueo y el procedimiento necesario para completar la comprobación.
+
+---
+
+6. Informe de cierre
+
+Al concluir el conjunto de tareas, entrega:
+
+- Estado individual de ADM-00 a ADM-07.
+- Brecha original y solución aplicada.
+- Archivos y componentes realmente modificados.
+- Criterios aprobados, fallidos y pendientes.
+- Pruebas de seguridad, integridad y regresión realizadas.
+- Errores encontrados durante las pruebas.
+- Cambios de datos o configuración, si los hubo y estaban autorizados.
+- Riesgos residuales y dependencias pendientes.
+- Comparación entre el comportamiento anterior y el resultado final.
+- Mejoras adicionales justificadas que queden fuera del alcance.
