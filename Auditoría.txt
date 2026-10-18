@@ -864,3 +864,36 @@ Archivos y Módulos Auditados:
 - Crear Módulo de UI de Expediente Digital Unificado en `teacher-dashboard.html` y `js/teacher.js`:
   * Modal `#modal-student-file` con pestañas: 1. Datos Personales, 2. Tutores y Responsables Legales, 3. Documentos Adjuntos (Google Drive), 4. Historial/Línea de Tiempo y Movimientos, 5. Duplicados y Fusión.
 - Conectar los endpoints backend existentes en `js/teacher.js` para permitir la creación, consulta, edición, adjunción de documentos, asignación de tutores y gestión de estados/movimientos del expediente sin duplicar lógica ni reconstruir el backend.
+
+====================================================================================================
+
+AUDITORÍA TÉCNICA Y DIAGNÓSTICO DE ARQUITECTURA - FASE 2: LMS AVANZADO Y APRENDIZAJE DIGITAL - Mon Jul 6 2026
+
+Archivos y Módulos Auditados:
+- Backend: `backend/task-service/Code.gs` (AulasVirtuales, MaterialesEducativos, PublicacionesAnuncios, EntregasVersiones, ResumableUploads)
+- Backend Evaluaciones: `backend/exam-service/Code.gs` (Examenes, Preguntas, CalificacionesEstudiantes, RubricasEvaluacion, CierrePeriodos)
+- Backend Identidad & Notificaciones: `backend/user-service/Code.gs` (CriteriosInstitucionales, EvaluacionesFormativas, Notificaciones)
+- Frontend Vistas: `teacher-dashboard.html`, `student-dashboard.html`, `exam.html`, `interactivo.html`, `pseudocode.html`
+- Controllers JS: `js/teacher.js`, `js/student.js`, `js/exam.js`, `js/quizpro.js`, `js/presentation-engine.js`, `js/questions-bank.json`, `js/ui-common.js`
+
+1. DIAGNÓSTICO DEL MÓDULO LMS Y APRENDIZAJE DIGITAL
+- Capacidades Funcionales Existentes:
+  * Aulas Virtuales (`AulasVirtuales`): Creación y consulta de aulas por grado/sección/materia (`createVirtualClassroom`, `getVirtualClassrooms`).
+  * Materiales de Estudio (`MaterialesEducativos`): Publicación de recursos con soporte multiformato (enlaces, Drive blobs, PDFs) y filtrado borrador/programado.
+  * Anuncios y Publicaciones (`PublicacionesAnuncios`): Muro interactivo con comentarios y filtrado de privacidad en servidor.
+  * Tareas y Entregas Multimodales: Creación de tareas, entregas de texto/enlaces/archivos reanudables (`uploadResumableFile`), versiones de entregas (`getSubmissionVersions`), devoluciones para corrección (`returnSubmissionForRevision`) y comentarios individuales.
+  * Banco de Preguntas y QuizPro: Catálogo de 771 preguntas en `js/questions-bank.json`, motor de quizzes interactivos (`quizpro.js`), selección aleatoria por tema y cálculo de puntuación.
+  * Rúbricas de Evaluación (`RubricasEvaluacion`): Diseñador de rúbricas `#modal-rubric-builder` con criterios, ponderaciones e integración con examen/tarea.
+  * Registro y Cierre de Calificaciones: Sincronización oficial con `CalificacionesEstudiantes` y cierre/reapertura de periodos evaluativos.
+
+- Deficiencias y Funciones Faltantes Detectadas:
+  * Ausencia de módulo de proyectos grupales (`GruposTrabajo`) y entregas colaborativas.
+  * Ausencia de portafolios estudiantiles curados (`PortafoliosEstudiantiles`).
+  * Ausencia de compatibilidad e importador de paquetes SCORM.
+  * Falta de editor jerárquico visual de Unidades -> Temas -> Lecciones (actualmente plano por etiquetas de texto).
+  * Falta de automatización de enlaces a videoconferencias (Google Meet / Zoom) con registro de asistencia.
+  * Falta de reglas de prerrequisitos y seguimiento de finalización ("Marcar lección como completada").
+  * Falta de tipos de pregunta complejos en el banco (Emparejamiento, Ordenamiento, Respuesta Corta, Arrastrar y Soltar).
+
+2. PLAN DE TRABAJO INYECTADO EN PENDIENTES.MD
+- Registrar las 10 tareas detalladas (REQ-EXP-001 a REQ-EXP-010) aprobadas por la metodología.
