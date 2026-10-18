@@ -1545,3 +1545,623 @@ Criterios de Aceptación:
 - El modal visualiza correctamente las acciones pendientes de la cola IndexedDB.
 - La ejecución manual de la sincronización procesa la cola y actualiza la UI.
 - No modifica ni elimina datos de producción durante el estado offline.
+
+
+---
+
+# PLAN MAESTRO DE TAREAS PARA RESOLUCIÓN, COMPLETADO Y OPTIMIZACIÓN
+
+## 1. CONTROL DE CALIDAD Y TRAZABILIDAD TRANSVERSAL
+
+### [T-001] Actualización del Registro Central de Auditoría
+- **Archivos Involucrados:** `Auditoría.txt`
+- **Descripción:** Consolidar en `Auditoría.txt` todas las entradas y evidencias técnicas derivadas de las auditorías de Infraestructura Transversal, Búsqueda y Fuentes de Datos, Capacidades Avanzadas y Sustitución Operativa Nivel 1.
+- **Criterios de Aceptación:**
+  - Registro cronológico acumulativo sin purgar información histórica.
+  - Trazabilidad completa por módulo, archivo y severidad.
+- **Estado:** [ ] Pendiente
+
+### [T-002] Mantenimiento del Mapa de Dependencias
+- **Archivos Involucrados:** `MapaDependencias.md`
+- **Descripción:** Actualizar `MapaDependencias.md` reflejando las relaciones de endpoints de backend, controladores JS y modales HTML identificados durante las auditorías de capacidades transversales y avanzadas.
+- **Criterios de Aceptación:**
+  - Indexación de funciones, variables globales y dependencias cruzadas.
+- **Estado:** [ ] Pendiente
+
+
+## 2. ÁREA B: AUTOMATIZACIÓN DE TAREAS Y RECORDATORIOS
+
+### [B-001] Programador de Tareas Automáticas e Idempotencia
+- **Archivos Involucrados:** `backend/user-service/Code.gs`, `backend/academic-service/Code.gs`, `backend/accounting-service/Code.gs`
+- **Descripción:** Implementar cerrojo de ejecución (LockService) e idempotencia en la generación de recordatorios pendientes (`getPendingReminders`), avisos de mora y vencimiento de tareas.
+- **Criterios de Aceptación:**
+  - Evita ejecuciones duplicadas simultáneas o repetidas en la misma jornada.
+  - Mantiene registro de estado en las hojas de auditoría de envío.
+- **Estado:** [ ] Pendiente
+
+### [B-002] Centro de Notificaciones y Bandeja de Salida Interna
+- **Archivos Involucrados:** `js/ui-common.js`, `teacher-dashboard.html`, `student-dashboard.html`
+- **Descripción:** Integrar la bandeja unificada de notificaciones con actualización en tiempo real/sondeo, marcado de leído/no leído e historial de avisos automáticos.
+- **Criterios de Aceptación:**
+  - Contador dinámico de no leídos en el encabezado.
+  - Sincronización automática de estado sin recarga completa.
+- **Estado:** [ ] Pendiente
+
+### [B-003] Reglas Configurables de Automatización y Alertas Educativas
+- **Archivos Involucrados:** `backend/academic-service/Code.gs`, `backend/user-service/Code.gs`
+- **Descripción:** Configurar disparadores automáticos para alertas tempranas de bajo rendimiento, ausencias consecutivas y vencimiento de cuotas.
+- **Criterios de Aceptación:**
+  - Configuración por rol (Director/Administrador).
+  - Emisión de notificaciones automáticas internas dirigidas a docentes, orientadores y tutores.
+- **Estado:** [ ] Pendiente
+
+### [B-004] Auditoría de Entregas y Registro de Notificaciones Automáticas
+- **Archivos Involucrados:** `backend/user-service/Code.gs`
+- **Descripción:** Crear bitácora detallada de notificaciones automáticas emitidas indicando destinatario, fecha, canal interno y estado de confirmación.
+- **Criterios de Aceptación:**
+  - Consulta restringida para perfil Administrador/Director.
+  - Exportación de logs de avisos en formato CSV/JSON.
+- **Estado:** [ ] Pendiente
+
+
+## 3. ÁREA C: PWA Y PORTAL MÓVIL
+
+### [C-001] Optimización del Service Worker y Cache Estratégico
+- **Archivos Involucrados:** `sw.js`, `manifest.json`
+- **Descripción:** Refinar las estrategias de precaché y caché dinámico (`stale-while-revalidate` para assets estáticos, `network-first` para endpoints de API) con fallback a IndexedDB.
+- **Criterios de Aceptación:**
+  - Carga inmediata offline de dashboards principales y recursos estáticos.
+  - Actualización transparente de caché al detectar nueva versión del SW.
+- **Estado:** [ ] Pendiente
+
+### [C-002] Gestor de Sincronización Offline en IndexedDB
+- **Archivos Involucrados:** `js/ui-common.js`, `js/persistence.js`
+- **Descripción:** Robustecer la cola de sincronización offline (`sync_queue` en `ngca_offline_db`) con reintentos exponenciales y manejo de colisiones de datos.
+- **Criterios de Aceptación:**
+  - Procesamiento automático al recuperar la conexión (`online`).
+  - Modal de resolución de conflictos en caso de cambios simultáneos.
+- **Estado:** [ ] Pendiente
+
+### [C-003] Visor Gráfico del Estado de Conexión y Cola Pendiente
+- **Archivos Involucrados:** `js/ui-common.js`, `teacher-dashboard.html`, `student-dashboard.html`
+- **Descripción:** Implementar indicador visual `#online-status-badge` enriquecido con panel desplegable que detalla la cantidad y tipo de acciones pendientes de sincronización.
+- **Criterios de Aceptación:**
+  - Muestra contador de elementos en cola y botón de "Sincronizar Ahora".
+  - Notifica visualmente los éxitos o fallos de sincronización.
+- **Estado:** [ ] Pendiente
+
+### [C-004] Adaptación Responsiva Touch-First para Dispositivos Móviles
+- **Archivos Involucrados:** `css/style.css`, `js/ui-common.js`, dashboards HTML
+- **Descripción:** Garantizar zonas de toque de mínimo 48px, gestos táctiles optimizados (swipes) y drawers navegación fluidos en dispositivos móviles.
+- **Criterios de Aceptación:**
+  - Cumplimiento de pautas WCAG 2.2 AA para interfaces táctiles.
+  - Ausencia de scroll horizontal involuntario en resoluciones móviles (<= 360px).
+- **Estado:** [ ] Pendiente
+
+### [C-005] Verificación PWA Lighthous e Instalabilidad Standalone
+- **Archivos Involucrados:** `manifest.json`, `sw.js`
+- **Descripción:** Validar manifest PWA, iconos responsivos, shortcuts y compatibilidad completa con modos standalone en iOS y Android.
+- **Criterios de Aceptación:**
+  - Cumplimiento de criterios de instalabilidad PWA en Lighthouse.
+  - Banner de instalación nativo funcional en navegadores soportados.
+- **Estado:** [ ] Pendiente
+
+
+## 4. ÁREA D: CENTRO DE INTEGRACIONES Y PROVEEDORES
+
+### [D-001] Gestión Servidor de Adaptadores de Notificación Externa
+- **Archivos Involucrados:** `backend/user-service/Code.gs`
+- **Descripción:** Extender los adaptadores multicanal (`configureNotificationChannel`, `sendChannelNotificationTest`) para SMS, WhatsApp, Messenger y Email con aislamiento de fallos.
+- **Criterios de Aceptación:**
+  - Las fallas en proveedores externos no afectan el funcionamiento de las notificaciones internas.
+  - Registro de credenciales cifradas y validadas por servidor.
+- **Estado:** [ ] Pendiente
+
+### [D-002] Panel UI de Administración de Integraciones y Proveedores
+- **Archivos Involucrados:** `teacher-dashboard.html`, `js/teacher.js`
+- **Descripción:** Perfeccionar el modal `#modal-channel-config` permitiendo probar conectividad, configurar tokens, límites de envío y consultar saldo/cuotas del proveedor.
+- **Criterios de Aceptación:**
+  - Interfaz interactiva de prueba de envío con reporte de código de respuesta HTTP.
+  - Acceso restringido exclusivamente a roles Administrador y Director.
+- **Estado:** [ ] Pendiente
+
+### [D-003] Normalización de Preferencias del Usuario e Idempotencia
+- **Archivos Involucrados:** `backend/user-service/Code.gs`, `js/ui-common.js`
+- **Descripción:** Normalizar las preferencias de usuario para la recepción de mensajes por canal (SMS, WhatsApp, Email, In-App) con respeto a las opciones de privacidad del tutor.
+- **Criterios de Aceptación:**
+  - El backend descarta automáticamente envíos por canales no autorizados por el usuario.
+  - Control estricto de límites por hora y prevención de spam.
+- **Estado:** [ ] Pendiente
+
+### [D-004] Bitácora Central de Envíos Externos e Alertas de Fallos
+- **Archivos Involucrados:** `backend/user-service/Code.gs`
+- **Descripción:** Registrar en `RegistroEnviosExternos` la respuesta exacta, tiempo de latencia y código de error de cada solicitud enviada a proveedores externos.
+- **Criterios de Aceptación:**
+  - Genera alerta automática al Administrador si la tasa de fallos supera el 15%.
+  - Historial consultable con filtros por fecha, canal y destinatario.
+- **Estado:** [ ] Pendiente
+
+### [D-005] Pruebas de Desconexión y Resiliencia Multicanal
+- **Archivos Involucrados:** `js/teacher.js`, `backend/user-service/Code.gs`
+- **Descripción:** Validar que la plataforma opere al 100% en modo degradado cuando los proveedores externos se encuentren deshabilitados o sin saldo.
+- **Criterios de Aceptación:**
+  - Conmutación automática a canal interno (In-App) sin interrupción de la experiencia del usuario.
+  - Sin excepciones no capturadas ni bloqueos en el hilo principal.
+- **Estado:** [ ] Pendiente
+
+
+## 5. ÁREA E: CONTINUIDAD OPERATIVA Y RECUPERACIÓN ANTE DESASTRES
+
+### [E-001] Motor Servidor de Respaldos Integrales JSON/Drive
+- **Archivos Involucrados:** `backend/academic-service/Code.gs`, `backend/accounting-service/Code.gs`, `backend/user-service/Code.gs`
+- **Descripción:** Fortalecer la generación de copias de respaldo completas (`createSystemBackup`) almacenando dumps estructurados JSON en Google Drive con sumas de verificación Checksum (SHA-256).
+- **Criterios de Aceptación:**
+  - Generación de respaldo manual y programado.
+  - Verificación de integridad mediante `verifyBackupIntegrity`.
+- **Estado:** [ ] Pendiente
+
+### [E-002] Procedimiento de Restauración Controlada con Preservación Histórica
+- **Archivos Involucrados:** `backend/academic-service/Code.gs`
+- **Descripción:** Implementar la restauración segura (`restoreSystemBackup`) con exigencia de código de confirmación explícito (`RESTORE-CONFIRMED`) y protección de registros históricos (Calificaciones y Recuperaciones).
+- **Criterios de Aceptación:**
+  - Preserva intactos los registros de auditoría e historial de notas.
+  - Requiere doble confirmación y rol exclusivo de Administrador.
+- **Estado:** [ ] Pendiente
+
+### [E-003] Interfaz UI de Gestión de Respaldos y Estado del Sistema
+- **Archivos Involucrados:** `teacher-dashboard.html`, `js/teacher.js`
+- **Descripción:** Desarrollar el panel de administración de respaldos permitiendo listar, descargar, verificar integridad y solicitar restauración de puntos de control.
+- **Criterios de Aceptación:**
+  - Muestra tabla con fecha, tamaño, checksum y estado de cada respaldo.
+  - Modal interactivo de confirmación de restauración con advertencias de seguridad.
+- **Estado:** [ ] Pendiente
+
+### [E-004] Pruebas Simuladas de Desastre y Failover de Datos
+- **Archivos Involucrados:** `backend/academic-service/Code.gs`
+- **Descripción:** Realizar simulacros de recuperación ante pérdida accidental de registros comprobando la reconstrucción exacta del estado desde los respaldos JSON.
+- **Criterios de Aceptación:**
+  - 100% de coincidencia de registros restaurados contra el checksum original.
+  - Documentación del tiempo estimado de recuperación (RTO / RPO).
+- **Estado:** [ ] Pendiente
+
+### [E-005] Bitácora Protegida de Operaciones de Respaldo y Restauración
+- **Archivos Involucrados:** `backend/user-service/Code.gs`
+- **Descripción:** Registrar de forma inmutable todas las acciones de creación, descarga y restauración de respaldos en la bitácora estructurada de seguridad.
+- **Criterios de Aceptación:**
+  - Captura IP/origen, usuario, timestamp, checksum y resultado de la operación.
+  - Registros no modificables ni eliminables mediante interfaz común.
+- **Estado:** [ ] Pendiente
+
+
+## 6. ÁREA A (EVALUACIÓN CONDICIONAL DE ASISTENTE DE IA)
+
+### [IA-01] Análisis de Factibilidad y Arquitectura de Asistente Institucional
+- **Archivos Involucrados:** Documentación técnica de arquitectura
+- **Descripción:** Evaluar la factibilidad técnica y costos de integración de un Asistente de IA manteniendo la soberanía de los datos de los estudiantes y el estricto cumplimiento de privacidad.
+- **Criterios de Aceptación:**
+  - Documento de evaluación con recomendaciones claras sobre uso de modelos locales vs APIs externas.
+  - Confirmación de exclusión o inclusión condicional del alcance.
+- **Estado:** [ ] Pendiente
+
+### [IA-02] Definición de Limites de Privacidad y Gobierno de Datos de IA
+- **Archivos Involucrados:** Politica de privacidad y documentos legales
+- **Descripción:** Establecer reglas estrictas para impedir el envío de PII (Información Personal Identificable) de estudiantes o finanzas a modelos de IA de terceros.
+- **Criterios de Aceptación:**
+  - Especificación técnica de anonimización de datos previa a cualquier procesamiento externo.
+- **Estado:** [ ] Pendiente
+
+### [IA-03] Prototipado Condicional de Búsqueda Asistida / FAQ con IA
+- **Archivos Involucrados:** `js/ui-common.js`
+- **Descripción:** En caso de aprobación del Plan Maestro, prototipar la asistencia de búsqueda basada exclusivamente en la base de datos de preguntas frecuentes (FAQ) de la institución.
+- **Criterios de Aceptación:**
+  - Respuestas limitadas a la base de conocimiento institucional sin alucinaciones.
+- **Estado:** [ ] Pendiente
+
+
+## 7. SALUD OPERATIVA Y PRIVACIDAD TRANSVERSAL
+
+### [X-001] Purga y Sanitización de Registros y Consola
+- **Archivos Involucrados:** Todos los controladores `.js` y scripts `.gs`
+- **Descripción:** Eliminar llamadas redundantes a `console.log` en producción y sanitizar logs para evitar la exposición de tokens o datos personales sensibles.
+- **Criterios de Aceptación:**
+  - Ausencia de logs con información sensible en las herramientas de desarrollador del navegador.
+  - Manejo uniforme de errores a través del sistema de registros estructurados.
+- **Estado:** [ ] Pendiente
+
+### [X-002] Validación WCAG 2.2 AA y Accesibilidad Universal
+- **Archivos Involucrados:** `css/style.css`, dashboards HTML, `js/ui-common.js`
+- **Descripción:** Verificar contrastes de color, etiquetas aria, navegación completa por teclado (Tab / Shift+Tab) y cierre de modales con la tecla ESC.
+- **Criterios de Aceptación:**
+  - Ratio de contraste mínimo de 4.5:1 para texto normal.
+  - Soporte completo de lectores de pantalla y navegación asistida.
+- **Estado:** [ ] Pendiente
+
+### [X-003] Verificación de Propiedad Intelectual y Cumplimiento Legal
+- **Archivos Involucrados:** `politica-de-privacidad.html`, `politica-de-uso.html`
+- **Descripción:** Validar que las declaraciones de propiedad intelectual pertenezcan a JyP Solutions S. de R.L. de C.V. y que la propiedad de los datos sea 100% del instituto cliente.
+- **Criterios de Aceptación:**
+  - Texto legal verificado y coherente en todas las páginas públicas e interfaces de la plataforma.
+- **Estado:** [ ] Pendiente
+
+
+## 8. VERIFICACIÓN Y CIERRE FINAL DE LA EXPANSIÓN
+
+### [V-001] Pruebas End-to-End de Integración Transversal (Flujos 1 al 11)
+- **Archivos Involucrados:** Todos los servicios backend y vistas frontend
+- **Descripción:** Ejecutar la batería completa de 11 flujos de prueba transversales desde la admisión de estudiantes hasta el cierre contable y emisión de reportes.
+- **Criterios de Aceptación:**
+  - 100% de escenarios ejecutados con éxito sin errores de inconsistencia de datos.
+  - Certificación de cero regresiones funcionales.
+- **Estado:** [ ] Pendiente
+
+### [V-002] Informe de Cierre de Expansión y Acta de Aprobación
+- **Archivos Involucrados:** `ChangesLogs.txt`, `Auditoría.txt`
+- **Descripción:** Elaborar el informe consolidado de cierre de expansión acreditando el cumplimiento del 100% de los requisitos arquitectónicos y operativos.
+- **Criterios de Aceptación:**
+  - Registro completo de cambios en `ChangesLogs.txt`.
+  - Conformidad y firma digital de aprobación del plan.
+- **Estado:** [ ] Pendiente
+
+
+---
+
+# BACKLOG MAESTRO DE RESOLUCIÓN, OPTIMIZACIÓN Y EVOLUCIÓN
+
+## A. INFRAESTRUCTURA Y ARQUITECTURA BASE
+
+### [BASE-01] Despliegue de unificación de endpoints y ruteo centralizado
+- **Severidad:** Alta
+- **Estado:** Pendiente
+- **Archivos:** `js/config.js`, `js/api.js`, `backend/user-service/Code.gs`
+- **Acción:** Consolidar el ruteo hacia microservicios backend garantizando fallback automático y reintentos ante fallas de red.
+
+### [BASE-02] Normalización del esquema de persistencia y caché IndexedDB
+- **Severidad:** Alta
+- **Estado:** Pendiente
+- **Archivos:** `js/persistence.js`, `js/ui-common.js`, `sw.js`
+- **Acción:** Estandarizar la estructura de los almacenes locales en IndexedDB (`ngca_offline_db`) asegurando la resolución determinista de conflictos en reconexión.
+
+### [BASE-03] Optimización del ciclo de vida del Service Worker y precaché
+- **Severidad:** Media
+- **Estado:** Pendiente
+- **Archivos:** `sw.js`, `manifest.json`
+- **Acción:** Implementar políticas de invalidación de caché por versión y precaché diferido para vistas pesadas sin bloquear el hilo principal.
+
+### [BASE-04] Sistema centralizado de tratamiento de errores y logs estructurados
+- **Severidad:** Media
+- **Estado:** Pendiente
+- **Archivos:** `js/ui-common.js`, `backend/user-service/Code.gs`
+- **Acción:** Estandarizar el formato JSON de respuestas de error e integrar captura de excepciones no controladas con envío a `RegistroErrores`.
+
+
+## B. SEGURIDAD, AUTENTICACIÓN Y PERMISOS GRANULARES (RBAC)
+
+### [SEC-01] Aislamiento estricto de roles en frontend y backend
+- **Severidad:** Crítica
+- **Estado:** Pendiente
+- **Archivos:** `js/api.js`, `backend/user-service/Code.gs`, todos los controladores `.js`
+- **Acción:** Enforzar la validación de roles en servidor en el 100% de las operaciones de escritura y lectura sensible, impidiendo bypass mediante manipulación de cliente.
+
+### [SEC-02] Auditoría de sesiones activas y revocación remota
+- **Severidad:** Alta
+- **Estado:** Pendiente
+- **Archivos:** `backend/user-service/Code.gs`, `js/ui-common.js`
+- **Acción:** Registrar sesiones activas con huella digital de dispositivo y permitir la expiración forzada desde el panel de administración.
+
+### [SEC-03] Cifrado y sanitización de datos personales en tránsito y reposo
+- **Severidad:** Alta
+- **Estado:** Pendiente
+- **Archivos:** `backend/user-service/Code.gs`, `backend/academic-service/Code.gs`
+- **Acción:** Aplicar sanitización estricta contra inyecciones XSS en formularios e implementar cifrado para identificadores sensibles.
+
+### [SEC-04] Trazabilidad e inmutabilidad de la bitácora de auditoría
+- **Severidad:** Alta
+- **Estado:** Pendiente
+- **Archivos:** `backend/user-service/Code.gs`
+- **Acción:** Garantizar que los registros en `BitacoraAuditoria` sean append-only y protegidos contra modificaciones de usuarios con rol no autorizado.
+
+### [SEC-05] Control de frecuencia (Rate Limiting) y prevención de abuso
+- **Severidad:** Media
+- **Estado:** Pendiente
+- **Archivos:** `backend/user-service/Code.gs`
+- **Acción:** Implementar controles de frecuencia de peticiones por usuario e IP para endpoints de autenticación y generación de reportes.
+
+
+## C. MATRÍCULA Y ADMISIÓN DE ESTUDIANTES
+
+### [MAT-01] Automatización del flujo de pre-matrícula y validación documental
+- **Severidad:** Alta
+- **Estado:** Pendiente
+- **Archivos:** `js/student.js`, `backend/academic-service/Code.gs`
+- **Acción:** Integrar la verificación automática de requisitos documentales durante el proceso de solicitud de pre-matrícula.
+
+### [MAT-02] Detección de duplicados en admisiones y fusión de registros
+- **Severidad:** Media
+- **Estado:** Pendiente
+- **Archivos:** `backend/academic-service/Code.gs`, `js/teacher.js`
+- **Acción:** Implementar algoritmos de coincidencia por coincidencia de identidad/nombre para alertar sobre expedientes duplicados antes de crear nuevos.
+
+
+## D. EXPEDIENTES Y GESTIÓN DE ESTUDIANTES
+
+### [EXP-01] Visor unificado del historial académico y disciplinario
+- **Severidad:** Alta
+- **Estado:** Pendiente
+- **Archivos:** `js/teacher.js`, `student-dashboard.html`
+- **Acción:** Consolidar en una sola vista la cronología de notas, asistencias, reconocimientos e incidencias disciplinarias del alumno.
+
+### [EXP-02] Gestión de traslados, retiros y cambios de condición
+- **Severidad:** Media
+- **Estado:** Pendiente
+- **Archivos:** `backend/academic-service/Code.gs`, `js/teacher.js`
+- **Acción:** Flujo completo para tramitar bajas, traslados e inactivaciones de expedientes con generación automática de paz y salvo.
+
+
+## E. CALIFICACIONES Y EVALUACIÓN DE APRENDIZAJES
+
+### [ACA-01] Motor de cálculo y ponderación de calificaciones por período
+- **Severidad:** Crítica
+- **Estado:** Pendiente
+- **Archivos:** `backend/exam-service/Code.gs`, `js/teacher.js`
+- **Acción:** Validar la aplicación exacta de rúbricas, porcentajes por categoría y redondeo institucional oficial.
+
+### [ACA-02] Publicación y cierre de cuadros de honor y boletines
+- **Severidad:** Alta
+- **Estado:** Pendiente
+- **Archivos:** `backend/exam-service/Code.gs`, `js/teacher.js`, `student-dashboard.html`
+- **Acción:** Flujo de aprobación para cierre definitivo de actas de calificaciones e imposibilidad de modificación sin reapertura autorizada.
+
+### [ACA-03] Módulo de recuperaciones y evaluaciones extraordinarias
+- **Severidad:** Alta
+- **Estado:** Pendiente
+- **Archivos:** `backend/exam-service/Code.gs`, `js/teacher.js`
+- **Acción:** Registro de procesos de recuperación académica con cálculo automático de notas definitivas recalificadas.
+
+
+## F. ASISTENCIA Y PUNTUALIDAD
+
+### [ASI-01] Toma de asistencia diaria y por asignatura con alertas en tiempo real
+- **Severidad:** Alta
+- **Estado:** Pendiente
+- **Archivos:** `js/teacher.js`, `backend/academic-service/Code.gs`
+- **Acción:** Interfaz optimizada para registro rápido de asistencia diaria con notificación automática a tutores ante ausencias no justificadas.
+
+### [ASI-02] Flujo de justificación de ausencias e integración con expedientes
+- **Severidad:** Media
+- **Estado:** Pendiente
+- **Archivos:** `js/student.js`, `backend/academic-service/Code.gs`, `js/teacher.js`
+- **Acción:** Permite a tutores enviar comprobantes de justificación con panel de aprobación para orientación y secretaría.
+
+
+## G. AULA VIRTUAL Y RECURSOS EDUCATIVOS
+
+### [AULA-01] Publicación de materiales y asignación de tareas interactivas
+- **Severidad:** Alta
+- **Estado:** Pendiente
+- **Archivos:** `backend/task-service/Code.gs`, `js/teacher.js`, `js/student.js`
+- **Acción:** Módulo para publicación diferida o inmediata de actividades académicas con adjuntos y fechas límite.
+
+### [AULA-02] Control de versiones en entregas de tareas y carga reanudable
+- **Severidad:** Media
+- **Estado:** Pendiente
+- **Archivos:** `backend/task-service/Code.gs`, `js/ui-common.js`
+- **Acción:** Implementación de carga por fragmentos (chunked upload) para archivos pesados con reintento automático ante desconexión.
+
+### [AULA-03] Integración de cuestionarios y banco de preguntas automatizado
+- **Severidad:** Media
+- **Estado:** Pendiente
+- **Archivos:** `backend/exam-service/Code.gs`, `js/quizpro.js`
+- **Acción:** Generación dinámica de evaluaciones a partir de banco de preguntas con calificación instantánea.
+
+
+## H. PAGOS, COBROS Y CUENTAS POR COBRAR
+
+### [FIN-01] Pasarela de registro y verificación de comprobantes de pago
+- **Severidad:** Crítica
+- **Estado:** Pendiente
+- **Archivos:** `backend/accounting-service/Code.gs`, `js/student.js`, `js/accounting.js`
+- **Acción:** Carga de recibos bancarios por tutores y cola de revisión administrativa para aprobación o rechazo con observación.
+
+### [FIN-02] Generación automática de estados de cuenta y alertas de mora
+- **Severidad:** Alta
+- **Estado:** Pendiente
+- **Archivos:** `backend/accounting-service/Code.gs`, `js/student.js`
+- **Acción:** Cálculo transparente de cargos, abonos, saldos pendientes y desglose de tarifas por estudiante/familia.
+
+### [FIN-03] Emisión de facturas fiscales SAR y recibos digitales PDF
+- **Severidad:** Alta
+- **Estado:** Pendiente
+- **Archivos:** `backend/accounting-service/Code.gs`, `js/accounting.js`
+- **Acción:** Generación de documentos fiscales formateados conforme a requisitos legales e impresión/descarga directa.
+
+### [FIN-04] Gestión de convenios de pago y Becas/Descuentos
+- **Severidad:** Media
+- **Estado:** Pendiente
+- **Archivos:** `backend/accounting-service/Code.gs`, `js/accounting.js`
+- **Acción:** Aplicación estructurada de planes de amortización, becas parciales o totales sobre cargos mensuales.
+
+### [FIN-05] Cierre de caja diario y arqueo de ingresos
+- **Severidad:** Media
+- **Estado:** Pendiente
+- **Archivos:** `backend/accounting-service/Code.gs`, `js/accounting.js`
+- **Acción:** Proceso de validación de cobros en efectivo y transferencias para conciliación de caja chica y depósito.
+
+
+## I. CONTABILIDAD Y CONTROL FINANCIERO
+
+### [CON-01] Libro mayor y asientos contables de partida doble
+- **Severidad:** Alta
+- **Estado:** Pendiente
+- **Archivos:** `backend/accounting-service/Code.gs`
+- **Acción:** Validación estricta de balance `Debe === Haber` en cada transacción financiera automatizada o manual.
+
+### [CON-02] Control presupuestario por centro de costo institucional
+- **Severidad:** Alta
+- **Estado:** Pendiente
+- **Archivos:** `backend/accounting-service/Code.gs`, `dashboard-contabilidad.html`
+- **Acción:** Seguimiento en tiempo real de ejecución presupuestaria proyectada vs devengada por departamento.
+
+### [CON-03] Conciliación bancaria y gestión de cuentas por pagar
+- **Severidad:** Media
+- **Estado:** Pendiente
+- **Archivos:** `backend/accounting-service/Code.gs`, `js/accounting.js`
+- **Acción:** Módulo para cruce de extractos bancarios e importación de facturas de proveedores.
+
+### [CON-04] Control de inventarios Kardex y activos fijos
+- **Severidad:** Media
+- **Estado:** Pendiente
+- **Archivos:** `backend/accounting-service/Code.gs`, `js/accounting.js`
+- **Acción:** Registro de entradas, salidas, depreciaciones y asignaciones patrimoniales de mobiliario y equipo.
+
+
+## J. PLANILLAS Y GESTIÓN DE PERSONAL (RRHH)
+
+### [NOM-01] Expediente laboral de colaboradores y contratos
+- **Severidad:** Alta
+- **Estado:** Pendiente
+- **Archivos:** `backend/accounting-service/Code.gs`, `dashboard-recursos-humanos.html`
+- **Acción:** Gestión de información contractual, cargos, salarios base y repositorio privado de documentos del empleado.
+
+### [NOM-02] Cálculo de nómina con deducciones de ley (IHSS, RAP, ISR)
+- **Severidad:** Crítica
+- **Estado:** Pendiente
+- **Archivos:** `backend/accounting-service/Code.gs`
+- **Acción:** Motor de cálculo de planilla quincenal/mensual con retenciones estatutarias e incapacidades.
+
+### [NOM-03] Solicitud de vacaciones, licencias y marcaje de asistencia
+- **Severidad:** Media
+- **Estado:** Pendiente
+- **Archivos:** `dashboard-recursos-humanos.html`, `backend/accounting-service/Code.gs`
+- **Acción:** Portal de autoservicio para el empleado con flujo de aprobación jerárquica para permisos y vacaciones.
+
+
+## K. GESTIÓN DOCUMENTAL Y FIRMA DIGITAL
+
+### [DOC-01] Generación de certificaciones y constancias académicas
+- **Severidad:** Alta
+- **Estado:** Pendiente
+- **Archivos:** `backend/accounting-service/Code.gs`, `js/teacher.js`
+- **Acción:** Plantillas dinámicas para emisión instantánea de constancias de estudio, conducta y egreso.
+
+### [DOC-02] Editor visual de plantillas PDF con estampación overlay
+- **Severidad:** Media
+- **Estado:** Pendiente
+- **Archivos:** `teacher-dashboard.html`, `js/teacher.js`
+- **Acción:** Posicionamiento interactivo de campos dinámicos sobre documentos base PDF mediante pdf-lib.
+
+### [DOC-03] Verificación mediante Código Único de Verificación (CUV)
+- **Severidad:** Alta
+- **Estado:** Pendiente
+- **Archivos:** `backend/user-service/Code.gs`, `js/ui-common.js`
+- **Acción:** Portal público para validar la autenticidad e integridad de documentos oficiales emitidos.
+
+
+## L. COMUNICACIÓN INSTITUCIONAL Y MENSAJERÍA
+
+### [COM-01] Emisión de comunicados con acuse de recibo explícito
+- **Severidad:** Alta
+- **Estado:** Pendiente
+- **Archivos:** `backend/user-service/Code.gs`, `student-dashboard.html`
+- **Acción:** Envío segmentado de circulares requiriendo confirmación de lectura por parte de los tutores.
+
+### [COM-02] Mensajería interna y canales de atención a familias
+- **Severidad:** Media
+- **Estado:** Pendiente
+- **Archivos:** `backend/user-service/Code.gs`, `js/student.js`, `js/teacher.js`
+- **Acción:** Hilos de conversación entre docentes, directivos y padres de familia con control de horarios de atención.
+
+### [COM-03] Agenda institucional y calendario unificado
+- **Severidad:** Media
+- **Estado:** Pendiente
+- **Archivos:** `backend/academic-service/Code.gs`, `js/ui-common.js`
+- **Acción:** Visualización consolidada de eventos académicos, feriados, exámenes y reuniones de padres.
+
+
+## M. REPORTES, INDICADORES E INTELIGENCIA INSTITUCIONAL
+
+### [REP-01] Catálogo central de reportes institucionales
+- **Severidad:** Alta
+- **Estado:** Pendiente
+- **Archivos:** `backend/user-service/Code.gs`, `js/ui-common.js`
+- **Acción:** Motor de generación de reportes matriciales consolidando datos académicos, financieros y administrativos.
+
+### [REP-02] Tableros analíticos e indicadores KPI con gráficos dinámicos
+- **Severidad:** Media
+- **Estado:** Pendiente
+- **Archivos:** `js/ui-common.js`, dashboards HTML
+- **Acción:** Componentes gráficos personalizables para evaluar retención, morosidad, rendimiento promedio y asistencia.
+
+### [REP-03] Simulares de proyecciones y tendencias de inscripción
+- **Severidad:** Bajo
+- **Estado:** Pendiente
+- **Archivos:** `backend/user-service/Code.gs`, `js/ui-common.js`
+- **Acción:** Herramienta predictiva para estimación de ingresos y capacidad de aulas en períodos futuros.
+
+
+## N. EXPERIENCIA DE USUARIO, OPTIMIZACIÓN Y CIERRE
+
+### [UX-01] Sistema de guías e instructivos contextuales interactivos
+- **Severidad:** Bajo
+- **Estado:** Pendiente
+- **Archivos:** `js/ui-common.js`
+- **Acción:** Tours guiados paso a paso para orientar a nuevos usuarios en las funciones principales de la plataforma.
+
+### [PERF-01] Optimización de tiempo de respuesta y carga perezosa
+- **Severidad:** Alta
+- **Estado:** Pendiente
+- **Archivos:** Todos los controladores `.js`
+- **Acción:** Paginación y lazy loading en tablas extensas para garantizar tiempos de renderizado inferiores a 1 segundo.
+
+### [PERF-02] Reducción de latencia en peticiones asíncronas
+- **Severidad:** Media
+- **Estado:** Pendiente
+- **Archivos:** `js/api.js`
+- **Acción:** Agrupación de solicitudes paralelas (batch requests) para minimizar llamadas RTT al backend Google Apps Script.
+
+### [UX-02] Estandarización de paletas institucionales y accesibilidad
+- **Severidad:** Bajo
+- **Estado:** Pendiente
+- **Archivos:** `css/style.css`, `js/ui-common.js`
+- **Acción:** Conmutador de temas de color y modo de alto contraste para cumplimiento WCAG 2.2 AA.
+
+### [NEW-01] Integración del Botón Global y Modal de Reporte de Problemas
+- **Severidad:** Media
+- **Estado:** Pendiente
+- **Archivos:** `js/ui-common.js`, `backend/user-service/Code.gs`
+- **Acción:** Soporte para captura automática de contexto, imágenes y seguimiento de tickets de soporte técnico.
+
+### [NEW-02] Panel de Control Administrativo de Tickets de Soporte
+- **Severidad:** Media
+- **Estado:** Pendiente
+- **Archivos:** `js/ui-common.js`, `teacher-dashboard.html`
+- **Acción:** Interfaz para gestión de estados de tickets, asignación a personal de soporte y respuestas públicas/privadas.
+
+### [NEW-03] Modal Forzado de Aceptación de Términos y Condiciones
+- **Severidad:** Alta
+- **Estado:** Pendiente
+- **Archivos:** `js/ui-common.js`, `backend/user-service/Code.gs`
+- **Acción:** Bloqueo de navegación en primer inicio hasta la firma digital y aceptación de políticas de privacidad.
+
+### [NEW-04] Selector de Cambiador de Estudiantes para Familias Múltiples
+- **Severidad:** Media
+- **Estado:** Pendiente
+- **Archivos:** `js/student.js`, `student-dashboard.html`
+- **Acción:** Alternancia fluida entre perfiles de hijos vinculados a un mismo tutor con consolidación de saldos y tareas.
+
+### [FINAL-01] Auditoría de Integración y Pruebas Transversales Nivel 1
+- **Severidad:** Alta
+- **Estado:** Pendiente
+- **Archivos:** Todos los módulos
+- **Acción:** Verificación completa de los 11 flujos de sustitución operativa.
+
+### [FINAL-02] Verificación de Cumplimiento de Políticas de Código y Repositorio
+- **Severidad:** Alta
+- **Estado:** Pendiente
+- **Archivos:** Todo el proyecto
+- **Acción:** Certificación del cumplimiento de `METODOLOGIA_DESARROLLO.md` y `AGENTS.md`.
+
+### [FINAL-03] Firma de Cierre de Versión 1.0 Global
+- **Severidad:** Alta
+- **Estado:** Pendiente
+- **Archivos:** `js/config.js`, `ChangesLogs.txt`
+- **Acción:** Congelamiento formal del release 1.0 y generación de versión final documentada.
