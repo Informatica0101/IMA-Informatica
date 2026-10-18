@@ -3518,3 +3518,546 @@ La ampliación se considerará terminada cuando las tareas aprobadas hayan cumpl
 Las funciones condicionadas a decisiones institucionales, como SCORM o la creación automática de reuniones mediante proveedores externos, deben permanecer identificadas como pendientes de aprobación y no deben declararse implementadas.
 
 Cada entrega debe informar los archivos modificados, las funciones incorporadas, las pruebas ejecutadas y sus resultados reales, así como cualquier limitación que siga pendiente.
+
+---
+
+PLAN DE IMPLEMENTACIÓN DETALLADO: FASE 3. PLANIFICACIÓN ACADÉMICA Y HORARIOS
+
+Proyecto: Ecosistema Educativo New Generation Christian Academy
+Área: Planificación académica, horarios y control de horas lectivas
+Objetivo: Completar las funciones faltantes identificadas en la auditoría de la Fase 3, integrar las capacidades existentes y garantizar que los horarios, las asignaciones docentes, los espacios físicos y las horas impartidas se administren de manera coherente.
+
+INSTRUCCIONES GENERALES PARA JULES
+
+Antes de comenzar, lee "METODOLOGIA_DESARROLLO.md" y los documentos de instrucciones vigentes del proyecto. Inspecciona el código existente y utiliza la auditoría de la Fase 3 como referencia de los hallazgos, pero verifica las dependencias directamente en el código antes de modificarlo.
+
+Aplica las siguientes reglas:
+
+1. Conserva las funciones existentes que ya trabajan correctamente, especialmente "createClassSchedule", "getClassSchedules", "deleteClassSchedule", "checkScheduleConflict", "getStudentSchedule", "getClassroomResources", "saveClassroomResource" y "createTeacherSubstitution".
+2. No crees implementaciones duplicadas si ya existe una función, tabla o componente que pueda ampliarse correctamente.
+3. No supongas que los nombres de hojas, columnas, funciones o parámetros del informe son definitivos. Confírmalos en el proyecto.
+4. Integra las nuevas capacidades con "OfertaAcademica", "MallaCurricular", "AnosLectivos", "HorariosClase", "SedesAulas", "AsignacionesDocentes", "CalendarioAcademico" y las matrículas existentes, cuando corresponda.
+5. Respeta los permisos por rol tanto en la interfaz como en el servidor. Ocultar una opción en pantalla no sustituye la validación de permisos del servidor.
+6. Mantén la compatibilidad con los registros históricos y las funciones existentes. No elimines ni reinicies información académica para facilitar una implementación.
+7. No uses datos simulados para declarar una tarea completada. Las pruebas deben distinguir entre resultados reales, pruebas controladas y verificaciones pendientes.
+8. Todo texto visible para estudiantes, docentes, tutores y personal administrativo debe estar redactado en español claro, sin exponer detalles de programación o funcionamiento interno.
+9. Si una función depende de otra tarea aún no completada, documenta la dependencia y respeta el orden de implementación.
+10. No alteres módulos ajenos a la planificación académica, salvo las modificaciones estrictamente necesarias para integrar las funciones de esta fase.
+
+---
+
+BLOQUE A. INTEGRIDAD DE LOS HORARIOS Y REGLAS ACADÉMICAS
+
+TAREA 3.1. Validación integral de horarios académicos
+
+Objetivo: Ampliar las validaciones actuales para impedir que se guarden horarios que incumplan restricciones académicas, docentes, temporales o físicas.
+
+Situación de partida: La función "checkScheduleConflict" ya identifica solapamientos de docentes, aulas y ofertas académicas. Debe conservarse y ampliarse sin duplicar sus validaciones.
+
+Requisitos funcionales
+
+1. Validar que la hora de inicio sea anterior a la hora de finalización.
+2. Rechazar bloques con días, horarios, ofertas, docentes o espacios inválidos o inexistentes.
+3. Comprobar que el docente esté asignado a la oferta académica correspondiente.
+4. Detectar solapamientos de docentes, secciones, aulas y recursos compartidos.
+5. Excluir correctamente el horario actual cuando se edite un bloque, sin ignorar los demás conflictos.
+6. Verificar las restricciones de disponibilidad docente definidas en la tarea 3.4.
+7. Verificar la capacidad de los espacios conforme a la tarea 3.5.
+8. Comprobar las restricciones del calendario lectivo definidas en la tarea 3.6.
+9. Cuando exista una malla curricular aplicable, comprobar la cantidad de sesiones y horas semanales exigidas para la oferta.
+10. Volver a validar las restricciones cuando se edite un horario o se modifique una asignación que pueda afectarlo.
+11. Antes de publicar una matriz de horarios, validar el conjunto completo y señalar todos los conflictos detectados.
+12. Diferenciar los errores que impiden guardar de las advertencias que requieren una decisión administrativa explícita.
+
+Reglas de negocio
+
+- Un mismo docente no puede impartir dos clases simultáneamente.
+- Una misma sección no puede tener dos clases simultáneas.
+- Un mismo espacio físico no puede reservarse para actividades incompatibles que coincidan en el tiempo.
+- Las restricciones deben aplicarse tanto al crear como al editar y publicar horarios.
+- No se deben omitir conflictos simplemente porque un horario ya esté publicado.
+- Las excepciones autorizadas, si el proyecto las contempla, deben quedar registradas con su justificación y responsable.
+
+Criterios de aceptación
+
+- Una clase que contradiga una restricción obligatoria se rechaza en el servidor.
+- El usuario recibe un mensaje claro que identifica el conflicto y permite localizar el bloque afectado.
+- La edición de un horario no genera falsos conflictos consigo mismo.
+- La publicación se bloquea cuando existen conflictos que no pueden autorizarse.
+- Las pruebas demuestran que los controles existentes siguen funcionando.
+
+---
+
+TAREA 3.2. Copia de horarios entre años lectivos
+
+Objetivo: Reducir el trabajo repetitivo al preparar el horario de un nuevo año lectivo, reutilizando una matriz anterior sin alterar los registros originales.
+
+Requisitos funcionales
+
+1. Incorporar una opción administrativa para copiar la matriz de horarios de un año lectivo a otro.
+2. Permitir seleccionar el año lectivo de origen y el año lectivo de destino.
+3. Mostrar un resumen previo de los horarios que se copiarán, las ofertas relacionadas, los docentes, las aulas y los bloques que podrían requerir ajustes.
+4. Comprobar que las ofertas del año de destino existan y correspondan a las asignaturas, grados y secciones apropiados.
+5. Identificar docentes, aulas o asignaturas que ya no estén disponibles o no tengan una correspondencia válida.
+6. No copiar identificadores únicos de los horarios originales como si fueran identificadores de registros nuevos.
+7. Crear los registros nuevos en estado de borrador.
+8. Ejecutar las validaciones de conflictos antes de finalizar la copia.
+9. Presentar los registros que no puedan copiarse y explicar la causa.
+10. Permitir cancelar la operación antes de confirmar los cambios.
+11. Registrar quién realizó la copia, cuándo se hizo y entre qué años lectivos.
+12. Evitar que la repetición accidental de la operación duplique toda la matriz.
+
+Criterios de aceptación
+
+- El horario original permanece intacto.
+- Los registros copiados quedan vinculados al año lectivo de destino.
+- Los bloques inválidos no se publican automáticamente.
+- El sistema muestra un resumen de los bloques copiados, omitidos y pendientes de revisión.
+- La copia respeta los permisos administrativos y puede revisarse antes de su publicación.
+
+---
+
+BLOQUE B. DISPONIBILIDAD DOCENTE, AULAS Y CALENDARIO
+
+TAREA 3.3. Gestión de aulas, laboratorios y recursos desde la interfaz
+
+Objetivo: Conectar la gestión de espacios físicos con la interfaz administrativa, aprovechando las funciones existentes de consulta y guardado.
+
+Requisitos funcionales
+
+1. Incorporar una pantalla o sección administrativa para consultar, registrar, editar y desactivar aulas, laboratorios, auditorios, canchas y otros espacios autorizados.
+2. Utilizar "getClassroomResources" y "saveClassroomResource", o sus equivalentes existentes, en lugar de crear servicios duplicados.
+3. Mostrar, como mínimo:
+   - Código del espacio.
+   - Nombre.
+   - Sede, si aplica.
+   - Tipo de espacio.
+   - Capacidad.
+   - Estado de disponibilidad.
+4. Validar que los códigos no se dupliquen.
+5. Impedir la desactivación de un espacio cuando existan reservas futuras incompatibles, salvo que se resuelvan o cancelen explícitamente.
+6. Mantener los espacios existentes y sus identificadores.
+7. Permitir filtrar espacios por sede, tipo y estado.
+8. Mostrar mensajes claros cuando un espacio esté ocupado o no pueda utilizarse.
+9. Restringir las modificaciones a los roles autorizados.
+10. Integrar el catálogo con el formulario de planificación de horarios.
+
+Criterios de aceptación
+
+- El personal autorizado puede gestionar los espacios sin modificar hojas de cálculo manualmente.
+- Los cambios aparecen en la selección de aulas al crear o editar un horario.
+- Los espacios desactivados no se ofrecen para nuevas reservas.
+- No se eliminan registros históricos asociados a espacios previamente utilizados.
+
+---
+
+TAREA 3.4. Disponibilidad horaria personalizada por docente
+
+Objetivo: Registrar las franjas en las que cada docente puede impartir clases y aplicar esas restricciones a la asignación y generación de horarios.
+
+Requisitos funcionales
+
+1. Incorporar una pantalla administrativa para registrar la disponibilidad semanal de cada docente.
+2. Permitir definir días de la semana, hora de inicio y hora de finalización de cada franja disponible.
+3. Permitir registrar franjas no disponibles, descansos u otras restricciones necesarias, sin confundirlas con clases ya asignadas.
+4. Admitir múltiples franjas por día.
+5. Validar que las franjas tengan horarios válidos y no se contradigan.
+6. Permitir actualizar la disponibilidad sin borrar el historial de horarios previamente impartidos.
+7. Aplicar las restricciones al crear, editar, copiar y generar horarios.
+8. Comprobar en el servidor que un horario solicitado esté dentro de la disponibilidad autorizada.
+9. Informar qué restricción impide la asignación.
+10. Permitir que los usuarios administrativos autorizados mantengan estos datos.
+11. Si el proyecto dispone de un flujo para que el docente comunique su disponibilidad, integrarlo respetando los permisos de aprobación existentes. No conceder aprobación automática sin una regla institucional definida.
+
+Datos que deben conservarse
+
+Cada registro debe poder asociarse al docente y contener los días y franjas aplicables, su estado y los datos de auditoría necesarios. La estructura definitiva debe adaptarse al modelo real del proyecto.
+
+Criterios de aceptación
+
+- Un docente no puede recibir nuevas clases fuera de su disponibilidad autorizada.
+- La restricción se valida en el servidor, no únicamente en la interfaz.
+- El generador automático respeta las mismas restricciones.
+- La actualización de disponibilidad no modifica retroactivamente las clases ya impartidas.
+- Las restricciones pueden consultarse y modificarse por los roles autorizados.
+
+---
+
+TAREA 3.5. Validación de capacidad de aulas y matrícula
+
+Objetivo: Evitar asignaciones que superen la capacidad registrada de los espacios.
+
+Requisitos funcionales
+
+1. Obtener la matrícula activa correspondiente a la sección o grupo de cada oferta académica.
+2. Comparar el número de estudiantes matriculados con la capacidad del espacio asignado.
+3. Ejecutar la validación al crear, editar, copiar y publicar horarios.
+4. Mostrar la capacidad del espacio y la cantidad de estudiantes utilizada para la comparación.
+5. Cuando el número de estudiantes exceda la capacidad, impedir la asignación ordinaria o solicitar una autorización explícita, únicamente si existe una política institucional válida para permitir excepciones.
+6. Registrar las excepciones autorizadas, con responsable, motivo y fecha.
+7. Si la matrícula todavía no está disponible o no puede determinarse, informar que la capacidad no ha podido verificarse. No asumir que el espacio cumple la condición.
+8. Volver a identificar posibles sobrecupos cuando cambie la matrícula de una sección.
+9. Mantener diferenciadas las capacidades de aulas ordinarias, laboratorios, auditorios y demás espacios.
+
+Criterios de aceptación
+
+- Una sección de 40 estudiantes no se asigna silenciosamente a un aula con capacidad de 25.
+- La advertencia identifica la sección, el espacio, la matrícula y la capacidad.
+- Las excepciones, cuando estén permitidas, requieren autorización y dejan trazabilidad.
+- El sistema vuelve a evaluar la capacidad si aumenta la matrícula.
+
+---
+
+TAREA 3.6. Integración de los horarios con el calendario académico
+
+Objetivo: Evitar que se programen o impartan clases ordinarias en fechas declaradas no lectivas y permitir el tratamiento correcto de los días especiales.
+
+Requisitos funcionales
+
+1. Consultar el "CalendarioAcademico" y las fechas correspondientes al año lectivo.
+2. Identificar días lectivos, feriados, vacaciones, suspensiones, actividades institucionales y demás tipos de día contemplados por el modelo existente.
+3. Validar la fecha correspondiente al día de la semana de cada horario y el intervalo de fechas del año lectivo.
+4. Impedir la publicación de clases ordinarias en días no lectivos, salvo que exista una excepción institucional expresamente autorizada.
+5. Distinguir entre un horario semanal recurrente y una sesión correspondiente a una fecha concreta.
+6. Permitir que una actividad extraordinaria se registre como tal sin alterar automáticamente el horario recurrente.
+7. Mostrar las fechas afectadas por suspensiones o cambios del calendario.
+8. Identificar las clases programadas que deban revisarse cuando se registre posteriormente un día no lectivo.
+9. Conectar los días no lectivos con el flujo de recuperación de clases de la tarea 3.10.
+
+Criterios de aceptación
+
+- Un horario ordinario no se publica en un día declarado no lectivo sin la autorización correspondiente.
+- Los cambios del calendario permiten identificar las sesiones afectadas.
+- Una clase extraordinaria no modifica por accidente la matriz semanal recurrente.
+- Las clases suspendidas pueden derivarse al proceso de recuperación sin duplicar su contabilización.
+
+---
+
+BLOQUE C. CONTROL DE CARGA ACADÉMICA Y GENERACIÓN AUTOMÁTICA
+
+TAREA 3.7. Control de carga lectiva máxima por docente
+
+Objetivo: Controlar la cantidad de horas y sesiones asignadas a cada docente, separando la carga académica frente a grupo del control laboral existente.
+
+Requisitos funcionales
+
+1. Obtener las asignaciones docentes y los horarios vigentes correspondientes al año lectivo.
+2. Calcular las horas semanales asignadas a cada docente considerando la duración real de los bloques.
+3. Distinguir, cuando corresponda, entre:
+   - Horas frente a grupo.
+   - Horas de planificación u otras actividades no lectivas.
+   - Horas extraordinarias.
+   - Horas impartidas y pendientes.
+4. Permitir configurar los límites de carga docente según las reglas institucionales autorizadas.
+5. Detectar cuando una asignación nueva o modificada supera el límite aplicable.
+6. Mostrar la carga actual, la carga resultante y el límite establecido.
+7. Impedir la asignación que exceda un límite obligatorio, salvo que la institución disponga de un procedimiento formal de excepción.
+8. Registrar las excepciones autorizadas y su justificación.
+9. Recalcular la carga cuando se editen horarios, asignaciones, sustituciones o límites.
+10. Evitar contabilizar dos veces un mismo bloque o sumar automáticamente las horas extraordinarias laborales como si fueran horas frente a grupo.
+11. Mantener separado el cálculo de horas laborales existente en "backend/accounting-service/Code.gs", salvo las integraciones justificadas.
+
+Criterios de aceptación
+
+- El sistema identifica cuándo una asignación sobrepasa el límite del docente.
+- Los cálculos corresponden a la duración de los bloques y al periodo académico aplicable.
+- Los cambios en los horarios actualizan los totales.
+- Las excepciones autorizadas quedan registradas y son consultables.
+- No se confunden horas programadas, impartidas y extraordinarias.
+
+---
+
+TAREA 3.8. Generador automático de horarios académicos
+
+Objetivo: Permitir generar una propuesta de matriz semanal de horarios a partir de las ofertas académicas, la malla curricular, las asignaciones docentes, la disponibilidad de los docentes, las aulas y las restricciones institucionales.
+
+Dependencias: Tareas 3.1, 3.4, 3.5, 3.6 y 3.7. Antes de implementar el generador, confirma que los datos necesarios para todas las restricciones estén disponibles y sean consistentes.
+
+Requisitos funcionales
+
+1. Incorporar una opción administrativa para generar automáticamente una propuesta de horarios para un año lectivo.
+2. Permitir seleccionar el año lectivo y las ofertas académicas que deben incluirse.
+3. Obtener las sesiones y horas semanales requeridas a partir de la malla curricular y la oferta académica aplicables.
+4. Consultar las asignaciones de docentes y sus disponibilidades.
+5. Consultar las aulas y los recursos que pueden utilizarse.
+6. Aplicar las restricciones de capacidad, calendario, disponibilidad, carga docente y ausencia de solapamientos.
+7. Permitir configurar las franjas horarias disponibles y los bloques lectivos permitidos, de acuerdo con la configuración institucional existente.
+8. Intentar distribuir las sesiones de una asignatura a lo largo de la semana respetando las restricciones académicas que realmente estén definidas.
+9. Diferenciar las restricciones obligatorias de las preferencias, como la distribución deseada de sesiones, cuando estas preferencias estén configuradas.
+10. Si no existe una solución completa, generar un informe que identifique las ofertas sin asignar y explique las restricciones que impiden programarlas.
+11. No crear horarios que incumplan silenciosamente restricciones obligatorias para conseguir una matriz aparentemente completa.
+12. Permitir revisar la propuesta antes de guardarla.
+13. Guardar el resultado como borrador sin sustituir ni publicar automáticamente los horarios existentes.
+14. Ejecutar nuevamente las validaciones de la tarea 3.1 antes de guardar la propuesta.
+15. Permitir generar una propuesta nueva sin duplicar registros de ejecuciones anteriores.
+16. Conservar la matriz existente hasta que un usuario autorizado confirme la aplicación de la nueva propuesta.
+17. Mostrar un resumen con ofertas programadas, sesiones asignadas, aulas utilizadas, carga por docente, conflictos y sesiones pendientes.
+18. Registrar quién generó la propuesta, cuándo se generó y qué año lectivo se seleccionó.
+
+Requisitos de implementación
+
+- Utiliza un método de resolución de restricciones apropiado para el volumen y las capacidades reales del proyecto.
+- No presentes una asignación aleatoria o una secuencia de bloques manuales como si fuera generación automática completa.
+- Si el generador requiere datos que no existen o no son confiables, identifica esa dependencia y evita inventar valores académicos.
+- Evita operaciones excesivamente largas o incompatibles con los límites de ejecución de Google Apps Script. Si es necesario dividir el procesamiento, conserva la integridad de los resultados y permite informar su estado real.
+- No incorpores dependencias externas innecesarias ni alteres la arquitectura general sin una justificación técnica verificable.
+
+Criterios de aceptación
+
+- La propuesta se genera utilizando datos académicos reales.
+- Los horarios generados no contienen choques de docente, sección, aula o recurso.
+- Se respetan las disponibilidades docentes, capacidades físicas, calendario y límites obligatorios.
+- Las sesiones requeridas por la malla curricular se cumplen o quedan identificadas como pendientes.
+- Una propuesta incompleta no se presenta como plenamente válida.
+- El usuario puede revisar y descartar una propuesta sin afectar el horario publicado.
+- Las pruebas incluyen escenarios en los que existe una solución y escenarios en los que no existe una solución completa.
+
+---
+
+BLOQUE D. REGISTRO DE CLASES IMPARTIDAS Y RECUPERACIONES
+
+TAREA 3.9. Registro y confirmación de horas lectivas impartidas
+
+Objetivo: Establecer un registro verificable de cada sesión programada para determinar si fue impartida, cancelada, pendiente o recuperada.
+
+Requisitos funcionales
+
+1. Definir un registro de sesiones concretas asociado a los horarios recurrentes y a sus ofertas académicas.
+2. Distinguir la matriz semanal de horarios de las sesiones que corresponden a fechas específicas.
+3. Identificar cada sesión mediante un identificador único para evitar registros duplicados.
+4. Permitir que el docente autorizado confirme el resultado de una sesión.
+5. Contemplar, como mínimo, los estados:
+   - Programada.
+   - Impartida.
+   - Cancelada.
+   - Pendiente de confirmar.
+   - Reprogramada.
+   - Recuperada.
+6. Registrar fecha, hora, duración, docente responsable, oferta académica y sección correspondiente.
+7. Cuando una sesión se confirme como impartida, registrar la fecha y el usuario que realizó la confirmación.
+8. Permitir observaciones o un motivo cuando una sesión sea cancelada o no pueda impartirse.
+9. Restringir la confirmación a docentes asignados y a los roles administrativos autorizados.
+10. Permitir que los roles autorizados corrijan registros erróneos mediante un procedimiento trazable, sin eliminar silenciosamente el historial anterior.
+11. Diferenciar una confirmación docente de una revisión o aprobación administrativa, si el procedimiento institucional requiere ambas.
+12. Relacionar la sesión con los registros de asistencia existentes, reutilizando "openAttendanceSession" y "saveClassAttendance" cuando su funcionamiento lo permita.
+13. No asumir que registrar asistencia de estudiantes equivale automáticamente a confirmar que la clase se impartió.
+14. Calcular las horas programadas, impartidas, canceladas y pendientes por docente, sección, asignatura y periodo.
+15. Evitar contar dos veces una sesión recuperada y conservar el vínculo con la sesión original.
+16. Permitir consultar el historial de sesiones por fecha, docente, sección y asignatura.
+
+Criterios de aceptación
+
+- Cada sesión tiene un resultado identificable y verificable.
+- Las horas impartidas se calculan a partir de sesiones confirmadas y sus duraciones.
+- Las sesiones pendientes de confirmar no se contabilizan como impartidas.
+- La asistencia estudiantil permanece integrada sin convertirse en el único criterio de confirmación.
+- Las correcciones y cambios de estado quedan registrados.
+- Una sesión recuperada no se contabiliza como si fueran dos sesiones impartidas independientes cuando se calculan las horas correspondientes a la obligación curricular original.
+
+---
+
+TAREA 3.10. Recuperación y reprogramación de clases canceladas
+
+Objetivo: Permitir reprogramar las sesiones canceladas o pendientes y controlar el cumplimiento de las horas lectivas sin duplicaciones.
+
+Dependencia: Tarea 3.9. La recuperación debe operar sobre sesiones concretas, no solamente sobre bloques recurrentes de la matriz semanal.
+
+Requisitos funcionales
+
+1. Permitir identificar las sesiones canceladas o pendientes que requieren recuperación.
+2. Mostrar la fecha original, la asignatura, la sección, el docente responsable y la duración pendiente.
+3. Permitir proponer una fecha y franja horaria alternativa.
+4. Validar la disponibilidad del docente, del aula, de la sección y de los recursos necesarios.
+5. Comprobar las restricciones del calendario académico y de capacidad del espacio.
+6. Permitir asignar un docente sustituto cuando las reglas institucionales lo autoricen.
+7. Impedir que una recuperación genere conflictos de horario.
+8. Vincular la sesión recuperada con la sesión original.
+9. Conservar la fecha original y el motivo de cancelación.
+10. Diferenciar la fecha originalmente programada de la fecha efectiva de recuperación.
+11. Permitir revisar y confirmar la reprogramación antes de comunicarla a los usuarios afectados.
+12. Actualizar los calendarios correspondientes después de confirmar el cambio.
+13. Notificar a los usuarios pertinentes mediante los mecanismos de comunicación existentes, si están disponibles.
+14. Actualizar los contadores de horas programadas, impartidas y pendientes sin contabilizar dos veces la misma obligación curricular.
+15. Permitir consultar las recuperaciones pendientes, programadas y completadas.
+16. Registrar quién solicitó, autorizó y confirmó la recuperación, según los permisos definidos.
+
+Criterios de aceptación
+
+- Una clase cancelada puede reprogramarse en una fecha válida.
+- El sistema impide recuperar una sesión en una franja que produzca conflictos.
+- La sesión original conserva su historial y queda vinculada a la recuperación.
+- Los calendarios muestran la información actualizada.
+- Los indicadores de cumplimiento reflejan correctamente las horas recuperadas.
+- No se marca una recuperación como completada hasta que la sesión se confirme como impartida.
+
+---
+
+BLOQUE E. PUBLICACIÓN Y CALENDARIOS POR ROL
+
+TAREA 3.11. Validación y publicación segura de horarios
+
+Objetivo: Garantizar que solamente se publiquen matrices revisadas, coherentes y autorizadas, manteniendo la distinción entre borradores y horarios vigentes.
+
+Requisitos funcionales
+
+1. Revisar el funcionamiento actual de los estados "Borrador", "Activo" e "Inactivo".
+2. Definir las transiciones válidas entre esos estados sin romper los registros existentes.
+3. Incorporar una revisión integral antes de publicar una matriz.
+4. Validar los conflictos de docentes, secciones, espacios, capacidades, disponibilidad, calendario y carga académica.
+5. Mostrar un resumen de los errores que impiden publicar y de las advertencias que requieren revisión.
+6. Impedir la publicación cuando existan incumplimientos obligatorios.
+7. Permitir que solamente los roles autorizados publiquen o desactiven horarios.
+8. Registrar quién publicó o modificó la matriz y cuándo.
+9. Cuando una modificación afecte a un horario publicado, volver a ejecutar las validaciones pertinentes.
+10. Evitar que una modificación parcial deje una matriz publicada en un estado incoherente.
+11. Permitir consultar el horario vigente y conservar los datos históricos de las versiones anteriores, cuando corresponda.
+12. Si el proyecto no cuenta con versionado formal, incorporar una solución compatible con el modelo actual, sin eliminar el historial disponible.
+
+Criterios de aceptación
+
+- Un borrador no se muestra como horario definitivo a los estudiantes.
+- Una matriz con conflictos obligatorios no puede publicarse.
+- Las publicaciones y modificaciones quedan registradas.
+- La edición de una matriz no destruye el historial anterior.
+- Los calendarios consultan la versión vigente correspondiente al año lectivo seleccionado.
+
+---
+
+TAREA 3.12. Calendarios individuales de estudiantes, docentes y secciones
+
+Objetivo: Consolidar los horarios en vistas coherentes para los usuarios de la institución, reutilizando las consultas existentes y mostrando los cambios autorizados.
+
+Requisitos funcionales
+
+1. Conservar el horario semanal existente del estudiante en "#weekly-timetable-container".
+2. Conservar la consulta actual "getStudentSchedule" y ampliarla solamente cuando sea necesario.
+3. Proporcionar vistas por:
+   - Estudiante.
+   - Docente.
+   - Sección o grupo.
+   - Aula o espacio.
+   - Tutor o encargado autorizado, para el estudiante que tenga permitido consultar.
+4. Mostrar día, hora de inicio, hora de finalización, asignatura, sección, aula y docente.
+5. Identificar las sustituciones docentes vigentes de forma clara.
+6. Mostrar las sesiones recuperadas, las cancelaciones y los cambios temporales en la fecha correspondiente.
+7. Diferenciar el horario semanal habitual de los eventos extraordinarios de una fecha concreta.
+8. Permitir navegar entre días y semanas cuando sea pertinente.
+9. Aplicar filtros por año lectivo y sección, respetando las relaciones académicas existentes.
+10. Evitar mostrar a los estudiantes información administrativa o personal que no les corresponda.
+11. Restringir la consulta de los calendarios familiares al estudiante o estudiantes autorizados para el tutor.
+12. Actualizar las vistas cuando se publique un horario nuevo o se confirme una sustitución, cancelación o recuperación.
+13. Mostrar un estado comprensible cuando no existan clases programadas para un periodo.
+14. Mantener la compatibilidad con dispositivos móviles y con las interfaces actuales.
+
+Criterios de aceptación
+
+- Cada usuario consulta el calendario que le corresponde.
+- Los tutores no pueden consultar horarios de estudiantes no autorizados.
+- Los cambios temporales se muestran en la fecha correcta.
+- Las sustituciones se reflejan sin alterar innecesariamente el horario recurrente.
+- Las vistas utilizan datos reales y no contienen bloques de demostración presentados como horarios oficiales.
+
+---
+
+BLOQUE F. INTEGRACIÓN, SEGURIDAD Y TRAZABILIDAD
+
+TAREA 3.13. Integración coherente de horarios, asignaciones y sesiones
+
+Objetivo: Mantener sincronizados los horarios, las asignaciones docentes, las sesiones impartidas, las recuperaciones y los calendarios, sin duplicar datos ni perder relaciones.
+
+Requisitos funcionales
+
+1. Identificar las funciones existentes que deben compartir datos entre los componentes de esta fase.
+2. Mantener las relaciones entre horarios, ofertas, docentes, secciones, aulas, sesiones y recuperaciones.
+3. Evitar que una sustitución temporal modifique permanentemente la asignación del docente titular.
+4. Evitar que una modificación del horario recurrente altere automáticamente las sesiones históricas ya impartidas.
+5. Definir el tratamiento de las sesiones futuras cuando se edite o desactive un horario.
+6. Garantizar que la desactivación de un bloque no borre las sesiones históricas asociadas.
+7. Evitar duplicaciones al reintentar una operación de guardado o generación.
+8. Aplicar mecanismos de control de concurrencia en las operaciones que modifiquen datos compartidos, respetando los mecanismos existentes.
+9. Asegurar que los errores parciales no dejen relaciones inconsistentes entre horarios y sesiones.
+10. Registrar las operaciones relevantes mediante los mecanismos de auditoría existentes, incluido "logStructuredEvent" cuando corresponda.
+
+Criterios de aceptación
+
+- Las relaciones académicas se conservan durante las modificaciones.
+- Una sustitución no sobrescribe la asignación titular.
+- Los cambios futuros no alteran silenciosamente las clases ya impartidas.
+- Las operaciones repetidas no crean registros duplicados.
+- Las modificaciones relevantes pueden rastrearse.
+
+---
+
+TAREA 3.14. Permisos y trazabilidad de operaciones académicas
+
+Objetivo: Asegurar que las nuevas funciones respeten los permisos institucionales y que las acciones relevantes puedan revisarse posteriormente.
+
+Requisitos funcionales
+
+1. Revisar las reglas actuales de "validateRolePermission" y las autorizaciones de los servicios académicos.
+2. Definir permisos específicos para gestionar disponibilidad, aulas, carga docente, generar propuestas, publicar horarios, confirmar clases y autorizar recuperaciones.
+3. Aplicar las comprobaciones en el servidor a todas las operaciones que modifiquen información.
+4. Evitar que un estudiante o tutor pueda crear horarios, cambiar asignaciones o confirmar sesiones docentes.
+5. Permitir que los docentes consulten sus horarios y confirmen las sesiones que tienen autorizadas.
+6. Limitar las modificaciones administrativas a los roles institucionales que tengan esa responsabilidad.
+7. Registrar la identidad del usuario, la fecha, la acción y el registro afectado en las operaciones relevantes.
+8. No registrar contraseñas, credenciales ni datos sensibles innecesarios en los registros de auditoría.
+9. Mostrar mensajes de error claros sin revelar detalles internos.
+10. Mantener las restricciones de acceso a los calendarios familiares y a la información de otros docentes.
+
+Criterios de aceptación
+
+- Las operaciones no autorizadas se rechazan en el servidor.
+- Las pruebas cubren tanto usuarios autorizados como no autorizados.
+- Las acciones importantes dejan registros consultables por los roles autorizados.
+- Los cambios de permisos no exponen información académica a usuarios que no corresponda.
+
+---
+
+ORDEN RECOMENDADO DE IMPLEMENTACIÓN
+
+El siguiente orden responde a las dependencias funcionales y no implica que todas las tareas deban desarrollarse en un único cambio.
+
+1. Tarea 3.1: Validación integral de horarios académicos.
+2. Tarea 3.3: Gestión de aulas, laboratorios y recursos desde la interfaz.
+3. Tarea 3.4: Disponibilidad horaria personalizada por docente.
+4. Tarea 3.5: Validación de capacidad de aulas y matrícula.
+5. Tarea 3.6: Integración con el calendario académico.
+6. Tarea 3.7: Control de carga lectiva máxima por docente.
+7. Tarea 3.2: Copia de horarios entre años lectivos.
+8. Tarea 3.8: Generador automático de horarios, una vez disponibles y comprobadas sus dependencias.
+9. Tarea 3.9: Registro y confirmación de horas lectivas impartidas.
+10. Tarea 3.10: Recuperación y reprogramación de clases canceladas.
+11. Tarea 3.11: Validación y publicación segura de horarios.
+12. Tarea 3.12: Calendarios individuales y por sección.
+13. Tarea 3.13: Integración coherente de horarios, asignaciones y sesiones.
+14. Tarea 3.14: Permisos y trazabilidad de operaciones académicas.
+
+Las tareas de seguridad e integración deben acompañar el desarrollo de cada función; su ubicación al final de la lista no autoriza a posponer las comprobaciones de permisos o consistencia de datos.
+
+REQUISITOS DE ENTREGA PARA CADA TAREA
+
+Para cada tarea implementada, entrega:
+
+1. Resumen funcional: qué se añadió o corrigió y cómo se utiliza.
+2. Archivos modificados: rutas reales y propósito de cada cambio.
+3. Funciones existentes reutilizadas: identifica cuáles se conservaron y ampliaron.
+4. Datos afectados: hojas, columnas, relaciones o registros modificados.
+5. Permisos: roles autorizados y controles aplicados en el servidor.
+6. Pruebas ejecutadas: escenarios, datos utilizados, resultado esperado y resultado observado.
+7. Criterios de aceptación: indica cuáles se cumplen y cuáles siguen pendientes.
+8. Limitaciones: identifica dependencias ausentes o escenarios que no pudieron verificarse.
+9. Compatibilidad: explica cómo se preservaron los registros y las funciones existentes.
+10. Documentación: actualiza los documentos del proyecto que correspondan al cambio realizado.
+
+No declares una tarea terminada solamente porque se añadieron botones, formularios o funciones. Debe existir una conexión funcional entre la interfaz, las validaciones, los datos y los permisos.
+
+No marques pruebas como aprobadas si no fueron ejecutadas. Cuando una prueba requiera acceso institucional, datos reales o autorización externa que no esté disponible, indica exactamente qué falta para completarla.
+
+RESULTADO FINAL ESPERADO DE LA FASE 3
+
+Al completar estas tareas, la institución deberá poder preparar horarios mediante asignación manual o generación automática, detectar conflictos antes de publicar, controlar la disponibilidad y carga de los docentes, validar las capacidades de los espacios, consultar calendarios por rol, registrar las clases efectivamente impartidas y recuperar sesiones canceladas con trazabilidad.
+
+Las funciones existentes deben seguir operativas y los cambios deben conservar la integridad de los datos académicos, los permisos y el historial institucional.
+
+Importante: implementa las tareas individualmente y respeta sus dependencias. No declares completa toda la Fase 3 cuando solamente se haya terminado una parte. Informa el estado real de cada tarea y de sus criterios de aceptación.
