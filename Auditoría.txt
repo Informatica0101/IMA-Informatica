@@ -1031,3 +1031,22 @@ Hallazgos Principales:
 4. Ausencia de Indicadores de Avance Curricular (CE-11): Sin motor ni tablero de medición del porcentaje de cobertura curricular por materia/grado.
 5. Ausencia de Aprobación de Guías (CE-09): Los docentes publican materiales sin revisión previa por Coordinación Pedagógica.
 6. Supervisión de Entregas (CE-08, CE-10): Se requiere un semáforo administrativo para auditar entregas puntuales de notas y tareas por docente.
+
+===============================================================================
+REGISTRO DE AUDITORÍA FUNCIONAL INTEGRAL: FASE 10 (MOTOR DE FLUJOS DE TRABAJO)
+===============================================================================
+Fecha: Mayo 2024
+Módulo Auditado: Motor de Flujos de Trabajo (Ampliación Fases 24 y 25 del Plan General)
+Componentes e Inspección:
+  - backend/user-service/Code.gs (saveApprovalWorkflow, getApprovalWorkflows, processWorkflowDecision, getWorkflowHistory)
+  - backend/accounting-service/Code.gs, backend/academic-service/Code.gs
+  - js/teacher.js, js/accounting.js, js/ui-common.js
+  - teacher-dashboard.html, dashboard-contabilidad.html
+
+Hallazgos Principales:
+1. Cobertura de Persistencia GAS: 4 tablas en Google Sheets operativas (FlujosAprobacion, RevisionesDecisionesTramite, SolicitudesTramites, FirmasConformidades).
+2. Endpoints Backend: 4 funciones clave de servidor activas para gestión de flujos, procesamiento de decisiones de revisión e historial cronológico auditado.
+3. Decisiones Soportadas (WF-04): APROBADO, RECHAZADO, DEVUELTO_CORRECCION, DERIVADO con notas públicas y observaciones internas confidenciales.
+4. Brecha en Asignación Dinámica y Suplencias (WF-03/WF-06): Falta resolución por Jerarquía Orgánica / Rol y configuración de suplente por licencias médicas o vacaciones.
+5. Ausencia de SLA y Escalamiento Automático (WF-05/WF-07): Sin temporizadores de vencimiento por etapa ni reasignación automática al superior jerárquico.
+6. Falta de Transaccionalidad (WF-13): Escritura no atómica entre decisiones y solicitudes requiere protección con LockService.

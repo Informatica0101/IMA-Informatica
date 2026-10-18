@@ -6889,3 +6889,42 @@ No implementes en esta ejecución:
 - Refactorizaciones ajenas a la numeración documental.
 
 Instrucción final: implementa exclusivamente GD-IMP-01, realiza las pruebas posibles y entrega el informe. Después, detente y espera nuevas instrucciones. No comiences la siguiente tarea por iniciativa propia.
+
+---
+
+# PLAN DE IMPLEMENTACIÓN DETALLADO - FASE 10: MOTOR DE FLUJOS DE TRABAJO
+
+### REQ-WF-001: Registro Atómico de Decisiones y Prevención de Inconsistencias (WF-13)
+- **Objetivo:** Garantizar que la aprobación/rechazo de un trámite y el avance de su etapa se ejecuten como una operación atómica indivisible.
+- **Backend Reutilizado:** `processWorkflowDecision` en `backend/user-service/Code.gs`.
+- **Archivos a Modificar:** `backend/user-service/Code.gs`.
+- **Tareas Concretas:**
+  1. Envolver la ejecución de `processWorkflowDecision` con `LockService.getScriptLock()` para evitar colisiones de escrituras paralelas.
+  2. Implementar bloque `try-catch` con mecanismo de reversión (*rollback*) simulado: si la actualización de `SolicitudesTramites` falla, revertir el registro en `RevisionesDecisionesTramite`.
+  3. Retornar confirmación explícita con el nuevo estado verificado de la solicitud.
+
+### REQ-WF-002: Configuración de Plazos (SLA) y Escalamiento Automático por Atrasos (WF-05, WF-07)
+- **Objetivo:** Establecer tiempos máximos de respuesta por etapa y reasignar automáticamente los trámites estancados al superior jerárquico.
+- **Backend Reutilizado:** `processWorkflowDecision` en `backend/user-service/Code.gs`.
+- **Archivos a Modificar:** `backend/user-service/Code.gs`, `js/teacher.js`, `teacher-dashboard.html`.
+- **Tareas Concretas:**
+  1. Modificar `FlujosAprobacion` para incluir el campo `PlazoMaximoHoras` en la definición de cada etapa.
+  2. Crear la función ejecutable `checkWorkflowSLADeadlines` que identifique trámites en mora que superen las horas permitidas.
+  3. Disparar acción de reasignación automática (*Escalamiento por Atraso*) al supervisor directo con notificación prioritaria.
+
+### REQ-WF-003: Módulo de Suplencias y Delegación Temporal de Aprobaciones (WF-06)
+- **Objetivo:** Permitir a jefes de departamento y revisores delegar temporalmente su facultad de firma durante licencias laborales o vacaciones.
+- **Backend Reutilizado:** `processWorkflowDecision` en `backend/user-service/Code.gs`.
+- **Archivos a Modificar:** `backend/user-service/Code.gs`, `js/teacher.js`, `teacher-dashboard.html`.
+- **Tareas Concretas:**
+  1. Crear la hoja de cálculo `DelegacionesFirma` para registrar `[DelegacionID, UserTitularID, UserSuplenteID, FechaInicio, FechaFin, Estado, Motivo]`.
+  2. Modificar la verificación de permisos en `processWorkflowDecision` para permitir que el suplente autorizado firme a nombre del titular durante el periodo de vigencia.
+  3. Registrar en la bitácora de firmas `FirmasConformidades` la aclaración: *"Firmado por Suplente Autorizado [UserSuplenteID] en representación de [UserTitularID]"*.
+
+### REQ-WF-004: Evaluación de Reglas Condicionales por Monto o Categoría (WF-12)
+- **Objetivo:** Incorporar bifurcaciones automáticas en los flujos según el impacto financiero o tipo de trámite.
+- **Backend Reutilizado:** `saveApprovalWorkflow` en `backend/user-service/Code.gs`.
+- **Archivos a Modificar:** `backend/user-service/Code.gs`.
+- **Tareas Concretas:**
+  1. Permitir definir reglas del tipo `SI Monto > 50000 ENTONCES Requiere_Aprobacion_Director`.
+  2. Evaluar dinámicamente los campos de la respuesta JSON del trámite al momento de determinar la siguiente etapa del flujo.
