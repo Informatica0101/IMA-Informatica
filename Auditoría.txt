@@ -922,3 +922,28 @@ Archivos y Módulos Auditados:
   * Ausencia de control de validación de capacidad de aula vs cantidad de alumnos matriculados.
   * Ausencia de registro y motor de recuperación de clases canceladas (`HorasImpartidas`, `RecuperacionClases`).
   * Desconexión en UI para la creación de eventos de calendario y gestión de recursos desde la vista de profesor/planificador.
+
+====================================================================================================
+
+AUDITORÍA TÉCNICA Y DIAGNÓSTICO DE ARQUITECTURA - FASE 4: ERP FINANCIERO Y PRESUPUESTARIO COMPLETO - Mon Jul 6 2026
+
+Archivos y Módulos Auditados:
+- Backend Microservicio Financiero: `backend/accounting-service/Code.gs` (151 endpoints, 61 hojas de base de datos)
+- Backend Identidad & Notificaciones: `backend/user-service/Code.gs` (Notificaciones, Tickets, Perfiles)
+- Frontend Vistas: `dashboard-contabilidad.html`, `dashboard-recursos-humanos.html`, `student-dashboard.html`
+- Controllers JS: `js/accounting.js`, `js/student.js`, `js/teacher.js`, `js/ui-common.js`
+
+1. DIAGNÓSTICO DEL MÓDULO ERP FINANCIERO Y PRESUPUESTARIO
+- Capacidades Funcionales Existentes:
+  * Presupuesto Institucional (`PresupuestosInstitucionales`): `getBudgets`, `saveBudgetPlan`, `getBudgetExecutionReport` calculando Monto Asignado, Comprometido (vía Órdenes de Compra/Gastos), Ejecutado y Saldo Disponible por centro de costo.
+  * Gestión de Matrícula, Tarifas, Becas y Recargos: `configurePaymentConcept`, `configurePaymentTariff`, `configureDiscountScholarshipRule`, `configureLateFeeRule`, `getStudentAccountStatement` calculando saldo pendiente `(MontoBase + Recargos - Descuentos) - TotalAbonado`.
+  * Verificación de Comprobantes y Facturación SAR CAI: Cola de revisión de transferencias bancarias (`uploadPaymentVoucher`, `reviewPaymentVoucher`) con auto-asiento contable e Invoicing Fiscal Hondureño (`createFiscalInvoice`) con desglose ISV 15%.
+  * Cajas y Conciliación Bancaria: Cierres de caja con arqueo físico y variaciones (`closeCashSession`) y conciliación de extractos bancarios (`performBankReconciliation`).
+  * Compras, Kardex y Proveedores: Flujo completo Solicitud -> Cotización -> Orden de Compra -> Recepción de Bienes con actualización automática de stock Kardex (`recordPurchaseReceipt`).
+  * Contabilidad de Doble Entrada (`AsientosContables`): `recordAccountingJournalEntry` con validación estricta server-side `totalDebe === totalHaber` y reportes de Balance General, Estado de Resultados y Libro Mayor.
+
+- Deficiencias y Brechas Detectadas:
+  * Ausencia de modal UI para reestructuración de convenios de pago individuales multicuota (`ConveniosPagoEstudiante`).
+  * Ausencia de proyecciones de flujo de caja predictivas con análisis de escenarios (Best-case vs. Worst-case).
+  * Ausencia de alertas automáticas por vencimiento de contratos de servicios con proveedores.
+  * Ausencia de bitácora visual de seguimiento telefónico/correo para cobranza de alumnos morosos.
