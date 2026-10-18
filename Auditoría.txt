@@ -947,3 +947,29 @@ Archivos y Módulos Auditados:
   * Ausencia de proyecciones de flujo de caja predictivas con análisis de escenarios (Best-case vs. Worst-case).
   * Ausencia de alertas automáticas por vencimiento de contratos de servicios con proveedores.
   * Ausencia de bitácora visual de seguimiento telefónico/correo para cobranza de alumnos morosos.
+
+====================================================================================================
+
+AUDITORÍA TÉCNICA Y DIAGNÓSTICO DE ARQUITECTURA - FASE 5: RECURSOS HUMANOS AVANZADO - Mon Jul 6 2026
+
+Archivos y Módulos Auditados:
+- Backend Microservicio Financiero/RRHH: `backend/accounting-service/Code.gs` (ExpedientesLaborales, ContratosLaborales, PlanillasNomenclatura, SolicitudesVacaciones, IncapacidadesMedicas)
+- Backend Identidad & Notificaciones: `backend/user-service/Code.gs` (Usuarios, Personas, Notificaciones)
+- Frontend Vistas: `dashboard-recursos-humanos.html`, `dashboard-contabilidad.html`
+- Controllers JS: `js/teacher.js`, `js/accounting.js`, `js/ui-common.js`
+
+1. DIAGNÓSTICO DEL MÓDULO DE RECURSOS HUMANOS AVANZADO
+- Capacidades Funcionales Existentes:
+  * Expediente Laboral (`ExpedientesLaborales`): `createEmployeeRecord`, `getEmployeeRecords`, `updateEmployeeLaborStatus` administrando la ficha del colaborador, puesto, departamento, fecha de ingreso y estado laboral.
+  * Contratos Laborales (`ContratosLaborales`): `manageEmployeeContract`, `getEmployeeContracts` registrando tipo de contrato, fechas de inicio/vencimiento, salario base y condiciones.
+  * Vacaciones y Licencias (`SolicitudesVacaciones`, `IncapacidadesMedicas`): `submitVacationRequest`, `reviewVacationRequest`, `calculateVacationBalances` calculando saldo acumulado de vacaciones según la legislación hondureña.
+  * Control de Asistencia y Horarios (`HorariosLaborales`, `DeduccionesAsistencia`, `CorreccionesAsistencia`): `configureWorkSchedule`, `recordStaffCheckIn`, `submitAttendanceCorrection`.
+  * Nómina y Deducciones de Ley en Honduras (`PlanillasNomenclatura`, `BoletasPago`): `calculatePayrollPeriod` calculando deducciones de IHSS, RAP e Impuesto Sobre la Renta (ISR) con generación de recibos PDF (`generatePayrollReceiptPDF`).
+  * Préstamos, Anticipos y Horas Extras (`AnticiposPrestamosEmpleado`, `AprobacionHorasExtras`): `requestEmployeeLoanAdvance`, `approveEmployeeLoanAdvance`, `getLoanAmortizationSchedule`, `calculateOvertime`, `reviewOvertimeRequest`.
+
+- Deficiencias y Brechas Detectadas:
+  * Ausencia de módulo de Reclutamiento, Vacantes y Candidatos (`PlazasVacantes`, `CandidatosProcesos`).
+  * Ausencia de evaluaciones de desempeño periódicas (`EvaluacionesDesempenoRRHH`).
+  * Ausencia de catálogo e historial de capacitaciones de personal (`CapacitacionesEmpleado`).
+  * Ausencia de bitácora formal de medidas disciplinarias (`IncidenciasDisciplinariasLaborales`).
+  * Desconexión en UI: `dashboard-recursos-humanos.html` posee las tablas y maquetación visual, pero los controladores JS carecen de la conexión directa a los endpoints de expedientes, contratos y vacaciones.
