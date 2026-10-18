@@ -7710,3 +7710,1294 @@ Resultado: evidencia verificable de estabilidad e integración.
   1. Crear la función `getCohortAcademicEvolution` agrupando estudiantes por año de ingreso a la institución.
   2. Generar gráficos comparativos de rendimiento promedio desde 1er Grado hasta 11vo Grado.
   3. Ofrecer exportación detallada a Excel/CSV con el desglose por asignaturas clave (Matemáticas, Español, Inglés).
+
+---
+
+PLAN DE IMPLEMENTACIÓN Y MEJORA FUNCIONAL
+
+Fase 12. Inteligencia Institucional
+
+Plataforma: Ecosistema Educativo New Generation Christian Academy
+
+### Objetivo general
+
+Desarrollar un sistema de inteligencia institucional que convierta los datos académicos, administrativos y financieros del centro educativo en información confiable, explicable, oportuna y útil para la toma de decisiones.
+
+Prioridad crítica
+
+Calidad e integridad de los datos
+
+Prioridad alta
+
+Retención y continuidad académica
+
+Prioridad alta
+
+Históricos y seguimiento por cohortes
+
+Prioridad media-alta
+
+Proyecciones y simulación de escenarios
+
+Criterio rector: ninguna proyección, alerta o indicador debe presentarse como fiable si sus datos de origen son insuficientes, inconsistentes o no comparables.
+
+### 1. Criterios generales de implementación
+
+Todas las tareas siguientes deberán cumplir estas condiciones transversales:
+
+* Integridad: las cifras deben poder rastrearse hasta los registros que las originan y conciliarse con ellos.
+
+* Precisión metodológica: cada indicador debe tener fórmula, período, población incluida, exclusiones y tratamiento de datos faltantes claramente definidos.
+
+* Seguridad: se respetarán los permisos por función institucional, incluidos los detalles de los registros y las exportaciones.
+
+* Usabilidad: las explicaciones deben estar redactadas en lenguaje claro, sin exponer terminología interna de programación ni procesos técnicos al personal educativo.
+
+* Rendimiento: los informes no deben recalcular innecesariamente todo el histórico ni bloquear la navegación cuando se consulten grandes volúmenes de información.
+
+* Tolerancia a errores: una consulta incompleta, un dato faltante o un servicio temporalmente indisponible no debe convertirse silenciosamente en un cero ni producir indicadores engañosos.
+
+* Compatibilidad: las mejoras deben integrarse con el catálogo de informes, los gráficos, los filtros, las exportaciones y la trazabilidad existentes.
+
+* Validación antes de publicar: las nuevas cifras deben compararse con cálculos independientes sobre conjuntos de datos de prueba.
+
+Las tareas se ordenan por prioridad y dependencia funcional. Las estimaciones de prioridad son relativas; no implican que se haya realizado una nueva inspección del código fuente.
+
+### 2. Tareas prioritarias de corrección y desarrollo
+
+Las prioridades P0 a P3 indican el orden recomendado: P0, bloqueante; P1, alta; P2, media; P3, mejora evolutiva.
+
+### INT-T01. Auditoría automática de calidad e integridad de los datos
+
+P0 · CríticaBloqueante para indicadores fiables
+
+Problema que resuelve
+
+Actualmente, según la auditoría, pueden registrarse notas fuera de escala, movimientos financieros incoherentes, matrículas duplicadas y otros errores sin que se generen alertas automáticas. Estos problemas pueden propagarse a varios informes y producir decisiones equivocadas.
+
+Objetivo
+
+Crear un sistema centralizado que identifique errores, inconsistencias, duplicidades y valores sospechosos en los datos utilizados por la inteligencia institucional.
+
+Requisitos funcionales
+
+* Validar las calificaciones según la escala aplicable a cada evaluación, asignatura y período. Una nota de 150 sobre 100 debe rechazarse cuando esa sea la escala autorizada, salvo que se trate de un dato histórico excepcional que deba conservarse para revisión.
+
+* Detectar posibles matrículas duplicadas utilizando identificadores institucionales y coincidencias de identidad, sin asumir que dos personas con nombres similares son la misma persona.
+
+* Detectar estudiantes que figuren simultáneamente como retirados y activos, registros académicos posteriores a una fecha de retiro y duplicados en un mismo período.
+
+* Identificar movimientos financieros con importes inesperados, pagos negativos, cargos repetidos, referencias duplicadas y diferencias entre los importes registrados y los totales de origen.
+
+* Detectar campos obligatorios vacíos, fechas imposibles, períodos académicos incompatibles, identificadores inexistentes y relaciones entre registros que ya no son válidas.
+
+* Diferenciar entre error confirmado, posible duplicado, valor atípico y dato que requiere revisión humana.
+
+* Ejecutar validaciones al guardar información y revisiones periódicas de los registros existentes.
+
+* Mostrar un centro de incidencias con filtros por área, gravedad, fecha, estado y responsable.
+
+* Permitir asignar una incidencia, documentar su resolución, conservar el valor original y registrar quién realizó cada corrección.
+
+* Evitar que una corrección automática modifique silenciosamente calificaciones oficiales, matrículas, pagos confirmados o documentos institucionales.
+
+Cambios necesarios
+
+* Crear reglas de validación reutilizables para las áreas académica, estudiantil y financiera.
+
+* Incorporar un registro persistente de incidencias de calidad.
+
+* Integrar las validaciones con los servicios que guardan y modifican los datos.
+
+* Añadir una vista de revisión y resolución accesible según los permisos del usuario.
+
+* Definir reglas para detectar duplicados sin borrar registros automáticamente.
+
+Comportamiento esperado
+
+Cuando se detecte una nota fuera de escala, el sistema debe impedir su registro si incumple una regla obligatoria y explicar cómo corregirla. Si encuentra dos matrículas posiblemente duplicadas, debe mostrar ambas y permitir verificar si pertenecen al mismo estudiante.
+
+Las incidencias detectadas después de guardar datos históricos deben generar alertas sin alterar los registros originales.
+
+Criterios de aceptación
+
+* Se detecta el 100 % de los errores incluidos en un conjunto de pruebas previamente definido.
+
+* No se producen falsos negativos en las reglas deterministas obligatorias probadas.
+
+* Los posibles duplicados se presentan para revisión, sin fusiones automáticas irreversibles.
+
+* Cada corrección queda registrada con usuario, fecha, motivo, valor anterior y valor nuevo.
+
+* Las reglas no permiten modificar registros fuera de los permisos del usuario.
+
+* La ejecución repetida no crea incidencias duplicadas para un mismo problema todavía abierto.
+
+* Los informes afectados por incidencias graves identifican la limitación de sus datos.
+
+Dependencias: definición de las reglas académicas y contables, permisos existentes y acceso a las entidades de origen.
+
+### INT-T02. Normalización de indicadores y contratos de cálculo
+
+P0 · CríticaBase de todos los indicadores
+
+Problema que resuelve
+
+Un mismo indicador puede producir resultados diferentes si distintos informes interpretan de forma diferente los períodos, las bajas, las matrículas activas, los pagos confirmados o los datos faltantes. Una fórmula matemáticamente válida no garantiza que el indicador represente correctamente la realidad institucional.
+
+Objetivo
+
+Establecer una definición oficial y reutilizable para cada indicador institucional.
+
+Requisitos funcionales
+
+Cada indicador debe contar con:
+
+* Nombre y descripción en lenguaje claro.
+
+* Fórmula documentada.
+
+* Numerador y denominador definidos.
+
+* Población incluida y excluida.
+
+* Período y fecha de referencia.
+
+* Fuente de los datos.
+
+* Tratamiento de valores faltantes, traslados, retiros y cambios retroactivos.
+
+* Reglas de redondeo y unidad de medida.
+
+* Responsable institucional de validar su definición.
+
+* Versión de la fórmula y fecha de vigencia.
+
+Se deben formalizar, como mínimo, las tasas de retención, deserción, promoción, asistencia, aprobación, reprobación, cobertura curricular y los indicadores financieros ya existentes.
+
+Cambios necesarios
+
+Centralizar las definiciones y evitar que cada tablero implemente su propia versión de una fórmula. Los informes deben utilizar la misma definición oficial para presentar un indicador equivalente.
+
+Comportamiento esperado
+
+Si dos informes muestran la tasa de retención del mismo año y población, ambos deben producir el mismo resultado. Si utilizan poblaciones distintas, deben indicarlo expresamente.
+
+No se debe mostrar un porcentaje válido cuando el denominador es cero o no puede determinarse. Debe mostrarse que el indicador no está disponible y explicar por qué.
+
+Criterios de aceptación
+
+* Todos los indicadores oficiales tienen una definición aprobada y documentada.
+
+* Las fórmulas producen los resultados esperados en casos normales, límites y datos faltantes.
+
+* Los resultados coinciden con un cálculo independiente.
+
+* Los informes históricos conservan la definición con la que fueron generados o indican claramente que se han recalculado.
+
+* No existen implementaciones contradictorias de una misma fórmula en los servicios consultados por los tableros.
+
+Dependencias: INT-T01 para garantizar la calidad de los datos y acceso a las fuentes académicas y financieras.
+
+### INT-T03. Cálculo oficial de retención, deserción, traslados y promoción
+
+P1 · AltaIndicadores académicos oficiales
+
+Problema que resuelve
+
+La dirección no dispone de tasas oficiales de continuidad estudiantil y no puede distinguir adecuadamente entre abandono, traslado, graduación y otras formas de salida.
+
+Objetivo
+
+Construir un módulo que permita conocer cuántos estudiantes continúan, abandonan, se trasladan, se gradúan o promocionan, tanto a nivel institucional como por grado, sección y año lectivo.
+
+Requisitos funcionales
+
+* Clasificar los estados de matrícula: nuevo ingreso, activo, promovido, repetidor, retirado, traslado, graduado y otros estados institucionalmente aprobados.
+
+* Mantener un historial de cambios de estado con fecha efectiva, motivo y responsable.
+
+* Calcular la retención interanual comparando estudiantes que continúan con una población de referencia claramente definida.
+
+* Calcular la deserción sobre la población elegible para el indicador, diferenciando el abandono confirmado de los casos cuyo destino se desconoce.
+
+* Calcular la promoción y la repetición según las reglas académicas vigentes.
+
+* Excluir traslados confirmados de la deserción institucional cuando la definición oficial así lo establezca.
+
+* Permitir segmentar resultados por año, grado, sección, nivel educativo y otros atributos autorizados.
+
+* Mostrar el numerador, denominador y cantidad de registros utilizados en cada tasa.
+
+* Permitir consultar la lista autorizada de estudiantes que integran el resultado.
+
+* Recalcular indicadores cuando se corrija un estado histórico, conservando la trazabilidad de la modificación.
+
+Precisión metodológica obligatoria
+
+Las fórmulas de la auditoría deben revisarse antes de implementarse. La retención propuesta puede utilizarse como punto de partida, pero debe verificarse que el total de estudiantes del año anterior represente la población realmente elegible para continuar.
+
+Del mismo modo, dividir los retiros injustificados entre los estudiantes del año actual puede distorsionar la deserción, pues los estudiantes que abandonaron podrían ya no aparecer en ese total. La fórmula definitiva debe emplear una población de referencia consistente y aprobada por la institución.
+
+Criterios de aceptación
+
+* Las tasas coinciden con cálculos manuales independientes.
+
+* Un traslado confirmado no se contabiliza automáticamente como abandono.
+
+* Los estudiantes nuevos no se confunden con estudiantes que regresan.
+
+* Las bajas retroactivas actualizan los indicadores afectados sin eliminar el historial.
+
+* El informe permite comprobar cada tasa mediante los registros que la componen.
+
+* No se generan porcentajes engañosos cuando falta información suficiente.
+
+Dependencias: INT-T01, INT-T02 y disponibilidad de un historial fiable de matrículas.
+
+### INT-T04. Historial de matrícula y comparación de los últimos cinco años
+
+P1 · AltaAmpliación de INT-02
+
+Problema que resuelve
+
+El informe actual se concentra en la matrícula del año activo, lo que impide analizar adecuadamente el crecimiento, la reducción de estudiantes y los cambios en la composición institucional.
+
+Objetivo
+
+Incorporar una serie histórica de matrícula que permita evaluar tendencias a lo largo de cinco años como mínimo, ampliable a todos los años disponibles.
+
+Requisitos funcionales
+
+* Mostrar estudiantes matriculados por año lectivo.
+
+* Separar nuevos ingresos, estudiantes que continúan, traslados, retiros y graduaciones.
+
+* Comparar cifras absolutas y variaciones porcentuales entre años.
+
+* Desglosar por grado, sección y nivel educativo.
+
+* Permitir comparar la misma fecha de corte entre años cuando se analice matrícula en proceso.
+
+* Diferenciar matrícula inicial, matrícula acumulada y matrícula activa a una fecha determinada.
+
+* Mantener los datos históricos aunque cambien las secciones o los nombres de los grados.
+
+* Mostrar advertencias cuando existan años incompletos o cambios metodológicos que impidan una comparación directa.
+
+Cambios necesarios
+
+Ampliar el catálogo de informes y las consultas históricas para recuperar registros de varios años, con criterios consistentes de inclusión y exclusión.
+
+Criterios de aceptación
+
+* Se muestran los últimos cinco años cuando existen datos suficientes.
+
+* Las sumas por grado coinciden con el total institucional correspondiente.
+
+* Los cambios porcentuales se calculan correctamente y no generan divisiones por cero.
+
+* Los períodos incompletos se identifican como tales.
+
+* El usuario puede acceder a los registros que justifican las cifras y exportar los resultados filtrados.
+
+Dependencias: INT-T01 y normalización de los períodos académicos.
+
+### INT-T05. Seguimiento longitudinal por cohortes generacionales
+
+P1 · AltaAmpliación de INT-04
+
+Problema que resuelve
+
+No existe una herramienta para estudiar la evolución de una generación de estudiantes a través de varios años lectivos. Esto dificulta identificar en qué etapas aumentan las pérdidas de matrícula, la repetición o las dificultades académicas.
+
+Objetivo
+
+Crear un tablero longitudinal que permita seguir a los estudiantes de una misma cohorte desde su ingreso hasta su egreso o salida institucional.
+
+Requisitos funcionales
+
+* Definir la cohorte por año y criterio de ingreso, con opciones para separar nuevos ingresos, transferencias y otras situaciones.
+
+* Conservar la pertenencia histórica a la cohorte aunque el estudiante cambie de sección o grado.
+
+* Mostrar la cantidad de integrantes originales, activos, promovidos, repetidores, trasladados, retirados y graduados por año.
+
+* Comparar rendimiento, asistencia, aprobación y promoción entre etapas.
+
+* Permitir segmentar por grado, asignatura y otros criterios autorizados, sin perder la referencia de la cohorte original.
+
+* Identificar las etapas en las que se producen mayores pérdidas de continuidad.
+
+* Mostrar cambios en el tamaño de la población y explicar las exclusiones aplicadas.
+
+* Permitir navegar desde los indicadores agregados hasta los registros autorizados.
+
+Comportamiento esperado
+
+Una cohorte de ingreso de 2026 debe seguir siendo la misma cohorte en los informes de 2027, 2028 y años posteriores, aunque cambie la estructura académica.
+
+Los traslados internos entre secciones no deben contabilizarse como salidas institucionales.
+
+Criterios de aceptación
+
+* La cohorte conserva su identidad en todos los períodos consultados.
+
+* Los totales por estado concilian con la población de referencia.
+
+* Los cambios de grado no crean estudiantes duplicados.
+
+* Los informes muestran las pérdidas y las incorporaciones de forma diferenciada.
+
+* Las comparaciones no mezclan cohortes con definiciones incompatibles.
+
+Dependencias: INT-T02, INT-T03 e INT-T04.
+
+### INT-T06. Comparación académica entre años y períodos equivalentes
+
+P2 · MediaAmpliación de INT-05
+
+Problema que resuelve
+
+La comparación entre parciales del mismo año no es suficiente para determinar si el rendimiento mejora o empeora de un año a otro. Además, comparar períodos de duración o cobertura diferente puede inducir a conclusiones incorrectas.
+
+Objetivo
+
+Ampliar los informes para comparar períodos académicos equivalentes y explicar las diferencias cuando no sean directamente comparables.
+
+Requisitos funcionales
+
+* Comparar el mismo parcial entre años lectivos diferentes.
+
+* Comparar asignaturas, grados, secciones y cohortes, según permisos.
+
+* Mostrar promedios, distribución de notas, aprobación, reprobación y variación interanual.
+
+* Identificar diferencias en la cantidad de estudiantes evaluados.
+
+* Mostrar las fechas, la duración y la cobertura de cada período.
+
+* Advertir sobre escalas de calificación, criterios de evaluación o contenidos curriculares distintos.
+
+* Distinguir entre cambios reales de rendimiento y variaciones explicadas por la composición del grupo.
+
+* Permitir revisar las notas que originan un resultado, con acceso restringido.
+
+Criterios de aceptación
+
+* Las comparaciones equivalentes se calculan correctamente.
+
+* Los períodos incompatibles generan una advertencia visible.
+
+* La ausencia de calificaciones no se interpreta como una nota de cero.
+
+* Los cambios en la composición del grupo aparecen documentados.
+
+* Los valores del gráfico y de la tabla coinciden exactamente.
+
+Dependencias: INT-T01 e INT-T02.
+
+### INT-T07. Indicadores financieros ampliados y conciliación
+
+P2 · MediaOptimización de INT-06
+
+Problema que resuelve
+
+La auditoría considera funcionales los indicadores financieros existentes, pero un balance neto y un saldo acumulado no son suficientes para evaluar la situación financiera, anticipar obligaciones o explicar diferencias entre ingresos registrados, pagos recibidos y saldos pendientes.
+
+Objetivo
+
+Ampliar la analítica financiera sin duplicar la contabilidad existente y manteniendo la conciliación con los movimientos de origen.
+
+Requisitos funcionales
+
+* Comparar ingresos, egresos y balance por mes, trimestre, año y período seleccionado.
+
+* Desglosar por categoría, cuenta, concepto y departamento cuando exista información válida.
+
+* Separar ingresos confirmados, pagos pendientes de validación, cargos emitidos, cuentas por cobrar y saldos vencidos.
+
+* Distinguir cobros recibidos de importes facturados o pendientes.
+
+* Mostrar vencimientos, antigüedad de saldos pendientes y evolución de la cobranza.
+
+* Incorporar presupuesto frente a ejecución cuando existan presupuestos aprobados.
+
+* Identificar movimientos anulados, reversados, corregidos o conciliados.
+
+* Mostrar la fecha de actualización, los filtros aplicados y el detalle que respalda cada cifra.
+
+* Permitir comparar períodos equivalentes y explicar variaciones importantes.
+
+* Mantener las restricciones de acceso a información financiera individual.
+
+Cambios necesarios
+
+Extender el catálogo de informes financieros y revisar los criterios con los que se contabilizan los movimientos. Los comprobantes no confirmados por administración deben seguir excluidos de los ingresos efectivamente recibidos, sin desaparecer de los informes de pendientes.
+
+Criterios de aceptación
+
+* Los totales se concilian con los registros contables correspondientes.
+
+* Las anulaciones y reversiones no se contabilizan dos veces.
+
+* Los cargos pendientes no aparecen como dinero recibido.
+
+* Las cuentas por cobrar coinciden con el detalle de los saldos pendientes.
+
+* Los informes pueden filtrarse y exportarse sin modificar los resultados originales.
+
+* Los usuarios sin autorización no pueden acceder a los detalles financieros.
+
+Dependencias: INT-T01, INT-T02 y acceso a los registros financieros y presupuestarios pertinentes.
+
+### INT-T08. Proyección de matrícula y planificación de cupos
+
+P2 · MediaDesarrollo nuevo · INT-07
+
+Problema que resuelve
+
+La planificación de cupos depende de cálculos manuales y no permite estimar con anticipación la demanda por grado, sección y nivel educativo.
+
+Objetivo
+
+Crear un simulador de matrícula para anticipar necesidades de capacidad, detectar posibles saturaciones y comparar escenarios de crecimiento.
+
+Requisitos funcionales
+
+* Proyectar la matrícula futura usando históricos de inscripción, continuidad, retiros, promoción y disponibilidad de cupos.
+
+* Permitir introducir nuevos ingresos previstos, traslados esperados y límites de capacidad por sección.
+
+* Calcular escenarios conservador, esperado y de crecimiento, mostrando los supuestos de cada uno.
+
+* Identificar grados con posible exceso o déficit de cupos.
+
+* Permitir modificar manualmente los supuestos y recalcular el escenario sin alterar los datos reales.
+
+* Diferenciar claramente las cifras reales, las estimaciones y los valores introducidos por el usuario.
+
+* Mostrar el histórico utilizado, el horizonte temporal y las limitaciones de la proyección.
+
+* Indicar cuándo los datos disponibles son insuficientes para generar una estimación razonable.
+
+Cambios necesarios
+
+Desarrollar un modelo de proyección basado inicialmente en métodos estadísticos interpretables y compararlo con un pronóstico sencillo de referencia. No es necesario introducir aprendizaje automático si un método más simple ofrece resultados iguales o mejores.
+
+Criterios de aceptación
+
+* Las proyecciones se validan con períodos históricos que no se hayan utilizado para construirlas.
+
+* Se mide el error de predicción y se compara con un método de referencia.
+
+* Los escenarios producen resultados coherentes al cambiar los supuestos.
+
+* Ninguna proyección modifica la matrícula real ni reserva cupos automáticamente.
+
+* El sistema muestra advertencias cuando el error histórico es alto o faltan datos.
+
+* Los cupos estimados se pueden consultar por grado, sección y año lectivo.
+
+Dependencias: INT-T01, INT-T02, INT-T04 y datos fiables de oferta académica y capacidad física.
+
+### INT-T09. Proyección de ingresos, egresos y flujo de caja
+
+P2 · MediaDesarrollo nuevo · INT-08
+
+Problema que resuelve
+
+La dirección puede consultar resultados financieros registrados, pero no dispone de una proyección que permita anticipar la disponibilidad de efectivo, los posibles déficits y las necesidades de financiación.
+
+Objetivo
+
+Desarrollar un simulador de flujo de caja que combine la situación financiera actual con las previsiones de matrícula, cobranza, gastos y compromisos futuros.
+
+Requisitos funcionales
+
+* Proyectar ingresos esperados a partir de estudiantes previstos, tarifas vigentes, becas, descuentos y calendarios de cobro.
+
+* Diferenciar importes facturados, importes efectivamente cobrados y cobros previstos.
+
+* Proyectar egresos utilizando obligaciones conocidas, gastos recurrentes, nómina, contratación prevista y compromisos pendientes.
+
+* Permitir previsiones semanales y mensuales, con un horizonte configurable.
+
+* Presentar un escenario conservador, uno esperado y uno favorable.
+
+* Permitir modificar supuestos como la matrícula, la morosidad, los descuentos, los gastos y las contrataciones.
+
+* Mostrar saldo inicial, entradas previstas, salidas previstas y saldo final estimado.
+
+* Incorporar fechas esperadas de cobro y pago cuando estén disponibles.
+
+* Identificar períodos con posible falta de liquidez y explicar qué supuestos producen el resultado.
+
+* Comparar las previsiones anteriores con los resultados reales para medir su precisión.
+
+* Mantener separados los datos reales, los escenarios y las estimaciones.
+
+* Permitir guardar, duplicar, comparar y exportar escenarios sin alterar los movimientos contables.
+
+Cambios necesarios
+
+Crear un motor de proyección que consuma información de los registros financieros existentes y de las proyecciones académicas. Las previsiones deben apoyarse en fechas y probabilidades justificables, no en la simple extrapolación del último saldo.
+
+Criterios de aceptación
+
+* El saldo proyectado coincide con el saldo inicial más las entradas menos las salidas previstas.
+
+* Los cobros pendientes no se suman al efectivo real.
+
+* Los gastos conocidos no se contabilizan dos veces.
+
+* Las modificaciones de un escenario no alteran los datos contables.
+
+* Se puede comparar la proyección con los resultados reales de períodos finalizados.
+
+* El informe identifica los supuestos, el horizonte y las limitaciones del cálculo.
+
+* Se generan alertas cuando el saldo previsto cae por debajo del límite definido por la institución.
+
+Dependencias: INT-T01, INT-T02, INT-T07 e INT-T08.
+
+### INT-T10. Simulador de necesidades de personal docente
+
+P2 · MediaDesarrollo nuevo · INT-09
+
+Problema que resuelve
+
+La institución no dispone de una herramienta cuantitativa para estimar cuántos docentes necesitará según el número proyectado de estudiantes, secciones, asignaturas y horas de clase.
+
+Objetivo
+
+Estimar la carga académica y las necesidades de contratación antes de aprobar la oferta del siguiente año lectivo.
+
+Requisitos funcionales
+
+* Utilizar matrícula proyectada, cupos por sección, asignaturas, horas semanales y estructura curricular.
+
+* Calcular la cantidad de secciones necesarias por grado y nivel.
+
+* Calcular las horas lectivas totales por asignatura y nivel.
+
+* Incorporar límites de carga docente, disponibilidad horaria y requisitos de especialidad.
+
+* Identificar docentes con exceso de carga, horas disponibles o incompatibilidades de horario.
+
+* Estimar las plazas adicionales necesarias y las necesidades de cobertura por asignatura.
+
+* Permitir simular distintos escenarios de matrícula, tamaño de sección y distribución de horarios.
+
+* Distinguir la plantilla actual de la plantilla estimada.
+
+* Mostrar los supuestos, restricciones y razones de cada necesidad de contratación.
+
+* Permitir exportar una propuesta de planificación para revisión directiva.
+
+Cambios necesarios
+
+Integrar los datos de matrícula, oferta académica, horarios y personal. Si falta alguno de estos componentes, el sistema debe señalarlo en lugar de producir una estimación aparentemente exacta.
+
+Criterios de aceptación
+
+* Las horas proyectadas coinciden con la suma de las necesidades curriculares configuradas.
+
+* Las plazas estimadas respetan las cargas máximas y las especialidades requeridas.
+
+* El cambio en la matrícula recalcula las secciones y las necesidades de personal.
+
+* Los escenarios no modifican contratos, asignaciones ni horarios reales.
+
+* Se identifican explícitamente los datos faltantes y las restricciones no satisfechas.
+
+Dependencias: INT-T01, INT-T02, INT-T08 y disponibilidad de información de horarios y personal.
+
+### INT-T11. Detección temprana de riesgo académico y abandono
+
+P2 · MediaDesarrollo nuevo · INT-13
+
+Problema que resuelve
+
+Los indicadores actuales son principalmente descriptivos. La institución no cuenta con un mecanismo para identificar estudiantes que podrían necesitar apoyo antes de que sus dificultades se conviertan en reprobación, inasistencia persistente o abandono.
+
+Objetivo
+
+Desarrollar un sistema de alertas tempranas que permita priorizar intervenciones educativas basadas en señales observables.
+
+Requisitos funcionales
+
+* Detectar tendencias como descenso sostenido de calificaciones, ausencias reiteradas, tareas no entregadas y pérdida de participación, cuando esos datos estén disponibles.
+
+* Establecer reglas configurables y umbrales aprobados por la institución.
+
+* Mostrar los factores observados que originaron cada alerta.
+
+* Diferenciar alertas académicas, de asistencia y de continuidad de matrícula.
+
+* Permitir registrar intervenciones, responsables, fechas de seguimiento y resultados.
+
+* Mostrar la evolución del caso y si las señales mejoran, empeoran o permanecen estables.
+
+* Evaluar posteriormente si las alertas identifican correctamente los casos que necesitan apoyo.
+
+* Permitir corregir una alerta incorrecta y registrar el motivo.
+
+* Restringir los detalles individuales al personal autorizado.
+
+* Evitar que una predicción se convierta automáticamente en una sanción, una decisión de retiro o una etiqueta permanente del estudiante.
+
+Cambios necesarios
+
+Implementar primero reglas transparentes y verificables. Cuando exista suficiente información histórica, se podrá evaluar un modelo estadístico de riesgo, compararlo con las reglas existentes y utilizarlo únicamente si demuestra una mejora real.
+
+Comportamiento esperado
+
+Una alerta debe explicar qué se observó, en qué período y qué acción de seguimiento se recomienda. No debe afirmar que un estudiante abandonará sus estudios ni atribuir una causa personal que los datos no demuestran.
+
+Criterios de aceptación
+
+* Cada alerta se puede reproducir utilizando los datos y las reglas que la generaron.
+
+* Se muestran los factores observados y la fecha de actualización.
+
+* Se miden falsos positivos, falsos negativos y capacidad de detección cuando existen resultados históricos verificables.
+
+* El sistema no presenta estimaciones sin datos suficientes.
+
+* No se toman decisiones disciplinarias o académicas definitivas automáticamente.
+
+* Las intervenciones y sus resultados quedan documentados con permisos adecuados.
+
+Dependencias: INT-T01, INT-T02, INT-T03, INT-T05 e INT-T06.
+
+### INT-T12. Cobertura curricular y cumplimiento de la planificación académica
+
+P2 · MediaAmpliación analítica
+
+Problema que resuelve
+
+La auditoría no acredita una medición consolidada de cobertura curricular que permita comparar lo planificado con lo efectivamente impartido y confirmado.
+
+Objetivo
+
+Permitir a la dirección y a la coordinación académica conocer el grado de avance curricular y detectar contenidos pendientes.
+
+Requisitos funcionales
+
+* Registrar o consultar los temas y objetivos previstos en la planificación oficial.
+
+* Relacionar cada tema con asignatura, grado, unidad, período y responsable.
+
+* Registrar el avance y la confirmación de los contenidos impartidos.
+
+* Calcular la cobertura curricular utilizando unidades de medida consistentes.
+
+* Comparar el avance real con el avance esperado a la fecha.
+
+* Detectar retrasos, contenidos pendientes y diferencias importantes entre secciones.
+
+* Permitir documentar cambios de planificación, suspensiones y reprogramaciones.
+
+* Mostrar la fecha de actualización y el responsable de la información.
+
+* Distinguir los temas impartidos y confirmados de los que solamente se marcaron como planificados o iniciados.
+
+Precisión del indicador
+
+El porcentaje de cobertura no debe calcularse sumando indiscriminadamente temas de distinta importancia. Si el currículo utiliza unidades de diferente peso, la institución deberá aprobar si el cálculo se realiza por tema, horas lectivas, objetivos o ponderaciones curriculares.
+
+Criterios de aceptación
+
+* El porcentaje se calcula conforme a la unidad de medida aprobada.
+
+* Los temas reprogramados no se cuentan como impartidos.
+
+* Las diferencias entre secciones pueden consultarse sin confundir sus planes curriculares.
+
+* Los totales coinciden con los registros que sustentan el indicador.
+
+* Los cambios históricos de planificación conservan su trazabilidad.
+
+Dependencias: INT-T01, INT-T02 y disponibilidad de planificación curricular y registros de avance docente.
+
+### INT-T13. Centro de informes institucionales y catálogo consolidado
+
+P2 · MediaOptimización de INT-01, INT-11 e INT-18
+
+Problema que resuelve
+
+El catálogo y la generación de informes ya existen, pero necesitan evolucionar para facilitar el uso cotidiano, evitar resultados ambiguos y reducir el tiempo necesario para encontrar información útil.
+
+Objetivo
+
+Convertir el centro de informes en una herramienta de consulta, análisis y seguimiento de decisiones institucionales.
+
+Requisitos funcionales
+
+* Organizar los informes por área, propósito y perfil autorizado.
+
+* Permitir buscar informes por nombre y necesidad práctica.
+
+* Ofrecer filtros reutilizables por período, grado, sección, asignatura y otros criterios pertinentes.
+
+* Permitir guardar vistas y filtros frecuentes para cada usuario autorizado.
+
+* Mostrar las definiciones de los indicadores y las fuentes de los datos.
+
+* Presentar el resumen principal antes del detalle, sin ocultar advertencias relevantes.
+
+* Permitir comparar períodos, consultar registros de origen y exportar resultados.
+
+* Mostrar cuándo se generó el informe y hasta qué fecha están actualizados sus datos.
+
+* Identificar cambios metodológicos que afecten a la interpretación.
+
+* Permitir marcar informes frecuentes como favoritos.
+
+* Evitar que los informes sin datos se confundan con resultados iguales a cero.
+
+* Mantener un historial de informes sensibles generados o exportados.
+
+Cambios necesarios
+
+Ampliar el catálogo existente y reutilizar las funciones actuales de generación de informes, filtros, exportación y permisos. No crear un segundo catálogo independiente.
+
+Criterios de aceptación
+
+* Cada informe publicado tiene descripción, filtros, permisos y definición de sus indicadores.
+
+* Los informes pueden recuperarse mediante búsquedas sencillas.
+
+* Los filtros guardados reproducen los mismos criterios.
+
+* Las advertencias sobre datos incompletos aparecen antes de interpretar el resultado.
+
+* Los informes financieros y los datos individuales no se muestran a usuarios no autorizados.
+
+* La generación y exportación de informes sensibles quedan registradas.
+
+Dependencias: INT-T01, INT-T02 y las mejoras de los informes académicos y financieros.
+
+### INT-T14. Optimización de gráficos, filtros y presentación de resultados
+
+P2 · MediaOptimización de INT-14 e INT-17
+
+Problema que resuelve
+
+El motor gráfico ya admite varias categorías, tipos de visualización y una alternativa tabular. Sin embargo, la disponibilidad de gráficos no garantiza que las comparaciones sean comprensibles, accesibles o adecuadas para cada conjunto de datos.
+
+Objetivo
+
+Mejorar la interpretación de los gráficos y evitar errores de lectura, sobrecarga visual y diferencias entre la información gráfica y la tabular.
+
+Requisitos funcionales
+
+* Seleccionar el tipo de gráfico apropiado para los datos y la pregunta analizada.
+
+* Evitar gráficos de pastel para comparaciones con demasiadas categorías y gráficos de líneas para períodos sin orden temporal.
+
+* Mostrar unidades, períodos, etiquetas y escalas claramente.
+
+* Identificar datos faltantes y distinguirlos de los valores cero.
+
+* Mantener consistencia entre gráfico, tabla, resumen y exportación.
+
+* Permitir ordenar, filtrar y explorar las categorías cuando el volumen de datos lo justifique.
+
+* Mostrar variaciones absolutas y porcentuales cuando aporten valor.
+
+* Incluir comparaciones de referencia solo cuando sean metodológicamente válidas.
+
+* Mantener la alternativa tabular accesible mediante teclado y lectores de pantalla.
+
+* Adaptar la presentación a móviles, pantallas pequeñas y diferentes tamaños de texto.
+
+* Informar cuando el conjunto de datos sea demasiado pequeño o incompleto para una comparación fiable.
+
+Cambios necesarios
+
+Mejorar las funciones existentes `renderUniversalConfigurableChart` y `openAnalyticsChartModal` sin sustituirlas innecesariamente ni duplicar su comportamiento.
+
+Criterios de aceptación
+
+* Los valores del gráfico, tabla, resumen y exportación coinciden.
+
+* Todos los gráficos tienen títulos, etiquetas y unidades suficientes.
+
+* Las comparaciones de períodos incompatibles muestran advertencias.
+
+* La interfaz puede utilizarse con teclado y lectores de pantalla.
+
+* Los gráficos funcionan en dispositivos móviles sin ocultar datos esenciales.
+
+* Los conjuntos de datos vacíos, nulos o de un solo elemento no provocan errores ni representaciones engañosas.
+
+Dependencias: INT-T02 y disponibilidad de los datos normalizados de cada informe.
+
+### INT-T15. Trazabilidad de cifras y reproducción de informes históricos
+
+P2 · MediaOptimización de INT-11 e INT-18
+
+Problema que resuelve
+
+La auditoría considera funcional el acceso a los datos de origen, pero los cambios retroactivos pueden hacer que un informe generado anteriormente muestre cifras diferentes al volver a consultarlo. Sin distinguir entre el resultado original y el resultado actualizado, resulta difícil reconstruir decisiones pasadas.
+
+Objetivo
+
+Garantizar que cada informe pueda explicarse, verificarse y reproducirse dentro de las limitaciones de los datos históricos disponibles.
+
+Requisitos funcionales
+
+* Registrar los filtros, el período, la definición de indicadores y la fecha de generación.
+
+* Identificar las fuentes utilizadas y permitir navegar a los registros de origen cuando el usuario tenga autorización.
+
+* Conservar una copia del resultado generado para los informes históricos que requieran evidencia documental.
+
+* Distinguir entre informe original e informe recalculado con datos corregidos.
+
+* Registrar cambios en los datos de origen que afecten a resultados institucionales.
+
+* Mostrar quién generó, consultó o exportó un informe sensible, según las reglas de auditoría aprobadas.
+
+* Evitar almacenar innecesariamente información personal completa dentro de cada copia del informe.
+
+* Permitir comparar dos versiones de un mismo informe e identificar qué cifras cambiaron.
+
+Cambios necesarios
+
+Ampliar la bitácora existente y definir qué informes requieren conservación histórica, durante cuánto tiempo y con qué nivel de detalle. La trazabilidad debe integrarse con la generación de informes existente.
+
+Criterios de aceptación
+
+* Un informe histórico conservado reproduce sus cifras y filtros originales.
+
+* Un informe recalculado refleja las correcciones de los datos de origen.
+
+* El sistema distingue ambas versiones sin confundirlas.
+
+* Los accesos a registros sensibles respetan los permisos.
+
+* Cada modificación relevante puede vincularse con su registro de auditoría.
+
+* La conservación de informes no expone datos personales a usuarios no autorizados.
+
+Dependencias: INT-T01, INT-T02 y el registro de auditoría existente.
+
+### INT-T16. Actualización de datos, errores de consulta y transparencia
+
+P2 · MediaOptimización de INT-12
+
+Problema que resuelve
+
+Un informe puede mostrar la hora de su último procesamiento satisfactorio y, aun así, utilizar datos incompletos, desactualizados o parcialmente inaccesibles. Una marca de tiempo por sí sola no garantiza que la información esté completa.
+
+Objetivo
+
+Hacer visible la actualidad, integridad y disponibilidad de los datos que sustentan cada indicador.
+
+Requisitos funcionales
+
+* Mostrar la última actualización correcta de cada fuente relevante.
+
+* Diferenciar actualización de datos, generación del informe y fecha del último movimiento registrado.
+
+* Identificar fuentes que no respondieron, períodos incompletos y errores parciales.
+
+* Evitar sustituir automáticamente datos ausentes por cero.
+
+* Permitir reintentar consultas fallidas sin duplicar registros ni generar resultados inconsistentes.
+
+* Mostrar un mensaje claro cuando un informe no pueda calcularse con suficiente fiabilidad.
+
+* Permitir actualizar los datos y volver a generar el informe cuando el servicio esté disponible.
+
+* Registrar los fallos de actualización y su resolución.
+
+* Establecer objetivos de actualización según la naturaleza del indicador, sin exigir la misma frecuencia para todos los informes.
+
+Criterios de aceptación
+
+* Los datos incompletos se identifican de manera visible.
+
+* Los valores cero solo aparecen cuando representan un resultado real.
+
+* Un fallo de una fuente no se presenta como un informe completo.
+
+* Las fechas de actualización corresponden a la fuente y al procesamiento que se muestran.
+
+* La recuperación de una consulta fallida no duplica resultados ni movimientos.
+
+Dependencias: INT-T01, INT-T02 y las fuentes de datos consultadas por los informes.
+
+### INT-T17. Revisión de permisos y protección de información institucional
+
+P0 · CríticaVerificación de INT-16
+
+Problema que resuelve
+
+La auditoría informa que existen controles de acceso, pero una prueba satisfactoria no demuestra que todos los informes, filtros, exportaciones, detalles y nuevas herramientas respeten las mismas restricciones.
+
+Objetivo
+
+Verificar y reforzar los permisos para garantizar que cada persona consulte únicamente la información que le corresponde.
+
+Requisitos funcionales
+
+* Revisar los permisos de lectura, consulta detallada, generación y exportación.
+
+* Aplicar las restricciones también a las solicitudes directas, no solo a los botones visibles.
+
+* Separar indicadores agregados de información individual cuando corresponda.
+
+* Limitar el acceso a datos académicos, financieros, laborales y personales según las funciones autorizadas.
+
+* Verificar que los filtros no permitan recuperar información de otros estudiantes, secciones o departamentos.
+
+* Registrar los intentos de acceso denegados a información sensible.
+
+* Evitar que las exportaciones incluyan columnas o registros no autorizados.
+
+* Aplicar los permisos a los nuevos simuladores, las alertas tempranas y los informes históricos.
+
+* Comprobar que los cambios de rol surtan efecto en las siguientes consultas.
+
+Criterios de aceptación
+
+* Las pruebas de autorización cubren cada tipo de informe y operación sensible.
+
+* Los usuarios no autorizados reciben una denegación efectiva desde el servicio que entrega los datos.
+
+* Las exportaciones respetan exactamente los mismos límites de acceso que las consultas.
+
+* No es posible obtener registros restringidos alterando manualmente los filtros.
+
+* Los accesos denegados y las operaciones sensibles quedan registrados según las políticas institucionales.
+
+Dependencias: controles de autorización existentes y matriz de permisos institucionales.
+
+### INT-T18. Optimización del rendimiento y la escalabilidad de los informes
+
+P2 · MediaMejora transversal
+
+Problema que resuelve
+
+A medida que se acumulan años de matrícula, calificaciones y movimientos financieros, las consultas históricas y los informes consolidados pueden tardar más, especialmente cuando se generan múltiples gráficos o exportaciones.
+
+Objetivo
+
+Mantener una experiencia rápida y estable sin sacrificar la precisión, la seguridad ni la trazabilidad.
+
+Requisitos funcionales
+
+* Medir tiempos de respuesta con volúmenes de datos representativos y crecientes.
+
+* Evitar leer repetidamente las mismas fuentes para calcular indicadores idénticos.
+
+* Permitir paginar o limitar los detalles de grandes conjuntos de registros.
+
+* Utilizar resultados intermedios reutilizables cuando sean seguros y apropiados.
+
+* Invalidar los resultados almacenados cuando cambien los datos relevantes.
+
+* Mostrar la fecha de actualización cuando un resultado no sea instantáneo.
+
+* Evitar que la generación de un informe pesado bloquee otras funciones.
+
+* Gestionar fallos parciales, tiempos de espera y solicitudes repetidas.
+
+* Mantener el control de permisos en cualquier mecanismo de reutilización de resultados.
+
+Criterios de aceptación
+
+* Los tiempos de respuesta se miden y comparan con una línea base obtenida antes de los cambios.
+
+* Los informes frecuentes cumplen objetivos de rendimiento definidos a partir de las pruebas reales.
+
+* Los resultados reutilizados coinciden con los cálculos de referencia.
+
+* Los cambios en los datos no dejan resultados obsoletos presentados como actuales.
+
+* Las consultas pesadas no bloquean la navegación normal.
+
+* Las optimizaciones no permiten compartir datos entre usuarios con permisos diferentes.
+
+Dependencias: INT-T01, INT-T02 y mediciones iniciales del rendimiento.
+
+### INT-T19. Exportación avanzada y uso de informes fuera de la plataforma
+
+P3 · EvolutivaOptimización de INT-15
+
+Problema que resuelve
+
+La exportación CSV/Excel ya funciona según la auditoría, pero la utilidad institucional requiere conservar filtros, definiciones, totales y advertencias para que los resultados puedan revisarse y presentarse sin perder contexto.
+
+Objetivo
+
+Ampliar las exportaciones para facilitar reuniones directivas, análisis posteriores y conservación documental.
+
+Requisitos funcionales
+
+* Mantener los filtros y el período utilizados en el informe.
+
+* Incluir fecha de generación, descripción del indicador y unidades.
+
+* Incorporar un resumen de los criterios de cálculo y las advertencias relevantes.
+
+* Permitir exportar datos detallados únicamente cuando el usuario tenga autorización.
+
+* Mantener una correspondencia verificable entre los totales del informe y los datos exportados.
+
+* Ofrecer formatos adicionales cuando aporten utilidad, como informes PDF para presentación y archivo.
+
+* Evitar fórmulas de hoja de cálculo que puedan ejecutar contenido no confiable procedente de datos de usuario.
+
+* Registrar las exportaciones de información sensible.
+
+* Permitir volver al informe original desde un registro de exportación, cuando siga disponible y autorizado.
+
+Criterios de aceptación
+
+* Los filtros y totales exportados coinciden con el informe visualizado.
+
+* Las exportaciones identifican su fecha de generación y sus criterios de cálculo.
+
+* Los datos restringidos no se incluyen en archivos descargados por usuarios no autorizados.
+
+* Los valores introducidos por usuarios no se interpretan como fórmulas ejecutables.
+
+* Las exportaciones mantienen una presentación legible y consistente.
+
+Dependencias: INT-T02, INT-T13, INT-T15 e INT-T17.
+
+### INT-T20. Validación integral y regresión de la inteligencia institucional
+
+P0 · CríticaObligatoria antes de publicar
+
+Problema que resuelve
+
+Añadir nuevas funciones sin una batería de pruebas compartida puede corregir una deficiencia y, al mismo tiempo, introducir errores en los indicadores, las exportaciones, los permisos o los informes existentes.
+
+Objetivo
+
+Establecer una validación integral que demuestre que los componentes actuales continúan funcionando y que las nuevas funciones producen resultados correctos.
+
+Requisitos funcionales
+
+* Crear conjuntos de datos controlados para matrícula, calificaciones, asistencia, cohortes y finanzas.
+
+* Verificar cada fórmula con cálculos independientes.
+
+* Probar datos vacíos, duplicados, incompletos, fuera de escala y corregidos retroactivamente.
+
+* Probar cambios de año lectivo, traslados, retiros, promociones y graduaciones.
+
+* Verificar que los resultados gráficos, tabulares y exportados coinciden.
+
+* Probar usuarios con diferentes permisos y acceso a información sensible.
+
+* Evaluar las proyecciones con datos históricos no utilizados para ajustarlas.
+
+* Comprobar el rendimiento con volúmenes de datos representativos.
+
+* Verificar que los errores de consulta se comuniquen sin generar resultados engañosos.
+
+* Mantener un registro de pruebas, resultados, defectos y correcciones.
+
+Criterios de aceptación
+
+* Todas las pruebas críticas de cálculo, integridad y autorización se aprueban.
+
+* Los defectos críticos y altos identificados durante las pruebas se corrigen antes de publicar.
+
+* Las pruebas de regresión confirman el funcionamiento de los informes que ya estaban operativos.
+
+* Los resultados se verifican contra datos de referencia independientes.
+
+* Las proyecciones muestran sus limitaciones y no se aprueban por el mero hecho de producir cifras.
+
+* La entrega incluye evidencia de pruebas y un inventario de los cambios realizados.
+
+Dependencias: todas las tareas que se vayan a publicar.
+
+### 3. Problemas de uso reportados y medidas preventivas
+
+Además de las carencias identificadas directamente en la auditoría, la investigación sobre sistemas educativos, tableros analíticos y herramientas financieras muestra problemas recurrentes que deben convertirse en requisitos de prevención.
+
+No todos estos problemas están demostrados en la plataforma del instituto. Se incluyen como riesgos que deben comprobarse y prevenirse mediante pruebas específicas.
+
+| Problema observado en sistemas similares | Cómo abordarlo en nuestra plataforma | Tareas relacionadas |
+| --- | --- | --- |
+| Estudiantes retirados que siguen apareciendo como activos. | Controlar fechas efectivas de matrícula, retiro y períodos de consulta. | INT-T01, INT-T03, INT-T04 |
+| Estudiantes duplicados o contados dos veces. | Validar identificadores y relaciones entre matrículas sin fusionar identidades automáticamente. | INT-T01, INT-T05 |
+| Informes con datos vacíos, desactualizados o clasificaciones incorrectas. | Mostrar la integridad de las fuentes, la fecha de actualización y las advertencias de información incompleta. | INT-T01, INT-T02, INT-T16 |
+| Diferencias entre los datos originales y las cifras de los informes. | Unificar fórmulas, fuentes oficiales y criterios de cálculo; conservar evidencia histórica. | INT-T02, INT-T07, INT-T15 |
+| Tableros demasiado complejos que dificultan identificar qué decisión tomar. | Mostrar primero la conclusión, las variaciones importantes y las acciones posibles, dejando el detalle disponible. | INT-T13, INT-T14 |
+| Proyecciones financieras poco útiles o difíciles de ajustar. | Permitir modificar supuestos, comparar escenarios y evaluar predicciones anteriores frente a resultados reales. | INT-T09 |
+| Informes poco flexibles y demasiados pasos para obtener información habitual. | Incorporar filtros guardados, favoritos, comparaciones y exportaciones con contexto. | INT-T13, INT-T19 |
+| Alertas académicas difíciles de interpretar o que generan conclusiones injustificadas. | Mostrar señales observadas, explicar cada alerta y exigir revisión humana antes de decisiones importantes. | INT-T11 |
+
+Estos riesgos están respaldados por problemas documentados en el sector educativo: se han reportado estudiantes duplicados, alumnos que continúan apareciendo tras su salida, datos ausentes y resultados de asistencia incorrectos. Las investigaciones sobre analítica educativa también advierten que los tableros pueden ser difíciles de interpretar y que las predicciones requieren explicaciones y orientación para traducirse en acciones útiles.
+
+En los sistemas financieros se observan igualmente dificultades de conciliación, sincronización, personalización de informes y comprensión de los resultados. Por ello, no basta con que un informe se genere: debe ser verificable, comprensible y útil para la decisión que se pretende tomar.
+
+### 4. Orden recomendado de ejecución
+
+Las tareas deben desarrollarse en el siguiente orden funcional. Algunas pueden ejecutarse en paralelo una vez completadas sus dependencias.
+
+### Etapa 1. Integridad y confiabilidad
+
+P0
+
+* INT-T01. Auditoría de calidad e integridad de datos.
+
+* INT-T02. Normalización de indicadores y fórmulas.
+
+* INT-T17. Revisión de permisos y protección de información.
+
+* INT-T20. Preparación de pruebas de referencia y regresión, que continuará durante todas las etapas.
+
+Resultado: una base verificable para evitar que las mejoras reproduzcan errores de origen o expongan información restringida.
+
+### Etapa 2. Indicadores académicos e históricos
+
+P1
+
+* INT-T03. Retención, deserción, traslados y promoción.
+
+* INT-T04. Histórico de matrícula de cinco años o más.
+
+* INT-T05. Seguimiento longitudinal por cohortes.
+
+Resultado: indicadores oficiales de continuidad y evolución académica con datos comprobables.
+
+### Etapa 3. Comparación y planificación
+
+P2
+
+* INT-T06. Comparaciones académicas interanuales.
+
+* INT-T07. Analítica y conciliación financiera ampliadas.
+
+* INT-T08. Proyección de matrícula y cupos.
+
+* INT-T09. Proyección de ingresos, egresos y flujo de caja.
+
+* INT-T10. Simulación de necesidades de personal.
+
+* INT-T11. Detección temprana de riesgo académico.
+
+* INT-T12. Cobertura curricular.
+
+Resultado: herramientas para anticipar necesidades, evaluar escenarios y organizar intervenciones.
+
+### Etapa 4. Consolidación y experiencia de uso
+
+P2-P3
+
+* INT-T13. Centro de informes consolidado.
+
+* INT-T14. Gráficos, filtros y accesibilidad.
+
+* INT-T15. Trazabilidad y reproducción histórica.
+
+* INT-T16. Transparencia sobre actualización y errores.
+
+* INT-T18. Rendimiento y escalabilidad.
+
+* INT-T19. Exportación avanzada.
+
+* INT-T20. Validación final y regresión completa.
+
+Resultado: un sistema integrado, comprensible, auditable y preparado para crecer.
+
+### 5. Dependencias críticas entre tareas
+
+El orden anterior debe respetarse especialmente en estas relaciones:
+
+```mermaid
+
+flowchart TD
+    A["INT-T01 · Calidad de datos"] --> B["INT-T02 · Fórmulas oficiales"]
+    A --> C["INT-T17 · Permisos"]
+    B --> D["INT-T03 · Retención y promoción"]
+    B --> E["INT-T04 · Histórico de matrícula"]
+    D --> F["INT-T05 · Cohortes"]
+    B --> G["INT-T06 · Comparación académica"]
+    B --> H["INT-T07 · Analítica financiera"]
+    E --> I["INT-T08 · Proyección de cupos"]
+    H --> J["INT-T09 · Flujo de caja"]
+    I --> J
+    I --> K["INT-T10 · Personal docente"]
+    F --> L["INT-T11 · Riesgo académico"]
+    B --> M["INT-T12 · Cobertura curricular"]
+    D --> N["INT-T13 · Centro de informes"]
+    H --> N
+    N --> O["INT-T14 · Gráficos y accesibilidad"]
+    B --> P["INT-T15 · Trazabilidad histórica"]
+    A --> Q["INT-T16 · Actualización y errores"]
+    A --> R["INT-T18 · Rendimiento"]
+    N --> S["INT-T19 · Exportación"]
+    C --> N
+    O --> T["INT-T20 · Validación final"]
+    P --> T
+    Q --> T
+    R --> T
+    S --> T
+    L --> T
+    K --> T
+    M --> T
+```
+
+### 6. Condiciones para dar por terminada la fase
+
+La Fase 12 no debe considerarse terminada únicamente porque las nuevas pantallas, gráficos o simuladores estén disponibles.
+
+Debe cumplir las siguientes condiciones de salida:
+
+* Los indicadores oficiales tienen definiciones aprobadas, fórmulas verificadas y fuentes identificables.
+
+* Las inconsistencias críticas se detectan y pueden resolverse sin alterar indebidamente los datos históricos.
+
+* Las tasas de retención, deserción y promoción se calculan correctamente y distinguen las distintas causas de salida.
+
+* La matrícula histórica y el seguimiento por cohortes concilian con los expedientes originales.
+
+* Las proyecciones de cupos, ingresos y personal han sido contrastadas con datos históricos y muestran sus limitaciones.
+
+* Las alertas académicas permiten actuar y hacer seguimiento sin convertir estimaciones en decisiones automáticas.
+
+* Los informes financieros conservan su conciliación y separan los importes reales de los pendientes y proyectados.
+
+* Los gráficos, tablas y exportaciones presentan los mismos valores.
+
+* Los permisos se verifican tanto en la interfaz como en las operaciones que entregan los datos.
+
+* Los informes históricos pueden reconstruirse dentro de las capacidades de conservación implementadas.
+
+* Las pruebas críticas y de regresión han sido aprobadas y documentadas.
+
+* No quedan defectos críticos o altos conocidos sin resolver; cualquier limitación restante está documentada y tiene una decisión explícita de tratamiento.
+
+### 7. Entregables obligatorios de la implementación
+
+Al finalizar cada tarea, se debe entregar:
+
+* Diagnóstico final: problema original, causa confirmada y alcance real de la deficiencia.
+
+* Cambios realizados: componentes, vistas, cálculos y registros afectados.
+
+* Requisitos cumplidos: relación entre cada requisito y su implementación verificable.
+
+* Pruebas ejecutadas: datos utilizados, resultados esperados, resultados obtenidos y evidencia.
+
+* Integración: dependencias atendidas y compatibilidad comprobada con las funciones existentes.
+
+* Limitaciones: información faltante, supuestos, riesgos residuales y restricciones conocidas.
+
+* Resultado de revisión: defectos encontrados durante la implementación, correcciones aplicadas y pruebas de regresión.
+
+* Estado de entrega: terminado, parcialmente terminado o pendiente, sin declarar completada una función que solo esté disponible visualmente.
+
+Instrucción final para la ejecución: antes de modificar el proyecto, revisar la implementación real de cada componente señalado en la auditoría y confirmar si la carencia sigue existiendo. La auditoría constituye el punto de partida, no una autorización para asumir que toda la evidencia descrita continúa vigente. Las tareas deben ejecutarse sobre los componentes existentes cuando corresponda, preservar las capacidades funcionales ya verificadas y documentar cualquier diferencia entre los hallazgos de la auditoría y el estado actual del sistema.
