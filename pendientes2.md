@@ -2660,3 +2660,751 @@ Al concluir el conjunto de tareas, entrega:
 - Riesgos residuales y dependencias pendientes.
 - Comparación entre el comportamiento anterior y el resultado final.
 - Mejoras adicionales justificadas que queden fuera del alcance.
+
+
+
+---
+
+# PLAN DE IMPLEMENTACIÓN: NIVEL 3. AUTOMATIZACIÓN E INTELIGENCIA
+
+Proyecto: Plataforma Integral de Gestión Educativa
+Institución: New Generation Christian Academy
+Informe de origen: Auditoría funcional del Nivel 3, versión 1.0
+Metodología obligatoria: "METODOLOGIA_DESARROLLO.md"
+Objetivo: Corregir brechas identificadas, completar implementaciones parciales y desarrollar capacidades adicionales justificadas por la auditoría.
+
+1. Reglas generales de ejecución
+
+1.1. Condiciones previas
+
+Antes de modificar el repositorio, Jules debe:
+
+1. Leer "METODOLOGIA_DESARROLLO.md" y cumplir sus procedimientos.
+2. Confirmar que los componentes identificados en el informe siguen existiendo y que sus nombres, ubicaciones y responsabilidades coinciden con la implementación actual.
+3. Revisar el código real, las interfaces, los servicios, el esquema de Google Sheets, los permisos y las pruebas disponibles.
+4. Verificar las brechas contra la implementación vigente. El informe de auditoría es el punto de partida, no un sustituto de la inspección.
+5. Conciliar las métricas del informe: se declaran 79 criterios, pero los rangos enumerados suman 80; además, las nueve evaluaciones parciales deben identificarse individualmente.
+6. Crear una matriz de tareas, dependencias, criterios de aceptación y evidencias.
+7. Determinar si las pruebas pueden ejecutarse en un entorno aislado sin afectar datos académicos reales.
+
+No inventar archivos, funciones, interfaces ni rutas. Los nombres mencionados en el informe son referencias que deben confirmarse.
+
+1.2. Restricciones
+
+- No realizar refactorizaciones generales ajenas al Nivel 3.
+- No cambiar contratos de servicios ni estructuras de datos compartidas sin comprobar sus dependencias.
+- No eliminar capacidades existentes que hayan sido verificadas.
+- No migrar datos reales durante las pruebas.
+- No exponer información personal de estudiantes en registros técnicos, reportes de errores o servicios externos.
+- No introducir servicios de pago o dependencias externas sin una justificación documentada.
+- No declarar terminada una tarea únicamente porque el código se haya modificado.
+- Ejecutar pruebas de regresión sobre las funciones relacionadas antes de considerar concluida cada tarea.
+
+1.3. Prioridades
+
+- P0: riesgo crítico de seguridad, exposición de datos o corrupción grave.
+- P1: integridad de datos o funcionamiento esencial comprometido.
+- P2: mejora funcional importante, robustez operativa o automatización necesaria.
+- P3: capacidad avanzada cuyo desarrollo requiere validación, diseño adicional o una inversión que puede planificarse por etapas.
+
+La prioridad puede modificarse si la inspección confirma un riesgo mayor o menor, pero el cambio debe justificarse.
+
+---
+
+2. Resumen de tareas
+
+ID| Tarea| Prioridad| Dependencia
+N3-00| Conciliar auditoría y establecer línea base| P1| Ninguna
+N3-01| Implementar deduplicación segura en importaciones| P1| N3-00
+N3-02| Endurecer validación y trazabilidad de importaciones| P2| N3-00, N3-01
+N3-03| Impedir la generación SACE con identidad faltante| P1| N3-00
+N3-04| Diseñar e implementar generación documental por lotes| P2| N3-00
+N3-05| Diseñar el optimizador automático de horarios| P2| N3-00
+N3-06| Implementar y validar el optimizador de horarios| P3| N3-05
+N3-07| Diseñar indicadores de riesgo académico explicables| P2| N3-00
+N3-08| Implementar indicadores de riesgo validados| P3| N3-07
+N3-09| Fortalecer el asistente contextual existente| P2| N3-00
+N3-10| Ejecutar regresión integral y documentar el cierre| Obligatoria| Todas las tareas implementadas
+
+Las tareas N3-05 y N3-07 deben comenzar con diseño y validación de requisitos. Su implementación definitiva depende de que se demuestre la viabilidad técnica y la utilidad institucional.
+
+---
+
+3. Tareas de preparación y corrección inmediata
+
+N3-00. Conciliar la auditoría y establecer una línea base verificable
+
+Prioridad: P1
+Objetivo: eliminar inconsistencias del informe y confirmar las brechas antes de ejecutar cambios.
+
+Problema
+
+El informe declara 79 criterios de aceptación, pero los seis rangos indicados contienen 80 criterios si se interpretan como rangos inclusivos. También informa nueve criterios parciales sin detallar todos sus resultados en la matriz de brechas.
+
+Las ubicaciones y los comportamientos descritos podrían haber cambiado desde la auditoría.
+
+Requisitos funcionales
+
+1. Recontar los criterios de aceptación de las seis capacidades.
+2. Identificar cada criterio como aprobado, parcial, fallido, bloqueado o no aplicable.
+3. Relacionar cada brecha con una evidencia concreta.
+4. Confirmar los componentes reales implicados.
+5. Establecer una línea base de las pruebas existentes.
+6. Identificar contratos, datos y funciones que no deben cambiar.
+
+Cambios necesarios
+
+- Corregir la matriz de auditoría y sus cálculos.
+- Añadir identificadores únicos a las tareas y pruebas que no los tengan.
+- Registrar las dependencias entre importaciones, documentos, horarios, analítica y asistencia contextual.
+- Documentar las condiciones necesarias para probar cada tarea sin afectar producción.
+
+Criterios de aceptación
+
+- N3-00-01: los criterios se cuentan de forma reproducible y el total coincide con el inventario.
+- N3-00-02: cada criterio tiene un resultado individual y una evidencia o una explicación de bloqueo.
+- N3-00-03: cada brecha incluida en el plan está respaldada por una implementación inspeccionada o una ausencia documentada.
+- N3-00-04: las ubicaciones reales de los componentes afectados están confirmadas.
+- N3-00-05: existe una línea base de pruebas que permite comparar el comportamiento anterior y posterior.
+- N3-00-06: se identifican las funciones relacionadas que deben protegerse mediante pruebas de regresión.
+
+Resultado esperado: una línea base fiable que permita desarrollar las siguientes tareas sin perpetuar errores del informe ni ampliar innecesariamente el alcance.
+
+---
+
+4. Importación avanzada
+
+N3-01. Implementar deduplicación segura en importaciones
+
+Prioridad: P1
+Componente de referencia: "importDataWithColumnMapping", sujeto a confirmación.
+Dependencia: N3-00.
+
+Problema
+
+Según la auditoría, la importación detecta identificadores vacíos, pero no comprueba de manera suficiente si el registro ya existe en el destino antes de insertarlo.
+
+Esto puede producir registros duplicados, relaciones inconsistentes e historiales académicos repetidos.
+
+Requisitos funcionales
+
+1. Identificar qué entidades admite realmente la importación.
+2. Definir para cada entidad una clave de identidad estable o una combinación de campos que permita reconocer un registro existente.
+3. Priorizar identificadores institucionales fiables cuando estén disponibles.
+4. No utilizar el nombre del estudiante como identificador único si pueden existir homónimos.
+5. Normalizar únicamente los campos necesarios para comparar identidades, sin alterar los valores originales de manera destructiva.
+6. Detectar duplicados tanto dentro del archivo como frente a los registros ya almacenados.
+7. Definir explícitamente el comportamiento ante cada caso:
+   - Registro nuevo.
+   - Registro ya existente sin cambios.
+   - Registro existente con diferencias.
+   - Duplicado dentro del mismo archivo.
+   - Identidad insuficiente para una comparación fiable.
+8. No actualizar ni sobrescribir información existente sin una política autorizada.
+9. Mantener la trazabilidad de los registros insertados, omitidos, rechazados o actualizados.
+10. Aplicar las validaciones en el servidor, independientemente de las comprobaciones de interfaz.
+
+Cambios necesarios
+
+- Incorporar una etapa de identificación de registros existentes antes de escribir.
+- Definir una política de resolución de duplicados por entidad.
+- Evitar consultas individuales repetitivas si puede realizarse una lectura por lotes.
+- Comprobar las relaciones entre registros antes de confirmar la importación.
+- Diseñar un mecanismo seguro para evitar que dos importaciones simultáneas inserten la misma identidad.
+- Evaluar "LockService" u otro mecanismo compatible con la arquitectura real, verificando sus límites y el alcance de su bloqueo.
+- Garantizar que la estrategia de concurrencia no mantenga bloqueos durante operaciones innecesariamente prolongadas.
+
+Criterios de aceptación
+
+- N3-01-01: importar un registro nuevo crea exactamente un registro.
+- N3-01-02: volver a importar el mismo registro no crea un duplicado.
+- N3-01-03: dos registros con el mismo identificador institucional se detectan conforme a la política definida.
+- N3-01-04: dos estudiantes con el mismo nombre, pero identificadores distintos, no se fusionan.
+- N3-01-05: un registro con identidad insuficiente no se asigna arbitrariamente a otra persona.
+- N3-01-06: ante diferencias con un registro existente, el sistema informa qué campos difieren y aplica la política autorizada.
+- N3-01-07: una importación repetida produce resultados coherentes y no duplica matrículas, calificaciones ni otras relaciones.
+- N3-01-08: dos importaciones concurrentes del mismo registro no crean duplicados ni sobrescriben datos silenciosamente.
+- N3-01-09: un usuario sin permiso no puede eludir la deduplicación o las validaciones invocando directamente el servicio.
+- N3-01-10: el resumen final diferencia altas, actualizaciones, omisiones, duplicados y errores.
+- N3-01-11: las pruebas confirman que los registros originales permanecen intactos cuando la operación se cancela o falla, según la política transaccional definida.
+- N3-01-12: las importaciones de entidades relacionadas conservan la integridad referencial.
+
+Resultado esperado
+
+Una importación repetible y segura que permita incorporar datos nuevos sin multiplicar registros ni alterar identidades académicas.
+
+---
+
+N3-02. Mejorar la validación, los informes de error y el rendimiento de importaciones
+
+Prioridad: P2
+Dependencias: N3-00 y N3-01.
+
+Problema
+
+La auditoría señala que la vista previa limita los errores mostrados y que el registro persistente conserva como máximo los primeros 20 errores. También identifica oportunidades de mejora en el procesamiento de grandes volúmenes.
+
+Requisitos funcionales
+
+1. Conservar un resumen completo de errores aunque no se muestren todos simultáneamente en la interfaz.
+2. Registrar el total de errores y proporcionar acceso a sus detalles mediante paginación, descarga o consulta segmentada, según resulte apropiado.
+3. Evitar exceder los límites de celdas, ejecución y almacenamiento de Google Apps Script.
+4. Diferenciar errores de formato, identidad, relaciones, permisos, duplicación y persistencia.
+5. Permitir que el administrador identifique la fila afectada y el motivo sin exponer información personal innecesaria.
+6. Establecer límites de tamaño de archivo, filas y campos conforme a las capacidades verificadas.
+7. Medir el rendimiento con conjuntos de datos representativos.
+8. Si se requiere procesamiento por bloques, conservar el estado y permitir reanudar o finalizar una operación sin duplicar registros.
+
+Cambios necesarios
+
+- Separar el resumen ejecutivo de los detalles de errores.
+- Diseñar una estructura de almacenamiento de errores que respete los límites de Sheets.
+- Evaluar escritura y lectura por lotes.
+- Incorporar identificadores de ejecución y de fila que permitan rastrear errores sin guardar innecesariamente el contenido completo del archivo.
+- Implementar paginación o exportación de detalles si el volumen lo justifica.
+- Definir el comportamiento cuando una operación exceda su tiempo de ejecución.
+
+Criterios de aceptación
+
+- N3-02-01: una importación con más de 20 errores muestra el total correcto y permite consultar los detalles previstos por el diseño.
+- N3-02-02: el resumen no afirma que todos los registros fueron procesados si existen filas pendientes o fallidas.
+- N3-02-03: cada error puede relacionarse con la ejecución y la fila correspondiente.
+- N3-02-04: un archivo que supera el límite definido se rechaza antes de iniciar una escritura parcial no controlada.
+- N3-02-05: una ejecución prolongada informa de su estado y puede recuperarse según la estrategia documentada.
+- N3-02-06: el procesamiento por bloques no genera duplicados cuando se reanuda.
+- N3-02-07: las pruebas de carga registran volumen, duración, errores y límites encontrados.
+- N3-02-08: el rendimiento no empeora de forma significativa en escenarios habituales sin una justificación documentada.
+
+Resultado esperado
+
+Importaciones más transparentes, escalables y fáciles de diagnosticar, sin depender de una lista truncada de errores.
+
+---
+
+5. Plantillas SACE
+
+N3-03. Impedir la generación de archivos SACE con identidades faltantes
+
+Prioridad: P1
+Componente de referencia: "generateSACEReportFile", sujeto a confirmación.
+Dependencia: N3-00.
+
+Problema
+
+Según el informe, cuando falta la identidad del estudiante se utiliza el valor genérico ""Estudiante"", sin advertencia previa. Esto puede generar archivos formalmente estructurados, pero semánticamente incorrectos.
+
+Requisitos funcionales
+
+1. Identificar los campos que exige la plantilla oficial aplicable.
+2. Distinguir los campos obligatorios de los opcionales.
+3. No sustituir identidades faltantes por valores genéricos.
+4. Validar los datos antes de generar el archivo.
+5. Mostrar un resumen de registros válidos e inválidos antes de confirmar la generación.
+6. Permitir corregir los registros de origen o excluirlos de manera explícita, cuando la política lo permita.
+7. Mantener los encabezados y tipos de datos exigidos por la plantilla.
+8. Documentar la versión o fuente de la plantilla utilizada.
+9. Diferenciar compatibilidad estructural de aceptación real por parte del sistema receptor.
+
+Cambios necesarios
+
+- Añadir validación previa de identidad y demás campos obligatorios.
+- Eliminar el uso de valores genéricos como sustitución de una identidad ausente.
+- Incorporar mensajes específicos para cada error.
+- Verificar que la validación se aplica también cuando el servicio se invoca directamente.
+- Confirmar que las reglas de formato corresponden a la plantilla oficial vigente y al procedimiento institucional real.
+
+Criterios de aceptación
+
+- N3-03-01: un registro sin identidad no genera una fila que lo identifique como ""Estudiante"".
+- N3-03-02: antes de generar el archivo, el sistema informa de los registros con identidad faltante.
+- N3-03-03: un archivo con registros inválidos no se presenta como completamente correcto.
+- N3-03-04: las identidades válidas se conservan exactamente conforme a las reglas de la plantilla.
+- N3-03-05: los campos opcionales vacíos no se rechazan indebidamente si el formato los permite.
+- N3-03-06: los encabezados, el orden de columnas, la codificación y los formatos siguen siendo compatibles.
+- N3-03-07: la validación funciona también en llamadas directas al servicio.
+- N3-03-08: el informe de generación diferencia los registros incluidos, excluidos y rechazados.
+- N3-03-09: las pruebas no modifican los datos académicos originales.
+- N3-03-10: cuando no pueda probarse el archivo en el sistema oficial, el informe limita la conclusión a la compatibilidad estructural demostrada.
+
+Resultado esperado
+
+Archivos SACE más fiables, sin identidades inventadas ni errores críticos ocultos.
+
+---
+
+6. Generación automática de documentos
+
+N3-04. Implementar generación documental por lotes con procesamiento en segundo plano
+
+Prioridad: P2
+Componentes de referencia: "generateSchoolDocument", "getIssuedSchoolDocuments", "configureSchoolDocumentTemplate" y mecanismos de plantillas, sujetos a confirmación.
+Dependencia: N3-00.
+
+Problema
+
+La generación actual opera individualmente. No existe una cola de generación masiva para operaciones como emitir documentos para una promoción completa, lo que limita la automatización administrativa y puede provocar tiempos de espera prolongados.
+
+Requisitos funcionales
+
+1. Permitir crear un lote a partir de una selección autorizada de estudiantes y documentos.
+2. Validar los datos requeridos antes de aceptar el lote.
+3. Previsualizar el alcance de la operación antes de confirmarla.
+4. Crear una ejecución identificable con estado y resumen.
+5. Procesar los documentos en bloques compatibles con los límites de Apps Script.
+6. Permitir consultar el progreso y los resultados parciales.
+7. Registrar el éxito o el error de cada documento.
+8. Reintentar los fallos recuperables sin duplicar documentos ya emitidos.
+9. Conservar el código CUV único y la indexación correspondiente en Google Drive.
+10. Aplicar los permisos existentes y evitar que un usuario acceda a documentos de otros grupos.
+11. Evitar almacenar varias copias innecesarias de un mismo documento.
+12. Mantener la trazabilidad de la plantilla y de los datos utilizados para cada emisión.
+13. Definir cómo cancelar o detener un lote sin dejarlo en un estado engañoso.
+14. Respetar los flujos de aprobación o firma que correspondan al tipo de documento.
+
+Cambios necesarios
+
+- Diseñar una estructura de cola o registro de lotes que se ajuste al almacenamiento existente.
+- Definir estados claros, por ejemplo: pendiente, en proceso, completado, completado parcialmente, fallido y cancelado, adaptándolos al modelo real.
+- Implementar procesamiento por bloques y recuperación tras interrupciones.
+- Incorporar una clave de idempotencia para impedir emisiones duplicadas en reintentos.
+- Separar el estado del lote del estado de cada documento.
+- Registrar errores sin almacenar datos personales innecesarios.
+- Confirmar cómo se crean, protegen y comparten los archivos en Drive.
+- Diseñar un mecanismo de actualización de progreso compatible con las limitaciones de ejecución y temporizadores de Apps Script.
+
+No supongas que existe ejecución ilimitada en segundo plano. Selecciona el mecanismo de procesamiento después de inspeccionar los servicios y límites disponibles.
+
+Criterios de aceptación
+
+- N3-04-01: un lote válido incluye exactamente los registros seleccionados y autorizados.
+- N3-04-02: el sistema muestra un resumen previo del número y tipo de documentos a generar.
+- N3-04-03: los datos obligatorios faltantes se identifican antes de emitir los documentos afectados.
+- N3-04-04: el procesamiento por bloques respeta los límites técnicos verificados.
+- N3-04-05: cada documento completado queda registrado con su CUV y referencia de Drive.
+- N3-04-06: un documento ya emitido no se duplica por un reintento del lote.
+- N3-04-07: un fallo intermedio no hace que todos los documentos aparezcan como fallidos si algunos se completaron correctamente.
+- N3-04-08: al reanudar un lote, solo se procesan los elementos pendientes o recuperables conforme a la política.
+- N3-04-09: el usuario puede distinguir el progreso, los errores y los documentos terminados.
+- N3-04-10: los documentos generados conservan su formato, contenido y permisos.
+- N3-04-11: un usuario no autorizado no puede iniciar un lote ni descargar sus documentos mediante llamadas directas.
+- N3-04-12: la cancelación no borra documentos ya emitidos ni presenta como completados los pendientes.
+- N3-04-13: las pruebas de regresión confirman que la generación individual continúa funcionando.
+- N3-04-14: una prueba con un lote representativo registra duración, límites, reintentos y tasa de éxito.
+
+Mejoras recomendables
+
+- Filtros por curso, grado, sección, periodo y tipo de documento, únicamente para las entidades existentes.
+- Descarga organizada de documentos o paquete comprimido, si la necesidad y la arquitectura lo justifican.
+- Resumen descargable de resultados y errores.
+- Detección de documentos obsoletos cuando cambien los datos de origen, sin modificar silenciosamente documentos oficiales ya emitidos.
+
+Resultado esperado
+
+Generación masiva fiable, recuperable y trazable, sin bloquear innecesariamente la interfaz ni duplicar documentos.
+
+---
+
+7. Horarios optimizados
+
+N3-05. Diseñar el modelo de restricciones y el optimizador de horarios
+
+Prioridad: P2
+Componente de referencia: "checkScheduleConflict" y modelo real de horarios, sujetos a confirmación.
+Dependencia: N3-00.
+
+Problema
+
+La plataforma valida conflictos al crear horarios manualmente, pero la auditoría no encontró un mecanismo que genere una propuesta semanal completa a partir de la malla curricular y las restricciones institucionales.
+
+Requisitos funcionales
+
+Antes de programar el algoritmo, documentar:
+
+1. Las entidades reales del horario: asignaturas, docentes, secciones, aulas, jornadas y bloques.
+2. Las horas requeridas por asignatura y grupo.
+3. Las disponibilidades y restricciones de cada recurso.
+4. Las reglas de duración, descanso y distribución de bloques.
+5. Las restricciones obligatorias y las preferencias.
+6. Los criterios que determinan la calidad de una solución.
+7. El tamaño máximo representativo de un horario institucional.
+8. La posibilidad de reutilizar "checkScheduleConflict" u otros validadores existentes.
+9. La diferencia entre generar un horario, optimizar uno existente y validar uno manual.
+10. Las condiciones para aprobar y publicar el resultado.
+
+Modelo de optimización esperado
+
+Restricciones obligatorias, según las entidades existentes:
+
+- No asignar simultáneamente un docente a dos clases.
+- No asignar una sección a dos clases incompatibles al mismo tiempo.
+- No asignar una misma aula a actividades simultáneas.
+- Respetar las disponibilidades y jornadas configuradas.
+- Cumplir las horas requeridas por la malla curricular.
+- Respetar otras reglas institucionales obligatorias que se confirmen en los requisitos.
+
+Preferencias optimizables, solo si son pertinentes:
+
+- Distribuir equilibradamente las clases durante la semana.
+- Reducir huecos innecesarios en la jornada docente.
+- Evitar concentraciones excesivas de una asignatura en un día.
+- Favorecer preferencias de disponibilidad previamente autorizadas.
+- Reducir modificaciones innecesarias respecto de un horario existente.
+
+Las preferencias nunca pueden prevalecer sobre una restricción obligatoria.
+
+Decisión técnica
+
+Comparar al menos dos enfoques adecuados, por ejemplo:
+
+- Búsqueda con backtracking y heurísticas de selección de variables.
+- Heurísticas de construcción y mejora local.
+- Algoritmo genético u otra técnica estocástica, si el tamaño y las restricciones justifican su uso.
+
+No elegir un algoritmo por ser más sofisticado. Justificarlo por calidad de soluciones, tiempo de ejecución, facilidad de validación y compatibilidad con Apps Script.
+
+Criterios de aceptación
+
+- N3-05-01: existe un inventario de restricciones obligatorias y preferencias.
+- N3-05-02: se documenta la representación de bloques, recursos y conflictos.
+- N3-05-03: se define una función de evaluación que no permita compensar una violación obligatoria con una mejora de preferencias.
+- N3-05-04: se comparan alternativas técnicas con ventajas, riesgos y límites.
+- N3-05-05: se identifica un conjunto de horarios de prueba con solución conocida y otro con restricciones incompatibles.
+- N3-05-06: se establecen métricas de validez, calidad y tiempo de generación.
+- N3-05-07: se define una estrategia para conservar el horario activo mientras se genera una propuesta.
+- N3-05-08: se documenta cómo se publicará una solución y cómo se revertirá si se detectan problemas.
+
+Resultado esperado
+
+Una especificación técnica validada que permita desarrollar un optimizador sin comprometer los horarios existentes.
+
+---
+
+N3-06. Implementar generación automática y optimización de horarios
+
+Prioridad: P3
+Dependencia: N3-05 aprobado.
+
+Problema
+
+La creación manual bloque a bloque requiere trabajo administrativo y no garantiza que se encuentre una distribución de calidad cuando existen numerosas restricciones.
+
+Requisitos funcionales
+
+1. Generar una propuesta completa utilizando las restricciones confirmadas.
+2. Reutilizar los validadores existentes siempre que sean adecuados.
+3. No escribir directamente sobre el horario activo durante la búsqueda.
+4. Detectar cuándo no existe una solución válida dentro de las restricciones.
+5. Diferenciar imposibilidad real demostrada de límite de búsqueda o agotamiento del tiempo.
+6. Mostrar conflictos o restricciones que impiden completar el horario.
+7. Permitir revisar la propuesta antes de publicarla.
+8. Comparar la propuesta con el horario existente cuando haya uno.
+9. Publicar solo mediante una operación autorizada.
+10. Mantener trazabilidad de la versión, autor, fecha y cambios realizados.
+11. Ofrecer un mecanismo de recuperación o reversión coherente con el almacenamiento actual.
+12. Garantizar que los cambios posteriores en disponibilidades puedan activar una nueva validación.
+
+Criterios de aceptación
+
+- N3-06-01: un escenario válido produce un horario que satisface todas las restricciones obligatorias.
+- N3-06-02: el horario propuesto se vuelve a validar con el mecanismo de conflictos antes de publicarse.
+- N3-06-03: ningún docente, sección o aula presenta conflictos de simultaneidad dentro del modelo aplicable.
+- N3-06-04: las horas asignadas coinciden con las requeridas por la malla curricular.
+- N3-06-05: un escenario incompatible no se presenta como un horario válido.
+- N3-06-06: cuando se alcanza un límite de búsqueda, el sistema comunica la limitación sin afirmar que ha demostrado la inexistencia de solución.
+- N3-06-07: una propuesta no publicada no altera el horario activo.
+- N3-06-08: publicar exige los permisos establecidos y genera trazabilidad.
+- N3-06-09: una reoptimización respeta las restricciones actualizadas.
+- N3-06-10: las pruebas miden tiempo de generación y calidad en escenarios de tamaño representativo.
+- N3-06-11: se comparan los resultados con la construcción manual o con una solución conocida.
+- N3-06-12: la generación automática no rompe la edición manual ni la validación de conflictos existente.
+- N3-06-13: el sistema conserva la última versión válida ante una interrupción.
+- N3-06-14: se prueba el comportamiento en escenarios con recursos escasos y numerosas restricciones.
+
+Resultado esperado
+
+Una herramienta que genere horarios válidos, permita optimizarlos y preserve el control institucional sobre su publicación.
+
+---
+
+8. Indicadores predictivos
+
+N3-07. Diseñar indicadores de riesgo académico explicables y verificables
+
+Prioridad: P2
+Componentes de referencia: "getAdvancedDashboardAnalytics", "getHRDashboardAnalytics" y el motor de gráficos, sujetos a confirmación.
+Dependencia: N3-00.
+
+Problema
+
+La plataforma dispone de métricas descriptivas y gráficos dinámicos, pero no de un modelo validado que estime riesgos futuros. Las estadísticas históricas no deben presentarse como predicciones.
+
+Requisitos funcionales
+
+1. Inventariar las métricas actuales y clasificarlas como descriptivas, diagnósticas o predictivas.
+2. Definir qué problema institucional se quiere anticipar.
+3. Identificar las fuentes autorizadas y su calidad.
+4. Establecer una fórmula o método reproducible.
+5. Evitar que datos posteriores al periodo de predicción se filtren al cálculo histórico de validación.
+6. Explicar qué significa cada nivel de riesgo.
+7. Definir cómo tratar los datos faltantes y desactualizados.
+8. Establecer métricas para evaluar aciertos, falsos positivos y falsos negativos.
+9. Restringir el acceso a los resultados individuales por rol.
+10. Evitar decisiones automáticas de alto impacto basadas exclusivamente en una estimación.
+
+Alcance inicial recomendado
+
+Evaluar primero un indicador académico limitado y verificable, por ejemplo, una alerta de posible dificultad académica basada en tendencias de asistencia y rendimiento, si esos datos existen y pueden utilizarse legalmente.
+
+El indicador debe servir para priorizar una revisión humana, no para etiquetar permanentemente a un estudiante ni para determinar automáticamente su promoción, sanción o permanencia.
+
+Los indicadores financieros o de mora solo deben añadirse si se confirma su pertinencia, disponibilidad de datos y autorización para ese uso. No ampliar el alcance por el simple hecho de que el informe mencione saldos administrativos.
+
+Requisitos de validación
+
+- Comparar las estimaciones con resultados históricos observados.
+- Separar los datos de entrenamiento o definición de los datos usados para evaluar el desempeño.
+- Medir el rendimiento con métricas adecuadas al objetivo.
+- Analizar si la información disponible introduce sesgos o diferencias injustificadas entre grupos.
+- Definir cuándo un indicador debe dejar de mostrarse por falta de datos o pérdida de fiabilidad.
+- Documentar las limitaciones de las conclusiones.
+
+Criterios de aceptación
+
+- N3-07-01: cada indicador tiene finalidad, población, variables y periodo definidos.
+- N3-07-02: se documenta una fórmula o método reproducible.
+- N3-07-03: se distingue claramente una métrica histórica de una estimación futura.
+- N3-07-04: se identifica la procedencia y autorización de los datos.
+- N3-07-05: se define un conjunto de validación que evite la filtración de información futura.
+- N3-07-06: se seleccionan métricas de evaluación adecuadas y se explica su interpretación.
+- N3-07-07: se establecen condiciones mínimas de datos para emitir una estimación.
+- N3-07-08: se define cómo actuar ante resultados inciertos, datos faltantes o indicadores poco fiables.
+- N3-07-09: se documentan los riesgos de falsos positivos y falsos negativos.
+- N3-07-10: se define quién puede consultar resultados individuales y agregados.
+- N3-07-11: se establece que las predicciones no desencadenan decisiones académicas de alto impacto sin revisión y autorización humana.
+- N3-07-12: existe un criterio verificable para decidir si el indicador aporta valor suficiente para su implementación.
+
+Resultado esperado
+
+Una especificación de analítica predictiva basada en datos disponibles, con reglas comprensibles, métricas de evaluación y límites de uso.
+
+---
+
+N3-08. Implementar el primer indicador predictivo validado
+
+Prioridad: P3
+Dependencia: N3-07 aprobado.
+
+Problema
+
+La plataforma presenta estadísticas útiles, pero todavía no estima de forma validada la probabilidad de que ocurra un resultado futuro.
+
+Requisitos funcionales
+
+1. Implementar únicamente el indicador aprobado en N3-07.
+2. Mantener separadas las métricas descriptivas y las estimaciones.
+3. Aplicar el método validado sobre datos autorizados.
+4. Mostrar el periodo de referencia, la fecha de cálculo y las limitaciones relevantes.
+5. Proporcionar una explicación comprensible del resultado.
+6. Evitar que una puntuación aparente una certeza mayor que la que permite la evidencia.
+7. Aplicar permisos en el servidor.
+8. Evitar que el indicador modifique automáticamente registros académicos.
+9. Definir la frecuencia de actualización y el tratamiento de fallos.
+10. Mantener evidencia suficiente para comprobar la versión del método y los datos de referencia.
+
+Criterios de aceptación
+
+- N3-08-01: los resultados coinciden con los resultados esperados en un conjunto sintético de prueba.
+- N3-08-02: las métricas de validación se pueden reproducir.
+- N3-08-03: la interfaz identifica que se trata de una estimación y no de un hecho confirmed.
+- N3-08-04: los usuarios no autorizados no pueden consultar indicadores individuales mediante llamadas directas.
+- N3-08-05: un conjunto de datos insuficiente produce una advertencia o ausencia de estimación, no una predicción inventada.
+- N3-08-06: los fallos de actualización no presentan resultados obsoletos como actuales.
+- N3-08-07: el sistema registra la versión del método y el periodo analizado, cuando corresponda.
+- N3-08-08: las pruebas de regresión confirman que los gráficos descriptivos actuales siguen funcionando.
+- N3-08-09: no se generan sanciones, cambios de notas ni otras decisiones automáticas de alto impacto.
+- N3-08-10: la institución puede interpretar el resultado y utilizarlo para iniciar una revisión humana.
+
+Decisión de implementación
+
+No es obligatorio utilizar aprendizaje automático. Si una regla estadística sencilla y validada resuelve el problema con mayor transparencia, menor coste y menor riesgo, debe preferirse frente a un modelo complejo.
+
+Resultado esperado
+
+Un primer indicador predictivo que pueda evaluarse objetivamente, explicar sus límites y utilizarse como apoyo a la toma de decisiones.
+
+---
+
+9. Asistente institucional
+
+N3-09. Fortalecer el asistente contextual y la base de conocimiento local
+
+Prioridad: P2
+Componentes de referencia: "openContextualHelpModal", las preguntas frecuentes en IndexedDB y los mecanismos de permisos existentes, sujetos a confirmación.
+Dependencia: N3-00.
+
+Problema
+
+La plataforma dispone de ayuda contextual y preguntas frecuentes locales, pero no de un agente conversacional basado en un modelo de lenguaje. El informe excluye deliberadamente este último para evitar costes recurrentes y riesgos de exposición de información de menores.
+
+La ausencia de un LLM no constituye por sí misma un defecto. La prioridad es mejorar la utilidad y la fiabilidad de la ayuda que ya existe.
+
+Requisitos funcionales
+
+1. Inventariar las preguntas frecuentes, instrucciones y recorridos de ayuda.
+2. Identificar preguntas repetidas, respuestas incompletas y contenidos desactualizados.
+3. Relacionar cada respuesta con el módulo y rol correspondiente.
+4. Mejorar la búsqueda local y la presentación de resultados pertinentes.
+5. Permitir que las respuestas indiquen cuándo la información no está disponible.
+6. Mantener el funcionamiento sin conexión cuando esté previsto.
+7. Definir cómo se actualiza la base local cuando cambia la documentación.
+8. Evitar mostrar instrucciones correspondientes a pantallas o funciones que ya no existen.
+9. Mantener la separación de permisos entre roles.
+10. No transmitir preguntas, conversaciones o información académica a proveedores externos como parte de estas mejoras.
+11. Evaluar la incorporación de guías paso a paso para tareas frecuentes.
+12. Mantener una distinción clara entre una guía informativa y una operación realmente ejecutada.
+
+Cambios necesarios
+
+- Revisar las preguntas frecuentes existentes y comprobarlas contra la interfaz actual.
+- Establecer un esquema de versión o actualización del contenido, si no existe uno adecuado.
+- Mejorar la organización temática y la búsqueda local.
+- Incorporar mensajes claros para consultas sin respuesta.
+- Verificar el uso de IndexedDB y el comportamiento sin conexión.
+- Documentar el procedimiento para añadir y revisar nuevos contenidos.
+- Evaluar la utilidad de guías interactivas sin duplicar recorridos ya existentes.
+
+Criterios de aceptación
+
+- N3-09-01: las preguntas frecuentes existentes se pueden localizar y relacionar con sus módulos correspondientes.
+- N3-09-02: cada respuesta auditada coincide con el comportamiento real de la función documentada.
+- N3-09-03: una pregunta sin respuesta pertinente no produce una respuesta institucional inventada.
+- N3-09-04: las instrucciones visibles son coherentes con el rol del usuario.
+- N3-09-05: las preguntas y respuestas locales siguen disponibles sin conexión cuando esa capacidad esté prevista.
+- N3-09-06: las actualizaciones del contenido no requieren borrar datos académicos ni reiniciar toda la aplicación.
+- N3-09-07: la ayuda no revela instrucciones restringidas ni información de otros usuarios.
+- N3-09-08: las guías interactivas no ejecutan operaciones con consecuencias sin la autorización requerida.
+- N3-09-09: el contenido puede mantenerse y actualizarse mediante un procedimiento documentado.
+- N3-09-10: las mejoras no introducen dependencias externas ni transmisión de datos personales.
+- N3-09-11: se comprueba el funcionamiento en los dispositivos y navegadores soportados.
+- N3-09-12: las pruebas confirman que las ayudas existentes siguen abriendo correctamente desde los puntos de acceso actuales.
+
+Fuera del alcance de esta tarea
+
+No desarrollar un agente LLM externo ni enviar información de estudiantes a APIs de terceros. Esa decisión requeriría una evaluación independiente de privacidad, seguridad, costes, contratos, retención de datos y controles institucionales.
+
+Si en el futuro se considera un asistente generativo, debe tratarse como una iniciativa separada, con análisis de riesgos y autorización explícita.
+
+Resultado esperado
+
+Una ayuda institucional más útil, actualizada, contextual y fiable, conservando el funcionamiento local y las protecciones de privacidad existentes.
+
+---
+
+10. Regresión, integración y cierre
+
+N3-10. Ejecutar regresión integral y documentar resultados
+
+Prioridad: Obligatoria
+Dependencias: todas las tareas implementadas.
+
+Objetivo
+
+Demostrar que las correcciones y ampliaciones funcionan de forma integrada y no degradan las capacidades existentes del Nivel 3.
+
+Requisitos funcionales
+
+Ejecutar pruebas sobre:
+
+- Importación avanzada y deduplicación.
+- Compatibilidad y generación de plantillas SACE.
+- Generación documental individual y por lotes.
+- Validación manual y generación automática de horarios.
+- Indicadores descriptivos y predictivos.
+- Ayuda contextual, preguntas frecuentes y funcionamiento sin conexión.
+- Roles, permisos, almacenamiento, errores y recuperación.
+
+Criterios de aceptación
+
+- N3-10-01: cada criterio de aceptación de las tareas implementadas tiene un resultado documentado.
+- N3-10-02: las funciones existentes que debían preservarse superan sus pruebas de regresión.
+- N3-10-03: las pruebas de permisos confirman que no se han ampliado accesos indebidamente.
+- N3-10-04: no existen errores críticos pendientes en los flujos modificados.
+- N3-10-05: los datos de prueba pueden identificarse y retirarse sin afectar información real.
+- N3-10-06: las operaciones prolongadas y los fallos recuperables tienen resultados observables y trazables.
+- N3-10-07: los cambios se documentan con los componentes reales modificados y las razones de cada cambio.
+- N3-10-08: los resultados distinguen pruebas aprobadas, fallidas, bloqueadas y pendientes.
+- N3-10-09: el informe final indica qué tareas quedaron terminadas, cuáles requieren más trabajo y cuáles no se implementaron.
+- N3-10-10: no se declara completa una tarea sin evidencia suficiente del resultado.
+
+Informe de cierre
+
+Entregar:
+
+1. Resumen de cambios realizados.
+2. Matriz de tareas y estado final.
+3. Relación de archivos y funciones realmente modificados.
+4. Resultados de pruebas y criterios de aceptación.
+5. Riesgos y regresiones detectados.
+6. Cambios de esquema o configuración, si los hubo.
+7. Limitaciones técnicas y decisiones de diseño.
+8. Tareas pendientes y próximos pasos.
+9. Evidencias reproducibles que permitan a otro revisor verificar el resultado.
+
+---
+
+11. Orden recomendado de ejecución
+
+Primera etapa: integridad y correcciones esenciales
+
+1. N3-00: conciliar auditoría y establecer línea base.
+2. N3-01: deduplicación segura.
+3. N3-03: validación estricta de identidad SACE.
+
+Estas tareas reducen el riesgo de duplicar registros o generar archivos académicos con identidades incorrectas.
+
+Segunda etapa: robustez operativa
+
+4. N3-02: informes de errores, procesamiento y recuperación de importaciones.
+5. N3-04: generación documental por lotes.
+6. N3-09: fortalecimiento de la ayuda contextual.
+
+Estas mejoras incrementan la eficiencia administrativa y facilitan la operación diaria.
+
+Tercera etapa: nuevas capacidades
+
+7. N3-05: diseño del optimizador de horarios.
+8. N3-07: diseño de indicadores predictivos.
+
+No iniciar la implementación definitiva hasta validar requisitos, datos, restricciones y criterios de calidad.
+
+Cuarta etapa: desarrollo avanzado
+
+9. N3-06: optimizador automático de horarios.
+10. N3-08: primer indicador predictivo validado.
+
+La prioridad de estas tareas debe revisarse tras las fases de diseño, teniendo en cuenta el beneficio real, el coste técnico y los riesgos.
+
+Quinta etapa: verificación
+
+11. N3-10: regresión integral y cierre documental.
+
+---
+
+12. Condiciones finales de calidad
+
+El objetivo no es simplemente añadir funciones nuevas. Cada mejora debe aumentar la fiabilidad, utilidad, seguridad, trazabilidad o eficiencia de la plataforma.
+
+Jules debe aplicar los siguientes principios:
+
+- Preferir operaciones idempotentes y controles de integridad en importaciones y generación documental.
+- Ofrecer previsualización, resultados parciales claros y recuperación ante fallos.
+- Reutilizar validadores existentes cuando cubran correctamente las reglas necesarias.
+- Separar restricciones obligatorias de preferencias al optimizar horarios.
+- Distinguir datos históricos de estimaciones futuras y hacer que los indicadores sean explicables.
+- Conservar la ayuda contextual local y evitar transferencias innecesarias de información sensible.
+- Incorporar capacidades de referencia solo cuando respondan a necesidades institucionales verificables.
+- No añadir complejidad, costes ni dependencias externas sin una justificación de valor.
+- Mantener las capacidades que ya funcionan y verificar las regresiones.
+- No confundir una interfaz terminada con una implementación funcional verificada.
+
+Criterio global de éxito: las tareas implementadas cumplen sus criterios de aceptación, preservan las capacidades existentes, tienen evidencias reproducibles y dejan documentadas las limitaciones restantes. Las tareas de diseño solo se consideran terminadas cuando sus requisitos, decisiones técnicas y criterios de validación están aprobados y listos para guiar la implementación.
