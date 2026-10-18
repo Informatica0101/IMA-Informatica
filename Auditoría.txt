@@ -824,3 +824,268 @@ Archivos y Módulos Auditados:
 - Programar sidebar acordeón, menú hamburguesa y prevención de bucles en retroceso.
 - Extender la configuración académica con equivalencias 1/A, 2/B y 3/C.
 - Mapear e integrar las herramientas del catálogo en la matriz de auditoría.
+
+====================================================================================================
+
+AUDITORÍA TÉCNICA Y DIAGNÓSTICO DE ARQUITECTURA - FASE 1: AUDITORÍA FUNCIONAL INTEGRAL DEL REGISTRO Y EXPEDIENTE DE ESTUDIANTES - Mon Jul 6 2026
+
+Archivos y Módulos Auditados:
+- Backend: backend/academic-service/Code.gs (v8.4.0 / Phase 4)
+- Backend Central Identity: backend/user-service/Code.gs
+- HTML Vistas: teacher-dashboard.html, student-dashboard.html, register.html, index.html
+- Controller JS: js/teacher.js, js/student.js, js/ui-common.js, js/auth.js, js/api.js
+
+1. DIAGNÓSTICO DE LA HERRAMIENTA DE REGISTRO Y EXPEDIENTE DE ESTUDIANTES
+- Ubicación y Roles:
+  * Denominación Visible: Secretaría / Matrícula & Expedientes, Expedientes de Estudiantes, Expediente Digital Unificado, Búsqueda de Expedientes.
+  * Ubicación en Navegación:
+    - Panel Administrativo / Secretaría (`teacher-dashboard.html`): Entrada de búsqueda de expediente (`#student-search`) y sección de Secretaría/Orientación.
+    - Portal del Estudiante / Familia (`student-dashboard.html`): Sección de Expediente Académico (`#student-expediente`).
+    - Formulario de Autorregistro (`register.html`): Creación de cuenta de usuario con rol Estudiante.
+  * Roles Autorizados: Administrador, Director, Secretaría (gestión completa), Docente/Profesor (lectura y seguimiento), Estudiante/Alumno (consulta personal), Padre/Tutor/Responsable (consulta de hijos vinculados).
+
+- Estado de Implementación Backend (100% Presente en backend/academic-service/Code.gs):
+  * Base de datos Google Sheets: Hoja `ExpedientesEstudiantes`, `SolicitudesAdmision`, `ResponsablesTutores`, `RelacionesEstudianteTutor`, `DocumentosEstudiante`, `MovimientosEstudiante`.
+  * Endpoints Backend Implementados (23 Acciones):
+    1. `createAdmissionRequest`, `getAdmissionRequests`, `updateAdmissionStatus`, `convertAdmissionToStudent`
+    2. `getStudentFile`, `updateStudentFile`, `getStudentTimeline`
+    3. `findDuplicateStudents`, `mergeStudentFiles`
+    4. `getStudentGuardians`, `saveStudentGuardian`, `unlinkStudentGuardian`
+    5. `uploadStudentDocument`, `getStudentDocuments`, `updateDocumentStatus`
+    6. `createStudentEnrollment`, `getStudentEnrollments`, `renewStudentEnrollment`, `checkEnrollmentCapacity`
+    7. `changeStudentSection`, `recordStudentTransfer`, `recordStudentWithdrawal`, `processStudentReentry`
+
+- Estado de Implementación Frontend (Brecha Principal):
+  * En la interfaz de usuario (`js/teacher.js` y `teacher-dashboard.html`), NINGUNO de los 23 endpoints de la Fase 4 para la gestión del Expediente Digital Unificado, Búsqueda/Fusión de Duplicados, Registro de Tutores Legales, Expediente Documental (Drive) o Registro de Retiros/Traslados/Reingresos está conectado a ventanas modales o controles interactivos de edición/gestión.
+  * El campo de búsqueda `#student-search` se limita a filtrar la lista local de usuarios cargada en memoria (`getStudentsByGradoSeccion`), sin invocar `getStudentFile` ni consultar la ficha completa del estudiante.
+  * La creación de usuarios desde `register.html` crea registros en la hoja `Usuarios`, pero no inicializa de forma automática el `ExpedienteID` en `ExpedientesEstudiantes` salvo que se tramite mediante solicitud de admisión (`convertAdmissionToStudent`).
+
+2. TAREAS Y PLAN DE MEJORA
+- Crear Módulo de UI de Expediente Digital Unificado en `teacher-dashboard.html` y `js/teacher.js`:
+  * Modal `#modal-student-file` con pestañas: 1. Datos Personales, 2. Tutores y Responsables Legales, 3. Documentos Adjuntos (Google Drive), 4. Historial/Línea de Tiempo y Movimientos, 5. Duplicados y Fusión.
+- Conectar los endpoints backend existentes en `js/teacher.js` para permitir la creación, consulta, edición, adjunción de documentos, asignación de tutores y gestión de estados/movimientos del expediente sin duplicar lógica ni reconstruir el backend.
+
+====================================================================================================
+
+AUDITORÍA TÉCNICA Y DIAGNÓSTICO DE ARQUITECTURA - FASE 2: LMS AVANZADO Y APRENDIZAJE DIGITAL - Mon Jul 6 2026
+
+Archivos y Módulos Auditados:
+- Backend: `backend/task-service/Code.gs` (AulasVirtuales, MaterialesEducativos, PublicacionesAnuncios, EntregasVersiones, ResumableUploads)
+- Backend Evaluaciones: `backend/exam-service/Code.gs` (Examenes, Preguntas, CalificacionesEstudiantes, RubricasEvaluacion, CierrePeriodos)
+- Backend Identidad & Notificaciones: `backend/user-service/Code.gs` (CriteriosInstitucionales, EvaluacionesFormativas, Notificaciones)
+- Frontend Vistas: `teacher-dashboard.html`, `student-dashboard.html`, `exam.html`, `interactivo.html`, `pseudocode.html`
+- Controllers JS: `js/teacher.js`, `js/student.js`, `js/exam.js`, `js/quizpro.js`, `js/presentation-engine.js`, `js/questions-bank.json`, `js/ui-common.js`
+
+1. DIAGNÓSTICO DEL MÓDULO LMS Y APRENDIZAJE DIGITAL
+- Capacidades Funcionales Existentes:
+  * Aulas Virtuales (`AulasVirtuales`): Creación y consulta de aulas por grado/sección/materia (`createVirtualClassroom`, `getVirtualClassrooms`).
+  * Materiales de Estudio (`MaterialesEducativos`): Publicación de recursos con soporte multiformato (enlaces, Drive blobs, PDFs) y filtrado borrador/programado.
+  * Anuncios y Publicaciones (`PublicacionesAnuncios`): Muro interactivo con comentarios y filtrado de privacidad en servidor.
+  * Tareas y Entregas Multimodales: Creación de tareas, entregas de texto/enlaces/archivos reanudables (`uploadResumableFile`), versiones de entregas (`getSubmissionVersions`), devoluciones para corrección (`returnSubmissionForRevision`) y comentarios individuales.
+  * Banco de Preguntas y QuizPro: Catálogo de 771 preguntas en `js/questions-bank.json`, motor de quizzes interactivos (`quizpro.js`), selección aleatoria por tema y cálculo de puntuación.
+  * Rúbricas de Evaluación (`RubricasEvaluacion`): Diseñador de rúbricas `#modal-rubric-builder` con criterios, ponderaciones e integración con examen/tarea.
+  * Registro y Cierre de Calificaciones: Sincronización oficial con `CalificacionesEstudiantes` y cierre/reapertura de periodos evaluativos.
+
+- Deficiencias y Funciones Faltantes Detectadas:
+  * Ausencia de módulo de proyectos grupales (`GruposTrabajo`) y entregas colaborativas.
+  * Ausencia de portafolios estudiantiles curados (`PortafoliosEstudiantiles`).
+  * Ausencia de compatibilidad e importador de paquetes SCORM.
+  * Falta de editor jerárquico visual de Unidades -> Temas -> Lecciones (actualmente plano por etiquetas de texto).
+  * Falta de automatización de enlaces a videoconferencias (Google Meet / Zoom) con registro de asistencia.
+  * Falta de reglas de prerrequisitos y seguimiento de finalización ("Marcar lección como completada").
+  * Falta de tipos de pregunta complejos en el banco (Emparejamiento, Ordenamiento, Respuesta Corta, Arrastrar y Soltar).
+
+2. PLAN DE TRABAJO INYECTADO EN PENDIENTES.MD
+- Registrar las 10 tareas detalladas (REQ-EXP-001 a REQ-EXP-010) aprobadas por la metodología.
+
+====================================================================================================
+
+AUDITORÍA TÉCNICA Y DIAGNÓSTICO DE ARQUITECTURA - FASE 3: PLANIFICACIÓN ACADÉMICA Y HORARIOS - Mon Jul 6 2026
+
+Archivos y Módulos Auditados:
+- Backend Servicios: `backend/academic-service/Code.gs` (HorariosClase, SedesAulas, AsignacionesDocentes, CalendarioAcademico, ReglasAcademicas)
+- Backend Recursos Humanos / Horas: `backend/accounting-service/Code.gs` (AprobacionHorasExtras, TurnosAlmuerzo)
+- Frontend Vistas: `teacher-dashboard.html`, `student-dashboard.html`
+- Controllers JS: `js/teacher.js`, `js/student.js`, `js/ui-common.js`
+
+1. DIAGNÓSTICO DEL MÓDULO DE PLANIFICACIÓN ACADÉMICA Y HORARIOS
+- Capacidades Funcionales Existentes:
+  * Motor de Prevención de Conflictos de Horario (`checkScheduleConflict`): Valida en tiempo real solapamientos de docente (`docenteUserId`), aula (`aulaCodigo`) y sección (`ofertaId`) previniendo colisiones de horario.
+  * Gestión de Bloques y Estados (`createClassSchedule`, `getClassSchedules`, `deleteClassSchedule`): Soporta estados `Borrador` y `Activo` con creación, edición y desactivación.
+  * Consulta de Horario Estudiantil (`getStudentSchedule`): Integra la oferta académica, resuelve sustituciones docentes temporales y ordena los bloques cronológicamente por día de la semana e hora de inicio.
+  * Gestión de Aulas y Recursos (`getClassroomResources`, `saveClassroomResource`): Sembrado automático de aulas, laboratorios, auditorio y canchas de la sede `SED-MAIN` con control de capacidad.
+  * Sustituciones Docentes (`createTeacherSubstitution`): Registra sustitutos temporales reflejándose dinámicamente en las vistas de horario.
+  * Calendario Académico (`createCalendarEvent`, `getAcademicCalendar`): Registro de días lectivos y eventos especiales.
+
+- Deficiencias y Funciones Faltantes Detectadas:
+  * Ausencia de algoritmo de generación automática de horarios (solver multivariable de restricciones).
+  * Ausencia de control de validación de capacidad de aula vs cantidad de alumnos matriculados.
+  * Ausencia de registro y motor de recuperación de clases canceladas (`HorasImpartidas`, `RecuperacionClases`).
+  * Desconexión en UI para la creación de eventos de calendario y gestión de recursos desde la vista de profesor/planificador.
+
+====================================================================================================
+
+AUDITORÍA TÉCNICA Y DIAGNÓSTICO DE ARQUITECTURA - FASE 4: ERP FINANCIERO Y PRESUPUESTARIO COMPLETO - Mon Jul 6 2026
+
+Archivos y Módulos Auditados:
+- Backend Microservicio Financiero: `backend/accounting-service/Code.gs` (151 endpoints, 61 hojas de base de datos)
+- Backend Identidad & Notificaciones: `backend/user-service/Code.gs` (Notificaciones, Tickets, Perfiles)
+- Frontend Vistas: `dashboard-contabilidad.html`, `dashboard-recursos-humanos.html`, `student-dashboard.html`
+- Controllers JS: `js/accounting.js`, `js/student.js`, `js/teacher.js`, `js/ui-common.js`
+
+1. DIAGNÓSTICO DEL MÓDULO ERP FINANCIERO Y PRESUPUESTARIO
+- Capacidades Funcionales Existentes:
+  * Presupuesto Institucional (`PresupuestosInstitucionales`): `getBudgets`, `saveBudgetPlan`, `getBudgetExecutionReport` calculando Monto Asignado, Comprometido (vía Órdenes de Compra/Gastos), Ejecutado y Saldo Disponible por centro de costo.
+  * Gestión de Matrícula, Tarifas, Becas y Recargos: `configurePaymentConcept`, `configurePaymentTariff`, `configureDiscountScholarshipRule`, `configureLateFeeRule`, `getStudentAccountStatement` calculando saldo pendiente `(MontoBase + Recargos - Descuentos) - TotalAbonado`.
+  * Verificación de Comprobantes y Facturación SAR CAI: Cola de revisión de transferencias bancarias (`uploadPaymentVoucher`, `reviewPaymentVoucher`) con auto-asiento contable e Invoicing Fiscal Hondureño (`createFiscalInvoice`) con desglose ISV 15%.
+  * Cajas y Conciliación Bancaria: Cierres de caja con arqueo físico y variaciones (`closeCashSession`) y conciliación de extractos bancarios (`performBankReconciliation`).
+  * Compras, Kardex y Proveedores: Flujo completo Solicitud -> Cotización -> Orden de Compra -> Recepción de Bienes con actualización automática de stock Kardex (`recordPurchaseReceipt`).
+  * Contabilidad de Doble Entrada (`AsientosContables`): `recordAccountingJournalEntry` con validación estricta server-side `totalDebe === totalHaber` y reportes de Balance General, Estado de Resultados y Libro Mayor.
+
+- Deficiencias y Brechas Detectadas:
+  * Ausencia de modal UI para reestructuración de convenios de pago individuales multicuota (`ConveniosPagoEstudiante`).
+  * Ausencia de proyecciones de flujo de caja predictivas con análisis de escenarios (Best-case vs. Worst-case).
+  * Ausencia de alertas automáticas por vencimiento de contratos de servicios con proveedores.
+  * Ausencia de bitácora visual de seguimiento telefónico/correo para cobranza de alumnos morosos.
+
+====================================================================================================
+
+AUDITORÍA TÉCNICA Y DIAGNÓSTICO DE ARQUITECTURA - FASE 5: RECURSOS HUMANOS AVANZADO - Mon Jul 6 2026
+
+Archivos y Módulos Auditados:
+- Backend Microservicio Financiero/RRHH: `backend/accounting-service/Code.gs` (ExpedientesLaborales, ContratosLaborales, PlanillasNomenclatura, SolicitudesVacaciones, IncapacidadesMedicas)
+- Backend Identidad & Notificaciones: `backend/user-service/Code.gs` (Usuarios, Personas, Notificaciones)
+- Frontend Vistas: `dashboard-recursos-humanos.html`, `dashboard-contabilidad.html`
+- Controllers JS: `js/teacher.js`, `js/accounting.js`, `js/ui-common.js`
+
+1. DIAGNÓSTICO DEL MÓDULO DE RECURSOS HUMANOS AVANZADO
+- Capacidades Funcionales Existentes:
+  * Expediente Laboral (`ExpedientesLaborales`): `createEmployeeRecord`, `getEmployeeRecords`, `updateEmployeeLaborStatus` administrando la ficha del colaborador, puesto, departamento, fecha de ingreso y estado laboral.
+  * Contratos Laborales (`ContratosLaborales`): `manageEmployeeContract`, `getEmployeeContracts` registrando tipo de contrato, fechas de inicio/vencimiento, salario base y condiciones.
+  * Vacaciones y Licencias (`SolicitudesVacaciones`, `IncapacidadesMedicas`): `submitVacationRequest`, `reviewVacationRequest`, `calculateVacationBalances` calculando saldo acumulado de vacaciones según la legislación hondureña.
+  * Control de Asistencia y Horarios (`HorariosLaborales`, `DeduccionesAsistencia`, `CorreccionesAsistencia`): `configureWorkSchedule`, `recordStaffCheckIn`, `submitAttendanceCorrection`.
+  * Nómina y Deducciones de Ley en Honduras (`PlanillasNomenclatura`, `BoletasPago`): `calculatePayrollPeriod` calculando deducciones de IHSS, RAP e Impuesto Sobre la Renta (ISR) con generación de recibos PDF (`generatePayrollReceiptPDF`).
+  * Préstamos, Anticipos y Horas Extras (`AnticiposPrestamosEmpleado`, `AprobacionHorasExtras`): `requestEmployeeLoanAdvance`, `approveEmployeeLoanAdvance`, `getLoanAmortizationSchedule`, `calculateOvertime`, `reviewOvertimeRequest`.
+
+- Deficiencias y Brechas Detectadas:
+  * Ausencia de módulo de Reclutamiento, Vacantes y Candidatos (`PlazasVacantes`, `CandidatosProcesos`).
+  * Ausencia de evaluaciones de desempeño periódicas (`EvaluacionesDesempenoRRHH`).
+  * Ausencia de catálogo e historial de capacitaciones de personal (`CapacitacionesEmpleado`).
+  * Ausencia de bitácora formal de medidas disciplinarias (`IncidenciasDisciplinariasLaborales`).
+  * Desconexión en UI: `dashboard-recursos-humanos.html` posee las tablas y maquetación visual, pero los controladores JS carecen de la conexión directa a los endpoints de expedientes, contratos y vacaciones.
+
+===============================================================================
+REGISTRO DE AUDITORÍA FUNCIONAL INTEGRAL: FASE 6 (OPERACIONES FÍSICAS DEL INSTITUTO)
+===============================================================================
+Fecha: Mayo 2024
+Módulo Auditado: Operaciones Físicas del Instituto (Ampliación Fase 11 del Plan General)
+Componentes e Inspección:
+  - backend/accounting-service/Code.gs (Gestión de almacenes, Kardex, compras, biblioteca, activos, mantenimiento, transporte)
+  - backend/academic-service/Code.gs (Catálogo de aulas y sedes)
+  - js/accounting.js, js/teacher.js, js/student.js
+  - dashboard-contabilidad.html, teacher-dashboard.html, student-dashboard.html
+
+Hallazgos Principales:
+1. Cobertura de Persistencia GAS: 11 tablas Google Sheets operativas (BibliotecaEjemplares, BibliotecaPrestamos, BibliotecaReservas, BibliotecaIncidencias, ActivosPatrimoniales, AsignacionesActivos, AlmacenesUbicaciones, MaterialesSolicitudes, InventariosConteosFisicos, MantenimientoOrdenes, TransporteRutas, TransporteAsignaciones, BajasBienes).
+2. Endpoints Backend: 21 funciones de servidor activas y verificadas.
+3. Brecha Crítica en Transporte Escolar (OP-08): Módulo backend funcional (manageTransportRoute, assignStudentTransport), pero 0% de interfaz de usuario en el frontend.
+4. Brecha en Reporte de Reparaciones para Docentes (OP-05): Falta portal de auto-servicio de reporte de fallas en teacher-dashboard.html sin requerir permisos de contabilidad.
+5. Biblioteca (OP-01): Funciones de préstamos y catálogo operativas, pero faltan paneles de gestión UI para reservas, incidencias y catálogo estructurado de títulos vs. ejemplares físicos.
+6. Integración de Expedientes (OP-12): Se requiere reflejar custodia de libros, transporte y equipos en el expediente digital del estudiante.
+
+===============================================================================
+REGISTRO DE AUDITORÍA FUNCIONAL INTEGRAL: FASE 7 (BIENESTAR ESTUDIANTIL Y ORIENTACIÓN)
+===============================================================================
+Fecha: Mayo 2024
+Módulo Auditado: Bienestar Estudiantil y Orientación (Ampliación Fase 12 del Plan General)
+Componentes e Inspección:
+  - backend/academic-service/Code.gs (CasosSeguimiento, IncidenciasAsistencia, SalidasAnticipadas, addCaseFollowUpNote)
+  - backend/user-service/Code.gs (PlanesAcompanamiento, saveSupportPlan, getSupportPlans)
+  - js/teacher.js, js/student.js, js/ui-common.js
+  - teacher-dashboard.html, student-dashboard.html
+
+Hallazgos Principales:
+1. Cobertura de Persistencia GAS: 4 tablas en Google Sheets operativas (CasosSeguimiento, PlanesAcompanamiento, IncidenciasAsistencia, SalidasAnticipadas).
+2. Endpoints Backend: 8 funciones de servidor activas para casos de seguimiento, notas cronológicas, planes de acompañamiento e incidencias.
+3. Brecha de UI Frontend: Inexistencia de un panel o portal dedicado de Orientación y Bienestar Estudiantil para docentes y orientadores.
+4. Privacidad y Confidencialidad (BS-10/BS-11): Las notas confidenciales de seguimiento se sirven sin restricción explícita de rol psicopedagógico especializado.
+5. Ausencia de Motor de Alertas Preventivas (BS-06, BS-07, BS-08): No existen rutinas para detección automática de riesgo de deserción, ausentismo o bajo rendimiento recurrente.
+6. Ausencia de Flujo de Derivaciones y Citas (BS-03, BS-05, BS-12): No hay flujos para remisión de casos entre docentes y orientadores ni actas de reuniones con familias.
+
+===============================================================================
+REGISTRO DE AUDITORÍA FUNCIONAL INTEGRAL: FASE 8 (CALIDAD EDUCATIVA Y SUPERVISIÓN DOCENTE)
+===============================================================================
+Fecha: Mayo 2024
+Módulo Auditado: Calidad Educativa y Supervisión Docente (Ampliación Fase 13 del Plan General)
+Componentes e Inspección:
+  - backend/academic-service/Code.gs (SupervisionesDocentes, ObservacionesSupervision, PlanesMejoraPedagogica)
+  - backend/exam-service/Code.gs (Calificaciones, supervisión de notas)
+  - backend/task-service/Code.gs (MaterialesEducativos, AulasVirtuales)
+  - js/teacher.js, js/student.js, js/ui-common.js
+  - teacher-dashboard.html, student-dashboard.html
+
+Hallazgos Principales:
+1. Cobertura de Persistencia GAS: 3 tablas en Google Sheets operativas (SupervisionesDocentes, ObservacionesSupervision, PlanesMejoraPedagogica).
+2. Endpoints Backend: 7 funciones de servidor activas para programación de observaciones de clase, registro de rúbricas y planes de mejora pedagógica.
+3. Brecha en Contenido Impartido vs. Planificado (CE-04, CE-05): Ausencia de bitácora diaria de clases donde el docente registre los temas realmente desarrollados.
+4. Ausencia de Indicadores de Avance Curricular (CE-11): Sin motor ni tablero de medición del porcentaje de cobertura curricular por materia/grado.
+5. Ausencia de Aprobación de Guías (CE-09): Los docentes publican materiales sin revisión previa por Coordinación Pedagógica.
+6. Supervisión de Entregas (CE-08, CE-10): Se requiere un semáforo administrativo para auditar entregas puntuales de notas y tareas por docente.
+
+===============================================================================
+REGISTRO DE AUDITORÍA FUNCIONAL INTEGRAL: FASE 10 (MOTOR DE FLUJOS DE TRABAJO)
+===============================================================================
+Fecha: Mayo 2024
+Módulo Auditado: Motor de Flujos de Trabajo (Ampliación Fases 24 y 25 del Plan General)
+Componentes e Inspección:
+  - backend/user-service/Code.gs (saveApprovalWorkflow, getApprovalWorkflows, processWorkflowDecision, getWorkflowHistory)
+  - backend/accounting-service/Code.gs, backend/academic-service/Code.gs
+  - js/teacher.js, js/accounting.js, js/ui-common.js
+  - teacher-dashboard.html, dashboard-contabilidad.html
+
+Hallazgos Principales:
+1. Cobertura de Persistencia GAS: 4 tablas en Google Sheets operativas (FlujosAprobacion, RevisionesDecisionesTramite, SolicitudesTramites, FirmasConformidades).
+2. Endpoints Backend: 4 funciones clave de servidor activas para gestión de flujos, procesamiento de decisiones de revisión e historial cronológico auditado.
+3. Decisiones Soportadas (WF-04): APROBADO, RECHAZADO, DEVUELTO_CORRECCION, DERIVADO con notas públicas y observaciones internas confidenciales.
+4. Brecha en Asignación Dinámica y Suplencias (WF-03/WF-06): Falta resolución por Jerarquía Orgánica / Rol y configuración de suplente por licencias médicas o vacaciones.
+5. Ausencia de SLA y Escalamiento Automático (WF-05/WF-07): Sin temporizadores de vencimiento por etapa ni reasignación automática al superior jerárquico.
+6. Falta de Transaccionalidad (WF-13): Escritura no atómica entre decisiones y solicitudes requiere protección con LockService.
+
+===============================================================================
+REGISTRO DE AUDITORÍA FUNCIONAL INTEGRAL: FASE 11 (COMUNICACIÓN INSTITUCIONAL MULTICANAL)
+===============================================================================
+Fecha: Mayo 2024
+Módulo Auditado: Comunicación Institucional Multicanal (Ampliación Fase 26 del Plan General)
+Componentes e Inspección:
+  - backend/user-service/Code.gs (getUnifiedNotifications, sendMultiChannelNotification, configureNotificationChannel, getNotificationChannelConfigs, sendChannelNotificationTest, createInstitutionalAnnouncement, sendInternalMessage)
+  - backend/accounting-service/Code.gs, backend/academic-service/Code.gs
+  - js/teacher.js, js/student.js, js/ui-common.js
+  - teacher-dashboard.html, student-dashboard.html
+
+Hallazgos Principales:
+1. Cobertura de Persistencia GAS: 7 tablas en Google Sheets operativas (CanalesProveedoresConfig, RegistroEnviosExternos, ComunicadosInstitucionales, ConfirmacionesLecturaComunicados, ConversacionesMensajes, BandejaNotificaciones, PreferenciasNotificacion).
+2. Endpoints Backend: 10 funciones clave de servidor activas para despacho unificado multicanal, mensajería interna, anuncios por audiencias, notificaciones in-app y configuración de adaptadores externos.
+3. Despachador Unificado (COM-01/COM-11): Sistema rutea mensajes a través de adaptadores (SMS, WhatsApp, Messenger, Email) aplicando preferencias por categoría del usuario.
+4. Ausencia de Token de Deduplicación (COM-19): Falta clave de idempotencia en sendMultiChannelNotification que evite envíos duplicados por reintentos de red.
+5. Ausencia de Agenda de Citas Familiares (COM-12): No hay tablas ni endpoints para agendar reuniones apoderado-docente ni confirmar asistencias.
+6. Falta de Conformidad Firmada en Circulares (COM-07): Registro de lectura se limita a apertura; falta botón de acuse/conformidad formal para circulares críticas.
+
+===============================================================================
+REGISTRO DE AUDITORÍA FUNCIONAL INTEGRAL: FASE 12 (INTELIGENCIA INSTITUCIONAL)
+===============================================================================
+Fecha: Mayo 2024
+Módulo Auditado: Inteligencia Institucional (Ampliación Fase 29 del Plan General)
+Componentes e Inspección:
+  - backend/user-service/Code.gs (getInstitutionalReportCatalog, generateInstitutionalReport, getStructuredLogs)
+  - backend/accounting-service/Code.gs (getAdvancedDashboardAnalytics, getHRDashboardAnalytics)
+  - backend/academic-service/Code.gs, backend/exam-service/Code.gs
+  - js/ui-common.js (renderUniversalConfigurableChart, openAnalyticsChartModal, renderReportsCenterUI)
+  - teacher-dashboard.html, student-dashboard.html
+
+Hallazgos Principales:
+1. Cobertura de Persistencia GAS: Integración con ConfiguracionSistema, RegistrosAuditoria, CalificacionesEstudiantes, ExpedientesEstudiantes y MovimientosCajaBancos.
+2. Endpoints Backend: 5 funciones de servidor activas para catálogo centralizado de reportes institucionales, analítica HR/financiera y bitácora estructurada de accesos.
+3. Motor Gráfico Universal (INT-01/INT-14): Implementación de renderUniversalConfigurableChart en js/ui-common.js con 5 categorías de gráficos, 5 formatos visuales y vista tabular de texto accesible (WCAG AA).
+4. Ausencia de Métricas de Deserción y Retención (INT-03): Falta de fórmulas y tableros para medir tasa de deserción inter-anual y retención por cohorte.
+5. Ausencia de Simuladores y Proyecciones (INT-07/INT-08/INT-09): Inexistencia de modelos cuantitativos de proyección de demanda de cupos, proyección de ingresos futuros y necesidades de personal.
+6. Ausencia de Auditoría de Calidad de Datos (INT-10): Sin rutinas en segundo plano para detección automática de datos atípicos o inconsistencias (notas > 100, pagos negativos).
