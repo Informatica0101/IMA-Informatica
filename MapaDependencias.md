@@ -1,5 +1,51 @@
 # Mapa de Dependencias Académicas (v8.9.0 - Plan General de Expansión e Interoperabilidad)
 
+## MÓDULO DE TÉRMINOS Y CONDICIONES DE USO V1.0 Y ACEPTACIÓN
+- **Páginas y Vistas:**
+  - `politica-de-uso.html`: Texto completo oficial de Términos y Condiciones de Uso de la Plataforma (17 Numerales).
+- **Componentes Frontend (`js/ui-common.js`):**
+  - `#modal-first-login-terms`: Modal de aceptación obligatoria al iniciar sesión o cargar dashboard sin evidencia de la Versión 1.0.
+  - `window.checkAndShowFirstLoginTermsModal()`
+  - `window.acceptTermsAndConditionsAction()`
+- **Backend & Almacenamiento (`backend/user-service/Code.gs`):**
+  - Tabla `AceptacionesPoliticas`: AceptacionID, UserID, DocumentoID, Version, RolUsuario, FechaAceptacion, Estado.
+  - Endpoint `acceptLegalDocument(payload)` / `getLegalDocumentAcceptances(payload)`.
+
+## MÓDULO DE CONFIGURACIÓN DEL AÑO ESCOLAR, JORNADAS, HORARIOS, CONTROL LABORAL Y ACTIVIDADES
+- **Hojas de Cálculo / Tablas:**
+  - `JornadasAcademicas`: Configuración de jornadas (JornadaID, NombreJornada, TipoJornada, HoraInicio, HoraFin, DuracionClaseMin, DuracionRecesoMin, DuracionAlmuerzoMin, Estado).
+  - `MallaCurricularDist`: Distribución semanal/diaria (MallaID, OfertaID, AsignaturaID, HorasSemana, HorasDia, RequiereBloqueConsecutivo, DiasPermitidosJSON, Estado).
+  - `ActividadesInstitucionales`: Eventos e hitos institucionales (ActividadID, Titulo, TipoActividad, FechaInicio, FechaFin, EstrategiaAfectacion, ClasesAfectadasJSON, Estado, AutorizadoPor).
+  - `ActividadesExtracurriculares`: Talleres, clubes y deportes (ExtracurricularID, Nombre, Categoria, HorarioJSON, EncargadosJSON, Estado, EvidenciasDriveFolderId).
+  - `TurnosAlmuerzo`: Franjas de almuerzo laboral (TurnoID, Departamento, RolNombre, HoraInicio, HoraFin, CoberturaMinima, Estado).
+  - `AprobacionHorasExtras`: Registro y flujo de horas extras (OvertimeID, UserId, NombreEmpleado, FechaTrabajada, HorasSugeridas, HorasAprobadas, EstadoAprobacion, AprobadoPor, PeriodoNominaId, EstadoPago, Timestamps).
+- **Funciones Backend (`backend/academic-service/Code.gs` & `backend/accounting-service/Code.gs`):**
+  - `configureSchoolYear(payload, user)` / `getSchoolYearConfigs(payload, user)`
+  - `configureAcademicJornada(payload, user)` / `getAcademicJornadas(payload, user)`
+  - `saveCurricularDistribution(payload, user)` / `getCurricularDistribution(payload, user)`
+  - `generateClassSchedulesAdvanced(payload, user)` / `saveClassSchedules(payload, user)`
+  - `configureLunchShifts(payload, user)` / `getLunchShifts(payload, user)`
+  - `recordStaffCheckInAdvanced(payload, user)` / `calculateOvertime(payload, user)` / `reviewOvertimeRequest(payload, user)`
+  - `saveInstitutionalActivity(payload, user)` / `saveExtracurricularActivity(payload, user)`
+  - `getUnifiedInstitutionalCalendar(payload, user)`
+
+## MÓDULO DE DISEÑO INSTITUCIONAL, TICKETS Y VERSIONADO (NUEVA FASE)
+- **Hojas de Cálculo / Tablas:**
+  - `PropuestasPaletasVisuales`: Armacena propuestas de paletas visuales (PropuestaID, PaletaNombre, ColoresJSON, CreadoPor, Estado, AprobadoPor, FechaAprobacion, Observaciones).
+  - `ConfiguracionVisualGlobal`: Almacena la paleta activa aprobada de aplicación global.
+  - `TicketsReporteProblemas`: Almacena el reporte inicial (TicketID, UserId, NombreUsuario, RolActivo, AreaFuncion, SeccionPagina, VersionGlobal, TipoApp, Descripcion, ResultadoEsperado, Estado, CreadoEn, ActualizadoEn).
+  - `HistorialMensajesTickets`: Registro inmutable de mensajes, notas internas y respuestas entre el Administrador y el Usuario (MensajeID, TicketID, AutorUserId, AutorNombre, TipoAutor, EsNotaInterna, Mensaje, Timestamp).
+- **Funciones Backend (`backend/user-service/Code.gs`):**
+  - `getActiveVisualPalette()`
+  - `saveVisualPaletteProposal(payload, user)`
+  - `approveVisualPaletteProposal(payload, user)`
+  - `submitProblemTicket(payload, user)`
+  - `getProblemTickets(payload, user)`
+  - `updateTicketStatus(payload, user)`
+  - `replyProblemTicket(payload, user)`
+- **Constantes de Versionado:**
+  - `GLOBAL_PLATFORM_VERSION`: "1.0" (Invariable sin autorización explícita).
+
 ## Plan General de Implementación de la Expansión (30 Fases)
 1. **Fase 1. Auditoría y planificación de la expansión**: Matriz de cobertura, inventario y mapeo de dependencias.
 2. **Fase 2. Arquitectura institucional e interoperabilidad**: Identificadores únicos institucionales, sincronización e interoperabilidad.

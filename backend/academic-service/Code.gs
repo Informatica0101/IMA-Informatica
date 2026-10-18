@@ -86,6 +86,12 @@ function getOrCreateSheet(ss, name) {
     if (name === "Matriculas") sheet.appendRow(["MatriculaID", "Fecha", "UserId", "Alumno", "Grado", "Seccion", "Periodo", "Tipo", "Estado", "BecaDescuento", "Observaciones"]);
     if (name === "CargosEstudiante") sheet.appendRow(["CargoID", "Fecha", "UserId", "Concepto", "MontoBase", "Descuento", "MontoFinal", "Estado", "FechaVencimiento"]);
 
+    // Tablas Nueva Fase - Configuración de Año Escolar, Jornadas, Malla, Actividades
+    if (name === "JornadasAcademicas") sheet.appendRow(["JornadaID", "NombreJornada", "TipoJornada", "HoraInicio", "HoraFin", "DuracionClaseMin", "DuracionRecesoMin", "DuracionAlmuerzoMin", "Estado", "Observaciones"]);
+    if (name === "MallaCurricularDist") sheet.appendRow(["MallaID", "AnoID", "Grado", "Seccion", "AsignaturaID", "HorasSemana", "HorasDia", "RequiereBloqueConsecutivo", "DiasPermitidosJSON", "Estado"]);
+    if (name === "ActividadesInstitucionales") sheet.appendRow(["ActividadID", "AnoID", "Titulo", "TipoActividad", "FechaInicio", "FechaFin", "HoraInicio", "HoraFin", "EstrategiaAfectacion", "ClasesAfectadasJSON", "AutorizadoPor", "Estado"]);
+    if (name === "ActividadesExtracurriculares") sheet.appendRow(["ExtracurricularID", "AnoID", "Nombre", "Categoria", "HorarioJSON", "EncargadosJSON", "SupervisoresJSON", "Estado", "EvidenciasDriveFolderId", "EvidenciasJSON"]);
+
     // Tablas Fase 3 - Estructura Institucional
     if (name === "InstitucionParametros") sheet.appendRow(["Clave", "Nombre", "Valor", "TipoDato", "Ambito", "Estado", "ModificadoPor", "UltimaActualizacion"]);
     if (name === "SedesAulas") sheet.appendRow(["SedeID", "NombreSede", "AulaCodigo", "NombreAula", "Capacidad", "TipoEspacio", "Estado"]);
@@ -208,6 +214,9 @@ const PUBLIC_ACTIONS = ["ping", "createAdmissionRequest"];
 function validateRolePermission(action, payload) {
   if (PUBLIC_ACTIONS.indexOf(action) !== -1) return { authorized: true };
   const userRole = (payload && (payload.authRole || payload.rol)) || "Estudiante";
+  if (["getSchoolYearConfigs", "getAcademicJornadas", "getCurricularDistribution", "getInstitutionalActivities", "getExtracurricularActivities", "getUnifiedInstitutionalCalendar"].indexOf(action) !== -1) {
+    return { authorized: true, role: userRole };
+  }
   const permitted = ROLE_PERMISSIONS[userRole] || ROLE_PERMISSIONS["Estudiante"];
   if (permitted.indexOf("*") !== -1 || permitted.indexOf(action) !== -1) {
     return { authorized: true, role: userRole };
@@ -245,6 +254,7 @@ function doPost(e) {
       case "restoreSystemBackup": result = restoreSystemBackup(payload); break;
       case "getInstitutionalReportCatalog": result = getInstitutionalReportCatalog(payload); break;
       case "generateInstitutionalReport": result = generateInstitutionalReport(payload); break;
+      case "getSectionEquivalences": result = getSectionEquivalences(payload); break;
 
       // Endpoints Fase 3
       case "getInstitutionParams": result = getInstitutionParams(payload); break;
@@ -277,6 +287,19 @@ function doPost(e) {
       case "getStudentSchedule": result = getStudentSchedule(payload); break;
       case "getAcademicRules": result = getAcademicRules(payload); break;
       case "saveAcademicRule": result = saveAcademicRule(payload); break;
+
+      // Endpoints Nueva Fase - Configuración Año Escolar, Jornadas, Malla, Actividades
+      case "configureSchoolYear": result = configureSchoolYear(payload); break;
+      case "getSchoolYearConfigs": result = getSchoolYearConfigs(payload); break;
+      case "configureAcademicJornada": result = configureAcademicJornada(payload); break;
+      case "getAcademicJornadas": result = getAcademicJornadas(payload); break;
+      case "saveCurricularDistribution": result = saveCurricularDistribution(payload); break;
+      case "getCurricularDistribution": result = getCurricularDistribution(payload); break;
+      case "saveInstitutionalActivity": result = saveInstitutionalActivity(payload); break;
+      case "getInstitutionalActivities": result = getInstitutionalActivities(payload); break;
+      case "saveExtracurricularActivity": result = saveExtracurricularActivity(payload); break;
+      case "getExtracurricularActivities": result = getExtracurricularActivities(payload); break;
+      case "getUnifiedInstitutionalCalendar": result = getUnifiedInstitutionalCalendar(payload); break;
 
       // Nuevos Endpoints Fase 4 - Admisiones, Expedientes, Matrículas y Movimientos
       case "createAdmissionRequest": result = createAdmissionRequest(payload); break;
@@ -626,6 +649,465 @@ function getStudentFile(payload) {
       movements: moves
     }
   };
+}
+
+// ---------------------------------------------------------------------------
+// MÓDULO DE CONFIGURACIÓN DE AÑO ESCOLAR, JORNADAS, MALLA, HORARIOS Y ACTIVIDADES
+// ---------------------------------------------------------------------------
+
+function configureSchoolYear(payload) {
+  try {
+    const verifiedRole = (payload && payload.authRole) || "Director";
+    if (["Administrador", "Director", "Subdirector", "Secretaría"].indexOf(verifiedRole) === -1) {
+      return { status: "error", code: "AUTH_PERMISSION_DENIED", message: "Rol no autorizado para configurar el año escolar." };
+    }
+
+    const { anoId, nombre, tipoCalendario, fechaInicio, fechaFin, inicioClases, finClases, finAdministrativo, limiteIngresoCalificaciones, estado } = payload || {};
+    if (!nombre || !fechaInicio || !fechaFin) {
+      return { status: "error", code: "VALIDATION_ERROR", message: "Nombre, Fecha de Inicio y Fecha de Fin son obligatorios." };
+    }
+
+    if (new Date(fechaFin) <= new Date(fechaInicio)) {
+      return { status: "error", code: "VALIDATION_ERROR", message: "La fecha de fin debe ser posterior a la fecha de inicio." };
+    }
+
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const sheet = getOrCreateSheet(ss, "AnosLectivos");
+    const data = sheet.getDataRange().getValues();
+
+    const targetAnoId = anoId || ("ANO-" + String(nombre).replace(/\s+/g, "_"));
+    const now = new Date().toISOString();
+
+    let foundIndex = -1;
+    if (data.length > 1) {
+      for (let i = 1; i < data.length; i++) {
+        if (String(data[i][0]).trim() === String(targetAnoId).trim()) {
+          foundIndex = i + 1;
+          break;
+        }
+      }
+    }
+
+    if (foundIndex > -1) {
+      sheet.getRange(foundIndex, 2).setValue(nombre);
+      sheet.getRange(foundIndex, 3).setValue(fechaInicio);
+      sheet.getRange(foundIndex, 4).setValue(fechaFin);
+      sheet.getRange(foundIndex, 5).setValue(inicioClases || fechaInicio);
+      sheet.getRange(foundIndex, 6).setValue(finClases || fechaFin);
+      sheet.getRange(foundIndex, 7).setValue(estado || "Activo");
+    } else {
+      sheet.appendRow([
+        targetAnoId,
+        nombre,
+        fechaInicio,
+        fechaFin,
+        inicioClases || fechaInicio,
+        finClases || fechaFin,
+        estado || "Activo",
+        verifiedRole,
+        now,
+        tipoCalendario || "Sistema Americano",
+        finAdministrativo || fechaFin,
+        limiteIngresoCalificaciones || finClases
+      ]);
+    }
+
+    logStructuredEvent("ACADEMIC", "configureSchoolYear", "INFO", "YEAR_CONFIGURED", `Año escolar ${nombre} configurado.`, { targetAnoId, tipoCalendario }, verifiedRole);
+
+    return { status: "success", anoId: targetAnoId, nombre: nombre, message: "Año escolar guardado exitosamente." };
+  } catch (error) {
+    return { status: "error", message: error.message };
+  }
+}
+
+function getSchoolYearConfigs(payload) {
+  try {
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const sheet = getOrCreateSheet(ss, "AnosLectivos");
+    const data = sheet.getDataRange().getValues();
+
+    if (data.length <= 1) return { status: "success", schoolYears: [] };
+
+    const years = [];
+    for (let i = 1; i < data.length; i++) {
+      const r = data[i];
+      years.push({
+        anoId: r[0],
+        nombre: r[1],
+        fechaInicio: r[2],
+        fechaFin: r[3],
+        inicioClases: r[4],
+        finClases: r[5],
+        estado: r[6],
+        creadoPor: r[7],
+        fechaCreacion: r[8],
+        tipoCalendario: r[9] || "Sistema Americano",
+        finAdministrativo: r[10] || r[3],
+        limiteCalificaciones: r[11] || r[5]
+      });
+    }
+
+    return { status: "success", schoolYears: years };
+  } catch (error) {
+    return { status: "error", message: error.message };
+  }
+}
+
+function configureAcademicJornada(payload) {
+  try {
+    const verifiedRole = (payload && payload.authRole) || "Director";
+    if (["Administrador", "Director", "Subdirector", "Secretaría"].indexOf(verifiedRole) === -1) {
+      return { status: "error", code: "AUTH_PERMISSION_DENIED", message: "Acceso denegado para configurar jornadas." };
+    }
+
+    const { jornadaId, nombreJornada, tipoJornada, horaInicio, horaFin, duracionClaseMin, duracionRecesoMin, duracionAlmuerzoMin, estado, observaciones } = payload || {};
+    if (!nombreJornada || !horaInicio || !horaFin) {
+      return { status: "error", code: "VALIDATION_ERROR", message: "Nombre de Jornada, Hora de Inicio y Hora de Fin son obligatorios." };
+    }
+
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const sheet = getOrCreateSheet(ss, "JornadasAcademicas");
+    const data = sheet.getDataRange().getValues();
+
+    const targetJornadaId = jornadaId || ("JOR-" + Math.floor(100000 + Math.random() * 900000));
+
+    let foundIndex = -1;
+    for (let i = 1; i < data.length; i++) {
+      if (String(data[i][0]).trim() === String(targetJornadaId).trim()) {
+        foundIndex = i + 1;
+        break;
+      }
+    }
+
+    if (foundIndex > -1) {
+      sheet.getRange(foundIndex, 2).setValue(nombreJornada);
+      sheet.getRange(foundIndex, 3).setValue(tipoJornada || "Matutina");
+      sheet.getRange(foundIndex, 4).setValue(horaInicio);
+      sheet.getRange(foundIndex, 5).setValue(horaFin);
+      sheet.getRange(foundIndex, 6).setValue(duracionClaseMin || 45);
+      sheet.getRange(foundIndex, 7).setValue(duracionRecesoMin || 15);
+      sheet.getRange(foundIndex, 8).setValue(duracionAlmuerzoMin || 45);
+      sheet.getRange(foundIndex, 9).setValue(estado || "Activa");
+      sheet.getRange(foundIndex, 10).setValue(observaciones || "");
+    } else {
+      sheet.appendRow([
+        targetJornadaId,
+        nombreJornada,
+        tipoJornada || "Matutina",
+        horaInicio,
+        horaFin,
+        duracionClaseMin || 45,
+        duracionRecesoMin || 15,
+        duracionAlmuerzoMin || 45,
+        estado || "Activa",
+        observaciones || ""
+      ]);
+    }
+
+    return { status: "success", jornadaId: targetJornadaId, message: "Jornada académica guardada exitosamente." };
+  } catch (error) {
+    return { status: "error", message: error.message };
+  }
+}
+
+function getAcademicJornadas(payload) {
+  try {
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const sheet = getOrCreateSheet(ss, "JornadasAcademicas");
+    const data = sheet.getDataRange().getValues();
+
+    if (data.length <= 1) {
+      return {
+        status: "success",
+        jornadas: [
+          { jornadaId: "JOR-DEF-MAT", nombreJornada: "Jornada Matutina", tipoJornada: "Matutina", horaInicio: "07:00", horaFin: "12:30", duracionClaseMin: 45, duracionRecesoMin: 20, duracionAlmuerzoMin: 45, estado: "Activa" },
+          { jornadaId: "JOR-DEF-VES", nombreJornada: "Jornada Vespertina", tipoJornada: "Vespertina", horaInicio: "12:30", horaFin: "17:30", duracionClaseMin: 45, duracionRecesoMin: 20, duracionAlmuerzoMin: 45, estado: "Activa" }
+        ]
+      };
+    }
+
+    const jornadas = [];
+    for (let i = 1; i < data.length; i++) {
+      const r = data[i];
+      jornadas.push({
+        jornadaId: r[0],
+        nombreJornada: r[1],
+        tipoJornada: r[2],
+        horaInicio: r[3],
+        horaFin: r[4],
+        duracionClaseMin: r[5],
+        duracionRecesoMin: r[6],
+        duracionAlmuerzoMin: r[7],
+        estado: r[8],
+        observaciones: r[9]
+      });
+    }
+
+    return { status: "success", jornadas: jornadas };
+  } catch (error) {
+    return { status: "error", message: error.message };
+  }
+}
+
+function saveCurricularDistribution(payload) {
+  try {
+    const verifiedRole = (payload && payload.authRole) || "Director";
+    const { mallaId, anoId, grado, seccion, asignaturaId, horasSemana, horasDia, requiereBloqueConsecutivo, diasPermitidosJSON, estado } = payload || {};
+
+    if (!grado || !asignaturaId || !horasSemana) {
+      return { status: "error", code: "VALIDATION_ERROR", message: "Grado, Asignatura y Horas por Semana son obligatorios." };
+    }
+
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const sheet = getOrCreateSheet(ss, "MallaCurricularDist");
+    const targetMallaId = mallaId || ("MALLA-" + Math.floor(100000 + Math.random() * 900000));
+
+    sheet.appendRow([
+      targetMallaId,
+      anoId || "2026",
+      grado,
+      seccion || "A",
+      asignaturaId,
+      horasSemana,
+      horasDia || 1,
+      requiereBloqueConsecutivo === true || String(requiereBloqueConsecutivo) === "true",
+      typeof diasPermitidosJSON === "object" ? JSON.stringify(diasPermitidosJSON) : (diasPermitidosJSON || "[\"Lunes\",\"Martes\",\"Miércoles\",\"Jueves\",\"Viernes\"]"),
+      estado || "Activa"
+    ]);
+
+    return { status: "success", mallaId: targetMallaId, message: "Regla de malla curricular registrada correctamente." };
+  } catch (error) {
+    return { status: "error", message: error.message };
+  }
+}
+
+function getCurricularDistribution(payload) {
+  try {
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const sheet = getOrCreateSheet(ss, "MallaCurricularDist");
+    const data = sheet.getDataRange().getValues();
+
+    if (data.length <= 1) return { status: "success", distribution: [] };
+
+    const items = [];
+    for (let i = 1; i < data.length; i++) {
+      const r = data[i];
+      items.push({
+        mallaId: r[0],
+        anoId: r[1],
+        grado: r[2],
+        seccion: r[3],
+        asignaturaId: r[4],
+        horasSemana: r[5],
+        horasDia: r[6],
+        requiereBloqueConsecutivo: r[7],
+        diasPermitidos: r[8],
+        estado: r[9]
+      });
+    }
+
+    return { status: "success", distribution: items };
+  } catch (error) {
+    return { status: "error", message: error.message };
+  }
+}
+
+function saveInstitutionalActivity(payload) {
+  try {
+    const verifiedRole = (payload && payload.authRole) || "Director";
+    const { actividadId, anoId, titulo, tipoActividad, fechaInicio, fechaFin, horaInicio, horaFin, estrategiaAfectacion, clasesAfectadasJSON, estado } = payload || {};
+
+    if (!titulo || !fechaInicio) {
+      return { status: "error", code: "VALIDATION_ERROR", message: "Título y Fecha de Inicio son obligatorios." };
+    }
+
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const sheet = getOrCreateSheet(ss, "ActividadesInstitucionales");
+    const targetId = actividadId || ("ACT-INST-" + Math.floor(100000 + Math.random() * 900000));
+
+    sheet.appendRow([
+      targetId,
+      anoId || "2026",
+      titulo,
+      tipoActividad || "Acto Cívico",
+      fechaInicio,
+      fechaFin || fechaInicio,
+      horaInicio || "08:00",
+      horaFin || "10:00",
+      estrategiaAfectacion || "Desplazar",
+      typeof clasesAfectadasJSON === "object" ? JSON.stringify(clasesAfectadasJSON) : (clasesAfectadasJSON || "[]"),
+      verifiedRole,
+      estado || "Programada"
+    ]);
+
+    logStructuredEvent("ACADEMIC", "saveInstitutionalActivity", "INFO", "ACTIVITY_SAVED", `Actividad institucional ${titulo} creada.`, { targetId, estrategiaAfectacion }, verifiedRole);
+
+    return { status: "success", actividadId: targetId, message: "Actividad institucional registrada exitosamente." };
+  } catch (error) {
+    return { status: "error", message: error.message };
+  }
+}
+
+function getInstitutionalActivities(payload) {
+  try {
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const sheet = getOrCreateSheet(ss, "ActividadesInstitucionales");
+    const data = sheet.getDataRange().getValues();
+
+    if (data.length <= 1) return { status: "success", activities: [] };
+
+    const activities = [];
+    for (let i = 1; i < data.length; i++) {
+      const r = data[i];
+      activities.push({
+        actividadId: r[0],
+        anoId: r[1],
+        titulo: r[2],
+        tipoActividad: r[3],
+        fechaInicio: r[4],
+        fechaFin: r[5],
+        horaInicio: r[6],
+        horaFin: r[7],
+        estrategiaAfectacion: r[8],
+        clasesAfectadas: r[9],
+        autorizadoPor: r[10],
+        estado: r[11]
+      });
+    }
+
+    return { status: "success", activities: activities };
+  } catch (error) {
+    return { status: "error", message: error.message };
+  }
+}
+
+function saveExtracurricularActivity(payload) {
+  try {
+    const verifiedRole = (payload && payload.authRole) || "Director";
+    const { extracurricularId, anoId, nombre, categoria, horarioJSON, encargadosJSON, supervisoresJSON, evidenciasDriveFolderId, estado } = payload || {};
+
+    if (!nombre || !categoria) {
+      return { status: "error", code: "VALIDATION_ERROR", message: "Nombre y Categoría son obligatorios." };
+    }
+
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const sheet = getOrCreateSheet(ss, "ActividadesExtracurriculares");
+    const targetId = extracurricularId || ("EXTRA-" + Math.floor(100000 + Math.random() * 900000));
+
+    sheet.appendRow([
+      targetId,
+      anoId || "2026",
+      nombre,
+      categoria,
+      typeof horarioJSON === "object" ? JSON.stringify(horarioJSON) : (horarioJSON || "{}"),
+      typeof encargadosJSON === "object" ? JSON.stringify(encargadosJSON) : (encargadosJSON || "[]"),
+      typeof supervisoresJSON === "object" ? JSON.stringify(supervisoresJSON) : (supervisoresJSON || "[]"),
+      estado || "Programada",
+      evidenciasDriveFolderId || "",
+      "[]"
+    ]);
+
+    return { status: "success", extracurricularId: targetId, message: "Actividad extracurricular registrada exitosamente." };
+  } catch (error) {
+    return { status: "error", message: error.message };
+  }
+}
+
+function getExtracurricularActivities(payload) {
+  try {
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const sheet = getOrCreateSheet(ss, "ActividadesExtracurriculares");
+    const data = sheet.getDataRange().getValues();
+
+    if (data.length <= 1) return { status: "success", activities: [] };
+
+    const activities = [];
+    for (let i = 1; i < data.length; i++) {
+      const r = data[i];
+      activities.push({
+        extracurricularId: r[0],
+        anoId: r[1],
+        nombre: r[2],
+        categoria: r[3],
+        horario: r[4],
+        encargados: r[5],
+        supervisores: r[6],
+        estado: r[7],
+        evidenciasFolderId: r[8],
+        evidencias: r[9]
+      });
+    }
+
+    return { status: "success", activities: activities };
+  } catch (error) {
+    return { status: "error", message: error.message };
+  }
+}
+
+function getUnifiedInstitutionalCalendar(payload) {
+  try {
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+
+    const calSheet = getOrCreateSheet(ss, "CalendarioAcademico");
+    const calData = calSheet.getDataRange().getValues();
+    const events = [];
+
+    if (calData.length > 1) {
+      for (let i = 1; i < calData.length; i++) {
+        const r = calData[i];
+        events.push({
+          id: r[0],
+          origen: "CalendarioAcademico",
+          titulo: r[3],
+          tipo: r[4] || "Evento",
+          fechaInicio: r[5],
+          fechaFin: r[6],
+          visibilidad: r[7] || "Todos"
+        });
+      }
+    }
+
+    const instSheet = getOrCreateSheet(ss, "ActividadesInstitucionales");
+    const instData = instSheet.getDataRange().getValues();
+    if (instData.length > 1) {
+      for (let i = 1; i < instData.length; i++) {
+        const r = instData[i];
+        events.push({
+          id: r[0],
+          origen: "ActividadesInstitucionales",
+          titulo: r[2],
+          tipo: r[3] || "Actividad Institucional",
+          fechaInicio: r[4],
+          fechaFin: r[5],
+          horaInicio: r[6],
+          horaFin: r[7],
+          estrategia: r[8],
+          visibilidad: "Todos"
+        });
+      }
+    }
+
+    const extraSheet = getOrCreateSheet(ss, "ActividadesExtracurriculares");
+    const extraData = extraSheet.getDataRange().getValues();
+    if (extraData.length > 1) {
+      for (let i = 1; i < extraData.length; i++) {
+        const r = extraData[i];
+        events.push({
+          id: r[0],
+          origen: "ActividadesExtracurriculares",
+          titulo: r[2],
+          tipo: r[3] || "Extracurricular",
+          fechaInicio: new Date().toISOString().substring(0, 10),
+          fechaFin: new Date().toISOString().substring(0, 10),
+          visibilidad: "Participantes"
+        });
+      }
+    }
+
+    return { status: "success", events: events };
+  } catch (error) {
+    return { status: "error", message: error.message };
+  }
 }
 
 // ---------------------------------------------------------------------------
@@ -3252,5 +3734,26 @@ function getStudentEnrollmentHistory(payload) {
       matriculas: userMatriculas,
       cargos: userCargos
     }
+  };
+}
+
+function resolveSectionEquivalence(secInput, targetFormat) {
+  if (!secInput) return "A";
+  const clean = String(secInput).trim().toUpperCase().replace("SECCIÓN", "").replace("SECCION", "").replace("SEC", "").trim();
+  const mapNumToAlpha = { "1": "A", "2": "B", "3": "C", "4": "D", "5": "E" };
+  const mapAlphaToNum = { "A": "1", "B": "2", "C": "3", "D": "4", "E": "5" };
+  if (targetFormat === "NUMERIC") {
+    return mapAlphaToNum[clean] || clean;
+  }
+  return mapNumToAlpha[clean] || clean;
+}
+
+function getSectionEquivalences(payload) {
+  const { seccion, formato } = payload || {};
+  const equivalente = resolveSectionEquivalence(seccion, formato);
+  return {
+    status: "success",
+    seccionOriginal: seccion,
+    seccionEquivalente: equivalente
   };
 }

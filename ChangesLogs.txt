@@ -1306,3 +1306,65 @@ Descripción de cambios:
   - Módulo de Preguntas Frecuentes Institucionales (`window.renderFAQSection`) con 32 preguntas y respuestas completas.
 - `Pendientes.md`, `Auditoría.txt`, `MapaDependencias.md`:
   - Registrados los requerimientos de la Fase 32 (`[REQ-F32-001]` al `[REQ-F32-010]`) y Fase Adicional (`[REQ-OFF-001]` al `[REQ-OFF-010]`).
+
+## [Nueva Fase: Diseño Institucional, Personalización Global, Tickets y Versión 1.0] - 2026-10-17
+### Agregado y Refactorizado
+- `css/style.css`:
+  - Definidos tokens de variables CSS `:root` para el sistema de colores institucionales sobrios y accesibles (WCAG 2.2 AA).
+  - Implementadas clases para las paletas sugeridas (`verde-sobrio`, `gris-azulado`, `borgona-profesional`).
+  - Refactorizados estilos de botones (primario, secundario, cancelación, peligro), tarjetas y contenedores de logotipo (`.logo-subtle-shadow`, `.logo-login-container`).
+- `login.html`:
+  - Integrado contenedor transparente de logotipo con sombra exterior sutil, proporciones originales y fallback para inicio de sesión.
+- `backend/user-service/Code.gs`:
+  - Hojas de cálculo: `PropuestasPaletasVisuales`, `ConfiguracionVisualGlobal`, `TicketsReporteProblemas` e `HistorialMensajesTickets`.
+  - Endpoints backend con RBAC: `submitProblemTicket`, `getProblemTickets`, `updateTicketStatus`, `replyProblemTicket`, `saveVisualPaletteProposal`, `approveVisualPaletteProposal`, `getActiveVisualPalette`.
+  - Máquina de estados de soporte y recolección contextual automática.
+- `js/ui-common.js`:
+  - Botón flotante global de reporte de problemas `#btn-global-report-issue`.
+  - Modales: `#modal-report-issue` (auto-detección de área y validación >= 20 caracteres significativos), `#modal-my-tickets` (historial cliente) y `#modal-admin-tickets` (gestión exclusiva con notas internas privadas).
+  - Aplicador dinámico de paleta activa `window.loadAndApplyActiveVisualPalette()`.
+  - Pestaña de Identidad Visual en `#modal-dashboard-settings` con previsualizador interactivo y flujo de propuesta por Administrador / aprobación por Dirección.
+- `README.md`:
+  - Actualizado con las funciones comprobadas, el sistema de diseño, la personalización global con aprobación, el soporte de tickets y la regla estricta de versión global 1.0.
+- `Pendientes.md`, `Auditoría.txt`, `MapaDependencias.md`:
+  - Registrado el requerimiento `[REQ-DESIGN-001]` y actualizados los esquemas de dependencias.
+
+## [Nueva Fase: Configuración del Año Escolar, Jornadas, Horarios, Control Laboral, Horas Extras y Actividades] - 2026-10-17
+### Agregado y Refactorizado
+- `backend/academic-service/Code.gs`:
+  - Hojas de cálculo: `JornadasAcademicas`, `MallaCurricularDist`, `ActividadesInstitucionales`, `ActividadesExtracurriculares`.
+  - Endpoints backend con RBAC: `configureSchoolYear`, `getSchoolYearConfigs`, `configureAcademicJornada`, `getAcademicJornadas`, `saveCurricularDistribution`, `getCurricularDistribution`, `saveInstitutionalActivity`, `getInstitutionalActivities`, `saveExtracurricularActivity`, `getExtracurricularActivities`, `getUnifiedInstitutionalCalendar`.
+- `backend/accounting-service/Code.gs`:
+  - Hojas de cálculo: `TurnosAlmuerzo`, `AprobacionHorasExtras`.
+  - Endpoints backend con RBAC: `configureLunchShifts`, `getLunchShifts`, `calculateOvertime`, `reviewOvertimeRequest`, `getOvertimeRequests`.
+- `teacher-dashboard.html` & `js/teacher.js`:
+  - Modales e interfaces interactivas: `#modal-school-year-config` (Año Escolar y Modelos de Calendario), `#modal-academic-jornadas` (Jornadas y Bloques), `#modal-institutional-activities` (Actividades e Impacto de Clases), `#modal-hr-overtime` (Revisión y Aprobación de Horas Extras con fechas de corte).
+- `Pendientes.md`, `Auditoría.txt`, `MapaDependencias.md`:
+  - Registrado el requerimiento `[REQ-SCHED-001]` y actualizados los esquemas de dependencias.
+
+## [Fase: Términos y Condiciones de Uso y Aceptación Obligatoria al Iniciar Sesión] - 2026-10-17
+### Agregado y Refactorizado
+- `politica-de-uso.html`:
+  - Actualización completa del documento legal de Términos y Condiciones de Uso con los 17 artículos requeridos, declarando la titularidad de propiedad intelectual exclusiva de JyP Solutions S. de R.L. de C.V., la licencia de uso otorgada a New Generation Bilingual School and Institute y la propiedad del instituto sobre los datos académicos.
+- `js/ui-common.js`:
+  - Implementación de `window.checkAndShowFirstLoginTermsModal` para verificar la evidencia de aceptación de la versión 1.0 en `AceptacionesPoliticas`.
+  - Integración del modal `#modal-first-login-terms` que se despliega automáticamente en el primer inicio de sesión o carga del dashboard y requiere la aceptación explícita antes de cerrarse, conectándolo con `acceptLegalDocument` en el servidor.
+  - Corrección en la vinculación del ID de propuesta de paleta activa en `window.submitPaletteProposal` y `window.approvePaletteProposal`.
+
+## [Fase: Gestión Familiar Multiestudiante y Sistema de Gráficas e Indicadores Configurables] - 2026-10-17
+### Agregado y Refactorizado
+- `backend/user-service/Code.gs`:
+  - Enriquecimiento de `getGuardianStudents` con datos de perfil de usuario (nombre, grado, sección, estado de matrícula).
+  - Endpoints con RBAC: `getFamilyConsolidatedSummary`, `submitJointFamilyPayment`, `getFamilyScholarships`, `submitFamilyScholarshipApplication`.
+  - Hojas de cálculo: `DistribucionPagosConjuntos` y `BecasYDescuentosFamiliares`.
+- `student-dashboard.html` & `js/student.js`:
+  - Selector enriquecido de estudiantes vinculados `#family-student-switcher` con tarjetas indicadoras.
+  - Vista Familiar Consolidada `#family-consolidated-summary-container` con métricas consolidadas e individuales por estudiante.
+  - Modales e interfaces interactivas: `#modal-joint-payment` (Pago conjunto multihijo con validación de suma distribuida) y `#modal-family-scholarship` (Solicitud de becas/descuentos familiares o individuales).
+- `js/ui-common.js`:
+  - Componente de Gráficas e Indicadores Configurables `window.renderUniversalConfigurableChart` compatible con 5 categorías (Minijuegos, Desempeño Académico, Participación, Asistencia/Comportamiento, Informes Administrativos).
+  - Selección de tipos de gráfico (barras verticales/horizontales, líneas, sectores/dona, radial), temas de paletas de color (`chartPalettes`), alternancia a tabla de datos textual y estados vacíos informativos.
+  - Visor modal analítico `window.openAnalyticsChartModal` accesible por rol.
+  - Preservación intacta del gráfico radial existente (`#student-radar-chart` y `#teacher-radar-chart`) y aislamiento de estadísticas de minijuegos.
+- `Pendientes.md`, `Auditoría.txt`, `MapaDependencias.md`:
+  - Registrado el requerimiento `[REQ-FAM-001]` y actualizados los esquemas de dependencias.

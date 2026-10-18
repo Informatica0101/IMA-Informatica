@@ -1,4 +1,114 @@
+## TAREAS PENDIENTES
+
+### [REQ-DASH-ADAPT-001] Adaptación Integral de Dashboards, Menús por Rol, Configuración Académica y Catálogo de Herramientas
+- **Origen del Hallazgo:** Auditoria.txt (Mon Jul 6 2026 - Fase Adaptación Integral de Dashboards y Menús)
+- **Severidad/Clasificación:** Crítico
+- **Archivos Involucrados:** `index.html`, `student-dashboard.html`, `teacher-dashboard.html`, `dashboard-contabilidad.html`, `dashboard-recursos-humanos.html`, `dashboard-tienda.html`, `dashboard-cafeteria.html`, `exam.html`, `forgot-password.html`, `reset-password.html`, `results.html`, `js/ui-common.js`, `js/teacher.js`, `js/student.js`, `js/accounting.js`, `backend/user-service/Code.gs`, `backend/academic-service/Code.gs`
+- **Dependencias Expuestas:** `ConfiguracionSistema`, `ConfiguracionDashboard`, `ROLE_PERMISSIONS`, `history.pushState`, `popstate`, `sw.js`
+- **Descripción del Alcance:**
+  1. Corregir títulos visibles: «Área de Contaduría» en contabilidad, «Secretaría» como título principal, y remover «Área de informática» de la UI general.
+  2. Rediseñar el botón de reporte de problemas `#btn-global-report-issue` a un icono discreto sin texto visible con tooltip accesibilidad.
+  3. Condicionar la aparición del carrusel de cafetería en `index.html` a la verificación de encargado activo + productos disponibles.
+  4. Configuración editable e independiente de nombres para «Tiendita Escolar» y «Cafetería» persistida en backend.
+  5. Implementar sistema de menús lateral de escritorio acordeón (auto-cierre de secciones hermanas) y menú hamburguesa móvil/PWA equivalente, conservando el menú inferior PWA.
+  6. Prevenir bucles infinitos en el historial del navegador (`pushState` / `popstate`) y retroceso de Android.
+  7. Configuración académica global (grados/niveles adaptables) y resolución de equivalencias de secciones (1/A, 2/B, 3/C) con identificadores estables.
+  8. Auditar e integrar las 18 secciones del catálogo de referencia, construyendo la matriz completa de auditoría y la lista de funciones faltantes/parciales.
+- **Criterios de Aceptación:**
+  - Títulos corregidos en todas las vistas.
+  - Botón de reporte de problemas discreto (solo icono + tooltip).
+  - Carrusel de cafetería oculto automáticamente cuando falta encargado o productos.
+  - Nombres de Tiendita Escolar y Cafetería editables y persistentes.
+  - Panel lateral acordeón y menú hamburguesa funcional por rol sin afectar la barra PWA inferior.
+  - Botón de retroceso opera sin ciclos ni bucles.
+  - Equivalencias 1/A, 2/B, 3/C operativas en matrícula y reportes.
+  - Matriz de auditoría de las 18 secciones del catálogo completada en el entregable.
+- **Estado:** [ ] En Ejecución
+
 ## TAREAS PENDIENTES DE REVISIÓN
+
+### [REQ-FAM-001] Gestión Familiar Multiestudiante y Sistema de Gráficas e Indicadores Configurables
+- **Origen del Hallazgo:** Auditoria.txt (Mon Jul 6 2026 - Nueva Fase de Gestión Familiar Multiestudiante y Gráficas Configurables)
+- **Severidad/Clasificación:** Crítico
+- **Archivos Involucrados:** `student-dashboard.html`, `teacher-dashboard.html`, `dashboard-contabilidad.html`, `js/student.js`, `js/teacher.js`, `js/accounting.js`, `js/ui-common.js`, `backend/user-service/Code.gs`, `backend/academic-service/Code.gs`, `backend/accounting-service/Code.gs`
+- **Dependencias Expuestas:** `ResponsablesTutores`, `RelacionesEstudianteTutor`, `PagosAbonos`, `TarifasPlanPago`, `CargosEstudiante`, `Chart.js`, `student-radar-chart`
+- **Descripción del Alcance:**
+  1. Permitir la gestión unificada de familias con múltiples estudiantes desde el Portal Familiar (`js/student.js`, `student-dashboard.html`). Selector de hijos visible con fotos, grado, sección, estado de matrícula e indicadores de pendientes.
+  2. Implementar la Vista Familiar Consolidada (resumen general con recuento de tareas, saldos, notas, solicitudes y becas) manteniendo el origen individual de cada dato.
+  3. Desglosar la gestión económica familiar: resumen consolidado, estados de cuenta individuales por estudiante, distribución explícita de pagos conjuntos sin duplicar saldos y consulta/solicitud de becas y descuentos familiares e individuales.
+  4. Clasificar y separar las 5 categorías de gráficas (A. Minijuegos, B. Desempeño Académico, C. Participación, D. Asistencia y Comportamiento, E. Informes Administrativos).
+  5. Preservar la funcionalidad del gráfico radial existente sin reemplazarlo ni duplicarlo.
+  6. Crear un componente de gráficas e indicadores configurables reutilizable (`window.renderUniversalConfigurableChart`) con opciones de personalización de tipo, colores, escalas, vistas tabulares alternativas y controles responsive para móviles/escritorio.
+  7. Aplicar permisos por rol (RBAC) en servidor y cliente para asegurar el aislamiento de datos.
+- **Criterios de Aceptación:**
+  - Selector de estudiante y resumen consolidado familiar operando sin mezclar expedientes individuales.
+  - Pagos conjuntos multihijo distribuidos explícitamente sin duplicar importes en los estados de cuenta.
+  - Becas y descuentos diferenciados por alcance (individual vs. familiar).
+  - Componente de gráficas dinámicas con tipos múltiples (barras, líneas, áreas, sectores, radial), personalización de colores y alternativas tabulares.
+  - Separación estricta entre estadísticas de minijuegos y notas oficiales.
+  - Gráfico radial conservado e integrado.
+  - Permisos por rol validados en backend.
+- **Estado:** [/] Pendiente de Revisión
+
+### [REQ-LEGAL-001] Términos y Condiciones de Uso v1.0 y Modal de Aceptación Obligatoria al Iniciar Sesión
+- **Origen del Hallazgo:** Auditoria.txt (Mon Jul 6 2026 - Módulo de Términos y Condiciones de Uso)
+- **Severidad/Clasificación:** Crítico
+- **Archivos Involucrados:** `politica-de-uso.html`, `js/ui-common.js`, `js/auth.js`, `backend/user-service/Code.gs`
+- **Dependencias Expuestas:** `AceptacionesPoliticas`, `acceptLegalDocument`, `modal-first-login-terms`
+- **Descripción del Alcance:**
+  1. Actualizar `politica-de-uso.html` con los 17 apartados legales completos de Términos y Condiciones de Uso de la Plataforma de New Generation Bilingual School and Institute y JyP Solutions (Versión 1.0).
+  2. Implementar `#modal-first-login-terms` en `js/ui-common.js` que se muestra en el primer inicio de sesión o carga de dashboard si no existe evidencia de aceptación de la Versión 1.0.
+  3. Incluir el enlace interactivo hacia `politica-de-uso.html`, permitiendo regresar al modal y cerrándose **únicamente** al presionar el botón "Aceptar Términos".
+  4. Registrar la aceptación con timestamp, versión e IP en la hoja `AceptacionesPoliticas` del servidor y en `localStorage`.
+- **Criterios de Aceptación:**
+  - `politica-de-uso.html` contiene el texto legal completo estructurado.
+  - El modal de primer inicio de sesión aparece de forma preventiva y no se puede cerrar sin presionar "Aceptar Términos".
+  - El enlace a los términos abre la lectura completa y permite retornar.
+  - La aceptación se registra en `AceptacionesPoliticas` mediante `acceptLegalDocument`.
+- **Estado:** [/] Pendiente de Revisión
+
+### [REQ-SCHED-001] Configuración del Año Escolar, Jornadas, Horarios, Control Laboral, Horas Extras y Actividades Institucionales
+- **Origen del Hallazgo:** Auditoria.txt (Mon Jul 6 2026 - Nueva Fase de Configuración del Año Escolar, Horarios, Control Laboral y Actividades)
+- **Severidad/Clasificación:** Crítico
+- **Archivos Involucrados:** `backend/academic-service/Code.gs`, `backend/accounting-service/Code.gs`, `backend/user-service/Code.gs`, `js/teacher.js`, `js/student.js`, `js/ui-common.js`, `teacher-dashboard.html`, `student-dashboard.html`, `dashboard-recursos-humanos.html`
+- **Dependencias Expuestas:** `AnosLectivos`, `CalendarioAcademico`, `HorariosClase`, `HorariosLaborales`, `MarcacionesPersonal`, `ROLE_PERMISSIONS`
+- **Descripción del Alcance:**
+  1. Configuración del Año Escolar con soporte para modelos de calendario (Sistema Americano, Año Calendario, Personalizado), fechas clave y validaciones de solapamiento.
+  2. Gestión de Jornadas Académicas (Matutina, Vespertina, Nocturna, A Distancia, Mixta), horas-clase, recreos, almuerzos y transiciones.
+  3. Malla Curricular con distribución semanal/diaria, bloques consecutivos y generador/editor de horarios con detección de colisiones de docentes/aulas/secciones.
+  4. Horarios Laborales del Personal por departamento/empleado, franjas de almuerzo escalonadas, marcaciones de entrada/salida y motor de cálculo y aprobación de Horas Extras con fechas de corte de nómina.
+  5. Programación de Actividades Institucionales con estrategias de afectación de clases (Desplazar, Reducir, Reemplazar, Reprogramar) y Actividades Extracurriculares con gestión de supervisores, estados y evidencias digitales en Drive.
+  6. Integración del Calendario Institucional Unificado con filtrado por rol y permisos.
+- **Criterios de Aceptación:**
+  - Tipos de año escolar configurables con fechas clave validadas.
+  - Jornadas múltiples con tiempos de clase, recreos y almuerzos parametrizados.
+  - Generador/editor de horarios funcional con validación de conflictos de docentes y aulas.
+  - Horarios laborales, marcaciones y flujo de aprobación de horas extras con corte de nómina.
+  - Actividades institucionales y extracurriculares con afectación explícita de clases y evidencias.
+  - Calendario unificado filtrado por rol en todos los dashboards.
+- **Estado:** [/] Pendiente de Revisión
+
+### [REQ-DESIGN-001] Renovación Visual Institucional, Personalización Global, Sistema de Tickets y Control de Versiones v1.0
+- **Origen del Hallazgo:** Auditoria.txt (Mon Jul 6 2026 - Nueva Fase de Diseño, Personalización, Tickets y Versionado)
+- **Severidad/Clasificación:** Crítico
+- **Archivos Involucrados:** `css/style.css`, `js/ui-common.js`, `js/teacher.js`, `js/student.js`, `js/api.js`, `backend/user-service/Code.gs`, `index.html`, `login.html`, `teacher-dashboard.html`, `student-dashboard.html`, `README.md`
+- **Dependencias Expuestas:** `ConfiguracionSistema`, `ROLE_PERMISSIONS`, `doPost`, `modal-dashboard-settings`, `style.css`
+- **Descripción del Alcance:**
+  1. Renovar el estilo visual con un sistema de diseño sobrio, profesional, accesible (WCAG 2.2 AA) y libre de tonos neón/infantiles.
+  2. Implementar gestión de paletas institucionales con flujo de propuesta por Administrador y aprobación por Dirección antes de publicación global.
+  3. Formatear la presentación del logotipo institucional en el inicio de sesión con fondo transparente, proporciones intactas y sombra sutil.
+  4. Crear el botón global de reporte de problemas, modal de envío con validación >= 20 caracteres significativos y recopilación contextual automática.
+  5. Implementar el módulo de tickets (`TICK-XXXXXX`) con seguimiento de estados ("Mis Reportes" para cliente, panel de gestión exclusiva con notas internas para Administrador/Desarrollador).
+  6. Fijar la versión global en 1.0 con la regla estricta de incremento únicamente por solicitud explícita.
+  7. Actualizar `README.md` con las funciones verificadas y especificaciones reales.
+- **Criterios de Aceptación:**
+  - Paletas con previsualización y aprobación por Dirección publicadas globalmente.
+  - Logotipo de inicio de sesión con estilo transparente y sutil.
+  - Formulario de reporte disponible globalmente con validación de 20 caracteres mínimos.
+  - Tickets únicos con respuestas, notas internas y máquina de estados funcional en servidor.
+  - Versión global confirmada en 1.0.
+  - Permisos RBAC validados en servidor.
+- **Estado:** [/] Pendiente de Revisión
 
 ### [UNIF-001] Unificación de Configuración Académica
 - **Origen del Hallazgo:** Nueva Tarea Adicional.

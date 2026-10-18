@@ -50,6 +50,10 @@ window.setupCommonUI = function() {
     window.addEventListener('offline', updateOnlineBadge);
     updateOnlineBadge();
 
+    if (window.initProblemReportingUI) {
+        window.initProblemReportingUI();
+    }
+
     var lastScrollTop = 0;
     var scrollThreshold = 10;
 
@@ -1321,6 +1325,9 @@ window.ensureDashboardSettingsModalExists = function() {
             <button id="tab-btn-provider-settings" class="settings-tab-btn py-3 px-4 border-b-2 border-transparent text-slate-500 hover:text-slate-800 flex items-center gap-2 hidden">
                 <i class="fa-solid fa-network-wired"></i> Proveedores & Pasarelas
             </button>
+            <button id="tab-btn-visual-settings" class="settings-tab-btn py-3 px-4 border-b-2 border-transparent text-slate-500 hover:text-slate-800 flex items-center gap-2 hidden">
+                <i class="fa-solid fa-palette"></i> Identidad Visual
+            </button>
         </div>
 
         <div class="p-6 overflow-y-auto flex-grow space-y-6">
@@ -1391,6 +1398,104 @@ window.ensureDashboardSettingsModalExists = function() {
                     <p class="text-xs text-slate-400 italic">Cargando integraciones de proveedores...</p>
                 </div>
             </div>
+
+            <div id="tab-panel-visual-settings" class="space-y-6 hidden">
+                <div class="p-4 bg-indigo-50 border border-indigo-100 rounded-2xl flex items-start gap-3">
+                    <i class="fa-solid fa-palette text-indigo-600 text-lg mt-0.5"></i>
+                    <div class="text-xs text-indigo-900 leading-relaxed font-medium">
+                        <strong>Personalización Global & Flujo de Aprobación:</strong> El Administrador propone la paleta institucional. Dirección la revisa y aprueba para su aplicación global inmediata a todos los usuarios.
+                    </div>
+                </div>
+
+                <div class="space-y-4">
+                    <h4 class="text-xs font-black uppercase text-slate-500 tracking-wider">Paletas Institucionales Sugeridas</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs font-semibold">
+                        <div onclick="window.previewPalette('Azul Institucional', '#0d6efd', '#0b5ed7', '#e7f1ff', '#4b5563')" class="p-4 bg-slate-50 border-2 border-slate-200 hover:border-blue-500 rounded-2xl cursor-pointer transition-all space-y-2">
+                            <div class="flex items-center justify-between">
+                                <span class="font-bold text-slate-800">Azul Institucional</span>
+                                <span class="w-4 h-4 rounded-full bg-[#0d6efd]"></span>
+                            </div>
+                            <div class="flex gap-1.5">
+                                <span class="w-6 h-6 rounded-lg bg-[#0d6efd]"></span>
+                                <span class="w-6 h-6 rounded-lg bg-[#0b5ed7]"></span>
+                                <span class="w-6 h-6 rounded-lg bg-[#e7f1ff]"></span>
+                                <span class="w-6 h-6 rounded-lg bg-[#4b5563]"></span>
+                            </div>
+                        </div>
+
+                        <div onclick="window.previewPalette('Verde Sobrio', '#15803d', '#166534', '#f0fdf4', '#475569')" class="p-4 bg-slate-50 border-2 border-slate-200 hover:border-emerald-500 rounded-2xl cursor-pointer transition-all space-y-2">
+                            <div class="flex items-center justify-between">
+                                <span class="font-bold text-slate-800">Verde Sobrio</span>
+                                <span class="w-4 h-4 rounded-full bg-[#15803d]"></span>
+                            </div>
+                            <div class="flex gap-1.5">
+                                <span class="w-6 h-6 rounded-lg bg-[#15803d]"></span>
+                                <span class="w-6 h-6 rounded-lg bg-[#166534]"></span>
+                                <span class="w-6 h-6 rounded-lg bg-[#f0fdf4]"></span>
+                                <span class="w-6 h-6 rounded-lg bg-[#475569]"></span>
+                            </div>
+                        </div>
+
+                        <div onclick="window.previewPalette('Gris Azulado', '#334155', '#1e293b', '#f1f5f9', '#64748b')" class="p-4 bg-slate-50 border-2 border-slate-200 hover:border-slate-500 rounded-2xl cursor-pointer transition-all space-y-2">
+                            <div class="flex items-center justify-between">
+                                <span class="font-bold text-slate-800">Gris Azulado</span>
+                                <span class="w-4 h-4 rounded-full bg-[#334155]"></span>
+                            </div>
+                            <div class="flex gap-1.5">
+                                <span class="w-6 h-6 rounded-lg bg-[#334155]"></span>
+                                <span class="w-6 h-6 rounded-lg bg-[#1e293b]"></span>
+                                <span class="w-6 h-6 rounded-lg bg-[#f1f5f9]"></span>
+                                <span class="w-6 h-6 rounded-lg bg-[#64748b]"></span>
+                            </div>
+                        </div>
+
+                        <div onclick="window.previewPalette('Borgoña Profesional', '#881337', '#4c0519', '#fff1f2', '#57534e')" class="p-4 bg-slate-50 border-2 border-slate-200 hover:border-rose-800 rounded-2xl cursor-pointer transition-all space-y-2">
+                            <div class="flex items-center justify-between">
+                                <span class="font-bold text-slate-800">Borgoña Profesional</span>
+                                <span class="w-4 h-4 rounded-full bg-[#881337]"></span>
+                            </div>
+                            <div class="flex gap-1.5">
+                                <span class="w-6 h-6 rounded-lg bg-[#881337]"></span>
+                                <span class="w-6 h-6 rounded-lg bg-[#4c0519]"></span>
+                                <span class="w-6 h-6 rounded-lg bg-[#fff1f2]"></span>
+                                <span class="w-6 h-6 rounded-lg bg-[#57534e]"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="p-5 bg-white border border-slate-200 rounded-2xl space-y-4">
+                    <h4 class="text-xs font-black uppercase text-slate-500 tracking-wider">Previsualización Interactiva Real</h4>
+                    <div id="palette-preview-sandbox" class="p-4 rounded-xl space-y-3 transition-all border" style="background-color: var(--color-background); border-color: var(--color-border);">
+                        <div class="flex items-center justify-between">
+                            <span id="preview-palette-title" class="font-bold text-xs" style="color: var(--color-text-primary);">Paleta Seleccionada: Azul Institucional</span>
+                            <span class="px-2 py-0.5 rounded text-[10px] font-bold" style="background-color: var(--color-primary-light); color: var(--color-primary);">Demo Previa</span>
+                        </div>
+
+                        <div class="flex flex-wrap items-center gap-2">
+                            <button type="button" class="px-3 py-1.5 rounded-lg text-xs font-bold text-white transition-all" style="background-color: var(--color-primary);">Botón Principal</button>
+                            <button type="button" class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all border" style="background-color: var(--color-surface); color: var(--color-text-primary); border-color: var(--color-border);">Botón Secundario</button>
+                            <button type="button" class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all" style="background-color: var(--color-btn-cancel-bg); color: var(--color-btn-cancel-text);">Cancelar</button>
+                        </div>
+
+                        <div class="p-3 rounded-lg border text-xs font-medium" style="background-color: var(--color-surface); border-color: var(--color-border); color: var(--color-text-secondary);">
+                            Campo de formulario de prueba con borde y texto institucional.
+                        </div>
+                    </div>
+
+                    <div id="palette-action-controls" class="flex flex-wrap items-center justify-between gap-3 pt-2">
+                        <span class="text-[11px] text-slate-400 font-medium">Requiere propuesta del Administrador y aprobación de Dirección.</span>
+                        <div class="flex items-center gap-2">
+                            <button id="btn-submit-palette-proposal" onclick="window.submitPaletteProposal()" class="px-4 py-2 bg-indigo-600 text-white font-bold text-xs rounded-xl hover:bg-indigo-700 transition-all shadow-md">
+                                <i class="fa-solid fa-paper-plane mr-1"></i> Proponer Paleta
+                            </button>
+                            <button id="btn-approve-palette-proposal" onclick="window.approvePaletteProposal('Aprobar')" class="px-4 py-2 bg-emerald-600 text-white font-bold text-xs rounded-xl hover:bg-emerald-700 transition-all shadow-md hidden">
+                                <i class="fa-solid fa-circle-check mr-1"></i> Aprobar & Publicar Global
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <div class="px-6 py-4 bg-slate-50 border-t border-slate-200 flex items-center justify-between">
@@ -1422,24 +1527,29 @@ window.bindDashboardSettingsModalEvents = function() {
     var tab1 = document.getElementById('tab-btn-user-settings');
     var tab2 = document.getElementById('tab-btn-role-settings');
     var tab3 = document.getElementById('tab-btn-provider-settings');
+    var tab4 = document.getElementById('tab-btn-visual-settings');
 
     if (tab1) tab1.onclick = function() { window.switchSettingsTab('user'); };
     if (tab2) tab2.onclick = function() { window.switchSettingsTab('role'); };
     if (tab3) tab3.onclick = function() { window.switchSettingsTab('provider'); };
+    if (tab4) tab4.onclick = function() { window.switchSettingsTab('visual'); };
 };
 
 window.switchSettingsTab = function(tabName) {
     var p1 = document.getElementById('tab-panel-user-settings');
     var p2 = document.getElementById('tab-panel-role-settings');
     var p3 = document.getElementById('tab-panel-provider-settings');
+    var p4 = document.getElementById('tab-panel-visual-settings');
 
     var b1 = document.getElementById('tab-btn-user-settings');
     var b2 = document.getElementById('tab-btn-role-settings');
     var b3 = document.getElementById('tab-btn-provider-settings');
+    var b4 = document.getElementById('tab-btn-visual-settings');
 
     if (p1) p1.classList.toggle('hidden', tabName !== 'user');
     if (p2) p2.classList.toggle('hidden', tabName !== 'role');
     if (p3) p3.classList.toggle('hidden', tabName !== 'provider');
+    if (p4) p4.classList.toggle('hidden', tabName !== 'visual');
 
     var activeClass = 'border-blue-600 text-blue-600 font-black';
     var inactiveClass = 'border-transparent text-slate-500 hover:text-slate-800';
@@ -1471,6 +1581,18 @@ window.openDashboardSettingsModal = function() {
     if (tab3Btn) {
         var canManageProviders = (role === 'Administrador' || role === 'Director' || role === 'Subdirector' || role === 'Desarrollador');
         tab3Btn.classList.toggle('hidden', !canManageProviders);
+    }
+
+    var tab4Btn = document.getElementById('tab-btn-visual-settings');
+    if (tab4Btn) {
+        var canManageVisual = (role === 'Administrador' || role === 'Director' || role === 'Desarrollador');
+        tab4Btn.classList.toggle('hidden', !canManageVisual);
+    }
+
+    var approveBtn = document.getElementById('btn-approve-palette-proposal');
+    if (approveBtn) {
+        var canApproveVisual = (role === 'Director' || role === 'Administrador' || role === 'Desarrollador');
+        approveBtn.classList.toggle('hidden', !canApproveVisual);
     }
 
     window.switchSettingsTab('user');
@@ -2745,3 +2867,1332 @@ if (document.readyState === 'loading') {
 } else {
     if (window.setupCommonUI) window.setupCommonUI();
 }
+
+// ==========================================================================
+// MÓDULO GLOBAL DE REPORTE DE PROBLEMAS (TICKETS) & PALETA VISUAL GLOBAL
+// ==========================================================================
+
+window.selectedPreviewPalette = {
+    paletaNombre: 'Azul Institucional',
+    colores: { primary: '#0d6efd', primaryDark: '#0b5ed7', primaryLight: '#e7f1ff', secondary: '#4b5563' }
+};
+
+window.previewPalette = function(nombre, primary, primaryDark, primaryLight, secondary) {
+    window.selectedPreviewPalette = {
+        paletaNombre: nombre,
+        colores: { primary: primary, primaryDark: primaryDark, primaryLight: primaryLight, secondary: secondary }
+    };
+
+    var title = document.getElementById('preview-palette-title');
+    if (title) title.textContent = 'Paleta Seleccionada: ' + nombre;
+
+    var sandbox = document.getElementById('palette-preview-sandbox');
+    if (sandbox) {
+        sandbox.style.setProperty('--color-primary', primary);
+        sandbox.style.setProperty('--color-primary-dark', primaryDark);
+        sandbox.style.setProperty('--color-primary-light', primaryLight);
+        sandbox.style.setProperty('--color-secondary', secondary);
+    }
+};
+
+window.submitPaletteProposal = function() {
+    var p = window.selectedPreviewPalette;
+    if (!p || !p.paletaNombre) return;
+
+    var currentUser = {};
+    try {
+        currentUser = JSON.parse(localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser') || localStorage.getItem('usuario_actual') || '{}');
+    } catch (_) {}
+
+    var payload = {
+        paletaNombre: p.paletaNombre,
+        coloresJSON: p.colores,
+        userId: currentUser.userId || currentUser.id,
+        authRole: currentUser.rol || 'Administrador',
+        observaciones: 'Propuesta enviada desde el panel de opciones visuales'
+    };
+
+    fetchApi('USER', 'saveVisualPaletteProposal', payload).then(function(res) {
+        if (res && res.status === 'success') {
+            window.activePaletteProposalId = res.propuestaId;
+            alert('¡Propuesta de paleta "' + p.paletaNombre + '" enviada exitosamente!\n\nID Propuesta: ' + (res.propuestaId || '') + '\n\nQueda pendiente de revisión y aprobación por Dirección.');
+        } else {
+            alert('Error al enviar propuesta: ' + (res ? res.message : 'Desconocido'));
+        }
+    }).catch(function(err) {
+        alert('Fallo de red: ' + err.message);
+    });
+};
+
+window.approvePaletteProposal = function(accion) {
+    var p = window.selectedPreviewPalette;
+    if (!p || !p.paletaNombre) return;
+
+    var currentUser = {};
+    try {
+        currentUser = JSON.parse(localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser') || localStorage.getItem('usuario_actual') || '{}');
+    } catch (_) {}
+
+    var payload = {
+        propuestaId: window.activePaletteProposalId || 'PAL-LATEST',
+        paletaNombre: p.paletaNombre,
+        coloresJSON: p.colores,
+        accion: accion || 'Aprobar',
+        userId: currentUser.userId || currentUser.id,
+        authRole: currentUser.rol || 'Director',
+        observaciones: 'Aprobación ejecutada desde el panel de opciones institucionales'
+    };
+
+    fetchApi('USER', 'approveVisualPaletteProposal', payload).then(function(res) {
+        if (res && res.status === 'success') {
+            alert('¡Paleta "' + p.paletaNombre + '" ' + (accion === 'Aprobar' ? 'aprobada y publicada globalmente' : 'rechazada') + '!');
+            window.loadAndApplyActiveVisualPalette();
+        } else {
+            alert('Error al procesar aprobación: ' + (res ? res.message : 'Error desconocido'));
+        }
+    }).catch(function(err) {
+        alert('Fallo de red: ' + err.message);
+    });
+};
+
+window.initProblemReportingUI = function() {
+    if (!document.getElementById('btn-global-report-issue')) {
+        var btn = document.createElement('button');
+        btn.id = 'btn-global-report-issue';
+        btn.onclick = function() { window.openReportIssueModal(); };
+        btn.className = 'fixed bottom-4 right-4 z-[9990] bg-slate-900/90 hover:bg-slate-900 text-white w-9 h-9 rounded-full shadow-lg flex items-center justify-center border border-slate-700/60 transition-all hover:scale-110 active:scale-95';
+        btn.title = 'Reportar un problema';
+        btn.setAttribute('aria-label', 'Reportar un problema');
+        btn.innerHTML = '<i class="fa-solid fa-circle-exclamation text-amber-400 text-sm"></i>';
+        document.body.appendChild(btn);
+    }
+
+    window.ensureReportIssueModalExists();
+    window.ensureMyTicketsModalExists();
+    window.ensureAdminTicketsModalExists();
+    window.loadAndApplyActiveVisualPalette();
+};
+
+window.loadAndApplyActiveVisualPalette = function() {
+    if (typeof fetchApi !== 'function') return;
+    fetchApi('USER', 'getActiveVisualPalette', {}).then(function(res) {
+        if (res && res.status === 'success' && res.palette && res.palette.colores) {
+            var c = res.palette.colores;
+            var root = document.documentElement;
+            if (c.primary) root.style.setProperty('--color-primary', c.primary);
+            if (c.primaryDark) root.style.setProperty('--color-primary-dark', c.primaryDark);
+            if (c.primaryLight) root.style.setProperty('--color-primary-light', c.primaryLight);
+            if (c.secondary) root.style.setProperty('--color-secondary', c.secondary);
+            if (c.background) root.style.setProperty('--color-background', c.background);
+            if (c.surface) root.style.setProperty('--color-surface', c.surface);
+            if (c.textPrimary) root.style.setProperty('--color-text-primary', c.textPrimary);
+            if (c.textSecondary) root.style.setProperty('--color-text-secondary', c.textSecondary);
+            if (c.border) root.style.setProperty('--color-border', c.border);
+            if (c.accent) root.style.setProperty('--color-accent', c.accent);
+
+            if (res.palette.paletaNombre) {
+                var themeSlug = res.palette.paletaNombre.toLowerCase().replace(/\s+/g, '-');
+                root.setAttribute('data-theme', themeSlug);
+            }
+        }
+    }).catch(function(err) {
+        console.warn('Error aplicando paleta visual global:', err);
+    });
+};
+
+window.detectCurrentAreaFunction = function() {
+    var path = window.location.pathname.toLowerCase();
+    if (path.includes('login') || path.includes('register') || path.includes('forgot') || path.includes('reset')) {
+        return 'Inicio de Sesión / Acceso';
+    } else if (path.includes('student-dashboard')) {
+        return 'Portal Estudiantil / Asignaturas';
+    } else if (path.includes('teacher-dashboard')) {
+        return 'Panel Docente / Gestión Académica';
+    } else if (path.includes('dashboard-contabilidad')) {
+        return 'Pagos y Estado de Cuenta';
+    } else if (path.includes('dashboard-recursos-humanos')) {
+        return 'Recursos Humanos';
+    } else if (path.includes('dashboard-direccion')) {
+        return 'Gestión de Dirección';
+    } else if (path.includes('exam')) {
+        return 'Exámenes y Evaluaciones';
+    }
+    return 'General';
+};
+
+window.ensureReportIssueModalExists = function() {
+    if (document.getElementById('modal-report-issue')) return;
+
+    var modalHtml = `
+<div id="modal-report-issue" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-[9995] flex items-center justify-center p-3 md:p-4 hidden">
+    <div class="bg-white rounded-[2rem] shadow-2xl w-full max-w-lg overflow-hidden border border-slate-100 flex flex-col max-h-[92vh]">
+        <div class="px-6 py-4 bg-slate-900 text-white flex items-center justify-between border-b border-slate-800">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center text-lg font-bold">
+                    <i class="fa-solid fa-bug"></i>
+                </div>
+                <div>
+                    <h3 class="text-sm md:text-base font-black uppercase tracking-tight text-white flex items-center gap-2">
+                        Reportar un Problema
+                        <span class="px-2 py-0.5 bg-slate-800 text-amber-400 text-[10px] font-black rounded-md border border-slate-700">v1.0</span>
+                    </h3>
+                    <p class="text-[11px] text-slate-400 font-medium">Su reporte genera un ticket único de seguimiento.</p>
+                </div>
+            </div>
+            <button onclick="window.closeReportIssueModal()" class="p-2 text-slate-400 hover:text-white rounded-xl hover:bg-slate-800 text-lg transition-all" aria-label="Cerrar modal">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+
+        <form id="form-report-issue" onsubmit="window.submitProblemReportForm(event)" class="p-6 overflow-y-auto space-y-4 flex-grow text-xs">
+            <div class="p-3.5 bg-blue-50 border border-blue-100 rounded-2xl flex items-start gap-3">
+                <i class="fa-solid fa-circle-info text-blue-600 text-base mt-0.5"></i>
+                <div class="text-[11px] text-blue-900 leading-relaxed font-medium">
+                    Se incorporan automáticamente datos de cuenta y contexto (área, sección, tipo de app y versión 1.0) necesarios para investigar el caso.
+                </div>
+            </div>
+
+            <div>
+                <label for="report-area-select" class="block font-bold text-slate-700 mb-1 uppercase tracking-wider text-[10px]">Área o Función afectada</label>
+                <select id="report-area-select" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20">
+                    <option value="Inicio de Sesión / Acceso">Inicio de Sesión / Acceso</option>
+                    <option value="Portal Estudiantil / Asignaturas">Portal Estudiantil / Asignaturas</option>
+                    <option value="Entregas y Tareas">Entregas y Tareas</option>
+                    <option value="Boletines y Calificaciones">Boletines y Calificaciones</option>
+                    <option value="Asistencia y Puntos">Asistencia y Puntos</option>
+                    <option value="Pagos y Estado de Cuenta">Pagos y Estado de Cuenta</option>
+                    <option value="Panel Docente / Gestión Académica">Panel Docente / Gestión Académica</option>
+                    <option value="Contabilidad y Planillas">Contabilidad y Planillas</option>
+                    <option value="Secretaría y Documentos">Secretaría y Documentos</option>
+                    <option value="Recursos Humanos">Recursos Humanos</option>
+                    <option value="Exámenes y Evaluaciones">Exámenes y Evaluaciones</option>
+                    <option value="Configuración General">Configuración General</option>
+                    <option value="Otro">Otro</option>
+                </select>
+            </div>
+
+            <div>
+                <div class="flex justify-between items-center mb-1">
+                    <label for="report-desc-input" class="font-bold text-slate-700 uppercase tracking-wider text-[10px]">¿Qué problema encontraste? *</label>
+                    <span id="report-desc-counter" class="text-[10px] text-slate-400 font-medium">0 / 2000</span>
+                </div>
+                <textarea id="report-desc-input" rows="3" maxlength="2000" oninput="window.updateReportCounter('report-desc-input', 'report-desc-counter')" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20" placeholder="Describa el problema detalladamente (mínimo 20 caracteres)..." required></textarea>
+                <p id="report-desc-error" class="text-[10px] text-red-500 font-bold mt-1 hidden">La descripción debe contener al menos 20 caracteres significativos.</p>
+            </div>
+
+            <div>
+                <div class="flex justify-between items-center mb-1">
+                    <label for="report-expected-input" class="font-bold text-slate-700 uppercase tracking-wider text-[10px]">¿Qué esperabas que ocurriera? *</label>
+                    <span id="report-expected-counter" class="text-[10px] text-slate-400 font-medium">0 / 2000</span>
+                </div>
+                <textarea id="report-expected-input" rows="3" maxlength="2000" oninput="window.updateReportCounter('report-expected-input', 'report-expected-counter')" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20" placeholder="Explique qué resultado o comportamiento esperaba (mínimo 20 caracteres)..." required></textarea>
+                <p id="report-expected-error" class="text-[10px] text-red-500 font-bold mt-1 hidden">La explicación debe contener al menos 20 caracteres significativos.</p>
+            </div>
+
+            <div class="pt-2 flex items-center justify-between border-t border-slate-100">
+                <button type="button" onclick="window.openMyTicketsModal()" class="px-3.5 py-2 bg-slate-100 text-slate-700 rounded-xl font-bold text-xs hover:bg-slate-200 transition-all flex items-center gap-1.5">
+                    <i class="fa-solid fa-list-check text-blue-600"></i> Mis Reportes
+                </button>
+                <div class="flex items-center gap-2">
+                    <button type="button" onclick="window.closeReportIssueModal()" class="btn-ima-cancel px-4 py-2 text-xs uppercase font-bold rounded-xl">
+                        Cancelar
+                    </button>
+                    <button type="submit" id="btn-submit-problem-report" class="btn-ima-primary px-5 py-2 text-xs uppercase font-bold rounded-xl shadow-md">
+                        <i class="fa-solid fa-paper-plane mr-1"></i> Enviar Reporte
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>`;
+    document.body.insertAdjacentHTML('beforeend', modalHtml);
+};
+
+window.updateReportCounter = function(inputId, counterId) {
+    var inp = document.getElementById(inputId);
+    var cnt = document.getElementById(counterId);
+    if (inp && cnt) {
+        cnt.textContent = inp.value.length + ' / 2000';
+    }
+};
+
+window.openReportIssueModal = function(areaOverride) {
+    window.ensureReportIssueModalExists();
+    var modal = document.getElementById('modal-report-issue');
+    var select = document.getElementById('report-area-select');
+    if (select) {
+        var area = areaOverride || window.detectCurrentAreaFunction();
+        select.value = area;
+    }
+    if (modal) modal.classList.remove('hidden');
+};
+
+window.closeReportIssueModal = function() {
+    var modal = document.getElementById('modal-report-issue');
+    if (modal) modal.classList.add('hidden');
+};
+
+window.submitProblemReportForm = function(e) {
+    if (e) e.preventDefault();
+
+    var descInp = document.getElementById('report-desc-input');
+    var expectedInp = document.getElementById('report-expected-input');
+    var areaSelect = document.getElementById('report-area-select');
+    var descErr = document.getElementById('report-desc-error');
+    var expectedErr = document.getElementById('report-expected-error');
+    var submitBtn = document.getElementById('btn-submit-problem-report');
+
+    var descVal = (descInp ? descInp.value : '').trim();
+    var expectedVal = (expectedInp ? expectedInp.value : '').trim();
+
+    var hasError = false;
+    if (descVal.length < 20) {
+        if (descErr) descErr.classList.remove('hidden');
+        hasError = true;
+    } else {
+        if (descErr) descErr.classList.add('hidden');
+    }
+
+    if (expectedVal.length < 20) {
+        if (expectedErr) expectedErr.classList.remove('hidden');
+        hasError = true;
+    } else {
+        if (expectedErr) expectedErr.classList.add('hidden');
+    }
+
+    if (hasError) return;
+
+    var isPWA = (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) || window.navigator.standalone === true;
+    var appType = isPWA ? 'PWA' : 'Escritorio / Navegador Web';
+
+    var currentUser = {};
+    try {
+        currentUser = JSON.parse(localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser') || localStorage.getItem('usuario_actual') || '{}');
+    } catch (_) {}
+
+    var payload = {
+        userId: currentUser.userId || currentUser.id || 'ANON',
+        nombreUsuario: currentUser.nombre || currentUser.name || 'Usuario',
+        authRole: currentUser.rol || 'Estudiante',
+        areaFuncion: areaSelect ? areaSelect.value : 'General',
+        seccionPagina: window.location.pathname + window.location.search,
+        tipoApp: appType,
+        versionGlobal: '1.0',
+        descripcion: descVal,
+        resultadoEsperado: expectedVal
+    };
+
+    if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-1"></i> Enviando...';
+    }
+
+    fetchApi('USER', 'submitProblemTicket', payload).then(function(res) {
+        if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '<i class="fa-solid fa-paper-plane mr-1"></i> Enviar Reporte';
+        }
+
+        if (res && res.status === 'success') {
+            alert('¡Reporte enviado exitosamente!\n\nNúmero de Ticket: ' + (res.ticketId || 'CONFIRMADO') + '\n\nPuede dar seguimiento a su estado desde "Mis Reportes".');
+            if (descInp) descInp.value = '';
+            if (expectedInp) expectedInp.value = '';
+            window.updateReportCounter('report-desc-input', 'report-desc-counter');
+            window.updateReportCounter('report-expected-input', 'report-expected-counter');
+            window.closeReportIssueModal();
+            window.openMyTicketsModal();
+        } else {
+            alert('Error al enviar el reporte: ' + (res && res.message ? res.message : 'Ocurrió un problema de red. Por favor reintente.'));
+        }
+    }).catch(function(err) {
+        if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '<i class="fa-solid fa-paper-plane mr-1"></i> Enviar Reporte';
+        }
+        alert('Fallo de conexión al enviar el reporte: ' + err.message);
+    });
+};
+
+window.ensureMyTicketsModalExists = function() {
+    if (document.getElementById('modal-my-tickets')) return;
+
+    var modalHtml = `
+<div id="modal-my-tickets" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-[9996] flex items-center justify-center p-3 md:p-4 hidden">
+    <div class="bg-white rounded-[2rem] shadow-2xl w-full max-w-2xl overflow-hidden border border-slate-100 flex flex-col max-h-[92vh]">
+        <div class="px-6 py-4 bg-slate-900 text-white flex items-center justify-between border-b border-slate-800">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-blue-500/20 text-blue-400 flex items-center justify-center text-lg font-bold">
+                    <i class="fa-solid fa-ticket"></i>
+                </div>
+                <div>
+                    <h3 class="text-sm md:text-base font-black uppercase tracking-tight text-white">Mis Reportes y Tickets</h3>
+                    <p class="text-[11px] text-slate-400 font-medium">Historial y estado de reportes enviados por su cuenta.</p>
+                </div>
+            </div>
+            <button onclick="window.closeMyTicketsModal()" class="p-2 text-slate-400 hover:text-white rounded-xl hover:bg-slate-800 text-lg transition-all" aria-label="Cerrar modal">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+
+        <div class="p-6 overflow-y-auto space-y-4 flex-grow text-xs">
+            <div id="my-tickets-list-container" class="space-y-3">
+                <p class="text-slate-400 text-center py-8 italic font-medium"><i class="fa-solid fa-spinner fa-spin mr-2"></i>Cargando reportes...</p>
+            </div>
+        </div>
+
+        <div class="px-6 py-3 bg-slate-50 border-t border-slate-200 flex justify-between items-center">
+            <button onclick="window.openReportIssueModal()" class="px-3.5 py-2 bg-blue-50 text-blue-700 rounded-xl font-bold text-xs hover:bg-blue-100 transition-all flex items-center gap-1.5">
+                <i class="fa-solid fa-plus text-blue-600"></i> Nuevo Reporte
+            </button>
+            <button onclick="window.closeMyTicketsModal()" class="btn-ima-cancel px-4 py-2 text-xs uppercase font-bold rounded-xl">
+                Cerrar
+            </button>
+        </div>
+    </div>
+</div>`;
+    document.body.insertAdjacentHTML('beforeend', modalHtml);
+};
+
+window.openMyTicketsModal = function() {
+    window.ensureMyTicketsModalExists();
+    var modal = document.getElementById('modal-my-tickets');
+    if (modal) modal.classList.remove('hidden');
+    window.renderMyTicketsList();
+};
+
+window.closeMyTicketsModal = function() {
+    var modal = document.getElementById('modal-my-tickets');
+    if (modal) modal.classList.add('hidden');
+};
+
+window.renderMyTicketsList = function() {
+    var container = document.getElementById('my-tickets-list-container');
+    if (!container) return;
+
+    var currentUser = {};
+    try {
+        currentUser = JSON.parse(localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser') || localStorage.getItem('usuario_actual') || '{}');
+    } catch (_) {}
+
+    fetchApi('USER', 'getProblemTickets', { userId: currentUser.userId || currentUser.id }).then(function(res) {
+        if (!res || res.status !== 'success' || !res.tickets || res.tickets.length === 0) {
+            container.innerHTML = '<div class="text-center py-10 text-slate-400 font-medium"><i class="fa-solid fa-ticket-simple text-3xl mb-2 opacity-40 block"></i><p>No tiene tickets ni reportes registrados.</p></div>';
+            return;
+        }
+
+        var html = [];
+        res.tickets.forEach(function(t) {
+            var badgeColor = 'bg-slate-100 text-slate-700 border-slate-200';
+            if (t.estado === 'En revisión') badgeColor = 'bg-blue-50 text-blue-700 border-blue-200';
+            else if (t.estado === 'Se necesita información') badgeColor = 'bg-amber-100 text-amber-800 border-amber-300 animate-pulse';
+            else if (t.estado === 'Información recibida') badgeColor = 'bg-purple-50 text-purple-700 border-purple-200';
+            else if (t.estado === 'Solucionado') badgeColor = 'bg-emerald-50 text-emerald-700 border-emerald-200';
+            else if (t.estado === 'Cerrado') badgeColor = 'bg-slate-200 text-slate-600 border-slate-300';
+
+            var requiresReply = t.estado === 'Se necesita información';
+
+            html.push(
+                '<div class="p-4 bg-slate-50 border border-slate-200 rounded-2xl space-y-3">',
+                '  <div class="flex items-center justify-between">',
+                '    <div class="flex items-center gap-2">',
+                '      <span class="font-black text-slate-900 uppercase text-xs">' + t.ticketId + '</span>',
+                '      <span class="text-[10px] font-bold text-slate-400 bg-slate-200/60 px-2 py-0.5 rounded-md">' + t.areaFuncion + '</span>',
+                '    </div>',
+                '    <span class="text-[10px] font-bold px-2.5 py-1 rounded-lg border ' + badgeColor + '">' + t.estado + '</span>',
+                '  </div>',
+                '  <p class="text-xs text-slate-700 font-medium line-clamp-2"><strong>Problema:</strong> ' + (t.descripcion || '') + '</p>',
+                requiresReply ? '  <div class="p-2.5 bg-amber-50 border border-amber-200 rounded-xl text-amber-900 font-bold text-[11px] flex items-center gap-2"><i class="fa-solid fa-circle-exclamation text-amber-600"></i> El administrador requiere información adicional de su parte.</div>' : '',
+                '  <div class="flex items-center justify-between text-[10px] text-slate-400 font-medium border-t border-slate-200/60 pt-2">',
+                '    <span>Enviado: ' + new Date(t.creadoEn).toLocaleString() + '</span>',
+                '    <button onclick="window.toggleTicketDetail(\'' + t.ticketId + '\')" class="text-blue-600 font-bold hover:underline flex items-center gap-1">Ver Mensajes (' + (t.mensajes ? t.mensajes.length : 0) + ') <i class="fa-solid fa-chevron-down"></i></button>',
+                '  </div>',
+                '  <div id="ticket-detail-' + t.ticketId + '" class="hidden space-y-3 pt-2 border-t border-slate-200">',
+                '    <div class="space-y-2 max-h-48 overflow-y-auto p-2 bg-white rounded-xl border border-slate-200">'
+            );
+
+            if (t.mensajes && t.mensajes.length > 0) {
+                t.mensajes.forEach(function(m) {
+                    var isUser = m.autorUserId === currentUser.userId || m.tipoAutor === t.rolActivo;
+                    html.push(
+                        '      <div class="p-2.5 rounded-xl text-xs ' + (isUser ? 'bg-blue-50 text-blue-900 border border-blue-100' : 'bg-slate-100 text-slate-800 border border-slate-200') + '">',
+                        '        <div class="flex items-center justify-between text-[10px] font-bold text-slate-400 mb-1">',
+                        '          <span>' + m.autorNombre + ' (' + m.tipoAutor + ')</span>',
+                        '          <span>' + new Date(m.timestamp).toLocaleTimeString() + '</span>',
+                        '        </div>',
+                        '        <p class="whitespace-pre-wrap font-medium text-xs">' + m.mensaje + '</p>',
+                        '      </div>'
+                    );
+                });
+            } else {
+                html.push('      <p class="text-slate-400 text-center py-2 italic">Sin mensajes adicionales.</p>');
+            }
+
+            html.push(
+                '    </div>',
+                '    <div class="flex items-center gap-2">',
+                '      <input type="text" id="reply-input-' + t.ticketId + '" class="flex-grow p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-medium text-xs" placeholder="Escriba su respuesta o aclaración...">',
+                '      <button onclick="window.sendTicketReply(\'' + t.ticketId + '\')" class="btn-ima-primary px-3.5 py-2 text-xs font-bold rounded-xl whitespace-nowrap"><i class="fa-solid fa-paper-plane mr-1"></i> Responder</button>',
+                '    </div>',
+                '  </div>',
+                '</div>'
+            );
+        });
+
+        container.innerHTML = html.join('');
+    }).catch(function(err) {
+        container.innerHTML = '<p class="text-red-500 text-center py-4 font-bold">Error al cargar reportes: ' + err.message + '</p>';
+    });
+};
+
+window.toggleTicketDetail = function(ticketId) {
+    var el = document.getElementById('ticket-detail-' + ticketId);
+    if (el) el.classList.toggle('hidden');
+};
+
+window.sendTicketReply = function(ticketId) {
+    var inp = document.getElementById('reply-input-' + ticketId);
+    if (!inp || !inp.value.trim()) return;
+
+    var text = inp.value.trim();
+    var currentUser = {};
+    try {
+        currentUser = JSON.parse(localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser') || localStorage.getItem('usuario_actual') || '{}');
+    } catch (_) {}
+
+    var payload = {
+        ticketId: ticketId,
+        mensaje: text,
+        userId: currentUser.userId || currentUser.id,
+        nombreUsuario: currentUser.nombre || currentUser.name,
+        authRole: currentUser.rol || 'Estudiante'
+    };
+
+    fetchApi('USER', 'replyProblemTicket', payload).then(function(res) {
+        if (res && res.status === 'success') {
+            inp.value = '';
+            window.renderMyTicketsList();
+        } else {
+            alert('Error al enviar respuesta: ' + (res ? res.message : 'Error desconocido'));
+        }
+    }).catch(function(err) {
+        alert('Fallo de red: ' + err.message);
+    });
+};
+
+window.ensureAdminTicketsModalExists = function() {
+    if (document.getElementById('modal-admin-tickets')) return;
+
+    var modalHtml = `
+<div id="modal-admin-tickets" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-[9997] flex items-center justify-center p-3 md:p-4 hidden">
+    <div class="bg-white rounded-[2rem] shadow-2xl w-full max-w-4xl overflow-hidden border border-slate-100 flex flex-col max-h-[92vh]">
+        <div class="px-6 py-4 bg-slate-900 text-white flex items-center justify-between border-b border-slate-800">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-purple-500/20 text-purple-400 flex items-center justify-center text-lg font-bold">
+                    <i class="fa-solid fa-headset"></i>
+                </div>
+                <div>
+                    <h3 class="text-sm md:text-base font-black uppercase tracking-tight text-white flex items-center gap-2">
+                        Administración de Tickets de Soporte
+                        <span class="px-2 py-0.5 bg-purple-500/20 text-purple-300 text-[10px] font-black rounded-md border border-purple-500/30">Exclusivo Admin</span>
+                    </h3>
+                    <p class="text-[11px] text-slate-400 font-medium">Gestión, investigación y respuesta a reportes de usuarios.</p>
+                </div>
+            </div>
+            <button onclick="window.closeAdminTicketsModal()" class="p-2 text-slate-400 hover:text-white rounded-xl hover:bg-slate-800 text-lg transition-all" aria-label="Cerrar modal">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+
+        <div class="px-6 py-3 bg-slate-50 border-b border-slate-200 flex flex-wrap items-center justify-between gap-3 text-xs">
+            <div class="flex items-center gap-2">
+                <label class="font-bold text-slate-600">Filtrar Estado:</label>
+                <select id="admin-ticket-status-filter" onchange="window.renderAdminTicketsUI()" class="p-2 bg-white border border-slate-200 rounded-xl font-medium text-xs">
+                    <option value="TODOS">Todos los estados</option>
+                    <option value="Enviado">Enviado</option>
+                    <option value="En revisión">En revisión</option>
+                    <option value="Se necesita información">Se necesita información</option>
+                    <option value="Información recibida">Información recibida</option>
+                    <option value="Solucionado">Solucionado</option>
+                    <option value="Cerrado">Cerrado</option>
+                </select>
+            </div>
+            <div class="flex items-center gap-2">
+                <input type="text" id="admin-ticket-search-input" onkeyup="window.renderAdminTicketsUI()" placeholder="Buscar ticket o usuario..." class="p-2 bg-white border border-slate-200 rounded-xl font-medium text-xs w-48 md:w-64">
+                <button onclick="window.renderAdminTicketsUI()" class="p-2 bg-slate-200 text-slate-700 rounded-xl hover:bg-slate-300 font-bold"><i class="fa-solid fa-rotate-right"></i></button>
+            </div>
+        </div>
+
+        <div class="p-6 overflow-y-auto space-y-4 flex-grow text-xs">
+            <div id="admin-tickets-container" class="space-y-3">
+                <p class="text-slate-400 text-center py-8 italic font-medium"><i class="fa-solid fa-spinner fa-spin mr-2"></i>Cargando tickets de soporte...</p>
+            </div>
+        </div>
+
+        <div class="px-6 py-3 bg-slate-50 border-t border-slate-200 flex justify-end">
+            <button onclick="window.closeAdminTicketsModal()" class="btn-ima-cancel px-4 py-2 text-xs uppercase font-bold rounded-xl">
+                Cerrar
+            </button>
+        </div>
+    </div>
+</div>`;
+    document.body.insertAdjacentHTML('beforeend', modalHtml);
+};
+
+window.openAdminTicketsModal = function() {
+    window.ensureAdminTicketsModalExists();
+    var modal = document.getElementById('modal-admin-tickets');
+    if (modal) modal.classList.remove('hidden');
+    window.renderAdminTicketsUI();
+};
+
+window.closeAdminTicketsModal = function() {
+    var modal = document.getElementById('modal-admin-tickets');
+    if (modal) modal.classList.add('hidden');
+};
+
+window.renderAdminTicketsUI = function() {
+    var container = document.getElementById('admin-tickets-container');
+    if (!container) return;
+
+    var filterSelect = document.getElementById('admin-ticket-status-filter');
+    var searchInput = document.getElementById('admin-ticket-search-input');
+
+    var filterState = filterSelect ? filterSelect.value : 'TODOS';
+    var searchQuery = searchInput ? searchInput.value.toLowerCase().trim() : '';
+
+    fetchApi('USER', 'getProblemTickets', {}).then(function(res) {
+        if (!res || res.status !== 'success' || !res.tickets || res.tickets.length === 0) {
+            container.innerHTML = '<div class="text-center py-10 text-slate-400 font-medium"><i class="fa-solid fa-inbox text-3xl mb-2 opacity-40 block"></i><p>No hay tickets de soporte registrados en el sistema.</p></div>';
+            return;
+        }
+
+        var filtered = res.tickets.filter(function(t) {
+            if (filterState !== 'TODOS' && t.estado !== filterState) return false;
+            if (searchQuery) {
+                var matchId = t.ticketId.toLowerCase().includes(searchQuery);
+                var matchUser = (t.nombreUsuario || '').toLowerCase().includes(searchQuery);
+                var matchArea = (t.areaFuncion || '').toLowerCase().includes(searchQuery);
+                var matchDesc = (t.descripcion || '').toLowerCase().includes(searchQuery);
+                if (!matchId && !matchUser && !matchArea && !matchDesc) return false;
+            }
+            return true;
+        });
+
+        if (filtered.length === 0) {
+            container.innerHTML = '<div class="text-center py-8 text-slate-400 font-medium"><p>No se encontraron tickets con los filtros aplicados.</p></div>';
+            return;
+        }
+
+        var html = [];
+        filtered.forEach(function(t) {
+            var badgeColor = 'bg-slate-100 text-slate-700 border-slate-200';
+            if (t.estado === 'En revisión') badgeColor = 'bg-blue-50 text-blue-700 border-blue-200';
+            else if (t.estado === 'Se necesita información') badgeColor = 'bg-amber-100 text-amber-800 border-amber-300';
+            else if (t.estado === 'Información recibida') badgeColor = 'bg-purple-100 text-purple-800 border-purple-300 font-bold';
+            else if (t.estado === 'Solucionado') badgeColor = 'bg-emerald-50 text-emerald-700 border-emerald-200';
+            else if (t.estado === 'Cerrado') badgeColor = 'bg-slate-200 text-slate-600 border-slate-300';
+
+            html.push(
+                '<div class="p-4 bg-slate-50 border border-slate-200 rounded-2xl space-y-3">',
+                '  <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-200/80 pb-2.5">',
+                '    <div class="flex items-center gap-2">',
+                '      <span class="font-black text-slate-900 text-xs">' + t.ticketId + '</span>',
+                '      <span class="text-[10px] font-bold text-slate-700 bg-slate-200 px-2 py-0.5 rounded-md">' + t.nombreUsuario + ' (' + t.rolActivo + ')</span>',
+                '      <span class="text-[10px] font-bold text-blue-700 bg-blue-50 border border-blue-100 px-2 py-0.5 rounded-md">' + t.areaFuncion + '</span>',
+                '    </div>',
+                '    <span class="text-[10px] font-bold px-2.5 py-1 rounded-lg border ' + badgeColor + '">' + t.estado + '</span>',
+                '  </div>',
+
+                '  <div class="grid grid-cols-1 md:grid-cols-2 gap-3 bg-white p-3 rounded-xl border border-slate-200/60">',
+                '    <div>',
+                '      <span class="block text-[10px] font-black uppercase text-slate-400">Problema Encontrado:</span>',
+                '      <p class="text-xs text-slate-800 font-medium leading-relaxed whitespace-pre-wrap mt-0.5">' + t.descripcion + '</p>',
+                '    </div>',
+                '    <div>',
+                '      <span class="block text-[10px] font-black uppercase text-slate-400">Resultado Esperado:</span>',
+                '      <p class="text-xs text-slate-800 font-medium leading-relaxed whitespace-pre-wrap mt-0.5">' + t.resultadoEsperado + '</p>',
+                '    </div>',
+                '  </div>',
+
+                '  <div class="flex flex-wrap items-center justify-between text-[10px] text-slate-400 font-medium">',
+                '    <span>Sección: ' + (t.seccionPagina || 'N/D') + ' | App: ' + (t.tipoApp || 'Escritorio') + ' | Versión: v' + (t.versionGlobal || '1.0') + '</span>',
+                '    <span>Fecha: ' + new Date(t.creadoEn).toLocaleString() + '</span>',
+                '  </div>',
+
+                '  <div class="pt-2 border-t border-slate-200 space-y-3">',
+                '    <div class="flex flex-wrap items-center gap-3">',
+                '      <label class="font-bold text-xs text-slate-700">Cambiar Estado:</label>',
+                '      <select id="admin-status-select-' + t.ticketId + '" class="p-2 bg-white border border-slate-200 rounded-xl font-semibold text-xs">',
+                '        <option value="Enviado"' + (t.estado === 'Enviado' ? ' selected' : '') + '>Enviado</option>',
+                '        <option value="En revisión"' + (t.estado === 'En revisión' ? ' selected' : '') + '>En revisión</option>',
+                '        <option value="Se necesita información"' + (t.estado === 'Se necesita información' ? ' selected' : '') + '>Se necesita información</option>',
+                '        <option value="Información recibida"' + (t.estado === 'Información recibida' ? ' selected' : '') + '>Información recibida</option>',
+                '        <option value="Solucionado"' + (t.estado === 'Solucionado' ? ' selected' : '') + '>Solucionado</option>',
+                '        <option value="Cerrado"' + (t.estado === 'Cerrado' ? ' selected' : '') + '>Cerrado</option>',
+                '      </select>',
+                '      <button onclick="window.adminUpdateTicketStatus(\'' + t.ticketId + '\')" class="px-3 py-2 bg-slate-900 text-white font-bold rounded-xl text-xs hover:bg-slate-800"><i class="fa-solid fa-floppy-disk mr-1"></i> Guardar Estado</button>',
+                '    </div>',
+
+                '    <div class="space-y-2 max-h-48 overflow-y-auto p-2.5 bg-white rounded-xl border border-slate-200">',
+                '      <span class="block text-[10px] font-black uppercase text-slate-400 mb-1">Historial de Mensajes & Notas Internas:</span>'
+            );
+
+            if (t.mensajes && t.mensajes.length > 0) {
+                t.mensajes.forEach(function(m) {
+                    var isInternal = m.esNotaInterna === true;
+                    var boxClass = isInternal ? 'bg-amber-50 text-amber-900 border-amber-200' : 'bg-slate-100 text-slate-800 border-slate-200';
+                    html.push(
+                        '      <div class="p-2.5 rounded-xl border text-xs ' + boxClass + '">',
+                        '        <div class="flex items-center justify-between text-[10px] font-bold opacity-70 mb-1">',
+                        '          <span>' + m.autorNombre + ' (' + m.tipoAutor + ')' + (isInternal ? ' - [NOTA INTERNA ADMIN]' : '') + '</span>',
+                        '          <span>' + new Date(m.timestamp).toLocaleString() + '</span>',
+                        '        </div>',
+                        '        <p class="whitespace-pre-wrap font-medium">' + m.mensaje + '</p>',
+                        '      </div>'
+                    );
+                });
+            } else {
+                html.push('      <p class="text-slate-400 italic text-center py-1">Sin mensajes registrados.</p>');
+            }
+
+            html.push(
+                '    </div>',
+
+                '    <div class="space-y-2 bg-slate-100 p-3 rounded-xl border border-slate-200">',
+                '      <div class="flex items-center gap-4 text-[11px] font-bold text-slate-700">',
+                '        <label class="flex items-center gap-1.5 cursor-pointer"><input type="radio" name="reply-type-' + t.ticketId + '" value="public" checked class="text-blue-600"> Mensaje Público al Usuario</label>',
+                '        <label class="flex items-center gap-1.5 cursor-pointer"><input type="radio" name="reply-type-' + t.ticketId + '" value="internal" class="text-amber-600"> Nota Interna Privada</label>',
+                '      </div>',
+                '      <div class="flex items-center gap-2">',
+                '        <input type="text" id="admin-reply-text-' + t.ticketId + '" class="flex-grow p-2.5 bg-white border border-slate-200 rounded-xl font-medium text-xs" placeholder="Escriba un mensaje o nota de seguimiento...">',
+                '        <button onclick="window.adminSubmitTicketReply(\'' + t.ticketId + '\')" class="btn-ima-primary px-3.5 py-2 text-xs font-bold rounded-xl whitespace-nowrap"><i class="fa-solid fa-paper-plane mr-1"></i> Enviar</button>',
+                '      </div>',
+                '    </div>',
+                '  </div>',
+                '</div>'
+            );
+        });
+
+        container.innerHTML = html.join('');
+    }).catch(function(err) {
+        container.innerHTML = '<p class="text-red-500 text-center py-4 font-bold">Error cargando tickets de soporte: ' + err.message + '</p>';
+    });
+};
+
+window.adminUpdateTicketStatus = function(ticketId) {
+    var select = document.getElementById('admin-status-select-' + ticketId);
+    if (!select) return;
+
+    var newStatus = select.value;
+    var currentUser = {};
+    try {
+        currentUser = JSON.parse(localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser') || localStorage.getItem('usuario_actual') || '{}');
+    } catch (_) {}
+
+    var payload = {
+        ticketId: ticketId,
+        nuevoEstado: newStatus,
+        userId: currentUser.userId || currentUser.id,
+        nombreUsuario: currentUser.nombre || currentUser.name,
+        authRole: currentUser.rol || 'Administrador'
+    };
+
+    fetchApi('USER', 'updateTicketStatus', payload).then(function(res) {
+        if (res && res.status === 'success') {
+            alert('Estado del ticket ' + ticketId + ' actualizado a "' + newStatus + '".');
+            window.renderAdminTicketsUI();
+        } else {
+            alert('Error actualizando estado: ' + (res ? res.message : 'Error desconocido'));
+        }
+    }).catch(function(err) {
+        alert('Fallo de red: ' + err.message);
+    });
+};
+
+window.adminSubmitTicketReply = function(ticketId) {
+    var inp = document.getElementById('admin-reply-text-' + ticketId);
+    if (!inp || !inp.value.trim()) return;
+
+    var text = inp.value.trim();
+    var radios = document.getElementsByName('reply-type-' + ticketId);
+    var isInternal = false;
+    for (var i = 0; i < radios.length; i++) {
+        if (radios[i].checked && radios[i].value === 'internal') {
+            isInternal = true;
+            break;
+        }
+    }
+
+    var currentUser = {};
+    try {
+        currentUser = JSON.parse(localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser') || localStorage.getItem('usuario_actual') || '{}');
+    } catch (_) {}
+
+    var select = document.getElementById('admin-status-select-' + ticketId);
+    var currentStatus = select ? select.value : 'En revisión';
+
+    var payload = {
+        ticketId: ticketId,
+        nuevoEstado: currentStatus,
+        notaInterna: isInternal ? text : '',
+        mensajeUsuario: isInternal ? '' : text,
+        userId: currentUser.userId || currentUser.id,
+        nombreUsuario: currentUser.nombre || currentUser.name,
+        authRole: currentUser.rol || 'Administrador'
+    };
+
+    fetchApi('USER', 'updateTicketStatus', payload).then(function(res) {
+        if (res && res.status === 'success') {
+            inp.value = '';
+            window.renderAdminTicketsUI();
+        } else {
+            alert('Error al registrar mensaje: ' + (res ? res.message : 'Error desconocido'));
+        }
+    }).catch(function(err) {
+        alert('Fallo de red: ' + err.message);
+    });
+};
+
+/* ==========================================================================
+   TERMS AND CONDITIONS FIRST-LOGIN MODAL WORKFLOW
+   ========================================================================== */
+window.checkAndShowFirstLoginTermsModal = function() {
+    var currentUser = {};
+    try {
+        currentUser = JSON.parse(localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser') || localStorage.getItem('usuario_actual') || '{}');
+    } catch (_) {}
+
+    if (!currentUser || (!currentUser.userId && !currentUser.id)) return;
+    var uid = currentUser.userId || currentUser.id;
+
+    fetchApi('ACCOUNTING', 'getPolicyAcceptances', { userId: uid })
+        .then(function(res) {
+            var accepted = false;
+            if (res && res.status === 'success' && res.aceptaciones) {
+                accepted = res.aceptaciones.some(function(a) {
+                    return a.politicaInstId === 'DOC-USO' || a.politicaInstId === 'TERMINOS-1.0' || a.tipoDocumento === 'TERMS_AND_CONDITIONS';
+                });
+            }
+            if (!accepted) {
+                window.openFirstLoginTermsModal();
+            }
+        })
+        .catch(function(err) {
+            console.warn('No se pudo verificar la aceptación de términos:', err);
+        });
+};
+
+window.openFirstLoginTermsModal = function() {
+    var modalId = 'modal-first-login-terms';
+    var modal = document.getElementById(modalId);
+    if (!modal) {
+        modal = document.createElement('div');
+        modal.id = modalId;
+        modal.className = 'fixed inset-0 z-[10000] bg-slate-900/80 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto';
+        modal.innerHTML = '' +
+            '<div class="bg-white rounded-[2rem] border border-slate-100 shadow-2xl max-w-2xl w-full p-6 md:p-8 space-y-6 relative animate-fade-in">' +
+                '<div class="text-center space-y-2 border-b border-slate-100 pb-4">' +
+                    '<div class="w-12 h-12 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center mx-auto text-xl shadow-inner">' +
+                        '<i class="fas fa-file-contract"></i>' +
+                    '</div>' +
+                    '<h3 class="text-xl font-black text-slate-900 uppercase tracking-tight">Términos y Condiciones de Uso</h3>' +
+                    '<p class="text-xs font-bold text-slate-400 uppercase tracking-widest">Aviso Legal Obligatorio — Versión Global 1.0</p>' +
+                '</div>' +
+                '<div class="text-xs text-slate-600 space-y-3 leading-relaxed max-h-60 overflow-y-auto p-4 bg-slate-50 rounded-2xl border border-slate-100">' +
+                    '<p class="font-bold text-slate-800">Bienvenido a la plataforma oficial de New Generation Bilingual School and Institute.</p>' +
+                    '<p>Para hacer uso de los servicios de la plataforma, es requisito indispensable leer y aceptar libremente los Términos y Condiciones de Uso del Software titularidad exclusiva de <strong>JyP Solutions S. de R.L. de C.V.</strong> otorgado bajo licencia de uso a la Institución.</p>' +
+                    '<p>El uso de la plataforma incluye el acceso al expediente escolar, notas, aulas virtuales, pagos y notificaciones multicanal. El usuario declara que sus credenciales son personales e intransferibles.</p>' +
+                    '<div class="pt-2">' +
+                        '<a href="politica-de-uso.html" target="_blank" class="inline-flex items-center text-blue-600 font-bold hover:underline gap-1 text-xs">' +
+                            '<i class="fas fa-external-link-alt"></i> Leer Términos y Condiciones Completos (17 Artículos)' +
+                        '</a>' +
+                    '</div>' +
+                '</div>' +
+                '<div class="pt-2 flex flex-col sm:flex-row items-center justify-end gap-3 border-t border-slate-100">' +
+                    '<button onclick="window.closeFirstLoginTermsModalAndLogout()" class="w-full sm:w-auto px-5 py-2.5 rounded-xl border border-slate-200 text-slate-600 font-bold text-xs hover:bg-slate-50 uppercase tracking-wider transition-all">' +
+                        'Volver / Salir' +
+                    '</button>' +
+                    '<button id="btn-modal-accept-terms" onclick="window.acceptTermsFromModal()" class="w-full sm:w-auto px-6 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs uppercase tracking-wider shadow-lg transition-all flex items-center justify-center gap-2">' +
+                        '<i class="fas fa-check-circle"></i> Aceptar Términos' +
+                    '</button>' +
+                '</div>' +
+            '</div>';
+        document.body.appendChild(modal);
+    } else {
+        modal.classList.remove('hidden');
+    }
+};
+
+window.closeFirstLoginTermsModalAndLogout = function() {
+    var modal = document.getElementById('modal-first-login-terms');
+    if (modal) modal.classList.add('hidden');
+    if (typeof window.logout === 'function') {
+        window.logout();
+    } else {
+        localStorage.clear();
+        sessionStorage.clear();
+        window.location.href = 'index.html';
+    }
+};
+
+window.acceptTermsFromModal = function() {
+    var currentUser = {};
+    try {
+        currentUser = JSON.parse(localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser') || localStorage.getItem('usuario_actual') || '{}');
+    } catch (_) {}
+
+    var uid = currentUser.userId || currentUser.id;
+    if (!uid) {
+        alert('Debe estar autenticado para registrar su conformidad.');
+        return;
+    }
+
+    var btn = document.getElementById('btn-modal-accept-terms');
+    if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Registrando...';
+    }
+
+    fetchApi('USER', 'acceptLegalDocument', {
+        userId: uid,
+        docType: 'TERMS_AND_CONDITIONS',
+        version: '1.0'
+    }).then(function(res) {
+        if (res && res.status === 'success') {
+            var modal = document.getElementById('modal-first-login-terms');
+            if (modal) modal.classList.add('hidden');
+        } else {
+            alert('Error al guardar la aceptación: ' + (res ? res.message : 'Error desconocido'));
+            if (btn) {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-check-circle"></i> Aceptar Términos';
+            }
+        }
+    }).catch(function(err) {
+        alert('Error de conexión al procesar la aceptación.');
+        if (btn) {
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-check-circle"></i> Aceptar Términos';
+        }
+    });
+};
+
+document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(function() {
+        if (typeof window.checkAndShowFirstLoginTermsModal === 'function') {
+            window.checkAndShowFirstLoginTermsModal();
+        }
+    }, 1200);
+});
+
+/* ==========================================================================
+   UNIVERSAL CONFIGURABLE CHART COMPONENT (FASE GRÁFICAS E INDICADORES)
+   ========================================================================== */
+window.chartPalettes = {
+    'institucional': { primary: '#2563eb', bg: 'rgba(37, 99, 235, 0.15)', border: '#1d4ed8', list: ['#2563eb', '#10b981', '#f59e0b', '#8b5cf6', '#ec4899', '#06b6d4'] },
+    'esmeralda': { primary: '#10b981', bg: 'rgba(16, 185, 129, 0.15)', border: '#047857', list: ['#10b981', '#059669', '#047857', '#34d399', '#6ee7b7', '#a7f3d0'] },
+    'indigo': { primary: '#6366f1', bg: 'rgba(99, 102, 241, 0.15)', border: '#4338ca', list: ['#6366f1', '#4f46e5', '#3730a3', '#818cf8', '#a5b4fc', '#c7d2fe'] },
+    'amber': { primary: '#f59e0b', bg: 'rgba(245, 158, 11, 0.15)', border: '#b45309', list: ['#f59e0b', '#d97706', '#b45309', '#fbbf24', '#fde68a', '#fef3c7'] },
+    'monocromo': { primary: '#475569', bg: 'rgba(71, 85, 105, 0.15)', border: '#1e293b', list: ['#334155', '#475569', '#64748b', '#94a3b8', '#cbd5e1', '#e2e8f0'] }
+};
+
+window.activeUniversalCharts = window.activeUniversalCharts || {};
+
+window.renderUniversalConfigurableChart = function(containerId, options) {
+    var container = document.getElementById(containerId);
+    if (!container) return;
+
+    options = options || {};
+    var category = options.chartCategory || 'ACADEMICO';
+    var title = options.title || 'Indicador de Rendimiento';
+    var subtitle = options.subtitle || 'Visualización de datos institucionales';
+    var labels = options.labels || [];
+    var rawData = options.data || [];
+    var defaultType = options.defaultType || 'bar';
+    var currentPaletteKey = options.paletteKey || 'institucional';
+    var isTableView = !!options.showTableFirst;
+
+    var chartKey = containerId + '_chart';
+
+    var html = '' +
+        '<div class="bg-white p-5 md:p-6 rounded-[2rem] border border-slate-200 shadow-sm space-y-4">' +
+            '<div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-slate-100 pb-3">' +
+                '<div>' +
+                    '<span class="inline-block px-2.5 py-0.5 bg-slate-100 text-slate-600 rounded-full text-[10px] font-black uppercase tracking-wider mb-1">' +
+                        category +
+                    '</span>' +
+                    '<h4 class="text-sm md:text-base font-black text-slate-900 uppercase tracking-tight">' + title + '</h4>' +
+                    '<p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">' + subtitle + '</p>' +
+                '</div>' +
+                '<!-- Controles de Configuración de Gráfica -->' +
+                '<div class="flex flex-wrap items-center gap-2 text-xs font-bold">' +
+                    '<select id="ctrl-type-' + containerId + '" class="p-1.5 bg-slate-50 border border-slate-200 rounded-lg font-bold text-slate-700 text-[11px] outline-none">' +
+                        '<option value="bar" ' + (defaultType==='bar'?'selected':'') + '>📊 Barras Verticales</option>' +
+                        '<option value="horizontalBar" ' + (defaultType==='horizontalBar'?'selected':'') + '>📏 Barras Horizontales</option>' +
+                        '<option value="line" ' + (defaultType==='line'?'selected':'') + '>📈 Líneas de Tendencia</option>' +
+                        '<option value="doughnut" ' + (defaultType==='doughnut'?'selected':'') + '>🍩 Sectores / Dona</option>' +
+                        '<option value="radar" ' + (defaultType==='radar'?'selected':'') + '>🕸️ Radial Multidimensional</option>' +
+                    '</select>' +
+                    '<select id="ctrl-palette-' + containerId + '" class="p-1.5 bg-slate-50 border border-slate-200 rounded-lg font-bold text-slate-700 text-[11px] outline-none">' +
+                        '<option value="institucional" ' + (currentPaletteKey==='institucional'?'selected':'') + '>🎨 Azul Institucional</option>' +
+                        '<option value="esmeralda" ' + (currentPaletteKey==='esmeralda'?'selected':'') + '>🌿 Verde Esmeralda</option>' +
+                        '<option value="indigo" ' + (currentPaletteKey==='indigo'?'selected':'') + '>🔮 Índigo Noble</option>' +
+                        '<option value="amber" ' + (currentPaletteKey==='amber'?'selected':'') + '>📙 Ámbar Cobre</option>' +
+                        '<option value="monocromo" ' + (currentPaletteKey==='monocromo'?'selected':'') + '>🔘 Monocromo Sobrio</option>' +
+                    '</select>' +
+                    '<button id="btn-toggle-view-' + containerId + '" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-[11px] uppercase tracking-wider transition-all flex items-center gap-1">' +
+                        '<i class="fas ' + (isTableView ? 'fa-chart-bar' : 'fa-table') + '"></i> ' + (isTableView ? 'Gráfica' : 'Tabla') +
+                    '</button>' +
+                '</div>' +
+            '</div>' +
+
+            '<!-- Area de Gráfica / Tabla -->' +
+            '<div id="view-chart-area-' + containerId + '" class="' + (isTableView ? 'hidden' : '') + ' h-64 md:h-72 relative">' +
+                '<canvas id="canvas-' + containerId + '"></canvas>' +
+            '</div>' +
+
+            '<div id="view-table-area-' + containerId + '" class="' + (isTableView ? '' : 'hidden') + ' max-h-64 overflow-y-auto border border-slate-100 rounded-xl p-2 bg-slate-50/50">' +
+                '<table class="w-full text-left text-xs font-semibold text-slate-700">' +
+                    '<thead class="text-[10px] uppercase font-black text-slate-400 border-b border-slate-200 bg-slate-100">' +
+                        '<tr><th class="p-2">Categoría / Ítem</th><th class="p-2 text-right">Valor / Resultado</th></tr>' +
+                    '</thead>' +
+                    '<tbody>' +
+                        (labels.map(function(lbl, idx) {
+                            var val = (rawData[idx] !== undefined && rawData[idx] !== null) ? rawData[idx] : 'N/A';
+                            return '<tr class="border-b border-slate-100 hover:bg-white"><td class="p-2 font-bold">' + lbl + '</td><td class="p-2 text-right font-black text-slate-900">' + val + '</td></tr>';
+                        }).join('') || '<tr><td colspan="2" class="p-4 text-center text-slate-400">Sin datos para mostrar en la tabla.</td></tr>') +
+                    '</tbody>' +
+                '</table>' +
+            '</div>' +
+        '</div>';
+
+    container.innerHTML = html;
+
+    if (!labels || labels.length === 0 || !rawData || rawData.length === 0) {
+        var chartArea = document.getElementById('view-chart-area-' + containerId);
+        if (chartArea) {
+            chartArea.innerHTML = '<div class="h-full flex items-center justify-center text-slate-400 text-xs font-bold uppercase tracking-wider bg-slate-50/50 rounded-2xl border border-dashed border-slate-200"><i class="fas fa-info-circle mr-2 text-slate-300"></i> No existen registros suficientes para esta categoría</div>';
+        }
+        return;
+    }
+
+    function renderChartInstance(type, paletteKey) {
+        var ctx = document.getElementById('canvas-' + containerId)?.getContext('2d');
+        if (!ctx) return;
+
+        if (window.activeUniversalCharts[chartKey]) {
+            window.activeUniversalCharts[chartKey].destroy();
+        }
+
+        var pal = window.chartPalettes[paletteKey] || window.chartPalettes['institucional'];
+        var isHorizontal = type === 'horizontalBar';
+        var actualType = isHorizontal ? 'bar' : type;
+
+        var bgColors = (actualType === 'doughnut' || actualType === 'pie' || actualType === 'polarArea') ? pal.list : pal.bg;
+        var borderColors = (actualType === 'doughnut' || actualType === 'pie' || actualType === 'polarArea') ? '#ffffff' : pal.border;
+
+        var chartConfig = {
+            type: actualType,
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: title,
+                    data: rawData,
+                    backgroundColor: bgColors,
+                    borderColor: borderColors,
+                    borderWidth: 2,
+                    tension: 0.35,
+                    fill: actualType === 'line'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                indexAxis: isHorizontal ? 'y' : 'x',
+                plugins: {
+                    legend: {
+                        display: (actualType === 'doughnut' || actualType === 'pie' || actualType === 'radar'),
+                        position: 'bottom',
+                        labels: { font: { family: 'Inter', size: 10, weight: 'bold' } }
+                    }
+                },
+                scales: (actualType === 'doughnut' || actualType === 'pie' || actualType === 'radar') ? {} : {
+                    y: { beginAtZero: true, grid: { color: 'rgba(226, 232, 240, 0.6)' }, ticks: { font: { family: 'Inter', size: 10, weight: 'bold' } } },
+                    x: { grid: { display: false }, ticks: { font: { family: 'Inter', size: 10, weight: 'bold' } } }
+                }
+            }
+        };
+
+        window.activeUniversalCharts[chartKey] = new Chart(ctx, chartConfig);
+    }
+
+    if (!isTableView) {
+        renderChartInstance(defaultType, currentPaletteKey);
+    }
+
+    // Handlers
+    var typeSelect = document.getElementById('ctrl-type-' + containerId);
+    var paletteSelect = document.getElementById('ctrl-palette-' + containerId);
+    var toggleBtn = document.getElementById('btn-toggle-view-' + containerId);
+
+    if (typeSelect) {
+        typeSelect.addEventListener('change', function() {
+            renderChartInstance(typeSelect.value, paletteSelect ? paletteSelect.value : 'institucional');
+        });
+    }
+
+    if (paletteSelect) {
+        paletteSelect.addEventListener('change', function() {
+            renderChartInstance(typeSelect ? typeSelect.value : 'bar', paletteSelect.value);
+        });
+    }
+
+    if (toggleBtn) {
+        toggleBtn.addEventListener('click', function() {
+            var chartView = document.getElementById('view-chart-area-' + containerId);
+            var tableView = document.getElementById('view-table-area-' + containerId);
+            if (!chartView || !tableView) return;
+
+            if (chartView.classList.contains('hidden')) {
+                chartView.classList.remove('hidden');
+                tableView.classList.add('hidden');
+                toggleBtn.innerHTML = '<i class="fas fa-table mr-1"></i> Tabla';
+                renderChartInstance(typeSelect ? typeSelect.value : 'bar', paletteSelect ? paletteSelect.value : 'institucional');
+            } else {
+                chartView.classList.add('hidden');
+                tableView.classList.remove('hidden');
+                toggleBtn.innerHTML = '<i class="fas fa-chart-bar mr-1"></i> Gráfica';
+            }
+        });
+    }
+};
+
+window.openAnalyticsChartModal = function(chartCategory) {
+    chartCategory = chartCategory || 'DESEMPEÑO ACADÉMICO';
+    var modalId = 'modal-universal-analytics-chart';
+    var modal = document.getElementById(modalId);
+    if (!modal) {
+        modal = document.createElement('div');
+        modal.id = modalId;
+        modal.className = 'fixed inset-0 z-[9995] bg-slate-900/80 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto';
+        modal.innerHTML = '' +
+            '<div class="bg-white rounded-[2rem] border border-slate-100 shadow-2xl max-w-3xl w-full p-6 md:p-8 space-y-6 relative animate-fade-in">' +
+                '<div class="flex items-center justify-between border-b border-slate-100 pb-4">' +
+                    '<div>' +
+                        '<span class="inline-block px-3 py-1 bg-blue-50 text-blue-600 rounded-full text-[10px] font-black uppercase tracking-widest mb-1">Módulo Analítico</span>' +
+                        '<h3 class="text-xl font-black text-slate-900 uppercase tracking-tight" id="analytics-modal-title">Gráficas e Indicadores</h3>' +
+                    '</div>' +
+                    '<button onclick="document.getElementById(\'' + modalId + '\').classList.add(\'hidden\')" class="w-8 h-8 rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200 flex items-center justify-center font-bold text-sm transition-all">' +
+                        '<i class="fas fa-times"></i>' +
+                    '</button>' +
+                '</div>' +
+                '<div id="modal-chart-widget-container">' +
+                    '<!-- Componente rendered por renderUniversalConfigurableChart -->' +
+                '</div>' +
+                '<div class="pt-2 border-t border-slate-100 text-right">' +
+                    '<button onclick="document.getElementById(\'' + modalId + '\').classList.add(\'hidden\')" class="px-5 py-2.5 bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs uppercase tracking-wider rounded-xl shadow-md transition-all">' +
+                        'Cerrar' +
+                    '</button>' +
+                '</div>' +
+            '</div>';
+        document.body.appendChild(modal);
+    } else {
+        modal.classList.remove('hidden');
+    }
+
+    var sampleLabels = ['Español', 'Matemáticas', 'Inglés', 'Ciencias Naturales', 'Estudios Sociales', 'Informática'];
+    var sampleData = [88, 92, 85, 90, 87, 96];
+
+    if (chartCategory === 'ASISTENCIA') {
+        sampleLabels = ['Asistencia Presencial', 'Excusas Justificadas', 'Tardanzas', 'Inasistencias'];
+        sampleData = [94, 3, 2, 1];
+    } else if (chartCategory === 'PARTICIPACION') {
+        sampleLabels = ['Tareas Entregadas a Tiempo', 'Entregas Tardías (50%)', 'Guías Consultadas', 'Exámenes Completados'];
+        sampleData = [18, 2, 12, 4];
+    } else if (chartCategory === 'ADMINISTRATIVO') {
+        sampleLabels = ['I Parcial', 'II Parcial', 'III Parcial', 'IV Parcial'];
+        sampleData = [89.5, 91.2, 93.0, 94.8];
+    }
+
+    window.renderUniversalConfigurableChart('modal-chart-widget-container', {
+        chartCategory: chartCategory,
+        title: 'Indicadores de ' + chartCategory,
+        subtitle: 'Análisis detallado de rendimiento e indicadores institucionales',
+        labels: sampleLabels,
+        data: sampleData,
+        defaultType: chartCategory === 'ASISTENCIA' ? 'doughnut' : 'bar'
+    });
+};
+
+/* ==========================================================================
+   ROLE NAVIGATION MENU & ACCORDION SIDEBAR / HAMBURGER DRAWER SYSTEM
+   ========================================================================== */
+window.loadCommercialUnitNames = function() {
+    var storeName = localStorage.getItem('storeUnitName') || 'Tiendita Escolar';
+    var cafeName = localStorage.getItem('cafeUnitName') || 'Cafetería';
+
+    var storeEl = document.getElementById('store-dashboard-title');
+    if (storeEl) storeEl.textContent = storeName;
+
+    var cafeEl = document.getElementById('cafeteria-dashboard-title');
+    if (cafeEl) cafeEl.textContent = cafeName;
+};
+
+window.saveCommercialUnitNames = function(storeName, cafeName) {
+    if (storeName) localStorage.setItem('storeUnitName', storeName.trim());
+    if (cafeName) localStorage.setItem('cafeUnitName', cafeName.trim());
+    window.loadCommercialUnitNames();
+};
+
+window.toggleRoleMenuAccordionSection = function(sectionId, containerId) {
+    var container = document.getElementById(containerId);
+    if (!container) return;
+    var sections = container.querySelectorAll('.accordion-section-content');
+    sections.forEach(function(sec) {
+        if (sec.id === sectionId) {
+            sec.classList.toggle('hidden');
+        } else {
+            sec.classList.add('hidden'); // Auto close sister sections
+        }
+    });
+};
+
+window.initRoleNavigationMenu = function() {
+    var currentUser = {};
+    try {
+        currentUser = JSON.parse(localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser') || localStorage.getItem('usuario_actual') || '{}');
+    } catch (_) {}
+
+    var role = currentUser.rol || 'Estudiante';
+
+    var desktopBtn = document.getElementById('btn-desktop-sidebar-toggle');
+    if (desktopBtn) {
+        desktopBtn.onclick = function() {
+            var sidebar = document.getElementById('desktop-sidebar-container');
+            if (sidebar) sidebar.classList.toggle('hidden');
+        };
+    }
+
+    var mobileBtn = document.getElementById('btn-mobile-hamburger-menu');
+    if (!mobileBtn) {
+        var headerNav = document.querySelector('#main-header nav') || document.querySelector('#main-header .container');
+        if (headerNav) {
+            mobileBtn = document.createElement('button');
+            mobileBtn.id = 'btn-mobile-hamburger-menu';
+            mobileBtn.className = 'md:hidden px-3 py-2 bg-slate-100 text-slate-700 rounded-xl font-bold text-xs flex items-center gap-1.5 hover:bg-slate-200 transition-all';
+            mobileBtn.title = 'Menú de Navegación';
+            mobileBtn.setAttribute('aria-label', 'Menú de Navegación');
+            mobileBtn.innerHTML = '<i class="fas fa-bars text-sm"></i> <span class="text-[10px] uppercase font-black">Menú</span>';
+            mobileBtn.onclick = function() { window.openMobileHamburgerDrawer(); };
+            headerNav.appendChild(mobileBtn);
+        }
+    } else {
+        mobileBtn.onclick = function() { window.openMobileHamburgerDrawer(); };
+    }
+
+    window.loadCommercialUnitNames();
+    window.initNoLoopHistoryManager();
+};
+
+window.openMobileHamburgerDrawer = function() {
+    var drawerId = 'mobile-hamburger-drawer';
+    var drawer = document.getElementById(drawerId);
+    if (!drawer) {
+        drawer = document.createElement('div');
+        drawer.id = drawerId;
+        drawer.className = 'fixed inset-0 z-[9998] bg-slate-900/80 backdrop-blur-sm flex justify-start animate-fade-in md:hidden';
+
+        var currentUser = {};
+        try {
+            currentUser = JSON.parse(localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser') || localStorage.getItem('usuario_actual') || '{}');
+        } catch (_) {}
+
+        var role = currentUser.rol || 'Estudiante';
+
+        drawer.innerHTML = '' +
+            '<div class="w-80 bg-white h-full shadow-2xl p-6 space-y-6 flex flex-col justify-between overflow-y-auto pb-24">' +
+                '<div class="space-y-4">' +
+                    '<div class="flex items-center justify-between border-b border-slate-100 pb-4">' +
+                        '<div class="flex items-center gap-2.5">' +
+                            '<img src="imagenes/new-generation-logo.png" class="w-8 h-8 object-contain">' +
+                            '<div>' +
+                                '<h4 class="text-xs font-black text-slate-900 uppercase">New Generation</h4>' +
+                                '<p class="text-[9px] font-bold text-blue-600 uppercase tracking-widest">' + role + '</p>' +
+                            '</div>' +
+                        '</div>' +
+                        '<button onclick="document.getElementById(\'' + drawerId + '\').classList.add(\'hidden\')" class="w-8 h-8 rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200 flex items-center justify-center font-bold text-xs">' +
+                            '<i class="fas fa-times"></i>' +
+                        '</button>' +
+                    '</div>' +
+
+                    '<!-- Menú Acordeón por Rol -->' +
+                    '<div id="drawer-accordion-container" class="space-y-2 text-xs font-bold text-slate-700">' +
+                        '<div class="rounded-2xl border border-slate-100 overflow-hidden">' +
+                            '<button onclick="window.toggleRoleMenuAccordionSection(\'sec-drawer-academic\', \'drawer-accordion-container\')" class="w-full p-3 bg-slate-50 hover:bg-slate-100 flex items-center justify-between font-black uppercase text-[11px] text-slate-800">' +
+                                '<span><i class="fas fa-graduation-cap mr-2 text-blue-600"></i> Académico & Clases</span>' +
+                                '<i class="fas fa-chevron-down text-[10px]"></i>' +
+                            '</button>' +
+                            '<div id="sec-drawer-academic" class="accordion-section-content hidden p-3 bg-white space-y-2 border-t border-slate-100 text-[11px]">' +
+                                '<a href="student-dashboard.html" class="block p-2 hover:bg-blue-50 text-slate-700 hover:text-blue-600 rounded-lg">👨‍🎓 Portal del Estudiante</a>' +
+                                '<a href="teacher-dashboard.html" class="block p-2 hover:bg-blue-50 text-slate-700 hover:text-blue-600 rounded-lg">👨‍🏫 Portal Docente & Clases</a>' +
+                                '<a href="javascript:void(0)" onclick="window.openAnalyticsChartModal(\'DESEMPEÑO ACADÉMICO\')" class="block p-2 hover:bg-blue-50 text-slate-700 hover:text-blue-600 rounded-lg">📊 Gráficas de Rendimiento</a>' +
+                            '</div>' +
+                        '</div>' +
+
+                        '<div class="rounded-2xl border border-slate-100 overflow-hidden">' +
+                            '<button onclick="window.toggleRoleMenuAccordionSection(\'sec-drawer-admin\', \'drawer-accordion-container\')" class="w-full p-3 bg-slate-50 hover:bg-slate-100 flex items-center justify-between font-black uppercase text-[11px] text-slate-800">' +
+                                '<span><i class="fas fa-building-columns mr-2 text-emerald-600"></i> Gestión & Secretaría</span>' +
+                                '<i class="fas fa-chevron-down text-[10px]"></i>' +
+                            '</button>' +
+                            '<div id="sec-drawer-admin" class="accordion-section-content hidden p-3 bg-white space-y-2 border-t border-slate-100 text-[11px]">' +
+                                '<a href="dashboard-contabilidad.html" class="block p-2 hover:bg-emerald-50 text-slate-700 hover:text-emerald-600 rounded-lg">💼 Área de Contaduría</a>' +
+                                '<a href="dashboard-recursos-humanos.html" class="block p-2 hover:bg-emerald-50 text-slate-700 hover:text-emerald-600 rounded-lg">👥 Recursos Humanos</a>' +
+                                '<a href="politica-de-uso.html" target="_blank" class="block p-2 hover:bg-emerald-50 text-slate-700 hover:text-emerald-600 rounded-lg">📜 Términos & Políticas</a>' +
+                            '</div>' +
+                        '</div>' +
+
+                        '<div class="rounded-2xl border border-slate-100 overflow-hidden">' +
+                            '<button onclick="window.toggleRoleMenuAccordionSection(\'sec-drawer-services\', \'drawer-accordion-container\')" class="w-full p-3 bg-slate-50 hover:bg-slate-100 flex items-center justify-between font-black uppercase text-[11px] text-slate-800">' +
+                                '<span><i class="fas fa-store mr-2 text-amber-600"></i> Servicios & Unidades</span>' +
+                                '<i class="fas fa-chevron-down text-[10px]"></i>' +
+                            '</button>' +
+                            '<div id="sec-drawer-services" class="accordion-section-content hidden p-3 bg-white space-y-2 border-t border-slate-100 text-[11px]">' +
+                                '<a href="dashboard-tienda.html" class="block p-2 hover:bg-amber-50 text-slate-700 hover:text-amber-600 rounded-lg">🛍️ Tiendita Escolar</a>' +
+                                '<a href="dashboard-cafeteria.html" class="block p-2 hover:bg-amber-50 text-slate-700 hover:text-amber-600 rounded-lg">🥪 Cafetería</a>' +
+                            '</div>' +
+                        '</div>' +
+                    '</div>' +
+                '</div>' +
+
+                '<div class="pt-4 border-t border-slate-100 space-y-2 text-xs font-bold text-slate-500">' +
+                    '<button onclick="window.openReportIssueModal()" class="w-full p-2.5 bg-slate-100 hover:bg-slate-200 text-slate-800 rounded-xl flex items-center justify-center gap-2 uppercase tracking-wider font-black">' +
+                        '<i class="fa-solid fa-circle-exclamation text-amber-500"></i> Reportar Problema' +
+                    '</button>' +
+                '</div>' +
+            '</div>';
+        document.body.appendChild(drawer);
+    } else {
+        drawer.classList.remove('hidden');
+    }
+};
+
+window.initNoLoopHistoryManager = function() {
+    if (window.noLoopHistoryInitialized) return;
+    window.noLoopHistoryInitialized = true;
+
+    window.addEventListener('popstate', function(event) {
+        if (event.state && event.state.view) {
+            if (typeof window.switchActiveView === 'function') {
+                window.switchActiveView(event.state.view, false);
+            }
+        }
+    });
+};
+
+document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(function() {
+        if (typeof window.initRoleNavigationMenu === 'function') {
+            window.initRoleNavigationMenu();
+        }
+    }, 600);
+});

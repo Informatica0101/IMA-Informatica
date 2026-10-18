@@ -109,6 +109,8 @@ function getOrCreateSheet(ss, name) {
   let sheet = ss.getSheetByName(name);
   if (!sheet) {
     sheet = ss.insertSheet(name);
+    if (name === "TurnosAlmuerzo") sheet.appendRow(["TurnoID", "Departamento", "RolNombre", "HoraInicio", "HoraFin", "CoberturaMinima", "Estado", "Observaciones"]);
+    if (name === "AprobacionHorasExtras") sheet.appendRow(["OvertimeID", "UserId", "NombreEmpleado", "FechaTrabajada", "HorasRegistradas", "HorasAprobadas", "Motivo", "EstadoAprobacion", "AprobadoPor", "PeriodoNominaId", "EstadoPago", "Timestamp"]);
     if (name === "ConceptosCobro") sheet.appendRow(["ConceptoID", "Fecha", "NombreConcepto", "MontoBase", "AplicaAGrado", "PeriodoVigencia", "Estado", "Observaciones"]);
     if (name === "CreditoFamiliarAutorizaciones") sheet.appendRow(["AutorizacionID", "Fecha", "ResponsableUserId", "EstudianteUserId", "LimiteDiario", "LimiteMensual", "SaldoUsado", "Estado", "FechaVencimiento", "Observaciones"]);
     if (name === "CreditoFamiliarMovimientos") sheet.appendRow(["MovimientoCreditoID", "Fecha", "AutorizacionID", "EstudianteUserId", "ResponsableUserId", "Establecimiento", "Monto", "OrigenRefId", "Estado", "Observaciones"]);
@@ -263,6 +265,13 @@ function doPost(e) {
       case "uploadEmployeeDocument": result = uploadEmployeeDocument(payload); break;
       case "getEmployeeDocuments": result = getEmployeeDocuments(payload); break;
       case "getHRDashboardAnalytics": result = getHRDashboardAnalytics(payload); break;
+
+      // Endpoints Nueva Fase - Horarios Laborales, Almuerzos y Horas Extras
+      case "configureLunchShifts": result = configureLunchShifts(payload); break;
+      case "getLunchShifts": result = getLunchShifts(payload); break;
+      case "calculateOvertime": result = calculateOvertime(payload); break;
+      case "reviewOvertimeRequest": result = reviewOvertimeRequest(payload); break;
+      case "getOvertimeRequests": result = getOvertimeRequests(payload); break;
       case "generatePayrollPeriod": result = generatePayrollPeriod(payload); break;
       case "recordStaffAttendance": result = recordStaffAttendance(payload); break;
       case "getStaffPayrollReceipt": result = getStaffPayrollReceipt(payload); break;
@@ -4259,6 +4268,180 @@ function getAssetAssignments(payload) {
     status: "success",
     asignaciones: mapped
   };
+}
+
+// ---------------------------------------------------------------------------
+// MÓDULO DE ALMUERZOS Y HORAS EXTRAS DE PERSONAL
+// ---------------------------------------------------------------------------
+
+function configureLunchShifts(payload) {
+  try {
+    const { turnoId, departamento, rolNombre, horaInicio, horaFin, coberturaMinima, estado, observaciones } = payload || {};
+    if (!departamento || !horaInicio || !horaFin) {
+      return { status: "error", code: "VALIDATION_ERROR", message: "Departamento, Hora de Inicio y Hora de Fin son obligatorios." };
+    }
+
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const sheet = getOrCreateSheet(ss, "TurnosAlmuerzo");
+    const targetId = turnoId || ("TURNO-" + Math.floor(100000 + Math.random() * 900000));
+
+    sheet.appendRow([
+      targetId,
+      departamento,
+      rolNombre || "Todos",
+      horaInicio,
+      horaFin,
+      coberturaMinima || 1,
+      estado || "Activo",
+      observaciones || ""
+    ]);
+
+    return { status: "success", turnoId: targetId, message: "Turno de almuerzo configurado correctamente." };
+  } catch (error) {
+    return { status: "error", message: error.message };
+  }
+}
+
+function getLunchShifts(payload) {
+  try {
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const sheet = getOrCreateSheet(ss, "TurnosAlmuerzo");
+    const data = sheet.getDataRange().getValues();
+
+    if (data.length <= 1) {
+      return {
+        status: "success",
+        shifts: [
+          { turnoId: "TURNO-DEF-1", departamento: "Docencia", rolNombre: "Profesor", horaInicio: "12:00", horaFin: "12:45", coberturaMinima: 2, estado: "Activo" },
+          { turnoId: "TURNO-DEF-2", departamento: "Administración", rolNombre: "Secretaría", horaInicio: "12:45", horaFin: "13:30", coberturaMinima: 1, estado: "Activo" }
+        ]
+      };
+    }
+
+    const shifts = [];
+    for (let i = 1; i < data.length; i++) {
+      const r = data[i];
+      shifts.push({
+        turnoId: r[0],
+        departamento: r[1],
+        rolNombre: r[2],
+        horaInicio: r[3],
+        horaFin: r[4],
+        coberturaMinima: r[5],
+        estado: r[6],
+        observaciones: r[7]
+      });
+    }
+
+    return { status: "success", shifts: shifts };
+  } catch (error) {
+    return { status: "error", message: error.message };
+  }
+}
+
+function calculateOvertime(payload) {
+  try {
+    const { userId, nombreEmpleado, fechaTrabajada, horasRegistradas, motivo } = payload || {};
+    if (!userId || !fechaTrabajada || !horasRegistradas) {
+      return { status: "error", code: "VALIDATION_ERROR", message: "userId, fechaTrabajada y horasRegistradas son obligatorios." };
+    }
+
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const sheet = getOrCreateSheet(ss, "AprobacionHorasExtras");
+    const overtimeId = "OVT-" + Math.floor(100000 + Math.random() * 900000);
+    const now = new Date().toISOString();
+
+    sheet.appendRow([
+      overtimeId,
+      userId,
+      nombreEmpleado || "Empleado",
+      fechaTrabajada,
+      parseFloat(horasRegistradas) || 0,
+      0,
+      motivo || "Trabajo adicional fuera de jornada",
+      "Pendiente",
+      "",
+      "",
+      "PendientePago",
+      now
+    ]);
+
+    return { status: "success", overtimeId: overtimeId, message: "Registro de horas extras ingresado para revisión." };
+  } catch (error) {
+    return { status: "error", message: error.message };
+  }
+}
+
+function reviewOvertimeRequest(payload) {
+  try {
+    const { overtimeId, accion, horasAprobadas, observaciones, periodoNominaId } = payload || {};
+    if (!overtimeId || (accion !== "Aprobar" && accion !== "Rechazar")) {
+      return { status: "error", code: "VALIDATION_ERROR", message: "overtimeId y accion ('Aprobar' o 'Rechazar') son obligatorios." };
+    }
+
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const sheet = getOrCreateSheet(ss, "AprobacionHorasExtras");
+    const data = sheet.getDataRange().getValues();
+
+    let foundIndex = -1;
+    for (let i = 1; i < data.length; i++) {
+      if (String(data[i][0]).trim() === String(overtimeId).trim()) {
+        foundIndex = i + 1;
+        break;
+      }
+    }
+
+    if (foundIndex === -1) {
+      return { status: "error", code: "NOT_FOUND", message: "Registro de horas extras no encontrado." };
+    }
+
+    const now = new Date().toISOString();
+    const verifiedRole = (payload && payload.authRole) || "RecursosHumanos";
+    const newState = accion === "Aprobar" ? "Aprobada" : "Rechazada";
+
+    sheet.getRange(foundIndex, 6).setValue(accion === "Aprobar" ? (parseFloat(horasAprobadas) || data[foundIndex - 1][4]) : 0);
+    sheet.getRange(foundIndex, 8).setValue(newState);
+    sheet.getRange(foundIndex, 9).setValue(verifiedRole);
+    if (periodoNominaId) sheet.getRange(foundIndex, 10).setValue(periodoNominaId);
+    sheet.getRange(foundIndex, 12).setValue(now);
+
+    return { status: "success", overtimeId: overtimeId, estadoAprobacion: newState, message: `Horas extras ${newState.toLowerCase()}s con éxito.` };
+  } catch (error) {
+    return { status: "error", message: error.message };
+  }
+}
+
+function getOvertimeRequests(payload) {
+  try {
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const sheet = getOrCreateSheet(ss, "AprobacionHorasExtras");
+    const data = sheet.getDataRange().getValues();
+
+    if (data.length <= 1) return { status: "success", overtimeRequests: [] };
+
+    const requests = [];
+    for (let i = 1; i < data.length; i++) {
+      const r = data[i];
+      requests.push({
+        overtimeId: r[0],
+        userId: r[1],
+        nombreEmpleado: r[2],
+        fechaTrabajada: r[3],
+        horasRegistradas: r[4],
+        horasAprobadas: r[5],
+        motivo: r[6],
+        estadoAprobacion: r[7],
+        aprobadoPor: r[8],
+        periodoNominaId: r[9],
+        estadoPago: r[10],
+        timestamp: r[11]
+      });
+    }
+
+    return { status: "success", overtimeRequests: requests };
+  } catch (error) {
+    return { status: "error", message: error.message };
+  }
 }
 
 // ---------------------------------------------------------------------------

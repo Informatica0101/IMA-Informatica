@@ -150,7 +150,9 @@ document.addEventListener('DOMContentLoaded', function() {
             });
     }
 
-    // Portal Familiar: Cargar estudiantes vinculados para tutores/padres (Fase 3)
+    // Portal Familiar: Cargar estudiantes vinculados para tutores/padres
+    window.familyLinkedStudents = [];
+
     function initFamilyStudentSwitcher() {
         var switcherContainer = document.getElementById('family-student-switcher-container');
         var switcherSelect = document.getElementById('family-student-switcher');
@@ -159,14 +161,18 @@ document.addEventListener('DOMContentLoaded', function() {
         fetchApi('USER', 'getGuardianStudents', { userId: currentUser.userId })
             .then(function(res) {
                 if (res && res.status === 'success' && Array.isArray(res.data) && res.data.length > 0) {
+                    window.familyLinkedStudents = res.data;
                     switcherContainer.classList.remove('hidden');
                     switcherSelect.innerHTML = res.data.map(function(st) {
                         var selected = (st.userId === currentUser.userId) ? 'selected' : '';
-                        return '<option value="' + st.userId + '" ' + selected + '>' + st.nombre + ' (' + (st.grado || '') + ' ' + (st.seccion || '') + ')</option>';
+                        return '<option value="' + st.userId + '" ' + selected + '>👦 ' + st.nombre + ' — ' + (st.grado || '') + ' ' + (st.seccion || '') + '</option>';
                     }).join('');
 
                     switcherSelect.onchange = function() {
                         var selectedId = switcherSelect.value;
+                        var summaryCont = document.getElementById('family-consolidated-summary-container');
+                        if (summaryCont) summaryCont.classList.add('hidden');
+
                         var selectedStudent = res.data.find(function(s) { return s.userId === selectedId; });
                         if (selectedStudent) {
                             currentUser = selectedStudent;
@@ -181,6 +187,340 @@ document.addEventListener('DOMContentLoaded', function() {
                 console.warn("Familiar student switcher deferred:", err);
             });
     }
+
+    window.toggleFamilyConsolidatedSummary = function() {
+        var cont = document.getElementById('family-consolidated-summary-container');
+        if (!cont) return;
+        if (cont.classList.contains('hidden')) {
+            cont.classList.remove('hidden');
+            window.renderFamilyConsolidatedSummary();
+        } else {
+            cont.classList.add('hidden');
+        }
+    };
+
+    window.renderFamilyConsolidatedSummary = function() {
+        var cont = document.getElementById('family-consolidated-summary-container');
+        if (!cont || !currentUser) return;
+
+        cont.innerHTML = '<div class="text-center py-6 text-slate-500 text-xs font-semibold"><i class="fas fa-circle-notch fa-spin mr-2"></i> Cargando Resumen Consolidado Familiar...</div>';
+
+        fetchApi('USER', 'getFamilyConsolidatedSummary', { userIdResponsable: currentUser.userId || currentUser.id })
+            .then(function(res) {
+                if (res && res.status === 'success' && res.data) {
+                    var d = res.data;
+                    var html = '' +
+                        '<div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 border-b border-slate-100 pb-4">' +
+                            '<div>' +
+                                '<span class="inline-block px-3 py-1 bg-indigo-50 text-indigo-600 rounded-full text-[10px] font-black uppercase tracking-widest mb-1">Vista Consolidada</span>' +
+                                '<h3 class="text-xl font-black text-slate-900 uppercase tracking-tight">Resumen General de la Familia</h3>' +
+                                '<p class="text-xs font-bold text-slate-400 uppercase tracking-widest">Información agregada de sus ' + d.totalEstudiantes + ' estudiante(s) vinculado(s)</p>' +
+                            '</div>' +
+                            '<div class="flex items-center gap-2">' +
+                                '<button onclick="window.openJointPaymentModal()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold uppercase tracking-wider transition-all shadow-sm flex items-center gap-1.5">' +
+                                    '<i class="fas fa-file-invoice-dollar"></i> Pago Conjunto Multihijo' +
+                                '</button>' +
+                                '<button onclick="window.openFamilyScholarshipModal()" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold uppercase tracking-wider transition-all shadow-sm flex items-center gap-1.5">' +
+                                    '<i class="fas fa-award"></i> Solicitud de Becas' +
+                                '</button>' +
+                            '</div>' +
+                        '</div>' +
+
+                        '<!-- Tarjetas de Métricas Familiares -->' +
+                        '<div class="grid grid-cols-1 md:grid-cols-3 gap-4">' +
+                            '<div class="p-5 bg-slate-50 rounded-2xl border border-slate-100 space-y-1">' +
+                                '<p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Hijos Vinculados</p>' +
+                                '<p class="text-2xl font-black text-slate-900 tracking-tight">' + d.totalEstudiantes + ' <span class="text-xs text-slate-500 font-bold">Estudiantes</span></p>' +
+                            '</div>' +
+                            '<div class="p-5 bg-amber-50 rounded-2xl border border-amber-100 space-y-1">' +
+                                '<p class="text-[10px] font-black text-amber-600 uppercase tracking-widest">Saldo Familiar Consolidado</p>' +
+                                '<p class="text-2xl font-black text-amber-900 tracking-tight">L. ' + (parseFloat(d.totalCargosPendientes) || 0).toFixed(2) + '</p>' +
+                            '</div>' +
+                            '<div class="p-5 bg-blue-50 rounded-2xl border border-blue-100 space-y-1">' +
+                                '<p class="text-[10px] font-black text-blue-600 uppercase tracking-widest">Pagos en Revisión</p>' +
+                                '<p class="text-2xl font-black text-blue-900 tracking-tight">L. ' + (parseFloat(d.totalPagosRevision) || 0).toFixed(2) + '</p>' +
+                            '</div>' +
+                        '</div>' +
+
+                        '<!-- Tarjetas Individuales por Estudiante -->' +
+                        '<div class="space-y-3">' +
+                            '<h4 class="text-xs font-black text-slate-700 uppercase tracking-wider">Desglose Individual de Hijos</h4>' +
+                            '<div class="grid grid-cols-1 md:grid-cols-2 gap-4">' +
+                                (d.estudiantes || []).map(function(st) {
+                                    return '' +
+                                        '<div class="p-4 bg-white rounded-2xl border border-slate-200 shadow-sm space-y-3 relative hover:border-indigo-300 transition-all">' +
+                                            '<div class="flex items-center justify-between gap-3">' +
+                                                '<div class="flex items-center gap-3">' +
+                                                    '<div class="w-10 h-10 bg-indigo-100 text-indigo-700 rounded-xl flex items-center justify-center font-black text-sm">' +
+                                                        (st.nombre ? st.nombre.charAt(0) : 'E') +
+                                                    '</div>' +
+                                                    '<div>' +
+                                                        '<h5 class="text-xs font-black text-slate-900 uppercase tracking-tight">' + st.nombre + '</h5>' +
+                                                        '<p class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">' + (st.grado || '') + ' ' + (st.seccion || '') + ' • Matrícula: <span class="text-emerald-600 font-black">' + st.estadoMatricula + '</span></p>' +
+                                                    '</div>' +
+                                                '</div>' +
+                                                '<button onclick="window.selectStudentFromSummary(\'' + st.userId + '\')" class="px-3 py-1.5 bg-slate-100 hover:bg-indigo-50 text-indigo-700 font-bold text-[10px] rounded-lg uppercase tracking-wider transition-all">' +
+                                                    'Ver Expediente' +
+                                                '</button>' +
+                                            '</div>' +
+                                            '<div class="flex items-center justify-between text-[11px] pt-2 border-t border-slate-100 font-semibold">' +
+                                                '<span class="text-slate-600">Saldo Pendiente: <strong class="text-slate-900">L. ' + (parseFloat(st.saldoPendiente) || 0).toFixed(2) + '</strong></span>' +
+                                                '<span class="text-slate-600">Pagos en revisión: <strong class="text-blue-600">L. ' + (parseFloat(st.pagosEnRevision) || 0).toFixed(2) + '</strong></span>' +
+                                            '</div>' +
+                                        '</div>';
+                                }).join('') +
+                            '</div>' +
+                        '</div>';
+
+                    cont.innerHTML = html;
+                } else {
+                    cont.innerHTML = '<div class="text-center py-6 text-slate-400 text-xs font-semibold">No se encontraron estudiantes vinculados para generar el resumen consolidado.</div>';
+                }
+            })
+            .catch(function(err) {
+                cont.innerHTML = '<div class="text-center py-6 text-rose-500 text-xs font-semibold">Error al cargar el resumen familiar: ' + err.message + '</div>';
+            });
+    };
+
+    window.selectStudentFromSummary = function(studentId) {
+        var switcherSelect = document.getElementById('family-student-switcher');
+        if (switcherSelect) {
+            switcherSelect.value = studentId;
+            switcherSelect.dispatchEvent(new Event('change'));
+        }
+    };
+
+    window.openJointPaymentModal = function() {
+        var modalId = 'modal-joint-payment';
+        var modal = document.getElementById(modalId);
+        if (!modal) {
+            modal = document.createElement('div');
+            modal.id = modalId;
+            modal.className = 'fixed inset-0 z-[9995] bg-slate-900/80 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto';
+
+            var studentsList = window.familyLinkedStudents || [];
+            var studentsInputsHtml = studentsList.map(function(s, idx) {
+                return '' +
+                    '<div class="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-2">' +
+                        '<div class="flex items-center justify-between">' +
+                            '<span class="text-xs font-black text-slate-800 uppercase tracking-tight">👦 ' + s.nombre + ' (' + (s.grado || '') + ' ' + (s.seccion || '') + ')</span>' +
+                            '<span class="text-[10px] font-bold text-slate-400 uppercase">Monto a aplicar</span>' +
+                        '</div>' +
+                        '<input type="number" step="0.01" id="joint-amount-' + s.userId + '" data-student-id="' + s.userId + '" data-student-name="' + s.nombre + '" class="joint-distribution-input w-full p-2 bg-white border border-slate-300 rounded-lg text-xs font-bold text-slate-900 outline-none focus:ring-2 focus:ring-emerald-500/20" placeholder="0.00" oninput="window.calcJointPaymentTotal()">' +
+                    '</div>';
+            }).join('');
+
+            modal.innerHTML = '' +
+                '<div class="bg-white rounded-[2rem] border border-slate-100 shadow-2xl max-w-xl w-full p-6 md:p-8 space-y-6 relative animate-fade-in">' +
+                    '<div class="flex items-center justify-between border-b border-slate-100 pb-4">' +
+                        '<div>' +
+                            '<span class="inline-block px-3 py-1 bg-emerald-50 text-emerald-600 rounded-full text-[10px] font-black uppercase tracking-widest mb-1">Pago Conjunto Multihijo</span>' +
+                            '<h3 class="text-lg font-black text-slate-900 uppercase tracking-tight">Registrar Pago para Varios Estudiantes</h3>' +
+                        '</div>' +
+                        '<button onclick="document.getElementById(\'' + modalId + '\').classList.add(\'hidden\')" class="w-8 h-8 rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200 flex items-center justify-center font-bold text-sm transition-all">' +
+                            '<i class="fas fa-times"></i>' +
+                        '</button>' +
+                    '</div>' +
+                    '<div class="space-y-4 text-xs">' +
+                        '<div class="grid grid-cols-1 sm:grid-cols-2 gap-3">' +
+                            '<div>' +
+                                '<label class="block text-[10px] font-black text-slate-500 uppercase tracking-wider mb-1">Monto Total del Depósito (L.)</label>' +
+                                '<input type="number" step="0.01" id="joint-total-amount" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-bold text-slate-900 outline-none focus:bg-white" placeholder="0.00" oninput="window.calcJointPaymentTotal()">' +
+                            '</div>' +
+                            '<div>' +
+                                '<label class="block text-[10px] font-black text-slate-500 uppercase tracking-wider mb-1">Número de Referencia / Comprobante</label>' +
+                                '<input type="text" id="joint-ref-number" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-bold text-slate-900 outline-none focus:bg-white" placeholder="Ej. REF-8899221">' +
+                            '</div>' +
+                        '</div>' +
+                        '<div>' +
+                            '<label class="block text-[10px] font-black text-slate-500 uppercase tracking-wider mb-1">Enlace del Comprobante (Drive / Imagen)</label>' +
+                            '<input type="url" id="joint-doc-url" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-bold text-slate-900 outline-none focus:bg-white" placeholder="https://drive.google.com/...">' +
+                        '</div>' +
+                        '<div>' +
+                            '<label class="block text-[10px] font-black text-slate-500 uppercase tracking-wider mb-1">Distribución del Pago entre Estudiantes</label>' +
+                            '<div class="space-y-2 max-h-48 overflow-y-auto p-1">' +
+                                (studentsInputsHtml || '<p class="text-slate-400 italic">No hay estudiantes vinculados.</p>') +
+                            '</div>' +
+                        '</div>' +
+                        '<div class="p-3 bg-indigo-50 rounded-xl border border-indigo-100 flex items-center justify-between text-indigo-900 font-bold">' +
+                            '<span>Total Distribuido:</span>' +
+                            '<span id="joint-sum-display">L. 0.00</span>' +
+                        '</div>' +
+                    '</div>' +
+                    '<div class="pt-3 border-t border-slate-100 flex items-center justify-end gap-3">' +
+                        '<button onclick="document.getElementById(\'' + modalId + '\').classList.add(\'hidden\')" class="px-4 py-2 text-xs font-bold text-slate-500 uppercase tracking-wider hover:bg-slate-100 rounded-xl transition-all">' +
+                            'Cancelar' +
+                        '</button>' +
+                        '<button onclick="window.submitJointFamilyPaymentForm()" class="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs uppercase tracking-wider rounded-xl shadow-md transition-all flex items-center gap-1.5">' +
+                            '<i class="fas fa-paper-plane"></i> Enviar Pago a Revisión' +
+                        '</button>' +
+                    '</div>' +
+                '</div>';
+            document.body.appendChild(modal);
+        } else {
+            modal.classList.remove('hidden');
+        }
+    };
+
+    window.calcJointPaymentTotal = function() {
+        var inputs = document.querySelectorAll('.joint-distribution-input');
+        var sum = 0;
+        inputs.forEach(function(inp) {
+            sum += parseFloat(inp.value) || 0;
+        });
+        var display = document.getElementById('joint-sum-display');
+        if (display) display.textContent = 'L. ' + sum.toFixed(2);
+    };
+
+    window.submitJointFamilyPaymentForm = function() {
+        var totalInp = document.getElementById('joint-total-amount');
+        var refInp = document.getElementById('joint-ref-number');
+        var urlInp = document.getElementById('joint-doc-url');
+
+        var montoTotal = parseFloat(totalInp ? totalInp.value : 0) || 0;
+        var refNum = refInp ? refInp.value.trim() : '';
+        var docUrl = urlInp ? urlInp.value.trim() : '';
+
+        if (montoTotal <= 0) {
+            alert('Ingrese un monto total válido para el pago.');
+            return;
+        }
+
+        var inputs = document.querySelectorAll('.joint-distribution-input');
+        var distribuciones = [];
+        var suma = 0;
+        inputs.forEach(function(inp) {
+            var val = parseFloat(inp.value) || 0;
+            if (val > 0) {
+                var stId = inp.getAttribute('data-student-id');
+                var stName = inp.getAttribute('data-student-name');
+                distribuciones.push({
+                    estudianteId: stId,
+                    concepto: 'Colegiatura / Servicios - ' + stName,
+                    montoAplicado: val
+                });
+                suma += val;
+            }
+        });
+
+        if (distribuciones.length === 0) {
+            alert('Debe asignar el monto distribuido al menos a un estudiante.');
+            return;
+        }
+
+        if (Math.abs(suma - montoTotal) > 0.01) {
+            alert('La suma de las distribuciones (L. ' + suma.toFixed(2) + ') debe coincidir exactamente con el monto total declarado (L. ' + montoTotal.toFixed(2) + ').');
+            return;
+        }
+
+        fetchApi('USER', 'submitJointFamilyPayment', {
+            userIdResponsable: currentUser.userId || currentUser.id,
+            montoTotal: montoTotal,
+            numeroReferencia: refNum,
+            comprobanteUrl: docUrl,
+            distribuciones: distribuciones
+        }).then(function(res) {
+            if (res && res.status === 'success') {
+                alert('¡Pago conjunto multihijo enviado exitosamente!\n\nID: ' + res.pagoId);
+                var modal = document.getElementById('modal-joint-payment');
+                if (modal) modal.classList.add('hidden');
+                window.renderFamilyConsolidatedSummary();
+            } else {
+                alert('Error al registrar pago conjunto: ' + (res ? res.message : 'Error desconocido'));
+            }
+        }).catch(function(err) {
+            alert('Fallo de red: ' + err.message);
+        });
+    };
+
+    window.openFamilyScholarshipModal = function() {
+        var modalId = 'modal-family-scholarship';
+        var modal = document.getElementById(modalId);
+        if (!modal) {
+            modal = document.createElement('div');
+            modal.id = modalId;
+            modal.className = 'fixed inset-0 z-[9995] bg-slate-900/80 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto';
+
+            modal.innerHTML = '' +
+                '<div class="bg-white rounded-[2rem] border border-slate-100 shadow-2xl max-w-lg w-full p-6 md:p-8 space-y-6 relative animate-fade-in">' +
+                    '<div class="flex items-center justify-between border-b border-slate-100 pb-4">' +
+                        '<div>' +
+                            '<span class="inline-block px-3 py-1 bg-indigo-50 text-indigo-600 rounded-full text-[10px] font-black uppercase tracking-widest mb-1">Becas y Descuentos</span>' +
+                            '<h3 class="text-lg font-black text-slate-900 uppercase tracking-tight">Solicitar Beneficio Familiar</h3>' +
+                        '</div>' +
+                        '<button onclick="document.getElementById(\'' + modalId + '\').classList.add(\'hidden\')" class="w-8 h-8 rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200 flex items-center justify-center font-bold text-sm transition-all">' +
+                            '<i class="fas fa-times"></i>' +
+                        '</button>' +
+                    '</div>' +
+                    '<div class="space-y-4 text-xs">' +
+                        '<div>' +
+                            '<label class="block text-[10px] font-black text-slate-500 uppercase tracking-wider mb-1">Tipo de Beneficio</label>' +
+                            '<select id="scholarship-type" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-bold text-slate-900 outline-none focus:bg-white">' +
+                                '<option value="Descuento Familiar (2+ Hijos)">Descuento Familiar (2+ Hijos)</option>' +
+                                '<option value="Beca Académica por Excelencia">Beca Académica por Excelencia</option>' +
+                                '<option value="Beca Social / Estudio Socioeconómico">Beca Social / Estudio Socioeconómico</option>' +
+                                '<option value="Descuento por Pago Anticipado">Descuento por Pago Anticipado</option>' +
+                            '</select>' +
+                        '</div>' +
+                        '<div>' +
+                            '<label class="block text-[10px] font-black text-slate-500 uppercase tracking-wider mb-1">Alcance del Beneficio</label>' +
+                            '<select id="scholarship-scope" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-bold text-slate-900 outline-none focus:bg-white">' +
+                                '<option value="Familiar">Familiar (Aplica a todos los estudiantes vinculados)</option>' +
+                                '<option value="Individual">Individual (Estudiante específico)</option>' +
+                            '</select>' +
+                        '</div>' +
+                        '<div>' +
+                            '<label class="block text-[10px] font-black text-slate-500 uppercase tracking-wider mb-1">Explicación / Justificación de la Solicitud</label>' +
+                            '<textarea id="scholarship-reason" rows="3" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-bold text-slate-900 outline-none focus:bg-white" placeholder="Describa los motivos de la solicitud..."></textarea>' +
+                        '</div>' +
+                    '</div>' +
+                    '<div class="pt-3 border-t border-slate-100 flex items-center justify-end gap-3">' +
+                        '<button onclick="document.getElementById(\'' + modalId + '\').classList.add(\'hidden\')" class="px-4 py-2 text-xs font-bold text-slate-500 uppercase tracking-wider hover:bg-slate-100 rounded-xl transition-all">' +
+                            'Cancelar' +
+                        '</button>' +
+                        '<button onclick="window.submitFamilyScholarshipForm()" class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs uppercase tracking-wider rounded-xl shadow-md transition-all flex items-center gap-1.5">' +
+                            '<i class="fas fa-paper-plane"></i> Enviar Solicitud' +
+                        '</button>' +
+                    '</div>' +
+                '</div>';
+            document.body.appendChild(modal);
+        } else {
+            modal.classList.remove('hidden');
+        }
+    };
+
+    window.submitFamilyScholarshipForm = function() {
+        var typeSel = document.getElementById('scholarship-type');
+        var scopeSel = document.getElementById('scholarship-scope');
+        var reasonArea = document.getElementById('scholarship-reason');
+
+        var tipo = typeSel ? typeSel.value : '';
+        var alcance = scopeSel ? scopeSel.value : 'Familiar';
+        var motivo = reasonArea ? reasonArea.value.trim() : '';
+
+        if (!motivo || motivo.length < 15) {
+            alert('Por favor ingrese una explicación detallada (mínimo 15 caracteres).');
+            return;
+        }
+
+        fetchApi('USER', 'submitFamilyScholarshipApplication', {
+            userIdResponsable: currentUser.userId || currentUser.id,
+            tipoBeneficio: tipo,
+            alcance: alcance,
+            motivo: motivo
+        }).then(function(res) {
+            if (res && res.status === 'success') {
+                alert('¡Solicitud de beneficio familiar enviada exitosamente!\n\nID Solicitud: ' + res.solicitudId);
+                var modal = document.getElementById('modal-family-scholarship');
+                if (modal) modal.classList.add('hidden');
+                if (reasonArea) reasonArea.value = '';
+            } else {
+                alert('Error enviando solicitud: ' + (res ? res.message : 'Error desconocido'));
+            }
+        }).catch(function(err) {
+            alert('Fallo de red: ' + err.message);
+        });
+    };
 
     renderStudentHeader();
     initFamilyStudentSwitcher();
