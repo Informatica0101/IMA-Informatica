@@ -6396,3 +6396,320 @@ La Fase 7 podrá considerarse completa cuando las herramientas pertinentes cumpl
 - **Tareas Concretas:**
   1. Modificar `ObservacionesSupervision` para capturar la firma canvas y comentarios de réplica del docente observado.
   2. Crear el consolidado de "Evaluación Anual de Desempeño Docente" que integre los resultados de observaciones, cumplimiento de entregas y avance curricular.
+
+---
+
+FASE 8. IMPLEMENTACIÓN DE MEJORAS
+
+Primera tarea: CE-IMP-01. Bitácora de contenido realmente impartido
+
+Proyecto: Ecosistema Educativo New Generation Christian Academy
+Fase: Calidad educativa y supervisión docente
+Herramienta que se implementará: Registro del contenido realmente impartido por el docente
+Referencia de auditoría: CE-04
+Prioridad: Crítica para establecer una medición fiable del avance curricular
+Modalidad: Implementación de una herramienta individual, pruebas y entrega de resultados.
+
+1. Orden de ejecución
+
+Implementa exclusivamente la herramienta CE-IMP-01: bitácora de contenido realmente impartido.
+
+Lee primero "METODOLOGIA_DESARROLLO.md" y las instrucciones vigentes del proyecto. Después, verifica directamente los hallazgos de la auditoría y examina el código actual antes de modificarlo.
+
+La auditoría informó que no encontró una bitácora específica para registrar la impartición real. Debes confirmar esa conclusión en el repositorio y revisar si existen funciones, estructuras de datos o interfaces reutilizables que puedan satisfacer parte del requerimiento.
+
+No implementes todavía el motor de comparación entre planificación e impartición, el tablero de avance curricular, la jornalización, el semáforo de entregas, la aprobación de guías ni la evaluación integral del desempeño docente.
+
+Puedes consultar una función externa únicamente cuando sea indispensable para identificar o utilizar una dependencia directa. No modifiques esa función externa salvo que sea estrictamente necesario para que la bitácora funcione; si detectas esa necesidad, detente, documenta el bloqueo y solicita autorización antes de ampliar el alcance.
+
+2. Objetivo funcional
+
+Permitir que cada docente registre qué contenido desarrolló realmente en una clase, en qué fecha lo impartió y qué parte quedó pendiente.
+
+La herramienta debe conservar una diferencia inequívoca entre:
+
+- Contenido planificado: lo que estaba previsto enseñar.
+- Contenido impartido: lo que el docente registra como efectivamente desarrollado.
+- Contenido impartido parcialmente: lo que se abordó, pero no se completó.
+- Contenido pendiente: lo que todavía no se ha impartido.
+- Contenido reprogramado: lo que se trasladó a otra fecha o sesión.
+- Sin información registrada: no hay datos suficientes para determinar qué ocurrió.
+
+Estos estados deben aplicarse según el diseño que permita el repositorio. Si una parte requiere una decisión institucional que no está definida, documenta la decisión pendiente y utiliza una solución coherente con las convenciones existentes, sin inventar políticas académicas.
+
+El registro de impartición real no debe sobrescribir, alterar ni sustituir silenciosamente la planificación aprobada.
+
+3. Investigación previa obligatoria
+
+Antes de escribir código:
+
+1. Localiza la estructura actual de las planificaciones y de la malla curricular.
+2. Identifica cómo se representan las asignaturas, los grados, las secciones, los docentes, los períodos académicos, las unidades y los contenidos.
+3. Revisa si las planificaciones se guardan como registros estructurados o únicamente como archivos.
+4. Identifica cómo se obtiene el docente autenticado y cómo se validan sus permisos.
+5. Determina qué mecanismo utiliza el proyecto para consultar y guardar datos.
+6. Revisa los patrones existentes para generar identificadores, validar entradas, informar errores y recuperar registros.
+7. Identifica la interfaz apropiada para el docente y las convenciones visuales existentes.
+8. Comprueba si ya existe un calendario académico o una estructura de sesiones que pueda reutilizarse.
+9. Revisa las funciones existentes que podrían proporcionar los datos necesarios sin duplicar información.
+10. Comprueba si hay pruebas automatizadas o procedimientos de validación definidos en el proyecto.
+
+La auditoría menciona "backend/academic-service/Code.gs", "backend/task-service/Code.gs", "js/teacher.js" y "teacher-dashboard.html", entre otros archivos. Inspecciona esas ubicaciones cuando correspondan, pero no asumas que contienen toda la implementación necesaria ni que sus nombres o líneas siguen siendo los mismos.
+
+Si la planificación actual no contiene los contenidos como registros individuales, documenta esa limitación antes de decidir cómo relacionarlos con la bitácora. No inventes identificadores de contenido ni relaciones que no existan.
+
+4. Alcance de la herramienta
+
+La bitácora debe permitir al docente:
+
+- Acceder a sus asignaturas, grados y secciones autorizados.
+- Seleccionar la fecha y la sesión correspondiente, cuando exista esa estructura.
+- Identificar el contenido o los temas que desarrolló.
+- Indicar si el contenido se impartió completamente, parcialmente, quedó pendiente o fue reprogramado.
+- Registrar una descripción breve de lo realizado.
+- Indicar qué quedó pendiente y qué necesita retomarse.
+- Registrar una justificación cuando corresponda, sin imponer explicaciones innecesarias para cada registro.
+- Proponer una fecha para retomar un contenido pendiente, cuando resulte pertinente.
+- Guardar un registro y consultarlo posteriormente.
+- Corregir un registro propio cuando tenga autorización.
+- Consultar los registros anteriores de sus asignaturas y grupos autorizados.
+- Reconocer cuándo todavía no existe información registrada para una clase.
+- Recibir confirmaciones y mensajes de error comprensibles.
+
+No añadas campos, estados ni controles solo para aparentar una herramienta más completa. Cada elemento debe tener un propósito funcional.
+
+Si el sistema ya dispone de una estructura equivalente, reutilízala en lugar de crear una segunda herramienta con la misma finalidad.
+
+5. Datos mínimos del registro
+
+Determina la estructura final después de examinar el modelo existente. El registro debe poder identificar, como mínimo:
+
+- Identificador único del registro.
+- Docente responsable.
+- Fecha de la clase.
+- Asignatura.
+- Grado y sección, cuando corresponda.
+- Período académico y unidad, si forman parte del modelo actual.
+- Sesión o clase asociada, si existe un identificador de sesión.
+- Contenido impartido.
+- Estado del desarrollo.
+- Descripción de lo realizado, cuando sea necesaria.
+- Contenido pendiente o parcialmente desarrollado, cuando corresponda.
+- Motivo o justificación, si aplica.
+- Fecha prevista para retomar el contenido, si aplica.
+- Fecha de creación y de última modificación, según las convenciones del proyecto.
+
+Cuando exista una planificación estructurada, relaciona el registro con el contenido planificado mediante su identificador estable. No utilices únicamente el nombre del tema como clave si el modelo permite una relación más fiable.
+
+Si no existe una planificación estructurada, permite registrar el contenido realmente impartido de manera identificable, pero documenta que la relación automática con lo planificado requerirá una tarea posterior.
+
+No dupliques innecesariamente los datos del docente, la asignatura o el contenido que ya puedan obtenerse de relaciones existentes. Conserva las referencias necesarias para que el registro siga siendo interpretable históricamente.
+
+6. Reglas de negocio
+
+Implementa y verifica las siguientes reglas:
+
+6.1. Separación entre planificación e impartición
+
+Guardar un registro de impartición no debe cambiar las fechas, los contenidos ni el estado de aprobación de la planificación original.
+
+Si el docente informa que no pudo impartir un tema previsto, la planificación original debe continuar disponible para consulta y comparación posterior.
+
+6.2. Identificación del responsable
+
+El servicio debe comprobar la identidad del usuario autenticado y sus permisos. No debe confiar exclusivamente en un identificador de docente enviado por la interfaz.
+
+Un docente no debe poder crear o modificar registros atribuidos a otro docente sin una autorización expresa definida por el sistema.
+
+6.3. Acceso a asignaturas y grupos
+
+Verifica que el docente tenga autorización para registrar información de la asignatura, grado y sección seleccionados.
+
+Si el repositorio ya dispone de una función de autorización adecuada, reutilízala.
+
+6.4. Validación
+
+Rechaza los registros que no contengan los datos imprescindibles, que tengan fechas inválidas o que se refieran a entidades inexistentes o no autorizadas.
+
+No rechaces arbitrariamente una fecha anterior solo porque sea histórica. Si el proyecto tiene reglas de cierre de períodos o restricciones de edición, reutilízalas y documenta su comportamiento.
+
+6.5. Edición y duplicados
+
+Define cómo se identifica un registro existente y cómo se evita que un reintento accidental cree duplicados.
+
+No supongas que dos registros del mismo docente y fecha son duplicados: un docente puede impartir varias sesiones o contenidos ese día.
+
+Si una sesión tiene un identificador único, úsalo para establecer la relación correspondiente. Si no existe, identifica el criterio seguro que permite distinguir las clases y documenta cualquier limitación.
+
+Editar un registro existente debe actualizarlo cuando corresponda, no crear una copia silenciosa.
+
+6.6. Historial
+
+No elimines datos históricos para corregir errores de registro.
+
+Si existen mecanismos de historial o auditoría, reutilízalos. Si no existen, conserva al menos las fechas de creación y modificación requeridas por las convenciones del proyecto. No construyas un sistema general de auditoría como parte de esta tarea.
+
+6.7. Integridad
+
+Los registros deben permanecer vinculados a su docente y contexto académico incluso después de volver a cargar la interfaz o consultar los datos posteriormente.
+
+No muestres una operación como exitosa hasta que el servicio confirme el resultado esperado.
+
+7. Interfaz de usuario
+
+Integra la herramienta en el lugar apropiado del panel docente, respetando la navegación y los patrones visuales existentes.
+
+La interfaz debe:
+
+- Utilizar nombres y explicaciones comprensibles para personal docente no técnico.
+- Permitir seleccionar la asignatura, el grado y la sección autorizados.
+- Facilitar la identificación de la fecha y la sesión.
+- Presentar claramente los estados del contenido.
+- Mostrar los campos adicionales únicamente cuando sean pertinentes.
+- Diferenciar el contenido impartido de las observaciones sobre lo pendiente.
+- Mostrar los registros guardados y permitir consultarlos.
+- Informar cuándo no existen registros.
+- Evitar dobles envíos accidentalmente.
+- Mostrar estados de carga, éxito y error.
+- Funcionar en dispositivos móviles y de escritorio.
+- Evitar que un error de guardado borre silenciosamente la información que el docente estaba escribiendo.
+
+No muestres términos internos de programación, nombres de servicios, identificadores técnicos o detalles de implementación al usuario final.
+
+No añadas un tablero de dirección ni indicadores agregados en esta tarea. La interfaz debe centrarse en que el docente pueda registrar y consultar la impartición real.
+
+8. Permisos y seguridad
+
+Verifica el acceso tanto en la interfaz como en el servicio.
+
+La seguridad no puede depender únicamente de ocultar botones o restringir opciones visuales.
+
+Comprueba que:
+
+- Un usuario sin sesión válida no pueda crear o consultar registros protegidos.
+- Un docente no pueda alterar el identificador de otro docente para modificar sus registros.
+- No se puedan asociar registros a asignaturas o secciones no autorizadas.
+- Las operaciones de lectura y escritura validen los permisos necesarios.
+- Los errores no revelen información académica de otros usuarios.
+- Los registros históricos no se expongan a través de una función alternativa sin las mismas restricciones.
+
+No amplíes permisos globales para facilitar la implementación.
+
+9. Pruebas obligatorias
+
+Ejecuta las pruebas seguras que permitan las herramientas y el entorno disponibles. No utilices registros reales para pruebas destructivas.
+
+Como mínimo, verifica:
+
+Prueba 1. Registro completo
+
+El docente autorizado registra un contenido impartido y el servicio confirma que se guardó.
+
+Prueba 2. Recuperación
+
+Después de volver a consultar los datos o recargar la interfaz, el registro sigue presente y conserva sus campos.
+
+Prueba 3. Registro parcial
+
+Se puede indicar que un contenido fue impartido parcialmente y especificar qué quedó pendiente.
+
+Prueba 4. Contenido no impartido
+
+Se puede registrar que el contenido previsto no se desarrolló, sin modificar la planificación original.
+
+Prueba 5. Reprogramación
+
+Cuando se marca un contenido como reprogramado, se conserva el registro de lo ocurrido y la fecha propuesta se guarda correctamente.
+
+Prueba 6. Edición
+
+La modificación de un registro existente no crea una segunda fila o registro accidental.
+
+Prueba 7. Prevención de duplicados
+
+Un envío repetido de la misma operación no produce duplicados indebidos.
+
+Prueba 8. Validación
+
+Los datos imprescindibles ausentes o inválidos son rechazados con un mensaje apropiado.
+
+Prueba 9. Permisos
+
+Un docente no puede registrar información en una asignatura, grupo o sesión a los que no tiene acceso.
+
+Prueba 10. Acceso directo al servicio
+
+Una llamada directa que intente omitir las restricciones de la interfaz debe ser rechazada cuando carezca de autorización.
+
+Prueba 11. Separación de datos
+
+Guardar, editar o consultar la bitácora no modifica ni sobrescribe la planificación original.
+
+Prueba 12. Compatibilidad
+
+Las herramientas existentes que compartan directamente las estructuras modificadas continúan funcionando según lo que pueda comprobarse con pruebas seguras.
+
+Si una prueba no puede ejecutarse, registra el motivo exacto y el estado como pendiente de verificación. No la marques como aprobada por haber inspeccionado el código.
+
+10. Criterios de aceptación
+
+La tarea se considera funcional cuando se cumplan todos los criterios aplicables:
+
+1. Existe una herramienta accesible para que el docente registre el contenido realmente impartido.
+2. Los registros se guardan y se recuperan de forma persistente.
+3. Los datos identifican correctamente la clase y su contexto académico.
+4. Los estados distinguen entre impartido, parcial, pendiente y reprogramado, o equivalentes correctamente documentados.
+5. El registro de impartición no modifica la planificación original.
+6. Se puede corregir un registro existente sin generar duplicados.
+7. Los permisos se comprueban en las operaciones del servicio.
+8. La interfaz informa correctamente de errores y operaciones completadas.
+9. Se han ejecutado y documentado las pruebas que permite el entorno.
+10. Se han identificado las pruebas pendientes y las limitaciones existentes.
+11. No se han introducido cambios ajenos al alcance.
+12. Se conserva la compatibilidad de los datos existentes, según las pruebas disponibles.
+
+Si algún criterio depende de una estructura de planificación que todavía no existe, no simules que se ha cumplido. Documenta la limitación y deja preparada la relación necesaria para una tarea futura, sin implementar esa tarea.
+
+11. Restricciones estrictas de alcance
+
+No implementes en esta tarea:
+
+- Comparación automática entre lo planificado y lo impartido.
+- Cálculo de porcentajes de cumplimiento curricular.
+- Tableros de avance por asignatura.
+- Jornalización académica completa.
+- Aprobación de guías didácticas.
+- Semáforo de entrega de notas o tareas.
+- Evaluación docente de 360 grados.
+- Firma digital de observaciones.
+- Nuevos módulos generales de notificaciones.
+- Cambios globales en el sistema de permisos.
+- Reestructuraciones generales de servicios o bases de datos.
+- Funciones que no sean necesarias para la bitácora.
+
+No dupliques funciones existentes. No elimines datos ni hojas de cálculo. No cambies contratos de servicios compartidos sin necesidad demostrable.
+
+Si descubres que la implementación requiere una modificación de mayor alcance, detente antes de efectuarla y explica qué impide completar la tarea dentro de estos límites.
+
+12. Informe de entrega obligatorio
+
+Al terminar, informa:
+
+1. Estado final: funcional, parcialmente funcional o bloqueada.
+2. Archivos modificados: rutas exactas y propósito de cada cambio.
+3. Funciones reutilizadas: nombres reales y responsabilidad.
+4. Persistencia: dónde se guardan los registros y cómo se recuperan.
+5. Reglas implementadas: estados, validaciones, relaciones y permisos.
+6. Pruebas ejecutadas: pasos, datos de prueba y resultados observados.
+7. Pruebas pendientes: cuáles no se ejecutaron y por qué.
+8. Compatibilidad: qué funciones relacionadas se comprobaron.
+9. Limitaciones: decisiones institucionales o dependencias aún no resueltas.
+10. Evidencia: archivos, funciones y resultados que permitan verificar el trabajo.
+
+No declares que el trabajo está completo basándote únicamente en que el código fue escrito o que no aparecen errores visibles.
+
+13. Orden final
+
+Ejecuta únicamente CE-IMP-01.
+
+Cuando termines, entrega el informe de resultados y detente. No comiences la siguiente tarea, no implementes el motor de comparación ni adelantes otros módulos hasta recibir una instrucción explícita.
