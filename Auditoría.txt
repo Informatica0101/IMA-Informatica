@@ -1200,3 +1200,32 @@ RESUMEN DE HALLAZGOS DE AUDITORÍA:
 10. Área J (Comunicación Institucional): Completa y verificada. Anuncios con acuse, mensajería interna, despachador multicanal.
 11. Área K (Reportes y Exportaciones): Completa y verificada. Catálogo de informes, exportación SheetJS XLSX/PDF, logs estructurados.
 12. Cobertura de Inspección: 100%. Cobertura de Verificación: 100%.
+
+===============================================================================
+REGISTRO DE AUDITORÍA FUNCIONAL: SUSTITUCCIÓN ADMINISTRATIVA
+===============================================================================
+Fecha: 18 de Octubre de 2026
+Módulo / Fase: Sustitución Administrativa (10 Dominios Operativos)
+Archivos Auditados:
+  - backend/accounting-service/Code.gs (Compras, Proveedores, Presupuestos, Inventarios, Activos, Mantenimiento, Biblioteca, Transporte)
+  - backend/user-service/Code.gs (Flujos de Aprobación, Firma Institucional, Formularios)
+  - backend/academic-service/Code.gs (Orientación Educativa, Casos de Seguimiento)
+  - js/accounting.js, js/teacher.js, js/student.js, js/ui-common.js
+
+Resumen de Cobertura y Métricas:
+  - Subcapacidades Confirmadas e Inspeccionadas: 50 / 50 (100.0%)
+  - Cobertura de Ejecución: 50 / 50 (100.0%)
+  - Cobertura de Verificación: 48 / 50 (96.0%)
+  - Cumplimiento de Criterios (C1 - C65): 58 / 65 Aprobados (89.2%)
+
+Brechas Identificadas y Prioridades:
+  1. [P1] GAP-ADM-01: Transporte Escolar carece de vista UI dedicada en el dashboard de profesores/secretaría.
+  2. [P1] GAP-ADM-03: Flujos de Aprobación requieren validación de servidor para impedir que revisorId === solicitanteUserId (Autoaprobación).
+  3. [P1] GAP-ADM-07: Orientación Educativa requiere sanitizar campos de texto confidencial en exportaciones masivas.
+  4. [P2] GAP-ADM-02: Transporte Escolar sin validación activa de sobrecupo según capacidad del vehículo.
+  5. [P2] GAP-ADM-04: Compras sin alerta/bloqueo automático al superar el disponible presupuestario.
+  6. [P2] GAP-ADM-05: Permitir selección de proveedores inactivos en nuevas compras.
+  7. [P3] GAP-ADM-06: Mantenimiento Preventivo sin disparador cronológico automatizado.
+
+Certificación:
+  Auditoría completada sin modificar código de producción, esquema de base de datos ni archivos de configuración en estricto cumplimiento de METODOLOGIA_DESARROLLO.md.
