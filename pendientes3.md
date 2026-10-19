@@ -8405,86 +8405,237 @@ El destinatario puede abrir una comunicación y completar la acción solicitada 
 
 ## PLAN DE TRABAJO DETALLADO Y UNIFICADO: FASE DE PLANILLAS, COMPENSACIONES Y OBLIGACIONES LABORALES
 
-### T-NOM-01 [P0] — Control transaccional de cálculo de planilla y asignación atómica de saldos con LockService
+### T-NOM-01 [P0] — Implementar exclusión mutua y control de concurrencia transaccional en el cálculo masivo de planillas con LockService
 
-- **Componentes relacionados:** `backend/accounting-service/Code.gs` (`calculatePayrollPeriod`), `dashboard-recursos-humanos.html`.
-- **Problema detectado:** El cálculo masivo de nómina en `calculatePayrollPeriod` requiere un bloqueo exclusivo mediante `LockService` para evitar ejecuciones concurrentes que generen asientos o deducciones duplicadas para el mismo período.
-- **Requisitos funcionales:**
-  1. Adquirir `LockService.getScriptLock()` al inicio de `calculatePayrollPeriod`.
-  2. Verificar si la planilla para `periodoMes` ya existe en estado `Calculada` o `Aprobada` antes de iniciar el procesamiento.
-  3. Liberar el bloqueo en bloques `finally`.
-- **Criterios de Aceptación:**
-  - Ejecuciones simultáneas del cálculo de nómina no generan registros duplicados ni descalces en el libro mayor.
+- **Componentes relacionados:** `backend/accounting-service/Code.gs` (`calculatePayrollPeriod`), `PlanillasNomenclatura`, `dashboard-recursos-humanos.html`.
+- **Problema que se debe resolver:** El cálculo masivo de nómina en `calculatePayrollPeriod` ya dispone de prevención de duplicados mediante el período (`periodoMes`) e identificador de idempotencia, pero requiere reforzar el control de concurrencia. La idempotencia evita ciertas operaciones repetidas, pero no garantiza por sí sola que dos ejecuciones simultáneas no lean el mismo estado, calculen sobre datos desactualizados o compitan al guardar resultados o generar asientos duplicados para el mismo período.
+- **Requisitos funcionales y técnicos:**
+  1. Incorporar un mecanismo de exclusión mutua mediante `LockService.getScriptLock()` al inicio de `calculatePayrollPeriod` en `backend/accounting-service/Code.gs`.
+  2. Antes de iniciar el procesamiento, verificar el estado del período (`periodoMes`), la existencia de un cálculo previo en `PlanillasNomenclatura` y la identidad de la operación solicitada.
+  3. Evitar que dos procesos creen simultáneamente la planilla definitiva del mismo período.
+  4. Mantener la idempotencia existente (`idempotencyToken`) y definir cómo se comportan los reintentos que utilizan el mismo identificador y los que llegan con identificadores distintos para el mismo período.
+  5. Definir un tiempo máximo de espera para adquirir el bloqueo y una respuesta controlada cuando no se consiga.
+  6. Mantener el bloqueo durante la sección crítica de lectura, validación y persistencia que realmente necesite exclusión, sin retenerlo innecesariamente durante tareas lentas que no requieren protección.
+  7. Garantizar la liberación del bloqueo mediante una estructura `finally` (`lock.releaseLock()`), incluidos los errores de cálculo, escritura y validación.
+  8. Evitar que una ejecución fallida deje un período marcado como calculado si sus registros quedaron incompletos.
+  9. Si la plataforma permite procesamientos parciales o por lotes, registrar qué empleados se procesaron correctamente y cuáles requieren recuperación.
+  10. Conservar los bloqueos existentes para planillas aprobadas, cerradas o contabilizadas (`updatePayrollPeriodStatus`).
+  11. No utilizar el bloqueo como sustituto de las validaciones de estado, la idempotencia o la consistencia de los datos.
+- **Alcance y Cambios necesarios:**
+  - Identificar la sección crítica de `calculatePayrollPeriod` y el punto exacto en el que se comprueba y crea el registro del período.
+  - Añadir la exclusión mutua en la operación que impide la creación concurrente de la misma planilla.
+  - Revisar la secuencia de lectura, cálculo y persistencia para evitar que una segunda ejecución trabaje con un estado que ya cambió.
+  - Definir respuestas diferenciadas para cálculo en curso, cálculo completado, período ya existente y bloqueo temporalmente ocupado.
+  - Asegurar que los errores no produzcan filas duplicadas, totales parciales presentados como definitivos ni estados inconsistentes.
+  - Revisar la interacción con `updatePayrollPeriodStatus` para impedir que una operación de cálculo iniciada anteriormente sobrescriba un estado más avanzado.
+  - Registrar el resultado final y los errores técnicos sin exponer datos salariales sensibles.
+- **Comportamiento esperado:** Cuando dos usuarios o procesos soliciten calcular el mismo período simultáneamente, solo una ejecución podrá efectuar la creación o actualización inicial autorizada. La otra deberá recuperar el resultado existente, identificar que el cálculo está en curso o recibir una respuesta controlada para reintentar. Si una ejecución falla, el sistema debe permitir determinar qué se guardó, qué quedó pendiente y cómo recuperarlo sin duplicar conceptos, empleados, comprobantes ni asientos contables.
+- **Criterios de aceptación:**
+  - Ejecutar dos solicitudes simultáneas para el mismo período: solo debe existir una planilla definitiva.
+  - Repetir una solicitud con el mismo token de idempotencia: no debe duplicar registros ni movimientos.
+  - Ejecutar dos solicitudes con tokens distintos para el mismo período: no debe generarse un segundo cálculo definitivo incompatible.
+  - Simular un bloqueo ocupado: el servidor debe responder de forma controlada y no guardar una planilla parcial como completa.
+  - Provocar un error durante la persistencia: el sistema debe liberar el bloqueo y dejar un estado recuperable.
+  - Volver a ejecutar el cálculo después de un fallo: debe completar o recuperar la operación sin duplicar las líneas ya persistidas.
+  - Intentar calcular una planilla cerrada o contabilizada: la operación debe seguir bloqueada.
+  - Intentar cambiar a un estado avanzado mientras el cálculo está en curso: no debe producirse una transición incompatible.
+  - Comprobar que el bloqueo se libera después de una ejecución satisfactoria y después de una fallida.
+  - Verificar que los totales resultantes coinciden con el cálculo independiente del conjunto de prueba.
 - **Riesgo de Regresión:** Bajo.
-- **Dependencias:** `calculatePayrollPeriod`, `LockService`.
+- **Dependencias:** `calculatePayrollPeriod`, `LockService`. Requiere pruebas de integración con el ciclo de vida de las planillas antes de darla por terminada.
 
 ---
 
-### T-NOM-02 [P0] — Parametrización dinámica de techos y tasas de deducción de ley (IHSS, RAP, ISR)
+### T-NOM-02 [P0] — Centralizar y versionar los parámetros legales y salariales por período de vigencia (IHSS, RAP, ISR)
 
-- **Componentes relacionados:** `backend/accounting-service/Code.gs` (`PlanillasNomenclatura`), `dashboard-recursos-humanos.html`.
-- **Problema detectado:** Evitar valores estáticos en el código para los techos del IHSS (L. 10,317.38) y tasas del RAP/ISR, haciéndolos configurables en la tabla de parámetros de nómina.
-- **Requisitos funcionales:**
-  1. Leer los techos y porcentajes de cotización de la tabla `ConfiguracionPlanillas` o `PlanillasNomenclatura`.
-  2. Aplicar las exenciones de la tabla progresiva del Impuesto sobre la Renta vigentes publicadas por el SAR de Honduras.
-- **Criterios de Aceptación:**
-  - Modificar el techo de cotización IHSS en la configuración actualiza automáticamente el cálculo de deducciones de la siguiente planilla sin alterar planillas históricas cerradas.
+- **Componentes relacionados:** `backend/accounting-service/Code.gs` (`PlanillasNomenclatura`, `calculatePayrollPeriod`), `dashboard-recursos-humanos.html`.
+- **Problema que se debe resolver:** Evitar valores estáticos en el código para los techos del IHSS (L. 10,317.38) y tasas del RAP/ISR, trasladando los techos, porcentajes y escalas a una configuración central. Los valores legales no deben asumirse universales ni permanentes sin comprobar su aplicabilidad y período de vigencia.
+- **Requisitos funcionales y técnicos:**
+  1. Definir un registro de parámetros por concepto legal en `ConfiguracionPlanillas` o `PlanillasNomenclatura`, con:
+     - Identificador y descripción.
+     - Institución y obligación a la que corresponde (IHSS, RAP, ISR).
+     - Tipo de parámetro: porcentaje, techo, mínimo, tramo, exención, base de cálculo o regla complementaria.
+     - Valor y unidad.
+     - Fecha de inicio y fin de vigencia.
+     - Período fiscal o laboral al que aplica.
+     - Condiciones de aplicabilidad.
+     - Fuente normativa oficial (STSS, SAR, IHSS, RAP, La Gaceta).
+     - Artículo, acuerdo, publicación o referencia que lo respalda.
+     - Fecha de validación y responsable de la revisión.
+     - Estado de aprobación de la configuración.
+  2. Permitir diferentes parámetros cuando la normativa distinga entre tipo de empleador, tamaño de empresa, categoría de trabajador, fondo o modalidad de aportación.
+  3. Mantener por separado las aportaciones del trabajador y las del empleador.
+  4. Permitir que una obligación tenga varios parámetros relacionados, como tasa, techo, base y exención.
+  5. Impedir que existan versiones incompatibles con la misma aplicabilidad y el mismo período de vigencia.
+  6. Mantener un historial inmutable de los parámetros utilizados por planillas calculadas, aprobadas, cerradas o contabilizadas.
+  7. Evitar que un parámetro futuro se aplique a períodos anteriores a su entrada en vigor.
+  8. Impedir que un parámetro no validado se utilice silenciosamente en una planilla definitiva.
+  9. Permitir desactivar una regla sin eliminar los registros históricos que dependan de ella.
+  10. Definir cómo se gestionan los parámetros ausentes, vencidos, contradictorios o todavía no aprobados.
+  11. Proteger los cambios mediante permisos específicos (`RecursosHumanos`/`Director`) y un registro de auditoría.
+  12. Mostrar qué versión de cada regla se applied al calcular una planilla.
+- **Alcance y Cambios necesarios:**
+  - Identificar todos los valores legales que actualmente estén definidos directamente en las fórmulas en `backend/accounting-service/Code.gs`.
+  - Trasladar los parámetros variables a la configuración central en `PlanillasNomenclatura`, conservando las fórmulas que deban permanecer estables.
+  - Añadir validaciones de formato, rango, vigencia y compatibilidad entre parámetros.
+  - Incorporar un procedimiento controlado para registrar y aprobar nuevos valores normativos en `dashboard-recursos-humanos.html`.
+  - Adaptar el motor de cálculo para seleccionar la versión vigente correspondiente al período procesado.
+  - Guardar una referencia a la versión de parámetros utilizada por cada cálculo.
+  - Añadir una comparación de versiones para detectar cambios posteriores que puedan afectar cálculos futuros.
+  - Mantener la posibilidad de reproducir un cálculo histórico con los parámetros originales.
+  - Evitar que editar una celda de configuración altere retroactivamente los importes ya aprobados o contabilizados.
+- **Comportamiento esperado:** Al calcular una planilla, el motor selecciona los parámetros aprobados y aplicables a su período. Si un valor no está configurado o presenta contradicciones, el sistema detiene el cálculo afectado con un mensaje preciso.
+- **Criterios de aceptación:**
+  - Registrar dos versiones de un mismo parámetro con vigencias distintas: cada período utiliza la versión correcta.
+  - Configurar una tasa con fecha futura: una planilla anterior no la utiliza.
+  - Intentar guardar dos versiones incompatibles para la misma aplicabilidad y vigencia: el sistema rechaza el conflicto.
+  - Eliminar o desactivar un parámetro vigente: no se permite dejar el cálculo definitivo sin una regla aplicable.
+  - Modificar una configuración después de cerrar una planilla: los importes e historial permanecen inalterados.
+  - Recalcular un período de prueba con su versión histórica: reproduce el resultado original.
+  - Intentar cambiar parámetros legales con un rol sin permiso: la operación es rechazada por el servidor.
+  - Consultar una planilla: permite identificar la versión de cada parámetro legal utilizado.
+  - Confirmar que un parámetro sin fuente o sin aprobación no puede presentarse como validado.
+  - Modificar el techo de cotización IHSS en la configuración actualiza el cálculo de deducciones de la siguiente planilla sin alterar planillas cerradas.
 - **Riesgo de Regresión:** Bajo.
-- **Dependencias:** `PlanillasNomenclatura`.
+- **Dependencias:** `PlanillasNomenclatura`, `calculatePayrollPeriod`.
 
 ---
 
-### T-NOM-03 [P0] — Generación automática del asiento contable por partida doble al aprobar la planilla
+### T-NOM-03 [P0] — Validar y corregir las reglas de IHSS, RAP e ISR conforme a la normativa hondureña aplicable
 
-- **Componentes relacionados:** `backend/accounting-service/Code.gs` (`updatePayrollPeriodStatus`, `recordAccountingJournalEntry`).
-- **Problema detectado:** Garantizar que al cambiar el estado de la planilla a `Contabilizada` en `updatePayrollPeriodStatus` se genere automáticamente el asiento contable por partida doble.
-- **Requisitos funcionales:**
-  1. Generar la partida contable:
-     - **Debe:** Gasto Sueldos y Salarios, Gasto Aportaciones Patronales IHSS/RAP.
-     - **Haber:** Retenciones IHSS/RAP/ISR por Pagar, Sueldos por Pagar.
-  2. Registrar la referencia de origen `PLN-XXXXXXXX`.
-- **Criterios de Aceptación:**
-  - La contabilización de la planilla crea el asiento balanceado en `AsientosContables` con débitos y créditos matemáticamente iguales.
+- **Componentes relacionados:** `backend/accounting-service/Code.gs` (`calculatePayrollPeriod`), `PlanillasNomenclatura`, `dashboard-recursos-humanos.html`.
+- **Problema que se debe resolver:** Comprobar y validar rigurosamente las reglas de cálculo de IHSS, RAP e ISR frente a las fuentes oficiales de Honduras (Secretaría de Trabajo, SAR, IHSS, RAP, La Gaceta) para garantizar el cumplimiento legal sin asumir reglas fijas o simplificadas.
+- **Requisitos funcionales y técnicos:**
+  1. **IHSS:**
+     - Confirmar la tasa (3.5% trabajador, 5.0% patronal), base de cotización, techo (L. 10,317.38 o actualizado), conceptos salariales incluidos y reglas de aplicabilidad por período.
+     - Identificar las diferencias entre las aportaciones del trabajador y del empleador.
+     - Registrar la versión normativa aplicable.
+     - Verificar el tratamiento de trabajadores cuyo salario se encuentre por debajo, en el límite o por encima del techo.
+     - Determinar cómo se prorratean los importes en períodos incompletos.
+  2. **RAP:**
+     - Identificar el fondo y la modalidad de aportación que se están calculando.
+     - Confirmar los porcentajes (1.5% sobre el excedente del techo IHSS), techos, bases y condiciones aplicables según la normativa.
+     - Diferenciar aportaciones del trabajador, del empleador y otros fondos administrados por el régimen.
+     - Verificar si las condiciones varían según el tamaño o la categoría de la empresa.
+  3. **ISR:**
+     - Aplicar la tabla progresiva oficial del SAR correspondiente al ejercicio fiscal (exención inicial L. 20,000 / escala progresiva).
+     - Verificar los límites de cada tramo, las exenciones y la base imponible.
+     - Determinar si la fórmula debe calcularse sobre ingresos anuales estimados, acumulados o mediante otro procedimiento aplicable al régimen de retención.
+     - Comprobar el tratamiento de remuneraciones variables, bonificaciones, pagos extraordinarios y otros conceptos.
+     - Evitar que la retención se calcule aplicando un único porcentaje a toda la base si la regla exige una escala progresiva por tramos.
+     - Definir cómo se realizan los ajustes y regularizaciones que correspondan, con trazabilidad.
+  4. **Validación común:**
+     - Mantener fuentes oficiales, fecha de vigencia y referencias normativas por regla.
+     - Separar las obligaciones legales de las deducciones voluntarias y de las políticas internas.
+     - Identificar los casos que requieran revisión por un profesional contable o asesor fiscal.
+     - No sustituir una regla por una tasa aproximada ni asumir que los valores de un año anterior continúan vigentes.
+- **Alcance y Cambios necesarios:**
+  - Elaborar una matriz de las fórmulas actuales de IHSS, RAP e ISR y compararlas con las fuentes oficiales correspondientes.
+  - Registrar los parámetros y condiciones que se confirmen como aplicables.
+  - Corregir las fórmulas cuando exista una diferencia demostrada en `calculatePayrollPeriod`.
+  - Integrar las reglas validadas con la configuración versionada de `T-NOM-02`.
+  - Separar los importes descontados al trabajador de los costos y pasivos patronales.
+  - Revisar la correspondencia entre los resultados calculados y los importes exportados para las obligaciones correspondientes.
+  - Añadir mensajes de revisión cuando falten datos que determinen la aplicabilidad de una regla.
+  - Documentar las reglas cuya interpretación o aplicabilidad siga pendiente de confirmación.
+- **Comportamiento esperado:** El motor aplica la regla correcta para el período, el trabajador y el tipo de obligación. El cálculo se explica a partir de la base, los porcentajes, los límites, los tramos y las condiciones utilizadas.
+- **Criterios de aceptación:**
+  - Calcular IHSS con salarios por debajo, exactamente en y por encima del techo validado.
+  - Calcular RAP para cada categoría de aplicabilidad confirmada.
+  - Verificar por separado el importe del trabajador y el aporte patronal.
+  - Probar el ISR en los límites inferior y superior de cada tramo de la tabla fiscal vigente.
+  - Verificar que la progresividad se aplique conforme a la fórmula validada.
+  - Ejecutar casos con remuneración fija y variable.
+  - Comparar los resultados con cálculos independientes documentados.
+  - Comprobar que cada resultado identifica la versión normativa aplicada.
+  - Confirmar que las exportaciones de cotización y retención coinciden con los cálculos de la planilla.
 - **Riesgo de Regresión:** Bajo.
-- **Dependencias:** `updatePayrollPeriodStatus`, `recordAccountingJournalEntry`.
+- **Dependencias:** `T-NOM-02` para almacenar y versionar parámetros; `T-NOM-04` para pruebas de límites y regresión.
 
 ---
 
-### T-NOM-04 [P0] — Inalterabilidad de planillas aprobadas y protección de períodos cerrados
+### T-NOM-04 [P0] — Inalterabilidad de planillas aprobadas, protección de períodos cerrados y pruebas de regresión
 
-- **Componentes relacionados:** `backend/accounting-service/Code.gs` (`updatePayrollPeriodStatus`), `backend/user-service/Code.gs`.
-- **Problema detectado:** Bloquear la edición, recálculo o anulación de planillas que se encuentren en estado `Aprobada`, `Cerrada` o `Contabilizada`.
-- **Requisitos funcionales:**
-  1. Validar el estado actual de la planilla antes de procesar cambios.
-  2. Rechazar recálculos sobre períodos cerrados salvo reapertura autorizada por Dirección con registro de motivo en auditoría.
-- **Criterios de Aceptación:**
+- **Componentes relacionados:** `backend/accounting-service/Code.gs` (`updatePayrollPeriodStatus`, `calculatePayrollPeriod`), `backend/user-service/Code.gs`.
+- **Problema que se debe resolver:** Bloquear la edición, recálculo o anulación de planillas en estado `Aprobada`, `Cerrada` o `Contabilizada`, e implementar una batería de pruebas automatizadas que garanticen la integridad de los datos financieros.
+- **Requisitos funcionales y técnicos:**
+  1. Validar el estado actual de la planilla antes de procesar cambios en `updatePayrollPeriodStatus`.
+  2. Rechazar recálculos o ediciones ordinarias sobre períodos cerrados salvo reapertura autorizada por Dirección con registro de motivo en auditoría.
+  3. Mantener un conjunto de pruebas automatizadas e independientes para las fórmulas principales de nómina.
+  4. Incorporar pruebas unitarias para cada concepto legal parametrizado (IHSS, RAP, ISR, horas extras, licencias).
+  5. Incorporar pruebas de integración para el cálculo completo de una planilla masiva.
+  6. Probar límites, valores extremos, datos ausentes, parámetros caducados y combinaciones incompatibles.
+  7. Probar el uso de versiones normativas diferentes entre períodos.
+  8. Probar solicitudes concurrentes, reintentos y fallos de persistencia.
+  9. Verificar que los comprobantes y reportes coincidan exactamente con los importes aprobados.
+  10. Verificar que la contabilización no produzca asientos duplicados en `AsientosContables`.
+  11. Mantener datos de prueba ficticios y resultados esperados calculados independientemente.
+  12. Identificar cada prueba con un nombre estable, entradas, resultado esperado, resultado obtenido y estado.
+  13. Distinguir las pruebas ejecutadas satisfactoriamente de las pruebas que no se pudieron ejecutar.
+- **Alcance y Cambios necesarios:**
+  - Añadir validaciones de bloqueo en `updatePayrollPeriodStatus` y `calculatePayrollPeriod` en `backend/accounting-service/Code.gs`.
+  - Añadir pruebas automatizadas de límites para IHSS, RAP e ISR.
+  - Añadir pruebas de vigencia, versionado de parámetros y concurrencia.
+  - Añadir pruebas de recuperación después de errores durante el guardado.
+  - Añadir pruebas de protección de planillas aprobadas, cerradas y contabilizadas.
+  - Incorporar una verificación de regresión para asegurar que los cambios en las reglas no alteren indebidamente los períodos históricos.
+- **Comportamiento esperado:** Intentar modificar o recalcular una planilla cerrada devuelve una excepción de período bloqueado. Cada cambio en el motor se verifica mediante pruebas reproducibles.
+- **Criterios de aceptación:**
   - Intento de modificar los valores salariales de una planilla cerrada devuelve una excepción de período bloqueado.
+  - Cada fórmula legal activa tiene pruebas de valores ordinarios y de límites.
+  - Cada regla versionada tiene pruebas que demuestran la selección correcta según la fecha del período.
+  - Las pruebas concurrentes no producen duplicados ni estados contradictorios.
+  - Las pruebas de cierre confirman que no se modifican importes protegidos.
+  - Las pruebas de reintento confirman que no se duplican deducciones, comprobantes ni asientos.
+  - Los reportes agregados coinciden con los registros individuales incluidos.
+  - Los cambios no provocan regresiones en las funciones relacionadas de Recursos Humanos y contabilidad.
 - **Riesgo de Regresión:** Bajo.
-- **Dependencias:** `updatePayrollPeriodStatus`.
+- **Dependencias:** `T-NOM-01`, `T-NOM-02` y `T-NOM-03`.
 
 ---
 
-### T-NOM-05 [P0] — Aislamiento RBAC y confidencialidad estricta de recibos individuales de sueldo
+### T-NOM-05 [P0/P1] — Aislamiento RBAC, confidencialidad y trazabilidad explicable de importes salariales
 
-- **Componentes relacionados:** `backend/accounting-service/Code.gs` (`generatePayrollReceiptPDF`, `getStaffPayrollReceipt`), `backend/user-service/Code.gs`.
-- **Problema detectado:** Proteger el desglose salarial para que cada empleado o docente solo pueda visualizar y descargar sus propios recibos de pago.
-- **Requisitos funcionales:**
-  1. Validar en `getStaffPayrollReceipt` que `authUserId` coincida con el `EmpleadoID` solicitante o que posea el rol `RecursosHumanos`/`Director`.
-  2. Denegar consultas de desgloses salariales pertenecientes a otros trabajadores.
-- **Criterios de Aceptación:**
+- **Componentes relacionados:** `backend/accounting-service/Code.gs` (`getStaffPayrollReceipt`, `generatePayrollReceiptPDF`), `backend/user-service/Code.gs` (`assertRecordOwnership`).
+- **Problema que se debe resolver:** Proteger el desglose salarial para que cada empleado o docente solo pueda consultar y descargar sus propios recibos de pago, haciendo que cada importe sea explicable y auditable.
+- **Requisitos funcionales y técnicos:**
+  1. Validar en `getStaffPayrollReceipt` y `generatePayrollReceiptPDF` que `authUserId` coincida con el `EmpleadoID` solicitante o que posea el rol `RecursosHumanos`, `Contador` o `Director`.
+  2. Denegar consultas de desgloses salariales pertenecientes a otros trabajadores mediante llamadas directas o manipulación de parámetros API.
+  3. Asociar cada línea calculada con el concepto que la origina (`PlanillasNomenclatura`).
+  4. Mostrar la base de cálculo, cantidad, tasa, límite aplicado y versión normativa cuando corresponda.
+  5. Identificar el registro de origen de horas extraordinarias, bonificaciones, ausencias, anticipos y ajustes.
+  6. Diferenciar los importes introducidos manualmente de los calculados automáticamente.
+  7. Registrar quién autorizó un ajuste y el motivo correspondiente en `logStructuredEvent`.
+  8. Permitir identificar la versión de las reglas utilizadas por el cálculo.
+  9. Mantener un historial de las modificaciones que afectan importes.
+  10. Distinguir el importe calculado, el importe aprobado, el importe contabilizado y el importe efectivamente pagado.
+  11. Presentar los conceptos de forma comprensible en el comprobante de pago PDF.
+- **Alcance y Cambios necesarios:**
+  - Aplicar `assertRecordOwnership` en `getStaffPayrollReceipt` de `backend/accounting-service/Code.gs`.
+  - Revisar el modelo de resultados de `calculatePayrollPeriod` para incluir metadatos explicativos de cálculo.
+  - Añadir referencias a los registros de origen y a las versiones de reglas aplicadas.
+  - Ampliar el desglose presentado en la interfaz y en el comprobante PDF.
+- **Comportamiento esperado:** Al revisar una línea de nómina, un usuario autorizado determina de dónde procede el importe y qué regla se applied. Cada empleado consulta exclusivamente sus propios recibos sin acceder a datos de terceros.
+- **Criterios de aceptación:**
   - Intentos de acceder al recibo salarial de un tercero devuelven error de acceso denegado.
+  - Seleccionar una línea de salario base permite localizar la condición salarial utilizada.
+  - Seleccionar horas extraordinarias permite localizar las horas aprobadas y la regla de recargo.
+  - Seleccionar una deducción legal muestra la base, el parámetro y la versión normativa utilizados.
+  - Comparar el comprobante con la planilla aprobada confirma que los importes coinciden.
+  - Los ajustes manuales conservan un historial identificable con autor y motivo.
 - **Riesgo de Regresión:** Bajo.
-- **Dependencias:** `getStaffPayrollReceipt`, `assertRecordOwnership`.
+- **Dependencias:** `getStaffPayrollReceipt`, `assertRecordOwnership`, `T-NOM-02`.
 
 ---
 
 ### T-NOM-06 [P0] — Integración de horas extraordinarias autorizadas en el cálculo devengado
 
-- **Componentes relacionados:** `backend/accounting-service/Code.gs` (`calculatePayrollPeriod`, `AprobacionHorasExtras`).
+- **Componentes relacionados:** `backend/accounting-service/Code.gs` (`calculatePayrollPeriod`, `AprobacionHorasExtras`), `js/teacher.js`.
 - **Problema detectado:** Incorporar las horas extras aprobadas en `AprobacionHorasExtras` dentro del cálculo devengado de la planilla del mes correspondiente.
 - **Requisitos funcionales:**
-  1. Consultar horas extras con estado `Aprobada` para el período `periodoMes`.
+  1. Consultar horas extras con estado `Aprobada` para el período `periodoMes` en `AprobacionHorasExtras`.
   2. Sumar el `MontoHorasExtras` al total devengado del trabajador y marcar las horas como `Liquidadas`.
+  3. Aplicar recargos del 25%, 50% o 75% según la jornada laboral hondureña (Art. 273 del Código del Trabajo).
 - **Criterios de Aceptación:**
   - Las horas extras aprobadas se desglosan en el recibo de pago y se suman al salario bruto.
 - **Riesgo de Regresión:** Bajo.
@@ -8497,7 +8648,7 @@ El destinatario puede abrir una comunicación y completar la acción solicitada 
 - **Componentes relacionados:** `backend/accounting-service/Code.gs` (`requestEmployeeLoanAdvance`, `approveEmployeeLoanAdvance`), `js/teacher.js`.
 - **Problema detectado:** Descontar automáticamente la cuota fija de amortización de préstamos o anticipos activos registrados en `AnticiposPrestamosEmpleado`.
 - **Requisitos funcionales:**
-  1. Consultar la cuota mensual en la tabla de amortización de préstamos aprobados.
+  1. Consultar la cuota mensual en la tabla de amortización de préstamos aprobados en `AnticiposPrestamosEmpleado`.
   2. Deducir la cuota en `OtrasDeducciones` y actualizar el saldo pendiente del préstamo.
 - **Criterios de Aceptación:**
   - El cálculo de nómina deduce la cuota del préstamo activo y actualiza la tabla de saldos pendientes.
@@ -8525,7 +8676,7 @@ El destinatario puede abrir una comunicación y completar la acción solicitada 
 - **Componentes relacionados:** `backend/accounting-service/Code.gs` (`calculatePayrollPeriod`), `backend/user-service/Code.gs`.
 - **Problema detectado:** Calcular el salario proporcional exacto para trabajadores con ingreso o desvinculación a mitad del período de nómina.
 - **Requisitos funcionales:**
-  1. Comparar `FechaIngreso` o `FechaBaja` contra las fechas de inicio y fin del período de nómina.
+  1. Comparar `FechaIngreso` o `FechaBaja` contra las fechas de inicio y fin del período de nómina en `ExpedientesLaborales`.
   2. Prorratear el salario base multiplicando por los días efectivamente laborados (`díasTrabajados / 30`).
 - **Criterios de Aceptación:**
   - Un trabajador que ingresa a mitad de mes recibe el salario proporcional exacto a los días trabajados.
@@ -8548,7 +8699,7 @@ El destinatario puede abrir una comunicación y completar la acción solicitada 
 
 ---
 
-### T-NOM-11 [P2] — Emisión de comprobantes individuales de pago PDF con marca de agua y firma de caja
+### T-NOM-11 [P2] — Emisión de comprobantes individuales PDF de pago con marca de agua y firma de caja
 
 - **Componentes relacionados:** `backend/accounting-service/Code.gs` (`generatePayrollReceiptPDF`), `dashboard-recursos-humanos.html`.
 - **Problema detectado:** Generar el desglose de nómina individual en PDF con membrete institucional, desglose de devengados/deducciones y firmas autorizadas.
@@ -8626,7 +8777,7 @@ El destinatario puede abrir una comunicación y completar la acción solicitada 
   1. Incluir `PlanillasNomenclatura` y `AnticiposPrestamosEmpleado` en `createSystemBackup`.
   2. Verificar la igualdad de saldos contables tras ejecutar `restoreSystemBackup`.
 - **Criterios de Aceptación:**
-  - El backup institucional respalda y restaura el 100% de los expedientes de nómina manteniendo la inalterabilidad contable.
+  - El archivo de respaldo contiene el 100% de los expedientes de nómina manteniendo la inalterabilidad contable.
 - **Riesgo de Regresión:** Bajo.
 - **Dependencias:** `createSystemBackup`, `restoreSystemBackup`.
 
@@ -8690,25 +8841,9 @@ El destinatario puede abrir una comunicación y completar la acción solicitada 
 
 ### ORDEN DE EJECUCIÓN RECOMENDADO FASE 17 (PLANILLAS Y NÓMINA)
 
-| Orden | Tarea | Prioridad | Dependencia principal |
-| :---: | :--- | :---: | :--- |
-| **1** | **T-NOM-01.** Control transaccional de cálculo de planilla con LockService | **P0** | `calculatePayrollPeriod` / `LockService` |
-| **2** | **T-NOM-02.** Parametrización dinámica de techos y tasas IHSS/RAP/ISR | **P0** | `PlanillasNomenclatura` |
-| **3** | **T-NOM-03.** Generación automática del asiento contable por partida doble | **P0** | `recordAccountingJournalEntry` |
-| **4** | **T-NOM-04.** Inalterabilidad de planillas aprobadas y períodos cerrados | **P0** | `updatePayrollPeriodStatus` |
-| **5** | **T-NOM-05.** Aislamiento RBAC de recibos individuales de sueldo | **P0** | `getStaffPayrollReceipt` / RBAC |
-| **6** | **T-NOM-06.** Integración de horas extraordinarias autorizadas | **P0** | `AprobacionHorasExtras` |
-| **7** | **T-NOM-07.** Deducción de cuotas de préstamos y anticipos | **P1** | `AnticiposPrestamosEmpleado` |
-| **8** | **T-NOM-08.** Descuento por incapacidades médicas y subsidio IHSS | **P1** | `IncapacidadesMedicas` |
-| **9** | **T-NOM-09.** Prorrateo de salario por altas, bajas y licencias | **P1** | `calculatePayrollPeriod` |
-| **10** | **T-NOM-10.** Cálculo automático del Décimo Tercer y Décimo Cuarto Mes | **P1** | `calculatePayrollPeriod` |
-| **11** | **T-NOM-11.** Emisión de comprobantes individuales PDF de pago | **P2** | `generatePayrollReceiptPDF` |
-| **12** | **T-NOM-12.** Exportación formateada de planilla de cotización IHSS/SAR | **P2** | `PlanillasNomenclatura` |
-| **13** | **T-NOM-13.** Reporte consolidado de masa salarial y costo patronal | **P2** | `getPayrollPeriodSummary` |
-| **14** | **T-NOM-14.** Dashboard dinámico de tendencias salariales | **P3** | Universal Chart Engine |
-| **15** | **T-NOM-15.** Herramienta de conciliación asistencia vs deducciones | **P3** | Reconciliation Engine |
-| **16** | **T-NOM-16.** Respaldo inmutable e integridad de tablas de nómina | **P3** | `createSystemBackup` |
-| **17** | **T-NOM-17.** Flujo de reclamos salariales y ajustes de nómina | **P2** | `dashboard-recursos-humanos.html` |
-| **18** | **T-NOM-18.** Gestión de retenciones judiciales y embargos | **P2** | `calculatePayrollPeriod` |
-| **19** | **T-NOM-19.** Calculadora de liquidación laboral e indemnizaciones | **P3** | `ContratosLaborales` |
-| **20** | **T-NOM-20.** Reconciliación integral planillas-bancos-contabilidad | **P1** | Reconciliation Engine |
+| Orden | Tareas | Condición para avanzar | Dependencia principal |
+| :---: | :--- | :--- | :--- |
+| **1** | **T-NOM-01**, **T-NOM-02**, **T-NOM-03**, **T-NOM-04**, **T-NOM-05** | Cálculo masivo protegido con LockService, parámetros IHSS/RAP/ISR versionados por vigencia, asiento por partida doble automático, períodos cerrados inalterables y aislamiento RBAC de recibos. | `calculatePayrollPeriod` / `LockService` / `PlanillasNomenclatura` / `recordAccountingJournalEntry` / `updatePayrollPeriodStatus` / RBAC |
+| **2** | **T-NOM-06**, **T-NOM-07**, **T-NOM-08**, **T-NOM-09**, **T-NOM-10** | Horas extras integradas, deducción de préstamos, incapacidades IHSS, prorrateo por altas/bajas y cálculo automático de Aguinaldo/14vo mes. | `AprobacionHorasExtras` / `AnticiposPrestamosEmpleado` / `IncapacidadesMedicas` / `calculatePayrollPeriod` |
+| **3** | **T-NOM-11**, **T-NOM-12**, **T-NOM-13**, **T-NOM-17**, **T-NOM-18** | Comprobantes individuales PDF con firma, exportación a portales IHSS/SAR, reporte de masa salarial patronal, reclamos salariales y embargos judiciales. | `generatePayrollReceiptPDF` / `PlanillasNomenclatura` / `getPayrollPeriodSummary` |
+| **4** | **T-NOM-14**, **T-NOM-15**, **T-NOM-16**, **T-NOM-19**, **T-NOM-20** | Dashboard dinámico salarial, conciliación asistencia vs deducciones, respaldo inmutable, calculadora de indemnización laboral y reconciliación nómina-bancos-contabilidad. | Universal Chart Engine / Reconciliation Engine / `createSystemBackup` |
