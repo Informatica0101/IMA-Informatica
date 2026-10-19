@@ -6634,248 +6634,700 @@ El destinatario puede abrir una comunicación y completar la acción solicitada 
 
 ## PLAN DE TRABAJO DETALLADO Y UNIFICADO: FASE DE CONTABILIDAD, PRESUPUESTOS Y CONTROL FINANCIERO
 
-### T-FIN-01 [P1] — Control de concurrencia transaccional con LockService en asientos contables y facturas fiscales
+### T-FIN-01 [P1] — Control de concurrencia y operaciones financieras atómicas con LockService
 
 - **Componentes relacionados:** `backend/accounting-service/Code.gs` (`recordAccountingJournalEntry`, `createFiscalInvoice`), `js/accounting.js`.
-- **Problema detectado:** Al guardar un asiento contable en `AsientosContables` o emitir una factura fiscal SAR en `FacturasFiscales`, el servidor no utiliza un bloqueo exclusivo mediante `LockService.getScriptLock()`. Transacciones simultáneas pueden provocar duplicados en el correlativo de factura o colisiones en el saldo contable.
+- **Problema que resuelve:** Las operaciones concurrentes de registro de asientos contables y emisión de facturas fiscales pueden generar duplicados, asignaciones simultáneas de números, inconsistencias entre registros o pérdida de actualizaciones cuando varias solicitudes modifican los mismos datos.
 - **Requisitos funcionales:**
-  1. Adquirir `LockService.getScriptLock()` antes de actualizar `AsientosContables` y `FacturasFiscales`.
-  2. Verificar la correlatividad del número de factura dentro de la autorización CAI vigente.
-  3. Garantizar el equilibrio estricto de partida doble (`Math.abs(debe - haber) <= 0.01`).
-- **Criterios de Aceptación:**
-  - Emisiones simultáneas de facturas no producen números de factura duplicados y conservan la secuencia CAI.
+  1. Incorporar `LockService.getScriptLock()` en las operaciones críticas de `backend/accounting-service/Code.gs`, particularmente en `recordAccountingJournalEntry`, `createFiscalInvoice` y cualquier operación adicional que asigne consecutivos, aplique pagos o modifique saldos compartidos.
+  2. Adquirir el bloqueo antes de consultar el estado que determinará la escritura y mantenerlo durante la validación y persistencia de la operación.
+  3. Configurar un tiempo máximo de espera. Si no se obtiene el bloqueo, devolver un resultado controlado que permita reintentar sin interpretar la operación como completada.
+  4. Revalidar dentro de la sección protegida:
+     - Existencia de la clave de idempotencia (`DeduplicationKey`).
+     - Disponibilidad del número de factura o recibo.
+     - Estado del período contable (`CierresPeriodosContables`).
+     - Estado y saldo pendiente de los documentos afectados.
+     - Validez del CAI y del rango autorizado.
+  5. Liberar el bloqueo mediante `finally`, incluso cuando se produzcan excepciones (`lock.releaseLock()`).
+  6. Evitar bloqueos prolongados durante generación de PDF, envío de notificaciones o tareas que no requieran exclusión mutua.
+  7. Establecer un orden consistente para adquirir bloqueos cuando una operación afecte varias entidades financieras.
+  8. Registrar los conflictos de concurrencia con identificador de operación, usuario, fecha y resultado, sin incluir credenciales ni datos bancarios sensibles.
+- **Alcance y Cambios necesarios:**
+  - Revisar los puntos de lectura-modificación-escritura de `backend/accounting-service/Code.gs`.
+  - Centralizar, cuando corresponda, la adquisición y liberación de bloqueos.
+  - Añadir controles de unicidad y revalidación del estado inmediatamente antes de persistir.
+  - Implementar una respuesta diferenciada entre conflicto temporal, validación rechazada y error definitivo.
+- **Comportamiento esperado:** Si dos usuarios intentan emitir simultáneamente una factura o registrar una operación sobre el mismo recurso, el sistema debe serializar las modificaciones conflictivas o rechazar de forma controlada la solicitud que no pueda continuar. Ninguna solicitud debe recibir confirmación de éxito si sus datos no se han guardado correctamente.
+- **Criterios de aceptación:**
+  - Dos solicitudes concurrentes no pueden emitir el mismo número fiscal.
+  - Dos solicitudes idénticas no generan dos asientos, facturas ni cargos.
+  - Las operaciones rechazadas por contención pueden reintentarse de manera segura.
+  - Un error intermedio no deja un documento marcado como pagado sin registrar el movimiento correspondiente.
+  - Los bloqueos se liberan después de una excepción.
+  - Las pruebas concurrentes comprueban tanto la integridad de los datos como la respuesta del servidor.
 - **Riesgo de Regresión:** Bajo.
-- **Dependencias:** `recordAccountingJournalEntry`, `createFiscalInvoice`, `LockService`.
+- **Dependencias:** T-FIN-02, T-FIN-03 y T-FIN-04.
 
 ---
 
-### T-FIN-02 [P1] — Inalterabilidad contable y bloqueo de escritura en períodos fiscales cerrados
+### T-FIN-02 [P1] — Cierre formal de períodos contables, inalterabilidad y bloqueo de operaciones retroactivas
 
 - **Componentes relacionados:** `backend/accounting-service/Code.gs` (`recordAccountingJournalEntry`), `backend/user-service/Code.gs`.
-- **Problema detectado:** Se requiere impedir que usuarios o scripts registren asientos contables o facturas con fechas pertenecientes a ejercicios o períodos fiscales con estado `Cerrado`.
+- **Problema que resuelve:** El sistema dispone de cierres de caja (`CierresCaja`), pero necesita un mecanismo formal que impida modificar períodos contables cerrados. El cierre diario de caja no equivale al cierre mensual, trimestral o anual de la contabilidad general.
 - **Requisitos funcionales:**
-  1. Validar la fecha del asiento contable contra la tabla `CierresPeriodosContables`.
-  2. Rechazar la operación si el período está cerrado, permitiendo únicamente ajustes autorizados por Dirección con registro de auditoría.
-- **Criterios de Aceptación:**
-  - Intentar registrar un asiento en un mes contable cerrado devuelve una excepción de período bloqueado.
+  1. Crear la tabla `CierresPeriodosContables` con, como mínimo:
+     - `CierrePeriodoID`
+     - `EjercicioFiscalID`
+     - `FechaInicio` y `FechaFin`
+     - `Estado`: Abierto, En revisión, Cerrado o Reabierto
+     - `FechaCierre`
+     - `UsuarioCierre`
+     - `FechaReapertura`
+     - `UsuarioReapertura`
+     - `MotivoCierre` y `MotivoReapertura`
+     - Totales de control al cierre
+     - Identificador de la versión o evidencia del informe de cierre
+  2. Crear una función de servidor que determine el período contable aplicable a cada fecha de contabilización.
+  3. Aplicar el bloqueo a todos los puntos de entrada capaces de crear, modificar, anular o recalcular información financiera, no solamente al formulario de asientos.
+  4. Impedir contabilizaciones retroactivas dentro de períodos cerrados, aunque la solicitud provenga de otro módulo, una importación, un proceso automático o una llamada directa al endpoint GAS.
+  5. Permitir preparar el cierre en estado de revisión y verificar:
+     - Balance de comprobación.
+     - Asientos descuadrados o incompletos (`Math.abs(debe - haber) <= 0.01`).
+     - Cuentas por cobrar y pagar.
+     - Saldos de caja y bancos.
+     - Facturas y comprobantes pendientes de contabilización.
+     - Diferencias de conciliación.
+     - Movimientos pendientes de sincronización.
+  6. Al cerrar, almacenar una instantánea de los saldos y totales de control necesarios para comparar el cierre con los informes posteriores.
+  7. Prohibir la reapertura a usuarios sin autorización específica (`Director`/`Contador`). Exigir motivo, identidad del responsable y registro de auditoría.
+  8. Si se necesita corregir un período cerrado, permitir registrar un asiento de ajuste en un período abierto o ejecutar una reapertura autorizada y trazable, según la política contable institucional.
+  9. Definir cómo se gestionan notas de crédito, devoluciones y documentos fiscales emitidos posteriormente que hacen referencia a operaciones de un período cerrado, sin alterar silenciosamente el historial original.
+  10. Evitar que un cambio de fecha enviado por el cliente permita eludir el bloqueo.
+- **Alcance y Cambios necesarios:**
+  - Implementar la tabla `CierresPeriodosContables` y los servicios de apertura, revisión, cierre y reapertura en `backend/accounting-service/Code.gs`.
+  - Integrar la validación del período en todas las funciones de escritura financiera.
+  - Añadir un panel de cierre contable en `dashboard-contabilidad.html` / `js/accounting.js` con lista de comprobaciones, diferencias detectadas, estado del proceso y responsable.
+  - Utilizar controles de concurrencia durante el cierre para evitar que entren nuevos movimientos mientras se calcula y confirma el estado final.
+- **Comportamiento esperado:** Una vez cerrado un período, cualquier intento de escritura retroactiva debe rechazarse en el servidor con un mensaje que identifique el período bloqueado y las alternativas permitidas. Los informes históricos deben seguir reflejando los valores del cierre, salvo que exista una corrección autorizada y documentada.
+- **Criterios de aceptación:**
+  - Un asiento de gasto con fecha dentro de un mes cerrado es rechazado desde cualquier módulo.
+  - El cierre no se confirma si existen errores críticos de integridad.
+  - Un usuario sin permiso no puede reabrir el período mediante una llamada directa a GAS.
+  - La reapertura registra quién la realizó, cuándo y por qué.
+  - Los totales del cierre pueden reproducirse y compararse con los informes posteriores.
+  - Los cierres de caja diarios continúan funcionando de forma independiente del cierre contable.
 - **Riesgo de Regresión:** Bajo.
-- **Dependencias:** `recordAccountingJournalEntry`, `CierresPeriodosContables`.
+- **Dependencias:** T-FIN-01, T-FIN-11, T-FIN-15 y T-FIN-16.
 
 ---
 
-### T-FIN-03 [P1] — Idempotencia y prevención de duplicados en la revisión de comprobantes de pago
+### T-FIN-03 [P1] — Idempotencia integral de pagos, comprobantes y contabilizaciones
 
-- **Componentes relacionados:** `backend/accounting-service/Code.gs` (`reviewPaymentVoucher`), `backend/user-service/Code.gs`.
-- **Problema detectado:** La confirmación de comprobantes de pago reportados por las familias (`ComprobantesPago`) debe ser idempotente para evitar abonar dos veces al saldo del estudiante ante reintentos de red.
+- **Componentes relacionados:** `backend/accounting-service/Code.gs` (`reviewPaymentVoucher`, `uploadPaymentVoucher`), `backend/user-service/Code.gs`.
+- **Problema que resuelve:** Aunque existe prevención de duplicados mediante `DeduplicationKey`, es necesario garantizar que el mecanismo cubra todo el ciclo de pago. Detectar dos comprobantes con la misma referencia bancaria no es suficiente para evitar duplicaciones originadas por reintentos, solicitudes concurrentes o respuestas de red perdidas.
 - **Requisitos funcionales:**
-  1. Validar en `reviewPaymentVoucher` si el comprobante ya fue procesado (`Aprobado` o `Rechazado`).
-  2. Utilizar clave de deduplicación basada en `ComprobanteID` y número de referencia bancaria.
-- **Criterios de Aceptación:**
-  - Aprobar dos veces el mismo comprobante no duplica el abono en `CargosEstudiante` ni genera asientos duplicados.
+  1. Implementar una clave de idempotencia estable por operación (`DeduplicationKey`), creada antes del primer envío y conservada en todos los reintentos de esa misma operación.
+  2. Aplicar el mecanismo a:
+     - Registro de pagos.
+     - Subida de comprobantes (`uploadPaymentVoucher`).
+     - Aprobación de pagos (`reviewPaymentVoucher`).
+     - Aplicación de pagos a cargos.
+     - Registro de anticipos.
+     - Devoluciones y reversos.
+     - Emisión de recibos.
+     - Generación de asientos automáticos.
+     - Notificaciones posteriores al pago.
+  3. Registrar por solicitud una clave única, tipo de operación, usuario o actor, estado, fecha de creación, resultado y referencia al documento financiero generado.
+  4. Si llega una solicitud repetida con la misma clave y el mismo contenido, devolver el resultado original sin volver a ejecutar los efectos financieros.
+  5. Si se reutiliza la misma clave con datos diferentes, rechazar la solicitud.
+  6. Diferenciar los estados `En proceso`, `Completada` y `Fallida recuperable`, evitando que dos reintentos ejecuten simultáneamente la misma operación.
+  7. Si se pierde la conexión después de persistir el pago, permitir recuperar el resultado consultando la clave original.
+  8. No utilizar únicamente el número de depósito como identificador universal: distintas entidades bancarias pueden producir referencias iguales.
+  9. Complementar la clave con validaciones de duplicidad por entidad bancaria, referencia normalizada, fecha, importe y cuenta receptora cuando esos datos estén disponibles.
+  10. Implementar reintentos con espera progresiva para fallos transitorios, con un límite de intentos y un mecanismo de recuperación de operaciones inconclusas.
+  11. Garantizar que una notificación repetida no genere un segundo cargo, recibo ni asiento.
+  12. Conservar un historial de intentos sin almacenar innecesariamente datos completos de tarjetas ni credenciales de pago.
+- **Alcance y Cambios necesarios:**
+  - Revisar `uploadPaymentVoucher`, `reviewPaymentVoucher` y todos los servicios que registren pagos en `backend/accounting-service/Code.gs`.
+  - Incorporar un registro central de idempotencia o un mecanismo equivalente de unicidad atómica.
+  - Relacionar cada pago con sus aplicaciones contables y documentos generados.
+  - Añadir una operación para consultar el resultado de una solicitud por su clave.
+- **Comportamiento esperado:** Una solicitud puede repetirse diez veces por errores de red y debe producir un único efecto financiero. El cliente debe poder recuperar el resultado sin tener que adivinar si el pago se procesó.
+- **Criterios de aceptación:**
+  - Diez reintentos con la misma clave producen un solo pago y un solo asiento.
+  - Dos solicitudes concurrentes con la misma clave no duplican el movimiento.
+  - La misma clave con importes distintos se rechaza.
+  - Un pago confirmado no vuelve a aplicarse a otro cargo por un reintento.
+  - Las operaciones inconclusas pueden recuperarse sin repetir efectos ya ejecutados.
+  - Las pruebas cubren desconexión antes de guardar, después de guardar y antes de devolver la respuesta.
 - **Riesgo de Regresión:** Bajo.
-- **Dependencias:** `reviewPaymentVoucher`, `CargosEstudiante`.
+- **Dependencias:** T-FIN-01 y T-FIN-04.
 
 ---
 
-### T-FIN-04 [P1] — Verificación estricta de parámetros fiscales SAR (CAI, rangos y fecha límite)
+### T-FIN-04 [P1] — Validación fiscal hondureña SAR/CAI, rangos y ciclo de vida de autorizaciones
 
-- **Componentes relacionados:** `backend/accounting-service/Code.gs` (`createFiscalInvoice`), `dashboard-contabilidad.html`.
-- **Problema detectado:** Las facturas emitidas deben validar que el número asignado se encuentre dentro del rango autorizado por el SAR y que la fecha de emisión sea anterior o igual a la `FechaLimiteEmision`.
+- **Componentes relacionados:** `backend/accounting-service/Code.gs` (`FacturasFiscales`, `createFiscalInvoice`), `dashboard-contabilidad.html`.
+- **Problema que resuelve:** La auditoría confirma validaciones de CAI, rango y fecha límite, pero no demuestra que se cubran todos los controles necesarios para una facturación fiscal consistente. La implementación debe diferenciar entre una validación de campos y el cumplimiento integral de las obligaciones fiscales aplicables según la normativa tributaria de Honduras.
 - **Requisitos funcionales:**
-  1. Verificar disponibilidad de correlativos dentro del rango autorizado (`RangoInicial` a `RangoFinal`).
-  2. Notificar al personal financiero cuando queden menos de 50 facturas disponibles en el rango CAI.
-- **Criterios de Aceptación:**
-  - Intentar emitir una factura con un rango CAI agotado o vencido bloquea la emisión e informa la necesidad de nuevo rango SAR.
+  1. Mantener en `FacturasFiscales` por autorización fiscal:
+     - CAI.
+     - Tipo de documento fiscal.
+     - Establecimiento, punto de emisión y tipo de documento, según corresponda.
+     - Rango autorizado (`RangoInicial` a `RangoFinal`).
+     - Próximo número disponible (`NumeroFactura`).
+     - Fecha de autorización y fecha límite de emisión (`FechaLimiteEmision`).
+     - Estado de la autorización.
+     - Cantidad de documentos emitidos y disponibles.
+  2. Verificar en el servidor que el número de documento pertenece al rango autorizado, no está previamente asignado y se emite dentro de la vigencia aplicable.
+  3. Reservar y asignar consecutivos de manera segura ante solicitudes concurrentes (integrado con `T-FIN-01`).
+  4. Impedir la emisión si el rango se agotó, la autorización está vencida, se encuentra inactiva o no corresponde al tipo de documento solicitado.
+  5. Mantener la trazabilidad de cada documento fiscal desde su emisión hasta su anulación o corrección, sin reutilizar números ya consumidos.
+  6. Separar el documento fiscal emitido de los recibos internos de caja y de los comprobantes de transferencia.
+  7. Gestionar notas de crédito, anulaciones y demás documentos de corrección que resulten aplicables, con referencias al documento original y controles de autorización.
+  8. Configurar impuestos, exenciones, descuentos, bases imponibles y redondeos (ISV 15%) de acuerdo con la normativa vigente y la condición fiscal del contribuyente. No aplicar automáticamente ISV a conceptos exentos.
+  9. Conservar una copia de los datos fiscales utilizados al emitir el documento, de modo que un cambio posterior en la configuración no altere facturas históricas.
+  10. Producir el documento descargable con los datos exigidos para el tipo de comprobante y con una representación consistente de los importes, impuestos y numeración.
+  11. Mostrar alertas configurables por proximidad a la fecha límite y agotamiento del rango (menos de 50 disponibles).
+  12. Registrar la identidad del emisor, la fecha, el CAI utilizado, el consecutivo asignado y los motivos de rechazo.
+  13. Mantener configurables los requisitos tributarios según el régimen, el tipo de contribuyente y las disposiciones vigentes del SAR.
+- **Alcance y Cambios necesarios:**
+  - Ampliar el modelo `FacturasFiscales` en `backend/accounting-service/Code.gs`.
+  - Centralizar las validaciones fiscales en el backend.
+  - Integrar la asignación segura de consecutivos con `T-FIN-01`.
+  - Crear un panel de autorizaciones y disponibilidad de rangos en `dashboard-contabilidad.html`.
+  - Revisar la generación de documentos fiscales y su separación respecto de `generatePaymentReceiptPDF`.
+- **Comportamiento esperado:** Ninguna factura fiscal puede emitirse con numeración fuera de rango, autorización vencida o consecutivo duplicado. El sistema debe distinguir claramente entre factura fiscal, recibo de pago y comprobante de depósito.
+- **Criterios de aceptación:**
+  - Se rechaza un CAI vencido y se informa el motivo.
+  - Se rechazan consecutivos fuera de rango o previamente utilizados.
+  - Dos emisiones simultáneas no reciben el mismo número.
+  - Una devolución no modifica retroactivamente una factura original.
+  - Los importes de las facturas emitidas permanecen estables aunque cambie la configuración fiscal.
+  - Los formatos y reglas se verifican contra la normativa SAR vigente aplicable al instituto.
 - **Riesgo de Regresión:** Bajo.
-- **Dependencias:** `FacturasFiscales`.
+- **Dependencias:** T-FIN-01, T-FIN-03 y T-FIN-16.
 
 ---
 
-### T-FIN-05 [P1] — Separación de funciones y prevención de auto-aprobación en compras y egresos
+### T-FIN-05 [P1] — Separación de funciones, prevención de auto-aprobación y autorización financiera
 
-- **Componentes relacionados:** `backend/accounting-service/Code.gs` (`approvePurchaseOrder`), `backend/user-service/Code.gs`.
-- **Problema detectado:** Para mantener el control interno, el usuario que solicita una orden de compra o registra un gasto no puede ser el mismo que aprueba el pago.
+- **Componentes relacionados:** `backend/accounting-service/Code.gs` (`approvePurchaseOrder`), `backend/user-service/Code.gs` (`ROLE_PERMISSIONS`).
+- **Problema que resuelve:** La existencia de permisos RBAC y la prohibición de autoaprobación no garantizan por sí solas una separación completa de funciones. Deben cubrirse todas las vías de autorización, las modificaciones posteriores a la aprobación y las operaciones de mayor riesgo.
 - **Requisitos funcionales:**
-  1. Validar en `approvePurchaseOrder` que `authUserId` sea diferente del creador de la orden de compra.
-  2. Exigir autorización de Dirección para órdenes de compra que superen el límite configurado.
-- **Criterios de Aceptación:**
-  - El creador de una orden de compra recibe un error si intenta auto-aprobarla.
+  1. Definir permisos independientes para crear, editar, revisar, aprobar, contabilizar, anular, devolver y reabrir operaciones financieras.
+  2. Aplicar la autorización en el servidor según el usuario autenticado, su rol, los permisos específicos y el estado actual del documento.
+  3. Impedir que una misma persona apruebe sus propias solicitudes de compra (`approvePurchaseOrder`), comprobantes de pago, devoluciones o ajustes que requieran revisión independiente.
+  4. Permitir configurar niveles de aprobación por importe, tipo de gasto, centro de costo y categoría de operación.
+  5. Admitir aprobaciones escalonadas cuando el importe supere los umbrales establecidos por la institución.
+  6. Exigir una nueva aprobación si se modifica un documento después de haber sido aprobado y el cambio afecta importes, proveedor, cuenta contable, impuestos, presupuesto o condiciones de pago.
+  7. Mantener un historial de decisiones con usuario, fecha, acción, observaciones y valores relevantes de la operación.
+  8. Separar las facultades del personal financiero, el contador, el director y el administrador técnico. Tener acceso administrativo al sistema no debe conceder automáticamente autorización para aprobar transacciones.
+  9. Implementar restricciones equivalentes en las operaciones automáticas y los procesos de integración.
+  10. Permitir consultar las solicitudes pendientes, los responsables asignados, los plazos de revisión y los motivos de rechazo.
+- **Alcance y Cambios necesarios:**
+  - Revisar `ROLE_PERMISSIONS` en `backend/user-service/Code.gs` y las funciones de aprobación en `backend/accounting-service/Code.gs`.
+  - Centralizar la comprobación de permisos para operaciones financieras.
+  - Incorporar configuración de niveles de aprobación y reglas de escalamiento.
+  - Integrar el historial de autorizaciones con `logStructuredEvent`.
+- **Comportamiento esperado:** Una operación solo puede avanzar si cumple los permisos y las condiciones de aprobación correspondientes. Los cambios posteriores a una autorización no deben conservar indebidamente la aprobación anterior.
+- **Criterios de aceptación:**
+  - Las llamadas directas a los endpoints respetan los mismos controles que la interfaz.
+  - Un usuario no puede aprobar su propia solicitud mediante otra pantalla o endpoint.
+  - Una modificación relevante invalida la aprobación previa.
+  - Las operaciones que superan los umbrales exigen el nivel de aprobación configurado.
+  - Cada decisión puede reconstruirse a partir del historial.
+  - Los permisos efectivos coinciden con los roles configurados y no dependen de ocultar botones.
 - **Riesgo de Regresión:** Bajo.
-- **Dependencias:** `OrdenesCompra`, `approvePurchaseOrder`.
+- **Dependencias:** T-FIN-01 y T-FIN-13.
 
 ---
 
-### T-FIN-06 [P2] — Algoritmo asistido de conciliación bancaria y sugerencia de coincidencias
+### T-FIN-06 [P2] — Conciliación bancaria asistida con reglas configurables, algoritmo de sugerencias y excepciones
 
-- **Componentes relacionados:** `backend/accounting-service/Code.gs` (`performBankReconciliation`), `js/accounting.js`.
-- **Problema detectado:** Simplificar el proceso de conciliación bancaria mediante la coincidencia automática de extractos en formato CSV/Excel con los cobros y egresos registrados.
+- **Componentes relacionados:** `backend/accounting-service/Code.gs` (`BancosConciliaciones`, `performBankReconciliation`), `js/accounting.js`.
+- **Problema que resuelve:** La auditoría identifica sugerencias automáticas de conciliación por importe, fecha y referencia. Para alcanzar un nivel de utilidad comparable al de soluciones contables consolidadas, se necesita un proceso que gestione formatos de extractos, coincidencias ambiguas, diferencias parciales, transacciones no identificadas y correcciones trazables.
 - **Requisitos funcionales:**
-  1. Comparar extractos bancarios contra `ComprobantesPago` y `AsientosContables` por monto, fecha (+/- 3 días) y número de referencia.
-  2. Clasificar coincidencias en: Exacta, Probable, y Diferencia.
-- **Criterios de Aceptación:**
-  - El módulo de conciliación presenta sugerencias automáticas de coincidencia bancaria con porcentaje de certeza.
+  1. Permitir importar movimientos bancarios desde CSV y XLSX en `BancosConciliaciones`, con configuración de columnas, formatos de fecha, separadores decimales, signo de los importes y referencias.
+  2. Diseñar una capa de importación extensible para incorporar otros formatos bancarios o conexiones disponibles en el futuro.
+  3. Validar los archivos antes de procesarlos, identificando columnas ausentes, filas inválidas, monedas incompatibles y duplicados.
+  4. Registrar una huella de importación y una identidad estable por movimiento para evitar cargar dos veces el mismo extracto.
+  5. Generar sugerencias de coincidencia considerando:
+     - Importe exacto.
+     - Fecha de operación y fecha valor (+/- 3 días).
+     - Referencia bancaria normalizada.
+     - Número de factura, recibo o transferencia.
+     - Cuenta bancaria de destino.
+     - Pagador, proveedor y descripción.
+  6. Priorizar las coincidencias exactas y distinguirlas de las probables. Una puntuación de similitud no debe confundirse con una confirmación.
+  7. Detectar relaciones uno a uno, un movimiento bancario contra varios documentos y varios movimientos contra un documento, siempre que las reglas permitan justificar la relación.
+  8. Gestionar comisiones, retenciones, diferencias de cambio, depósitos agrupados, pagos parciales y diferencias de redondeo mediante movimientos de ajuste identificados.
+  9. Ofrecer una bandeja de excepciones para movimientos sin coincidencia, coincidencias múltiples y diferencias de importe.
+  10. Permitir aceptar, rechazar o modificar una sugerencia según los permisos del usuario, registrando la decisión.
+  11. Impedir que un movimiento bancario se concilie dos veces sin una operación explícita de reversión.
+  12. Mostrar el saldo inicial, movimientos importados, movimientos conciliados, pendientes, diferencias y saldo final.
+  13. Conservar el extracto original y la relación entre cada movimiento bancario y los documentos contables asociados.
+  14. Permitir deshacer una conciliación mediante una operación trazable, sin eliminar el historial.
+  15. Medir la proporción de coincidencias automáticas correctas, las excepciones y los ajustes manuales para mejorar las reglas sin alterar conciliaciones ya confirmadas.
+- **Alcance y Cambios necesarios:**
+  - Ampliar `BancosConciliaciones` con estados, identificadores de importación, relaciones de conciliación y motivos de ajuste en `backend/accounting-service/Code.gs`.
+  - Mejorar la función `performBankReconciliation`.
+  - Incorporar una interfaz de conciliación por lotes con filtros y revisión de excepciones en `dashboard-contabilidad.html` / `js/accounting.js`.
+  - Integrar las diferencias de conciliación con los informes y cierres contables.
+- **Comportamiento esperado:** El usuario podrá importar un extracto, revisar las coincidencias sugeridas, resolver las diferencias y confirmar la conciliación sin tener que reconstruir manualmente todos los movimientos. El sistema no confirmará automáticamente coincidencias ambiguas.
+- **Criterios de aceptación:**
+  - Reimportar un extracto idéntico no duplica movimientos.
+  - Las coincidencias exactas se distinguen de las aproximadas.
+  - Las comisiones y los pagos parciales pueden resolverse sin modificar el movimiento bancario original.
+  - Los movimientos no conciliados aparecen en una lista de excepciones.
+  - El saldo final del extracto se reconcilia con el saldo inicial y los movimientos importados.
+  - Toda conciliación y reversión tiene trazabilidad.
+  - Una conciliación pendiente no se presenta como definitivamente confirmada.
 - **Riesgo de Regresión:** Nulo.
-- **Dependencias:** `BancosConciliaciones`.
+- **Dependencias:** T-FIN-01, T-FIN-02 y T-FIN-15.
 
 ---
 
-### T-FIN-07 [P2] — Estado de cuenta consolidado para familias multihijo y cobros conjuntos
+### T-FIN-07 [P2] — Estado de cuenta familiar consolidado y gestión integral de obligaciones multihijo
 
-- **Componentes relacionados:** `backend/accounting-service/Code.gs` (`getStudentAccountStatement`), `backend/user-service/Code.gs` (`getGuardianStudents`).
-- **Problema detectado:** Permitir a los padres de familia con múltiples hijos matricular y pagar cuotas de varios estudiantes en una única transacción sin duplicar cobros.
+- **Componentes relacionados:** `backend/accounting-service/Code.gs` (`getStudentAccountStatement`, `CargosEstudiante`), `backend/user-service/Code.gs` (`getGuardianStudents`, `getFamilyConsolidatedSummary`).
+- **Problema que resuelve:** El estado de cuenta familiar consolidado existe según la auditoría, pero debe garantizar que todos los cargos, pagos, descuentos, becas y saldos se agrupen correctamente sin confundir las obligaciones individuales de cada estudiante con los acuerdos económicos de una familia.
 - **Requisitos funcionales:**
-  1. Consolidar los cargos activos en `getFamilyConsolidatedSummary`.
-  2. Permitir el desglose de abonos conjuntos asignando montos específicos por estudiante en `PagosAbonos`.
-- **Criterios de Aceptación:**
-  - El pago conjunto de una familia distribuye el abono correctamente entre los estados de cuenta de cada hijo.
+  1. Consolidar las obligaciones de los estudiantes vinculados a una misma cuenta familiar en `getFamilyConsolidatedSummary`, conservando el detalle individual de cada cargo en `CargosEstudiante`.
+  2. Mostrar por estudiante y por concepto:
+     - Matrícula.
+     - Mensualidades.
+     - Servicios y cargos extraordinarios.
+     - Descuentos y becas (`DescuentosBecas`).
+     - Pagos aplicados (`PagosAbonos`).
+     - Anticipos disponibles.
+     - Notas de crédito y devoluciones.
+     - Saldo pendiente.
+     - Fecha de vencimiento y días de mora.
+  3. Mostrar un resumen familiar con saldo total, obligaciones vencidas, próximas fechas de pago y movimientos recientes.
+  4. Diferenciar entre el titular financiero, el padre o tutor autorizado y el estudiante. La relación familiar no debe conceder acceso automático a los datos financieros de todos los integrantes sin autorización.
+  5. Permitir distribuir un pago entre varios estudiantes y conceptos, de forma manual o mediante reglas de prioridad configurables.
+  6. Conservar el desglose de la aplicación del pago, permitiendo identificar cuánto se abonó a cada obligación.
+  7. Admitir pagos parciales, anticipos y sobrepagos sin crear saldos negativos incorrectos ni aplicar automáticamente el excedente a obligaciones no autorizadas.
+  8. Gestionar acuerdos de pago, fechas comprometidas, cuotas acordadas y seguimiento de incumplimientos.
+  9. Mostrar el historial de cargos, ajustes, aplicaciones y reversos sin sobrescribir las operaciones originales.
+  10. Permitir consultar e imprimir estados de cuenta con un rango de fechas y un saldo de apertura verificable.
+  11. Incorporar filtros por familia, estudiante, concepto, vencimiento y estado.
+  12. Calcular la mora conforme a la política institucional aplicable, sin duplicar penalizaciones ni aplicar intereses no autorizados.
+  13. Mantener sincronizados los cargos originados en matrículas, mensualidades, descuentos y otros módulos académicos.
+- **Alcance y Cambios necesarios:**
+  - Revisar `getStudentAccountStatement` y el modelo `CargosEstudiante` en `backend/accounting-service/Code.gs`.
+  - Normalizar la relación entre familia, estudiantes, cargos, pagos y aplicaciones.
+  - Crear una vista consolidada con acceso al detalle individual en `student-dashboard.html` / `js/student.js`.
+  - Integrar la aplicación de pagos con el registro de idempotencia (`T-FIN-03`) y la contabilidad general.
+- **Comportamiento esperado:** Una familia con varios estudiantes podrá consultar una posición financiera consolidada y, al mismo tiempo, conocer la deuda exacta de cada estudiante. Ningún pago deberá desaparecer del historial por haberse redistribuido entre conceptos.
+- **Criterios de aceptación:**
+  - La suma de los saldos individuales coincide con el consolidado familiar, considerando los anticipos y créditos según su tratamiento contable.
+  - Un pago distribuido entre tres estudiantes conserva tres aplicaciones identificables y un único registro del pago recibido.
+  - Los usuarios solo consultan los estados de cuenta para los que están autorizados.
+  - Un descuento o beca no puede contabilizarse dos veces.
+  - Los estados de cuenta históricos pueden reproducirse para una fecha de corte.
+  - Los reversos restituyen correctamente los saldos afectados.
 - **Riesgo de Regresión:** Bajo.
-- **Dependencias:** `CargosEstudiante`, `getGuardianStudents`.
+- **Dependencias:** T-FIN-03, T-FIN-11 y T-FIN-15.
 
 ---
 
-### T-FIN-08 [P2] — Control de ejecución presupuestaria por centro de costo y alertas de desviación
+### T-FIN-08 [P2] — Control presupuestario avanzado por centro de costo, sede y período
 
-- **Componentes relacionados:** `backend/accounting-service/Code.gs` (`getBudgetExecutionReport`), `dashboard-contabilidad.html`.
-- **Problema detectado:** Evaluar la ejecución del presupuesto por departamento (Académico, Administración, Mantenimiento, Transporte) emitiendo alertas cuando un rubro supere el 90% del límite asignado.
+- **Componentes relacionados:** `backend/accounting-service/Code.gs` (`PresupuestosInstitucionales`, `getBudgetExecutionReport`), `dashboard-contabilidad.html`.
+- **Problema que resuelve:** El control de ejecución presupuestaria y las alertas de sobreejecución existen según la auditoría, pero deben permitir controlar compromisos futuros, transferencias presupuestarias y desviaciones en distintos niveles organizativos, no solamente comparar importes presupuestados con gastos ya contabilizados.
 - **Requisitos funcionales:**
-  1. Agrupar gastos contabilizados por `CentroCosto` en `PresupuestosInstitucionales`.
-  2. Renderizar indicadores visuales de semáforo (Verde < 80%, Amarillo 80-95%, Rojo > 95%).
-- **Criterios de Aceptación:**
-  - El reporte de ejecución presupuestaria destaca en amarillo/rojo los centros de costo próximos a su límite.
+  1. Permitir estructurar presupuestos en `PresupuestosInstitucionales` por ejercicio fiscal, sede, departamento, centro de costo, cuenta contable, programa y categoría de gasto.
+  2. Definir presupuestos anuales, trimestrales y mensuales con distribución del importe autorizado por período.
+  3. Distinguir entre:
+     - Presupuesto aprobado.
+     - Presupuesto modificado.
+     - Importe comprometido por órdenes de compra (`OrdenesCompra`).
+     - Importe devengado (`CuentasPorPagarGastos`).
+     - Importe pagado.
+     - Saldo disponible.
+  4. Calcular el saldo disponible descontando compromisos y obligaciones según la metodología presupuestaria configurada.
+  5. Evitar contabilizar el mismo gasto en dos etapas del ciclo presupuestario. La conversión de orden de compra a factura y pago debe conservar la relación entre las etapas.
+  6. Permitir establecer umbrales de alerta por porcentaje ejecutado (Verde < 80%, Amarillo 80-95%, Rojo > 95%), importe excedido, ritmo de gasto y proximidad al cierre del ejercicio.
+  7. Incorporar reglas de bloqueo o autorización previa cuando una operación exceda el presupuesto disponible.
+  8. Permitir transferencias entre partidas únicamente mediante una operación autorizada que registre la partida de origen, la de destino, el importe y el motivo.
+  9. Conservar las versiones del presupuesto aprobado y de cada modificación.
+  10. Comparar presupuesto y ejecución por sede, departamento, cuenta, período y responsable.
+  11. Mostrar tendencias, proyecciones de gasto y estimaciones de cierre basadas en la ejecución histórica, identificándolas como proyecciones y no como importes contabilizados.
+  12. Permitir compromisos plurimensuales cuando una orden de compra abarque varios períodos.
+  13. Exportar informes con presupuesto inicial, modificaciones, compromisos, ejecución real, saldo disponible y desviación.
+- **Alcance y Cambios necesarios:**
+  - Ampliar `PresupuestosInstitucionales` con dimensiones organizativas, períodos y versiones en `backend/accounting-service/Code.gs`.
+  - Integrar `OrdenesCompra`, `CuentasPorPagarGastos` y `AsientosContables`.
+  - Mejorar `getBudgetExecutionReport`.
+  - Incorporar un panel de alertas y un historial de modificaciones en `dashboard-contabilidad.html`.
+- **Comportamiento esperado:** Antes de confirmar un gasto, el sistema debe mostrar el saldo disponible real y, si procede, advertir o bloquear la operación. La institución podrá detectar desviaciones antes de que se conviertan en gastos pagados.
+- **Criterios de aceptación:**
+  - Una orden de compra aprobada reduce el presupuesto disponible conforme a la regla configurada.
+  - La factura asociada no vuelve a descontar el mismo compromiso.
+  - Una transferencia presupuestaria conserva la trazabilidad de ambas partidas.
+  - Las alertas se generan al alcanzar los umbrales configurados.
+  - Los informes permiten reconstruir el presupuesto aprobado en una fecha histórica.
+  - Los compromisos, gastos devengados y pagos se presentan por separado.
 - **Riesgo de Regresión:** Nulo.
-- **Dependencias:** `PresupuestosInstitucionales`.
+- **Dependencias:** T-FIN-02, T-FIN-05, T-FIN-11 y T-FIN-12.
 
 ---
 
-### T-FIN-09 [P2] — Arqueo y cierre de caja diario con registro de sobrantes y faltantes
+### T-FIN-09 [P2] — Arqueo de caja, control de efectivo y gestión de diferencias de caja
 
-- **Componentes relacionados:** `backend/accounting-service/Code.gs` (`closeCashRegister`), `js/accounting.js`.
-- **Problema detectado:** El cierre de caja diario debe contrastar el saldo teórico (cobros en efectivo del día) con el conteo físico de valores, registrando diferencias.
+- **Componentes relacionados:** `backend/accounting-service/Code.gs` (`CierresCaja`, `closeCashRegister`), `js/accounting.js`.
+- **Problema que resuelve:** El cierre de caja diario registra diferencias entre el saldo teórico y el conteo real. Se necesita completar el flujo de apertura, custodia, conteo, revisión y regularización, con controles para evitar cierres ficticios o modificaciones posteriores no autorizadas.
 - **Requisitos funcionales:**
-  1. Registrar en `CierresCaja` el `MontoInicial`, `TotalIngresos`, `TotalEgresos`, `SaldoTeorico` y `SaldoRealEfectivo`.
-  2. Generar automáticamente un asiento contable de ajuste por sobrante o faltante de caja si existe diferencia.
-- **Criterios de Aceptación:**
-  - El cierre de caja calcula la diferencia entre el efectivo teórico y real y genera la partida contable de ajuste.
+  1. Registrar aperturas de caja con saldo inicial, responsable, fecha, turno y cuenta o ubicación de caja en `CierresCaja`.
+  2. Clasificar movimientos de efectivo por cobros, devoluciones, ingresos extraordinarios, pagos autorizados y retiros de caja.
+  3. Mantener separados los movimientos en efectivo de los realizados mediante transferencia, tarjeta u otros medios.
+  4. Calcular el saldo teórico a partir del saldo inicial y los movimientos válidos registrados durante el turno.
+  5. Permitir el arqueo por denominación de billetes y monedas, además del registro de otros valores cuando corresponda.
+  6. Comparar el conteo real (`SaldoRealEfectivo`) con el saldo teórico (`SaldoTeorico`) y mostrar faltantes o sobrantes por medio de pago en `closeCashRegister`.
+  7. Exigir observaciones para diferencias superiores al umbral institucional y aprobación independiente para los ajustes que así lo requieran.
+  8. Impedir que el cajero modifique o elimine movimientos confirmados para hacer coincidir el saldo.
+  9. Permitir cierres parciales, entrega de turno y transferencia de custodia entre responsables.
+  10. Generar un comprobante de cierre con apertura, movimientos, saldo esperado, saldo contado, diferencias y responsables.
+  11. Registrar depósitos posteriores del efectivo recaudado, relacionándolos con el cierre que los originó.
+  12. Impedir que un mismo movimiento se incluya en dos cierres o se contabilice nuevamente.
+  13. Mantener un flujo de revisión para diferencias pendientes, con estados, responsable y resolución documentada.
+  14. Permitir reabrir un cierre únicamente mediante autorización y dejando constancia del motivo.
+- **Alcance y Cambios necesarios:**
+  - Ampliar `CierresCaja` y su relación con los movimientos de tesorería en `backend/accounting-service/Code.gs`.
+  - Revisar `closeCashRegister`.
+  - Crear pantallas de apertura, arqueo, entrega de turno y revisión de diferencias en `dashboard-contabilidad.html` / `js/accounting.js`.
+  - Integrar el cierre con las cuentas contables (`recordAccountingJournalEntry`) y conciliaciones bancarias.
+- **Comportamiento esperado:** Cada cierre representa una sesión concreta de custodia del efectivo. El sistema puede explicar cómo se calculó el saldo esperado y quién registró, contó, revisó o regularizó cada diferencia.
+- **Criterios de aceptación:**
+  - El saldo teórico coincide con el saldo inicial más los movimientos válidos del turno.
+  - Los cobros por transferencia no incrementan el efectivo de caja.
+  - Las diferencias no desaparecen mediante la edición de movimientos confirmados.
+  - La entrega de turno conserva la identidad de ambos responsables.
+  - Un depósito bancario relacionado con un cierre no se contabiliza dos veces.
+  - Los cierres aprobados mantienen su historial ante ajustes posteriores.
 - **Riesgo de Regresión:** Bajo.
-- **Dependencias:** `CierresCaja`, `recordAccountingJournalEntry`.
+- **Dependencias:** T-FIN-01, T-FIN-02, T-FIN-05 y T-FIN-15.
 
 ---
 
-### T-FIN-10 [P2] — Contabilización automática de planillas de sueldos y cargas sociales
+### T-FIN-10 [P2] — Contabilización automática de planillas, cargas sociales y liquidaciones laborales
 
-- **Componentes relacionados:** `backend/accounting-service/Code.gs` (`calculatePayrollPeriod`), `js/accounting.js`.
-- **Problema detectado:** Al aprobar la planilla mensual de salarios, el sistema debe generar automáticamente el asiento contable de sueldos, retenciones (IHSS, RAP, ISR) y aportes patronales.
+- **Componentes relacionados:** `backend/accounting-service/Code.gs` (`calculatePayrollPeriod`, `PlanillasNomenclatura`), `js/accounting.js`.
+- **Problema que resuelve:** La integración de planillas con IHSS, RAP e ISR está implementada según la auditoría. Es necesario garantizar que el cálculo de la planilla, la aprobación, el pago y el asiento contable sean procesos consistentes, auditables y parametrizables conforme a las reglas laborales y tributarias aplicables en Honduras.
 - **Requisitos funcionales:**
-  1. Crear la rutina de contabilización de planilla vinculada a `AsientosContables`.
-  2. Debitar la cuenta de Gasto Sueldos y acreditar las cuentas de pasivo por retenciones e instituciones previsionales.
-- **Criterios de Aceptación:**
-  - La aprobación de la planilla mensual genera automáticamente el asiento contable por partida doble.
+  1. Diferenciar los importes de salario bruto, deducciones del empleado (IHSS, RAP, ISR), aportaciones patronales, otras obligaciones laborales y salario neto.
+  2. Mantener configurables las tasas, bases, topes, exenciones y vigencias de cada concepto en `PlanillasNomenclatura`. No fijar valores legales permanentes en el código.
+  3. Conservar la versión de las reglas utilizadas para calcular cada período de nómina.
+  4. Permitir revisar la planilla antes de aprobarla, mostrando totales por empleado, departamento, centro de costo y cuenta contable.
+  5. Generar automáticamente el asiento de salarios y obligaciones patronales al aprobar la planilla en `calculatePayrollPeriod`, según el plan de cuentas y la política contable configurados.
+  6. Separar las retenciones al empleado de los gastos y obligaciones a cargo de la institución.
+  7. Generar las obligaciones por pagar correspondientes a las deducciones y aportaciones, evitando duplicar el gasto al registrar posteriormente su pago.
+  8. Distribuir el gasto salarial entre centros de costo cuando existan asignaciones múltiples.
+  9. Vincular el asiento con la planilla de origen, su período, versión, responsable y estado de aprobación.
+  10. Permitir contabilizaciones de reversión y ajustes de diferencias, sin sobrescribir planillas ya aprobadas.
+  11. Impedir la doble contabilización por reintentos o por una segunda aprobación de la misma planilla (integrado con `T-FIN-03`).
+  12. Gestionar liquidaciones, retroactivos y ajustes de períodos anteriores según las reglas configuradas y los cierres contables.
+  13. Conciliar los importes de la planilla con los pagos efectuados y las obligaciones pendientes.
+  14. Restringir el acceso a los datos salariales según las funciones y responsabilidades del usuario.
+- **Alcance y Cambios necesarios:**
+  - Revisar la integración de planillas en `backend/accounting-service/Code.gs`.
+  - Relacionar la planilla aprobada con el asiento (`recordAccountingJournalEntry`) y las obligaciones por pagar.
+  - Incorporar controles de idempotencia (`T-FIN-03`) y período contable (`T-FIN-02`).
+  - Añadir informes de diferencias entre planilla calculada, planilla aprobada, asientos y pagos.
+- **Comportamiento esperado:** La aprobación de una planilla genera una contabilización única y verificable. El pago posterior liquida las obligaciones registradas sin volver a reconocer el mismo gasto salarial.
+- **Criterios de aceptación:**
+  - Los débitos y créditos del asiento coinciden con los importes de la planilla.
+  - Las retenciones al empleado no se confunden con las aportaciones patronales.
+  - Reprocesar la aprobación no duplica el asiento.
+  - Una modificación posterior requiere un procedimiento de ajuste autorizado.
+  - Las tasas y topes históricos pueden reproducirse según su vigencia.
+  - La planilla y sus obligaciones pueden conciliarse con los pagos realizados.
 - **Riesgo de Regresión:** Bajo.
-- **Dependencias:** `calculatePayrollPeriod`, `AsientosContables`.
+- **Dependencias:** T-FIN-01, T-FIN-02, T-FIN-03 y T-FIN-05.
 
 ---
 
-### T-FIN-11 [P2] — Informe de antigüedad de saldos y morosidad de colegiaturas
+### T-FIN-11 [P2] — Antigüedad de saldos, morosidad de colegiaturas y previsión de cobros
 
-- **Componentes relacionados:** `backend/accounting-service/Code.gs`, `dashboard-contabilidad.html`.
-- **Problema detectado:** Generar el reporte de saldos pendientes por cobrar agrupados en intervalos de mora: Al día, 1-30 días, 31-60 días, 61-90 días, y más de 90 días.
+- **Componentes relacionados:** `backend/accounting-service/Code.gs` (`CargosEstudiante`, `getStudentAccountStatement`), `dashboard-contabilidad.html`.
+- **Problema que resuelve:** El informe de antigüedad de saldos está identificado como existente, pero debe proporcionar información consistente por fecha de corte, distinguir deuda vencida de deuda futura y ofrecer herramientas de seguimiento que ayuden a priorizar la gestión de cobros y pagos.
 - **Requisitos funcionales:**
-  1. Calcular los días de atraso comparando `FechaVencimiento` contra la fecha actual en `CargosEstudiante`.
-  2. Exportar el informe clasificado a Excel/PDF para gestión de cobro.
-- **Criterios de Aceptación:**
-  - El reporte de morosidad clasifica adecuadamente los saldos vencidos por tramos de días de mora.
+  1. Generar informes de antigüedad de cuentas por cobrar y cuentas por pagar en `dashboard-contabilidad.html`.
+  2. Utilizar tramos configurables que incluyan, como mínimo, saldos no vencidos (Al día), de 1 a 30 días, de 31 a 60 días, de 61 a 90 días y más de 90 días.
+  3. Calcular la antigüedad a partir de la fecha de vencimiento (`FechaVencimiento`) y una fecha de corte seleccionable.
+  4. Diferenciar cargos vencidos, obligaciones futuras, pagos parciales, anticipos, notas de crédito y acuerdos de pago.
+  5. Mostrar saldos por estudiante, familia, proveedor, documento, sede, concepto y responsable.
+  6. Permitir reconstruir la situación de las cuentas a una fecha pasada, utilizando los movimientos históricos y sus fechas contables pertinentes.
+  7. Evitar contar dos veces un cargo cuando existen varias aplicaciones de pago.
+  8. Identificar documentos vencidos parcialmente y distribuir el saldo pendiente por obligación.
+  9. Añadir indicadores de morosidad, tasa de recuperación, días promedio de cobro y concentración de deuda.
+  10. Incorporar previsiones de cobro y vencimientos futuros basadas en obligaciones y compromisos registrados, diferenciándolas de los cobros reales.
+  11. Permitir filtros, ordenación, exportación y acceso desde el informe hasta el documento de origen.
+  12. Facilitar el seguimiento de acuerdos de pago y registrar las gestiones de cobro con fecha, responsable y resultado.
+  13. Aplicar reglas institucionales de intereses o recargos únicamente cuando estén configuradas y autorizadas.
+  14. Conciliar los totales del informe con los saldos de los auxiliares y el mayor contable.
+- **Alcance y Cambios necesarios:**
+  - Revisar `getStudentAccountStatement` y las consultas de cuentas por pagar en `backend/accounting-service/Code.gs`.
+  - Centralizar el cálculo de antigüedad y saldo pendiente.
+  - Incorporar fecha de corte y detalle por documento en `dashboard-contabilidad.html`.
+  - Integrar los informes con el panel financiero y los cierres contables.
+- **Comportamiento esperado:** El contador podrá identificar qué obligaciones están vencidas, desde cuándo, por qué importe y qué parte permanece pendiente después de los abonos. Los informes históricos no cambiarán arbitrariamente al consultar fechas pasadas.
+- **Criterios de aceptación:**
+  - Los tramos de antigüedad se calculan correctamente en los límites de 30, 60 y 90 días.
+  - Los pagos parciales reducen exclusivamente los documentos a los que fueron aplicados.
+  - La suma de los tramos coincide con el saldo pendiente total según la metodología configurada.
+  - Los informes pueden generarse para fechas históricas.
+  - Los totales se concilian con las cuentas auxiliares y el mayor contable.
+  - Las previsiones se distinguen visualmente de los resultados reales.
 - **Riesgo de Regresión:** Nulo.
-- **Dependencias:** `CargosEstudiante`.
+- **Dependencias:** T-FIN-02, T-FIN-07, T-FIN-12 y T-FIN-15.
 
 ---
 
-### T-FIN-12 [P2] — Directorio de proveedores, retenciones tributarias y cuentas por pagar
+### T-FIN-12 [P2] — Expediente de proveedores, retenciones tributarias y ciclo de cuentas por pagar
 
-- **Componentes relacionados:** `backend/accounting-service/Code.gs` (`registerSupplier`), `dashboard-contabilidad.html`.
-- **Problema detectado:** Administrar el expediente de proveedores activos, incluyendo RTN, rubro y cálculo de retenciones del 12.5% ISR o ISV según ley hondureña.
+- **Componentes relacionados:** `backend/accounting-service/Code.gs` (`ProveedoresActivos`, `registerSupplier`, `OrdenesCompra`, `CuentasPorPagarGastos`), `dashboard-contabilidad.html`.
+- **Problema que resuelve:** La gestión de proveedores, órdenes de compra y retenciones está implementada, pero debe integrarse como un flujo completo desde la solicitud de compra hasta la recepción, factura, obligación, pago y conciliación, evitando registros duplicados y mejorando el control de documentos y presupuestos.
 - **Requisitos funcionales:**
-  1. Registrar datos fiscales en `ProveedoresActivos`.
-  2. Aplicar la retención legal correspondiente al registrar facturas de compras de servicios profesionales.
-- **Criterios de Aceptación:**
-  - El registro de un pago a proveedor aplica automáticamente la retención fiscal correspondiente al rubro.
+  1. Mantener un expediente de proveedor en `ProveedoresActivos` con identificación fiscal (RTN), contactos, datos de pago, estado, condiciones comerciales y documentos de soporte.
+  2. Controlar proveedores activos, suspendidos e inactivos, evitando nuevas órdenes o pagos cuando las reglas institucionales lo prohíban.
+  3. Gestionar solicitudes de compra, cotizaciones, comparativas, órdenes aprobadas (`OrdenesCompra`), recepciones, facturas de proveedor (`CuentasPorPagarGastos`), cuentas por pagar y pagos.
+  4. Permitir comparar varias cotizaciones con desglose de precio, impuestos, descuentos, plazos y condiciones.
+  5. Configurar niveles de aprobación por importe, categoría de gasto y centro de costo.
+  6. Relacionar cada orden de compra con el presupuesto y registrar su importe comprometido (`T-FIN-08`).
+  7. Permitir registrar recepciones parciales y comparar las cantidades recibidas con las ordenadas y facturadas.
+  8. Detectar facturas duplicadas mediante proveedor, identificación fiscal, número de documento, fecha e importe, con revisión para casos legítimos de coincidencia.
+  9. Controlar diferencias entre orden, recepción y factura, con tolerancias configurables y aprobación de excepciones.
+  10. Registrar vencimientos, pagos parciales, anticipos, retenciones (12.5% ISR/ISV según ley hondureña) y saldos pendientes.
+  11. Parametrizar los tratamientos fiscales aplicables a cada tipo de operación, según la normativa hondureña vigente y la condición del proveedor.
+  12. Generar las obligaciones y asientos contables correspondientes, evitando reconocer dos veces el gasto durante el ciclo de compra.
+  13. Permitir pagos agrupados de varias facturas, conservando el desglose de cada aplicación.
+  14. Mantener adjuntos de cotizaciones, órdenes, facturas y comprobantes con acceso controlado.
+  15. Permitir devoluciones a proveedores, notas de crédito y reversos trazables.
+  16. Incorporar informes de compras por proveedor, categoría, centro de costo, presupuesto y período.
+  17. Facilitar la evaluación del proveedor mediante puntualidad, cumplimiento de entregas, incidencias y variaciones de precio, siempre que existan datos suficientes.
+  18. Permitir exportar el expediente y su historial para revisión contable.
+- **Alcance y Cambios necesarios:**
+  - Ampliar `ProveedoresActivos`, `OrdenesCompra` y `CuentasPorPagarGastos` en `backend/accounting-service/Code.gs`.
+  - Establecer relaciones explícitas entre solicitudes, órdenes, recepciones, facturas, obligaciones y pagos.
+  - Integrar el flujo con `T-FIN-05` y `T-FIN-08`.
+  - Añadir vistas de facturas pendientes, vencimientos, excepciones y compromisos de compra en `dashboard-contabilidad.html`.
+- **Comportamiento esperado:** Cada compra puede seguirse desde su solicitud hasta su liquidación. El sistema distingue lo pedido, lo recibido, lo facturado y lo pagado, mostrando las diferencias antes de confirmar operaciones inconsistentes.
+- **Criterios de aceptación:**
+  - Una factura duplicada se detecta antes de generar una segunda obligación.
+  - Una recepción parcial no se presenta como una recepción completa.
+  - Una orden aprobada compromete el presupuesto una sola vez.
+  - El pago de una factura reduce la obligación sin volver a registrar el gasto.
+  - Las retenciones se calculan según las reglas vigentes configuradas.
+  - Los cambios de estado y las aprobaciones quedan registrados.
 - **Riesgo de Regresión:** Nulo.
-- **Dependencias:** `ProveedoresActivos`, `CuentasPorPagarGastos`.
+- **Dependencias:** T-FIN-01, T-FIN-03, T-FIN-05, T-FIN-08 y T-FIN-11.
 
 ---
 
-### T-FIN-13 [P3] — Dashboard financiero consolidado con gráficos comparativos
+### T-FIN-13 [P3] — Dashboard financiero ejecutivo con indicadores, análisis y alertas accionables
 
 - **Componentes relacionados:** `js/accounting.js`, `js/ui-common.js` (`renderUniversalConfigurableChart`), `dashboard-contabilidad.html`.
-- **Problema detectado:** Presentar a la Dirección un panel financiero visual con tendencias de ingresos vs egresos, cobranza mensual y flujo de caja.
+- **Problema que resuelve:** El panel financiero integrado ya presenta gráficos de ingresos y egresos mediante `renderUniversalConfigurableChart`. La mejora debe convertirlo en una herramienta de análisis y gestión, con indicadores conciliados, comparaciones históricas, filtros coherentes y alertas que permitan actuar sobre los problemas detectados.
 - **Requisitos funcionales:**
-  1. Renderizar mediante `renderUniversalConfigurableChart` gráficos de barras y líneas con los ingresos y egresos del año lectivo.
-  2. Ofrecer selector de tipo de gráfico y exportación de datos.
-- **Criterios de Aceptación:**
-  - El dashboard financiero muestra tendencias mensuales de flujo de caja e ingresos consolidados.
+  1. Incorporar indicadores de:
+     - Ingresos contabilizados.
+     - Egresos contabilizados.
+     - Resultado del período.
+     - Saldos de efectivo y bancos.
+     - Cuentas por cobrar y pagar.
+     - Deuda vencida y porcentaje de morosidad.
+     - Ejecución presupuestaria.
+     - Compromisos de compra pendientes.
+     - Diferencias de conciliación.
+     - Estado de los cierres contables.
+  2. Diferenciar ingresos devengados, cobros recibidos y anticipos. No presentarlos como magnitudes equivalentes.
+  3. Diferenciar gastos contabilizados, obligaciones pendientes y pagos efectuados.
+  4. Permitir comparar períodos, ejercicios fiscales, sedes, departamentos, centros de costo y categorías contables.
+  5. Incorporar gráficos de tendencias, distribución de gastos, evolución de la morosidad, ejecución presupuestaria y flujo de caja.
+  6. Permitir profundizar desde un indicador hasta los movimientos, documentos y cuentas que componen su importe.
+  7. Mostrar la fecha de corte y la última actualización de cada conjunto de datos.
+  8. Identificar los indicadores provisionales, las operaciones pendientes y las diferencias de conciliación que limiten la fiabilidad de un resultado.
+  9. Implementar alertas configurables para:
+     - Sobreejecución presupuestaria.
+     - Incremento de morosidad.
+     - Vencimientos relevantes.
+     - Facturas fiscales próximas a agotar su rango (menos de 50 disponibles).
+     - Cierres pendientes.
+     - Conciliaciones con diferencias.
+     - Desviaciones importantes respecto de períodos anteriores.
+  10. Permitir filtrar y exportar los datos que sustentan los indicadores, manteniendo los mismos criterios de cálculo.
+  11. Adaptar las visualizaciones a pantallas móviles y de escritorio, evitando que los gráficos impidan consultar los datos detallados.
+  12. Incorporar estados de carga, ausencia de información, error y datos desactualizados, sin sustituir errores por valores cero que puedan inducir a conclusiones incorrectas.
+  13. Mantener la coherencia entre los filtros aplicados en indicadores, gráficos y tablas.
+  14. Permitir vistas diferenciadas para el director, el contador y el personal financiero según sus permisos.
+- **Alcance y Cambios necesarios:**
+  - Mejorar `dashboard-contabilidad.html` y `js/accounting.js`.
+  - Revisar `renderUniversalConfigurableChart` y los servicios que alimentan los indicadores en `backend/accounting-service/Code.gs`.
+  - Centralizar las fórmulas y reglas de agregación para evitar que diferentes pantallas calculen saldos distintos.
+  - Implementar navegación desde los indicadores hacia sus registros de origen.
+- **Comportamiento esperado:** El director podrá identificar la situación financiera y las principales desviaciones; el contador podrá rastrear cualquier cifra hasta sus movimientos contables, y el personal financiero podrá acceder directamente a las excepciones que requieren atención.
+- **Criterios de aceptación:**
+  - Los totales del panel coinciden con los informes contables para los mismos filtros y fechas de corte.
+  - Un indicador permite consultar su composición documental.
+  - Los ingresos devengados no se confunden con los cobros.
+  - Los filtros afectan consistentemente a todas las visualizaciones relacionadas.
+  - La ausencia de datos y los errores de consulta se distinguen de un saldo real de cero.
+  - Los permisos limitan tanto los indicadores como el detalle accesible.
+  - Las alertas se generan a partir de condiciones configurables y datos verificables.
 - **Riesgo de Regresión:** Nulo.
-- **Dependencias:** `renderUniversalConfigurableChart`.
+- **Dependencias:** T-FIN-07, T-FIN-08, T-FIN-11, T-FIN-12 y T-FIN-15.
 
 ---
 
-### T-FIN-14 [P3] — Emisión e impresión de recibos oficiales de caja en PDF
+### T-FIN-14 [P3] — Recibos oficiales de caja en PDF, documentos financieros y verificación de autenticidad
 
 - **Componentes relacionados:** `backend/accounting-service/Code.gs` (`generatePaymentReceiptPDF`), `dashboard-contabilidad.html`.
-- **Problema detectado:** Generar el recibo oficial de caja en PDF para entregarlo al padre de familia tras la confirmación del pago de colegiatura.
+- **Problema que resuelve:** La generación de recibos PDF está implementada mediante `generatePaymentReceiptPDF`. Se debe mejorar la fiabilidad documental, la presentación, la recuperación de comprobantes y la distinción entre recibos internos, facturas fiscales y documentos de respaldo.
 - **Requisitos funcionales:**
-  1. Implementar la plantilla de Recibo Oficial de Caja con sello digital, número correlativo, detalle de conceptos y marca de agua.
-  2. Habilitar la descarga directa desde el portal del estudiante y el panel de contabilidad.
-- **Criterios de Aceptación:**
-  - El recibo de caja PDF se emite con datos completos, desglose de cuotas pagadas e identificador único.
+  1. Generar recibos en `generatePaymentReceiptPDF` con identificador único, número de recibo, fecha de emisión, institución, pagador, estudiante o familia, importe, moneda, conceptos pagados y método de pago.
+  2. Mostrar la distribución del pago entre los cargos correspondientes y el saldo resultante cuando proceda.
+  3. Diferenciar los recibos de caja de las facturas fiscales autorizadas por el SAR.
+  4. No presentar un recibo interno como documento fiscal si no reúne los requisitos aplicables a ese tipo de documento.
+  5. Incluir referencias al pago y a los documentos relacionados para facilitar la verificación.
+  6. Incorporar elementos de identidad visual institucional, diseño legible, numeración consistente y marca de agua cuando corresponda.
+  7. Generar el documento únicamente después de confirmar la operación financiera que acredita.
+  8. Mantener el mismo identificador documental cuando se recupere o vuelva a descargar el comprobante de una operación ya registrada.
+  9. Impedir que un error de generación del PDF provoque la duplicación del pago o del asiento.
+  10. Permitir regenerar la representación del documento desde los datos históricos conservados, sin modificar el registro financiero original.
+  11. Registrar las emisiones, descargas administrativas, anulaciones y sustituciones documentales que requieran trazabilidad.
+  12. Incorporar un mecanismo de verificación mediante código único o enlace seguro, sin exponer datos financieros privados a terceros.
+  13. Controlar el acceso a los PDF según la relación del usuario con la operación.
+  14. Garantizar que los archivos incluyan todas las páginas y conceptos, manejen correctamente caracteres en español y mantengan importes y fechas legibles.
+  15. Proporcionar mensajes claros si el documento no puede generarse o recuperarse.
+- **Alcance y Cambios necesarios:**
+  - Revisar `generatePaymentReceiptPDF` en `backend/accounting-service/Code.gs`.
+  - Relacionar los documentos emitidos con sus registros financieros y sus versiones.
+  - Incorporar verificación de autenticidad y control de acceso.
+  - Mejorar el flujo de generación y recuperación de PDF en `dashboard-contabilidad.html`.
+- **Comportamiento esperado:** Un pago confirmado dispone de un recibo recuperable y verificable. Si falla la generación del documento, el pago permanece registrado y puede generarse el PDF posteriormente sin duplicar la operación.
+- **Criterios de aceptación:**
+  - Un pago genera un único registro financiero aunque el PDF se solicite varias veces.
+  - Los importes del recibo coinciden con la operación y sus aplicaciones.
+  - Los recibos internos se distinguen claramente de las facturas fiscales.
+  - La regeneración conserva la referencia al pago original.
+  - Un usuario no autorizado no puede consultar el PDF mediante una URL directa.
+  - La verificación documental no revela información privada innecesaria.
 - **Riesgo de Regresión:** Nulo.
-- **Dependencias:** `generatePaymentReceiptPDF`, `ComprobantesPago`.
+- **Dependencias:** T-FIN-03, T-FIN-04 y T-FIN-07.
 
 ---
 
-### T-FIN-15 [P3] — Herramienta de conciliación entre cuentas auxiliares y libro mayor
+### T-FIN-15 [P3] — Herramienta de conciliación integral entre auxiliares financieros y contabilidad general
 
-- **Componentes relacionados:** `backend/accounting-service/Code.gs`.
-- **Problema detectado:** Verificar la coincidencia matemática exacta entre la suma de cuentas por cobrar auxiliares de estudiantes y la cuenta del libro mayor `1102 - Cuentas por Cobrar Estudiantes`.
+- **Componentes relacionados:** `backend/accounting-service/Code.gs` (`reconcileSubledgersWithGeneralLedger`).
+- **Problema que resuelve:** La rutina de conciliación entre auxiliares y cuentas de mayor está implementada, pero debe garantizar que todos los módulos financieros mantengan saldos consistentes con la contabilidad general, que las diferencias sean explicables y que los movimientos no contabilizados o duplicados puedan localizarse.
 - **Requisitos funcionales:**
-  1. Desarrollar la rutina `reconcileSubledgersWithGeneralLedger()`.
-  2. Detectar descalces entre saldos individuales y la cuenta sintética del mayor.
-- **Criterios de Aceptación:**
-  - La herramienta de conciliación identifica y reporta cualquier descalce entre auxiliares y mayor.
+  1. Conciliar periódicamente mediante `reconcileSubledgersWithGeneralLedger()`, como mínimo:
+     - Cuentas por cobrar frente a los cargos y aplicaciones de pago de estudiantes y familias (`CargosEstudiante`).
+     - Cuentas por pagar frente a facturas, obligaciones y pagos a proveedores (`CuentasPorPagarGastos`).
+     - Bancos frente a movimientos y conciliaciones bancarias (`BancosConciliaciones`).
+     - Caja frente a cierres y movimientos de efectivo (`CierresCaja`).
+     - Nómina frente a salarios y obligaciones laborales (`calculatePayrollPeriod`).
+     - Ingresos y gastos frente a sus módulos de origen.
+     - Anticipos, descuentos, becas y devoluciones frente a sus saldos auxiliares.
+  2. Ejecutar conciliaciones por fecha de corte, ejercicio fiscal, cuenta contable, sede y centro de costo cuando corresponda.
+  3. Comparar saldos de apertura, movimientos del período, ajustes y saldos de cierre.
+  4. Identificar diferencias por categoría:
+     - Movimiento auxiliar sin asiento contable.
+     - Asiento sin documento de origen válido.
+     - Importe diferente entre origen y mayor.
+     - Movimiento duplicado.
+     - Período contable incorrecto.
+     - Aplicación de pago incompleta.
+     - Reverso o ajuste sin correspondencia.
+  5. Permitir rastrear cada diferencia hasta el documento, el asiento y el módulo que originó la operación.
+  6. Incorporar tolerancias explícitas para redondeos permitidos, sin ocultar diferencias materiales.
+  7. Generar un informe de conciliación con totales, diferencias, estado de revisión, responsable y acciones correctivas.
+  8. Permitir marcar diferencias como pendientes, justificadas o resueltas, exigiendo observaciones y evidencia cuando corresponda.
+  9. Impedir que la herramienta corrija automáticamente saldos mediante ajustes contables sin autorización.
+  10. Permitir generar asientos de regularización autorizados a partir de diferencias identificadas, conservando la relación con el informe que los originó.
+  11. Registrar el resultado de cada ejecución para comparar las diferencias entre períodos.
+  12. Impedir que los registros ya conciliados se contabilicen nuevamente durante una reejecución.
+  13. Validar que las cuentas de control y sus auxiliares utilicen criterios de fecha, moneda y estado compatibles.
+  14. Integrar las conciliaciones con el proceso de cierre contable (`T-FIN-02`).
+- **Alcance y Cambios necesarios:**
+  - Revisar `performBankReconciliation`, `getStudentAccountStatement` y las funciones que consolidan movimientos contables en `backend/accounting-service/Code.gs`.
+  - Crear un servicio de conciliación entre auxiliares y mayor (`reconcileSubledgersWithGeneralLedger`).
+  - Incorporar un registro de ejecuciones, diferencias y resoluciones.
+  - Añadir una vista de excepciones y un resumen de conciliación para el cierre en `dashboard-contabilidad.html`.
+- **Comportamiento esperado:** El contador podrá determinar si el saldo de cada cuenta de control coincide con sus auxiliares y localizar las operaciones responsables de cualquier diferencia. Una conciliación no se considerará completa simplemente porque el proceso haya terminado sin errores técnicos.
+- **Criterios de aceptación:**
+  - Los auxiliares conciliados coinciden con sus cuentas de mayor dentro de las tolerancias configuradas.
+  - Las diferencias se muestran con su importe y referencia documental.
+  - Los movimientos no contabilizados se detectan explícitamente.
+  - Una ejecución repetida no duplica asientos ni ajustes.
+  - Cada corrección queda relacionada con la diferencia que pretende resolver.
+  - El cierre contable puede identificar conciliaciones pendientes o con diferencias materiales.
 - **Riesgo de Regresión:** Nulo.
-- **Dependencias:** `CargosEstudiante`, `AsientosContables`.
+- **Dependencias:** T-FIN-01, T-FIN-02, T-FIN-06, T-FIN-07, T-FIN-09, T-FIN-10, T-FIN-11 y T-FIN-12.
 
 ---
 
-### T-FIN-16 [P3] — Respaldo inmutable e integridad de tablas contables y financieras
+### T-FIN-16 [P3] — Respaldo financiero, recuperación verificable e inmutabilidad del historial contable
 
-- **Componentes relacionados:** `backend/accounting-service/Code.gs` (`createSystemBackup`, `restoreSystemBackup`).
-- **Problema detectado:** Garantizar que los respaldos del sistema incluyan la totalidad de tablas financieras (`PlanCuentas`, `AsientosContables`, `PresupuestosInstitucionales`, `FacturasFiscales`, `ComprobantesPago`, `BancosConciliaciones`, `CierresCaja`) y que la restauración mantenga intacta la inalterabilidad contable.
+- **Componentes relacionados:** `backend/accounting-service/Code.gs` (`createSystemBackup`, `restoreSystemBackup`), `backend/user-service/Code.gs`.
+- **Problema que resuelve:** La auditoría indica que los respaldos globales incluyen las tablas financieras. Debe verificarse que la recuperación restaure relaciones, estados y documentos asociados sin producir duplicados, reabrir períodos cerrados o perder trazabilidad.
 - **Requisitos funcionales:**
-  1. Incluir todas las tablas financieras en el payload de `createSystemBackup`.
-  2. Validar que `restoreSystemBackup` verifique los saldos contables tras restaurar.
-- **Criterios de Aceptación:**
-  - El archivo de respaldo contiene el 100% de las transacciones financieras y la restauración conserva la igualdad de partida doble.
+  1. Incluir en los respaldos todos los datos necesarios para reconstruir las operaciones financieras, como:
+     - Plan de cuentas (`PlanCuentas`).
+     - Asientos y líneas contables (`AsientosContables`).
+     - Ejercicios y cierres contables (`CierresPeriodosContables`).
+     - Presupuestos y sus versiones (`PresupuestosInstitucionales`).
+     - Cargos, pagos y aplicaciones (`CargosEstudiante`, `PagosAbonos`).
+     - Comprobantes de pago (`ComprobantesPago`).
+     - Facturas fiscales y autorizaciones CAI (`FacturasFiscales`).
+     - Cierres de caja (`CierresCaja`).
+     - Conciliaciones bancarias (`BancosConciliaciones`).
+     - Proveedores, órdenes de compra y cuentas por pagar (`ProveedoresActivos`, `OrdenesCompra`, `CuentasPorPagarGastos`).
+     - Becas, descuentos, anticipos y devoluciones (`DescuentosBecas`).
+     - Claves de idempotencia (`DeduplicationKey`) y relaciones entre documentos.
+     - Historial de aprobaciones y eventos de auditoría (`logStructuredEvent`).
+  2. Incluir las configuraciones, identificadores y referencias necesarios para interpretar los datos restaurados.
+  3. Mantener referencias a los archivos adjuntos y PDF, verificando su disponibilidad e integridad cuando el respaldo pretenda garantizar su recuperación.
+  4. Generar metadatos del respaldo con fecha, versión del esquema, período cubierto y resultado de las validaciones.
+  5. Verificar la integridad del archivo y la consistencia de los datos antes de permitir una restauración en `restoreSystemBackup`.
+  6. Permitir realizar una restauración de prueba en un entorno aislado, sin alterar los datos de producción.
+  7. Validar las relaciones entre pagos, aplicaciones, asientos, documentos fiscales y cierres después de la restauración.
+  8. Impedir que una restauración ordinaria se ejecute sobre producción sin autorización explícita y una evaluación del impacto.
+  9. Detectar posibles duplicados antes de importar datos restaurados en un sistema que ya contiene registros.
+  10. Preservar el estado de los períodos cerrados, las autorizaciones y el historial de auditoría.
+  11. Registrar el responsable de la restauración, el origen del respaldo, las validaciones realizadas y el resultado.
+  12. Definir políticas de conservación, frecuencia y retención de respaldos adecuadas para la información financiera.
+  13. Comprobar que los respaldos puedan recuperarse dentro de objetivos institucionales de tiempo de recuperación y pérdida máxima tolerable de datos.
+  14. Garantizar que los movimientos financieros confirmados no se alteren silenciosamente por el proceso de restauración.
+  15. Proporcionar un informe de recuperación con registros restaurados, omitidos, conflictivos y referencias que no pudieron recuperarse.
+- **Alcance y Cambios necesarios:**
+  - Revisar `createSystemBackup` y `restoreSystemBackup` en `backend/academic-service/Code.gs` / `backend/user-service/Code.gs`.
+  - Incorporar las nuevas tablas de períodos, idempotencia, aprobaciones y conciliaciones.
+  - Añadir validación de integridad y compatibilidad de esquemas.
+  - Crear un procedimiento de restauración de prueba y un informe verificable de resultados.
+- **Comportamiento esperado:** La institución podrá recuperar la información financiera a partir de un respaldo validado y comprobar que las operaciones, los saldos y las relaciones documentales mantienen su coherencia. Un respaldo creado correctamente no se considerará suficiente hasta comprobar que puede restaurarse.
+- **Criterios de aceptación:**
+  - Todas las tablas financieras necesarias están incluidas y documentadas.
+  - Un respaldo de prueba puede restaurarse en un entorno aislado.
+  - Los totales contables y los saldos auxiliares se mantienen después de la recuperación.
+  - Las claves de idempotencia y los identificadores originales no se regeneran de forma que permitan duplicar operaciones.
+  - Los períodos cerrados conservan su estado y su historial.
+  - Los archivos faltantes o dañados se identifican expresamente.
+  - La restauración produce un informe de validación y no modifica producción durante las pruebas.
 - **Riesgo de Regresión:** Bajo.
-- **Dependencias:** `createSystemBackup`, `restoreSystemBackup`.
+- **Dependencias:** T-FIN-01, T-FIN-02, T-FIN-03 y T-FIN-13.
 
 ---
 
 ### ORDEN DE EJECUCIÓN RECOMENDADO FASE 14 (CONTABILIDAD Y FINANZAS)
 
-| Orden | Tarea | Prioridad | Dependencia principal |
-| :---: | :--- | :---: | :--- |
-| **1** | **T-FIN-01.** Control de concurrencia transaccional con LockService | **P1** | `recordAccountingJournalEntry` / `LockService` |
-| **2** | **T-FIN-02.** Inalterabilidad contable y bloqueo de períodos cerrados | **P1** | `CierresPeriodosContables` |
-| **3** | **T-FIN-03.** Idempotencia en la revisión de comprobantes de pago | **P1** | `reviewPaymentVoucher` |
-| **4** | **T-FIN-04.** Verificación estricta de parámetros fiscales SAR (CAI y rangos) | **P1** | `FacturasFiscales` |
-| **5** | **T-FIN-05.** Separación de funciones y prevención de auto-aprobación | **P1** | `approvePurchaseOrder` |
-| **6** | **T-FIN-06.** Algoritmo asistido de conciliación bancaria | **P2** | `BancosConciliaciones` |
-| **7** | **T-FIN-07.** Estado de cuenta consolidado para familias multihijo | **P2** | `getGuardianStudents` / `PagosAbonos` |
-| **8** | **T-FIN-08.** Control de ejecución presupuestaria por centro de costo | **P2** | `PresupuestosInstitucionales` |
-| **9** | **T-FIN-09.** Arqueo y cierre de caja diario con registro de diferencias | **P2** | `CierresCaja` |
-| **10** | **T-FIN-10.** Contabilización automática de planillas de sueldos | **P2** | `calculatePayrollPeriod` / `AsientosContables` |
-| **11** | **T-FIN-11.** Informe de antigüedad de saldos y morosidad | **P2** | `CargosEstudiante` |
-| **12** | **T-FIN-12.** Directorio de proveedores y retenciones tributarias | **P2** | `ProveedoresActivos` |
-| **13** | **T-FIN-13.** Dashboard financiero consolidado con gráficos comparativos | **P3** | Universal Chart Engine |
-| **14** | **T-FIN-14.** Emisión e impresión de recibos oficiales de caja en PDF | **P3** | `generatePaymentReceiptPDF` |
-| **15** | **T-FIN-15.** Herramienta de conciliación entre auxiliares y libro mayor | **P3** | Reconciliation Engine |
-| **16** | **T-FIN-16.** Respaldo inmutable e integridad de tablas financieras | **P3** | `createSystemBackup` |
+| Orden | Tareas | Condición para avanzar | Dependencia principal |
+| :---: | :--- | :--- | :--- |
+| **1** | **T-FIN-01**, **T-FIN-02**, **T-FIN-03**, **T-FIN-04**, **T-FIN-05** | Escrituras financieras protegidas por LockService, períodos cerrados inalterables, idempotencia en pagos, parámetros SAR CAI validados y autoaprobación bloqueada. | `recordAccountingJournalEntry` / `LockService` / `CierresPeriodosContables` / `reviewPaymentVoucher` / `FacturasFiscales` / `approvePurchaseOrder` |
+| **2** | **T-FIN-06**, **T-FIN-07**, **T-FIN-08**, **T-FIN-09**, **T-FIN-10**, **T-FIN-11**, **T-FIN-12** | Conciliación bancaria asistida, estado de cuenta consolidado multihijo, presupuestos por centro de costo, arqueo de caja con diferencias, contabilización de planilla, antigüedad de saldos y directorio de proveedores con retenciones. | `BancosConciliaciones` / `getGuardianStudents` / `PresupuestosInstitucionales` / `CierresCaja` / `calculatePayrollPeriod` / `CargosEstudiante` / `ProveedoresActivos` |
+| **3** | **T-FIN-13**, **T-FIN-14**, **T-FIN-15** | Dashboard financiero consolidado con gráficos comparativos, recibos oficiales PDF y herramienta de conciliación auxiliares-mayor. | Universal Chart Engine / `generatePaymentReceiptPDF` / Reconciliation Engine |
+| **4** | **T-FIN-16** | Prueba de respaldo y restauración inmutable con el conjunto ampliado de datos financieros. | `createSystemBackup` / `restoreSystemBackup` |
