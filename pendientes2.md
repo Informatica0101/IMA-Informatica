@@ -3408,3 +3408,644 @@ Jules debe aplicar los siguientes principios:
 - No confundir una interfaz terminada con una implementación funcional verificada.
 
 Criterio global de éxito: las tareas implementadas cumplen sus criterios de aceptación, preservan las capacidades existentes, tienen evidencias reproducibles y dejan documentadas las limitaciones restantes. Las tareas de diseño solo se consideran terminadas cuando sus requisitos, decisiones técnicas y criterios de validación están aprobados y listos para guiar la implementación.
+
+
+---
+
+### Lista de tareas de implementación y mejora
+
+### Fase 2. Arquitectura institucional e interoperabilidad
+
+### Tarea 1. Implementar versionado explícito y validación de compatibilidad de las API
+
+P2 · ImportanteGAP-ARQ-01Contratos de comunicación
+
+Problema detectado: los contratos utilizan una versión global 1.0, pero las solicitudes HTTP no incluyen un mecanismo explícito que permita identificar la versión del contrato que utiliza cada consumidor.
+
+Requisitos funcionales
+
+* Incorporar la identificación de versión en las solicitudes realizadas por el cliente y definir cómo debe validarse en cada servicio.
+
+* Mantener la compatibilidad con los consumidores actuales durante la incorporación del mecanismo de versionado.
+
+* Establecer una única fuente de configuración para la versión activa del contrato, evitando que cada módulo declare valores independientes que puedan divergir.
+
+* Definir el comportamiento ante solicitudes sin versión, versiones desconocidas y versiones incompatibles.
+
+* Establecer una política para introducir cambios compatibles y cambios que requieran una nueva versión.
+
+* Asegurar que los errores de compatibilidad se comuniquen mediante respuestas estructuradas y no se confundan con fallos de red.
+
+* Mantener intactos el formato JSON-RPC existente, las acciones, los permisos y los tokens de idempotencia, salvo los ajustes indispensables para la compatibilidad.
+
+Cambios necesarios
+
+* Incorporar el encabezado `X-API-Version: 1.0` en el mecanismo común de solicitudes HTTP.
+
+* Definir cómo cada servicio valida la versión recibida y cómo comunica las versiones admitidas.
+
+* Documentar los contratos de entrada y salida de los servicios, incluidos sus campos obligatorios, opcionales y formatos de error.
+
+* Definir un procedimiento para evolucionar contratos sin romper las operaciones existentes.
+
+* Determinar si los servicios deben compartir una misma versión o admitir versiones independientes cuando sus contratos evolucionen de forma distinta.
+
+Comportamiento esperado
+
+Las solicitudes deben identificar de forma inequívoca el contrato utilizado. Una versión incompatible debe generar un error controlado, sin ejecutar operaciones de escritura. La incorporación del versionado no debe romper la aplicación, los procesos automáticos ni las operaciones pendientes de sincronización.
+
+Criterios de aceptación
+
+* Una solicitud válida con la versión admitida se procesa correctamente.
+
+* Una solicitud con una versión incompatible se rechaza antes de ejecutar la operación.
+
+* Las solicitudes sin encabezado siguen una política explícita de compatibilidad, sin cambios silenciosos de comportamiento.
+
+* El cliente interpreta correctamente los errores de versión.
+
+* Los tokens de idempotencia se conservan en los reintentos.
+
+* Se comprueba la compatibilidad de todos los servicios afectados y de las operaciones principales.
+
+* La documentación permite identificar la versión de cada contrato y las reglas de compatibilidad.
+
+Dependencias: mecanismo común de comunicación, contratos actuales y respuestas de error de los servicios.
+
+### Tarea 2. Garantizar la integridad de las escrituras concurrentes y operaciones masivas
+
+P1 · Alta prioridadGAP-ARQ-02Consistencia de datos
+
+Problema detectado: la cobertura de `LockService` es parcial en las operaciones de escritura masiva. Las ejecuciones concurrentes podrían intercalar escrituras, duplicar operaciones o generar estados inconsistentes.
+
+Requisitos funcionales
+
+* Identificar todas las operaciones que puedan escribir simultáneamente sobre los mismos recursos o mantener invariantes compartidas.
+
+* Determinar cuáles necesitan exclusión mutua y cuáles pueden operar de manera segura sin bloqueo.
+
+* Proteger las secciones críticas con el mecanismo de bloqueo adecuado para el contexto de ejecución de Google Apps Script.
+
+* Aplicar un tiempo máximo de espera configurable y un tratamiento explícito de la imposibilidad de adquirir el bloqueo.
+
+* Liberar los bloqueos de forma garantizada, incluso cuando se produzcan excepciones.
+
+* Mantener los tokens de idempotencia y la validación de duplicados. El bloqueo no debe utilizarse como sustituto de estos mecanismos.
+
+* Evitar mantener bloqueos durante operaciones de red, cálculos prolongados o trabajos que no necesiten acceso exclusivo.
+
+* Garantizar que las operaciones rechazadas por contención puedan reintentarse de forma segura.
+
+* Identificar qué escrituras requieren una única sección crítica y cuáles necesitan un mecanismo de coordinación entre varios recursos.
+
+* Evitar que una operación fallida deje cambios parciales que se interpreten como una transacción completada.
+
+Cambios necesarios
+
+* Revisar las escrituras masivas y las operaciones que generan documentos, registros contables, nóminas o movimientos relacionados.
+
+* Evaluar específicamente `importDataWithColumnMapping` y `generatePayrollPeriod`, mencionadas en la auditoría.
+
+* Identificar otras operaciones con riesgos equivalentes mediante el análisis de sus escrituras y dependencias.
+
+* Incorporar bloqueos únicamente donde sean necesarios y documentar el recurso protegido.
+
+* Establecer un patrón común de adquisición, liberación, timeout y registro de errores.
+
+* Comprobar si el bloqueo de nivel de script es suficiente o si la operación requiere otra estrategia de coordinación.
+
+* Registrar las colisiones y los fallos de adquisición sin exponer información sensible.
+
+Comportamiento esperado
+
+Cuando varias ejecuciones intenten modificar simultáneamente los mismos datos, el sistema debe conservar la integridad de los registros. Las operaciones compatibles podrán continuar en paralelo; las que requieran exclusividad deberán esperar dentro del límite establecido o finalizar con un error recuperable.
+
+Un timeout no debe provocar que se repita automáticamente una operación cuyo resultado anterior sea desconocido sin verificar su estado o reutilizar su mecanismo de idempotencia.
+
+Criterios de aceptación
+
+* Dos ejecuciones concurrentes sobre el mismo recurso no generan identificadores duplicados ni escrituras intercaladas incompatibles.
+
+* Las operaciones sobre recursos independientes no quedan bloqueadas innecesariamente.
+
+* Si no se obtiene el bloqueo dentro del tiempo permitido, se devuelve un error controlado.
+
+* El bloqueo se libera después de una excepción.
+
+* Una operación reintentada no duplica documentos, movimientos contables, nóminas ni otros efectos secundarios.
+
+* Las pruebas incluyen ejecuciones concurrentes, fallos durante la escritura y contención prolongada.
+
+* Se verifica la integridad de los datos antes y después de cada prueba.
+
+* Se documenta el impacto del bloqueo sobre el rendimiento y la duración de las operaciones masivas.
+
+Dependencias: mecanismos de escritura, generación de identificadores, tokens de idempotencia, validaciones y procesos automáticos relacionados.
+
+### Tarea 3. Definir una estrategia de escalabilidad y migración a base de datos relacional
+
+P2 · ImportanteGAP-ARQ-03Persistencia y escalabilidad
+
+Problema detectado: existe una orientación hacia una futura base de datos relacional, pero no hay una estrategia formal que establezca condiciones verificables para iniciar la migración, evaluar alternativas y preservar la integridad institucional.
+
+La auditoría propone un umbral inicial de 100,000 filas, pero este valor debe tratarse como una hipótesis por validar, no como un límite universal de Google Sheets ni como prueba suficiente de que la migración sea necesaria.
+
+Requisitos funcionales
+
+* Definir métricas que permitan evaluar la capacidad real de la infraestructura actual.
+
+* Establecer criterios de migración relacionados con rendimiento, concurrencia, integridad, cuotas, recuperación y complejidad operativa.
+
+* Distinguir los límites técnicos documentados de los umbrales internos que la institución decida adoptar.
+
+* Definir cómo se medirá el volumen de registros por entidad y hoja, así como su crecimiento previsto.
+
+* Establecer objetivos de rendimiento para operaciones representativas: consultas, escrituras, búsquedas, importaciones y procesos masivos.
+
+* Determinar qué operaciones necesitan garantías transaccionales entre varios registros.
+
+* Evaluar alternativas relacionales, incluidos PostgreSQL y MySQL, según los requisitos reales.
+
+* Definir una estrategia de migración incremental que permita conservar la continuidad de los servicios.
+
+* Establecer mecanismos para validar que los datos migrados coincidan con los originales.
+
+* Determinar cómo se gestionarán las referencias, las restricciones de unicidad, los índices, las relaciones y las transacciones.
+
+* Definir un procedimiento de reversión y recuperación ante fallos.
+
+* Establecer criterios para decidir si conviene mantener determinadas funciones en su infraestructura actual o trasladarlas a la nueva base de datos.
+
+Cambios necesarios
+
+* Crear un documento técnico específico de estrategia de escalabilidad y migración.
+
+* Inventariar las hojas, entidades, operaciones y dependencias que utilizan la persistencia actual.
+
+* Registrar volúmenes aproximados, frecuencia de acceso, concurrencia y tiempos de respuesta.
+
+* Identificar los cuellos de botella que puedan resolverse mediante optimización antes de migrar.
+
+* Definir los indicadores que activarán una evaluación formal de migración.
+
+* Elaborar una matriz comparativa de las alternativas de almacenamiento, incluyendo coste operativo, transacciones, seguridad, mantenimiento, escalabilidad y compatibilidad con los servicios existentes.
+
+* Definir un modelo de datos objetivo y un mapa de correspondencias entre las estructuras actuales y las futuras.
+
+* Establecer el mecanismo de validación y reconciliación durante la transición.
+
+* Definir el procedimiento para evitar divergencias si, durante la migración, deben convivir temporalmente dos sistemas de persistencia.
+
+Comportamiento esperado
+
+La plataforma debe permitir tomar decisiones de escalabilidad a partir de métricas verificables, no únicamente del número de filas. La migración debe ser planificada, reversible cuando sea técnicamente viable y verificable mediante comparaciones de datos y pruebas funcionales.
+
+Criterios de aceptación
+
+* El documento identifica la arquitectura actual y los límites técnicos relevantes de cada servicio utilizado.
+
+* Los umbrales de migración tienen una definición, una métrica y un procedimiento de medición.
+
+* El umbral de 100,000 filas queda validado, ajustado o descartado mediante evidencia.
+
+* Se documentan los objetivos de rendimiento y los escenarios de carga.
+
+* Se identifica qué operaciones necesitan transacciones atómicas.
+
+* Se incluye una matriz de alternativas con criterios de selección explícitos.
+
+* Se define cómo validar conteos, identificadores, relaciones, importes y registros históricos después de migrar.
+
+* Se documentan la reversión, las copias de seguridad y la recuperación.
+
+* La estrategia no exige migrar todos los módulos simultáneamente ni duplicar indefinidamente la lógica de acceso a datos.
+
+Dependencias: inventario de persistencia, contratos de los servicios, identificadores institucionales, reglas de consistencia y métricas de rendimiento.
+
+### Tarea 4. Establecer observabilidad y métricas operativas de interoperabilidad
+
+P2 · ImportanteMejora complementaria
+
+Problema detectado: el informe identifica registros estructurados de eventos y mecanismos de trazabilidad, pero no demuestra que exista una visión unificada del rendimiento, los fallos de comunicación, las colisiones de concurrencia y el estado de sincronización de todos los servicios.
+
+Requisitos funcionales
+
+* Identificar las solicitudes y operaciones relacionadas mediante un identificador de correlación.
+
+* Registrar servicio de origen, operación, duración, resultado y clasificación del error.
+
+* Distinguir errores de validación, permisos, incompatibilidad de versión, timeout, cuota, contención y fallos de persistencia.
+
+* Medir tiempos de respuesta, frecuencia de errores, reintentos y operaciones pendientes.
+
+* Medir los tiempos de espera para adquirir bloqueos y los fallos de adquisición.
+
+* Identificar procesos automáticos estancados, repetidos o fallidos.
+
+* Mantener la trazabilidad entre una operación principal y sus efectos secundarios.
+
+* Evitar registrar contraseñas, tokens de autenticación, claves secretas o datos personales innecesarios.
+
+* Definir alertas proporcionales al impacto y a los umbrales operativos acordados.
+
+Cambios necesarios
+
+* Identificar los mecanismos de registro existentes y determinar qué métricas faltan.
+
+* Unificar los campos de los eventos relevantes sin reemplazar innecesariamente los sistemas actuales.
+
+* Definir un identificador de correlación que se propague entre servicios y procesos asíncronos cuando corresponda.
+
+* Incorporar métricas agregadas y un procedimiento para consultar fallos sin depender de revisar manualmente registros dispersos.
+
+* Definir alertas para fallos repetidos, acumulación de operaciones pendientes y degradación del rendimiento.
+
+Comportamiento esperado
+
+Una operación que atraviesa varios servicios debe poder investigarse de principio a fin. Los registros deben permitir distinguir dónde falló, cuánto tardó y si produjo efectos parciales, sin revelar información confidencial.
+
+Criterios de aceptación
+
+* Una operación de prueba puede rastrearse a través de los componentes involucrados.
+
+* Un error de comunicación puede distinguirse de un error de negocio.
+
+* Los reintentos y las operaciones duplicadas quedan identificados.
+
+* Las métricas permiten detectar un aumento de latencia o de errores.
+
+* Las alertas no generan notificaciones repetitivas sin control.
+
+* Los registros sanitizados no incluyen credenciales ni datos sensibles innecesarios.
+
+* La observabilidad no introduce una dependencia que impida ejecutar las operaciones principales cuando el sistema de registro no esté disponible.
+
+Dependencias: contratos de comunicación, registros estructurados existentes, mecanismos de sincronización y tareas automáticas.
+
+### Tarea 5. Formalizar los contratos de datos compartidos entre servicios
+
+P2 · ImportanteMejora complementaria
+
+Problema detectado: se ha verificado un formato común de solicitudes, pero un envoltorio JSON uniforme no garantiza que todos los servicios interpreten de la misma manera los campos, estados, referencias y errores de las entidades compartidas.
+
+Requisitos funcionales
+
+* Documentar los contratos reales de las operaciones que comparten entidades institucionales.
+
+* Definir los tipos, campos obligatorios, valores opcionales, restricciones y reglas de nulabilidad.
+
+* Establecer formatos uniformes para fechas, importes, estados y referencias.
+
+* Definir cómo se representan los errores recuperables y no recuperables.
+
+* Identificar los cambios compatibles y los cambios que requieren coordinación entre productores y consumidores.
+
+* Evitar que cada servicio implemente una interpretación diferente de un mismo estado institucional.
+
+* Mantener la compatibilidad con los datos históricos y las operaciones existentes.
+
+Cambios necesarios
+
+* Elaborar un inventario de contratos de entrada y salida.
+
+* Comparar las estructuras utilizadas por los consumidores con las producidas por cada servicio.
+
+* Identificar campos redundantes, equivalencias ambiguas y valores con interpretaciones distintas.
+
+* Definir esquemas verificables para los contratos más importantes.
+
+* Añadir pruebas de compatibilidad para las operaciones compartidas.
+
+Comportamiento esperado
+
+Los servicios deben intercambiar datos de forma predecible. Una modificación de contrato no debe introducir errores silenciosos en otro módulo ni convertir valores válidos en estados incorrectos.
+
+Criterios de aceptación
+
+* Cada operación crítica tiene un contrato documentado y verificable.
+
+* Los campos obligatorios y opcionales coinciden entre productor y consumidor.
+
+* Las respuestas de error mantienen una estructura coherente.
+
+* Las pruebas detectan campos incompatibles y cambios que rompen consumidores existentes.
+
+* Las operaciones relacionadas con estudiantes, usuarios, expedientes y contabilidad conservan la integridad de sus referencias.
+
+* Los cambios de contrato tienen una política de compatibilidad documentada.
+
+Dependencias: Tarea 1, inventario de servicios y resolución de datos institucionales.
+
+### Tarea 6. Fortalecer la idempotencia de las operaciones institucionales y económicas
+
+P1 · Alta prioridadConsistencia e integridad
+
+Problema detectado: la auditoría verifica la inyección de `idempotencyToken` en las mutaciones desde el cliente, pero no detalla si todos los servicios registran y validan de forma duradera los resultados asociados a cada token, ni cómo se resuelven solicitudes simultáneas con el mismo token.
+
+Requisitos funcionales
+
+* Determinar qué operaciones necesitan idempotencia, especialmente las que generan cargos, pagos, movimientos de inventario, matrículas, documentos o nóminas.
+
+* Comprobar que el token se valida y aplica en el servidor, sin confiar exclusivamente en el cliente.
+
+* Definir el ámbito de unicidad y el periodo de conservación de los tokens.
+
+* Vincular cada token a la operación y a sus parámetros relevantes.
+
+* Evitar que el mismo token se reutilice para ejecutar una operación diferente.
+
+* Definir qué respuesta se devuelve cuando se repite una solicitud ya completada.
+
+* Resolver las solicitudes simultáneas con el mismo token sin duplicar efectos.
+
+* Definir cómo se recuperan las operaciones cuyo resultado quedó incierto por un timeout.
+
+* Mantener una trazabilidad suficiente para investigar solicitudes repetidas.
+
+Cambios necesarios
+
+* Inspeccionar los mecanismos reales de almacenamiento y consulta de tokens en todos los servicios que ejecutan mutaciones.
+
+* Identificar operaciones donde el token solo se transmite, pero no se valida de forma duradera.
+
+* Establecer un mecanismo seguro para registrar el resultado de una operación y vincularlo a su token.
+
+* Definir el tratamiento de tokens vencidos, reutilizados con parámetros diferentes y solicitudes concurrentes.
+
+* Comprobar que los procesos automáticos secundarios no vuelvan a ejecutar efectos ya confirmados.
+
+Comportamiento esperado
+
+La repetición de una misma solicitud no debe producir un segundo efecto económico o institucional. Si la operación anterior ya terminó, el sistema debe devolver un resultado coherente con ella; si su estado es incierto, debe poder determinarse antes de ejecutar de nuevo el efecto.
+
+Criterios de aceptación
+
+* Repetir una solicitud completada no duplica sus efectos.
+
+* Dos solicitudes simultáneas con el mismo token no generan dos operaciones.
+
+* Reutilizar un token con parámetros incompatibles genera un error controlado.
+
+* Un timeout seguido de reintento conserva la integridad de los datos.
+
+* La pérdida temporal de respuesta no produce cargos, movimientos o documentos duplicados.
+
+* Las pruebas comprueban el comportamiento tanto en el servicio principal como en sus procesos secundarios.
+
+Dependencias: Tarea 2, contratos de comunicación, persistencia y trazabilidad.
+
+### Tarea 7. Fortalecer la integridad de las operaciones que abarcan varios servicios
+
+P1 · Alta prioridadIntegridad institucional
+
+Problema detectado: la auditoría verifica validaciones previas a la persistencia y el aislamiento de ciertos fallos secundarios, pero no demuestra que todas las operaciones que modifican varias entidades puedan recuperarse de forma coherente cuando una escritura intermedia falla.
+
+Requisitos funcionales
+
+* Identificar las operaciones que modifican más de una entidad o servicio.
+
+* Separar las operaciones críticas de negocio de las notificaciones y otras acciones secundarias.
+
+* Definir los estados válidos de cada operación y sus transiciones.
+
+* Detectar escrituras parciales y evitar que se presenten como operaciones completadas.
+
+* Determinar cuándo corresponde utilizar una transacción local y cuándo se necesita una estrategia de recuperación entre servicios.
+
+* Establecer mecanismos de compensación cuando una operación distribuida no pueda revertirse mediante una transacción.
+
+* Garantizar que los procesos de recuperación sean idempotentes.
+
+* Mantener referencias consistentes entre documentos, expedientes, transacciones y registros relacionados.
+
+Cambios necesarios
+
+* Elaborar un inventario de flujos críticos que atraviesan varios servicios.
+
+* Documentar los pasos, las escrituras, los estados y los efectos secundarios de cada flujo.
+
+* Identificar los puntos donde una excepción podría dejar datos parcialmente actualizados.
+
+* Implementar, donde sea necesario, estados intermedios, registros de operación o mecanismos de compensación.
+
+* Añadir pruebas de fallos en cada paso crítico.
+
+* Evitar introducir una transacción distribuida compleja si un mecanismo de recuperación más sencillo satisface los requisitos.
+
+Comportamiento esperado
+
+Una operación debe finalizar en un estado coherente y verificable. Si falla a mitad del proceso, el sistema debe identificar lo que se completó, evitar repetir efectos ya confirmados y permitir recuperar o compensar los cambios pendientes.
+
+Criterios de aceptación
+
+* Cada flujo crítico tiene definidos sus estados válidos y puntos de recuperación.
+
+* Los fallos inducidos no dejan registros huérfanosc o estados finales falsos.
+
+* Los reintentos no duplican efectos.
+
+* Las acciones de compensación pueden ejecutarse de forma segura más de una vez cuando corresponda.
+
+* Los errores quedan registrados con suficiente información para diagnosticar la operación.
+
+* Se comprueba la integridad de los datos antes y después de los escenarios de fallo.
+
+Dependencias: Tareas 2, 5 y 6; mecanismos de persistencia y procesos automáticos.
+
+### Tarea 8. Completar la recuperación y conciliación de las sincronizaciones
+
+P2 · ImportanteSincronización
+
+Problema detectado: existe una cola de sincronización en IndexedDB y se ha verificado la conciliación de inventario, pero no se documenta un mecanismo uniforme para reconciliar todos los flujos de sincronización entre el cliente, los servicios y las fuentes de datos.
+
+Requisitos funcionales
+
+* Identificar las operaciones pendientes, completadas, fallidas y de resultado incierto.
+
+* Registrar intentos, errores y fechas de procesamiento sin exponer datos sensibles.
+
+* Reintentar fallos transitorios con límites y estrategia de espera adecuados.
+
+* Evitar reintentos infinitos y duplicación de efectos.
+
+* Distinguir los errores transitorios de los errores permanentes de validación o autorización.
+
+* Detectar registros que existan en una fuente, pero falten en otra.
+
+* Establecer reglas para resolver divergencias sin sobrescribir silenciosamente cambios legítimos.
+
+* Permitir recuperar una sincronización interrumpida sin procesar incorrectamente todos los registros desde el principio.
+
+Cambios necesarios
+
+* Inventariar las colas, mecanismos de sincronización y rutinas de conciliación existentes.
+
+* Identificar sus formatos de estado, políticas de reintento y criterios de finalización.
+
+* Definir un mecanismo de consulta de operaciones pendientes y fallidas.
+
+* Completar las rutinas de reconciliación para los flujos donde sean necesarias.
+
+* Establecer procedimientos de resolución de conflictos y reparación controlada.
+
+Comportamiento esperado
+
+Una interrupción de red o de ejecución no debe ocasionar pérdida silenciosa de datos. La plataforma debe poder identificar las operaciones afectadas, reanudarlas de manera segura y demostrar que los registros sincronizados coinciden con la fuente autorizada.
+
+Criterios de aceptación
+
+* Una operación pendiente puede reanudarse después de recuperar la conectividad.
+
+* Los fallos permanentes no se reintentan indefinidamente.
+
+* Los registros duplicados, ausentes o inconsistentes pueden identificarse.
+
+* La conciliación distingue discrepancias reales de diferencias legítimas.
+
+* Los cambios conflictivos no se sobrescriben automáticamente sin una regla definida.
+
+* Los resultados de la recuperación quedan registrados y son verificables.
+
+Dependencias: Tareas 5, 6 y 7; almacenamiento local, persistencia remota y registros de operación.
+
+### Tarea 9. Optimizar las operaciones masivas y el uso de cuotas
+
+P2 · ImportanteRendimiento
+
+Problema detectado: existen mecanismos de paginación y carga por fragmentos, pero la auditoría no aporta mediciones suficientes para demostrar que todas las operaciones masivas cumplen los límites operativos con volúmenes crecientes.
+
+Requisitos funcionales
+
+* Identificar operaciones que leen o escriben grandes cantidades de datos.
+
+* Reducir lecturas completas, escrituras repetitivas y solicitudes redundantes.
+
+* Definir tamaños de lote adecuados según los límites y mediciones reales.
+
+* Permitir reanudar trabajos interrumpidos sin duplicar resultados.
+
+* Establecer tiempos máximos y tratamiento de cuotas excedidas.
+
+* Evitar que los procesos masivos monopolizen recursos compartidos.
+
+* Mantener la consistencia y trazabilidad de los registros procesados.
+
+* Definir métricas para evaluar duración, volumen, errores y consumo de recursos.
+
+Cambios necesarios
+
+* Revisar `importDataWithColumnMapping`, `uploadChunk` y las operaciones equivalentes.
+
+* Medir los tiempos de ejecución y el número de operaciones de lectura y escritura.
+
+* Identificar llamadas repetidas que puedan sustituirse por operaciones por lotes.
+
+* Ajustar los tamaños de lote con base en pruebas controladas.
+
+* Incorporar puntos de control y reanudación donde sean necesarios.
+
+* Definir límites de concurrencia para procesos que compitan por los mismos recursos.
+
+Comportamiento esperado
+
+Las importaciones y operaciones masivas deben procesar grandes volúmenes de forma predecible, con recuperación ante interrupciones y sin degradar de manera desproporcionada las operaciones interactivas.
+
+Criterios de aceptación
+
+* Se documentan las mediciones de rendimiento para volúmenes representativos.
+
+* Los procesos pueden reanudarse después de un fallo.
+
+* Los reintentos no duplican registros ni efectos secundarios.
+
+* Los errores de cuota se identifican y reciben un tratamiento controlado.
+
+* Se comprueba la integridad de los datos procesados.
+
+* Las optimizaciones no degradan las validaciones ni los permisos existentes.
+
+Dependencias: Tareas 2, 4, 6 y 8.
+
+### Tarea 10. Formalizar la resolución y validación de configuraciones compartidas
+
+P3 · MejoraConfiguración institucional
+
+Problema detectado: la auditoría verifica la resolución de fuentes autorizadas y el uso de valores predeterminados, pero es necesario asegurar que las reglas de precedencia y los valores de configuración se mantengan coherentes entre todos los módulos.
+
+Requisitos funcionales
+
+* Identificar las configuraciones institucionales compartidas y su fuente efectiva.
+
+* Documentar las reglas de precedencia entre registros de configuración, valores predeterminados y constantes.
+
+* Validar los tipos, rangos y formatos de los valores.
+
+* Distinguir configuraciones opcionales de configuraciones obligatorias.
+
+* Evitar que una configuración inválida se sustituya silenciosamente por un valor predeterminado que altere operaciones importantes.
+
+* Definir cómo se invalidan las cachés cuando cambia una configuración.
+
+* Mantener separados los valores institucionales de las preferencias personales.
+
+* Registrar los cambios de configuración relevantes y su efecto.
+
+Cambios necesarios
+
+* Inventariar las fuentes de configuración utilizadas por los servicios.
+
+* Identificar duplicaciones y reglas de precedencia implícitas.
+
+* Unificar las validaciones que deban ser compartidas.
+
+* Definir errores controlados para valores inválidos o ausentes que sean obligatorios.
+
+* Añadir pruebas de consistencia entre consumidores y de invalidación de caché.
+
+Comportamiento esperado
+
+Los módulos deben aplicar una configuración coherente y predecible. Los errores de configuración deben ser detectables y no provocar cambios silenciosos en reglas académicas, financieras o administrativas.
+
+Criterios de aceptación
+
+* Cada configuración compartida tiene una fuente autorizada identificada.
+
+* Los valores inválidos se rechazan o se gestionan mediante una regla explícita.
+
+* Los consumidores aplican el mismo valor cuando comparten el mismo ámbito.
+
+* La caché se actualiza según la política definida.
+
+* Los cambios no exponen secretos ni invalidan datos institucionales existentes.
+
+Dependencias: contratos de servicios, fuentes de datos autorizadas y mecanismos de caché.
+
+### Orden recomendado de ejecución
+
+### 1
+
+Integridad y concurrencia
+
+Tareas 2, 6 y 7. Reducir riesgos de escrituras incompatibles, operaciones duplicadas y estados parciales.
+
+### 2
+
+Contratos e interoperabilidad
+
+Tareas 1 y 5. Estandarizar la evolución de las API y los contratos de datos.
+
+### 3
+
+Recuperación y operación
+
+Tareas 8 y 9. Fortalecer la sincronización, las conciliaciones y el procesamiento masivo.
+
+### 4
+
+Observabilidad y evolución
+
+Tareas 3, 4 y 10. Formalizar métricas, configuraciones compartidas y criterios de escalabilidad.
+
+Las tareas 2, 6 y 7 deben coordinarse porque los bloqueos, la idempotencia y la recuperación de operaciones protegen aspectos distintos de una misma operación. No debe considerarse resuelto el problema de duplicación únicamente por añadir `LockService`, ni resuelto el de consistencia únicamente por añadir un token de idempotencia.
+
+La Tarea 3 puede desarrollarse en paralelo con las mejoras operativas, ya que la planificación de la migración no requiere migrar datos ni alterar la infraestructura actual.
