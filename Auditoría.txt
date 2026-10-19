@@ -1562,3 +1562,30 @@ Hallazgos principales:
 
 Estado general: AUDITORÍA COMPLETADA - TAREAS T-FIN-01 A T-FIN-16 REGISTRADAS EN PENDIENTES3.MD.
 ================================================================================
+
+================================================================================
+AUDITORÍA FUNCIONAL Y TÉCNICA: FASE 15 — PAGOS ESCOLARES, COBROS Y FACTURACIÓN
+================================================================================
+
+Subcapacidades evaluadas:
+4.1. Administración de cargos escolares y obligaciones de pago
+4.2. Estados de cuenta individuales y familiares
+4.3. Registro y aplicación de pagos por diferentes métodos
+4.4. Pasarelas de pago y pagos en línea
+4.5. Recepción, revisión y aprobación de comprobantes bancarios
+4.6. Pagos parciales, anticipos, sobrepagos y distribución entre cargos
+4.7. Reembolsos, anulaciones, reversos y correcciones
+4.8. Recibos, comprobantes y documentos fiscales
+4.9. Conciliación entre pagos, cargos y contabilidad
+4.10. Notificaciones y comunicación con las familias
+4.11. Seguridad, permisos, auditoría e integridad transversal
+4.12. Experiencia de usuario, búsqueda y recuperación de operaciones
+
+Hallazgos principales:
+- Verificadas las estructuras de cobros, cargos y recibos en `backend/accounting-service/Code.gs` (`CargosEstudiante`, `ComprobantesPago`, `FacturasFiscales`, `PagosAbonos`).
+- Operativos los endpoints de revisión de comprobantes de transferencia (`uploadPaymentVoucher`, `reviewPaymentVoucher`), emisión de recibos PDF (`generatePaymentReceiptPDF`) y facturas fiscales SAR Honduras (`createFiscalInvoice`).
+- Operativo el estado de cuenta consolidado familiar multihijo (`getStudentAccountStatement`, `getFamilyConsolidatedSummary`).
+- Planificadas e integradas las tareas de resolución T-PAG-01 a T-PAG-16 en `pendientes3.md`.
+
+Estado general: AUDITORÍA COMPLETADA - TAREAS T-PAG-01 A T-PAG-16 REGISTRADAS EN PENDIENTES3.MD.
+================================================================================
