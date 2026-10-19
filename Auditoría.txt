@@ -1619,3 +1619,38 @@ Hallazgos principales:
 
 Estado general: AUDITORÍA COMPLETADA - TAREAS T-RRHH-01 A T-RRHH-16 REGISTRADAS EN PENDIENTES3.MD.
 ================================================================================
+
+================================================================================
+AUDITORÍA FUNCIONAL Y TÉCNICA: FASE 17 — PLANILLAS, COMPENSACIONES Y LEY
+================================================================================
+
+Subcapacidades evaluadas:
+T17-01. Estructuras salariales y condiciones de remuneración
+T17-02. Catálogo de conceptos salariales y reglas de cálculo
+T17-03. Motor de cálculo y reproducibilidad de la planilla
+T17-04. Integración con expedientes, contratos y estado laboral
+T17-05. Asistencia, horas ordinarias y novedades laborales
+T17-06. Horas extraordinarias y recargos
+T17-07. Deducciones legales, retenciones y aportaciones (IHSS, RAP, ISR)
+T17-08. Anticipos, préstamos y ajustes manuales
+T17-09. Beneficios, prestaciones y conceptos periódicos o extraordinarios
+T17-10. Períodos de nómina y generación masiva
+T17-11. Revisión, aprobación y segregación de funciones
+T17-12. Estados, cierre y protección de períodos
+T17-13. Comprobantes individuales de pago
+T17-14. Reportes y análisis de planillas
+T17-15. Exportaciones, obligaciones laborales y fiscales
+T17-16. Integración contable y conciliación financiera
+T17-17. Historial, trazabilidad y protección de datos salariales
+T17-18. Rendimiento, concurrencia y recuperación ante errores
+T17-19. Experiencia de uso y resolución de incidencias
+T17-20. Pruebas de regresión e integridad de datos
+
+Hallazgos principales:
+- Verificado el motor de cálculo de planillas en `backend/accounting-service/Code.gs` (`calculatePayrollPeriod`, `updatePayrollPeriodStatus`, `generatePayrollReceiptPDF`).
+- Confirmada la aplicación de deducciones statutory hondureñas (IHSS 3.5% hasta techo L. 10,317.38, RAP 1.5% excedente y retención progresiva ISR).
+- Operativa la generación automática de asientos contables por partida doble al aprobar/contabilizar la nómina mensual.
+- Planificadas e integradas las tareas de resolución T-NOM-01 a T-NOM-20 en `pendientes3.md`.
+
+Estado general: AUDITORÍA COMPLETADA - TAREAS T-NOM-01 A T-NOM-20 REGISTRADAS EN PENDIENTES3.MD.
+================================================================================

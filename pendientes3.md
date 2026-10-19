@@ -8401,3 +8401,314 @@ El destinatario puede abrir una comunicación y completar la acción solicitada 
 | **2** | **T-RRHH-06**, **T-RRHH-07**, **T-RRHH-08**, **T-RRHH-09**, **T-RRHH-10**, **T-RRHH-11**, **T-RRHH-12** | Marcaje de asistencia preciso, horas extras autorizadas, saldo legal de vacaciones (Código del Trabajo), incapacidades IHSS, repositorio documental verificado, adscripción de coordinadores y firma de contratos con token. | `recordStaffCheckIn` / `AprobacionHorasExtras` / `calculateVacationBalances` / `IncapacidadesMedicas` / `DocumentosLaborales` |
 | **3** | **T-RRHH-13**, **T-RRHH-14**, **T-RRHH-15**, **T-RRHH-17**, **T-RRHH-18** | Dashboard analítico de personal, ficha del empleado PDF, conciliación asistencia-planilla, flujo integral de incorporación/baja y seguimiento de formación profesional. | Universal Chart Engine / `generateSchoolDocument` / Reconciliation / `dashboard-recursos-humanos.html` |
 | **4** | **T-RRHH-16**, **T-RRHH-19**, **T-RRHH-20** | Organigrama institucional navegable, prueba de respaldo e inmutabilidad, y reconciliación integral RRHH-Académico-Nómina. | UI / `createSystemBackup` / Reconciliation Engine |
+
+
+## PLAN DE TRABAJO DETALLADO Y UNIFICADO: FASE DE PLANILLAS, COMPENSACIONES Y OBLIGACIONES LABORALES
+
+### T-NOM-01 [P0] — Control transaccional de cálculo de planilla y asignación atómica de saldos con LockService
+
+- **Componentes relacionados:** `backend/accounting-service/Code.gs` (`calculatePayrollPeriod`), `dashboard-recursos-humanos.html`.
+- **Problema detectado:** El cálculo masivo de nómina en `calculatePayrollPeriod` requiere un bloqueo exclusivo mediante `LockService` para evitar ejecuciones concurrentes que generen asientos o deducciones duplicadas para el mismo período.
+- **Requisitos funcionales:**
+  1. Adquirir `LockService.getScriptLock()` al inicio de `calculatePayrollPeriod`.
+  2. Verificar si la planilla para `periodoMes` ya existe en estado `Calculada` o `Aprobada` antes de iniciar el procesamiento.
+  3. Liberar el bloqueo en bloques `finally`.
+- **Criterios de Aceptación:**
+  - Ejecuciones simultáneas del cálculo de nómina no generan registros duplicados ni descalces en el libro mayor.
+- **Riesgo de Regresión:** Bajo.
+- **Dependencias:** `calculatePayrollPeriod`, `LockService`.
+
+---
+
+### T-NOM-02 [P0] — Parametrización dinámica de techos y tasas de deducción de ley (IHSS, RAP, ISR)
+
+- **Componentes relacionados:** `backend/accounting-service/Code.gs` (`PlanillasNomenclatura`), `dashboard-recursos-humanos.html`.
+- **Problema detectado:** Evitar valores estáticos en el código para los techos del IHSS (L. 10,317.38) y tasas del RAP/ISR, haciéndolos configurables en la tabla de parámetros de nómina.
+- **Requisitos funcionales:**
+  1. Leer los techos y porcentajes de cotización de la tabla `ConfiguracionPlanillas` o `PlanillasNomenclatura`.
+  2. Aplicar las exenciones de la tabla progresiva del Impuesto sobre la Renta vigentes publicadas por el SAR de Honduras.
+- **Criterios de Aceptación:**
+  - Modificar el techo de cotización IHSS en la configuración actualiza automáticamente el cálculo de deducciones de la siguiente planilla sin alterar planillas históricas cerradas.
+- **Riesgo de Regresión:** Bajo.
+- **Dependencias:** `PlanillasNomenclatura`.
+
+---
+
+### T-NOM-03 [P0] — Generación automática del asiento contable por partida doble al aprobar la planilla
+
+- **Componentes relacionados:** `backend/accounting-service/Code.gs` (`updatePayrollPeriodStatus`, `recordAccountingJournalEntry`).
+- **Problema detectado:** Garantizar que al cambiar el estado de la planilla a `Contabilizada` en `updatePayrollPeriodStatus` se genere automáticamente el asiento contable por partida doble.
+- **Requisitos funcionales:**
+  1. Generar la partida contable:
+     - **Debe:** Gasto Sueldos y Salarios, Gasto Aportaciones Patronales IHSS/RAP.
+     - **Haber:** Retenciones IHSS/RAP/ISR por Pagar, Sueldos por Pagar.
+  2. Registrar la referencia de origen `PLN-XXXXXXXX`.
+- **Criterios de Aceptación:**
+  - La contabilización de la planilla crea el asiento balanceado en `AsientosContables` con débitos y créditos matemáticamente iguales.
+- **Riesgo de Regresión:** Bajo.
+- **Dependencias:** `updatePayrollPeriodStatus`, `recordAccountingJournalEntry`.
+
+---
+
+### T-NOM-04 [P0] — Inalterabilidad de planillas aprobadas y protección de períodos cerrados
+
+- **Componentes relacionados:** `backend/accounting-service/Code.gs` (`updatePayrollPeriodStatus`), `backend/user-service/Code.gs`.
+- **Problema detectado:** Bloquear la edición, recálculo o anulación de planillas que se encuentren en estado `Aprobada`, `Cerrada` o `Contabilizada`.
+- **Requisitos funcionales:**
+  1. Validar el estado actual de la planilla antes de procesar cambios.
+  2. Rechazar recálculos sobre períodos cerrados salvo reapertura autorizada por Dirección con registro de motivo en auditoría.
+- **Criterios de Aceptación:**
+  - Intento de modificar los valores salariales de una planilla cerrada devuelve una excepción de período bloqueado.
+- **Riesgo de Regresión:** Bajo.
+- **Dependencias:** `updatePayrollPeriodStatus`.
+
+---
+
+### T-NOM-05 [P0] — Aislamiento RBAC y confidencialidad estricta de recibos individuales de sueldo
+
+- **Componentes relacionados:** `backend/accounting-service/Code.gs` (`generatePayrollReceiptPDF`, `getStaffPayrollReceipt`), `backend/user-service/Code.gs`.
+- **Problema detectado:** Proteger el desglose salarial para que cada empleado o docente solo pueda visualizar y descargar sus propios recibos de pago.
+- **Requisitos funcionales:**
+  1. Validar en `getStaffPayrollReceipt` que `authUserId` coincida con el `EmpleadoID` solicitante o que posea el rol `RecursosHumanos`/`Director`.
+  2. Denegar consultas de desgloses salariales pertenecientes a otros trabajadores.
+- **Criterios de Aceptación:**
+  - Intentos de acceder al recibo salarial de un tercero devuelven error de acceso denegado.
+- **Riesgo de Regresión:** Bajo.
+- **Dependencias:** `getStaffPayrollReceipt`, `assertRecordOwnership`.
+
+---
+
+### T-NOM-06 [P0] — Integración de horas extraordinarias autorizadas en el cálculo devengado
+
+- **Componentes relacionados:** `backend/accounting-service/Code.gs` (`calculatePayrollPeriod`, `AprobacionHorasExtras`).
+- **Problema detectado:** Incorporar las horas extras aprobadas en `AprobacionHorasExtras` dentro del cálculo devengado de la planilla del mes correspondiente.
+- **Requisitos funcionales:**
+  1. Consultar horas extras con estado `Aprobada` para el período `periodoMes`.
+  2. Sumar el `MontoHorasExtras` al total devengado del trabajador y marcar las horas como `Liquidadas`.
+- **Criterios de Aceptación:**
+  - Las horas extras aprobadas se desglosan en el recibo de pago y se suman al salario bruto.
+- **Riesgo de Regresión:** Bajo.
+- **Dependencias:** `AprobacionHorasExtras`, `calculatePayrollPeriod`.
+
+---
+
+### T-NOM-07 [P1] — Deducción de cuotas de préstamos y anticipos salariales en nómina
+
+- **Componentes relacionados:** `backend/accounting-service/Code.gs` (`requestEmployeeLoanAdvance`, `approveEmployeeLoanAdvance`), `js/teacher.js`.
+- **Problema detectado:** Descontar automáticamente la cuota fija de amortización de préstamos o anticipos activos registrados en `AnticiposPrestamosEmpleado`.
+- **Requisitos funcionales:**
+  1. Consultar la cuota mensual en la tabla de amortización de préstamos aprobados.
+  2. Deducir la cuota en `OtrasDeducciones` y actualizar el saldo pendiente del préstamo.
+- **Criterios de Aceptación:**
+  - El cálculo de nómina deduce la cuota del préstamo activo y actualiza la tabla de saldos pendientes.
+- **Riesgo de Regresión:** Nulo.
+- **Dependencias:** `AnticiposPrestamosEmpleado`.
+
+---
+
+### T-NOM-08 [P1] — Descuento por incapacidades médicas y subsidio IHSS en salario ordinario
+
+- **Componentes relacionados:** `backend/accounting-service/Code.gs` (`recordMedicalLeave`), `dashboard-recursos-humanos.html`.
+- **Problema detectado:** Reflejar las incapacidades registradas en `IncapacidadesMedicas` ajustando los días trabajados y deduciendo los días cubiertos por el subsidio IHSS.
+- **Requisitos funcionales:**
+  1. Calcular la deducción del salario correspondiente a los días de incapacidad cubiertos por el IHSS.
+  2. Mantenimiento del salario básico para los días cubiertos según la política institucional.
+- **Criterios de Aceptación:**
+  - Las incapacidades médicas aprobadas ajustan el devengado ordinario e indican el subsidio correspondiente en el recibo.
+- **Riesgo de Regresión:** Bajo.
+- **Dependencias:** `IncapacidadesMedicas`.
+
+---
+
+### T-NOM-09 [P1] — Prorrateo de salario por altas, bajas y licencias no remuneradas en el período
+
+- **Componentes relacionados:** `backend/accounting-service/Code.gs` (`calculatePayrollPeriod`), `backend/user-service/Code.gs`.
+- **Problema detectado:** Calcular el salario proporcional exacto para trabajadores con ingreso o desvinculación a mitad del período de nómina.
+- **Requisitos funcionales:**
+  1. Comparar `FechaIngreso` o `FechaBaja` contra las fechas de inicio y fin del período de nómina.
+  2. Prorratear el salario base multiplicando por los días efectivamente laborados (`díasTrabajados / 30`).
+- **Criterios de Aceptación:**
+  - Un trabajador que ingresa a mitad de mes recibe el salario proporcional exacto a los días trabajados.
+- **Riesgo de Regresión:** Nulo.
+- **Dependencias:** `calculatePayrollPeriod`, `ExpedientesLaborales`.
+
+---
+
+### T-NOM-10 [P1] — Cálculo automático del Décimo Tercer (Aguinaldo) y Décimo Cuarto Mes de Salario
+
+- **Componentes relacionados:** `backend/accounting-service/Code.gs`, `dashboard-recursos-humanos.html`.
+- **Problema detectado:** Procesar las planillas especiales de Aguinaldo (Diciembre) y Décimo Cuarto Mes (Junio) conforme al Art. 340 del Código del Trabajo de Honduras.
+- **Requisitos funcionales:**
+  1. Calcular el promedio de salarios ordinarios devengados en los 12 meses anteriores o proporcional al tiempo trabajado.
+  2. Generar el pago exento de deducciones IHSS y RAP de acuerdo con la legislación laboral.
+- **Criterios de Aceptación:**
+  - La planilla de Décimo Tercer y Décimo Cuarto mes calcula el promedio devengado exacto sin deducciones inaplicables.
+- **Riesgo de Regresión:** Nulo.
+- **Dependencias:** `calculatePayrollPeriod`.
+
+---
+
+### T-NOM-11 [P2] — Emisión de comprobantes individuales de pago PDF con marca de agua y firma de caja
+
+- **Componentes relacionados:** `backend/accounting-service/Code.gs` (`generatePayrollReceiptPDF`), `dashboard-recursos-humanos.html`.
+- **Problema detectado:** Generar el desglose de nómina individual en PDF con membrete institucional, desglose de devengados/deducciones y firmas autorizadas.
+- **Requisitos funcionales:**
+  1. Implementar la plantilla `ComprobantePagoNomina` en `generatePayrollReceiptPDF`.
+  2. Incluir el detalle de retenciones IHSS, RAP e ISR y enlace seguro de descarga para el empleado.
+- **Criterios de Aceptación:**
+  - El PDF del recibo de pago se genera con datos precisos y membrete oficial descargable por el trabajador.
+- **Riesgo de Regresión:** Nulo.
+- **Dependencias:** `generatePayrollReceiptPDF`.
+
+---
+
+### T-NOM-12 [P2] — Exportación formateada de planilla de cotización IHSS y retención ISR SAR
+
+- **Componentes relacionados:** `backend/accounting-service/Code.gs`, `dashboard-recursos-humanos.html`.
+- **Problema detectado:** Generar los archivos CSV/Excel en la estructura requerida para la carga de planillas de cotización en el portal del IHSS y la planilla anual de retenciones del SAR.
+- **Requisitos funcionales:**
+  1. Exportar la estructura con campos: RTN, DNI, Nombre, Salario Devengado, Cotización IHSS y Retención ISR.
+  2. Validar que no existan campos vacíos antes de la descarga.
+- **Criterios de Aceptación:**
+  - La exportación genera el archivo en el formato exacto exigido por los portales oficiales de la administración pública.
+- **Riesgo de Regresión:** Nulo.
+- **Dependencias:** `PlanillasNomenclatura`.
+
+---
+
+### T-NOM-13 [P2] — Reporte consolidado de masa salarial, cargas patronales y costos por departamento
+
+- **Componentes relacionados:** `backend/accounting-service/Code.gs` (`getPayrollPeriodSummary`), `dashboard-recursos-humanos.html`.
+- **Problema detectado:** Ofrecer a la Dirección el desglose del costo total de la nómina incluyendo aportes patronales por centro de costo.
+- **Requisitos funcionales:**
+  1. Agrupar sueldos, aportaciones patronales IHSS/RAP y beneficios por departamento.
+  2. Renderizar resumen comparativo entre períodos en `dashboard-recursos-humanos.html`.
+- **Criterios de Aceptación:**
+  - El reporte consolidado desglosa la masa salarial bruta, deducciones totales y costo patronal efectivo por departamento.
+- **Riesgo de Regresión:** Nulo.
+- **Dependencias:** `getPayrollPeriodSummary`.
+
+---
+
+### T-NOM-14 [P3] — Dashboard dinámico de tendencias salariales e indicadores de nómina
+
+- **Componentes relacionados:** `js/accounting.js`, `js/ui-common.js` (`renderUniversalConfigurableChart`), `dashboard-recursos-humanos.html`.
+- **Problema detectado:** Visualizar mediante gráficos interactivos la evolución de la nómina mensual y desglose de incentivos/horas extras.
+- **Requisitos funcionales:**
+  1. Renderizar mediante `renderUniversalConfigurableChart` gráficos comparativos de masa salarial por mes.
+  2. Selector de vista por departamento y tipo de contratación.
+- **Criterios de Aceptación:**
+  - El dashboard de nómina muestra tendencias históricas de sueldos e impuestos retenidos.
+- **Riesgo de Regresión:** Nulo.
+- **Dependencias:** `renderUniversalConfigurableChart`.
+
+---
+
+### T-NOM-15 [P3] — Herramienta de conciliación entre marcajes de asistencia y deducciones por tardanza
+
+- **Componentes relacionados:** `backend/accounting-service/Code.gs`.
+- **Problema detectado:** Auditar que los minutos de tardanza no justificados detectados en `HorariosLaborales` concuerden con los descuentos aplicados en nómina.
+- **Requisitos funcionales:**
+  1. Desarrollar la rutina `reconcileAttendanceDeductions()`.
+  2. Comparar el total de minutos de tardanza contra el campo `OtrasDeducciones` del trabajador.
+- **Criterios de Aceptación:**
+  - La herramienta de conciliación identifica discrepancias entre tardanzas acumuladas y deducciones en planilla.
+- **Riesgo de Regresión:** Nulo.
+- **Dependencias:** `HorariosLaborales`, `PlanillasNomenclatura`.
+
+---
+
+### T-NOM-16 [P3] — Respaldo inmutable e integridad de tablas de nómina y comprobantes salariales
+
+- **Componentes relacionados:** `backend/accounting-service/Code.gs` (`createSystemBackup`, `restoreSystemBackup`).
+- **Problema detectado:** Garantizar que las copias de seguridad incluyan las tablas de nómina y que la restauración conserve la inalterabilidad contable de planillas cerradas.
+- **Requisitos funcionales:**
+  1. Incluir `PlanillasNomenclatura` y `AnticiposPrestamosEmpleado` en `createSystemBackup`.
+  2. Verificar la igualdad de saldos contables tras ejecutar `restoreSystemBackup`.
+- **Criterios de Aceptación:**
+  - El backup institucional respalda y restaura el 100% de los expedientes de nómina manteniendo la inalterabilidad contable.
+- **Riesgo de Regresión:** Bajo.
+- **Dependencias:** `createSystemBackup`, `restoreSystemBackup`.
+
+---
+
+### T-NOM-17 [P2] — Flujo de reclamos salariales, solicitudes de revisión y ajustes de nómina
+
+- **Componentes relacionados:** `backend/accounting-service/Code.gs`, `dashboard-recursos-humanos.html`.
+- **Problema detectado:** Permitir a los empleados enviar solicitudes de revisión sobre discrepancias detectadas en sus recibos de pago.
+- **Requisitos funcionales:**
+  1. Habilitar formulario de reclamo salarial en el portal del empleado.
+  2. Tramitar la resolución en Recursos Humanos aprobando ajustes para el siguiente período de nómina.
+- **Criterios de Aceptación:**
+  - Las solicitudes de revisión salarial aprobadas generan el ajuste correspondiente en la nómina del período subsiguiente.
+- **Riesgo de Regresión:** Nulo.
+- **Dependencias:** `dashboard-recursos-humanos.html`.
+
+---
+
+### T-NOM-18 [P2] — Gestión de retenciones judiciales y embargos salariales según Código del Trabajo
+
+- **Componentes relacionados:** `backend/accounting-service/Code.gs`, `dashboard-recursos-humanos.html`.
+- **Problema detectado:** Aplicar retenciones por mandamiento judicial (e.g. pensión alimenticia) respetando el porcentaje máximo embargable de ley.
+- **Requisitos funcionales:**
+  1. Registrar en `DeduccionesJudiciales` el monto o porcentaje de retención y la resolución judicial de respaldo.
+  2. Deducir automáticamente la pensión o embargo en el cálculo de nómina sin exceder los límites legales.
+- **Criterios de Aceptación:**
+  - Las retenciones judiciales se aplican exactamente según el mandamiento de ley registrado.
+- **Riesgo de Regresión:** Nulo.
+- **Dependencias:** `calculatePayrollPeriod`.
+
+---
+
+### T-NOM-19 [P3] — Calculadora de liquidación laboral e indemnizaciones por término de contrato
+
+- **Componentes relacionados:** `backend/accounting-service/Code.gs`, `dashboard-recursos-humanos.html`.
+- **Problema detectado:** Calcular la estimación de derechos adquiridos (Auxilio de Cesantía, Preaviso, Vacaciones proporcionales, Aguinaldo proporcional) en caso de despido o renuncia según la ley hondureña.
+- **Requisitos funcionales:**
+  1. Desarrollar la función `calculateLaborSeverance(empleadoId, motivoTerminacion)`.
+  2. Emitir el desglose de indemnización laboral con referencia a los artículos del Código del Trabajo.
+- **Criterios de Aceptación:**
+  - La calculadora de prestaciones emite el cálculo exacto de indemnización laboral según la causal de salida.
+- **Riesgo de Regresión:** Nulo.
+- **Dependencias:** `ExpedientesLaborales`, `ContratosLaborales`.
+
+---
+
+### T-NOM-20 [P1/P3] — Reconciliación integral entre planillas, saldos bancarios y contabilidad general
+
+- **Componentes relacionados:** `backend/accounting-service/Code.gs` (`reconcileSubledgersWithGeneralLedger`).
+- **Problema detectado:** Verificar la coincidencia matemática exacta entre los desembolsos de nómina registrados en bancos y los asientos del libro mayor.
+- **Requisitos funcionales:**
+  1. Comparar la suma de salarios netos transferidos contra el asiento de débito/crédito en `AsientosContables`.
+  2. Generar informe de discrepancias si existen pagos rechazados por el banco no revertidos en contabilidad.
+- **Criterios de Aceptación:**
+  - La rutina de conciliación confirma la coherencia total entre el pago bancario de nómina y los registros contables.
+- **Riesgo de Regresión:** Nulo.
+- **Dependencias:** `reconcileSubledgersWithGeneralLedger`, `AsientosContables`.
+
+---
+
+### ORDEN DE EJECUCIÓN RECOMENDADO FASE 17 (PLANILLAS Y NÓMINA)
+
+| Orden | Tarea | Prioridad | Dependencia principal |
+| :---: | :--- | :---: | :--- |
+| **1** | **T-NOM-01.** Control transaccional de cálculo de planilla con LockService | **P0** | `calculatePayrollPeriod` / `LockService` |
+| **2** | **T-NOM-02.** Parametrización dinámica de techos y tasas IHSS/RAP/ISR | **P0** | `PlanillasNomenclatura` |
+| **3** | **T-NOM-03.** Generación automática del asiento contable por partida doble | **P0** | `recordAccountingJournalEntry` |
+| **4** | **T-NOM-04.** Inalterabilidad de planillas aprobadas y períodos cerrados | **P0** | `updatePayrollPeriodStatus` |
+| **5** | **T-NOM-05.** Aislamiento RBAC de recibos individuales de sueldo | **P0** | `getStaffPayrollReceipt` / RBAC |
+| **6** | **T-NOM-06.** Integración de horas extraordinarias autorizadas | **P0** | `AprobacionHorasExtras` |
+| **7** | **T-NOM-07.** Deducción de cuotas de préstamos y anticipos | **P1** | `AnticiposPrestamosEmpleado` |
+| **8** | **T-NOM-08.** Descuento por incapacidades médicas y subsidio IHSS | **P1** | `IncapacidadesMedicas` |
+| **9** | **T-NOM-09.** Prorrateo de salario por altas, bajas y licencias | **P1** | `calculatePayrollPeriod` |
+| **10** | **T-NOM-10.** Cálculo automático del Décimo Tercer y Décimo Cuarto Mes | **P1** | `calculatePayrollPeriod` |
+| **11** | **T-NOM-11.** Emisión de comprobantes individuales PDF de pago | **P2** | `generatePayrollReceiptPDF` |
+| **12** | **T-NOM-12.** Exportación formateada de planilla de cotización IHSS/SAR | **P2** | `PlanillasNomenclatura` |
+| **13** | **T-NOM-13.** Reporte consolidado de masa salarial y costo patronal | **P2** | `getPayrollPeriodSummary` |
+| **14** | **T-NOM-14.** Dashboard dinámico de tendencias salariales | **P3** | Universal Chart Engine |
+| **15** | **T-NOM-15.** Herramienta de conciliación asistencia vs deducciones | **P3** | Reconciliation Engine |
+| **16** | **T-NOM-16.** Respaldo inmutable e integridad de tablas de nómina | **P3** | `createSystemBackup` |
+| **17** | **T-NOM-17.** Flujo de reclamos salariales y ajustes de nómina | **P2** | `dashboard-recursos-humanos.html` |
+| **18** | **T-NOM-18.** Gestión de retenciones judiciales y embargos | **P2** | `calculatePayrollPeriod` |
+| **19** | **T-NOM-19.** Calculadora de liquidación laboral e indemnizaciones | **P3** | `ContratosLaborales` |
+| **20** | **T-NOM-20.** Reconciliación integral planillas-bancos-contabilidad | **P1** | Reconciliation Engine |
