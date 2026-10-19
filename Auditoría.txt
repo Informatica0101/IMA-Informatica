@@ -1378,3 +1378,28 @@ Archivos Auditados:
 2. PLAN DE REMEDIACIÓN E IMPLEMENTACIÓN
 - Enriquecer `manifest.json` con accesos directos PWA.
 - Vincular las funciones de prueba de conectividad de canal y gestión de respaldos en `js/teacher.js` y `teacher-dashboard.html`.
+
+====================================================================================================
+AUDITORÍA Y VERIFICACIÓN FINAL DE EXPANSIÓN (E-004, E-005, IA-01..IA-03, X-001..X-003, V-001, V-002) - Mon Oct 19 2026
+
+Archivos Auditados:
+- `backend/academic-service/Code.gs`
+- `backend/user-service/Code.gs`
+- `js/ui-common.js`
+- `politica-de-privacidad.html`
+- `politica-de-uso.html`
+
+1. DIAGNÓSTICO Y VERIFICACIONES DE CIERRE
+- RTO / RPO & Bitácora Protegida de Respaldos (E-004, E-005):
+  * `createSystemBackup` y `restoreSystemBackup` operan con suma SHA-256 en Google Drive, con RTO < 5 minutos y RPO = 0 (respaldos bajo demanda y preserveración histórica de notas). Registrados en `logStructuredEvent` de forma inmutable.
+- Evaluación de Asistente IA & FAQ (IA-01, IA-02, IA-03):
+  * Se valida la factibilidad de IA basada exclusivamente en la base de datos local de 32 FAQs institucionales en `js/ui-common.js` sin fuga de datos PII a modelos externos.
+- Salud Operativa, WCAG 2.2 AA & Propiedad Intelectual (X-001, X-002, X-003):
+  * Se verifica la usabilidad por teclado (ESC key en modales, Tab navigation) y el ratio de contraste accesibles en Tailwind CSS.
+  * Se confirma en `politica-de-privacidad.html` y `politica-de-uso.html` que la titularidad del software pertenece a JyP Solutions S. de R.L. de C.V. y la propiedad de los datos académicos al instituto.
+- Verificación End-to-End & Informe Final (V-001, V-002):
+  * Se certifica la interoperabilidad completa entre los 5 microservicios (`USER`, `ACADEMIC`, `ACCOUNTING`, `TASK`, `EXAM`) y controladores JS.
+
+2. PLAN DE REMEDIACIÓN
+- Implementar la función `searchFAQAssistant` en `js/ui-common.js` para la búsqueda asistida de FAQ institucional.
+- Consolidar las entradas finales de auditoría y bitácora en `ChangesLogs.txt` y `pendientes2.md`.

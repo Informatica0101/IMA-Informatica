@@ -2791,6 +2791,51 @@ window.resolveConflictChoice = function(choice, queueItemId) {
     }
 };
 
+window.searchFAQAssistant = function(query) {
+    if (!query || typeof query !== 'string') return [];
+    var q = query.toLowerCase().trim();
+    if (q.length < 2) return [];
+
+    var faqs = [
+        { cat: 'Acceso', q: '1. ¿Para qué sirve la plataforma?', a: 'Sirve para realizar y consultar las actividades institucionales que estén habilitadas para tu cuenta, como documentos, solicitudes, información académica y otros trámites.' },
+        { cat: 'Acceso', q: '2. ¿Cómo encuentro una función?', a: 'Abre el menú de tu panel y selecciona la opción relacionada con la tarea que deseas realizar. Si necesitas orientación, pulsa el icono "Ayuda" para consultar el instructivo de esa pantalla.' },
+        { cat: 'Acceso', q: '3. ¿Cómo puedo trabajar sin internet?', a: 'Puedes utilizar las funciones y los documentos que estén disponibles en tu dispositivo. Los cambios que deban compartirse con otras personas se enviarán cuando vuelva la conexión.' },
+        { cat: 'Acceso', q: '4. ¿Puedo abrir mis documentos sin conexión?', a: 'Sí, si ya existe una copia local disponible y el formato es compatible con el visualizador de la aplicación.' },
+        { cat: 'Acceso', q: '5. ¿Qué ocurre si un documento no está guardado en mi dispositivo?', a: 'Si tienes conexión y permiso para consultarlo, la aplicación puede recuperar la copia disponible en línea. Sin conexión, tendrás que esperar hasta poder descargarla.' },
+        { cat: 'Sincronización', q: '6. ¿Cómo sé si mis cambios se guardaron?', a: 'Revisa el estado que aparece junto al documento. Si indica que los cambios están pendientes, todavía no se han confirmed en línea.' },
+        { cat: 'Sincronización', q: '7. ¿Qué ocurre cuando vuelve internet?', a: 'La aplicación comprueba los cambios pendientes y los envía cuando puede hacerlo de forma segura. Si detecta cambios incompatibles, puede pedirte que los revises.' },
+        { cat: 'Sincronización', q: '8. ¿Puedo utilizar la plataforma en otro dispositivo?', a: 'Sí, puedes ingresar desde otro dispositivo compatible. Los documentos guardados en línea estarán disponibles según tus permisos, aunque tendrás que descargar las copias que necesites utilizar sin conexión.' },
+        { cat: 'Sincronización', q: '9. ¿Qué pasa si borro los datos de la aplicación?', a: 'Las copias locales pueden desaparecer. Los documentos que sigan guardados en línea pueden recuperarse cuando vuelvas a ingresar con conexión y tengas permiso para consultarlos. Los cambios que nunca se sincronizaron podrían perderse.' },
+        { cat: 'Sincronización', q: '10. ¿Cómo creo un documento?', a: 'Abre la herramienta correspondiente, selecciona la opción para crear un documento y completa la información solicitada. Guarda los cambios antes de salir.' },
+        { cat: 'Documentos', q: '11. ¿Cómo puedo abrir un archivo que tengo en mi computadora o teléfono?', a: 'En la herramienta correspondiente, selecciona la opción para abrir o importar un archivo y elige el documento desde tu dispositivo.' },
+        { cat: 'Documentos', q: '12. ¿Qué hago si un documento no se abre?', a: 'Comprueba que el archivo esté disponible, que su formato sea compatible y que tengas permiso para consultarlo. Si el problema continúa, intenta recuperar una copia válida o solicita ayuda.' },
+        { cat: 'Documentos', q: '13. ¿Cómo creo una plantilla?', a: 'Abre "Editor de plantilla", crea una plantilla nueva o utiliza un documento compatible como base y guarda los cambios cuando termines.' },
+        { cat: 'Documentos', q: '14. ¿Cómo agrego un campo para completar información?', a: 'Abre la plantilla, selecciona la opción para agregar un campo, colócalo en el lugar correspondiente y define qué información debe introducir la persona.' },
+        { cat: 'Documentos', q: '15. ¿Puedo cambiar la apariencia de una plantilla?', a: 'Puedes modificar los estilos que permita el editor, como el tipo y tamaño de letra, el color y la alineación. Las opciones disponibles dependen del formato de la plantilla.' },
+        { cat: 'Documentos', q: '16. ¿Cómo genero un documento a partir de una plantilla?', a: 'Abre la plantilla, completa los campos requeridos, revisa la vista previa y utiliza la opción de generar o guardar el documento final.' },
+        { cat: 'Documentos', q: '17. ¿Se modifica el documento original cuando utilizo una plantilla?', a: 'La plantilla debe conservar el documento original separado de los campos y de los documentos generados. Los datos introducidos se incorporan al documento final, no al original.' },
+        { cat: 'Trámites', q: '18. ¿Cómo puedo importar información desde un archivo?', a: 'Abre "Importador de documentos", selecciona el archivo y revisa la información que se va a procesar. Si la importación requiere conexión o autorización, deberás completar ese paso antes de que se refleje en la plataforma.' },
+        { cat: 'Trámites', q: '19. ¿Qué ocurre si un archivo tiene información incorrecta?', a: 'Revisa los datos señalados y corrígelos antes de continuar. No confirmes una importación si los registros no corresponden a las personas o documentos correctos.' },
+        { cat: 'Trámites', q: '20. ¿Cómo puedo saber si envié una solicitud?', a: 'Consulta el estado de la solicitud en la sección correspondiente. Si aparece como borrador o pendiente de envío, todavía no se ha presentado oficialmente.' },
+        { cat: 'Trámites', q: '21. ¿Puedo corregir una solicitud que ya envié?', a: 'Depende del estado de la solicitud y de las opciones disponibles. Si aparece una opción para corregirla, sigue las instrucciones. Si no aparece, consulta al departamento responsable.' },
+        { cat: 'Trámites', q: '22. ¿Cómo adjunto un documento a una solicitud?', a: 'Abre la solicitud, selecciona la opción para adjuntar archivos, elige el documento y comprueba que aparezca en la lista antes de enviar.' },
+        { cat: 'Plataforma', q: '23. ¿Cómo puedo revisar una notificación?', a: 'Abre la sección de notificaciones y selecciona el aviso que deseas consultar. Algunas notificaciones pueden llevarte directamente a la solicitud o al documento relacionado.' },
+        { cat: 'Plataforma', q: '24. ¿Qué hago si una opción no aparece en mi panel?', a: 'Es posible que esa función no esté disponible para tu cuenta o que no corresponda a tu panel actual. Consulta con el responsable institucional si necesitas acceso.' },
+        { cat: 'Plataforma', q: '25. ¿Cómo puedo consultar mis calificaciones o tareas?', a: 'Abre la sección académica correspondiente y selecciona el periodo o la actividad que deseas consultar, si esa opción está disponible para tu cuenta.' },
+        { cat: 'Plataforma', q: '26. ¿Cómo puedo consultar información de mis hijos?', a: 'Ingresa con tu cuenta y abre la sección correspondiente a tus hijos. Solo podrás consultar la información que esté asociada a tu cuenta y autorizada para ti.' },
+        { cat: 'Pagos', q: '27. ¿Cómo compruebo si un pago quedó registrado?', a: 'Consulta el estado del pago en la sección financiera correspondiente. Si aparece pendiente de verificación, todavía no debe considerarse confirmado.' },
+        { cat: 'Pagos', q: '28. ¿Puedo realizar un abono parcial?', a: 'Si la opción está habilitada para tu cuenta, puedes realizar abonos parciales según el plan de pago establecido.' },
+        { cat: 'Pagos', q: '29. ¿Qué hago si no puedo realizar un pago en línea?', a: 'Si el servicio no está disponible o el pago falla, puedes intentarlo más tarde o utilizar los canales presenciales autorizados por la institución.' },
+        { cat: 'General', q: '30. ¿Qué hago si la pantalla se queda cargando?', a: 'Comprueba tu conexión a internet o intenta recargar la página. Si trabajas sin conexión, asegúrate de utilizar una función disponible en tu dispositivo.' },
+        { cat: 'General', q: '31. ¿Dónde solicito ayuda si tengo un problema con mi cuenta?', a: 'Comunícate con el área administrativa o de secretaría del instituto para revisar el estado de tu cuenta o solicitar asistencia.' },
+        { cat: 'General', q: '32. ¿Mis datos están protegidos?', a: 'Sí. La información almacenada se utiliza exclusivamente para los fines institucionales autorizados y según las políticas de uso y privacidad de la plataforma.' }
+    ];
+
+    return faqs.filter(function(item) {
+        return item.q.toLowerCase().indexOf(q) !== -1 || item.a.toLowerCase().indexOf(q) !== -1 || item.cat.toLowerCase().indexOf(q) !== -1;
+    });
+};
+
 window.renderFAQSection = function(containerId) {
     var container = document.getElementById(containerId);
     if (!container) return;

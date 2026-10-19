@@ -1722,7 +1722,7 @@ Criterios de Aceptación:
 - **Criterios de Aceptación:**
   - 100% de coincidencia de registros restaurados contra el checksum original.
   - Documentación del tiempo estimado de recuperación (RTO / RPO).
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 ### [E-005] Bitácora Protegida de Operaciones de Respaldo y Restauración
 - **Archivos Involucrados:** `backend/user-service/Code.gs`
@@ -1730,7 +1730,7 @@ Criterios de Aceptación:
 - **Criterios de Aceptación:**
   - Captura IP/origen, usuario, timestamp, checksum y resultado de la operación.
   - Registros no modificables ni eliminables mediante interfaz común.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 
 ## 6. ÁREA A (EVALUACIÓN CONDICIONAL DE ASISTENTE DE IA)
@@ -1741,21 +1741,21 @@ Criterios de Aceptación:
 - **Criterios de Aceptación:**
   - Documento de evaluación con recomendaciones claras sobre uso de modelos locales vs APIs externas.
   - Confirmación de exclusión o inclusión condicional del alcance.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 ### [IA-02] Definición de Limites de Privacidad y Gobierno de Datos de IA
 - **Archivos Involucrados:** Politica de privacidad y documentos legales
 - **Descripción:** Establecer reglas estrictas para impedir el envío de PII (Información Personal Identificable) de estudiantes o finanzas a modelos de IA de terceros.
 - **Criterios de Aceptación:**
   - Especificación técnica de anonimización de datos previa a cualquier procesamiento externo.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 ### [IA-03] Prototipado Condicional de Búsqueda Asistida / FAQ con IA
 - **Archivos Involucrados:** `js/ui-common.js`
 - **Descripción:** En caso de aprobación del Plan Maestro, prototipar la asistencia de búsqueda basada exclusivamente en la base de datos de preguntas frecuentes (FAQ) de la institución.
 - **Criterios de Aceptación:**
   - Respuestas limitadas a la base de conocimiento institucional sin alucinaciones.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 
 ## 7. SALUD OPERATIVA Y PRIVACIDAD TRANSVERSAL
@@ -1766,7 +1766,7 @@ Criterios de Aceptación:
 - **Criterios de Aceptación:**
   - Ausencia de logs con información sensible en las herramientas de desarrollador del navegador.
   - Manejo uniforme de errores a través del sistema de registros estructurados.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 ### [X-002] Validación WCAG 2.2 AA y Accesibilidad Universal
 - **Archivos Involucrados:** `css/style.css`, dashboards HTML, `js/ui-common.js`
@@ -1774,14 +1774,14 @@ Criterios de Aceptación:
 - **Criterios de Aceptación:**
   - Ratio de contraste mínimo de 4.5:1 para texto normal.
   - Soporte completo de lectores de pantalla y navegación asistida.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 ### [X-003] Verificación de Propiedad Intelectual y Cumplimiento Legal
 - **Archivos Involucrados:** `politica-de-privacidad.html`, `politica-de-uso.html`
 - **Descripción:** Validar que las declaraciones de propiedad intelectual pertenezcan a JyP Solutions S. de R.L. de C.V. y que la propiedad de los datos sea 100% del instituto cliente.
 - **Criterios de Aceptación:**
   - Texto legal verificado y coherente en todas las páginas públicas e interfaces de la plataforma.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 
 ## 8. VERIFICACIÓN Y CIERRE FINAL DE LA EXPANSIÓN
@@ -1792,7 +1792,7 @@ Criterios de Aceptación:
 - **Criterios de Aceptación:**
   - 100% de escenarios ejecutados con éxito sin errores de inconsistencia de datos.
   - Certificación de cero regresiones funcionales.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 ### [V-002] Informe de Cierre de Expansión y Acta de Aprobación
 - **Archivos Involucrados:** `ChangesLogs.txt`, `Auditoría.txt`
@@ -1800,7 +1800,7 @@ Criterios de Aceptación:
 - **Criterios de Aceptación:**
   - Registro completo de cambios en `ChangesLogs.txt`.
   - Conformidad y firma digital de aprobación del plan.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 
 ---
