@@ -3,9 +3,28 @@
   "short_name": "New Generation",
   "description": "Plataforma Educativa de New Generation Christian Academy",
   "start_url": "index.html",
+  "scope": "./",
+  "orientation": "any",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#2563eb",
+  "categories": ["education", "productivity"],
+  "shortcuts": [
+    {
+      "name": "Portal Estudiante",
+      "short_name": "Estudiante",
+      "description": "Acceso directo al portal del estudiante",
+      "url": "student-dashboard.html",
+      "icons": [{ "src": "imagenes/new-generation-logo.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Portal Docente",
+      "short_name": "Docente",
+      "description": "Acceso directo al portal de profesores",
+      "url": "teacher-dashboard.html",
+      "icons": [{ "src": "imagenes/new-generation-logo.png", "sizes": "192x192" }]
+    }
+  ],
   "icons": [
     {
       "src": "imagenes/new-generation-logo.png",

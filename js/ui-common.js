@@ -2791,6 +2791,51 @@ window.resolveConflictChoice = function(choice, queueItemId) {
     }
 };
 
+window.searchFAQAssistant = function(query) {
+    if (!query || typeof query !== 'string') return [];
+    var q = query.toLowerCase().trim();
+    if (q.length < 2) return [];
+
+    var faqs = [
+        { cat: 'Acceso', q: '1. ¿Para qué sirve la plataforma?', a: 'Sirve para realizar y consultar las actividades institucionales que estén habilitadas para tu cuenta, como documentos, solicitudes, información académica y otros trámites.' },
+        { cat: 'Acceso', q: '2. ¿Cómo encuentro una función?', a: 'Abre el menú de tu panel y selecciona la opción relacionada con la tarea que deseas realizar. Si necesitas orientación, pulsa el icono "Ayuda" para consultar el instructivo de esa pantalla.' },
+        { cat: 'Acceso', q: '3. ¿Cómo puedo trabajar sin internet?', a: 'Puedes utilizar las funciones y los documentos que estén disponibles en tu dispositivo. Los cambios que deban compartirse con otras personas se enviarán cuando vuelva la conexión.' },
+        { cat: 'Acceso', q: '4. ¿Puedo abrir mis documentos sin conexión?', a: 'Sí, si ya existe una copia local disponible y el formato es compatible con el visualizador de la aplicación.' },
+        { cat: 'Acceso', q: '5. ¿Qué ocurre si un documento no está guardado en mi dispositivo?', a: 'Si tienes conexión y permiso para consultarlo, la aplicación puede recuperar la copia disponible en línea. Sin conexión, tendrás que esperar hasta poder descargarla.' },
+        { cat: 'Sincronización', q: '6. ¿Cómo sé si mis cambios se guardaron?', a: 'Revisa el estado que aparece junto al documento. Si indica que los cambios están pendientes, todavía no se han confirmed en línea.' },
+        { cat: 'Sincronización', q: '7. ¿Qué ocurre cuando vuelve internet?', a: 'La aplicación comprueba los cambios pendientes y los envía cuando puede hacerlo de forma segura. Si detecta cambios incompatibles, puede pedirte que los revises.' },
+        { cat: 'Sincronización', q: '8. ¿Puedo utilizar la plataforma en otro dispositivo?', a: 'Sí, puedes ingresar desde otro dispositivo compatible. Los documentos guardados en línea estarán disponibles según tus permisos, aunque tendrás que descargar las copias que necesites utilizar sin conexión.' },
+        { cat: 'Sincronización', q: '9. ¿Qué pasa si borro los datos de la aplicación?', a: 'Las copias locales pueden desaparecer. Los documentos que sigan guardados en línea pueden recuperarse cuando vuelvas a ingresar con conexión y tengas permiso para consultarlos. Los cambios que nunca se sincronizaron podrían perderse.' },
+        { cat: 'Sincronización', q: '10. ¿Cómo creo un documento?', a: 'Abre la herramienta correspondiente, selecciona la opción para crear un documento y completa la información solicitada. Guarda los cambios antes de salir.' },
+        { cat: 'Documentos', q: '11. ¿Cómo puedo abrir un archivo que tengo en mi computadora o teléfono?', a: 'En la herramienta correspondiente, selecciona la opción para abrir o importar un archivo y elige el documento desde tu dispositivo.' },
+        { cat: 'Documentos', q: '12. ¿Qué hago si un documento no se abre?', a: 'Comprueba que el archivo esté disponible, que su formato sea compatible y que tengas permiso para consultarlo. Si el problema continúa, intenta recuperar una copia válida o solicita ayuda.' },
+        { cat: 'Documentos', q: '13. ¿Cómo creo una plantilla?', a: 'Abre "Editor de plantilla", crea una plantilla nueva o utiliza un documento compatible como base y guarda los cambios cuando termines.' },
+        { cat: 'Documentos', q: '14. ¿Cómo agrego un campo para completar información?', a: 'Abre la plantilla, selecciona la opción para agregar un campo, colócalo en el lugar correspondiente y define qué información debe introducir la persona.' },
+        { cat: 'Documentos', q: '15. ¿Puedo cambiar la apariencia de una plantilla?', a: 'Puedes modificar los estilos que permita el editor, como el tipo y tamaño de letra, el color y la alineación. Las opciones disponibles dependen del formato de la plantilla.' },
+        { cat: 'Documentos', q: '16. ¿Cómo genero un documento a partir de una plantilla?', a: 'Abre la plantilla, completa los campos requeridos, revisa la vista previa y utiliza la opción de generar o guardar el documento final.' },
+        { cat: 'Documentos', q: '17. ¿Se modifica el documento original cuando utilizo una plantilla?', a: 'La plantilla debe conservar el documento original separado de los campos y de los documentos generados. Los datos introducidos se incorporan al documento final, no al original.' },
+        { cat: 'Trámites', q: '18. ¿Cómo puedo importar información desde un archivo?', a: 'Abre "Importador de documentos", selecciona el archivo y revisa la información que se va a procesar. Si la importación requiere conexión o autorización, deberás completar ese paso antes de que se refleje en la plataforma.' },
+        { cat: 'Trámites', q: '19. ¿Qué ocurre si un archivo tiene información incorrecta?', a: 'Revisa los datos señalados y corrígelos antes de continuar. No confirmes una importación si los registros no corresponden a las personas o documentos correctos.' },
+        { cat: 'Trámites', q: '20. ¿Cómo puedo saber si envié una solicitud?', a: 'Consulta el estado de la solicitud en la sección correspondiente. Si aparece como borrador o pendiente de envío, todavía no se ha presentado oficialmente.' },
+        { cat: 'Trámites', q: '21. ¿Puedo corregir una solicitud que ya envié?', a: 'Depende del estado de la solicitud y de las opciones disponibles. Si aparece una opción para corregirla, sigue las instrucciones. Si no aparece, consulta al departamento responsable.' },
+        { cat: 'Trámites', q: '22. ¿Cómo adjunto un documento a una solicitud?', a: 'Abre la solicitud, selecciona la opción para adjuntar archivos, elige el documento y comprueba que aparezca en la lista antes de enviar.' },
+        { cat: 'Plataforma', q: '23. ¿Cómo puedo revisar una notificación?', a: 'Abre la sección de notificaciones y selecciona el aviso que deseas consultar. Algunas notificaciones pueden llevarte directamente a la solicitud o al documento relacionado.' },
+        { cat: 'Plataforma', q: '24. ¿Qué hago si una opción no aparece en mi panel?', a: 'Es posible que esa función no esté disponible para tu cuenta o que no corresponda a tu panel actual. Consulta con el responsable institucional si necesitas acceso.' },
+        { cat: 'Plataforma', q: '25. ¿Cómo puedo consultar mis calificaciones o tareas?', a: 'Abre la sección académica correspondiente y selecciona el periodo o la actividad que deseas consultar, si esa opción está disponible para tu cuenta.' },
+        { cat: 'Plataforma', q: '26. ¿Cómo puedo consultar información de mis hijos?', a: 'Ingresa con tu cuenta y abre la sección correspondiente a tus hijos. Solo podrás consultar la información que esté asociada a tu cuenta y autorizada para ti.' },
+        { cat: 'Pagos', q: '27. ¿Cómo compruebo si un pago quedó registrado?', a: 'Consulta el estado del pago en la sección financiera correspondiente. Si aparece pendiente de verificación, todavía no debe considerarse confirmado.' },
+        { cat: 'Pagos', q: '28. ¿Puedo realizar un abono parcial?', a: 'Si la opción está habilitada para tu cuenta, puedes realizar abonos parciales según el plan de pago establecido.' },
+        { cat: 'Pagos', q: '29. ¿Qué hago si no puedo realizar un pago en línea?', a: 'Si el servicio no está disponible o el pago falla, puedes intentarlo más tarde o utilizar los canales presenciales autorizados por la institución.' },
+        { cat: 'General', q: '30. ¿Qué hago si la pantalla se queda cargando?', a: 'Comprueba tu conexión a internet o intenta recargar la página. Si trabajas sin conexión, asegúrate de utilizar una función disponible en tu dispositivo.' },
+        { cat: 'General', q: '31. ¿Dónde solicito ayuda si tengo un problema con mi cuenta?', a: 'Comunícate con el área administrativa o de secretaría del instituto para revisar el estado de tu cuenta o solicitar asistencia.' },
+        { cat: 'General', q: '32. ¿Mis datos están protegidos?', a: 'Sí. La información almacenada se utiliza exclusivamente para los fines institucionales autorizados y según las políticas de uso y privacidad de la plataforma.' }
+    ];
+
+    return faqs.filter(function(item) {
+        return item.q.toLowerCase().indexOf(q) !== -1 || item.a.toLowerCase().indexOf(q) !== -1 || item.cat.toLowerCase().indexOf(q) !== -1;
+    });
+};
+
 window.renderFAQSection = function(containerId) {
     var container = document.getElementById(containerId);
     if (!container) return;
@@ -4195,4 +4240,132 @@ document.addEventListener('DOMContentLoaded', function() {
             window.initRoleNavigationMenu();
         }
     }, 600);
+});
+
+// ---------------------------------------------------------------------------
+// REQ-OMNI-001: BARRA DE BÚSQUEDA OMNIBOX UNIFICADA GLOBAL (CTRL + K / CMD + K)
+// ---------------------------------------------------------------------------
+
+window.openGlobalOmniboxModal = function() {
+    let modal = document.getElementById('modal-global-omnibox');
+    if (!modal) {
+        modal = document.createElement('div');
+        modal.id = 'modal-global-omnibox';
+        modal.className = 'fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-[120] flex items-start justify-center p-3 md:p-6 animate-fade-in';
+        modal.innerHTML =
+            '<div class="bg-white rounded-3xl max-w-2xl w-full max-h-[85vh] flex flex-col shadow-2xl border border-slate-100 overflow-hidden mt-10 md:mt-16">' +
+                '<div class="p-4 bg-slate-900 text-white flex items-center gap-3 border-b border-slate-800 flex-shrink-0">' +
+                    '<i class="fa-solid fa-magnifying-glass text-blue-400 text-lg"></i>' +
+                    '<input type="text" id="omnibox-search-input" placeholder="Buscar estudiantes, avisos, trámites... (Ctrl + K)" class="w-full bg-slate-800 text-white border border-slate-700 rounded-xl px-4 py-2 text-sm focus:outline-none focus:border-blue-500 font-medium" autofocus>' +
+                    '<button onclick="window.closeGlobalOmniboxModal()" class="w-8 h-8 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white flex items-center justify-center transition-colors">' +
+                        '<i class="fa-solid fa-xmark"></i>' +
+                    '</button>' +
+                '</div>' +
+                '<div id="omnibox-results-container" class="p-4 overflow-y-auto space-y-3 flex-grow min-h-[250px]">' +
+                    '<div class="text-center text-slate-400 py-10 font-semibold text-sm">' +
+                        '<i class="fa-solid fa-keyboard text-3xl mb-2 text-slate-300 block"></i>' +
+                        'Escribe al menos 2 caracteres para buscar en la plataforma...' +
+                    '</div>' +
+                '</div>' +
+                '<div class="p-3 bg-slate-50 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500 font-semibold flex-shrink-0">' +
+                    '<span><i class="fa-solid fa-circle-info text-blue-500 mr-1"></i> Búsqueda Unificada Global</span>' +
+                    '<span>ESC para salir</span>' +
+                '</div>' +
+            '</div>';
+        document.body.appendChild(modal);
+
+        const input = document.getElementById('omnibox-search-input');
+        let debounceTimer;
+        input.addEventListener('input', function() {
+            clearTimeout(debounceTimer);
+            const val = input.value.trim();
+            if (val.length < 2) {
+                document.getElementById('omnibox-results-container').innerHTML =
+                    '<div class="text-center text-slate-400 py-10 font-semibold text-sm">' +
+                        '<i class="fa-solid fa-keyboard text-3xl mb-2 text-slate-300 block"></i>' +
+                        'Escribe al menos 2 caracteres para buscar en la plataforma...' +
+                    '</div>';
+                return;
+            }
+            debounceTimer = setTimeout(function() {
+                window.executeOmniboxSearch(val);
+            }, 300);
+        });
+    } else {
+        modal.classList.remove('hidden');
+    }
+
+    setTimeout(function() {
+        const inp = document.getElementById('omnibox-search-input');
+        if (inp) {
+            inp.focus();
+            inp.select();
+        }
+    }, 100);
+};
+
+window.closeGlobalOmniboxModal = function() {
+    const modal = document.getElementById('modal-global-omnibox');
+    if (modal) modal.classList.add('hidden');
+};
+
+window.executeOmniboxSearch = function(query) {
+    const container = document.getElementById('omnibox-results-container');
+    if (!container) return;
+    container.innerHTML =
+        '<div class="text-center text-blue-600 py-10 font-semibold text-sm animate-pulse">' +
+            '<i class="fa-solid fa-spinner fa-spin text-3xl mb-2 block"></i> Buscando resultados...' +
+        '</div>';
+
+    if (typeof fetchApi === 'function') {
+        fetchApi('USER', 'searchGlobalOmnibox', { query: query }).then(function(response) {
+            if (response && response.status === 'success' && Array.isArray(response.results) && response.results.length > 0) {
+                let html = '<div class="space-y-2">';
+                response.results.forEach(function(item) {
+                    html +=
+                        '<div onclick="window.handleOmniboxResultClick(\'' + item.type + '\', \'' + item.id + '\')" class="p-3 bg-slate-50 hover:bg-blue-50 border border-slate-100 hover:border-blue-200 rounded-2xl flex items-center gap-3 cursor-pointer transition-all hover:scale-[1.01]">' +
+                            '<div class="w-10 h-10 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center font-bold flex-shrink-0">' +
+                                '<i class="fa-solid ' + (item.icon || 'fa-magnifying-glass') + '"></i>' +
+                            '</div>' +
+                            '<div class="flex-grow min-w-0">' +
+                                '<div class="flex items-center justify-between">' +
+                                    '<h4 class="font-bold text-slate-800 text-sm truncate">' + item.title + '</h4>' +
+                                    '<span class="text-[10px] uppercase font-black px-2 py-0.5 rounded-full bg-slate-200 text-slate-700">' + item.category + '</span>' +
+                                '</div>' +
+                                '<p class="text-xs text-slate-500 font-medium truncate">' + item.subtitle + '</p>' +
+                            '</div>' +
+                        '</div>';
+                });
+                html += '</div>';
+                container.innerHTML = html;
+            } else {
+                container.innerHTML =
+                    '<div class="text-center text-slate-400 py-10 font-semibold text-sm">' +
+                        '<i class="fa-solid fa-magnifying-glass-slash text-3xl mb-2 text-slate-300 block"></i> No se encontraron resultados para "' + query + '".' +
+                    '</div>';
+            }
+        }).catch(function(err) {
+            container.innerHTML =
+                '<div class="text-center text-slate-400 py-10 font-semibold text-sm">' +
+                    '<i class="fa-solid fa-circle-exclamation text-3xl mb-2 text-amber-500 block"></i> Ocurrió un error al buscar.' +
+                '</div>';
+        });
+    }
+};
+
+window.handleOmniboxResultClick = function(type, id) {
+    window.closeGlobalOmniboxModal();
+    if (type === 'user' && typeof window.openStudentFileModal === 'function') {
+        window.openStudentFileModal(id);
+    } else {
+        alert('Navegando al elemento: ' + id);
+    }
+};
+
+// Global Keyboard Shortcut (Ctrl + K / Cmd + K)
+window.addEventListener('keydown', function(e) {
+    if ((e.ctrlKey || e.metaKey) && (e.key === 'k' || e.key === 'K')) {
+        e.preventDefault();
+        window.openGlobalOmniboxModal();
+    }
 });

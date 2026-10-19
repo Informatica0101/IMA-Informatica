@@ -745,7 +745,7 @@ function getUserVerifiedRole(payload) {
 function validateRolePermission(action, payload) {
   if (PUBLIC_ACTIONS.indexOf(action) !== -1) return { authorized: true };
   const userRole = getUserVerifiedRole(payload);
-  if (["submitProblemTicket", "getProblemTickets", "replyProblemTicket"].indexOf(action) !== -1) {
+  if (["submitProblemTicket", "getProblemTickets", "replyProblemTicket", "searchGlobalOmnibox", "configureAutomationRules", "getAutomationRules", "getNotificationAuditLogs"].indexOf(action) !== -1) {
     return { authorized: true, role: userRole };
   }
   const permitted = ROLE_PERMISSIONS[userRole] || ROLE_PERMISSIONS["Estudiante"];
@@ -843,6 +843,11 @@ function doPost(e) {
       case "updateAppointmentStatus": result = updateAppointmentStatus(payload); break;
       case "getInstitutionalCalendarEvents": result = getInstitutionalCalendarEvents(payload); break;
       case "getPendingReminders": result = getPendingReminders(payload); break;
+
+      case "searchGlobalOmnibox": result = searchGlobalOmnibox(payload); break;
+      case "configureAutomationRules": result = configureAutomationRules(payload); break;
+      case "getAutomationRules": result = getAutomationRules(payload); break;
+      case "getNotificationAuditLogs": result = getNotificationAuditLogs(payload); break;
 
       // Endpoints Fase 27 - Configuración Central, Opciones por Rol y Proveedores
       case "getUserSettings": result = getUserSettings(payload); break;
@@ -2704,23 +2709,116 @@ function getInstitutionalCalendarEvents(payload) {
 }
 
 function getPendingReminders(payload) {
-  const { userId } = payload || {};
-  if (!userId) throw new Error("userId requerido.");
+  const lock = LockService.getScriptLock();
+  try {
+    lock.waitLock(10000);
+  } catch (e) {
+    return { status: "error", message: "Servidor ocupado procesando recordatorios. Intente nuevamente." };
+  }
+  try {
+    const { userId } = payload || {};
+    if (!userId) throw new Error("userId requerido.");
 
-  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
-  const notifs = getOrCreateSheet(ss, "BandejaNotificaciones").getDataRange().getValues().slice(1);
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const notifs = getOrCreateSheet(ss, "BandejaNotificaciones").getDataRange().getValues().slice(1);
 
-  const pending = notifs
-    .filter(r => String(r[1]).trim() === String(userId).trim() && (r[6] !== true && String(r[6]).toLowerCase() !== "true"))
-    .map(r => ({
-      reminderId: r[0],
-      titulo: r[2],
-      mensaje: r[3],
-      categoria: r[5],
-      fechaRegistro: r[8]
-    }));
+    const pending = notifs
+      .filter(r => String(r[1]).trim() === String(userId).trim() && (r[6] !== true && String(r[6]).toLowerCase() !== "true"))
+      .map(r => ({
+        reminderId: r[0],
+        titulo: r[2],
+        mensaje: r[3],
+        categoria: r[5],
+        fechaRegistro: r[8]
+      }));
 
-  return { status: "success", userId: userId, recordatoriosPendientes: pending };
+    return { status: "success", userId: userId, recordatoriosPendientes: pending };
+  } finally {
+    try { lock.releaseLock(); } catch (_) {}
+  }
+}
+
+function configureAutomationRules(payload) {
+  try {
+    if (!payload) return { status: "error", message: "Payload no provisto." };
+    const verifiedRole = getUserVerifiedRole(payload);
+    if (["Administrador", "Desarrollador", "Director"].indexOf(verifiedRole) === -1) {
+      return { status: "error", message: "Acceso denegado." };
+    }
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const sheet = getOrCreateSheet(ss, "ReglasAutomatizacionAlertas");
+    if (sheet.getLastRow() === 0) {
+      sheet.appendRow(["IDRegla", "NombreRegla", "TipoAlerta", "UmbralValor", "AvisoMail", "AvisoPortal", "Estado", "ActualizadoPor", "FechaActualizacion"]);
+    }
+    const ruleId = payload.ruleId || ("rule-" + Date.now());
+    const rowData = [
+      ruleId,
+      payload.nombreRegla || "Regla de Automatización",
+      payload.tipoAlerta || "ACADEMICA",
+      payload.umbralValor || "70",
+      payload.avisoMail === true,
+      payload.avisoPortal !== false,
+      payload.estado || "Activa",
+      verifiedRole,
+      new Date().toISOString()
+    ];
+    sheet.appendRow(rowData);
+    logStructuredEvent("USER", "configureAutomationRules", "INFO", "AUTOMATION_RULE_SAVED", `Regla ${ruleId} guardada.`, payload, verifiedRole);
+    return { status: "success", ruleId: ruleId, message: "Regla de automatización configurada correctamente." };
+  } catch (error) {
+    logStructuredEvent("USER", "configureAutomationRules", "ERROR", "AUTOMATION_RULE_SAVE_FAILED", error.message, payload, payload && payload.authRole);
+    return { status: "error", message: error.message };
+  }
+}
+
+function getAutomationRules(payload) {
+  try {
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const sheet = getOrCreateSheet(ss, "ReglasAutomatizacionAlertas");
+    const data = sheet.getDataRange().getValues();
+    const rules = [];
+    for (let i = 1; i < data.length; i++) {
+      rules.push({
+        ruleId: data[i][0],
+        nombreRegla: data[i][1],
+        tipoAlerta: data[i][2],
+        umbralValor: data[i][3],
+        avisoMail: data[i][4],
+        avisoPortal: data[i][5],
+        estado: data[i][6]
+      });
+    }
+    return { status: "success", rules: rules };
+  } catch (error) {
+    return { status: "error", message: error.message };
+  }
+}
+
+function getNotificationAuditLogs(payload) {
+  try {
+    const verifiedRole = getUserVerifiedRole(payload);
+    if (["Administrador", "Desarrollador", "Director", "Subdirector"].indexOf(verifiedRole) === -1) {
+      return { status: "error", message: "Acceso denegado para consultar logs de auditoría." };
+    }
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const sheet = getOrCreateSheet(ss, "BandejaNotificaciones");
+    const data = sheet.getDataRange().getValues();
+    const logs = [];
+    for (let i = 1; i < data.length; i++) {
+      logs.push({
+        notifId: data[i][0],
+        destinatarioUserId: data[i][1],
+        titulo: data[i][2],
+        mensaje: data[i][3],
+        canal: data[i][4] || "Portal",
+        leido: data[i][6],
+        fechaRegistro: data[i][8]
+      });
+    }
+    return { status: "success", logs: logs.reverse().slice(0, 300) };
+  } catch (error) {
+    return { status: "error", message: error.message };
+  }
 }
 
 function getParentDriveFolder() {
@@ -3437,6 +3535,98 @@ function purgeStructuredLogs(payload) {
     logStructuredEvent("USER", "purgeStructuredLogs", "WARN", "LOGS_PURGED", "Registros de auditoría purgados por administrador.", payload, verifiedRole);
     return { status: "success", message: "Registros de auditoría purgados correctamente." };
   } catch (error) {
+    return { status: "error", message: error.message };
+  }
+}
+
+function searchGlobalOmnibox(payload) {
+  try {
+    if (!payload) return { status: "error", message: "Payload no provisto." };
+    const query = String(payload.query || "").trim().toLowerCase();
+    if (query.length < 2) {
+      return { status: "success", results: [] };
+    }
+    const verifiedRole = getUserVerifiedRole(payload);
+    const results = [];
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+
+    // 1. Search Usuarios / Personas / ExpedientesEstudiantes
+    if (["Administrador", "Desarrollador", "Director", "Subdirector", "Secretaría", "Profesor", "Coordinador", "Consejeros", "Contador", "RecursosHumanos"].indexOf(verifiedRole) !== -1) {
+      const userSheet = ss.getSheetByName("Usuarios");
+      if (userSheet) {
+        const uData = userSheet.getDataRange().getValues();
+        for (let i = 1; i < uData.length; i++) {
+          const row = uData[i];
+          const uid = String(row[0] || "");
+          const name = String(row[1] || "");
+          const email = String(row[4] || "");
+          const role = String(row[6] || "");
+          if (name.toLowerCase().indexOf(query) !== -1 || email.toLowerCase().indexOf(query) !== -1 || uid.toLowerCase().indexOf(query) !== -1) {
+            results.push({
+              id: uid,
+              title: name || email,
+              category: "Usuarios & Personal",
+              subtitle: "Rol: " + role + " | Email: " + email,
+              icon: "fa-user",
+              type: "user",
+              targetModule: "student_file"
+            });
+            if (results.length >= 25) break;
+          }
+        }
+      }
+    }
+
+    // 2. Search Noticias / Anuncios
+    const newsSheet = ss.getSheetByName("NoticiasPortal");
+    if (newsSheet) {
+      const nData = newsSheet.getDataRange().getValues();
+      for (let i = 1; i < nData.length; i++) {
+        const row = nData[i];
+        const title = String(row[1] || "");
+        const content = String(row[2] || "");
+        if (title.toLowerCase().indexOf(query) !== -1 || content.toLowerCase().indexOf(query) !== -1) {
+          results.push({
+            id: row[0] || ("news-" + i),
+            title: title,
+            category: "Noticias & Comunicados",
+            subtitle: "Publicación Institucional",
+            icon: "fa-newspaper",
+            type: "news",
+            targetModule: "news"
+          });
+          if (results.length >= 25) break;
+        }
+      }
+    }
+
+    // 3. Search Solicitudes / Trámites
+    const reqSheet = ss.getSheetByName("SolicitudesTramites");
+    if (reqSheet) {
+      const rData = reqSheet.getDataRange().getValues();
+      for (let i = 1; i < rData.length; i++) {
+        const row = rData[i];
+        const reqId = String(row[0] || "");
+        const asunto = String(row[2] || "");
+        const tipo = String(row[3] || "");
+        if (reqId.toLowerCase().indexOf(query) !== -1 || asunto.toLowerCase().indexOf(query) !== -1 || tipo.toLowerCase().indexOf(query) !== -1) {
+          results.push({
+            id: reqId,
+            title: asunto || ("Trámite " + reqId),
+            category: "Trámites & Solicitudes",
+            subtitle: "Tipo: " + tipo + " | ID: " + reqId,
+            icon: "fa-file-signature",
+            type: "request",
+            targetModule: "requests"
+          });
+          if (results.length >= 25) break;
+        }
+      }
+    }
+
+    return { status: "success", results: results.slice(0, 20) };
+  } catch (error) {
+    logStructuredEvent("USER", "searchGlobalOmnibox", "ERROR", "OMNIBOX_SEARCH_FAILED", error.message, payload, payload && payload.authRole);
     return { status: "error", message: error.message };
   }
 }

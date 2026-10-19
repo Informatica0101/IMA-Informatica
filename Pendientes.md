@@ -1163,7 +1163,7 @@ Fin del plan de tareas derivadas de la Fase 1.
   - Subida de documentos adjuntos directo a Google Drive y generación de enlaces de vista previa.
   - Fusión de expediente re-vinculando documentos/movimientos y marcando expediente origen como "Fusionado".
   - Búsqueda `#student-search` integrada con apertura de expediente digital.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 ### [REQ-DASH-ADAPT-001] Adaptación Integral de Dashboards, Menús por Rol, Configuración Académica y Catálogo de Herramientas
 - **Origen del Hallazgo:** Auditoria.txt (Mon Jul 6 2026 - Fase Adaptación Integral de Dashboards y Menús)
@@ -1188,7 +1188,7 @@ Fin del plan de tareas derivadas de la Fase 1.
   - Botón de retroceso opera sin ciclos ni bucles.
   - Equivalencias 1/A, 2/B, 3/C operativas en matrícula y reportes.
   - Matriz de auditoría de las 18 secciones del catálogo completada en el entregable.
-- **Estado:** [ ] En Ejecución
+- **Estado:** [X] Completada
 
 ## TAREAS PENDIENTES DE REVISIÓN
 

@@ -741,6 +741,139 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+// ---------------------------------------------------------------------------
+// FASE 29 & E-001..E-003: GESTOR DE RESPALDOS Y RESTAURACIÓN DE SISTEMA
+// ---------------------------------------------------------------------------
+
+window.openBackupManagerModal = function() {
+    let modal = document.getElementById('modal-backup-manager');
+    if (!modal) {
+        modal = document.createElement('div');
+        modal.id = 'modal-backup-manager';
+        modal.className = 'fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-[110] flex items-center justify-center p-3 md:p-6 animate-fade-in';
+        modal.innerHTML =
+            '<div class="bg-white rounded-3xl max-w-4xl w-full max-h-[90vh] flex flex-col shadow-2xl border border-slate-100 overflow-hidden">' +
+                '<div class="p-5 bg-slate-900 text-white flex items-center justify-between flex-shrink-0">' +
+                    '<div class="flex items-center gap-3">' +
+                        '<div class="w-10 h-10 rounded-2xl bg-indigo-600/30 flex items-center justify-center border border-indigo-400/30 text-indigo-400">' +
+                            '<i class="fa-solid fa-database text-lg"></i>' +
+                        '</div>' +
+                        '<div>' +
+                            '<h3 class="font-black text-base md:text-lg uppercase tracking-tight">Copias de Seguridad y Respaldos JSON</h3>' +
+                            '<p class="text-[10px] font-semibold text-slate-400 uppercase tracking-widest">Resguardos Integrales de Base de Datos y Verificación Checksum</p>' +
+                        '</div>' +
+                    '</div>' +
+                    '<button onclick="document.getElementById(\'modal-backup-manager\').classList.add(\'hidden\')" class="w-9 h-9 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white flex items-center justify-center transition-colors">' +
+                        '<i class="fa-solid fa-xmark"></i>' +
+                    '</button>' +
+                '</div>' +
+                '<div class="p-6 overflow-y-auto space-y-4 flex-grow text-xs">' +
+                    '<div class="flex justify-between items-center bg-indigo-50 border border-indigo-100 rounded-2xl p-4">' +
+                        '<div>' +
+                            '<h4 class="font-bold text-indigo-900 text-sm">Generar Punto de Control Ahora</h4>' +
+                            '<p class="text-indigo-700 text-xs">Crea una copia congelada con sumas Checksum SHA-256 almacenada en Drive.</p>' +
+                        '</div>' +
+                        '<button onclick="window.triggerCreateSystemBackup()" class="px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold uppercase tracking-wider text-xs transition-all shadow-md flex items-center gap-2">' +
+                            '<i class="fa-solid fa-cloud-arrow-up"></i> Generar Respaldo' +
+                        '</button>' +
+                    '</div>' +
+                    '<div id="backups-list-container" class="space-y-2">' +
+                        '<div class="text-center py-8 text-slate-400 font-semibold">' +
+                            '<i class="fa-solid fa-spinner fa-spin text-2xl mb-2 block"></i> Cargando lista de respaldos...' +
+                        '</div>' +
+                    '</div>' +
+                '</div>' +
+            '</div>';
+        document.body.appendChild(modal);
+    } else {
+        modal.classList.remove('hidden');
+    }
+
+    window.fetchSystemBackupsList();
+};
+
+window.fetchSystemBackupsList = async function() {
+    const container = document.getElementById('backups-list-container');
+    if (!container) return;
+
+    try {
+        const res = await fetchApi('ACADEMIC', 'listSystemBackups', {});
+        if (res && res.status === 'success' && Array.isArray(res.backups) && res.backups.length > 0) {
+            let html = '<div class="divide-y divide-slate-100 border border-slate-100 rounded-2xl overflow-hidden">';
+            res.backups.forEach(function(b) {
+                html +=
+                    '<div class="p-3 bg-white hover:bg-slate-50 flex items-center justify-between gap-3">' +
+                        '<div>' +
+                            '<h5 class="font-bold text-slate-800 text-xs truncate">' + b.fileName + '</h5>' +
+                            '<p class="text-[10px] text-slate-400 font-medium">Fecha: ' + (b.createdTime || b.timestamp || 'N/A') + ' | Checksum: ' + (b.checksum || 'SHA-256') + '</p>' +
+                        '</div>' +
+                        '<div class="flex items-center gap-2 flex-shrink-0">' +
+                            '<a href="' + b.fileUrl + '" target="_blank" class="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg font-bold text-[10px] flex items-center gap-1">' +
+                                '<i class="fa-solid fa-download"></i> Descargar' +
+                            '</a>' +
+                            '<button onclick="window.triggerRestoreSystemBackup(\'' + b.fileId + '\', \'' + b.fileName + '\')" class="px-2.5 py-1.5 bg-amber-500 hover:bg-amber-600 text-white rounded-lg font-bold text-[10px] flex items-center gap-1">' +
+                                '<i class="fa-solid fa-rotate-left"></i> Restaurar' +
+                            '</button>' +
+                        '</div>' +
+                    '</div>';
+            });
+            html += '</div>';
+            container.innerHTML = html;
+        } else {
+            container.innerHTML = '<div class="text-center py-8 text-slate-400 font-semibold">No se encontraron respaldos registrados previamente.</div>';
+        }
+    } catch (e) {
+        console.error('Error cargando lista de respaldos:', e);
+        container.innerHTML = '<div class="text-center py-8 text-red-500 font-semibold">No se pudo cargar la lista de respaldos.</div>';
+    }
+};
+
+window.triggerCreateSystemBackup = async function() {
+    try {
+        if (window.showLoading) window.showLoading('Generando copia de seguridad integral...');
+        const res = await fetchApi('ACADEMIC', 'createSystemBackup', {});
+        if (window.hideLoading) window.hideLoading();
+
+        if (res && res.status === 'success') {
+            alert('Copia de seguridad creada correctamente: ' + res.fileName);
+            window.fetchSystemBackupsList();
+        } else {
+            alert(res && res.message ? res.message : 'Error al crear la copia de seguridad.');
+        }
+    } catch (err) {
+        if (window.hideLoading) window.hideLoading();
+        console.error('Error al generar respaldo:', err);
+    }
+};
+
+window.triggerRestoreSystemBackup = async function(fileId, fileName) {
+    const confirmation = prompt(`ADVERTENCIA DE SEGURIDAD:\nVas a restaurar el punto de control "${fileName}".\nLas notas históricas serán preservadas intactas.\nPara confirmar, escribe el código exacto: RESTORE-CONFIRMED`);
+    if (confirmation !== 'RESTORE-CONFIRMED') {
+        alert('Código de confirmación incorrecto. Restauración cancelada.');
+        return;
+    }
+
+    try {
+        if (window.showLoading) window.showLoading('Procesando restauración de copia de seguridad...');
+        const res = await fetchApi('ACADEMIC', 'restoreSystemBackup', {
+            fileId: fileId,
+            confirmationCode: 'RESTORE-CONFIRMED',
+            preserveHistoricGrades: true
+        });
+        if (window.hideLoading) window.hideLoading();
+
+        if (res && res.status === 'success') {
+            alert('Restauración completada correctamente con preservación de calificaciones históricas.');
+            window.location.reload();
+        } else {
+            alert(res && res.message ? res.message : 'Error al procesar la restauración.');
+        }
+    } catch (err) {
+        if (window.hideLoading) window.hideLoading();
+        console.error('Error al restaurar respaldo:', err);
+    }
+};
+
     document.getElementById('btn-run-health-checks')?.addEventListener('click', runTechnicalHealthChecks);
 
     // Lógica de Migración del Banco de Preguntas (Fase 2)
@@ -1688,8 +1821,21 @@ document.addEventListener('DOMContentLoaded', () => {
             <tr class="hover:bg-gray-50 transition-colors cursor-pointer nav-btn" data-index="${idx}">
                 <td class="p-4 font-medium text-blue-700">${a.nombre}</td>
                 <td class="p-4 text-sm text-gray-500">${a.grado} - ${a.seccion || 'N/A'}</td>
-                <td class="p-4 text-right"><span class="text-blue-600 font-medium text-sm">Ver detalles &rsaquo;</span></td>
+                <td class="p-4 text-right space-x-2">
+                    <button class="px-2.5 py-1 bg-blue-600 text-white rounded-lg text-[10px] font-bold uppercase tracking-wider hover:bg-blue-700 btn-open-student-file" data-student-id="${a.id}">
+                        Expediente
+                    </button>
+                    <span class="text-blue-600 font-medium text-sm">Ver detalles &rsaquo;</span>
+                </td>
             </tr>`).join('');
+
+        submissionsTableBody.querySelectorAll('.btn-open-student-file').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const stId = btn.getAttribute('data-student-id');
+                if (window.openStudentFileModal) window.openStudentFileModal(stId);
+            });
+        });
     }
 
     function renderGrados(search) {
@@ -1728,7 +1874,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 </td>
                 <td class="p-4 text-right"><span class="text-blue-600 font-semibold text-[9px] uppercase tracking-widest group-hover:underline transition-all">Ver Secciones &rsaquo;</span></td>
             </tr>`;
-        }).join('');
+        }).join('')
+        submissionsTableBody.querySelectorAll('.btn-open-student-file').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const stId = btn.getAttribute('data-student-id');
+                if (window.openStudentFileModal) window.openStudentFileModal(stId);
+            });
+        });
     }
 
     /**
@@ -1956,7 +2109,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     <td class="p-4">
                         <span class="px-2 py-1 rounded-lg text-[9px] font-semibold uppercase tracking-widest ${statusClass}">${s.statusText}</span>
                     </td>
-                    <td class="p-4 text-right">
+                    <td class="p-4 text-right space-x-2">
+                        <button class="px-2.5 py-1 bg-blue-600 text-white rounded-lg text-[10px] font-bold uppercase tracking-wider hover:bg-blue-700 btn-open-student-file" data-student-id="${s.userId || s.id}">
+                            Expediente
+                        </button>
                         <span class="text-blue-600 font-semibold text-[9px] uppercase tracking-widest">Detalles &rsaquo;</span>
                     </td>
                 </tr>`;
@@ -5646,3 +5802,420 @@ window.reviewOvertimeAction = function(overtimeId, accion) {
         }
     }).catch(err => alert('Fallo de red: ' + err.message));
 };
+
+    // =========================================================================
+    // EXPEDIENTE DIGITAL UNIFICADO DEL ESTUDIANTE (REQ-EXP-001)
+    // =========================================================================
+    let currentStudentFile = null;
+
+    window.openStudentFileModal = async function(studentId) {
+        if (!studentId) return;
+        const modal = document.getElementById('modal-student-file');
+        if (!modal) return;
+
+        try {
+            if (window.showLoading) window.showLoading('Cargando expediente digital...');
+            const response = await fetchApi('ACADEMIC', 'getStudentFile', { studentId: studentId });
+            if (window.hideLoading) window.hideLoading();
+
+            if (!response || response.status !== 'success' || !response.data) {
+                alert(response && response.message ? response.message : 'No se pudo consultar el expediente del estudiante.');
+                return;
+            }
+
+            currentStudentFile = response.data;
+            renderStudentFileModalData();
+            modal.classList.remove('hidden');
+        } catch (err) {
+            if (window.hideLoading) window.hideLoading();
+            console.error('Error al abrir expediente:', err);
+            alert('Error al conectar con el servidor para consultar el expediente.');
+        }
+    };
+
+    function renderStudentFileModalData() {
+        if (!currentStudentFile) return;
+        const data = currentStudentFile;
+
+        // Header info
+        const nameEl = document.getElementById('stfile-student-name');
+        const codeEl = document.getElementById('stfile-student-code');
+        if (nameEl) nameEl.textContent = data.nombreCompleto || `${data.nombres || ''} ${data.apellidos || ''}`.trim() || 'Estudiante';
+        if (codeEl) codeEl.textContent = `Código: ${data.codigoEstudiante || data.userId || '--'} | Estado: ${data.estadoExpediente || data.estado || 'Activo'}`;
+
+        // Personal form inputs
+        document.getElementById('stfile-nombre').value = data.nombreCompleto || `${data.nombres || ''} ${data.apellidos || ''}`.trim() || '';
+        document.getElementById('stfile-codigo').value = data.codigoEstudiante || data.userId || '';
+        document.getElementById('stfile-identificacion').value = data.identificacion || data.dni || '';
+        document.getElementById('stfile-fecha-nacimiento').value = data.fechaNacimiento ? data.fechaNacimiento.split('T')[0] : '';
+        document.getElementById('stfile-nacionalidad').value = data.nacionalidad || '';
+        document.getElementById('stfile-estado-expediente').value = data.estadoExpediente || data.estado || 'Activo';
+        document.getElementById('stfile-direccion').value = data.direccion || '';
+        document.getElementById('stfile-observaciones').value = data.observaciones || '';
+
+        // Reset active tab to personal
+        switchStudentFileTab('tab-stfile-personal');
+
+        // Load guardians, documents, and timeline
+        loadStudentGuardians();
+        loadStudentDocuments();
+        loadStudentTimeline();
+    }
+
+    // Tabs switching
+    document.querySelectorAll('.stfile-tab-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const targetTab = btn.getAttribute('data-tab');
+            switchStudentFileTab(targetTab);
+        });
+    });
+
+    function switchStudentFileTab(tabId) {
+        document.querySelectorAll('.stfile-tab-btn').forEach(b => {
+            if (b.getAttribute('data-tab') === tabId) {
+                b.classList.add('text-blue-600', 'border-blue-600');
+                b.classList.remove('text-slate-500', 'border-transparent');
+            } else {
+                b.classList.remove('text-blue-600', 'border-blue-600');
+                b.classList.add('text-slate-500', 'border-transparent');
+            }
+        });
+        document.querySelectorAll('.stfile-tab-content').forEach(c => {
+            if (c.id === tabId) c.classList.remove('hidden');
+            else c.classList.add('hidden');
+        });
+    }
+
+    const btnCloseStFile = document.getElementById('btn-close-student-file');
+    if (btnCloseStFile) {
+        btnCloseStFile.addEventListener('click', () => {
+            const modal = document.getElementById('modal-student-file');
+            if (modal) modal.classList.add('hidden');
+            currentStudentFile = null;
+        });
+    }
+
+    // Personal Form Submission (updateStudentFile)
+    const stfilePersonalForm = document.getElementById('stfile-personal-form');
+    if (stfilePersonalForm) {
+        stfilePersonalForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            if (!currentStudentFile) return;
+
+            const updatedData = {
+                studentId: currentStudentFile.userId || currentStudentFile.studentId,
+                nombreCompleto: document.getElementById('stfile-nombre').value.trim(),
+                identificacion: document.getElementById('stfile-identificacion').value.trim(),
+                fechaNacimiento: document.getElementById('stfile-fecha-nacimiento').value,
+                nacionalidad: document.getElementById('stfile-nacionalidad').value.trim(),
+                estadoExpediente: document.getElementById('stfile-estado-expediente').value,
+                direccion: document.getElementById('stfile-direccion').value.trim(),
+                observaciones: document.getElementById('stfile-observaciones').value.trim()
+            };
+
+            try {
+                if (window.showLoading) window.showLoading('Guardando datos del expediente...');
+                const res = await fetchApi('ACADEMIC', 'updateStudentFile', updatedData);
+                if (window.hideLoading) window.hideLoading();
+
+                if (res && res.status === 'success') {
+                    alert('Expediente actualizado exitosamente.');
+                    if (res.data) currentStudentFile = { ...currentStudentFile, ...res.data };
+                    renderStudentFileModalData();
+                } else {
+                    alert(res && res.message ? res.message : 'No se pudo guardar los cambios en el expediente.');
+                }
+            } catch (err) {
+                if (window.hideLoading) window.hideLoading();
+                console.error('Error al actualizar expediente:', err);
+                alert('Error al conectar con el servidor.');
+            }
+        });
+    }
+
+    // Guardians Management
+    async function loadStudentGuardians() {
+        const container = document.getElementById('stfile-guardians-container');
+        if (!container || !currentStudentFile) return;
+        container.innerHTML = '<div class="col-span-2 text-center p-4 text-slate-400 text-xs">Cargando tutores...</div>';
+
+        try {
+            const res = await fetchApi('ACADEMIC', 'getStudentGuardians', { studentId: currentStudentFile.userId || currentStudentFile.studentId });
+            const guardians = (res && res.status === 'success' && Array.isArray(res.data)) ? res.data : [];
+
+            if (guardians.length === 0) {
+                container.innerHTML = '<div class="col-span-2 text-center p-6 text-slate-400 text-xs bg-slate-50 rounded-2xl border border-slate-200">No hay tutores o responsables vinculados aún.</div>';
+                return;
+            }
+
+            container.innerHTML = guardians.map(g => `
+                <div class="p-4 bg-slate-50 border border-slate-200 rounded-2xl space-y-2">
+                    <div class="flex items-center justify-between">
+                        <div class="font-bold text-xs text-slate-800">${g.nombreTutor || g.nombre || 'Tutor Registrado'}</div>
+                        <span class="px-2 py-0.5 rounded-full text-[9px] font-bold uppercase bg-blue-100 text-blue-700">${g.parentesco || 'Responsable'}</span>
+                    </div>
+                    <div class="text-[11px] text-slate-600 space-y-1">
+                        <div><i class="fa-solid fa-phone mr-1 text-slate-400"></i> ${g.telefono || 'Sin teléfono'}</div>
+                        <div><i class="fa-solid fa-envelope mr-1 text-slate-400"></i> ${g.email || 'Sin correo'}</div>
+                        <div class="flex flex-wrap gap-1 pt-1">
+                            ${g.esRepresentanteLegal ? '<span class="bg-emerald-100 text-emerald-800 text-[8px] font-bold uppercase px-1.5 py-0.5 rounded">Rep. Legal</span>' : ''}
+                            ${g.esContactoEmergencia ? '<span class="bg-amber-100 text-amber-800 text-[8px] font-bold uppercase px-1.5 py-0.5 rounded">Emergencia</span>' : ''}
+                            ${g.esResponsableFinanciero ? '<span class="bg-purple-100 text-purple-800 text-[8px] font-bold uppercase px-1.5 py-0.5 rounded">Financiero</span>' : ''}
+                        </div>
+                    </div>
+                    <div class="pt-2 flex justify-end">
+                        <button class="px-2.5 py-1 bg-red-50 text-red-600 border border-red-200 rounded-xl text-[10px] font-bold uppercase hover:bg-red-100 btn-unlink-guardian" data-guardian-id="${g.guardianId || g.id}">
+                            Desvincular
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+
+            container.querySelectorAll('.btn-unlink-guardian').forEach(btn => {
+                btn.addEventListener('click', async () => {
+                    const gId = btn.getAttribute('data-guardian-id');
+                    if (!confirm('¿Desea desvincular este tutor del estudiante?')) return;
+                    try {
+                        if (window.showLoading) window.showLoading('Desvinculando tutor...');
+                        const unres = await fetchApi('ACADEMIC', 'unlinkStudentGuardian', {
+                            studentId: currentStudentFile.userId || currentStudentFile.studentId,
+                            guardianId: gId
+                        });
+                        if (window.hideLoading) window.hideLoading();
+                        if (unres && unres.status === 'success') {
+                            alert('Tutor desvinculado correctamente.');
+                            loadStudentGuardians();
+                        } else {
+                            alert(unres && unres.message ? unres.message : 'No se pudo desvincular el tutor.');
+                        }
+                    } catch (err) {
+                        if (window.hideLoading) window.hideLoading();
+                        console.error('Error al desvincular tutor:', err);
+                    }
+                });
+            });
+        } catch (err) {
+            console.error('Error al cargar tutores:', err);
+            container.innerHTML = '<div class="col-span-2 text-center p-4 text-red-500 text-xs">Error al cargar la lista de tutores.</div>';
+        }
+    }
+
+    const btnOpenAddGuardian = document.getElementById('btn-open-add-guardian-modal');
+    if (btnOpenAddGuardian) {
+        btnOpenAddGuardian.addEventListener('click', async () => {
+            if (!currentStudentFile) return;
+            const name = prompt('Ingrese nombre completo del tutor:');
+            if (!name) return;
+            const parentesco = prompt('Parentesco (ej: Padre, Madre, Tutor Legal):') || 'Tutor';
+            const email = prompt('Correo electrónico del tutor:') || '';
+            const telefono = prompt('Teléfono de contacto:') || '';
+
+            try {
+                if (window.showLoading) window.showLoading('Vinculando tutor...');
+                const res = await fetchApi('ACADEMIC', 'saveStudentGuardian', {
+                    studentId: currentStudentFile.userId || currentStudentFile.studentId,
+                    nombreTutor: name,
+                    parentesco: parentesco,
+                    email: email,
+                    telefono: telefono,
+                    esRepresentanteLegal: true,
+                    esContactoEmergencia: true
+                });
+                if (window.hideLoading) window.hideLoading();
+                if (res && res.status === 'success') {
+                    alert('Tutor vinculado exitosamente.');
+                    loadStudentGuardians();
+                } else {
+                    alert(res && res.message ? res.message : 'No se pudo vincular el tutor.');
+                }
+            } catch (err) {
+                if (window.hideLoading) window.hideLoading();
+                console.error('Error al vincular tutor:', err);
+            }
+        });
+    }
+
+    // Documents Upload & Management
+    async function loadStudentDocuments() {
+        const container = document.getElementById('stfile-documents-list');
+        if (!container || !currentStudentFile) return;
+        container.innerHTML = '<div class="text-center p-4 text-slate-400 text-xs">Cargando documentos...</div>';
+
+        try {
+            const res = await fetchApi('ACADEMIC', 'getStudentDocuments', { studentId: currentStudentFile.userId || currentStudentFile.studentId });
+            const docs = (res && res.status === 'success' && Array.isArray(res.data)) ? res.data : [];
+
+            if (docs.length === 0) {
+                container.innerHTML = '<div class="text-center p-6 text-slate-400 text-xs bg-slate-50 rounded-2xl border border-slate-200">No hay documentos cargados en el expediente.</div>';
+                return;
+            }
+
+            container.innerHTML = docs.map(d => `
+                <div class="p-3 bg-slate-50 border border-slate-200 rounded-xl flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-xs">
+                            <i class="fa-solid ${d.mimeType && d.mimeType.includes('pdf') ? 'fa-file-pdf' : 'fa-file-image'}"></i>
+                        </div>
+                        <div>
+                            <div class="font-bold text-xs text-slate-800">${d.nombreArchivo || d.tipoDocumento || 'Documento'}</div>
+                            <div class="text-[10px] text-slate-500">${d.tipoDocumento || 'General'} | Fecha: ${d.fechaCarga ? new Date(d.fechaCarga).toLocaleDateString() : 'Reciente'}</div>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        ${d.archivoUrl || d.driveUrl ? `<a href="${d.archivoUrl || d.driveUrl}" target="_blank" class="px-3 py-1 bg-blue-600 text-white rounded-lg text-[10px] font-bold uppercase hover:bg-blue-700">Ver / Descargar</a>` : ''}
+                    </div>
+                </div>
+            `).join('');
+        } catch (err) {
+            console.error('Error al cargar documentos:', err);
+            container.innerHTML = '<div class="text-center p-4 text-red-500 text-xs">Error al consultar documentos del expediente.</div>';
+        }
+    }
+
+    const stfileDocUploadForm = document.getElementById('stfile-doc-upload-form');
+    if (stfileDocUploadForm) {
+        stfileDocUploadForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            if (!currentStudentFile) return;
+
+            const fileInput = document.getElementById('stfile-doc-file');
+            const docType = document.getElementById('stfile-doc-tipo').value;
+
+            if (!fileInput.files || fileInput.files.length === 0) {
+                alert('Por favor seleccione un archivo para cargar.');
+                return;
+            }
+
+            const file = fileInput.files[0];
+            const reader = new FileReader();
+
+            reader.onload = async function(event) {
+                const base64Data = event.target.result.split(',')[1];
+                try {
+                    if (window.showLoading) window.showLoading('Subiendo documento a Google Drive...');
+                    const res = await fetchApi('ACADEMIC', 'uploadStudentDocument', {
+                        studentId: currentStudentFile.userId || currentStudentFile.studentId,
+                        tipoDocumento: docType,
+                        fileName: file.name,
+                        mimeType: file.type,
+                        fileDataBase64: base64Data
+                    });
+                    if (window.hideLoading) window.hideLoading();
+
+                    if (res && res.status === 'success') {
+                        alert('Documento subido exitosamente a Google Drive.');
+                        fileInput.value = '';
+                        loadStudentDocuments();
+                    } else {
+                        alert(res && res.message ? res.message : 'No se pudo subir el documento.');
+                    }
+                } catch (err) {
+                    if (window.hideLoading) window.hideLoading();
+                    console.error('Error al subir documento:', err);
+                    alert('Error de conexión al subir el archivo.');
+                }
+            };
+
+            reader.readAsDataURL(file);
+        });
+    }
+
+    // Timeline Loading
+    async function loadStudentTimeline() {
+        const container = document.getElementById('stfile-timeline-container');
+        if (!container || !currentStudentFile) return;
+        container.innerHTML = '<div class="text-slate-400 text-xs">Cargando historial de movimientos...</div>';
+
+        try {
+            const res = await fetchApi('ACADEMIC', 'getStudentTimeline', { studentId: currentStudentFile.userId || currentStudentFile.studentId });
+            const events = (res && res.status === 'success' && Array.isArray(res.data)) ? res.data : [];
+
+            if (events.length === 0) {
+                container.innerHTML = '<div class="text-slate-400 text-xs">No hay registros de movimientos en la línea de tiempo.</div>';
+                return;
+            }
+
+            container.innerHTML = events.map(ev => `
+                <div class="relative">
+                    <div class="absolute -left-[31px] top-0.5 w-4 h-4 rounded-full bg-blue-600 border-2 border-white"></div>
+                    <div class="bg-slate-50 p-3 rounded-2xl border border-slate-200 space-y-1">
+                        <div class="flex items-center justify-between">
+                            <span class="font-bold text-xs text-slate-800">${ev.tipoMovimiento || ev.evento || 'Movimiento Institucional'}</span>
+                            <span class="text-[10px] font-semibold text-slate-400">${ev.fecha ? new Date(ev.fecha).toLocaleDateString() : 'N/A'}</span>
+                        </div>
+                        <p class="text-[11px] text-slate-600">${ev.descripcion || 'Sin descripción detallada.'}</p>
+                    </div>
+                </div>
+            `).join('');
+        } catch (err) {
+            console.error('Error al cargar historial:', err);
+            container.innerHTML = '<div class="text-red-500 text-xs">Error al cargar la línea de tiempo.</div>';
+        }
+    }
+
+    // Duplicate Scan & Merge
+    const btnScanDuplicates = document.getElementById('btn-scan-duplicates');
+    if (btnScanDuplicates) {
+        btnScanDuplicates.addEventListener('click', async () => {
+            if (!currentStudentFile) return;
+            const resultsContainer = document.getElementById('stfile-duplicates-results');
+            if (!resultsContainer) return;
+            resultsContainer.innerHTML = '<div class="text-slate-400 text-xs p-2">Escaneando coincidencia de duplicados...</div>';
+
+            try {
+                const res = await fetchApi('ACADEMIC', 'findDuplicateStudents', {
+                    studentId: currentStudentFile.userId || currentStudentFile.studentId,
+                    nombre: currentStudentFile.nombreCompleto || currentStudentFile.nombres || '',
+                    identificacion: currentStudentFile.identificacion || currentStudentFile.dni || ''
+                });
+
+                const matches = (res && res.status === 'success' && Array.isArray(res.data)) ? res.data : [];
+
+                if (matches.length === 0) {
+                    resultsContainer.innerHTML = '<div class="p-4 bg-emerald-50 border border-emerald-200 rounded-2xl text-emerald-800 text-xs font-semibold"><i class="fa-solid fa-circle-check text-emerald-600 mr-1"></i> No se encontraron expedientes duplicados coincidentes.</div>';
+                    return;
+                }
+
+                resultsContainer.innerHTML = matches.map(m => `
+                    <div class="p-4 bg-white border border-slate-200 rounded-2xl flex items-center justify-between">
+                        <div>
+                            <div class="font-bold text-xs text-slate-800">${m.nombreCompleto || m.nombre}</div>
+                            <div class="text-[10px] text-slate-500">ID: ${m.studentId || m.userId} | DNI: ${m.identificacion || 'N/A'} | Criterio: ${m.motivoCoincidencia || 'Similitud de nombre'}</div>
+                        </div>
+                        <button class="px-3 py-1.5 bg-amber-600 text-white rounded-xl text-[10px] font-bold uppercase tracking-wider hover:bg-amber-700 btn-merge-student" data-target-id="${m.studentId || m.userId}">
+                            Fusionar en este Expediente
+                        </button>
+                    </div>
+                `).join('');
+
+                resultsContainer.querySelectorAll('.btn-merge-student').forEach(btn => {
+                    btn.addEventListener('click', async () => {
+                        const targetId = btn.getAttribute('data-target-id');
+                        if (!confirm(`¿Está seguro de fusionar el expediente ${targetId} en este expediente principal (${currentStudentFile.userId || currentStudentFile.studentId})? Esta acción es irreversible y re-vinculará sus registros.`)) return;
+
+                        try {
+                            if (window.showLoading) window.showLoading('Procesando fusión auditada de expedientes...');
+                            const mres = await fetchApi('ACADEMIC', 'mergeStudentFiles', {
+                                targetStudentId: currentStudentFile.userId || currentStudentFile.studentId,
+                                sourceStudentId: targetId
+                            });
+                            if (window.hideLoading) window.hideLoading();
+
+                            if (mres && mres.status === 'success') {
+                                alert('Expedientes fusionados correctamente.');
+                                window.openStudentFileModal(currentStudentFile.userId || currentStudentFile.studentId);
+                            } else {
+                                alert(mres && mres.message ? mres.message : 'No se pudo realizar la fusión.');
+                            }
+                        } catch (err) {
+                            if (window.hideLoading) window.hideLoading();
+                            console.error('Error al fusionar:', err);
+                        }
+                    });
+                });
+            } catch (err) {
+                console.error('Error al buscar duplicados:', err);
+                resultsContainer.innerHTML = '<div class="text-red-500 text-xs p-2">Error de conexión al escanear duplicados.</div>';
+            }
+        });
+    }
