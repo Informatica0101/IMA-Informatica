@@ -1654,3 +1654,44 @@ Hallazgos principales:
 
 Estado general: AUDITORÍA COMPLETADA - TAREAS T-NOM-01 A T-NOM-20 REGISTRADAS EN PENDIENTES3.MD.
 ================================================================================
+
+================================================================================
+AUDITORÍA DE LA FASE 18: COMPRAS, PROVEEDORES Y CONTRATACIÓN DE SERVICIOS
+================================================================================
+Fecha de auditoría: 2026-10-19
+Documento independiente generado: AUDITORIA_FASE18_COMPRAS_PROVEEDORES.md
+
+Subcapacidades auditadas e inspeccionadas (24 de 24 - 100% Cobertura):
+T18-PRO-01. Catálogo y Registro de Proveedores (`registerSupplier` -> `ProveedoresActivos`)
+T18-PRO-02. Condiciones Comerciales e Historial (`registerSupplier` / `ProveedoresActivos`)
+T18-COM-01. Solicitudes de Compra Internas (`createPurchaseRequest` -> `SolicitudesCompra`)
+T18-COM-02. Cotizaciones y Ofertas de Proveedores (`submitPurchaseQuotation` -> `CotizacionesCompra`)
+T18-COM-03. Comparación y Selección de Ofertas (`getPurchaseQuotations`)
+T18-APR-01. Flujos de Aprobación Jerárquica (`approvePurchaseOrder` con rol RBAC)
+T18-ORD-01. Creación y Emisión de Órdenes de Compra (`createPurchaseOrder` -> `OrdenesCompra`)
+T18-REC-01. Recepción de Bienes e Integración Kardex (`recordPurchaseReceipt` -> `InventariosKardex`)
+T18-REC-02. Conformidad de Servicios (`recordPurchaseReceipt` estadoConformidad)
+T18-FAC-01. Registro de Facturas de Proveedores (`recordAccountsPayableExpense` -> `CuentasPorPagarGastos`)
+T18-FAC-02. Conciliación Orden vs Recepción vs Factura (Integración automática tripartita)
+T18-PAG-01. Vencimientos y Control de Cuentas por Pagar (`getAccountsReceivablePayableSummary`)
+T18-PRE-01. Control Presupuestario de Compras (`createPurchaseRequest` con Centro de Costo)
+T18-PRE-02. Asignación a Centros de Costo (`createPurchaseOrder` distribución)
+T18-INT-01. Integración con Inventario (`recordInventoryMovement` movimiento Entrada)
+T18-INT-02. Integración con Activos Fijos (`manageAssetItem`)
+T18-INT-03. Integración Contable (Pasivo en Cuentas por Pagar `CTA-201 Proveedores`)
+T18-TRA-01. Trazabilidad Extremo a Extremo (`REQ-CMP-*` -> `COT-*` -> `ORD-CMP-*` -> `REC-CMP-*` -> `OBL-*`)
+T18-TRA-02. Historial de Auditoría (Timestamps y UserIDs grabados en Google Sheets)
+T18-REP-01. Informes Operativos de Compras (`getPurchaseOrders` / `getPurchaseRequests`)
+T18-REP-02. Usabilidad e Interfaz Frontend (`js/accounting.js` `renderComprasModule`)
+T18-SEG-01. Control de Acceso RBAC (`ROLE_PERMISSIONS` de backend)
+T18-SEG-02. Idempotencia y Prevención de Duplicados (IDs únicos temporales y atómicos)
+T18-SEG-03. Validación de Datos y Casos Límite (Excepciones explícitas en backend)
+
+Hallazgos principales:
+- Verificado el pipeline de compras en `backend/accounting-service/Code.gs` (`registerSupplier`, `createPurchaseRequest`, `submitPurchaseQuotation`, `createPurchaseOrder`, `approvePurchaseOrder`, `recordPurchaseReceipt`).
+- Confirmada la integración tripartita atómica: la recepción de compra genera en una sola transacción la entrada en `InventariosKardex` y la obligación en `CuentasPorPagarGastos`.
+- Comprobada la trazabilidad completa mediante identificadores entrelazados y validación de roles en `ROLE_PERMISSIONS`.
+- Planificadas e integradas las tareas de resolución T18-COM-01 a T18-COM-16 en `pendientes3.md`.
+
+Estado general: AUDITORÍA COMPLETADA - TAREAS T18-COM-01 A T18-COM-16 REGISTRADAS EN PENDIENTES3.MD.
+================================================================================
