@@ -7335,248 +7335,431 @@ El destinatario puede abrir una comunicación y completar la acción solicitada 
 
 ## PLAN DE TRABAJO DETALLADO Y UNIFICADO: FASE DE PAGOS ESCOLARES, COBROS Y FACTURACIÓN
 
-### T-PAG-01 [P1] — Control de concurrencia transaccional con LockService en cobros y revisión de comprobantes
+### T-PAG-01 [P0] — Garantizar la concurrencia segura y control de operaciones en la aprobación de comprobantes
 
 - **Componentes relacionados:** `backend/accounting-service/Code.gs` (`reviewPaymentVoucher`, `recordStudentPayment`), `js/accounting.js`.
-- **Problema detectado:** Al aprobar comprobantes de pago o registrar cobros manuales en `CargosEstudiante`, el servidor requiere un bloqueo exclusivo con `LockService` para evitar abonos duplicados si dos administradores procesan el mismo pago simultáneamente.
-- **Requisitos funcionales:**
-  1. Adquirir `LockService.getScriptLock()` antes de actualizar `ComprobantesPago` y `CargosEstudiante`.
-  2. Verificar que el comprobante se encuentre en estado `Pendiente` antes de aplicar el abono.
-  3. Liberar el bloqueo en bloques `finally`.
-- **Criterios de Aceptación:**
-  - Revisiones concurrentes del mismo comprobante no generan abonos dobles ni registros inconsistentes en la libreta contable.
+- **Problema que se debe resolver:** La aprobación simultánea de comprobantes puede provocar condiciones de carrera si varios usuarios financieros procesan operaciones relacionadas con el mismo cargo, comprobante o saldo a favor.
+- **Requisitos funcionales y técnicos:**
+  1. Incorporar mecanismos de exclusión mutua mediante `LockService` (`LockService.getScriptLock()`) en las operaciones de aprobación y aplicación de pagos que modifiquen recursos financieros compartidos en `backend/accounting-service/Code.gs`.
+  2. Validar dentro de la sección crítica protegida por bloqueo que el comprobante continúa pendiente de revisión (`Pendiente`), que no ha sido procesado anteriormente y que corresponde a un estudiante y cargo válidos.
+  3. Recalcular el saldo pendiente a partir de los datos vigentes antes de aplicar el pago en `CargosEstudiante`.
+  4. Garantizar que la transición del comprobante, el registro del abono, la actualización del cargo y la creación del asiento contable no generen aplicaciones duplicadas.
+  5. Definir un tiempo máximo de espera del bloqueo y una respuesta controlada cuando no pueda adquirirse.
+  6. Liberar los bloqueos correctamente en bloques `finally`, incluso cuando ocurra una excepción (`lock.releaseLock()`).
+  7. Mantener la clave de idempotencia existente (`DeduplicationKey`) y reforzarla en el servidor. La clave debe identificar una operación financiera concreta, no únicamente la sesión o el usuario.
+  8. Cuando una operación no pueda completarse de forma consistente, impedir que quede presentada como aprobada si el abono o los registros financieros correspondientes no se han confirmado.
+- **Alcance y Cambios necesarios:**
+  - Revisar los flujos de `reviewPaymentVoucher`, `recordStudentPayment` y los procedimientos relacionados con la generación de asientos y la aplicación de saldos.
+  - Centralizar las validaciones y las modificaciones financieras críticas en el backend.
+  - Implementar el bloqueo en las secciones mínimas necesarias para reducir la contención.
+  - Registrar los conflictos, reintentos, tiempos de espera y resultados de las operaciones sin exponer información financiera sensible.
+- **Comportamiento esperado:** Si dos contadores intentan aprobar el mismo comprobante simultáneamente, solo una operación debe aplicar el pago. Si dos pagos diferentes afectan al mismo cargo, ambos deben procesarse de manera serializada o mediante un mecanismo equivalente que preserve los saldos correctos. Una solicitud repetida debe devolver el resultado de la operación ya procesada o informar de su estado, sin crear movimientos adicionales.
+- **Criterios de aceptación:**
+  - Dos aprobaciones simultáneas del mismo comprobante producen exactamente un abono y un asiento contable.
+  - Dos pagos concurrentes de un mismo cargo no producen saldos negativos ni pierden movimientos válidos.
+  - Una operación que no consiga adquirir el bloqueo devuelve un error controlado y permite reintentarla.
+  - Las excepciones no dejan bloqueos permanentes.
+  - Las pruebas verifican que los estados del comprobante, cargo, abono y asiento contable concuerdan después de cada operación.
+  - Se conservan los permisos y las validaciones de titularidad existentes.
 - **Riesgo de Regresión:** Bajo.
-- **Dependencias:** `reviewPaymentVoucher`, `LockService`.
+- **Dependencias:** T-PAG-02, T-PAG-03 y T-PAG-04.
 
 ---
 
-### T-PAG-02 [P1] — Idempotencia en la subida de comprobantes de pago y referencias bancarias
+### T-PAG-02 [P0] — Consolidar la idempotencia de todas las operaciones de pago y subida de comprobantes
 
-- **Componentes relacionados:** `backend/accounting-service/Code.gs` (`uploadPaymentVoucher`), `js/student.js`.
-- **Problema detectado:** Evitar la duplicación de comprobantes de transferencia cuando un usuario hace doble clic o reintenta el envío por desconexión de red.
-- **Requisitos funcionales:**
-  1. Generar la clave de idempotencia `DeduplicationKey` uniendo `UserId`, `MontoReportado` y `ReferenciaBancaria`.
-  2. Rechazar reenvíos idénticos si ya existe un comprobante registrado con la misma clave en `ComprobantesPago`.
-- **Criterios de Aceptación:**
-  - El sistema detecta e informa si una referencia de transferencia bancaria ya fue enviada previamente.
+- **Componentes relacionados:** `backend/accounting-service/Code.gs` (`uploadPaymentVoucher`, `reviewPaymentVoucher`), `js/student.js`.
+- **Problema que se debe resolver:** Se necesita garantizar protección contra el doble envío de comprobantes, reintentos automáticos, doble clic del usuario o respuestas duplicadas en todos los puntos donde una solicitud pueda generar efectos financieros.
+- **Requisitos funcionales y técnicos:**
+  1. Definir identificadores únicos e idempotentes (`DeduplicationKey`) para las operaciones de registro de pagos, subida/aprobación de comprobantes, abonos, devoluciones, reversos, emisión de recibos y procesamiento de notificaciones de pasarelas.
+  2. Generar la clave de idempotencia uniendo `UserId`, `MontoReportado` y `ReferenciaBancaria` para subida de comprobantes (`uploadPaymentVoucher`).
+  3. Registrar la clave de idempotencia junto con el tipo de operación, la entidad afectada, el estado y el resultado.
+  4. Rechazar la reutilización de una misma clave para una operación diferente.
+  5. Permitir que los reintentos legítimos recuperen el resultado de la operación original.
+  6. Garantizar que la generación de asientos contables y recibos asociados no se repita por reintentos.
+  7. Diferenciar una solicitud repetida de una operación nueva que legítimamente utiliza el mismo importe.
+  8. Establecer reglas de retención de registros de idempotencia compatibles con las necesidades de auditoría y recuperación.
+- **Alcance y Cambios necesarios:**
+  - Revisar los puntos de entrada del backend que generan efectos financieros en `backend/accounting-service/Code.gs`.
+  - Añadir validación y persistencia de claves únicas en `ComprobantesPago`.
+  - Incorporar restricciones de unicidad o controles equivalentes en el almacenamiento disponible.
+  - Vincular cada operación con sus movimientos contables y documentos resultantes.
+- **Comportamiento esperado:** Reenviar una solicitud después de un tiempo de espera o por doble clic no debe duplicar el cobro, el abono, el asiento, la devolución ni el recibo. El sistema debe señalar explícitamente si una referencia de transferencia bancaria ya fue enviada previamente.
+- **Criterios de aceptación:**
+  - Repetir la misma solicitud varias veces produce un solo efecto financiero.
+  - Una clave reutilizada con datos incompatibles se rechaza.
+  - Un fallo de conexión después de que el backend haya registrado una operación no genera duplicados al reintentar.
+  - Los registros de auditoría permiten identificar la operación original y todos sus reintentos.
+  - Las pruebas incluyen doble clic, solicitudes paralelas, tiempos de espera y reintentos después de una respuesta perdida.
 - **Riesgo de Regresión:** Bajo.
-- **Dependencias:** `uploadPaymentVoucher`, `ComprobantesPago`.
+- **Dependencias:** T-PAG-01 y T-PAG-03.
 
 ---
 
-### T-PAG-03 [P1] — Aislamiento RBAC y verificación estricta de estados de cuenta estudiantiles y familiares
+### T-PAG-03 [P0] — Reforzar la consistencia transaccional del ciclo de vida de los pagos y aislamiento RBAC de estados de cuenta
 
-- **Componentes relacionados:** `backend/accounting-service/Code.gs` (`getStudentAccountStatement`), `backend/user-service/Code.gs`.
-- **Problema detectado:** Garantizar que los padres y estudiantes solo puedan consultar sus propios cargos y comprobantes, bloqueando el acceso a estados de cuenta de otros estudiantes mediante manipulación de parámetros API.
-- **Requisitos funcionales:**
-  1. Validar que el `authUserId` o sus relaciones familiares autorizadas (`RelacionesEstudianteTutor`) correspondan al `UserId` solicitado en `getStudentAccountStatement`.
-  2. Denegar la consulta si no existe un vínculo verificado en la base de datos de usuarios.
-- **Criterios de Aceptación:**
+- **Componentes relacionados:** `backend/accounting-service/Code.gs` (`getStudentAccountStatement`), `backend/user-service/Code.gs` (`assertRecordOwnership`).
+- **Problema que se debe resolver:** El ciclo de un pago modifica varias entidades relacionadas (`CargosEstudiante`, `PagosAbonos`, `ComprobantesPago`). Es necesario evitar estados contradictorios cuando una parte de la operación se completa y otra falla, asegurando al mismo tiempo que el acceso a estados de cuenta y comprobantes cumpla aislamiento RBAC estricto.
+- **Requisitos funcionales y técnicos:**
+  1. Definir los estados permitidos y las transiciones válidas para pagos, comprobantes, cargos, reembolsos y operaciones de pasarela.
+  2. Separar claramente los estados `Pendiente`, `En revisión`, `Aprobado`, `Confirmado`, `Fallido`, `Rechazado`, `Reversado` y cualquier otro que se necesite, sin confundir aprobación administrativa con liquidación bancaria.
+  3. Establecer qué operaciones pueden ejecutarse juntas y cuáles requieren una secuencia recuperable.
+  4. Si no existe una transacción atómica entre todas las hojas de cálculo implicadas, implementar un procedimiento de operación recuperable con identificador único, pasos registrados y mecanismos de compensación.
+  5. Evitar que un pago aparezca aplicado dos veces o que un asiento se genere sin un movimiento financiero correspondiente.
+  6. Implementar procedimientos de reconciliación interna que detecten operaciones incompletas y permitan corregirlas sin borrar el historial.
+  7. Mantener la exactitud de los importes en lempiras y las reglas de redondeo definidas.
+  8. Validar en `getStudentAccountStatement` que el `authUserId` o sus relaciones familiares autorizadas (`RelacionesEstudianteTutor`) correspondan al `UserId` solicitado, impidiendo la manipulación de parámetros API para consultar estados de cuenta ajenos.
+- **Alcance y Cambios necesarios:**
+  - Documentar el ciclo de vida de las operaciones financieras en `backend/accounting-service/Code.gs`.
+  - Incorporar estados intermedios y registros de procesamiento cuando sean necesarios.
+  - Añadir rutinas de recuperación y detección de inconsistencias.
+  - Mostrar los estados intermedios a los usuarios autorizados y evitar presentar como definitivo un resultado no confirmado.
+  - Aplicar `assertRecordOwnership` en la consulta de estados de cuenta.
+- **Comportamiento esperado:** Si se interrumpe una operación después de registrar un abono, el sistema debe detectar que faltan pasos y completarlos de forma segura o dejar la operación en un estado recuperable. Ningún usuario podrá consultar estados de cuenta de otros estudiantes mediante llamadas directas.
+- **Criterios de aceptación:**
+  - Las pruebas de fallos inducidos en cada etapa no dejan operaciones silenciosamente incompletas.
+  - La recuperación no genera movimientos duplicados.
+  - Los cargos, abonos, saldos a favor y asientos concuerdan tras la recuperación.
   - Intentar consultar el estado de cuenta de un tercero devuelve un error de permiso denegado.
+  - Los cambios conservan trazabilidad completa.
 - **Riesgo de Regresión:** Bajo.
-- **Dependencias:** `getStudentAccountStatement`, `assertRecordOwnership`.
+- **Dependencias:** T-PAG-01 y T-PAG-02.
 
 ---
 
-### T-PAG-04 [P1] — Verificación fiscal de facturación SAR (CAI, rangos y comprobante fiscal)
+### T-PAG-04 [P0] — Verificación fiscal SAR Honduras (CAI, rangos) e integración segura de pasarelas
 
-- **Componentes relacionados:** `backend/accounting-service/Code.gs` (`createFiscalInvoice`), `dashboard-contabilidad.html`.
-- **Problema detectado:** Validar que cada factura fiscal emitida cumpla con los requisitos del SAR de Honduras (CAI activo, correlativo dentro de rango y fecha límite válida).
-- **Requisitos funcionales:**
-  1. Verificar disponibilidad de números en `RangoInicial` a `RangoFinal` en `FacturasFiscales`.
-  2. Asignar el consecutivo de forma atómica y calcular el impuesto del 15% ISV cuando aplique.
-- **Criterios de Aceptación:**
-  - Facturas fiscales emitidas presentan desglose tributario exacto y correlativo CAI consecutivo.
+- **Componentes relacionados:** `backend/accounting-service/Code.gs` (`FacturasFiscales`, `createFiscalInvoice`, `testGatewayConnection`, `configureGatewayIntegration`), `dashboard-contabilidad.html`.
+- **Problema que se debe resolver:** Las facturas fiscales emitidas deben cumplir con la normativa del SAR de Honduras (CAI activo, correlativo en rango y fecha límite válida). Además, las pasarelas de pago externas deben procesar notificaciones de forma segura e idempotente.
+- **Requisitos funcionales y técnicos:**
+  1. Validar disponibilidad de números en `RangoInicial` a `RangoFinal` y vigencia de `FechaLimiteEmision` en `FacturasFiscales` antes de emitir.
+  2. Verificar en el servidor que el número de documento pertenece al rango autorizado, no está previamente asignado y se emite dentro de la vigencia aplicable.
+  3. Reservar y asignar consecutivos de manera segura ante solicitudes concurrentes (integrado con `T-PAG-01`).
+  4. Impedir la emisión si el rango se agotó, la autorización está vencida o inactiva.
+  5. Mantener la trazabilidad de cada documento fiscal desde su emisión hasta su anulación o corrección, sin reutilizar números consumidos.
+  6. Separar el documento fiscal emitido de los recibos internos de caja (`generatePaymentReceiptPDF`) y comprobantes de depósito.
+  7. Configurar impuestos, exenciones, descuentos, bases imponibles y redondeos (ISV 15%) conforme a la normativa SAR.
+  8. Implementar recepción idempotente de notificaciones Webhook de pasarelas (PixelPay, BAC, Ficohsa) en `testGatewayConnection` y `configureGatewayIntegration`.
+  9. Verificar las firmas criptográficas o tokens oficiales del proveedor para confirmar transacciones asíncronas.
+  10. No marcar un pago como exitoso solo por recibir una redirección del navegador; la confirmación debe basarse en un Webhook autenticado.
+- **Alcance y Cambios necesarios:**
+  - Ampliar el modelo `FacturasFiscales` en `backend/accounting-service/Code.gs`.
+  - Centralizar las validaciones fiscales SAR en el backend.
+  - Integrar la asignación atómica de consecutivos con `T-PAG-01`.
+  - Completar los adaptadores de pasarelas de pago con validación de firmas digitales y persistencia de eventos.
+- **Comportamiento esperado:** Ninguna factura fiscal se emitirá fuera de rango o vencida. Las respuestas Webhook válidas de pasarelas de pago confirmarán las transacciones automáticamente sin duplicar abonos ante llamadas repetidas.
+- **Criterios de aceptación:**
+  - Se rechaza un CAI vencido o fuera de rango e informa el motivo.
+  - Dos emisiones simultáneas no reciben el mismo número.
+  - Las notificaciones Webhook auténticas actualizan el estado una sola vez.
+  - No se almacenan datos completos de tarjetas de crédito o códigos CVV.
 - **Riesgo de Regresión:** Bajo.
-- **Dependencias:** `FacturasFiscales`.
+- **Dependencias:** T-PAG-01, T-PAG-02 y T-PAG-03.
 
 ---
 
-### T-PAG-05 [P1] — Prevención de auto-aprobación en anulación de cargos y reembolso de valores
+### T-PAG-05 [P1] — Separación de funciones, prevención de auto-aprobación y conciliación de pasarelas
+
+- **Componentes relacionados:** `backend/accounting-service/Code.gs`, `backend/user-service/Code.gs` (`ROLE_PERMISSIONS`).
+- **Problema que se debe resolver:** Prevenir que un usuario financiero apruebe sus propias operaciones, anulaciones o reembolsos, asegurando además la conciliación entre cobros brutos, comisiones del proveedor y depósitos netos.
+- **Requisitos funcionales y técnicos:**
+  1. Exigir en el servidor que la anulación de cargos en `CargosEstudiante` o aprobación de devoluciones sea ejecutada por un usuario distinto al creador.
+  2. Implementar niveles de aprobación por importe, centro de costo y tipo de gasto en `ROLE_PERMISSIONS`.
+  3. Diferenciar entre pago informado, pago aprobado, pago confirmado por pasarela, movimiento bancario conciliado y liquidación neta recibida.
+  4. Permitir conciliar movimientos por importe, fecha, referencia, cuenta bancaria, identificador del proveedor y tolerancias configuradas.
+  5. Mostrar sugerencias de coincidencia automática sin confirmar de forma irreversible una asociación ambigua.
+  6. Mantener la separación entre el importe bruto pagado por la familia, las comisiones del proveedor y el importe neto recibido en la contabilidad general.
+- **Alcance y Cambios necesarios:**
+  - Revisar las reglas RBAC en `backend/user-service/Code.gs` y las funciones de anulación/reembolso en `backend/accounting-service/Code.gs`.
+  - Desarrollar el módulo de conciliación de pasarelas en `dashboard-contabilidad.html` / `js/accounting.js`.
+  - Registrar autoría, fecha y motivo en la bitácora de auditoría para cada anulación o reverso.
+- **Comportamiento esperado:** Intento de auto-anular o auto-aprobar un movimiento financiero por el mismo creador es rechazado. El sistema concilia ingresos brutos y comisiones de pasarela sin alterar el abono al estudiante.
+- **Criterios de aceptación:**
+  - La auto-aprobación o auto-anulación es bloqueada en el backend.
+  - Un pago con comisión de pasarela queda conciliado por su importe bruto y su liquidación neta con la comisión desglosada.
+  - Las anulaciones y reversos conservan su trazabilidad completa.
+- **Riesgo de Regresión:** Bajo.
+- **Dependencias:** T-PAG-01, T-PAG-03 y T-PAG-04.
+
+---
+
+### T-PAG-06 [P1/P2] — Pagos parciales, sobrepagos, anticipos y emisión de recibos oficiales PDF con QR
+
+- **Componentes relacionados:** `backend/accounting-service/Code.gs` (`recordStudentPayment`, `generatePaymentReceiptPDF`), `dashboard-contabilidad.html`, `js/student.js`.
+- **Problema que se debe resolver:** Administrar abonos parciales, acreditar sobrepagos como saldos a favor y emitir recibos oficiales PDF con código QR y verificación digital de autenticidad.
+- **Requisitos funcionales y técnicos:**
+  1. Actualizar el estado del cargo en `CargosEstudiante` a `Parcial` al recibir un abono menor al total, recalculando el saldo pendiente exacto.
+  2. Registrar sobrepagos o anticipos en `PagosAbonos` con la etiqueta `SaldoAFavor` para su aplicación a cuotas futuras.
+  3. Generar la representación PDF de `generatePaymentReceiptPDF` incluyendo código QR con token único de verificación no predecible.
+  4. Implementar un endpoint o página de verificación que compruebe la autenticidad e integridad del recibo sin exponer datos privados innecesarios.
+  5. Diferenciar claramente los recibos de caja de las facturas fiscales autorizadas por el SAR.
+  6. Permitir la descarga directa desde el portal del estudiante y el panel de contabilidad.
+- **Alcance y Cambios necesarios:**
+  - Actualizar `recordStudentPayment` y `generatePaymentReceiptPDF` en `backend/accounting-service/Code.gs`.
+  - Añadir el generador de QR y la página de validación digital de documentos.
+  - Habilitar el desglose de abonos parciales y anticipos en `js/student.js` / `student-dashboard.html`.
+- **Comportamiento esperado:** Abonos parciales reducen el saldo pendiente exacto; sobrepagos quedan disponibles como anticipos. Los recibos emitidos incluyen un código QR escaneable para validación pública de autenticidad.
+- **Criterios de aceptación:**
+  - Un abono parcial actualiza el saldo pendiente y el excedente se almacena como crédito a favor.
+  - Escanear el QR de un recibo confirma su validez, número correlativo, monto y estado (Activo/Anulado).
+  - Un PDF modificado que altere importes falla la validación de integridad.
+- **Riesgo de Regresión:** Nulo.
+- **Dependencias:** T-PAG-02, T-PAG-03 y T-PAG-07.
+
+---
+
+### T-PAG-07 [P1/P2] — Gestión de tarifas, recargos por mora, becas, descuentos y convenios
+
+- **Componentes relacionados:** `backend/accounting-service/Code.gs` (`TarifasPlanPago`, `ConceptosCobro`, `DescuentosBecas`), `js/student.js`.
+- **Problema que se debe resolver:** Sincronizar automáticamente la aplicación de tarifas, becas institucionales, descuentos familiares por hermanos, convenios y recargos por mora en la generación periódica de mensualidades.
+- **Requisitos funcionales y técnicos:**
+  1. Permitir configurar tarifas en `TarifasPlanPago` por año lectivo, grado, sección, jornada y concepto en `ConceptosCobro`.
+  2. Consultar reglas activas en `DescuentosBecas` al calcular la mensualidad, aplicando el porcentaje o monto fijo de descuento al `MontoBase` para registrar el `MontoFinal` exigible.
+  3. Evitar aplicar dos veces un mismo beneficio y resolver de forma determinista la coincidencia de varios descuentos.
+  4. Mantener la instantánea de la tarifa y reglas que dieron origen al cargo; editar una tarifa no modifica retroactivamente cargos ya emitidos.
+  5. Implementar proceso automático que evalúe cargos vencidos superada la `FechaVencimiento` y aplique el recargo por mora configurado.
+  6. Hacer que la generación periódica de cargos sea idempotente para no crear duplicados si se ejecuta de nuevo.
+- **Alcance y Cambios necesarios:**
+  - Ampliar `TarifasPlanPago`, `ConceptosCobro` y `DescuentosBecas` en `backend/accounting-service/Code.gs`.
+  - Revisar la generación automática de mensualidades en el servicio académico.
+  - Incorporar validaciones de fechas, elegibilidad y reglas de mora.
+- **Comportamiento esperado:** Estudiantes con beca o descuento aprobado reciben sus cargos mensuales calculados con precisión. Las cuotas no pagadas a la fecha límite reciben el recargo por mora configurado.
+- **Criterios de aceptación:**
+  - Estudiantes con beca reciben cargos con el descuento aplicado automáticamente.
+  - La reejecución del proceso de generación de cargos no produce cobros duplicados.
+  - Los cargos vencidos reciben el recargo por mora al día siguiente del vencimiento.
+- **Riesgo de Regresión:** Bajo.
+- **Dependencias:** T-PAG-03 y T-PAG-08.
+
+---
+
+### T-PAG-08 [P1/P2] — Ampliación del estado de cuenta individual y consolidado familiar multihijo
+
+- **Componentes relacionados:** `backend/accounting-service/Code.gs` (`getStudentAccountStatement`), `backend/user-service/Code.gs` (`getGuardianStudents`, `getFamilyConsolidatedSummary`), `student-dashboard.html`.
+- **Problema que se debe resolver:** Ofrecer una vista financiera completa, transparente y consolidada para familias con múltiples hijos matriculados, permitiendo consultar cargos, abonos, beneficios y saldos por estudiante e institucionales.
+- **Requisitos funcionales y técnicos:**
+  1. Mostrar cada cargo con concepto, período, fecha de emisión, vencimiento, importe base, descuento, abonos, saldo pendiente y estado (`Pendiente`, `Parcial`, `Pagado`, `Vencido`, `En revision`, `Anulado`).
+  2. Consolidar las obligaciones en `getFamilyConsolidatedSummary` para encargados con varios hijos, permitiendo ver el total familiar y desglosar por estudiante individual en `getStudentAccountStatement`.
+  3. Mostrar anticipos y saldos a favor como créditos diferenciados de las deudas.
+  4. Incorporar un historial cronológico de movimientos con saldo resultante.
+  5. Permitir la exportación e impresión en PDF del estado de cuenta con fecha de corte.
+  6. Garantizar que los totales consolidados familiares coincidan exactamente con la suma de los saldos de cada estudiante.
+  7. Bloquear en el servidor que un usuario consulte la cuenta financiera de estudiantes sin relación familiar verificada (`RelacionesEstudianteTutor`).
+- **Alcance y Cambios necesarios:**
+  - Ampliar `getStudentAccountStatement` y `getFamilyConsolidatedSummary` en `backend/accounting-service/Code.gs`.
+  - Actualizar la interfaz del portal familiar en `student-dashboard.html` / `js/student.js`.
+  - Incluir filtros por estudiante, período, concepto y estado de cobro.
+- **Comportamiento esperado:** Los padres de familia visualizan el saldo total consolidado de todos sus hijos y pueden acceder al desglose de cargos y abonos de cada uno.
+- **Criterios de aceptación:**
+  - La suma de los estados de cuenta individuales coincide con el resumen familiar consolidado.
+  - Los pagos parciales y saldos a favor se presentan de forma transparente.
+  - Intentos de acceso cruzado entre cuentas sin parentesco son bloqueados.
+- **Riesgo de Regresión:** Bajo.
+- **Dependencias:** T-PAG-03 y T-PAG-07.
+
+---
+
+### T-PAG-09 [P1/P2] — Distribución de pagos entre cargos, reglas de prioridad y gestión de anticipos
+
+- **Componentes relacionados:** `backend/accounting-service/Code.gs` (`PagosAbonos`, `recordStudentPayment`), `js/accounting.js`.
+- **Problema que se debe resolver:** Asegurar que la distribución de pagos entre varias obligaciones sea explícita, trazable y basada en reglas de prioridad configurables, gestionando anticipos de forma clara.
+- **Requisitos funcionales y técnicos:**
+  1. Permitir aplicar un pago a un cargo específico o distribuirlo entre múltiples cargos autorizados en `PagosAbonos`.
+  2. Definir reglas de prioridad configurables (e.g., cuota más antigua vencida primero, o cargos de colegiatura sobre servicios opcionales).
+  3. Mostrar la propuesta de distribución antes de confirmarla cuando el abono cubra varias deudas.
+  4. Registrar el excedente como un crédito/anticipo en `PagosAbonos` con fecha, origen y saldo disponible.
+  5. No transferir automáticamente saldos a favor entre estudiantes de la misma familia salvo autorización explícita documentada.
+  6. Impedir que la suma aplicada supere el importe del pago recibido.
+  7. Registrar correcciones o reasignaciones como movimientos nuevos con historial, sin sobrescribir los registros originales.
+- **Alcance y Cambios necesarios:**
+  - Modificar la lógica de aplicación en `recordStudentPayment` de `backend/accounting-service/Code.gs`.
+  - Crear la estructura para saldo a favor y movimientos de créditos en `PagosAbonos`.
+  - Añadir vista de distribución y reasignación de abonos en `dashboard-contabilidad.html`.
+- **Comportamiento esperado:** Cada pago recibido se aplica a las deudas indicadas o se registra como saldo a favor. Las correcciones de distribución conservan la trazabilidad original.
+- **Criterios de aceptación:**
+  - La suma de aplicaciones más el saldo a favor es exactamente igual al pago recibido.
+  - Reasignaciones de pagos conservan el registro previo y documentan el motivo y responsable.
+  - Los créditos no aplicados permanecen disponibles para el estudiante correspondiente.
+- **Riesgo de Regresión:** Bajo.
+- **Dependencias:** T-PAG-03, T-PAG-07 y T-PAG-08.
+
+---
+
+### T-PAG-10 [P1/P2] — Flujo de reembolsos, anulaciones de cargos y correcciones financieras
 
 - **Componentes relacionados:** `backend/accounting-service/Code.gs`, `backend/user-service/Code.gs`.
-- **Problema detectado:** El usuario que registra un cobro o cargo no debe poder anularlo o autorizar un reembolso sin la revisión independiente de la Dirección o Contabilidad.
-- **Requisitos funcionales:**
-  1. Exigir que la anulación de cargos en `CargosEstudiante` sea ejecutada por un usuario distinto al creador.
-  2. Registrar el motivo de anulación y autoría en la bitácora de auditoría.
-- **Criterios de Aceptación:**
-  - Intento de auto-anular un cargo por el mismo usuario registrador es rechazado por el servidor.
+- **Problema que se debe resolver:** Diferenciar la anulación de cargos, el rechazo de comprobantes, la cancelación de pagos no liquidados y la devolución de fondos efectivamente recibidos con auditoría completa.
+- **Requisitos funcionales y técnicos:**
+  1. Exigir motivo obligatorio, fecha, usuario responsable y permisos específicos para reembolsos y anulaciones.
+  2. Requerir aprobación de la Dirección para devoluciones o anulaciones que superen el monto límite configurado.
+  3. Vincular la anulación o reembolso con el pago u obligación original, su asiento contable y sus documentos.
+  4. Permitir devoluciones parciales, garantizando que el total reembolsado no exceda el pago original.
+  5. Si el reembolso se procesa vía pasarela de pago, registrar el identificador de la transacción de reverso.
+  6. Restituir los saldos del estudiante en `CargosEstudiante` sin borrar los movimientos contables históricos.
+  7. Marcar los recibos o comprobantes afectados con el estado `Anulado` o `Reembolsado`.
+- **Alcance y Cambios necesarios:**
+  - Revisar los flujos de reversión en `backend/accounting-service/Code.gs`.
+  - Definir roles con facultad de devolución en `ROLE_PERMISSIONS`.
+  - Crear historial de reversos y notas de crédito en `dashboard-contabilidad.html`.
+- **Comportamiento esperado:** La anulación o devolución deja evidencia completa del reverso financiero sin eliminar la historia original del cobro.
+- **Criterios de aceptación:**
+  - No es posible reembolsar un monto superior al recibido y disponible.
+  - La anulación genera los asientos de reverso contables por partida doble.
+  - Todos los documentos impresos o PDF de la transacción anulada muestran la marca de agua `ANULADO`.
 - **Riesgo de Regresión:** Bajo.
-- **Dependencias:** `ROLE_PERMISSIONS`, `CargosEstudiante`.
+- **Dependencias:** T-PAG-01, T-PAG-02 y T-PAG-03.
 
 ---
 
-### T-PAG-06 [P2] — Gestión de pagos parciales, saldos pendientes y acreditación de sobrepagos
+### T-PAG-11 [P1/P2] — Visor de comprobantes bancarios adjuntos, validación de archivos y cola de revisión
 
-- **Componentes relacionados:** `backend/accounting-service/Code.gs` (`recordStudentPayment`), `js/student.js`.
-- **Problema detectado:** Gestionar adecuadamente abonos parciales a colegiaturas calculando el saldo pendiente y acreditando excedentes como saldo a favor para cuotas futuras.
-- **Requisitos funcionales:**
-  1. Actualizar el estado del cargo a `Parcial` al recibir un abono menor al total.
-  2. Registrar sobrepagos en `PagosAbonos` con la etiqueta `SaldoAFavor` para su aplicación automática en la siguiente mensualidad.
-- **Criterios de Aceptación:**
-  - Un abono parcial actualiza el saldo pendiente en el estado de cuenta y el excedente se guarda como saldo a favor.
+- **Componentes relacionados:** `backend/accounting-service/Code.gs` (`uploadPaymentVoucher`, `reviewPaymentVoucher`), `dashboard-contabilidad.html`, `js/accounting.js`.
+- **Problema que se debe resolver:** Mejorar la calidad de los archivos de comprobante subidos por los usuarios, previsualizarlos eficientemente y optimizar la cola de revisión financiera.
+- **Requisitos funcionales y técnicos:**
+  1. Validar formato, tamaño máximo (e.g. 5 MB), extensión y estructura real del archivo subido en `uploadPaymentVoucher`.
+  2. Implementar un visor integrado en `dashboard-contabilidad.html` con previsualización modal de imágenes (PNG/JPG) y PDFs almacenados en Drive.
+  3. Permitir zoom, rotación y descarga segura del comprobante con permisos verificados.
+  4. Identificar posibles duplicados por referencia bancaria, importe y fecha antes de la aprobación.
+  5. Exigir observaciones obligatorias al rechazar un comprobante e informar al usuario en su portal con opción de reenvío.
+  6. Registrar quién revisó, fecha, hora y decisión tomada en `reviewPaymentVoucher`.
+- **Alcance y Cambios necesarios:**
+  - Actualizar `uploadPaymentVoucher` y `reviewPaymentVoucher` en `backend/accounting-service/Code.gs`.
+  - Construir el visor de evidencia documental en `js/accounting.js` / `dashboard-contabilidad.html`.
+  - Asegurar que los archivos en Drive no tengan acceso público desprotegido.
+- **Comportamiento esperado:** El personal financiero evalúa la imagen clara del comprobante en pantalla y lo aprueba o rechaza motivadamente sin descargar manualmente cada archivo.
+- **Criterios de aceptación:**
+  - Archivos corruptos o no permitidos se rechazan al intentar subirlos.
+  - El modal del visor muestra la imagen o PDF del depósito bancario con controles de zoom.
+  - El rechazo notifica a la familia e indica el motivo de la corrección requerida.
 - **Riesgo de Regresión:** Nulo.
-- **Dependencias:** `CargosEstudiante`, `PagosAbonos`.
+- **Dependencias:** T-PAG-01, T-PAG-02 y T-PAG-08.
 
 ---
 
-### T-PAG-07 [P2] — Aplicación automática de becas, descuentos familiares y convenios de pago
+### T-PAG-12 [P1/P2] — Control de facturación fiscal SAR, disponibilidad de rangos CAI y alertas
 
-- **Componentes relacionados:** `backend/accounting-service/Code.gs` (`DescuentosBecas`), `js/student.js`.
-- **Problema detectado:** Sincronizar automáticamente las resoluciones de becas institucionales y descuentos por hermanos en la generación de cargos mensuales.
-- **Requisitos funcionales:**
-  1. Consultar reglas activas en `DescuentosBecas` al calcular la mensualidad.
-  2. Aplicar el porcentaje o monto fijo de descuento al `MontoBase` registrando el `MontoFinal` exigible.
-- **Criterios de Aceptación:**
-  - Estudiantes con beca aprobada reciben sus cargos con el descuento aplicado automáticamente.
+- **Componentes relacionados:** `backend/accounting-service/Code.gs` (`FacturasFiscales`, `createFiscalInvoice`), `dashboard-contabilidad.html`.
+- **Problema que se debe resolver:** Reforzar el control sobre la emisión de facturas SAR, monitorear la disponibilidad de números en el rango asignado y alertar sobre vencimientos CAI.
+- **Requisitos funcionales y técnicos:**
+  1. Validar vigencia del CAI y disponibilidad de correlativos en `FacturasFiscales` antes de confirmar la emisión.
+  2. Asignar el número atómicamente evitando salteos o duplicados por solicitudes concurrentes (`T-PAG-01`).
+  3. Disparar alertas preventivas en la bandeja financiera cuando queden menos de 50 facturas en el rango o falten 15 días para la `FechaLimiteEmision`.
+  4. Desglosar subtotal, exoneraciones, descuentos e impuesto (ISV 15%) de acuerdo con las normativas vigentes del SAR de Honduras.
+  5. Permitir la regeneración del PDF de la factura emitida conservando los datos originales.
+- **Alcance y Cambios necesarios:**
+  - Modificar `createFiscalInvoice` y `getFiscalInvoices` en `backend/accounting-service/Code.gs`.
+  - Agregar el panel de monitoreo de autorizaciones CAI en `dashboard-contabilidad.html`.
+  - Incorporar alertas automáticas en `BandejaNotificaciones`.
+- **Comportamiento esperado:** La emisión fiscal se realiza dentro de los parámetros autorizados por el SAR. La plataforma advierte a contabilidad cuando el rango CAI está próximo a agotarse.
+- **Criterios de aceptación:**
+  - El sistema impide facturar si el CAI expiró o el rango se agotó.
+  - La bandeja de administración financiera muestra avisos cuando el inventario de facturas es bajo.
+  - Los importes e impuestos coinciden exactamente con la liquidación del cobro.
 - **Riesgo de Regresión:** Bajo.
-- **Dependencias:** `DescuentosBecas`, `CargosEstudiante`.
+- **Dependencias:** T-PAG-01, T-PAG-02, T-PAG-03 y T-PAG-04.
 
 ---
 
-### T-PAG-08 [P2] — Módulo de pasarelas de pago en línea y simulación de Webhooks idempotentes
+### T-PAG-13 [P1/P2] — Gestión de proveedores de pasarela, secretos y configuraciones de entorno
 
-- **Componentes relacionados:** `backend/accounting-service/Code.gs` (`testGatewayConnection`, `configureGatewayIntegration`).
-- **Problema detectado:** Asegurar que las notificaciones asíncronas (Webhooks) de pasarelas de pago (PixelPay, BAC) confirmen las transacciones de forma segura e idempotente.
-- **Requisitos funcionales:**
-  1. Validar la firma digital criptográfica de las notificaciones Webhook entrantes.
-  2. Confirmar el pago en `CargosEstudiante` solo si el estado de la transacción es `Aprobado` y el monto coincide.
-- **Criterios de Aceptación:**
-  - Las respuestas Webhook válidas confirman el pago automáticamente sin duplicar abonos ante llamadas repetidas.
-- **Riesgo de Regresión:** Nulo.
-- **Dependencias:** `IntegracionesProveedores`.
-
----
-
-### T-PAG-09 [P2] — Generación automática de recargos por mora y políticas de vencimiento
-
-- **Componentes relacionados:** `backend/accounting-service/Code.gs`, `dashboard-contabilidad.html`.
-- **Problema detectado:** Aplicar recargos o mora por pago extemporáneo una vez superada la `FechaVencimiento` según la política institucional configurada.
-- **Requisitos funcionales:**
-  1. Ejecutar proceso nocturno que evalúe cargos `Pendiente` con `FechaVencimiento` vencida.
-  2. Generar el cargo adicional por recargo o aplicar el porcentaje de mora configurado.
-- **Criterios de Aceptación:**
-  - Los cargos vencidos reciben el recargo por mora configurado al día siguiente del vencimiento.
+- **Componentes relacionados:** `backend/accounting-service/Code.gs` (`IntegracionesProveedores`, `configureGatewayIntegration`, `testGatewayConnection`), `dashboard-contabilidad.html`.
+- **Problema que se debe resolver:** Administrar de forma segura las credenciales de pasarelas de pago, separando entornos de prueba (Sandbox) y producción, evitando la exposición de claves secretas.
+- **Requisitos funcionales y técnicos:**
+  1. Almacenar credenciales cifradas/ocultas en `IntegracionesProveedores` en `backend/accounting-service/Code.gs`.
+  2. Impedir que claves secretas (API Keys, Secret Tokens) sean retornadas en respuestas API al cliente o expuestas en logs.
+  3. Separar explícitamente la configuración de Sandbox y Producción para PixelPay, BAC Credomatic y Ficohsa.
+  4. Proveer prueba de conectividad segura en `testGatewayConnection` enviando ping de verificación sin ejecutar transacciones reales.
+  5. Registrar cambios de configuración con usuario, fecha e IP en auditoría.
+- **Alcance y Cambios necesarios:**
+  - Refactorizar `configureGatewayIntegration` y `testGatewayConnection` en `backend/accounting-service/Code.gs`.
+  - Ocultar valores sensibles en las vistas de `dashboard-contabilidad.html`.
+  - Crear mecanismos de rotación de credenciales.
+- **Comportamiento esperado:** El administrador prueba la conexión con la pasarela sin revelar claves privadas en el código frontend ni en llamadas API.
+- **Criterios de aceptación:**
+  - Las claves secretas nunca aparecen en el inspector de red o HTML.
+  - El modo Sandbox permite transacciones de prueba sin afectar producción.
+  - La prueba de conexión confirma el estado del servicio externo.
 - **Riesgo de Regresión:** Bajo.
-- **Dependencias:** `CargosEstudiante`.
+- **Dependencias:** T-PAG-04.
 
 ---
 
-### T-PAG-10 [P2] — Visor y visor de evidencias de comprobantes bancarios adjuntos
+### T-PAG-14 [P1/P2] — Sincronización contable automática por partida doble y conciliación de cobros
 
-- **Componentes relacionados:** `dashboard-contabilidad.html`, `js/accounting.js`.
-- **Problema detectado:** Proveer un visor de comprobantes bancarios en el panel de revisión financiera que permita previsualizar imágenes y documentos PDF almacenados en Drive.
-- **Requisitos funcionales:**
-  1. Renderizar modal con previsualización del archivo adjunto al seleccionar un comprobante en la cola de revisión.
-  2. Permitir zoom, rotación y descarga directa con permisos verificados.
-- **Criterios de Aceptación:**
-  - El revisor financiero previsualiza claramente la imagen del depósito bancario antes de aprobar o rechazar.
-- **Riesgo de Regresión:** Nulo.
-- **Dependencias:** `ComprobantesPago`, `dashboard-contabilidad.html`.
-
----
-
-### T-PAG-11 [P2] — Reporte de morosidad y alertas automáticas a responsables financieros
-
-- **Componentes relacionados:** `backend/accounting-service/Code.gs`, `backend/user-service/Code.gs`.
-- **Problema detectado:** Enviar recordatorios de pago preventivos y avisos de cobro por correo/bandeja a tutores con saldo vencido.
-- **Requisitos funcionales:**
-  1. Identificar responsables financieros con cuotas vencidas en `getStudentAccountStatement`.
-  2. Enviar notificación con el desglose de cuotas pendientes y enlace para subir el comprobante.
-- **Criterios de Aceptación:**
-  - El sistema envía avisos de cobro a responsables con mensualidades vencidas adjuntando el estado de cuenta.
-- **Riesgo de Regresión:** Nulo.
-- **Dependencias:** `BandejaNotificaciones`, `CargosEstudiante`.
-
----
-
-### T-PAG-12 [P2] — Sincronización entre cobros confirmados y libro mayor contable
-
-- **Componentes relacionados:** `backend/accounting-service/Code.gs` (`recordAccountingJournalEntry`), `backend/user-service/Code.gs`.
-- **Problema detectado:** Garantizar que cada comprobante aprobado genere el asiento de ingreso correspondiente en la contabilidad general.
-- **Requisitos funcionales:**
-  1. Disparar `recordAccountingJournalEntry` al aprobar un pago en `reviewPaymentVoucher`.
-  2. Registrar la partida doble (`Debe: Caja/Bancos`, `Haber: Cuentas por Cobrar Estudiantes`).
-- **Criterios de Aceptación:**
-  - La aprobación de un pago genera inmediatamente el asiento contable balanceado en `AsientosContables`.
+- **Componentes relacionados:** `backend/accounting-service/Code.gs` (`recordAccountingJournalEntry`, `reviewPaymentVoucher`), `backend/user-service/Code.gs`.
+- **Problema que se debe resolver:** Asegurar que cada cobro aprobado o transacción confirmada genere inmediatamente su asiento contable balanceado en la contabilidad general.
+- **Requisitos funcionales y técnicos:**
+  1. Disparar `recordAccountingJournalEntry` al aprobar un comprobante de pago o confirmarse un cobro en línea.
+  2. Generar el asiento por partida doble (`Debe: Caja/Bancos`, `Haber: Cuentas por Cobrar Estudiantes`), registrando la comisión del proveedor en cuenta de gasto si aplica.
+  3. Vincular el asiento mediante `OrigenModulo: "Cobros"` y `ReferenciaId: ComprobanteID`.
+  4. Prevenir asientos duplicados si la operación es reintentada (`T-PAG-02`).
+  5. Verificar la igualdad matemática estricta de débitos y créditos (`Math.abs(debe - haber) <= 0.01`).
+- **Alcance y Cambios necesarios:**
+  - Vincular `reviewPaymentVoucher` y `recordStudentPayment` con `recordAccountingJournalEntry` en `backend/accounting-service/Code.gs`.
+  - Crear reporte de conciliación entre libro auxiliar de cobros y libro mayor.
+- **Comportamiento esperado:** Todo dinero recibido se refleja instantáneamente en los libros contables sin requerir digitación manual posterior.
+- **Criterios de aceptación:**
+  - Cada cobro aprobado genera un asiento contable balanceado con referencia de origen.
+  - El reporte confirma la coincidencia exacta entre la cobranza auxiliar y la cuenta de mayor.
 - **Riesgo de Regresión:** Bajo.
-- **Dependencias:** `reviewPaymentVoucher`, `recordAccountingJournalEntry`.
+- **Dependencias:** T-PAG-02, T-PAG-03 y T-PAG-05.
 
 ---
 
-### T-PAG-13 [P3] — Dashboard visual de cobranza, recaudación diaria y proyecciones
+### T-PAG-15 [P2] — Notificaciones financieras automáticas, avisos de cobro y recordatorios
 
-- **Componentes relacionados:** `js/accounting.js`, `js/ui-common.js` (`renderUniversalConfigurableChart`), `dashboard-contabilidad.html`.
-- **Problema detectado:** Presentar gráficos dinámicos de proyección de ingresos, recaudación del mes y tasa de efectividad de cobro.
-- **Requisitos funcionales:**
-  1. Renderizar gráficos de barras y dona utilizando `renderUniversalConfigurableChart`.
-  2. Filtrar métricas por nivel educativo, grado y mes.
-- **Criterios de Aceptación:**
-  - El dashboard financiero muestra gráficos comparativos de cobranza estimada vs recaudada.
+- **Componentes relacionados:** `backend/accounting-service/Code.gs`, `backend/user-service/Code.gs` (`BandejaNotificaciones`), `js/student.js`.
+- **Problema que se debe resolver:** Notificar oportunamente a las familias sobre la emisión de mensualidades, vencimientos próximos, estados de comprobantes subidos y solicitudes de reintento tras rechazos.
+- **Requisitos funcionales y técnicos:**
+  1. Emitir avisos automáticos en `BandejaNotificaciones` e email al:
+     - Generar las mensualidades del mes.
+     - Faltar 5 días para la fecha de vencimiento de la cuota.
+     - Aprobarse un comprobante de pago subido.
+     - Rechazarse un comprobante (indicando el motivo).
+     - Emitirse una devolución o nota de crédito.
+  2. Evitar notificaciones duplicadas mediante claves de deduplicación de eventos (`T-PAG-02`).
+  3. Adjuntar resumen del saldo pendiente y enlace directo para realizar la carga del nuevo comprobante.
+- **Alcance y Cambios necesarios:**
+  - Configurar las reglas de envio en `backend/accounting-service/Code.gs` / `backend/user-service/Code.gs`.
+  - Crear plantillas formateadas para notificaciones de cobranza.
+- **Comportamiento esperado:** La familia se mantiene informada del estado de sus obligaciones y recibe retroalimentación inmediata sobre sus pagos.
+- **Criterios de aceptación:**
+  - El rechazo de un comprobante envía inmediatamente una notificación a la familia indicando la causa.
+  - Los recordatorios no se duplican tras ejecuciones repetidas.
 - **Riesgo de Regresión:** Nulo.
-- **Dependencias:** `renderUniversalConfigurableChart`.
+- **Dependencias:** T-PAG-02 y T-PAG-03.
 
 ---
 
-### T-PAG-14 [P3] — Emisión de recibos oficiales PDF con código QR y verificación digital
+### T-PAG-16 [P2] — Centro de control financiero de cobranza, reporte de morosidad e incidencias
 
-- **Componentes relacionados:** `backend/accounting-service/Code.gs` (`generatePaymentReceiptPDF`), `dashboard-contabilidad.html`.
-- **Problema detectado:** Emitir el recibo de caja oficial en PDF con código QR de verificación de autenticidad.
-- **Requisitos funcionales:**
-  1. Generar la representación PDF de `generatePaymentReceiptPDF` incluyendo código QR con token de verificación.
-  2. Permitir la descarga directa desde la vista del estudiante y del cajero.
-- **Criterios de Aceptación:**
-  - El PDF del recibo contiene el código QR que redirige a la página de validación oficial del documento.
+- **Componentes relacionados:** `dashboard-contabilidad.html`, `js/accounting.js`, `backend/accounting-service/Code.gs` (`getStudentAccountStatement`).
+- **Problema que se debe resolver:** Proveer a la administración un centro de control con métricas de recaudación, antigüedad de saldos vencidos, seguimiento de morosidad y resolución de incidencias de cobro.
+- **Requisitos funcionales y técnicos:**
+  1. Construir en `dashboard-contabilidad.html` la vista "Centro de Control de Cobranzas y Morosidad".
+  2. Agrupar la cartera vencida en tramos de mora (Al día, 1-30 días, 31-60 días, 61-90 días, >90 días).
+  3. Renderizar gráficos comparativos mediante `renderUniversalConfigurableChart` mostrando efectividad de cobro por grado y nivel.
+  4. Ofrecer exportación a Excel y PDF del reporte de morosidad con filtros por nivel y fecha de corte.
+  5. Permitir la gestión de acuerdos de pago o compromisos con fecha de seguimiento.
+- **Alcance y Cambios necesarios:**
+  - Desarrollar las agregaciones en `backend/accounting-service/Code.gs`.
+  - Crear la interfaz analítica en `dashboard-contabilidad.html` / `js/accounting.js`.
+  - Conectar los gráficos con `renderUniversalConfigurableChart`.
+- **Comportamiento esperado:** El personal financiero identifica la morosidad institucional por antigüedad, gestiona acuerdos de pago y exporta listas de cobro.
+- **Criterios de aceptación:**
+  - El informe de antigüedad agrupa adecuadamente la cartera vencida por tramos de días.
+  - Los gráficos muestran la tasa de efectividad de cobranza mensual.
+  - Las exportaciones coinciden con los saldos consolidados de los estados de cuenta.
 - **Riesgo de Regresión:** Nulo.
-- **Dependencias:** `generatePaymentReceiptPDF`.
-
----
-
-### T-PAG-15 [P3] — Herramienta de conciliación entre cargos académicos y cobranza realizada
-
-- **Componentes relacionados:** `backend/accounting-service/Code.gs`.
-- **Problema detectado:** Auditar que todos los estudiantes matriculados tengan sus cargos correspondientes y que no existan cuotas sin facturar.
-- **Requisitos funcionales:**
-  1. Desarrollar la rutina `reconcileEnrollmentCharges()`.
-  2. Detectar estudiantes matriculados sin plan de pago asignado o mensualidades faltantes.
-- **Criterios de Aceptación:**
-  - La rutina identifica estudiantes con inconsistencias entre su plan de estudios y los cargos generados.
-- **Riesgo de Regresión:** Nulo.
-- **Dependencias:** `CargosEstudiante`, `EstudiantesMatriculados`.
-
----
-
-### T-PAG-16 [P3] — Respaldo inmutable e integridad de comprobantes y recibos de pago
-
-- **Componentes relacionados:** `backend/accounting-service/Code.gs` (`createSystemBackup`, `restoreSystemBackup`).
-- **Problema detectado:** Garantizar que los backups respalden el 100% de los comprobantes de pago, recibos emitidos y facturas tributarias.
-- **Requisitos funcionales:**
-  1. Incluir `CargosEstudiante`, `ComprobantesPago`, `PagosAbonos` y `FacturasFiscales` en `createSystemBackup`.
-  2. Verificar la integridad de enlaces a archivos adjuntos en Drive tras ejecutar `restoreSystemBackup`.
-- **Criterios de Aceptación:**
-  - El archivo de respaldo contiene la totalidad de comprobantes e historial financiero de cobros.
-- **Riesgo de Regresión:** Bajo.
-- **Dependencias:** `createSystemBackup`, `restoreSystemBackup`.
+- **Dependencias:** T-PAG-05, T-PAG-08, T-PAG-10, T-PAG-12 y T-PAG-14.
 
 ---
 
 ### ORDEN DE EJECUCIÓN RECOMENDADO FASE 15 (PAGOS Y COBROS)
 
-| Orden | Tarea | Prioridad | Dependencia principal |
-| :---: | :--- | :---: | :--- |
-| **1** | **T-PAG-01.** Control de concurrencia transaccional con LockService | **P1** | `reviewPaymentVoucher` / `LockService` |
-| **2** | **T-PAG-02.** Idempotencia en subida de comprobantes y referencias | **P1** | `uploadPaymentVoucher` / `DeduplicationKey` |
-| **3** | **T-PAG-03.** Aislamiento RBAC y verificación de estados de cuenta | **P1** | `getStudentAccountStatement` |
-| **4** | **T-PAG-04.** Verificación fiscal SAR (CAI, rangos y comprobante) | **P1** | `FacturasFiscales` |
-| **5** | **T-PAG-05.** Prevención de auto-aprobación en anulación de cargos | **P1** | `ROLE_PERMISSIONS` |
-| **6** | **T-PAG-06.** Pagos parciales, saldos pendientes y sobrepagos | **P2** | `CargosEstudiante` |
-| **7** | **T-PAG-07.** Aplicación automática de becas y descuentos familiares | **P2** | `DescuentosBecas` |
-| **8** | **T-PAG-08.** Pasarelas de pago y Webhooks idempotentes | **P2** | `IntegracionesProveedores` |
-| **9** | **T-PAG-09.** Generación automática de recargos por mora | **P2** | `CargosEstudiante` |
-| **10** | **T-PAG-10.** Visor de comprobantes bancarios adjuntos | **P2** | `ComprobantesPago` / UI |
-| **11** | **T-PAG-11.** Reporte de morosidad y alertas a responsables | **P2** | `getStudentAccountStatement` |
-| **12** | **T-PAG-12.** Sincronización entre cobros y libro mayor contable | **P2** | `recordAccountingJournalEntry` |
-| **13** | **T-PAG-13.** Dashboard visual de cobranza y proyecciones | **P3** | Universal Chart Engine |
-| **14** | **T-PAG-14.** Emisión de recibos oficiales PDF con código QR | **P3** | `generatePaymentReceiptPDF` |
-| **15** | **T-PAG-15.** Herramienta de conciliación entre cargos y cobranza | **P3** | Reconciliation Engine |
-| **16** | **T-PAG-16.** Respaldo inmutable e integridad de comprobantes | **P3** | `createSystemBackup` |
+| Orden | Tareas | Condición para avanzar | Dependencia principal |
+| :---: | :--- | :--- | :--- |
+| **1** | **T-PAG-01**, **T-PAG-02**, **T-PAG-03**, **T-PAG-04** | Aprobación de comprobantes protegida con LockService, idempotencia en pagos, consistencia transaccional y validación fiscal SAR / Webhooks pasarela. | `reviewPaymentVoucher` / `LockService` / `DeduplicationKey` / `FacturasFiscales` |
+| **2** | **T-PAG-05**, **T-PAG-06**, **T-PAG-07**, **T-PAG-08**, **T-PAG-09**, **T-PAG-10** | Separación de funciones en anulaciones, pagos parciales/sobrepagos con recibos QR, tarifas/becas/mora, estado de cuenta consolidado multihijo, reglas de distribución de abonos y devoluciones. | `ROLE_PERMISSIONS` / `generatePaymentReceiptPDF` / `DescuentosBecas` / `getFamilyConsolidatedSummary` |
+| **3** | **T-PAG-11**, **T-PAG-12**, **T-PAG-13**, **T-PAG-14** | Visor de comprobantes adjuntos, control de autorizaciones SAR CAI, gestión segura de secretos de pasarela y sincronización contable por partida doble. | `uploadPaymentVoucher` / `createFiscalInvoice` / `IntegracionesProveedores` / `recordAccountingJournalEntry` |
+| **4** | **T-PAG-15**, **T-PAG-16** | Notificaciones automáticas de cobro y centro de control de morosidad con gráficos comparativos. | `BandejaNotificaciones` / Universal Chart Engine |
