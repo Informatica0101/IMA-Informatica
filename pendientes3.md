@@ -4316,681 +4316,959 @@ La institución puede verificar que los respaldos están completos, consultar el
 
 ---
 
-## PLAN DE TRABAJO DETALLADO Y UNIFICADO: FASE DE COMUNICACIÓN Y COLABORACIÓN INSTITUCIONAL
+## BACKLOG DE IMPLEMENTACIÓN Y OPTIMIZACIÓN: FASE 11. COMUNICACIÓN Y COLABORACIÓN INSTITUCIONAL
 
-### T-COM-01 [P1] — Identificación y auditoría del centro unificado de comunicaciones
+### T-COM-01 [P1] — Actualización en tiempo real del centro unificado de comunicaciones
 
-**Problema que debe resolverse**
+**Estado de partida:** Funcional. La actualización de contadores y notificaciones requiere recargar la vista.
 
-Los usuarios acceden a notificaciones, avisos y mensajes desde diferentes vistas sin una consolidación en tiempo real que garantice la consistencia del estado de lectura, contadores y acciones requeridas.
+- **Componentes relacionados:** `backend/user-service/Code.gs` (`getUnifiedNotifications`, `getUserNotifications`, `markNotificationAsRead`), `js/ui-common.js`, `js/teacher.js`, `js/student.js`.
 
-**Alcance de los cambios**
+#### Requerimientos funcionales
 
-- "backend/user-service/Code.gs" (`getUnifiedNotifications`, `getUserNotifications`, `markNotificationAsRead`).
-- "js/ui-common.js" (centro de notificaciones en encabezados, modales de resumen y badges).
-- "js/teacher.js", "js/student.js" y tableros por rol.
+- Actualizar automáticamente el contador de mensajes sin leer, las notificaciones pendientes y los avisos urgentes sin recargar la página.
+- Mantener una bandeja unificada que consolide comunicados institucionales, mensajes internos, recordatorios y solicitudes administrativas, sin presentar el mismo evento varias veces.
+- Permitir abrir cada elemento desde la bandeja y navegar hasta su conversación, comunicado, trámite o evento de origen, siempre que el usuario tenga autorización.
+- Distinguir claramente los elementos nuevos, leídos, pendientes de confirmación y completados.
+- Incorporar filtros por tipo de comunicación, prioridad, fecha, estado de lectura y contexto.
+- Permitir marcar como leído, archivar y acceder al historial desde la propia bandeja, respetando las reglas de cada tipo de elemento.
+- Actualizar los contadores de forma coherente cuando se lee un mensaje desde otra vista, se recibe una respuesta o se confirma un comunicado.
+- Mostrar los avisos urgentes con suficiente prominencia, sin convertir todas las notificaciones en alertas invasivas.
 
-**Requisitos funcionales**
+#### Cambios necesarios
 
-1. Cada usuario debe disponer de una vista de comunicaciones adaptada a su rol, sus relaciones institucionales y sus permisos.
-2. La vista debe distinguir:
-   - Comunicaciones nuevas.
-   - Comunicaciones leídas.
-   - Comunicaciones pendientes de respuesta.
-   - Solicitudes de autorización pendientes.
-   - Convocatorias próximas.
-   - Comunicaciones archivadas.
-   - Comunicaciones que requieren una acción.
-3. Cada elemento debe mostrar, según corresponda, título, tipo, emisor, fecha, destinatarios o ámbito, prioridad, vencimiento y estado.
-4. La selección de una comunicación debe abrir el contenido correspondiente o llevar al recurso institucional relacionado.
-5. Las comunicaciones relacionadas con un mismo asunto deben poder identificarse y consultarse conjuntamente cuando exista una relación real entre ellas.
-6. La interfaz debe permitir filtrar por tipo, fecha, emisor, estado y prioridad, respetando los permisos de acceso.
-7. Los mensajes y anuncios no deben confundirse con las alertas del sistema, las solicitudes de autorización ni los recordatorios de calendario.
-8. Las comunicaciones críticas deben distinguirse de las informativas sin convertir todos los mensajes en elementos de máxima prioridad.
-9. La interfaz debe indicar cuándo existen mensajes pendientes de sincronización, errores de carga o resultados incompletos.
-10. La plataforma debe evitar que cada módulo presente una versión incompatible del estado de lectura o de respuesta de una misma comunicación.
+- Incorporar un mecanismo de actualización incremental, mediante sondeo periódico, sincronización por eventos o la alternativa compatible con la infraestructura existente.
+- Evitar consultas completas e innecesarias a todos los servicios cuando solo hayan cambiado unos pocos elementos.
+- Gestionar la conexión interrumpida, los errores temporales, las sesiones vencidas y la recuperación después de recuperar la conectividad.
+- Evitar solicitudes simultáneas redundantes y respuestas fuera de orden que sobrescriban información más reciente.
+- Incorporar indicadores de última sincronización y estados de carga, error y recuperación.
+- Revisar los servicios de origen para que compartan identificadores estables y estados compatibles con la bandeja unificada.
 
-**Comportamiento esperado**
+#### Comportamiento esperado
 
-La vista reúne las comunicaciones que corresponden al usuario sin mostrar contenido ajeno a sus permisos. Los estados son consistentes entre vistas, los enlaces conducen al recurso correcto y las acciones realizadas se reflejan sin duplicaciones ni pérdidas.
+La persona usuaria recibe una notificación y ve actualizarse la bandeja y su contador sin recargar la página. Si abre el mismo mensaje desde otra sección, el estado se sincroniza. Si pierde conexión, la interfaz informa de la situación sin presentar datos antiguos como recién actualizados.
 
-**Criterios de aceptación**
+#### Criterios de aceptación
 
-- Un mensaje leído en el desplegable actualiza inmediatamente el contador del encabezado sin recargar la página.
-- El centro de notificaciones filtra correctamente por categoría y prioridad según el rol del usuario.
-- Los enlaces contextuales abren el recurso institucional correspondiente o el hilo de conversación original.
-- Los errores de sincronización se notifican claramente en la interfaz.
+1. Una notificación nueva aparece en la bandeja dentro de un intervalo máximo de 10 segundos en condiciones normales de conectividad.
+2. El contador coincide con la cantidad real de elementos no leídos que corresponden al usuario.
+3. Abrir o confirmar un elemento actualiza su estado y el contador sin duplicar registros.
+4. Recibir una misma notificación desde dos servicios no produce dos entradas para el mismo evento.
+5. Tras una interrupción de red, la bandeja recupera la sincronización sin perder ni duplicar elementos.
+6. Los usuarios no pueden acceder a notificaciones ajenas manipulando identificadores o parámetros.
+7. Las actualizaciones no provocan recargas completas ni consultas innecesarias de alto volumen.
+8. Se comprueba el comportamiento en escritorio y dispositivos móviles.
 
-**Dependencias:** Modelo de usuarios, roles, relaciones institucionales y permisos; persistencia de comunicaciones en `BandejaNotificaciones`.
+**Dependencias:** T-COM-02, T-COM-06, T-COM-07 y T-COM-10.
 
 ---
 
-### T-COM-02 [P1] — Control de destinatarios, segmentación y permisos de envío
+### T-COM-02 [P1] — Segmentación avanzada de destinatarios y aislamiento de información
 
-**Problema que debe resolverse**
+**Estado de partida:** Funcional. La resolución de audiencias y la autorización por rol se realizan en el servidor.
 
-La selección de destinatarios para comunicados masivos o avisos debe resolverse estrictamente en el servidor. No se debe confiar únicamente en los filtros del cliente ni permitir que un emisor envíe mensajes a audiencias para las que no cuenta con autorización.
+- **Componentes relacionados:** `backend/user-service/Code.gs` (`createInstitutionalAnnouncement`, `sendMultiChannelNotification`), `RelacionesFamiliares`, `Matriculas`, `Secciones`, asignaciones docentes.
 
-**Alcance de los cambios**
+#### Requerimientos funcionales
 
-- "backend/user-service/Code.gs" (`createInstitutionalAnnouncement`, `sendMultiChannelNotification`).
-- "RelacionesFamiliares", "Matriculas", "Secciones" y asignaciones docentes.
-- Interfaces de envío en "teacher-dashboard.html" y "js/teacher.js".
+- Permitir dirigir comunicaciones a toda la institución, roles autorizados, grados, secciones, asignaturas, grupos docentes, familias y destinatarios individuales.
+- Permitir combinar criterios de segmentación, siempre que el emisor tenga permiso para consultar y seleccionar esos grupos.
+- Resolver las audiencias definitivas en el servidor, utilizando las matrículas, asignaciones, relaciones familiares, roles y permisos vigentes.
+- Distinguir entre destinatarios previstos, destinatarios elegibles, destinatarios excluidos y destinatarios que no pudieron ser resueltos.
+- Permitir previsualizar el alcance de una comunicación antes de enviarla, mostrando cantidades por grupo y una lista de destinatarios únicamente cuando el rol lo permita.
+- Evitar que un destinatario vea las direcciones de correo, teléfonos, expedientes o datos personales de otros receptores sin autorización.
+- Aplicar cambios de matrícula, sección, relación familiar o asignación docente al resolver futuras comunicaciones.
+- Definir el tratamiento de las comunicaciones ya enviadas cuando cambia una relación académica o familiar, conservando la trazabilidad histórica sin conceder acceso indebido.
+- Permitir excluir destinatarios específicos únicamente cuando la política institucional y el tipo de comunicación lo permitan.
+- Distinguir comunicaciones obligatorias de avisos opcionales para que las preferencias personales no supriman notificaciones legal o institucionalmente requeridas.
 
-**Requisitos funcionales**
+#### Cambios necesarios
 
-1. Permitir segmentar destinatarios mediante relaciones institucionales verificables:
-   - Rol institucional.
-   - Grado y sección.
-   - Asignatura y grupo de clase.
-   - Personal o departamento.
-   - Relaciones familiares activas y autorizadas.
-   - Participantes de una actividad, trámite o reunión.
-   - Destinatarios seleccionados individualmente.
-2. Resolver la lista efectiva de destinatarios en el servidor, no confiar únicamente en las selecciones del navegador.
-3. Validar que el emisor tenga permiso para comunicarse con cada destinatario y utilizar el canal solicitado.
-4. Mostrar una vista previa de la audiencia antes del envío, con recuento de destinatarios y resumen de los criterios de selección.
-5. Detectar selecciones vacías, duplicados, usuarios inactivos y destinatarios que hayan perdido la relación o autorización requerida.
-6. Evitar que una selección de toda la institución se active accidentalmente al cambiar un filtro o perder una selección previa.
-7. Permitir excluir destinatarios cuando el emisor tenga autorización para hacerlo, conservando un registro del criterio aplicado.
-8. Aplicar las relaciones vigentes en el momento del envío. Si una persona deja de pertenecer a una sección o pierde autorización, no debe seguir recibiendo comunicaciones futuras por una selección obsoleta.
-9. Para comunicaciones familiares, distinguir entre responsables legales, contactos de emergencia y otras relaciones, sin atribuir permisos equivalentes a todas.
-10. Evitar que las respuestas o direcciones de correo de otros destinatarios queden expuestas en comunicaciones masivas.
-11. Permitir que las comunicaciones oficiales se dirijan a grupos dinámicos y que su audiencia quede registrada de forma reproducible.
-12. Si una comunicación exige confirmación o autorización, identificar explícitamente qué destinatarios están obligados a realizar la acción.
+- Revisar las reglas de autorización en los puntos de creación, consulta, envío, respuesta, descarga de adjuntos y lectura de reportes.
+- Centralizar o armonizar la resolución de audiencias para evitar que cada canal aplique reglas diferentes.
+- Validar nuevamente los permisos en el momento del envío, no solo cuando se abre el formulario.
+- Implementar una vista previa del alcance que no revele datos personales a usuarios sin autorización.
+- Registrar los criterios utilizados para resolver la audiencia y el resultado de la resolución, evitando almacenar copias innecesarias de información sensible.
+- Gestionar explícitamente destinatarios inválidos, relaciones ambiguas, usuarios inactivos y grupos vacíos.
 
-**Comportamiento esperado**
+#### Comportamiento esperado
 
-Cada destinatario recibe únicamente las comunicaciones para las que resulta elegible. Los recuentos y las listas de destinatarios coinciden con la audiencia real, y las selecciones inválidas se detectan antes del envío o se registran como exclusiones justificadas.
+Una comunicación dirigida a una sección se entrega únicamente a los usuarios que cumplen los criterios autorizados. Los destinatarios no pueden acceder a mensajes de otros grupos. Si una relación académica cambia antes del envío, el sistema recalcula la audiencia según las reglas vigentes.
 
-**Criterios de aceptación**
+#### Criterios de aceptación
 
-- Un docente de primaria no puede enviar un comunicado a secciones no asignadas sin autorización explícita.
-- Los envíos masivos ocultan la lista de contactos de terceros evitando fugas de PII.
-- Los estudiantes retirados o relaciones familiares revocadas se excluyen automáticamente en la resolución server-side.
+1. Las combinaciones de rol, grado, sección, asignatura y relación familiar producen la audiencia prevista.
+2. Una solicitud manipulada desde el navegador no permite enviar comunicaciones a grupos no autorizados.
+3. Ningún usuario puede consultar destinatarios, mensajes, adjuntos o reportes fuera de su alcance.
+4. La vista previa y el resultado efectivo del envío coinciden, salvo cambios concurrentes identificados y registrados.
+5. Se prueban usuarios con varias funciones, familias con varios estudiantes, matrículas inactivas, cambios de sección y cuentas deshabilitadas.
+6. Los canales externos respetan la misma audiencia autorizada que la bandeja interna.
+7. Las comunicaciones obligatorias no se omiten por preferencias destinadas a avisos opcionales.
+8. Los fallos de resolución impiden el envío cuando existe riesgo de fuga de información.
 
-**Dependencias:** Roles y permisos (`ROLE_PERMISSIONS`), matrículas, asignaciones docentes, `RelacionesFamiliares`.
-
----
-
-### T-COM-03 [P1] — Seguridad, confidencialidad y trazabilidad de las comunicaciones
-
-**Problema que debe resolverse**
-
-Las comunicaciones institucionales, adjuntos de Google Drive e hilos de conversación deben contar con controles de acceso del lado del servidor para evitar que la manipulación de identificadores o enlaces permita consultar información confidencial de otros usuarios.
-
-**Alcance de los cambios**
-
-- "backend/user-service/Code.gs" (`getInternalMessages`, `getInstitutionalAnnouncements`, `logStructuredEvent`).
-- Servidor de adjuntos en Google Drive y proxy de descarga.
-- Matriz "ROLE_PERMISSIONS".
-
-**Requisitos funcionales**
-
-1. Aplicar autorización en el servidor a cada operación sensible.
-2. Diferenciar los permisos para:
-   - Crear borradores.
-   - Editar borradores propios o ajenos.
-   - Aprobar comunicados oficiales.
-   - Publicar para un grupo.
-   - Enviar a toda la institución.
-   - Consultar comunicaciones privadas.
-   - Administrar destinatarios.
-   - Acceder a adjuntos.
-   - Modificar o retirar una comunicación publicada.
-3. Aplicar el principio de mínimo privilegio. Un usuario no debe recibir acceso general a mensajes privados por el simple hecho de tener un rol administrativo, salvo que exista una autorización institucional explícita y trazable.
-4. Validar en cada acceso la pertenencia de la comunicación al usuario o a su ámbito autorizado.
-5. Impedir que cambiar un identificador en una URL permita consultar comunicaciones, archivos o respuestas de otra persona.
-6. Proteger los adjuntos mediante controles de acceso equivalentes a los de la comunicación que los contiene.
-7. Evitar que mensajes privados o información sensible se incluyan en notificaciones externas de manera innecesaria.
-8. Registrar eventos relevantes: creación, edición, aprobación, envío, retirada, acceso administrativo excepcional y cambios en la audiencia.
-9. Conservar los valores anteriores y nuevos en las modificaciones sensibles, junto con usuario, fecha y motivo cuando corresponda.
-10. Diferenciar la retirada de una comunicación de la eliminación de su historial.
-11. Evitar que los usuarios puedan alterar los registros de auditoría mediante las funciones ordinarias de edición.
-12. Aplicar límites de carga, validación de archivos y protección contra contenido malicioso.
-13. Evitar que una vista previa, una exportación o un enlace compartido revele contenido que el usuario no podría consultar directamente.
-14. Establecer una política de retención y eliminación que considere el tipo de comunicación, su valor administrativo y la confidencialidad de los datos.
-15. Evitar que las respuestas de una comunicación masiva se expongan a destinatarios ajenos al intercambio.
-
-**Comportamiento esperado**
-
-No se puede acceder a comunicaciones ni adjuntos sin autorización vigente. Los permisos se validan en el servidor y los eventos sensibles quedan registrados sin exponer credenciales, tokens o contenido innecesario.
-
-**Criterios de aceptación**
-
-- Alterar el `anuncioId` o `mensajeId` en una llamada AJAX devuelve error `403 Forbidden` a usuarios no autorizados.
-- La descarga de adjuntos en Drive requiere token de sesión firmado y no funciona mediante enlaces públicos abiertos.
-- Los eventos de creación, retiro y rectificación quedan registrados en la bitácora de auditoría estructurada.
-
-**Dependencias:** Autenticación, RBAC, almacenamiento de archivos, registros de auditoría y configuración de retención.
+**Dependencias:** T-COM-03, T-COM-04, T-COM-06, T-COM-07 y T-COM-08.
 
 ---
 
-### T-COM-04 [P2] — Noticias, anuncios, circulares y comunicados oficiales
+### T-COM-03 [P1] — Seguridad, confidencialidad y trazabilidad integral
 
-**Problema que debe resolverse**
+**Estado de partida:** Funcional. Existe registro estructurado de operaciones, pero debe verificarse su cobertura y resistencia ante accesos indebidos.
 
-Se debe estructurar el ciclo de vida completo de la información oficial (creación, revisión, aprobación, publicación programada, fijado y retiro), distinguiéndola de la mensajería privada.
+- **Componentes relacionados:** `backend/user-service/Code.gs` (`getInternalMessages`, `getInstitutionalAnnouncements`, `logStructuredEvent`), proxy de descarga Drive, `ROLE_PERMISSIONS`.
 
-**Alcance de los cambios**
+#### Requerimientos funcionales
 
-- "AnunciosInstitucionales".
-- "backend/user-service/Code.gs" (`createInstitutionalAnnouncement`, `getInstitutionalAnnouncements`).
-- "js/teacher.js" y "js/student.js".
+- Aplicar autorización en el servidor para crear, consultar, modificar, retirar, responder, confirmar, exportar y enviar comunicaciones.
+- Mantener la separación de acceso entre Dirección, Secretaría, docentes, estudiantes, familias y personal administrativo.
+- Proteger el contenido de los mensajes, los datos de los destinatarios y los adjuntos durante el transporte y en los sistemas de almacenamiento.
+- Evitar que los registros de auditoría almacenen contraseñas, credenciales de proveedores, tokens de acceso o contenido sensible innecesario.
+- Registrar, como mínimo, el actor, el rol efectivo, la operación, el identificador del recurso, la fecha y hora, el resultado y el motivo de los fallos relevantes.
+- Registrar los cambios de estado de los comunicados y envíos, incluidos creación, aprobación cuando corresponda, publicación, cancelación, reintento y confirmación.
+- Diferenciar las operaciones ejecutadas por una persona de las acciones automáticas del sistema.
+- Conservar evidencia de las comunicaciones institucionales que requieran trazabilidad, según la política de retención.
+- Evitar que usuarios ordinarios modifiquen o eliminen los registros de auditoría.
+- Gestionar credenciales de correo, SMS y otros proveedores mediante mecanismos seguros, sin exponerlas en interfaces, respuestas del servicio o registros.
+- Aplicar límites razonables a consultas, envíos masivos y operaciones sensibles.
 
-**Requisitos funcionales**
+#### Cambios necesarios
 
-1. Permitir crear comunicaciones con título, cuerpo, categoría, emisor, audiencia, fecha de publicación y vigencia.
-2. Diferenciar noticias informativas, anuncios académicos, circulares administrativas, comunicados oficiales y avisos urgentes.
-3. Permitir guardar borradores, previsualizar, editar, programar, publicar, retirar y archivar comunicaciones según los permisos.
-4. Incorporar un flujo de revisión o aprobación para los tipos de comunicado que lo requieran.
-5. Permitir fijar una comunicación importante durante un período definido.
-6. Permitir programar la publicación y la expiración sin depender de que un usuario mantenga abierta la aplicación.
-7. Registrar la versión publicada y el historial de cambios relevantes.
-8. Si una comunicación ya publicada se modifica sustancialmente, indicar que existe una actualización y conservar la trazabilidad de la versión anterior.
-9. Permitir adjuntar documentos o enlaces con controles de acceso adecuados.
-10. Ofrecer una vista previa adaptada a móvil y escritorio.
-11. Permitir clasificar y buscar comunicados por categoría, fecha, audiencia y estado.
-12. Evitar que un comunicado dirigido a una sección aparezca como institucional para todos los usuarios.
-13. Diferenciar la fecha de publicación, la fecha del evento anunciado y la fecha límite para actuar.
-14. Permitir destacar una comunicación urgente con una justificación o categoría definida, evitando el uso indiscriminado de avisos críticos.
-15. Permitir retirar un comunicado publicado conservando un registro de su existencia, motivo de retirada y audiencia original.
-16. Facilitar que una circular que exige confirmación o autorización se convierta en un proceso de seguimiento, sin requerir que el destinatario responda por un canal distinto.
+- Auditar los puntos de entrada de los microservicios y las rutas de acceso a Google Sheets, Google Drive y proveedores externos.
+- Verificar que los permisos se validan del lado servidor y que los identificadores proporcionados por el cliente no se consideran prueba de autorización.
+- Revisar el transporte cifrado, el almacenamiento de credenciales y los permisos de los adjuntos en Drive.
+- Uniformar el esquema de auditoría y correlacionar una operación de envío con sus intentos, resultados y destinatarios.
+- Añadir controles contra duplicación maliciosa de solicitudes, abuso de envíos masivos y consultas excesivas.
+- Definir qué datos se conservan, durante cuánto tiempo y quién puede consultarlos.
 
-**Comportamiento esperado**
+#### Comportamiento esperado
 
-Las publicaciones aparecen únicamente a la audiencia prevista, respetan el flujo de aprobación y las fechas configuradas, mantienen un historial verificable y permiten distinguir una comunicación vigente de una retirada o reemplazada.
+Cada operación sensible puede reconstruirse mediante su historial. Los usuarios solo ven las comunicaciones autorizadas. Los fallos quedan registrados sin revelar secretos y las credenciales de los canales externos no aparecen en el frontend ni en las respuestas de depuración.
 
-**Criterios de aceptación**
+#### Criterios de aceptación
 
-- Un comunicado programado se publica automáticamente al cumplirse la fecha/hora sin requerir acción manual.
-- Las circulares retiradas se marcan como inactivas pero se conservan en la auditoría para fines legales.
-- Los avisos fijados permanecen en la parte superior del portal del estudiante durante su período de vigencia.
+1. Las pruebas de acceso horizontal y vertical impiden consultar o modificar recursos de otros usuarios o roles.
+2. Las pruebas de manipulación de identificadores no permiten saltarse las autorizaciones.
+3. Las operaciones críticas producen registros de auditoría con actor, acción, recurso, fecha y resultado.
+4. Los registros no contienen credenciales ni secretos recuperables.
+5. Los adjuntos privados no son accesibles mediante enlaces públicos no autorizados.
+6. Se comprueba el manejo de sesiones vencidas, usuarios deshabilitados y errores del proveedor.
+7. Los registros de auditoría no pueden ser modificados por perfiles sin privilegios.
+8. Existe una política documentada de conservación y acceso a los registros.
 
-**Dependencias:** T-COM-02, T-COM-03 y el motor de notificaciones.
-
----
-
-### T-COM-05 [P2] — Mensajería individual y grupal con contexto institucional
-
-**Problema que debe resolverse**
-
-La interacción privada y grupal entre docentes, directivos, estudiantes y familias debe organizarse en hilos de conversación vinculados contextualmente a asignaturas, expedientes o trámites.
-
-**Alcance de los cambios**
-
-- "MensajesInternos".
-- "backend/user-service/Code.gs" (`sendInternalMessage`, `getInternalMessages`, `getInternalConversations`).
-- "js/teacher.js" y "js/student.js".
-
-**Requisitos funcionales**
-
-1. Permitir iniciar una conversación individual desde un perfil, una asignatura, un expediente o una comunicación, siempre que el emisor tenga autorización.
-2. Permitir conversaciones grupales para participantes con una relación institucional válida.
-3. Identificar a los participantes, el asunto, la fecha y el estado de la conversación.
-4. Mostrar los mensajes en orden cronológico y conservar el historial pertinente.
-5. Permitir responder, citar o referenciar mensajes anteriores sin duplicar el contenido original.
-6. Diferenciar mensajes privados de publicaciones visibles para todo un grupo.
-7. Permitir adjuntos y enlaces sujetos a validación y control de acceso.
-8. Permitir buscar conversaciones y mensajes propios o accesibles, respetando permisos y límites de privacidad.
-9. Permitir archivar, silenciar o marcar conversaciones como importantes sin eliminar el historial.
-10. Incorporar indicadores de mensaje enviado, entregado y leído cuando exista evidencia fiable de cada estado.
-11. No interpretar la recepción técnica de una notificación como prueba de que la persona leyó el mensaje.
-12. Establecer límites de uso, protección frente al envío abusivo y controles contra mensajes automatizados no autorizados.
-13. Definir horarios o expectativas de respuesta institucionales cuando corresponda, sin prometer disponibilidad inmediata de docentes y personal.
-14. Permitir que un usuario gestione las notificaciones de conversaciones no críticas sin perder el acceso al historial.
-15. Evitar la creación automática de conversaciones duplicadas por aperturas simultáneas o reintentos.
-16. Cuando una conversación se relacione con un estudiante, permitir que el personal autorizado consulte el historial institucional pertinente sin exponer conversaciones personales ajenas al asunto.
-17. Definir qué ocurre con las conversaciones cuando un participante deja de pertenecer al grupo o a la institución.
-18. Mantener las comunicaciones necesarias para trámites o decisiones institucionales disponibles según las reglas de conservación aplicables.
-
-**Comportamiento esperado**
-
-Las conversaciones se muestran a los participantes autorizados, conservan su secuencia y contexto, y permiten distinguir los estados de entrega sin afirmar una lectura no verificada. Los cambios de permisos no habilitan accesos indebidos.
-
-**Criterios de aceptación**
-
-- Las respuestas quedan enlazadas al hilo original de la conversación.
-- Los participantes desvinculados de una sección dejan de recibir nuevos mensajes del grupo.
-- Las búsquedas en la bandeja respetan estrictamente la privacidad entre usuarios.
-
-**Dependencias:** T-COM-02, T-COM-03 y el motor de notificaciones.
+**Dependencias:** T-COM-02, T-COM-04, T-COM-06 y T-COM-07.
 
 ---
 
-### T-COM-06 [P2] — Motor de notificaciones internas y preparación de canales externos
+### T-COM-04 [P2] — Ciclo de vida de comunicados oficiales y circulares
 
-**Problema que debe resolverse**
+**Estado de partida:** Funcional. Se admiten prioridades, adjuntos y confirmaciones de lectura.
 
-Garantizar un desacoplamiento completo entre la comunicación lógica de la plataforma y el motor de envío hacia proveedores de canales externos (SMS, WhatsApp, Messenger, Correo).
+- **Componentes relacionados:** `AnunciosInstitucionales`, `backend/user-service/Code.gs` (`createInstitutionalAnnouncement`, `getInstitutionalAnnouncements`), `js/teacher.js`, `js/student.js`.
 
-**Alcance de los cambios**
+#### Requerimientos funcionales
 
-- "CanalesProveedoresConfig", "RegistroEnviosExternos".
-- "backend/user-service/Code.gs" (`sendMultiChannelNotification`, `configureNotificationChannel`, `sendChannelNotificationTest`).
-- Modal `#modal-channel-config` en "teacher-dashboard.html" y "js/teacher.js".
+- Gestionar comunicados, noticias, circulares, avisos urgentes y notificaciones oficiales con tipos claramente diferenciados.
+- Incorporar un ciclo de vida con estados como borrador, pendiente de aprobación cuando aplique, programado, publicado, suspendido, retirado y archivado.
+- Permitir que la institución configure qué tipos de comunicado requieren aprobación y qué roles pueden aprobarlos.
+- Conservar autor, fechas de creación y publicación, audiencia, prioridad, vigencia y estado.
+- Permitir definir fecha de inicio y finalización de la publicación, sin eliminar el historial al vencer la vigencia.
+- Admitir texto estructurado, enlaces y adjuntos con controles de tamaño, formato y acceso.
+- Permitir editar un comunicado publicado únicamente según los permisos y las reglas de la institución.
+- Mantener un historial de modificaciones y mostrar cuándo una comunicación fue actualizada después de su publicación.
+- Diferenciar entre retirar una comunicación de la vista activa y eliminarla físicamente de los registros.
+- Permitir indicar si la lectura es informativa o si exige confirmación explícita.
+- Permitir destacar comunicaciones urgentes sin convertir la prioridad en un mecanismo para eludir permisos o controles.
+- Ofrecer vistas previas para escritorio y móvil y para los distintos tipos de destinatario.
+- Evitar que las ediciones cambien silenciosamente la versión que un usuario ya confirmó haber leído.
 
-**Requisitos funcionales**
+#### Cambios necesarios
 
-1. Diferenciar la comunicación original de sus notificaciones. Una misma publicación puede originar varias entregas, pero debe conservar una única identidad lógica.
-2. Definir eventos de notificación configurables, por ejemplo:
-   - Nuevo mensaje.
-   - Nuevo comunicado dirigido al usuario.
-   - Convocatoria o reunión próxima.
-   - Solicitud de autorización.
-   - Recordatorio de vencimiento.
-   - Respuesta a una consulta.
-   - Cambio importante en un trámite.
-3. Permitir configurar qué eventos generan notificación y qué canales pueden utilizarse.
-4. Resolver destinatarios en el servidor y volver a validar permisos antes de enviar.
-5. Mantener una bandeja interna con enlaces al contexto original.
-6. Diseñar el envío externo mediante adaptadores desacoplados, con configuración de proveedor, credenciales seguras, límites de uso y manejo de errores.
-7. No dar por implementada una integración externa solo porque exista un botón o una configuración visual. Verificar que haya un flujo operativo, un proveedor configurado o una prueba controlada.
-8. Registrar el estado por destinatario y canal: pendiente, procesando, enviado al proveedor, confirmado por el proveedor cuando exista evidencia, fallido o descartado.
-9. No equiparar la aceptación del mensaje por un proveedor de correo con su lectura por el destinatario.
-10. Permitir reintentos limitados para fallos temporales y registrar los errores permanentes.
-11. Evitar que un fallo del correo impida consultar la comunicación original dentro de la plataforma.
-12. Proteger las credenciales de los proveedores y evitar que aparezcan en registros, errores o respuestas al cliente.
-13. Definir reglas de prioridad, agrupación y frecuencia para evitar saturación.
-14. Incorporar un mecanismo de deduplicación por evento, destinatario y canal.
-15. Permitir consultar fallos de entrega y reintentar manualmente cuando exista autorización.
-16. Diferenciar las notificaciones obligatorias de las informativas, de acuerdo con la política institucional.
-17. Evitar incluir información sensible en correos o mensajes externos cuando baste con un aviso genérico y un enlace autenticado.
-18. Si un canal externo no está habilitado, informar que la función está pendiente de configuración y no afirmar que el mensaje fue enviado.
+- Revisar el modelo de datos y las transiciones de estado.
+- Incorporar validaciones de fechas, permisos, campos obligatorios y adjuntos.
+- Registrar versiones o revisiones de los comunicados.
+- Integrar la publicación con la resolución de audiencia, la bandeja unificada y el motor de notificaciones.
+- Añadir una vista de gestión con borradores, pendientes de aprobación, programados, publicados y vencidos.
+- Implementar operaciones seguras para cancelar una publicación programada o corregir un comunicado difundido.
 
-**Comportamiento esperado**
+#### Comportamiento esperado
 
-Cada evento genera las notificaciones previstas sin duplicados; los estados de entrega reflejan la evidencia disponible; los errores pueden diagnosticarse y los canales externos no eluden los permisos ni la confidencialidad.
+Un comunicado puede redactarse, aprobarse cuando sea necesario, publicarse en el momento definido y retirarse de la vista activa al vencer. Los cambios posteriores quedan identificados y no borran el historial ni las confirmaciones existentes.
 
-**Criterios de aceptación**
+#### Criterios de aceptación
 
-- Si falla el proveedor externo de WhatsApp/SMS, la notificación interna en la plataforma permanece 100% disponible.
-- La pantalla de prueba de canal (`sendChannelNotificationTest`) verifica la conectividad sin exponer las claves API en la respuesta del cliente.
+1. Los estados solo permiten transiciones válidas y autorizadas.
+2. Los comunicados programados no se publican antes de la fecha configurada.
+3. Los comunicados vencidos dejan de aparecer como vigentes, pero permanecen accesibles en el historial autorizado.
+4. La edición posterior a una confirmación genera una revisión identificable.
+5. Los adjuntos respetan los permisos de la audiencia y las restricciones de formato.
+6. Los usuarios no autorizados no pueden publicar ni aprobar comunicados manipulando solicitudes.
+7. Las comunicaciones urgentes y obligatorias conservan su clasificación durante la distribución.
+8. Las notificaciones correspondientes se generan sin duplicar el mismo evento.
 
-**Dependencias:** T-COM-02, T-COM-03 y T-COM-07.
+**Dependencias:** T-COM-02, T-COM-03, T-COM-06, T-COM-07 y T-COM-08.
 
 ---
 
-### T-COM-07 [P1] — Prevención de duplicados, control de frecuencia y preferencias
+### T-COM-05 [P2] — Mensajería interna contextual y gestión de conversaciones
 
-**Problema que debe resolverse**
+**Estado de partida:** Funcional. Existen conversaciones individuales y grupales vinculables a asignaturas, expedientes y trámites.
 
-Evitar ráfagas de notificaciones redundantes mediante claves de idempotencia (`DeduplicationKey`), ventanas de deduplicación y el respeto de las preferencias del usuario.
+- **Componentes relacionados:** `MensajesInternos`, `backend/user-service/Code.gs` (`sendInternalMessage`, `getInternalMessages`, `getInternalConversations`), `js/teacher.js`, `js/student.js`.
 
-**Alcance de los cambios**
+#### Requerimientos funcionales
 
-- "PreferenciasNotificacion".
-- "backend/user-service/Code.gs" (`sendMultiChannelNotification`, `getNotificationPreferences`).
-- Configuración de usuarios en "js/ui-common.js".
+- Permitir conversaciones individuales y grupales entre perfiles autorizados.
+- Mantener mensajes agrupados por conversación, con orden cronológico estable, autor, fecha, estado de envío y estado de lectura cuando corresponda.
+- Permitir responder dentro de una conversación, conservar el contexto y distinguir mensajes nuevos de mensajes anteriores.
+- Admitir adjuntos autorizados y validar tipo, tamaño y acceso.
+- Permitir silenciar conversaciones, archivarlas y recuperar su historial.
+- Mostrar el contexto relacionado, por ejemplo, estudiante, asignatura, trámite o expediente, sin exponerlo a miembros que no tengan acceso.
+- Permitir que los usuarios autorizados consulten conversaciones anteriores aunque el asunto académico haya cambiado, siempre de acuerdo con la política de acceso histórico.
+- Definir reglas para editar o retirar mensajes enviados, conservando trazabilidad cuando sea necesario.
+- Incorporar indicadores de disponibilidad y horarios de contacto configurables, sin presentar esos indicadores como garantía de respuesta inmediata.
+- Permitir reportar mensajes inapropiados o problemas de comunicación a los responsables autorizados.
+- Evitar que una respuesta a un mensaje antiguo se confunda con una comunicación nueva sobre otro asunto.
 
-**Requisitos funcionales**
+#### Cambios necesarios
 
-1. Permitir preferencias por usuario, categoría de evento y canal, dentro de las opciones habilitadas por la institución.
-2. Distinguir entre:
-   - Avisos informativos.
-   - Mensajes directos.
-   - Recordatorios.
-   - Solicitudes con fecha límite.
-   - Comunicaciones oficiales.
-   - Alertas críticas.
-3. Permitir configurar frecuencia, agrupación o resumen para eventos informativos.
-4. Evitar que una persona reciba varios avisos idénticos porque el mismo evento fue procesado por diferentes módulos.
-5. Utilizar identificadores idempotentes (`DeduplicationKey`) o mecanismos equivalentes que eviten repetir la entrega lógica al reintentar una operación.
-6. Definir ventanas de deduplicación y reglas para decidir cuándo una actualización justifica una nueva notificación.
-7. Agrupar notificaciones de baja prioridad cuando resulte apropiado, conservando acceso a cada elemento original.
-8. No agrupar ni retrasar comunicaciones que deban entregarse inmediatamente según la política institucional.
-9. Permitir horarios de silencio o límites de frecuencia para notificaciones informativas, sin suprimir indebidamente avisos obligatorios o críticos.
-10. Permitir ajustar preferencias por estudiante cuando una cuenta familiar esté vinculada a varios estudiantes.
-11. Evitar que un cambio de preferencia se interprete como autorización para acceder a información adicional.
-12. Conservar un historial de preferencias y cambios cuando sea necesario para diagnosticar incidencias.
-13. Definir un tratamiento explícito de las notificaciones que se generan mientras un usuario está desconectado.
-14. Evitar el envío repetido por reintentos de cola, fallos de red, recarga de página o doble clic.
-15. Permitir identificar por qué se envió, agrupó, retrasó o descartó un aviso.
-16. Garantizar que silenciar una conversación no elimina los mensajes ni las obligaciones de respuesta existentes.
+- Revisar el modelo de conversaciones, mensajes, participantes y referencias contextuales.
+- Asegurar que los permisos se validan por conversación y también por cada recurso vinculado.
+- Implementar paginación o carga progresiva para conversaciones extensas.
+- Añadir búsqueda dentro de la conversación, indicadores de mensajes no leídos y sincronización de estados.
+- Establecer límites para adjuntos y mecanismos de validación.
+- Integrar las preferencias de notificación y el control de frecuencia de T-COM-07.
 
-**Comportamiento esperado**
+#### Comportamiento esperado
 
-Los eventos repetidos no generan avisos duplicados. Las preferencias se aplican según el tipo de evento y el canal, y las reglas de prioridad impiden que la reducción del ruido oculte comunicaciones críticas.
+Los usuarios pueden mantener conversaciones ordenadas, recuperar mensajes anteriores y navegar al contexto asociado. Las conversaciones archivadas o silenciadas siguen disponibles, pero respetan las preferencias de aviso y los permisos de acceso.
 
-**Criterios de aceptación**
+#### Criterios de aceptación
 
-- Un reintento AJAX de la misma notificación no genera un segundo envío al proveedor externo.
-- Las alertas críticas de seguridad o cierre académico se entregan ignorando los horarios de silencio personales.
+1. Los mensajes se muestran en el orden correcto, incluso si llegan respuestas con retraso.
+2. Los usuarios no autorizados no pueden entrar en una conversación mediante un enlace directo.
+3. El contexto relacionado solo se muestra cuando el usuario tiene permiso para consultarlo.
+4. Silenciar una conversación reduce las notificaciones opcionales sin impedir el acceso al contenido.
+5. Los adjuntos inválidos o no autorizados son rechazados.
+6. Los mensajes editados o retirados respetan la política de historial y no alteran indebidamente la evidencia de lectura.
+7. La interfaz permite recuperar conversaciones extensas sin cargar todo el historial de una sola vez.
+8. Se comprueba el funcionamiento con conexiones intermitentes y varios dispositivos.
 
-**Dependencias:** T-COM-06 y el modelo de preferencias de usuario.
+**Dependencias:** T-COM-02, T-COM-03, T-COM-06, T-COM-07 y T-COM-10.
 
 ---
 
-### T-COM-08 [P2] — Confirmaciones de lectura, respuestas y seguimiento de comunicaciones
+### T-COM-06 [P2] — Motor de notificaciones internas y adaptadores multicanal
 
-**Problema que debe resolverse**
+**Estado de partida:** Funcional. Existen configuraciones de proveedores y registros de envíos externos.
 
-Registrar la lectura confirmada de circulares obligatorias y dar seguimiento a las autorizaciones o respuestas solicitadas a los padres de familia.
+- **Componentes relacionados:** `CanalesProveedoresConfig`, `RegistroEnviosExternos`, `backend/user-service/Code.gs` (`sendMultiChannelNotification`, `configureNotificationChannel`, `sendChannelNotificationTest`), `#modal-channel-config` en `teacher-dashboard.html`.
 
-**Alcance de los cambios**
+#### Requerimientos funcionales
 
-- "backend/user-service/Code.gs" (`submitAnnouncementReceiptConfirmation`, `getAnnouncementReadReport`).
-- Portal de estudiante/familia en "js/student.js" y panel directivo en "js/teacher.js".
+- Unificar la generación y distribución de notificaciones originadas por comunicados, mensajes, eventos de calendario, tareas administrativas y avisos financieros autorizados.
+- Separar el evento que genera la notificación de los canales por los que se distribuye.
+- Admitir canales internos y, cuando exista una integración válida, correo electrónico, SMS y WhatsApp.
+- Tratar Messenger u otros canales como integraciones opcionales sujetas a disponibilidad, autorización y compatibilidad real del proveedor.
+- Mantener una interfaz común para los adaptadores, con operaciones diferenciadas de preparación, envío, consulta de estado y gestión de errores según las capacidades del proveedor.
+- Validar destinatarios, credenciales, parámetros y plantillas antes de enviar.
+- Permitir probar una integración sin enviar mensajes reales a destinatarios ajenos a la prueba.
+- Registrar los estados de cada intento: pendiente, en proceso, aceptado por el proveedor, entregado cuando el proveedor lo confirme, fallido y estado desconocido.
+- No confundir aceptación por el proveedor con entrega efectiva ni entrega con lectura.
+- Gestionar límites del proveedor, errores temporales, fallos permanentes y tiempos de espera.
+- Respetar las preferencias de los usuarios y las reglas institucionales aplicables a cada tipo de notificación.
+- Permitir mensajes específicos por canal, con contenido adaptado a las limitaciones de longitud, formato y enlaces.
+- Evitar que una caída del proveedor impida recibir una notificación por los canales internos disponibles.
 
-**Requisitos funcionales**
+#### Cambios necesarios
 
-1. Diferenciar:
-   - Comunicación enviada.
-   - Comunicación disponible para el destinatario.
-   - Notificación entregada por un canal externo, si se confirma.
-   - Comunicación abierta o marcada como leída.
-   - Respuesta recibida.
-   - Autorización concedida o denegada.
-   - Acción completada.
-2. No interpretar una apertura automática, una vista previa de correo o una notificación push como confirmación fiable de lectura humana.
-3. Permitir solicitar confirmación de lectura cuando el tipo de comunicación lo requiera.
-4. Permitir respuestas directas o estructuradas según la naturaleza del asunto.
-5. Para solicitudes de autorización, registrar quién respondió, qué decisión tomó, cuándo lo hizo y a qué versión de la solicitud se refiere.
-6. Permitir fechas límite, recordatorios y estados pendientes.
-7. Diferenciar la ausencia de respuesta del rechazo.
-8. Permitir corregir una respuesta únicamente mediante un procedimiento autorizado y trazable.
-9. Conservar las respuestas anteriores cuando se reabra una solicitud o se emita una nueva versión.
-10. Permitir que el emisor consulte el estado de la audiencia, sujeto a los permisos correspondientes.
-11. En comunicaciones masivas, mostrar el avance agregado de confirmaciones sin exponer innecesariamente la respuesta individual de otros destinatarios.
-12. Permitir recordatorios únicamente a quienes todavía tengan pendiente la acción.
-13. Evitar recordatorios posteriores a la respuesta, revocación, cancelación o vencimiento de la solicitud.
-14. Permitir descargar o consultar un resumen de respuestas cuando la comunicación lo requiera.
-15. Mantener un historial de modificaciones de estados y de acciones pendientes.
+- Revisar `CanalesProveedoresConfig` y `RegistroEnviosExternos` para comprobar que representan correctamente las integraciones, intentos y estados.
+- Separar el proceso de generación de notificaciones del proceso de envío a proveedores.
+- Incorporar un mecanismo persistente de procesamiento pendiente y reintentos controlados, compatible con la infraestructura existente.
+- Añadir clasificación de errores, tiempos de espera, límites de reintentos y gestión de circuitos temporalmente inactivos.
+- Proteger credenciales y separar la configuración de pruebas de la configuración de producción.
+- Incorporar correlación entre el evento original, la notificación interna y los envíos externos.
+- Permitir desactivar un canal defectuoso sin deshabilitar la bandeja interna ni otros proveedores.
 
-**Comportamiento esperado**
+#### Comportamiento esperado
 
-Los estados reflejan hechos verificables, una lectura no se confunde con una autorización, las respuestas se vinculan con la solicitud correcta y los recordatorios dejan de enviarse cuando la acción ya no está pendiente.
+Un evento autorizado genera una notificación interna y, cuando corresponda, envíos externos. Si un proveedor falla temporalmente, el sistema registra el error y gestiona el reintento sin bloquear los demás canales ni crear mensajes duplicados.
 
-**Criterios de aceptación**
+#### Criterios de aceptación
 
-- El botón "Confirmar Lectura" registra la marca temporal exacta del acuse de recibo en `AnunciosInstitucionales`.
-- El reporte `getAnnouncementReadReport` calcula el porcentaje de lectura por sección identificando a los padres pendientes.
+1. Un mismo evento puede distribuirse por varios canales sin duplicar su registro de origen.
+2. La caída de un proveedor no impide el funcionamiento de los canales independientes.
+3. Los estados muestran únicamente aquello que la respuesta del proveedor permite confirmar.
+4. Los errores temporales y permanentes reciben tratamientos diferentes.
+5. Las pruebas de integración no envían mensajes reales fuera del destino de prueba autorizado.
+6. Las credenciales no aparecen en el navegador ni en los registros.
+7. Los destinatarios y contenidos respetan las autorizaciones y preferencias aplicables.
+8. El historial permite reconstruir qué canales se intentaron, cuándo y con qué resultado.
+9. Se verifican los límites y formatos reales de cada proveedor integrado.
 
-**Dependencias:** T-COM-02, T-COM-03, T-COM-06 y T-COM-07.
+**Dependencias:** T-COM-02, T-COM-03, T-COM-07 y T-COM-14.
 
 ---
 
-### T-COM-09 [P2] — Calendario compartido, reuniones, convocatorias y recordatorios
+### T-COM-07 [P1] — Idempotencia, deduplicación y control de frecuencia
 
-**Problema que debe resolverse**
+**Estado de partida:** Se detectó una brecha explícita: falta un mecanismo de deduplicación idempotente mediante `DeduplicationKey` en la cola de envíos externos.
 
-Gestión unificada de eventos en `EventosCalendario`, convocatorias a citas de entrega de notas o reuniones de padres con detección de conflictos de horario.
+- **Componentes relacionados:** `PreferenciasNotificacion`, `backend/user-service/Code.gs` (`sendMultiChannelNotification`, `getNotificationPreferences`), `js/ui-common.js`.
 
-**Alcance de los cambios**
+#### Requerimientos funcionales
 
-- "backend/user-service/Code.gs" (`getInstitutionalCalendarEvents`, `getPendingReminders`, `getAppointmentBookings`, `bookAppointment`).
-- Módulo de reuniones en "js/teacher.js" y "js/student.js".
+- Asignar una clave de idempotencia estable (`DeduplicationKey`) a cada operación lógica de envío.
+- Reutilizar la misma clave cuando se reintenta la misma operación y generar una nueva cuando se trata de un envío legítimamente distinto.
+- Evitar duplicados provocados por reintentos AJAX, doble clic, recarga de página, tiempos de espera o ejecución concurrente.
+- Distinguir entre un evento original, sus destinatarios, los canales de distribución y los intentos realizados para cada destino.
+- Permitir reintentar operaciones cuyo resultado sea conocido como fallido, sin volver a ejecutar un envío que ya se haya completado.
+- Gestionar el resultado desconocido cuando el proveedor pudo haber aceptado un mensaje, pero la respuesta no llegó.
+- Evitar prometer entrega exactamente una vez cuando el proveedor externo no ofrece garantías de idempotencia. En esos casos, definir una política de reconciliación y riesgo de duplicación.
+- Aplicar límites de frecuencia por usuario, canal, tipo de evento y ventana temporal.
+- Agrupar avisos informativos repetidos cuando sea adecuado, sin combinar mensajes urgentes, obligatorios o transaccionales que deban llegar por separado.
+- Permitir preferencias por categoría y canal, con opciones de frecuencia compatibles con las políticas institucionales.
+- Respetar las preferencias de silenciar o resumir avisos opcionales sin suprimir confirmaciones obligatorias o alertas que la institución haya definido como críticas.
+- Evitar que dos servicios generen notificaciones equivalentes sobre el mismo evento.
 
-**Requisitos funcionales**
+#### Cambios necesarios
 
-1. Permitir crear eventos con título, descripción, fecha, hora, zona horaria, duración, ubicación o enlace, organizador y audiencia.
-2. Diferenciar eventos públicos, institucionales, académicos, reuniones privadas y convocatorias restringidas.
-3. Permitir convocar a personas o grupos y definir si la participación es obligatoria, opcional o requiere confirmación.
-4. Permitir aceptar, rechazar o indicar disponibilidad, cuando el tipo de evento lo requiera.
-5. Evitar que un participante consulte reuniones privadas a las que no ha sido invitado.
-6. Permitir modificar o cancelar eventos, notificando los cambios relevantes a los participantes afectados.
-7. Incorporar recordatorios configurables y evitar duplicados cuando el evento se modifica o se vuelve a guardar.
-8. Permitir calendarios compartidos según rol, grupo o departamento.
-9. Mostrar conflictos de horario cuando sea posible determinar que una persona o recurso tiene eventos incompatibles.
-10. Permitir relacionar un evento con una asignatura, estudiante, trámite o documento.
-11. Diferenciar la fecha del evento de sus plazos administrativos asociados.
-12. Gestionar eventos recurrentes sin duplicar ocurrencias ni perder excepciones.
-13. Tratar correctamente eventos que cambian de fecha, se cancelan o dejan de ser relevantes.
-14. Definir el comportamiento de los eventos en días no lectivos y períodos académicos cerrados, cuando corresponda.
-15. Permitir una vista diaria, semanal y mensual adaptable a dispositivos móviles.
-16. Si existe integración externa de calendario, verificar sincronización, permisos, zonas horarias, actualizaciones y cancelaciones. No asumir que una exportación de calendario constituye sincronización bidireccional.
-17. Permitir consultar convocatorias próximas y respuestas pendientes desde el centro de comunicaciones.
+- Incorporar `DeduplicationKey` y las restricciones de unicidad necesarias en el almacenamiento de envíos.
+- Definir el ámbito de unicidad de la clave y el ciclo de vida de los registros de idempotencia.
+- Garantizar la creación atómica de la operación lógica y la reserva del envío, dentro de las posibilidades de la persistencia utilizada.
+- Añadir estados de procesamiento para evitar que dos ejecuciones concurrentes envíen la misma operación.
+- Implementar una política explícita para tiempos de espera, reintentos y resultados desconocidos.
+- Revisar las reglas de frecuencia, agrupación y preferencias para que se apliquen uniformemente en los distintos canales.
+- Conservar evidencia de los intentos bloqueados por duplicación y de las decisiones de supresión por frecuencia, sin generar registros excesivos.
 
-**Comportamiento esperado**
+#### Comportamiento esperado
 
-Los eventos se muestran a los participantes autorizados con horarios correctos. Los cambios y cancelaciones actualizan el calendario y sus recordatorios sin generar duplicados ni conservar convocatorias obsoletas.
+Si una solicitud se repite por un tiempo de espera, el sistema reconoce que corresponde al mismo envío y no crea una segunda comunicación. Si el estado del proveedor es incierto, el sistema evita reintentar ciegamente cuando ello pueda duplicar el mensaje.
 
-Criterios de aceptación
+#### Criterios de aceptación
 
-- Reservar un turno de atención en `bookAppointment` bloquea el horario impidiendo dobles citas para el mismo docente.
-- La cancelación de una reunión detiene automáticamente los recordatorios programados pendientes.
+1. Repetir diez veces una misma solicitud lógica no genera diez envíos.
+2. Dos ejecuciones concurrentes con la misma clave no producen envíos duplicados.
+3. Una nueva comunicación legítima no queda bloqueada por una clave anterior.
+4. Los reintentos conservan el identificador de la operación original.
+5. Se prueban tiempos de espera antes y después de que el proveedor acepte el mensaje.
+6. El sistema distingue estados fallidos, completados y desconocidos.
+7. Las notificaciones informativas repetitivas pueden agruparse o limitarse según las reglas configuradas.
+8. Los avisos obligatorios no se suprimen por un límite de frecuencia destinado a notificaciones opcionales.
+9. Las preferencias se aplican de manera consistente en la bandeja interna y en los canales externos.
+10. Los registros permiten explicar por qué un envío fue ejecutado, reintentado, agrupado o suprimido.
+
+**Dependencias:** T-COM-02, T-COM-03, T-COM-06, T-COM-12 y T-COM-14.
+
+---
+
+### T-COM-08 [P2] — Confirmaciones de lectura, respuestas estructuradas y seguimiento
+
+**Estado de partida:** Funcional. Se registran confirmaciones explícitas y existen reportes de lectura por sección.
+
+- **Componentes relacionados:** `backend/user-service/Code.gs` (`submitAnnouncementReceiptConfirmation`, `getAnnouncementReadReport`), `js/student.js`, `js/teacher.js`.
+
+#### Requerimientos funcionales
+
+- Diferenciar entre notificación generada, entregada por un canal, abierta, marcada como leída y confirmada explícitamente por el destinatario.
+- Mantener la confirmación explícita para los comunicados que la requieren.
+- Registrar destinatario, comunicado y versión, fecha y hora, tipo de respuesta y estado de procesamiento.
+- Permitir respuestas estructuradas, como aceptación, autorización, rechazo, solicitud de aclaración o confirmación de asistencia, según el tipo de comunicación.
+- Permitir preguntas o comentarios cuando el flujo institucional lo requiera.
+- Definir fechas límite para respuestas y mostrar si están pendientes, completadas o vencidas.
+- Permitir corregir una respuesta únicamente mediante un procedimiento autorizado y trazable.
+- Mostrar reportes por grado, sección, destinatario, tipo de comunicación y estado de confirmación, de acuerdo con los permisos.
+- Permitir identificar destinatarios pendientes sin revelar información a usuarios que no estén autorizados.
+- Facilitar recordatorios dirigidos exclusivamente a los destinatarios que aún no han respondido.
+- Permitir exportar reportes autorizados con fecha de corte y criterios de selección.
+- Evitar interpretar una apertura automática de correo o una notificación de entrega como confirmación expresa de lectura.
+
+#### Cambios necesarios
+
+- Revisar el modelo de confirmaciones para vincular cada respuesta con la versión exacta del comunicado.
+- Separar los estados técnicos del canal de los estados de lectura y respuesta.
+- Incorporar formularios de respuesta configurables para las comunicaciones que los necesiten.
+- Añadir filtros, indicadores de avance y listas de pendientes en los reportes.
+- Integrar los recordatorios con el motor de notificaciones y la deduplicación.
+- Definir reglas de acceso y conservación para confirmaciones que tengan consecuencias administrativas.
+
+#### Comportamiento esperado
+
+Dirección o Secretaría puede publicar una circular obligatoria, consultar quién confirmó la versión vigente y enviar recordatorios únicamente a quienes siguen pendientes. Los reportes distinguen las confirmaciones explícitas de los estados técnicos de entrega o apertura.
+
+#### Criterios de aceptación
+
+1. Cada confirmación queda asociada al destinatario y a la versión correcta.
+2. Una respuesta repetida no crea confirmaciones contradictorias ni duplica el registro.
+3. Los cambios posteriores del comunicado no alteran las confirmaciones históricas.
+4. Los reportes coinciden con los registros individuales y con la audiencia efectiva.
+5. Los recordatorios se dirigen únicamente a destinatarios pendientes y autorizados.
+6. Se puede distinguir claramente entre entregado, leído y confirmado.
+7. Los usuarios no autorizados no pueden consultar las respuestas ni los reportes.
+8. Los formularios de respuesta validan campos, fechas límite y estados permitidos.
+
+**Dependencias:** T-COM-02, T-COM-03, T-COM-04, T-COM-06 y T-COM-07.
+
+---
+
+### T-COM-09 [P2] — Calendario institucional, convocatorias y recordatorios
+
+**Estado de partida:** Funcional. Se agregan eventos académicos, reuniones, exámenes y actividades institucionales.
+
+- **Componentes relacionados:** `EventosCalendario`, `backend/user-service/Code.gs` (`getInstitutionalCalendarEvents`, `getPendingReminders`, `getAppointmentBookings`, `bookAppointment`), `js/teacher.js`, `js/student.js`.
+
+#### Requerimientos funcionales
+
+- Mostrar eventos según el calendario y los permisos del usuario: institucionales, académicos, reuniones, evaluaciones y actividades relevantes.
+- Permitir vistas mensual, semanal y de agenda, con navegación accesible entre fechas.
+- Diferenciar eventos de asistencia obligatoria, eventos informativos y actividades opcionales.
+- Gestionar convocatorias con fecha, hora, duración, ubicación o enlace autorizado, organizador, destinatarios y descripción.
+- Permitir confirmar asistencia, rechazar una invitación o indicar que se necesita una alternativa, cuando corresponda.
+- Permitir reuniones presenciales y virtuales sin asumir que toda reunión dispone de integración externa.
+- Gestionar cambios, cancelaciones y reprogramaciones, notificando a los participantes afectados.
+- Permitir recordatorios configurables y prevenir que se envíen varias veces para un mismo evento.
+- Respetar la zona horaria institucional y mostrar fechas y horas de manera coherente para los participantes.
+- Vincular reuniones con estudiantes, grupos, asignaturas o trámites cuando corresponda.
+- Mostrar conflictos de horario y advertir al organizador antes de confirmar una convocatoria incompatible.
+- Permitir consultar el historial de invitaciones, respuestas y cambios.
+- Diferenciar una invitación enviada de una invitación aceptada por el destinatario.
+
+#### Cambios necesarios
+
+- Revisar el modelo de eventos, invitaciones, participantes, respuestas y recordatorios.
+- Incorporar estados de participación y un historial de cambios.
+- Integrar la generación de recordatorios con T-COM-06 y T-COM-07.
+- Implementar validación de fechas, duración, zona horaria y permisos de edición.
+- Añadir controles para reprogramaciones y cancelaciones, evitando conservar recordatorios de eventos cancelados.
+- Incorporar detección de conflictos cuando los datos disponibles permitan determinar la disponibilidad.
+
+#### Comportamiento esperado
+
+Los participantes reciben una convocatoria, pueden responder y ven actualizaciones cuando cambia la reunión. Los recordatorios respetan las preferencias y no se envían después de una cancelación. El calendario refleja el estado real de la invitación.
+
+#### Criterios de aceptación
+
+1. Los eventos aparecen únicamente a los usuarios autorizados.
+2. Las invitaciones y respuestas se registran individualmente.
+3. Una reprogramación actualiza el evento y los recordatorios pendientes.
+4. Una cancelación impide enviar recordatorios futuros del evento cancelado.
+5. Las fechas y horas se muestran correctamente en los límites de día y cambios de zona horaria.
+6. Los conflictos detectables se señalan antes de confirmar la convocatoria.
+7. Los recordatorios no se duplican.
+8. El calendario funciona en dispositivos móviles y con navegación por teclado.
 
 **Dependencias:** T-COM-02, T-COM-06 y T-COM-07.
 
 ---
 
-### T-COM-10 [P2] — Comunicación contextual vinculada con estudiantes, asignaturas, trámites y documentos
+### T-COM-10 [P2] — Relaciones bidireccionales entre comunicaciones, expedientes y trámites
 
-**Problema que debe resolverse**
+**Estado de partida:** Funcional. Los mensajes incluyen una referencia contextual (`ReferenciaContextoID`) que permite navegar al recurso asociado.
 
-Proporcionar referencias estables entre los hilos de conversación y los objetos del sistema (expediente estudiantil, solicitud de trámite, entregas de tarea).
+- **Componentes relacionados:** `MensajesInternos`, `backend/user-service/Code.gs` (`sendInternalMessage`, `getDepartmentalWorkInbox`), `js/teacher.js`, `js/student.js`.
 
-**Alcance de los cambios**
+#### Requerimientos funcionales
 
-- "MensajesInternos".
-- "backend/user-service/Code.gs" (`sendInternalMessage`, `getDepartmentalWorkInbox`).
-- Controladores en "js/teacher.js" y "js/student.js".
+- Permitir vincular comunicados y conversaciones con estudiantes, familias, matrículas, asignaturas, trámites, documentos, cobros y otros recursos institucionales autorizados.
+- Mostrar la referencia contextual en la comunicación y permitir navegar desde el recurso a las comunicaciones relacionadas.
+- Mantener un identificador estable y un tipo de recurso explícito para cada referencia.
+- Validar los permisos del usuario tanto al abrir la comunicación como al navegar al recurso de destino.
+- Manejar recursos eliminados, archivados, trasladados o cuyo acceso haya sido revocado.
+- Permitir consultar el historial de comunicaciones vinculadas desde un expediente, cuando el rol tenga autorización.
+- Evitar duplicar la información original del expediente dentro del mensaje cuando basta con mantener una referencia segura.
+- Mantener los vínculos cuando el título visible o algunos metadatos del recurso cambian.
+- Evitar referencias ambiguas cuando existen varios estudiantes, trámites o documentos con nombres similares.
+- Distinguir las referencias contextuales de los adjuntos, ya que un documento vinculado no necesariamente debe descargarse ni compartirse.
+- Registrar las asociaciones y cambios relevantes cuando la trazabilidad institucional lo requiera.
 
-**Requisitos funcionales**
+#### Cambios necesarios
 
-1. Permitir relacionar una comunicación con uno o varios recursos válidos, como:
-   - Estudiante.
-   - Asignatura.
-   - Grado o sección.
-   - Trámite.
-   - Documento.
-   - Reunión.
-   - Solicitud de autorización.
-2. Al abrir una comunicación contextual, mostrar el recurso relacionado solo si el usuario tiene permiso vigente para consultarlo.
-3. Mantener una referencia estable al recurso, sin depender de enlaces frágiles o de posiciones en listas.
-4. Evitar que un mensaje dirigido a un docente o responsable permita acceder indirectamente a expedientes privados de otros estudiantes.
-5. Diferenciar el texto de la comunicación de los datos actuales del recurso vinculado. Si el recurso cambia, la comunicación histórica debe conservar su contexto original cuando sea necesario.
-6. Permitir que una respuesta conserve la relación con el asunto original.
-7. Permitir consultar las comunicaciones relevantes desde el recurso relacionado, con filtros por fecha, tipo y participantes autorizados.
-8. Evitar duplicar el contenido de un trámite o documento dentro del mensaje cuando basta con mantener una referencia segura.
-9. Gestionar documentos eliminados, archivados o sustituidos sin dejar enlaces que permitan acceder a contenido no autorizado.
-10. Permitir que un mensaje genere una tarea o acción pendiente cuando corresponda, conservando el vínculo con su origen.
-11. Evitar crear múltiples conversaciones equivalentes por iniciar el contacto desde diferentes pantallas.
-12. Mantener la trazabilidad entre la comunicación, el recurso, las respuestas y las acciones derivadas.
+- Normalizar el formato de las referencias contextuales y los tipos de recurso permitidos.
+- Revisar los puntos de integración entre el servicio de usuarios, el servicio académico y el servicio contable.
+- Crear validaciones comunes para identificar recursos existentes y comprobar permisos.
+- Añadir enlaces de retorno entre el expediente y las comunicaciones relacionadas.
+- Incorporar un tratamiento explícito para referencias inválidas o inaccesibles.
+- Evitar que la resolución automática de una referencia exponga datos financieros o académicos fuera del alcance autorizado.
 
-**Comportamiento esperado**
+#### Comportamiento esperado
 
-Las referencias llevan al recurso correcto, los permisos se comprueban en cada acceso y la comunicación conserva su historial aunque el recurso relacionado cambie o deje de estar disponible.
+Una persona autorizada puede abrir una conversación vinculada a un trámite y regresar al expediente desde el que se originó. Si pierde el permiso sobre ese expediente, no obtiene acceso indirecto mediante el enlace de la conversación.
 
-**Criterios de aceptación**
+#### Criterios de aceptación
 
-- Abrir una referencia contextual de un trámite verifica los permisos RBAC antes de mostrar la solicitud.
-- El historial de mensajes se conserva inalterado aunque el documento adjunto sea sustituido por una nueva versión.
+1. Los vínculos funcionan entre las vistas de comunicación y los recursos autorizados.
+2. Una referencia manipulada no permite acceder a otro expediente.
+3. Los cambios en títulos o metadatos no rompen los vínculos basados en identificadores estables.
+4. Los recursos archivados o eliminados muestran un estado comprensible sin revelar datos indebidos.
+5. Los usuarios pueden consultar el historial contextual permitido sin duplicaciones.
+6. Se prueban referencias de los servicios académico y contable.
+7. La navegación conserva un retorno razonable a la conversación o al expediente de origen.
 
-**Dependencias:** T-COM-03, T-COM-05 y los módulos institucionales correspondientes.
-
----
-
-### T-COM-11 [P3] — Búsqueda, archivo, recuperación e historial de comunicaciones
-
-**Problema que debe resolverse**
-
-Permitir la búsqueda rápida y el archivado lógico de mensajes y comunicados sin destruir la trazabilidad histórica ni exponer contenido privado en las sugerencias.
-
-**Alcance de los cambios**
-
-- "BandejaNotificaciones", "AnunciosInstitucionales", "MensajesInternos".
-- "backend/user-service/Code.gs" (`getUnifiedNotifications`, `getInternalConversations`).
-- Componentes de interfaz en "js/ui-common.js".
-
-**Requisitos funcionales**
-
-1. Permitir buscar por texto, título, emisor, destinatario, tipo, fecha, estado y contexto institucional.
-2. Aplicar filtros sin ampliar el ámbito de permisos del usuario.
-3. Permitir archivar comunicaciones sin eliminarlas.
-4. Diferenciar mensajes archivados, eliminados lógicamente, retirados por el emisor y sujetos a retención institucional.
-5. Conservar el historial necesario de comunicaciones oficiales, respuestas y autorizaciones.
-6. Permitir consultar versiones anteriores de comunicados cuando el usuario tenga autorización.
-7. Mostrar resultados ordenados de manera consistente y permitir paginación o carga progresiva.
-8. Evitar búsquedas que recorran innecesariamente grandes volúmenes de datos en cada interacción.
-9. Proteger la información sensible frente a resultados de búsqueda, extractos, vistas previas y sugerencias.
-10. Permitir recuperar una comunicación archivada cuando las reglas institucionales lo permitan.
-11. Evitar que la eliminación de una vista o un mensaje local borre por accidente el registro institucional.
-12. Documentar qué tipos de comunicaciones se conservan, durante cuánto tiempo y qué sucede al vencer el período de retención.
-13. Registrar las acciones administrativas de recuperación o eliminación cuando afecten comunicaciones oficiales.
-
-**Comportamiento esperado**
-
-La búsqueda devuelve los resultados pertinentes y autorizados, las operaciones de archivo no destruyen el historial y las comunicaciones oficiales pueden recuperarse de acuerdo con su política de conservación.
-
-**Criterios de aceptación**
-
-- Archivar un hilo de mensajes lo remueve de la bandeja activa pero lo mantiene consultable en la pestaña de archivados.
-- Las búsquedas por texto no muestran fragmentos de mensajes privados entre otros usuarios.
-
-**Dependencias:** Modelo de comunicaciones, permisos, persistencia e historial de auditoría.
+**Dependencias:** T-COM-02, T-COM-03, T-COM-05 y T-COM-09.
 
 ---
 
-### T-COM-12 [P3] — Plantillas, envíos programados y automatización de comunicaciones
+### T-COM-11 [P3] — Búsqueda avanzada, archivo e historial de comunicaciones
 
-**Problema que debe resolverse**
+**Estado de partida:** Capacidad por desarrollar o ampliar según la disponibilidad real de búsqueda y archivado en los módulos existentes.
 
-Gestión de plantillas institucionales reutilizables con variables dinámicas para circulares, cobros o recordatorios con previsualización segura.
+- **Componentes relacionados:** `BandejaNotificaciones`, `AnunciosInstitucionales`, `MensajesInternos`, `backend/user-service/Code.gs` (`getUnifiedNotifications`, `getInternalConversations`), `js/ui-common.js`.
 
-**Alcance de los cambios**
+#### Requerimientos funcionales
 
-- "backend/user-service/Code.gs" (`createInstitutionalAnnouncement`, `sendMultiChannelNotification`).
-- Interfaz de redacción en "js/teacher.js".
+- Permitir buscar comunicaciones por texto, remitente, destinatario, fecha, tipo, prioridad, estado, contexto y conversación.
+- Permitir combinar filtros y conservarlos mientras el usuario navega por los resultados.
+- Incluir comunicados vigentes, vencidos y archivados cuando el usuario tenga autorización.
+- Permitir archivar y recuperar comunicaciones personales sin eliminar el registro institucional original.
+- Diferenciar el archivo personal del archivo institucional y de la retirada oficial de un comunicado.
+- Mantener enlaces a las conversaciones y recursos relacionados.
+- Mostrar fragmentos relevantes de los resultados sin revelar contenido no autorizado.
+- Ordenar los resultados por relevancia o fecha y ofrecer paginación para grandes volúmenes.
+- Permitir limpiar filtros y recuperar búsquedas recientes cuando resulte útil.
+- Respetar la política de conservación y eliminación de datos.
+- Permitir búsquedas desde dispositivos móviles y mediante teclado.
+- Evitar que las consultas devuelvan resultados de otros usuarios, familias, grupos o expedientes.
 
-**Requisitos funcionales**
+#### Cambios necesarios
 
-1. Permitir crear plantillas para comunicados, convocatorias, recordatorios y respuestas administrativas.
-2. Diferenciar plantillas institucionales de plantillas personales.
-3. Permitir variables dinámicas únicamente de campos autorizados y disponibles (ej. `{NombreEstudiante}`, `{Grado}`, `{Materia}`).
-4. Validar las variables antes del envío y evitar mensajes con marcadores vacíos o datos incorrectos.
-5. Permitir programar publicaciones o envíos para una fecha y hora determinadas.
-6. Permitir cancelar o modificar un envío programado antes de su ejecución, según permisos.
-7. Registrar la versión de la plantilla utilizada en cada envío.
-8. Evitar que cambios posteriores en una plantilla alteren retroactivamente mensajes ya enviados.
-9. Permitir automatizar recordatorios de vencimientos, reuniones y solicitudes pendientes.
-10. Establecer límites de frecuencia y reglas de deduplicación para comunicaciones automatizadas.
-11. Exigir revisión o aprobación cuando una plantilla genere comunicaciones oficiales o de alto impacto.
-12. Permitir una vista previa con datos de ejemplo antes de publicar.
-13. Registrar la ejecución, destinatarios, resultado y errores de cada automatización.
-14. Evitar que una automatización se ejecute después de que el evento de origen haya sido cancelado o resuelto.
-15. Permitir desactivar una regla defectuosa sin borrar el historial de ejecuciones anteriores.
+- Revisar los mecanismos de consulta disponibles en los servicios y la estructura de las hojas de cálculo.
+- Implementar filtros del lado servidor con validación de permisos.
+- Añadir paginación y límites de consulta para evitar cargar el historial completo.
+- Definir el modelo de archivo y los estados de visibilidad.
+- Evaluar índices o mecanismos de búsqueda compatibles con la infraestructura existente si el volumen de datos lo requiere.
+- Incorporar mensajes claros para búsquedas sin resultados, errores y restricciones de acceso.
 
-**Comportamiento esperado**
+#### Comportamiento esperado
 
-Las plantillas generan contenido válido, las variables se resuelven correctamente, los envíos programados respetan su estado y las automatizaciones no repiten ni ejecutan comunicaciones que ya no correspondan.
+Un usuario puede localizar una circular antigua o recuperar una conversación archivada sin recorrer manualmente todas las comunicaciones. Los resultados respetan las autorizaciones y el archivo personal no modifica el historial institucional.
 
-**Criterios de aceptación**
+#### Criterios de aceptación
 
-- Una plantilla con variables dinámicas resuelve los valores reales del alumno antes de la entrega.
-- Los envíos cancelados antes de la hora programada no se ejecutan.
+1. Las combinaciones de filtros producen resultados correctos.
+2. Los usuarios solo encuentran recursos autorizados.
+3. Archivar una conversación no elimina sus mensajes ni las evidencias institucionales.
+4. La paginación no repite ni omite resultados al navegar por páginas estables.
+5. Las búsquedas de texto y metadatos se comportan de forma consistente.
+6. Se comprueba el rendimiento con un volumen representativo de comunicaciones.
+7. Las políticas de conservación y acceso se aplican a los resultados archivados.
 
-**Dependencias:** T-COM-04, T-COM-06, T-COM-07 y T-COM-09.
+**Dependencias:** T-COM-03, T-COM-05, T-COM-08 y T-COM-10.
 
 ---
 
-### T-COM-13 [P3] — Accesibilidad, experiencia móvil y control de la sobrecarga comunicativa
+### T-COM-12 [P3] — Plantillas, envíos programados y automatizaciones controladas
 
-**Problema que debe resolverse**
+**Estado de partida:** Capacidad por desarrollar o ampliar según las funciones de programación existentes.
 
-Garantizar accesibilidad WCAG 2.2 AA, diseño responsive en dispositivos móviles y prevención de la sobrecarga de notificaciones.
+- **Componentes relacionados:** `backend/user-service/Code.gs` (`createInstitutionalAnnouncement`, `sendMultiChannelNotification`), `js/teacher.js`.
 
-**Alcance de los cambios**
+#### Requerimientos funcionales
 
-- "teacher-dashboard.html", "student-dashboard.html".
-- "js/ui-common.js", "js/teacher.js", "js/student.js".
+- Crear una biblioteca de plantillas para circulares, recordatorios, convocatorias, avisos académicos y comunicaciones administrativas.
+- Permitir que las plantillas tengan nombre, categoría, contenido, idioma, variables permitidas, estado y permisos de uso.
+- Incorporar variables dinámicas para datos autorizados, como nombre del destinatario, estudiante relacionado, fecha, asignatura y enlace al recurso (ej. `{NombreEstudiante}`, `{Grado}`, `{Materia}`).
+- Validar que las variables obligatorias estén disponibles antes de programar o enviar.
+- Mostrar una vista previa del mensaje personalizado antes del envío.
+- Permitir programar comunicaciones para una fecha y hora determinadas y cancelar la programación antes de su ejecución.
+- Permitir automatizaciones basadas en eventos definidos, como un vencimiento, una convocatoria o una confirmación pendiente.
+- Definir condiciones de activación, audiencia, canal, plantilla, frecuencia, límites y tratamiento de errores.
+- Impedir que una automatización cree ciclos de notificaciones o dispare múltiples mensajes por una misma transición de estado.
+- Mantener una versión identificable de la plantilla utilizada en cada envío.
+- Permitir desactivar una automatización sin borrar su historial.
+- Exigir aprobación cuando la política institucional lo requiera, especialmente para comunicaciones masivas o de carácter oficial.
+- Evitar incluir información sensible en variables o canales que no sean adecuados para transmitirla.
 
-**Requisitos funcionales**
+#### Cambios necesarios
 
-1. Mantener una interfaz consistente entre la bandeja, los anuncios, las conversaciones, el calendario y las solicitudes.
-2. Evitar que una misma comunicación se presente como elementos independientes en varias vistas sin indicar que corresponden al mismo evento.
-3. Mostrar un resumen claro de qué requiere atención y qué es meramente informativo.
-4. Permitir agrupar avisos de baja prioridad y filtrar por importancia.
-5. Evitar que los contadores de notificaciones crezcan indefinidamente por eventos ya leídos, archivados o resueltos.
-6. Permitir silenciar conversaciones o ajustar preferencias sin perder acceso a los mensajes.
-7. Ofrecer controles accesibles mediante teclado (foco visible, cierre con `ESC`) y lectores de pantalla.
-8. Utilizar etiquetas textuales, estados claros y mensajes de error comprensibles, sin depender exclusivamente del color.
-9. Mantener el foco y los datos introducidos cuando se producen errores de validación.
-10. Adaptar formularios, adjuntos, listas de destinatarios y calendarios a pantallas pequeñas.
-11. Advertir al usuario antes de abandonar un borrador con cambios no guardados.
-12. Mostrar el estado real de guardado y envío, diferenciando borrador, envío en curso, enviado y fallo.
-13. Permitir revisar la audiencia y el contenido antes de enviar una comunicación masiva.
-14. Proporcionar límites y expectativas de respuesta para evitar que la mensajería implique disponibilidad permanente del personal.
-15. No enviar automáticamente múltiples notificaciones para confirmar acciones rutinarias si el estado puede consultarse en la plataforma.
-16. Evitar que la simplificación de avisos elimine información que el usuario necesita para cumplir un plazo o una obligación.
-17. Medir rendimiento con volúmenes representativos de mensajes, conversaciones y eventos.
+- Incorporar entidades para plantillas, versiones, programaciones y reglas de automatización si no existen equivalentes.
+- Integrar la ejecución programada con el motor de notificaciones y la deduplicación.
+- Añadir validación de variables, permisos, audiencias y fechas.
+- Registrar las ejecuciones y los motivos de omisión o fallo.
+- Implementar controles de concurrencia para evitar que dos procesos ejecuten el mismo envío programado.
+- Añadir opciones de prueba y previsualización que no contacten a destinatarios reales.
+- Definir límites de frecuencia y mecanismos para pausar reglas problemáticas.
 
-**Comportamiento esperado**
+#### Comportamiento esperado
 
-La interfaz es operable mediante los mecanismos de accesibilidad previstos, mantiene la coherencia de los estados y reduce avisos innecesarios sin ocultar comunicaciones importantes ni perder borradores.
+Una comunicación programada se ejecuta una sola vez en el momento previsto, con la audiencia y la versión de plantilla configuradas. Una regla automática no genera avisos repetidos por un mismo evento y puede desactivarse sin perder su historial.
 
-**Criterios de aceptación**
+#### Criterios de aceptación
 
-- Todos los modales de redacción y lectura se cierran con la tecla `ESC`.
-- Las vistas en móviles estrechos evitan desplazamientos horizontales no deseados.
+1. Las variables se resuelven correctamente para distintos destinatarios.
+2. Una variable obligatoria ausente bloquea el envío y explica el error.
+3. Cancelar una programación impide su ejecución posterior.
+4. La ejecución concurrente no genera duplicados.
+5. Cada envío puede vincularse con la versión de plantilla y la regla que lo originaron.
+6. Las automatizaciones respetan permisos, preferencias y límites de frecuencia.
+7. Se pueden probar plantillas sin enviar mensajes externos.
+8. Las reglas desactivadas no generan nuevas comunicaciones.
+9. Los fallos quedan registrados y pueden diagnosticarse.
+
+**Dependencias:** T-COM-02, T-COM-03, T-COM-06, T-COM-07 y T-COM-14.
+
+---
+
+### T-COM-13 [P3] — Accesibilidad, experiencia móvil y reducción de fatiga de notificaciones
+
+**Estado de partida:** Requiere validación específica de accesibilidad y optimización de la experiencia de uso.
+
+- **Componentes relacionados:** `teacher-dashboard.html`, `student-dashboard.html`, `js/ui-common.js`, `js/teacher.js`, `js/student.js`.
+
+#### Requerimientos funcionales
+
+- Asegurar que la bandeja, los comunicados, los formularios de confirmación, la mensajería y el calendario sean utilizables con teclado y tecnologías de asistencia (WCAG 2.2 AA).
+- Aplicar criterios WCAG 2.2 nivel AA en los componentes incluidos en el alcance.
+- Mantener contraste suficiente, foco visible (cierre con `ESC`), etiquetas accesibles, nombres descriptivos de controles y mensajes de error comprensibles.
+- No depender exclusivamente del color, sonido, animación o posición para comunicar prioridades y estados.
+- Ofrecer una experiencia responsive para pantallas pequeñas, sin ocultar acciones esenciales ni exigir desplazamientos horizontales innecesarios.
+- Permitir configurar preferencias por categoría, canal y frecuencia, con opciones claras para avisos opcionales.
+- Diferenciar notificaciones urgentes, obligatorias e informativas mediante texto, iconografía y jerarquía visual.
+- Agrupar notificaciones relacionadas cuando ello no altere el sentido ni suprima información importante.
+- Evitar enviar avisos reiterados por cambios menores o eventos que el usuario ya haya consultado.
+- Permitir horarios de silencio para comunicaciones no urgentes, con reglas institucionales explícitas para excepciones.
+- Proporcionar controles para reducir el ruido visual y acceder fácilmente a los pendientes importantes.
+- Evitar que la interfaz sugiera que una persona debe responder inmediatamente fuera de su horario de disponibilidad.
+- Garantizar que los controles de confirmación, autorización y respuesta puedan completarse sin depender de gestos complejos.
+
+#### Cambios necesarios
+
+- Revisar los componentes visuales y los flujos de interacción de los módulos de comunicación.
+- Corregir problemas de foco, orden de tabulación, nombres accesibles, contraste y escalado de texto.
+- Implementar preferencias de notificación con persistencia y aplicación uniforme entre canales.
+- Incorporar reglas de agrupación y silenciamiento coordinadas con T-COM-07.
+- Mejorar estados vacíos, errores, carga, confirmación y recuperación.
+- Comprobar la interacción en dispositivos móviles, zoom y navegación por teclado.
+- Evitar que los mensajes urgentes dependan de animaciones o de avisos sonoros.
+
+#### Comportamiento esperado
+
+La plataforma permite completar las acciones de comunicación desde un teléfono o mediante teclado y lector de pantalla. El usuario puede reducir notificaciones opcionales sin perder acceso a comunicados obligatorios ni a avisos críticos definidos por la institución.
+
+#### Criterios de aceptación
+
+1. Los flujos principales cumplen los criterios WCAG 2.2 AA aplicables, respaldados por pruebas automáticas y revisión manual.
+2. Todas las acciones principales pueden completarse con teclado.
+3. El foco es visible y sigue un orden lógico.
+4. Los errores de formularios se identifican y anuncian de forma accesible.
+5. Los diseños funcionan en pantallas pequeñas y con ampliación de texto.
+6. Las preferencias se mantienen después de cerrar sesión y volver a entrar.
+7. Las notificaciones opcionales respetan la frecuencia y los horarios configurados.
+8. Los avisos obligatorios siguen las reglas institucionales y no se silencian accidentalmente.
+9. La agrupación no elimina información crítica ni mezcla comunicaciones con acciones diferentes.
 
 **Dependencias:** T-COM-01, T-COM-06, T-COM-07 y T-COM-08.
 
 ---
 
-### T-COM-14 [P3] — Supervisión operativa, métricas y diagnóstico de comunicaciones
+### T-COM-14 [P3] — Supervisión operativa, métricas de entrega y diagnóstico
 
-**Problema que debe resolverse**
+**Estado de partida:** Existen configuraciones de canales y registros de envíos. Se requiere ampliar la capacidad de supervisión y diagnóstico.
 
-Proporcionar a la administración un tablero de supervisión de envíos multicanal, diagnóstico de fallos y métricas de rendimiento del servicio de mensajería.
+- **Componentes relacionados:** `backend/user-service/Code.gs` (`getNotificationChannelConfigs`, `sendChannelNotificationTest`), `RegistroEnviosExternos`, `js/teacher.js`.
 
-**Alcance de los cambios**
+#### Requerimientos funcionales
 
-- "backend/user-service/Code.gs" (`getNotificationChannelConfigs`, `sendChannelNotificationTest`).
-- Panel de configuración en "js/teacher.js".
+- Proporcionar una vista operativa de los canales externos, sus configuraciones, disponibilidad conocida, errores recientes y resultados de pruebas.
+- Mostrar volúmenes de notificaciones generadas, enviadas, aceptadas, entregadas cuando exista confirmación del proveedor, fallidas, reintentadas y pendientes.
+- Diferenciar los indicadores por canal, proveedor, tipo de comunicación y periodo.
+- Mostrar la antigüedad de la cola pendiente y la cantidad de operaciones con estado desconocido.
+- Permitir localizar un envío mediante su identificador y reconstruir el evento de origen, los intentos y el resultado.
+- Mostrar causas de error comprensibles y acciones de diagnóstico sugeridas.
+- Permitir realizar pruebas controladas de conectividad y configuración, sin enviar mensajes a destinatarios reales no autorizados.
+- Permitir desactivar un canal con problemas y reactivarlo tras una comprobación satisfactoria.
+- Alertar a los responsables cuando se superen umbrales configurables de fallos, retrasos o acumulación de envíos.
+- Diferenciar las métricas operativas de los indicadores de lectura y respuesta de los destinatarios.
+- Proteger los datos personales en los paneles, informes y exportaciones.
+- Registrar las acciones administrativas que alteren la configuración de los proveedores.
+- Evitar que los indicadores presenten una prueba de conexión satisfactoria como garantía de entrega de todos los mensajes.
 
-**Requisitos funcionales**
+#### Cambios necesarios
 
-1. Mostrar indicadores operativos como:
-   - Comunicaciones creadas y publicadas.
-   - Notificaciones pendientes.
-   - Envíos exitosos y fallidos.
-   - Reintentos realizados.
-   - Comunicaciones que requieren aprobación.
-   - Solicitudes de autorización pendientes.
-   - Eventos programados y vencidos.
-2. Diferenciar los resultados por canal, tipo de evento y período.
-3. Mostrar los errores con códigos y descripciones que permitan diagnosticar el problema sin revelar credenciales ni datos sensibles.
-4. Permitir filtrar los envíos fallidos y reintentar únicamente aquellos que sigan siendo válidos.
-5. Identificar fallos recurrentes de configuración, destinatarios inválidos o proveedores externos.
-6. Permitir consultar el historial de una comunicación desde su creación hasta sus entregas y respuestas.
-7. Evitar que los indicadores cuenten como entregado un mensaje que únicamente fue puesto en cola.
-8. Diferenciar las métricas técnicas de entrega de las métricas de lectura y respuesta.
-9. Registrar las acciones administrativas realizadas desde el panel.
-10. Evitar que los administradores puedan consultar el contenido privado de las comunicaciones solo por acceder al panel de métricas.
-11. Incorporar alertas operativas ante acumulaciones anormales de envíos pendientes o errores reiterados.
-12. Permitir exportar informes operativos con controles de acceso.
-13. Evitar que la consulta de métricas genere consultas costosas repetidas sobre todos los mensajes.
-14. Establecer una política de conservación de los registros operativos y de auditoría.
+- Normalizar los estados y motivos de error almacenados en `RegistroEnviosExternos`.
+- Incorporar correlación entre evento original, operación idempotente, intento y respuesta del proveedor.
+- Crear consultas agregadas que no requieran cargar todos los registros individuales.
+- Añadir filtros por periodo, canal, estado y proveedor.
+- Definir umbrales y reglas de alerta para detectar problemas operativos.
+- Incorporar controles de permisos para separar la consulta de métricas de la gestión de credenciales.
+- Añadir una vista de detalle que muestre el historial de un envío sin exponer secretos.
+- Establecer mecanismos para identificar colas bloqueadas, configuraciones inválidas y errores repetitivos.
 
-**Comportamiento esperado**
+#### Comportamiento esperado
 
-Los indicadores reflejan los estados reales disponibles, los errores pueden diagnosticarse y las acciones de reintento no duplican envíos. Las métricas técnicas no se presentan como pruebas de lectura humana.
+Un responsable autorizado puede identificar qué canal presenta fallos, localizar un envío específico, conocer sus intentos y distinguir entre una demora del proveedor y un error de configuración. Puede ejecutar una prueba controlada y verificar el resultado sin exponer credenciales ni datos innecesarios.
 
-**Criterios de aceptación**
+#### Criterios de aceptación
 
-- El panel diferencia envíos en cola de entregas confirmadas por adaptadores externos.
-- Los reintentos manuales de envíos fallidos no duplican mensajes exitosos previa o paralelamente procesados.
+1. Las métricas coinciden con los registros de origen para el periodo consultado.
+2. Los estados de entrega reflejan las garantías reales del proveedor.
+3. Los envíos fallidos pueden rastrearse desde el evento original hasta el último intento.
+4. Los datos agregados se consultan sin cargar todos los registros de forma indiscriminada.
+5. Las pruebas de canal no contactan destinatarios no autorizados.
+6. Las credenciales y secretos no aparecen en el panel, las exportaciones ni los mensajes de error.
+7. Las alertas se activan cuando se cumplen las condiciones configuradas y no se repiten sin control.
+8. Se puede identificar una cola atascada o una acumulación anormal de fallos.
+9. Los usuarios sin permisos administrativos no pueden cambiar la configuración de los proveedores.
 
-**Dependencias:** T-COM-03, T-COM-06, T-COM-07 y los registros de auditoría.
+**Dependencias:** T-COM-03, T-COM-06, T-COM-07 y T-COM-12.
 
 ---
 
-### ORDEN DE EJECUCIÓN RECOMENDADO FASE 11 (COMUNICACIÓN INSTITUCIONAL)
+### T-COM-15 [P2] — Preferencias de comunicación por categoría, canal y frecuencia
+
+**Estado de partida:** Existe `getNotificationPreferences`; debe comprobarse y ampliarse la granularidad de las preferencias y su aplicación efectiva.
+
+- **Componentes relacionados:** `PreferenciasNotificacion`, `backend/user-service/Code.gs` (`getNotificationPreferences`, `sendMultiChannelNotification`), `js/ui-common.js`.
+
+#### Requerimientos funcionales
+
+- Permitir que cada usuario configure, dentro de las opciones autorizadas, qué avisos opcionales desea recibir y por qué canales.
+- Separar preferencias por categorías, por ejemplo, comunicados institucionales, mensajes directos, eventos de calendario, recordatorios académicos y avisos administrativos.
+- Ofrecer frecuencias apropiadas, como inmediata, resumen periódico o desactivada para categorías opcionales compatibles.
+- Permitir silenciar conversaciones o grupos concretos sin deshabilitar todas las comunicaciones.
+- Definir qué preferencias puede configurar el usuario y cuáles son obligatorias por política institucional.
+- Mantener las preferencias al cambiar de dispositivo o volver a iniciar sesión.
+- Aplicar los cambios de forma consistente a la bandeja, al correo, a SMS y a otros canales realmente habilitados.
+- Mostrar claramente las consecuencias de desactivar una categoría.
+- Evitar que una preferencia de correo desactive accidentalmente una notificación interna necesaria.
+- Diferenciar avisos informativos de confirmaciones, autorizaciones y alertas críticas.
+- Permitir que la institución configure valores predeterminados y excepciones justificadas.
+- Conservar el historial necesario para explicar por qué una notificación fue enviada o suprimida.
+
+#### Cambios necesarios
+
+- Revisar el esquema de `PreferenciasNotificacion`.
+- Definir reglas de precedencia entre preferencias personales, configuración institucional y obligaciones de comunicación.
+- Incorporar validación de valores y persistencia segura.
+- Integrar las preferencias con T-COM-06, T-COM-07 y T-COM-12.
+- Añadir una interfaz sencilla para consultar y modificar preferencias.
+- Registrar las decisiones de distribución relevantes sin generar un historial excesivo de datos personales.
+
+#### Comportamiento esperado
+
+Un usuario puede optar por recibir resúmenes de avisos informativos y notificaciones inmediatas de mensajes directos. Los cambios se aplican de forma consistente y no suprimen comunicaciones obligatorias que deban recibirse.
+
+#### Criterios de aceptación
+
+1. Las preferencias persisten entre sesiones y dispositivos.
+2. Cada categoría respeta los canales y frecuencias seleccionados.
+3. Los avisos obligatorios se distinguen de los opcionales.
+4. Una preferencia no puede deshabilitar por error una categoría crítica.
+5. Las preferencias se aplican tanto a las notificaciones nuevas como a las programaciones que aún no se hayan ejecutado, según las reglas definidas.
+6. El usuario puede identificar por qué un aviso fue enviado o no enviado cuando tenga derecho a conocerlo.
+7. Los cambios de preferencias no generan notificaciones duplicadas.
+8. Los perfiles administrativos no pueden modificar preferencias personales fuera de sus atribuciones.
+
+**Dependencias:** T-COM-02, T-COM-03, T-COM-06 y T-COM-07.
+
+---
+
+### T-COM-16 [P2] — Resúmenes de actividad y vista consolidada para familias con varios estudiantes
+
+**Estado de partida:** Se identifica como una ampliación de valor para el centro de comunicaciones y el portal familiar.
+
+- **Componentes relacionados:** `backend/user-service/Code.gs` (`getFamilyConsolidatedSummary`, `getGuardianStudents`), `student-dashboard.html`, `js/student.js`.
+
+#### Requerimientos funcionales
+
+- Ofrecer resúmenes de actividad con comunicaciones recientes, avisos pendientes, próximos eventos y acciones requeridas.
+- Permitir elegir una frecuencia para los resúmenes opcionales, cuando el canal lo admita.
+- Agrupar información por estudiante dentro de una misma cuenta familiar cuando exista una relación válida y autorizada.
+- Diferenciar claramente los datos de cada estudiante para evitar confusiones entre nombres, grados, asignaturas y pendientes.
+- Permitir abrir el comunicado, evento o acción desde el resumen.
+- Excluir del resumen los contenidos que el destinatario no esté autorizado a consultar.
+- No incluir calificaciones, datos financieros u otra información sensible en canales inadecuados.
+- Evitar incluir en el mismo mensaje familiar información que deba permanecer separada por permisos o por confidencialidad.
+- Respetar las preferencias del usuario y las reglas de frecuencia.
+- Diferenciar información reciente de tareas pendientes y de eventos próximos.
+- Evitar repetir en cada resumen comunicaciones que ya no requieran acción, salvo que la política institucional indique lo contrario.
+- Mantener un registro de los resúmenes generados y de su resultado técnico, sin confundirlo con confirmaciones individuales de lectura.
+
+#### Cambios necesarios
+
+- Integrar la información de la bandeja, los comunicados, el calendario y los recordatorios.
+- Resolver las relaciones familiares desde los datos autorizados del sistema (`RelacionesFamiliares`).
+- Implementar reglas de agrupación, deduplicación y selección de contenido.
+- Incorporar plantillas específicas para resúmenes y validación del contenido antes del envío.
+- Integrar la programación con T-COM-06, T-COM-07, T-COM-12 y T-COM-15.
+
+#### Comportamiento esperado
+
+Una persona responsable de varios estudiantes puede consultar un resumen organizado por estudiante, con enlaces a las acciones pendientes. El sistema excluye automáticamente los datos que no corresponden a su relación autorizada y no convierte el resumen en una confirmación de lectura de cada elemento.
+
+#### Criterios de aceptación
+
+1. Cada estudiante aparece únicamente para responsables con relación autorizada.
+2. Los elementos se agrupan correctamente por estudiante y categoría.
+3. El resumen no contiene datos sensibles no autorizados para ese canal.
+4. Los elementos repetidos se consolidan según reglas definidas.
+5. Los enlaces llevan al recurso correcto y vuelven a validar permisos.
+6. Los resúmenes respetan frecuencia, preferencias y límites de envío.
+7. La generación de resúmenes no crea confirmaciones de lectura falsas.
+8. Se comprueban familias con un estudiante, varios estudiantes y cambios de relación familiar.
+
+**Dependencias:** T-COM-02, T-COM-06, T-COM-07, T-COM-10, T-COM-12 y T-COM-15.
+
+---
+
+### T-COM-17 [P3] — Gestión de incidencias y seguimiento de comunicaciones problemáticas
+
+**Estado de partida:** Capacidad complementaria por implementar si no existe una herramienta equivalente en el sistema.
+
+- **Componentes relacionados:** `backend/user-service/Code.gs` (`submitProblemTicket`, `getProblemTickets`), `js/ui-common.js`.
+
+#### Requerimientos funcionales
+
+- Permitir reportar una comunicación no recibida, un enlace roto, un adjunto inaccesible, una convocatoria incorrecta o un problema de entrega.
+- Vincular la incidencia con el mensaje, comunicado, evento o envío afectado.
+- Registrar categoría, descripción, fecha, usuario reportante, estado, responsable y resolución.
+- Permitir estados como recibida, en revisión, pendiente de información, resuelta y cerrada.
+- Permitir que los responsables autorizados añadan notas internas sin mostrarlas al reportante.
+- Mostrar al usuario el estado de su incidencia y la resolución que le corresponda conocer.
+- Evitar que el reporte de una incidencia permita consultar mensajes o datos de otros usuarios.
+- Permitir identificar problemas recurrentes por canal, tipo de comunicación o módulo.
+- Vincular las incidencias técnicas con el diagnóstico de T-COM-14.
+- Evitar que reportar una comunicación como no recibida genere automáticamente un reenvío duplicado sin comprobar el estado anterior.
+
+#### Cambios necesarios
+
+- Incorporar un registro de incidencias vinculado a los recursos de comunicación.
+- Definir permisos, estados, campos y reglas de asignación.
+- Integrar el seguimiento con los registros de entrega y la bandeja unificada.
+- Incorporar validaciones para evitar reportes duplicados de la misma incidencia.
+- Añadir una vista de seguimiento para el usuario y una vista de gestión para responsables autorizados.
+
+#### Comportamiento esperado
+
+El usuario puede informar de un problema y consultar su estado. El responsable puede localizar el envío original, diagnosticarlo y decidir si corresponde reintentar, corregir o cerrar la incidencia sin duplicar la comunicación automáticamente.
+
+#### Criterios de aceptación
+
+1. Cada incidencia queda vinculada al recurso correcto.
+2. Los permisos impiden consultar incidencias ajenas sin autorización.
+3. Los cambios de estado y las acciones de gestión quedan registrados.
+4. Las incidencias duplicadas pueden identificarse y tratarse de manera controlada.
+5. La resolución puede relacionarse con el historial del envío original.
+6. Reportar una incidencia no provoca por sí solo un envío repetido.
+7. Los problemas recurrentes pueden agruparse mediante filtros operativos.
+
+**Dependencias:** T-COM-03, T-COM-06, T-COM-07 y T-COM-14.
+
+---
+
+### T-COM-18 [P3] — Políticas de retención, conservación y exportación de comunicaciones
+
+**Estado de partida:** Requiere definir y verificar las políticas aplicables a los distintos tipos de comunicación y sus evidencias.
+
+- **Componentes relacionados:** `backend/user-service/Code.gs` (`purgeStructuredLogs`, `createSystemBackup`), Google Drive, Google Sheets.
+
+#### Requerimientos funcionales
+
+- Diferenciar la conservación de mensajes personales, comunicados oficiales, confirmaciones, registros de entrega, adjuntos y registros de auditoría.
+- Definir periodos de conservación según el tipo de dato y las necesidades institucionales aplicables.
+- Evitar la eliminación automática de evidencias que deban conservarse por obligaciones administrativas o políticas vigentes.
+- Permitir archivar comunicaciones vencidas sin confundir el archivo con la eliminación.
+- Permitir exportaciones autorizadas con filtros y fecha de corte.
+- Incluir en cada exportación los metadatos necesarios para interpretar el contenido y su contexto.
+- Restringir las exportaciones masivas a perfiles autorizados.
+- Registrar quién exportó qué información, cuándo y bajo qué alcance.
+- Evitar que la exportación incluya destinatarios, adjuntos o referencias contextuales no autorizados.
+- Definir el tratamiento de datos personales cuando una cuenta se deshabilita o cambia su relación con la institución.
+- Permitir aplicar una política de eliminación cuando corresponda, con controles y registro de ejecución.
+- Gestionar las referencias a documentos archivados o eliminados para evitar enlaces rotos que parezcan activos.
+
+#### Cambios necesarios
+
+- Inventariar los tipos de comunicación y datos asociados.
+- Definir reglas de retención diferenciadas, aprobadas por los responsables institucionales pertinentes.
+- Implementar controles de acceso, exportación y eliminación acordes con dichas reglas.
+- Incorporar registro de operaciones de exportación y mantenimiento.
+- Verificar las implicaciones de la retención sobre Google Sheets, Google Drive y los registros de los proveedores externos.
+- Establecer un procedimiento para comprobar el resultado de los procesos de conservación y eliminación.
+
+#### Comportamiento esperado
+
+La institución puede consultar y exportar el historial autorizado sin perder la trazabilidad requerida. Los datos se conservan o eliminan conforme a reglas definidas, y las operaciones administrativas sobre el historial quedan registradas.
+
+#### Criterios de aceptación
+
+1. Cada tipo de dato tiene una política de conservación definida.
+2. Las exportaciones respetan filtros y permisos.
+3. Cada exportación sensible queda registrada.
+4. Los procesos de eliminación no afectan datos fuera de su alcance.
+5. Los recursos conservados mantienen referencias coherentes.
+6. Los registros que deban conservarse no se eliminan mediante operaciones ordinarias de archivo.
+7. Se comprueba el resultado de las políticas sobre las hojas de cálculo y los archivos asociados.
+
+**Dependencias:** T-COM-03, T-COM-08, T-COM-10 y T-COM-11.
+
+---
+
+### T-COM-19 [P3] — Acciones directas desde las comunicaciones y seguimiento de tareas pendientes
+
+**Estado de partida:** Ampliación funcional para conectar las comunicaciones con las acciones institucionales que requieren una respuesta o gestión.
+
+- **Componentes relacionados:** `SolicitudesTramites`, `FirmasConformidades`, `backend/user-service/Code.gs` (`processWorkflowDecision`), `js/ui-common.js`.
+
+#### Requerimientos funcionales
+
+- Permitir que una comunicación incluya acciones concretas, como confirmar asistencia, responder una solicitud, presentar una autorización o abrir un trámite.
+- Mostrar claramente qué acción se solicita, quién debe ejecutarla y cuál es la fecha límite.
+- Vincular cada acción con el comunicado o conversación de origen.
+- Registrar el estado de la acción, su responsable, fecha de creación y fecha de finalización.
+- Evitar que pulsar un enlace se interprete como completar una acción que requiere confirmación explícita.
+- Permitir acceder a la acción directamente desde la bandeja, el resumen y la comunicación original.
+- Mostrar las acciones pendientes y vencidas sin duplicar tareas cuando el mismo evento se presenta en varias vistas.
+- Respetar los permisos del recurso al abrir y completar la acción.
+- Permitir que la institución defina qué acciones requieren respuesta obligatoria y cuáles son opcionales.
+- Actualizar el estado en todas las vistas cuando una acción se completa desde cualquiera de ellas.
+- Registrar el resultado de acciones con consecuencias administrativas.
+- Evitar que un recordatorio de una acción ya completada se envíe por una condición desactualizada.
+
+#### Cambios necesarios
+
+- Definir un modelo común para acciones vinculadas a comunicaciones, reutilizando entidades existentes cuando resulte apropiado.
+- Integrar el estado de la acción con la bandeja, el calendario y los recordatorios.
+- Añadir validación de responsables, permisos y fechas límite.
+- Incorporar idempotencia para las operaciones de finalización.
+- Integrar la programación de recordatorios con T-COM-06, T-COM-07 y T-COM-12.
+
+#### Comportamiento esperado
+
+El destinatario puede abrir una comunicación y completar la acción solicitada desde el enlace correspondiente. El estado se refleja en la bandeja y el calendario, y dejan de generarse recordatorios una vez cumplida la tarea.
+
+#### Criterios de aceptación
+
+1. Cada acción tiene un identificador y un vínculo inequívoco con su comunicación de origen.
+2. Completar una acción actualiza todas las vistas correspondientes.
+3. Repetir una operación de finalización no duplica resultados.
+4. Un enlace abierto no se interpreta automáticamente como una autorización o respuesta.
+5. Las acciones vencidas y pendientes se identifican correctamente.
+6. Los recordatorios se detienen al completar o cancelar la acción.
+7. Las acciones con consecuencias administrativas conservan evidencia del resultado.
+8. Los permisos se validan al abrir y al completar la acción.
+
+**Dependencias:** T-COM-02, T-COM-03, T-COM-06, T-COM-07, T-COM-09, T-COM-10 y T-COM-12.
+
+---
+
+### MATRIZ DE DEPENDENCIAS Y ORDEN DE EJECUCIÓN RECOMENDADO FASE 11 (COMUNICACIÓN INSTITUCIONAL)
 
 | Orden | Tarea | Prioridad | Dependencia principal |
 | :---: | :--- | :---: | :--- |
-| **1** | **T-COM-01.** Identificación y auditoría del centro unificado de comunicaciones | **P1** | `getUnifiedNotifications` / Bandeja |
-| **2** | **T-COM-02.** Control de destinatarios, segmentación y permisos de envío | **P1** | RBAC / `ROLE_PERMISSIONS` |
-| **3** | **T-COM-03.** Seguridad, confidencialidad y trazabilidad de las comunicaciones | **P1** | Drive proxy / Log audit |
-| **4** | **T-COM-07.** Prevención de duplicados, control de frecuencia y preferencias | **P1** | `DeduplicationKey` / Idempotencia |
-| **5** | **T-COM-04.** Noticias, anuncios, circulares y comunicados oficiales | **P2** | `AnunciosInstitucionales` |
-| **6** | **T-COM-05.** Mensajería individual y grupal con contexto institucional | **P2** | `MensajesInternos` |
-| **7** | **T-COM-06.** Motor de notificaciones internas y preparación de canales externos | **P2** | `sendMultiChannelNotification` |
-| **8** | **T-COM-08.** Confirmaciones de lectura, respuestas y seguimiento | **P2** | `submitAnnouncementReceiptConfirmation` |
-| **9** | **T-COM-09.** Calendario compartido, reuniones, convocatorias y recordatorios | **P2** | `EventosCalendario` |
-| **10** | **T-COM-10.** Comunicación contextual vinculada a expedientes y trámites | **P2** | `ReferenciaContextoID` |
-| **11** | **T-COM-11.** Búsqueda, archivo, recuperación e historial de comunicaciones | **P3** | Search engine / Privacy |
-| **12** | **T-COM-12.** Plantillas, envíos programados y automatización | **P3** | Dynamic variables engine |
-| **13** | **T-COM-13.** Accesibilidad, experiencia móvil y control de fatiga noticiosa | **P3** | UI / WCAG AA |
-| **14** | **T-COM-14.** Supervisión operativa, métricas y diagnóstico de comunicaciones | **P3** | `RegistroEnviosExternos` |
+| **1** | **T-COM-07.** Idempotencia, deduplicación (`DeduplicationKey`) y control de frecuencia | **P1** | `sendMultiChannelNotification` / Idempotencia |
+| **2** | **T-COM-02.** Segmentación avanzada de destinatarios y aislamiento de información | **P1** | RBAC / `ROLE_PERMISSIONS` |
+| **3** | **T-COM-03.** Seguridad, confidencialidad y trazabilidad integral | **P1** | Drive proxy / Log audit |
+| **4** | **T-COM-06.** Motor de notificaciones internas y adaptadores multicanal | **P2** | `sendMultiChannelNotification` |
+| **5** | **T-COM-15.** Preferencias de comunicación por categoría, canal y frecuencia | **P2** | `PreferenciasNotificacion` |
+| **6** | **T-COM-01.** Actualización en tiempo real del centro unificado de comunicaciones | **P1** | `getUnifiedNotifications` / Bandeja |
+| **7** | **T-COM-04.** Ciclo de vida de comunicados oficiales y circulares | **P2** | `AnunciosInstitucionales` |
+| **8** | **T-COM-05.** Mensajería interna contextual y gestión de conversaciones | **P2** | `MensajesInternos` |
+| **9** | **T-COM-08.** Confirmaciones de lectura, respuestas estructuradas y seguimiento | **P2** | `submitAnnouncementReceiptConfirmation` |
+| **10** | **T-COM-09.** Calendario institucional, convocatorias y recordatorios | **P2** | `EventosCalendario` |
+| **11** | **T-COM-10.** Relaciones bidireccionales entre comunicaciones, expedientes y trámites | **P2** | `ReferenciaContextoID` |
+| **12** | **T-COM-14.** Supervisión operativa, métricas de entrega y diagnóstico | **P3** | `RegistroEnviosExternos` |
+| **13** | **T-COM-11.** Búsqueda avanzada, archivo e historial de comunicaciones | **P3** | Search engine / Privacy |
+| **14** | **T-COM-12.** Plantillas, envíos programados y automatizaciones controladas | **P3** | Dynamic variables engine |
+| **15** | **T-COM-13.** Accesibilidad, experiencia móvil y reducción de fatiga de notificaciones | **P3** | UI / WCAG AA |
+| **16** | **T-COM-16.** Resúmenes de actividad y vista consolidada para familias multihijo | **P2** | `getFamilyConsolidatedSummary` |
+| **17** | **T-COM-17.** Gestión de incidencias y seguimiento de comunicaciones problemáticas | **P3** | Support tickets |
+| **18** | **T-COM-18.** Políticas de retención, conservación y exportación de comunicaciones | **P3** | Data retention policy |
+| **19** | **T-COM-19.** Acciones directas desde las comunicaciones y seguimiento de tareas | **P3** | `SolicitudesTramites` |
