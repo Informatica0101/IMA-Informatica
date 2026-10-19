@@ -1964,3 +1964,128 @@ Modelo de permisos, expediente consolidado, cronología, exportaciones y auditor
 | **16** | **T-EXP-15.** Cronología del expediente con filtros por categoría | **P2** | `getStudentTimeline` |
 | **17** | **T-EXP-17.** Panel de alertas y tareas pendientes | **P2** | `ExpedientesEstudiantes` |
 | **18** | **T-EXP-09.** Buscador avanzado multicriterio de expedientes | **P3** | Frontend search |
+
+
+---
+
+## PLAN DE TRABAJO DETALLADO Y UNIFICADO: FASE DE PLANIFICACIÓN ACADÉMICA, HORARIOS Y RECURSOS INSTITUCIONALES
+
+### T-HOR-01 [P1] — LockService y Control Transaccional en Asignación de Aulas y Horarios
+- **Componentes relacionados:** `backend/academic-service/Code.gs` (`createClassSchedule`, `checkScheduleConflict`), `js/teacher.js`, hojas `HorariosClases`, `SedesAulas`.
+- **Problema que debe resolverse:** Cuando dos coordinadores guardan bloques de horario simultáneamente para la misma aula o docente, la consulta previa de colisión en `checkScheduleConflict` puede sufrir una condición de carrera si la reserva no está protegida por un bloqueo atómico exclusivo.
+- **Requisitos funcionales:**
+  - Envolver la validación y guardado de `createClassSchedule` en un bloque `LockService.getScriptLock()` con timeout de 10 segundos.
+  - Revalidar la colisión dentro del bloque exclusivo antes de insertar el registro en `HorariosClases`.
+- **Criterios de Aceptación:**
+  1. Dos peticiones simultáneas sobre el mismo espacio y bloque horario resultan en una reserva exitosa y un rechazo controlado por conflicto de agenda.
+  2. No se generan reservas dobles sobre una misma aula en el mismo intervalo.
+- **Riesgo de Regresión:** Bajo.
+
+---
+
+### T-HOR-02 [P1] — Validador de Sobrecarga de Evaluaciones y Exámenes por Sección
+- **Componentes relacionados:** `backend/academic-service/Code.gs` (`createCalendarEvent`), `backend/exam-service/Code.gs`, `js/teacher.js`.
+- **Problema que debe resolverse:** La programación de exámenes y evaluaciones no limita la cantidad máxima de exámenes simultáneos o diarios para una misma sección, pudiendo agendar tres o más evaluaciones el mismo día para un grupo de estudiantes.
+- **Requisitos funcionales:**
+  - Implementar en `createCalendarEvent` una regla que restrinja un máximo de 2 evaluaciones/exámenes principales por sección en un mismo día lectivo.
+  - Generar un aviso de advertencia o requerir confirmación administrativa si se intenta superar el límite.
+- **Criterios de Aceptación:**
+  1. Intentar agendar un tercer examen el mismo día para una sección dispara un aviso de sobrecarga de evaluaciones.
+  2. La regla permite excepciones autorizadas por Dirección.
+- **Riesgo de Regresión:** Nulo.
+
+---
+
+### T-HOR-03 [P1] — Regla de Bloques Consecutivos y Pausas Obligatorias para Carga Docente
+- **Componentes relacionados:** `backend/academic-service/Code.gs`, `backend/accounting-service/Code.gs` (`TurnosAlmuerzo`), `js/teacher.js`.
+- **Problema que debe resolverse:** La asignación de horarios a docentes no controla el número máximo de períodos consecutivos sin descanso o turno de almuerzo, pudiendo programar 6 o más horas seguidas de impartición de clases.
+- **Requisitos funcionales:**
+  - Validar un máximo de 4 períodos lectivos consecutivos por docente antes de exigir un bloque libre o turno de descanso/almuerzo.
+  - Advertir al coordinador de horarios si la distribución no respeta el descanso docente.
+- **Criterios de Aceptación:**
+  1. Asignar más de 4 horas continuas a un docente dispara una advertencia de fatiga/carga laboral.
+  2. Respeta las pausas y turnos de almuerzo configurados en `TurnosAlmuerzo`.
+- **Riesgo de Regresión:** Nulo.
+
+---
+
+### T-HOR-04 [P1] — Matriz de Tiempos de Traslado entre Sedes y Edificios
+- **Componentes relacionados:** `backend/academic-service/Code.gs`, `js/teacher.js`, hoja `SedesAulas`.
+- **Problema que debe resolverse:** Cuando la institución cuenta con múltiples sedes o edificios distantes, el sistema permite asignar a un docente dos clases consecutivas en aulas ubicadas en edificios diferentes sin margen de tiempo de traslado.
+- **Requisitos funcionales:**
+  - Definir la matriz de tiempo mínimo de desplazamiento (`TiempoTrasladoMinutos`) entre sedes o edificios en `SedesAulas`.
+  - Bloquear la asignación si el tiempo entre el fin de la Clase A en Edificio 1 y el inicio de la Clase B en Edificio 2 es menor que el tiempo de traslado requerido.
+- **Criterios de Aceptación:**
+  1. Clases consecutivas en edificios distantes sin margen de traslado disparan un bloqueo por conflicto de desplazamiento.
+  2. La validación considera las sedes de origen y destino.
+- **Riesgo de Regresión:** Bajo.
+
+---
+
+### T-HOR-05 [P2] — Motor Algorítmico CSP para Generación y Optimización Automática de Horarios
+- **Componentes relacionados:** `backend/academic-service/Code.gs`, `js/teacher.js`, `teacher-dashboard.html`.
+- **Problema que debe resolverse:** La plataforma sólo permite la creación manual de horarios casilla por casilla; se requiere un motor de generación automática por satisfacción de restricciones (CSP) que distribuya automáticamente la carga curricular.
+- **Requisitos funcionales:**
+  - Implementar el endpoint `generateAutomatedSchedule` que reciba materias, docentes, aulas y restricciones obligatorias.
+  - Ejecutar algoritmo CSP (Constraint Satisfaction Problem) con retroceso (backtracking) para proponer una cuadrícula horaria 100% libre de colisiones.
+  - Permitir fijar bloques manualmente ("Pin/Lock") para que el generador automático no modifique clases ya confirmadas.
+- **Criterios de Aceptación:**
+  1. El generador produce una propuesta de horario válida respetando disponibilidad docente, aula y carga horaria por asignatura.
+  2. Los bloques fijados se mantienen inalterados durante la generación.
+- **Riesgo de Regresión:** Nulo.
+
+---
+
+### T-HOR-06 [P2] — Versionado en Borrador, Diff de Cambios y Publicación de Horarios
+- **Componentes relacionados:** `backend/academic-service/Code.gs`, `js/teacher.js`, `teacher-dashboard.html`.
+- **Problema que debe resolverse:** Los cambios en los horarios se aplican directamente en vivo; se requiere un flujo de trabajo en Borrador ("Draft") con vista previa de diferencias ("Diff") antes de publicar oficialmente a estudiantes y padres.
+- **Requisitos funcionales:**
+  - Manejar estados de horario: `Borrador`, `EnRevision`, `Publicado`, `Sustituido`.
+  - Presentar la herramienta de comparación visual que resalte en amarillo/rojo los bloques modificados o cancelados respecto a la versión oficial activa.
+  - Al presionar "Publicar Horario", actualizar el estado oficial y disparar notificaciones en lote a los docentes y familias afectadas.
+- **Criterios de Aceptación:**
+  1. Los horarios en borrador no son visibles en el portal del estudiante hasta su publicación oficial.
+  2. La publicación genera el registro del historial de versiones y la notificación correspondiente.
+- **Riesgo de Regresión:** Bajo.
+
+---
+
+### T-HOR-07 [P2] — Importación Masiva con Simulación Previa (Dry-Run) y Reporte por Fila
+- **Componentes relacionados:** `backend/academic-service/Code.gs`, `js/teacher.js`, `teacher-dashboard.html`.
+- **Problema que debe resolverse:** La carga de mallas horarias desde archivos masivos no cuenta con un simulador previo por fila que valide códigos de aula, docentes y materias antes de escribir en la base de datos.
+- **Requisitos funcionales:**
+  - Desarrollar el modo `Dry-Run` en la importación masiva de horarios que valide el 100% de las filas del archivo de Excel.
+  - Mostrar tabla de pre-validación indicando filas válidas (verde) y filas con errores/colisiones (rojo con motivo del fallo).
+  - Confirmar la importación procesando únicamente los registros válidos u omitiendo el lote ante errores críticos.
+- **Criterios de Aceptación:**
+  1. El usuario puede previsualizar qué filas tienen errores de código o colisión antes de insertar.
+  2. Reimportar un archivo no genera bloques duplicados en la base de datos.
+- **Riesgo de Regresión:** Nulo.
+
+---
+
+### T-HOR-08 [P3] — Vista Semanal Imprimible, Filtros por Audiencia y Caché IndexedDB
+- **Componentes relacionados:** `js/teacher.js`, `js/student.js`, `js/ui-common.js`, `teacher-dashboard.html`, `student-dashboard.html`.
+- **Problema que debe resolverse:** Optimizar la visualización de la cuadrícula horaria en dispositivos móviles y permitir la exportación/impresión limpia en formato PDF de bolsillo.
+- **Requisitos funcionales:**
+  - Diseñar plantilla CSS `@media print` para imprimir la cuadrícula horaria semanal en una sola página limpia.
+  - Almacenar en caché local de IndexedDB la cuadrícula horaria del usuario para consulta instantánea offline en PWA.
+- **Criterios de Aceptación:**
+  1. La impresión del horario genera un PDF perfectamente encuadrado y legible.
+  2. La cuadrícula de clases permanece consultable sin conexión a internet desde el móvil.
+- **Riesgo de Regresión:** Nulo.
+
+---
+
+### ORDEN DE EJECUCIÓN RECOMENDADO FASE PLANIFICACIÓN ACADÉMICA Y HORARIOS
+
+| Orden | Tarea | Prioridad | Dependencia principal |
+| :---: | :--- | :---: | :--- |
+| **1** | **T-HOR-01.** LockService y control transaccional en asignación de aulas/horarios | **P1** | `createClassSchedule` |
+| **2** | **T-HOR-02.** Validador de sobrecarga de evaluaciones por sección | **P1** | `createCalendarEvent` |
+| **3** | **T-HOR-03.** Regla de bloques consecutivos y pausas para carga docente | **P1** | `TurnosAlmuerzo` / Horarios |
+| **4** | **T-HOR-04.** Matriz de tiempos de traslado entre sedes y edificios | **P1** | `SedesAulas` |
+| **5** | **T-HOR-06.** Versionado en borrador, diff de cambios y publicación de horarios | **P2** | `HorariosClases` |
+| **6** | **T-HOR-05.** Motor algorítmico CSP para generación y optimización automática | **P2** | T-HOR-01 |
+| **7** | **T-HOR-07.** Importación masiva con simulación previa (Dry-Run) | **P2** | Excel import engine |
+| **8** | **T-HOR-08.** Vista semanal imprimible, filtros por audiencia y caché IndexedDB | **P3** | UI / PWA |

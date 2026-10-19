@@ -1375,3 +1375,30 @@ Resumen por Área:
 
 Certificación:
   Auditoría completada sin modificar código de producción, esquema de base de datos ni archivos de configuración en estricto cumplimiento de METODOLOGIA_DESARROLLO.md.
+
+===============================================================================
+REGISTRO DE AUDITORÍA FUNCIONAL: FASE - PLANIFICACIÓN ACADÉMICA, HORARIOS Y RECURSOS
+===============================================================================
+Fecha: 19 de Octubre de 2026
+Módulo / Fase: Planificación Académica, Horarios y Recursos Institucionales
+Archivos Auditados:
+  - Backend GAS: backend/academic-service/Code.gs, backend/accounting-service/Code.gs, backend/user-service/Code.gs, backend/task-service/Code.gs, backend/exam-service/Code.gs
+  - Controladores JS: js/teacher.js, js/student.js, js/accounting.js, js/ui-common.js, js/api.js
+  - Vistas / HTML: teacher-dashboard.html, student-dashboard.html, dashboard-contabilidad.html
+
+Resumen de Cobertura y Métricas:
+  - Subcapacidades Evaluadas: 15 / 15 (100.0%)
+  - Escenarios Integrales Evaluados: 22 / 22 (100.0%)
+  - Cobertura de Verificación: 18 / 22 Escenarios Aprobados (81.8%)
+  - Cumplimiento por Dominio: 13 / 15 Totalmente Funcionales (86.7%)
+
+Resumen por Área:
+  1. Estructura Académica y Recursos: Funcional. SedesAulas y asignación por grado activas. Brecha en LockService para reservas concurrentes (P1).
+  2. Calendario Académico: Funcional. CalendarioEscolar y días lectivos/feriados activos.
+  3. Creación y Detección de Conflictos: Funcional. Solucionador trifactorial checkScheduleConflict (docente, aula, grupo) verificado en servidor.
+  4. Carga Laboral y Sustituciones: Funcional. createTeacherSubstitution activo. Brecha en límite de bloques consecutivos (P1).
+  5. Generación Automática: Incompleto. Requiere motor solver CSP para optimización automática (P2).
+  6. Publicación, Notificaciones e Integración: Funcional. Integrado con asistencia, portal de familias y reportes consolidados.
+
+Certificación:
+  Auditoría completada sin modificar código de producción, esquema de base de datos ni archivos de configuración en estricto cumplimiento de METODOLOGIA_DESARROLLO.md.
