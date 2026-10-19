@@ -1311,3 +1311,27 @@ Archivos Auditados:
 - Implementar funciones JS en `js/teacher.js` para cargar el expediente vía `getStudentFile`, gestionar edicione de datos personales, administrar tutores, subir y previsualizar documentos en Google Drive, mostrar la línea de tiempo de movimientos y permitir la búsqueda/fusión auditada de expedientes duplicados.
 - Conectar la selección de estudiante y la búsqueda `#student-search` para abrir directamente el expediente.
 - Verificar títulos visibles y ajustes visuales solicitados en REQ-DASH-ADAPT-001.
+
+====================================================================================================
+AUDITORÍA TÉCNICA - BÚSQUEDA OMNIBOX UNIFICADA GLOBAL (REQ-OMNI-001) Y CENTRO DE NOTIFICACIONES (B-002) - Mon Oct 19 2026
+
+Archivos Auditados:
+- `backend/user-service/Code.gs`
+- `js/ui-common.js`
+- `teacher-dashboard.html`
+- `student-dashboard.html`
+- `MapaDependencias.md`
+
+1. DIAGNÓSTICO Y COMPONENTES EXISTENTES
+- Backend (`backend/user-service/Code.gs`):
+  * Cuenta con endpoints de notificaciones (`getUserNotifications`, `getUnifiedNotifications`, `markNotificationAsRead`) pero no existe el endpoint de búsqueda unificada `searchGlobalOmnibox`.
+  * La matriz `ROLE_PERMISSIONS` requiere incluir la acción `searchGlobalOmnibox` para todos los roles de la institución.
+- Frontend (`js/ui-common.js`, `teacher-dashboard.html`, `student-dashboard.html`):
+  * Se requiere la inyección del modal de búsqueda unificada `#modal-global-omnibox` con atajo global por teclado `Ctrl + K` / `Cmd + K`.
+  * Se requiere la vinculación de la bandeja de notificaciones unificada con contador dinámico de elementos no leídos.
+
+2. PLAN DE REMEDIACIÓN E IMPLEMENTACIÓN
+- Implementar `searchGlobalOmnibox` en `backend/user-service/Code.gs` con filtrado RBAC por rol.
+- Agregar modal omnibox e interfaz de notificaciones en `js/ui-common.js`.
+- Agregar disparadores e iconos de búsqueda y notificaciones en `teacher-dashboard.html` y `student-dashboard.html`.
+- Actualizar `MapaDependencias.md` con las nuevas relaciones de endpoints y modales.

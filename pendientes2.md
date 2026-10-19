@@ -16,7 +16,7 @@
   - Búsqueda global unificada funcional desde cualquier vista.
   - Permisos RBAC aplicados server-side en `searchGlobalOmnibox`.
   - Atajo de teclado `Ctrl + K` operativo.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 
 Backlog técnico de mejoras y desarrollo
@@ -1559,14 +1559,14 @@ Criterios de Aceptación:
 - **Criterios de Aceptación:**
   - Registro cronológico acumulativo sin purgar información histórica.
   - Trazabilidad completa por módulo, archivo y severidad.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 ### [T-002] Mantenimiento del Mapa de Dependencias
 - **Archivos Involucrados:** `MapaDependencias.md`
 - **Descripción:** Actualizar `MapaDependencias.md` reflejando las relaciones de endpoints de backend, controladores JS y modales HTML identificados durante las auditorías de capacidades transversales y avanzadas.
 - **Criterios de Aceptación:**
   - Indexación de funciones, variables globales y dependencias cruzadas.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 
 ## 2. ÁREA B: AUTOMATIZACIÓN DE TAREAS Y RECORDATORIOS
@@ -1585,7 +1585,7 @@ Criterios de Aceptación:
 - **Criterios de Aceptación:**
   - Contador dinámico de no leídos en el encabezado.
   - Sincronización automática de estado sin recarga completa.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 ### [B-003] Reglas Configurables de Automatización y Alertas Educativas
 - **Archivos Involucrados:** `backend/academic-service/Code.gs`, `backend/user-service/Code.gs`

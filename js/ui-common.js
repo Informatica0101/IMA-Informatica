@@ -4196,3 +4196,131 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }, 600);
 });
+
+// ---------------------------------------------------------------------------
+// REQ-OMNI-001: BARRA DE BÚSQUEDA OMNIBOX UNIFICADA GLOBAL (CTRL + K / CMD + K)
+// ---------------------------------------------------------------------------
+
+window.openGlobalOmniboxModal = function() {
+    let modal = document.getElementById('modal-global-omnibox');
+    if (!modal) {
+        modal = document.createElement('div');
+        modal.id = 'modal-global-omnibox';
+        modal.className = 'fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-[120] flex items-start justify-center p-3 md:p-6 animate-fade-in';
+        modal.innerHTML =
+            '<div class="bg-white rounded-3xl max-w-2xl w-full max-h-[85vh] flex flex-col shadow-2xl border border-slate-100 overflow-hidden mt-10 md:mt-16">' +
+                '<div class="p-4 bg-slate-900 text-white flex items-center gap-3 border-b border-slate-800 flex-shrink-0">' +
+                    '<i class="fa-solid fa-magnifying-glass text-blue-400 text-lg"></i>' +
+                    '<input type="text" id="omnibox-search-input" placeholder="Buscar estudiantes, avisos, trámites... (Ctrl + K)" class="w-full bg-slate-800 text-white border border-slate-700 rounded-xl px-4 py-2 text-sm focus:outline-none focus:border-blue-500 font-medium" autofocus>' +
+                    '<button onclick="window.closeGlobalOmniboxModal()" class="w-8 h-8 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white flex items-center justify-center transition-colors">' +
+                        '<i class="fa-solid fa-xmark"></i>' +
+                    '</button>' +
+                '</div>' +
+                '<div id="omnibox-results-container" class="p-4 overflow-y-auto space-y-3 flex-grow min-h-[250px]">' +
+                    '<div class="text-center text-slate-400 py-10 font-semibold text-sm">' +
+                        '<i class="fa-solid fa-keyboard text-3xl mb-2 text-slate-300 block"></i>' +
+                        'Escribe al menos 2 caracteres para buscar en la plataforma...' +
+                    '</div>' +
+                '</div>' +
+                '<div class="p-3 bg-slate-50 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500 font-semibold flex-shrink-0">' +
+                    '<span><i class="fa-solid fa-circle-info text-blue-500 mr-1"></i> Búsqueda Unificada Global</span>' +
+                    '<span>ESC para salir</span>' +
+                '</div>' +
+            '</div>';
+        document.body.appendChild(modal);
+
+        const input = document.getElementById('omnibox-search-input');
+        let debounceTimer;
+        input.addEventListener('input', function() {
+            clearTimeout(debounceTimer);
+            const val = input.value.trim();
+            if (val.length < 2) {
+                document.getElementById('omnibox-results-container').innerHTML =
+                    '<div class="text-center text-slate-400 py-10 font-semibold text-sm">' +
+                        '<i class="fa-solid fa-keyboard text-3xl mb-2 text-slate-300 block"></i>' +
+                        'Escribe al menos 2 caracteres para buscar en la plataforma...' +
+                    '</div>';
+                return;
+            }
+            debounceTimer = setTimeout(function() {
+                window.executeOmniboxSearch(val);
+            }, 300);
+        });
+    } else {
+        modal.classList.remove('hidden');
+    }
+
+    setTimeout(function() {
+        const inp = document.getElementById('omnibox-search-input');
+        if (inp) {
+            inp.focus();
+            inp.select();
+        }
+    }, 100);
+};
+
+window.closeGlobalOmniboxModal = function() {
+    const modal = document.getElementById('modal-global-omnibox');
+    if (modal) modal.classList.add('hidden');
+};
+
+window.executeOmniboxSearch = function(query) {
+    const container = document.getElementById('omnibox-results-container');
+    if (!container) return;
+    container.innerHTML =
+        '<div class="text-center text-blue-600 py-10 font-semibold text-sm animate-pulse">' +
+            '<i class="fa-solid fa-spinner fa-spin text-3xl mb-2 block"></i> Buscando resultados...' +
+        '</div>';
+
+    if (typeof fetchApi === 'function') {
+        fetchApi('USER', 'searchGlobalOmnibox', { query: query }).then(function(response) {
+            if (response && response.status === 'success' && Array.isArray(response.results) && response.results.length > 0) {
+                let html = '<div class="space-y-2">';
+                response.results.forEach(function(item) {
+                    html +=
+                        '<div onclick="window.handleOmniboxResultClick(\'' + item.type + '\', \'' + item.id + '\')" class="p-3 bg-slate-50 hover:bg-blue-50 border border-slate-100 hover:border-blue-200 rounded-2xl flex items-center gap-3 cursor-pointer transition-all hover:scale-[1.01]">' +
+                            '<div class="w-10 h-10 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center font-bold flex-shrink-0">' +
+                                '<i class="fa-solid ' + (item.icon || 'fa-magnifying-glass') + '"></i>' +
+                            '</div>' +
+                            '<div class="flex-grow min-w-0">' +
+                                '<div class="flex items-center justify-between">' +
+                                    '<h4 class="font-bold text-slate-800 text-sm truncate">' + item.title + '</h4>' +
+                                    '<span class="text-[10px] uppercase font-black px-2 py-0.5 rounded-full bg-slate-200 text-slate-700">' + item.category + '</span>' +
+                                '</div>' +
+                                '<p class="text-xs text-slate-500 font-medium truncate">' + item.subtitle + '</p>' +
+                            '</div>' +
+                        '</div>';
+                });
+                html += '</div>';
+                container.innerHTML = html;
+            } else {
+                container.innerHTML =
+                    '<div class="text-center text-slate-400 py-10 font-semibold text-sm">' +
+                        '<i class="fa-solid fa-magnifying-glass-slash text-3xl mb-2 text-slate-300 block"></i> No se encontraron resultados para "' + query + '".' +
+                    '</div>';
+            }
+        }).catch(function(err) {
+            container.innerHTML =
+                '<div class="text-center text-slate-400 py-10 font-semibold text-sm">' +
+                    '<i class="fa-solid fa-circle-exclamation text-3xl mb-2 text-amber-500 block"></i> Ocurrió un error al buscar.' +
+                '</div>';
+        });
+    }
+};
+
+window.handleOmniboxResultClick = function(type, id) {
+    window.closeGlobalOmniboxModal();
+    if (type === 'user' && typeof window.openStudentFileModal === 'function') {
+        window.openStudentFileModal(id);
+    } else {
+        alert('Navegando al elemento: ' + id);
+    }
+};
+
+// Global Keyboard Shortcut (Ctrl + K / Cmd + K)
+window.addEventListener('keydown', function(e) {
+    if ((e.ctrlKey || e.metaKey) && (e.key === 'k' || e.key === 'K')) {
+        e.preventDefault();
+        window.openGlobalOmniboxModal();
+    }
+});

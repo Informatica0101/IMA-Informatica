@@ -1368,3 +1368,25 @@ Descripción de cambios:
   - Preservación intacta del gráfico radial existente (`#student-radar-chart` y `#teacher-radar-chart`) y aislamiento de estadísticas de minijuegos.
 - `Pendientes.md`, `Auditoría.txt`, `MapaDependencias.md`:
   - Registrado el requerimiento `[REQ-FAM-001]` y actualizados los esquemas de dependencias.
+
+## [Fase: Expediente Digital Unificado del Estudiante REQ-EXP-001 & Adaptación REQ-DASH-ADAPT-001] - 2026-10-17
+- `teacher-dashboard.html`:
+  - Incorporado el modal `#modal-student-file` con z-index `z-[110]` y 5 pestañas de navegación (Ficha Personal, Tutores y Responsables, Documentos Drive, Historial y Movimientos, Duplicados y Fusión Auditoría).
+  - Actualizados títulos de cabecera y membretes institucionales a "New Generation Christian Academy".
+- `js/teacher.js`:
+  - Implementadas las funciones `openStudentFileModal`, `switchStudentFileTab`, `saveStudentPersonalFile`, `unlinkGuardianFromStudent`, `showAddGuardianDialog`, `uploadStudentDocumentFile`, `findAndRenderDuplicateStudents` y `executeStudentMerge`.
+  - Integrada la invocación del Expediente Digital desde la búsqueda general de alumnos `#student-search` y listas de estudiantes.
+- `Auditoria.txt`, `Pendientes.md`:
+  - Documentados los hallazgos de la auditoría y actualizado el estado de las tareas REQ-EXP-001 y REQ-DASH-ADAPT-001 a completadas.
+
+## [Fase: Búsqueda Omnibox Unificada Global REQ-OMNI-001 & Notificaciones B-002] - 2026-10-19
+- `backend/user-service/Code.gs`:
+  - Creada e integrada la función `searchGlobalOmnibox` con consulta multi-entidad (Usuarios, Anuncios, Solicitudes/Trámites) y filtrado por roles RBAC.
+  - Habilitado permiso `searchGlobalOmnibox` en `validateRolePermission` y registrado en la rutina `doPost`.
+- `js/ui-common.js`:
+  - Implementada la función `window.openGlobalOmniboxModal`, manejadores de entrada, ejecución `window.executeOmniboxSearch` mediante `.then().catch()` y navegación directa.
+  - Vinculado escuchador de eventos de teclado global `Ctrl + K` / `Cmd + K`.
+- `teacher-dashboard.html` & `student-dashboard.html`:
+  - Agregado botón disparador de búsqueda `#btn-global-search` en la barra de navegación del encabezado principal.
+- `MapaDependencias.md`, `Auditoría.txt`, `pendientes2.md`:
+  - Actualizados registros de dependencias, bitácora de auditoría y marcadas tareas `[REQ-OMNI-001]`, `[B-002]`, `[T-001]` y `[T-002]` como completadas.

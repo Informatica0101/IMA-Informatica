@@ -206,3 +206,8 @@
 - `PDFOverlayEditor`: Interfaz visual `#modal-pdf-overlay-editor` con renderizado PDF.js y capa de lienzo interactivo.
 - `PDFOverlayField`: Definición de campo superpuesto en coordenadas ratio `(xRatio, yRatio, wRatio, hRatio)` para alineación independiente del visor.
 - `PDFTemplateConfig`: Metadatos de plantilla `PDF_OVERLAY` integrados en `PlantillasEscolares` en `backend/accounting-service/Code.gs`.
+
+## Matriz de Búsqueda Unificada Global & Notificaciones (REQ-OMNI-001 & B-002)
+- `searchGlobalOmnibox`: Endpoint en `backend/user-service/Code.gs` para consulta multi-entidad (Usuarios, Anuncios, Trámites) con seguridad RBAC.
+- `#modal-global-omnibox`: Componente modal de búsqueda unificada en `js/ui-common.js` activable vía atajo de teclado (`Ctrl + K` / `Cmd + K`) e icono `#btn-global-search`.
+- `#btn-global-notifications`: Disparador de notificaciones unificadas y bandeja de alertas en `js/ui-common.js`.

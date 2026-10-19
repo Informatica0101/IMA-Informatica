@@ -745,7 +745,7 @@ function getUserVerifiedRole(payload) {
 function validateRolePermission(action, payload) {
   if (PUBLIC_ACTIONS.indexOf(action) !== -1) return { authorized: true };
   const userRole = getUserVerifiedRole(payload);
-  if (["submitProblemTicket", "getProblemTickets", "replyProblemTicket"].indexOf(action) !== -1) {
+  if (["submitProblemTicket", "getProblemTickets", "replyProblemTicket", "searchGlobalOmnibox"].indexOf(action) !== -1) {
     return { authorized: true, role: userRole };
   }
   const permitted = ROLE_PERMISSIONS[userRole] || ROLE_PERMISSIONS["Estudiante"];
@@ -843,6 +843,8 @@ function doPost(e) {
       case "updateAppointmentStatus": result = updateAppointmentStatus(payload); break;
       case "getInstitutionalCalendarEvents": result = getInstitutionalCalendarEvents(payload); break;
       case "getPendingReminders": result = getPendingReminders(payload); break;
+
+      case "searchGlobalOmnibox": result = searchGlobalOmnibox(payload); break;
 
       // Endpoints Fase 27 - Configuración Central, Opciones por Rol y Proveedores
       case "getUserSettings": result = getUserSettings(payload); break;
@@ -3437,6 +3439,98 @@ function purgeStructuredLogs(payload) {
     logStructuredEvent("USER", "purgeStructuredLogs", "WARN", "LOGS_PURGED", "Registros de auditoría purgados por administrador.", payload, verifiedRole);
     return { status: "success", message: "Registros de auditoría purgados correctamente." };
   } catch (error) {
+    return { status: "error", message: error.message };
+  }
+}
+
+function searchGlobalOmnibox(payload) {
+  try {
+    if (!payload) return { status: "error", message: "Payload no provisto." };
+    const query = String(payload.query || "").trim().toLowerCase();
+    if (query.length < 2) {
+      return { status: "success", results: [] };
+    }
+    const verifiedRole = getUserVerifiedRole(payload);
+    const results = [];
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+
+    // 1. Search Usuarios / Personas / ExpedientesEstudiantes
+    if (["Administrador", "Desarrollador", "Director", "Subdirector", "Secretaría", "Profesor", "Coordinador", "Consejeros", "Contador", "RecursosHumanos"].indexOf(verifiedRole) !== -1) {
+      const userSheet = ss.getSheetByName("Usuarios");
+      if (userSheet) {
+        const uData = userSheet.getDataRange().getValues();
+        for (let i = 1; i < uData.length; i++) {
+          const row = uData[i];
+          const uid = String(row[0] || "");
+          const name = String(row[1] || "");
+          const email = String(row[4] || "");
+          const role = String(row[6] || "");
+          if (name.toLowerCase().indexOf(query) !== -1 || email.toLowerCase().indexOf(query) !== -1 || uid.toLowerCase().indexOf(query) !== -1) {
+            results.push({
+              id: uid,
+              title: name || email,
+              category: "Usuarios & Personal",
+              subtitle: "Rol: " + role + " | Email: " + email,
+              icon: "fa-user",
+              type: "user",
+              targetModule: "student_file"
+            });
+            if (results.length >= 25) break;
+          }
+        }
+      }
+    }
+
+    // 2. Search Noticias / Anuncios
+    const newsSheet = ss.getSheetByName("NoticiasPortal");
+    if (newsSheet) {
+      const nData = newsSheet.getDataRange().getValues();
+      for (let i = 1; i < nData.length; i++) {
+        const row = nData[i];
+        const title = String(row[1] || "");
+        const content = String(row[2] || "");
+        if (title.toLowerCase().indexOf(query) !== -1 || content.toLowerCase().indexOf(query) !== -1) {
+          results.push({
+            id: row[0] || ("news-" + i),
+            title: title,
+            category: "Noticias & Comunicados",
+            subtitle: "Publicación Institucional",
+            icon: "fa-newspaper",
+            type: "news",
+            targetModule: "news"
+          });
+          if (results.length >= 25) break;
+        }
+      }
+    }
+
+    // 3. Search Solicitudes / Trámites
+    const reqSheet = ss.getSheetByName("SolicitudesTramites");
+    if (reqSheet) {
+      const rData = reqSheet.getDataRange().getValues();
+      for (let i = 1; i < rData.length; i++) {
+        const row = rData[i];
+        const reqId = String(row[0] || "");
+        const asunto = String(row[2] || "");
+        const tipo = String(row[3] || "");
+        if (reqId.toLowerCase().indexOf(query) !== -1 || asunto.toLowerCase().indexOf(query) !== -1 || tipo.toLowerCase().indexOf(query) !== -1) {
+          results.push({
+            id: reqId,
+            title: asunto || ("Trámite " + reqId),
+            category: "Trámites & Solicitudes",
+            subtitle: "Tipo: " + tipo + " | ID: " + reqId,
+            icon: "fa-file-signature",
+            type: "request",
+            targetModule: "requests"
+          });
+          if (results.length >= 25) break;
+        }
+      }
+    }
+
+    return { status: "success", results: results.slice(0, 20) };
+  } catch (error) {
+    logStructuredEvent("USER", "searchGlobalOmnibox", "ERROR", "OMNIBOX_SEARCH_FAILED", error.message, payload, payload && payload.authRole);
     return { status: "error", message: error.message };
   }
 }
