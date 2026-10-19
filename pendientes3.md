@@ -2757,258 +2757,562 @@ Modelo de permisos, expediente consolidado, cronología, exportaciones y auditor
 
 ## PLAN DE TRABAJO DETALLADO Y UNIFICADO: FASE DE EVALUACIONES, CALIFICACIONES Y RESULTADOS ACADÉMICOS
 
-### T-CAL-01 [P1] — Control de concurrencia con LockService en el guardado masivo de calificaciones (`saveGradebookGrades`)
+### T-CAL-01 [P1] — Control de concurrencia y protección contra sobrescrituras en el guardado masivo de calificaciones
 
 - **Componentes relacionados:** `backend/exam-service/Code.gs` (`saveGradebookGrades`), `js/teacher.js`.
-- **Problema detectado:** Al guardar un lote de calificaciones mediante `saveGradebookGrades`, el backend no ejecuta un bloqueo exclusivo mediante `LockService.getScriptLock()`. Cuando múltiples docentes co-evaluadores ingresan calificaciones para la misma sección o materia simultáneamente, se generan condiciones de carrera que provocan sobreescrituras silenciosas, lecturas desactualizadas o pérdida de registros en `CalificacionesEstudiantes`.
+- **Problema detectado:** `saveGradebookGrades` actualiza calificaciones por lote sin un bloqueo exclusivo que proteja las operaciones concurrentes. Cuando dos docentes o usuarios autorizados modifican simultáneamente las mismas calificaciones, existe riesgo de que una operación sobrescriba los cambios de otra sin advertencia.
 - **Requisitos funcionales:**
-  1. Proteger con `LockService.getScriptLock()` con timeout de 10 segundos la ejecución de `saveGradebookGrades`.
-  2. Dentro del bloqueo exclusivo, re-validar el estado del período en `CierresPeriodos` antes de aplicar las modificaciones sobre la hoja.
-  3. Comprobar que los registros a guardar correspondan a evaluaciones y estudiantes pertenecientes a la sección y asignatura autorizadas.
-  4. Realizar la actualización en bloque de forma atómica e idempotente.
-  5. En caso de no adquirir el bloqueo tras 10 segundos, responder con un código de error controlado solicitando al cliente un reintento seguro.
-- **Criterios de Aceptación:**
-  - Peticiones simultáneas de guardado masivo sobre la misma sección son procesadas secuencialmente sin pérdida de notas.
-  - La concurrencia no genera duplicados en `CalificacionesEstudiantes` ni altera notas ajenas al lote.
+  - Incorporar un mecanismo de exclusión mutua en las operaciones de escritura que afecten al mismo conjunto de calificaciones.
+  - Implementar `LockService.getScriptLock()` cuando corresponda al alcance compartido del servicio y adquirir el bloqueo antes de leer el estado que se utilizará para decidir qué datos guardar.
+  - Definir un tiempo máximo de espera para obtener el bloqueo (10 segundos) y devolver un error controlado si no está disponible.
+  - Liberar el bloqueo mediante un bloque `finally`, tanto cuando la operación finalice correctamente como cuando ocurra una excepción.
+  - Validar los identificadores de evaluación, estudiante, asignatura, sección y período antes de modificar registros.
+  - Evitar que una actualización parcial destruya campos no incluidos en la solicitud.
+  - Detectar conflictos entre el estado leído por el cliente y el estado vigente en el servidor. Cuando dos usuarios editen el mismo registro, no sobrescribir automáticamente una versión más reciente sin una política de resolución explícita.
+  - Mantener el comportamiento de permisos y el bloqueo de períodos cerrados e históricos.
+  - Garantizar que los reintentos de una misma solicitud no generen duplicados ni apliquen dos veces una operación.
+- **Cambios requeridos:**
+  - Revisar el flujo completo de lectura, validación, cálculo y escritura de `saveGradebookGrades`.
+  - Incorporar bloqueo, validaciones previas y liberación segura.
+  - Implementar un mecanismo de detección de versiones o modificaciones concurrentes (versión de registro, marca de actualización o huella del estado original).
+  - Definir el resultado de cada fila cuando un lote contenga registros válidos, inválidos o en conflicto.
+  - Actualizar el frontend para informar qué calificaciones se guardaron, cuáles fallaron y cuáles requieren resolver un conflicto.
+  - Registrar los conflictos relevantes en la bitácora de auditoría.
+- **Comportamiento esperado:** Si dos usuarios intentan modificar una misma calificación, el sistema debe conservar una versión válida y comunicar el conflicto cuando corresponda. Si las operaciones afectan a estudiantes diferentes, no deben bloquearse innecesariamente.
+- **Criterios de aceptación:**
+  1. Dos solicitudes simultáneas sobre el mismo registro no provocan sobrescrituras silenciosas.
+  2. Una solicitud que no consigue el bloqueo finaliza con un error controlado y permite reintentarla.
+  3. Una excepción durante la escritura no deja el bloqueo retenido.
+  4. Los reintentos no crean filas duplicadas ni duplican cambios.
+  5. Los lotes informan resultados por registro, sin presentar como exitoso un lote que contenga errores no resueltos.
+  6. Las reglas de autorización y cierre siguen aplicándose en el servidor.
+  7. Las pruebas de concurrencia comprueban tanto registros compartidos como registros independientes.
 - **Riesgo de Regresión:** Bajo.
-- **Dependencias:** `saveGradebookGrades`, `CalificacionesEstudiantes`, `LockService`.
+- **Dependencias:** Ninguna tarea previa. Debe coordinarse con T-CAL-03, T-CAL-05 y T-CAL-07.
 
 ---
 
-### T-CAL-02 [P1] — Validación estricta de suma de ponderaciones por categoría (= 100%)
+### T-CAL-02 [P1] — Validación estricta y coherencia de las ponderaciones de evaluación
 
 - **Componentes relacionados:** `backend/exam-service/Code.gs` (`saveEvaluationCategory`, `getEvaluationCategories`), `js/teacher.js`.
-- **Problema detectado:** La función `saveEvaluationCategory` guarda categorías en `CategoriasEvaluacion` pero no valida en el servidor que la suma de los porcentajes o ponderaciones asignadas a un parcial o materia sea exactamente igual al 100%. Se aceptan silenciosamente configuraciones de evaluación con totales menores o mayores al 100%, distorsionando el cálculo del promedio final del estudiante.
+- **Problema detectado:** `saveEvaluationCategory` permite registrar ponderaciones cuya suma puede ser inferior o superior al 100 %. Esto puede producir resultados incorrectos, criterios de evaluación inconsistentes y diferencias entre lo configurado y lo que recibe el estudiante.
 - **Requisitos funcionales:**
-  1. Validar en `saveEvaluationCategory` que la suma de ponderaciones activas para el grado, asignatura y parcial sume exactamente 100.0%.
-  2. Si la suma difiere del 100%, rechazar el guardado con un mensaje explícito indicando el porcentaje acumulado actual y el ajuste requerido.
-  3. Permitir guardar borradores de categorías indicando explícitamente `esBorrador = true` sin aplicar la restricción estricta hasta la publicación final del sistema de evaluación.
-- **Criterios de Aceptación:**
-  - Intentar publicar una configuración de categorías cuya suma sea != 100% es rechazado por el servidor con un mensaje informativo.
-  - Las notas calculadas para asignaturas con categorías validadas al 100% reflejan promedios ponderados exactos.
+  - Validar las ponderaciones en el servidor, no solamente en la interfaz.
+  - Determinar la suma por el ámbito exacto al que pertenecen las reglas: asignatura, sección, período, año lectivo y sistema de evaluación, según el modelo existente.
+  - Exigir una suma del 100 % cuando el sistema configurado utilice ponderación porcentual total.
+  - Permitir otros modelos de cálculo legítimos, como puntuación total acumulada, sin aplicarles indebidamente la regla del 100 %.
+  - Impedir ponderaciones negativas, valores no numéricos, valores infinitos y combinaciones incompatibles.
+  - Definir qué ocurre con categorías desactivadas, categorías opcionales y categorías sin actividades registradas.
+  - Evitar que una categoría perteneciente a otro período, asignatura o configuración intervenga en el cálculo.
+  - Mostrar el total actual, la diferencia respecto del 100 % y las categorías que originan el error.
+  - Permitir guardar una configuración incompleta como borrador únicamente si el modelo de la plataforma lo admite y si no puede utilizarse para calcular o publicar notas (`esBorrador = true`).
+  - Evitar que la modificación de una categoría cambie silenciosamente resultados de períodos ya cerrados.
+- **Cambios requeridos:**
+  - Añadir validación de integridad en `saveEvaluationCategory` y en cualquier operación que active o modifique un sistema de evaluación.
+  - Centralizar las reglas de validación para que las distintas pantallas no implementen criterios diferentes.
+  - Incorporar estados de configuración (borrador, válida, activa) compatibles con el modelo actual.
+  - Presentar errores de validación específicos y accionables en la interfaz administrativa.
+  - Validar la configuración completa antes de activar el sistema o permitir el cierre de un período.
+- **Comportamiento esperado:** Una configuración porcentual no puede activarse mientras sus ponderaciones sean inconsistentes. Los usuarios reciben una explicación precisa del error y pueden corregirlo sin perder los valores introducidos.
+- **Criterios de aceptación:**
+  1. Una suma de 100 % se acepta cuando todas las categorías cumplen las reglas.
+  2. Sumas de 99 %, 101 %, valores negativos y datos inválidos se rechazan para una configuración porcentual activa.
+  3. Una configuración basada en puntos no se rechaza por no sumar 100 %.
+  4. La validación se aplica incluso si se llama directamente al servicio backend.
+  5. Las categorías de otra asignatura o período no se mezclan en la suma.
+  6. La configuración inválida no puede utilizarse para publicar calificaciones.
+  7. Una modificación de ponderaciones no altera los resultados históricos protegidos.
 - **Riesgo de Regresión:** Bajo.
-- **Dependencias:** `saveEvaluationCategory`, `CategoriasEvaluacion`.
+- **Dependencias:** T-CAL-03 para el versionado y aislamiento de las reglas.
 
 ---
 
-### T-CAL-03 [P1] — Garantía de inalterabilidad histórica y aislamiento de versiones de reglas de evaluación
+### T-CAL-03 [P1] — Versionado de sistemas de evaluación e inalterabilidad de resultados históricos
 
 - **Componentes relacionados:** `backend/exam-service/Code.gs` (`saveGradebookGrades`, `closePeriodGradebook`), `backend/user-service/Code.gs`.
-- **Problema detectado:** Asegurar que los cierres de períodos y años escolares congelen inmutablemente las notas y las reglas de evaluación utilizadas en dicho período, evitando que cambios posteriores en las plantillas de categorías o ponderaciones alteren promedios históricos.
+- **Problema detectado:** Las ponderaciones y reglas de evaluación pueden modificarse después de haber sido utilizadas. Aunque el sistema protege los años históricos frente a la edición ordinaria de notas, no se ha acreditado un aislamiento completo de las versiones de las reglas que produjeron los resultados originales.
 - **Requisitos funcionales:**
-  1. Congelar la versión de la regla y ponderación aplicada en `CierresPeriodos` al momento del cierre formal.
-  2. Mantener la restricción server-side inalterable en `saveGradebookGrades` que bloquea cualquier modificación si `esAnoHistoricoAnterior === true` o el período está marcado como `Cerrado`.
-  3. Requerir un flujo formal de Secretaría/Dirección para la apertura excepcional de un período cerrado con registro de motivo en auditoría.
-- **Criterios de Aceptación:**
-  - Intento de editar una calificación perteneciente a un año escolar o período cerrado devuelve error `403 Period Closed`.
-  - La modificación de ponderaciones en el período activo no afecta los promedios ni boletines de períodos previamente cerrados.
+  - Mantener una versión identificable de cada configuración de evaluación utilizada para calcular calificaciones.
+  - Asociar las notas calculadas con la versión de las reglas aplicadas, incluyendo ponderaciones, escala, precisión, regla de redondeo y política de recuperación cuando corresponda.
+  - Al cerrar un período, conservar una instantánea verificable en `CierresPeriodos` de la configuración y los resultados finales.
+  - Impedir que editar una configuración activa modifique retroactivamente las notas publicadas o cerradas.
+  - Permitir crear una nueva versión para períodos abiertos o para períodos futuros sin alterar las versiones anteriores.
+  - Conservar la nota original, la nota resultante, la regla aplicada y la identidad del responsable de cualquier rectificación autorizada.
+  - Preservar la inalterabilidad de años históricos mediante controles del servidor, aunque se intente llamar directamente a las funciones.
+  - Definir un procedimiento administrativo excepcional para corregir errores históricos con autorización de Secretaría/Dirección sin habilitar una edición directa e invisible.
+  - Diferenciar una recalculación de una rectificación manual y registrar ambas operaciones.
+- **Cambios requeridos:**
+  - Revisar el modelo de `CategoriasEvaluacion`, `CalificacionesEstudiantes` y `CierresPeriodos`.
+  - Añadir identificadores de versión o instantáneas de configuración, evitando duplicar información sin necesidad.
+  - Modificar los cálculos para utilizar la versión asociada al período y no simplemente la configuración activa más reciente.
+  - Registrar una huella de integridad o un mecanismo equivalente que permita detectar modificaciones no autorizadas.
+  - Establecer cómo se migrarán los datos históricos que no tienen una versión explícita de las reglas.
+  - Evitar inventar retroactivamente una configuración histórica que no pueda demostrarse a partir de los datos disponibles.
+- **Comportamiento esperado:** Una nota cerrada debe poder reproducirse con las reglas que se utilizaron cuando fue calculada. Una modificación futura de categorías o escalas no cambia por sí sola el expediente previamente publicado.
+- **Criterios de aceptación:**
+  1. Cambiar una ponderación activa no altera las notas de un período cerrado.
+  2. Cada cierre conserva la versión de reglas utilizada.
+  3. Una recalculación identifica expresamente la versión de origen y el motivo.
+  4. Una rectificación deja trazabilidad del valor anterior y del nuevo.
+  5. Una llamada directa al backend no puede eludir la protección de años históricos (`esAnoHistoricoAnterior === true`).
+  6. Los datos antiguos sin versión quedan identificados como tales y no reciben versiones históricas ficticias.
+  7. Los boletines y el expediente muestran los resultados correspondientes a la versión oficial del período.
 - **Riesgo de Regresión:** Nulo.
-- **Dependencias:** `CierresPeriodos`, `saveGradebookGrades`.
+- **Dependencias:** T-CAL-02, T-CAL-06, T-CAL-07 y T-CAL-12.
 
 ---
 
-### T-CAL-04 [P1] — Verificación estricta de propiedad y relaciones familiares en reportes académicos (`getStudentAcademicReport`)
+### T-CAL-04 [P1] — Validación de la relación familiar y autorización de acceso a reportes académicos
 
 - **Componentes relacionados:** `backend/exam-service/Code.gs` (`getStudentAcademicReport`), `backend/user-service/Code.gs` (`RelacionesFamiliares`), `js/api.js`.
-- **Problema detectado:** El endpoint `getStudentAcademicReport` recibe `userId` del cliente pero requiere verificación estricta de propiedad mediante `assertRecordOwnership` para garantizar que un familiar o estudiante no pueda consultar reportes de notas de otros alumnos modificando los parámetros de la solicitud.
+- **Problema detectado:** Las consultas a `getStudentAcademicReport` deben verificar la relación entre el usuario solicitante y el estudiante cuando se trata de padres, tutores o responsables. Una autorización general por rol no basta para conceder acceso a los expedientes de cualquier alumno.
 - **Requisitos funcionales:**
-  1. Invocar la verificación de propiedad en `getStudentAcademicReport`.
-  2. Validar que si la solicitud proviene de un rol familiar (`Padre`, `Tutor`, `Responsable`), el `targetUserId` corresponda a un hijo vinculado activamente en `RelacionesFamiliares`.
-  3. Denegar solicitudes no autorizadas con código `403 Forbidden` y registrar evento `AUTH_PERMISSION_DENIED` en auditoría.
-- **Criterios de Aceptación:**
-  - Alterar el `userId` en una solicitud de reporte académico por parte de un estudiante o familiar devuelve un error de permiso denegado.
-  - Los tutores legales acceden exclusivamente a las notas de sus representados autorizados.
+  - Validar la identidad autenticada en el servidor mediante `assertRecordOwnership` en cada solicitud de información académica protegida.
+  - Si el solicitante es estudiante, limitar la consulta a su propio expediente (`authenticatedUserId === targetUserId`).
+  - Si es padre, tutor o responsable, comprobar en `RelacionesFamiliares` que existe una relación válida y activa con el estudiante solicitado.
+  - Aplicar las reglas institucionales correspondientes al estado de la relación, autorizaciones vigentes y posibles restricciones de acceso.
+  - No confiar en identificadores de estudiante enviados por el frontend como prueba de autorización.
+  - Aplicar la misma comprobación a boletines, historiales, resultados de recuperación, certificados, descargas PDF y cualquier endpoint que permita obtener información equivalente.
+  - Evitar que una consulta por identificador, URL directa o modificación manual de parámetros permita acceder a datos de otro estudiante.
+  - Responder con un error controlado `403 Forbidden` y registrar evento `AUTH_PERMISSION_DENIED` sin revelar si un estudiante existe cuando el solicitante no tiene autorización.
+- **Cambios requeridos:**
+  - Revisar `getStudentAcademicReport` y todas las funciones relacionadas con informes y descargas.
+  - Centralizar la autorización por estudiante para evitar que distintos servicios implementen comprobaciones contradictorias.
+  - Revisar los permisos de `ROLE_PERMISSIONS` en conjunto con las relaciones familiares.
+  - Verificar que las descargas de documentos vuelvan a comprobar la autorización en el servidor y no dependan de una URL permanente accesible sin control.
+- **Comportamiento esperado:** Cada usuario puede consultar exclusivamente los expedientes que le corresponde visualizar según su rol y relación autorizada.
+- **Criterios de aceptación:**
+  1. Un estudiante no puede consultar el expediente de otro cambiando el identificador enviado.
+  2. Un familiar solo accede a estudiantes relacionados y autorizados en `RelacionesFamiliares`.
+  3. Un familiar sin relación vigente no obtiene boletines ni historiales mediante endpoints alternativos.
+  4. Los roles administrativos conservan el acceso que les corresponde por sus permisos institucionales.
+  5. Las descargas de PDF aplican los mismos controles que la consulta en pantalla.
+  6. Las pruebas negativas verifican que no se filtran calificaciones ni datos personales en los mensajes de error.
 - **Riesgo de Regresión:** Bajo.
 - **Dependencias:** `RelacionesFamiliares`, `assertRecordOwnership`, `getStudentAcademicReport`.
 
 ---
 
-### T-CAL-05 [P2] — Distinción clara entre cero (0), calificación pendiente y exención en cálculos y libreta
+### T-CAL-05 [P1] — Separación inequívoca entre nota cero, nota pendiente, actividad exenta y actividad no aplicable
 
 - **Componentes relacionados:** `backend/exam-service/Code.gs` (`getGradebookData`, `saveGradebookGrades`), `js/teacher.js`.
-- **Problema detectado:** En la libreta de calificaciones y en los cálculos de promedios, las actividades sin nota registrada (pendientes) suelen convertirse implícitamente a cero (`0`), penalizando injustamente al alumno antes del cierre del parcial. Además, no existe un estado explícito para calificar una actividad como `Eximido`.
+- **Problema detectado:** Los valores `null` devueltos por `getGradebookData` pueden convertirse implícitamente en `0` en `js/teacher.js`. Esto penaliza al estudiante antes de que exista una calificación definitiva y mezcla situaciones académicas diferentes.
 - **Requisitos funcionales:**
-  1. Diferenciar tres estados de calificación: `NotaRegistrada` (valor numérico >= 0), `Pendiente` (`null` / sin entregar) y `Eximido` (`EX` - exento de evaluación).
-  2. Excluir las actividades en estado `Pendiente` y `Eximido` del divisor en el cálculo del promedio parcial, evaluando únicamente sobre el total de actividades efectivamente calificadas.
-  3. Al ejecutar el cierre formal del período con `closePeriodGradebook`, convertir automáticamente las notas en estado `Pendiente` a `0` si no cuentan con justificación o prórroga autorizada.
-- **Criterios de Aceptación:**
-  - Una actividad no entregada o sin nota no reduce el promedio antes del cierre oficial del período.
-  - Calificar una actividad como `Eximido` recalcula el promedio sobre el 100% de las actividades restantes sin penalizar al estudiante.
+  - Distinguir, como mínimo, entre:
+    - Calificada: existe una nota válida, incluido el cero.
+    - Pendiente: aún no se ha registrado una calificación (`null` / sin entregar).
+    - Exenta: la actividad no debe penalizar al estudiante (`EX`) y se excluye del cálculo según la política institucional.
+    - No aplicable: la actividad no corresponde al estudiante o al grupo.
+    - No presentada: existe evidencia de que el estudiante no entregó o no realizó la actividad, con una política de puntuación definida.
+    - Anulada: la actividad fue invalidada y no debe intervenir en el resultado.
+  - No inferir que una actividad no presentada equivale a cero sin aplicar la política de evaluación configurada.
+  - Evitar que una calificación pendiente se muestre como cero en la libreta, los gráficos, los promedios parciales y los boletines.
+  - Excluir las actividades exentas del denominador o ponderación de acuerdo con la regla configurada.
+  - Mostrar el estado de cada actividad mediante una etiqueta accesible, sin depender exclusivamente del color.
+  - Impedir el cierre o la publicación en `closePeriodGradebook` cuando existan pendientes que incumplan las condiciones de cierre, o convertirlas automáticamente a 0 si no cuentan con prórroga autorizada.
+  - Permitir que la institución defina cómo tratar ausencias justificadas, actividades recuperables y actividades anuladas.
+- **Cambios requeridos:**
+  - Revisar los valores de estado que devuelve el backend y el tratamiento de los valores vacíos en el frontend.
+  - Centralizar el cálculo de promedios para evitar diferencias entre libro de notas, reportes, gráficos y PDF.
+  - Añadir validaciones para impedir que un estado académico se convierta accidentalmente en otro durante el guardado.
+  - Ajustar los filtros, contadores y alertas para diferenciar pendientes de calificaciones insuficientes.
+- **Comportamiento esperado:** Una nota pendiente permanece pendiente y no reduce artificialmente el promedio. Un cero explícito sí participa en el cálculo conforme a la configuración. Una exención no perjudica al estudiante.
+- **Criterios de aceptación:**
+  1. Una casilla sin calificación no se transforma en cero al cargar, editar, guardar o imprimir.
+  2. Una nota explícita de cero se conserva y participa en el cálculo.
+  3. Una actividad exenta se excluye según la regla configurada.
+  4. Una actividad no presentada recibe el tratamiento establecido por la política institucional.
+  5. Los promedios de frontend y backend coinciden para los mismos datos.
+  6. Los boletines identifican correctamente los estados pendientes o incompletos.
+  7. El cierre detecta los pendientes que impiden cerrar el período.
 - **Riesgo de Regresión:** Bajo.
-- **Dependencias:** `getGradebookData`, `CalificacionesEstudiantes`.
+- **Dependencias:** T-CAL-02, T-CAL-03 y T-CAL-06.
 
 ---
 
-### T-CAL-06 [P2] — Configuración homogénea de precisión decimal y reglas de redondeo institucional
+### T-CAL-06 [P2] — Política institucional de precisión decimal, redondeo y presentación de resultados
 
 - **Componentes relacionados:** `backend/exam-service/Code.gs`, `js/teacher.js`, `js/student.js`, `js/ui-common.js`.
-- **Problema detectado:** Existen pequeñas diferencias de redondeo decimal entre los promedios mostrados en el libro de calificaciones docente (pantalla), los boletines en PDF y los reportes del portal de estudiantes debido a la falta de una función centralizada de redondeo.
+- **Problema detectado:** No existe una política homogénea acreditada para el número de decimales y el método de redondeo. Los cálculos del frontend, el backend y los informes impresos pueden producir resultados distintos.
 - **Requisitos funcionales:**
-  1. Crear la función utility unificada `formatAcademicGrade(number, precision, roundingMode)` en backend y frontend.
-  2. Soportar precisión a 1 o 2 decimales y modos de redondeo: `Aritmetico` (≥0.5 redondea hacia arriba) y `Truncado`.
-  3. Parametrizar la regla en `ConfiguracionSistema` y aplicarla idénticamente en la libreta docente, informes de estudiantes, boletines impresos y exportaciones SACE.
-- **Criterios de Aceptación:**
-  - Las notas y promedios mostrados en pantalla coinciden al 100% con los valores impresos en boletines PDF y archivos de exportación.
+  - Configurar la precisión decimal aplicable a notas individuales, promedios, porcentajes y resultados finales mediante `formatAcademicGrade(number, precision, roundingMode)`.
+  - Definir el método de redondeo utilizado (`Aritmetico` conventional vs. `Truncado`), según la normativa institucional.
+  - Distinguir la precisión de almacenamiento de la precisión de presentación.
+  - Evitar redondear prematuramente los valores intermedios cuando la política exige conservar mayor precisión.
+  - Definir en qué etapa se redondea: nota individual, subtotal, promedio ponderado o resultado final.
+  - Centralizar la función de cálculo y redondeo en el backend o en un módulo compartido con comportamiento determinista.
+  - Aplicar la misma política a la libreta, el portal del estudiante, los boletines, los historiales, los gráficos y las exportaciones SACE.
+  - Permitir una política diferenciada únicamente cuando una regla oficial o institucional lo justifique.
+  - Mantener la versión de la política aplicada a los resultados cerrados.
+- **Cambios requeridos:**
+  - Identificar todos los puntos donde se calcula, redondea o formatea una nota.
+  - Sustituir las operaciones duplicadas por una regla común.
+  - Separar el valor numérico de su formato visual para no realizar cálculos sobre cadenas formateadas.
+  - Incorporar pruebas con valores límite, decimales periódicos y resultados próximos a la nota mínima de aprobación (ej. 69.5% vs 70%).
+- **Comportamiento esperado:** El mismo expediente produce los mismos valores numéricos en todas las vistas y documentos. La presentación puede mostrar menos decimales que los utilizados internamente, sin modificar el resultado académico.
+- **Criterios de aceptación:**
+  1. Los mismos datos producen resultados idénticos en frontend, backend y PDF.
+  2. Los valores situados en los límites de redondeo se resuelven conforme a la política configurada.
+  3. La decisión de aprobación se toma con el valor definido por la normativa aplicable, no con una cadena de texto formateada.
+  4. Las notas cerradas conservan la regla de redondeo de su período.
+  5. Las pruebas cubren valores cero, negativos no permitidos, máximos, decimales y notas cercanas al umbral de aprobación.
+  6. Cambiar el formato visual no cambia la nota almacenada ni la decisión académica.
 - **Riesgo de Regresión:** Nulo.
-- **Dependencias:** `ConfiguracionSistema`, `formatAcademicGrade`.
+- **Dependencias:** T-CAL-03 y T-CAL-05.
 
 ---
 
-### T-CAL-07 [P2] — Flujo formal de rectificación de notas post-cierre con registro de trazabilidad y motivo obligatorio
+### T-CAL-07 [P2] — Flujo formal de rectificación de calificaciones después del cierre
 
 - **Componentes relacionados:** `backend/exam-service/Code.gs` (`reopenPeriodGradebook`, `saveGradebookGrades`), `js/teacher.js`, `teacher-dashboard.html`.
-- **Problema detectado:** Cuando se requiere corregir una nota de un período ya cerrado, el procedimiento carece de una bitácora que registre el motivo formal de la rectificación, el valor anterior, el valor nuevo y la autoridad que lo autorizó.
+- **Problema detectado:** Existe un mecanismo de reapertura justificada (`reopenPeriodGradebook`), pero se necesita un flujo de rectificación que haga explícitos el motivo, la autorización, los valores afectados y la trazabilidad del cambio.
 - **Requisitos funcionales:**
-  1. Implementar la tabla `RectificacionesNotas` para almacenar: `RectificacionID`, `CalificacionID`, `ValorAnterior`, `ValorNuevo`, `Motivo`, `AutorizadoPor`, `FechaRectificacion`.
-  2. Exigir la selección de motivo ("Error de transcripción", "Revisión de examen", "Resolución de Secretaría") y adjuntar justificación al rectificar una nota en un período reabierto.
-  3. Mantener la nota original en el historial sin eliminar la evidencia previa.
-- **Criterios de Aceptación:**
-  - Rectificar una nota guarda el cambio, actualiza el promedio y genera una entrada inmutable en `RectificacionesNotas`.
-  - El expediente y los reportes muestran el resultado vigente preservando el historial de rectificaciones para auditoría.
+  - Exigir un motivo obligatorio para toda rectificación posterior al cierre en la tabla `RectificacionesNotas` (`RectificacionID`, `CalificacionID`, `ValorAnterior`, `ValorNuevo`, `Motivo`, `AutorizadoPor`, `FechaRectificacion`).
+  - Registrar el usuario solicitante, la fecha, el estudiante, la evaluación, el valor anterior, el nuevo valor y la justificación ("Error de transcripción", "Revisión de examen", "Resolución de Secretaría").
+  - Permitir aprobación por un usuario autorizado cuando la política institucional lo requiera (`Secretaría`, `Director`, `Administrador`).
+  - Diferenciar el permiso para solicitar una rectificación del permiso para aprobarla o ejecutarla.
+  - Evitar que un docente modifique directamente un período cerrado mediante una llamada alternativa al backend.
+  - Conservar los documentos y resultados anteriores como evidencia histórica, identificándolos como sustituidos cuando corresponda.
+  - Recalcular los resultados dependientes de la nota corregida de forma controlada y reproducible.
+  - Registrar qué boletines, promedios o documentos oficiales deben regenerarse o invalidarse.
+  - Mantener la inalterabilidad de los años históricos, salvo que se utilice un procedimiento excepcional explícitamente autorizado y auditable.
+  - Proporcionar al estudiante y al familiar autorizado la versión oficial vigente, sin ocultar que existió una rectificación cuando la normativa o la política institucional exija mostrarla.
+- **Cambios requeridos:**
+  - Definir estados de solicitud, aprobación, rechazo y aplicación, según el flujo institucional.
+  - Añadir un historial específico de rectificaciones en `RectificacionesNotas`.
+  - Integrar el flujo con `reopenPeriodGradebook`, `saveGradebookGrades` y el sistema de publicación.
+  - Invalidar o marcar como desactualizados los documentos derivados de las notas modificadas.
+  - Evitar que una rectificación aprobada cambie reglas de evaluación o resultados no relacionados.
+- **Comportamiento esperado:** La rectificación de una nota cerrada es un procedimiento controlado, justificable y reversible mediante un nuevo registro de corrección, sin borrar la historia original.
+- **Criterios de aceptación:**
+  1. Una rectificación sin motivo se rechaza.
+  2. Un usuario sin autorización no puede aprobar ni ejecutar el cambio.
+  3. El historial conserva los valores anterior y nuevo.
+  4. Los promedios dependientes se recalculan usando las reglas correctas.
+  5. Los documentos derivados quedan identificados como vigentes o desactualizados.
+  6. El sistema no permite alterar directamente un año histórico protegido (`esAnoHistoricoAnterior === true`).
+  7. Las rectificaciones aparecen en los registros de auditoría con su responsable y fecha.
 - **Riesgo de Regresión:** Bajo.
-- **Dependencias:** `reopenPeriodGradebook`, `RectificacionesNotas`.
+- **Dependencias:** T-CAL-01, T-CAL-03 y T-CAL-06.
 
 ---
 
-### T-CAL-08 [P2] — Módulo de observaciones cualitativas y evaluativos actitudinales por período
+### T-CAL-08 [P2] — Módulo de observaciones cualitativas y seguimiento actitudinal
 
 - **Componentes relacionados:** `backend/exam-service/Code.gs`, `js/teacher.js`, `teacher-dashboard.html`, `student-dashboard.html`.
-- **Problema detectado:** La plataforma registra calificaciones cuantitativas y comentarios por tarea, pero carece de una sección para registrar observaciones cualitativas pedagógicas, actitudinales y de conducta general por parcial para el boletín.
+- **Problema detectado:** Las rúbricas permiten registrar criterios cualitativos vinculados a actividades, pero no existe una interfaz independiente para documentar observaciones de comportamiento, hábitos de trabajo y desarrollo actitudinal por período para el boletín.
 - **Requisitos funcionales:**
-  1. Crear la tabla `ObservacionesCualitativasPeriodo` con campos: `ID`, `UserID`, `PeriodoID`, `Asignatura`, `Conducta`, `ObservacionPedagogica`, `FechaRegistro`.
-  2. Implementar interfaz en el libro docente para ingresar observaciones cualitativas por alumno.
-  3. Integrar las observaciones cualitativas en el reporte académico del estudiante y en el boletín en PDF.
-- **Criterios de Aceptación:**
-  - El docente puede ingresar observaciones pedagógicas generales por parcial.
-  - El boletín del estudiante incluye las observaciones cualitativas registradas.
+  - Crear la tabla `ObservacionesCualitativasPeriodo` (`ID`, `UserID`, `PeriodoID`, `Asignatura`, `Conducta`, `ObservacionPedagogica`, `FechaRegistro`).
+  - Permitir que el personal autorizado registre observaciones cualitativas asociadas al estudiante, año lectivo y período.
+  - Diferenciar observaciones generales, fortalezas, aspectos por mejorar, seguimiento de competencias y acuerdos de apoyo.
+  - Permitir asociar una observación a una competencia, criterio de rúbrica o área formativa cuando corresponda.
+  - Admitir comentarios descriptivos y escalas cualitativas configurables, por ejemplo, alcanzado, en desarrollo y requiere apoyo.
+  - Mantener estas observaciones separadas de las notas numéricas, salvo que una rúbrica configurada establezca explícitamente una conversión.
+  - Permitir observaciones privadas para personal autorizado y observaciones publicables para estudiantes o familiares.
+  - Incorporar controles para evitar que comentarios internos confidenciales aparezcan accidentalmente en boletines.
+  - Registrar autor, fecha, última modificación y período correspondiente.
+  - Permitir editar o rectificar observaciones conforme a los permisos y mantener la trazabilidad de los cambios.
+  - Ofrecer filtros por estudiante, período, competencia, docente y estado de publicación.
+  - Permitir seleccionar qué observaciones se incorporan al boletín y generar un resumen cualitativo comprensible.
+- **Cambios requeridos:**
+  - Crear o adaptar la estructura de persistencia `ObservacionesCualitativasPeriodo`.
+  - Incorporar una interfaz docente en `teacher-dashboard.html` para registrar y consultar observaciones.
+  - Integrar la consulta con el expediente del estudiante y el proceso de generación de boletines en `getStudentAcademicReport`.
+  - Definir permisos de lectura y edición para docentes, dirección, orientación, secretaría, estudiantes y familiares.
+  - Validar longitudes, contenido vacío y estados de publicación.
+  - Evitar la exposición de datos sensibles que no sean necesarios para el seguimiento académico.
+- **Comportamiento esperado:** El docente puede documentar el progreso del estudiante sin inventar una nota numérica. El centro puede comunicar observaciones seleccionadas a la familia, manteniendo separadas las notas oficiales y los comentarios internos.
+- **Criterios de aceptación:**
+  1. Se puede crear, editar y consultar una observación según los permisos.
+  2. Una observación no modifica automáticamente las calificaciones.
+  3. Las observaciones privadas no aparecen en el portal familiar ni en boletines públicos.
+  4. Cada registro conserva autoría, fecha y período.
+  5. El boletín incluye únicamente observaciones autorizadas para publicación.
+  6. Las rúbricas y observaciones cualitativas pueden consultarse de forma coherente sin duplicar innecesariamente la información.
 - **Riesgo de Regresión:** Nulo.
-- **Dependencias:** `ObservacionesCualitativasPeriodos`, `getStudentAcademicReport`.
+- **Dependencias:** T-CAL-04 para la autorización de acceso y T-CAL-09 para su inclusión en boletines.
 
 ---
 
-### T-CAL-09 [P2] — Reporte diagnóstico previo a la generación masiva de boletines PDF
+### T-CAL-09 [P2] — Diagnóstico previo y generación masiva fiable de boletines PDF
 
 - **Componentes relacionados:** `backend/accounting-service/Code.gs` (`generateSchoolDocument`), `backend/exam-service/Code.gs`, `js/teacher.js`.
-- **Problema detectado:** Al emitir boletines masivos en PDF para una sección, si algunos estudiantes tienen calificaciones incompletas o errores de datos, el proceso falla a mitad de la generación o emite documentos con inconsistencias sin advertirlo.
+- **Problema detectado:** La generación masiva de boletines no cuenta con un diagnóstico previo (`preCheckGradebookForReportCards`) que identifique notas pendientes, matrículas inconsistentes y otras condiciones capaces de producir documentos incompletos o incorrectos.
 - **Requisitos funcionales:**
-  1. Implementar la función de diagnóstico `preCheckGradebookForReportCards` antes de iniciar la generación masiva.
-  2. Evaluar y mostrar un resumen con: alumnos completos, alumnos con notas pendientes, alumnos sin asignación de materias o con inconsistencias de matrícula.
-  3. Permitir al usuario decidir si continuar emitiendo únicamente los boletines de alumnos con datos 100% completos o corregir las inconsistencias antes.
-- **Criterios de Aceptación:**
-  - El diagnóstico pre-emisión identifica con precisión a los alumnos que presentan notas pendientes o errores de matrícula.
-  - La generación por lotes no se interrumpe abruptamente y reporta el estado exacto de cada boletín generado.
+  - Ejecutar la validación previa `preCheckGradebookForReportCards` antes de generar los documentos masivos.
+  - Identificar estudiantes matriculados sin asignaturas o secciones requeridas, matrículas duplicadas, estudiantes sin calificaciones esperadas, períodos no cerrados y resultados no publicados.
+  - Diferenciar errores bloqueantes, advertencias y situaciones informativas.
+  - Permitir filtrar por año lectivo, período, grado, sección y grupo de estudiantes.
+  - Mostrar un resumen de cuántos documentos se pueden generar, cuántos requieren corrección y cuántos no se pueden emitir.
+  - Permitir generar únicamente los boletines válidos, sin incluir estudiantes con errores bloqueantes.
+  - Producir un resultado individual por estudiante y un resumen global del lote.
+  - Detectar fallos de renderizado, documentos vacíos, archivos duplicados y problemas de almacenamiento.
+  - Evitar que un error en un estudiante cancele silenciosamente todo el lote.
+  - Permitir reintentar únicamente los documentos fallidos sin duplicar los ya generados.
+  - Identificar el período y la versión de las calificaciones utilizadas en cada documento.
+  - Ofrecer una vista previa y un mecanismo de revisión antes de publicar o distribuir los archivos.
+  - No exponer boletines a familiares hasta que la autorización y el estado de publicación sean válidos.
+- **Cambios requeridos:**
+  - Incorporar la función de diagnóstico `preCheckGradebookForReportCards` previa a la renderización.
+  - Definir un informe de validación con errores, advertencias y acciones recomendadas.
+  - Separar el proceso en preparación, validación, generación y verificación final.
+  - Registrar el estado individual de cada documento.
+  - Añadir una herramienta para consultar lotes anteriores y localizar archivos fallidos o desactualizados.
+- **Comportamiento esperado:** La institución conoce los problemas antes de iniciar la generación y puede resolverlos o excluir los registros afectados. Cada boletín generado se vincula a un resultado académico válido y verificable.
+- **Criterios de aceptación:**
+  1. El diagnóstico detecta pendientes y matrículas inconsistentes de los tipos definidos.
+  2. No se genera un boletín oficial con notas pendientes que impidan su emisión.
+  3. Los errores se muestran por estudiante y con una explicación comprensible.
+  4. El fallo de un documento no elimina ni duplica los demás.
+  5. El sistema permite reintentar los documentos fallidos.
+  6. Cada PDF queda asociado al estudiante, período y versión de resultados.
+  7. Una modificación posterior de las notas permite identificar los boletines que necesitan regeneración.
 - **Riesgo de Regresión:** Nulo.
-- **Dependencias:** `generateSchoolDocument`, `getGradebookData`.
+- **Dependencias:** T-CAL-03, T-CAL-04, T-CAL-05 y T-CAL-07.
 
 ---
 
-### T-CAL-10 [P2] — Verificación avanzada y exportación de archivos 100% compatibles con SACE (Honduras)
+### T-CAL-10 [P2] — Validación integral y exportación fiable de resultados para SACE Honduras
 
 - **Componentes relacionados:** `backend/accounting-service/Code.gs` (`verifySACETemplateCompatibility`, `generateSACEReportFile`), `js/teacher.js`.
-- **Problema detectado:** Las funciones de compatibilidad SACE existen en el backend, pero se requiere enriquecer la interfaz docente para validar la estructura de la plantilla oficial SACE y exportar el archivo de carga masiva con código de colores e indicadores de estado.
+- **Problema detectado:** El servicio valida determinadas columnas y genera un archivo con calificaciones ordinarias y recuperaciones. Sin embargo, se requiere enriquecer la interfaz docente para validar la estructura de la plantilla oficial SACE y exportar el archivo de carga masiva con códigos e indicadores de estado.
 - **Requisitos funcionales:**
-  1. Vincular en `js/teacher.js` los botones de acción para invocar `verifySACETemplateCompatibility` y `generateSACEReportFile`.
-  2. Validar automáticamente los campos SACE obligatorios (`identidad`, `nombreAlumno`, `calificacionOrdinaria`, `recuperacion`, `resultadoFinalSACE`, `estadoAprobacion`).
-  3. Aplicar la regla SACE de aprobación mínima de 70% y cálculo de nota final como `Math.max(notaOrdinaria, notaRecuperacion)`.
-  4. Permitir descargar la hoja estructurada lista para su carga en el portal oficial SACE.
-- **Criterios de Aceptación:**
-  - La exportación genera el archivo con la estructura exacta exigida por las plantillas SACE.
-  - Los alumnos con nota final SACE >= 70 se clasifican como `APROBADO` y < 70 como `REPROBADO`.
+  - Vincular en `js/teacher.js` los controles para invocar `verifySACETemplateCompatibility` y `generateSACEReportFile`.
+  - Mantener la compatibilidad con la plantilla oficial SACE de Honduras (`identidad`, `nombreAlumno`, `calificacionOrdinaria`, `recuperacion`, `resultadoFinalSACE`, `estadoAprobacion`).
+  - Verificar nombres, orden, obligatoriedad, tipo de dato, formato y restricciones de las columnas exigidas en `PlantillasSACEVerificadas`.
+  - Identificar la versión de plantilla (`SACE-2026-v2`) y el tipo de exportación a los que corresponde la validación.
+  - Validar identidad del estudiante, matrícula, año lectivo, grado, sección, asignatura y período.
+  - Detectar identidades vacías o inválidas, registros duplicados, estudiantes fuera del grupo seleccionado y calificaciones fuera de rango.
+  - Verificar que las notas ordinarias y de recuperación correspondan al mismo estudiante, asignatura y período.
+  - Aplicar la regla SACE de resultado final como `Math.max(notaOrdinaria, notaRecuperacion)` y nota mínima de aprobación oficial de 70% (`APROBADO` vs `REPROBADO`).
+  - Diferenciar la validación estructural del archivo de la validación de contenido académico.
+  - Proporcionar un diagnóstico antes de generar el archivo final.
+  - Generar un archivo de prueba o vista previa para que el personal autorizado pueda verificar su contenido.
+  - Conservar la plantilla, fecha de verificación, reglas aplicadas y resultado de la validación.
+  - Permitir descargar el archivo y un informe de validación con errores y advertencias.
+- **Cambios requeridos:**
+  - Revisar `verifySACETemplateCompatibility` y `generateSACEReportFile`.
+  - Separar la validación de plantilla, la validación académica, el mapeo de campos y la generación del archivo.
+  - Incorporar pruebas con plantillas válidas, columnas ausentes, columnas inesperadas, datos inválidos y resultados de recuperación.
+  - Registrar las exportaciones para poder reproducir qué datos y reglas generaron cada archivo.
+- **Comportamiento esperado:** La plataforma genera archivos cuya estructura y contenido han sido validados frente a la especificación oficial SACE de Honduras, e informa con claridad cualquier condición que impida su uso.
+- **Criterios de aceptación:**
+  1. La plantilla se rechaza cuando faltan columnas obligatorias o sus formatos son incompatibles.
+  2. Los datos inválidos se detectan antes de generar el archivo definitivo.
+  3. La regla de recuperación (`Math.max`) y aprobación (70%) se aplica según la especificación correspondiente.
+  4. Las identidades y calificaciones se vinculan al estudiante correcto.
+  5. La validación produce un informe legible de errores y advertencias.
+  6. La exportación registra la plantilla y las reglas utilizadas en `PlantillasSACEVerificadas`.
+  7. La interfaz distingue entre archivo generado, archivo validado y archivo oficialmente aceptado.
 - **Riesgo de Regresión:** Nulo.
-- **Dependencias:** `verifySACETemplateCompatibility`, `generateSACEReportFile`, `PlantillasSACEVerificadas`.
+- **Dependencias:** T-CAL-03, T-CAL-05 y T-CAL-06.
 
 ---
 
-### T-CAL-11 [P2] — Edición rápida y navegación por teclado en el libro de calificaciones docente
+### T-CAL-11 [P2] — Edición rápida y navegación por teclado en el libro de calificaciones
 
 - **Componentes relacionados:** `teacher-dashboard.html`, `js/teacher.js`.
-- **Problema detectado:** El ingreso manual de notas en secciones numerosas (30+ alumnos) mediante clic en cada celda resulta lento e incómodo para los docentes.
+- **Problema detectado:** El ingreso manual de notas en secciones numerosas (30+ alumnos) mediante clic en cada celda resulta lento e incómodo para los docentes. La navegación por teclado puede perder el foco si no está optimizada.
 - **Requisitos funcionales:**
-  1. Habilitar navegación por teclado mediante teclas de flechas (Arriba, Abajo, Izquierda, Derecha), `Enter` y `Tab` dentro de la cuadrícula de notas del libro docente.
-  2. Guardar automáticamente el foco en la celda correspondiente al avanzar con `Enter` o `Tab`.
-  3. Resaltar visualmente la celda activa y mostrar indicador de cambios no guardados.
-- **Criterios de Aceptación:**
-  - El docente puede recorrer e ingresar notas en la tabla de calificaciones completa utilizando únicamente el teclado.
-  - Presionar `Enter` o `Flecha Abajo` tras ingresar una nota desplaza el foco a la siguiente celda sin perder el valor escrito.
+  - Permitir navegar entre celdas de la libreta mediante flechas (Arriba, Abajo, Izquierda, Derecha), `Enter` y `Tab`.
+  - Mantener el foco en la celda esperada después de editar, guardar o mostrar un error (ej. presionar `Enter` o `Flecha Abajo` desplaza el foco a la celda de abajo).
+  - Resaltar visualmente la celda activa y mostrar un indicador de cambios no guardados.
+  - Permitir editar una nota sin que la tabla se vuelva a renderizar completamente y pierda la posición del usuario.
+  - Validar el rango y formato de la nota antes de confirmar el cambio.
+  - Indicar visualmente las celdas modificadas, guardadas, pendientes de guardar y con errores.
+  - Evitar que el cambio de foco guarde accidentalmente valores incompletos.
+  - Ofrecer guardado por lote con indicadores de progreso y resultado.
+  - Permitir recuperar la edición ante un fallo de red sin duplicar ni perder silenciosamente los valores introducidos.
+  - Mantener accesibilidad para navegación sin ratón y lectores de pantalla (WCAG 2.2 AA).
+  - Respetar las restricciones de edición de períodos cerrados y años históricos.
+  - Permitir filtrar por estudiante y localizar rápidamente una fila sin alterar el conjunto de notas seleccionado.
+- **Cambios requeridos:**
+  - Revisar los manejadores de eventos, el ciclo de renderizado y el estado local de la tabla en `js/teacher.js`.
+  - Evitar reemplazar toda la tabla cuando basta con actualizar una celda o una fila.
+  - Incorporar un modelo de cambios pendientes que distinga los datos locales de los confirmados por el servidor.
+  - Añadir mensajes de error asociados a la celda y no únicamente alertas globales.
+  - Verificar el comportamiento en escritorio, tabletas y dispositivos móviles.
+- **Comportamiento esperado:** El docente puede registrar notas consecutivamente sin perder el foco, comprende qué valores están guardados y puede corregir errores sin reiniciar la edición de todo el grupo.
+- **Criterios de aceptación:**
+  1. La navegación por teclado mantiene el orden esperado entre celdas.
+  2. La actualización de una nota no desplaza el foco a otra fila inesperada.
+  3. Los errores de validación conservan el valor introducido y permiten corregirlo.
+  4. Los estados de guardado son distinguibles y accesibles.
+  5. Una desconexión no provoca que las notas pendientes se presenten como guardadas.
+  6. La tabla funciona con grupos de más de 30 estudiantes sin pérdida de foco en las pruebas.
+  7. Los controles de edición respetan los permisos y el estado del período.
 - **Riesgo de Regresión:** Nulo.
-- **Dependencias:** `teacher-dashboard.html`, `js/teacher.js`.
+- **Dependencias:** T-CAL-01 y T-CAL-05.
 
 ---
 
-### T-CAL-12 [P2] — Congelamiento de versión de rúbricas aplicadas a entregas
+### T-CAL-12 [P2] — Versionado de rúbricas aplicadas a actividades y entregas
 
 - **Componentes relacionados:** `backend/exam-service/Code.gs` (`getRubrics`, `saveRubric`), `backend/task-service/Code.gs`, `js/teacher.js`.
-- **Problema detectado:** Si un docente modifica los criterios o ponderaciones de una plantilla de rúbrica en `RubricasEvaluacion`, los trabajos previamente calificados con esa plantilla podrían recalcularse con los nuevos valores, alterando notas históricas.
+- **Problema detectado:** Las rúbricas se almacenan como plantillas en `RubricasEvaluacion`, pero si un docente modifica la plantilla maestro, los trabajos previamente calificados podrían recalcularse con los nuevos valores, alterando notas históricas.
 - **Requisitos funcionales:**
-  1. Al calificar una entrega mediante rúbrica, guardar una copia estática congelada en JSON del esquema y puntuación de la rúbrica dentro del registro de la entrega en `EntregasVersiones`.
-  2. Evitar que modificaciones posteriores a la plantilla maestro de la rúbrica recalculen las calificaciones de entregas ya evaluadas.
-- **Criterios de Aceptación:**
-  - Modificar una plantilla de rúbrica no altera los puntajes ni criterios de las tareas previamente calificadas.
-  - El estudiante y docente pueden visualizar el desglose exacto de la rúbrica tal como se aplicó al momento de la revisión.
+  - Al calificar una entrega mediante rúbrica, guardar una copia estática congelada en JSON del esquema y puntuación de la rúbrica dentro del registro de la entrega en `EntregasVersiones`.
+  - Crear una versión nueva cuando se modifique una rúbrica maestro que ya se haya utilizado.
+  - Conservar los criterios, niveles de desempeño, descripciones, puntuaciones máximas y ponderaciones de cada versión.
+  - Asociar cada evaluación aplicada a la versión exacta de la rúbrica que utilizó.
+  - Evitar que la modificación de una plantilla altere la interpretación de las calificaciones anteriores.
+  - Permitir reutilizar una rúbrica en otras actividades sin compartir accidentalmente cambios posteriores.
+  - Definir si una rúbrica puede modificarse cuando existen entregas en borrador, calificadas o publicadas.
+  - Si se necesita recalificar con una versión nueva, ejecutar una operación explícita, autorizada y trazable.
+  - Conservar la puntuación por criterio, los comentarios y la nota total resultante.
+  - Permitir consultar la rúbrica histórica junto con la evaluación del estudiante.
+- **Cambios requeridos:**
+  - Revisar `RubricasEvaluacion` y las estructuras de `task-service` que guardan resultados de rúbricas.
+  - Incorporar identificadores de versión o copia congelada en JSON en `EntregasVersiones`.
+  - Ajustar las interfaces de creación, edición y selección de rúbricas para diferenciar plantillas nuevas de versiones utilizadas.
+  - Vincular las entregas calificadas a su versión histórica.
+- **Comportamiento esperado:** La rúbrica que se visualiza en una evaluación antigua es exactamente la que se aplicó al calificarla, incluso si la plantilla maestro ha cambiado desde entonces.
+- **Criterios de aceptación:**
+  1. Modificar una rúbrica utilizada crea una nueva versión o conserva una instantánea congelada en `EntregasVersiones`.
+  2. Las entregas antiguas siguen mostrando los criterios originales.
+  3. La puntuación histórica no cambia por editar la plantilla.
+  4. Una recalificación explícita registra el responsable, la versión nueva y los resultados anteriores.
+  5. La rúbrica histórica puede consultarse desde la evaluación correspondiente.
 - **Riesgo de Regresión:** Nulo.
-- **Dependencias:** `RubricasEvaluacion`, `EntregasVersiones`.
+- **Dependencias:** T-CAL-03 y T-CAL-06.
 
 ---
 
-### T-CAL-13 [P3] — Dashboard de alertas pre-cierre para notas no registradas y promedios en riesgo
+### T-CAL-13 [P3] — Panel de alertas antes del cierre de período
 
 - **Componentes relacionados:** `js/teacher.js`, `teacher-dashboard.html`, `backend/exam-service/Code.gs`.
-- **Problema detectado:** Los docentes y directivos carecen de un panel visual de resumen que señale antes del cierre de parcial qué materias o secciones presentan un porcentaje alto de calificaciones pendientes o alumnos en riesgo de reprobación.
+- **Problema detectado:** No existe una herramienta consolidada en el dashboard docente que señale con anticipación calificaciones pendientes, actividades sin evaluar y estudiantes en riesgo de no alcanzar los resultados esperados (< 70%).
 - **Requisitos funcionales:**
-  1. Crear el panel "Alertas de Cierre y Avance de Evaluaciones" en `teacher-dashboard.html`.
-  2. Calcular el porcentaje de avance en el registro de notas por sección y materia.
-  3. Listar a los estudiantes cuyo promedio proyectado esté por debajo de la nota mínima de aprobación (ej. < 70%).
-  4. Notificar al docente y orientador sobre los casos que requieran atención pedagógica preventiva antes del examen final.
-- **Criterios de Aceptación:**
-  - El panel resalta en color amarillo las secciones con notas pendientes a 5 días del cierre y en rojo los estudiantes en riesgo académico.
+  - Crear el panel "Alertas de Cierre y Avance de Evaluaciones" en `teacher-dashboard.html`.
+  - Mostrar un panel de estado por docente, asignatura, sección y período.
+  - Identificar actividades que no tienen calificaciones registradas, grupos con calificación incompleta y estudiantes con resultados parciales insuficientes (< 70%).
+  - Diferenciar riesgo académico, ausencia de datos y error de configuración.
+  - Calcular las alertas utilizando las ponderaciones, estados y reglas de evaluación vigentes.
+  - Mostrar cuántas actividades faltan y cuáles pueden afectar el cierre.
+  - Permitir abrir la libreta directamente desde cada alerta.
+  - Ofrecer filtros por grado, sección, asignatura, docente y período.
+  - Permitir configurar umbrales de alerta sin alterar la nota oficial.
+  - Diferenciar una proyección provisional de un resultado definitivo.
+  - Evitar mostrar a estudiantes o familiares alertas internas que no les correspondan.
+  - Identificar qué condiciones bloquean realmente el cierre y cuáles son recomendaciones preventivas.
+- **Cambios requeridos:**
+  - Crear una consulta consolidada que reutilice las reglas oficiales de cálculo (`getGradebookData`).
+  - Añadir la interfaz de alertas en `teacher-dashboard.html` con enlaces a las actividades y estudiantes afectados.
+  - Incorporar indicadores de completitud de la evaluación por período.
+  - Definir criterios de riesgo que no dependan de convertir notas pendientes en ceros.
+- **Comportamiento esperado:** Antes del cierre, el docente puede identificar y resolver las evaluaciones faltantes y reconocer los casos que necesitan seguimiento académico, sin confundir proyecciones con notas definitivas.
+- **Criterios de aceptación:**
+  1. Las actividades sin notas aparecen como pendientes, no como ceros.
+  2. Las alertas coinciden con los datos y ponderaciones de la libreta.
+  3. Los resultados provisionales se identifican expresamente.
+  4. Cada alerta permite acceder al registro que requiere atención.
+  5. El panel respeta los permisos del usuario.
+  6. Los indicadores se actualizan después de guardar una calificación.
 - **Riesgo de Regresión:** Nulo.
-- **Dependencias:** `getGradebookData`, Universal Chart Engine.
+- **Dependencias:** T-CAL-02, T-CAL-05 y T-CAL-06.
 
 ---
 
-### T-CAL-14 [P3] — Comparativa longitudinal de desempeño académico entre períodos
+### T-CAL-14 [P3] — Comparativa longitudinal del desempeño académico
 
 - **Componentes relacionados:** `js/teacher.js`, `js/student.js`, `js/ui-common.js` (`renderUniversalConfigurableChart`).
-- **Problema detectado:** Brindar a docentes, estudiantes y familias un gráfico dinámico comparativo de la evolución del rendimiento académico a lo largo de los diferentes parciales del año escolar.
+- **Problema detectado:** Los resultados se consolidan por período y año lectivo, pero se requiere una herramienta de análisis dinámico que permita comparar la evolución académica entre parciales sin mezclar escalas o versiones de evaluación incompatibles.
 - **Requisitos funcionales:**
-  1. Renderizar mediante `renderUniversalConfigurableChart` un gráfico de líneas o barras comparando las notas obtenidas en el Parcial I, II, III y IV por materia.
-  2. Permitir filtrar la vista por asignatura y por promedio general.
-  3. Aislar la información para que el estudiante o tutor solo consulte su propia gráfica de rendimiento.
-- **Criterios de Aceptación:**
-  - La gráfica muestra de forma clara la tendencia ascendente, estable o descendente del rendimiento del estudiante entre parciales.
+  - Renderizar mediante `renderUniversalConfigurableChart` un gráfico de líneas o barras comparando las notas obtenidas en el Parcial I, II, III y IV por materia.
+  - Comparar resultados entre períodos, asignaturas y años lectivos.
+  - Mostrar promedios, tasas de aprobación, cantidad de estudiantes evaluados, pendientes y recuperaciones.
+  - Permitir comparar la evolución individual del estudiante con su propio historial y, cuando los permisos lo permitan, analizar tendencias agregadas de una sección o grado.
+  - Diferenciar una mejora real de una diferencia provocada por cambios de escala, ponderación o reglas de evaluación.
+  - Mostrar la cantidad de registros que sustentan cada indicador.
+  - Identificar períodos incompletos y excluirlos de comparaciones definitivas cuando corresponda.
+  - Permitir filtros por año lectivo, grado, sección, asignatura y período.
+  - Ofrecer gráficos de tendencia y tablas con valores exactos.
+  - Evitar clasificaciones engañosas cuando los grupos tienen tamaños distintos.
+  - Restringir la consulta de datos individuales a usuarios autorizados (el estudiante o tutor solo consulta su propia gráfica).
+- **Cambios requeridos:**
+  - Preparar consultas de resultados históricos que respeten el versionado de las reglas (`getStudentAcademicReport`).
+  - Incorporar visualizaciones de evolución y comparativas entre períodos mediante `renderUniversalConfigurableChart`.
+  - Definir qué indicadores se pueden comparar directamente y cuáles requieren advertencias o normalización.
+  - Incluir metadatos de período, escala, cantidad de registros y estado de publicación.
+- **Comportamiento esperado:** Los docentes y responsables autorizados pueden identificar tendencias y cambios en el rendimiento, con información suficiente para interpretar correctamente los resultados.
+- **Criterios de aceptación:**
+  1. Las comparaciones utilizan períodos y registros identificados correctamente.
+  2. Las escalas incompatibles no se presentan como directamente equivalentes sin advertencia.
+  3. Los períodos incompletos se identifican.
+  4. Los valores de los gráficos coinciden con los de las tablas.
+  5. Los filtros no mezclan estudiantes de otras secciones o años.
+  6. Los usuarios sin permiso no acceden a datos individuales de otros estudiantes.
 - **Riesgo de Regresión:** Nulo.
-- **Dependencias:** `renderUniversalConfigurableChart`, `getStudentAcademicReport`.
+- **Dependencias:** T-CAL-03, T-CAL-04 y T-CAL-06.
 
 ---
 
-### T-CAL-15 [P3] — Herramienta de conciliación entre libreta de notas, boletines y expediente definitivo
+### T-CAL-15 [P3] — Conciliación entre libro de notas, boletines y expediente académico definitivo
 
 - **Componentes relacionados:** `backend/exam-service/Code.gs`, `backend/academic-service/Code.gs`, `js/teacher.js`.
-- **Problema detectado:** Asegurar que no existan discrepancias numéricas entre las notas registradas en el libro docente, las impresas en los boletines y las consolidadas en el expediente histórico del alumno.
+- **Problema detectado:** Los resultados se utilizan en diferentes vistas y documentos. Se necesita una herramienta que permita identificar discrepancias numéricas entre las calificaciones registradas en el libro docente, las notas publicadas, los boletines generados y los datos consolidados en el expediente.
 - **Requisitos funcionales:**
-  1. Implementar la rutina de conciliación `reconcileAcademicGrades(grado, seccion, periodo)`.
-  2. Comparar los valores persistidos en `CalificacionesEstudiantes`, `RecuperacionesEstudiante` y `ExpedientesEstudiantes`.
-  3. Generar un informe de discrepancias si se detectan diferencias superiores a 0.01 puntos.
-- **Criterios de Aceptación:**
-  - La conciliación confirma que el 100% de los datos académicos son idénticos entre la libreta de notas y el expediente definitivo.
+  - Implementar la rutina de conciliación `reconcileAcademicGrades(grado, seccion, periodo)`.
+  - Comparar las calificaciones persistidas en `CalificacionesEstudiantes`, `RecuperacionesEstudiante` y `ExpedientesEstudiantes`.
+  - Verificar promedios, recuperaciones, estados de publicación, matrícula, asignatura, período y año lectivo.
+  - Detectar documentos generados con una versión anterior de las notas.
+  - Identificar duplicados, registros faltantes, referencias huérfanas y diferencias de cálculo (> 0.01 puntos).
+  - Clasificar los hallazgos como informativos, advertencias o errores que requieren corrección.
+  - Mostrar el valor esperado, el valor encontrado y la regla usada para calcularlo.
+  - Permitir filtrar por estudiante, sección, asignatura, período y tipo de discrepancia.
+  - No modificar automáticamente los datos oficiales durante la conciliación.
+  - Permitir iniciar una corrección autorizada a partir de un hallazgo, manteniendo la trazabilidad.
+  - Registrar fecha, usuario y resultado de cada conciliación.
+  - Permitir repetir el análisis y comprobar que una discrepancia se resolvió.
+- **Cambios requeridos:**
+  - Crear el proceso `reconcileAcademicGrades` que compare las fuentes de información académica y los documentos generados.
+  - Definir qué fuente constituye el resultado oficial en cada estado del flujo académico.
+  - Incorporar una interfaz de conciliación con detalles por registro.
+  - Vincular las discrepancias con el flujo de rectificación y regeneración de boletines.
+- **Comportamiento esperado:** El personal autorizado puede identificar y resolver diferencias entre los registros académicos y los documentos publicados sin que el sistema altere automáticamente las notas oficiales.
+- **Criterios de aceptación:**
+  1. Una diferencia de promedio o estado de publicación se detecta y muestra con suficiente detalle.
+  2. Los boletines desactualizados quedan identificados.
+  3. Las reglas de cálculo y la versión utilizadas aparecen en los detalles de la discrepancia.
+  4. Ejecutar la conciliación no modifica por sí solo las calificaciones.
+  5. Las correcciones se realizan mediante operaciones autorizadas y auditables.
+  6. Un segundo análisis permite verificar que el hallazgo fue resuelto.
 - **Riesgo de Regresión:** Nulo.
-- **Dependencias:** `CalificacionesEstudiantes`, `ExpedientesEstudiantes`.
+- **Dependencias:** T-CAL-03, T-CAL-05, T-CAL-06, T-CAL-07 y T-CAL-09.
 
 ---
 
-### T-CAL-16 [P3] — Respaldo integral e inmutable del historial de calificaciones en el sistema de backup
+### T-CAL-16 [P3] — Respaldo íntegro, verificable y recuperable del historial de calificaciones
 
 - **Componentes relacionados:** `backend/academic-service/Code.gs` (`createSystemBackup`, `restoreSystemBackup`), `backend/exam-service/Code.gs`.
-- **Problema detectado:** Garantizar que los respaldos automáticos del sistema incluyan la totalidad de tablas de evaluación (`CalificacionesEstudiantes`, `CierresPeriodos`, `RecuperacionesEstudiante`, `CategoriasEvaluacion`, `RubricasEvaluacion`, `RectificacionesNotas`) y que la restauración conserve intactas las notas históricas.
+- **Problema detectado:** La plataforma dispone de mecanismos generales de respaldo, pero se necesita comprobar que el historial académico conserva versiones, rectificaciones, reglas de evaluación y resultados relacionados de manera consistente.
 - **Requisitos funcionales:**
-  1. Incluir todas las hojas y estructuras de datos de evaluación en el payload de `createSystemBackup`.
-  2. Verificar que `restoreSystemBackup` no sobrescriba ni altere notas de períodos o años cerrados salvo en una restauración completa validada por checksum hash.
-  3. Generar un registro de auditoría tras cada operación de backup/restore de datos académicos.
-- **Criterios de Aceptación:**
-  - El archivo de respaldo contiene el 100% de los datos de calificaciones, cierres y recuperaciones.
-  - La restauración recupera la libreta de notas completa y mantiene la inalterabilidad de los años cerrados.
+  - Incluir en el payload de `createSystemBackup` las tablas `CalificacionesEstudiantes`, `CierresPeriodos`, `RecuperacionesEstudiante`, `CategoriasEvaluacion`, `RubricasEvaluacion`, `RectificacionesNotas` y los metadatos necesarios para interpretar los resultados históricos.
+  - Mantener las relaciones entre estudiantes, matrículas, asignaturas, períodos, evaluaciones y documentos.
+  - Registrar fecha, alcance, versión del esquema y resultado de cada respaldo.
+  - Verificar integridad mediante sumas de comprobación hash (checksum), recuentos o mecanismos equivalentes.
+  - Detectar respaldos incompletos y errores de lectura o escritura.
+  - Mantener la protección de los respaldos y restringir el acceso a usuarios autorizados.
+  - Evitar que una restauración en `restoreSystemBackup` sobrescriba o altere datos de períodos o años cerrados sin un procedimiento explícito de autorización.
+  - Probar la restauración en un entorno separado y verificar que los resultados académicos sean consistentes.
+  - Preservar la trazabilidad de rectificaciones y no restaurar únicamente la última nota perdiendo el historial anterior.
+  - Definir una política de retención compatible con las obligaciones institucionales de conservación de expedientes.
+  - Registrar cada restauración, su responsable, el conjunto recuperado y las validaciones ejecutadas.
+- **Cambios requeridos:**
+  - Revisar la integración entre el respaldo general y los datos académicos (`createSystemBackup`).
+  - Incorporar las nuevas estructuras de versiones, observaciones y rectificaciones (`RectificacionesNotas`) al alcance de los respaldos.
+  - Añadir verificaciones posteriores a la generación y restauración.
+  - Documentar el procedimiento de recuperación ante corrupción o pérdida de registros.
+- **Comportamiento esperado:** La institución puede recuperar un conjunto coherente de datos académicos y demostrar que los resultados, las reglas y las rectificaciones siguen relacionados correctamente.
+- **Criterios de aceptación:**
+  1. El respaldo incluye las estructuras necesarias para reconstruir el historial de calificaciones.
+  2. La verificación detecta datos faltantes o inconsistentes.
+  3. Una restauración de prueba conserva las relaciones entre estudiantes, evaluaciones, períodos y reglas.
+  4. Las rectificaciones históricas permanecen consultables después de la restauración.
+  5. Los respaldos y las restauraciones quedan registrados en auditoría.
+  6. No es posible restaurar sobre producción de forma accidental mediante una operación ordinaria.
 - **Riesgo de Regresión:** Bajo.
-- **Dependencias:** `createSystemBackup`, `restoreSystemBackup`, `CalificacionesEstudiantes`.
+- **Dependencias:** T-CAL-03, T-CAL-07 y T-CAL-12.
 
 ---
 
@@ -3016,19 +3320,19 @@ Modelo de permisos, expediente consolidado, cronología, exportaciones y auditor
 
 | Orden | Tarea | Prioridad | Dependencia principal |
 | :---: | :--- | :---: | :--- |
-| **1** | **T-CAL-01.** Control de concurrencia con LockService en el guardado masivo | **P1** | `saveGradebookGrades` / `LockService` |
-| **2** | **T-CAL-02.** Validación estricta de suma de ponderaciones por categoría (= 100%) | **P1** | `saveEvaluationCategory` |
-| **3** | **T-CAL-03.** Inalterabilidad histórica y aislamiento de versiones de reglas | **P1** | `closePeriodGradebook` / Server-side guard |
-| **4** | **T-CAL-04.** Verificación estricta de propiedad y relaciones familiares en reportes | **P1** | `assertRecordOwnership` / `RelacionesFamiliares` |
-| **5** | **T-CAL-05.** Distinción entre cero, nota pendiente y exención en cálculos | **P2** | `getGradebookData` |
-| **6** | **T-CAL-06.** Configuración de precisión decimal y redondeo institucional | **P2** | `formatAcademicGrade` |
-| **7** | **T-CAL-07.** Flujo formal de rectificación de notas post-cierre con bitácora | **P2** | `RectificacionesNotas` |
-| **8** | **T-CAL-10.** Verificación avanzada y exportación 100% compatible SACE | **P2** | `generateSACEReportFile` |
-| **9** | **T-CAL-08.** Módulo de observaciones cualitativas y actitudinales | **P2** | `ObservacionesCualitativasPeriodo` |
-| **10** | **T-CAL-09.** Reporte diagnóstico previo a emisión masiva de boletines PDF | **P2** | `generateSchoolDocument` |
-| **11** | **T-CAL-11.** Edición rápida y navegación por teclado en el libro docente | **P2** | `js/teacher.js` / Table UX |
-| **12** | **T-CAL-12.** Congelamiento de versión de rúbricas aplicadas a entregas | **P2** | `RubricasEvaluacion` |
-| **13** | **T-CAL-13.** Dashboard de alertas pre-cierre para notas pendientes | **P3** | Universal Chart Engine |
-| **14** | **T-CAL-14.** Comparativa longitudinal de desempeño académico entre parciales | **P3** | `renderUniversalConfigurableChart` |
-| **15** | **T-CAL-15.** Herramienta de conciliación entre libreta, boletines y expediente | **P3** | Reconciliation Engine |
-| **16** | **T-CAL-16.** Respaldo integral e inmutable del historial de calificaciones | **P3** | `createSystemBackup` |
+| **1** | **T-CAL-01.** Control de concurrencia y protección contra sobrescrituras en el guardado masivo | **P1** | `saveGradebookGrades` / `LockService` |
+| **2** | **T-CAL-02.** Validación estricta y coherencia de las ponderaciones de evaluación | **P1** | `saveEvaluationCategory` |
+| **3** | **T-CAL-03.** Versionado de sistemas de evaluación e inalterabilidad de resultados históricos | **P1** | `closePeriodGradebook` / Server-side guard |
+| **4** | **T-CAL-04.** Validación de la relación familiar y autorización de acceso a reportes académicos | **P1** | `assertRecordOwnership` / `RelacionesFamiliares` |
+| **5** | **T-CAL-05.** Separación inequívoca entre nota cero, nota pendiente, actividad exenta y no aplicable | **P2** | `getGradebookData` |
+| **6** | **T-CAL-06.** Política institucional de precisión decimal, redondeo y presentación de resultados | **P2** | `formatAcademicGrade` |
+| **7** | **T-CAL-07.** Flujo formal de rectificación de calificaciones después del cierre | **P2** | `RectificacionesNotas` |
+| **8** | **T-CAL-10.** Validación integral y exportación fiable de resultados para SACE Honduras | **P2** | `generateSACEReportFile` |
+| **9** | **T-CAL-08.** Módulo de observaciones cualitativas y seguimiento actitudinal | **P2** | `ObservacionesCualitativasPeriodo` |
+| **10** | **T-CAL-09.** Diagnóstico previo y generación masiva fiable de boletines PDF | **P2** | `generateSchoolDocument` |
+| **11** | **T-CAL-11.** Edición rápida y navegación por teclado en el libro de calificaciones | **P2** | `js/teacher.js` / Table UX |
+| **12** | **T-CAL-12.** Versionado de rúbricas aplicadas a actividades y entregas | **P2** | `RubricasEvaluacion` |
+| **13** | **T-CAL-13.** Panel de alertas antes del cierre de período | **P3** | Universal Chart Engine |
+| **14** | **T-CAL-14.** Comparativa longitudinal del desempeño académico | **P3** | `renderUniversalConfigurableChart` |
+| **15** | **T-CAL-15.** Conciliación entre libro de notas, boletines y expediente académico definitivo | **P3** | Reconciliation Engine |
+| **16** | **T-CAL-16.** Respaldo íntegro, verificable y recuperable del historial de calificaciones | **P3** | `createSystemBackup` |
