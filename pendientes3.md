@@ -5943,3 +5943,252 @@ El destinatario puede abrir una comunicación y completar la acción solicitada 
 | **14** | **T-ORI-14.** Exportación estructurada de informes de orientación y actas en PDF y Excel | **P3** | `generateSchoolDocument` |
 | **15** | **T-ORI-15.** Conciliación entre incidencias, actuaciones y resumen del expediente | **P3** | Reconciliation Engine |
 | **16** | **T-ORI-16.** Respaldo integral, verificable y protegido de expedientes de bienestar | **P3** | `createSystemBackup` |
+
+
+## PLAN DE TRABAJO DETALLADO Y UNIFICADO: FASE DE SUPERVISIÓN DOCENTE Y CALIDAD EDUCATIVA
+
+### T-SUP-01 [P1] — Control de concurrencia transaccional con LockService en evaluaciones y observaciones docentes
+
+- **Componentes relacionados:** `backend/academic-service/Code.gs` (`saveSupervisionObservation`), `js/teacher.js`.
+- **Problema detectado:** Al guardar las respuestas de rúbricas y observaciones de aula en `ObservacionesSupervision` y actualizar el estado en `SupervisionesDocentes`, el servidor no aplica un bloqueo exclusivo con `LockService`. Evaluaciones concurrentes por parte de coordinadores o supervisores pueden provocar carreras y sobrescritura de observaciones.
+- **Requisitos funcionales:**
+  1. Adquirir `LockService.getScriptLock()` antes de actualizar `ObservacionesSupervision` y `SupervisionesDocentes`.
+  2. Verificar que la supervisión exista y no esté en estado `Finalizada` o `Cerrada` por otra sesión.
+  3. Manejar reintentos y liberar el bloqueo en bloques `finally`.
+- **Criterios de Aceptación:**
+  - Operaciones concurrentes de registro de observaciones no sobreescriben datos ni producen registros duplicados.
+- **Riesgo de Regresión:** Bajo.
+- **Dependencias:** `saveSupervisionObservation`, `LockService`.
+
+---
+
+### T-SUP-02 [P1] — Confidencialidad granular y aislamiento RBAC de evaluaciones y comentarios privados docentes
+
+- **Componentes relacionados:** `backend/academic-service/Code.gs` (`getSupervisionObservation`), `backend/user-service/Code.gs`.
+- **Problema detectado:** Las observaciones pedagógicas y comentarios privados sobre el desempeño docente deben aislarse estrictamente para que solo sean accesibles por el docente evaluado, el supervisor asignado y Dirección/Coordinación.
+- **Requisitos funcionales:**
+  1. Validar en `getSupervisionObservation` que el `authUserId` corresponda al docente observado, al supervisor o a roles `Director`/`Coordinador`.
+  2. Ocultar comentarios internos de supervisión en las respuestas API entregadas a docentes cuando el campo esté marcado como borrador o confidencial.
+- **Criterios de Aceptación:**
+  - Docentes no autorizados o de otras asignaturas reciben error de permiso al intentar consultar observaciones ajenas.
+- **Riesgo de Regresión:** Bajo.
+- **Dependencias:** `getSupervisionObservation`, `assertRecordOwnership`.
+
+---
+
+### T-SUP-03 [P1] — Módulo estructurado de gestión de jornalizaciones, sílabos y planes de clase
+
+- **Componentes relacionados:** `backend/academic-service/Code.gs`, `js/teacher.js`, `teacher-dashboard.html`.
+- **Problema detectado:** Falta un módulo dedicado para que los docentes elaboren, estructuren y organicen sus jornalizaciones y sílabos por unidades, semanas y temas con objetivos de aprendizaje y competencias.
+- **Requisitos funcionales:**
+  1. Crear la tabla `JornalizacionesDocentes` (`JornalizacionID`, `DocenteUserId`, `AsignaturaID`, `Grado`, `Seccion`, `Periodo`, `EstructuraJSON`, `Estado`, `FechaEntrega`).
+  2. Implementar interfaz en `teacher-dashboard.html` para la edición estructurada por semanas y temas.
+- **Criterios de Aceptación:**
+  - El docente puede crear, editar y guardar su jornalización curricular por período lectivo.
+- **Riesgo de Regresión:** Nulo.
+- **Dependencias:** `teacher-dashboard.html`, `js/teacher.js`.
+
+---
+
+### T-SUP-04 [P1] — Ciclo de vida formal de entrega, revisión, aprobación y devolución de documentación pedagógica
+
+- **Componentes relacionados:** `backend/academic-service/Code.gs`, `js/teacher.js`.
+- **Problema detectado:** No existe un flujo trazable que controle la fecha límite de entrega de planificaciones, la revisión por coordinación y la devolución con observaciones para corrección (`RequiereCorrecciones`).
+- **Requisitos funcionales:**
+  1. Implementar la máquina de estados de documentación: `Borrador` -> `Entregado` -> `EnRevision` -> `Aprobado` / `RequiereCorrecciones`.
+  2. Registrar el historial de revisiones, observaciones del coordinador y fecha efectiva de reentrega.
+- **Criterios de Aceptación:**
+  - El coordinador puede devolver una jornalización indicando observaciones, cambiando su estado a `RequiereCorrecciones` e informando al docente.
+- **Riesgo de Regresión:** Bajo.
+- **Dependencias:** `JornalizacionesDocentes`.
+
+---
+
+### T-SUP-05 [P1] — Módulo de gestión de suplencias docentes y asignaciones temporales con delegación de permisos
+
+- **Componentes relacionados:** `backend/academic-service/Code.gs`, `backend/user-service/Code.gs`, `js/teacher.js`.
+- **Problema detectado:** Cuando un docente titular se ausenta, no existe un mecanismo para asignar un docente suplente con permisos temporales para registrar asistencia, calificar tareas y consultar planes del período de sustitución.
+- **Requisitos funcionales:**
+  1. Crear la tabla `SuplenciasDocentes` (`SuplenciaID`, `DocenteTitularID`, `DocenteSuplenteID`, `AsignaturaID`, `Grado`, `Seccion`, `FechaInicio`, `FechaFin`, `Estado`).
+  2. Otorgar permisos temporales acotados estrictamente al rango de fechas de la suplencia.
+- **Criterios de Aceptación:**
+  - El docente suplente visualiza la asignatura asignada temporalmente y registra asistencia durante el período de la suplencia, perdiendo el acceso al vencer la fecha fin.
+- **Riesgo de Regresión:** Medio.
+- **Dependencias:** `ROLE_PERMISSIONS`, `HorariosClases`.
+
+---
+
+### T-SUP-06 [P2] — Rúbricas configurables multicriterio para observaciones de aula
+
+- **Componentes relacionados:** `backend/academic-service/Code.gs` (`saveSupervisionObservation`), `teacher-dashboard.html`.
+- **Problema detectado:** La plataforma requiere soportar rúbricas institucionales adaptables con diferentes niveles de desempeño (Excelente, Satisfactorio, Debe Mejorar, Insatisfactorio) y ponderaciones por dimensión pedagógica.
+- **Requisitos funcionales:**
+  1. Almacenar la definición de rúbricas en `RubricasSupervision` con criterios y niveles.
+  2. Evaluar y calcular automáticamente el puntaje global obtenido en la observación.
+- **Criterios de Aceptación:**
+  - El formulario de observación renderiza los criterios dinámicos de la rúbrica seleccionada y calcula el resumen de desempeño.
+- **Riesgo de Regresión:** Nulo.
+- **Dependencias:** `saveSupervisionObservation`.
+
+---
+
+### T-SUP-07 [P2] — Planes de mejora pedagógica con alertas de fechas objetivo y compromisos
+
+- **Componentes relacionados:** `backend/academic-service/Code.gs` (`saveTeacherImprovementPlan`, `getTeacherImprovementPlans`), `js/teacher.js`.
+- **Problema detectado:** Los planes de mejora en `PlanesMejoraPedagogica` deben contar con alertas automáticas cuando la `FechaObjetivo` o la `FechaRevision` están próximas a vencer o se encuentran desfasadas sin cumplimiento.
+- **Requisitos funcionales:**
+  1. Consultar planes con estado `EnEjecucion` y comparar `FechaObjetivo` con la fecha actual.
+  2. Generar tareas pendientes y avisos en la bandeja de coordinación para revisiones vencidas.
+- **Criterios de Aceptación:**
+  - El panel de coordinación resalta los planes de mejora docente cuyo plazo de revisión ha expirado.
+- **Riesgo de Regresión:** Nulo.
+- **Dependencias:** `PlanesMejoraPedagogica`.
+
+---
+
+### T-SUP-08 [P2] — Bitácora diaria de clases impartidas y avance curricular real vs. planificado
+
+- **Componentes relacionados:** `backend/academic-service/Code.gs`, `js/teacher.js`, `teacher-dashboard.html`.
+- **Problema detectado:** No existe un registro donde el docente confirme el contenido real impartido en cada sesión de clase para compararlo contra la jornalización aprobada.
+- **Requisitos funcionales:**
+  1. Crear la tabla `BitacoraClasesImpartidas` (`BitacoraID`, `SesionID`, `DocenteUserId`, `Fecha`, `TemaImpartido`, `AvancePorcentaje`, `ObservacionesDocente`).
+  2. Calcular el porcentaje de cumplimiento curricular acumulado por asignatura y grado.
+- **Criterios de Aceptación:**
+  - El docente registra al finalizar la clase el tema impartido y el sistema actualiza el porcentaje de avance respecto a la planificación.
+- **Riesgo de Regresión:** Nulo.
+- **Dependencias:** `SesionesAsistencia`, `JornalizacionesDocentes`.
+
+---
+
+### T-SUP-09 [P2] — Supervisión de carga horaria docente y prevención de solapamientos
+
+- **Componentes relacionados:** `backend/academic-service/Code.gs`, `js/teacher.js`.
+- **Problema detectado:** Se requiere auditar la carga horaria semanal de cada docente detectando sobrecargas superiores a la jornada contratada o cruces de horario entre secciones.
+- **Requisitos funcionales:**
+  1. Desarrollar la función `auditTeacherWorkload(docenteUserId)` que sume las horas lectivas asignadas.
+  2. Alertar cuando un docente tenga más horas asignadas de las permitidas o solapamientos en un mismo bloque de tiempo.
+- **Criterios de Aceptación:**
+  - El asignador de horarios recibe una advertencia si intenta asignar un bloque horaria que colisiona con otra sección del docente.
+- **Riesgo de Regresión:** Nulo.
+- **Dependencias:** `HorariosClases`, `AsignacionesDocentes`.
+
+---
+
+### T-SUP-10 [P2] — Inalterabilidad de evaluaciones docentes en períodos o años lectivos cerrados
+
+- **Componentes relacionados:** `backend/academic-service/Code.gs`, `backend/exam-service/Code.gs` (`CierresPeriodos`).
+- **Problema detectado:** Al cerrar un año escolar o período de evaluación, las evaluaciones docentes y planes de mejora asociados deben congelarse para prevenir modificaciones extemporáneas.
+- **Requisitos funcionales:**
+  1. Verificar si la fecha de la supervisión corresponde a un período con estado `Cerrado`.
+  2. Bloquear cualquier actualización en `SupervisionesDocentes` y `ObservacionesSupervision` para períodos cerrados.
+- **Criterios de Aceptación:**
+  - Intento de editar una observación de un período cerrado devuelve un error de inalterabilidad histórica.
+- **Riesgo de Regresión:** Nulo.
+- **Dependencias:** `CierresPeriodos`, `SupervisionesDocentes`.
+
+---
+
+### T-SUP-11 [P2] — Búsqueda avanzada, filtrado y centro de control de supervisión docente
+
+- **Componentes relacionados:** `js/teacher.js`, `teacher-dashboard.html`.
+- **Problema detectado:** Coordinación requiere un panel consolidado con búsquedas multicriterio para filtrar observaciones por docente, nivel, estado (`Programada`, `Finalizada`), y rango de fechas.
+- **Requisitos funcionales:**
+  1. Implementar el buscador en la sección `#section-supervision` de `teacher-dashboard.html`.
+  2. Permitir filtrar por estado de la observación, docente y asignatura.
+- **Criterios de Aceptación:**
+  - El coordinador filtra rápidamente observaciones finalizadas o pendientes de un departamento específico.
+- **Riesgo de Regresión:** Nulo.
+- **Dependencias:** `teacher-dashboard.html`, `js/teacher.js`.
+
+---
+
+### T-SUP-12 [P2] — Integración entre asistencia docente, ausentismo y activación de suplencias
+
+- **Componentes relacionados:** `backend/academic-service/Code.gs`, `backend/accounting-service/Code.gs` (`HorariosLaborales`).
+- **Problema detectado:** Las ausencias o tardanzas justificadas registradas en el control laboral de personal deben sugerir automáticamente la apertura de una suplencia docente para las clases del día.
+- **Requisitos funcionales:**
+  1. Detectar registros de inasistencia en `HorariosLaborales` o `IncapacidadesMedicas`.
+  2. Generar aviso a Coordinación para asignar un reemplazo temporal.
+- **Criterios de Aceptación:**
+  - El registro de una incapacidad médica de un docente activa un aviso de suplencia requerida en el panel de coordinación.
+- **Riesgo de Regresión:** Nulo.
+- **Dependencias:** `HorariosLaborales`, `SuplenciasDocentes`.
+
+---
+
+### T-SUP-13 [P3] — Dashboard consolidado de indicadores de calidad educativa e informes agregados
+
+- **Componentes relacionados:** `js/teacher.js`, `js/ui-common.js` (`renderUniversalConfigurableChart`), `teacher-dashboard.html`.
+- **Problema detectado:** La Dirección requiere visualizar métricas globales de cumplimiento de entregas pedagógicas, nivel promedio de desempeño docente por área y avance de planes de mejora.
+- **Requisitos funcionales:**
+  1. Renderizar mediante `renderUniversalConfigurableChart` gráficos agregados de desempeño sin exponer nombres individuales en reportes públicos.
+  2. Calcular el porcentaje institucional de cumplimiento de planificaciones.
+- **Criterios de Aceptación:**
+  - El dashboard directivo presenta gráficos de barra/rosca con los niveles de desempeño pedagógico consolidados por departamento.
+- **Riesgo de Regresión:** Nulo.
+- **Dependencias:** `renderUniversalConfigurableChart`, `SupervisionesDocentes`.
+
+---
+
+### T-SUP-14 [P3] — Exportación oficial de la Ficha de Evaluación y Acompañamiento Docente en PDF
+
+- **Componentes relacionados:** `backend/accounting-service/Code.gs` (`generateSchoolDocument`), `backend/academic-service/Code.gs`.
+- **Problema detectado:** Permitir a coordinadores y directores emitir el informe oficial de evaluación docente en PDF con firmas de conformidad y sello institucional.
+- **Requisitos funcionales:**
+  1. Crear la plantilla `FichaEvaluacionDocente` en `generateSchoolDocument`.
+  2. Incluir puntajes de rúbrica, fortalezas, oportunidades de mejora, compromisos del docente y firma digital.
+- **Criterios de Aceptación:**
+  - El archivo PDF de la ficha de evaluación se genera correctamente con todos los criterios y acuerdos de desempeño.
+- **Riesgo de Regresión:** Nulo.
+- **Dependencias:** `generateSchoolDocument`, `ObservacionesSupervision`.
+
+---
+
+### T-SUP-15 [P3] — Herramienta de conciliación entre observaciones de aula y planes de mejora
+
+- **Componentes relacionados:** `backend/academic-service/Code.gs`.
+- **Problema detectado:** Asegurar que cada supervisión finalizada con oportunidades de mejora críticas cuente con un plan de acompañamiento activo registrado en `PlanesMejoraPedagogica`.
+- **Requisitos funcionales:**
+  1. Implementar la rutina de conciliación `reconcileSupervisionImprovementPlans()`.
+  2. Identificar observaciones con puntaje bajo que no tengan un plan de mejora vinculado.
+- **Criterios de Aceptación:**
+  - La rutina identifica supervisiones con brechas pedagógicas que requieren la apertura inmediata de un plan de mejora.
+- **Riesgo de Regresión:** Nulo.
+- **Dependencias:** `ObservacionesSupervision`, `PlanesMejoraPedagogica`.
+
+---
+
+### T-SUP-16 [P3] — Respaldo integral e inmutable de registros de supervisión pedagógica
+
+- **Componentes relacionados:** `backend/academic-service/Code.gs` (`createSystemBackup`, `restoreSystemBackup`).
+- **Problema detectado:** Garantizar que las copias de seguridad incluyan las tablas de evaluación docente y que la restauración mantenga intacta la privacidad RBAC de las notas de desempaño.
+- **Requisitos funcionales:**
+  1. Incluir `SupervisionesDocentes`, `ObservacionesSupervision`, `PlanesMejoraPedagogica` y `JornalizacionesDocentes` en `createSystemBackup`.
+  2. Verificar la integridad de los datos de supervisión al ejecutar `restoreSystemBackup`.
+- **Criterios de Aceptación:**
+  - El backup institucional respalda y restaura el 100% de los expedientes de evaluación docente manteniendo las restricciones de confidencialidad.
+- **Riesgo de Regresión:** Bajo.
+- **Dependencias:** `createSystemBackup`, `restoreSystemBackup`.
+
+---
+
+### ORDEN DE EJECUCIÓN RECOMENDADO FASE 13 (SUPERVISIÓN DOCENTE Y CALIDAD)
+
+| Orden | Tarea | Prioridad | Dependencia principal |
+| :---: | :--- | :---: | :--- |
+| **1** | **T-SUP-01.** Control de concurrencia transaccional con LockService | **P1** | `saveSupervisionObservation` / `LockService` |
+| **2** | **T-SUP-02.** Confidencialidad granular y aislamiento RBAC de evaluaciones | **P1** | `assertRecordOwnership` / RBAC |
+| **3** | **T-SUP-03.** Módulo estructurado de jornalizaciones, sílabos y planes de clase | **P1** | `teacher-dashboard.html` / UI |
+| **4** | **T-SUP-04.** Ciclo de vida de entrega, revisión, aprobación y devolución | **P1** | `JornalizacionesDocentes` |
+| **5** | **T-SUP-05.** Módulo de suplencias docentes y delegación de permisos | **P1** | `ROLE_PERMISSIONS` |
+| **6** | **T-SUP-06.** Rúbricas configurables multicriterio para observaciones | **P2** | `saveSupervisionObservation` |
+| **7** | **T-SUP-07.** Planes de mejora pedagógica con alertas de fechas objetivo | **P2** | `PlanesMejoraPedagogica` |
+| **8** | **T-SUP-08.** Bitácora diaria de clases impartidas y avance curricular | **P2** | `SesionesAsistencia` |
+| **9** | **T-SUP-09.** Supervisión de carga horaria docente y prevención de solapamientos | **P2** | `HorariosClases` |
+| **10** | **T-SUP-10.** Inalterabilidad de evaluaciones en períodos cerrados | **P2** | `CierresPeriodos` |
+| **11** | **T-SUP-11.** Búsqueda avanzada y centro de control de supervisión docente | **P2** | `teacher-dashboard.html` / UI |
+| **12** | **T-SUP-12.** Integración entre asistencia docente y suplencias | **P2** | `HorariosLaborales` |
+| **13** | **T-SUP-13.** Dashboard consolidado de indicadores de calidad educativa | **P3** | Universal Chart Engine |
+| **14** | **T-SUP-14.** Exportación oficial de Ficha de Evaluación Docente PDF | **P3** | `generateSchoolDocument` |
+| **15** | **T-SUP-15.** Conciliación entre observaciones y planes de mejora | **P3** | Reconciliation Engine |
+| **16** | **T-SUP-16.** Respaldo integral e inmutable de registros de supervisión | **P3** | `createSystemBackup` |

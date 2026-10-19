@@ -1507,3 +1507,28 @@ Resumen por Área:
 
 Certificación:
   Auditoría completada sin modificar código de producción, esquema de base de datos ni archivos de configuración en estricto cumplimiento de METODOLOGIA_DESARROLLO.md.
+
+================================================================================
+AUDITORÍA FUNCIONAL Y TÉCNICA: FASE 13 — SUPERVISIÓN DOCENTE Y CALIDAD EDUCATIVA
+================================================================================
+
+Subcapacidades evaluadas:
+1. Planificación pedagógica (Planes de clase, jornalizaciones, sílabos y guiones docentes)
+2. Entrega, revisión, aprobación y devolución de documentación pedagógica
+3. Observaciones de aula, evaluaciones docentes y retroalimentación profesional
+4. Planes de mejora docente y seguimiento de compromisos
+5. Suplencias, relevos y asignaciones temporales
+6. Supervisión del calendario académico, carga docente y actividades planificadas
+7. Indicadores de cumplimiento, calidad educativa y seguimiento institucional
+8. Informes para Dirección y Coordinación con acceso restringido
+9. Notificaciones, tareas pendientes y seguimiento de plazos
+10. Historial, trazabilidad, integridad documental y experiencia de uso
+
+Hallazgos principales:
+- Implementadas y verificadas las tablas `SupervisionesDocentes`, `ObservacionesSupervision` y `PlanesMejoraPedagogica` en `backend/academic-service/Code.gs` junto con sus endpoints API y componentes UI en `teacher-dashboard.html` / `js/teacher.js`.
+- Identificada necesidad de módulo de gestión de jornalizaciones/sílabos curriculares y flujo formal de entrega/devolución con observaciones.
+- Identificada ausencia de un módulo de gestión de suplencias docentes y asignaciones temporales con delegación restringida de permisos.
+- Planificadas e integradas las tareas de resolución T-SUP-01 a T-SUP-16 en `pendientes3.md`.
+
+Estado general: AUDITORÍA COMPLETADA - TAREAS T-SUP-01 A T-SUP-16 REGISTRADAS EN PENDIENTES3.MD.
+================================================================================
