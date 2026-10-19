@@ -57,7 +57,7 @@
                     <img src="imagenes/new-generation-logo.png" alt="Escudo institucional del New Generation Christian Academy" class="logo-img transition-transform duration-300 group-hover:scale-105">
                     <div class="header-title-container">
                         <h1 class="text-sm md:text-xl font-black text-gray-900 uppercase tracking-tighter leading-none">New Generation</h1>
-                        <p class="text-[9px] md:text-[11px] font-bold text-blue-600 uppercase tracking-widest mt-1">Área de Informática</p>
+                        <p class="text-[9px] md:text-[11px] font-bold text-blue-600 uppercase tracking-widest mt-1">New Generation Christian Academy</p>
                     </div>
                 </a>
             </div>
@@ -2410,6 +2410,174 @@
     </div>
 
     <!-- Modal Importador Universal de Excel (.xlsx) (Fase 28) -->
+        <!-- Modal Expediente Digital Unificado del Estudiante (REQ-EXP-001) -->
+    <div id="modal-student-file" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-[95] flex items-center justify-center p-2 md:p-4 hidden">
+        <div class="bg-white rounded-3xl max-w-5xl w-full max-h-[92vh] flex flex-col shadow-2xl border border-slate-100 overflow-hidden animate-fade-in-up">
+            <!-- Header -->
+            <div class="p-5 bg-slate-900 text-white flex items-center justify-between flex-shrink-0">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-2xl bg-blue-600/30 flex items-center justify-center border border-blue-400/30 text-blue-400">
+                        <i class="fa-solid fa-folder-user text-lg"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-black text-base md:text-lg uppercase tracking-tight" id="stfile-student-name">Expediente Digital del Estudiante</h3>
+                        <p class="text-[10px] font-semibold text-slate-400 uppercase tracking-widest" id="stfile-student-code">Código: -- | Estado: --</p>
+                    </div>
+                </div>
+                <button id="btn-close-student-file" class="text-slate-400 hover:text-white p-2 rounded-xl hover:bg-slate-800 transition-colors">
+                    <i class="fa-solid fa-xmark text-xl"></i>
+                </button>
+            </div>
+
+            <!-- Tabs Navigation -->
+            <div class="flex border-b border-slate-200 bg-slate-50 flex-shrink-0 overflow-x-auto">
+                <button class="stfile-tab-btn px-5 py-3 text-xs font-bold uppercase tracking-wider text-blue-600 border-b-2 border-blue-600 flex items-center gap-2" data-tab="tab-stfile-personal">
+                    <i class="fa-solid fa-id-card"></i> <span>Ficha Personal</span>
+                </button>
+                <button class="stfile-tab-btn px-5 py-3 text-xs font-bold uppercase tracking-wider text-slate-500 hover:text-slate-800 border-b-2 border-transparent flex items-center gap-2" data-tab="tab-stfile-guardians">
+                    <i class="fa-solid fa-users-rectangle"></i> <span>Tutores & Responsables</span>
+                </button>
+                <button class="stfile-tab-btn px-5 py-3 text-xs font-bold uppercase tracking-wider text-slate-500 hover:text-slate-800 border-b-2 border-transparent flex items-center gap-2" data-tab="tab-stfile-documents">
+                    <i class="fa-solid fa-file-pdf"></i> <span>Documentos (Drive)</span>
+                </button>
+                <button class="stfile-tab-btn px-5 py-3 text-xs font-bold uppercase tracking-wider text-slate-500 hover:text-slate-800 border-b-2 border-transparent flex items-center gap-2" data-tab="tab-stfile-timeline">
+                    <i class="fa-solid fa-clock-rotate-left"></i> <span>Historial & Movimientos</span>
+                </button>
+                <button class="stfile-tab-btn px-5 py-3 text-xs font-bold uppercase tracking-wider text-slate-500 hover:text-slate-800 border-b-2 border-transparent flex items-center gap-2" data-tab="tab-stfile-duplicates">
+                    <i class="fa-solid fa-code-merge"></i> <span>Duplicados & Fusión</span>
+                </button>
+            </div>
+
+            <!-- Content Area -->
+            <div class="p-6 overflow-y-auto flex-1 space-y-6">
+                <!-- Tab 1: Personal Data -->
+                <div id="tab-stfile-personal" class="stfile-tab-content space-y-5">
+                    <form id="stfile-personal-form" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Nombre Completo *</label>
+                            <input type="text" id="stfile-nombre" required class="w-full text-xs p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-medium focus:ring-2 focus:ring-blue-500/20 focus:outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Código / ID Institucional</label>
+                            <input type="text" id="stfile-codigo" readonly class="w-full text-xs p-2.5 bg-slate-100 border border-slate-200 rounded-xl font-mono font-bold text-slate-600 cursor-not-allowed">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Identificación Nacional (DNI/Pasaporte)</label>
+                            <input type="text" id="stfile-identificacion" class="w-full text-xs p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-medium focus:ring-2 focus:ring-blue-500/20 focus:outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Fecha de Nacimiento</label>
+                            <input type="date" id="stfile-fecha-nacimiento" class="w-full text-xs p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-medium focus:ring-2 focus:ring-blue-500/20 focus:outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Nacionalidad</label>
+                            <input type="text" id="stfile-nacionalidad" class="w-full text-xs p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-medium focus:ring-2 focus:ring-blue-500/20 focus:outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Estado del Expediente</label>
+                            <select id="stfile-estado-expediente" class="w-full text-xs p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-semibold focus:ring-2 focus:ring-blue-500/20 focus:outline-none">
+                                <option value="Activo">Activo</option>
+                                <option value="Inactivo">Inactivo</option>
+                                <option value="Retirado">Retirado</option>
+                                <option value="Trasladado">Trasladado</option>
+                                <option value="Graduado">Graduado</option>
+                                <option value="Fusionado">Fusionado</option>
+                            </select>
+                        </div>
+                        <div class="md:col-span-2">
+                            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Dirección de Residencia</label>
+                            <input type="text" id="stfile-direccion" class="w-full text-xs p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-medium focus:ring-2 focus:ring-blue-500/20 focus:outline-none">
+                        </div>
+                        <div class="md:col-span-2">
+                            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Observaciones Institucionales</label>
+                            <textarea id="stfile-observaciones" rows="3" class="w-full text-xs p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-medium focus:ring-2 focus:ring-blue-500/20 focus:outline-none" placeholder="Anotaciones pedagógicas o médicas confidenciales..."></textarea>
+                        </div>
+                        <div class="md:col-span-2 flex justify-end">
+                            <button type="submit" id="btn-save-stfile-personal" class="px-5 py-2.5 bg-blue-600 text-white font-bold text-xs uppercase tracking-wider rounded-xl hover:bg-blue-700 shadow-md transition-all">
+                                <i class="fa-solid fa-floppy-disk mr-1"></i> Guardar Cambios Personales
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Tab 2: Guardians -->
+                <div id="tab-stfile-guardians" class="stfile-tab-content hidden space-y-6">
+                    <div class="flex items-center justify-between">
+                        <h4 class="text-xs font-bold text-slate-800 uppercase tracking-wider">Padres & Responsables Legales Vinculados</h4>
+                        <button id="btn-open-add-guardian-modal" class="px-3 py-1.5 bg-emerald-600 text-white rounded-xl font-bold text-[10px] uppercase tracking-wider hover:bg-emerald-700 transition-all">
+                            + Vincular Nuevo Tutor
+                        </button>
+                    </div>
+                    <div id="stfile-guardians-container" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <!-- Guardians list rendered dynamically -->
+                    </div>
+                </div>
+
+                <!-- Tab 3: Documents -->
+                <div id="tab-stfile-documents" class="stfile-tab-content hidden space-y-6">
+                    <div class="p-4 bg-slate-50 border border-slate-200 rounded-2xl space-y-3">
+                        <h4 class="text-xs font-bold text-slate-800 uppercase tracking-wider">Cargar Nuevo Documento al Expediente (Google Drive)</h4>
+                        <form id="stfile-doc-upload-form" class="grid grid-cols-1 md:grid-cols-3 gap-3 items-end">
+                            <div>
+                                <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Tipo Documental</label>
+                                <select id="stfile-doc-tipo" required class="w-full text-xs p-2 bg-white border border-slate-200 rounded-xl font-medium">
+                                    <option value="PartidaNacimiento">Partida de Nacimiento</option>
+                                    <option value="CertificadoEstudios">Certificado de Estudios</option>
+                                    <option value="FotografiaOficial">Fotografía Oficial</option>
+                                    <option value="FichaMedica">Ficha Médica</option>
+                                    <option value="SolvenciaEconomica">Solvencia Económica</option>
+                                    <option value="Otros">Otro Documento</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Seleccionar Archivo (PDF/Imagen)</label>
+                                <input type="file" id="stfile-doc-file" required accept="application/pdf,image/*" class="w-full text-xs p-1.5 bg-white border border-slate-200 rounded-xl">
+                            </div>
+                            <div>
+                                <button type="submit" id="btn-stfile-upload-doc" class="w-full py-2 bg-blue-600 text-white rounded-xl font-bold text-xs uppercase tracking-wider hover:bg-blue-700 shadow transition-all">
+                                    <i class="fa-solid fa-cloud-arrow-up mr-1"></i> Subir a Google Drive
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="space-y-3">
+                        <h4 class="text-xs font-bold text-slate-800 uppercase tracking-wider">Documentos Registrados</h4>
+                        <div id="stfile-documents-list" class="space-y-2">
+                            <!-- Documents list rendered dynamically -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab 4: Timeline -->
+                <div id="tab-stfile-timeline" class="stfile-tab-content hidden space-y-4">
+                    <h4 class="text-xs font-bold text-slate-800 uppercase tracking-wider">Línea de Tiempo Unificada del Estudiante</h4>
+                    <div id="stfile-timeline-container" class="relative pl-6 border-l-2 border-blue-500 space-y-6">
+                        <!-- Timeline events rendered dynamically -->
+                    </div>
+                </div>
+
+                <!-- Tab 5: Duplicates & Merge -->
+                <div id="tab-stfile-duplicates" class="stfile-tab-content hidden space-y-5">
+                    <div class="p-4 bg-amber-50 border border-amber-200 rounded-2xl space-y-2">
+                        <div class="flex items-center gap-2 text-amber-800 font-bold text-xs uppercase">
+                            <i class="fa-solid fa-triangle-exclamation text-amber-600"></i> Detección y Fusión de Expedientes Duplicados
+                        </div>
+                        <p class="text-[11px] text-amber-700">Esta herramienta escanea la base de datos buscando coincidencia por DNI, correo o similitud de nombre. La fusión re-vincula los documentos e historial al expediente principal y marca el expediente origen como "Fusionado".</p>
+                    </div>
+                    <div class="flex gap-2">
+                        <button id="btn-scan-duplicates" class="px-4 py-2 bg-slate-800 text-white rounded-xl font-bold text-xs uppercase tracking-wider hover:bg-slate-900 transition-all">
+                            <i class="fa-solid fa-magnifying-glass mr-1"></i> Buscar Coincidencias Duplicadas
+                        </button>
+                    </div>
+                    <div id="stfile-duplicates-results" class="space-y-3">
+                        <!-- Duplicate match results rendered dynamically -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
     <div id="modal-excel-importer" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-[90] flex items-center justify-center p-2 md:p-4 hidden">
         <div class="bg-white rounded-3xl max-w-2xl w-full p-6 shadow-2xl border border-slate-100 space-y-4 animate-fade-in-up">
             <div class="flex items-center justify-between border-b border-slate-100 pb-3">

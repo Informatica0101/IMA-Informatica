@@ -1284,3 +1284,30 @@ Brechas Identificadas y Prioridades:
 
 Certificación:
   Auditoría completada sin modificar código de producción, esquema de base de datos ni archivos de configuración en estricto cumplimiento de METODOLOGIA_DESARROLLO.md.
+
+===============================================================================
+AUDITORÍA FUNCIONAL Y TÉCNICA DE DETALLE - TAREA REQ-EXP-001 Y REQ-DASH-ADAPT-001
+===============================================================================
+Fecha: Mon Oct 19 2026
+Módulo: Expediente Digital Unificado del Estudiante y Adaptación Integral de UI
+Archivos Auditados:
+  - teacher-dashboard.html
+  - student-dashboard.html
+  - js/teacher.js
+  - js/student.js
+  - js/ui-common.js
+  - backend/academic-service/Code.gs
+
+1. DIAGNÓSTICO Y COMPONENTES EXISTENTES
+- Backend (`backend/academic-service/Code.gs`):
+  * Posee los 23 endpoints de la Fase 4 plenamente funcionales: `getStudentFile`, `updateStudentFile`, `getStudentTimeline`, `findDuplicateStudents`, `mergeStudentFiles`, `getStudentGuardians`, `saveStudentGuardian`, `unlinkStudentGuardian`, `uploadStudentDocument`, `getStudentDocuments`, `updateDocumentStatus`, `createStudentEnrollment`, `getStudentEnrollments`, `renewStudentEnrollment`, `changeStudentSection`, `recordStudentTransfer`, `recordStudentWithdrawal`, `processStudentReentry`.
+- Frontend (`teacher-dashboard.html` / `js/teacher.js`):
+  * `#student-search` filtra únicamente la lista cargada en memoria.
+  * No existe la estructura modal `#modal-student-file` ni sus 5 pestañas funcionales (Ficha Personal, Tutores/Responsables, Expediente Documental Drive, Historial/Movimientos y Duplicados/Fusión).
+  * Se requiere la construcción del modal interactivo e integración completa con `fetchApi('ACADEMIC', ...)` respetando RBAC y preservación de campos no modificados.
+
+2. HALLAZGOS Y PLAN DE IMPLEMENTACIÓN
+- Crear `#modal-student-file` en `teacher-dashboard.html` con 5 pestañas navegables.
+- Implementar funciones JS en `js/teacher.js` para cargar el expediente vía `getStudentFile`, gestionar edicione de datos personales, administrar tutores, subir y previsualizar documentos en Google Drive, mostrar la línea de tiempo de movimientos y permitir la búsqueda/fusión auditada de expedientes duplicados.
+- Conectar la selección de estudiante y la búsqueda `#student-search` para abrir directamente el expediente.
+- Verificar títulos visibles y ajustes visuales solicitados en REQ-DASH-ADAPT-001.
