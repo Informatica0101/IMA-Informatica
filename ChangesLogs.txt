@@ -1417,3 +1417,9 @@ Descripción de cambios:
   - Verificada la estipulación legal de titularidad exclusiva de propiedad intelectual a favor de JyP Solutions S. de R.L. de C.V. y propiedad de datos del cliente.
 - `Auditoría.txt`, `pendientes2.md`:
   - Consolidada la auditoría técnica final y marcadas como completadas el 100% de las tareas del plan de expansión.
+
+## [Fase: Sincronización de Estado de Tareas en Pendientes.md & Ajuste Capa Modal z-[110]] - 2026-10-19
+- `teacher-dashboard.html`:
+  - Actualizado el z-index de `#modal-student-file` a `z-[110]` para superponerlo correctamente a la cabecera fija de navegación (`z-[100]`).
+- `Pendientes.md`, `Auditoría.txt`:
+  - Actualizado el estado de las tareas REQ-EXP-001 y REQ-DASH-ADAPT-001 a `[X] Completada`.

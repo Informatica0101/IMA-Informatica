@@ -1403,3 +1403,13 @@ Archivos Auditados:
 2. PLAN DE REMEDIACIÓN
 - Implementar la función `searchFAQAssistant` en `js/ui-common.js` para la búsqueda asistida de FAQ institucional.
 - Consolidar las entradas finales de auditoría y bitácora en `ChangesLogs.txt` y `pendientes2.md`.
+
+====================================================================================================
+AUDITORÍA DE ESTADO DE TAREAS - PENDIENTES.MD - Mon Oct 19 2026
+
+Archivos Auditados:
+- `Pendientes.md`
+
+1. DIAGNÓSTICO Y ACCIÓN
+- Se verifica que las tareas REQ-EXP-001 (Expediente Digital Unificado) y REQ-DASH-ADAPT-001 (Adaptación de Dashboards y Marca) se encuentran 100% implementadas y verificadas.
+- Se actualiza el estado de ambas tareas en `Pendientes.md` a `[X] Completada`.
