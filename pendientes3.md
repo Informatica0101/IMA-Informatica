@@ -5278,250 +5278,648 @@ El destinatario puede abrir una comunicación y completar la acción solicitada 
 
 ## PLAN DE TRABAJO DETALLADO Y UNIFICADO: FASE DE BIENESTAR ESTUDIANTIL, ORIENTACIÓN Y SEGUIMIENTO DE CASOS
 
-### T-ORI-01 [P1] — Control de concurrencia transaccional con LockService en la actualización de expedientes de seguimiento
+### T-ORI-01 [P1] — Control de concurrencia transaccional con LockService en expedientes de seguimiento
 
 - **Componentes relacionados:** `backend/academic-service/Code.gs` (`addCaseFollowUpNote`), `js/teacher.js`.
-- **Problema detectado:** Al actualizar un expediente de seguimiento en `CasosSeguimiento` agregando notas o modificando el estado del caso, el servidor no utiliza un bloqueo exclusivo mediante `LockService.getScriptLock()`. Múltiples profesionales de orientación o tutores trabajando en paralelo sobre el mismo caso pueden provocar condiciones de carrera y sobreescrituras en el campo `AccionesJSON` o resumen.
+- **Problema detectado:** Las actualizaciones concurrentes de expedientes en `CasosSeguimiento` (agregando notas o modificando el estado del caso) pueden producir sobrescrituras, pérdida de actuaciones, duplicación de registros o inconsistencias entre el estado del caso, sus responsables y el historial. La existencia de operaciones de escritura no garantiza que una secuencia de cambios relacionados se complete de forma coherente al carecer de un bloqueo exclusivo mediante `LockService.getScriptLock()`.
+- **Alcance de los cambios:**
+  - Revisar las operaciones de creación y actualización de casos, asignaciones, notas, actuaciones, planes y estados.
+  - Incorporar mecanismos de exclusión mutua mediante `LockService` donde corresponda en Google Apps Script.
+  - Implementar controles de concurrencia para evitar que una actualización basada en datos antiguos sobrescriba cambios recientes.
+  - Separar las operaciones que necesitan protección exclusiva de aquellas que pueden ejecutarse sin bloqueo.
+  - Establecer un orden consistente para actualizar el registro principal, sus elementos relacionados y el historial.
+  - Incorporar identificadores de operación o mecanismos de idempotencia para evitar duplicaciones por reintentos.
+  - Gestionar tiempos máximos de espera, liberación de bloqueos y errores recuperables.
+  - Validar los datos nuevamente dentro de la sección protegida, en lugar de depender de comprobaciones efectuadas antes de adquirir el bloqueo.
+  - Evitar que el frontend muestre una operación como exitosa cuando el servidor no haya confirmado la persistencia.
+  - Implementar recuperación o compensación explícita cuando una operación de varias etapas falle parcialmente.
 - **Requisitos funcionales:**
-  1. Proteger con `LockService.getScriptLock()` con timeout de 10 segundos la llamada a `addCaseFollowUpNote` y actualización de estado.
-  2. Adquirir el bloqueo antes de leer el estado actual del caso y actualizar `CasosSeguimiento`.
-  3. Validar en el servidor que el usuario solicitante tenga permiso activo sobre el caso antes de guardar la nota.
-  4. Realizar la actualización de forma atómica e idempotente.
-  5. En caso de no adquirir el bloqueo tras 10 segundos, responder con un error controlado solicitando al cliente un reintento seguro.
-- **Criterios de Aceptación:**
-  - Peticiones simultáneas sobre el mismo expediente se procesan secuencialmente sin pérdida ni sobrescritura de notas previas.
-  - La concurrencia no corrompe la estructura JSON de compromisos ni borra las intervenciones anteriores.
+  1. Cada actualización debe comprobar que el caso y las relaciones que pretende modificar siguen siendo válidos.
+  2. Dos operaciones simultáneas sobre el mismo recurso no deben ocasionar pérdida silenciosa de información.
+  3. Una misma solicitud reenviada por un error de conexión no debe crear dos casos, notas, citas o actuaciones.
+  4. Cuando exista un conflicto de actualización, el sistema debe rechazar el cambio incompatible o solicitar que se revise la información más reciente.
+  5. Los errores de bloqueo deben generar una respuesta controlada que permita reintentar la operación.
+  6. Los bloqueos deben liberarse en todos los caminos de ejecución, incluidos los errores.
+  7. El historial solo debe registrar como completadas las operaciones efectivamente confirmadas.
+  8. Las operaciones de lectura deben continuar disponibles siempre que no comprometan la consistencia o la confidencialidad.
+- **Comportamiento esperado:** Cuando dos profesionales intenten actualizar un caso simultáneamente, el sistema preservará ambos cambios si son compatibles. Si existe un conflicto real, no sobrescribirá silenciosamente el trabajo anterior. Los reintentos no generarán duplicados y los errores dejarán el caso en un estado recuperable.
+- **Criterios de aceptación:**
+  - Dos actualizaciones simultáneas de campos diferentes conservan ambos cambios cuando corresponda.
+  - Dos actualizaciones incompatibles del mismo campo no producen una sobrescritura silenciosa.
+  - Los envíos repetidos de una misma operación no duplican registros.
+  - Una excepción durante una actualización no deja referencias huérfanas ni un estado que aparente estar confirmado.
+  - Los bloqueos se liberan incluso cuando se produce una excepción (`try...finally lock.releaseLock()`).
+  - Se prueban concurrencia, tiempos de espera, reintentos, desconexiones y errores parciales.
+  - El resultado persistido coincide con el mensaje de confirmación mostrado al usuario.
 - **Riesgo de Regresión:** Bajo.
-- **Dependencias:** `CasosSeguimiento`, `LockService`, `addCaseFollowUpNote`.
+- **Dependencias:** T-ORI-08, T-ORI-10 y T-ORI-16 cuando estas operaciones actualicen planes, historial o respaldos. La solución debe proteger las operaciones compartidas sin ampliar innecesariamente el alcance de los cambios.
 
 ---
 
 ### T-ORI-02 [P1] — Confidencialidad granular y aislamiento RBAC de notas sensibles de orientación
 
-- **Componentes relacionados:** `backend/academic-service/Code.gs`, `backend/user-service/Code.gs` (`ROLE_PERMISSIONS`), `js/api.js`.
-- **Problema detectado:** Las notas privadas de consejería registradas en un expediente deben aislarse estrictamente para que solo los roles autorizados (`Orientador`, `Consejero`, `Director`) puedan consultarlas, evitando que docentes generales o personal administrativo accedan a antecedentes psicológicos o familiares delicados.
+- **Componentes relacionados:** `backend/academic-service/Code.gs` (`getCaseFollowUpNotes`, `assertRecordOwnership`), `backend/user-service/Code.gs`.
+- **Problema detectado:** La protección basada en categorías de usuario o roles generales no garantiza por sí sola que cada profesional acceda exclusivamente a los casos, notas y recursos que necesita. Las notas de consejería psicológica son accesibles por roles docentes generales en endpoints de la API sin validación estricta de propiedad o permiso explícito. Es necesario controlar la autorización efectiva por operación y por recurso, incluyendo accesos indirectos desde listados, informes y notificaciones.
+- **Alcance de los cambios:**
+  - Revisar la autorización del servidor en todas las operaciones relacionadas con expedientes, notas, citas, incidencias, planes y adjuntos.
+  - Ampliar el modelo de permisos para diferenciar entre lectura, creación, modificación, asignación, cierre, exportación y administración.
+  - Establecer niveles de confidencialidad para las notas y los documentos, con categorías definidas según las necesidades institucionales (`PrivadoOrientacion`, `CompartidoTutores`, `Directivo`).
+  - Permitir restricciones por responsabilidad asignada, equipo autorizado y acceso específico al caso, cuando corresponda.
+  - Separar las notas privadas de orientación de las observaciones académicas o administrativas que puedan compartirse con otros profesionales.
+  - Aplicar los permisos en búsquedas, contadores, paneles, exportaciones, impresiones y notificaciones.
+  - Revalidar los permisos en el servidor en cada operación sensible, sin confiar en los controles de la interfaz.
+  - Registrar las consultas y modificaciones sensibles que deban ser auditables.
+  - Evitar la exposición de notas, datos personales o contenido confidencial en registros técnicos y mensajes de error.
+  - Definir el tratamiento de accesos excepcionales, incluyendo quién los autoriza, su alcance y su duración.
 - **Requisitos funcionales:**
-  1. Verificar en el servidor mediante `assertRecordOwnership` y comprobación de rol que la consulta de notas sensibles esté restringida a profesionales autorizados.
-  2. Ocultar los campos de notas confidenciales en las respuestas de API dirigidas a docentes sin asignación de consejería o personal general.
-  3. Responder con código `403 Forbidden` y registrar evento `AUTH_PERMISSION_DENIED` si un usuario no autorizado intenta consultar el expediente sensible.
-- **Criterios de Aceptación:**
-  - Un docente general solo consulta la información básica del estudiante; las notas sensibles de orientación retornan vacías o quedan bloqueadas en el servidor.
-  - Las búsquedas globales y reportes agregados no filtran contenido confidencial de consejería.
-- **Riesgo de Regresión:** Bajo.
-- **Dependencias:** `ROLE_PERMISSIONS`, `assertRecordOwnership`, `CasosSeguimiento`.
+  1. Los permisos deben evaluar la identidad autenticada, el recurso solicitado, la operación y las condiciones de acceso aplicables.
+  2. Conocer el identificador de un caso no debe permitir acceder a él.
+  3. El acceso a una nota privada no debe otorgar automáticamente acceso al resto del expediente.
+  4. La autorización de un responsable debe poder revocarse sin eliminar el historial de sus actuaciones.
+  5. Los administradores técnicos no deben obtener acceso indiscriminado al contenido sensible por el mero hecho de administrar la infraestructura.
+  6. Las notificaciones deben mostrar únicamente la información necesaria y autorizada.
+  7. Los documentos exportados deben aplicar las mismas restricciones que los datos originales.
+  8. Los cambios de permisos deben reflejarse en las siguientes operaciones, aunque el usuario conserve una página abierta.
+  9. El sistema debe distinguir entre un recurso inexistente y uno al que el usuario no tiene acceso cuando la política de seguridad requiera evitar la revelación de su existencia.
+- **Comportamiento esperado:** Un docente puede recibir una tarea pedagógica relacionada con un estudiante sin acceder a las notas privadas del orientador. Un profesional asignado puede consultar únicamente el contenido permitido por su autorización. La pérdida de asignación o de permisos impide nuevos accesos al recurso protegido.
+- **Criterios de aceptación:**
+  - Las operaciones de lectura y escritura se prueban con usuarios autorizados, no autorizados, deshabilitados y con permisos revocados.
+  - La manipulación de identificadores, roles o parámetros no permite ampliar privilegios.
+  - Los listados y búsquedas no filtran datos de casos restringidos.
+  - Las exportaciones, impresiones y adjuntos respetan la autorización de origen.
+  - La revocación de permisos impide el acceso posterior a través de enlaces guardados.
+  - Las acciones sensibles dejan registros de auditoría sin duplicar ni revelar innecesariamente el contenido de las notas.
+  - Las pruebas comprueban permisos por recurso y operación, no únicamente por rol.
+- **Riesgo de Regresión:** Medio.
+- **Dependencias:** T-ORI-03, T-ORI-04, T-ORI-10 y T-ORI-14. Las reglas de acceso deben definirse antes de ampliar las capacidades de búsqueda y exportación.
 
 ---
 
 ### T-ORI-03 [P1] — Verificación estricta de propiedad y relaciones familiares en el portal de familias
 
-- **Componentes relacionados:** `backend/academic-service/Code.gs`, `backend/user-service/Code.gs` (`RelacionesFamiliares`), `js/student.js`.
-- **Problema detectado:** El acceso a resúmenes de apoyo y planes de acompañamiento desde el portal familiar debe validar activamente `RelacionesFamiliares` para garantizar que un tutor legal solo consulte los expedientes autorizados de sus propios representados.
+- **Componentes relacionados:** `backend/academic-service/Code.gs` (`getStudentFile`), `backend/user-service/Code.gs` (`RelacionesFamiliares`), `js/student.js`.
+- **Problema detectado:** El portal de estudiantes y familias debe garantizar que cada usuario solo consulte los expedientes y servicios de los estudiantes con los que mantiene una relación autorizada. Una asociación existente en la interfaz o el envío de un identificador de estudiante no demuestra que exista autorización vigente.
+- **Alcance de los cambios:**
+  - Revisar la relación entre cuentas de usuario, estudiantes y responsables familiares en `RelacionesFamiliares`.
+  - Validar en el servidor la relación vigente para cada consulta o acción realizada desde el portal.
+  - Comprobar el acceso a solicitudes de citas, planes de apoyo compartidos, notificaciones y documentos.
+  - Definir qué información puede consultar un responsable familiar y cuál permanece restringida al personal autorizado.
+  - Gestionar relaciones múltiples, cambios de responsable, restricciones institucionales y vínculos que dejan de estar vigentes.
+  - Evitar que el cambio de identificadores en solicitudes o URLs permita consultar a otro estudiante.
+  - Revisar los enlaces compartidos, las sesiones abiertas y las notificaciones antiguas cuando cambia la relación de acceso.
+  - Asegurar que la interfaz no presente como accesible información que el servidor rechazará.
 - **Requisitos funcionales:**
-  1. Validar dinámicamente en el servidor que la solicitud provenga de un familiar vinculado activamente en `RelacionesFamiliares` con el `studentId`.
-  2. Verificar que no exista un flag de restricción de custodia legal (`RestriccionCustodiaLegal === true`) que bloquee la consulta de la ficha.
-  3. Filtrar de la vista familiar las observaciones internas o notas privadas clasificadas como `SoloPersonalInterno`.
-- **Criterios de Aceptación:**
-  - Los padres acceden exclusivamente a los planes de acompañamiento autorizados de sus representados.
-  - Las notas internas de consejería no son visibles desde el portal de estudiantes/familias.
+  1. La autorización debe comprobarse para el estudiante concreto y la operación solicitada.
+  2. Las relaciones familiares deben proceder de registros institucionales verificables, no de datos enviados libremente por el cliente.
+  3. La existencia de una relación con un estudiante no debe conceder acceso a todos los estudiantes de una misma familia o domicilio sin una autorización explícita.
+  4. La solicitud de una cita debe respetar las facultades del usuario que la solicita.
+  5. Los planes de apoyo deben compartir únicamente la información expresamente autorizada para ese destinatario.
+  6. Las relaciones revocadas deben dejar de permitir nuevas consultas.
+  7. Los cambios de matrícula, grado o sección no deben romper las relaciones válidas ni crear otras automáticamente.
+  8. Los intentos de acceso indebido deben rechazarse sin revelar datos del estudiante objetivo.
+- **Comportamiento esperado:** Una familia puede acceder a la información autorizada de sus estudiantes vinculados. Si pierde la autorización, ya no puede consultar expedientes, citas o planes restringidos, aunque conserve una URL o una sesión iniciada anteriormente.
+- **Criterios de aceptación:**
+  - Se prueban cuentas vinculadas a un estudiante, a varios estudiantes, sin vínculos y con relaciones revocadas.
+  - La sustitución de un identificador en una petición no permite acceder a otro expediente.
+  - Los accesos a citas y planes aplican las mismas comprobaciones de relación.
+  - Los cambios de relación se reflejan en las siguientes consultas.
+  - Las pantallas no muestran información privada antes de recibir la autorización del servidor.
+  - Los intentos no autorizados no generan modificaciones ni notificaciones con datos sensibles.
 - **Riesgo de Regresión:** Bajo.
-- **Dependencias:** `RelacionesFamiliares`, `PlanesAcompanamiento`.
+- **Dependencias:** T-ORI-02 y T-ORI-06.
 
 ---
 
-### T-ORI-04 [P1] — Proxy de descarga segura con token firmado para evidencias adjuntas en Drive
+### T-ORI-04 [P1] — Proxy de descarga segura con token firmado para evidencias adjuntas en Google Drive
 
-- **Componentes relacionados:** `backend/academic-service/Code.gs`, `backend/user-service/Code.gs`, `js/teacher.js`.
-- **Problema detectado:** Las evidencias y documentos de respaldo adjuntos a expedientes de orientación en Google Drive requieren un proxy de descarga autenticado con token firmado de corta duración para evitar que URLs directas de Drive sean accesibles sin control de sesión.
+- **Componentes relacionados:** `backend/user-service/Code.gs` (`getSecureDocumentStream`), `backend/academic-service/Code.gs`.
+- **Problema detectado:** Los adjuntos de incidencias y expedientes (fotografías, evaluaciones externas, citatorios) se almacenan en Google Drive entregando URLs públicas directas, quedando expuestos fuera del control de permisos de la plataforma.
+- **Alcance de los cambios:**
+  - Revisar cómo se almacenan, consultan y comparten los identificadores y enlaces de archivos adjuntos.
+  - Implementar un mecanismo de descarga controlada (`getSecureDocumentStream`) que valide la sesión y los permisos antes de entregar el archivo.
+  - Si la arquitectura admite descargas temporales firmadas, utilizar tokens criptográficamente seguros, de duración limitada y asociados al recurso autorizado.
+  - Evitar que el token incluya información confidencial legible o permita cambiar el identificador del archivo.
+  - Verificar la vigencia, integridad y alcance del token en el servidor.
+  - Mantener los archivos privados en Drive y evitar conceder permisos públicos como solución a problemas de descarga.
+  - Revisar el comportamiento de enlaces copiados, reenvíos, sesiones vencidas y permisos revocados.
+  - Controlar los errores de archivos eliminados, movidos o inaccesibles.
+  - Registrar los eventos relevantes de acceso sin guardar tokens completos ni credenciales.
 - **Requisitos funcionales:**
-  1. Canalizar las descargas de evidencias de bienestar mediante `getSecureDocumentStream`.
-  2. Generar tokens temporales firmados criptográficamente con caducidad máxima de 5 minutos.
-  3. Validar en el servidor que el usuario tenga rol de `Orientador`, `Consejero` o `Director` antes de entregar el archivo.
-  4. Denegar peticiones no autorizadas con error `403 Forbidden`.
-- **Criterios de Aceptación:**
-  - Un enlace de archivo adjunto a un expediente de orientación expira en 5 minutos y no puede ser reutilizado sin una nueva sesión autenticada.
-  - Usuarios no autorizados no pueden descargar archivos manipulando identificadores de Drive.
+  1. Antes de generar una descarga, el servidor debe verificar que el usuario tiene acceso al caso y al adjunto.
+  2. Los tokens deben ser impredecibles, verificables y de corta duración.
+  3. El token debe quedar asociado al archivo y al alcance de la autorización concedida.
+  4. La modificación del identificador del archivo o del contenido del token debe invalidar la solicitud.
+  5. La revocación de permisos debe impedir nuevas autorizaciones de descarga.
+  6. La solución debe evitar enlaces permanentes con acceso público.
+  7. Los errores no deben revelar identificadores internos innecesarios ni información sobre archivos de otros usuarios.
+  8. Deben respetarse las limitaciones reales de Google Apps Script, Drive y el método de entrega seleccionado.
+- **Comportamiento esperado:** Un usuario autorizado puede descargar un adjunto durante el periodo permitido. Un usuario sin autorización, un token vencido o un enlace manipulado no puede obtener el archivo. Compartir la URL temporal no debe convertirla en un permiso permanente.
+- **Criterios de aceptación:**
+  - Se comprueba una descarga válida y una descarga con token vencido.
+  - Se prueba la manipulación del token y del identificador del archivo.
+  - Se prueba el acceso después de revocar permisos.
+  - Los archivos permanecen privados en Drive.
+  - La URL no permite descargar indefinidamente el archivo.
+  - Los errores de acceso no revelan el contenido del adjunto.
+  - Los registros técnicos no conservan tokens reutilizables.
+  - Se documentan las limitaciones de revocación inmediata inherentes al mecanismo de descarga elegido.
 - **Riesgo de Regresión:** Bajo.
-- **Dependencias:** `getSecureDocumentStream`, Google Drive API.
+- **Dependencias:** T-ORI-02. Requiere comprobar las capacidades reales de almacenamiento y entrega de archivos antes de seleccionar la implementación.
 
 ---
 
-### T-ORI-05 [P2] — Flujo formal de derivación institucional entre docentes, orientación y dirección
+### T-ORI-05 [P2] — Flujo formal de derivación institucional entre docentes, orientación y Dirección
 
-- **Componentes relacionados:** `backend/academic-service/Code.gs`, `js/teacher.js`, `teacher-dashboard.html`.
-- **Problema detectado:** Cuando un docente detecta una dificultad académica o de conducta, requiere un flujo digital para derivar formalmente el caso al departamento de orientación con motivo, prioridad y estado de recepción.
+- **Componentes relacionados:** `backend/academic-service/Code.gs` (`referStudentToGuidance`), `js/teacher.js`, `teacher-dashboard.html`.
+- **Problema detectado:** La capacidad de cambiar el responsable de un caso no equivale a disponer de un flujo de derivación que permita aceptar, devolver, priorizar y supervisar las solicitudes de atención. Actualmente los docentes derivan casos mediante notas libres sin acuse de recibo o aceptación formal por consejería.
+- **Alcance de los cambios:**
+  - Definir un flujo configurable de derivación entre docentes, orientación, coordinación y Dirección.
+  - Diferenciar la asignación directa de una derivación que requiere aceptación.
+  - Incorporar motivo, fecha, emisor, destinatario, prioridad operativa y estado de la derivación.
+  - Permitir aceptar, rechazar justificadamente, devolver para completar información y reasignar una derivación.
+  - Mantener el caso original y relacionar con él todas las transferencias.
+  - Definir qué información acompaña a cada derivación según los permisos del destinatario.
+  - Mostrar las derivaciones pendientes de aceptación y las que superen el plazo establecido.
+  - Notificar los cambios de responsabilidad a las personas autorizadas.
+  - Registrar las decisiones y transferencias en la cronología.
+  - Gestionar destinatarios inactivos, derivaciones duplicadas y ausencia de responsables disponibles.
 - **Requisitos funcionales:**
-  1. Implementar la función `referStudentToGuidance` que cree un caso en `CasosSeguimiento` con estado `DerivadoAOrientacion`.
-  2. Notificar automáticamente al orientador/consejero asignado mediante la bandeja multicanal.
-  3. Permitir que el orientador acepte, solicite ampliación de información o resuelva la derivación registrando la fecha de recepción.
-- **Criterios de Aceptación:**
-  - El docente puede derivar un alumno a orientación y consultar el estado de atención de la solicitud desde su tablero.
-  - La derivación notifica al equipo de consejería e inicia el expediente de seguimiento.
+  1. Toda derivación debe tener un origen, un destinatario o equipo, una fecha y un estado (`Pendiente`, `Aceptada`, `Devuelta`, `Rechazada`).
+  2. La aceptación debe hacer efectiva la responsabilidad conforme al flujo definido.
+  3. Un rechazo o devolución debe incluir un motivo y mantener la responsabilidad anterior o activar un estado explícito de reasignación.
+  4. El sistema no debe considerar atendido un caso solo porque se envió una derivación.
+  5. Las derivaciones deben poder consultarse por estado, destinatario y antigüedad.
+  6. Los destinatarios solo deben recibir información compatible con sus permisos.
+  7. El historial debe conservar las transferencias anteriores.
+  8. La falta de respuesta debe poder identificarse y escalarse según las reglas institucionales.
+- **Comportamiento esperado:** Una derivación puede seguirse desde su creación hasta su aceptación, devolución o cierre. El sistema identifica quién debe actuar en cada momento y evita que un caso quede sin responsable por una transferencia incompleta.
+- **Criterios de aceptación:**
+  - Se completa una derivación desde su creación hasta la aceptación.
+  - Se prueban rechazo, devolución, reasignación y destinatario inactivo.
+  - Una derivación pendiente no se contabiliza como una intervención completada.
+  - Los cambios de responsabilidad se reflejan en permisos y paneles.
+  - Las derivaciones repetidas no crean duplicados.
+  - La cronología permite reconstruir todo el proceso.
+  - Los destinatarios no pueden consultar notas fuera de su autorización.
 - **Riesgo de Regresión:** Nulo.
-- **Dependencias:** `CasosSeguimiento`, `sendMultiChannelNotification`.
+- **Dependencias:** T-ORI-02 y T-ORI-10.
 
 ---
 
-### T-ORI-06 [P2] — Módulo de citas de orientación con detección de conflictos horarios y recordatorios
+### T-ORI-06 [P2] — Gestión avanzada de citas de orientación, conflictos horarios y recordatorios
 
-- **Componentes relacionados:** `backend/user-service/Code.gs` (`getAppointmentBookings`, `bookAppointment`, `updateAppointmentStatus`), `js/teacher.js`, `js/student.js`.
-- **Problema detectado:** El agendamiento de citas de consejería entre orientadores, estudiantes y padres debe prevenir activamente el solapamiento de horarios en la agenda del profesional y disparar recordatorios automáticos.
+- **Componentes relacionados:** `backend/academic-service/Code.gs` (`CitasOrientacion`, `bookAppointment`), `js/teacher.js`, `js/student.js`.
+- **Problema detectado:** El sistema dispone de operaciones para reservar, consultar y cambiar el estado de citas, pero debe garantizar que la agenda represente la disponibilidad efectiva, que los cambios se propaguen a los recordatorios y que el seguimiento de cada entrevista quede documentado sin solapamientos en un mismo bloque de tiempo.
+- **Alcance de los cambios:**
+  - Revisar la agenda de profesionales, la disponibilidad, las duraciones y los estados de las citas en `CitasOrientacion`.
+  - Implementar o completar la detección de conflictos entre citas del mismo profesional y, cuando proceda, del mismo recurso o espacio físico.
+  - Gestionar reservas, confirmaciones, reprogramaciones, cancelaciones y ausencias.
+  - Incorporar políticas configurables para duración, anticipación, intervalos, disponibilidad y ventanas de atención.
+  - Implementar recordatorios configurables, con control de duplicados y cancelación de avisos obsoletos.
+  - Relacionar las citas con el estudiante y el caso correspondiente cuando proceda.
+  - Separar los datos logísticos de la cita de su motivo confidencial y de las notas de entrevista.
+  - Registrar el resultado de la entrevista, los acuerdos y la siguiente actuación.
+  - Permitir consultar citas pendientes de confirmar, próximas, vencidas y completadas.
+  - Gestionar solicitudes duplicadas y cambios de disponibilidad posteriores a una reserva.
+  - Asegurar que los horarios se interpretan de forma coherente con la zona horaria institucional.
 - **Requisitos funcionales:**
-  1. Validar en `bookAppointment` la disponibilidad del orientador bloqueando la reserva si el intervalo de hora/fecha ya está ocupado en `CitasOrientacion`.
-  2. Disparar recordatorios automáticos 24 horas y 2 horas antes de la cita para el estudiante y tutor legal.
-  3. Permitir cancelar o reprogramar citas registrando la causa en el historial.
-- **Criterios de Aceptación:**
-  - La reserva de citas impide dobles agendas para el orientador en el mismo bloque de tiempo.
-  - La cancelación de la cita detiene automáticamente las notificaciones de recordatorio.
-- **Riesgo de Regresión:** Nulo.
-- **Dependencias:** `getAppointmentBookings`, `bookAppointment`, `CitasOrientacion`.
+  1. Una cita debe tener estudiante, responsable, fecha, hora, duración y estado válidos.
+  2. La comprobación de disponibilidad debe realizarse en el servidor al confirmar la reserva.
+  3. Dos solicitudes concurrentes no deben reservar el mismo intervalo incompatible.
+  4. Los recordatorios deben depender del estado actual de la cita y no solo de la planificación inicial.
+  5. Cancelar o reprogramar debe actualizar los recordatorios pendientes.
+  6. La cita debe poder registrar asistencia, resultado y próxima acción.
+  7. Los usuarios externos solo deben consultar la información que les corresponda.
+  8. Las citas canceladas o vencidas no deben permanecer como futuras en la agenda.
+  9. Los errores de notificación no deben borrar una reserva confirmada.
+- **Comportamiento esperado:** La agenda muestra la disponibilidad y el estado reales. Cada cita conserva su historial de cambios y, una vez atendida, permite documentar el resultado y programar el seguimiento necesario.
+- **Criterios de aceptación:**
+  - Dos reservas simultáneas incompatibles no pueden confirmarse ambas.
+  - Una reprogramación libera el horario anterior y comprueba el nuevo.
+  - Una cancelación impide enviar recordatorios futuros asociados a la cita cancelada.
+  - Los reintentos no duplican reservas ni recordatorios.
+  - Las citas completadas pueden asociarse a actuaciones posteriores.
+  - Se prueban ausencias, citas vencidas, cambios de responsable y fallos de notificación.
+  - Los datos privados de la entrevista no aparecen en las vistas generales de agenda.
+- **Riesgo de Regresión:** Bajo.
+- **Dependencias:** T-ORI-01, T-ORI-02, T-ORI-03 y T-ORI-10.
 
 ---
 
-### T-ORI-07 [P2] — Motor de alertas tempranas por patrones de ausentismo y riesgo de deserción
+### T-ORI-07 [P2] — Motor configurable de alertas tempranas por ausentismo, rendimiento y riesgo de deserción
 
-- **Componentes relacionados:** `backend/academic-service/Code.gs`, `backend/user-service/Code.gs`, `js/ui-common.js`.
-- **Problema detectado:** La plataforma debe analizar rutinariamente las inasistencias y la baja de rendimiento para generar alertas preventivas antes de que el estudiante entre en riesgo crítico de reprobación o abandono escolar.
+- **Componentes relacionados:** `backend/academic-service/Code.gs` (`evaluateEarlyWarningAlerts`), `backend/user-service/Code.gs`.
+- **Problema detectado:** La generación automatizada de casos a partir de faltas o bajo rendimiento puede provocar alertas duplicadas, intervenciones desproporcionadas o expedientes abiertos sin una revisión humana previa. El sistema necesita explicar las alertas, controlar su ciclo de vida y permitir evaluar su utilidad.
+- **Alcance de los cambios:**
+  - Revisar las reglas actuales que relacionan asistencia y rendimiento con la creación de casos.
+  - Implementar un motor de reglas configurables con indicadores, umbrales, periodos de observación y destinatarios autorizados.
+  - Incorporar, cuando existan datos fiables, patrones de ausentismo, ausencias consecutivas, deterioro de asistencia, asignaturas reprobadas y cambios relevantes del rendimiento.
+  - Registrar la regla activada, los datos de origen, el periodo evaluado y la fecha de detección.
+  - Diferenciar alertas nuevas, revisadas, atendidas, descartadas justificadamente y resueltas.
+  - Evitar duplicados mediante agrupación de alertas relacionadas y vinculación con casos activos.
+  - Incorporar mecanismos de reevaluación cuando cambian las calificaciones o la asistencia.
+  - Distinguir entre una condición que persiste y una recaída posterior a su resolución.
+  - Gestionar datos faltantes, desactualizados, anulados o corregidos.
+  - Permitir revisar los resultados de las reglas y ajustar sus umbrales sin reescribir silenciosamente el historial.
+  - Establecer una cola de revisión humana antes de crear o escalar un caso sensible, salvo que exista una regla institucional explícita y debidamente autorizada para una actuación concreta.
+  - Evitar que la falta de datos se interprete como un indicador favorable o desfavorable.
+  - Permitir medir volumen de alertas, tiempos de revisión, proporción de alertas útiles y falsas alarmas.
 - **Requisitos funcionales:**
-  1. Desarrollar la rutina `evaluateEarlyWarningAlerts` que evalúe semanalmente ausencias injustificadas acumuladas (≥ 3 en un mes) o bajo rendimiento (promedio < 70%).
-  2. Crear automáticamente un registro de alerta en `CasosSeguimiento` clasificándolo como `RiesgoAcademico` o `RiesgoAusentismo`.
-  3. Notificar al consejero asignado y al tutor legal vía `sendMultiChannelNotification`.
-- **Criterios de Aceptación:**
-  - La acumulación de señales de riesgo genera automáticamente la alerta preventiva en el panel de orientación.
-  - Ejecuciones repetidas no duplican alertas activas para el mismo estudiante.
-- **Riesgo de Regresión:** Nulo.
-- **Dependencias:** `CasosSeguimiento`, `RegistrosAsistencia`, `CalificacionesEstudiantes`.
+  1. Cada regla debe definir el indicador, las condiciones, el periodo de evaluación y los destinatarios autorizados.
+  2. La alerta debe explicar por qué se generó y permitir consultar los datos de origen dentro de los permisos aplicables.
+  3. Las alertas repetidas por una misma condición deben actualizar o relacionarse con la alerta existente en lugar de crear registros ilimitados.
+  4. Las condiciones resueltas deben reflejarse en el estado de la alerta.
+  5. Una recaída debe registrarse como un nuevo evento relacionado con el historial previo.
+  6. El sistema debe permitir que un profesional confirme, descarte justificadamente o convierta una alerta en una actuación de seguimiento.
+  7. La creación de un caso debe quedar registrada como una decisión diferenciada de la detección automática.
+  8. Los indicadores deben poder configurarse conforme a los datos disponibles y las necesidades institucionales.
+  9. Los indicadores no deben utilizar atributos personales irrelevantes ni producir conclusiones automáticas sobre el estado psicológico o las circunstancias familiares de un estudiante.
+  10. La indisponibilidad de los servicios académicos debe impedir que se presenten evaluaciones incompletas como resultados definitivos.
+  11. Deben poder identificarse las reglas que generan alertas excesivas o que no producen actuaciones útiles.
+  12. Las alertas deben tener responsables, estados y plazos de revisión cuando la política institucional los establezca.
+- **Comportamiento esperado:** El sistema detecta condiciones que requieren atención y proporciona evidencia comprensible para revisarlas. Las alertas se convierten en actuaciones mediante un proceso controlled, y el equipo puede evaluar qué reglas ayudan realmente a detectar y atender necesidades.
+- **Criterios de aceptación:**
+  - Las reglas se prueban con datos que cumplen y no cumplen cada condición.
+  - Los umbrales y periodos se aplican correctamente.
+  - Los datos incompletos o desactualizados quedan identificados.
+  - Las condiciones persistentes no generan alertas duplicadas sin control.
+  - Las recaídas se distinguen de los eventos ya resueltos.
+  - La resolución de una alerta no elimina su historial.
+  - Se puede medir cuántas alertas fueron revisadas, atendidas, descartadas y vinculadas a casos.
+  - Las alertas no se presentan como diagnósticos ni decisiones definitivas.
+  - Se comprueba la integración con asistencia, calificaciones y casos existentes.
+  - Las reglas pueden modificarse y probarse sin alterar retroactivamente las alertas históricas.
+- **Riesgo de Regresión:** Bajo.
+- **Dependencias:** T-ORI-01, T-ORI-02, T-ORI-08 y T-ORI-10. La integración con datos académicos requiere coordinación con T-ORI-12.
 
 ---
 
-### T-ORI-08 [P2] — Planes de acompañamiento conductual con objetivos estructurados JSON y fechas de revisión
+### T-ORI-08 [P2] — Planes de acompañamiento estructurados, medibles y revisables
 
-- **Componentes relacionados:** `backend/user-service/Code.gs` (`getSupportPlans`, `saveSupportPlan`), `js/teacher.js`, `teacher-dashboard.html`.
-- **Problema detectado:** Los planes de apoyo en `PlanesAcompanamiento` requieren estructurar sus objetivos e intervenciones pedagógicas con responsables, plazos e indicadores de avance.
+- **Componentes relacionados:** `backend/academic-service/Code.gs` (`PlanesAcompanamiento`, `saveSupportPlan`), `js/teacher.js`.
+- **Problema detectado:** La existencia de planes con objetivos en JSON y fechas de revisión no garantiza que sus acciones sean verificables, que tengan responsables y plazos individuales, o que se pueda distinguir entre una actividad completada y un objetivo alcanzado.
+- **Alcance de los cambios:**
+  - Revisar el modelo actual de `PlanesAcompanamiento`, incluyendo los campos y estructuras de objetivos.
+  - Definir una estructura consistente para objetivos, acciones, responsables, plazos, indicadores, resultados y estado.
+  - Incorporar acciones individuales con fechas de vencimiento y seguimiento.
+  - Registrar acuerdos, revisiones, evidencias pertinentes y resultados observables.
+  - Diferenciar entre objetivo propuesto, acordado, en curso, cumplido, no cumplido, revisado y cancelado cuando proceda.
+  - Establecer una fecha de próxima revisión y avisos sobre acciones vencidas.
+  - Permitir ajustar los objetivos y acciones conservando el historial de cambios.
+  - Vincular el plan al caso correspondiente sin duplicar la información principal del expediente.
+  - Definir qué partes del plan pueden compartir docentes, orientación, coordinación y responsables familiares.
+  - Gestionar planes suspendidos, cerrados, reabiertos y sustituidos por nuevas versiones.
+  - Evitar que un plan se considere exitoso por el mero hecho de haber marcado sus tareas como completadas.
 - **Requisitos funcionales:**
-  1. Estructurar el campo `ObjetivosJSON` en `PlanesAcompanamiento` para incluir: `ObjetivoID`, `Descripcion`, `AccionPedagogica`, `ResponsableID`, `FechaRevision`, `EstadoCumplimiento` (`EnProceso`, `Cumplido`, `Incumplido`).
-  2. Implementar interfaz para registrar revisiones periódicas y actas de compromiso firmadas con los padres.
-  3. Destacar en el tablero los planes con fecha de revisión vencida.
-- **Criterios de Aceptación:**
-  - El orientador puede definir objetivos de acompañamiento estructurados y registrar evaluaciones de avance en cada fecha de revisión.
+  1. Cada objetivo debe tener una descripción concreta y un criterio que permita valorar su avance.
+  2. Cada acción debe incluir responsable, estado y fecha o regla de revisión cuando corresponda.
+  3. Las revisiones deben registrar fecha, participante autorizado, resultado y siguientes pasos.
+  4. El plan debe permitir identificar acciones vencidas y objetivos sin avance documentado.
+  5. Completar una acción no debe marcar automáticamente el objetivo como alcanzado.
+  6. Los cambios deben conservar las versiones anteriores de objetivos y acciones relevantes.
+  7. El cierre debe registrar el resultado alcanzado o explicar por qué no pudo alcanzarse.
+  8. Las notas privadas deben conservar su clasificación de acceso aunque otros colaboradores puedan consultar el estado operativo del plan.
+  9. Los datos deben validarse al guardar, y las estructuras JSON deben tener un formato coherente que permita consultarlas y modificarlas de forma segura.
+  10. Los planes existentes deben seguir siendo consultables durante una migración del formato de datos.
+- **Comportamiento esperado:** Cada plan permite saber qué se pretende mejorar, qué acciones deben realizarse, quién es responsable, cuándo se revisará el progreso y qué resultado se obtuvo. Los cambios de objetivos no borran la historia ni convierten automáticamente una actividad realizada en un resultado positivo.
+- **Criterios de aceptación:**
+  - Se crea, actualiza, revisa, cierra y reabre un plan.
+  - Los objetivos y acciones se muestran de forma coherente en las vistas relacionadas.
+  - Las acciones vencidas se identifican correctamente.
+  - Los cambios conservan el historial anterior.
+  - Los datos incompletos o con formato inválido se rechazan con mensajes claros.
+  - Los planes existentes no pierden información durante la adaptación del modelo.
+  - Las tareas completadas y los objetivos alcanzados se contabilizan por separado.
+  - Los permisos se aplican tanto al plan como a sus notas y documentos relacionados.
 - **Riesgo de Regresión:** Nulo.
-- **Dependencias:** `PlanesAcompanamiento`, `saveSupportPlan`.
+- **Dependencias:** T-ORI-01, T-ORI-02, T-ORI-10 y T-ORI-11.
 
 ---
 
-### T-ORI-09 [P2] — Inalterabilidad de expedientes de orientación pertenecientes a períodos cerrados
+### T-ORI-09 [P2] — Integridad histórica de expedientes y actuaciones de períodos cerrados
 
 - **Componentes relacionados:** `backend/academic-service/Code.gs`, `backend/exam-service/Code.gs` (`CierresPeriodos`).
-- **Problema detectado:** Al cerrar formalmente un año lectivo, los expedientes de orientación y planes de apoyo de dicho año deben congelarse para evitar modificaciones extemporáneas.
+- **Problema detectado:** Los expedientes y actuaciones vinculados a períodos académicos cerrados no deben quedar expuestos a modificaciones accidentales o retroactivas que alteren la historia de la atención. La protección debe coexistir con los procedimientos legítimos de rectificación y seguimiento posterior. Al cerrar formalmente un año lectivo, los expedientes de orientación deben congelarse.
+- **Alcance de los cambios:**
+  - Identificar las entidades de bienestar que dependen de un período académico.
+  - Definir qué operaciones quedan restringidas al cerrar un período y qué funciones continúan disponibles.
+  - Impedir la modificación ordinaria de actuaciones históricas cuando el período esté cerrado.
+  - Establecer un procedimiento autorizado para correcciones justificadas.
+  - Registrar el valor anterior, el nuevo valor, el autor, la fecha y el motivo de la rectificación cuando corresponda.
+  - Permitir agregar nuevas actuaciones sin modificar las anteriores.
+  - Separar el cierre académico de un período del cierre operativo de un caso de bienestar.
+  - Definir cómo se gestionan los casos que siguen activos después del cierre de un período.
+  - Revisar permisos para exportar, consultar y corregir registros históricos.
+  - Evitar que una actualización de matrícula o configuración académica modifique accidentalmente los datos históricos.
 - **Requisitos funcionales:**
-  1. Validar si la fecha del caso o plan corresponde a un año o período escolar con estado `Cerrado`.
-  2. Bloquear la edición o adición de notas salvo autorización expresa de Dirección o Secretaría con registro de motivo en auditoría.
-- **Criterios de Aceptación:**
-  - Intento de editar un plan de apoyo perteneciente a un año cerrado devuelve un mensaje de error de período cerrado.
+  1. El cierre del período debe aplicar las restricciones previstas a los registros relacionados.
+  2. Las operaciones permitidas después del cierre deben estar definidas explícitamente.
+  3. Las correcciones autorizadas deben dejar evidencia de la modificación y su motivo en auditoría.
+  4. Una nueva intervención posterior debe añadirse al historial sin reescribir las anteriores.
+  5. Los casos activos deben poder continuar su seguimiento cuando la política institucional lo permita.
+  6. La restricción no debe depender exclusivamente de que el frontend oculte botones.
+  7. Los cambios de período, grado o sección no deben alterar las relaciones históricas del expediente.
+- **Comportamiento esperado:** Los registros históricos permanecen protegidos frente a cambios ordinarios. Cuando se necesita corregir información o continuar un caso, el sistema permite hacerlo mediante operaciones diferenciadas y trazables. Intento de editar un plan de apoyo perteneciente a un año cerrado devuelve un mensaje de error de período cerrado.
+- **Criterios de aceptación:**
+  - Un usuario sin autorización no puede modificar registros protegidos mediante llamadas directas al servidor.
+  - Una corrección autorizada conserva evidencia del cambio.
+  - Se pueden registrar actuaciones nuevas en un caso activo que atraviesa el cierre académico, según las reglas definidas.
+  - El historial mantiene las fechas y relaciones originales.
+  - Los cambios de matrícula no modifican retroactivamente la identidad del estudiante ni las actuaciones.
+  - Los permisos de consulta y exportación siguen aplicándose a los registros históricos.
 - **Riesgo de Regresión:** Nulo.
-- **Dependencias:** `CierresPeriodos`, `PlanesAcompanamiento`.
+- **Dependencias:** T-ORI-02 y T-ORI-10. La aplicación concreta depende de cómo se representen los períodos y cierres académicos en el sistema.
 
 ---
 
-### T-ORI-10 [P2] — Historial cronológico de actuaciones y bitácora de intervenciones pedagógicas
+### T-ORI-10 [P2] — Cronología unificada y bitácora de actuaciones pedagógicas
 
 - **Componentes relacionados:** `backend/academic-service/Code.gs` (`getCaseFollowUpNotes`), `js/teacher.js`, `teacher-dashboard.html`.
-- **Problema detectado:** El orientador requiere visualizar la línea de tiempo completa del estudiante combinando citas atendidas, incidencias de conducta, avisos de asistencia y notas de seguimiento.
+- **Problema detectado:** La información de casos, notas, citas, incidencias, derivaciones y planes puede estar distribuida entre varias entidades. Sin una cronología unificada, reconstruir la evolución de un caso exige consultar manualmente diferentes registros y aumenta el riesgo de omitir actuaciones. El orientador requiere visualizar la línea de tiempo completa combinando citas atendidas, incidencias de conducta, avisos de asistencia y notas de seguimiento.
+- **Alcance de los cambios:**
+  - Definir una vista cronológica que integre los eventos relevantes del caso.
+  - Relacionar las actuaciones con sus registros originales en lugar de duplicar sus datos completos.
+  - Incorporar eventos de apertura, asignación, derivación, cita, intervención, revisión del plan, alerta, cambio de estado y cierre.
+  - Diferenciar eventos informativos, actuaciones realizadas, decisiones y tareas pendientes.
+  - Mostrar autor, fecha, tipo de evento y resultado según los permisos del usuario con etiquetas visuales por tipo de actuación (Entrevista, Incidencia, Plan de Apoyo, Cita, Carta de Compromiso).
+  - Permitir filtrar la cronología por categoría, responsable, periodo, rango de fechas y tipo de actuación.
+  - Registrar correcciones y cambios relevantes sin borrar silenciosamente los eventos previos.
+  - Garantizar que los eventos no se registren como completados antes de confirmar la operación.
+  - Controlar la duplicación de eventos cuando una misma operación se reintente.
+  - Separar los datos de auditoría técnica de las notas profesionales del expediente.
+  - Mantener el orden cronológico ante actualizaciones tardías o registros importados.
 - **Requisitos funcionales:**
-  1. Consolidar en `getCaseFollowUpNotes` el historial cronológico ordenado por fecha de creación.
-  2. Mostrar etiquetas visuales por tipo de actuación (Entrevista, Incidencia, Plan de Apoyo, Cita, Carta de Compromiso).
-  3. Permitir filtrar la cronología por rango de fechas y categoría.
-- **Criterios de Aceptación:**
-  - La vista del expediente presenta la línea de tiempo integrada del estudiante ordenada cronológicamente.
+  1. Cada evento debe tener un identificador estable, tipo, fecha y referencia al recurso de origen.
+  2. Los eventos deben mantener la relación correcta con el caso y el estudiante.
+  3. La cronología debe reflejar los cambios de estado y responsabilidad.
+  4. Los eventos deben distinguir entre fecha del hecho, fecha de registro y fecha de modificación cuando sea necesario.
+  5. La vista debe mostrar únicamente los detalles autorizados.
+  6. Los eventos corregidos deben conservar la trazabilidad correspondiente.
+  7. Los registros de origen deben seguir siendo la referencia para consultar detalles y modificar la entidad cuando esté permitido.
+  8. La cronología debe permitir identificar las actuaciones sin resultado, las próximas acciones y los periodos sin seguimiento.
+  9. La carga de la cronología no debe requerir descargar innecesariamente todos los expedientes o notas confidenciales.
+- **Comportamiento esperado:** El profesional autorizado puede reconstruir la evolución del caso desde una única vista, identificar qué ocurrió y qué falta por hacer, y acceder al registro original cuando tenga permiso. La cronología mantiene coherencia con los módulos que producen los eventos.
+- **Criterios de aceptación:**
+  - Las citas, planes, derivaciones e incidencias aparecen vinculadas al caso correcto en la vista del expediente.
+  - Los eventos no se duplican por reintentos.
+  - Los cambios de responsable y estado quedan reflejados.
+  - Las actuaciones fallidas no aparecen como completadas.
+  - Los filtros mantienen la coherencia cronológica.
+  - Los usuarios no autorizados no obtienen contenido privado desde la cronología.
+  - Los cambios tardíos no destruyen el orden histórico ni confunden la fecha del hecho con la fecha de registro.
+  - La cronología coincide con los registros originales después de crear, modificar y cerrar actuaciones.
 - **Riesgo de Regresión:** Nulo.
-- **Dependencias:** `CasosSeguimiento`, `getCaseFollowUpNotes`.
+- **Dependencias:** T-ORI-01, T-ORI-02, T-ORI-05, T-ORI-06 y T-ORI-08.
 
 ---
 
-### T-ORI-11 [P2] — Búsqueda avanzada multicriterio y panel de tareas de seguimiento pendientes
+### T-ORI-11 [P2] — Búsqueda avanzada multicriterio y panel de seguimiento pendiente
 
 - **Componentes relacionados:** `js/teacher.js`, `teacher-dashboard.html`, `js/ui-common.js`.
-- **Problema detectado:** El panel de orientación requiere un buscador avanzado para filtrar expedientes por grado, sección, categoría de caso (`RiesgoAcademico`, `Conducta`, `Familiar`) y estado (`Activo`, `EnRevision`, `Cerrado`).
+- **Problema detectado:** La existencia de listados de casos no garantiza que los profesionales puedan priorizar sus pendientes, identificar casos sin responsable y localizar actuaciones vencidas. El panel de orientación requiere un buscador avanzado para filtrar expedientes por grado, sección, categoría de caso (`RiesgoAcademico`, `Conducta`, `Familiar`) y estado (`Activo`, `EnRevision`, `Cerrado`). La búsqueda también puede convertirse en un canal de filtración si no aplica los mismos permisos que el expediente.
+- **Alcance de los cambios:**
+  - Crear el panel "Centro de Control de Orientación y Consejería" en `teacher-dashboard.html`.
+  - Implementar o completar la búsqueda por identificador, estudiante, estado, categoría, responsable y fechas.
+  - Añadir filtros combinados para grado, sección, tipo de riesgo, estado del plan, citas pendientes, derivaciones sin aceptar, planes con revisión vencida, acciones pendientes y alertas sin revisar.
+  - Incorporar vistas operativas para casos sin responsable, sin actividad reciente o con más de 15 días de inactividad o compromisos vencidos.
+  - Mostrar fecha de apertura, última actuación y próxima revisión cuando corresponda.
+  - Permitir combinar filtros, ordenar resultados y paginar listados extensos.
+  - Incluir vistas personales de tareas y vistas de supervisión para roles autorizados.
+  - Garantizar que los contadores y listados utilicen los mismos criterios.
+  - Evitar que las búsquedas revelen la existencia de casos confidenciales mediante sugerencias, autocompletado o mensajes de error.
+  - Optimizar las consultas para no cargar todos los registros en el navegador.
+  - Incorporar estados vacíos, mensajes de error recuperables y actualización de resultados tras modificar un caso.
 - **Requisitos funcionales:**
-  1. Crear el panel "Centro de Control de Orientación y Consejería" en `teacher-dashboard.html`.
-  2. Habilitar filtros combinados por grado, sección, tipo de riesgo y estado del plan.
-  3. Destacar casos con más de 15 días sin actividad o con revisiones de compromisos vencidas.
-- **Criterios de Aceptación:**
-  - El orientador localiza rápidamente casos activos filtrados por categoría y prioridad de atención.
+  1. Los filtros deben aplicarse sobre los registros que el usuario está autorizado a consultar.
+  2. Los casos sin responsable y las acciones vencidas deben identificarse mediante criterios verificables.
+  3. Los resultados deben indicar los criterios de filtrado aplicados.
+  4. Los contadores deben corresponder a los registros realmente incluidos en cada vista.
+  5. Las búsquedas deben soportar combinaciones de criterios sin mezclar casos de diferentes estudiantes.
+  6. La vista personal debe diferenciar tareas asignadas al usuario de casos que solo puede consultar.
+  7. Las vistas de supervisión deben limitarse a la información autorizada para ese rol.
+  8. La ordenación y paginación no deben duplicar ni omitir registros válidos.
+  9. Las métricas operativas deben representar volumen y estado del trabajo, no asumir que una mayor cantidad de intervenciones equivale a una mejor atención.
+- **Comportamiento esperado:** Cada profesional puede localizar los casos y acciones que le corresponden y priorizar los pendientes. Los supervisores autorizados pueden identificar cargas de trabajo y retrasos sin acceder a notas privadas que no necesitan consultar.
+- **Criterios de aceptación:**
+  - Se prueban filtros individuales y combinados.
+  - Los resultados coinciden con los registros que cumplen las condiciones.
+  - Los contadores coinciden con sus listados.
+  - Los casos restringidos no aparecen en búsquedas de usuarios sin autorización.
+  - La paginación mantiene resultados estables y no duplica registros.
+  - Los cambios de estado actualizan las vistas y contadores.
+  - Se prueban casos sin responsable, sin actividad, con tareas vencidas y con varios responsables históricos.
+  - El rendimiento se verifica con un volumen representativo de datos.
 - **Riesgo de Regresión:** Nulo.
-- **Dependencias:** `teacher-dashboard.html`, `js/teacher.js`.
+- **Dependencias:** T-ORI-02, T-ORI-05, T-ORI-07, T-ORI-08 y T-ORI-10.
 
 ---
 
-### T-ORI-12 [P2] — Sincronización de planes de apoyo con la libreta de notas y exenciones
+### T-ORI-12 [P2] — Sincronización controlada de planes de apoyo con el expediente académico y la libreta de notas
 
-- **Componentes relacionados:** `backend/user-service/Code.gs`, `backend/exam-service/Code.gs`.
-- **Problema detectado:** Cuando un plan de acompañamiento autoriza una adecuación curricular o exención justificada de evaluación, el sistema debe sincronizar dicho estado con el libro de calificaciones.
+- **Componentes relacionados:** `backend/user-service/Code.gs`, `backend/exam-service/Code.gs` (`CalificacionesEstudiantes`).
+- **Problema detectado:** Los planes de apoyo pueden requerir coordinación con docentes y ajustes pedagógicos, pero una integración inadecuada puede duplicar datos, revelar notas privadas o modificar calificaciones sin una autorización académica explícita. Cuando un plan autoriza una adecuación curricular o exención justificada, el sistema debe sincronizar dicho estado con el libro de calificaciones.
+- **Alcance de los cambios:**
+  - Identificar qué datos académicos son necesarios para el seguimiento de un plan.
+  - Definir una interfaz de coordinación entre planes de apoyo, asistencia, calificaciones y expediente académico.
+  - Vincular los indicadores con sus registros originales y mostrar su fecha de actualización.
+  - Permitir registrar medidas pedagógicas autorizadas, exenciones y adecuaciones curriculares, responsables y periodos de aplicación.
+  - Reflejar automáticamente en `CalificacionesEstudiantes` el estado `Eximido` (`EX`) para las actividades indicadas en la resolución.
+  - Separar los ajustes pedagógicos autorizados de las modificaciones ordinarias de calificaciones.
+  - Evitar que un plan de acompañamiento modifique automáticamente notas, asistencia oficial o resultados académicos sin las reglas de negocio pertinentes.
+  - Gestionar exenciones o adaptaciones solo si existen reglas institucionales y permisos explícitos para ello.
+  - Mantener las notas privadas de orientación fuera de la libreta académica general.
+  - Gestionar cambios de grado, sección, asignaturas y períodos.
+  - Definir un comportamiento controlado ante fallos o retrasos de sincronización.
+  - Registrar las modificaciones que afecten a los datos académicos y el origen de cada cambio.
 - **Requisitos funcionales:**
-  1. Registrar en el plan la exención o adecuación curricular aprobada.
-  2. Reflejar automáticamente en `CalificacionesEstudiantes` el estado `Eximido` (`EX`) para las actividades indicadas en la resolución.
-- **Criterios de Aceptación:**
+  1. Cada dato académico mostrado debe tener un origen identificable y una fecha de actualización.
+  2. El sistema debe distinguir entre una recomendación pedagógica y un cambio académico oficialmente aplicado.
+  3. Las medidas de apoyo deben tener responsable, periodo de vigencia y estado cuando corresponda.
+  4. Las modificaciones de calificaciones o exenciones requieren autorización específica y validación de las reglas académicas.
+  5. La integración no debe copiar notas confidenciales a los módulos académicos.
+  6. Los cambios en la matrícula deben actualizar las relaciones vigentes sin alterar el historial.
+  7. Un fallo de sincronización debe identificarse y no presentarse como una actualización exitosa.
+  8. Los conflictos entre datos deben resolverse mediante una regla explícita, no por sobrescritura silenciosa.
+- **Comportamiento esperado:** Los profesionales autorizados pueden coordinar apoyos con el contexto académico pertinente. Las medidas se documentan y siguen sin convertir automáticamente un plan de bienestar en una modificación no autorizada de la evaluación oficial.
+- **Criterios de aceptación:**
+  - Los datos académicos mostrados coinciden con sus fuentes autorizadas.
+  - Las medidas pedagógicas pueden crearse, asignarse, revisar y finalizar.
   - La aprobación de una adecuación en el plan de apoyo actualiza la libreta de notas excluyendo la actividad del cálculo del promedio.
+  - Los cambios académicos requieren los permisos correspondientes.
+  - Las notas privadas no aparecen en las vistas generales de calificaciones.
+  - Los fallos de integración generan un estado identificable.
+  - Los cambios de matrícula conservan la asociación histórica del caso.
+  - Se prueban datos desactualizados, conflictos, cambios de asignaturas y períodos cerrados.
 - **Riesgo de Regresión:** Bajo.
-- **Dependencias:** `PlanesAcompanamiento`, `CalificacionesEstudiantes`.
+- **Dependencias:** T-ORI-02, T-ORI-07, T-ORI-08 y T-ORI-10.
 
 ---
 
-### T-ORI-13 [P3] — Dashboard consolidado de indicadores de bienestar y clima escolar por grado
+### T-ORI-13 [P3] — Panel consolidado de indicadores de bienestar y clima escolar por grado
 
 - **Componentes relacionados:** `js/teacher.js`, `js/ui-common.js` (`renderUniversalConfigurableChart`), `teacher-dashboard.html`.
-- **Problema detectado:** Presentar a la dirección e informe directivo gráficos estadísticos anónimos sobre distribución de casos de orientación, tipos de incidencias y avance de planes de apoyo por nivel educativo.
+- **Problema detectado:** La existencia de alertas individuales no proporciona necesariamente una visión operativa de patrones colectivos. Se requiere un panel que permita identificar necesidades de seguimiento por grado, sección o período sin exponer información individual innecesaria ni violar la confidencialidad.
+- **Alcance de los cambios:**
+  - Crear un panel agregado para roles autorizados de orientación, coordinación y Dirección en `teacher-dashboard.html`.
+  - Renderizar mediante `renderUniversalConfigurableChart` gráficos estadísticos de barras/rosca con la distribución de casos por categoría.
+  - Incorporar indicadores de casos activos, nuevos, cerrados, sin responsable y con actuaciones vencidas.
+  - Mostrar tendencias agregadas de alertas de asistencia y rendimiento, derivaciones y seguimiento de planes.
+  - Permitir filtros por período académico, grado, sección, categoría de caso y estado.
+  - Diferenciar volumen de casos, tiempos de atención, carga de trabajo y resultados documentados.
+  - Mostrar la fecha de actualización y la cobertura de los datos.
+  - Permitir navegar desde un indicador agregado hacia los registros individuales solo si el usuario tiene autorización.
+  - Evitar comparaciones que interpreten automáticamente una mayor cantidad de casos como peor desempeño de un grado o profesional.
+  - Incorporar mecanismos para reducir el riesgo de identificar estudiantes en grupos muy pequeños.
+  - Evitar la presentación de indicadores basados en datos incompletos como si fueran representativos.
 - **Requisitos funcionales:**
-  1. Renderizar mediante `renderUniversalConfigurableChart` un gráfico de barras/rosca con la distribución de casos por categoría.
-  2. Garantizar que el gráfico estadístico agregue datos en forma anónima sin exponer nombres de estudiantes.
-- **Criterios de Aceptación:**
+  1. Cada indicador debe tener una definición clara y una fuente de datos identificable.
+  2. Los filtros deben aplicarse de manera consistente a todos los indicadores relacionados.
+  3. Los datos deben diferenciar períodos, estados y categorías para evitar comparaciones incompatibles.
+  4. El panel debe mostrar cuándo se actualizaron los datos.
+  5. Los resultados agregados no deben revelar detalles de casos restringidos.
+  6. Los indicadores de resultados deben distinguir entre tareas completadas, objetivos alcanzados y casos cerrados.
+  7. Las tasas deben incluir un denominador pertinente cuando se comparen grupos o períodos.
+  8. El panel debe identificar datos faltantes o cobertura insuficiente.
+  9. Las exportaciones deben aplicar las mismas restricciones de acceso que el panel.
+- **Comportamiento esperado:** Los responsables autorizados pueden observar tendencias operativas y determinar dónde se necesita revisar la cobertura del seguimiento. El panel ofrece información útil para organizar recursos sin convertirse en una herramienta de estigmatización o clasificación automática de estudiantes.
+- **Criterios de aceptación:**
+  - Los indicadores coinciden con los registros que los componen.
+  - Los filtros actualizan todos los elementos relacionados.
+  - Los datos de distintos períodos no se mezclan.
+  - La navegación a un caso individual vuelve a validar permisos.
+  - Los grupos pequeños se protegen cuando existe riesgo de identificación.
+  - Los indicadores incompletos muestran su limitación.
+  - Se verifica que los totales, porcentajes y tendencias utilizan denominadores coherentes.
+  - Los datos históricos siguen siendo interpretables después de cambiar las reglas de alertas.
   - El dashboard directivo muestra tendencias de clima escolar y casos atendidos sin comprometer la confidencialidad individual.
 - **Riesgo de Regresión:** Nulo.
-- **Dependencias:** `renderUniversalConfigurableChart`, `CasosSeguimiento`.
+- **Dependencias:** T-ORI-02, T-ORI-07, T-ORI-10 y T-ORI-11.
 
 ---
 
-### T-ORI-14 [P3] — Exportación estructurada de informes de orientación y actas en Excel/PDF
+### T-ORI-14 [P3] — Exportación estructurada de informes de orientación y actas en PDF y Excel
 
 - **Componentes relacionados:** `backend/accounting-service/Code.gs` (`generateSchoolDocument`), `backend/academic-service/Code.gs`.
-- **Problema detectado:** Permitir a orientadores autorizados emitir la Ficha de Seguimiento Psicopedagógico y Actas de Compromiso en PDF con estampa oficial e identificador único.
+- **Problema detectado:** La generación de documentos institucionales debe ofrecer informes útiles (Ficha de Seguimiento Psicopedagógico y Actas de Compromiso en PDF con estampa oficial e identificador único) y coherentes con el expediente, pero también impedir que una exportación revele información confidencial a destinatarios no autorizados.
+- **Alcance de los cambios:**
+  - Revisar las capacidades existentes de generación de documentos en `generateSchoolDocument` y determinar qué formatos están realmente implementados.
+  - Implementar la plantilla `FichaSeguimientoOrientacion` y plantillas para informes de seguimiento, resúmenes de caso, actas de entrevista, planes de acompañamiento e informes agregados.
+  - Permitir seleccionar el alcance del informe según los permisos del usuario.
+  - Incorporar datos identificativos necesarios, fechas, responsables, actuaciones, acuerdos, estado, firmas digitales y estampa de confidencialidad cuando corresponda.
+  - Diferenciar los informes operativos de los informes que contienen notas sensibles.
+  - Restringir la generación del documento exclusivamente a roles autorizados (`Orientador`, `Director`).
+  - Implementar exportación a PDF para documentos legibles y a Excel para datos estructurados que deban analizarse.
+  - Incorporar encabezados, fechas de generación, identificación del período y paginación cuando proceda.
+  - Registrar quién genera el documento y qué alcance de datos se incluyó.
+  - Validar que los filtros aplicados se reflejen en el archivo.
+  - Evitar que las fórmulas, hojas ocultas, metadatos o enlaces del archivo expongan información no visible.
+  - Gestionar errores de generación, archivos incompletos y descargas interrumpidas.
 - **Requisitos funcionales:**
-  1. Implementar la plantilla `FichaSeguimientoOrientacion` en `generateSchoolDocument`.
-  2. Incluir datos del estudiante, resumen de intervenciones, compromisos acordados, firmas digitales y estampa de confidencialidad.
-  3. Restringir la generación del documento exclusivamente a roles autorizados (`Orientador`, `Director`).
-- **Criterios de Aceptación:**
-  - El PDF de la ficha de orientación se genera con datos completos y marca de agua confidencial.
+  1. La exportación debe comprobar permisos antes de recuperar los datos y antes de entregar el documento.
+  2. Los informes deben incluir solo los campos autorizados para el tipo de documento.
+  3. Los datos deben coincidir con los registros de origen en el momento de la generación.
+  4. Los informes deben distinguir hechos, actuaciones, acuerdos y estados, sin presentar conclusiones no documentadas.
+  5. Los documentos deben identificar cuándo se generaron y a qué período o selección corresponden.
+  6. La exportación de notas sensibles debe requerir autorización específica.
+  7. Los archivos no deben quedar almacenados en ubicaciones públicas.
+  8. Los errores deben comunicarse sin generar un archivo parcial que aparente estar completo.
+  9. La exportación Excel debe estructurar los datos en columnas coherentes y evitar contenido ejecutable no confiable en celdas.
+  10. Los informes agregados deben evitar la divulgación accidental de expedientes individuales.
+- **Comportamiento esperado:** El usuario autorizado genera documentos legibles, completos y coherentes con la información consultada. El archivo respeta los permisos y los filtros, y no incorpora datos adicionales por el mero hecho de estar disponibles en el sistema. El PDF se emite con marca de agua confidencial.
+- **Criterios de aceptación:**
+  - Se generan correctamente los formatos definidos para cada tipo de informe.
+  - Los datos exportados coinciden con el expediente de origen.
+  - Los filtros y permisos se mantienen en el documento.
+  - Los usuarios no autorizados no pueden exportar notas sensibles.
+  - Se comprueba el contenido visible y la estructura interna de los archivos.
+  - Los errores de generación no producen documentos aparentemente válidos pero incompletos.
+  - Se prueban expedientes extensos, caracteres especiales, campos vacíos y datos adjuntos.
+  - Se verifica que las descargas no concedan acceso público permanente a los documentos.
 - **Riesgo de Regresión:** Nulo.
-- **Dependencias:** `generateSchoolDocument`, `CasosSeguimiento`.
+- **Dependencias:** T-ORI-02, T-ORI-04 y T-ORI-10. El diseño de informes agregados debe coordinarse con T-ORI-13.
 
 ---
 
-### T-ORI-15 [P3] — Herramienta de conciliación entre registros de incidentes y resumen del expediente
+### T-ORI-15 [P3] — Conciliación entre incidencias, actuaciones y resumen del expediente
 
-- **Componentes relacionados:** `backend/academic-service/Code.gs`, `backend/user-service/Code.gs`.
-- **Problema detectado:** Verificar que el resumen de casos y compromisos presentado en la ficha consolidada coincida exactamente con los registros individuales de `CasosSeguimiento` y `PlanesAcompanamiento`.
+- **Componentes relacionados:** `backend/academic-service/Code.gs` (`reconcileGuidanceRecords`), `backend/user-service/Code.gs`.
+- **Problema detectado:** La coexistencia de incidencias, observaciones, casos y resúmenes en `CasosSeguimiento` y `PlanesAcompanamiento` puede producir registros duplicados o diferencias entre la información original y la síntesis mostrada en el expediente. Es necesario detectar esas discrepancias sin fusionar automáticamente hechos distintos.
+- **Alcance de los cambios:**
+  - Identificar las entidades que representan incidencias, observaciones, actuaciones y resúmenes.
+  - Desarrollar la rutina de conciliación `reconcileGuidanceRecords(userId)`.
+  - Definir reglas para detectar posibles duplicados y registros relacionados.
+  - Comparar fechas, estudiante, categoría, origen y referencias disponibles.
+  - Crear una vista de revisión para que personal autorizado confirme si los registros son duplicados, relacionados o independientes.
+  - Permitir vincular registros relacionados al mismo caso sin eliminar sus registros de origen.
+  - Establecer un procedimiento trazable para corregir asociaciones erróneas.
+  - Actualizar los resúmenes del expediente a partir de registros válidos y autorizados.
+  - Distinguir entre la información original y las síntesis elaboradas por el sistema o por un profesional.
+  - Identificar incidencias sin caso asociado cuando la política requiera seguimiento.
+  - Evitar que las coincidencias aproximadas produzcan fusiones automáticas irreversibles.
 - **Requisitos funcionales:**
-  1. Desarrollar la rutina de conciliación `reconcileGuidanceRecords(userId)`.
-  2. Comparar el resumen de intervenciones con las notas activas detectando registros desfasados.
-- **Criterios de Aceptación:**
-  - La rutina confirma la coherencia de datos entre el expediente individual y los planes de apoyo.
+  1. La detección de duplicados debe apoyarse en criterios explícitos y mostrar las coincidencias relevantes.
+  2. La coincidencia de nombre o fecha por sí sola no debe provocar una fusión automática.
+  3. La conciliación debe conservar los identificadores y la procedencia de los registros originales.
+  4. Las correcciones de asociaciones deben quedar registradas.
+  5. Los resúmenes deben diferenciar datos confirmados, relaciones pendientes de revisión y síntesis profesionales.
+  6. Los usuarios solo deben revisar registros dentro de su ámbito de autorización.
+  7. La resolución de una coincidencia no debe eliminar evidencia histórica.
+  8. Los registros sin relación válida deben poder identificarse y corregirse mediante un proceso autorizado.
+- **Comportamiento esperado:** El sistema identifica posibles inconsistencias y ofrece herramientas para revisarlas. Los profesionales pueden relacionar registros correctamente, corregir asociaciones y mantener un resumen fiel al expediente sin perder la información de origen.
+- **Criterios de aceptación:**
+  - Se detectan registros que cumplen las reglas de coincidencia definidas.
+  - Se distinguen duplicados probables de eventos diferentes.
+  - La confirmación de una relación conserva los registros originales.
+  - La corrección de una asociación deja evidencia de quién la realizó y cuándo.
+  - Los resúmenes coinciden con los registros válidos que deben representar.
+  - Los usuarios no autorizados no pueden revisar ni conciliar registros restringidos.
+  - Se prueban incidencias repetidas, registros relacionados, fechas distintas y estudiantes con nombres similares.
 - **Riesgo de Regresión:** Nulo.
-- **Dependencias:** `CasosSeguimiento`, `PlanesAcompanamiento`.
+- **Dependencias:** T-ORI-02, T-ORI-08 y T-ORI-10.
 
 ---
 
-### T-ORI-16 [P3] — Respaldo integral e inmutable de expedientes de bienestar en el sistema de backup
+### T-ORI-16 [P3] — Respaldo integral, verificable y protegido de expedientes de bienestar
 
 - **Componentes relacionados:** `backend/academic-service/Code.gs` (`createSystemBackup`, `restoreSystemBackup`), `backend/user-service/Code.gs`.
-- **Problema detectado:** Garantizar que las copias de seguridad de la plataforma incluyan la totalidad de tablas de consejería y bienestar (`CasosSeguimiento`, `PlanesAcompanamiento`, `CitasOrientacion`, `ObservacionesConvivencia`) y que la restauración mantenga intacta la confidencialidad.
+- **Problema detectado:** Los expedientes dependen de varios registros relacionados (`CasosSeguimiento`, `PlanesAcompanamiento`, `CitasOrientacion`, `ObservacionesConvivencia`) y pueden incluir información sensible y archivos adjuntos. Un respaldo que copie únicamente las hojas principales no garantiza que sea posible reconstruir los casos, sus actuaciones y sus documentos manteniendo la confidencialidad RBAC.
+- **Alcance de los cambios:**
+  - Revisar el sistema de respaldo existente (`createSystemBackup`, `restoreSystemBackup`) y sus capacidades reales de recuperación.
+  - Identificar todas las entidades que forman parte de un expediente: casos, notas, planes, citas, incidencias, derivaciones, historial y relaciones con adjuntos.
+  - Definir un procedimiento consistente para capturar registros relacionados y su estado en un momento identificable.
+  - Incorporar verificaciones de integridad, conteos y relaciones entre registros respaldados.
+  - Mantener controles de acceso equivalentes o más restrictivos para las copias de datos sensibles.
+  - Evitar que los respaldos se almacenen en ubicaciones públicas o accesibles por usuarios sin autorización.
+  - Registrar fecha, alcance, resultado y errores de cada ejecución.
+  - Definir procedimientos de restauración que permitan recuperar datos sin duplicar expedientes o sobrescribir información posterior indebidamente.
+  - Establecer mecanismos de retención y eliminación de copias conforme a las políticas institucionales aplicables.
+  - Determinar cómo se respaldan y verifican los archivos adjuntos almacenados en Drive.
+  - Probar la recuperación en un entorno controlado.
+  - Definir cómo se comprueba que los datos restaurados conservan sus identificadores, relaciones y restricciones de acceso.
 - **Requisitos funcionales:**
-  1. Incluir todas las tablas de orientación en el payload de `createSystemBackup`.
-  2. Validar que `restoreSystemBackup` restaure los expedientes conservando los controles RBAC de acceso restringido.
-  3. Generar registro de auditoría tras cada operación de respaldo o restauración de datos de consejería.
-- **Criterios de Aceptación:**
-  - El archivo de respaldo contiene el 100% de los expedientes de orientación y planes de acompañamiento.
-  - La restauración recupera la información manteniendo las restricciones de confidencialidad por rol.
+  1. El respaldo debe incluir todas las entidades necesarias para reconstruir el expediente y sus relaciones.
+  2. Debe poder verificarse que los registros respaldados no están incompletos o corruptos.
+  3. Las copias deben mantener la confidencialidad de los datos originales.
+  4. Cada respaldo debe identificarse por fecha, alcance y resultado.
+  5. La restauración debe comprobar las relaciones entre estudiantes, casos, notas, planes, citas y adjuntos.
+  6. Los procedimientos de recuperación deben prevenir duplicados y conflictos con registros existentes.
+  7. Las copias deben estar protegidas frente a modificaciones no autorizadas.
+  8. La restauración debe probarse antes de considerarse operativa.
+  9. Los fallos parciales deben identificarse explícitamente, sin marcar el respaldo como íntegro.
+  10. La política de retención debe distinguir las copias operativas de los registros históricos que deban conservarse.
+- **Comportamiento esperado:** El sistema puede recuperar un expediente completo y coherente, incluidos sus registros relacionados y los adjuntos necesarios, sin exponer la información ni duplicar datos. Los responsables pueden verificar cuándo se creó el respaldo y si pasó las comprobaciones de integridad.
+- **Criterios de aceptación:**
+  - Se genera un respaldo que incluye todas las entidades y relaciones definidas.
+  - Se verifican conteos, identificadores y referencias entre registros.
+  - Se detectan los adjuntos ausentes o inaccesibles.
+  - Se restaura una muestra representativa en un entorno controlled.
+  - Los datos restaurados conservan las relaciones y los permisos previstos.
+  - Los respaldos no quedan accesibles públicamente.
+  - Los fallos parciales se registran y no se presentan como respaldo exitoso.
+  - Se comprueba que una restauración no duplica expedientes ni elimina cambios posteriores sin un procedimiento explícito.
+  - Se documentan los resultados y las limitaciones reales de la recuperación.
 - **Riesgo de Regresión:** Bajo.
-- **Dependencias:** `createSystemBackup`, `restoreSystemBackup`, `CasosSeguimiento`.
+- **Dependencias:** T-ORI-02, T-ORI-04 y T-ORI-10. La integración con el sistema general de respaldo debe aprovechar los mecanismos existentes y evitar crear una vía paralela sin necesidad.
 
 ---
 
@@ -5533,15 +5931,15 @@ El destinatario puede abrir una comunicación y completar la acción solicitada 
 | **2** | **T-ORI-02.** Confidencialidad granular y aislamiento RBAC de notas sensibles | **P1** | `assertRecordOwnership` / RBAC |
 | **3** | **T-ORI-03.** Verificación de propiedad y relaciones familiares en portal familiar | **P1** | `RelacionesFamiliares` |
 | **4** | **T-ORI-04.** Proxy de descarga segura con token firmado para evidencias Drive | **P1** | `getSecureDocumentStream` |
-| **5** | **T-ORI-07.** Motor de alertas tempranas por patrones de ausentismo y riesgo | **P2** | `evaluateEarlyWarningAlerts` |
-| **6** | **T-ORI-05.** Flujo formal de derivación institucional a orientación | **P2** | `referStudentToGuidance` |
-| **7** | **T-ORI-06.** Módulo de citas de orientación con detección de conflictos | **P2** | `bookAppointment` |
-| **8** | **T-ORI-08.** Planes de acompañamiento conductual con objetivos JSON | **P2** | `PlanesAcompanamiento` |
-| **9** | **T-ORI-09.** Inalterabilidad de expedientes de orientación en períodos cerrados | **P2** | `CierresPeriodos` |
-| **10** | **T-ORI-10.** Historial cronológico de actuaciones y bitácora de intervenciones | **P2** | `getCaseFollowUpNotes` |
-| **11** | **T-ORI-11.** Búsqueda avanzada multicriterio y panel de tareas pendientes | **P2** | `teacher-dashboard.html` / UI |
-| **12** | **T-ORI-12.** Sincronización de planes de apoyo con la libreta de notas | **P2** | `CalificacionesEstudiantes` |
-| **13** | **T-ORI-13.** Dashboard consolidado de indicadores de bienestar y clima escolar | **P3** | Universal Chart Engine |
-| **14** | **T-ORI-14.** Exportación estructurada de informes de orientación y actas PDF | **P3** | `generateSchoolDocument` |
-| **15** | **T-ORI-15.** Herramienta de conciliación entre incidentes y expediente | **P3** | Reconciliation Engine |
-| **16** | **T-ORI-16.** Respaldo integral e inmutable de expedientes de bienestar | **P3** | `createSystemBackup` |
+| **5** | **T-ORI-05.** Flujo formal de derivación institucional entre docentes, orientación y Dirección | **P2** | `referStudentToGuidance` |
+| **6** | **T-ORI-06.** Gestión avanzada de citas de orientación, conflictos horarios y recordatorios | **P2** | `bookAppointment` |
+| **7** | **T-ORI-07.** Motor configurable de alertas tempranas por ausentismo, rendimiento y riesgo de deserción | **P2** | `evaluateEarlyWarningAlerts` |
+| **8** | **T-ORI-08.** Planes de acompañamiento estructurados, medibles y revisables | **P2** | `PlanesAcompanamiento` |
+| **9** | **T-ORI-09.** Integridad histórica de expedientes y actuaciones de períodos cerrados | **P2** | `CierresPeriodos` |
+| **10** | **T-ORI-10.** Cronología unificada y bitácora de actuaciones pedagógicas | **P2** | `getCaseFollowUpNotes` |
+| **11** | **T-ORI-11.** Búsqueda avanzada multicriterio y panel de seguimiento pendiente | **P2** | `teacher-dashboard.html` / UI |
+| **12** | **T-ORI-12.** Sincronización controlada de planes de apoyo con el expediente académico y la libreta de notas | **P2** | `CalificacionesEstudiantes` |
+| **13** | **T-ORI-13.** Panel consolidado de indicadores de bienestar y clima escolar por grado | **P3** | Universal Chart Engine |
+| **14** | **T-ORI-14.** Exportación estructurada de informes de orientación y actas en PDF y Excel | **P3** | `generateSchoolDocument` |
+| **15** | **T-ORI-15.** Conciliación entre incidencias, actuaciones y resumen del expediente | **P3** | Reconciliation Engine |
+| **16** | **T-ORI-16.** Respaldo integral, verificable y protegido de expedientes de bienestar | **P3** | `createSystemBackup` |
