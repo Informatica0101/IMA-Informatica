@@ -741,6 +741,139 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+// ---------------------------------------------------------------------------
+// FASE 29 & E-001..E-003: GESTOR DE RESPALDOS Y RESTAURACIÓN DE SISTEMA
+// ---------------------------------------------------------------------------
+
+window.openBackupManagerModal = function() {
+    let modal = document.getElementById('modal-backup-manager');
+    if (!modal) {
+        modal = document.createElement('div');
+        modal.id = 'modal-backup-manager';
+        modal.className = 'fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-[110] flex items-center justify-center p-3 md:p-6 animate-fade-in';
+        modal.innerHTML =
+            '<div class="bg-white rounded-3xl max-w-4xl w-full max-h-[90vh] flex flex-col shadow-2xl border border-slate-100 overflow-hidden">' +
+                '<div class="p-5 bg-slate-900 text-white flex items-center justify-between flex-shrink-0">' +
+                    '<div class="flex items-center gap-3">' +
+                        '<div class="w-10 h-10 rounded-2xl bg-indigo-600/30 flex items-center justify-center border border-indigo-400/30 text-indigo-400">' +
+                            '<i class="fa-solid fa-database text-lg"></i>' +
+                        '</div>' +
+                        '<div>' +
+                            '<h3 class="font-black text-base md:text-lg uppercase tracking-tight">Copias de Seguridad y Respaldos JSON</h3>' +
+                            '<p class="text-[10px] font-semibold text-slate-400 uppercase tracking-widest">Resguardos Integrales de Base de Datos y Verificación Checksum</p>' +
+                        '</div>' +
+                    '</div>' +
+                    '<button onclick="document.getElementById(\'modal-backup-manager\').classList.add(\'hidden\')" class="w-9 h-9 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white flex items-center justify-center transition-colors">' +
+                        '<i class="fa-solid fa-xmark"></i>' +
+                    '</button>' +
+                '</div>' +
+                '<div class="p-6 overflow-y-auto space-y-4 flex-grow text-xs">' +
+                    '<div class="flex justify-between items-center bg-indigo-50 border border-indigo-100 rounded-2xl p-4">' +
+                        '<div>' +
+                            '<h4 class="font-bold text-indigo-900 text-sm">Generar Punto de Control Ahora</h4>' +
+                            '<p class="text-indigo-700 text-xs">Crea una copia congelada con sumas Checksum SHA-256 almacenada en Drive.</p>' +
+                        '</div>' +
+                        '<button onclick="window.triggerCreateSystemBackup()" class="px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold uppercase tracking-wider text-xs transition-all shadow-md flex items-center gap-2">' +
+                            '<i class="fa-solid fa-cloud-arrow-up"></i> Generar Respaldo' +
+                        '</button>' +
+                    '</div>' +
+                    '<div id="backups-list-container" class="space-y-2">' +
+                        '<div class="text-center py-8 text-slate-400 font-semibold">' +
+                            '<i class="fa-solid fa-spinner fa-spin text-2xl mb-2 block"></i> Cargando lista de respaldos...' +
+                        '</div>' +
+                    '</div>' +
+                '</div>' +
+            '</div>';
+        document.body.appendChild(modal);
+    } else {
+        modal.classList.remove('hidden');
+    }
+
+    window.fetchSystemBackupsList();
+};
+
+window.fetchSystemBackupsList = async function() {
+    const container = document.getElementById('backups-list-container');
+    if (!container) return;
+
+    try {
+        const res = await fetchApi('ACADEMIC', 'listSystemBackups', {});
+        if (res && res.status === 'success' && Array.isArray(res.backups) && res.backups.length > 0) {
+            let html = '<div class="divide-y divide-slate-100 border border-slate-100 rounded-2xl overflow-hidden">';
+            res.backups.forEach(function(b) {
+                html +=
+                    '<div class="p-3 bg-white hover:bg-slate-50 flex items-center justify-between gap-3">' +
+                        '<div>' +
+                            '<h5 class="font-bold text-slate-800 text-xs truncate">' + b.fileName + '</h5>' +
+                            '<p class="text-[10px] text-slate-400 font-medium">Fecha: ' + (b.createdTime || b.timestamp || 'N/A') + ' | Checksum: ' + (b.checksum || 'SHA-256') + '</p>' +
+                        '</div>' +
+                        '<div class="flex items-center gap-2 flex-shrink-0">' +
+                            '<a href="' + b.fileUrl + '" target="_blank" class="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg font-bold text-[10px] flex items-center gap-1">' +
+                                '<i class="fa-solid fa-download"></i> Descargar' +
+                            '</a>' +
+                            '<button onclick="window.triggerRestoreSystemBackup(\'' + b.fileId + '\', \'' + b.fileName + '\')" class="px-2.5 py-1.5 bg-amber-500 hover:bg-amber-600 text-white rounded-lg font-bold text-[10px] flex items-center gap-1">' +
+                                '<i class="fa-solid fa-rotate-left"></i> Restaurar' +
+                            '</button>' +
+                        '</div>' +
+                    '</div>';
+            });
+            html += '</div>';
+            container.innerHTML = html;
+        } else {
+            container.innerHTML = '<div class="text-center py-8 text-slate-400 font-semibold">No se encontraron respaldos registrados previamente.</div>';
+        }
+    } catch (e) {
+        console.error('Error cargando lista de respaldos:', e);
+        container.innerHTML = '<div class="text-center py-8 text-red-500 font-semibold">No se pudo cargar la lista de respaldos.</div>';
+    }
+};
+
+window.triggerCreateSystemBackup = async function() {
+    try {
+        if (window.showLoading) window.showLoading('Generando copia de seguridad integral...');
+        const res = await fetchApi('ACADEMIC', 'createSystemBackup', {});
+        if (window.hideLoading) window.hideLoading();
+
+        if (res && res.status === 'success') {
+            alert('Copia de seguridad creada correctamente: ' + res.fileName);
+            window.fetchSystemBackupsList();
+        } else {
+            alert(res && res.message ? res.message : 'Error al crear la copia de seguridad.');
+        }
+    } catch (err) {
+        if (window.hideLoading) window.hideLoading();
+        console.error('Error al generar respaldo:', err);
+    }
+};
+
+window.triggerRestoreSystemBackup = async function(fileId, fileName) {
+    const confirmation = prompt(`ADVERTENCIA DE SEGURIDAD:\nVas a restaurar el punto de control "${fileName}".\nLas notas históricas serán preservadas intactas.\nPara confirmar, escribe el código exacto: RESTORE-CONFIRMED`);
+    if (confirmation !== 'RESTORE-CONFIRMED') {
+        alert('Código de confirmación incorrecto. Restauración cancelada.');
+        return;
+    }
+
+    try {
+        if (window.showLoading) window.showLoading('Procesando restauración de copia de seguridad...');
+        const res = await fetchApi('ACADEMIC', 'restoreSystemBackup', {
+            fileId: fileId,
+            confirmationCode: 'RESTORE-CONFIRMED',
+            preserveHistoricGrades: true
+        });
+        if (window.hideLoading) window.hideLoading();
+
+        if (res && res.status === 'success') {
+            alert('Restauración completada correctamente con preservación de calificaciones históricas.');
+            window.location.reload();
+        } else {
+            alert(res && res.message ? res.message : 'Error al procesar la restauración.');
+        }
+    } catch (err) {
+        if (window.hideLoading) window.hideLoading();
+        console.error('Error al restaurar respaldo:', err);
+    }
+};
+
     document.getElementById('btn-run-health-checks')?.addEventListener('click', runTechnicalHealthChecks);
 
     // Lógica de Migración del Banco de Preguntas (Fase 2)
@@ -1748,7 +1881,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const stId = btn.getAttribute('data-student-id');
                 if (window.openStudentFileModal) window.openStudentFileModal(stId);
             });
-        });;
+        });
     }
 
     /**

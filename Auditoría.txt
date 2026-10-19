@@ -1356,3 +1356,25 @@ Archivos Auditados:
 - Inyectar `LockService` en `getPendingReminders` y crear endpoints `configureAutomationRules`, `getAutomationRules` y `getNotificationAuditLogs` en `backend/user-service/Code.gs`.
 - Actualizar la lista de precaché en `sw.js`.
 - Enriquecer `window.queueOfflineAction` y `window.syncOfflineQueue` en `js/ui-common.js` actualizando la insignia `#online-status-badge` con el contador de pendientes.
+
+====================================================================================================
+AUDITORÍA TÉCNICA - INTEGRACIONES MULTICANAL, PROVEEDORES Y RESPALDOS ANTE DESASTRES (C-005, D-001..D-005, E-001..E-003) - Mon Oct 19 2026
+
+Archivos Auditados:
+- `manifest.json`
+- `backend/user-service/Code.gs`
+- `backend/academic-service/Code.gs`
+- `teacher-dashboard.html`
+- `js/teacher.js`
+
+1. DIAGNÓSTICO Y COMPONENTES EXISTENTES
+- PWA Manifest (`manifest.json`):
+  * Posee los campos base `name`, `short_name`, `start_url`, `display` e `icons`. Se enriquece con `scope`, `categories` y accesos directos `shortcuts`.
+- Backend Multicanal & Respaldos (`backend/user-service/Code.gs`, `backend/academic-service/Code.gs`):
+  * Cuentan con `configureNotificationChannel`, `sendChannelNotificationTest`, `getNotificationPreferences`, `createSystemBackup`, `listSystemBackups`, `verifyBackupIntegrity` y `restoreSystemBackup` con protección explícita de notas históricas.
+- UI & Controlador Docente (`teacher-dashboard.html`, `js/teacher.js`):
+  * Se requiere la vinculación interactiva del modal de configuración de canales `#modal-channel-config` y del gestor de respaldos.
+
+2. PLAN DE REMEDIACIÓN E IMPLEMENTACIÓN
+- Enriquecer `manifest.json` con accesos directos PWA.
+- Vincular las funciones de prueba de conectividad de canal y gestión de respaldos en `js/teacher.js` y `teacher-dashboard.html`.

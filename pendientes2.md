@@ -1644,7 +1644,7 @@ Criterios de Aceptación:
 - **Criterios de Aceptación:**
   - Cumplimiento de criterios de instalabilidad PWA en Lighthouse.
   - Banner de instalación nativo funcional en navegadores soportados.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 
 ## 4. ÁREA D: CENTRO DE INTEGRACIONES Y PROVEEDORES
@@ -1655,7 +1655,7 @@ Criterios de Aceptación:
 - **Criterios de Aceptación:**
   - Las fallas en proveedores externos no afectan el funcionamiento de las notificaciones internas.
   - Registro de credenciales cifradas y validadas por servidor.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 ### [D-002] Panel UI de Administración de Integraciones y Proveedores
 - **Archivos Involucrados:** `teacher-dashboard.html`, `js/teacher.js`
@@ -1663,7 +1663,7 @@ Criterios de Aceptación:
 - **Criterios de Aceptación:**
   - Interfaz interactiva de prueba de envío con reporte de código de respuesta HTTP.
   - Acceso restringido exclusivamente a roles Administrador y Director.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 ### [D-003] Normalización de Preferencias del Usuario e Idempotencia
 - **Archivos Involucrados:** `backend/user-service/Code.gs`, `js/ui-common.js`
@@ -1671,7 +1671,7 @@ Criterios de Aceptación:
 - **Criterios de Aceptación:**
   - El backend descarta automáticamente envíos por canales no autorizados por el usuario.
   - Control estricto de límites por hora y prevención de spam.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 ### [D-004] Bitácora Central de Envíos Externos e Alertas de Fallos
 - **Archivos Involucrados:** `backend/user-service/Code.gs`
@@ -1679,7 +1679,7 @@ Criterios de Aceptación:
 - **Criterios de Aceptación:**
   - Genera alerta automática al Administrador si la tasa de fallos supera el 15%.
   - Historial consultable con filtros por fecha, canal y destinatario.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 ### [D-005] Pruebas de Desconexión y Resiliencia Multicanal
 - **Archivos Involucrados:** `js/teacher.js`, `backend/user-service/Code.gs`
@@ -1687,7 +1687,7 @@ Criterios de Aceptación:
 - **Criterios de Aceptación:**
   - Conmutación automática a canal interno (In-App) sin interrupción de la experiencia del usuario.
   - Sin excepciones no capturadas ni bloqueos en el hilo principal.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 
 ## 5. ÁREA E: CONTINUIDAD OPERATIVA Y RECUPERACIÓN ANTE DESASTRES
@@ -1698,7 +1698,7 @@ Criterios de Aceptación:
 - **Criterios de Aceptación:**
   - Generación de respaldo manual y programado.
   - Verificación de integridad mediante `verifyBackupIntegrity`.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 ### [E-002] Procedimiento de Restauración Controlada con Preservación Histórica
 - **Archivos Involucrados:** `backend/academic-service/Code.gs`
@@ -1706,7 +1706,7 @@ Criterios de Aceptación:
 - **Criterios de Aceptación:**
   - Preserva intactos los registros de auditoría e historial de notas.
   - Requiere doble confirmación y rol exclusivo de Administrador.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 ### [E-003] Interfaz UI de Gestión de Respaldos y Estado del Sistema
 - **Archivos Involucrados:** `teacher-dashboard.html`, `js/teacher.js`
@@ -1714,7 +1714,7 @@ Criterios de Aceptación:
 - **Criterios de Aceptación:**
   - Muestra tabla con fecha, tamaño, checksum y estado de cada respaldo.
   - Modal interactivo de confirmación de restauración con advertencias de seguridad.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 ### [E-004] Pruebas Simuladas de Desastre y Failover de Datos
 - **Archivos Involucrados:** `backend/academic-service/Code.gs`

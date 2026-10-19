@@ -1401,3 +1401,11 @@ Descripción de cambios:
   - Enriquecidas la cola de acciones IndexedDB (`window.queueOfflineAction`) y el motor de sincronización (`window.syncOfflineQueue`).
 - `Auditoría.txt`, `pendientes2.md`:
   - Registrados los hallazgos de auditoría y marcadas como completadas las tareas B-001, B-003, B-004, C-001, C-002, C-003 y C-004.
+
+## [Fase: PWA Standalone, Adaptadores Multicanal y Gestión de Respaldos C-005, D-001..D-005, E-001..E-003] - 2026-10-19
+- `manifest.json`:
+  - Enriquecido con metadatos PWA (`scope`, `orientation`, `categories`) y accesos directos `shortcuts` para los portales de estudiante y docente.
+- `js/teacher.js`:
+  - Implementada la interfaz modal `#modal-backup-manager`, consulta de respaldos `fetchSystemBackupsList`, creación manual `triggerCreateSystemBackup` y flujo de restauración segura `triggerRestoreSystemBackup` con código de confirmación.
+- `Auditoría.txt`, `pendientes2.md`:
+  - Registrada la bitácora de auditoría y marcadas las tareas C-005, D-001..D-005, E-001..E-003 como completadas.
