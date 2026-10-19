@@ -9215,3 +9215,260 @@ El destinatario puede abrir una comunicación y completar la acción solicitada 
 | **1** | **T18-02 / T18-COM-05**, **T18-05 / T18-COM-08**, **T18-06 / T18-COM-04**, **T18-07 / T18-COM-16**, **T18-09 / T18-COM-02 / T18-COM-03**, **T18-14 / T18-COM-01 / T18-COM-13** | Control presupuestario preventivo, recepciones parciales, conciliación atómica tripartita, ciclo de pagos con pasivo contable, LockService en numeración, aislamiento RBAC y PDF oficial con tests. | Backend `Code.gs` / `ROLE_PERMISSIONS` / `LockService` / `PresupuestosInstitucionales` / `recordPurchaseReceipt` |
 | **2** | **T18-01 / T18-COM-09**, **T18-03 / T18-COM-07**, **T18-04 / T18-COM-06**, **T18-08 / T18-COM-10**, **T18-10 / T18-COM-14**, **T18-11 / T18-COM-11 / T18-COM-15** | Interfaz UI interactiva en `js/accounting.js`, contratos/proveedores inactivos, matriz comparativa de ofertas, integración de activos fijos patrimoniales, trazabilidad/desempeño de proveedores e informes/exportación. | `renderComprasModule` / `CotizacionesCompra` / `ProveedoresActivos` / `manageAssetItem` / Universal Chart Engine |
 | **3** | **T18-12 / T18-COM-12**, **T18-13** | Alertas operativas de vencimiento de cotizaciones/contratos y acuerdos de compra recurrente. | Centro de Notificaciones / Módulo de Compras |
+
+---
+
+## TAREAS DE RESOLUCIÓN - FASE 19: INVENTARIO, ACTIVOS FIJOS Y MANTENIMIENTO
+
+### T19-01 / T19-INV-01 [P0] — Aislamiento y control RBAC estricto en API de Inventario, Activos y Mantenimiento
+
+- **Componentes relacionados:** `backend/accounting-service/Code.gs` (`ROLE_PERMISSIONS`, `manageWarehouseLocation`, `transferInventoryStock`, `createMaterialRequisition`, `deliverMaterialRequisition`, `reconcilePhysicalCount`, `manageAssetItem`, `assignAssetCustody`, `manageMaintenanceOrder`, `registerAssetDisposal`).
+- **Estado inicial:** Implementada con validación de roles estándar; requiere restricción estricta en servidor.
+- **Dependencias:** `ROLE_PERMISSIONS`.
+- **Problema detectado:** Asegurar que únicamente usuarios autorizados (`Administrador`, `Director`, `Subdirector`, `Contador`) puedan ejecutar ajustes de inventario, transferencias de custodia, reconciliación de conteos o bajas de activos.
+- **Requisitos funcionales:**
+  1. Validar `authRole` en el backend antes de procesar operaciones sensibles de inventario y activos.
+  2. Rechazar invocaciones no autorizadas provenientes de perfiles de estudiantes o docentes no autorizados.
+- **Criterios de Aceptación:**
+  - Peticiones sin permiso son rechazadas en el servidor arrojando excepción de autorización explícita.
+- **Riesgo de Regresión:** Bajo.
+
+---
+
+### T19-02 / T19-INV-02 [P0] — Control de concurrencia y prevención de stock negativo en transferencias y entregas
+
+- **Componentes relacionados:** `backend/accounting-service/Code.gs` (`transferInventoryStock`, `deliverMaterialRequisition`, `recordInventoryMovement`).
+- **Estado inicial:** Validación básica de cantidad positiva; requiere control de concurrencia atómico.
+- **Dependencias:** `LockService`, `InventariosKardex`.
+- **Problema detectado:** En operaciones simultáneas de entrega o despacho de almacén, existe riesgo de dejar existencias en saldo negativo por lecturas concurrentes del stock disponible.
+- **Requisitos funcionales:**
+  1. Utilizar `LockService.getScriptLock().waitLock(10000)` al procesar transferencias y entregas de materiales.
+  2. Verificar el stock acumulado actual antes de realizar el débito y cancelar la transacción si la cantidad solicitada supera la disponibilidad real.
+- **Criterios de Aceptación:**
+  - Solicitudes simultáneas que excedan el stock disponible son rechazadas evitando saldos negativos en Kardex.
+- **Riesgo de Regresión:** Bajo.
+
+---
+
+### T19-03 / T19-INV-03 [P0] — Catálogo unificado y clasificación estructurada de recursos consumibles vs activos patrimoniales
+
+- **Componentes relacionados:** `backend/accounting-service/Code.gs` (`recordInventoryMovement`, `manageAssetItem`), `js/accounting.js`.
+- **Estado inicial:** Implementada; requiere catálogo unificado con búsqueda por código único.
+- **Dependencias:** `InventariosKardex`, `ActivosPatrimoniales`.
+- **Problema detectado:** Garantizar la diferenciación clara en el catálogo entre bienes controlados por cantidad (consumibles/papelería) y activos individuales identificables (laptops, proyectores, mobiliario) sin colisiones de código.
+- **Requisitos funcionales:**
+  1. Exigir campos obligatorios específicos según el tipo de recurso (ej. serie/modelo y ubicación para activos, categoría y stock mínimo para consumibles).
+  2. Garantizar que la modificación administrativa de un producto o activo no altere silenciosamente sus registros de movimientos pasados.
+- **Criterios de Aceptación:**
+  - Modificar la descripción de un item o activo conserva intactos los identificadores y valores en el historial.
+- **Riesgo de Regresión:** Nulo.
+
+---
+
+### T19-04 / T19-INV-04 [P0] — Recepción de entradas e integración atómica con Compras y Proveedores
+
+- **Componentes relacionados:** `backend/accounting-service/Code.gs` (`recordInventoryMovement`, `recordPurchaseReceipt`), `InventariosKardex`.
+- **Estado inicial:** Integración básica en recepciones; requiere trazabilidad completa del documento de origen.
+- **Dependencias:** Módulo de Compras (Fase 18).
+- **Problema detectado:** Asegurar que cada recepción de compra registre la entrada en Kardex conservando el proveedor, orden de compra y número de factura original.
+- **Requisitos funcionales:**
+  1. Registrar en la entrada de Kardex la referencia cruzada `ordenCompraId`, `proveedorId` y `recepcionId`.
+  2. Evitar que una re-ejecución o fallo en la recepción cree movimientos duplicados de entrada en el Kardex.
+- **Criterios de Aceptación:**
+  - La entrada en Kardex incluye el identificador de la orden de compra y proveedor sin duplicar cantidades al reintentar.
+- **Riesgo de Regresión:** Bajo.
+
+---
+
+### T19-05 / T19-INV-05 [P0] — Salidas por consumo, requisiciones internas y transferencias multialmacén
+
+- **Componentes relacionados:** `backend/accounting-service/Code.gs` (`transferInventoryStock`, `createMaterialRequisition`, `deliverMaterialRequisition`).
+- **Estado inicial:** Funciones creadas; requiere trazabilidad completa entre origen y destino.
+- **Dependencias:** `AlmacenesUbicaciones`, `MaterialesSolicitudes`, `InventariosKardex`.
+- **Problema detectado:** Garantizar la consistencia en el traslado de materiales entre bodegas y en la entrega de suministros a departamentos solicitantes.
+- **Requisitos funcionales:**
+  1. En transferencias multialmacén, acreditar la salida en el almacén de origen y el ingreso en el almacén de destino por el mismo monto en un solo paso atómico.
+  2. En entregas de requisiciones internas, cambiar el estado a `Entregado` y descontar los materiales del Kardex del almacén emisor.
+- **Criterios de Aceptación:**
+  - Las transferencias mantienen la suma total de existencias institucionales constante entre bodegas.
+- **Riesgo de Regresión:** Bajo.
+
+---
+
+### T19-06 / T19-INV-06 [P0] — Ciclo de asignación de custodia, préstamo temporal y devoluciones de activos patrimoniales
+
+- **Componentes relacionados:** `backend/accounting-service/Code.gs` (`manageAssetItem`, `assignAssetCustody`), `ActivosPatrimoniales`, `AsignacionesActivos`.
+- **Estado inicial:** Asignación básica implementada; requiere flujo de transferencias de custodia e historial.
+- **Dependencias:** `ActivosPatrimoniales`, `AsignacionesActivos`.
+- **Problema detectado:** Llevar el control ininterrumpido de quién es el custodio responsable de cada equipo y su ubicación física actual.
+- **Requisitos funcionales:**
+  1. Registrar cada cambio de custodio en `AsignacionesActivos` manteniendo la fecha, custodio anterior, nuevo custodio y observaciones.
+  2. Impedir la asignación simultánea de un mismo activo a dos personas como poseedores exclusivos.
+  3. Permitir registrar devoluciones de equipos actualizando el estado del activo a `Disponible en Bodega`.
+- **Criterios de Aceptación:**
+  - La consulta del activo muestra el custodio actual y el historial cronológico completo de asignaciones anteriores.
+- **Riesgo de Regresión:** Nulo.
+
+---
+
+### T19-08 / T19-INV-07 [P0] — Conteos de inventario físico, informe de diferencias y conciliación con ajuste automático de Kardex
+
+- **Componentes relacionados:** `backend/accounting-service/Code.gs` (`createPhysicalInventoryCount`, `reconcilePhysicalCount`), `InventariosConteosFisicos`, `InventariosKardex`.
+- **Estado inicial:** Reconciliación básica operativa; requiere flujo de aprobación previa de ajustes.
+- **Dependencias:** `InventariosConteosFisicos`, `InventariosKardex`.
+- **Problema detectado:** Permitir el registro de toma física de inventario por almacén, compararla contra el Kardex teórico y aplicar los ajustes autorizados.
+- **Requisitos funcionales:**
+  1. Generar la hoja de conteo para una ubicación física capturando el stock contado por item.
+  2. Calcular automáticamente las diferencias (sobrantes y faltantes) contra el saldo teórico del Kardex.
+  3. Exigir la aprobación de un usuario directivo (`Director` / `Contador`) antes de aplicar los movimientos de ajuste.
+  4. Generar los movimientos de ajuste en `InventariosKardex` con el motivo `Ajuste por Conteo Físico ID CNT-*`.
+- **Criterios de Aceptación:**
+  - Al aprobar el conteo, el Kardex se actualiza con las cantidades contadas y se conserva el registro histórico del ajuste.
+- **Riesgo de Regresión:** Medio.
+
+---
+
+### T19-10 / T19-INV-08 [P0] — Registro individual de activos patrimoniales, hoja de vida y desincorporaciones (Bajas)
+
+- **Componentes relacionados:** `backend/accounting-service/Code.gs` (`manageAssetItem`, `registerAssetDisposal`), `ActivosPatrimoniales`, `BajasBienes`.
+- **Estado inicial:** Registro y bajas implementadas; requiere hoja de vida consolidada del activo.
+- **Dependencias:** `ActivosPatrimoniales`, `BajasBienes`, `MantenimientoOrdenes`.
+- **Problema detectado:** Reconstruir la hoja de vida de un activo desde su adquisición hasta su baja definitiva por daño, robo u obsolescencia.
+- **Requisitos funcionales:**
+  1. Asignar un ID de activo patrimonial inalterable `ACT-*` durante todo su ciclo de vida.
+  2. Al procesar una baja en `registerAssetDisposal`, actualizar el estado del activo a `DadoDeBaja`, grabar el motivo, `valorLibros` y usuario autorizador.
+  3. Prevenir que un activo dado de baja vuelva a aparecer disponible para asignaciones o mantenimientos.
+- **Criterios de Aceptación:**
+  - Los activos dados de baja quedan inactivos para nuevas operaciones y conservan su acta de desincorporación en `BajasBienes`.
+- **Riesgo de Regresión:** Nulo.
+
+---
+
+### T19-12 / T19-INV-09 [P0] — Gestión de órdenes de mantenimiento preventivo, correctivo y repuestos consumidos
+
+- **Componentes relacionados:** `backend/accounting-service/Code.gs` (`manageMaintenanceOrder`), `MantenimientoOrdenes`, `InventariosKardex`.
+- **Estado inicial:** Registro de mantenimiento implementado; requiere integración con descuento de repuestos en Kardex.
+- **Dependencias:** `MantenimientoOrdenes`, `ActivosPatrimoniales`, `InventariosKardex`.
+- **Problema detectado:** Gestionar las solicitudes de mantenimiento de equipos y aulas, vinculando el consumo de repuestos con el Kardex de inventario.
+- **Requisitos funcionales:**
+  1. Registrar órdenes de trabajo `MNT-*` clasificadas por tipo (`Preventivo` / `Correctivo`) y prioridad (`Alta`, `Media`, `Baja`).
+  2. Permitir desglosar los repuestos o insumos utilizados en formato JSON (`repuestosConsumidosJSON`).
+  3. Al cerrar la orden de mantenimiento como `Resuelto`, descontar automáticamente los repuestos del Kardex de inventario.
+- **Criterios de Aceptación:**
+  - Cerrar la orden de trabajo descuenta los repuestos utilizados de las existencias del Kardex.
+- **Riesgo de Regresión:** Bajo.
+
+---
+
+### T19-07 / T19-INV-10 [P1] — Parámetros de stock mínimo, alertas de desabastecimiento y sugerencias de reposición
+
+- **Componentes relacionados:** `backend/accounting-service/Code.gs` (`recordInventoryMovement`, `getInventoryKardex`), `js/accounting.js`.
+- **Estado inicial:** Flag `alertaStockMinimo` retornado en backend; requiere panel visual de alertas en UI.
+- **Dependencias:** `InventariosKardex`, `js/accounting.js`.
+- **Problema detectado:** Visualizar los materiales cuyo saldo actual ha alcanzado o descendido del nivel de stock mínimo configurado para activar su reabastecimiento.
+- **Requisitos funcionales:**
+  1. Destacar en el panel de Kardex los productos en nivel crítico de existencias con un indicador visual.
+  2. Ofrecer un botón para generar automáticamente una propuesta de Solicitud de Compra (Fase 18) a partir de los insumos bajo mínimos.
+- **Criterios de Aceptación:**
+  - El sistema resalta los insumos desabastecidos y permite prellenar una solicitud de compra con la cantidad requerida para alcanzar el stock óptimo.
+- **Riesgo de Regresión:** Nulo.
+
+---
+
+### T19-09 / T19-INV-11 [P1] — Identificación rápida de activos mediante lectura de código QR / Códigos de Barras
+
+- **Componentes relacionados:** `js/accounting.js` (`renderActivosView`), `teacher-dashboard.html`.
+- **Estado inicial:** Búsqueda por texto implementada; requiere integración de escáner QR.
+- **Dependencias:** Cámara del dispositivo, HTML5 QR Scanner Library.
+- **Problema detectado:** Permitir que los encargados de inventario escaneen la etiqueta QR de un equipo o mobiliario para abrir directamente su ficha patrimonial y solicitar mantenimiento o transferencia.
+- **Requisitos funcionales:**
+  1. Integrar lector de cámara para escanear etiquetas de código de barras o QR de activos patrimoniales.
+  2. Al escanear un código válido, abrir la ventana de detalle del activo con su custodio, ubicación e historial.
+- **Criterios de Aceptación:**
+  - Escanear una etiqueta QR desde un teléfono o laptop despliega inmediatamente la ficha del activo correspondiente.
+- **Riesgo de Regresión:** Nulo.
+
+---
+
+### T19-11 / T19-INV-12 [P1] — Registro de garantías, contratos de mantenimiento y proveedores de servicio técnico
+
+- **Componentes relacionados:** `backend/accounting-service/Code.gs` (`manageAssetItem`, `manageMaintenanceOrder`), `ActivosPatrimoniales`.
+- **Estado inicial:** Campos básicos en observaciones; requiere campos estructurados de garantía.
+- **Dependencias:** `ActivosPatrimoniales`, Catálogo de Proveedores (Fase 18).
+- **Problema detectado:** Controlar la vigencia de las garantías de fábrica o contratos de soporte de los equipos institucionales para reclamar coberturas antes de incurrir en gastos de reparación.
+- **Requisitos funcionales:**
+  1. Almacenar fecha de vencimiento de garantía, proveedor del servicio técnico y número de póliza en la ficha del activo.
+  2. Advertir en la orden de trabajo si el activo con falla se encuentra dentro del período de garantía vigente.
+- **Criterios de Aceptación:**
+  - Al reportar una falla de un activo con garantía vigente, el sistema notifica al usuario indicando el proveedor y número de póliza para cobertura gratuita.
+- **Riesgo de Regresión:** Nulo.
+
+---
+
+### T19-14 / T19-INV-13 [P1] — Motor de depreciación lineal acumulada de activos patrimoniales de capital
+
+- **Componentes relacionados:** `backend/accounting-service/Code.gs` (`getAssetItems`, `registerAssetDisposal`), `ActivosPatrimoniales`.
+- **Estado inicial:** Captura de `valorLibros` manual; requiere cálculo mensual automatizado.
+- **Dependencias:** `ActivosPatrimoniales`, Libro Mayor Contable.
+- **Problema detectado:** Calcular periódicamente la depreciación contable de los bienes de capital de acuerdo con su vida útil asignada (ej. 5 años para equipo de cómputo, 10 años para mobiliario).
+- **Requisitos funcionales:**
+  1. Implementar rutina de cálculo de depreciación por el método de línea recta (Costo inicial - Valor residual / Vida útil en meses).
+  2. Reflejar el valor neto en libros actualizado en la ficha del activo patrimonial.
+- **Criterios de Aceptación:**
+  - La consulta del activo muestra su costo original, depreciación acumulada a la fecha y valor neto en libros resultante.
+- **Riesgo de Regresión:** Bajo.
+
+---
+
+### T19-19 / T19-INV-14 [P1] — Informes consolidados de existencias, movimientos de almacén e inventario patrimonial
+
+- **Componentes relacionados:** `backend/accounting-service/Code.gs` (`getInventoryKardex`, `getAssetItems`), `js/accounting.js`.
+- **Estado inicial:** Listados por sub-pestañas operativos; requiere reportes consolidados exportables.
+- **Dependencias:** `js/accounting.js`, Universal Chart Engine.
+- **Problema detectado:** Generar informes consolidados de inventario físico por sede, ubicación, custodio y categoría para auditorías institucionales.
+- **Requisitos funcionales:**
+  1. Proveer reportes resumidos: Valorización total del inventario de consumibles, Listado de activos por custodio, Resumen de mantenimientos por equipo y Acta de bajas.
+  2. Habilitar la exportación a Excel/CSV con los filtros aplicados por el usuario.
+- **Criterios de Aceptación:**
+  - El usuario puede descargar en Excel el listado de existencias o activos patrimoniales filtrado por bodega o departamento.
+- **Riesgo de Regresión:** Nulo.
+
+---
+
+### T19-20 / T19-INV-15 [P2] — Alertas automáticas de mantenimientos preventivos programados
+
+- **Componentes relacionados:** `backend/accounting-service/Code.gs` (`getMaintenanceOrders`), `js/ui-common.js`.
+- **Estado inicial:** Registro de mantenimiento manual; requiere alertas por calendario de periodicidad.
+- **Dependencias:** `MantenimientoOrdenes`, Centro de Notificaciones.
+- **Problema detectado:** Notificar con anticipación las fechas programadas de mantenimiento preventivo para equipos críticos (ej. mantenimiento de aires acondicionados, servidores, vehículos escolares).
+- **Requisitos funcionales:**
+  1. Permitir definir periodicidad en meses para el mantenimiento preventivo de un activo.
+  2. Generar automáticamente una alerta en el panel cuando la fecha del próximo mantenimiento se aproxime (ej. 7 días antes).
+- **Criterios de Aceptación:**
+  - El sistema muestra alertas de mantenimiento preventivo pendiente en el panel de notificaciones del departamento de operaciones.
+- **Riesgo de Regresión:** Nulo.
+
+---
+
+### T19-13 / T19-INV-16 [P2] — Control de devolución de repuestos no utilizados en órdenes de trabajo
+
+- **Componentes relacionados:** `backend/accounting-service/Code.gs` (`manageMaintenanceOrder`, `recordInventoryMovement`).
+- **Estado inicial:** Descuento de repuestos al resolver; requiere reingreso de sobrantes.
+- **Dependencias:** `MantenimientoOrdenes`, `InventariosKardex`.
+- **Problema detectado:** Permitir el reingreso al Kardex de repuestos retirados para un mantenimiento que finalmente no fueron instalados.
+- **Requisitos funcionales:**
+  1. Registrar movimientos de devolución de repuestos no consumidos vinculados a la orden de mantenimiento original.
+  2. Incrementar el stock del almacén emisor con el motivo `Devolución de repuesto sin usar de Orden MNT-*`.
+- **Criterios de Aceptación:**
+  - Reingresar un repuesto no utilizado restituye el stock en Kardex y actualiza el costo real de la orden de mantenimiento.
+- **Riesgo de Regresión:** Nulo.
+
+---
+
+### ORDEN DE EJECUCIÓN RECOMENDADO FASE 19 (INVENTARIO, ACTIVOS Y MANTENIMIENTO)
+
+| Orden | Tareas | Condición para avanzar | Dependencia principal |
+| :---: | :--- | :--- | :--- |
+| **1** | **T19-01 / T19-INV-01**, **T19-02 / T19-INV-02**, **T19-03 / T19-INV-03**, **T19-04 / T19-INV-04**, **T19-05 / T19-INV-05**, **T19-06 / T19-INV-06**, **T19-08 / T19-INV-07**, **T19-10 / T19-INV-08**, **T19-12 / T19-INV-09** | Aislamiento RBAC estricto, LockService en transferencias, catálogo unificado, entradas desde compras, transferencias multialmacén, custodia de activos, conciliación de conteos físicos, hoja de vida y bajas de bienes, e integración de repuestos de mantenimiento en Kardex. | Backend `Code.gs` / `ROLE_PERMISSIONS` / `LockService` / `InventariosKardex` / `ActivosPatrimoniales` / `MantenimientoOrdenes` |
+| **2** | **T19-07 / T19-INV-10**, **T19-09 / T19-INV-11**, **T19-11 / T19-INV-12**, **T19-14 / T19-INV-13**, **T19-19 / T19-INV-14** | Panel de alertas de stock mínimo con propuesta de compra, escáner QR de activos en UI, control de garantías con advertencia de cobertura, motor de depreciación lineal e informes consolidados exportables. | `js/accounting.js` / HTML5 QR Scanner / `ActivosPatrimoniales` / Universal Chart Engine |
+| **3** | **T19-20 / T19-INV-15**, **T19-13 / T19-INV-16** | Alertas automáticas de mantenimiento preventivo por periodicidad y reingreso de repuestos no consumidos al Kardex. | Centro de Notificaciones / `MantenimientoOrdenes` / `InventariosKardex` |

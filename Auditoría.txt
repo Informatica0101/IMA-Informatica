@@ -1695,3 +1695,44 @@ Hallazgos principales:
 
 Estado general: AUDITORÍA COMPLETADA - TAREAS T18-COM-01 A T18-COM-16 REGISTRADAS EN PENDIENTES3.MD.
 ================================================================================
+
+================================================================================
+AUDITORÍA DE LA FASE 19: INVENTARIO, ACTIVOS FIJOS Y MANTENIMIENTO
+================================================================================
+Fecha de auditoría: 2026-10-19
+Documento independiente generado: AUDITORIA_FASE19_INVENTARIO_ACTIVOS_MANTENIMIENTO.md
+
+Subcapacidades auditadas e inspeccionadas (24 de 24 - 100% Cobertura):
+T19-01. Inventario Real de Componentes (`backend/accounting-service/Code.gs` y `js/accounting.js`)
+T19-02. Registro de Avance (Matriz de seguimiento completa en informe individual)
+T19-03. Catálogo y Clasificación de Recursos (`recordInventoryMovement` / `manageAssetItem`)
+T19-04. Recepción y Registro de Entradas (`recordInventoryMovement` -> `InventariosKardex`)
+T19-05. Salidas, Consumo y Transferencias (`transferInventoryStock` entre almacenes)
+T19-06. Asignación, Custodia, Préstamo y Devolución (`assignAssetCustody` -> `AsignacionesActivos`)
+T19-07. Existencias Mínimas, Vencimientos y Reposición (`alertaStockMinimo` en Kardex)
+T19-08. Inventario Físico, Conteos y Conciliación (`reconcilePhysicalCount` con ajuste de Kardex)
+T19-09. Identificación por Códigos y Lectura (`manageAssetItem` por `codigoPatrimonial`)
+T19-10. Registro Individual y Ciclo de Vida (`manageAssetItem` -> `ActivosPatrimoniales`)
+T19-11. Garantías, Reparaciones y Proveedores (`manageMaintenanceOrder` con repuestos/costos)
+T19-12. Mantenimiento Preventivo y Correctivo (`manageMaintenanceOrder` -> `MantenimientoOrdenes`)
+T19-13. Repuestos y Materiales de Mantenimiento (Consumo en JSON en orden de trabajo)
+T19-14. Costos, Vida Útil y Depreciación (`registerAssetDisposal` con `valorLibros`)
+T19-15. Integración con Compras y Presupuesto (`recordPurchaseReceipt` -> entrada automática Kardex)
+T19-16. Integración Contable y Conciliación (`registerAssetDisposal` -> `BajasBienes`)
+T19-17. Permisos y Segregación de Responsabilidades (`ROLE_PERMISSIONS` en backend)
+T19-18. Trazabilidad, Auditoría y Conservación (UserIDs, fechas y timestamps en Google Sheets)
+T19-19. Informes, Búsquedas y Experiencia Operativa (`renderInventarioModule` con subtabs en UI)
+T19-20. Alertas y Seguimiento de Tareas (Banderas de desabastecimiento en respuestas JSON)
+T19-21. Integridad de Datos y Recuperación (Validación de stock y excepciones explícitas)
+T19-22. Recorridos Integrales Extremo a Extremo (Verificados escenarios A, B, C, D, E, F, G)
+T19-23. Usabilidad, Rendimiento y Operación Cotidiana (Panel interactivo en `js/accounting.js`)
+T19-24. Registro de Hallazgos (Matriz con 100% de cobertura verificada)
+
+Hallazgos principales:
+- Verificados los microservicios de Operaciones Físicas en `backend/accounting-service/Code.gs` (`manageWarehouseLocation`, `transferInventoryStock`, `createMaterialRequisition`, `deliverMaterialRequisition`, `createPhysicalInventoryCount`, `reconcilePhysicalCount`, `manageAssetItem`, `assignAssetCustody`, `manageMaintenanceOrder`, `registerAssetDisposal`).
+- Confirmada la trazabilidad multialmacén de consumibles y el ciclo de vida completo de activos patrimoniales (Alta -> Custodia -> Mantenimiento -> Baja).
+- Operativa la conciliación automática de conteos físicos y la integración directa con recepciones de compras.
+- Planificadas e integradas las tareas de resolución T19-01 a T19-24 en `pendientes3.md`.
+
+Estado general: AUDITORÍA COMPLETADA - TAREAS T19-01 A T19-24 REGISTRADAS EN PENDIENTES3.MD.
+================================================================================
