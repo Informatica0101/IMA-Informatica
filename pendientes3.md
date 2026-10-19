@@ -5272,3 +5272,276 @@ El destinatario puede abrir una comunicación y completar la acción solicitada 
 | **17** | **T-COM-17.** Gestión de incidencias y seguimiento de comunicaciones problemáticas | **P3** | Support tickets |
 | **18** | **T-COM-18.** Políticas de retención, conservación y exportación de comunicaciones | **P3** | Data retention policy |
 | **19** | **T-COM-19.** Acciones directas desde las comunicaciones y seguimiento de tareas | **P3** | `SolicitudesTramites` |
+
+
+---
+
+## PLAN DE TRABAJO DETALLADO Y UNIFICADO: FASE DE BIENESTAR ESTUDIANTIL, ORIENTACIÓN Y SEGUIMIENTO DE CASOS
+
+### T-ORI-01 [P1] — Control de concurrencia transaccional con LockService en la actualización de expedientes de seguimiento
+
+- **Componentes relacionados:** `backend/academic-service/Code.gs` (`addCaseFollowUpNote`), `js/teacher.js`.
+- **Problema detectado:** Al actualizar un expediente de seguimiento en `CasosSeguimiento` agregando notas o modificando el estado del caso, el servidor no utiliza un bloqueo exclusivo mediante `LockService.getScriptLock()`. Múltiples profesionales de orientación o tutores trabajando en paralelo sobre el mismo caso pueden provocar condiciones de carrera y sobreescrituras en el campo `AccionesJSON` o resumen.
+- **Requisitos funcionales:**
+  1. Proteger con `LockService.getScriptLock()` con timeout de 10 segundos la llamada a `addCaseFollowUpNote` y actualización de estado.
+  2. Adquirir el bloqueo antes de leer el estado actual del caso y actualizar `CasosSeguimiento`.
+  3. Validar en el servidor que el usuario solicitante tenga permiso activo sobre el caso antes de guardar la nota.
+  4. Realizar la actualización de forma atómica e idempotente.
+  5. En caso de no adquirir el bloqueo tras 10 segundos, responder con un error controlado solicitando al cliente un reintento seguro.
+- **Criterios de Aceptación:**
+  - Peticiones simultáneas sobre el mismo expediente se procesan secuencialmente sin pérdida ni sobrescritura de notas previas.
+  - La concurrencia no corrompe la estructura JSON de compromisos ni borra las intervenciones anteriores.
+- **Riesgo de Regresión:** Bajo.
+- **Dependencias:** `CasosSeguimiento`, `LockService`, `addCaseFollowUpNote`.
+
+---
+
+### T-ORI-02 [P1] — Confidencialidad granular y aislamiento RBAC de notas sensibles de orientación
+
+- **Componentes relacionados:** `backend/academic-service/Code.gs`, `backend/user-service/Code.gs` (`ROLE_PERMISSIONS`), `js/api.js`.
+- **Problema detectado:** Las notas privadas de consejería registradas en un expediente deben aislarse estrictamente para que solo los roles autorizados (`Orientador`, `Consejero`, `Director`) puedan consultarlas, evitando que docentes generales o personal administrativo accedan a antecedentes psicológicos o familiares delicados.
+- **Requisitos funcionales:**
+  1. Verificar en el servidor mediante `assertRecordOwnership` y comprobación de rol que la consulta de notas sensibles esté restringida a profesionales autorizados.
+  2. Ocultar los campos de notas confidenciales en las respuestas de API dirigidas a docentes sin asignación de consejería o personal general.
+  3. Responder con código `403 Forbidden` y registrar evento `AUTH_PERMISSION_DENIED` si un usuario no autorizado intenta consultar el expediente sensible.
+- **Criterios de Aceptación:**
+  - Un docente general solo consulta la información básica del estudiante; las notas sensibles de orientación retornan vacías o quedan bloqueadas en el servidor.
+  - Las búsquedas globales y reportes agregados no filtran contenido confidencial de consejería.
+- **Riesgo de Regresión:** Bajo.
+- **Dependencias:** `ROLE_PERMISSIONS`, `assertRecordOwnership`, `CasosSeguimiento`.
+
+---
+
+### T-ORI-03 [P1] — Verificación estricta de propiedad y relaciones familiares en el portal de familias
+
+- **Componentes relacionados:** `backend/academic-service/Code.gs`, `backend/user-service/Code.gs` (`RelacionesFamiliares`), `js/student.js`.
+- **Problema detectado:** El acceso a resúmenes de apoyo y planes de acompañamiento desde el portal familiar debe validar activamente `RelacionesFamiliares` para garantizar que un tutor legal solo consulte los expedientes autorizados de sus propios representados.
+- **Requisitos funcionales:**
+  1. Validar dinámicamente en el servidor que la solicitud provenga de un familiar vinculado activamente en `RelacionesFamiliares` con el `studentId`.
+  2. Verificar que no exista un flag de restricción de custodia legal (`RestriccionCustodiaLegal === true`) que bloquee la consulta de la ficha.
+  3. Filtrar de la vista familiar las observaciones internas o notas privadas clasificadas como `SoloPersonalInterno`.
+- **Criterios de Aceptación:**
+  - Los padres acceden exclusivamente a los planes de acompañamiento autorizados de sus representados.
+  - Las notas internas de consejería no son visibles desde el portal de estudiantes/familias.
+- **Riesgo de Regresión:** Bajo.
+- **Dependencias:** `RelacionesFamiliares`, `PlanesAcompanamiento`.
+
+---
+
+### T-ORI-04 [P1] — Proxy de descarga segura con token firmado para evidencias adjuntas en Drive
+
+- **Componentes relacionados:** `backend/academic-service/Code.gs`, `backend/user-service/Code.gs`, `js/teacher.js`.
+- **Problema detectado:** Las evidencias y documentos de respaldo adjuntos a expedientes de orientación en Google Drive requieren un proxy de descarga autenticado con token firmado de corta duración para evitar que URLs directas de Drive sean accesibles sin control de sesión.
+- **Requisitos funcionales:**
+  1. Canalizar las descargas de evidencias de bienestar mediante `getSecureDocumentStream`.
+  2. Generar tokens temporales firmados criptográficamente con caducidad máxima de 5 minutos.
+  3. Validar en el servidor que el usuario tenga rol de `Orientador`, `Consejero` o `Director` antes de entregar el archivo.
+  4. Denegar peticiones no autorizadas con error `403 Forbidden`.
+- **Criterios de Aceptación:**
+  - Un enlace de archivo adjunto a un expediente de orientación expira en 5 minutos y no puede ser reutilizado sin una nueva sesión autenticada.
+  - Usuarios no autorizados no pueden descargar archivos manipulando identificadores de Drive.
+- **Riesgo de Regresión:** Bajo.
+- **Dependencias:** `getSecureDocumentStream`, Google Drive API.
+
+---
+
+### T-ORI-05 [P2] — Flujo formal de derivación institucional entre docentes, orientación y dirección
+
+- **Componentes relacionados:** `backend/academic-service/Code.gs`, `js/teacher.js`, `teacher-dashboard.html`.
+- **Problema detectado:** Cuando un docente detecta una dificultad académica o de conducta, requiere un flujo digital para derivar formalmente el caso al departamento de orientación con motivo, prioridad y estado de recepción.
+- **Requisitos funcionales:**
+  1. Implementar la función `referStudentToGuidance` que cree un caso en `CasosSeguimiento` con estado `DerivadoAOrientacion`.
+  2. Notificar automáticamente al orientador/consejero asignado mediante la bandeja multicanal.
+  3. Permitir que el orientador acepte, solicite ampliación de información o resuelva la derivación registrando la fecha de recepción.
+- **Criterios de Aceptación:**
+  - El docente puede derivar un alumno a orientación y consultar el estado de atención de la solicitud desde su tablero.
+  - La derivación notifica al equipo de consejería e inicia el expediente de seguimiento.
+- **Riesgo de Regresión:** Nulo.
+- **Dependencias:** `CasosSeguimiento`, `sendMultiChannelNotification`.
+
+---
+
+### T-ORI-06 [P2] — Módulo de citas de orientación con detección de conflictos horarios y recordatorios
+
+- **Componentes relacionados:** `backend/user-service/Code.gs` (`getAppointmentBookings`, `bookAppointment`, `updateAppointmentStatus`), `js/teacher.js`, `js/student.js`.
+- **Problema detectado:** El agendamiento de citas de consejería entre orientadores, estudiantes y padres debe prevenir activamente el solapamiento de horarios en la agenda del profesional y disparar recordatorios automáticos.
+- **Requisitos funcionales:**
+  1. Validar en `bookAppointment` la disponibilidad del orientador bloqueando la reserva si el intervalo de hora/fecha ya está ocupado en `CitasOrientacion`.
+  2. Disparar recordatorios automáticos 24 horas y 2 horas antes de la cita para el estudiante y tutor legal.
+  3. Permitir cancelar o reprogramar citas registrando la causa en el historial.
+- **Criterios de Aceptación:**
+  - La reserva de citas impide dobles agendas para el orientador en el mismo bloque de tiempo.
+  - La cancelación de la cita detiene automáticamente las notificaciones de recordatorio.
+- **Riesgo de Regresión:** Nulo.
+- **Dependencias:** `getAppointmentBookings`, `bookAppointment`, `CitasOrientacion`.
+
+---
+
+### T-ORI-07 [P2] — Motor de alertas tempranas por patrones de ausentismo y riesgo de deserción
+
+- **Componentes relacionados:** `backend/academic-service/Code.gs`, `backend/user-service/Code.gs`, `js/ui-common.js`.
+- **Problema detectado:** La plataforma debe analizar rutinariamente las inasistencias y la baja de rendimiento para generar alertas preventivas antes de que el estudiante entre en riesgo crítico de reprobación o abandono escolar.
+- **Requisitos funcionales:**
+  1. Desarrollar la rutina `evaluateEarlyWarningAlerts` que evalúe semanalmente ausencias injustificadas acumuladas (≥ 3 en un mes) o bajo rendimiento (promedio < 70%).
+  2. Crear automáticamente un registro de alerta en `CasosSeguimiento` clasificándolo como `RiesgoAcademico` o `RiesgoAusentismo`.
+  3. Notificar al consejero asignado y al tutor legal vía `sendMultiChannelNotification`.
+- **Criterios de Aceptación:**
+  - La acumulación de señales de riesgo genera automáticamente la alerta preventiva en el panel de orientación.
+  - Ejecuciones repetidas no duplican alertas activas para el mismo estudiante.
+- **Riesgo de Regresión:** Nulo.
+- **Dependencias:** `CasosSeguimiento`, `RegistrosAsistencia`, `CalificacionesEstudiantes`.
+
+---
+
+### T-ORI-08 [P2] — Planes de acompañamiento conductual con objetivos estructurados JSON y fechas de revisión
+
+- **Componentes relacionados:** `backend/user-service/Code.gs` (`getSupportPlans`, `saveSupportPlan`), `js/teacher.js`, `teacher-dashboard.html`.
+- **Problema detectado:** Los planes de apoyo en `PlanesAcompanamiento` requieren estructurar sus objetivos e intervenciones pedagógicas con responsables, plazos e indicadores de avance.
+- **Requisitos funcionales:**
+  1. Estructurar el campo `ObjetivosJSON` en `PlanesAcompanamiento` para incluir: `ObjetivoID`, `Descripcion`, `AccionPedagogica`, `ResponsableID`, `FechaRevision`, `EstadoCumplimiento` (`EnProceso`, `Cumplido`, `Incumplido`).
+  2. Implementar interfaz para registrar revisiones periódicas y actas de compromiso firmadas con los padres.
+  3. Destacar en el tablero los planes con fecha de revisión vencida.
+- **Criterios de Aceptación:**
+  - El orientador puede definir objetivos de acompañamiento estructurados y registrar evaluaciones de avance en cada fecha de revisión.
+- **Riesgo de Regresión:** Nulo.
+- **Dependencias:** `PlanesAcompanamiento`, `saveSupportPlan`.
+
+---
+
+### T-ORI-09 [P2] — Inalterabilidad de expedientes de orientación pertenecientes a períodos cerrados
+
+- **Componentes relacionados:** `backend/academic-service/Code.gs`, `backend/exam-service/Code.gs` (`CierresPeriodos`).
+- **Problema detectado:** Al cerrar formalmente un año lectivo, los expedientes de orientación y planes de apoyo de dicho año deben congelarse para evitar modificaciones extemporáneas.
+- **Requisitos funcionales:**
+  1. Validar si la fecha del caso o plan corresponde a un año o período escolar con estado `Cerrado`.
+  2. Bloquear la edición o adición de notas salvo autorización expresa de Dirección o Secretaría con registro de motivo en auditoría.
+- **Criterios de Aceptación:**
+  - Intento de editar un plan de apoyo perteneciente a un año cerrado devuelve un mensaje de error de período cerrado.
+- **Riesgo de Regresión:** Nulo.
+- **Dependencias:** `CierresPeriodos`, `PlanesAcompanamiento`.
+
+---
+
+### T-ORI-10 [P2] — Historial cronológico de actuaciones y bitácora de intervenciones pedagógicas
+
+- **Componentes relacionados:** `backend/academic-service/Code.gs` (`getCaseFollowUpNotes`), `js/teacher.js`, `teacher-dashboard.html`.
+- **Problema detectado:** El orientador requiere visualizar la línea de tiempo completa del estudiante combinando citas atendidas, incidencias de conducta, avisos de asistencia y notas de seguimiento.
+- **Requisitos funcionales:**
+  1. Consolidar en `getCaseFollowUpNotes` el historial cronológico ordenado por fecha de creación.
+  2. Mostrar etiquetas visuales por tipo de actuación (Entrevista, Incidencia, Plan de Apoyo, Cita, Carta de Compromiso).
+  3. Permitir filtrar la cronología por rango de fechas y categoría.
+- **Criterios de Aceptación:**
+  - La vista del expediente presenta la línea de tiempo integrada del estudiante ordenada cronológicamente.
+- **Riesgo de Regresión:** Nulo.
+- **Dependencias:** `CasosSeguimiento`, `getCaseFollowUpNotes`.
+
+---
+
+### T-ORI-11 [P2] — Búsqueda avanzada multicriterio y panel de tareas de seguimiento pendientes
+
+- **Componentes relacionados:** `js/teacher.js`, `teacher-dashboard.html`, `js/ui-common.js`.
+- **Problema detectado:** El panel de orientación requiere un buscador avanzado para filtrar expedientes por grado, sección, categoría de caso (`RiesgoAcademico`, `Conducta`, `Familiar`) y estado (`Activo`, `EnRevision`, `Cerrado`).
+- **Requisitos funcionales:**
+  1. Crear el panel "Centro de Control de Orientación y Consejería" en `teacher-dashboard.html`.
+  2. Habilitar filtros combinados por grado, sección, tipo de riesgo y estado del plan.
+  3. Destacar casos con más de 15 días sin actividad o con revisiones de compromisos vencidas.
+- **Criterios de Aceptación:**
+  - El orientador localiza rápidamente casos activos filtrados por categoría y prioridad de atención.
+- **Riesgo de Regresión:** Nulo.
+- **Dependencias:** `teacher-dashboard.html`, `js/teacher.js`.
+
+---
+
+### T-ORI-12 [P2] — Sincronización de planes de apoyo con la libreta de notas y exenciones
+
+- **Componentes relacionados:** `backend/user-service/Code.gs`, `backend/exam-service/Code.gs`.
+- **Problema detectado:** Cuando un plan de acompañamiento autoriza una adecuación curricular o exención justificada de evaluación, el sistema debe sincronizar dicho estado con el libro de calificaciones.
+- **Requisitos funcionales:**
+  1. Registrar en el plan la exención o adecuación curricular aprobada.
+  2. Reflejar automáticamente en `CalificacionesEstudiantes` el estado `Eximido` (`EX`) para las actividades indicadas en la resolución.
+- **Criterios de Aceptación:**
+  - La aprobación de una adecuación en el plan de apoyo actualiza la libreta de notas excluyendo la actividad del cálculo del promedio.
+- **Riesgo de Regresión:** Bajo.
+- **Dependencias:** `PlanesAcompanamiento`, `CalificacionesEstudiantes`.
+
+---
+
+### T-ORI-13 [P3] — Dashboard consolidado de indicadores de bienestar y clima escolar por grado
+
+- **Componentes relacionados:** `js/teacher.js`, `js/ui-common.js` (`renderUniversalConfigurableChart`), `teacher-dashboard.html`.
+- **Problema detectado:** Presentar a la dirección e informe directivo gráficos estadísticos anónimos sobre distribución de casos de orientación, tipos de incidencias y avance de planes de apoyo por nivel educativo.
+- **Requisitos funcionales:**
+  1. Renderizar mediante `renderUniversalConfigurableChart` un gráfico de barras/rosca con la distribución de casos por categoría.
+  2. Garantizar que el gráfico estadístico agregue datos en forma anónima sin exponer nombres de estudiantes.
+- **Criterios de Aceptación:**
+  - El dashboard directivo muestra tendencias de clima escolar y casos atendidos sin comprometer la confidencialidad individual.
+- **Riesgo de Regresión:** Nulo.
+- **Dependencias:** `renderUniversalConfigurableChart`, `CasosSeguimiento`.
+
+---
+
+### T-ORI-14 [P3] — Exportación estructurada de informes de orientación y actas en Excel/PDF
+
+- **Componentes relacionados:** `backend/accounting-service/Code.gs` (`generateSchoolDocument`), `backend/academic-service/Code.gs`.
+- **Problema detectado:** Permitir a orientadores autorizados emitir la Ficha de Seguimiento Psicopedagógico y Actas de Compromiso en PDF con estampa oficial e identificador único.
+- **Requisitos funcionales:**
+  1. Implementar la plantilla `FichaSeguimientoOrientacion` en `generateSchoolDocument`.
+  2. Incluir datos del estudiante, resumen de intervenciones, compromisos acordados, firmas digitales y estampa de confidencialidad.
+  3. Restringir la generación del documento exclusivamente a roles autorizados (`Orientador`, `Director`).
+- **Criterios de Aceptación:**
+  - El PDF de la ficha de orientación se genera con datos completos y marca de agua confidencial.
+- **Riesgo de Regresión:** Nulo.
+- **Dependencias:** `generateSchoolDocument`, `CasosSeguimiento`.
+
+---
+
+### T-ORI-15 [P3] — Herramienta de conciliación entre registros de incidentes y resumen del expediente
+
+- **Componentes relacionados:** `backend/academic-service/Code.gs`, `backend/user-service/Code.gs`.
+- **Problema detectado:** Verificar que el resumen de casos y compromisos presentado en la ficha consolidada coincida exactamente con los registros individuales de `CasosSeguimiento` y `PlanesAcompanamiento`.
+- **Requisitos funcionales:**
+  1. Desarrollar la rutina de conciliación `reconcileGuidanceRecords(userId)`.
+  2. Comparar el resumen de intervenciones con las notas activas detectando registros desfasados.
+- **Criterios de Aceptación:**
+  - La rutina confirma la coherencia de datos entre el expediente individual y los planes de apoyo.
+- **Riesgo de Regresión:** Nulo.
+- **Dependencias:** `CasosSeguimiento`, `PlanesAcompanamiento`.
+
+---
+
+### T-ORI-16 [P3] — Respaldo integral e inmutable de expedientes de bienestar en el sistema de backup
+
+- **Componentes relacionados:** `backend/academic-service/Code.gs` (`createSystemBackup`, `restoreSystemBackup`), `backend/user-service/Code.gs`.
+- **Problema detectado:** Garantizar que las copias de seguridad de la plataforma incluyan la totalidad de tablas de consejería y bienestar (`CasosSeguimiento`, `PlanesAcompanamiento`, `CitasOrientacion`, `ObservacionesConvivencia`) y que la restauración mantenga intacta la confidencialidad.
+- **Requisitos funcionales:**
+  1. Incluir todas las tablas de orientación en el payload de `createSystemBackup`.
+  2. Validar que `restoreSystemBackup` restaure los expedientes conservando los controles RBAC de acceso restringido.
+  3. Generar registro de auditoría tras cada operación de respaldo o restauración de datos de consejería.
+- **Criterios de Aceptación:**
+  - El archivo de respaldo contiene el 100% de los expedientes de orientación y planes de acompañamiento.
+  - La restauración recupera la información manteniendo las restricciones de confidencialidad por rol.
+- **Riesgo de Regresión:** Bajo.
+- **Dependencias:** `createSystemBackup`, `restoreSystemBackup`, `CasosSeguimiento`.
+
+---
+
+### ORDEN DE EJECUCIÓN RECOMENDADO FASE 12 (BIENESTAR Y ORIENTACIÓN)
+
+| Orden | Tarea | Prioridad | Dependencia principal |
+| :---: | :--- | :---: | :--- |
+| **1** | **T-ORI-01.** Control de concurrencia transaccional con LockService | **P1** | `addCaseFollowUpNote` / `LockService` |
+| **2** | **T-ORI-02.** Confidencialidad granular y aislamiento RBAC de notas sensibles | **P1** | `assertRecordOwnership` / RBAC |
+| **3** | **T-ORI-03.** Verificación de propiedad y relaciones familiares en portal familiar | **P1** | `RelacionesFamiliares` |
+| **4** | **T-ORI-04.** Proxy de descarga segura con token firmado para evidencias Drive | **P1** | `getSecureDocumentStream` |
+| **5** | **T-ORI-07.** Motor de alertas tempranas por patrones de ausentismo y riesgo | **P2** | `evaluateEarlyWarningAlerts` |
+| **6** | **T-ORI-05.** Flujo formal de derivación institucional a orientación | **P2** | `referStudentToGuidance` |
+| **7** | **T-ORI-06.** Módulo de citas de orientación con detección de conflictos | **P2** | `bookAppointment` |
+| **8** | **T-ORI-08.** Planes de acompañamiento conductual con objetivos JSON | **P2** | `PlanesAcompanamiento` |
+| **9** | **T-ORI-09.** Inalterabilidad de expedientes de orientación en períodos cerrados | **P2** | `CierresPeriodos` |
+| **10** | **T-ORI-10.** Historial cronológico de actuaciones y bitácora de intervenciones | **P2** | `getCaseFollowUpNotes` |
+| **11** | **T-ORI-11.** Búsqueda avanzada multicriterio y panel de tareas pendientes | **P2** | `teacher-dashboard.html` / UI |
+| **12** | **T-ORI-12.** Sincronización de planes de apoyo con la libreta de notas | **P2** | `CalificacionesEstudiantes` |
+| **13** | **T-ORI-13.** Dashboard consolidado de indicadores de bienestar y clima escolar | **P3** | Universal Chart Engine |
+| **14** | **T-ORI-14.** Exportación estructurada de informes de orientación y actas PDF | **P3** | `generateSchoolDocument` |
+| **15** | **T-ORI-15.** Herramienta de conciliación entre incidentes y expediente | **P3** | Reconciliation Engine |
+| **16** | **T-ORI-16.** Respaldo integral e inmutable de expedientes de bienestar | **P3** | `createSystemBackup` |
