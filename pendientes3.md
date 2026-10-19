@@ -1,4 +1,4 @@
-# REGISTRO DE TAREAS PENDIENTES DE RESOLUCIÓN, OPTIMIZACIÓN Y MEJORA - FASE 3 Y FASE 4
+# REGISTRO DE TAREAS PENDIENTES DE RESOLUCIÓN, OPTIMIZACIÓN Y MEJORA - FASE 3, FASE 4 Y FASE 5
 
 Este documento almacena las tareas de resolución, optimización y mejora derivadas de las auditorías funcionales y técnicas de la plataforma.
 
@@ -241,7 +241,7 @@ Algunas búsquedas frontend no normalizan de manera consistente los espacios mú
 - Evaluar el rendimiento con tablas grandes para evitar normalizaciones costosas repetidas en cada renderizado.
 
 **Comportamiento esperado:**
-Una búsqueda flexible encuentra registros equivalentes aunque existan diferencias de mayúsculas, acentos o espacios irrelevantes. Los identificadores exactos mantienen sus reglas estrictas y no se mezclan con coincidencias aproximadas.
+Una búsqueda flexible encuentra registros equivalentes aunque existan diferencias de mayúsculas, acentos o espacios irrelevantes. Los identificadores exactos mantienen sus reglas strictly y no se mezclan con coincidencias aproximadas.
 
 **Criterios de aceptación:**
 1. Buscar "perez" encuentra registros como "Pérez".
@@ -902,7 +902,7 @@ La interfaz no identifica claramente el cargo secundario activo, no muestra cuá
    - Deshabilitar la confirmación si no se puede calcular o validar el alcance de la operación. Revalidar siempre la confirmación en el backend.
 
 #### Comportamiento esperado
-La interfaz deja claro en qué contexto actúa el usuario, facilita el diagnóstico de permisos efectivos, mejora la precisión de auditoría y previene eliminaciones masivas accidentales.
+La interfaz deja claro en qué contexto actúa el usuario, facilita el diagnóstico de permisos efectivos, mejora la precisión de auditoría y previene eliminaciones masivas accidentalmente.
 
 #### Criterios de aceptación
 1. Los usuarios con múltiples cargos pueden identificar el contexto activo, y las acciones bajo suplencia muestran claramente el distintivo `En representación de [Nombre]`.
@@ -990,4 +990,435 @@ Nulo.
 | **8** | **T-GOV-09.** Notificaciones de cuenta, suplencias y privacidad | **P2** | `sendMultiChannelNotification` |
 | **9** | **T-GOV-08.** Badges de representación, simulador y confirmaciones | **P3** | UI de modales |
 
-EOF
+---
+
+## PLAN DE TRABAJO DETALLADO Y UNIFICADO: FASE 5. ADMISIONES, ASPIRANTES Y PORTAL DE FAMILIAS
+
+### T-ADM-01 [P1] — Control transaccional de concurrencia en cupos y conversión de admitidos
+
+**Componentes involucrados:** `backend/academic-service/Code.gs` (`convertAdmissionToStudent`, `createAdmissionRequest`, `checkCapacity`), hojas `SolicitudesAdmision`, `ExpedientesEstudiantes`, `Personas`, `RelacionesFamiliares` y estructuras de matrícula o cupos.
+
+**Problema detectado:**
+La conversión de aspirantes admitidos presenta protección contra duplicados, pero carece de un bloqueo transaccional explícito mediante `LockService.getScriptLock()`. La validación de cupos tampoco garantiza que dos solicitudes simultáneas no ocupen el mismo último espacio disponible. Existe riesgo de inconsistencia bajo alta concurrencia.
+
+**Requisitos funcionales:**
+1. Implementar control de concurrencia en las operaciones críticas de asignación de cupos y conversión de aspirantes.
+2. Utilizar `LockService.getScriptLock()` con un tiempo máximo de espera configurable (por defecto 10,000 ms) o explícitamente definido.
+3. Dentro del bloqueo, volver a consultar el estado real de la solicitud, la existencia de una matrícula previa y la disponibilidad de cupos. No confiar en una comprobación realizada antes de adquirir el bloqueo.
+4. Garantizar que una solicitud solo pueda generar una matrícula activa y un expediente estudiantil correspondiente.
+5. Garantizar que cada cupo se reserve o consuma una sola vez, incluso cuando se reciban solicitudes simultáneas, se repitan peticiones por errores de red o se ejecuten procesos masivos.
+6. Distinguir entre cupos disponibles, reservados temporalmente, ocupados y liberados.
+7. Definir cuándo se consume definitivamente un cupo y cuándo se libera. Una oferta enviada, una oferta aceptada y una matrícula formalizada no deben considerarse equivalentes automáticamente.
+8. Mantener la idempotencia de `convertAdmissionToStudent`: repetir una operación completada debe devolver el resultado existente o un estado equivalente, sin generar identidades, expedientes, matrículas, cargos o relaciones duplicadas.
+9. Evitar mantener el bloqueo durante llamadas externas, envío de correos, cargas de archivos u operaciones lentas.
+10. Registrar el identificador de solicitud, resultado, asignación de cupo y errores relevantes en auditoría.
+11. Ante un bloqueo no adquirido, informar que la operación no pudo completarse por concurrencia y permitir un reintento seguro.
+12. Implementar una estrategia de recuperación de operaciones parciales entre servicios.
+
+**Criterios de aceptación:**
+- Dos solicitudes simultáneas para el último cupo no producen sobrecupo.
+- Dos conversiones simultáneas de un mismo aspirante generan una sola matrícula y un solo expediente.
+- Los reintentos después de un tiempo de espera agotado no duplican registros.
+- Un fallo intermedio no deja una matrícula activa sin su expediente o sus relaciones requeridas.
+- Las operaciones masivas procesan correctamente los aspirantes válidos y registran los fallos individuales.
+- Los cupos reservados, consumidos y liberados se contabilizan de manera coherente.
+- Se mantienen las pruebas existentes de idempotencia, recuperación y preservación de expedientes históricos.
+
+**Riesgo de Regresión:** Bajo.
+**Dependencias:** Revisión de la estructura actual de cupos y matrícula; coordinación con T-ADM-02.
+
+---
+
+### T-ADM-02 [P1] — Flujo completo de revisión, aprobación y rechazo de documentos de admisión
+
+**Componentes involucrados:** `backend/academic-service/Code.gs`, `backend/user-service/Code.gs`, `js/student.js`, `js/teacher.js`, `js/api.js`, `js/ui-common.js`, `student-dashboard.html`, `teacher-dashboard.html`, hoja `SolicitudesAdmision` y almacenamiento de documentos en Google Drive.
+
+**Problema detectado:**
+Las solicitudes permiten adjuntar documentos, pero no existe un flujo administrativo completo para revisarlos y aprobarlos o rechazarlos con un motivo obligatorio. El mecanismo de descarga de Drive requiere revisión de seguridad y experiencia de usuario.
+
+**Requisitos funcionales:**
+1. Mostrar, para cada solicitud, un inventario de documentos requeridos, recibidos, pendientes, aprobados, rechazados y sujetos a nueva entrega.
+2. Permitir configurar requisitos documentales por período de admisión, grado, nivel o programa (`RevisionesDocumentalesAdmision`).
+3. Diferenciar documentos obligatorios y opcionales. La ausencia de un documento opcional no debe bloquear la solicitud.
+4. Proporcionar al personal acciones explícitas para: Aprobar, Rechazar (motivo obligatorio), Solicitar corrección/nueva versión, Marcar como pendiente de revisión, y Registrar observaciones internas.
+5. Mostrar al responsable familiar el estado de cada documento y las instrucciones concretas para corregir los rechazados.
+6. Permitir volver a cargar un documento rechazado sin obligar a completar nuevamente toda la solicitud.
+7. Conservar las versiones anteriores y su historial en Drive sin reemplazar silenciosamente los archivos revisados.
+8. Registrar usuario revisor, fecha/hora, estado anterior, estado nuevo, motivo y versión del archivo revisado.
+9. Validar archivos recibidos: tipo permitido, tamaño máximo, integridad básica y errores de carga.
+10. Proteger los documentos mediante permisos de mínimo privilegio y proxy de descarga autenticado.
+11. Mantener accesibles los documentos después de convertir al aspirante en estudiante.
+
+**Criterios de aceptación:**
+- Un usuario autorizado puede aprobar un documento y el sistema registra quién lo hizo y cuándo.
+- No se puede rechazar un documento sin un motivo comprensible.
+- La familia puede consultar el motivo y enviar una nueva versión.
+- Las versiones anteriores y sus decisiones siguen disponibles para los usuarios autorizados.
+- Una persona ajena a la solicitud no puede consultar ni descargar sus documentos manipulando identificadores.
+- Los archivos inválidos o corruptos no se marcan como recibidos y aprobados.
+- La conversión a estudiante conserva los documentos y su historial.
+
+**Riesgo de Regresión:** Bajo.
+**Dependencias:** T-ADM-01 para requisitos previos de conversión; T-ADM-06 para integración con borradores.
+
+---
+
+### T-ADM-03 [P1] — Verificación estricta y segura del código de vinculación familiar
+
+**Componentes involucrados:** `backend/user-service/Code.gs`, `js/auth.js`, `js/api.js`, `js/student.js`, hojas `Personas`, `Usuarios`, `RelacionesFamiliares` y `ResponsablesTutores`.
+
+**Problema detectado:**
+La vinculación de responsables con estudiantes debe exigir un token/código de vinculación verificado enviado por la institución para evitar que un usuario reclame el acceso a un expediente con solo conocer su nombre o DNI.
+
+**Requisitos funcionales:**
+1. Generar códigos o tokens temporales de vinculación de 6 dígitos (`CodigoVinculacionFamilia`) con suficiente aleatoriedad y resistencia a adivinación.
+2. Asociar cada código a un estudiante/aspirante específico, al propósito de la vinculación y al responsable previsto.
+3. Establecer fecha de expiración configurable, número máximo de usos (de un solo uso por defecto) y límite de intentos fallidos.
+4. Invalidar el código después de una vinculación exitosa y permitir revocarlo administrativamente.
+5. Verificar el código en el backend, no únicamente en JavaScript del navegador.
+6. Evitar que las respuestas de error revelen si un estudiante, correo o código específico existe.
+7. Exigir autenticación de la persona responsable y validar su identidad.
+8. Permitir que un responsable tenga varios hijos y un estudiante varios responsables, conservando las relaciones independientes.
+9. Registrar la creación, aceptación, rechazo, revocación y modificación de cada relación.
+
+**Criterios de aceptación:**
+- Los códigos vencidos, revocados o consumidos no pueden reutilizarse.
+- Intentos repetidos fallidos se limitan y registran.
+- No es posible acceder a expedientes antes de completar la vinculación autorizada.
+- Un responsable puede consultar todos sus hijos autorizados sin acceder a los de otra persona.
+- Revocar una relación impide el acceso posterior en todos los microservicios.
+
+**Riesgo de Regresión:** Bajo.
+**Dependencias:** Permisos del portal familiar y funciones de propiedad de registros.
+
+---
+
+### T-ADM-04 [P2] — Módulo de agendamiento de entrevistas y evaluaciones de aspirantes
+
+**Componentes involucrados:** `backend/academic-service/Code.gs`, `backend/user-service/Code.gs`, `js/student.js`, `js/teacher.js`, `js/api.js`, `teacher-dashboard.html`, `student-dashboard.html`.
+
+**Problema detectado:**
+Falta un flujo completo para programar entrevistas, asignar docentes evaluadores y registrar resultados mediante una rúbrica de evaluación estructurada.
+
+**Requisitos funcionales:**
+1. Configurar tipos de evaluación (entrevista familiar, evaluación pedagógica, prueba diagnóstica) y asociarlos con grados/programas.
+2. Configurar rúbricas con criterios, descripciones, escalas de puntuación y ponderaciones.
+3. Permitir crear citas (`EntrevistasEvaluacionesAdmision`) vinculadas a una solicitud y asignar uno o varios evaluadores autorizados.
+4. Consultar disponibilidad y detectar conflictos de horario para evaluadores y espacios físicos.
+5. Permitir reprogramaciones y cancelaciones conservando el historial y motivo.
+6. Notificar a la familia y al evaluador cuando se programe, modifique o cancele una cita.
+7. Presentar al evaluador la rúbrica correspondiente, registrar puntuaciones por criterio, comentarios y recomendación final (Admitir, Lista de Espera, Rechazar).
+8. Diferenciar observaciones internas de los resultados comunicables a la familia.
+9. Mantener un historial de cambios y correcciones en la evaluación.
+
+**Criterios de aceptación:**
+- Se puede programar una entrevista y asignar un evaluador autorizado.
+- El sistema detecta conflictos de agenda según recursos disponibles.
+- La reprogramación conserva la cita anterior y su motivo.
+- La rúbrica valida puntuaciones, campos obligatorios y ponderaciones.
+- Los resultados quedan vinculados a la solicitud y al evaluador sin revelar notas internas a la familia.
+
+**Riesgo de Regresión:** Nulo.
+**Dependencias:** T-ADM-07 para reflejar citas en el seguimiento de la solicitud.
+
+---
+
+### T-ADM-05 [P2] — Expiración automática de ofertas de admisión y gestión de respuestas
+
+**Componentes involucrados:** `backend/academic-service/Code.gs`, `js/student.js`, servicios de comunicación, hojas `SolicitudesAdmision`, `ExpedientesEstudiantes`.
+
+**Problema detectado:**
+Las ofertas de admisión pueden permanecer abiertas indefinidamente si la familia no responde, bloqueando la liberación del cupo para aspirantes en lista de espera.
+
+**Requisitos funcionales:**
+1. Registrar en cada oferta la fecha de emisión, fecha límite de respuesta (`FechaExpiracionOferta`), estado y condiciones.
+2. Calcular el plazo de 15 días hábiles excluyendo fines de semana y festivos configurados en el calendario institucional.
+3. Ejecutar un proceso automático periódico mediante activador (Trigger) de Apps Script.
+4. Enviar recordatorios configurables a la familia 3 días antes del vencimiento.
+5. Al cumplir el plazo, marcar la oferta como `OfertaExpirada` y liberar el cupo reservado para la lista de espera.
+6. No expirar ofertas aceptadas, rechazadas o canceladas previamente.
+7. Notificar a la familia cuando la oferta venza y permitir que personal autorizado registre una prórroga o reapertura justificada.
+8. Permitir la aceptación o rechazo explícito desde el portal familiar.
+
+**Criterios de aceptación:**
+- El cálculo excluye fines de semana y festivos configurados.
+- Las ofertas no contestadas dentro del plazo pasan automáticamente a `OfertaExpirada`.
+- Ejecutar el proceso periódico no genera transiciones ni avisos duplicados.
+- La expiración libera el cupo reservado y permite notificar al siguiente candidato de la lista de espera.
+- Las prórrogas quedan registradas y requieren permisos adecuados.
+
+**Riesgo de Regresión:** Bajo.
+**Dependencias:** T-ADM-01 para gestión de cupos; T-ADM-07 para estado de ofertas.
+
+---
+
+### T-ADM-06 [P2] — Guardado y recuperación de borradores de solicitudes de admisión
+
+**Componentes involucrados:** `backend/academic-service/Code.gs`, `js/student.js`, `js/api.js`, `js/ui-common.js`, `student-dashboard.html`, IndexedDB / hoja `SolicitudesAdmision`.
+
+**Problema detectado:**
+Los formularios extensos de admisión se pierden si el usuario abandona la página o pierde la conexión antes de enviar la solicitud definitiva.
+
+**Requisitos funcionales:**
+1. Permitir guardar la solicitud como borrador (`BorradoresSolicitudAdmision` en IndexedDB local o tabla remota) sin exigir todos los campos obligatorios del envío final.
+2. Generar un identificador estable para cada borrador y permitir recuperarlo mediante la cuenta autenticada.
+3. Guardar el progreso de cada sección, campos completados y requisitos documentales asociados.
+4. Mostrar un indicador claro del progreso, secciones incompletas y requisitos pendientes.
+5. Permitir retomar el formulario desde la última sección guardada.
+6. Diferenciar claramente los estados Borrador, Enviada, En Revisión, etc.
+7. Al presionar "Enviar Definitivo", ejecutar las validaciones completas de campos obligatorios en el backend.
+8. Evitar que un doble clic o reintento cree solicitudes definitivas duplicadas.
+
+**Criterios de aceptación:**
+- Un formulario incompleto puede guardarse como borrador y reanudarse posteriormente.
+- Los borradores no figuran como solicitudes enviadas en el panel administrativo.
+- Los errores de conexión se muestran claramente y no producen pérdida silenciosa de datos.
+- El envío definitivo valida nuevamente todos los campos obligatorios en el servidor.
+- Los borradores de otros usuarios no se pueden consultar manipulando identificadores.
+
+**Riesgo de Regresión:** Nulo.
+**Dependencias:** T-ADM-02 para integrar documentos; T-ADM-07 para reportes.
+
+---
+
+### T-ADM-07 [P3] — Embudo visual de admisiones e historial de comunicaciones por aspirante
+
+**Componentes involucrados:** `backend/academic-service/Code.gs`, `backend/user-service/Code.gs`, `js/teacher.js`, `js/student.js`, `js/ui-common.js`, `teacher-dashboard.html`, `generateInstitutionalReport`.
+
+**Problema detectado:**
+La plataforma carece de una visualización gráfica completa del embudo de admisiones y de un historial unificado de comunicaciones enviadas/fallidas por aspirante.
+
+**Requisitos funcionales:**
+1. Mostrar el número de aspirantes por etapa del proceso (Borrador, Enviada, En Evaluación, Lista de Espera, Oferta Emitida, Aceptada, Rechazada, Matriculado) en un gráfico de embudo utilizando `renderUniversalConfigurableChart`.
+2. Evitar contar una misma solicitud varias veces y calcular tasas de conversión entre etapas.
+3. Permitir filtrar por período, año lectivo, grado y programa.
+4. Registrar el historial de comunicaciones por aspirante: tipo de mensaje, destinatario, fecha, canal, resultado del envío y contenido/plantilla utilizada.
+5. Diferenciar mensajes internos de notas visibles para las familias.
+6. Permitir reintentar envíos fallidos sin duplicar notificaciones.
+
+**Criterios de aceptación:**
+1. El personal de admisiones visualiza el embudo de conversión y sus tasas filtrado por año y grado.
+2. Cada comunicación queda vinculada al expediente del aspirante con su estado exacto de entrega.
+3. Los usuarios sin permisos no pueden consultar datos de contacto o mensajes de otros aspirantes.
+
+**Riesgo de Regresión:** Nulo.
+**Dependencias:** T-ADM-04, T-ADM-05, T-ADM-06.
+
+---
+
+### T-ADM-08 [P2] — Vista unificada y contextual del portal de familias
+
+**Componentes involucrados:** `student-dashboard.html`, `js/student.js`, `backend/user-service/Code.gs`, `backend/academic-service/Code.gs`, `backend/accounting-service/Code.gs`, hojas `RelacionesFamiliares`, `ResponsablesTutores`, `ExpedientesEstudiantes`.
+
+**Problema detectado:**
+Mejorar el contenedor `#family-consolidated-summary-container` y la función `getGuardianStudents` para brindar una experiencia de usuario unificada que diferencie claramente entre aspirantes en proceso de admisión y estudiantes activos matriculados.
+
+**Requisitos funcionales:**
+1. Presentar tarjetas independientes por hijo vinculado a la cuenta familiar.
+2. Permitir conmutar entre hijos sin mezclar expedientes, calificaciones, pagos, documentos ni notificaciones.
+3. Para aspirantes: mostrar el estado de la solicitud, requisitos pendientes, documentos rechazados, fechas de evaluación y ofertas activas.
+4. Para estudiantes matriculados: mostrar secciones académicas, tareas, asistencia, estado de cuenta y avisos del período activo.
+5. Permitir que los errores de un servicio secundario (ej. finanzas) no bloqueen el acceso a las demás secciones independientes.
+
+**Criterios de aceptación:**
+- Un responsable con varios hijos ve únicamente los perfiles vinculados y autorizados.
+- Conmutar entre hijos limpia el contexto sin dejar datos residuales del estudiante anterior.
+- La interfaz se adapta correctamente a dispositivos móviles y escritorio.
+
+**Riesgo de Regresión:** Nulo.
+**Dependencias:** T-ADM-02, T-ADM-04, T-ADM-05, T-ADM-07.
+
+---
+
+### T-ADM-09 [P2] — Conciliación y seguimiento de comprobantes de pago asociados a admisiones
+
+**Componentes relacionados:** `backend/accounting-service/Code.gs`, `backend/academic-service/Code.gs`, `js/student.js`, `js/accounting.js`, hojas `CargosEstudiante`, `ComprobantesPago`.
+
+**Problema detectado:**
+Un comprobante cargado por la familia no debe interpretarse como pago confirmado automáticamente. Se requiere un flujo de revisión contable con conciliación, rechazo con motivo y distribución de pagos familiares.
+
+**Requisitos funcionales:**
+1. Diferenciar estados de comprobante: `PendienteRevision`, `Aprobado`, `Rechazado`, `Aplicado`.
+2. Permitir que el área de contabilidad valide el importe declarado contra el importe extractado del banco antes de aplicar el abono al saldo del estudiante.
+3. Evitar que un mismo número de referencia bancaria se aplique dos veces.
+4. Si un comprobante es rechazado, notificar a la familia especificando el motivo y habilitando la carga de un nuevo comprobante.
+5. Mantener la distribución multihijo de `submitJointFamilyPayment` sin mezclar saldos entre hermanos.
+
+**Criterios de aceptación:**
+- La carga de un comprobante lo mantiene en estado `PendienteRevision` sin marcar los cargos como pagados.
+- Reintentar una transacción no duplica los abonos contables.
+- Los rechazos permiten a la familia adjuntar un nuevo comprobante con trazabilidad del anterior.
+
+**Riesgo de Regresión:** Bajo.
+**Dependencias:** T-ADM-01; T-ADM-08.
+
+---
+
+### T-ADM-10 [P2] — Verificación de propiedad y autorización en todas las operaciones de expedientes
+
+**Componentes involucrados:** Microservicios backend (`USER`, `ACADEMIC`, `ACCOUNTING`, `TASK`, `EXAM`), `js/api.js`, `js/auth.js`.
+
+**Problema detectado:**
+Asegurar que todas las rutas de lectura, edición, exportación y descarga de documentos de admisiones y expedientes validen la propiedad del registro mediante `assertRecordOwnership` en el servidor.
+
+**Requisitos funcionales:**
+1. Validar en el backend que el `authenticatedUserId` tenga una relación activa en `RelacionesFamiliares` o rol administrativo antes de retornar datos de un `studentId` o `solicitudId`.
+2. Proteger las exportaciones masivas y reportes con las mismas reglas de ámbito.
+3. Garantizar que la manipulación de identificadores en peticiones HTTP sea rechazada con error `403 Forbidden`.
+
+**Criterios de Aceptación:**
+- Intentos de consulta con identificadores alterados son bloqueados por el backend.
+- Las exportaciones y descargas de Drive aplican el mismo control estricto.
+
+**Riesgo de Regresión:** Bajo.
+**Dependencias:** T-ADM-03, T-ADM-08.
+
+---
+
+### T-ADM-11 [P3] — Indicadores de carga, recuperación de errores y reintentos en los flujos de admisión
+
+**Componentes involucrados:** `js/student.js`, `js/teacher.js`, `js/ui-common.js`, `js/api.js`.
+
+**Problema detectado:**
+Brindar mejor retroalimentación visual durante operaciones lentas (carga de adjuntos, sumisión de formularios) e impedir el doble envío accidental.
+
+**Requisitos funcionales:**
+1. Deshabilitar botones de envío y mostrar spinners de procesamiento durante peticiones a API.
+2. Presentar mensajes de error claros y orientativos en lugar de códigos técnicos.
+3. Conservar los campos del formulario intactos ante errores de red para permitir un reintento seguro.
+
+**Criterios de Aceptación:**
+- El doble clic en botones de submit no genera solicitudes duplicadas.
+- Errores de conexión no borran la información ingresada por la familia.
+
+**Riesgo de Regresión:** Nulo.
+**Dependencias:** T-ADM-01, T-ADM-06.
+
+---
+
+### T-ADM-12 [P2] — Estados, reapertura y retiro explícito de solicitudes de admisión
+
+**Componentes involucrados:** `backend/academic-service/Code.gs`, `js/student.js`, `js/teacher.js`, hoja `SolicitudesAdmision`.
+
+**Problema detectado:**
+Proporcionar acciones administrativas formales para registrar el retiro voluntario de una solicitud o la reapertura justificada de un expediente cerrado.
+
+**Requisitos funcionales:**
+1. Permitir que la familia o admisiones registren el estado `Retirada` con motivo obligatorio.
+2. Permitir a los administradores reabrir expedientes `Rechazados` o `Vencidos` conservando el historial previo.
+3. Liberar los cupos reservados al retirar una solicitud.
+
+**Criterios de Aceptación:**
+- Retirar una solicitud libera el cupo reservado y registra la trazabilidad en auditoría.
+- Reabrir un expediente conserva las evaluaciones y documentos previamente registrados.
+
+**Riesgo de Regresión:** Bajo.
+**Dependencias:** T-ADM-01, T-ADM-05.
+
+---
+
+### T-ADM-13 [P2] — Seguimiento de requisitos pendientes y lista de espera
+
+**Componentes involucrados:** `backend/academic-service/Code.gs`, `js/teacher.js`, `teacher-dashboard.html`, hoja `SolicitudesAdmision`.
+
+**Problema detectado:**
+Gestionar de manera estructurada las solicitudes en estado `ListaEspera` y el checklist de requisitos pendientes.
+
+**Requisitos funcionales:**
+1. Clasificar y ordenar la lista de espera por fecha de solicitud o criterios de prioridad institucionales configurables.
+2. Permitir al personal filtrar aspirantes por grado, evaluar elegibilidad y emitir ofertas cuando se libere una vacante.
+3. Mostrar a la familia un estado informativo claro sin exponer la posición exacta de otros aspirantes.
+
+**Criterios de Aceptación:**
+- La lista de espera se puede filtrar y ordenar por criterios autorizados.
+- Al liberarse un cupo, el sistema sugiere candidatos elegibles que cumplan todos los requisitos documentales.
+
+**Riesgo de Regresión:** Bajo.
+**Dependencias:** T-ADM-01, T-ADM-02, T-ADM-05.
+
+---
+
+### T-ADM-14 [P2] — Conversión integral de aspirante admitido a estudiante matriculado
+
+**Componentes involucrados:** `backend/academic-service/Code.gs`, `backend/user-service/Code.gs`, `backend/accounting-service/Code.gs`, hojas `SolicitudesAdmision`, `ExpedientesEstudiantes`, `RelacionesFamiliares`.
+
+**Problema detectado:**
+Formalizar y coordinar la creación atómica de todas las entidades asociadas al convertir un admitido en estudiante.
+
+**Requisitos funcionales:**
+1. Reutilizar la identidad de la `Persona` creada durante la admisión.
+2. Crear el expediente en `ExpedientesEstudiantes` con código institucional único.
+3. Transferir los vínculos de `RelacionesFamiliares` y documentos de Drive al expediente del nuevo estudiante.
+4. Sincronizar el estado de cupos y generar cargos de matrícula si están configurados.
+
+**Criterios de Aceptación:**
+- La conversión genera un estudiante matriculado manteniendo todo el historial de admisión vinculado.
+- No se crean registros de personas o familiares duplicados.
+
+**Riesgo de Regresión:** Bajo.
+**Dependencias:** T-ADM-01, T-ADM-02, T-ADM-03, T-ADM-09.
+
+---
+
+### T-ADM-15 [P3] — Mejora de formularios, accesibilidad y validación de datos de admisión
+
+**Componentes involucrados:** `index.html`, `login.html`, `student-dashboard.html`, `js/student.js`, `js/ui-common.js`.
+
+**Problema que debe resolverse:**
+Optimizar la estructura en pasos de los formularios de admisión, soporte para teclado, lectores de pantalla y diseño responsive en dispositivos móviles.
+
+**Requisitos funcionales:**
+1. Dividir formularios en pasos lógicos (Datos Aspirante -> Datos Responsables -> Antecedentes -> Documentación).
+2. Proporcionar resumen de revisión antes del envío final.
+3. Garantizar cumplimiento de WCAG 2.2 AA en contrastes y foco visible.
+
+**Criterios de Aceptación:**
+- Formularios 100% navegables por teclado y adaptados a pantallas móviles estrechas.
+- Resumen previo permite verificar la información antes del envío definitivo.
+
+**Riesgo de Regresión:** Nulo.
+**Dependencias:** T-ADM-06.
+
+---
+
+### T-ADM-16 [P2] — Integración consistente de admisiones con comunicaciones, documentos, matrícula y servicios financieros
+
+**Componentes involucrados:** Microservicios backend (`ACADEMIC`, `USER`, `ACCOUNTING`, `TASK`, `EXAM`), `js/api.js`.
+
+**Problema detectado:**
+Garantizar la consistencia transaccional y resistencia a fallos parciales cuando una operación de admisión involucra múltiples microservicios.
+
+**Requisitos funcionales:**
+1. Identificar fuentes de verdad para cada estado (Académico, Financiero, Documental).
+2. Un fallo en el servicio de notificación no revierte una admisión confirmada.
+3. Permitir reintentos seguros idempotentes en caso de desconexión entre servicios.
+
+**Criterios de Aceptación:**
+- Fallos en notificaciones u operaciones secundarias quedan registrados sin dejar la solicitud en estado incoherente.
+- Peticiones repetidas son reconocidas mediante identificadores de operación evitando registros duplicados.
+
+**Riesgo de Regresión:** Bajo.
+**Dependencias:** T-ADM-01, T-ADM-02, T-ADM-05, T-ADM-09, T-ADM-14.
+
+---
+
+### ORDEN DE EJECUCIÓN RECOMENDADO FASE 5
+
+| Orden | Tarea | Prioridad | Dependencia principal |
+| :---: | :--- | :---: | :--- |
+| **1** | **T-ADM-01.** Control transaccional de concurrencia en cupos y conversión | **P1** | `convertAdmissionToStudent` |
+| **2** | **T-ADM-02.** Flujo completo de revisión, aprobación y rechazo de documentos | **P1** | Gestión documental en Drive |
+| **3** | **T-ADM-03.** Verificación estricta del código de vinculación familiar | **P1** | `RelacionesFamiliares` |
+| **4** | **T-ADM-10.** Verificación de propiedad y autorización en expedientes | **P2** | Backend RBAC & Ownership |
+| **5** | **T-ADM-14.** Conversión integral a estudiante matriculado | **P2** | T-ADM-01, T-ADM-03 |
+| **6** | **T-ADM-09.** Conciliación y seguimiento de comprobantes de pago | **P2** | `ComprobantesPago` / Finanzas |
+| **7** | **T-ADM-06.** Guardado y recuperación de borradores de solicitudes | **P2** | IndexedDB / Forms |
+| **8** | **T-ADM-04.** Módulo de agendamiento de entrevistas y evaluaciones | **P2** | Calendario de docentes |
+| **9** | **T-ADM-05.** Expiración automática de ofertas de admisión | **P2** | Triggers / Control de cupos |
+| **10** | **T-ADM-12.** Estados, reapertura y retiro explícito de solicitudes | **P2** | `SolicitudesAdmision` |
+| **11** | **T-ADM-13.** Seguimiento de requisitos pendientes y lista de espera | **P2** | T-ADM-01, T-ADM-05 |
+| **12** | **T-ADM-16.** Integración consistente entre servicios | **P2** | Microservicios backend |
+| **13** | **T-ADM-08.** Vista unificada y contextual del portal de familias | **P2** | `#family-consolidated-summary-container` |
+| **14** | **T-ADM-07.** Embudo visual de admisiones e historial de comunicaciones | **P3** | Universal Chart Engine |
+| **15** | **T-ADM-11.** Indicadores de carga, recuperación de errores y reintentos | **P3** | `js/api.js` / UX |
+| **16** | **T-ADM-15.** Mejora de formularios, accesibilidad y validación | **P3** | Forms / WCAG 2.2 |

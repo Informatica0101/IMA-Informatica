@@ -1315,3 +1315,34 @@ Resumen por Dominio:
 
 Certificación:
   Auditoría completada sin modificar código de producción, esquema de base de datos ni archivos de configuración en estricto cumplimiento de METODOLOGIA_DESARROLLO.md.
+
+===============================================================================
+REGISTRO DE AUDITORÍA FUNCIONAL: FASE 5 - ADMISIONES, ASPIRANTES Y PORTAL DE FAMILIAS
+===============================================================================
+Fecha: 19 de Octubre de 2026
+Módulo / Fase: Fase 5 - Admisiones, Aspirantes y Portal de Familias
+Archivos Auditados:
+  - Backend GAS: backend/academic-service/Code.gs, backend/user-service/Code.gs, backend/accounting-service/Code.gs, backend/task-service/Code.gs, backend/exam-service/Code.gs
+  - Controladores JS: js/student.js, js/teacher.js, js/ui-common.js, js/api.js, js/auth.js
+  - Vistas / HTML: student-dashboard.html, teacher-dashboard.html, index.html, login.html
+
+Resumen de Cobertura y Métricas:
+  - Subcapacidades Confirmadas e Inspeccionadas: 15 / 15 (100.0%)
+  - Escenarios de Prueba Evaluados: 20 / 20 (100.0%)
+  - Cobertura de Verificación: 16 / 20 Escenarios Aprobados (80.0%)
+  - Cumplimiento por Subcapacidad: 12 / 15 Totalmente Funcionales (80.0%)
+
+Resumen por Área:
+  1. Ciclo de Admisión y Solicitudes: Funcional. createAdmissionRequest y SolicitudesAdmision activos. Brecha en vista de reapertura/retiro explícita (P2).
+  2. Formularios y Requisitos: Funcional. Validaciones server-side completas. Brecha en borradores parciales (P2).
+  3. Documentos y Evidencias: Parcial. Carga en Drive operativa. Brecha en flujo de revisión/rechazo documental (P1).
+  4. Entrevistas y Evaluaciones: Incompleto. Requiere módulo de agenda y rúbricas (P2).
+  5. Listas de Espera y Ofertas: Funcional. Brecha en temporizador automático de expiración (P2).
+  6. Identidad y Vinculación Familiar: Funcional. RelacionesFamiliares y getGuardianStudents activos.
+  7. Portal de Familias: Funcional. Panel consolidado multitutor activo en student-dashboard.html.
+  8. Cuentas e Invitaciones: Funcional. Token temporal de invitación verificado.
+  9. Conversión a Matriculado: Funcional. convertAdmissionToStudent atómico. Brecha en LockService para concurrencia masiva (P1).
+  10. Cupos y Finanzas: Funcional. checkCapacity y submitJointFamilyPayment integrados. Brecha en bloqueo por sobrecupo concurrente (P1).
+
+Certificación:
+  Auditoría completada sin modificar código de producción, esquema de base de datos ni archivos de configuración en estricto cumplimiento de METODOLOGIA_DESARROLLO.md.
