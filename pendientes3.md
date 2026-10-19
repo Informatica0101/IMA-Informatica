@@ -8852,227 +8852,359 @@ El destinatario puede abrir una comunicación y completar la acción solicitada 
 
 ## TAREAS DE RESOLUCIÓN - FASE 18: COMPRAS, PROVEEDORES Y CONTRATACIÓN DE SERVICIOS
 
-### T18-COM-01 [P0] — Aislamiento y control RBAC estricto en API de Compras y Cuentas por Pagar
+### T18-02 / T18-COM-05 [P0] — Control presupuestario preventivo y verificación de techo presupuestario para solicitudes y órdenes de compra
 
-- **Componentes relacionados:** `backend/accounting-service/Code.gs` (`ROLE_PERMISSIONS`, `createPurchaseRequest`, `submitPurchaseQuotation`, `createPurchaseOrder`, `approvePurchaseOrder`, `recordPurchaseReceipt`).
-- **Problema detectado:** Garantizar que únicamente perfiles autorizados (`Administrador`, `Director`, `Subdirector`, `Contador`) puedan ejecutar la aprobación de órdenes de compra y la recepción física que genera obligaciones financieras.
+- **Componentes relacionados:** `backend/accounting-service/Code.gs` (`createPurchaseRequest`, `createPurchaseOrder`, `getBudgets`), asignación de centro de costo y generación de órdenes.
+- **Estado inicial:** Implementada parcialmente.
+- **Dependencias:** La fuente presupuestaria existente (`PresupuestosInstitucionales`) y el mecanismo de autorización de excepciones.
+- **Problema detectado:** Evitar que una adquisición supere inadvertidamente el presupuesto institucional asignado al Centro de Costo o partida de la unidad solicitante antes de comprometer recursos.
 - **Requisitos funcionales:**
-  1. Validar `authRole` en el backend antes de procesar `approvePurchaseOrder` o `recordPurchaseReceipt`.
-  2. Impedir que usuarios con roles docentes o estudiantiles puedan invocar funciones de compra mediante llamadas directas.
+  1. Comprobar la disponibilidad presupuestaria antes de permitir que una adquisición avance al estado que compromete recursos.
+  2. Determinar la disponibilidad utilizando el presupuesto aplicable al periodo, departamento, centro de costo y partida presupuestaria.
+  3. Diferenciar los importes: Presupuesto autorizado, Importe reservado por solicitudes, Importe comprometido por órdenes aprobadas, Importe ejecutado mediante facturas, Ajustes y liberaciones, y Saldo disponible.
+  4. Definir de forma coherente en qué transición se reserva el presupuesto y en cuál se reconoce el compromiso definitivo. Evitar descontar el mismo importe dos veces por solicitud, orden y factura.
+  5. Validar el presupuesto al crear una solicitud y volver a comprobarlo antes de aprobar o emitir la orden, según las reglas presupuestarias.
+  6. Permitir configurar opcionalmente si las solicitudes pueden superar el saldo disponible o si deben bloquearse. Si hay disputa o duda sobre la rigidez del bloqueo, la plataforma debe permitir configurar mediante parámetro en `ConfiguracionSistema` si el sobrepaso genera un bloqueo duro o una advertencia que requiere autorización de excepción.
+  7. Si se permiten excepciones, exigir la autorización correspondiente (`Director` / `Administrador`), registrar el motivo y conservar el importe excedido.
+  8. Liberar reservas o compromisos cuando se cancelen operaciones, se reduzcan cantidades o se anulen documentos.
+  9. Evitar que dos solicitudes concurrentes consuman el mismo saldo disponible.
+  10. Mantener un historial de las comprobaciones, reservas, compromisos, liberaciones y excepciones.
+  11. Mostrar al usuario el presupuesto disponible, el importe solicitado, el saldo resultante y la causa de cualquier bloqueo.
+- **Comportamiento esperado:**
+  El sistema impide que una compra supere inadvertidamente el presupuesto disponible. Si la política admite una excepción, existe autorización identificable y trazabilidad completa. La disponibilidad se comprueba con los datos más recientes y se actualiza de forma consistente ante operaciones simultáneas.
 - **Criterios de Aceptación:**
-  - Invocaciones con roles no autorizados son rechazadas inmediatamente en el backend con excepción de permisos.
+  - Una solicitud dentro del saldo permitido avanza al siguiente estado.
+  - Una solicitud que excede el saldo se bloquea o sigue el proceso de excepción configurado.
+  - Modificar el importe hacia arriba vuelve a validar el presupuesto.
+  - Una orden no puede aprobarse con una asignación inválida o con un exceso no autorizado.
+  - Cancelar una solicitud libera el importe reservado.
+  - Cancelar una orden no libera compromisos mantenidos por facturas o recepciones existentes.
+  - Dos solicitudes concurrentes no utilizan el mismo saldo como si estuviera disponible para ambas.
+  - Los informes de presupuesto concilian reservas, compromisos, ejecuciones y liberaciones.
 - **Riesgo de Regresión:** Bajo.
-- **Dependencias:** `ROLE_PERMISSIONS`.
 
 ---
 
-### T18-COM-02 [P0] — Concurrencia y bloqueo duro de LockService en numeración documental de órdenes de compra
+### T18-05 / T18-COM-08 [P0] — Implementar recepciones parciales, devoluciones y conciliación por línea de compra
 
-- **Componentes relacionados:** `backend/accounting-service/Code.gs` (`createPurchaseOrder`, `approvePurchaseOrder`, `recordPurchaseReceipt`).
-- **Problema detectado:** En entornos con múltiples usuarios emitiendo órdenes o recepciones simultáneas, existe riesgo de colisión en identificadores unívocos.
+- **Componentes relacionados:** `backend/accounting-service/Code.gs` (`recordPurchaseReceipt`, `recordInventoryMovement`), `OrdenesCompra`, `RecepcionesCompra`, `InventariosKardex`.
+- **Estado inicial:** Recepción total implementada; tratamiento integral de recepciones parciales requiere completarse.
+- **Dependencias:** Órdenes de compra e integración con inventario kardex.
+- **Problema detectado:** Registrar de forma precisa compras donde el proveedor entrega bienes en múltiples entregas parciales o donde parte del pedido es devuelto o rechazado.
+- **Requisitos funcionales:**
+  1. Registrar la cantidad ordenada, recibida, rechazada y pendiente por cada línea de una orden.
+  2. Permitir registrar múltiples recepciones parciales contra una misma orden de compra.
+  3. Mantener la relación de cada recepción con las líneas originales de la orden.
+  4. Distinguir recepción parcial, recepción completa, recepción con incidencias y recepción cancelada/revertida.
+  5. Evitar que una recepción parcial cambie la orden a `RecibidaTotal` mientras existan cantidades pendientes (marcar como `RecibidaParcial`).
+  6. Permitir registrar diferencias de cantidad, calidad o especificación.
+  7. Registrar devoluciones y sustituciones de bienes sin eliminar el registro de recepción original.
+  8. Incorporar la conformidad de servicios como una operación identificable vinculada al alcance contratado y evidencia de prestación.
+  9. Evitar que los servicios se contabilicen como bienes recibidos en inventario cuando no corresponda.
+  10. Mantener un saldo acumulado de cantidades recibidas, facturadas y pendientes por línea.
+  11. Permitir cerrar una orden con cantidades pendientes únicamente mediante reglas autorizadas y conservando el saldo no recibido.
+  12. Identificar al receptor, fecha, observaciones y documentos de evidencia.
+- **Comportamiento esperado:**
+  La recepción representa lo que realmente ocurrió. La orden solo se considera completamente recibida cuando las cantidades pendientes hayan sido satisfechas o cerradas mediante una excepción autorizada.
+- **Criterios de Aceptación:**
+  - Una orden de 50 unidades puede recibir 20 y después 30, conservando el historial de ambas.
+  - Tras la primera recepción, el sistema muestra 20 recibidas y 30 pendientes en estado `RecibidaParcial`.
+  - La segunda recepción actualiza los acumulados a 50 recibidas y transiciona a `RecibidaTotal` sin duplicar la primera.
+  - El inventario kardex aumenta únicamente por las cantidades aceptadas.
+  - Una recepción superior a la cantidad pendiente se bloquea o exige excepción.
+  - Una devolución genera el movimiento compensatorio manteniendo la relación original.
+- **Riesgo de Regresión:** Medio.
+
+---
+
+### T18-06 / T18-COM-04 [P0] — Separar recepción de factura y aplicar conciliación e integridad atómica tripartita (Orden vs Recepción vs Factura)
+
+- **Componentes relacionados:** `backend/accounting-service/Code.gs` (`recordPurchaseReceipt`, `recordAccountsPayableExpense`), `CuentasPorPagarGastos`, `OrdenesCompra`, `RecepcionesCompra`.
+- **Estado inicial:** Integración automática con Cuentas por Pagar implementada; separación entre recepción física, validación de factura y reconocimiento de obligación atómico requiere verificarse.
+- **Dependencias:** Recepciones, órdenes, cotizaciones y cuentas por pagar.
+- **Problema detectado:** Garantizar que si falla el registro en `InventariosKardex` o en `CuentasPorPagarGastos`, la recepción no quede guardada parcialmente, diferenciando la recepción física de la aprobación de factura.
+- **Requisitos funcionales:**
+  1. Diferenciar los eventos de recepción física, conformidad, registro de factura, aprobación de factura y reconocimiento de la obligación.
+  2. Evitar que la recepción física genere automáticamente una obligación por el total de la orden si todavía no existe una factura válida, a menos que se configure explícitamente en la plataforma el comportamiento de provisión automática por recepción. Si existe disputa, la plataforma ofrecerá un parámetro configurable (`PROVISIONAR_EN_RECEPCION`: true/false).
+  3. Envolver las escrituras de recepción, entrada a kardex y obligación contable en un bloque de ejecución atómica con reversión en caso de fallo parcial.
+  4. Registrar facturas con número, proveedor, fechas, moneda, líneas, descuentos, impuestos, cargos y total.
+  5. Vincular cada línea facturada con la orden y la recepción correspondiente.
+  6. Permitir facturas parciales y múltiples facturas contra una orden dentro de los límites autorizados.
+  7. Comparar cantidades, precios e importes entre orden, recepción y factura (3-way matching).
+  8. Configurar tolerancias y excepciones para diferencias de precio o cantidad.
+  9. Detectar facturas duplicadas mediante la combinación de proveedor, referencia externa y datos clave.
+  10. Gestionar notas de crédito, devoluciones y ajustes mediante registros vinculados sin borrar la historia original.
+  11. Impedir que una factura bloqueada por diferencias se reconozca como obligación aprobada sin la autorización correspondiente.
+- **Comportamiento esperado:**
+  Coincidencia atómica 1:1 entre los items recepcionados, las existencias en inventario y el monto en cuentas por pagar, manteniendo la trazabilidad e impidiendo obligaciones duplicadas o no sustentadas.
+- **Criterios de Aceptación:**
+  - Si falla el guardado en Kardex o Cuentas por Pagar, la recepción se revierte por completo.
+  - Una factura válida y conciliada genera la obligación correspondiente una sola vez.
+  - Una factura parcial conserva el saldo pendiente de facturar.
+  - Las diferencias de precios/cantidades se identifican antes de aprobar la factura.
+  - Facturas duplicadas son rechazadas.
+- **Riesgo de Regresión:** Medio.
+
+---
+
+### T18-07 / T18-COM-16 [P0] — Ciclo integral de pagos, control de cuentas por pagar y conciliación con libro mayor contable
+
+- **Componentes relacionados:** `backend/accounting-service/Code.gs` (`getAccountsReceivablePayableSummary`, `recordAccountsPayableExpense`, `getAccountingJournalEntries`), `CuentasPorPagarGastos`.
+- **Estado inicial:** Resumen de obligaciones disponible; ciclo integral de pagos y conciliación contable requiere completarse.
+- **Dependencias:** Facturas de proveedores, cuentas por pagar, permisos financieros y libro mayor (`CTA-201 Proveedores`).
+- **Problema detectado:** Controlar las obligaciones con proveedores y registrar los pagos sin duplicar operaciones, garantizando la coincidencia exacta entre Cuentas por Pagar y el Libro Mayor.
+- **Requisitos funcionales:**
+  1. Presentar facturas pendientes, parcialmente pagadas, vencidas y pagadas con su importe original, ajustes, total pagado, saldo pendiente y fecha de vencimiento.
+  2. Permitir registrar pagos parciales y totales con fecha, importe, moneda, medio de pago y referencia de transacción.
+  3. Relacionar cada pago con una o varias facturas de proveedor.
+  4. Establecer una autorización previa para pagos cuando la política financiera la requiera.
+  5. Diferenciar los permisos para registrar, aprobar, ejecutar, consultar y revertir pagos (`Contador` / `Director`).
+  6. Impedir pagos superiores al saldo permitido, salvo en flujos explícitos de anticipos autorizados.
+  7. Detectar solicitudes de pago repetidas y garantizar que los reintentos no dupliquen el efecto financiero.
+  8. Permitir registrar comprobantes y referencias de pago.
+  9. Gestionar anulaciones y reversiones sin eliminar el registro original.
+  10. Conciliar las obligaciones en `CuentasPorPagarGastos` con la cuenta de pasivo `CTA-201 Proveedores` (o `2101`) en el Libro Mayor (`AsientosContables`).
+  11. Mostrar alertas de vencimiento y filtrar obligaciones por periodo, proveedor, estado y antigüedad de la deuda.
+- **Comportamiento esperado:**
+  El resumen de cuentas por pagar refleja obligaciones reales y su estado de liquidación. No se considera pagada una factura sin confirmación real ni se permite un segundo pago inadvertido.
+- **Criterios de Aceptación:**
+  - Un pago parcial reduce el saldo pendiente en el importe exacto.
+  - Un pago total deja el saldo pendiente en cero.
+  - Solicitudes repetidas de pago no ejecutan dos veces la transacción.
+  - La herramienta de conciliación confirma balance cero entre el auxiliar de Cuentas por Pagar y la cuenta de pasivo en el Libro Mayor.
+- **Riesgo de Regresión:** Bajo.
+
+---
+
+### T18-09 / T18-COM-02 / T18-COM-03 [P0] — Fortalecer integridad transaccional, idempotencia, LockService en numeración y prevención de doble recepción
+
+- **Componentes relacionados:** `backend/accounting-service/Code.gs` (`createPurchaseOrder`, `approvePurchaseOrder`, `recordPurchaseReceipt`), `OrdenesCompra`, `RecepcionesCompra`.
+- **Estado inicial:** Prevención básica de duplicados por marcas de tiempo; requiere LockService y verificación de estado idempotente.
+- **Dependencias:** Servicios de compras, inventario y cuentas por pagar, `LockService`.
+- **Problema detectado:** En entornos con alta concurrencia o reintentos por latencia de red, existe riesgo de colisión en identificadores documentales o de ejecución duplicada de recepciones/pagos.
 - **Requisitos funcionales:**
   1. Envolver la generación de identificadores `ORD-CMP-*` y `REC-CMP-*` en `LockService.getScriptLock().waitLock(10000)`.
-  2. Garantizar que cada orden y recepción reciba un número correlativo/timestamp estrictamente unívoco sin duplicación.
+  2. Implementar tokens de idempotencia para operaciones que puedan repetirse por doble clic o fallos de conexión.
+  3. Comprobar el estado actual de una orden antes de aceptar una nueva aprobación, recepción o cancelación.
+  4. Rechazar inmediatamente intentos de recepcionar una orden que ya se encuentre en estado `RecibidaTotal` o `Cancelada`.
+  5. Asegurar que una recepción no genere dos entradas en Kardex ni dos pasivos en Cuentas por Pagar.
+  6. Registrar operaciones incompletas con identificadores de correlación que permitan su reconstrucción o recuperación.
+  7. Permitir reintentar operaciones fallidas sin duplicar efectos ya confirmados.
+  8. Gestionar la concurrencia al actualizar estados y consumir saldos presupuestarios.
+- **Comportamiento esperado:**
+  Cada operación lógica produce un único resultado válido aunque se reciban solicitudes repetidas o fuera de orden. Los identificadores documentales se mantienen únicos bajo concurrencia.
 - **Criterios de Aceptación:**
-  - 50 solicitudes concurrentes generan 50 órdenes con IDs únicos y sin colisión.
+  - 50 solicitudes concurrentes de creación de ordenes generan 50 IDs únicos sin colisiones.
+  - Reintentar la recepción sobre una orden ya recepcionada arroja un error controlado de idempotencia.
+  - Dos aprobaciones simultáneas no producen estados contradictorios.
 - **Riesgo de Regresión:** Bajo.
-- **Dependencias:** `LockService`.
 
 ---
 
-### T18-COM-03 [P0] — Prevención de recepción doble y sobre-facturación de órdenes de compra
+### T18-14 / T18-COM-01 / T18-COM-13 [P0] — Aislamiento RBAC estricto, generación de PDF de órdenes y suite de pruebas automatizadas integrales
 
-- **Componentes relacionados:** `backend/accounting-service/Code.gs` (`recordPurchaseReceipt`).
-- **Problema detectado:** Prevenir que una orden de compra en estado `RecibidaTotal` vuelva a ser recepcionada por error, lo que duplicaría las entradas en Inventario Kardex y el pasivo en Cuentas por Pagar.
+- **Componentes relacionados:** `backend/accounting-service/Code.gs` (`ROLE_PERMISSIONS`, `generateSchoolDocument`), `js/accounting.js`.
+- **Estado inicial:** Roles definidos; suite de pruebas integrales y aislamiento estricto de backend requieren formalización.
+- **Dependencias:** `ROLE_PERMISSIONS`, plantilla `PDFOverlay`, servicios de compras.
+- **Problema detectado:** Asegurar que únicamente perfiles autorizados puedan ejecutar operaciones de compra, permitir la emisión oficial de Órdenes de Compra en PDF y validar todos los escenarios límites mediante pruebas automatizadas.
 - **Requisitos funcionales:**
-  1. Verificar el estado previo de la orden en `OrdenesCompra` antes de procesar la recepción.
-  2. Rechazar la recepción si la orden ya se encuentra en estado `RecibidaTotal` o `Cancelada`.
+  1. Validar `authRole` en el backend para `createPurchaseRequest`, `submitPurchaseQuotation`, `createPurchaseOrder`, `approvePurchaseOrder` y `recordPurchaseReceipt`.
+  2. Denegar de forma efectiva solicitudes directas de usuarios con roles no autorizados (estudiantes, docentes).
+  3. Generar el documento PDF oficial de la Orden de Compra formateado con membrete institucional, RTN, proveedor, líneas, totales y firmas de aprobación utilizando `generateSchoolDocument`.
+  4. Incorporar una suite de pruebas automatizadas que valide: compra completa de bien inventariable, compra de servicio con conformidad, entregas parciales, facturación parcial, facturas con diferencias, facturas duplicadas, pagos, exceso presupuestario, concurrencia de solicitudes, recepciones repetidas y recuperación de errores.
+- **Comportamiento esperado:**
+  El backend aplica restricciones de seguridad inviolables, produce documentos PDF oficiales de órdenes de compra y cuenta con verificación automatizada de todos los flujos principales y alternativos.
 - **Criterios de Aceptación:**
-  - Reintentar `recordPurchaseReceipt` sobre una orden ya recepcionada arroja un error controlado indicando que la orden ya fue completada.
+  - Solicitudes no autorizadas a los endpoints de compras son rechazadas en el servidor.
+  - El usuario puede descargar o imprimir la Orden de Compra oficial en PDF.
+  - Las pruebas automatizadas verifican registros persistidos y confirman la integridad de datos.
 - **Riesgo de Regresión:** Bajo.
-- **Dependencias:** `recordPurchaseReceipt`, `OrdenesCompra`.
 
 ---
 
-### T18-COM-04 [P0] — Conciliación e integridad atómica tripartita (Orden vs Recepción vs Factura)
-
-- **Componentes relacionados:** `backend/accounting-service/Code.gs` (`recordPurchaseReceipt`, `recordAccountsPayableExpense`, `recordInventoryMovement`).
-- **Problema detectado:** Garantizar que si falla el registro en `InventariosKardex` o en `CuentasPorPagarGastos`, la recepción no quede guardada parcialmente.
-- **Requisitos funcionales:**
-  1. Envolver las operaciones de recepción, entrada a kardex y generación de obligación contable en un bloque de ejecución atómica.
-  2. Si ocurre un fallo en cualquiera de las 3 escrituras, revertir el estado y notificar la inconsistencia.
-- **Criterios de Aceptación:**
-  - El sistema asegura coincidencia atómica 1:1 entre los items recepcionados, las existencias en inventario y el monto en cuentas por pagar.
-- **Riesgo de Regresión:** Medio.
-- **Dependencias:** `recordPurchaseReceipt`, `InventariosKardex`, `CuentasPorPagarGastos`.
-
----
-
-### T18-COM-05 [P1] — Verificación de techo presupuestario en Solicitudes y Órdenes de Compra
-
-- **Componentes relacionados:** `backend/accounting-service/Code.gs` (`createPurchaseRequest`, `createPurchaseOrder`, `getBudgets`).
-- **Problema detectado:** Evitar que se emitan órdenes de compra que superen el presupuesto institucional asignado al Centro de Costo de la unidad solicitante.
-- **Requisitos funcionales:**
-  1. Consultar el saldo disponible en `PresupuestosInstitucionales` para la partida/centro de costo antes de autorizar la orden de compra.
-  2. Advertir o bloquear la orden si el monto estimado excede la disponibilidad del centro de costo.
-- **Criterios de Aceptación:**
-  - Intentar aprobar una orden sin saldo disponible genera una alerta de sobrepaso presupuestario.
-- **Riesgo de Regresión:** Bajo.
-- **Dependencias:** `PresupuestosInstitucionales`, `getBudgets`.
-
----
-
-### T18-COM-06 [P1] — Matriz comparativa de cotizaciones y selección justificada de ofertas
-
-- **Componentes relacionados:** `backend/accounting-service/Code.gs` (`getPurchaseQuotations`, `submitPurchaseQuotation`), `js/accounting.js`.
-- **Problema detectado:** Facilitar la evaluación visual comparativa entre cotizaciones de múltiples proveedores para una misma solicitud de compra.
-- **Requisitos funcionales:**
-  1. Construir una vista en matriz comparando precio total, plazo de entrega en días, vigencia de oferta y condiciones de pago.
-  2. Exigir la justificación obligatoria cuando se selecciona una cotización que no sea la de menor precio.
-- **Criterios de Aceptación:**
-  - La interfaz resalta la mejor oferta por costo/plazo y solicita campo de justificación al seleccionar una cotización alternativa.
-- **Riesgo de Regresión:** Bajo.
-- **Dependencias:** `getPurchaseQuotations`, `CotizacionesCompra`.
-
----
-
-### T18-COM-07 [P1] — Registro y validación de proveedores inactivos en adquisiciones
-
-- **Componentes relacionados:** `backend/accounting-service/Code.gs` (`registerSupplier`, `createPurchaseOrder`).
-- **Problema detectado:** Impedir la emisión de nuevas órdenes de compra o adjudicación de cotizaciones a proveedores marcados como `Inactivo` en el catálogo.
-- **Requisitos funcionales:**
-  1. Validar el campo `Estado` en `ProveedoresActivos` al seleccionar un proveedor para una nueva cotización u orden.
-  2. Preservar la visibilidad de proveedores inactivos en el historial de compras pasadas y cuentas por pagar sin permitir transacciones nuevas.
-- **Criterios de Aceptación:**
-  - Proveedores con estado `Inactivo` quedan deshabilitados en los selectores de compras nuevas.
-- **Riesgo de Regresión:** Nulo.
-- **Dependencias:** `ProveedoresActivos`, `registerSupplier`.
-
----
-
-### T18-COM-08 [P1] — Gestión de Recepciones Parciales y Devoluciones a Proveedores
-
-- **Componentes relacionados:** `backend/accounting-service/Code.gs` (`recordPurchaseReceipt`).
-- **Problema detectado:** Manejar compras donde el proveedor entrega los bienes en múltiples entregas parciales o donde parte del pedido es rechazado.
-- **Requisitos funcionales:**
-  1. Soportar el registro de cantidad recibida vs cantidad pendiente por item.
-  2. Actualizar el estado de la orden a `RecibidaParcial` y ajustar la obligación en cuentas por pagar proporcionalmente a lo entregado.
-- **Criterios de Aceptación:**
-  - La recepción parcial deja la orden en estado `RecibidaParcial` con el saldo de items pendiente registrado de forma exacta.
-- **Riesgo de Regresión:** Medio.
-- **Dependencias:** `recordPurchaseReceipt`, `OrdenesCompra`.
-
----
-
-### T18-COM-09 [P1] — Enriquecimiento UI del Módulo de Compras en `js/accounting.js`
+### T18-01 / T18-COM-09 [P1] — Interfaz integral, interactiva y enriquecida para la gestión de compras y proveedores en `js/accounting.js`
 
 - **Componentes relacionados:** `js/accounting.js` (`renderComprasModule`), `dashboard-contabilidad.html`.
-- **Problema detectado:** Sustituir la tarjeta contenedora estática por una interfaz con pestañas interactivas para gestionar todas las fases del ciclo de compras.
+- **Estado inicial:** Vista contenedora informativa; requiere implementación interactiva.
+- **Dependencias:** Servicios backend de compras (`registerSupplier`, `createPurchaseRequest`, `submitPurchaseQuotation`, `createPurchaseOrder`, `approvePurchaseOrder`, `recordPurchaseReceipt`).
+- **Problema detectado:** Convertir la pantalla informativa estática en un módulo operativo unificado que permita administrar el ciclo completo de compras desde la interfaz.
 - **Requisitos funcionales:**
-  1. Implementar sub-pestañas: `Proveedores`, `Solicitudes`, `Cotizaciones`, `Órdenes de Compra`, `Recepciones`.
-  2. Integrar formularios para crear proveedores, registrar solicitudes, cargar cotizaciones, autorizar órdenes y procesar recepciones físicas.
+  1. Incorporar pestañas de navegación interactiva para: `Proveedores`, `Solicitudes de Compra`, `Cotizaciones`, `Matriz Comparativa`, `Órdenes de Compra`, `Aprobaciones Pendientes`, `Recepciones & Conformidad`, y `Cuentas por Pagar / Facturas`.
+  2. Incorporar en cada sección formularios y tablas para creación, consulta, edición, cambio de estado y visualización de detalles.
+  3. Conectar todos los controles con las funciones reales del backend.
+  4. Incorporar búsqueda global, filtros (proveedor, estado, departamento, centro de costo, período, ID), ordenación y paginación.
+  5. Mostrar tarjetas de indicadores (KPIs) con solicitudes pendientes, órdenes por aprobar, entregas incompletas y facturas vencidas.
+  6. Reflejar permisos de usuario en la UI sin depender de la ocultación de botones como única seguridad.
+  7. Presentar estados de carga, listas vacías con mensaje informativo y mensajes de error comprensibles.
+  8. Prevenir envíos duplicados por doble clic deshabilitando controles durante el procesamiento.
+  9. Garantizar diseño adaptable para dispositivos móviles y de escritorio.
+- **Comportamiento esperado:**
+  El usuario puede gestionar fluidamente todo el proceso de abastecimiento desde una sola pantalla sin necesidad de cambiar de módulo.
 - **Criterios de Aceptación:**
-  - El usuario puede navegar fluidamente entre todas las áreas de compras sin salir del panel de contabilidad.
+  - Navegación fluida entre pestañas de compras.
+  - Formularios crean y actualizan registros reales en el backend.
+  - Filtros combinados devuelven los registros correctos.
+  - Errores del servidor se muestran de forma amigable al usuario.
 - **Riesgo de Regresión:** Bajo.
-- **Dependencias:** `renderComprasModule`, `js/accounting.js`.
 
 ---
 
-### T18-COM-10 [P1] — Integración directa de Compras de Activos Fijos con Inventario Patrimonial
+### T18-03 / T18-COM-07 [P1] — Gestión de condiciones comerciales, contratos de proveedores y validación de proveedores inactivos
 
-- **Componentes relacionados:** `backend/accounting-service/Code.gs` (`recordPurchaseReceipt`, `manageAssetItem`).
-- **Problema detectado:** Automatizar el alta de bienes de capital/equipo (mobiliario, computadoras, vehículos) en `ActivosPatrimoniales` al recepcionar compras etiquetadas como activo fijo.
+- **Componentes relacionados:** `backend/accounting-service/Code.gs` (`registerSupplier`, `createPurchaseOrder`), `ProveedoresActivos`.
+- **Estado inicial:** Catálogo de proveedores básico; requiere condiciones comerciales estructuradas y control de inactividad.
+- **Dependencias:** Catálogo de proveedores y gestión documental.
+- **Problema detectado:** Gestionar contratos y acuerdos comerciales con proveedores impidiendo la adjudicación de nuevas compras a proveedores inactivos o con contratos vencidos.
 - **Requisitos funcionales:**
-  1. Identificar items con categoría `ActivoFijo` en la orden de compra.
-  2. Invocar `manageAssetItem` para dar de alta automáticamente las fichas de activos patrimoniales correspondientes.
+  1. Complementar los datos del proveedor con acuerdos/contratos estructurados: ID documento, tipo de acuerdo, fechas de inicio y vencimiento, moneda, condiciones de pago, plazos de entrega, precios pactados, garantías y adjuntos.
+  2. Mantener historial de versiones de condiciones comerciales.
+  3. Relacionar cada contrato con las solicitudes, cotizaciones u órdenes generadas bajo sus términos.
+  4. Incorporar alertas de vencimiento para contratos de proveedores.
+  5. Impedir la emisión de nuevas cotizaciones u órdenes a proveedores marcados como `Inactivo` en `ProveedoresActivos`.
+  6. Preservar las condiciones de una orden ya aprobada aunque cambie posteriormente el contrato general del proveedor.
+  7. Diferenciar claramente los estados: Proveedor Inactivo, Contrato Vencido y Contrato Activo.
+- **Comportamiento esperado:**
+  El sistema valida la vigencia del proveedor y sus contratos al emitir compras. Cambios futuros en contratos no afectan retroactivamente órdenes históricas.
 - **Criterios de Aceptación:**
-  - Al recepcionar una compra de equipo, el sistema crea automáticamente las fichas patrimoniales con su proveedor y número de factura.
-- **Riesgo de Regresión:** Bajo.
-- **Dependencias:** `recordPurchaseReceipt`, `manageAssetItem`, `ActivosPatrimoniales`.
-
----
-
-### T18-COM-11 [P2] — Indicadores y Métricas Operativas de Compras en Dashboard
-
-- **Componentes relacionados:** `backend/accounting-service/Code.gs` (`getAdvancedDashboardAnalytics`), `js/accounting.js`.
-- **Problema detectado:** Proporcionar métricas clave de gestión de compras (monto total de compras del período, tiempo promedio de atención de solicitudes, órdenes pendientes de entrega).
-- **Requisitos funcionales:**
-  1. Calcular KPIs de compras consolidados por mes, proveedor y centro de costo.
-  2. Renderizar gráficos visuales utilizando el motor dinámico de gráficos universales.
-- **Criterios de Aceptación:**
-  - El dashboard muestra tarjetas con total comprado en el mes, órdenes pendientes de entrega y distribución de gasto por categoría.
+  - Proveedores con estado `Inactivo` no pueden seleccionarse para compras nuevas.
+  - Un proveedor puede tener múltiples contratos con periodos vigentes distintos.
+  - Las órdenes aprobadas conservan las condiciones contractuales vigentes al momento de su emisión.
 - **Riesgo de Regresión:** Nulo.
-- **Dependencias:** Universal Chart Engine, `getAdvancedDashboardAnalytics`.
 
 ---
 
-### T18-COM-12 [P2] — Control de Vencimiento y Alertas de Cotizaciones de Proveedores
+### T18-04 / T18-COM-06 [P1] — Matriz comparativa de ofertas y selección justificada de cotizaciones
+
+- **Componentes relacionados:** `backend/accounting-service/Code.gs` (`submitPurchaseQuotation`, `getPurchaseQuotations`), `js/accounting.js`.
+- **Estado inicial:** Consulta individual de cotizaciones implementada; matriz comparativa requiere desarrollo UI.
+- **Dependencias:** Solicitudes de compra y cotizaciones registradas.
+- **Problema detectado:** Permitir la evaluación lado a lado de múltiples ofertas para una misma solicitud de compra, documentando la justificación de la elección.
+- **Requisitos funcionales:**
+  1. Presentar en una tabla/matriz comparativa todas las cotizaciones vinculadas a una solicitud.
+  2. Desglosar por proveedor: producto/servicio, especificación, cantidad, precio unitario, descuento, impuestos, costo total, plazo de entrega (días), condiciones de pago, vigencia y garantía.
+  3. Resaltar ofertas incompletas (que no cubren todas las líneas), vencidas o con condiciones atípicas.
+  4. Permitir registrar observaciones y criterios de evaluación (precio, plazo, calidad, garantía).
+  5. Permitir seleccionar la cotización ganadora (total o parcialmente si la política lo permite).
+  6. Exigir un campo de justificación obligatorio cuando se seleccione una cotización que no sea la de menor costo.
+  7. Mantener disponibles las ofertas descartadas para fines de auditoría.
+- **Comportamiento esperado:**
+  La matriz facilita una toma de decisiones transparente e informada, registrando la cotización seleccionada y el motivo explícito de la decisión.
+- **Criterios de Aceptación:**
+  - La matriz agrupa correctamente todas las ofertas de la solicitud.
+  - Seleccionar una oferta más costosa bloquea el avance si no se ingresa la justificación.
+  - La orden de compra se genera automáticamente con los datos de la cotización seleccionada.
+- **Riesgo de Regresión:** Bajo.
+
+---
+
+### T18-08 / T18-COM-10 [P1] — Automatización del registro, capitalización e integración de activos fijos adquiridos
+
+- **Componentes relacionados:** `backend/accounting-service/Code.gs` (`recordPurchaseReceipt`, `manageAssetItem`), `ActivosPatrimoniales`.
+- **Estado inicial:** Funciones independientes; requiere integración automática en recepciones.
+- **Dependencias:** Catálogo de activos y recepciones de compras.
+- **Problema detectado:** Facilitar el alta automática de bienes de capital (mobiliario, equipos, vehículos) en el catálogo de `ActivosPatrimoniales` al recepcionar compras etiquetadas como activo fijo.
+- **Requisitos funcionales:**
+  1. Identificar en la orden/recepción los items clasificados como `ActivoFijo` o bien capitalizable.
+  2. Permitir que la recepción de un activo invoque `manageAssetItem` para crear las fichas patrimoniales correspondientes.
+  3. Registrar en el activo el proveedor, número de factura, orden de compra, fecha de adquisición, costo y ubicación inicial.
+  4. Soportar la creación de múltiples fichas individualizadas cuando se compren varias unidades del mismo activo.
+  5. Evitar la creación de activos duplicados al reintentar o reprocesar una recepción.
+  6. Mantener separadas la entrada física a inventario y la capitalización contable del activo patrimonial.
+- **Comportamiento esperado:**
+  Los bienes de capital pasan del flujo de compras al registro patrimonial sin reingresar datos manualmente, conservando la trazabilidad de la factura y orden de origen.
+- **Criterios de Aceptación:**
+  - Compras de activos fijos crean sus fichas correspondientes en `ActivosPatrimoniales`.
+  - Compras de insumos o consumibles no generan activos patrimoniales.
+  - Reprocesar la recepción no duplica los registros de activos.
+- **Riesgo de Regresión:** Bajo.
+
+---
+
+### T18-10 / T18-COM-14 [P1] — Historial de auditoría, trazabilidad de documentos y evaluación de desempeño de proveedores
+
+- **Componentes relacionados:** `backend/accounting-service/Code.gs` (`recordPurchaseReceipt`, `ProveedoresActivos`), hojas de compras.
+- **Estado inicial:** Logs de usuario básicos; requiere trazabilidad completa y calificación de proveedores.
+- **Dependencias:** Hojas de datos de compras y módulo de proveedores.
+- **Problema detectado:** Reconstruir la historia completa de una adquisición desde la solicitud inicial hasta la liquidación del pago, e incorporar la calificación de desempeño de proveedores.
+- **Requisitos funcionales:**
+  1. Registrar en el historial cada cambio de estado de solicitudes, cotizaciones, órdenes, recepciones, facturas y pagos con usuario, fecha y valores modificados.
+  2. Mantener referencias cruzadas entre `solicitudId`, `cotizacionId`, `ordenCompraId`, `recepcionId`, `facturaNum` y `pagoId`.
+  3. Permitir navegar hacia atrás y hacia adelante entre documentos relacionados.
+  4. Capturar durante la recepción de compras una calificación de 1 a 5 estrellas y comentarios sobre el tiempo de entrega y calidad del proveedor.
+  5. Promediar la calificación de desempeño del proveedor en `ProveedoresActivos`.
+  6. Restringir la modificación o eliminación del historial de auditoría a superadministradores.
+- **Comportamiento esperado:**
+  Trazabilidad total de extremo a extremo para cualquier compra y disponibilidad de un indicador de desempeño para cada proveedor en el catálogo.
+- **Criterios de Aceptación:**
+  - Abrir una orden permite acceder a su solicitud, cotización, recepción y factura.
+  - La calificación del proveedor se actualiza en el catálogo tras evaluar la recepción.
+  - No es posible alterar el historial sin permisos de auditoría.
+- **Riesgo de Regresión:** Nulo.
+
+---
+
+### T18-11 / T18-COM-11 / T18-COM-15 [P1] — Informes operativos, métricas en dashboard y exportación de compras a Excel/CSV
+
+- **Componentes relacionados:** `backend/accounting-service/Code.gs` (`getPurchaseOrders`, `getPurchaseRequests`, `getAdvancedDashboardAnalytics`), `js/accounting.js`.
+- **Estado inicial:** Listados sencillos; requiere informes avanzados, métricas y exportación.
+- **Dependencias:** Módulo de compras, Universal Chart Engine.
+- **Problema detectado:** Proveer reportes analíticos de compras por período, proveedor, centro de costo e indicadores clave, junto con la capacidad de exportar datos a formatos estándar.
+- **Requisitos funcionales:**
+  1. Generar reportes consolidados de: solicitudes pendientes, cotizaciones por estado, órdenes por estado/recepción, facturas por pagar y vencimientos.
+  2. Calcular KPIs de compras (monto total comprado en el mes, tiempo promedio de atención de solicitudes, porcentaje de órdenes entregadas a tiempo).
+  3. Renderizar gráficos estadísticos dinámicos mediante el motor dinámico de gráficos universales.
+  4. Incorporar botón de exportación de listados a Excel/CSV respetando los filtros activos y permisos del usuario.
+  5. Permitir la consulta por identificador documental o rango de fechas.
+- **Comportamiento esperado:**
+  Herramientas analíticas y de exportación integradas que facilitan el control gerencial y las auditorías externas de compras.
+- **Criterios de Aceptación:**
+  - Los totales de los informes coinciden exactamente con las transacciones de origen.
+  - La exportación a CSV genera un archivo limpio con las columnas visibles y filtros aplicados.
+  - Gráficos del dashboard reflejan datos actualizados en tiempo real.
+- **Riesgo de Regresión:** Nulo.
+
+---
+
+### T18-12 / T18-COM-12 [P2] — Alertas operativas, seguimiento de tareas pendientes y vencimiento de cotizaciones/contratos
 
 - **Componentes relacionados:** `backend/accounting-service/Code.gs` (`getPurchaseQuotations`), `js/ui-common.js`.
-- **Problema detectado:** Advertir sobre cotizaciones que hayan superado su período de vigencia (ej. 30 días) antes de proceder a la emisión de la orden de compra.
+- **Estado inicial:** Capacidad no implementada.
+- **Dependencias:** Módulo de compras y notificaciones.
+- **Problema detectado:** Alertar oportunamente sobre solicitudes estancadas, cotizaciones por vencer, contratos a punto de expirar y entregas atrasadas.
 - **Requisitos funcionales:**
-  1. Comparar la fecha de recepción + días de vigencia de la oferta con la fecha actual.
-  2. Marcar las cotizaciones vencidas y requerir actualización de precios si la oferta expiró.
+  1. Detectar solicitudes de compra pendientes de aprobación por más de N días.
+  2. Alertar sobre cotizaciones cuya fecha de vigencia haya expirado antes de emitir la orden.
+  3. Identificar órdenes de compra con fecha estimada de entrega vencida.
+  4. Mostrar facturas de proveedores próximas a vencer o vencidas en el panel de tareas pendientes.
+  5. Vincular cada alerta con el rol/usuario responsable para su resolución directa.
+  6. Remover las alertas automáticamente una vez resuelta la condición que la originó.
+- **Comportamiento esperado:**
+  Centro de notificaciones y panel con alertas operativas activas para evitar retrasos o pagos fuera de plazo.
 - **Criterios de Aceptación:**
-  - Intentar adjudicar una cotización cuya vigencia expiró despliega un mensaje solicitando re-cotización.
+  - Cotizaciones vencidas muestran un indicador de advertencia al intentar ser adjudicadas.
+  - Resolver la recepción o pago remueve la alerta del panel.
 - **Riesgo de Regresión:** Nulo.
-- **Dependencias:** `CotizacionesCompra`, `getPurchaseQuotations`.
 
 ---
 
-### T18-COM-13 [P2] — Descarga en PDF de Órdenes de Compra Institucionales
+### T18-13 [P2] — Acuerdos de compra recurrente y reutilización de condiciones pactadas
 
-- **Componentes relacionados:** `backend/accounting-service/Code.gs` (`generateSchoolDocument`), `js/accounting.js`.
-- **Problema detectado:** Generar el documento PDF oficial de la Orden de Compra formateado con logo institucional, encabezado, firmas de autorización y detalle de items.
+- **Componentes relacionados:** `backend/accounting-service/Code.gs` (`registerSupplier`, `createPurchaseOrder`), `ProveedoresActivos`.
+- **Estado inicial:** Capacidad complementaria no implementada.
+- **Dependencias:** Contratos de proveedores y módulo de compras.
+- **Problema detectado:** Automatizar la creación de órdenes de compra periódicas para insumos recurrentes (ej. papelería, limpieza, servicios de mantenimiento) utilizando precios y condiciones previas.
 - **Requisitos funcionales:**
-  1. Formatear la orden de compra en PDF utilizando la plantilla institucional predeterminada.
-  2. Incluir membrete, RTN de la institución, RTN del proveedor, condiciones de entrega y firmas.
+  1. Permitir definir plantillas o acuerdos de compra recurrente asociadas a un proveedor.
+  2. Precargar las líneas de productos, precios pactados, centro de costo y condiciones de entrega al generar una nueva compra recurrente.
+  3. Permitir ajustar cantidades o fechas antes de enviar la orden a aprobación.
+  4. Mantener el registro del consumo acumulado contra el tope del acuerdo recurrente.
+  5. Bloquear la reutilización de acuerdos vencidos o cuyo monto tope haya sido alcanzado.
+- **Comportamiento esperado:**
+  Emisión ágil de compras frecuentes reutilizando acuerdos previamente negociados sin omitir los flujos de aprobación requeridos.
 - **Criterios de Aceptación:**
-  - El usuario puede descargar o imprimir la Orden de Compra oficial en formato PDF para enviar al proveedor.
-- **Riesgo de Regresión:** Bajo.
-- **Dependencias:** `generateSchoolDocument`, `PDFOverlay`.
-
----
-
-### T18-COM-14 [P2] — Registro y Evaluación del Desempeño de Proveedores (Cumplimiento & Calidad)
-
-- **Componentes relacionados:** `backend/accounting-service/Code.gs` (`recordPurchaseReceipt`, `ProveedoresActivos`).
-- **Problema detectado:** Calificar el cumplimiento de tiempo de entrega y calidad de los productos recibidos para construir un ranking histórico de proveedores.
-- **Requisitos funcionales:**
-  1. Capturar una puntuación de 1 a 5 estrellas y observaciones sobre la puntualidad/calidad durante el registro de la recepción.
-  2. Promediar la calificación del proveedor en el catálogo `ProveedoresActivos`.
-- **Criterios de Aceptación:**
-  - El catálogo de proveedores muestra la calificación promedio de cumplimiento de entregas derivada de las recepciones anteriores.
+  - Crear una compra a partir de un acuerdo recurrente llena automáticamente los campos correspondientes.
+  - Las compras derivadas siguen el flujo de aprobación presupuestaria estándar.
 - **Riesgo de Regresión:** Nulo.
-- **Dependencias:** `ProveedoresActivos`, `recordPurchaseReceipt`.
-
----
-
-### T18-COM-15 [P3] — Exportación de Informes de Compras a Excel/CSV
-
-- **Componentes relacionados:** `js/accounting.js`.
-- **Problema detectado:** Exportar el historial de compras, órdenes de compra y cotizaciones para auditorías externas o análisis financiero.
-- **Requisitos funcionales:**
-  1. Generar archivos Excel/CSV filtrados por rango de fechas, proveedor o departamento solicitante.
-  2. Respetar las reglas de privacidad y permisos del usuario al exportar.
-- **Criterios de Aceptación:**
-  - El botón de exportación genera una descarga limpia en CSV/XLSX con todas las columnas seleccionadas.
-- **Riesgo de Regresión:** Nulo.
-- **Dependencias:** `js/accounting.js`.
-
----
-
-### T18-COM-16 [P3] — Conciliación de Cuentas por Pagar con Contabilidad General
-
-- **Componentes relacionados:** `backend/accounting-service/Code.gs` (`getAccountsReceivablePayableSummary`, `getAccountingJournalEntries`).
-- **Problema detectado:** Verificar la coincidencia exacta entre la suma de obligaciones en `CuentasPorPagarGastos` y la cuenta de pasivo `CTA-201 Proveedores` en el Libro Mayor.
-- **Requisitos funcionales:**
-  1. Comparar la suma de saldos pendientes de facturas de proveedores contra el saldo acreedor de la cuenta 2101/CTA-201.
-  2. Reportar cualquier discrepancia o asiento manual descuadrado.
-- **Criterios de Aceptación:**
-  - La herramienta de conciliación confirma balance cero entre el módulo de compras/cuentas por pagar y el libro mayor contable.
-- **Riesgo de Regresión:** Nulo.
-- **Dependencias:** `CuentasPorPagarGastos`, `AsientosContables`.
 
 ---
 
@@ -9080,7 +9212,6 @@ El destinatario puede abrir una comunicación y completar la acción solicitada 
 
 | Orden | Tareas | Condición para avanzar | Dependencia principal |
 | :---: | :--- | :--- | :--- |
-| **1** | **T18-COM-01**, **T18-COM-02**, **T18-COM-03**, **T18-COM-04** | Aislamiento RBAC estricto, LockService en numeración, prevención de doble recepción e integración atómica tripartita (Orden-Recepción-CuentasPorPagar-Kardex). | Backend `Code.gs` / `ROLE_PERMISSIONS` / `LockService` / `recordPurchaseReceipt` |
-| **2** | **T18-COM-05**, **T18-COM-06**, **T18-COM-07**, **T18-COM-08** | Verificación de techo presupuestario, matriz comparativa de cotizaciones, validación de proveedores inactivos y soporte de recepciones parciales. | `PresupuestosInstitucionales` / `CotizacionesCompra` / `ProveedoresActivos` / `OrdenesCompra` |
-| **3** | **T18-COM-09**, **T18-COM-10**, **T18-COM-12**, **T18-COM-13** | Módulo UI interactivo en `js/accounting.js`, alta automática de activos fijos patrimoniales, alertas de cotizaciones vencidas y PDF oficial de Órdenes de Compra. | `renderComprasModule` / `manageAssetItem` / `PDFOverlay` / `generateSchoolDocument` |
-| **4** | **T18-COM-11**, **T18-COM-14**, **T18-COM-15**, **T18-COM-16** | Dashboard de métricas de compras, evaluación de desempeño de proveedores, exportación a Excel/CSV y conciliación contable Cuentas por Pagar vs Mayor. | Universal Chart Engine / `ProveedoresActivos` / `AsientosContables` |
+| **1** | **T18-02 / T18-COM-05**, **T18-05 / T18-COM-08**, **T18-06 / T18-COM-04**, **T18-07 / T18-COM-16**, **T18-09 / T18-COM-02 / T18-COM-03**, **T18-14 / T18-COM-01 / T18-COM-13** | Control presupuestario preventivo, recepciones parciales, conciliación atómica tripartita, ciclo de pagos con pasivo contable, LockService en numeración, aislamiento RBAC y PDF oficial con tests. | Backend `Code.gs` / `ROLE_PERMISSIONS` / `LockService` / `PresupuestosInstitucionales` / `recordPurchaseReceipt` |
+| **2** | **T18-01 / T18-COM-09**, **T18-03 / T18-COM-07**, **T18-04 / T18-COM-06**, **T18-08 / T18-COM-10**, **T18-10 / T18-COM-14**, **T18-11 / T18-COM-11 / T18-COM-15** | Interfaz UI interactiva en `js/accounting.js`, contratos/proveedores inactivos, matriz comparativa de ofertas, integración de activos fijos patrimoniales, trazabilidad/desempeño de proveedores e informes/exportación. | `renderComprasModule` / `CotizacionesCompra` / `ProveedoresActivos` / `manageAssetItem` / Universal Chart Engine |
+| **3** | **T18-12 / T18-COM-12**, **T18-13** | Alertas operativas de vencimiento de cotizaciones/contratos y acuerdos de compra recurrente. | Centro de Notificaciones / Módulo de Compras |
