@@ -1577,7 +1577,7 @@ Criterios de Aceptación:
 - **Criterios de Aceptación:**
   - Evita ejecuciones duplicadas simultáneas o repetidas en la misma jornada.
   - Mantiene registro de estado en las hojas de auditoría de envío.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 ### [B-002] Centro de Notificaciones y Bandeja de Salida Interna
 - **Archivos Involucrados:** `js/ui-common.js`, `teacher-dashboard.html`, `student-dashboard.html`
@@ -1593,7 +1593,7 @@ Criterios de Aceptación:
 - **Criterios de Aceptación:**
   - Configuración por rol (Director/Administrador).
   - Emisión de notificaciones automáticas internas dirigidas a docentes, orientadores y tutores.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 ### [B-004] Auditoría de Entregas y Registro de Notificaciones Automáticas
 - **Archivos Involucrados:** `backend/user-service/Code.gs`
@@ -1601,7 +1601,7 @@ Criterios de Aceptación:
 - **Criterios de Aceptación:**
   - Consulta restringida para perfil Administrador/Director.
   - Exportación de logs de avisos en formato CSV/JSON.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 
 ## 3. ÁREA C: PWA Y PORTAL MÓVIL
@@ -1612,7 +1612,7 @@ Criterios de Aceptación:
 - **Criterios de Aceptación:**
   - Carga inmediata offline de dashboards principales y recursos estáticos.
   - Actualización transparente de caché al detectar nueva versión del SW.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 ### [C-002] Gestor de Sincronización Offline en IndexedDB
 - **Archivos Involucrados:** `js/ui-common.js`, `js/persistence.js`
@@ -1620,7 +1620,7 @@ Criterios de Aceptación:
 - **Criterios de Aceptación:**
   - Procesamiento automático al recuperar la conexión (`online`).
   - Modal de resolución de conflictos en caso de cambios simultáneos.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 ### [C-003] Visor Gráfico del Estado de Conexión y Cola Pendiente
 - **Archivos Involucrados:** `js/ui-common.js`, `teacher-dashboard.html`, `student-dashboard.html`
@@ -1628,7 +1628,7 @@ Criterios de Aceptación:
 - **Criterios de Aceptación:**
   - Muestra contador de elementos en cola y botón de "Sincronizar Ahora".
   - Notifica visualmente los éxitos o fallos de sincronización.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 ### [C-004] Adaptación Responsiva Touch-First para Dispositivos Móviles
 - **Archivos Involucrados:** `css/style.css`, `js/ui-common.js`, dashboards HTML
@@ -1636,7 +1636,7 @@ Criterios de Aceptación:
 - **Criterios de Aceptación:**
   - Cumplimiento de pautas WCAG 2.2 AA para interfaces táctiles.
   - Ausencia de scroll horizontal involuntario en resoluciones móviles (<= 360px).
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 ### [C-005] Verificación PWA Lighthous e Instalabilidad Standalone
 - **Archivos Involucrados:** `manifest.json`, `sw.js`

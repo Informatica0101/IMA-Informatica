@@ -1390,3 +1390,14 @@ Descripción de cambios:
   - Agregado botón disparador de búsqueda `#btn-global-search` en la barra de navegación del encabezado principal.
 - `MapaDependencias.md`, `Auditoría.txt`, `pendientes2.md`:
   - Actualizados registros de dependencias, bitácora de auditoría y marcadas tareas `[REQ-OMNI-001]`, `[B-002]`, `[T-001]` y `[T-002]` como completadas.
+
+## [Fase: Automatización, Idempotencia, PWA & Modo Offline B-001..B-004 & C-001..C-004] - 2026-10-19
+- `backend/user-service/Code.gs`:
+  - Inyectado cerrojo de concurrencia `LockService` en `getPendingReminders` para prevención de envíos duplicados de recordatorios.
+  - Implementados endpoints de configuración de automatización (`configureAutomationRules`, `getAutomationRules`) y auditoría de notificaciones (`getNotificationAuditLogs`).
+- `sw.js`:
+  - Actualizada la versión de caché `ngca-app-v8.1` para refresco transparente de recursos offline en PWA.
+- `js/ui-common.js`:
+  - Enriquecidas la cola de acciones IndexedDB (`window.queueOfflineAction`) y el motor de sincronización (`window.syncOfflineQueue`).
+- `Auditoría.txt`, `pendientes2.md`:
+  - Registrados los hallazgos de auditoría y marcadas como completadas las tareas B-001, B-003, B-004, C-001, C-002, C-003 y C-004.

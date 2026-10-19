@@ -3,7 +3,7 @@
  * ES5 Compliance Mandatory for maximum compatibility.
  */
 
-var CACHE_NAME = 'ngca-app-v8.0';
+var CACHE_NAME = 'ngca-app-v8.1';
 var ASSETS = [
   './',
   './index.html',

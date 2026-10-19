@@ -1335,3 +1335,24 @@ Archivos Auditados:
 - Agregar modal omnibox e interfaz de notificaciones en `js/ui-common.js`.
 - Agregar disparadores e iconos de búsqueda y notificaciones en `teacher-dashboard.html` y `student-dashboard.html`.
 - Actualizar `MapaDependencias.md` con las nuevas relaciones de endpoints y modales.
+
+====================================================================================================
+AUDITORÍA TÉCNICA - AUTOMATIZACIÓN, IDEMPOTENCIA, PWA & MODO OFFLINE (B-001, B-003, B-004, C-001, C-002, C-003, C-004) - Mon Oct 19 2026
+
+Archivos Auditados:
+- `backend/user-service/Code.gs`
+- `sw.js`
+- `js/ui-common.js`
+
+1. DIAGNÓSTICO Y COMPONENTES EXISTENTES
+- Backend (`backend/user-service/Code.gs`):
+  * `getPendingReminders` carece de bloqueo atómico mediante `LockService` para prevenir envíos duplicados concurrentes.
+  * No se cuenta con endpoints explícitos para reglas configurables de automatización (`configureAutomationRules`) ni auditoría exportable de notificaciones (`getNotificationAuditLogs`).
+- Service Worker & Frontend (`sw.js`, `js/ui-common.js`):
+  * `sw.js` maneja la lista de precaché pero requiere la inclusión explícita de todos los dashboards HTML.
+  * `js/ui-common.js` implementa IndexedDB `ngca_offline_db` y cola de sincronización sin incluir el contador de pendientes en la insignia visual `#online-status-badge`.
+
+2. PLAN DE REMEDIACIÓN E IMPLEMENTACIÓN
+- Inyectar `LockService` en `getPendingReminders` y crear endpoints `configureAutomationRules`, `getAutomationRules` y `getNotificationAuditLogs` en `backend/user-service/Code.gs`.
+- Actualizar la lista de precaché en `sw.js`.
+- Enriquecer `window.queueOfflineAction` y `window.syncOfflineQueue` en `js/ui-common.js` actualizando la insignia `#online-status-badge` con el contador de pendientes.
