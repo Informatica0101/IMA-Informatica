@@ -1346,3 +1346,32 @@ Resumen por Área:
 
 Certificación:
   Auditoría completada sin modificar código de producción, esquema de base de datos ni archivos de configuración en estricto cumplimiento de METODOLOGIA_DESARROLLO.md.
+
+===============================================================================
+REGISTRO DE AUDITORÍA FUNCIONAL: FASE 6 - EXPEDIENTE INSTITUCIONAL Y CICLO DE VIDA DEL ESTUDIANTE
+===============================================================================
+Fecha: 19 de Octubre de 2026
+Módulo / Fase: Fase 6 - Expediente Institucional y Ciclo de Vida del Estudiante
+Archivos Auditados:
+  - Backend GAS: backend/academic-service/Code.gs, backend/user-service/Code.gs, backend/accounting-service/Code.gs, backend/task-service/Code.gs, backend/exam-service/Code.gs
+  - Controladores JS: js/teacher.js, js/student.js, js/accounting.js, js/ui-common.js, js/api.js
+  - Vistas / HTML: teacher-dashboard.html, student-dashboard.html, dashboard-contabilidad.html, index.html
+
+Resumen de Cobertura y Métricas:
+  - Subcapacidades / Secciones Evaluadas: 22 / 22 (100.0%)
+  - Escenarios Integrales Evaluados: 22 / 22 (100.0%)
+  - Cobertura de Verificación: 18 / 22 Escenarios Aprobados (81.8%)
+  - Cumplimiento por Dominio: 18 / 22 Totalmente Funcionales (81.8%)
+
+Resumen por Área:
+  1. Expediente Único e Identidad: Funcional. ExpedientesEstudiantes y getStudentFile activos. Brecha en UI de conciliación de duplicados (P2).
+  2. Datos Personales y Contactos: Funcional. RelacionesFamiliares activo. Brecha en alerta de restricción de custodia legal (P1).
+  3. Matrícula Actual y Cambios: Funcional. createStudentEnrollment atómico. Brecha en LockService para reasignación masiva (P1).
+  4. Ciclo de Vida Anual: Funcional. Preservación de notas históricas verificada.
+  5. Traslados y Retiros: Parcial. updateStudentStatus actualiza estado. Brecha en cancelación automática de cargos futuros tras retiro (P1) y constancia de traslado PDF (P2).
+  6. Promoción y Graduación: Parcial. Requiere módulo dedicado de egresados y titulación (P2).
+  7. Gestión Documental y Autorizaciones: Funcional. Brecha en alertas de vencimiento de permisos/salidas (P2).
+  8. Integración Académica, Asistencia, Disciplina y Finanzas: Funcional. Isolamiento por rol y propiedad de registro comprobado.
+
+Certificación:
+  Auditoría completada sin modificar código de producción, esquema de base de datos ni archivos de configuración en estricto cumplimiento de METODOLOGIA_DESARROLLO.md.

@@ -1422,3 +1422,545 @@ Garantizar la consistencia transaccional y resistencia a fallos parciales cuando
 | **14** | **T-ADM-07.** Embudo visual de admisiones e historial de comunicaciones | **P3** | Universal Chart Engine |
 | **15** | **T-ADM-11.** Indicadores de carga, recuperación de errores y reintentos | **P3** | `js/api.js` / UX |
 | **16** | **T-ADM-15.** Mejora de formularios, accesibilidad y validación | **P3** | Forms / WCAG 2.2 |
+
+
+---
+
+## PLAN DE TRABAJO DETALLADO Y UNIFICADO: FASE 6. EXPEDIENTE INSTITUCIONAL Y CICLO DE VIDA DEL ESTUDIANTE
+
+### T-EXP-01 [P1] — Flag de Restricción de Custodia Legal y Alertas en Entrega de Estudiante
+- **Componentes relacionados:** `backend/academic-service/Code.gs`, `backend/user-service/Code.gs`, `js/teacher.js`, `teacher-dashboard.html`, hojas `RelacionesFamiliares`, `ResponsablesTutores`.
+- **Problema que debe resolverse:** Cuando existen restricciones legales o decretos de custodia exclusiva, el sistema debe alertar de forma destacada al docente u orientador antes de permitir la salida o entrega del estudiante a un familiar no autorizado.
+- **Requisitos funcionales:**
+  - Agregar el campo `RestriccionCustodiaLegal` (Booleano/Texto) y `DocumentoCustodiaUrl` en `RelacionesFamiliares`.
+  - Disparar un badge de alerta roja ("RESTRICCIÓN DE CUSTODIA LEGAL") en el perfil del expediente del estudiante visible para docentes, consejeros y directivos.
+  - Bloquear la selección de un contacto no autorizado en los módulos de salida anticipada o autorización de recogida.
+- **Criterios de Aceptación:**
+  1. Si un responsable tiene un flag de restricción de custodia, se muestra un aviso de alerta en su ficha.
+  2. El personal no puede autorizar la entrega del estudiante a la persona restringida sin clave de anulación administrativa.
+- **Riesgo de Regresión:** Nulo.
+
+---
+
+### T-EXP-02 [P1] — Cancelación Automática de Cargos Financieros Futuros al Registrar Baja/Retiro
+- **Componentes relacionados:** `backend/academic-service/Code.gs` (`updateStudentStatus`), `backend/accounting-service/Code.gs`, `js/accounting.js`, hojas `ExpedientesEstudiantes`, `CargosEstudiante`.
+- **Problema que debe resolverse:** Cuando se registra el retiro o baja de un estudiante a mitad de año lectivo, el sistema no anula automáticamente los cargos de colegiatura generados para meses posteriores a la fecha efectiva de retiro.
+- **Requisitos funcionales:**
+  - En `updateStudentStatus`, al pasar a estado `Retirado` o `Trasladado`, identificar en `CargosEstudiante` los cargos no pagados con fecha de vencimiento mayor a la fecha efectiva de baja.
+  - Actualizar el estado de dichos cargos futuros a `AnuladoPorBaja` o `CanceladoPorRetiro`, ajustando el saldo pendiente.
+  - Mantener los cargos anteriores a la fecha de baja e impagos como saldo adeudado histórico.
+- **Criterios de Aceptación:**
+  1. Dar de baja a un estudiante el 15 de marzo anula los cobros programados para abril en adelante.
+  2. Los saldos adeudados hasta el 15 de marzo permanecen como cuenta por cobrar activa.
+- **Riesgo de Regresión:** Bajo.
+
+---
+
+### T-EXP-03 [P1] — LockService y Concurrencia Transaccional en Cambios de Sección Masivos
+- **Componentes relacionados:** `backend/academic-service/Code.gs` (`createStudentEnrollment`, `changeStudentSection`), `js/teacher.js`.
+- **Problema que debe resolverse:** La reasignación de sección o grado de múltiples estudiantes al inicio de período carece de bloqueo transaccional, pudiendo sobrepasar la capacidad máxima asignada al aula o crear inconsistencias en listas de clase.
+- **Requisitos funcionales:**
+  - Aplicar `LockService.getScriptLock()` con timeout de 10 segundos en las reasignaciones masivas de sección.
+  - Revalidar la capacidad de la sección destino en `SedesAulas` dentro del bloqueo exclusivo.
+- **Criterios de Aceptación:**
+  1. Cambios de sección simultáneos respetan la capacidad máxima del aula.
+  2. La reasignación no duplica matrículas ni asignaciones de clase.
+- **Riesgo de Regresión:** Bajo.
+
+---
+
+### T-EXP-04 [P1] — Cierre Anual con Snapshot Inmutable del Expediente Académico
+- **Componentes relacionados:** `backend/academic-service/Code.gs`, `js/teacher.js`, `teacher-dashboard.html`.
+- **Problema que debe resolverse:** Al cerrar un año escolar, las calificaciones e historiales de asistencia deben quedar congeladas de forma inmutable para que ediciones posteriores de notas o reasignaciones de docentes no alteren los certificados emitidos.
+- **Requisitos funcionales:**
+  - Implementar el endpoint `closeAcademicYearSnapshot` que genera una copia de respaldo firmada con hash SHA-256 de las tablas de calificaciones del año finalizado.
+  - Bloquear cualquier edición posterior en `CalificacionesEstudiantes` para registros pertenecientes a años con estado `Cerrado` sin una autorización formal de Apertura Excepcional.
+- **Criterios de Aceptación:**
+  1. Intento de modificar una nota de un año cerrado devuelve error `403 Academic Year Closed`.
+  2. Los reportes e historial del año cerrado leen directamente el snapshot congelado.
+- **Riesgo de Regresión:** Bajo.
+
+---
+
+### T-EXP-05 [P2] — Módulo Visual de Comparación y Conciliación de Expedientes Duplicados
+- **Componentes relacionados:** `backend/academic-service/Code.gs` (`findDuplicateStudents`, `mergeStudentFiles`), `js/teacher.js`, `teacher-dashboard.html`.
+- **Problema que debe resolverse:** `findDuplicateStudents` identifica duplicados, pero la fusión en `mergeStudentFiles` se ejecuta a ciegas sin una interfaz "Lado a Lado" que permita al usuario seleccionar qué campos conservar de cada registro.
+- **Requisitos funcionales:**
+  - Crear el modal `#modal-merge-students-preview` en `teacher-dashboard.html`.
+  - Presentar columnas comparativas entre el Expediente A (Origen) y Expediente B (Destino) permitiendo seleccionar foto, fecha de nacimiento, DNI y tutores principales antes de ejecutar `mergeStudentFiles`.
+- **Criterios de Aceptación:**
+  1. El usuario puede previsualizar y elegir qué datos prevalecen antes de consolidar dos expedientes duplicados.
+  2. Todas las calificaciones, matrículas e historial se reasignan al expediente consolidado.
+- **Riesgo de Regresión:** Nulo.
+
+---
+
+### T-EXP-06 [P2] — Generación Oficial de Constancias de Traslado y Ficha Acumulativa PDF
+- **Componentes relacionados:** `backend/academic-service/Code.gs`, `backend/accounting-service/Code.gs` (`generateSchoolDocument`), `js/teacher.js`.
+- **Problema que debe resolverse:** Cuando un estudiante se traslada a otra institución, el sistema debe emitir la Constancia Oficial de Traslado y la Ficha Acumulativa de Conducta y Rendimiento con código de verificación CUV.
+- **Requisitos funcionales:**
+  - Implementar plantilla `ConstanciaTrasladoOficial` en `generateSchoolDocument` que incluya promedios acumulados, estado de solvencia y código CUV.
+  - Registrar el evento de emisión en el historial de trazabilidad del expediente.
+- **Criterios de Aceptación:**
+  1. El personal autorizado puede emitir la constancia oficial en PDF stamping CUV directo desde el expediente.
+  2. La verificación pública del CUV confirma la autenticidad del traslado.
+- **Riesgo de Regresión:** Nulo.
+
+---
+
+### T-EXP-07 [P2] — Módulo de Control de Egresados, Graduación y Certificación
+- **Componentes relacionados:** `backend/academic-service/Code.gs`, `js/teacher.js`, `teacher-dashboard.html`.
+- **Problema que debe resolverse:** Los estudiantes de último año que completan el plan de estudios requieren un estado de graduación formal, número de acta de graduación y registro en el catálogo histórico de egresados.
+- **Requisitos funcionales:**
+  - Crear el estado `Graduado` en `ExpedientesEstudiantes` y la tabla `RegistroEgresadosTitulos`.
+  - Permitir registrar número de libro, folio, acta y fecha de graduación.
+  - Habilitar portal de consulta histórica de egresados.
+- **Criterios de Aceptación:**
+  1. Los estudiantes graduados pasan a estado `Graduado` sin perder el acceso histórico a sus certificados.
+  2. Se genera el registro de título oficial en el catálogo de egresados.
+- **Riesgo de Regresión:** Bajo.
+
+---
+
+### T-EXP-08 [P2] — Gestión de Permisos Institucionales, Salidas de Campo y Control de Vencimientos
+- **Componentes relacionados:** `backend/academic-service/Code.gs`, `backend/user-service/Code.gs`, `js/student.js`, `js/teacher.js`.
+- **Problema que debe resolverse:** Falta un registro de permisos de salidas pedagógicas/excursiones firmadas digitalmente por los padres, con alertas de vencimiento para autorizaciones médicas anuales.
+- **Requisitos funcionales:**
+  - Crear el módulo `PermisosAutorizacionesEstudiante` para registrar la conformidad firmada digitalmente (`registerDocumentSignature`).
+  - Alertar a los docentes si un estudiante no cuenta con la autorización firmada antes de una excursión programada.
+- **Criterios de Aceptación:**
+  1. Los padres pueden firmar autorizaciones de salida desde el portal familiar.
+  2. La lista de control de la excursión muestra claramente qué estudiantes cuentan con permiso vigente.
+- **Riesgo de Regresión:** Nulo.
+
+---
+
+### T-EXP-09 [P3] — Buscador Avanzado Multicriterio de Expedientes e Indicadores de Estado
+- **Componentes relacionados:** `js/teacher.js`, `teacher-dashboard.html`, `js/ui-common.js`.
+- **Problema que debe resolverse:** El buscador de estudiantes actual filtra por texto simple; se requiere un panel de búsqueda avanzada con filtros combinados por grado, sección, estado (Activo, Retirado, Graduado), solvencia y alertas de documentos.
+- **Requisitos funcionales:**
+  - Enriquecer `#student-search-panel` con filtros combinados multicriterio y exportación de listas filtradas a Excel.
+  - Mostrar badges visuales de color según la condición del estudiante.
+- **Criterios de Aceptación:**
+  1. Búsquedas combinadas (ej. "9no Grado" + "Retirados") retornan exactamente el listado filtrado.
+  2. Las listas exportadas respetan el enmascaramiento de datos personales según el rol del usuario.
+- **Riesgo de Regresión:** Nulo.
+
+---
+
+### ORDEN DE EJECUCIÓN RECOMENDADO FASE 6
+
+| Orden | Tarea | Prioridad | Dependencia principal |
+| :---: | :--- | :---: | :--- |
+| **1** | **T-EXP-01.** Flag de restricción de custodia legal | **P1** | `RelacionesFamiliares` |
+| **2** | **T-EXP-02.** Cancelación de cargos futuros tras retiro/baja | **P1** | `updateStudentStatus` / Finanzas |
+| **3** | **T-EXP-03.** LockService en reasignaciones masivas | **P1** | `createStudentEnrollment` |
+| **4** | **T-EXP-04.** Snapshot inmutable de cierre de año escolar | **P1** | `CalificacionesEstudiantes` |
+| **5** | **T-EXP-05.** Modal visual de comparación y fusión de duplicados | **P2** | `mergeStudentFiles` |
+| **6** | **T-EXP-06.** Constancias de traslado y Ficha Acumulativa PDF | **P2** | `generateSchoolDocument` |
+| **7** | **T-EXP-07.** Módulo de egresados, graduación y títulos | **P2** | `ExpedientesEstudiantes` |
+| **8** | **T-EXP-08.** Permisos de salidas de campo y firmas digitales | **P2** | `registerDocumentSignature` |
+| **9** | **T-EXP-09.** Buscador avanzado multicriterio de expedientes | **P3** | Frontend search |
+
+
+---
+
+### T-EXP-10 [P1] — Aislamiento de calificaciones y asignaciones académicas históricas
+
+**Estado de partida:** Requiere mejoras.
+**Componentes relacionados:** `CalificacionesEstudiantes`, historial de matrículas, `backend/academic-service/Code.gs`, `backend/exam-service/Code.gs`, `js/teacher.js` y `js/student.js`.
+
+#### Problema que debe resolver
+Las calificaciones deben permanecer vinculadas al año, período, grado, sección, asignatura y matrícula en los que se originaron. Un cambio posterior de sección o grado no debe reasignar calificaciones antiguas al contexto académico actual ni permitir que aparezcan en los informes equivocados.
+
+#### Requisitos funcionales
+1. Verificar que cada calificación esté vinculada a una matrícula o asignación académica identificable y al período correspondiente.
+2. Mantener separados los datos de la persona, la matrícula anual, la pertenencia a una sección, la inscripción en una asignatura y el resultado académico.
+3. Cuando un estudiante cambie de sección, conservar las calificaciones anteriores asociadas a la sección y asignatura originales.
+4. Diferenciar las calificaciones históricas de las actuales en las vistas del docente, estudiante y personal administrativo.
+5. Definir cómo se registran traslados de notas entre secciones, equivalencias y correcciones autorizadas. No trasladar ni recalcular notas automáticamente solo porque cambie el grado o la sección.
+6. Permitir que los usuarios autorizados consulten el historial académico por año, período, asignatura y sección.
+7. Conservar el valor anterior, el valor corregido, el motivo y el autor en cualquier modificación de una calificación cerrada.
+8. Validar que los informes, promedios, boletines y procesos de promoción utilicen las calificaciones correspondientes al período y matrícula seleccionados.
+9. Evitar que una actualización del expediente personal modifique las relaciones académicas de forma indirecta.
+
+#### Cambios necesarios
+Revisar las claves de relación utilizadas por los servicios académicos y de evaluación. Corregir consultas que dependan únicamente del identificador del estudiante cuando también se necesite el contexto histórico. Añadir validaciones de integridad y pruebas de informes por año y sección.
+
+#### Comportamiento esperado
+Un cambio de sección crea una nueva asignación vigente, pero no modifica el contexto de las calificaciones anteriores. Los informes históricos muestran los resultados del período original y los informes actuales solo incluyen los registros que corresponden a la matrícula vigente.
+
+#### Criterios de aceptación
+- Las notas anteriores permanecen asociadas a su sección y período originales.
+- Los informes históricos no cambian después de una reasignación.
+- Los promedios no mezclan períodos o matrículas incompatibles.
+- Las correcciones de notas cerradas quedan auditadas.
+- Se prueba el cambio de sección a mitad de año, el cambio de grado en un nuevo año y la consulta de boletines anteriores.
+
+#### Dependencias
+Matrículas históricas, asignaciones académicas, calificaciones, exámenes y cierre anual.
+
+---
+
+### T-EXP-11 [P1] — Corte de asistencia por fecha efectiva de baja o traslado
+
+**Estado de partida:** Requiere mejoras.
+**Componentes relacionados:** `RegistroAsistencia`, `ExpedientesEstudiantes`, `backend/academic-service/Code.gs`, `js/teacher.js` y los procesos de registro de asistencia.
+
+#### Problema que debe resolver
+El sistema impide registrar asistencia después de un retiro en el escenario probado, pero debe garantizar que el control también funcione con fechas efectivas, traslados, matrículas históricas y peticiones directas al backend.
+
+#### Requisitos funcionales
+1. Determinar la elegibilidad de asistencia según la matrícula vigente en la fecha de la sesión, no únicamente según el estado actual del expediente.
+2. Rechazar nuevos registros de asistencia fuera del período efectivo de matrícula, salvo excepciones autorizadas y auditadas.
+3. Advertir sobre registros de asistencia posteriores a una fecha de baja o traslado cuando se registra el evento o se ejecuta una conciliación.
+4. Conservar la asistencia histórica válida después del retiro, traslado, promoción o reincorporación.
+5. No borrar ni modificar automáticamente registros anteriores como consecuencia de una baja.
+6. Permitir corregir registros de asistencia erróneos mediante un procedimiento autorizado, con motivo y trazabilidad.
+7. Diferenciar asistencia no registrada, sesión no aplicable, ausencia justificada y registro inválido.
+8. Aplicar las validaciones tanto en la interfaz como en el backend.
+9. Al reincorporar al estudiante, permitir asistencia dentro de las nuevas fechas de matrícula sin habilitar retroactivamente fechas no cubiertas.
+10. Proporcionar un informe de inconsistencias entre matrícula y asistencia.
+
+#### Cambios necesarios
+Unificar las reglas de elegibilidad temporal de asistencia con el historial de matrícula. Revisar las consultas que determinan si un estudiante está activo y añadir validaciones de fechas efectivas, además de las pruebas de conciliación.
+
+#### Comportamiento esperado
+La asistencia se permite únicamente cuando corresponde a una matrícula válida para la fecha de la sesión. Las bajas y traslados no eliminan el historial y las reincorporaciones habilitan el registro desde la fecha aplicable.
+
+#### Criterios de aceptación
+- Se rechaza una nueva asistencia posterior a la baja cuando no existe matrícula válida.
+- Se conserva la asistencia anterior al retiro.
+- La reincorporación no habilita fechas anteriores fuera del período de matrícula.
+- Los intentos directos contra el backend también son validados.
+- Las inconsistencias detectadas quedan disponibles para revisión.
+- Se prueban fechas límite, cambios de año, traslados, bajas retroactivas autorizadas y reincorporaciones.
+
+#### Dependencias
+Historial de matrículas, registro de asistencia, cambios de estado y control de permisos.
+
+---
+
+### T-EXP-12 [P1] — Reglas configurables de solvencia financiera para trámites académicos
+
+**Estado de partida:** Requiere mejoras.
+**Componentes relacionados:** `CargosEstudiante`, `ExpedientesEstudiantes`, `backend/accounting-service/Code.gs`, `backend/academic-service/Code.gs` y los flujos de matrícula, traslado, graduación y emisión documental.
+
+#### Problema que debe resolver
+La plataforma necesita separar el estado financiero de un estudiante de su estado académico y permitir configurar cuándo una condición de solvencia afecta un trámite. Un saldo pendiente no debe bloquear indiscriminadamente todas las operaciones ni alterar el historial académico.
+
+#### Requisitos funcionales
+1. Crear reglas configurables por tipo de trámite, período y política institucional para determinar si se requiere una comprobación financiera.
+2. Diferenciar saldo pendiente, saldo vencido, cargo en disputa, pago en proceso, acuerdo de pago, exención autorizada y cuenta al día.
+3. Definir si la regla es informativa, requiere revisión administrativa o bloquea el trámite. No convertir una alerta financiera en un bloqueo general sin configuración expresa.
+4. Mostrar el estado financiero únicamente a los roles autorizados y revelar al personal académico solo el resultado operativo necesario cuando la política así lo permita.
+5. Permitir excepciones autorizadas con motivo, responsable y fecha.
+6. Recalcular la condición a partir de los movimientos contables vigentes, sin almacenar estados duplicados que puedan quedar desactualizados.
+7. No eliminar ni alterar cargos, pagos o saldos como consecuencia de una promoción, traslado, baja o graduación.
+8. Diferenciar la solvencia financiera de la elegibilidad académica para promoción o graduación.
+9. Mantener una auditoría de bloqueos, advertencias, excepciones y cambios de política.
+10. Permitir consultar por qué un trámite fue bloqueado o advertido y qué condición debe resolverse.
+
+#### Cambios necesarios
+Incorporar un servicio de evaluación de reglas de solvencia que pueda ser consultado por los flujos pertinentes. Añadir configuración administrativa y mensajes claros, sin duplicar el cálculo del saldo en diferentes módulos.
+
+#### Comportamiento esperado
+Cada trámite aplica la regla financiera configurada para ese tipo de operación. Cuando exista una restricción, el usuario autorizado recibe una explicación precisa; una excepción queda registrada y no altera los movimientos contables.
+
+#### Criterios de aceptación
+- Las reglas pueden variar según el trámite.
+- Un saldo no produce bloqueos fuera de las reglas configuradas.
+- Los usuarios sin permisos no ven importes ni movimientos financieros.
+- Una excepción autorizada queda auditada.
+- La actualización de un pago se refleja correctamente en la evaluación de solvencia.
+- Se prueban cuentas al día, saldos pendientes, pagos en proceso, disputas, excepciones y cambios de configuración.
+
+#### Dependencias
+Contabilidad, cargos y pagos, permisos de usuario y flujos administrativos.
+
+---
+
+### T-EXP-13 [P1] — Trazabilidad y validación de las transiciones del ciclo de vida
+
+**Estado de partida:** Requiere mejoras.
+**Componentes relacionados:** `createStudentEnrollment`, `updateStudentStatus`, `getStudentTimeline`, `ExpedientesEstudiantes` y `backend/academic-service/Code.gs`.
+
+#### Problema que debe resolver
+La plataforma maneja estados de estudiante, pero necesita reglas explícitas para controlar qué transiciones son válidas, qué datos requieren y qué consecuencias producen en otros módulos.
+
+#### Requisitos funcionales
+1. Definir una matriz de transiciones admitidas entre los estados existentes, sin inventar estados incompatibles con el modelo institucional.
+2. Para cada transición, establecer:
+   - Estado de origen y estado de destino.
+   - Condiciones previas.
+   - Fecha efectiva.
+   - Motivo obligatorio cuando corresponda.
+   - Rol autorizado.
+   - Aprobaciones necesarias.
+   - Efectos sobre matrícula, asistencia, facturación, documentos y acceso.
+3. Diferenciar traslado, retiro, reincorporación, promoción, retención y graduación. No inferir graduación a partir de una baja ni reactivar una matrícula histórica al cambiar únicamente el estado general.
+4. Registrar los cambios con identificador de operación, estado anterior, estado nuevo, usuario, fecha, motivo y resultado.
+5. Evitar que dos peticiones concurrentes apliquen transiciones incompatibles.
+6. Implementar idempotencia para reintentos de red y solicitudes repetidas.
+7. Permitir corregir una transición errónea mediante una operación auditada, conservando el evento original.
+8. Definir cómo se gestionan operaciones cuyo cambio académico se registra correctamente pero cuya sincronización con otro módulo falla.
+9. Mostrar al usuario los resultados completos: operación exitosa, rechazada, pendiente de sincronización o que requiere intervención.
+10. Proporcionar un historial cronológico de estados y transiciones.
+
+#### Cambios necesarios
+Centralizar las reglas de transición en el servicio de backend correspondiente. Evitar que cada interfaz cambie estados con validaciones diferentes. Incorporar un registro de eventos y un mecanismo de conciliación para las operaciones intermodulares.
+
+#### Comportamiento esperado
+Un cambio de estado solo se aplica cuando cumple las condiciones configuradas. Sus efectos secundarios se ejecutan o quedan identificados como pendientes, y el sistema conserva una explicación verificable de cada transición.
+
+#### Criterios de aceptación
+- Las transiciones inválidas son rechazadas en backend.
+- Las operaciones repetidas no duplican eventos ni efectos secundarios.
+- Los cambios de estado quedan auditados.
+- Las fallas de sincronización se detectan y se pueden recuperar.
+- Los estados históricos no se sobrescriben silenciosamente.
+- Se prueban transiciones normales, no permitidas, concurrentes, repetidas y parcialmente fallidas.
+
+#### Dependencias
+Matrículas, asistencia, cobranza, documentos, promoción, graduación y auditoría.
+
+---
+
+### T-EXP-14 [P1] — Enmascaramiento de información médica y datos personales sensibles
+
+**Estado de partida:** Requiere mejoras.
+**Componentes relacionados:** `ExpedientesEstudiantes`, `Personas`, `backend/user-service/Code.gs`, `backend/academic-service/Code.gs`, `js/ui-common.js` y las interfaces que presentan datos personales.
+
+#### Problema que debe resolver
+Los datos médicos y otros datos personales sensibles requieren controles específicos de visibilidad. La existencia de permisos generales sobre el expediente no debe implicar acceso indiscriminado a todos sus campos.
+
+#### Requisitos funcionales
+1. Clasificar los campos personales según sensibilidad y necesidad operativa, incluyendo información médica, documentos de identidad, contactos privados y datos de orientación cuando corresponda.
+2. Definir qué roles pueden consultar cada categoría y qué campos necesitan ver para cumplir sus funciones.
+3. Aplicar autorización en backend antes de devolver campos sensibles. Ocultarlos en la interfaz no es suficiente.
+4. Mostrar versiones enmascaradas de los identificadores personales en listados y pantallas donde no se necesite el valor completo.
+5. Permitir revelar el valor completo únicamente a usuarios autorizados y registrar esa consulta cuando corresponda.
+6. Evitar incluir información sensible en mensajes de error, logs técnicos, parámetros de URL, notificaciones generales o exportaciones no autorizadas.
+7. Restringir los documentos adjuntos con controles equivalentes a los de los datos que contienen.
+8. Evitar que cachés locales, almacenamiento offline o datos persistidos en el navegador expongan información sensible a otros usuarios del dispositivo.
+9. Aplicar los mismos permisos en consultas individuales, listados, búsquedas, exportaciones, APIs y operaciones masivas.
+10. Mantener una separación explícita entre los datos médicos necesarios para una emergencia y la historia médica detallada.
+11. Probar los permisos ante cambios de rol, revocación de acceso, sesión vencida y acceso directo mediante identificadores modificados.
+
+#### Cambios necesarios
+Auditar los objetos de respuesta del backend y las rutas de consulta del expediente. Implementar filtrado por campo o proyecciones de respuesta según rol. Revisar almacenamiento local, generación de exportaciones y acceso a documentos.
+
+#### Comportamiento esperado
+Cada usuario recibe solo los datos que necesita y está autorizado a consultar. La ocultación de información se aplica también al backend, los archivos y los canales secundarios de acceso.
+
+#### Criterios de aceptación
+- Un rol no autorizado no recibe campos sensibles en la respuesta de API.
+- Los listados enmascaran identificadores cuando no se necesita mostrarlos completos.
+- Las exportaciones respetan los permisos.
+- Los documentos sensibles no se pueden descargar con enlaces no autorizados.
+- La revocación de un permiso impide nuevas consultas.
+- Se prueban accesos desde diferentes roles y mediante peticiones directas.
+
+#### Dependencias
+Modelo de permisos, expediente consolidado, documentos, exportaciones y almacenamiento local.
+
+---
+
+### T-EXP-15 [P2] — Línea de tiempo del expediente con filtros por categoría
+
+**Estado de partida:** Requiere mejoras.
+**Componentes relacionados:** `getStudentTimeline`, `ExpedientesEstudiantes`, historial de matrículas y eventos de los módulos académicos, administrativos y financieros.
+
+#### Problema que debe resolver
+La línea de tiempo debe permitir localizar eventos relevantes sin mezclar indiscriminadamente actividades académicas, cambios administrativos, documentos y movimientos financieros. También debe evitar que el usuario vea eventos que no está autorizado a consultar.
+
+#### Requisitos funcionales
+1. Agrupar eventos por categorías configurables, como:
+   - Identidad y datos personales.
+   - Matrículas y cambios de estado.
+   - Grados, secciones y jornadas.
+   - Calificaciones y decisiones académicas.
+   - Asistencia.
+   - Documentos y autorizaciones.
+   - Finanzas.
+   - Convivencia y disciplina.
+   - Orientación y bienestar.
+   - Emisión de certificados.
+2. Permitir filtrar por categoría, rango de fechas, año académico, tipo de operación y usuario responsable, siempre que el rol tenga acceso a esos datos.
+3. Mostrar fecha efectiva del evento y fecha de registro cuando sean distintas.
+4. Identificar los cambios importantes con una descripción clara, estado anterior y nuevo cuando corresponda, y un enlace al registro relacionado.
+5. Diferenciar eventos completados, pendientes, rechazados, corregidos y revertidos.
+6. Evitar duplicar eventos cuando un único cambio se refleje en varios módulos.
+7. Permitir abrir el detalle de un evento con controles de acceso propios del registro de origen.
+8. Mantener los eventos históricos aunque el estudiante cambie de estado o deje de estar activo.
+9. Implementar paginación o carga progresiva para expedientes con historiales extensos.
+10. No exponer información médica, financiera o de orientación a través de títulos, resúmenes o filtros visibles para roles no autorizados.
+
+#### Cambios necesarios
+Normalizar el formato de los eventos utilizados por `getStudentTimeline`, añadir filtros en backend y frontend y asegurar que cada categoría respete sus permisos. Definir un identificador estable para evitar eventos duplicados.
+
+#### Comportamiento esperado
+El usuario autorizado puede reconstruir la evolución del expediente, filtrar los eventos que necesita y abrir los detalles pertinentes. Los usuarios con permisos limitados no pueden inferir información sensible a través de la cronología.
+
+#### Criterios de aceptación
+- Los filtros devuelven solo eventos de las categorías y fechas seleccionadas.
+- Las fechas efectivas y de registro se distinguen.
+- Los eventos no se duplican al reintentar operaciones.
+- Los registros históricos siguen visibles después de la baja o graduación para los roles autorizados.
+- Los filtros no revelan categorías sensibles a usuarios no autorizados.
+- Se prueban expedientes extensos, eventos simultáneos, correcciones y cambios de permisos.
+
+#### Dependencias
+Registro de auditoría, transiciones de estado, historial académico, documentos y permisos.
+
+---
+
+### T-EXP-16 [P2] — Operaciones masivas e importaciones con validación y recuperación
+
+**Estado de partida:** Implementación parcial.
+**Componentes relacionados:** servicios de backend que procesan matrículas, expedientes, relaciones y datos académicos; hojas `Personas`, `Usuarios`, `ExpedientesEstudiantes` y estructuras relacionadas.
+
+#### Problema que debe resolver
+Los procesos masivos necesitan una vista previa, detección de duplicados, validación por fila y recuperación clara de errores. Una importación parcialmente fallida no debe dejar identidades duplicadas, relaciones rotas o cambios que el administrador no pueda identificar.
+
+#### Requisitos funcionales
+1. Implementar una fase de preparación antes de confirmar la importación, con resumen de registros válidos, inválidos, duplicados potenciales y conflictos.
+2. Validar campos obligatorios, formatos, identificadores, referencias a grados y secciones, fechas, relaciones familiares y restricciones de unicidad.
+3. Detectar coincidencias por identificadores estables y por criterios secundarios. No fusionar personas automáticamente ante una coincidencia ambigua.
+4. Permitir configurar la política de conflicto: rechazar, omitir, actualizar campos permitidos o enviar a revisión. No sobrescribir silenciosamente información existente.
+5. Proporcionar un informe descargable con el número de fila o identificador de origen, campo afectado, error y acción recomendada.
+6. Permitir corregir los registros rechazados y reintentar únicamente los que no se procesaron correctamente.
+7. Implementar idempotencia mediante un identificador de importación y claves de origen estables.
+8. Registrar quién inició y confirmó la importación, el archivo o fuente, la fecha, la política aplicada y el resultado.
+9. Definir la recuperación de operaciones interrumpidas, diferenciando registros confirmados, pendientes y fallidos.
+10. Evitar que una repetición genere estudiantes, usuarios, matrículas, relaciones, cargos o notificaciones duplicados.
+11. Mostrar una confirmación final con cantidades y acceso al informe de resultados.
+12. Aplicar permisos de importación y actualización por tipo de dato, evitando que un usuario autorizado a importar expedientes pueda alterar campos financieros o sensibles fuera de su función.
+
+#### Cambios necesarios
+Crear o ampliar un flujo de importación con prevalidación, ejecución controlada, registro de estado y reporte de errores. Reutilizar las validaciones del backend en lugar de implementar reglas incompatibles únicamente en la interfaz.
+
+#### Comportamiento esperado
+El administrador conoce los efectos antes de confirmar y puede identificar con precisión los registros procesados o rechazados. Reintentar una importación no repite los cambios ya confirmados.
+
+#### Criterios de aceptación
+- La vista previa identifica errores y posibles duplicados antes de escribir.
+- Las filas inválidas no corrompen los registros válidos.
+- Los conflictos no provocan sobrescrituras silenciosas.
+- Un reintento no duplica los registros confirmados.
+- Una interrupción produce un informe recuperable.
+- Se prueban archivos repetidos, identificadores desconocidos, datos incompletos, relaciones inválidas y fallos a mitad de proceso.
+
+#### Dependencias
+Identidad única, relaciones, matrículas, permisos, operaciones masivas y auditoría.
+
+---
+
+### T-EXP-17 [P2] — Panel de alertas y tareas pendientes del expediente
+
+**Estado de partida:** Implementación parcial.
+**Componentes relacionados:** `ExpedientesEstudiantes`, documentos, autorizaciones, matrículas, estados de ciclo de vida y los componentes de interfaz compartidos.
+
+#### Problema que debe resolver
+La plataforma necesita un panel que permita detectar y priorizar incidencias del expediente antes de que afecten trámites académicos o administrativos. Las alertas deben derivarse de condiciones reales y distinguir las que requieren una acción de las que son meramente informativas.
+
+#### Requisitos funcionales
+1. Centralizar alertas sobre:
+   - Documentos obligatorios pendientes, rechazados o vencidos.
+   - Autorizaciones próximas a vencer o ya vencidas.
+   - Matrículas incompletas o inconsistentes.
+   - Estudiantes con transiciones pendientes de completar.
+   - Errores de sincronización entre módulos.
+   - Cierres anuales incompletos.
+   - Requisitos de promoción o graduación pendientes.
+   - Conflictos de datos que requieren conciliación.
+2. Definir para cada alerta la condición de activación, severidad, rol destinatario, acción recomendada y condición de resolución.
+3. Diferenciar alerta activa, reconocida, resuelta, descartada mediante autorización y reabierta.
+4. Evitar que reconocer una alerta la elimine si la condición que la origina sigue existiendo.
+5. Permitir navegar desde la alerta al expediente o registro correspondiente, respetando los permisos.
+6. Evitar alertas duplicadas por el mismo problema. Actualizar el evento existente cuando corresponda.
+7. Permitir filtrar por categoría, prioridad, fecha, responsable y estado.
+8. Mostrar al personal autorizado un resumen de alertas pendientes y acciones vencidas.
+9. Registrar quién reconoció, asignó, resolvió o descartó cada alerta y cuándo.
+10. Permitir configurar plazos y anticipación de alertas de vencimiento sin codificar períodos fijos en múltiples componentes.
+11. Mostrar errores de sincronización como tareas pendientes de conciliación y no como si la operación hubiera finalizado correctamente.
+12. No exponer información sensible en notificaciones generales o paneles visibles para roles no autorizados.
+
+#### Cambios necesarios
+Definir un modelo común de alertas, conectar sus condiciones con los módulos de origen y añadir un panel de consulta y resolución. Si ya existe un mecanismo de notificaciones, reutilizarlo para evitar crear dos sistemas de alertas independientes.
+
+#### Comportamiento esperado
+El panel presenta las incidencias reales que requieren atención y ofrece una ruta clara para resolverlas. Las alertas desaparecen o se cierran cuando se cumple la condición de resolución, no simplemente cuando alguien las oculta.
+
+#### Criterios de aceptación
+- Las alertas se crean según reglas verificables.
+- Una alerta reconocida continúa visible mientras el problema siga activo.
+- La resolución queda registrada.
+- Los reintentos no generan alertas duplicadas.
+- Las alertas respetan los permisos de acceso.
+- Se prueban vencimientos, documentos rechazados, errores de sincronización, alertas resueltas y alertas que vuelven a activarse.
+
+#### Dependencias
+Documentos, autorizaciones, matrículas, cierre anual, operaciones masivas, sincronización y permisos.
+
+---
+
+### T-EXP-18 [P2] — Integración de convivencia y orientación con aislamiento estricto de información
+
+**Estado de partida:** Requiere mejoras.
+**Componentes relacionados:** `ObservacionesConvivencia`, `ExpedientesEstudiantes`, `backend/academic-service/Code.gs`, `backend/user-service/Code.gs` y las vistas de consulta del expediente.
+
+#### Problema que debe resolver
+La auditoría confirma restricciones para notas de orientación, pero se requiere garantizar que el aislamiento se mantenga en todas las consultas del expediente, exportaciones, búsquedas, cronologías y operaciones indirectas. Una relación con el estudiante no debe conceder acceso automático a observaciones sensibles.
+
+#### Requisitos funcionales
+1. Definir permisos separados para observaciones de convivencia, sanciones, notas de orientación y registros de bienestar.
+2. Limitar la consulta al personal expresamente autorizado, según las funciones y reglas institucionales.
+3. Permitir que el expediente muestre únicamente un indicador general de existencia de un registro restringido cuando sea necesario, sin revelar contenido ni detalles sensibles.
+4. Evitar que los datos restringidos aparezcan en listados, búsquedas, exportaciones, informes académicos o notificaciones destinadas a roles no autorizados.
+5. Mantener la relación histórica de los eventos con el estudiante, incluso después de su retiro o graduación.
+6. Registrar consultas, modificaciones y exportaciones de información especialmente sensible según la política de acceso.
+7. Diferenciar las anotaciones operativas de convivencia de las notas privadas de orientación, evitando que ambas compartan una política de acceso excesivamente amplia.
+8. Permitir correcciones mediante un proceso auditado, conservando la trazabilidad.
+9. Aplicar la autorización en backend para peticiones directas, no solo en los componentes visuales.
+
+#### Cambios necesarios
+Revisar las respuestas de `getStudentFile` y `getStudentTimeline`, así como los endpoints y las exportaciones que puedan incluir `ObservacionesConvivencia`. Aplicar permisos específicos por categoría y comprobar que las relaciones del expediente no amplíen el acceso.
+
+#### Comportamiento esperado
+Cada rol ve únicamente la información de convivencia y orientación permitida. El expediente sigue ofreciendo una vista útil del estudiante sin exponer notas privadas a docentes, familiares u otros usuarios que no deban consultarlas.
+
+#### Criterios de aceptación
+- Un usuario no autorizado no recibe contenido restringido desde el backend.
+- Las exportaciones y la cronología aplican los mismos controles.
+- Los registros históricos siguen vinculados al expediente.
+- Las modificaciones quedan auditadas.
+- Se prueban roles autorizados y no autorizados, acceso directo a endpoints, exportaciones y consultas de estudiantes retirados.
+
+#### Dependencias
+Modelo de permisos, expediente consolidado, cronología, exportaciones y auditoría.
+
+---
+
+### ORDEN DE EJECUCIÓN RECOMENDADO COMPLETO FASE 6
+
+| Orden | Tarea | Prioridad | Dependencia principal |
+| :---: | :--- | :---: | :--- |
+| **1** | **T-EXP-01.** Flag de restricción de custodia legal | **P1** | `RelacionesFamiliares` |
+| **2** | **T-EXP-02.** Cancelación de cargos futuros tras retiro/baja | **P1** | `updateStudentStatus` / Finanzas |
+| **3** | **T-EXP-03.** LockService en reasignaciones masivas | **P1** | `createStudentEnrollment` |
+| **4** | **T-EXP-04.** Snapshot inmutable de cierre de año escolar | **P1** | `CalificacionesEstudiantes` |
+| **5** | **T-EXP-10.** Aislamiento de calificaciones e historial | **P1** | Matrículas históricas |
+| **6** | **T-EXP-11.** Corte de asistencia por fecha efectiva | **P1** | `RegistroAsistencia` |
+| **7** | **T-EXP-12.** Reglas configurables de solvencia financiera | **P1** | `CargosEstudiante` |
+| **8** | **T-EXP-13.** Transiciones trazables del ciclo de vida | **P1** | `getStudentTimeline` |
+| **9** | **T-EXP-14.** Enmascaramiento de información PII sensible | **P1** | `backend/user-service/Code.gs` |
+| **10** | **T-EXP-05.** Modal visual de comparación y fusión de duplicados | **P2** | `mergeStudentFiles` |
+| **11** | **T-EXP-06.** Constancias de traslado y Ficha Acumulativa PDF | **P2** | `generateSchoolDocument` |
+| **12** | **T-EXP-07.** Módulo de egresados, graduación y títulos | **P2** | `ExpedientesEstudiantes` |
+| **13** | **T-EXP-08.** Permisos de salidas de campo y firmas digitales | **P2** | `registerDocumentSignature` |
+| **14** | **T-EXP-16.** Operaciones masivas e importaciones | **P2** | Backend import engines |
+| **15** | **T-EXP-18.** Aislamiento de convivencia y orientación | **P2** | `ObservacionesConvivencia` |
+| **16** | **T-EXP-15.** Cronología del expediente con filtros por categoría | **P2** | `getStudentTimeline` |
+| **17** | **T-EXP-17.** Panel de alertas y tareas pendientes | **P2** | `ExpedientesEstudiantes` |
+| **18** | **T-EXP-09.** Buscador avanzado multicriterio de expedientes | **P3** | Frontend search |
