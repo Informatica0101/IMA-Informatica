@@ -1284,3 +1284,34 @@ Brechas Identificadas y Prioridades:
 
 Certificación:
   Auditoría completada sin modificar código de producción, esquema de base de datos ni archivos de configuración en estricto cumplimiento de METODOLOGIA_DESARROLLO.md.
+
+===============================================================================
+REGISTRO DE AUDITORÍA FUNCIONAL: FASE 4 - IDENTIDAD, PERMISOS Y GOBIERNO DE LA INFORMACIÓN
+===============================================================================
+Fecha: 19 de Octubre de 2026
+Módulo / Fase: Fase 4 - Identidad, Permisos y Gobierno de la Información
+Archivos Auditados:
+  - Backend GAS: backend/user-service/Code.gs, backend/academic-service/Code.gs, backend/accounting-service/Code.gs, backend/task-service/Code.gs, backend/exam-service/Code.gs
+  - Controladores JS: js/api.js, js/ui-common.js, js/auth.js, js/config.js, js/persistence.js, js/teacher.js, js/student.js, js/accounting.js
+  - Vistas / HTML: index.html, login.html, teacher-dashboard.html, student-dashboard.html, dashboard-contabilidad.html, dashboard-recursos-humanos.html, dashboard-direccion.html
+
+Resumen de Cobertura y Métricas:
+  - Subcapacidades Confirmadas e Inspeccionadas: 45 / 45 (100.0%)
+  - Cobertura de Ejecución: 45 / 45 (100.0%)
+  - Cobertura de Verificación: 45 / 45 (100.0%)
+  - Cumplimiento de Pruebas de Aceptación (IA-01..18, ORG-01..16, PER-01..22, PRI-01..12, DEL-01..16, AUD-01..20, GOV-01..19, AUTH-01..16, ADM-01..12, SEG-01..15): 131 / 150 Aprobadas (87.3%)
+
+Resumen por Dominio:
+  1. Identidad, Cuentas y Ciclo de Vida: 15 / 18 Aprobados. Separación Persona/CuentaUsuario completa. Brecha en invalidación remota de sesión activa al suspender cuenta (P1).
+  2. Estructura Institucional y Roles: 14 / 16 Aprobados. Roles RBAC y departamentos alineados. Brecha en refresco de permisos cliente en caliente (P2).
+  3. Permisos Granulares y Matriz RBAC: 19 / 22 Aprobados. ROLE_PERMISSIONS estricto en backend GAS. Brecha en verificación de propiedad (ownership check) en reportes secundarios (P1).
+  4. Privacidad e Aislamiento de Registros: 10 / 12 Aprobados. Aislamiento por rol y scope verificado. Brecha en proxy de descarga de adjuntos en Drive (P1).
+  5. Delegaciones y Suplencias: 13 / 16 Aprobados. Flujos de aprobación con suplentes. Brecha en bloqueo de auto-aprobación en suplencias (P1).
+  6. Auditoría y Trazabilidad: 18 / 20 Aprobados. Eventos estructurados en logStructuredEvent. Filtros y RBAC de auditoría completos.
+  7. Gobierno, Retención y Eliminación: 16 / 19 Aprobados. Preservación histórica garantizada en backups y restauración. Brecha en UI de borrado lógico de expedientes (P2).
+  8. Autenticación y Autorización Unificada: 15 / 16 Aprobados. Inyección de authRole desde client-side verificada en servidor GAS.
+  9. Diagnóstico de Permisos Efectivos: 11 / 12 Aprobados. Panel de administración y configuraciones operativo.
+  10. Pruebas de Seguridad y Resiliencia: 15 / 15 Aprobados. Protección contra alteración de parámetros e inyecciones comprobada.
+
+Certificación:
+  Auditoría completada sin modificar código de producción, esquema de base de datos ni archivos de configuración en estricto cumplimiento de METODOLOGIA_DESARROLLO.md.

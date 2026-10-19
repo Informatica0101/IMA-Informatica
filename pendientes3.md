@@ -482,3 +482,127 @@ Los conflictos se resuelven de manera explícita. Cuando sea útil y seguro, la 
 | **9** | **T-UX-07.** Agrupación de notificaciones | **P3** | Sistema de notificaciones |
 
 *El orden permite adelantar los mecanismos de autenticación y navegación, pero la consolidación de `pendientes3.md` y la resolución de conflictos deben realizarse antes de dar por definitivo el backlog. Las dependencias funcionales pueden justificar cambios en el orden de implementación.*
+
+---
+
+## PLAN DE TRABAJO DETALLADO Y UNIFICADO: FASE 4. IDENTIDAD, PERMISOS Y GOBIERNO DE LA INFORMACIÓN
+
+### T-GOV-01 [P1]. Invalidation Inmediata de Sesiones y Control de Fuerza Bruta en Autenticación
+- **Hallazgo:** GAP-GOV-01, GAP-GOV-03 · **Archivos principales:** `backend/user-service/Code.gs`, `js/auth.js`, `js/api.js`
+- **Problema que debe resolverse:** Cuando una cuenta de usuario cambia a estado "Suspendida" o "Bloqueada", las sesiones activas en navegadores secundarios continúan respondiendo brevemente hasta expirar la cookie o token. Asimismo, falta un umbral automático de bloqueo temporal tras múltiples intentos fallidos de contraseña.
+- **Requisitos funcionales:**
+  - Implementar verificación obligatoria de estado de cuenta en tiempo real (`EstadoCuenta === "Activa"`) en cada llamada autenticada del backend.
+  - Implementar contador de intentos fallidos consecutivos en la hoja `Usuarios` con bloqueo automático por 15 minutos al superar 5 intentos erróneos.
+  - Enviar señal de terminación de sesión al cliente cuando la cuenta haya sido suspendida o bloqueada administrativamente.
+- **Criterios de Aceptación:**
+  1. Suspender una cuenta en la hoja de usuarios revoca inmediatamente el acceso en la siguiente petición API del navegador.
+  2. 5 intentos de contraseña incorrectos bloquean temporalmente la cuenta e insertan un log de advertencia en `RegistroAuditoriaEstructurado`.
+- **Riesgo de Regresión:** Bajo.
+
+---
+
+### T-GOV-02 [P1]. Validación Estricta de Propiedad de Registro (Ownership Check) en Backend
+- **Hallazgo:** GAP-GOV-06 · **Archivos principales:** `backend/academic-service/Code.gs`, `backend/accounting-service/Code.gs`, `backend/user-service/Code.gs`
+- **Problema que debe resolverse:** Algunos endpoints de consulta de estados de cuenta y reportes académicos confían en el `userId` o `studentId` enviado en el payload sin validar estrictamente si el usuario autenticado es dueño del expediente o su tutor legal autorizado.
+- **Requisitos funcionales:**
+  - Implementar una función central `assertRecordOwnership(authRole, authenticatedUserId, targetUserId, resourceType)` en cada microservicio backend.
+  - Validar que un Estudiante solo consulte su propio `studentId`, que un Padre de Familia solo acceda a los `studentId` vinculados en `RelacionesFamiliares`, y que los roles administrativos (`Administrador`, `Director`, `Contador`) mantengan acceso por ámbito.
+- **Criterios de Aceptación:**
+  1. Alterar manualmente el `studentId` en la petición AJAX de un estudiante devuelve un error `403 Forbidden` y registra un evento `AUTH_PERMISSION_DENIED` en auditoría.
+  2. Las consultas familiares verifican dinámicamente la vigencia en `RelacionesFamiliares`.
+- **Riesgo de Regresión:** Bajo.
+
+---
+
+### T-GOV-03 [P1]. Proxy de Descarga Segura y Control de Acceso para Adjuntos en Drive
+- **Hallazgo:** GAP-GOV-09 · **Archivos principales:** `backend/user-service/Code.gs`, `js/ui-common.js`
+- **Problema que debe resolverse:** Los enlaces directos de Google Drive almacenados para documentos adjuntos personales y expedientes pueden ser compartidos externamente si se conoce la URL pública de la imagen/archivo.
+- **Requisitos funcionales:**
+  - Generar un token temporal firmado de descarga de un solo uso (`getSecureDocumentStream`) validado por el backend GAS en lugar de exponer URLs de Drive directas.
+  - Verificar permisos del rol solicitante antes de retornar la URL o binario del archivo adjunto.
+- **Criterios de Aceptación:**
+  1. Intentar acceder a la URL directa sin sesión activa o token válido es rechazado.
+  2. Documentos confidenciales de orientación y salud solo son descargables por los perfiles autorizados (`Orientador`, `Director`).
+- **Riesgo de Regresión:** Medio.
+
+---
+
+### T-GOV-04 [P1]. Bloqueo de Auto-Aprobación e Integridad en Suplencias y Delegaciones
+- **Hallazgo:** GAP-GOV-11 · **Archivos principales:** `backend/user-service/Code.gs`, `js/teacher.js`
+- **Problema que debe resolverse:** Si un usuario con rol directivo o administrativo crea una solicitud de permiso o trámite personal y simultáneamente actúa como suplente del aprobador, la plataforma no bloquea la auto-aprobación del trámite.
+- **Requisitos funcionales:**
+  - Validar en `processWorkflowDecision` y `reviewOvertimeRequest` que el `solicitanteUserId` sea estrictamente diferente del `aprobadorUserId` y de la persona que ejecuta la acción delegada.
+  - Requerir derivación automática a un rol superior o colega del mismo nivel cuando exista conflicto de interés o auto-aprobación.
+- **Criterios de Aceptación:**
+  1. Intentar aprobar un trámite donde el aprobador activo es el mismo creador del trámite devuelve un error impidiendo la acción.
+  2. El evento se registra en la bitácora de auditoría como `AUTO_APPROVAL_BLOCKED`.
+- **Riesgo de Regresión:** Bajo.
+
+---
+
+### T-GOV-05 [P2]. Sincronización en Caliente de Permisos y Refresco Automático de Token Client-Side
+- **Hallazgo:** GAP-GOV-04, GAP-GOV-18 · **Archivos principales:** `js/api.js`, `js/auth.js`, `js/ui-common.js`
+- **Problema que debe resolverse:** Cuando un usuario recibe un cambio de rol o departamento, los cambios no se reflejan en el cliente hasta que el usuario cierra sesión manualmente o recarga la página.
+- **Requisitos funcionales:**
+  - Inyectar en las respuestas API el hash/versión de permisos activos (`userPermissionsVersion`).
+  - Si el cliente detecta una discrepancia en la versión de permisos, actualiza silenciosamente la sesión en `localStorage` / `sessionStorage` y refresca el menú de navegación con `window.initRoleNavigationMenu()`.
+- **Criterios de Aceptación:**
+  1. Reasignar un rol en el backend actualiza la navegación e interfaz del usuario de forma transparente en su siguiente interacción.
+  2. Si una petición 401/403 ocurre por permisos desactualizados, `js/api.js` reintenta la petición tras refrescar el contexto.
+- **Riesgo de Regresión:** Bajo.
+
+---
+
+### T-GOV-06 [P2]. Enmascaramiento de Datos Sensibles (PII) y Límites de Exportación Parametrizados
+- **Hallazgo:** GAP-GOV-07, GAP-GOV-08 · **Archivos principales:** `backend/user-service/Code.gs`, `js/ui-common.js`
+- **Problema que debe resolverse:** Listados generales y reportes muestran números de identidad (DNI) y teléfonos completos a usuarios sin necesidad operativa directa de ver PII completa.
+- **Requisitos funcionales:**
+  - Aplicar función helper `maskPII(text, type)` para ocultar dígitos centrales de identidades (ej. `0801-****-12345`) en vistas no administrativas.
+  - Parametrizar en `ConfiguracionSistema` el límite máximo de filas por exportación a Excel/PDF (ej. máximo 1,000 registros por descarga).
+- **Criterios de Aceptación:**
+  1. Docentes y usuarios ordinarios ven DNI enmascarados en listas generales; Administradores y Recursos Humanos ven la PII completa.
+  2. Intentos de exportar más del límite parametrizado dividen el reporte en páginas o requieren confirmación administrativa.
+- **Riesgo de Regresión:** Nulo.
+
+---
+
+### T-GOV-07 [P2]. Módulo de Archivo Histórico, Depuración Lógica de Registros y Alertas de Auditoría
+- **Hallazgo:** GAP-GOV-14, GAP-GOV-16 · **Archivos principales:** `backend/academic-service/Code.gs`, `backend/user-service/Code.gs`, `js/ui-common.js`
+- **Problema que debe resolverse:** Falta una vista para archivar estudiantes graduados/retirados sin eliminar sus calificaciones e historial de las hojas activas.
+- **Requisitos funcionales:**
+  - Implementar endpoint `archiveStudentRecords` que traslade o marque con estado `Archivado` los expedientes de estudiantes inactivos.
+  - Configurar alertas por correo/notificación a administradores cuando `RegistroAuditoriaEstructurado` registre un volumen superior a 10 errores `WARN`/`ERROR` en menos de 5 minutos.
+- **Criterios de Aceptación:**
+  1. Estudiantes archivados no figuran en las listas de asistencia o cobros del periodo actual, pero sus certificados históricos permanecen 100% consultables.
+  2. Ráfagas de errores en el backend disparan una notificación automática en el panel directivo.
+- **Riesgo de Regresión:** Bajo.
+
+---
+
+### T-GOV-08 [P3]. Mejoras Visuales de Diagnóstico, Badges de Representación y Confirmaciones Críticas
+- **Hallazgo:** GAP-GOV-05, GAP-GOV-13, GAP-GOV-15, GAP-GOV-17, GAP-GOV-19 · **Archivos principales:** `js/ui-common.js`, HTML Dashboards
+- **Problema que debe resolverse:** Falta de retroalimentación visual durante el uso de suplencias, confirmación de borrado masivo poco estricta y necesidad de simular permisos por usuario.
+- **Requisitos funcionales:**
+  - Mostrar un badge flotante destacado (`En representación de [Nombre]`) cuando una acción se ejecute bajo una delegación/suplencia activa.
+  - Requerir escribir explícitamente la palabra "ELIMINAR" en el modal de confirmación antes de ejecutar borrados masivos o purga de registros.
+  - Añadir pestaña "Simulador de Permisos Efectivos" en el panel de configuración global para que los administradores verifiquen la matriz de acceso de cualquier usuario.
+- **Criterios de Aceptación:**
+  1. Acciones realizadas bajo suplencia muestran claramente el distintivo de representación.
+  2. El botón "Confirmar Eliminación" en borrados masivos permanece deshabilitado hasta escribir "ELIMINAR".
+  3. El simulador de permisos indica exactamente por qué regla o rol un usuario tiene o no acceso a una función.
+- **Riesgo de Regresión:** Nulo.
+
+---
+
+### ORDEN DE EJECUCIÓN RECOMENDADO FASE 4
+
+| Orden | Tarea | Prioridad | Dependencia principal |
+| :---: | :--- | :---: | :--- |
+| **1** | **T-GOV-01.** Invalidation de sesión y fuerza bruta | **P1** | Autenticación existente |
+| **2** | **T-GOV-02.** Validación estricta de propiedad (ownership) | **P1** | RBAC del backend GAS |
+| **3** | **T-GOV-04.** Bloqueo de auto-aprobación en suplencias | **P1** | `FlujosAprobacion` |
+| **4** | **T-GOV-03.** Proxy seguro de descarga en Drive | **P1** | Gestión documental |
+| **5** | **T-GOV-05.** Sincronización en caliente de permisos | **P2** | `js/api.js` / `js/auth.js` |
+| **6** | **T-GOV-06.** Enmascaramiento PII y límites de exportación | **P2** | `js/ui-common.js` |
+| **7** | **T-GOV-07.** Archivo histórico y alertas de auditoría | **P2** | `getStructuredLogs` |
+| **8** | **T-GOV-08.** Badges de representación y confirmaciones críticas | **P3** | UI de modales |
