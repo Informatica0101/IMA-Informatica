@@ -2259,3 +2259,147 @@ Modelo de permisos, expediente consolidado, cronología, exportaciones y auditor
 | **6** | **T-HOR-05.** Motor algorítmico CSP para generación y optimización automática de horarios | **P2** | T-HOR-01 |
 | **7** | **T-HOR-07.** Importación masiva de horarios y cuadrículas Excel con simulación previa (Dry-Run) | **P2** | Excel import engine |
 | **8** | **T-HOR-08.** Vista semanal imprimible, filtros por audiencia y caché local IndexedDB | **P3** | UI / PWA |
+
+---
+
+## PLAN DE TRABAJO DETALLADO Y UNIFICADO: FASE DE AULA VIRTUAL Y GESTIÓN AVANZADA DEL APRENDIZAJE (LMS AVANZADO)
+
+### T-LMS-01 [P1] — Control de concurrencia con LockService en cierres de período y libreta de calificaciones
+
+- **Componentes relacionados:** `backend/exam-service/Code.gs` (`closePeriodGradebook`, `saveGradebookGrades`), `backend/task-service/Code.gs`, `js/teacher.js`.
+- **Problema detectado:** Al ejecutar la publicación masiva o el cierre formal de un período de evaluación, la actualización de `CalificacionesEstudiantes` y `CierresPeriodos` no cuenta con un bloqueo exclusivo `LockService.getScriptLock()`. Modificaciones simultáneas de docentes co-evaluadores pueden generar inconsistencias de cálculo o sobreescrituras silenciosas.
+- **Requisitos funcionales:**
+  1. Proteger con `LockService.getScriptLock()` con timeout de 10 segundos las llamadas a `saveGradebookGrades` y `closePeriodGradebook`.
+  2. Verificar el estado del período en `CierresPeriodos` dentro del bloqueo exclusivo antes de aplicar la modificación.
+  3. Denegar cualquier edición si el período está cerrado salvo autorización expresa de Secretaría.
+- **Criterios de Aceptación:**
+  - Peticiones simultáneas sobre el libro de calificaciones son procesadas de forma secuencial sin pérdida de notas.
+  - Intentar guardar notas en un período cerrado sin permiso de Secretaría es rechazado en servidor.
+- **Riesgo de Regresión:** Bajo.
+- **Dependencias:** `closePeriodGradebook`, `saveGradebookGrades`, `CierresPeriodos`.
+
+---
+
+### T-LMS-02 [P1] — Validación estricta de propiedad (ownership check) en hilos de comentarios y versiones de entregas
+
+- **Componentes relacionados:** `backend/task-service/Code.gs` (`getSubmissionComments`, `addSubmissionComment`, `getSubmissionVersions`), `js/api.js`.
+- **Problema detectado:** Las funciones `getSubmissionComments` y `getSubmissionVersions` reciben el `entregaId` o `tareaId` enviado por el cliente pero no re-validan en servidor mediante `assertRecordOwnership` si el usuario autenticado es el propietario de la entrega, su familiar tutor o el docente del curso.
+- **Requisitos funcionales:**
+  1. Invocar la verificación de propiedad en `getSubmissionComments`, `addSubmissionComment` y `getSubmissionVersions`.
+  2. Validar que el `userId` autenticado corresponda a la entrega solicitada o tenga un rol de docente/administrativo sobre el aula virtual.
+  3. Denegar solicitudes manipuladas con código `403 Forbidden` y registrar evento `AUTH_PERMISSION_DENIED` en auditoría.
+- **Criterios de Aceptación:**
+  - Alterar el `entregaId` en una llamada AJAX devuelve error `403 Forbidden` a usuarios no autorizados.
+  - Los familiares únicamente pueden consultar comentarios y versiones de sus hijos vinculados en `RelacionesFamiliares`.
+- **Riesgo de Regresión:** Bajo.
+- **Dependencias:** `validateRolePermission`, `RelacionesFamiliares`, `assertRecordOwnership`.
+
+---
+
+### T-LMS-03 [P2] — Reordenamiento interactivo y compartición de materiales educativos entre aulas
+
+- **Componentes relacionados:** `backend/task-service/Code.gs` (`getStudyMaterials`, `createStudyMaterial`), `js/teacher.js`, `teacher-dashboard.html`.
+- **Problema detectado:** La organización de materiales en `MaterialesEducativos` es plana por fecha de creación; no existe una columna de orden numérico que permita reordenar recursos ni compartir materiales comunes entre secciones sin duplicar archivos.
+- **Requisitos funcionales:**
+  1. Agregar la columna `OrdenPosicion` en la hoja `MaterialesEducativos`.
+  2. Implementar endpoint `reorderStudyMaterials` para actualizar el orden de visualización en la interfaz.
+  3. Permitir vincular un mismo recurso compartido (`MaterialId`) a múltiples aulas virtuales manteniendo sincronizadas las actualizaciones del autor original.
+- **Criterios de Aceptación:**
+  - El docente puede cambiar la secuencia de materiales de estudio sin tener que eliminarlos y volverlos a subir.
+  - Un material común actualizado por el coordinador refleja los cambios en todas las secciones vinculadas.
+- **Riesgo de Regresión:** Nulo.
+- **Dependencias:** `MaterialesEducativos`, `AulasVirtuales`.
+
+---
+
+### T-LMS-04 [P2] — Módulo de anotación visual directa sobre entregas en PDF
+
+- **Componentes relacionados:** `teacher-dashboard.html`, `js/teacher.js`, `backend/task-service/Code.gs`.
+- **Problema detectado:** Los docentes pueden agregar comentarios de texto a una tarea entregada, pero carecen de una herramienta visual en pantalla para realizar marcas o anotaciones directamente sobre documentos PDF entregados por los alumnos.
+- **Requisitos funcionales:**
+  - Integrar visor interactivo con capa de dibujo o estampación sobre canvas utilizando `pdf-lib` o `PDF.js` en el modal de revisión de entregas.
+  - Guardar el documento PDF anotado como una nueva versión en `EntregasVersiones` con etiqueta `AnotadoDocente`.
+  - Permitir al estudiante visualizar la copia anotada directamente desde su panel de entregas.
+- **Criterios de Aceptación:**
+  - El docente puede realizar correcciones visuales sobre la entrega PDF del alumno.
+  - El estudiante descarga o previsualiza el PDF con las anotaciones del profesor preservando la versión original entregada.
+- **Riesgo de Regresión:** Nulo.
+- **Dependencias:** `EntregasVersiones`, `pdf-lib`, `PDF.js`.
+
+---
+
+### T-LMS-05 [P2] — Soporte de paquetes e-learning interactivos en estándar SCORM 1.2 / 2004
+
+- **Componentes relacionados:** `backend/task-service/Code.gs`, `js/teacher.js`, `js/student.js`, `student-dashboard.html`.
+- **Problema detectado:** La plataforma no cuenta con un reproductor ni un importador de objetos de aprendizaje interactivos empaquetados bajo estándares SCORM (zip con imsmanifest.xml).
+- **Requisitos funcionales:**
+  - Desarrollar el visor e importador de módulos SCORM (`importSCORMPackage`, `getSCORMTrackingData`).
+  - Implementar la API `LMSInitialize`, `LMSSetValue`, `LMSCommit`, `LMSFinish` en JavaScript para comunicar el progreso y la calificación del paquete e-learning con el backend.
+  - Registrar la puntuación obtenida en el paquete SCORM directamente en `CalificacionesEstudiantes`.
+- **Criterios de Aceptación:**
+  - Un paquete SCORM comprimido puede subirse a una unidad del curso y ejecutarse en un reproductor iframe.
+  - La finalización del módulo SCORM registra automáticamente la nota en el expediente del estudiante.
+- **Riesgo de Regresión:** Nulo.
+- **Dependencias:** `MaterialesEducativos`, `CalificacionesEstudiantes`.
+
+---
+
+### T-LMS-06 [P2] — Motor de alertas tempranas de riesgo académico por entregas no realizadas
+
+- **Componentes relacionados:** `backend/task-service/Code.gs`, `backend/user-service/Code.gs`, `js/ui-common.js`.
+- **Problema detectado:** El sistema registra las entregas pendientes y vencidas, pero no emite una alerta automática al orientador o tutor cuando un estudiante acumula un patrón de tres o más actividades consecutivas sin entregar.
+- **Requisitos funcionales:**
+  1. Desarrollar la rutina `evaluateAcademicRiskAlerts` que analice entregas no realizadas por estudiante en un período activo.
+  2. Al detectar 3 o más tareas consecutivas sin entregar, generar automáticamente una notificación de riesgo en `IncidenciasAsistencia` o `CasosSeguimiento`.
+  3. Notificar al tutor legal a través de la bandeja multicanal del portal familiar.
+- **Criterios de Aceptación:**
+  - La acumulación de tareas no entregadas dispara la alerta preventiva de riesgo académico para el orientador y tutor.
+  - La resolución o entrega posterior de los trabajos actualiza el estado de la alerta.
+- **Riesgo de Regresión:** Nulo.
+- **Dependencias:** `Entregas`, `CasosSeguimiento`, `sendMultiChannelNotification`.
+
+---
+
+### T-LMS-07 [P3] — Limpieza automatizada de carpetas temporales huérfanas en Google Drive
+
+- **Componentes relacionados:** `backend/task-service/Code.gs` (`cancelUploadSession`, `.temp_resumable_uploads`).
+- **Problema detectado:** Cuando una sesión de carga reanudable es cancelada o abandonada antes de completar el primer fragmento, pueden quedar carpetas temporales huérfanas en `.temp_resumable_uploads`.
+- **Requisitos funcionales:**
+  1. Crear la función programada (Apps Script Time-Driven Trigger) `purgeOrphanResumableUploads`.
+  2. Identificar carpetas temporales de carga con más de 48 horas en estado `INACTIVE` o `CANCELLED` y moverlas a la papelera de Google Drive.
+  3. Registrar la cantidad de espacio liberado y carpetas depuradas en el registro de auditoría.
+- **Criterios de Aceptación:**
+  - La ejecución periódica elimina carpetas temporales de carga incompletas con más de 48 horas sin afectar cargas activas en curso.
+- **Riesgo de Regresión:** Nulo.
+- **Dependencias:** `.temp_resumable_uploads`, `SesionesCargaResumible`.
+
+---
+
+### T-LMS-08 [P3] — Plantillas de comentarios predefinidos y calificación masiva por lote
+
+- **Componentes relacionados:** `js/teacher.js`, `teacher-dashboard.html`, `backend/task-service/Code.gs`.
+- **Problema que debe resolverse:** La revisión individual de tareas exige escribir comentarios repetitivos para errores comunes, ralentizando el proceso de retroalimentación en grupos grandes.
+- **Requisitos funcionales:**
+  1. Incorporar un selector de "Comentarios Frecuentes / Plantillas" en el modal de calificación docente.
+  2. Permitir al profesor administrar su banco personal de comentarios rápidos.
+  3. Habilitar la calificación por lotes para entregas seleccionadas con confirmación previa.
+- **Criterios de Aceptación:**
+  - El docente puede insertar comentarios frecuentes con un solo clic durante la calificación.
+  - La calificación masiva actualiza las entregas seleccionadas sin sobrescribir revisiones individuales previas.
+- **Riesgo de Regresión:** Nulo.
+- **Dependencias:** `ComentariosEntregas`, `gradeSubmission`.
+
+---
+
+### ORDEN DE EJECUCIÓN RECOMENDADO FASE AULA VIRTUAL Y GESTIÓN AVANZADA DEL APRENDIZAJE
+
+| Orden | Tarea | Prioridad | Dependencia principal |
+| :---: | :--- | :---: | :--- |
+| **1** | **T-LMS-01.** Control de concurrencia en cierres de período y libreta | **P1** | `closePeriodGradebook` |
+| **2** | **T-LMS-02.** Validación estricta de propiedad en comentarios y versiones | **P1** | `assertRecordOwnership` |
+| **3** | **T-LMS-03.** Reordenamiento interactivo y compartición de materiales | **P2** | `MaterialesEducativos` |
+| **4** | **T-LMS-04.** Módulo de anotación visual directa sobre entregas PDF | **P2** | Visor PDF |
+| **5** | **T-LMS-05.** Soporte de paquetes e-learning SCORM 1.2 / 2004 | **P2** | SCORM API |
+| **6** | **T-LMS-06.** Motor de alertas tempranas de riesgo académico | **P2** | `CasosSeguimiento` |
+| **7** | **T-LMS-07.** Limpieza automatizada de carpetas temporales huérfanas | **P3** | Drive cleanup |
+| **8** | **T-LMS-08.** Plantillas de comentarios predefinidos y calificación por lote | **P3** | `ComentariosEntregas` |

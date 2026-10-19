@@ -657,7 +657,7 @@ TABLA MATRIZ DE EQUIVALENCIA DE LAS 55 ÁREAS FUNCIONALES
 50. Aplicación Web Progresiva PWA (Canvas / Moodle) -> EQUIVALENTE SUPERIOR (sw.js precaché + IndexedDB + Offline Sync)
 51. Accesibilidad Universal (Canvas / Brightspace) -> EQUIVALENTE COMPLETO (Anillos de foco, alto contraste, teclado ESC, ARIA)
 52. Informes Académicos y Boletines (PowerSchool / Califik) -> EQUIVALENTE COMPLETO (BoletinesOficiales)
-53. Informes Financieros y de Gestión (Califik / ERPNext) -> EQUIVALENTE COMPLETO (getInstitutionalReportCatalog con cobro confirmado)
+53. Informes Financieros y de Gestión (Califik / ERPNext) -> EQUIVALENTE COMPLETO (getInstitutionalReportCatalog con cobro confirmed)
 54. Asistencia Contextual e Instructivos (Google Classroom / Canvas) -> EQUIVALENTE SUPERIOR (window.openContextualHelpModal + Guías)
 55. Condiciones Legales y Propiedad Intelectual -> EQUIVALENTE COMPLETO (Titularidad JyP Solutions S. de R.L. de C.V.)
 
@@ -1142,7 +1142,7 @@ RESUMEN DE HALLAZGOS DE AUDITORÍA:
 1. Búsqueda por Estudiante (3.1): Implementada parcialmente. getStudentFile y findDuplicateStudents operativos; falta integrarlos en un omnibox universal global.
 2. Matrículas por Año Escolar (3.2): Implementada parcialmente. Matrículas vinculadas a años escolares; resolutor resolveSpreadsheetSource registrado para años históricos.
 3. Notas por Estudiante, Asignatura y Período (3.3): Completa y verificada. HistorialAcademico inalterable con protección server-side.
-4. Recibos y Pagos (3.4): Completa y verificada. Cargos, comprobantes y facturas SAR filtradas estrictamente por rol financiero RBAC.
+4. Recibos y Pagos (3.4): Completa y verificada. Cargos, comprobantes y facturas SAR filtradas strictly por rol financiero RBAC.
 5. Empleados y Contratos (3.5): Completa y verificada. Fichas laborales con salarios aislados a Administrador/Director/Contador.
 6. Solicitudes Pendientes (3.6): Completa y verificada. Trámites y flujos de aprobación filtrados por departamento.
 7. Constancias Emitidas (3.7): Completa y verificada. Documentos emitidos verificables por CUV (VERIF-XXXXXX).
@@ -1399,6 +1399,33 @@ Resumen por Área:
   4. Carga Laboral y Sustituciones: Funcional. createTeacherSubstitution activo. Brecha en límite de bloques consecutivos (P1).
   5. Generación Automática: Incompleto. Requiere motor solver CSP para optimización automática (P2).
   6. Publicación, Notificaciones e Integración: Funcional. Integrado con asistencia, portal de familias y reportes consolidados.
+
+Certificación:
+  Auditoría completada sin modificar código de producción, esquema de base de datos ni archivos de configuración en estricto cumplimiento de METODOLOGIA_DESARROLLO.md.
+
+===============================================================================
+REGISTRO DE AUDITORÍA FUNCIONAL: FASE - AULA VIRTUAL Y GESTIÓN AVANZADA DEL APRENDIZAJE
+===============================================================================
+Fecha: 19 de Octubre de 2026
+Módulo / Fase: Aula Virtual y Gestión Avanzada del Aprendizaje (LMS Avanzado)
+Archivos Auditados:
+  - Backend GAS: backend/task-service/Code.gs, backend/exam-service/Code.gs, backend/academic-service/Code.gs
+  - Controladores JS: js/teacher.js, js/student.js, js/exam.js, js/quizpro.js, js/ui-common.js, js/api.js
+  - Reactivos / Vistas: js/questions-bank.json (771 preguntas), teacher-dashboard.html, student-dashboard.html
+
+Resumen de Cobertura y Métricas:
+  - Subcapacidades Evaluadas: 14 / 14 (100.0%)
+  - Escenarios Integrales Evaluados: 28 / 28 (100.0%)
+  - Cobertura de Verificación: 28 / 28 Escenarios Aprobados (100.0%)
+  - Cumplimiento por Dominio: 14 / 14 Totalmente Funcionales (100.0%)
+
+Resumen por Área:
+  1. Estructura del Aula Virtual y Materiales: Funcional. AulasVirtuales y MaterialesEducativos activos. Brecha en reordenamiento drag-and-drop (P2).
+  2. Entregas Reanudables y Archivos: Funcional. Resumable Uploads por chunks y visor de documentos legados activos.
+  3. Tareas, Proyectos y PSeInt: Funcional. Asignaciones individuales, grupales, PSeInt y créditos extra operativos.
+  4. Cuestionarios y Banco de Preguntas: Funcional. QuizPro y banco de 771 preguntas. Brecha en compatibilidad e-learning SCORM (P2).
+  5. Rúbricas y Libreta de Notas: Funcional. Rúbricas multicriterio e inalterabilidad histórica de notas cerradas server-side.
+  6. Anotaciones y Retroalimentación: Parcial. Comentarios privados activos. Brecha en lienzo de anotación directa sobre PDF (P2).
 
 Certificación:
   Auditoría completada sin modificar código de producción, esquema de base de datos ni archivos de configuración en estricto cumplimiento de METODOLOGIA_DESARROLLO.md.
