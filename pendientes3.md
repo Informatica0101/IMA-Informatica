@@ -3336,3 +3336,1661 @@ Modelo de permisos, expediente consolidado, cronología, exportaciones y auditor
 | **14** | **T-CAL-14.** Comparativa longitudinal del desempeño académico | **P3** | `renderUniversalConfigurableChart` |
 | **15** | **T-CAL-15.** Conciliación entre libro de notas, boletines y expediente académico definitivo | **P3** | Reconciliation Engine |
 | **16** | **T-CAL-16.** Respaldo íntegro, verificable y recuperable del historial de calificaciones | **P3** | `createSystemBackup` |
+
+
+
+---
+
+## BACKLOG DE RESOLUCIÓN Y MEJORA: FASE 10. ASISTENCIA, DISCIPLINA Y CONVIVENCIA ESCOLAR
+
+### T-ASI-01 [P1] — Control de concurrencia transaccional en el registro masivo de asistencia
+
+**Problema que debe resolverse**
+
+El guardado por lote de "saveAttendanceRecords" puede ejecutarse simultáneamente desde varias sesiones de usuario sobre los mismos registros. Esto puede provocar sobrescrituras silenciosas, resultados inconsistentes o pérdida de modificaciones realizadas por otro docente.
+
+**Alcance de los cambios**
+
+- "backend/academic-service/Code.gs".
+- Funciones "openAttendanceSession", "saveAttendanceRecords" y "getAttendanceForSession".
+- Identificación de sesiones, registros de asistencia y versiones de sus modificaciones.
+- "js/teacher.js" y la cola de sincronización de "js/persistence.js", cuando corresponda.
+
+**Requisitos funcionales**
+
+1. Implementar exclusión mutua en las operaciones críticas de escritura mediante "LockService" de Google Apps Script. Utilizar un bloqueo apropiado al ámbito de concurrencia y liberarlo siempre mediante "finally".
+2. No mantener el bloqueo durante operaciones ajenas a la escritura crítica, como renderizado, envío de notificaciones o procesamiento de documentos.
+3. Validar en el servidor:
+   - Identificador de sesión.
+   - Estado de la sesión.
+   - Identidad del usuario que modifica la asistencia.
+   - Autorización del usuario para el grado, sección, materia y sesión.
+   - Pertenencia de cada estudiante a la lista correspondiente.
+   - Validez de los estados de asistencia.
+4. Incorporar control de versiones o un mecanismo equivalente de concurrencia optimista. La versión consultada por el cliente debe compararse con la versión vigente antes de aplicar cambios.
+5. Detectar conflictos cuando dos usuarios intenten modificar el mismo registro. No permitir que el último guardado sobrescriba silenciosamente el anterior.
+6. Permitir que se guarden los registros independientes que no tengan conflictos, siempre que el resultado identifique claramente los registros aceptados y rechazados.
+7. Admitir claves de idempotencia para que los reintentos de una operación no dupliquen registros ni generen eventos repetidos.
+8. Hacer que la sincronización de registros pendientes desde IndexedDB utilice el mismo mecanismo de validación y concurrencia que las operaciones en línea.
+9. Registrar en la bitácora quién modificó cada registro, cuándo lo hizo, qué cambió y si la operación fue manual o una sincronización.
+10. Devolver errores estructurados para distinguir conflictos, permisos insuficientes, sesiones cerradas, datos inválidos y fallos temporales.
+
+**Comportamiento esperado**
+
+Si dos docentes consultan una misma sesión y uno guarda cambios antes que el otro, el segundo debe recibir un aviso de conflicto al intentar guardar una versión desactualizada. La interfaz debe permitir recargar los datos y volver a aplicar las modificaciones que todavía sean pertinentes.
+
+Si una operación falla, no debe comunicar un guardado completo cuando solo se hayan almacenado algunos registros. Los resultados parciales deben estar identificados individualmente.
+
+**Criterios de aceptación**
+
+- Dos usuarios modifican simultáneamente al mismo estudiante: el conflicto se detecta y no hay sobrescritura silenciosa.
+- Dos usuarios modifican estudiantes distintos: se conservan los cambios compatibles.
+- Un cliente reintenta una solicitud ya procesada: no se crean duplicados.
+- Un usuario intenta guardar asistencia en una sesión ajena: el servidor rechaza la operación.
+- Una sesión cerrada recibe una solicitud de modificación: el servidor la rechaza.
+- Una sincronización fuera de línea encuentra un conflicto: el registro queda pendiente de resolución, no se declara sincronizado.
+- Una prueba con múltiples escrituras concurrentes demuestra que no existen registros duplicados ni estados finales inconsistentes.
+- Los errores temporales permiten reintentar sin repetir efectos secundarios.
+
+**Dependencias:** T-ASI-02, para las reglas de estado y cierre de sesiones; T-ASI-04, para las restricciones de períodos cerrados; T-ASI-11, para la interacción de la interfaz ante conflictos; T-ASI-16, para conservar la trazabilidad de las modificaciones.
+
+---
+
+### T-ASI-02 [P1] — Distinción estricta entre sesión no registrada, ausencia confirmada y excusa autorizada
+
+**Problema que debe resolverse**
+
+Una sesión sin registros no equivale a una ausencia confirmada. La plataforma debe impedir que una sesión incompleta, un fallo de carga o un registro pendiente de sincronización produzcan porcentajes de inasistencia incorrectos o alertas injustificadas.
+
+**Alcance de los cambios**
+
+- "SesionesAsistencia".
+- "RegistrosAsistencia".
+- "JustificacionesAsistencia".
+- "IncidenciasAsistencia".
+- "openAttendanceSession", "saveAttendanceRecords", "getAttendanceForSession", "submitAttendanceJustification", "reviewAttendanceJustification" y "getStudentAttendanceSummary".
+- "js/teacher.js", "js/student.js" y las interfaces de responsables familiares.
+
+**Requisitos funcionales**
+
+1. Separar el estado de la sesión del estado individual de asistencia.
+
+   La sesión debe distinguir, como mínimo:
+   - No iniciada.
+   - Abierta.
+   - En proceso de finalización.
+   - Cerrada y completa.
+   - Cerrada con incidencias pendientes de resolución, si el flujo institucional lo permite.
+   - Anulada.
+
+2. Los registros individuales deben distinguir, según la configuración institucional:
+   - Presente.
+   - Tardanza.
+   - Ausente injustificado.
+   - Ausente con justificación pendiente.
+   - Ausente justificado.
+   - Permiso autorizado.
+   - Salida anticipada.
+   - Estado pendiente de confirmación.
+
+3. Los estados anteriores deben modelarse sin confundir situaciones distintas. Una ausencia justificada no debe borrar el hecho histórico de la ausencia ni convertirse en una asistencia presencial.
+
+4. Si se necesita mantener compatibilidad con el estado existente "Justificada", definir una migración o normalización explícita que conserve la relación con la justificación y el estado original.
+
+5. Al abrir una sesión, generar o recuperar la lista esperada de estudiantes sin convertir automáticamente a todos los que carecen de registro en ausentes.
+
+6. Incorporar una validación de completitud antes de cerrar una sesión:
+   - Número de estudiantes esperados.
+   - Número de registros realizados.
+   - Registros pendientes.
+   - Estudiantes incorporados o retirados durante la sesión.
+   - Conflictos de sincronización.
+
+7. Permitir el cierre excepcional de una sesión incompleta únicamente mediante un permiso autorizado, con motivo obligatorio y registro de auditoría.
+
+8. Establecer reglas configurables para calcular asistencia:
+   - Qué estados cuentan como asistencia.
+   - Qué estados cuentan como ausencia.
+   - Qué estados se excluyen del denominador.
+   - Cómo se calcula la tardanza.
+   - Cómo se tratan las salidas anticipadas.
+   - Cómo se manejan las sesiones anuladas y las justificaciones pendientes.
+
+9. Mantener separados los indicadores de asistencia, puntualidad y ausencia justificada.
+
+10. Aplicar las mismas reglas de cálculo en el portal del estudiante, los informes docentes, los paneles administrativos y las exportaciones.
+
+11. Definir transiciones válidas de estado y evitar combinaciones contradictorias. Por ejemplo, una misma sesión no debe mostrar simultáneamente al estudiante como presente y ausente.
+
+12. Cuando una justificación sea aprobada, actualizar el estado derivado sin duplicar la sesión, la ausencia ni el expediente de justificación.
+
+13. Mantener la fecha, hora, autor y motivo de cada cambio de estado.
+
+**Comportamiento esperado**
+
+Una sesión no registrada o incompleta debe mostrarse como pendiente de completar, no como una jornada de ausencias. Una justificación pendiente debe seguir identificándose como tal hasta que sea aprobada o rechazada. Los porcentajes y las alertas deben calcularse únicamente sobre los datos que cumplen las reglas configuradas.
+
+**Criterios de aceptación**
+
+- Una sesión sin registros no genera ausencias automáticas.
+- Una sesión parcialmente completada muestra cuántos estudiantes están pendientes.
+- Una justificación pendiente no se presenta como aprobada.
+- Aprobar una justificación modifica la clasificación correspondiente sin duplicar el registro.
+- Los mismos datos producen el mismo porcentaje en todos los módulos.
+- Una sesión anulada no afecta indebidamente los indicadores.
+- Una modificación manual de estado requiere autorización y deja trazabilidad.
+- Se prueban los cálculos con cero sesiones válidas, sesiones completas, sesiones incompletas, tardanzas, permisos y ausencias justificadas.
+
+**Dependencias:** T-ASI-01, para evitar conflictos durante las transiciones; T-ASI-04, para impedir modificaciones retroactivas indebidas; T-ASI-07, para generar alertas con datos válidos; T-ASI-12 y T-ASI-15, para sincronizar y conciliar los resultados.
+
+---
+
+### T-ASI-03 [P1] — Verificación de relaciones familiares y autorización de notificaciones
+
+**Problema que debe resolverse**
+
+Las notificaciones por ausencias o tardanzas deben consultar las relaciones familiares vigentes en el servidor. No se debe confiar en destinatarios enviados por el navegador ni enviar información de un estudiante a una persona que no esté autorizada para recibirla.
+
+**Alcance de los cambios**
+
+- "RelacionesFamiliares".
+- "sendMultiChannelNotification".
+- Funciones que generan alertas de asistencia.
+- Resolución de destinatarios, plantillas, colas y registros de entrega.
+- Portal familiar y preferencias de notificación.
+
+**Requisitos funcionales**
+
+1. Consultar dinámicamente las relaciones familiares del estudiante en el backend antes de preparar cada notificación.
+2. Verificar que la relación:
+   - Corresponda al estudiante afectado.
+   - Esté activa.
+   - Tenga la autorización necesaria para el tipo de comunicación.
+   - No haya sido revocada ni sustituida por una relación más reciente.
+3. Diferenciar entre responsable legal, contacto de emergencia, persona autorizada para recoger al estudiante y otros contactos. Una relación de contacto no debe otorgar automáticamente todos los privilegios.
+4. Permitir configurar qué tipos de notificaciones puede recibir cada responsable, de acuerdo con la política institucional.
+5. No incluir destinatarios suministrados directamente por el cliente sin validación del servidor.
+6. Resolver por separado el derecho a recibir información y el canal de entrega disponible.
+7. Aplicar plantillas con divulgación mínima de datos:
+   - Aviso de ausencia o tardanza.
+   - Solicitud de justificación.
+   - Recordatorio de autorización.
+   - Notificación administrativa.
+   - Comunicación sobre un caso de convivencia, únicamente cuando corresponda y exista autorización.
+8. Evitar incluir descripciones disciplinarias, datos de otros estudiantes, documentos adjuntos o detalles sensibles en notificaciones generales.
+9. Registrar el evento, destinatarios autorizados, canal, fecha, resultado del envío y errores. Las credenciales y los tokens no deben aparecer en la bitácora.
+10. Implementar reintentos limitados y control de duplicados. Un reintento no debe enviar múltiples avisos equivalentes.
+11. Permitir gestionar preferencias de comunicación sin desactivar comunicaciones institucionales obligatorias que deban mantenerse según la política aplicable.
+12. Incorporar un mecanismo para revisar entregas fallidas y reintentar cuando sea procedente.
+13. Volver a comprobar la autorización cuando una notificación se retrase en una cola y se procese después de que la relación familiar haya cambiado.
+14. Mantener una vista administrativa de las notificaciones pendientes, entregadas, fallidas y descartadas por falta de autorización.
+
+**Comportamiento esperado**
+
+Si un contacto deja de estar autorizado después de generarse un evento, la cola debe volver a validar su elegibilidad antes del envío. Si ya no corresponde enviarle la información, el mensaje debe descartarse de forma segura y quedar registrado como no enviado por autorización insuficiente.
+
+**Criterios de aceptación**
+
+- Una persona sin relación autorizada no recibe alertas aunque conozca el identificador del estudiante.
+- Una relación inactiva no se utiliza como destinataria.
+- Un contacto autorizado únicamente para emergencias no recibe automáticamente detalles disciplinarios.
+- Los mensajes fallidos pueden reintentarse sin duplicación.
+- Los registros de auditoría permiten reconstruir el resultado de cada envío sin exponer secretos.
+- Las plantillas no revelan información de otros estudiantes.
+- Se prueban cambios de tutela, relaciones revocadas, múltiples responsables y destinatarios sin canal válido.
+
+**Dependencias:** T-ASI-02, para identificar correctamente el evento que genera la alerta; T-ASI-07, para las notificaciones por patrones de inasistencia; T-ASI-08 y T-ASI-09, para proteger las comunicaciones vinculadas con expedientes y compromisos.
+
+---
+
+### T-ASI-04 [P1] — Protección de registros de períodos y años escolares cerrados
+
+**Problema que debe resolverse**
+
+Los registros de asistencia de períodos concluidos deben conservar su integridad. Una corrección posterior no debe modificar silenciosamente datos históricos ni alterar un boletín, informe o porcentaje ya emitido.
+
+**Alcance de los cambios**
+
+- "SesionesAsistencia".
+- "RegistrosAsistencia".
+- "JustificacionesAsistencia".
+- "CasosSeguimiento".
+- Configuración de períodos académicos.
+- Funciones de escritura, corrección y cierre.
+- Informes y resúmenes asociados.
+
+**Requisitos funcionales**
+
+1. Definir estados explícitos para períodos académicos y años escolares, incluyendo abierto, en cierre y cerrado.
+2. Validar en el servidor el estado del período asociado a cada operación. No depender de que la interfaz oculte los botones de edición.
+3. Bloquear la creación, modificación o eliminación ordinaria de registros dentro de períodos cerrados.
+4. Permitir correcciones excepcionales únicamente a roles autorizados, con:
+   - Motivo obligatorio.
+   - Identidad del solicitante.
+   - Fecha y hora.
+   - Valores anteriores y nuevos.
+   - Aprobación adicional cuando la política institucional lo requiera.
+5. Conservar el valor original y registrar la corrección como una operación trazable. No sobrescribir el historial de forma que resulte imposible reconstruirlo.
+6. Impedir que las modificaciones de períodos cerrados se realicen mediante llamadas alternativas, sincronización offline, importaciones o funciones administrativas que no apliquen las mismas reglas.
+7. Definir cómo afectan las correcciones aprobadas a los resúmenes, informes y boletines ya generados.
+8. Registrar qué documentos o cálculos deben regenerarse después de una corrección autorizada.
+9. Mantener una vista histórica de las versiones de un registro.
+10. Proteger también los períodos cerrados frente a cambios indirectos, como la modificación de horarios, listas de matrícula o reglas de cálculo.
+11. Permitir consultar los datos históricos sin otorgar permisos de edición.
+12. Establecer una operación de cierre verificable que identifique sesiones pendientes, justificaciones sin resolver, conflictos de sincronización y discrepancias.
+
+**Comportamiento esperado**
+
+Una operación ordinaria sobre un período cerrado debe rechazarse en el servidor. Una corrección autorizada debe quedar registrada como una rectificación, conservando los valores previos y permitiendo identificar los informes que requieren actualización.
+
+**Criterios de aceptación**
+
+- Un docente no puede modificar una sesión de un año cerrado.
+- Una sincronización pendiente no puede alterar un período cerrado sin el flujo de rectificación autorizado.
+- Toda corrección excepcional conserva el historial anterior y el motivo.
+- Los informes afectados por una corrección quedan identificados para su regeneración.
+- El cierre detecta registros incompletos y discrepancias conocidas.
+- Una consulta histórica no modifica datos.
+- Se comprueba que todos los puntos de escritura del backend respetan la misma política.
+
+**Dependencias:** T-ASI-01 y T-ASI-02; T-ASI-12 y T-ASI-15, para actualizar los resultados derivados; T-ASI-16, para respaldar el historial y las rectificaciones.
+
+---
+
+### T-ASI-05 [P2] — Portal de marcación diaria de entrada y salida del personal
+
+**Problema que debe resolverse**
+
+Existen registros de horas extras y turnos de almuerzo, pero no un mecanismo completo de marcación diaria de entrada y salida del personal docente y administrativo.
+
+**Alcance de los cambios**
+
+- Nuevo módulo de control horario del personal.
+- Esquema de persistencia para jornadas y marcaciones.
+- Integración con "AprobacionHorasExtras" y "TurnosAlmuerzo".
+- Paneles de personal, dirección y administración.
+- Notificaciones de incidencias horarias.
+
+**Requisitos funcionales**
+
+1. Permitir registrar, como mínimo:
+   - Entrada.
+   - Inicio y finalización de almuerzo, cuando corresponda.
+   - Salida.
+   - Incidencias de marcación.
+2. Configurar horarios y tolerancias por empleado, puesto, jornada, día y calendario laboral.
+3. Diferenciar marcación original, corrección solicitada y corrección aprobada.
+4. Registrar fecha y hora del servidor, usuario, método de marcación y dispositivo o contexto técnico disponible. No confiar en la hora del navegador como única fuente.
+5. Admitir PIN individual o autenticación de usuario. Si se habilita un terminal compartido, limitar los intentos, ocultar datos personales y evitar que una sesión quede abierta para el siguiente empleado.
+6. No considerar el PIN un factor de autenticación fuerte por sí solo. Si el entorno lo requiere, combinarlo con una sesión autenticada o un dispositivo administrado.
+7. Detectar:
+   - Entrada tardía.
+   - Salida anticipada.
+   - Falta de entrada o salida.
+   - Marcaciones duplicadas.
+   - Jornadas que exceden el horario previsto.
+   - Inconsistencias entre turnos y marcaciones.
+8. Permitir turnos partidos, jornadas variables, permisos, ausencias autorizadas y ajustes por calendario institucional.
+9. Calcular tiempo trabajado, tiempo de descanso y diferencias respecto al horario previsto mediante reglas configurables y documentadas.
+10. Separar las horas calculadas de las horas extras solicitadas, aprobadas y efectivamente reconocidas.
+11. Vincular las incidencias horarias con el flujo existente de "AprobacionHorasExtras", sin aprobar automáticamente pagos ni deducciones.
+12. Incorporar una pantalla para que cada empleado consulte sus marcaciones y solicite correcciones.
+13. Permitir a los responsables autorizados revisar, aprobar o rechazar correcciones con motivo obligatorio.
+14. Crear informes por empleado, departamento, período y tipo de incidencia.
+15. No usar la marcación para aplicar automáticamente sanciones laborales o deducciones sin revisión y autorización conforme a las reglas institucionales aplicables.
+
+**Comportamiento esperado**
+
+El personal puede marcar su jornada desde un dispositivo autorizado o terminal institucional. El sistema compara las marcaciones con el horario vigente, identifica incidencias y permite solicitar correcciones sin alterar el registro original.
+
+**Criterios de aceptación**
+
+- Se registra correctamente una jornada normal y una jornada con almuerzo.
+- Las marcaciones repetidas no generan horas trabajadas duplicadas.
+- La hora del cliente no puede utilizarse para falsificar libremente el momento de la marcación.
+- Los permisos y calendarios modifican los cálculos de manera coherente.
+- El empleado solo puede consultar sus propias marcaciones.
+- Las correcciones requieren autorización y dejan historial.
+- Las horas extras calculadas no se confunden con las aprobadas.
+- Los informes concuerdan con las marcaciones y los horarios aplicables.
+
+**Dependencias:** Modelo de roles y permisos vigente; Configuración de calendarios y horarios del personal; Integración con "AprobacionHorasExtras" y "TurnosAlmuerzo"; T-ASI-14 para exportar los informes horarios, si se incluye dentro del alcance de exportación.
+
+---
+
+### T-ASI-06 [P2] — Módulo de solicitudes, autorización y registro de salidas anticipadas
+
+**Problema que debe resolverse**
+
+Aunque existe la estructura "SalidasAnticipadas" y "PermisosAutorizacionesEstudiante", se requiere un flujo completo y verificable que conecte la solicitud, la aprobación, la identificación de quien recoge al estudiante y el registro de su salida efectiva.
+
+**Alcance de los cambios**
+
+- "SalidasAnticipadas".
+- "PermisosAutorizacionesEstudiante".
+- "RelacionesFamiliares".
+- Portal familiar, docente y administrativo.
+- Generación y validación de pases de salida.
+- Integración con asistencia y notificaciones.
+
+**Requisitos funcionales**
+
+1. Permitir solicitudes por responsables autorizados y por personal institucional habilitado.
+2. Registrar estudiante, fecha, hora prevista, motivo, solicitante, persona autorizada para recogerlo y observaciones pertinentes.
+3. Definir estados del flujo: borrador, pendiente de aprobación, aprobado, rechazado, cancelado, emitido, salida registrada y vencido.
+4. Configurar quién puede solicitar, aprobar, emitir y validar una salida.
+5. Validar la relación del solicitante con el estudiante y su facultad para autorizar esa operación.
+6. Permitir autorización previa, autorización excepcional presencial y rechazo justificado.
+7. Incorporar validación de identidad de la persona que recoge al estudiante mediante un procedimiento institucional. No exponer documentos de identidad en pantallas públicas o mensajes generales.
+8. Generar un pase con identificador único, fecha de vencimiento y estado verificable. Si se utiliza un código QR, este debe ser opaco o contener un token limitado, no información personal legible.
+9. Evitar la reutilización del pase después de registrar la salida o de que expire.
+10. Registrar quién verificó la identidad y quién confirmó la salida efectiva.
+11. Diferenciar la hora prevista de la hora real de salida.
+12. Actualizar el registro de asistencia cuando corresponda, sin convertir una salida autorizada en una ausencia injustificada.
+13. Notificar a los responsables autorizados sobre aprobación, rechazo, cancelación y salida efectivamente registrada.
+14. Permitir anular una autorización con motivo y conservar el historial.
+15. Gestionar salidas de emergencia mediante un procedimiento separado que no dependa de una aprobación digital ordinaria.
+16. Mostrar en la lista de estudiantes del día si existe un permiso aprobado, pendiente o vencido, con información limitada al personal autorizado.
+
+**Comportamiento esperado**
+
+Una solicitud aprobada no se considera una salida realizada hasta que el personal registra la salida efectiva. Un pase vencido, utilizado o cancelado no puede volver a utilizarse. La asistencia refleja el hecho real y conserva la autorización que lo respalda.
+
+**Criterios de aceptación**
+
+- Una persona no autorizada no puede solicitar ni aprobar una salida en nombre del estudiante.
+- Una solicitud pendiente no genera un pase válido.
+- Un pase vencido o ya utilizado es rechazado.
+- La hora real queda registrada separadamente de la prevista.
+- La salida actualiza la asistencia sin duplicar registros.
+- La notificación se envía únicamente a destinatarios autorizados.
+- Las cancelaciones y excepciones quedan registradas con su responsable.
+- Se prueban salidas ordinarias, emergencias, retiros por personas autorizadas y autorizaciones revocadas.
+
+**Dependencias:** T-ASI-03, para validar responsables y notificaciones; T-ASI-02, para la clasificación de asistencia; T-ASI-08, si se adjuntan documentos sensibles; T-ASI-16, para la conservación histórica.
+
+---
+
+### T-ASI-07 [P2] — Motor configurable de alertas por inasistencias y tardanzas reiteradas
+
+**Problema que debe resolverse**
+
+Las notificaciones asociadas a una ausencia o tardanza individual no sustituyen un sistema de detección de patrones. La plataforma debe identificar acumulaciones, tendencias y casos que requieran seguimiento, sin generar falsas alertas por datos incompletos o justificaciones pendientes.
+
+**Alcance de los cambios**
+
+- Motor de reglas y procesamiento de eventos de asistencia.
+- "RegistrosAsistencia", "SesionesAsistencia" y "JustificacionesAsistencia".
+- "CasosSeguimiento".
+- "sendMultiChannelNotification".
+- Panel de alertas para docentes, orientación y dirección.
+
+**Requisitos funcionales**
+
+1. Permitir configurar reglas por centro, período, grado, sección, nivel educativo y tipo de incidencia.
+2. Contemplar condiciones como:
+   - Número de ausencias injustificadas en un período.
+   - Porcentaje de asistencia inferior a un umbral.
+   - Tardanzas repetidas.
+   - Secuencias de ausencias consecutivas.
+   - Ausencias en determinadas sesiones o materias.
+   - Incremento de incidencias respecto de un período anterior.
+3. Permitir establecer ventanas de cálculo, umbrales, severidad, frecuencia de evaluación y destinatarios.
+4. Excluir sesiones no registradas, anuladas o no válidas para el cálculo.
+5. Tratar las justificaciones pendientes de acuerdo con una política explícita. No deben clasificarse como definitivamente injustificadas antes de la resolución.
+6. Recalcular las alertas cuando se corrijan registros o se aprueben justificaciones.
+7. Evitar la generación de alertas duplicadas para un mismo caso y período.
+8. Agrupar eventos relacionados en una alerta o caso de seguimiento cuando resulte útil.
+9. Diferenciar alerta informativa, alerta que requiere revisión y caso que requiere intervención.
+10. Mostrar los registros que originaron la alerta, la regla aplicada, la fecha de detección y el cálculo que la sustenta.
+11. Permitir que un usuario autorizado reconozca, asigne, comente, cierre o derive una alerta.
+12. No cerrar automáticamente una alerta de seguimiento activo solo porque el porcentaje haya mejorado; conservar el historial y exigir resolución según la regla correspondiente.
+13. Incorporar mecanismos de supresión temporal y revisión para evitar notificaciones excesivas.
+14. Resolver destinatarios mediante "RelacionesFamiliares" y permisos vigentes.
+15. Crear o vincular un "CasoSeguimiento" cuando la regla lo requiera, sin duplicar casos existentes.
+16. Permitir configurar las reglas sin modificar el código y conservar el historial de cambios en su configuración.
+
+**Comportamiento esperado**
+
+Cuando un estudiante alcanza un umbral configurable, el sistema genera una alerta trazable, identifica los registros que la justifican y asigna las acciones correspondientes. Si posteriormente se aprueba una justificación, recalcula el caso y actualiza la alerta sin borrar su historial.
+
+**Criterios de aceptación**
+
+- Un umbral configurable genera una alerta exactamente cuando corresponde.
+- Una sesión incompleta no genera una falsa ausencia.
+- La aprobación de una justificación recalcula el patrón.
+- Un evento repetido no crea alertas duplicadas.
+- La alerta muestra su regla, cálculo y registros de origen.
+- Los destinatarios se validan en el servidor.
+- Las alertas pueden asignarse, comentarse y resolverse con trazabilidad.
+- Se verifica el comportamiento con umbrales, ventanas, períodos cerrados y cambios retroactivos autorizados.
+
+**Dependencias:** T-ASI-02 y T-ASI-03; T-ASI-09, para vincular alertas con planes de acompañamiento; T-ASI-13, para visualizar los patrones consolidados.
+
+---
+
+### T-ASI-08 [P2] — Acceso seguro a evidencias documentales de expedientes de convivencia
+
+**Problema que debe resolverse**
+
+Los enlaces directos de Google Drive pueden permitir acceso a documentos sin que el sistema vuelva a verificar la identidad, la vigencia de la sesión y los permisos sobre el caso disciplinario.
+
+**Alcance de los cambios**
+
+- Gestión de evidencias adjuntas a "CasosSeguimiento" y "ObservacionesConvivencia".
+- Backend de acceso a archivos.
+- Almacenamiento en Google Drive.
+- "validateRolePermission".
+- Componentes frontend que muestran o descargan documentos.
+
+**Requisitos funcionales**
+
+1. Implementar un endpoint de acceso controlado a las evidencias que compruebe la sesión autenticada y los permisos del usuario sobre el expediente concreto.
+2. No utilizar el conocimiento de un identificador de archivo, URL o ID de caso como prueba suficiente de autorización.
+3. Evitar que los archivos confidenciales se compartan mediante enlaces públicos o permisos generales de Drive.
+4. Utilizar una política de acceso que impida a los usuarios acceder directamente a los archivos fuera del flujo autorizado. Si el diseño del almacenamiento permite omitir el proxy, corregir también los permisos del archivo.
+5. Validar que el archivo solicitado pertenece al caso indicado y que el usuario puede consultar ese caso.
+6. Para descargas diferidas, usar tokens de acceso de corta duración, de alcance limitado y con protección contra manipulación. Los tokens no deben sustituir la autorización inicial ni permitir acceso a otros archivos.
+7. Evitar tokens reutilizables indefinidamente. Definir expiración, revocación y alcance de cada acceso.
+8. Verificar el tipo, tamaño y contenido permitido de los archivos durante la carga.
+9. Evitar ejecutar archivos adjuntos como contenido activo. Servirlos con encabezados y tratamiento apropiados para descarga o visualización segura.
+10. Registrar accesos, descargas, rechazos y errores sin guardar tokens ni contenido sensible en la bitácora.
+11. Aplicar límites de tamaño, controles de frecuencia y respuestas de error que no revelen la existencia de expedientes a usuarios no autorizados.
+12. Gestionar la revocación de permisos cuando una persona deja de ser docente asignado, orientador o directivo autorizado.
+13. Permitir la descarga individual y, si se habilita la descarga agrupada, aplicar las mismas verificaciones a cada archivo.
+14. Mantener un procedimiento de eliminación o retención de evidencias conforme a la política institucional, sin destruir indebidamente la trazabilidad del expediente.
+
+**Comportamiento esperado**
+
+El usuario accede a una evidencia solo si tiene autorización vigente sobre el caso. Si pierde ese permiso, los enlaces o tokens previos dejan de proporcionar acceso conforme al mecanismo de revocación establecido.
+
+**Criterios de aceptación**
+
+- Una URL copiada por un usuario no autorizado no permite descargar la evidencia.
+- Un token vencido, alterado o correspondiente a otro archivo es rechazado.
+- Un usuario autorizado para un caso no puede descargar archivos de otro caso cambiando un identificador.
+- Los permisos de Drive no permiten eludir la autorización de la aplicación.
+- Los archivos inválidos o no permitidos se rechazan.
+- Las descargas y denegaciones quedan registradas sin exponer credenciales.
+- Se comprueba el comportamiento tras revocar un rol o reasignar un caso.
+
+**Dependencias:** Sistema de autenticación y RBAC; T-ASI-09, para los documentos vinculados a planes de acompañamiento; T-ASI-16, para conservar la trazabilidad de los documentos y sus cambios.
+
+---
+
+### T-ASI-09 [P2] — Flujo formal de compromisos pedagógicos y planes de acompañamiento conductual
+
+**Problema que debe resolverse**
+
+Los campos "AccionesJSON" y las notas de seguimiento permiten almacenar información sobre acciones y compromisos, pero se necesita un ciclo de vida estructurado que permita asignar responsables, establecer plazos, comprobar avances y documentar resultados.
+
+**Alcance de los cambios**
+
+- "CasosSeguimiento".
+- "getCaseFollowUpNotes" y "addCaseFollowUpNote".
+- Estructura de "AccionesJSON" y sus validaciones.
+- "ObservacionesConvivencia".
+- Interfaces de docentes, orientación, dirección y responsables autorizados.
+
+**Requisitos funcionales**
+
+1. Definir un modelo estructurado para los planes de acompañamiento, evitando depender exclusivamente de un campo JSON libre para representar estados y relaciones.
+2. Cada plan debe contener:
+   - Identificador único.
+   - Caso asociado.
+   - Estudiante o participantes vinculados.
+   - Fecha de apertura.
+   - Motivo y objetivos concretos.
+   - Responsable principal.
+   - Participantes autorizados.
+   - Acciones y compromisos.
+   - Fechas de inicio y vencimiento.
+   - Indicadores o criterios de revisión.
+   - Estado del plan.
+   - Historial de seguimiento.
+3. Permitir acciones individuales con responsable, fecha límite, estado, comentarios y evidencia opcional.
+4. Definir estados de caso y plan, por ejemplo: abierto, en evaluación, planificado, en seguimiento, pendiente de revisión, resuelto, cerrado y reabierto.
+5. Diferenciar la resolución de una incidencia del cierre de su plan de acompañamiento. Resolver un incidente no implica necesariamente completar todas las acciones posteriores.
+6. Permitir programar revisiones periódicas y registrar el resultado de cada revisión.
+7. Notificar vencimientos, revisiones pendientes y compromisos no completados a las personas autorizadas.
+8. Permitir registrar avances, incumplimientos, cambios de responsable y ajustes de objetivos con fecha, autor y motivo.
+9. Incorporar plantillas configurables para intervenciones pedagógicas, mediación, compromisos conductuales y reuniones con responsables.
+10. Permitir planes de acompañamiento preventivo que no requieran clasificar al estudiante como infractor.
+11. Evitar que una observación inicial se convierta automáticamente en una sanción o una conclusión definitiva.
+12. Diferenciar hechos observados, testimonios, valoraciones profesionales, decisiones y acciones ejecutadas.
+13. Mantener la confidencialidad por caso, rol y asignación.
+14. Permitir adjuntar evidencias mediante el acceso seguro de T-ASI-08.
+15. Incorporar el registro de participantes, incluidos los distintos estudiantes y miembros del personal involucrados en un mismo incidente.
+16. Permitir derivar un caso a orientación o dirección con motivo, destinatario y registro de aceptación de la derivación.
+17. Evitar el cierre automático de un plan por ausencia de actividad o por cumplimiento de una fecha.
+18. Generar un historial de seguimiento que permita consultar las acciones realizadas sin sobrescribir notas previas.
+
+**Comportamiento esperado**
+
+Cada caso puede contar con un plan de acciones con responsables y fechas. Los usuarios autorizados registran avances y revisiones; el sistema identifica compromisos vencidos y permite documentar la resolución o reapertura del caso.
+
+**Criterios de aceptación**
+
+- Un plan puede crearse, asignarse, actualizarse, revisarse y cerrarse.
+- Cada acción conserva responsable, estado y fechas.
+- Una acción vencida se identifica sin cambiar automáticamente el estado del caso.
+- La reapertura conserva la información de la resolución anterior.
+- Las notas anteriores no desaparecen cuando se añade una nueva.
+- Un docente sin asignación no puede consultar el plan completo.
+- Las plantillas permiten crear planes consistentes y configurables.
+- Se prueban casos con múltiples participantes, evidencias, cambios de responsable y revisiones vencidas.
+
+**Dependencias:** T-ASI-03, para las comunicaciones a responsables; T-ASI-07, para la derivación desde alertas de asistencia; T-ASI-08, para las evidencias; T-ASI-16, para la conservación histórica.
+
+---
+
+### T-ASI-10 [P2] — Registro y validación de asistencia en actividades extracurriculares, eventos y excursiones
+
+**Problema que debe resolverse**
+
+La asistencia vinculada a sesiones académicas ordinarias no cubre necesariamente eventos, actividades extracurriculares, salidas de campo y excursiones. Estos contextos requieren listas específicas, responsables, autorizaciones y control de salida y retorno.
+
+**Alcance de los cambios**
+
+- Nuevo modelo de actividades y sesiones extraordinarias.
+- Integración con "SesionesAsistencia" y "RegistrosAsistencia".
+- Autorizaciones de participación.
+- Gestión de responsables de actividad.
+- Notificaciones y reportes.
+
+**Requisitos funcionales**
+
+1. Permitir crear actividades con nombre, tipo, fecha, horario, ubicación, organizador, responsable y lista de participantes.
+2. Permitir seleccionar participantes por grado, sección, grupo, lista manual o criterios autorizados.
+3. Registrar la participación prevista, autorización requerida, autorización recibida y asistencia efectiva como estados independientes.
+4. Para excursiones, permitir registrar salida, llegada, controles intermedios cuando proceda y retorno.
+5. Permitir listas de asistencia por grupo y responsable, con registro de quién realizó cada marcación.
+6. Diferenciar presente, ausente, tardanza, retiro anticipado, no autorizado para participar y pendiente de confirmar.
+7. Registrar observaciones operativas sin incluir información sensible innecesaria.
+8. Permitir que un participante sea asignado a un grupo o responsable específico.
+9. Detectar discrepancias entre la lista de participantes autorizados y la lista de asistencia efectiva.
+10. Notificar a los responsables autorizados cambios relevantes, cancelaciones y situaciones de ausencia cuando corresponda.
+11. Aplicar permisos específicos para que solo el personal asignado pueda editar la asistencia de la actividad.
+12. Conservar la asistencia ordinaria sin duplicar una misma sesión académica por la asistencia a una actividad extraordinaria.
+13. Definir si una actividad afecta la asistencia académica del día y cómo se refleja esa excepción en los cálculos.
+14. Permitir imprimir o exportar listas operativas y generar un informe posterior a la actividad.
+15. Admitir captura temporal sin conexión, con sincronización y detección de conflictos al recuperar conectividad.
+16. Evitar que una lista offline o una autorización pendiente se interpreten como confirmación de asistencia o autorización definitiva.
+
+**Comportamiento esperado**
+
+El responsable de una actividad consulta la lista asignada, valida las autorizaciones y registra la participación real. Al finalizar, el sistema conserva un registro completo de los participantes previstos, presentes, ausentes y de las incidencias de salida o retorno.
+
+**Criterios de aceptación**
+
+- Una actividad puede crearse y asignarse a responsables.
+- Las autorizaciones y la asistencia se consultan por separado.
+- Un usuario ajeno a la actividad no puede modificar su lista.
+- La asistencia extraordinaria no duplica la ordinaria.
+- Se detectan participantes sin autorización cuando esta es obligatoria.
+- Las marcaciones offline se sincronizan sin duplicados y muestran conflictos.
+- Los informes permiten reconstruir la participación y las incidencias de la actividad.
+
+**Dependencias:** T-ASI-01, para concurrencia y sincronización; T-ASI-02, para los estados de asistencia; T-ASI-03, para notificaciones; T-ASI-06, si la actividad requiere gestionar permisos de salida.
+
+---
+
+### T-ASI-11 [P2] — Edición rápida, navegación por teclado y accesibilidad en la toma de asistencia
+
+**Problema que debe resolverse**
+
+La marcación diaria es una operación repetitiva que debe ser rápida, precisa y accesible. La mejora no consiste únicamente en reducir clics: debe minimizar errores, mantener la claridad de los estados y funcionar en dispositivos móviles y equipos con conectividad limitada.
+
+**Alcance de los cambios**
+
+- "js/teacher.js".
+- Vistas de asistencia en "teacher-dashboard.html".
+- Componentes de tabla, formularios, modales y mensajes de estado.
+- Integración con el guardado por lote y la sincronización offline.
+
+**Requisitos funcionales**
+
+1. Presentar la lista de estudiantes con identificación suficiente para evitar confusiones entre personas con nombres similares.
+2. Permitir cambiar el estado de asistencia mediante teclado, sin depender exclusivamente del ratón o de controles táctiles.
+3. Definir una navegación consistente con Tab, Shift+Tab, flechas, Enter y Espacio según el tipo de control.
+4. Permitir marcación masiva por estado, con confirmación o posibilidad de deshacer antes de guardar.
+5. No aplicar acciones masivas a estudiantes fuera del filtro visible ni a registros que no estén dentro de la sesión autorizada.
+6. Resaltar visualmente los registros modificados y los que todavía no se han guardado.
+7. Mostrar claramente si el registro está guardado, pendiente de sincronización, en conflicto o rechazado.
+8. Incorporar búsqueda y filtros por nombre, identificador y estado, sin perder las modificaciones locales al cambiar la vista.
+9. Mantener el foco al actualizar la lista, guardar o mostrar errores.
+10. Ofrecer etiquetas textuales además de colores e iconos para distinguir los estados.
+11. Proporcionar mensajes accesibles para lectores de pantalla y evitar depender exclusivamente de avisos visuales.
+12. Permitir confirmar el cierre de una sesión cuando existan estudiantes pendientes.
+13. Evitar la pérdida de modificaciones al recargar o cambiar accidentalmente de pantalla, utilizando el mecanismo de persistencia disponible.
+14. Incorporar indicadores de conectividad y de cola de sincronización.
+15. Adaptar la interfaz a pantallas pequeñas sin ocultar información necesaria ni provocar desplazamientos horizontales innecesarios.
+16. Permitir revisar un resumen de los cambios antes del guardado definitivo.
+17. Medir el tiempo de carga y el tiempo de interacción con listas representativas del tamaño real de los grupos.
+
+**Comportamiento esperado**
+
+El docente puede marcar y revisar una lista completa sin utilizar el ratón, identificar los cambios no guardados y corregir errores antes de confirmar. Una pérdida temporal de conectividad no debe hacer desaparecer los datos pendientes.
+
+**Criterios de aceptación**
+
+- La toma de asistencia puede completarse usando solo teclado.
+- Los controles muestran foco visible y tienen etiquetas comprensibles.
+- La marcación masiva afecta únicamente a los estudiantes seleccionados.
+- Los cambios locales sobreviven a una interrupción temporal de conectividad.
+- Los errores de guardado identifican qué registros requieren atención.
+- Los colores no son el único medio para distinguir estados.
+- Las pruebas de usabilidad verifican que la nueva interfaz no aumenta los errores de marcación.
+- Las mediciones de rendimiento se realizan con listas de tamaño representativo y se documentan los resultados.
+
+**Dependencias:** T-ASI-01, para mostrar y resolver conflictos; T-ASI-02, para los estados y validaciones; T-ASI-04, para mostrar correctamente las restricciones de períodos cerrados.
+
+---
+
+### T-ASI-12 [P2] — Sincronización de justificaciones aprobadas con el expediente y los informes académicos
+
+**Problema que debe resolverse**
+
+La aprobación de una justificación modifica el registro de asistencia, pero se requiere asegurar que todos los resúmenes, informes, expedientes y documentos derivados reflejen el cambio sin inconsistencias ni duplicaciones.
+
+**Alcance de los cambios**
+
+- "submitAttendanceJustification".
+- "reviewAttendanceJustification".
+- "getAttendanceJustifications".
+- "getStudentAttendanceSummary".
+- "RegistrosAsistencia", "JustificacionesAsistencia" y módulos que consuman los datos de asistencia.
+- Boletines e informes que presenten indicadores de asistencia.
+
+**Requisitos funcionales**
+
+1. Definir la justificación como un registro propio relacionado con el estudiante, el período y la sesión o sesiones afectadas.
+2. Conservar el estado de la solicitud, el motivo, la decisión, el autor y las fechas relevantes.
+3. Diferenciar el estado de la solicitud del estado derivado de asistencia.
+4. Al aprobar o rechazar una justificación, actualizar los registros afectados mediante una operación idempotente.
+5. Identificar las vistas, informes y cálculos que dependen del registro modificado.
+6. Actualizar los indicadores de asistencia y puntualidad sin duplicar los eventos originales.
+7. Si un resumen se almacena físicamente, invalidarlo o recalcularlo con un mecanismo verificable. No asumir que el cambio en la hoja original actualiza automáticamente todos los resúmenes.
+8. Mantener una relación trazable entre la justificación, la decisión y el registro de asistencia que modifica.
+9. Gestionar justificaciones que afecten varias sesiones, períodos o materias mediante una relación explícita con cada registro afectado.
+10. Rechazar solicitudes que intenten modificar registros que no pertenecen al estudiante o período indicados.
+11. Permitir revisar las justificaciones y sus resoluciones desde el expediente del estudiante según los permisos.
+12. Evitar mostrar el motivo detallado de una justificación en módulos que solo necesitan conocer su estado.
+13. Definir qué ocurre cuando una justificación se aprueba después de emitirse un boletín o cerrarse un período.
+14. Marcar los informes afectados que deban regenerarse y conservar la versión previamente emitida cuando sea necesario.
+15. Garantizar que las operaciones repetidas no dupliquen justificaciones, cambios de estado ni notificaciones.
+16. Incluir una vista de discrepancias entre justificaciones aprobadas y registros de asistencia que todavía no reflejan la resolución.
+
+**Comportamiento esperado**
+
+Una decisión aprobada actualiza de manera consistente la clasificación de la asistencia y sus resúmenes dependientes. La plataforma conserva el hecho histórico, la justificación y la decisión administrativa, y permite identificar documentos que requieren actualización.
+
+**Criterios de aceptación**
+
+- Aprobar una justificación actualiza todos los registros afectados.
+- Repetir la operación no duplica los cambios.
+- Una justificación rechazada no modifica indebidamente la asistencia.
+- Los informes reflejan la misma clasificación que el expediente.
+- Una corrección de período cerrado sigue el procedimiento excepcional autorizado.
+- Las discrepancias entre solicitud y registro se detectan y pueden resolverse.
+- Las pruebas incluyen solicitudes múltiples, decisiones repetidas, cambios retroactivos autorizados y documentos ya emitidos.
+
+**Dependencias:** T-ASI-02, para los estados de asistencia; T-ASI-04, para períodos cerrados; T-ASI-14, para exportaciones coherentes; T-ASI-15, para conciliación de los datos derivados.
+
+---
+
+### T-ASI-13 [P3] — Panel consolidado de puntualidad, asistencia y ausentismo
+
+**Problema que debe resolverse**
+
+Los porcentajes y gráficos individuales existentes no proporcionan necesariamente una visión consolidada que permita comparar períodos, grados, secciones, materias y patrones de puntualidad de manera consistente.
+
+**Alcance de los cambios**
+
+- "getStudentAttendanceSummary".
+- Motor de gráficos de "js/ui-common.js".
+- Paneles de docentes, orientación y dirección.
+- Nuevos servicios de agregación de indicadores.
+- Filtros y permisos de consulta.
+
+**Requisitos funcionales**
+
+1. Ofrecer vistas agregadas por centro, año escolar, período, grado, sección, materia y rango de fechas, de acuerdo con los permisos del usuario.
+2. Presentar, como mínimo:
+   - Porcentaje de asistencia.
+   - Número y porcentaje de ausencias justificadas.
+   - Número y porcentaje de ausencias injustificadas.
+   - Número de tardanzas.
+   - Tendencia de puntualidad.
+   - Estudiantes con patrones reiterados.
+   - Sesiones incompletas que afecten la fiabilidad de los datos.
+3. Separar indicadores de asistencia y puntualidad. No utilizar una única cifra que oculte diferencias relevantes.
+4. Mostrar numerador, denominador, período y reglas de cálculo de cada indicador.
+5. Excluir del cálculo las sesiones no válidas según la política de asistencia.
+6. Permitir comparar períodos equivalentes y consultar tendencias históricas.
+7. Incorporar filtros interactivos que actualicen las métricas y las tablas relacionadas.
+8. Permitir navegar desde un indicador agregado a los datos individuales cuando el rol tenga autorización para hacerlo.
+9. No revelar nombres ni expedientes individuales en vistas agregadas de usuarios que no necesiten esa información.
+10. Diferenciar valores nulos, datos insuficientes y resultados iguales a cero.
+11. Mostrar la fecha de actualización de los datos y señalar si existen procesos de sincronización pendientes.
+12. Evitar cálculos divergentes entre gráficos, tablas y exportaciones mediante un servicio de agregación común.
+13. Permitir configurar umbrales de visualización y alertas según el centro educativo.
+14. Incorporar tablas accesibles y una alternativa textual a las visualizaciones.
+15. Optimizar las consultas para evitar recorrer repetidamente todas las hojas de cálculo por cada componente del panel.
+16. Definir cuándo los datos agregados pueden almacenarse en caché y cómo invalidarlos cuando se modifica la asistencia.
+
+**Comportamiento esperado**
+
+La dirección puede detectar tendencias de ausentismo y puntualidad, filtrar por período y localizar los grupos que requieren revisión. Los datos agregados deben coincidir con los registros individuales y señalar las limitaciones de cobertura cuando existan sesiones pendientes.
+
+**Criterios de aceptación**
+
+- Los indicadores coinciden con los cálculos validados a partir de registros de prueba.
+- Los filtros actualizan todas las visualizaciones relacionadas.
+- El panel diferencia cero de datos insuficientes.
+- Las sesiones incompletas no producen conclusiones engañosas.
+- Los usuarios sin permiso no pueden navegar a datos individuales.
+- La fecha de actualización y las limitaciones de los datos son visibles.
+- Se documenta el rendimiento con volúmenes representativos.
+- Las exportaciones y los gráficos utilizan las mismas reglas de cálculo.
+
+**Dependencias:** T-ASI-02, para las reglas de cálculo; T-ASI-07, para identificar patrones y alertas; T-ASI-12 y T-ASI-15, para garantizar la coherencia de los indicadores.
+
+---
+
+### T-ASI-14 [P3] — Exportación estructurada de informes de asistencia en Excel y PDF
+
+**Problema que debe resolverse**
+
+Los datos de asistencia deben poder utilizarse en procesos administrativos, reuniones, revisiones y comunicaciones institucionales sin depender exclusivamente de las pantallas del sistema.
+
+**Alcance de los cambios**
+
+- Servicio de generación de informes.
+- "generateSchoolDocument".
+- Vistas de informes de asistencia y convivencia.
+- Exportación a Excel y PDF.
+- Permisos de consulta y descarga.
+
+**Requisitos funcionales**
+
+1. Permitir generar informes por estudiante, grado, sección, materia, docente, período y rango de fechas.
+2. Incorporar informes diferenciados para:
+   - Asistencia diaria.
+   - Historial individual.
+   - Resumen por período.
+   - Tardanzas y ausencias.
+   - Justificaciones pendientes, aprobadas y rechazadas.
+   - Salidas anticipadas.
+   - Actividades extraordinarias.
+   - Indicadores consolidados.
+3. Permitir configurar columnas, filtros, orden, agrupaciones y períodos, manteniendo las reglas de cálculo institucionales.
+4. Incluir en cada informe la fecha de generación, período cubierto, filtros aplicados y definiciones necesarias para interpretar las métricas.
+5. Generar archivos Excel estructurados en filas y columnas, con encabezados consistentes y tipos de datos adecuados.
+6. Evitar que identificadores, fechas y valores numéricos se exporten de manera ambigua por formatos regionales.
+7. Generar PDF con paginación, encabezados, títulos, totales y tablas legibles.
+8. Controlar la repetición de encabezados en tablas extensas y evitar que los registros queden cortados de manera que se pierda su significado.
+9. No incluir datos disciplinarios sensibles en informes generales de asistencia.
+10. Aplicar permisos específicos al generar, consultar y descargar cada informe.
+11. Validar los filtros y la autorización en el servidor, no solo en la interfaz.
+12. Establecer límites razonables de volumen y un mecanismo para procesar informes extensos sin bloquear operaciones interactivas.
+13. Mostrar un estado claro durante la generación y comunicar los errores sin afirmar que el archivo existe cuando la generación falló.
+14. Evitar nombres de archivo ambiguos y utilizar convenciones consistentes que identifiquen tipo de informe y período.
+15. Registrar quién generó y descargó informes sensibles, cuando corresponda.
+16. Permitir comparar el archivo exportado con los datos que se muestran en pantalla.
+17. Si se ofrece una exportación de expedientes disciplinarios, aplicar un conjunto de permisos y controles más restrictivo que el utilizado para los informes ordinarios de asistencia.
+
+**Comportamiento esperado**
+
+El usuario autorizado puede seleccionar los filtros, generar el informe, revisar sus datos y descargarlo en el formato solicitado. Los totales y estados coinciden con los que presenta la plataforma para el mismo conjunto de datos.
+
+**Criterios de aceptación**
+
+- Cada tipo de informe genera un archivo válido y legible.
+- Los filtros aplicados aparecen reflejados en el resultado.
+- Los totales coinciden con los cálculos del sistema.
+- Las fechas y los números mantienen su significado al abrir el Excel.
+- Los PDF extensos conservan encabezados y paginación.
+- Los usuarios no autorizados no pueden generar ni descargar informes sensibles.
+- Los errores de generación se notifican sin producir enlaces inválidos.
+- Se prueban volúmenes pequeños, medianos y representativos del uso real.
+
+**Dependencias:** T-ASI-02, para los estados y cálculos; T-ASI-12 y T-ASI-13, para los datos consolidados; T-ASI-15, para detectar discrepancias antes de exportar informes oficiales.
+
+---
+
+### T-ASI-15 [P3] — Herramienta de conciliación entre registros diarios y resúmenes académicos
+
+**Problema que debe resolverse**
+
+Los registros individuales, las justificaciones, los resúmenes calculados y los boletines pueden divergir si una actualización no se propaga correctamente o si existen datos históricos inconsistentes. Se requiere una herramienta que detecte, clasifique y permita resolver esas diferencias.
+
+**Alcance de los cambios**
+
+- "SesionesAsistencia".
+- "RegistrosAsistencia".
+- "JustificacionesAsistencia".
+- "getStudentAttendanceSummary".
+- Resúmenes y documentos académicos.
+- Nuevo servicio de conciliación y panel administrativo.
+
+**Requisitos funcionales**
+
+1. Definir una fuente de verdad para cada dato:
+   - Sesión y estado de cierre.
+   - Registro individual de asistencia.
+   - Estado de justificación.
+   - Reglas de cálculo.
+   - Resumen calculado.
+   - Valores incorporados en informes o boletines.
+2. Ejecutar conciliaciones por estudiante, período, materia, grado y sección.
+3. Comparar los registros de origen con los valores derivados y detectar:
+   - Sesiones sin registros esperados.
+   - Registros duplicados.
+   - Justificaciones aprobadas que no se reflejan en la asistencia.
+   - Resúmenes desactualizados.
+   - Diferencias de denominador.
+   - Estados incompatibles.
+   - Boletines que no coinciden con la versión vigente de los datos.
+4. Mostrar para cada discrepancia el valor de origen, el valor derivado, la regla aplicable y la posible causa.
+5. Clasificar los resultados en categorías como correcto, discrepancia informativa, requiere revisión y requiere corrección autorizada.
+6. Permitir ejecutar una conciliación sin modificar los datos.
+7. Permitir recalcular resúmenes derivados cuando la discrepancia sea reproducible y el procedimiento esté autorizado.
+8. No corregir automáticamente los registros originales cuando la causa sea incierta.
+9. Exigir revisión humana para conflictos que afecten registros cerrados, decisiones administrativas o documentos oficiales.
+10. Mantener un registro de conciliaciones, resultados, acciones ejecutadas y usuario responsable.
+11. Permitir repetir una conciliación sin duplicar correcciones ni generar cambios artificiales.
+12. Ofrecer una vista para revisar discrepancias en lote y priorizarlas según impacto.
+13. Detectar si el resumen o el boletín corresponde a una versión anterior de los datos.
+14. Permitir identificar los documentos que deben regenerarse tras una rectificación autorizada.
+15. Incorporar un modo de simulación que muestre qué cambiaría al recalcular un resumen antes de aplicar la operación.
+16. Generar informes de discrepancias por período y tipo de problema.
+
+**Comportamiento esperado**
+
+El administrador puede ejecutar una conciliación, consultar las diferencias y determinar cuáles requieren una reparación automática controlada o una corrección manual. Las discrepancias se resuelven sin sobrescribir los registros históricos ni ocultar la causa del problema.
+
+**Criterios de aceptación**
+
+- Los registros correctos no generan falsos positivos.
+- Las discrepancias sembradas deliberadamente se detectan y clasifican.
+- El modo de simulación no modifica los datos.
+- El recálculo autorizado produce el resultado esperado y es idempotente.
+- Los casos ambiguos se envían a revisión, no se corrigen automáticamente.
+- Las correcciones quedan registradas con usuario, fecha, motivo y resultado.
+- Se identifica qué boletines o informes necesitan regeneración.
+- La conciliación puede ejecutarse repetidamente sin generar diferencias artificiales.
+
+**Dependencias:** T-ASI-02, para los estados canónicos; T-ASI-04, para las restricciones históricas; T-ASI-12, para la sincronización de justificaciones; T-ASI-13 y T-ASI-14, para mantener coherentes indicadores y exportaciones.
+
+---
+
+### T-ASI-16 [P3] — Respaldo verificable e historial inmutable de asistencia y convivencia
+
+**Problema que debe resolverse**
+
+La conservación de los registros en hojas de cálculo no garantiza por sí sola que puedan recuperarse de una eliminación accidental, una modificación indebida, una corrupción de datos o una inconsistencia propagada a varios módulos.
+
+**Alcance de los cambios**
+
+- Registros de asistencia.
+- Justificaciones.
+- Incidencias y casos de seguimiento.
+- Observaciones de convivencia.
+- Evidencias adjuntas.
+- Historial de modificaciones y operaciones de conciliación.
+- Mecanismo de respaldo y restauración.
+
+**Requisitos funcionales**
+
+1. Definir una política de respaldo para los registros operativos y los expedientes de convivencia.
+2. Identificar qué datos deben respaldarse:
+   - Sesiones y registros individuales.
+   - Justificaciones y sus decisiones.
+   - Incidencias y participantes.
+   - Casos, planes de acompañamiento y seguimientos.
+   - Referencias a evidencias y metadatos.
+   - Historial de modificaciones.
+   - Configuración necesaria para interpretar los registros históricos.
+3. Establecer frecuencia de respaldo, retención, responsables y objetivos de recuperación acordes con el impacto de los datos.
+4. Separar los respaldos de la fuente operativa y limitar los permisos de modificación o eliminación de las copias.
+5. Conservar las evidencias documentales con los controles de acceso definidos para su categoría de sensibilidad.
+6. Registrar cada ejecución de respaldo, su fecha, alcance, resultado, volumen y errores.
+7. Verificar la integridad de las copias mediante comprobaciones de consistencia y, cuando corresponda, hashes de archivos o manifiestos.
+8. No considerar un respaldo válido únicamente porque se haya creado un archivo. Debe verificarse que el contenido sea legible y completo.
+9. Mantener un historial de cambios que permita reconstruir quién modificó un registro, cuándo, qué cambió y con qué motivo.
+10. Proteger los eventos históricos frente a la edición ordinaria. Las correcciones deben añadirse como nuevos eventos o rectificaciones trazables.
+11. Definir procedimientos para restaurar datos sin sobrescribir indiscriminadamente registros válidos que se hayan creado después del respaldo.
+12. Incorporar una restauración de prueba en un entorno controlado.
+13. Verificar las relaciones entre registros restaurados, estudiantes, períodos, justificaciones, casos y archivos adjuntos.
+14. Detectar referencias rotas a evidencias y registrar las que no puedan recuperarse.
+15. Definir controles para evitar que una restauración duplique sesiones, notificaciones, justificaciones o casos.
+16. Permitir consultas de auditoría por estudiante, período, usuario, tipo de evento y caso.
+17. Restringir el acceso a los respaldos y a las funciones de restauración a personal autorizado.
+18. Definir un procedimiento de conservación y eliminación conforme a la política institucional y las obligaciones aplicables, sin prometer una conservación ilimitada de datos personales.
+19. Permitir verificar que una copia corresponde a un momento concreto y que no ha sido modificada de forma no autorizada.
+20. Documentar los resultados de las pruebas de recuperación y las limitaciones encontradas.
+
+**Comportamiento esperado**
+
+La institución puede verificar que los respaldos están completos, consultar el historial de modificaciones y recuperar datos ante una incidencia. La restauración conserva las relaciones entre registros y no genera duplicados ni borra silenciosamente información válida posterior al respaldo.
+
+**Criterios de aceptación**
+
+- Una ejecución de respaldo registra su alcance y resultado.
+- Una copia incompleta o ilegible se identifica como fallida.
+- Una restauración de prueba recupera los registros y sus relaciones.
+- Las correcciones históricas conservan los valores anteriores y el motivo.
+- Los respaldos no son modificables por los roles ordinarios de asistencia.
+- Los archivos adjuntos restaurados mantienen los controles de acceso correspondientes.
+- La restauración no duplica registros ni vuelve a enviar notificaciones ya procesadas.
+- Se comprueba la recuperación de datos de asistencia, justificaciones y expedientes de convivencia.
+- La institución dispone de resultados documentados de la prueba de recuperación.
+
+**Dependencias:** T-ASI-01, para registrar correctamente las operaciones concurrentes; T-ASI-04, para el historial de períodos cerrados; T-ASI-08, para la gestión de evidencias; T-ASI-09, para los planes y seguimientos; T-ASI-12 y T-ASI-15, para recuperar y verificar los datos derivados.
+
+---
+
+### MATRIZ DE DEPENDENCIAS Y ORDEN DE EJECUCIÓN RECOMENDADO FASE 10 (ASISTENCIA Y CONVIVENCIA)
+
+| Orden | Tarea | Prioridad | Dependencia principal |
+| :---: | :--- | :---: | :--- |
+| **1** | **T-ASI-01.** Control de concurrencia transaccional en el registro masivo de asistencia | **P1** | `saveAttendanceRecords` / `LockService` |
+| **2** | **T-ASI-02.** Distinción entre sesión no registrada, ausencia y excusa | **P1** | `RegistrosAsistencia` |
+| **3** | **T-ASI-03.** Verificación de relaciones familiares y autorización de notificaciones | **P1** | `RelacionesFamiliares` / RBAC |
+| **4** | **T-ASI-04.** Protección de registros de períodos y años escolares cerrados | **P1** | `CierresPeriodos` |
+| **5** | **T-ASI-08.** Acceso seguro a evidencias documentales de expedientes de convivencia | **P2** | RBAC / Drive proxy |
+| **6** | **T-ASI-06.** Módulo de salidas anticipadas y pases de salida | **P2** | `SalidasAnticipadas` |
+| **7** | **T-ASI-07.** Motor configurable de alertas por inasistencias e impuntualidades | **P2** | `CasosSeguimiento` / Notificaciones |
+| **8** | **T-ASI-09.** Compromisos pedagógicos y planes de acompañamiento conductual | **P2** | `CasosSeguimiento` |
+| **9** | **T-ASI-11.** Edición rápida, navegación por teclado y accesibilidad en toma de lista | **P2** | `js/teacher.js` / Table UX |
+| **10** | **T-ASI-12.** Sincronización de justificaciones aprobadas con expediente | **P2** | `JustificacionesAsistencia` |
+| **11** | **T-ASI-05.** Portal de marcación diaria de entrada y salida del personal | **P2** | Control horario laboral |
+| **12** | **T-ASI-10.** Asistencia en excursiones, eventos y validación de permisos | **P2** | Permisos / Salidas |
+| **13** | **T-ASI-13.** Panel consolidado de puntualidad, asistencia y ausentismo | **P3** | Universal Chart Engine |
+| **14** | **T-ASI-14.** Exportación estructurada de informes de asistencia Excel/PDF | **P3** | `generateSchoolDocument` |
+| **15** | **T-ASI-15.** Herramienta de conciliación entre registros diarios y resúmenes | **P3** | Reconciliation Engine |
+| **16** | **T-ASI-16.** Respaldo verificable e historial inmutable de asistencia y convivencia | **P3** | `createSystemBackup` |
+
+
+
+---
+
+## PLAN DE TRABAJO DETALLADO Y UNIFICADO: FASE DE COMUNICACIÓN Y COLABORACIÓN INSTITUCIONAL
+
+### T-COM-01 [P1] — Identificación y auditoría del centro unificado de comunicaciones
+
+**Problema que debe resolverse**
+
+Los usuarios acceden a notificaciones, avisos y mensajes desde diferentes vistas sin una consolidación en tiempo real que garantice la consistencia del estado de lectura, contadores y acciones requeridas.
+
+**Alcance de los cambios**
+
+- "backend/user-service/Code.gs" (`getUnifiedNotifications`, `getUserNotifications`, `markNotificationAsRead`).
+- "js/ui-common.js" (centro de notificaciones en encabezados, modales de resumen y badges).
+- "js/teacher.js", "js/student.js" y tableros por rol.
+
+**Requisitos funcionales**
+
+1. Cada usuario debe disponer de una vista de comunicaciones adaptada a su rol, sus relaciones institucionales y sus permisos.
+2. La vista debe distinguir:
+   - Comunicaciones nuevas.
+   - Comunicaciones leídas.
+   - Comunicaciones pendientes de respuesta.
+   - Solicitudes de autorización pendientes.
+   - Convocatorias próximas.
+   - Comunicaciones archivadas.
+   - Comunicaciones que requieren una acción.
+3. Cada elemento debe mostrar, según corresponda, título, tipo, emisor, fecha, destinatarios o ámbito, prioridad, vencimiento y estado.
+4. La selección de una comunicación debe abrir el contenido correspondiente o llevar al recurso institucional relacionado.
+5. Las comunicaciones relacionadas con un mismo asunto deben poder identificarse y consultarse conjuntamente cuando exista una relación real entre ellas.
+6. La interfaz debe permitir filtrar por tipo, fecha, emisor, estado y prioridad, respetando los permisos de acceso.
+7. Los mensajes y anuncios no deben confundirse con las alertas del sistema, las solicitudes de autorización ni los recordatorios de calendario.
+8. Las comunicaciones críticas deben distinguirse de las informativas sin convertir todos los mensajes en elementos de máxima prioridad.
+9. La interfaz debe indicar cuándo existen mensajes pendientes de sincronización, errores de carga o resultados incompletos.
+10. La plataforma debe evitar que cada módulo presente una versión incompatible del estado de lectura o de respuesta de una misma comunicación.
+
+**Comportamiento esperado**
+
+La vista reúne las comunicaciones que corresponden al usuario sin mostrar contenido ajeno a sus permisos. Los estados son consistentes entre vistas, los enlaces conducen al recurso correcto y las acciones realizadas se reflejan sin duplicaciones ni pérdidas.
+
+**Criterios de aceptación**
+
+- Un mensaje leído en el desplegable actualiza inmediatamente el contador del encabezado sin recargar la página.
+- El centro de notificaciones filtra correctamente por categoría y prioridad según el rol del usuario.
+- Los enlaces contextuales abren el recurso institucional correspondiente o el hilo de conversación original.
+- Los errores de sincronización se notifican claramente en la interfaz.
+
+**Dependencias:** Modelo de usuarios, roles, relaciones institucionales y permisos; persistencia de comunicaciones en `BandejaNotificaciones`.
+
+---
+
+### T-COM-02 [P1] — Control de destinatarios, segmentación y permisos de envío
+
+**Problema que debe resolverse**
+
+La selección de destinatarios para comunicados masivos o avisos debe resolverse estrictamente en el servidor. No se debe confiar únicamente en los filtros del cliente ni permitir que un emisor envíe mensajes a audiencias para las que no cuenta con autorización.
+
+**Alcance de los cambios**
+
+- "backend/user-service/Code.gs" (`createInstitutionalAnnouncement`, `sendMultiChannelNotification`).
+- "RelacionesFamiliares", "Matriculas", "Secciones" y asignaciones docentes.
+- Interfaces de envío en "teacher-dashboard.html" y "js/teacher.js".
+
+**Requisitos funcionales**
+
+1. Permitir segmentar destinatarios mediante relaciones institucionales verificables:
+   - Rol institucional.
+   - Grado y sección.
+   - Asignatura y grupo de clase.
+   - Personal o departamento.
+   - Relaciones familiares activas y autorizadas.
+   - Participantes de una actividad, trámite o reunión.
+   - Destinatarios seleccionados individualmente.
+2. Resolver la lista efectiva de destinatarios en el servidor, no confiar únicamente en las selecciones del navegador.
+3. Validar que el emisor tenga permiso para comunicarse con cada destinatario y utilizar el canal solicitado.
+4. Mostrar una vista previa de la audiencia antes del envío, con recuento de destinatarios y resumen de los criterios de selección.
+5. Detectar selecciones vacías, duplicados, usuarios inactivos y destinatarios que hayan perdido la relación o autorización requerida.
+6. Evitar que una selección de toda la institución se active accidentalmente al cambiar un filtro o perder una selección previa.
+7. Permitir excluir destinatarios cuando el emisor tenga autorización para hacerlo, conservando un registro del criterio aplicado.
+8. Aplicar las relaciones vigentes en el momento del envío. Si una persona deja de pertenecer a una sección o pierde autorización, no debe seguir recibiendo comunicaciones futuras por una selección obsoleta.
+9. Para comunicaciones familiares, distinguir entre responsables legales, contactos de emergencia y otras relaciones, sin atribuir permisos equivalentes a todas.
+10. Evitar que las respuestas o direcciones de correo de otros destinatarios queden expuestas en comunicaciones masivas.
+11. Permitir que las comunicaciones oficiales se dirijan a grupos dinámicos y que su audiencia quede registrada de forma reproducible.
+12. Si una comunicación exige confirmación o autorización, identificar explícitamente qué destinatarios están obligados a realizar la acción.
+
+**Comportamiento esperado**
+
+Cada destinatario recibe únicamente las comunicaciones para las que resulta elegible. Los recuentos y las listas de destinatarios coinciden con la audiencia real, y las selecciones inválidas se detectan antes del envío o se registran como exclusiones justificadas.
+
+**Criterios de aceptación**
+
+- Un docente de primaria no puede enviar un comunicado a secciones no asignadas sin autorización explícita.
+- Los envíos masivos ocultan la lista de contactos de terceros evitando fugas de PII.
+- Los estudiantes retirados o relaciones familiares revocadas se excluyen automáticamente en la resolución server-side.
+
+**Dependencias:** Roles y permisos (`ROLE_PERMISSIONS`), matrículas, asignaciones docentes, `RelacionesFamiliares`.
+
+---
+
+### T-COM-03 [P1] — Seguridad, confidencialidad y trazabilidad de las comunicaciones
+
+**Problema que debe resolverse**
+
+Las comunicaciones institucionales, adjuntos de Google Drive e hilos de conversación deben contar con controles de acceso del lado del servidor para evitar que la manipulación de identificadores o enlaces permita consultar información confidencial de otros usuarios.
+
+**Alcance de los cambios**
+
+- "backend/user-service/Code.gs" (`getInternalMessages`, `getInstitutionalAnnouncements`, `logStructuredEvent`).
+- Servidor de adjuntos en Google Drive y proxy de descarga.
+- Matriz "ROLE_PERMISSIONS".
+
+**Requisitos funcionales**
+
+1. Aplicar autorización en el servidor a cada operación sensible.
+2. Diferenciar los permisos para:
+   - Crear borradores.
+   - Editar borradores propios o ajenos.
+   - Aprobar comunicados oficiales.
+   - Publicar para un grupo.
+   - Enviar a toda la institución.
+   - Consultar comunicaciones privadas.
+   - Administrar destinatarios.
+   - Acceder a adjuntos.
+   - Modificar o retirar una comunicación publicada.
+3. Aplicar el principio de mínimo privilegio. Un usuario no debe recibir acceso general a mensajes privados por el simple hecho de tener un rol administrativo, salvo que exista una autorización institucional explícita y trazable.
+4. Validar en cada acceso la pertenencia de la comunicación al usuario o a su ámbito autorizado.
+5. Impedir que cambiar un identificador en una URL permita consultar comunicaciones, archivos o respuestas de otra persona.
+6. Proteger los adjuntos mediante controles de acceso equivalentes a los de la comunicación que los contiene.
+7. Evitar que mensajes privados o información sensible se incluyan en notificaciones externas de manera innecesaria.
+8. Registrar eventos relevantes: creación, edición, aprobación, envío, retirada, acceso administrativo excepcional y cambios en la audiencia.
+9. Conservar los valores anteriores y nuevos en las modificaciones sensibles, junto con usuario, fecha y motivo cuando corresponda.
+10. Diferenciar la retirada de una comunicación de la eliminación de su historial.
+11. Evitar que los usuarios puedan alterar los registros de auditoría mediante las funciones ordinarias de edición.
+12. Aplicar límites de carga, validación de archivos y protección contra contenido malicioso.
+13. Evitar que una vista previa, una exportación o un enlace compartido revele contenido que el usuario no podría consultar directamente.
+14. Establecer una política de retención y eliminación que considere el tipo de comunicación, su valor administrativo y la confidencialidad de los datos.
+15. Evitar que las respuestas de una comunicación masiva se expongan a destinatarios ajenos al intercambio.
+
+**Comportamiento esperado**
+
+No se puede acceder a comunicaciones ni adjuntos sin autorización vigente. Los permisos se validan en el servidor y los eventos sensibles quedan registrados sin exponer credenciales, tokens o contenido innecesario.
+
+**Criterios de aceptación**
+
+- Alterar el `anuncioId` o `mensajeId` en una llamada AJAX devuelve error `403 Forbidden` a usuarios no autorizados.
+- La descarga de adjuntos en Drive requiere token de sesión firmado y no funciona mediante enlaces públicos abiertos.
+- Los eventos de creación, retiro y rectificación quedan registrados en la bitácora de auditoría estructurada.
+
+**Dependencias:** Autenticación, RBAC, almacenamiento de archivos, registros de auditoría y configuración de retención.
+
+---
+
+### T-COM-04 [P2] — Noticias, anuncios, circulares y comunicados oficiales
+
+**Problema que debe resolverse**
+
+Se debe estructurar el ciclo de vida completo de la información oficial (creación, revisión, aprobación, publicación programada, fijado y retiro), distinguiéndola de la mensajería privada.
+
+**Alcance de los cambios**
+
+- "AnunciosInstitucionales".
+- "backend/user-service/Code.gs" (`createInstitutionalAnnouncement`, `getInstitutionalAnnouncements`).
+- "js/teacher.js" y "js/student.js".
+
+**Requisitos funcionales**
+
+1. Permitir crear comunicaciones con título, cuerpo, categoría, emisor, audiencia, fecha de publicación y vigencia.
+2. Diferenciar noticias informativas, anuncios académicos, circulares administrativas, comunicados oficiales y avisos urgentes.
+3. Permitir guardar borradores, previsualizar, editar, programar, publicar, retirar y archivar comunicaciones según los permisos.
+4. Incorporar un flujo de revisión o aprobación para los tipos de comunicado que lo requieran.
+5. Permitir fijar una comunicación importante durante un período definido.
+6. Permitir programar la publicación y la expiración sin depender de que un usuario mantenga abierta la aplicación.
+7. Registrar la versión publicada y el historial de cambios relevantes.
+8. Si una comunicación ya publicada se modifica sustancialmente, indicar que existe una actualización y conservar la trazabilidad de la versión anterior.
+9. Permitir adjuntar documentos o enlaces con controles de acceso adecuados.
+10. Ofrecer una vista previa adaptada a móvil y escritorio.
+11. Permitir clasificar y buscar comunicados por categoría, fecha, audiencia y estado.
+12. Evitar que un comunicado dirigido a una sección aparezca como institucional para todos los usuarios.
+13. Diferenciar la fecha de publicación, la fecha del evento anunciado y la fecha límite para actuar.
+14. Permitir destacar una comunicación urgente con una justificación o categoría definida, evitando el uso indiscriminado de avisos críticos.
+15. Permitir retirar un comunicado publicado conservando un registro de su existencia, motivo de retirada y audiencia original.
+16. Facilitar que una circular que exige confirmación o autorización se convierta en un proceso de seguimiento, sin requerir que el destinatario responda por un canal distinto.
+
+**Comportamiento esperado**
+
+Las publicaciones aparecen únicamente a la audiencia prevista, respetan el flujo de aprobación y las fechas configuradas, mantienen un historial verificable y permiten distinguir una comunicación vigente de una retirada o reemplazada.
+
+**Criterios de aceptación**
+
+- Un comunicado programado se publica automáticamente al cumplirse la fecha/hora sin requerir acción manual.
+- Las circulares retiradas se marcan como inactivas pero se conservan en la auditoría para fines legales.
+- Los avisos fijados permanecen en la parte superior del portal del estudiante durante su período de vigencia.
+
+**Dependencias:** T-COM-02, T-COM-03 y el motor de notificaciones.
+
+---
+
+### T-COM-05 [P2] — Mensajería individual y grupal con contexto institucional
+
+**Problema que debe resolverse**
+
+La interacción privada y grupal entre docentes, directivos, estudiantes y familias debe organizarse en hilos de conversación vinculados contextualmente a asignaturas, expedientes o trámites.
+
+**Alcance de los cambios**
+
+- "MensajesInternos".
+- "backend/user-service/Code.gs" (`sendInternalMessage`, `getInternalMessages`, `getInternalConversations`).
+- "js/teacher.js" y "js/student.js".
+
+**Requisitos funcionales**
+
+1. Permitir iniciar una conversación individual desde un perfil, una asignatura, un expediente o una comunicación, siempre que el emisor tenga autorización.
+2. Permitir conversaciones grupales para participantes con una relación institucional válida.
+3. Identificar a los participantes, el asunto, la fecha y el estado de la conversación.
+4. Mostrar los mensajes en orden cronológico y conservar el historial pertinente.
+5. Permitir responder, citar o referenciar mensajes anteriores sin duplicar el contenido original.
+6. Diferenciar mensajes privados de publicaciones visibles para todo un grupo.
+7. Permitir adjuntos y enlaces sujetos a validación y control de acceso.
+8. Permitir buscar conversaciones y mensajes propios o accesibles, respetando permisos y límites de privacidad.
+9. Permitir archivar, silenciar o marcar conversaciones como importantes sin eliminar el historial.
+10. Incorporar indicadores de mensaje enviado, entregado y leído cuando exista evidencia fiable de cada estado.
+11. No interpretar la recepción técnica de una notificación como prueba de que la persona leyó el mensaje.
+12. Establecer límites de uso, protección frente al envío abusivo y controles contra mensajes automatizados no autorizados.
+13. Definir horarios o expectativas de respuesta institucionales cuando corresponda, sin prometer disponibilidad inmediata de docentes y personal.
+14. Permitir que un usuario gestione las notificaciones de conversaciones no críticas sin perder el acceso al historial.
+15. Evitar la creación automática de conversaciones duplicadas por aperturas simultáneas o reintentos.
+16. Cuando una conversación se relacione con un estudiante, permitir que el personal autorizado consulte el historial institucional pertinente sin exponer conversaciones personales ajenas al asunto.
+17. Definir qué ocurre con las conversaciones cuando un participante deja de pertenecer al grupo o a la institución.
+18. Mantener las comunicaciones necesarias para trámites o decisiones institucionales disponibles según las reglas de conservación aplicables.
+
+**Comportamiento esperado**
+
+Las conversaciones se muestran a los participantes autorizados, conservan su secuencia y contexto, y permiten distinguir los estados de entrega sin afirmar una lectura no verificada. Los cambios de permisos no habilitan accesos indebidos.
+
+**Criterios de aceptación**
+
+- Las respuestas quedan enlazadas al hilo original de la conversación.
+- Los participantes desvinculados de una sección dejan de recibir nuevos mensajes del grupo.
+- Las búsquedas en la bandeja respetan estrictamente la privacidad entre usuarios.
+
+**Dependencias:** T-COM-02, T-COM-03 y el motor de notificaciones.
+
+---
+
+### T-COM-06 [P2] — Motor de notificaciones internas y preparación de canales externos
+
+**Problema que debe resolverse**
+
+Garantizar un desacoplamiento completo entre la comunicación lógica de la plataforma y el motor de envío hacia proveedores de canales externos (SMS, WhatsApp, Messenger, Correo).
+
+**Alcance de los cambios**
+
+- "CanalesProveedoresConfig", "RegistroEnviosExternos".
+- "backend/user-service/Code.gs" (`sendMultiChannelNotification`, `configureNotificationChannel`, `sendChannelNotificationTest`).
+- Modal `#modal-channel-config` en "teacher-dashboard.html" y "js/teacher.js".
+
+**Requisitos funcionales**
+
+1. Diferenciar la comunicación original de sus notificaciones. Una misma publicación puede originar varias entregas, pero debe conservar una única identidad lógica.
+2. Definir eventos de notificación configurables, por ejemplo:
+   - Nuevo mensaje.
+   - Nuevo comunicado dirigido al usuario.
+   - Convocatoria o reunión próxima.
+   - Solicitud de autorización.
+   - Recordatorio de vencimiento.
+   - Respuesta a una consulta.
+   - Cambio importante en un trámite.
+3. Permitir configurar qué eventos generan notificación y qué canales pueden utilizarse.
+4. Resolver destinatarios en el servidor y volver a validar permisos antes de enviar.
+5. Mantener una bandeja interna con enlaces al contexto original.
+6. Diseñar el envío externo mediante adaptadores desacoplados, con configuración de proveedor, credenciales seguras, límites de uso y manejo de errores.
+7. No dar por implementada una integración externa solo porque exista un botón o una configuración visual. Verificar que haya un flujo operativo, un proveedor configurado o una prueba controlada.
+8. Registrar el estado por destinatario y canal: pendiente, procesando, enviado al proveedor, confirmado por el proveedor cuando exista evidencia, fallido o descartado.
+9. No equiparar la aceptación del mensaje por un proveedor de correo con su lectura por el destinatario.
+10. Permitir reintentos limitados para fallos temporales y registrar los errores permanentes.
+11. Evitar que un fallo del correo impida consultar la comunicación original dentro de la plataforma.
+12. Proteger las credenciales de los proveedores y evitar que aparezcan en registros, errores o respuestas al cliente.
+13. Definir reglas de prioridad, agrupación y frecuencia para evitar saturación.
+14. Incorporar un mecanismo de deduplicación por evento, destinatario y canal.
+15. Permitir consultar fallos de entrega y reintentar manualmente cuando exista autorización.
+16. Diferenciar las notificaciones obligatorias de las informativas, de acuerdo con la política institucional.
+17. Evitar incluir información sensible en correos o mensajes externos cuando baste con un aviso genérico y un enlace autenticado.
+18. Si un canal externo no está habilitado, informar que la función está pendiente de configuración y no afirmar que el mensaje fue enviado.
+
+**Comportamiento esperado**
+
+Cada evento genera las notificaciones previstas sin duplicados; los estados de entrega reflejan la evidencia disponible; los errores pueden diagnosticarse y los canales externos no eluden los permisos ni la confidencialidad.
+
+**Criterios de aceptación**
+
+- Si falla el proveedor externo de WhatsApp/SMS, la notificación interna en la plataforma permanece 100% disponible.
+- La pantalla de prueba de canal (`sendChannelNotificationTest`) verifica la conectividad sin exponer las claves API en la respuesta del cliente.
+
+**Dependencias:** T-COM-02, T-COM-03 y T-COM-07.
+
+---
+
+### T-COM-07 [P1] — Prevención de duplicados, control de frecuencia y preferencias
+
+**Problema que debe resolverse**
+
+Evitar ráfagas de notificaciones redundantes mediante claves de idempotencia (`DeduplicationKey`), ventanas de deduplicación y el respeto de las preferencias del usuario.
+
+**Alcance de los cambios**
+
+- "PreferenciasNotificacion".
+- "backend/user-service/Code.gs" (`sendMultiChannelNotification`, `getNotificationPreferences`).
+- Configuración de usuarios en "js/ui-common.js".
+
+**Requisitos funcionales**
+
+1. Permitir preferencias por usuario, categoría de evento y canal, dentro de las opciones habilitadas por la institución.
+2. Distinguir entre:
+   - Avisos informativos.
+   - Mensajes directos.
+   - Recordatorios.
+   - Solicitudes con fecha límite.
+   - Comunicaciones oficiales.
+   - Alertas críticas.
+3. Permitir configurar frecuencia, agrupación o resumen para eventos informativos.
+4. Evitar que una persona reciba varios avisos idénticos porque el mismo evento fue procesado por diferentes módulos.
+5. Utilizar identificadores idempotentes (`DeduplicationKey`) o mecanismos equivalentes que eviten repetir la entrega lógica al reintentar una operación.
+6. Definir ventanas de deduplicación y reglas para decidir cuándo una actualización justifica una nueva notificación.
+7. Agrupar notificaciones de baja prioridad cuando resulte apropiado, conservando acceso a cada elemento original.
+8. No agrupar ni retrasar comunicaciones que deban entregarse inmediatamente según la política institucional.
+9. Permitir horarios de silencio o límites de frecuencia para notificaciones informativas, sin suprimir indebidamente avisos obligatorios o críticos.
+10. Permitir ajustar preferencias por estudiante cuando una cuenta familiar esté vinculada a varios estudiantes.
+11. Evitar que un cambio de preferencia se interprete como autorización para acceder a información adicional.
+12. Conservar un historial de preferencias y cambios cuando sea necesario para diagnosticar incidencias.
+13. Definir un tratamiento explícito de las notificaciones que se generan mientras un usuario está desconectado.
+14. Evitar el envío repetido por reintentos de cola, fallos de red, recarga de página o doble clic.
+15. Permitir identificar por qué se envió, agrupó, retrasó o descartó un aviso.
+16. Garantizar que silenciar una conversación no elimina los mensajes ni las obligaciones de respuesta existentes.
+
+**Comportamiento esperado**
+
+Los eventos repetidos no generan avisos duplicados. Las preferencias se aplican según el tipo de evento y el canal, y las reglas de prioridad impiden que la reducción del ruido oculte comunicaciones críticas.
+
+**Criterios de aceptación**
+
+- Un reintento AJAX de la misma notificación no genera un segundo envío al proveedor externo.
+- Las alertas críticas de seguridad o cierre académico se entregan ignorando los horarios de silencio personales.
+
+**Dependencias:** T-COM-06 y el modelo de preferencias de usuario.
+
+---
+
+### T-COM-08 [P2] — Confirmaciones de lectura, respuestas y seguimiento de comunicaciones
+
+**Problema que debe resolverse**
+
+Registrar la lectura confirmada de circulares obligatorias y dar seguimiento a las autorizaciones o respuestas solicitadas a los padres de familia.
+
+**Alcance de los cambios**
+
+- "backend/user-service/Code.gs" (`submitAnnouncementReceiptConfirmation`, `getAnnouncementReadReport`).
+- Portal de estudiante/familia en "js/student.js" y panel directivo en "js/teacher.js".
+
+**Requisitos funcionales**
+
+1. Diferenciar:
+   - Comunicación enviada.
+   - Comunicación disponible para el destinatario.
+   - Notificación entregada por un canal externo, si se confirma.
+   - Comunicación abierta o marcada como leída.
+   - Respuesta recibida.
+   - Autorización concedida o denegada.
+   - Acción completada.
+2. No interpretar una apertura automática, una vista previa de correo o una notificación push como confirmación fiable de lectura humana.
+3. Permitir solicitar confirmación de lectura cuando el tipo de comunicación lo requiera.
+4. Permitir respuestas directas o estructuradas según la naturaleza del asunto.
+5. Para solicitudes de autorización, registrar quién respondió, qué decisión tomó, cuándo lo hizo y a qué versión de la solicitud se refiere.
+6. Permitir fechas límite, recordatorios y estados pendientes.
+7. Diferenciar la ausencia de respuesta del rechazo.
+8. Permitir corregir una respuesta únicamente mediante un procedimiento autorizado y trazable.
+9. Conservar las respuestas anteriores cuando se reabra una solicitud o se emita una nueva versión.
+10. Permitir que el emisor consulte el estado de la audiencia, sujeto a los permisos correspondientes.
+11. En comunicaciones masivas, mostrar el avance agregado de confirmaciones sin exponer innecesariamente la respuesta individual de otros destinatarios.
+12. Permitir recordatorios únicamente a quienes todavía tengan pendiente la acción.
+13. Evitar recordatorios posteriores a la respuesta, revocación, cancelación o vencimiento de la solicitud.
+14. Permitir descargar o consultar un resumen de respuestas cuando la comunicación lo requiera.
+15. Mantener un historial de modificaciones de estados y de acciones pendientes.
+
+**Comportamiento esperado**
+
+Los estados reflejan hechos verificables, una lectura no se confunde con una autorización, las respuestas se vinculan con la solicitud correcta y los recordatorios dejan de enviarse cuando la acción ya no está pendiente.
+
+**Criterios de aceptación**
+
+- El botón "Confirmar Lectura" registra la marca temporal exacta del acuse de recibo en `AnunciosInstitucionales`.
+- El reporte `getAnnouncementReadReport` calcula el porcentaje de lectura por sección identificando a los padres pendientes.
+
+**Dependencias:** T-COM-02, T-COM-03, T-COM-06 y T-COM-07.
+
+---
+
+### T-COM-09 [P2] — Calendario compartido, reuniones, convocatorias y recordatorios
+
+**Problema que debe resolverse**
+
+Gestión unificada de eventos en `EventosCalendario`, convocatorias a citas de entrega de notas o reuniones de padres con detección de conflictos de horario.
+
+**Alcance de los cambios**
+
+- "backend/user-service/Code.gs" (`getInstitutionalCalendarEvents`, `getPendingReminders`, `getAppointmentBookings`, `bookAppointment`).
+- Módulo de reuniones en "js/teacher.js" y "js/student.js".
+
+**Requisitos funcionales**
+
+1. Permitir crear eventos con título, descripción, fecha, hora, zona horaria, duración, ubicación o enlace, organizador y audiencia.
+2. Diferenciar eventos públicos, institucionales, académicos, reuniones privadas y convocatorias restringidas.
+3. Permitir convocar a personas o grupos y definir si la participación es obligatoria, opcional o requiere confirmación.
+4. Permitir aceptar, rechazar o indicar disponibilidad, cuando el tipo de evento lo requiera.
+5. Evitar que un participante consulte reuniones privadas a las que no ha sido invitado.
+6. Permitir modificar o cancelar eventos, notificando los cambios relevantes a los participantes afectados.
+7. Incorporar recordatorios configurables y evitar duplicados cuando el evento se modifica o se vuelve a guardar.
+8. Permitir calendarios compartidos según rol, grupo o departamento.
+9. Mostrar conflictos de horario cuando sea posible determinar que una persona o recurso tiene eventos incompatibles.
+10. Permitir relacionar un evento con una asignatura, estudiante, trámite o documento.
+11. Diferenciar la fecha del evento de sus plazos administrativos asociados.
+12. Gestionar eventos recurrentes sin duplicar ocurrencias ni perder excepciones.
+13. Tratar correctamente eventos que cambian de fecha, se cancelan o dejan de ser relevantes.
+14. Definir el comportamiento de los eventos en días no lectivos y períodos académicos cerrados, cuando corresponda.
+15. Permitir una vista diaria, semanal y mensual adaptable a dispositivos móviles.
+16. Si existe integración externa de calendario, verificar sincronización, permisos, zonas horarias, actualizaciones y cancelaciones. No asumir que una exportación de calendario constituye sincronización bidireccional.
+17. Permitir consultar convocatorias próximas y respuestas pendientes desde el centro de comunicaciones.
+
+**Comportamiento esperado**
+
+Los eventos se muestran a los participantes autorizados con horarios correctos. Los cambios y cancelaciones actualizan el calendario y sus recordatorios sin generar duplicados ni conservar convocatorias obsoletas.
+
+Criterios de aceptación
+
+- Reservar un turno de atención en `bookAppointment` bloquea el horario impidiendo dobles citas para el mismo docente.
+- La cancelación de una reunión detiene automáticamente los recordatorios programados pendientes.
+
+**Dependencias:** T-COM-02, T-COM-06 y T-COM-07.
+
+---
+
+### T-COM-10 [P2] — Comunicación contextual vinculada con estudiantes, asignaturas, trámites y documentos
+
+**Problema que debe resolverse**
+
+Proporcionar referencias estables entre los hilos de conversación y los objetos del sistema (expediente estudiantil, solicitud de trámite, entregas de tarea).
+
+**Alcance de los cambios**
+
+- "MensajesInternos".
+- "backend/user-service/Code.gs" (`sendInternalMessage`, `getDepartmentalWorkInbox`).
+- Controladores en "js/teacher.js" y "js/student.js".
+
+**Requisitos funcionales**
+
+1. Permitir relacionar una comunicación con uno o varios recursos válidos, como:
+   - Estudiante.
+   - Asignatura.
+   - Grado o sección.
+   - Trámite.
+   - Documento.
+   - Reunión.
+   - Solicitud de autorización.
+2. Al abrir una comunicación contextual, mostrar el recurso relacionado solo si el usuario tiene permiso vigente para consultarlo.
+3. Mantener una referencia estable al recurso, sin depender de enlaces frágiles o de posiciones en listas.
+4. Evitar que un mensaje dirigido a un docente o responsable permita acceder indirectamente a expedientes privados de otros estudiantes.
+5. Diferenciar el texto de la comunicación de los datos actuales del recurso vinculado. Si el recurso cambia, la comunicación histórica debe conservar su contexto original cuando sea necesario.
+6. Permitir que una respuesta conserve la relación con el asunto original.
+7. Permitir consultar las comunicaciones relevantes desde el recurso relacionado, con filtros por fecha, tipo y participantes autorizados.
+8. Evitar duplicar el contenido de un trámite o documento dentro del mensaje cuando basta con mantener una referencia segura.
+9. Gestionar documentos eliminados, archivados o sustituidos sin dejar enlaces que permitan acceder a contenido no autorizado.
+10. Permitir que un mensaje genere una tarea o acción pendiente cuando corresponda, conservando el vínculo con su origen.
+11. Evitar crear múltiples conversaciones equivalentes por iniciar el contacto desde diferentes pantallas.
+12. Mantener la trazabilidad entre la comunicación, el recurso, las respuestas y las acciones derivadas.
+
+**Comportamiento esperado**
+
+Las referencias llevan al recurso correcto, los permisos se comprueban en cada acceso y la comunicación conserva su historial aunque el recurso relacionado cambie o deje de estar disponible.
+
+**Criterios de aceptación**
+
+- Abrir una referencia contextual de un trámite verifica los permisos RBAC antes de mostrar la solicitud.
+- El historial de mensajes se conserva inalterado aunque el documento adjunto sea sustituido por una nueva versión.
+
+**Dependencias:** T-COM-03, T-COM-05 y los módulos institucionales correspondientes.
+
+---
+
+### T-COM-11 [P3] — Búsqueda, archivo, recuperación e historial de comunicaciones
+
+**Problema que debe resolverse**
+
+Permitir la búsqueda rápida y el archivado lógico de mensajes y comunicados sin destruir la trazabilidad histórica ni exponer contenido privado en las sugerencias.
+
+**Alcance de los cambios**
+
+- "BandejaNotificaciones", "AnunciosInstitucionales", "MensajesInternos".
+- "backend/user-service/Code.gs" (`getUnifiedNotifications`, `getInternalConversations`).
+- Componentes de interfaz en "js/ui-common.js".
+
+**Requisitos funcionales**
+
+1. Permitir buscar por texto, título, emisor, destinatario, tipo, fecha, estado y contexto institucional.
+2. Aplicar filtros sin ampliar el ámbito de permisos del usuario.
+3. Permitir archivar comunicaciones sin eliminarlas.
+4. Diferenciar mensajes archivados, eliminados lógicamente, retirados por el emisor y sujetos a retención institucional.
+5. Conservar el historial necesario de comunicaciones oficiales, respuestas y autorizaciones.
+6. Permitir consultar versiones anteriores de comunicados cuando el usuario tenga autorización.
+7. Mostrar resultados ordenados de manera consistente y permitir paginación o carga progresiva.
+8. Evitar búsquedas que recorran innecesariamente grandes volúmenes de datos en cada interacción.
+9. Proteger la información sensible frente a resultados de búsqueda, extractos, vistas previas y sugerencias.
+10. Permitir recuperar una comunicación archivada cuando las reglas institucionales lo permitan.
+11. Evitar que la eliminación de una vista o un mensaje local borre por accidente el registro institucional.
+12. Documentar qué tipos de comunicaciones se conservan, durante cuánto tiempo y qué sucede al vencer el período de retención.
+13. Registrar las acciones administrativas de recuperación o eliminación cuando afecten comunicaciones oficiales.
+
+**Comportamiento esperado**
+
+La búsqueda devuelve los resultados pertinentes y autorizados, las operaciones de archivo no destruyen el historial y las comunicaciones oficiales pueden recuperarse de acuerdo con su política de conservación.
+
+**Criterios de aceptación**
+
+- Archivar un hilo de mensajes lo remueve de la bandeja activa pero lo mantiene consultable en la pestaña de archivados.
+- Las búsquedas por texto no muestran fragmentos de mensajes privados entre otros usuarios.
+
+**Dependencias:** Modelo de comunicaciones, permisos, persistencia e historial de auditoría.
+
+---
+
+### T-COM-12 [P3] — Plantillas, envíos programados y automatización de comunicaciones
+
+**Problema que debe resolverse**
+
+Gestión de plantillas institucionales reutilizables con variables dinámicas para circulares, cobros o recordatorios con previsualización segura.
+
+**Alcance de los cambios**
+
+- "backend/user-service/Code.gs" (`createInstitutionalAnnouncement`, `sendMultiChannelNotification`).
+- Interfaz de redacción en "js/teacher.js".
+
+**Requisitos funcionales**
+
+1. Permitir crear plantillas para comunicados, convocatorias, recordatorios y respuestas administrativas.
+2. Diferenciar plantillas institucionales de plantillas personales.
+3. Permitir variables dinámicas únicamente de campos autorizados y disponibles (ej. `{NombreEstudiante}`, `{Grado}`, `{Materia}`).
+4. Validar las variables antes del envío y evitar mensajes con marcadores vacíos o datos incorrectos.
+5. Permitir programar publicaciones o envíos para una fecha y hora determinadas.
+6. Permitir cancelar o modificar un envío programado antes de su ejecución, según permisos.
+7. Registrar la versión de la plantilla utilizada en cada envío.
+8. Evitar que cambios posteriores en una plantilla alteren retroactivamente mensajes ya enviados.
+9. Permitir automatizar recordatorios de vencimientos, reuniones y solicitudes pendientes.
+10. Establecer límites de frecuencia y reglas de deduplicación para comunicaciones automatizadas.
+11. Exigir revisión o aprobación cuando una plantilla genere comunicaciones oficiales o de alto impacto.
+12. Permitir una vista previa con datos de ejemplo antes de publicar.
+13. Registrar la ejecución, destinatarios, resultado y errores de cada automatización.
+14. Evitar que una automatización se ejecute después de que el evento de origen haya sido cancelado o resuelto.
+15. Permitir desactivar una regla defectuosa sin borrar el historial de ejecuciones anteriores.
+
+**Comportamiento esperado**
+
+Las plantillas generan contenido válido, las variables se resuelven correctamente, los envíos programados respetan su estado y las automatizaciones no repiten ni ejecutan comunicaciones que ya no correspondan.
+
+**Criterios de aceptación**
+
+- Una plantilla con variables dinámicas resuelve los valores reales del alumno antes de la entrega.
+- Los envíos cancelados antes de la hora programada no se ejecutan.
+
+**Dependencias:** T-COM-04, T-COM-06, T-COM-07 y T-COM-09.
+
+---
+
+### T-COM-13 [P3] — Accesibilidad, experiencia móvil y control de la sobrecarga comunicativa
+
+**Problema que debe resolverse**
+
+Garantizar accesibilidad WCAG 2.2 AA, diseño responsive en dispositivos móviles y prevención de la sobrecarga de notificaciones.
+
+**Alcance de los cambios**
+
+- "teacher-dashboard.html", "student-dashboard.html".
+- "js/ui-common.js", "js/teacher.js", "js/student.js".
+
+**Requisitos funcionales**
+
+1. Mantener una interfaz consistente entre la bandeja, los anuncios, las conversaciones, el calendario y las solicitudes.
+2. Evitar que una misma comunicación se presente como elementos independientes en varias vistas sin indicar que corresponden al mismo evento.
+3. Mostrar un resumen claro de qué requiere atención y qué es meramente informativo.
+4. Permitir agrupar avisos de baja prioridad y filtrar por importancia.
+5. Evitar que los contadores de notificaciones crezcan indefinidamente por eventos ya leídos, archivados o resueltos.
+6. Permitir silenciar conversaciones o ajustar preferencias sin perder acceso a los mensajes.
+7. Ofrecer controles accesibles mediante teclado (foco visible, cierre con `ESC`) y lectores de pantalla.
+8. Utilizar etiquetas textuales, estados claros y mensajes de error comprensibles, sin depender exclusivamente del color.
+9. Mantener el foco y los datos introducidos cuando se producen errores de validación.
+10. Adaptar formularios, adjuntos, listas de destinatarios y calendarios a pantallas pequeñas.
+11. Advertir al usuario antes de abandonar un borrador con cambios no guardados.
+12. Mostrar el estado real de guardado y envío, diferenciando borrador, envío en curso, enviado y fallo.
+13. Permitir revisar la audiencia y el contenido antes de enviar una comunicación masiva.
+14. Proporcionar límites y expectativas de respuesta para evitar que la mensajería implique disponibilidad permanente del personal.
+15. No enviar automáticamente múltiples notificaciones para confirmar acciones rutinarias si el estado puede consultarse en la plataforma.
+16. Evitar que la simplificación de avisos elimine información que el usuario necesita para cumplir un plazo o una obligación.
+17. Medir rendimiento con volúmenes representativos de mensajes, conversaciones y eventos.
+
+**Comportamiento esperado**
+
+La interfaz es operable mediante los mecanismos de accesibilidad previstos, mantiene la coherencia de los estados y reduce avisos innecesarios sin ocultar comunicaciones importantes ni perder borradores.
+
+**Criterios de aceptación**
+
+- Todos los modales de redacción y lectura se cierran con la tecla `ESC`.
+- Las vistas en móviles estrechos evitan desplazamientos horizontales no deseados.
+
+**Dependencias:** T-COM-01, T-COM-06, T-COM-07 y T-COM-08.
+
+---
+
+### T-COM-14 [P3] — Supervisión operativa, métricas y diagnóstico de comunicaciones
+
+**Problema que debe resolverse**
+
+Proporcionar a la administración un tablero de supervisión de envíos multicanal, diagnóstico de fallos y métricas de rendimiento del servicio de mensajería.
+
+**Alcance de los cambios**
+
+- "backend/user-service/Code.gs" (`getNotificationChannelConfigs`, `sendChannelNotificationTest`).
+- Panel de configuración en "js/teacher.js".
+
+**Requisitos funcionales**
+
+1. Mostrar indicadores operativos como:
+   - Comunicaciones creadas y publicadas.
+   - Notificaciones pendientes.
+   - Envíos exitosos y fallidos.
+   - Reintentos realizados.
+   - Comunicaciones que requieren aprobación.
+   - Solicitudes de autorización pendientes.
+   - Eventos programados y vencidos.
+2. Diferenciar los resultados por canal, tipo de evento y período.
+3. Mostrar los errores con códigos y descripciones que permitan diagnosticar el problema sin revelar credenciales ni datos sensibles.
+4. Permitir filtrar los envíos fallidos y reintentar únicamente aquellos que sigan siendo válidos.
+5. Identificar fallos recurrentes de configuración, destinatarios inválidos o proveedores externos.
+6. Permitir consultar el historial de una comunicación desde su creación hasta sus entregas y respuestas.
+7. Evitar que los indicadores cuenten como entregado un mensaje que únicamente fue puesto en cola.
+8. Diferenciar las métricas técnicas de entrega de las métricas de lectura y respuesta.
+9. Registrar las acciones administrativas realizadas desde el panel.
+10. Evitar que los administradores puedan consultar el contenido privado de las comunicaciones solo por acceder al panel de métricas.
+11. Incorporar alertas operativas ante acumulaciones anormales de envíos pendientes o errores reiterados.
+12. Permitir exportar informes operativos con controles de acceso.
+13. Evitar que la consulta de métricas genere consultas costosas repetidas sobre todos los mensajes.
+14. Establecer una política de conservación de los registros operativos y de auditoría.
+
+**Comportamiento esperado**
+
+Los indicadores reflejan los estados reales disponibles, los errores pueden diagnosticarse y las acciones de reintento no duplican envíos. Las métricas técnicas no se presentan como pruebas de lectura humana.
+
+**Criterios de aceptación**
+
+- El panel diferencia envíos en cola de entregas confirmadas por adaptadores externos.
+- Los reintentos manuales de envíos fallidos no duplican mensajes exitosos previa o paralelamente procesados.
+
+**Dependencias:** T-COM-03, T-COM-06, T-COM-07 y los registros de auditoría.
+
+---
+
+### ORDEN DE EJECUCIÓN RECOMENDADO FASE 11 (COMUNICACIÓN INSTITUCIONAL)
+
+| Orden | Tarea | Prioridad | Dependencia principal |
+| :---: | :--- | :---: | :--- |
+| **1** | **T-COM-01.** Identificación y auditoría del centro unificado de comunicaciones | **P1** | `getUnifiedNotifications` / Bandeja |
+| **2** | **T-COM-02.** Control de destinatarios, segmentación y permisos de envío | **P1** | RBAC / `ROLE_PERMISSIONS` |
+| **3** | **T-COM-03.** Seguridad, confidencialidad y trazabilidad de las comunicaciones | **P1** | Drive proxy / Log audit |
+| **4** | **T-COM-07.** Prevención de duplicados, control de frecuencia y preferencias | **P1** | `DeduplicationKey` / Idempotencia |
+| **5** | **T-COM-04.** Noticias, anuncios, circulares y comunicados oficiales | **P2** | `AnunciosInstitucionales` |
+| **6** | **T-COM-05.** Mensajería individual y grupal con contexto institucional | **P2** | `MensajesInternos` |
+| **7** | **T-COM-06.** Motor de notificaciones internas y preparación de canales externos | **P2** | `sendMultiChannelNotification` |
+| **8** | **T-COM-08.** Confirmaciones de lectura, respuestas y seguimiento | **P2** | `submitAnnouncementReceiptConfirmation` |
+| **9** | **T-COM-09.** Calendario compartido, reuniones, convocatorias y recordatorios | **P2** | `EventosCalendario` |
+| **10** | **T-COM-10.** Comunicación contextual vinculada a expedientes y trámites | **P2** | `ReferenciaContextoID` |
+| **11** | **T-COM-11.** Búsqueda, archivo, recuperación e historial de comunicaciones | **P3** | Search engine / Privacy |
+| **12** | **T-COM-12.** Plantillas, envíos programados y automatización | **P3** | Dynamic variables engine |
+| **13** | **T-COM-13.** Accesibilidad, experiencia móvil y control de fatiga noticiosa | **P3** | UI / WCAG AA |
+| **14** | **T-COM-14.** Supervisión operativa, métricas y diagnóstico de comunicaciones | **P3** | `RegistroEnviosExternos` |
