@@ -1970,110 +1970,280 @@ Modelo de permisos, expediente consolidado, cronología, exportaciones y auditor
 
 ## PLAN DE TRABAJO DETALLADO Y UNIFICADO: FASE DE PLANIFICACIÓN ACADÉMICA, HORARIOS Y RECURSOS INSTITUCIONALES
 
-### T-HOR-01 [P1] — LockService y Control Transaccional en Asignación de Aulas y Horarios
+### T-HOR-01 [P1] — Control transaccional y prevención de reservas dobles en horarios, aulas y recursos
+
 - **Componentes relacionados:** `backend/academic-service/Code.gs` (`createClassSchedule`, `checkScheduleConflict`), `js/teacher.js`, hojas `HorariosClases`, `SedesAulas`.
-- **Problema que debe resolverse:** Cuando dos coordinadores guardan bloques de horario simultáneamente para la misma aula o docente, la consulta previa de colisión en `checkScheduleConflict` puede sufrir una condición de carrera si la reserva no está protegida por un bloqueo atómico exclusivo.
+- **Problema detectado:** Las operaciones de asignación validan los conflictos mediante `checkScheduleConflict`, pero carecen de un bloqueo transaccional con `LockService.getScriptLock()`. Dos solicitudes simultáneas pueden sufrir una condición de carrera antes de que cualquiera registre su reserva en `HorariosClases` o `SedesAulas`, provocando horarios duplicados, docentes asignados simultáneamente o recursos compartidos reservados para actividades incompatibles.
+- **Alcance específico:**
+  - Crear, modificar y reasignar bloques horarios (`createClassSchedule`).
+  - Reservar aulas, laboratorios, canchas y otros recursos compartidos.
+  - Cambiar docentes, secciones, períodos y ubicaciones.
+  - Importar horarios mediante operaciones masivas.
+  - Copiar horarios entre períodos académicos o años lectivos.
 - **Requisitos funcionales:**
-  - Envolver la validación y guardado de `createClassSchedule` en un bloque `LockService.getScriptLock()` con timeout de 10 segundos.
-  - Revalidar la colisión dentro del bloque exclusivo antes de insertar el registro en `HorariosClases`.
-- **Criterios de Aceptación:**
-  1. Dos peticiones simultáneas sobre el mismo espacio y bloque horario resultan en una reserva exitosa y un rechazo controlado por conflicto de agenda.
-  2. No se generan reservas dobles sobre una misma aula en el mismo intervalo.
+  1. Ejecutar la validación definitiva de conflictos en el servidor inmediatamente antes de confirmar cada operación.
+  2. Implementar un mecanismo de exclusión mutua mediante `LockService.getScriptLock()` con timeout de 10 segundos (10,000 ms) en las operaciones concurrentes que modifiquen horarios o reservas compartidas.
+  3. Mantener dentro de la sección protegida la secuencia crítica de adquisición del bloqueo, lectura del estado relevante, validación y escritura de los registros.
+  4. Volver a comprobar las restricciones después de adquirir el bloqueo. Una validación realizada antes de bloquear no debe considerarse suficiente.
+  5. Aplicar la protección a todas las rutas de escritura que puedan afectar a la misma reserva, no únicamente al formulario principal.
+  6. Validar, como mínimo: colisión del docente; colisión del aula o espacio; colisión de la sección u oferta académica; colisión de recursos compartidos; disponibilidad de la sede y del período; capacidad y compatibilidad del espacio, cuando corresponda.
+  7. Evitar bloqueos indefinidos. Si no se obtiene el bloqueo dentro del tiempo establecido, devolver un error controlado y permitir un reintento seguro.
+  8. Liberar el bloqueo mediante bloque `finally` incluso cuando se produzca una excepción.
+  9. Garantizar que una operación rechazada no deje registros parciales, reservas huérfanas ni estados que aparenten una asignación exitosa.
+  10. Si el proceso modifica varias hojas o registros que no pueden confirmarse mediante una transacción real, implementar una estrategia explícita de recuperación, compensación o reversión.
+  11. Utilizar identificadores de operación o mecanismos de idempotencia para impedir duplicados ante reintentos de red.
+  12. Evitar bloquear durante operaciones de lectura, generación de reportes o cálculos prolongados que no requieran exclusión mutua.
+- **Comportamiento esperado:** Cuando dos usuarios intenten reservar la misma aula, asignar al mismo docente en intervalos incompatibles o utilizar el mismo recurso simultáneamente, solo podrá confirmarse una operación. La otra recibirá un mensaje que identifique el conflicto y permita elegir otra opción.
+- **Criterios de aceptación:**
+  - Dos solicitudes concurrentes para reservar la misma aula y el mismo intervalo: una se confirma y la otra se rechaza por conflicto.
+  - Dos solicitudes concurrentes para asignar al mismo docente en el mismo intervalo: una se confirma y la otra se rechaza.
+  - Dos solicitudes para recursos diferentes y horarios compatibles: ambas se confirman.
+  - Una solicitud que falle después de iniciar la escritura no deja datos parciales sin detectar ni corregir.
+  - Una interrupción de red seguida de reintento no duplica la asignación.
+  - Los conflictos siguen detectándose aunque las solicitudes provengan de endpoints diferentes.
+  - Las modificaciones de horarios existentes se validan con el mismo rigor que las nuevas asignaciones.
+  - Las pruebas de concurrencia incluyen solicitudes simultáneas reales o una simulación reproducible que permita verificar la exclusión mutua.
+  - Se documentan las limitaciones transaccionales del almacenamiento actual y el mecanismo utilizado para recuperar operaciones incompletas.
 - **Riesgo de Regresión:** Bajo.
+- **Dependencias:** Validación de conflictos existente (`checkScheduleConflict`), `createClassSchedule`, gestión de aulas/sedes/recursos en `SedesAulas`, operaciones de importación/copia e identificadores de idempotencia.
 
 ---
 
-### T-HOR-02 [P1] — Validador de Sobrecarga de Evaluaciones y Exámenes por Sección
-- **Componentes relacionados:** `backend/academic-service/Code.gs` (`createCalendarEvent`), `backend/exam-service/Code.gs`, `js/teacher.js`.
-- **Problema que debe resolverse:** La programación de exámenes y evaluaciones no limita la cantidad máxima de exámenes simultáneos o diarios para una misma sección, pudiendo agendar tres o más evaluaciones el mismo día para un grupo de estudiantes.
+### T-HOR-02 [P1] — Detección de sobrecarga y conflictos en la planificación de exámenes y evaluaciones
+
+- **Componentes relacionados:** `backend/academic-service/Code.gs` (`createCalendarEvent`), `backend/exam-service/Code.gs`, `js/teacher.js`, calendario escolar.
+- **Problema detectado:** La planificación detecta determinadas colisiones de horarios, pero no advierte cuando una sección tiene varios exámenes concentrados en un mismo día o distribuidos en días consecutivos de manera excesiva. Falta un validador que restrinja por defecto el máximo de evaluaciones principales diarias por sección, generando sobrecarga académica.
+- **Alcance específico:**
+  - Creación y modificación de exámenes y evaluaciones.
+  - Reprogramación de evaluaciones existentes.
+  - Calendario de evaluaciones por sección, asignatura, docente y estudiante.
+  - Integración con el módulo de exámenes (`exam-service`) y el calendario escolar (`createCalendarEvent`).
 - **Requisitos funcionales:**
-  - Implementar en `createCalendarEvent` una regla que restrinja un máximo de 2 evaluaciones/exámenes principales por sección en un mismo día lectivo.
-  - Generar un aviso de advertencia o requerir confirmación administrativa si se intenta superar el límite.
-- **Criterios de Aceptación:**
-  1. Intentar agendar un tercer examen el mismo día para una sección dispara un aviso de sobrecarga de evaluaciones.
-  2. La regla permite excepciones autorizadas por Dirección.
+  1. Crear un validador de carga de evaluaciones en `createCalendarEvent` y endpoints de examen que examine las evaluaciones programadas para el intervalo afectado.
+  2. Detectar: dos exámenes simultáneos para una misma sección; dos evaluaciones simultáneas para un estudiante matriculado en asignaturas diferentes; exceso de exámenes en un mismo día (por defecto máximo 2 evaluaciones/exámenes principales por sección en un día lectivo); exámenes en días consecutivos cuando superen el límite institucional configurado; concentración excesiva de evaluaciones en una ventana móvil de varios días; solapamientos entre evaluaciones y clases obligatorias, cuando la política académica lo prohíba; evaluaciones programadas durante vacaciones, feriados, cierres institucionales o fechas bloqueadas, salvo excepción autorizada.
+  3. Permitir configurar los límites por institución, período académico, nivel, grado o sección en `ConfiguracionSistema` / `ConfiguracionDashboard`.
+  4. Establecer parámetros independientes para el máximo de exámenes diarios, consecutivos y acumulados en una ventana de días.
+  5. Diferenciar los conflictos absolutos de las advertencias de carga académica.
+  6. Mostrar el motivo de cada advertencia, las evaluaciones involucradas, las fechas y las secciones o estudiantes afectados.
+  7. Proponer alternativas de fecha y hora que respeten la disponibilidad de docentes, aulas y estudiantes.
+  8. Recalcular las validaciones cuando se modifique una fecha, se cambie una matrícula o se traslade una evaluación.
+  9. Utilizar las matrículas y asignaciones reales para detectar conflictos individuales, sin asumir que todos los estudiantes de un mismo grado cursan exactamente las mismas asignaturas.
+  10. Permitir excepciones autorizadas por Dirección o Coordinación, con justificación y registro de auditoría.
+  11. Evitar que un fallo en la consulta de evaluaciones existentes se interprete como ausencia de conflictos.
+  12. Mantener sincronizados el calendario escolar, la agenda docente, la vista del estudiante y el portal de familias.
+- **Comportamiento esperado:** Al programar una evaluación, el sistema debe mostrar las colisiones y la carga académica acumulada antes de confirmar la fecha. Las restricciones configuradas como obligatorias deben bloquear la operación; las recomendaciones podrán autorizarse únicamente conforme a la política institucional.
+- **Criterios de aceptación:**
+  - Dos exámenes simultáneos para una misma sección generan un conflicto.
+  - Dos exámenes simultáneos para un estudiante que cursa asignaturas de diferentes grados generan un conflicto individual.
+  - Intentar agendar más de los exámenes configurados (ej. 3 o más en un día) dispara una advertencia o bloqueo según el límite institucional.
+  - Una carga excesiva de evaluaciones en días consecutivos se detecta aunque no existan solapamientos de horas.
+  - Las evaluaciones de grupos sin estudiantes compartidos no se bloquean por conflictos individuales inexistentes.
+  - Cambiar la fecha de un examen recalcula las advertencias y actualiza sus vistas relacionadas sin duplicar eventos.
+  - Los límites configurados pueden modificarse sin alterar evaluaciones históricas.
+  - Las excepciones autorizadas quedan registradas con usuario, fecha, motivo y evaluación afectada.
+  - Si no se puede consultar la información necesaria, el sistema informa que la validación está incompleta y no presenta el resultado como una comprobación exitosa.
 - **Riesgo de Regresión:** Nulo.
+- **Dependencias:** Calendario escolar y períodos académicos, matrículas y asignaciones de estudiantes, módulo de exámenes (`exam-service`), `createCalendarEvent`, notificaciones.
 
 ---
 
-### T-HOR-03 [P1] — Regla de Bloques Consecutivos y Pausas Obligatorias para Carga Docente
-- **Componentes relacionados:** `backend/academic-service/Code.gs`, `backend/accounting-service/Code.gs` (`TurnosAlmuerzo`), `js/teacher.js`.
-- **Problema que debe resolverse:** La asignación de horarios a docentes no controla el número máximo de períodos consecutivos sin descanso o turno de almuerzo, pudiendo programar 6 o más horas seguidas de impartición de clases.
+### T-HOR-03 [P1] — Configuración de bloques consecutivos, descansos y carga laboral docente
+
+- **Componentes relacionados:** `backend/academic-service/Code.gs`, `backend/accounting-service/Code.gs` (`TurnosAlmuerzo`), `js/teacher.js`, asignación de horarios.
+- **Problema detectado:** La asignación docente no incorpora de forma suficiente la limitación de bloques consecutivos ni las pausas obligatorias (por ejemplo, asignando 5 o 6 períodos seguidos sin descanso o turno de almuerzo). Una planificación sin solapamientos puede ser inviable si asigna demasiadas clases seguidas, elimina períodos de preparación o excede las restricciones laborales configuradas.
+- **Alcance específico:**
+  - Asignación manual y automática de docentes.
+  - Creación y modificación de horarios.
+  - Sustituciones docentes.
+  - Informes de carga laboral.
+  - Validación previa a la publicación.
 - **Requisitos funcionales:**
-  - Validar un máximo de 4 períodos lectivos consecutivos por docente antes de exigir un bloque libre o turno de descanso/almuerzo.
-  - Advertir al coordinador de horarios si la distribución no respeta el descanso docente.
-- **Criterios de Aceptación:**
-  1. Asignar más de 4 horas continuas a un docente dispara una advertencia de fatiga/carga laboral.
-  2. Respeta las pausas y turnos de almuerzo configurados en `TurnosAlmuerzo`.
+  1. Incorporar parámetros configurables para: máximo de períodos lectivos consecutivos (por defecto máximo 4 bloques); pausas mínimas entre bloques; descansos y turnos de almuerzo (`TurnosAlmuerzo`); máximo de períodos por día; máximo de horas o períodos por semana; horarios de disponibilidad y no disponibilidad; períodos de planificación docente protegidos; cargas mínimas o máximas contractuales, si la institución las registra.
+  2. Permitir reglas diferentes por docente, jornada, contrato, sede o política institucional.
+  3. Distinguir las restricciones obligatorias de las preferencias recomendadas.
+  4. Calcular la carga a partir de las sesiones efectivamente asignadas, evitando contar dos veces bloques vinculados o registros duplicados.
+  5. Considerar las sustituciones y los períodos de vigencia de cada asignación.
+  6. Validar las restricciones tanto al crear como al editar, copiar, importar, sustituir o publicar horarios.
+  7. Mostrar una vista de carga diaria y semanal por docente, con períodos libres, descansos, bloques consecutivos y alertas de exceso.
+  8. Permitir definir si una sustitución temporal debe respetar los límites ordinarios, una excepción autorizada o ambos.
+  9. Evitar que la edición de una regla modifique retroactivamente los horarios históricos.
+  10. Si se incorpora generación automática, utilizar estas restricciones como parte del modelo de planificación, no como una comprobación superficial posterior.
+- **Comportamiento esperado:** El sistema debe impedir las asignaciones que violen límites obligatorios y señalar las que incumplan preferencias. Las advertencias deben identificar la regla infringida y mostrar la distribución que origina el problema.
+- **Criterios de aceptación:**
+  - Un docente con un máximo de 4 bloques consecutivos no puede recibir un quinto bloque consecutivo si esa regla es obligatoria o no cuenta con excepción.
+  - Una pausa obligatoria o turno de almuerzo (`TurnosAlmuerzo`) no puede ser ocupado por una clase.
+  - El exceso de carga semanal se calcula correctamente, incluyendo asignaciones de diferentes secciones.
+  - Una sustitución se valida para el período exacto en que estará vigente.
+  - Los períodos de planificación protegidos se conservan durante las modificaciones y la generación automática.
+  - Las preferencias configuradas como no obligatorias producen advertencias, no bloqueos arbitrarios.
+  - El sistema identifica claramente la regla y el bloque que genera el exceso.
+  - Los reportes de carga docente coinciden con las sesiones activas del horario publicado.
 - **Riesgo de Regresión:** Nulo.
+- **Dependencias:** Perfiles docentes y asignaciones, modelo de períodos y bloques horarios, sustituciones docentes, `TurnosAlmuerzo`, validación de conflictos.
 
 ---
 
-### T-HOR-04 [P1] — Matriz de Tiempos de Traslado entre Sedes y Edificios
+### T-HOR-04 [P1] — Matriz de tiempos de traslado entre sedes y edificios
+
 - **Componentes relacionados:** `backend/academic-service/Code.gs`, `js/teacher.js`, hoja `SedesAulas`.
-- **Problema que debe resolverse:** Cuando la institución cuenta con múltiples sedes o edificios distantes, el sistema permite asignar a un docente dos clases consecutivas en aulas ubicadas en edificios diferentes sin margen de tiempo de traslado.
+- **Problema detectado:** La validación de conflictos no contempla adecuadamente el tiempo necesario para trasladarse entre edificios o sedes distantes. Dos clases consecutivas pueden no solaparse cronológicamente, pero resultar imposibles de atender físicamente si el tiempo entre el fin de la clase A en un edificio y el inicio de la clase B en otro es inferior al tiempo requerido.
+- **Alcance específico:**
+  - Gestión de sedes y edificios en `SedesAulas`.
+  - Asignación de aulas.
+  - Horarios docentes.
+  - Sustituciones docentes.
+  - Optimización automática, si se incorpora.
+  - Informes de viabilidad horaria.
 - **Requisitos funcionales:**
-  - Definir la matriz de tiempo mínimo de desplazamiento (`TiempoTrasladoMinutos`) entre sedes o edificios en `SedesAulas`.
-  - Bloquear la asignación si el tiempo entre el fin de la Clase A en Edificio 1 y el inicio de la Clase B en Edificio 2 es menor que el tiempo de traslado requerido.
-- **Criterios de Aceptación:**
-  1. Clases consecutivas en edificios distantes sin margen de traslado disparan un bloqueo por conflicto de desplazamiento.
-  2. La validación considera las sedes de origen y destino.
+  1. Definir e incorporar en `SedesAulas` una matriz configurable de tiempos mínimos de traslado (`TiempoTrasladoMinutos`) entre sedes, edificios o zonas físicas.
+  2. Permitir establecer tiempos distintos según el origen y destino cuando existan diferencias reales de desplazamiento.
+  3. Considerar la duración de cada clase y el intervalo disponible entre sesiones.
+  4. Aplicar la regla a docentes que cambien de ubicación entre bloques consecutivos y a otros usuarios o grupos cuando el modelo disponga de datos suficientes.
+  5. Considerar las restricciones de movilidad y accesibilidad únicamente cuando estén registradas y sean pertinentes para la planificación.
+  6. Permitir configurar tiempos adicionales de transición, preparación de aula o montaje de recursos.
+  7. Distinguir entre traslados imposibles o insuficientes y traslados posibles pero poco convenientes.
+  8. Detectar también conflictos introducidos por sustituciones, cambios de aula y modificaciones masivas.
+  9. Mostrar las dos sesiones implicadas, sus ubicaciones, el intervalo disponible y el tiempo mínimo requerido.
+  10. Permitir excepciones justificadas por usuarios autorizados, conservando la trazabilidad.
+  11. Evitar asumir que todas las sedes tienen un tiempo de traslado idéntico o que los desplazamientos siempre requieren cero minutos.
+- **Comportamiento esperado:** Cuando un docente deba pasar de un edificio o sede a otro, el sistema debe verificar que el intervalo entre las sesiones sea suficiente según la configuración institucional. Si no lo es, deberá bloquear la asignación cuando se trate de una restricción obligatoria o generar una advertencia cuando la política permita excepciones.
+- **Criterios de aceptación:**
+  - Un traslado con 5 minutos disponibles y 15 minutos requeridos se detecta como inviable y bloquea la asignación.
+  - Un traslado entre aulas del mismo edificio utiliza la regla configurada para ese caso.
+  - Una clase que termina exactamente cuando comienza la siguiente en el mismo espacio no genera una falsa colisión temporal, salvo que exista un tiempo de transición configurado.
+  - Los cambios de aula recalculan los traslados afectados.
+  - Las reglas se aplican a la generación automática de horarios cuando corresponda.
+  - Las excepciones registran quién las autorizó y por qué.
+  - Los horarios publicados y los informes de carga reflejan las ubicaciones actualizadas.
 - **Riesgo de Regresión:** Bajo.
+- **Dependencias:** Catálogo de sedes, edificios y aulas (`SedesAulas`), horarios y asignaciones docentes, sustituciones y operaciones masivas.
 
 ---
 
-### T-HOR-05 [P2] — Motor Algorítmico CSP para Generación y Optimización Automática de Horarios
-- **Componentes relacionados:** `backend/academic-service/Code.gs`, `js/teacher.js`, `teacher-dashboard.html`.
-- **Problema que debe resolverse:** La plataforma sólo permite la creación manual de horarios casilla por casilla; se requiere un motor de generación automática por satisfacción de restricciones (CSP) que distribuya automáticamente la carga curricular.
+### T-HOR-05 [P2] — Motor algorítmico CSP para generación y optimización automática de horarios mediante restricciones
+
+- **Componentes relacionados:** `backend/academic-service/Code.gs` (`generateAutomatedSchedule`), `js/teacher.js`, `teacher-dashboard.html`.
+- **Problema detectado:** No existe una capacidad completa de generación automática de horarios mediante un motor de satisfacción de restricciones (CSP). La planificación depende de asignaciones manuales casilla por casilla, lo que limita la capacidad para resolver escenarios complejos y comparar alternativas de distribución.
+- **Alcance específico:**
+  - Generación inicial de horarios.
+  - Reorganización de horarios existentes.
+  - Copia y adaptación de horarios a nuevos períodos.
+  - Comparación de escenarios.
+  - Reasignación de docentes, aulas y bloques.
+  - Informes de calidad de la planificación.
 - **Requisitos funcionales:**
-  - Implementar el endpoint `generateAutomatedSchedule` que reciba materias, docentes, aulas y restricciones obligatorias.
-  - Ejecutar algoritmo CSP (Constraint Satisfaction Problem) con retroceso (backtracking) para proponer una cuadrícula horaria 100% libre de colisiones.
-  - Permitir fijar bloques manualmente ("Pin/Lock") para que el generador automático no modifique clases ya confirmadas.
-- **Criterios de Aceptación:**
-  1. El generador produce una propuesta de horario válida respetando disponibilidad docente, aula y carga horaria por asignatura.
-  2. Los bloques fijados se mantienen inalterados durante la generación.
+  - **A. Modelo de datos de entrada:** Oferta académica, grados, secciones, asignaturas y matrículas; número de sesiones semanales requeridas por asignatura; duración de las sesiones y períodos en que pueden impartirse; disponibilidad y cualificaciones de docentes; carga laboral máxima, bloques consecutivos y períodos de planificación protegidos; aulas, capacidades, equipamiento, sedes (`SedesAulas`) y horarios disponibles; recursos compartidos y sus reservas; calendario escolar, feriados, vacaciones y excepciones; evaluaciones, actividades institucionales y sesiones que no pueden moverse; preferencias institucionales y restricciones específicas; sesiones existentes que deban conservarse o puedan reorganizarse; necesidades individuales de estudiantes en asignaturas compartidas o electivas. Antes de iniciar, comprobar que los datos obligatorios estén completos sin inventar disponibilidad.
+  - **B. Restricciones obligatorias (Duras):** Ausencia de solapamientos de docentes, aulas, secciones y recursos compartidos; cumplimiento de disponibilidad docente y de espacios; cumplimiento de capacidades y requisitos de equipamiento; respeto a días no lectivos y fechas bloqueadas; cumplimiento de límites laborales obligatorios; respeto a tiempos de traslado y descansos configurados; conservación de sesiones bloqueadas por el usuario ("Pin/Lock"); cumplimiento de las sesiones y horas lectivas obligatorias. Ninguna mejora de puntuación puede violar una restricción dura.
+  - **C. Preferencias y optimización (Blandas):** Reducir períodos libres excesivos de estudiantes y docentes; evitar demasiados bloques consecutivos; distribuir equilibradamente la carga docente; reducir traslados entre edificios; evitar concentraciones innecesarias de clases o evaluaciones; aprovechar las aulas según capacidad y equipamiento; conservar períodos comunes de planificación; reducir cambios innecesarios respecto al horario publicado; evitar horarios fragmentados; respetar preferencias docentes. Ponderaciones configurables con explicación de compromisos adoptados.
+  - **D. Generación y revisión de escenarios:** Implementar el endpoint `generateAutomatedSchedule` ejecutando algoritmo CSP con retroceso (backtracking). Generar una o varias alternativas; mostrar sesiones asignadas, no asignadas y pendientes; mostrar conflictos duros, preferencias incumplidas e indicadores de calidad; permitir comparar alternativas; explicar por qué una sesión no pudo ubicarse; permitir fijar o bloquear sesiones concretas ("Pin/Lock") antes de regenerar; preservar sesiones bloqueadas; permitir ajustes manuales y recalcular validez; conservar versiones de cada escenario; evitar publicar automáticamente sin confirmación explícita; ejecutar validación definitiva mediante las mismas reglas de conflictos que protegen la asignación manual; permitir generar solución parcial identificándola explícitamente como incompleta.
+  - **E. Rendimiento y resiliencia:** Definir límites de tiempo de ejecución y cancelación controlada; evitar que un proceso prolongado bloquee otras operaciones; informar del progreso y estado real; gestionar escenarios sin solución, agotamiento de tiempo y datos inconsistentes; no alterar el horario publicado ante una ejecución fallida; registrar parámetros de ejecución.
+- **Comportamiento esperado:** El sistema debe generar propuestas que respeten todas las restricciones obligatorias, expliquen sus compromisos y puedan inspeccionarse y compararse antes de su publicación.
+- **Criterios de aceptación:**
+  - Una solución completa no contiene colisiones duras.
+  - Cuando no existe una solución viable, el motor lo informa y presenta las causas conocidas sin fabricar asignaciones falsas.
+  - Una solución parcial identifica todas las sesiones no ubicadas.
+  - Las sesiones bloqueadas ("Pin/Lock") permanecen inalteradas durante una nueva generación.
+  - Las preferencias incumplidas se muestran por separado de las restricciones obligatorias.
+  - La comparación entre escenarios utiliza las mismas métricas y restricciones.
+  - Un escenario no puede publicarse si contiene conflictos obligatorios o sesiones requeridas sin asignar, salvo flujo explícito de publicación parcial.
+  - El horario publicado no se altera hasta que un usuario autorizado confirma la propuesta validada.
+  - Los resultados generados superan las mismas pruebas de conflicto que las asignaciones manuales.
+  - Se evalúa la calidad con casos representativos y se documentan resultados, tiempo y limitaciones.
 - **Riesgo de Regresión:** Nulo.
+- **Dependencias:** T-HOR-01, T-HOR-02, T-HOR-03, T-HOR-04, estructura académica, aulas, recursos, calendario, matrículas, T-HOR-06.
 
 ---
 
-### T-HOR-06 [P2] — Versionado en Borrador, Diff de Cambios y Publicación de Horarios
+### T-HOR-06 [P2] — Versionado de borradores, comparación de cambios (Diff) y publicación controlada de horarios
+
 - **Componentes relacionados:** `backend/academic-service/Code.gs`, `js/teacher.js`, `teacher-dashboard.html`.
-- **Problema que debe resolverse:** Los cambios en los horarios se aplican directamente en vivo; se requiere un flujo de trabajo en Borrador ("Draft") con vista previa de diferencias ("Diff") antes de publicar oficialmente a estudiantes y padres.
+- **Problema detectado:** Existe publicación y registro de cambios, pero los horarios se pueden aplicar directamente en vivo o carecen de un mecanismo completo de comparación entre versiones ("Diff") que permita revisar de manera clara qué cambia antes de publicar un horario. Sin una vista comparativa, las modificaciones masivas o automáticas pueden introducir alteraciones difíciles de detectar.
+- **Alcance específico:**
+  - Creación y edición de borradores.
+  - Modificaciones de horarios publicados.
+  - Copia entre períodos académicos.
+  - Generación automática (CSP).
+  - Publicación, sustitución de versiones y recuperación.
+  - Registro de cambios y notificaciones.
 - **Requisitos funcionales:**
-  - Manejar estados de horario: `Borrador`, `EnRevision`, `Publicado`, `Sustituido`.
-  - Presentar la herramienta de comparación visual que resalte en amarillo/rojo los bloques modificados o cancelados respecto a la versión oficial activa.
-  - Al presionar "Publicar Horario", actualizar el estado oficial y disparar notificaciones en lote a los docentes y familias afectadas.
-- **Criterios de Aceptación:**
-  1. Los horarios en borrador no son visibles en el portal del estudiante hasta su publicación oficial.
-  2. La publicación genera el registro del historial de versiones y la notificación correspondiente.
+  - **A. Ciclo de vida de los horarios:** Implementar o completar estados diferenciados: `Borrador` ("Draft"), `PendienteRevision`, `Validado`, `Publicado`, `Sustituido`, `Cancelado`. Transiciones permitidas y permisos explícitos. Distinguir la versión vigente de las versiones de trabajo.
+  - **B. Aislamiento de borradores:** Los cambios de un borrador no deben alterar el horario publicado. Vincular cada borrador a un período académico y versión base. Registrar creador, modificador y marcas temporales. Detectar si el borrador queda desactualizado por cambios en el horario publicado. Solicitar reconciliación ante modificaciones concurrentes. Permitir descartar un borrador sin eliminar ni alterar la versión publicada.
+  - **C. Comparación de versiones (Diff):** Herramienta visual que muestre una comparación estructurada antes de publicar: sesiones agregadas (verde), eliminadas (rojo), cambios de docente, aula, sede, recurso, fecha, día, período, hora, sección, asignatura o duración (amarillo/naranja), y sesiones sin cambios. Identificar cada sesión mediante una identidad estable.
+  - **D. Publicación:** Ejecutar validaciones definitivas al solicitar la publicación; bloquear la publicación si existen conflictos duros; presentar confirmación con el resumen de cambios y el número de personas, secciones y recursos afectados; registrar usuario que publica, fecha, versión anterior, nueva versión y justificación; publicar de manera coherente para todas las vistas; gestionar fallos parciales; impedir sobrescritura por publicaciones concurrentes; permitir recuperar una versión anterior mediante una nueva publicación controlada sin borrar el historial; mantener las versiones históricas consultables.
+  - **E. Integración con notificaciones:** Alimentar el proceso de notificación tras la publicación confirmada. La entrega de notificaciones debe tener su propio estado verificable en lote sin reportar falsas entregas.
+- **Comportamiento esperado:** Los usuarios autorizados podrán preparar y revisar un horario en borrador sin afectar a estudiantes o docentes. Al publicar, el sistema mostrará exactamente qué cambiará mediante el diff y conservará la versión anterior para consulta y recuperación.
+- **Criterios de aceptación:**
+  - Editar un borrador no cambia la vista pública ni la del estudiante.
+  - La comparación (Diff) detecta correctamente altas, bajas y modificaciones.
+  - Dos usuarios que editan simultáneamente no pierden cambios silenciosamente.
+  - Un borrador basado en una versión obsoleta no se publica sin reconciliar las diferencias.
+  - La publicación falla si hay conflictos obligatorios.
+  - Una publicación exitosa genera una nueva versión identificable.
+  - La recuperación de una versión anterior conserva ambas versiones en el historial.
+  - Las sesiones históricas y registros de asistencia no se modifican por la publicación de una nueva versión.
+  - Las notificaciones se generan a partir de los cambios confirmados, no de los borradores.
+  - Los reportes identifican la versión y el período correspondientes.
 - **Riesgo de Regresión:** Bajo.
+- **Dependencias:** Validación de conflictos, registro de auditoría, notificaciones, integraciones con asistencia, evaluaciones, calendario y portal, T-HOR-05.
 
 ---
 
-### T-HOR-07 [P2] — Importación Masiva con Simulación Previa (Dry-Run) y Reporte por Fila
+### T-HOR-07 [P2] — Importación masiva de horarios y cuadrículas Excel con simulación previa (Dry-Run)
+
 - **Componentes relacionados:** `backend/academic-service/Code.gs`, `js/teacher.js`, `teacher-dashboard.html`.
-- **Problema que debe resolverse:** La carga de mallas horarias desde archivos masivos no cuenta con un simulador previo por fila que valide códigos de aula, docentes y materias antes de escribir en la base de datos.
+- **Problema detectado:** La importación masiva carece de una simulación previa ("Dry-Run") por fila que permita detectar errores, duplicados, referencias inexistentes y conflictos antes de guardar en la base de datos. Esto dificulta cargar horarios complejos y aumenta el riesgo de operaciones incompletas o datos inconsistentes.
+- **Alcance específico:**
+  - Importación de cuadrículas horarias desde Excel o CSV.
+  - Carga de asignaciones de docentes, aulas y secciones.
+  - Importación de actividades y evaluaciones cuando el formato lo admita.
+  - Copia o migración de horarios entre períodos académicos.
 - **Requisitos funcionales:**
-  - Desarrollar el modo `Dry-Run` en la importación masiva de horarios que valide el 100% de las filas del archivo de Excel.
-  - Mostrar tabla de pre-validación indicando filas válidas (verde) y filas con errores/colisiones (rojo con motivo del fallo).
-  - Confirmar la importación procesando únicamente los registros válidos u omitiendo el lote ante errores críticos.
-- **Criterios de Aceptación:**
-  1. El usuario puede previsualizar qué filas tienen errores de código o colisión antes de insertar.
-  2. Reimportar un archivo no genera bloques duplicados en la base de datos.
+  - **A. Plantillas y mapeo:** Proporcionar plantilla descargable con columnas documentadas y ejemplos válidos. Incluir campos obligatorios y opcionales para período, sección, asignatura, docente, día, bloque, hora, duración, aula y recursos. Permitir mapear columnas externas a campos reconocidos. Validar formatos de fechas, horas, códigos e identificadores sin crear referencias ficticias.
+  - **B. Dry-Run obligatorio antes de confirmar:** Desarrollar el modo `Dry-Run` que procese el 100% de las filas del archivo sin modificar datos productivos. Mostrar vista previa con: total de filas detectadas, filas válidas (verde), con advertencias, filas inválidas (rojo con descripción del problema), registros nuevos, modificados, duplicados dentro del archivo, duplicados en base de datos, conflictos de docentes, secciones, aulas y recursos, problemas de capacidad/disponibilidad y referencias inexistentes. Cada fila debe indicar número de origen, estado, campo afectado y acción recomendada.
+  - **C. Confirmación y ejecución:** Permitir descargar un reporte de errores en Excel para corregir el archivo original. Permitir cancelar sin alterar datos. Exigir confirmación explícita antes de guardar. Volver a comprobar conflictos e identificadores inmediatamente antes de escribir. Aplicar política de lote (por defecto no confirmar lote con errores bloqueantes; si se permite importación parcial, debe ser explícita). Procesar lotes de forma controlada con progreso. Registrar identificador de lote, usuario, fecha, filas procesadas/rechazadas en auditoría. Permitir reintentar filas fallidas sin duplicar las ya confirmadas. Recalcular validaciones si los datos cambian entre simulación y confirmación. Si se interrumpe, indicar qué registros se confirmaron y cuáles no.
+  - **D. Actualización de registros existentes:** Distinguir entre crear una sesión nueva, actualizar una existente u omitir un registro utilizando claves estables e identificadores explícitos.
+- **Comportamiento esperado:** Antes de guardar, el usuario conocerá el efecto exacto de la importación mediante la simulación. Ninguna fila inválida se aceptará silenciosamente y el sistema no creará duplicados por reintentos o por volver a importar el mismo archivo.
+- **Criterios de aceptación:**
+  - El modo `Dry-Run` procesa el 100% del archivo y produce una vista previa coherente con sus filas.
+  - Un archivo con un docente o aula inexistente identifica la fila y el campo problemático.
+  - Una colisión de aula o docente se detecta antes de confirmar.
+  - Una importación cancelada no modifica los datos productivos.
+  - Reimportar el mismo lote no crea bloques duplicados.
+  - Los errores pueden descargarse con información suficiente para corregir el archivo original.
+  - Los registros que se actualizarán se distinguen de los nuevos.
+  - Si los datos cambian después del `Dry-Run`, las validaciones se ejecutan nuevamente.
+  - Una interrupción permite identificar el estado de cada registro y recuperar la operación.
+  - Las cantidades del resumen final coinciden con los registros confirmados.
 - **Riesgo de Regresión:** Nulo.
+- **Dependencias:** Estructura académica y horarios, T-HOR-01, validación de conflictos, permisos y auditoría, T-HOR-06.
 
 ---
 
-### T-HOR-08 [P3] — Vista Semanal Imprimible, Filtros por Audiencia y Caché IndexedDB
+### T-HOR-08 [P3] — Vista semanal imprimible, filtros por audiencia y caché local de la cuadrícula horaria
+
 - **Componentes relacionados:** `js/teacher.js`, `js/student.js`, `js/ui-common.js`, `teacher-dashboard.html`, `student-dashboard.html`.
-- **Problema que debe resolverse:** Optimizar la visualización de la cuadrícula horaria en dispositivos móviles y permitir la exportación/impresión limpia en formato PDF de bolsillo.
+- **Problema detectado:** La visualización responsive y las consultas de horarios están implementadas, pero falta una vista semanal imprimible adaptada a la PWA (formato de bolsillo encuadrado) y una estrategia de caché local (IndexedDB) para consultar cuadrículas recientes de manera eficiente sin conexión a internet.
+- **Alcance específico:**
+  - Horarios de docentes, estudiantes, secciones, asignaturas, aulas y sedes.
+  - Vista semanal imprimible (`@media print`).
+  - Filtros por audiencia y período.
+  - Caché local con IndexedDB en la PWA.
 - **Requisitos funcionales:**
-  - Diseñar plantilla CSS `@media print` para imprimir la cuadrícula horaria semanal en una sola página limpia.
-  - Almacenar en caché local de IndexedDB la cuadrícula horaria del usuario para consulta instantánea offline en PWA.
-- **Criterios de Aceptación:**
-  1. La impresión del horario genera un PDF perfectamente encuadrado y legible.
-  2. La cuadrícula de clases permanece consultable sin conexión a internet desde el móvil.
+  - **A. Vista semanal e impresión:** Permitir seleccionar período académico, semana, sección, docente, estudiante o aula según permisos. Mostrar días, intervalos horarios, asignaturas, docentes, aulas y ubicaciones. Diferenciar clases, evaluaciones, actividades y cancelaciones mediante etiquetas accesibles. Incluir nombre institucional, período académico, rango de fechas y fecha de generación. Diseñar la vista de impresión mediante `@media print` para papel común, evitando cortes de bloques, encabezados repetidos innecesarios y controles de interfaz. Adaptar en móvil a tarjetas o cuadrícula desplazable. Distinguir la versión publicada de versiones históricas.
+  - **B. Filtros por audiencia y permisos:** Estudiantes/familias consultan únicamente horarios publicados correspondientes a su expediente. Docentes consultan sus asignaciones. Coordinadores y Administradores consultan vistas institucionales. Aplicar filtros en el servidor.
+  - **C. Caché local con IndexedDB:** Almacenar localmente una representación de los horarios publicados consultados recientemente en IndexedDB. Asociar cada entrada con usuario, período académico, tipo de vista y versión. Invalidar o actualizar la caché tras notificaciones de cambios. Mostrar fecha y hora de la última actualización offline. Cuando no haya conexión, consultar la copia local disponible y advertir claramente su antigüedad. Si la caché está corrupta, descartarla sin bloquear la consulta en línea. No mezclar datos de diferentes usuarios ni mantener información accesible tras cerrar sesión.
+- **Comportamiento esperado:** Los usuarios autorizados podrán consultar, filtrar e imprimir los horarios con claridad. Las consultas recientes podrán mantenerse disponibles sin conexión cuando exista una copia local válida, distinguiendo los datos almacenados localmente de los confirmados por el servidor.
+- **Criterios de aceptación:**
+  - La impresión de un horario semanal genera un formato PDF/papel perfectamente encuadrado y legible sin controles de UI.
+  - La cuadrícula horaria publicada se almacena en IndexedDB y permanece consultable sin conexión a internet.
+  - Un estudiante no puede acceder a horarios privados de otros usuarios modificando parámetros o solicitudes.
+  - Un borrador no aparece en la vista pública ni en la caché de estudiantes.
+  - Una actualización publicada invalida o actualiza la caché correspondiente.
+  - Sin conexión, se consulta la cuadrícula almacenada mostrando su fecha de actualización.
+  - Cambiar de cuenta elimina la caché de la cuenta anterior.
+  - Las vistas en móvil, escritorio e impresión muestran la misma asignación académica.
 - **Riesgo de Regresión:** Nulo.
+- **Dependencias:** Visualización actual de horarios, sistema de autenticación y permisos, publicación y versionado (T-HOR-06), PWA IndexedDB / Service Worker.
 
 ---
 
@@ -2081,11 +2251,11 @@ Modelo de permisos, expediente consolidado, cronología, exportaciones y auditor
 
 | Orden | Tarea | Prioridad | Dependencia principal |
 | :---: | :--- | :---: | :--- |
-| **1** | **T-HOR-01.** LockService y control transaccional en asignación de aulas/horarios | **P1** | `createClassSchedule` |
-| **2** | **T-HOR-02.** Validador de sobrecarga de evaluaciones por sección | **P1** | `createCalendarEvent` |
-| **3** | **T-HOR-03.** Regla de bloques consecutivos y pausas para carga docente | **P1** | `TurnosAlmuerzo` / Horarios |
+| **1** | **T-HOR-01.** Control transaccional y prevención de reservas dobles en horarios, aulas y recursos | **P1** | `createClassSchedule` / `checkScheduleConflict` |
+| **2** | **T-HOR-02.** Detección de sobrecarga y conflictos en la planificación de exámenes y evaluaciones | **P1** | `createCalendarEvent` / `exam-service` |
+| **3** | **T-HOR-03.** Configuración de bloques consecutivos, descansos y carga laboral docente | **P1** | `TurnosAlmuerzo` / Horarios |
 | **4** | **T-HOR-04.** Matriz de tiempos de traslado entre sedes y edificios | **P1** | `SedesAulas` |
-| **5** | **T-HOR-06.** Versionado en borrador, diff de cambios y publicación de horarios | **P2** | `HorariosClases` |
-| **6** | **T-HOR-05.** Motor algorítmico CSP para generación y optimización automática | **P2** | T-HOR-01 |
-| **7** | **T-HOR-07.** Importación masiva con simulación previa (Dry-Run) | **P2** | Excel import engine |
-| **8** | **T-HOR-08.** Vista semanal imprimible, filtros por audiencia y caché IndexedDB | **P3** | UI / PWA |
+| **5** | **T-HOR-06.** Versionado de borradores, comparación de cambios (Diff) y publicación controlada | **P2** | `HorariosClases` |
+| **6** | **T-HOR-05.** Motor algorítmico CSP para generación y optimización automática de horarios | **P2** | T-HOR-01 |
+| **7** | **T-HOR-07.** Importación masiva de horarios y cuadrículas Excel con simulación previa (Dry-Run) | **P2** | Excel import engine |
+| **8** | **T-HOR-08.** Vista semanal imprimible, filtros por audiencia y caché local IndexedDB | **P3** | UI / PWA |
