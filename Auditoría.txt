@@ -1532,3 +1532,33 @@ Hallazgos principales:
 
 Estado general: AUDITORÍA COMPLETADA - TAREAS T-SUP-01 A T-SUP-16 REGISTRADAS EN PENDIENTES3.MD.
 ================================================================================
+
+================================================================================
+AUDITORÍA FUNCIONAL Y TÉCNICA: FASE 14 — CONTABILIDAD, PRESUPUESTOS Y FINANZAS
+================================================================================
+
+Subcapacidades evaluadas:
+F14-01. Ejercicios fiscales, configuración contable, catálogo de cuentas, centros de costo y categorías financieras.
+F14-02. Contabilidad general y registro de asientos.
+F14-03. Presupuestos y control de ejecución presupuestaria.
+F14-04. Ingresos, cuentas por cobrar, facturación y gestión de morosidad.
+F14-05. Egresos, cuentas por pagar, proveedores y gastos.
+F14-06. Registro de facturas, recibos, comprobantes, ajustes y movimientos financieros.
+F14-07. Pagos, cobros parciales, anticipos, devoluciones, becas y descuentos.
+F14-08. Conciliación bancaria, caja y control de movimientos.
+F14-09. Autorizaciones, separación de funciones y controles de operaciones sensibles.
+F14-10. Cierres contables, períodos bloqueados y conservación histórica.
+F14-11. Estados financieros, balances e informes de gestión.
+F14-12. Integración financiera con matrículas, mensualidades, pagos y otros módulos institucionales.
+F14-13. Auditoría, trazabilidad, integridad, recuperación y prevención de duplicados.
+F14-14. Experiencia de usuario, búsqueda, filtros, importación, exportación y operación masiva.
+
+Hallazgos principales:
+- Implementadas y verificadas las estructuras financieras en `backend/accounting-service/Code.gs` (`PlanCuentas`, `AsientosContables`, `PresupuestosInstitucionales`, `FacturasFiscales`, `ComprobantesPago`, `BancosConciliaciones`, `CierresCaja`, `ProveedoresActivos`, `OrdenesCompra`).
+- Verificada la regla estricta de partida doble por asiento contable (`Math.abs(debe - haber) <= 0.01`).
+- Verificada la facturación fiscal adaptada a la normativa SAR de Honduras (CAI, rangos de facturación, fecha límite y desglose ISV 15%).
+- Identificada la necesidad de reforzar la concurrencia con `LockService` en asientos y la inalterabilidad de períodos fiscales cerrados.
+- Planificadas e integradas las tareas de resolución T-FIN-01 a T-FIN-16 en `pendientes3.md`.
+
+Estado general: AUDITORÍA COMPLETADA - TAREAS T-FIN-01 A T-FIN-16 REGISTRADAS EN PENDIENTES3.MD.
+================================================================================

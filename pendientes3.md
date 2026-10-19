@@ -6630,3 +6630,252 @@ El destinatario puede abrir una comunicación y completar la acción solicitada 
 | **5** | **T-SUP-10**, **T-SUP-11**, **T-SUP-12** | Cálculo de carga, cierre histórico y panel operativo coherentes. | `auditTeacherWorkload` / `CierresPeriodos` / UI |
 | **6** | **T-SUP-13**, **T-SUP-14**, **T-SUP-15** | Indicadores, fichas PDF y conciliación basados en datos confiables. | Universal Chart Engine / `generateSchoolDocument` / Reconciliation |
 | **7** | **T-SUP-16** | Prueba de respaldo y restauración con el conjunto ampliado de datos. | `createSystemBackup` / `restoreSystemBackup` |
+
+
+## PLAN DE TRABAJO DETALLADO Y UNIFICADO: FASE DE CONTABILIDAD, PRESUPUESTOS Y CONTROL FINANCIERO
+
+### T-FIN-01 [P1] — Control de concurrencia transaccional con LockService en asientos contables y facturas fiscales
+
+- **Componentes relacionados:** `backend/accounting-service/Code.gs` (`recordAccountingJournalEntry`, `createFiscalInvoice`), `js/accounting.js`.
+- **Problema detectado:** Al guardar un asiento contable en `AsientosContables` o emitir una factura fiscal SAR en `FacturasFiscales`, el servidor no utiliza un bloqueo exclusivo mediante `LockService.getScriptLock()`. Transacciones simultáneas pueden provocar duplicados en el correlativo de factura o colisiones en el saldo contable.
+- **Requisitos funcionales:**
+  1. Adquirir `LockService.getScriptLock()` antes de actualizar `AsientosContables` y `FacturasFiscales`.
+  2. Verificar la correlatividad del número de factura dentro de la autorización CAI vigente.
+  3. Garantizar el equilibrio estricto de partida doble (`Math.abs(debe - haber) <= 0.01`).
+- **Criterios de Aceptación:**
+  - Emisiones simultáneas de facturas no producen números de factura duplicados y conservan la secuencia CAI.
+- **Riesgo de Regresión:** Bajo.
+- **Dependencias:** `recordAccountingJournalEntry`, `createFiscalInvoice`, `LockService`.
+
+---
+
+### T-FIN-02 [P1] — Inalterabilidad contable y bloqueo de escritura en períodos fiscales cerrados
+
+- **Componentes relacionados:** `backend/accounting-service/Code.gs` (`recordAccountingJournalEntry`), `backend/user-service/Code.gs`.
+- **Problema detectado:** Se requiere impedir que usuarios o scripts registren asientos contables o facturas con fechas pertenecientes a ejercicios o períodos fiscales con estado `Cerrado`.
+- **Requisitos funcionales:**
+  1. Validar la fecha del asiento contable contra la tabla `CierresPeriodosContables`.
+  2. Rechazar la operación si el período está cerrado, permitiendo únicamente ajustes autorizados por Dirección con registro de auditoría.
+- **Criterios de Aceptación:**
+  - Intentar registrar un asiento en un mes contable cerrado devuelve una excepción de período bloqueado.
+- **Riesgo de Regresión:** Bajo.
+- **Dependencias:** `recordAccountingJournalEntry`, `CierresPeriodosContables`.
+
+---
+
+### T-FIN-03 [P1] — Idempotencia y prevención de duplicados en la revisión de comprobantes de pago
+
+- **Componentes relacionados:** `backend/accounting-service/Code.gs` (`reviewPaymentVoucher`), `backend/user-service/Code.gs`.
+- **Problema detectado:** La confirmación de comprobantes de pago reportados por las familias (`ComprobantesPago`) debe ser idempotente para evitar abonar dos veces al saldo del estudiante ante reintentos de red.
+- **Requisitos funcionales:**
+  1. Validar en `reviewPaymentVoucher` si el comprobante ya fue procesado (`Aprobado` o `Rechazado`).
+  2. Utilizar clave de deduplicación basada en `ComprobanteID` y número de referencia bancaria.
+- **Criterios de Aceptación:**
+  - Aprobar dos veces el mismo comprobante no duplica el abono en `CargosEstudiante` ni genera asientos duplicados.
+- **Riesgo de Regresión:** Bajo.
+- **Dependencias:** `reviewPaymentVoucher`, `CargosEstudiante`.
+
+---
+
+### T-FIN-04 [P1] — Verificación estricta de parámetros fiscales SAR (CAI, rangos y fecha límite)
+
+- **Componentes relacionados:** `backend/accounting-service/Code.gs` (`createFiscalInvoice`), `dashboard-contabilidad.html`.
+- **Problema detectado:** Las facturas emitidas deben validar que el número asignado se encuentre dentro del rango autorizado por el SAR y que la fecha de emisión sea anterior o igual a la `FechaLimiteEmision`.
+- **Requisitos funcionales:**
+  1. Verificar disponibilidad de correlativos dentro del rango autorizado (`RangoInicial` a `RangoFinal`).
+  2. Notificar al personal financiero cuando queden menos de 50 facturas disponibles en el rango CAI.
+- **Criterios de Aceptación:**
+  - Intentar emitir una factura con un rango CAI agotado o vencido bloquea la emisión e informa la necesidad de nuevo rango SAR.
+- **Riesgo de Regresión:** Bajo.
+- **Dependencias:** `FacturasFiscales`.
+
+---
+
+### T-FIN-05 [P1] — Separación de funciones y prevención de auto-aprobación en compras y egresos
+
+- **Componentes relacionados:** `backend/accounting-service/Code.gs` (`approvePurchaseOrder`), `backend/user-service/Code.gs`.
+- **Problema detectado:** Para mantener el control interno, el usuario que solicita una orden de compra o registra un gasto no puede ser el mismo que aprueba el pago.
+- **Requisitos funcionales:**
+  1. Validar en `approvePurchaseOrder` que `authUserId` sea diferente del creador de la orden de compra.
+  2. Exigir autorización de Dirección para órdenes de compra que superen el límite configurado.
+- **Criterios de Aceptación:**
+  - El creador de una orden de compra recibe un error si intenta auto-aprobarla.
+- **Riesgo de Regresión:** Bajo.
+- **Dependencias:** `OrdenesCompra`, `approvePurchaseOrder`.
+
+---
+
+### T-FIN-06 [P2] — Algoritmo asistido de conciliación bancaria y sugerencia de coincidencias
+
+- **Componentes relacionados:** `backend/accounting-service/Code.gs` (`performBankReconciliation`), `js/accounting.js`.
+- **Problema detectado:** Simplificar el proceso de conciliación bancaria mediante la coincidencia automática de extractos en formato CSV/Excel con los cobros y egresos registrados.
+- **Requisitos funcionales:**
+  1. Comparar extractos bancarios contra `ComprobantesPago` y `AsientosContables` por monto, fecha (+/- 3 días) y número de referencia.
+  2. Clasificar coincidencias en: Exacta, Probable, y Diferencia.
+- **Criterios de Aceptación:**
+  - El módulo de conciliación presenta sugerencias automáticas de coincidencia bancaria con porcentaje de certeza.
+- **Riesgo de Regresión:** Nulo.
+- **Dependencias:** `BancosConciliaciones`.
+
+---
+
+### T-FIN-07 [P2] — Estado de cuenta consolidado para familias multihijo y cobros conjuntos
+
+- **Componentes relacionados:** `backend/accounting-service/Code.gs` (`getStudentAccountStatement`), `backend/user-service/Code.gs` (`getGuardianStudents`).
+- **Problema detectado:** Permitir a los padres de familia con múltiples hijos matricular y pagar cuotas de varios estudiantes en una única transacción sin duplicar cobros.
+- **Requisitos funcionales:**
+  1. Consolidar los cargos activos en `getFamilyConsolidatedSummary`.
+  2. Permitir el desglose de abonos conjuntos asignando montos específicos por estudiante en `PagosAbonos`.
+- **Criterios de Aceptación:**
+  - El pago conjunto de una familia distribuye el abono correctamente entre los estados de cuenta de cada hijo.
+- **Riesgo de Regresión:** Bajo.
+- **Dependencias:** `CargosEstudiante`, `getGuardianStudents`.
+
+---
+
+### T-FIN-08 [P2] — Control de ejecución presupuestaria por centro de costo y alertas de desviación
+
+- **Componentes relacionados:** `backend/accounting-service/Code.gs` (`getBudgetExecutionReport`), `dashboard-contabilidad.html`.
+- **Problema detectado:** Evaluar la ejecución del presupuesto por departamento (Académico, Administración, Mantenimiento, Transporte) emitiendo alertas cuando un rubro supere el 90% del límite asignado.
+- **Requisitos funcionales:**
+  1. Agrupar gastos contabilizados por `CentroCosto` en `PresupuestosInstitucionales`.
+  2. Renderizar indicadores visuales de semáforo (Verde < 80%, Amarillo 80-95%, Rojo > 95%).
+- **Criterios de Aceptación:**
+  - El reporte de ejecución presupuestaria destaca en amarillo/rojo los centros de costo próximos a su límite.
+- **Riesgo de Regresión:** Nulo.
+- **Dependencias:** `PresupuestosInstitucionales`.
+
+---
+
+### T-FIN-09 [P2] — Arqueo y cierre de caja diario con registro de sobrantes y faltantes
+
+- **Componentes relacionados:** `backend/accounting-service/Code.gs` (`closeCashRegister`), `js/accounting.js`.
+- **Problema detectado:** El cierre de caja diario debe contrastar el saldo teórico (cobros en efectivo del día) con el conteo físico de valores, registrando diferencias.
+- **Requisitos funcionales:**
+  1. Registrar en `CierresCaja` el `MontoInicial`, `TotalIngresos`, `TotalEgresos`, `SaldoTeorico` y `SaldoRealEfectivo`.
+  2. Generar automáticamente un asiento contable de ajuste por sobrante o faltante de caja si existe diferencia.
+- **Criterios de Aceptación:**
+  - El cierre de caja calcula la diferencia entre el efectivo teórico y real y genera la partida contable de ajuste.
+- **Riesgo de Regresión:** Bajo.
+- **Dependencias:** `CierresCaja`, `recordAccountingJournalEntry`.
+
+---
+
+### T-FIN-10 [P2] — Contabilización automática de planillas de sueldos y cargas sociales
+
+- **Componentes relacionados:** `backend/accounting-service/Code.gs` (`calculatePayrollPeriod`), `js/accounting.js`.
+- **Problema detectado:** Al aprobar la planilla mensual de salarios, el sistema debe generar automáticamente el asiento contable de sueldos, retenciones (IHSS, RAP, ISR) y aportes patronales.
+- **Requisitos funcionales:**
+  1. Crear la rutina de contabilización de planilla vinculada a `AsientosContables`.
+  2. Debitar la cuenta de Gasto Sueldos y acreditar las cuentas de pasivo por retenciones e instituciones previsionales.
+- **Criterios de Aceptación:**
+  - La aprobación de la planilla mensual genera automáticamente el asiento contable por partida doble.
+- **Riesgo de Regresión:** Bajo.
+- **Dependencias:** `calculatePayrollPeriod`, `AsientosContables`.
+
+---
+
+### T-FIN-11 [P2] — Informe de antigüedad de saldos y morosidad de colegiaturas
+
+- **Componentes relacionados:** `backend/accounting-service/Code.gs`, `dashboard-contabilidad.html`.
+- **Problema detectado:** Generar el reporte de saldos pendientes por cobrar agrupados en intervalos de mora: Al día, 1-30 días, 31-60 días, 61-90 días, y más de 90 días.
+- **Requisitos funcionales:**
+  1. Calcular los días de atraso comparando `FechaVencimiento` contra la fecha actual en `CargosEstudiante`.
+  2. Exportar el informe clasificado a Excel/PDF para gestión de cobro.
+- **Criterios de Aceptación:**
+  - El reporte de morosidad clasifica adecuadamente los saldos vencidos por tramos de días de mora.
+- **Riesgo de Regresión:** Nulo.
+- **Dependencias:** `CargosEstudiante`.
+
+---
+
+### T-FIN-12 [P2] — Directorio de proveedores, retenciones tributarias y cuentas por pagar
+
+- **Componentes relacionados:** `backend/accounting-service/Code.gs` (`registerSupplier`), `dashboard-contabilidad.html`.
+- **Problema detectado:** Administrar el expediente de proveedores activos, incluyendo RTN, rubro y cálculo de retenciones del 12.5% ISR o ISV según ley hondureña.
+- **Requisitos funcionales:**
+  1. Registrar datos fiscales en `ProveedoresActivos`.
+  2. Aplicar la retención legal correspondiente al registrar facturas de compras de servicios profesionales.
+- **Criterios de Aceptación:**
+  - El registro de un pago a proveedor aplica automáticamente la retención fiscal correspondiente al rubro.
+- **Riesgo de Regresión:** Nulo.
+- **Dependencias:** `ProveedoresActivos`, `CuentasPorPagarGastos`.
+
+---
+
+### T-FIN-13 [P3] — Dashboard financiero consolidado con gráficos comparativos
+
+- **Componentes relacionados:** `js/accounting.js`, `js/ui-common.js` (`renderUniversalConfigurableChart`), `dashboard-contabilidad.html`.
+- **Problema detectado:** Presentar a la Dirección un panel financiero visual con tendencias de ingresos vs egresos, cobranza mensual y flujo de caja.
+- **Requisitos funcionales:**
+  1. Renderizar mediante `renderUniversalConfigurableChart` gráficos de barras y líneas con los ingresos y egresos del año lectivo.
+  2. Ofrecer selector de tipo de gráfico y exportación de datos.
+- **Criterios de Aceptación:**
+  - El dashboard financiero muestra tendencias mensuales de flujo de caja e ingresos consolidados.
+- **Riesgo de Regresión:** Nulo.
+- **Dependencias:** `renderUniversalConfigurableChart`.
+
+---
+
+### T-FIN-14 [P3] — Emisión e impresión de recibos oficiales de caja en PDF
+
+- **Componentes relacionados:** `backend/accounting-service/Code.gs` (`generatePaymentReceiptPDF`), `dashboard-contabilidad.html`.
+- **Problema detectado:** Generar el recibo oficial de caja en PDF para entregarlo al padre de familia tras la confirmación del pago de colegiatura.
+- **Requisitos funcionales:**
+  1. Implementar la plantilla de Recibo Oficial de Caja con sello digital, número correlativo, detalle de conceptos y marca de agua.
+  2. Habilitar la descarga directa desde el portal del estudiante y el panel de contabilidad.
+- **Criterios de Aceptación:**
+  - El recibo de caja PDF se emite con datos completos, desglose de cuotas pagadas e identificador único.
+- **Riesgo de Regresión:** Nulo.
+- **Dependencias:** `generatePaymentReceiptPDF`, `ComprobantesPago`.
+
+---
+
+### T-FIN-15 [P3] — Herramienta de conciliación entre cuentas auxiliares y libro mayor
+
+- **Componentes relacionados:** `backend/accounting-service/Code.gs`.
+- **Problema detectado:** Verificar la coincidencia matemática exacta entre la suma de cuentas por cobrar auxiliares de estudiantes y la cuenta del libro mayor `1102 - Cuentas por Cobrar Estudiantes`.
+- **Requisitos funcionales:**
+  1. Desarrollar la rutina `reconcileSubledgersWithGeneralLedger()`.
+  2. Detectar descalces entre saldos individuales y la cuenta sintética del mayor.
+- **Criterios de Aceptación:**
+  - La herramienta de conciliación identifica y reporta cualquier descalce entre auxiliares y mayor.
+- **Riesgo de Regresión:** Nulo.
+- **Dependencias:** `CargosEstudiante`, `AsientosContables`.
+
+---
+
+### T-FIN-16 [P3] — Respaldo inmutable e integridad de tablas contables y financieras
+
+- **Componentes relacionados:** `backend/accounting-service/Code.gs` (`createSystemBackup`, `restoreSystemBackup`).
+- **Problema detectado:** Garantizar que los respaldos del sistema incluyan la totalidad de tablas financieras (`PlanCuentas`, `AsientosContables`, `PresupuestosInstitucionales`, `FacturasFiscales`, `ComprobantesPago`, `BancosConciliaciones`, `CierresCaja`) y que la restauración mantenga intacta la inalterabilidad contable.
+- **Requisitos funcionales:**
+  1. Incluir todas las tablas financieras en el payload de `createSystemBackup`.
+  2. Validar que `restoreSystemBackup` verifique los saldos contables tras restaurar.
+- **Criterios de Aceptación:**
+  - El archivo de respaldo contiene el 100% de las transacciones financieras y la restauración conserva la igualdad de partida doble.
+- **Riesgo de Regresión:** Bajo.
+- **Dependencias:** `createSystemBackup`, `restoreSystemBackup`.
+
+---
+
+### ORDEN DE EJECUCIÓN RECOMENDADO FASE 14 (CONTABILIDAD Y FINANZAS)
+
+| Orden | Tarea | Prioridad | Dependencia principal |
+| :---: | :--- | :---: | :--- |
+| **1** | **T-FIN-01.** Control de concurrencia transaccional con LockService | **P1** | `recordAccountingJournalEntry` / `LockService` |
+| **2** | **T-FIN-02.** Inalterabilidad contable y bloqueo de períodos cerrados | **P1** | `CierresPeriodosContables` |
+| **3** | **T-FIN-03.** Idempotencia en la revisión de comprobantes de pago | **P1** | `reviewPaymentVoucher` |
+| **4** | **T-FIN-04.** Verificación estricta de parámetros fiscales SAR (CAI y rangos) | **P1** | `FacturasFiscales` |
+| **5** | **T-FIN-05.** Separación de funciones y prevención de auto-aprobación | **P1** | `approvePurchaseOrder` |
+| **6** | **T-FIN-06.** Algoritmo asistido de conciliación bancaria | **P2** | `BancosConciliaciones` |
+| **7** | **T-FIN-07.** Estado de cuenta consolidado para familias multihijo | **P2** | `getGuardianStudents` / `PagosAbonos` |
+| **8** | **T-FIN-08.** Control de ejecución presupuestaria por centro de costo | **P2** | `PresupuestosInstitucionales` |
+| **9** | **T-FIN-09.** Arqueo y cierre de caja diario con registro de diferencias | **P2** | `CierresCaja` |
+| **10** | **T-FIN-10.** Contabilización automática de planillas de sueldos | **P2** | `calculatePayrollPeriod` / `AsientosContables` |
+| **11** | **T-FIN-11.** Informe de antigüedad de saldos y morosidad | **P2** | `CargosEstudiante` |
+| **12** | **T-FIN-12.** Directorio de proveedores y retenciones tributarias | **P2** | `ProveedoresActivos` |
+| **13** | **T-FIN-13.** Dashboard financiero consolidado con gráficos comparativos | **P3** | Universal Chart Engine |
+| **14** | **T-FIN-14.** Emisión e impresión de recibos oficiales de caja en PDF | **P3** | `generatePaymentReceiptPDF` |
+| **15** | **T-FIN-15.** Herramienta de conciliación entre auxiliares y libro mayor | **P3** | Reconciliation Engine |
+| **16** | **T-FIN-16.** Respaldo inmutable e integridad de tablas financieras | **P3** | `createSystemBackup` |
