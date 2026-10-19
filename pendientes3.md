@@ -7763,3 +7763,252 @@ El destinatario puede abrir una comunicación y completar la acción solicitada 
 | **2** | **T-PAG-05**, **T-PAG-06**, **T-PAG-07**, **T-PAG-08**, **T-PAG-09**, **T-PAG-10** | Separación de funciones en anulaciones, pagos parciales/sobrepagos con recibos QR, tarifas/becas/mora, estado de cuenta consolidado multihijo, reglas de distribución de abonos y devoluciones. | `ROLE_PERMISSIONS` / `generatePaymentReceiptPDF` / `DescuentosBecas` / `getFamilyConsolidatedSummary` |
 | **3** | **T-PAG-11**, **T-PAG-12**, **T-PAG-13**, **T-PAG-14** | Visor de comprobantes adjuntos, control de autorizaciones SAR CAI, gestión segura de secretos de pasarela y sincronización contable por partida doble. | `uploadPaymentVoucher` / `createFiscalInvoice` / `IntegracionesProveedores` / `recordAccountingJournalEntry` |
 | **4** | **T-PAG-15**, **T-PAG-16** | Notificaciones automáticas de cobro y centro de control de morosidad con gráficos comparativos. | `BandejaNotificaciones` / Universal Chart Engine |
+
+
+## PLAN DE TRABAJO DETALLADO Y UNIFICADO: FASE DE RECURSOS HUMANOS Y ADMINISTRACIÓN DEL PERSONAL
+
+### T-RRHH-01 [P1] — Control de concurrencia transaccional con LockService en solicitudes de vacaciones y licencias
+
+- **Componentes relacionados:** `backend/accounting-service/Code.gs` (`reviewVacationRequest`, `submitVacationRequest`), `js/teacher.js`.
+- **Problema detectado:** Al procesar solicitudes de vacaciones en `SolicitudesVacaciones` y descontar los días autorizados del saldo acumulado en `ExpedientesLaborales`, el servidor requiere un bloqueo exclusivo mediante `LockService` para evitar saldos negativos por aprobaciones simultáneas.
+- **Requisitos funcionales:**
+  1. Adquirir `LockService.getScriptLock()` antes de actualizar `SolicitudesVacaciones` y `ExpedientesLaborales`.
+  2. Revalidar el saldo de días disponibles dentro del bloque protegido antes de aprobar.
+  3. Liberar el bloqueo en bloques `finally`.
+- **Criterios de Aceptación:**
+  - Aprobaciones concurrentes no generan saldos negativos de vacaciones ni duplican deducciones.
+- **Riesgo de Regresión:** Bajo.
+- **Dependencias:** `reviewVacationRequest`, `LockService`.
+
+---
+
+### T-RRHH-02 [P1] — Confidencialidad granular y aislamiento RBAC de expedientes laborales y datos médicos
+
+- **Componentes relacionados:** `backend/accounting-service/Code.gs` (`getEmployeeRecords`, `getEmployeeDocuments`), `backend/user-service/Code.gs`.
+- **Problema detectado:** Los datos salariales, antecedentes médicos (`IncapacidadesMedicas`) y contratos laborales privados deben aislarse para que solo sean consultables por el propio empleado, Recursos Humanos y Dirección.
+- **Requisitos funcionales:**
+  1. Validar en `getEmployeeRecords` y `getEmployeeDocuments` que `authUserId` coincida con el empleado o que posea el rol `RecursosHumanos` o `Director`.
+  2. Ocultar campos de salarios y diagnósticos médicos en respuestas entregadas a coordinadores u otros empleados.
+- **Criterios de Aceptación:**
+  - Intentos de consultar salarios o incapacidades de otros empleados devuelven error de permiso denegado.
+- **Riesgo de Regresión:** Bajo.
+- **Dependencias:** `getEmployeeRecords`, `assertRecordOwnership`.
+
+---
+
+### T-RRHH-03 [P1] — Desvinculación laboral trazable y revocación automática de accesos al sistema
+
+- **Componentes relacionados:** `backend/accounting-service/Code.gs` (`updateEmployeeLaborStatus`), `backend/user-service/Code.gs`.
+- **Problema detectado:** Al cambiar el estado laboral de un trabajador a `Baja` o `Desvinculado`, la plataforma debe suspender automáticamente sus credenciales de usuario en `CuentaUsuario` para evitar accesos indebidos post-empleo.
+- **Requisitos funcionales:**
+  1. Actualizar `EstadoLaboral` en `ExpedientesLaborales` e invocar la suspensión de cuenta en `CuentaUsuario`.
+  2. Registrar la fecha de baja, motivo de desvinculación y usuario autorizador en auditoría.
+- **Criterios de Aceptación:**
+  - La desvinculación de un empleado bloquea inmediatamente el inicio de sesión de su cuenta de usuario en todas las plataformas.
+- **Riesgo de Regresión:** Medio.
+- **Dependencias:** `updateEmployeeLaborStatus`, `manageAccountState`.
+
+---
+
+### T-RRHH-04 [P1] — Alertas automáticas por vencimiento de contratos laborales y licencias
+
+- **Componentes relacionados:** `backend/accounting-service/Code.gs` (`getEmployeeContracts`), `dashboard-recursos-humanos.html`.
+- **Problema detectado:** El departamento de RRHH requiere alertas preventivas antes del vencimiento de contratos temporales o licencias médicas para gestionar renovaciones oportunamente.
+- **Requisitos funcionales:**
+  1. Consultar contratos en `ContratosLaborales` con fecha de vencimiento dentro de los próximos 30 días.
+  2. Emitir avisos en la bandeja de Recursos Humanos y enviar notificación por correo.
+- **Criterios de Aceptación:**
+  - La bandeja de RRHH resalta los contratos laborales próximos a expirar en los siguientes 30 días.
+- **Riesgo de Regresión:** Nulo.
+- **Dependencias:** `ContratosLaborales`.
+
+---
+
+### T-RRHH-05 [P1] — Prevención de auto-aprobación en solicitudes de vacaciones y permisos laborales
+
+- **Componentes relacionados:** `backend/accounting-service/Code.gs` (`reviewVacationRequest`), `backend/user-service/Code.gs`.
+- **Problema detectado:** Un jefe de departamento o responsable de RRHH no puede aprobar sus propias solicitudes de vacaciones o permisos personales.
+- **Requisitos funcionales:**
+  1. Validar en `reviewVacationRequest` que `authUserId` sea diferente del solicitante (`EmpleadoID`).
+  2. Exigir la aprobación de Dirección para las solicitudes de jefes de departamento.
+- **Criterios de Aceptación:**
+  - El servidor rechaza cualquier intento de auto-aprobar una solicitud de vacaciones por parte del mismo solicitante.
+- **Riesgo de Regresión:** Bajo.
+- **Dependencias:** `reviewVacationRequest`, `ROLE_PERMISSIONS`.
+
+---
+
+### T-RRHH-06 [P2] — Registro de asistencia laboral, marcaje biométrico y geolocalización IP
+
+- **Componentes relacionados:** `backend/accounting-service/Code.gs` (`recordStaffCheckIn`), `dashboard-recursos-humanos.html`.
+- **Problema detectado:** Permitir el registro de entrada/salida del personal docente y administrativo validando el horario asignado e identificando la dirección IP o ubicación geográfica.
+- **Requisitos funcionales:**
+  1. Registrar en `HorariosLaborales` la hora exacta de marcaje, IP y tipo de registro (`Entrada`, `Salida Almuerzo`, `Entrada Almuerzo`, `Salida`).
+  2. Calcular automáticamente minutos de tardanza comparando contra la hora de inicio oficial de la jornada.
+- **Criterios de Aceptación:**
+  - El marcaje de personal registra la hora real de llegada y calcula los minutos de tardanza acumulados.
+- **Riesgo de Regresión:** Nulo.
+- **Dependencias:** `recordStaffCheckIn`.
+
+---
+
+### T-RRHH-07 [P2] — Módulo de solicitud, autorización y liquidación de horas extraordinarias
+
+- **Componentes relacionados:** `backend/accounting-service/Code.gs` (`calculateOvertime`, `reviewOvertimeRequest`), `js/teacher.js`.
+- **Problema detectado:** El tiempo extraordinario laborado por el personal debe contar con autorización previa por el jefe inmediato antes de abonarse en la planilla de sueldos.
+- **Requisitos funcionales:**
+  1. Registrar solicitudes de horas extras en `AprobacionHorasExtras` con motivo, fecha y cantidad de horas.
+  2. Recalcular el valor de la hora extra aplicando el recargo del 25%, 50% o 75% según el Código del Trabajo de Honduras.
+- **Criterios de Aceptación:**
+  - Las horas extras aprobadas se liquidan con el recargo legal correspondiente en la nómina del empleado.
+- **Riesgo de Regresión:** Nulo.
+- **Dependencias:** `AprobacionHorasExtras`.
+
+---
+
+### T-RRHH-08 [P2] — Motor de acumulación progresiva de vacaciones según legislación hondureña
+
+- **Componentes relacionados:** `backend/accounting-service/Code.gs` (`calculateVacationBalances`), `dashboard-recursos-humanos.html`.
+- **Problema detectado:** Calcular los días de vacaciones acumulados por año continuo de trabajo según el Art. 346 del Código del Trabajo (10 días 1er año, 12 días 2do año, 15 días 3er año, 20 días 4to año en adelante).
+- **Requisitos funcionales:**
+  1. Calcular la antigüedad del trabajador comparando `FechaIngreso` con la fecha actual.
+  2. Asignar la escala de días de vacaciones correspondiente y descontar las solicitudes aprobadas en `SolicitudesVacaciones`.
+- **Criterios de Aceptación:**
+  - El saldo de vacaciones disponible se calcula dinámicamente aplicando la escala legal de antigüedad.
+- **Riesgo de Regresión:** Nulo.
+- **Dependencias:** `calculateVacationBalances`.
+
+---
+
+### T-RRHH-09 [P2] — Gestión de incapacidades médicas y subsidios de la seguridad social (IHSS)
+
+- **Componentes relacionados:** `backend/accounting-service/Code.gs` (`recordMedicalLeave`), `dashboard-recursos-humanos.html`.
+- **Problema detectado:** Registrar las incapacidades por enfermedad o maternidad especificando los días cubiertos por el IHSS y los días a cargo de la institución.
+- **Requisitos funcionales:**
+  1. Almacenar en `IncapacidadesMedicas` los días de la incapacidad, número de certificado IHSS y tipo de licencia.
+  2. Excluir los días cubiertos por el IHSS del cálculo del pago de salario ordinario en la nómina.
+- **Criterios de Aceptación:**
+  - La incapacidad médica aprobada deduce el subsidio IHSS correspondiente en el cálculo de la planilla.
+- **Riesgo de Regresión:** Bajo.
+- **Dependencias:** `IncapacidadesMedicas`.
+
+---
+
+### T-RRHH-10 [P2] — Repositorio digital de documentos laborales y credenciales profesionales
+
+- **Componentes relacionados:** `backend/accounting-service/Code.gs` (`uploadEmployeeDocument`, `getEmployeeDocuments`), `dashboard-recursos-humanos.html`.
+- **Problema detectado:** Almacenar de forma segura la documentación personal del trabajador (títulos, hoja de vida, antecedentes penales, cédula) en Drive.
+- **Requisitos funcionales:**
+  1. Guardar archivos en `DocumentosLaborales` registrando `TipoDocumento`, `FechaVencimiento` y `DriveUrl`.
+  2. Alertar cuando un documento obligatorio (e.g. antecedente penal) haya vencido o falte en el expediente.
+- **Criterios de Aceptación:**
+  - El expediente laboral permite previsualizar y descargar la documentación respaldada en Drive con permisos verificados.
+- **Riesgo de Regresión:** Nulo.
+- **Dependencias:** `DocumentosLaborales`.
+
+---
+
+### T-RRHH-11 [P2] — Designación de coordinadores de área y delimitación de alcance operativo
+
+- **Componentes relacionados:** `backend/academic-service/Code.gs`, `backend/user-service/Code.gs`.
+- **Problema detectado:** Designar docentes como coordinadores académicos de departamento (e.g. Matemáticas, Ciencias) asignándoles facultades de supervisión acotadas a su área.
+- **Requisitos funcionales:**
+  1. Configurar la adscripción en `EspecialidadesDocentes` o `CoordinacionesArea`.
+  2. Otorgar permisos de lectura y revisión de planificaciones únicamente para los docentes de su departamento.
+- **Criterios de Aceptación:**
+  - El coordinador de área visualiza y supervisa exclusivamente los docentes y asignaturas de su departamento asignado.
+- **Riesgo de Regresión:** Nulo.
+- **Dependencias:** `ROLE_PERMISSIONS`.
+
+---
+
+### T-RRHH-12 [P2] — Organigrama institucional interactivo y jerarquía organizativa
+
+- **Componentes relacionados:** `dashboard-recursos-humanos.html`, `js/ui-common.js`.
+- **Problema detectado:** Renderizar la estructura jerárquica de la institución con dependencias entre Dirección, Coordinaciones, Departamentos y Personal.
+- **Requisitos funcionales:**
+  1. Construir la vista de organigrama interactivo utilizando los cargos y jefaturas registradas en `ExpedientesLaborales`.
+  2. Permitir filtrar la estructura por sede y departamento.
+- **Criterios de Aceptación:**
+  - El organigrama representa gráficamente las relaciones de dependencia jerárquica del personal.
+- **Riesgo de Regresión:** Nulo.
+- **Dependencias:** `ExpedientesLaborales`.
+
+---
+
+### T-RRHH-13 [P3] — Dashboard de indicadores de personal, ausentismo y rotación
+
+- **Componentes relacionados:** `backend/accounting-service/Code.gs` (`getHRDashboardAnalytics`), `js/ui-common.js` (`renderUniversalConfigurableChart`), `dashboard-recursos-humanos.html`.
+- **Problema detectado:** Ofrecer a la Dirección métricas consolidadas sobre la tasa de rotación de personal, índice de ausentismo, distribución por género y vencimientos de contratos.
+- **Requisitos funcionales:**
+  1. Renderizar mediante `renderUniversalConfigurableChart` gráficos de barras y torta con los datos demográficos y laborales.
+  2. Calcular el porcentaje mensual de ausentismo docente sobre la jornada contratada.
+- **Criterios de Aceptación:**
+  - El dashboard de RRHH presenta indicadores visuales de rotación, ausentismo y estado de contratos.
+- **Riesgo de Regresión:** Nulo.
+- **Dependencias:** `renderUniversalConfigurableChart`.
+
+---
+
+### T-RRHH-14 [P3] — Emisión de la Ficha del Expediente Único del Empleado en PDF
+
+- **Componentes relacionados:** `backend/accounting-service/Code.gs` (`generateSchoolDocument`), `dashboard-recursos-humanos.html`.
+- **Problema detectado:** Emitir la Ficha Laboral Oficial del Empleado en PDF con la hoja de vida, historial de cargos, capacitaciones y contratos.
+- **Requisitos funcionales:**
+  1. Crear la plantilla `FichaEmpleado` en `generateSchoolDocument`.
+  2. Restringir la generación del documento exclusivamente al personal autorizado de RRHH y al propio trabajador.
+- **Criterios de Aceptación:**
+  - El PDF de la ficha de empleado se emite con los datos completos del trabajador y marca de agua confidencial.
+- **Riesgo de Regresión:** Nulo.
+- **Dependencias:** `generateSchoolDocument`, `ExpedientesLaborales`.
+
+---
+
+### T-RRHH-15 [P3] — Herramienta de conciliación entre marcajes de asistencia y liquidación salarial
+
+- **Componentes relacionados:** `backend/accounting-service/Code.gs`.
+- **Problema detectado:** Verificar que las tardanzas, ausencias injustificadas y horas extras aprobadas coincidan con los montos calculados en la planilla mensual de sueldos.
+- **Requisitos funcionales:**
+  1. Desarrollar la rutina `reconcileAttendanceWithPayroll()`.
+  2. Detectar descalces entre minutos de tardanza acumulados y deducciones aplicadas en nómina.
+- **Criterios de Aceptación:**
+  - La herramienta de conciliación identifica discrepancias entre los marcajes de asistencia y la planilla calculada.
+- **Riesgo de Regresión:** Nulo.
+- **Dependencias:** `HorariosLaborales`, `PlanillasNomenclatura`.
+
+---
+
+### T-RRHH-16 [P3] — Respaldo inmutable e integridad de expedientes y contratos laborales
+
+- **Componentes relacionados:** `backend/accounting-service/Code.gs` (`createSystemBackup`, `restoreSystemBackup`).
+- **Problema detectado:** Garantizar que los backups globales del sistema incluyan la totalidad de tablas de Recursos Humanos (`ExpedientesLaborales`, `ContratosLaborales`, `SolicitudesVacaciones`, `IncapacidadesMedicas`, `DocumentosLaborales`).
+- **Requisitos funcionales:**
+  1. Incluir todas las tablas de personal en `createSystemBackup`.
+  2. Verificar que `restoreSystemBackup` restaure las relaciones laborales conservando los controles RBAC de acceso restringido.
+- **Criterios de Aceptación:**
+  - El archivo de respaldo contiene el 100% de los expedientes de personal y contratos, y la restauración conserva las restricciones de confidencialidad.
+- **Riesgo de Regresión:** Bajo.
+- **Dependencias:** `createSystemBackup`, `restoreSystemBackup`.
+
+---
+
+### ORDEN DE EJECUCIÓN RECOMENDADO FASE 16 (RECURSOS HUMANOS)
+
+| Orden | Tarea | Prioridad | Dependencia principal |
+| :---: | :--- | :---: | :--- |
+| **1** | **T-RRHH-01.** Control de concurrencia transaccional en vacaciones | **P1** | `reviewVacationRequest` / `LockService` |
+| **2** | **T-RRHH-02.** Confidencialidad granular y aislamiento RBAC de expedientes | **P1** | `getEmployeeRecords` / RBAC |
+| **3** | **T-RRHH-03.** Desvinculación laboral trazable y revocación de accesos | **P1** | `updateEmployeeLaborStatus` |
+| **4** | **T-RRHH-04.** Alertas automáticas por vencimiento de contratos | **P1** | `ContratosLaborales` |
+| **5** | **T-RRHH-05.** Prevención de auto-aprobación en vacaciones y permisos | **P1** | `ROLE_PERMISSIONS` |
+| **6** | **T-RRHH-06.** Registro de asistencia laboral, marcaje biométrico e IP | **P2** | `recordStaffCheckIn` |
+| **7** | **T-RRHH-07.** Módulo de solicitud, autorización y liquidación de horas extras | **P2** | `AprobacionHorasExtras` |
+| **8** | **T-RRHH-08.** Motor de acumulación de vacaciones según ley hondureña | **P2** | `calculateVacationBalances` |
+| **9** | **T-RRHH-09.** Gestión de incapacidades médicas y subsidios IHSS | **P2** | `IncapacidadesMedicas` |
+| **10** | **T-RRHH-10.** Repositorio digital de documentos laborales | **P2** | `DocumentosLaborales` |
+| **11** | **T-RRHH-11.** Designación de coordinadores de área y alcance operativo | **P2** | `ROLE_PERMISSIONS` |
+| **12** | **T-RRHH-12.** Organigrama institucional interactivo | **P2** | `ExpedientesLaborales` / UI |
+| **13** | **T-RRHH-13.** Dashboard de indicadores de personal y rotación | **P3** | Universal Chart Engine |
+| **14** | **T-RRHH-14.** Emisión de Ficha del Expediente Único de Empleado PDF | **P3** | `generateSchoolDocument` |
+| **15** | **T-RRHH-15.** Conciliación entre marcajes de asistencia y planilla | **P3** | Reconciliation Engine |
+| **16** | **T-RRHH-16.** Respaldo inmutable e integridad de expedientes laborales | **P3** | `createSystemBackup` |

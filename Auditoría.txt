@@ -1589,3 +1589,33 @@ Hallazgos principales:
 
 Estado general: AUDITORÍA COMPLETADA - TAREAS T-PAG-01 A T-PAG-16 REGISTRADAS EN PENDIENTES3.MD.
 ================================================================================
+
+================================================================================
+AUDITORÍA FUNCIONAL Y TÉCNICA: FASE 16 — RECURSOS HUMANOS Y PERSONAL
+================================================================================
+
+Subcapacidades evaluadas:
+1. Expedientes de empleados y docentes
+2. Estructura organizativa: departamentos, cargos, áreas y relaciones laborales
+3. Creación y asignación de roles internos, coordinadores de área y responsables
+4. Asignación de docentes a áreas académicas, asignaturas y responsabilidades
+5. Contratación, incorporación, cambios de puesto, traslados y desvinculación
+6. Contratos laborales, documentación, vencimientos y renovaciones
+7. Evaluaciones de desempeño, objetivos y seguimiento profesional
+8. Horarios laborales, turnos, jornadas y planificación de personal
+9. Asistencia, puntualidad, horas trabajadas, incidencias y horas extraordinarias
+10. Vacaciones, permisos, ausencias y licencias
+11. Formación profesional, capacitaciones, certificaciones y credenciales
+12. Integración con planillas, contabilidad, horarios académicos y asistencia
+13. Confidencialidad de expedientes, permisos, protección de datos y trazabilidad
+14. Búsquedas, filtros, reportes, alertas y operaciones masivas
+15. Integridad de datos, automatizaciones, concurrencia y pruebas de regresión
+
+Hallazgos principales:
+- Verificadas las estructuras de gestión de personal en `backend/accounting-service/Code.gs` (`ExpedientesLaborales`, `ContratosLaborales`, `SolicitudesVacaciones`, `IncapacidadesMedicas`, `HorariosLaborales`, `DocumentosLaborales`).
+- Operativos los endpoints para creación de expedientes (`createEmployeeRecord`), contratos (`manageEmployeeContract`), estado laboral (`updateEmployeeLaborStatus`), revisión de vacaciones (`reviewVacationRequest`), marcaje laboral (`recordStaffCheckIn`) y horas extras (`reviewOvertimeRequest`).
+- Verificada la adscripción de coordinadores de área en `backend/academic-service/Code.gs` e integración con planillas en `backend/accounting-service/Code.gs`.
+- Planificadas e integradas las tareas de resolución T-RRHH-01 a T-RRHH-16 en `pendientes3.md`.
+
+Estado general: AUDITORÍA COMPLETADA - TAREAS T-RRHH-01 A T-RRHH-16 REGISTRADAS EN PENDIENTES3.MD.
+================================================================================
