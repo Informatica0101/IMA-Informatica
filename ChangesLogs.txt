@@ -102,3 +102,28 @@ Archivos Modificados:
 
 5. Pendientes.md
    - Actualización del estado de [X] TAREA RH-08. Implementar la planificación de necesidades de personal.
+
+-------------------------------------------------------------------------------
+FECHA: Octubre 2026
+TAREA: [TAREA RH-09] Completar la gestión visual de turnos y sustituciones
+-------------------------------------------------------------------------------
+
+Archivos Modificados:
+1. backend/accounting-service/Code.gs
+   - Linea 192: Adición de permisos "manageWorkShiftAndSubstitution", "getWorkShiftsAndSubstitutionsHistory" en ROLE_PERMISSIONS para rol RecursosHumanos.
+   - Lineas 338, 339: Adición de dispatchers en doPost para acciones manageWorkShiftAndSubstitution, getWorkShiftsAndSubstitutionsHistory.
+   - Lineas 6077-6330: Implementación de funciones backend manageWorkShiftAndSubstitution y getWorkShiftsAndSubstitutionsHistory con comentario identificativo de tarea. Módulo de asignación de turnos laborales, registro de sustituciones de personal e historial trazable unificado con horas extras.
+
+2. dashboard-recursos-humanos.html
+   - Linea 70: Adición de botón #btn-turnos-sustituciones en la barra principal de acciones.
+   - Lineas 375-500: Adición de modal #modal-turnos-sustituciones con pestañas de Asignar Turno Laboral, Registrar Sustitución e Historial Turnos & Sustituciones.
+   - Lineas 1415-1850: Implementación de controladores JavaScript para apertura de modal, formularios de registro (manageWorkShiftAndSubstitution) y renderizado dinámico con refreshWorkShiftsSubstitutionsModuleData.
+
+3. MapaDependencias.md
+   - Adición de documentación de tablas y funciones del Módulo de Gestión Visual de Turnos y Sustituciones (TAREA RH-09).
+
+4. Auditoria.txt
+   - Migración de [TAREA RH-09] del Grupo 3 (Tareas Pendientes) al Grupo 1 (Tareas Completadas) como ítem 46.
+
+5. Pendientes.md
+   - Actualización del estado de [X] TAREA RH-09. Completar la gestión visual de turnos y sustituciones.

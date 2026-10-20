@@ -210,6 +210,11 @@ GRUPO 1: TAREAS COMPLETADAS
     - Archivo Frontend: dashboard-recursos-humanos.html (Línea 67 `#btn-planificacion-personal`, Línea 275 `#modal-planificacion-personal`, Línea 1487 `refreshStaffingPlanningModuleData`)
     - Descripción: Módulo completo de proyección y planificación de necesidades de personal por periodo, área, puesto y escenario de matrícula, comparativa automatizada de activos requeridos vs disponibles y vacantes abiertas, e informes trazables de justificación sin crear contratos ni modificar horarios automáticamente.
 
+46. [TAREA RH-09] Completar la gestión visual de turnos y sustituciones
+    - Archivo: backend/accounting-service/Code.gs (Línea 6077 `manageWorkShiftAndSubstitution`, `getWorkShiftsAndSubstitutionsHistory`)
+    - Archivo Frontend: dashboard-recursos-humanos.html (Línea 70 `#btn-turnos-sustituciones`, Línea 375 `#modal-turnos-sustituciones`, Línea 1790 `refreshWorkShiftsSubstitutionsModuleData`)
+    - Descripción: Módulo visual para la gestión y asignación de turnos laborales, registro de sustituciones de personal con identificación del colaborador sustituido y sustituto, trazabilidad con solicitudes de horas extras e historial unificado.
+
 
 -------------------------------------------------------------------------------
 GRUPO 2: TAREAS INCOMPLETAS
@@ -225,7 +230,6 @@ GRUPO 3: TAREAS PENDIENTES / NO INICIADAS
 (Registradas en el backlog pero no iniciadas ni presentes en el código)
 -------------------------------------------------------------------------------
 
-26. TAREA RH-09: Completar la gestión visual de turnos y sustituciones
 27. TAREA RH-10: Verificar y completar el portal de autoservicio del empleado
 28. TAREA RH-11: Verificar la preparación de información laboral y fiscal
 29. TAREA RH-12: Pruebas de integración y regresión de Recursos Humanos

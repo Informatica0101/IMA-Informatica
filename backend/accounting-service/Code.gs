@@ -189,7 +189,7 @@ const ROLE_PERMISSIONS = {
   // REVISIÓN RBAC: Habilitar permiso processFamilyCreditPurchase para personal de tienda, cafetería, tutores y estudiantes
   "EncargadoTienda": ["getStoreProducts", "manageStoreProduct", "createStoreOrder", "getStoreOrders", "updateStoreOrderStatus", "recordInventoryMovement", "getInventoryKardex", "getInstitutionalPolicies", "processFamilyCreditPurchase"],
   "EncargadoCafeteria": ["getCafeteriaMenu", "manageCafeteriaMenu", "createCafeteriaOrder", "getCafeteriaOrders", "updateCafeteriaOrderStatus", "recordInventoryMovement", "getInventoryKardex", "getInstitutionalPolicies", "processFamilyCreditPurchase"],
-  "RecursosHumanos": ["createEmployeeRecord", "getEmployeeRecords", "manageEmployeeContract", "getEmployeeContracts", "getEmployeeContractAlerts", "manageJobVacancy", "getJobVacancies", "submitJobCandidate", "getJobCandidates", "manageInterviewSchedule", "getInterviewSchedules", "updateEmployeeLaborStatus", "configureWorkSchedule", "recordStaffCheckIn", "getStaffAttendanceLogs", "submitAttendanceCorrection", "reviewAttendanceCorrection", "submitLeaveVacationRequest", "getLeaveVacationRequests", "reviewLeaveVacationRequest", "calculateVacationBalances", "recordMedicalLeave", "calculatePayrollPeriod", "updatePayrollPeriodStatus", "getPayrollPeriodSummary", "requestEmployeeLoanAdvance", "getEmployeeLoansAdvances", "approveEmployeeLoanAdvance", "getLoanAmortizationSchedule", "generatePayrollReceiptPDF", "uploadEmployeeDocument", "getEmployeeDocuments", "getHRDashboardAnalytics", "getInstitutionalPolicies", "managePerformancePeriod", "managePerformanceCriteria", "managePerformanceEvaluation", "getPerformanceEvaluations", "manageTrainingCourse", "manageTrainingEnrollment", "getEmployeeTrainingHistory", "manageProfessionalDevelopmentPlan", "getTrainingAnalyticsReport", "manageLaborIncident", "manageDisciplinaryMeasure", "getLaborIncidentsHistory", "manageStaffingNeeds", "getStaffingNeedsPlanning"],
+  "RecursosHumanos": ["createEmployeeRecord", "getEmployeeRecords", "manageEmployeeContract", "getEmployeeContracts", "getEmployeeContractAlerts", "manageJobVacancy", "getJobVacancies", "submitJobCandidate", "getJobCandidates", "manageInterviewSchedule", "getInterviewSchedules", "updateEmployeeLaborStatus", "configureWorkSchedule", "recordStaffCheckIn", "getStaffAttendanceLogs", "submitAttendanceCorrection", "reviewAttendanceCorrection", "submitLeaveVacationRequest", "getLeaveVacationRequests", "reviewLeaveVacationRequest", "calculateVacationBalances", "recordMedicalLeave", "calculatePayrollPeriod", "updatePayrollPeriodStatus", "getPayrollPeriodSummary", "requestEmployeeLoanAdvance", "getEmployeeLoansAdvances", "approveEmployeeLoanAdvance", "getLoanAmortizationSchedule", "generatePayrollReceiptPDF", "uploadEmployeeDocument", "getEmployeeDocuments", "getHRDashboardAnalytics", "getInstitutionalPolicies", "managePerformancePeriod", "managePerformanceCriteria", "managePerformanceEvaluation", "getPerformanceEvaluations", "manageTrainingCourse", "manageTrainingEnrollment", "getEmployeeTrainingHistory", "manageProfessionalDevelopmentPlan", "getTrainingAnalyticsReport", "manageLaborIncident", "manageDisciplinaryMeasure", "getLaborIncidentsHistory", "manageStaffingNeeds", "getStaffingNeedsPlanning", "manageWorkShiftAndSubstitution", "getWorkShiftsAndSubstitutionsHistory"],
   "Empleado": ["getEmployeeRecords", "getEmployeeContracts", "recordStaffCheckIn", "getStaffAttendanceLogs", "submitAttendanceCorrection", "submitLeaveVacationRequest", "getLeaveVacationRequests", "requestEmployeeLoanAdvance", "getEmployeeLoansAdvances", "generatePayrollReceiptPDF", "getEmployeeDocuments", "getPerformanceEvaluations", "getEmployeeTrainingHistory", "manageProfessionalDevelopmentPlan"],
   "Padre": ["getStudentAccountStatement", "uploadPaymentVoucher", "getPaymentVouchers", "generatePaymentReceiptPDF", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getLibraryBooks", "getLibraryLoans", "reserveLibraryBook", "getLibraryReservations", "getDigitalResources", "getTransportRoutes", "getTransportAssignments", "getSchoolDocumentTemplates", "generateSchoolDocument", "getIssuedSchoolDocuments", "getStoreProducts", "createStoreOrder", "getStoreOrders", "getCafeteriaMenu", "createCafeteriaOrder", "getCafeteriaOrders", "getFamilyCreditAuthorizations", "configureFamilyCreditAuthorization", "processFamilyCreditPurchase"],
   "Tutor": ["getStudentAccountStatement", "uploadPaymentVoucher", "getPaymentVouchers", "generatePaymentReceiptPDF", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getLibraryBooks", "getLibraryLoans", "reserveLibraryBook", "getLibraryReservations", "getDigitalResources", "getTransportRoutes", "getTransportAssignments", "getSchoolDocumentTemplates", "generateSchoolDocument", "getIssuedSchoolDocuments", "getStoreProducts", "createStoreOrder", "getStoreOrders", "getCafeteriaMenu", "createCafeteriaOrder", "getCafeteriaOrders", "getFamilyCreditAuthorizations", "configureFamilyCreditAuthorization", "processFamilyCreditPurchase"],
@@ -335,6 +335,8 @@ function doPost(e) {
       case "getLaborIncidentsHistory": result = getLaborIncidentsHistory(payload); break;
       case "manageStaffingNeeds": result = manageStaffingNeeds(payload); break;
       case "getStaffingNeedsPlanning": result = getStaffingNeedsPlanning(payload); break;
+      case "manageWorkShiftAndSubstitution": result = manageWorkShiftAndSubstitution(payload); break;
+      case "getWorkShiftsAndSubstitutionsHistory": result = getWorkShiftsAndSubstitutionsHistory(payload); break;
       case "submitLeaveVacationRequest": result = submitLeaveVacationRequest(payload); break;
       case "submitVacationRequest": result = submitVacationRequest(payload); break;
       case "getLeaveVacationRequests": result = getLeaveVacationRequests(payload); break;
@@ -6070,6 +6072,256 @@ function getAssetAssignments(payload) {
   return {
     status: "success",
     asignaciones: mapped
+  };
+}
+
+// TAREA RH-09: Completar la gestión visual de turnos y sustituciones
+function manageWorkShiftAndSubstitution(payload) {
+  const {
+    tipoOperacion,
+    registroId,
+    empleadoId,
+    empleadoSustituidoId,
+    nombreTurno,
+    fechaInicio,
+    fechaFin,
+    horaEntrada,
+    horaSalida,
+    motivoSustitucion,
+    departamentoArea,
+    estado,
+    creadoPor
+  } = payload || {};
+
+  if (!tipoOperacion || !empleadoId || !fechaInicio || !fechaFin) {
+    throw new Error("tipoOperacion, empleadoId, fechaInicio y fechaFin son campos obligatorios.");
+  }
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const nowStr = new Date().toISOString();
+
+  if (tipoOperacion === "RegistrarSustitucion") {
+    if (!empleadoSustituidoId) throw new Error("Para registrar una sustitución se requiere empleadoSustituidoId.");
+
+    const sheet = getOrCreateSheet(ss, "SustitucionesPersonal");
+    if (sheet.getLastRow() === 0) {
+      sheet.appendRow([
+        "SustitucionID",
+        "EmpleadoSustitutoID",
+        "EmpleadoSustituidoID",
+        "FechaInicio",
+        "FechaFin",
+        "HoraEntrada",
+        "HoraSalida",
+        "MotivoSustitucion",
+        "DepartamentoArea",
+        "Estado",
+        "CreadoPor",
+        "FechaCreacion",
+        "UltimaModificacion"
+      ]);
+    }
+
+    const data = sheet.getDataRange().getValues();
+    const sustId = registroId || ("SUST-PERS-" + Date.now());
+    let foundIdx = -1;
+
+    for (let i = 1; i < data.length; i++) {
+      if (String(data[i][0]).trim() === String(sustId).trim()) {
+        foundIdx = i + 1;
+        break;
+      }
+    }
+
+    const stFinal = estado || "Confirmada";
+
+    if (foundIdx > 0) {
+      sheet.getRange(foundIdx, 2).setValue(empleadoId);
+      sheet.getRange(foundIdx, 3).setValue(empleadoSustituidoId);
+      sheet.getRange(foundIdx, 4).setValue(fechaInicio);
+      sheet.getRange(foundIdx, 5).setValue(fechaFin);
+      sheet.getRange(foundIdx, 6).setValue(horaEntrada || "07:00");
+      sheet.getRange(foundIdx, 7).setValue(horaSalida || "15:00");
+      sheet.getRange(foundIdx, 8).setValue(motivoSustitucion || "Permiso/Incapacidad");
+      sheet.getRange(foundIdx, 9).setValue(departamentoArea || "General");
+      sheet.getRange(foundIdx, 10).setValue(stFinal);
+      sheet.getRange(foundIdx, 13).setValue(nowStr);
+    } else {
+      sheet.appendRow([
+        sustId,
+        empleadoId,
+        empleadoSustituidoId,
+        fechaInicio,
+        fechaFin,
+        horaEntrada || "07:00",
+        horaSalida || "15:00",
+        motivoSustitucion || "Permiso/Incapacidad",
+        departamentoArea || "General",
+        stFinal,
+        creadoPor || "RecursosHumanos",
+        nowStr,
+        nowStr
+      ]);
+    }
+
+    return {
+      status: "success",
+      message: "Sustitución de personal registrada correctamente.",
+      data: { sustitucionId: sustId, empleadoSustitutoId: empleadoId, empleadoSustituidoId, estado: stFinal }
+    };
+  } else {
+    // AsignarTurno
+    const sheet = getOrCreateSheet(ss, "AsignacionesTurnosLaborales");
+    if (sheet.getLastRow() === 0) {
+      sheet.appendRow([
+        "AsignacionTurnoID",
+        "EmpleadoID",
+        "NombreTurno",
+        "FechaInicio",
+        "FechaFin",
+        "HoraEntrada",
+        "HoraSalida",
+        "DepartamentoArea",
+        "Estado",
+        "CreadoPor",
+        "FechaCreacion",
+        "UltimaModificacion"
+      ]);
+    }
+
+    const data = sheet.getDataRange().getValues();
+    const asgnId = registroId || ("ASGN-TURNO-" + Date.now());
+    let foundIdx = -1;
+
+    for (let i = 1; i < data.length; i++) {
+      if (String(data[i][0]).trim() === String(asgnId).trim()) {
+        foundIdx = i + 1;
+        break;
+      }
+    }
+
+    const stFinal = estado || "Asignado";
+
+    if (foundIdx > 0) {
+      sheet.getRange(foundIdx, 2).setValue(empleadoId);
+      sheet.getRange(foundIdx, 3).setValue(nombreTurno || "Turno Regular");
+      sheet.getRange(foundIdx, 4).setValue(fechaInicio);
+      sheet.getRange(foundIdx, 5).setValue(fechaFin);
+      sheet.getRange(foundIdx, 6).setValue(horaEntrada || "07:00");
+      sheet.getRange(foundIdx, 7).setValue(horaSalida || "15:00");
+      sheet.getRange(foundIdx, 8).setValue(departamentoArea || "General");
+      sheet.getRange(foundIdx, 9).setValue(stFinal);
+      sheet.getRange(foundIdx, 12).setValue(nowStr);
+    } else {
+      sheet.appendRow([
+        asgnId,
+        empleadoId,
+        nombreTurno || "Turno Regular",
+        fechaInicio,
+        fechaFin,
+        horaEntrada || "07:00",
+        horaSalida || "15:00",
+        departamentoArea || "General",
+        stFinal,
+        creadoPor || "RecursosHumanos",
+        nowStr,
+        nowStr
+      ]);
+    }
+
+    return {
+      status: "success",
+      message: "Turno laboral asignado correctamente.",
+      data: { asignacionTurnoId: asgnId, empleadoId, nombreTurno, estado: stFinal }
+    };
+  }
+}
+
+function getWorkShiftsAndSubstitutionsHistory(payload) {
+  const { empleadoId, departamentoArea } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+
+  // 1. Asignaciones de Turnos
+  const turnosSheet = getOrCreateSheet(ss, "AsignacionesTurnosLaborales");
+  const turnosData = turnosSheet.getDataRange().getValues();
+  let turnos = [];
+
+  if (turnosData.length > 1) {
+    turnos = turnosData.slice(1).filter(r => {
+      if (empleadoId && String(r[1]).trim() !== String(empleadoId).trim()) return false;
+      if (departamentoArea && String(r[7]).toLowerCase() !== String(departamentoArea).toLowerCase()) return false;
+      return true;
+    }).map(r => ({
+      asignacionTurnoId: r[0],
+      empleadoId: r[1],
+      nombreTurno: r[2],
+      fechaInicio: r[3],
+      fechaFin: r[4],
+      horaEntrada: r[5],
+      horaSalida: r[6],
+      departamentoArea: r[7],
+      estado: r[8],
+      creadoPor: r[9],
+      fechaCreacion: r[10]
+    }));
+  }
+
+  // 2. Sustituciones
+  const sustSheet = getOrCreateSheet(ss, "SustitucionesPersonal");
+  const sustData = sustSheet.getDataRange().getValues();
+  let sustituciones = [];
+
+  if (sustData.length > 1) {
+    sustituciones = sustData.slice(1).filter(r => {
+      if (empleadoId && String(r[1]).trim() !== String(empleadoId).trim() && String(r[2]).trim() !== String(empleadoId).trim()) return false;
+      if (departamentoArea && String(r[8]).toLowerCase() !== String(departamentoArea).toLowerCase()) return false;
+      return true;
+    }).map(r => ({
+      sustitucionId: r[0],
+      empleadoSustitutoId: r[1],
+      empleadoSustituidoId: r[2],
+      fechaInicio: r[3],
+      fechaFin: r[4],
+      horaEntrada: r[5],
+      horaSalida: r[6],
+      motivoSustitucion: r[7],
+      departamentoArea: r[8],
+      estado: r[9],
+      creadoPor: r[10],
+      fechaCreacion: r[11]
+    }));
+  }
+
+  // 3. Solicitudes Horas Extras
+  const otSheet = getOrCreateSheet(ss, "SolicitudesHorasExtras");
+  const otData = otSheet.getDataRange().getValues();
+  let horasExtras = [];
+
+  if (otData.length > 1) {
+    horasExtras = otData.slice(1).filter(r => {
+      if (empleadoId && String(r[1]).trim() !== String(empleadoId).trim()) return false;
+      return true;
+    }).map(r => ({
+      solicitudId: r[0],
+      empleadoId: r[1],
+      fecha: r[2],
+      horasSolicitadas: r[3],
+      motivo: r[4],
+      estado: r[5],
+      aprobadoPor: r[6]
+    }));
+  }
+
+  return {
+    status: "success",
+    data: {
+      turnos,
+      sustituciones,
+      horasExtras,
+      totalTurnos: turnos.length,
+      totalSustituciones: sustituciones.length,
+      totalHorasExtras: horasExtras.length
+    }
   };
 }
 

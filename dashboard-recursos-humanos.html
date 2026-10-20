@@ -67,6 +67,9 @@
                 <button id="btn-planificacion-personal" class="px-4 py-2.5 bg-teal-600 text-white rounded-2xl font-bold text-xs uppercase tracking-widest hover:bg-teal-700 transition-all shadow-md">
                     <i class="fa-solid fa-users-gear mr-1.5"></i> Planificación Necesidades
                 </button>
+                <button id="btn-turnos-sustituciones" class="px-4 py-2.5 bg-amber-600 text-white rounded-2xl font-bold text-xs uppercase tracking-widest hover:bg-amber-700 transition-all shadow-md">
+                    <i class="fa-solid fa-clock-rotate-left mr-1.5"></i> Turnos &amp; Sustituciones
+                </button>
                 <button id="btn-calcular-planilla" class="px-4 py-2.5 bg-emerald-600 text-white rounded-2xl font-bold text-xs uppercase tracking-widest hover:bg-emerald-700 transition-all shadow-md">
                     <i class="fa-solid fa-calculator mr-1.5"></i> Calcular Planilla
                 </button>
@@ -363,6 +366,133 @@
                         <p class="text-xs text-teal-800">Las necesidades registradas sirven como sustento técnico para la apertura de vacantes. Este módulo compara datos reales de empleados activos sin crear vacantes ni contratos automáticamente.</p>
                     </div>
                     <div id="list-plan-proyecciones" class="space-y-3"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- [TAREA RH-09] Modal para Gestión Visual de Turnos y Sustituciones -->
+    <div id="modal-turnos-sustituciones" class="fixed inset-0 z-[110] hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white rounded-[2.5rem] max-w-4xl w-full max-h-[90vh] overflow-y-auto p-6 md:p-8 shadow-2xl border border-gray-100">
+            <div class="flex items-center justify-between pb-4 border-b border-gray-100 mb-6">
+                <div>
+                    <span class="px-3 py-1 bg-amber-50 text-amber-700 rounded-full text-[10px] font-black uppercase tracking-widest">Recursos Humanos</span>
+                    <h3 class="text-xl font-black text-gray-900 uppercase mt-1"><i class="fa-solid fa-clock-rotate-left mr-2 text-amber-600"></i>Gestión Visual de Turnos &amp; Sustituciones</h3>
+                </div>
+                <button id="btn-close-modal-shift" class="p-2 text-gray-400 hover:text-gray-700 rounded-full hover:bg-gray-100 text-lg transition-all">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <!-- Tabs Navegación Interna -->
+            <div class="flex space-x-2 border-b border-gray-100 pb-3 mb-6 overflow-x-auto">
+                <button class="tab-shift-btn px-4 py-2 text-xs font-bold rounded-xl transition-all bg-amber-600 text-white" data-target="sec-shift-turno">
+                    Asignar Turno Laboral
+                </button>
+                <button class="tab-shift-btn px-4 py-2 text-xs font-bold rounded-xl transition-all text-gray-500 hover:text-gray-800 hover:bg-gray-50" data-target="sec-shift-sustitucion">
+                    Registrar Sustitución
+                </button>
+                <button class="tab-shift-btn px-4 py-2 text-xs font-bold rounded-xl transition-all text-gray-500 hover:text-gray-800 hover:bg-gray-50" data-target="sec-shift-historial">
+                    Historial Turnos &amp; Sustituciones
+                </button>
+            </div>
+
+            <div class="space-y-6">
+                <!-- TAB 1: ASIGNAR TURNO LABORAL -->
+                <div id="sec-shift-turno" class="space-y-4">
+                    <form id="form-shift-turno" class="bg-gray-50 p-4 rounded-2xl border border-gray-200 space-y-3">
+                        <h4 class="text-xs font-black uppercase text-gray-900">Asignación de Turno Laboral</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                            <div>
+                                <label class="text-[10px] font-bold uppercase text-gray-500">Empleado ID / Nombre</label>
+                                <input type="text" id="shift-tur-empleado" placeholder="Ej. EMP-001" class="p-2.5 text-xs rounded-xl border border-gray-200 w-full" required>
+                            </div>
+                            <div>
+                                <label class="text-[10px] font-bold uppercase text-gray-500">Nombre del Turno</label>
+                                <input type="text" id="shift-tur-nombre" placeholder="Ej. Turno Mañana / Matutino" class="p-2.5 text-xs rounded-xl border border-gray-200 w-full" required>
+                            </div>
+                            <div>
+                                <label class="text-[10px] font-bold uppercase text-gray-500">Departamento / Área</label>
+                                <input type="text" id="shift-tur-dept" placeholder="Ej. Primaria / Administración" class="p-2.5 text-xs rounded-xl border border-gray-200 w-full" required>
+                            </div>
+                            <div>
+                                <label class="text-[10px] font-bold uppercase text-gray-500">Fecha Inicio</label>
+                                <input type="date" id="shift-tur-inicio" class="p-2.5 text-xs rounded-xl border border-gray-200 w-full" required>
+                            </div>
+                            <div>
+                                <label class="text-[10px] font-bold uppercase text-gray-500">Fecha Fin</label>
+                                <input type="date" id="shift-tur-fin" class="p-2.5 text-xs rounded-xl border border-gray-200 w-full" required>
+                            </div>
+                            <div>
+                                <label class="text-[10px] font-bold uppercase text-gray-500">Horario (Entrada / Salida)</label>
+                                <div class="grid grid-cols-2 gap-1">
+                                    <input type="time" id="shift-tur-hora-in" value="07:00" class="p-2 text-xs rounded-xl border border-gray-200 w-full" required>
+                                    <input type="time" id="shift-tur-hora-out" value="15:00" class="p-2 text-xs rounded-xl border border-gray-200 w-full" required>
+                                </div>
+                            </div>
+                        </div>
+                        <button type="submit" class="w-full py-2.5 bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs uppercase rounded-xl transition-all shadow-md">
+                            Asignar Turno
+                        </button>
+                    </form>
+                </div>
+
+                <!-- TAB 2: REGISTRAR SUSTITUCIÓN DE PERSONAL -->
+                <div id="sec-shift-sustitucion" class="space-y-4 hidden">
+                    <form id="form-shift-sustitucion" class="bg-gray-50 p-4 rounded-2xl border border-gray-200 space-y-3">
+                        <h4 class="text-xs font-black uppercase text-gray-900">Registrar Sustitución de Personal</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                            <div>
+                                <label class="text-[10px] font-bold uppercase text-gray-500">Empleado Sustituto (Cubre)</label>
+                                <input type="text" id="shift-sust-sustituto" placeholder="Ej. EMP-002" class="p-2.5 text-xs rounded-xl border border-gray-200 w-full" required>
+                            </div>
+                            <div>
+                                <label class="text-[10px] font-bold uppercase text-gray-500">Empleado Sustituido (Ausente)</label>
+                                <input type="text" id="shift-sust-sustituido" placeholder="Ej. EMP-001" class="p-2.5 text-xs rounded-xl border border-gray-200 w-full" required>
+                            </div>
+                            <div>
+                                <label class="text-[10px] font-bold uppercase text-gray-500">Departamento / Área</label>
+                                <input type="text" id="shift-sust-dept" placeholder="Ej. Secundaria / Ciencias" class="p-2.5 text-xs rounded-xl border border-gray-200 w-full" required>
+                            </div>
+                            <div>
+                                <label class="text-[10px] font-bold uppercase text-gray-500">Fecha Inicio</label>
+                                <input type="date" id="shift-sust-inicio" class="p-2.5 text-xs rounded-xl border border-gray-200 w-full" required>
+                            </div>
+                            <div>
+                                <label class="text-[10px] font-bold uppercase text-gray-500">Fecha Fin</label>
+                                <input type="date" id="shift-sust-fin" class="p-2.5 text-xs rounded-xl border border-gray-200 w-full" required>
+                            </div>
+                            <div>
+                                <label class="text-[10px] font-bold uppercase text-gray-500">Motivo Sustitución</label>
+                                <input type="text" id="shift-sust-motivo" placeholder="Ej. Incapacidad médica / Licencia" class="p-2.5 text-xs rounded-xl border border-gray-200 w-full" required>
+                            </div>
+                        </div>
+                        <button type="submit" class="w-full py-2.5 bg-gray-800 hover:bg-gray-900 text-white font-bold text-xs uppercase rounded-xl transition-all shadow-md">
+                            Guardar Sustitución
+                        </button>
+                    </form>
+                </div>
+
+                <!-- TAB 3: HISTORIAL TURNOS & SUSTITUCIONES -->
+                <div id="sec-shift-historial" class="space-y-4 hidden">
+                    <div class="flex items-center justify-between">
+                        <h4 class="text-xs font-black uppercase text-gray-900">Historial Trazable de Turnos, Sustituciones &amp; Horas Extras</h4>
+                        <button id="btn-refresh-shift" class="text-xs font-bold text-amber-600 hover:text-amber-800"><i class="fa-solid fa-rotate mr-1"></i>Actualizar Historial</button>
+                    </div>
+                    <div class="space-y-4">
+                        <div>
+                            <h5 class="text-[11px] font-black uppercase text-gray-500 mb-2">Turnos Laborales Asignados</h5>
+                            <div id="list-shift-turnos" class="space-y-2 text-xs font-medium text-gray-700"></div>
+                        </div>
+                        <div>
+                            <h5 class="text-[11px] font-black uppercase text-gray-500 mb-2">Sustituciones Registradas</h5>
+                            <div id="list-shift-sustituciones" class="space-y-2 text-xs font-medium text-gray-700"></div>
+                        </div>
+                        <div>
+                            <h5 class="text-[11px] font-black uppercase text-gray-500 mb-2">Solicitudes de Horas Extras</h5>
+                            <div id="list-shift-horasextras" class="space-y-2 text-xs font-medium text-gray-700"></div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1281,6 +1411,129 @@
                     await refreshStaffingPlanningModuleData();
                 });
             }
+
+            // [TAREA RH-09] Gestor Visual de Turnos y Sustituciones
+            const btnShift = document.getElementById('btn-turnos-sustituciones');
+            const modalShift = document.getElementById('modal-turnos-sustituciones');
+            const btnCloseModalShift = document.getElementById('btn-close-modal-shift');
+
+            if (btnShift && modalShift) {
+                btnShift.addEventListener('click', async () => {
+                    modalShift.classList.remove('hidden');
+                    await refreshWorkShiftsSubstitutionsModuleData();
+                });
+            }
+
+            if (btnCloseModalShift && modalShift) {
+                btnCloseModalShift.addEventListener('click', () => {
+                    modalShift.classList.add('hidden');
+                });
+            }
+
+            // Pestañas Turnos & Sustituciones
+            const shiftTabBtns = document.querySelectorAll('.tab-shift-btn');
+            shiftTabBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const targetId = btn.getAttribute('data-target');
+                    shiftTabBtns.forEach(b => {
+                        b.className = b === btn ?
+                            'tab-shift-btn px-4 py-2 text-xs font-bold rounded-xl transition-all bg-amber-600 text-white' :
+                            'tab-shift-btn px-4 py-2 text-xs font-bold rounded-xl transition-all text-gray-500 hover:text-gray-800 hover:bg-gray-50';
+                    });
+                    ['sec-shift-turno', 'sec-shift-sustitucion', 'sec-shift-historial'].forEach(secId => {
+                        const secEl = document.getElementById(secId);
+                        if (secEl) {
+                            if (secId === targetId) secEl.classList.remove('hidden');
+                            else secEl.classList.add('hidden');
+                        }
+                    });
+                });
+            });
+
+            // Form Turno
+            const formShiftTurno = document.getElementById('form-shift-turno');
+            if (formShiftTurno) {
+                formShiftTurno.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    const empleadoId = document.getElementById('shift-tur-empleado').value;
+                    const nombreTurno = document.getElementById('shift-tur-nombre').value;
+                    const departamentoArea = document.getElementById('shift-tur-dept').value;
+                    const fechaInicio = document.getElementById('shift-tur-inicio').value;
+                    const fechaFin = document.getElementById('shift-tur-fin').value;
+                    const horaEntrada = document.getElementById('shift-tur-hora-in').value;
+                    const horaSalida = document.getElementById('shift-tur-hora-out').value;
+
+                    try {
+                        if (window.showLoading) window.showLoading('Asignando turno...');
+                        const res = await fetchApi('ACCOUNTING', 'manageWorkShiftAndSubstitution', {
+                            tipoOperacion: 'AsignarTurno',
+                            empleadoId,
+                            nombreTurno,
+                            departamentoArea,
+                            fechaInicio,
+                            fechaFin,
+                            horaEntrada,
+                            horaSalida
+                        });
+                        if (window.hideLoading) window.hideLoading();
+                        if (res && res.status === 'success') {
+                            alert('Turno asignado correctamente.');
+                            formShiftTurno.reset();
+                            await refreshWorkShiftsSubstitutionsModuleData();
+                        } else {
+                            alert(res && res.message ? res.message : 'Error al asignar el turno.');
+                        }
+                    } catch (err) {
+                        if (window.hideLoading) window.hideLoading();
+                        alert('Error de conexión.');
+                    }
+                });
+            }
+
+            // Form Sustitución
+            const formShiftSust = document.getElementById('form-shift-sustitucion');
+            if (formShiftSust) {
+                formShiftSust.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    const empleadoId = document.getElementById('shift-sust-sustituto').value;
+                    const empleadoSustituidoId = document.getElementById('shift-sust-sustituido').value;
+                    const departamentoArea = document.getElementById('shift-sust-dept').value;
+                    const fechaInicio = document.getElementById('shift-sust-inicio').value;
+                    const fechaFin = document.getElementById('shift-sust-fin').value;
+                    const motivoSustitucion = document.getElementById('shift-sust-motivo').value;
+
+                    try {
+                        if (window.showLoading) window.showLoading('Registrando sustitución...');
+                        const res = await fetchApi('ACCOUNTING', 'manageWorkShiftAndSubstitution', {
+                            tipoOperacion: 'RegistrarSustitucion',
+                            empleadoId,
+                            empleadoSustituidoId,
+                            departamentoArea,
+                            fechaInicio,
+                            fechaFin,
+                            motivoSustitucion
+                        });
+                        if (window.hideLoading) window.hideLoading();
+                        if (res && res.status === 'success') {
+                            alert('Sustitución registrada correctamente.');
+                            formShiftSust.reset();
+                            await refreshWorkShiftsSubstitutionsModuleData();
+                        } else {
+                            alert(res && res.message ? res.message : 'Error al registrar la sustitución.');
+                        }
+                    } catch (err) {
+                        if (window.hideLoading) window.hideLoading();
+                        alert('Error de conexión.');
+                    }
+                });
+            }
+
+            const btnRefreshShift = document.getElementById('btn-refresh-shift');
+            if (btnRefreshShift) {
+                btnRefreshShift.addEventListener('click', async () => {
+                    await refreshWorkShiftsSubstitutionsModuleData();
+                });
+            }
         });
 
         async function refreshPerformanceModuleData() {
@@ -1533,6 +1786,65 @@
                 }
             } catch (err) {
                 console.error('Error al actualizar datos de planificación de personal:', err);
+            }
+        }
+
+        async function refreshWorkShiftsSubstitutionsModuleData() {
+            try {
+                const res = await fetchApi('ACCOUNTING', 'getWorkShiftsAndSubstitutionsHistory', {});
+                if (!res || res.status !== 'success' || !res.data) return;
+
+                const { turnos, sustituciones, horasExtras } = res.data;
+
+                // Render Turnos
+                const listTurnosEl = document.getElementById('list-shift-turnos');
+                if (listTurnosEl) {
+                    listTurnosEl.innerHTML = turnos.length === 0 ?
+                        '<p class="text-gray-400 font-bold uppercase py-2">No hay turnos asignados.</p>' :
+                        turnos.map(t => `
+                            <div class="p-4 bg-white border border-gray-100 rounded-2xl space-y-1">
+                                <div class="flex items-center justify-between">
+                                    <span class="font-bold text-gray-900">${t.nombreTurno} — Empleado: ${t.empleadoId}</span>
+                                    <span class="px-2 py-0.5 rounded-full text-[10px] font-black uppercase bg-emerald-100 text-emerald-800">${t.estado}</span>
+                                </div>
+                                <p class="text-xs text-gray-600">Periodo: ${t.fechaInicio} al ${t.fechaFin} | Horario: ${t.horaEntrada} - ${t.horaSalida}</p>
+                            </div>
+                        `).join('');
+                }
+
+                // Render Sustituciones
+                const listSustEl = document.getElementById('list-shift-sustituciones');
+                if (listSustEl) {
+                    listSustEl.innerHTML = sustituciones.length === 0 ?
+                        '<p class="text-gray-400 font-bold uppercase py-2">No hay sustituciones registradas.</p>' :
+                        sustituciones.map(s => `
+                            <div class="p-4 bg-white border border-gray-100 rounded-2xl space-y-1">
+                                <div class="flex items-center justify-between">
+                                    <span class="font-bold text-gray-900">Sustituto: ${s.empleadoSustitutoId} (Cubre a ${s.empleadoSustituidoId})</span>
+                                    <span class="px-2 py-0.5 rounded-full text-[10px] font-black uppercase bg-blue-100 text-blue-800">${s.estado}</span>
+                                </div>
+                                <p class="text-xs text-gray-600">Motivo: ${s.motivoSustitucion} | Fechas: ${s.fechaInicio} al ${s.fechaFin}</p>
+                            </div>
+                        `).join('');
+                }
+
+                // Render Horas Extras
+                const listOTEl = document.getElementById('list-shift-horasextras');
+                if (listOTEl) {
+                    listOTEl.innerHTML = horasExtras.length === 0 ?
+                        '<p class="text-gray-400 font-bold uppercase py-2">No hay solicitudes de horas extras.</p>' :
+                        horasExtras.map(ot => `
+                            <div class="p-4 bg-white border border-gray-100 rounded-2xl space-y-1">
+                                <div class="flex items-center justify-between">
+                                    <span class="font-bold text-gray-900">Empleado: ${ot.empleadoId} (${ot.horasSolicitadas} hrs)</span>
+                                    <span class="px-2 py-0.5 rounded-full text-[10px] font-black uppercase ${ot.estado === 'Aprobada' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}">${ot.estado}</span>
+                                </div>
+                                <p class="text-xs text-gray-600">Motivo: ${ot.motivo || 'N/A'} | Fecha: ${ot.fecha || 'N/A'}</p>
+                            </div>
+                        `).join('');
+                }
+            } catch (err) {
+                console.error('Error al actualizar datos de turnos y sustituciones:', err);
             }
         }
 

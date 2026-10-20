@@ -262,3 +262,14 @@
 - **Componentes Frontend (`dashboard-recursos-humanos.html`):**
   - Botón `#btn-planificacion-personal`
   - Modal `#modal-planificacion-personal` con pestañas de Proyección de Necesidades, Disponibilidad vs Demanda e Informes & Justificación de Contratación.
+
+## MÓDULO DE GESTIÓN VISUAL DE TURNOS Y SUSTITUCIONES (TAREA RH-09)
+- **Hojas de Cálculo / Tablas:**
+  - `AsignacionesTurnosLaborales`: Registro de asignación de turnos de trabajo por empleado y periodo (AsignacionTurnoID, EmpleadoID, NombreTurno, FechaInicio, FechaFin, HoraEntrada, HoraSalida, DepartamentoArea, Estado, CreadoPor, FechaCreacion, UltimaModificacion).
+  - `SustitucionesPersonal`: Registro de reemplazos y coberturas temporales entre colaboradores (SustitucionID, EmpleadoSustitutoID, EmpleadoSustituidoID, FechaInicio, FechaFin, HoraEntrada, HoraSalida, MotivoSustitucion, DepartamentoArea, Estado, CreadoPor, FechaCreacion, UltimaModificacion).
+- **Funciones Backend (`backend/accounting-service/Code.gs`):**
+  - `manageWorkShiftAndSubstitution(payload)`
+  - `getWorkShiftsAndSubstitutionsHistory(payload)`
+- **Componentes Frontend (`dashboard-recursos-humanos.html`):**
+  - Botón `#btn-turnos-sustituciones`
+  - Modal `#modal-turnos-sustituciones` con pestañas de Asignar Turno Laboral, Registrar Sustitución e Historial Turnos, Sustituciones & Horas Extras.

@@ -4850,7 +4850,7 @@ Criterios de aceptación
 
 ---
 
-TAREA RH-09. Completar la gestión visual de turnos y sustituciones
+[X] TAREA RH-09. Completar la gestión visual de turnos y sustituciones
 
 Prioridad: Media-alta.
 Dependencia: RH-01.
