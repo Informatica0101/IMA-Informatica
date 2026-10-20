@@ -3619,7 +3619,7 @@ Criterios de aceptación
 
 BLOQUE B. DISPONIBILIDAD DOCENTE, AULAS Y CALENDARIO
 
-TAREA 3.3. Gestión de aulas, laboratorios y recursos desde la interfaz
+[X] TAREA 3.3. Gestión de aulas, laboratorios y recursos desde la interfaz
 
 Objetivo: Conectar la gestión de espacios físicos con la interfaz administrativa, aprovechando las funciones existentes de consulta y guardado.
 

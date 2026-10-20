@@ -2004,6 +2004,7 @@ function checkScheduleConflict(params) {
   return { hasConflict: false };
 }
 
+// [TAREA 3.3] [Fase 3: Planificación Académica y Horarios] - Consulta de recursos de aulas, laboratorios y espacios físicos.
 function getClassroomResources(payload) {
   const { sedeId } = payload || {};
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
@@ -2044,8 +2045,9 @@ function getClassroomResources(payload) {
   return { status: "success", data: classrooms };
 }
 
+// [TAREA 3.3] [Fase 3: Planificación Académica y Horarios] - Registro, edición y gestión de aulas y espacios desde la interfaz.
 function saveClassroomResource(payload) {
-  const { aulaCodigo, nombreAula, capacidad, tipoEspacio, sedeId, nombreSede } = payload || {};
+  const { aulaCodigo, nombreAula, capacidad, tipoEspacio, sedeId, nombreSede, estado } = payload || {};
   if (!aulaCodigo || !nombreAula) throw new Error("aulaCodigo y nombreAula son requeridos.");
 
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
@@ -2057,6 +2059,7 @@ function saveClassroomResource(payload) {
     sheet.getRange(idx + 1, 4).setValue(nombreAula);
     if (capacidad) sheet.getRange(idx + 1, 5).setValue(capacidad);
     if (tipoEspacio) sheet.getRange(idx + 1, 6).setValue(tipoEspacio);
+    if (estado) sheet.getRange(idx + 1, 7).setValue(estado);
   } else {
     sheet.appendRow([
       sedeId || "SED-MAIN",
@@ -2065,7 +2068,7 @@ function saveClassroomResource(payload) {
       nombreAula,
       capacidad || 30,
       tipoEspacio || "Aula",
-      "Activo"
+      estado || "Activo"
     ]);
   }
 

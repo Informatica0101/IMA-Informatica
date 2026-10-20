@@ -2587,6 +2587,79 @@
     </div>
 
 
+    <!-- [TAREA 3.3] [Fase 3: Planificación Académica y Horarios] - Interfaz modal (#modal-classroom-manager) para la gestión de aulas, laboratorios y espacios físicos. -->
+    <div id="modal-classroom-manager" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-[95] flex items-center justify-center p-2 md:p-4 hidden">
+        <div class="bg-white rounded-3xl max-w-3xl w-full p-6 shadow-2xl border border-slate-100 space-y-4 animate-fade-in-up">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                <div class="flex items-center gap-2">
+                    <i class="fa-solid fa-door-open text-blue-600 text-xl"></i>
+                    <h3 class="font-bold text-slate-800 text-sm md:text-base">Gestión de Aulas, Laboratorios y Espacios Físicos</h3>
+                </div>
+                <button id="btn-close-classroom-manager" class="text-slate-400 hover:text-slate-600 p-1"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+
+            <!-- Formulario de Espacio -->
+            <form id="form-classroom-resource" class="bg-slate-50 p-4 rounded-2xl border border-slate-200 grid grid-cols-1 md:grid-cols-3 gap-3">
+                <div>
+                    <label class="block text-xs font-bold text-slate-600 mb-1">Código del Espacio *</label>
+                    <input type="text" id="clsr-codigo" class="w-full px-3 py-2 text-xs border rounded-xl" placeholder="Ej: AULA-201" required>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-600 mb-1">Nombre del Espacio *</label>
+                    <input type="text" id="clsr-nombre" class="w-full px-3 py-2 text-xs border rounded-xl" placeholder="Ej: Aula 201 - Física" required>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-600 mb-1">Capacidad *</label>
+                    <input type="number" id="clsr-capacidad" class="w-full px-3 py-2 text-xs border rounded-xl" min="1" value="30" required>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-600 mb-1">Tipo de Espacio</label>
+                    <select id="clsr-tipo" class="w-full px-3 py-2 text-xs border rounded-xl">
+                        <option value="Aula">Aula</option>
+                        <option value="Laboratorio">Laboratorio</option>
+                        <option value="Auditorio">Auditorio</option>
+                        <option value="Deportes">Deportes</option>
+                        <option value="Otro">Otro</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-600 mb-1">Estado</label>
+                    <select id="clsr-estado" class="w-full px-3 py-2 text-xs border rounded-xl">
+                        <option value="Activo">Activo</option>
+                        <option value="Inactivo">Inactivo</option>
+                    </select>
+                </div>
+                <div class="flex items-end">
+                    <button type="submit" class="w-full py-2 bg-blue-600 text-white rounded-xl font-bold text-xs hover:bg-blue-700 shadow-sm transition">
+                        <i class="fa-solid fa-floppy-disk mr-1"></i> Guardar Espacio
+                    </button>
+                </div>
+            </form>
+
+            <!-- Lista de Espacios Registrados -->
+            <div class="space-y-2">
+                <h4 class="font-bold text-xs text-slate-700 uppercase tracking-wider">Espacios Registrados</h4>
+                <div class="max-h-60 overflow-y-auto border border-slate-100 rounded-2xl">
+                    <table class="w-full text-xs text-left text-slate-600">
+                        <thead class="bg-slate-100 text-slate-700 font-bold sticky top-0">
+                            <tr>
+                                <th class="p-2.5">Código</th>
+                                <th class="p-2.5">Nombre</th>
+                                <th class="p-2.5">Tipo</th>
+                                <th class="p-2.5">Capacidad</th>
+                                <th class="p-2.5">Estado</th>
+                                <th class="p-2.5 text-right">Acción</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbl-classroom-resources-body" class="divide-y divide-slate-100">
+                            <tr><td colspan="6" class="p-3 text-center text-slate-400">Cargando espacios...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- [REQ-EXP-010] [Fase 1: Registro y Expediente de Estudiantes] - Interfaz modal para la importación masiva de expedientes desde archivos CSV y XLSX (#modal-excel-importer). -->
     <div id="modal-excel-importer" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-[90] flex items-center justify-center p-2 md:p-4 hidden">
         <div class="bg-white rounded-3xl max-w-2xl w-full p-6 shadow-2xl border border-slate-100 space-y-4 animate-fade-in-up">
