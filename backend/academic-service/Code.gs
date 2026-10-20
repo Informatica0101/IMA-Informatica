@@ -1963,13 +1963,43 @@ function checkScheduleConflict(params) {
   const { diaSemana, horaInicio, horaFin, aulaCodigo, docenteUserId, ofertaId, excludeHorarioId, estudiantesCount } = params || {};
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
 
-  // Validar capacidad de aula en SedesAulas si se especifica estudiantesCount y aulaCodigo
-  if (aulaCodigo && estudiantesCount) {
-    const aulaSheet = getOrCreateSheet(ss, "SedesAulas");
-    const aulaRows = aulaSheet.getDataRange().getValues().slice(1);
-    const aula = aulaRows.find(a => String(a[2]).trim() === String(aulaCodigo).trim() && a[6] !== "Inactivo");
-    if (aula && Number(aula[4]) > 0 && Number(estudiantesCount) > Number(aula[4])) {
-      return { hasConflict: true, reason: `El aula ${aulaCodigo} (${aula[3]}) tiene capacidad máxima de ${aula[4]} estudiantes, menor a los ${estudiantesCount} requeridos.` };
+  // [TAREA 3.4] Validar disponibilidad horaria personalizada por docente en HorariosLaborales
+  if (docenteUserId && diaSemana && horaInicio && horaFin) {
+    const hlSheet = getOrCreateSheet(ss, "HorariosLaborales");
+    const hlRows = hlSheet.getDataRange().getValues().slice(1);
+    const docenteHL = hlRows.find(r => r[7] !== "Inactivo" && String(r[0]).trim() === String(docenteUserId).trim());
+    if (docenteHL) {
+      const hEntrada = String(docenteHL[3]);
+      const hSalida = String(docenteHL[4]);
+      let diasLaborales = [];
+      try { diasLaborales = JSON.parse(docenteHL[6] || "[]"); } catch (e) { diasLaborales = []; }
+
+      if (diasLaborales.length > 0 && !diasLaborales.some(d => normalizeString(d) === normalizeString(diaSemana))) {
+        return { hasConflict: true, reason: `El docente no está disponible el día ${diaSemana} según su horario laboral registrado.` };
+      }
+      if (horaInicio < hEntrada || horaFin > hSalida) {
+        return { hasConflict: true, reason: `La clase (${horaInicio} - ${horaFin}) se encuentra fuera de la jornada del docente (${hEntrada} - ${hSalida}).` };
+      }
+    }
+  }
+
+  // [TAREA 3.5] Validar capacidad de aula y matrícula activa de la sección/oferta
+  if (aulaCodigo) {
+    let effectiveEstudiantesCount = estudiantesCount;
+    if (!effectiveEstudiantesCount && ofertaId) {
+      const matSheet = getOrCreateSheet(ss, "Matriculas");
+      const matRows = matSheet.getDataRange().getValues().slice(1);
+      // Contar matrículas activas vinculadas a la oferta / sección
+      effectiveEstudiantesCount = matRows.filter(m => m[8] !== "Inactivo" && m[8] !== "Retirado" && (String(m[5]).trim() === String(ofertaId).trim() || String(m[0]).trim() === String(ofertaId).trim())).length;
+    }
+
+    if (effectiveEstudiantesCount && Number(effectiveEstudiantesCount) > 0) {
+      const aulaSheet = getOrCreateSheet(ss, "SedesAulas");
+      const aulaRows = aulaSheet.getDataRange().getValues().slice(1);
+      const aula = aulaRows.find(a => String(a[2]).trim() === String(aulaCodigo).trim() && a[6] !== "Inactivo");
+      if (aula && Number(aula[4]) > 0 && Number(effectiveEstudiantesCount) > Number(aula[4])) {
+        return { hasConflict: true, reason: `El aula ${aulaCodigo} (${aula[3]}) tiene capacidad máxima de ${aula[4]} estudiantes, menor a la matrícula activa de ${effectiveEstudiantesCount} estudiantes.` };
+      }
     }
   }
 

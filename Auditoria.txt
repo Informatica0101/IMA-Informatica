@@ -90,24 +90,28 @@ GRUPO 1: TAREAS COMPLETADAS
     - Archivo: backend/academic-service/Code.gs (Línea 1882)
     - Descripción: Endpoint `copyClassSchedules` para duplicar la matriz de horarios de un año lectivo a otro en estado `Borrador`, evitando duplicaciones existentes y omitiendo bloques con conflictos.
 
+18. [TAREA 3.3] Gestión de aulas, laboratorios y recursos desde la interfaz
+    - Archivo: backend/academic-service/Code.gs (Línea 2007 `getClassroomResources`, Línea 2047 `saveClassroomResource`)
+    - Archivo Frontend: js/teacher.js (Línea 744 `openClassroomManagerModal`), teacher-dashboard.html (Línea 2590 `#modal-classroom-manager`)
+    - Descripción: Interfaz modal completa para administración de espacios físicos, consulta y guardado con estado de disponibilidad activo/inactivo.
+
+19. [TAREA 3.4] Disponibilidad horaria personalizada por docente
+    - Archivo: backend/academic-service/Code.gs (Línea 1966 `checkScheduleConflict`)
+    - Archivo Relacionado: backend/accounting-service/Code.gs (Línea 2149 `HorariosLaborales`)
+    - Descripción: Validación de disponibilidad horaria por docente integrada directamente en `checkScheduleConflict` consultando días laborales (`DiasLaboralesJSON`) y franjas permitidas (`horaEntrada` - `horaSalida`).
+
+20. [TAREA 3.5] Validación de capacidad de aulas y matrícula
+    - Archivo: backend/academic-service/Code.gs (Línea 1986 `checkScheduleConflict`)
+    - Descripción: Validación dinámica de capacidad física de espacios calculando automáticamente el recuento de alumnos inscritos activos desde la tabla `Matriculas`.
+
 
 -------------------------------------------------------------------------------
 GRUPO 2: TAREAS INCOMPLETAS
-(Implementadas parcialmente en el backend o frontend, requiriendo completar
-integraciones, controles visuales o validaciones complementarias)
+(Todas las tareas identificadas anteriormente en el bloque de incompletas
+han sido completadas y migradas exitosamente al Grupo 1)
 -------------------------------------------------------------------------------
 
-1. [TAREA 3.3] Gestión de aulas, laboratorios y recursos desde la interfaz
-   - Archivo: backend/academic-service/Code.gs (Línea 2007 `getClassroomResources`, Línea 2047 `saveClassroomResource`)
-   - Detalle de lo que falta: La persistencia backend y sembrado por defecto de aulas existe en `SedesAulas`, pero falta construir la vista interactiva dentro de `teacher-dashboard.html` y `js/teacher.js` para permitir la administración visual de espacios físicos (crear aula, editar capacidad, tipo de espacio) e integrar los filtros en tiempo real al seleccionar un espacio en el creador de horarios.
-
-2. [TAREA 3.4] Disponibilidad horaria personalizada por docente
-   - Archivo: backend/accounting-service/Code.gs (Línea 2149 `HorariosLaborales`)
-   - Detalle de lo que falta: Existe la estructura de `HorariosLaborales` en el microservicio contable, pero falta conectar directamente la columna `DiasLaboralesJSON` y las franjas horarias con la función `checkScheduleConflict` en `backend/academic-service/Code.gs` para que rechace la asignación de un docente fuera de su jornada/disponibilidad personalizada.
-
-3. [TAREA 3.5] Validación de capacidad de aulas y matrícula
-   - Archivo: backend/academic-service/Code.gs (Línea 1885 `checkScheduleConflict`)
-   - Detalle de lo que falta: La función `checkScheduleConflict` valida la capacidad máxima del aula cuando se recibe `estudiantesCount` manualmente en la petición. Sin embargo, falta calcular automáticamente la cantidad de alumnos inscritos en la sección consultando la tabla `Matriculas` para comparar dinámicamente con la capacidad del aula asignada sin depender del parámetro manual.
+(Actualmente no existen tareas incompletas registradas)
 
 
 -------------------------------------------------------------------------------

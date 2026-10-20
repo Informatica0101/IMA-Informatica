@@ -3651,7 +3651,7 @@ Criterios de aceptación
 
 ---
 
-TAREA 3.4. Disponibilidad horaria personalizada por docente
+[X] TAREA 3.4. Disponibilidad horaria personalizada por docente
 
 Objetivo: Registrar las franjas en las que cada docente puede impartir clases y aplicar esas restricciones a la asignación y generación de horarios.
 
@@ -3683,7 +3683,7 @@ Criterios de aceptación
 
 ---
 
-TAREA 3.5. Validación de capacidad de aulas y matrícula
+[X] TAREA 3.5. Validación de capacidad de aulas y matrícula
 
 Objetivo: Evitar asignaciones que superen la capacidad registrada de los espacios.
 
