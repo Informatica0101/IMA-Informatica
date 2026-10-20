@@ -2857,6 +2857,7 @@ function createPurchaseOrder(payload) {
   return { status: "success", ordenCompraId: ordenId, message: "Órden de compra emitida en borrador." };
 }
 
+// [T-GOV-04] [Fase Gobernanza y Seguridad] - Prevención de autoaprobaciones en órdenes de compra
 function approvePurchaseOrder(payload) {
   const { ordenCompraId, nuevoEstado, observacionesAdmin, authRole } = payload || {};
   if (!ordenCompraId || !nuevoEstado) throw new Error("ordenCompraId y nuevoEstado son requeridos.");
@@ -2867,6 +2868,14 @@ function approvePurchaseOrder(payload) {
 
   const idx = data.findIndex(r => String(r[0]).trim() === String(ordenCompraId).trim());
   if (idx === -1) throw new Error("Órden de compra no encontrada.");
+
+  const solicitanteId = String(data[idx][13] || data[idx][1] || "").trim();
+  const aprobadorId = String((payload && (payload.authenticatedUserId || payload.userId || payload.actorId)) || "").trim();
+
+  if (nuevoEstado === "Aprobada" && aprobadorId && solicitanteId && solicitanteId === aprobadorId) {
+    logStructuredEvent("ACCOUNTING", "approvePurchaseOrder", "WARN", "AUTO_APPROVAL_BLOCKED", `Auto-aprobación de orden de compra bloqueada para usuario ${solicitanteId}`, payload, authRole);
+    return { status: "error", code: "AUTO_APPROVAL_BLOCKED", message: "Acción denegada: Un usuario no puede aprobar su propia orden de compra." };
+  }
 
   sheet.getRange(idx + 1, 10).setValue(nuevoEstado);
   sheet.getRange(idx + 1, 11).setValue(authRole || "Dirección/Contabilidad");
@@ -4377,6 +4386,7 @@ function calculateOvertime(payload) {
   }
 }
 
+// [T-GOV-04] [Fase Gobernanza y Seguridad] - Prevención de autoaprobaciones y separación de funciones en horas extras
 function reviewOvertimeRequest(payload) {
   try {
     const { overtimeId, accion, horasAprobadas, observaciones, periodoNominaId } = payload || {};
@@ -4400,8 +4410,16 @@ function reviewOvertimeRequest(payload) {
       return { status: "error", code: "NOT_FOUND", message: "Registro de horas extras no encontrado." };
     }
 
-    const now = new Date().toISOString();
+    const solicitanteUserId = String(data[foundIndex - 1][1]).trim();
+    const aprobadorUserId = String((payload && (payload.authenticatedUserId || payload.userId || payload.actorId)) || "").trim();
     const verifiedRole = (payload && payload.authRole) || "RecursosHumanos";
+
+    if (accion === "Aprobar" && aprobadorUserId && solicitanteUserId && solicitanteUserId === aprobadorUserId) {
+      logStructuredEvent("ACCOUNTING", "reviewOvertimeRequest", "WARN", "AUTO_APPROVAL_BLOCKED", `Auto-aprobación de horas extras bloqueada para usuario ${solicitanteUserId}`, payload, verifiedRole);
+      return { status: "error", code: "AUTO_APPROVAL_BLOCKED", message: "Acción denegada: Un usuario no puede aprobar sus propias solicitudes de horas extras." };
+    }
+
+    const now = new Date().toISOString();
     const newState = accion === "Aprobar" ? "Aprobada" : "Rechazada";
 
     sheet.getRange(foundIndex, 6).setValue(accion === "Aprobar" ? (parseFloat(horasAprobadas) || data[foundIndex - 1][4]) : 0);

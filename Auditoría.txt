@@ -1743,3 +1743,17 @@ Archivos Auditados:
 
 2. Conclusión:
 - Se implementaron las soluciones funcionales y los comentarios de identificación correspondientes respetando todas las especificaciones.
+
+===============================================================================
+AUDITORÍA FUNCIONAL Y TÉCNICA - TAREA T-GOV-04
+===============================================================================
+Fecha: 2026-10-19
+Tarea: T-GOV-04 [P1] — Prevención de autoaprobaciones y separación de funciones en suplencias
+Archivos Auditados:
+- backend/accounting-service/Code.gs
+
+1. Hallazgos y Solución Implementada:
+- `backend/accounting-service/Code.gs`: Se incorporó la validación estricta de no-autoaprobación en `reviewOvertimeRequest` y `approvePurchaseOrder`. Si el usuario aprobador es idéntico al solicitante, la operación se bloquea en el servidor, devolviendo error `AUTO_APPROVAL_BLOCKED` y registrando el evento en `logStructuredEvent`.
+
+2. Conclusión:
+- Se implementó la solución funcional completa para T-GOV-04 y se agregaron los comentarios identificadores correspondientes.

@@ -1594,3 +1594,11 @@ Archivos Modificados:
 - backend/academic-service/Code.gs:
     - Agregada la función `assertRecordOwnership` para validación estricta de propiedad de registros según rol (T-GOV-02).
     - Agregada la función `getSecureDocumentStream` para el proxy de descarga autorizada de adjuntos en Google Drive (T-GOV-03).
+
+====================================================================================================
+
+REGISTRO DE CAMBIOS - TAREA T-GOV-04 - Mon Oct 19 2026
+
+Archivos Modificados:
+- backend/accounting-service/Code.gs:
+    - Implementada validación de no-autoaprobación en `reviewOvertimeRequest` y `approvePurchaseOrder` que bloquea y registra el evento `AUTO_APPROVAL_BLOCKED` cuando el solicitante intenta aprobar su propia solicitud (T-GOV-04).
