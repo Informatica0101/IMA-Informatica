@@ -1577,3 +1577,11 @@ Archivos Modificados:
     - Detección de `AUTH_PERMISSION_DENIED` para llamar a `window.handleSessionExpired`.
 - js/auth.js:
     - Lectura de parámetro `session_expired` y renderizado de banner de expiración de sesión.
+
+====================================================================================================
+
+REGISTRO DE CAMBIOS - TAREA T-GOV-01 - Mon Oct 19 2026
+
+Archivos Modificados:
+- backend/user-service/Code.gs (Línea 1110):
+    - Se implementó protección contra ataques de fuerza bruta en `loginUser` incrementando `IntentosFallidos` por clave incorrecta y bloqueando la cuenta al alcanzar 5 intentos fallidos.

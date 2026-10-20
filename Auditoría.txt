@@ -1715,3 +1715,17 @@ Archivos Involucrados:
 1. Diagnóstico y Resultados:
 - Se implementaron todas las funciones utilitarias y manejadores requeridos en `js/ui-common.js`, `js/api.js` y `js/auth.js`.
 - Se verificó la sintaxis limpia de los controladores JavaScript mediante Node.js.
+
+===============================================================================
+AUDITORÍA FUNCIONAL Y TÉCNICA - TAREA T-GOV-01
+===============================================================================
+Fecha: 2026-10-19
+Tarea: T-GOV-01 [P1] — Invalidación inmediata de sesiones y protección contra ataques de fuerza bruta
+Archivos Auditados:
+- backend/user-service/Code.gs
+
+1. Hallazgos y Solución Implementada:
+- `backend/user-service/Code.gs`: Implementación de contador de intentos fallidos `currentFailed` en `loginUser`. Al acumular 5 intentos fallidos por clave incorrecta, el estado de la cuenta se cambia automáticamente a `"Bloqueada"` y se registra el evento estructurado `LOGIN_BLOCKED_BRUTE_FORCE` en la bitácora de auditoría. Al iniciar sesión correctamente, el contador se resetea a 0.
+
+2. Conclusión:
+- Se implementó la solución funcional completa para T-GOV-01 y se agregó el comentario identificador en la primera línea de la función `loginUser`.
