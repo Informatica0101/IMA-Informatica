@@ -168,6 +168,10 @@ GRUPO 1: TAREAS COMPLETADAS
     - Archivo: backend/accounting-service/Code.gs (Línea 5502 `reconcileFinancialReportCoherence`)
     - Descripción: Endpoint `reconcileFinancialReportCoherence` para conciliar presupuesto aprobado, comprometido, ejecutado, disponibilidad de efectivo y cuentas pendientes.
 
+37. [TAREA 8] VERIFICACIÓN DE INTEGRIDAD CONTABLE EN LAS NUEVAS FUNCIONES
+    - Archivo: backend/accounting-service/Code.gs (Línea 5504 `verifyAccountingIntegrity`)
+    - Descripción: Endpoint `verifyAccountingIntegrity` para validación transversal de partida doble, inconsistencias en convenios y preservación inmutable de asientos.
+
 
 -------------------------------------------------------------------------------
 GRUPO 2: TAREAS INCOMPLETAS
@@ -183,7 +187,6 @@ GRUPO 3: TAREAS PENDIENTES / NO INICIADAS
 (Registradas en el backlog pero no iniciadas ni presentes en el código)
 -------------------------------------------------------------------------------
 
-17. TAREA 8: VERIFICACIÓN DE INTEGRIDAD CONTABLE EN LAS NUEVAS FUNCIONES
 18. TAREA RH-01: Conectar el panel de Recursos Humanos con los servicios existentes
 19. TAREA RH-02: Implementar avisos de vencimiento de contratos y documentos laborales
 20. TAREA RH-03: Crear el módulo de reclutamiento y selección de personal

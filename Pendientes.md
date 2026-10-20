@@ -4396,7 +4396,7 @@ Criterios de aceptación
 
 ---
 
-TAREA 8. VERIFICACIÓN DE INTEGRIDAD CONTABLE EN LAS NUEVAS FUNCIONES
+[X] TAREA 8. VERIFICACIÓN DE INTEGRIDAD CONTABLE EN LAS NUEVAS FUNCIONES
 
 Prioridad: Crítica
 Área: Seguridad financiera y consistencia de datos.
