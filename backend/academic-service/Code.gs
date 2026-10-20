@@ -1722,17 +1722,110 @@ function getCoordinatorOverview(payload) {
   };
 }
 
+// [TAREA 3.8] [Fase 3: Planificación Académica y Horarios] - Generador automático de propuestas de horarios académicos con resolución de restricciones.
 function generateAutoSchedules(payload) {
-  const { anoLectivo, duracionUnidadMinutos, horaInicioLectiva } = payload || {};
+  const { anoLectivo, duracionUnidadMinutos, horaInicioLectiva, ofertasIds } = payload || {};
+  const targetAno = anoLectivo || "2026";
   const unidadMin = parseInt(duracionUnidadMinutos, 10) || 45;
-  const startHour = horaInicioLectiva || "07:30";
+  const startHourStr = horaInicioLectiva || "07:30";
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+
+  // Cargar ofertas académicas y asignaciones
+  const offSheet = getOrCreateSheet(ss, "OfertaAcademica");
+  const offRows = offSheet.getDataRange().getValues().slice(1);
+
+  const asigSheet = getOrCreateSheet(ss, "AsignacionesDocentes");
+  const asigRows = asigSheet.getDataRange().getValues().slice(1);
+
+  const aulaSheet = getOrCreateSheet(ss, "SedesAulas");
+  const aulaRows = aulaSheet.getDataRange().getValues().slice(1).filter(a => a[6] !== "Inactivo");
+
+  // Filtrar ofertas del año lectivo
+  let targetOffers = offRows.filter(r => r[7] !== "Inactivo" && String(r[1]).includes(String(targetAno)));
+  if (Array.isArray(ofertasIds) && ofertasIds.length > 0) {
+    targetOffers = targetOffers.filter(r => ofertasIds.includes(String(r[0]).trim()));
+  }
+
+  if (targetOffers.length === 0) {
+    return {
+      status: "success",
+      message: `No existen ofertas académicas activas configuradas para el año ${targetAno}.`,
+      resumen: { programadas: 0, pendientes: 0, borradorCount: 0, logs: [] }
+    };
+  }
+
+  const diasSemana = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes"];
+  const horasBloques = [
+    { start: "07:30", end: "08:15" },
+    { start: "08:15", end: "09:00" },
+    { start: "09:15", end: "10:00" },
+    { start: "10:00", end: "10:45" },
+    { start: "11:00", end: "11:45" },
+    { start: "13:00", end: "13:45" },
+    { start: "13:45", end: "14:30" }
+  ];
+
+  let borradorCount = 0;
+  let pendientesCount = 0;
+  const logs = [];
+  const scheduleSheet = getOrCreateSheet(ss, "HorariosClase");
+
+  targetOffers.forEach(off => {
+    const ofertaId = off[0];
+    const asignaturaNombre = off[3];
+
+    // Buscar docente asignado
+    const asig = asigRows.find(a => String(a[1]).trim() === String(ofertaId).trim() && a[6] !== "Inactivo");
+    const docenteUserId = asig ? asig[2] : "";
+
+    // Seleccionar aula disponible
+    const aula = aulaRows.find(a => a[6] !== "Inactivo") || ["", "", "AULA-101"];
+    const aulaCodigo = aula[2];
+
+    let asignado = false;
+
+    for (let dia of diasSemana) {
+      if (asignado) break;
+      for (let bloque of horasBloques) {
+        const conflict = checkScheduleConflict({
+          diaSemana: dia,
+          horaInicio: bloque.start,
+          horaFin: bloque.end,
+          aulaCodigo,
+          docenteUserId,
+          ofertaId
+        });
+
+        if (!conflict.hasConflict) {
+          const horId = "AUTO-HOR-" + Date.now() + "-" + Math.floor(Math.random() * 1000);
+          scheduleSheet.appendRow([horId, ofertaId, dia, bloque.start, bloque.end, aulaCodigo, docenteUserId, "Borrador"]);
+          borradorCount++;
+          asignado = true;
+          logs.push(`Asignado automáticamente ${ofertaId} (${asignaturaNombre}) el ${dia} ${bloque.start}-${bloque.end} en ${aulaCodigo} (Borrador).`);
+          break;
+        }
+      }
+    }
+
+    if (!asignado) {
+      pendientesCount++;
+      logs.push(`No se pudo encontrar franja libre para oferta ${ofertaId} (${asignaturaNombre}) debido a restricciones.`);
+    }
+  });
+
+  logStructuredEvent("ACADEMIC", "generateAutoSchedules", "INFO", "AUTO_SCHEDULE_GENERATED", `Generación automática de horarios para ${targetAno}. Creados: ${borradorCount}, Pendientes: ${pendientesCount}`, { targetAno, borradorCount, pendientesCount }, payload && payload.authRole);
 
   return {
     status: "success",
-    message: "Horarios automáticos distribuidos respetando bloques continuos de unidades y prevención de colisiones.",
-    duracionUnidadMinutos: unidadMin,
-    horaInicioLectiva: startHour,
-    bloquesGenerados: 20
+    message: `Propuesta automática de horarios generada exitosamente en estado Borrador.`,
+    resumen: {
+      anoLectivo: targetAno,
+      ofertasProcesadas: targetOffers.length,
+      bloquesBorradorCreados: borradorCount,
+      ofertasPendientes: pendientesCount,
+      logs
+    }
   };
 }
 

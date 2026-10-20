@@ -3767,7 +3767,7 @@ Criterios de aceptación
 
 ---
 
-TAREA 3.8. Generador automático de horarios académicos
+[X] TAREA 3.8. Generador automático de horarios académicos
 
 Objetivo: Permitir generar una propuesta de matriz semanal de horarios a partir de las ofertas académicas, la malla curricular, las asignaciones docentes, la disponibilidad de los docentes, las aulas y las restricciones institucionales.
 

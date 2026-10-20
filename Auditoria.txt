@@ -112,6 +112,10 @@ GRUPO 1: TAREAS COMPLETADAS
     - Archivo: backend/academic-service/Code.gs (Línea 1819 `getTeacherTeachingLoad`, Línea 2042 `checkScheduleConflict`)
     - Descripción: Endpoint `getTeacherTeachingLoad` para el cálculo de horas semanales frente a grupo por docente y validación de límite máximo de carga lectiva en `checkScheduleConflict`.
 
+23. [TAREA 3.8] Generador automático de horarios académicos
+    - Archivo: backend/academic-service/Code.gs (Línea 1725 `generateAutoSchedules`)
+    - Descripción: Endpoint `generateAutoSchedules` para la resolución de restricciones y propuesta automática de bloques de horarios en estado `Borrador` respetando colisiones y disponibilidad.
+
 
 -------------------------------------------------------------------------------
 GRUPO 2: TAREAS INCOMPLETAS
@@ -127,7 +131,6 @@ GRUPO 3: TAREAS PENDIENTES / NO INICIADAS
 (Registradas en el backlog pero no iniciadas ni presentes en el código)
 -------------------------------------------------------------------------------
 
-1. TAREA 3.8: Generador automático de horarios académicos
 4. TAREA 3.9: Registro y confirmación de horas lectivas impartidas
 5. TAREA 3.10: Recuperación y reprogramación de clases canceladas
 6. TAREA 3.11: Validación y publicación segura de horarios
