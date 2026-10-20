@@ -1694,3 +1694,24 @@ Resultados de Auditoría:
 1. Se revisaron todas las tareas secuencialmente.
 2. Para cada tarea con código funcional existente, se inyectó la línea de comentario identificadora directamente sobre el primer elemento/bloque de código correspondiente.
 3. Se detectó la necesidad de mejora funcional en T-UX-01 (Manejo centralizado de expiración de sesión y redirección con aviso explicativo), la cual fue implementada en `js/api.js`, `js/ui-common.js` y `js/auth.js`.
+
+===============================================================================
+AUDITORÍA FUNCIONAL Y TÉCNICA - FASE 3 UX (T-UX-01 A T-UX-05)
+===============================================================================
+Fecha: 2026-10-19
+Tareas Auditadas e Implementadas:
+- T-UX-01: Gestión centralizada de expiración de sesión y errores de autenticación.
+- T-UX-02: Buscador global unificado Omnibox con restauración de foco y cierre ESC.
+- T-UX-03: Protección unificada contra pérdida de cambios sin guardar (`window.setupUnsavedChangesProtection`).
+- T-UX-04: Indicadores de frescura de datos (`window.renderDataFreshnessBadge`).
+- T-UX-05: Normalización avanzada de búsquedas (`window.normalizeSearchString`).
+
+Archivos Involucrados:
+- js/api.js
+- js/ui-common.js
+- js/auth.js
+- login.html
+
+1. Diagnóstico y Resultados:
+- Se implementaron todas las funciones utilitarias y manejadores requeridos en `js/ui-common.js`, `js/api.js` y `js/auth.js`.
+- Se verificó la sintaxis limpia de los controladores JavaScript mediante Node.js.

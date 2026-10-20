@@ -1561,3 +1561,19 @@ Archivos Modificados:
     - Implementación de `T-UX-01`: Detección centralizada de `AUTH_PERMISSION_DENIED`, función `window.handleSessionExpired(reason)` y banner de aviso de expiración de sesión en `login.html`.
 - backend/academic-service/Code.gs, backend/accounting-service/Code.gs, backend/task-service/Code.gs, backend/user-service/Code.gs, js/teacher.js, js/student.js, teacher-dashboard.html, index.html, METODOLOGIA_DESARROLLO.md:
     - Inyección de líneas de comentario de identificación sobre los bloques de código y funciones asociadas a cada tarea de Pendientes.md, pendientes2.md y pendientes3.md.
+
+====================================================================================================
+
+REGISTRO DE CAMBIOS - FUNCIONALIDADES UX Y TAREAS T-UX-01 A T-UX-05 - Mon Oct 19 2026
+
+Archivos Modificados:
+- js/ui-common.js:
+    - Agregada `window.handleSessionExpired(reason)` para T-UX-01.
+    - Mejorado el modal Omnibox con restauración de foco y cierre por tecla Escape para T-UX-02.
+    - Agregada `window.setupUnsavedChangesProtection` para T-UX-03.
+    - Agregada `window.renderDataFreshnessBadge` para T-UX-04.
+    - Agregada `window.normalizeSearchString` para T-UX-05.
+- js/api.js:
+    - Detección de `AUTH_PERMISSION_DENIED` para llamar a `window.handleSessionExpired`.
+- js/auth.js:
+    - Lectura de parámetro `session_expired` y renderizado de banner de expiración de sesión.

@@ -1641,6 +1641,19 @@ window.loadUserSettingsInModal = function(user) {
     }
 };
 
+// [T-UX-05] [Fase 3: Experiencia de Usuario y Navegación Unificada] - Función utilitaria de normalización avanzada de búsquedas (acentos, minúsculas, espacios y caracteres especiales).
+window.normalizeSearchString = function(str) {
+    if (!str) return '';
+    return str
+        .toString()
+        .toLowerCase()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/[^\w\s]/gi, ' ')
+        .replace(/\s+/g, ' ')
+        .trim();
+};
+
 window.renderRoleSettingsInModal = function(role, user) {
     var container = document.getElementById('role-settings-dynamic-container');
     if (!container) return;
@@ -4256,7 +4269,11 @@ document.addEventListener('DOMContentLoaded', function() {
 // REQ-OMNI-001: BARRA DE BÚSQUEDA OMNIBOX UNIFICADA GLOBAL (CTRL + K / CMD + K)
 // ---------------------------------------------------------------------------
 
+var omniboxActiveTrigger = null;
+
+// [T-UX-02] [Fase 3: Experiencia de Usuario y Navegación Unificada] - Modal Omnibox unificado con atajos de teclado (Ctrl+K/Cmd+K/ESC) y restauración de foco.
 window.openGlobalOmniboxModal = function() {
+    omniboxActiveTrigger = document.activeElement;
     let modal = document.getElementById('modal-global-omnibox');
     if (!modal) {
         modal = document.createElement('div');
@@ -4317,6 +4334,9 @@ window.openGlobalOmniboxModal = function() {
 window.closeGlobalOmniboxModal = function() {
     const modal = document.getElementById('modal-global-omnibox');
     if (modal) modal.classList.add('hidden');
+    if (omniboxActiveTrigger && typeof omniboxActiveTrigger.focus === 'function') {
+        omniboxActiveTrigger.focus();
+    }
 };
 
 window.executeOmniboxSearch = function(query) {
@@ -4372,10 +4392,79 @@ window.handleOmniboxResultClick = function(type, id) {
     }
 };
 
-// Global Keyboard Shortcut (Ctrl + K / Cmd + K)
+// Global Keyboard Shortcut (Ctrl + K / Cmd + K / ESC)
 window.addEventListener('keydown', function(e) {
     if ((e.ctrlKey || e.metaKey) && (e.key === 'k' || e.key === 'K')) {
         e.preventDefault();
         window.openGlobalOmniboxModal();
     }
+    if (e.key === 'Escape') {
+        const modal = document.getElementById('modal-global-omnibox');
+        if (modal && !modal.classList.contains('hidden')) {
+            window.closeGlobalOmniboxModal();
+        }
+    }
 });
+
+// [T-UX-03] [Fase 3: Experiencia de Usuario y Navegación Unificada] - Función compartida para la detección y protección de cambios no guardados en formularios y contenedores.
+window.setupUnsavedChangesProtection = function(containerIdOrElement, options) {
+    options = options || {};
+    var container = typeof containerIdOrElement === 'string' ? document.getElementById(containerIdOrElement) : containerIdOrElement;
+    if (!container) return { markClean: function(){}, markDirty: function(){}, isDirty: function(){ return false; } };
+
+    var isDirty = false;
+
+    function markDirty() { isDirty = true; }
+    function markClean() { isDirty = false; }
+
+    var inputs = container.querySelectorAll('input, textarea, select');
+    inputs.forEach(function(inp) {
+        inp.addEventListener('change', markDirty);
+        inp.addEventListener('input', markDirty);
+    });
+
+    window.addEventListener('beforeunload', function(e) {
+        if (isDirty) {
+            var msg = options.message || 'Tiene cambios sin guardar en esta sección. ¿Está seguro de que desea salir y descartar los cambios?';
+            e.preventDefault();
+            e.returnValue = msg;
+            return msg;
+        }
+    });
+
+    return {
+        markClean: markClean,
+        markDirty: markDirty,
+        isDirty: function() { return isDirty; }
+    };
+};
+
+// [T-UX-04] [Fase 3: Experiencia de Usuario y Navegación Unificada] - Componente utilitario para mostrar la frescura de los datos y control de actualización.
+window.renderDataFreshnessBadge = function(containerIdOrElement, lastUpdatedTimestamp, onRefreshCallback) {
+    var container = typeof containerIdOrElement === 'string' ? document.getElementById(containerIdOrElement) : containerIdOrElement;
+    if (!container) return;
+
+    var dateObj = lastUpdatedTimestamp ? new Date(lastUpdatedTimestamp) : new Date();
+    var timeStr = dateObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+    var badge = document.createElement('div');
+    badge.className = 'inline-flex items-center gap-2 text-[10px] font-semibold text-slate-500 bg-slate-100 border border-slate-200 px-3 py-1 rounded-xl shadow-sm';
+    badge.innerHTML =
+        '<span><i class="fa-solid fa-clock-rotate-left text-slate-400 mr-1"></i> Actualizado: ' + timeStr + '</span>' +
+        '<button class="btn-refresh-badge text-blue-600 hover:text-blue-800 font-bold uppercase tracking-wider ml-1">' +
+            '<i class="fa-solid fa-rotate-right"></i>' +
+        '</button>';
+
+    container.appendChild(badge);
+
+    var refreshBtn = badge.querySelector('.btn-refresh-badge');
+    if (refreshBtn && typeof onRefreshCallback === 'function') {
+        refreshBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            refreshBtn.classList.add('animate-spin');
+            onRefreshCallback(function() {
+                refreshBtn.classList.remove('animate-spin');
+            });
+        });
+    }
+};
