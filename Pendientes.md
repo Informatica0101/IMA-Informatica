@@ -3894,7 +3894,7 @@ Criterios de aceptación
 
 BLOQUE E. PUBLICACIÓN Y CALENDARIOS POR ROL
 
-TAREA 3.11. Validación y publicación segura de horarios
+[X] TAREA 3.11. Validación y publicación segura de horarios
 
 Objetivo: Garantizar que solamente se publiquen matrices revisadas, coherentes y autorizadas, manteniendo la distinción entre borradores y horarios vigentes.
 

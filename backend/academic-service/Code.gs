@@ -2256,6 +2256,85 @@ function deleteClassSchedule(payload) {
   return { status: "success", message: "Bloque de horario desactivado correctamente." };
 }
 
+// [TAREA 3.11] [Fase 3: Planificación Académica y Horarios] - Validación integral y publicación segura de la matriz de horarios en estado Borrador a Activo.
+function publishClassSchedules(payload) {
+  const { anoLectivo, ofertaIds } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "HorariosClase");
+  const data = sheet.getDataRange().getValues();
+
+  if (data.length <= 1) {
+    return { status: "success", message: "No existen horarios para publicar.", publishedCount: 0, conflicts: [] };
+  }
+
+  const rows = data.slice(1);
+  // Filtrar horarios en estado Borrador
+  let draftSchedules = rows.map((r, i) => ({ rowIdx: i + 2, r })).filter(item => item.r[7] === "Borrador");
+
+  if (Array.isArray(ofertaIds) && ofertaIds.length > 0) {
+    draftSchedules = draftSchedules.filter(item => ofertaIds.includes(String(item.r[1]).trim()));
+  } else if (anoLectivo) {
+    draftSchedules = draftSchedules.filter(item => String(item.r[1]).includes(String(anoLectivo)));
+  }
+
+  if (draftSchedules.length === 0) {
+    return { status: "success", message: "No se encontraron bloques en Borrador para publicar.", publishedCount: 0, conflicts: [] };
+  }
+
+  const conflicts = [];
+
+  // Validar cada bloque de la matriz antes de cambiar su estado
+  draftSchedules.forEach(item => {
+    const r = item.r;
+    const conflict = checkScheduleConflict({
+      diaSemana: r[2],
+      horaInicio: r[3],
+      horaFin: r[4],
+      aulaCodigo: r[5],
+      docenteUserId: r[6],
+      ofertaId: r[1],
+      excludeHorarioId: r[0]
+    });
+
+    if (conflict.hasConflict) {
+      conflicts.push({
+        horarioId: r[0],
+        ofertaId: r[1],
+        diaSemana: r[2],
+        horaInicio: r[3],
+        horaFin: r[4],
+        reason: conflict.reason
+      });
+    }
+  });
+
+  if (conflicts.length > 0) {
+    return {
+      status: "error",
+      message: `Se encontraron ${conflicts.length} conflicto(s) que impiden la publicación de la matriz de horarios.`,
+      publishedCount: 0,
+      conflicts
+    };
+  }
+
+  // Si no existen conflictos, proceder a activar todos los bloques de la propuesta
+  let publishedCount = 0;
+  draftSchedules.forEach(item => {
+    sheet.getRange(item.rowIdx, 8).setValue("Activo");
+    publishedCount++;
+  });
+
+  const publisher = payload && payload.authUserId ? payload.authUserId : "Administración";
+  logStructuredEvent("ACADEMIC", "publishClassSchedules", "INFO", "SCHEDULES_PUBLISHED", `Publicación exitosa de ${publishedCount} bloques de horarios.`, { anoLectivo, publishedCount, publisher }, payload && payload.authRole);
+
+  return {
+    status: "success",
+    message: `Matriz de horarios publicada exitosamente. Se activaron ${publishedCount} bloques lectivos.`,
+    publishedCount,
+    conflicts: []
+  };
+}
+
 // [TAREA 3.2] [Fase 3: Planificación Académica y Horarios] - Copia de horarios entre años lectivos en estado borrador.
 function copyClassSchedules(payload) {
   const { anioOrigen, anioDestino } = payload || {};
