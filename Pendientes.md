@@ -4312,7 +4312,7 @@ Criterios de aceptación
 
 ---
 
-TAREA 6. COMPARACIÓN FINANCIERA VISUAL ENTRE EJERCICIOS FISCALES
+[X] TAREA 6. COMPARACIÓN FINANCIERA VISUAL ENTRE EJERCICIOS FISCALES
 
 Prioridad: Media
 Área: Informes contables y consolidación fiscal.

@@ -160,6 +160,10 @@ GRUPO 1: TAREAS COMPLETADAS
     - Archivo: backend/accounting-service/Code.gs (Línea 5498 `recordCollectionManagementAction`, Línea 5539 `getCollectionManagementLogs`)
     - Descripción: Endpoints `recordCollectionManagementAction` y `getCollectionManagementLogs` para el seguimiento ordenado cronológicamente de gestiones de cobro, compromisos de pago y fechas de seguimiento.
 
+35. [TAREA 6] COMPARACIÓN FINANCIERA VISUAL ENTRE EJERCICIOS FISCALES
+    - Archivo: backend/accounting-service/Code.gs (Línea 5500 `getComparativeFinancialSummary`)
+    - Descripción: Endpoint `getComparativeFinancialSummary` para comparar dos o más ejercicios fiscales desglosando ingresos, gastos, resultado neto y variaciones absolutas y porcentuales.
+
 
 -------------------------------------------------------------------------------
 GRUPO 2: TAREAS INCOMPLETAS
@@ -175,7 +179,6 @@ GRUPO 3: TAREAS PENDIENTES / NO INICIADAS
 (Registradas en el backlog pero no iniciadas ni presentes en el código)
 -------------------------------------------------------------------------------
 
-15. TAREA 6: COMPARACIÓN FINANCIERA VISUAL ENTRE EJERCICIOS FISCALES
 16. TAREA 7: PROYECCIONES PRESUPUESTARIAS Y FINANCIERAS: COHERENCIA ENTRE INFORMES
 17. TAREA 8: VERIFICACIÓN DE INTEGRIDAD CONTABLE EN LAS NUEVAS FUNCIONES
 18. TAREA RH-01: Conectar el panel de Recursos Humanos con los servicios existentes
