@@ -16,7 +16,7 @@
   - Búsqueda global unificada funcional desde cualquier vista.
   - Permisos RBAC aplicados server-side en `searchGlobalOmnibox`.
   - Atajo de teclado `Ctrl + K` operativo.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 
 Backlog técnico de mejoras y desarrollo
@@ -1559,14 +1559,14 @@ Criterios de Aceptación:
 - **Criterios de Aceptación:**
   - Registro cronológico acumulativo sin purgar información histórica.
   - Trazabilidad completa por módulo, archivo y severidad.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 ### [T-002] Mantenimiento del Mapa de Dependencias
 - **Archivos Involucrados:** `MapaDependencias.md`
 - **Descripción:** Actualizar `MapaDependencias.md` reflejando las relaciones de endpoints de backend, controladores JS y modales HTML identificados durante las auditorías de capacidades transversales y avanzadas.
 - **Criterios de Aceptación:**
   - Indexación de funciones, variables globales y dependencias cruzadas.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 
 ## 2. ÁREA B: AUTOMATIZACIÓN DE TAREAS Y RECORDATORIOS
@@ -1577,7 +1577,7 @@ Criterios de Aceptación:
 - **Criterios de Aceptación:**
   - Evita ejecuciones duplicadas simultáneas o repetidas en la misma jornada.
   - Mantiene registro de estado en las hojas de auditoría de envío.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 ### [B-002] Centro de Notificaciones y Bandeja de Salida Interna
 - **Archivos Involucrados:** `js/ui-common.js`, `teacher-dashboard.html`, `student-dashboard.html`
@@ -1585,7 +1585,7 @@ Criterios de Aceptación:
 - **Criterios de Aceptación:**
   - Contador dinámico de no leídos en el encabezado.
   - Sincronización automática de estado sin recarga completa.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 ### [B-003] Reglas Configurables de Automatización y Alertas Educativas
 - **Archivos Involucrados:** `backend/academic-service/Code.gs`, `backend/user-service/Code.gs`
@@ -1741,21 +1741,21 @@ Criterios de Aceptación:
 - **Criterios de Aceptación:**
   - Documento de evaluación con recomendaciones claras sobre uso de modelos locales vs APIs externas.
   - Confirmación de exclusión o inclusión condicional del alcance.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 ### [IA-02] Definición de Limites de Privacidad y Gobierno de Datos de IA
 - **Archivos Involucrados:** Politica de privacidad y documentos legales
 - **Descripción:** Establecer reglas estrictas para impedir el envío de PII (Información Personal Identificable) de estudiantes o finanzas a modelos de IA de terceros.
 - **Criterios de Aceptación:**
   - Especificación técnica de anonimización de datos previa a cualquier procesamiento externo.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 ### [IA-03] Prototipado Condicional de Búsqueda Asistida / FAQ con IA
 - **Archivos Involucrados:** `js/ui-common.js`
 - **Descripción:** En caso de aprobación del Plan Maestro, prototipar la asistencia de búsqueda basada exclusivamente en la base de datos de preguntas frecuentes (FAQ) de la institución.
 - **Criterios de Aceptación:**
   - Respuestas limitadas a la base de conocimiento institucional sin alucinaciones.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 
 ## 7. SALUD OPERATIVA Y PRIVACIDAD TRANSVERSAL
