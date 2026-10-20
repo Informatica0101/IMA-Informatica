@@ -1950,6 +1950,7 @@ function getCashBankSummary(payload) {
 // PLANILLAS, DEDUCCIONES Y ASISTENCIA DE PERSONAL
 // ---------------------------------------------------------------------------
 
+// VERIFICACION JULES 2026-10-19: Cerrojo Transaccional LockService e Idempotencia en Planillas
 function calculatePayrollPeriod(payload) {
   const { skipLock } = payload || {};
   let lock = null;
@@ -2598,6 +2599,7 @@ function getStaffPayrollReceipt(payload) {
 }
 
 // REQ-EXP-015: Módulo de Inventarios, Activos y Control de Proveedores
+// VERIFICACION JULES 2026-10-19: Cerrojo Transaccional LockService en Kardex con Re-entrancia skipLock
 function recordInventoryMovement(payload) {
   const { skipLock } = payload || {};
   let lock = null;

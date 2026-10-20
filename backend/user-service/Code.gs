@@ -2199,6 +2199,7 @@ function getUnifiedNotifications(payload) {
   return { status: "success", data: notifications, unreadCount: unreadCount };
 }
 
+// VERIFICACION JULES 2026-10-19: Despacho Multicanal Resiliente con Preferencias y Fallback (D-003, D-004, D-005)
 function sendMultiChannelNotification(payload) {
   const { userId, titulo, mensaje, tipo, categoria, canal, enlaceAccion } = payload || {};
   if (!userId || !titulo || !mensaje) throw new Error("userId, titulo y mensaje son requeridos.");
@@ -4199,6 +4200,7 @@ function generateInstitutionalReport(payload) {
 }
 
 
+// VERIFICACION JULES 2026-10-19: Motor de Alertas Educativas Automáticas (B-003, B-004)
 function sendEducationalAlertsTrigger(payload) {
   try {
     const verifiedRole = getUserVerifiedRole(payload);

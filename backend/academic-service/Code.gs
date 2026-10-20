@@ -451,6 +451,7 @@ function updateAdmissionStatus(payload) {
   return { status: "success", message: `Estado de la solicitud actualizado a '${nuevoEstado}'.` };
 }
 
+// VERIFICACION JULES 2026-10-19: Cerrojo Transaccional LockService en Conversión de Admisiones
 function convertAdmissionToStudent(payload) {
   const { skipLock } = payload || {};
   let lock = null;
