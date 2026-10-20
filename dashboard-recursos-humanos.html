@@ -70,6 +70,9 @@
                 <button id="btn-turnos-sustituciones" class="px-4 py-2.5 bg-amber-600 text-white rounded-2xl font-bold text-xs uppercase tracking-widest hover:bg-amber-700 transition-all shadow-md">
                     <i class="fa-solid fa-clock-rotate-left mr-1.5"></i> Turnos &amp; Sustituciones
                 </button>
+                <button id="btn-autoservicio-empleado" class="px-4 py-2.5 bg-slate-800 text-white rounded-2xl font-bold text-xs uppercase tracking-widest hover:bg-slate-900 transition-all shadow-md">
+                    <i class="fa-solid fa-user-gear mr-1.5"></i> Autoservicio Empleado
+                </button>
                 <button id="btn-calcular-planilla" class="px-4 py-2.5 bg-emerald-600 text-white rounded-2xl font-bold text-xs uppercase tracking-widest hover:bg-emerald-700 transition-all shadow-md">
                     <i class="fa-solid fa-calculator mr-1.5"></i> Calcular Planilla
                 </button>
@@ -493,6 +496,66 @@
                             <div id="list-shift-horasextras" class="space-y-2 text-xs font-medium text-gray-700"></div>
                         </div>
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- [TAREA RH-10] Modal para Portal de Autoservicio del Empleado -->
+    <div id="modal-autoservicio-empleado" class="fixed inset-0 z-[110] hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white rounded-[2.5rem] max-w-4xl w-full max-h-[90vh] overflow-y-auto p-6 md:p-8 shadow-2xl border border-gray-100">
+            <div class="flex items-center justify-between pb-4 border-b border-gray-100 mb-6">
+                <div>
+                    <span class="px-3 py-1 bg-slate-100 text-slate-800 rounded-full text-[10px] font-black uppercase tracking-widest">Portal del Empleado</span>
+                    <h3 class="text-xl font-black text-gray-900 uppercase mt-1"><i class="fa-solid fa-user-gear mr-2 text-slate-700"></i>Autoservicio &amp; Ficha Personal</h3>
+                </div>
+                <button id="btn-close-modal-self" class="p-2 text-gray-400 hover:text-gray-700 rounded-full hover:bg-gray-100 text-lg transition-all">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <!-- Tabs Navegación Interna -->
+            <div class="flex space-x-2 border-b border-gray-100 pb-3 mb-6 overflow-x-auto">
+                <button class="tab-self-btn px-4 py-2 text-xs font-bold rounded-xl transition-all bg-slate-800 text-white" data-target="sec-self-expediente">
+                    Mi Ficha &amp; Contrato
+                </button>
+                <button class="tab-self-btn px-4 py-2 text-xs font-bold rounded-xl transition-all text-gray-500 hover:text-gray-800 hover:bg-gray-50" data-target="sec-self-solicitudes">
+                    Mis Solicitudes
+                </button>
+                <button class="tab-self-btn px-4 py-2 text-xs font-bold rounded-xl transition-all text-gray-500 hover:text-gray-800 hover:bg-gray-50" data-target="sec-self-turnos">
+                    Mis Turnos &amp; Horarios
+                </button>
+                <button class="tab-self-btn px-4 py-2 text-xs font-bold rounded-xl transition-all text-gray-500 hover:text-gray-800 hover:bg-gray-50" data-target="sec-self-capacitaciones">
+                    Mis Capacitaciones
+                </button>
+            </div>
+
+            <div class="space-y-6">
+                <!-- TAB 1: MI FICHA & CONTRATO -->
+                <div id="sec-self-expediente" class="space-y-4">
+                    <div id="info-self-expediente" class="p-4 bg-gray-50 rounded-2xl border border-gray-200"></div>
+                    <div id="info-self-contratos" class="space-y-2"></div>
+                </div>
+
+                <!-- TAB 2: MIS SOLICITUDES -->
+                <div id="sec-self-solicitudes" class="space-y-4 hidden">
+                    <div class="flex items-center justify-between">
+                        <h4 class="text-xs font-black uppercase text-gray-900">Historial de Mis Solicitudes de Vacaciones &amp; Permisos</h4>
+                        <button id="btn-refresh-self" class="text-xs font-bold text-slate-700 hover:text-slate-900"><i class="fa-solid fa-rotate mr-1"></i>Actualizar</button>
+                    </div>
+                    <div id="list-self-solicitudes" class="space-y-2 text-xs font-medium text-gray-700"></div>
+                </div>
+
+                <!-- TAB 3: MIS TURNOS -->
+                <div id="sec-self-turnos" class="space-y-4 hidden">
+                    <h4 class="text-xs font-black uppercase text-gray-900">Mis Turnos Asignados</h4>
+                    <div id="list-self-turnos" class="space-y-2 text-xs font-medium text-gray-700"></div>
+                </div>
+
+                <!-- TAB 4: MIS CAPACITACIONES -->
+                <div id="sec-self-capacitaciones" class="space-y-4 hidden">
+                    <h4 class="text-xs font-black uppercase text-gray-900">Mis Capacitaciones &amp; Certificados</h4>
+                    <div id="list-self-capacitaciones" class="space-y-2 text-xs font-medium text-gray-700"></div>
                 </div>
             </div>
         </div>
@@ -1534,6 +1597,51 @@
                     await refreshWorkShiftsSubstitutionsModuleData();
                 });
             }
+
+            // [TAREA RH-10] Gestor del Portal de Autoservicio del Empleado
+            const btnSelf = document.getElementById('btn-autoservicio-empleado');
+            const modalSelf = document.getElementById('modal-autoservicio-empleado');
+            const btnCloseModalSelf = document.getElementById('btn-close-modal-self');
+
+            if (btnSelf && modalSelf) {
+                btnSelf.addEventListener('click', async () => {
+                    modalSelf.classList.remove('hidden');
+                    await refreshEmployeeSelfServiceData();
+                });
+            }
+
+            if (btnCloseModalSelf && modalSelf) {
+                btnCloseModalSelf.addEventListener('click', () => {
+                    modalSelf.classList.add('hidden');
+                });
+            }
+
+            // Pestañas Autoservicio
+            const selfTabBtns = document.querySelectorAll('.tab-self-btn');
+            selfTabBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const targetId = btn.getAttribute('data-target');
+                    selfTabBtns.forEach(b => {
+                        b.className = b === btn ?
+                            'tab-self-btn px-4 py-2 text-xs font-bold rounded-xl transition-all bg-slate-800 text-white' :
+                            'tab-self-btn px-4 py-2 text-xs font-bold rounded-xl transition-all text-gray-500 hover:text-gray-800 hover:bg-gray-50';
+                    });
+                    ['sec-self-expediente', 'sec-self-solicitudes', 'sec-self-turnos', 'sec-self-capacitaciones'].forEach(secId => {
+                        const secEl = document.getElementById(secId);
+                        if (secEl) {
+                            if (secId === targetId) secEl.classList.remove('hidden');
+                            else secEl.classList.add('hidden');
+                        }
+                    });
+                });
+            });
+
+            const btnRefreshSelf = document.getElementById('btn-refresh-self');
+            if (btnRefreshSelf) {
+                btnRefreshSelf.addEventListener('click', async () => {
+                    await refreshEmployeeSelfServiceData();
+                });
+            }
         });
 
         async function refreshPerformanceModuleData() {
@@ -1845,6 +1953,96 @@
                 }
             } catch (err) {
                 console.error('Error al actualizar datos de turnos y sustituciones:', err);
+            }
+        }
+
+        async function refreshEmployeeSelfServiceData() {
+            try {
+                const res = await fetchApi('ACCOUNTING', 'getEmployeeSelfServicePortal', {});
+                if (!res || res.status !== 'success' || !res.data) return;
+
+                const { expediente, contratos, solicitudesVacaciones, turnos, capacitaciones } = res.data;
+
+                // Render Expediente
+                const expEl = document.getElementById('info-self-expediente');
+                if (expEl) {
+                    expEl.innerHTML = !expediente ?
+                        '<p class="text-gray-400 font-bold uppercase py-2">Ficha del colaborador no encontrada.</p>' : `
+                        <div class="space-y-1 text-xs">
+                            <h4 class="font-black text-gray-900 text-sm">${expediente.nombreCompleto || 'Colaborador'} (${expediente.expedienteId})</h4>
+                            <p class="text-gray-600"><strong>Puesto:</strong> ${expediente.puesto || 'N/A'} | <strong>Departamento:</strong> ${expediente.departamento || 'N/A'}</p>
+                            <p class="text-gray-600"><strong>Jornada:</strong> ${expediente.jornada || 'Completa'} | <strong>Fecha Ingreso:</strong> ${expediente.fechaIngreso || 'N/A'}</p>
+                            <span class="inline-block mt-1 px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase bg-emerald-100 text-emerald-800">${expediente.estadoLaboral || 'Activo'}</span>
+                        </div>
+                    `;
+                }
+
+                // Render Contratos
+                const conEl = document.getElementById('info-self-contratos');
+                if (conEl) {
+                    conEl.innerHTML = contratos.length === 0 ?
+                        '<p class="text-gray-400 font-bold uppercase py-2">Sin contratos registrados.</p>' :
+                        contratos.map(c => `
+                            <div class="p-3 bg-white border border-gray-100 rounded-xl flex items-center justify-between text-xs">
+                                <div>
+                                    <span class="font-bold text-gray-900">${c.tipoContrato} (${c.puesto})</span>
+                                    <p class="text-[10px] text-gray-400">Vigencia: ${c.fechaInicio} al ${c.fechaFin || 'Indefinido'}</p>
+                                </div>
+                                <span class="px-2 py-0.5 rounded-full text-[10px] font-black uppercase bg-blue-100 text-blue-800">${c.estadoContrato}</span>
+                            </div>
+                        `).join('');
+                }
+
+                // Render Solicitudes
+                const solEl = document.getElementById('list-self-solicitudes');
+                if (solEl) {
+                    solEl.innerHTML = solicitudesVacaciones.length === 0 ?
+                        '<p class="text-gray-400 font-bold uppercase py-2">No registras solicitudes de vacaciones o permisos.</p>' :
+                        solicitudesVacaciones.map(s => `
+                            <div class="p-3 bg-white border border-gray-100 rounded-2xl flex items-center justify-between text-xs">
+                                <div>
+                                    <span class="font-bold text-gray-900">${s.tipoSolicitud} (${s.diasSolicitados} días)</span>
+                                    <p class="text-[10px] text-gray-400">Fechas: ${s.fechaInicio} al ${s.fechaFin}</p>
+                                </div>
+                                <span class="px-2 py-0.5 rounded-full text-[10px] font-black uppercase ${s.estado === 'Aprobada' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}">${s.estado}</span>
+                            </div>
+                        `).join('');
+                }
+
+                // Render Turnos
+                const turEl = document.getElementById('list-self-turnos');
+                if (turEl) {
+                    turEl.innerHTML = turnos.length === 0 ?
+                        '<p class="text-gray-400 font-bold uppercase py-2">No tienes turnos asignados.</p>' :
+                        turnos.map(t => `
+                            <div class="p-3 bg-white border border-gray-100 rounded-2xl flex items-center justify-between text-xs">
+                                <div>
+                                    <span class="font-bold text-gray-900">${t.nombreTurno}</span>
+                                    <p class="text-[10px] text-gray-400">Horario: ${t.horaEntrada} - ${t.horaSalida} | Periodo: ${t.fechaInicio} al ${t.fechaFin}</p>
+                                </div>
+                                <span class="px-2 py-0.5 rounded-full text-[10px] font-black uppercase bg-emerald-100 text-emerald-800">${t.estado}</span>
+                            </div>
+                        `).join('');
+                }
+
+                // Render Capacitaciones
+                const capEl = document.getElementById('list-self-capacitaciones');
+                if (capEl) {
+                    capEl.innerHTML = capacitaciones.length === 0 ?
+                        '<p class="text-gray-400 font-bold uppercase py-2">No registras capacitaciones activas.</p>' :
+                        capacitaciones.map(c => `
+                            <div class="p-3 bg-white border border-gray-100 rounded-2xl space-y-1 text-xs">
+                                <div class="flex items-center justify-between">
+                                    <span class="font-bold text-gray-900">Curso Ref: ${c.cursoId}</span>
+                                    <span class="px-2 py-0.5 rounded-full text-[10px] font-black uppercase bg-blue-100 text-blue-800">${c.estadoInscripcion}</span>
+                                </div>
+                                <p class="text-[10px] text-gray-500">Asistencia: ${c.asistenciaPorcentaje}% | Calificación: ${c.resultadoNota || 'N/A'}</p>
+                                ${c.certificadoDriveUrl ? `<a href="${c.certificadoDriveUrl}" target="_blank" class="text-blue-600 hover:underline font-bold text-[10px]"><i class="fa-solid fa-file-pdf mr-1"></i>Ver Certificado Adjunto</a>` : ''}
+                            </div>
+                        `).join('');
+                }
+            } catch (err) {
+                console.error('Error al actualizar portal de autoservicio:', err);
             }
         }
 

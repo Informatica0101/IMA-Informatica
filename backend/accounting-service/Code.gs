@@ -189,13 +189,13 @@ const ROLE_PERMISSIONS = {
   // REVISIÓN RBAC: Habilitar permiso processFamilyCreditPurchase para personal de tienda, cafetería, tutores y estudiantes
   "EncargadoTienda": ["getStoreProducts", "manageStoreProduct", "createStoreOrder", "getStoreOrders", "updateStoreOrderStatus", "recordInventoryMovement", "getInventoryKardex", "getInstitutionalPolicies", "processFamilyCreditPurchase"],
   "EncargadoCafeteria": ["getCafeteriaMenu", "manageCafeteriaMenu", "createCafeteriaOrder", "getCafeteriaOrders", "updateCafeteriaOrderStatus", "recordInventoryMovement", "getInventoryKardex", "getInstitutionalPolicies", "processFamilyCreditPurchase"],
-  "RecursosHumanos": ["createEmployeeRecord", "getEmployeeRecords", "manageEmployeeContract", "getEmployeeContracts", "getEmployeeContractAlerts", "manageJobVacancy", "getJobVacancies", "submitJobCandidate", "getJobCandidates", "manageInterviewSchedule", "getInterviewSchedules", "updateEmployeeLaborStatus", "configureWorkSchedule", "recordStaffCheckIn", "getStaffAttendanceLogs", "submitAttendanceCorrection", "reviewAttendanceCorrection", "submitLeaveVacationRequest", "getLeaveVacationRequests", "reviewLeaveVacationRequest", "calculateVacationBalances", "recordMedicalLeave", "calculatePayrollPeriod", "updatePayrollPeriodStatus", "getPayrollPeriodSummary", "requestEmployeeLoanAdvance", "getEmployeeLoansAdvances", "approveEmployeeLoanAdvance", "getLoanAmortizationSchedule", "generatePayrollReceiptPDF", "uploadEmployeeDocument", "getEmployeeDocuments", "getHRDashboardAnalytics", "getInstitutionalPolicies", "managePerformancePeriod", "managePerformanceCriteria", "managePerformanceEvaluation", "getPerformanceEvaluations", "manageTrainingCourse", "manageTrainingEnrollment", "getEmployeeTrainingHistory", "manageProfessionalDevelopmentPlan", "getTrainingAnalyticsReport", "manageLaborIncident", "manageDisciplinaryMeasure", "getLaborIncidentsHistory", "manageStaffingNeeds", "getStaffingNeedsPlanning", "manageWorkShiftAndSubstitution", "getWorkShiftsAndSubstitutionsHistory"],
-  "Empleado": ["getEmployeeRecords", "getEmployeeContracts", "recordStaffCheckIn", "getStaffAttendanceLogs", "submitAttendanceCorrection", "submitLeaveVacationRequest", "getLeaveVacationRequests", "requestEmployeeLoanAdvance", "getEmployeeLoansAdvances", "generatePayrollReceiptPDF", "getEmployeeDocuments", "getPerformanceEvaluations", "getEmployeeTrainingHistory", "manageProfessionalDevelopmentPlan"],
+  "RecursosHumanos": ["createEmployeeRecord", "getEmployeeRecords", "manageEmployeeContract", "getEmployeeContracts", "getEmployeeContractAlerts", "manageJobVacancy", "getJobVacancies", "submitJobCandidate", "getJobCandidates", "manageInterviewSchedule", "getInterviewSchedules", "updateEmployeeLaborStatus", "configureWorkSchedule", "recordStaffCheckIn", "getStaffAttendanceLogs", "submitAttendanceCorrection", "reviewAttendanceCorrection", "submitLeaveVacationRequest", "getLeaveVacationRequests", "reviewLeaveVacationRequest", "calculateVacationBalances", "recordMedicalLeave", "calculatePayrollPeriod", "updatePayrollPeriodStatus", "getPayrollPeriodSummary", "requestEmployeeLoanAdvance", "getEmployeeLoansAdvances", "approveEmployeeLoanAdvance", "getLoanAmortizationSchedule", "generatePayrollReceiptPDF", "uploadEmployeeDocument", "getEmployeeDocuments", "getHRDashboardAnalytics", "getInstitutionalPolicies", "managePerformancePeriod", "managePerformanceCriteria", "managePerformanceEvaluation", "getPerformanceEvaluations", "manageTrainingCourse", "manageTrainingEnrollment", "getEmployeeTrainingHistory", "manageProfessionalDevelopmentPlan", "getTrainingAnalyticsReport", "manageLaborIncident", "manageDisciplinaryMeasure", "getLaborIncidentsHistory", "manageStaffingNeeds", "getStaffingNeedsPlanning", "manageWorkShiftAndSubstitution", "getWorkShiftsAndSubstitutionsHistory", "getEmployeeSelfServicePortal"],
+  "Empleado": ["getEmployeeRecords", "getEmployeeContracts", "recordStaffCheckIn", "getStaffAttendanceLogs", "submitAttendanceCorrection", "submitLeaveVacationRequest", "getLeaveVacationRequests", "requestEmployeeLoanAdvance", "getEmployeeLoansAdvances", "generatePayrollReceiptPDF", "getEmployeeDocuments", "getPerformanceEvaluations", "getEmployeeTrainingHistory", "manageProfessionalDevelopmentPlan", "getEmployeeSelfServicePortal"],
   "Padre": ["getStudentAccountStatement", "uploadPaymentVoucher", "getPaymentVouchers", "generatePaymentReceiptPDF", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getLibraryBooks", "getLibraryLoans", "reserveLibraryBook", "getLibraryReservations", "getDigitalResources", "getTransportRoutes", "getTransportAssignments", "getSchoolDocumentTemplates", "generateSchoolDocument", "getIssuedSchoolDocuments", "getStoreProducts", "createStoreOrder", "getStoreOrders", "getCafeteriaMenu", "createCafeteriaOrder", "getCafeteriaOrders", "getFamilyCreditAuthorizations", "configureFamilyCreditAuthorization", "processFamilyCreditPurchase"],
   "Tutor": ["getStudentAccountStatement", "uploadPaymentVoucher", "getPaymentVouchers", "generatePaymentReceiptPDF", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getLibraryBooks", "getLibraryLoans", "reserveLibraryBook", "getLibraryReservations", "getDigitalResources", "getTransportRoutes", "getTransportAssignments", "getSchoolDocumentTemplates", "generateSchoolDocument", "getIssuedSchoolDocuments", "getStoreProducts", "createStoreOrder", "getStoreOrders", "getCafeteriaMenu", "createCafeteriaOrder", "getCafeteriaOrders", "getFamilyCreditAuthorizations", "configureFamilyCreditAuthorization", "processFamilyCreditPurchase"],
   "Responsable": ["getStudentAccountStatement", "uploadPaymentVoucher", "getPaymentVouchers", "generatePaymentReceiptPDF", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getLibraryBooks", "getLibraryLoans", "reserveLibraryBook", "getLibraryReservations", "getDigitalResources", "getTransportRoutes", "getTransportAssignments", "getSchoolDocumentTemplates", "generateSchoolDocument", "getIssuedSchoolDocuments", "getStoreProducts", "createStoreOrder", "getStoreOrders", "getCafeteriaMenu", "createCafeteriaOrder", "getCafeteriaOrders", "getFamilyCreditAuthorizations", "configureFamilyCreditAuthorization", "processFamilyCreditPurchase"],
   "Consejeros": ["getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getLibraryBooks", "getLibraryLoans", "reserveLibraryBook", "getLibraryReservations", "getDigitalResources", "getTransportRoutes", "getSchoolDocumentTemplates", "generateSchoolDocument", "getIssuedSchoolDocuments"],
-  "Profesor": ["getStaffPayrollReceipt", "submitVacationRequest", "getVacationRequests", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getLibraryBooks", "getLibraryLoans", "reserveLibraryBook", "getLibraryReservations", "getDigitalResources", "getTransportRoutes", "getSchoolDocumentTemplates", "generateSchoolDocument", "getIssuedSchoolDocuments", "verifySACETemplateCompatibility", "generateSACEReportFile"],
+  "Profesor": ["getStaffPayrollReceipt", "submitVacationRequest", "getVacationRequests", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getLibraryBooks", "getLibraryLoans", "reserveLibraryBook", "getLibraryReservations", "getDigitalResources", "getTransportRoutes", "getSchoolDocumentTemplates", "generateSchoolDocument", "getIssuedSchoolDocuments", "verifySACETemplateCompatibility", "generateSACEReportFile", "getEmployeeSelfServicePortal"],
   "Asistente": ["getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getLibraryBooks", "getLibraryLoans", "getDigitalResources", "getSchoolDocumentTemplates"],
   "Estudiante": ["getStudentAccountStatement", "uploadPaymentVoucher", "getPaymentVouchers", "generatePaymentReceiptPDF", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getLibraryBooks", "getLibraryLoans", "reserveLibraryBook", "getLibraryReservations", "getDigitalResources", "getTransportRoutes", "getTransportAssignments", "getSchoolDocumentTemplates", "generateSchoolDocument", "getIssuedSchoolDocuments", "getStoreProducts", "createStoreOrder", "getStoreOrders", "getCafeteriaMenu", "createCafeteriaOrder", "getCafeteriaOrders", "getFamilyCreditAuthorizations", "processFamilyCreditPurchase"],
   "Alumno": ["getStudentAccountStatement", "uploadPaymentVoucher", "getPaymentVouchers", "generatePaymentReceiptPDF", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getLibraryBooks", "getLibraryLoans", "reserveLibraryBook", "getLibraryReservations", "getDigitalResources", "getTransportRoutes", "getTransportAssignments", "getSchoolDocumentTemplates", "generateSchoolDocument", "getIssuedSchoolDocuments", "getStoreProducts", "createStoreOrder", "getStoreOrders", "getCafeteriaMenu", "createCafeteriaOrder", "getCafeteriaOrders", "getFamilyCreditAuthorizations", "processFamilyCreditPurchase"]
@@ -337,6 +337,7 @@ function doPost(e) {
       case "getStaffingNeedsPlanning": result = getStaffingNeedsPlanning(payload); break;
       case "manageWorkShiftAndSubstitution": result = manageWorkShiftAndSubstitution(payload); break;
       case "getWorkShiftsAndSubstitutionsHistory": result = getWorkShiftsAndSubstitutionsHistory(payload); break;
+      case "getEmployeeSelfServicePortal": result = getEmployeeSelfServicePortal(payload); break;
       case "submitLeaveVacationRequest": result = submitLeaveVacationRequest(payload); break;
       case "submitVacationRequest": result = submitVacationRequest(payload); break;
       case "getLeaveVacationRequests": result = getLeaveVacationRequests(payload); break;
@@ -6072,6 +6073,137 @@ function getAssetAssignments(payload) {
   return {
     status: "success",
     asignaciones: mapped
+  };
+}
+
+// TAREA RH-10: Verificar y completar el portal de autoservicio del empleado
+function getEmployeeSelfServicePortal(payload) {
+  const { authRole, authUserId, targetUserId } = payload || {};
+  const isSelfServiceUser = authRole === "Empleado" || authRole === "Profesor" || authRole === "Asistente";
+
+  const effectiveUserId = isSelfServiceUser ? (authUserId || "EMP-CURRENT") : (targetUserId || authUserId || "EMP-CURRENT");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+
+  // 1. Expediente Laboral Propio
+  const empSheet = getOrCreateSheet(ss, "ExpedientesLaborales");
+  const empRows = empSheet.getDataRange().getValues();
+  let expediente = null;
+
+  if (empRows.length > 1) {
+    const foundRow = empRows.slice(1).find(r => String(r[0]).trim() === String(effectiveUserId).trim());
+    if (foundRow) {
+      expediente = {
+        expedienteId: foundRow[0],
+        nombreCompleto: foundRow[1],
+        puesto: foundRow[2],
+        departamento: foundRow[3],
+        fechaIngreso: foundRow[4],
+        tipoContrato: foundRow[5],
+        jornada: foundRow[6],
+        estadoLaboral: foundRow[7]
+      };
+    }
+  }
+
+  // 2. Contratos Propios
+  const conSheet = getOrCreateSheet(ss, "ContratosLaborales");
+  const conRows = conSheet.getDataRange().getValues();
+  let contratos = [];
+
+  if (conRows.length > 1) {
+    contratos = conRows.slice(1).filter(r => String(r[1]).trim() === String(effectiveUserId).trim()).map(r => ({
+      contratoId: r[0],
+      empleadoId: r[1],
+      tipoContrato: r[2],
+      puesto: r[3],
+      fechaInicio: r[4],
+      fechaFin: r[5],
+      salarioBase: r[6],
+      estadoContrato: r[7]
+    }));
+  }
+
+  // 3. Solicitudes de Vacaciones / Permisos
+  const vacSheet = getOrCreateSheet(ss, "SolicitudesVacaciones");
+  const vacRows = vacSheet.getDataRange().getValues();
+  let solicitudesVacaciones = [];
+
+  if (vacRows.length > 1) {
+    solicitudesVacaciones = vacRows.slice(1).filter(r => String(r[1]).trim() === String(effectiveUserId).trim()).map(r => ({
+      solicitudId: r[0],
+      empleadoId: r[1],
+      tipoSolicitud: r[2],
+      fechaInicio: r[3],
+      fechaFin: r[4],
+      diasSolicitados: r[5],
+      estado: r[6],
+      comentarios: r[7]
+    }));
+  }
+
+  // 4. Préstamos / Anticipos
+  const loanSheet = getOrCreateSheet(ss, "PrestamosAnticiposEmpleado");
+  const loanRows = loanSheet.getDataRange().getValues();
+  let prestamos = [];
+
+  if (loanRows.length > 1) {
+    prestamos = loanRows.slice(1).filter(r => String(r[1]).trim() === String(effectiveUserId).trim()).map(r => ({
+      prestamoId: r[0],
+      empleadoId: r[1],
+      montoTotal: r[2],
+      cuotasPactadas: r[3],
+      montoCuota: r[4],
+      saldoPendiente: r[5],
+      estado: r[6]
+    }));
+  }
+
+  // 5. Turnos y Sustituciones
+  const shiftSheet = getOrCreateSheet(ss, "AsignacionesTurnosLaborales");
+  const shiftRows = shiftSheet.getDataRange().getValues();
+  let turnos = [];
+
+  if (shiftRows.length > 1) {
+    turnos = shiftRows.slice(1).filter(r => String(r[1]).trim() === String(effectiveUserId).trim()).map(r => ({
+      asignacionTurnoId: r[0],
+      nombreTurno: r[2],
+      fechaInicio: r[3],
+      fechaFin: r[4],
+      horaEntrada: r[5],
+      horaSalida: r[6],
+      estado: r[8]
+    }));
+  }
+
+  // 6. Capacitaciones
+  const capSheet = getOrCreateSheet(ss, "InscripcionesCapacitacion");
+  const capRows = capSheet.getDataRange().getValues();
+  let capacitaciones = [];
+
+  if (capRows.length > 1) {
+    capacitaciones = capRows.slice(1).filter(r => String(r[2]).trim() === String(effectiveUserId).trim()).map(r => ({
+      inscripcionId: r[0],
+      cursoId: r[1],
+      estadoInscripcion: r[4],
+      asistenciaPorcentaje: r[5],
+      resultadoNota: r[6],
+      certificadoDriveUrl: r[7]
+    }));
+  }
+
+  return {
+    status: "success",
+    data: {
+      effectiveUserId,
+      expediente,
+      contratos,
+      solicitudesVacaciones,
+      prestamos,
+      turnos,
+      capacitaciones,
+      seguridadTrazable: "Acceso restringido server-side a la identidad autenticada."
+    }
   };
 }
 

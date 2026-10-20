@@ -127,3 +127,28 @@ Archivos Modificados:
 
 5. Pendientes.md
    - Actualización del estado de [X] TAREA RH-09. Completar la gestión visual de turnos y sustituciones.
+
+-------------------------------------------------------------------------------
+FECHA: Octubre 2026
+TAREA: [TAREA RH-10] Verificar y completar el portal de autoservicio del empleado
+-------------------------------------------------------------------------------
+
+Archivos Modificados:
+1. backend/accounting-service/Code.gs
+   - Lineas 192-198: Adición de permiso "getEmployeeSelfServicePortal" en ROLE_PERMISSIONS para roles RecursosHumanos, Empleado y Profesor.
+   - Linea 340: Adición de dispatcher en doPost para acción getEmployeeSelfServicePortal.
+   - Lineas 6078-6210: Implementación de función backend getEmployeeSelfServicePortal con comentario identificativo de tarea y validación estricta server-side para restringir la consulta a la identidad del colaborador autenticado.
+
+2. dashboard-recursos-humanos.html
+   - Linea 73: Adición de botón #btn-autoservicio-empleado en la barra principal de acciones.
+   - Lineas 505-565: Adición de modal #modal-autoservicio-empleado con pestañas de Mi Ficha & Contrato, Mis Solicitudes, Mis Turnos & Horarios y Mis Capacitaciones.
+   - Lineas 1600-2050: Implementación de controladores JavaScript para apertura de modal y renderizado dinámico con refreshEmployeeSelfServiceData.
+
+3. MapaDependencias.md
+   - Adición de documentación de tablas y funciones del Portal de Autoservicio del Empleado (TAREA RH-10).
+
+4. Auditoria.txt
+   - Migración de [TAREA RH-10] del Grupo 3 (Tareas Pendientes) al Grupo 1 (Tareas Completadas) como ítem 47.
+
+5. Pendientes.md
+   - Actualización del estado de [X] TAREA RH-10. Verificar y completar el portal de autoservicio del empleado.

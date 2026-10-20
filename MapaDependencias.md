@@ -273,3 +273,12 @@
 - **Componentes Frontend (`dashboard-recursos-humanos.html`):**
   - Botón `#btn-turnos-sustituciones`
   - Modal `#modal-turnos-sustituciones` con pestañas de Asignar Turno Laboral, Registrar Sustitución e Historial Turnos, Sustituciones & Horas Extras.
+
+## PORTAL DE AUTOSERVICIO DEL EMPLEADO (TAREA RH-10)
+- **Hojas de Cálculo / Tablas:**
+  - Consulta unificada de `ExpedientesLaborales`, `ContratosLaborales`, `SolicitudesVacaciones`, `PrestamosAnticiposEmpleado`, `AsignacionesTurnosLaborales` e `InscripcionesCapacitacion` restringida a la identidad autenticada.
+- **Funciones Backend (`backend/accounting-service/Code.gs`):**
+  - `getEmployeeSelfServicePortal(payload)`
+- **Componentes Frontend (`dashboard-recursos-humanos.html`):**
+  - Botón `#btn-autoservicio-empleado`
+  - Modal `#modal-autoservicio-empleado` con pestañas de Mi Ficha & Contrato, Mis Solicitudes, Mis Turnos & Horarios y Mis Capacitaciones.

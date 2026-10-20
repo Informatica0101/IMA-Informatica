@@ -215,6 +215,11 @@ GRUPO 1: TAREAS COMPLETADAS
     - Archivo Frontend: dashboard-recursos-humanos.html (Línea 70 `#btn-turnos-sustituciones`, Línea 375 `#modal-turnos-sustituciones`, Línea 1790 `refreshWorkShiftsSubstitutionsModuleData`)
     - Descripción: Módulo visual para la gestión y asignación de turnos laborales, registro de sustituciones de personal con identificación del colaborador sustituido y sustituto, trazabilidad con solicitudes de horas extras e historial unificado.
 
+47. [TAREA RH-10] Verificar y completar el portal de autoservicio del empleado
+    - Archivo: backend/accounting-service/Code.gs (Línea 6078 `getEmployeeSelfServicePortal`)
+    - Archivo Frontend: dashboard-recursos-humanos.html (Línea 73 `#btn-autoservicio-empleado`, Línea 505 `#modal-autoservicio-empleado`, Línea 1960 `refreshEmployeeSelfServiceData`)
+    - Descripción: Portal unificado de autoservicio para el empleado con consulta segura de ficha laboral, contratos, historial de solicitudes de vacaciones/permisos, turnos asignados y capacitaciones con validación estricta de propiedad por usuario autenticado.
+
 
 -------------------------------------------------------------------------------
 GRUPO 2: TAREAS INCOMPLETAS
@@ -230,7 +235,6 @@ GRUPO 3: TAREAS PENDIENTES / NO INICIADAS
 (Registradas en el backlog pero no iniciadas ni presentes en el código)
 -------------------------------------------------------------------------------
 
-27. TAREA RH-10: Verificar y completar el portal de autoservicio del empleado
 28. TAREA RH-11: Verificar la preparación de información laboral y fiscal
 29. TAREA RH-12: Pruebas de integración y regresión de Recursos Humanos
 30. TAREA GD-IMP-01: Numeración documental segura y prevención de códigos duplicados

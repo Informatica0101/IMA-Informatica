@@ -4882,7 +4882,7 @@ Criterios de aceptación
 
 ---
 
-TAREA RH-10. Verificar y completar el portal de autoservicio del empleado
+[X] TAREA RH-10. Verificar y completar el portal de autoservicio del empleado
 
 Prioridad: Alta.
 Dependencia: RH-01.
