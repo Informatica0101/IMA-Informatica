@@ -3923,7 +3923,7 @@ Criterios de aceptación
 
 ---
 
-TAREA 3.12. Calendarios individuales de estudiantes, docentes y secciones
+[X] TAREA 3.12. Calendarios individuales de estudiantes, docentes y secciones
 
 Objetivo: Consolidar los horarios en vistas coherentes para los usuarios de la institución, reutilizando las consultas existentes y mostrando los cambios autorizados.
 

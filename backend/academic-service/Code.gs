@@ -2118,15 +2118,19 @@ function getClassSchedules(payload) {
 
 // [TAREA 3.7] [Fase 3: Planificación Académica y Horarios] - Control de carga lectiva máxima por docente y cálculo de horas semanales frente a grupo.
 function getTeacherTeachingLoad(payload) {
-  const { docenteUserId, maxHorasSemanales, anoId } = payload || {};
+  const { docenteUserId, maxHorasSemanales, anoId, excludeHorarioId } = payload || {};
   if (!docenteUserId) throw new Error("docenteUserId es requerido.");
 
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
   const horSheet = getOrCreateSheet(ss, "HorariosClase");
   const horRows = horSheet.getDataRange().getValues().slice(1);
 
-  // Filtrar horarios activos del docente
-  const teacherSchedules = horRows.filter(r => r[7] !== "Inactivo" && String(r[6]).trim() === String(docenteUserId).trim());
+  // Filtrar horarios activos del docente excluyendo el bloque en edición si aplica
+  const teacherSchedules = horRows.filter(r => {
+    if (r[7] === "Inactivo") return false;
+    if (excludeHorarioId && String(r[0]).trim() === String(excludeHorarioId).trim()) return false;
+    return String(r[6]).trim() === String(docenteUserId).trim();
+  });
 
   let totalMinutosSemanales = 0;
   const bloques = [];
@@ -2422,7 +2426,7 @@ function checkScheduleConflict(params) {
 
   // [TAREA 3.7] Validar límite de carga lectiva máxima semanal para el docente
   if (docenteUserId && horaInicio && horaFin) {
-    const loadInfo = getTeacherTeachingLoad({ docenteUserId, maxHorasSemanales: maxHorasDocente });
+    const loadInfo = getTeacherTeachingLoad({ docenteUserId, maxHorasSemanales: maxHorasDocente, excludeHorarioId });
     if (loadInfo && loadInfo.data) {
       const [startH, startM] = String(horaInicio).split(":").map(Number);
       const [endH, endM] = String(horaFin).split(":").map(Number);
@@ -2595,6 +2599,68 @@ function saveClassroomResource(payload) {
   return { status: "success", message: "Espacio/Aula registrada exitosamente." };
 }
 
+// [TAREA 3.12] [Fase 3: Planificación Académica y Horarios] - Calendario individual consolidado para estudiantes, docentes y secciones con eventos y sustituciones.
+function getIndividualCalendar(payload) {
+  const { tipoConsulta, targetId, anoId, fechaInicio, fechaFin } = payload || {};
+  const queryType = tipoConsulta || "ESTUDIANTE";
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+
+  let baseSchedules = [];
+  if (queryType === "ESTUDIANTE" || queryType === "SECCION") {
+    const res = getStudentSchedule({ userId: targetId, grado: payload.grado, seccion: payload.seccion });
+    baseSchedules = (res && res.status === "success" && Array.isArray(res.data)) ? res.data : [];
+  } else if (queryType === "DOCENTE") {
+    const res = getClassSchedules({ docenteUserId: targetId });
+    baseSchedules = (res && res.status === "success" && Array.isArray(res.data)) ? res.data : [];
+  } else if (queryType === "AULA") {
+    const res = getClassSchedules({ aulaCodigo: targetId });
+    baseSchedules = (res && res.status === "success" && Array.isArray(res.data)) ? res.data : [];
+  }
+
+  // Cargar sustituciones docentes vigentes
+  const asigSheet = getOrCreateSheet(ss, "AsignacionesDocentes");
+  const asigRows = asigSheet.getDataRange().getValues().slice(1);
+  const substitutions = asigRows.filter(r => r[3] === "Sustituto" && r[6] === "Temporal").map(r => ({
+    asignacionId: r[0],
+    ofertaId: r[1],
+    sustitutoUserId: r[2],
+    fechaInicio: r[4],
+    fechaFin: r[5],
+    autorizadoPor: r[7]
+  }));
+
+  // Cargar eventos del calendario
+  const calRes = getAcademicCalendar({ anoId });
+  const calendarEvents = (calRes && calRes.status === "success" && Array.isArray(calRes.data)) ? calRes.data : [];
+
+  // Cargar sesiones canceladas / recuperadas
+  const sessSheet = getOrCreateSheet(ss, "SesionesClaseImpartidas");
+  const sessRows = sessSheet.getDataRange().getValues().slice(1);
+  const sessionOutcomes = sessRows.map(r => ({
+    sesionId: r[0],
+    horarioId: r[1],
+    ofertaId: r[2],
+    fecha: r[3],
+    estado: r[4],
+    docenteUserId: r[5],
+    observaciones: r[6]
+  }));
+
+  return {
+    status: "success",
+    data: {
+      tipoConsulta: queryType,
+      targetId: targetId || "GLOBAL",
+      horariosRecurrentes: baseSchedules,
+      sustitucionesVigentes: substitutions,
+      eventosCalendario: calendarEvents,
+      sesionesExcepcionales: sessionOutcomes
+    }
+  };
+}
+
+// [TAREA 3.12] [Fase 3: Planificación Académica y Horarios] - Consulta de horarios semanales del estudiante por asignaturas.
 function getStudentSchedule(payload) {
   const { userId, grado, seccion } = payload || {};
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);

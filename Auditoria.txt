@@ -128,6 +128,10 @@ GRUPO 1: TAREAS COMPLETADAS
     - Archivo: backend/academic-service/Code.gs (Línea 2260 `publishClassSchedules`)
     - Descripción: Endpoint `publishClassSchedules` para la validación integral y cambio de estado de Borrador a Activo con verificación de conflictos obligatorios y auditoría.
 
+27. [TAREA 3.12] Calendarios individuales de estudiantes, docentes y secciones
+    - Archivo: backend/academic-service/Code.gs (Línea 2598 `getIndividualCalendar`, Línea 2658 `getStudentSchedule`)
+    - Descripción: Endpoint `getIndividualCalendar` consolidando horarios semanales recurrentes, sustituciones docentes, eventos del calendario lectivo y sesiones excepcionales canceladas/recuperadas.
+
 
 -------------------------------------------------------------------------------
 GRUPO 2: TAREAS INCOMPLETAS
@@ -143,7 +147,6 @@ GRUPO 3: TAREAS PENDIENTES / NO INICIADAS
 (Registradas en el backlog pero no iniciadas ni presentes en el código)
 -------------------------------------------------------------------------------
 
-7. TAREA 3.12: Calendarios individuales de estudiantes, docentes y secciones
 8. TAREA 3.13: Integración coherente de horarios, asignaciones y sesiones
 9. TAREA 3.14: Permisos y trazabilidad de operaciones académicas
 10. TAREA 1: REESTRUCTURACIÓN DE CONVENIOS Y PLANES DE PAGO FAMILIARES
