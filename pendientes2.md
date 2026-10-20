@@ -1612,7 +1612,7 @@ Criterios de Aceptación:
 - **Criterios de Aceptación:**
   - Carga inmediata offline de dashboards principales y recursos estáticos.
   - Actualización transparente de caché al detectar nueva versión del SW.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 ### [C-002] Gestor de Sincronización Offline en IndexedDB
 - **Archivos Involucrados:** `js/ui-common.js`, `js/persistence.js`
@@ -1620,7 +1620,7 @@ Criterios de Aceptación:
 - **Criterios de Aceptación:**
   - Procesamiento automático al recuperar la conexión (`online`).
   - Modal de resolución de conflictos en caso de cambios simultáneos.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 ### [C-003] Visor Gráfico del Estado de Conexión y Cola Pendiente
 - **Archivos Involucrados:** `js/ui-common.js`, `teacher-dashboard.html`, `student-dashboard.html`
@@ -1628,7 +1628,7 @@ Criterios de Aceptación:
 - **Criterios de Aceptación:**
   - Muestra contador de elementos en cola y botón de "Sincronizar Ahora".
   - Notifica visualmente los éxitos o fallos de sincronización.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 ### [C-004] Adaptación Responsiva Touch-First para Dispositivos Móviles
 - **Archivos Involucrados:** `css/style.css`, `js/ui-common.js`, dashboards HTML
@@ -1636,7 +1636,7 @@ Criterios de Aceptación:
 - **Criterios de Aceptación:**
   - Cumplimiento de pautas WCAG 2.2 AA para interfaces táctiles.
   - Ausencia de scroll horizontal involuntario en resoluciones móviles (<= 360px).
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 ### [C-005] Verificación PWA Lighthous e Instalabilidad Standalone
 - **Archivos Involucrados:** `manifest.json`, `sw.js`
@@ -1644,7 +1644,7 @@ Criterios de Aceptación:
 - **Criterios de Aceptación:**
   - Cumplimiento de criterios de instalabilidad PWA en Lighthouse.
   - Banner de instalación nativo funcional en navegadores soportados.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 
 ## 4. ÁREA D: CENTRO DE INTEGRACIONES Y PROVEEDORES
@@ -1655,7 +1655,7 @@ Criterios de Aceptación:
 - **Criterios de Aceptación:**
   - Las fallas en proveedores externos no afectan el funcionamiento de las notificaciones internas.
   - Registro de credenciales cifradas y validadas por servidor.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 ### [D-002] Panel UI de Administración de Integraciones y Proveedores
 - **Archivos Involucrados:** `teacher-dashboard.html`, `js/teacher.js`
@@ -1663,7 +1663,7 @@ Criterios de Aceptación:
 - **Criterios de Aceptación:**
   - Interfaz interactiva de prueba de envío con reporte de código de respuesta HTTP.
   - Acceso restringido exclusivamente a roles Administrador y Director.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 ### [D-003] Normalización de Preferencias del Usuario e Idempotencia
 - **Archivos Involucrados:** `backend/user-service/Code.gs`, `js/ui-common.js`
@@ -1698,7 +1698,7 @@ Criterios de Aceptación:
 - **Criterios de Aceptación:**
   - Generación de respaldo manual y programado.
   - Verificación de integridad mediante `verifyBackupIntegrity`.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 ### [E-002] Procedimiento de Restauración Controlada con Preservación Histórica
 - **Archivos Involucrados:** `backend/academic-service/Code.gs`
@@ -1706,7 +1706,7 @@ Criterios de Aceptación:
 - **Criterios de Aceptación:**
   - Preserva intactos los registros de auditoría e historial de notas.
   - Requiere doble confirmación y rol exclusivo de Administrador.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 ### [E-003] Interfaz UI de Gestión de Respaldos y Estado del Sistema
 - **Archivos Involucrados:** `teacher-dashboard.html`, `js/teacher.js`
@@ -1714,7 +1714,7 @@ Criterios de Aceptación:
 - **Criterios de Aceptación:**
   - Muestra tabla con fecha, tamaño, checksum y estado de cada respaldo.
   - Modal interactivo de confirmación de restauración con advertencias de seguridad.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 ### [E-004] Pruebas Simuladas de Desastre y Failover de Datos
 - **Archivos Involucrados:** `backend/academic-service/Code.gs`
@@ -1722,7 +1722,7 @@ Criterios de Aceptación:
 - **Criterios de Aceptación:**
   - 100% de coincidencia de registros restaurados contra el checksum original.
   - Documentación del tiempo estimado de recuperación (RTO / RPO).
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 ### [E-005] Bitácora Protegida de Operaciones de Respaldo y Restauración
 - **Archivos Involucrados:** `backend/user-service/Code.gs`
@@ -1730,7 +1730,7 @@ Criterios de Aceptación:
 - **Criterios de Aceptación:**
   - Captura IP/origen, usuario, timestamp, checksum y resultado de la operación.
   - Registros no modificables ni eliminables mediante interfaz común.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 
 ## 6. ÁREA A (EVALUACIÓN CONDICIONAL DE ASISTENTE DE IA)
@@ -1766,7 +1766,7 @@ Criterios de Aceptación:
 - **Criterios de Aceptación:**
   - Ausencia de logs con información sensible en las herramientas de desarrollador del navegador.
   - Manejo uniforme de errores a través del sistema de registros estructurados.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 ### [X-002] Validación WCAG 2.2 AA y Accesibilidad Universal
 - **Archivos Involucrados:** `css/style.css`, dashboards HTML, `js/ui-common.js`
@@ -1774,14 +1774,14 @@ Criterios de Aceptación:
 - **Criterios de Aceptación:**
   - Ratio de contraste mínimo de 4.5:1 para texto normal.
   - Soporte completo de lectores de pantalla y navegación asistida.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 ### [X-003] Verificación de Propiedad Intelectual y Cumplimiento Legal
 - **Archivos Involucrados:** `politica-de-privacidad.html`, `politica-de-uso.html`
 - **Descripción:** Validar que las declaraciones de propiedad intelectual pertenezcan a JyP Solutions S. de R.L. de C.V. y que la propiedad de los datos sea 100% del instituto cliente.
 - **Criterios de Aceptación:**
   - Texto legal verificado y coherente en todas las páginas públicas e interfaces de la plataforma.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 
 ## 8. VERIFICACIÓN Y CIERRE FINAL DE LA EXPANSIÓN
@@ -1792,7 +1792,7 @@ Criterios de Aceptación:
 - **Criterios de Aceptación:**
   - 100% de escenarios ejecutados con éxito sin errores de inconsistencia de datos.
   - Certificación de cero regresiones funcionales.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 ### [V-002] Informe de Cierre de Expansión y Acta de Aprobación
 - **Archivos Involucrados:** `ChangesLogs.txt`, `Auditoría.txt`
@@ -1800,7 +1800,7 @@ Criterios de Aceptación:
 - **Criterios de Aceptación:**
   - Registro completo de cambios en `ChangesLogs.txt`.
   - Conformidad y firma digital de aprobación del plan.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 
 ---

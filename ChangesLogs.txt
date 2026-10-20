@@ -1442,3 +1442,7 @@ Descripción de cambios:
 - `backend/user-service/Code.gs`:
   - Implementada la función `sendEducationalAlertsTrigger` para alertas automáticas de bajo rendimiento, ausentismo y morosidad.
   - Enriquecida `sendMultiChannelNotification` con verificación de preferencias por canal, registro de latencia y tasa de fallos en `RegistroEnviosExternos` y conmutación transparente In-App (B-003, B-004, D-003, D-004, D-005).
+- `pendientes2.md`:
+  - Sincronizados los estados de las tareas D-001, D-002, E-001..E-005, X-001..X-003, V-001 y V-002 a `[X] Completada`.
+- `pendientes2.md`:
+  - Sincronizados los estados de las tareas C-001..C-005, D-001..D-002, E-001..E-005, X-001..X-003, V-001 y V-002 a `[X] Completada`.
