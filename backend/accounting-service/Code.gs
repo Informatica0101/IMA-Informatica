@@ -189,7 +189,7 @@ const ROLE_PERMISSIONS = {
   // REVISIÓN RBAC: Habilitar permiso processFamilyCreditPurchase para personal de tienda, cafetería, tutores y estudiantes
   "EncargadoTienda": ["getStoreProducts", "manageStoreProduct", "createStoreOrder", "getStoreOrders", "updateStoreOrderStatus", "recordInventoryMovement", "getInventoryKardex", "getInstitutionalPolicies", "processFamilyCreditPurchase"],
   "EncargadoCafeteria": ["getCafeteriaMenu", "manageCafeteriaMenu", "createCafeteriaOrder", "getCafeteriaOrders", "updateCafeteriaOrderStatus", "recordInventoryMovement", "getInventoryKardex", "getInstitutionalPolicies", "processFamilyCreditPurchase"],
-  "RecursosHumanos": ["createEmployeeRecord", "getEmployeeRecords", "manageEmployeeContract", "getEmployeeContracts", "getEmployeeContractAlerts", "manageJobVacancy", "getJobVacancies", "submitJobCandidate", "getJobCandidates", "updateEmployeeLaborStatus", "configureWorkSchedule", "recordStaffCheckIn", "getStaffAttendanceLogs", "submitAttendanceCorrection", "reviewAttendanceCorrection", "submitLeaveVacationRequest", "getLeaveVacationRequests", "reviewLeaveVacationRequest", "calculateVacationBalances", "recordMedicalLeave", "calculatePayrollPeriod", "updatePayrollPeriodStatus", "getPayrollPeriodSummary", "requestEmployeeLoanAdvance", "getEmployeeLoansAdvances", "approveEmployeeLoanAdvance", "getLoanAmortizationSchedule", "generatePayrollReceiptPDF", "uploadEmployeeDocument", "getEmployeeDocuments", "getHRDashboardAnalytics", "getInstitutionalPolicies"],
+  "RecursosHumanos": ["createEmployeeRecord", "getEmployeeRecords", "manageEmployeeContract", "getEmployeeContracts", "getEmployeeContractAlerts", "manageJobVacancy", "getJobVacancies", "submitJobCandidate", "getJobCandidates", "manageInterviewSchedule", "getInterviewSchedules", "updateEmployeeLaborStatus", "configureWorkSchedule", "recordStaffCheckIn", "getStaffAttendanceLogs", "submitAttendanceCorrection", "reviewAttendanceCorrection", "submitLeaveVacationRequest", "getLeaveVacationRequests", "reviewLeaveVacationRequest", "calculateVacationBalances", "recordMedicalLeave", "calculatePayrollPeriod", "updatePayrollPeriodStatus", "getPayrollPeriodSummary", "requestEmployeeLoanAdvance", "getEmployeeLoansAdvances", "approveEmployeeLoanAdvance", "getLoanAmortizationSchedule", "generatePayrollReceiptPDF", "uploadEmployeeDocument", "getEmployeeDocuments", "getHRDashboardAnalytics", "getInstitutionalPolicies"],
   "Empleado": ["getEmployeeRecords", "getEmployeeContracts", "recordStaffCheckIn", "getStaffAttendanceLogs", "submitAttendanceCorrection", "submitLeaveVacationRequest", "getLeaveVacationRequests", "requestEmployeeLoanAdvance", "getEmployeeLoansAdvances", "generatePayrollReceiptPDF", "getEmployeeDocuments"],
   "Padre": ["getStudentAccountStatement", "uploadPaymentVoucher", "getPaymentVouchers", "generatePaymentReceiptPDF", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getLibraryBooks", "getLibraryLoans", "reserveLibraryBook", "getLibraryReservations", "getDigitalResources", "getTransportRoutes", "getTransportAssignments", "getSchoolDocumentTemplates", "generateSchoolDocument", "getIssuedSchoolDocuments", "getStoreProducts", "createStoreOrder", "getStoreOrders", "getCafeteriaMenu", "createCafeteriaOrder", "getCafeteriaOrders", "getFamilyCreditAuthorizations", "configureFamilyCreditAuthorization", "processFamilyCreditPurchase"],
   "Tutor": ["getStudentAccountStatement", "uploadPaymentVoucher", "getPaymentVouchers", "generatePaymentReceiptPDF", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getLibraryBooks", "getLibraryLoans", "reserveLibraryBook", "getLibraryReservations", "getDigitalResources", "getTransportRoutes", "getTransportAssignments", "getSchoolDocumentTemplates", "generateSchoolDocument", "getIssuedSchoolDocuments", "getStoreProducts", "createStoreOrder", "getStoreOrders", "getCafeteriaMenu", "createCafeteriaOrder", "getCafeteriaOrders", "getFamilyCreditAuthorizations", "configureFamilyCreditAuthorization", "processFamilyCreditPurchase"],
@@ -319,6 +319,8 @@ function doPost(e) {
       case "getJobVacancies": result = getJobVacancies(payload); break;
       case "submitJobCandidate": result = submitJobCandidate(payload); break;
       case "getJobCandidates": result = getJobCandidates(payload); break;
+      case "manageInterviewSchedule": result = manageInterviewSchedule(payload); break;
+      case "getInterviewSchedules": result = getInterviewSchedules(payload); break;
       case "submitLeaveVacationRequest": result = submitLeaveVacationRequest(payload); break;
       case "submitVacationRequest": result = submitVacationRequest(payload); break;
       case "getLeaveVacationRequests": result = getLeaveVacationRequests(payload); break;
@@ -1387,6 +1389,205 @@ function getFamilyPaymentAgreements(payload) {
       observaciones: r[8],
       autorizadoPor: r[9],
       fechaCreacion: r[10]
+    };
+  });
+
+  return { status: "success", data: filtered };
+}
+
+// [TAREA RH-04] [Fase Reclutamiento y Selección] - Programación, reprogramación, seguimiento de asistencia y evaluación confidencial de entrevistas laborales.
+function manageInterviewSchedule(payload) {
+  const {
+    entrevistaId,
+    candidatoId,
+    vacanteId,
+    fecha,
+    hora,
+    modalidad,
+    responsable,
+    evaluadores,
+    estadoEntrevista,
+    asistencia,
+    motivoCambio,
+    observacionesEvaluador,
+    resultado,
+    nuevoEstadoCandidatura,
+    forzarConflicto
+  } = payload || {};
+
+  if (!candidatoId || !fecha || !hora) {
+    throw new Error("candidatoId, fecha y hora son campos obligatorios.");
+  }
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "EntrevistasSeleccion");
+
+  if (sheet.getLastRow() === 0) {
+    sheet.appendRow([
+      "EntrevistaID",
+      "CandidatoID",
+      "VacanteID",
+      "Fecha",
+      "Hora",
+      "Modalidad",
+      "Responsable",
+      "EvaluadoresJSON",
+      "EstadoEntrevista",
+      "Asistencia",
+      "MotivoCambio",
+      "ObservacionesEvaluador",
+      "Resultado",
+      "HistorialCambiosJSON",
+      "FechaCreacion",
+      "UltimaModificacion"
+    ]);
+  }
+
+  const data = sheet.getDataRange().getValues();
+  const eId = entrevistaId || ("INT-" + Date.now());
+  const nowStr = new Date().toISOString();
+
+  // Detector de conflictos de horario para el mismo responsable o candidato
+  if (!forzarConflicto) {
+    const conflict = data.slice(1).find(r => {
+      const isDiffId = String(r[0]).trim() !== String(eId).trim();
+      const sameDate = String(r[3]).trim() === String(fecha).trim();
+      const sameTime = String(r[4]).trim() === String(hora).trim();
+      const sameRespOrCand = (responsable && String(r[6]).toLowerCase() === String(responsable).toLowerCase()) ||
+                             String(r[1]).trim() === String(candidatoId).trim();
+      const isActive = String(r[8]).toLowerCase() !== "cancelada";
+      return isDiffId && sameDate && sameTime && sameRespOrCand && isActive;
+    });
+
+    if (conflict) {
+      return {
+        status: "warning",
+        hasConflict: true,
+        message: "Existe un conflicto de horario para la fecha y hora seleccionadas con " + (conflict[6] || conflict[1]) + ".",
+        conflictData: { entrevistaId: conflict[0], responsable: conflict[6], fecha: conflict[3], hora: conflict[4] }
+      };
+    }
+  }
+
+  const idx = data.slice(1).findIndex(r => String(r[0]).trim() === String(eId).trim());
+  const evaluadoresStr = Array.isArray(evaluadores) ? JSON.stringify(evaluadores) : (evaluadores || "[]");
+
+  if (idx !== -1) {
+    const rowIdx = idx + 2;
+    const prevHistoryStr = data[rowIdx - 1][13] || "[]";
+    let history = [];
+    try { history = JSON.parse(prevHistoryStr); } catch (e) { history = []; }
+
+    history.push({
+      fechaModificacion: nowStr,
+      estadoAnterior: data[rowIdx - 1][8],
+      nuevoEstado: estadoEntrevista || data[rowIdx - 1][8],
+      motivoCambio: motivoCambio || "",
+      asistencia: asistencia || data[rowIdx - 1][9]
+    });
+
+    sheet.getRange(rowIdx, 3).setValue(vacanteId || data[rowIdx - 1][2]);
+    sheet.getRange(rowIdx, 4).setValue(fecha);
+    sheet.getRange(rowIdx, 5).setValue(hora);
+    sheet.getRange(rowIdx, 6).setValue(modalidad || data[rowIdx - 1][5] || "Presencial");
+    sheet.getRange(rowIdx, 7).setValue(responsable || data[rowIdx - 1][6] || "");
+    sheet.getRange(rowIdx, 8).setValue(evaluadoresStr);
+    sheet.getRange(rowIdx, 9).setValue(estadoEntrevista || data[rowIdx - 1][8] || "Programada");
+    sheet.getRange(rowIdx, 10).setValue(asistencia || data[rowIdx - 1][9] || "Pendiente");
+    sheet.getRange(rowIdx, 11).setValue(motivoCambio || data[rowIdx - 1][10] || "");
+    if (observacionesEvaluador !== undefined) sheet.getRange(rowIdx, 12).setValue(observacionesEvaluador);
+    if (resultado !== undefined) sheet.getRange(rowIdx, 13).setValue(resultado);
+    sheet.getRange(rowIdx, 14).setValue(JSON.stringify(history));
+    sheet.getRange(rowIdx, 16).setValue(nowStr);
+  } else {
+    const initialHistory = JSON.stringify([{
+      fechaModificacion: nowStr,
+      accion: "Creacion",
+      estado: estadoEntrevista || "Programada"
+    }]);
+
+    sheet.appendRow([
+      eId,
+      candidatoId,
+      vacanteId || "",
+      fecha,
+      hora,
+      modalidad || "Presencial",
+      responsable || "",
+      evaluadoresStr,
+      estadoEntrevista || "Programada",
+      asistencia || "Pendiente",
+      motivoCambio || "",
+      observacionesEvaluador || "",
+      resultado || "Pendiente",
+      initialHistory,
+      nowStr,
+      nowStr
+    ]);
+  }
+
+  // Sincronizar estado en la candidatura del participante
+  if (candidatoId) {
+    const candSheet = getOrCreateSheet(ss, "CandidatosVacantes");
+    const candData = candSheet.getDataRange().getValues();
+    const cIdx = candData.slice(1).findIndex(r => String(r[0]).trim() === String(candidatoId).trim());
+    if (cIdx !== -1) {
+      const cRow = cIdx + 2;
+      const targetState = nuevoEstadoCandidatura || (
+        estadoEntrevista === "Realizada" ? "Entrevistado" :
+        estadoEntrevista === "Cancelada" ? "Entrevista Cancelada" :
+        "Entrevista Programada"
+      );
+      candSheet.getRange(cRow, 8).setValue(targetState);
+    }
+  }
+
+  return {
+    status: "success",
+    message: "Agenda de entrevista procesada exitosamente.",
+    data: { entrevistaId: eId, candidatoId, fecha, hora, estadoEntrevista: estadoEntrevista || "Programada" }
+  };
+}
+
+// [TAREA RH-04] [Fase Reclutamiento y Selección] - Consulta e historial de entrevistas laborales agendadas.
+function getInterviewSchedules(payload) {
+  const { candidatoId, vacanteId, estadoEntrevista, incluirObservacionesPrivadas } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "EntrevistasSeleccion");
+  const data = sheet.getDataRange().getValues();
+
+  if (data.length <= 1) return { status: "success", data: [] };
+
+  const rows = data.slice(1);
+  const filtered = rows.filter(r => {
+    if (candidatoId && String(r[1]).trim() !== String(candidatoId).trim()) return false;
+    if (vacanteId && String(r[2]).trim() !== String(vacanteId).trim()) return false;
+    if (estadoEntrevista && String(r[8]).toLowerCase() !== String(estadoEntrevista).toLowerCase()) return false;
+    return true;
+  }).map(r => {
+    let evaluadores = [];
+    let historialCambios = [];
+    try { evaluadores = JSON.parse(r[7] || "[]"); } catch (e) { evaluadores = []; }
+    try { historialCambios = JSON.parse(r[13] || "[]"); } catch (e) { historialCambios = []; }
+
+    return {
+      entrevistaId: r[0],
+      candidatoId: r[1],
+      vacanteId: r[2],
+      fecha: r[3],
+      hora: r[4],
+      modalidad: r[5],
+      responsable: r[6],
+      evaluadores: evaluadores,
+      estadoEntrevista: r[8],
+      asistencia: r[9],
+      motivoCambio: r[10],
+      // No exponer observaciones privadas a usuarios sin permiso explícito
+      observacionesEvaluador: incluirObservacionesPrivadas ? r[11] : undefined,
+      resultado: r[12],
+      historialCambios: historialCambios,
+      fechaCreacion: r[14],
+      ultimaModificacion: r[15]
     };
   });
 

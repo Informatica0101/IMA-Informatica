@@ -4662,7 +4662,7 @@ Criterios de aceptación
 
 ---
 
-TAREA RH-04. Implementar la agenda y el seguimiento de entrevistas
+[X] TAREA RH-04. Implementar la agenda y el seguimiento de entrevistas
 
 Prioridad: Alta.
 Dependencia: RH-03.

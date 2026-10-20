@@ -185,6 +185,11 @@ GRUPO 1: TAREAS COMPLETADAS
     - Archivo: backend/accounting-service/Code.gs (Línea 3740 `manageJobVacancy`, Línea 3824 `submitJobCandidate`)
     - Descripción: Endpoints `manageJobVacancy`, `getJobVacancies`, `submitJobCandidate` y `getJobCandidates` para gestión de vacantes laborales, postulantes, currículos y estados de candidatura.
 
+41. [TAREA RH-04] Implementar la agenda y el seguimiento de entrevistas
+    - Archivo: backend/accounting-service/Code.gs (Línea 1398 `manageInterviewSchedule`, Línea 1546 `getInterviewSchedules`)
+    - Archivo Frontend: dashboard-recursos-humanos.html (Línea 182)
+    - Descripción: Endpoints `manageInterviewSchedule` y `getInterviewSchedules` para programación, reprogramación, detección de conflictos de agenda, asistencia y evaluación confidencial de entrevistas.
+
 
 -------------------------------------------------------------------------------
 GRUPO 2: TAREAS INCOMPLETAS
@@ -200,7 +205,6 @@ GRUPO 3: TAREAS PENDIENTES / NO INICIADAS
 (Registradas en el backlog pero no iniciadas ni presentes en el código)
 -------------------------------------------------------------------------------
 
-21. TAREA RH-04: Implementar la agenda y el seguimiento de entrevistas
 22. TAREA RH-05: Implementar la evaluación del desempeño de los empleados
 23. TAREA RH-06: Implementar el registro de capacitación y desarrollo profesional
 24. TAREA RH-07: Completar el registro de incidencias laborales y medidas disciplinarias

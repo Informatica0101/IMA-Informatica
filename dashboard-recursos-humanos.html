@@ -52,6 +52,9 @@
                 <button id="btn-nuevo-empleado" class="px-4 py-2.5 bg-teal-600 text-white rounded-2xl font-bold text-xs uppercase tracking-widest hover:bg-teal-700 transition-all shadow-md">
                     + Registrar Empleado
                 </button>
+                <button id="btn-agendar-entrevista" class="px-4 py-2.5 bg-indigo-600 text-white rounded-2xl font-bold text-xs uppercase tracking-widest hover:bg-indigo-700 transition-all shadow-md">
+                    <i class="fa-solid fa-calendar-check mr-1.5"></i> Agendar Entrevista
+                </button>
                 <button id="btn-calcular-planilla" class="px-4 py-2.5 bg-emerald-600 text-white rounded-2xl font-bold text-xs uppercase tracking-widest hover:bg-emerald-700 transition-all shadow-md">
                     <i class="fa-solid fa-calculator mr-1.5"></i> Calcular Planilla
                 </button>
@@ -171,6 +174,45 @@
                     } catch (err) {
                         if (window.hideLoading) window.hideLoading();
                         console.error('Error al registrar empleado:', err);
+                        alert('Error al conectar con el servidor.');
+                    }
+                });
+            }
+
+            // [TAREA RH-04] Acceso para agendar entrevistas de candidatos desde el panel de RRHH
+            const btnAgendarEntrevista = document.getElementById('btn-agendar-entrevista');
+            if (btnAgendarEntrevista) {
+                btnAgendarEntrevista.addEventListener('click', async () => {
+                    const candidatoId = prompt('Ingrese el CandidatoID:');
+                    if (!candidatoId) return;
+                    const fecha = prompt('Ingrese la Fecha (AAAA-MM-DD):', new Date().toISOString().split('T')[0]);
+                    const hora = prompt('Ingrese la Hora (HH:MM):', '09:00');
+                    const responsable = prompt('Ingrese el Nombre o ID del Responsable / Evaluador:');
+                    if (!fecha || !hora) return;
+
+                    try {
+                        if (window.showLoading) window.showLoading('Agendando entrevista de selección...');
+                        const res = await fetchApi('ACCOUNTING', 'manageInterviewSchedule', {
+                            candidatoId,
+                            fecha,
+                            hora,
+                            responsable: responsable || 'Recursos Humanos',
+                            modalidad: 'Presencial',
+                            estadoEntrevista: 'Programada'
+                        });
+                        if (window.hideLoading) window.hideLoading();
+
+                        if (res && res.status === 'success') {
+                            alert('Entrevista agendada exitosamente. ID: ' + (res.data ? res.data.entrevistaId : ''));
+                            await loadHRDashboardData();
+                        } else if (res && res.status === 'warning') {
+                            alert('Advertencia: ' + res.message);
+                        } else {
+                            alert(res && res.message ? res.message : 'No se pudo agendar la entrevista.');
+                        }
+                    } catch (err) {
+                        if (window.hideLoading) window.hideLoading();
+                        console.error('Error al agendar entrevista:', err);
                         alert('Error al conectar con el servidor.');
                     }
                 });
