@@ -64,6 +64,9 @@
                 <button id="btn-incidencias-disciplinarias" class="px-4 py-2.5 bg-red-600 text-white rounded-2xl font-bold text-xs uppercase tracking-widest hover:bg-red-700 transition-all shadow-md">
                     <i class="fa-solid fa-triangle-exclamation mr-1.5"></i> Incidencias &amp; Disciplina
                 </button>
+                <button id="btn-planificacion-personal" class="px-4 py-2.5 bg-teal-600 text-white rounded-2xl font-bold text-xs uppercase tracking-widest hover:bg-teal-700 transition-all shadow-md">
+                    <i class="fa-solid fa-users-gear mr-1.5"></i> Planificación Necesidades
+                </button>
                 <button id="btn-calcular-planilla" class="px-4 py-2.5 bg-emerald-600 text-white rounded-2xl font-bold text-xs uppercase tracking-widest hover:bg-emerald-700 transition-all shadow-md">
                     <i class="fa-solid fa-calculator mr-1.5"></i> Calcular Planilla
                 </button>
@@ -264,6 +267,102 @@
                             <div id="list-inc-medidas" class="space-y-2 text-xs font-medium text-gray-700"></div>
                         </div>
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- [TAREA RH-08] Modal para Planificación de Necesidades de Personal -->
+    <div id="modal-planificacion-personal" class="fixed inset-0 z-[110] hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white rounded-[2.5rem] max-w-4xl w-full max-h-[90vh] overflow-y-auto p-6 md:p-8 shadow-2xl border border-gray-100">
+            <div class="flex items-center justify-between pb-4 border-b border-gray-100 mb-6">
+                <div>
+                    <span class="px-3 py-1 bg-teal-50 text-teal-700 rounded-full text-[10px] font-black uppercase tracking-widest">Recursos Humanos</span>
+                    <h3 class="text-xl font-black text-gray-900 uppercase mt-1"><i class="fa-solid fa-users-gear mr-2 text-teal-600"></i>Planificación de Necesidades de Personal</h3>
+                </div>
+                <button id="btn-close-modal-plan" class="p-2 text-gray-400 hover:text-gray-700 rounded-full hover:bg-gray-100 text-lg transition-all">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <!-- Tabs Navegación Interna -->
+            <div class="flex space-x-2 border-b border-gray-100 pb-3 mb-6 overflow-x-auto">
+                <button class="tab-plan-btn px-4 py-2 text-xs font-bold rounded-xl transition-all bg-teal-600 text-white" data-target="sec-plan-proyeccion">
+                    Proyección de Necesidades
+                </button>
+                <button class="tab-plan-btn px-4 py-2 text-xs font-bold rounded-xl transition-all text-gray-500 hover:text-gray-800 hover:bg-gray-50" data-target="sec-plan-comparativa">
+                    Disponibilidad vs Demanda
+                </button>
+                <button class="tab-plan-btn px-4 py-2 text-xs font-bold rounded-xl transition-all text-gray-500 hover:text-gray-800 hover:bg-gray-50" data-target="sec-plan-informes">
+                    Justificación &amp; Vacantes
+                </button>
+            </div>
+
+            <div class="space-y-6">
+                <!-- TAB 1: REGISTRAR PROYECCIÓN DE NECESIDADES -->
+                <div id="sec-plan-proyeccion" class="space-y-4">
+                    <form id="form-plan-proyeccion" class="bg-gray-50 p-4 rounded-2xl border border-gray-200 space-y-3">
+                        <h4 class="text-xs font-black uppercase text-gray-900">Registrar Proyección de Personal Requerido</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                            <div>
+                                <label class="text-[10px] font-bold uppercase text-gray-500">Periodo Académico</label>
+                                <input type="text" id="plan-proy-periodo" placeholder="Ej. 2026-2027" class="p-2.5 text-xs rounded-xl border border-gray-200 w-full" required>
+                            </div>
+                            <div>
+                                <label class="text-[10px] font-bold uppercase text-gray-500">Departamento / Área</label>
+                                <input type="text" id="plan-proy-dept" placeholder="Ej. Primaria / Matemáticas" class="p-2.5 text-xs rounded-xl border border-gray-200 w-full" required>
+                            </div>
+                            <div>
+                                <label class="text-[10px] font-bold uppercase text-gray-500">Puesto / Familia Laboral</label>
+                                <input type="text" id="plan-proy-puesto" placeholder="Ej. Docente Titular" class="p-2.5 text-xs rounded-xl border border-gray-200 w-full" required>
+                            </div>
+                            <div>
+                                <label class="text-[10px] font-bold uppercase text-gray-500">Cantidad Requerida</label>
+                                <input type="number" id="plan-proy-cantidad" placeholder="1" class="p-2.5 text-xs rounded-xl border border-gray-200 w-full" min="1" required>
+                            </div>
+                            <div>
+                                <label class="text-[10px] font-bold uppercase text-gray-500">Escenario Matrícula</label>
+                                <select id="plan-proy-escenario" class="p-2.5 text-xs rounded-xl border border-gray-200 w-full" required>
+                                    <option value="BaseMatriculaReal">Base Real Actual</option>
+                                    <option value="CrecimientoModerado">Crecimiento Moderado (+10%)</option>
+                                    <option value="CrecimientoApresurado">Escenario Alta Demanda (+25%)</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="text-[10px] font-bold uppercase text-gray-500">Cálculo de Referencia</label>
+                                <select id="plan-proy-metrica" class="p-2.5 text-xs rounded-xl border border-gray-200 w-full" required>
+                                    <option value="RatioAlumnosDocente">Ratio Alumnos/Docente</option>
+                                    <option value="HorasSemanalesSeccion">Carga Horaria por Secciones</option>
+                                    <option value="EstimacionDirectiva">Estimación Técnica Directiva</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="text-[10px] font-bold uppercase text-gray-500">Justificación Técnica &amp; Criterios</label>
+                            <textarea id="plan-proy-justificacion" rows="2" placeholder="Describa los criterios utilizados para justificar esta proyección de personal" class="p-2.5 text-xs rounded-xl border border-gray-200 w-full" required></textarea>
+                        </div>
+                        <button type="submit" class="w-full py-2.5 bg-teal-600 hover:bg-teal-700 text-white font-bold text-xs uppercase rounded-xl transition-all shadow-md">
+                            Guardar Proyección de Necesidad
+                        </button>
+                    </form>
+                </div>
+
+                <!-- TAB 2: COMPARATIVA DISPONIBILIDAD VS DEMANDA -->
+                <div id="sec-plan-comparativa" class="space-y-4 hidden">
+                    <div class="flex items-center justify-between">
+                        <h4 class="text-xs font-black uppercase text-gray-900">Análisis de Cobertura &amp; Déficit / Excedente</h4>
+                        <button id="btn-refresh-plan" class="text-xs font-bold text-teal-600 hover:text-teal-800"><i class="fa-solid fa-rotate mr-1"></i>Actualizar Analítica</button>
+                    </div>
+                    <div id="list-plan-comparativa" class="space-y-3"></div>
+                </div>
+
+                <!-- TAB 3: INFORMES & JUSTIFICACIÓN DE CONTRATACIÓN -->
+                <div id="sec-plan-informes" class="space-y-4 hidden">
+                    <div class="p-4 bg-teal-50 rounded-2xl border border-teal-100 space-y-2">
+                        <h4 class="text-xs font-black uppercase text-teal-900"><i class="fa-solid fa-file-contract mr-1"></i>Trazabilidad de Justificación para Contratación</h4>
+                        <p class="text-xs text-teal-800">Las necesidades registradas sirven como sustento técnico para la apertura de vacantes. Este módulo compara datos reales de empleados activos sin crear vacantes ni contratos automáticamente.</p>
+                    </div>
+                    <div id="list-plan-proyecciones" class="space-y-3"></div>
                 </div>
             </div>
         </div>
@@ -1098,6 +1197,90 @@
                     await refreshLaborIncidentsModuleData();
                 });
             }
+
+            // [TAREA RH-08] Gestor de Planificación de Necesidades de Personal
+            const btnPlanificacion = document.getElementById('btn-planificacion-personal');
+            const modalPlanificacion = document.getElementById('modal-planificacion-personal');
+            const btnCloseModalPlan = document.getElementById('btn-close-modal-plan');
+
+            if (btnPlanificacion && modalPlanificacion) {
+                btnPlanificacion.addEventListener('click', async () => {
+                    modalPlanificacion.classList.remove('hidden');
+                    await refreshStaffingPlanningModuleData();
+                });
+            }
+
+            if (btnCloseModalPlan && modalPlanificacion) {
+                btnCloseModalPlan.addEventListener('click', () => {
+                    modalPlanificacion.classList.add('hidden');
+                });
+            }
+
+            // Pestañas Planificación
+            const planTabBtns = document.querySelectorAll('.tab-plan-btn');
+            planTabBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const targetId = btn.getAttribute('data-target');
+                    planTabBtns.forEach(b => {
+                        b.className = b === btn ?
+                            'tab-plan-btn px-4 py-2 text-xs font-bold rounded-xl transition-all bg-teal-600 text-white' :
+                            'tab-plan-btn px-4 py-2 text-xs font-bold rounded-xl transition-all text-gray-500 hover:text-gray-800 hover:bg-gray-50';
+                    });
+                    ['sec-plan-proyeccion', 'sec-plan-comparativa', 'sec-plan-informes'].forEach(secId => {
+                        const secEl = document.getElementById(secId);
+                        if (secEl) {
+                            if (secId === targetId) secEl.classList.remove('hidden');
+                            else secEl.classList.add('hidden');
+                        }
+                    });
+                });
+            });
+
+            // Form Proyección
+            const formPlanProy = document.getElementById('form-plan-proyeccion');
+            if (formPlanProy) {
+                formPlanProy.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    const periodoAcademico = document.getElementById('plan-proy-periodo').value;
+                    const departamentoArea = document.getElementById('plan-proy-dept').value;
+                    const puestoOFamilia = document.getElementById('plan-proy-puesto').value;
+                    const cantidadRequerida = parseInt(document.getElementById('plan-proy-cantidad').value || '1', 10);
+                    const escenarioMatricula = document.getElementById('plan-proy-escenario').value;
+                    const metricaBaseCalculo = document.getElementById('plan-proy-metrica').value;
+                    const observacionesJustificacion = document.getElementById('plan-proy-justificacion').value;
+
+                    try {
+                        if (window.showLoading) window.showLoading('Guardando proyección de necesidad...');
+                        const res = await fetchApi('ACCOUNTING', 'manageStaffingNeeds', {
+                            periodoAcademico,
+                            departamentoArea,
+                            puestoOFamilia,
+                            cantidadRequerida,
+                            escenarioMatricula,
+                            metricaBaseCalculo,
+                            observacionesJustificacion
+                        });
+                        if (window.hideLoading) window.hideLoading();
+                        if (res && res.status === 'success') {
+                            alert('Proyección de necesidad de personal guardada correctamente.');
+                            formPlanProy.reset();
+                            await refreshStaffingPlanningModuleData();
+                        } else {
+                            alert(res && res.message ? res.message : 'Error al guardar la proyección.');
+                        }
+                    } catch (err) {
+                        if (window.hideLoading) window.hideLoading();
+                        alert('Error de conexión.');
+                    }
+                });
+            }
+
+            const btnRefreshPlan = document.getElementById('btn-refresh-plan');
+            if (btnRefreshPlan) {
+                btnRefreshPlan.addEventListener('click', async () => {
+                    await refreshStaffingPlanningModuleData();
+                });
+            }
         });
 
         async function refreshPerformanceModuleData() {
@@ -1298,6 +1481,58 @@
                 }
             } catch (err) {
                 console.error('Error al actualizar datos de incidencias laborables:', err);
+            }
+        }
+
+        async function refreshStaffingPlanningModuleData() {
+            try {
+                const res = await fetchApi('ACCOUNTING', 'getStaffingNeedsPlanning', {});
+                if (!res || res.status !== 'success' || !res.data) return;
+
+                const { proyecciones, comparativa } = res.data;
+
+                // Render Comparativa
+                const listCompEl = document.getElementById('list-plan-comparativa');
+                if (listCompEl) {
+                    listCompEl.innerHTML = comparativa.length === 0 ?
+                        '<p class="text-gray-400 font-bold uppercase py-2">No hay análisis comparativo disponible.</p>' :
+                        comparativa.map(c => `
+                            <div class="p-4 bg-white border border-gray-100 rounded-2xl space-y-2">
+                                <div class="flex items-center justify-between">
+                                    <span class="font-bold text-gray-900">${c.puestoOFamilia} — Depto: ${c.departamentoArea}</span>
+                                    <span class="px-2 py-0.5 rounded-full text-[10px] font-black uppercase ${c.deficitExcedente < 0 ? 'bg-red-100 text-red-800' : 'bg-emerald-100 text-emerald-800'}">${c.estadoCobertura}</span>
+                                </div>
+                                <div class="grid grid-cols-2 md:grid-cols-4 gap-2 text-xs text-gray-600 font-medium">
+                                    <div>Requeridos: <strong>${c.cantidadRequerida}</strong></div>
+                                    <div>Activos Actuales: <strong>${c.activosDisponibles}</strong></div>
+                                    <div>Vacantes Abiertas: <strong>${c.vacantesAbiertas}</strong></div>
+                                    <div>Déficit / Excedente: <strong>${c.deficitExcedente}</strong></div>
+                                </div>
+                                <div class="w-full bg-gray-100 rounded-full h-2 overflow-hidden">
+                                    <div class="${c.coberturaPorcentaje >= 100 ? 'bg-emerald-500' : 'bg-amber-500'} h-2 rounded-full" style="width: ${c.coberturaPorcentaje}%"></div>
+                                </div>
+                            </div>
+                        `).join('');
+                }
+
+                // Render Proyecciones
+                const listProyEl = document.getElementById('list-plan-proyecciones');
+                if (listProyEl) {
+                    listProyEl.innerHTML = proyecciones.length === 0 ?
+                        '<p class="text-gray-400 font-bold uppercase py-2">No hay proyecciones registradas.</p>' :
+                        proyecciones.map(p => `
+                            <div class="p-4 bg-white border border-gray-100 rounded-2xl space-y-2">
+                                <div class="flex items-center justify-between">
+                                    <span class="font-bold text-gray-900">${p.puestoOFamilia} (${p.cantidadRequerida} plazas) — Periodo ${p.periodoAcademico}</span>
+                                    <span class="px-2 py-0.5 rounded-full text-[10px] font-black uppercase bg-teal-100 text-teal-800">${p.escenarioMatricula}</span>
+                                </div>
+                                <p class="text-xs text-gray-700"><strong>Justificación:</strong> ${p.observacionesJustificacion || 'Sin justificación'}</p>
+                                <p class="text-[10px] text-gray-400">Métrica Base: ${p.metricaBaseCalculo} | Registrado por: ${p.creadoPor}</p>
+                            </div>
+                        `).join('');
+                }
+            } catch (err) {
+                console.error('Error al actualizar datos de planificación de personal:', err);
             }
         }
 

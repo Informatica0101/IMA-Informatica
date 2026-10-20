@@ -252,3 +252,13 @@
 - **Componentes Frontend (`dashboard-recursos-humanos.html`):**
   - Botón `#btn-incidencias-disciplinarias`
   - Modal `#modal-incidencias-disciplinarias` con pestañas de Registrar Incidencia, Aplicar Medida Disciplinaria y Historial de Incidencias & Medidas.
+
+## MÓDULO DE PLANIFICACIÓN DE NECESIDADES DE PERSONAL (TAREA RH-08)
+- **Hojas de Cálculo / Tablas:**
+  - `PlanificacionNecesidadesPersonal`: Registro de proyecciones y estimaciones de plantilla requerida (PlanificacionID, PeriodoAcademico, DepartamentoArea, PuestoOFamilia, CantidadRequerida, EscenarioMatricula, MetricaBaseCalculo, ObservacionesJustificacion, VacanteRelacionadaID, CreadoPor, FechaCreacion, UltimaModificacion).
+- **Funciones Backend (`backend/accounting-service/Code.gs`):**
+  - `manageStaffingNeeds(payload)`
+  - `getStaffingNeedsPlanning(payload)`
+- **Componentes Frontend (`dashboard-recursos-humanos.html`):**
+  - Botón `#btn-planificacion-personal`
+  - Modal `#modal-planificacion-personal` con pestañas de Proyección de Necesidades, Disponibilidad vs Demanda e Informes & Justificación de Contratación.

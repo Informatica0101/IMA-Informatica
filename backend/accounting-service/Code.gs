@@ -189,7 +189,7 @@ const ROLE_PERMISSIONS = {
   // REVISIÓN RBAC: Habilitar permiso processFamilyCreditPurchase para personal de tienda, cafetería, tutores y estudiantes
   "EncargadoTienda": ["getStoreProducts", "manageStoreProduct", "createStoreOrder", "getStoreOrders", "updateStoreOrderStatus", "recordInventoryMovement", "getInventoryKardex", "getInstitutionalPolicies", "processFamilyCreditPurchase"],
   "EncargadoCafeteria": ["getCafeteriaMenu", "manageCafeteriaMenu", "createCafeteriaOrder", "getCafeteriaOrders", "updateCafeteriaOrderStatus", "recordInventoryMovement", "getInventoryKardex", "getInstitutionalPolicies", "processFamilyCreditPurchase"],
-  "RecursosHumanos": ["createEmployeeRecord", "getEmployeeRecords", "manageEmployeeContract", "getEmployeeContracts", "getEmployeeContractAlerts", "manageJobVacancy", "getJobVacancies", "submitJobCandidate", "getJobCandidates", "manageInterviewSchedule", "getInterviewSchedules", "updateEmployeeLaborStatus", "configureWorkSchedule", "recordStaffCheckIn", "getStaffAttendanceLogs", "submitAttendanceCorrection", "reviewAttendanceCorrection", "submitLeaveVacationRequest", "getLeaveVacationRequests", "reviewLeaveVacationRequest", "calculateVacationBalances", "recordMedicalLeave", "calculatePayrollPeriod", "updatePayrollPeriodStatus", "getPayrollPeriodSummary", "requestEmployeeLoanAdvance", "getEmployeeLoansAdvances", "approveEmployeeLoanAdvance", "getLoanAmortizationSchedule", "generatePayrollReceiptPDF", "uploadEmployeeDocument", "getEmployeeDocuments", "getHRDashboardAnalytics", "getInstitutionalPolicies", "managePerformancePeriod", "managePerformanceCriteria", "managePerformanceEvaluation", "getPerformanceEvaluations", "manageTrainingCourse", "manageTrainingEnrollment", "getEmployeeTrainingHistory", "manageProfessionalDevelopmentPlan", "getTrainingAnalyticsReport", "manageLaborIncident", "manageDisciplinaryMeasure", "getLaborIncidentsHistory"],
+  "RecursosHumanos": ["createEmployeeRecord", "getEmployeeRecords", "manageEmployeeContract", "getEmployeeContracts", "getEmployeeContractAlerts", "manageJobVacancy", "getJobVacancies", "submitJobCandidate", "getJobCandidates", "manageInterviewSchedule", "getInterviewSchedules", "updateEmployeeLaborStatus", "configureWorkSchedule", "recordStaffCheckIn", "getStaffAttendanceLogs", "submitAttendanceCorrection", "reviewAttendanceCorrection", "submitLeaveVacationRequest", "getLeaveVacationRequests", "reviewLeaveVacationRequest", "calculateVacationBalances", "recordMedicalLeave", "calculatePayrollPeriod", "updatePayrollPeriodStatus", "getPayrollPeriodSummary", "requestEmployeeLoanAdvance", "getEmployeeLoansAdvances", "approveEmployeeLoanAdvance", "getLoanAmortizationSchedule", "generatePayrollReceiptPDF", "uploadEmployeeDocument", "getEmployeeDocuments", "getHRDashboardAnalytics", "getInstitutionalPolicies", "managePerformancePeriod", "managePerformanceCriteria", "managePerformanceEvaluation", "getPerformanceEvaluations", "manageTrainingCourse", "manageTrainingEnrollment", "getEmployeeTrainingHistory", "manageProfessionalDevelopmentPlan", "getTrainingAnalyticsReport", "manageLaborIncident", "manageDisciplinaryMeasure", "getLaborIncidentsHistory", "manageStaffingNeeds", "getStaffingNeedsPlanning"],
   "Empleado": ["getEmployeeRecords", "getEmployeeContracts", "recordStaffCheckIn", "getStaffAttendanceLogs", "submitAttendanceCorrection", "submitLeaveVacationRequest", "getLeaveVacationRequests", "requestEmployeeLoanAdvance", "getEmployeeLoansAdvances", "generatePayrollReceiptPDF", "getEmployeeDocuments", "getPerformanceEvaluations", "getEmployeeTrainingHistory", "manageProfessionalDevelopmentPlan"],
   "Padre": ["getStudentAccountStatement", "uploadPaymentVoucher", "getPaymentVouchers", "generatePaymentReceiptPDF", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getLibraryBooks", "getLibraryLoans", "reserveLibraryBook", "getLibraryReservations", "getDigitalResources", "getTransportRoutes", "getTransportAssignments", "getSchoolDocumentTemplates", "generateSchoolDocument", "getIssuedSchoolDocuments", "getStoreProducts", "createStoreOrder", "getStoreOrders", "getCafeteriaMenu", "createCafeteriaOrder", "getCafeteriaOrders", "getFamilyCreditAuthorizations", "configureFamilyCreditAuthorization", "processFamilyCreditPurchase"],
   "Tutor": ["getStudentAccountStatement", "uploadPaymentVoucher", "getPaymentVouchers", "generatePaymentReceiptPDF", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getLibraryBooks", "getLibraryLoans", "reserveLibraryBook", "getLibraryReservations", "getDigitalResources", "getTransportRoutes", "getTransportAssignments", "getSchoolDocumentTemplates", "generateSchoolDocument", "getIssuedSchoolDocuments", "getStoreProducts", "createStoreOrder", "getStoreOrders", "getCafeteriaMenu", "createCafeteriaOrder", "getCafeteriaOrders", "getFamilyCreditAuthorizations", "configureFamilyCreditAuthorization", "processFamilyCreditPurchase"],
@@ -333,6 +333,8 @@ function doPost(e) {
       case "manageLaborIncident": result = manageLaborIncident(payload); break;
       case "manageDisciplinaryMeasure": result = manageDisciplinaryMeasure(payload); break;
       case "getLaborIncidentsHistory": result = getLaborIncidentsHistory(payload); break;
+      case "manageStaffingNeeds": result = manageStaffingNeeds(payload); break;
+      case "getStaffingNeedsPlanning": result = getStaffingNeedsPlanning(payload); break;
       case "submitLeaveVacationRequest": result = submitLeaveVacationRequest(payload); break;
       case "submitVacationRequest": result = submitVacationRequest(payload); break;
       case "getLeaveVacationRequests": result = getLeaveVacationRequests(payload); break;
@@ -6068,6 +6070,231 @@ function getAssetAssignments(payload) {
   return {
     status: "success",
     asignaciones: mapped
+  };
+}
+
+// TAREA RH-08: Implementar la planificación de necesidades de personal
+function manageStaffingNeeds(payload) {
+  const {
+    planificacionId,
+    periodoAcademico,
+    departamentoArea,
+    puestoOFamilia,
+    cantidadRequerida,
+    escenarioMatricula,
+    metricaBaseCalculo,
+    observacionesJustificacion,
+    vacanteRelacionadaId,
+    creadoPor
+  } = payload || {};
+
+  if (!periodoAcademico || !departamentoArea || !puestoOFamilia) {
+    throw new Error("periodoAcademico, departamentoArea y puestoOFamilia son campos obligatorios.");
+  }
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "PlanificacionNecesidadesPersonal");
+
+  if (sheet.getLastRow() === 0) {
+    sheet.appendRow([
+      "PlanificacionID",
+      "PeriodoAcademico",
+      "DepartamentoArea",
+      "PuestoOFamilia",
+      "CantidadRequerida",
+      "EscenarioMatricula",
+      "MetricaBaseCalculo",
+      "ObservacionesJustificacion",
+      "VacanteRelacionadaID",
+      "CreadoPor",
+      "FechaCreacion",
+      "UltimaModificacion"
+    ]);
+  }
+
+  const data = sheet.getDataRange().getValues();
+  const planId = planificacionId || ("PLAN-NEC-" + Date.now());
+  const nowStr = new Date().toISOString();
+  let foundIndex = -1;
+
+  for (let i = 1; i < data.length; i++) {
+    if (String(data[i][0]).trim() === String(planId).trim()) {
+      foundIndex = i + 1;
+      break;
+    }
+  }
+
+  const qtyReq = parseInt(cantidadRequerida || 1, 10);
+
+  if (foundIndex > 0) {
+    sheet.getRange(foundIndex, 2).setValue(periodoAcademico);
+    sheet.getRange(foundIndex, 3).setValue(departamentoArea);
+    sheet.getRange(foundIndex, 4).setValue(puestoOFamilia);
+    sheet.getRange(foundIndex, 5).setValue(qtyReq);
+    sheet.getRange(foundIndex, 6).setValue(escenarioMatricula || "BaseMatriculaReal");
+    sheet.getRange(foundIndex, 7).setValue(metricaBaseCalculo || "Manual");
+    sheet.getRange(foundIndex, 8).setValue(observacionesJustificacion || "");
+    sheet.getRange(foundIndex, 9).setValue(vacanteRelacionadaId || "");
+    sheet.getRange(foundIndex, 12).setValue(nowStr);
+  } else {
+    sheet.appendRow([
+      planId,
+      periodoAcademico,
+      departamentoArea,
+      puestoOFamilia,
+      qtyReq,
+      escenarioMatricula || "BaseMatriculaReal",
+      metricaBaseCalculo || "Manual",
+      observacionesJustificacion || "",
+      vacanteRelacionadaId || "",
+      creadoPor || "RecursosHumanos",
+      nowStr,
+      nowStr
+    ]);
+  }
+
+  return {
+    status: "success",
+    message: "Planificación de necesidad de personal registrada correctamente.",
+    data: { planificacionId: planId, periodoAcademico, departamentoArea, puestoOFamilia, cantidadRequerida: qtyReq }
+  };
+}
+
+function getStaffingNeedsPlanning(payload) {
+  const { periodoAcademico, departamentoArea, escenarioMatricula } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+
+  // 1. Proyecciones registradas
+  const planSheet = getOrCreateSheet(ss, "PlanificacionNecesidadesPersonal");
+  const planRows = planSheet.getDataRange().getValues();
+  let proyecciones = [];
+
+  if (planRows.length > 1) {
+    proyecciones = planRows.slice(1).filter(r => {
+      if (periodoAcademico && String(r[1]).trim() !== String(periodoAcademico).trim()) return false;
+      if (departamentoArea && String(r[2]).toLowerCase() !== String(departamentoArea).toLowerCase()) return false;
+      if (escenarioMatricula && String(r[5]).toLowerCase() !== String(escenarioMatricula).toLowerCase()) return false;
+      return true;
+    }).map(r => ({
+      planificacionId: r[0],
+      periodoAcademico: r[1],
+      departamentoArea: r[2],
+      puestoOFamilia: r[3],
+      cantidadRequerida: parseInt(r[4] || 0, 10),
+      escenarioMatricula: r[5],
+      metricaBaseCalculo: r[6],
+      observacionesJustificacion: r[7],
+      vacanteRelacionadaId: r[8],
+      creadoPor: r[9],
+      fechaCreacion: r[10]
+    }));
+  }
+
+  // 2. Personal Activo
+  const empSheet = getOrCreateSheet(ss, "ExpedientesLaborales");
+  const empRows = empSheet.getDataRange().getValues();
+  let personalActivo = [];
+
+  if (empRows.length > 1) {
+    personalActivo = empRows.slice(1).filter(r => {
+      const st = String(r[7] || "").toLowerCase();
+      return st === "active" || st === "activo";
+    }).map(r => ({
+      expedienteId: r[0],
+      puesto: r[2],
+      departamento: r[3],
+      jornada: r[6]
+    }));
+  }
+
+  // 3. Vacantes Publicadas
+  const vacSheet = getOrCreateSheet(ss, "VacantesLaborales");
+  const vacRows = vacSheet.getDataRange().getValues();
+  let vacantesActivas = [];
+
+  if (vacRows.length > 1) {
+    vacantesActivas = vacRows.slice(1).filter(r => {
+      const st = String(r[5] || "").toLowerCase();
+      return st === "abierta" || st === "publicada" || st === "en_proceso";
+    }).map(r => ({
+      vacanteId: r[0],
+      tituloPuesto: r[1],
+      departamento: r[2],
+      plazasDisponibles: parseInt(r[4] || 1, 10)
+    }));
+  }
+
+  // 4. Comparativa Disponibilidad vs Demanda
+  const comparativaMap = {};
+
+  proyecciones.forEach(p => {
+    const key = (p.departamentoArea + "___" + p.puestoOFamilia).toLowerCase();
+    if (!comparativaMap[key]) {
+      comparativaMap[key] = {
+        departamentoArea: p.departamentoArea,
+        puestoOFamilia: p.puestoOFamilia,
+        cantidadRequerida: 0,
+        activosDisponibles: 0,
+        vacantesAbiertas: 0,
+        deficitExcedente: 0,
+        coberturaPorcentaje: 0
+      };
+    }
+    comparativaMap[key].cantidadRequerida += p.cantidadRequerida;
+  });
+
+  personalActivo.forEach(emp => {
+    const dept = emp.departamento || "General";
+    const puesto = emp.puesto || "General";
+    const key = (dept + "___" + puesto).toLowerCase();
+
+    if (!comparativaMap[key]) {
+      comparativaMap[key] = {
+        departamentoArea: dept,
+        puestoOFamilia: puesto,
+        cantidadRequerida: 0,
+        activosDisponibles: 0,
+        vacantesAbiertas: 0,
+        deficitExcedente: 0,
+        coberturaPorcentaje: 0
+      };
+    }
+    comparativaMap[key].activosDisponibles += 1;
+  });
+
+  vacantesActivas.forEach(v => {
+    const dept = v.departamento || "General";
+    const puesto = v.tituloPuesto || "General";
+    const key = (dept + "___" + puesto).toLowerCase();
+
+    if (comparativaMap[key]) {
+      comparativaMap[key].vacantesAbiertas += v.plazasDisponibles;
+    }
+  });
+
+  const comparativa = Object.values(comparativaMap).map(c => {
+    const coberturaActual = c.activosDisponibles + c.vacantesAbiertas;
+    const diff = coberturaActual - c.cantidadRequerida;
+    const porcentaje = c.cantidadRequerida > 0 ? Math.round((c.activosDisponibles / c.cantidadRequerida) * 100) : 100;
+    return {
+      ...c,
+      deficitExcedente: diff,
+      coberturaPorcentaje: Math.min(porcentaje, 100),
+      estadoCobertura: diff < 0 ? "Déficit Cobertura" : (diff === 0 ? "Cobertura Exacta" : "Superávit")
+    };
+  });
+
+  return {
+    status: "success",
+    data: {
+      proyecciones,
+      totalProyecciones: proyecciones.length,
+      personalActivoCount: personalActivo.length,
+      vacantesActivasCount: vacantesActivas.length,
+      comparativa,
+      metricasCompletas: true,
+      notaTrazabilidad: "Planificación basada en datos reales de empleados activos y vacantes abiertas. No modifica horarios ni crea contratos automáticamente."
+    }
   };
 }
 

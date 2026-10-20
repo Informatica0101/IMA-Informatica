@@ -4808,7 +4808,7 @@ Criterios de aceptación
 
 ---
 
-TAREA RH-08. Implementar la planificación de necesidades de personal
+[X] TAREA RH-08. Implementar la planificación de necesidades de personal
 
 Prioridad: Media-alta.
 Dependencias: RH-01 y acceso de consulta a los datos académicos y de horarios pertinentes.

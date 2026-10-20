@@ -205,6 +205,11 @@ GRUPO 1: TAREAS COMPLETADAS
     - Archivo Frontend: dashboard-recursos-humanos.html (Línea 64 `#btn-incidencias-disciplinarias`, Línea 154 `#modal-incidencias-disciplinarias`, Línea 1240 `refreshLaborIncidentsModuleData`)
     - Descripción: Registro estructurado de faltas/incidencias laborales diferenciadas de incapacidades médicas, aplicación de medidas disciplinarias con actas firmadas adjuntas, sustento documentado, control de suspensiones y restricciones de acceso estrictas según RBAC.
 
+45. [TAREA RH-08] Implementar la planificación de necesidades de personal
+    - Archivo: backend/accounting-service/Code.gs (Línea 6075 `manageStaffingNeeds`, `getStaffingNeedsPlanning`)
+    - Archivo Frontend: dashboard-recursos-humanos.html (Línea 67 `#btn-planificacion-personal`, Línea 275 `#modal-planificacion-personal`, Línea 1487 `refreshStaffingPlanningModuleData`)
+    - Descripción: Módulo completo de proyección y planificación de necesidades de personal por periodo, área, puesto y escenario de matrícula, comparativa automatizada de activos requeridos vs disponibles y vacantes abiertas, e informes trazables de justificación sin crear contratos ni modificar horarios automáticamente.
+
 
 -------------------------------------------------------------------------------
 GRUPO 2: TAREAS INCOMPLETAS
@@ -220,7 +225,6 @@ GRUPO 3: TAREAS PENDIENTES / NO INICIADAS
 (Registradas en el backlog pero no iniciadas ni presentes en el código)
 -------------------------------------------------------------------------------
 
-25. TAREA RH-08: Implementar la planificación de necesidades de personal
 26. TAREA RH-09: Completar la gestión visual de turnos y sustituciones
 27. TAREA RH-10: Verificar y completar el portal de autoservicio del empleado
 28. TAREA RH-11: Verificar la preparación de información laboral y fiscal

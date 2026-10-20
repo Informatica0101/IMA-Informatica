@@ -77,3 +77,28 @@ Archivos Modificados:
 
 5. Pendientes.md
    - Actualización del estado de [X] TAREA RH-07. Completar el registro de incidencias laborales y medidas disciplinarias.
+
+-------------------------------------------------------------------------------
+FECHA: Octubre 2026
+TAREA: [TAREA RH-08] Implementar la planificación de necesidades de personal
+-------------------------------------------------------------------------------
+
+Archivos Modificados:
+1. backend/accounting-service/Code.gs
+   - Lineas 192: Adición de permisos "manageStaffingNeeds", "getStaffingNeedsPlanning" en ROLE_PERMISSIONS para rol RecursosHumanos.
+   - Lineas 336, 337: Adición de dispatchers en doPost para acciones manageStaffingNeeds, getStaffingNeedsPlanning.
+   - Lineas 6075-6250: Implementación de funciones backend manageStaffingNeeds y getStaffingNeedsPlanning con comentario identificativo de tarea. Módulo completo de proyección de necesidades de personal, comparación automatizada de requeridos vs empleados activos y vacantes abiertas, e informes trazables de justificación.
+
+2. dashboard-recursos-humanos.html
+   - Linea 67: Adición de botón #btn-planificacion-personal en la barra principal de acciones.
+   - Lineas 275-350: Adición de modal #modal-planificacion-personal con pestañas de Proyección de Necesidades, Disponibilidad vs Demanda e Informes & Justificación.
+   - Lineas 1200-1535: Implementación de controladores JavaScript para apertura de modal, formulario de registro (manageStaffingNeeds) y renderizado dinámico con refreshStaffingPlanningModuleData.
+
+3. MapaDependencias.md
+   - Adición de documentación de tablas y funciones del Módulo de Planificación de Necesidades de Personal (TAREA RH-08).
+
+4. Auditoria.txt
+   - Migración de [TAREA RH-08] del Grupo 3 (Tareas Pendientes) al Grupo 1 (Tareas Completadas) como ítem 45.
+
+5. Pendientes.md
+   - Actualización del estado de [X] TAREA RH-08. Implementar la planificación de necesidades de personal.
