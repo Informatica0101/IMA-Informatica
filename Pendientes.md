@@ -4223,7 +4223,7 @@ Criterios de aceptación
 
 ---
 
-TAREA 4. PROYECCIÓN DEL FLUJO DE CAJA A SEIS MESES
+[X] TAREA 4. PROYECCIÓN DEL FLUJO DE CAJA A SEIS MESES
 
 Prioridad: Alta
 Área: Tesorería y planificación financiera.
