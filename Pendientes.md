@@ -4356,7 +4356,7 @@ Criterios de aceptación
 
 ---
 
-TAREA 7. PROYECCIONES PRESUPUESTARIAS Y FINANCIERAS: COHERENCIA ENTRE INFORMES
+[X] TAREA 7. PROYECCIONES PRESUPUESTARIAS Y FINANCIERAS: COHERENCIA ENTRE INFORMES
 
 Prioridad: Media
 Área: Integración entre presupuesto, tesorería y contabilidad.

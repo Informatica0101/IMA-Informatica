@@ -164,6 +164,10 @@ GRUPO 1: TAREAS COMPLETADAS
     - Archivo: backend/accounting-service/Code.gs (Línea 5500 `getComparativeFinancialSummary`)
     - Descripción: Endpoint `getComparativeFinancialSummary` para comparar dos o más ejercicios fiscales desglosando ingresos, gastos, resultado neto y variaciones absolutas y porcentuales.
 
+36. [TAREA 7] PROYECCIONES PRESUPUESTARIAS Y FINANCIERAS: COHERENCIA ENTRE INFORMES
+    - Archivo: backend/accounting-service/Code.gs (Línea 5502 `reconcileFinancialReportCoherence`)
+    - Descripción: Endpoint `reconcileFinancialReportCoherence` para conciliar presupuesto aprobado, comprometido, ejecutado, disponibilidad de efectivo y cuentas pendientes.
+
 
 -------------------------------------------------------------------------------
 GRUPO 2: TAREAS INCOMPLETAS
@@ -179,7 +183,6 @@ GRUPO 3: TAREAS PENDIENTES / NO INICIADAS
 (Registradas en el backlog pero no iniciadas ni presentes en el código)
 -------------------------------------------------------------------------------
 
-16. TAREA 7: PROYECCIONES PRESUPUESTARIAS Y FINANCIERAS: COHERENCIA ENTRE INFORMES
 17. TAREA 8: VERIFICACIÓN DE INTEGRIDAD CONTABLE EN LAS NUEVAS FUNCIONES
 18. TAREA RH-01: Conectar el panel de Recursos Humanos con los servicios existentes
 19. TAREA RH-02: Implementar avisos de vencimiento de contratos y documentos laborales
