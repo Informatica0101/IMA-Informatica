@@ -4514,7 +4514,7 @@ Reglas obligatorias
 
 ---
 
-TAREA RH-01. Conectar el panel de Recursos Humanos con los servicios existentes
+[X] TAREA RH-01. Conectar el panel de Recursos Humanos con los servicios existentes
 
 Prioridad: Crítica para completar la experiencia administrativa.
 Dependencia: Ninguna. Debe ser la primera tarea.

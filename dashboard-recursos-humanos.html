@@ -140,5 +140,129 @@
     <script src="js/config.js?v=24"></script>
     <script src="js/api.js?v=24"></script>
     <script src="js/ui-common.js?v=24"></script>
+    <!-- [TAREA RH-01] [Fase Recursos Humanos y Personal] - Controlador de interfaz para el panel de Recursos Humanos y conexión con servicios existentes. -->
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            await loadHRDashboardData();
+
+            const btnNuevoEmpleado = document.getElementById('btn-nuevo-empleado');
+            if (btnNuevoEmpleado) {
+                btnNuevoEmpleado.addEventListener('click', async () => {
+                    const puesto = prompt('Ingrese el puesto del nuevo empleado:');
+                    const departamento = prompt('Ingrese el departamento (ej. Docencia, Administración):');
+                    if (!puesto || !departamento) return;
+
+                    try {
+                        if (window.showLoading) window.showLoading('Registrando nuevo expediente laboral...');
+                        const res = await fetchApi('ACCOUNTING', 'createEmployeeRecord', {
+                            puesto,
+                            departamento,
+                            centroCosto: 'General',
+                            fechaIngreso: new Date().toISOString().split('T')[0]
+                        });
+                        if (window.hideLoading) window.hideLoading();
+
+                        if (res && res.status === 'success') {
+                            alert('Empleado registrado exitosamente.');
+                            await loadHRDashboardData();
+                        } else {
+                            alert(res && res.message ? res.message : 'No se pudo registrar el empleado.');
+                        }
+                    } catch (err) {
+                        if (window.hideLoading) window.hideLoading();
+                        console.error('Error al registrar empleado:', err);
+                        alert('Error al conectar con el servidor.');
+                    }
+                });
+            }
+
+            const btnCalcularPlanilla = document.getElementById('btn-calcular-planilla');
+            if (btnCalcularPlanilla) {
+                btnCalcularPlanilla.addEventListener('click', async () => {
+                    const periodoMes = prompt('Ingrese el mes/período de planilla a calcular (ej. 2026-10):', new Date().toISOString().slice(0, 7));
+                    if (!periodoMes) return;
+
+                    try {
+                        if (window.showLoading) window.showLoading('Calculando planilla del período...');
+                        const res = await fetchApi('ACCOUNTING', 'calculatePayrollPeriod', { periodoMes });
+                        if (window.hideLoading) window.hideLoading();
+
+                        if (res && res.status === 'success') {
+                            alert(`Planilla procesada correctamente. Total bruto: L. ${res.data ? res.data.totalBruto : '0.00'}`);
+                        } else {
+                            alert(res && res.message ? res.message : 'Error al calcular la planilla.');
+                        }
+                    } catch (err) {
+                        if (window.hideLoading) window.hideLoading();
+                        console.error('Error al calcular planilla:', err);
+                        alert('Error al conectar con el servidor.');
+                    }
+                });
+            }
+        });
+
+        async function loadHRDashboardData() {
+            try {
+                // 1. Cargar Expedientes Laborales
+                const resEmp = await fetchApi('ACCOUNTING', 'getEmployeeRecords', {});
+                const tbody = document.getElementById('rrhh-employees-tbody');
+                const totalCountEl = document.getElementById('rrhh-total-count');
+                const activeStaffEl = document.getElementById('rrhh-active-staff');
+
+                if (resEmp && resEmp.status === 'success' && Array.isArray(resEmp.expedientes)) {
+                    const emps = resEmp.expedientes;
+                    if (totalCountEl) totalCountEl.textContent = `${emps.length} Registros`;
+                    if (activeStaffEl) activeStaffEl.textContent = emps.filter(e => e.estadoLaboral === 'active' || e.estadoLaboral === 'Activo').length;
+
+                    if (tbody) {
+                        if (emps.length === 0) {
+                            tbody.innerHTML = '<tr><td colspan="5" class="py-6 text-center text-gray-400 font-bold uppercase">No existen expedientes registrados.</td></tr>';
+                        } else {
+                            tbody.innerHTML = emps.map(emp => `
+                                <tr class="border-b border-gray-50 hover:bg-teal-50/30 transition-all">
+                                    <td class="py-3 px-2 font-bold text-gray-800">${emp.observaciones || emp.expedienteId}<br><span class="text-[10px] text-gray-400 font-normal">${emp.puesto || 'Sin Puesto'}</span></td>
+                                    <td class="py-3 px-2 font-medium">${emp.departamento || 'General'}</td>
+                                    <td class="py-3 px-2"><span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-teal-50 text-teal-700">${emp.centroCosto || 'Completa'}</span></td>
+                                    <td class="py-3 px-2"><span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800">${emp.estadoLaboral || 'Activo'}</span></td>
+                                    <td class="py-3 px-2 text-right">
+                                        <button class="text-teal-600 hover:text-teal-800 font-bold text-[11px]" onclick="alert('Expediente ID: ${emp.expedienteId}')">Ver Ficha</button>
+                                    </td>
+                                </tr>
+                            `).join('');
+                        }
+                    }
+                }
+
+                // 2. Cargar Solicitudes de Permisos / Vacaciones
+                const resLeaves = await fetchApi('ACCOUNTING', 'getLeaveVacationRequests', {});
+                const requestsList = document.getElementById('rrhh-requests-list');
+                const pendingLeavesEl = document.getElementById('rrhh-pending-leaves');
+
+                if (resLeaves && resLeaves.status === 'success' && Array.isArray(resLeaves.data)) {
+                    const leaves = resLeaves.data;
+                    const pendingCount = leaves.filter(l => l.estado === 'Pendiente').length;
+                    if (pendingLeavesEl) pendingLeavesEl.textContent = pendingCount;
+
+                    if (requestsList) {
+                        if (leaves.length === 0) {
+                            requestsList.innerHTML = '<div class="text-center py-4 text-gray-400 font-bold text-xs uppercase">Sin solicitudes pendientes.</div>';
+                        } else {
+                            requestsList.innerHTML = leaves.map(l => `
+                                <div class="p-3 bg-gray-50 rounded-2xl flex items-center justify-between border border-gray-100">
+                                    <div>
+                                        <p class="font-bold text-xs text-gray-800">${l.tipoSolicitud || 'Permiso'} - ${l.userId || 'Empleado'}</p>
+                                        <p class="text-[10px] text-gray-400">${l.fechaInicio || ''} al ${l.fechaFin || ''}</p>
+                                    </div>
+                                    <span class="px-2 py-1 rounded-lg text-[10px] font-black uppercase ${l.estado === 'Pendiente' ? 'bg-amber-100 text-amber-800' : 'bg-emerald-100 text-emerald-800'}">${l.estado || 'Pendiente'}</span>
+                                </div>
+                            `).join('');
+                        }
+                    }
+                }
+            } catch (err) {
+                console.error('Error al cargar datos de RRHH:', err);
+            }
+        }
+    </script>
 </body>
 </html>
