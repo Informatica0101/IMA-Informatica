@@ -189,7 +189,7 @@ const ROLE_PERMISSIONS = {
   // REVISIÓN RBAC: Habilitar permiso processFamilyCreditPurchase para personal de tienda, cafetería, tutores y estudiantes
   "EncargadoTienda": ["getStoreProducts", "manageStoreProduct", "createStoreOrder", "getStoreOrders", "updateStoreOrderStatus", "recordInventoryMovement", "getInventoryKardex", "getInstitutionalPolicies", "processFamilyCreditPurchase"],
   "EncargadoCafeteria": ["getCafeteriaMenu", "manageCafeteriaMenu", "createCafeteriaOrder", "getCafeteriaOrders", "updateCafeteriaOrderStatus", "recordInventoryMovement", "getInventoryKardex", "getInstitutionalPolicies", "processFamilyCreditPurchase"],
-  "RecursosHumanos": ["createEmployeeRecord", "getEmployeeRecords", "manageEmployeeContract", "getEmployeeContracts", "updateEmployeeLaborStatus", "configureWorkSchedule", "recordStaffCheckIn", "getStaffAttendanceLogs", "submitAttendanceCorrection", "reviewAttendanceCorrection", "submitLeaveVacationRequest", "getLeaveVacationRequests", "reviewLeaveVacationRequest", "calculateVacationBalances", "recordMedicalLeave", "calculatePayrollPeriod", "updatePayrollPeriodStatus", "getPayrollPeriodSummary", "requestEmployeeLoanAdvance", "getEmployeeLoansAdvances", "approveEmployeeLoanAdvance", "getLoanAmortizationSchedule", "generatePayrollReceiptPDF", "uploadEmployeeDocument", "getEmployeeDocuments", "getHRDashboardAnalytics", "getInstitutionalPolicies"],
+  "RecursosHumanos": ["createEmployeeRecord", "getEmployeeRecords", "manageEmployeeContract", "getEmployeeContracts", "getEmployeeContractAlerts", "updateEmployeeLaborStatus", "configureWorkSchedule", "recordStaffCheckIn", "getStaffAttendanceLogs", "submitAttendanceCorrection", "reviewAttendanceCorrection", "submitLeaveVacationRequest", "getLeaveVacationRequests", "reviewLeaveVacationRequest", "calculateVacationBalances", "recordMedicalLeave", "calculatePayrollPeriod", "updatePayrollPeriodStatus", "getPayrollPeriodSummary", "requestEmployeeLoanAdvance", "getEmployeeLoansAdvances", "approveEmployeeLoanAdvance", "getLoanAmortizationSchedule", "generatePayrollReceiptPDF", "uploadEmployeeDocument", "getEmployeeDocuments", "getHRDashboardAnalytics", "getInstitutionalPolicies"],
   "Empleado": ["getEmployeeRecords", "getEmployeeContracts", "recordStaffCheckIn", "getStaffAttendanceLogs", "submitAttendanceCorrection", "submitLeaveVacationRequest", "getLeaveVacationRequests", "requestEmployeeLoanAdvance", "getEmployeeLoansAdvances", "generatePayrollReceiptPDF", "getEmployeeDocuments"],
   "Padre": ["getStudentAccountStatement", "uploadPaymentVoucher", "getPaymentVouchers", "generatePaymentReceiptPDF", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getLibraryBooks", "getLibraryLoans", "reserveLibraryBook", "getLibraryReservations", "getDigitalResources", "getTransportRoutes", "getTransportAssignments", "getSchoolDocumentTemplates", "generateSchoolDocument", "getIssuedSchoolDocuments", "getStoreProducts", "createStoreOrder", "getStoreOrders", "getCafeteriaMenu", "createCafeteriaOrder", "getCafeteriaOrders", "getFamilyCreditAuthorizations", "configureFamilyCreditAuthorization", "processFamilyCreditPurchase"],
   "Tutor": ["getStudentAccountStatement", "uploadPaymentVoucher", "getPaymentVouchers", "generatePaymentReceiptPDF", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getLibraryBooks", "getLibraryLoans", "reserveLibraryBook", "getLibraryReservations", "getDigitalResources", "getTransportRoutes", "getTransportAssignments", "getSchoolDocumentTemplates", "generateSchoolDocument", "getIssuedSchoolDocuments", "getStoreProducts", "createStoreOrder", "getStoreOrders", "getCafeteriaMenu", "createCafeteriaOrder", "getCafeteriaOrders", "getFamilyCreditAuthorizations", "configureFamilyCreditAuthorization", "processFamilyCreditPurchase"],
@@ -314,6 +314,7 @@ function doPost(e) {
       case "updateEmployeeLaborStatus": result = updateEmployeeLaborStatus(payload); break;
       case "manageEmployeeContract": result = manageEmployeeContract(payload); break;
       case "getEmployeeContracts": result = getEmployeeContracts(payload); break;
+      case "getEmployeeContractAlerts": result = getEmployeeContractAlerts(payload); break;
       case "submitLeaveVacationRequest": result = submitLeaveVacationRequest(payload); break;
       case "submitVacationRequest": result = submitVacationRequest(payload); break;
       case "getLeaveVacationRequests": result = getLeaveVacationRequests(payload); break;
@@ -3671,6 +3672,68 @@ function manageEmployeeContract(payload) {
   };
 }
 
+// [TAREA RH-02] [Fase Recursos Humanos y Personal] - Consulta y alertas por vencimiento de contratos y documentos laborales de empleados.
+function getEmployeeContractAlerts(payload) {
+  const { diasAnticipacion } = payload || {};
+  const threshold = parseInt(diasAnticipacion || 30, 10);
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const rows = getOrCreateSheet(ss, "ContratosLaborales").getDataRange().getValues().slice(1);
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  let countVigentes = 0;
+  let countProximos = 0;
+  let countVencidos = 0;
+
+  const alertas = rows.map(r => {
+    const fFin = r[4] ? new Date(r[4]) : null;
+    let estadoAlerta = "Vigente";
+    let diasParaVencer = null;
+
+    if (fFin && !isNaN(fFin.getTime())) {
+      fFin.setHours(0, 0, 0, 0);
+      const diff = fFin.getTime() - today.getTime();
+      diasParaVencer = Math.ceil(diff / (1000 * 60 * 60 * 24));
+
+      if (diasParaVencer < 0) {
+        estadoAlerta = "Vencido";
+        countVencidos++;
+      } else if (diasParaVencer <= threshold) {
+        estadoAlerta = "ProximoAVencer";
+        countProximos++;
+      } else {
+        estadoAlerta = "Vigente";
+        countVigentes++;
+      }
+    }
+
+    return {
+      contratoId: r[0],
+      expedienteId: r[1],
+      tipoContrato: r[2],
+      fechaInicio: r[3],
+      fechaFin: r[4],
+      estadoContrato: r[7],
+      estadoAlerta,
+      diasParaVencer,
+      observaciones: r[8]
+    };
+  });
+
+  return {
+    status: "success",
+    data: alertas,
+    resumen: {
+      vigentes: countVigentes,
+      proximosAVencer: countProximos,
+      vencidos: countVencidos,
+      totalContratos: rows.length
+    }
+  };
+}
+
 function getEmployeeContracts(payload) {
   const { expedienteId } = payload || {};
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
@@ -5498,9 +5561,6 @@ function getCashFlowSixMonthProjection(payload) {
   };
 }
 
-// [TAREA 5] [Fase Morosidad y Cuentas por Cobrar] - Registro de acciones de seguimiento en la bitácora de gestiones de cobro.
-// [TAREA 6] [Fase Contabilidad e Informes Fiscales] - Comparación financiera visual y tabular entre dos o más ejercicios fiscales.
-// [TAREA 7] [Fase Integración Presupuesto y Finanzas] - Conciliación de coherencia entre presupuesto, tesorería, cuentas por cobrar/pagar y flujo de caja.
 // [TAREA 8] [Fase Seguridad Financiera] - Verificación transversal de integridad contable, cuadratura de asientos y prevención de saldos inconsistentes.
 function verifyAccountingIntegrity(payload) {
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
@@ -5562,6 +5622,7 @@ function verifyAccountingIntegrity(payload) {
   };
 }
 
+// [TAREA 7] [Fase Integración Presupuesto y Finanzas] - Conciliación de coherencia entre presupuesto, tesorería, cuentas por cobrar/pagar y flujo de caja.
 function reconcileFinancialReportCoherence(payload) {
   const { anoId } = payload || {};
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
@@ -5614,6 +5675,7 @@ function reconcileFinancialReportCoherence(payload) {
   };
 }
 
+// [TAREA 6] [Fase Contabilidad e Informes Fiscales] - Comparación financiera visual y tabular entre dos o más ejercicios fiscales.
 function getComparativeFinancialSummary(payload) {
   const { ejerciciosAnos } = payload || {};
   const anosArr = Array.isArray(ejerciciosAnos) && ejerciciosAnos.length >= 2 ? ejerciciosAnos : ["2025", "2026"];
@@ -5707,6 +5769,7 @@ function getComparativeFinancialSummary(payload) {
   };
 }
 
+// [TAREA 5] [Fase Morosidad y Cuentas por Cobrar] - Registro de acciones de seguimiento en la bitácora de gestiones de cobro.
 function recordCollectionManagementAction(payload) {
   const { gestionId, estudianteUserId, responsableUserId, medioContacto, motivoContacto, resultado, compromisoPagoMonto, compromisoPagoFecha, fechaSeguimiento, observaciones, estadoCompromiso } = payload || {};
   if (!estudianteUserId || !medioContacto || !resultado) {

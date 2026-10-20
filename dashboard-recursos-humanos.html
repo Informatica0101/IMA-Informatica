@@ -233,6 +233,13 @@
                     }
                 }
 
+                // 1.5 Cargar Alertas de Contratos
+                const resAlerts = await fetchApi('ACCOUNTING', 'getEmployeeContractAlerts', { diasAnticipacion: 30 });
+                const expiringContractsEl = document.getElementById('rrhh-expiring-contracts');
+                if (resAlerts && resAlerts.status === 'success' && resAlerts.resumen) {
+                    if (expiringContractsEl) expiringContractsEl.textContent = resAlerts.resumen.proximosAVencer + resAlerts.resumen.vencidos;
+                }
+
                 // 2. Cargar Solicitudes de Permisos / Vacaciones
                 const resLeaves = await fetchApi('ACCOUNTING', 'getLeaveVacationRequests', {});
                 const requestsList = document.getElementById('rrhh-requests-list');

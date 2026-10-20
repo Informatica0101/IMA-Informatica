@@ -176,6 +176,11 @@ GRUPO 1: TAREAS COMPLETADAS
     - Archivo: dashboard-recursos-humanos.html (Línea 143 `loadHRDashboardData`)
     - Descripción: Conexión completa del panel de Recursos Humanos con los servicios backend para consultar/crear expedientes laborales, calcular planillas y listar permisos.
 
+39. [TAREA RH-02] Implementar avisos de vencimiento de contratos y documentos laborales
+    - Archivo: backend/accounting-service/Code.gs (Línea 3675 `getEmployeeContractAlerts`)
+    - Archivo Frontend: dashboard-recursos-humanos.html (Línea 236)
+    - Descripción: Endpoint `getEmployeeContractAlerts` para el cálculo automático de días para vencer en contratos laborales, clasificación de alertas y renderizado en dashboard-recursos-humanos.html.
+
 
 -------------------------------------------------------------------------------
 GRUPO 2: TAREAS INCOMPLETAS
@@ -191,7 +196,6 @@ GRUPO 3: TAREAS PENDIENTES / NO INICIADAS
 (Registradas en el backlog pero no iniciadas ni presentes en el código)
 -------------------------------------------------------------------------------
 
-19. TAREA RH-02: Implementar avisos de vencimiento de contratos y documentos laborales
 20. TAREA RH-03: Crear el módulo de reclutamiento y selección de personal
 21. TAREA RH-04: Implementar la agenda y el seguimiento de entrevistas
 22. TAREA RH-05: Implementar la evaluación del desempeño de los empleados

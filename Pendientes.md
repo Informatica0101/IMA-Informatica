@@ -4566,7 +4566,7 @@ Criterios de aceptación
 
 ---
 
-TAREA RH-02. Implementar avisos de vencimiento de contratos y documentos laborales
+[X] TAREA RH-02. Implementar avisos de vencimiento de contratos y documentos laborales
 
 Prioridad: Alta.
 Dependencia: RH-01 para la integración con el panel.
