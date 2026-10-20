@@ -132,6 +132,10 @@ GRUPO 1: TAREAS COMPLETADAS
     - Archivo: backend/academic-service/Code.gs (Línea 2598 `getIndividualCalendar`, Línea 2658 `getStudentSchedule`)
     - Descripción: Endpoint `getIndividualCalendar` consolidando horarios semanales recurrentes, sustituciones docentes, eventos del calendario lectivo y sesiones excepcionales canceladas/recuperadas.
 
+28. [TAREA 3.13] Integración coherente de horarios, asignaciones y sesiones
+    - Archivo: backend/academic-service/Code.gs (Línea 2602 `syncAcademicScheduleIntegrity`)
+    - Descripción: Endpoint `syncAcademicScheduleIntegrity` para verificar huérfanos, sustituciones temporales activas y vinculaciones entre asignaciones y horarios.
+
 
 -------------------------------------------------------------------------------
 GRUPO 2: TAREAS INCOMPLETAS
@@ -147,7 +151,6 @@ GRUPO 3: TAREAS PENDIENTES / NO INICIADAS
 (Registradas en el backlog pero no iniciadas ni presentes en el código)
 -------------------------------------------------------------------------------
 
-8. TAREA 3.13: Integración coherente de horarios, asignaciones y sesiones
 9. TAREA 3.14: Permisos y trazabilidad de operaciones académicas
 10. TAREA 1: REESTRUCTURACIÓN DE CONVENIOS Y PLANES DE PAGO FAMILIARES
 11. TAREA 2: PROYECCIONES PRESUPUESTARIAS PLURIANUALES

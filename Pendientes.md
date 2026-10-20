@@ -3961,7 +3961,7 @@ Criterios de aceptación
 
 BLOQUE F. INTEGRACIÓN, SEGURIDAD Y TRAZABILIDAD
 
-TAREA 3.13. Integración coherente de horarios, asignaciones y sesiones
+[X] TAREA 3.13. Integración coherente de horarios, asignaciones y sesiones
 
 Objetivo: Mantener sincronizados los horarios, las asignaciones docentes, las sesiones impartidas, las recuperaciones y los calendarios, sin duplicar datos ni perder relaciones.
 

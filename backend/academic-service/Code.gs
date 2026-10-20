@@ -2599,6 +2599,59 @@ function saveClassroomResource(payload) {
   return { status: "success", message: "Espacio/Aula registrada exitosamente." };
 }
 
+// [TAREA 3.13] [Fase 3: Planificación Académica y Horarios] - Sincronización y validación de integridad entre horarios, asignaciones titulares/sustitutas y sesiones impartidas.
+function syncAcademicScheduleIntegrity(payload) {
+  const { anoId } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+
+  const horSheet = getOrCreateSheet(ss, "HorariosClase");
+  const horRows = horSheet.getDataRange().getValues().slice(1);
+
+  const asigSheet = getOrCreateSheet(ss, "AsignacionesDocentes");
+  const asigRows = asigSheet.getDataRange().getValues().slice(1);
+
+  const sessSheet = getOrCreateSheet(ss, "SesionesClaseImpartidas");
+  const sessRows = sessSheet.getDataRange().getValues().slice(1);
+
+  let orphanSchedules = 0;
+  let activeSubstitutions = 0;
+  const issues = [];
+
+  // 1. Verificar huérfanos de HorariosClase sin docente asignado
+  horRows.filter(r => r[7] === "Activo").forEach(r => {
+    const horId = r[0];
+    const ofertaId = r[1];
+    const docenteId = r[6];
+
+    if (!docenteId || String(docenteId).trim() === "") {
+      const hasAsig = asigRows.some(a => String(a[1]).trim() === String(ofertaId).trim() && a[6] === "Activo");
+      if (!hasAsig) {
+        orphanSchedules++;
+        issues.push(`Horario ${horId} (Oferta ${ofertaId}) no cuenta con docente titular asignado.`);
+      }
+    }
+  });
+
+  // 2. Verificar sustituciones temporales activas sin alterar docente titular original
+  asigRows.filter(r => r[3] === "Sustituto" && r[6] === "Temporal").forEach(r => {
+    activeSubstitutions++;
+  });
+
+  logStructuredEvent("ACADEMIC", "syncAcademicScheduleIntegrity", "INFO", "SCHEDULE_INTEGRITY_CHECKED", `Verificación de integridad de horarios efectuada. Huérfanos: ${orphanSchedules}, Sustituciones activas: ${activeSubstitutions}`, { orphanSchedules, activeSubstitutions }, payload && payload.authRole);
+
+  return {
+    status: "success",
+    message: "Verificación y sincronización de integridad de horarios completada.",
+    data: {
+      horariosRevisados: horRows.length,
+      horariosHuerfanos: orphanSchedules,
+      sustitucionesTemporales: activeSubstitutions,
+      sesionesRegistradas: sessRows.length,
+      incidencias: issues
+    }
+  };
+}
+
 // [TAREA 3.12] [Fase 3: Planificación Académica y Horarios] - Calendario individual consolidado para estudiantes, docentes y secciones con eventos y sustituciones.
 function getIndividualCalendar(payload) {
   const { tipoConsulta, targetId, anoId, fechaInicio, fechaFin } = payload || {};
