@@ -1878,6 +1878,87 @@ function deleteClassSchedule(payload) {
   return { status: "success", message: "Bloque de horario desactivado correctamente." };
 }
 
+// [TAREA 3.2] [Fase 3: Planificación Académica y Horarios] - Copia de horarios entre años lectivos en estado borrador.
+function copyClassSchedules(payload) {
+  const { anioOrigen, anioDestino } = payload || {};
+  if (!anioOrigen || !anioDestino) throw new Error("El año de origen y año de destino son requeridos.");
+  if (String(anioOrigen).trim() === String(anioDestino).trim()) {
+    throw new Error("El año de origen y de destino no pueden ser el mismo.");
+  }
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "HorariosClase");
+  const data = sheet.getDataRange().getValues();
+
+  if (data.length <= 1) {
+    return { status: "success", message: "No se encontraron horarios para copiar.", copiedCount: 0, skippedCount: 0, logs: [] };
+  }
+
+  const rows = data.slice(1);
+  // Filtrar horarios activos pertenecientes al año de origen (ofertaId o metadata)
+  const sourceSchedules = rows.filter(r => r[7] !== "Inactivo" && String(r[1]).includes(String(anioOrigen)));
+
+  if (sourceSchedules.length === 0) {
+    return { status: "success", message: `No existen horarios activos registrados para el año ${anioOrigen}.`, copiedCount: 0, skippedCount: 0, logs: [] };
+  }
+
+  let copiedCount = 0;
+  let skippedCount = 0;
+  const logs = [];
+
+  sourceSchedules.forEach(r => {
+    const originalHorarioId = r[0];
+    const originalOfertaId = r[1];
+    const diaSemana = r[2];
+    const horaInicio = r[3];
+    const horaFin = r[4];
+    const aulaCodigo = r[5];
+    const docenteUserId = r[6];
+
+    // Construir nueva ofertaId vinculada al año de destino
+    const targetOfertaId = originalOfertaId.replace(String(anioOrigen), String(anioDestino));
+
+    // Verificar si el horario ya fue copiado o existe en el destino para evitar duplicados
+    const existingTarget = rows.find(tr => tr[7] !== "Inactivo" && String(tr[1]) === targetOfertaId && String(tr[2]) === String(diaSemana) && String(tr[3]) === String(horaInicio));
+    if (existingTarget) {
+      skippedCount++;
+      logs.push(`Omitido horario ${originalHorarioId}: ya existe registro equivalente en ${anioDestino}.`);
+      return;
+    }
+
+    // Validar conflictos en destino
+    const conflict = checkScheduleConflict({
+      diaSemana,
+      horaInicio,
+      horaFin,
+      aulaCodigo,
+      docenteUserId,
+      ofertaId: targetOfertaId
+    });
+
+    if (conflict.hasConflict) {
+      skippedCount++;
+      logs.push(`Omitido horario ${originalHorarioId}: conflicto detectado (${conflict.reason}).`);
+      return;
+    }
+
+    const newHorarioId = "HOR-" + Date.now() + "-" + Math.floor(Math.random() * 1000);
+    sheet.appendRow([newHorarioId, targetOfertaId, diaSemana, horaInicio, horaFin, aulaCodigo, docenteUserId, "Borrador"]);
+    copiedCount++;
+    logs.push(`Copiado horario ${originalHorarioId} a ${newHorarioId} (${targetOfertaId}) en estado Borrador.`);
+  });
+
+  logStructuredEvent("ACADEMIC", "copyClassSchedules", "INFO", "SCHEDULE_COPIED", `Copia de horarios efectuada de ${anioOrigen} a ${anioDestino}. Copiados: ${copiedCount}, Omitidos: ${skippedCount}`, { anioOrigen, anioDestino, copiedCount, skippedCount }, payload && payload.authRole);
+
+  return {
+    status: "success",
+    message: `Copia de horarios completada. Se crearon ${copiedCount} bloques en estado Borrador y se omitieron ${skippedCount}.`,
+    copiedCount,
+    skippedCount,
+    logs
+  };
+}
+
 function checkScheduleConflict(params) {
   const { diaSemana, horaInicio, horaFin, aulaCodigo, docenteUserId, ofertaId, excludeHorarioId, estudiantesCount } = params || {};
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);

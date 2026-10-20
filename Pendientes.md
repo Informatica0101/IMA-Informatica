@@ -3588,7 +3588,7 @@ Criterios de aceptación
 
 ---
 
-TAREA 3.2. Copia de horarios entre años lectivos
+[X] TAREA 3.2. Copia de horarios entre años lectivos
 
 Objetivo: Reducir el trabajo repetitivo al preparar el horario de un nuevo año lectivo, reutilizando una matriz anterior sin alterar los registros originales.
 
