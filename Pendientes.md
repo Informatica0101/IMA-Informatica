@@ -4267,7 +4267,7 @@ Criterios de aceptación
 
 ---
 
-TAREA 5. BITÁCORA DE GESTIONES DE COBRO
+[X] TAREA 5. BITÁCORA DE GESTIONES DE COBRO
 
 Prioridad: Alta
 Área: Morosidad y cuentas por cobrar.

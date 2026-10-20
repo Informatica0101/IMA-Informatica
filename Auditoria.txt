@@ -156,6 +156,10 @@ GRUPO 1: TAREAS COMPLETADAS
     - Archivo: backend/accounting-service/Code.gs (Línea 5430 `getCashFlowSixMonthProjection`)
     - Descripción: Endpoint `getCashFlowSixMonthProjection` para estimación de liquidez mensual a horizonte de 6 meses, considerando saldos iniciales, cobros/pagos estimados y alertas de déficit.
 
+34. [TAREA 5] BITÁCORA DE GESTIONES DE COBRO
+    - Archivo: backend/accounting-service/Code.gs (Línea 5498 `recordCollectionManagementAction`, Línea 5539 `getCollectionManagementLogs`)
+    - Descripción: Endpoints `recordCollectionManagementAction` y `getCollectionManagementLogs` para el seguimiento ordenado cronológicamente de gestiones de cobro, compromisos de pago y fechas de seguimiento.
+
 
 -------------------------------------------------------------------------------
 GRUPO 2: TAREAS INCOMPLETAS
@@ -171,7 +175,6 @@ GRUPO 3: TAREAS PENDIENTES / NO INICIADAS
 (Registradas en el backlog pero no iniciadas ni presentes en el código)
 -------------------------------------------------------------------------------
 
-14. TAREA 5: BITÁCORA DE GESTIONES DE COBRO
 15. TAREA 6: COMPARACIÓN FINANCIERA VISUAL ENTRE EJERCICIOS FISCALES
 16. TAREA 7: PROYECCIONES PRESUPUESTARIAS Y FINANCIERAS: COHERENCIA ENTRE INFORMES
 17. TAREA 8: VERIFICACIÓN DE INTEGRIDAD CONTABLE EN LAS NUEVAS FUNCIONES
