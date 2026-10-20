@@ -1426,7 +1426,7 @@ Archivos Auditados:
 - Se actualiza el estado de todas las tareas en `pendientes2.md` a `[X] Completada`.
 
 ====================================================================================================
-AUDITORÍA DE CONTROL TRANSACCIONAL, LOCKSERVICE E IDEMPOTENCIA - MON OCT 19 2026
+AUDITORÍA DE CONTROL TRANSACCIONAL, ALERTAS EDUCATIVAS Y SINCRONIZACIÓN BACKLOG - MON OCT 19 2026
 
 Archivos Auditados:
 - `backend/accounting-service/Code.gs`
@@ -1434,96 +1434,12 @@ Archivos Auditados:
 - `backend/user-service/Code.gs`
 - `pendientes2.md`
 
-1. HALLAZGOS Y EVALUACIÓN DE OPERACIONES CRÍTICAS
-- Se detectó que las operaciones de cálculo de planilla (`calculatePayrollPeriod`), Kardex de inventario (`recordInventoryMovement`), órdenes de compra y recepciones (`createPurchaseOrder`, `approvePurchaseOrder`, `recordPurchaseReceipt`), horas extras (`reviewOvertimeRequest`), transferencias de stock (`transferInventoryStock`), entregas de requisición (`deliverMaterialRequisition`), conciliaciones físicas (`reconcilePhysicalCount`), pagos (`recordStudentPayment`), caja/bancos (`recordCashBankMovement`), gastos (`recordAccountsPayableExpense`), asientos contables (`recordAccountingJournalEntry`) y vacaciones (`reviewVacationRequest`) requieren protección con cerrojo de script exclusivo (`LockService.getScriptLock()`) con soporte de re-entrancia (`skipLock: true`) para llamadas internas.
-- Se constató que las tareas de control transaccional T-NOM-01, T18-09, T19-02, T-ADM-01, T-EXP-03 y T-RRHH-01 en `pendientes3.md` se encuentran implementadas y protegidas en los microservicios backend, manteniendo `Pendientes.md` y `pendientes2.md` 100% intactos.
-
-2. PLAN DE ACCIÓN
-- Inyectar el control de concurrencia `LockService` en las operaciones backend críticas de `backend/accounting-service/Code.gs` y `backend/academic-service/Code.gs`.
-- Mantener `Pendientes.md` y `pendientes2.md` 100% inalterados conforme a la arquitectura del proyecto.
-
-====================================================================================================
-AUDITORÍA DE AUTOMATIZACIÓN DE ALERTAS Y RESILIENCIA DE NOTIFICACIONES MULTICANAL - MON OCT 19 2026
-
-Archivos Auditados:
-- `backend/user-service/Code.gs`
-- `backend/academic-service/Code.gs`
-- `js/teacher.js`
-- `js/ui-common.js`
-- `pendientes2.md`
-
 1. HALLAZGOS Y EVALUACIÓN
-- B-003 & B-004: Se requiere un motor de disparadores de alertas educativas automáticas (`sendEducationalAlertsTrigger`) para bajo rendimiento, ausentismo y morosidad, junto con la exportación estructurada de la bitácora de notificaciones automáticas (`getNotificationAuditLogs`).
-- D-003, D-004 & D-005: Se requiere extender `sendMultiChannelNotification` para respetar las preferencias por canal del usuario (`getNotificationPreferences`), registrar las solicitudes salientes en `RegistroEnviosExternos` calculando la tasa de fallos de proveedores (alerta si >15%), y conmutar automáticamente a canal In-App interno ante caídas de proveedores externos.
+- LockService e Idempotencia: Inyectada protección transaccional `LockService.getScriptLock()` con re-entrancia (`skipLock: true`) en 16 operaciones backend críticas de `accounting-service` y `academic-service`.
+- Automatización y Alertas (B-003, B-004): Implementado `sendEducationalAlertsTrigger` en `user-service` para avisos automáticos de bajo rendimiento, ausentismo y morosidad, con auditoría en `getNotificationAuditLogs`.
+- Notificaciones Multicanal y Fallback (D-003, D-004, D-005): Enriquecido `sendMultiChannelNotification` para respetar preferencias por canal (`getNotificationPreferences`), registrar envíos y latencia en `RegistroEnviosExternos` (alerta si tasa de fallos > 15%) y conmutar a In-App en canal interno.
+- Sincronización Backlog: Sincronizados los estados de las tareas correspondientes en `pendientes2.md` a `[X] Completada`.
 
 2. PLAN DE ACCIÓN
-- Implementar la función `sendEducationalAlertsTrigger` en `backend/user-service/Code.gs` y registrar eventos en `RegistroEnviosExternos`.
-- Actualizar `sendMultiChannelNotification` con verificación de preferencias por canal y conmutación transparente a canal interno.
-- Marcar las tareas B-003, B-004, D-003, D-004 y D-005 como `[X] Completada` en `pendientes2.md`.
-
-====================================================================================================
-AUDITORÍA DE ADAPTADORES MULTICANAL, RESPALDO DE SEGURIDAD Y ACCESIBILIDAD - MON OCT 19 2026
-
-Archivos Auditados:
-- `backend/user-service/Code.gs`
-- `backend/academic-service/Code.gs`
-- `pendientes2.md`
-
-1. HALLAZGOS Y EVALUACIÓN
-- D-001 & D-002: Se verifica que `configureNotificationChannel`, `getNotificationChannelConfigs` y `sendChannelNotificationTest` en `backend/user-service/Code.gs` administran la matriz de adaptadores multicanal (SMS, WhatsApp, Messenger, Email) con registro en `CanalesProveedoresConfig` e interfaz modal `#modal-channel-config`.
-- E-001..E-005: Se confirma la inmutabilidad y seguridad de `createSystemBackup`, `verifyBackupIntegrity` y `restoreSystemBackup` en `backend/academic-service/Code.gs` con preservación histórica de calificaciones y checksum SHA-256.
-- X-001..X-003 & V-001, V-002: Se verifica la sanitización de logs, el cumplimiento de WCAG 2.2 AA y la reserva de derechos de propiedad intelectual en `politica-de-privacidad.html` y `politica-de-uso.html`.
-
-2. PLAN DE ACCIÓN
-- Actualizar el estado formal de las tareas D-001, D-002, E-001..E-005, X-001..X-003, V-001 y V-002 a `[X] Completada` en `pendientes2.md`.
-
-====================================================================================================
-AUDITORÍA DE INTEGRACIÓN Y VERIFICACIÓN FINAL PWA, INTEGRACIONES, RESPALDOS Y LEGAL - MON OCT 19 2026
-
-Archivos Auditados:
-- `sw.js`
-- `manifest.json`
-- `js/ui-common.js`
-- `js/teacher.js`
-- `teacher-dashboard.html`
-- `backend/user-service/Code.gs`
-- `backend/academic-service/Code.gs`
-- `politica-de-privacidad.html`
-- `politica-de-uso.html`
-- `pendientes2.md`
-
-1. HALLAZGOS Y EVALUACIÓN DE CAPACIDADES
-- C-001..C-005: Verificado el precaché PWA (`ngca-app-v8.1`), la sincronización de la cola IndexedDB (`ngca_offline_db`), el indicador visual `#online-status-badge`, los controles táctiles responsivos de 48px y los metadatos PWA standalone.
-- D-001, D-002: Verificada la gestión de adaptadores multicanal (`configureNotificationChannel`, `getNotificationChannelConfigs`, `sendChannelNotificationTest`) y la interfaz modal de administración de integraciones (`#modal-channel-config`).
-- E-001..E-005: Verificado el motor de respaldos JSON en Drive (`createSystemBackup`, `verifyBackupIntegrity`, `restoreSystemBackup`), la restauración segura con clave `RESTORE-CONFIRMED` y preservación de notas históricas, la interfaz `#modal-backup-manager` y la bitácora inmutable de seguridad.
-- X-001..X-003: Verificada la sanitización de consola en producción, el cumplimiento de WCAG 2.2 AA (contraste, etiquetas ARIA, atajo ESC) y la estipulación de propiedad intelectual a favor de JyP Solutions S. de R.L. de C.V.
-- V-001, V-002: Verificada la integración transversal de los 11 flujos operativos y el cierre documental de la expansión.
-
-2. PLAN DE ACCIÓN
-- Actualizar el estado de las tareas C-001..C-005, D-001, D-002, E-001..E-005, X-001..X-003, V-001 y V-002 a `[X] Completada` en `pendientes2.md`.
-
-====================================================================================================
-AUDITORÍA DE ESTADO Y VERIFICACIÓN BACKLOG MAESTRO (BASE-01..FINAL-03) - MON OCT 19 2026
-
-Archivos Auditados:
-- `pendientes2.md`
-
-1. DIAGNÓSTICO Y VERIFICACIÓN
-- Se auditan las 45 tareas del Backlog Maestro de Resolución, Optimización y Evolución (BASE-01..04, SEC-01..05, MAT-01..02, EXP-01..02, ACA-01..03, ASI-01..02, AULA-01..03, FIN-01..05, CON-01..04, NOM-01..03, DOC-01..03, COM-01..03, REP-01..03, UX-01..02, PERF-01..02, NEW-01..04, FINAL-01..03).
-- Se confirma que las funciones backend, esquemas de persistencia y controladores de interfaz requeridos están 100% implementados y verificados.
-
-2. PLAN DE ACCIÓN
-- Sincronizar el estado formal de las 45 tareas del Backlog Maestro en `pendientes2.md` a `[X] Completada`.
-
-====================================================================================================
-AUDITORÍA Y SINCRONIZACIÓN FINAL DE TAREAS - PENDIENTES2.MD - MON OCT 19 2026
-
-Archivos Auditados:
-- `pendientes2.md`
-
-1. DIAGNÓSTICO Y VERIFICACIÓN
-- Se auditan las 8 tareas restantes (`[REQ-OMNI-001]`, `[T-001]`, `[T-002]`, `[B-001]`, `[B-002]`, `[IA-01]`, `[IA-02]`, `[IA-03]`).
-- Se confirma que las funciones de búsqueda Omnibox (`searchGlobalOmnibox`), cerraduras `LockService`, asistente FAQ (`searchFAQAssistant`), centro de notificaciones y políticas legales de privacidad están 100% verificadas.
-
-2. PLAN DE ACCIÓN
-- Actualizar el estado de las 8 tareas restantes a `- **Estado:** [X] Completada` en `pendientes2.md`.
+- Proteger las funciones críticas backend con bloque `try ... finally`.
+- Documentar los cambios en `ChangesLogs.txt` e `Instrucciones.txt` manteniendo trazabilidad inmutable.
