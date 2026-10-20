@@ -696,6 +696,105 @@ function getStudentFile(payload) {
   };
 }
 
+// [TAREA 3.9] [Fase 3: Planificación Académica y Horarios] - Registro, confirmación y cálculo de horas lectivas impartidas, canceladas y pendientes.
+function recordClassSessionOutcome(payload) {
+  const { sesionId, horarioId, ofertaId, fecha, estado, observaciones, docenteUserId } = payload || {};
+  if (!ofertaId || !fecha || !estado) throw new Error("ofertaId, fecha y estado son requeridos.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "SesionesClaseImpartidas");
+
+  if (sheet.getLastRow() === 0) {
+    sheet.appendRow(["SesionID", "HorarioID", "OfertaID", "Fecha", "Estado", "DocenteUserId", "Observaciones", "ConfirmadoPor", "FechaConfirmacion"]);
+  }
+
+  const data = sheet.getDataRange().getValues();
+  const nowStr = new Date().toISOString();
+  const targetUser = payload.authUserId || docenteUserId || "SISTEMA";
+
+  let sId = sesionId;
+  if (sId) {
+    const idx = data.findIndex(r => String(r[0]).trim() === String(sId).trim());
+    if (idx !== -1) {
+      sheet.getRange(idx + 1, 5, 1, 5).setValues([[
+        estado,
+        docenteUserId || data[idx][5],
+        observaciones || data[idx][6],
+        targetUser,
+        nowStr
+      ]]);
+      return { status: "success", message: "Resultado de sesión actualizado correctamente.", data: { sesionId: sId } };
+    }
+  }
+
+  sId = "SES-" + Date.now();
+  sheet.appendRow([sId, horarioId || "HOR-GEN", ofertaId, fecha, estado, docenteUserId || "", observaciones || "", targetUser, nowStr]);
+
+  logStructuredEvent("ACADEMIC", "recordClassSessionOutcome", "INFO", "SESSION_OUTCOME_RECORDED", `Sesión ${sId} marcada como ${estado} para oferta ${ofertaId}`, { sId, ofertaId, fecha, estado }, payload && payload.authRole);
+
+  return { status: "success", message: `Sesión de clase confirmada como ${estado}.`, data: { sesionId: sId } };
+}
+
+// [TAREA 3.9] [Fase 3: Planificación Académica y Horarios] - Consulta de resumen de horas lectivas impartidas, programadas y pendientes por docente/oferta.
+function getTeachingHoursSummary(payload) {
+  const { docenteUserId, ofertaId, fechaInicio, fechaFin } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "SesionesClaseImpartidas");
+  const data = sheet.getDataRange().getValues();
+
+  if (data.length <= 1) {
+    return { status: "success", data: { impartidas: 0, canceladas: 0, pendientes: 0, reprogramadas: 0, sesiones: [] } };
+  }
+
+  const rows = data.slice(1);
+  const filtered = rows.filter(r => {
+    if (docenteUserId && String(r[5]).trim() !== String(docenteUserId).trim()) return false;
+    if (ofertaId && String(r[2]).trim() !== String(ofertaId).trim()) return false;
+    if (fechaInicio && new Date(r[3]) < new Date(fechaInicio)) return false;
+    if (fechaFin && new Date(r[3]) > new Date(fechaFin)) return false;
+    return true;
+  });
+
+  let impartidas = 0;
+  let canceladas = 0;
+  let pendientes = 0;
+  let reprogramadas = 0;
+
+  const sesiones = filtered.map(r => {
+    const estado = String(r[4]);
+    if (estado === "Impartida" || estado === "Recuperada") impartidas++;
+    else if (estado === "Cancelada") canceladas++;
+    else if (estado === "Reprogramada") reprogramadas++;
+    else pendientes++;
+
+    return {
+      sesionId: r[0],
+      horarioId: r[1],
+      ofertaId: r[2],
+      fecha: r[3],
+      estado,
+      docenteUserId: r[5],
+      observaciones: r[6],
+      confirmadoPor: r[7],
+      fechaConfirmacion: r[8]
+    };
+  });
+
+  return {
+    status: "success",
+    data: {
+      docenteUserId: docenteUserId || "TODOS",
+      ofertaId: ofertaId || "TODAS",
+      impartidas,
+      canceladas,
+      pendientes,
+      reprogramadas,
+      totalSesionesRegistradas: filtered.length,
+      sesiones
+    }
+  };
+}
+
 // ---------------------------------------------------------------------------
 // MÓDULO DE CONFIGURACIÓN DE AÑO ESCOLAR, JORNADAS, MALLA, HORARIOS Y ACTIVIDADES
 // ---------------------------------------------------------------------------

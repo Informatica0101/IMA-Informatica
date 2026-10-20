@@ -116,6 +116,10 @@ GRUPO 1: TAREAS COMPLETADAS
     - Archivo: backend/academic-service/Code.gs (Línea 1725 `generateAutoSchedules`)
     - Descripción: Endpoint `generateAutoSchedules` para la resolución de restricciones y propuesta automática de bloques de horarios en estado `Borrador` respetando colisiones y disponibilidad.
 
+24. [TAREA 3.9] Registro y confirmación de horas lectivas impartidas
+    - Archivo: backend/academic-service/Code.gs (Línea 700 `recordClassSessionOutcome`, Línea 739 `getTeachingHoursSummary`)
+    - Descripción: Endpoints `recordClassSessionOutcome` y `getTeachingHoursSummary` para el registro, confirmación y resumen de horas lectivas impartidas, canceladas, pendientes y reprogramadas con trazabilidad.
+
 
 -------------------------------------------------------------------------------
 GRUPO 2: TAREAS INCOMPLETAS
@@ -131,7 +135,6 @@ GRUPO 3: TAREAS PENDIENTES / NO INICIADAS
 (Registradas en el backlog pero no iniciadas ni presentes en el código)
 -------------------------------------------------------------------------------
 
-4. TAREA 3.9: Registro y confirmación de horas lectivas impartidas
 5. TAREA 3.10: Recuperación y reprogramación de clases canceladas
 6. TAREA 3.11: Validación y publicación segura de horarios
 7. TAREA 3.12: Calendarios individuales de estudiantes, docentes y secciones

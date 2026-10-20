@@ -3816,7 +3816,7 @@ Criterios de aceptación
 
 BLOQUE D. REGISTRO DE CLASES IMPARTIDAS Y RECUPERACIONES
 
-TAREA 3.9. Registro y confirmación de horas lectivas impartidas
+[X] TAREA 3.9. Registro y confirmación de horas lectivas impartidas
 
 Objetivo: Establecer un registro verificable de cada sesión programada para determinar si fue impartida, cancelada, pendiente o recuperada.
 
