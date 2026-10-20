@@ -140,6 +140,10 @@ GRUPO 1: TAREAS COMPLETADAS
     - Archivo: backend/academic-service/Code.gs (Línea 160 `ROLE_PERMISSIONS`, Línea 2612 `getAcademicAuditLogs`)
     - Descripción: Actualización de la matriz de permisos RBAC del servidor con las nuevas acciones de la Fase 3 y endpoint `getAcademicAuditLogs` para consulta trazable de bitácora.
 
+30. [TAREA 1] REESTRUCTURACIÓN DE CONVENIOS Y PLANES DE PAGO FAMILIARES
+    - Archivo: backend/accounting-service/Code.gs (Línea 1301 `createFamilyPaymentAgreement`, Línea 1346 `getFamilyPaymentAgreements`)
+    - Descripción: Endpoints `createFamilyPaymentAgreement` y `getFamilyPaymentAgreements` con validación de saldos, desglose de cuotas personalizadas, verificación de suma de importes y permisos RBAC.
+
 
 -------------------------------------------------------------------------------
 GRUPO 2: TAREAS INCOMPLETAS
@@ -155,7 +159,6 @@ GRUPO 3: TAREAS PENDIENTES / NO INICIADAS
 (Registradas en el backlog pero no iniciadas ni presentes en el código)
 -------------------------------------------------------------------------------
 
-10. TAREA 1: REESTRUCTURACIÓN DE CONVENIOS Y PLANES DE PAGO FAMILIARES
 11. TAREA 2: PROYECCIONES PRESUPUESTARIAS PLURIANUALES
 12. TAREA 3: ALERTAS POR VENCIMIENTO DE CONTRATOS DE PROVEEDORES
 13. TAREA 4: PROYECCIÓN DEL FLUJO DE CAJA A SEIS MESES

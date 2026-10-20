@@ -183,7 +183,7 @@ function doGet() { return textResponse({ status: "success", service: "ACCOUNTING
 
 const ROLE_PERMISSIONS = {
   "Administrador": ["*"],
-  "Director": ["configurePaymentConcept", "configurePaymentTariff", "getStudentAccountStatement", "recordStudentPayment", "uploadPaymentVoucher", "getPaymentVouchers", "reviewPaymentVoucher", "generatePaymentReceiptPDF", "createFiscalInvoice", "getFiscalInvoices", "configureGatewayIntegration", "testGatewayConnection", "recordCashBankMovement", "closeCashSession", "getCashBankSummary", "performBankReconciliation", "recordAccountsPayableExpense", "getChartOfAccounts", "saveAccountItem", "recordAccountingJournalEntry", "getAccountingJournalEntries", "getBudgets", "saveBudgetPlan", "getBudgetExecutionReport", "getFinancialSummary", "getAccountsReceivablePayableSummary", "generatePayrollPeriod", "recordStaffAttendance", "getStaffPayrollReceipt", "recordInventoryMovement", "getInventoryKardex", "registerSupplier", "createEmployeeRecord", "getEmployeeRecords", "manageEmployeeContract", "getEmployeeContracts", "submitVacationRequest", "getVacationRequests", "reviewVacationRequest", "configureFiscalPolicy", "getFiscalPolicies", "publishInstitutionalPolicy", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getAdvancedDashboardAnalytics", "manageLibraryBook", "getLibraryBooks", "processLibraryLoan", "getLibraryLoans", "reserveLibraryBook", "getLibraryReservations", "recordLibraryIncident", "getLibraryIncidents", "manageDigitalResource", "getDigitalResources", "manageAssetItem", "getAssetItems", "assignAssetCustody", "getAssetAssignments", "manageTransportRoute", "getTransportRoutes", "assignStudentTransport", "getTransportAssignments", "registerSpreadsheetSource", "resolveSpreadsheetSource", "getSpreadsheetCatalog", "configureSchoolDocumentTemplate", "getSchoolDocumentTemplates", "generateSchoolDocument", "getIssuedSchoolDocuments", "validateImportPreview", "importDataWithColumnMapping", "getMigrationLogs", "verifySACETemplateCompatibility", "generateSACEReportFile", "configureDiscountScholarshipRule", "getDiscountScholarshipRules", "submitDiscountScholarshipRequest", "getDiscountScholarshipRequests", "approveDiscountScholarshipRequest", "calculateAppliedDiscount", "configureLateFeeRule", "getLateFeeRules", "calculateLateFeesForAccount", "manageStoreProduct", "getStoreProducts", "createStoreOrder", "getStoreOrders", "updateStoreOrderStatus", "manageCafeteriaMenu", "getCafeteriaMenu", "createCafeteriaOrder", "getCafeteriaOrders", "updateCafeteriaOrderStatus", "configureFamilyCreditAuthorization", "getFamilyCreditAuthorizations", "processFamilyCreditPurchase", "createPurchaseRequest", "getPurchaseRequests", "submitPurchaseQuotation", "getPurchaseQuotations", "createPurchaseOrder", "approvePurchaseOrder", "getPurchaseOrders", "recordPurchaseReceipt", "manageWarehouseLocation", "getWarehouseLocations", "transferInventoryStock", "createMaterialRequisition", "getMaterialRequisitions", "deliverMaterialRequisition", "createPhysicalInventoryCount", "getPhysicalInventoryCounts", "reconcilePhysicalCount", "manageMaintenanceOrder", "getMaintenanceOrders", "registerAssetDisposal", "getAssetDisposals"],
+  "Director": ["configurePaymentConcept", "configurePaymentTariff", "getStudentAccountStatement", "recordStudentPayment", "uploadPaymentVoucher", "getPaymentVouchers", "reviewPaymentVoucher", "generatePaymentReceiptPDF", "createFiscalInvoice", "getFiscalInvoices", "configureGatewayIntegration", "testGatewayConnection", "recordCashBankMovement", "closeCashSession", "getCashBankSummary", "performBankReconciliation", "recordAccountsPayableExpense", "getChartOfAccounts", "saveAccountItem", "recordAccountingJournalEntry", "getAccountingJournalEntries", "getBudgets", "saveBudgetPlan", "getBudgetExecutionReport", "getFinancialSummary", "getAccountsReceivablePayableSummary", "generatePayrollPeriod", "recordStaffAttendance", "getStaffPayrollReceipt", "recordInventoryMovement", "getInventoryKardex", "registerSupplier", "createEmployeeRecord", "getEmployeeRecords", "manageEmployeeContract", "getEmployeeContracts", "submitVacationRequest", "getVacationRequests", "reviewVacationRequest", "configureFiscalPolicy", "getFiscalPolicies", "publishInstitutionalPolicy", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getAdvancedDashboardAnalytics", "manageLibraryBook", "getLibraryBooks", "processLibraryLoan", "getLibraryLoans", "reserveLibraryBook", "getLibraryReservations", "recordLibraryIncident", "getLibraryIncidents", "manageDigitalResource", "getDigitalResources", "manageAssetItem", "getAssetItems", "assignAssetCustody", "getAssetAssignments", "manageTransportRoute", "getTransportRoutes", "assignStudentTransport", "getTransportAssignments", "registerSpreadsheetSource", "resolveSpreadsheetSource", "getSpreadsheetCatalog", "configureSchoolDocumentTemplate", "getSchoolDocumentTemplates", "generateSchoolDocument", "getIssuedSchoolDocuments", "validateImportPreview", "importDataWithColumnMapping", "getMigrationLogs", "verifySACETemplateCompatibility", "generateSACEReportFile", "configureDiscountScholarshipRule", "getDiscountScholarshipRules", "submitDiscountScholarshipRequest", "getDiscountScholarshipRequests", "approveDiscountScholarshipRequest", "calculateAppliedDiscount", "configureLateFeeRule", "getLateFeeRules", "calculateLateFeesForAccount", "manageStoreProduct", "getStoreProducts", "createStoreOrder", "getStoreOrders", "updateStoreOrderStatus", "manageCafeteriaMenu", "getCafeteriaMenu", "createCafeteriaOrder", "getCafeteriaOrders", "updateCafeteriaOrderStatus", "configureFamilyCreditAuthorization", "getFamilyCreditAuthorizations", "processFamilyCreditPurchase", "createFamilyPaymentAgreement", "getFamilyPaymentAgreements", "createPurchaseRequest", "getPurchaseRequests", "submitPurchaseQuotation", "getPurchaseQuotations", "createPurchaseOrder", "approvePurchaseOrder", "getPurchaseOrders", "recordPurchaseReceipt", "manageWarehouseLocation", "getWarehouseLocations", "transferInventoryStock", "createMaterialRequisition", "getMaterialRequisitions", "deliverMaterialRequisition", "createPhysicalInventoryCount", "getPhysicalInventoryCounts", "reconcilePhysicalCount", "manageMaintenanceOrder", "getMaintenanceOrders", "registerAssetDisposal", "getAssetDisposals"],
   "Subdirector": ["configurePaymentConcept", "configurePaymentTariff", "getStudentAccountStatement", "recordStudentPayment", "uploadPaymentVoucher", "getPaymentVouchers", "reviewPaymentVoucher", "generatePaymentReceiptPDF", "createFiscalInvoice", "getFiscalInvoices", "configureGatewayIntegration", "testGatewayConnection", "recordCashBankMovement", "closeCashSession", "getCashBankSummary", "performBankReconciliation", "recordAccountsPayableExpense", "getChartOfAccounts", "saveAccountItem", "recordAccountingJournalEntry", "getAccountingJournalEntries", "getBudgets", "saveBudgetPlan", "getBudgetExecutionReport", "getFinancialSummary", "getAccountsReceivablePayableSummary", "generatePayrollPeriod", "recordStaffAttendance", "getStaffPayrollReceipt", "recordInventoryMovement", "getInventoryKardex", "registerSupplier", "createEmployeeRecord", "getEmployeeRecords", "manageEmployeeContract", "getEmployeeContracts", "submitVacationRequest", "getVacationRequests", "reviewVacationRequest", "configureFiscalPolicy", "getFiscalPolicies", "publishInstitutionalPolicy", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getAdvancedDashboardAnalytics", "manageLibraryBook", "getLibraryBooks", "processLibraryLoan", "getLibraryLoans", "reserveLibraryBook", "getLibraryReservations", "recordLibraryIncident", "getLibraryIncidents", "manageDigitalResource", "getDigitalResources", "manageAssetItem", "getAssetItems", "assignAssetCustody", "getAssetAssignments", "manageTransportRoute", "getTransportRoutes", "assignStudentTransport", "getTransportAssignments", "registerSpreadsheetSource", "resolveSpreadsheetSource", "getSpreadsheetCatalog", "configureSchoolDocumentTemplate", "getSchoolDocumentTemplates", "generateSchoolDocument", "getIssuedSchoolDocuments", "validateImportPreview", "importDataWithColumnMapping", "getMigrationLogs", "verifySACETemplateCompatibility", "generateSACEReportFile", "configureDiscountScholarshipRule", "getDiscountScholarshipRules", "submitDiscountScholarshipRequest", "getDiscountScholarshipRequests", "approveDiscountScholarshipRequest", "calculateAppliedDiscount", "createPurchaseRequest", "getPurchaseRequests", "submitPurchaseQuotation", "getPurchaseQuotations", "createPurchaseOrder", "approvePurchaseOrder", "getPurchaseOrders", "recordPurchaseReceipt", "manageWarehouseLocation", "getWarehouseLocations", "transferInventoryStock", "createMaterialRequisition", "getMaterialRequisitions", "deliverMaterialRequisition", "createPhysicalInventoryCount", "getPhysicalInventoryCounts", "reconcilePhysicalCount", "manageMaintenanceOrder", "getMaintenanceOrders", "registerAssetDisposal", "getAssetDisposals"],
   "Contador": ["configurePaymentConcept", "configurePaymentTariff", "getStudentAccountStatement", "recordStudentPayment", "uploadPaymentVoucher", "getPaymentVouchers", "reviewPaymentVoucher", "generatePaymentReceiptPDF", "createFiscalInvoice", "getFiscalInvoices", "configureGatewayIntegration", "testGatewayConnection", "recordCashBankMovement", "closeCashSession", "getCashBankSummary", "performBankReconciliation", "recordAccountsPayableExpense", "getChartOfAccounts", "saveAccountItem", "recordAccountingJournalEntry", "getAccountingJournalEntries", "getBudgets", "saveBudgetPlan", "getBudgetExecutionReport", "getFinancialSummary", "getAccountsReceivablePayableSummary", "generatePayrollPeriod", "recordStaffAttendance", "getStaffPayrollReceipt", "recordInventoryMovement", "getInventoryKardex", "registerSupplier", "createEmployeeRecord", "getEmployeeRecords", "manageEmployeeContract", "getEmployeeContracts", "submitVacationRequest", "getVacationRequests", "reviewVacationRequest", "configureFiscalPolicy", "getFiscalPolicies", "publishInstitutionalPolicy", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getAdvancedDashboardAnalytics", "manageLibraryBook", "getLibraryBooks", "processLibraryLoan", "getLibraryLoans", "reserveLibraryBook", "getLibraryReservations", "recordLibraryIncident", "getLibraryIncidents", "manageDigitalResource", "getDigitalResources", "manageAssetItem", "getAssetItems", "assignAssetCustody", "getAssetAssignments", "resolveSpreadsheetSource", "getSpreadsheetCatalog", "validateImportPreview", "importDataWithColumnMapping", "getMigrationLogs", "configureDiscountScholarshipRule", "getDiscountScholarshipRules", "submitDiscountScholarshipRequest", "getDiscountScholarshipRequests", "calculateAppliedDiscount", "getStoreProducts", "getStoreOrders", "getCafeteriaMenu", "getCafeteriaOrders", "createPurchaseRequest", "getPurchaseRequests", "submitPurchaseQuotation", "getPurchaseQuotations", "createPurchaseOrder", "approvePurchaseOrder", "getPurchaseOrders", "recordPurchaseReceipt", "manageWarehouseLocation", "getWarehouseLocations", "transferInventoryStock", "createMaterialRequisition", "getMaterialRequisitions", "deliverMaterialRequisition", "createPhysicalInventoryCount", "getPhysicalInventoryCounts", "reconcilePhysicalCount", "manageMaintenanceOrder", "getMaintenanceOrders", "registerAssetDisposal", "getAssetDisposals"],
   // REVISIÓN RBAC: Habilitar permiso processFamilyCreditPurchase para personal de tienda, cafetería, tutores y estudiantes
@@ -374,6 +374,8 @@ function doPost(e) {
       case "updateCafeteriaOrderStatus": result = updateCafeteriaOrderStatus(payload); break;
       case "configureFamilyCreditAuthorization": result = configureFamilyCreditAuthorization(payload); break;
       case "getFamilyCreditAuthorizations": result = getFamilyCreditAuthorizations(payload); break;
+      case "createFamilyPaymentAgreement": result = createFamilyPaymentAgreement(payload); break;
+      case "getFamilyPaymentAgreements": result = getFamilyPaymentAgreements(payload); break;
       case "processFamilyCreditPurchase": result = processFamilyCreditPurchase(payload); break;
       case "ping": result = { status: "success", service: "ACCOUNTING", timestamp: new Date().toISOString(), dbConnected: true }; break;
       default: result = { status: "error", message: `Acción no reconocida: ${action}` };
@@ -1294,6 +1296,86 @@ function getFamilyCreditAuthorizations(payload) {
     status: "success",
     autorizaciones: mapped
   };
+}
+
+// [TAREA 1] [Fase Contabilidad y Finanzas] - Reestructuración de convenios y planes de pago familiares con cuotas personalizadas y trazabilidad.
+function createFamilyPaymentAgreement(payload) {
+  const { responsableUserId, estudianteUserId, saldoInicial, cuotas, observaciones, fechaFormalizacion } = payload || {};
+  if (!responsableUserId || !saldoInicial || !cuotas || !Array.isArray(cuotas) || cuotas.length === 0) {
+    throw new Error("responsableUserId, saldoInicial y un arreglo de cuotas son requeridos.");
+  }
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "ConveniosPagoFamilia");
+
+  if (sheet.getLastRow() === 0) {
+    sheet.appendRow(["ConvenioID", "FechaFormalizacion", "ResponsableUserId", "EstudianteUserId", "SaldoInicial", "CantidadCuotas", "CuotasJSON", "Estado", "Observaciones", "AutorizadoPor", "FechaCreacion"]);
+  }
+
+  const sumaCuotas = cuotas.reduce((acc, c) => acc + parseFloat(c.monto || 0), 0);
+  if (Math.abs(sumaCuotas - parseFloat(saldoInicial)) > 0.05) {
+    throw new Error(`La suma de las cuotas (${sumaCuotas}) no coincide con el saldo inicial del convenio (${saldoInicial}).`);
+  }
+
+  const convenioId = "CONV-" + Date.now();
+  const nowStr = new Date().toISOString();
+  const autoriz = payload.authUserId || "Contaduría";
+
+  sheet.appendRow([
+    convenioId,
+    fechaFormalizacion || nowStr.split('T')[0],
+    responsableUserId,
+    estudianteUserId || "TODOS",
+    parseFloat(saldoInicial),
+    cuotas.length,
+    JSON.stringify(cuotas),
+    "Activo",
+    observaciones || "",
+    autoriz,
+    nowStr
+  ]);
+
+  return {
+    status: "success",
+    message: "Convenio de pago formalizado exitosamente.",
+    data: { convenioId, saldoInicial, cantidadCuotas: cuotas.length }
+  };
+}
+
+// [TAREA 1] [Fase Contabilidad y Finanzas] - Consulta de convenios de pago familiares y estados de cuotas.
+function getFamilyPaymentAgreements(payload) {
+  const { responsableUserId, estudianteUserId } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "ConveniosPagoFamilia");
+  const data = sheet.getDataRange().getValues();
+
+  if (data.length <= 1) return { status: "success", data: [] };
+
+  const rows = data.slice(1);
+  const filtered = rows.filter(r => {
+    if (responsableUserId && String(r[2]).trim() !== String(responsableUserId).trim()) return false;
+    if (estudianteUserId && String(r[3]).trim() !== "TODOS" && String(r[3]).trim() !== String(estudianteUserId).trim()) return false;
+    return true;
+  }).map(r => {
+    let cuotasArr = [];
+    try { cuotasArr = JSON.parse(r[6] || "[]"); } catch (e) { cuotasArr = []; }
+
+    return {
+      convenioId: r[0],
+      fechaFormalizacion: r[1],
+      responsableUserId: r[2],
+      estudianteUserId: r[3],
+      saldoInicial: parseFloat(r[4] || 0),
+      cantidadCuotas: r[5],
+      cuotas: cuotasArr,
+      estado: r[7],
+      observaciones: r[8],
+      autorizadoPor: r[9],
+      fechaCreacion: r[10]
+    };
+  });
+
+  return { status: "success", data: filtered };
 }
 
 function processFamilyCreditPurchase(payload) {

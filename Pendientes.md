@@ -4095,7 +4095,7 @@ Reglas obligatorias
 
 ---
 
-TAREA 1. REESTRUCTURACIÓN DE CONVENIOS Y PLANES DE PAGO FAMILIARES
+[X] TAREA 1. REESTRUCTURACIÓN DE CONVENIOS Y PLANES DE PAGO FAMILIARES
 
 Prioridad: Alta
 Área: Contabilidad, cuentas por cobrar y gestión de familias.
