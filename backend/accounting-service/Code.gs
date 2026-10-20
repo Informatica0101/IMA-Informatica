@@ -189,7 +189,7 @@ const ROLE_PERMISSIONS = {
   // REVISIÓN RBAC: Habilitar permiso processFamilyCreditPurchase para personal de tienda, cafetería, tutores y estudiantes
   "EncargadoTienda": ["getStoreProducts", "manageStoreProduct", "createStoreOrder", "getStoreOrders", "updateStoreOrderStatus", "recordInventoryMovement", "getInventoryKardex", "getInstitutionalPolicies", "processFamilyCreditPurchase"],
   "EncargadoCafeteria": ["getCafeteriaMenu", "manageCafeteriaMenu", "createCafeteriaOrder", "getCafeteriaOrders", "updateCafeteriaOrderStatus", "recordInventoryMovement", "getInventoryKardex", "getInstitutionalPolicies", "processFamilyCreditPurchase"],
-  "RecursosHumanos": ["createEmployeeRecord", "getEmployeeRecords", "manageEmployeeContract", "getEmployeeContracts", "getEmployeeContractAlerts", "manageJobVacancy", "getJobVacancies", "submitJobCandidate", "getJobCandidates", "manageInterviewSchedule", "getInterviewSchedules", "updateEmployeeLaborStatus", "configureWorkSchedule", "recordStaffCheckIn", "getStaffAttendanceLogs", "submitAttendanceCorrection", "reviewAttendanceCorrection", "submitLeaveVacationRequest", "getLeaveVacationRequests", "reviewLeaveVacationRequest", "calculateVacationBalances", "recordMedicalLeave", "calculatePayrollPeriod", "updatePayrollPeriodStatus", "getPayrollPeriodSummary", "requestEmployeeLoanAdvance", "getEmployeeLoansAdvances", "approveEmployeeLoanAdvance", "getLoanAmortizationSchedule", "generatePayrollReceiptPDF", "uploadEmployeeDocument", "getEmployeeDocuments", "getHRDashboardAnalytics", "getInstitutionalPolicies", "managePerformancePeriod", "managePerformanceCriteria", "managePerformanceEvaluation", "getPerformanceEvaluations", "manageTrainingCourse", "manageTrainingEnrollment", "getEmployeeTrainingHistory", "manageProfessionalDevelopmentPlan", "getTrainingAnalyticsReport", "manageLaborIncident", "manageDisciplinaryMeasure", "getLaborIncidentsHistory", "manageStaffingNeeds", "getStaffingNeedsPlanning", "manageWorkShiftAndSubstitution", "getWorkShiftsAndSubstitutionsHistory", "getEmployeeSelfServicePortal"],
+  "RecursosHumanos": ["createEmployeeRecord", "getEmployeeRecords", "manageEmployeeContract", "getEmployeeContracts", "getEmployeeContractAlerts", "manageJobVacancy", "getJobVacancies", "submitJobCandidate", "getJobCandidates", "manageInterviewSchedule", "getInterviewSchedules", "updateEmployeeLaborStatus", "configureWorkSchedule", "recordStaffCheckIn", "getStaffAttendanceLogs", "submitAttendanceCorrection", "reviewAttendanceCorrection", "submitLeaveVacationRequest", "getLeaveVacationRequests", "reviewLeaveVacationRequest", "calculateVacationBalances", "recordMedicalLeave", "calculatePayrollPeriod", "updatePayrollPeriodStatus", "getPayrollPeriodSummary", "requestEmployeeLoanAdvance", "getEmployeeLoansAdvances", "approveEmployeeLoanAdvance", "getLoanAmortizationSchedule", "generatePayrollReceiptPDF", "uploadEmployeeDocument", "getEmployeeDocuments", "getHRDashboardAnalytics", "getInstitutionalPolicies", "managePerformancePeriod", "managePerformanceCriteria", "managePerformanceEvaluation", "getPerformanceEvaluations", "manageTrainingCourse", "manageTrainingEnrollment", "getEmployeeTrainingHistory", "manageProfessionalDevelopmentPlan", "getTrainingAnalyticsReport", "manageLaborIncident", "manageDisciplinaryMeasure", "getLaborIncidentsHistory", "manageStaffingNeeds", "getStaffingNeedsPlanning", "manageWorkShiftAndSubstitution", "getWorkShiftsAndSubstitutionsHistory", "getEmployeeSelfServicePortal", "verifyLaborAndTaxInformation"],
   "Empleado": ["getEmployeeRecords", "getEmployeeContracts", "recordStaffCheckIn", "getStaffAttendanceLogs", "submitAttendanceCorrection", "submitLeaveVacationRequest", "getLeaveVacationRequests", "requestEmployeeLoanAdvance", "getEmployeeLoansAdvances", "generatePayrollReceiptPDF", "getEmployeeDocuments", "getPerformanceEvaluations", "getEmployeeTrainingHistory", "manageProfessionalDevelopmentPlan", "getEmployeeSelfServicePortal"],
   "Padre": ["getStudentAccountStatement", "uploadPaymentVoucher", "getPaymentVouchers", "generatePaymentReceiptPDF", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getLibraryBooks", "getLibraryLoans", "reserveLibraryBook", "getLibraryReservations", "getDigitalResources", "getTransportRoutes", "getTransportAssignments", "getSchoolDocumentTemplates", "generateSchoolDocument", "getIssuedSchoolDocuments", "getStoreProducts", "createStoreOrder", "getStoreOrders", "getCafeteriaMenu", "createCafeteriaOrder", "getCafeteriaOrders", "getFamilyCreditAuthorizations", "configureFamilyCreditAuthorization", "processFamilyCreditPurchase"],
   "Tutor": ["getStudentAccountStatement", "uploadPaymentVoucher", "getPaymentVouchers", "generatePaymentReceiptPDF", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getLibraryBooks", "getLibraryLoans", "reserveLibraryBook", "getLibraryReservations", "getDigitalResources", "getTransportRoutes", "getTransportAssignments", "getSchoolDocumentTemplates", "generateSchoolDocument", "getIssuedSchoolDocuments", "getStoreProducts", "createStoreOrder", "getStoreOrders", "getCafeteriaMenu", "createCafeteriaOrder", "getCafeteriaOrders", "getFamilyCreditAuthorizations", "configureFamilyCreditAuthorization", "processFamilyCreditPurchase"],
@@ -338,6 +338,7 @@ function doPost(e) {
       case "manageWorkShiftAndSubstitution": result = manageWorkShiftAndSubstitution(payload); break;
       case "getWorkShiftsAndSubstitutionsHistory": result = getWorkShiftsAndSubstitutionsHistory(payload); break;
       case "getEmployeeSelfServicePortal": result = getEmployeeSelfServicePortal(payload); break;
+      case "verifyLaborAndTaxInformation": result = verifyLaborAndTaxInformation(payload); break;
       case "submitLeaveVacationRequest": result = submitLeaveVacationRequest(payload); break;
       case "submitVacationRequest": result = submitVacationRequest(payload); break;
       case "getLeaveVacationRequests": result = getLeaveVacationRequests(payload); break;
@@ -6073,6 +6074,157 @@ function getAssetAssignments(payload) {
   return {
     status: "success",
     asignaciones: mapped
+  };
+}
+
+// TAREA RH-11: Verificar la preparación de información laboral y fiscal
+function verifyLaborAndTaxInformation(payload) {
+  const { periodoMes, authRole, authUserId } = payload || {};
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+
+  // 1. Obtener Expedientes y Planillas
+  const empSheet = getOrCreateSheet(ss, "ExpedientesLaborales");
+  const empRows = empSheet.getDataRange().getValues().slice(1);
+
+  const planSheet = getOrCreateSheet(ss, "PlanillasNomenclatura");
+  const planRows = planSheet.getDataRange().getValues().slice(1);
+
+  // 2. Obtener Asientos Contables si existen para conciliación
+  const asientosSheet = getOrCreateSheet(ss, "AsientosContables");
+  const asientosRows = asientosSheet.getDataRange().getValues().slice(1);
+
+  // Filtrar planillas si se solicita un período específico
+  let planillasFiltradas = planRows;
+  if (periodoMes) {
+    planillasFiltradas = planRows.filter(r => String(r[2]).trim() === String(periodoMes).trim() && r[15] !== "Anulada");
+  } else {
+    planillasFiltradas = planRows.filter(r => r[15] !== "Anulada");
+  }
+
+  // Acumular Totales de Nómina
+  let totalSalarioBase = 0;
+  let totalHorasExtras = 0;
+  let totalBonificaciones = 0;
+  let totalDevengado = 0;
+  let totalIHSS = 0;
+  let totalRAP = 0;
+  let totalISR = 0;
+  let totalOtrasDed = 0;
+  let totalDeducciones = 0;
+  let totalSalarioNeto = 0;
+
+  planillasFiltradas.forEach(r => {
+    totalSalarioBase += Number(r[6] || 0);
+    totalHorasExtras += Number(r[8] || 0);
+    totalBonificaciones += Number(r[9] || 0);
+    totalIHSS += Number(r[10] || 0);
+    totalRAP += Number(r[11] || 0);
+    totalISR += Number(r[12] || 0);
+    totalOtrasDed += Number(r[13] || 0);
+    totalSalarioNeto += Number(r[14] || 0);
+  });
+
+  totalDevengado = totalSalarioBase + totalHorasExtras + totalBonificaciones;
+  totalDeducciones = totalIHSS + totalRAP + totalISR + totalOtrasDed;
+
+  // 3. Verificación de Inconsistencias y Datos Faltantes en Empleados
+  const inconsistencias = [];
+  const empleadosVerificados = empRows.length;
+  let empleadosSinRTN = 0;
+
+  empRows.forEach(e => {
+    const empId = String(e[0] || "").trim();
+    const nombre = e[1] || e[9] || empId;
+    const rtn = e[10] || e[11] || "";
+
+    if (!rtn) {
+      empleadosSinRTN++;
+      inconsistencias.push({
+        empId: empId,
+        nombre: nombre,
+        tipo: "DATOS_INCOMPLETOS",
+        descripcion: `Empleado ${nombre} (${empId}) no registra RTN ni DNI oficial para declaración fiscal.`
+      });
+    }
+  });
+
+  // Check discrepancia entre Netos y Devengados-Deducciones
+  const discrepanciaCalculo = Math.abs((totalDevengado - totalDeducciones) - totalSalarioNeto);
+  if (discrepanciaCalculo > 0.01) {
+    inconsistencias.push({
+      empId: "GLOBAL",
+      nombre: "Consolidado Nómina",
+      tipo: "DISCREPANCIA_ARITMETICA",
+      descripcion: `Discrepancia detectada entre devengado menos deducciones vs neto consolidado: L. ${discrepanciaCalculo.toFixed(2)}`
+    });
+  }
+
+  // 4. Parámetros Legales Hondureños de Referencia
+  const parametrosLegales = [
+    {
+      institucion: "IHSS (Instituto Hondureño de Seguridad Social)",
+      techoCotizable: "L. 10,317.38 (Ley de Protección Social vigente)",
+      tasaTrabajador: "3.50% (Salud y Maternidad / IVM)",
+      baseLegal: "Boletín Oficial IHSS / Acuerdo Ejecutivo 2025-2026"
+    },
+    {
+      institucion: "RAP (Régimen de Aportaciones Privadas)",
+      techoExcedente: "Aplica sobre excedente de techo IHSS (L. 10,317.38)",
+      tasaTrabajador: "1.50%",
+      baseLegal: "Ley del Régimen de Aportaciones Privadas"
+    },
+    {
+      institucion: "SAR (Servicio de Administración de Rentas - ISR)",
+      exencionBase: "Hasta L. 20,000.00 mensuales (Escala Exenta L. 199,539.00 anuales + Gastos Médicos L. 40,000.00)",
+      escalaGrabable: "15%, 20%, 25% según escala progresiva de sueldos en Honduras",
+      baseLegal: "Art. 22 Ley del Impuesto Sobre la Renta Hondureña"
+    }
+  ];
+
+  // 5. Conciliación Contable
+  const asientosNomina = asientosRows.filter(r => String(r[1] || "").toLowerCase().includes("planilla") || String(r[2] || "").toLowerCase().includes("nómina") || String(r[2] || "").toLowerCase().includes("nomina"));
+  let totalDebitoContableNomina = 0;
+  let totalCreditoContableNomina = 0;
+
+  asientosNomina.forEach(r => {
+    totalDebitoContableNomina += Number(r[4] || 0);
+    totalCreditoContableNomina += Number(r[5] || 0);
+  });
+
+  const concilContable = {
+    asientosProcesados: asientosNomina.length,
+    totalDebitoContable: totalDebitoContableNomina,
+    totalCreditoContable: totalCreditoContableNomina,
+    estadoConciliacion: asientosNomina.length > 0 ? "Asientos Contables Registrados" : "Pendiente Generación de Asiento Global"
+  };
+
+  return {
+    status: "success",
+    periodoVerificado: periodoMes || "Todos los periodos calculados",
+    resumenTotales: {
+      totalSalarioBase: totalSalarioBase,
+      totalHorasExtras: totalHorasExtras,
+      totalBonificaciones: totalBonificaciones,
+      totalDevengado: totalDevengado,
+      totalIHSS: totalIHSS,
+      totalRAP: totalRAP,
+      totalISR: totalISR,
+      totalOtrasDed: totalOtrasDed,
+      totalDeducciones: totalDeducciones,
+      totalSalarioNeto: totalSalarioNeto
+    },
+    empleadosVerificados: empleadosVerificados,
+    empleadosSinRTN: empleadosSinRTN,
+    inconsistenciasDetectadas: inconsistencias,
+    parametrosLegalesReferencia: parametrosLegales,
+    conciliacionContable: concilContable,
+    clasificacionInforme: {
+      esDocumentoOficial: false,
+      caracterDocumento: "Borrador de Trabajo / Auditoría Interna Institucional",
+      estadoTransmision: "Solo Uso Interno Institucional - No Presentado Oficialmente"
+    },
+    fechaAuditoria: new Date().toISOString()
   };
 }
 

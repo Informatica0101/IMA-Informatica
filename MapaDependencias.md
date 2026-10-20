@@ -282,3 +282,12 @@
 - **Componentes Frontend (`dashboard-recursos-humanos.html`):**
   - Botón `#btn-autoservicio-empleado`
   - Modal `#modal-autoservicio-empleado` con pestañas de Mi Ficha & Contrato, Mis Solicitudes, Mis Turnos & Horarios y Mis Capacitaciones.
+
+## VERIFICACIÓN DE INFORMACIÓN LABORAL Y FISCAL (TAREA RH-11)
+- **Hojas de Cálculo / Tablas:**
+  - Consulta y conciliación de `PlanillasNomenclatura`, `ExpedientesLaborales` y `AsientosContables`.
+- **Funciones Backend (`backend/accounting-service/Code.gs`):**
+  - `verifyLaborAndTaxInformation(payload)`
+- **Componentes Frontend (`dashboard-recursos-humanos.html`):**
+  - Botón `#btn-informacion-laboral-fiscal`
+  - Modal `#modal-informacion-laboral-fiscal` con despliegue de consolidados devengados y deducciones IHSS/RAP/ISR, tabla de parámetros legales hondureños de referencia, lista de alertas por datos faltantes/RTN y conciliación contable.

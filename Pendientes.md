@@ -4915,7 +4915,7 @@ Criterios de aceptación
 
 ---
 
-TAREA RH-11. Verificar la preparación de información laboral y fiscal
+[X] TAREA RH-11. Verificar la preparación de información laboral y fiscal
 
 Prioridad: Alta para la confiabilidad de la información.
 Dependencia: RH-01.

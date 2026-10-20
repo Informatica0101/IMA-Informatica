@@ -152,3 +152,28 @@ Archivos Modificados:
 
 5. Pendientes.md
    - Actualización del estado de [X] TAREA RH-10. Verificar y completar el portal de autoservicio del empleado.
+
+-------------------------------------------------------------------------------
+FECHA: Octubre 2026
+TAREA: [TAREA RH-11] Verificar la preparación de información laboral y fiscal
+-------------------------------------------------------------------------------
+
+Archivos Modificados:
+1. backend/accounting-service/Code.gs
+   - Lineas 192-198: Adición de permiso "verifyLaborAndTaxInformation" en ROLE_PERMISSIONS para roles RecursosHumanos.
+   - Linea 341: Adición de dispatcher en doPost para acción verifyLaborAndTaxInformation.
+   - Lineas 6080-6230: Implementación de función backend verifyLaborAndTaxInformation con comentario identificativo de tarea en primera línea, auditoría de planillas, consolidación de retenciones de ley (IHSS/RAP/ISR), referencias legales hondureñas, alertas por faltante de RTN/DNI, conciliación contable y clasificación del reporte como borrador de trabajo de auditoría interna.
+
+2. dashboard-recursos-humanos.html
+   - Linea 76: Adición de botón #btn-informacion-laboral-fiscal en la sección de accesos de Recursos Humanos.
+   - Lineas 507-600: Adición de modal #modal-informacion-laboral-fiscal para verificación de información laboral y fiscal.
+   - Lineas 1695-2230: Implementación de controladores JavaScript para apertura del modal y función refreshLaborTaxVerificationData para actualización dinámica de consolidados, parámetros legales y alertas de inconsistencia.
+
+3. MapaDependencias.md
+   - Adición de documentación del módulo de Verificación de Información Laboral y Fiscal (TAREA RH-11).
+
+4. Auditoria.txt
+   - Migración de [TAREA RH-11] del Grupo 3 (Tareas Pendientes) al Grupo 1 (Tareas Completadas) como ítem 48.
+
+5. Pendientes.md
+   - Actualización del estado a [X] TAREA RH-11. Verificar la preparación de información laboral y fiscal.

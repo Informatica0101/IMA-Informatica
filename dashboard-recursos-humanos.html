@@ -73,6 +73,9 @@
                 <button id="btn-autoservicio-empleado" class="px-4 py-2.5 bg-slate-800 text-white rounded-2xl font-bold text-xs uppercase tracking-widest hover:bg-slate-900 transition-all shadow-md">
                     <i class="fa-solid fa-user-gear mr-1.5"></i> Autoservicio Empleado
                 </button>
+                <button id="btn-informacion-laboral-fiscal" class="px-4 py-2.5 bg-indigo-600 text-white rounded-2xl font-bold text-xs uppercase tracking-widest hover:bg-indigo-700 transition-all shadow-md">
+                    <i class="fa-solid fa-file-invoice-dollar mr-1.5"></i> Verificación Laboral &amp; Fiscal
+                </button>
                 <button id="btn-calcular-planilla" class="px-4 py-2.5 bg-emerald-600 text-white rounded-2xl font-bold text-xs uppercase tracking-widest hover:bg-emerald-700 transition-all shadow-md">
                     <i class="fa-solid fa-calculator mr-1.5"></i> Calcular Planilla
                 </button>
@@ -494,6 +497,96 @@
                         <div>
                             <h5 class="text-[11px] font-black uppercase text-gray-500 mb-2">Solicitudes de Horas Extras</h5>
                             <div id="list-shift-horasextras" class="space-y-2 text-xs font-medium text-gray-700"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- [TAREA RH-11] Modal para Verificación de Información Laboral y Fiscal -->
+    <div id="modal-informacion-laboral-fiscal" class="fixed inset-0 z-[110] hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white rounded-[2.5rem] max-w-4xl w-full max-h-[90vh] overflow-y-auto p-6 md:p-8 shadow-2xl border border-gray-100">
+            <div class="flex items-center justify-between pb-4 border-b border-gray-100 mb-6">
+                <div>
+                    <span class="px-3 py-1 bg-indigo-100 text-indigo-800 rounded-full text-[10px] font-black uppercase tracking-widest">Cumplimiento Legal &amp; Fiscal</span>
+                    <h3 class="text-xl font-black text-gray-900 uppercase mt-1"><i class="fa-solid fa-file-invoice-dollar mr-2 text-indigo-600"></i>Verificación de Información Laboral &amp; Fiscal</h3>
+                    <p class="text-xs text-gray-500 font-medium">Análisis de consistencia en nóminas, deducciones IHSS/RAP/ISR y conciliación contable</p>
+                </div>
+                <button id="btn-close-modal-tax" class="text-gray-400 hover:text-gray-600 transition-colors p-2">
+                    <i class="fa-solid fa-xmark text-xl"></i>
+                </button>
+            </div>
+
+            <!-- Alerta de Clasificación de Documento Interno -->
+            <div class="mb-6 p-4 bg-amber-50 border border-amber-200 rounded-2xl text-amber-900 text-xs flex items-start space-x-3">
+                <i class="fa-solid fa-triangle-exclamation text-amber-600 text-lg mt-0.5"></i>
+                <div>
+                    <strong class="font-bold uppercase block text-[11px]">Borrador de Auditoría Interna Institucional</strong>
+                    <span>Este reporte es de uso interno para verificar consistencias de datos. No constituye una presentación electrónica oficial ante el IHSS, RAP o SAR.</span>
+                </div>
+            </div>
+
+            <div class="space-y-6 text-xs">
+                <!-- Resumen Consolidados de Nómina -->
+                <div class="bg-gray-50 p-4 rounded-2xl border border-gray-100 space-y-3">
+                    <h4 class="font-bold text-gray-900 uppercase text-xs flex items-center justify-between">
+                        <span><i class="fa-solid fa-calculator text-indigo-600 mr-2"></i>Totales de Nómina Procesada</span>
+                        <span id="tax-periodo-label" class="text-[10px] text-gray-500 font-normal">Periodo: Todos</span>
+                    </h4>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                        <div class="p-3 bg-white rounded-xl border border-gray-100">
+                            <span class="text-[10px] text-gray-400 uppercase font-bold block">Devengado Total</span>
+                            <span id="tax-tot-devengado" class="text-sm font-black text-gray-900">L. 0.00</span>
+                        </div>
+                        <div class="p-3 bg-white rounded-xl border border-gray-100">
+                            <span class="text-[10px] text-gray-400 uppercase font-bold block">Retención IHSS</span>
+                            <span id="tax-tot-ihss" class="text-sm font-black text-blue-700">L. 0.00</span>
+                        </div>
+                        <div class="p-3 bg-white rounded-xl border border-gray-100">
+                            <span class="text-[10px] text-gray-400 uppercase font-bold block">Retención RAP</span>
+                            <span id="tax-tot-rap" class="text-sm font-black text-teal-700">L. 0.00</span>
+                        </div>
+                        <div class="p-3 bg-white rounded-xl border border-gray-100">
+                            <span class="text-[10px] text-gray-400 uppercase font-bold block">Retención ISR</span>
+                            <span id="tax-tot-isr" class="text-sm font-black text-purple-700">L. 0.00</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Parámetros Legales Hondureños de Referencia -->
+                <div class="bg-white p-4 rounded-2xl border border-gray-100 space-y-3">
+                    <h4 class="font-bold text-gray-900 uppercase text-xs"><i class="fa-solid fa-scale-balanced text-indigo-600 mr-2"></i>Parámetros Legales Hondureños Vigentes</h4>
+                    <div id="tax-legal-params-list" class="space-y-2">
+                        <!-- Carga dinámica -->
+                    </div>
+                </div>
+
+                <!-- Inconsistencias y Alertas de Datos Faltantes -->
+                <div class="bg-white p-4 rounded-2xl border border-gray-100 space-y-3">
+                    <h4 class="font-bold text-gray-900 uppercase text-xs flex items-center justify-between">
+                        <span><i class="fa-solid fa-circle-exclamation text-amber-600 mr-2"></i>Inconsistencias y Datos Faltantes</span>
+                        <span id="tax-issues-count" class="px-2 py-0.5 rounded-full text-[10px] font-black bg-amber-100 text-amber-800">0 Alertas</span>
+                    </h4>
+                    <div id="tax-inconsistencies-list" class="space-y-2 max-h-48 overflow-y-auto">
+                        <!-- Carga dinámica -->
+                    </div>
+                </div>
+
+                <!-- Conciliación Contable -->
+                <div class="bg-slate-900 text-white p-4 rounded-2xl space-y-2">
+                    <h4 class="font-bold uppercase text-xs flex items-center justify-between">
+                        <span><i class="fa-solid fa-book-bookmark text-emerald-400 mr-2"></i>Conciliación Contable de Nómina</span>
+                        <span id="tax-concil-status" class="px-2 py-0.5 rounded-full text-[10px] font-black uppercase bg-emerald-900 text-emerald-200">Verificado</span>
+                    </h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs pt-1">
+                        <div>
+                            <p class="text-[10px] text-slate-400">Total Débitos Registrados:</p>
+                            <p id="tax-concil-debito" class="font-black text-emerald-400">L. 0.00</p>
+                        </div>
+                        <div>
+                            <p class="text-[10px] text-slate-400">Total Créditos Registrados:</p>
+                            <p id="tax-concil-credito" class="font-black text-emerald-400">L. 0.00</p>
                         </div>
                     </div>
                 </div>
@@ -1598,6 +1691,24 @@
                 });
             }
 
+            // [TAREA RH-11] Verificación de Información Laboral y Fiscal
+            const btnTax = document.getElementById('btn-informacion-laboral-fiscal');
+            const modalTax = document.getElementById('modal-informacion-laboral-fiscal');
+            const btnCloseModalTax = document.getElementById('btn-close-modal-tax');
+
+            if (btnTax && modalTax) {
+                btnTax.addEventListener('click', async () => {
+                    modalTax.classList.remove('hidden');
+                    await refreshLaborTaxVerificationData();
+                });
+            }
+
+            if (btnCloseModalTax && modalTax) {
+                btnCloseModalTax.addEventListener('click', () => {
+                    modalTax.classList.add('hidden');
+                });
+            }
+
             // [TAREA RH-10] Gestor del Portal de Autoservicio del Empleado
             const btnSelf = document.getElementById('btn-autoservicio-empleado');
             const modalSelf = document.getElementById('modal-autoservicio-empleado');
@@ -2043,6 +2154,71 @@
                 }
             } catch (err) {
                 console.error('Error al actualizar portal de autoservicio:', err);
+            }
+        }
+
+        async function refreshLaborTaxVerificationData() {
+            try {
+                const res = await fetchApi('ACCOUNTING', 'verifyLaborAndTaxInformation', {});
+                if (!res || res.status !== 'success') return;
+
+                const tot = res.resumenTotales || {};
+                const devEl = document.getElementById('tax-tot-devengado');
+                const ihssEl = document.getElementById('tax-tot-ihss');
+                const rapEl = document.getElementById('tax-tot-rap');
+                const isrEl = document.getElementById('tax-tot-isr');
+                const perEl = document.getElementById('tax-periodo-label');
+
+                if (devEl) devEl.textContent = `L. ${(tot.totalDevengado || 0).toLocaleString('es-HN', { minimumFractionDigits: 2 })}`;
+                if (ihssEl) ihssEl.textContent = `L. ${(tot.totalIHSS || 0).toLocaleString('es-HN', { minimumFractionDigits: 2 })}`;
+                if (rapEl) rapEl.textContent = `L. ${(tot.totalRAP || 0).toLocaleString('es-HN', { minimumFractionDigits: 2 })}`;
+                if (isrEl) isrEl.textContent = `L. ${(tot.totalISR || 0).toLocaleString('es-HN', { minimumFractionDigits: 2 })}`;
+                if (perEl) perEl.textContent = `Periodo: ${res.periodoVerificado || 'Todos'}`;
+
+                // Render Parámetros Legales
+                const paramsEl = document.getElementById('tax-legal-params-list');
+                if (paramsEl && Array.isArray(res.parametrosLegalesReferencia)) {
+                    paramsEl.innerHTML = res.parametrosLegalesReferencia.map(p => `
+                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 text-xs">
+                            <span class="font-bold text-gray-900 block">${p.institucion}</span>
+                            <p class="text-[10px] text-gray-600">Base: ${p.techoCotizable || p.techoExcedente || p.exencionBase} | Tasa: ${p.tasaTrabajador || p.escalaGrabable}</p>
+                            <span class="text-[9px] text-indigo-600 font-medium">Ref Legal: ${p.baseLegal}</span>
+                        </div>
+                    `).join('');
+                }
+
+                // Render Inconsistencias
+                const issuesEl = document.getElementById('tax-inconsistencies-list');
+                const countEl = document.getElementById('tax-issues-count');
+                const issues = res.inconsistenciasDetectadas || [];
+                if (countEl) countEl.textContent = `${issues.length} Alertas`;
+
+                if (issuesEl) {
+                    issuesEl.innerHTML = issues.length === 0 ?
+                        '<p class="text-emerald-600 font-bold text-xs py-2"><i class="fa-solid fa-circle-check mr-1.5"></i>No se detectaron inconsistencias de datos en empleados ni planillas.</p>' :
+                        issues.map(i => `
+                            <div class="p-2.5 bg-amber-50 border border-amber-200 rounded-xl text-xs flex items-center justify-between text-amber-900">
+                                <div>
+                                    <span class="font-bold text-[11px] block">${i.nombre} (${i.empId})</span>
+                                    <span class="text-[10px] text-amber-800">${i.descripcion}</span>
+                                </div>
+                                <span class="px-2 py-0.5 rounded-full text-[9px] font-black uppercase bg-amber-200 text-amber-900">${i.tipo}</span>
+                            </div>
+                        `).join('');
+                }
+
+                // Render Conciliación Contable
+                const concil = res.conciliacionContable || {};
+                const debEl = document.getElementById('tax-concil-debito');
+                const credEl = document.getElementById('tax-concil-credito');
+                const statEl = document.getElementById('tax-concil-status');
+
+                if (debEl) debEl.textContent = `L. ${(concil.totalDebitoContable || 0).toLocaleString('es-HN', { minimumFractionDigits: 2 })}`;
+                if (credEl) credEl.textContent = `L. ${(concil.totalCreditoContable || 0).toLocaleString('es-HN', { minimumFractionDigits: 2 })}`;
+                if (statEl) statEl.textContent = concil.estadoConciliacion || 'Verificado';
+
+            } catch (err) {
+                console.error('Error al verificar información laboral y fiscal:', err);
             }
         }
 
