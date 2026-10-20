@@ -1816,6 +1816,30 @@ function getClassSchedules(payload) {
   return { status: "success", data: schedules };
 }
 
+// [TAREA 3.6] [Fase 3: Planificación Académica y Horarios] - Integración de horarios con eventos del calendario académico y suspensión de clases.
+function getScheduleCalendarConflicts(payload) {
+  const { anoId, fecha } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const calSheet = getOrCreateSheet(ss, "CalendarioAcademico");
+  const calRows = calSheet.getDataRange().getValues().slice(1);
+
+  const nonSchoolEvents = calRows.filter(r => {
+    if (r[7] === "Inactivo") return false;
+    if (anoId && String(r[1]).trim() !== String(anoId).trim()) return false;
+    const tipo = String(r[3]).toLowerCase();
+    return tipo.includes("feriado") || tipo.includes("suspension") || tipo.includes("vacacion") || tipo.includes("no_lectivo");
+  }).map(r => ({
+    eventoId: r[0],
+    anoId: r[1],
+    nombre: r[2],
+    tipoDia: r[3],
+    fechaInicio: r[4],
+    fechaFin: r[5]
+  }));
+
+  return { status: "success", data: nonSchoolEvents };
+}
+
 // [TAREA 3.1] [Fase 3: Planificación Académica y Horarios] - Validación integral de horarios académicos y prevención de conflictos.
 function createClassSchedule(payload) {
   const { ofertaId, diaSemana, horaInicio, horaFin, aulaCodigo, docenteUserId, borrador, horarioId, estudiantesCount } = payload || {};
@@ -1960,8 +1984,27 @@ function copyClassSchedules(payload) {
 }
 
 function checkScheduleConflict(params) {
-  const { diaSemana, horaInicio, horaFin, aulaCodigo, docenteUserId, ofertaId, excludeHorarioId, estudiantesCount } = params || {};
+  const { diaSemana, horaInicio, horaFin, aulaCodigo, docenteUserId, ofertaId, excludeHorarioId, estudiantesCount, fechaEspecifica } = params || {};
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+
+  // [TAREA 3.6] Validar si la fecha especificada corresponde a un día no lectivo o suspendido en CalendarioAcademico
+  if (fechaEspecifica) {
+    const calSheet = getOrCreateSheet(ss, "CalendarioAcademico");
+    const calRows = calSheet.getDataRange().getValues().slice(1);
+    const targetDateStr = new Date(fechaEspecifica).toISOString().split('T')[0];
+    const calConflict = calRows.find(r => {
+      if (r[7] === "Inactivo") return false;
+      const tipo = String(r[3]).toLowerCase();
+      if (!tipo.includes("feriado") && !tipo.includes("suspension") && !tipo.includes("vacacion") && !tipo.includes("no_lectivo")) return false;
+      const fIni = r[4] ? new Date(r[4]).toISOString().split('T')[0] : "";
+      const fFin = r[5] ? new Date(r[5]).toISOString().split('T')[0] : fIni;
+      return targetDateStr >= fIni && targetDateStr <= fFin;
+    });
+
+    if (calConflict) {
+      return { hasConflict: true, reason: `No se pueden programar clases ordinarias el ${targetDateStr} debido al evento de calendario "${calConflict[2]}" (${calConflict[3]}).` };
+    }
+  }
 
   // [TAREA 3.4] Validar disponibilidad horaria personalizada por docente en HorariosLaborales
   if (docenteUserId && diaSemana && horaInicio && horaFin) {

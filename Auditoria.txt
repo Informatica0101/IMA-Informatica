@@ -104,6 +104,10 @@ GRUPO 1: TAREAS COMPLETADAS
     - Archivo: backend/academic-service/Code.gs (Línea 1986 `checkScheduleConflict`)
     - Descripción: Validación dinámica de capacidad física de espacios calculando automáticamente el recuento de alumnos inscritos activos desde la tabla `Matriculas`.
 
+21. [TAREA 3.6] Integración de los horarios con el calendario académico
+    - Archivo: backend/academic-service/Code.gs (Línea 1819 `getScheduleCalendarConflicts`, Línea 1990 `checkScheduleConflict`)
+    - Descripción: Integración de validación de feriados, vacaciones y días no lectivos / suspensiones en CalendarioAcademico impidiendo la publicación de horarios en fechas no lectivas.
+
 
 -------------------------------------------------------------------------------
 GRUPO 2: TAREAS INCOMPLETAS
@@ -119,8 +123,7 @@ GRUPO 3: TAREAS PENDIENTES / NO INICIADAS
 (Registradas en el backlog pero no iniciadas ni presentes en el código)
 -------------------------------------------------------------------------------
 
-1. TAREA 3.6: Integración de los horarios con el calendario académico
-2. TAREA 3.7: Control de carga lectiva máxima por docente
+1. TAREA 3.7: Control de carga lectiva máxima por docente
 3. TAREA 3.8: Generador automático de horarios académicos
 4. TAREA 3.9: Registro y confirmación de horas lectivas impartidas
 5. TAREA 3.10: Recuperación y reprogramación de clases canceladas

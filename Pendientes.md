@@ -3708,7 +3708,7 @@ Criterios de aceptación
 
 ---
 
-TAREA 3.6. Integración de los horarios con el calendario académico
+[X] TAREA 3.6. Integración de los horarios con el calendario académico
 
 Objetivo: Evitar que se programen o impartan clases ordinarias en fechas declaradas no lectivas y permitir el tratamiento correcto de los días especiales.
 
