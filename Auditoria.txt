@@ -120,6 +120,10 @@ GRUPO 1: TAREAS COMPLETADAS
     - Archivo: backend/academic-service/Code.gs (Línea 700 `recordClassSessionOutcome`, Línea 739 `getTeachingHoursSummary`)
     - Descripción: Endpoints `recordClassSessionOutcome` y `getTeachingHoursSummary` para el registro, confirmación y resumen de horas lectivas impartidas, canceladas, pendientes y reprogramadas con trazabilidad.
 
+25. [TAREA 3.10] Recuperación y reprogramación de clases canceladas
+    - Archivo: backend/academic-service/Code.gs (Línea 700 `rescheduleCancelledSession`, Línea 774 `getPendingSessionRecoveries`)
+    - Descripción: Endpoints `rescheduleCancelledSession` y `getPendingSessionRecoveries` para la reprogramación de sesiones canceladas con comprobación de conflictos de horario y docentes sustitutos.
+
 
 -------------------------------------------------------------------------------
 GRUPO 2: TAREAS INCOMPLETAS
@@ -135,7 +139,6 @@ GRUPO 3: TAREAS PENDIENTES / NO INICIADAS
 (Registradas en el backlog pero no iniciadas ni presentes en el código)
 -------------------------------------------------------------------------------
 
-5. TAREA 3.10: Recuperación y reprogramación de clases canceladas
 6. TAREA 3.11: Validación y publicación segura de horarios
 7. TAREA 3.12: Calendarios individuales de estudiantes, docentes y secciones
 8. TAREA 3.13: Integración coherente de horarios, asignaciones y sesiones

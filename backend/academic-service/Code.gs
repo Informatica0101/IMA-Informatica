@@ -696,6 +696,114 @@ function getStudentFile(payload) {
   };
 }
 
+// [TAREA 3.10] [Fase 3: Planificación Académica y Horarios] - Recuperación y reprogramación de clases canceladas con vinculación histórica de sesiones.
+function rescheduleCancelledSession(payload) {
+  const { sesionOriginalId, nuevaFecha, horaInicio, horaFin, aulaCodigo, docenteSustitutoUserId, motivo } = payload || {};
+  if (!sesionOriginalId || !nuevaFecha || !horaInicio || !horaFin) {
+    throw new Error("sesionOriginalId, nuevaFecha, horaInicio y horaFin son requeridos.");
+  }
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "SesionesClaseImpartidas");
+  const data = sheet.getDataRange().getValues();
+
+  if (data.length <= 1) throw new Error("No existen sesiones registradas.");
+
+  const idx = data.findIndex(r => String(r[0]).trim() === String(sesionOriginalId).trim());
+  if (idx === -1) throw new Error("Sesión original no encontrada.");
+
+  const originalRow = data[idx];
+  const ofertaId = originalRow[2];
+  const docenteEfectivoUserId = docenteSustitutoUserId || originalRow[5];
+  const aulaEfectivaCodigo = aulaCodigo || "AULA-101";
+
+  // Obtener día de la semana para la nueva fecha
+  const diasNombres = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
+  const diaSemana = diasNombres[new Date(nuevaFecha).getDay()];
+
+  // Validar conflictos para la fecha y franja de recuperación
+  const conflict = checkScheduleConflict({
+    diaSemana,
+    horaInicio,
+    horaFin,
+    aulaCodigo: aulaEfectivaCodigo,
+    docenteUserId: docenteEfectivoUserId,
+    ofertaId,
+    fechaEspecifica: nuevaFecha
+  });
+
+  if (conflict.hasConflict) {
+    throw new Error(`Conflicto de horario en reprogramación: ${conflict.reason}`);
+  }
+
+  // Actualizar estado de la sesión original a Reprogramada
+  sheet.getRange(idx + 1, 5).setValue("Reprogramada");
+  sheet.getRange(idx + 1, 7).setValue(`Reprogramada para ${nuevaFecha} ${horaInicio}-${horaFin}. Motivo: ${motivo || 'Recuperación'}`);
+
+  // Crear la nueva sesión de recuperación vinculada
+  const recuperacionSesionId = "REC-" + Date.now();
+  const nowStr = new Date().toISOString();
+  const autoriz = payload.authUserId || "Secretaría";
+
+  sheet.appendRow([
+    recuperacionSesionId,
+    originalRow[1] || "HOR-GEN",
+    ofertaId,
+    nuevaFecha,
+    "Recuperada",
+    docenteEfectivoUserId,
+    `Recuperación de sesión original ${sesionOriginalId} del ${originalRow[3]}. Motivo: ${motivo || 'Recuperación'}`,
+    autoriz,
+    nowStr
+  ]);
+
+  logStructuredEvent("ACADEMIC", "rescheduleCancelledSession", "INFO", "SESSION_RESCHEDULED", `Sesión ${sesionOriginalId} reprogramada a ${recuperacionSesionId} el ${nuevaFecha}`, { sesionOriginalId, recuperacionSesionId, nuevaFecha, horaInicio, horaFin }, payload && payload.authRole);
+
+  return {
+    status: "success",
+    message: "Clase reprogramada exitosamente sin duplicar la obligación curricular.",
+    data: {
+      sesionOriginalId,
+      recuperacionSesionId,
+      nuevaFecha,
+      horaInicio,
+      horaFin,
+      docenteEfectivoUserId
+    }
+  };
+}
+
+// [TAREA 3.10] [Fase 3: Planificación Académica y Horarios] - Consulta de sesiones canceladas y pendientes de recuperación.
+function getPendingSessionRecoveries(payload) {
+  const { docenteUserId, ofertaId } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "SesionesClaseImpartidas");
+  const data = sheet.getDataRange().getValues();
+
+  if (data.length <= 1) return { status: "success", data: [] };
+
+  const rows = data.slice(1);
+  const pendingRecoveries = rows.filter(r => {
+    const estado = String(r[4]);
+    if (estado !== "Cancelada") return false;
+    if (docenteUserId && String(r[5]).trim() !== String(docenteUserId).trim()) return false;
+    if (ofertaId && String(r[2]).trim() !== String(ofertaId).trim()) return false;
+    return true;
+  }).map(r => ({
+    sesionId: r[0],
+    horarioId: r[1],
+    ofertaId: r[2],
+    fechaOriginal: r[3],
+    estado: r[4],
+    docenteUserId: r[5],
+    motivoCancelacion: r[6],
+    registradoPor: r[7],
+    fechaRegistro: r[8]
+  }));
+
+  return { status: "success", data: pendingRecoveries };
+}
+
 // [TAREA 3.9] [Fase 3: Planificación Académica y Horarios] - Registro, confirmación y cálculo de horas lectivas impartidas, canceladas y pendientes.
 function recordClassSessionOutcome(payload) {
   const { sesionId, horarioId, ofertaId, fecha, estado, observaciones, docenteUserId } = payload || {};

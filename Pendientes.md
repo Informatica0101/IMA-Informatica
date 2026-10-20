@@ -3856,7 +3856,7 @@ Criterios de aceptación
 
 ---
 
-TAREA 3.10. Recuperación y reprogramación de clases canceladas
+[X] TAREA 3.10. Recuperación y reprogramación de clases canceladas
 
 Objetivo: Permitir reprogramar las sesiones canceladas o pendientes y controlar el cumplimiento de las horas lectivas sin duplicaciones.
 
