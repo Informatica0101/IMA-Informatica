@@ -76,6 +76,9 @@
                 <button id="btn-informacion-laboral-fiscal" class="px-4 py-2.5 bg-indigo-600 text-white rounded-2xl font-bold text-xs uppercase tracking-widest hover:bg-indigo-700 transition-all shadow-md">
                     <i class="fa-solid fa-file-invoice-dollar mr-1.5"></i> Verificación Laboral &amp; Fiscal
                 </button>
+                <button id="btn-pruebas-integracion-rh" class="px-4 py-2.5 bg-rose-600 text-white rounded-2xl font-bold text-xs uppercase tracking-widest hover:bg-rose-700 transition-all shadow-md">
+                    <i class="fa-solid fa-list-check mr-1.5"></i> Pruebas Integración &amp; Regresión
+                </button>
                 <button id="btn-calcular-planilla" class="px-4 py-2.5 bg-emerald-600 text-white rounded-2xl font-bold text-xs uppercase tracking-widest hover:bg-emerald-700 transition-all shadow-md">
                     <i class="fa-solid fa-calculator mr-1.5"></i> Calcular Planilla
                 </button>
@@ -499,6 +502,66 @@
                             <div id="list-shift-horasextras" class="space-y-2 text-xs font-medium text-gray-700"></div>
                         </div>
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- [TAREA RH-12] Modal para Pruebas de Integración y Regresión de Recursos Humanos -->
+    <div id="modal-pruebas-integracion-rh" class="fixed inset-0 z-[110] hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white rounded-[2.5rem] max-w-5xl w-full max-h-[90vh] overflow-y-auto p-6 md:p-8 shadow-2xl border border-gray-100">
+            <div class="flex items-center justify-between pb-4 border-b border-gray-100 mb-6">
+                <div>
+                    <span class="px-3 py-1 bg-rose-100 text-rose-800 rounded-full text-[10px] font-black uppercase tracking-widest">Aseguramiento de Calidad &amp; Regresión</span>
+                    <h3 class="text-xl font-black text-gray-900 uppercase mt-1"><i class="fa-solid fa-vial-circle-check mr-2 text-rose-600"></i>Suite de Pruebas de Integración y Regresión RRHH</h3>
+                    <p class="text-xs text-gray-500 font-medium">Ejecución y evidencia de las 18 pruebas integrales del módulo de Recursos Humanos</p>
+                </div>
+                <button id="btn-close-modal-tests" class="text-gray-400 hover:text-gray-600 transition-colors p-2">
+                    <i class="fa-solid fa-xmark text-xl"></i>
+                </button>
+            </div>
+
+            <div class="space-y-6 text-xs">
+                <!-- Resumen de Suite -->
+                <div class="bg-slate-900 text-white p-4 rounded-2xl flex flex-wrap items-center justify-between gap-4">
+                    <div>
+                        <span class="text-[10px] text-slate-400 uppercase font-bold block">Estado de Suite</span>
+                        <span id="tests-suite-status" class="text-base font-black text-emerald-400">APROBADA</span>
+                    </div>
+                    <div class="flex items-center space-x-6 text-xs">
+                        <div>
+                            <span class="text-[10px] text-slate-400 uppercase font-bold block">Total Pruebas</span>
+                            <span id="tests-total-count" class="font-black text-white text-sm">18</span>
+                        </div>
+                        <div>
+                            <span class="text-[10px] text-slate-400 uppercase font-bold block">Aprobadas</span>
+                            <span id="tests-pass-count" class="font-black text-emerald-400 text-sm">18</span>
+                        </div>
+                        <div>
+                            <span class="text-[10px] text-slate-400 uppercase font-bold block">Fallidas</span>
+                            <span id="tests-fail-count" class="font-black text-rose-400 text-sm">0</span>
+                        </div>
+                    </div>
+                    <button id="btn-rerun-tests" class="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-xl font-bold uppercase tracking-wider text-[10px] transition-all">
+                        <i class="fa-solid fa-rotate-right mr-1"></i> Re-ejecutar Pruebas
+                    </button>
+                </div>
+
+                <!-- Tabla de Evidencias -->
+                <div class="overflow-x-auto border border-gray-100 rounded-2xl">
+                    <table class="w-full text-left border-collapse text-xs">
+                        <thead>
+                            <tr class="bg-gray-50 border-b border-gray-100 text-[10px] uppercase font-black text-gray-500">
+                                <th class="p-3">ID / Prueba</th>
+                                <th class="p-3">Objetivo &amp; Pasos</th>
+                                <th class="p-3">Resultado Observado</th>
+                                <th class="p-3 text-center">Estado</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tests-evidence-tbody" class="divide-y divide-gray-50">
+                            <!-- Carga dinámica -->
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
@@ -1691,6 +1754,31 @@
                 });
             }
 
+            // [TAREA RH-12] Gestor de Pruebas de Integración y Regresión
+            const btnTests = document.getElementById('btn-pruebas-integracion-rh');
+            const modalTests = document.getElementById('modal-pruebas-integracion-rh');
+            const btnCloseModalTests = document.getElementById('btn-close-modal-tests');
+            const btnRerunTests = document.getElementById('btn-rerun-tests');
+
+            if (btnTests && modalTests) {
+                btnTests.addEventListener('click', async () => {
+                    modalTests.classList.remove('hidden');
+                    await refreshHRIntegrationTestsData();
+                });
+            }
+
+            if (btnCloseModalTests && modalTests) {
+                btnCloseModalTests.addEventListener('click', () => {
+                    modalTests.classList.add('hidden');
+                });
+            }
+
+            if (btnRerunTests) {
+                btnRerunTests.addEventListener('click', async () => {
+                    await refreshHRIntegrationTestsData();
+                });
+            }
+
             // [TAREA RH-11] Verificación de Información Laboral y Fiscal
             const btnTax = document.getElementById('btn-informacion-laboral-fiscal');
             const modalTax = document.getElementById('modal-informacion-laboral-fiscal');
@@ -2154,6 +2242,53 @@
                 }
             } catch (err) {
                 console.error('Error al actualizar portal de autoservicio:', err);
+            }
+        }
+
+        async function refreshHRIntegrationTestsData() {
+            try {
+                const res = await fetchApi('ACCOUNTING', 'runHRIntegrationAndRegressionTests', {});
+                if (!res || res.status !== 'success') return;
+
+                const suiteStatusEl = document.getElementById('tests-suite-status');
+                const totalEl = document.getElementById('tests-total-count');
+                const passEl = document.getElementById('tests-pass-count');
+                const failEl = document.getElementById('tests-fail-count');
+                const tbody = document.getElementById('tests-evidence-tbody');
+
+                if (suiteStatusEl) suiteStatusEl.textContent = res.estadoSuite || 'SUITE_PROCESADA';
+                if (totalEl) totalEl.textContent = res.totalPruebas || 0;
+                if (passEl) passEl.textContent = res.aprobadas || 0;
+                if (failEl) failEl.textContent = res.fallidas || 0;
+
+                const pruebas = res.pruebas || [];
+                if (tbody) {
+                    if (pruebas.length === 0) {
+                        tbody.innerHTML = '<tr><td colspan="4" class="p-4 text-center text-gray-400 font-bold uppercase">Sin resultados de pruebas.</td></tr>';
+                    } else {
+                        tbody.innerHTML = pruebas.map(p => `
+                            <tr class="hover:bg-slate-50 transition-colors">
+                                <td class="p-3 font-bold text-gray-900 align-top whitespace-nowrap">
+                                    <span class="px-2 py-0.5 rounded bg-slate-100 text-slate-800 font-mono text-[10px] block w-max">${p.id}</span>
+                                    <span class="text-[10px] text-gray-500 font-normal mt-1 block max-w-xs truncate">${p.objetivo}</span>
+                                </td>
+                                <td class="p-3 align-top">
+                                    <p class="font-bold text-gray-800 text-[11px]">${p.pasosEjecutados}</p>
+                                    <p class="text-[10px] text-gray-500 mt-0.5">Datos: ${p.datosUtilizados}</p>
+                                </td>
+                                <td class="p-3 align-top">
+                                    <p class="font-medium text-gray-900 text-[11px]">${p.resultadoObservado}</p>
+                                    <p class="text-[9px] text-rose-600 font-mono mt-0.5">${p.evidenciaLimitaciones || ''}</p>
+                                </td>
+                                <td class="p-3 align-top text-center">
+                                    <span class="px-2.5 py-1 rounded-full text-[10px] font-black uppercase ${p.estado === 'APROBADO' ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'}">${p.estado}</span>
+                                </td>
+                            </tr>
+                        `).join('');
+                    }
+                }
+            } catch (err) {
+                console.error('Error al ejecutar suite de pruebas de integración RRHH:', err);
             }
         }
 

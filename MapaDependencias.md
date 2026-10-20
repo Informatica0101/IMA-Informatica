@@ -291,3 +291,20 @@
 - **Componentes Frontend (`dashboard-recursos-humanos.html`):**
   - Botón `#btn-informacion-laboral-fiscal`
   - Modal `#modal-informacion-laboral-fiscal` con despliegue de consolidados devengados y deducciones IHSS/RAP/ISR, tabla de parámetros legales hondureños de referencia, lista de alertas por datos faltantes/RTN y conciliación contable.
+
+## PRUEBAS DE INTEGRACIÓN Y REGRESIÓN DE RECURSOS HUMANOS (TAREA RH-12)
+- **Hojas de Cálculo / Tablas:**
+  - Validación transversal de todas las tablas del módulo de RRHH (`ExpedientesLaborales`, `ContratosLaborales`, `VacantesLaborales`, `AgendaEntrevistasRH`, `EvaluacionesDesempeno`, `InscripcionesCapacitacion`, `IncidenciasLaborales`, `PlanificacionNecesidadesPersonal`, `SolicitudesVacaciones`, `SolicitudesHorasExtras`, `AsignacionesTurnosLaborales`, `SustitucionesPersonal`, `PlanillasNomenclatura`, `BitacoraAuditoriaSistema`).
+- **Funciones Backend (`backend/accounting-service/Code.gs`):**
+  - `runHRIntegrationAndRegressionTests(payload)`
+- **Componentes Frontend (`dashboard-recursos-humanos.html`):**
+  - Botón `#btn-pruebas-integracion-rh`
+  - Modal `#modal-pruebas-integracion-rh` con resumen de suite (Total, Aprobadas, Fallidas), botón de re-ejecución y tabla detallada de evidencias para los 18 casos de prueba integrales.
+
+## NUMERACIÓN DOCUMENTAL SEGURA Y PREVENCIÓN DE CÓDIGOS DUPLICADOS (TAREA GD-IMP-01)
+- **Hojas de Cálculo / Tablas:**
+  - `PlantillasEscolares`: Catálogo de plantillas oficiales con código, categoría, título y versión.
+  - `DocumentosEscolaresEmitidos`: Registro inmutable de emisiones documentales (DocumentoID, PlantillaID, EstudianteUserId, SolicitanteUserId, DatosJSON, EstadoDoc, CodigoVerificacion, DriveFileId, DriveUrl, FechaEmision, Observaciones, VersionPlantilla, SecuenciaNumerica, NumeroCorrelativo).
+- **Funciones Backend (`backend/accounting-service/Code.gs`):**
+  - `generateSchoolDocument(payload)` - Coordinado mediante `LockService.getScriptLock()` para asignación atómica bajo concurrencia.
+  - `verifySchoolDocumentByCUV(payload)` - Endpoint público para autenticación y consulta trazable de documentos emitidos por CUV.

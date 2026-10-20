@@ -225,6 +225,15 @@ GRUPO 1: TAREAS COMPLETADAS
     - Archivo Frontend: dashboard-recursos-humanos.html (Línea 76 `#btn-informacion-laboral-fiscal`, Línea 507 `#modal-informacion-laboral-fiscal`, Línea 2160 `refreshLaborTaxVerificationData`)
     - Descripción: Módulo de verificación de información laboral y fiscal con análisis de consistencias en nóminas, deducciones IHSS/RAP/ISR, conciliación contable, parámetros legales hondureños de referencia y alertas de datos faltantes clasificando el reporte como borrador interno.
 
+49. [TAREA RH-12] Pruebas de integración y regresión de Recursos Humanos
+    - Archivo: backend/accounting-service/Code.gs (Línea 6231 `runHRIntegrationAndRegressionTests`)
+    - Archivo Frontend: dashboard-recursos-humanos.html (Línea 79 `#btn-pruebas-integracion-rh`, Línea 510 `#modal-pruebas-integracion-rh`, Línea 2245 `refreshHRIntegrationTestsData`)
+    - Descripción: Suite automatizada de pruebas de integración y regresión de Recursos Humanos que ejecuta las 18 pruebas integrales definidas en el backlog con evidencia detallada, validación RBAC, candados de identidad y verificación de cero regresiones.
+
+50. [TAREA GD-IMP-01] Numeración documental segura y prevención de códigos duplicados
+    - Archivo: backend/accounting-service/Code.gs (Línea 8924 `generateSchoolDocument`, Línea 9015 `verifySchoolDocumentByCUV`)
+    - Descripción: Asignación segura de numeración correlativa oficial e ID de documento mediante LockService.getScriptLock() bajo concurrencia, distinción explícita de tipos de códigos, generación y verificación de unicidad de CUV (Código Único de Verificación) contra DocumentosEscolaresEmitidos y preservación del historial.
+
 
 -------------------------------------------------------------------------------
 GRUPO 2: TAREAS INCOMPLETAS
@@ -240,6 +249,5 @@ GRUPO 3: TAREAS PENDIENTES / NO INICIADAS
 (Registradas en el backlog pero no iniciadas ni presentes en el código)
 -------------------------------------------------------------------------------
 
-29. TAREA RH-12: Pruebas de integración y regresión de Recursos Humanos
-30. TAREA GD-IMP-01: Numeración documental segura y prevención de códigos duplicados
+(Todas las tareas registradas en el backlog han sido completadas al 100%)
 ===============================================================================

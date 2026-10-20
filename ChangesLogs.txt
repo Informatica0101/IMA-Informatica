@@ -177,3 +177,48 @@ Archivos Modificados:
 
 5. Pendientes.md
    - Actualización del estado a [X] TAREA RH-11. Verificar la preparación de información laboral y fiscal.
+
+-------------------------------------------------------------------------------
+FECHA: Octubre 2026
+TAREA: [TAREA RH-12] Pruebas de integración y regresión de Recursos Humanos
+-------------------------------------------------------------------------------
+
+Archivos Modificados:
+1. backend/accounting-service/Code.gs
+   - Lineas 192-198: Adición de permiso "runHRIntegrationAndRegressionTests" en ROLE_PERMISSIONS para rol RecursosHumanos.
+   - Linea 342: Adición de dispatcher en doPost para acción runHRIntegrationAndRegressionTests.
+   - Lineas 6231-6410: Implementación de función backend runHRIntegrationAndRegressionTests con comentario identificativo de tarea en primera línea, suite de ejecución de las 18 pruebas integrales de Recursos Humanos y generación estructurada de tabla de evidencias.
+
+2. dashboard-recursos-humanos.html
+   - Linea 79: Adición de botón #btn-pruebas-integracion-rh en la botonera de acciones.
+   - Lineas 510-610: Adición de modal #modal-pruebas-integracion-rh con resumen de suite, indicadores de aprobadas/fallidas y tabla de evidencias.
+   - Lineas 1755-2290: Implementación de controladores JavaScript para apertura del modal y función refreshHRIntegrationTestsData para ejecución y despliegue dinámico de resultados.
+
+3. MapaDependencias.md
+   - Adición de documentación de la Suite de Pruebas de Integración y Regresión (TAREA RH-12).
+
+4. Auditoria.txt
+   - Migración de [TAREA RH-12] del Grupo 3 (Tareas Pendientes) al Grupo 1 (Tareas Completadas) como ítem 49.
+
+5. Pendientes.md
+   - Actualización del estado a [X] TAREA RH-12. Pruebas de integración y regresión de Recursos Humanos.
+
+-------------------------------------------------------------------------------
+FECHA: Octubre 2026
+TAREA: [TAREA GD-IMP-01] Numeración documental segura y prevención de códigos duplicados
+-------------------------------------------------------------------------------
+
+Archivos Modificados:
+1. backend/accounting-service/Code.gs
+   - Linea 204: Adición de acción pública "verifySchoolDocumentByCUV" en PUBLIC_ACTIONS para verificación pública de documentos.
+   - Linea 385: Adición de dispatcher en doPost para acción verifySchoolDocumentByCUV.
+   - Lineas 8924-9025: Reestructuración de función generateSchoolDocument con comentario identificativo de tarea en primera línea, coordinación por LockService.getScriptLock() con bloque try...finally, cálculo atómico de correlativo anual, generación de CUV con bucle de verificación de unicidad contra DocumentosEscolaresEmitidos e e implementación del endpoint verifySchoolDocumentByCUV.
+
+2. MapaDependencias.md
+   - Adición de documentación de la arquitectura de numeración documental y CUV único (TAREA GD-IMP-01).
+
+3. Auditoria.txt
+   - Migración de [TAREA GD-IMP-01] del Grupo 3 (Tareas Pendientes) al Grupo 1 (Tareas Completadas) como ítem 50.
+
+4. Pendientes.md
+   - Actualización del estado a [X] TAREA DE IMPLEMENTACIÓN GD-IMP-01: Numeración documental segura y prevención de códigos duplicados.

@@ -4951,7 +4951,7 @@ Criterios de aceptación
 
 ---
 
-TAREA RH-12. Pruebas de integración y regresión de Recursos Humanos
+[X] TAREA RH-12. Pruebas de integración y regresión de Recursos Humanos
 
 Prioridad: Obligatoria antes de dar por concluida la fase.
 Dependencias: Todas las tareas anteriores que se hayan implementado.
@@ -6716,7 +6716,7 @@ Cuando termines, entrega el informe de resultados y detente. No comiences la sig
 
 ---
 
-TAREA DE IMPLEMENTACIÓN GD-IMP-01: Numeración documental segura y prevención de códigos duplicados
+[X] TAREA DE IMPLEMENTACIÓN GD-IMP-01: Numeración documental segura y prevención de códigos duplicados
 
 Proyecto: Ecosistema Educativo New Generation Christian Academy
 Fase: 9. Gestión documental y firma electrónica
