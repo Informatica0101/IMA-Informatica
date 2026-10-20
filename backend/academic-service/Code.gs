@@ -1816,16 +1816,18 @@ function getClassSchedules(payload) {
   return { status: "success", data: schedules };
 }
 
+// [TAREA 3.1] [Fase 3: Planificación Académica y Horarios] - Validación integral de horarios académicos y prevención de conflictos.
 function createClassSchedule(payload) {
-  const { ofertaId, diaSemana, horaInicio, horaFin, aulaCodigo, docenteUserId, borrador, horarioId } = payload || {};
+  const { ofertaId, diaSemana, horaInicio, horaFin, aulaCodigo, docenteUserId, borrador, horarioId, estudiantesCount } = payload || {};
   if (!diaSemana || !horaInicio || !horaFin) throw new Error("Día, hora de inicio y hora de fin son requeridos.");
+  if (horaInicio >= horaFin) throw new Error("La hora de inicio debe ser anterior a la hora de finalización.");
 
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
   const sheet = getOrCreateSheet(ss, "HorariosClase");
   const data = sheet.getDataRange().getValues();
 
-  // Motor de prevención de conflictos por solapamiento de docente, aula u oferta académica
-  const conflict = checkScheduleConflict({ diaSemana, horaInicio, horaFin, aulaCodigo, docenteUserId, ofertaId, excludeHorarioId: horarioId });
+  // Motor de prevención de conflictos por solapamiento de docente, aula u oferta académica y validación de capacidad
+  const conflict = checkScheduleConflict({ diaSemana, horaInicio, horaFin, aulaCodigo, docenteUserId, ofertaId, excludeHorarioId: horarioId, estudiantesCount });
   if (conflict.hasConflict) {
     throw new Error(`Conflicto de horario detectado: ${conflict.reason}`);
   }
@@ -1877,8 +1879,19 @@ function deleteClassSchedule(payload) {
 }
 
 function checkScheduleConflict(params) {
-  const { diaSemana, horaInicio, horaFin, aulaCodigo, docenteUserId, ofertaId, excludeHorarioId } = params || {};
+  const { diaSemana, horaInicio, horaFin, aulaCodigo, docenteUserId, ofertaId, excludeHorarioId, estudiantesCount } = params || {};
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+
+  // Validar capacidad de aula en SedesAulas si se especifica estudiantesCount y aulaCodigo
+  if (aulaCodigo && estudiantesCount) {
+    const aulaSheet = getOrCreateSheet(ss, "SedesAulas");
+    const aulaRows = aulaSheet.getDataRange().getValues().slice(1);
+    const aula = aulaRows.find(a => String(a[2]).trim() === String(aulaCodigo).trim() && a[6] !== "Inactivo");
+    if (aula && Number(aula[4]) > 0 && Number(estudiantesCount) > Number(aula[4])) {
+      return { hasConflict: true, reason: `El aula ${aulaCodigo} (${aula[3]}) tiene capacidad máxima de ${aula[4]} estudiantes, menor a los ${estudiantesCount} requeridos.` };
+    }
+  }
+
   const sheet = getOrCreateSheet(ss, "HorariosClase");
   const data = sheet.getDataRange().getValues();
   if (data.length <= 1) return { hasConflict: false };

@@ -3548,7 +3548,7 @@ Aplica las siguientes reglas:
 
 BLOQUE A. INTEGRIDAD DE LOS HORARIOS Y REGLAS ACADÉMICAS
 
-TAREA 3.1. Validación integral de horarios académicos
+[X] TAREA 3.1. Validación integral de horarios académicos
 
 Objetivo: Ampliar las validaciones actuales para impedir que se guarden horarios que incumplan restricciones académicas, docentes, temporales o físicas.
 
