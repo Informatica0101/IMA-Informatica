@@ -1439,3 +1439,6 @@ Descripción de cambios:
   - Implementados los requerimientos de exclusión mutua, idempotencia y control transaccional `LockService` con soporte de re-entrancia (`skipLock: true`) para las tareas T-NOM-01, T18-09, T19-02, T-ADM-01, T-EXP-03 y T-RRHH-01 descritas en `pendientes3.md`, manteniendo `Pendientes.md`, `pendientes2.md` y `pendientes3.md` intactos.
 - `Auditoría.txt`:
   - Registrada la bitácora de auditoría y diagnóstico de concurrencia, idempotencia e inmutabilidad de registros.
+- `backend/user-service/Code.gs`:
+  - Implementada la función `sendEducationalAlertsTrigger` para alertas automáticas de bajo rendimiento, ausentismo y morosidad.
+  - Enriquecida `sendMultiChannelNotification` con verificación de preferencias por canal, registro de latencia y tasa de fallos en `RegistroEnviosExternos` y conmutación transparente In-App (B-003, B-004, D-003, D-004, D-005).

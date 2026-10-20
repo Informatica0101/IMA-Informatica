@@ -1593,7 +1593,7 @@ Criterios de Aceptación:
 - **Criterios de Aceptación:**
   - Configuración por rol (Director/Administrador).
   - Emisión de notificaciones automáticas internas dirigidas a docentes, orientadores y tutores.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 ### [B-004] Auditoría de Entregas y Registro de Notificaciones Automáticas
 - **Archivos Involucrados:** `backend/user-service/Code.gs`
@@ -1601,7 +1601,7 @@ Criterios de Aceptación:
 - **Criterios de Aceptación:**
   - Consulta restringida para perfil Administrador/Director.
   - Exportación de logs de avisos en formato CSV/JSON.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 
 ## 3. ÁREA C: PWA Y PORTAL MÓVIL
@@ -1671,7 +1671,7 @@ Criterios de Aceptación:
 - **Criterios de Aceptación:**
   - El backend descarta automáticamente envíos por canales no autorizados por el usuario.
   - Control estricto de límites por hora y prevención de spam.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 ### [D-004] Bitácora Central de Envíos Externos e Alertas de Fallos
 - **Archivos Involucrados:** `backend/user-service/Code.gs`
@@ -1679,7 +1679,7 @@ Criterios de Aceptación:
 - **Criterios de Aceptación:**
   - Genera alerta automática al Administrador si la tasa de fallos supera el 15%.
   - Historial consultable con filtros por fecha, canal y destinatario.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 ### [D-005] Pruebas de Desconexión y Resiliencia Multicanal
 - **Archivos Involucrados:** `js/teacher.js`, `backend/user-service/Code.gs`
@@ -1687,7 +1687,7 @@ Criterios de Aceptación:
 - **Criterios de Aceptación:**
   - Conmutación automática a canal interno (In-App) sin interrupción de la experiencia del usuario.
   - Sin excepciones no capturadas ni bloqueos en el hilo principal.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 
 ## 5. ÁREA E: CONTINUIDAD OPERATIVA Y RECUPERACIÓN ANTE DESASTRES

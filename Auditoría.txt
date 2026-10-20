@@ -1441,3 +1441,22 @@ Archivos Auditados:
 2. PLAN DE ACCIÓN
 - Inyectar el control de concurrencia `LockService` en las operaciones backend críticas de `backend/accounting-service/Code.gs` y `backend/academic-service/Code.gs`.
 - Mantener `Pendientes.md` y `pendientes2.md` 100% inalterados conforme a la arquitectura del proyecto.
+
+====================================================================================================
+AUDITORÍA DE AUTOMATIZACIÓN DE ALERTAS Y RESILIENCIA DE NOTIFICACIONES MULTICANAL - MON OCT 19 2026
+
+Archivos Auditados:
+- `backend/user-service/Code.gs`
+- `backend/academic-service/Code.gs`
+- `js/teacher.js`
+- `js/ui-common.js`
+- `pendientes2.md`
+
+1. HALLAZGOS Y EVALUACIÓN
+- B-003 & B-004: Se requiere un motor de disparadores de alertas educativas automáticas (`sendEducationalAlertsTrigger`) para bajo rendimiento, ausentismo y morosidad, junto con la exportación estructurada de la bitácora de notificaciones automáticas (`getNotificationAuditLogs`).
+- D-003, D-004 & D-005: Se requiere extender `sendMultiChannelNotification` para respetar las preferencias por canal del usuario (`getNotificationPreferences`), registrar las solicitudes salientes en `RegistroEnviosExternos` calculando la tasa de fallos de proveedores (alerta si >15%), y conmutar automáticamente a canal In-App interno ante caídas de proveedores externos.
+
+2. PLAN DE ACCIÓN
+- Implementar la función `sendEducationalAlertsTrigger` en `backend/user-service/Code.gs` y registrar eventos en `RegistroEnviosExternos`.
+- Actualizar `sendMultiChannelNotification` con verificación de preferencias por canal y conmutación transparente a canal interno.
+- Marcar las tareas B-003, B-004, D-003, D-004 y D-005 como `[X] Completada` en `pendientes2.md`.
