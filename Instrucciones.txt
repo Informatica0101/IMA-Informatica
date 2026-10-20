@@ -370,3 +370,4 @@ TAREAS PENDIENTES DE REVISIÓN
 - Fase 2: Arquitectura Institucional, Identidad, Interoperabilidad y Comunicación entre Servicios - Desacoplamiento Persona/Cuenta, Matriz de Propiedad de Datos, Resolutor de Fuentes, Contratos Unificados de API, Idempotencia y Códigos de Error Estandarizados
 - Fase 3: Experiencia de Usuario, Navegación Unificada y Diseño Centrado en las Personas - Sistema de Diseño Institucional, Portal Familiar Prioritario, Navegación por Rol, Ayudas Contextuales y Lenguaje No Técnico
 - Implementación de Código para Fase 2 (Arquitectura, Identidad Persona/Cuenta, Errores Estandarizados e Idempotencia) y Fase 3 (UX, Tokens de Diseño, Portal Familiar, Ayudas Contextuales y Navegación Unificada)
+- Control Transaccional, LockService, Idempotencia y Sincronización del Backlog (B-001..04, C-001..05, D-001..05, E-001..05, IA-01..03, X-001..03, V-001..02)

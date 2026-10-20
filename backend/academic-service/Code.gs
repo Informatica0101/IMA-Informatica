@@ -452,6 +452,17 @@ function updateAdmissionStatus(payload) {
 }
 
 function convertAdmissionToStudent(payload) {
+  const { skipLock } = payload || {};
+  let lock = null;
+  if (!skipLock) {
+    lock = LockService.getScriptLock();
+    try {
+      lock.waitLock(10000);
+    } catch (e) {
+      throw new Error("No se pudo obtener el bloqueo de ejecución para convertir la admisión a estudiante. Intente de nuevo.");
+    }
+  }
+  try {
   const { solicitudId, userId, codigoInstitucional, seccion } = payload || {};
   if (!solicitudId) throw new Error("solicitudId es requerido.");
 
@@ -541,7 +552,11 @@ function convertAdmissionToStudent(payload) {
     codigoInstitucional: code,
     message: "Solicitud convertida exitosamente en expediente de estudiante y matrícula activa."
   };
-}
+  } finally {
+    if (lock) {
+      lock.releaseLock();
+    }
+  }}
 
 // ---------------------------------------------------------------------------
 // FASE 4: 2. EXPEDIENTE DIGITAL INTEGRAL Y LÍNEA DE TIEMPO
@@ -2911,6 +2926,17 @@ function checkEnrollmentCapacity(payload) {
 }
 
 function createStudentEnrollment(payload) {
+  const { skipLock } = payload || {};
+  let lock = null;
+  if (!skipLock) {
+    lock = LockService.getScriptLock();
+    try {
+      lock.waitLock(10000);
+    } catch (e) {
+      throw new Error("No se pudo obtener el bloqueo de ejecución para crear la matrícula del estudiante. Intente de nuevo.");
+    }
+  }
+  try {
   const { userId, alumno, grado, seccion, anolectivo, tipo, becaDescuento, observaciones, forceCapacityOverride } = payload || {};
   if (!userId || !grado || !seccion) throw new Error("userId, grado y sección requeridos.");
 
@@ -2955,7 +2981,11 @@ function createStudentEnrollment(payload) {
   logStructuredEvent("ACADEMIC", "createStudentEnrollment", "INFO", "ENROLLMENT_CREATED", `Matrícula ${matriculaId} confirmada para ${alumno} en ${grado} ${seccion} (${targetAno})`, { matriculaId, targetAno, grado, seccion }, payload && payload.authRole);
 
   return { status: "success", matriculaId: matriculaId, message: "Matrícula procesada y confirmada con éxito." };
-}
+  } finally {
+    if (lock) {
+      lock.releaseLock();
+    }
+  }}
 
 function getStudentEnrollments(payload) {
   const { userId, anolectivo } = payload || {};

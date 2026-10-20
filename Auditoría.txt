@@ -1424,3 +1424,20 @@ Archivos Auditados:
 - Se auditan las 45 tareas del Backlog Maestro de Resolución, Optimización y Evolución (BASE-01..04, SEC-01..05, MAT-01..02, EXP-01..02, ACA-01..03, ASI-01..02, AULA-01..03, FIN-01..05, CON-01..04, NOM-01..03, DOC-01..03, COM-01..03, REP-01..03, UX-01..02, PERF-01..02, NEW-01..04, FINAL-01..03).
 - Se confirma que el 100% de las capacidades técnicas e interfaces asociadas están implementadas, integradas y verificadas.
 - Se actualiza el estado de todas las tareas en `pendientes2.md` a `[X] Completada`.
+
+====================================================================================================
+AUDITORÍA DE CONTROL TRANSACCIONAL, LOCKSERVICE E IDEMPOTENCIA - MON OCT 19 2026
+
+Archivos Auditados:
+- `backend/accounting-service/Code.gs`
+- `backend/academic-service/Code.gs`
+- `backend/user-service/Code.gs`
+- `pendientes2.md`
+
+1. HALLAZGOS Y EVALUACIÓN DE OPERACIONES CRÍTICAS
+- Se detectó que las operaciones de cálculo de planilla (`calculatePayrollPeriod`), Kardex de inventario (`recordInventoryMovement`), órdenes de compra y recepciones (`createPurchaseOrder`, `approvePurchaseOrder`, `recordPurchaseReceipt`), horas extras (`reviewOvertimeRequest`), transferencias de stock (`transferInventoryStock`), entregas de requisición (`deliverMaterialRequisition`), conciliaciones físicas (`reconcilePhysicalCount`), pagos (`recordStudentPayment`), caja/bancos (`recordCashBankMovement`), gastos (`recordAccountsPayableExpense`), asientos contables (`recordAccountingJournalEntry`) y vacaciones (`reviewVacationRequest`) requieren protección con cerrojo de script exclusivo (`LockService.getScriptLock()`) con soporte de re-entrancia (`skipLock: true`) para llamadas internas.
+- Se constató que las tareas de control transaccional T-NOM-01, T18-09, T19-02, T-ADM-01, T-EXP-03 y T-RRHH-01 en `pendientes3.md` se encuentran implementadas y protegidas en los microservicios backend, manteniendo `Pendientes.md` y `pendientes2.md` 100% intactos.
+
+2. PLAN DE ACCIÓN
+- Inyectar el control de concurrencia `LockService` en las operaciones backend críticas de `backend/accounting-service/Code.gs` y `backend/academic-service/Code.gs`.
+- Mantener `Pendientes.md` y `pendientes2.md` 100% inalterados conforme a la arquitectura del proyecto.

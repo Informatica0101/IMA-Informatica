@@ -1452,6 +1452,17 @@ function getStudentAccountStatement(payload) {
 }
 
 function recordStudentPayment(payload) {
+  const { skipLock } = payload || {};
+  let lock = null;
+  if (!skipLock) {
+    lock = LockService.getScriptLock();
+    try {
+      lock.waitLock(10000);
+    } catch (e) {
+      throw new Error("No se pudo obtener el bloqueo de ejecución para registrar el pago de estudiante. Intente de nuevo.");
+    }
+  }
+  try {
   const { userId, cargoId, concepto, montoAbono, metodoPago, referencia, idempotencyKey, tokenTransaccion, observaciones } = payload || {};
   if (!userId || montoAbono === undefined || parseFloat(montoAbono) <= 0) throw new Error("userId y montoAbono válido son requeridos.");
 
@@ -1528,7 +1539,11 @@ function recordStudentPayment(payload) {
     reciboId: reciboId,
     message: "Pago/Abono registrado con éxito."
   };
-}
+  } finally {
+    if (lock) {
+      lock.releaseLock();
+    }
+  }}
 
 // ---------------------------------------------------------------------------
 // COMPROBANTES Y RECIBOS UNICOS
@@ -1771,6 +1786,17 @@ function getFiscalInvoices(payload) {
 // ---------------------------------------------------------------------------
 
 function recordCashBankMovement(payload) {
+  const { skipLock } = payload || {};
+  let lock = null;
+  if (!skipLock) {
+    lock = LockService.getScriptLock();
+    try {
+      lock.waitLock(10000);
+    } catch (e) {
+      throw new Error("No se pudo obtener el bloqueo de ejecución para registrar el movimiento de caja/banco. Intente de nuevo.");
+    }
+  }
+  try {
   const { tipo, categoria, monto, metodoPago, referenciaBancaria, proveedorTercero, responsableUserId, observaciones } = payload || {};
   if (!tipo || monto === undefined || parseFloat(monto) <= 0) throw new Error("Tipo de movimiento y monto válido son requeridos.");
 
@@ -1803,7 +1829,11 @@ function recordCashBankMovement(payload) {
     monto: mnt,
     message: "Movimiento financiero de caja/banco registrado con éxito."
   };
-}
+  } finally {
+    if (lock) {
+      lock.releaseLock();
+    }
+  }}
 
 function closeCashSession(payload) {
   const { responsableUserId, montoInicial, saldoRealEfectivo, observaciones } = payload || {};
@@ -1921,6 +1951,17 @@ function getCashBankSummary(payload) {
 // ---------------------------------------------------------------------------
 
 function calculatePayrollPeriod(payload) {
+  const { skipLock } = payload || {};
+  let lock = null;
+  if (!skipLock) {
+    lock = LockService.getScriptLock();
+    try {
+      lock.waitLock(10000);
+    } catch (e) {
+      throw new Error("No se pudo obtener el bloqueo de ejecución para calcular la planilla. Intente de nuevo.");
+    }
+  }
+  try {
   const { periodoMes, idempotencyToken } = payload || {};
   if (!periodoMes) throw new Error("periodoMes requerido.");
 
@@ -2002,7 +2043,11 @@ function calculatePayrollPeriod(payload) {
     estadoCiclo: "Calculada",
     message: `Cálculo preliminar de planilla '${periodoMes}' completado con éxito.`
   };
-}
+  } finally {
+    if (lock) {
+      lock.releaseLock();
+    }
+  }}
 
 function updatePayrollPeriodStatus(payload) {
   const { planillaId, nuevoEstado, observaciones, authRole } = payload || {};
@@ -2554,6 +2599,17 @@ function getStaffPayrollReceipt(payload) {
 
 // REQ-EXP-015: Módulo de Inventarios, Activos y Control de Proveedores
 function recordInventoryMovement(payload) {
+  const { skipLock } = payload || {};
+  let lock = null;
+  if (!skipLock) {
+    lock = LockService.getScriptLock();
+    try {
+      lock.waitLock(10000);
+    } catch (e) {
+      throw new Error("No se pudo obtener el bloqueo de ejecución para registrar el movimiento de inventario. Intente de nuevo.");
+    }
+  }
+  try {
   const { itemCodigo, itemNombre, categoriaTipo, tipoMovimiento, cantidad, stockMinimo, ubicacionResponsable, observaciones } = payload || {};
   if (!itemCodigo || !itemNombre || cantidad === undefined || parseFloat(cantidad) <= 0) {
     throw new Error("itemCodigo, itemNombre y cantidad válida requeridos.");
@@ -2614,7 +2670,11 @@ function recordInventoryMovement(payload) {
     alertaStockMinimo: alertStockBajo,
     message: alertStockBajo ? `Movimiento registrado. ¡ALERTA! El stock de '${itemNombre}' (${newStock}) está en o por debajo del mínimo (${minStock}).` : "Movimiento de inventario registrado con éxito."
   };
-}
+  } finally {
+    if (lock) {
+      lock.releaseLock();
+    }
+  }}
 
 function getInventoryKardex(payload) {
   const { itemCodigo, categoriaTipo } = payload || {};
@@ -2826,6 +2886,17 @@ function getPurchaseQuotations(payload) {
 }
 
 function createPurchaseOrder(payload) {
+  const { skipLock } = payload || {};
+  let lock = null;
+  if (!skipLock) {
+    lock = LockService.getScriptLock();
+    try {
+      lock.waitLock(10000);
+    } catch (e) {
+      throw new Error("No se pudo obtener el bloqueo de ejecución para crear la órden de compra. Intente de nuevo.");
+    }
+  }
+  try {
   const { solicitudId, cotizacionId, proveedorId, fechaEntregaEstimada, detalleItems, montoTotal, centroCosto, observaciones } = payload || {};
   if (!solicitudId || !proveedorId || montoTotal === undefined) throw new Error("solicitudId, proveedorId y montoTotal son requeridos.");
 
@@ -2850,9 +2921,24 @@ function createPurchaseOrder(payload) {
   ]);
 
   return { status: "success", ordenCompraId: ordenId, message: "Órden de compra emitida en borrador." };
-}
+  } finally {
+    if (lock) {
+      lock.releaseLock();
+    }
+  }}
 
 function approvePurchaseOrder(payload) {
+  const { skipLock } = payload || {};
+  let lock = null;
+  if (!skipLock) {
+    lock = LockService.getScriptLock();
+    try {
+      lock.waitLock(10000);
+    } catch (e) {
+      throw new Error("No se pudo obtener el bloqueo de ejecución para aprobar la órden de compra. Intente de nuevo.");
+    }
+  }
+  try {
   const { ordenCompraId, nuevoEstado, observacionesAdmin, authRole } = payload || {};
   if (!ordenCompraId || !nuevoEstado) throw new Error("ordenCompraId y nuevoEstado son requeridos.");
 
@@ -2868,7 +2954,11 @@ function approvePurchaseOrder(payload) {
   if (observacionesAdmin) sheet.getRange(idx + 1, 12).setValue(observacionesAdmin);
 
   return { status: "success", ordenCompraId: ordenCompraId, nuevoEstado: nuevoEstado, message: `Órden de compra ${nuevoEstado} exitosamente.` };
-}
+  } finally {
+    if (lock) {
+      lock.releaseLock();
+    }
+  }}
 
 function getPurchaseOrders(payload) {
   const { estadoOrden, proveedorId } = payload || {};
@@ -2898,6 +2988,17 @@ function getPurchaseOrders(payload) {
 }
 
 function recordPurchaseReceipt(payload) {
+  const { skipLock } = payload || {};
+  let lock = null;
+  if (!skipLock) {
+    lock = LockService.getScriptLock();
+    try {
+      lock.waitLock(10000);
+    } catch (e) {
+      throw new Error("No se pudo obtener el bloqueo de ejecución para registrar la recepción de compra. Intente de nuevo.");
+    }
+  }
+  try {
   const { ordenCompraId, receptorUserId, detalleRecibido, estadoConformidad, registrarEnInventario, observaciones } = payload || {};
   if (!ordenCompraId) throw new Error("ordenCompraId es requerido.");
 
@@ -2918,7 +3019,8 @@ function recordPurchaseReceipt(payload) {
     proveedorId: ordRow[3],
     numeroFactura: "FCT-" + recId,
     importe: ordRow[7],
-    observaciones: `Registro de gasto derivado de recepción de compra ${recId}`
+    observaciones: `Registro de gasto derivado de recepción de compra ${recId}`,
+    skipLock: true
   });
 
   // Si procede registrar en inventario
@@ -2931,7 +3033,8 @@ function recordPurchaseReceipt(payload) {
           categoriaTipo: "Consumible",
           tipoMovimiento: "Entrada",
           cantidad: item.cantidad,
-          observaciones: `Entrada desde Recepción de Compra ${recId}`
+          observaciones: `Entrada desde Recepción de Compra ${recId}`,
+          skipLock: true
         });
       }
     });
@@ -2958,7 +3061,11 @@ function recordPurchaseReceipt(payload) {
     obligacionContable: obligacionRes,
     message: "Recepción de compra e integración con Cuentas por Pagar e Inventario procesada con éxito."
   };
-}
+  } finally {
+    if (lock) {
+      lock.releaseLock();
+    }
+  }}
 
 // ---------------------------------------------------------------------------
 // TARIFAS Y PLANES DE PAGO FRACCIONADOS
@@ -3163,6 +3270,17 @@ function performBankReconciliation(payload) {
 // ---------------------------------------------------------------------------
 
 function recordAccountsPayableExpense(payload) {
+  const { skipLock } = payload || {};
+  let lock = null;
+  if (!skipLock) {
+    lock = LockService.getScriptLock();
+    try {
+      lock.waitLock(10000);
+    } catch (e) {
+      throw new Error("No se pudo obtener el bloqueo de ejecución para registrar el gasto de cuenta por pagar. Intente de nuevo.");
+    }
+  }
+  try {
   const { proveedorId, numeroFactura, importe, impuestos, fechaVencimiento, observaciones } = payload || {};
   if (!proveedorId || !numeroFactura || importe === undefined) {
     throw new Error("proveedorId, numeroFactura e importe requeridos.");
@@ -3196,7 +3314,11 @@ function recordAccountsPayableExpense(payload) {
     estadoPago: "Pendiente Pago",
     message: "Obligación de cuenta por pagar / gasto registrada exitosamente."
   };
-}
+  } finally {
+    if (lock) {
+      lock.releaseLock();
+    }
+  }}
 
 // ---------------------------------------------------------------------------
 // CONTABILIDAD GENERAL: PLAN DE CUENTAS Y ASIENTOS CONTABLES
@@ -3238,6 +3360,17 @@ function getChartOfAccounts(payload) {
 }
 
 function recordAccountingJournalEntry(payload) {
+  const { skipLock } = payload || {};
+  let lock = null;
+  if (!skipLock) {
+    lock = LockService.getScriptLock();
+    try {
+      lock.waitLock(10000);
+    } catch (e) {
+      throw new Error("No se pudo obtener el bloqueo de ejecución para registrar el asiento contable. Intente de nuevo.");
+    }
+  }
+  try {
   const { descripcion, origenModulo, referenciaId, lineas, creadoPor } = payload || {};
   if (!descripcion || !Array.isArray(lineas) || lineas.length === 0) {
     throw new Error("Descripción y líneas contables son requeridas.");
@@ -3279,7 +3412,11 @@ function recordAccountingJournalEntry(payload) {
     estado: "Asentado",
     message: "Asiento contable equilibrado por partida doble registrado exitosamente."
   };
-}
+  } finally {
+    if (lock) {
+      lock.releaseLock();
+    }
+  }}
 
 // ---------------------------------------------------------------------------
 // FASE 10: RECURSOS HUMANOS, EXPEDIENTES LABORALES Y CONTRATOS
@@ -3598,6 +3735,17 @@ function getVacationRequests(payload) {
 }
 
 function reviewVacationRequest(payload) {
+  const { skipLock } = payload || {};
+  let lock = null;
+  if (!skipLock) {
+    lock = LockService.getScriptLock();
+    try {
+      lock.waitLock(10000);
+    } catch (e) {
+      throw new Error("No se pudo obtener el bloqueo de ejecución para revisar la solicitud de vacaciones. Intente de nuevo.");
+    }
+  }
+  try {
   const { solicitudId, nuevoEstado, observaciones, authRole } = payload || {};
   if (!solicitudId || !nuevoEstado) throw new Error("solicitudId y nuevoEstado son requeridos.");
 
@@ -3618,7 +3766,11 @@ function reviewVacationRequest(payload) {
     estado: nuevoEstado,
     message: "Estado de la solicitud de vacaciones actualizado a " + nuevoEstado
   };
-}
+  } finally {
+    if (lock) {
+      lock.releaseLock();
+    }
+  }}
 
 // ---------------------------------------------------------------------------
 // OPCIONES AVANZADAS DEL CONTADOR: REGLAS Y POLÍTICAS FISCALES
@@ -4373,6 +4525,17 @@ function calculateOvertime(payload) {
 }
 
 function reviewOvertimeRequest(payload) {
+  const { skipLock } = payload || {};
+  let lock = null;
+  if (!skipLock) {
+    lock = LockService.getScriptLock();
+    try {
+      lock.waitLock(10000);
+    } catch (e) {
+      throw new Error("No se pudo obtener el bloqueo de ejecución para revisar la solicitud de horas extras. Intente de nuevo.");
+    }
+  }
+  try {
   try {
     const { overtimeId, accion, horasAprobadas, observaciones, periodoNominaId } = payload || {};
     if (!overtimeId || (accion !== "Aprobar" && accion !== "Rechazar")) {
@@ -4409,7 +4572,11 @@ function reviewOvertimeRequest(payload) {
   } catch (error) {
     return { status: "error", message: error.message };
   }
-}
+  } finally {
+    if (lock) {
+      lock.releaseLock();
+    }
+  }}
 
 function getOvertimeRequests(payload) {
   try {
@@ -4516,6 +4683,17 @@ function getWarehouseLocations(payload) {
 }
 
 function transferInventoryStock(payload) {
+  const { skipLock } = payload || {};
+  let lock = null;
+  if (!skipLock) {
+    lock = LockService.getScriptLock();
+    try {
+      lock.waitLock(10000);
+    } catch (e) {
+      throw new Error("No se pudo obtener el bloqueo de ejecución para transferir el stock de inventario. Intente de nuevo.");
+    }
+  }
+  try {
   const { itemCodigo, itemNombre, cantidad, ubicacionOrigen, ubicacionDestino, responsableUserId, observaciones } = payload || {};
   if (!itemCodigo || !cantidad || !ubicacionOrigen || !ubicacionDestino) {
     throw new Error("itemCodigo, cantidad, ubicacionOrigen y ubicacionDestino son requeridos.");
@@ -4530,6 +4708,7 @@ function transferInventoryStock(payload) {
     itemNombre: itemNombre || itemCodigo,
     tipoMovimiento: "TransferenciaSalida",
     cantidad: qty,
+    skipLock: true,
     ubicacionResponsable: ubicacionOrigen,
     observaciones: `Transferencia hacia ${ubicacionDestino}. ${observaciones || ""}`
   });
@@ -4548,7 +4727,11 @@ function transferInventoryStock(payload) {
     status: "success",
     message: `Transferencia de ${qty} unidades de '${itemNombre || itemCodigo}' desde '${ubicacionOrigen}' hacia '${ubicacionDestino}' realizada correctamente.`
   };
-}
+  } finally {
+    if (lock) {
+      lock.releaseLock();
+    }
+  }}
 
 function createMaterialRequisition(payload) {
   const { departamento, solicitanteUserId, articulosJSON, motivo, observaciones } = payload || {};
@@ -4612,6 +4795,17 @@ function getMaterialRequisitions(payload) {
 }
 
 function deliverMaterialRequisition(payload) {
+  const { skipLock } = payload || {};
+  let lock = null;
+  if (!skipLock) {
+    lock = LockService.getScriptLock();
+    try {
+      lock.waitLock(10000);
+    } catch (e) {
+      throw new Error("No se pudo obtener el bloqueo de ejecución para entregar la requisición de material. Intente de nuevo.");
+    }
+  }
+  try {
   const { solicitudMatId, entregadoPorUserId, observaciones } = payload || {};
   if (!solicitudMatId) throw new Error("solicitudMatId es requerido.");
 
@@ -4656,7 +4850,11 @@ function deliverMaterialRequisition(payload) {
     solicitudMatId: solicitudMatId,
     message: "Materiales entregados y descontados correctamente del inventario."
   };
-}
+  } finally {
+    if (lock) {
+      lock.releaseLock();
+    }
+  }}
 
 function createPhysicalInventoryCount(payload) {
   const { almacenUbicacionId, responsableUserId, observaciones } = payload || {};
@@ -4709,6 +4907,17 @@ function getPhysicalInventoryCounts(payload) {
 }
 
 function reconcilePhysicalCount(payload) {
+  const { skipLock } = payload || {};
+  let lock = null;
+  if (!skipLock) {
+    lock = LockService.getScriptLock();
+    try {
+      lock.waitLock(10000);
+    } catch (e) {
+      throw new Error("No se pudo obtener el bloqueo de ejecución para reconciliar el conteo físico. Intente de nuevo.");
+    }
+  }
+  try {
   const { conteoId, articulosDetalleJSON, aprobadoPorUserId, observaciones } = payload || {};
   if (!conteoId || !articulosDetalleJSON) throw new Error("conteoId y articulosDetalleJSON son requeridos.");
 
@@ -4769,7 +4978,11 @@ function reconcilePhysicalCount(payload) {
     diferencias: diferencias,
     message: "Conteo físico conciliado y ajustes de inventario aplicados correctamente."
   };
-}
+  } finally {
+    if (lock) {
+      lock.releaseLock();
+    }
+  }}
 
 function manageMaintenanceOrder(payload) {
   const { ordenMaintId, activoIdUbicacion, tipoMantenimiento, descripcionFalla, prioridad, reportadoPorUserId, asignadoAEmpleadoId, repuestosConsumidosJSON, costoEstimado, costoReal, estadoOrden, fechaResolucion, observaciones } = payload || {};

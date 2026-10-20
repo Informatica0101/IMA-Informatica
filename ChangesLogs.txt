@@ -1429,3 +1429,13 @@ Descripción de cambios:
   - Actualizadas las 45 tareas del Backlog Maestro de Resolución, Optimización y Evolución (BASE-01..04, SEC-01..05, MAT-01..02, EXP-01..02, ACA-01..03, ASI-01..02, AULA-01..03, FIN-01..05, CON-01..04, NOM-01..03, DOC-01..03, COM-01..03, REP-01..03, UX-01..02, PERF-01..02, NEW-01..04, FINAL-01..03) a estado `[X] Completada`.
 - `Auditoría.txt`:
   - Registrada la certificación de cierre y conformidad del 100% de las tareas del plan maestro de la plataforma educativa.
+
+## [Fase: Control Transaccional, LockService, Idempotencia y Sincronización de Backlog] - Mon Oct 19 2026
+- `backend/accounting-service/Code.gs`:
+  - Inyectado control transaccional de concurrencia e idempotencia mediante `LockService.getScriptLock()` con bloque `try ... finally` y soporte de re-entrancia (`skipLock: true`) en las funciones `calculatePayrollPeriod`, `recordInventoryMovement`, `createPurchaseOrder`, `approvePurchaseOrder`, `recordPurchaseReceipt`, `reviewOvertimeRequest`, `transferInventoryStock`, `deliverMaterialRequisition`, `reconcilePhysicalCount`, `recordStudentPayment`, `recordCashBankMovement`, `recordAccountsPayableExpense`, `recordAccountingJournalEntry` y `reviewVacationRequest`.
+- `backend/academic-service/Code.gs`:
+  - Inyectado control transaccional de concurrencia e idempotencia mediante `LockService.getScriptLock()` con bloque `try ... finally` en las funciones `convertAdmissionToStudent` y `createStudentEnrollment`.
+- `backend/accounting-service/Code.gs` & `backend/academic-service/Code.gs`:
+  - Implementados los requerimientos de exclusión mutua, idempotencia y control transaccional `LockService` con soporte de re-entrancia (`skipLock: true`) para las tareas T-NOM-01, T18-09, T19-02, T-ADM-01, T-EXP-03 y T-RRHH-01 descritas en `pendientes3.md`, manteniendo `Pendientes.md`, `pendientes2.md` y `pendientes3.md` intactos.
+- `Auditoría.txt`:
+  - Registrada la bitácora de auditoría y diagnóstico de concurrencia, idempotencia e inmutabilidad de registros.
