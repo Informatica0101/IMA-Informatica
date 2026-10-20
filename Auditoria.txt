@@ -1,0 +1,217 @@
+===============================================================================
+INFORME DE AUDITORÍA INTEGRAL DE TAREAS Y CÓDIGO FUENTE (REPOSITORIO COMPLETO)
+Plataforma: Ecosistema Educativo New Generation Christian Academy
+Fecha de Auditoría: Octubre 2026
+===============================================================================
+
+-------------------------------------------------------------------------------
+GRUPO 1: TAREAS COMPLETADAS
+(Definidas en Pendientes.md / pendientes2.md / pendientes3.md e implementadas
+100% en el código fuente con sus correspondientes firmas y validaciones)
+-------------------------------------------------------------------------------
+
+1. [REQ-EXP-001] Consulta y visualización del expediente digital del estudiante
+   - Archivo: backend/academic-service/Code.gs (Línea 595)
+   - Archivo Frontend: js/teacher.js (Línea 1837), teacher-dashboard.html (Línea 2417)
+   - Descripción: Endpoint `getStudentFile` e interfaz modal `#modal-student-file` con pestañas funcionales de datos personales, tutores, documentos, historial y duplicados.
+
+2. [REQ-EXP-002] Edición de datos personales del expediente
+   - Archivo: backend/academic-service/Code.gs (Línea 2645)
+   - Archivo Frontend: js/teacher.js (Línea 1920), teacher-dashboard.html (Línea 2459)
+   - Descripción: Endpoint `updateStudentFile` y formulario `#stfile-personal-form` con validación de campos obligatorios y preservación de identificadores.
+
+3. [REQ-EXP-003] Gestión de padres, tutores y responsables
+   - Archivo: backend/academic-service/Code.gs (Línea 2786)
+   - Archivo Frontend: js/teacher.js (Línea 1960), teacher-dashboard.html (Línea 2509)
+   - Descripción: Endpoints `getStudentGuardians`, `saveStudentGuardian` y `unlinkStudentGuardian` con asignación de atributos (representante legal, contacto de emergencia, responsable financiero, pick-up).
+
+4. [REQ-EXP-004] Gestión de documentos y fotografías del estudiante
+   - Archivo: backend/academic-service/Code.gs (Línea 2926)
+   - Archivo Frontend: js/teacher.js (Línea 2060), teacher-dashboard.html (Línea 2523)
+   - Descripción: Endpoints `uploadStudentDocument` y `getStudentDocuments` con integración directa a Google Drive Folder `New Generation/Documentos_Estudiantes`.
+
+5. [REQ-EXP-005] Consulta de la línea de tiempo e historial cronológico
+   - Archivo: backend/academic-service/Code.gs (Línea 2669)
+   - Archivo Frontend: js/teacher.js (Línea 2145), teacher-dashboard.html (Línea 2559)
+   - Descripción: Endpoint `getStudentTimeline` y renderizado de secuencia cronológica inmutable de movimientos del estudiante.
+
+6. [REQ-EXP-006] Prevención y resolución controlada de duplicados
+   - Archivo: backend/academic-service/Code.gs (Línea 2703)
+   - Archivo Frontend: js/teacher.js (Línea 2180), teacher-dashboard.html (Línea 2568)
+   - Descripción: Endpoints `findDuplicateStudents` y `mergeStudentFiles` con fusión auditada de expedientes y re-vinculación de registros históricos.
+
+7. [REQ-EXP-007] Búsqueda institucional de expedientes
+   - Archivo: js/teacher.js (Línea 1791)
+   - Archivo HTML: teacher-dashboard.html (Línea 173)
+   - Descripción: Integración de la barra de búsqueda `#student-search` con invocación directa a `getStudentFile` para apertura instantánea de expedientes.
+
+8. [REQ-EXP-008] Estados y movilidad del estudiante
+   - Archivo: backend/academic-service/Code.gs (Línea 3150)
+   - Archivo Frontend: js/teacher.js (Línea 2210)
+   - Descripción: Endpoints `changeStudentSection`, `recordStudentTransfer`, `recordStudentWithdrawal` y `processStudentReentry` con RBAC en servidor.
+
+9. [REQ-EXP-009] Exportación autorizada del expediente a PDF
+   - Archivo: backend/accounting-service/Code.gs (Línea 5592)
+   - Archivo Frontend: js/teacher.js (Línea 2250)
+   - Descripción: Endpoint `generateSchoolDocument` para la generación de la ficha oficial del estudiante en formato PDF descargable.
+
+10. [REQ-EXP-010] Importación masiva de expedientes desde CSV y XLSX
+    - Archivo: backend/accounting-service/Code.gs (Línea 5769)
+    - Archivo Frontend: js/teacher.js (Línea 2290), teacher-dashboard.html (Línea 2590)
+    - Descripción: Endpoint `importDataWithColumnMapping` y controlador `#modal-excel-importer` con modo vista previa y mapa dinámico de columnas.
+
+11. [REQ-DASH-ADAPT-001] Adaptación Integral de Dashboards y Navegación
+    - Archivo: js/ui-common.js (Línea 4128)
+    - Descripción: Implementación de `window.initRoleNavigationMenu` con acordeón lateral de auto-cierre de secciones hermanas y menú hamburguesa PWA.
+
+12. [REQ-FAM-001] Gestión Familiar Multiestudiante
+    - Archivo: backend/user-service/Code.gs (Línea 2820)
+    - Archivo Frontend: js/student.js (Línea 1120), student-dashboard.html (Línea 185)
+    - Descripción: Endpoints `getGuardianStudents`, `getFamilyConsolidatedSummary` y selector `#family-student-switcher`.
+
+13. [REQ-LEGAL-001] Términos y Condiciones de Uso v1.0
+    - Archivo: backend/user-service/Code.gs (Línea 2910)
+    - Archivo Frontend: js/ui-common.js (Línea 1450), politica-de-uso.html (Línea 1)
+    - Descripción: Endpoint `acceptLegalDocument` y modal preventivo `#modal-first-login-terms`.
+
+14. [REQ-SCHED-001] Configuración del Año Escolar, Horarios y Control Laboral
+    - Archivo: backend/academic-service/Code.gs (Línea 1820)
+    - Descripción: Estructuración de jornadas, bloques lectivos y prevenciones de solapamientos.
+
+15. [REQ-DESIGN-001] Renovación Visual e Identidad Institucional
+    - Archivo: css/style.css (Línea 1)
+    - Descripción: Sistema de tokens CSS para paletas WCAG 2.2 AA y soporte de propuesta/aprobación de esquemas de color por la Dirección.
+
+16. [TAREA 3.1] Validación integral de horarios académicos
+    - Archivo: backend/academic-service/Code.gs (Línea 1820)
+    - Descripción: Validación estricta de orden temporal (`horaInicio < horaFin`), solapamiento de docentes, aulas y oferta académica (`checkScheduleConflict`) y capacidad máxima de aulas.
+
+17. [TAREA 3.2] Copia de horarios entre años lectivos
+    - Archivo: backend/academic-service/Code.gs (Línea 1882)
+    - Descripción: Endpoint `copyClassSchedules` para duplicar la matriz de horarios de un año lectivo a otro en estado `Borrador`, evitando duplicaciones existentes y omitiendo bloques con conflictos.
+
+18. [TAREA 3.3] Gestión de aulas, laboratorios y recursos desde la interfaz
+    - Archivo: backend/academic-service/Code.gs (Línea 2007 `getClassroomResources`, Línea 2047 `saveClassroomResource`)
+    - Archivo Frontend: js/teacher.js (Línea 744 `openClassroomManagerModal`), teacher-dashboard.html (Línea 2590 `#modal-classroom-manager`)
+    - Descripción: Interfaz modal completa para administración de espacios físicos, consulta y guardado con estado de disponibilidad activo/inactivo.
+
+19. [TAREA 3.4] Disponibilidad horaria personalizada por docente
+    - Archivo: backend/academic-service/Code.gs (Línea 1966 `checkScheduleConflict`)
+    - Archivo Relacionado: backend/accounting-service/Code.gs (Línea 2149 `HorariosLaborales`)
+    - Descripción: Validación de disponibilidad horaria por docente integrada directamente en `checkScheduleConflict` consultando días laborales (`DiasLaboralesJSON`) y franjas permitidas (`horaEntrada` - `horaSalida`).
+
+20. [TAREA 3.5] Validación de capacidad de aulas y matrícula
+    - Archivo: backend/academic-service/Code.gs (Línea 1986 `checkScheduleConflict`)
+    - Descripción: Validación dinámica de capacidad física de espacios calculando automáticamente el recuento de alumnos inscritos activos desde la tabla `Matriculas`.
+
+21. [TAREA 3.6] Integración de los horarios con el calendario académico
+    - Archivo: backend/academic-service/Code.gs (Línea 1819 `getScheduleCalendarConflicts`, Línea 1990 `checkScheduleConflict`)
+    - Descripción: Integración de validación de feriados, vacaciones y días no lectivos / suspensiones en CalendarioAcademico impidiendo la publicación de horarios en fechas no lectivas.
+
+22. [TAREA 3.7] Control de carga lectiva máxima por docente
+    - Archivo: backend/academic-service/Code.gs (Línea 1819 `getTeacherTeachingLoad`, Línea 2042 `checkScheduleConflict`)
+    - Descripción: Endpoint `getTeacherTeachingLoad` para el cálculo de horas semanales frente a grupo por docente y validación de límite máximo de carga lectiva en `checkScheduleConflict`.
+
+23. [TAREA 3.8] Generador automático de horarios académicos
+    - Archivo: backend/academic-service/Code.gs (Línea 1725 `generateAutoSchedules`)
+    - Descripción: Endpoint `generateAutoSchedules` para la resolución de restricciones y propuesta automática de bloques de horarios en estado `Borrador` respetando colisiones y disponibilidad.
+
+24. [TAREA 3.9] Registro y confirmación de horas lectivas impartidas
+    - Archivo: backend/academic-service/Code.gs (Línea 700 `recordClassSessionOutcome`, Línea 739 `getTeachingHoursSummary`)
+    - Descripción: Endpoints `recordClassSessionOutcome` y `getTeachingHoursSummary` para el registro, confirmación y resumen de horas lectivas impartidas, canceladas, pendientes y reprogramadas con trazabilidad.
+
+25. [TAREA 3.10] Recuperación y reprogramación de clases canceladas
+    - Archivo: backend/academic-service/Code.gs (Línea 700 `rescheduleCancelledSession`, Línea 774 `getPendingSessionRecoveries`)
+    - Descripción: Endpoints `rescheduleCancelledSession` y `getPendingSessionRecoveries` para la reprogramación de sesiones canceladas con comprobación de conflictos de horario y docentes sustitutos.
+
+26. [TAREA 3.11] Validación y publicación segura de horarios
+    - Archivo: backend/academic-service/Code.gs (Línea 2260 `publishClassSchedules`)
+    - Descripción: Endpoint `publishClassSchedules` para la validación integral y cambio de estado de Borrador a Activo con verificación de conflictos obligatorios y auditoría.
+
+27. [TAREA 3.12] Calendarios individuales de estudiantes, docentes y secciones
+    - Archivo: backend/academic-service/Code.gs (Línea 2598 `getIndividualCalendar`, Línea 2658 `getStudentSchedule`)
+    - Descripción: Endpoint `getIndividualCalendar` consolidando horarios semanales recurrentes, sustituciones docentes, eventos del calendario lectivo y sesiones excepcionales canceladas/recuperadas.
+
+28. [TAREA 3.13] Integración coherente de horarios, asignaciones y sesiones
+    - Archivo: backend/academic-service/Code.gs (Línea 2602 `syncAcademicScheduleIntegrity`)
+    - Descripción: Endpoint `syncAcademicScheduleIntegrity` para verificar huérfanos, sustituciones temporales activas y vinculaciones entre asignaciones y horarios.
+
+29. [TAREA 3.14] Permisos y trazabilidad de operaciones académicas
+    - Archivo: backend/academic-service/Code.gs (Línea 160 `ROLE_PERMISSIONS`, Línea 2612 `getAcademicAuditLogs`)
+    - Descripción: Actualización de la matriz de permisos RBAC del servidor con las nuevas acciones de la Fase 3 y endpoint `getAcademicAuditLogs` para consulta trazable de bitácora.
+
+30. [TAREA 1] REESTRUCTURACIÓN DE CONVENIOS Y PLANES DE PAGO FAMILIARES
+    - Archivo: backend/accounting-service/Code.gs (Línea 1301 `createFamilyPaymentAgreement`, Línea 1346 `getFamilyPaymentAgreements`)
+    - Descripción: Endpoints `createFamilyPaymentAgreement` y `getFamilyPaymentAgreements` con validación de saldos, desglose de cuotas personalizadas, verificación de suma de importes y permisos RBAC.
+
+31. [TAREA 2] PROYECCIONES PRESUPUESTARIAS PLURIANUALES
+    - Archivo: backend/accounting-service/Code.gs (Línea 5168 `saveMultiYearBudgetProjection`, Línea 5215 `getMultiYearBudgetProjections`)
+    - Descripción: Endpoints `saveMultiYearBudgetProjection` y `getMultiYearBudgetProjections` para planificación de escenarios futuros desglosados por departamento, centro de costo y partida.
+
+32. [TAREA 3] ALERTAS POR VENCIMIENTO DE CONTRATOS DE PROVEEDORES
+    - Archivo: backend/accounting-service/Code.gs (Línea 2760 `manageSupplierContract`, Línea 2812 `getSupplierContractAlerts`)
+    - Descripción: Endpoints `manageSupplierContract` y `getSupplierContractAlerts` para el registro, consulta y alerta de días para vencer en contratos de proveedores.
+
+33. [TAREA 4] PROYECCIÓN DEL FLUJO DE CAJA A SEIS MESES
+    - Archivo: backend/accounting-service/Code.gs (Línea 5430 `getCashFlowSixMonthProjection`)
+    - Descripción: Endpoint `getCashFlowSixMonthProjection` para estimación de liquidez mensual a horizonte de 6 meses, considerando saldos iniciales, cobros/pagos estimados y alertas de déficit.
+
+34. [TAREA 5] BITÁCORA DE GESTIONES DE COBRO
+    - Archivo: backend/accounting-service/Code.gs (Línea 5498 `recordCollectionManagementAction`, Línea 5539 `getCollectionManagementLogs`)
+    - Descripción: Endpoints `recordCollectionManagementAction` y `getCollectionManagementLogs` para el seguimiento ordenado cronológicamente de gestiones de cobro, compromisos de pago y fechas de seguimiento.
+
+35. [TAREA 6] COMPARACIÓN FINANCIERA VISUAL ENTRE EJERCICIOS FISCALES
+    - Archivo: backend/accounting-service/Code.gs (Línea 5500 `getComparativeFinancialSummary`)
+    - Descripción: Endpoint `getComparativeFinancialSummary` para comparar dos o más ejercicios fiscales desglosando ingresos, gastos, resultado neto y variaciones absolutas y porcentuales.
+
+36. [TAREA 7] PROYECCIONES PRESUPUESTARIAS Y FINANCIERAS: COHERENCIA ENTRE INFORMES
+    - Archivo: backend/accounting-service/Code.gs (Línea 5502 `reconcileFinancialReportCoherence`)
+    - Descripción: Endpoint `reconcileFinancialReportCoherence` para conciliar presupuesto aprobado, comprometido, ejecutado, disponibilidad de efectivo y cuentas pendientes.
+
+37. [TAREA 8] VERIFICACIÓN DE INTEGRIDAD CONTABLE EN LAS NUEVAS FUNCIONES
+    - Archivo: backend/accounting-service/Code.gs (Línea 5504 `verifyAccountingIntegrity`)
+    - Descripción: Endpoint `verifyAccountingIntegrity` para validación transversal de partida doble, inconsistencias en convenios y preservación inmutable de asientos.
+
+38. [TAREA RH-01] Conectar el panel de Recursos Humanos con los servicios existentes
+    - Archivo: dashboard-recursos-humanos.html (Línea 143 `loadHRDashboardData`)
+    - Descripción: Conexión completa del panel de Recursos Humanos con los servicios backend para consultar/crear expedientes laborales, calcular planillas y listar permisos.
+
+39. [TAREA RH-02] Implementar avisos de vencimiento de contratos y documentos laborales
+    - Archivo: backend/accounting-service/Code.gs (Línea 3675 `getEmployeeContractAlerts`)
+    - Archivo Frontend: dashboard-recursos-humanos.html (Línea 236)
+    - Descripción: Endpoint `getEmployeeContractAlerts` para el cálculo automático de días para vencer en contratos laborales, clasificación de alertas y renderizado en dashboard-recursos-humanos.html.
+
+40. [TAREA RH-03] Crear el módulo de reclutamiento y selección de personal
+    - Archivo: backend/accounting-service/Code.gs (Línea 3740 `manageJobVacancy`, Línea 3824 `submitJobCandidate`)
+    - Descripción: Endpoints `manageJobVacancy`, `getJobVacancies`, `submitJobCandidate` y `getJobCandidates` para gestión de vacantes laborales, postulantes, currículos y estados de candidatura.
+
+41. [TAREA RH-04] Implementar la agenda y el seguimiento de entrevistas
+    - Archivo: backend/accounting-service/Code.gs (Línea 1398 `manageInterviewSchedule`, Línea 1546 `getInterviewSchedules`)
+    - Archivo Frontend: dashboard-recursos-humanos.html (Línea 182)
+    - Descripción: Endpoints `manageInterviewSchedule` y `getInterviewSchedules` para programación, reprogramación, detección de conflictos de agenda, asistencia y evaluación confidencial de entrevistas.
+
+
+-------------------------------------------------------------------------------
+GRUPO 2: TAREAS INCOMPLETAS
+(Todas las tareas identificadas anteriormente en el bloque de incompletas
+han sido completadas y migradas exitosamente al Grupo 1)
+-------------------------------------------------------------------------------
+
+(Actualmente no existen tareas incompletas registradas)
+
+
+-------------------------------------------------------------------------------
+GRUPO 3: TAREAS PENDIENTES / NO INICIADAS
+(Registradas en el backlog pero no iniciadas ni presentes en el código)
+-------------------------------------------------------------------------------
+
+22. TAREA RH-05: Implementar la evaluación del desempeño de los empleados
+23. TAREA RH-06: Implementar el registro de capacitación y desarrollo profesional
+24. TAREA RH-07: Completar el registro de incidencias laborales y medidas disciplinarias
+25. TAREA RH-08: Implementar la planificación de necesidades de personal
+26. TAREA RH-09: Completar la gestión visual de turnos y sustituciones
+27. TAREA RH-10: Verificar y completar el portal de autoservicio del empleado
+28. TAREA RH-11: Verificar la preparación de información laboral y fiscal
+29. TAREA RH-12: Pruebas de integración y regresión de Recursos Humanos
+30. TAREA GD-IMP-01: Numeración documental segura y prevención de códigos duplicados
+===============================================================================

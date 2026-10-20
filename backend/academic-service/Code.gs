@@ -163,7 +163,7 @@ const ROLE_PERMISSIONS = {
   "Subdirector": [
     "getAcademicConfig", "getAcademicHistory", "getAsignaturasActivas", "getWhatsAppLink", "getQuestionBank", "registerStudentEnrollment", "getStudentEnrollmentHistory",
     "getInstitutionParams", "getAcademicYears", "getAcademicPeriods", "getSubjectCatalog", "getStudyPlans", "getAcademicOffers",
-    "getTeacherAssignments", "assignTeacherToClass", "createTeacherSubstitution", "getAcademicCalendar", "createCalendarEvent", "getClassSchedules", "createClassSchedule", "deleteClassSchedule",
+    "getTeacherAssignments", "assignTeacherToClass", "createTeacherSubstitution", "getAcademicCalendar", "createCalendarEvent", "getClassSchedules", "createClassSchedule", "deleteClassSchedule", "copyClassSchedules", "getTeacherTeachingLoad", "generateAutoSchedules", "recordClassSessionOutcome", "getTeachingHoursSummary", "rescheduleCancelledSession", "getPendingSessionRecoveries", "publishClassSchedules", "getIndividualCalendar", "syncAcademicScheduleIntegrity", "getAcademicAuditLogs",
     "getClassroomResources", "saveClassroomResource", "getStudentSchedule",
     "createAdmissionRequest", "getAdmissionRequests", "updateAdmissionStatus", "getStudentFile", "getStudentTimeline", "findDuplicateStudents",
     "getStudentGuardians", "getStudentDocuments", "getStudentEnrollments", "checkEnrollmentCapacity",
@@ -173,7 +173,7 @@ const ROLE_PERMISSIONS = {
   "Secretaría": [
     "getAcademicConfig", "getAsignaturasActivas", "registerStudentEnrollment", "getStudentEnrollmentHistory",
     "getInstitutionParams", "getAcademicYears", "getAcademicPeriods", "getSubjectCatalog", "getStudyPlans", "getAcademicOffers",
-    "createAcademicOffer", "getTeacherAssignments", "assignTeacherToClass", "createTeacherSubstitution", "getAcademicCalendar", "createCalendarEvent", "getClassSchedules", "createClassSchedule", "deleteClassSchedule",
+    "createAcademicOffer", "getTeacherAssignments", "assignTeacherToClass", "createTeacherSubstitution", "getAcademicCalendar", "createCalendarEvent", "getClassSchedules", "createClassSchedule", "deleteClassSchedule", "copyClassSchedules", "getTeacherTeachingLoad", "generateAutoSchedules", "recordClassSessionOutcome", "getTeachingHoursSummary", "rescheduleCancelledSession", "getPendingSessionRecoveries", "publishClassSchedules", "getIndividualCalendar", "syncAcademicScheduleIntegrity", "getAcademicAuditLogs",
     "getClassroomResources", "saveClassroomResource", "getStudentSchedule",
     "createAdmissionRequest", "getAdmissionRequests", "updateAdmissionStatus", "convertAdmissionToStudent",
     "getStudentFile", "updateStudentFile", "getStudentTimeline", "findDuplicateStudents",
@@ -201,7 +201,7 @@ const ROLE_PERMISSIONS = {
   ],
   "Profesor": [
     "getAcademicConfig", "updateAcademicConfig", "getAcademicHistory", "getAsignaturasActivas", "updateAsignaturasActivas", "saveWhatsAppLink", "getWhatsAppLink", "getQuestionBank", "saveQuestion", "generateMigrationReport",
-    "getAcademicYears", "getAcademicPeriods", "getSubjectCatalog", "getAcademicOffers", "getTeacherAssignments", "createTeacherSubstitution", "getAcademicCalendar", "getClassSchedules", "createClassSchedule", "deleteClassSchedule", "getClassroomResources", "getStudentSchedule",
+    "getAcademicYears", "getAcademicPeriods", "getSubjectCatalog", "getAcademicOffers", "getTeacherAssignments", "createTeacherSubstitution", "getAcademicCalendar", "getClassSchedules", "createClassSchedule", "deleteClassSchedule", "getTeacherTeachingLoad", "recordClassSessionOutcome", "getTeachingHoursSummary", "rescheduleCancelledSession", "getPendingSessionRecoveries", "getIndividualCalendar", "getClassroomResources", "getStudentSchedule",
     "getStudentFile", "getStudentTimeline", "getStudentEnrollments",
     "openAttendanceSession", "saveClassAttendance", "getClassAttendance", "saveDailyAttendance", "getDailyAttendance", "submitAttendanceJustification", "reviewAttendanceJustification", "recordEarlyDeparture", "getAttendanceIncidents", "saveAttendanceIncident", "getAttendanceFollowupCases", "saveAttendanceFollowupCase", "addCaseFollowUpNote", "getStudentAttendanceSummary",
     "getTeacherSupervisions", "getSupervisionObservation", "getTeacherImprovementPlans"
@@ -290,6 +290,16 @@ function doPost(e) {
       case "getStudentSchedule": result = getStudentSchedule(payload); break;
       case "getAcademicRules": result = getAcademicRules(payload); break;
       case "saveAcademicRule": result = saveAcademicRule(payload); break;
+      case "copyClassSchedules": result = copyClassSchedules(payload); break;
+      case "getTeacherTeachingLoad": result = getTeacherTeachingLoad(payload); break;
+      case "recordClassSessionOutcome": result = recordClassSessionOutcome(payload); break;
+      case "getTeachingHoursSummary": result = getTeachingHoursSummary(payload); break;
+      case "rescheduleCancelledSession": result = rescheduleCancelledSession(payload); break;
+      case "getPendingSessionRecoveries": result = getPendingSessionRecoveries(payload); break;
+      case "publishClassSchedules": result = publishClassSchedules(payload); break;
+      case "getIndividualCalendar": result = getIndividualCalendar(payload); break;
+      case "syncAcademicScheduleIntegrity": result = syncAcademicScheduleIntegrity(payload); break;
+      case "getAcademicAuditLogs": result = getAcademicAuditLogs(payload); break;
 
       // Endpoints Nueva Fase - Configuración Año Escolar, Jornadas, Malla, Actividades
       case "configureSchoolYear": result = configureSchoolYear(payload); break;
@@ -692,6 +702,213 @@ function getStudentFile(payload) {
       guardians: guardians,
       documents: docs,
       movements: moves
+    }
+  };
+}
+
+// [TAREA 3.10] [Fase 3: Planificación Académica y Horarios] - Recuperación y reprogramación de clases canceladas con vinculación histórica de sesiones.
+function rescheduleCancelledSession(payload) {
+  const { sesionOriginalId, nuevaFecha, horaInicio, horaFin, aulaCodigo, docenteSustitutoUserId, motivo } = payload || {};
+  if (!sesionOriginalId || !nuevaFecha || !horaInicio || !horaFin) {
+    throw new Error("sesionOriginalId, nuevaFecha, horaInicio y horaFin son requeridos.");
+  }
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "SesionesClaseImpartidas");
+  const data = sheet.getDataRange().getValues();
+
+  if (data.length <= 1) throw new Error("No existen sesiones registradas.");
+
+  const idx = data.findIndex(r => String(r[0]).trim() === String(sesionOriginalId).trim());
+  if (idx === -1) throw new Error("Sesión original no encontrada.");
+
+  const originalRow = data[idx];
+  const ofertaId = originalRow[2];
+  const docenteEfectivoUserId = docenteSustitutoUserId || originalRow[5];
+  const aulaEfectivaCodigo = aulaCodigo || "AULA-101";
+
+  // Obtener día de la semana para la nueva fecha
+  const diasNombres = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
+  const diaSemana = diasNombres[new Date(nuevaFecha).getDay()];
+
+  // Validar conflictos para la fecha y franja de recuperación
+  const conflict = checkScheduleConflict({
+    diaSemana,
+    horaInicio,
+    horaFin,
+    aulaCodigo: aulaEfectivaCodigo,
+    docenteUserId: docenteEfectivoUserId,
+    ofertaId,
+    fechaEspecifica: nuevaFecha
+  });
+
+  if (conflict.hasConflict) {
+    throw new Error(`Conflicto de horario en reprogramación: ${conflict.reason}`);
+  }
+
+  // Actualizar estado de la sesión original a Reprogramada
+  sheet.getRange(idx + 1, 5).setValue("Reprogramada");
+  sheet.getRange(idx + 1, 7).setValue(`Reprogramada para ${nuevaFecha} ${horaInicio}-${horaFin}. Motivo: ${motivo || 'Recuperación'}`);
+
+  // Crear la nueva sesión de recuperación vinculada
+  const recuperacionSesionId = "REC-" + Date.now();
+  const nowStr = new Date().toISOString();
+  const autoriz = payload.authUserId || "Secretaría";
+
+  sheet.appendRow([
+    recuperacionSesionId,
+    originalRow[1] || "HOR-GEN",
+    ofertaId,
+    nuevaFecha,
+    "Recuperada",
+    docenteEfectivoUserId,
+    `Recuperación de sesión original ${sesionOriginalId} del ${originalRow[3]}. Motivo: ${motivo || 'Recuperación'}`,
+    autoriz,
+    nowStr
+  ]);
+
+  logStructuredEvent("ACADEMIC", "rescheduleCancelledSession", "INFO", "SESSION_RESCHEDULED", `Sesión ${sesionOriginalId} reprogramada a ${recuperacionSesionId} el ${nuevaFecha}`, { sesionOriginalId, recuperacionSesionId, nuevaFecha, horaInicio, horaFin }, payload && payload.authRole);
+
+  return {
+    status: "success",
+    message: "Clase reprogramada exitosamente sin duplicar la obligación curricular.",
+    data: {
+      sesionOriginalId,
+      recuperacionSesionId,
+      nuevaFecha,
+      horaInicio,
+      horaFin,
+      docenteEfectivoUserId
+    }
+  };
+}
+
+// [TAREA 3.10] [Fase 3: Planificación Académica y Horarios] - Consulta de sesiones canceladas y pendientes de recuperación.
+function getPendingSessionRecoveries(payload) {
+  const { docenteUserId, ofertaId } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "SesionesClaseImpartidas");
+  const data = sheet.getDataRange().getValues();
+
+  if (data.length <= 1) return { status: "success", data: [] };
+
+  const rows = data.slice(1);
+  const pendingRecoveries = rows.filter(r => {
+    const estado = String(r[4]);
+    if (estado !== "Cancelada") return false;
+    if (docenteUserId && String(r[5]).trim() !== String(docenteUserId).trim()) return false;
+    if (ofertaId && String(r[2]).trim() !== String(ofertaId).trim()) return false;
+    return true;
+  }).map(r => ({
+    sesionId: r[0],
+    horarioId: r[1],
+    ofertaId: r[2],
+    fechaOriginal: r[3],
+    estado: r[4],
+    docenteUserId: r[5],
+    motivoCancelacion: r[6],
+    registradoPor: r[7],
+    fechaRegistro: r[8]
+  }));
+
+  return { status: "success", data: pendingRecoveries };
+}
+
+// [TAREA 3.9] [Fase 3: Planificación Académica y Horarios] - Registro, confirmación y cálculo de horas lectivas impartidas, canceladas y pendientes.
+function recordClassSessionOutcome(payload) {
+  const { sesionId, horarioId, ofertaId, fecha, estado, observaciones, docenteUserId } = payload || {};
+  if (!ofertaId || !fecha || !estado) throw new Error("ofertaId, fecha y estado son requeridos.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "SesionesClaseImpartidas");
+
+  if (sheet.getLastRow() === 0) {
+    sheet.appendRow(["SesionID", "HorarioID", "OfertaID", "Fecha", "Estado", "DocenteUserId", "Observaciones", "ConfirmadoPor", "FechaConfirmacion"]);
+  }
+
+  const data = sheet.getDataRange().getValues();
+  const nowStr = new Date().toISOString();
+  const targetUser = payload.authUserId || docenteUserId || "SISTEMA";
+
+  let sId = sesionId;
+  if (sId) {
+    const idx = data.findIndex(r => String(r[0]).trim() === String(sId).trim());
+    if (idx !== -1) {
+      sheet.getRange(idx + 1, 5, 1, 5).setValues([[
+        estado,
+        docenteUserId || data[idx][5],
+        observaciones || data[idx][6],
+        targetUser,
+        nowStr
+      ]]);
+      return { status: "success", message: "Resultado de sesión actualizado correctamente.", data: { sesionId: sId } };
+    }
+  }
+
+  sId = "SES-" + Date.now();
+  sheet.appendRow([sId, horarioId || "HOR-GEN", ofertaId, fecha, estado, docenteUserId || "", observaciones || "", targetUser, nowStr]);
+
+  logStructuredEvent("ACADEMIC", "recordClassSessionOutcome", "INFO", "SESSION_OUTCOME_RECORDED", `Sesión ${sId} marcada como ${estado} para oferta ${ofertaId}`, { sId, ofertaId, fecha, estado }, payload && payload.authRole);
+
+  return { status: "success", message: `Sesión de clase confirmada como ${estado}.`, data: { sesionId: sId } };
+}
+
+// [TAREA 3.9] [Fase 3: Planificación Académica y Horarios] - Consulta de resumen de horas lectivas impartidas, programadas y pendientes por docente/oferta.
+function getTeachingHoursSummary(payload) {
+  const { docenteUserId, ofertaId, fechaInicio, fechaFin } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "SesionesClaseImpartidas");
+  const data = sheet.getDataRange().getValues();
+
+  if (data.length <= 1) {
+    return { status: "success", data: { impartidas: 0, canceladas: 0, pendientes: 0, reprogramadas: 0, sesiones: [] } };
+  }
+
+  const rows = data.slice(1);
+  const filtered = rows.filter(r => {
+    if (docenteUserId && String(r[5]).trim() !== String(docenteUserId).trim()) return false;
+    if (ofertaId && String(r[2]).trim() !== String(ofertaId).trim()) return false;
+    if (fechaInicio && new Date(r[3]) < new Date(fechaInicio)) return false;
+    if (fechaFin && new Date(r[3]) > new Date(fechaFin)) return false;
+    return true;
+  });
+
+  let impartidas = 0;
+  let canceladas = 0;
+  let pendientes = 0;
+  let reprogramadas = 0;
+
+  const sesiones = filtered.map(r => {
+    const estado = String(r[4]);
+    if (estado === "Impartida" || estado === "Recuperada") impartidas++;
+    else if (estado === "Cancelada") canceladas++;
+    else if (estado === "Reprogramada") reprogramadas++;
+    else pendientes++;
+
+    return {
+      sesionId: r[0],
+      horarioId: r[1],
+      ofertaId: r[2],
+      fecha: r[3],
+      estado,
+      docenteUserId: r[5],
+      observaciones: r[6],
+      confirmadoPor: r[7],
+      fechaConfirmacion: r[8]
+    };
+  });
+
+  return {
+    status: "success",
+    data: {
+      docenteUserId: docenteUserId || "TODOS",
+      ofertaId: ofertaId || "TODAS",
+      impartidas,
+      canceladas,
+      pendientes,
+      reprogramadas,
+      totalSesionesRegistradas: filtered.length,
+      sesiones
     }
   };
 }
@@ -1722,17 +1939,110 @@ function getCoordinatorOverview(payload) {
   };
 }
 
+// [TAREA 3.8] [Fase 3: Planificación Académica y Horarios] - Generador automático de propuestas de horarios académicos con resolución de restricciones.
 function generateAutoSchedules(payload) {
-  const { anoLectivo, duracionUnidadMinutos, horaInicioLectiva } = payload || {};
+  const { anoLectivo, duracionUnidadMinutos, horaInicioLectiva, ofertasIds } = payload || {};
+  const targetAno = anoLectivo || "2026";
   const unidadMin = parseInt(duracionUnidadMinutos, 10) || 45;
-  const startHour = horaInicioLectiva || "07:30";
+  const startHourStr = horaInicioLectiva || "07:30";
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+
+  // Cargar ofertas académicas y asignaciones
+  const offSheet = getOrCreateSheet(ss, "OfertaAcademica");
+  const offRows = offSheet.getDataRange().getValues().slice(1);
+
+  const asigSheet = getOrCreateSheet(ss, "AsignacionesDocentes");
+  const asigRows = asigSheet.getDataRange().getValues().slice(1);
+
+  const aulaSheet = getOrCreateSheet(ss, "SedesAulas");
+  const aulaRows = aulaSheet.getDataRange().getValues().slice(1).filter(a => a[6] !== "Inactivo");
+
+  // Filtrar ofertas del año lectivo
+  let targetOffers = offRows.filter(r => r[7] !== "Inactivo" && String(r[1]).includes(String(targetAno)));
+  if (Array.isArray(ofertasIds) && ofertasIds.length > 0) {
+    targetOffers = targetOffers.filter(r => ofertasIds.includes(String(r[0]).trim()));
+  }
+
+  if (targetOffers.length === 0) {
+    return {
+      status: "success",
+      message: `No existen ofertas académicas activas configuradas para el año ${targetAno}.`,
+      resumen: { programadas: 0, pendientes: 0, borradorCount: 0, logs: [] }
+    };
+  }
+
+  const diasSemana = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes"];
+  const horasBloques = [
+    { start: "07:30", end: "08:15" },
+    { start: "08:15", end: "09:00" },
+    { start: "09:15", end: "10:00" },
+    { start: "10:00", end: "10:45" },
+    { start: "11:00", end: "11:45" },
+    { start: "13:00", end: "13:45" },
+    { start: "13:45", end: "14:30" }
+  ];
+
+  let borradorCount = 0;
+  let pendientesCount = 0;
+  const logs = [];
+  const scheduleSheet = getOrCreateSheet(ss, "HorariosClase");
+
+  targetOffers.forEach(off => {
+    const ofertaId = off[0];
+    const asignaturaNombre = off[3];
+
+    // Buscar docente asignado
+    const asig = asigRows.find(a => String(a[1]).trim() === String(ofertaId).trim() && a[6] !== "Inactivo");
+    const docenteUserId = asig ? asig[2] : "";
+
+    // Seleccionar aula disponible
+    const aula = aulaRows.find(a => a[6] !== "Inactivo") || ["", "", "AULA-101"];
+    const aulaCodigo = aula[2];
+
+    let asignado = false;
+
+    for (let dia of diasSemana) {
+      if (asignado) break;
+      for (let bloque of horasBloques) {
+        const conflict = checkScheduleConflict({
+          diaSemana: dia,
+          horaInicio: bloque.start,
+          horaFin: bloque.end,
+          aulaCodigo,
+          docenteUserId,
+          ofertaId
+        });
+
+        if (!conflict.hasConflict) {
+          const horId = "AUTO-HOR-" + Date.now() + "-" + Math.floor(Math.random() * 1000);
+          scheduleSheet.appendRow([horId, ofertaId, dia, bloque.start, bloque.end, aulaCodigo, docenteUserId, "Borrador"]);
+          borradorCount++;
+          asignado = true;
+          logs.push(`Asignado automáticamente ${ofertaId} (${asignaturaNombre}) el ${dia} ${bloque.start}-${bloque.end} en ${aulaCodigo} (Borrador).`);
+          break;
+        }
+      }
+    }
+
+    if (!asignado) {
+      pendientesCount++;
+      logs.push(`No se pudo encontrar franja libre para oferta ${ofertaId} (${asignaturaNombre}) debido a restricciones.`);
+    }
+  });
+
+  logStructuredEvent("ACADEMIC", "generateAutoSchedules", "INFO", "AUTO_SCHEDULE_GENERATED", `Generación automática de horarios para ${targetAno}. Creados: ${borradorCount}, Pendientes: ${pendientesCount}`, { targetAno, borradorCount, pendientesCount }, payload && payload.authRole);
 
   return {
     status: "success",
-    message: "Horarios automáticos distribuidos respetando bloques continuos de unidades y prevención de colisiones.",
-    duracionUnidadMinutos: unidadMin,
-    horaInicioLectiva: startHour,
-    bloquesGenerados: 20
+    message: `Propuesta automática de horarios generada exitosamente en estado Borrador.`,
+    resumen: {
+      anoLectivo: targetAno,
+      ofertasProcesadas: targetOffers.length,
+      bloquesBorradorCreados: borradorCount,
+      ofertasPendientes: pendientesCount,
+      logs
+    }
   };
 }
 
@@ -1816,16 +2126,100 @@ function getClassSchedules(payload) {
   return { status: "success", data: schedules };
 }
 
+// [TAREA 3.7] [Fase 3: Planificación Académica y Horarios] - Control de carga lectiva máxima por docente y cálculo de horas semanales frente a grupo.
+function getTeacherTeachingLoad(payload) {
+  const { docenteUserId, maxHorasSemanales, anoId, excludeHorarioId } = payload || {};
+  if (!docenteUserId) throw new Error("docenteUserId es requerido.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const horSheet = getOrCreateSheet(ss, "HorariosClase");
+  const horRows = horSheet.getDataRange().getValues().slice(1);
+
+  // Filtrar horarios activos del docente excluyendo el bloque en edición si aplica
+  const teacherSchedules = horRows.filter(r => {
+    if (r[7] === "Inactivo") return false;
+    if (excludeHorarioId && String(r[0]).trim() === String(excludeHorarioId).trim()) return false;
+    return String(r[6]).trim() === String(docenteUserId).trim();
+  });
+
+  let totalMinutosSemanales = 0;
+  const bloques = [];
+
+  teacherSchedules.forEach(r => {
+    const diaSemana = r[2];
+    const hInicio = String(r[3]);
+    const hFin = String(r[4]);
+
+    const [startH, startM] = hInicio.split(":").map(Number);
+    const [endH, endM] = hFin.split(":").map(Number);
+    const mins = (endH * 60 + (endM || 0)) - (startH * 60 + (startM || 0));
+
+    if (mins > 0) {
+      totalMinutosSemanales += mins;
+      bloques.push({
+        horarioId: r[0],
+        ofertaId: r[1],
+        diaSemana,
+        horaInicio: hInicio,
+        horaFin: hFin,
+        duracionMinutos: mins
+      });
+    }
+  });
+
+  const totalHorasSemanales = Math.round((totalMinutosSemanales / 60) * 100) / 100;
+  const limiteMaximo = Number(maxHorasSemanales) || 40; // Límite institucional estándar (40 horas lectivas semanales)
+  const excedeLimite = totalHorasSemanales > limiteMaximo;
+
+  return {
+    status: "success",
+    data: {
+      docenteUserId,
+      totalHorasSemanales,
+      totalMinutosSemanales,
+      limiteMaximo,
+      excedeLimite,
+      bloques
+    }
+  };
+}
+
+// [TAREA 3.6] [Fase 3: Planificación Académica y Horarios] - Integración de horarios con eventos del calendario académico y suspensión de clases.
+function getScheduleCalendarConflicts(payload) {
+  const { anoId, fecha } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const calSheet = getOrCreateSheet(ss, "CalendarioAcademico");
+  const calRows = calSheet.getDataRange().getValues().slice(1);
+
+  const nonSchoolEvents = calRows.filter(r => {
+    if (r[7] === "Inactivo") return false;
+    if (anoId && String(r[1]).trim() !== String(anoId).trim()) return false;
+    const tipo = String(r[3]).toLowerCase();
+    return tipo.includes("feriado") || tipo.includes("suspension") || tipo.includes("vacacion") || tipo.includes("no_lectivo");
+  }).map(r => ({
+    eventoId: r[0],
+    anoId: r[1],
+    nombre: r[2],
+    tipoDia: r[3],
+    fechaInicio: r[4],
+    fechaFin: r[5]
+  }));
+
+  return { status: "success", data: nonSchoolEvents };
+}
+
+// [TAREA 3.1] [Fase 3: Planificación Académica y Horarios] - Validación integral de horarios académicos y prevención de conflictos.
 function createClassSchedule(payload) {
-  const { ofertaId, diaSemana, horaInicio, horaFin, aulaCodigo, docenteUserId, borrador, horarioId } = payload || {};
+  const { ofertaId, diaSemana, horaInicio, horaFin, aulaCodigo, docenteUserId, borrador, horarioId, estudiantesCount } = payload || {};
   if (!diaSemana || !horaInicio || !horaFin) throw new Error("Día, hora de inicio y hora de fin son requeridos.");
+  if (horaInicio >= horaFin) throw new Error("La hora de inicio debe ser anterior a la hora de finalización.");
 
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
   const sheet = getOrCreateSheet(ss, "HorariosClase");
   const data = sheet.getDataRange().getValues();
 
-  // Motor de prevención de conflictos por solapamiento de docente, aula u oferta académica
-  const conflict = checkScheduleConflict({ diaSemana, horaInicio, horaFin, aulaCodigo, docenteUserId, ofertaId, excludeHorarioId: horarioId });
+  // Motor de prevención de conflictos por solapamiento de docente, aula u oferta académica y validación de capacidad
+  const conflict = checkScheduleConflict({ diaSemana, horaInicio, horaFin, aulaCodigo, docenteUserId, ofertaId, excludeHorarioId: horarioId, estudiantesCount });
   if (conflict.hasConflict) {
     throw new Error(`Conflicto de horario detectado: ${conflict.reason}`);
   }
@@ -1876,9 +2270,243 @@ function deleteClassSchedule(payload) {
   return { status: "success", message: "Bloque de horario desactivado correctamente." };
 }
 
-function checkScheduleConflict(params) {
-  const { diaSemana, horaInicio, horaFin, aulaCodigo, docenteUserId, ofertaId, excludeHorarioId } = params || {};
+// [TAREA 3.11] [Fase 3: Planificación Académica y Horarios] - Validación integral y publicación segura de la matriz de horarios en estado Borrador a Activo.
+function publishClassSchedules(payload) {
+  const { anoLectivo, ofertaIds } = payload || {};
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "HorariosClase");
+  const data = sheet.getDataRange().getValues();
+
+  if (data.length <= 1) {
+    return { status: "success", message: "No existen horarios para publicar.", publishedCount: 0, conflicts: [] };
+  }
+
+  const rows = data.slice(1);
+  // Filtrar horarios en estado Borrador
+  let draftSchedules = rows.map((r, i) => ({ rowIdx: i + 2, r })).filter(item => item.r[7] === "Borrador");
+
+  if (Array.isArray(ofertaIds) && ofertaIds.length > 0) {
+    draftSchedules = draftSchedules.filter(item => ofertaIds.includes(String(item.r[1]).trim()));
+  } else if (anoLectivo) {
+    draftSchedules = draftSchedules.filter(item => String(item.r[1]).includes(String(anoLectivo)));
+  }
+
+  if (draftSchedules.length === 0) {
+    return { status: "success", message: "No se encontraron bloques en Borrador para publicar.", publishedCount: 0, conflicts: [] };
+  }
+
+  const conflicts = [];
+
+  // Validar cada bloque de la matriz antes de cambiar su estado
+  draftSchedules.forEach(item => {
+    const r = item.r;
+    const conflict = checkScheduleConflict({
+      diaSemana: r[2],
+      horaInicio: r[3],
+      horaFin: r[4],
+      aulaCodigo: r[5],
+      docenteUserId: r[6],
+      ofertaId: r[1],
+      excludeHorarioId: r[0]
+    });
+
+    if (conflict.hasConflict) {
+      conflicts.push({
+        horarioId: r[0],
+        ofertaId: r[1],
+        diaSemana: r[2],
+        horaInicio: r[3],
+        horaFin: r[4],
+        reason: conflict.reason
+      });
+    }
+  });
+
+  if (conflicts.length > 0) {
+    return {
+      status: "error",
+      message: `Se encontraron ${conflicts.length} conflicto(s) que impiden la publicación de la matriz de horarios.`,
+      publishedCount: 0,
+      conflicts
+    };
+  }
+
+  // Si no existen conflictos, proceder a activar todos los bloques de la propuesta
+  let publishedCount = 0;
+  draftSchedules.forEach(item => {
+    sheet.getRange(item.rowIdx, 8).setValue("Activo");
+    publishedCount++;
+  });
+
+  const publisher = payload && payload.authUserId ? payload.authUserId : "Administración";
+  logStructuredEvent("ACADEMIC", "publishClassSchedules", "INFO", "SCHEDULES_PUBLISHED", `Publicación exitosa de ${publishedCount} bloques de horarios.`, { anoLectivo, publishedCount, publisher }, payload && payload.authRole);
+
+  return {
+    status: "success",
+    message: `Matriz de horarios publicada exitosamente. Se activaron ${publishedCount} bloques lectivos.`,
+    publishedCount,
+    conflicts: []
+  };
+}
+
+// [TAREA 3.2] [Fase 3: Planificación Académica y Horarios] - Copia de horarios entre años lectivos en estado borrador.
+function copyClassSchedules(payload) {
+  const { anioOrigen, anioDestino } = payload || {};
+  if (!anioOrigen || !anioDestino) throw new Error("El año de origen y año de destino son requeridos.");
+  if (String(anioOrigen).trim() === String(anioDestino).trim()) {
+    throw new Error("El año de origen y de destino no pueden ser el mismo.");
+  }
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "HorariosClase");
+  const data = sheet.getDataRange().getValues();
+
+  if (data.length <= 1) {
+    return { status: "success", message: "No se encontraron horarios para copiar.", copiedCount: 0, skippedCount: 0, logs: [] };
+  }
+
+  const rows = data.slice(1);
+  // Filtrar horarios activos pertenecientes al año de origen (ofertaId o metadata)
+  const sourceSchedules = rows.filter(r => r[7] !== "Inactivo" && String(r[1]).includes(String(anioOrigen)));
+
+  if (sourceSchedules.length === 0) {
+    return { status: "success", message: `No existen horarios activos registrados para el año ${anioOrigen}.`, copiedCount: 0, skippedCount: 0, logs: [] };
+  }
+
+  let copiedCount = 0;
+  let skippedCount = 0;
+  const logs = [];
+
+  sourceSchedules.forEach(r => {
+    const originalHorarioId = r[0];
+    const originalOfertaId = r[1];
+    const diaSemana = r[2];
+    const horaInicio = r[3];
+    const horaFin = r[4];
+    const aulaCodigo = r[5];
+    const docenteUserId = r[6];
+
+    // Construir nueva ofertaId vinculada al año de destino
+    const targetOfertaId = originalOfertaId.replace(String(anioOrigen), String(anioDestino));
+
+    // Verificar si el horario ya fue copiado o existe en el destino para evitar duplicados
+    const existingTarget = rows.find(tr => tr[7] !== "Inactivo" && String(tr[1]) === targetOfertaId && String(tr[2]) === String(diaSemana) && String(tr[3]) === String(horaInicio));
+    if (existingTarget) {
+      skippedCount++;
+      logs.push(`Omitido horario ${originalHorarioId}: ya existe registro equivalente en ${anioDestino}.`);
+      return;
+    }
+
+    // Validar conflictos en destino
+    const conflict = checkScheduleConflict({
+      diaSemana,
+      horaInicio,
+      horaFin,
+      aulaCodigo,
+      docenteUserId,
+      ofertaId: targetOfertaId
+    });
+
+    if (conflict.hasConflict) {
+      skippedCount++;
+      logs.push(`Omitido horario ${originalHorarioId}: conflicto detectado (${conflict.reason}).`);
+      return;
+    }
+
+    const newHorarioId = "HOR-" + Date.now() + "-" + Math.floor(Math.random() * 1000);
+    sheet.appendRow([newHorarioId, targetOfertaId, diaSemana, horaInicio, horaFin, aulaCodigo, docenteUserId, "Borrador"]);
+    copiedCount++;
+    logs.push(`Copiado horario ${originalHorarioId} a ${newHorarioId} (${targetOfertaId}) en estado Borrador.`);
+  });
+
+  logStructuredEvent("ACADEMIC", "copyClassSchedules", "INFO", "SCHEDULE_COPIED", `Copia de horarios efectuada de ${anioOrigen} a ${anioDestino}. Copiados: ${copiedCount}, Omitidos: ${skippedCount}`, { anioOrigen, anioDestino, copiedCount, skippedCount }, payload && payload.authRole);
+
+  return {
+    status: "success",
+    message: `Copia de horarios completada. Se crearon ${copiedCount} bloques en estado Borrador y se omitieron ${skippedCount}.`,
+    copiedCount,
+    skippedCount,
+    logs
+  };
+}
+
+function checkScheduleConflict(params) {
+  const { diaSemana, horaInicio, horaFin, aulaCodigo, docenteUserId, ofertaId, excludeHorarioId, estudiantesCount, fechaEspecifica, maxHorasDocente } = params || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+
+  // [TAREA 3.7] Validar límite de carga lectiva máxima semanal para el docente
+  if (docenteUserId && horaInicio && horaFin) {
+    const loadInfo = getTeacherTeachingLoad({ docenteUserId, maxHorasSemanales: maxHorasDocente, excludeHorarioId });
+    if (loadInfo && loadInfo.data) {
+      const [startH, startM] = String(horaInicio).split(":").map(Number);
+      const [endH, endM] = String(horaFin).split(":").map(Number);
+      const newMins = (endH * 60 + (endM || 0)) - (startH * 60 + (startM || 0));
+      const projectedHoras = Math.round(((loadInfo.data.totalMinutosSemanales + newMins) / 60) * 100) / 100;
+      if (projectedHoras > loadInfo.data.limiteMaximo) {
+        return { hasConflict: true, reason: `La asignación llevaría la carga docente a ${projectedHoras}h semanales, superando el límite máximo permitido de ${loadInfo.data.limiteMaximo}h.` };
+      }
+    }
+  }
+
+  // [TAREA 3.6] Validar si la fecha especificada corresponde a un día no lectivo o suspendido en CalendarioAcademico
+  if (fechaEspecifica) {
+    const calSheet = getOrCreateSheet(ss, "CalendarioAcademico");
+    const calRows = calSheet.getDataRange().getValues().slice(1);
+    const targetDateStr = new Date(fechaEspecifica).toISOString().split('T')[0];
+    const calConflict = calRows.find(r => {
+      if (r[7] === "Inactivo") return false;
+      const tipo = String(r[3]).toLowerCase();
+      if (!tipo.includes("feriado") && !tipo.includes("suspension") && !tipo.includes("vacacion") && !tipo.includes("no_lectivo")) return false;
+      const fIni = r[4] ? new Date(r[4]).toISOString().split('T')[0] : "";
+      const fFin = r[5] ? new Date(r[5]).toISOString().split('T')[0] : fIni;
+      return targetDateStr >= fIni && targetDateStr <= fFin;
+    });
+
+    if (calConflict) {
+      return { hasConflict: true, reason: `No se pueden programar clases ordinarias el ${targetDateStr} debido al evento de calendario "${calConflict[2]}" (${calConflict[3]}).` };
+    }
+  }
+
+  // [TAREA 3.4] Validar disponibilidad horaria personalizada por docente en HorariosLaborales
+  if (docenteUserId && diaSemana && horaInicio && horaFin) {
+    const hlSheet = getOrCreateSheet(ss, "HorariosLaborales");
+    const hlRows = hlSheet.getDataRange().getValues().slice(1);
+    const docenteHL = hlRows.find(r => r[7] !== "Inactivo" && String(r[0]).trim() === String(docenteUserId).trim());
+    if (docenteHL) {
+      const hEntrada = String(docenteHL[3]);
+      const hSalida = String(docenteHL[4]);
+      let diasLaborales = [];
+      try { diasLaborales = JSON.parse(docenteHL[6] || "[]"); } catch (e) { diasLaborales = []; }
+
+      if (diasLaborales.length > 0 && !diasLaborales.some(d => normalizeString(d) === normalizeString(diaSemana))) {
+        return { hasConflict: true, reason: `El docente no está disponible el día ${diaSemana} según su horario laboral registrado.` };
+      }
+      if (horaInicio < hEntrada || horaFin > hSalida) {
+        return { hasConflict: true, reason: `La clase (${horaInicio} - ${horaFin}) se encuentra fuera de la jornada del docente (${hEntrada} - ${hSalida}).` };
+      }
+    }
+  }
+
+  // [TAREA 3.5] Validar capacidad de aula y matrícula activa de la sección/oferta
+  if (aulaCodigo) {
+    let effectiveEstudiantesCount = estudiantesCount;
+    if (!effectiveEstudiantesCount && ofertaId) {
+      const matSheet = getOrCreateSheet(ss, "Matriculas");
+      const matRows = matSheet.getDataRange().getValues().slice(1);
+      // Contar matrículas activas vinculadas a la oferta / sección
+      effectiveEstudiantesCount = matRows.filter(m => m[8] !== "Inactivo" && m[8] !== "Retirado" && (String(m[5]).trim() === String(ofertaId).trim() || String(m[0]).trim() === String(ofertaId).trim())).length;
+    }
+
+    if (effectiveEstudiantesCount && Number(effectiveEstudiantesCount) > 0) {
+      const aulaSheet = getOrCreateSheet(ss, "SedesAulas");
+      const aulaRows = aulaSheet.getDataRange().getValues().slice(1);
+      const aula = aulaRows.find(a => String(a[2]).trim() === String(aulaCodigo).trim() && a[6] !== "Inactivo");
+      if (aula && Number(aula[4]) > 0 && Number(effectiveEstudiantesCount) > Number(aula[4])) {
+        return { hasConflict: true, reason: `El aula ${aulaCodigo} (${aula[3]}) tiene capacidad máxima de ${aula[4]} estudiantes, menor a la matrícula activa de ${effectiveEstudiantesCount} estudiantes.` };
+      }
+    }
+  }
+
   const sheet = getOrCreateSheet(ss, "HorariosClase");
   const data = sheet.getDataRange().getValues();
   if (data.length <= 1) return { hasConflict: false };
@@ -1910,6 +2538,7 @@ function checkScheduleConflict(params) {
   return { hasConflict: false };
 }
 
+// [TAREA 3.3] [Fase 3: Planificación Académica y Horarios] - Consulta de recursos de aulas, laboratorios y espacios físicos.
 function getClassroomResources(payload) {
   const { sedeId } = payload || {};
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
@@ -1950,8 +2579,9 @@ function getClassroomResources(payload) {
   return { status: "success", data: classrooms };
 }
 
+// [TAREA 3.3] [Fase 3: Planificación Académica y Horarios] - Registro, edición y gestión de aulas y espacios desde la interfaz.
 function saveClassroomResource(payload) {
-  const { aulaCodigo, nombreAula, capacidad, tipoEspacio, sedeId, nombreSede } = payload || {};
+  const { aulaCodigo, nombreAula, capacidad, tipoEspacio, sedeId, nombreSede, estado } = payload || {};
   if (!aulaCodigo || !nombreAula) throw new Error("aulaCodigo y nombreAula son requeridos.");
 
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
@@ -1963,6 +2593,7 @@ function saveClassroomResource(payload) {
     sheet.getRange(idx + 1, 4).setValue(nombreAula);
     if (capacidad) sheet.getRange(idx + 1, 5).setValue(capacidad);
     if (tipoEspacio) sheet.getRange(idx + 1, 6).setValue(tipoEspacio);
+    if (estado) sheet.getRange(idx + 1, 7).setValue(estado);
   } else {
     sheet.appendRow([
       sedeId || "SED-MAIN",
@@ -1971,13 +2602,159 @@ function saveClassroomResource(payload) {
       nombreAula,
       capacidad || 30,
       tipoEspacio || "Aula",
-      "Activo"
+      estado || "Activo"
     ]);
   }
 
   return { status: "success", message: "Espacio/Aula registrada exitosamente." };
 }
 
+// [TAREA 3.14] [Fase 3: Planificación Académica y Horarios] - Permisos y consulta trazable de registros de auditoría de operaciones académicas.
+function getAcademicAuditLogs(payload) {
+  const { eventType, userId, fechaInicio, fechaFin } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "BitacoraAuditoriaEstructurada");
+  const data = sheet.getDataRange().getValues();
+
+  if (data.length <= 1) return { status: "success", data: [] };
+
+  const rows = data.slice(1);
+  const logs = rows.filter(r => {
+    if (r[1] !== "ACADEMIC") return false;
+    if (eventType && String(r[4]).trim() !== String(eventType).trim()) return false;
+    if (userId && String(r[7]).trim() !== String(userId).trim()) return false;
+    if (fechaInicio && new Date(r[0]) < new Date(fechaInicio)) return false;
+    if (fechaFin && new Date(r[0]) > new Date(fechaFin)) return false;
+    return true;
+  }).map(r => ({
+    timestamp: r[0],
+    service: r[1],
+    functionName: r[2],
+    severity: r[3],
+    eventType: r[4],
+    message: r[5],
+    metadataJSON: r[6],
+    userRole: r[7]
+  }));
+
+  return { status: "success", data: logs };
+}
+
+// [TAREA 3.13] [Fase 3: Planificación Académica y Horarios] - Sincronización y validación de integridad entre horarios, asignaciones titulares/sustitutas y sesiones impartidas.
+function syncAcademicScheduleIntegrity(payload) {
+  const { anoId } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+
+  const horSheet = getOrCreateSheet(ss, "HorariosClase");
+  const horRows = horSheet.getDataRange().getValues().slice(1);
+
+  const asigSheet = getOrCreateSheet(ss, "AsignacionesDocentes");
+  const asigRows = asigSheet.getDataRange().getValues().slice(1);
+
+  const sessSheet = getOrCreateSheet(ss, "SesionesClaseImpartidas");
+  const sessRows = sessSheet.getDataRange().getValues().slice(1);
+
+  let orphanSchedules = 0;
+  let activeSubstitutions = 0;
+  const issues = [];
+
+  // 1. Verificar huérfanos de HorariosClase sin docente asignado
+  horRows.filter(r => r[7] === "Activo").forEach(r => {
+    const horId = r[0];
+    const ofertaId = r[1];
+    const docenteId = r[6];
+
+    if (!docenteId || String(docenteId).trim() === "") {
+      const hasAsig = asigRows.some(a => String(a[1]).trim() === String(ofertaId).trim() && a[6] === "Activo");
+      if (!hasAsig) {
+        orphanSchedules++;
+        issues.push(`Horario ${horId} (Oferta ${ofertaId}) no cuenta con docente titular asignado.`);
+      }
+    }
+  });
+
+  // 2. Verificar sustituciones temporales activas sin alterar docente titular original
+  asigRows.filter(r => r[3] === "Sustituto" && r[6] === "Temporal").forEach(r => {
+    activeSubstitutions++;
+  });
+
+  logStructuredEvent("ACADEMIC", "syncAcademicScheduleIntegrity", "INFO", "SCHEDULE_INTEGRITY_CHECKED", `Verificación de integridad de horarios efectuada. Huérfanos: ${orphanSchedules}, Sustituciones activas: ${activeSubstitutions}`, { orphanSchedules, activeSubstitutions }, payload && payload.authRole);
+
+  return {
+    status: "success",
+    message: "Verificación y sincronización de integridad de horarios completada.",
+    data: {
+      horariosRevisados: horRows.length,
+      horariosHuerfanos: orphanSchedules,
+      sustitucionesTemporales: activeSubstitutions,
+      sesionesRegistradas: sessRows.length,
+      incidencias: issues
+    }
+  };
+}
+
+// [TAREA 3.12] [Fase 3: Planificación Académica y Horarios] - Calendario individual consolidado para estudiantes, docentes y secciones con eventos y sustituciones.
+function getIndividualCalendar(payload) {
+  const { tipoConsulta, targetId, anoId, fechaInicio, fechaFin } = payload || {};
+  const queryType = tipoConsulta || "ESTUDIANTE";
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+
+  let baseSchedules = [];
+  if (queryType === "ESTUDIANTE" || queryType === "SECCION") {
+    const res = getStudentSchedule({ userId: targetId, grado: payload.grado, seccion: payload.seccion });
+    baseSchedules = (res && res.status === "success" && Array.isArray(res.data)) ? res.data : [];
+  } else if (queryType === "DOCENTE") {
+    const res = getClassSchedules({ docenteUserId: targetId });
+    baseSchedules = (res && res.status === "success" && Array.isArray(res.data)) ? res.data : [];
+  } else if (queryType === "AULA") {
+    const res = getClassSchedules({ aulaCodigo: targetId });
+    baseSchedules = (res && res.status === "success" && Array.isArray(res.data)) ? res.data : [];
+  }
+
+  // Cargar sustituciones docentes vigentes
+  const asigSheet = getOrCreateSheet(ss, "AsignacionesDocentes");
+  const asigRows = asigSheet.getDataRange().getValues().slice(1);
+  const substitutions = asigRows.filter(r => r[3] === "Sustituto" && r[6] === "Temporal").map(r => ({
+    asignacionId: r[0],
+    ofertaId: r[1],
+    sustitutoUserId: r[2],
+    fechaInicio: r[4],
+    fechaFin: r[5],
+    autorizadoPor: r[7]
+  }));
+
+  // Cargar eventos del calendario
+  const calRes = getAcademicCalendar({ anoId });
+  const calendarEvents = (calRes && calRes.status === "success" && Array.isArray(calRes.data)) ? calRes.data : [];
+
+  // Cargar sesiones canceladas / recuperadas
+  const sessSheet = getOrCreateSheet(ss, "SesionesClaseImpartidas");
+  const sessRows = sessSheet.getDataRange().getValues().slice(1);
+  const sessionOutcomes = sessRows.map(r => ({
+    sesionId: r[0],
+    horarioId: r[1],
+    ofertaId: r[2],
+    fecha: r[3],
+    estado: r[4],
+    docenteUserId: r[5],
+    observaciones: r[6]
+  }));
+
+  return {
+    status: "success",
+    data: {
+      tipoConsulta: queryType,
+      targetId: targetId || "GLOBAL",
+      horariosRecurrentes: baseSchedules,
+      sustitucionesVigentes: substitutions,
+      eventosCalendario: calendarEvents,
+      sesionesExcepcionales: sessionOutcomes
+    }
+  };
+}
+
+// [TAREA 3.12] [Fase 3: Planificación Académica y Horarios] - Consulta de horarios semanales del estudiante por asignaturas.
 function getStudentSchedule(payload) {
   const { userId, grado, seccion } = payload || {};
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);

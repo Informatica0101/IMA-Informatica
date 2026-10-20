@@ -741,6 +741,117 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // [TAREA 3.3] [Fase 3: Planificación Académica y Horarios] - Controlador de interfaz para la gestión de aulas, laboratorios y recursos físicos (#modal-classroom-manager).
+    window.openClassroomManagerModal = async function() {
+        const modal = document.getElementById('modal-classroom-manager');
+        if (!modal) return;
+        modal.classList.remove('hidden');
+        await loadClassroomResourcesTable();
+    };
+
+    async function loadClassroomResourcesTable() {
+        const tbody = document.getElementById('tbl-classroom-resources-body');
+        if (!tbody) return;
+        tbody.innerHTML = '<tr><td colspan="6" class="p-3 text-center text-slate-400">Cargando espacios...</td></tr>';
+
+        try {
+            const res = await fetchApi('ACADEMIC', 'getClassroomResources', {});
+            if (res && res.status === 'success' && Array.isArray(res.data)) {
+                if (res.data.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="6" class="p-3 text-center text-slate-400">No hay espacios registrados.</td></tr>';
+                    return;
+                }
+                tbody.innerHTML = res.data.map(cls => `
+                    <tr class="hover:bg-slate-50">
+                        <td class="p-2.5 font-bold text-slate-800">${cls.aulaCodigo}</td>
+                        <td class="p-2.5">${cls.nombreAula}</td>
+                        <td class="p-2.5"><span class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-slate-100 text-slate-700">${cls.tipoEspacio || 'Aula'}</span></td>
+                        <td class="p-2.5 font-medium">${cls.capacidad || 30} est.</td>
+                        <td class="p-2.5">
+                            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${cls.estado === 'Inactivo' ? 'bg-red-100 text-red-700' : 'bg-emerald-100 text-emerald-700'}">
+                                ${cls.estado || 'Activo'}
+                            </span>
+                        </td>
+                        <td class="p-2.5 text-right">
+                            <button class="btn-edit-clsr text-blue-600 hover:text-blue-800 font-bold text-[11px]"
+                                data-codigo="${cls.aulaCodigo}"
+                                data-nombre="${cls.nombreAula}"
+                                data-capacidad="${cls.capacidad || 30}"
+                                data-tipo="${cls.tipoEspacio || 'Aula'}"
+                                data-estado="${cls.estado || 'Activo'}">
+                                <i class="fa-solid fa-pen-to-square mr-0.5"></i> Editar
+                            </button>
+                        </td>
+                    </tr>
+                `).join('');
+
+                document.querySelectorAll('.btn-edit-clsr').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        document.getElementById('clsr-codigo').value = btn.getAttribute('data-codigo');
+                        document.getElementById('clsr-nombre').value = btn.getAttribute('data-nombre');
+                        document.getElementById('clsr-capacidad').value = btn.getAttribute('data-capacidad');
+                        document.getElementById('clsr-tipo').value = btn.getAttribute('data-tipo');
+                        document.getElementById('clsr-estado').value = btn.getAttribute('data-estado');
+                    });
+                });
+            } else {
+                tbody.innerHTML = '<tr><td colspan="6" class="p-3 text-center text-red-500">Error al cargar espacios.</td></tr>';
+            }
+        } catch (err) {
+            console.error('Error al obtener recursos de aulas:', err);
+            tbody.innerHTML = '<tr><td colspan="6" class="p-3 text-center text-red-500">Error de comunicación con el servidor.</td></tr>';
+        }
+    }
+
+    const btnCloseClsrManager = document.getElementById('btn-close-classroom-manager');
+    if (btnCloseClsrManager) {
+        btnCloseClsrManager.addEventListener('click', () => {
+            const modal = document.getElementById('modal-classroom-manager');
+            if (modal) modal.classList.add('hidden');
+        });
+    }
+
+    const formClassroomResource = document.getElementById('form-classroom-resource');
+    if (formClassroomResource) {
+        formClassroomResource.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const aulaCodigo = document.getElementById('clsr-codigo').value.trim();
+            const nombreAula = document.getElementById('clsr-nombre').value.trim();
+            const capacidad = parseInt(document.getElementById('clsr-capacidad').value, 10);
+            const tipoEspacio = document.getElementById('clsr-tipo').value;
+            const estado = document.getElementById('clsr-estado').value;
+
+            if (!aulaCodigo || !nombreAula) {
+                alert('Código y Nombre del espacio son obligatorios.');
+                return;
+            }
+
+            try {
+                if (window.showLoading) window.showLoading('Guardando recurso de aula/espacio...');
+                const res = await fetchApi('ACADEMIC', 'saveClassroomResource', {
+                    aulaCodigo,
+                    nombreAula,
+                    capacidad,
+                    tipoEspacio,
+                    estado
+                });
+                if (window.hideLoading) window.hideLoading();
+
+                if (res && res.status === 'success') {
+                    alert('Espacio guardado correctamente.');
+                    formClassroomResource.reset();
+                    await loadClassroomResourcesTable();
+                } else {
+                    alert(res && res.message ? res.message : 'Error al guardar el espacio.');
+                }
+            } catch (err) {
+                if (window.hideLoading) window.hideLoading();
+                console.error('Error al guardar espacio:', err);
+                alert('Error al conectar con el servidor.');
+            }
+        });
+    }
+
 // ---------------------------------------------------------------------------
 // FASE 29 & E-001..E-003: GESTOR DE RESPALDOS Y RESTAURACIÓN DE SISTEMA
 // ---------------------------------------------------------------------------

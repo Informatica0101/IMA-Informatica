@@ -183,13 +183,13 @@ function doGet() { return textResponse({ status: "success", service: "ACCOUNTING
 
 const ROLE_PERMISSIONS = {
   "Administrador": ["*"],
-  "Director": ["configurePaymentConcept", "configurePaymentTariff", "getStudentAccountStatement", "recordStudentPayment", "uploadPaymentVoucher", "getPaymentVouchers", "reviewPaymentVoucher", "generatePaymentReceiptPDF", "createFiscalInvoice", "getFiscalInvoices", "configureGatewayIntegration", "testGatewayConnection", "recordCashBankMovement", "closeCashSession", "getCashBankSummary", "performBankReconciliation", "recordAccountsPayableExpense", "getChartOfAccounts", "saveAccountItem", "recordAccountingJournalEntry", "getAccountingJournalEntries", "getBudgets", "saveBudgetPlan", "getBudgetExecutionReport", "getFinancialSummary", "getAccountsReceivablePayableSummary", "generatePayrollPeriod", "recordStaffAttendance", "getStaffPayrollReceipt", "recordInventoryMovement", "getInventoryKardex", "registerSupplier", "createEmployeeRecord", "getEmployeeRecords", "manageEmployeeContract", "getEmployeeContracts", "submitVacationRequest", "getVacationRequests", "reviewVacationRequest", "configureFiscalPolicy", "getFiscalPolicies", "publishInstitutionalPolicy", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getAdvancedDashboardAnalytics", "manageLibraryBook", "getLibraryBooks", "processLibraryLoan", "getLibraryLoans", "reserveLibraryBook", "getLibraryReservations", "recordLibraryIncident", "getLibraryIncidents", "manageDigitalResource", "getDigitalResources", "manageAssetItem", "getAssetItems", "assignAssetCustody", "getAssetAssignments", "manageTransportRoute", "getTransportRoutes", "assignStudentTransport", "getTransportAssignments", "registerSpreadsheetSource", "resolveSpreadsheetSource", "getSpreadsheetCatalog", "configureSchoolDocumentTemplate", "getSchoolDocumentTemplates", "generateSchoolDocument", "getIssuedSchoolDocuments", "validateImportPreview", "importDataWithColumnMapping", "getMigrationLogs", "verifySACETemplateCompatibility", "generateSACEReportFile", "configureDiscountScholarshipRule", "getDiscountScholarshipRules", "submitDiscountScholarshipRequest", "getDiscountScholarshipRequests", "approveDiscountScholarshipRequest", "calculateAppliedDiscount", "configureLateFeeRule", "getLateFeeRules", "calculateLateFeesForAccount", "manageStoreProduct", "getStoreProducts", "createStoreOrder", "getStoreOrders", "updateStoreOrderStatus", "manageCafeteriaMenu", "getCafeteriaMenu", "createCafeteriaOrder", "getCafeteriaOrders", "updateCafeteriaOrderStatus", "configureFamilyCreditAuthorization", "getFamilyCreditAuthorizations", "processFamilyCreditPurchase", "createPurchaseRequest", "getPurchaseRequests", "submitPurchaseQuotation", "getPurchaseQuotations", "createPurchaseOrder", "approvePurchaseOrder", "getPurchaseOrders", "recordPurchaseReceipt", "manageWarehouseLocation", "getWarehouseLocations", "transferInventoryStock", "createMaterialRequisition", "getMaterialRequisitions", "deliverMaterialRequisition", "createPhysicalInventoryCount", "getPhysicalInventoryCounts", "reconcilePhysicalCount", "manageMaintenanceOrder", "getMaintenanceOrders", "registerAssetDisposal", "getAssetDisposals"],
+  "Director": ["configurePaymentConcept", "configurePaymentTariff", "getStudentAccountStatement", "recordStudentPayment", "uploadPaymentVoucher", "getPaymentVouchers", "reviewPaymentVoucher", "generatePaymentReceiptPDF", "createFiscalInvoice", "getFiscalInvoices", "configureGatewayIntegration", "testGatewayConnection", "recordCashBankMovement", "closeCashSession", "getCashBankSummary", "performBankReconciliation", "recordAccountsPayableExpense", "getChartOfAccounts", "saveAccountItem", "recordAccountingJournalEntry", "getAccountingJournalEntries", "getBudgets", "saveBudgetPlan", "getBudgetExecutionReport", "getFinancialSummary", "getAccountsReceivablePayableSummary", "getCashFlowSixMonthProjection", "recordCollectionManagementAction", "getCollectionManagementLogs", "getComparativeFinancialSummary", "reconcileFinancialReportCoherence", "verifyAccountingIntegrity", "generatePayrollPeriod", "recordStaffAttendance", "getStaffPayrollReceipt", "recordInventoryMovement", "getInventoryKardex", "registerSupplier", "manageSupplierContract", "getSupplierContractAlerts", "createEmployeeRecord", "getEmployeeRecords", "manageEmployeeContract", "getEmployeeContracts", "submitVacationRequest", "getVacationRequests", "reviewVacationRequest", "configureFiscalPolicy", "getFiscalPolicies", "publishInstitutionalPolicy", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getAdvancedDashboardAnalytics", "manageLibraryBook", "getLibraryBooks", "processLibraryLoan", "getLibraryLoans", "reserveLibraryBook", "getLibraryReservations", "recordLibraryIncident", "getLibraryIncidents", "manageDigitalResource", "getDigitalResources", "manageAssetItem", "getAssetItems", "assignAssetCustody", "getAssetAssignments", "manageTransportRoute", "getTransportRoutes", "assignStudentTransport", "getTransportAssignments", "registerSpreadsheetSource", "resolveSpreadsheetSource", "getSpreadsheetCatalog", "configureSchoolDocumentTemplate", "getSchoolDocumentTemplates", "generateSchoolDocument", "getIssuedSchoolDocuments", "validateImportPreview", "importDataWithColumnMapping", "getMigrationLogs", "verifySACETemplateCompatibility", "generateSACEReportFile", "configureDiscountScholarshipRule", "getDiscountScholarshipRules", "submitDiscountScholarshipRequest", "getDiscountScholarshipRequests", "approveDiscountScholarshipRequest", "calculateAppliedDiscount", "configureLateFeeRule", "getLateFeeRules", "calculateLateFeesForAccount", "manageStoreProduct", "getStoreProducts", "createStoreOrder", "getStoreOrders", "updateStoreOrderStatus", "manageCafeteriaMenu", "getCafeteriaMenu", "createCafeteriaOrder", "getCafeteriaOrders", "updateCafeteriaOrderStatus", "configureFamilyCreditAuthorization", "getFamilyCreditAuthorizations", "processFamilyCreditPurchase", "createFamilyPaymentAgreement", "getFamilyPaymentAgreements", "saveMultiYearBudgetProjection", "getMultiYearBudgetProjections", "createPurchaseRequest", "getPurchaseRequests", "submitPurchaseQuotation", "getPurchaseQuotations", "createPurchaseOrder", "approvePurchaseOrder", "getPurchaseOrders", "recordPurchaseReceipt", "manageWarehouseLocation", "getWarehouseLocations", "transferInventoryStock", "createMaterialRequisition", "getMaterialRequisitions", "deliverMaterialRequisition", "createPhysicalInventoryCount", "getPhysicalInventoryCounts", "reconcilePhysicalCount", "manageMaintenanceOrder", "getMaintenanceOrders", "registerAssetDisposal", "getAssetDisposals"],
   "Subdirector": ["configurePaymentConcept", "configurePaymentTariff", "getStudentAccountStatement", "recordStudentPayment", "uploadPaymentVoucher", "getPaymentVouchers", "reviewPaymentVoucher", "generatePaymentReceiptPDF", "createFiscalInvoice", "getFiscalInvoices", "configureGatewayIntegration", "testGatewayConnection", "recordCashBankMovement", "closeCashSession", "getCashBankSummary", "performBankReconciliation", "recordAccountsPayableExpense", "getChartOfAccounts", "saveAccountItem", "recordAccountingJournalEntry", "getAccountingJournalEntries", "getBudgets", "saveBudgetPlan", "getBudgetExecutionReport", "getFinancialSummary", "getAccountsReceivablePayableSummary", "generatePayrollPeriod", "recordStaffAttendance", "getStaffPayrollReceipt", "recordInventoryMovement", "getInventoryKardex", "registerSupplier", "createEmployeeRecord", "getEmployeeRecords", "manageEmployeeContract", "getEmployeeContracts", "submitVacationRequest", "getVacationRequests", "reviewVacationRequest", "configureFiscalPolicy", "getFiscalPolicies", "publishInstitutionalPolicy", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getAdvancedDashboardAnalytics", "manageLibraryBook", "getLibraryBooks", "processLibraryLoan", "getLibraryLoans", "reserveLibraryBook", "getLibraryReservations", "recordLibraryIncident", "getLibraryIncidents", "manageDigitalResource", "getDigitalResources", "manageAssetItem", "getAssetItems", "assignAssetCustody", "getAssetAssignments", "manageTransportRoute", "getTransportRoutes", "assignStudentTransport", "getTransportAssignments", "registerSpreadsheetSource", "resolveSpreadsheetSource", "getSpreadsheetCatalog", "configureSchoolDocumentTemplate", "getSchoolDocumentTemplates", "generateSchoolDocument", "getIssuedSchoolDocuments", "validateImportPreview", "importDataWithColumnMapping", "getMigrationLogs", "verifySACETemplateCompatibility", "generateSACEReportFile", "configureDiscountScholarshipRule", "getDiscountScholarshipRules", "submitDiscountScholarshipRequest", "getDiscountScholarshipRequests", "approveDiscountScholarshipRequest", "calculateAppliedDiscount", "createPurchaseRequest", "getPurchaseRequests", "submitPurchaseQuotation", "getPurchaseQuotations", "createPurchaseOrder", "approvePurchaseOrder", "getPurchaseOrders", "recordPurchaseReceipt", "manageWarehouseLocation", "getWarehouseLocations", "transferInventoryStock", "createMaterialRequisition", "getMaterialRequisitions", "deliverMaterialRequisition", "createPhysicalInventoryCount", "getPhysicalInventoryCounts", "reconcilePhysicalCount", "manageMaintenanceOrder", "getMaintenanceOrders", "registerAssetDisposal", "getAssetDisposals"],
   "Contador": ["configurePaymentConcept", "configurePaymentTariff", "getStudentAccountStatement", "recordStudentPayment", "uploadPaymentVoucher", "getPaymentVouchers", "reviewPaymentVoucher", "generatePaymentReceiptPDF", "createFiscalInvoice", "getFiscalInvoices", "configureGatewayIntegration", "testGatewayConnection", "recordCashBankMovement", "closeCashSession", "getCashBankSummary", "performBankReconciliation", "recordAccountsPayableExpense", "getChartOfAccounts", "saveAccountItem", "recordAccountingJournalEntry", "getAccountingJournalEntries", "getBudgets", "saveBudgetPlan", "getBudgetExecutionReport", "getFinancialSummary", "getAccountsReceivablePayableSummary", "generatePayrollPeriod", "recordStaffAttendance", "getStaffPayrollReceipt", "recordInventoryMovement", "getInventoryKardex", "registerSupplier", "createEmployeeRecord", "getEmployeeRecords", "manageEmployeeContract", "getEmployeeContracts", "submitVacationRequest", "getVacationRequests", "reviewVacationRequest", "configureFiscalPolicy", "getFiscalPolicies", "publishInstitutionalPolicy", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getAdvancedDashboardAnalytics", "manageLibraryBook", "getLibraryBooks", "processLibraryLoan", "getLibraryLoans", "reserveLibraryBook", "getLibraryReservations", "recordLibraryIncident", "getLibraryIncidents", "manageDigitalResource", "getDigitalResources", "manageAssetItem", "getAssetItems", "assignAssetCustody", "getAssetAssignments", "resolveSpreadsheetSource", "getSpreadsheetCatalog", "validateImportPreview", "importDataWithColumnMapping", "getMigrationLogs", "configureDiscountScholarshipRule", "getDiscountScholarshipRules", "submitDiscountScholarshipRequest", "getDiscountScholarshipRequests", "calculateAppliedDiscount", "getStoreProducts", "getStoreOrders", "getCafeteriaMenu", "getCafeteriaOrders", "createPurchaseRequest", "getPurchaseRequests", "submitPurchaseQuotation", "getPurchaseQuotations", "createPurchaseOrder", "approvePurchaseOrder", "getPurchaseOrders", "recordPurchaseReceipt", "manageWarehouseLocation", "getWarehouseLocations", "transferInventoryStock", "createMaterialRequisition", "getMaterialRequisitions", "deliverMaterialRequisition", "createPhysicalInventoryCount", "getPhysicalInventoryCounts", "reconcilePhysicalCount", "manageMaintenanceOrder", "getMaintenanceOrders", "registerAssetDisposal", "getAssetDisposals"],
   // REVISIÓN RBAC: Habilitar permiso processFamilyCreditPurchase para personal de tienda, cafetería, tutores y estudiantes
   "EncargadoTienda": ["getStoreProducts", "manageStoreProduct", "createStoreOrder", "getStoreOrders", "updateStoreOrderStatus", "recordInventoryMovement", "getInventoryKardex", "getInstitutionalPolicies", "processFamilyCreditPurchase"],
   "EncargadoCafeteria": ["getCafeteriaMenu", "manageCafeteriaMenu", "createCafeteriaOrder", "getCafeteriaOrders", "updateCafeteriaOrderStatus", "recordInventoryMovement", "getInventoryKardex", "getInstitutionalPolicies", "processFamilyCreditPurchase"],
-  "RecursosHumanos": ["createEmployeeRecord", "getEmployeeRecords", "manageEmployeeContract", "getEmployeeContracts", "updateEmployeeLaborStatus", "configureWorkSchedule", "recordStaffCheckIn", "getStaffAttendanceLogs", "submitAttendanceCorrection", "reviewAttendanceCorrection", "submitLeaveVacationRequest", "getLeaveVacationRequests", "reviewLeaveVacationRequest", "calculateVacationBalances", "recordMedicalLeave", "calculatePayrollPeriod", "updatePayrollPeriodStatus", "getPayrollPeriodSummary", "requestEmployeeLoanAdvance", "getEmployeeLoansAdvances", "approveEmployeeLoanAdvance", "getLoanAmortizationSchedule", "generatePayrollReceiptPDF", "uploadEmployeeDocument", "getEmployeeDocuments", "getHRDashboardAnalytics", "getInstitutionalPolicies"],
+  "RecursosHumanos": ["createEmployeeRecord", "getEmployeeRecords", "manageEmployeeContract", "getEmployeeContracts", "getEmployeeContractAlerts", "manageJobVacancy", "getJobVacancies", "submitJobCandidate", "getJobCandidates", "manageInterviewSchedule", "getInterviewSchedules", "updateEmployeeLaborStatus", "configureWorkSchedule", "recordStaffCheckIn", "getStaffAttendanceLogs", "submitAttendanceCorrection", "reviewAttendanceCorrection", "submitLeaveVacationRequest", "getLeaveVacationRequests", "reviewLeaveVacationRequest", "calculateVacationBalances", "recordMedicalLeave", "calculatePayrollPeriod", "updatePayrollPeriodStatus", "getPayrollPeriodSummary", "requestEmployeeLoanAdvance", "getEmployeeLoansAdvances", "approveEmployeeLoanAdvance", "getLoanAmortizationSchedule", "generatePayrollReceiptPDF", "uploadEmployeeDocument", "getEmployeeDocuments", "getHRDashboardAnalytics", "getInstitutionalPolicies"],
   "Empleado": ["getEmployeeRecords", "getEmployeeContracts", "recordStaffCheckIn", "getStaffAttendanceLogs", "submitAttendanceCorrection", "submitLeaveVacationRequest", "getLeaveVacationRequests", "requestEmployeeLoanAdvance", "getEmployeeLoansAdvances", "generatePayrollReceiptPDF", "getEmployeeDocuments"],
   "Padre": ["getStudentAccountStatement", "uploadPaymentVoucher", "getPaymentVouchers", "generatePaymentReceiptPDF", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getLibraryBooks", "getLibraryLoans", "reserveLibraryBook", "getLibraryReservations", "getDigitalResources", "getTransportRoutes", "getTransportAssignments", "getSchoolDocumentTemplates", "generateSchoolDocument", "getIssuedSchoolDocuments", "getStoreProducts", "createStoreOrder", "getStoreOrders", "getCafeteriaMenu", "createCafeteriaOrder", "getCafeteriaOrders", "getFamilyCreditAuthorizations", "configureFamilyCreditAuthorization", "processFamilyCreditPurchase"],
   "Tutor": ["getStudentAccountStatement", "uploadPaymentVoucher", "getPaymentVouchers", "generatePaymentReceiptPDF", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getLibraryBooks", "getLibraryLoans", "reserveLibraryBook", "getLibraryReservations", "getDigitalResources", "getTransportRoutes", "getTransportAssignments", "getSchoolDocumentTemplates", "generateSchoolDocument", "getIssuedSchoolDocuments", "getStoreProducts", "createStoreOrder", "getStoreOrders", "getCafeteriaMenu", "createCafeteriaOrder", "getCafeteriaOrders", "getFamilyCreditAuthorizations", "configureFamilyCreditAuthorization", "processFamilyCreditPurchase"],
@@ -247,8 +247,16 @@ function doPost(e) {
       case "getBudgets": result = getBudgets(payload); break;
       case "saveBudgetPlan": result = saveBudgetPlan(payload); break;
       case "getBudgetExecutionReport": result = getBudgetExecutionReport(payload); break;
+      case "saveMultiYearBudgetProjection": result = saveMultiYearBudgetProjection(payload); break;
+      case "getMultiYearBudgetProjections": result = getMultiYearBudgetProjections(payload); break;
       case "getFinancialSummary": result = getFinancialSummary(payload); break;
       case "getAccountsReceivablePayableSummary": result = getAccountsReceivablePayableSummary(payload); break;
+      case "getCashFlowSixMonthProjection": result = getCashFlowSixMonthProjection(payload); break;
+      case "recordCollectionManagementAction": result = recordCollectionManagementAction(payload); break;
+      case "getCollectionManagementLogs": result = getCollectionManagementLogs(payload); break;
+      case "getComparativeFinancialSummary": result = getComparativeFinancialSummary(payload); break;
+      case "reconcileFinancialReportCoherence": result = reconcileFinancialReportCoherence(payload); break;
+      case "verifyAccountingIntegrity": result = verifyAccountingIntegrity(payload); break;
       case "configureWorkSchedule": result = configureWorkSchedule(payload); break;
       case "recordStaffCheckIn": result = recordStaffCheckIn(payload); break;
       case "getStaffAttendanceLogs": result = getStaffAttendanceLogs(payload); break;
@@ -278,6 +286,8 @@ function doPost(e) {
       case "recordInventoryMovement": result = recordInventoryMovement(payload); break;
       case "getInventoryKardex": result = getInventoryKardex(payload); break;
       case "registerSupplier": result = registerSupplier(payload); break;
+      case "manageSupplierContract": result = manageSupplierContract(payload); break;
+      case "getSupplierContractAlerts": result = getSupplierContractAlerts(payload); break;
       case "createPurchaseRequest": result = createPurchaseRequest(payload); break;
       case "getPurchaseRequests": result = getPurchaseRequests(payload); break;
       case "submitPurchaseQuotation": result = submitPurchaseQuotation(payload); break;
@@ -304,6 +314,13 @@ function doPost(e) {
       case "updateEmployeeLaborStatus": result = updateEmployeeLaborStatus(payload); break;
       case "manageEmployeeContract": result = manageEmployeeContract(payload); break;
       case "getEmployeeContracts": result = getEmployeeContracts(payload); break;
+      case "getEmployeeContractAlerts": result = getEmployeeContractAlerts(payload); break;
+      case "manageJobVacancy": result = manageJobVacancy(payload); break;
+      case "getJobVacancies": result = getJobVacancies(payload); break;
+      case "submitJobCandidate": result = submitJobCandidate(payload); break;
+      case "getJobCandidates": result = getJobCandidates(payload); break;
+      case "manageInterviewSchedule": result = manageInterviewSchedule(payload); break;
+      case "getInterviewSchedules": result = getInterviewSchedules(payload); break;
       case "submitLeaveVacationRequest": result = submitLeaveVacationRequest(payload); break;
       case "submitVacationRequest": result = submitVacationRequest(payload); break;
       case "getLeaveVacationRequests": result = getLeaveVacationRequests(payload); break;
@@ -374,6 +391,8 @@ function doPost(e) {
       case "updateCafeteriaOrderStatus": result = updateCafeteriaOrderStatus(payload); break;
       case "configureFamilyCreditAuthorization": result = configureFamilyCreditAuthorization(payload); break;
       case "getFamilyCreditAuthorizations": result = getFamilyCreditAuthorizations(payload); break;
+      case "createFamilyPaymentAgreement": result = createFamilyPaymentAgreement(payload); break;
+      case "getFamilyPaymentAgreements": result = getFamilyPaymentAgreements(payload); break;
       case "processFamilyCreditPurchase": result = processFamilyCreditPurchase(payload); break;
       case "ping": result = { status: "success", service: "ACCOUNTING", timestamp: new Date().toISOString(), dbConnected: true }; break;
       default: result = { status: "error", message: `Acción no reconocida: ${action}` };
@@ -1294,6 +1313,285 @@ function getFamilyCreditAuthorizations(payload) {
     status: "success",
     autorizaciones: mapped
   };
+}
+
+// [TAREA 1] [Fase Contabilidad y Finanzas] - Reestructuración de convenios y planes de pago familiares con cuotas personalizadas y trazabilidad.
+function createFamilyPaymentAgreement(payload) {
+  const { responsableUserId, estudianteUserId, saldoInicial, cuotas, observaciones, fechaFormalizacion } = payload || {};
+  if (!responsableUserId || !saldoInicial || !cuotas || !Array.isArray(cuotas) || cuotas.length === 0) {
+    throw new Error("responsableUserId, saldoInicial y un arreglo de cuotas son requeridos.");
+  }
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "ConveniosPagoFamilia");
+
+  if (sheet.getLastRow() === 0) {
+    sheet.appendRow(["ConvenioID", "FechaFormalizacion", "ResponsableUserId", "EstudianteUserId", "SaldoInicial", "CantidadCuotas", "CuotasJSON", "Estado", "Observaciones", "AutorizadoPor", "FechaCreacion"]);
+  }
+
+  const sumaCuotas = cuotas.reduce((acc, c) => acc + parseFloat(c.monto || 0), 0);
+  if (Math.abs(sumaCuotas - parseFloat(saldoInicial)) > 0.05) {
+    throw new Error(`La suma de las cuotas (${sumaCuotas}) no coincide con el saldo inicial del convenio (${saldoInicial}).`);
+  }
+
+  const convenioId = "CONV-" + Date.now();
+  const nowStr = new Date().toISOString();
+  const autoriz = payload.authUserId || "Contaduría";
+
+  sheet.appendRow([
+    convenioId,
+    fechaFormalizacion || nowStr.split('T')[0],
+    responsableUserId,
+    estudianteUserId || "TODOS",
+    parseFloat(saldoInicial),
+    cuotas.length,
+    JSON.stringify(cuotas),
+    "Activo",
+    observaciones || "",
+    autoriz,
+    nowStr
+  ]);
+
+  return {
+    status: "success",
+    message: "Convenio de pago formalizado exitosamente.",
+    data: { convenioId, saldoInicial, cantidadCuotas: cuotas.length }
+  };
+}
+
+// [TAREA 1] [Fase Contabilidad y Finanzas] - Consulta de convenios de pago familiares y estados de cuotas.
+function getFamilyPaymentAgreements(payload) {
+  const { responsableUserId, estudianteUserId } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "ConveniosPagoFamilia");
+  const data = sheet.getDataRange().getValues();
+
+  if (data.length <= 1) return { status: "success", data: [] };
+
+  const rows = data.slice(1);
+  const filtered = rows.filter(r => {
+    if (responsableUserId && String(r[2]).trim() !== String(responsableUserId).trim()) return false;
+    if (estudianteUserId && String(r[3]).trim() !== "TODOS" && String(r[3]).trim() !== String(estudianteUserId).trim()) return false;
+    return true;
+  }).map(r => {
+    let cuotasArr = [];
+    try { cuotasArr = JSON.parse(r[6] || "[]"); } catch (e) { cuotasArr = []; }
+
+    return {
+      convenioId: r[0],
+      fechaFormalizacion: r[1],
+      responsableUserId: r[2],
+      estudianteUserId: r[3],
+      saldoInicial: parseFloat(r[4] || 0),
+      cantidadCuotas: r[5],
+      cuotas: cuotasArr,
+      estado: r[7],
+      observaciones: r[8],
+      autorizadoPor: r[9],
+      fechaCreacion: r[10]
+    };
+  });
+
+  return { status: "success", data: filtered };
+}
+
+// [TAREA RH-04] [Fase Reclutamiento y Selección] - Programación, reprogramación, seguimiento de asistencia y evaluación confidencial de entrevistas laborales.
+function manageInterviewSchedule(payload) {
+  const {
+    entrevistaId,
+    candidatoId,
+    vacanteId,
+    fecha,
+    hora,
+    modalidad,
+    responsable,
+    evaluadores,
+    estadoEntrevista,
+    asistencia,
+    motivoCambio,
+    observacionesEvaluador,
+    resultado,
+    nuevoEstadoCandidatura,
+    forzarConflicto
+  } = payload || {};
+
+  if (!candidatoId || !fecha || !hora) {
+    throw new Error("candidatoId, fecha y hora son campos obligatorios.");
+  }
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "EntrevistasSeleccion");
+
+  if (sheet.getLastRow() === 0) {
+    sheet.appendRow([
+      "EntrevistaID",
+      "CandidatoID",
+      "VacanteID",
+      "Fecha",
+      "Hora",
+      "Modalidad",
+      "Responsable",
+      "EvaluadoresJSON",
+      "EstadoEntrevista",
+      "Asistencia",
+      "MotivoCambio",
+      "ObservacionesEvaluador",
+      "Resultado",
+      "HistorialCambiosJSON",
+      "FechaCreacion",
+      "UltimaModificacion"
+    ]);
+  }
+
+  const data = sheet.getDataRange().getValues();
+  const eId = entrevistaId || ("INT-" + Date.now());
+  const nowStr = new Date().toISOString();
+
+  // Detector de conflictos de horario para el mismo responsable o candidato
+  if (!forzarConflicto) {
+    const conflict = data.slice(1).find(r => {
+      const isDiffId = String(r[0]).trim() !== String(eId).trim();
+      const sameDate = String(r[3]).trim() === String(fecha).trim();
+      const sameTime = String(r[4]).trim() === String(hora).trim();
+      const sameRespOrCand = (responsable && String(r[6]).toLowerCase() === String(responsable).toLowerCase()) ||
+                             String(r[1]).trim() === String(candidatoId).trim();
+      const isActive = String(r[8]).toLowerCase() !== "cancelada";
+      return isDiffId && sameDate && sameTime && sameRespOrCand && isActive;
+    });
+
+    if (conflict) {
+      return {
+        status: "warning",
+        hasConflict: true,
+        message: "Existe un conflicto de horario para la fecha y hora seleccionadas con " + (conflict[6] || conflict[1]) + ".",
+        conflictData: { entrevistaId: conflict[0], responsable: conflict[6], fecha: conflict[3], hora: conflict[4] }
+      };
+    }
+  }
+
+  const idx = data.slice(1).findIndex(r => String(r[0]).trim() === String(eId).trim());
+  const evaluadoresStr = Array.isArray(evaluadores) ? JSON.stringify(evaluadores) : (evaluadores || "[]");
+
+  if (idx !== -1) {
+    const rowIdx = idx + 2;
+    const prevHistoryStr = data[rowIdx - 1][13] || "[]";
+    let history = [];
+    try { history = JSON.parse(prevHistoryStr); } catch (e) { history = []; }
+
+    history.push({
+      fechaModificacion: nowStr,
+      estadoAnterior: data[rowIdx - 1][8],
+      nuevoEstado: estadoEntrevista || data[rowIdx - 1][8],
+      motivoCambio: motivoCambio || "",
+      asistencia: asistencia || data[rowIdx - 1][9]
+    });
+
+    sheet.getRange(rowIdx, 3).setValue(vacanteId || data[rowIdx - 1][2]);
+    sheet.getRange(rowIdx, 4).setValue(fecha);
+    sheet.getRange(rowIdx, 5).setValue(hora);
+    sheet.getRange(rowIdx, 6).setValue(modalidad || data[rowIdx - 1][5] || "Presencial");
+    sheet.getRange(rowIdx, 7).setValue(responsable || data[rowIdx - 1][6] || "");
+    sheet.getRange(rowIdx, 8).setValue(evaluadoresStr);
+    sheet.getRange(rowIdx, 9).setValue(estadoEntrevista || data[rowIdx - 1][8] || "Programada");
+    sheet.getRange(rowIdx, 10).setValue(asistencia || data[rowIdx - 1][9] || "Pendiente");
+    sheet.getRange(rowIdx, 11).setValue(motivoCambio || data[rowIdx - 1][10] || "");
+    if (observacionesEvaluador !== undefined) sheet.getRange(rowIdx, 12).setValue(observacionesEvaluador);
+    if (resultado !== undefined) sheet.getRange(rowIdx, 13).setValue(resultado);
+    sheet.getRange(rowIdx, 14).setValue(JSON.stringify(history));
+    sheet.getRange(rowIdx, 16).setValue(nowStr);
+  } else {
+    const initialHistory = JSON.stringify([{
+      fechaModificacion: nowStr,
+      accion: "Creacion",
+      estado: estadoEntrevista || "Programada"
+    }]);
+
+    sheet.appendRow([
+      eId,
+      candidatoId,
+      vacanteId || "",
+      fecha,
+      hora,
+      modalidad || "Presencial",
+      responsable || "",
+      evaluadoresStr,
+      estadoEntrevista || "Programada",
+      asistencia || "Pendiente",
+      motivoCambio || "",
+      observacionesEvaluador || "",
+      resultado || "Pendiente",
+      initialHistory,
+      nowStr,
+      nowStr
+    ]);
+  }
+
+  // Sincronizar estado en la candidatura del participante
+  if (candidatoId) {
+    const candSheet = getOrCreateSheet(ss, "CandidatosVacantes");
+    const candData = candSheet.getDataRange().getValues();
+    const cIdx = candData.slice(1).findIndex(r => String(r[0]).trim() === String(candidatoId).trim());
+    if (cIdx !== -1) {
+      const cRow = cIdx + 2;
+      const targetState = nuevoEstadoCandidatura || (
+        estadoEntrevista === "Realizada" ? "Entrevistado" :
+        estadoEntrevista === "Cancelada" ? "Entrevista Cancelada" :
+        "Entrevista Programada"
+      );
+      candSheet.getRange(cRow, 8).setValue(targetState);
+    }
+  }
+
+  return {
+    status: "success",
+    message: "Agenda de entrevista procesada exitosamente.",
+    data: { entrevistaId: eId, candidatoId, fecha, hora, estadoEntrevista: estadoEntrevista || "Programada" }
+  };
+}
+
+// [TAREA RH-04] [Fase Reclutamiento y Selección] - Consulta e historial de entrevistas laborales agendadas.
+function getInterviewSchedules(payload) {
+  const { candidatoId, vacanteId, estadoEntrevista, incluirObservacionesPrivadas } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "EntrevistasSeleccion");
+  const data = sheet.getDataRange().getValues();
+
+  if (data.length <= 1) return { status: "success", data: [] };
+
+  const rows = data.slice(1);
+  const filtered = rows.filter(r => {
+    if (candidatoId && String(r[1]).trim() !== String(candidatoId).trim()) return false;
+    if (vacanteId && String(r[2]).trim() !== String(vacanteId).trim()) return false;
+    if (estadoEntrevista && String(r[8]).toLowerCase() !== String(estadoEntrevista).toLowerCase()) return false;
+    return true;
+  }).map(r => {
+    let evaluadores = [];
+    let historialCambios = [];
+    try { evaluadores = JSON.parse(r[7] || "[]"); } catch (e) { evaluadores = []; }
+    try { historialCambios = JSON.parse(r[13] || "[]"); } catch (e) { historialCambios = []; }
+
+    return {
+      entrevistaId: r[0],
+      candidatoId: r[1],
+      vacanteId: r[2],
+      fecha: r[3],
+      hora: r[4],
+      modalidad: r[5],
+      responsable: r[6],
+      evaluadores: evaluadores,
+      estadoEntrevista: r[8],
+      asistencia: r[9],
+      motivoCambio: r[10],
+      // No exponer observaciones privadas a usuarios sin permiso explícito
+      observacionesEvaluador: incluirObservacionesPrivadas ? r[11] : undefined,
+      resultado: r[12],
+      historialCambios: historialCambios,
+      fechaCreacion: r[14],
+      ultimaModificacion: r[15]
+    };
+  });
+
+  return { status: "success", data: filtered };
 }
 
 function processFamilyCreditPurchase(payload) {
@@ -2671,6 +2969,136 @@ function getInventoryKardex(payload) {
   };
 }
 
+// [TAREA 3] [Fase Proveedores y Compromisos] - Registro y actualización de contratos de proveedores con fecha de inicio, vencimiento y días de aviso.
+function manageSupplierContract(payload) {
+  const { contratoId, proveedorId, nombreProveedor, descripcion, fechaInicio, fechaVencimiento, responsableUserId, diasAnticipacionAviso, estado, observaciones } = payload || {};
+  if (!nombreProveedor || !fechaVencimiento) {
+    throw new Error("Nombre de proveedor y fecha de vencimiento son requeridos.");
+  }
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "ContratosProveedores");
+
+  if (sheet.getLastRow() === 0) {
+    sheet.appendRow(["ContratoID", "ProveedorID", "NombreProveedor", "Descripcion", "FechaInicio", "FechaVencimiento", "ResponsableUserId", "DiasAnticipacionAviso", "Estado", "Observaciones", "FechaRegistro"]);
+  }
+
+  const data = sheet.getDataRange().getValues();
+  const cId = contratoId || ("CTR-" + Date.now());
+  const nowStr = new Date().toISOString();
+
+  const idx = data.slice(1).findIndex(r => String(r[0]).trim() === String(cId).trim());
+
+  if (idx !== -1) {
+    const rowIdx = idx + 2;
+    sheet.getRange(rowIdx, 3).setValue(nombreProveedor);
+    sheet.getRange(rowIdx, 4).setValue(descripcion || "");
+    sheet.getRange(rowIdx, 5).setValue(fechaInicio || "");
+    sheet.getRange(rowIdx, 6).setValue(fechaVencimiento);
+    sheet.getRange(rowIdx, 7).setValue(responsableUserId || "");
+    sheet.getRange(rowIdx, 8).setValue(parseInt(diasAnticipacionAviso || 30, 10));
+    sheet.getRange(rowIdx, 9).setValue(estado || "Vigente");
+    sheet.getRange(rowIdx, 10).setValue(observaciones || "");
+  } else {
+    sheet.appendRow([
+      cId,
+      proveedorId || "PRV-GEN",
+      nombreProveedor,
+      descripcion || "",
+      fechaInicio || nowStr.split('T')[0],
+      fechaVencimiento,
+      responsableUserId || payload.authUserId || "",
+      parseInt(diasAnticipacionAviso || 30, 10),
+      estado || "Vigente",
+      observaciones || "",
+      nowStr
+    ]);
+  }
+
+  return {
+    status: "success",
+    message: "Contrato de proveedor guardado exitosamente.",
+    data: { contratoId: cId, nombreProveedor, fechaVencimiento }
+  };
+}
+
+// [TAREA 3] [Fase Proveedores y Compromisos] - Consulta de alertas automáticas por vencimiento de contratos de proveedores.
+function getSupplierContractAlerts(payload) {
+  const { proveedorId, estadoFiltro } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "ContratosProveedores");
+  const data = sheet.getDataRange().getValues();
+
+  if (data.length <= 1) return { status: "success", data: [], resumen: { vigentes: 0, proximosAVencer: 0, vencidos: 0 } };
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  let countVigentes = 0;
+  let countProximos = 0;
+  let countVencidos = 0;
+
+  const rows = data.slice(1);
+  const contracts = rows.filter(r => {
+    if (proveedorId && String(r[1]).trim() !== String(proveedorId).trim()) return false;
+    return true;
+  }).map(r => {
+    const fVenc = r[5] ? new Date(r[5]) : null;
+    let estadoContrato = r[8] || "Vigente";
+    let diasParaVencer = null;
+
+    if (fVenc && !isNaN(fVenc.getTime())) {
+      fVenc.setHours(0, 0, 0, 0);
+      const diffTime = fVenc.getTime() - today.getTime();
+      diasParaVencer = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+      const avisoAnticipado = parseInt(r[7] || 30, 10);
+
+      if (diasParaVencer < 0) {
+        estadoContrato = "Vencido";
+        countVencidos++;
+      } else if (diasParaVencer <= avisoAnticipado) {
+        estadoContrato = "ProximoAVencer";
+        countProximos++;
+      } else {
+        estadoContrato = "Vigente";
+        countVigentes++;
+      }
+    }
+
+    return {
+      contratoId: r[0],
+      proveedorId: r[1],
+      nombreProveedor: r[2],
+      descripcion: r[3],
+      fechaInicio: r[4],
+      fechaVencimiento: r[5],
+      responsableUserId: r[6],
+      diasAnticipacionAviso: r[7],
+      estadoContrato,
+      diasParaVencer,
+      observaciones: r[9],
+      fechaRegistro: r[10]
+    };
+  });
+
+  const filteredContracts = contracts.filter(c => {
+    if (estadoFiltro && String(c.estadoContrato).toLowerCase() !== String(estadoFiltro).toLowerCase()) return false;
+    return true;
+  });
+
+  return {
+    status: "success",
+    data: filteredContracts,
+    resumen: {
+      vigentes: countVigentes,
+      proximosAVencer: countProximos,
+      vencidos: countVencidos,
+      totalContratos: contracts.length
+    }
+  };
+}
+
 function registerSupplier(payload) {
   const { proveedorId, nombreProveedor, rtn, telefono, email, rubroServicio, estado, observaciones } = payload || {};
   if (!nombreProveedor) throw new Error("Nombre de proveedor requerido.");
@@ -3447,6 +3875,230 @@ function manageEmployeeContract(payload) {
     contratoId: contratoId,
     message: "Contrato laboral registrado exitosamente."
   };
+}
+
+// [TAREA RH-02] [Fase Recursos Humanos y Personal] - Consulta y alertas por vencimiento de contratos y documentos laborales de empleados.
+function getEmployeeContractAlerts(payload) {
+  const { diasAnticipacion } = payload || {};
+  const threshold = parseInt(diasAnticipacion || 30, 10);
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const rows = getOrCreateSheet(ss, "ContratosLaborales").getDataRange().getValues().slice(1);
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  let countVigentes = 0;
+  let countProximos = 0;
+  let countVencidos = 0;
+
+  const alertas = rows.map(r => {
+    const fFin = r[4] ? new Date(r[4]) : null;
+    let estadoAlerta = "Vigente";
+    let diasParaVencer = null;
+
+    if (fFin && !isNaN(fFin.getTime())) {
+      fFin.setHours(0, 0, 0, 0);
+      const diff = fFin.getTime() - today.getTime();
+      diasParaVencer = Math.ceil(diff / (1000 * 60 * 60 * 24));
+
+      if (diasParaVencer < 0) {
+        estadoAlerta = "Vencido";
+        countVencidos++;
+      } else if (diasParaVencer <= threshold) {
+        estadoAlerta = "ProximoAVencer";
+        countProximos++;
+      } else {
+        estadoAlerta = "Vigente";
+        countVigentes++;
+      }
+    }
+
+    return {
+      contratoId: r[0],
+      expedienteId: r[1],
+      tipoContrato: r[2],
+      fechaInicio: r[3],
+      fechaFin: r[4],
+      estadoContrato: r[7],
+      estadoAlerta,
+      diasParaVencer,
+      observaciones: r[8]
+    };
+  });
+
+  return {
+    status: "success",
+    data: alertas,
+    resumen: {
+      vigentes: countVigentes,
+      proximosAVencer: countProximos,
+      vencidos: countVencidos,
+      totalContratos: rows.length
+    }
+  };
+}
+
+// [TAREA RH-03] [Fase Reclutamiento y Selección] - Creación, consulta y actualización de vacantes laborales institucionales.
+function manageJobVacancy(payload) {
+  const { vacanteId, puesto, departamento, requisitos, cantidadPlazas, fechaPublicacion, fechaLimite, estado, observaciones } = payload || {};
+  if (!puesto || !departamento) throw new Error("Puesto y departamento son requeridos.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "VacantesLaborales");
+
+  if (sheet.getLastRow() === 0) {
+    sheet.appendRow(["VacanteID", "Puesto", "Departamento", "Requisitos", "CantidadPlazas", "FechaPublicacion", "FechaLimite", "Estado", "Observaciones", "PublicadoPor", "FechaRegistro"]);
+  }
+
+  const data = sheet.getDataRange().getValues();
+  const vId = vacanteId || ("VAC-" + Date.now());
+  const nowStr = new Date().toISOString();
+  const pubUser = payload.authUserId || "RecursosHumanos";
+
+  const idx = data.slice(1).findIndex(r => String(r[0]).trim() === String(vId).trim());
+
+  if (idx !== -1) {
+    const rowIdx = idx + 2;
+    sheet.getRange(rowIdx, 2).setValue(puesto);
+    sheet.getRange(rowIdx, 3).setValue(departamento);
+    sheet.getRange(rowIdx, 4).setValue(requisitos || "");
+    sheet.getRange(rowIdx, 5).setValue(parseInt(cantidadPlazas || 1, 10));
+    if (fechaPublicacion) sheet.getRange(rowIdx, 6).setValue(fechaPublicacion);
+    if (fechaLimite) sheet.getRange(rowIdx, 7).setValue(fechaLimite);
+    sheet.getRange(rowIdx, 8).setValue(estado || "Abierta");
+    sheet.getRange(rowIdx, 9).setValue(observaciones || "");
+  } else {
+    sheet.appendRow([
+      vId,
+      puesto,
+      departamento,
+      requisitos || "",
+      parseInt(cantidadPlazas || 1, 10),
+      fechaPublicacion || nowStr.split('T')[0],
+      fechaLimite || "",
+      estado || "Abierta",
+      observaciones || "",
+      pubUser,
+      nowStr
+    ]);
+  }
+
+  return {
+    status: "success",
+    message: "Vacante laboral registrada exitosamente.",
+    data: { vacanteId: vId, puesto, departamento }
+  };
+}
+
+// [TAREA RH-03] [Fase Reclutamiento y Selección] - Consulta de vacantes laborales activas e históricas.
+function getJobVacancies(payload) {
+  const { departamento, estado } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "VacantesLaborales");
+  const data = sheet.getDataRange().getValues();
+
+  if (data.length <= 1) return { status: "success", data: [] };
+
+  const rows = data.slice(1);
+  const filtered = rows.filter(r => {
+    if (departamento && normalizeString(r[2]) !== normalizeString(departamento)) return false;
+    if (estado && String(r[7]).toLowerCase() !== String(estado).toLowerCase()) return false;
+    return true;
+  }).map(r => ({
+    vacanteId: r[0],
+    puesto: r[1],
+    departamento: r[2],
+    requisitos: r[3],
+    cantidadPlazas: r[4],
+    fechaPublicacion: r[5],
+    fechaLimite: r[6],
+    estado: r[7],
+    observaciones: r[8],
+    publicadoPor: r[9],
+    fechaRegistro: r[10]
+  }));
+
+  return { status: "success", data: filtered };
+}
+
+// [TAREA RH-03] [Fase Reclutamiento y Selección] - Registro, postulación y evaluación de candidatos a vacantes laborales.
+function submitJobCandidate(payload) {
+  const { candidatoId, vacanteId, nombreCompleto, identificacion, telefono, email, cvDriveUrl, estadoCandidatura, observaciones } = payload || {};
+  if (!vacanteId || !nombreCompleto || !email) throw new Error("vacanteId, nombreCompleto y email son requeridos.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "CandidatosVacantes");
+
+  if (sheet.getLastRow() === 0) {
+    sheet.appendRow(["CandidatoID", "VacanteID", "NombreCompleto", "Identificacion", "Telefono", "Email", "CVDriveUrl", "EstadoCandidatura", "Observaciones", "FechaPostulacion"]);
+  }
+
+  const data = sheet.getDataRange().getValues();
+  const cId = candidatoId || ("CND-" + Date.now());
+  const nowStr = new Date().toISOString();
+
+  const idx = data.slice(1).findIndex(r => String(r[0]).trim() === String(cId).trim());
+
+  if (idx !== -1) {
+    const rowIdx = idx + 2;
+    sheet.getRange(rowIdx, 3).setValue(nombreCompleto);
+    if (identificacion) sheet.getRange(rowIdx, 4).setValue(identificacion);
+    if (telefono) sheet.getRange(rowIdx, 5).setValue(telefono);
+    if (email) sheet.getRange(rowIdx, 6).setValue(email);
+    if (cvDriveUrl) sheet.getRange(rowIdx, 7).setValue(cvDriveUrl);
+    sheet.getRange(rowIdx, 8).setValue(estadoCandidatura || "Recibida");
+    sheet.getRange(rowIdx, 9).setValue(observaciones || "");
+  } else {
+    sheet.appendRow([
+      cId,
+      vacanteId,
+      nombreCompleto,
+      identificacion || "",
+      telefono || "",
+      email,
+      cvDriveUrl || "",
+      estadoCandidatura || "Recibida",
+      observaciones || "",
+      nowStr
+    ]);
+  }
+
+  return {
+    status: "success",
+    message: "Candidatura a vacante registrada exitosamente.",
+    data: { candidatoId: cId, vacanteId, nombreCompleto, estadoCandidatura: estadoCandidatura || "Recibida" }
+  };
+}
+
+// [TAREA RH-03] [Fase Reclutamiento y Selección] - Consulta de postulaciones y candidatos por vacante o estado.
+function getJobCandidates(payload) {
+  const { vacanteId, estadoCandidatura } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "CandidatosVacantes");
+  const data = sheet.getDataRange().getValues();
+
+  if (data.length <= 1) return { status: "success", data: [] };
+
+  const rows = data.slice(1);
+  const filtered = rows.filter(r => {
+    if (vacanteId && String(r[1]).trim() !== String(vacanteId).trim()) return false;
+    if (estadoCandidatura && String(r[7]).toLowerCase() !== String(estadoCandidatura).toLowerCase()) return false;
+    return true;
+  }).map(r => ({
+    candidatoId: r[0],
+    vacanteId: r[1],
+    nombreCompleto: r[2],
+    identificacion: r[3],
+    telefono: r[4],
+    email: r[5],
+    cvDriveUrl: r[6],
+    estadoCandidatura: r[7],
+    observaciones: r[8],
+    fechaPostulacion: r[9]
+  }));
+
+  return { status: "success", data: filtered };
 }
 
 function getEmployeeContracts(payload) {
@@ -5081,6 +5733,88 @@ function saveBudgetPlan(payload) {
   return { status: "success", message: "Partida presupuestaria registrada exitosamente.", data: { presupuestoId: pId } };
 }
 
+// [TAREA 2] [Fase Contabilidad y Finanzas] - Creación y guardado de proyecciones presupuestarias plurianuales y escenarios futuros.
+function saveMultiYearBudgetProjection(payload) {
+  const { escenarioId, nombreEscenario, anoBase, anoProyectado, centroCosto, partidaCodigo, montoBase, porcentajeVariacion, montoProyectado, observaciones } = payload || {};
+  if (!anoBase || !anoProyectado || !centroCosto || !partidaCodigo) {
+    throw new Error("anoBase, anoProyectado, centroCosto y partidaCodigo son requeridos.");
+  }
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "ProyeccionesPresupuestariasPlurianuales");
+
+  if (sheet.getLastRow() === 0) {
+    sheet.appendRow(["EscenarioID", "NombreEscenario", "AnoBase", "AnoProyectado", "CentroCosto", "PartidaCodigo", "MontoBase", "PorcentajeVariacion", "MontoProyectado", "Observaciones", "CreadoPor", "FechaCreacion"]);
+  }
+
+  const escId = escenarioId || ("ESC-" + Date.now());
+  const mBase = parseFloat(montoBase || 0);
+  const pct = parseFloat(porcentajeVariacion || 0);
+  let mProyectado = parseFloat(montoProyectado || 0);
+  if (!montoProyectado && mBase > 0) {
+    mProyectado = Math.round((mBase * (1 + (pct / 100))) * 100) / 100;
+  }
+
+  const nowStr = new Date().toISOString();
+  const creador = payload.authUserId || "Contaduría";
+
+  sheet.appendRow([
+    escId,
+    nombreEscenario || "Escenario Esperado",
+    String(anoBase),
+    String(anoProyectado),
+    centroCosto,
+    partidaCodigo,
+    mBase,
+    pct,
+    mProyectado,
+    observaciones || "",
+    creador,
+    nowStr
+  ]);
+
+  return {
+    status: "success",
+    message: "Proyección presupuestaria plurianual registrada exitosamente.",
+    data: { escenarioId: escId, anoBase, anoProyectado, montoProyectado: mProyectado }
+  };
+}
+
+// [TAREA 2] [Fase Contabilidad y Finanzas] - Consulta de proyecciones presupuestarias plurianuales por ejercicio, departamento y centro de costo.
+function getMultiYearBudgetProjections(payload) {
+  const { anoBase, anoProyectado, centroCosto, escenarioId } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "ProyeccionesPresupuestariasPlurianuales");
+  const data = sheet.getDataRange().getValues();
+
+  if (data.length <= 1) return { status: "success", data: [] };
+
+  const rows = data.slice(1);
+  const filtered = rows.filter(r => {
+    if (escenarioId && String(r[0]).trim() !== String(escenarioId).trim()) return false;
+    if (anoBase && String(r[2]).trim() !== String(anoBase).trim()) return false;
+    if (anoProyectado && String(r[3]).trim() !== String(anoProyectado).trim()) return false;
+    if (centroCosto && normalizeString(r[4]) !== normalizeString(centroCosto)) return false;
+    return true;
+  }).map(r => ({
+    escenarioId: r[0],
+    nombreEscenario: r[1],
+    anoBase: r[2],
+    anoProyectado: r[3],
+    centroCosto: r[4],
+    partidaCodigo: r[5],
+    montoBase: parseFloat(r[6] || 0),
+    porcentajeVariacion: parseFloat(r[7] || 0),
+    montoProyectado: parseFloat(r[8] || 0),
+    variacionAbsoluta: parseFloat(r[8] || 0) - parseFloat(r[6] || 0),
+    observaciones: r[9],
+    creadoPor: r[10],
+    fechaCreacion: r[11]
+  }));
+
+  return { status: "success", data: filtered };
+}
+
 function getBudgetExecutionReport(payload) {
   const res = getBudgets(payload);
   const budgets = res.data || [];
@@ -5126,6 +5860,358 @@ function getFinancialSummary(payload) {
       balanceado: Math.abs(totalDebitos - totalCreditos) < 0.01
     }
   };
+}
+
+// [TAREA 4] [Fase Tesorería y Planificación Financiera] - Proyección de flujo de caja a seis meses consecutivos con estimación de liquidez y detección de déficit.
+function getCashFlowSixMonthProjection(payload) {
+  const { saldoInicialManual, ingresosExtraordinariosMensuales, egresosExtraordinariosMensuales } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+
+  // Obtener saldo inicial de caja/bancos
+  const cashRes = getCashBankSummary({});
+  let saldoInicial = parseFloat(saldoInicialManual || (cashRes.data ? cashRes.data.saldoTotalDisponibilidad : 0) || 0);
+
+  // Obtener cuentas por cobrar y por pagar
+  const arApSummary = getAccountsReceivablePayableSummary({});
+  const totalPorCobrar = arApSummary.data ? arApSummary.data.cuentasPorCobrarPendientes : 0;
+  const totalPorPagar = arApSummary.data ? arApSummary.data.cuentasPorPagarPendientes : 0;
+
+  // Promedio mensual de cobros y pagos estimado a 6 meses
+  const cobroEstimadoMensual = Math.round((totalPorCobrar / 6) * 100) / 100;
+  const pagoEstimadoMensual = Math.round((totalPorPagar / 6) * 100) / 100;
+
+  const ingExtra = parseFloat(ingresosExtraordinariosMensuales || 0);
+  const egrExtra = parseFloat(egresosExtraordinariosMensuales || 0);
+
+  const hoy = new Date();
+  const proyeccion = [];
+  let saldoAcumulado = saldoInicial;
+  let detectadoDeficit = false;
+
+  for (let i = 0; i < 6; i++) {
+    const fechaMes = new Date(hoy.getFullYear(), hoy.getMonth() + i, 1);
+    const nombreMes = fechaMes.toLocaleString('es-ES', { month: 'long', year: 'numeric' });
+
+    const cobrosMes = Math.round((cobroEstimadoMensual + ingExtra) * 100) / 100;
+    const pagosMes = Math.round((pagoEstimadoMensual + egrExtra) * 100) / 100;
+    const flujoNetoMes = Math.round((cobrosMes - pagosMes) * 100) / 100;
+
+    saldoAcumulado = Math.round((saldoAcumulado + flujoNetoMes) * 100) / 100;
+
+    if (saldoAcumulado < 0) {
+      detectadoDeficit = true;
+    }
+
+    proyeccion.push({
+      mesNumero: i + 1,
+      nombreMes,
+      saldoInicial: Math.round((saldoAcumulado - flujoNetoMes) * 100) / 100,
+      cobrosEstimados: cobrosMes,
+      pagosEstimados: pagosMes,
+      flujoNeto: flujoNetoMes,
+      saldoFinalProyectado: saldoAcumulado,
+      alertaDéficit: saldoAcumulado < 0
+    });
+  }
+
+  return {
+    status: "success",
+    data: {
+      saldoInicialLiquidez: saldoInicial,
+      totalCuentasPorCobrar: totalPorCobrar,
+      totalCuentasPorPagar: totalPorPagar,
+      horizonteMeses: 6,
+      detectadoDeficit,
+      mensajeAlerta: detectadoDeficit ? "Advertencia: Se proyecta déficit de liquidez en uno o más meses del horizonte." : "Flujo de caja saludable sin déficit proyectado.",
+      mesesProyeccion: proyeccion
+    }
+  };
+}
+
+// [TAREA 8] [Fase Seguridad Financiera] - Verificación transversal de integridad contable, cuadratura de asientos y prevención de saldos inconsistentes.
+function verifyAccountingIntegrity(payload) {
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+
+  // 1. Validar asientos desequilibrados en AsientosContables
+  const entriesSheet = getOrCreateSheet(ss, "AsientosContables");
+  const entriesRows = entriesSheet.getDataRange().getValues().slice(1);
+
+  let unadjustedEntriesCount = 0;
+  const unadjustedEntries = [];
+
+  entriesRows.forEach(r => {
+    const asientoId = r[0];
+    let lineas = [];
+    try { lineas = JSON.parse(r[5] || "[]"); } catch (e) { lineas = []; }
+
+    let sumDebito = 0;
+    let sumCredito = 0;
+    lineas.forEach(l => {
+      sumDebito += parseFloat(l.debito || 0);
+      sumCredito += parseFloat(l.credito || 0);
+    });
+
+    const diff = Math.abs(sumDebito - sumCredito);
+    if (diff > 0.01) {
+      unadjustedEntriesCount++;
+      unadjustedEntries.push({ asientoId, sumDebito, sumCredito, diff: Math.round(diff * 100) / 100 });
+    }
+  });
+
+  // 2. Validar suma de cuotas de convenios de pago
+  const convSheet = getOrCreateSheet(ss, "ConveniosPagoFamilia");
+  const convRows = convSheet.getDataRange().getValues().slice(1);
+  let convInconsistenciesCount = 0;
+
+  convRows.forEach(r => {
+    const convenId = r[0];
+    const saldoInicial = parseFloat(r[4] || 0);
+    let cuotas = [];
+    try { cuotas = JSON.parse(r[6] || "[]"); } catch (e) { cuotas = []; }
+
+    const sumaCuotas = cuotas.reduce((acc, c) => acc + parseFloat(c.monto || 0), 0);
+    if (Math.abs(sumaCuotas - saldoInicial) > 0.05) {
+      convInconsistenciesCount++;
+    }
+  });
+
+  const isIntegral = unadjustedEntriesCount === 0 && convInconsistenciesCount === 0;
+
+  return {
+    status: "success",
+    data: {
+      integridadVerificada: isIntegral,
+      asientosRevisados: entriesRows.length,
+      asientosDesequilibrados: unadjustedEntriesCount,
+      conveniosInconsistentes: convInconsistenciesCount,
+      detallesDesequilibrios: unadjustedEntries
+    }
+  };
+}
+
+// [TAREA 7] [Fase Integración Presupuesto y Finanzas] - Conciliación de coherencia entre presupuesto, tesorería, cuentas por cobrar/pagar y flujo de caja.
+function reconcileFinancialReportCoherence(payload) {
+  const { anoId } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+
+  // Obtener ejecución de presupuesto
+  const budgetsRes = getBudgets({ anoId });
+  const budgets = budgetsRes.data || [];
+
+  let totalPresupuestoAprobado = 0;
+  let totalPresupuestoComprometido = 0;
+  let totalPresupuestoEjecutado = 0;
+
+  budgets.forEach(b => {
+    totalPresupuestoAprobado += b.montoAprobado;
+    totalPresupuestoComprometido += b.montoComprometido;
+    totalPresupuestoEjecutado += b.montoEjecutado;
+  });
+
+  // Obtener resumen de flujo de caja y liquidez
+  const cashRes = getCashBankSummary({});
+  const saldoLiquidezReal = cashRes.data ? cashRes.data.saldoTotalDisponibilidad : 0;
+
+  // Obtener cuentas por cobrar y por pagar
+  const arApRes = getAccountsReceivablePayableSummary({});
+  const cuentasPorCobrar = arApRes.data ? arApRes.data.cuentasPorCobrarPendientes : 0;
+  const cuentasPorPagar = arApRes.data ? arApRes.data.cuentasPorPagarPendientes : 0;
+
+  // Mapear reporte con desglose inequívoco de origen
+  return {
+    status: "success",
+    data: {
+      anoId: anoId || "ANO-CURRENT",
+      presupuestario: {
+        totalAprobado: Math.round(totalPresupuestoAprobado * 100) / 100,
+        totalComprometido: Math.round(totalPresupuestoComprometido * 100) / 100,
+        totalEjecutado: Math.round(totalPresupuestoEjecutado * 100) / 100,
+        saldoDisponiblePresupuestario: Math.round((totalPresupuestoAprobado - totalPresupuestoComprometido - totalPresupuestoEjecutado) * 100) / 100
+      },
+      tesoreriaCaja: {
+        saldoEfectivoBancarioReal: Math.round(saldoLiquidezReal * 100) / 100,
+        cuentasPorCobrarPendientes: Math.round(cuentasPorCobrar * 100) / 100,
+        cuentasPorPagarPendientes: Math.round(cuentasPorPagar * 100) / 100,
+        posicionLiquidezEstimada: Math.round((saldoLiquidezReal + cuentasPorCobrar - cuentasPorPagar) * 100) / 100
+      },
+      advertenciasCoherencia: [
+        "Las órdenes de compra comprometidas no constituyen egresos reales hasta la emisión y pago de la factura.",
+        "Las cuentas por cobrar representan estimaciones de cobro y no se suman al saldo de caja real en libros."
+      ]
+    }
+  };
+}
+
+// [TAREA 6] [Fase Contabilidad e Informes Fiscales] - Comparación financiera visual y tabular entre dos o más ejercicios fiscales.
+function getComparativeFinancialSummary(payload) {
+  const { ejerciciosAnos } = payload || {};
+  const anosArr = Array.isArray(ejerciciosAnos) && ejerciciosAnos.length >= 2 ? ejerciciosAnos : ["2025", "2026"];
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const entriesSheet = getOrCreateSheet(ss, "AsientosContables");
+  const entriesRows = entriesSheet.getDataRange().getValues().slice(1);
+
+  const comparacionPorAno = {};
+
+  anosArr.forEach(ano => {
+    comparacionPorAno[ano] = {
+      ingresos: 0,
+      gastos: 0,
+      resultadoNeto: 0,
+      asientosCount: 0
+    };
+  });
+
+  entriesRows.forEach(r => {
+    const fecha = r[1] ? new Date(r[1]) : null;
+    if (!fecha || isNaN(fecha.getTime())) return;
+    const anoStr = String(fecha.getFullYear());
+
+    if (comparacionPorAno[anoStr]) {
+      comparacionPorAno[anoStr].asientosCount++;
+      let lineas = [];
+      try { lineas = JSON.parse(r[5] || "[]"); } catch (e) { lineas = []; }
+
+      lineas.forEach(l => {
+        const deb = parseFloat(l.debito || 0);
+        const cred = parseFloat(l.credito || 0);
+        const cuenta = String(l.cuentaCodigo || l.codigoCuenta || "");
+
+        // Cuentas de Ingresos (Clase 4) y Gastos (Clase 5/6)
+        if (cuenta.startsWith("4")) {
+          comparacionPorAno[anoStr].ingresos += cred - deb;
+        } else if (cuenta.startsWith("5") || cuenta.startsWith("6")) {
+          comparacionPorAno[anoStr].gastos += deb - cred;
+        }
+      });
+    }
+  });
+
+  const resumenAnos = [];
+  anosArr.forEach(ano => {
+    const ing = Math.round(comparacionPorAno[ano].ingresos * 100) / 100;
+    const gst = Math.round(comparacionPorAno[ano].gastos * 100) / 100;
+    const neto = Math.round((ing - gst) * 100) / 100;
+
+    resumenAnos.push({
+      ejercicioAno: ano,
+      ingresosTotales: ing,
+      gastosTotales: gst,
+      resultadoNeto: neto,
+      asientosRegistrados: comparacionPorAno[ano].asientosCount
+    });
+  });
+
+  // Calcular variaciones respecto al primer año base
+  const base = resumenAnos[0];
+  const variaciones = resumenAnos.slice(1).map(item => {
+    const varIngAbs = Math.round((item.ingresosTotales - base.ingresosTotales) * 100) / 100;
+    const varIngPct = base.ingresosTotales !== 0 ? Math.round((varIngAbs / Math.abs(base.ingresosTotales)) * 10000) / 100 : 0;
+
+    const varGstAbs = Math.round((item.gastosTotales - base.gastosTotales) * 100) / 100;
+    const varGstPct = base.gastosTotales !== 0 ? Math.round((varGstAbs / Math.abs(base.gastosTotales)) * 10000) / 100 : 0;
+
+    const varNetoAbs = Math.round((item.resultadoNeto - base.resultadoNeto) * 100) / 100;
+    const varNetoPct = base.resultadoNeto !== 0 ? Math.round((varNetoAbs / Math.abs(base.resultadoNeto)) * 10000) / 100 : 0;
+
+    return {
+      ejercicioComparado: item.ejercicioAno,
+      ejercicioBase: base.ejercicioAno,
+      variacionIngresosAbsoluta: varIngAbs,
+      variacionIngresosPorcentual: varIngPct,
+      variacionGastosAbsoluta: varGstAbs,
+      variacionGastosPorcentual: varGstPct,
+      variacionResultadoNetoAbsoluta: varNetoAbs,
+      variacionResultadoNetoPorcentual: varNetoPct
+    };
+  });
+
+  return {
+    status: "success",
+    data: {
+      ejerciciosComparados: anosArr,
+      resumenEjercicios: resumenAnos,
+      variacionesComparativas: variaciones
+    }
+  };
+}
+
+// [TAREA 5] [Fase Morosidad y Cuentas por Cobrar] - Registro de acciones de seguimiento en la bitácora de gestiones de cobro.
+function recordCollectionManagementAction(payload) {
+  const { gestionId, estudianteUserId, responsableUserId, medioContacto, motivoContacto, resultado, compromisoPagoMonto, compromisoPagoFecha, fechaSeguimiento, observaciones, estadoCompromiso } = payload || {};
+  if (!estudianteUserId || !medioContacto || !resultado) {
+    throw new Error("estudianteUserId, medioContacto y resultado son requeridos.");
+  }
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "BitacoraGestionesCobro");
+
+  if (sheet.getLastRow() === 0) {
+    sheet.appendRow(["GestionID", "EstudianteUserId", "ResponsableUserId", "MedioContacto", "MotivoContacto", "Resultado", "CompromisoPagoMonto", "CompromisoPagoFecha", "FechaSeguimiento", "EstadoCompromiso", "Observaciones", "RegistradoPor", "FechaRegistro"]);
+  }
+
+  const gId = gestionId || ("GCOB-" + Date.now());
+  const nowStr = new Date().toISOString();
+  const regUser = payload.authUserId || "Contaduría";
+
+  sheet.appendRow([
+    gId,
+    estudianteUserId,
+    responsableUserId || "APODERADO",
+    medioContacto,
+    motivoContacto || "Cobro de Colegiatura",
+    resultado,
+    parseFloat(compromisoPagoMonto || 0),
+    compromisoPagoFecha || "",
+    fechaSeguimiento || "",
+    estadoCompromiso || (compromisoPagoMonto ? "Pendiente" : "N/A"),
+    observaciones || "",
+    regUser,
+    nowStr
+  ]);
+
+  return {
+    status: "success",
+    message: "Gestión de cobro registrada exitosamente en la bitácora.",
+    data: { gestionId: gId, estudianteUserId, medioContacto, resultado }
+  };
+}
+
+// [TAREA 5] [Fase Morosidad y Cuentas por Cobrar] - Consulta cronológica de la bitácora de gestiones de cobro y compromisos de pago.
+function getCollectionManagementLogs(payload) {
+  const { estudianteUserId, responsableUserId, estadoCompromiso } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "BitacoraGestionesCobro");
+  const data = sheet.getDataRange().getValues();
+
+  if (data.length <= 1) return { status: "success", data: [] };
+
+  const rows = data.slice(1);
+  const filtered = rows.filter(r => {
+    if (estudianteUserId && String(r[1]).trim() !== String(estudianteUserId).trim()) return false;
+    if (responsableUserId && String(r[2]).trim() !== String(responsableUserId).trim()) return false;
+    if (estadoCompromiso && String(r[9]).toLowerCase() !== String(estadoCompromiso).toLowerCase()) return false;
+    return true;
+  }).map(r => ({
+    gestionId: r[0],
+    estudianteUserId: r[1],
+    responsableUserId: r[2],
+    medioContacto: r[3],
+    motivoContacto: r[4],
+    resultado: r[5],
+    compromisoPagoMonto: parseFloat(r[6] || 0),
+    compromisoPagoFecha: r[7],
+    fechaSeguimiento: r[8],
+    estadoCompromiso: r[9],
+    observaciones: r[10],
+    registradoPor: r[11],
+    fechaRegistro: r[12]
+  }));
+
+  // Ordenar cronológicamente descendente por FechaRegistro
+  filtered.sort((a, b) => new Date(b.fechaRegistro).getTime() - new Date(a.fechaRegistro).getTime());
+
+  return { status: "success", data: filtered };
 }
 
 function getAccountsReceivablePayableSummary(payload) {

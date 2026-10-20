@@ -3548,7 +3548,7 @@ Aplica las siguientes reglas:
 
 BLOQUE A. INTEGRIDAD DE LOS HORARIOS Y REGLAS ACADÉMICAS
 
-TAREA 3.1. Validación integral de horarios académicos
+[X] TAREA 3.1. Validación integral de horarios académicos
 
 Objetivo: Ampliar las validaciones actuales para impedir que se guarden horarios que incumplan restricciones académicas, docentes, temporales o físicas.
 
@@ -3588,7 +3588,7 @@ Criterios de aceptación
 
 ---
 
-TAREA 3.2. Copia de horarios entre años lectivos
+[X] TAREA 3.2. Copia de horarios entre años lectivos
 
 Objetivo: Reducir el trabajo repetitivo al preparar el horario de un nuevo año lectivo, reutilizando una matriz anterior sin alterar los registros originales.
 
@@ -3619,7 +3619,7 @@ Criterios de aceptación
 
 BLOQUE B. DISPONIBILIDAD DOCENTE, AULAS Y CALENDARIO
 
-TAREA 3.3. Gestión de aulas, laboratorios y recursos desde la interfaz
+[X] TAREA 3.3. Gestión de aulas, laboratorios y recursos desde la interfaz
 
 Objetivo: Conectar la gestión de espacios físicos con la interfaz administrativa, aprovechando las funciones existentes de consulta y guardado.
 
@@ -3651,7 +3651,7 @@ Criterios de aceptación
 
 ---
 
-TAREA 3.4. Disponibilidad horaria personalizada por docente
+[X] TAREA 3.4. Disponibilidad horaria personalizada por docente
 
 Objetivo: Registrar las franjas en las que cada docente puede impartir clases y aplicar esas restricciones a la asignación y generación de horarios.
 
@@ -3683,7 +3683,7 @@ Criterios de aceptación
 
 ---
 
-TAREA 3.5. Validación de capacidad de aulas y matrícula
+[X] TAREA 3.5. Validación de capacidad de aulas y matrícula
 
 Objetivo: Evitar asignaciones que superen la capacidad registrada de los espacios.
 
@@ -3708,7 +3708,7 @@ Criterios de aceptación
 
 ---
 
-TAREA 3.6. Integración de los horarios con el calendario académico
+[X] TAREA 3.6. Integración de los horarios con el calendario académico
 
 Objetivo: Evitar que se programen o impartan clases ordinarias en fechas declaradas no lectivas y permitir el tratamiento correcto de los días especiales.
 
@@ -3735,7 +3735,7 @@ Criterios de aceptación
 
 BLOQUE C. CONTROL DE CARGA ACADÉMICA Y GENERACIÓN AUTOMÁTICA
 
-TAREA 3.7. Control de carga lectiva máxima por docente
+[X] TAREA 3.7. Control de carga lectiva máxima por docente
 
 Objetivo: Controlar la cantidad de horas y sesiones asignadas a cada docente, separando la carga académica frente a grupo del control laboral existente.
 
@@ -3767,7 +3767,7 @@ Criterios de aceptación
 
 ---
 
-TAREA 3.8. Generador automático de horarios académicos
+[X] TAREA 3.8. Generador automático de horarios académicos
 
 Objetivo: Permitir generar una propuesta de matriz semanal de horarios a partir de las ofertas académicas, la malla curricular, las asignaciones docentes, la disponibilidad de los docentes, las aulas y las restricciones institucionales.
 
@@ -3816,7 +3816,7 @@ Criterios de aceptación
 
 BLOQUE D. REGISTRO DE CLASES IMPARTIDAS Y RECUPERACIONES
 
-TAREA 3.9. Registro y confirmación de horas lectivas impartidas
+[X] TAREA 3.9. Registro y confirmación de horas lectivas impartidas
 
 Objetivo: Establecer un registro verificable de cada sesión programada para determinar si fue impartida, cancelada, pendiente o recuperada.
 
@@ -3856,7 +3856,7 @@ Criterios de aceptación
 
 ---
 
-TAREA 3.10. Recuperación y reprogramación de clases canceladas
+[X] TAREA 3.10. Recuperación y reprogramación de clases canceladas
 
 Objetivo: Permitir reprogramar las sesiones canceladas o pendientes y controlar el cumplimiento de las horas lectivas sin duplicaciones.
 
@@ -3894,7 +3894,7 @@ Criterios de aceptación
 
 BLOQUE E. PUBLICACIÓN Y CALENDARIOS POR ROL
 
-TAREA 3.11. Validación y publicación segura de horarios
+[X] TAREA 3.11. Validación y publicación segura de horarios
 
 Objetivo: Garantizar que solamente se publiquen matrices revisadas, coherentes y autorizadas, manteniendo la distinción entre borradores y horarios vigentes.
 
@@ -3923,7 +3923,7 @@ Criterios de aceptación
 
 ---
 
-TAREA 3.12. Calendarios individuales de estudiantes, docentes y secciones
+[X] TAREA 3.12. Calendarios individuales de estudiantes, docentes y secciones
 
 Objetivo: Consolidar los horarios en vistas coherentes para los usuarios de la institución, reutilizando las consultas existentes y mostrando los cambios autorizados.
 
@@ -3961,7 +3961,7 @@ Criterios de aceptación
 
 BLOQUE F. INTEGRACIÓN, SEGURIDAD Y TRAZABILIDAD
 
-TAREA 3.13. Integración coherente de horarios, asignaciones y sesiones
+[X] TAREA 3.13. Integración coherente de horarios, asignaciones y sesiones
 
 Objetivo: Mantener sincronizados los horarios, las asignaciones docentes, las sesiones impartidas, las recuperaciones y los calendarios, sin duplicar datos ni perder relaciones.
 
@@ -3988,7 +3988,7 @@ Criterios de aceptación
 
 ---
 
-TAREA 3.14. Permisos y trazabilidad de operaciones académicas
+[X] TAREA 3.14. Permisos y trazabilidad de operaciones académicas
 
 Objetivo: Asegurar que las nuevas funciones respeten los permisos institucionales y que las acciones relevantes puedan revisarse posteriormente.
 
@@ -4095,7 +4095,7 @@ Reglas obligatorias
 
 ---
 
-TAREA 1. REESTRUCTURACIÓN DE CONVENIOS Y PLANES DE PAGO FAMILIARES
+[X] TAREA 1. REESTRUCTURACIÓN DE CONVENIOS Y PLANES DE PAGO FAMILIARES
 
 Prioridad: Alta
 Área: Contabilidad, cuentas por cobrar y gestión de familias.
@@ -4142,7 +4142,7 @@ Criterios de aceptación
 
 ---
 
-TAREA 2. PROYECCIONES PRESUPUESTARIAS PLURIANUALES
+[X] TAREA 2. PROYECCIONES PRESUPUESTARIAS PLURIANUALES
 
 Prioridad: Media
 Área: Presupuesto institucional.
@@ -4180,7 +4180,7 @@ Criterios de aceptación
 
 ---
 
-TAREA 3. ALERTAS POR VENCIMIENTO DE CONTRATOS DE PROVEEDORES
+[X] TAREA 3. ALERTAS POR VENCIMIENTO DE CONTRATOS DE PROVEEDORES
 
 Prioridad: Media
 Área: Proveedores y compromisos institucionales.
@@ -4223,7 +4223,7 @@ Criterios de aceptación
 
 ---
 
-TAREA 4. PROYECCIÓN DEL FLUJO DE CAJA A SEIS MESES
+[X] TAREA 4. PROYECCIÓN DEL FLUJO DE CAJA A SEIS MESES
 
 Prioridad: Alta
 Área: Tesorería y planificación financiera.
@@ -4267,7 +4267,7 @@ Criterios de aceptación
 
 ---
 
-TAREA 5. BITÁCORA DE GESTIONES DE COBRO
+[X] TAREA 5. BITÁCORA DE GESTIONES DE COBRO
 
 Prioridad: Alta
 Área: Morosidad y cuentas por cobrar.
@@ -4312,7 +4312,7 @@ Criterios de aceptación
 
 ---
 
-TAREA 6. COMPARACIÓN FINANCIERA VISUAL ENTRE EJERCICIOS FISCALES
+[X] TAREA 6. COMPARACIÓN FINANCIERA VISUAL ENTRE EJERCICIOS FISCALES
 
 Prioridad: Media
 Área: Informes contables y consolidación fiscal.
@@ -4356,7 +4356,7 @@ Criterios de aceptación
 
 ---
 
-TAREA 7. PROYECCIONES PRESUPUESTARIAS Y FINANCIERAS: COHERENCIA ENTRE INFORMES
+[X] TAREA 7. PROYECCIONES PRESUPUESTARIAS Y FINANCIERAS: COHERENCIA ENTRE INFORMES
 
 Prioridad: Media
 Área: Integración entre presupuesto, tesorería y contabilidad.
@@ -4396,7 +4396,7 @@ Criterios de aceptación
 
 ---
 
-TAREA 8. VERIFICACIÓN DE INTEGRIDAD CONTABLE EN LAS NUEVAS FUNCIONES
+[X] TAREA 8. VERIFICACIÓN DE INTEGRIDAD CONTABLE EN LAS NUEVAS FUNCIONES
 
 Prioridad: Crítica
 Área: Seguridad financiera y consistencia de datos.
@@ -4514,7 +4514,7 @@ Reglas obligatorias
 
 ---
 
-TAREA RH-01. Conectar el panel de Recursos Humanos con los servicios existentes
+[X] TAREA RH-01. Conectar el panel de Recursos Humanos con los servicios existentes
 
 Prioridad: Crítica para completar la experiencia administrativa.
 Dependencia: Ninguna. Debe ser la primera tarea.
@@ -4566,7 +4566,7 @@ Criterios de aceptación
 
 ---
 
-TAREA RH-02. Implementar avisos de vencimiento de contratos y documentos laborales
+[X] TAREA RH-02. Implementar avisos de vencimiento de contratos y documentos laborales
 
 Prioridad: Alta.
 Dependencia: RH-01 para la integración con el panel.
@@ -4611,7 +4611,7 @@ Criterios de aceptación
 
 ---
 
-TAREA RH-03. Crear el módulo de reclutamiento y selección de personal
+[X] TAREA RH-03. Crear el módulo de reclutamiento y selección de personal
 
 Prioridad: Alta.
 Dependencia: RH-01 para la integración con Recursos Humanos.
@@ -4662,7 +4662,7 @@ Criterios de aceptación
 
 ---
 
-TAREA RH-04. Implementar la agenda y el seguimiento de entrevistas
+[X] TAREA RH-04. Implementar la agenda y el seguimiento de entrevistas
 
 Prioridad: Alta.
 Dependencia: RH-03.
