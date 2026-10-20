@@ -3735,7 +3735,7 @@ Criterios de aceptación
 
 BLOQUE C. CONTROL DE CARGA ACADÉMICA Y GENERACIÓN AUTOMÁTICA
 
-TAREA 3.7. Control de carga lectiva máxima por docente
+[X] TAREA 3.7. Control de carga lectiva máxima por docente
 
 Objetivo: Controlar la cantidad de horas y sesiones asignadas a cada docente, separando la carga académica frente a grupo del control laboral existente.
 

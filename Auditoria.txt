@@ -108,6 +108,10 @@ GRUPO 1: TAREAS COMPLETADAS
     - Archivo: backend/academic-service/Code.gs (Línea 1819 `getScheduleCalendarConflicts`, Línea 1990 `checkScheduleConflict`)
     - Descripción: Integración de validación de feriados, vacaciones y días no lectivos / suspensiones en CalendarioAcademico impidiendo la publicación de horarios en fechas no lectivas.
 
+22. [TAREA 3.7] Control de carga lectiva máxima por docente
+    - Archivo: backend/academic-service/Code.gs (Línea 1819 `getTeacherTeachingLoad`, Línea 2042 `checkScheduleConflict`)
+    - Descripción: Endpoint `getTeacherTeachingLoad` para el cálculo de horas semanales frente a grupo por docente y validación de límite máximo de carga lectiva en `checkScheduleConflict`.
+
 
 -------------------------------------------------------------------------------
 GRUPO 2: TAREAS INCOMPLETAS
@@ -123,8 +127,7 @@ GRUPO 3: TAREAS PENDIENTES / NO INICIADAS
 (Registradas en el backlog pero no iniciadas ni presentes en el código)
 -------------------------------------------------------------------------------
 
-1. TAREA 3.7: Control de carga lectiva máxima por docente
-3. TAREA 3.8: Generador automático de horarios académicos
+1. TAREA 3.8: Generador automático de horarios académicos
 4. TAREA 3.9: Registro y confirmación de horas lectivas impartidas
 5. TAREA 3.10: Recuperación y reprogramación de clases canceladas
 6. TAREA 3.11: Validación y publicación segura de horarios

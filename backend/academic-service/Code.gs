@@ -1816,6 +1816,60 @@ function getClassSchedules(payload) {
   return { status: "success", data: schedules };
 }
 
+// [TAREA 3.7] [Fase 3: Planificación Académica y Horarios] - Control de carga lectiva máxima por docente y cálculo de horas semanales frente a grupo.
+function getTeacherTeachingLoad(payload) {
+  const { docenteUserId, maxHorasSemanales, anoId } = payload || {};
+  if (!docenteUserId) throw new Error("docenteUserId es requerido.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const horSheet = getOrCreateSheet(ss, "HorariosClase");
+  const horRows = horSheet.getDataRange().getValues().slice(1);
+
+  // Filtrar horarios activos del docente
+  const teacherSchedules = horRows.filter(r => r[7] !== "Inactivo" && String(r[6]).trim() === String(docenteUserId).trim());
+
+  let totalMinutosSemanales = 0;
+  const bloques = [];
+
+  teacherSchedules.forEach(r => {
+    const diaSemana = r[2];
+    const hInicio = String(r[3]);
+    const hFin = String(r[4]);
+
+    const [startH, startM] = hInicio.split(":").map(Number);
+    const [endH, endM] = hFin.split(":").map(Number);
+    const mins = (endH * 60 + (endM || 0)) - (startH * 60 + (startM || 0));
+
+    if (mins > 0) {
+      totalMinutosSemanales += mins;
+      bloques.push({
+        horarioId: r[0],
+        ofertaId: r[1],
+        diaSemana,
+        horaInicio: hInicio,
+        horaFin: hFin,
+        duracionMinutos: mins
+      });
+    }
+  });
+
+  const totalHorasSemanales = Math.round((totalMinutosSemanales / 60) * 100) / 100;
+  const limiteMaximo = Number(maxHorasSemanales) || 40; // Límite institucional estándar (40 horas lectivas semanales)
+  const excedeLimite = totalHorasSemanales > limiteMaximo;
+
+  return {
+    status: "success",
+    data: {
+      docenteUserId,
+      totalHorasSemanales,
+      totalMinutosSemanales,
+      limiteMaximo,
+      excedeLimite,
+      bloques
+    }
+  };
+}
+
 // [TAREA 3.6] [Fase 3: Planificación Académica y Horarios] - Integración de horarios con eventos del calendario académico y suspensión de clases.
 function getScheduleCalendarConflicts(payload) {
   const { anoId, fecha } = payload || {};
@@ -1984,8 +2038,22 @@ function copyClassSchedules(payload) {
 }
 
 function checkScheduleConflict(params) {
-  const { diaSemana, horaInicio, horaFin, aulaCodigo, docenteUserId, ofertaId, excludeHorarioId, estudiantesCount, fechaEspecifica } = params || {};
+  const { diaSemana, horaInicio, horaFin, aulaCodigo, docenteUserId, ofertaId, excludeHorarioId, estudiantesCount, fechaEspecifica, maxHorasDocente } = params || {};
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+
+  // [TAREA 3.7] Validar límite de carga lectiva máxima semanal para el docente
+  if (docenteUserId && horaInicio && horaFin) {
+    const loadInfo = getTeacherTeachingLoad({ docenteUserId, maxHorasSemanales: maxHorasDocente });
+    if (loadInfo && loadInfo.data) {
+      const [startH, startM] = String(horaInicio).split(":").map(Number);
+      const [endH, endM] = String(horaFin).split(":").map(Number);
+      const newMins = (endH * 60 + (endM || 0)) - (startH * 60 + (startM || 0));
+      const projectedHoras = Math.round(((loadInfo.data.totalMinutosSemanales + newMins) / 60) * 100) / 100;
+      if (projectedHoras > loadInfo.data.limiteMaximo) {
+        return { hasConflict: true, reason: `La asignación llevaría la carga docente a ${projectedHoras}h semanales, superando el límite máximo permitido de ${loadInfo.data.limiteMaximo}h.` };
+      }
+    }
+  }
 
   // [TAREA 3.6] Validar si la fecha especificada corresponde a un día no lectivo o suspendido en CalendarioAcademico
   if (fechaEspecifica) {
