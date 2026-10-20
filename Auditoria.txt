@@ -181,6 +181,10 @@ GRUPO 1: TAREAS COMPLETADAS
     - Archivo Frontend: dashboard-recursos-humanos.html (Línea 236)
     - Descripción: Endpoint `getEmployeeContractAlerts` para el cálculo automático de días para vencer en contratos laborales, clasificación de alertas y renderizado en dashboard-recursos-humanos.html.
 
+40. [TAREA RH-03] Crear el módulo de reclutamiento y selección de personal
+    - Archivo: backend/accounting-service/Code.gs (Línea 3740 `manageJobVacancy`, Línea 3824 `submitJobCandidate`)
+    - Descripción: Endpoints `manageJobVacancy`, `getJobVacancies`, `submitJobCandidate` y `getJobCandidates` para gestión de vacantes laborales, postulantes, currículos y estados de candidatura.
+
 
 -------------------------------------------------------------------------------
 GRUPO 2: TAREAS INCOMPLETAS
@@ -196,7 +200,6 @@ GRUPO 3: TAREAS PENDIENTES / NO INICIADAS
 (Registradas en el backlog pero no iniciadas ni presentes en el código)
 -------------------------------------------------------------------------------
 
-20. TAREA RH-03: Crear el módulo de reclutamiento y selección de personal
 21. TAREA RH-04: Implementar la agenda y el seguimiento de entrevistas
 22. TAREA RH-05: Implementar la evaluación del desempeño de los empleados
 23. TAREA RH-06: Implementar el registro de capacitación y desarrollo profesional

@@ -189,7 +189,7 @@ const ROLE_PERMISSIONS = {
   // REVISIÓN RBAC: Habilitar permiso processFamilyCreditPurchase para personal de tienda, cafetería, tutores y estudiantes
   "EncargadoTienda": ["getStoreProducts", "manageStoreProduct", "createStoreOrder", "getStoreOrders", "updateStoreOrderStatus", "recordInventoryMovement", "getInventoryKardex", "getInstitutionalPolicies", "processFamilyCreditPurchase"],
   "EncargadoCafeteria": ["getCafeteriaMenu", "manageCafeteriaMenu", "createCafeteriaOrder", "getCafeteriaOrders", "updateCafeteriaOrderStatus", "recordInventoryMovement", "getInventoryKardex", "getInstitutionalPolicies", "processFamilyCreditPurchase"],
-  "RecursosHumanos": ["createEmployeeRecord", "getEmployeeRecords", "manageEmployeeContract", "getEmployeeContracts", "getEmployeeContractAlerts", "updateEmployeeLaborStatus", "configureWorkSchedule", "recordStaffCheckIn", "getStaffAttendanceLogs", "submitAttendanceCorrection", "reviewAttendanceCorrection", "submitLeaveVacationRequest", "getLeaveVacationRequests", "reviewLeaveVacationRequest", "calculateVacationBalances", "recordMedicalLeave", "calculatePayrollPeriod", "updatePayrollPeriodStatus", "getPayrollPeriodSummary", "requestEmployeeLoanAdvance", "getEmployeeLoansAdvances", "approveEmployeeLoanAdvance", "getLoanAmortizationSchedule", "generatePayrollReceiptPDF", "uploadEmployeeDocument", "getEmployeeDocuments", "getHRDashboardAnalytics", "getInstitutionalPolicies"],
+  "RecursosHumanos": ["createEmployeeRecord", "getEmployeeRecords", "manageEmployeeContract", "getEmployeeContracts", "getEmployeeContractAlerts", "manageJobVacancy", "getJobVacancies", "submitJobCandidate", "getJobCandidates", "updateEmployeeLaborStatus", "configureWorkSchedule", "recordStaffCheckIn", "getStaffAttendanceLogs", "submitAttendanceCorrection", "reviewAttendanceCorrection", "submitLeaveVacationRequest", "getLeaveVacationRequests", "reviewLeaveVacationRequest", "calculateVacationBalances", "recordMedicalLeave", "calculatePayrollPeriod", "updatePayrollPeriodStatus", "getPayrollPeriodSummary", "requestEmployeeLoanAdvance", "getEmployeeLoansAdvances", "approveEmployeeLoanAdvance", "getLoanAmortizationSchedule", "generatePayrollReceiptPDF", "uploadEmployeeDocument", "getEmployeeDocuments", "getHRDashboardAnalytics", "getInstitutionalPolicies"],
   "Empleado": ["getEmployeeRecords", "getEmployeeContracts", "recordStaffCheckIn", "getStaffAttendanceLogs", "submitAttendanceCorrection", "submitLeaveVacationRequest", "getLeaveVacationRequests", "requestEmployeeLoanAdvance", "getEmployeeLoansAdvances", "generatePayrollReceiptPDF", "getEmployeeDocuments"],
   "Padre": ["getStudentAccountStatement", "uploadPaymentVoucher", "getPaymentVouchers", "generatePaymentReceiptPDF", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getLibraryBooks", "getLibraryLoans", "reserveLibraryBook", "getLibraryReservations", "getDigitalResources", "getTransportRoutes", "getTransportAssignments", "getSchoolDocumentTemplates", "generateSchoolDocument", "getIssuedSchoolDocuments", "getStoreProducts", "createStoreOrder", "getStoreOrders", "getCafeteriaMenu", "createCafeteriaOrder", "getCafeteriaOrders", "getFamilyCreditAuthorizations", "configureFamilyCreditAuthorization", "processFamilyCreditPurchase"],
   "Tutor": ["getStudentAccountStatement", "uploadPaymentVoucher", "getPaymentVouchers", "generatePaymentReceiptPDF", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getLibraryBooks", "getLibraryLoans", "reserveLibraryBook", "getLibraryReservations", "getDigitalResources", "getTransportRoutes", "getTransportAssignments", "getSchoolDocumentTemplates", "generateSchoolDocument", "getIssuedSchoolDocuments", "getStoreProducts", "createStoreOrder", "getStoreOrders", "getCafeteriaMenu", "createCafeteriaOrder", "getCafeteriaOrders", "getFamilyCreditAuthorizations", "configureFamilyCreditAuthorization", "processFamilyCreditPurchase"],
@@ -315,6 +315,10 @@ function doPost(e) {
       case "manageEmployeeContract": result = manageEmployeeContract(payload); break;
       case "getEmployeeContracts": result = getEmployeeContracts(payload); break;
       case "getEmployeeContractAlerts": result = getEmployeeContractAlerts(payload); break;
+      case "manageJobVacancy": result = manageJobVacancy(payload); break;
+      case "getJobVacancies": result = getJobVacancies(payload); break;
+      case "submitJobCandidate": result = submitJobCandidate(payload); break;
+      case "getJobCandidates": result = getJobCandidates(payload); break;
       case "submitLeaveVacationRequest": result = submitLeaveVacationRequest(payload); break;
       case "submitVacationRequest": result = submitVacationRequest(payload); break;
       case "getLeaveVacationRequests": result = getLeaveVacationRequests(payload); break;
@@ -3732,6 +3736,168 @@ function getEmployeeContractAlerts(payload) {
       totalContratos: rows.length
     }
   };
+}
+
+// [TAREA RH-03] [Fase Reclutamiento y Selección] - Creación, consulta y actualización de vacantes laborales institucionales.
+function manageJobVacancy(payload) {
+  const { vacanteId, puesto, departamento, requisitos, cantidadPlazas, fechaPublicacion, fechaLimite, estado, observaciones } = payload || {};
+  if (!puesto || !departamento) throw new Error("Puesto y departamento son requeridos.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "VacantesLaborales");
+
+  if (sheet.getLastRow() === 0) {
+    sheet.appendRow(["VacanteID", "Puesto", "Departamento", "Requisitos", "CantidadPlazas", "FechaPublicacion", "FechaLimite", "Estado", "Observaciones", "PublicadoPor", "FechaRegistro"]);
+  }
+
+  const data = sheet.getDataRange().getValues();
+  const vId = vacanteId || ("VAC-" + Date.now());
+  const nowStr = new Date().toISOString();
+  const pubUser = payload.authUserId || "RecursosHumanos";
+
+  const idx = data.slice(1).findIndex(r => String(r[0]).trim() === String(vId).trim());
+
+  if (idx !== -1) {
+    const rowIdx = idx + 2;
+    sheet.getRange(rowIdx, 2).setValue(puesto);
+    sheet.getRange(rowIdx, 3).setValue(departamento);
+    sheet.getRange(rowIdx, 4).setValue(requisitos || "");
+    sheet.getRange(rowIdx, 5).setValue(parseInt(cantidadPlazas || 1, 10));
+    if (fechaPublicacion) sheet.getRange(rowIdx, 6).setValue(fechaPublicacion);
+    if (fechaLimite) sheet.getRange(rowIdx, 7).setValue(fechaLimite);
+    sheet.getRange(rowIdx, 8).setValue(estado || "Abierta");
+    sheet.getRange(rowIdx, 9).setValue(observaciones || "");
+  } else {
+    sheet.appendRow([
+      vId,
+      puesto,
+      departamento,
+      requisitos || "",
+      parseInt(cantidadPlazas || 1, 10),
+      fechaPublicacion || nowStr.split('T')[0],
+      fechaLimite || "",
+      estado || "Abierta",
+      observaciones || "",
+      pubUser,
+      nowStr
+    ]);
+  }
+
+  return {
+    status: "success",
+    message: "Vacante laboral registrada exitosamente.",
+    data: { vacanteId: vId, puesto, departamento }
+  };
+}
+
+// [TAREA RH-03] [Fase Reclutamiento y Selección] - Consulta de vacantes laborales activas e históricas.
+function getJobVacancies(payload) {
+  const { departamento, estado } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "VacantesLaborales");
+  const data = sheet.getDataRange().getValues();
+
+  if (data.length <= 1) return { status: "success", data: [] };
+
+  const rows = data.slice(1);
+  const filtered = rows.filter(r => {
+    if (departamento && normalizeString(r[2]) !== normalizeString(departamento)) return false;
+    if (estado && String(r[7]).toLowerCase() !== String(estado).toLowerCase()) return false;
+    return true;
+  }).map(r => ({
+    vacanteId: r[0],
+    puesto: r[1],
+    departamento: r[2],
+    requisitos: r[3],
+    cantidadPlazas: r[4],
+    fechaPublicacion: r[5],
+    fechaLimite: r[6],
+    estado: r[7],
+    observaciones: r[8],
+    publicadoPor: r[9],
+    fechaRegistro: r[10]
+  }));
+
+  return { status: "success", data: filtered };
+}
+
+// [TAREA RH-03] [Fase Reclutamiento y Selección] - Registro, postulación y evaluación de candidatos a vacantes laborales.
+function submitJobCandidate(payload) {
+  const { candidatoId, vacanteId, nombreCompleto, identificacion, telefono, email, cvDriveUrl, estadoCandidatura, observaciones } = payload || {};
+  if (!vacanteId || !nombreCompleto || !email) throw new Error("vacanteId, nombreCompleto y email son requeridos.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "CandidatosVacantes");
+
+  if (sheet.getLastRow() === 0) {
+    sheet.appendRow(["CandidatoID", "VacanteID", "NombreCompleto", "Identificacion", "Telefono", "Email", "CVDriveUrl", "EstadoCandidatura", "Observaciones", "FechaPostulacion"]);
+  }
+
+  const data = sheet.getDataRange().getValues();
+  const cId = candidatoId || ("CND-" + Date.now());
+  const nowStr = new Date().toISOString();
+
+  const idx = data.slice(1).findIndex(r => String(r[0]).trim() === String(cId).trim());
+
+  if (idx !== -1) {
+    const rowIdx = idx + 2;
+    sheet.getRange(rowIdx, 3).setValue(nombreCompleto);
+    if (identificacion) sheet.getRange(rowIdx, 4).setValue(identificacion);
+    if (telefono) sheet.getRange(rowIdx, 5).setValue(telefono);
+    if (email) sheet.getRange(rowIdx, 6).setValue(email);
+    if (cvDriveUrl) sheet.getRange(rowIdx, 7).setValue(cvDriveUrl);
+    sheet.getRange(rowIdx, 8).setValue(estadoCandidatura || "Recibida");
+    sheet.getRange(rowIdx, 9).setValue(observaciones || "");
+  } else {
+    sheet.appendRow([
+      cId,
+      vacanteId,
+      nombreCompleto,
+      identificacion || "",
+      telefono || "",
+      email,
+      cvDriveUrl || "",
+      estadoCandidatura || "Recibida",
+      observaciones || "",
+      nowStr
+    ]);
+  }
+
+  return {
+    status: "success",
+    message: "Candidatura a vacante registrada exitosamente.",
+    data: { candidatoId: cId, vacanteId, nombreCompleto, estadoCandidatura: estadoCandidatura || "Recibida" }
+  };
+}
+
+// [TAREA RH-03] [Fase Reclutamiento y Selección] - Consulta de postulaciones y candidatos por vacante o estado.
+function getJobCandidates(payload) {
+  const { vacanteId, estadoCandidatura } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "CandidatosVacantes");
+  const data = sheet.getDataRange().getValues();
+
+  if (data.length <= 1) return { status: "success", data: [] };
+
+  const rows = data.slice(1);
+  const filtered = rows.filter(r => {
+    if (vacanteId && String(r[1]).trim() !== String(vacanteId).trim()) return false;
+    if (estadoCandidatura && String(r[7]).toLowerCase() !== String(estadoCandidatura).toLowerCase()) return false;
+    return true;
+  }).map(r => ({
+    candidatoId: r[0],
+    vacanteId: r[1],
+    nombreCompleto: r[2],
+    identificacion: r[3],
+    telefono: r[4],
+    email: r[5],
+    cvDriveUrl: r[6],
+    estadoCandidatura: r[7],
+    observaciones: r[8],
+    fechaPostulacion: r[9]
+  }));
+
+  return { status: "success", data: filtered };
 }
 
 function getEmployeeContracts(payload) {

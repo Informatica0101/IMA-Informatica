@@ -4611,7 +4611,7 @@ Criterios de aceptación
 
 ---
 
-TAREA RH-03. Crear el módulo de reclutamiento y selección de personal
+[X] TAREA RH-03. Crear el módulo de reclutamiento y selección de personal
 
 Prioridad: Alta.
 Dependencia: RH-01 para la integración con Recursos Humanos.
