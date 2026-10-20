@@ -190,6 +190,11 @@ GRUPO 1: TAREAS COMPLETADAS
     - Archivo Frontend: dashboard-recursos-humanos.html (Línea 182)
     - Descripción: Endpoints `manageInterviewSchedule` y `getInterviewSchedules` para programación, reprogramación, detección de conflictos de agenda, asistencia y evaluación confidencial de entrevistas.
 
+42. [TAREA RH-05] Implementar la evaluación del desempeño de los empleados
+    - Archivo: backend/accounting-service/Code.gs (Línea 1402 `managePerformancePeriod`, `managePerformanceCriteria`, `managePerformanceEvaluation`, `getPerformanceEvaluations`)
+    - Archivo Frontend: dashboard-recursos-humanos.html (Línea 58 `#btn-evaluar-desempeno`, Línea 146 `#modal-evaluacion-desempeno`, Línea 385 `refreshPerformanceModuleData`)
+    - Descripción: Módulo completo de evaluación de desempeño con periodos de evaluación, criterios parametrizables por puesto, fichas individuales con calificaciones y compromisos, observaciones confidenciales, rectificación trazable de evaluaciones cerradas e informes.
+
 
 -------------------------------------------------------------------------------
 GRUPO 2: TAREAS INCOMPLETAS
@@ -205,7 +210,6 @@ GRUPO 3: TAREAS PENDIENTES / NO INICIADAS
 (Registradas en el backlog pero no iniciadas ni presentes en el código)
 -------------------------------------------------------------------------------
 
-22. TAREA RH-05: Implementar la evaluación del desempeño de los empleados
 23. TAREA RH-06: Implementar el registro de capacitación y desarrollo profesional
 24. TAREA RH-07: Completar el registro de incidencias laborales y medidas disciplinarias
 25. TAREA RH-08: Implementar la planificación de necesidades de personal

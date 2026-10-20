@@ -1,0 +1,29 @@
+===============================================================================
+REGISTRO DE CAMBIOS Y MODIFICACIONES TÉCNICAS (ChangesLogs.txt)
+Plataforma: Ecosistema Educativo New Generation Christian Academy
+===============================================================================
+
+-------------------------------------------------------------------------------
+FECHA: Octubre 2026
+TAREA: [TAREA RH-05] Implementar la evaluación del desempeño de los empleados
+-------------------------------------------------------------------------------
+
+Archivos Modificados:
+1. backend/accounting-service/Code.gs
+   - Linea 192, 193: Adición de permisos "managePerformancePeriod", "managePerformanceCriteria", "managePerformanceEvaluation", "getPerformanceEvaluations" para roles RecursosHumanos y Empleado en ROLE_PERMISSIONS.
+   - Lineas 324-327: Adición de dispatchers en doPost para acciones managePerformancePeriod, managePerformanceCriteria, managePerformanceEvaluation, getPerformanceEvaluations.
+   - Lineas 1402-1815: Implementación de funciones backend managePerformancePeriod, managePerformanceCriteria, managePerformanceEvaluation, getPerformanceEvaluations y parseJsonSafe con comentario identificativo de tarea. Soporte para periodos, criterios por puesto, registros de evaluación, confidencialidad de observaciones privadas y rectificación de evaluaciones cerradas con auditoría de historial.
+
+2. dashboard-recursos-humanos.html
+   - Linea 58: Adición de botón #btn-evaluar-desempeno en la barra principal de acciones de Recursos Humanos.
+   - Lineas 146-285: Adición de modal #modal-evaluacion-desempeno con pestañas para Periodos, Criterios por Puesto, Registrar Evaluación e Historial & Informes.
+   - Lineas 385-625: Implementación de controladores JavaScript para apertura de modal, navegación entre pestañas, envío de formularios (managePerformancePeriod, managePerformanceCriteria, managePerformanceEvaluation) y renderizado dinámico de datos con refreshPerformanceModuleData.
+
+3. MapaDependencias.md
+   - Adición de documentación de entidad y funciones del Módulo de Evaluación del Desempeño Laboral (TAREA RH-05).
+
+4. Auditoria.txt
+   - Migración de [TAREA RH-05] del Grupo 3 (Tareas Pendientes) al Grupo 1 (Tareas Completadas) como ítem 42.
+
+5. Pendientes.md
+   - Actualización del estado de [X] TAREA RH-05. Implementar la evaluación del desempeño de los empleados.

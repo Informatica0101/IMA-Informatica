@@ -211,3 +211,17 @@
 - `searchGlobalOmnibox`: Endpoint en `backend/user-service/Code.gs` para consulta multi-entidad (Usuarios, Anuncios, Trámites) con seguridad RBAC.
 - `#modal-global-omnibox`: Componente modal de búsqueda unificada en `js/ui-common.js` activable vía atajo de teclado (`Ctrl + K` / `Cmd + K`) e icono `#btn-global-search`.
 - `#btn-global-notifications`: Disparador de notificaciones unificadas y bandeja de alertas en `js/ui-common.js`.
+
+## MÓDULO DE EVALUACIÓN DEL DESEMPEÑO LABORAL (TAREA RH-05)
+- **Hojas de Cálculo / Tablas:**
+  - `PeriodosEvaluacionDesempeno`: Definición y control de periodos de evaluación (PeriodoID, NombrePeriodo, FechaInicio, FechaFin, EstadoPeriodo, CriteriosGeneralesJSON, CreadoPor, FechaCreacion, UltimaModificacion).
+  - `CriteriosEvaluacionDesempeno`: Parametrización de criterios por puesto o familia laboral (CriterioID, PuestoOFamilia, NombreCriterio, PesoPorcentaje, EscalaCalificacionJSON, Descripcion, Estado, FechaCreacion, UltimaModificacion).
+  - `EvaluacionesDesempeno`: Fichas individuales de evaluación del desempeño, calificaciones, fortalezas, compromisos, observaciones confidenciales y trazabilidad de rectificaciones (EvaluacionID, PeriodoID, EmpleadoID, EvaluadorID, PuestoOFamilia, Estado, CalificacionesJSON, PuntajeTotal, EscalaObtenida, Fortalezas, AspectosMejorar, ObservacionesPrivadas, ObservacionesPublicasEmpleado, ObjetivosCompromisosJSON, ConformidadEmpleado, FechaConformidad, RectificadaPor, MotivoRectificacion, HistorialModificacionesJSON, CreadoPor, FechaCreacion, UltimaModificacion).
+- **Funciones Backend (`backend/accounting-service/Code.gs`):**
+  - `managePerformancePeriod(payload)`
+  - `managePerformanceCriteria(payload)`
+  - `managePerformanceEvaluation(payload)`
+  - `getPerformanceEvaluations(payload)`
+- **Componentes Frontend (`dashboard-recursos-humanos.html`):**
+  - Botón `#btn-evaluar-desempeno`
+  - Modal `#modal-evaluacion-desempeno` con pestañas de Periodos, Criterios por Puesto, Registro de Evaluación e Historial & Informes.

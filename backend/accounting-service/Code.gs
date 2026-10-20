@@ -189,8 +189,8 @@ const ROLE_PERMISSIONS = {
   // REVISIÓN RBAC: Habilitar permiso processFamilyCreditPurchase para personal de tienda, cafetería, tutores y estudiantes
   "EncargadoTienda": ["getStoreProducts", "manageStoreProduct", "createStoreOrder", "getStoreOrders", "updateStoreOrderStatus", "recordInventoryMovement", "getInventoryKardex", "getInstitutionalPolicies", "processFamilyCreditPurchase"],
   "EncargadoCafeteria": ["getCafeteriaMenu", "manageCafeteriaMenu", "createCafeteriaOrder", "getCafeteriaOrders", "updateCafeteriaOrderStatus", "recordInventoryMovement", "getInventoryKardex", "getInstitutionalPolicies", "processFamilyCreditPurchase"],
-  "RecursosHumanos": ["createEmployeeRecord", "getEmployeeRecords", "manageEmployeeContract", "getEmployeeContracts", "getEmployeeContractAlerts", "manageJobVacancy", "getJobVacancies", "submitJobCandidate", "getJobCandidates", "manageInterviewSchedule", "getInterviewSchedules", "updateEmployeeLaborStatus", "configureWorkSchedule", "recordStaffCheckIn", "getStaffAttendanceLogs", "submitAttendanceCorrection", "reviewAttendanceCorrection", "submitLeaveVacationRequest", "getLeaveVacationRequests", "reviewLeaveVacationRequest", "calculateVacationBalances", "recordMedicalLeave", "calculatePayrollPeriod", "updatePayrollPeriodStatus", "getPayrollPeriodSummary", "requestEmployeeLoanAdvance", "getEmployeeLoansAdvances", "approveEmployeeLoanAdvance", "getLoanAmortizationSchedule", "generatePayrollReceiptPDF", "uploadEmployeeDocument", "getEmployeeDocuments", "getHRDashboardAnalytics", "getInstitutionalPolicies"],
-  "Empleado": ["getEmployeeRecords", "getEmployeeContracts", "recordStaffCheckIn", "getStaffAttendanceLogs", "submitAttendanceCorrection", "submitLeaveVacationRequest", "getLeaveVacationRequests", "requestEmployeeLoanAdvance", "getEmployeeLoansAdvances", "generatePayrollReceiptPDF", "getEmployeeDocuments"],
+  "RecursosHumanos": ["createEmployeeRecord", "getEmployeeRecords", "manageEmployeeContract", "getEmployeeContracts", "getEmployeeContractAlerts", "manageJobVacancy", "getJobVacancies", "submitJobCandidate", "getJobCandidates", "manageInterviewSchedule", "getInterviewSchedules", "updateEmployeeLaborStatus", "configureWorkSchedule", "recordStaffCheckIn", "getStaffAttendanceLogs", "submitAttendanceCorrection", "reviewAttendanceCorrection", "submitLeaveVacationRequest", "getLeaveVacationRequests", "reviewLeaveVacationRequest", "calculateVacationBalances", "recordMedicalLeave", "calculatePayrollPeriod", "updatePayrollPeriodStatus", "getPayrollPeriodSummary", "requestEmployeeLoanAdvance", "getEmployeeLoansAdvances", "approveEmployeeLoanAdvance", "getLoanAmortizationSchedule", "generatePayrollReceiptPDF", "uploadEmployeeDocument", "getEmployeeDocuments", "getHRDashboardAnalytics", "getInstitutionalPolicies", "managePerformancePeriod", "managePerformanceCriteria", "managePerformanceEvaluation", "getPerformanceEvaluations"],
+  "Empleado": ["getEmployeeRecords", "getEmployeeContracts", "recordStaffCheckIn", "getStaffAttendanceLogs", "submitAttendanceCorrection", "submitLeaveVacationRequest", "getLeaveVacationRequests", "requestEmployeeLoanAdvance", "getEmployeeLoansAdvances", "generatePayrollReceiptPDF", "getEmployeeDocuments", "getPerformanceEvaluations"],
   "Padre": ["getStudentAccountStatement", "uploadPaymentVoucher", "getPaymentVouchers", "generatePaymentReceiptPDF", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getLibraryBooks", "getLibraryLoans", "reserveLibraryBook", "getLibraryReservations", "getDigitalResources", "getTransportRoutes", "getTransportAssignments", "getSchoolDocumentTemplates", "generateSchoolDocument", "getIssuedSchoolDocuments", "getStoreProducts", "createStoreOrder", "getStoreOrders", "getCafeteriaMenu", "createCafeteriaOrder", "getCafeteriaOrders", "getFamilyCreditAuthorizations", "configureFamilyCreditAuthorization", "processFamilyCreditPurchase"],
   "Tutor": ["getStudentAccountStatement", "uploadPaymentVoucher", "getPaymentVouchers", "generatePaymentReceiptPDF", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getLibraryBooks", "getLibraryLoans", "reserveLibraryBook", "getLibraryReservations", "getDigitalResources", "getTransportRoutes", "getTransportAssignments", "getSchoolDocumentTemplates", "generateSchoolDocument", "getIssuedSchoolDocuments", "getStoreProducts", "createStoreOrder", "getStoreOrders", "getCafeteriaMenu", "createCafeteriaOrder", "getCafeteriaOrders", "getFamilyCreditAuthorizations", "configureFamilyCreditAuthorization", "processFamilyCreditPurchase"],
   "Responsable": ["getStudentAccountStatement", "uploadPaymentVoucher", "getPaymentVouchers", "generatePaymentReceiptPDF", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getLibraryBooks", "getLibraryLoans", "reserveLibraryBook", "getLibraryReservations", "getDigitalResources", "getTransportRoutes", "getTransportAssignments", "getSchoolDocumentTemplates", "generateSchoolDocument", "getIssuedSchoolDocuments", "getStoreProducts", "createStoreOrder", "getStoreOrders", "getCafeteriaMenu", "createCafeteriaOrder", "getCafeteriaOrders", "getFamilyCreditAuthorizations", "configureFamilyCreditAuthorization", "processFamilyCreditPurchase"],
@@ -321,6 +321,10 @@ function doPost(e) {
       case "getJobCandidates": result = getJobCandidates(payload); break;
       case "manageInterviewSchedule": result = manageInterviewSchedule(payload); break;
       case "getInterviewSchedules": result = getInterviewSchedules(payload); break;
+      case "managePerformancePeriod": result = managePerformancePeriod(payload); break;
+      case "managePerformanceCriteria": result = managePerformanceCriteria(payload); break;
+      case "managePerformanceEvaluation": result = managePerformanceEvaluation(payload); break;
+      case "getPerformanceEvaluations": result = getPerformanceEvaluations(payload); break;
       case "submitLeaveVacationRequest": result = submitLeaveVacationRequest(payload); break;
       case "submitVacationRequest": result = submitVacationRequest(payload); break;
       case "getLeaveVacationRequests": result = getLeaveVacationRequests(payload); break;
@@ -1393,6 +1397,418 @@ function getFamilyPaymentAgreements(payload) {
   });
 
   return { status: "success", data: filtered };
+}
+
+// [TAREA RH-05] [Fase Recursos Humanos] - Gestión de periodos, criterios, evaluaciones y rectificación de desempeño laboral de empleados.
+function managePerformancePeriod(payload) {
+  const {
+    periodoId,
+    nombrePeriodo,
+    fechaInicio,
+    fechaFin,
+    estadoPeriodo,
+    criteriosGenerales,
+    creadoPor
+  } = payload || {};
+
+  if (!nombrePeriodo || !fechaInicio || !fechaFin) {
+    throw new Error("nombrePeriodo, fechaInicio y fechaFin son campos obligatorios.");
+  }
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "PeriodosEvaluacionDesempeno");
+
+  if (sheet.getLastRow() === 0) {
+    sheet.appendRow([
+      "PeriodoID",
+      "NombrePeriodo",
+      "FechaInicio",
+      "FechaFin",
+      "EstadoPeriodo",
+      "CriteriosGeneralesJSON",
+      "CreadoPor",
+      "FechaCreacion",
+      "UltimaModificacion"
+    ]);
+  }
+
+  const data = sheet.getDataRange().getValues();
+  const pId = periodoId || ("PER-EVAL-" + Date.now());
+  const nowStr = new Date().toISOString();
+  let foundIndex = -1;
+
+  for (let i = 1; i < data.length; i++) {
+    if (String(data[i][0]).trim() === String(pId).trim()) {
+      foundIndex = i + 1;
+      break;
+    }
+  }
+
+  const criteriosStr = typeof criteriosGenerales === "string" ? criteriosGenerales : JSON.stringify(criteriosGenerales || []);
+  const estadoFinal = estadoPeriodo || "Borrador";
+
+  if (foundIndex > 0) {
+    sheet.getRange(foundIndex, 2).setValue(nombrePeriodo);
+    sheet.getRange(foundIndex, 3).setValue(fechaInicio);
+    sheet.getRange(foundIndex, 4).setValue(fechaFin);
+    sheet.getRange(foundIndex, 5).setValue(estadoFinal);
+    sheet.getRange(foundIndex, 6).setValue(criteriosStr);
+    sheet.getRange(foundIndex, 9).setValue(nowStr);
+  } else {
+    sheet.appendRow([
+      pId,
+      nombrePeriodo,
+      fechaInicio,
+      fechaFin,
+      estadoFinal,
+      criteriosStr,
+      creadoPor || "RecursosHumanos",
+      nowStr,
+      nowStr
+    ]);
+  }
+
+  return {
+    status: "success",
+    message: "Periodo de evaluación guardado exitosamente.",
+    data: { periodoId: pId, nombrePeriodo, estadoPeriodo: estadoFinal }
+  };
+}
+
+function managePerformanceCriteria(payload) {
+  const {
+    criterioId,
+    puestoOFamilia,
+    nombreCriterio,
+    pesoPorcentaje,
+    escalaCalificacionJSON,
+    descripcion,
+    estado
+  } = payload || {};
+
+  if (!puestoOFamilia || !nombreCriterio) {
+    throw new Error("puestoOFamilia y nombreCriterio son campos obligatorios.");
+  }
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "CriteriosEvaluacionDesempeno");
+
+  if (sheet.getLastRow() === 0) {
+    sheet.appendRow([
+      "CriterioID",
+      "PuestoOFamilia",
+      "NombreCriterio",
+      "PesoPorcentaje",
+      "EscalaCalificacionJSON",
+      "Descripcion",
+      "Estado",
+      "FechaCreacion",
+      "UltimaModificacion"
+    ]);
+  }
+
+  const data = sheet.getDataRange().getValues();
+  const cId = criterioId || ("CRIT-EVAL-" + Date.now());
+  const nowStr = new Date().toISOString();
+  let foundIndex = -1;
+
+  for (let i = 1; i < data.length; i++) {
+    if (String(data[i][0]).trim() === String(cId).trim()) {
+      foundIndex = i + 1;
+      break;
+    }
+  }
+
+  const escalaStr = typeof escalaCalificacionJSON === "string" ? escalaCalificacionJSON : JSON.stringify(escalaCalificacionJSON || [1, 2, 3, 4, 5]);
+
+  if (foundIndex > 0) {
+    sheet.getRange(foundIndex, 2).setValue(puestoOFamilia);
+    sheet.getRange(foundIndex, 3).setValue(nombreCriterio);
+    sheet.getRange(foundIndex, 4).setValue(pesoPorcentaje || 0);
+    sheet.getRange(foundIndex, 5).setValue(escalaStr);
+    sheet.getRange(foundIndex, 6).setValue(descripcion || "");
+    sheet.getRange(foundIndex, 7).setValue(estado || "Activo");
+    sheet.getRange(foundIndex, 9).setValue(nowStr);
+  } else {
+    sheet.appendRow([
+      cId,
+      puestoOFamilia,
+      nombreCriterio,
+      pesoPorcentaje || 0,
+      escalaStr,
+      descripcion || "",
+      estado || "Activo",
+      nowStr,
+      nowStr
+    ]);
+  }
+
+  return {
+    status: "success",
+    message: "Criterio de evaluación configurado exitosamente.",
+    data: { criterioId: cId, puestoOFamilia, nombreCriterio }
+  };
+}
+
+function managePerformanceEvaluation(payload) {
+  const {
+    evaluacionId,
+    periodoId,
+    empleadoId,
+    evaluadorId,
+    puestoOFamilia,
+    estado,
+    calificaciones,
+    puntajeTotal,
+    escalaObtenida,
+    fortalezas,
+    aspectosMejorar,
+    observacionesPrivadas,
+    observacionesPublicasEmpleado,
+    objetivosCompromisos,
+    conformidadEmpleado,
+    fechaConformidad,
+    isRectification,
+    motivoRectificacion,
+    autorizadoPor,
+    creadoPor
+  } = payload || {};
+
+  if (!periodoId || !empleadoId) {
+    throw new Error("periodoId y empleadoId son campos obligatorios.");
+  }
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "EvaluacionesDesempeno");
+
+  if (sheet.getLastRow() === 0) {
+    sheet.appendRow([
+      "EvaluacionID",
+      "PeriodoID",
+      "EmpleadoID",
+      "EvaluadorID",
+      "PuestoOFamilia",
+      "Estado",
+      "CalificacionesJSON",
+      "PuntajeTotal",
+      "EscalaObtenida",
+      "Fortalezas",
+      "AspectosMejorar",
+      "ObservacionesPrivadas",
+      "ObservacionesPublicasEmpleado",
+      "ObjetivosCompromisosJSON",
+      "ConformidadEmpleado",
+      "FechaConformidad",
+      "RectificadaPor",
+      "MotivoRectificacion",
+      "HistorialModificacionesJSON",
+      "CreadoPor",
+      "FechaCreacion",
+      "UltimaModificacion"
+    ]);
+  }
+
+  const data = sheet.getDataRange().getValues();
+  const evId = evaluacionId || ("EVAL-" + Date.now());
+  const nowStr = new Date().toISOString();
+  let foundIndex = -1;
+  let currentRow = null;
+
+  for (let i = 1; i < data.length; i++) {
+    if (String(data[i][0]).trim() === String(evId).trim()) {
+      foundIndex = i + 1;
+      currentRow = data[i];
+      break;
+    }
+  }
+
+  const califsStr = typeof calificaciones === "string" ? calificaciones : JSON.stringify(calificaciones || []);
+  const objetStr = typeof objetivosCompromisos === "string" ? objetivosCompromisos : JSON.stringify(objetivosCompromisos || []);
+
+  if (foundIndex > 0) {
+    const estadoActual = String(currentRow[5] || "").trim();
+
+    // Regla #12: Evitar que una calificación o comentario se modifique silenciosamente después del cierre
+    if ((estadoActual === "Cerrada" || estadoActual === "Rectificada") && !isRectification) {
+      throw new Error("No se puede modificar una evaluación de desempeño cerrada sin un proceso autorizado de rectificación.");
+    }
+
+    if (isRectification) {
+      if (!motivoRectificacion || !autorizadoPor) {
+        throw new Error("Para rectificar una evaluación cerrada se requiere motivoRectificacion y autorizadoPor.");
+      }
+    }
+
+    let historial = [];
+    try { historial = JSON.parse(currentRow[18] || "[]"); } catch (e) { historial = []; }
+
+    // Guardar versión anterior en el historial antes de sobrescribir
+    historial.push({
+      timestamp: nowStr,
+      modificadoPor: autorizadoPor || creadoPor || "RecursosHumanos",
+      estadoAnterior: estadoActual,
+      calificacionesAnteriores: currentRow[6],
+      puntajeAnterior: currentRow[7],
+      fortalezasAnteriores: currentRow[9],
+      aspectosAnteriores: currentRow[10],
+      observacionesAnteriores: currentRow[11],
+      motivo: motivoRectificacion || "Actualización trazable de evaluación"
+    });
+
+    const estadoNuevo = isRectification ? "Rectificada" : (estado || estadoActual);
+
+    sheet.getRange(foundIndex, 2).setValue(periodoId);
+    sheet.getRange(foundIndex, 3).setValue(empleadoId);
+    sheet.getRange(foundIndex, 4).setValue(evaluadorId || currentRow[3]);
+    sheet.getRange(foundIndex, 5).setValue(puestoOFamilia || currentRow[4]);
+    sheet.getRange(foundIndex, 6).setValue(estadoNuevo);
+    sheet.getRange(foundIndex, 7).setValue(califsStr);
+    sheet.getRange(foundIndex, 8).setValue(puntajeTotal !== undefined ? puntajeTotal : currentRow[7]);
+    sheet.getRange(foundIndex, 9).setValue(escalaObtenida || currentRow[8]);
+    sheet.getRange(foundIndex, 10).setValue(fortalezas !== undefined ? fortalezas : currentRow[9]);
+    sheet.getRange(foundIndex, 11).setValue(aspectosMejorar !== undefined ? aspectosMejorar : currentRow[10]);
+    sheet.getRange(foundIndex, 12).setValue(observacionesPrivadas !== undefined ? observacionesPrivadas : currentRow[11]);
+    sheet.getRange(foundIndex, 13).setValue(observacionesPublicasEmpleado !== undefined ? observacionesPublicasEmpleado : currentRow[12]);
+    sheet.getRange(foundIndex, 14).setValue(objetStr);
+    sheet.getRange(foundIndex, 15).setValue(conformidadEmpleado || currentRow[14] || "Pendiente");
+    sheet.getRange(foundIndex, 16).setValue(fechaConformidad || currentRow[15] || "");
+    sheet.getRange(foundIndex, 17).setValue(autorizadoPor || currentRow[16] || "");
+    sheet.getRange(foundIndex, 18).setValue(motivoRectificacion || currentRow[17] || "");
+    sheet.getRange(foundIndex, 19).setValue(JSON.stringify(historial));
+    sheet.getRange(foundIndex, 21).setValue(nowStr);
+  } else {
+    const estadoFinal = estado || "Borrador";
+    sheet.appendRow([
+      evId,
+      periodoId,
+      empleadoId,
+      evaluadorId || "RecursosHumanos",
+      puestoOFamilia || "General",
+      estadoFinal,
+      califsStr,
+      puntajeTotal || 0,
+      escalaObtenida || "SinCalificar",
+      fortalezas || "",
+      aspectosMejorar || "",
+      observacionesPrivadas || "",
+      observacionesPublicasEmpleado || "",
+      objetStr,
+      conformidadEmpleado || "Pendiente",
+      fechaConformidad || "",
+      autorizadoPor || "",
+      motivoRectificacion || "",
+      JSON.stringify([]),
+      creadoPor || "RecursosHumanos",
+      nowStr,
+      nowStr
+    ]);
+  }
+
+  return {
+    status: "success",
+    message: isRectification ? "Evaluación de desempeño rectificada trazablemente." : "Evaluación de desempeño guardada exitosamente.",
+    data: { evaluacionId: evId, periodoId, empleadoId, estado: estado || "Borrador" }
+  };
+}
+
+function getPerformanceEvaluations(payload) {
+  const {
+    evaluacionId,
+    periodoId,
+    empleadoId,
+    evaluadorId,
+    estado,
+    userRole,
+    authenticatedUserId
+  } = payload || {};
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+
+  // Periodos
+  const periodSheet = getOrCreateSheet(ss, "PeriodosEvaluacionDesempeno");
+  const periodData = periodSheet.getDataRange().getValues();
+  const periodos = periodData.length > 1 ? periodData.slice(1).map(r => ({
+    periodoId: r[0],
+    nombrePeriodo: r[1],
+    fechaInicio: r[2],
+    fechaFin: r[3],
+    estadoPeriodo: r[4],
+    criteriosGenerales: parseJsonSafe(r[5], []),
+    creadoPor: r[6],
+    fechaCreacion: r[7]
+  })) : [];
+
+  // Criterios
+  const critSheet = getOrCreateSheet(ss, "CriteriosEvaluacionDesempeno");
+  const critData = critSheet.getDataRange().getValues();
+  const criterios = critData.length > 1 ? critData.slice(1).map(r => ({
+    criterioId: r[0],
+    puestoOFamilia: r[1],
+    nombreCriterio: r[2],
+    pesoPorcentaje: r[3],
+    escalaCalificacion: parseJsonSafe(r[4], [1, 2, 3, 4, 5]),
+    descripcion: r[5],
+    estado: r[6]
+  })) : [];
+
+  // Evaluaciones
+  const evalSheet = getOrCreateSheet(ss, "EvaluacionesDesempeno");
+  const evalData = evalSheet.getDataRange().getValues();
+  let evaluaciones = [];
+
+  if (evalData.length > 1) {
+    const isEmployeeViewing = userRole === "Empleado";
+    evaluaciones = evalData.slice(1).filter(r => {
+      if (evaluacionId && String(r[0]).trim() !== String(evaluacionId).trim()) return false;
+      if (periodoId && String(r[1]).trim() !== String(periodoId).trim()) return false;
+      if (empleadoId && String(r[2]).trim() !== String(empleadoId).trim()) return false;
+      if (isEmployeeViewing && authenticatedUserId && String(r[2]).trim() !== String(authenticatedUserId).trim()) return false;
+      if (evaluadorId && String(r[3]).trim() !== String(evaluadorId).trim()) return false;
+      if (estado && String(r[5]).toLowerCase() !== String(estado).toLowerCase()) return false;
+      return true;
+    }).map(r => {
+      const isEmployeeRole = isEmployeeViewing || (userRole !== "Director" && userRole !== "Administrador" && userRole !== "RecursosHumanos");
+      return {
+        evaluacionId: r[0],
+        periodoId: r[1],
+        empleadoId: r[2],
+        evaluadorId: r[3],
+        puestoOFamilia: r[4],
+        estado: r[5],
+        calificaciones: parseJsonSafe(r[6], []),
+        puntajeTotal: r[7],
+        escalaObtenida: r[8],
+        fortalezas: r[9],
+        aspectosMejorar: r[10],
+        // Regla: Mantener separadas las observaciones de acceso restringido
+        observacionesPrivadas: isEmployeeRole ? undefined : r[11],
+        observacionesPublicasEmpleado: r[12],
+        objetivosCompromisos: parseJsonSafe(r[13], []),
+        conformidadEmpleado: r[14],
+        fechaConformidad: r[15],
+        rectificadaPor: r[16],
+        motivoRectificacion: r[17],
+        historialModificaciones: isEmployeeRole ? undefined : parseJsonSafe(r[18], []),
+        creadoPor: r[19],
+        fechaCreacion: r[20],
+        ultimaModificacion: r[21]
+      };
+    });
+  }
+
+  return {
+    status: "success",
+    data: {
+      periodos,
+      criterios,
+      evaluaciones
+    }
+  };
+}
+
+function parseJsonSafe(jsonStr, fallback) {
+  if (!jsonStr) return fallback;
+  try { return JSON.parse(jsonStr); } catch (e) { return fallback; }
 }
 
 // [TAREA RH-04] [Fase Reclutamiento y Selección] - Programación, reprogramación, seguimiento de asistencia y evaluación confidencial de entrevistas laborales.

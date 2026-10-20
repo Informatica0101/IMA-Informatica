@@ -4695,7 +4695,7 @@ Criterios de aceptación
 
 ---
 
-TAREA RH-05. Implementar la evaluación del desempeño de los empleados
+[X] TAREA RH-05. Implementar la evaluación del desempeño de los empleados
 
 Prioridad: Media-alta.
 Dependencia: RH-01.

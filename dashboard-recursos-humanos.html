@@ -55,6 +55,9 @@
                 <button id="btn-agendar-entrevista" class="px-4 py-2.5 bg-indigo-600 text-white rounded-2xl font-bold text-xs uppercase tracking-widest hover:bg-indigo-700 transition-all shadow-md">
                     <i class="fa-solid fa-calendar-check mr-1.5"></i> Agendar Entrevista
                 </button>
+                <button id="btn-evaluar-desempeno" class="px-4 py-2.5 bg-purple-600 text-white rounded-2xl font-bold text-xs uppercase tracking-widest hover:bg-purple-700 transition-all shadow-md">
+                    <i class="fa-solid fa-chart-line mr-1.5"></i> Evaluación Desempeño
+                </button>
                 <button id="btn-calcular-planilla" class="px-4 py-2.5 bg-emerald-600 text-white rounded-2xl font-bold text-xs uppercase tracking-widest hover:bg-emerald-700 transition-all shadow-md">
                     <i class="fa-solid fa-calculator mr-1.5"></i> Calcular Planilla
                 </button>
@@ -139,6 +142,143 @@
             </div>
         </div>
     </main>
+
+    <!-- [TAREA RH-05] Modal para Evaluación del Desempeño de Empleados -->
+    <div id="modal-evaluacion-desempeno" class="fixed inset-0 z-[110] hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white rounded-[2.5rem] max-w-3xl w-full max-h-[90vh] overflow-y-auto p-6 md:p-8 shadow-2xl border border-gray-100">
+            <div class="flex items-center justify-between pb-4 border-b border-gray-100 mb-6">
+                <div>
+                    <span class="px-3 py-1 bg-purple-50 text-purple-700 rounded-full text-[10px] font-black uppercase tracking-widest">Recursos Humanos</span>
+                    <h3 class="text-xl font-black text-gray-900 uppercase mt-1"><i class="fa-solid fa-award mr-2 text-purple-600"></i>Evaluación del Desempeño Laboral</h3>
+                </div>
+                <button id="btn-close-modal-evaluacion" class="p-2 text-gray-400 hover:text-gray-700 rounded-full hover:bg-gray-100 text-lg transition-all">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <div class="space-y-6">
+                <!-- Pestañas de Acción -->
+                <div class="flex flex-wrap gap-2 border-b border-gray-100 pb-3">
+                    <button id="tab-eval-periodos" class="px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider bg-purple-600 text-white">Periodos</button>
+                    <button id="tab-eval-criterios" class="px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider bg-gray-100 text-gray-600 hover:bg-gray-200">Criterios por Puesto</button>
+                    <button id="tab-eval-registro" class="px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider bg-gray-100 text-gray-600 hover:bg-gray-200">Registrar Evaluación</button>
+                    <button id="tab-eval-historial" class="px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider bg-gray-100 text-gray-600 hover:bg-gray-200">Historial & Informes</button>
+                </div>
+
+                <!-- TAB 1: PERIODOS -->
+                <div id="sec-eval-periodos" class="space-y-4">
+                    <form id="form-eval-periodo" class="bg-purple-50/50 p-4 rounded-2xl border border-purple-100 space-y-3">
+                        <h4 class="text-xs font-black uppercase text-purple-900">Crear / Actualizar Periodo de Evaluación</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            <input type="text" id="eval-nombre-periodo" placeholder="Nombre (ej. Anual 2026, Trimestre 1 2026)" class="p-2.5 text-xs rounded-xl border border-gray-200 w-full" required>
+                            <select id="eval-estado-periodo" class="p-2.5 text-xs rounded-xl border border-gray-200 w-full">
+                                <option value="Borrador">Borrador</option>
+                                <option value="Activo">Activo</option>
+                                <option value="Cerrado">Cerrado</option>
+                            </select>
+                            <input type="date" id="eval-fecha-inicio" class="p-2.5 text-xs rounded-xl border border-gray-200 w-full" required>
+                            <input type="date" id="eval-fecha-fin" class="p-2.5 text-xs rounded-xl border border-gray-200 w-full" required>
+                        </div>
+                        <button type="submit" class="w-full py-2 bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs uppercase rounded-xl transition-all">Guardar Periodo</button>
+                    </form>
+                    <div id="list-eval-periodos" class="space-y-2 text-xs font-medium text-gray-700"></div>
+                </div>
+
+                <!-- TAB 2: CRITERIOS -->
+                <div id="sec-eval-criterios" class="space-y-4 hidden">
+                    <form id="form-eval-criterio" class="bg-gray-50 p-4 rounded-2xl border border-gray-200 space-y-3">
+                        <h4 class="text-xs font-black uppercase text-gray-900">Configurar Criterios por Puesto / Familia</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            <input type="text" id="eval-puesto-familia" placeholder="Puesto o Familia (ej. Docentes, Administración, General)" class="p-2.5 text-xs rounded-xl border border-gray-200 w-full" required>
+                            <input type="text" id="eval-nombre-criterio" placeholder="Nombre Criterio (ej. Cumplimiento Objetivos, Liderazgo)" class="p-2.5 text-xs rounded-xl border border-gray-200 w-full" required>
+                            <input type="number" id="eval-peso-criterio" placeholder="Peso % (ej. 25)" class="p-2.5 text-xs rounded-xl border border-gray-200 w-full">
+                            <input type="text" id="eval-desc-criterio" placeholder="Descripción del Criterio" class="p-2.5 text-xs rounded-xl border border-gray-200 w-full">
+                        </div>
+                        <button type="submit" class="w-full py-2 bg-gray-800 hover:bg-gray-900 text-white font-bold text-xs uppercase rounded-xl transition-all">Guardar Criterio</button>
+                    </form>
+                    <div id="list-eval-criterios" class="space-y-2 text-xs font-medium text-gray-700"></div>
+                </div>
+
+                <!-- TAB 3: REGISTRO EVALUACION -->
+                <div id="sec-eval-registro" class="space-y-4 hidden">
+                    <form id="form-eval-registro" class="bg-white p-4 rounded-2xl border border-gray-200 space-y-3">
+                        <h4 class="text-xs font-black uppercase text-gray-900">Registrar / Editar Evaluación de Empleado</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            <div>
+                                <label class="text-[10px] font-bold uppercase text-gray-500">Periodo</label>
+                                <select id="eval-reg-periodo" class="p-2.5 text-xs rounded-xl border border-gray-200 w-full" required></select>
+                            </div>
+                            <div>
+                                <label class="text-[10px] font-bold uppercase text-gray-500">Empleado / Ficha ID</label>
+                                <input type="text" id="eval-reg-empleado" placeholder="Empleado ID o Nombre" class="p-2.5 text-xs rounded-xl border border-gray-200 w-full" required>
+                            </div>
+                            <div>
+                                <label class="text-[10px] font-bold uppercase text-gray-500">Evaluador / Supervisor</label>
+                                <input type="text" id="eval-reg-evaluador" placeholder="Evaluador ID o Nombre" class="p-2.5 text-xs rounded-xl border border-gray-200 w-full">
+                            </div>
+                            <div>
+                                <label class="text-[10px] font-bold uppercase text-gray-500">Estado de la Evaluación</label>
+                                <select id="eval-reg-estado" class="p-2.5 text-xs rounded-xl border border-gray-200 w-full">
+                                    <option value="Borrador">Borrador</option>
+                                    <option value="PendienteRevision">Pendiente de Revisión</option>
+                                    <option value="Cerrada">Cerrada (Finalizada)</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="text-[10px] font-bold uppercase text-gray-500">Puntaje Total (0 - 100)</label>
+                                <input type="number" id="eval-reg-puntaje" placeholder="Puntaje Obtenido" class="p-2.5 text-xs rounded-xl border border-gray-200 w-full" min="0" max="100" required>
+                            </div>
+                            <div>
+                                <label class="text-[10px] font-bold uppercase text-gray-500">Escala / Clasificación</label>
+                                <select id="eval-reg-escala" class="p-2.5 text-xs rounded-xl border border-gray-200 w-full">
+                                    <option value="Excelente">Excelente (90 - 100)</option>
+                                    <option value="Satisfactorio">Satisfactorio (75 - 89)</option>
+                                    <option value="NecesitaMejora">Necesita Mejora (60 - 74)</option>
+                                    <option value="Insatisfactorio">Insatisfactorio (&lt; 60)</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="text-[10px] font-bold uppercase text-gray-500">Fortalezas Identificadas</label>
+                            <textarea id="eval-reg-fortalezas" rows="2" placeholder="Describa las principales fortalezas del desempeño" class="p-2.5 text-xs rounded-xl border border-gray-200 w-full"></textarea>
+                        </div>
+                        <div>
+                            <label class="text-[10px] font-bold uppercase text-gray-500">Aspectos por Mejorar &amp; Compromisos</label>
+                            <textarea id="eval-reg-aspectos" rows="2" placeholder="Oportunidades de mejora y compromisos de seguimiento" class="p-2.5 text-xs rounded-xl border border-gray-200 w-full"></textarea>
+                        </div>
+                        <div>
+                            <label class="text-[10px] font-bold uppercase text-gray-500">Observaciones Privadas / Restringidas (Solo RRHH/Dirección)</label>
+                            <textarea id="eval-reg-privadas" rows="2" placeholder="Notas confidenciales no visibles para el empleado" class="p-2.5 text-xs rounded-xl border border-gray-200 w-full"></textarea>
+                        </div>
+                        <div>
+                            <label class="text-[10px] font-bold uppercase text-gray-500">Observaciones Compartidas con Empleado</label>
+                            <textarea id="eval-reg-publicas" rows="2" placeholder="Retroalimentación pública accesible para el colaborador" class="p-2.5 text-xs rounded-xl border border-gray-200 w-full"></textarea>
+                        </div>
+
+                        <!-- Campos para Rectificación Autorizada (Si está cerrada) -->
+                        <div id="box-rectificacion-eval" class="hidden p-3 bg-amber-50 border border-amber-200 rounded-xl space-y-2">
+                            <span class="text-[10px] font-black uppercase text-amber-900"><i class="fa-solid fa-triangle-exclamation mr-1"></i> Rectificación Autorizada de Evaluación Cerrada</span>
+                            <input type="text" id="eval-rect-motivo" placeholder="Motivo formal de la rectificación" class="p-2 text-xs rounded-xl border border-amber-300 w-full">
+                            <input type="text" id="eval-rect-autorizado" placeholder="Autorizado Por (Director / RRHH)" class="p-2 text-xs rounded-xl border border-amber-300 w-full">
+                        </div>
+
+                        <button type="submit" class="w-full py-2.5 bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs uppercase rounded-xl transition-all shadow-md">
+                            Guardar Evaluación
+                        </button>
+                    </form>
+                </div>
+
+                <!-- TAB 4: HISTORIAL & INFORMES -->
+                <div id="sec-eval-historial" class="space-y-4 hidden">
+                    <div class="flex items-center justify-between">
+                        <h4 class="text-xs font-black uppercase text-gray-900">Historial e Informes de Evaluación</h4>
+                        <button id="btn-refresh-evals" class="text-xs font-bold text-purple-600 hover:text-purple-800"><i class="fa-solid fa-rotate mr-1"></i>Actualizar</button>
+                    </div>
+                    <div id="list-eval-historial" class="space-y-2 text-xs font-medium text-gray-700"></div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <script src="js/config.js?v=24"></script>
     <script src="js/api.js?v=24"></script>
@@ -241,7 +381,251 @@
                     }
                 });
             }
+
+            // [TAREA RH-05] Gestor de Evaluación del Desempeño Laboral
+            const btnEvaluarDesempeno = document.getElementById('btn-evaluar-desempeno');
+            const modalEvaluacion = document.getElementById('modal-evaluacion-desempeno');
+            const btnCloseModalEval = document.getElementById('btn-close-modal-evaluacion');
+
+            if (btnEvaluarDesempeno && modalEvaluacion) {
+                btnEvaluarDesempeno.addEventListener('click', async () => {
+                    modalEvaluacion.classList.remove('hidden');
+                    await refreshPerformanceModuleData();
+                });
+            }
+
+            if (btnCloseModalEval && modalEvaluacion) {
+                btnCloseModalEval.addEventListener('click', () => {
+                    modalEvaluacion.classList.add('hidden');
+                });
+            }
+
+            // Pestañas del Modal
+            const tabs = [
+                { tab: 'tab-eval-periodos', sec: 'sec-eval-periodos' },
+                { tab: 'tab-eval-criterios', sec: 'sec-eval-criterios' },
+                { tab: 'tab-eval-registro', sec: 'sec-eval-registro' },
+                { tab: 'tab-eval-historial', sec: 'sec-eval-historial' }
+            ];
+
+            tabs.forEach(tObj => {
+                const btn = document.getElementById(tObj.tab);
+                if (!btn) return;
+                btn.addEventListener('click', () => {
+                    tabs.forEach(o => {
+                        const b = document.getElementById(o.tab);
+                        const s = document.getElementById(o.sec);
+                        if (b) {
+                            b.className = o.tab === tObj.tab ?
+                                'px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider bg-purple-600 text-white' :
+                                'px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider bg-gray-100 text-gray-600 hover:bg-gray-200';
+                        }
+                        if (s) {
+                            if (o.tab === tObj.tab) s.classList.remove('hidden');
+                            else s.classList.add('hidden');
+                        }
+                    });
+                });
+            });
+
+            // Formulario Periodo
+            const formPeriodo = document.getElementById('form-eval-periodo');
+            if (formPeriodo) {
+                formPeriodo.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    const nombrePeriodo = document.getElementById('eval-nombre-periodo').value;
+                    const estadoPeriodo = document.getElementById('eval-estado-periodo').value;
+                    const fechaInicio = document.getElementById('eval-fecha-inicio').value;
+                    const fechaFin = document.getElementById('eval-fecha-fin').value;
+
+                    try {
+                        if (window.showLoading) window.showLoading('Guardando periodo de evaluación...');
+                        const res = await fetchApi('ACCOUNTING', 'managePerformancePeriod', {
+                            nombrePeriodo,
+                            estadoPeriodo,
+                            fechaInicio,
+                            fechaFin
+                        });
+                        if (window.hideLoading) window.hideLoading();
+                        if (res && res.status === 'success') {
+                            alert('Periodo guardado correctamente.');
+                            formPeriodo.reset();
+                            await refreshPerformanceModuleData();
+                        } else {
+                            alert(res && res.message ? res.message : 'Error al guardar el periodo.');
+                        }
+                    } catch (err) {
+                        if (window.hideLoading) window.hideLoading();
+                        alert('Error de conexión.');
+                    }
+                });
+            }
+
+            // Formulario Criterio
+            const formCriterio = document.getElementById('form-eval-criterio');
+            if (formCriterio) {
+                formCriterio.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    const puestoOFamilia = document.getElementById('eval-puesto-familia').value;
+                    const nombreCriterio = document.getElementById('eval-nombre-criterio').value;
+                    const pesoPorcentaje = parseFloat(document.getElementById('eval-peso-criterio').value || '0');
+                    const descripcion = document.getElementById('eval-desc-criterio').value;
+
+                    try {
+                        if (window.showLoading) window.showLoading('Guardando criterio...');
+                        const res = await fetchApi('ACCOUNTING', 'managePerformanceCriteria', {
+                            puestoOFamilia,
+                            nombreCriterio,
+                            pesoPorcentaje,
+                            descripcion
+                        });
+                        if (window.hideLoading) window.hideLoading();
+                        if (res && res.status === 'success') {
+                            alert('Criterio guardado correctamente.');
+                            formCriterio.reset();
+                            await refreshPerformanceModuleData();
+                        } else {
+                            alert(res && res.message ? res.message : 'Error al guardar el criterio.');
+                        }
+                    } catch (err) {
+                        if (window.hideLoading) window.hideLoading();
+                        alert('Error de conexión.');
+                    }
+                });
+            }
+
+            // Formulario Registro Evaluación
+            const formRegistroEval = document.getElementById('form-eval-registro');
+            if (formRegistroEval) {
+                formRegistroEval.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    const periodoId = document.getElementById('eval-reg-periodo').value;
+                    const empleadoId = document.getElementById('eval-reg-empleado').value;
+                    const evaluadorId = document.getElementById('eval-reg-evaluador').value;
+                    const estado = document.getElementById('eval-reg-estado').value;
+                    const puntajeTotal = parseFloat(document.getElementById('eval-reg-puntaje').value || '0');
+                    const escalaObtenida = document.getElementById('eval-reg-escala').value;
+                    const fortalezas = document.getElementById('eval-reg-fortalezas').value;
+                    const aspectosMejorar = document.getElementById('eval-reg-aspectos').value;
+                    const observacionesPrivadas = document.getElementById('eval-reg-privadas').value;
+                    const observacionesPublicasEmpleado = document.getElementById('eval-reg-publicas').value;
+
+                    const motivoRectificacion = document.getElementById('eval-rect-motivo').value;
+                    const autorizadoPor = document.getElementById('eval-rect-autorizado').value;
+                    const isRectification = !!(motivoRectificacion && autorizadoPor);
+
+                    try {
+                        if (window.showLoading) window.showLoading('Guardando evaluación...');
+                        const res = await fetchApi('ACCOUNTING', 'managePerformanceEvaluation', {
+                            periodoId,
+                            empleadoId,
+                            evaluadorId,
+                            estado,
+                            puntajeTotal,
+                            escalaObtenida,
+                            fortalezas,
+                            aspectosMejorar,
+                            observacionesPrivadas,
+                            observacionesPublicasEmpleado,
+                            isRectification,
+                            motivoRectificacion,
+                            autorizadoPor
+                        });
+                        if (window.hideLoading) window.hideLoading();
+                        if (res && res.status === 'success') {
+                            alert(res.message || 'Evaluación registrada correctamente.');
+                            formRegistroEval.reset();
+                            await refreshPerformanceModuleData();
+                        } else {
+                            alert(res && res.message ? res.message : 'Error al guardar la evaluación.');
+                        }
+                    } catch (err) {
+                        if (window.hideLoading) window.hideLoading();
+                        alert('Error de conexión.');
+                    }
+                });
+            }
+
+            const btnRefreshEvals = document.getElementById('btn-refresh-evals');
+            if (btnRefreshEvals) {
+                btnRefreshEvals.addEventListener('click', async () => {
+                    await refreshPerformanceModuleData();
+                });
+            }
         });
+
+        async function refreshPerformanceModuleData() {
+            try {
+                const res = await fetchApi('ACCOUNTING', 'getPerformanceEvaluations', {});
+                if (!res || res.status !== 'success' || !res.data) return;
+
+                const { periodos, criterios, evaluaciones } = res.data;
+
+                // Render Periodos
+                const listPeriodosEl = document.getElementById('list-eval-periodos');
+                const regPeriodoSelect = document.getElementById('eval-reg-periodo');
+                if (listPeriodosEl) {
+                    listPeriodosEl.innerHTML = periodos.length === 0 ?
+                        '<p class="text-gray-400 font-bold uppercase py-2">No hay periodos creados.</p>' :
+                        periodos.map(p => `
+                            <div class="p-3 bg-white border border-gray-100 rounded-xl flex items-center justify-between">
+                                <div>
+                                    <span class="font-bold text-gray-800">${p.nombrePeriodo}</span>
+                                    <span class="text-[10px] text-gray-400 ml-2">(${p.fechaInicio} a ${p.fechaFin})</span>
+                                </div>
+                                <span class="px-2 py-0.5 rounded-full text-[10px] font-black uppercase ${p.estadoPeriodo === 'Activo' ? 'bg-emerald-100 text-emerald-800' : 'bg-gray-100 text-gray-600'}">${p.estadoPeriodo}</span>
+                            </div>
+                        `).join('');
+                }
+
+                if (regPeriodoSelect) {
+                    regPeriodoSelect.innerHTML = periodos.length === 0 ?
+                        '<option value="">Sin periodos</option>' :
+                        periodos.map(p => `<option value="${p.periodoId}">${p.nombrePeriodo} (${p.estadoPeriodo})</option>`).join('');
+                }
+
+                // Render Criterios
+                const listCriteriosEl = document.getElementById('list-eval-criterios');
+                if (listCriteriosEl) {
+                    listCriteriosEl.innerHTML = criterios.length === 0 ?
+                        '<p class="text-gray-400 font-bold uppercase py-2">No hay criterios configurados.</p>' :
+                        criterios.map(c => `
+                            <div class="p-3 bg-white border border-gray-100 rounded-xl flex items-center justify-between">
+                                <div>
+                                    <span class="font-bold text-gray-800">${c.nombreCriterio}</span>
+                                    <span class="text-[10px] text-purple-600 font-black ml-2">${c.puestoOFamilia} (${c.pesoPorcentaje}%)</span>
+                                </div>
+                                <span class="text-[10px] text-gray-400">${c.descripcion || ''}</span>
+                            </div>
+                        `).join('');
+                }
+
+                // Render Historial
+                const listHistorialEl = document.getElementById('list-eval-historial');
+                if (listHistorialEl) {
+                    listHistorialEl.innerHTML = evaluaciones.length === 0 ?
+                        '<p class="text-gray-400 font-bold uppercase py-2">No se han registrado evaluaciones.</p>' :
+                        evaluaciones.map(ev => `
+                            <div class="p-4 bg-white border border-gray-100 rounded-2xl space-y-2">
+                                <div class="flex items-center justify-between">
+                                    <span class="font-bold text-gray-900">Empleado: ${ev.empleadoId} (Periodo: ${ev.periodoId})</span>
+                                    <span class="px-2 py-0.5 rounded-full text-[10px] font-black uppercase ${ev.estado === 'Cerrada' ? 'bg-emerald-100 text-emerald-800' : ev.estado === 'Rectificada' ? 'bg-amber-100 text-amber-800' : 'bg-blue-100 text-blue-800'}">${ev.estado}</span>
+                                </div>
+                                <div class="grid grid-cols-2 gap-2 text-[11px] text-gray-600">
+                                    <div><strong>Puntaje:</strong> ${ev.puntajeTotal} / 100 (${ev.escalaObtenida || ''})</div>
+                                    <div><strong>Evaluador:</strong> ${ev.evaluadorId}</div>
+                                </div>
+                                ${ev.fortalezas ? `<p class="text-[11px] text-gray-700"><strong>Fortalezas:</strong> ${ev.fortalezas}</p>` : ''}
+                                ${ev.aspectosMejorar ? `<p class="text-[11px] text-gray-700"><strong>Por Mejorar:</strong> ${ev.aspectosMejorar}</p>` : ''}
+                                ${ev.observacionesPrivadas ? `<p class="text-[10px] text-purple-700 bg-purple-50 p-2 rounded-lg"><strong>Observaciones Privadas:</strong> ${ev.observacionesPrivadas}</p>` : ''}
+                                ${ev.motivoRectificacion ? `<p class="text-[10px] text-amber-800 bg-amber-50 p-2 rounded-lg"><strong>Rectificado Por:</strong> ${ev.rectificadaPor} - <em>${ev.motivoRectificacion}</em></p>` : ''}
+                            </div>
+                        `).join('');
+                }
+            } catch (err) {
+                console.error('Error al actualizar datos del módulo de desempeño:', err);
+            }
+        }
 
         async function loadHRDashboardData() {
             try {
