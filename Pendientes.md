@@ -3988,7 +3988,7 @@ Criterios de aceptación
 
 ---
 
-TAREA 3.14. Permisos y trazabilidad de operaciones académicas
+[X] TAREA 3.14. Permisos y trazabilidad de operaciones académicas
 
 Objetivo: Asegurar que las nuevas funciones respeten los permisos institucionales y que las acciones relevantes puedan revisarse posteriormente.
 

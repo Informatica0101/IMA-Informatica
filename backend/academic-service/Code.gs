@@ -163,7 +163,7 @@ const ROLE_PERMISSIONS = {
   "Subdirector": [
     "getAcademicConfig", "getAcademicHistory", "getAsignaturasActivas", "getWhatsAppLink", "getQuestionBank", "registerStudentEnrollment", "getStudentEnrollmentHistory",
     "getInstitutionParams", "getAcademicYears", "getAcademicPeriods", "getSubjectCatalog", "getStudyPlans", "getAcademicOffers",
-    "getTeacherAssignments", "assignTeacherToClass", "createTeacherSubstitution", "getAcademicCalendar", "createCalendarEvent", "getClassSchedules", "createClassSchedule", "deleteClassSchedule",
+    "getTeacherAssignments", "assignTeacherToClass", "createTeacherSubstitution", "getAcademicCalendar", "createCalendarEvent", "getClassSchedules", "createClassSchedule", "deleteClassSchedule", "copyClassSchedules", "getTeacherTeachingLoad", "generateAutoSchedules", "recordClassSessionOutcome", "getTeachingHoursSummary", "rescheduleCancelledSession", "getPendingSessionRecoveries", "publishClassSchedules", "getIndividualCalendar", "syncAcademicScheduleIntegrity", "getAcademicAuditLogs",
     "getClassroomResources", "saveClassroomResource", "getStudentSchedule",
     "createAdmissionRequest", "getAdmissionRequests", "updateAdmissionStatus", "getStudentFile", "getStudentTimeline", "findDuplicateStudents",
     "getStudentGuardians", "getStudentDocuments", "getStudentEnrollments", "checkEnrollmentCapacity",
@@ -173,7 +173,7 @@ const ROLE_PERMISSIONS = {
   "Secretaría": [
     "getAcademicConfig", "getAsignaturasActivas", "registerStudentEnrollment", "getStudentEnrollmentHistory",
     "getInstitutionParams", "getAcademicYears", "getAcademicPeriods", "getSubjectCatalog", "getStudyPlans", "getAcademicOffers",
-    "createAcademicOffer", "getTeacherAssignments", "assignTeacherToClass", "createTeacherSubstitution", "getAcademicCalendar", "createCalendarEvent", "getClassSchedules", "createClassSchedule", "deleteClassSchedule",
+    "createAcademicOffer", "getTeacherAssignments", "assignTeacherToClass", "createTeacherSubstitution", "getAcademicCalendar", "createCalendarEvent", "getClassSchedules", "createClassSchedule", "deleteClassSchedule", "copyClassSchedules", "getTeacherTeachingLoad", "generateAutoSchedules", "recordClassSessionOutcome", "getTeachingHoursSummary", "rescheduleCancelledSession", "getPendingSessionRecoveries", "publishClassSchedules", "getIndividualCalendar", "syncAcademicScheduleIntegrity", "getAcademicAuditLogs",
     "getClassroomResources", "saveClassroomResource", "getStudentSchedule",
     "createAdmissionRequest", "getAdmissionRequests", "updateAdmissionStatus", "convertAdmissionToStudent",
     "getStudentFile", "updateStudentFile", "getStudentTimeline", "findDuplicateStudents",
@@ -201,7 +201,7 @@ const ROLE_PERMISSIONS = {
   ],
   "Profesor": [
     "getAcademicConfig", "updateAcademicConfig", "getAcademicHistory", "getAsignaturasActivas", "updateAsignaturasActivas", "saveWhatsAppLink", "getWhatsAppLink", "getQuestionBank", "saveQuestion", "generateMigrationReport",
-    "getAcademicYears", "getAcademicPeriods", "getSubjectCatalog", "getAcademicOffers", "getTeacherAssignments", "createTeacherSubstitution", "getAcademicCalendar", "getClassSchedules", "createClassSchedule", "deleteClassSchedule", "getClassroomResources", "getStudentSchedule",
+    "getAcademicYears", "getAcademicPeriods", "getSubjectCatalog", "getAcademicOffers", "getTeacherAssignments", "createTeacherSubstitution", "getAcademicCalendar", "getClassSchedules", "createClassSchedule", "deleteClassSchedule", "getTeacherTeachingLoad", "recordClassSessionOutcome", "getTeachingHoursSummary", "rescheduleCancelledSession", "getPendingSessionRecoveries", "getIndividualCalendar", "getClassroomResources", "getStudentSchedule",
     "getStudentFile", "getStudentTimeline", "getStudentEnrollments",
     "openAttendanceSession", "saveClassAttendance", "getClassAttendance", "saveDailyAttendance", "getDailyAttendance", "submitAttendanceJustification", "reviewAttendanceJustification", "recordEarlyDeparture", "getAttendanceIncidents", "saveAttendanceIncident", "getAttendanceFollowupCases", "saveAttendanceFollowupCase", "addCaseFollowUpNote", "getStudentAttendanceSummary",
     "getTeacherSupervisions", "getSupervisionObservation", "getTeacherImprovementPlans"
@@ -290,6 +290,16 @@ function doPost(e) {
       case "getStudentSchedule": result = getStudentSchedule(payload); break;
       case "getAcademicRules": result = getAcademicRules(payload); break;
       case "saveAcademicRule": result = saveAcademicRule(payload); break;
+      case "copyClassSchedules": result = copyClassSchedules(payload); break;
+      case "getTeacherTeachingLoad": result = getTeacherTeachingLoad(payload); break;
+      case "recordClassSessionOutcome": result = recordClassSessionOutcome(payload); break;
+      case "getTeachingHoursSummary": result = getTeachingHoursSummary(payload); break;
+      case "rescheduleCancelledSession": result = rescheduleCancelledSession(payload); break;
+      case "getPendingSessionRecoveries": result = getPendingSessionRecoveries(payload); break;
+      case "publishClassSchedules": result = publishClassSchedules(payload); break;
+      case "getIndividualCalendar": result = getIndividualCalendar(payload); break;
+      case "syncAcademicScheduleIntegrity": result = syncAcademicScheduleIntegrity(payload); break;
+      case "getAcademicAuditLogs": result = getAcademicAuditLogs(payload); break;
 
       // Endpoints Nueva Fase - Configuración Año Escolar, Jornadas, Malla, Actividades
       case "configureSchoolYear": result = configureSchoolYear(payload); break;
@@ -2597,6 +2607,37 @@ function saveClassroomResource(payload) {
   }
 
   return { status: "success", message: "Espacio/Aula registrada exitosamente." };
+}
+
+// [TAREA 3.14] [Fase 3: Planificación Académica y Horarios] - Permisos y consulta trazable de registros de auditoría de operaciones académicas.
+function getAcademicAuditLogs(payload) {
+  const { eventType, userId, fechaInicio, fechaFin } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "BitacoraAuditoriaEstructurada");
+  const data = sheet.getDataRange().getValues();
+
+  if (data.length <= 1) return { status: "success", data: [] };
+
+  const rows = data.slice(1);
+  const logs = rows.filter(r => {
+    if (r[1] !== "ACADEMIC") return false;
+    if (eventType && String(r[4]).trim() !== String(eventType).trim()) return false;
+    if (userId && String(r[7]).trim() !== String(userId).trim()) return false;
+    if (fechaInicio && new Date(r[0]) < new Date(fechaInicio)) return false;
+    if (fechaFin && new Date(r[0]) > new Date(fechaFin)) return false;
+    return true;
+  }).map(r => ({
+    timestamp: r[0],
+    service: r[1],
+    functionName: r[2],
+    severity: r[3],
+    eventType: r[4],
+    message: r[5],
+    metadataJSON: r[6],
+    userRole: r[7]
+  }));
+
+  return { status: "success", data: logs };
 }
 
 // [TAREA 3.13] [Fase 3: Planificación Académica y Horarios] - Sincronización y validación de integridad entre horarios, asignaciones titulares/sustitutas y sesiones impartidas.
