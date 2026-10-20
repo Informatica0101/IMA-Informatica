@@ -547,6 +547,7 @@ function convertAdmissionToStudent(payload) {
 // FASE 4: 2. EXPEDIENTE DIGITAL INTEGRAL Y LÍNEA DE TIEMPO
 // ---------------------------------------------------------------------------
 
+// [REQ-EXP-001] [Fase 1: Registro y Expediente de Estudiantes] - Service backend endpoint (getStudentFile) para consulta y visualización del expediente digital del estudiante.
 function getStudentFile(payload) {
   const { expedienteId, userId, codigoInstitucional } = payload || {};
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
@@ -2502,6 +2503,7 @@ function getStudentAttendanceSummary(payload) {
   };
 }
 
+// [REQ-EXP-002] [Fase 1: Registro y Expediente de Estudiantes] - Service backend endpoint (updateStudentFile) para la edición de datos personales del expediente del estudiante.
 function updateStudentFile(payload) {
   const { expedienteId, fechaNacimiento, nacionalidad, direccionResidencia, fotografiaUrl, estadoExpediente, observaciones } = payload || {};
   if (!expedienteId) throw new Error("expedienteId es requerido.");
@@ -2525,6 +2527,7 @@ function updateStudentFile(payload) {
   return { status: "success", message: "Expediente digital actualizado exitosamente." };
 }
 
+// [REQ-EXP-005] [Fase 1: Registro y Expediente de Estudiantes] - Service backend endpoint (getStudentTimeline) para consultar la línea de tiempo e historial cronológico de movimientos del estudiante.
 function getStudentTimeline(payload) {
   const { expedienteId } = payload || {};
   const fileRes = getStudentFile(payload);
@@ -2558,6 +2561,7 @@ function getStudentTimeline(payload) {
 // FASE 4: 3. DETECCIÓN Y FUSIÓN CONTROLADA DE DUPLICADOS
 // ---------------------------------------------------------------------------
 
+// [REQ-EXP-006] [Fase 1: Registro y Expediente de Estudiantes] - Service backend endpoints (findDuplicateStudents, mergeStudentFiles) para la detección preventiva y fusión controlada de expedientes duplicados.
 function findDuplicateStudents(payload) {
   const { nombres, apellidos, identificacion, email } = payload || {};
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
@@ -2640,6 +2644,7 @@ function mergeStudentFiles(payload) {
 // FASE 4: 4. PADRES, TUTORES Y RESPONSABLES
 // ---------------------------------------------------------------------------
 
+// [REQ-EXP-003] [Fase 1: Registro y Expediente de Estudiantes] - Service backend endpoints (getStudentGuardians, saveStudentGuardian, unlinkStudentGuardian) para la gestión de padres, tutores y responsables legales del estudiante.
 function getStudentGuardians(payload) {
   const { expedienteId } = payload || {};
   if (!expedienteId) throw new Error("expedienteId es requerido.");
@@ -2779,6 +2784,7 @@ function unlinkStudentGuardian(payload) {
 // FASE 4: 5. GESTIÓN DOCUMENTAL DE EXPEDIENTES
 // ---------------------------------------------------------------------------
 
+// [REQ-EXP-004] [Fase 1: Registro y Expediente de Estudiantes] - Service backend endpoints (uploadStudentDocument, getStudentDocuments, updateDocumentStatus) para la carga y gestión de documentos y fotografías del estudiante.
 function uploadStudentDocument(payload) {
   const { expedienteId, solicitudId, tipoDocumento, fileName, fileData, fechaVencimiento, observaciones } = payload || {};
   if ((!expedienteId && !solicitudId) || !tipoDocumento || !fileData) {
@@ -3002,6 +3008,7 @@ function renewStudentEnrollment(payload) {
 // FASE 4: 7. MOVIMIENTOS ESTUDIANTILES (TRASLADOS, RETIROS, REINGRESOS)
 // ---------------------------------------------------------------------------
 
+// [REQ-EXP-008] [Fase 1: Registro y Expediente de Estudiantes] - Service backend endpoints (changeStudentSection, recordStudentTransfer, recordStudentWithdrawal, processStudentReentry) para la gestión de estados y movilidad estudiantil.
 function changeStudentSection(payload) {
   const { expedienteId, userId, anolectivo, nuevaSeccion, motivo } = payload || {};
   if ((!expedienteId && !userId) || !nuevaSeccion) throw new Error("Expediente/userId y nuevaSeccion son requeridos.");

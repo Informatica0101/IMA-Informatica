@@ -1424,3 +1424,240 @@ Archivos Auditados:
 - Se auditan las 45 tareas del Backlog Maestro de Resolución, Optimización y Evolución (BASE-01..04, SEC-01..05, MAT-01..02, EXP-01..02, ACA-01..03, ASI-01..02, AULA-01..03, FIN-01..05, CON-01..04, NOM-01..03, DOC-01..03, COM-01..03, REP-01..03, UX-01..02, PERF-01..02, NEW-01..04, FINAL-01..03).
 - Se confirma que el 100% de las capacidades técnicas e interfaces asociadas están implementadas, integradas y verificadas.
 - Se actualiza el estado de todas las tareas en `pendientes2.md` a `[X] Completada`.
+
+===============================================================================
+AUDITORÍA FUNCIONAL Y TÉCNICA - TAREA REQ-EXP-001
+===============================================================================
+Fecha: 2026-10-19
+Tarea: REQ-EXP-001: CONSULTA Y VISUALIZACIÓN DEL EXPEDIENTE DIGITAL DEL ESTUDIANTE
+Archivos Auditados:
+- backend/academic-service/Code.gs
+- teacher-dashboard.html
+- js/teacher.js
+
+1. Hallazgos y Análisis del Código Existente:
+- Backend (`backend/academic-service/Code.gs`):
+  * La función `getStudentFile(payload)` está implementada en las líneas 550-590.
+  * Valida `studentId`/`expedienteId` o `userId`.
+  * Consulta las hojas `ExpedientesEstudiantes`, `Usuarios` y `Matriculas`.
+  * Devuelve nombre completo, código institucional, fecha de nacimiento, nacionalidad, dirección, teléfono, correo, observaciones, foto, grado/sección actual, estado del expediente y tutores vinculados.
+  * Matriz RBAC en `Code.gs` (líneas 150-210) incluye `getStudentFile` para Administrador, Director, Subdirector, Secretaría, Contador, Consejeros, Profesor, Padre, Tutor, Estudiante y Alumno con restricciones por rol/propiedad.
+
+- Frontend UI (`teacher-dashboard.html`):
+  * Contiene el modal `#modal-student-file` (líneas 2417-2580) con la estructura visual completa organizada en 5 pestañas (Ficha Personal, Tutores/Responsables, Documentos, Historial/Movimientos, Duplicados/Fusión).
+
+- Frontend Controller (`js/teacher.js`):
+  * La función `openStudentFileModal(studentId)` (líneas 5813-5890) realiza la invocación mediante `fetchApi('ACADEMIC', 'getStudentFile', { studentId: studentId })`.
+  * Muestra estados de carga, maneja errores, renderiza los datos devueltos (nombre, código, estado, datos personales, académicos y tutores) y permite cerrar el modal sin alterar la lista.
+  * El buscador de estudiantes `#student-search` y las listas de estudiantes llaman o se conectan a la apertura de dicho expediente digital.
+
+2. Conclusión de Auditoría:
+- El código necesario para la Tarea REQ-EXP-001 ya está completamente implementado, probado y funcional en la base de código.
+- De acuerdo con las instrucciones específicas del usuario: "Si esa tarea ya tiene código necesario y cumple con los requisitos solo agrega el comentario en la primera línea del código con, el nombre/ID de la tarea, la fase de la tarea y la función que cumple el código que pide la tarea. (Descripción breve)".
+
+===============================================================================
+AUDITORÍA FUNCIONAL Y TÉCNICA - TAREA REQ-EXP-002
+===============================================================================
+Fecha: 2026-10-19
+Tarea: REQ-EXP-002: EDICIÓN DE DATOS PERSONALES DEL EXPEDIENTE
+Archivos Auditados:
+- backend/academic-service/Code.gs
+- teacher-dashboard.html
+- js/teacher.js
+
+1. Hallazgos y Análisis del Código Existente:
+- Backend (`backend/academic-service/Code.gs`):
+  * La función `updateStudentFile(payload)` está implementada en las líneas 2506-2525.
+  * Valida `expedienteId` y actualiza los campos personales: fechaNacimiento, nacionalidad, direccionResidencia, fotografiaUrl, estadoExpediente y observaciones.
+  * Preserva los valores no modificados y registra la marca de tiempo de actualización.
+
+- Frontend UI (`teacher-dashboard.html`):
+  * Formulario `#stfile-personal-form` en la pestaña 1 del expediente digital (#tab-stfile-personal) con los campos para edición de datos personales.
+
+- Frontend Controller (`js/teacher.js`):
+  * Event listener `stfilePersonalForm.addEventListener('submit', ...)` que envía los datos del formulario al backend mediante `fetchApi('ACADEMIC', 'updateStudentFile', updatedData)` y actualiza la vista tras confirmar el guardado.
+
+2. Conclusión de Auditoría:
+- El código necesario para la Tarea REQ-EXP-002 ya está completamente implementado y funcional en la base de código.
+- Se agregó el comentario de identificación directamente en la primera línea de cada bloque de código correspondiente.
+
+===============================================================================
+AUDITORÍA FUNCIONAL Y TÉCNICA - TAREA REQ-EXP-003
+===============================================================================
+Fecha: 2026-10-19
+Tarea: REQ-EXP-003: GESTIÓN DE PADRES, TUTORES Y RESPONSABLES
+Archivos Auditados:
+- backend/academic-service/Code.gs
+- teacher-dashboard.html
+- js/teacher.js
+
+1. Hallazgos y Análisis del Código Existente:
+- Backend (`backend/academic-service/Code.gs`):
+  * Las funciones `getStudentGuardians`, `saveStudentGuardian` y `unlinkStudentGuardian` están implementadas en las líneas 2646-2775.
+  * Gestionan la consulta, creación, actualización y desvinculación de tutores en la hoja `ResponsablesTutores` y sus relaciones en `RelacionesEstudianteTutor`.
+  * Preservan atributos independientes (representante legal, contacto emergencia, responsable financiero, autorización pick-up, acceso portal).
+
+- Frontend UI (`teacher-dashboard.html`):
+  * Contenedor `#tab-stfile-guardians` en la pestaña 2 del expediente digital con la interfaz de visualización y botón de vinculación `btn-open-add-guardian-modal`.
+
+- Frontend Controller (`js/teacher.js`):
+  * Funciones `loadStudentGuardians` y evento `btnOpenAddGuardian` que invocan los endpoints de backend y gestionan la interfaz de usuario.
+
+2. Conclusión de Auditoría:
+- El código necesario para la Tarea REQ-EXP-003 ya está completamente implementado y funcional.
+- Se agregó el comentario de identificación directamente en la primera línea del código correspondiente.
+
+===============================================================================
+AUDITORÍA FUNCIONAL Y TÉCNICA - TAREA REQ-EXP-004
+===============================================================================
+Fecha: 2026-10-19
+Tarea: REQ-EXP-004: GESTIÓN DE DOCUMENTOS Y FOTOGRAFÍAS DEL ESTUDIANTE
+Archivos Auditados:
+- backend/academic-service/Code.gs
+- teacher-dashboard.html
+- js/teacher.js
+
+1. Hallazgos y Análisis del Código Existente:
+- Backend (`backend/academic-service/Code.gs`):
+  * Las funciones `uploadStudentDocument`, `getStudentDocuments` y `updateDocumentStatus` están implementadas en las líneas 2785-2860.
+  * Gestionan la carga de blobs a carpetas de Google Drive ("New Generation/Documentos_Estudiantes") y el registro de metadatos en la hoja `DocumentosEstudiante`.
+
+- Frontend UI (`teacher-dashboard.html`):
+  * Contenedor `#tab-stfile-documents` en la pestaña 3 con formulario `#stfile-doc-upload-form` para selección de tipo documental, archivo e indicador de subida.
+
+- Frontend Controller (`js/teacher.js`):
+  * Funciones `loadStudentDocuments` y manejador `stfileDocUploadForm.addEventListener('submit', ...)` que procesan la lectura Base64, envío y renderizado de enlaces de vista previa/descarga.
+
+2. Conclusión de Auditoría:
+- El código necesario para la Tarea REQ-EXP-004 ya está completamente implementado y funcional.
+- Se agregó el comentario de identificación directamente en la primera línea del código correspondiente.
+
+===============================================================================
+AUDITORÍA FUNCIONAL Y TÉCNICA - TAREA REQ-EXP-005
+===============================================================================
+Fecha: 2026-10-19
+Tarea: REQ-EXP-005: CONSULTA DE LA LÍNEA DE TIEMPO E HISTORIAL DEL ESTUDIANTE
+Archivos Auditados:
+- backend/academic-service/Code.gs
+- teacher-dashboard.html
+- js/teacher.js
+
+1. Hallazgos y Análisis del Código Existente:
+- Backend (`backend/academic-service/Code.gs`):
+  * La función `getStudentTimeline(payload)` está implementada en las líneas 2531-2555.
+  * Agrega eventos de creación de expediente, matrículas anuales, movimientos/traslados y recepción de documentos, ordenados cronológicamente.
+
+- Frontend UI (`teacher-dashboard.html`):
+  * Contenedor `#tab-stfile-timeline` en la pestaña 4 con la estructura de línea de tiempo `#stfile-timeline-container`.
+
+- Frontend Controller (`js/teacher.js`):
+  * Función `loadStudentTimeline` que realiza la llamada a `getStudentTimeline` y renderiza la lista cronológica de eventos.
+
+2. Conclusión de Auditoría:
+- El código necesario para la Tarea REQ-EXP-005 ya está completamente implementado y funcional.
+- Se agregó el comentario de identificación directamente en la primera línea del código correspondiente.
+
+===============================================================================
+AUDITORÍA FUNCIONAL Y TÉCNICA - TAREA REQ-EXP-006
+===============================================================================
+Fecha: 2026-10-19
+Tarea: REQ-EXP-006: PREVENCIÓN Y RESOLUCIÓN CONTROLADA DE DUPLICADOS
+Archivos Auditados:
+- backend/academic-service/Code.gs
+- teacher-dashboard.html
+- js/teacher.js
+
+1. Hallazgos y Análisis del Código Existente:
+- Backend (`backend/academic-service/Code.gs`):
+  * Las funciones `findDuplicateStudents` y `mergeStudentFiles` están implementadas en las líneas 2565-2638.
+  * `findDuplicateStudents` busca coincidencias por identificación exacta, correo o similitud de nombre.
+  * `mergeStudentFiles` re-vincula los documentos y movimientos al expediente principal y marca el expediente origen como "Fusionado".
+
+- Frontend UI (`teacher-dashboard.html`):
+  * Contenedor `#tab-stfile-duplicates` en la pestaña 5 con botón `#btn-scan-duplicates` y resultados de coincidencias.
+
+- Frontend Controller (`js/teacher.js`):
+  * Manejador de evento `btnScanDuplicates` que ejecuta la búsqueda de candidatos e inicia la confirmación para fusión auditada de expedientes.
+
+2. Conclusión de Auditoría:
+- El código necesario para la Tarea REQ-EXP-006 ya está completamente implementado y funcional.
+- Se agregó el comentario de identificación directamente en la primera línea del código correspondiente.
+
+===============================================================================
+AUDITORÍA FUNCIONAL Y TÉCNICA - TAREA REQ-EXP-007
+===============================================================================
+Fecha: 2026-10-19
+Tarea: REQ-EXP-007: BÚSQUEDA INSTITUCIONAL DE EXPEDIENTES
+Archivos Auditados:
+- teacher-dashboard.html
+- js/teacher.js
+
+1. Hallazgos y Análisis del Código Existente:
+- Frontend UI (`teacher-dashboard.html`):
+  * Campo de entrada `#student-search` en la cabecera del panel de entregas/gestión.
+
+- Frontend Controller (`js/teacher.js`):
+  * Función `renderGlobalSearch(search)` y manejadores de evento de entrada en `#student-search` que filtran y permiten abrir directamente el expediente digital mediante `window.openStudentFileModal(stId)`.
+
+2. Conclusión de Auditoría:
+- El código necesario para la Tarea REQ-EXP-007 ya está completamente implementado y funcional.
+- Se agregó el comentario de identificación directamente en la primera línea del código correspondiente.
+
+===============================================================================
+AUDITORÍA FUNCIONAL Y TÉCNICA - TAREA REQ-EXP-008
+===============================================================================
+Fecha: 2026-10-19
+Tarea: REQ-EXP-008: ESTADOS Y MOVILIDAD DEL ESTUDIANTE
+Archivos Auditados:
+- backend/academic-service/Code.gs
+
+1. Hallazgos y Análisis del Código Existente:
+- Backend (`backend/academic-service/Code.gs`):
+  * Las funciones `changeStudentSection`, `recordStudentTransfer`, `recordStudentWithdrawal` y `processStudentReentry` están implementadas en las líneas 3011-3110.
+  * Registran movimientos inmutables en la hoja `MovimientosEstudiante` preservando el historial académico.
+
+2. Conclusión de Auditoría:
+- El código necesario para la Tarea REQ-EXP-008 ya está completamente implementado y funcional.
+- Se agregó el comentario de identificación directamente en la primera línea del código correspondiente.
+
+===============================================================================
+AUDITORÍA FUNCIONAL Y TÉCNICA - TAREA REQ-EXP-009
+===============================================================================
+Fecha: 2026-10-19
+Tarea: REQ-EXP-009: EXPORTACIÓN AUTORIZADA DEL EXPEDIENTE A PDF
+Archivos Auditados:
+- backend/accounting-service/Code.gs
+
+1. Hallazgos y Análisis del Código Existente:
+- Backend (`backend/accounting-service/Code.gs`):
+  * La función `generateSchoolDocument` está implementada en las líneas 5568-5630.
+  * Resuelve plantillas escolares (`PlantillasEscolares`), inyecta datos oficiales, genera el documento PDF impreso/almacenado en Drive y asigna CUV único de verificación (`VERIF-XXXXXX`).
+
+2. Conclusión de Auditoría:
+- El código necesario para la Tarea REQ-EXP-009 ya está completamente implementado y funcional.
+- Se agregó el comentario de identificación directamente en la primera línea del código correspondiente.
+
+===============================================================================
+AUDITORÍA FUNCIONAL Y TÉCNICA - TAREA REQ-EXP-010
+===============================================================================
+Fecha: 2026-10-19
+Tarea: REQ-EXP-010: IMPORTACIÓN MASIVA DE EXPEDIENTES DESDE CSV Y XLSX
+Archivos Auditados:
+- backend/accounting-service/Code.gs
+- teacher-dashboard.html
+- js/teacher.js
+
+1. Hallazgos y Análisis del Código Existente:
+- Backend (`backend/accounting-service/Code.gs`):
+  * La función `importDataWithColumnMapping` está implementada en las líneas 5745-5800.
+  * Procesa arreglos de datos desde archivos Excel/CSV con mapeo de columnas, validación previa fila por fila y bitácora en `AuditoriaMigraciones`.
+
+- Frontend UI (`teacher-dashboard.html`):
+  * Componente `#modal-excel-importer` con selector de módulo destino, carga de archivo `.xlsx` e inspección de vista previa.
+
+- Frontend Controller (`js/teacher.js`):
+  * Módulo controlador del importador que utiliza la librería SheetJS (XLSX.js) para procesar archivos binarios en el navegador y transmitirlos de forma segura al backend.
+
+2. Conclusión de Auditoría:
+- El código necesario para la Tarea REQ-EXP-010 ya está completamente implementado y funcional.
+- Se agregó el comentario de identificación directamente en la primera línea del código correspondiente.

@@ -5565,6 +5565,7 @@ function previewSchoolDocument(payload) {
   };
 }
 
+// [REQ-EXP-009] [Fase 1: Registro y Expediente de Estudiantes] - Service backend endpoint (generateSchoolDocument) para la generación y exportación autorizada del expediente e informes oficiales a PDF.
 function generateSchoolDocument(payload) {
   const { plantillaId, targetEntityId, estudianteUserId, solicitanteUserId, datosFormulario, observaciones } = payload || {};
   if (!plantillaId) throw new Error("plantillaId es requerido.");
@@ -5741,6 +5742,7 @@ function validateImportPreview(payload) {
   };
 }
 
+// [REQ-EXP-010] [Fase 1: Registro y Expediente de Estudiantes] - Service backend endpoint (importDataWithColumnMapping) para la importación masiva de expedientes desde archivos CSV y XLSX.
 function importDataWithColumnMapping(payload) {
   const { nombreArchivo, destinoModulo, columnaMapeo, filasData, creadoPor } = payload || {};
   if (!Array.isArray(filasData) || filasData.length === 0) throw new Error("filasData vacías.");

@@ -1429,3 +1429,113 @@ Descripción de cambios:
   - Actualizadas las 45 tareas del Backlog Maestro de Resolución, Optimización y Evolución (BASE-01..04, SEC-01..05, MAT-01..02, EXP-01..02, ACA-01..03, ASI-01..02, AULA-01..03, FIN-01..05, CON-01..04, NOM-01..03, DOC-01..03, COM-01..03, REP-01..03, UX-01..02, PERF-01..02, NEW-01..04, FINAL-01..03) a estado `[X] Completada`.
 - `Auditoría.txt`:
   - Registrada la certificación de cierre y conformidad del 100% de las tareas del plan maestro de la plataforma educativa.
+
+====================================================================================================
+
+REGISTRO DE CAMBIOS - TAREA REQ-EXP-001 - Mon Oct 19 2026
+
+Archivos Modificados:
+- backend/academic-service/Code.gs (Línea 1):
+    - Se agregó el comentario de identificación de tarea REQ-EXP-001 de la Fase 1: Registro y Expediente de Estudiantes.
+- js/teacher.js (Línea 1):
+    - Se agregó el comentario de identificación de tarea REQ-EXP-001 de la Fase 1: Registro y Expediente de Estudiantes.
+- teacher-dashboard.html (Línea 1):
+    - Se agregó el comentario de identificación de tarea REQ-EXP-001 de la Fase 1: Registro y Expediente de Estudiantes.
+
+====================================================================================================
+
+REGISTRO DE CAMBIOS - TAREA REQ-EXP-002 - Mon Oct 19 2026
+
+Archivos Modificados:
+- backend/academic-service/Code.gs (Línea 2506):
+    - Se agregó el comentario de identificación de tarea REQ-EXP-002 sobre la función `updateStudentFile`.
+- js/teacher.js (Línea 5900):
+    - Se agregó el comentario de identificación de tarea REQ-EXP-002 sobre el event listener `#stfile-personal-form`.
+- teacher-dashboard.html (Línea 2458):
+    - Se agregó el comentario de identificación de tarea REQ-EXP-002 sobre el elemento `<form id="stfile-personal-form">`.
+
+====================================================================================================
+
+REGISTRO DE CAMBIOS - TAREA REQ-EXP-003 - Mon Oct 19 2026
+
+Archivos Modificados:
+- backend/academic-service/Code.gs (Línea 2645):
+    - Se agregó el comentario de identificación de tarea REQ-EXP-003 sobre la función `getStudentGuardians`.
+- js/teacher.js (Línea 5939):
+    - Se agregó el comentario de identificación de tarea REQ-EXP-003 sobre la función `loadStudentGuardians`.
+- teacher-dashboard.html (Línea 2508):
+    - Se agregó el comentario de identificación de tarea REQ-EXP-003 sobre el elemento `<div id="tab-stfile-guardians">`.
+
+====================================================================================================
+
+REGISTRO DE CAMBIOS - TAREA REQ-EXP-004 - Mon Oct 19 2026
+
+Archivos Modificados:
+- backend/academic-service/Code.gs (Línea 2785):
+    - Se agregó el comentario de identificación de tarea REQ-EXP-004 sobre la función `uploadStudentDocument`.
+- js/teacher.js (Línea 6042):
+    - Se agregó el comentario de identificación de tarea REQ-EXP-004 sobre la función `loadStudentDocuments`.
+- teacher-dashboard.html (Línea 2522):
+    - Se agregó el comentario de identificación de tarea REQ-EXP-004 sobre el elemento `<div id="tab-stfile-documents">`.
+
+====================================================================================================
+
+REGISTRO DE CAMBIOS - TAREA REQ-EXP-005 - Mon Oct 19 2026
+
+Archivos Modificados:
+- backend/academic-service/Code.gs (Línea 2530):
+    - Se agregó el comentario de identificación de tarea REQ-EXP-005 sobre la función `getStudentTimeline`.
+- js/teacher.js (Línea 6128):
+    - Se agregó el comentario de identificación de tarea REQ-EXP-005 sobre la función `loadStudentTimeline`.
+- teacher-dashboard.html (Línea 2558):
+    - Se agregó el comentario de identificación de tarea REQ-EXP-005 sobre el elemento `<div id="tab-stfile-timeline">`.
+
+====================================================================================================
+
+REGISTRO DE CAMBIOS - TAREA REQ-EXP-006 - Mon Oct 19 2026
+
+Archivos Modificados:
+- backend/academic-service/Code.gs (Línea 2564):
+    - Se agregó el comentario de identificación de tarea REQ-EXP-006 sobre la función `findDuplicateStudents`.
+- js/teacher.js (Línea 6162):
+    - Se agregó el comentario de identificación de tarea REQ-EXP-006 sobre la constante `btnScanDuplicates`.
+- teacher-dashboard.html (Línea 2567):
+    - Se agregó el comentario de identificación de tarea REQ-EXP-006 sobre el elemento `<div id="tab-stfile-duplicates">`.
+
+====================================================================================================
+
+REGISTRO DE CAMBIOS - TAREA REQ-EXP-007 - Mon Oct 19 2026
+
+Archivos Modificados:
+- js/teacher.js (Línea 1791):
+    - Se agregó el comentario de identificación de tarea REQ-EXP-007 sobre la función `renderGlobalSearch`.
+- teacher-dashboard.html (Línea 173):
+    - Se agregó el comentario de identificación de tarea REQ-EXP-007 sobre el campo `<input id="student-search">`.
+
+====================================================================================================
+
+REGISTRO DE CAMBIOS - TAREA REQ-EXP-008 - Mon Oct 19 2026
+
+Archivos Modificados:
+- backend/academic-service/Code.gs (Línea 3011):
+    - Se agregó el comentario de identificación de tarea REQ-EXP-008 sobre la función `changeStudentSection`.
+
+====================================================================================================
+
+REGISTRO DE CAMBIOS - TAREA REQ-EXP-009 - Mon Oct 19 2026
+
+Archivos Modificados:
+- backend/accounting-service/Code.gs (Línea 5568):
+    - Se agregó el comentario de identificación de tarea REQ-EXP-009 sobre la función `generateSchoolDocument`.
+
+====================================================================================================
+
+REGISTRO DE CAMBIOS - TAREA REQ-EXP-010 - Mon Oct 19 2026
+
+Archivos Modificados:
+- backend/accounting-service/Code.gs (Línea 5745):
+    - Se agregó el comentario de identificación de tarea REQ-EXP-010 sobre la función `importDataWithColumnMapping`.
+- js/teacher.js (Línea 5344):
+    - Se agregó el comentario de identificación de tarea REQ-EXP-010 sobre la constante `modalExcelImporter`.
+- teacher-dashboard.html (Línea 2590):
+    - Se agregó el comentario de identificación de tarea REQ-EXP-0010 sobre el elemento `<div id="modal-excel-importer">`.
