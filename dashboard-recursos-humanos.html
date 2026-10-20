@@ -61,6 +61,9 @@
                 <button id="btn-capacitacion-desarrollo" class="px-4 py-2.5 bg-blue-600 text-white rounded-2xl font-bold text-xs uppercase tracking-widest hover:bg-blue-700 transition-all shadow-md">
                     <i class="fa-solid fa-graduation-cap mr-1.5"></i> Capacitación &amp; Desarrollo
                 </button>
+                <button id="btn-incidencias-disciplinarias" class="px-4 py-2.5 bg-red-600 text-white rounded-2xl font-bold text-xs uppercase tracking-widest hover:bg-red-700 transition-all shadow-md">
+                    <i class="fa-solid fa-triangle-exclamation mr-1.5"></i> Incidencias &amp; Disciplina
+                </button>
                 <button id="btn-calcular-planilla" class="px-4 py-2.5 bg-emerald-600 text-white rounded-2xl font-bold text-xs uppercase tracking-widest hover:bg-emerald-700 transition-all shadow-md">
                     <i class="fa-solid fa-calculator mr-1.5"></i> Calcular Planilla
                 </button>
@@ -145,6 +148,126 @@
             </div>
         </div>
     </main>
+
+    <!-- [TAREA RH-07] Modal para Incidencias Laborales y Medidas Disciplinarias -->
+    <div id="modal-incidencias-disciplinarias" class="fixed inset-0 z-[110] hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white rounded-[2.5rem] max-w-3xl w-full max-h-[90vh] overflow-y-auto p-6 md:p-8 shadow-2xl border border-gray-100">
+            <div class="flex items-center justify-between pb-4 border-b border-gray-100 mb-6">
+                <div>
+                    <span class="px-3 py-1 bg-red-50 text-red-700 rounded-full text-[10px] font-black uppercase tracking-widest">Recursos Humanos</span>
+                    <h3 class="text-xl font-black text-gray-900 uppercase mt-1"><i class="fa-solid fa-scale-balanced mr-2 text-red-600"></i>Incidencias Laborales &amp; Medidas Disciplinarias</h3>
+                </div>
+                <button id="btn-close-modal-inc" class="p-2 text-gray-400 hover:text-gray-700 rounded-full hover:bg-gray-100 text-lg transition-all">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <div class="space-y-6">
+                <!-- Pestañas del Modal -->
+                <div class="flex flex-wrap gap-2 border-b border-gray-100 pb-3">
+                    <button id="tab-inc-registro" class="px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider bg-red-600 text-white">Registrar Incidencia</button>
+                    <button id="tab-inc-medidas" class="px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider bg-gray-100 text-gray-600 hover:bg-gray-200">Medidas Disciplinarias</button>
+                    <button id="tab-inc-historial" class="px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider bg-gray-100 text-gray-600 hover:bg-gray-200">Historial &amp; Trazabilidad</button>
+                </div>
+
+                <!-- TAB 1: REGISTRAR INCIDENCIA -->
+                <div id="sec-inc-registro" class="space-y-4">
+                    <form id="form-inc-registro" class="bg-red-50/40 p-4 rounded-2xl border border-red-100 space-y-3">
+                        <h4 class="text-xs font-black uppercase text-red-900">Registrar Reporte de Incidencia Laboral</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            <input type="text" id="inc-reg-empleado" placeholder="Empleado ID o Nombre" class="p-2.5 text-xs rounded-xl border border-gray-200 w-full" required>
+                            <input type="date" id="inc-reg-fecha" class="p-2.5 text-xs rounded-xl border border-gray-200 w-full" required>
+                            <select id="inc-reg-categoria" class="p-2.5 text-xs rounded-xl border border-gray-200 w-full">
+                                <option value="FaltaLlegadaTardia">Llegada Tardía / Salida Anticipada</option>
+                                <option value="InasistenciaInjustificada">Inasistencia Injustificada</option>
+                                <option value="IncumplimientoDeberes">Incumplimiento de Deberes</option>
+                                <option value="ConductaInapropiada">Conducta Inapropiada</option>
+                                <option value="ObservacionOperativa">Observación Operativa</option>
+                                <option value="Otra">Otra Causal</option>
+                            </select>
+                            <select id="inc-reg-estado" class="p-2.5 text-xs rounded-xl border border-gray-200 w-full">
+                                <option value="Registrada">Reporte Inicial (Registrada)</option>
+                                <option value="EnRevision">En Revisión / Investigación</option>
+                                <option value="ActuacionRealizada">Actuación Realizada</option>
+                                <option value="Cerrada">Caso Cerrado</option>
+                            </select>
+                            <div>
+                                <label class="text-[10px] font-bold uppercase text-gray-500">¿Responsabilidad Establecida?</label>
+                                <select id="inc-reg-responsabilidad" class="p-2.5 text-xs rounded-xl border border-gray-200 w-full">
+                                    <option value="false">No / En Investigación</option>
+                                    <option value="true">Sí / Determinada</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="text-[10px] font-bold uppercase text-gray-500">Documento de Respaldo (Drive URL)</label>
+                                <input type="url" id="inc-reg-drive-url" placeholder="https://drive.google.com/..." class="p-2.5 text-xs rounded-xl border border-gray-200 w-full">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="text-[10px] font-bold uppercase text-gray-500">Descripción Objetiva de los Hechos</label>
+                            <textarea id="inc-reg-desc" rows="3" placeholder="Describa de forma objetiva los hechos observados" class="p-2.5 text-xs rounded-xl border border-gray-200 w-full" required></textarea>
+                        </div>
+                        <div>
+                            <label class="text-[10px] font-bold uppercase text-gray-500">Aclaraciones / Alegaciones del Colaborador</label>
+                            <textarea id="inc-reg-aclaraciones" rows="2" placeholder="Manifestaciones o explicaciones aportadas" class="p-2.5 text-xs rounded-xl border border-gray-200 w-full"></textarea>
+                        </div>
+                        <button type="submit" class="w-full py-2.5 bg-red-600 hover:bg-red-700 text-white font-bold text-xs uppercase rounded-xl transition-all shadow-md">
+                            Guardar Incidencia
+                        </button>
+                    </form>
+                </div>
+
+                <!-- TAB 2: MEDIDAS DISCIPLINARIAS -->
+                <div id="sec-inc-medidas" class="space-y-4 hidden">
+                    <form id="form-inc-medida" class="bg-gray-50 p-4 rounded-2xl border border-gray-200 space-y-3">
+                        <h4 class="text-xs font-black uppercase text-gray-900">Registrar Medida Disciplinaria Aprobada</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            <input type="text" id="med-incidencia-id" placeholder="ID Incidencia Relacionada (Opcional)" class="p-2.5 text-xs rounded-xl border border-gray-200 w-full">
+                            <input type="text" id="med-empleado-id" placeholder="Empleado ID o Nombre" class="p-2.5 text-xs rounded-xl border border-gray-200 w-full" required>
+                            <select id="med-tipo" class="p-2.5 text-xs rounded-xl border border-gray-200 w-full" required>
+                                <option value="AmonestacionVerbal">Amonestación Verbal</option>
+                                <option value="AmonestacionEscrita">Amonestación Escrita</option>
+                                <option value="SuspensionLaboral">Suspensión Laboral sin Goce de Sueldo</option>
+                                <option value="TerminacionContrato">Terminación de Contrato</option>
+                            </select>
+                            <input type="date" id="med-fecha-efectiva" class="p-2.5 text-xs rounded-xl border border-gray-200 w-full" required>
+                            <input type="number" id="med-dias-suspension" placeholder="Días de Suspensión (Si aplica)" class="p-2.5 text-xs rounded-xl border border-gray-200 w-full" min="0">
+                            <input type="text" id="med-responsable-aprob" placeholder="Aprobado Por (Dirección / RRHH)" class="p-2.5 text-xs rounded-xl border border-gray-200 w-full" required>
+                        </div>
+                        <div>
+                            <label class="text-[10px] font-bold uppercase text-gray-500">Fundamento Reglamentario &amp; Documentación</label>
+                            <textarea id="med-fundamento" rows="2" placeholder="Fundamento según el reglamento interno de trabajo" class="p-2.5 text-xs rounded-xl border border-gray-200 w-full" required></textarea>
+                        </div>
+                        <div>
+                            <label class="text-[10px] font-bold uppercase text-gray-500">Acta Firmada (Drive URL)</label>
+                            <input type="url" id="med-acta-url" placeholder="https://drive.google.com/..." class="p-2.5 text-xs rounded-xl border border-gray-200 w-full">
+                        </div>
+                        <button type="submit" class="w-full py-2.5 bg-gray-800 hover:bg-gray-900 text-white font-bold text-xs uppercase rounded-xl transition-all shadow-md">
+                            Guardar Medida Disciplinaria
+                        </button>
+                    </form>
+                </div>
+
+                <!-- TAB 3: HISTORIAL & TRAZABILIDAD -->
+                <div id="sec-inc-historial" class="space-y-4 hidden">
+                    <div class="flex items-center justify-between">
+                        <h4 class="text-xs font-black uppercase text-gray-900">Historial Trazable de Incidencias &amp; Sanciones</h4>
+                        <button id="btn-refresh-inc" class="text-xs font-bold text-red-600 hover:text-red-800"><i class="fa-solid fa-rotate mr-1"></i>Actualizar</button>
+                    </div>
+                    <div class="space-y-4">
+                        <div>
+                            <h5 class="text-[11px] font-black uppercase text-gray-500 mb-2">Incidencias Registradas</h5>
+                            <div id="list-inc-incidencias" class="space-y-2 text-xs font-medium text-gray-700"></div>
+                        </div>
+                        <div>
+                            <h5 class="text-[11px] font-black uppercase text-gray-500 mb-2">Medidas Disciplinarias Aplicadas</h5>
+                            <div id="list-inc-medidas" class="space-y-2 text-xs font-medium text-gray-700"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- [TAREA RH-06] Modal para Capacitación y Desarrollo Profesional -->
     <div id="modal-capacitacion-desarrollo" class="fixed inset-0 z-[110] hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
@@ -840,6 +963,141 @@
                     await refreshTrainingModuleData();
                 });
             }
+
+            // [TAREA RH-07] Gestor de Incidencias Laborales y Medidas Disciplinarias
+            const btnIncidencias = document.getElementById('btn-incidencias-disciplinarias');
+            const modalIncidencias = document.getElementById('modal-incidencias-disciplinarias');
+            const btnCloseModalInc = document.getElementById('btn-close-modal-inc');
+
+            if (btnIncidencias && modalIncidencias) {
+                btnIncidencias.addEventListener('click', async () => {
+                    modalIncidencias.classList.remove('hidden');
+                    await refreshLaborIncidentsModuleData();
+                });
+            }
+
+            if (btnCloseModalInc && modalIncidencias) {
+                btnCloseModalInc.addEventListener('click', () => {
+                    modalIncidencias.classList.add('hidden');
+                });
+            }
+
+            // Pestañas Incidencias
+            const incTabs = [
+                { tab: 'tab-inc-registro', sec: 'sec-inc-registro' },
+                { tab: 'tab-inc-medidas', sec: 'sec-inc-medidas' },
+                { tab: 'tab-inc-historial', sec: 'sec-inc-historial' }
+            ];
+
+            incTabs.forEach(tObj => {
+                const btn = document.getElementById(tObj.tab);
+                if (!btn) return;
+                btn.addEventListener('click', () => {
+                    incTabs.forEach(o => {
+                        const b = document.getElementById(o.tab);
+                        const s = document.getElementById(o.sec);
+                        if (b) {
+                            b.className = o.tab === tObj.tab ?
+                                'px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider bg-red-600 text-white' :
+                                'px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider bg-gray-100 text-gray-600 hover:bg-gray-200';
+                        }
+                        if (s) {
+                            if (o.tab === tObj.tab) s.classList.remove('hidden');
+                            else s.classList.add('hidden');
+                        }
+                    });
+                });
+            });
+
+            // Form Incidencia
+            const formIncidencia = document.getElementById('form-inc-registro');
+            if (formIncidencia) {
+                formIncidencia.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    const empleadoId = document.getElementById('inc-reg-empleado').value;
+                    const fecha = document.getElementById('inc-reg-fecha').value;
+                    const categoria = document.getElementById('inc-reg-categoria').value;
+                    const estado = document.getElementById('inc-reg-estado').value;
+                    const responsabilidadEstablecida = document.getElementById('inc-reg-responsabilidad').value === 'true';
+                    const documentacionDriveUrl = document.getElementById('inc-reg-drive-url').value;
+                    const descripcionObjetiva = document.getElementById('inc-reg-desc').value;
+                    const observacionesAclaraciones = document.getElementById('inc-reg-aclaraciones').value;
+
+                    try {
+                        if (window.showLoading) window.showLoading('Guardando incidencia...');
+                        const res = await fetchApi('ACCOUNTING', 'manageLaborIncident', {
+                            empleadoId,
+                            fecha,
+                            categoria,
+                            estado,
+                            responsabilidadEstablecida,
+                            documentacionDriveUrl,
+                            descripcionObjetiva,
+                            observacionesAclaraciones
+                        });
+                        if (window.hideLoading) window.hideLoading();
+                        if (res && res.status === 'success') {
+                            alert('Incidencia registrada correctamente.');
+                            formIncidencia.reset();
+                            await refreshLaborIncidentsModuleData();
+                        } else {
+                            alert(res && res.message ? res.message : 'Error al registrar la incidencia.');
+                        }
+                    } catch (err) {
+                        if (window.hideLoading) window.hideLoading();
+                        alert('Error de conexión.');
+                    }
+                });
+            }
+
+            // Form Medida Disciplinaria
+            const formMedida = document.getElementById('form-inc-medida');
+            if (formMedida) {
+                formMedida.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    const incidenciaId = document.getElementById('med-incidencia-id').value;
+                    const empleadoId = document.getElementById('med-empleado-id').value;
+                    const tipoMedida = document.getElementById('med-tipo').value;
+                    const fechaEfectiva = document.getElementById('med-fecha-efectiva').value;
+                    const diasSuspension = parseInt(document.getElementById('med-dias-suspension').value || '0', 10);
+                    const responsableAprobacion = document.getElementById('med-responsable-aprob').value;
+                    const fundamentoDocumentado = document.getElementById('med-fundamento').value;
+                    const actaFirmadaDriveUrl = document.getElementById('med-acta-url').value;
+
+                    try {
+                        if (window.showLoading) window.showLoading('Guardando medida disciplinaria...');
+                        const res = await fetchApi('ACCOUNTING', 'manageDisciplinaryMeasure', {
+                            incidenciaId,
+                            empleadoId,
+                            tipoMedida,
+                            fechaEfectiva,
+                            diasSuspension,
+                            responsableAprobacion,
+                            fundamentoDocumentado,
+                            actaFirmadaDriveUrl,
+                            estadoMedida: 'Aprobada'
+                        });
+                        if (window.hideLoading) window.hideLoading();
+                        if (res && res.status === 'success') {
+                            alert('Medida disciplinaria registrada correctamente.');
+                            formMedida.reset();
+                            await refreshLaborIncidentsModuleData();
+                        } else {
+                            alert(res && res.message ? res.message : 'Error al registrar la medida disciplinaria.');
+                        }
+                    } catch (err) {
+                        if (window.hideLoading) window.hideLoading();
+                        alert('Error de conexión.');
+                    }
+                });
+            }
+
+            const btnRefreshInc = document.getElementById('btn-refresh-inc');
+            if (btnRefreshInc) {
+                btnRefreshInc.addEventListener('click', async () => {
+                    await refreshLaborIncidentsModuleData();
+                });
+            }
         });
 
         async function refreshPerformanceModuleData() {
@@ -985,6 +1243,61 @@
                 }
             } catch (err) {
                 console.error('Error al actualizar datos del módulo de capacitación:', err);
+            }
+        }
+
+        async function refreshLaborIncidentsModuleData() {
+            try {
+                const res = await fetchApi('ACCOUNTING', 'getLaborIncidentsHistory', {});
+                if (!res || res.status !== 'success' || !res.data) return;
+
+                const { incidencias, medidas } = res.data;
+
+                // Render Incidencias
+                const listIncidenciasEl = document.getElementById('list-inc-incidencias');
+                if (listIncidenciasEl) {
+                    listIncidenciasEl.innerHTML = incidencias.length === 0 ?
+                        '<p class="text-gray-400 font-bold uppercase py-2">No hay incidencias registradas.</p>' :
+                        incidencias.map(i => `
+                            <div class="p-4 bg-white border border-gray-100 rounded-2xl space-y-2">
+                                <div class="flex items-center justify-between">
+                                    <span class="font-bold text-gray-900">${i.incidenciaId} — Empleado: ${i.empleadoId} (${i.categoria})</span>
+                                    <span class="px-2 py-0.5 rounded-full text-[10px] font-black uppercase ${i.estado === 'Cerrada' ? 'bg-gray-100 text-gray-800' : 'bg-amber-100 text-amber-800'}">${i.estado}</span>
+                                </div>
+                                <p class="text-xs text-gray-700"><strong>Descripción Objetiva:</strong> ${i.descripcionObjetiva || ''}</p>
+                                ${i.observacionesAclaraciones ? `<p class="text-xs text-gray-500 italic bg-gray-50 p-2 rounded-lg"><strong>Aclaraciones Empleado:</strong> ${i.observacionesAclaraciones}</p>` : ''}
+                                <div class="flex items-center justify-between text-[10px] text-gray-400 font-bold">
+                                    <span>Fecha: ${i.fecha} | Responsabilidad Establecida: ${i.responsabilidadEstablecida ? 'SÍ' : 'NO'}</span>
+                                    ${i.documentacionDriveUrl ? `<a href="${i.documentacionDriveUrl}" target="_blank" class="text-blue-600 hover:underline"><i class="fa-solid fa-file-pdf mr-1"></i>Documentación Adjunta</a>` : ''}
+                                </div>
+                            </div>
+                        `).join('');
+                }
+
+                // Render Medidas
+                const listMedidasEl = document.getElementById('list-inc-medidas');
+                if (listMedidasEl) {
+                    listMedidasEl.innerHTML = medidas.length === 0 ?
+                        '<p class="text-gray-400 font-bold uppercase py-2">No hay medidas disciplinarias aplicadas.</p>' :
+                        medidas.map(m => `
+                            <div class="p-4 bg-white border border-gray-100 rounded-2xl space-y-2">
+                                <div class="flex items-center justify-between">
+                                    <span class="font-bold text-gray-900">${m.medidaId} (${m.tipoMedida}) — Empleado: ${m.empleadoId}</span>
+                                    <span class="px-2 py-0.5 rounded-full text-[10px] font-black uppercase bg-purple-100 text-purple-800">${m.estadoMedida}</span>
+                                </div>
+                                <p class="text-xs text-gray-700"><strong>Fundamento Documentado:</strong> ${m.fundamentoDocumentado || ''}</p>
+                                <div class="grid grid-cols-2 gap-2 text-[10px] text-gray-500">
+                                    <div><strong>Incidencia Ref:</strong> ${m.incidenciaId}</div>
+                                    <div><strong>Días Suspensión:</strong> ${m.diasSuspension || 0}</div>
+                                    <div><strong>Aprobado Por:</strong> ${m.responsableAprobacion}</div>
+                                    <div><strong>Fecha Efectiva:</strong> ${m.fechaEfectiva}</div>
+                                </div>
+                                ${m.actaFirmadaDriveUrl ? `<a href="${m.actaFirmadaDriveUrl}" target="_blank" class="inline-block text-[11px] text-blue-600 hover:underline font-bold"><i class="fa-solid fa-file-signature mr-1"></i>Ver Acta Firmada Adjunta</a>` : ''}
+                            </div>
+                        `).join('');
+                }
+            } catch (err) {
+                console.error('Error al actualizar datos de incidencias laborables:', err);
             }
         }
 

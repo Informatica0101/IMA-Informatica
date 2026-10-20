@@ -4772,7 +4772,7 @@ Criterios de aceptación
 
 ---
 
-TAREA RH-07. Completar el registro de incidencias laborales y medidas disciplinarias
+[X] TAREA RH-07. Completar el registro de incidencias laborales y medidas disciplinarias
 
 Prioridad: Alta por la sensibilidad de la información.
 Dependencia: RH-01.

@@ -52,3 +52,28 @@ Archivos Modificados:
 
 5. Pendientes.md
    - Actualización del estado de [X] TAREA RH-06. Implementar el registro de capacitación y desarrollo profesional.
+
+-------------------------------------------------------------------------------
+FECHA: Octubre 2026
+TAREA: [TAREA RH-07] Completar el registro de incidencias laborales y medidas disciplinarias
+-------------------------------------------------------------------------------
+
+Archivos Modificados:
+1. backend/accounting-service/Code.gs
+   - Lineas 194, 195: Adición de permisos "manageLaborIncident", "manageDisciplinaryMeasure", "getLaborIncidentsHistory" en ROLE_PERMISSIONS para rol RecursosHumanos.
+   - Lineas 333-335: Adición de dispatchers en doPost para acciones manageLaborIncident, manageDisciplinaryMeasure, getLaborIncidentsHistory.
+   - Lineas 2012-2120: Implementación de funciones backend manageLaborIncident, manageDisciplinaryMeasure y getLaborIncidentsHistory con comentario identificativo de tarea. Registro estructurado de faltas/incidencias laborales diferenciadas de incapacidades médicas, aplicación de medidas disciplinarias con actas firmadas adjuntas, sustento documentado, control de suspensiones y restricciones de acceso estrictas según RBAC.
+
+2. dashboard-recursos-humanos.html
+   - Linea 64: Adición de botón #btn-incidencias-disciplinarias en la barra principal de acciones.
+   - Lineas 154-265: Adición de modal #modal-incidencias-disciplinarias con pestañas de Registrar Incidencia, Aplicar Medida Disciplinaria e Historial de Incidencias & Medidas.
+   - Lineas 700-1290: Implementación de controladores JavaScript para apertura de modal, formularios de registro (manageLaborIncident, manageDisciplinaryMeasure) y renderizado dinámico con refreshLaborIncidentsModuleData.
+
+3. MapaDependencias.md
+   - Adición de documentación de tablas y funciones del Módulo de Incidencias Laborales y Medidas Disciplinarias (TAREA RH-07).
+
+4. Auditoria.txt
+   - Migración de [TAREA RH-07] del Grupo 3 (Tareas Pendientes) al Grupo 1 (Tareas Completadas) como ítem 44.
+
+5. Pendientes.md
+   - Actualización del estado de [X] TAREA RH-07. Completar el registro de incidencias laborales y medidas disciplinarias.

@@ -189,7 +189,7 @@ const ROLE_PERMISSIONS = {
   // REVISIÓN RBAC: Habilitar permiso processFamilyCreditPurchase para personal de tienda, cafetería, tutores y estudiantes
   "EncargadoTienda": ["getStoreProducts", "manageStoreProduct", "createStoreOrder", "getStoreOrders", "updateStoreOrderStatus", "recordInventoryMovement", "getInventoryKardex", "getInstitutionalPolicies", "processFamilyCreditPurchase"],
   "EncargadoCafeteria": ["getCafeteriaMenu", "manageCafeteriaMenu", "createCafeteriaOrder", "getCafeteriaOrders", "updateCafeteriaOrderStatus", "recordInventoryMovement", "getInventoryKardex", "getInstitutionalPolicies", "processFamilyCreditPurchase"],
-  "RecursosHumanos": ["createEmployeeRecord", "getEmployeeRecords", "manageEmployeeContract", "getEmployeeContracts", "getEmployeeContractAlerts", "manageJobVacancy", "getJobVacancies", "submitJobCandidate", "getJobCandidates", "manageInterviewSchedule", "getInterviewSchedules", "updateEmployeeLaborStatus", "configureWorkSchedule", "recordStaffCheckIn", "getStaffAttendanceLogs", "submitAttendanceCorrection", "reviewAttendanceCorrection", "submitLeaveVacationRequest", "getLeaveVacationRequests", "reviewLeaveVacationRequest", "calculateVacationBalances", "recordMedicalLeave", "calculatePayrollPeriod", "updatePayrollPeriodStatus", "getPayrollPeriodSummary", "requestEmployeeLoanAdvance", "getEmployeeLoansAdvances", "approveEmployeeLoanAdvance", "getLoanAmortizationSchedule", "generatePayrollReceiptPDF", "uploadEmployeeDocument", "getEmployeeDocuments", "getHRDashboardAnalytics", "getInstitutionalPolicies", "managePerformancePeriod", "managePerformanceCriteria", "managePerformanceEvaluation", "getPerformanceEvaluations", "manageTrainingCourse", "manageTrainingEnrollment", "getEmployeeTrainingHistory", "manageProfessionalDevelopmentPlan", "getTrainingAnalyticsReport"],
+  "RecursosHumanos": ["createEmployeeRecord", "getEmployeeRecords", "manageEmployeeContract", "getEmployeeContracts", "getEmployeeContractAlerts", "manageJobVacancy", "getJobVacancies", "submitJobCandidate", "getJobCandidates", "manageInterviewSchedule", "getInterviewSchedules", "updateEmployeeLaborStatus", "configureWorkSchedule", "recordStaffCheckIn", "getStaffAttendanceLogs", "submitAttendanceCorrection", "reviewAttendanceCorrection", "submitLeaveVacationRequest", "getLeaveVacationRequests", "reviewLeaveVacationRequest", "calculateVacationBalances", "recordMedicalLeave", "calculatePayrollPeriod", "updatePayrollPeriodStatus", "getPayrollPeriodSummary", "requestEmployeeLoanAdvance", "getEmployeeLoansAdvances", "approveEmployeeLoanAdvance", "getLoanAmortizationSchedule", "generatePayrollReceiptPDF", "uploadEmployeeDocument", "getEmployeeDocuments", "getHRDashboardAnalytics", "getInstitutionalPolicies", "managePerformancePeriod", "managePerformanceCriteria", "managePerformanceEvaluation", "getPerformanceEvaluations", "manageTrainingCourse", "manageTrainingEnrollment", "getEmployeeTrainingHistory", "manageProfessionalDevelopmentPlan", "getTrainingAnalyticsReport", "manageLaborIncident", "manageDisciplinaryMeasure", "getLaborIncidentsHistory"],
   "Empleado": ["getEmployeeRecords", "getEmployeeContracts", "recordStaffCheckIn", "getStaffAttendanceLogs", "submitAttendanceCorrection", "submitLeaveVacationRequest", "getLeaveVacationRequests", "requestEmployeeLoanAdvance", "getEmployeeLoansAdvances", "generatePayrollReceiptPDF", "getEmployeeDocuments", "getPerformanceEvaluations", "getEmployeeTrainingHistory", "manageProfessionalDevelopmentPlan"],
   "Padre": ["getStudentAccountStatement", "uploadPaymentVoucher", "getPaymentVouchers", "generatePaymentReceiptPDF", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getLibraryBooks", "getLibraryLoans", "reserveLibraryBook", "getLibraryReservations", "getDigitalResources", "getTransportRoutes", "getTransportAssignments", "getSchoolDocumentTemplates", "generateSchoolDocument", "getIssuedSchoolDocuments", "getStoreProducts", "createStoreOrder", "getStoreOrders", "getCafeteriaMenu", "createCafeteriaOrder", "getCafeteriaOrders", "getFamilyCreditAuthorizations", "configureFamilyCreditAuthorization", "processFamilyCreditPurchase"],
   "Tutor": ["getStudentAccountStatement", "uploadPaymentVoucher", "getPaymentVouchers", "generatePaymentReceiptPDF", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getLibraryBooks", "getLibraryLoans", "reserveLibraryBook", "getLibraryReservations", "getDigitalResources", "getTransportRoutes", "getTransportAssignments", "getSchoolDocumentTemplates", "generateSchoolDocument", "getIssuedSchoolDocuments", "getStoreProducts", "createStoreOrder", "getStoreOrders", "getCafeteriaMenu", "createCafeteriaOrder", "getCafeteriaOrders", "getFamilyCreditAuthorizations", "configureFamilyCreditAuthorization", "processFamilyCreditPurchase"],
@@ -330,6 +330,9 @@ function doPost(e) {
       case "getEmployeeTrainingHistory": result = getEmployeeTrainingHistory(payload); break;
       case "manageProfessionalDevelopmentPlan": result = manageProfessionalDevelopmentPlan(payload); break;
       case "getTrainingAnalyticsReport": result = getTrainingAnalyticsReport(payload); break;
+      case "manageLaborIncident": result = manageLaborIncident(payload); break;
+      case "manageDisciplinaryMeasure": result = manageDisciplinaryMeasure(payload); break;
+      case "getLaborIncidentsHistory": result = getLaborIncidentsHistory(payload); break;
       case "submitLeaveVacationRequest": result = submitLeaveVacationRequest(payload); break;
       case "submitVacationRequest": result = submitVacationRequest(payload); break;
       case "getLeaveVacationRequests": result = getLeaveVacationRequests(payload); break;
@@ -1680,7 +1683,7 @@ function managePerformanceEvaluation(payload) {
     sheet.getRange(foundIndex, 17).setValue(autorizadoPor || currentRow[16] || "");
     sheet.getRange(foundIndex, 18).setValue(motivoRectificacion || currentRow[17] || "");
     sheet.getRange(foundIndex, 19).setValue(JSON.stringify(historial));
-    sheet.getRange(foundIndex, 21).setValue(nowStr);
+    sheet.getRange(foundIndex, 22).setValue(nowStr);
   } else {
     const estadoFinal = estado || "Borrador";
     sheet.appendRow([
@@ -1807,6 +1810,283 @@ function getPerformanceEvaluations(payload) {
       periodos,
       criterios,
       evaluaciones
+    }
+  };
+}
+
+// [TAREA RH-07] [Fase Recursos Humanos] - Registro de incidencias laborales, medidas disciplinarias autorizadas y trazabilidad con estricta confidencialidad.
+function manageLaborIncident(payload) {
+  const {
+    incidenciaId,
+    empleadoId,
+    fecha,
+    categoria,
+    descripcionObjetiva,
+    responsableRegistro,
+    estado,
+    responsabilidadEstablecida,
+    documentacionDriveUrl,
+    observacionesAclaraciones,
+    creadoPor
+  } = payload || {};
+
+  if (!empleadoId || !descripcionObjetiva) {
+    throw new Error("empleadoId y descripcionObjetiva son campos obligatorios.");
+  }
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "IncidenciasLaborales");
+
+  if (sheet.getLastRow() === 0) {
+    sheet.appendRow([
+      "IncidenciaID",
+      "EmpleadoID",
+      "Fecha",
+      "Categoria",
+      "DescripcionObjetiva",
+      "ResponsableRegistro",
+      "Estado",
+      "ResponsabilidadEstablecida",
+      "DocumentacionDriveUrl",
+      "ObservacionesAclaraciones",
+      "HistorialAclaracionesJSON",
+      "CreadoPor",
+      "FechaCreacion",
+      "UltimaModificacion"
+    ]);
+  }
+
+  const data = sheet.getDataRange().getValues();
+  const incId = incidenciaId || ("INC-LAB-" + Date.now());
+  const nowStr = new Date().toISOString();
+  let foundIndex = -1;
+  let currentRow = null;
+
+  for (let i = 1; i < data.length; i++) {
+    if (String(data[i][0]).trim() === String(incId).trim()) {
+      foundIndex = i + 1;
+      currentRow = data[i];
+      break;
+    }
+  }
+
+  if (foundIndex > 0) {
+    let historial = [];
+    try { historial = JSON.parse(currentRow[10] || "[]"); } catch (e) { historial = []; }
+
+    // Preservar aclaraciones anteriores sin borrado silencioso
+    if (currentRow[9]) {
+      historial.push({
+        timestamp: nowStr,
+        modificadoPor: creadoPor || "RecursosHumanos",
+        aclaracionAnterior: currentRow[9],
+        estadoAnterior: currentRow[6]
+      });
+    }
+
+    sheet.getRange(foundIndex, 2).setValue(empleadoId);
+    sheet.getRange(foundIndex, 3).setValue(fecha || nowStr.split("T")[0]);
+    sheet.getRange(foundIndex, 4).setValue(categoria || "ObservacionOperativa");
+    sheet.getRange(foundIndex, 5).setValue(descripcionObjetiva);
+    sheet.getRange(foundIndex, 6).setValue(responsableRegistro || currentRow[5]);
+    sheet.getRange(foundIndex, 7).setValue(estado || currentRow[6] || "Registrada");
+    sheet.getRange(foundIndex, 8).setValue(responsabilidadEstablecida !== undefined ? Boolean(responsabilidadEstablecida) : currentRow[7]);
+    sheet.getRange(foundIndex, 9).setValue(documentacionDriveUrl !== undefined ? documentacionDriveUrl : currentRow[8]);
+    sheet.getRange(foundIndex, 10).setValue(observacionesAclaraciones !== undefined ? observacionesAclaraciones : currentRow[9]);
+    sheet.getRange(foundIndex, 11).setValue(JSON.stringify(historial));
+    sheet.getRange(foundIndex, 14).setValue(nowStr);
+  } else {
+    sheet.appendRow([
+      incId,
+      empleadoId,
+      fecha || nowStr.split("T")[0],
+      categoria || "ObservacionOperativa",
+      descripcionObjetiva,
+      responsableRegistro || creadoPor || "RecursosHumanos",
+      estado || "Registrada",
+      Boolean(responsabilidadEstablecida),
+      documentacionDriveUrl || "",
+      observacionesAclaraciones || "",
+      JSON.stringify([]),
+      creadoPor || "RecursosHumanos",
+      nowStr,
+      nowStr
+    ]);
+  }
+
+  return {
+    status: "success",
+    message: "Incidencia laboral registrada exitosamente.",
+    data: { incidenciaId: incId, empleadoId, estado: estado || "Registrada" }
+  };
+}
+
+function manageDisciplinaryMeasure(payload) {
+  const {
+    medidaId,
+    incidenciaId,
+    empleadoId,
+    tipoMedida,
+    fundamentoDocumentado,
+    fechaEfectiva,
+    responsableAprobacion,
+    estadoMedida,
+    diasSuspension,
+    actaFirmadaDriveUrl,
+    creadoPor
+  } = payload || {};
+
+  if (!empleadoId || !tipoMedida || !fundamentoDocumentado) {
+    throw new Error("empleadoId, tipoMedida y fundamentoDocumentado son campos obligatorios.");
+  }
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "MedidasDisciplinarias");
+
+  if (sheet.getLastRow() === 0) {
+    sheet.appendRow([
+      "MedidaID",
+      "IncidenciaID",
+      "EmpleadoID",
+      "TipoMedida",
+      "FundamentoDocumentado",
+      "FechaEfectiva",
+      "ResponsableAprobacion",
+      "EstadoMedida",
+      "DiasSuspension",
+      "ActaFirmadaDriveUrl",
+      "CreadoPor",
+      "FechaCreacion",
+      "UltimaModificacion"
+    ]);
+  }
+
+  const data = sheet.getDataRange().getValues();
+  const medId = medidaId || ("MED-DISC-" + Date.now());
+  const nowStr = new Date().toISOString();
+  let foundIndex = -1;
+
+  for (let i = 1; i < data.length; i++) {
+    if (String(data[i][0]).trim() === String(medId).trim()) {
+      foundIndex = i + 1;
+      break;
+    }
+  }
+
+  const estadoFinal = estadoMedida || "Aprobada";
+
+  if (foundIndex > 0) {
+    sheet.getRange(foundIndex, 2).setValue(incidenciaId || "");
+    sheet.getRange(foundIndex, 3).setValue(empleadoId);
+    sheet.getRange(foundIndex, 4).setValue(tipoMedida);
+    sheet.getRange(foundIndex, 5).setValue(fundamentoDocumentado);
+    sheet.getRange(foundIndex, 6).setValue(fechaEfectiva || nowStr.split("T")[0]);
+    sheet.getRange(foundIndex, 7).setValue(responsableAprobacion || "Direccion");
+    sheet.getRange(foundIndex, 8).setValue(estadoFinal);
+    sheet.getRange(foundIndex, 9).setValue(parseInt(diasSuspension || 0, 10));
+    sheet.getRange(foundIndex, 10).setValue(actaFirmadaDriveUrl || "");
+    sheet.getRange(foundIndex, 13).setValue(nowStr);
+  } else {
+    sheet.appendRow([
+      medId,
+      incidenciaId || "",
+      empleadoId,
+      tipoMedida,
+      fundamentoDocumentado,
+      fechaEfectiva || nowStr.split("T")[0],
+      responsableAprobacion || "Direccion",
+      estadoFinal,
+      parseInt(diasSuspension || 0, 10),
+      actaFirmadaDriveUrl || "",
+      creadoPor || "RecursosHumanos",
+      nowStr,
+      nowStr
+    ]);
+  }
+
+  return {
+    status: "success",
+    message: "Medida disciplinaria registrada exitosamente.",
+    data: { medidaId: medId, empleadoId, tipoMedida, estadoMedida: estadoFinal }
+  };
+}
+
+function getLaborIncidentsHistory(payload) {
+  const {
+    empleadoId,
+    incidenciaId,
+    estado,
+    categoria,
+    userRole
+  } = payload || {};
+
+  // Restringir acceso solo a roles autorizados de RRHH / Dirección
+  const allowedRoles = ["RecursosHumanos", "Director", "Administrador", "Subdirector"];
+  if (userRole && !allowedRoles.includes(userRole)) {
+    throw new Error("Acceso denegado. Los registros de incidencias laborales y medidas disciplinarias están restringidos a la Oficina de Recursos Humanos y Dirección.");
+  }
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+
+  // Incidencias
+  const incSheet = getOrCreateSheet(ss, "IncidenciasLaborales");
+  const incData = incSheet.getDataRange().getValues();
+  let incidencias = [];
+
+  if (incData.length > 1) {
+    incidencias = incData.slice(1).filter(r => {
+      if (empleadoId && String(r[1]).trim() !== String(empleadoId).trim()) return false;
+      if (incidenciaId && String(r[0]).trim() !== String(incidenciaId).trim()) return false;
+      if (categoria && String(r[3]).toLowerCase() !== String(categoria).toLowerCase()) return false;
+      if (estado && String(r[6]).toLowerCase() !== String(estado).toLowerCase()) return false;
+      return true;
+    }).map(r => ({
+      incidenciaId: r[0],
+      empleadoId: r[1],
+      fecha: r[2],
+      categoria: r[3],
+      descripcionObjetiva: r[4],
+      responsableRegistro: r[5],
+      estado: r[6],
+      responsabilidadEstablecida: Boolean(r[7]),
+      documentacionDriveUrl: r[8],
+      observacionesAclaraciones: r[9],
+      historialAclaraciones: parseJsonSafe(r[10], []),
+      creadoPor: r[11],
+      fechaCreacion: r[12]
+    }));
+  }
+
+  // Medidas Disciplinarias
+  const medSheet = getOrCreateSheet(ss, "MedidasDisciplinarias");
+  const medData = medSheet.getDataRange().getValues();
+  let medidasDisciplinarias = [];
+
+  if (medData.length > 1) {
+    medidasDisciplinarias = medData.slice(1).filter(r => {
+      if (empleadoId && String(r[2]).trim() !== String(empleadoId).trim()) return false;
+      if (incidenciaId && String(r[1]).trim() !== String(incidenciaId).trim()) return false;
+      return true;
+    }).map(r => ({
+      medidaId: r[0],
+      incidenciaId: r[1],
+      empleadoId: r[2],
+      tipoMedida: r[3],
+      fundamentoDocumentado: r[4],
+      fechaEfectiva: r[5],
+      responsableAprobacion: r[6],
+      estadoMedida: r[7],
+      diasSuspension: parseInt(r[8] || 0, 10),
+      actaFirmadaDriveUrl: r[9],
+      fechaCreacion: r[11]
+    }));
+  }
+
+  return {
+    status: "success",
+    data: {
+      incidencias,
+      medidasDisciplinarias
     }
   };
 }
@@ -1970,7 +2250,7 @@ function manageTrainingEnrollment(payload) {
     sheet.getRange(foundIndex, 9).setValue(fechaEmisionCertificado || "");
     sheet.getRange(foundIndex, 10).setValue(fechaVencimientoCertificado || "");
     sheet.getRange(foundIndex, 11).setValue(observaciones || "");
-    sheet.getRange(foundIndex, 13).setValue(nowStr);
+    sheet.getRange(foundIndex, 14).setValue(nowStr);
   } else {
     sheet.appendRow([
       insId,

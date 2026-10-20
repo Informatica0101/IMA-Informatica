@@ -240,3 +240,15 @@
 - **Componentes Frontend (`dashboard-recursos-humanos.html`):**
   - Botón `#btn-capacitacion-desarrollo`
   - Modal `#modal-capacitacion-desarrollo` con pestañas de Catálogo Cursos, Inscripción & Asistencia, Certificados & Vencimientos y Planes de Desarrollo.
+
+## MÓDULO DE INCIDENCIAS LABORALES Y MEDIDAS DISCIPLINARIAS (TAREA RH-07)
+- **Hojas de Cálculo / Tablas:**
+  - `IncidenciasLaborales`: Registro de faltas, retardos, incumplimientos o incidentes (IncidenciaId, EmpleadoId, Fecha, Categoria, DescripcionObjetiva, ObservacionesAclaraciones, ResponsabilidadEstablecida, DocumentacionDriveUrl, Estado, CreadoPor, FechaCreacion, UltimaModificacion).
+  - `MedidasDisciplinarias`: Aplicación de amonestaciones verbales/escritas, suspensiones o resoluciones disciplinarias con acta firmada (MedidaId, IncidenciaId, EmpleadoId, TipoMedida, FechaEfectiva, DiasSuspension, ResponsableAprobacion, FundamentoDocumentado, ActaFirmadaDriveUrl, EstadoMedida, CreadoPor, FechaCreacion, UltimaModificacion).
+- **Funciones Backend (`backend/accounting-service/Code.gs`):**
+  - `manageLaborIncident(payload)`
+  - `manageDisciplinaryMeasure(payload)`
+  - `getLaborIncidentsHistory(payload)`
+- **Componentes Frontend (`dashboard-recursos-humanos.html`):**
+  - Botón `#btn-incidencias-disciplinarias`
+  - Modal `#modal-incidencias-disciplinarias` con pestañas de Registrar Incidencia, Aplicar Medida Disciplinaria y Historial de Incidencias & Medidas.
