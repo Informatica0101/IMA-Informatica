@@ -189,8 +189,8 @@ const ROLE_PERMISSIONS = {
   // REVISIÓN RBAC: Habilitar permiso processFamilyCreditPurchase para personal de tienda, cafetería, tutores y estudiantes
   "EncargadoTienda": ["getStoreProducts", "manageStoreProduct", "createStoreOrder", "getStoreOrders", "updateStoreOrderStatus", "recordInventoryMovement", "getInventoryKardex", "getInstitutionalPolicies", "processFamilyCreditPurchase"],
   "EncargadoCafeteria": ["getCafeteriaMenu", "manageCafeteriaMenu", "createCafeteriaOrder", "getCafeteriaOrders", "updateCafeteriaOrderStatus", "recordInventoryMovement", "getInventoryKardex", "getInstitutionalPolicies", "processFamilyCreditPurchase"],
-  "RecursosHumanos": ["createEmployeeRecord", "getEmployeeRecords", "manageEmployeeContract", "getEmployeeContracts", "getEmployeeContractAlerts", "manageJobVacancy", "getJobVacancies", "submitJobCandidate", "getJobCandidates", "manageInterviewSchedule", "getInterviewSchedules", "updateEmployeeLaborStatus", "configureWorkSchedule", "recordStaffCheckIn", "getStaffAttendanceLogs", "submitAttendanceCorrection", "reviewAttendanceCorrection", "submitLeaveVacationRequest", "getLeaveVacationRequests", "reviewLeaveVacationRequest", "calculateVacationBalances", "recordMedicalLeave", "calculatePayrollPeriod", "updatePayrollPeriodStatus", "getPayrollPeriodSummary", "requestEmployeeLoanAdvance", "getEmployeeLoansAdvances", "approveEmployeeLoanAdvance", "getLoanAmortizationSchedule", "generatePayrollReceiptPDF", "uploadEmployeeDocument", "getEmployeeDocuments", "getHRDashboardAnalytics", "getInstitutionalPolicies", "managePerformancePeriod", "managePerformanceCriteria", "managePerformanceEvaluation", "getPerformanceEvaluations"],
-  "Empleado": ["getEmployeeRecords", "getEmployeeContracts", "recordStaffCheckIn", "getStaffAttendanceLogs", "submitAttendanceCorrection", "submitLeaveVacationRequest", "getLeaveVacationRequests", "requestEmployeeLoanAdvance", "getEmployeeLoansAdvances", "generatePayrollReceiptPDF", "getEmployeeDocuments", "getPerformanceEvaluations"],
+  "RecursosHumanos": ["createEmployeeRecord", "getEmployeeRecords", "manageEmployeeContract", "getEmployeeContracts", "getEmployeeContractAlerts", "manageJobVacancy", "getJobVacancies", "submitJobCandidate", "getJobCandidates", "manageInterviewSchedule", "getInterviewSchedules", "updateEmployeeLaborStatus", "configureWorkSchedule", "recordStaffCheckIn", "getStaffAttendanceLogs", "submitAttendanceCorrection", "reviewAttendanceCorrection", "submitLeaveVacationRequest", "getLeaveVacationRequests", "reviewLeaveVacationRequest", "calculateVacationBalances", "recordMedicalLeave", "calculatePayrollPeriod", "updatePayrollPeriodStatus", "getPayrollPeriodSummary", "requestEmployeeLoanAdvance", "getEmployeeLoansAdvances", "approveEmployeeLoanAdvance", "getLoanAmortizationSchedule", "generatePayrollReceiptPDF", "uploadEmployeeDocument", "getEmployeeDocuments", "getHRDashboardAnalytics", "getInstitutionalPolicies", "managePerformancePeriod", "managePerformanceCriteria", "managePerformanceEvaluation", "getPerformanceEvaluations", "manageTrainingCourse", "manageTrainingEnrollment", "getEmployeeTrainingHistory", "manageProfessionalDevelopmentPlan", "getTrainingAnalyticsReport"],
+  "Empleado": ["getEmployeeRecords", "getEmployeeContracts", "recordStaffCheckIn", "getStaffAttendanceLogs", "submitAttendanceCorrection", "submitLeaveVacationRequest", "getLeaveVacationRequests", "requestEmployeeLoanAdvance", "getEmployeeLoansAdvances", "generatePayrollReceiptPDF", "getEmployeeDocuments", "getPerformanceEvaluations", "getEmployeeTrainingHistory", "manageProfessionalDevelopmentPlan"],
   "Padre": ["getStudentAccountStatement", "uploadPaymentVoucher", "getPaymentVouchers", "generatePaymentReceiptPDF", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getLibraryBooks", "getLibraryLoans", "reserveLibraryBook", "getLibraryReservations", "getDigitalResources", "getTransportRoutes", "getTransportAssignments", "getSchoolDocumentTemplates", "generateSchoolDocument", "getIssuedSchoolDocuments", "getStoreProducts", "createStoreOrder", "getStoreOrders", "getCafeteriaMenu", "createCafeteriaOrder", "getCafeteriaOrders", "getFamilyCreditAuthorizations", "configureFamilyCreditAuthorization", "processFamilyCreditPurchase"],
   "Tutor": ["getStudentAccountStatement", "uploadPaymentVoucher", "getPaymentVouchers", "generatePaymentReceiptPDF", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getLibraryBooks", "getLibraryLoans", "reserveLibraryBook", "getLibraryReservations", "getDigitalResources", "getTransportRoutes", "getTransportAssignments", "getSchoolDocumentTemplates", "generateSchoolDocument", "getIssuedSchoolDocuments", "getStoreProducts", "createStoreOrder", "getStoreOrders", "getCafeteriaMenu", "createCafeteriaOrder", "getCafeteriaOrders", "getFamilyCreditAuthorizations", "configureFamilyCreditAuthorization", "processFamilyCreditPurchase"],
   "Responsable": ["getStudentAccountStatement", "uploadPaymentVoucher", "getPaymentVouchers", "generatePaymentReceiptPDF", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getLibraryBooks", "getLibraryLoans", "reserveLibraryBook", "getLibraryReservations", "getDigitalResources", "getTransportRoutes", "getTransportAssignments", "getSchoolDocumentTemplates", "generateSchoolDocument", "getIssuedSchoolDocuments", "getStoreProducts", "createStoreOrder", "getStoreOrders", "getCafeteriaMenu", "createCafeteriaOrder", "getCafeteriaOrders", "getFamilyCreditAuthorizations", "configureFamilyCreditAuthorization", "processFamilyCreditPurchase"],
@@ -325,6 +325,11 @@ function doPost(e) {
       case "managePerformanceCriteria": result = managePerformanceCriteria(payload); break;
       case "managePerformanceEvaluation": result = managePerformanceEvaluation(payload); break;
       case "getPerformanceEvaluations": result = getPerformanceEvaluations(payload); break;
+      case "manageTrainingCourse": result = manageTrainingCourse(payload); break;
+      case "manageTrainingEnrollment": result = manageTrainingEnrollment(payload); break;
+      case "getEmployeeTrainingHistory": result = getEmployeeTrainingHistory(payload); break;
+      case "manageProfessionalDevelopmentPlan": result = manageProfessionalDevelopmentPlan(payload); break;
+      case "getTrainingAnalyticsReport": result = getTrainingAnalyticsReport(payload); break;
       case "submitLeaveVacationRequest": result = submitLeaveVacationRequest(payload); break;
       case "submitVacationRequest": result = submitVacationRequest(payload); break;
       case "getLeaveVacationRequests": result = getLeaveVacationRequests(payload); break;
@@ -1809,6 +1814,440 @@ function getPerformanceEvaluations(payload) {
 function parseJsonSafe(jsonStr, fallback) {
   if (!jsonStr) return fallback;
   try { return JSON.parse(jsonStr); } catch (e) { return fallback; }
+}
+
+// [TAREA RH-06] [Fase Recursos Humanos] - Catálogo de capacitaciones, inscripciones, certificados con vencimiento y planes de desarrollo profesional.
+function manageTrainingCourse(payload) {
+  const {
+    cursoId,
+    nombreCurso,
+    categoria,
+    proveedorResponsable,
+    modalidad,
+    duracionHoras,
+    requisitos,
+    dirigidoA,
+    estado,
+    creadoPor
+  } = payload || {};
+
+  if (!nombreCurso) {
+    throw new Error("nombreCurso es un campo obligatorio.");
+  }
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "CatalogoCursosCapacitacion");
+
+  if (sheet.getLastRow() === 0) {
+    sheet.appendRow([
+      "CursoID",
+      "NombreCurso",
+      "Categoria",
+      "ProveedorResponsable",
+      "Modalidad",
+      "DuracionHoras",
+      "Requisitos",
+      "DirigidoA",
+      "Estado",
+      "CreadoPor",
+      "FechaCreacion",
+      "UltimaModificacion"
+    ]);
+  }
+
+  const data = sheet.getDataRange().getValues();
+  const cId = cursoId || ("CURS-CAP-" + Date.now());
+  const nowStr = new Date().toISOString();
+  let foundIndex = -1;
+
+  for (let i = 1; i < data.length; i++) {
+    if (String(data[i][0]).trim() === String(cId).trim()) {
+      foundIndex = i + 1;
+      break;
+    }
+  }
+
+  const reqStr = typeof requisitos === "string" ? requisitos : JSON.stringify(requisitos || []);
+
+  if (foundIndex > 0) {
+    sheet.getRange(foundIndex, 2).setValue(nombreCurso);
+    sheet.getRange(foundIndex, 3).setValue(categoria || "General");
+    sheet.getRange(foundIndex, 4).setValue(proveedorResponsable || "Interno");
+    sheet.getRange(foundIndex, 5).setValue(modalidad || "Presencial");
+    sheet.getRange(foundIndex, 6).setValue(duracionHoras || 0);
+    sheet.getRange(foundIndex, 7).setValue(reqStr);
+    sheet.getRange(foundIndex, 8).setValue(dirigidoA || "Todos");
+    sheet.getRange(foundIndex, 9).setValue(estado || "Planificado");
+    sheet.getRange(foundIndex, 12).setValue(nowStr);
+  } else {
+    sheet.appendRow([
+      cId,
+      nombreCurso,
+      categoria || "General",
+      proveedorResponsable || "Interno",
+      modalidad || "Presencial",
+      duracionHoras || 0,
+      reqStr,
+      dirigidoA || "Todos",
+      estado || "Planificado",
+      creadoPor || "RecursosHumanos",
+      nowStr,
+      nowStr
+    ]);
+  }
+
+  return {
+    status: "success",
+    message: "Curso de capacitación registrado exitosamente.",
+    data: { cursoId: cId, nombreCurso, estado: estado || "Planificado" }
+  };
+}
+
+function manageTrainingEnrollment(payload) {
+  const {
+    inscripcionId,
+    cursoId,
+    empleadoId,
+    fechaInscripcion,
+    estadoInscripcion,
+    asistenciaPorcentaje,
+    resultadoNota,
+    certificadoDriveUrl,
+    fechaEmisionCertificado,
+    fechaVencimientoCertificado,
+    observaciones,
+    creadoPor
+  } = payload || {};
+
+  if (!cursoId || !empleadoId) {
+    throw new Error("cursoId y empleadoId son campos obligatorios.");
+  }
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "InscripcionesCapacitacion");
+
+  if (sheet.getLastRow() === 0) {
+    sheet.appendRow([
+      "InscripcionID",
+      "CursoID",
+      "EmpleadoID",
+      "FechaInscripcion",
+      "EstadoInscripcion",
+      "AsistenciaPorcentaje",
+      "ResultadoNota",
+      "CertificadoDriveUrl",
+      "FechaEmisionCertificado",
+      "FechaVencimientoCertificado",
+      "Observaciones",
+      "CreadoPor",
+      "FechaCreacion",
+      "UltimaModificacion"
+    ]);
+  }
+
+  const data = sheet.getDataRange().getValues();
+  const insId = inscripcionId || ("INSC-CAP-" + Date.now());
+  const nowStr = new Date().toISOString();
+  let foundIndex = -1;
+
+  for (let i = 1; i < data.length; i++) {
+    if (String(data[i][0]).trim() === String(insId).trim()) {
+      foundIndex = i + 1;
+      break;
+    }
+  }
+
+  const estadoFinal = estadoInscripcion || "Inscrito";
+
+  if (foundIndex > 0) {
+    sheet.getRange(foundIndex, 2).setValue(cursoId);
+    sheet.getRange(foundIndex, 3).setValue(empleadoId);
+    sheet.getRange(foundIndex, 4).setValue(fechaInscripcion || nowStr.split("T")[0]);
+    sheet.getRange(foundIndex, 5).setValue(estadoFinal);
+    sheet.getRange(foundIndex, 6).setValue(asistenciaPorcentaje || 0);
+    sheet.getRange(foundIndex, 7).setValue(resultadoNota || 0);
+    sheet.getRange(foundIndex, 8).setValue(certificadoDriveUrl || "");
+    sheet.getRange(foundIndex, 9).setValue(fechaEmisionCertificado || "");
+    sheet.getRange(foundIndex, 10).setValue(fechaVencimientoCertificado || "");
+    sheet.getRange(foundIndex, 11).setValue(observaciones || "");
+    sheet.getRange(foundIndex, 13).setValue(nowStr);
+  } else {
+    sheet.appendRow([
+      insId,
+      cursoId,
+      empleadoId,
+      fechaInscripcion || nowStr.split("T")[0],
+      estadoFinal,
+      asistenciaPorcentaje || 0,
+      resultadoNota || 0,
+      certificadoDriveUrl || "",
+      fechaEmisionCertificado || "",
+      fechaVencimientoCertificado || "",
+      observaciones || "",
+      creadoPor || "RecursosHumanos",
+      nowStr,
+      nowStr
+    ]);
+  }
+
+  return {
+    status: "success",
+    message: "Inscripción/capacitación registrada exitosamente.",
+    data: { inscripcionId: insId, cursoId, empleadoId, estadoInscripcion: estadoFinal }
+  };
+}
+
+function getEmployeeTrainingHistory(payload) {
+  const {
+    empleadoId,
+    cursoId,
+    soloProximosVencimientos,
+    diasAnticipacion,
+    userRole,
+    authenticatedUserId
+  } = payload || {};
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+
+  // Cursos
+  const courseSheet = getOrCreateSheet(ss, "CatalogoCursosCapacitacion");
+  const courseData = courseSheet.getDataRange().getValues();
+  const cursosMap = {};
+  if (courseData.length > 1) {
+    courseData.slice(1).forEach(r => {
+      cursosMap[String(r[0]).trim()] = {
+        cursoId: r[0],
+        nombreCurso: r[1],
+        categoria: r[2],
+        proveedorResponsable: r[3],
+        modalidad: r[4],
+        duracionHoras: r[5],
+        requisitos: parseJsonSafe(r[6], []),
+        dirigidoA: r[7],
+        estado: r[8]
+      };
+    });
+  }
+
+  // Inscripciones
+  const insSheet = getOrCreateSheet(ss, "InscripcionesCapacitacion");
+  const insData = insSheet.getDataRange().getValues();
+  let inscripciones = [];
+
+  const now = new Date();
+  const targetDays = parseInt(diasAnticipacion || "30", 10);
+  const isEmployeeRole = userRole === "Empleado";
+  const targetEmpId = isEmployeeRole ? authenticatedUserId : empleadoId;
+
+  if (insData.length > 1) {
+    inscripciones = insData.slice(1).filter(r => {
+      if (targetEmpId && String(r[2]).trim() !== String(targetEmpId).trim()) return false;
+      if (cursoId && String(r[1]).trim() !== String(cursoId).trim()) return false;
+
+      // Filtro de vencimiento
+      if (soloProximosVencimientos) {
+        const fechaVenc = r[9] ? new Date(r[9]) : null;
+        if (!fechaVenc || isNaN(fechaVenc.getTime())) return false;
+        const diffDays = Math.ceil((fechaVenc - now) / (1000 * 60 * 60 * 24));
+        if (diffDays < 0 || diffDays > targetDays) return false;
+      }
+
+      return true;
+    }).map(r => {
+      const cId = String(r[1]).trim();
+      const cursoInfo = cursosMap[cId] || { nombreCurso: cId };
+      const fechaVenc = r[9] ? new Date(r[9]) : null;
+      let estaProximoAVencer = false;
+      let diasParaVencer = null;
+
+      if (fechaVenc && !isNaN(fechaVenc.getTime())) {
+        diasParaVencer = Math.ceil((fechaVenc - now) / (1000 * 60 * 60 * 24));
+        estaProximoAVencer = diasParaVencer >= 0 && diasParaVencer <= targetDays;
+      }
+
+      return {
+        inscripcionId: r[0],
+        cursoId: r[1],
+        nombreCurso: cursoInfo.nombreCurso,
+        categoriaCurso: cursoInfo.categoria,
+        duracionHoras: cursoInfo.duracionHoras,
+        empleadoId: r[2],
+        fechaInscripcion: r[3],
+        estadoInscripcion: r[4],
+        asistenciaPorcentaje: r[5],
+        resultadoNota: r[6],
+        certificadoDriveUrl: r[7],
+        fechaEmisionCertificado: r[8],
+        fechaVencimientoCertificado: r[9],
+        estaProximoAVencer,
+        diasParaVencer,
+        observaciones: r[10],
+        fechaCreacion: r[12]
+      };
+    });
+  }
+
+  // Planes de Desarrollo
+  const planSheet = getOrCreateSheet(ss, "PlanesDesarrolloProfesional");
+  const planData = planSheet.getDataRange().getValues();
+  let planesDesarrollo = [];
+
+  if (planData.length > 1) {
+    planesDesarrollo = planData.slice(1).filter(r => {
+      if (targetEmpId && String(r[1]).trim() !== String(targetEmpId).trim()) return false;
+      return true;
+    }).map(r => ({
+      planId: r[0],
+      empleadoId: r[1],
+      tituloObjetivo: r[2],
+      descripcion: r[3],
+      metasAcciones: parseJsonSafe(r[4], []),
+      fechaInicio: r[5],
+      fechaMeta: r[6],
+      estadoObjetivo: r[7],
+      evaluacionSeguimiento: r[8],
+      fechaCreacion: r[10]
+    }));
+  }
+
+  return {
+    status: "success",
+    data: {
+      cursos: Object.values(cursosMap),
+      inscripciones,
+      planesDesarrollo
+    }
+  };
+}
+
+function manageProfessionalDevelopmentPlan(payload) {
+  const {
+    planId,
+    empleadoId,
+    tituloObjetivo,
+    descripcion,
+    metasAcciones,
+    fechaInicio,
+    fechaMeta,
+    estadoObjetivo,
+    evaluacionSeguimiento,
+    creadoPor
+  } = payload || {};
+
+  if (!empleadoId || !tituloObjetivo) {
+    throw new Error("empleadoId y tituloObjetivo son campos obligatorios.");
+  }
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "PlanesDesarrolloProfesional");
+
+  if (sheet.getLastRow() === 0) {
+    sheet.appendRow([
+      "PlanID",
+      "EmpleadoID",
+      "TituloObjetivo",
+      "Descripcion",
+      "MetasAccionesJSON",
+      "FechaInicio",
+      "FechaMeta",
+      "EstadoObjetivo",
+      "EvaluacionSeguimiento",
+      "CreadoPor",
+      "FechaCreacion",
+      "UltimaModificacion"
+    ]);
+  }
+
+  const data = sheet.getDataRange().getValues();
+  const pId = planId || ("PLAN-DEV-" + Date.now());
+  const nowStr = new Date().toISOString();
+  let foundIndex = -1;
+
+  for (let i = 1; i < data.length; i++) {
+    if (String(data[i][0]).trim() === String(pId).trim()) {
+      foundIndex = i + 1;
+      break;
+    }
+  }
+
+  const metasStr = typeof metasAcciones === "string" ? metasAcciones : JSON.stringify(metasAcciones || []);
+
+  if (foundIndex > 0) {
+    sheet.getRange(foundIndex, 2).setValue(empleadoId);
+    sheet.getRange(foundIndex, 3).setValue(tituloObjetivo);
+    sheet.getRange(foundIndex, 4).setValue(descripcion || "");
+    sheet.getRange(foundIndex, 5).setValue(metasStr);
+    sheet.getRange(foundIndex, 6).setValue(fechaInicio || nowStr.split("T")[0]);
+    sheet.getRange(foundIndex, 7).setValue(fechaMeta || "");
+    sheet.getRange(foundIndex, 8).setValue(estadoObjetivo || "EnProgreso");
+    sheet.getRange(foundIndex, 9).setValue(evaluacionSeguimiento || "");
+    sheet.getRange(foundIndex, 12).setValue(nowStr);
+  } else {
+    sheet.appendRow([
+      pId,
+      empleadoId,
+      tituloObjetivo,
+      descripcion || "",
+      metasStr,
+      fechaInicio || nowStr.split("T")[0],
+      fechaMeta || "",
+      estadoObjetivo || "EnProgreso",
+      evaluacionSeguimiento || "",
+      creadoPor || "RecursosHumanos",
+      nowStr,
+      nowStr
+    ]);
+  }
+
+  return {
+    status: "success",
+    message: "Plan de desarrollo profesional guardado exitosamente.",
+    data: { planId: pId, empleadoId, tituloObjetivo }
+  };
+}
+
+function getTrainingAnalyticsReport(payload) {
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+
+  const courseSheet = getOrCreateSheet(ss, "CatalogoCursosCapacitacion");
+  const courseData = courseSheet.getDataRange().getValues();
+
+  const insSheet = getOrCreateSheet(ss, "InscripcionesCapacitacion");
+  const insData = insSheet.getDataRange().getValues();
+
+  const totalCursos = Math.max(0, courseData.length - 1);
+  const totalInscripciones = Math.max(0, insData.length - 1);
+
+  let completados = 0;
+  let enCurso = 0;
+  let certificadosPorVencer = 0;
+  const now = new Date();
+
+  if (insData.length > 1) {
+    insData.slice(1).forEach(r => {
+      const estado = String(r[4]).trim();
+      if (estado === "Finalizado" || estado === "Asistio") completados++;
+      if (estado === "EnCurso" || estado === "Inscrito") enCurso++;
+
+      const fechaVenc = r[9] ? new Date(r[9]) : null;
+      if (fechaVenc && !isNaN(fechaVenc.getTime())) {
+        const diffDays = Math.ceil((fechaVenc - now) / (1000 * 60 * 60 * 24));
+        if (diffDays >= 0 && diffDays <= 30) certificadosPorVencer++;
+      }
+    });
+  }
+
+  return {
+    status: "success",
+    data: {
+      totalCursos,
+      totalInscripciones,
+      completados,
+      enCurso,
+      certificadosPorVencer,
+      tasaFinalizacion: totalInscripciones > 0 ? Math.round((completados / totalInscripciones) * 100) : 0
+    }
+  };
 }
 
 // [TAREA RH-04] [Fase Reclutamiento y Selección] - Programación, reprogramación, seguimiento de asistencia y evaluación confidencial de entrevistas laborales.

@@ -195,6 +195,11 @@ GRUPO 1: TAREAS COMPLETADAS
     - Archivo Frontend: dashboard-recursos-humanos.html (Línea 58 `#btn-evaluar-desempeno`, Línea 146 `#modal-evaluacion-desempeno`, Línea 385 `refreshPerformanceModuleData`)
     - Descripción: Módulo completo de evaluación de desempeño con periodos de evaluación, criterios parametrizables por puesto, fichas individuales con calificaciones y compromisos, observaciones confidenciales, rectificación trazable de evaluaciones cerradas e informes.
 
+43. [TAREA RH-06] Implementar el registro de capacitación y desarrollo profesional
+    - Archivo: backend/accounting-service/Code.gs (Línea 1819 `manageTrainingCourse`, `manageTrainingEnrollment`, `getEmployeeTrainingHistory`, `manageProfessionalDevelopmentPlan`, `getTrainingAnalyticsReport`)
+    - Archivo Frontend: dashboard-recursos-humanos.html (Línea 61 `#btn-capacitacion-desarrollo`, Línea 150 `#modal-capacitacion-desarrollo`, Línea 918 `refreshTrainingModuleData`)
+    - Descripción: Módulo completo para gestión de capacitaciones, catálogo de cursos, inscripciones, control de asistencia y calificaciones, certificados Drive adjuntos con detección de próximos vencimientos, planes de desarrollo profesional e informes analíticos por empleado.
+
 
 -------------------------------------------------------------------------------
 GRUPO 2: TAREAS INCOMPLETAS
@@ -210,7 +215,6 @@ GRUPO 3: TAREAS PENDIENTES / NO INICIADAS
 (Registradas en el backlog pero no iniciadas ni presentes en el código)
 -------------------------------------------------------------------------------
 
-23. TAREA RH-06: Implementar el registro de capacitación y desarrollo profesional
 24. TAREA RH-07: Completar el registro de incidencias laborales y medidas disciplinarias
 25. TAREA RH-08: Implementar la planificación de necesidades de personal
 26. TAREA RH-09: Completar la gestión visual de turnos y sustituciones

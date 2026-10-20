@@ -27,3 +27,28 @@ Archivos Modificados:
 
 5. Pendientes.md
    - Actualización del estado de [X] TAREA RH-05. Implementar la evaluación del desempeño de los empleados.
+
+-------------------------------------------------------------------------------
+FECHA: Octubre 2026
+TAREA: [TAREA RH-06] Implementar el registro de capacitación y desarrollo profesional
+-------------------------------------------------------------------------------
+
+Archivos Modificados:
+1. backend/accounting-service/Code.gs
+   - Lineas 192, 193: Adición de permisos "manageTrainingCourse", "manageTrainingEnrollment", "getEmployeeTrainingHistory", "manageProfessionalDevelopmentPlan", "getTrainingAnalyticsReport" en ROLE_PERMISSIONS para roles RecursosHumanos y Empleado.
+   - Lineas 328-332: Adición de dispatchers en doPost para acciones manageTrainingCourse, manageTrainingEnrollment, getEmployeeTrainingHistory, manageProfessionalDevelopmentPlan, getTrainingAnalyticsReport.
+   - Lineas 1819-2250: Implementación de funciones backend manageTrainingCourse, manageTrainingEnrollment, getEmployeeTrainingHistory, manageProfessionalDevelopmentPlan y getTrainingAnalyticsReport con comentario identificativo de tarea. Soporte para catálogo de cursos, inscripciones, asistencias, notas, certificados Drive, detección de certificados próximos a vencer, planes de desarrollo profesional e informes analíticos.
+
+2. dashboard-recursos-humanos.html
+   - Linea 61: Adición de botón #btn-capacitacion-desarrollo en la barra principal de acciones.
+   - Lineas 150-265: Adición de modal #modal-capacitacion-desarrollo con pestañas de Catálogo Cursos, Inscripción & Asistencia, Certificados & Vencimientos y Planes de Desarrollo.
+   - Lineas 678-1000: Implementación de controladores JavaScript para apertura del modal, formularios de registro (manageTrainingCourse, manageTrainingEnrollment, manageProfessionalDevelopmentPlan) y renderizado dinámico de datos con refreshTrainingModuleData.
+
+3. MapaDependencias.md
+   - Adición de documentación de tablas y funciones del Módulo de Capacitación y Desarrollo Profesional (TAREA RH-06).
+
+4. Auditoria.txt
+   - Migración de [TAREA RH-06] del Grupo 3 (Tareas Pendientes) al Grupo 1 (Tareas Completadas) como ítem 43.
+
+5. Pendientes.md
+   - Actualización del estado de [X] TAREA RH-06. Implementar el registro de capacitación y desarrollo profesional.

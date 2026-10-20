@@ -225,3 +225,18 @@
 - **Componentes Frontend (`dashboard-recursos-humanos.html`):**
   - Botón `#btn-evaluar-desempeno`
   - Modal `#modal-evaluacion-desempeno` con pestañas de Periodos, Criterios por Puesto, Registro de Evaluación e Historial & Informes.
+
+## MÓDULO DE CAPACITACIÓN Y DESARROLLO PROFESIONAL (TAREA RH-06)
+- **Hojas de Cálculo / Tablas:**
+  - `CatalogoCursosCapacitacion`: Registro central de cursos, talleres y actividades formativas (CursoID, NombreCurso, Categoria, ProveedorResponsable, Modalidad, DuracionHoras, Requisitos, DirigidoA, Estado, CreadoPor, FechaCreacion, UltimaModificacion).
+  - `InscripcionesCapacitacion`: Control de inscripciones, asistencia, resultados, enlaces a certificados Drive y alertas de vencimiento (InscripcionID, CursoID, EmpleadoID, FechaInscripcion, EstadoInscripcion, AsistenciaPorcentaje, ResultadoNota, CertificadoDriveUrl, FechaEmisionCertificado, FechaVencimientoCertificado, Observaciones, CreadoPor, FechaCreacion, UltimaModificacion).
+  - `PlanesDesarrolloProfesional`: Definición y seguimiento de objetivos de desarrollo profesional (PlanID, EmpleadoID, TituloObjetivo, Descripcion, MetasAccionesJSON, FechaInicio, FechaMeta, EstadoObjetivo, EvaluacionSeguimiento, CreadoPor, FechaCreacion, UltimaModificacion).
+- **Funciones Backend (`backend/accounting-service/Code.gs`):**
+  - `manageTrainingCourse(payload)`
+  - `manageTrainingEnrollment(payload)`
+  - `getEmployeeTrainingHistory(payload)`
+  - `manageProfessionalDevelopmentPlan(payload)`
+  - `getTrainingAnalyticsReport(payload)`
+- **Componentes Frontend (`dashboard-recursos-humanos.html`):**
+  - Botón `#btn-capacitacion-desarrollo`
+  - Modal `#modal-capacitacion-desarrollo` con pestañas de Catálogo Cursos, Inscripción & Asistencia, Certificados & Vencimientos y Planes de Desarrollo.

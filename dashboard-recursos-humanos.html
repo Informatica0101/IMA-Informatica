@@ -58,6 +58,9 @@
                 <button id="btn-evaluar-desempeno" class="px-4 py-2.5 bg-purple-600 text-white rounded-2xl font-bold text-xs uppercase tracking-widest hover:bg-purple-700 transition-all shadow-md">
                     <i class="fa-solid fa-chart-line mr-1.5"></i> Evaluación Desempeño
                 </button>
+                <button id="btn-capacitacion-desarrollo" class="px-4 py-2.5 bg-blue-600 text-white rounded-2xl font-bold text-xs uppercase tracking-widest hover:bg-blue-700 transition-all shadow-md">
+                    <i class="fa-solid fa-graduation-cap mr-1.5"></i> Capacitación &amp; Desarrollo
+                </button>
                 <button id="btn-calcular-planilla" class="px-4 py-2.5 bg-emerald-600 text-white rounded-2xl font-bold text-xs uppercase tracking-widest hover:bg-emerald-700 transition-all shadow-md">
                     <i class="fa-solid fa-calculator mr-1.5"></i> Calcular Planilla
                 </button>
@@ -142,6 +145,125 @@
             </div>
         </div>
     </main>
+
+    <!-- [TAREA RH-06] Modal para Capacitación y Desarrollo Profesional -->
+    <div id="modal-capacitacion-desarrollo" class="fixed inset-0 z-[110] hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white rounded-[2.5rem] max-w-3xl w-full max-h-[90vh] overflow-y-auto p-6 md:p-8 shadow-2xl border border-gray-100">
+            <div class="flex items-center justify-between pb-4 border-b border-gray-100 mb-6">
+                <div>
+                    <span class="px-3 py-1 bg-blue-50 text-blue-700 rounded-full text-[10px] font-black uppercase tracking-widest">Recursos Humanos</span>
+                    <h3 class="text-xl font-black text-gray-900 uppercase mt-1"><i class="fa-solid fa-graduation-cap mr-2 text-blue-600"></i>Capacitación &amp; Desarrollo Profesional</h3>
+                </div>
+                <button id="btn-close-modal-cap" class="p-2 text-gray-400 hover:text-gray-700 rounded-full hover:bg-gray-100 text-lg transition-all">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <div class="space-y-6">
+                <!-- Pestañas del Modal -->
+                <div class="flex flex-wrap gap-2 border-b border-gray-100 pb-3">
+                    <button id="tab-cap-cursos" class="px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider bg-blue-600 text-white">Catálogo Cursos</button>
+                    <button id="tab-cap-inscripciones" class="px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider bg-gray-100 text-gray-600 hover:bg-gray-200">Inscripción &amp; Asistencia</button>
+                    <button id="tab-cap-certificados" class="px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider bg-gray-100 text-gray-600 hover:bg-gray-200">Certificados &amp; Vencimientos</button>
+                    <button id="tab-cap-planes" class="px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider bg-gray-100 text-gray-600 hover:bg-gray-200">Planes de Desarrollo</button>
+                </div>
+
+                <!-- TAB 1: CURSOS -->
+                <div id="sec-cap-cursos" class="space-y-4">
+                    <form id="form-cap-curso" class="bg-blue-50/50 p-4 rounded-2xl border border-blue-100 space-y-3">
+                        <h4 class="text-xs font-black uppercase text-blue-900">Registrar Nuevo Curso / Taller</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            <input type="text" id="cap-nombre-curso" placeholder="Nombre del Curso / Actividad" class="p-2.5 text-xs rounded-xl border border-gray-200 w-full" required>
+                            <input type="text" id="cap-categoria-curso" placeholder="Categoría (ej. Didáctica, Tecnología, Liderazgo)" class="p-2.5 text-xs rounded-xl border border-gray-200 w-full">
+                            <input type="text" id="cap-proveedor-curso" placeholder="Proveedor / Facilitador Responsable" class="p-2.5 text-xs rounded-xl border border-gray-200 w-full">
+                            <select id="cap-modalidad-curso" class="p-2.5 text-xs rounded-xl border border-gray-200 w-full">
+                                <option value="Presencial">Presencial</option>
+                                <option value="Virtual">Virtual</option>
+                                <option value="Hibrido">Híbrido</option>
+                            </select>
+                            <input type="number" id="cap-duracion-curso" placeholder="Duración en Horas" class="p-2.5 text-xs rounded-xl border border-gray-200 w-full" min="1">
+                            <input type="text" id="cap-dirigido-curso" placeholder="Dirigido A (ej. Docentes Sec., Todo el personal)" class="p-2.5 text-xs rounded-xl border border-gray-200 w-full">
+                        </div>
+                        <button type="submit" class="w-full py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs uppercase rounded-xl transition-all">Guardar Curso</button>
+                    </form>
+                    <div id="list-cap-cursos" class="space-y-2 text-xs font-medium text-gray-700"></div>
+                </div>
+
+                <!-- TAB 2: INSCRIPCION & ASISTENCIA -->
+                <div id="sec-cap-inscripciones" class="space-y-4 hidden">
+                    <form id="form-cap-inscripcion" class="bg-gray-50 p-4 rounded-2xl border border-gray-200 space-y-3">
+                        <h4 class="text-xs font-black uppercase text-gray-900">Inscribir / Registrar Asistencia de Empleado</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            <div>
+                                <label class="text-[10px] font-bold uppercase text-gray-500">Curso</label>
+                                <select id="cap-ins-curso" class="p-2.5 text-xs rounded-xl border border-gray-200 w-full" required></select>
+                            </div>
+                            <div>
+                                <label class="text-[10px] font-bold uppercase text-gray-500">Empleado / ID Ficha</label>
+                                <input type="text" id="cap-ins-empleado" placeholder="Empleado ID o Nombre" class="p-2.5 text-xs rounded-xl border border-gray-200 w-full" required>
+                            </div>
+                            <div>
+                                <label class="text-[10px] font-bold uppercase text-gray-500">Estado Inscripción</label>
+                                <select id="cap-ins-estado" class="p-2.5 text-xs rounded-xl border border-gray-200 w-full">
+                                    <option value="Inscrito">Inscrito</option>
+                                    <option value="EnCurso">En Curso</option>
+                                    <option value="Asistio">Asistió</option>
+                                    <option value="Finalizado">Finalizado / Aprobado</option>
+                                    <option value="Reprobado">Reprobado</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="text-[10px] font-bold uppercase text-gray-500">Asistencia (%)</label>
+                                <input type="number" id="cap-ins-asistencia" placeholder="Porcentaje (ej. 100)" class="p-2.5 text-xs rounded-xl border border-gray-200 w-full" min="0" max="100">
+                            </div>
+                            <div>
+                                <label class="text-[10px] font-bold uppercase text-gray-500">Calificación / Nota Obtenida</label>
+                                <input type="number" id="cap-ins-nota" placeholder="Nota Obtenida (0-100)" class="p-2.5 text-xs rounded-xl border border-gray-200 w-full" min="0" max="100">
+                            </div>
+                            <div>
+                                <label class="text-[10px] font-bold uppercase text-gray-500">Enlace Certificado (Google Drive / URL)</label>
+                                <input type="url" id="cap-ins-cert-url" placeholder="https://drive.google.com/..." class="p-2.5 text-xs rounded-xl border border-gray-200 w-full">
+                            </div>
+                            <div>
+                                <label class="text-[10px] font-bold uppercase text-gray-500">Fecha Emisión Certificado</label>
+                                <input type="date" id="cap-ins-cert-emision" class="p-2.5 text-xs rounded-xl border border-gray-200 w-full">
+                            </div>
+                            <div>
+                                <label class="text-[10px] font-bold uppercase text-gray-500">Fecha Vencimiento Certificado</label>
+                                <input type="date" id="cap-ins-cert-vencimiento" class="p-2.5 text-xs rounded-xl border border-gray-200 w-full">
+                            </div>
+                        </div>
+                        <button type="submit" class="w-full py-2 bg-gray-800 hover:bg-gray-900 text-white font-bold text-xs uppercase rounded-xl transition-all">Guardar Registro Capacitación</button>
+                    </form>
+                </div>
+
+                <!-- TAB 3: CERTIFICADOS & VENCIMIENTOS -->
+                <div id="sec-cap-certificados" class="space-y-4 hidden">
+                    <div class="flex items-center justify-between">
+                        <h4 class="text-xs font-black uppercase text-gray-900">Historial de Capacitación &amp; Vencimiento de Certificados</h4>
+                        <button id="btn-refresh-cap" class="text-xs font-bold text-blue-600 hover:text-blue-800"><i class="fa-solid fa-rotate mr-1"></i>Actualizar Lista</button>
+                    </div>
+                    <div id="list-cap-certificados" class="space-y-2 text-xs font-medium text-gray-700"></div>
+                </div>
+
+                <!-- TAB 4: PLANES DESARROLLO -->
+                <div id="sec-cap-planes" class="space-y-4 hidden">
+                    <form id="form-cap-plan" class="bg-gray-50 p-4 rounded-2xl border border-gray-200 space-y-3">
+                        <h4 class="text-xs font-black uppercase text-gray-900">Crear Plan de Desarrollo Profesional</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            <input type="text" id="cap-plan-empleado" placeholder="Empleado ID o Nombre" class="p-2.5 text-xs rounded-xl border border-gray-200 w-full" required>
+                            <input type="text" id="cap-plan-titulo" placeholder="Título del Objetivo de Desarrollo" class="p-2.5 text-xs rounded-xl border border-gray-200 w-full" required>
+                            <input type="date" id="cap-plan-inicio" class="p-2.5 text-xs rounded-xl border border-gray-200 w-full">
+                            <input type="date" id="cap-plan-meta" class="p-2.5 text-xs rounded-xl border border-gray-200 w-full">
+                        </div>
+                        <textarea id="cap-plan-desc" rows="2" placeholder="Descripción detallada y metas de acción" class="p-2.5 text-xs rounded-xl border border-gray-200 w-full"></textarea>
+                        <button type="submit" class="w-full py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs uppercase rounded-xl transition-all">Guardar Plan de Desarrollo</button>
+                    </form>
+                    <div id="list-cap-planes" class="space-y-2 text-xs font-medium text-gray-700"></div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- [TAREA RH-05] Modal para Evaluación del Desempeño de Empleados -->
     <div id="modal-evaluacion-desempeno" class="fixed inset-0 z-[110] hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
@@ -552,6 +674,172 @@
                     await refreshPerformanceModuleData();
                 });
             }
+
+            // [TAREA RH-06] Gestor de Capacitación y Desarrollo Profesional
+            const btnCapacitacion = document.getElementById('btn-capacitacion-desarrollo');
+            const modalCapacitacion = document.getElementById('modal-capacitacion-desarrollo');
+            const btnCloseModalCap = document.getElementById('btn-close-modal-cap');
+
+            if (btnCapacitacion && modalCapacitacion) {
+                btnCapacitacion.addEventListener('click', async () => {
+                    modalCapacitacion.classList.remove('hidden');
+                    await refreshTrainingModuleData();
+                });
+            }
+
+            if (btnCloseModalCap && modalCapacitacion) {
+                btnCloseModalCap.addEventListener('click', () => {
+                    modalCapacitacion.classList.add('hidden');
+                });
+            }
+
+            // Pestañas Capacitacion
+            const capTabs = [
+                { tab: 'tab-cap-cursos', sec: 'sec-cap-cursos' },
+                { tab: 'tab-cap-inscripciones', sec: 'sec-cap-inscripciones' },
+                { tab: 'tab-cap-certificados', sec: 'sec-cap-certificados' },
+                { tab: 'tab-cap-planes', sec: 'sec-cap-planes' }
+            ];
+
+            capTabs.forEach(tObj => {
+                const btn = document.getElementById(tObj.tab);
+                if (!btn) return;
+                btn.addEventListener('click', () => {
+                    capTabs.forEach(o => {
+                        const b = document.getElementById(o.tab);
+                        const s = document.getElementById(o.sec);
+                        if (b) {
+                            b.className = o.tab === tObj.tab ?
+                                'px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider bg-blue-600 text-white' :
+                                'px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider bg-gray-100 text-gray-600 hover:bg-gray-200';
+                        }
+                        if (s) {
+                            if (o.tab === tObj.tab) s.classList.remove('hidden');
+                            else s.classList.add('hidden');
+                        }
+                    });
+                });
+            });
+
+            // Form Curso
+            const formCurso = document.getElementById('form-cap-curso');
+            if (formCurso) {
+                formCurso.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    const nombreCurso = document.getElementById('cap-nombre-curso').value;
+                    const categoria = document.getElementById('cap-categoria-curso').value;
+                    const proveedorResponsable = document.getElementById('cap-proveedor-curso').value;
+                    const modalidad = document.getElementById('cap-modalidad-curso').value;
+                    const duracionHoras = parseFloat(document.getElementById('cap-duracion-curso').value || '0');
+                    const dirigidoA = document.getElementById('cap-dirigido-curso').value;
+
+                    try {
+                        if (window.showLoading) window.showLoading('Guardando curso...');
+                        const res = await fetchApi('ACCOUNTING', 'manageTrainingCourse', {
+                            nombreCurso,
+                            categoria,
+                            proveedorResponsable,
+                            modalidad,
+                            duracionHoras,
+                            dirigidoA
+                        });
+                        if (window.hideLoading) window.hideLoading();
+                        if (res && res.status === 'success') {
+                            alert('Curso guardado correctamente.');
+                            formCurso.reset();
+                            await refreshTrainingModuleData();
+                        } else {
+                            alert(res && res.message ? res.message : 'Error al guardar el curso.');
+                        }
+                    } catch (err) {
+                        if (window.hideLoading) window.hideLoading();
+                        alert('Error de conexión.');
+                    }
+                });
+            }
+
+            // Form Inscripción
+            const formInscripcion = document.getElementById('form-cap-inscripcion');
+            if (formInscripcion) {
+                formInscripcion.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    const cursoId = document.getElementById('cap-ins-curso').value;
+                    const empleadoId = document.getElementById('cap-ins-empleado').value;
+                    const estadoInscripcion = document.getElementById('cap-ins-estado').value;
+                    const asistenciaPorcentaje = parseFloat(document.getElementById('cap-ins-asistencia').value || '0');
+                    const resultadoNota = parseFloat(document.getElementById('cap-ins-nota').value || '0');
+                    const certificadoDriveUrl = document.getElementById('cap-ins-cert-url').value;
+                    const fechaEmisionCertificado = document.getElementById('cap-ins-cert-emision').value;
+                    const fechaVencimientoCertificado = document.getElementById('cap-ins-cert-vencimiento').value;
+
+                    try {
+                        if (window.showLoading) window.showLoading('Guardando inscripción...');
+                        const res = await fetchApi('ACCOUNTING', 'manageTrainingEnrollment', {
+                            cursoId,
+                            empleadoId,
+                            estadoInscripcion,
+                            asistenciaPorcentaje,
+                            resultadoNota,
+                            certificadoDriveUrl,
+                            fechaEmisionCertificado,
+                            fechaVencimientoCertificado
+                        });
+                        if (window.hideLoading) window.hideLoading();
+                        if (res && res.status === 'success') {
+                            alert('Registro de capacitación guardado correctamente.');
+                            formInscripcion.reset();
+                            await refreshTrainingModuleData();
+                        } else {
+                            alert(res && res.message ? res.message : 'Error al guardar la capacitación.');
+                        }
+                    } catch (err) {
+                        if (window.hideLoading) window.hideLoading();
+                        alert('Error de conexión.');
+                    }
+                });
+            }
+
+            // Form Plan de Desarrollo
+            const formPlanDev = document.getElementById('form-cap-plan');
+            if (formPlanDev) {
+                formPlanDev.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    const empleadoId = document.getElementById('cap-plan-empleado').value;
+                    const tituloObjetivo = document.getElementById('cap-plan-titulo').value;
+                    const fechaInicio = document.getElementById('cap-plan-inicio').value;
+                    const fechaMeta = document.getElementById('cap-plan-meta').value;
+                    const descripcion = document.getElementById('cap-plan-desc').value;
+
+                    try {
+                        if (window.showLoading) window.showLoading('Guardando plan...');
+                        const res = await fetchApi('ACCOUNTING', 'manageProfessionalDevelopmentPlan', {
+                            empleadoId,
+                            tituloObjetivo,
+                            fechaInicio,
+                            fechaMeta,
+                            descripcion
+                        });
+                        if (window.hideLoading) window.hideLoading();
+                        if (res && res.status === 'success') {
+                            alert('Plan de desarrollo guardado correctamente.');
+                            formPlanDev.reset();
+                            await refreshTrainingModuleData();
+                        } else {
+                            alert(res && res.message ? res.message : 'Error al guardar el plan.');
+                        }
+                    } catch (err) {
+                        if (window.hideLoading) window.hideLoading();
+                        alert('Error de conexión.');
+                    }
+                });
+            }
+
+            const btnRefreshCap = document.getElementById('btn-refresh-cap');
+            if (btnRefreshCap) {
+                btnRefreshCap.addEventListener('click', async () => {
+                    await refreshTrainingModuleData();
+                });
+            }
         });
 
         async function refreshPerformanceModuleData() {
@@ -624,6 +912,79 @@
                 }
             } catch (err) {
                 console.error('Error al actualizar datos del módulo de desempeño:', err);
+            }
+        }
+
+        async function refreshTrainingModuleData() {
+            try {
+                const res = await fetchApi('ACCOUNTING', 'getEmployeeTrainingHistory', {});
+                if (!res || res.status !== 'success' || !res.data) return;
+
+                const { cursos, inscripciones, planesDesarrollo } = res.data;
+
+                // Render Cursos
+                const listCursosEl = document.getElementById('list-cap-cursos');
+                const capInsCursoSelect = document.getElementById('cap-ins-curso');
+
+                if (listCursosEl) {
+                    listCursosEl.innerHTML = cursos.length === 0 ?
+                        '<p class="text-gray-400 font-bold uppercase py-2">No hay cursos en el catálogo.</p>' :
+                        cursos.map(c => `
+                            <div class="p-3 bg-white border border-gray-100 rounded-xl flex items-center justify-between">
+                                <div>
+                                    <span class="font-bold text-gray-800">${c.nombreCurso}</span>
+                                    <span class="text-[10px] text-blue-600 font-black ml-2">${c.categoria} (${c.duracionHoras}h - ${c.modalidad})</span>
+                                </div>
+                                <span class="text-[10px] text-gray-400">Dirigido a: ${c.dirigidoA}</span>
+                            </div>
+                        `).join('');
+                }
+
+                if (capInsCursoSelect) {
+                    capInsCursoSelect.innerHTML = cursos.length === 0 ?
+                        '<option value="">Sin cursos disponibles</option>' :
+                        cursos.map(c => `<option value="${c.cursoId}">${c.nombreCurso} (${c.categoria})</option>`).join('');
+                }
+
+                // Render Inscripciones y Certificados
+                const listCertificadosEl = document.getElementById('list-cap-certificados');
+                if (listCertificadosEl) {
+                    listCertificadosEl.innerHTML = inscripciones.length === 0 ?
+                        '<p class="text-gray-400 font-bold uppercase py-2">No se registran capacitaciones o certificados.</p>' :
+                        inscripciones.map(i => `
+                            <div class="p-4 bg-white border border-gray-100 rounded-2xl space-y-2">
+                                <div class="flex items-center justify-between">
+                                    <span class="font-bold text-gray-900">${i.nombreCurso} — Empleado: ${i.empleadoId}</span>
+                                    <span class="px-2 py-0.5 rounded-full text-[10px] font-black uppercase ${i.estadoInscripcion === 'Finalizado' ? 'bg-emerald-100 text-emerald-800' : 'bg-blue-100 text-blue-800'}">${i.estadoInscripcion}</span>
+                                </div>
+                                <div class="grid grid-cols-2 gap-2 text-[11px] text-gray-600">
+                                    <div><strong>Asistencia:</strong> ${i.asistenciaPorcentaje}% | <strong>Nota:</strong> ${i.resultadoNota || 'N/A'}</div>
+                                    <div><strong>Emisión:</strong> ${i.fechaEmisionCertificado || 'N/A'} | <strong>Vencimiento:</strong> ${i.fechaVencimientoCertificado || 'N/A'}</div>
+                                </div>
+                                ${i.estaProximoAVencer ? `<p class="text-[10px] text-red-700 bg-red-50 p-2 rounded-lg font-bold"><i class="fa-solid fa-triangle-exclamation mr-1"></i> Certificado Próximo a Vencer (días restantes: ${i.diasParaVencer})</p>` : ''}
+                                ${i.certificadoDriveUrl ? `<a href="${i.certificadoDriveUrl}" target="_blank" class="inline-block text-[11px] text-blue-600 hover:underline font-bold"><i class="fa-solid fa-file-pdf mr-1"></i>Ver Certificado Adjunto</a>` : ''}
+                            </div>
+                        `).join('');
+                }
+
+                // Render Planes de Desarrollo
+                const listPlanesEl = document.getElementById('list-cap-planes');
+                if (listPlanesEl) {
+                    listPlanesEl.innerHTML = planesDesarrollo.length === 0 ?
+                        '<p class="text-gray-400 font-bold uppercase py-2">No hay planes de desarrollo registrados.</p>' :
+                        planesDesarrollo.map(p => `
+                            <div class="p-4 bg-white border border-gray-100 rounded-2xl space-y-1">
+                                <div class="flex items-center justify-between">
+                                    <span class="font-bold text-gray-900">${p.tituloObjetivo} (Empleado: ${p.empleadoId})</span>
+                                    <span class="px-2 py-0.5 rounded-full text-[10px] font-black uppercase bg-blue-100 text-blue-800">${p.estadoObjetivo}</span>
+                                </div>
+                                <p class="text-[11px] text-gray-600">${p.descripcion || ''}</p>
+                                <p class="text-[10px] text-gray-400">Meta: ${p.fechaMeta || 'Sin fecha'}</p>
+                            </div>
+                        `).join('');
+                }
+            } catch (err) {
+                console.error('Error al actualizar datos del módulo de capacitación:', err);
             }
         }
 

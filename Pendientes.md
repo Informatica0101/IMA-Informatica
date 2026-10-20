@@ -4737,7 +4737,7 @@ Criterios de aceptación
 
 ---
 
-TAREA RH-06. Implementar el registro de capacitación y desarrollo profesional
+[X] TAREA RH-06. Implementar el registro de capacitación y desarrollo profesional
 
 Prioridad: Media.
 Dependencia: RH-01.
