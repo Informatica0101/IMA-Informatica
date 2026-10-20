@@ -1,0 +1,21 @@
+===============================================================================
+REGISTRO DE CAMBIOS - NEW GENERATION CHRISTIAN ACADEMY
+===============================================================================
+Fecha: Mon Jul 6 2026
+Archivos Modificados:
+- teacher-dashboard.html (líneas 2431-2439, 2510-2530)
+- js/teacher.js (líneas 5941-6087)
+
+Descripción Objetiva de los Cambios:
+1. En teacher-dashboard.html:
+   - Se incorporó en el encabezado del modal #modal-student-file el botón #btn-export-stfile-pdf etiquetado con la tarea [REQ-EXP-009].
+   - Se agregó en la pestaña de Ficha Personal la sección "Movilidad y Estado Estudiantil" con botones interactivos para Registrar Retiro (#btn-stfile-withdrawal), Registrar Traslado (#btn-stfile-transfer), Procesar Reingreso (#btn-stfile-reentry) y Cambiar Sección (#btn-stfile-section-change) etiquetados con la tarea [REQ-EXP-008].
+
+2. En js/teacher.js:
+   - Se implementó el event listener para #btn-export-stfile-pdf invocando fetchApi('ACCOUNTING', 'generateSchoolDocument') para generar la exportación en PDF.
+   - Se implementaron los controladores de movilidad estudiantil (#btn-stfile-withdrawal, #btn-stfile-transfer, #btn-stfile-reentry, #btn-stfile-section-change) invocando los endpoints backend correspondientes (recordStudentWithdrawal, recordStudentTransfer, processStudentReentry, changeStudentSection) en el microservicio ACADEMIC.
+   - Se colocaron comentarios de identificación de tarea en la primera línea de cada bloque de código correspondiente a REQ-EXP-001 hasta REQ-EXP-010.
+
+3. En el entorno local:
+   - Se eliminaron los archivos temporales de respaldo teacher-dashboard.html.bak y js/teacher.js.bak tras completar las verificaciones diff.
+===============================================================================

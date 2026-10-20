@@ -5938,6 +5938,153 @@ window.reviewOvertimeAction = function(overtimeId, accion) {
         });
     }
 
+    // Export File PDF (generateSchoolDocument)
+    // [REQ-EXP-009] [Fase 1: Registro y Expediente de Estudiantes] - Controlador de exportación autorizada del expediente a PDF mediante generateSchoolDocument.
+    const btnExportStFilePdf = document.getElementById('btn-export-stfile-pdf');
+    if (btnExportStFilePdf) {
+        btnExportStFilePdf.addEventListener('click', async () => {
+            if (!currentStudentFile) return;
+            const studentId = currentStudentFile.userId || currentStudentFile.studentId;
+            try {
+                if (window.showLoading) window.showLoading('Generando documento PDF del expediente...');
+                const res = await fetchApi('ACCOUNTING', 'generateSchoolDocument', {
+                    tipoDocumento: 'ExpedienteDigital',
+                    studentId: studentId
+                });
+                if (window.hideLoading) window.hideLoading();
+
+                if (res && res.status === 'success' && res.data && res.data.documentUrl) {
+                    window.open(res.data.documentUrl, '_blank');
+                } else if (res && res.documentUrl) {
+                    window.open(res.documentUrl, '_blank');
+                } else {
+                    alert(res && res.message ? res.message : 'No se pudo generar la exportación en PDF del expediente.');
+                }
+            } catch (err) {
+                if (window.hideLoading) window.hideLoading();
+                console.error('Error al exportar expediente a PDF:', err);
+                alert('Error al conectar con el servicio de exportación a PDF.');
+            }
+        });
+    }
+
+    // Student Mobility Actions (recordStudentWithdrawal, recordStudentTransfer, processStudentReentry, changeStudentSection)
+    // [REQ-EXP-008] [Fase 1: Registro y Expediente de Estudiantes] - Controlador para la gestión de estados y movilidad estudiantil (retiros, traslados, reingresos y cambios de sección).
+    const btnStfileWithdrawal = document.getElementById('btn-stfile-withdrawal');
+    if (btnStfileWithdrawal) {
+        btnStfileWithdrawal.addEventListener('click', async () => {
+            if (!currentStudentFile) return;
+            const motivo = prompt('Ingrese el motivo del retiro del estudiante:');
+            if (!motivo) return;
+            const fechaEfectiva = prompt('Fecha efectiva de retiro (YYYY-MM-DD):', new Date().toISOString().split('T')[0]);
+
+            try {
+                if (window.showLoading) window.showLoading('Registrando retiro de estudiante...');
+                const res = await fetchApi('ACADEMIC', 'recordStudentWithdrawal', {
+                    studentId: currentStudentFile.userId || currentStudentFile.studentId,
+                    motivo: motivo,
+                    fechaEfectiva: fechaEfectiva
+                });
+                if (window.hideLoading) window.hideLoading();
+
+                if (res && res.status === 'success') {
+                    alert('Retiro registrado exitosamente.');
+                    window.openStudentFileModal(currentStudentFile.userId || currentStudentFile.studentId);
+                } else {
+                    alert(res && res.message ? res.message : 'No se pudo registrar el retiro.');
+                }
+            } catch (err) {
+                if (window.hideLoading) window.hideLoading();
+                console.error('Error al registrar retiro:', err);
+            }
+        });
+    }
+
+    const btnStfileTransfer = document.getElementById('btn-stfile-transfer');
+    if (btnStfileTransfer) {
+        btnStfileTransfer.addEventListener('click', async () => {
+            if (!currentStudentFile) return;
+            const institucionDestino = prompt('Ingrese la institución o sede de destino:');
+            if (!institucionDestino) return;
+            const motivo = prompt('Motivo del traslado:') || 'Traslado institucional';
+
+            try {
+                if (window.showLoading) window.showLoading('Registrando traslado...');
+                const res = await fetchApi('ACADEMIC', 'recordStudentTransfer', {
+                    studentId: currentStudentFile.userId || currentStudentFile.studentId,
+                    institucionDestino: institucionDestino,
+                    motivo: motivo
+                });
+                if (window.hideLoading) window.hideLoading();
+
+                if (res && res.status === 'success') {
+                    alert('Traslado registrado exitosamente.');
+                    window.openStudentFileModal(currentStudentFile.userId || currentStudentFile.studentId);
+                } else {
+                    alert(res && res.message ? res.message : 'No se pudo registrar el traslado.');
+                }
+            } catch (err) {
+                if (window.hideLoading) window.hideLoading();
+                console.error('Error al registrar traslado:', err);
+            }
+        });
+    }
+
+    const btnStfileReentry = document.getElementById('btn-stfile-reentry');
+    if (btnStfileReentry) {
+        btnStfileReentry.addEventListener('click', async () => {
+            if (!currentStudentFile) return;
+            const motivo = prompt('Ingrese el motivo de reingreso o reactivación:') || 'Reingreso autorizado';
+
+            try {
+                if (window.showLoading) window.showLoading('Procesando reingreso...');
+                const res = await fetchApi('ACADEMIC', 'processStudentReentry', {
+                    studentId: currentStudentFile.userId || currentStudentFile.studentId,
+                    motivo: motivo
+                });
+                if (window.hideLoading) window.hideLoading();
+
+                if (res && res.status === 'success') {
+                    alert('Reingreso procesado exitosamente.');
+                    window.openStudentFileModal(currentStudentFile.userId || currentStudentFile.studentId);
+                } else {
+                    alert(res && res.message ? res.message : 'No se pudo procesar el reingreso.');
+                }
+            } catch (err) {
+                if (window.hideLoading) window.hideLoading();
+                console.error('Error al procesar reingreso:', err);
+            }
+        });
+    }
+
+    const btnStfileSectionChange = document.getElementById('btn-stfile-section-change');
+    if (btnStfileSectionChange) {
+        btnStfileSectionChange.addEventListener('click', async () => {
+            if (!currentStudentFile) return;
+            const nuevaSeccion = prompt('Ingrese la nueva sección (ej: Sección A, Sección B, 1, 2):');
+            if (!nuevaSeccion) return;
+
+            try {
+                if (window.showLoading) window.showLoading('Cambiando sección...');
+                const res = await fetchApi('ACADEMIC', 'changeStudentSection', {
+                    studentId: currentStudentFile.userId || currentStudentFile.studentId,
+                    nuevaSeccion: nuevaSeccion
+                });
+                if (window.hideLoading) window.hideLoading();
+
+                if (res && res.status === 'success') {
+                    alert('Sección modificada exitosamente.');
+                    window.openStudentFileModal(currentStudentFile.userId || currentStudentFile.studentId);
+                } else {
+                    alert(res && res.message ? res.message : 'No se pudo cambiar la sección.');
+                }
+            } catch (err) {
+                if (window.hideLoading) window.hideLoading();
+                console.error('Error al cambiar sección:', err);
+            }
+        });
+    }
+
     // Guardians Management
     // [REQ-EXP-003] [Fase 1: Registro y Expediente de Estudiantes] - Controlador de interfaz para la consulta, vinculación y desvinculación de padres, tutores y responsables legales del estudiante.
     async function loadStudentGuardians() {

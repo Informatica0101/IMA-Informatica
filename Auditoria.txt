@@ -1,0 +1,26 @@
+===============================================================================
+REGISTRO DE AUDITORÍA TÉCNICA - NEW GENERATION CHRISTIAN ACADEMY
+===============================================================================
+Fecha: Mon Jul 6 2026
+Módulo / Sector: Registro y Expediente de Estudiantes (Fase 1: REQ-EXP-001..REQ-EXP-010)
+Archivos Auditados: teacher-dashboard.html, js/teacher.js, backend/academic-service/Code.gs, backend/accounting-service/Code.gs
+Tipo de Hallazgo: Auditoría Funcional e Integración de Interfaz de Expediente Digital
+
+Descripción Técnica Detallada:
+Se auditaron exhaustivamente las 10 tareas de la Fase 1 (Registro y Expediente de Estudiantes):
+- REQ-EXP-001: Consulta y visualización del expediente digital del estudiante (#modal-student-file).
+- REQ-EXP-002: Edición de datos personales (#stfile-personal-form, updateStudentFile).
+- REQ-EXP-003: Gestión de padres, tutores y responsables (#tab-stfile-guardians, getStudentGuardians, saveStudentGuardian, unlinkStudentGuardian).
+- REQ-EXP-004: Gestión de documentos y fotografías en Google Drive (#tab-stfile-documents, uploadStudentDocument).
+- REQ-EXP-005: Consulta de línea de tiempo e historial de movimientos (#tab-stfile-timeline, getStudentTimeline).
+- REQ-EXP-006: Prevención y resolución controlada de duplicados (#tab-stfile-duplicates, findDuplicateStudents, mergeStudentFiles).
+- REQ-EXP-007: Búsqueda institucional de expedientes (#student-search, setupStudentSearch).
+- REQ-EXP-008: Estados y movilidad estudiantil (retiro, traslado, reingreso, cambio de sección).
+- REQ-EXP-009: Exportación autorizada del expediente a PDF (#btn-export-stfile-pdf, generateSchoolDocument).
+- REQ-EXP-010: Importación masiva de expedientes desde CSV y XLSX (#modal-excel-importer, importDataWithColumnMapping).
+
+Se verificó la existencia y correcto funcionamiento de todos los endpoints de servidor y se agregaron los componentes de interfaz y controladores JS faltantes para movilidad estudiantil (REQ-EXP-008) y exportación a PDF (REQ-EXP-009), asegurando que cada bloque de código cuente con el comentario identificador de tarea en la primera línea.
+
+Impacto Potencial: Sin riesgos de regresión, integración completa entre UI y microservicios backend con protección RBAC.
+Nivel de Criticidad: Crítico (Módulo Fundacional de Expediente de Estudiantes)
+===============================================================================

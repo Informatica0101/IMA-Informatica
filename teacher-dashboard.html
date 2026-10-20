@@ -2428,9 +2428,15 @@
                         <p class="text-[10px] font-semibold text-slate-400 uppercase tracking-widest" id="stfile-student-code">Código: -- | Estado: --</p>
                     </div>
                 </div>
-                <button id="btn-close-student-file" class="text-slate-400 hover:text-white p-2 rounded-xl hover:bg-slate-800 transition-colors">
-                    <i class="fa-solid fa-xmark text-xl"></i>
-                </button>
+                <div class="flex items-center gap-2">
+                    <!-- [REQ-EXP-009] [Fase 1: Registro y Expediente de Estudiantes] - Botón de exportación autorizada del expediente a PDF (#btn-export-stfile-pdf). -->
+                    <button id="btn-export-stfile-pdf" type="button" class="px-3 py-1.5 bg-red-600/80 hover:bg-red-600 text-white rounded-xl text-xs font-bold uppercase tracking-wider flex items-center gap-1.5 transition-colors">
+                        <i class="fa-solid fa-file-pdf"></i> Exportar PDF
+                    </button>
+                    <button id="btn-close-student-file" class="text-slate-400 hover:text-white p-2 rounded-xl hover:bg-slate-800 transition-colors">
+                        <i class="fa-solid fa-xmark text-xl"></i>
+                    </button>
+                </div>
             </div>
 
             <!-- Tabs Navigation -->
@@ -2501,6 +2507,27 @@
                             <button type="submit" id="btn-save-stfile-personal" class="px-5 py-2.5 bg-blue-600 text-white font-bold text-xs uppercase tracking-wider rounded-xl hover:bg-blue-700 shadow-md transition-all">
                                 <i class="fa-solid fa-floppy-disk mr-1"></i> Guardar Cambios Personales
                             </button>
+                        </div>
+
+                        <!-- [REQ-EXP-008] [Fase 1: Registro y Expediente de Estudiantes] - Interfaz para la gestión de estados y movilidad estudiantil (retiro, traslado, reingreso y cambio de sección). -->
+                        <div class="md:col-span-2 pt-4 border-t border-slate-200 space-y-3">
+                            <h4 class="text-xs font-bold text-slate-800 uppercase tracking-wider flex items-center gap-2">
+                                <i class="fa-solid fa-person-walking-arrow-right text-blue-600"></i> Movilidad y Estado Estudiantil
+                            </h4>
+                            <div class="grid grid-cols-2 md:grid-cols-4 gap-2">
+                                <button type="button" id="btn-stfile-withdrawal" class="p-2.5 bg-rose-50 text-rose-700 border border-rose-200 rounded-xl font-bold text-[11px] uppercase hover:bg-rose-100 flex items-center justify-center gap-1.5 transition-colors">
+                                    <i class="fa-solid fa-user-minus"></i> Registrar Retiro
+                                </button>
+                                <button type="button" id="btn-stfile-transfer" class="p-2.5 bg-amber-50 text-amber-700 border border-amber-200 rounded-xl font-bold text-[11px] uppercase hover:bg-amber-100 flex items-center justify-center gap-1.5 transition-colors">
+                                    <i class="fa-solid fa-right-left"></i> Registrar Traslado
+                                </button>
+                                <button type="button" id="btn-stfile-reentry" class="p-2.5 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-xl font-bold text-[11px] uppercase hover:bg-emerald-100 flex items-center justify-center gap-1.5 transition-colors">
+                                    <i class="fa-solid fa-user-check"></i> Procesar Reingreso
+                                </button>
+                                <button type="button" id="btn-stfile-section-change" class="p-2.5 bg-blue-50 text-blue-700 border border-blue-200 rounded-xl font-bold text-[11px] uppercase hover:bg-blue-100 flex items-center justify-center gap-1.5 transition-colors">
+                                    <i class="fa-solid fa-arrows-rotate"></i> Cambiar Sección
+                                </button>
+                            </div>
                         </div>
                     </form>
                 </div>
