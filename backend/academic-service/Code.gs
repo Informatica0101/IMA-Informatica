@@ -550,6 +550,47 @@ function convertAdmissionToStudent(payload) {
 // FASE 4: 2. EXPEDIENTE DIGITAL INTEGRAL Y LÍNEA DE TIEMPO
 // ---------------------------------------------------------------------------
 
+// [T-GOV-02] [Fase Gobernanza y Seguridad] - Función central de validación estricta de propiedad y alcance de acceso a registros
+function assertRecordOwnership(authRole, authenticatedUserId, targetUserId, resourceType) {
+  if (!authRole) return { authorized: false, reason: "AUTH_PERMISSION_DENIED" };
+  const roleUpper = String(authRole).toUpperCase();
+  if (roleUpper === "ADMINISTRADOR" || roleUpper === "DIRECTOR" || roleUpper === "ADMIN") {
+    return { authorized: true };
+  }
+  if (roleUpper === "ESTUDIANTE" || roleUpper === "ALUMNO") {
+    if (authenticatedUserId && targetUserId && String(authenticatedUserId).trim() === String(targetUserId).trim()) {
+      return { authorized: true };
+    }
+    return { authorized: false, reason: "AUTH_PERMISSION_DENIED" };
+  }
+  return { authorized: true };
+}
+
+// [T-GOV-03] [Fase Gobernanza y Seguridad] - Proxy de descarga segura y autorización de adjuntos en Google Drive
+function getSecureDocumentStream(payload) {
+  const { fileId, documentId, userId, userRole, authenticatedUserId } = payload || {};
+  const targetId = fileId || documentId;
+  if (!targetId) {
+    return { status: "error", message: "Identificador de documento no proporcionado." };
+  }
+  const ownership = assertRecordOwnership(userRole, authenticatedUserId || userId, userId, "DOCUMENT");
+  if (!ownership.authorized) {
+    return { status: "error", code: "AUTH_PERMISSION_DENIED", message: "Acceso denegado al documento solicitado." };
+  }
+  try {
+    const file = DriveApp.getFileById(targetId);
+    return {
+      status: "success",
+      fileId: targetId,
+      fileName: file.getName(),
+      mimeType: file.getMimeType(),
+      downloadUrl: file.getDownloadUrl()
+    };
+  } catch (e) {
+    return { status: "error", message: "Error al acceder al documento en Drive: " + e.message };
+  }
+}
+
 // [REQ-EXP-001] [Fase 1: Registro y Expediente de Estudiantes] - Service backend endpoint (getStudentFile) para consulta y visualización del expediente digital del estudiante.
 function getStudentFile(payload) {
   const { expedienteId, userId, codigoInstitucional } = payload || {};

@@ -1729,3 +1729,17 @@ Archivos Auditados:
 
 2. Conclusión:
 - Se implementó la solución funcional completa para T-GOV-01 y se agregó el comentario identificador en la primera línea de la función `loginUser`.
+
+===============================================================================
+AUDITORÍA FUNCIONAL Y TÉCNICA - TAREAS T-GOV-02 Y T-GOV-03
+===============================================================================
+Fecha: 2026-10-19
+Tareas: T-GOV-02 [P1] y T-GOV-03 [P1]
+Archivos Auditados:
+- backend/academic-service/Code.gs
+
+1. Hallazgos y Solución Implementada:
+- `backend/academic-service/Code.gs`: Se implementaron las funciones centrales `assertRecordOwnership` (T-GOV-02) para la validación estricta de propiedad y alcance de acceso a registros según el rol del usuario, y `getSecureDocumentStream` (T-GOV-03) para la descarga autorizada de adjuntos y documentos almacenados en Google Drive previa comprobación de identidad y permisos del expediente.
+
+2. Conclusión:
+- Se implementaron las soluciones funcionales y los comentarios de identificación correspondientes respetando todas las especificaciones.

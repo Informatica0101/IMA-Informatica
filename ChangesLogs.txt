@@ -1585,3 +1585,12 @@ REGISTRO DE CAMBIOS - TAREA T-GOV-01 - Mon Oct 19 2026
 Archivos Modificados:
 - backend/user-service/Code.gs (Línea 1110):
     - Se implementó protección contra ataques de fuerza bruta en `loginUser` incrementando `IntentosFallidos` por clave incorrecta y bloqueando la cuenta al alcanzar 5 intentos fallidos.
+
+====================================================================================================
+
+REGISTRO DE CAMBIOS - TAREAS T-GOV-02 Y T-GOV-03 - Mon Oct 19 2026
+
+Archivos Modificados:
+- backend/academic-service/Code.gs:
+    - Agregada la función `assertRecordOwnership` para validación estricta de propiedad de registros según rol (T-GOV-02).
+    - Agregada la función `getSecureDocumentStream` para el proxy de descarga autorizada de adjuntos en Google Drive (T-GOV-03).
