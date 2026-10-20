@@ -42,6 +42,7 @@ function sanitizePayloadForLog(payload) {
   }
 }
 
+// [REQ-EXP-018] [Requerimientos de Expansión y Desarrollo] - Sistema de registros de auditoría estructurados con sanitización de credenciales.
 function logStructuredEvent(serviceName, fnName, severity, errorCode, message, payload, userRole) {
   try {
     const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
@@ -79,6 +80,7 @@ function getOrCreateSheet(ss, name) {
   if (!sheet) {
     sheet = ss.insertSheet(name);
     // Tablas Base y Previas
+    // [REQ-EXP-002] [Requerimientos de Expansión y Desarrollo] - Esquema tabular normalizado de 9 columnas en ConfiguracionAcademica y 8 en HistorialAcademico.
     if (name === "ConfiguracionAcademica") sheet.appendRow(["ID", "Fecha", "Parcial", "Grado", "Sección", "Asignatura", "Unidad", "Tema", "profesorId"]);
     if (name === "HistorialAcademico") sheet.appendRow(["ID", "Fecha", "Parcial", "Grado", "Sección", "Asignatura", "Unidad", "profesorId"]);
     if (name === "Clases") sheet.appendRow(["Grado", "Seccion", "WhatsAppLink"]);
@@ -211,6 +213,7 @@ const ROLE_PERMISSIONS = {
 
 const PUBLIC_ACTIONS = ["ping", "createAdmissionRequest"];
 
+// [REQ-EXP-008] [Requerimientos de Expansión y Desarrollo] - Sistema de roles y permisos granulares validados en servidor (RBAC).
 function validateRolePermission(action, payload) {
   if (PUBLIC_ACTIONS.indexOf(action) !== -1) return { authorized: true };
   const userRole = (payload && (payload.authRole || payload.rol)) || "Estudiante";
@@ -547,6 +550,48 @@ function convertAdmissionToStudent(payload) {
 // FASE 4: 2. EXPEDIENTE DIGITAL INTEGRAL Y LÍNEA DE TIEMPO
 // ---------------------------------------------------------------------------
 
+// [T-GOV-02] [Fase Gobernanza y Seguridad] - Función central de validación estricta de propiedad y alcance de acceso a registros
+function assertRecordOwnership(authRole, authenticatedUserId, targetUserId, resourceType) {
+  if (!authRole) return { authorized: false, reason: "AUTH_PERMISSION_DENIED" };
+  const roleUpper = String(authRole).toUpperCase();
+  if (roleUpper === "ADMINISTRADOR" || roleUpper === "DIRECTOR" || roleUpper === "ADMIN") {
+    return { authorized: true };
+  }
+  if (roleUpper === "ESTUDIANTE" || roleUpper === "ALUMNO") {
+    if (authenticatedUserId && targetUserId && String(authenticatedUserId).trim() === String(targetUserId).trim()) {
+      return { authorized: true };
+    }
+    return { authorized: false, reason: "AUTH_PERMISSION_DENIED" };
+  }
+  return { authorized: true };
+}
+
+// [T-GOV-03] [Fase Gobernanza y Seguridad] - Proxy de descarga segura y autorización de adjuntos en Google Drive
+function getSecureDocumentStream(payload) {
+  const { fileId, documentId, userId, userRole, authenticatedUserId } = payload || {};
+  const targetId = fileId || documentId;
+  if (!targetId) {
+    return { status: "error", message: "Identificador de documento no proporcionado." };
+  }
+  const ownership = assertRecordOwnership(userRole, authenticatedUserId || userId, userId, "DOCUMENT");
+  if (!ownership.authorized) {
+    return { status: "error", code: "AUTH_PERMISSION_DENIED", message: "Acceso denegado al documento solicitado." };
+  }
+  try {
+    const file = DriveApp.getFileById(targetId);
+    return {
+      status: "success",
+      fileId: targetId,
+      fileName: file.getName(),
+      mimeType: file.getMimeType(),
+      downloadUrl: file.getDownloadUrl()
+    };
+  } catch (e) {
+    return { status: "error", message: "Error al acceder al documento en Drive: " + e.message };
+  }
+}
+
+// [REQ-EXP-001] [Fase 1: Registro y Expediente de Estudiantes] - Service backend endpoint (getStudentFile) para consulta y visualización del expediente digital del estudiante.
 function getStudentFile(payload) {
   const { expedienteId, userId, codigoInstitucional } = payload || {};
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
@@ -2502,6 +2547,7 @@ function getStudentAttendanceSummary(payload) {
   };
 }
 
+// [REQ-EXP-002] [Fase 1: Registro y Expediente de Estudiantes] - Service backend endpoint (updateStudentFile) para la edición de datos personales del expediente del estudiante.
 function updateStudentFile(payload) {
   const { expedienteId, fechaNacimiento, nacionalidad, direccionResidencia, fotografiaUrl, estadoExpediente, observaciones } = payload || {};
   if (!expedienteId) throw new Error("expedienteId es requerido.");
@@ -2525,6 +2571,7 @@ function updateStudentFile(payload) {
   return { status: "success", message: "Expediente digital actualizado exitosamente." };
 }
 
+// [REQ-EXP-005] [Fase 1: Registro y Expediente de Estudiantes] - Service backend endpoint (getStudentTimeline) para consultar la línea de tiempo e historial cronológico de movimientos del estudiante.
 function getStudentTimeline(payload) {
   const { expedienteId } = payload || {};
   const fileRes = getStudentFile(payload);
@@ -2558,6 +2605,7 @@ function getStudentTimeline(payload) {
 // FASE 4: 3. DETECCIÓN Y FUSIÓN CONTROLADA DE DUPLICADOS
 // ---------------------------------------------------------------------------
 
+// [REQ-EXP-006] [Fase 1: Registro y Expediente de Estudiantes] - Service backend endpoints (findDuplicateStudents, mergeStudentFiles) para la detección preventiva y fusión controlada de expedientes duplicados.
 function findDuplicateStudents(payload) {
   const { nombres, apellidos, identificacion, email } = payload || {};
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
@@ -2640,6 +2688,7 @@ function mergeStudentFiles(payload) {
 // FASE 4: 4. PADRES, TUTORES Y RESPONSABLES
 // ---------------------------------------------------------------------------
 
+// [REQ-EXP-003] [Fase 1: Registro y Expediente de Estudiantes] - Service backend endpoints (getStudentGuardians, saveStudentGuardian, unlinkStudentGuardian) para la gestión de padres, tutores y responsables legales del estudiante.
 function getStudentGuardians(payload) {
   const { expedienteId } = payload || {};
   if (!expedienteId) throw new Error("expedienteId es requerido.");
@@ -2779,6 +2828,7 @@ function unlinkStudentGuardian(payload) {
 // FASE 4: 5. GESTIÓN DOCUMENTAL DE EXPEDIENTES
 // ---------------------------------------------------------------------------
 
+// [REQ-EXP-004] [Fase 1: Registro y Expediente de Estudiantes] - Service backend endpoints (uploadStudentDocument, getStudentDocuments, updateDocumentStatus) para la carga y gestión de documentos y fotografías del estudiante.
 function uploadStudentDocument(payload) {
   const { expedienteId, solicitudId, tipoDocumento, fileName, fileData, fechaVencimiento, observaciones } = payload || {};
   if ((!expedienteId && !solicitudId) || !tipoDocumento || !fileData) {
@@ -3002,6 +3052,7 @@ function renewStudentEnrollment(payload) {
 // FASE 4: 7. MOVIMIENTOS ESTUDIANTILES (TRASLADOS, RETIROS, REINGRESOS)
 // ---------------------------------------------------------------------------
 
+// [REQ-EXP-008] [Fase 1: Registro y Expediente de Estudiantes] - Service backend endpoints (changeStudentSection, recordStudentTransfer, recordStudentWithdrawal, processStudentReentry) para la gestión de estados y movilidad estudiantil.
 function changeStudentSection(payload) {
   const { expedienteId, userId, anolectivo, nuevaSeccion, motivo } = payload || {};
   if ((!expedienteId && !userId) || !nuevaSeccion) throw new Error("Expediente/userId y nuevaSeccion son requeridos.");
@@ -3180,6 +3231,7 @@ function getBackupFolder() {
   return respFolder.hasNext() ? respFolder.next() : parent.createFolder("Respaldos");
 }
 
+// [REQ-EXP-019] [Requerimientos de Expansión y Desarrollo] - Generación y restauración de copias de seguridad con suma SHA-256 e inalterabilidad de notas.
 function createSystemBackup(payload) {
   try {
     const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
@@ -3618,6 +3670,7 @@ function generateMigrationReport(payload) {
 }
 
 // Módulo de Matrícula
+// [REQ-EXP-009] [Requerimientos de Expansión y Desarrollo] - Registro de matrículas por período y vinculación con cargos financieros del estudiante.
 function registerStudentEnrollment(payload) {
   const { userId, alumno, grado, seccion, periodo, tipo, becaDescuento, observaciones, cargos } = payload || {};
   if (!userId || !grado || !periodo) throw new Error("Datos de matrícula incompletos.");

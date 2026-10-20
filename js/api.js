@@ -111,6 +111,14 @@ function fetchApi(service, action, payload, retryCount, options) {
                 try {
                     var parsed = JSON.parse(textResponse);
 
+                    // [T-UX-01] [Fase 3: Experiencia de Usuario y Navegación Unificada] - Detección centralizada de errores de permisos y expiración de sesión.
+                    if (parsed && (parsed.code === 'AUTH_PERMISSION_DENIED' || (parsed.message && parsed.message.indexOf('Acceso denegado') !== -1))) {
+                        console.warn('[API-AUTH] Error de autorización o sesión expirada:', parsed.message);
+                        if (typeof window.handleSessionExpired === 'function') {
+                            window.handleSessionExpired(parsed.message);
+                        }
+                    }
+
                     // REQ: Defensive Data Validation (v7.7.1)
                     // If the action is a "get" action, ensure we return an array if data is missing
                     if (action.indexOf('get') === 0 && parsed.status === 'success' && parsed.data === undefined) {

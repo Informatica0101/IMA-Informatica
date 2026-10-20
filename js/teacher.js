@@ -685,7 +685,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // REQ-EXP-017: Health Checks Ping-Pong en Consola Técnica
+    // [REQ-EXP-017] [Requerimientos de Expansión y Desarrollo] - Health checks de estado y latencia de microservicios en Consola Técnica.
     function runTechnicalHealthChecks() {
         var services = ['USER', 'ACADEMIC', 'TASK', 'EXAM', 'ACCOUNTING'];
         var btn = document.getElementById('btn-run-health-checks');
@@ -1788,6 +1788,7 @@ window.triggerRestoreSystemBackup = async function(fileId, fileName) {
         }
     }
 
+    // [REQ-EXP-007] [Fase 1: Registro y Expediente de Estudiantes] - Función para la búsqueda institucional de expedientes de estudiantes y apertura de ficha completa.
     function renderGlobalSearch(search) {
         if (dashboardLevelTitle) dashboardLevelTitle.textContent = "Resultados de Búsqueda Global";
         const alumnosGlobal = [];
@@ -1922,6 +1923,7 @@ window.triggerRestoreSystemBackup = async function(fileId, fileName) {
      * Renderiza la lista de asignaturas filtradas por el contexto actual (v7.9.1)
      * REQ: Filtrado estricto por Parcial, Grado y Sección.
      */
+    // [REQ-EXP-003] [Requerimientos de Expansión y Desarrollo] - Jerarquía Nivel -> Grado -> Sección -> Asignatura con filtrado estricto GranularConfig.
     function renderAsignaturas(grado, seccion, search) {
         const activePartial = window.GLOBAL_SCOPE ? window.GLOBAL_SCOPE.ParcialActual : window.PARCIAL_ACTUAL;
 
@@ -5340,6 +5342,7 @@ function toBase64(file) {
     // ---------------------------------------------------------------------------
     // FASE 28: IMPORTADOR UNIVERSAL DE ARCHIVOS EXCEL (.xlsx) Y BINDINGS
     // ---------------------------------------------------------------------------
+    // [REQ-EXP-010] [Fase 1: Registro y Expediente de Estudiantes] - Controlador de interfaz para la lectura, vista previa e importación masiva de expedientes desde CSV y XLSX (#modal-excel-importer).
     const modalExcelImporter = document.getElementById('modal-excel-importer');
     const fileInputExcel = document.getElementById('excel-file-input');
     let parsedExcelData = [];
@@ -5808,6 +5811,7 @@ window.reviewOvertimeAction = function(overtimeId, accion) {
     // =========================================================================
     let currentStudentFile = null;
 
+    // [REQ-EXP-001] [Fase 1: Registro y Expediente de Estudiantes] - Función para abrir, consultar y visualizar el expediente digital del estudiante mediante getStudentFile y #modal-student-file.
     window.openStudentFileModal = async function(studentId) {
         if (!studentId) return;
         const modal = document.getElementById('modal-student-file');
@@ -5896,6 +5900,7 @@ window.reviewOvertimeAction = function(overtimeId, accion) {
     }
 
     // Personal Form Submission (updateStudentFile)
+    // [REQ-EXP-002] [Fase 1: Registro y Expediente de Estudiantes] - Event listener y controlador para el guardado y actualización de datos personales del expediente (#stfile-personal-form).
     const stfilePersonalForm = document.getElementById('stfile-personal-form');
     if (stfilePersonalForm) {
         stfilePersonalForm.addEventListener('submit', async (e) => {
@@ -5934,6 +5939,7 @@ window.reviewOvertimeAction = function(overtimeId, accion) {
     }
 
     // Guardians Management
+    // [REQ-EXP-003] [Fase 1: Registro y Expediente de Estudiantes] - Controlador de interfaz para la consulta, vinculación y desvinculación de padres, tutores y responsables legales del estudiante.
     async function loadStudentGuardians() {
         const container = document.getElementById('stfile-guardians-container');
         if (!container || !currentStudentFile) return;
@@ -6036,6 +6042,7 @@ window.reviewOvertimeAction = function(overtimeId, accion) {
     }
 
     // Documents Upload & Management
+    // [REQ-EXP-004] [Fase 1: Registro y Expediente de Estudiantes] - Controlador de interfaz para la carga, consulta y visualización de documentos y fotografías del expediente en Google Drive.
     async function loadStudentDocuments() {
         const container = document.getElementById('stfile-documents-list');
         if (!container || !currentStudentFile) return;
@@ -6121,6 +6128,7 @@ window.reviewOvertimeAction = function(overtimeId, accion) {
     }
 
     // Timeline Loading
+    // [REQ-EXP-005] [Fase 1: Registro y Expediente de Estudiantes] - Controlador de interfaz para la consulta y renderizado de la línea de tiempo e historial de movimientos del estudiante.
     async function loadStudentTimeline() {
         const container = document.getElementById('stfile-timeline-container');
         if (!container || !currentStudentFile) return;
@@ -6154,6 +6162,7 @@ window.reviewOvertimeAction = function(overtimeId, accion) {
     }
 
     // Duplicate Scan & Merge
+    // [REQ-EXP-006] [Fase 1: Registro y Expediente de Estudiantes] - Controlador de interfaz para el escaneo de coincidencia de duplicados y ejecución auditada de la fusión de expedientes.
     const btnScanDuplicates = document.getElementById('btn-scan-duplicates');
     if (btnScanDuplicates) {
         btnScanDuplicates.addEventListener('click', async () => {

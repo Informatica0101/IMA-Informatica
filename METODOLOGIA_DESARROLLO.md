@@ -1,3 +1,4 @@
+<!-- [REQ-EXP-001] [Requerimientos de Expansión y Desarrollo] - Documentación oficial del procedimiento obligatorio de desarrollo, auditoría y control de calidad. -->
 ## Metodología Oficial de Auditoría, Desarrollo, Verificación, Estandarización de Contenidos y Control de Calidad
 
 # IMPORTANTE

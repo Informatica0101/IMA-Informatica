@@ -714,6 +714,7 @@ const ROLE_PERMISSIONS = {
   ]
 };
 
+// [T-GOV-02] [pendientes3.md] - Función verificadora de rol en servidor (getUserVerifiedRole) para validación estricta de propiedad y alcance de acceso.
 function getUserVerifiedRole(payload) {
   if (!payload) return "Estudiante";
   const declaredRole = payload.authRole || payload.rol || (payload.currentUser && payload.currentUser.rol);
@@ -1106,8 +1107,11 @@ function registerUser(payload) {
   return { status: "success", userId };
 }
 
+// [T-GOV-01] [pendientes3.md] - Función loginUser con invalidación de sesiones y protección contra ataques de fuerza bruta (bloqueo al acumular 5 intentos fallidos).
 function loginUser(payload) {
   const { identifier, password } = payload || {};
+  if (!identifier || !password) return { status: "error", message: "Identificador y contraseña son requeridos." };
+
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
   const sheet = getSheetOrThrow(ss, "Usuarios");
   const data = sheet.getDataRange().getValues();
@@ -1120,30 +1124,45 @@ function loginUser(payload) {
     const uNombre = row[1]?.toString().toLowerCase().trim();
     const state = row[10] || "Activa";
 
-    if ((uEmail === id || uNombre === id) && row[5] === hp) {
+    if (uEmail === id || uNombre === id) {
       if (state === "Suspendida" || state === "Desactivada" || state === "Bloqueada") {
         logStructuredEvent("USER", "loginUser", "WARN", "LOGIN_BLOCKED", `Intento de inicio de sesión en cuenta ${state}`, { identifier, userId: row[0], state }, "Sistema");
         return { status: "error", message: `Su cuenta se encuentra en estado '${state}'. Por favor contacte a la administración.` };
       }
 
-      // Actualizar Último Acceso
-      sheet.getRange(i + 1, 13).setValue(new Date());
+      if (row[5] === hp) {
+        // Éxito - Resetear intentos fallidos y actualizar último acceso
+        sheet.getRange(i + 1, 12).setValue(0);
+        sheet.getRange(i + 1, 13).setValue(new Date());
 
-      return {
-        status: "success",
-        data: {
-          userId: row[0],
-          nombre: row[1],
-          grado: row[2],
-          seccion: row[3],
-          email: row[4],
-          rol: row[6],
-          telefono: row[7] || "",
-          numeroLista: row[8] || "",
-          personaId: row[9] || "",
-          estadoCuenta: state
+        return {
+          status: "success",
+          data: {
+            userId: row[0],
+            nombre: row[1],
+            grado: row[2],
+            seccion: row[3],
+            email: row[4],
+            rol: row[6],
+            telefono: row[7] || "",
+            numeroLista: row[8] || "",
+            personaId: row[9] || "",
+            estadoCuenta: state
+          }
+        };
+      } else {
+        // Fallo de contraseña - Incrementar contador de intentos fallidos
+        const currentFailed = parseInt(row[11] || 0, 10) + 1;
+        sheet.getRange(i + 1, 12).setValue(currentFailed);
+
+        if (currentFailed >= 5) {
+          sheet.getRange(i + 1, 11).setValue("Bloqueada");
+          logStructuredEvent("USER", "loginUser", "WARN", "LOGIN_BLOCKED_BRUTE_FORCE", `Cuenta ${row[0]} bloqueada por acumular ${currentFailed} intentos fallidos de contraseña.`, { identifier, userId: row[0], currentFailed }, "Sistema");
+          return { status: "error", message: "Su cuenta ha sido bloqueada por acumular 5 intentos de inicio de sesión fallidos. Contacte a la administración." };
         }
-      };
+
+        return { status: "error", message: `Credenciales incorrectas. Intentos fallidos: ${currentFailed}/5.` };
+      }
     }
   }
   return { status: "error", message: "Credenciales incorrectas." };
@@ -2640,6 +2659,7 @@ function updateAppointmentStatus(payload) {
   return { status: "success", message: `Estado de la cita cambiado a ${nuevoEstado}.` };
 }
 
+// [REQ-EXP-016] [Requerimientos de Expansión y Desarrollo] - Publicación y gestión de noticias/avisos institucionales por Secretaría.
 function createNews(payload) {
   const { titulo, contenido, imagenUrl, categoria, gradoAudiencia, seccionAudiencia, fechaInicio, fechaFin } = payload || {};
   if (!titulo || !contenido) throw new Error("Título y contenido requeridos.");
@@ -2708,6 +2728,7 @@ function getInstitutionalCalendarEvents(payload) {
   return { status: "success", eventos: mapped };
 }
 
+// [B-001] [pendientes2.md] - Service backend endpoint (getPendingReminders) con bloqueo LockService para despacho idempotente de recordatorios.
 function getPendingReminders(payload) {
   const lock = LockService.getScriptLock();
   try {
@@ -3539,6 +3560,7 @@ function purgeStructuredLogs(payload) {
   }
 }
 
+// [REQ-OMNI-001] [pendientes2.md] - Service backend endpoint (searchGlobalOmnibox) para búsqueda unificada multi-entidad con validación RBAC.
 function searchGlobalOmnibox(payload) {
   try {
     if (!payload) return { status: "error", message: "Payload no provisto." };

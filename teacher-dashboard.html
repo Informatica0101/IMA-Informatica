@@ -170,6 +170,7 @@
                         </div>
                     </div>
                     <div class="w-full relative">
+                        <!-- [REQ-EXP-007] [Fase 1: Registro y Expediente de Estudiantes] - Campo de búsqueda institucional para localizar estudiantes y abrir expedientes digitalizados (#student-search). -->
                         <input type="text" id="student-search" placeholder="Buscar expediente..." class="w-full pl-10 pr-4 py-3 bg-white border-none rounded-2xl focus:ring-2 focus:ring-blue-500/20 focus:outline-none transition-all text-xs font-medium uppercase tracking-widest">
                         <svg class="w-4 h-4 text-gray-400 absolute left-4 top-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                     </div>
@@ -2413,7 +2414,7 @@
     </div>
 
     <!-- Modal Importador Universal de Excel (.xlsx) (Fase 28) -->
-        <!-- Modal Expediente Digital Unificado del Estudiante (REQ-EXP-001) -->
+    <!-- [REQ-EXP-001] [Fase 1: Registro y Expediente de Estudiantes] - Interfaz modal (#modal-student-file) para consulta y visualización del expediente digital del estudiante. -->
     <div id="modal-student-file" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-[110] flex items-center justify-center p-2 md:p-4 hidden">
         <div class="bg-white rounded-3xl max-w-5xl w-full max-h-[92vh] flex flex-col shadow-2xl border border-slate-100 overflow-hidden animate-fade-in-up">
             <!-- Header -->
@@ -2455,6 +2456,7 @@
             <div class="p-6 overflow-y-auto flex-1 space-y-6">
                 <!-- Tab 1: Personal Data -->
                 <div id="tab-stfile-personal" class="stfile-tab-content space-y-5">
+                    <!-- [REQ-EXP-002] [Fase 1: Registro y Expediente de Estudiantes] - Formulario de edición de datos personales del expediente de estudiante (#stfile-personal-form). -->
                     <form id="stfile-personal-form" class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Nombre Completo *</label>
@@ -2504,6 +2506,7 @@
                 </div>
 
                 <!-- Tab 2: Guardians -->
+                <!-- [REQ-EXP-003] [Fase 1: Registro y Expediente de Estudiantes] - Interfaz para la gestión y vinculación de padres, tutores y responsables legales del estudiante (#tab-stfile-guardians). -->
                 <div id="tab-stfile-guardians" class="stfile-tab-content hidden space-y-6">
                     <div class="flex items-center justify-between">
                         <h4 class="text-xs font-bold text-slate-800 uppercase tracking-wider">Padres & Responsables Legales Vinculados</h4>
@@ -2517,6 +2520,7 @@
                 </div>
 
                 <!-- Tab 3: Documents -->
+                <!-- [REQ-EXP-004] [Fase 1: Registro y Expediente de Estudiantes] - Interfaz para la gestión y carga de documentos y fotografías del expediente estudiantil (#tab-stfile-documents). -->
                 <div id="tab-stfile-documents" class="stfile-tab-content hidden space-y-6">
                     <div class="p-4 bg-slate-50 border border-slate-200 rounded-2xl space-y-3">
                         <h4 class="text-xs font-bold text-slate-800 uppercase tracking-wider">Cargar Nuevo Documento al Expediente (Google Drive)</h4>
@@ -2552,6 +2556,7 @@
                 </div>
 
                 <!-- Tab 4: Timeline -->
+                <!-- [REQ-EXP-005] [Fase 1: Registro y Expediente de Estudiantes] - Interfaz para la visualización de la línea de tiempo e historial de movimientos del estudiante (#tab-stfile-timeline). -->
                 <div id="tab-stfile-timeline" class="stfile-tab-content hidden space-y-4">
                     <h4 class="text-xs font-bold text-slate-800 uppercase tracking-wider">Línea de Tiempo Unificada del Estudiante</h4>
                     <div id="stfile-timeline-container" class="relative pl-6 border-l-2 border-blue-500 space-y-6">
@@ -2560,6 +2565,7 @@
                 </div>
 
                 <!-- Tab 5: Duplicates & Merge -->
+                <!-- [REQ-EXP-006] [Fase 1: Registro y Expediente de Estudiantes] - Interfaz para la búsqueda, revisión y resolución controlada de expedientes duplicados (#tab-stfile-duplicates). -->
                 <div id="tab-stfile-duplicates" class="stfile-tab-content hidden space-y-5">
                     <div class="p-4 bg-amber-50 border border-amber-200 rounded-2xl space-y-2">
                         <div class="flex items-center gap-2 text-amber-800 font-bold text-xs uppercase">
@@ -2581,6 +2587,7 @@
     </div>
 
 
+    <!-- [REQ-EXP-010] [Fase 1: Registro y Expediente de Estudiantes] - Interfaz modal para la importación masiva de expedientes desde archivos CSV y XLSX (#modal-excel-importer). -->
     <div id="modal-excel-importer" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-[90] flex items-center justify-center p-2 md:p-4 hidden">
         <div class="bg-white rounded-3xl max-w-2xl w-full p-6 shadow-2xl border border-slate-100 space-y-4 animate-fade-in-up">
             <div class="flex items-center justify-between border-b border-slate-100 pb-3">

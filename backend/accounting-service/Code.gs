@@ -1350,6 +1350,7 @@ function processFamilyCreditPurchase(payload) {
 // CONCEPTOS, MENSUALIDADES Y OBLIGACIONES DE PAGO
 // ---------------------------------------------------------------------------
 
+// [REQ-EXP-010] [Requerimientos de Expansión y Desarrollo] - Configuración de conceptos de cobro, mensualidades, recargos y estado de cuenta.
 function configurePaymentConcept(payload) {
   const { conceptoId, nombreConcepto, montoBase, aplicaAGrado, periodoVigencia, estado, observaciones } = payload || {};
   if (!nombreConcepto || montoBase === undefined) throw new Error("Nombre y monto base son requeridos.");
@@ -1644,6 +1645,7 @@ function reviewPaymentVoucher(payload) {
   };
 }
 
+// [REQ-EXP-011] [Requerimientos de Expansión y Desarrollo] - Generación de recibos PDF únicos con correlativo y consulta de vencimientos.
 function generatePaymentReceiptPDF(payload) {
   const { reciboId, pagoId } = payload || {};
   if (!reciboId && !pagoId) throw new Error("reciboId o pagoId requerido.");
@@ -1687,6 +1689,7 @@ function generatePaymentReceiptPDF(payload) {
 // FACTURACIÓN FISCAL HONDUREÑA (SAR)
 // ---------------------------------------------------------------------------
 
+// [REQ-EXP-012] [Requerimientos de Expansión y Desarrollo] - Facturación fiscal hondureña SAR CAI independiente con ISV 15%.
 function createFiscalInvoice(payload) {
   const { cai, rangoInicial, rangoFinal, numeroFactura, userId, clienteNombre, clienteRTN, concepto, subtotal, isv15, total, fechaLimiteEmision, observaciones } = payload || {};
   if (!cai || !numeroFactura || !clienteNombre) throw new Error("CAI, Número de factura y Nombre de cliente son requeridos.");
@@ -1805,6 +1808,7 @@ function recordCashBankMovement(payload) {
   };
 }
 
+// [REQ-EXP-013] [Requerimientos de Expansión y Desarrollo] - Arqueo de caja chica, depósitos bancarios, conciliaciones y cierres de tesorería.
 function closeCashSession(payload) {
   const { responsableUserId, montoInicial, saldoRealEfectivo, observaciones } = payload || {};
   if (!responsableUserId) throw new Error("responsableUserId requerido.");
@@ -1920,6 +1924,7 @@ function getCashBankSummary(payload) {
 // PLANILLAS, DEDUCCIONES Y ASISTENCIA DE PERSONAL
 // ---------------------------------------------------------------------------
 
+// [REQ-EXP-014] [Requerimientos de Expansión y Desarrollo] - Cálculo de planillas con retenciones de ley en Honduras (IHSS, RAP, ISR) y comprobantes.
 function calculatePayrollPeriod(payload) {
   const { periodoMes, idempotencyToken } = payload || {};
   if (!periodoMes) throw new Error("periodoMes requerido.");
@@ -2552,7 +2557,7 @@ function getStaffPayrollReceipt(payload) {
   };
 }
 
-// REQ-EXP-015: Módulo de Inventarios, Activos y Control de Proveedores
+// [REQ-EXP-015] [Requerimientos de Expansión y Desarrollo] - Control de inventarios Kardex, activo fijo, custodia, mantenimientos y proveedores.
 function recordInventoryMovement(payload) {
   const { itemCodigo, itemNombre, categoriaTipo, tipoMovimiento, cantidad, stockMinimo, ubicacionResponsable, observaciones } = payload || {};
   if (!itemCodigo || !itemNombre || cantidad === undefined || parseFloat(cantidad) <= 0) {
@@ -2852,6 +2857,7 @@ function createPurchaseOrder(payload) {
   return { status: "success", ordenCompraId: ordenId, message: "Órden de compra emitida en borrador." };
 }
 
+// [T-GOV-04] [Fase Gobernanza y Seguridad] - Prevención de autoaprobaciones en órdenes de compra
 function approvePurchaseOrder(payload) {
   const { ordenCompraId, nuevoEstado, observacionesAdmin, authRole } = payload || {};
   if (!ordenCompraId || !nuevoEstado) throw new Error("ordenCompraId y nuevoEstado son requeridos.");
@@ -2862,6 +2868,14 @@ function approvePurchaseOrder(payload) {
 
   const idx = data.findIndex(r => String(r[0]).trim() === String(ordenCompraId).trim());
   if (idx === -1) throw new Error("Órden de compra no encontrada.");
+
+  const solicitanteId = String(data[idx][13] || data[idx][1] || "").trim();
+  const aprobadorId = String((payload && (payload.authenticatedUserId || payload.userId || payload.actorId)) || "").trim();
+
+  if (nuevoEstado === "Aprobada" && aprobadorId && solicitanteId && solicitanteId === aprobadorId) {
+    logStructuredEvent("ACCOUNTING", "approvePurchaseOrder", "WARN", "AUTO_APPROVAL_BLOCKED", `Auto-aprobación de orden de compra bloqueada para usuario ${solicitanteId}`, payload, authRole);
+    return { status: "error", code: "AUTO_APPROVAL_BLOCKED", message: "Acción denegada: Un usuario no puede aprobar su propia orden de compra." };
+  }
 
   sheet.getRange(idx + 1, 10).setValue(nuevoEstado);
   sheet.getRange(idx + 1, 11).setValue(authRole || "Dirección/Contabilidad");
@@ -4372,6 +4386,7 @@ function calculateOvertime(payload) {
   }
 }
 
+// [T-GOV-04] [Fase Gobernanza y Seguridad] - Prevención de autoaprobaciones y separación de funciones en horas extras
 function reviewOvertimeRequest(payload) {
   try {
     const { overtimeId, accion, horasAprobadas, observaciones, periodoNominaId } = payload || {};
@@ -4395,8 +4410,16 @@ function reviewOvertimeRequest(payload) {
       return { status: "error", code: "NOT_FOUND", message: "Registro de horas extras no encontrado." };
     }
 
-    const now = new Date().toISOString();
+    const solicitanteUserId = String(data[foundIndex - 1][1]).trim();
+    const aprobadorUserId = String((payload && (payload.authenticatedUserId || payload.userId || payload.actorId)) || "").trim();
     const verifiedRole = (payload && payload.authRole) || "RecursosHumanos";
+
+    if (accion === "Aprobar" && aprobadorUserId && solicitanteUserId && solicitanteUserId === aprobadorUserId) {
+      logStructuredEvent("ACCOUNTING", "reviewOvertimeRequest", "WARN", "AUTO_APPROVAL_BLOCKED", `Auto-aprobación de horas extras bloqueada para usuario ${solicitanteUserId}`, payload, verifiedRole);
+      return { status: "error", code: "AUTO_APPROVAL_BLOCKED", message: "Acción denegada: Un usuario no puede aprobar sus propias solicitudes de horas extras." };
+    }
+
+    const now = new Date().toISOString();
     const newState = accion === "Aprobar" ? "Aprobada" : "Rechazada";
 
     sheet.getRange(foundIndex, 6).setValue(accion === "Aprobar" ? (parseFloat(horasAprobadas) || data[foundIndex - 1][4]) : 0);
@@ -5565,6 +5588,7 @@ function previewSchoolDocument(payload) {
   };
 }
 
+// [REQ-EXP-009] [Fase 1: Registro y Expediente de Estudiantes] - Service backend endpoint (generateSchoolDocument) para la generación y exportación autorizada del expediente e informes oficiales a PDF.
 function generateSchoolDocument(payload) {
   const { plantillaId, targetEntityId, estudianteUserId, solicitanteUserId, datosFormulario, observaciones } = payload || {};
   if (!plantillaId) throw new Error("plantillaId es requerido.");
@@ -5741,6 +5765,7 @@ function validateImportPreview(payload) {
   };
 }
 
+// [REQ-EXP-010] [Fase 1: Registro y Expediente de Estudiantes] - Service backend endpoint (importDataWithColumnMapping) para la importación masiva de expedientes desde archivos CSV y XLSX.
 function importDataWithColumnMapping(payload) {
   const { nombreArchivo, destinoModulo, columnaMapeo, filasData, creadoPor } = payload || {};
   if (!Array.isArray(filasData) || filasData.length === 0) throw new Error("filasData vacías.");

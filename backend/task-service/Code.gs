@@ -1,4 +1,5 @@
 // NOTA: Las URLs de los microservicios solo se deben actualizar en el frontend (js/config.js), no en este archivo.
+// [REQ-EXP-004] [Requerimientos de Expansión y Desarrollo] - Consolidación del módulo de tareas, entregas, evaluaciones y penalización por entrega tardía.
 // --- MICROSERVICIO DE TAREAS ---
 
 const SPREADSHEET_ID = "1txfudU4TR4AhVtvFgGRT5Wtmwjl78hK4bfR4XbRwwww";
@@ -258,6 +259,7 @@ function deleteTask(payload) {
   }
 }
 
+// [REQ-EXP-005] [Requerimientos de Expansión y Desarrollo] - Procedimiento de cierre de año escolar y eliminación física de entregas en Drive.
 function closeAcademicYear(payload) {
   const { profesorId, format } = payload;
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
