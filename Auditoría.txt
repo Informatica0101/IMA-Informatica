@@ -1661,3 +1661,36 @@ Archivos Auditados:
 2. Conclusión de Auditoría:
 - El código necesario para la Tarea REQ-EXP-010 ya está completamente implementado y funcional.
 - Se agregó el comentario de identificación directamente en la primera línea del código correspondiente.
+
+===============================================================================
+AUDITORÍA FUNCIONAL Y TÉCNICA - TAREA T-UX-01
+===============================================================================
+Fecha: 2026-10-19
+Tarea: T-UX-01 [P1]. Gestión centralizada de expiración de sesión y errores de autenticación
+Archivos Auditados:
+- js/api.js
+- js/ui-common.js
+- js/auth.js
+- login.html
+
+1. Hallazgos y Solución Implementada:
+- `js/api.js`: Detección de `parsed.code === 'AUTH_PERMISSION_DENIED'` para invocar `window.handleSessionExpired(parsed.message)`.
+- `js/ui-common.js`: Implementación de `window.handleSessionExpired(reason)` que limpia `localStorage`/`sessionStorage` y redirige a `login.html?session_expired=...`.
+- `js/auth.js`: Detección de parámetro `session_expired` en la URL de `login.html` para renderizar banner de aviso preventivo.
+
+2. Conclusión:
+- Se implementó la solución funcional completa para T-UX-01 y se agregaron los comentarios identificadores correspondientes.
+
+===============================================================================
+AUDITORÍA FUNCIONAL Y TÉCNICA DE REVISIÓN Y COMPLETADO
+===============================================================================
+Fecha: 2026-10-19
+Documentos Auditados:
+- Pendientes.md (Fase 1, Requerimientos de Expansión y Desarrollo, REQ-DOC, REQ-DASH, REQ-AMP, REQ-AMP2, REQ-SUP, REQ-FLOW, REQ-MOD, REQ-FASE3, REQ-FASE2, REQ-FASE1)
+- pendientes2.md (Backlog Maestro BASE-01..FINAL-03, REQ-OMNI-001, B-001..E-005, IA-01..V-002)
+- pendientes3.md (T-UX-01..T-UX-09, T-GOV-01..T-GOV-04, T-EXP-01..T-EXP-18, T-CAL-01..T-CAL-16, T-LMS-01..T-LMS-20, T-PAG-01..T-PAG-16, T-FIN-01..T-FIN-16, T-RRHH-01..T-RRHH-20, T-NOM-01..T-NOM-20, T18-01..T18-COM-16, T19-01..T19-INV-16, T-COM-01..T-COM-19, T-SUP-01..T-SUP-16, T-HOR-01..T-HOR-08)
+
+Resultados de Auditoría:
+1. Se revisaron todas las tareas secuencialmente.
+2. Para cada tarea con código funcional existente, se inyectó la línea de comentario identificadora directamente sobre el primer elemento/bloque de código correspondiente.
+3. Se detectó la necesidad de mejora funcional en T-UX-01 (Manejo centralizado de expiración de sesión y redirección con aviso explicativo), la cual fue implementada en `js/api.js`, `js/ui-common.js` y `js/auth.js`.

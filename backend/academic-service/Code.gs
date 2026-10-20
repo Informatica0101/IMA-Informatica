@@ -42,6 +42,7 @@ function sanitizePayloadForLog(payload) {
   }
 }
 
+// [REQ-EXP-018] [Requerimientos de Expansión y Desarrollo] - Sistema de registros de auditoría estructurados con sanitización de credenciales.
 function logStructuredEvent(serviceName, fnName, severity, errorCode, message, payload, userRole) {
   try {
     const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
@@ -79,6 +80,7 @@ function getOrCreateSheet(ss, name) {
   if (!sheet) {
     sheet = ss.insertSheet(name);
     // Tablas Base y Previas
+    // [REQ-EXP-002] [Requerimientos de Expansión y Desarrollo] - Esquema tabular normalizado de 9 columnas en ConfiguracionAcademica y 8 en HistorialAcademico.
     if (name === "ConfiguracionAcademica") sheet.appendRow(["ID", "Fecha", "Parcial", "Grado", "Sección", "Asignatura", "Unidad", "Tema", "profesorId"]);
     if (name === "HistorialAcademico") sheet.appendRow(["ID", "Fecha", "Parcial", "Grado", "Sección", "Asignatura", "Unidad", "profesorId"]);
     if (name === "Clases") sheet.appendRow(["Grado", "Seccion", "WhatsAppLink"]);
@@ -211,6 +213,7 @@ const ROLE_PERMISSIONS = {
 
 const PUBLIC_ACTIONS = ["ping", "createAdmissionRequest"];
 
+// [REQ-EXP-008] [Requerimientos de Expansión y Desarrollo] - Sistema de roles y permisos granulares validados en servidor (RBAC).
 function validateRolePermission(action, payload) {
   if (PUBLIC_ACTIONS.indexOf(action) !== -1) return { authorized: true };
   const userRole = (payload && (payload.authRole || payload.rol)) || "Estudiante";
@@ -3187,6 +3190,7 @@ function getBackupFolder() {
   return respFolder.hasNext() ? respFolder.next() : parent.createFolder("Respaldos");
 }
 
+// [REQ-EXP-019] [Requerimientos de Expansión y Desarrollo] - Generación y restauración de copias de seguridad con suma SHA-256 e inalterabilidad de notas.
 function createSystemBackup(payload) {
   try {
     const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
@@ -3625,6 +3629,7 @@ function generateMigrationReport(payload) {
 }
 
 // Módulo de Matrícula
+// [REQ-EXP-009] [Requerimientos de Expansión y Desarrollo] - Registro de matrículas por período y vinculación con cargos financieros del estudiante.
 function registerStudentEnrollment(payload) {
   const { userId, alumno, grado, seccion, periodo, tipo, becaDescuento, observaciones, cargos } = payload || {};
   if (!userId || !grado || !periodo) throw new Error("Datos de matrícula incompletos.");

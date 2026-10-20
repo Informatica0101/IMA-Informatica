@@ -186,6 +186,14 @@ window.setupCommonUI = function() {
         window.location.href = 'login.html';
     };
 
+    // [T-UX-01] [Fase 3: Experiencia de Usuario y Navegación Unificada] - Función centralizada para el manejo de expiración de sesión y redirección con aviso explicativo.
+    window.handleSessionExpired = function(reason) {
+        localStorage.removeItem('currentUser');
+        sessionStorage.removeItem('currentUser');
+        var msg = reason ? encodeURIComponent(reason) : '1';
+        window.location.href = 'login.html?session_expired=' + msg;
+    };
+
     // Portal Redirect Logic
     var portalLink = document.getElementById('nav-portal-link');
     var mobilePortalLink = document.getElementById('mobile-portal-link');
@@ -2665,6 +2673,7 @@ window.getLocalDocuments = function(userId, callback) {
     });
 };
 
+// [C-002] [pendientes2.md] - Motor de encolamiento y almacenamiento de operaciones offline en IndexedDB.
 window.queueOfflineAction = function(actionName, payload, callback) {
     window.initOfflineDB(function(db) {
         if (!db) { if (callback) callback(false); return; }
@@ -2791,6 +2800,7 @@ window.resolveConflictChoice = function(choice, queueItemId) {
     }
 };
 
+// [IA-03] [pendientes2.md] - Búsqueda asistida en la base de conocimientos FAQ local de 32 elementos institucionales.
 window.searchFAQAssistant = function(query) {
     if (!query || typeof query !== 'string') return [];
     var q = query.toLowerCase().trim();

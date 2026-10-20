@@ -1350,6 +1350,7 @@ function processFamilyCreditPurchase(payload) {
 // CONCEPTOS, MENSUALIDADES Y OBLIGACIONES DE PAGO
 // ---------------------------------------------------------------------------
 
+// [REQ-EXP-010] [Requerimientos de Expansión y Desarrollo] - Configuración de conceptos de cobro, mensualidades, recargos y estado de cuenta.
 function configurePaymentConcept(payload) {
   const { conceptoId, nombreConcepto, montoBase, aplicaAGrado, periodoVigencia, estado, observaciones } = payload || {};
   if (!nombreConcepto || montoBase === undefined) throw new Error("Nombre y monto base son requeridos.");
@@ -1644,6 +1645,7 @@ function reviewPaymentVoucher(payload) {
   };
 }
 
+// [REQ-EXP-011] [Requerimientos de Expansión y Desarrollo] - Generación de recibos PDF únicos con correlativo y consulta de vencimientos.
 function generatePaymentReceiptPDF(payload) {
   const { reciboId, pagoId } = payload || {};
   if (!reciboId && !pagoId) throw new Error("reciboId o pagoId requerido.");
@@ -1687,6 +1689,7 @@ function generatePaymentReceiptPDF(payload) {
 // FACTURACIÓN FISCAL HONDUREÑA (SAR)
 // ---------------------------------------------------------------------------
 
+// [REQ-EXP-012] [Requerimientos de Expansión y Desarrollo] - Facturación fiscal hondureña SAR CAI independiente con ISV 15%.
 function createFiscalInvoice(payload) {
   const { cai, rangoInicial, rangoFinal, numeroFactura, userId, clienteNombre, clienteRTN, concepto, subtotal, isv15, total, fechaLimiteEmision, observaciones } = payload || {};
   if (!cai || !numeroFactura || !clienteNombre) throw new Error("CAI, Número de factura y Nombre de cliente son requeridos.");
@@ -1805,6 +1808,7 @@ function recordCashBankMovement(payload) {
   };
 }
 
+// [REQ-EXP-013] [Requerimientos de Expansión y Desarrollo] - Arqueo de caja chica, depósitos bancarios, conciliaciones y cierres de tesorería.
 function closeCashSession(payload) {
   const { responsableUserId, montoInicial, saldoRealEfectivo, observaciones } = payload || {};
   if (!responsableUserId) throw new Error("responsableUserId requerido.");
@@ -1920,6 +1924,7 @@ function getCashBankSummary(payload) {
 // PLANILLAS, DEDUCCIONES Y ASISTENCIA DE PERSONAL
 // ---------------------------------------------------------------------------
 
+// [REQ-EXP-014] [Requerimientos de Expansión y Desarrollo] - Cálculo de planillas con retenciones de ley en Honduras (IHSS, RAP, ISR) y comprobantes.
 function calculatePayrollPeriod(payload) {
   const { periodoMes, idempotencyToken } = payload || {};
   if (!periodoMes) throw new Error("periodoMes requerido.");
@@ -2552,7 +2557,7 @@ function getStaffPayrollReceipt(payload) {
   };
 }
 
-// REQ-EXP-015: Módulo de Inventarios, Activos y Control de Proveedores
+// [REQ-EXP-015] [Requerimientos de Expansión y Desarrollo] - Control de inventarios Kardex, activo fijo, custodia, mantenimientos y proveedores.
 function recordInventoryMovement(payload) {
   const { itemCodigo, itemNombre, categoriaTipo, tipoMovimiento, cantidad, stockMinimo, ubicacionResponsable, observaciones } = payload || {};
   if (!itemCodigo || !itemNombre || cantidad === undefined || parseFloat(cantidad) <= 0) {

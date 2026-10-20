@@ -685,7 +685,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // REQ-EXP-017: Health Checks Ping-Pong en Consola Técnica
+    // [REQ-EXP-017] [Requerimientos de Expansión y Desarrollo] - Health checks de estado y latencia de microservicios en Consola Técnica.
     function runTechnicalHealthChecks() {
         var services = ['USER', 'ACADEMIC', 'TASK', 'EXAM', 'ACCOUNTING'];
         var btn = document.getElementById('btn-run-health-checks');
@@ -1923,6 +1923,7 @@ window.triggerRestoreSystemBackup = async function(fileId, fileName) {
      * Renderiza la lista de asignaturas filtradas por el contexto actual (v7.9.1)
      * REQ: Filtrado estricto por Parcial, Grado y Sección.
      */
+    // [REQ-EXP-003] [Requerimientos de Expansión y Desarrollo] - Jerarquía Nivel -> Grado -> Sección -> Asignatura con filtrado estricto GranularConfig.
     function renderAsignaturas(grado, seccion, search) {
         const activePartial = window.GLOBAL_SCOPE ? window.GLOBAL_SCOPE.ParcialActual : window.PARCIAL_ACTUAL;
 

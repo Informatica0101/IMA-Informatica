@@ -2338,7 +2338,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (!waActive || !waDisabled) return;
 
         try {
-            // WhatsApp links are now assigned by GRADO only (v7.9.3)
+            // [REQ-EXP-006] [Requerimientos de Expansión y Desarrollo] - Integración de grupos de WhatsApp por grado y vista de asignaturas autorizadas.
             var res = await fetchApi('ACADEMIC', 'getWhatsAppLink', {
                 grado: currentUser.grado
             });

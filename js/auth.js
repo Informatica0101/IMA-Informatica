@@ -1,6 +1,15 @@
+// [T-UX-01] [Fase 3: Experiencia de Usuario y Navegación Unificada] - Detección de parámetro session_expired para mostrar banner de expiración de sesión.
 document.addEventListener('DOMContentLoaded', () => {
     const loginForm = document.getElementById('login-form');
     const registerForm = document.getElementById('register-form');
+
+    var urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.has('session_expired')) {
+        var banner = document.createElement('div');
+        banner.className = 'mb-4 p-4 bg-amber-50 border border-amber-200 text-amber-900 rounded-2xl text-xs font-semibold flex items-center gap-3 animate-fade-in-up';
+        banner.innerHTML = '<i class="fa-solid fa-triangle-exclamation text-amber-600 text-lg"></i><span>Su sesión ha expirado o sus permisos han cambiado. Por favor ingrese de nuevo.</span>';
+        if (loginForm) loginForm.parentNode.insertBefore(banner, loginForm);
+    }
 
     // Si el usuario ya está logueado, redirigir al dashboard correspondiente (buscando en ambos storages)
     const currentUser = JSON.parse(localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser'));

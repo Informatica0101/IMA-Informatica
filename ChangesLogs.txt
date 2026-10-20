@@ -1539,3 +1539,25 @@ Archivos Modificados:
     - Se agregó el comentario de identificación de tarea REQ-EXP-010 sobre la constante `modalExcelImporter`.
 - teacher-dashboard.html (Línea 2590):
     - Se agregó el comentario de identificación de tarea REQ-EXP-0010 sobre el elemento `<div id="modal-excel-importer">`.
+
+====================================================================================================
+
+REGISTRO DE CAMBIOS - TAREA T-UX-01 - Mon Oct 19 2026
+
+Archivos Modificados:
+- js/api.js (Línea 114):
+    - Se agregó detección centralizada de `AUTH_PERMISSION_DENIED` e inyección de `window.handleSessionExpired`.
+- js/ui-common.js (Línea 190):
+    - Se implementó `window.handleSessionExpired(reason)` para cierre limpio de sesión y redirección a `login.html`.
+- js/auth.js (Línea 1):
+    - Se agregó detección de parámetro `session_expired` y renderizado de banner de aviso en `login.html`.
+
+====================================================================================================
+
+REGISTRO DE CAMBIOS - COMPLETADO DE REVISIÓN Y ETIQUETADO DE TAREAS - Mon Oct 19 2026
+
+Archivos Modificados:
+- js/api.js, js/ui-common.js, js/auth.js:
+    - Implementación de `T-UX-01`: Detección centralizada de `AUTH_PERMISSION_DENIED`, función `window.handleSessionExpired(reason)` y banner de aviso de expiración de sesión en `login.html`.
+- backend/academic-service/Code.gs, backend/accounting-service/Code.gs, backend/task-service/Code.gs, backend/user-service/Code.gs, js/teacher.js, js/student.js, teacher-dashboard.html, index.html, METODOLOGIA_DESARROLLO.md:
+    - Inyección de líneas de comentario de identificación sobre los bloques de código y funciones asociadas a cada tarea de Pendientes.md, pendientes2.md y pendientes3.md.

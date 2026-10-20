@@ -714,6 +714,7 @@ const ROLE_PERMISSIONS = {
   ]
 };
 
+// [T-GOV-02] [pendientes3.md] - Función verificadora de rol en servidor (getUserVerifiedRole) para validación estricta de propiedad y alcance de acceso.
 function getUserVerifiedRole(payload) {
   if (!payload) return "Estudiante";
   const declaredRole = payload.authRole || payload.rol || (payload.currentUser && payload.currentUser.rol);
@@ -2640,6 +2641,7 @@ function updateAppointmentStatus(payload) {
   return { status: "success", message: `Estado de la cita cambiado a ${nuevoEstado}.` };
 }
 
+// [REQ-EXP-016] [Requerimientos de Expansión y Desarrollo] - Publicación y gestión de noticias/avisos institucionales por Secretaría.
 function createNews(payload) {
   const { titulo, contenido, imagenUrl, categoria, gradoAudiencia, seccionAudiencia, fechaInicio, fechaFin } = payload || {};
   if (!titulo || !contenido) throw new Error("Título y contenido requeridos.");
@@ -2708,6 +2710,7 @@ function getInstitutionalCalendarEvents(payload) {
   return { status: "success", eventos: mapped };
 }
 
+// [B-001] [pendientes2.md] - Service backend endpoint (getPendingReminders) con bloqueo LockService para despacho idempotente de recordatorios.
 function getPendingReminders(payload) {
   const lock = LockService.getScriptLock();
   try {
@@ -3539,6 +3542,7 @@ function purgeStructuredLogs(payload) {
   }
 }
 
+// [REQ-OMNI-001] [pendientes2.md] - Service backend endpoint (searchGlobalOmnibox) para búsqueda unificada multi-entidad con validación RBAC.
 function searchGlobalOmnibox(payload) {
   try {
     if (!payload) return { status: "error", message: "Payload no provisto." };
