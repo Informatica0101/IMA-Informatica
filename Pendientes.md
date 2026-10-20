@@ -4180,7 +4180,7 @@ Criterios de aceptación
 
 ---
 
-TAREA 3. ALERTAS POR VENCIMIENTO DE CONTRATOS DE PROVEEDORES
+[X] TAREA 3. ALERTAS POR VENCIMIENTO DE CONTRATOS DE PROVEEDORES
 
 Prioridad: Media
 Área: Proveedores y compromisos institucionales.
