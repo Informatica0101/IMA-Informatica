@@ -144,6 +144,10 @@ GRUPO 1: TAREAS COMPLETADAS
     - Archivo: backend/accounting-service/Code.gs (Línea 1301 `createFamilyPaymentAgreement`, Línea 1346 `getFamilyPaymentAgreements`)
     - Descripción: Endpoints `createFamilyPaymentAgreement` y `getFamilyPaymentAgreements` con validación de saldos, desglose de cuotas personalizadas, verificación de suma de importes y permisos RBAC.
 
+31. [TAREA 2] PROYECCIONES PRESUPUESTARIAS PLURIANUALES
+    - Archivo: backend/accounting-service/Code.gs (Línea 5168 `saveMultiYearBudgetProjection`, Línea 5215 `getMultiYearBudgetProjections`)
+    - Descripción: Endpoints `saveMultiYearBudgetProjection` y `getMultiYearBudgetProjections` para planificación de escenarios futuros desglosados por departamento, centro de costo y partida.
+
 
 -------------------------------------------------------------------------------
 GRUPO 2: TAREAS INCOMPLETAS
@@ -159,7 +163,6 @@ GRUPO 3: TAREAS PENDIENTES / NO INICIADAS
 (Registradas en el backlog pero no iniciadas ni presentes en el código)
 -------------------------------------------------------------------------------
 
-11. TAREA 2: PROYECCIONES PRESUPUESTARIAS PLURIANUALES
 12. TAREA 3: ALERTAS POR VENCIMIENTO DE CONTRATOS DE PROVEEDORES
 13. TAREA 4: PROYECCIÓN DEL FLUJO DE CAJA A SEIS MESES
 14. TAREA 5: BITÁCORA DE GESTIONES DE COBRO

@@ -4142,7 +4142,7 @@ Criterios de aceptación
 
 ---
 
-TAREA 2. PROYECCIONES PRESUPUESTARIAS PLURIANUALES
+[X] TAREA 2. PROYECCIONES PRESUPUESTARIAS PLURIANUALES
 
 Prioridad: Media
 Área: Presupuesto institucional.
