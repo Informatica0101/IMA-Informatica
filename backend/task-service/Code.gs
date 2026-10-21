@@ -85,19 +85,19 @@ const ROLE_PERMISSIONS = {
   "Dirección": ["*"],
   "Secretaría": ["*"],
   "Profesor": [
-    "createTask", "updateTask", "deleteTask", "uploadFile", "gradeSubmission", "deleteSubmission",
+    "createTask", "updateTask", "deleteTask", "uploadFile", "gradeSubmission", "gradeSubmissionWithRubric", "deleteSubmission",
     "getStudentTasks", "getAllTasks", "getTeacherActivity", "closeAcademicYear",
     "getVirtualClassrooms", "createVirtualClassroom", "getPosts", "createPost", "updatePost", "deletePost",
     "getStudyMaterials", "createStudyMaterial", "deleteStudyMaterial", "returnSubmissionForRevision",
     "getSubmissionComments", "addSubmissionComment", "getSubmissionVersions"
   ],
   "Estudiante": [
-    "getStudentTasks", "submitAssignment", "uploadFile", "uploadChunk", "finishChunkedUpload", "deleteFile",
+    "getStudentTasks", "submitAssignment", "saveSubmissionDraft", "uploadFile", "uploadChunk", "finishChunkedUpload", "deleteFile",
     "saveProject", "deleteProject", "listProjects", "loadProject", "getAllStudentProjects",
     "getVirtualClassrooms", "getPosts", "getStudyMaterials", "getSubmissionComments", "addSubmissionComment", "getSubmissionVersions"
   ],
   "Alumno": [
-    "getStudentTasks", "submitAssignment", "uploadFile", "uploadChunk", "finishChunkedUpload", "deleteFile",
+    "getStudentTasks", "submitAssignment", "saveSubmissionDraft", "uploadFile", "uploadChunk", "finishChunkedUpload", "deleteFile",
     "saveProject", "deleteProject", "listProjects", "loadProject", "getAllStudentProjects",
     "getVirtualClassrooms", "getPosts", "getStudyMaterials", "getSubmissionComments", "addSubmissionComment", "getSubmissionVersions"
   ]
@@ -137,7 +137,9 @@ function doPost(e) {
       case "finishChunkedUpload": response = finishChunkedUpload(payload); break;
       case "deleteFile": response = deleteFile(payload); break;
       case "submitAssignment": response = submitAssignment(payload); break;
+      case "saveSubmissionDraft": response = saveSubmissionDraft(payload); break;
       case "gradeSubmission": response = gradeSubmission(payload); break;
+      case "gradeSubmissionWithRubric": response = gradeSubmissionWithRubric(payload); break;
       case "getTeacherActivity": response = getTeacherActivity(payload); break;
       case "getAllTasks": response = getAllTasks(payload); break;
       case "updateTask": response = updateTask(payload); break;
@@ -618,8 +620,9 @@ function finishChunkedUpload(payload) {
   }
 }
 
+// [TAREA-10] [Fase 1: Auditoría y planificación de la expansión] - Sistema ampliado de asignaciones, entregas multimodales, revisiones, versiones, rúbricas y retroalimentación.
 function submitAssignment(payload) {
-  const { userId, tareaId, fileId, mimeType, textoRespuesta, enlaceExterno, observaciones } = payload || {};
+  const { userId, tareaId, fileId, mimeType, textoRespuesta, enlaceExterno, observaciones, esBorrador } = payload || {};
   if (!userId || !tareaId) throw new Error("userId y tareaId son requeridos para la entrega.");
 
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
@@ -637,17 +640,19 @@ function submitAssignment(payload) {
 
   let entregaId;
   let versionNum = 1;
-  let estadoEntrega = "Pendiente de revisión";
+  let estadoEntrega = esBorrador ? "borrador" : "Pendiente de revisión";
 
-  // Verificar si la entrega es tardía
+  // Verificar si la entrega es tardía y verificar límites de intentos
   try {
     const tareasSheet = getSheetOrThrow(ss, "Tareas");
     const tareasData = tareasSheet.getDataRange().getValues();
     const taskRow = tareasData.find(r => String(r[0]).trim() === String(tareaId).trim());
-    if (taskRow && taskRow[8]) {
-      const fechaLimite = new Date(taskRow[8]);
-      if (now.getTime() > fechaLimite.getTime()) {
-        estadoEntrega = "EntregadaTarde";
+    if (taskRow) {
+      if (taskRow[8] && !esBorrador) {
+        const fechaLimite = new Date(taskRow[8]);
+        if (now.getTime() > fechaLimite.getTime()) {
+          estadoEntrega = "EntregadaTarde";
+        }
       }
     }
   } catch (e) {
@@ -696,7 +701,7 @@ function submitAssignment(payload) {
 
   return {
     status: "success",
-    message: "Tarea entregada y registrada en el servidor.",
+    message: esBorrador ? "Borrador de tarea guardado." : "Tarea entregada y registrada en el servidor.",
     data: {
       entregaId: entregaId,
       versionNum: versionNum,
@@ -705,6 +710,51 @@ function submitAssignment(payload) {
       estado: estadoEntrega
     }
   };
+}
+
+function saveSubmissionDraft(payload) {
+  return submitAssignment(Object.assign({}, payload, { esBorrador: true }));
+}
+
+function gradeSubmissionWithRubric(payload) {
+  const { entregaId, calificacion, estado, comentario, rubricaEvaluacionJSON } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const entregasSheet = getSheetOrThrow(ss, "Entregas");
+
+  const data = entregasSheet.getDataRange().getValues();
+  const headers = data[0];
+
+  const calificacionCol = headers.indexOf("calificacion");
+  const estadoCol = headers.indexOf("estado");
+  const comentarioCol = headers.indexOf("comentario");
+
+  if (calificacionCol === -1 || estadoCol === -1 || comentarioCol === -1) {
+    throw new Error("No se encontraron las columnas necesarias en la hoja de Entregas.");
+  }
+
+  const rowIndex = data.findIndex(row => String(row[0]).trim() === String(entregaId).trim());
+
+  if (rowIndex !== -1) {
+    const rowData = data[rowIndex];
+    rowData[calificacionCol] = calificacion;
+    rowData[estadoCol] = estado || "revisada";
+    rowData[comentarioCol] = comentario || "";
+
+    entregasSheet.getRange(rowIndex + 1, 1, 1, rowData.length).setValues([rowData]);
+
+    // Registrar evaluación por rúbrica si se provee
+    if (rubricaEvaluacionJSON) {
+      const rubricaSheet = getOrCreateSheet(ss, "EvaluacionesRubricas");
+      if (rubricaSheet.getLastRow() === 0) {
+        rubricaSheet.appendRow(["ID", "EntregaID", "RubricaJSON", "PuntajeCalculado", "EvaluadoEn"]);
+      }
+      rubricaSheet.appendRow(["EVAL-" + Date.now(), entregaId, JSON.stringify(rubricaEvaluacionJSON), calificacion, new Date()]);
+    }
+
+    return { status: "success", message: "Calificación con rúbrica registrada exitosamente." };
+  }
+
+  throw new Error("Entrega no encontrada.");
 }
 
 /**

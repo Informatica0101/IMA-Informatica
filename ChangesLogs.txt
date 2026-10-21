@@ -501,3 +501,12 @@ ARCHIVO(S) AFECTADO(S): pendientes3.md, Pendientes.md, Auditoria.txt
 DESCRIPCIÓN OBJETIVA DE LOS CAMBIOS:
 - Integración y transferencia de las tareas T-UX-10 a T-UX-27 de la Fase 3 en pendientes3.md y Pendientes.md organizadas por prioridad (P1, P2, P3) con nivel de detalle completo sin omitir ni alterar las tareas preexistentes.
 - Actualización de Auditoria.txt documentando la expansión y verificación de las tareas de la Fase 3.
+
+-------------------------------------------------------------------------------
+FECHA: Octubre 2026
+ARCHIVO(S) AFECTADO(S): backend/task-service/Code.gs, Pendientes.md
+-------------------------------------------------------------------------------
+DESCRIPCIÓN OBJETIVA DE LOS CAMBIOS:
+- Implementación de las funciones saveSubmissionDraft y gradeSubmissionWithRubric en backend/task-service/Code.gs, añadiendo soporte para guardado de borradores de tareas (estado 'borrador'), evaluación analítica por rúbricas en EvaluacionesRubricas y control de versiones de entregas.
+- Inyección del comentario identificativo de TAREA-10 en la primera línea directamente sobre la función submitAssignment.
+- Actualización del estado de [TAREA-10] a [X] Completada en Pendientes.md tras autoauditoría y verificación de pruebas funcionales en entorno Node.js.

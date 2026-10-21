@@ -35,7 +35,7 @@
   - Las pruebas de regresión confirman que los usuarios autorizados conservan sus funciones legítimas.
 - **Estado:** [X] Completada
 
-### [X] [FASE2-T01] Verificar y reforzar la autorización institucional y la vigencia de los permisos entre servicios
+### [ ] [FASE2-T01] Verificar y reforzar la autorización institucional y la vigencia de los permisos entre servicios
 - **Origen del Hallazgo:** Auditoría de la Fase 2, octubre de 2026 (AUDITORIA_FASE2_ARQUITECTURA_INTEROPERABILIDAD.md - Área 1)
 - **Severidad/Clasificación:** Crítico
 - **Archivos Involucrados:** `backend/user-service/Code.gs`, `backend/academic-service/Code.gs`, `backend/accounting-service/Code.gs`, `backend/task-service/Code.gs`, `backend/exam-service/Code.gs`, `js/auth.js`, `js/api.js`
@@ -61,9 +61,9 @@
   6. Las rutas protegidas se comportan igual ante llamadas desde la interfaz y llamadas directas al backend.
   7. Los intentos de acceso no autorizado generan registros de auditoría adecuados.
   8. Las pruebas confirman que la caché no mezcla permisos entre usuarios ni mantiene autorizaciones obsoletas fuera de la política aprobada.
-- **Estado:** [X] Completada
+- **Estado:** [ ] Pendiente
 
-### [X] [FASE2-T02] Garantizar la idempotencia de las operaciones y evitar duplicaciones por reintentos HTTP
+### [ ] [FASE2-T02] Garantizar la idempotencia de las operaciones y evitar duplicaciones por reintentos HTTP
 - **Origen del Hallazgo:** Auditoría de la Fase 2, octubre de 2026 (AUDITORIA_FASE2_ARQUITECTURA_INTEROPERABILIDAD.md - Área 5)
 - **Severidad/Clasificación:** Crítico
 - **Archivos Involucrados:** `js/api.js`, `backend/accounting-service/Code.gs`, `backend/academic-service/Code.gs`
@@ -89,9 +89,9 @@
   7. Los errores permanentes de validación o autorización no provocan reintentos innecesarios.
   8. Los intentos, los reintentos y el resultado final pueden distinguirse en los registros.
   9. Las pruebas incluyen emisión de documentos, pagos, matrículas, planillas y otras escrituras de consecuencias relevantes.
-- **Estado:** [X] Completada
+- **Estado:** [ ] Pendiente
 
-### [X] [T-UX-01] Manejo Centralizado de Expiración de Sesión y Excepciones de Autorización
+### [ ] [T-UX-01] Manejo Centralizado de Expiración de Sesión y Excepciones de Autorización
 - **Origen del Hallazgo:** Auditoría de la Fase 3, octubre de 2026 (AUDITORIA_FASE3_EXPERIENCIA_USUARIO_NAVEGACION.md - Área 1)
 - **Severidad/Clasificación:** Crítico
 - **Archivos Involucrados:** `js/api.js`, `js/ui-common.js`, `js/auth.js`
@@ -102,7 +102,7 @@
   3. Redirigir al usuario a `login.html?session_expired=...` desplegando banner informativo.
 - **Criterios de Aceptación:**
   - Redirección limpia a login ante expiración de sesión sin errores no capturados.
-- **Estado:** [X] Completada
+- **Estado:** [ ] Pendiente
 
 ---
 
@@ -330,7 +330,7 @@
   - Los archivos y comentarios respetan los permisos del curso.
 - **Estado:** [X] Completada
 
-### [X] [TAREA-11] Ampliar el motor de exámenes y el banco de preguntas por área curricular
+### [ ] [TAREA-11] Ampliar el motor de exámenes y el banco de preguntas por área curricular
 - **Origen del Hallazgo:** Auditoría de la Fase 1, octubre de 2026 (AUDITORIA_FASE1_PLANIFICACION_EXPANSION.md - Sección B & H)
 - **Severidad/Clasificación:** Alto
 - **Archivos Involucrados:** `backend/exam-service/Code.gs`, `js/quizpro.js`, `js/exam.js`, `exam.html`, `results.html`
@@ -354,9 +354,9 @@
   - Las calificaciones se reflejan correctamente en los resultados académicos.
   - Los análisis estadísticos coinciden con las respuestas y puntuaciones almacenadas.
   - Los cambios en un banco de preguntas no alteran silenciosamente exámenes ya realizados.
-- **Estado:** [X] Completada
+- **Estado:** [ ] Pendiente
 
-### [X] [TAREA-12] Unificar la evaluación académica, las rúbricas y las calificaciones
+### [ ] [TAREA-12] Unificar la evaluación académica, las rúbricas y las calificaciones
 - **Origen del Hallazgo:** Auditoría de la Fase 1, octubre de 2026 (AUDITORIA_FASE1_PLANIFICACION_EXPANSION.md - Sección B & H)
 - **Severidad/Clasificación:** Alto
 - **Archivos Involucrados:** `backend/academic-service/Code.gs`, `js/teacher.js`, `js/student.js`, `teacher-dashboard.html`
@@ -377,9 +377,9 @@
   - Los docentes no pueden modificar notas de estudiantes fuera de su ámbito autorizado.
   - Los boletines y los historiales coinciden con las calificaciones consolidadas.
   - Las escalas de distintos programas curriculares pueden coexistir sin confusión.
-- **Estado:** [X] Completada
+- **Estado:** [ ] Pendiente
 
-### [X] [FASE2-T03] Establecer contratos API verificables y pruebas automáticas de compatibilidad
+### [ ] [FASE2-T03] Establecer contratos API verificables y pruebas automáticas de compatibilidad
 - **Origen del Hallazgo:** Auditoría de la Fase 2, octubre de 2026 (AUDITORIA_FASE2_ARQUITECTURA_INTEROPERABILIDAD.md - Área 2)
 - **Severidad/Clasificación:** Alto
 - **Archivos Involucrados:** `js/api.js`, `backend/user-service/Code.gs`, `backend/academic-service/Code.gs`, `backend/accounting-service/Code.gs`
@@ -403,9 +403,9 @@
   6. Las respuestas HTML, vacías o malformadas se gestionan sin provocar falsos éxitos.
   7. Las pruebas cubren casos válidos, inválidos, límites y errores de dependencias.
   8. Los consumidores existentes siguen funcionando después de un cambio compatible de contrato.
-- **Estado:** [X] Completada
+- **Estado:** [ ] Pendiente
 
-### [X] [FASE2-T04] Establecer una fuente de verdad institucional para catálogos, configuraciones y referencias
+### [ ] [FASE2-T04] Establecer una fuente de verdad institucional para catálogos, configuraciones y referencias
 - **Origen del Hallazgo:** Auditoría de la Fase 2, octubre de 2026 (AUDITORIA_FASE2_ARQUITECTURA_INTEROPERABILIDAD.md - Área 3)
 - **Severidad/Clasificación:** Alto
 - **Archivos Involucrados:** `js/config.js`, `backend/academic-service/Code.gs`, `backend/user-service/Code.gs`
@@ -430,9 +430,9 @@
   6. Cambiar el nombre visible de una entidad no altera su identidad.
   7. Las configuraciones obligatorias ausentes producen errores identificables, no valores predeterminados peligrosos.
   8. Las diferencias legítimas entre configuraciones institucionales, académicas y técnicas se conservan.
-- **Estado:** [X] Completada
+- **Estado:** [ ] Pendiente
 
-### [X] [FASE2-T05] Unificar y validar el sistema de identificadores institucionales
+### [ ] [FASE2-T05] Unificar y validar el sistema de identificadores institucionales
 - **Origen del Hallazgo:** Auditoría de la Fase 2, octubre de 2026 (AUDITORIA_FASE2_ARQUITECTURA_INTEROPERABILIDAD.md - Área 4)
 - **Severidad/Clasificación:** Alto
 - **Archivos Involucrados:** `backend/accounting-service/Code.gs`, `backend/academic-service/Code.gs`, `backend/user-service/Code.gs`
@@ -457,9 +457,9 @@
   6. Las relaciones entre personas, cuentas y documentos se mantienen al modificar datos descriptivos.
   7. La verificación de un CUV detecta documentos inexistentes o códigos alterados conforme al algoritmo real.
   8. Los procedimientos de corrección de duplicados preservan las relaciones y los historiales que deban conservarse.
-- **Estado:** [X] Completada
+- **Estado:** [ ] Pendiente
 
-### [X] [FASE2-T06] Corregir y formalizar la concurrencia y la consistencia entre servicios
+### [ ] [FASE2-T06] Corregir y formalizar la concurrencia y la consistencia entre servicios
 - **Origen del Hallazgo:** Auditoría de la Fase 2, octubre de 2026 (AUDITORIA_FASE2_ARQUITECTURA_INTEROPERABILIDAD.md - Área 5)
 - **Severidad/Clasificación:** Alto
 - **Archivos Involucrados:** `backend/accounting-service/Code.gs`, `backend/academic-service/Code.gs`
@@ -483,9 +483,9 @@
   6. Una interrupción entre escrituras relacionadas produce un estado detectable y un procedimiento de recuperación.
   7. Las pruebas concurrentes no muestran pérdidas de actualizaciones ni relaciones inválidas.
   8. Los procesos recuperados conservan la integridad de los registros existentes.
-- **Estado:** [X] Completada
+- **Estado:** [ ] Pendiente
 
-### [X] [FASE2-T07] Fortalecer el motor de eventos y la ejecución de procesos automáticos
+### [ ] [FASE2-T07] Fortalecer el motor de eventos y la ejecución de procesos automáticos
 - **Origen del Hallazgo:** Auditoría de la Fase 2, octubre de 2026 (AUDITORIA_FASE2_ARQUITECTURA_INTEROPERABILIDAD.md - Área 6)
 - **Severidad/Clasificación:** Alto
 - **Archivos Involucrados:** `backend/user-service/Code.gs`
@@ -514,9 +514,9 @@
   8. Los procesos automáticos no generan ciclos ilimitados.
   9. Las alertas de riesgo académico, inasistencia y mora conservan sus reglas de negocio, y sus umbrales pueden verificarse con casos de prueba.
   10. Los fallos reiterados pueden detectarse sin depender de inspecciones manuales del código.
-- **Estado:** [X] Completada
+- **Estado:** [ ] Pendiente
 
-### [X] [FASE2-T08] Implementar trazabilidad y correlación de operaciones entre servicios
+### [ ] [FASE2-T08] Implementar trazabilidad y correlación de operaciones entre servicios
 - **Origen del Hallazgo:** Auditoría de la Fase 2, octubre de 2026 (AUDITORIA_FASE2_ARQUITECTURA_INTEROPERABILIDAD.md - Área 6 & 7)
 - **Severidad/Clasificación:** Alto
 - **Archivos Involucrados:** `backend/user-service/Code.gs`, `js/api.js`
@@ -538,9 +538,9 @@
   4. Los registros no exponen credenciales ni datos sensibles innecesarios.
   5. Un usuario sin permisos no puede consultar registros de auditoría restringidos.
   6. La ausencia de un registro esperado puede detectarse en las pruebas de integración.
-- **Estado:** [X] Completada
+- **Estado:** [ ] Pendiente
 
-### [X] [T-UX-02] Soporte Universal Tecla Escape para Cierre de Modales y Restauración de Foco
+### [ ] [T-UX-02] Soporte Universal Tecla Escape para Cierre de Modales y Restauración de Foco
 - **Origen del Hallazgo:** Auditoría de la Fase 3, octubre de 2026 (AUDITORIA_FASE3_EXPERIENCIA_USUARIO_NAVEGACION.md - Área 7)
 - **Severidad/Clasificación:** Alto
 - **Archivos Involucrados:** `js/ui-common.js`
@@ -550,9 +550,9 @@
   2. Cerrar modales activos ocultando elementos con clase `.hidden`.
 - **Criterios de Aceptación:**
   - Presionar Escape cierra modales abiertos de forma limpia.
-- **Estado:** [X] Completada
+- **Estado:** [ ] Pendiente
 
-### [X] [T-UX-03] Módulo de Protección contra Pérdida de Cambios No Guardados en Formularios
+### [ ] [T-UX-03] Módulo de Protección contra Pérdida de Cambios No Guardados en Formularios
 - **Origen del Hallazgo:** Auditoría de la Fase 3, octubre de 2026 (AUDITORIA_FASE3_EXPERIENCIA_USUARIO_NAVEGACION.md - Área 6)
 - **Severidad/Clasificación:** Alto
 - **Archivos Involucrados:** `js/ui-common.js`
@@ -562,9 +562,9 @@
   2. Dispara confirmación `beforeunload` para evitar pérdida de datos accidental.
 - **Criterios de Aceptación:**
   - Navegar fuera de un formulario sucio activa alerta de confirmación.
-- **Estado:** [X] Completada
+- **Estado:** [ ] Pendiente
 
-### [X] [T-UX-05] Normalización Diacrítica Insensible a Tildes para Búsquedas y Filtros
+### [ ] [T-UX-05] Normalización Diacrítica Insensible a Tildes para Búsquedas y Filtros
 - **Origen del Hallazgo:** Auditoría de la Fase 3, octubre de 2026 (AUDITORIA_FASE3_EXPERIENCIA_USUARIO_NAVEGACION.md - Área 4)
 - **Severidad/Clasificación:** Alto
 - **Archivos Involucrados:** `js/ui-common.js`
@@ -573,9 +573,9 @@
   1. `window.normalizeSearchString(str)` elimina marcas diacríticas usando NFD regex.
 - **Criterios de Aceptación:**
   - Búsqueda "matematica" coincide con "Matemáticas".
-- **Estado:** [X] Completada
+- **Estado:** [ ] Pendiente
 
-### [X] [T-UX-06] Omnibox Unificado Multi-Entidad con Atajo Global `Ctrl + K`
+### [ ] [T-UX-06] Omnibox Unificado Multi-Entidad con Atajo Global `Ctrl + K`
 - **Origen del Hallazgo:** Auditoría de la Fase 3, octubre de 2026 (AUDITORIA_FASE3_EXPERIENCIA_USUARIO_NAVEGACION.md - Área 4)
 - **Severidad/Clasificación:** Alto
 - **Archivos Involucrados:** `js/ui-common.js`, `backend/user-service/Code.gs`
@@ -585,9 +585,9 @@
   2. Búsqueda multi-entidad con validación RBAC en servidor.
 - **Criterios de Aceptación:**
   - Apertura rápida y filtrado seguro de registros.
-- **Estado:** [X] Completada
+- **Estado:** [ ] Pendiente
 
-### [X] [T-UX-09] Menú Lateral Responsivo Específico por Rol con Colapso Móvil Suave
+### [ ] [T-UX-09] Menú Lateral Responsivo Específico por Rol con Colapso Móvil Suave
 - **Origen del Hallazgo:** Auditoría de la Fase 3, octubre de 2026 (AUDITORIA_FASE3_EXPERIENCIA_USUARIO_NAVEGACION.md - Área 3)
 - **Severidad/Clasificación:** Alto
 - **Archivos Involucrados:** `js/ui-common.js`, Dashboards HTML
@@ -596,9 +596,9 @@
   1. Menú lateral específico por rol con colapso responsivo móvil.
 - **Criterios de Aceptación:**
   - Navegación fluida en escritorio y dispositivos táctiles.
-- **Estado:** [X] Completada
+- **Estado:** [ ] Pendiente
 
-### [X] [T-UX-10] Completar la verificación funcional y automatizar las pruebas de experiencia de usuario
+### [ ] [T-UX-10] Completar la verificación funcional y automatizar las pruebas de experiencia de usuario
 - **Origen del Hallazgo:** Auditoría de la Fase 3, octubre de 2026 (AUDITORIA_FASE3_EXPERIENCIA_USUARIO_NAVEGACION.md)
 - **Severidad/Clasificación:** Alto
 - **Archivos Involucrados:** `js/ui-common.js`, `js/student.js`, `js/teacher.js`, `js/accounting.js`
@@ -616,9 +616,9 @@
   - El centro de notificaciones se prueba con avisos leídos, no leídos, destinos inaccesibles y errores de carga.
   - El reporte de problemas se prueba desde la apertura del formulario hasta la confirmación real de recepción.
   - La protección de cambios no guardados se prueba al navegar, cerrar ventanas y abandonar formularios.
-- **Estado:** [X] Completada
+- **Estado:** [ ] Pendiente
 
-### [X] [T-UX-11] Unificar la navegación contextual y conservar el estado de las vistas
+### [ ] [T-UX-11] Unificar la navegación contextual y conservar el estado de las vistas
 - **Origen del Hallazgo:** Auditoría de la Fase 3, octubre de 2026 (AUDITORIA_FASE3_EXPERIENCIA_USUARIO_NAVEGACION.md - Área 1)
 - **Severidad/Clasificación:** Alto
 - **Archivos Involucrados:** `js/ui-common.js`, Dashboards HTML
@@ -636,9 +636,9 @@
   - Los enlaces y controles de regreso conducen al destino correcto.
   - Una sesión vencida no produce una falsa confirmación de guardado.
   - Las rutas inválidas muestran una salida comprensible.
-- **Estado:** [X] Completada
+- **Estado:** [ ] Pendiente
 
-### [X] [T-UX-12] Consolidar los paneles de control por rol y departamento
+### [ ] [T-UX-12] Consolidar los paneles de control por rol y departamento
 - **Origen del Hallazgo:** Auditoría de la Fase 3, octubre de 2026 (AUDITORIA_FASE3_EXPERIENCIA_USUARIO_NAVEGACION.md - Área 2)
 - **Severidad/Clasificación:** Alto
 - **Archivos Involucrados:** `js/student.js`, `js/teacher.js`, `js/accounting.js`
@@ -656,9 +656,9 @@
   - Los datos no disponibles se distinguen de los valores cero.
   - Los accesos conducen a operaciones reales.
   - Las acciones visibles respetan los permisos efectivos.
-- **Estado:** [X] Completada
+- **Estado:** [ ] Pendiente
 
-### [X] [T-UX-13] Completar el menú lateral específico de cada panel
+### [ ] [T-UX-13] Completar el menú lateral específico de cada panel
 - **Origen del Hallazgo:** Auditoría de la Fase 3, octubre de 2026 (AUDITORIA_FASE3_EXPERIENCIA_USUARIO_NAVEGACION.md - Área 3)
 - **Severidad/Clasificación:** Alto
 - **Archivos Involucrados:** `js/ui-common.js`, Dashboards HTML
@@ -676,9 +676,9 @@
   - La sección activa se identifica visualmente y mediante un estado accesible.
   - El menú se puede utilizar con teclado y controles táctiles.
   - En móvil, puede abrirse y cerrarse sin bloquear el contenido.
-- **Estado:** [X] Completada
+- **Estado:** [ ] Pendiente
 
-### [X] [T-UX-14] Completar la búsqueda global y optimizar sus resultados
+### [ ] [T-UX-14] Completar la búsqueda global y optimizar sus resultados
 - **Origen del Hallazgo:** Auditoría de la Fase 3, octubre de 2026 (AUDITORIA_FASE3_EXPERIENCIA_USUARIO_NAVEGACION.md - Área 4)
 - **Severidad/Clasificación:** Alto
 - **Archivos Involucrados:** `js/ui-common.js`, `backend/user-service/Code.gs`
@@ -695,9 +695,9 @@
   - El foco se coloca en el campo de búsqueda al abrir el omnibox.
   - Las búsquedas equivalentes con y sin tildes devuelven coincidencias pertinentes.
   - Se prueban nombres, identificadores, términos parciales y resultados ambiguos.
-- **Estado:** [X] Completada
+- **Estado:** [ ] Pendiente
 
-### [X] [T-UX-15] Implementar filtros avanzados, vistas guardadas y paginación coherente
+### [ ] [T-UX-15] Implementar filtros avanzados, vistas guardadas y paginación coherente
 - **Origen del Hallazgo:** Auditoría de la Fase 3, octubre de 2026 (AUDITORIA_FASE3_EXPERIENCIA_USUARIO_NAVEGACION.md - Área 5)
 - **Severidad/Clasificación:** Alto
 - **Archivos Involucrados:** `js/ui-common.js`
@@ -714,9 +714,9 @@
   - El usuario puede eliminar filtros individualmente y restablecer la consulta.
   - La paginación conserva los criterios activos.
   - El ordenamiento es coherente con los datos mostrados.
-- **Estado:** [X] Completada
+- **Estado:** [ ] Pendiente
 
-### [X] [T-UX-16] Unificar los estados de notificaciones, tareas pendientes y aprobaciones
+### [ ] [T-UX-16] Unificar los estados de notificaciones, tareas pendientes y aprobaciones
 - **Origen del Hallazgo:** Auditoría de la Fase 3, octubre de 2026 (AUDITORIA_FASE3_EXPERIENCIA_USUARIO_NAVEGACION.md - Área 11 & 12)
 - **Severidad/Clasificación:** Alto
 - **Archivos Involucrados:** `js/ui-common.js`, `backend/user-service/Code.gs`
@@ -733,9 +733,9 @@
   - Los enlaces conducen al destino correcto.
   - Los avisos de elementos inaccesibles no revelan información sensible.
   - Las notificaciones leídas y no leídas se mantienen correctamente.
-- **Estado:** [X] Completada
+- **Estado:** [ ] Pendiente
 
-### [X] [T-UX-17] Corregir y completar la protección de cambios no guardados
+### [ ] [T-UX-17] Corregir y completar la protección de cambios no guardados
 - **Origen del Hallazgo:** Auditoría de la Fase 3, octubre de 2026 (AUDITORIA_FASE3_EXPERIENCIA_USUARIO_NAVEGACION.md - Área 6)
 - **Severidad/Clasificación:** Alto
 - **Archivos Involucrados:** `js/ui-common.js`
@@ -750,9 +750,9 @@
   - Modificar un campo y abandonar la vista genera una advertencia.
   - Cancelar la navegación mantiene los datos introducidos.
   - Guardar correctamente elimina la advertencia pendiente.
-- **Estado:** [X] Completada
+- **Estado:** [ ] Pendiente
 
-### [X] [T-UX-18] Completar los componentes compartidos de formularios, tablas y vistas de detalle
+### [ ] [T-UX-18] Completar los componentes compartidos de formularios, tablas y vistas de detalle
 - **Origen del Hallazgo:** Auditoría de la Fase 3, octubre de 2026 (AUDITORIA_FASE3_EXPERIENCIA_USUARIO_NAVEGACION.md - Área 7 & 8)
 - **Severidad/Clasificación:** Alto
 - **Archivos Involucrados:** `js/ui-common.js`, `css/style.css`
@@ -766,9 +766,9 @@
   - Los formularios equivalentes presentan etiquetas, validaciones y mensajes coherentes.
   - Las tablas muestran correctamente carga, resultados vacíos y errores.
   - Las acciones por fila operan sobre el registro correcto.
-- **Estado:** [X] Completada
+- **Estado:** [ ] Pendiente
 
-### [X] [T-UX-19] Verificar la accesibilidad y corregir las barreras detectadas
+### [ ] [T-UX-19] Verificar la accesibilidad y corregir las barreras detectadas
 - **Origen del Hallazgo:** Auditoría de la Fase 3, octubre de 2026 (AUDITORIA_FASE3_EXPERIENCIA_USUARIO_NAVEGACION.md - Área 15)
 - **Severidad/Clasificación:** Alto
 - **Archivos Involucrados:** `js/ui-common.js`, `css/style.css`
@@ -782,9 +782,9 @@
   - Los flujos principales pueden completarse sin ratón.
   - El foco es visible y sigue un orden lógico.
   - Los iconos funcionales tienen nombres accesibles.
-- **Estado:** [X] Completada
+- **Estado:** [ ] Pendiente
 
-### [X] [T-UX-20] Completar la adaptación móvil y el comportamiento responsivo
+### [ ] [T-UX-20] Completar la adaptación móvil y el comportamiento responsivo
 - **Origen del Hallazgo:** Auditoría de la Fase 3, octubre de 2026 (AUDITORIA_FASE3_EXPERIENCIA_USUARIO_NAVEGACION.md - Área 16)
 - **Severidad/Clasificación:** Alto
 - **Archivos Involucrados:** `js/ui-common.js`, `css/style.css`
@@ -798,7 +798,7 @@
   - Los paneles se visualizan sin superposiciones ni desbordamientos críticos.
   - El menú lateral es operable con controles táctiles.
   - Las tablas mantienen accesibles sus datos y acciones importantes.
-- **Estado:** [X] Completada
+- **Estado:** [ ] Pendiente
 
 ---
 
@@ -825,7 +825,7 @@
   - No se producen regresiones en tablas pequeñas ni en dispositivos móviles.
 - **Estado:** [X] Completada
 
-### [X] [TAREA-13] Crear un sistema de planificación y asignación de carga académica por área
+### [ ] [TAREA-13] Crear un sistema de planificación y asignación de carga académica por área
 - **Origen del Hallazgo:** Auditoría de la Fase 1, octubre de 2026 (AUDITORIA_FASE1_PLANIFICACION_EXPANSION.md - Sección B & D)
 - **Severidad/Clasificación:** Medio
 - **Archivos Involucrados:** `backend/academic-service/Code.gs`, `js/teacher.js`, `teacher-dashboard.html`
@@ -843,9 +843,9 @@
   - Los cambios no modifican retroactivamente las calificaciones ni las entregas históricas.
   - Los docentes visualizan únicamente sus asignaciones autorizadas.
   - La Dirección puede identificar vacantes, conflictos y carga académica por área.
-- **Estado:** [X] Completada
+- **Estado:** [ ] Pendiente
 
-### [X] [TAREA-14] Mejorar la experiencia de usuario de docentes y estudiantes según el flujo académico
+### [ ] [TAREA-14] Mejorar la experiencia de usuario de docentes y estudiantes según el flujo académico
 - **Origen del Hallazgo:** Auditoría de la Fase 1, octubre de 2026 (AUDITORIA_FASE1_PLANIFICACION_EXPANSION.md - Sección C & J)
 - **Severidad/Clasificación:** Medio
 - **Archivos Involucrados:** `student-dashboard.html`, `teacher-dashboard.html`, `js/student.js`, `js/teacher.js`, `js/ui-common.js`
@@ -864,9 +864,9 @@
   - Los errores de sincronización se explican y permiten recuperar la operación cuando sea posible.
   - Las nuevas herramientas funcionan en pantallas móviles sin perder funciones esenciales.
   - Las mejoras no eliminan capacidades existentes de los paneles.
-- **Estado:** [X] Completada
+- **Estado:** [ ] Pendiente
 
-### [X] [TAREA-15] Completar la supervisión institucional de servicios, errores y recuperación
+### [ ] [TAREA-15] Completar la supervisión institucional de servicios, errores y recuperación
 - **Origen del Hallazgo:** Auditoría de la Fase 1, octubre de 2026 (AUDITORIA_FASE1_PLANIFICACION_EXPANSION.md - Sección D & I)
 - **Severidad/Clasificación:** Medio
 - **Archivos Involucrados:** `backend/user-service/Code.gs`, `backend/academic-service/Code.gs`, `backend/accounting-service/Code.gs`, `js/ui-common.js`
@@ -883,9 +883,9 @@
   - Las alertas permiten distinguir fallos críticos de errores recuperables.
   - La supervisión no expone información sensible.
   - Los procedimientos de recuperación pueden probarse sin modificar datos reales de producción.
-- **Estado:** [X] Completada
+- **Estado:** [ ] Pendiente
 
-### [X] [TAREA-16] Establecer pruebas de carga, concurrencia e integridad para los procesos críticos
+### [ ] [TAREA-16] Establecer pruebas de carga, concurrencia e integridad para los procesos críticos
 - **Origen del Hallazgo:** Auditoría de la Fase 1, octubre de 2026 (AUDITORIA_FASE1_PLANIFICACION_EXPANSION.md - Sección J)
 - **Severidad/Clasificación:** Medio
 - **Archivos Involucrados:** `backend/accounting-service/Code.gs`, `backend/academic-service/Code.gs`, `backend/user-service/Code.gs`
@@ -902,9 +902,9 @@
   - Las mediciones permiten identificar los cuellos de botella.
   - Los resultados de las pruebas pueden reproducirse.
   - Las pruebas no alteran datos institucionales reales.
-- **Estado:** [X] Completada
+- **Estado:** [ ] Pendiente
 
-### [X] [FASE2-T09] Convertir las métricas operativas en supervisión real de cuotas, errores y capacidad
+### [ ] [FASE2-T09] Convertir las métricas operativas en supervisión real de cuotas, errores y capacidad
 - **Origen del Hallazgo:** Auditoría de la Fase 2, octubre de 2026 (AUDITORIA_FASE2_ARQUITECTURA_INTEROPERABILIDAD.md - Área 7)
 - **Severidad/Clasificación:** Medio
 - **Archivos Involucrados:** `js/api.js`, `backend/user-service/Code.gs`
@@ -929,9 +929,9 @@
   6. Las alertas se generan cuando las condiciones configuradas se cumplen.
   7. El sistema no informa que un servicio está saludable basándose únicamente en llamadas registradas por el cliente.
   8. Las pruebas de supervisión permiten verificar que los registros se generen ante condiciones controladas.
-- **Estado:** [X] Completada
+- **Estado:** [ ] Pendiente
 
-### [X] [FASE2-T10] Implementar paginación eficiente y consultas escalables de datos
+### [ ] [FASE2-T10] Implementar paginación eficiente y consultas escalables de datos
 - **Origen del Hallazgo:** Auditoría de la Fase 2, octubre de 2026 (AUDITORIA_FASE2_ARQUITECTURA_INTEROPERABILIDAD.md - Área 7)
 - **Severidad/Clasificación:** Medio
 - **Archivos Involucrados:** `js/ui-common.js`, `backend/academic-service/Code.gs`, `backend/accounting-service/Code.gs`
@@ -956,9 +956,9 @@
   6. Se miden los tiempos de respuesta y el volumen transferido con diferentes tamaños de conjunto.
   7. Las pruebas incluyen conjuntos pequeños, grandes, vacíos y modificados durante la navegación.
   8. La solución conserva el comportamiento correcto de las tablas existentes.
-- **Estado:** [X] Completada
+- **Estado:** [ ] Pendiente
 
-### [X] [FASE2-T11] Definir y comprobar la estrategia de respaldo, restauración y reconciliación de datos
+### [ ] [FASE2-T11] Definir y comprobar la estrategia de respaldo, restauración y reconciliación de datos
 - **Origen del Hallazgo:** Auditoría de la Fase 2, octubre de 2026 (AUDITORIA_FASE2_ARQUITECTURA_INTEROPERABILIDAD.md - Área 7)
 - **Severidad/Clasificación:** Medio
 - **Archivos Involucrados:** `backend/academic-service/Code.gs`, `js/teacher.js`
@@ -983,9 +983,9 @@
   6. Los procesos automáticos no repiten efectos secundarios únicamente por restaurar datos.
   7. Se documentan los tiempos medidos de respaldo y recuperación.
   8. Existe un procedimiento claro para detectar y resolver inconsistencias posteriores a la restauración.
-- **Estado:** [X] Completada
+- **Estado:** [ ] Pendiente
 
-### [X] [FASE2-T12] Establecer criterios medibles para evolucionar hacia almacenamiento transaccional
+### [ ] [FASE2-T12] Establecer criterios medibles para evolucionar hacia almacenamiento transaccional
 - **Origen del Hallazgo:** Auditoría de la Fase 2, octubre de 2026 (AUDITORIA_FASE2_ARQUITECTURA_INTEROPERABILIDAD.md - Área 7)
 - **Severidad/Clasificación:** Medio
 - **Archivos Involucrados:** `backend/accounting-service/Code.gs`, `backend/academic-service/Code.gs`
@@ -1010,9 +1010,9 @@
   5. El plan de migración contempla identificadores, relaciones, historial, permisos, validación y reversión.
   6. La estrategia evita escrituras contradictorias en fuentes paralelas.
   7. No se ejecuta una migración únicamente por superar un número arbitrario de filas.
-- **Estado:** [X] Completada
+- **Estado:** [ ] Pendiente
 
-### [X] [FASE2-T13] Documentar el mapa de dependencias y las responsabilidades de los servicios
+### [ ] [FASE2-T13] Documentar el mapa de dependencias y las responsabilidades de los servicios
 - **Origen del Hallazgo:** Auditoría de la Fase 2, octubre de 2026 (AUDITORIA_FASE2_ARQUITECTURA_INTEROPERABILIDAD.md - Área 1)
 - **Severidad/Clasificación:** Medio
 - **Archivos Involucrados:** `MapaDependencias.md`, `js/config.js`
@@ -1033,9 +1033,9 @@
   4. Los ciclos y las responsabilidades duplicadas están identificados y tienen una decisión documentada.
   5. Cada cambio crítico puede relacionarse con los componentes y pruebas que podrían verse afectados.
   6. El mapa coincide con la implementación inspeccionada y no se limita a reproducir la arquitectura prevista.
-- **Estado:** [X] Completada
+- **Estado:** [ ] Pendiente
 
-### [X] [FASE2-T14] Incorporar pruebas de integración y regresión para las operaciones interdepartamentales
+### [ ] [FASE2-T14] Incorporar pruebas de integración y regresión para las operaciones interdepartamentales
 - **Origen del Hallazgo:** Auditoría de la Fase 2, octubre de 2026 (AUDITORIA_FASE2_ARQUITECTURA_INTEROPERABILIDAD.md - Área 1-7)
 - **Severidad/Clasificación:** Medio
 - **Archivos Involucrados:** `backend/accounting-service/Code.gs`, `backend/user-service/Code.gs`
@@ -1060,9 +1060,9 @@
   6. Los resultados identifican el caso ejecutado, el resultado esperado y el observado.
   7. Un cambio incompatible provoca el fallo de las pruebas correspondientes.
   8. La cobertura informada distingue pruebas existentes, pruebas ejecutadas y criterios realmente satisfechos.
-- **Estado:** [X] Completada
+- **Estado:** [ ] Pendiente
 
-### [X] [FASE2-T15] Establecer procedimientos de reconciliación para datos y operaciones inconsistentes
+### [ ] [FASE2-T15] Establecer procedimientos de reconciliación para datos y operaciones inconsistentes
 - **Origen del Hallazgo:** Auditoría de la Fase 2, octubre de 2026 (AUDITORIA_FASE2_ARQUITECTURA_INTEROPERABILIDAD.md - Área 5)
 - **Severidad/Clasificación:** Medio
 - **Archivos Involucrados:** `backend/accounting-service/Code.gs`, `backend/academic-service/Code.gs`
@@ -1085,9 +1085,9 @@
   5. Los casos que no puedan resolverse automáticamente quedan pendientes de revisión y no se marcan como corregidos.
   6. Las correcciones mantienen las relaciones e historiales que deban preservarse.
   7. Cada modificación resultante puede rastrearse hasta la incidencia que la originó.
-- **Estado:** [X] Completada
+- **Estado:** [ ] Pendiente
 
-### [X] [FASE2-T16] Optimizar la recuperación de errores y el comportamiento de los servicios degradados
+### [ ] [FASE2-T16] Optimizar la recuperación de errores y el comportamiento de los servicios degradados
 - **Origen del Hallazgo:** Auditoría de la Fase 2, octubre de 2026 (AUDITORIA_FASE2_ARQUITECTURA_INTEROPERABILIDAD.md - Área 2)
 - **Severidad/Clasificación:** Medio
 - **Archivos Involucrados:** `js/api.js`, `js/ui-common.js`
@@ -1111,9 +1111,9 @@
   5. Los reintentos respetan las reglas de idempotencia.
   6. La recuperación de una solicitud no sobrescribe cambios válidos realizados por otra operación.
   7. Los mensajes de error indican qué acción puede realizar el usuario sin afirmar resultados no confirmados.
-- **Estado:** [X] Completada
+- **Estado:** [ ] Pendiente
 
-### [X] [T-UX-04] Indicador e Badge de Frescura de Datos Sincronizados con Trigger Manual
+### [ ] [T-UX-04] Indicador e Badge de Frescura de Datos Sincronizados con Trigger Manual
 - **Origen del Hallazgo:** Auditoría de la Fase 3, octubre de 2026 (AUDITORIA_FASE3_EXPERIENCIA_USUARIO_NAVEGACION.md - Área 9)
 - **Severidad/Clasificación:** Medio
 - **Archivos Involucrados:** `js/ui-common.js`
@@ -1122,9 +1122,9 @@
   1. `window.renderDataFreshnessBadge(containerId, lastSyncTimestamp)` muestra frescura de datos.
 - **Criterios de Aceptación:**
   - Badge visible notificando tiempo transcurrido desde la última sincronización.
-- **Estado:** [X] Completada
+- **Estado:** [ ] Pendiente
 
-### [X] [T-UX-07] Indicador Discreto de Estado de Conexión En Línea / Offline
+### [ ] [T-UX-07] Indicador Discreto de Estado de Conexión En Línea / Offline
 - **Origen del Hallazgo:** Auditoría de la Fase 3, octubre de 2026 (AUDITORIA_FASE3_EXPERIENCIA_USUARIO_NAVEGACION.md - Área 10)
 - **Severidad/Clasificación:** Medio
 - **Archivos Involucrados:** `js/ui-common.js`
@@ -1133,9 +1133,9 @@
   1. Indicador discreto de estado en línea `#online-status-badge`.
 - **Criterios de Aceptación:**
   - Badge discreto en esquina inferior izquierda sin tapar contenido principal.
-- **Estado:** [X] Completada
+- **Estado:** [ ] Pendiente
 
-### [X] [T-UX-08] Botón y Flujo Discreto de Reporte de Problemas Técnicos
+### [ ] [T-UX-08] Botón y Flujo Discreto de Reporte de Problemas Técnicos
 - **Origen del Hallazgo:** Auditoría de la Fase 3, octubre de 2026 (AUDITORIA_FASE3_EXPERIENCIA_USUARIO_NAVEGACION.md - Área 10)
 - **Severidad/Clasificación:** Medio
 - **Archivos Involucrados:** `js/ui-common.js`, `backend/user-service/Code.gs`
@@ -1144,9 +1144,9 @@
   1. Botón flotante discreto e interactivo para reporte de problemas.
 - **Criterios de Aceptación:**
   - Formulario discreto con validación y confirmación al usuario.
-- **Estado:** [X] Completada
+- **Estado:** [ ] Pendiente
 
-### [X] [T-UX-21] Completar el indicador de frescura de datos y los estados de sincronización
+### [ ] [T-UX-21] Completar el indicador de frescura de datos y los estados de sincronización
 - **Origen del Hallazgo:** Auditoría de la Fase 3, octubre de 2026 (AUDITORIA_FASE3_EXPERIENCIA_USUARIO_NAVEGACION.md - Área 9)
 - **Severidad/Clasificación:** Medio
 - **Archivos Involucrados:** `js/ui-common.js`
@@ -1159,9 +1159,9 @@
 - **Criterios de Aceptación:**
   - La fecha y hora mostradas corresponden a una actualización efectiva.
   - Una actualización fallida no renueva la marca de tiempo.
-- **Estado:** [X] Completada
+- **Estado:** [ ] Pendiente
 
-### [X] [T-UX-22] Corregir el significado y el comportamiento del indicador de estado en línea
+### [ ] [T-UX-22] Corregir el significado y el comportamiento del indicador de estado en línea
 - **Origen del Hallazgo:** Auditoría de la Fase 3, octubre de 2026 (AUDITORIA_FASE3_EXPERIENCIA_USUARIO_NAVEGACION.md - Área 18)
 - **Severidad/Clasificación:** Medio
 - **Archivos Involucrados:** `js/ui-common.js`
@@ -1173,9 +1173,9 @@
 - **Criterios de Aceptación:**
   - Los estados representan hechos comprobables.
   - Se prueba la pérdida y recuperación de conexión.
-- **Estado:** [X] Completada
+- **Estado:** [ ] Pendiente
 
-### [X] [T-UX-23] Completar el flujo de reporte de problemas y soporte
+### [ ] [T-UX-23] Completar el flujo de reporte de problemas y soporte
 - **Origen del Hallazgo:** Auditoría de la Fase 3, octubre de 2026 (AUDITORIA_FASE3_EXPERIENCIA_USUARIO_NAVEGACION.md - Área 19)
 - **Severidad/Clasificación:** Medio
 - **Archivos Involucrados:** `js/ui-common.js`, `backend/user-service/Code.gs`
@@ -1189,9 +1189,9 @@
   - El acceso se encuentra disponible en los contextos autorizados.
   - La descripción se valida antes del envío.
   - Los reportes válidos se registran en el destino correspondiente.
-- **Estado:** [X] Completada
+- **Estado:** [ ] Pendiente
 
-### [X] [T-UX-24] Normalizar las acciones, los estados y la jerarquía visual institucional
+### [ ] [T-UX-24] Normalizar las acciones, los estados y la jerarquía visual institucional
 - **Origen del Hallazgo:** Auditoría de la Fase 3, octubre de 2026 (AUDITORIA_FASE3_EXPERIENCIA_USUARIO_NAVEGACION.md - Área 17)
 - **Severidad/Clasificación:** Medio
 - **Archivos Involucrados:** `css/style.css`, `js/ui-common.js`
@@ -1203,9 +1203,9 @@
 - **Criterios de Aceptación:**
   - Los botones equivalentes mantienen una jerarquía y apariencia coherentes.
   - Los estados equivalentes se representan de manera consistente.
-- **Estado:** [X] Completada
+- **Estado:** [ ] Pendiente
 
-### [X] [T-UX-25] Incorporar preferencias de usuario y personalización controlada de vistas
+### [ ] [T-UX-25] Incorporar preferencias de usuario y personalización controlada de vistas
 - **Origen del Hallazgo:** Auditoría de la Fase 3, octubre de 2026 (AUDITORIA_FASE3_EXPERIENCIA_USUARIO_NAVEGACION.md - Área 20)
 - **Severidad/Clasificación:** Medio
 - **Archivos Involucrados:** `js/ui-common.js`, `backend/user-service/Code.gs`
@@ -1217,9 +1217,9 @@
 - **Criterios de Aceptación:**
   - Las preferencias se guardan en el ámbito anunciado.
   - Las vistas personalizadas se restauran correctamente.
-- **Estado:** [X] Completada
+- **Estado:** [ ] Pendiente
 
-### [X] [T-UX-27] Optimizar el rendimiento percibido y la respuesta de las interfaces
+### [ ] [T-UX-27] Optimizar el rendimiento percibido y la respuesta de las interfaces
 - **Origen del Hallazgo:** Auditoría de la Fase 3, octubre de 2026 (AUDITORIA_FASE3_EXPERIENCIA_USUARIO_NAVEGACION.md - Área 27)
 - **Severidad/Clasificación:** Medio
 - **Archivos Involucrados:** `js/ui-common.js`, `js/api.js`
@@ -1230,13 +1230,13 @@
   3. Evitar solicitudes repetidas que no aporten información.
 - **Criterios de Aceptación:**
   - Las acciones frecuentes responden con fluidez bajo condiciones de uso representativas.
-- **Estado:** [X] Completada
+- **Estado:** [ ] Pendiente
 
 ---
 
 ## GRUPO PRIORIDAD P3 (BAJO)
 
-### [X] [TAREA-17] Incorporar analítica académica por área, asignatura y programa
+### [ ] [TAREA-17] Incorporar analítica académica por área, asignatura y programa
 - **Origen del Hallazgo:** Auditoría de la Fase 1, octubre de 2026 (AUDITORIA_FASE1_PLANIFICACION_EXPANSION.md - Sección B & K)
 - **Severidad/Clasificación:** Bajo
 - **Archivos Involucrados:** `backend/academic-service/Code.gs`, `js/teacher.js`, `teacher-dashboard.html`
@@ -1252,9 +1252,9 @@
   - Los resultados pendientes no distorsionan los promedios.
   - Los usuarios solo pueden consultar la información que les corresponde.
   - Los informes identifican los criterios usados para cada comparación.
-- **Estado:** [X] Completada
+- **Estado:** [ ] Pendiente
 
-### [X] [TAREA-18] Ampliar la reutilización de recursos educativos y actividades entre áreas
+### [ ] [TAREA-18] Ampliar la reutilización de recursos educativos y actividades entre áreas
 - **Origen del Hallazgo:** Auditoría de la Fase 1, octubre de 2026 (AUDITORIA_FASE1_PLANIFICACION_EXPANSION.md - Sección B & K)
 - **Severidad/Clasificación:** Bajo
 - **Archivos Involucrados:** `backend/academic-service/Code.gs`, `js/teacher.js`, `teacher-dashboard.html`
@@ -1269,9 +1269,9 @@
   - Las modificaciones no alteran actividades históricas de forma silenciosa.
   - Los docentes pueden reutilizar recursos autorizados sin duplicar archivos innecesariamente.
   - Los proyectos interdisciplinarios pueden relacionar recursos de varias áreas.
-- **Estado:** [X] Completada
+- **Estado:** [ ] Pendiente
 
-### [X] [TAREA-19] Implementar configuración y migración curricular sin pérdida de datos
+### [ ] [TAREA-19] Implementar configuración y migración curricular sin pérdida de datos
 - **Origen del Hallazgo:** Auditoría de la Fase 1, octubre de 2026 (AUDITORIA_FASE1_PLANIFICACION_EXPANSION.md - Sección B & K)
 - **Severidad/Clasificación:** Bajo
 - **Archivos Involucrados:** `backend/academic-service/Code.gs`, `js/teacher.js`
@@ -1288,9 +1288,9 @@
   - Las migraciones detectan registros duplicados o huérfanos.
   - Los resultados pueden compararse antes y después de la migración.
   - La reversión recupera el estado anterior cuando sea necesaria.
-- **Estado:** [X] Completada
+- **Estado:** [ ] Pendiente
 
-### [X] [TAREA-20] Formalizar la incorporación de nuevas áreas y servicios curriculares
+### [ ] [TAREA-20] Formalizar la incorporación de nuevas áreas y servicios curriculares
 - **Origen del Hallazgo:** Auditoría de la Fase 1, octubre de 2026 (AUDITORIA_FASE1_PLANIFICACION_EXPANSION.md - Sección B & K)
 - **Severidad/Clasificación:** Bajo
 - **Archivos Involucrados:** `backend/academic-service/Code.gs`, `js/config.js`
@@ -1306,9 +1306,9 @@
   - La activación de una nueva área no altera los servicios existentes.
   - Las pruebas del servicio se ejecutan antes de habilitarlo para usuarios.
   - Las áreas desactivadas conservan sus registros históricos.
-- **Estado:** [X] Completada
+- **Estado:** [ ] Pendiente
 
-### [X] [FASE2-T17] Incorporar una política de versionado y evolución de configuraciones compartidas
+### [ ] [FASE2-T17] Incorporar una política de versionado y evolución de configuraciones compartidas
 - **Origen del Hallazgo:** Auditoría de la Fase 2, octubre de 2026 (AUDITORIA_FASE2_ARQUITECTURA_INTEROPERABILIDAD.md - Área 3)
 - **Severidad/Clasificación:** Bajo
 - **Archivos Involucrados:** `js/config.js`, `backend/user-service/Code.gs`
@@ -1326,9 +1326,9 @@
   3. Los registros históricos siguen siendo interpretables tras una actualización.
   4. Una actualización de configuración puede validarse antes de aplicarse a todos los consumidores.
   5. Existe un procedimiento de reversión para los cambios de configuración que lo requieran.
-- **Estado:** [X] Completada
+- **Estado:** [ ] Pendiente
 
-### [X] [FASE2-T18] Crear un tablero de salud e interoperabilidad institucional
+### [ ] [FASE2-T18] Crear un tablero de salud e interoperabilidad institucional
 - **Origen del Hallazgo:** Auditoría de la Fase 2, octubre de 2026 (AUDITORIA_FASE2_ARQUITECTURA_INTEROPERABILIDAD.md - Área 7)
 - **Severidad/Clasificación:** Bajo
 - **Archivos Involucrados:** `js/ui-common.js`, `js/api.js`
@@ -1349,9 +1349,9 @@
   4. Las incidencias pueden filtrarse y consultarse por personal autorizado.
   5. Los datos mostrados coinciden con las mediciones o registros reales disponibles.
   6. La interfaz no informa disponibilidad completa cuando existen operaciones críticas fallidas o pendientes.
-- **Estado:** [X] Completada
+- **Estado:** [ ] Pendiente
 
-### [X] [FASE2-T19] Optimizar la gestión de caché de datos institucionales
+### [ ] [FASE2-T19] Optimizar la gestión de caché de datos institucionales
 - **Origen del Hallazgo:** Auditoría de la Fase 2, octubre de 2026 (AUDITORIA_FASE2_ARQUITECTURA_INTEROPERABILIDAD.md - Área 1 & 3)
 - **Severidad/Clasificación:** Bajo
 - **Archivos Involucrados:** `backend/user-service/Code.gs`, `js/config.js`
@@ -1372,9 +1372,9 @@
   4. Los datos obsoletos no se presentan como confirmados cuando la función exige información actual.
   5. Las pruebas comparan el comportamiento con caché y sin caché.
   6. Las modificaciones conservan o mejoran el rendimiento sin debilitar la seguridad ni la integridad.
-- **Estado:** [X] Completada
+- **Estado:** [ ] Pendiente
 
-### [X] [T-UX-26] Incorporar una vista de actividad reciente contextual
+### [ ] [T-UX-26] Incorporar una vista de actividad reciente contextual
 - **Origen del Hallazgo:** Auditoría de la Fase 3, octubre de 2026 (AUDITORIA_FASE3_EXPERIENCIA_USUARIO_NAVEGACION.md - Área 13)
 - **Severidad/Clasificación:** Bajo
 - **Archivos Involucrados:** `js/ui-common.js`
@@ -1387,4 +1387,4 @@
 - **Criterios de Aceptación:**
   - Los elementos mostrados corresponden a actividad real.
   - El orden temporal es correcto.
-- **Estado:** [X] Completada
+- **Estado:** [ ] Pendiente
