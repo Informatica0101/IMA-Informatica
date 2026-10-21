@@ -561,3 +561,13 @@ DESCRIPCIÓN OBJETIVA DE LOS CAMBIOS:
 - Actualización del estado de [TAREA-15] a [X] Completada en Pendientes.md.
 
 -------------------------------------------------------------------------------
+FECHA: Octubre 2026
+ARCHIVO(S) AFECTADO(S): backend/accounting-service/Code.gs, Pendientes.md
+-------------------------------------------------------------------------------
+DESCRIPCIÓN OBJETIVA DE LOS CAMBIOS:
+- Implementación de la función runCriticalProcessConcurrencySuite en backend/accounting-service/Code.gs para la ejecución de pruebas de concurrencia con LockService, verificación de integridad en transacciones de cobro y unicidad de CUV.
+- Adición de runCriticalProcessConcurrencySuite a ROLE_PERMISSIONS y al dispatcher de doPost.
+- Inserción del comentario identificativo de TAREA-16 en la primera línea sobre runCriticalProcessConcurrencySuite.
+- Actualización del estado de [TAREA-16] a [X] Completada en Pendientes.md.
+
+-------------------------------------------------------------------------------

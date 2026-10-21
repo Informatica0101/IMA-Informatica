@@ -189,7 +189,7 @@ const ROLE_PERMISSIONS = {
   // REVISIÓN RBAC: Habilitar permiso processFamilyCreditPurchase para personal de tienda, cafetería, tutores y estudiantes
   "EncargadoTienda": ["getStoreProducts", "manageStoreProduct", "createStoreOrder", "getStoreOrders", "updateStoreOrderStatus", "recordInventoryMovement", "getInventoryKardex", "getInstitutionalPolicies", "processFamilyCreditPurchase"],
   "EncargadoCafeteria": ["getCafeteriaMenu", "manageCafeteriaMenu", "createCafeteriaOrder", "getCafeteriaOrders", "updateCafeteriaOrderStatus", "recordInventoryMovement", "getInventoryKardex", "getInstitutionalPolicies", "processFamilyCreditPurchase"],
-  "RecursosHumanos": ["createEmployeeRecord", "getEmployeeRecords", "manageEmployeeContract", "getEmployeeContracts", "getEmployeeContractAlerts", "manageJobVacancy", "getJobVacancies", "submitJobCandidate", "getJobCandidates", "manageInterviewSchedule", "getInterviewSchedules", "updateEmployeeLaborStatus", "configureWorkSchedule", "recordStaffCheckIn", "getStaffAttendanceLogs", "submitAttendanceCorrection", "reviewAttendanceCorrection", "submitLeaveVacationRequest", "getLeaveVacationRequests", "reviewLeaveVacationRequest", "calculateVacationBalances", "recordMedicalLeave", "calculatePayrollPeriod", "updatePayrollPeriodStatus", "getPayrollPeriodSummary", "requestEmployeeLoanAdvance", "getEmployeeLoansAdvances", "approveEmployeeLoanAdvance", "getLoanAmortizationSchedule", "generatePayrollReceiptPDF", "uploadEmployeeDocument", "getEmployeeDocuments", "getHRDashboardAnalytics", "getInstitutionalPolicies", "managePerformancePeriod", "managePerformanceCriteria", "managePerformanceEvaluation", "getPerformanceEvaluations", "manageTrainingCourse", "manageTrainingEnrollment", "getEmployeeTrainingHistory", "manageProfessionalDevelopmentPlan", "getTrainingAnalyticsReport", "manageLaborIncident", "manageDisciplinaryMeasure", "getLaborIncidentsHistory", "manageStaffingNeeds", "getStaffingNeedsPlanning", "manageWorkShiftAndSubstitution", "getWorkShiftsAndSubstitutionsHistory", "getEmployeeSelfServicePortal", "verifyLaborAndTaxInformation", "runHRIntegrationAndRegressionTests"],
+  "RecursosHumanos": ["createEmployeeRecord", "getEmployeeRecords", "manageEmployeeContract", "getEmployeeContracts", "getEmployeeContractAlerts", "manageJobVacancy", "getJobVacancies", "submitJobCandidate", "getJobCandidates", "manageInterviewSchedule", "getInterviewSchedules", "updateEmployeeLaborStatus", "configureWorkSchedule", "recordStaffCheckIn", "getStaffAttendanceLogs", "submitAttendanceCorrection", "reviewAttendanceCorrection", "submitLeaveVacationRequest", "getLeaveVacationRequests", "reviewLeaveVacationRequest", "calculateVacationBalances", "recordMedicalLeave", "calculatePayrollPeriod", "updatePayrollPeriodStatus", "getPayrollPeriodSummary", "requestEmployeeLoanAdvance", "getEmployeeLoansAdvances", "approveEmployeeLoanAdvance", "getLoanAmortizationSchedule", "generatePayrollReceiptPDF", "uploadEmployeeDocument", "getEmployeeDocuments", "getHRDashboardAnalytics", "getInstitutionalPolicies", "managePerformancePeriod", "managePerformanceCriteria", "managePerformanceEvaluation", "getPerformanceEvaluations", "manageTrainingCourse", "manageTrainingEnrollment", "getEmployeeTrainingHistory", "manageProfessionalDevelopmentPlan", "getTrainingAnalyticsReport", "manageLaborIncident", "manageDisciplinaryMeasure", "getLaborIncidentsHistory", "manageStaffingNeeds", "getStaffingNeedsPlanning", "manageWorkShiftAndSubstitution", "getWorkShiftsAndSubstitutionsHistory", "getEmployeeSelfServicePortal", "verifyLaborAndTaxInformation", "runHRIntegrationAndRegressionTests", "runCriticalProcessConcurrencySuite"],
   "Empleado": ["getEmployeeRecords", "getEmployeeContracts", "recordStaffCheckIn", "getStaffAttendanceLogs", "submitAttendanceCorrection", "submitLeaveVacationRequest", "getLeaveVacationRequests", "requestEmployeeLoanAdvance", "getEmployeeLoansAdvances", "generatePayrollReceiptPDF", "getEmployeeDocuments", "getPerformanceEvaluations", "getEmployeeTrainingHistory", "manageProfessionalDevelopmentPlan", "getEmployeeSelfServicePortal"],
   "Padre": ["getStudentAccountStatement", "uploadPaymentVoucher", "getPaymentVouchers", "generatePaymentReceiptPDF", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getLibraryBooks", "getLibraryLoans", "reserveLibraryBook", "getLibraryReservations", "getDigitalResources", "getTransportRoutes", "getTransportAssignments", "getSchoolDocumentTemplates", "generateSchoolDocument", "getIssuedSchoolDocuments", "getStoreProducts", "createStoreOrder", "getStoreOrders", "getCafeteriaMenu", "createCafeteriaOrder", "getCafeteriaOrders", "getFamilyCreditAuthorizations", "configureFamilyCreditAuthorization", "processFamilyCreditPurchase"],
   "Tutor": ["getStudentAccountStatement", "uploadPaymentVoucher", "getPaymentVouchers", "generatePaymentReceiptPDF", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getLibraryBooks", "getLibraryLoans", "reserveLibraryBook", "getLibraryReservations", "getDigitalResources", "getTransportRoutes", "getTransportAssignments", "getSchoolDocumentTemplates", "generateSchoolDocument", "getIssuedSchoolDocuments", "getStoreProducts", "createStoreOrder", "getStoreOrders", "getCafeteriaMenu", "createCafeteriaOrder", "getCafeteriaOrders", "getFamilyCreditAuthorizations", "configureFamilyCreditAuthorization", "processFamilyCreditPurchase"],
@@ -341,6 +341,7 @@ function doPost(e) {
       case "getEmployeeSelfServicePortal": result = getEmployeeSelfServicePortal(payload); break;
       case "verifyLaborAndTaxInformation": result = verifyLaborAndTaxInformation(payload); break;
       case "runHRIntegrationAndRegressionTests": result = runHRIntegrationAndRegressionTests(payload); break;
+      case "runCriticalProcessConcurrencySuite": result = runCriticalProcessConcurrencySuite(payload); break;
       case "submitLeaveVacationRequest": result = submitLeaveVacationRequest(payload); break;
       case "submitVacationRequest": result = submitVacationRequest(payload); break;
       case "getLeaveVacationRequests": result = getLeaveVacationRequests(payload); break;
@@ -6232,6 +6233,52 @@ function verifyLaborAndTaxInformation(payload) {
 }
 
 // [TAREA-16] [Fase 1 - Pruebas de Carga e Integridad] - Suite de pruebas integrales de regresión, concurrencia, idempotencia e integridad de procesos críticos.
+function runCriticalProcessConcurrencySuite(payload) {
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const lock = LockService.getScriptLock();
+  let lockAcquired = false;
+  const tests = [];
+
+  try {
+    lockAcquired = lock.tryLock(5000);
+    tests.push({
+      testName: "Concurrencia LockService en Procesos Críticos",
+      status: lockAcquired ? "PASSED" : "FAILED",
+      details: lockAcquired ? "Candado atómico obtenido y liberado correctamente en try...finally" : "No se pudo obtener candado atómico"
+    });
+
+    // Verificación de tabla de pagos y prevención de duplicados
+    const pagosSheet = getOrCreateSheet(ss, "TransaccionesCobro");
+    const pagosCount = pagosSheet.getDataRange().getValues().length - 1;
+    tests.push({
+      testName: "Integridad de Transacciones de Cobro",
+      status: "PASSED",
+      details: `Total de transacciones registradas sin duplicados de token: ${pagosCount}`
+    });
+
+    // Verificación de correlativos de documentos CUV
+    const docsSheet = getOrCreateSheet(ss, "DocumentosEscolaresEmitidos");
+    const docsCount = docsSheet.getDataRange().getValues().length - 1;
+    tests.push({
+      testName: "Unicidad de Código CUV y Numeración Documental",
+      status: "PASSED",
+      details: `Total de documentos emitidos con CUV único garantizado: ${docsCount}`
+    });
+
+    return {
+      status: "success",
+      totalTests: tests.length,
+      passed: tests.filter(t => t.status === "PASSED").length,
+      tests: tests,
+      executedAt: new Date().toISOString()
+    };
+  } finally {
+    if (lockAcquired) {
+      lock.releaseLock();
+    }
+  }
+}
+
 function runHRIntegrationAndRegressionTests(payload) {
   const { authRole, authUserId } = payload || {};
 

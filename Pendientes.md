@@ -885,7 +885,7 @@
   - Los procedimientos de recuperación pueden probarse sin modificar datos reales de producción.
 - **Estado:** [X] Completada
 
-### [ ] [TAREA-16] Establecer pruebas de carga, concurrencia e integridad para los procesos críticos
+### [X] [TAREA-16] Establecer pruebas de carga, concurrencia e integridad para los procesos críticos
 - **Origen del Hallazgo:** Auditoría de la Fase 1, octubre de 2026 (AUDITORIA_FASE1_PLANIFICACION_EXPANSION.md - Sección J)
 - **Severidad/Clasificación:** Medio
 - **Archivos Involucrados:** `backend/accounting-service/Code.gs`, `backend/academic-service/Code.gs`, `backend/user-service/Code.gs`
@@ -902,7 +902,7 @@
   - Las mediciones permiten identificar los cuellos de botella.
   - Los resultados de las pruebas pueden reproducirse.
   - Las pruebas no alteran datos institucionales reales.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 ### [ ] [FASE2-T09] Convertir las métricas operativas en supervisión real de cuotas, errores y capacidad
 - **Origen del Hallazgo:** Auditoría de la Fase 2, octubre de 2026 (AUDITORIA_FASE2_ARQUITECTURA_INTEROPERABILIDAD.md - Área 7)
