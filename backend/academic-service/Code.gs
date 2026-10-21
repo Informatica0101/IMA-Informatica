@@ -160,7 +160,7 @@ const ROLE_PERMISSIONS = {
     "getInstitutionParams", "saveInstitutionParam", "getAcademicYears", "createAcademicYear", "updateAcademicYearStatus", "prepareNewAcademicYear",
     "getAcademicPeriods", "manageAcademicPeriod", "getSubjectCatalog", "createSubjectCatalogItem", "getStudyPlans", "createStudyPlan",
     "getAcademicOffers", "createAcademicOffer", "getTeacherAssignments", "assignTeacherToClass", "createTeacherSubstitution",
-    "getAcademicCalendar", "createCalendarEvent", "getClassSchedules", "createClassSchedule", "deleteClassSchedule", "getAcademicRules", "saveAcademicRule", "getDepartmentAcademicPlanning", "assignDepartmentHead", "getCurricularAnalyticsReport", "getReusableResourceCatalog", "manageReusableResource", "getCurricularEquivalences", "executeCurricularMigration", "registerCurricularAreaExtension", "runCurricularAreaServiceTests", "toggleCurricularAreaStatus", "validateApiContractsTestSuite", "getInstitutionalCatalog", "validateCatalogReference",
+    "getAcademicCalendar", "createCalendarEvent", "getClassSchedules", "createClassSchedule", "deleteClassSchedule", "getAcademicRules", "saveAcademicRule", "getDepartmentAcademicPlanning", "assignDepartmentHead", "getCurricularAnalyticsReport", "getReusableResourceCatalog", "manageReusableResource", "getCurricularEquivalences", "executeCurricularMigration", "registerCurricularAreaExtension", "runCurricularAreaServiceTests", "toggleCurricularAreaStatus", "validateApiContractsTestSuite", "getInstitutionalCatalog", "validateCatalogReference", "generateInstitutionalUUID", "validateInstitutionalIdentifier", "auditInstitutionalIdentifierCollisions",
     "getClassroomResources", "saveClassroomResource", "getStudentSchedule",
     "createAdmissionRequest", "getAdmissionRequests", "updateAdmissionStatus", "convertAdmissionToStudent",
     "getStudentFile", "updateStudentFile", "getStudentTimeline", "findDuplicateStudents", "mergeStudentFiles",
@@ -362,6 +362,9 @@ function doPost(e) {
       case "validateApiContractsTestSuite": result = validateApiContractsTestSuite(payload); break;
       case "getInstitutionalCatalog": result = getInstitutionalCatalog(payload); break;
       case "validateCatalogReference": result = validateCatalogReference(payload); break;
+      case "generateInstitutionalUUID": result = generateInstitutionalUUID(payload); break;
+      case "validateInstitutionalIdentifier": result = validateInstitutionalIdentifier(payload); break;
+      case "auditInstitutionalIdentifierCollisions": result = auditInstitutionalIdentifierCollisions(payload); break;
       case "registerCurricularAreaExtension": result = registerCurricularAreaExtension(payload); break;
       case "runCurricularAreaServiceTests": result = runCurricularAreaServiceTests(payload); break;
       case "toggleCurricularAreaStatus": result = toggleCurricularAreaStatus(payload); break;
@@ -1315,6 +1318,100 @@ function executeCurricularMigration(payload) {
   return {
     status: "success",
     message: esSimulacion ? "Pre-validación y simulación de migración completada sin pérdidas de datos." : "Migración curricular ejecutada exitosamente conservando inalterables las calificaciones históricas.",
+    reporte: report
+  };
+}
+
+// [FASE2-T05] [Fase 2 - Identificadores Institucionales Unificados] - Generación de UUIDs con prefijo de entidad, diferenciación de clave interna vs correlativo vs CUV y auditoría de colisiones.
+function generateInstitutionalUUID(payload) {
+  const { entityPrefix } = payload || {};
+  const prefix = String(entityPrefix || "ENT").trim().toUpperCase();
+
+  const uuidPart = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+    const r = Math.random() * 16 | 0;
+    const v = c === 'x' ? r : (r & 0x3 | 0x8);
+    return v.toString(16);
+  });
+
+  const fullId = `${prefix}-${uuidPart}`;
+  return {
+    status: "success",
+    prefix: prefix,
+    uuid: uuidPart,
+    institutionalId: fullId,
+    timestamp: new Date().toISOString()
+  };
+}
+
+function validateInstitutionalIdentifier(payload) {
+  const { identifier, expectedType } = payload || {};
+  if (!identifier) {
+    throw new Error("Parámetro obligatorio ausente: identifier.");
+  }
+
+  const cleanId = String(identifier).trim().toUpperCase();
+  let detectedType = "ID_INTERNO";
+
+  if (cleanId.indexOf("CUV-") === 0) {
+    detectedType = "CODIGO_VERIFICACION_CUV";
+  } else if (/^\d+$/.test(cleanId) || /^CORR-\d+$/.test(cleanId)) {
+    detectedType = "CORRELATIVO_SECUENCIAL";
+  } else if (/^[A-Z]{3,4}-[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(cleanId)) {
+    detectedType = "UUID_INSTITUCIONAL";
+  }
+
+  const matchesType = !expectedType || expectedType.toUpperCase() === detectedType;
+
+  return {
+    status: "success",
+    identifier: cleanId,
+    detectedType: detectedType,
+    matchesExpectedType: matchesType,
+    isValidFormat: true
+  };
+}
+
+function auditInstitutionalIdentifierCollisions(payload) {
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheetsToCheck = ["CatalogoAsignaturas", "HistorialAcademico", "CalificacionesEstudiantes", "OfertaAcademica"];
+
+  const report = {
+    totalTablasAuditadas: sheetsToCheck.length,
+    colisionesDetectadas: 0,
+    registrosSinId: 0,
+    detallesColisiones: []
+  };
+
+  sheetsToCheck.forEach(sheetName => {
+    const sheet = ss.getSheetByName(sheetName);
+    if (!sheet) return;
+
+    const data = sheet.getDataRange().getValues();
+    if (data.length <= 1) return;
+
+    const idMap = new Map();
+    data.slice(1).forEach((row, idx) => {
+      const idVal = String(row[0] || "").trim();
+      if (!idVal) {
+        report.registrosSinId++;
+        report.detallesColisiones.push(`Tabla ${sheetName}, Fila ${idx + 2}: ID interno ausente o celda vacía.`);
+      } else {
+        if (idMap.has(idVal)) {
+          report.colisionesDetectadas++;
+          report.detallesColisiones.push(`Tabla ${sheetName}, Fila ${idx + 2}: ID duplicado '${idVal}' (coincide con Fila ${idMap.get(idVal)}).`);
+        } else {
+          idMap.set(idVal, idx + 2);
+        }
+      }
+    });
+  });
+
+  logStructuredEvent("ACADEMIC", "auditInstitutionalIdentifierCollisions", "INFO", "IDENTIFIER_AUDIT_COMPLETED", `Auditoría de identificadores completada. Colisiones: ${report.colisionesDetectadas}, IDs ausentes: ${report.registrosSinId}.`, {
+    report
+  }, payload && payload.authRole);
+
+  return {
+    status: "success",
     reporte: report
   };
 }

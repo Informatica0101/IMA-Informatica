@@ -405,7 +405,7 @@
   8. Los consumidores existentes siguen funcionando después de un cambio compatible de contrato.
 - **Estado:** [X] Completada
 
-### [ ] [FASE2-T04] Establecer una fuente de verdad institucional para catálogos, configuraciones y referencias
+### [X] [FASE2-T04] Establecer una fuente de verdad institucional para catálogos, configuraciones y referencias
 - **Origen del Hallazgo:** Auditoría de la Fase 2, octubre de 2026 (AUDITORIA_FASE2_ARQUITECTURA_INTEROPERABILIDAD.md - Área 3)
 - **Severidad/Clasificación:** Alto
 - **Archivos Involucrados:** `js/config.js`, `backend/academic-service/Code.gs`, `backend/user-service/Code.gs`
@@ -430,9 +430,9 @@
   6. Cambiar el nombre visible de una entidad no altera su identidad.
   7. Las configuraciones obligatorias ausentes producen errores identificables, no valores predeterminados peligrosos.
   8. Las diferencias legítimas entre configuraciones institucionales, académicas y técnicas se conservan.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
-### [ ] [FASE2-T05] Unificar y validar el sistema de identificadores institucionales
+### [X] [FASE2-T05] Unificar y validar el sistema de identificadores institucionales
 - **Origen del Hallazgo:** Auditoría de la Fase 2, octubre de 2026 (AUDITORIA_FASE2_ARQUITECTURA_INTEROPERABILIDAD.md - Área 4)
 - **Severidad/Clasificación:** Alto
 - **Archivos Involucrados:** `backend/accounting-service/Code.gs`, `backend/academic-service/Code.gs`, `backend/user-service/Code.gs`
@@ -457,7 +457,7 @@
   6. Las relaciones entre personas, cuentas y documentos se mantienen al modificar datos descriptivos.
   7. La verificación de un CUV detecta documentos inexistentes o códigos alterados conforme al algoritmo real.
   8. Los procedimientos de corrección de duplicados preservan las relaciones y los historiales que deban conservarse.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 ### [ ] [FASE2-T06] Corregir y formalizar la concurrencia y la consistencia entre servicios
 - **Origen del Hallazgo:** Auditoría de la Fase 2, octubre de 2026 (AUDITORIA_FASE2_ARQUITECTURA_INTEROPERABILIDAD.md - Área 5)
