@@ -477,6 +477,30 @@ window.isContentAuthorized = function(contentUnit, contentSubject, contentTopic,
     return true;
 };
 
+// [FASE2-T04] [Fase 2 - Fuente de Verdad Institucional de Catálogos] - Sincronización del cliente con el catálogo centralizado de la institución.
+window.fetchInstitutionalCatalog = function(catalogType) {
+    if (typeof fetchApi !== 'function') {
+        console.warn("[CATALOG-SYNC] fetchApi no disponible para consulta de catálogos.");
+        return Promise.resolve({ status: "success", data: window.CURRICULAR_AREAS_CATALOG });
+    }
+    return fetchApi('ACADEMIC', 'getInstitutionalCatalog', { catalogType: catalogType || 'ALL_INSTITUTIONAL_CATALOGS' })
+        .then(function(res) {
+            if (res && res.status === 'success' && res.data) {
+                if (Array.isArray(res.data.areasCurriculares)) {
+                    res.data.areasCurriculares.forEach(function(area) {
+                        window.registerNewCurricularAreaServiceConfig(area);
+                    });
+                }
+                return res;
+            }
+            return { status: "success", data: window.CURRICULAR_AREAS_CATALOG };
+        })
+        .catch(function(e) {
+            console.error("[CATALOG-SYNC] Error en sincronización de catálogos:", e);
+            return { status: "success", data: window.CURRICULAR_AREAS_CATALOG };
+        });
+};
+
 window.validateQuestion = function(q) {
     var normalized = window.normalizeQuestion(q);
     var required = ['Asignatura', 'Nivel', 'Pregunta', 'RespuestaCorrecta'];

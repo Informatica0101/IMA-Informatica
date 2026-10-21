@@ -160,7 +160,7 @@ const ROLE_PERMISSIONS = {
     "getInstitutionParams", "saveInstitutionParam", "getAcademicYears", "createAcademicYear", "updateAcademicYearStatus", "prepareNewAcademicYear",
     "getAcademicPeriods", "manageAcademicPeriod", "getSubjectCatalog", "createSubjectCatalogItem", "getStudyPlans", "createStudyPlan",
     "getAcademicOffers", "createAcademicOffer", "getTeacherAssignments", "assignTeacherToClass", "createTeacherSubstitution",
-    "getAcademicCalendar", "createCalendarEvent", "getClassSchedules", "createClassSchedule", "deleteClassSchedule", "getAcademicRules", "saveAcademicRule", "getDepartmentAcademicPlanning", "assignDepartmentHead", "getCurricularAnalyticsReport", "getReusableResourceCatalog", "manageReusableResource", "getCurricularEquivalences", "executeCurricularMigration", "registerCurricularAreaExtension", "runCurricularAreaServiceTests", "toggleCurricularAreaStatus", "validateApiContractsTestSuite",
+    "getAcademicCalendar", "createCalendarEvent", "getClassSchedules", "createClassSchedule", "deleteClassSchedule", "getAcademicRules", "saveAcademicRule", "getDepartmentAcademicPlanning", "assignDepartmentHead", "getCurricularAnalyticsReport", "getReusableResourceCatalog", "manageReusableResource", "getCurricularEquivalences", "executeCurricularMigration", "registerCurricularAreaExtension", "runCurricularAreaServiceTests", "toggleCurricularAreaStatus", "validateApiContractsTestSuite", "getInstitutionalCatalog", "validateCatalogReference",
     "getClassroomResources", "saveClassroomResource", "getStudentSchedule",
     "createAdmissionRequest", "getAdmissionRequests", "updateAdmissionStatus", "convertAdmissionToStudent",
     "getStudentFile", "updateStudentFile", "getStudentTimeline", "findDuplicateStudents", "mergeStudentFiles",
@@ -360,6 +360,8 @@ function doPost(e) {
       case "getCurricularEquivalences": result = getCurricularEquivalences(payload); break;
       case "executeCurricularMigration": result = executeCurricularMigration(payload); break;
       case "validateApiContractsTestSuite": result = validateApiContractsTestSuite(payload); break;
+      case "getInstitutionalCatalog": result = getInstitutionalCatalog(payload); break;
+      case "validateCatalogReference": result = validateCatalogReference(payload); break;
       case "registerCurricularAreaExtension": result = registerCurricularAreaExtension(payload); break;
       case "runCurricularAreaServiceTests": result = runCurricularAreaServiceTests(payload); break;
       case "toggleCurricularAreaStatus": result = toggleCurricularAreaStatus(payload); break;
@@ -1314,6 +1316,97 @@ function executeCurricularMigration(payload) {
     status: "success",
     message: esSimulacion ? "Pre-validación y simulación de migración completada sin pérdidas de datos." : "Migración curricular ejecutada exitosamente conservando inalterables las calificaciones históricas.",
     reporte: report
+  };
+}
+
+// [FASE2-T04] [Fase 2 - Fuente de Verdad Institucional de Catálogos] - Punto único de verdad para catálogos, configuraciones y referencias institucionales con validación en servidor.
+function getInstitutionalCatalog(payload) {
+  const { catalogType } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+
+  if (catalogType === "CURRICULAR_AREAS") {
+    const sheet = getOrCreateSheet(ss, "AreasCurricularesExtensiones");
+    const rows = sheet.getDataRange().getValues().slice(1);
+    const areas = rows.map(r => ({
+      areaId: r[0],
+      name: r[1],
+      code: r[2],
+      serviceKey: r[3],
+      estado: r[7] || "Activo"
+    }));
+    return { status: "success", catalogType: "CURRICULAR_AREAS", data: areas };
+  }
+
+  if (catalogType === "SUBJECTS") {
+    const sheet = getOrCreateSheet(ss, "CatalogoAsignaturas");
+    const rows = sheet.getDataRange().getValues().slice(1);
+    const subjects = rows.map(r => ({
+      asignaturaId: r[0],
+      nombreOficial: r[1],
+      codigo: r[2],
+      areaAcademica: r[3],
+      estado: r[4] || "Activo"
+    }));
+    return { status: "success", catalogType: "SUBJECTS", data: subjects };
+  }
+
+  const sheetCat = getOrCreateSheet(ss, "CatalogoAsignaturas");
+  const subjRows = sheetCat.getDataRange().getValues().slice(1);
+  const subjectsList = subjRows.map(r => ({
+    asignaturaId: r[0],
+    nombreOficial: r[1],
+    codigo: r[2],
+    areaAcademica: r[3],
+    estado: r[4] || "Activo"
+  }));
+
+  const sheetAreas = getOrCreateSheet(ss, "AreasCurricularesExtensiones");
+  const areaRows = sheetAreas.getDataRange().getValues().slice(1);
+  const areasList = areaRows.map(r => ({
+    areaId: r[0],
+    name: r[1],
+    code: r[2],
+    serviceKey: r[3],
+    estado: r[7] || "Activo"
+  }));
+
+  return {
+    status: "success",
+    catalogType: "ALL_INSTITUTIONAL_CATALOGS",
+    version: "2026.1",
+    data: {
+      areasCurriculares: areasList,
+      asignaturas: subjectsList
+    }
+  };
+}
+
+function validateCatalogReference(payload) {
+  const { catalogType, referenceKey } = payload || {};
+  if (!catalogType || !referenceKey) {
+    throw new Error("Parámetros obligatorios ausentes: catalogType y referenceKey.");
+  }
+
+  const catalogRes = getInstitutionalCatalog({ catalogType });
+  const cleanKey = String(referenceKey).trim().toUpperCase();
+  let isValid = false;
+
+  if (Array.isArray(catalogRes.data)) {
+    isValid = catalogRes.data.some(item => {
+      const idKey = item.areaId || item.asignaturaId || item.codigo;
+      return idKey && String(idKey).trim().toUpperCase() === cleanKey;
+    });
+  }
+
+  if (!isValid) {
+    throw new Error(`Referencia inválida de catálogo '${cleanKey}' para el tipo de catálogo '${catalogType}'.`);
+  }
+
+  return {
+    status: "success",
+    catalogType,
+    referenceKey: cleanKey,
+    isValid: true
   };
 }
 
