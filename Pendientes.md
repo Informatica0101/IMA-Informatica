@@ -866,7 +866,7 @@
   - Las mejoras no eliminan capacidades existentes de los paneles.
 - **Estado:** [X] Completada
 
-### [ ] [TAREA-15] Completar la supervisión institucional de servicios, errores y recuperación
+### [X] [TAREA-15] Completar la supervisión institucional de servicios, errores y recuperación
 - **Origen del Hallazgo:** Auditoría de la Fase 1, octubre de 2026 (AUDITORIA_FASE1_PLANIFICACION_EXPANSION.md - Sección D & I)
 - **Severidad/Clasificación:** Medio
 - **Archivos Involucrados:** `backend/user-service/Code.gs`, `backend/academic-service/Code.gs`, `backend/accounting-service/Code.gs`, `js/ui-common.js`
@@ -883,7 +883,7 @@
   - Las alertas permiten distinguir fallos críticos de errores recuperables.
   - La supervisión no expone información sensible.
   - Los procedimientos de recuperación pueden probarse sin modificar datos reales de producción.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 ### [ ] [TAREA-16] Establecer pruebas de carga, concurrencia e integridad para los procesos críticos
 - **Origen del Hallazgo:** Auditoría de la Fase 1, octubre de 2026 (AUDITORIA_FASE1_PLANIFICACION_EXPANSION.md - Sección J)

@@ -69,7 +69,76 @@ function sanitizePayloadForLog(payload) {
   }
 }
 
-// [TAREA-15] [Fase 1 - Supervisión Operativa] - Registro de eventos estructurados de auditoría, errores y trazabilidad de servicios.
+// [TAREA-15] [Fase 1 - Supervisión Operativa] - Registro de versiones por servicio, informe de salud operativa sin PII y eventos estructurados de auditoría.
+function getServiceHealthReport(payload) {
+  try {
+    const verifiedRole = getUserVerifiedRole(payload);
+    const isAdmin = ["Administrador", "Desarrollador", "Director"].indexOf(verifiedRole) !== -1;
+    if (!isAdmin) {
+      return { status: "error", code: "AUTH_PERMISSION_DENIED", message: "Solo administradores autorizados pueden consultar el informe de salud operativa." };
+    }
+
+    const versions = {
+      USER: "1.0.0",
+      ACADEMIC: "1.0.0",
+      TASK: "1.0.0",
+      EXAM: "1.0.0",
+      ACCOUNTING: "1.0.0"
+    };
+
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const sheet = ss.getSheetByName("LogsSistema");
+
+    let totalLogs = 0;
+    let errorsCount = 0;
+    let warningCount = 0;
+    let categoryStats = {
+      AUTENTICACION: 0,
+      CUOTAS: 0,
+      ALMACENAMIENTO: 0,
+      LOGICA: 0,
+      RED_API: 0
+    };
+
+    if (sheet) {
+      const data = sheet.getDataRange().getValues();
+      if (data.length > 1) {
+        totalLogs = data.length - 1;
+        data.slice(1).forEach(r => {
+          const severity = String(r[4] || "").toUpperCase();
+          const errCode = String(r[5] || "").toUpperCase();
+          const msg = String(r[6] || "").toLowerCase();
+
+          if (severity === "ERROR" || severity === "CRITICAL") errorsCount++;
+          if (severity === "WARN" || severity === "WARNING") warningCount++;
+
+          if (errCode.includes("AUTH") || msg.includes("autenticación") || msg.includes("permiso")) categoryStats.AUTENTICACION++;
+          else if (errCode.includes("QUOTA") || msg.includes("cuota") || msg.includes("exceeded")) categoryStats.CUOTAS++;
+          else if (errCode.includes("DRIVE") || errCode.includes("SHEET") || msg.includes("hoja")) categoryStats.ALMACENAMIENTO++;
+          else if (errCode.includes("NET") || errCode.includes("FETCH")) categoryStats.RED_API++;
+          else categoryStats.LOGICA++;
+        });
+      }
+    }
+
+    return {
+      status: "success",
+      timestamp: new Date().toISOString(),
+      serviceVersions: versions,
+      metrics: {
+        totalLogs,
+        errorsCount,
+        warningCount,
+        categoryStats,
+        operationalStatus: errorsCount > 50 ? "DEGRADADO" : "SALUDABLE"
+      }
+    };
+  } catch (error) {
+    logStructuredEvent("USER", "getServiceHealthReport", "ERROR", "HEALTH_REPORT_FAILED", error.message, payload, payload && payload.authRole);
+    return { status: "error", message: error.message };
+  }
+}
+
 function logStructuredEvent(serviceName, fnName, severity, errorCode, message, payload, userRole) {
   try {
     const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
@@ -769,7 +838,7 @@ function validateRolePermission(action, payload) {
   if (userRole === "NO_ACCESS") {
     return { authorized: false, role: "Cuenta Inactiva/Bloqueada" };
   }
-  if (["submitProblemTicket", "getProblemTickets", "replyProblemTicket", "searchGlobalOmnibox", "configureAutomationRules", "getAutomationRules", "getNotificationAuditLogs"].indexOf(action) !== -1) {
+  if (["submitProblemTicket", "getProblemTickets", "replyProblemTicket", "searchGlobalOmnibox", "configureAutomationRules", "getAutomationRules", "getNotificationAuditLogs", "getServiceHealthReport"].indexOf(action) !== -1) {
     return { authorized: true, role: userRole };
   }
   const permitted = ROLE_PERMISSIONS[userRole] || ROLE_PERMISSIONS["Estudiante"];
@@ -813,6 +882,7 @@ function doPost(e) {
       case "uploadNewsImage": result = uploadNewsImage(payload); break;
       case "updateNewsStatus": result = updateNewsStatus(payload); break;
       case "getStructuredLogs": result = getStructuredLogs(payload); break;
+      case "getServiceHealthReport": result = getServiceHealthReport(payload); break;
       case "getInstitutionalCriteria": result = getInstitutionalCriteria(payload); break;
       case "saveInstitutionalCriterion": result = saveInstitutionalCriterion(payload); break;
       case "getFormativeEvaluations": result = getFormativeEvaluations(payload); break;

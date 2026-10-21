@@ -551,3 +551,13 @@ DESCRIPCIÓN OBJETIVA DE LOS CAMBIOS:
 - Actualización del estado de [TAREA-14] a [X] Completada en Pendientes.md.
 
 -------------------------------------------------------------------------------
+FECHA: Octubre 2026
+ARCHIVO(S) AFECTADO(S): backend/user-service/Code.gs, Pendientes.md
+-------------------------------------------------------------------------------
+DESCRIPCIÓN OBJETIVA DE LOS CAMBIOS:
+- Implementación de la función getServiceHealthReport en backend/user-service/Code.gs para consulta de versiones por servicio, clasificación de errores por categoría e informe de salud operativa sin PII para administradores.
+- Adición de getServiceHealthReport a la lista de acciones autorizadas y al dispatcher en doPost.
+- Inserción del comentario identificativo de TAREA-15 en la primera línea sobre getServiceHealthReport.
+- Actualización del estado de [TAREA-15] a [X] Completada en Pendientes.md.
+
+-------------------------------------------------------------------------------
