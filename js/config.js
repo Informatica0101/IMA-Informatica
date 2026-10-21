@@ -589,3 +589,27 @@ window.normalizeQuestion = function(q) {
 
     return result;
 };
+
+// [TAREA-20] [Fase 1 - Incorporación Curricular] - Plantilla técnica estandarizada para registro e incorporación de nuevas áreas y servicios curriculares en la configuración global.
+window.registerNewCurricularAreaServiceConfig = function(areaConfig) {
+    if (!areaConfig || !areaConfig.areaId || !areaConfig.name) return false;
+    if (!Array.isArray(window.CURRICULAR_AREAS_CATALOG)) {
+        window.CURRICULAR_AREAS_CATALOG = [];
+    }
+    if (!window.CURRICULAR_AREAS_CATALOG.some(function(a) { return a.areaId === areaConfig.areaId; })) {
+        window.CURRICULAR_AREAS_CATALOG.push({
+            areaId: areaConfig.areaId,
+            name: areaConfig.name,
+            code: areaConfig.code || areaConfig.areaId
+        });
+    }
+    if (areaConfig.serviceKey) {
+        if (!window.CURRICULAR_SPECIALIZED_SERVICES) window.CURRICULAR_SPECIALIZED_SERVICES = {};
+        window.CURRICULAR_SPECIALIZED_SERVICES[areaConfig.areaId] = {
+            serviceKey: areaConfig.serviceKey,
+            name: areaConfig.name,
+            tools: areaConfig.tools || []
+        };
+    }
+    return true;
+};

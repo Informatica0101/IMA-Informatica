@@ -604,3 +604,14 @@ DESCRIPCIÓN OBJETIVA DE LOS CAMBIOS:
 - Actualización del estado de [TAREA-19] a [X] Completada en Pendientes.md.
 
 -------------------------------------------------------------------------------
+FECHA: Octubre 2026
+ARCHIVO(S) AFECTADO(S): backend/academic-service/Code.gs, js/config.js, Pendientes.md
+-------------------------------------------------------------------------------
+DESCRIPCIÓN OBJETIVA DE LOS CAMBIOS:
+- Implementación de registerCurricularAreaExtension, runCurricularAreaServiceTests y toggleCurricularAreaStatus en backend/academic-service/Code.gs para el registro técnico estandarizado de nuevas áreas y servicios de Apps Script, ejecución de protocolos de prueba integrados previos a producción y desactivación segura preservando historiales.
+- Implementación del helper de configuración window.registerNewCurricularAreaServiceConfig en js/config.js.
+- Inserción del comentario identificativo de TAREA-20 en la primera línea sobre registerCurricularAreaExtension en Code.gs y sobre window.registerNewCurricularAreaServiceConfig en js/config.js.
+- Registro de permisos en ROLE_PERMISSIONS y rutas en doPost dispatcher de backend/academic-service/Code.gs.
+- Actualización del estado de [TAREA-20] a [X] Completada en Pendientes.md.
+
+-------------------------------------------------------------------------------

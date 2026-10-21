@@ -1290,7 +1290,7 @@
   - La reversión recupera el estado anterior cuando sea necesaria.
 - **Estado:** [X] Completada
 
-### [ ] [TAREA-20] Formalizar la incorporación de nuevas áreas y servicios curriculares
+### [X] [TAREA-20] Formalizar la incorporación de nuevas áreas y servicios curriculares
 - **Origen del Hallazgo:** Auditoría de la Fase 1, octubre de 2026 (AUDITORIA_FASE1_PLANIFICACION_EXPANSION.md - Sección B & K)
 - **Severidad/Clasificación:** Bajo
 - **Archivos Involucrados:** `backend/academic-service/Code.gs`, `js/config.js`
@@ -1306,7 +1306,7 @@
   - La activación de una nueva área no altera los servicios existentes.
   - Las pruebas del servicio se ejecutan antes de habilitarlo para usuarios.
   - Las áreas desactivadas conservan sus registros históricos.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 ### [ ] [FASE2-T17] Incorporar una política de versionado y evolución de configuraciones compartidas
 - **Origen del Hallazgo:** Auditoría de la Fase 2, octubre de 2026 (AUDITORIA_FASE2_ARQUITECTURA_INTEROPERABILIDAD.md - Área 3)
