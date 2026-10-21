@@ -1,7 +1,7 @@
 # REGISTRO MAESTRO DE TAREAS PENDIENTES DE DESARROLLO Y OPTIMIZACIÓN
 **Plataforma Integral de Gestión Educativa — New Generation Christian Academy**
 **Versión de Referencia:** 1.0
-**Origen:** Auditoría de la Fase 1 y Fase 2, octubre de 2026
+**Origen:** Auditoría de las Fases 1, 2 y 3, octubre de 2026
 
 ---
 
@@ -89,6 +89,19 @@
   7. Los errores permanentes de validación o autorización no provocan reintentos innecesarios.
   8. Los intentos, los reintentos y el resultado final pueden distinguirse en los registros.
   9. Las pruebas incluyen emisión de documentos, pagos, matrículas, planillas y otras escrituras de consecuencias relevantes.
+- **Estado:** [X] Completada
+
+### [X] [T-UX-01] Manejo Centralizado de Expiración de Sesión y Excepciones de Autorización
+- **Origen del Hallazgo:** Auditoría de la Fase 3, octubre de 2026 (AUDITORIA_FASE3_EXPERIENCIA_USUARIO_NAVEGACION.md - Área 1)
+- **Severidad/Clasificación:** Crítico
+- **Archivos Involucrados:** `js/api.js`, `js/ui-common.js`, `js/auth.js`
+- **Dependencias Expuestas:** `js/api.js`, `window.handleSessionExpired`, flujo de login.
+- **Descripción del Alcance:**
+  1. Detectar errores de sesión o permisos rechazados (`AUTH_PERMISSION_DENIED`) en `js/api.js`.
+  2. Disparar el manejador `window.handleSessionExpired(reason)` limpiando almacenamiento local.
+  3. Redirigir al usuario a `login.html?session_expired=...` desplegando banner informativo.
+- **Criterios de Aceptación:**
+  - Redirección limpia a login ante expiración de sesión sin errores no capturados.
 - **Estado:** [X] Completada
 
 ---
@@ -527,6 +540,64 @@
   6. La ausencia de un registro esperado puede detectarse en las pruebas de integración.
 - **Estado:** [X] Completada
 
+### [X] [T-UX-02] Soporte Universal Tecla Escape para Cierre de Modales y Restauración de Foco
+- **Origen del Hallazgo:** Auditoría de la Fase 3, octubre de 2026 (AUDITORIA_FASE3_EXPERIENCIA_USUARIO_NAVEGACION.md - Área 7)
+- **Severidad/Clasificación:** Alto
+- **Archivos Involucrados:** `js/ui-common.js`
+- **Dependencias Expuestas:** Modales activos en la interfaz.
+- **Descripción del Alcance:**
+  1. Listener global `keydown` para capturar la tecla Escape (code 27).
+  2. Cerrar modales activos ocultando elementos con clase `.hidden`.
+- **Criterios de Aceptación:**
+  - Presionar Escape cierra modales abiertos de forma limpia.
+- **Estado:** [X] Completada
+
+### [X] [T-UX-03] Módulo de Protección contra Pérdida de Cambios No Guardados en Formularios
+- **Origen del Hallazgo:** Auditoría de la Fase 3, octubre de 2026 (AUDITORIA_FASE3_EXPERIENCIA_USUARIO_NAVEGACION.md - Área 6)
+- **Severidad/Clasificación:** Alto
+- **Archivos Involucrados:** `js/ui-common.js`
+- **Dependencias Expuestas:** Formularios de edición en la app.
+- **Descripción del Alcance:**
+  1. `window.setupUnsavedChangesProtection(formElement)` detecta modificaciones sin guardar.
+  2. Dispara confirmación `beforeunload` para evitar pérdida de datos accidental.
+- **Criterios de Aceptación:**
+  - Navegar fuera de un formulario sucio activa alerta de confirmación.
+- **Estado:** [X] Completada
+
+### [X] [T-UX-05] Normalización Diacrítica Insensible a Tildes para Búsquedas y Filtros
+- **Origen del Hallazgo:** Auditoría de la Fase 3, octubre de 2026 (AUDITORIA_FASE3_EXPERIENCIA_USUARIO_NAVEGACION.md - Área 4)
+- **Severidad/Clasificación:** Alto
+- **Archivos Involucrados:** `js/ui-common.js`
+- **Dependencias Expuestas:** Búsquedas y filtros en frontend.
+- **Descripción del Alcance:**
+  1. `window.normalizeSearchString(str)` elimina marcas diacríticas usando NFD regex.
+- **Criterios de Aceptación:**
+  - Búsqueda "matematica" coincide con "Matemáticas".
+- **Estado:** [X] Completada
+
+### [X] [T-UX-06] Omnibox Unificado Multi-Entidad con Atajo Global `Ctrl + K`
+- **Origen del Hallazgo:** Auditoría de la Fase 3, octubre de 2026 (AUDITORIA_FASE3_EXPERIENCIA_USUARIO_NAVEGACION.md - Área 4)
+- **Severidad/Clasificación:** Alto
+- **Archivos Involucrados:** `js/ui-common.js`, `backend/user-service/Code.gs`
+- **Dependencias Expuestas:** `#modal-global-omnibox`, `searchGlobalOmnibox`.
+- **Descripción del Alcance:**
+  1. Búsqueda omnibox atajo `Ctrl + K` / `Cmd + K`.
+  2. Búsqueda multi-entidad con validación RBAC en servidor.
+- **Criterios de Aceptación:**
+  - Apertura rápida y filtrado seguro de registros.
+- **Estado:** [X] Completada
+
+### [X] [T-UX-09] Menú Lateral Responsivo Específico por Rol con Colapso Móvil Suave
+- **Origen del Hallazgo:** Auditoría de la Fase 3, octubre de 2026 (AUDITORIA_FASE3_EXPERIENCIA_USUARIO_NAVEGACION.md - Área 3)
+- **Severidad/Clasificación:** Alto
+- **Archivos Involucrados:** `js/ui-common.js`, Dashboards HTML
+- **Dependencias Expuestas:** Paneles laterales de navegación.
+- **Descripción del Alcance:**
+  1. Menú lateral específico por rol con colapso responsivo móvil.
+- **Criterios de Aceptación:**
+  - Navegación fluida en escritorio y dispositivos táctiles.
+- **Estado:** [X] Completada
+
 ---
 
 ## GRUPO PRIORIDAD P2 (MEDIO)
@@ -838,6 +909,39 @@
   5. Los reintentos respetan las reglas de idempotencia.
   6. La recuperación de una solicitud no sobrescribe cambios válidos realizados por otra operación.
   7. Los mensajes de error indican qué acción puede realizar el usuario sin afirmar resultados no confirmados.
+- **Estado:** [X] Completada
+
+### [X] [T-UX-04] Indicador e Badge de Frescura de Datos Sincronizados con Trigger Manual
+- **Origen del Hallazgo:** Auditoría de la Fase 3, octubre de 2026 (AUDITORIA_FASE3_EXPERIENCIA_USUARIO_NAVEGACION.md - Área 9)
+- **Severidad/Clasificación:** Medio
+- **Archivos Involucrados:** `js/ui-common.js`
+- **Dependencias Expuestas:** Vistas de lista y datos dinámicos.
+- **Descripción del Alcance:**
+  1. `window.renderDataFreshnessBadge(containerId, lastSyncTimestamp)` muestra frescura de datos.
+- **Criterios de Aceptación:**
+  - Badge visible notificando tiempo transcurrido desde la última sincronización.
+- **Estado:** [X] Completada
+
+### [X] [T-UX-07] Indicador Discreto de Estado de Conexión En Línea / Offline
+- **Origen del Hallazgo:** Auditoría de la Fase 3, octubre de 2026 (AUDITORIA_FASE3_EXPERIENCIA_USUARIO_NAVEGACION.md - Área 10)
+- **Severidad/Clasificación:** Medio
+- **Archivos Involucrados:** `js/ui-common.js`
+- **Dependencias Expuestas:** `#online-status-badge`.
+- **Descripción del Alcance:**
+  1. Indicador discreto de estado en línea `#online-status-badge`.
+- **Criterios de Aceptación:**
+  - Badge discreto en esquina inferior izquierda sin tapar contenido principal.
+- **Estado:** [X] Completada
+
+### [X] [T-UX-08] Botón y Flujo Discreto de Reporte de Problemas Técnicos
+- **Origen del Hallazgo:** Auditoría de la Fase 3, octubre de 2026 (AUDITORIA_FASE3_EXPERIENCIA_USUARIO_NAVEGACION.md - Área 10)
+- **Severidad/Clasificación:** Medio
+- **Archivos Involucrados:** `js/ui-common.js`, `backend/user-service/Code.gs`
+- **Dependencias Expuestas:** `#btn-global-report-issue`, `#modal-report-issue`.
+- **Descripción del Alcance:**
+  1. Botón flotante discreto e interactivo para reporte de problemas.
+- **Criterios de Aceptación:**
+  - Formulario discreto con validación y confirmación al usuario.
 - **Estado:** [X] Completada
 
 ---
