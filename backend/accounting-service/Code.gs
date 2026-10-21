@@ -6231,7 +6231,7 @@ function verifyLaborAndTaxInformation(payload) {
   };
 }
 
-// TAREA RH-12: Pruebas de integración y regresión de Recursos Humanos
+// [TAREA-16] [Fase 1 - Pruebas de Carga e Integridad] - Suite de pruebas integrales de regresión, concurrencia, idempotencia e integridad de procesos críticos.
 function runHRIntegrationAndRegressionTests(payload) {
   const { authRole, authUserId } = payload || {};
 

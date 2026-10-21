@@ -141,10 +141,7 @@ function doPost(e) {
   }
 }
 
-// ---------------------------------------------------------------------------
-// LÓGICA DE NEGOCIO
-// ---------------------------------------------------------------------------
-
+// [TAREA-11] [Fase 1 - Motor de Exámenes] - Motor ampliado de evaluaciones, bancos de preguntas polimórficos por área, aleatoriedad y analítica psicométrica.
 function createExam(p) {
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
   const examenes = getSheetOrThrow(ss, "Examenes");

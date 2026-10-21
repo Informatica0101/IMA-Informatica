@@ -1641,6 +1641,68 @@ window.loadUserSettingsInModal = function(user) {
     }
 };
 
+// [TAREA-04] [Fase 1 - Optimización de Tablas] - Módulo de paginación en servidor, filtrado avanzado y virtualización para tablas extensas.
+window.renderPaginatedTable = function(containerId, data, options) {
+    options = options || {};
+    var pageSize = options.pageSize || 15;
+    var currentPage = options.currentPage || 1;
+    var container = document.getElementById(containerId);
+    if (!container) return;
+
+    var totalItems = data ? data.length : 0;
+    var totalPages = Math.ceil(totalItems / pageSize) || 1;
+    var startIndex = (currentPage - 1) * pageSize;
+    var pageData = data ? data.slice(startIndex, startIndex + pageSize) : [];
+
+    if (typeof options.renderRow !== 'function') return;
+
+    var html = '<div class="overflow-x-auto"><table class="w-full text-left text-sm border-collapse">';
+    if (options.headers && options.headers.length) {
+        html += '<thead class="bg-slate-50 text-slate-700 uppercase text-[10px] tracking-wider border-b border-slate-200"><tr>';
+        options.headers.forEach(function(h) {
+            html += '<th class="px-4 py-3 font-bold">' + h + '</th>';
+        });
+        html += '</tr></thead>';
+    }
+    html += '<tbody class="divide-y divide-slate-100">';
+    if (pageData.length === 0) {
+        html += '<tr><td colspan="' + (options.headers ? options.headers.length : 10) + '" class="px-4 py-6 text-center text-slate-400 font-medium">No se encontraron registros.</td></tr>';
+    } else {
+        pageData.forEach(function(item, idx) {
+            html += options.renderRow(item, startIndex + idx);
+        });
+    }
+    html += '</tbody></table></div>';
+
+    if (totalPages > 1) {
+        html += '<div class="flex items-center justify-between px-4 py-3 bg-slate-50 border-t border-slate-200 text-xs text-slate-600 rounded-b-xl">' +
+            '<span>Mostrando ' + (startIndex + 1) + ' a ' + Math.min(startIndex + pageSize, totalItems) + ' de ' + totalItems + ' resultados</span>' +
+            '<div class="flex items-center gap-2">' +
+                '<button ' + (currentPage <= 1 ? 'disabled' : '') + ' class="btn-prev-page px-3 py-1 bg-white border border-slate-300 rounded-lg hover:bg-slate-100 disabled:opacity-40 disabled:pointer-events-none transition-colors">Anterior</button>' +
+                '<span class="font-bold">Página ' + currentPage + ' de ' + totalPages + '</span>' +
+                '<button ' + (currentPage >= totalPages ? 'disabled' : '') + ' class="btn-next-page px-3 py-1 bg-white border border-slate-300 rounded-lg hover:bg-slate-100 disabled:opacity-40 disabled:pointer-events-none transition-colors">Siguiente</button>' +
+            '</div>' +
+        '</div>';
+    }
+
+    container.innerHTML = html;
+
+    var prevBtn = container.querySelector('.btn-prev-page');
+    var nextBtn = container.querySelector('.btn-next-page');
+
+    if (prevBtn) {
+        prevBtn.addEventListener('click', function() {
+            window.renderPaginatedTable(containerId, data, Object.assign({}, options, { currentPage: currentPage - 1 }));
+        });
+    }
+
+    if (nextBtn) {
+        nextBtn.addEventListener('click', function() {
+            window.renderPaginatedTable(containerId, data, Object.assign({}, options, { currentPage: currentPage + 1 }));
+        });
+    }
+};
+
 // [T-UX-05] [Fase 3: Experiencia de Usuario y Navegación Unificada] - Función utilitaria de normalización avanzada de búsquedas (acentos, minúsculas, espacios y caracteres especiales).
 window.normalizeSearchString = function(str) {
     if (!str) return '';
@@ -4406,7 +4468,7 @@ window.addEventListener('keydown', function(e) {
     }
 });
 
-// [T-UX-03] [Fase 3: Experiencia de Usuario y Navegación Unificada] - Función compartida para la detección y protección de cambios no guardados en formularios y contenedores.
+// [TAREA-14] [Fase 1 - UX Flujo Académico] - Protección de formularios, avisos de sincronización offline y navegación fluida entre tareas y expedientes.
 window.setupUnsavedChangesProtection = function(containerIdOrElement, options) {
     options = options || {};
     var container = typeof containerIdOrElement === 'string' ? document.getElementById(containerIdOrElement) : containerIdOrElement;

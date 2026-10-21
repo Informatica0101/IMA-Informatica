@@ -183,7 +183,7 @@ function doPost(e) {
     .setMimeType(ContentService.MimeType.JSON);
 }
 
-// --- LÓGICA DEL SERVICIO ---
+// [TAREA-10] [Fase 1 - Sistema de Tareas y Entregas] - Sistema ampliado de asignaciones, entregas multimodales, revisiones, versiones y retroalimentación.
 function createTask(payload) {
   const { tipo, titulo, descripcion, parcial, asignatura, gradoAsignado, seccionAsignada, fechaLimite, tareaOriginalId, profesorId, puntaje, archivoUrl, fechaDisponible, tipoRecurso } = payload || {};
   const tareaId = "TSK-" + new Date().getTime();

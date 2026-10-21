@@ -69,6 +69,7 @@ function sanitizePayloadForLog(payload) {
   }
 }
 
+// [TAREA-15] [Fase 1 - Supervisión Operativa] - Registro de eventos estructurados de auditoría, errores y trazabilidad de servicios.
 function logStructuredEvent(serviceName, fnName, severity, errorCode, message, payload, userRole) {
   try {
     const ss = SpreadsheetApp.openById(SPREADSHEET_ID);

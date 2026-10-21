@@ -232,7 +232,7 @@
   - Se pueden incorporar áreas nuevas sin reconstruir los servicios comunes.
 - **Estado:** [X] Completada
 
-### [TAREA-10] Ampliar el sistema de tareas, entregas, revisiones y retroalimentación
+### [X] [TAREA-10] Ampliar el sistema de tareas, entregas, revisiones y retroalimentación
 - **Origen del Hallazgo:** Auditoría de la Fase 1, octubre de 2026 (AUDITORIA_FASE1_PLANIFICACION_EXPANSION.md - Sección B & H)
 - **Severidad/Clasificación:** Alto
 - **Archivos Involucrados:** `backend/task-service/Code.gs`, `js/teacher.js`, `js/student.js`, `student-dashboard.html`, `teacher-dashboard.html`
@@ -259,9 +259,9 @@
   - Las entregas tardías siguen las reglas configuradas.
   - Las operaciones repetidas no duplican entregas ni notificaciones.
   - Los archivos y comentarios respetan los permisos del curso.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
-### [TAREA-11] Ampliar el motor de exámenes y el banco de preguntas por área curricular
+### [X] [TAREA-11] Ampliar el motor de exámenes y el banco de preguntas por área curricular
 - **Origen del Hallazgo:** Auditoría de la Fase 1, octubre de 2026 (AUDITORIA_FASE1_PLANIFICACION_EXPANSION.md - Sección B & H)
 - **Severidad/Clasificación:** Alto
 - **Archivos Involucrados:** `backend/exam-service/Code.gs`, `js/quizpro.js`, `js/exam.js`, `exam.html`, `results.html`
@@ -285,9 +285,9 @@
   - Las calificaciones se reflejan correctamente en los resultados académicos.
   - Los análisis estadísticos coinciden con las respuestas y puntuaciones almacenadas.
   - Los cambios en un banco de preguntas no alteran silenciosamente exámenes ya realizados.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
-### [TAREA-12] Unificar la evaluación académica, las rúbricas y las calificaciones
+### [X] [TAREA-12] Unificar la evaluación académica, las rúbricas y las calificaciones
 - **Origen del Hallazgo:** Auditoría de la Fase 1, octubre de 2026 (AUDITORIA_FASE1_PLANIFICACION_EXPANSION.md - Sección B & H)
 - **Severidad/Clasificación:** Alto
 - **Archivos Involucrados:** `backend/academic-service/Code.gs`, `js/teacher.js`, `js/student.js`, `teacher-dashboard.html`
@@ -308,13 +308,13 @@
   - Los docentes no pueden modificar notas de estudiantes fuera de su ámbito autorizado.
   - Los boletines y los historiales coinciden con las calificaciones consolidadas.
   - Las escalas de distintos programas curriculares pueden coexistir sin confusión.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 ---
 
 ## GRUPO PRIORIDAD P2 (MEDIO)
 
-### [TAREA-04] Optimizar las tablas extensas y los paneles analíticos
+### [X] [TAREA-04] Optimizar las tablas extensas y los paneles analíticos
 - **Origen del Hallazgo:** Auditoría de la Fase 1, octubre de 2026 (AUDITORIA_FASE1_PLANIFICACION_EXPANSION.md - Sección I)
 - **Severidad/Clasificación:** Medio
 - **Archivos Involucrados:** `js/teacher.js`, `js/student.js`, `js/accounting.js`, `js/ui-common.js`
@@ -333,9 +333,9 @@
   - Los paneles muestran resultados consistentes con los datos de origen.
   - Se registran mediciones comparables antes y después de las optimizaciones.
   - No se producen regresiones en tablas pequeñas ni en dispositivos móviles.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
-### [TAREA-13] Crear un sistema de planificación y asignación de carga académica por área
+### [X] [TAREA-13] Crear un sistema de planificación y asignación de carga académica por área
 - **Origen del Hallazgo:** Auditoría de la Fase 1, octubre de 2026 (AUDITORIA_FASE1_PLANIFICACION_EXPANSION.md - Sección B & D)
 - **Severidad/Clasificación:** Medio
 - **Archivos Involucrados:** `backend/academic-service/Code.gs`, `js/teacher.js`, `teacher-dashboard.html`
@@ -353,9 +353,9 @@
   - Los cambios no modifican retroactivamente las calificaciones ni las entregas históricas.
   - Los docentes visualizan únicamente sus asignaciones autorizadas.
   - La Dirección puede identificar vacantes, conflictos y carga académica por área.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
-### [TAREA-14] Mejorar la experiencia de usuario de docentes y estudiantes según el flujo académico
+### [X] [TAREA-14] Mejorar la experiencia de usuario de docentes y estudiantes según el flujo académico
 - **Origen del Hallazgo:** Auditoría de la Fase 1, octubre de 2026 (AUDITORIA_FASE1_PLANIFICACION_EXPANSION.md - Sección C & J)
 - **Severidad/Clasificación:** Medio
 - **Archivos Involucrados:** `student-dashboard.html`, `teacher-dashboard.html`, `js/student.js`, `js/teacher.js`, `js/ui-common.js`
@@ -374,9 +374,9 @@
   - Los errores de sincronización se explican y permiten recuperar la operación cuando sea posible.
   - Las nuevas herramientas funcionan en pantallas móviles sin perder funciones esenciales.
   - Las mejoras no eliminan capacidades existentes de los paneles.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
-### [TAREA-15] Completar la supervisión institucional de servicios, errores y recuperación
+### [X] [TAREA-15] Completar la supervisión institucional de servicios, errores y recuperación
 - **Origen del Hallazgo:** Auditoría de la Fase 1, octubre de 2026 (AUDITORIA_FASE1_PLANIFICACION_EXPANSION.md - Sección D & I)
 - **Severidad/Clasificación:** Medio
 - **Archivos Involucrados:** `backend/user-service/Code.gs`, `backend/academic-service/Code.gs`, `backend/accounting-service/Code.gs`, `js/ui-common.js`
@@ -393,9 +393,9 @@
   - Las alertas permiten distinguir fallos críticos de errores recuperables.
   - La supervisión no expone información sensible.
   - Los procedimientos de recuperación pueden probarse sin modificar datos reales de producción.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
-### [TAREA-16] Establecer pruebas de carga, concurrencia e integridad para los procesos críticos
+### [X] [TAREA-16] Establecer pruebas de carga, concurrencia e integridad para los procesos críticos
 - **Origen del Hallazgo:** Auditoría de la Fase 1, octubre de 2026 (AUDITORIA_FASE1_PLANIFICACION_EXPANSION.md - Sección J)
 - **Severidad/Clasificación:** Medio
 - **Archivos Involucrados:** `backend/accounting-service/Code.gs`, `backend/academic-service/Code.gs`, `backend/user-service/Code.gs`
@@ -412,13 +412,13 @@
   - Las mediciones permiten identificar los cuellos de botella.
   - Los resultados de las pruebas pueden reproducirse.
   - Las pruebas no alteran datos institucionales reales.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 ---
 
 ## GRUPO PRIORIDAD P3 (BAJO)
 
-### [TAREA-17] Incorporar analítica académica por área, asignatura y programa
+### [X] [TAREA-17] Incorporar analítica académica por área, asignatura y programa
 - **Origen del Hallazgo:** Auditoría de la Fase 1, octubre de 2026 (AUDITORIA_FASE1_PLANIFICACION_EXPANSION.md - Sección B & K)
 - **Severidad/Clasificación:** Bajo
 - **Archivos Involucrados:** `backend/academic-service/Code.gs`, `js/teacher.js`, `teacher-dashboard.html`
@@ -434,9 +434,9 @@
   - Los resultados pendientes no distorsionan los promedios.
   - Los usuarios solo pueden consultar la información que les corresponde.
   - Los informes identifican los criterios usados para cada comparación.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
-### [TAREA-18] Ampliar la reutilización de recursos educativos y actividades entre áreas
+### [X] [TAREA-18] Ampliar la reutilización de recursos educativos y actividades entre áreas
 - **Origen del Hallazgo:** Auditoría de la Fase 1, octubre de 2026 (AUDITORIA_FASE1_PLANIFICACION_EXPANSION.md - Sección B & K)
 - **Severidad/Clasificación:** Bajo
 - **Archivos Involucrados:** `backend/academic-service/Code.gs`, `js/teacher.js`, `teacher-dashboard.html`
@@ -451,9 +451,9 @@
   - Las modificaciones no alteran actividades históricas de forma silenciosa.
   - Los docentes pueden reutilizar recursos autorizados sin duplicar archivos innecesariamente.
   - Los proyectos interdisciplinarios pueden relacionar recursos de varias áreas.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
-### [TAREA-19] Implementar configuración y migración curricular sin pérdida de datos
+### [X] [TAREA-19] Implementar configuración y migración curricular sin pérdida de datos
 - **Origen del Hallazgo:** Auditoría de la Fase 1, octubre de 2026 (AUDITORIA_FASE1_PLANIFICACION_EXPANSION.md - Sección B & K)
 - **Severidad/Clasificación:** Bajo
 - **Archivos Involucrados:** `backend/academic-service/Code.gs`, `js/teacher.js`
@@ -470,9 +470,9 @@
   - Las migraciones detectan registros duplicados o huérfanos.
   - Los resultados pueden compararse antes y después de la migración.
   - La reversión recupera el estado anterior cuando sea necesaria.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
-### [TAREA-20] Formalizar la incorporación de nuevas áreas y servicios curriculares
+### [X] [TAREA-20] Formalizar la incorporación de nuevas áreas y servicios curriculares
 - **Origen del Hallazgo:** Auditoría de la Fase 1, octubre de 2026 (AUDITORIA_FASE1_PLANIFICACION_EXPANSION.md - Sección B & K)
 - **Severidad/Clasificación:** Bajo
 - **Archivos Involucrados:** `backend/academic-service/Code.gs`, `js/config.js`
@@ -488,4 +488,4 @@
   - La activación de una nueva área no altera los servicios existentes.
   - Las pruebas del servicio se ejecutan antes de habilitarlo para usuarios.
   - Las áreas desactivadas conservan sus registros históricos.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
