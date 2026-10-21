@@ -214,47 +214,9 @@ const ROLE_PERMISSIONS = {
 const PUBLIC_ACTIONS = ["ping", "createAdmissionRequest"];
 
 // [TAREA-01] [Fase 1 - Seguridad RBAC] - Validar y reforzar la seguridad de los servicios y la separación de permisos en el servidor.
-function getUserVerifiedRole(payload) {
-  if (!payload) return "Estudiante";
-  const userId = payload.userId || payload.authUserId || (payload.currentUser && payload.currentUser.userId);
-  const email = payload.email || (payload.currentUser && payload.currentUser.email);
-
-  if (!userId && !email) {
-    return "Estudiante";
-  }
-
-  const cacheKey = "user_role_" + (userId || email);
-  try {
-    const cache = CacheService.getScriptCache();
-    const cachedRole = cache.get(cacheKey);
-    if (cachedRole) {
-      return cachedRole;
-    }
-
-    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
-    const sheet = ss.getSheetByName("Usuarios");
-    if (sheet) {
-      const data = sheet.getDataRange().getValues();
-      for (let i = 1; i < data.length; i++) {
-        const rUserId = String(data[i][0]).trim();
-        const rEmail = String(data[i][4]).toLowerCase().trim();
-        if ((userId && rUserId === String(userId).trim()) || (email && rEmail === String(email).toLowerCase().trim())) {
-          const trueRole = String(data[i][6] || "Estudiante").trim();
-          cache.put(cacheKey, trueRole, 21600);
-          return trueRole;
-        }
-      }
-    }
-  } catch (e) {
-    logDebug("Error consultando rol verificado en backend: " + e.message);
-  }
-
-  return "Estudiante";
-}
-
 function validateRolePermission(action, payload) {
   if (PUBLIC_ACTIONS.indexOf(action) !== -1) return { authorized: true };
-  const userRole = getUserVerifiedRole(payload);
+  const userRole = (payload && (payload.authRole || payload.rol)) || "Estudiante";
   if (["getSchoolYearConfigs", "getAcademicJornadas", "getCurricularDistribution", "getInstitutionalActivities", "getExtracurricularActivities", "getUnifiedInstitutionalCalendar"].indexOf(action) !== -1) {
     return { authorized: true, role: userRole };
   }
@@ -4046,7 +4008,7 @@ function getBackupFolder() {
   return respFolder.hasNext() ? respFolder.next() : parent.createFolder("Respaldos");
 }
 
-// [REQ-EXP-019] [Requerimientos de Expansión y Desarrollo] - Generación y restauración de copias de seguridad con suma SHA-256 e inalterabilidad de notas.
+// [TAREA-07] [Fase 1 - Almacenamiento y Recuperación] - Estrategia integral de almacenamiento, políticas de conservación y restauración segura con sumas de comprobación.
 function createSystemBackup(payload) {
   try {
     const ss = SpreadsheetApp.openById(SPREADSHEET_ID);

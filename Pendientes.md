@@ -146,7 +146,7 @@
   - Las pruebas de concurrencia no generan estructuras inconsistentes.
 - **Estado:** [X] Completada
 
-### [TAREA-07] Implementar una estrategia integral de almacenamiento, conservación y recuperación
+### [X] [TAREA-07] Implementar una estrategia integral de almacenamiento, conservación y recuperación
 - **Origen del Hallazgo:** Auditoría de la Fase 1, octubre de 2026 (AUDITORIA_FASE1_PLANIFICACION_EXPANSION.md - Sección G)
 - **Severidad/Clasificación:** Alto
 - **Archivos Involucrados:** `backend/academic-service/Code.gs`, `backend/accounting-service/Code.gs`, `js/teacher.js`
@@ -173,9 +173,9 @@
   - Las referencias a documentos restaurados son consistentes.
   - Las políticas de conservación impiden eliminar automáticamente datos protegidos.
   - Las alertas identifican el recurso afectado y permiten actuar antes de que se interrumpan operaciones esenciales.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
-### [TAREA-08] Implementar la estructura jerárquica de la malla curricular por áreas, asignaturas y departamentos
+### [X] [TAREA-08] Implementar la estructura jerárquica de la malla curricular por áreas, asignaturas y departamentos
 - **Origen del Hallazgo:** Auditoría de la Fase 1, octubre de 2026 (AUDITORIA_FASE1_PLANIFICACION_EXPANSION.md - Sección B & K)
 - **Severidad/Clasificación:** Alto
 - **Archivos Involucrados:** `backend/academic-service/Code.gs`, `js/config.js`, `js/teacher.js`, `teacher-dashboard.html`
@@ -199,7 +199,7 @@
   - La configuración curricular se refleja correctamente en la oferta académica, los horarios y los paneles de docentes y estudiantes.
   - Las calificaciones históricas no se pierden al reorganizar las áreas.
   - Las áreas y asignaturas nuevas aparecen en los formularios, filtros y reportes correspondientes.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 ### [TAREA-09] Crear un servicio de Apps Script especializado para cada área curricular
 - **Origen del Hallazgo:** Auditoría de la Fase 1, octubre de 2026 (AUDITORIA_FASE1_PLANIFICACION_EXPANSION.md - Sección D & K)

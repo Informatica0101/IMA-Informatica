@@ -15,6 +15,33 @@ window.DEPARTMENT_SERVICES_MAP = {
   'ALUMNADO_PADRES': ['USER', 'ACADEMIC', 'TASK', 'EXAM', 'ACCOUNTING']
 };
 
+// [TAREA-08] [Fase 1 - Malla Curricular] - Estructura jerárquica de la malla curricular por áreas, asignaturas y departamentos.
+window.CURRICULAR_AREAS_CATALOG = [
+    { areaId: "AREA-01", name: "Matemáticas y razonamiento cuantitativo", code: "MAT" },
+    { areaId: "AREA-02", name: "Ciencias naturales", code: "CNT" },
+    { areaId: "AREA-03", name: "Informática, tecnología y computación", code: "INF" },
+    { areaId: "AREA-04", name: "Español, comunicación y literatura", code: "ESP" },
+    { areaId: "AREA-05", name: "Inglés y lenguas extranjeras", code: "ING" },
+    { areaId: "AREA-06", name: "Ciencias sociales y humanidades", code: "SOC" },
+    { areaId: "AREA-07", name: "Artes y expresión creativa", code: "ART" },
+    { areaId: "AREA-08", name: "Educación física, salud y bienestar", code: "EFI" },
+    { areaId: "AREA-09", name: "Formación en valores y desarrollo personal", code: "VAL" },
+    { areaId: "AREA-10", name: "Emprendimiento, economía y formación profesional", code: "EMP" },
+    { areaId: "AREA-11", name: "Agricultura, ambiente y sostenibilidad", code: "AGR" },
+    { areaId: "AREA-12", name: "Áreas complementarias", code: "CMP" }
+];
+
+window.ACADEMIC_DEPARTMENTS_CATALOG = [
+    { deptId: "DEPT-MAT", name: "Departamento de Matemáticas", areaId: "AREA-01" },
+    { deptId: "DEPT-CNT", name: "Departamento de Ciencias", areaId: "AREA-02" },
+    { deptId: "DEPT-INF", name: "Departamento de Informática", areaId: "AREA-03" },
+    { deptId: "DEPT-ESP", name: "Departamento de Español y Comunicación", areaId: "AREA-04" },
+    { deptId: "DEPT-ING", name: "Departamento de Inglés", areaId: "AREA-05" },
+    { deptId: "DEPT-SOC", name: "Departamento de Ciencias Sociales", areaId: "AREA-06" },
+    { deptId: "DEPT-ART", name: "Departamento de Artes", areaId: "AREA-07" },
+    { deptId: "DEPT-EFI", name: "Departamento de Educación Física", areaId: "AREA-08" }
+];
+
 // --- INSTRUCCIONES DE DESPLIEGUE DE MICROSERVICIOS ---
 // 1. Para cada carpeta en el directorio `backend` (ej. `user-service`), crea un NUEVO proyecto de Google Apps Script.
 // 2. Copia el contenido del archivo `Code.gs` de esa carpeta en el proyecto de Apps Script.

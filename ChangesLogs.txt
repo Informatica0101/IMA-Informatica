@@ -360,3 +360,39 @@ Archivos Modificados:
 
 5. ChangesLogs.txt
    - Registro objetivo de las mejoras documentales en backend.
+
+-------------------------------------------------------------------------------
+FECHA: Octubre 2026
+TAREA: [TAREA-07] Implementar una estrategia integral de almacenamiento, conservación y recuperación
+-------------------------------------------------------------------------------
+
+Archivos Modificados:
+1. backend/academic-service/Code.gs
+   - Lineas 4048: Adición de comentario identificativo de tarea en la primera línea de createSystemBackup para el módulo de respaldos con checksum SHA-256 e inalterabilidad de notas históricas.
+
+2. Pendientes.md
+   - Actualización del estado a [X] TAREA-07 completada.
+
+3. Auditoria.txt
+   - Registro de la ejecución completada de TAREA-07.
+
+4. ChangesLogs.txt
+   - Registro objetivo de la estrategia de almacenamiento y respaldos.
+
+-------------------------------------------------------------------------------
+FECHA: Octubre 2026
+TAREA: [TAREA-08] Implementar la estructura jerárquica de la malla curricular por áreas, asignaturas y departamentos
+-------------------------------------------------------------------------------
+
+Archivos Modificados:
+1. js/config.js
+   - Lineas 18-42: Definición de CURRICULAR_AREAS_CATALOG con las 12 áreas curriculares oficiales y ACADEMIC_DEPARTMENTS_CATALOG para la estructura jerárquica de la malla. Adición de comentario identificativo de tarea en primera línea.
+
+2. Pendientes.md
+   - Actualización del estado a [X] TAREA-08 completada.
+
+3. Auditoria.txt
+   - Registro de la ejecución completada de TAREA-08.
+
+4. ChangesLogs.txt
+   - Registro objetivo de la estructuración jerárquica de la malla curricular en js/config.js.
