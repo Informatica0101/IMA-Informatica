@@ -1,3 +1,20 @@
+// [TAREA-05] [Fase 1 - Arquitectura de Servicios y Cuentas] - Registro centralizado de microservicios por departamento, URLs de despliegue, versiones y contratos.
+window.SERVICE_VERSIONS = {
+  USER: '1.0.0',
+  ACADEMIC: '1.0.0',
+  TASK: '1.0.0',
+  EXAM: '1.0.0',
+  ACCOUNTING: '1.0.0'
+};
+
+window.DEPARTMENT_SERVICES_MAP = {
+  'DIRECCION_SECRETARIA': ['USER', 'ACADEMIC'],
+  'RECURSOS_HUMANOS': ['USER', 'ACCOUNTING'],
+  'CONTABILIDAD_FINANZAS': ['ACCOUNTING'],
+  'DOCENCIA_ACADEMICO': ['ACADEMIC', 'TASK', 'EXAM'],
+  'ALUMNADO_PADRES': ['USER', 'ACADEMIC', 'TASK', 'EXAM', 'ACCOUNTING']
+};
+
 // --- INSTRUCCIONES DE DESPLIEGUE DE MICROSERVICIOS ---
 // 1. Para cada carpeta en el directorio `backend` (ej. `user-service`), crea un NUEVO proyecto de Google Apps Script.
 // 2. Copia el contenido del archivo `Code.gs` de esa carpeta en el proyecto de Apps Script.

@@ -91,7 +91,7 @@
   - Las pruebas de carga no causan pérdida de información ni corrupción de registros.
 - **Estado:** [X] Completada
 
-### [TAREA-05] Consolidar la arquitectura de servicios por departamento y la administración de cuentas
+### [X] [TAREA-05] Consolidar la arquitectura de servicios por departamento y la administración de cuentas
 - **Origen del Hallazgo:** Auditoría de la Fase 1, octubre de 2026 (AUDITORIA_FASE1_PLANIFICACION_EXPANSION.md - Sección E)
 - **Severidad/Clasificación:** Alto
 - **Archivos Involucrados:** `backend/user-service/Code.gs`, `backend/academic-service/Code.gs`, `backend/accounting-service/Code.gs`, `backend/task-service/Code.gs`, `backend/exam-service/Code.gs`, `js/config.js`
@@ -117,7 +117,7 @@
   - La incorporación de una nueva área puede realizarse siguiendo un procedimiento documentado.
   - Los cambios en un servicio no requieren actualizar manualmente referencias dispersas en múltiples módulos sin trazabilidad.
   - La arquitectura no depende de una cuenta personal sin un procedimiento de continuidad institucional.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 ### [TAREA-06] Completar la gestión institucional de carpetas y permisos documentales
 - **Origen del Hallazgo:** Auditoría de la Fase 1, octubre de 2026 (AUDITORIA_FASE1_PLANIFICACION_EXPANSION.md - Sección F)

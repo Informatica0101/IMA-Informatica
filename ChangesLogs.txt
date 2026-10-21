@@ -321,3 +321,21 @@ Archivos Modificados:
 
 4. ChangesLogs.txt
    - Registro objetivo de las mejoras operativas implementadas en js/api.js.
+
+-------------------------------------------------------------------------------
+FECHA: Octubre 2026
+TAREA: [TAREA-05] Consolidar la arquitectura de servicios por departamento y la administración de cuentas
+-------------------------------------------------------------------------------
+
+Archivos Modificados:
+1. js/config.js
+   - Lineas 1-16: Definición de SERVICE_VERSIONS y DEPARTMENT_SERVICES_MAP para mapa centralizado de arquitectura híbrida de microservicios por departamento. Adición de comentario identificativo de tarea en primera línea.
+
+2. Pendientes.md
+   - Actualización del estado a [X] TAREA-05 completada.
+
+3. Auditoria.txt
+   - Registro de la ejecución completada de TAREA-05.
+
+4. ChangesLogs.txt
+   - Registro objetivo de las modificaciones en la arquitectura de servicios en js/config.js.
