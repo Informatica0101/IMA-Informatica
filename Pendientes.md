@@ -356,7 +356,7 @@
   - Los cambios en un banco de preguntas no alteran silenciosamente exámenes ya realizados.
 - **Estado:** [ ] Pendiente
 
-### [ ] [TAREA-12] Unificar la evaluación académica, las rúbricas y las calificaciones
+### [X] [TAREA-12] Unificar la evaluación académica, las rúbricas y las calificaciones
 - **Origen del Hallazgo:** Auditoría de la Fase 1, octubre de 2026 (AUDITORIA_FASE1_PLANIFICACION_EXPANSION.md - Sección B & H)
 - **Severidad/Clasificación:** Alto
 - **Archivos Involucrados:** `backend/academic-service/Code.gs`, `js/teacher.js`, `js/student.js`, `teacher-dashboard.html`

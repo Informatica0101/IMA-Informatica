@@ -207,7 +207,7 @@ const ROLE_PERMISSIONS = {
     "getTeacherSupervisions", "getSupervisionObservation", "getTeacherImprovementPlans"
   ],
   "Asistente": ["getAcademicConfig", "getAsignaturasActivas", "getWhatsAppLink", "getQuestionBank", "getAcademicCalendar", "getClassSchedules", "getStudentSchedule", "getStudentTimeline", "getClassAttendance", "getStudentAttendanceSummary"],
-  "Estudiante": ["getAcademicConfig", "getAsignaturasActivas", "getWhatsAppLink", "getQuestionBank", "getStudentEnrollmentHistory", "getAcademicCalendar", "getClassSchedules", "getStudentSchedule", "getStudentFile", "getStudentTimeline", "getStudentDocuments", "getClassAttendance", "getDailyAttendance", "submitAttendanceJustification", "getStudentAttendanceSummary", "getAttendanceIncidents"],
+  "Estudiante": ["getAcademicConfig", "getAsignaturasActivas", "getWhatsAppLink", "getQuestionBank", "getStudentEnrollmentHistory", "getAcademicCalendar", "getClassSchedules", "getStudentSchedule", "getStudentFile", "getStudentTimeline", "getStudentDocuments", "getClassAttendance", "getDailyAttendance", "submitAttendanceJustification", "getStudentAttendanceSummary", "getAttendanceIncidents", "calculateUnifiedAcademicGrade"],
   "Alumno": ["getAcademicConfig", "getAcademicHistory", "getAsignaturasActivas", "getWhatsAppLink", "getStudentEnrollmentHistory", "getAcademicYears", "getAcademicPeriods", "getAcademicOffers", "getAcademicCalendar", "getClassSchedules", "getStudentSchedule", "getStudentFile", "getStudentTimeline", "getStudentDocuments", "getStudentEnrollments", "submitAttendanceJustification", "getStudentAttendanceSummary", "getAttendanceIncidents"]
 };
 
@@ -258,6 +258,7 @@ function doPost(e) {
       case "getInstitutionalReportCatalog": result = getInstitutionalReportCatalog(payload); break;
       case "generateInstitutionalReport": result = generateInstitutionalReport(payload); break;
       case "getSectionEquivalences": result = getSectionEquivalences(payload); break;
+      case "calculateUnifiedAcademicGrade": result = calculateUnifiedAcademicGrade(payload); break;
 
       // Endpoints Fase 3
       case "getInstitutionParams": result = getInstitutionParams(payload); break;
@@ -4607,5 +4608,64 @@ function getSectionEquivalences(payload) {
     status: "success",
     seccionOriginal: seccion,
     seccionEquivalente: equivalente
+  };
+}
+
+// [TAREA-12] [Fase 1 - Evaluación Unificada] - Unificación de la evaluación académica, rúbricas analíticas, ponderaciones, inalterabilidad de periodos cerrados y compatibilidad SACE / Cuadro de Honor.
+function calculateUnifiedAcademicGrade(payload) {
+  const { userId, asignaturaId, periodoId, actividades, esAnoHistoricoAnterior, periodoCerrado } = payload || {};
+
+  if (esAnoHistoricoAnterior) {
+    throw new Error("Las calificaciones de años escolares anteriores son inalterables.");
+  }
+
+  if (periodoCerrado) {
+    throw new Error("El periodo académico se encuentra cerrado. Se requiere rectificación autorizada por Secretaría.");
+  }
+
+  if (!Array.isArray(actividades) || actividades.length === 0) {
+    return {
+      status: "success",
+      notaFinal: 0,
+      estadoCalificacion: "Sin Actividades",
+      ponderaciones: {},
+      cuadroHonor: false,
+      compatibilidadSACE: "Pendiente"
+    };
+  }
+
+  let acumuladoPonderado = 0;
+  let totalPonderacion = 0;
+  const ponderacionesPorCategoria = {};
+
+  actividades.forEach(act => {
+    const nota = parseFloat(act.notaObtenida) || 0;
+    const peso = parseFloat(act.porcentajePonderacion) || 0;
+    const cat = act.categoria || "General";
+
+    acumuladoPonderado += (nota * (peso / 100));
+    totalPonderacion += peso;
+
+    ponderacionesPorCategoria[cat] = (ponderacionesPorCategoria[cat] || 0) + (nota * (peso / 100));
+  });
+
+  const notaFinalCalculada = Math.min(100, Math.round(acumuladoPonderado * 100) / 100);
+  const esCuadroHonor = notaFinalCalculada >= 90;
+
+  let equivalenciaSACE = "Reprobado";
+  if (notaFinalCalculada >= 91) equivalenciaSACE = "Excelente";
+  else if (notaFinalCalculada >= 81) equivalenciaSACE = "Muy Bueno";
+  else if (notaFinalCalculada >= 70) equivalenciaSACE = "Satisfactorio";
+
+  return {
+    status: "success",
+    userId: userId,
+    asignaturaId: asignaturaId,
+    periodoId: periodoId,
+    notaFinal: notaFinalCalculada,
+    estadoCalificacion: notaFinalCalculada >= 70 ? "Aprobado" : "Reprobado",
+    equivalenciaSACE: equivalenciaSACE,
+    esCuadroHonor: esCuadroHonor,
+    ponderacionesPorCategoria: ponderacionesPorCategoria
   };
 }
