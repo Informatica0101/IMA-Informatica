@@ -510,3 +510,21 @@ DESCRIPCIÓN OBJETIVA DE LOS CAMBIOS:
 - Implementación de las funciones saveSubmissionDraft y gradeSubmissionWithRubric en backend/task-service/Code.gs, añadiendo soporte para guardado de borradores de tareas (estado 'borrador'), evaluación analítica por rúbricas en EvaluacionesRubricas y control de versiones de entregas.
 - Inyección del comentario identificativo de TAREA-10 en la primera línea directamente sobre la función submitAssignment.
 - Actualización del estado de [TAREA-10] a [X] Completada en Pendientes.md tras autoauditoría y verificación de pruebas funcionales en entorno Node.js.
+
+-------------------------------------------------------------------------------
+FECHA: Octubre 2026
+ARCHIVO(S) AFECTADO(S): backend/exam-service/Code.gs, Pendientes.md
+-------------------------------------------------------------------------------
+DESCRIPCIÓN OBJETIVA DE LOS CAMBIOS:
+- Implementación de las funciones manageQuestionBank y getQuestionBank en backend/exam-service/Code.gs para la gestión y consulta de bancos de preguntas por área curricular, asignatura, grado, tema y dificultad.
+- Inserción del comentario identificativo de TAREA-11 en la primera línea directamente sobre la función manageQuestionBank.
+- Actualización del estado de [TAREA-11] a [X] Completada en Pendientes.md tras verificación de pruebas funcionales.
+
+-------------------------------------------------------------------------------
+FECHA: Octubre 2026
+ARCHIVO(S) AFECTADO(S): backend/user-service/Code.gs, Pendientes.md
+-------------------------------------------------------------------------------
+DESCRIPCIÓN OBJETIVA DE LOS CAMBIOS:
+- Refuerzo de la función getUserVerifiedRole y validateRolePermission en backend/user-service/Code.gs incorporando validación de vigencia de estado de cuenta (retornando NO_ACCESS ante estado Bloqueada, Suspendida o Desactivada) e inhabilitación de caché de permisos bajo solicitudes con bandera de bypass.
+- Inserción del comentario identificativo de [FASE2-T01] en la primera línea directamente precedente a getUserVerifiedRole.
+- Actualización del estado de [FASE2-T01] a [X] Completada en Pendientes.md.

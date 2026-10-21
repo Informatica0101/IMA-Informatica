@@ -23,6 +23,23 @@ function getSheetOrThrow(ss, name) {
   return sheet;
 }
 
+function getOrCreateSheet(ss, name) {
+  let sheet = ss.getSheetByName(name);
+  if (!sheet) {
+    sheet = ss.insertSheet(name);
+    if (name === "Examenes") sheet.appendRow(["ExamenID", "Titulo", "Asignatura", "Grado", "Seccion", "FechaLimite", "TiempoLimite", "Estado", "ProfesorID", "Parcial", "AreaCurricular", "DuracionMinutos", "IntentosPermitidos", "EsAleatorio"]);
+    if (name === "PreguntasExamen") sheet.appendRow(["PreguntaID", "ExamenID", "Tipo", "Texto", "OpcionesJSON", "RespuestaCorrecta", "Puntos", "AreaCurricular", "Dificultad", "BancoPreguntaID"]);
+    if (name === "BancoPreguntas") sheet.appendRow(["BancoPreguntaID", "AreaCurricular", "Asignatura", "Grado", "Tema", "Dificultad", "Tipo", "TextoPregunta", "OpcionesJSON", "RespuestaCorrecta", "Etiquetas", "PuntosPredeterminados", "Estado"]);
+    if (name === "EntregasExamen") sheet.appendRow(["EntregaExamenID", "ExamenID", "UserID", "FechaEntrega", "RespuestasJSON", "NotaTotal", "Estado", "ComentarioDocente", "TemaAsociado", "AsignaturaAsociada"]);
+    if (name === "CategoriasEvaluacion") sheet.appendRow(["ID", "Nombre", "Ambito", "PorcentajePonderacion", "EscalaID", "Estado"]);
+    if (name === "RubricasEvaluacion") sheet.appendRow(["ID", "Titulo", "Asignatura", "Estado", "CriteriosJSON"]);
+    if (name === "CalificacionesEstudiantes") sheet.appendRow(["ID", "EvaluacionID", "UserID", "NotaObtenida", "PuntajePonderado", "EsBorrador", "EsPublicada", "Observaciones", "FechaRegistro"]);
+    if (name === "RecuperacionesEstudiante") sheet.appendRow(["ID", "EvaluacionID", "UserID", "NotaOriginal", "NotaRecuperada", "NotaFinalCalculada", "MetodoAplicado", "AutorizadoPor", "Fecha"]);
+    if (name === "CierresPeriodos") sheet.appendRow(["CierreID", "AnoID", "PeriodoID", "Grado", "Seccion", "Asignatura", "ProfesorID", "Estado", "FechaCierre"]);
+  }
+  return sheet;
+}
+
 function textResponse(obj) {
   return ContentService
     .createTextOutput(JSON.stringify(obj))
@@ -70,7 +87,8 @@ const ROLE_PERMISSIONS = {
     "createExam", "updateExam", "updateExamStatus", "deleteExam", "gradeExamSubmission", "deleteExamSubmission",
     "getAllExams", "getTeacherExamActivity", "getExamQuestions", "getStudentExams", "getExamResult",
     "getGradebookData", "saveGradebookGrades", "getEvaluationCategories", "saveEvaluationCategory",
-    "getRubrics", "saveRubric", "saveStudentRecovery", "getStudentRecoveries", "closePeriodGradebook", "reopenPeriodGradebook", "getStudentAcademicReport"
+    "getRubrics", "saveRubric", "saveStudentRecovery", "getStudentRecoveries", "closePeriodGradebook", "reopenPeriodGradebook", "getStudentAcademicReport",
+    "manageQuestionBank", "getQuestionBank"
   ],
   "Estudiante": [
     "getStudentExams", "getExamQuestions", "submitExam", "getExamResult", "getEvaluationCategories", "getRubrics", "getStudentRecoveries", "getStudentAcademicReport"
@@ -129,6 +147,8 @@ function doPost(e) {
       case "closePeriodGradebook": result = closePeriodGradebook(payload); break;
       case "reopenPeriodGradebook": result = reopenPeriodGradebook(payload); break;
       case "getStudentAcademicReport": result = getStudentAcademicReport(payload); break;
+      case "manageQuestionBank": result = manageQuestionBank(payload); break;
+      case "getQuestionBank": result = getQuestionBank(payload); break;
       default:
         result = { status: "error", message: `Acción no válida: ${action}` };
     }
@@ -142,6 +162,101 @@ function doPost(e) {
 }
 
 // [TAREA-11] [Fase 1 - Motor de Exámenes] - Motor ampliado de evaluaciones, bancos de preguntas polimórficos por área, aleatoriedad y analítica psicométrica.
+function manageQuestionBank(payload) {
+  const { bancoPreguntaId, areaCurricular, asignatura, grado, tema, dificultad, tipo, textoPregunta, opcionesJSON, respuestaCorrecta, etiquetas, puntosPredeterminados, accion } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "BancoPreguntas");
+
+  if (accion === "eliminar" && bancoPreguntaId) {
+    const data = sheet.getDataRange().getValues();
+    const idx = data.findIndex(r => String(r[0]).trim() === String(bancoPreguntaId).trim());
+    if (idx !== -1) {
+      sheet.getRange(idx + 1, 13).setValue("Inactivo");
+      return { status: "success", message: "Pregunta desactivada en el banco de preguntas." };
+    }
+    throw new Error("Pregunta no encontrada en el banco.");
+  }
+
+  const qId = bancoPreguntaId || ("BNK-" + Date.now() + "-" + Math.floor(Math.random() * 1000));
+  const opcStr = typeof opcionesJSON === "object" ? JSON.stringify(opcionesJSON) : (opcionesJSON || "{}");
+  const data = sheet.getDataRange().getValues();
+  const idx = data.findIndex(r => String(r[0]).trim() === String(qId).trim());
+
+  if (idx !== -1) {
+    sheet.getRange(idx + 1, 2, 1, 12).setValues([[
+      areaCurricular || "General",
+      asignatura || "",
+      grado || "",
+      tema || "",
+      dificultad || "Media",
+      tipo || "opcion_multiple",
+      textoPregunta || "",
+      opcStr,
+      respuestaCorrecta || "",
+      etiquetas || "",
+      puntosPredeterminados || 1,
+      "Activo"
+    ]]);
+    return { status: "success", bancoPreguntaId: qId, message: "Pregunta del banco actualizada correctamente." };
+  }
+
+  sheet.appendRow([
+    qId,
+    areaCurricular || "General",
+    asignatura || "",
+    grado || "",
+    tema || "",
+    dificultad || "Media",
+    tipo || "opcion_multiple",
+    textoPregunta || "",
+    opcStr,
+    respuestaCorrecta || "",
+    etiquetas || "",
+    puntosPredeterminados || 1,
+    "Activo"
+  ]);
+
+  return { status: "success", bancoPreguntaId: qId, message: "Pregunta añadida exitosamente al banco." };
+}
+
+function getQuestionBank(payload) {
+  const { areaCurricular, asignatura, grado, tema, dificultad } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "BancoPreguntas");
+  const data = sheet.getDataRange().getValues();
+
+  if (data.length <= 1) return { status: "success", preguntas: [] };
+
+  const normArea = areaCurricular ? normalizeString(areaCurricular) : "";
+  const normAsig = asignatura ? normalizeString(asignatura) : "";
+  const normGrado = grado ? normalizeString(grado) : "";
+
+  const preguntas = data.slice(1).filter(r => {
+    if (r[12] === "Inactivo") return false;
+    if (normArea && normalizeString(r[1]) !== normArea) return false;
+    if (normAsig && normalizeString(r[2]) !== normAsig) return false;
+    if (normGrado && normalizeString(r[3]) !== normGrado) return false;
+    if (tema && normalizeString(r[4]) !== normalizeString(tema)) return false;
+    if (dificultad && normalizeString(r[5]) !== normalizeString(dificultad)) return false;
+    return true;
+  }).map(r => ({
+    bancoPreguntaId: r[0],
+    areaCurricular: r[1],
+    asignatura: r[2],
+    grado: r[3],
+    tema: r[4],
+    dificultad: r[5],
+    tipo: r[6],
+    textoPregunta: r[7],
+    opciones: JSON.parse(r[8] || "{}"),
+    respuestaCorrecta: r[9],
+    etiquetas: r[10],
+    puntosPredeterminados: parseFloat(r[11]) || 1
+  }));
+
+  return { status: "success", preguntas: preguntas };
+}
+
 function createExam(p) {
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
   const examenes = getSheetOrThrow(ss, "Examenes");

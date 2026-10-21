@@ -715,23 +715,26 @@ const ROLE_PERMISSIONS = {
   ]
 };
 
-// [TAREA-01] [Fase 1 - Seguridad RBAC] - Validar y reforzar la seguridad de los servicios y la separación de permisos en el servidor.
+// [FASE2-T01] [Fase 2 - Autorización e Interoperabilidad] - Verifica y refuerza la autorización institucional, validación de vigencia de cuentas y revocación de permisos.
 function getUserVerifiedRole(payload) {
   if (!payload) return "Estudiante";
   const userId = payload.userId || payload.authUserId || (payload.currentUser && payload.currentUser.userId);
   const email = payload.email || (payload.currentUser && payload.currentUser.email);
-  const declaredRole = payload.authRole || payload.rol || (payload.currentUser && payload.currentUser.rol);
 
   if (!userId && !email) {
     return "Estudiante";
   }
 
+  const bypassCache = payload.skipRoleCache === true || payload.ignoreCache === true;
   const cacheKey = "user_role_" + (userId || email);
+
   try {
     const cache = CacheService.getScriptCache();
-    const cachedRole = cache.get(cacheKey);
-    if (cachedRole) {
-      return cachedRole;
+    if (!bypassCache) {
+      const cachedRole = cache.get(cacheKey);
+      if (cachedRole) {
+        return cachedRole;
+      }
     }
 
     const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
@@ -742,6 +745,11 @@ function getUserVerifiedRole(payload) {
         const rUserId = String(data[i][0]).trim();
         const rEmail = String(data[i][4]).toLowerCase().trim();
         if ((userId && rUserId === String(userId).trim()) || (email && rEmail === String(email).toLowerCase().trim())) {
+          const accountState = String(data[i][10] || "Activa").trim();
+          if (accountState === "Desactivada" || accountState === "Bloqueada" || accountState === "Suspendida") {
+            cache.remove(cacheKey);
+            return "NO_ACCESS";
+          }
           const trueRole = String(data[i][6] || "Estudiante").trim();
           cache.put(cacheKey, trueRole, 21600);
           return trueRole;
@@ -758,6 +766,9 @@ function getUserVerifiedRole(payload) {
 function validateRolePermission(action, payload) {
   if (PUBLIC_ACTIONS.indexOf(action) !== -1) return { authorized: true };
   const userRole = getUserVerifiedRole(payload);
+  if (userRole === "NO_ACCESS") {
+    return { authorized: false, role: "Cuenta Inactiva/Bloqueada" };
+  }
   if (["submitProblemTicket", "getProblemTickets", "replyProblemTicket", "searchGlobalOmnibox", "configureAutomationRules", "getAutomationRules", "getNotificationAuditLogs"].indexOf(action) !== -1) {
     return { authorized: true, role: userRole };
   }

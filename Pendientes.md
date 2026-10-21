@@ -61,7 +61,7 @@
   6. Las rutas protegidas se comportan igual ante llamadas desde la interfaz y llamadas directas al backend.
   7. Los intentos de acceso no autorizado generan registros de auditoría adecuados.
   8. Las pruebas confirman que la caché no mezcla permisos entre usuarios ni mantiene autorizaciones obsoletas fuera de la política aprobada.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 ### [ ] [FASE2-T02] Garantizar la idempotencia de las operaciones y evitar duplicaciones por reintentos HTTP
 - **Origen del Hallazgo:** Auditoría de la Fase 2, octubre de 2026 (AUDITORIA_FASE2_ARQUITECTURA_INTEROPERABILIDAD.md - Área 5)
@@ -330,7 +330,7 @@
   - Los archivos y comentarios respetan los permisos del curso.
 - **Estado:** [X] Completada
 
-### [ ] [TAREA-11] Ampliar el motor de exámenes y el banco de preguntas por área curricular
+### [X] [TAREA-11] Ampliar el motor de exámenes y el banco de preguntas por área curricular
 - **Origen del Hallazgo:** Auditoría de la Fase 1, octubre de 2026 (AUDITORIA_FASE1_PLANIFICACION_EXPANSION.md - Sección B & H)
 - **Severidad/Clasificación:** Alto
 - **Archivos Involucrados:** `backend/exam-service/Code.gs`, `js/quizpro.js`, `js/exam.js`, `exam.html`, `results.html`
