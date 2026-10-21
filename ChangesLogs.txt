@@ -282,3 +282,42 @@ Archivos Modificados:
 
 8. ChangesLogs.txt
    - Registro objetivo de las modificaciones funcionales aplicadas en TAREA-01.
+
+-------------------------------------------------------------------------------
+FECHA: Octubre 2026
+TAREA: [TAREA-02] Consolidar la matriz maestra de requisitos, dependencias y pruebas
+-------------------------------------------------------------------------------
+
+Archivos Modificados:
+1. MapaDependencias.md
+   - Adición de la sección 'MATRIZ MAESTRA DE TRAZABILIDAD DE REQUISITOS, DEPENDENCIAS Y PRUEBAS' vinculando de forma unívoca requisitos, subcapacidades, componentes, pruebas, estados y tareas de resolución. Adición de comentario identificativo de tarea en primera línea.
+
+2. Pendientes.md
+   - Actualización del estado a [X] TAREA-02 completada.
+
+3. Auditoria.txt
+   - Registro de la adición de la matriz maestra en MapaDependencias.md.
+
+4. ChangesLogs.txt
+   - Registro objetivo de la consolidación documental de la matriz maestra.
+
+-------------------------------------------------------------------------------
+FECHA: Octubre 2026
+TAREA: [TAREA-03] Implementar supervisión operativa y prevención de agotamiento de cuotas
+-------------------------------------------------------------------------------
+
+Archivos Modificados:
+1. js/api.js
+   - Lineas 1-15: Adición de objeto global OPERATIONAL_HEALTH_METRICS y función getServiceHealthMetrics para monitoreo de salud operativa y conteo de llamadas/errores por servicio. Adición de comentario identificativo de tarea en primera línea.
+   - Lineas 25-30: Registro de contadores de llamadas iniciadas en OPERATIONAL_HEALTH_METRICS por servicio.
+   - Lineas 150-160: Registro de peticiones exitosas en métricas operativas.
+   - Lineas 168-185: Registro de errores y detección de fallos por cuotas (quotaExceeded) e incremento de backoff exponencial en reintentos HTTP.
+
+2. Pendientes.md
+   - Actualización del estado a [X] TAREA-03 completada.
+
+3. Auditoria.txt
+   - Registro de la ejecución completada de TAREA-03.
+
+4. ChangesLogs.txt
+   - Registro objetivo de las mejoras operativas implementadas en js/api.js.

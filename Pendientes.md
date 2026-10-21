@@ -39,7 +39,7 @@
 
 ## GRUPO PRIORIDAD P1 (ALTO)
 
-### [TAREA-02] Consolidar la matriz maestra de requisitos, dependencias y pruebas
+### [X] [TAREA-02] Consolidar la matriz maestra de requisitos, dependencias y pruebas
 - **Origen del Hallazgo:** Auditoría de la Fase 1, octubre de 2026 (AUDITORIA_FASE1_PLANIFICACION_EXPANSION.md - Sección H)
 - **Severidad/Clasificación:** Alto
 - **Archivos Involucrados:** `MapaDependencias.md`, `README.md`, `AUDITORIA_FASE1_PLANIFICACION_EXPANSION.md`
@@ -60,9 +60,9 @@
   - Las dependencias permiten identificar el impacto potencial de un cambio.
   - Los elementos pendientes de prueba no aparecen como verificados.
   - La cobertura se calcula sobre elementos identificables, sin contabilizar los bloqueos como éxitos.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
-### [TAREA-03] Implementar supervisión operativa y prevención de agotamiento de cuotas
+### [X] [TAREA-03] Implementar supervisión operativa y prevención de agotamiento de cuotas
 - **Origen del Hallazgo:** Auditoría de la Fase 1, octubre de 2026 (AUDITORIA_FASE1_PLANIFICACION_EXPANSION.md - Sección G)
 - **Severidad/Clasificación:** Alto
 - **Archivos Involucrados:** `backend/user-service/Code.gs`, `backend/academic-service/Code.gs`, `backend/accounting-service/Code.gs`, `backend/task-service/Code.gs`, `backend/exam-service/Code.gs`, `js/api.js`, `js/persistence.js`
@@ -89,7 +89,7 @@
   - Los indicadores distinguen los errores de cuota de los errores de permisos o de datos.
   - Las métricas permiten identificar el servicio que consume recursos de forma anormal.
   - Las pruebas de carga no causan pérdida de información ni corrupción de registros.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 ### [TAREA-05] Consolidar la arquitectura de servicios por departamento y la administración de cuentas
 - **Origen del Hallazgo:** Auditoría de la Fase 1, octubre de 2026 (AUDITORIA_FASE1_PLANIFICACION_EXPANSION.md - Sección E)
