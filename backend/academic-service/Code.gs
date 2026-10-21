@@ -217,6 +217,59 @@ const ROLE_PERMISSIONS = {
 
 const PUBLIC_ACTIONS = ["ping", "createAdmissionRequest"];
 
+// [FASE2-T02] [Fase 2 - Idempotencia de Operaciones] - Mecanismo de verificación de claves de idempotencia, caché de resultados y prevención de duplicación por reintentos HTTP.
+function getIdempotencyPayloadSignature(payload) {
+  if (!payload || typeof payload !== "object") return "";
+  const copy = {};
+  Object.keys(payload).sort().forEach(k => {
+    if (["idempotencyToken", "idempotencyKey", "requestId", "timestamp", "authRole"].indexOf(k) === -1) {
+      copy[k] = payload[k];
+    }
+  });
+  return JSON.stringify(copy);
+}
+
+function checkAndRegisterIdempotencyKey(action, payload) {
+  const token = payload && (payload.idempotencyToken || payload.idempotencyKey);
+  if (!token) return null;
+
+  const cacheKey = `IDEM_${action}_${String(token).trim()}`;
+  const currentSignature = getIdempotencyPayloadSignature(payload);
+  const cache = CacheService.getScriptCache();
+  const cachedRaw = cache.get(cacheKey);
+
+  if (cachedRaw) {
+    try {
+      const parsed = JSON.parse(cachedRaw);
+      if (parsed.signature && parsed.signature !== currentSignature) {
+        throw new Error("Clave de idempotencia reutilizada con datos incompatibles.");
+      }
+      if (parsed.result) {
+        const copyResult = JSON.parse(JSON.stringify(parsed.result));
+        copyResult.cachedIdempotentResult = true;
+        return copyResult;
+      }
+    } catch (e) {
+      if (e.message.indexOf("incompatibles") !== -1) throw e;
+    }
+  }
+  return null;
+}
+
+function saveIdempotentResult(action, payload, result) {
+  const token = payload && (payload.idempotencyToken || payload.idempotencyKey);
+  if (!token || !result || result.status !== "success") return;
+
+  const cacheKey = `IDEM_${action}_${String(token).trim()}`;
+  const signature = getIdempotencyPayloadSignature(payload);
+  const cache = CacheService.getScriptCache();
+  try {
+    cache.put(cacheKey, JSON.stringify({ signature, result }), 21600);
+  } catch (e) {
+    console.warn("No se pudo guardar la clave de idempotencia en caché:", e);
+  }
+}
+
 // [TAREA-01] [Fase 1 - Seguridad RBAC] - Validar y reforzar la seguridad de los servicios y la separación de permisos en el servidor.
 function validateRolePermission(action, payload) {
   if (PUBLIC_ACTIONS.indexOf(action) !== -1) return { authorized: true };
@@ -240,6 +293,14 @@ function doPost(e) {
       logStructuredEvent("ACADEMIC", action, "WARN", "AUTH_PERMISSION_DENIED", `Acceso denegado a ${action} para rol ${authCheck.role}`, payload, authCheck.role);
       return textResponse({ status: "error", code: "AUTH_PERMISSION_DENIED", message: "Acceso denegado: El rol " + authCheck.role + " no tiene permiso para la acción " + action + "." });
     }
+
+    if (action.indexOf("get") !== 0) {
+      const cachedResult = checkAndRegisterIdempotencyKey(action, payload);
+      if (cachedResult) {
+        return textResponse(cachedResult);
+      }
+    }
+
     let result;
     switch (action) {
       // Endpoints Anteriores
@@ -382,6 +443,11 @@ function doPost(e) {
       case "ping": result = { status: "success", service: "ACADEMIC", timestamp: new Date().toISOString(), dbConnected: true }; break;
       default: result = { status: "error", message: `Acción no reconocida: ${action}` };
     }
+
+    if (action.indexOf("get") !== 0 && result && result.status === "success") {
+      saveIdempotentResult(action, payload, result);
+    }
+
     return textResponse(result);
   } catch (err) {
     logStructuredEvent("ACADEMIC", "doPost", "ERROR", "UNHANDLED_EXCEPTION", err.message, e ? e.postData : null, "Sistema");

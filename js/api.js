@@ -66,9 +66,9 @@ function fetchApi(service, action, payload, retryCount, options) {
                 }
             } catch (_) {}
         }
-        // FASE 2: Inyectar token de idempotencia único para operaciones no de lectura (write/mutation)
-        if (action.indexOf('get') !== 0 && !payload.idempotencyToken) {
-            payload.idempotencyToken = 'IDEM-' + Date.now() + '-' + Math.floor(Math.random() * 10000);
+        // [FASE2-T02] [Fase 2 - Idempotencia de Operaciones] - Inyección automática de token de idempotencia para escrituras con efectos secundarios y prevención de duplicación por reintentos HTTP.
+        if (action.indexOf('get') !== 0 && !payload.idempotencyToken && !payload.idempotencyKey) {
+            payload.idempotencyToken = 'IDEM-' + Date.now() + '-' + Math.floor(Math.random() * 100000);
         }
     }
 
@@ -177,9 +177,11 @@ function fetchApi(service, action, payload, retryCount, options) {
                 }
             }
 
-            if (retryCount < MAX_RETRIES && (error.message.indexOf('fetch') !== -1 || error.message.indexOf('Network') !== -1 || error.message.indexOf('Failed') !== -1)) {
+            var isReadOnlyAction = action.indexOf('get') === 0;
+            var hasIdempotencyToken = payload && (payload.idempotencyToken || payload.idempotencyKey);
+            if (retryCount < MAX_RETRIES && (isReadOnlyAction || hasIdempotencyToken) && (error.message.indexOf('fetch') !== -1 || error.message.indexOf('Network') !== -1 || error.message.indexOf('Failed') !== -1)) {
                 var delay = 1000 * Math.pow(2, retryCount);
-                console.log('Reintentando en ' + delay + 'ms...');
+                console.log('Reintentando en ' + delay + 'ms para ' + action + ' (Intento ' + (retryCount + 1) + ')...');
                 return new Promise(function(resolve) {
                     setTimeout(function() {
                         resolve(fetchApi(service, action, payload, retryCount + 1, options));
