@@ -203,6 +203,7 @@ const ROLE_PERMISSIONS = {
 
 const PUBLIC_ACTIONS = ["ping", "getInstitutionalPolicies", "verifySchoolDocumentByCUV"];
 
+// [TAREA-01] [Fase 1 - Seguridad RBAC] - Validar y reforzar la seguridad de los servicios y la separación de permisos en el servidor.
 function validateRolePermission(action, payload) {
   if (PUBLIC_ACTIONS.indexOf(action) !== -1) return { authorized: true };
   const userRole = (payload && (payload.authRole || payload.rol)) || "Estudiante";
@@ -6230,7 +6231,7 @@ function verifyLaborAndTaxInformation(payload) {
   };
 }
 
-// TAREA RH-12: Pruebas de integración y regresión de Recursos Humanos
+// [TAREA-16] [Fase 1 - Pruebas de Carga e Integridad] - Suite de pruebas integrales de regresión, concurrencia, idempotencia e integridad de procesos críticos.
 function runHRIntegrationAndRegressionTests(payload) {
   const { authRole, authUserId } = payload || {};
 

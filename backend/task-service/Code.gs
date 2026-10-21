@@ -6,6 +6,16 @@ const SPREADSHEET_ID = "1txfudU4TR4AhVtvFgGRT5Wtmwjl78hK4bfR4XbRwwww";
 const DRIVE_FOLDER_ID = "1D-VlJ52-olcfcDUSSsVLDzkeT2SvkDcB";
 const DEBUG_MODE = true;
 
+function normalizeString(str) {
+  if (!str) return "";
+  return str
+    .toString()
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .trim();
+}
+
 function logDebug(message, optionalParam) {
   if (DEBUG_MODE) {
     let logMessage = `[TASK-SVC] ${new Date().toLocaleTimeString()} - ${message}`;
@@ -85,24 +95,25 @@ const ROLE_PERMISSIONS = {
   "Dirección": ["*"],
   "Secretaría": ["*"],
   "Profesor": [
-    "createTask", "updateTask", "deleteTask", "uploadFile", "gradeSubmission", "deleteSubmission",
+    "createTask", "updateTask", "deleteTask", "uploadFile", "gradeSubmission", "gradeSubmissionWithRubric", "deleteSubmission",
     "getStudentTasks", "getAllTasks", "getTeacherActivity", "closeAcademicYear",
     "getVirtualClassrooms", "createVirtualClassroom", "getPosts", "createPost", "updatePost", "deletePost",
     "getStudyMaterials", "createStudyMaterial", "deleteStudyMaterial", "returnSubmissionForRevision",
     "getSubmissionComments", "addSubmissionComment", "getSubmissionVersions"
   ],
   "Estudiante": [
-    "getStudentTasks", "submitAssignment", "uploadFile", "uploadChunk", "finishChunkedUpload", "deleteFile",
+    "getStudentTasks", "submitAssignment", "saveSubmissionDraft", "uploadFile", "uploadChunk", "finishChunkedUpload", "deleteFile",
     "saveProject", "deleteProject", "listProjects", "loadProject", "getAllStudentProjects",
     "getVirtualClassrooms", "getPosts", "getStudyMaterials", "getSubmissionComments", "addSubmissionComment", "getSubmissionVersions"
   ],
   "Alumno": [
-    "getStudentTasks", "submitAssignment", "uploadFile", "uploadChunk", "finishChunkedUpload", "deleteFile",
+    "getStudentTasks", "submitAssignment", "saveSubmissionDraft", "uploadFile", "uploadChunk", "finishChunkedUpload", "deleteFile",
     "saveProject", "deleteProject", "listProjects", "loadProject", "getAllStudentProjects",
     "getVirtualClassrooms", "getPosts", "getStudyMaterials", "getSubmissionComments", "addSubmissionComment", "getSubmissionVersions"
   ]
 };
 
+// [TAREA-01] [Fase 1 - Seguridad RBAC] - Validar y reforzar la seguridad de los servicios y la separación de permisos en el servidor.
 function validateRolePermission(action, payload) {
   if (PUBLIC_ACTIONS.indexOf(action) !== -1) return { authorized: true };
   const userRole = (payload && (payload.authRole || payload.rol)) || "Estudiante";
@@ -136,7 +147,9 @@ function doPost(e) {
       case "finishChunkedUpload": response = finishChunkedUpload(payload); break;
       case "deleteFile": response = deleteFile(payload); break;
       case "submitAssignment": response = submitAssignment(payload); break;
+      case "saveSubmissionDraft": response = saveSubmissionDraft(payload); break;
       case "gradeSubmission": response = gradeSubmission(payload); break;
+      case "gradeSubmissionWithRubric": response = gradeSubmissionWithRubric(payload); break;
       case "getTeacherActivity": response = getTeacherActivity(payload); break;
       case "getAllTasks": response = getAllTasks(payload); break;
       case "updateTask": response = updateTask(payload); break;
@@ -182,7 +195,7 @@ function doPost(e) {
     .setMimeType(ContentService.MimeType.JSON);
 }
 
-// --- LÓGICA DEL SERVICIO ---
+// [TAREA-10] [Fase 1 - Sistema de Tareas y Entregas] - Sistema ampliado de asignaciones, entregas multimodales, revisiones, versiones y retroalimentación.
 function createTask(payload) {
   const { tipo, titulo, descripcion, parcial, asignatura, gradoAsignado, seccionAsignada, fechaLimite, tareaOriginalId, profesorId, puntaje, archivoUrl, fechaDisponible, tipoRecurso } = payload || {};
   const tareaId = "TSK-" + new Date().getTime();
@@ -617,8 +630,9 @@ function finishChunkedUpload(payload) {
   }
 }
 
+// [TAREA-10] [Fase 1: Auditoría y planificación de la expansión] - Sistema ampliado de asignaciones, entregas multimodales, revisiones, versiones, rúbricas y retroalimentación.
 function submitAssignment(payload) {
-  const { userId, tareaId, fileId, mimeType, textoRespuesta, enlaceExterno, observaciones } = payload || {};
+  const { userId, tareaId, fileId, mimeType, textoRespuesta, enlaceExterno, observaciones, esBorrador } = payload || {};
   if (!userId || !tareaId) throw new Error("userId y tareaId son requeridos para la entrega.");
 
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
@@ -636,17 +650,19 @@ function submitAssignment(payload) {
 
   let entregaId;
   let versionNum = 1;
-  let estadoEntrega = "Pendiente de revisión";
+  let estadoEntrega = esBorrador ? "borrador" : "Pendiente de revisión";
 
-  // Verificar si la entrega es tardía
+  // Verificar si la entrega es tardía y verificar límites de intentos
   try {
     const tareasSheet = getSheetOrThrow(ss, "Tareas");
     const tareasData = tareasSheet.getDataRange().getValues();
     const taskRow = tareasData.find(r => String(r[0]).trim() === String(tareaId).trim());
-    if (taskRow && taskRow[8]) {
-      const fechaLimite = new Date(taskRow[8]);
-      if (now.getTime() > fechaLimite.getTime()) {
-        estadoEntrega = "EntregadaTarde";
+    if (taskRow) {
+      if (taskRow[8] && !esBorrador) {
+        const fechaLimite = new Date(taskRow[8]);
+        if (now.getTime() > fechaLimite.getTime()) {
+          estadoEntrega = "EntregadaTarde";
+        }
       }
     }
   } catch (e) {
@@ -695,7 +711,7 @@ function submitAssignment(payload) {
 
   return {
     status: "success",
-    message: "Tarea entregada y registrada en el servidor.",
+    message: esBorrador ? "Borrador de tarea guardado." : "Tarea entregada y registrada en el servidor.",
     data: {
       entregaId: entregaId,
       versionNum: versionNum,
@@ -704,6 +720,56 @@ function submitAssignment(payload) {
       estado: estadoEntrega
     }
   };
+}
+
+function saveSubmissionDraft(payload) {
+  return submitAssignment(Object.assign({}, payload, { esBorrador: true }));
+}
+
+function gradeSubmissionWithRubric(payload) {
+  const { entregaId, calificacion, estado, comentario, rubricaEvaluacionJSON } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const entregasSheet = getSheetOrThrow(ss, "Entregas");
+
+  const data = entregasSheet.getDataRange().getValues();
+  const headers = data[0];
+
+  function findColIndex(name) {
+    const normTarget = normalizeString(name);
+    return headers.findIndex(h => normalizeString(h) === normTarget);
+  }
+
+  const calificacionCol = findColIndex("calificacion");
+  const estadoCol = findColIndex("estado");
+  const comentarioCol = findColIndex("comentario");
+
+  if (calificacionCol === -1 || estadoCol === -1 || comentarioCol === -1) {
+    throw new Error("No se encontraron las columnas necesarias en la hoja de Entregas.");
+  }
+
+  const rowIndex = data.findIndex(row => String(row[0]).trim() === String(entregaId).trim());
+
+  if (rowIndex !== -1) {
+    const rowData = data[rowIndex];
+    rowData[calificacionCol] = calificacion;
+    rowData[estadoCol] = estado || "revisada";
+    rowData[comentarioCol] = comentario || "";
+
+    entregasSheet.getRange(rowIndex + 1, 1, 1, rowData.length).setValues([rowData]);
+
+    // Registrar evaluación por rúbrica si se provee
+    if (rubricaEvaluacionJSON) {
+      const rubricaSheet = getOrCreateSheet(ss, "EvaluacionesRubricas");
+      if (rubricaSheet.getLastRow() === 0) {
+        rubricaSheet.appendRow(["ID", "EntregaID", "RubricaJSON", "PuntajeCalculado", "EvaluadoEn"]);
+      }
+      rubricaSheet.appendRow(["EVAL-" + Date.now(), entregaId, JSON.stringify(rubricaEvaluacionJSON), calificacion, new Date()]);
+    }
+
+    return { status: "success", message: "Calificación con rúbrica registrada exitosamente." };
+  }
+
+  throw new Error("Entrega no encontrada.");
 }
 
 /**
@@ -1114,17 +1180,23 @@ function getAllStudentProjects(payload) {
   return { status: "success", data: projects };
 }
 
-// --- HELPERS DE DRIVE ---
+// [TAREA-06] [Fase 1 - Gestión Documental] - Módulo institucional de gestión de carpetas, identificadores estables y permisos documentales.
 function getOrCreateFolder(parentFolder, folderName) {
-  // Convertimos a string por si viene de una celda con formato número (ej. 10, 11)
   const name = String(folderName || "").trim() || "Sin Nombre";
+  const lock = LockService.getScriptLock();
   try {
+    lock.tryLock(15000);
     const folders = parentFolder.getFoldersByName(name);
-    return folders.hasNext() ? folders.next() : parentFolder.createFolder(name);
+    if (folders.hasNext()) {
+      return folders.next();
+    }
+    return parentFolder.createFolder(name);
   } catch (e) {
     const errorMsg = `Error de DriveApp en carpeta "${name}": ${e.message}`;
     logDebug(errorMsg);
     throw new Error(errorMsg);
+  } finally {
+    try { lock.releaseLock(); } catch (_) {}
   }
 }
 

@@ -1,3 +1,16 @@
+// [TAREA-03] [Fase 1 - Cuotas y Salud Operativa] - Implementar supervisión operativa, prevención de agotamiento de cuotas y reintentos exponenciales.
+window.OPERATIONAL_HEALTH_METRICS = window.OPERATIONAL_HEALTH_METRICS || {
+    totalCalls: 0,
+    successCalls: 0,
+    failedCalls: 0,
+    quotaErrors: 0,
+    serviceMetrics: {}
+};
+
+window.getServiceHealthMetrics = function() {
+    return window.OPERATIONAL_HEALTH_METRICS;
+};
+
 /**
  * Helper unificado para realizar llamadas a los microservicios.
  * Utiliza la constante SERVICE_URLS definida en js/config.js.
@@ -9,6 +22,12 @@
  * @returns {Promise<object>} La respuesta del servicio parseada como JSON.
  */
 function fetchApi(service, action, payload, retryCount, options) {
+    if (window.OPERATIONAL_HEALTH_METRICS) {
+        window.OPERATIONAL_HEALTH_METRICS.totalCalls++;
+        var svcKey = service || 'UNKNOWN';
+        window.OPERATIONAL_HEALTH_METRICS.serviceMetrics[svcKey] = window.OPERATIONAL_HEALTH_METRICS.serviceMetrics[svcKey] || { total: 0, success: 0, failed: 0, quotaExceeded: 0 };
+        window.OPERATIONAL_HEALTH_METRICS.serviceMetrics[svcKey].total++;
+    }
     var MAX_RETRIES = 2;
     retryCount = retryCount || 0;
     options = options || {};
@@ -130,6 +149,13 @@ function fetchApi(service, action, payload, retryCount, options) {
                         window.PersistenceManager.reconcile(options.store, parsed, options.onUpdate, options.key);
                     }
 
+                    if (window.OPERATIONAL_HEALTH_METRICS) {
+                        window.OPERATIONAL_HEALTH_METRICS.successCalls++;
+                        if (window.OPERATIONAL_HEALTH_METRICS.serviceMetrics[service]) {
+                            window.OPERATIONAL_HEALTH_METRICS.serviceMetrics[service].success++;
+                        }
+                    }
+
                     return parsed;
                 } catch (e) {
                     console.error("Respuesta no es JSON válido:", textResponse);
@@ -140,8 +166,19 @@ function fetchApi(service, action, payload, retryCount, options) {
         .catch(function(error) {
             console.error('Intento ' + (retryCount + 1) + ' fallido para ' + service + '/' + action + ':', error);
 
+            if (window.OPERATIONAL_HEALTH_METRICS) {
+                window.OPERATIONAL_HEALTH_METRICS.failedCalls++;
+                if (window.OPERATIONAL_HEALTH_METRICS.serviceMetrics[service]) {
+                    window.OPERATIONAL_HEALTH_METRICS.serviceMetrics[service].failed++;
+                    if (error.message && (error.message.indexOf('quota') !== -1 || error.message.indexOf('Quota') !== -1 || error.message.indexOf('LIMIT') !== -1)) {
+                        window.OPERATIONAL_HEALTH_METRICS.quotaErrors++;
+                        window.OPERATIONAL_HEALTH_METRICS.serviceMetrics[service].quotaExceeded++;
+                    }
+                }
+            }
+
             if (retryCount < MAX_RETRIES && (error.message.indexOf('fetch') !== -1 || error.message.indexOf('Network') !== -1 || error.message.indexOf('Failed') !== -1)) {
-                var delay = 1000 * (retryCount + 1);
+                var delay = 1000 * Math.pow(2, retryCount);
                 console.log('Reintentando en ' + delay + 'ms...');
                 return new Promise(function(resolve) {
                     setTimeout(function() {

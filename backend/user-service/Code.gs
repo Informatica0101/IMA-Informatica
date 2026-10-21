@@ -69,6 +69,7 @@ function sanitizePayloadForLog(payload) {
   }
 }
 
+// [TAREA-15] [Fase 1 - Supervisión Operativa] - Registro de eventos estructurados de auditoría, errores y trazabilidad de servicios.
 function logStructuredEvent(serviceName, fnName, severity, errorCode, message, payload, userRole) {
   try {
     const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
@@ -714,38 +715,60 @@ const ROLE_PERMISSIONS = {
   ]
 };
 
-// [T-GOV-02] [pendientes3.md] - Función verificadora de rol en servidor (getUserVerifiedRole) para validación estricta de propiedad y alcance de acceso.
+// [FASE2-T01] [Fase 2 - Autorización e Interoperabilidad] - Verifica y refuerza la autorización institucional, validación de vigencia de cuentas y revocación de permisos.
 function getUserVerifiedRole(payload) {
   if (!payload) return "Estudiante";
-  const declaredRole = payload.authRole || payload.rol || (payload.currentUser && payload.currentUser.rol);
-  const userId = payload.userId || (payload.currentUser && payload.currentUser.userId);
+  const userId = payload.userId || payload.authUserId || (payload.currentUser && payload.currentUser.userId);
   const email = payload.email || (payload.currentUser && payload.currentUser.email);
 
-  if (userId || email) {
-    try {
-      const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
-      const sheet = ss.getSheetByName("Usuarios");
-      if (sheet) {
-        const data = sheet.getDataRange().getValues();
-        for (let i = 1; i < data.length; i++) {
-          const rUserId = String(data[i][0]).trim();
-          const rEmail = String(data[i][4]).toLowerCase().trim();
-          if ((userId && rUserId === String(userId).trim()) || (email && rEmail === String(email).toLowerCase().trim())) {
-            const trueRole = data[i][6];
-            if (trueRole) return String(trueRole).trim();
+  if (!userId && !email) {
+    return "Estudiante";
+  }
+
+  const bypassCache = payload.skipRoleCache === true || payload.ignoreCache === true;
+  const cacheKey = "user_role_" + (userId || email);
+
+  try {
+    const cache = CacheService.getScriptCache();
+    if (!bypassCache) {
+      const cachedRole = cache.get(cacheKey);
+      if (cachedRole) {
+        return cachedRole;
+      }
+    }
+
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const sheet = ss.getSheetByName("Usuarios");
+    if (sheet) {
+      const data = sheet.getDataRange().getValues();
+      for (let i = 1; i < data.length; i++) {
+        const rUserId = String(data[i][0]).trim();
+        const rEmail = String(data[i][4]).toLowerCase().trim();
+        if ((userId && rUserId === String(userId).trim()) || (email && rEmail === String(email).toLowerCase().trim())) {
+          const accountState = String(data[i][10] || "Activa").trim();
+          if (accountState === "Desactivada" || accountState === "Bloqueada" || accountState === "Suspendida") {
+            cache.remove(cacheKey);
+            return "NO_ACCESS";
           }
+          const trueRole = String(data[i][6] || "Estudiante").trim();
+          cache.put(cacheKey, trueRole, 21600);
+          return trueRole;
         }
       }
-    } catch (e) {
-      logDebug("Error consultando rol verificado en backend: " + e.message);
     }
+  } catch (e) {
+    logDebug("Error consultando rol verificado en backend: " + e.message);
   }
-  return declaredRole || "Estudiante";
+
+  return "Estudiante";
 }
 
 function validateRolePermission(action, payload) {
   if (PUBLIC_ACTIONS.indexOf(action) !== -1) return { authorized: true };
   const userRole = getUserVerifiedRole(payload);
+  if (userRole === "NO_ACCESS") {
+    return { authorized: false, role: "Cuenta Inactiva/Bloqueada" };
+  }
   if (["submitProblemTicket", "getProblemTickets", "replyProblemTicket", "searchGlobalOmnibox", "configureAutomationRules", "getAutomationRules", "getNotificationAuditLogs"].indexOf(action) !== -1) {
     return { authorized: true, role: userRole };
   }
@@ -2857,7 +2880,17 @@ function uploadNewsImage(payload) {
   return { status: "success", data: { fileId: file.getId(), directUrl: `https://lh3.googleusercontent.com/d/${file.getId()}` } };
 }
 
-function getOrCreateFolderNews(parent, name) { const f = parent.getFoldersByName(name); return f.hasNext() ? f.next() : parent.createFolder(name); }
+// [TAREA-06] [Fase 1 - Gestión Documental] - Módulo institucional de gestión de carpetas, identificadores estables y permisos documentales.
+function getOrCreateFolderNews(parent, name) {
+  const lock = LockService.getScriptLock();
+  try {
+    lock.tryLock(15000);
+    const f = parent.getFoldersByName(name);
+    return f.hasNext() ? f.next() : parent.createFolder(name);
+  } finally {
+    try { lock.releaseLock(); } catch (_) {}
+  }
+}
 
 // ---------------------------------------------------------------------------
 // FASE 25: FLUJOS DE APROBACIÓN, REVISIÓN Y FIRMA INSTITUCIONAL

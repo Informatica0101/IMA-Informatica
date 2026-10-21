@@ -1,3 +1,63 @@
+// [TAREA-05] [Fase 1 - Arquitectura de Servicios y Cuentas] - Registro centralizado de microservicios por departamento, URLs de despliegue, versiones y contratos.
+window.SERVICE_VERSIONS = {
+  USER: '1.0.0',
+  ACADEMIC: '1.0.0',
+  TASK: '1.0.0',
+  EXAM: '1.0.0',
+  ACCOUNTING: '1.0.0'
+};
+
+window.DEPARTMENT_SERVICES_MAP = {
+  'DIRECCION_SECRETARIA': ['USER', 'ACADEMIC'],
+  'RECURSOS_HUMANOS': ['USER', 'ACCOUNTING'],
+  'CONTABILIDAD_FINANZAS': ['ACCOUNTING'],
+  'DOCENCIA_ACADEMICO': ['ACADEMIC', 'TASK', 'EXAM'],
+  'ALUMNADO_PADRES': ['USER', 'ACADEMIC', 'TASK', 'EXAM', 'ACCOUNTING']
+};
+
+// [TAREA-08] [Fase 1 - Malla Curricular] - Estructura jerárquica de la malla curricular por áreas, asignaturas y departamentos.
+window.CURRICULAR_AREAS_CATALOG = [
+    { areaId: "AREA-01", name: "Matemáticas y razonamiento cuantitativo", code: "MAT" },
+    { areaId: "AREA-02", name: "Ciencias naturales", code: "CNT" },
+    { areaId: "AREA-03", name: "Informática, tecnología y computación", code: "INF" },
+    { areaId: "AREA-04", name: "Español, comunicación y literatura", code: "ESP" },
+    { areaId: "AREA-05", name: "Inglés y lenguas extranjeras", code: "ING" },
+    { areaId: "AREA-06", name: "Ciencias sociales y humanidades", code: "SOC" },
+    { areaId: "AREA-07", name: "Artes y expresión creativa", code: "ART" },
+    { areaId: "AREA-08", name: "Educación física, salud y bienestar", code: "EFI" },
+    { areaId: "AREA-09", name: "Formación en valores y desarrollo personal", code: "VAL" },
+    { areaId: "AREA-10", name: "Emprendimiento, economía y formación profesional", code: "EMP" },
+    { areaId: "AREA-11", name: "Agricultura, ambiente y sostenibilidad", code: "AGR" },
+    { areaId: "AREA-12", name: "Áreas complementarias", code: "CMP" }
+];
+
+window.ACADEMIC_DEPARTMENTS_CATALOG = [
+    { deptId: "DEPT-MAT", name: "Departamento de Matemáticas", areaId: "AREA-01" },
+    { deptId: "DEPT-CNT", name: "Departamento de Ciencias", areaId: "AREA-02" },
+    { deptId: "DEPT-INF", name: "Departamento de Informática", areaId: "AREA-03" },
+    { deptId: "DEPT-ESP", name: "Departamento de Español y Comunicación", areaId: "AREA-04" },
+    { deptId: "DEPT-ING", name: "Departamento de Inglés", areaId: "AREA-05" },
+    { deptId: "DEPT-SOC", name: "Departamento de Ciencias Sociales", areaId: "AREA-06" },
+    { deptId: "DEPT-ART", name: "Departamento de Artes", areaId: "AREA-07" },
+    { deptId: "DEPT-EFI", name: "Departamento de Educación Física", areaId: "AREA-08" }
+];
+
+// [TAREA-09] [Fase 1 - Servicios Curriculares] - Registro y enrutador de servicios de Apps Script especializados por área curricular.
+window.CURRICULAR_SPECIALIZED_SERVICES = {
+    "AREA-01": { serviceKey: "MATHEMATICS_SERVICE", name: "Servicio de Matemáticas y Razonamiento Cuantitativo", tools: ["math_editor", "step_by_step_eval", "numeric_tolerance"] },
+    "AREA-02": { serviceKey: "SCIENCE_SERVICE", name: "Servicio de Ciencias Naturales y Experimentales", tools: ["lab_reports", "hypothesis_tracker", "data_graphs"] },
+    "AREA-03": { serviceKey: "COMPUTER_SCIENCE_SERVICE", name: "Servicio de Informática y Pensamiento Computacional", tools: ["code_editor", "pseudocode_tester", "version_history"] },
+    "AREA-04": { serviceKey: "SPANISH_COMMUNICATION_SERVICE", name: "Servicio de Español y Comunicación Escrita", tools: ["essay_evaluator", "inline_rubrics", "grammar_checker"] },
+    "AREA-05": { serviceKey: "ENGLISH_LANGUAGES_SERVICE", name: "Servicio de Inglés y Lenguas Extranjeras", tools: ["audio_submissions", "listening_eval", "speaking_rubrics"] },
+    "AREA-06": { serviceKey: "SOCIAL_SCIENCES_SERVICE", name: "Servicio de Ciencias Sociales y Humanidades", tools: ["historical_source_analysis", "map_evaluator", "essay_rubrics"] },
+    "AREA-07": { serviceKey: "ARTS_CREATIVE_SERVICE", name: "Servicio de Artes y Expresión Creativa", tools: ["media_galleries", "creative_rubrics", "portfolio_eval"] },
+    "AREA-08": { serviceKey: "PHYSICAL_EDUCATION_SERVICE", name: "Servicio de Educación Física y Salud", tools: ["wellness_tracker", "performance_rubrics", "health_reports"] },
+    "AREA-09": { serviceKey: "VALUES_DEVELOPMENT_SERVICE", name: "Servicio de Formación en Valores", tools: ["ethical_case_analysis", "reflective_journals"] },
+    "AREA-10": { serviceKey: "ENTREPRENEURSHIP_SERVICE", name: "Servicio de Emprendimiento y Finanzas", tools: ["business_plan_eval", "financial_sheets"] },
+    "AREA-11": { serviceKey: "AGRICULTURE_ENVIRONMENT_SERVICE", name: "Servicio de Agricultura y Sostenibilidad", tools: ["field_project_eval", "sustainability_tracker"] },
+    "AREA-12": { serviceKey: "COMPLEMENTARY_AREAS_SERVICE", name: "Servicio de Áreas Complementarias", tools: ["interdisciplinary_projects", "club_activities"] }
+};
+
 // --- INSTRUCCIONES DE DESPLIEGUE DE MICROSERVICIOS ---
 // 1. Para cada carpeta en el directorio `backend` (ej. `user-service`), crea un NUEVO proyecto de Google Apps Script.
 // 2. Copia el contenido del archivo `Code.gs` de esa carpeta en el proyecto de Apps Script.

@@ -1,4 +1,21 @@
+<!-- [TAREA-02] [Fase 1 - Matriz Maestra] - Consolidar la matriz maestra de requisitos, dependencias y pruebas de la plataforma. -->
 # Mapa de Dependencias Académicas (v8.9.0 - Plan General de Expansión e Interoperabilidad)
+
+## MATRIZ MAESTRA DE TRAZABILIDAD DE REQUISITOS, DEPENDENCIAS Y PRUEBAS (TAREA-02)
+
+| ID Requisito | Fase y Función | Componente Implementado | Dependencias Explicitas | Criterios de Aceptación | Suite de Pruebas & Evidencias | Estado Funcional | Prioridad | Tarea Asociada |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| **REQ-SEC-001** | Fase 1 - RBAC Servidor | `backend/user-service/Code.gs` (`getUserVerifiedRole`) | `Usuarios` Sheet, `CacheService` | No permite elevación de privilegios al alterar rol cliente | Batería ACC-02, Code Review #Correct# | Completa y verificada | P0 | TAREA-01 |
+| **REQ-EXP-001** | Fase 1 - Expediente Único | `backend/academic-service/Code.gs` (`getStudentFile`) | `ExpedientesEstudiantes` | Ficha única con trazabilidad de cambios e historial | Batería DRV-04, `teacher-dashboard.html` | Completa y verificada | P0 | REQ-EXP-001 |
+| **REQ-EXP-002** | Fase 1 - Fusión Duplicados | `backend/academic-service/Code.gs` (`mergeStudentFiles`) | `ExpedientesEstudiantes` | Fusión atómica de registros conservando historial | Batería MOD-01, `js/teacher.js` | Completa y verificada | P0 | REQ-EXP-002 |
+| **REQ-GD-001** | Fase 9 - CUV Documental | `backend/accounting-service/Code.gs` (`generateSchoolDocument`) | `LockService`, `DocumentosEscolaresEmitidos` | Numeración atómica correlativa sin colisiones ni CUV duplicado | Batería DRV-02, GD-IMP-01 | Completa y verificada | P0 | TAREA GD-IMP-01 |
+| **REQ-FIN-001** | Fase 15 - Facturación SAR | `backend/accounting-service/Code.gs` (`FacturasFiscales`) | `FacturasFiscales`, `CAI` | Emisión fiscal conforme a normativa SAR Honduras | Batería STO-05, `dashboard-contabilidad.html` | Completa y verificada | P0 | T-PAG-12 |
+| **REQ-HR-001** | Fase 17 - Deducciones Ley | `backend/accounting-service/Code.gs` (`calculatePayrollPeriod`) | `PlanillasNomenclatura`, `IHSS/RAP/ISR` | Deducciones automáticas de IHSS, RAP e ISR vigentes | Batería MOD-05, TAREA RH-12 | Completa y verificada | P0 | TAREA RH-11 |
+| **REQ-HR-002** | Fase 16 - Desempeño Laboral | `backend/accounting-service/Code.gs` (`managePerformanceEvaluation`) | `EvaluacionesDesempeno` | Evaluación con observaciones privadas y rectificación | TAREA RH-12 Suite Scenario #5 | Completa y verificada | P1 | TAREA RH-05 |
+| **REQ-PWA-001** | Fase 28 - PWA Offline | `sw.js` (v8.1), `js/persistence.js` | Service Worker API, IndexedDB v4 | Precaching de assets y cola de sincronización diferida | Batería STO-03, `manifest.json` | Completa y verificada | P1 | B-001 |
+| **REQ-UX-001** | Fase 3 - Omnibox Búsqueda | `backend/user-service/Code.gs` (`searchGlobalOmnibox`) | `js/ui-common.js` | Consulta multi-entidad accesible via atajo `Ctrl + K` | Batería MOD-03, `#modal-global-omnibox` | Completa y verificada | P1 | REQ-OMNI-001 |
+
+---
 
 ## MÓDULO DE TÉRMINOS Y CONDICIONES DE USO V1.0 Y ACEPTACIÓN
 - **Páginas y Vistas:**
