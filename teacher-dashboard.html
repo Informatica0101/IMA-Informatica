@@ -537,6 +537,12 @@
                                 <button onclick="window.openAcademicLoadPlanningModal()" class="bg-teal-600 text-white px-3.5 py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider hover:bg-teal-700 transition-all shadow-md">
                                     <i class="fa-solid fa-sitemap mr-1"></i> Carga Académica
                                 </button>
+                                <button onclick="window.openAcademicAnalyticsModal()" class="bg-blue-600 text-white px-3.5 py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider hover:bg-blue-700 transition-all shadow-md">
+                                    <i class="fa-solid fa-chart-pie mr-1"></i> Analítica Académica
+                                </button>
+                                <button onclick="window.openReusableResourcesModal()" class="bg-indigo-600 text-white px-3.5 py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider hover:bg-indigo-700 transition-all shadow-md">
+                                    <i class="fa-solid fa-box-archive mr-1"></i> Recursos Reutilizables
+                                </button>
                                 <button id="btn-load-schedules-list" class="bg-indigo-600 text-white px-3.5 py-2.5 rounded-xl font-bold text-xs uppercase tracking-widest hover:bg-indigo-700 transition-all shadow-md">
                                     <i class="fas fa-sync-alt mr-1"></i> Actualizar
                                 </button>
@@ -1524,6 +1530,85 @@
             </div>
             <div class="flex justify-center bg-gray-50 rounded-2xl overflow-hidden">
                 <img id="lightbox-image" src="" alt="Vista previa" class="max-w-full max-h-[70vh] object-contain">
+            </div>
+        </div>
+    </div>
+
+    <!-- [TAREA-18] [Fase 1 - Reutilización de Recursos] - Interfaz modal (#modal-reusable-resources) para catálogo de recursos educativos reutilizables y proyectos interdisciplinarios. -->
+    <div id="modal-reusable-resources" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-[95] flex items-center justify-center p-2 md:p-4 hidden">
+        <div class="bg-white rounded-3xl max-w-4xl w-full p-6 shadow-2xl border border-slate-100 space-y-4 animate-fade-in-up">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                <div class="flex items-center gap-2">
+                    <i class="fa-solid fa-box-archive text-indigo-600 text-xl"></i>
+                    <h3 class="font-bold text-slate-800 text-sm md:text-base">Catálogo de Recursos Educativos Reutilizables y Proyectos Interdisciplinarios</h3>
+                </div>
+                <button id="btn-close-reusable-resources" class="text-slate-400 hover:text-slate-600 p-1"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+
+            <!-- Formulario de Registro de Recurso / Proyecto -->
+            <form id="form-add-reusable-resource" class="bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-3">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-600 mb-1">Tipo *</label>
+                        <select id="reut-tipo-registro" class="w-full px-3 py-2 text-xs border rounded-xl" required>
+                            <option value="Recurso">Recurso Educativo</option>
+                            <option value="Proyecto">Proyecto Interdisciplinario</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-600 mb-1">Título *</label>
+                        <input type="text" id="reut-titulo" class="w-full px-3 py-2 text-xs border rounded-xl" placeholder="Ej. Guía Práctica de Álgebra" required>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-600 mb-1">Área / Deptos *</label>
+                        <input type="text" id="reut-area" class="w-full px-3 py-2 text-xs border rounded-xl" placeholder="Ej. Matemáticas / Ciencias" required>
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-600 mb-1">Asignatura</label>
+                        <input type="text" id="reut-asignatura" class="w-full px-3 py-2 text-xs border rounded-xl" placeholder="Ej. Álgebra">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-600 mb-1">Grado / Tema</label>
+                        <input type="text" id="reut-tema" class="w-full px-3 py-2 text-xs border rounded-xl" placeholder="Ej. 10mo - Ecuaciones">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-600 mb-1">URL Drive / Recurso</label>
+                        <input type="text" id="reut-url" class="w-full px-3 py-2 text-xs border rounded-xl" placeholder="https://drive.google.com/...">
+                    </div>
+                </div>
+                <div class="flex justify-end">
+                    <button type="submit" class="py-2 px-6 bg-indigo-600 text-white font-bold text-xs uppercase rounded-xl hover:bg-indigo-700 shadow">
+                        <i class="fa-solid fa-plus mr-1"></i> Registrar Recurso / Proyecto
+                    </button>
+                </div>
+            </form>
+
+            <!-- Lista de Recursos y Proyectos -->
+            <div class="space-y-2">
+                <div class="flex items-center justify-between">
+                    <h4 class="text-xs font-bold text-slate-700 uppercase tracking-wider">Recursos y Proyectos Disponibles</h4>
+                    <button id="btn-refresh-reusable-resources" class="text-xs text-indigo-600 font-bold hover:underline"><i class="fa-solid fa-rotate mr-1"></i>Actualizar</button>
+                </div>
+                <div class="max-h-56 overflow-y-auto border border-slate-200 rounded-2xl">
+                    <table class="w-full text-left text-xs">
+                        <thead class="bg-slate-100 text-slate-600 font-bold border-b border-slate-200 uppercase text-[10px]">
+                            <tr>
+                                <th class="p-2.5">Título</th>
+                                <th class="p-2.5">Área / Depto</th>
+                                <th class="p-2.5">Asignatura / Tema</th>
+                                <th class="p-2.5">Versión / Estado</th>
+                                <th class="p-2.5 text-right">Acción</th>
+                            </tr>
+                        </thead>
+                        <tbody id="table-reusable-resources-body" class="divide-y divide-slate-100 font-medium">
+                            <tr>
+                                <td colspan="5" class="p-4 text-center text-slate-400 italic">Cargando catálogo de recursos reutilizables...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
@@ -2721,6 +2806,51 @@
                             </tr>
                         </tbody>
                     </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- [TAREA-17] [Fase 1 - Analítica Académica] - Interfaz modal (#modal-academic-analytics) para reportes de distribución de notas, alertas pedagógicas e indicadores por área/programa. -->
+    <div id="modal-academic-analytics" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-[95] flex items-center justify-center p-2 md:p-4 hidden">
+        <div class="bg-white rounded-3xl max-w-3xl w-full p-6 shadow-2xl border border-slate-100 space-y-4 animate-fade-in-up">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                <div class="flex items-center gap-2">
+                    <i class="fa-solid fa-chart-pie text-blue-600 text-xl"></i>
+                    <h3 class="font-bold text-slate-800 text-sm md:text-base">Analítica Académica por Área, Asignatura y Programa</h3>
+                </div>
+                <button id="btn-close-academic-analytics" class="text-slate-400 hover:text-slate-600 p-1"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+
+            <!-- Contenido del Reporte Analítico -->
+            <div id="analytics-report-container" class="space-y-4">
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                    <div class="p-3 bg-blue-50 border border-blue-100 rounded-2xl text-center">
+                        <div class="text-[10px] font-bold text-blue-600 uppercase">Promedio Consolidado</div>
+                        <div id="analytics-promedio" class="text-xl font-black text-blue-800 mt-1">--</div>
+                    </div>
+                    <div class="p-3 bg-emerald-50 border border-emerald-100 rounded-2xl text-center">
+                        <div class="text-[10px] font-bold text-emerald-600 uppercase">Evaluadas</div>
+                        <div id="analytics-evaluadas" class="text-xl font-black text-emerald-800 mt-1">--</div>
+                    </div>
+                    <div class="p-3 bg-amber-50 border border-amber-100 rounded-2xl text-center">
+                        <div class="text-[10px] font-bold text-amber-600 uppercase">Notas Pendientes</div>
+                        <div id="analytics-pendientes" class="text-xl font-black text-amber-800 mt-1">--</div>
+                    </div>
+                    <div class="p-3 bg-red-50 border border-red-100 rounded-2xl text-center">
+                        <div class="text-[10px] font-bold text-red-600 uppercase">Alertas (< 70)</div>
+                        <div id="analytics-alertas" class="text-xl font-black text-red-800 mt-1">--</div>
+                    </div>
+                </div>
+
+                <div class="p-4 bg-slate-50 border border-slate-200 rounded-2xl space-y-2">
+                    <h4 class="text-xs font-bold text-slate-700 uppercase tracking-wider">Distribución de Rendimiento Académico</h4>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-2 text-xs font-semibold">
+                        <div class="p-2 bg-white rounded-xl border text-emerald-700">Excelente (>=90): <span id="dist-excelente">0</span></div>
+                        <div class="p-2 bg-white rounded-xl border text-blue-700">Bueno (80-89): <span id="dist-bueno">0</span></div>
+                        <div class="p-2 bg-white rounded-xl border text-amber-700">Satisfactorio (70-79): <span id="dist-satisfactorio">0</span></div>
+                        <div class="p-2 bg-white rounded-xl border text-red-700">Acompañamiento (<70): <span id="dist-mejora">0</span></div>
+                    </div>
                 </div>
             </div>
         </div>

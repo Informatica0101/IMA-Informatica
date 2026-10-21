@@ -1236,7 +1236,7 @@
 
 ## GRUPO PRIORIDAD P3 (BAJO)
 
-### [ ] [TAREA-17] Incorporar analítica académica por área, asignatura y programa
+### [X] [TAREA-17] Incorporar analítica académica por área, asignatura y programa
 - **Origen del Hallazgo:** Auditoría de la Fase 1, octubre de 2026 (AUDITORIA_FASE1_PLANIFICACION_EXPANSION.md - Sección B & K)
 - **Severidad/Clasificación:** Bajo
 - **Archivos Involucrados:** `backend/academic-service/Code.gs`, `js/teacher.js`, `teacher-dashboard.html`
@@ -1252,9 +1252,9 @@
   - Los resultados pendientes no distorsionan los promedios.
   - Los usuarios solo pueden consultar la información que les corresponde.
   - Los informes identifican los criterios usados para cada comparación.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
-### [ ] [TAREA-18] Ampliar la reutilización de recursos educativos y actividades entre áreas
+### [X] [TAREA-18] Ampliar la reutilización de recursos educativos y actividades entre áreas
 - **Origen del Hallazgo:** Auditoría de la Fase 1, octubre de 2026 (AUDITORIA_FASE1_PLANIFICACION_EXPANSION.md - Sección B & K)
 - **Severidad/Clasificación:** Bajo
 - **Archivos Involucrados:** `backend/academic-service/Code.gs`, `js/teacher.js`, `teacher-dashboard.html`
@@ -1269,7 +1269,7 @@
   - Las modificaciones no alteran actividades históricas de forma silenciosa.
   - Los docentes pueden reutilizar recursos autorizados sin duplicar archivos innecesariamente.
   - Los proyectos interdisciplinarios pueden relacionar recursos de varias áreas.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 ### [ ] [TAREA-19] Implementar configuración y migración curricular sin pérdida de datos
 - **Origen del Hallazgo:** Auditoría de la Fase 1, octubre de 2026 (AUDITORIA_FASE1_PLANIFICACION_EXPANSION.md - Sección B & K)

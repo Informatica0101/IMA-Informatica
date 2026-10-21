@@ -571,3 +571,25 @@ DESCRIPCIÓN OBJETIVA DE LOS CAMBIOS:
 - Actualización del estado de [TAREA-16] a [X] Completada en Pendientes.md.
 
 -------------------------------------------------------------------------------
+FECHA: Octubre 2026
+ARCHIVO(S) AFECTADO(S): backend/academic-service/Code.gs, teacher-dashboard.html, js/teacher.js, Pendientes.md
+-------------------------------------------------------------------------------
+DESCRIPCIÓN OBJETIVA DE LOS CAMBIOS:
+- Implementación y actualización de getCurricularAnalyticsReport en backend/academic-service/Code.gs para el cálculo de métricas de promedio consolidado excluyendo notas pendientes, distribución de notas por rangos y conteo de alertas de acompañamiento pedagógico.
+- Adición del modal #modal-academic-analytics y botón gatillador en teacher-dashboard.html.
+- Implementación de controladores JavaScript en js/teacher.js para apertura de modal y carga dinámica de reportes analíticos curriculares.
+- Inserción del comentario identificativo de TAREA-17 en la primera línea sobre getCurricularAnalyticsReport y en el controlador de js/teacher.js.
+- Actualización del estado de [TAREA-17] a [X] Completada en Pendientes.md.
+
+-------------------------------------------------------------------------------
+FECHA: Octubre 2026
+ARCHIVO(S) AFECTADO(S): backend/academic-service/Code.gs, teacher-dashboard.html, js/teacher.js, Pendientes.md
+-------------------------------------------------------------------------------
+DESCRIPCIÓN OBJETIVA DE LOS CAMBIOS:
+- Implementación de getReusableResourceCatalog y manageReusableResource en backend/academic-service/Code.gs para el catálogo de recursos reutilizables (etiquetados por área, materia, grado, tema, idioma y versión) y proyectos interdisciplinarios compartidos entre departamentos.
+- Adición del modal #modal-reusable-resources y botón gatillador en teacher-dashboard.html.
+- Implementación de controladores de evento JavaScript en js/teacher.js (openReusableResourcesModal, loadReusableResourcesCatalog y listener de envío de formulario) para interacción con el usuario.
+- Inserción del comentario identificativo de TAREA-18 en la primera línea sobre getReusableResourceCatalog y en el controlador de js/teacher.js.
+- Actualización del estado de [TAREA-18] a [X] Completada en Pendientes.md.
+
+-------------------------------------------------------------------------------

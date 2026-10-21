@@ -741,6 +741,161 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // [TAREA-17] [Fase 1 - Analítica Académica] - Controlador del modal e interfaz de reportes analíticos por área, asignatura y programa (#modal-academic-analytics).
+    const modalAcademicAnalytics = document.getElementById('modal-academic-analytics');
+    const btnCloseAcademicAnalytics = document.getElementById('btn-close-academic-analytics');
+
+    window.openAcademicAnalyticsModal = function() {
+        if (modalAcademicAnalytics) {
+            modalAcademicAnalytics.classList.remove('hidden');
+            window.loadCurricularAnalyticsReport();
+        }
+    };
+
+    if (btnCloseAcademicAnalytics) {
+        btnCloseAcademicAnalytics.addEventListener('click', () => {
+            if (modalAcademicAnalytics) modalAcademicAnalytics.classList.add('hidden');
+        });
+    }
+
+    window.loadCurricularAnalyticsReport = async function() {
+        try {
+            const res = await fetchApi('ACADEMIC', 'getCurricularAnalyticsReport', {});
+            if (res && res.status === 'success' && res.data && res.data.metrics) {
+                const m = res.data.metrics;
+                document.getElementById('analytics-promedio').innerText = (m.promedioConsolidado || 0) + '%';
+                document.getElementById('analytics-evaluadas').innerText = m.evaluadasCount || 0;
+                document.getElementById('analytics-pendientes').innerText = m.notasPendientes || 0;
+                document.getElementById('analytics-alertas').innerText = m.alertasAcompanamiento || 0;
+
+                const dist = m.distribucion || {};
+                document.getElementById('dist-excelente').innerText = dist.excelente || 0;
+                document.getElementById('dist-bueno').innerText = dist.bueno || 0;
+                document.getElementById('dist-satisfactorio').innerText = dist.satisfactorio || 0;
+                document.getElementById('dist-mejora').innerText = dist.necesitaMejora || 0;
+            }
+        } catch (err) {
+            console.error('Error al cargar reporte analítico:', err);
+        }
+    };
+
+    // [TAREA-18] [Fase 1 - Reutilización de Recursos] - Controlador del modal de catálogo de recursos educativos reutilizables e interdisciplinarios (#modal-reusable-resources).
+    const modalReusableResources = document.getElementById('modal-reusable-resources');
+    const btnCloseReusableResources = document.getElementById('btn-close-reusable-resources');
+    const btnRefreshReusableResources = document.getElementById('btn-refresh-reusable-resources');
+    const formAddReusableResource = document.getElementById('form-add-reusable-resource');
+
+    window.openReusableResourcesModal = function() {
+        if (modalReusableResources) {
+            modalReusableResources.classList.remove('hidden');
+            window.loadReusableResourcesCatalog();
+        }
+    };
+
+    if (btnCloseReusableResources) {
+        btnCloseReusableResources.addEventListener('click', () => {
+            if (modalReusableResources) modalReusableResources.classList.add('hidden');
+        });
+    }
+
+    if (btnRefreshReusableResources) {
+        btnRefreshReusableResources.addEventListener('click', () => {
+            window.loadReusableResourcesCatalog();
+        });
+    }
+
+    window.loadReusableResourcesCatalog = async function() {
+        const tableBody = document.getElementById('table-reusable-resources-body');
+        if (!tableBody) return;
+
+        try {
+            tableBody.innerHTML = '<tr><td colspan="5" class="p-4 text-center text-slate-400 italic">Cargando catálogo de recursos...</td></tr>';
+            const res = await fetchApi('ACADEMIC', 'getReusableResourceCatalog', {});
+            if (res && res.status === 'success') {
+                const resources = res.resources || [];
+                const projects = res.interdisciplinaryProjects || [];
+                const combined = [
+                    ...resources.map(r => ({ ...r, esProyectoItem: false })),
+                    ...projects.map(p => ({
+                        recursoId: p.proyectoId,
+                        titulo: p.titulo,
+                        area: p.departamentosInvolucrados,
+                        asignatura: 'Proyecto Interdisciplinario',
+                        tema: p.descripcion,
+                        version: '1.0',
+                        estado: p.estado,
+                        esProyectoItem: true
+                    }))
+                ];
+
+                if (combined.length === 0) {
+                    tableBody.innerHTML = '<tr><td colspan="5" class="p-4 text-center text-slate-400 font-semibold">No hay recursos ni proyectos registrados en el catálogo aún.</td></tr>';
+                } else {
+                    tableBody.innerHTML = combined.map(item => `
+                        <tr class="hover:bg-slate-50">
+                            <td class="p-2.5 font-bold text-slate-800">${item.titulo}</td>
+                            <td class="p-2.5">${item.area || 'General'}</td>
+                            <td class="p-2.5">${item.asignatura || 'General'} ${item.tema ? ' / ' + item.tema : ''}</td>
+                            <td class="p-2.5"><span class="px-2 py-0.5 ${item.esProyectoItem ? 'bg-purple-100 text-purple-800' : 'bg-indigo-100 text-indigo-800'} rounded-full font-bold text-[10px]">${item.esProyectoItem ? 'PROYECTO' : 'v' + (item.version || '1.0')}</span></td>
+                            <td class="p-2.5 text-right">
+                                ${item.urlDrive ? `<a href="${item.urlDrive}" target="_blank" class="text-indigo-600 hover:text-indigo-800 font-bold text-[11px]"><i class="fa-solid fa-arrow-up-right-from-square mr-0.5"></i> Abrir</a>` : '<span class="text-slate-400 text-[10px]">Sin enlace</span>'}
+                            </td>
+                        </tr>
+                    `).join('');
+                }
+            } else {
+                tableBody.innerHTML = '<tr><td colspan="5" class="p-4 text-center text-red-500">Error al cargar recursos.</td></tr>';
+            }
+        } catch (err) {
+            console.error('Error al cargar recursos reutilizables:', err);
+            tableBody.innerHTML = '<tr><td colspan="5" class="p-4 text-center text-red-500">Error de conexión.</td></tr>';
+        }
+    };
+
+    if (formAddReusableResource) {
+        formAddReusableResource.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const tipo = document.getElementById('reut-tipo-registro')?.value;
+            const titulo = document.getElementById('reut-titulo')?.value?.trim();
+            const area = document.getElementById('reut-area')?.value?.trim();
+            const asignatura = document.getElementById('reut-asignatura')?.value?.trim();
+            const tema = document.getElementById('reut-tema')?.value?.trim();
+            const urlDrive = document.getElementById('reut-url')?.value?.trim();
+
+            if (!titulo || !area) {
+                alert('Por favor ingrese al menos el Título y Área/Departamentos.');
+                return;
+            }
+
+            try {
+                if (window.showLoading) window.showLoading('Registrando recurso...');
+                const res = await fetchApi('ACADEMIC', 'manageReusableResource', {
+                    titulo,
+                    area,
+                    asignatura,
+                    tema,
+                    urlDrive,
+                    esProyecto: tipo === 'Proyecto',
+                    departamentosInvolucrados: area,
+                    descripcion: tema,
+                    autorId: currentUser?.nombre || 'Docente'
+                });
+                if (window.hideLoading) window.hideLoading();
+
+                if (res && res.status === 'success') {
+                    alert('Registro completado exitosamente.');
+                    formAddReusableResource.reset();
+                    window.loadReusableResourcesCatalog();
+                } else {
+                    alert(res && res.message ? res.message : 'Error al guardar el recurso.');
+                }
+            } catch (err) {
+                if (window.hideLoading) window.hideLoading();
+                console.error('Error al guardar recurso reutilizable:', err);
+            }
+        });
+    }
+
     // [TAREA-13] [Fase 1 - Planificación de Carga Académica] - Controlador del modal de planificación de carga académica, jefaturas y vacantes.
     const modalAcademicPlanning = document.getElementById('modal-academic-load-planning');
     const btnCloseAcademicPlanning = document.getElementById('btn-close-academic-load-planning');

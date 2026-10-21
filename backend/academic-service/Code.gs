@@ -129,6 +129,10 @@ function getOrCreateSheet(ss, name) {
     if (name === "SupervisionesDocentes") sheet.appendRow(["SupervisionID", "DocenteUserId", "SupervisorUserId", "FechaProgramada", "Grado", "Seccion", "Asignatura", "TipoSupervision", "RubricaID", "Estado", "ObservacionesAdmin", "FechaCreacion"]);
     if (name === "ObservacionesSupervision") sheet.appendRow(["ObservacionID", "SupervisionID", "RespuestasRubricaJSON", "EvidenciasTexto", "FortalezasTexto", "OportunidadesMejora", "ComentarioDocente", "FechaRegistro"]);
     if (name === "PlanesMejoraPedagogica") sheet.appendRow(["PlanID", "SupervisionID", "DocenteUserId", "ObjetivoMejora", "AccionesJSON", "ResponsableAcompanamiento", "FechaInicio", "FechaObjetivo", "Estado", "FechaRevision"]);
+
+    // TAREA-18 - Recursos Educativos y Proyectos Interdisciplinarios
+    if (name === "RecursosEducativosReutilizables") sheet.appendRow(["RecursoID", "Titulo", "Area", "Asignatura", "Grado", "Tema", "Idioma", "Version", "Estado", "AutorID", "UrlDrive", "EsInterdisciplinario"]);
+    if (name === "ProyectosInterdisciplinarios") sheet.appendRow(["ProyectoID", "Titulo", "DepartamentosInvolucrados", "Descripcion", "LiderProyectoID", "AnoLectivo", "Estado"]);
   }
   return sheet;
 }
@@ -150,7 +154,7 @@ const ROLE_PERMISSIONS = {
     "getInstitutionParams", "saveInstitutionParam", "getAcademicYears", "createAcademicYear", "updateAcademicYearStatus", "prepareNewAcademicYear",
     "getAcademicPeriods", "manageAcademicPeriod", "getSubjectCatalog", "createSubjectCatalogItem", "getStudyPlans", "createStudyPlan",
     "getAcademicOffers", "createAcademicOffer", "getTeacherAssignments", "assignTeacherToClass", "createTeacherSubstitution",
-    "getAcademicCalendar", "createCalendarEvent", "getClassSchedules", "createClassSchedule", "deleteClassSchedule", "getAcademicRules", "saveAcademicRule", "getDepartmentAcademicPlanning", "assignDepartmentHead",
+    "getAcademicCalendar", "createCalendarEvent", "getClassSchedules", "createClassSchedule", "deleteClassSchedule", "getAcademicRules", "saveAcademicRule", "getDepartmentAcademicPlanning", "assignDepartmentHead", "getCurricularAnalyticsReport", "getReusableResourceCatalog", "manageReusableResource",
     "getClassroomResources", "saveClassroomResource", "getStudentSchedule",
     "createAdmissionRequest", "getAdmissionRequests", "updateAdmissionStatus", "convertAdmissionToStudent",
     "getStudentFile", "updateStudentFile", "getStudentTimeline", "findDuplicateStudents", "mergeStudentFiles",
@@ -163,7 +167,7 @@ const ROLE_PERMISSIONS = {
   "Subdirector": [
     "getAcademicConfig", "getAcademicHistory", "getAsignaturasActivas", "getWhatsAppLink", "getQuestionBank", "registerStudentEnrollment", "getStudentEnrollmentHistory",
     "getInstitutionParams", "getAcademicYears", "getAcademicPeriods", "getSubjectCatalog", "getStudyPlans", "getAcademicOffers",
-    "getTeacherAssignments", "assignTeacherToClass", "createTeacherSubstitution", "getAcademicCalendar", "createCalendarEvent", "getClassSchedules", "createClassSchedule", "deleteClassSchedule", "copyClassSchedules", "getTeacherTeachingLoad", "generateAutoSchedules", "recordClassSessionOutcome", "getTeachingHoursSummary", "rescheduleCancelledSession", "getPendingSessionRecoveries", "publishClassSchedules", "getIndividualCalendar", "syncAcademicScheduleIntegrity", "getAcademicAuditLogs",
+    "getTeacherAssignments", "assignTeacherToClass", "createTeacherSubstitution", "getAcademicCalendar", "createCalendarEvent", "getClassSchedules", "createClassSchedule", "deleteClassSchedule", "copyClassSchedules", "getTeacherTeachingLoad", "generateAutoSchedules", "recordClassSessionOutcome", "getTeachingHoursSummary", "rescheduleCancelledSession", "getPendingSessionRecoveries", "publishClassSchedules", "getIndividualCalendar", "syncAcademicScheduleIntegrity", "getAcademicAuditLogs", "getReusableResourceCatalog", "manageReusableResource",
     "getClassroomResources", "saveClassroomResource", "getStudentSchedule",
     "createAdmissionRequest", "getAdmissionRequests", "updateAdmissionStatus", "getStudentFile", "getStudentTimeline", "findDuplicateStudents",
     "getStudentGuardians", "getStudentDocuments", "getStudentEnrollments", "checkEnrollmentCapacity",
@@ -173,7 +177,7 @@ const ROLE_PERMISSIONS = {
   "Secretaría": [
     "getAcademicConfig", "getAsignaturasActivas", "registerStudentEnrollment", "getStudentEnrollmentHistory",
     "getInstitutionParams", "getAcademicYears", "getAcademicPeriods", "getSubjectCatalog", "getStudyPlans", "getAcademicOffers",
-    "createAcademicOffer", "getTeacherAssignments", "assignTeacherToClass", "createTeacherSubstitution", "getAcademicCalendar", "createCalendarEvent", "getClassSchedules", "createClassSchedule", "deleteClassSchedule", "copyClassSchedules", "getTeacherTeachingLoad", "generateAutoSchedules", "recordClassSessionOutcome", "getTeachingHoursSummary", "rescheduleCancelledSession", "getPendingSessionRecoveries", "publishClassSchedules", "getIndividualCalendar", "syncAcademicScheduleIntegrity", "getAcademicAuditLogs",
+    "createAcademicOffer", "getTeacherAssignments", "assignTeacherToClass", "createTeacherSubstitution", "getAcademicCalendar", "createCalendarEvent", "getClassSchedules", "createClassSchedule", "deleteClassSchedule", "copyClassSchedules", "getTeacherTeachingLoad", "generateAutoSchedules", "recordClassSessionOutcome", "getTeachingHoursSummary", "rescheduleCancelledSession", "getPendingSessionRecoveries", "publishClassSchedules", "getIndividualCalendar", "syncAcademicScheduleIntegrity", "getAcademicAuditLogs", "getReusableResourceCatalog", "manageReusableResource",
     "getClassroomResources", "saveClassroomResource", "getStudentSchedule",
     "createAdmissionRequest", "getAdmissionRequests", "updateAdmissionStatus", "convertAdmissionToStudent",
     "getStudentFile", "updateStudentFile", "getStudentTimeline", "findDuplicateStudents",
@@ -201,7 +205,7 @@ const ROLE_PERMISSIONS = {
   ],
   "Profesor": [
     "getAcademicConfig", "updateAcademicConfig", "getAcademicHistory", "getAsignaturasActivas", "updateAsignaturasActivas", "saveWhatsAppLink", "getWhatsAppLink", "getQuestionBank", "saveQuestion", "generateMigrationReport",
-    "getAcademicYears", "getAcademicPeriods", "getSubjectCatalog", "getAcademicOffers", "getTeacherAssignments", "createTeacherSubstitution", "getAcademicCalendar", "getClassSchedules", "createClassSchedule", "deleteClassSchedule", "getTeacherTeachingLoad", "recordClassSessionOutcome", "getTeachingHoursSummary", "rescheduleCancelledSession", "getPendingSessionRecoveries", "getIndividualCalendar", "getClassroomResources", "getStudentSchedule",
+    "getAcademicYears", "getAcademicPeriods", "getSubjectCatalog", "getAcademicOffers", "getTeacherAssignments", "createTeacherSubstitution", "getAcademicCalendar", "getClassSchedules", "createClassSchedule", "deleteClassSchedule", "getTeacherTeachingLoad", "recordClassSessionOutcome", "getTeachingHoursSummary", "rescheduleCancelledSession", "getPendingSessionRecoveries", "getIndividualCalendar", "getClassroomResources", "getStudentSchedule", "getReusableResourceCatalog", "manageReusableResource",
     "getStudentFile", "getStudentTimeline", "getStudentEnrollments",
     "openAttendanceSession", "saveClassAttendance", "getClassAttendance", "saveDailyAttendance", "getDailyAttendance", "submitAttendanceJustification", "reviewAttendanceJustification", "recordEarlyDeparture", "getAttendanceIncidents", "saveAttendanceIncident", "getAttendanceFollowupCases", "saveAttendanceFollowupCase", "addCaseFollowUpNote", "getStudentAttendanceSummary",
     "getTeacherSupervisions", "getSupervisionObservation", "getTeacherImprovementPlans"
@@ -283,6 +287,9 @@ function doPost(e) {
       case "createTeacherSubstitution": result = createTeacherSubstitution(payload); break;
       case "getDepartmentAcademicPlanning": result = getDepartmentAcademicPlanning(payload); break;
       case "assignDepartmentHead": result = assignDepartmentHead(payload); break;
+      case "getCurricularAnalyticsReport": result = getCurricularAnalyticsReport(payload); break;
+      case "getReusableResourceCatalog": result = getReusableResourceCatalog(payload); break;
+      case "manageReusableResource": result = manageReusableResource(payload); break;
       case "getAcademicCalendar": result = getAcademicCalendar(payload); break;
       case "createCalendarEvent": result = createCalendarEvent(payload); break;
       case "getClassSchedules": result = getClassSchedules(payload); break;
@@ -987,12 +994,168 @@ function configureSchoolYear(payload) {
 
 // [TAREA-17] [Fase 1 - Analítica Académica] - Módulo de indicadores analíticos y métricas por área, asignatura y programa.
 function getCurricularAnalyticsReport(payload) {
-  return { status: "success", data: { totalAreas: 12, performanceRate: 92.5, period: payload ? payload.periodo : "I Parcial" } };
+  const { area, asignatura, grado, programa, periodo } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+
+  const califSheet = getOrCreateSheet(ss, "CalificacionesEstudiantes");
+  const califData = califSheet.getDataRange().getValues();
+
+  let validScores = [];
+  let totalEvaluations = 0;
+  let pendingCount = 0;
+
+  if (califData.length > 1) {
+    califData.slice(1).forEach(r => {
+      const nota = parseFloat(r[3]);
+      const esBorrador = r[5] === true || String(r[5]).toLowerCase() === "true";
+      const esPublicada = r[6] === true || String(r[6]).toLowerCase() === "true";
+
+      totalEvaluations++;
+      if (esBorrador || !esPublicada || isNaN(nota)) {
+        pendingCount++;
+      } else {
+        validScores.push(nota);
+      }
+    });
+  }
+
+  // Cálculo de promedio excluyendo notas pendientes
+  const sum = validScores.reduce((acc, curr) => acc + curr, 0);
+  const average = validScores.length > 0 ? Math.round((sum / validScores.length) * 100) / 100 : 0;
+
+  // Distribución de calificaciones
+  const distribution = {
+    excelente: validScores.filter(s => s >= 90).length,
+    bueno: validScores.filter(s => s >= 80 && s < 90).length,
+    satisfactorio: validScores.filter(s => s >= 70 && s < 80).length,
+    necesitaMejora: validScores.filter(s => s < 70).length
+  };
+
+  // Alertas de acompañamiento pedagógico
+  const lowPerformanceAlerts = validScores.filter(s => s < 70).length;
+
+  return {
+    status: "success",
+    data: {
+      periodo: periodo || "I Parcial",
+      area: area || "Todas",
+      asignatura: asignatura || "Todas",
+      grado: grado || "Todos",
+      programa: programa || "General",
+      metrics: {
+        totalEvaluaciones: totalEvaluations,
+        notasPendientes: pendingCount,
+        evaluadasCount: validScores.length,
+        promedioConsolidado: average,
+        alertasAcompanamiento: lowPerformanceAlerts,
+        distribucion: distribution
+      }
+    }
+  };
 }
 
-// [TAREA-18] [Fase 1 - Reutilización de Recursos] - Módulo de catálogo de recursos educativos reutilizables y proyectos interdisciplinarios.
+// [TAREA-18] [Fase 1 - Reutilización de Recursos] - Módulo de catálogo de recursos educativos reutilizables, etiquetado por área/materia e interdisciplinariedad.
 function getReusableResourceCatalog(payload) {
-  return { status: "success", resources: [], interdisciplinaryProjects: [] };
+  const { area, asignatura, grado, tema, idioma, categoria } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+
+  const sheet = getOrCreateSheet(ss, "RecursosEducativosReutilizables");
+  const data = sheet.getDataRange().getValues();
+
+  // Función local auxiliar de comparación diacrítica segura para evitar depender de alcance externo
+  const normStr = (str) => (!str ? "" : str.toString().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim());
+
+  let resources = [];
+  if (data.length > 1) {
+    resources = data.slice(1).filter(r => {
+      if (r[8] === "Inactivo") return false;
+      if (area && normStr(r[2]) !== normStr(area)) return false;
+      if (asignatura && normStr(r[3]) !== normStr(asignatura)) return false;
+      if (grado && normStr(r[4]) !== normStr(grado)) return false;
+      if (idioma && normStr(r[6]) !== normStr(idioma)) return false;
+      return true;
+    }).map(r => ({
+      recursoId: r[0],
+      titulo: r[1],
+      area: r[2],
+      asignatura: r[3],
+      grado: r[4],
+      tema: r[5],
+      idioma: r[6] || "Español",
+      version: r[7] || "1.0",
+      estado: r[8] || "Activo",
+      autorId: r[9],
+      urlDrive: r[10],
+      esInterdisciplinario: r[11] === true || String(r[11]).toLowerCase() === "true"
+    }));
+  }
+
+  const projSheet = getOrCreateSheet(ss, "ProyectosInterdisciplinarios");
+  const projData = projSheet.getDataRange().getValues();
+  let projects = [];
+  if (projData.length > 1) {
+    projects = projData.slice(1).filter(r => r[6] !== "Inactivo").map(r => ({
+      proyectoId: r[0],
+      titulo: r[1],
+      departamentosInvolucrados: r[2],
+      descripcion: r[3],
+      liderProyectoId: r[4],
+      anoLectivo: r[5],
+      estado: r[6] || "Activo"
+    }));
+  }
+
+  return {
+    status: "success",
+    resources,
+    interdisciplinaryProjects: projects
+  };
+}
+
+function manageReusableResource(payload) {
+  const { recursoId, titulo, area, asignatura, grado, tema, idioma, version, urlDrive, esInterdisciplinario, autorId, esProyecto, departamentosInvolucrados, descripcion } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+
+  if (esProyecto) {
+    if (!titulo) throw new Error("Título de proyecto es requerido.");
+    const projSheet = getOrCreateSheet(ss, "ProyectosInterdisciplinarios");
+    const pid = recursoId || ("PROJ-INT-" + Date.now());
+
+    projSheet.appendRow([
+      pid,
+      titulo,
+      departamentosInvolucrados || "General",
+      descripcion || "",
+      autorId || "Docente",
+      "2026",
+      "Activo"
+    ]);
+
+    logStructuredEvent("ACADEMIC", "manageReusableResource", "INFO", "PROJECT_SAVED", `Proyecto interdisciplinario ${titulo} creado`, { pid }, payload && payload.authRole);
+    return { status: "success", message: "Proyecto interdisciplinario registrado exitosamente.", data: { proyectoId: pid } };
+  } else {
+    if (!titulo || !area) throw new Error("Título y área son requeridos.");
+    const sheet = getOrCreateSheet(ss, "RecursosEducativosReutilizables");
+    const rid = recursoId || ("REC-REUT-" + Date.now());
+
+    sheet.appendRow([
+      rid,
+      titulo,
+      area,
+      asignatura || "General",
+      grado || "Todos",
+      tema || "General",
+      idioma || "Español",
+      version || "1.0",
+      "Activo",
+      autorId || "Docente",
+      urlDrive || "",
+      esInterdisciplinario ? true : false
+    ]);
+
+    logStructuredEvent("ACADEMIC", "manageReusableResource", "INFO", "RESOURCE_SAVED", `Recurso educativo ${titulo} registrado`, { rid }, payload && payload.authRole);
+    return { status: "success", message: "Recurso educativo reutilizable registrado con éxito.", data: { recursoId: rid } };
+  }
 }
 
 // [TAREA-19] [Fase 1 - Migración Curricular] - Herramienta de mapeo, equivalencias curriculares y preservación inalterable de datos históricos.
