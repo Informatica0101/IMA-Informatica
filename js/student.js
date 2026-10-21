@@ -1432,7 +1432,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 return s === 'Rechazada' || s === 'Tarea incompleta';
             });
 
-            // Ordenar por fecha de vencimiento más próxima (ascendente)
+            // [TAREA-14] [Fase 1 - UX Flujo Académico] - Vista unificada y ordenamiento prioritario por fecha de vencimiento de actividades estudiantiles.
             pendingActivities.sort(function(a, b) {
                 var dateA = a.fechaLimite ? new Date(a.fechaLimite) : new Date(8640000000000000);
                 var dateB = b.fechaLimite ? new Date(b.fechaLimite) : new Date(8640000000000000);

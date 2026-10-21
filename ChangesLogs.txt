@@ -541,3 +541,13 @@ DESCRIPCIÓN OBJETIVA DE LOS CAMBIOS:
 - Actualización del estado de [TAREA-13] a [X] Completada en Pendientes.md.
 
 -------------------------------------------------------------------------------
+FECHA: Octubre 2026
+ARCHIVO(S) AFECTADO(S): js/student.js, js/teacher.js, Pendientes.md
+-------------------------------------------------------------------------------
+DESCRIPCIÓN OBJETIVA DE LOS CAMBIOS:
+- Optimización de la bandeja de revisiones pendientes para docentes ordenada por prioridad de fecha de vencimiento en js/teacher.js.
+- Mejora en la vista unificada de actividades pendientes con ordenamiento por fecha límite en js/student.js.
+- Inserción de comentarios identificativos de TAREA-14 en las secciones afectadas.
+- Actualización del estado de [TAREA-14] a [X] Completada en Pendientes.md.
+
+-------------------------------------------------------------------------------

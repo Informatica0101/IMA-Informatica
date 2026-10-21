@@ -845,7 +845,7 @@
   - La Dirección puede identificar vacantes, conflictos y carga académica por área.
 - **Estado:** [X] Completada
 
-### [ ] [TAREA-14] Mejorar la experiencia de usuario de docentes y estudiantes según el flujo académico
+### [X] [TAREA-14] Mejorar la experiencia de usuario de docentes y estudiantes según el flujo académico
 - **Origen del Hallazgo:** Auditoría de la Fase 1, octubre de 2026 (AUDITORIA_FASE1_PLANIFICACION_EXPANSION.md - Sección C & J)
 - **Severidad/Clasificación:** Medio
 - **Archivos Involucrados:** `student-dashboard.html`, `teacher-dashboard.html`, `js/student.js`, `js/teacher.js`, `js/ui-common.js`
@@ -864,7 +864,7 @@
   - Los errores de sincronización se explican y permiten recuperar la operación cuando sea posible.
   - Las nuevas herramientas funcionan en pantallas móviles sin perder funciones esenciales.
   - Las mejoras no eliminan capacidades existentes de los paneles.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 ### [ ] [TAREA-15] Completar la supervisión institucional de servicios, errores y recuperación
 - **Origen del Hallazgo:** Auditoría de la Fase 1, octubre de 2026 (AUDITORIA_FASE1_PLANIFICACION_EXPANSION.md - Sección D & I)
