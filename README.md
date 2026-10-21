@@ -1,112 +1,122 @@
-# Plataforma Integral de Gestión Institucional - New Generation Christian Academy
+# Ecosistema Educativo New Generation Christian Academy - Plataforma Integral de Gestión Institucional
 
-Bienvenido al centro de información y documentación funcional de la plataforma institucional de **New Generation Christian Academy** (Versión Global **1.0**).
+Bienvenido a la documentación oficial y guía funcional del **Ecosistema Educativo New Generation Christian Academy** (Versión Global **1.0**).
 
-La plataforma constituye un ecosistema digital centralizado que integra la gestión académica, administrativa, financiera, técnica, comunicativa y de soporte de la institución. Su propósito principal es conectar a la dirección, secretaría, cuerpo docente, estudiantes y padres de familia en un único entorno coordinado, eficiente, seguro y accesible.
-
----
-
-## Control de Versionado Global y Regla de Incremento
-
-* **Versión Global Pública Inicial**: **1.0**
-* **Regla Estricta de Incremento Manual**: La versión global de la plataforma queda fijada en 1.0 y **únicamente** se modificará cuando el responsable o cliente autorizado lo solicite de forma expresa. No se incrementa automáticamente al aplicar correcciones de errores, renovaciones visuales, pruebas, publicaciones o actualizaciones de documentación.
+La plataforma constituye una solución tecnológica centralizada que integra la gestión académica, administrativa, financiera, comunicativa, de recursos humanos y de operaciones físicas de la institución. Conecta en tiempo real a directivos, coordinadores, docentes, estudiantes, padres de familia y personal administrativo en un entorno único, seguro, intuitivo y accesible desde navegadores web y dispositivos móviles (PWA).
 
 ---
 
-## Visión General de Módulos y Funcionalidades Verificadas
+## Módulos Funcionales y Servicios Institucionales
 
-### 1. Identidad Central, Seguridad y Portal de Accesos
-* **Perfiles de Usuario y Roles Institucionales**: Gestión diferenciada para Administradores, Directores, Subdirectores, Personal de Secretaría, Contadores, Docentes, Estudiantes y Padres/Tutores.
-* **Control de Permisos por Funcionalidad (RBAC Servidor)**: Acceso protegido en el servidor para asegurar que cada usuario consulte e interactúe únicamente con las opciones y datos que corresponden a su rol y responsabilidad.
-* **Manejo de Cuentas y Estado de Usuarios**: Capacidad para crear, activar, suspender o desactivar cuentas de acceso garantizando la conservación inmutable del historial institucional.
-* **Recuperación e Invitaciones de Clave**: Emisión de invitaciones seguras para la creación inicial de contraseñas y restablecimiento seguro mediante enlaces temporales de uso único.
+### 1. Gestión Académica, Matrícula y Expediente Estudiantil
+* **Ciclo Escolar y Estructura Curricular:** Planificación de periodos lectivos (parciales, semestres, trimestres), jornadas académicas, catálogo de asignaturas y planes de estudio.
+* **Expediente Digital Único:** Registro integral del estudiante que consolida datos personales, tutores legales, documentos digitalizados, línea de tiempo de movimientos académicos (traslados, cambios de sección, retiros) y prevención de expedientes duplicados.
+* **Admisiones y Matrícula:** Formulario de solicitud de ingreso, carga y revisión de requisitos, asignación de secciones y matriculación formal anual.
+* **Gestión de Horarios y Espacios Físicos:** Matriz de horarios por nivel, grado y docente, control de capacidad de aulas, prevención automática de solapamiento de horarios y asignación de docentes sustitutos.
 
-### 2. Identidad Visual, Personalización Global y Diseño Institucional
-* **Sistema de Diseño Sobrio y Profesional**: Normativa de colores centralizada en variables CSS que elimina tonos neón, colores chillantes, formas caricaturescas y bordes innecesarios, cumpliendo con pautas de accesibilidad WCAG 2.2 AA.
-* **Paletas Institucionales Sugeridas**: Paletas predefinidas (Azul Institucional, Verde Sobrio, Gris Azulado, Borgoña Profesional) con previsualizador interactivo de botones, tablas, formularios y alertas.
-* **Flujo Verificable de Aprobación**: Flujo formal donde el Administrador prepara una propuesta de diseño y Dirección la revisa y aprueba antes de publicarse globalmente a todos los usuarios.
-* **Presentación del Logotipo en Inicio de Sesión**: Contenedor de fondo transparente, sin marcos sólidos ni contornos neón, conservando proporciones originales con sombra sutil y fallback elegante.
+### 2. Aula Virtual, LMS y Material Didáctico
+* **Aulas Virtuales por Asignatura:** Publicación de anuncios, guías de estudio, lecciones interactivas, presentaciones y recursos educativos digitales.
+* **Proyectos y Tareas Multimodales:** Creación de asignaciones con fechas de entrega, cargas de archivos adjuntos, respuestas en línea y retroalimentación privada docente-estudiante.
+* **Biblioteca Digital y Contenidos:** Catálogo organizado de lecturas, guías didácticas y material complementario por unidad de aprendizaje.
 
-### 3. Módulo de Reporte de Problemas y Sistema de Tickets
-* **Acceso Global desde Toda la Plataforma**: Botón flotante accesible desde todos los dashboards, herramientas, secciones, páginas y formularios.
-* **Formulario Estricto y Contextual**: Auto-detección del área o función activa y validación obligatoria de dos campos ("¿Qué problema encontraste?" y "¿Qué esperabas que ocurriera?") con mínimo 20 caracteres significativos cada uno y contador en tiempo real.
-* **Captura Contextual Automática en Servidor**: Generación de identificador único de ticket (`TICK-XXXXXX`), recolección segura de ID de cuenta, rol activo, área/sección, versión global (`1.0`), tipo de aplicación (PWA vs Escritorio) y marcas de tiempo sin exigir campos manuales.
-* **Módulo Cliente "Mis Reportes"**: Espacio personal para consultar tickets propios, revisar mensajes del administrador e ingresar respuestas aclaratorias.
-* **Módulo Administrativo Exclusivo de Soporte**: Interfaz de gestión exclusiva para Administrador, Desarrollador y Dirección con filtros por estado, búsqueda, notas internas privadas, respuestas públicas y máquina de estados (Enviado, En revisión, Se necesita información, Información recibida, Solucionado, Cerrado).
+### 3. Evaluaciones, Calificaciones e Informes Académicos
+* **Libro de Calificaciones Consolidado:** Registro centralizado de notas por parcial y materia con ponderaciones parametrizables, cálculo de promedios e inalterabilidad de periodos cerrados.
+* **Evaluaciones y Cuestionarios en Línea:** Aplicación de exámenes interactivos con bancos de preguntas por asignatura y calificación automatizada.
+* **Boletines y Cuadros de Honor:** Generación de libretas de calificaciones, cuadros de honor, fichas de rendimiento e historiales académicos para padres y estudiantes.
+* **Evaluación Formativa Independiente:** Valoración separada de conducta, presentación personal e higiene que no altera los promedios académicos.
+* **Compatibilidad con Secretaría de Educación (SACE):** Exportación de reportes académicos en el formato oficial requerido por la Secretaría de Educación de Honduras.
 
-### 4. Gestión Académica, Matrícula y Estructura Escolar
-* **Configuración del Ciclo Escolar y Calendario**: Planificación de años lectivos, períodos escolares (parciales, semestres, trimestres) y fechas clave en el calendario académico institucional.
-* **Catálogo de Oferta Educativa**: Administración de niveles de enseñanza, grados, secciones y catálogo oficial de asignaturas y planes de estudio.
-* **Expediente Digital Único del Estudiante**: Ficha académica integral del alumno que reúne datos personales, historial de grados cursados, antecedentes académicos y trayectoria en la institución.
-* **Proceso de Admisiones y Matrícula**: Formulario de solicitud de ingreso, carga y revisión de documentos de admisión, asignación de cupos y matriculación formal anual.
-* **Gestión de Cambios y Movimientos Estudiantiles**: Registro ordenado de cambios de sección, traslados internos/externos, retiros y reincorporaciones sin pérdida de registros históricos.
-* **Asignaciones Docentes y Suplencias**: Control de asignaciones de profesores titulares y asistentes por materia y grupo, con soporte para coberturas y suplencias temporales con vigencia delimitada.
+### 4. Portal Familiar y Comunicación Multicanal
+* **Consola Multiestudiante para Padres:** Vista consolidada para tutores con múltiples hijos inscritos, permitiendo alternar fácilmente entre expedientes, calificaciones y avisos.
+* **Comunicación Institucional Segura:** Circulares, noticias, avisos generales y mensajería interna entre padres, docentes y dirección.
+* **Centro de Notificaciones:** Sistema de alertas en tiempo real para tareas pendientes, convocatorias a reuniones, avisos financieros y avisos de rendimiento académico.
 
-### 5. Aula Virtual, Contenidos y Material de Estudio
-* **Aulas Virtuales Integradas**: Espacio interactivo por asignatura donde el docente publica avisos, anuncios de clase, recursos digitales y tareas.
-* **Biblioteca de Contenidos y Guías de Estudio**: Almacenamiento y organización de presentaciones de clase, lecciones en línea, guías informativas y materiales didácticos descargables ordenados por unidad y tema.
-* **Módulo Polimórfico de Tareas y Proyectos**: Creación de actividades de aprendizaje con instrucciones enriquecidas, fecha de disponibilidad programada y fecha límite de entrega.
-* **Entrega Multimodal y Cargas Reanudables**: Carga de trabajos por parte de los estudiantes mediante archivos adjuntos, respuestas escritas o enlaces externos, con protocolo de carga reanudable por puntos de control (`uploadResumableFile`).
-* **Comentarios Privados y Correcciones**: Canal de retroalimentación privada entre el profesor y el estudiante para revisiones, observaciones pedagógicas y devolución de trabajos para corrección.
+### 5. ERP Financiero, Pagos, Cobros y Facturación SAR
+* **Planes de Pago y Convenios Familiares:** Desglose de colegiaturas, matrícula, transporte, servicios especiales y estructuración de acuerdos de pago personalizados.
+* **Recepción y Validación de Pagos:** Carga de comprobantes por parte de las familias, cola de revisión contable y emisión de recibos oficiales descargables en PDF.
+* **Facturación Fiscal Hondureña (SAR):** Emisión de facturas fiscales de cumplimiento tributario nacional (CAI, Rango Autorizado, ISV 15%, RTN).
+* **Tesorería, Caja Chica y Cierres:** Arqueos diarios de caja, depósitos bancarios, conciliaciones de extractos y estados financieros comparativos.
 
-### 6. Evaluaciones, Calificaciones y Trayectoria Académica
-* **Libro de Calificaciones Consolidado**: Registro centralizado de calificaciones por parcial y asignatura con cálculo de promedios, ponderaciones por categoría e inalterabilidad histórica de periodos cerrados en el servidor.
-* **Exámenes y Evaluaciones Interactivas**: Aplicación de evaluaciones en línea con bancos de preguntas por materia y calificación inmediata.
-* **Rúbricas Analíticas de Evaluación**: Criterios e indicadores descriptivos para calificar desempeños complejos de manera transparente.
-* **Módulo de Recuperaciones y Reposiciones**: Administración de exámenes de recuperación con reglas institucionales de sustitución o promediado de nota.
-* **Boletines e Informes Académicos**: Generación de libretas de calificaciones, historiales académicos de desempeño y certificados institucionales.
-* **Evaluación Formativa e Independiente**: Valoración separada de Comportamiento, Aseo Personal/Higiene y Presentación Personal que no altera las notas académicas del estudiante.
+### 6. Recursos Humanos, Planillas y Administración de Personal
+* **Expediente Laboral y Contratos:** Control de personal, contratos de trabajo, avisos de vencimiento y asignación de cargos por departamento.
+* **Gestión de Asistencia, Permisos y Vacaciones:** Solicitud y aprobación de vacaciones, justificaciones médicas, registro de asistencia e incidencias laborales.
+* **Cálculo Oficial de Planillas:** Procesamiento de sueldos, horas adicionales, bonificaciones y retenciones de ley en Honduras (IHSS, RAP, ISR).
+* **Portal de Autoservicio del Empleado:** Espacio privado para que el colaborador consulte sus boletas de pago, historial de vacaciones, turnos asignados y capacitaciones.
+* **Evaluación del Desempeño y Capacitación:** Evaluaciones periódicas de competencias por puesto, planes de desarrollo profesional y seguimiento de certificaciones.
 
-### 7. Asistencia, Puntualidad y Control Estudiantil
-* **Control de Asistencia Diario y por Asignatura**: Registro de presencia, ausencias, tardanzas y salidas anticipadas.
-* **Gestión de Justificaciones e Incidencias**: Tramitación de excusas médicas o justificantes presentados por los padres con adjuntos digitales y resolución administrativa.
-* **Planes de Seguimiento por Ausentismo**: Alertas e indicadores oportunos para detectar patrones de inasistencia o impuntualidad recurrente.
+### 7. Operaciones Físicas, Inventario y Recursos
+* **Almacén e Inventario Consumible:** Control de existencias de materiales, entradas, salidas por consumo internos y alertas de desabastecimiento.
+* **Activos Patrimoniales y Custodia:** Registro de bienes, equipos y mobiliario con asignación de responsables y seguimiento de mantenimiento preventivo/correctivo.
+* **Biblioteca Física:** Préstamo y devolución de libros, control de ejemplares, reservas y registro de incidencias.
+* **Transporte Escolar:** Gestión de unidades, rutas, paradas asignadas y control de capacidad por vehículo.
 
-### 8. Portal Familiar y Comunicación Institucional
-* **Portal para Padres y Tutores Legalmente Autorizados**: Interfaz para consultar el progreso académico, asistencia, avisos y estado financiero de sus hijos o representados.
-* **Vinculación Segura Familiar**: Proceso de vinculación formal mediante tokens de invitación autorizados por la secretaría.
-* **Mensajería Interna e Institucional**: Canal directo de comunicación entre padres, docentes y dirección sin exponer números telefónicos privados.
-* **Noticias y Tablón de Avisos**: Publicación de circulares, eventos y noticias con segmentación de público objetivo por nivel o grado.
-* **Centro de Notificaciones con Alertas**: Notificaciones con indicadores de prioridad (tareas pendientes, eventos próximos, avisos urgentes).
-
-### 9. Contabilidad, Tesorería, Cobros y Facturación
-* **Estructura de Tarifas y Plan de Pagos**: Configuración de importes por matrícula, mensualidades, transporte, materiales y cargos extraordinarios fraccionados.
-* **Estado de Cuenta Estudiantil y Gestión de Saldos**: Visualización en tiempo real de cargos, abonos, descuentos, becas y saldo pendiente por estudiante.
-* **Recepción y Validación de Pagos**: Carga de comprobantes de transferencia por parte de la familia, revisión por el área contable y emisión de recibos oficiales en PDF con numeración correlativa única.
-* **Facturación Fiscal Hondureña (SAR)**: Módulo de emisión de facturas fiscales que cumplen con las exigencias tributarias nacionales (CAI, Rango Autorizado, ISV 15%, RTN), independiente del recibo interno.
-* **Gestión de Caja Chica y Cierres de Caja**: Control de movimientos diarios de ingresos y egresos, arqueo físico y cierres de caja equilibrados.
-* **Conciliación Bancaria y Cuentas por Pagar**: Importación de extractos bancarios para cruce de depósitos y registro de compras o facturas de proveedores.
-* **Contabilidad General y Asientos Contables**: Plan de cuentas institucional y generación de asientos contables por partida doble.
-
-### 10. Recursos Humanos, Planillas y Administración de Personal
-* **Expediente Laboral del Empleado**: Hoja de vida del colaborador, tipo de contrato, cargo, departamento, historial de puestos y estado de vinculación.
-* **Control de Asistencia y Vacaciones de Colaboradores**: Registro de jornadas de trabajo, permisos, licencias y solicitudes de vacaciones.
-* **Cálculo Oficial de Planillas e Impuestos**: Motor de nómina con cálculo automático de salarios, horas adicionales, bonificaciones y deducciones de ley en Honduras (IHSS, RAP, ISR).
-* **Boletas Individuales de Pago**: Emisión digital de comprobantes de salario para consulta privada e inmutable por parte de cada colaborador.
-
-### 11. Operaciones, Servicios Complementarios y Recursos
-* **Inventario e Insumos Institucionales**: Control de existencias de materiales de consumo, entradas, salidas, préstamos y alertas de stock mínimo.
-* **Activos Patrimoniales y Custodia**: Registro de equipos, mobiliario y bienes institucionales con asignación de responsables y estado de conservación.
-* **Biblioteca Escolar**: Catálogo de libros y recursos educativos, control de ejemplares físicos, registro de préstamos, devoluciones y reservas.
-* **Transporte Escolar**: Administración de unidades, conductores, rutas, paradas asignadas y control de capacidad por vehículo.
-
-### 12. Gestión Documental, Migración e Integración SACE
-* **Formularios y Constancias Escolares**: Emisión de constancias de estudio, conducta, justificaciones y solicitudes académicas mediante plantillas institucionales.
-* **Motor de Importación de Datos**: Herramienta de carga masiva de expedientes, notas o listas desde archivos Excel/CSV con mapeo inteligente de columnas y vista previa de validación.
-* **Completado de Plantillas Oficiales de SACE**: Generación automática de archivos compatibles con la plataforma oficial de la Secretaría de Educación (SACE), conservando formatos, fórmulas e identificadores originales.
-
-### 13. Seguridad, Modo Sin Conexión, Respaldos y Monitoreo Técnico
-* **Modo Sin Conexión & PWA**: Service Worker (`sw.js`) con precaché estático, almacén IndexedDB nativo (`ngca_offline_db`) y cola de sincronización en reconexión.
-* **Monitoreo de Salud de Servicios (Ping-Pong)**: Consola de administración técnica que mide la disponibilidad y tiempo de respuesta en tiempo real de los microservicios backend.
-* **Registro de Auditoría e Historial de Cambios**: Registro inmutable de eventos del sistema (`getStructuredLogs`) garantizando total trazabilidad de operaciones sensibles.
-* **Respaldos Automatizados de Información**: Generación periódica de copias de seguridad de la base de datos almacenadas en Google Drive con verificación de integridad y preservación de notas históricas.
+### 8. Gobernanza, Seguridad y Soporte Técnico
+* **Control de Acceso Basado en Roles (RBAC):** Restricciones de privacidad y permisos en el servidor según el rol activo (Dirección, Secretaría, Contabilidad, Docente, Estudiante, Padre/Tutor).
+* **Soporte y Reporte de Problemas:** Sistema de tickets integrado con seguimiento de estados y notas de atención técnica.
+* **Respaldo e Integridad de Datos:** Generación periódica de copias de seguridad de datos institucionales con verificación de sumas de comprobación.
+* **Operación Sin Conexión (PWA):** Soporte de navegación en dispositivos móviles con cola de sincronización automática al recuperar señal.
 
 ---
 
-## Modos de Uso y Acceso por Interfaz
+## Estructura General y Flujo de Interacción Institucional
 
-1. **Portal Público y Lecciones (`index.html`)**: Acceso libre a lecciones interactivas, presentaciones pedagógicas, noticias institucionales e información de contacto.
-2. **Formulario de Inicio de Sesión (`login.html`)**: Acceso autenticado con presentación sobria del logotipo institucional y enlace a recuperación de clave.
-3. **Panel del Estudiante (`student-dashboard.html`)**: Vista personalizada para el alumno con su horario, materias activas, entregas pendientes, calificaciones, guías de estudio, avisos, pagos y botón global de reporte de problemas.
-4. **Panel Administrativo y Docente (`teacher-dashboard.html`)**: Espacio de trabajo adaptado por rol para profesores, personal de secretaría, dirección, contabilidad y administración técnica para calificar, gestionar solicitudes, administrar cobros y supervisar tickets de soporte.
-5. **Módulo de Actividades Evaluativas (`exam.html`)**: Entorno enfocado para la realización de cuestionarios y evaluaciones académicas en línea.
+```
++-----------------------------------------------------------------------------------+
+|                        ECOSISTEMA EDUCATIVO INSTITUCIONAL                         |
++-----------------------------------------------------------------------------------+
+                                          |
+     +--------------------+---------------+---------------+--------------------+
+     |                    |                               |                    |
+     v                    v                               v                    v
++----------+    +-------------------+           +-------------------+    +-----------+
+| PARENT & |    | STUDENT DASHBOARD |           | TEACHER & ACADEMIC|    |FINANCIAL &|
+| GUARDIAN |    +-------------------+           |     DASHBOARD     |    |   HR ERP  |
+| PORTAL   |    | - Horarios & Aulas|           +-------------------+    +-----------+
++----------+    | - Tareas & Guías  |           | - Control de Notas|    | - Cobros  |
+| - Fichas |    | - Calificaciones  |           | - Asistencia      |    | - SAR CAI |
+| - Pagos  |    | - Materiales      |           | - Planificación   |    | - Planilla|
+| - Avisos |    | - Notificaciones  |           | - Expedientes     |    | - Activos |
++----------+    +-------------------+           +-------------------+    +-----------+
+     |                    |                               |                    |
+     +--------------------+---------------+---------------+--------------------+
+                                          |
+                                          v
++-----------------------------------------------------------------------------------+
+|                           MOTOR CENTRAL DE SERVICIOS                              |
+|   (Seguridad RBAC, Reglas de Negocio, Trazabilidad, Base de Datos & Almacenamiento)|
++-----------------------------------------------------------------------------------+
+```
+
+---
+
+## Diagrama de Flujo: Ciclo de Emisión Documental y Verificación CUV
+
+```
+[ Usuario Autorizado ] ---> ( Selecciona Plantilla ) ---> ( Asigna Datos de Estudiante )
+                                                                 |
+                                                                 v
+                                                     < Adquiere Candado Atómico >
+                                                                 |
+                                                                 v
+                                                     [ Calcula Correlativo Oficial ]
+                                                                 |
+                                                                 v
+                                                     [ Genera CUV Único Garantizado ]
+                                                                 |
+                                                                 v
+                                                     [ Registra Documento Oficial ]
+                                                                 |
+                                                                 v
+                                                     < Libera Candado Atómico >
+                                                                 |
+                                                                 v
+[ Documento Emitido PDF / QR ] <-------------------- [ Retorna ID, Correlativo & CUV ]
+             |
+             v
+( Verificación Pública por CUV ) ---> [ Autenticación Oficial en Plataforma ]
+```
+
+---
+
+## Normativa Visual y Accesibilidad
+La interfaz de usuario cumple estrictamente con las pautas de accesibilidad **WCAG 2.2 AA**, garantizando contrastes legibles, jerarquía tipográfica clara, diseño responsivo adaptativo para pantallas de escritorio, tabletas y teléfonos móviles, y esquemas de color institucionales aprobados por la Dirección.

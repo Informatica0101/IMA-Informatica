@@ -1,0 +1,239 @@
+===============================================================================
+REGISTRO DE CAMBIOS Y MODIFICACIONES TÉCNICAS (ChangesLogs.txt)
+Plataforma: Ecosistema Educativo New Generation Christian Academy
+===============================================================================
+
+-------------------------------------------------------------------------------
+FECHA: Octubre 2026
+TAREA: [TAREA RH-05] Implementar la evaluación del desempeño de los empleados
+-------------------------------------------------------------------------------
+
+Archivos Modificados:
+1. backend/accounting-service/Code.gs
+   - Linea 192, 193: Adición de permisos "managePerformancePeriod", "managePerformanceCriteria", "managePerformanceEvaluation", "getPerformanceEvaluations" para roles RecursosHumanos y Empleado en ROLE_PERMISSIONS.
+   - Lineas 324-327: Adición de dispatchers en doPost para acciones managePerformancePeriod, managePerformanceCriteria, managePerformanceEvaluation, getPerformanceEvaluations.
+   - Lineas 1402-1815: Implementación de funciones backend managePerformancePeriod, managePerformanceCriteria, managePerformanceEvaluation, getPerformanceEvaluations y parseJsonSafe con comentario identificativo de tarea. Soporte para periodos, criterios por puesto, registros de evaluación, confidencialidad de observaciones privadas y rectificación de evaluaciones cerradas con auditoría de historial.
+
+2. dashboard-recursos-humanos.html
+   - Linea 58: Adición de botón #btn-evaluar-desempeno en la barra principal de acciones de Recursos Humanos.
+   - Lineas 146-285: Adición de modal #modal-evaluacion-desempeno con pestañas para Periodos, Criterios por Puesto, Registrar Evaluación e Historial & Informes.
+   - Lineas 385-625: Implementación de controladores JavaScript para apertura de modal, navegación entre pestañas, envío de formularios (managePerformancePeriod, managePerformanceCriteria, managePerformanceEvaluation) y renderizado dinámico de datos con refreshPerformanceModuleData.
+
+3. MapaDependencias.md
+   - Adición de documentación de entidad y funciones del Módulo de Evaluación del Desempeño Laboral (TAREA RH-05).
+
+4. Auditoria.txt
+   - Migración de [TAREA RH-05] del Grupo 3 (Tareas Pendientes) al Grupo 1 (Tareas Completadas) como ítem 42.
+
+5. Pendientes.md
+   - Actualización del estado de [X] TAREA RH-05. Implementar la evaluación del desempeño de los empleados.
+
+-------------------------------------------------------------------------------
+FECHA: Octubre 2026
+TAREA: [TAREA RH-06] Implementar el registro de capacitación y desarrollo profesional
+-------------------------------------------------------------------------------
+
+Archivos Modificados:
+1. backend/accounting-service/Code.gs
+   - Lineas 192, 193: Adición de permisos "manageTrainingCourse", "manageTrainingEnrollment", "getEmployeeTrainingHistory", "manageProfessionalDevelopmentPlan", "getTrainingAnalyticsReport" en ROLE_PERMISSIONS para roles RecursosHumanos y Empleado.
+   - Lineas 328-332: Adición de dispatchers en doPost para acciones manageTrainingCourse, manageTrainingEnrollment, getEmployeeTrainingHistory, manageProfessionalDevelopmentPlan, getTrainingAnalyticsReport.
+   - Lineas 1819-2250: Implementación de funciones backend manageTrainingCourse, manageTrainingEnrollment, getEmployeeTrainingHistory, manageProfessionalDevelopmentPlan y getTrainingAnalyticsReport con comentario identificativo de tarea. Soporte para catálogo de cursos, inscripciones, asistencias, notas, certificados Drive, detección de certificados próximos a vencer, planes de desarrollo profesional e informes analíticos.
+
+2. dashboard-recursos-humanos.html
+   - Linea 61: Adición de botón #btn-capacitacion-desarrollo en la barra principal de acciones.
+   - Lineas 150-265: Adición de modal #modal-capacitacion-desarrollo con pestañas de Catálogo Cursos, Inscripción & Asistencia, Certificados & Vencimientos y Planes de Desarrollo.
+   - Lineas 678-1000: Implementación de controladores JavaScript para apertura del modal, formularios de registro (manageTrainingCourse, manageTrainingEnrollment, manageProfessionalDevelopmentPlan) y renderizado dinámico de datos con refreshTrainingModuleData.
+
+3. MapaDependencias.md
+   - Adición de documentación de tablas y funciones del Módulo de Capacitación y Desarrollo Profesional (TAREA RH-06).
+
+4. Auditoria.txt
+   - Migración de [TAREA RH-06] del Grupo 3 (Tareas Pendientes) al Grupo 1 (Tareas Completadas) como ítem 43.
+
+5. Pendientes.md
+   - Actualización del estado de [X] TAREA RH-06. Implementar el registro de capacitación y desarrollo profesional.
+
+-------------------------------------------------------------------------------
+FECHA: Octubre 2026
+TAREA: [TAREA RH-07] Completar el registro de incidencias laborales y medidas disciplinarias
+-------------------------------------------------------------------------------
+
+Archivos Modificados:
+1. backend/accounting-service/Code.gs
+   - Lineas 194, 195: Adición de permisos "manageLaborIncident", "manageDisciplinaryMeasure", "getLaborIncidentsHistory" en ROLE_PERMISSIONS para rol RecursosHumanos.
+   - Lineas 333-335: Adición de dispatchers en doPost para acciones manageLaborIncident, manageDisciplinaryMeasure, getLaborIncidentsHistory.
+   - Lineas 2012-2120: Implementación de funciones backend manageLaborIncident, manageDisciplinaryMeasure y getLaborIncidentsHistory con comentario identificativo de tarea. Registro estructurado de faltas/incidencias laborales diferenciadas de incapacidades médicas, aplicación de medidas disciplinarias con actas firmadas adjuntas, sustento documentado, control de suspensiones y restricciones de acceso estrictas según RBAC.
+
+2. dashboard-recursos-humanos.html
+   - Linea 64: Adición de botón #btn-incidencias-disciplinarias en la barra principal de acciones.
+   - Lineas 154-265: Adición de modal #modal-incidencias-disciplinarias con pestañas de Registrar Incidencia, Aplicar Medida Disciplinaria e Historial de Incidencias & Medidas.
+   - Lineas 700-1290: Implementación de controladores JavaScript para apertura de modal, formularios de registro (manageLaborIncident, manageDisciplinaryMeasure) y renderizado dinámico con refreshLaborIncidentsModuleData.
+
+3. MapaDependencias.md
+   - Adición de documentación de tablas y funciones del Módulo de Incidencias Laborales y Medidas Disciplinarias (TAREA RH-07).
+
+4. Auditoria.txt
+   - Migración de [TAREA RH-07] del Grupo 3 (Tareas Pendientes) al Grupo 1 (Tareas Completadas) como ítem 44.
+
+5. Pendientes.md
+   - Actualización del estado de [X] TAREA RH-07. Completar el registro de incidencias laborales y medidas disciplinarias.
+
+-------------------------------------------------------------------------------
+FECHA: Octubre 2026
+TAREA: [TAREA RH-08] Implementar la planificación de necesidades de personal
+-------------------------------------------------------------------------------
+
+Archivos Modificados:
+1. backend/accounting-service/Code.gs
+   - Lineas 192: Adición de permisos "manageStaffingNeeds", "getStaffingNeedsPlanning" en ROLE_PERMISSIONS para rol RecursosHumanos.
+   - Lineas 336, 337: Adición de dispatchers en doPost para acciones manageStaffingNeeds, getStaffingNeedsPlanning.
+   - Lineas 6075-6250: Implementación de funciones backend manageStaffingNeeds y getStaffingNeedsPlanning con comentario identificativo de tarea. Módulo completo de proyección de necesidades de personal, comparación automatizada de requeridos vs empleados activos y vacantes abiertas, e informes trazables de justificación.
+
+2. dashboard-recursos-humanos.html
+   - Linea 67: Adición de botón #btn-planificacion-personal en la barra principal de acciones.
+   - Lineas 275-350: Adición de modal #modal-planificacion-personal con pestañas de Proyección de Necesidades, Disponibilidad vs Demanda e Informes & Justificación.
+   - Lineas 1200-1535: Implementación de controladores JavaScript para apertura de modal, formulario de registro (manageStaffingNeeds) y renderizado dinámico con refreshStaffingPlanningModuleData.
+
+3. MapaDependencias.md
+   - Adición de documentación de tablas y funciones del Módulo de Planificación de Necesidades de Personal (TAREA RH-08).
+
+4. Auditoria.txt
+   - Migración de [TAREA RH-08] del Grupo 3 (Tareas Pendientes) al Grupo 1 (Tareas Completadas) como ítem 45.
+
+5. Pendientes.md
+   - Actualización del estado de [X] TAREA RH-08. Implementar la planificación de necesidades de personal.
+
+-------------------------------------------------------------------------------
+FECHA: Octubre 2026
+TAREA: [TAREA RH-09] Completar la gestión visual de turnos y sustituciones
+-------------------------------------------------------------------------------
+
+Archivos Modificados:
+1. backend/accounting-service/Code.gs
+   - Linea 192: Adición de permisos "manageWorkShiftAndSubstitution", "getWorkShiftsAndSubstitutionsHistory" en ROLE_PERMISSIONS para rol RecursosHumanos.
+   - Lineas 338, 339: Adición de dispatchers en doPost para acciones manageWorkShiftAndSubstitution, getWorkShiftsAndSubstitutionsHistory.
+   - Lineas 6077-6330: Implementación de funciones backend manageWorkShiftAndSubstitution y getWorkShiftsAndSubstitutionsHistory con comentario identificativo de tarea. Módulo de asignación de turnos laborales, registro de sustituciones de personal e historial trazable unificado con horas extras.
+
+2. dashboard-recursos-humanos.html
+   - Linea 70: Adición de botón #btn-turnos-sustituciones en la barra principal de acciones.
+   - Lineas 375-500: Adición de modal #modal-turnos-sustituciones con pestañas de Asignar Turno Laboral, Registrar Sustitución e Historial Turnos & Sustituciones.
+   - Lineas 1415-1850: Implementación de controladores JavaScript para apertura de modal, formularios de registro (manageWorkShiftAndSubstitution) y renderizado dinámico con refreshWorkShiftsSubstitutionsModuleData.
+
+3. MapaDependencias.md
+   - Adición de documentación de tablas y funciones del Módulo de Gestión Visual de Turnos y Sustituciones (TAREA RH-09).
+
+4. Auditoria.txt
+   - Migración de [TAREA RH-09] del Grupo 3 (Tareas Pendientes) al Grupo 1 (Tareas Completadas) como ítem 46.
+
+5. Pendientes.md
+   - Actualización del estado de [X] TAREA RH-09. Completar la gestión visual de turnos y sustituciones.
+
+-------------------------------------------------------------------------------
+FECHA: Octubre 2026
+TAREA: [TAREA RH-10] Verificar y completar el portal de autoservicio del empleado
+-------------------------------------------------------------------------------
+
+Archivos Modificados:
+1. backend/accounting-service/Code.gs
+   - Lineas 192-198: Adición de permiso "getEmployeeSelfServicePortal" en ROLE_PERMISSIONS para roles RecursosHumanos, Empleado y Profesor.
+   - Linea 340: Adición de dispatcher en doPost para acción getEmployeeSelfServicePortal.
+   - Lineas 6078-6210: Implementación de función backend getEmployeeSelfServicePortal con comentario identificativo de tarea y validación estricta server-side para restringir la consulta a la identidad del colaborador autenticado.
+
+2. dashboard-recursos-humanos.html
+   - Linea 73: Adición de botón #btn-autoservicio-empleado en la barra principal de acciones.
+   - Lineas 505-565: Adición de modal #modal-autoservicio-empleado con pestañas de Mi Ficha & Contrato, Mis Solicitudes, Mis Turnos & Horarios y Mis Capacitaciones.
+   - Lineas 1600-2050: Implementación de controladores JavaScript para apertura de modal y renderizado dinámico con refreshEmployeeSelfServiceData.
+
+3. MapaDependencias.md
+   - Adición de documentación de tablas y funciones del Portal de Autoservicio del Empleado (TAREA RH-10).
+
+4. Auditoria.txt
+   - Migración de [TAREA RH-10] del Grupo 3 (Tareas Pendientes) al Grupo 1 (Tareas Completadas) como ítem 47.
+
+5. Pendientes.md
+   - Actualización del estado de [X] TAREA RH-10. Verificar y completar el portal de autoservicio del empleado.
+
+-------------------------------------------------------------------------------
+FECHA: Octubre 2026
+TAREA: [TAREA RH-11] Verificar la preparación de información laboral y fiscal
+-------------------------------------------------------------------------------
+
+Archivos Modificados:
+1. backend/accounting-service/Code.gs
+   - Lineas 192-198: Adición de permiso "verifyLaborAndTaxInformation" en ROLE_PERMISSIONS para roles RecursosHumanos.
+   - Linea 341: Adición de dispatcher en doPost para acción verifyLaborAndTaxInformation.
+   - Lineas 6080-6230: Implementación de función backend verifyLaborAndTaxInformation con comentario identificativo de tarea en primera línea, auditoría de planillas, consolidación de retenciones de ley (IHSS/RAP/ISR), referencias legales hondureñas, alertas por faltante de RTN/DNI, conciliación contable y clasificación del reporte como borrador de trabajo de auditoría interna.
+
+2. dashboard-recursos-humanos.html
+   - Linea 76: Adición de botón #btn-informacion-laboral-fiscal en la sección de accesos de Recursos Humanos.
+   - Lineas 507-600: Adición de modal #modal-informacion-laboral-fiscal para verificación de información laboral y fiscal.
+   - Lineas 1695-2230: Implementación de controladores JavaScript para apertura del modal y función refreshLaborTaxVerificationData para actualización dinámica de consolidados, parámetros legales y alertas de inconsistencia.
+
+3. MapaDependencias.md
+   - Adición de documentación del módulo de Verificación de Información Laboral y Fiscal (TAREA RH-11).
+
+4. Auditoria.txt
+   - Migración de [TAREA RH-11] del Grupo 3 (Tareas Pendientes) al Grupo 1 (Tareas Completadas) como ítem 48.
+
+5. Pendientes.md
+   - Actualización del estado a [X] TAREA RH-11. Verificar la preparación de información laboral y fiscal.
+
+-------------------------------------------------------------------------------
+FECHA: Octubre 2026
+TAREA: [TAREA RH-12] Pruebas de integración y regresión de Recursos Humanos
+-------------------------------------------------------------------------------
+
+Archivos Modificados:
+1. backend/accounting-service/Code.gs
+   - Lineas 192-198: Adición de permiso "runHRIntegrationAndRegressionTests" en ROLE_PERMISSIONS para rol RecursosHumanos.
+   - Linea 342: Adición de dispatcher en doPost para acción runHRIntegrationAndRegressionTests.
+   - Lineas 6231-6410: Implementación de función backend runHRIntegrationAndRegressionTests con comentario identificativo de tarea en primera línea, suite de ejecución de las 18 pruebas integrales de Recursos Humanos y generación estructurada de tabla de evidencias.
+
+2. dashboard-recursos-humanos.html
+   - Linea 79: Adición de botón #btn-pruebas-integracion-rh en la botonera de acciones.
+   - Lineas 510-610: Adición de modal #modal-pruebas-integracion-rh con resumen de suite, indicadores de aprobadas/fallidas y tabla de evidencias.
+   - Lineas 1755-2290: Implementación de controladores JavaScript para apertura del modal y función refreshHRIntegrationTestsData para ejecución y despliegue dinámico de resultados.
+
+3. MapaDependencias.md
+   - Adición de documentación de la Suite de Pruebas de Integración y Regresión (TAREA RH-12).
+
+4. Auditoria.txt
+   - Migración de [TAREA RH-12] del Grupo 3 (Tareas Pendientes) al Grupo 1 (Tareas Completadas) como ítem 49.
+
+5. Pendientes.md
+   - Actualización del estado a [X] TAREA RH-12. Pruebas de integración y regresión de Recursos Humanos.
+
+-------------------------------------------------------------------------------
+FECHA: Octubre 2026
+TAREA: [TAREA GD-IMP-01] Numeración documental segura y prevención de códigos duplicados
+-------------------------------------------------------------------------------
+
+Archivos Modificados:
+1. backend/accounting-service/Code.gs
+   - Linea 204: Adición de acción pública "verifySchoolDocumentByCUV" en PUBLIC_ACTIONS para verificación pública de documentos.
+   - Linea 385: Adición de dispatcher en doPost para acción verifySchoolDocumentByCUV.
+   - Lineas 8924-9025: Reestructuración de función generateSchoolDocument con comentario identificativo de tarea en primera línea, coordinación por LockService.getScriptLock() con bloque try...finally, cálculo atómico de correlativo anual, generación de CUV con bucle de verificación de unicidad contra DocumentosEscolaresEmitidos e e implementación del endpoint verifySchoolDocumentByCUV.
+
+2. MapaDependencias.md
+   - Adición de documentación de la arquitectura de numeración documental y CUV único (TAREA GD-IMP-01).
+
+3. Auditoria.txt
+   - Migración de [TAREA GD-IMP-01] del Grupo 3 (Tareas Pendientes) al Grupo 1 (Tareas Completadas) como ítem 50.
+
+4. Pendientes.md
+   - Actualización del estado a [X] TAREA DE IMPLEMENTACIÓN GD-IMP-01: Numeración documental segura y prevención de códigos duplicados.
+
+-------------------------------------------------------------------------------
+FECHA: Octubre 2026
+TAREA: AUDITORÍA INTEGRAL DE CÓDIGO FUENTE Y BACKLOGS (Pendientes.md, pendientes2.md, pendientes3.md)
+-------------------------------------------------------------------------------
+
+Archivos Modificados:
+1. Auditoria.txt
+   - Reemplazo completo del informe de auditoría integral consolidando las 50 tareas completadas del sistema en el Grupo 1, dejando los Grupos 2 (Incompletas) y 3 (Pendientes) vacíos tras verificar la presencia de firmas de función, controladores de interfaz y comentarios identificativos de primera línea.
+
+2. MapaDependencias.md
+   - Verificación y consolidación de la estructura de dependencias de todos los módulos de Recursos Humanos, Gestión Documental, Finanzas y Administración.
+
+3. ChangesLogs.txt
+   - Registro objetivo de la auditoría integral ejecutada sobre los 3 documentos de pendientes del proyecto.

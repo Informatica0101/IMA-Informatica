@@ -211,3 +211,100 @@
 - `searchGlobalOmnibox`: Endpoint en `backend/user-service/Code.gs` para consulta multi-entidad (Usuarios, Anuncios, Trámites) con seguridad RBAC.
 - `#modal-global-omnibox`: Componente modal de búsqueda unificada en `js/ui-common.js` activable vía atajo de teclado (`Ctrl + K` / `Cmd + K`) e icono `#btn-global-search`.
 - `#btn-global-notifications`: Disparador de notificaciones unificadas y bandeja de alertas en `js/ui-common.js`.
+
+## MÓDULO DE EVALUACIÓN DEL DESEMPEÑO LABORAL (TAREA RH-05)
+- **Hojas de Cálculo / Tablas:**
+  - `PeriodosEvaluacionDesempeno`: Definición y control de periodos de evaluación (PeriodoID, NombrePeriodo, FechaInicio, FechaFin, EstadoPeriodo, CriteriosGeneralesJSON, CreadoPor, FechaCreacion, UltimaModificacion).
+  - `CriteriosEvaluacionDesempeno`: Parametrización de criterios por puesto o familia laboral (CriterioID, PuestoOFamilia, NombreCriterio, PesoPorcentaje, EscalaCalificacionJSON, Descripcion, Estado, FechaCreacion, UltimaModificacion).
+  - `EvaluacionesDesempeno`: Fichas individuales de evaluación del desempeño, calificaciones, fortalezas, compromisos, observaciones confidenciales y trazabilidad de rectificaciones (EvaluacionID, PeriodoID, EmpleadoID, EvaluadorID, PuestoOFamilia, Estado, CalificacionesJSON, PuntajeTotal, EscalaObtenida, Fortalezas, AspectosMejorar, ObservacionesPrivadas, ObservacionesPublicasEmpleado, ObjetivosCompromisosJSON, ConformidadEmpleado, FechaConformidad, RectificadaPor, MotivoRectificacion, HistorialModificacionesJSON, CreadoPor, FechaCreacion, UltimaModificacion).
+- **Funciones Backend (`backend/accounting-service/Code.gs`):**
+  - `managePerformancePeriod(payload)`
+  - `managePerformanceCriteria(payload)`
+  - `managePerformanceEvaluation(payload)`
+  - `getPerformanceEvaluations(payload)`
+- **Componentes Frontend (`dashboard-recursos-humanos.html`):**
+  - Botón `#btn-evaluar-desempeno`
+  - Modal `#modal-evaluacion-desempeno` con pestañas de Periodos, Criterios por Puesto, Registro de Evaluación e Historial & Informes.
+
+## MÓDULO DE CAPACITACIÓN Y DESARROLLO PROFESIONAL (TAREA RH-06)
+- **Hojas de Cálculo / Tablas:**
+  - `CatalogoCursosCapacitacion`: Registro central de cursos, talleres y actividades formativas (CursoID, NombreCurso, Categoria, ProveedorResponsable, Modalidad, DuracionHoras, Requisitos, DirigidoA, Estado, CreadoPor, FechaCreacion, UltimaModificacion).
+  - `InscripcionesCapacitacion`: Control de inscripciones, asistencia, resultados, enlaces a certificados Drive y alertas de vencimiento (InscripcionID, CursoID, EmpleadoID, FechaInscripcion, EstadoInscripcion, AsistenciaPorcentaje, ResultadoNota, CertificadoDriveUrl, FechaEmisionCertificado, FechaVencimientoCertificado, Observaciones, CreadoPor, FechaCreacion, UltimaModificacion).
+  - `PlanesDesarrolloProfesional`: Definición y seguimiento de objetivos de desarrollo profesional (PlanID, EmpleadoID, TituloObjetivo, Descripcion, MetasAccionesJSON, FechaInicio, FechaMeta, EstadoObjetivo, EvaluacionSeguimiento, CreadoPor, FechaCreacion, UltimaModificacion).
+- **Funciones Backend (`backend/accounting-service/Code.gs`):**
+  - `manageTrainingCourse(payload)`
+  - `manageTrainingEnrollment(payload)`
+  - `getEmployeeTrainingHistory(payload)`
+  - `manageProfessionalDevelopmentPlan(payload)`
+  - `getTrainingAnalyticsReport(payload)`
+- **Componentes Frontend (`dashboard-recursos-humanos.html`):**
+  - Botón `#btn-capacitacion-desarrollo`
+  - Modal `#modal-capacitacion-desarrollo` con pestañas de Catálogo Cursos, Inscripción & Asistencia, Certificados & Vencimientos y Planes de Desarrollo.
+
+## MÓDULO DE INCIDENCIAS LABORALES Y MEDIDAS DISCIPLINARIAS (TAREA RH-07)
+- **Hojas de Cálculo / Tablas:**
+  - `IncidenciasLaborales`: Registro de faltas, retardos, incumplimientos o incidentes (IncidenciaId, EmpleadoId, Fecha, Categoria, DescripcionObjetiva, ObservacionesAclaraciones, ResponsabilidadEstablecida, DocumentacionDriveUrl, Estado, CreadoPor, FechaCreacion, UltimaModificacion).
+  - `MedidasDisciplinarias`: Aplicación de amonestaciones verbales/escritas, suspensiones o resoluciones disciplinarias con acta firmada (MedidaId, IncidenciaId, EmpleadoId, TipoMedida, FechaEfectiva, DiasSuspension, ResponsableAprobacion, FundamentoDocumentado, ActaFirmadaDriveUrl, EstadoMedida, CreadoPor, FechaCreacion, UltimaModificacion).
+- **Funciones Backend (`backend/accounting-service/Code.gs`):**
+  - `manageLaborIncident(payload)`
+  - `manageDisciplinaryMeasure(payload)`
+  - `getLaborIncidentsHistory(payload)`
+- **Componentes Frontend (`dashboard-recursos-humanos.html`):**
+  - Botón `#btn-incidencias-disciplinarias`
+  - Modal `#modal-incidencias-disciplinarias` con pestañas de Registrar Incidencia, Aplicar Medida Disciplinaria y Historial de Incidencias & Medidas.
+
+## MÓDULO DE PLANIFICACIÓN DE NECESIDADES DE PERSONAL (TAREA RH-08)
+- **Hojas de Cálculo / Tablas:**
+  - `PlanificacionNecesidadesPersonal`: Registro de proyecciones y estimaciones de plantilla requerida (PlanificacionID, PeriodoAcademico, DepartamentoArea, PuestoOFamilia, CantidadRequerida, EscenarioMatricula, MetricaBaseCalculo, ObservacionesJustificacion, VacanteRelacionadaID, CreadoPor, FechaCreacion, UltimaModificacion).
+- **Funciones Backend (`backend/accounting-service/Code.gs`):**
+  - `manageStaffingNeeds(payload)`
+  - `getStaffingNeedsPlanning(payload)`
+- **Componentes Frontend (`dashboard-recursos-humanos.html`):**
+  - Botón `#btn-planificacion-personal`
+  - Modal `#modal-planificacion-personal` con pestañas de Proyección de Necesidades, Disponibilidad vs Demanda e Informes & Justificación de Contratación.
+
+## MÓDULO DE GESTIÓN VISUAL DE TURNOS Y SUSTITUCIONES (TAREA RH-09)
+- **Hojas de Cálculo / Tablas:**
+  - `AsignacionesTurnosLaborales`: Registro de asignación de turnos de trabajo por empleado y periodo (AsignacionTurnoID, EmpleadoID, NombreTurno, FechaInicio, FechaFin, HoraEntrada, HoraSalida, DepartamentoArea, Estado, CreadoPor, FechaCreacion, UltimaModificacion).
+  - `SustitucionesPersonal`: Registro de reemplazos y coberturas temporales entre colaboradores (SustitucionID, EmpleadoSustitutoID, EmpleadoSustituidoID, FechaInicio, FechaFin, HoraEntrada, HoraSalida, MotivoSustitucion, DepartamentoArea, Estado, CreadoPor, FechaCreacion, UltimaModificacion).
+- **Funciones Backend (`backend/accounting-service/Code.gs`):**
+  - `manageWorkShiftAndSubstitution(payload)`
+  - `getWorkShiftsAndSubstitutionsHistory(payload)`
+- **Componentes Frontend (`dashboard-recursos-humanos.html`):**
+  - Botón `#btn-turnos-sustituciones`
+  - Modal `#modal-turnos-sustituciones` con pestañas de Asignar Turno Laboral, Registrar Sustitución e Historial Turnos, Sustituciones & Horas Extras.
+
+## PORTAL DE AUTOSERVICIO DEL EMPLEADO (TAREA RH-10)
+- **Hojas de Cálculo / Tablas:**
+  - Consulta unificada de `ExpedientesLaborales`, `ContratosLaborales`, `SolicitudesVacaciones`, `PrestamosAnticiposEmpleado`, `AsignacionesTurnosLaborales` e `InscripcionesCapacitacion` restringida a la identidad autenticada.
+- **Funciones Backend (`backend/accounting-service/Code.gs`):**
+  - `getEmployeeSelfServicePortal(payload)`
+- **Componentes Frontend (`dashboard-recursos-humanos.html`):**
+  - Botón `#btn-autoservicio-empleado`
+  - Modal `#modal-autoservicio-empleado` con pestañas de Mi Ficha & Contrato, Mis Solicitudes, Mis Turnos & Horarios y Mis Capacitaciones.
+
+## VERIFICACIÓN DE INFORMACIÓN LABORAL Y FISCAL (TAREA RH-11)
+- **Hojas de Cálculo / Tablas:**
+  - Consulta y conciliación de `PlanillasNomenclatura`, `ExpedientesLaborales` y `AsientosContables`.
+- **Funciones Backend (`backend/accounting-service/Code.gs`):**
+  - `verifyLaborAndTaxInformation(payload)`
+- **Componentes Frontend (`dashboard-recursos-humanos.html`):**
+  - Botón `#btn-informacion-laboral-fiscal`
+  - Modal `#modal-informacion-laboral-fiscal` con despliegue de consolidados devengados y deducciones IHSS/RAP/ISR, tabla de parámetros legales hondureños de referencia, lista de alertas por datos faltantes/RTN y conciliación contable.
+
+## PRUEBAS DE INTEGRACIÓN Y REGRESIÓN DE RECURSOS HUMANOS (TAREA RH-12)
+- **Hojas de Cálculo / Tablas:**
+  - Validación transversal de todas las tablas del módulo de RRHH (`ExpedientesLaborales`, `ContratosLaborales`, `VacantesLaborales`, `AgendaEntrevistasRH`, `EvaluacionesDesempeno`, `InscripcionesCapacitacion`, `IncidenciasLaborales`, `PlanificacionNecesidadesPersonal`, `SolicitudesVacaciones`, `SolicitudesHorasExtras`, `AsignacionesTurnosLaborales`, `SustitucionesPersonal`, `PlanillasNomenclatura`, `BitacoraAuditoriaSistema`).
+- **Funciones Backend (`backend/accounting-service/Code.gs`):**
+  - `runHRIntegrationAndRegressionTests(payload)`
+- **Componentes Frontend (`dashboard-recursos-humanos.html`):**
+  - Botón `#btn-pruebas-integracion-rh`
+  - Modal `#modal-pruebas-integracion-rh` con resumen de suite (Total, Aprobadas, Fallidas), botón de re-ejecución y tabla detallada de evidencias para los 18 casos de prueba integrales.
+
+## NUMERACIÓN DOCUMENTAL SEGURA Y PREVENCIÓN DE CÓDIGOS DUPLICADOS (TAREA GD-IMP-01)
+- **Hojas de Cálculo / Tablas:**
+  - `PlantillasEscolares`: Catálogo de plantillas oficiales con código, categoría, título y versión.
+  - `DocumentosEscolaresEmitidos`: Registro inmutable de emisiones documentales (DocumentoID, PlantillaID, EstudianteUserId, SolicitanteUserId, DatosJSON, EstadoDoc, CodigoVerificacion, DriveFileId, DriveUrl, FechaEmision, Observaciones, VersionPlantilla, SecuenciaNumerica, NumeroCorrelativo).
+- **Funciones Backend (`backend/accounting-service/Code.gs`):**
+  - `generateSchoolDocument(payload)` - Coordinado mediante `LockService.getScriptLock()` para asignación atómica bajo concurrencia.
+  - `verifySchoolDocumentByCUV(payload)` - Endpoint público para autenticación y consulta trazable de documentos emitidos por CUV.

@@ -55,6 +55,30 @@
                 <button id="btn-agendar-entrevista" class="px-4 py-2.5 bg-indigo-600 text-white rounded-2xl font-bold text-xs uppercase tracking-widest hover:bg-indigo-700 transition-all shadow-md">
                     <i class="fa-solid fa-calendar-check mr-1.5"></i> Agendar Entrevista
                 </button>
+                <button id="btn-evaluar-desempeno" class="px-4 py-2.5 bg-purple-600 text-white rounded-2xl font-bold text-xs uppercase tracking-widest hover:bg-purple-700 transition-all shadow-md">
+                    <i class="fa-solid fa-chart-line mr-1.5"></i> Evaluación Desempeño
+                </button>
+                <button id="btn-capacitacion-desarrollo" class="px-4 py-2.5 bg-blue-600 text-white rounded-2xl font-bold text-xs uppercase tracking-widest hover:bg-blue-700 transition-all shadow-md">
+                    <i class="fa-solid fa-graduation-cap mr-1.5"></i> Capacitación &amp; Desarrollo
+                </button>
+                <button id="btn-incidencias-disciplinarias" class="px-4 py-2.5 bg-red-600 text-white rounded-2xl font-bold text-xs uppercase tracking-widest hover:bg-red-700 transition-all shadow-md">
+                    <i class="fa-solid fa-triangle-exclamation mr-1.5"></i> Incidencias &amp; Disciplina
+                </button>
+                <button id="btn-planificacion-personal" class="px-4 py-2.5 bg-teal-600 text-white rounded-2xl font-bold text-xs uppercase tracking-widest hover:bg-teal-700 transition-all shadow-md">
+                    <i class="fa-solid fa-users-gear mr-1.5"></i> Planificación Necesidades
+                </button>
+                <button id="btn-turnos-sustituciones" class="px-4 py-2.5 bg-amber-600 text-white rounded-2xl font-bold text-xs uppercase tracking-widest hover:bg-amber-700 transition-all shadow-md">
+                    <i class="fa-solid fa-clock-rotate-left mr-1.5"></i> Turnos &amp; Sustituciones
+                </button>
+                <button id="btn-autoservicio-empleado" class="px-4 py-2.5 bg-slate-800 text-white rounded-2xl font-bold text-xs uppercase tracking-widest hover:bg-slate-900 transition-all shadow-md">
+                    <i class="fa-solid fa-user-gear mr-1.5"></i> Autoservicio Empleado
+                </button>
+                <button id="btn-informacion-laboral-fiscal" class="px-4 py-2.5 bg-indigo-600 text-white rounded-2xl font-bold text-xs uppercase tracking-widest hover:bg-indigo-700 transition-all shadow-md">
+                    <i class="fa-solid fa-file-invoice-dollar mr-1.5"></i> Verificación Laboral &amp; Fiscal
+                </button>
+                <button id="btn-pruebas-integracion-rh" class="px-4 py-2.5 bg-rose-600 text-white rounded-2xl font-bold text-xs uppercase tracking-widest hover:bg-rose-700 transition-all shadow-md">
+                    <i class="fa-solid fa-list-check mr-1.5"></i> Pruebas Integración &amp; Regresión
+                </button>
                 <button id="btn-calcular-planilla" class="px-4 py-2.5 bg-emerald-600 text-white rounded-2xl font-bold text-xs uppercase tracking-widest hover:bg-emerald-700 transition-all shadow-md">
                     <i class="fa-solid fa-calculator mr-1.5"></i> Calcular Planilla
                 </button>
@@ -139,6 +163,815 @@
             </div>
         </div>
     </main>
+
+    <!-- [TAREA RH-07] Modal para Incidencias Laborales y Medidas Disciplinarias -->
+    <div id="modal-incidencias-disciplinarias" class="fixed inset-0 z-[110] hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white rounded-[2.5rem] max-w-3xl w-full max-h-[90vh] overflow-y-auto p-6 md:p-8 shadow-2xl border border-gray-100">
+            <div class="flex items-center justify-between pb-4 border-b border-gray-100 mb-6">
+                <div>
+                    <span class="px-3 py-1 bg-red-50 text-red-700 rounded-full text-[10px] font-black uppercase tracking-widest">Recursos Humanos</span>
+                    <h3 class="text-xl font-black text-gray-900 uppercase mt-1"><i class="fa-solid fa-scale-balanced mr-2 text-red-600"></i>Incidencias Laborales &amp; Medidas Disciplinarias</h3>
+                </div>
+                <button id="btn-close-modal-inc" class="p-2 text-gray-400 hover:text-gray-700 rounded-full hover:bg-gray-100 text-lg transition-all">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <div class="space-y-6">
+                <!-- Pestañas del Modal -->
+                <div class="flex flex-wrap gap-2 border-b border-gray-100 pb-3">
+                    <button id="tab-inc-registro" class="px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider bg-red-600 text-white">Registrar Incidencia</button>
+                    <button id="tab-inc-medidas" class="px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider bg-gray-100 text-gray-600 hover:bg-gray-200">Medidas Disciplinarias</button>
+                    <button id="tab-inc-historial" class="px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider bg-gray-100 text-gray-600 hover:bg-gray-200">Historial &amp; Trazabilidad</button>
+                </div>
+
+                <!-- TAB 1: REGISTRAR INCIDENCIA -->
+                <div id="sec-inc-registro" class="space-y-4">
+                    <form id="form-inc-registro" class="bg-red-50/40 p-4 rounded-2xl border border-red-100 space-y-3">
+                        <h4 class="text-xs font-black uppercase text-red-900">Registrar Reporte de Incidencia Laboral</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            <input type="text" id="inc-reg-empleado" placeholder="Empleado ID o Nombre" class="p-2.5 text-xs rounded-xl border border-gray-200 w-full" required>
+                            <input type="date" id="inc-reg-fecha" class="p-2.5 text-xs rounded-xl border border-gray-200 w-full" required>
+                            <select id="inc-reg-categoria" class="p-2.5 text-xs rounded-xl border border-gray-200 w-full">
+                                <option value="FaltaLlegadaTardia">Llegada Tardía / Salida Anticipada</option>
+                                <option value="InasistenciaInjustificada">Inasistencia Injustificada</option>
+                                <option value="IncumplimientoDeberes">Incumplimiento de Deberes</option>
+                                <option value="ConductaInapropiada">Conducta Inapropiada</option>
+                                <option value="ObservacionOperativa">Observación Operativa</option>
+                                <option value="Otra">Otra Causal</option>
+                            </select>
+                            <select id="inc-reg-estado" class="p-2.5 text-xs rounded-xl border border-gray-200 w-full">
+                                <option value="Registrada">Reporte Inicial (Registrada)</option>
+                                <option value="EnRevision">En Revisión / Investigación</option>
+                                <option value="ActuacionRealizada">Actuación Realizada</option>
+                                <option value="Cerrada">Caso Cerrado</option>
+                            </select>
+                            <div>
+                                <label class="text-[10px] font-bold uppercase text-gray-500">¿Responsabilidad Establecida?</label>
+                                <select id="inc-reg-responsabilidad" class="p-2.5 text-xs rounded-xl border border-gray-200 w-full">
+                                    <option value="false">No / En Investigación</option>
+                                    <option value="true">Sí / Determinada</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="text-[10px] font-bold uppercase text-gray-500">Documento de Respaldo (Drive URL)</label>
+                                <input type="url" id="inc-reg-drive-url" placeholder="https://drive.google.com/..." class="p-2.5 text-xs rounded-xl border border-gray-200 w-full">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="text-[10px] font-bold uppercase text-gray-500">Descripción Objetiva de los Hechos</label>
+                            <textarea id="inc-reg-desc" rows="3" placeholder="Describa de forma objetiva los hechos observados" class="p-2.5 text-xs rounded-xl border border-gray-200 w-full" required></textarea>
+                        </div>
+                        <div>
+                            <label class="text-[10px] font-bold uppercase text-gray-500">Aclaraciones / Alegaciones del Colaborador</label>
+                            <textarea id="inc-reg-aclaraciones" rows="2" placeholder="Manifestaciones o explicaciones aportadas" class="p-2.5 text-xs rounded-xl border border-gray-200 w-full"></textarea>
+                        </div>
+                        <button type="submit" class="w-full py-2.5 bg-red-600 hover:bg-red-700 text-white font-bold text-xs uppercase rounded-xl transition-all shadow-md">
+                            Guardar Incidencia
+                        </button>
+                    </form>
+                </div>
+
+                <!-- TAB 2: MEDIDAS DISCIPLINARIAS -->
+                <div id="sec-inc-medidas" class="space-y-4 hidden">
+                    <form id="form-inc-medida" class="bg-gray-50 p-4 rounded-2xl border border-gray-200 space-y-3">
+                        <h4 class="text-xs font-black uppercase text-gray-900">Registrar Medida Disciplinaria Aprobada</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            <input type="text" id="med-incidencia-id" placeholder="ID Incidencia Relacionada (Opcional)" class="p-2.5 text-xs rounded-xl border border-gray-200 w-full">
+                            <input type="text" id="med-empleado-id" placeholder="Empleado ID o Nombre" class="p-2.5 text-xs rounded-xl border border-gray-200 w-full" required>
+                            <select id="med-tipo" class="p-2.5 text-xs rounded-xl border border-gray-200 w-full" required>
+                                <option value="AmonestacionVerbal">Amonestación Verbal</option>
+                                <option value="AmonestacionEscrita">Amonestación Escrita</option>
+                                <option value="SuspensionLaboral">Suspensión Laboral sin Goce de Sueldo</option>
+                                <option value="TerminacionContrato">Terminación de Contrato</option>
+                            </select>
+                            <input type="date" id="med-fecha-efectiva" class="p-2.5 text-xs rounded-xl border border-gray-200 w-full" required>
+                            <input type="number" id="med-dias-suspension" placeholder="Días de Suspensión (Si aplica)" class="p-2.5 text-xs rounded-xl border border-gray-200 w-full" min="0">
+                            <input type="text" id="med-responsable-aprob" placeholder="Aprobado Por (Dirección / RRHH)" class="p-2.5 text-xs rounded-xl border border-gray-200 w-full" required>
+                        </div>
+                        <div>
+                            <label class="text-[10px] font-bold uppercase text-gray-500">Fundamento Reglamentario &amp; Documentación</label>
+                            <textarea id="med-fundamento" rows="2" placeholder="Fundamento según el reglamento interno de trabajo" class="p-2.5 text-xs rounded-xl border border-gray-200 w-full" required></textarea>
+                        </div>
+                        <div>
+                            <label class="text-[10px] font-bold uppercase text-gray-500">Acta Firmada (Drive URL)</label>
+                            <input type="url" id="med-acta-url" placeholder="https://drive.google.com/..." class="p-2.5 text-xs rounded-xl border border-gray-200 w-full">
+                        </div>
+                        <button type="submit" class="w-full py-2.5 bg-gray-800 hover:bg-gray-900 text-white font-bold text-xs uppercase rounded-xl transition-all shadow-md">
+                            Guardar Medida Disciplinaria
+                        </button>
+                    </form>
+                </div>
+
+                <!-- TAB 3: HISTORIAL & TRAZABILIDAD -->
+                <div id="sec-inc-historial" class="space-y-4 hidden">
+                    <div class="flex items-center justify-between">
+                        <h4 class="text-xs font-black uppercase text-gray-900">Historial Trazable de Incidencias &amp; Sanciones</h4>
+                        <button id="btn-refresh-inc" class="text-xs font-bold text-red-600 hover:text-red-800"><i class="fa-solid fa-rotate mr-1"></i>Actualizar</button>
+                    </div>
+                    <div class="space-y-4">
+                        <div>
+                            <h5 class="text-[11px] font-black uppercase text-gray-500 mb-2">Incidencias Registradas</h5>
+                            <div id="list-inc-incidencias" class="space-y-2 text-xs font-medium text-gray-700"></div>
+                        </div>
+                        <div>
+                            <h5 class="text-[11px] font-black uppercase text-gray-500 mb-2">Medidas Disciplinarias Aplicadas</h5>
+                            <div id="list-inc-medidas" class="space-y-2 text-xs font-medium text-gray-700"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- [TAREA RH-08] Modal para Planificación de Necesidades de Personal -->
+    <div id="modal-planificacion-personal" class="fixed inset-0 z-[110] hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white rounded-[2.5rem] max-w-4xl w-full max-h-[90vh] overflow-y-auto p-6 md:p-8 shadow-2xl border border-gray-100">
+            <div class="flex items-center justify-between pb-4 border-b border-gray-100 mb-6">
+                <div>
+                    <span class="px-3 py-1 bg-teal-50 text-teal-700 rounded-full text-[10px] font-black uppercase tracking-widest">Recursos Humanos</span>
+                    <h3 class="text-xl font-black text-gray-900 uppercase mt-1"><i class="fa-solid fa-users-gear mr-2 text-teal-600"></i>Planificación de Necesidades de Personal</h3>
+                </div>
+                <button id="btn-close-modal-plan" class="p-2 text-gray-400 hover:text-gray-700 rounded-full hover:bg-gray-100 text-lg transition-all">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <!-- Tabs Navegación Interna -->
+            <div class="flex space-x-2 border-b border-gray-100 pb-3 mb-6 overflow-x-auto">
+                <button class="tab-plan-btn px-4 py-2 text-xs font-bold rounded-xl transition-all bg-teal-600 text-white" data-target="sec-plan-proyeccion">
+                    Proyección de Necesidades
+                </button>
+                <button class="tab-plan-btn px-4 py-2 text-xs font-bold rounded-xl transition-all text-gray-500 hover:text-gray-800 hover:bg-gray-50" data-target="sec-plan-comparativa">
+                    Disponibilidad vs Demanda
+                </button>
+                <button class="tab-plan-btn px-4 py-2 text-xs font-bold rounded-xl transition-all text-gray-500 hover:text-gray-800 hover:bg-gray-50" data-target="sec-plan-informes">
+                    Justificación &amp; Vacantes
+                </button>
+            </div>
+
+            <div class="space-y-6">
+                <!-- TAB 1: REGISTRAR PROYECCIÓN DE NECESIDADES -->
+                <div id="sec-plan-proyeccion" class="space-y-4">
+                    <form id="form-plan-proyeccion" class="bg-gray-50 p-4 rounded-2xl border border-gray-200 space-y-3">
+                        <h4 class="text-xs font-black uppercase text-gray-900">Registrar Proyección de Personal Requerido</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                            <div>
+                                <label class="text-[10px] font-bold uppercase text-gray-500">Periodo Académico</label>
+                                <input type="text" id="plan-proy-periodo" placeholder="Ej. 2026-2027" class="p-2.5 text-xs rounded-xl border border-gray-200 w-full" required>
+                            </div>
+                            <div>
+                                <label class="text-[10px] font-bold uppercase text-gray-500">Departamento / Área</label>
+                                <input type="text" id="plan-proy-dept" placeholder="Ej. Primaria / Matemáticas" class="p-2.5 text-xs rounded-xl border border-gray-200 w-full" required>
+                            </div>
+                            <div>
+                                <label class="text-[10px] font-bold uppercase text-gray-500">Puesto / Familia Laboral</label>
+                                <input type="text" id="plan-proy-puesto" placeholder="Ej. Docente Titular" class="p-2.5 text-xs rounded-xl border border-gray-200 w-full" required>
+                            </div>
+                            <div>
+                                <label class="text-[10px] font-bold uppercase text-gray-500">Cantidad Requerida</label>
+                                <input type="number" id="plan-proy-cantidad" placeholder="1" class="p-2.5 text-xs rounded-xl border border-gray-200 w-full" min="1" required>
+                            </div>
+                            <div>
+                                <label class="text-[10px] font-bold uppercase text-gray-500">Escenario Matrícula</label>
+                                <select id="plan-proy-escenario" class="p-2.5 text-xs rounded-xl border border-gray-200 w-full" required>
+                                    <option value="BaseMatriculaReal">Base Real Actual</option>
+                                    <option value="CrecimientoModerado">Crecimiento Moderado (+10%)</option>
+                                    <option value="CrecimientoApresurado">Escenario Alta Demanda (+25%)</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="text-[10px] font-bold uppercase text-gray-500">Cálculo de Referencia</label>
+                                <select id="plan-proy-metrica" class="p-2.5 text-xs rounded-xl border border-gray-200 w-full" required>
+                                    <option value="RatioAlumnosDocente">Ratio Alumnos/Docente</option>
+                                    <option value="HorasSemanalesSeccion">Carga Horaria por Secciones</option>
+                                    <option value="EstimacionDirectiva">Estimación Técnica Directiva</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="text-[10px] font-bold uppercase text-gray-500">Justificación Técnica &amp; Criterios</label>
+                            <textarea id="plan-proy-justificacion" rows="2" placeholder="Describa los criterios utilizados para justificar esta proyección de personal" class="p-2.5 text-xs rounded-xl border border-gray-200 w-full" required></textarea>
+                        </div>
+                        <button type="submit" class="w-full py-2.5 bg-teal-600 hover:bg-teal-700 text-white font-bold text-xs uppercase rounded-xl transition-all shadow-md">
+                            Guardar Proyección de Necesidad
+                        </button>
+                    </form>
+                </div>
+
+                <!-- TAB 2: COMPARATIVA DISPONIBILIDAD VS DEMANDA -->
+                <div id="sec-plan-comparativa" class="space-y-4 hidden">
+                    <div class="flex items-center justify-between">
+                        <h4 class="text-xs font-black uppercase text-gray-900">Análisis de Cobertura &amp; Déficit / Excedente</h4>
+                        <button id="btn-refresh-plan" class="text-xs font-bold text-teal-600 hover:text-teal-800"><i class="fa-solid fa-rotate mr-1"></i>Actualizar Analítica</button>
+                    </div>
+                    <div id="list-plan-comparativa" class="space-y-3"></div>
+                </div>
+
+                <!-- TAB 3: INFORMES & JUSTIFICACIÓN DE CONTRATACIÓN -->
+                <div id="sec-plan-informes" class="space-y-4 hidden">
+                    <div class="p-4 bg-teal-50 rounded-2xl border border-teal-100 space-y-2">
+                        <h4 class="text-xs font-black uppercase text-teal-900"><i class="fa-solid fa-file-contract mr-1"></i>Trazabilidad de Justificación para Contratación</h4>
+                        <p class="text-xs text-teal-800">Las necesidades registradas sirven como sustento técnico para la apertura de vacantes. Este módulo compara datos reales de empleados activos sin crear vacantes ni contratos automáticamente.</p>
+                    </div>
+                    <div id="list-plan-proyecciones" class="space-y-3"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- [TAREA RH-09] Modal para Gestión Visual de Turnos y Sustituciones -->
+    <div id="modal-turnos-sustituciones" class="fixed inset-0 z-[110] hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white rounded-[2.5rem] max-w-4xl w-full max-h-[90vh] overflow-y-auto p-6 md:p-8 shadow-2xl border border-gray-100">
+            <div class="flex items-center justify-between pb-4 border-b border-gray-100 mb-6">
+                <div>
+                    <span class="px-3 py-1 bg-amber-50 text-amber-700 rounded-full text-[10px] font-black uppercase tracking-widest">Recursos Humanos</span>
+                    <h3 class="text-xl font-black text-gray-900 uppercase mt-1"><i class="fa-solid fa-clock-rotate-left mr-2 text-amber-600"></i>Gestión Visual de Turnos &amp; Sustituciones</h3>
+                </div>
+                <button id="btn-close-modal-shift" class="p-2 text-gray-400 hover:text-gray-700 rounded-full hover:bg-gray-100 text-lg transition-all">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <!-- Tabs Navegación Interna -->
+            <div class="flex space-x-2 border-b border-gray-100 pb-3 mb-6 overflow-x-auto">
+                <button class="tab-shift-btn px-4 py-2 text-xs font-bold rounded-xl transition-all bg-amber-600 text-white" data-target="sec-shift-turno">
+                    Asignar Turno Laboral
+                </button>
+                <button class="tab-shift-btn px-4 py-2 text-xs font-bold rounded-xl transition-all text-gray-500 hover:text-gray-800 hover:bg-gray-50" data-target="sec-shift-sustitucion">
+                    Registrar Sustitución
+                </button>
+                <button class="tab-shift-btn px-4 py-2 text-xs font-bold rounded-xl transition-all text-gray-500 hover:text-gray-800 hover:bg-gray-50" data-target="sec-shift-historial">
+                    Historial Turnos &amp; Sustituciones
+                </button>
+            </div>
+
+            <div class="space-y-6">
+                <!-- TAB 1: ASIGNAR TURNO LABORAL -->
+                <div id="sec-shift-turno" class="space-y-4">
+                    <form id="form-shift-turno" class="bg-gray-50 p-4 rounded-2xl border border-gray-200 space-y-3">
+                        <h4 class="text-xs font-black uppercase text-gray-900">Asignación de Turno Laboral</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                            <div>
+                                <label class="text-[10px] font-bold uppercase text-gray-500">Empleado ID / Nombre</label>
+                                <input type="text" id="shift-tur-empleado" placeholder="Ej. EMP-001" class="p-2.5 text-xs rounded-xl border border-gray-200 w-full" required>
+                            </div>
+                            <div>
+                                <label class="text-[10px] font-bold uppercase text-gray-500">Nombre del Turno</label>
+                                <input type="text" id="shift-tur-nombre" placeholder="Ej. Turno Mañana / Matutino" class="p-2.5 text-xs rounded-xl border border-gray-200 w-full" required>
+                            </div>
+                            <div>
+                                <label class="text-[10px] font-bold uppercase text-gray-500">Departamento / Área</label>
+                                <input type="text" id="shift-tur-dept" placeholder="Ej. Primaria / Administración" class="p-2.5 text-xs rounded-xl border border-gray-200 w-full" required>
+                            </div>
+                            <div>
+                                <label class="text-[10px] font-bold uppercase text-gray-500">Fecha Inicio</label>
+                                <input type="date" id="shift-tur-inicio" class="p-2.5 text-xs rounded-xl border border-gray-200 w-full" required>
+                            </div>
+                            <div>
+                                <label class="text-[10px] font-bold uppercase text-gray-500">Fecha Fin</label>
+                                <input type="date" id="shift-tur-fin" class="p-2.5 text-xs rounded-xl border border-gray-200 w-full" required>
+                            </div>
+                            <div>
+                                <label class="text-[10px] font-bold uppercase text-gray-500">Horario (Entrada / Salida)</label>
+                                <div class="grid grid-cols-2 gap-1">
+                                    <input type="time" id="shift-tur-hora-in" value="07:00" class="p-2 text-xs rounded-xl border border-gray-200 w-full" required>
+                                    <input type="time" id="shift-tur-hora-out" value="15:00" class="p-2 text-xs rounded-xl border border-gray-200 w-full" required>
+                                </div>
+                            </div>
+                        </div>
+                        <button type="submit" class="w-full py-2.5 bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs uppercase rounded-xl transition-all shadow-md">
+                            Asignar Turno
+                        </button>
+                    </form>
+                </div>
+
+                <!-- TAB 2: REGISTRAR SUSTITUCIÓN DE PERSONAL -->
+                <div id="sec-shift-sustitucion" class="space-y-4 hidden">
+                    <form id="form-shift-sustitucion" class="bg-gray-50 p-4 rounded-2xl border border-gray-200 space-y-3">
+                        <h4 class="text-xs font-black uppercase text-gray-900">Registrar Sustitución de Personal</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                            <div>
+                                <label class="text-[10px] font-bold uppercase text-gray-500">Empleado Sustituto (Cubre)</label>
+                                <input type="text" id="shift-sust-sustituto" placeholder="Ej. EMP-002" class="p-2.5 text-xs rounded-xl border border-gray-200 w-full" required>
+                            </div>
+                            <div>
+                                <label class="text-[10px] font-bold uppercase text-gray-500">Empleado Sustituido (Ausente)</label>
+                                <input type="text" id="shift-sust-sustituido" placeholder="Ej. EMP-001" class="p-2.5 text-xs rounded-xl border border-gray-200 w-full" required>
+                            </div>
+                            <div>
+                                <label class="text-[10px] font-bold uppercase text-gray-500">Departamento / Área</label>
+                                <input type="text" id="shift-sust-dept" placeholder="Ej. Secundaria / Ciencias" class="p-2.5 text-xs rounded-xl border border-gray-200 w-full" required>
+                            </div>
+                            <div>
+                                <label class="text-[10px] font-bold uppercase text-gray-500">Fecha Inicio</label>
+                                <input type="date" id="shift-sust-inicio" class="p-2.5 text-xs rounded-xl border border-gray-200 w-full" required>
+                            </div>
+                            <div>
+                                <label class="text-[10px] font-bold uppercase text-gray-500">Fecha Fin</label>
+                                <input type="date" id="shift-sust-fin" class="p-2.5 text-xs rounded-xl border border-gray-200 w-full" required>
+                            </div>
+                            <div>
+                                <label class="text-[10px] font-bold uppercase text-gray-500">Motivo Sustitución</label>
+                                <input type="text" id="shift-sust-motivo" placeholder="Ej. Incapacidad médica / Licencia" class="p-2.5 text-xs rounded-xl border border-gray-200 w-full" required>
+                            </div>
+                        </div>
+                        <button type="submit" class="w-full py-2.5 bg-gray-800 hover:bg-gray-900 text-white font-bold text-xs uppercase rounded-xl transition-all shadow-md">
+                            Guardar Sustitución
+                        </button>
+                    </form>
+                </div>
+
+                <!-- TAB 3: HISTORIAL TURNOS & SUSTITUCIONES -->
+                <div id="sec-shift-historial" class="space-y-4 hidden">
+                    <div class="flex items-center justify-between">
+                        <h4 class="text-xs font-black uppercase text-gray-900">Historial Trazable de Turnos, Sustituciones &amp; Horas Extras</h4>
+                        <button id="btn-refresh-shift" class="text-xs font-bold text-amber-600 hover:text-amber-800"><i class="fa-solid fa-rotate mr-1"></i>Actualizar Historial</button>
+                    </div>
+                    <div class="space-y-4">
+                        <div>
+                            <h5 class="text-[11px] font-black uppercase text-gray-500 mb-2">Turnos Laborales Asignados</h5>
+                            <div id="list-shift-turnos" class="space-y-2 text-xs font-medium text-gray-700"></div>
+                        </div>
+                        <div>
+                            <h5 class="text-[11px] font-black uppercase text-gray-500 mb-2">Sustituciones Registradas</h5>
+                            <div id="list-shift-sustituciones" class="space-y-2 text-xs font-medium text-gray-700"></div>
+                        </div>
+                        <div>
+                            <h5 class="text-[11px] font-black uppercase text-gray-500 mb-2">Solicitudes de Horas Extras</h5>
+                            <div id="list-shift-horasextras" class="space-y-2 text-xs font-medium text-gray-700"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- [TAREA RH-12] Modal para Pruebas de Integración y Regresión de Recursos Humanos -->
+    <div id="modal-pruebas-integracion-rh" class="fixed inset-0 z-[110] hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white rounded-[2.5rem] max-w-5xl w-full max-h-[90vh] overflow-y-auto p-6 md:p-8 shadow-2xl border border-gray-100">
+            <div class="flex items-center justify-between pb-4 border-b border-gray-100 mb-6">
+                <div>
+                    <span class="px-3 py-1 bg-rose-100 text-rose-800 rounded-full text-[10px] font-black uppercase tracking-widest">Aseguramiento de Calidad &amp; Regresión</span>
+                    <h3 class="text-xl font-black text-gray-900 uppercase mt-1"><i class="fa-solid fa-vial-circle-check mr-2 text-rose-600"></i>Suite de Pruebas de Integración y Regresión RRHH</h3>
+                    <p class="text-xs text-gray-500 font-medium">Ejecución y evidencia de las 18 pruebas integrales del módulo de Recursos Humanos</p>
+                </div>
+                <button id="btn-close-modal-tests" class="text-gray-400 hover:text-gray-600 transition-colors p-2">
+                    <i class="fa-solid fa-xmark text-xl"></i>
+                </button>
+            </div>
+
+            <div class="space-y-6 text-xs">
+                <!-- Resumen de Suite -->
+                <div class="bg-slate-900 text-white p-4 rounded-2xl flex flex-wrap items-center justify-between gap-4">
+                    <div>
+                        <span class="text-[10px] text-slate-400 uppercase font-bold block">Estado de Suite</span>
+                        <span id="tests-suite-status" class="text-base font-black text-emerald-400">APROBADA</span>
+                    </div>
+                    <div class="flex items-center space-x-6 text-xs">
+                        <div>
+                            <span class="text-[10px] text-slate-400 uppercase font-bold block">Total Pruebas</span>
+                            <span id="tests-total-count" class="font-black text-white text-sm">18</span>
+                        </div>
+                        <div>
+                            <span class="text-[10px] text-slate-400 uppercase font-bold block">Aprobadas</span>
+                            <span id="tests-pass-count" class="font-black text-emerald-400 text-sm">18</span>
+                        </div>
+                        <div>
+                            <span class="text-[10px] text-slate-400 uppercase font-bold block">Fallidas</span>
+                            <span id="tests-fail-count" class="font-black text-rose-400 text-sm">0</span>
+                        </div>
+                    </div>
+                    <button id="btn-rerun-tests" class="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-xl font-bold uppercase tracking-wider text-[10px] transition-all">
+                        <i class="fa-solid fa-rotate-right mr-1"></i> Re-ejecutar Pruebas
+                    </button>
+                </div>
+
+                <!-- Tabla de Evidencias -->
+                <div class="overflow-x-auto border border-gray-100 rounded-2xl">
+                    <table class="w-full text-left border-collapse text-xs">
+                        <thead>
+                            <tr class="bg-gray-50 border-b border-gray-100 text-[10px] uppercase font-black text-gray-500">
+                                <th class="p-3">ID / Prueba</th>
+                                <th class="p-3">Objetivo &amp; Pasos</th>
+                                <th class="p-3">Resultado Observado</th>
+                                <th class="p-3 text-center">Estado</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tests-evidence-tbody" class="divide-y divide-gray-50">
+                            <!-- Carga dinámica -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- [TAREA RH-11] Modal para Verificación de Información Laboral y Fiscal -->
+    <div id="modal-informacion-laboral-fiscal" class="fixed inset-0 z-[110] hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white rounded-[2.5rem] max-w-4xl w-full max-h-[90vh] overflow-y-auto p-6 md:p-8 shadow-2xl border border-gray-100">
+            <div class="flex items-center justify-between pb-4 border-b border-gray-100 mb-6">
+                <div>
+                    <span class="px-3 py-1 bg-indigo-100 text-indigo-800 rounded-full text-[10px] font-black uppercase tracking-widest">Cumplimiento Legal &amp; Fiscal</span>
+                    <h3 class="text-xl font-black text-gray-900 uppercase mt-1"><i class="fa-solid fa-file-invoice-dollar mr-2 text-indigo-600"></i>Verificación de Información Laboral &amp; Fiscal</h3>
+                    <p class="text-xs text-gray-500 font-medium">Análisis de consistencia en nóminas, deducciones IHSS/RAP/ISR y conciliación contable</p>
+                </div>
+                <button id="btn-close-modal-tax" class="text-gray-400 hover:text-gray-600 transition-colors p-2">
+                    <i class="fa-solid fa-xmark text-xl"></i>
+                </button>
+            </div>
+
+            <!-- Alerta de Clasificación de Documento Interno -->
+            <div class="mb-6 p-4 bg-amber-50 border border-amber-200 rounded-2xl text-amber-900 text-xs flex items-start space-x-3">
+                <i class="fa-solid fa-triangle-exclamation text-amber-600 text-lg mt-0.5"></i>
+                <div>
+                    <strong class="font-bold uppercase block text-[11px]">Borrador de Auditoría Interna Institucional</strong>
+                    <span>Este reporte es de uso interno para verificar consistencias de datos. No constituye una presentación electrónica oficial ante el IHSS, RAP o SAR.</span>
+                </div>
+            </div>
+
+            <div class="space-y-6 text-xs">
+                <!-- Resumen Consolidados de Nómina -->
+                <div class="bg-gray-50 p-4 rounded-2xl border border-gray-100 space-y-3">
+                    <h4 class="font-bold text-gray-900 uppercase text-xs flex items-center justify-between">
+                        <span><i class="fa-solid fa-calculator text-indigo-600 mr-2"></i>Totales de Nómina Procesada</span>
+                        <span id="tax-periodo-label" class="text-[10px] text-gray-500 font-normal">Periodo: Todos</span>
+                    </h4>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                        <div class="p-3 bg-white rounded-xl border border-gray-100">
+                            <span class="text-[10px] text-gray-400 uppercase font-bold block">Devengado Total</span>
+                            <span id="tax-tot-devengado" class="text-sm font-black text-gray-900">L. 0.00</span>
+                        </div>
+                        <div class="p-3 bg-white rounded-xl border border-gray-100">
+                            <span class="text-[10px] text-gray-400 uppercase font-bold block">Retención IHSS</span>
+                            <span id="tax-tot-ihss" class="text-sm font-black text-blue-700">L. 0.00</span>
+                        </div>
+                        <div class="p-3 bg-white rounded-xl border border-gray-100">
+                            <span class="text-[10px] text-gray-400 uppercase font-bold block">Retención RAP</span>
+                            <span id="tax-tot-rap" class="text-sm font-black text-teal-700">L. 0.00</span>
+                        </div>
+                        <div class="p-3 bg-white rounded-xl border border-gray-100">
+                            <span class="text-[10px] text-gray-400 uppercase font-bold block">Retención ISR</span>
+                            <span id="tax-tot-isr" class="text-sm font-black text-purple-700">L. 0.00</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Parámetros Legales Hondureños de Referencia -->
+                <div class="bg-white p-4 rounded-2xl border border-gray-100 space-y-3">
+                    <h4 class="font-bold text-gray-900 uppercase text-xs"><i class="fa-solid fa-scale-balanced text-indigo-600 mr-2"></i>Parámetros Legales Hondureños Vigentes</h4>
+                    <div id="tax-legal-params-list" class="space-y-2">
+                        <!-- Carga dinámica -->
+                    </div>
+                </div>
+
+                <!-- Inconsistencias y Alertas de Datos Faltantes -->
+                <div class="bg-white p-4 rounded-2xl border border-gray-100 space-y-3">
+                    <h4 class="font-bold text-gray-900 uppercase text-xs flex items-center justify-between">
+                        <span><i class="fa-solid fa-circle-exclamation text-amber-600 mr-2"></i>Inconsistencias y Datos Faltantes</span>
+                        <span id="tax-issues-count" class="px-2 py-0.5 rounded-full text-[10px] font-black bg-amber-100 text-amber-800">0 Alertas</span>
+                    </h4>
+                    <div id="tax-inconsistencies-list" class="space-y-2 max-h-48 overflow-y-auto">
+                        <!-- Carga dinámica -->
+                    </div>
+                </div>
+
+                <!-- Conciliación Contable -->
+                <div class="bg-slate-900 text-white p-4 rounded-2xl space-y-2">
+                    <h4 class="font-bold uppercase text-xs flex items-center justify-between">
+                        <span><i class="fa-solid fa-book-bookmark text-emerald-400 mr-2"></i>Conciliación Contable de Nómina</span>
+                        <span id="tax-concil-status" class="px-2 py-0.5 rounded-full text-[10px] font-black uppercase bg-emerald-900 text-emerald-200">Verificado</span>
+                    </h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs pt-1">
+                        <div>
+                            <p class="text-[10px] text-slate-400">Total Débitos Registrados:</p>
+                            <p id="tax-concil-debito" class="font-black text-emerald-400">L. 0.00</p>
+                        </div>
+                        <div>
+                            <p class="text-[10px] text-slate-400">Total Créditos Registrados:</p>
+                            <p id="tax-concil-credito" class="font-black text-emerald-400">L. 0.00</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- [TAREA RH-10] Modal para Portal de Autoservicio del Empleado -->
+    <div id="modal-autoservicio-empleado" class="fixed inset-0 z-[110] hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white rounded-[2.5rem] max-w-4xl w-full max-h-[90vh] overflow-y-auto p-6 md:p-8 shadow-2xl border border-gray-100">
+            <div class="flex items-center justify-between pb-4 border-b border-gray-100 mb-6">
+                <div>
+                    <span class="px-3 py-1 bg-slate-100 text-slate-800 rounded-full text-[10px] font-black uppercase tracking-widest">Portal del Empleado</span>
+                    <h3 class="text-xl font-black text-gray-900 uppercase mt-1"><i class="fa-solid fa-user-gear mr-2 text-slate-700"></i>Autoservicio &amp; Ficha Personal</h3>
+                </div>
+                <button id="btn-close-modal-self" class="p-2 text-gray-400 hover:text-gray-700 rounded-full hover:bg-gray-100 text-lg transition-all">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <!-- Tabs Navegación Interna -->
+            <div class="flex space-x-2 border-b border-gray-100 pb-3 mb-6 overflow-x-auto">
+                <button class="tab-self-btn px-4 py-2 text-xs font-bold rounded-xl transition-all bg-slate-800 text-white" data-target="sec-self-expediente">
+                    Mi Ficha &amp; Contrato
+                </button>
+                <button class="tab-self-btn px-4 py-2 text-xs font-bold rounded-xl transition-all text-gray-500 hover:text-gray-800 hover:bg-gray-50" data-target="sec-self-solicitudes">
+                    Mis Solicitudes
+                </button>
+                <button class="tab-self-btn px-4 py-2 text-xs font-bold rounded-xl transition-all text-gray-500 hover:text-gray-800 hover:bg-gray-50" data-target="sec-self-turnos">
+                    Mis Turnos &amp; Horarios
+                </button>
+                <button class="tab-self-btn px-4 py-2 text-xs font-bold rounded-xl transition-all text-gray-500 hover:text-gray-800 hover:bg-gray-50" data-target="sec-self-capacitaciones">
+                    Mis Capacitaciones
+                </button>
+            </div>
+
+            <div class="space-y-6">
+                <!-- TAB 1: MI FICHA & CONTRATO -->
+                <div id="sec-self-expediente" class="space-y-4">
+                    <div id="info-self-expediente" class="p-4 bg-gray-50 rounded-2xl border border-gray-200"></div>
+                    <div id="info-self-contratos" class="space-y-2"></div>
+                </div>
+
+                <!-- TAB 2: MIS SOLICITUDES -->
+                <div id="sec-self-solicitudes" class="space-y-4 hidden">
+                    <div class="flex items-center justify-between">
+                        <h4 class="text-xs font-black uppercase text-gray-900">Historial de Mis Solicitudes de Vacaciones &amp; Permisos</h4>
+                        <button id="btn-refresh-self" class="text-xs font-bold text-slate-700 hover:text-slate-900"><i class="fa-solid fa-rotate mr-1"></i>Actualizar</button>
+                    </div>
+                    <div id="list-self-solicitudes" class="space-y-2 text-xs font-medium text-gray-700"></div>
+                </div>
+
+                <!-- TAB 3: MIS TURNOS -->
+                <div id="sec-self-turnos" class="space-y-4 hidden">
+                    <h4 class="text-xs font-black uppercase text-gray-900">Mis Turnos Asignados</h4>
+                    <div id="list-self-turnos" class="space-y-2 text-xs font-medium text-gray-700"></div>
+                </div>
+
+                <!-- TAB 4: MIS CAPACITACIONES -->
+                <div id="sec-self-capacitaciones" class="space-y-4 hidden">
+                    <h4 class="text-xs font-black uppercase text-gray-900">Mis Capacitaciones &amp; Certificados</h4>
+                    <div id="list-self-capacitaciones" class="space-y-2 text-xs font-medium text-gray-700"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- [TAREA RH-06] Modal para Capacitación y Desarrollo Profesional -->
+    <div id="modal-capacitacion-desarrollo" class="fixed inset-0 z-[110] hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white rounded-[2.5rem] max-w-3xl w-full max-h-[90vh] overflow-y-auto p-6 md:p-8 shadow-2xl border border-gray-100">
+            <div class="flex items-center justify-between pb-4 border-b border-gray-100 mb-6">
+                <div>
+                    <span class="px-3 py-1 bg-blue-50 text-blue-700 rounded-full text-[10px] font-black uppercase tracking-widest">Recursos Humanos</span>
+                    <h3 class="text-xl font-black text-gray-900 uppercase mt-1"><i class="fa-solid fa-graduation-cap mr-2 text-blue-600"></i>Capacitación &amp; Desarrollo Profesional</h3>
+                </div>
+                <button id="btn-close-modal-cap" class="p-2 text-gray-400 hover:text-gray-700 rounded-full hover:bg-gray-100 text-lg transition-all">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <div class="space-y-6">
+                <!-- Pestañas del Modal -->
+                <div class="flex flex-wrap gap-2 border-b border-gray-100 pb-3">
+                    <button id="tab-cap-cursos" class="px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider bg-blue-600 text-white">Catálogo Cursos</button>
+                    <button id="tab-cap-inscripciones" class="px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider bg-gray-100 text-gray-600 hover:bg-gray-200">Inscripción &amp; Asistencia</button>
+                    <button id="tab-cap-certificados" class="px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider bg-gray-100 text-gray-600 hover:bg-gray-200">Certificados &amp; Vencimientos</button>
+                    <button id="tab-cap-planes" class="px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider bg-gray-100 text-gray-600 hover:bg-gray-200">Planes de Desarrollo</button>
+                </div>
+
+                <!-- TAB 1: CURSOS -->
+                <div id="sec-cap-cursos" class="space-y-4">
+                    <form id="form-cap-curso" class="bg-blue-50/50 p-4 rounded-2xl border border-blue-100 space-y-3">
+                        <h4 class="text-xs font-black uppercase text-blue-900">Registrar Nuevo Curso / Taller</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            <input type="text" id="cap-nombre-curso" placeholder="Nombre del Curso / Actividad" class="p-2.5 text-xs rounded-xl border border-gray-200 w-full" required>
+                            <input type="text" id="cap-categoria-curso" placeholder="Categoría (ej. Didáctica, Tecnología, Liderazgo)" class="p-2.5 text-xs rounded-xl border border-gray-200 w-full">
+                            <input type="text" id="cap-proveedor-curso" placeholder="Proveedor / Facilitador Responsable" class="p-2.5 text-xs rounded-xl border border-gray-200 w-full">
+                            <select id="cap-modalidad-curso" class="p-2.5 text-xs rounded-xl border border-gray-200 w-full">
+                                <option value="Presencial">Presencial</option>
+                                <option value="Virtual">Virtual</option>
+                                <option value="Hibrido">Híbrido</option>
+                            </select>
+                            <input type="number" id="cap-duracion-curso" placeholder="Duración en Horas" class="p-2.5 text-xs rounded-xl border border-gray-200 w-full" min="1">
+                            <input type="text" id="cap-dirigido-curso" placeholder="Dirigido A (ej. Docentes Sec., Todo el personal)" class="p-2.5 text-xs rounded-xl border border-gray-200 w-full">
+                        </div>
+                        <button type="submit" class="w-full py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs uppercase rounded-xl transition-all">Guardar Curso</button>
+                    </form>
+                    <div id="list-cap-cursos" class="space-y-2 text-xs font-medium text-gray-700"></div>
+                </div>
+
+                <!-- TAB 2: INSCRIPCION & ASISTENCIA -->
+                <div id="sec-cap-inscripciones" class="space-y-4 hidden">
+                    <form id="form-cap-inscripcion" class="bg-gray-50 p-4 rounded-2xl border border-gray-200 space-y-3">
+                        <h4 class="text-xs font-black uppercase text-gray-900">Inscribir / Registrar Asistencia de Empleado</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            <div>
+                                <label class="text-[10px] font-bold uppercase text-gray-500">Curso</label>
+                                <select id="cap-ins-curso" class="p-2.5 text-xs rounded-xl border border-gray-200 w-full" required></select>
+                            </div>
+                            <div>
+                                <label class="text-[10px] font-bold uppercase text-gray-500">Empleado / ID Ficha</label>
+                                <input type="text" id="cap-ins-empleado" placeholder="Empleado ID o Nombre" class="p-2.5 text-xs rounded-xl border border-gray-200 w-full" required>
+                            </div>
+                            <div>
+                                <label class="text-[10px] font-bold uppercase text-gray-500">Estado Inscripción</label>
+                                <select id="cap-ins-estado" class="p-2.5 text-xs rounded-xl border border-gray-200 w-full">
+                                    <option value="Inscrito">Inscrito</option>
+                                    <option value="EnCurso">En Curso</option>
+                                    <option value="Asistio">Asistió</option>
+                                    <option value="Finalizado">Finalizado / Aprobado</option>
+                                    <option value="Reprobado">Reprobado</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="text-[10px] font-bold uppercase text-gray-500">Asistencia (%)</label>
+                                <input type="number" id="cap-ins-asistencia" placeholder="Porcentaje (ej. 100)" class="p-2.5 text-xs rounded-xl border border-gray-200 w-full" min="0" max="100">
+                            </div>
+                            <div>
+                                <label class="text-[10px] font-bold uppercase text-gray-500">Calificación / Nota Obtenida</label>
+                                <input type="number" id="cap-ins-nota" placeholder="Nota Obtenida (0-100)" class="p-2.5 text-xs rounded-xl border border-gray-200 w-full" min="0" max="100">
+                            </div>
+                            <div>
+                                <label class="text-[10px] font-bold uppercase text-gray-500">Enlace Certificado (Google Drive / URL)</label>
+                                <input type="url" id="cap-ins-cert-url" placeholder="https://drive.google.com/..." class="p-2.5 text-xs rounded-xl border border-gray-200 w-full">
+                            </div>
+                            <div>
+                                <label class="text-[10px] font-bold uppercase text-gray-500">Fecha Emisión Certificado</label>
+                                <input type="date" id="cap-ins-cert-emision" class="p-2.5 text-xs rounded-xl border border-gray-200 w-full">
+                            </div>
+                            <div>
+                                <label class="text-[10px] font-bold uppercase text-gray-500">Fecha Vencimiento Certificado</label>
+                                <input type="date" id="cap-ins-cert-vencimiento" class="p-2.5 text-xs rounded-xl border border-gray-200 w-full">
+                            </div>
+                        </div>
+                        <button type="submit" class="w-full py-2 bg-gray-800 hover:bg-gray-900 text-white font-bold text-xs uppercase rounded-xl transition-all">Guardar Registro Capacitación</button>
+                    </form>
+                </div>
+
+                <!-- TAB 3: CERTIFICADOS & VENCIMIENTOS -->
+                <div id="sec-cap-certificados" class="space-y-4 hidden">
+                    <div class="flex items-center justify-between">
+                        <h4 class="text-xs font-black uppercase text-gray-900">Historial de Capacitación &amp; Vencimiento de Certificados</h4>
+                        <button id="btn-refresh-cap" class="text-xs font-bold text-blue-600 hover:text-blue-800"><i class="fa-solid fa-rotate mr-1"></i>Actualizar Lista</button>
+                    </div>
+                    <div id="list-cap-certificados" class="space-y-2 text-xs font-medium text-gray-700"></div>
+                </div>
+
+                <!-- TAB 4: PLANES DESARROLLO -->
+                <div id="sec-cap-planes" class="space-y-4 hidden">
+                    <form id="form-cap-plan" class="bg-gray-50 p-4 rounded-2xl border border-gray-200 space-y-3">
+                        <h4 class="text-xs font-black uppercase text-gray-900">Crear Plan de Desarrollo Profesional</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            <input type="text" id="cap-plan-empleado" placeholder="Empleado ID o Nombre" class="p-2.5 text-xs rounded-xl border border-gray-200 w-full" required>
+                            <input type="text" id="cap-plan-titulo" placeholder="Título del Objetivo de Desarrollo" class="p-2.5 text-xs rounded-xl border border-gray-200 w-full" required>
+                            <input type="date" id="cap-plan-inicio" class="p-2.5 text-xs rounded-xl border border-gray-200 w-full">
+                            <input type="date" id="cap-plan-meta" class="p-2.5 text-xs rounded-xl border border-gray-200 w-full">
+                        </div>
+                        <textarea id="cap-plan-desc" rows="2" placeholder="Descripción detallada y metas de acción" class="p-2.5 text-xs rounded-xl border border-gray-200 w-full"></textarea>
+                        <button type="submit" class="w-full py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs uppercase rounded-xl transition-all">Guardar Plan de Desarrollo</button>
+                    </form>
+                    <div id="list-cap-planes" class="space-y-2 text-xs font-medium text-gray-700"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- [TAREA RH-05] Modal para Evaluación del Desempeño de Empleados -->
+    <div id="modal-evaluacion-desempeno" class="fixed inset-0 z-[110] hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white rounded-[2.5rem] max-w-3xl w-full max-h-[90vh] overflow-y-auto p-6 md:p-8 shadow-2xl border border-gray-100">
+            <div class="flex items-center justify-between pb-4 border-b border-gray-100 mb-6">
+                <div>
+                    <span class="px-3 py-1 bg-purple-50 text-purple-700 rounded-full text-[10px] font-black uppercase tracking-widest">Recursos Humanos</span>
+                    <h3 class="text-xl font-black text-gray-900 uppercase mt-1"><i class="fa-solid fa-award mr-2 text-purple-600"></i>Evaluación del Desempeño Laboral</h3>
+                </div>
+                <button id="btn-close-modal-evaluacion" class="p-2 text-gray-400 hover:text-gray-700 rounded-full hover:bg-gray-100 text-lg transition-all">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <div class="space-y-6">
+                <!-- Pestañas de Acción -->
+                <div class="flex flex-wrap gap-2 border-b border-gray-100 pb-3">
+                    <button id="tab-eval-periodos" class="px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider bg-purple-600 text-white">Periodos</button>
+                    <button id="tab-eval-criterios" class="px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider bg-gray-100 text-gray-600 hover:bg-gray-200">Criterios por Puesto</button>
+                    <button id="tab-eval-registro" class="px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider bg-gray-100 text-gray-600 hover:bg-gray-200">Registrar Evaluación</button>
+                    <button id="tab-eval-historial" class="px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider bg-gray-100 text-gray-600 hover:bg-gray-200">Historial & Informes</button>
+                </div>
+
+                <!-- TAB 1: PERIODOS -->
+                <div id="sec-eval-periodos" class="space-y-4">
+                    <form id="form-eval-periodo" class="bg-purple-50/50 p-4 rounded-2xl border border-purple-100 space-y-3">
+                        <h4 class="text-xs font-black uppercase text-purple-900">Crear / Actualizar Periodo de Evaluación</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            <input type="text" id="eval-nombre-periodo" placeholder="Nombre (ej. Anual 2026, Trimestre 1 2026)" class="p-2.5 text-xs rounded-xl border border-gray-200 w-full" required>
+                            <select id="eval-estado-periodo" class="p-2.5 text-xs rounded-xl border border-gray-200 w-full">
+                                <option value="Borrador">Borrador</option>
+                                <option value="Activo">Activo</option>
+                                <option value="Cerrado">Cerrado</option>
+                            </select>
+                            <input type="date" id="eval-fecha-inicio" class="p-2.5 text-xs rounded-xl border border-gray-200 w-full" required>
+                            <input type="date" id="eval-fecha-fin" class="p-2.5 text-xs rounded-xl border border-gray-200 w-full" required>
+                        </div>
+                        <button type="submit" class="w-full py-2 bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs uppercase rounded-xl transition-all">Guardar Periodo</button>
+                    </form>
+                    <div id="list-eval-periodos" class="space-y-2 text-xs font-medium text-gray-700"></div>
+                </div>
+
+                <!-- TAB 2: CRITERIOS -->
+                <div id="sec-eval-criterios" class="space-y-4 hidden">
+                    <form id="form-eval-criterio" class="bg-gray-50 p-4 rounded-2xl border border-gray-200 space-y-3">
+                        <h4 class="text-xs font-black uppercase text-gray-900">Configurar Criterios por Puesto / Familia</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            <input type="text" id="eval-puesto-familia" placeholder="Puesto o Familia (ej. Docentes, Administración, General)" class="p-2.5 text-xs rounded-xl border border-gray-200 w-full" required>
+                            <input type="text" id="eval-nombre-criterio" placeholder="Nombre Criterio (ej. Cumplimiento Objetivos, Liderazgo)" class="p-2.5 text-xs rounded-xl border border-gray-200 w-full" required>
+                            <input type="number" id="eval-peso-criterio" placeholder="Peso % (ej. 25)" class="p-2.5 text-xs rounded-xl border border-gray-200 w-full">
+                            <input type="text" id="eval-desc-criterio" placeholder="Descripción del Criterio" class="p-2.5 text-xs rounded-xl border border-gray-200 w-full">
+                        </div>
+                        <button type="submit" class="w-full py-2 bg-gray-800 hover:bg-gray-900 text-white font-bold text-xs uppercase rounded-xl transition-all">Guardar Criterio</button>
+                    </form>
+                    <div id="list-eval-criterios" class="space-y-2 text-xs font-medium text-gray-700"></div>
+                </div>
+
+                <!-- TAB 3: REGISTRO EVALUACION -->
+                <div id="sec-eval-registro" class="space-y-4 hidden">
+                    <form id="form-eval-registro" class="bg-white p-4 rounded-2xl border border-gray-200 space-y-3">
+                        <h4 class="text-xs font-black uppercase text-gray-900">Registrar / Editar Evaluación de Empleado</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            <div>
+                                <label class="text-[10px] font-bold uppercase text-gray-500">Periodo</label>
+                                <select id="eval-reg-periodo" class="p-2.5 text-xs rounded-xl border border-gray-200 w-full" required></select>
+                            </div>
+                            <div>
+                                <label class="text-[10px] font-bold uppercase text-gray-500">Empleado / Ficha ID</label>
+                                <input type="text" id="eval-reg-empleado" placeholder="Empleado ID o Nombre" class="p-2.5 text-xs rounded-xl border border-gray-200 w-full" required>
+                            </div>
+                            <div>
+                                <label class="text-[10px] font-bold uppercase text-gray-500">Evaluador / Supervisor</label>
+                                <input type="text" id="eval-reg-evaluador" placeholder="Evaluador ID o Nombre" class="p-2.5 text-xs rounded-xl border border-gray-200 w-full">
+                            </div>
+                            <div>
+                                <label class="text-[10px] font-bold uppercase text-gray-500">Estado de la Evaluación</label>
+                                <select id="eval-reg-estado" class="p-2.5 text-xs rounded-xl border border-gray-200 w-full">
+                                    <option value="Borrador">Borrador</option>
+                                    <option value="PendienteRevision">Pendiente de Revisión</option>
+                                    <option value="Cerrada">Cerrada (Finalizada)</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="text-[10px] font-bold uppercase text-gray-500">Puntaje Total (0 - 100)</label>
+                                <input type="number" id="eval-reg-puntaje" placeholder="Puntaje Obtenido" class="p-2.5 text-xs rounded-xl border border-gray-200 w-full" min="0" max="100" required>
+                            </div>
+                            <div>
+                                <label class="text-[10px] font-bold uppercase text-gray-500">Escala / Clasificación</label>
+                                <select id="eval-reg-escala" class="p-2.5 text-xs rounded-xl border border-gray-200 w-full">
+                                    <option value="Excelente">Excelente (90 - 100)</option>
+                                    <option value="Satisfactorio">Satisfactorio (75 - 89)</option>
+                                    <option value="NecesitaMejora">Necesita Mejora (60 - 74)</option>
+                                    <option value="Insatisfactorio">Insatisfactorio (&lt; 60)</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="text-[10px] font-bold uppercase text-gray-500">Fortalezas Identificadas</label>
+                            <textarea id="eval-reg-fortalezas" rows="2" placeholder="Describa las principales fortalezas del desempeño" class="p-2.5 text-xs rounded-xl border border-gray-200 w-full"></textarea>
+                        </div>
+                        <div>
+                            <label class="text-[10px] font-bold uppercase text-gray-500">Aspectos por Mejorar &amp; Compromisos</label>
+                            <textarea id="eval-reg-aspectos" rows="2" placeholder="Oportunidades de mejora y compromisos de seguimiento" class="p-2.5 text-xs rounded-xl border border-gray-200 w-full"></textarea>
+                        </div>
+                        <div>
+                            <label class="text-[10px] font-bold uppercase text-gray-500">Observaciones Privadas / Restringidas (Solo RRHH/Dirección)</label>
+                            <textarea id="eval-reg-privadas" rows="2" placeholder="Notas confidenciales no visibles para el empleado" class="p-2.5 text-xs rounded-xl border border-gray-200 w-full"></textarea>
+                        </div>
+                        <div>
+                            <label class="text-[10px] font-bold uppercase text-gray-500">Observaciones Compartidas con Empleado</label>
+                            <textarea id="eval-reg-publicas" rows="2" placeholder="Retroalimentación pública accesible para el colaborador" class="p-2.5 text-xs rounded-xl border border-gray-200 w-full"></textarea>
+                        </div>
+
+                        <!-- Campos para Rectificación Autorizada (Si está cerrada) -->
+                        <div id="box-rectificacion-eval" class="hidden p-3 bg-amber-50 border border-amber-200 rounded-xl space-y-2">
+                            <span class="text-[10px] font-black uppercase text-amber-900"><i class="fa-solid fa-triangle-exclamation mr-1"></i> Rectificación Autorizada de Evaluación Cerrada</span>
+                            <input type="text" id="eval-rect-motivo" placeholder="Motivo formal de la rectificación" class="p-2 text-xs rounded-xl border border-amber-300 w-full">
+                            <input type="text" id="eval-rect-autorizado" placeholder="Autorizado Por (Director / RRHH)" class="p-2 text-xs rounded-xl border border-amber-300 w-full">
+                        </div>
+
+                        <button type="submit" class="w-full py-2.5 bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs uppercase rounded-xl transition-all shadow-md">
+                            Guardar Evaluación
+                        </button>
+                    </form>
+                </div>
+
+                <!-- TAB 4: HISTORIAL & INFORMES -->
+                <div id="sec-eval-historial" class="space-y-4 hidden">
+                    <div class="flex items-center justify-between">
+                        <h4 class="text-xs font-black uppercase text-gray-900">Historial e Informes de Evaluación</h4>
+                        <button id="btn-refresh-evals" class="text-xs font-bold text-purple-600 hover:text-purple-800"><i class="fa-solid fa-rotate mr-1"></i>Actualizar</button>
+                    </div>
+                    <div id="list-eval-historial" class="space-y-2 text-xs font-medium text-gray-700"></div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <script src="js/config.js?v=24"></script>
     <script src="js/api.js?v=24"></script>
@@ -241,7 +1074,1288 @@
                     }
                 });
             }
+
+            // [TAREA RH-05] Gestor de Evaluación del Desempeño Laboral
+            const btnEvaluarDesempeno = document.getElementById('btn-evaluar-desempeno');
+            const modalEvaluacion = document.getElementById('modal-evaluacion-desempeno');
+            const btnCloseModalEval = document.getElementById('btn-close-modal-evaluacion');
+
+            if (btnEvaluarDesempeno && modalEvaluacion) {
+                btnEvaluarDesempeno.addEventListener('click', async () => {
+                    modalEvaluacion.classList.remove('hidden');
+                    await refreshPerformanceModuleData();
+                });
+            }
+
+            if (btnCloseModalEval && modalEvaluacion) {
+                btnCloseModalEval.addEventListener('click', () => {
+                    modalEvaluacion.classList.add('hidden');
+                });
+            }
+
+            // Pestañas del Modal
+            const tabs = [
+                { tab: 'tab-eval-periodos', sec: 'sec-eval-periodos' },
+                { tab: 'tab-eval-criterios', sec: 'sec-eval-criterios' },
+                { tab: 'tab-eval-registro', sec: 'sec-eval-registro' },
+                { tab: 'tab-eval-historial', sec: 'sec-eval-historial' }
+            ];
+
+            tabs.forEach(tObj => {
+                const btn = document.getElementById(tObj.tab);
+                if (!btn) return;
+                btn.addEventListener('click', () => {
+                    tabs.forEach(o => {
+                        const b = document.getElementById(o.tab);
+                        const s = document.getElementById(o.sec);
+                        if (b) {
+                            b.className = o.tab === tObj.tab ?
+                                'px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider bg-purple-600 text-white' :
+                                'px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider bg-gray-100 text-gray-600 hover:bg-gray-200';
+                        }
+                        if (s) {
+                            if (o.tab === tObj.tab) s.classList.remove('hidden');
+                            else s.classList.add('hidden');
+                        }
+                    });
+                });
+            });
+
+            // Formulario Periodo
+            const formPeriodo = document.getElementById('form-eval-periodo');
+            if (formPeriodo) {
+                formPeriodo.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    const nombrePeriodo = document.getElementById('eval-nombre-periodo').value;
+                    const estadoPeriodo = document.getElementById('eval-estado-periodo').value;
+                    const fechaInicio = document.getElementById('eval-fecha-inicio').value;
+                    const fechaFin = document.getElementById('eval-fecha-fin').value;
+
+                    try {
+                        if (window.showLoading) window.showLoading('Guardando periodo de evaluación...');
+                        const res = await fetchApi('ACCOUNTING', 'managePerformancePeriod', {
+                            nombrePeriodo,
+                            estadoPeriodo,
+                            fechaInicio,
+                            fechaFin
+                        });
+                        if (window.hideLoading) window.hideLoading();
+                        if (res && res.status === 'success') {
+                            alert('Periodo guardado correctamente.');
+                            formPeriodo.reset();
+                            await refreshPerformanceModuleData();
+                        } else {
+                            alert(res && res.message ? res.message : 'Error al guardar el periodo.');
+                        }
+                    } catch (err) {
+                        if (window.hideLoading) window.hideLoading();
+                        alert('Error de conexión.');
+                    }
+                });
+            }
+
+            // Formulario Criterio
+            const formCriterio = document.getElementById('form-eval-criterio');
+            if (formCriterio) {
+                formCriterio.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    const puestoOFamilia = document.getElementById('eval-puesto-familia').value;
+                    const nombreCriterio = document.getElementById('eval-nombre-criterio').value;
+                    const pesoPorcentaje = parseFloat(document.getElementById('eval-peso-criterio').value || '0');
+                    const descripcion = document.getElementById('eval-desc-criterio').value;
+
+                    try {
+                        if (window.showLoading) window.showLoading('Guardando criterio...');
+                        const res = await fetchApi('ACCOUNTING', 'managePerformanceCriteria', {
+                            puestoOFamilia,
+                            nombreCriterio,
+                            pesoPorcentaje,
+                            descripcion
+                        });
+                        if (window.hideLoading) window.hideLoading();
+                        if (res && res.status === 'success') {
+                            alert('Criterio guardado correctamente.');
+                            formCriterio.reset();
+                            await refreshPerformanceModuleData();
+                        } else {
+                            alert(res && res.message ? res.message : 'Error al guardar el criterio.');
+                        }
+                    } catch (err) {
+                        if (window.hideLoading) window.hideLoading();
+                        alert('Error de conexión.');
+                    }
+                });
+            }
+
+            // Formulario Registro Evaluación
+            const formRegistroEval = document.getElementById('form-eval-registro');
+            if (formRegistroEval) {
+                formRegistroEval.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    const periodoId = document.getElementById('eval-reg-periodo').value;
+                    const empleadoId = document.getElementById('eval-reg-empleado').value;
+                    const evaluadorId = document.getElementById('eval-reg-evaluador').value;
+                    const estado = document.getElementById('eval-reg-estado').value;
+                    const puntajeTotal = parseFloat(document.getElementById('eval-reg-puntaje').value || '0');
+                    const escalaObtenida = document.getElementById('eval-reg-escala').value;
+                    const fortalezas = document.getElementById('eval-reg-fortalezas').value;
+                    const aspectosMejorar = document.getElementById('eval-reg-aspectos').value;
+                    const observacionesPrivadas = document.getElementById('eval-reg-privadas').value;
+                    const observacionesPublicasEmpleado = document.getElementById('eval-reg-publicas').value;
+
+                    const motivoRectificacion = document.getElementById('eval-rect-motivo').value;
+                    const autorizadoPor = document.getElementById('eval-rect-autorizado').value;
+                    const isRectification = !!(motivoRectificacion && autorizadoPor);
+
+                    try {
+                        if (window.showLoading) window.showLoading('Guardando evaluación...');
+                        const res = await fetchApi('ACCOUNTING', 'managePerformanceEvaluation', {
+                            periodoId,
+                            empleadoId,
+                            evaluadorId,
+                            estado,
+                            puntajeTotal,
+                            escalaObtenida,
+                            fortalezas,
+                            aspectosMejorar,
+                            observacionesPrivadas,
+                            observacionesPublicasEmpleado,
+                            isRectification,
+                            motivoRectificacion,
+                            autorizadoPor
+                        });
+                        if (window.hideLoading) window.hideLoading();
+                        if (res && res.status === 'success') {
+                            alert(res.message || 'Evaluación registrada correctamente.');
+                            formRegistroEval.reset();
+                            await refreshPerformanceModuleData();
+                        } else {
+                            alert(res && res.message ? res.message : 'Error al guardar la evaluación.');
+                        }
+                    } catch (err) {
+                        if (window.hideLoading) window.hideLoading();
+                        alert('Error de conexión.');
+                    }
+                });
+            }
+
+            const btnRefreshEvals = document.getElementById('btn-refresh-evals');
+            if (btnRefreshEvals) {
+                btnRefreshEvals.addEventListener('click', async () => {
+                    await refreshPerformanceModuleData();
+                });
+            }
+
+            // [TAREA RH-06] Gestor de Capacitación y Desarrollo Profesional
+            const btnCapacitacion = document.getElementById('btn-capacitacion-desarrollo');
+            const modalCapacitacion = document.getElementById('modal-capacitacion-desarrollo');
+            const btnCloseModalCap = document.getElementById('btn-close-modal-cap');
+
+            if (btnCapacitacion && modalCapacitacion) {
+                btnCapacitacion.addEventListener('click', async () => {
+                    modalCapacitacion.classList.remove('hidden');
+                    await refreshTrainingModuleData();
+                });
+            }
+
+            if (btnCloseModalCap && modalCapacitacion) {
+                btnCloseModalCap.addEventListener('click', () => {
+                    modalCapacitacion.classList.add('hidden');
+                });
+            }
+
+            // Pestañas Capacitacion
+            const capTabs = [
+                { tab: 'tab-cap-cursos', sec: 'sec-cap-cursos' },
+                { tab: 'tab-cap-inscripciones', sec: 'sec-cap-inscripciones' },
+                { tab: 'tab-cap-certificados', sec: 'sec-cap-certificados' },
+                { tab: 'tab-cap-planes', sec: 'sec-cap-planes' }
+            ];
+
+            capTabs.forEach(tObj => {
+                const btn = document.getElementById(tObj.tab);
+                if (!btn) return;
+                btn.addEventListener('click', () => {
+                    capTabs.forEach(o => {
+                        const b = document.getElementById(o.tab);
+                        const s = document.getElementById(o.sec);
+                        if (b) {
+                            b.className = o.tab === tObj.tab ?
+                                'px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider bg-blue-600 text-white' :
+                                'px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider bg-gray-100 text-gray-600 hover:bg-gray-200';
+                        }
+                        if (s) {
+                            if (o.tab === tObj.tab) s.classList.remove('hidden');
+                            else s.classList.add('hidden');
+                        }
+                    });
+                });
+            });
+
+            // Form Curso
+            const formCurso = document.getElementById('form-cap-curso');
+            if (formCurso) {
+                formCurso.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    const nombreCurso = document.getElementById('cap-nombre-curso').value;
+                    const categoria = document.getElementById('cap-categoria-curso').value;
+                    const proveedorResponsable = document.getElementById('cap-proveedor-curso').value;
+                    const modalidad = document.getElementById('cap-modalidad-curso').value;
+                    const duracionHoras = parseFloat(document.getElementById('cap-duracion-curso').value || '0');
+                    const dirigidoA = document.getElementById('cap-dirigido-curso').value;
+
+                    try {
+                        if (window.showLoading) window.showLoading('Guardando curso...');
+                        const res = await fetchApi('ACCOUNTING', 'manageTrainingCourse', {
+                            nombreCurso,
+                            categoria,
+                            proveedorResponsable,
+                            modalidad,
+                            duracionHoras,
+                            dirigidoA
+                        });
+                        if (window.hideLoading) window.hideLoading();
+                        if (res && res.status === 'success') {
+                            alert('Curso guardado correctamente.');
+                            formCurso.reset();
+                            await refreshTrainingModuleData();
+                        } else {
+                            alert(res && res.message ? res.message : 'Error al guardar el curso.');
+                        }
+                    } catch (err) {
+                        if (window.hideLoading) window.hideLoading();
+                        alert('Error de conexión.');
+                    }
+                });
+            }
+
+            // Form Inscripción
+            const formInscripcion = document.getElementById('form-cap-inscripcion');
+            if (formInscripcion) {
+                formInscripcion.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    const cursoId = document.getElementById('cap-ins-curso').value;
+                    const empleadoId = document.getElementById('cap-ins-empleado').value;
+                    const estadoInscripcion = document.getElementById('cap-ins-estado').value;
+                    const asistenciaPorcentaje = parseFloat(document.getElementById('cap-ins-asistencia').value || '0');
+                    const resultadoNota = parseFloat(document.getElementById('cap-ins-nota').value || '0');
+                    const certificadoDriveUrl = document.getElementById('cap-ins-cert-url').value;
+                    const fechaEmisionCertificado = document.getElementById('cap-ins-cert-emision').value;
+                    const fechaVencimientoCertificado = document.getElementById('cap-ins-cert-vencimiento').value;
+
+                    try {
+                        if (window.showLoading) window.showLoading('Guardando inscripción...');
+                        const res = await fetchApi('ACCOUNTING', 'manageTrainingEnrollment', {
+                            cursoId,
+                            empleadoId,
+                            estadoInscripcion,
+                            asistenciaPorcentaje,
+                            resultadoNota,
+                            certificadoDriveUrl,
+                            fechaEmisionCertificado,
+                            fechaVencimientoCertificado
+                        });
+                        if (window.hideLoading) window.hideLoading();
+                        if (res && res.status === 'success') {
+                            alert('Registro de capacitación guardado correctamente.');
+                            formInscripcion.reset();
+                            await refreshTrainingModuleData();
+                        } else {
+                            alert(res && res.message ? res.message : 'Error al guardar la capacitación.');
+                        }
+                    } catch (err) {
+                        if (window.hideLoading) window.hideLoading();
+                        alert('Error de conexión.');
+                    }
+                });
+            }
+
+            // Form Plan de Desarrollo
+            const formPlanDev = document.getElementById('form-cap-plan');
+            if (formPlanDev) {
+                formPlanDev.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    const empleadoId = document.getElementById('cap-plan-empleado').value;
+                    const tituloObjetivo = document.getElementById('cap-plan-titulo').value;
+                    const fechaInicio = document.getElementById('cap-plan-inicio').value;
+                    const fechaMeta = document.getElementById('cap-plan-meta').value;
+                    const descripcion = document.getElementById('cap-plan-desc').value;
+
+                    try {
+                        if (window.showLoading) window.showLoading('Guardando plan...');
+                        const res = await fetchApi('ACCOUNTING', 'manageProfessionalDevelopmentPlan', {
+                            empleadoId,
+                            tituloObjetivo,
+                            fechaInicio,
+                            fechaMeta,
+                            descripcion
+                        });
+                        if (window.hideLoading) window.hideLoading();
+                        if (res && res.status === 'success') {
+                            alert('Plan de desarrollo guardado correctamente.');
+                            formPlanDev.reset();
+                            await refreshTrainingModuleData();
+                        } else {
+                            alert(res && res.message ? res.message : 'Error al guardar el plan.');
+                        }
+                    } catch (err) {
+                        if (window.hideLoading) window.hideLoading();
+                        alert('Error de conexión.');
+                    }
+                });
+            }
+
+            const btnRefreshCap = document.getElementById('btn-refresh-cap');
+            if (btnRefreshCap) {
+                btnRefreshCap.addEventListener('click', async () => {
+                    await refreshTrainingModuleData();
+                });
+            }
+
+            // [TAREA RH-07] Gestor de Incidencias Laborales y Medidas Disciplinarias
+            const btnIncidencias = document.getElementById('btn-incidencias-disciplinarias');
+            const modalIncidencias = document.getElementById('modal-incidencias-disciplinarias');
+            const btnCloseModalInc = document.getElementById('btn-close-modal-inc');
+
+            if (btnIncidencias && modalIncidencias) {
+                btnIncidencias.addEventListener('click', async () => {
+                    modalIncidencias.classList.remove('hidden');
+                    await refreshLaborIncidentsModuleData();
+                });
+            }
+
+            if (btnCloseModalInc && modalIncidencias) {
+                btnCloseModalInc.addEventListener('click', () => {
+                    modalIncidencias.classList.add('hidden');
+                });
+            }
+
+            // Pestañas Incidencias
+            const incTabs = [
+                { tab: 'tab-inc-registro', sec: 'sec-inc-registro' },
+                { tab: 'tab-inc-medidas', sec: 'sec-inc-medidas' },
+                { tab: 'tab-inc-historial', sec: 'sec-inc-historial' }
+            ];
+
+            incTabs.forEach(tObj => {
+                const btn = document.getElementById(tObj.tab);
+                if (!btn) return;
+                btn.addEventListener('click', () => {
+                    incTabs.forEach(o => {
+                        const b = document.getElementById(o.tab);
+                        const s = document.getElementById(o.sec);
+                        if (b) {
+                            b.className = o.tab === tObj.tab ?
+                                'px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider bg-red-600 text-white' :
+                                'px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider bg-gray-100 text-gray-600 hover:bg-gray-200';
+                        }
+                        if (s) {
+                            if (o.tab === tObj.tab) s.classList.remove('hidden');
+                            else s.classList.add('hidden');
+                        }
+                    });
+                });
+            });
+
+            // Form Incidencia
+            const formIncidencia = document.getElementById('form-inc-registro');
+            if (formIncidencia) {
+                formIncidencia.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    const empleadoId = document.getElementById('inc-reg-empleado').value;
+                    const fecha = document.getElementById('inc-reg-fecha').value;
+                    const categoria = document.getElementById('inc-reg-categoria').value;
+                    const estado = document.getElementById('inc-reg-estado').value;
+                    const responsabilidadEstablecida = document.getElementById('inc-reg-responsabilidad').value === 'true';
+                    const documentacionDriveUrl = document.getElementById('inc-reg-drive-url').value;
+                    const descripcionObjetiva = document.getElementById('inc-reg-desc').value;
+                    const observacionesAclaraciones = document.getElementById('inc-reg-aclaraciones').value;
+
+                    try {
+                        if (window.showLoading) window.showLoading('Guardando incidencia...');
+                        const res = await fetchApi('ACCOUNTING', 'manageLaborIncident', {
+                            empleadoId,
+                            fecha,
+                            categoria,
+                            estado,
+                            responsabilidadEstablecida,
+                            documentacionDriveUrl,
+                            descripcionObjetiva,
+                            observacionesAclaraciones
+                        });
+                        if (window.hideLoading) window.hideLoading();
+                        if (res && res.status === 'success') {
+                            alert('Incidencia registrada correctamente.');
+                            formIncidencia.reset();
+                            await refreshLaborIncidentsModuleData();
+                        } else {
+                            alert(res && res.message ? res.message : 'Error al registrar la incidencia.');
+                        }
+                    } catch (err) {
+                        if (window.hideLoading) window.hideLoading();
+                        alert('Error de conexión.');
+                    }
+                });
+            }
+
+            // Form Medida Disciplinaria
+            const formMedida = document.getElementById('form-inc-medida');
+            if (formMedida) {
+                formMedida.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    const incidenciaId = document.getElementById('med-incidencia-id').value;
+                    const empleadoId = document.getElementById('med-empleado-id').value;
+                    const tipoMedida = document.getElementById('med-tipo').value;
+                    const fechaEfectiva = document.getElementById('med-fecha-efectiva').value;
+                    const diasSuspension = parseInt(document.getElementById('med-dias-suspension').value || '0', 10);
+                    const responsableAprobacion = document.getElementById('med-responsable-aprob').value;
+                    const fundamentoDocumentado = document.getElementById('med-fundamento').value;
+                    const actaFirmadaDriveUrl = document.getElementById('med-acta-url').value;
+
+                    try {
+                        if (window.showLoading) window.showLoading('Guardando medida disciplinaria...');
+                        const res = await fetchApi('ACCOUNTING', 'manageDisciplinaryMeasure', {
+                            incidenciaId,
+                            empleadoId,
+                            tipoMedida,
+                            fechaEfectiva,
+                            diasSuspension,
+                            responsableAprobacion,
+                            fundamentoDocumentado,
+                            actaFirmadaDriveUrl,
+                            estadoMedida: 'Aprobada'
+                        });
+                        if (window.hideLoading) window.hideLoading();
+                        if (res && res.status === 'success') {
+                            alert('Medida disciplinaria registrada correctamente.');
+                            formMedida.reset();
+                            await refreshLaborIncidentsModuleData();
+                        } else {
+                            alert(res && res.message ? res.message : 'Error al registrar la medida disciplinaria.');
+                        }
+                    } catch (err) {
+                        if (window.hideLoading) window.hideLoading();
+                        alert('Error de conexión.');
+                    }
+                });
+            }
+
+            const btnRefreshInc = document.getElementById('btn-refresh-inc');
+            if (btnRefreshInc) {
+                btnRefreshInc.addEventListener('click', async () => {
+                    await refreshLaborIncidentsModuleData();
+                });
+            }
+
+            // [TAREA RH-08] Gestor de Planificación de Necesidades de Personal
+            const btnPlanificacion = document.getElementById('btn-planificacion-personal');
+            const modalPlanificacion = document.getElementById('modal-planificacion-personal');
+            const btnCloseModalPlan = document.getElementById('btn-close-modal-plan');
+
+            if (btnPlanificacion && modalPlanificacion) {
+                btnPlanificacion.addEventListener('click', async () => {
+                    modalPlanificacion.classList.remove('hidden');
+                    await refreshStaffingPlanningModuleData();
+                });
+            }
+
+            if (btnCloseModalPlan && modalPlanificacion) {
+                btnCloseModalPlan.addEventListener('click', () => {
+                    modalPlanificacion.classList.add('hidden');
+                });
+            }
+
+            // Pestañas Planificación
+            const planTabBtns = document.querySelectorAll('.tab-plan-btn');
+            planTabBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const targetId = btn.getAttribute('data-target');
+                    planTabBtns.forEach(b => {
+                        b.className = b === btn ?
+                            'tab-plan-btn px-4 py-2 text-xs font-bold rounded-xl transition-all bg-teal-600 text-white' :
+                            'tab-plan-btn px-4 py-2 text-xs font-bold rounded-xl transition-all text-gray-500 hover:text-gray-800 hover:bg-gray-50';
+                    });
+                    ['sec-plan-proyeccion', 'sec-plan-comparativa', 'sec-plan-informes'].forEach(secId => {
+                        const secEl = document.getElementById(secId);
+                        if (secEl) {
+                            if (secId === targetId) secEl.classList.remove('hidden');
+                            else secEl.classList.add('hidden');
+                        }
+                    });
+                });
+            });
+
+            // Form Proyección
+            const formPlanProy = document.getElementById('form-plan-proyeccion');
+            if (formPlanProy) {
+                formPlanProy.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    const periodoAcademico = document.getElementById('plan-proy-periodo').value;
+                    const departamentoArea = document.getElementById('plan-proy-dept').value;
+                    const puestoOFamilia = document.getElementById('plan-proy-puesto').value;
+                    const cantidadRequerida = parseInt(document.getElementById('plan-proy-cantidad').value || '1', 10);
+                    const escenarioMatricula = document.getElementById('plan-proy-escenario').value;
+                    const metricaBaseCalculo = document.getElementById('plan-proy-metrica').value;
+                    const observacionesJustificacion = document.getElementById('plan-proy-justificacion').value;
+
+                    try {
+                        if (window.showLoading) window.showLoading('Guardando proyección de necesidad...');
+                        const res = await fetchApi('ACCOUNTING', 'manageStaffingNeeds', {
+                            periodoAcademico,
+                            departamentoArea,
+                            puestoOFamilia,
+                            cantidadRequerida,
+                            escenarioMatricula,
+                            metricaBaseCalculo,
+                            observacionesJustificacion
+                        });
+                        if (window.hideLoading) window.hideLoading();
+                        if (res && res.status === 'success') {
+                            alert('Proyección de necesidad de personal guardada correctamente.');
+                            formPlanProy.reset();
+                            await refreshStaffingPlanningModuleData();
+                        } else {
+                            alert(res && res.message ? res.message : 'Error al guardar la proyección.');
+                        }
+                    } catch (err) {
+                        if (window.hideLoading) window.hideLoading();
+                        alert('Error de conexión.');
+                    }
+                });
+            }
+
+            const btnRefreshPlan = document.getElementById('btn-refresh-plan');
+            if (btnRefreshPlan) {
+                btnRefreshPlan.addEventListener('click', async () => {
+                    await refreshStaffingPlanningModuleData();
+                });
+            }
+
+            // [TAREA RH-09] Gestor Visual de Turnos y Sustituciones
+            const btnShift = document.getElementById('btn-turnos-sustituciones');
+            const modalShift = document.getElementById('modal-turnos-sustituciones');
+            const btnCloseModalShift = document.getElementById('btn-close-modal-shift');
+
+            if (btnShift && modalShift) {
+                btnShift.addEventListener('click', async () => {
+                    modalShift.classList.remove('hidden');
+                    await refreshWorkShiftsSubstitutionsModuleData();
+                });
+            }
+
+            if (btnCloseModalShift && modalShift) {
+                btnCloseModalShift.addEventListener('click', () => {
+                    modalShift.classList.add('hidden');
+                });
+            }
+
+            // Pestañas Turnos & Sustituciones
+            const shiftTabBtns = document.querySelectorAll('.tab-shift-btn');
+            shiftTabBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const targetId = btn.getAttribute('data-target');
+                    shiftTabBtns.forEach(b => {
+                        b.className = b === btn ?
+                            'tab-shift-btn px-4 py-2 text-xs font-bold rounded-xl transition-all bg-amber-600 text-white' :
+                            'tab-shift-btn px-4 py-2 text-xs font-bold rounded-xl transition-all text-gray-500 hover:text-gray-800 hover:bg-gray-50';
+                    });
+                    ['sec-shift-turno', 'sec-shift-sustitucion', 'sec-shift-historial'].forEach(secId => {
+                        const secEl = document.getElementById(secId);
+                        if (secEl) {
+                            if (secId === targetId) secEl.classList.remove('hidden');
+                            else secEl.classList.add('hidden');
+                        }
+                    });
+                });
+            });
+
+            // Form Turno
+            const formShiftTurno = document.getElementById('form-shift-turno');
+            if (formShiftTurno) {
+                formShiftTurno.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    const empleadoId = document.getElementById('shift-tur-empleado').value;
+                    const nombreTurno = document.getElementById('shift-tur-nombre').value;
+                    const departamentoArea = document.getElementById('shift-tur-dept').value;
+                    const fechaInicio = document.getElementById('shift-tur-inicio').value;
+                    const fechaFin = document.getElementById('shift-tur-fin').value;
+                    const horaEntrada = document.getElementById('shift-tur-hora-in').value;
+                    const horaSalida = document.getElementById('shift-tur-hora-out').value;
+
+                    try {
+                        if (window.showLoading) window.showLoading('Asignando turno...');
+                        const res = await fetchApi('ACCOUNTING', 'manageWorkShiftAndSubstitution', {
+                            tipoOperacion: 'AsignarTurno',
+                            empleadoId,
+                            nombreTurno,
+                            departamentoArea,
+                            fechaInicio,
+                            fechaFin,
+                            horaEntrada,
+                            horaSalida
+                        });
+                        if (window.hideLoading) window.hideLoading();
+                        if (res && res.status === 'success') {
+                            alert('Turno asignado correctamente.');
+                            formShiftTurno.reset();
+                            await refreshWorkShiftsSubstitutionsModuleData();
+                        } else {
+                            alert(res && res.message ? res.message : 'Error al asignar el turno.');
+                        }
+                    } catch (err) {
+                        if (window.hideLoading) window.hideLoading();
+                        alert('Error de conexión.');
+                    }
+                });
+            }
+
+            // Form Sustitución
+            const formShiftSust = document.getElementById('form-shift-sustitucion');
+            if (formShiftSust) {
+                formShiftSust.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    const empleadoId = document.getElementById('shift-sust-sustituto').value;
+                    const empleadoSustituidoId = document.getElementById('shift-sust-sustituido').value;
+                    const departamentoArea = document.getElementById('shift-sust-dept').value;
+                    const fechaInicio = document.getElementById('shift-sust-inicio').value;
+                    const fechaFin = document.getElementById('shift-sust-fin').value;
+                    const motivoSustitucion = document.getElementById('shift-sust-motivo').value;
+
+                    try {
+                        if (window.showLoading) window.showLoading('Registrando sustitución...');
+                        const res = await fetchApi('ACCOUNTING', 'manageWorkShiftAndSubstitution', {
+                            tipoOperacion: 'RegistrarSustitucion',
+                            empleadoId,
+                            empleadoSustituidoId,
+                            departamentoArea,
+                            fechaInicio,
+                            fechaFin,
+                            motivoSustitucion
+                        });
+                        if (window.hideLoading) window.hideLoading();
+                        if (res && res.status === 'success') {
+                            alert('Sustitución registrada correctamente.');
+                            formShiftSust.reset();
+                            await refreshWorkShiftsSubstitutionsModuleData();
+                        } else {
+                            alert(res && res.message ? res.message : 'Error al registrar la sustitución.');
+                        }
+                    } catch (err) {
+                        if (window.hideLoading) window.hideLoading();
+                        alert('Error de conexión.');
+                    }
+                });
+            }
+
+            const btnRefreshShift = document.getElementById('btn-refresh-shift');
+            if (btnRefreshShift) {
+                btnRefreshShift.addEventListener('click', async () => {
+                    await refreshWorkShiftsSubstitutionsModuleData();
+                });
+            }
+
+            // [TAREA RH-12] Gestor de Pruebas de Integración y Regresión
+            const btnTests = document.getElementById('btn-pruebas-integracion-rh');
+            const modalTests = document.getElementById('modal-pruebas-integracion-rh');
+            const btnCloseModalTests = document.getElementById('btn-close-modal-tests');
+            const btnRerunTests = document.getElementById('btn-rerun-tests');
+
+            if (btnTests && modalTests) {
+                btnTests.addEventListener('click', async () => {
+                    modalTests.classList.remove('hidden');
+                    await refreshHRIntegrationTestsData();
+                });
+            }
+
+            if (btnCloseModalTests && modalTests) {
+                btnCloseModalTests.addEventListener('click', () => {
+                    modalTests.classList.add('hidden');
+                });
+            }
+
+            if (btnRerunTests) {
+                btnRerunTests.addEventListener('click', async () => {
+                    await refreshHRIntegrationTestsData();
+                });
+            }
+
+            // [TAREA RH-11] Verificación de Información Laboral y Fiscal
+            const btnTax = document.getElementById('btn-informacion-laboral-fiscal');
+            const modalTax = document.getElementById('modal-informacion-laboral-fiscal');
+            const btnCloseModalTax = document.getElementById('btn-close-modal-tax');
+
+            if (btnTax && modalTax) {
+                btnTax.addEventListener('click', async () => {
+                    modalTax.classList.remove('hidden');
+                    await refreshLaborTaxVerificationData();
+                });
+            }
+
+            if (btnCloseModalTax && modalTax) {
+                btnCloseModalTax.addEventListener('click', () => {
+                    modalTax.classList.add('hidden');
+                });
+            }
+
+            // [TAREA RH-10] Gestor del Portal de Autoservicio del Empleado
+            const btnSelf = document.getElementById('btn-autoservicio-empleado');
+            const modalSelf = document.getElementById('modal-autoservicio-empleado');
+            const btnCloseModalSelf = document.getElementById('btn-close-modal-self');
+
+            if (btnSelf && modalSelf) {
+                btnSelf.addEventListener('click', async () => {
+                    modalSelf.classList.remove('hidden');
+                    await refreshEmployeeSelfServiceData();
+                });
+            }
+
+            if (btnCloseModalSelf && modalSelf) {
+                btnCloseModalSelf.addEventListener('click', () => {
+                    modalSelf.classList.add('hidden');
+                });
+            }
+
+            // Pestañas Autoservicio
+            const selfTabBtns = document.querySelectorAll('.tab-self-btn');
+            selfTabBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const targetId = btn.getAttribute('data-target');
+                    selfTabBtns.forEach(b => {
+                        b.className = b === btn ?
+                            'tab-self-btn px-4 py-2 text-xs font-bold rounded-xl transition-all bg-slate-800 text-white' :
+                            'tab-self-btn px-4 py-2 text-xs font-bold rounded-xl transition-all text-gray-500 hover:text-gray-800 hover:bg-gray-50';
+                    });
+                    ['sec-self-expediente', 'sec-self-solicitudes', 'sec-self-turnos', 'sec-self-capacitaciones'].forEach(secId => {
+                        const secEl = document.getElementById(secId);
+                        if (secEl) {
+                            if (secId === targetId) secEl.classList.remove('hidden');
+                            else secEl.classList.add('hidden');
+                        }
+                    });
+                });
+            });
+
+            const btnRefreshSelf = document.getElementById('btn-refresh-self');
+            if (btnRefreshSelf) {
+                btnRefreshSelf.addEventListener('click', async () => {
+                    await refreshEmployeeSelfServiceData();
+                });
+            }
         });
+
+        async function refreshPerformanceModuleData() {
+            try {
+                const res = await fetchApi('ACCOUNTING', 'getPerformanceEvaluations', {});
+                if (!res || res.status !== 'success' || !res.data) return;
+
+                const { periodos, criterios, evaluaciones } = res.data;
+
+                // Render Periodos
+                const listPeriodosEl = document.getElementById('list-eval-periodos');
+                const regPeriodoSelect = document.getElementById('eval-reg-periodo');
+                if (listPeriodosEl) {
+                    listPeriodosEl.innerHTML = periodos.length === 0 ?
+                        '<p class="text-gray-400 font-bold uppercase py-2">No hay periodos creados.</p>' :
+                        periodos.map(p => `
+                            <div class="p-3 bg-white border border-gray-100 rounded-xl flex items-center justify-between">
+                                <div>
+                                    <span class="font-bold text-gray-800">${p.nombrePeriodo}</span>
+                                    <span class="text-[10px] text-gray-400 ml-2">(${p.fechaInicio} a ${p.fechaFin})</span>
+                                </div>
+                                <span class="px-2 py-0.5 rounded-full text-[10px] font-black uppercase ${p.estadoPeriodo === 'Activo' ? 'bg-emerald-100 text-emerald-800' : 'bg-gray-100 text-gray-600'}">${p.estadoPeriodo}</span>
+                            </div>
+                        `).join('');
+                }
+
+                if (regPeriodoSelect) {
+                    regPeriodoSelect.innerHTML = periodos.length === 0 ?
+                        '<option value="">Sin periodos</option>' :
+                        periodos.map(p => `<option value="${p.periodoId}">${p.nombrePeriodo} (${p.estadoPeriodo})</option>`).join('');
+                }
+
+                // Render Criterios
+                const listCriteriosEl = document.getElementById('list-eval-criterios');
+                if (listCriteriosEl) {
+                    listCriteriosEl.innerHTML = criterios.length === 0 ?
+                        '<p class="text-gray-400 font-bold uppercase py-2">No hay criterios configurados.</p>' :
+                        criterios.map(c => `
+                            <div class="p-3 bg-white border border-gray-100 rounded-xl flex items-center justify-between">
+                                <div>
+                                    <span class="font-bold text-gray-800">${c.nombreCriterio}</span>
+                                    <span class="text-[10px] text-purple-600 font-black ml-2">${c.puestoOFamilia} (${c.pesoPorcentaje}%)</span>
+                                </div>
+                                <span class="text-[10px] text-gray-400">${c.descripcion || ''}</span>
+                            </div>
+                        `).join('');
+                }
+
+                // Render Historial
+                const listHistorialEl = document.getElementById('list-eval-historial');
+                if (listHistorialEl) {
+                    listHistorialEl.innerHTML = evaluaciones.length === 0 ?
+                        '<p class="text-gray-400 font-bold uppercase py-2">No se han registrado evaluaciones.</p>' :
+                        evaluaciones.map(ev => `
+                            <div class="p-4 bg-white border border-gray-100 rounded-2xl space-y-2">
+                                <div class="flex items-center justify-between">
+                                    <span class="font-bold text-gray-900">Empleado: ${ev.empleadoId} (Periodo: ${ev.periodoId})</span>
+                                    <span class="px-2 py-0.5 rounded-full text-[10px] font-black uppercase ${ev.estado === 'Cerrada' ? 'bg-emerald-100 text-emerald-800' : ev.estado === 'Rectificada' ? 'bg-amber-100 text-amber-800' : 'bg-blue-100 text-blue-800'}">${ev.estado}</span>
+                                </div>
+                                <div class="grid grid-cols-2 gap-2 text-[11px] text-gray-600">
+                                    <div><strong>Puntaje:</strong> ${ev.puntajeTotal} / 100 (${ev.escalaObtenida || ''})</div>
+                                    <div><strong>Evaluador:</strong> ${ev.evaluadorId}</div>
+                                </div>
+                                ${ev.fortalezas ? `<p class="text-[11px] text-gray-700"><strong>Fortalezas:</strong> ${ev.fortalezas}</p>` : ''}
+                                ${ev.aspectosMejorar ? `<p class="text-[11px] text-gray-700"><strong>Por Mejorar:</strong> ${ev.aspectosMejorar}</p>` : ''}
+                                ${ev.observacionesPrivadas ? `<p class="text-[10px] text-purple-700 bg-purple-50 p-2 rounded-lg"><strong>Observaciones Privadas:</strong> ${ev.observacionesPrivadas}</p>` : ''}
+                                ${ev.motivoRectificacion ? `<p class="text-[10px] text-amber-800 bg-amber-50 p-2 rounded-lg"><strong>Rectificado Por:</strong> ${ev.rectificadaPor} - <em>${ev.motivoRectificacion}</em></p>` : ''}
+                            </div>
+                        `).join('');
+                }
+            } catch (err) {
+                console.error('Error al actualizar datos del módulo de desempeño:', err);
+            }
+        }
+
+        async function refreshTrainingModuleData() {
+            try {
+                const res = await fetchApi('ACCOUNTING', 'getEmployeeTrainingHistory', {});
+                if (!res || res.status !== 'success' || !res.data) return;
+
+                const { cursos, inscripciones, planesDesarrollo } = res.data;
+
+                // Render Cursos
+                const listCursosEl = document.getElementById('list-cap-cursos');
+                const capInsCursoSelect = document.getElementById('cap-ins-curso');
+
+                if (listCursosEl) {
+                    listCursosEl.innerHTML = cursos.length === 0 ?
+                        '<p class="text-gray-400 font-bold uppercase py-2">No hay cursos en el catálogo.</p>' :
+                        cursos.map(c => `
+                            <div class="p-3 bg-white border border-gray-100 rounded-xl flex items-center justify-between">
+                                <div>
+                                    <span class="font-bold text-gray-800">${c.nombreCurso}</span>
+                                    <span class="text-[10px] text-blue-600 font-black ml-2">${c.categoria} (${c.duracionHoras}h - ${c.modalidad})</span>
+                                </div>
+                                <span class="text-[10px] text-gray-400">Dirigido a: ${c.dirigidoA}</span>
+                            </div>
+                        `).join('');
+                }
+
+                if (capInsCursoSelect) {
+                    capInsCursoSelect.innerHTML = cursos.length === 0 ?
+                        '<option value="">Sin cursos disponibles</option>' :
+                        cursos.map(c => `<option value="${c.cursoId}">${c.nombreCurso} (${c.categoria})</option>`).join('');
+                }
+
+                // Render Inscripciones y Certificados
+                const listCertificadosEl = document.getElementById('list-cap-certificados');
+                if (listCertificadosEl) {
+                    listCertificadosEl.innerHTML = inscripciones.length === 0 ?
+                        '<p class="text-gray-400 font-bold uppercase py-2">No se registran capacitaciones o certificados.</p>' :
+                        inscripciones.map(i => `
+                            <div class="p-4 bg-white border border-gray-100 rounded-2xl space-y-2">
+                                <div class="flex items-center justify-between">
+                                    <span class="font-bold text-gray-900">${i.nombreCurso} — Empleado: ${i.empleadoId}</span>
+                                    <span class="px-2 py-0.5 rounded-full text-[10px] font-black uppercase ${i.estadoInscripcion === 'Finalizado' ? 'bg-emerald-100 text-emerald-800' : 'bg-blue-100 text-blue-800'}">${i.estadoInscripcion}</span>
+                                </div>
+                                <div class="grid grid-cols-2 gap-2 text-[11px] text-gray-600">
+                                    <div><strong>Asistencia:</strong> ${i.asistenciaPorcentaje}% | <strong>Nota:</strong> ${i.resultadoNota || 'N/A'}</div>
+                                    <div><strong>Emisión:</strong> ${i.fechaEmisionCertificado || 'N/A'} | <strong>Vencimiento:</strong> ${i.fechaVencimientoCertificado || 'N/A'}</div>
+                                </div>
+                                ${i.estaProximoAVencer ? `<p class="text-[10px] text-red-700 bg-red-50 p-2 rounded-lg font-bold"><i class="fa-solid fa-triangle-exclamation mr-1"></i> Certificado Próximo a Vencer (días restantes: ${i.diasParaVencer})</p>` : ''}
+                                ${i.certificadoDriveUrl ? `<a href="${i.certificadoDriveUrl}" target="_blank" class="inline-block text-[11px] text-blue-600 hover:underline font-bold"><i class="fa-solid fa-file-pdf mr-1"></i>Ver Certificado Adjunto</a>` : ''}
+                            </div>
+                        `).join('');
+                }
+
+                // Render Planes de Desarrollo
+                const listPlanesEl = document.getElementById('list-cap-planes');
+                if (listPlanesEl) {
+                    listPlanesEl.innerHTML = planesDesarrollo.length === 0 ?
+                        '<p class="text-gray-400 font-bold uppercase py-2">No hay planes de desarrollo registrados.</p>' :
+                        planesDesarrollo.map(p => `
+                            <div class="p-4 bg-white border border-gray-100 rounded-2xl space-y-1">
+                                <div class="flex items-center justify-between">
+                                    <span class="font-bold text-gray-900">${p.tituloObjetivo} (Empleado: ${p.empleadoId})</span>
+                                    <span class="px-2 py-0.5 rounded-full text-[10px] font-black uppercase bg-blue-100 text-blue-800">${p.estadoObjetivo}</span>
+                                </div>
+                                <p class="text-[11px] text-gray-600">${p.descripcion || ''}</p>
+                                <p class="text-[10px] text-gray-400">Meta: ${p.fechaMeta || 'Sin fecha'}</p>
+                            </div>
+                        `).join('');
+                }
+            } catch (err) {
+                console.error('Error al actualizar datos del módulo de capacitación:', err);
+            }
+        }
+
+        async function refreshLaborIncidentsModuleData() {
+            try {
+                const res = await fetchApi('ACCOUNTING', 'getLaborIncidentsHistory', {});
+                if (!res || res.status !== 'success' || !res.data) return;
+
+                const { incidencias, medidas } = res.data;
+
+                // Render Incidencias
+                const listIncidenciasEl = document.getElementById('list-inc-incidencias');
+                if (listIncidenciasEl) {
+                    listIncidenciasEl.innerHTML = incidencias.length === 0 ?
+                        '<p class="text-gray-400 font-bold uppercase py-2">No hay incidencias registradas.</p>' :
+                        incidencias.map(i => `
+                            <div class="p-4 bg-white border border-gray-100 rounded-2xl space-y-2">
+                                <div class="flex items-center justify-between">
+                                    <span class="font-bold text-gray-900">${i.incidenciaId} — Empleado: ${i.empleadoId} (${i.categoria})</span>
+                                    <span class="px-2 py-0.5 rounded-full text-[10px] font-black uppercase ${i.estado === 'Cerrada' ? 'bg-gray-100 text-gray-800' : 'bg-amber-100 text-amber-800'}">${i.estado}</span>
+                                </div>
+                                <p class="text-xs text-gray-700"><strong>Descripción Objetiva:</strong> ${i.descripcionObjetiva || ''}</p>
+                                ${i.observacionesAclaraciones ? `<p class="text-xs text-gray-500 italic bg-gray-50 p-2 rounded-lg"><strong>Aclaraciones Empleado:</strong> ${i.observacionesAclaraciones}</p>` : ''}
+                                <div class="flex items-center justify-between text-[10px] text-gray-400 font-bold">
+                                    <span>Fecha: ${i.fecha} | Responsabilidad Establecida: ${i.responsabilidadEstablecida ? 'SÍ' : 'NO'}</span>
+                                    ${i.documentacionDriveUrl ? `<a href="${i.documentacionDriveUrl}" target="_blank" class="text-blue-600 hover:underline"><i class="fa-solid fa-file-pdf mr-1"></i>Documentación Adjunta</a>` : ''}
+                                </div>
+                            </div>
+                        `).join('');
+                }
+
+                // Render Medidas
+                const listMedidasEl = document.getElementById('list-inc-medidas');
+                if (listMedidasEl) {
+                    listMedidasEl.innerHTML = medidas.length === 0 ?
+                        '<p class="text-gray-400 font-bold uppercase py-2">No hay medidas disciplinarias aplicadas.</p>' :
+                        medidas.map(m => `
+                            <div class="p-4 bg-white border border-gray-100 rounded-2xl space-y-2">
+                                <div class="flex items-center justify-between">
+                                    <span class="font-bold text-gray-900">${m.medidaId} (${m.tipoMedida}) — Empleado: ${m.empleadoId}</span>
+                                    <span class="px-2 py-0.5 rounded-full text-[10px] font-black uppercase bg-purple-100 text-purple-800">${m.estadoMedida}</span>
+                                </div>
+                                <p class="text-xs text-gray-700"><strong>Fundamento Documentado:</strong> ${m.fundamentoDocumentado || ''}</p>
+                                <div class="grid grid-cols-2 gap-2 text-[10px] text-gray-500">
+                                    <div><strong>Incidencia Ref:</strong> ${m.incidenciaId}</div>
+                                    <div><strong>Días Suspensión:</strong> ${m.diasSuspension || 0}</div>
+                                    <div><strong>Aprobado Por:</strong> ${m.responsableAprobacion}</div>
+                                    <div><strong>Fecha Efectiva:</strong> ${m.fechaEfectiva}</div>
+                                </div>
+                                ${m.actaFirmadaDriveUrl ? `<a href="${m.actaFirmadaDriveUrl}" target="_blank" class="inline-block text-[11px] text-blue-600 hover:underline font-bold"><i class="fa-solid fa-file-signature mr-1"></i>Ver Acta Firmada Adjunta</a>` : ''}
+                            </div>
+                        `).join('');
+                }
+            } catch (err) {
+                console.error('Error al actualizar datos de incidencias laborables:', err);
+            }
+        }
+
+        async function refreshStaffingPlanningModuleData() {
+            try {
+                const res = await fetchApi('ACCOUNTING', 'getStaffingNeedsPlanning', {});
+                if (!res || res.status !== 'success' || !res.data) return;
+
+                const { proyecciones, comparativa } = res.data;
+
+                // Render Comparativa
+                const listCompEl = document.getElementById('list-plan-comparativa');
+                if (listCompEl) {
+                    listCompEl.innerHTML = comparativa.length === 0 ?
+                        '<p class="text-gray-400 font-bold uppercase py-2">No hay análisis comparativo disponible.</p>' :
+                        comparativa.map(c => `
+                            <div class="p-4 bg-white border border-gray-100 rounded-2xl space-y-2">
+                                <div class="flex items-center justify-between">
+                                    <span class="font-bold text-gray-900">${c.puestoOFamilia} — Depto: ${c.departamentoArea}</span>
+                                    <span class="px-2 py-0.5 rounded-full text-[10px] font-black uppercase ${c.deficitExcedente < 0 ? 'bg-red-100 text-red-800' : 'bg-emerald-100 text-emerald-800'}">${c.estadoCobertura}</span>
+                                </div>
+                                <div class="grid grid-cols-2 md:grid-cols-4 gap-2 text-xs text-gray-600 font-medium">
+                                    <div>Requeridos: <strong>${c.cantidadRequerida}</strong></div>
+                                    <div>Activos Actuales: <strong>${c.activosDisponibles}</strong></div>
+                                    <div>Vacantes Abiertas: <strong>${c.vacantesAbiertas}</strong></div>
+                                    <div>Déficit / Excedente: <strong>${c.deficitExcedente}</strong></div>
+                                </div>
+                                <div class="w-full bg-gray-100 rounded-full h-2 overflow-hidden">
+                                    <div class="${c.coberturaPorcentaje >= 100 ? 'bg-emerald-500' : 'bg-amber-500'} h-2 rounded-full" style="width: ${c.coberturaPorcentaje}%"></div>
+                                </div>
+                            </div>
+                        `).join('');
+                }
+
+                // Render Proyecciones
+                const listProyEl = document.getElementById('list-plan-proyecciones');
+                if (listProyEl) {
+                    listProyEl.innerHTML = proyecciones.length === 0 ?
+                        '<p class="text-gray-400 font-bold uppercase py-2">No hay proyecciones registradas.</p>' :
+                        proyecciones.map(p => `
+                            <div class="p-4 bg-white border border-gray-100 rounded-2xl space-y-2">
+                                <div class="flex items-center justify-between">
+                                    <span class="font-bold text-gray-900">${p.puestoOFamilia} (${p.cantidadRequerida} plazas) — Periodo ${p.periodoAcademico}</span>
+                                    <span class="px-2 py-0.5 rounded-full text-[10px] font-black uppercase bg-teal-100 text-teal-800">${p.escenarioMatricula}</span>
+                                </div>
+                                <p class="text-xs text-gray-700"><strong>Justificación:</strong> ${p.observacionesJustificacion || 'Sin justificación'}</p>
+                                <p class="text-[10px] text-gray-400">Métrica Base: ${p.metricaBaseCalculo} | Registrado por: ${p.creadoPor}</p>
+                            </div>
+                        `).join('');
+                }
+            } catch (err) {
+                console.error('Error al actualizar datos de planificación de personal:', err);
+            }
+        }
+
+        async function refreshWorkShiftsSubstitutionsModuleData() {
+            try {
+                const res = await fetchApi('ACCOUNTING', 'getWorkShiftsAndSubstitutionsHistory', {});
+                if (!res || res.status !== 'success' || !res.data) return;
+
+                const { turnos, sustituciones, horasExtras } = res.data;
+
+                // Render Turnos
+                const listTurnosEl = document.getElementById('list-shift-turnos');
+                if (listTurnosEl) {
+                    listTurnosEl.innerHTML = turnos.length === 0 ?
+                        '<p class="text-gray-400 font-bold uppercase py-2">No hay turnos asignados.</p>' :
+                        turnos.map(t => `
+                            <div class="p-4 bg-white border border-gray-100 rounded-2xl space-y-1">
+                                <div class="flex items-center justify-between">
+                                    <span class="font-bold text-gray-900">${t.nombreTurno} — Empleado: ${t.empleadoId}</span>
+                                    <span class="px-2 py-0.5 rounded-full text-[10px] font-black uppercase bg-emerald-100 text-emerald-800">${t.estado}</span>
+                                </div>
+                                <p class="text-xs text-gray-600">Periodo: ${t.fechaInicio} al ${t.fechaFin} | Horario: ${t.horaEntrada} - ${t.horaSalida}</p>
+                            </div>
+                        `).join('');
+                }
+
+                // Render Sustituciones
+                const listSustEl = document.getElementById('list-shift-sustituciones');
+                if (listSustEl) {
+                    listSustEl.innerHTML = sustituciones.length === 0 ?
+                        '<p class="text-gray-400 font-bold uppercase py-2">No hay sustituciones registradas.</p>' :
+                        sustituciones.map(s => `
+                            <div class="p-4 bg-white border border-gray-100 rounded-2xl space-y-1">
+                                <div class="flex items-center justify-between">
+                                    <span class="font-bold text-gray-900">Sustituto: ${s.empleadoSustitutoId} (Cubre a ${s.empleadoSustituidoId})</span>
+                                    <span class="px-2 py-0.5 rounded-full text-[10px] font-black uppercase bg-blue-100 text-blue-800">${s.estado}</span>
+                                </div>
+                                <p class="text-xs text-gray-600">Motivo: ${s.motivoSustitucion} | Fechas: ${s.fechaInicio} al ${s.fechaFin}</p>
+                            </div>
+                        `).join('');
+                }
+
+                // Render Horas Extras
+                const listOTEl = document.getElementById('list-shift-horasextras');
+                if (listOTEl) {
+                    listOTEl.innerHTML = horasExtras.length === 0 ?
+                        '<p class="text-gray-400 font-bold uppercase py-2">No hay solicitudes de horas extras.</p>' :
+                        horasExtras.map(ot => `
+                            <div class="p-4 bg-white border border-gray-100 rounded-2xl space-y-1">
+                                <div class="flex items-center justify-between">
+                                    <span class="font-bold text-gray-900">Empleado: ${ot.empleadoId} (${ot.horasSolicitadas} hrs)</span>
+                                    <span class="px-2 py-0.5 rounded-full text-[10px] font-black uppercase ${ot.estado === 'Aprobada' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}">${ot.estado}</span>
+                                </div>
+                                <p class="text-xs text-gray-600">Motivo: ${ot.motivo || 'N/A'} | Fecha: ${ot.fecha || 'N/A'}</p>
+                            </div>
+                        `).join('');
+                }
+            } catch (err) {
+                console.error('Error al actualizar datos de turnos y sustituciones:', err);
+            }
+        }
+
+        async function refreshEmployeeSelfServiceData() {
+            try {
+                const res = await fetchApi('ACCOUNTING', 'getEmployeeSelfServicePortal', {});
+                if (!res || res.status !== 'success' || !res.data) return;
+
+                const { expediente, contratos, solicitudesVacaciones, turnos, capacitaciones } = res.data;
+
+                // Render Expediente
+                const expEl = document.getElementById('info-self-expediente');
+                if (expEl) {
+                    expEl.innerHTML = !expediente ?
+                        '<p class="text-gray-400 font-bold uppercase py-2">Ficha del colaborador no encontrada.</p>' : `
+                        <div class="space-y-1 text-xs">
+                            <h4 class="font-black text-gray-900 text-sm">${expediente.nombreCompleto || 'Colaborador'} (${expediente.expedienteId})</h4>
+                            <p class="text-gray-600"><strong>Puesto:</strong> ${expediente.puesto || 'N/A'} | <strong>Departamento:</strong> ${expediente.departamento || 'N/A'}</p>
+                            <p class="text-gray-600"><strong>Jornada:</strong> ${expediente.jornada || 'Completa'} | <strong>Fecha Ingreso:</strong> ${expediente.fechaIngreso || 'N/A'}</p>
+                            <span class="inline-block mt-1 px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase bg-emerald-100 text-emerald-800">${expediente.estadoLaboral || 'Activo'}</span>
+                        </div>
+                    `;
+                }
+
+                // Render Contratos
+                const conEl = document.getElementById('info-self-contratos');
+                if (conEl) {
+                    conEl.innerHTML = contratos.length === 0 ?
+                        '<p class="text-gray-400 font-bold uppercase py-2">Sin contratos registrados.</p>' :
+                        contratos.map(c => `
+                            <div class="p-3 bg-white border border-gray-100 rounded-xl flex items-center justify-between text-xs">
+                                <div>
+                                    <span class="font-bold text-gray-900">${c.tipoContrato} (${c.puesto})</span>
+                                    <p class="text-[10px] text-gray-400">Vigencia: ${c.fechaInicio} al ${c.fechaFin || 'Indefinido'}</p>
+                                </div>
+                                <span class="px-2 py-0.5 rounded-full text-[10px] font-black uppercase bg-blue-100 text-blue-800">${c.estadoContrato}</span>
+                            </div>
+                        `).join('');
+                }
+
+                // Render Solicitudes
+                const solEl = document.getElementById('list-self-solicitudes');
+                if (solEl) {
+                    solEl.innerHTML = solicitudesVacaciones.length === 0 ?
+                        '<p class="text-gray-400 font-bold uppercase py-2">No registras solicitudes de vacaciones o permisos.</p>' :
+                        solicitudesVacaciones.map(s => `
+                            <div class="p-3 bg-white border border-gray-100 rounded-2xl flex items-center justify-between text-xs">
+                                <div>
+                                    <span class="font-bold text-gray-900">${s.tipoSolicitud} (${s.diasSolicitados} días)</span>
+                                    <p class="text-[10px] text-gray-400">Fechas: ${s.fechaInicio} al ${s.fechaFin}</p>
+                                </div>
+                                <span class="px-2 py-0.5 rounded-full text-[10px] font-black uppercase ${s.estado === 'Aprobada' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}">${s.estado}</span>
+                            </div>
+                        `).join('');
+                }
+
+                // Render Turnos
+                const turEl = document.getElementById('list-self-turnos');
+                if (turEl) {
+                    turEl.innerHTML = turnos.length === 0 ?
+                        '<p class="text-gray-400 font-bold uppercase py-2">No tienes turnos asignados.</p>' :
+                        turnos.map(t => `
+                            <div class="p-3 bg-white border border-gray-100 rounded-2xl flex items-center justify-between text-xs">
+                                <div>
+                                    <span class="font-bold text-gray-900">${t.nombreTurno}</span>
+                                    <p class="text-[10px] text-gray-400">Horario: ${t.horaEntrada} - ${t.horaSalida} | Periodo: ${t.fechaInicio} al ${t.fechaFin}</p>
+                                </div>
+                                <span class="px-2 py-0.5 rounded-full text-[10px] font-black uppercase bg-emerald-100 text-emerald-800">${t.estado}</span>
+                            </div>
+                        `).join('');
+                }
+
+                // Render Capacitaciones
+                const capEl = document.getElementById('list-self-capacitaciones');
+                if (capEl) {
+                    capEl.innerHTML = capacitaciones.length === 0 ?
+                        '<p class="text-gray-400 font-bold uppercase py-2">No registras capacitaciones activas.</p>' :
+                        capacitaciones.map(c => `
+                            <div class="p-3 bg-white border border-gray-100 rounded-2xl space-y-1 text-xs">
+                                <div class="flex items-center justify-between">
+                                    <span class="font-bold text-gray-900">Curso Ref: ${c.cursoId}</span>
+                                    <span class="px-2 py-0.5 rounded-full text-[10px] font-black uppercase bg-blue-100 text-blue-800">${c.estadoInscripcion}</span>
+                                </div>
+                                <p class="text-[10px] text-gray-500">Asistencia: ${c.asistenciaPorcentaje}% | Calificación: ${c.resultadoNota || 'N/A'}</p>
+                                ${c.certificadoDriveUrl ? `<a href="${c.certificadoDriveUrl}" target="_blank" class="text-blue-600 hover:underline font-bold text-[10px]"><i class="fa-solid fa-file-pdf mr-1"></i>Ver Certificado Adjunto</a>` : ''}
+                            </div>
+                        `).join('');
+                }
+            } catch (err) {
+                console.error('Error al actualizar portal de autoservicio:', err);
+            }
+        }
+
+        async function refreshHRIntegrationTestsData() {
+            try {
+                const res = await fetchApi('ACCOUNTING', 'runHRIntegrationAndRegressionTests', {});
+                if (!res || res.status !== 'success') return;
+
+                const suiteStatusEl = document.getElementById('tests-suite-status');
+                const totalEl = document.getElementById('tests-total-count');
+                const passEl = document.getElementById('tests-pass-count');
+                const failEl = document.getElementById('tests-fail-count');
+                const tbody = document.getElementById('tests-evidence-tbody');
+
+                if (suiteStatusEl) suiteStatusEl.textContent = res.estadoSuite || 'SUITE_PROCESADA';
+                if (totalEl) totalEl.textContent = res.totalPruebas || 0;
+                if (passEl) passEl.textContent = res.aprobadas || 0;
+                if (failEl) failEl.textContent = res.fallidas || 0;
+
+                const pruebas = res.pruebas || [];
+                if (tbody) {
+                    if (pruebas.length === 0) {
+                        tbody.innerHTML = '<tr><td colspan="4" class="p-4 text-center text-gray-400 font-bold uppercase">Sin resultados de pruebas.</td></tr>';
+                    } else {
+                        tbody.innerHTML = pruebas.map(p => `
+                            <tr class="hover:bg-slate-50 transition-colors">
+                                <td class="p-3 font-bold text-gray-900 align-top whitespace-nowrap">
+                                    <span class="px-2 py-0.5 rounded bg-slate-100 text-slate-800 font-mono text-[10px] block w-max">${p.id}</span>
+                                    <span class="text-[10px] text-gray-500 font-normal mt-1 block max-w-xs truncate">${p.objetivo}</span>
+                                </td>
+                                <td class="p-3 align-top">
+                                    <p class="font-bold text-gray-800 text-[11px]">${p.pasosEjecutados}</p>
+                                    <p class="text-[10px] text-gray-500 mt-0.5">Datos: ${p.datosUtilizados}</p>
+                                </td>
+                                <td class="p-3 align-top">
+                                    <p class="font-medium text-gray-900 text-[11px]">${p.resultadoObservado}</p>
+                                    <p class="text-[9px] text-rose-600 font-mono mt-0.5">${p.evidenciaLimitaciones || ''}</p>
+                                </td>
+                                <td class="p-3 align-top text-center">
+                                    <span class="px-2.5 py-1 rounded-full text-[10px] font-black uppercase ${p.estado === 'APROBADO' ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'}">${p.estado}</span>
+                                </td>
+                            </tr>
+                        `).join('');
+                    }
+                }
+            } catch (err) {
+                console.error('Error al ejecutar suite de pruebas de integración RRHH:', err);
+            }
+        }
+
+        async function refreshLaborTaxVerificationData() {
+            try {
+                const res = await fetchApi('ACCOUNTING', 'verifyLaborAndTaxInformation', {});
+                if (!res || res.status !== 'success') return;
+
+                const tot = res.resumenTotales || {};
+                const devEl = document.getElementById('tax-tot-devengado');
+                const ihssEl = document.getElementById('tax-tot-ihss');
+                const rapEl = document.getElementById('tax-tot-rap');
+                const isrEl = document.getElementById('tax-tot-isr');
+                const perEl = document.getElementById('tax-periodo-label');
+
+                if (devEl) devEl.textContent = `L. ${(tot.totalDevengado || 0).toLocaleString('es-HN', { minimumFractionDigits: 2 })}`;
+                if (ihssEl) ihssEl.textContent = `L. ${(tot.totalIHSS || 0).toLocaleString('es-HN', { minimumFractionDigits: 2 })}`;
+                if (rapEl) rapEl.textContent = `L. ${(tot.totalRAP || 0).toLocaleString('es-HN', { minimumFractionDigits: 2 })}`;
+                if (isrEl) isrEl.textContent = `L. ${(tot.totalISR || 0).toLocaleString('es-HN', { minimumFractionDigits: 2 })}`;
+                if (perEl) perEl.textContent = `Periodo: ${res.periodoVerificado || 'Todos'}`;
+
+                // Render Parámetros Legales
+                const paramsEl = document.getElementById('tax-legal-params-list');
+                if (paramsEl && Array.isArray(res.parametrosLegalesReferencia)) {
+                    paramsEl.innerHTML = res.parametrosLegalesReferencia.map(p => `
+                        <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 text-xs">
+                            <span class="font-bold text-gray-900 block">${p.institucion}</span>
+                            <p class="text-[10px] text-gray-600">Base: ${p.techoCotizable || p.techoExcedente || p.exencionBase} | Tasa: ${p.tasaTrabajador || p.escalaGrabable}</p>
+                            <span class="text-[9px] text-indigo-600 font-medium">Ref Legal: ${p.baseLegal}</span>
+                        </div>
+                    `).join('');
+                }
+
+                // Render Inconsistencias
+                const issuesEl = document.getElementById('tax-inconsistencies-list');
+                const countEl = document.getElementById('tax-issues-count');
+                const issues = res.inconsistenciasDetectadas || [];
+                if (countEl) countEl.textContent = `${issues.length} Alertas`;
+
+                if (issuesEl) {
+                    issuesEl.innerHTML = issues.length === 0 ?
+                        '<p class="text-emerald-600 font-bold text-xs py-2"><i class="fa-solid fa-circle-check mr-1.5"></i>No se detectaron inconsistencias de datos en empleados ni planillas.</p>' :
+                        issues.map(i => `
+                            <div class="p-2.5 bg-amber-50 border border-amber-200 rounded-xl text-xs flex items-center justify-between text-amber-900">
+                                <div>
+                                    <span class="font-bold text-[11px] block">${i.nombre} (${i.empId})</span>
+                                    <span class="text-[10px] text-amber-800">${i.descripcion}</span>
+                                </div>
+                                <span class="px-2 py-0.5 rounded-full text-[9px] font-black uppercase bg-amber-200 text-amber-900">${i.tipo}</span>
+                            </div>
+                        `).join('');
+                }
+
+                // Render Conciliación Contable
+                const concil = res.conciliacionContable || {};
+                const debEl = document.getElementById('tax-concil-debito');
+                const credEl = document.getElementById('tax-concil-credito');
+                const statEl = document.getElementById('tax-concil-status');
+
+                if (debEl) debEl.textContent = `L. ${(concil.totalDebitoContable || 0).toLocaleString('es-HN', { minimumFractionDigits: 2 })}`;
+                if (credEl) credEl.textContent = `L. ${(concil.totalCreditoContable || 0).toLocaleString('es-HN', { minimumFractionDigits: 2 })}`;
+                if (statEl) statEl.textContent = concil.estadoConciliacion || 'Verificado';
+
+            } catch (err) {
+                console.error('Error al verificar información laboral y fiscal:', err);
+            }
+        }
 
         async function loadHRDashboardData() {
             try {
