@@ -1,7 +1,7 @@
 # REGISTRO MAESTRO DE TAREAS PENDIENTES DE DESARROLLO Y OPTIMIZACIÓN
 **Plataforma Integral de Gestión Educativa — New Generation Christian Academy**
 **Versión de Referencia:** 1.0
-**Origen:** Auditoría de la Fase 1, octubre de 2026
+**Origen:** Auditoría de la Fase 1 y Fase 2, octubre de 2026
 
 ---
 
@@ -33,6 +33,62 @@
   - Las operaciones sensibles se comprueban en el servidor, incluso cuando se invocan directamente sin utilizar la interfaz.
   - Los intentos no autorizados generan respuestas controladas y registros de auditoría.
   - Las pruebas de regresión confirman que los usuarios autorizados conservan sus funciones legítimas.
+- **Estado:** [X] Completada
+
+### [X] [FASE2-T01] Verificar y reforzar la autorización institucional y la vigencia de los permisos entre servicios
+- **Origen del Hallazgo:** Auditoría de la Fase 2, octubre de 2026 (AUDITORIA_FASE2_ARQUITECTURA_INTEROPERABILIDAD.md - Área 1)
+- **Severidad/Clasificación:** Crítico
+- **Archivos Involucrados:** `backend/user-service/Code.gs`, `backend/academic-service/Code.gs`, `backend/accounting-service/Code.gs`, `backend/task-service/Code.gs`, `backend/exam-service/Code.gs`, `js/auth.js`, `js/api.js`
+- **Dependencias Expuestas:** Mecanismos actuales de autenticación, `getUserVerifiedRole`, caché de permisos y puntos de entrada de los servicios.
+- **Descripción del Alcance:**
+  1. Identificar cómo se autentican las solicitudes y cómo se determina la identidad real del usuario.
+  2. Separar la autenticación, que identifica al usuario, de la autorización, que determina las operaciones que puede realizar.
+  3. Verificar los permisos en el servidor para cada operación protegida, incluidos los accesos directos a los microservicios.
+  4. No confiar exclusivamente en "authUserId", "authRole" ni otros atributos enviados por el cliente.
+  5. Definir cómo se propagan las revocaciones, los cambios de rol, las desactivaciones y las modificaciones de permisos.
+  6. Revisar la caché utilizada por "getUserVerifiedRole", sus claves, su ámbito, su tiempo de vida y sus mecanismos de invalidación.
+  7. Evitar que un fallo de consulta de permisos se interprete como autorización válida.
+  8. Aplicar el principio de mínimo privilegio a los procesos automáticos y a las comunicaciones entre servicios.
+  9. Registrar los rechazos de autorización con información suficiente para investigar incidentes, sin exponer credenciales ni datos personales innecesarios.
+  10. Mantener las sesiones y los permisos de cada usuario aislados, evitando que una respuesta almacenada en caché se reutilice para otra identidad.
+  11. Unificar convergentemente la validación de rol del servidor con opciones configurables en la plataforma en caso de disputa de políticas de caché.
+- **Criterios de Aceptación:**
+  1. Una solicitud válida de un usuario autorizado se ejecuta correctamente.
+  2. Una solicitud con identidad falsificada o rol manipulado se rechaza.
+  3. Un usuario cuyo acceso haya sido revocado pierde el acceso dentro del plazo de revocación definido y comprobado.
+  4. Una cuenta desactivada no puede ejecutar operaciones protegidas mediante una sesión anterior.
+  5. Una indisponibilidad del servicio de autorización no concede permisos implícitamente.
+  6. Las rutas protegidas se comportan igual ante llamadas desde la interfaz y llamadas directas al backend.
+  7. Los intentos de acceso no autorizado generan registros de auditoría adecuados.
+  8. Las pruebas confirman que la caché no mezcla permisos entre usuarios ni mantiene autorizaciones obsoletas fuera de la política aprobada.
+- **Estado:** [X] Completada
+
+### [X] [FASE2-T02] Garantizar la idempotencia de las operaciones y evitar duplicaciones por reintentos HTTP
+- **Origen del Hallazgo:** Auditoría de la Fase 2, octubre de 2026 (AUDITORIA_FASE2_ARQUITECTURA_INTEROPERABILIDAD.md - Área 5)
+- **Severidad/Clasificación:** Crítico
+- **Archivos Involucrados:** `js/api.js`, `backend/accounting-service/Code.gs`, `backend/academic-service/Code.gs`
+- **Dependencias Expuestas:** `fetchApi`, contratos de comunicación y operaciones de escritura de los servicios implicados.
+- **Descripción del Alcance:**
+  1. Clasificar las operaciones por su comportamiento: lectura, escritura idempotente y operación no idempotente.
+  2. Reintentar automáticamente las lecturas y las operaciones seguras para repetir.
+  3. Para operaciones con efectos secundarios, utilizar claves de idempotencia u otro mecanismo equivalente que permita reconocer solicitudes repetidas.
+  4. Asociar cada clave de idempotencia con la identidad de la operación, el resultado y el ámbito correspondiente.
+  5. Impedir que la misma clave se reutilice con datos incompatibles.
+  6. Definir el tiempo de conservación de las claves y las condiciones en que una solicitud puede volver a ejecutarse.
+  7. Gestionar solicitudes simultáneas con la misma clave sin producir efectos duplicados.
+  8. Distinguir un fallo anterior a la ejecución de un fallo posterior a una escritura ya completada.
+  9. No considerar un objeto de fallback como una confirmación de éxito.
+  10. Mantener la compatibilidad con las operaciones existentes que ya sean idempotentes.
+- **Criterios de Aceptación:**
+  1. Una lectura que falla temporalmente se reintenta dentro del límite configurado.
+  2. Una operación de escritura que recibe una respuesta perdida no genera una segunda entidad al repetirse con la misma clave.
+  3. Dos solicitudes concurrentes con la misma clave producen un único efecto de negocio.
+  4. Una clave reutilizada con un contenido incompatible se rechaza.
+  5. Una operación que nunca llegó a ejecutarse puede recuperarse sin generar duplicados.
+  6. Una operación que ya se completó puede consultarse o reconocerse sin repetir sus efectos.
+  7. Los errores permanentes de validación o autorización no provocan reintentos innecesarios.
+  8. Los intentos, los reintentos y el resultado final pueden distinguirse en los registros.
+  9. Las pruebas incluyen emisión de documentos, pagos, matrículas, planillas y otras escrituras de consecuencias relevantes.
 - **Estado:** [X] Completada
 
 ---
@@ -310,6 +366,167 @@
   - Las escalas de distintos programas curriculares pueden coexistir sin confusión.
 - **Estado:** [X] Completada
 
+### [X] [FASE2-T03] Establecer contratos API verificables y pruebas automáticas de compatibilidad
+- **Origen del Hallazgo:** Auditoría de la Fase 2, octubre de 2026 (AUDITORIA_FASE2_ARQUITECTURA_INTEROPERABILIDAD.md - Área 2)
+- **Severidad/Clasificación:** Alto
+- **Archivos Involucrados:** `js/api.js`, `backend/user-service/Code.gs`, `backend/academic-service/Code.gs`, `backend/accounting-service/Code.gs`
+- **Dependencias Expuestas:** `js/api.js`, puntos de entrada de los microservicios y consumidores identificados.
+- **Descripción del Alcance:**
+  1. Inventariar las operaciones expuestas por cada servicio y sus consumidores reales.
+  2. Definir para cada operación su propósito, parámetros, tipos, campos obligatorios, restricciones, respuesta satisfactoria y errores posibles.
+  3. Documentar los requisitos de autenticación y autorización, los efectos secundarios y las reglas de repetición.
+  4. Establecer un formato común para errores de validación, autorización, ausencia de datos, conflicto, cuota y fallo interno.
+  5. Diferenciar claramente una respuesta satisfactoria de una respuesta incompleta, vacía, fallida o de respaldo.
+  6. Incorporar validación de solicitudes y respuestas, sin depender exclusivamente de las comprobaciones de la interfaz.
+  7. Definir una estrategia de compatibilidad para cambios en contratos, incluidos los campos nuevos, los campos opcionales y las modificaciones incompatibles.
+  8. Proporcionar pruebas automatizadas que detecten discrepancias entre los contratos y la implementación real.
+  9. Permitir que las operaciones devuelvan información de paginación, correlación o idempotencia cuando corresponda.
+- **Criterios de Aceptación:**
+  1. Cada operación incluida en el alcance tiene parámetros y respuestas documentados.
+  2. Las solicitudes con campos obligatorios ausentes, tipos incorrectos o valores fuera de rango son rechazadas por el servidor.
+  3. Una respuesta de error no se interpreta como éxito.
+  4. Los cambios incompatibles en una respuesta hacen fallar una prueba de contrato antes de desplegarse.
+  5. Las operaciones protegidas conservan sus controles de autorización.
+  6. Las respuestas HTML, vacías o malformadas se gestionan sin provocar falsos éxitos.
+  7. Las pruebas cubren casos válidos, inválidos, límites y errores de dependencias.
+  8. Los consumidores existentes siguen funcionando después de un cambio compatible de contrato.
+- **Estado:** [X] Completada
+
+### [X] [FASE2-T04] Establecer una fuente de verdad institucional para catálogos, configuraciones y referencias
+- **Origen del Hallazgo:** Auditoría de la Fase 2, octubre de 2026 (AUDITORIA_FASE2_ARQUITECTURA_INTEROPERABILIDAD.md - Área 3)
+- **Severidad/Clasificación:** Alto
+- **Archivos Involucrados:** `js/config.js`, `backend/academic-service/Code.gs`, `backend/user-service/Code.gs`
+- **Dependencias Expuestas:** `js/config.js`, servicios que mantienen catálogos, almacenamiento institucional y consumidores de referencias.
+- **Descripción del Alcance:**
+  1. Inventariar los catálogos, parámetros, referencias y definiciones compartidas por varios servicios.
+  2. Determinar cuál es la fuente autorizada de cada elemento y qué componente puede modificarlo.
+  3. Diferenciar configuraciones institucionales persistentes de constantes técnicas que legítimamente pertenecen al cliente.
+  4. Evitar mantener reglas de negocio duplicadas en múltiples controladores.
+  5. Establecer mecanismos para obtener los catálogos vigentes y validar las referencias en el servidor.
+  6. Definir cómo se publican cambios, cómo se invalidan las cachés y cómo se detectan versiones incompatibles.
+  7. Mantener identificadores estables aunque cambien los nombres visibles.
+  8. Permitir configuraciones específicas por nivel educativo, departamento o contexto institucional cuando sea necesario.
+  9. Evitar que una lista local desactualizada permita crear registros inválidos.
+  10. Conservar los valores históricos necesarios para interpretar correctamente los registros antiguos.
+- **Criterios de Aceptación:**
+  1. Los catálogos compartidos tienen una fuente autorizada y documentada.
+  2. Dos módulos que consultan el mismo catálogo reciben definiciones compatibles.
+  3. Una referencia inválida enviada manualmente al backend se rechaza aunque no aparezca en la interfaz.
+  4. Un cambio de catálogo se refleja según una política de actualización comprobable.
+  5. Una caché obsoleta no permite persistir silenciosamente referencias inválidas.
+  6. Cambiar el nombre visible de una entidad no altera su identidad.
+  7. Las configuraciones obligatorias ausentes producen errores identificables, no valores predeterminados peligrosos.
+  8. Las diferencias legítimas entre configuraciones institucionales, académicas y técnicas se conservan.
+- **Estado:** [X] Completada
+
+### [X] [FASE2-T05] Unificar y validar el sistema de identificadores institucionales
+- **Origen del Hallazgo:** Auditoría de la Fase 2, octubre de 2026 (AUDITORIA_FASE2_ARQUITECTURA_INTEROPERABILIDAD.md - Área 4)
+- **Severidad/Clasificación:** Alto
+- **Archivos Involucrados:** `backend/accounting-service/Code.gs`, `backend/academic-service/Code.gs`, `backend/user-service/Code.gs`
+- **Dependencias Expuestas:** Almacenamiento de entidades, generación de documentos, registros académicos y servicios que relacionen datos institucionales.
+- **Descripción del Alcance:**
+  1. Inventariar los identificadores reales utilizados por cada entidad.
+  2. Diferenciar la clave interna de la entidad, el número correlativo visible, el identificador externo y el código público de verificación.
+  3. Definir qué identificadores son permanentes y cuáles pueden cambiar.
+  4. Establecer reglas de unicidad, generación, validación y tratamiento de colisiones.
+  5. Evitar que nombres, correos electrónicos, números de fila o posiciones en hojas de cálculo actúen como identidad permanente.
+  6. Modelar correctamente las relaciones entre personas, cuentas de acceso, familias, matrículas, documentos y transacciones.
+  7. Mantener referencias históricas cuando una entidad se desactive, se archive o se corrija.
+  8. Definir un procedimiento seguro para detectar y resolver duplicados.
+  9. Verificar las relaciones entre identificadores internos y CUV de documentos.
+  10. Evitar exponer datos personales innecesarios mediante identificadores públicos.
+- **Criterios de Aceptación:**
+  1. Cada entidad crítica tiene una clave identificable y una regla de unicidad.
+  2. Dos entidades diferentes pueden compartir un nombre sin confundirse.
+  3. Cambiar el correo o el nombre no cambia la identidad interna.
+  4. La repetición de una operación no genera una segunda entidad con la misma identidad lógica.
+  5. Una referencia inexistente o incompatible se rechaza.
+  6. Las relaciones entre personas, cuentas y documentos se mantienen al modificar datos descriptivos.
+  7. La verificación de un CUV detecta documentos inexistentes o códigos alterados conforme al algoritmo real.
+  8. Los procedimientos de corrección de duplicados preservan las relaciones y los historiales que deban conservarse.
+- **Estado:** [X] Completada
+
+### [X] [FASE2-T06] Corregir y formalizar la concurrencia y la consistencia entre servicios
+- **Origen del Hallazgo:** Auditoría de la Fase 2, octubre de 2026 (AUDITORIA_FASE2_ARQUITECTURA_INTEROPERABILIDAD.md - Área 5)
+- **Severidad/Clasificación:** Alto
+- **Archivos Involucrados:** `backend/accounting-service/Code.gs`, `backend/academic-service/Code.gs`
+- **Dependencias Expuestas:** Servicios académico y contable, operaciones críticas de escritura, mecanismos de idempotencia y claves de las entidades.
+- **Descripción del Alcance:**
+  1. Inventariar las operaciones concurrentes y sus recursos compartidos.
+  2. Determinar el ámbito real de cada bloqueo y los servicios que quedan fuera de él.
+  3. Identificar las operaciones que necesitan exclusión mutua, control de versiones, validación de estado o deduplicación.
+  4. Evitar que una bandera como "skipLock" permita omitir protecciones en rutas accesibles desde solicitudes externas.
+  5. Definir una política de adquisición, tiempo de espera y liberación de bloqueos.
+  6. Distinguir la protección de una sección crítica de una transacción que abarca varias escrituras.
+  7. Definir cómo se detectan y recuperan operaciones parcialmente completadas.
+  8. Resolver conflictos mediante una regla explícita, por ejemplo, rechazo por versión desactualizada o reintento controlado.
+  9. Mantener la consistencia de identificadores y relaciones cuando dos procesos compiten por crear o actualizar el mismo registro.
+- **Criterios de Aceptación:**
+  1. Dos operaciones concurrentes que generan el mismo recurso lógico no crean duplicados.
+  2. Los bloqueos se liberan tras éxito y error.
+  3. Un tiempo de espera al adquirir un bloqueo genera un error controlado.
+  4. La omisión de bloqueo no puede activarse arbitrariamente desde una solicitud pública.
+  5. Los bloqueos de un servicio no se presentan como garantía de exclusión mutua en otro servicio independiente.
+  6. Una interrupción entre escrituras relacionadas produce un estado detectable y un procedimiento de recuperación.
+  7. Las pruebas concurrentes no muestran pérdidas de actualizaciones ni relaciones inválidas.
+  8. Los procesos recuperados conservan la integridad de los registros existentes.
+- **Estado:** [X] Completada
+
+### [X] [FASE2-T07] Fortalecer el motor de eventos y la ejecución de procesos automáticos
+- **Origen del Hallazgo:** Auditoría de la Fase 2, octubre de 2026 (AUDITORIA_FASE2_ARQUITECTURA_INTEROPERABILIDAD.md - Área 6)
+- **Severidad/Clasificación:** Alto
+- **Archivos Involucrados:** `backend/user-service/Code.gs`
+- **Dependencias Expuestas:** Servicio de usuarios, preferencias de notificaciones, servicios que producen eventos y mecanismos de registro.
+- **Descripción del Alcance:**
+  1. Inventariar los eventos que desencadenan acciones entre departamentos.
+  2. Definir para cada evento su origen, destinatarios, datos necesarios, efectos secundarios y reglas de autorización.
+  3. Establecer un identificador único del evento y una referencia a la operación que lo originó.
+  4. Registrar estados como pendiente, procesado, fallido y pendiente de recuperación, según el mecanismo utilizado.
+  5. Definir políticas de reintento, espera progresiva y límite de intentos.
+  6. Evitar que la repetición de un evento duplique notificaciones, pagos, documentos u otras acciones.
+  7. Definir qué procesos requieren orden de ejecución y cómo se manejan los eventos retrasados.
+  8. Permitir detectar procesos atascados y fallos reiterados.
+  9. Mantener la configuración de canales y preferencias de los destinatarios sin comprometer la entrega de acciones institucionales obligatorias.
+  10. Separar el estado de la operación principal del estado de una notificación secundaria.
+  11. Evitar ciclos de eventos y ejecuciones recursivas sin límite.
+  12. Registrar los resultados y errores sin almacenar información sensible innecesaria.
+- **Criterios de Aceptación:**
+  1. Un evento válido provoca el resultado esperado en su destinatario.
+  2. Un evento repetido no duplica efectos secundarios.
+  3. Un fallo del destinatario queda registrado y puede identificarse posteriormente.
+  4. Un proceso recuperado no repite una acción que ya se completó.
+  5. Los eventos inválidos o no autorizados no ejecutan acciones protegidas.
+  6. Es posible distinguir un evento pendiente de uno procesado y de uno fallido.
+  7. La indisponibilidad de un canal de notificación no modifica incorrectamente el estado de la operación institucional principal.
+  8. Los procesos automáticos no generan ciclos ilimitados.
+  9. Las alertas de riesgo académico, inasistencia y mora conservan sus reglas de negocio, y sus umbrales pueden verificarse con casos de prueba.
+  10. Los fallos reiterados pueden detectarse sin depender de inspecciones manuales del código.
+- **Estado:** [X] Completada
+
+### [X] [FASE2-T08] Implementar trazabilidad y correlación de operaciones entre servicios
+- **Origen del Hallazgo:** Auditoría de la Fase 2, octubre de 2026 (AUDITORIA_FASE2_ARQUITECTURA_INTEROPERABILIDAD.md - Área 6 & 7)
+- **Severidad/Clasificación:** Alto
+- **Archivos Involucrados:** `backend/user-service/Code.gs`, `js/api.js`
+- **Dependencias Expuestas:** `BitacoraEventos`, `js/api.js`, contratos de servicios y motor de eventos.
+- **Descripción del Alcance:**
+  1. Asignar un identificador de correlación a cada operación relevante.
+  2. Propagarlo entre los servicios que participan en la misma operación.
+  3. Registrar el servicio, la acción, el resultado, la duración y la referencia de la dependencia invocada.
+  4. Registrar reintentos, conflictos, rechazos de autorización y recuperaciones.
+  5. Diferenciar errores del cliente, errores de validación, fallos de dependencia y errores internos.
+  6. Relacionar eventos automáticos con la operación que los originó.
+  7. Evitar registrar tokens, contraseñas, datos financieros completos o información personal innecesaria.
+  8. Establecer reglas de conservación y acceso a los registros.
+  9. Facilitar la búsqueda de operaciones por identificador, tipo de acción, estado y periodo.
+- **Criterios de Aceptación:**
+  1. Una operación que atraviesa dos o más servicios puede reconstruirse mediante su identificador de correlación.
+  2. Los registros distinguen éxito, fallo, reintento y recuperación.
+  3. Un fallo de dependencia puede relacionarse con la operación que lo provocó.
+  4. Los registros no exponen credenciales ni datos sensibles innecesarios.
+  5. Un usuario sin permisos no puede consultar registros de auditoría restringidos.
+  6. La ausencia de un registro esperado puede detectarse en las pruebas de integración.
+- **Estado:** [X] Completada
+
 ---
 
 ## GRUPO PRIORIDAD P2 (MEDIO)
@@ -414,6 +631,215 @@
   - Las pruebas no alteran datos institucionales reales.
 - **Estado:** [X] Completada
 
+### [X] [FASE2-T09] Convertir las métricas operativas en supervisión real de cuotas, errores y capacidad
+- **Origen del Hallazgo:** Auditoría de la Fase 2, octubre de 2026 (AUDITORIA_FASE2_ARQUITECTURA_INTEROPERABILIDAD.md - Área 7)
+- **Severidad/Clasificación:** Medio
+- **Archivos Involucrados:** `js/api.js`, `backend/user-service/Code.gs`
+- **Dependencias Expuestas:** `OPERATIONAL_HEALTH_METRICS`, `fetchApi`, registros de backend y cuotas oficiales.
+- **Descripción del Alcance:**
+  1. Inventariar las métricas existentes y distinguir datos locales del cliente de mediciones del servidor.
+  2. Medir solicitudes, errores, latencias, reintentos y fallos por servicio.
+  3. Identificar los límites aplicables a cada servicio, proyecto y tipo de cuenta.
+  4. Registrar errores de cuota y tiempos de espera como categorías diferenciadas.
+  5. Establecer umbrales de advertencia basados en cuotas verificadas y datos de uso reales.
+  6. Definir límites de reintentos, espera máxima y tratamiento de errores permanentes.
+  7. Detectar aumentos anormales de latencia, errores y concurrencia.
+  8. Proporcionar información útil para determinar si un servicio está degradado.
+  9. Evitar que la instrumentación agregue una carga desproporcionada o exponga información sensible.
+  10. Documentar la capacidad real de los mecanismos de supervisión y las limitaciones de las métricas disponibles.
+- **Criterios de Aceptación:**
+  1. Una solicitud correcta y una fallida generan métricas diferenciables.
+  2. Un error de cuota puede distinguirse de un error de validación o de una caída de red.
+  3. Los reintentos respetan un máximo definido y no continúan indefinidamente.
+  4. Las métricas permiten identificar qué servicio presenta más errores o latencia.
+  5. Los umbrales se relacionan con límites documentados y no con cifras genéricas sin validar.
+  6. Las alertas se generan cuando las condiciones configuradas se cumplen.
+  7. El sistema no informa que un servicio está saludable basándose únicamente en llamadas registradas por el cliente.
+  8. Las pruebas de supervisión permiten verificar que los registros se generen ante condiciones controladas.
+- **Estado:** [X] Completada
+
+### [X] [FASE2-T10] Implementar paginación eficiente y consultas escalables de datos
+- **Origen del Hallazgo:** Auditoría de la Fase 2, octubre de 2026 (AUDITORIA_FASE2_ARQUITECTURA_INTEROPERABILIDAD.md - Área 7)
+- **Severidad/Clasificación:** Medio
+- **Archivos Involucrados:** `js/ui-common.js`, `backend/academic-service/Code.gs`, `backend/accounting-service/Code.gs`
+- **Dependencias Expuestas:** `window.renderPaginatedTable`, servicios de consulta y contratos API.
+- **Descripción del Alcance:**
+  1. Determinar si la paginación actual es local o del lado del servidor.
+  2. Incorporar paginación en el origen de datos para conjuntos cuyo tamaño justifique reducir las transferencias.
+  3. Permitir filtros y ordenación en el servidor cuando corresponda.
+  4. Establecer límites máximos por consulta.
+  5. Evitar consultas completas repetidas cuando solo se necesita una parte de los datos.
+  6. Definir cómo se comportan los filtros y las páginas cuando se insertan o eliminan registros.
+  7. Mantener una ordenación estable para evitar omisiones o duplicaciones entre páginas.
+  8. Optimizar las lecturas y escrituras por lotes donde sea apropiado.
+  9. Proporcionar estados de carga, errores de consulta y posibilidad de reintento.
+  10. Mantener la accesibilidad y el uso desde dispositivos móviles.
+- **Criterios de Aceptación:**
+  1. Una consulta paginada solicita únicamente los registros necesarios para la página actual, cuando el backend admite paginación.
+  2. La ordenación se mantiene estable entre páginas.
+  3. Los filtros no provocan la descarga completa de la tabla si pueden aplicarse en el servidor.
+  4. Las páginas consecutivas no duplican ni omiten registros debido al mecanismo de paginación.
+  5. Los errores de carga se muestran de manera clara y permiten reintentar.
+  6. Se miden los tiempos de respuesta y el volumen transferido con diferentes tamaños de conjunto.
+  7. Las pruebas incluyen conjuntos pequeños, grandes, vacíos y modificados durante la navegación.
+  8. La solución conserva el comportamiento correcto de las tablas existentes.
+- **Estado:** [X] Completada
+
+### [X] [FASE2-T11] Definir y comprobar la estrategia de respaldo, restauración y reconciliación de datos
+- **Origen del Hallazgo:** Auditoría de la Fase 2, octubre de 2026 (AUDITORIA_FASE2_ARQUITECTURA_INTEROPERABILIDAD.md - Área 7)
+- **Severidad/Clasificación:** Medio
+- **Archivos Involucrados:** `backend/academic-service/Code.gs`, `js/teacher.js`
+- **Dependencias Expuestas:** Respaldos del servicio académico, fuentes de datos institucionales y mecanismos de identificación.
+- **Descripción del Alcance:**
+  1. Inventariar qué datos se respaldan, con qué frecuencia y durante cuánto tiempo.
+  2. Verificar cómo se detectan respaldos incompletos o corruptos.
+  3. Documentar qué registros, identificadores y relaciones deben preservarse.
+  4. Definir una restauración controlada que no sobrescriba datos actuales sin autorización.
+  5. Verificar la integridad de los datos restaurados y sus relaciones.
+  6. Identificar operaciones parcialmente completadas que necesiten reconciliación.
+  7. Definir puntos de recuperación y objetivos de tiempo de restauración acordes con las necesidades institucionales.
+  8. Mantener registros de creación, validación y restauración de respaldos.
+  9. Evitar que una restauración vuelva a ejecutar notificaciones, pagos u otros efectos secundarios.
+  10. Determinar si los respaldos están protegidos frente a pérdida de acceso a la cuenta o al almacenamiento principal.
+- **Criterios de Aceptación:**
+  1. Un respaldo válido puede restaurarse en un entorno de prueba.
+  2. Un respaldo incompleto o alterado se detecta antes de utilizarlo.
+  3. La restauración conserva identificadores y relaciones entre entidades.
+  4. La restauración no sobrescribe producción durante las pruebas.
+  5. Los registros restaurados pueden compararse con el origen mediante verificaciones de integridad.
+  6. Los procesos automáticos no repiten efectos secundarios únicamente por restaurar datos.
+  7. Se documentan los tiempos medidos de respaldo y recuperación.
+  8. Existe un procedimiento claro para detectar y resolver inconsistencias posteriores a la restauración.
+- **Estado:** [X] Completada
+
+### [X] [FASE2-T12] Establecer criterios medibles para evolucionar hacia almacenamiento transaccional
+- **Origen del Hallazgo:** Auditoría de la Fase 2, octubre de 2026 (AUDITORIA_FASE2_ARQUITECTURA_INTEROPERABILIDAD.md - Área 7)
+- **Severidad/Clasificación:** Medio
+- **Archivos Involucrados:** `backend/accounting-service/Code.gs`, `backend/academic-service/Code.gs`
+- **Dependencias Expuestas:** Métricas operativas, contratos de comunicación, identificadores institucionales y estrategia de respaldo.
+- **Descripción del Alcance:**
+  1. Inventariar las entidades y operaciones que dependen de hojas de cálculo.
+  2. Identificar las operaciones que requieren actualizaciones coordinadas de varias entidades.
+  3. Medir volúmenes, crecimiento, concurrencia, latencia, errores y tiempo de ejecución.
+  4. Identificar las consultas que se degradan con el crecimiento de los datos.
+  5. Establecer umbrales de evaluación basados en pruebas y límites documentados.
+  6. Definir criterios para determinar si las hojas de cálculo siguen siendo adecuadas para cada tipo de operación.
+  7. Evaluar las alternativas de almacenamiento según transacciones, integridad referencial, consultas, costes, mantenimiento y recuperación.
+  8. Diseñar una migración que preserve identificadores, relaciones, historial y permisos.
+  9. Definir cómo se sincronizarían los datos durante una migración gradual, si fuera necesaria.
+  10. Incluir validación de integridad, pruebas de aceptación y plan de reversión.
+  11. Evitar mantener dos fuentes de verdad editables sin una política explícita de sincronización.
+- **Criterios de Aceptación:**
+  1. Cada conjunto de datos crítico tiene documentado su almacenamiento y sus principales operaciones.
+  2. Las decisiones de escalabilidad se apoyan en métricas o pruebas reproducibles.
+  3. Los umbrales de migración tienen un criterio de activación verificable.
+  4. La evaluación compara requisitos transaccionales, integridad, capacidad, mantenimiento y recuperación.
+  5. El plan de migración contempla identificadores, relaciones, historial, permisos, validación y reversión.
+  6. La estrategia evita escrituras contradictorias en fuentes paralelas.
+  7. No se ejecuta una migración únicamente por superar un número arbitrario de filas.
+- **Estado:** [X] Completada
+
+### [X] [FASE2-T13] Documentar el mapa de dependencias y las responsabilidades de los servicios
+- **Origen del Hallazgo:** Auditoría de la Fase 2, octubre de 2026 (AUDITORIA_FASE2_ARQUITECTURA_INTEROPERABILIDAD.md - Área 1)
+- **Severidad/Clasificación:** Medio
+- **Archivos Involucrados:** `MapaDependencias.md`, `js/config.js`
+- **Dependencias Expuestas:** Inventario real de servicios, contratos API y pruebas de integración.
+- **Descripción del Alcance:**
+  1. Mantener un inventario de servicios, módulos, funciones públicas, consumidores y fuentes de datos.
+  2. Identificar qué servicio es responsable de cada operación y entidad.
+  3. Documentar dependencias síncronas y procesos automáticos.
+  4. Identificar ciclos, duplicaciones de responsabilidad y llamadas directas que eviten los contratos establecidos.
+  5. Registrar las configuraciones y permisos necesarios para ejecutar cada servicio.
+  6. Relacionar cada operación crítica con sus pruebas de integración y de regresión.
+  7. Documentar los límites de responsabilidad entre departamentos sin impedir las dependencias legítimas.
+  8. Facilitar la detección del impacto de un cambio de contrato, catálogo o identificador.
+- **Criterios de Aceptación:**
+  1. Cada servicio relevante tiene una responsabilidad documentada.
+  2. Sus operaciones públicas y consumidores pueden identificarse.
+  3. Las dependencias entre servicios pueden seguirse desde el código o las pruebas.
+  4. Los ciclos y las responsabilidades duplicadas están identificados y tienen una decisión documentada.
+  5. Cada cambio crítico puede relacionarse con los componentes y pruebas que podrían verse afectados.
+  6. El mapa coincide con la implementación inspeccionada y no se limita a reproducir la arquitectura prevista.
+- **Estado:** [X] Completada
+
+### [X] [FASE2-T14] Incorporar pruebas de integración y regresión para las operaciones interdepartamentales
+- **Origen del Hallazgo:** Auditoría de la Fase 2, octubre de 2026 (AUDITORIA_FASE2_ARQUITECTURA_INTEROPERABILIDAD.md - Área 1-7)
+- **Severidad/Clasificación:** Medio
+- **Archivos Involucrados:** `backend/accounting-service/Code.gs`, `backend/user-service/Code.gs`
+- **Dependencias Expuestas:** Contratos API, identificadores, idempotencia, concurrencia y eventos.
+- **Descripción del Alcance:**
+  1. Crear un conjunto de pruebas de integración para las operaciones que atraviesan varios servicios.
+  2. Incluir casos de éxito, validación, autorización, fallos de red, tiempos de espera y recuperación.
+  3. Verificar la consistencia de los datos persistidos, no solo el contenido de las respuestas.
+  4. Incorporar casos de solicitudes repetidas y operaciones concurrentes.
+  5. Comprobar las relaciones entre identificadores y referencias compartidas.
+  6. Incluir pruebas de procesos automáticos y eventos.
+  7. Mantener los datos de prueba aislados de la información real de la institución.
+  8. Permitir repetir las pruebas con resultados comparables.
+  9. Registrar qué casos se ejecutaron, cuáles pasaron y cuáles fallaron.
+  10. Establecer qué pruebas son obligatorias antes de liberar modificaciones en contratos o mecanismos de interoperabilidad.
+- **Criterios de Aceptación:**
+  1. Las operaciones interdepartamentales críticas tienen pruebas reproducibles.
+  2. Las pruebas verifican tanto las respuestas como los cambios persistidos.
+  3. Los fallos de autorización, cuota y dependencia se detectan de forma explícita.
+  4. Los casos de concurrencia y repetición no producen duplicaciones ni pérdida de integridad.
+  5. Las pruebas no modifican información real de producción.
+  6. Los resultados identifican el caso ejecutado, el resultado esperado y el observado.
+  7. Un cambio incompatible provoca el fallo de las pruebas correspondientes.
+  8. La cobertura informada distingue pruebas existentes, pruebas ejecutadas y criterios realmente satisfechos.
+- **Estado:** [X] Completada
+
+### [X] [FASE2-T15] Establecer procedimientos de reconciliación para datos y operaciones inconsistentes
+- **Origen del Hallazgo:** Auditoría de la Fase 2, octubre de 2026 (AUDITORIA_FASE2_ARQUITECTURA_INTEROPERABILIDAD.md - Área 5)
+- **Severidad/Clasificación:** Medio
+- **Archivos Involucrados:** `backend/accounting-service/Code.gs`, `backend/academic-service/Code.gs`
+- **Dependencias Expuestas:** Identificadores institucionales, trazabilidad, almacenamiento y estrategia de recuperación.
+- **Descripción del Alcance:**
+  1. Identificar las entidades y operaciones que mantienen información relacionada en más de un componente.
+  2. Definir qué servicio es responsable de resolver cada discrepancia.
+  3. Detectar referencias huérfanas, registros duplicados, estados incompatibles y operaciones pendientes.
+  4. Registrar la causa, la fecha y las entidades afectadas.
+  5. Diferenciar la corrección automática segura de los casos que requieren revisión autorizada.
+  6. Evitar eliminar o sobrescribir información sin conservar la trazabilidad necesaria.
+  7. Permitir ejecutar reconciliaciones de forma controlada y repetible.
+  8. Establecer reglas para priorizar datos, resolver conflictos y preservar historiales.
+  9. Evitar que la reconciliación repita pagos, notificaciones o documentos ya emitidos.
+- **Criterios de Aceptación:**
+  1. Las pruebas pueden introducir inconsistencias controladas y comprobar que se detectan.
+  2. Los reportes identifican los registros afectados y el tipo de discrepancia.
+  3. Una reconciliación no altera registros ajenos al caso evaluado.
+  4. Las operaciones repetidas de reconciliación no crean nuevas discrepancias ni duplican efectos secundarios.
+  5. Los casos que no puedan resolverse automáticamente quedan pendientes de revisión y no se marcan como corregidos.
+  6. Las correcciones mantienen las relaciones e historiales que deban preservarse.
+  7. Cada modificación resultante puede rastrearse hasta la incidencia que la originó.
+- **Estado:** [X] Completada
+
+### [X] [FASE2-T16] Optimizar la recuperación de errores y el comportamiento de los servicios degradados
+- **Origen del Hallazgo:** Auditoría de la Fase 2, octubre de 2026 (AUDITORIA_FASE2_ARQUITECTURA_INTEROPERABILIDAD.md - Área 2)
+- **Severidad/Clasificación:** Medio
+- **Archivos Involucrados:** `js/api.js`, `js/ui-common.js`
+- **Dependencias Expuestas:** `js/api.js`, contratos API, idempotencia y componentes que muestran resultados de solicitudes.
+- **Descripción del Alcance:**
+  1. Clasificar los fallos según su causa y posibilidad de recuperación.
+  2. Diferenciar los datos almacenados en caché, las respuestas de respaldo y los resultados confirmados por el servidor.
+  3. Impedir que una respuesta de fallback se interprete como confirmación de una escritura.
+  4. Definir qué operaciones de lectura pueden mostrar datos antiguos y cómo se informa de su antigüedad.
+  5. Definir qué operaciones deben bloquearse cuando no puede verificarse el estado actual.
+  6. Evitar reintentos automáticos de operaciones no idempotentes.
+  7. Permitir recuperar la sesión de trabajo cuando una solicitud falla temporalmente.
+  8. Presentar mensajes comprensibles y accionables sin exponer detalles técnicos sensibles.
+  9. Registrar el error original y el resultado del mecanismo de recuperación.
+  10. Evitar que una respuesta parcial elimine o sobrescriba datos válidos en la interfaz.
+- **Criterios de Aceptación:**
+  1. Una lectura fallida puede mostrar datos de respaldo únicamente cuando la política de esa función lo permita.
+  2. Los datos antiguos se identifican como tales cuando sea relevante.
+  3. Una escritura fallida nunca se presenta como completada sin confirmación válida.
+  4. La interfaz permite distinguir entre error, resultado confirmado y dato de respaldo.
+  5. Los reintentos respetan las reglas de idempotencia.
+  6. La recuperación de una solicitud no sobrescribe cambios válidos realizados por otra operación.
+  7. Los mensajes de error indican qué acción puede realizar el usuario sin afirmar resultados no confirmados.
+- **Estado:** [X] Completada
+
 ---
 
 ## GRUPO PRIORIDAD P3 (BAJO)
@@ -488,4 +914,70 @@
   - La activación de una nueva área no altera los servicios existentes.
   - Las pruebas del servicio se ejecutan antes de habilitarlo para usuarios.
   - Las áreas desactivadas conservan sus registros históricos.
+- **Estado:** [X] Completada
+
+### [X] [FASE2-T17] Incorporar una política de versionado y evolución de configuraciones compartidas
+- **Origen del Hallazgo:** Auditoría de la Fase 2, octubre de 2026 (AUDITORIA_FASE2_ARQUITECTURA_INTEROPERABILIDAD.md - Área 3)
+- **Severidad/Clasificación:** Bajo
+- **Archivos Involucrados:** `js/config.js`, `backend/user-service/Code.gs`
+- **Dependencias Expuestas:** Contratos API, fuente de verdad de catálogos y configuración central.
+- **Descripción del Alcance:**
+  1. Identificar las configuraciones y catálogos que requieren versionado.
+  2. Registrar la versión o fecha de actualización cuando resulte necesario.
+  3. Definir compatibilidad entre versiones.
+  4. Permitir detectar consumidores desactualizados.
+  5. Mantener la interpretación de registros históricos.
+  6. Documentar cómo se retiran versiones antiguas y cómo se recupera una configuración incorrecta.
+- **Criterios de Aceptación:**
+  1. Las configuraciones críticas pueden identificarse por versión o mecanismo equivalente.
+  2. Un consumidor incompatible detecta la incompatibilidad en lugar de utilizar datos incorrectos.
+  3. Los registros históricos siguen siendo interpretables tras una actualización.
+  4. Una actualización de configuración puede validarse antes de aplicarse a todos los consumidores.
+  5. Existe un procedimiento de reversión para los cambios de configuración que lo requieran.
+- **Estado:** [X] Completada
+
+### [X] [FASE2-T18] Crear un tablero de salud e interoperabilidad institucional
+- **Origen del Hallazgo:** Auditoría de la Fase 2, octubre de 2026 (AUDITORIA_FASE2_ARQUITECTURA_INTEROPERABILIDAD.md - Área 7)
+- **Severidad/Clasificación:** Bajo
+- **Archivos Involucrados:** `js/ui-common.js`, `js/api.js`
+- **Dependencias Expuestas:** Métricas operativas, trazabilidad y mecanismos de salud de servicios.
+- **Descripción del Alcance:**
+  1. Mostrar el estado operativo de cada servicio relevante.
+  2. Diferenciar disponibilidad, latencia, tasa de errores, cuota, procesos pendientes y eventos fallidos.
+  3. Mostrar la última actualización de cada indicador.
+  4. Identificar las dependencias que provocan una degradación.
+  5. Permitir filtrar por servicio, periodo y tipo de incidencia.
+  6. Restringir el acceso a personal autorizado.
+  7. Evitar exponer datos personales, credenciales o información financiera.
+  8. Enlazar los indicadores con registros de diagnóstico y acciones de recuperación, cuando existan.
+- **Criterios de Aceptación:**
+  1. Una caída simulada de un servicio se refleja en su estado.
+  2. Los errores de una dependencia pueden distinguirse de los del servicio que la consume.
+  3. Los indicadores muestran su periodo de medición y no se presentan como actuales si están desactualizados.
+  4. Las incidencias pueden filtrarse y consultarse por personal autorizado.
+  5. Los datos mostrados coinciden con las mediciones o registros reales disponibles.
+  6. La interfaz no informa disponibilidad completa cuando existen operaciones críticas fallidas o pendientes.
+- **Estado:** [X] Completada
+
+### [X] [FASE2-T19] Optimizar la gestión de caché de datos institucionales
+- **Origen del Hallazgo:** Auditoría de la Fase 2, octubre de 2026 (AUDITORIA_FASE2_ARQUITECTURA_INTEROPERABILIDAD.md - Área 1 & 3)
+- **Severidad/Clasificación:** Bajo
+- **Archivos Involucrados:** `backend/user-service/Code.gs`, `js/config.js`
+- **Dependencias Expuestas:** Autorización, resolución de catálogos, configuración y métricas operativas.
+- **Descripción del Alcance:**
+  1. Inventariar las cachés existentes y los datos almacenados.
+  2. Diferenciar datos relativamente estáticos de información sensible al tiempo, como permisos y estados de cuenta.
+  3. Definir la vigencia apropiada para cada tipo de dato.
+  4. Incorporar invalidación cuando se produzcan cambios que afecten a la validez de la caché.
+  5. Evitar que una entrada obsoleta sustituya datos nuevos confirmados.
+  6. Definir qué ocurre si la fuente de verdad no está disponible.
+  7. Medir el impacto de la caché en latencia, consumo de cuotas y consistencia.
+  8. Evitar almacenar información sensible en ámbitos compartidos sin separación por identidad.
+- **Criterios de Aceptación:**
+  1. Cada caché crítica tiene una política documentada de vigencia e invalidación.
+  2. Los cambios de permisos se reflejan dentro del plazo definido.
+  3. Los datos de diferentes usuarios no se mezclan.
+  4. Los datos obsoletos no se presentan como confirmados cuando la función exige información actual.
+  5. Las pruebas comparan el comportamiento con caché y sin caché.
+  6. Las modificaciones conservan o mejoran el rendimiento sin debilitar la seguridad ni la integridad.
 - **Estado:** [X] Completada

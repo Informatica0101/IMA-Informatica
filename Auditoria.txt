@@ -78,3 +78,15 @@ INFORME COMPLEMENTARIO: AUDITORIA_FASE2_ARQUITECTURA_INTEROPERABILIDAD.md
    - Cobertura de Inspección: 100% (7/7 subcapacidades examinadas).
    - Cobertura de Verificación: 100% (7/7 subcapacidades verificadas).
    - Estado de la Fase 2: COMPLETA Y VERIFICADA.
+
+-------------------------------------------------------------------------------
+FECHA: Octubre 2026
+FASE: Fase 2. Arquitectura institucional e interoperabilidad (Transferencia de Tareas)
+-------------------------------------------------------------------------------
+1. REGISTRO DE TAREAS EN PENDIENTES.MD:
+   - Se transfirieron e integraron convergentemente las 19 tareas de desarrollo de la Fase 2 (FASE2-T01 a FASE2-T19) en Pendientes.md sin modificar ni eliminar ninguna de las tareas existentes (TAREA-01 a TAREA-20).
+   - Clasificación por Prioridad:
+     * P0 (Crítico): [X] FASE2-T01 (Autorización y vigencia de permisos), [X] FASE2-T02 (Idempotencia y reintentos HTTP).
+     * P1 (Alto): [X] FASE2-T03 (Contratos API verificables), [X] FASE2-T04 (Fuente de verdad de catálogos), [X] FASE2-T05 (Identificadores institucionales CUV/UUID), [X] FASE2-T06 (Concurrencia y consistencia inter-servicio), [X] FASE2-T07 (Motor de eventos y procesos automáticos), [X] FASE2-T08 (Trazabilidad y correlación entre servicios).
+     * P2 (Medio): [X] FASE2-T09 (Supervisión real de cuotas y capacidad), [X] FASE2-T10 (Paginación eficiente y consultas escalables), [X] FASE2-T11 (Estrategia de respaldo, restauración y reconciliación), [X] FASE2-T12 (Criterios para almacenamiento transaccional), [X] FASE2-T13 (Mapa de dependencias y responsabilidades), [X] FASE2-T14 (Pruebas de integración y regresión interdepartamental), [X] FASE2-T15 (Procedimientos de reconciliación de inconsistencias), [X] FASE2-T16 (Recuperación y comportamiento en servicios degradados).
+     * P3 (Bajo): [X] FASE2-T17 (Versionado de configuraciones compartidas), [X] FASE2-T18 (Tablero de salud e interoperabilidad), [X] FASE2-T19 (Gestión y optimización de caché de datos).
