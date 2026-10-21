@@ -530,3 +530,14 @@ DESCRIPCIÓN OBJETIVA DE LOS CAMBIOS:
 - Actualización del estado de [TAREA-12] a [X] Completada en Pendientes.md tras verificación de pruebas funcionales.
 
 -------------------------------------------------------------------------------
+FECHA: Octubre 2026
+ARCHIVO(S) AFECTADO(S): backend/exam-service/Code.gs, backend/academic-service/Code.gs, Pendientes.md
+-------------------------------------------------------------------------------
+DESCRIPCIÓN OBJETIVA DE LOS CAMBIOS:
+- Adición de comentario identificativo en la primera línea sobre la función normalizeString en backend/exam-service/Code.gs.
+- Implementación de las funciones assignDepartmentHead y getDepartmentAcademicPlanning en backend/academic-service/Code.gs para asignación de responsables de departamentos académicos, planificación de carga docente y detección de vacantes.
+- Adición de permisos en ROLE_PERMISSIONS y dispatchers en doPost para getDepartmentAcademicPlanning y assignDepartmentHead.
+- Inserción del comentario identificativo de TAREA-13 en la primera línea sobre assignDepartmentHead.
+- Actualización del estado de [TAREA-13] a [X] Completada en Pendientes.md.
+
+-------------------------------------------------------------------------------

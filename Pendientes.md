@@ -825,7 +825,7 @@
   - No se producen regresiones en tablas pequeñas ni en dispositivos móviles.
 - **Estado:** [X] Completada
 
-### [ ] [TAREA-13] Crear un sistema de planificación y asignación de carga académica por área
+### [X] [TAREA-13] Crear un sistema de planificación y asignación de carga académica por área
 - **Origen del Hallazgo:** Auditoría de la Fase 1, octubre de 2026 (AUDITORIA_FASE1_PLANIFICACION_EXPANSION.md - Sección B & D)
 - **Severidad/Clasificación:** Medio
 - **Archivos Involucrados:** `backend/academic-service/Code.gs`, `js/teacher.js`, `teacher-dashboard.html`
@@ -843,7 +843,7 @@
   - Los cambios no modifican retroactivamente las calificaciones ni las entregas históricas.
   - Los docentes visualizan únicamente sus asignaciones autorizadas.
   - La Dirección puede identificar vacantes, conflictos y carga académica por área.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 ### [ ] [TAREA-14] Mejorar la experiencia de usuario de docentes y estudiantes según el flujo académico
 - **Origen del Hallazgo:** Auditoría de la Fase 1, octubre de 2026 (AUDITORIA_FASE1_PLANIFICACION_EXPANSION.md - Sección C & J)

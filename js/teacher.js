@@ -741,6 +741,96 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // [TAREA-13] [Fase 1 - Planificación de Carga Académica] - Controlador del modal de planificación de carga académica, jefaturas y vacantes.
+    const modalAcademicPlanning = document.getElementById('modal-academic-load-planning');
+    const btnCloseAcademicPlanning = document.getElementById('btn-close-academic-load-planning');
+    const btnRefreshAcademicPlanning = document.getElementById('btn-refresh-academic-planning');
+    const formAssignDeptHead = document.getElementById('form-assign-dept-head');
+
+    window.openAcademicLoadPlanningModal = function() {
+        if (modalAcademicPlanning) {
+            modalAcademicPlanning.classList.remove('hidden');
+            window.refreshAcademicPlanningData();
+        }
+    };
+
+    if (btnCloseAcademicPlanning) {
+        btnCloseAcademicPlanning.addEventListener('click', () => {
+            if (modalAcademicPlanning) modalAcademicPlanning.classList.add('hidden');
+        });
+    }
+
+    if (btnRefreshAcademicPlanning) {
+        btnRefreshAcademicPlanning.addEventListener('click', () => {
+            window.refreshAcademicPlanningData();
+        });
+    }
+
+    window.refreshAcademicPlanningData = async function() {
+        const tableBody = document.getElementById('table-academic-planning-vacancies');
+        if (!tableBody) return;
+
+        try {
+            tableBody.innerHTML = '<tr><td colspan="5" class="p-4 text-center text-slate-400 italic">Cargando planificación y vacantes...</td></tr>';
+            const res = await fetchApi('ACADEMIC', 'getDepartmentAcademicPlanning', {});
+            if (res && res.status === 'success' && res.data) {
+                const vacantes = res.data.vacantes || [];
+                if (vacantes.length === 0) {
+                    tableBody.innerHTML = '<tr><td colspan="5" class="p-4 text-center text-emerald-600 font-bold">¡Todas las ofertas académicas tienen docente asignado! No hay vacantes.</td></tr>';
+                } else {
+                    tableBody.innerHTML = vacantes.map(v => `
+                        <tr>
+                            <td class="p-2.5 font-bold text-slate-800">${v.ofertaId}</td>
+                            <td class="p-2.5">${v.asignatura}</td>
+                            <td class="p-2.5">${v.grado} ${v.seccion || 'A'}</td>
+                            <td class="p-2.5">${v.departamento || 'General'}</td>
+                            <td class="p-2.5"><span class="px-2 py-0.5 bg-amber-100 text-amber-800 rounded-full font-bold text-[10px]">VACANTE</span></td>
+                        </tr>
+                    `).join('');
+                }
+            } else {
+                tableBody.innerHTML = '<tr><td colspan="5" class="p-4 text-center text-red-500">Error al cargar la planificación.</td></tr>';
+            }
+        } catch (err) {
+            console.error('Error al obtener planificación:', err);
+            tableBody.innerHTML = '<tr><td colspan="5" class="p-4 text-center text-red-500">Error de conexión con el servidor.</td></tr>';
+        }
+    };
+
+    if (formAssignDeptHead) {
+        formAssignDeptHead.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const deptId = document.getElementById('load-dept-select')?.value;
+            const jefeUserId = document.getElementById('load-dept-head-user-id')?.value?.trim();
+
+            if (!deptId || !jefeUserId) {
+                alert('Por favor complete todos los campos obligatorios.');
+                return;
+            }
+
+            try {
+                if (window.showLoading) window.showLoading('Asignando jefe de departamento...');
+                const res = await fetchApi('ACADEMIC', 'assignDepartmentHead', {
+                    departamentoId: deptId,
+                    jefeUserId: jefeUserId
+                });
+                if (window.hideLoading) window.hideLoading();
+
+                if (res && res.status === 'success') {
+                    alert(`Jefe asignado correctamente al departamento de ${deptId}.`);
+                    document.getElementById('load-dept-head-user-id').value = '';
+                    window.refreshAcademicPlanningData();
+                } else {
+                    alert(res && res.message ? res.message : 'No se pudo asignar el jefe de departamento.');
+                }
+            } catch (err) {
+                if (window.hideLoading) window.hideLoading();
+                console.error('Error al asignar jefe de departamento:', err);
+                alert('Error al conectar con el servidor.');
+            }
+        });
+    }
+
     // [TAREA 3.3] [Fase 3: Planificación Académica y Horarios] - Controlador de interfaz para la gestión de aulas, laboratorios y recursos físicos (#modal-classroom-manager).
     window.openClassroomManagerModal = async function() {
         const modal = document.getElementById('modal-classroom-manager');

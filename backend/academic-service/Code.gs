@@ -150,7 +150,7 @@ const ROLE_PERMISSIONS = {
     "getInstitutionParams", "saveInstitutionParam", "getAcademicYears", "createAcademicYear", "updateAcademicYearStatus", "prepareNewAcademicYear",
     "getAcademicPeriods", "manageAcademicPeriod", "getSubjectCatalog", "createSubjectCatalogItem", "getStudyPlans", "createStudyPlan",
     "getAcademicOffers", "createAcademicOffer", "getTeacherAssignments", "assignTeacherToClass", "createTeacherSubstitution",
-    "getAcademicCalendar", "createCalendarEvent", "getClassSchedules", "createClassSchedule", "deleteClassSchedule", "getAcademicRules", "saveAcademicRule",
+    "getAcademicCalendar", "createCalendarEvent", "getClassSchedules", "createClassSchedule", "deleteClassSchedule", "getAcademicRules", "saveAcademicRule", "getDepartmentAcademicPlanning", "assignDepartmentHead",
     "getClassroomResources", "saveClassroomResource", "getStudentSchedule",
     "createAdmissionRequest", "getAdmissionRequests", "updateAdmissionStatus", "convertAdmissionToStudent",
     "getStudentFile", "updateStudentFile", "getStudentTimeline", "findDuplicateStudents", "mergeStudentFiles",
@@ -281,6 +281,8 @@ function doPost(e) {
       case "getTeacherAssignments": result = getTeacherAssignments(payload); break;
       case "assignTeacherToClass": result = assignTeacherToClass(payload); break;
       case "createTeacherSubstitution": result = createTeacherSubstitution(payload); break;
+      case "getDepartmentAcademicPlanning": result = getDepartmentAcademicPlanning(payload); break;
+      case "assignDepartmentHead": result = assignDepartmentHead(payload); break;
       case "getAcademicCalendar": result = getAcademicCalendar(payload); break;
       case "createCalendarEvent": result = createCalendarEvent(payload); break;
       case "getClassSchedules": result = getClassSchedules(payload); break;
@@ -2451,7 +2453,97 @@ function copyClassSchedules(payload) {
   };
 }
 
-// [TAREA-13] [Fase 1 - Planificación de Carga Académica] - Motor de asignación de carga docente por departamento, límites lectivos y prevención de conflictos.
+// [TAREA-13] [Fase 1 - Planificación de Carga Académica] - Motor de asignación de carga docente por departamento, límites lectivos, asignación de responsables y detección de vacantes.
+function assignDepartmentHead(payload) {
+  const { departamentoId, jefeUserId, autorizadoPor } = payload || {};
+  if (!departamentoId || !jefeUserId) throw new Error("departamentoId y jefeUserId son requeridos.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "DepartamentosAcademicos");
+  if (sheet.getLastRow() === 0) {
+    sheet.appendRow(["DepartamentoID", "Nombre", "JefeUserId", "Estado", "FechaActualizacion", "AutorizadoPor"]);
+  }
+
+  const data = sheet.getDataRange().getValues();
+  const idx = data.findIndex(r => String(r[0]).trim() === String(departamentoId).trim());
+
+  if (idx !== -1) {
+    sheet.getRange(idx + 1, 3).setValue(jefeUserId);
+    sheet.getRange(idx + 1, 5).setValue(new Date());
+    sheet.getRange(idx + 1, 6).setValue(autorizadoPor || "Dirección");
+  } else {
+    sheet.appendRow([departamentoId, departamentoId, jefeUserId, "Activo", new Date(), autorizadoPor || "Dirección"]);
+  }
+
+  logStructuredEvent("ACADEMIC", "assignDepartmentHead", "INFO", "DEPT_HEAD_ASSIGNED", `Jefe de departamento asignado: ${jefeUserId} a ${departamentoId}`, { departamentoId, jefeUserId }, payload && payload.authRole);
+
+  return { status: "success", message: `Jefe asignado al departamento ${departamentoId} exitosamente.` };
+}
+
+function getDepartmentAcademicPlanning(payload) {
+  const { departamentoId, anoId } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+
+  const deptSheet = getOrCreateSheet(ss, "DepartamentosAcademicos");
+  const deptData = deptSheet.getDataRange().getValues();
+  const departamentos = deptData.length > 1 ? deptData.slice(1).map(r => ({
+    departamentoId: r[0],
+    nombre: r[1],
+    jefeUserId: r[2],
+    estado: r[3]
+  })) : [];
+
+  const offerSheet = getOrCreateSheet(ss, "OfertasAcademicas");
+  const offerData = offerSheet.getDataRange().getValues();
+  const offers = offerData.length > 1 ? offerData.slice(1).filter(r => {
+    if (r[8] === "Inactivo") return false;
+    if (anoId && String(r[1]).trim() !== String(anoId).trim()) return false;
+    if (departamentoId && normalizeString(r[7] || r[2]) !== normalizeString(departamentoId)) return false;
+    return true;
+  }).map(r => ({
+    ofertaId: r[0],
+    anoId: r[1],
+    asignatura: r[2],
+    grado: r[3],
+    seccion: r[4],
+    cupoMaximo: r[5],
+    departamento: r[7] || "General"
+  })) : [];
+
+  const asigSheet = getOrCreateSheet(ss, "AsignacionesDocentes");
+  const asigData = asigSheet.getDataRange().getValues();
+  const offerIds = new Set(offers.map(o => String(o.ofertaId).trim()));
+  const asignaciones = asigData.length > 1 ? asigData.slice(1).filter(r => r[6] === "Activo" && offerIds.has(String(r[1]).trim())).map(r => ({
+    asignacionId: r[0],
+    ofertaId: r[1],
+    docenteUserId: r[2],
+    rolDocente: r[3]
+  })) : [];
+
+  const offerAssignedMap = {};
+  asignaciones.forEach(a => {
+    offerAssignedMap[a.ofertaId] = a.docenteUserId;
+  });
+
+  const vacantes = [];
+  offers.forEach(o => {
+    if (!offerAssignedMap[o.ofertaId]) {
+      vacantes.push(o);
+    }
+  });
+
+  return {
+    status: "success",
+    data: {
+      departamentos,
+      ofertasCount: offers.length,
+      vacantesCount: vacantes.length,
+      vacantes,
+      asignaciones
+    }
+  };
+}
+
 function checkScheduleConflict(params) {
   const { diaSemana, horaInicio, horaFin, aulaCodigo, docenteUserId, ofertaId, excludeHorarioId, estudiantesCount, fechaEspecifica, maxHorasDocente } = params || {};
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
