@@ -530,10 +530,3 @@ DESCRIPCIÓN OBJETIVA DE LOS CAMBIOS:
 - Actualización del estado de [TAREA-12] a [X] Completada en Pendientes.md tras verificación de pruebas funcionales.
 
 -------------------------------------------------------------------------------
-FECHA: Octubre 2026
-ARCHIVO(S) AFECTADO(S): backend/user-service/Code.gs, Pendientes.md
--------------------------------------------------------------------------------
-DESCRIPCIÓN OBJETIVA DE LOS CAMBIOS:
-- Refuerzo de la función getUserVerifiedRole y validateRolePermission en backend/user-service/Code.gs incorporando validación de vigencia de estado de cuenta (retornando NO_ACCESS ante estado Bloqueada, Suspendida o Desactivada) e inhabilitación de caché de permisos bajo solicitudes con bandera de bypass.
-- Inserción del comentario identificativo de [FASE2-T01] en la primera línea directamente precedente a getUserVerifiedRole.
-- Actualización del estado de [FASE2-T01] a [X] Completada en Pendientes.md.

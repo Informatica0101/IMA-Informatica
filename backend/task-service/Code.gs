@@ -6,6 +6,16 @@ const SPREADSHEET_ID = "1txfudU4TR4AhVtvFgGRT5Wtmwjl78hK4bfR4XbRwwww";
 const DRIVE_FOLDER_ID = "1D-VlJ52-olcfcDUSSsVLDzkeT2SvkDcB";
 const DEBUG_MODE = true;
 
+function normalizeString(str) {
+  if (!str) return "";
+  return str
+    .toString()
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .trim();
+}
+
 function logDebug(message, optionalParam) {
   if (DEBUG_MODE) {
     let logMessage = `[TASK-SVC] ${new Date().toLocaleTimeString()} - ${message}`;

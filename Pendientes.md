@@ -354,7 +354,7 @@
   - Las calificaciones se reflejan correctamente en los resultados académicos.
   - Los análisis estadísticos coinciden con las respuestas y puntuaciones almacenadas.
   - Los cambios en un banco de preguntas no alteran silenciosamente exámenes ya realizados.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 ### [X] [TAREA-12] Unificar la evaluación académica, las rúbricas y las calificaciones
 - **Origen del Hallazgo:** Auditoría de la Fase 1, octubre de 2026 (AUDITORIA_FASE1_PLANIFICACION_EXPANSION.md - Sección B & H)
@@ -377,7 +377,7 @@
   - Los docentes no pueden modificar notas de estudiantes fuera de su ámbito autorizado.
   - Los boletines y los historiales coinciden con las calificaciones consolidadas.
   - Las escalas de distintos programas curriculares pueden coexistir sin confusión.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 ### [ ] [FASE2-T03] Establecer contratos API verificables y pruebas automáticas de compatibilidad
 - **Origen del Hallazgo:** Auditoría de la Fase 2, octubre de 2026 (AUDITORIA_FASE2_ARQUITECTURA_INTEROPERABILIDAD.md - Área 2)
