@@ -203,7 +203,7 @@ GRUPO 1: TAREAS COMPLETADAS
 44. [TAREA RH-07] Completar el registro de incidencias laborales y medidas disciplinarias
     - Archivo: backend/accounting-service/Code.gs (Línea 2012 `manageLaborIncident`, `manageDisciplinaryMeasure`, `getLaborIncidentsHistory`)
     - Archivo Frontend: dashboard-recursos-humanos.html (Línea 64 `#btn-incidencias-disciplinarias`, Línea 154 `#modal-incidencias-disciplinarias`, Línea 1240 `refreshLaborIncidentsModuleData`)
-    - Descripción: Registro estructurado de faltas/incidencias laborales diferenciadas de incapacidades médicas, aplicación de medidas disciplinarias con actas firmadas adjuntas, sustento documentado, control de suspensiones y restricciones de acceso estrictas según RBAC.
+    - Descripción: Registro estructurado de faltas/incidencias laborales diferenciadas de incapacidades médicas, aplicación de medidas disciplinarias con actas firmadas adjuntas, sustento documentado, control de suspensiones y restricciones de acceso strictly segun RBAC.
 
 45. [TAREA RH-08] Implementar la planificación de necesidades de personal
     - Archivo: backend/accounting-service/Code.gs (Línea 6075 `manageStaffingNeeds`, `getStaffingNeedsPlanning`)
