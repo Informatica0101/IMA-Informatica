@@ -7,6 +7,17 @@ window.OPERATIONAL_HEALTH_METRICS = window.OPERATIONAL_HEALTH_METRICS || {
     serviceMetrics: {}
 };
 
+// [FASE2-T03] [Fase 2 - Contratos API y Compatibilidad] - Validador de esquemas de contrato de respuestas API y diferenciación estricta de éxito vs error/fallback.
+window.validateApiResponseContract = function(res, service, action) {
+    if (!res || typeof res !== 'object') {
+        throw new Error('Respuesta inválida del servicio ' + service + '/' + action + ': no es un objeto JSON válido.');
+    }
+    if (!res.status || (res.status !== 'success' && res.status !== 'error')) {
+        throw new Error('Contrato de respuesta violado en ' + service + '/' + action + ': la propiedad status debe ser "success" o "error".');
+    }
+    return true;
+};
+
 window.getServiceHealthMetrics = function() {
     return window.OPERATIONAL_HEALTH_METRICS;
 };
@@ -129,6 +140,9 @@ function fetchApi(service, action, payload, retryCount, options) {
 
                 try {
                     var parsed = JSON.parse(textResponse);
+                    if (typeof window.validateApiResponseContract === 'function') {
+                        window.validateApiResponseContract(parsed, service, action);
+                    }
 
                     // [T-UX-01] [Fase 3: Experiencia de Usuario y Navegación Unificada] - Detección centralizada de errores de permisos y expiración de sesión.
                     if (parsed && (parsed.code === 'AUTH_PERMISSION_DENIED' || (parsed.message && parsed.message.indexOf('Acceso denegado') !== -1))) {

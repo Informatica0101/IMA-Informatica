@@ -16,7 +16,13 @@ function logDebug(message, optionalParam) {
   } catch (_) {}
 }
 
+// [FASE2-T03] [Fase 2 - Contratos API y Compatibilidad] - Formato estandarizado de respuestas de API, marca de tiempo y códigos de error normalizados.
 function textResponse(obj) {
+  if (obj && typeof obj === "object") {
+    if (!obj.status) obj.status = "success";
+    if (!obj.timestamp) obj.timestamp = new Date().toISOString();
+    if (obj.status === "error" && !obj.code) obj.code = "INTERNAL_ERROR";
+  }
   return ContentService.createTextOutput(JSON.stringify(obj)).setMimeType(ContentService.MimeType.TEXT);
 }
 

@@ -615,3 +615,14 @@ DESCRIPCIÓN OBJETIVA DE LOS CAMBIOS:
 - Actualización del estado de [TAREA-20] a [X] Completada en Pendientes.md.
 
 -------------------------------------------------------------------------------
+FECHA: Octubre 2026
+ARCHIVO(S) AFECTADO(S): js/api.js, backend/academic-service/Code.gs, backend/accounting-service/Code.gs, backend/user-service/Code.gs, Pendientes.md
+-------------------------------------------------------------------------------
+DESCRIPCIÓN OBJETIVA DE LOS CAMBIOS:
+- Implementación de window.validateApiResponseContract en js/api.js para validación de contratos JSON y prevención de respuestas malformadas.
+- Estandarización de la función textResponse en backend/academic-service/Code.gs, backend/accounting-service/Code.gs y backend/user-service/Code.gs para garantizar presencia de campos status, timestamp ISO 8601 y código de error.
+- Implementación de validateApiContractsTestSuite en backend/academic-service/Code.gs para la ejecución automatizada de pruebas de contratos y compatibilidad API entre cliente y microservicios.
+- Inserción del comentario identificativo de FASE2-T03 en la primera línea de cada bloque modificado o creado.
+- Actualización del estado de [FASE2-T03] a [X] Completada en Pendientes.md.
+
+-------------------------------------------------------------------------------

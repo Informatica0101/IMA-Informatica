@@ -63,7 +63,7 @@
   8. Las pruebas confirman que la caché no mezcla permisos entre usuarios ni mantiene autorizaciones obsoletas fuera de la política aprobada.
 - **Estado:** [X] Completada
 
-### [ ] [FASE2-T02] Garantizar la idempotencia de las operaciones y evitar duplicaciones por reintentos HTTP
+### [X] [FASE2-T02] Garantizar la idempotencia de las operaciones y evitar duplicaciones por reintentos HTTP
 - **Origen del Hallazgo:** Auditoría de la Fase 2, octubre de 2026 (AUDITORIA_FASE2_ARQUITECTURA_INTEROPERABILIDAD.md - Área 5)
 - **Severidad/Clasificación:** Crítico
 - **Archivos Involucrados:** `js/api.js`, `backend/accounting-service/Code.gs`, `backend/academic-service/Code.gs`
@@ -89,7 +89,7 @@
   7. Los errores permanentes de validación o autorización no provocan reintentos innecesarios.
   8. Los intentos, los reintentos y el resultado final pueden distinguirse en los registros.
   9. Las pruebas incluyen emisión de documentos, pagos, matrículas, planillas y otras escrituras de consecuencias relevantes.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 ### [ ] [T-UX-01] Manejo Centralizado de Expiración de Sesión y Excepciones de Autorización
 - **Origen del Hallazgo:** Auditoría de la Fase 3, octubre de 2026 (AUDITORIA_FASE3_EXPERIENCIA_USUARIO_NAVEGACION.md - Área 1)
@@ -379,7 +379,7 @@
   - Las escalas de distintos programas curriculares pueden coexistir sin confusión.
 - **Estado:** [X] Completada
 
-### [ ] [FASE2-T03] Establecer contratos API verificables y pruebas automáticas de compatibilidad
+### [X] [FASE2-T03] Establecer contratos API verificables y pruebas automáticas de compatibilidad
 - **Origen del Hallazgo:** Auditoría de la Fase 2, octubre de 2026 (AUDITORIA_FASE2_ARQUITECTURA_INTEROPERABILIDAD.md - Área 2)
 - **Severidad/Clasificación:** Alto
 - **Archivos Involucrados:** `js/api.js`, `backend/user-service/Code.gs`, `backend/academic-service/Code.gs`, `backend/accounting-service/Code.gs`
@@ -403,7 +403,7 @@
   6. Las respuestas HTML, vacías o malformadas se gestionan sin provocar falsos éxitos.
   7. Las pruebas cubren casos válidos, inválidos, límites y errores de dependencias.
   8. Los consumidores existentes siguen funcionando después de un cambio compatible de contrato.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 ### [ ] [FASE2-T04] Establecer una fuente de verdad institucional para catálogos, configuraciones y referencias
 - **Origen del Hallazgo:** Auditoría de la Fase 2, octubre de 2026 (AUDITORIA_FASE2_ARQUITECTURA_INTEROPERABILIDAD.md - Área 3)

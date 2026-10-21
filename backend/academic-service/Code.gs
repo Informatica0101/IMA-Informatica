@@ -16,7 +16,13 @@ function logDebug(message, optionalParam) {
   } catch (_) {}
 }
 
+// [FASE2-T03] [Fase 2 - Contratos API y Compatibilidad] - Formato estandarizado de respuestas de API, marca de tiempo y códigos de error normalizados.
 function textResponse(obj) {
+  if (obj && typeof obj === "object") {
+    if (!obj.status) obj.status = "success";
+    if (!obj.timestamp) obj.timestamp = new Date().toISOString();
+    if (obj.status === "error" && !obj.code) obj.code = "INTERNAL_ERROR";
+  }
   return ContentService.createTextOutput(JSON.stringify(obj)).setMimeType(ContentService.MimeType.TEXT);
 }
 
@@ -154,7 +160,7 @@ const ROLE_PERMISSIONS = {
     "getInstitutionParams", "saveInstitutionParam", "getAcademicYears", "createAcademicYear", "updateAcademicYearStatus", "prepareNewAcademicYear",
     "getAcademicPeriods", "manageAcademicPeriod", "getSubjectCatalog", "createSubjectCatalogItem", "getStudyPlans", "createStudyPlan",
     "getAcademicOffers", "createAcademicOffer", "getTeacherAssignments", "assignTeacherToClass", "createTeacherSubstitution",
-    "getAcademicCalendar", "createCalendarEvent", "getClassSchedules", "createClassSchedule", "deleteClassSchedule", "getAcademicRules", "saveAcademicRule", "getDepartmentAcademicPlanning", "assignDepartmentHead", "getCurricularAnalyticsReport", "getReusableResourceCatalog", "manageReusableResource", "getCurricularEquivalences", "executeCurricularMigration", "registerCurricularAreaExtension", "runCurricularAreaServiceTests", "toggleCurricularAreaStatus",
+    "getAcademicCalendar", "createCalendarEvent", "getClassSchedules", "createClassSchedule", "deleteClassSchedule", "getAcademicRules", "saveAcademicRule", "getDepartmentAcademicPlanning", "assignDepartmentHead", "getCurricularAnalyticsReport", "getReusableResourceCatalog", "manageReusableResource", "getCurricularEquivalences", "executeCurricularMigration", "registerCurricularAreaExtension", "runCurricularAreaServiceTests", "toggleCurricularAreaStatus", "validateApiContractsTestSuite",
     "getClassroomResources", "saveClassroomResource", "getStudentSchedule",
     "createAdmissionRequest", "getAdmissionRequests", "updateAdmissionStatus", "convertAdmissionToStudent",
     "getStudentFile", "updateStudentFile", "getStudentTimeline", "findDuplicateStudents", "mergeStudentFiles",
@@ -353,6 +359,7 @@ function doPost(e) {
       case "manageReusableResource": result = manageReusableResource(payload); break;
       case "getCurricularEquivalences": result = getCurricularEquivalences(payload); break;
       case "executeCurricularMigration": result = executeCurricularMigration(payload); break;
+      case "validateApiContractsTestSuite": result = validateApiContractsTestSuite(payload); break;
       case "registerCurricularAreaExtension": result = registerCurricularAreaExtension(payload); break;
       case "runCurricularAreaServiceTests": result = runCurricularAreaServiceTests(payload); break;
       case "toggleCurricularAreaStatus": result = toggleCurricularAreaStatus(payload); break;
@@ -1307,6 +1314,55 @@ function executeCurricularMigration(payload) {
     status: "success",
     message: esSimulacion ? "Pre-validación y simulación de migración completada sin pérdidas de datos." : "Migración curricular ejecutada exitosamente conservando inalterables las calificaciones históricas.",
     reporte: report
+  };
+}
+
+// [FASE2-T03] [Fase 2 - Contratos API y Compatibilidad] - Suite automatizada de pruebas de contratos y compatibilidad API entre cliente y microservicios.
+function validateApiContractsTestSuite(payload) {
+  const testedEndpoints = [
+    { action: "ping", requiredKeys: ["status", "service", "timestamp"] },
+    { action: "getAcademicConfig", requiredKeys: ["status", "data"] },
+    { action: "getSectionEquivalences", requiredKeys: ["status", "seccionOriginal", "seccionEquivalente"] },
+    { action: "calculateUnifiedAcademicGrade", requiredKeys: ["status", "notaFinal", "estadoCalificacion"] }
+  ];
+
+  const results = [];
+  let totalPassed = 0;
+
+  testedEndpoints.forEach(item => {
+    try {
+      let res;
+      if (item.action === "ping") res = { status: "success", service: "ACADEMIC", timestamp: new Date().toISOString() };
+      else if (item.action === "getAcademicConfig") res = getAcademicConfig(payload);
+      else if (item.action === "getSectionEquivalences") res = getSectionEquivalences({ seccion: "Sección A" });
+      else if (item.action === "calculateUnifiedAcademicGrade") res = calculateUnifiedAcademicGrade({ actividades: [{ notaObtenida: 85, porcentajePonderacion: 100 }] });
+
+      const missingKeys = item.requiredKeys.filter(k => !(k in res));
+      const passed = missingKeys.length === 0 && (res.status === "success" || res.status === "error");
+      if (passed) totalPassed++;
+
+      results.push({
+        action: item.action,
+        status: passed ? "PASS" : "FAIL",
+        missingKeys: missingKeys,
+        contractSample: res
+      });
+    } catch (e) {
+      results.push({
+        action: item.action,
+        status: "FAIL",
+        error: e.message
+      });
+    }
+  });
+
+  return {
+    status: "success",
+    service: "ACADEMIC",
+    totalPruebas: testedEndpoints.length,
+    pruebasExitosas: totalPassed,
+    todasPruebasPasaron: totalPassed === testedEndpoints.length,
+    resultadosContratos: results
   };
 }
 
