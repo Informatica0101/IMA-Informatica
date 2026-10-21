@@ -2495,10 +2495,14 @@ function getDepartmentAcademicPlanning(payload) {
 
   const offerSheet = getOrCreateSheet(ss, "OfertasAcademicas");
   const offerData = offerSheet.getDataRange().getValues();
+
+  // Función local auxiliar de comparación diacrítica segura para evitar depender del alcance externo de normalizeString
+  const normStr = (str) => (!str ? "" : str.toString().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim());
+
   const offers = offerData.length > 1 ? offerData.slice(1).filter(r => {
     if (r[8] === "Inactivo") return false;
     if (anoId && String(r[1]).trim() !== String(anoId).trim()) return false;
-    if (departamentoId && normalizeString(r[7] || r[2]) !== normalizeString(departamentoId)) return false;
+    if (departamentoId && normStr(r[7] || r[2]) !== normStr(departamentoId)) return false;
     return true;
   }).map(r => ({
     ofertaId: r[0],
