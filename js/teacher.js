@@ -741,6 +741,90 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // [TAREA-19] [Fase 1 - Migración Curricular] - Handlers e integración frontend (#modal-curricular-migration) para mapeo, equivalencias y simulación pre-validada.
+    const modalCurricularMigration = document.getElementById('modal-curricular-migration');
+    const btnCloseCurricularMigration = document.getElementById('btn-close-curricular-migration');
+    const btnLoadEquivalences = document.getElementById('btn-load-equivalences');
+    const formCurricularMigration = document.getElementById('form-curricular-migration');
+    const migrationReportContainer = document.getElementById('migration-report-container');
+    const migrationReportDetails = document.getElementById('migration-report-details');
+
+    window.openCurricularMigrationModal = function() {
+        if (modalCurricularMigration) {
+            modalCurricularMigration.classList.remove('hidden');
+        }
+    };
+
+    if (btnCloseCurricularMigration) {
+        btnCloseCurricularMigration.addEventListener('click', () => {
+            if (modalCurricularMigration) modalCurricularMigration.classList.add('hidden');
+        });
+    }
+
+    if (btnLoadEquivalences) {
+        btnLoadEquivalences.addEventListener('click', async () => {
+            const planOrigenId = document.getElementById('mig-plan-origen')?.value || 'PLAN-ANTERIOR';
+            const planDestinoId = document.getElementById('mig-plan-destino')?.value || 'PLAN-2026-OFICIAL';
+            try {
+                if (window.showLoading) window.showLoading('Consultando equivalencias curriculares...');
+                const res = await fetchApi('ACADEMIC', 'getCurricularEquivalences', { planOrigenId, planDestinoId });
+                if (window.hideLoading) window.hideLoading();
+
+                if (res && res.status === 'success' && migrationReportContainer && migrationReportDetails) {
+                    migrationReportContainer.classList.remove('hidden');
+                    let html = `<div class="font-bold text-amber-700">Equivalencias Mapeadas (${res.totalAsignaturas || 0} asignaturas):</div>`;
+                    if (Array.isArray(res.equivalencias)) {
+                        res.equivalencias.slice(0, 10).forEach(eq => {
+                            html += `<div>• ${eq.nombreOrigen} (${eq.codigoOrigen}) → ${eq.nombreDestino} [${eq.estadoMapeo}]</div>`;
+                        });
+                    }
+                    migrationReportDetails.innerHTML = html;
+                } else if (res && res.message) {
+                    alert(res.message);
+                }
+            } catch (err) {
+                if (window.hideLoading) window.hideLoading();
+                console.error('Error al consultar equivalencias:', err);
+            }
+        });
+    }
+
+    if (formCurricularMigration) {
+        formCurricularMigration.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const planOrigenId = document.getElementById('mig-plan-origen')?.value || 'PLAN-ANTERIOR';
+            const planDestinoId = document.getElementById('mig-plan-destino')?.value || 'PLAN-2026-OFICIAL';
+            const ejecutarPruebaSeca = document.getElementById('mig-prueba-seca')?.checked ?? true;
+
+            try {
+                if (window.showLoading) window.showLoading('Ejecutando verificación e inspección de migración...');
+                const res = await fetchApi('ACADEMIC', 'executeCurricularMigration', {
+                    planOrigenId,
+                    planDestinoId,
+                    ejecutarPruebaSeca,
+                    modo: ejecutarPruebaSeca ? 'SIMULACION' : 'REAL'
+                });
+                if (window.hideLoading) window.hideLoading();
+
+                if (res && res.status === 'success' && migrationReportContainer && migrationReportDetails) {
+                    migrationReportContainer.classList.remove('hidden');
+                    const rep = res.reporte || {};
+                    let html = `<div class="font-bold text-emerald-700">${res.message}</div>`;
+                    html += `<div>Modo: ${rep.modoEjecucion || 'N/A'}</div>`;
+                    html += `<div>Registros Históricos Analizados: ${rep.registrosHistoricosAnalizados || 0}</div>`;
+                    html += `<div>Calificaciones Preservadas Inalterables: ${rep.calificacionesOficialesPreservadas || 0}</div>`;
+                    html += `<div>Discrepancias Detectadas: ${rep.discrepanciasDetectadas || 0}</div>`;
+                    migrationReportDetails.innerHTML = html;
+                } else if (res && res.message) {
+                    alert(res.message);
+                }
+            } catch (err) {
+                if (window.hideLoading) window.hideLoading();
+                console.error('Error al ejecutar migración:', err);
+            }
+        });
+    }
+
     // [TAREA-17] [Fase 1 - Analítica Académica] - Controlador del modal e interfaz de reportes analíticos por área, asignatura y programa (#modal-academic-analytics).
     const modalAcademicAnalytics = document.getElementById('modal-academic-analytics');
     const btnCloseAcademicAnalytics = document.getElementById('btn-close-academic-analytics');

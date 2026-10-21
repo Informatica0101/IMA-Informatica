@@ -1534,6 +1534,56 @@
         </div>
     </div>
 
+    <!-- [TAREA-19] [Fase 1 - Migración Curricular] - Interfaz modal (#modal-curricular-migration) para pre-validación, equivalencias y simulación sin pérdida de datos. -->
+    <div id="modal-curricular-migration" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-[95] flex items-center justify-center p-2 md:p-4 hidden">
+        <div class="bg-white rounded-3xl max-w-3xl w-full p-6 shadow-2xl border border-slate-100 space-y-4 animate-fade-in-up">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                <div class="flex items-center gap-2">
+                    <i class="fa-solid fa-file-import text-amber-600 text-xl"></i>
+                    <h3 class="font-bold text-slate-800 text-sm md:text-base">Mapeo, Equivalencias y Migración Curricular Inalterable</h3>
+                </div>
+                <button id="btn-close-curricular-migration" class="text-slate-400 hover:text-slate-600 p-1"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+
+            <!-- Formulario de Configuración de Migración -->
+            <form id="form-curricular-migration" class="bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-3">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Plan / Malla Origen</label>
+                        <select id="mig-plan-origen" class="w-full text-xs p-2.5 rounded-xl border border-slate-300 bg-white font-semibold">
+                            <option value="PLAN-CNB-2022">CNB Honduras 2022 (Historico)</option>
+                            <option value="PLAN-BILINGUE-2024">Programa Bilingüe 2024</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Plan / Malla Destino</label>
+                        <select id="mig-plan-destino" class="w-full text-xs p-2.5 rounded-xl border border-slate-300 bg-white font-semibold">
+                            <option value="PLAN-2026-OFICIAL" selected>Estructura Unificada 2026</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2 pt-1">
+                    <input type="checkbox" id="mig-prueba-seca" checked class="rounded text-amber-600 focus:ring-amber-500">
+                    <label for="mig-prueba-seca" class="text-xs font-bold text-slate-700">Ejecutar como Simulación / Pre-validación (Sin modificar datos reales)</label>
+                </div>
+                <div class="flex justify-end gap-2 pt-2">
+                    <button type="button" id="btn-load-equivalences" class="px-4 py-2 bg-slate-200 text-slate-800 text-xs font-bold rounded-xl hover:bg-slate-300 transition-all">Ver Mapeo</button>
+                    <button type="submit" id="btn-run-migration" class="px-4 py-2 bg-amber-600 text-white text-xs font-bold rounded-xl hover:bg-amber-700 transition-all">Ejecutar Verificación</button>
+                </div>
+            </form>
+
+            <!-- Resumen y Resultado de Pre-validación -->
+            <div id="migration-report-container" class="border border-slate-200 rounded-2xl p-4 bg-slate-50 text-xs space-y-2 hidden">
+                <h4 class="font-bold text-slate-800 uppercase tracking-wider flex items-center gap-2">
+                    <i class="fa-solid fa-clipboard-check text-emerald-600"></i> Resultado de Pre-validación y Simulación
+                </h4>
+                <div id="migration-report-details" class="font-mono text-slate-700 space-y-1 bg-white p-3 rounded-xl border border-slate-200">
+                    <!-- Dinámico -->
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- [TAREA-18] [Fase 1 - Reutilización de Recursos] - Interfaz modal (#modal-reusable-resources) para catálogo de recursos educativos reutilizables y proyectos interdisciplinarios. -->
     <div id="modal-reusable-resources" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-[95] flex items-center justify-center p-2 md:p-4 hidden">
         <div class="bg-white rounded-3xl max-w-4xl w-full p-6 shadow-2xl border border-slate-100 space-y-4 animate-fade-in-up">

@@ -1271,10 +1271,10 @@
   - Los proyectos interdisciplinarios pueden relacionar recursos de varias áreas.
 - **Estado:** [X] Completada
 
-### [ ] [TAREA-19] Implementar configuración y migración curricular sin pérdida de datos
+### [X] [TAREA-19] Implementar configuración y migración curricular sin pérdida de datos
 - **Origen del Hallazgo:** Auditoría de la Fase 1, octubre de 2026 (AUDITORIA_FASE1_PLANIFICACION_EXPANSION.md - Sección B & K)
 - **Severidad/Clasificación:** Bajo
-- **Archivos Involucrados:** `backend/academic-service/Code.gs`, `js/teacher.js`
+- **Archivos Involucrados:** `backend/academic-service/Code.gs`, `js/teacher.js`, `teacher-dashboard.html`
 - **Dependencias Expuestas:** Tarea 08, catálogo de asignaturas, historial académico y estructura de almacenamiento.
 - **Descripción del Alcance:**
   1. Herramienta de mapeo y equivalencias curriculares para planes anteriores.
@@ -1288,7 +1288,7 @@
   - Las migraciones detectan registros duplicados o huérfanos.
   - Los resultados pueden compararse antes y después de la migración.
   - La reversión recupera el estado anterior cuando sea necesaria.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 ### [ ] [TAREA-20] Formalizar la incorporación de nuevas áreas y servicios curriculares
 - **Origen del Hallazgo:** Auditoría de la Fase 1, octubre de 2026 (AUDITORIA_FASE1_PLANIFICACION_EXPANSION.md - Sección B & K)

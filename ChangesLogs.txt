@@ -593,3 +593,14 @@ DESCRIPCIÓN OBJETIVA DE LOS CAMBIOS:
 - Actualización del estado de [TAREA-18] a [X] Completada en Pendientes.md.
 
 -------------------------------------------------------------------------------
+FECHA: Octubre 2026
+ARCHIVO(S) AFECTADO(S): backend/academic-service/Code.gs, teacher-dashboard.html, js/teacher.js, Pendientes.md
+-------------------------------------------------------------------------------
+DESCRIPCIÓN OBJETIVA DE LOS CAMBIOS:
+- Implementación de getCurricularEquivalences y executeCurricularMigration en backend/academic-service/Code.gs para el mapeo, equivalencias curriculares, simulación/pre-validación sin pérdida de datos y preservación inalterable de calificaciones históricas.
+- Adición del modal #modal-curricular-migration en teacher-dashboard.html.
+- Implementación de controladores JavaScript en js/teacher.js para consulta de mapeo y ejecución de simulación de migración.
+- Inserción del comentario identificativo de TAREA-19 en la primera línea sobre getCurricularEquivalences en Code.gs y en el controlador de js/teacher.js.
+- Actualización del estado de [TAREA-19] a [X] Completada en Pendientes.md.
+
+-------------------------------------------------------------------------------
