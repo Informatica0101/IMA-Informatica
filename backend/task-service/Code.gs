@@ -1153,17 +1153,23 @@ function getAllStudentProjects(payload) {
   return { status: "success", data: projects };
 }
 
-// --- HELPERS DE DRIVE ---
+// [TAREA-06] [Fase 1 - Gestión Documental] - Módulo institucional de gestión de carpetas, identificadores estables y permisos documentales.
 function getOrCreateFolder(parentFolder, folderName) {
-  // Convertimos a string por si viene de una celda con formato número (ej. 10, 11)
   const name = String(folderName || "").trim() || "Sin Nombre";
+  const lock = LockService.getScriptLock();
   try {
+    lock.tryLock(15000);
     const folders = parentFolder.getFoldersByName(name);
-    return folders.hasNext() ? folders.next() : parentFolder.createFolder(name);
+    if (folders.hasNext()) {
+      return folders.next();
+    }
+    return parentFolder.createFolder(name);
   } catch (e) {
     const errorMsg = `Error de DriveApp en carpeta "${name}": ${e.message}`;
     logDebug(errorMsg);
     throw new Error(errorMsg);
+  } finally {
+    try { lock.releaseLock(); } catch (_) {}
   }
 }
 

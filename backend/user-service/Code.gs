@@ -2868,7 +2868,17 @@ function uploadNewsImage(payload) {
   return { status: "success", data: { fileId: file.getId(), directUrl: `https://lh3.googleusercontent.com/d/${file.getId()}` } };
 }
 
-function getOrCreateFolderNews(parent, name) { const f = parent.getFoldersByName(name); return f.hasNext() ? f.next() : parent.createFolder(name); }
+// [TAREA-06] [Fase 1 - Gestión Documental] - Módulo institucional de gestión de carpetas, identificadores estables y permisos documentales.
+function getOrCreateFolderNews(parent, name) {
+  const lock = LockService.getScriptLock();
+  try {
+    lock.tryLock(15000);
+    const f = parent.getFoldersByName(name);
+    return f.hasNext() ? f.next() : parent.createFolder(name);
+  } finally {
+    try { lock.releaseLock(); } catch (_) {}
+  }
+}
 
 // ---------------------------------------------------------------------------
 // FASE 25: FLUJOS DE APROBACIÓN, REVISIÓN Y FIRMA INSTITUCIONAL

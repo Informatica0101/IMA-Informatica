@@ -339,3 +339,24 @@ Archivos Modificados:
 
 4. ChangesLogs.txt
    - Registro objetivo de las modificaciones en la arquitectura de servicios en js/config.js.
+
+-------------------------------------------------------------------------------
+FECHA: Octubre 2026
+TAREA: [TAREA-06] Completar la gestión institucional de carpetas y permisos documentales
+-------------------------------------------------------------------------------
+
+Archivos Modificados:
+1. backend/task-service/Code.gs
+   - Lineas 1153-1172: Refuerzo de la función getOrCreateFolder incorporando bloqueo atómico LockService.getScriptLock() con try...finally para garantizar la prevención de creación de carpetas duplicadas bajo ejecuciones concurrentes. Adición de comentario identificativo de tarea en primera línea.
+
+2. backend/user-service/Code.gs
+   - Lineas 2868-2880: Refuerzo de la función getOrCreateFolderNews con LockService.getScriptLock() atómico para prevención de duplicados de carpetas. Adición de comentario identificativo de tarea en primera línea.
+
+3. Pendientes.md
+   - Actualización del estado a [X] TAREA-06 completada.
+
+4. Auditoria.txt
+   - Registro de la ejecución completada de TAREA-06.
+
+5. ChangesLogs.txt
+   - Registro objetivo de las mejoras documentales en backend.

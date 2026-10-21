@@ -119,7 +119,7 @@
   - La arquitectura no depende de una cuenta personal sin un procedimiento de continuidad institucional.
 - **Estado:** [X] Completada
 
-### [TAREA-06] Completar la gestión institucional de carpetas y permisos documentales
+### [X] [TAREA-06] Completar la gestión institucional de carpetas y permisos documentales
 - **Origen del Hallazgo:** Auditoría de la Fase 1, octubre de 2026 (AUDITORIA_FASE1_PLANIFICACION_EXPANSION.md - Sección F)
 - **Severidad/Clasificación:** Alto
 - **Archivos Involucrados:** `backend/academic-service/Code.gs`, `backend/accounting-service/Code.gs`, `backend/user-service/Code.gs`, `js/teacher.js`, `js/accounting.js`
@@ -144,7 +144,7 @@
   - Los cambios de nombre o ubicación no rompen las referencias que la aplicación deba conservar.
   - Los fallos de permisos o de acceso se registran sin dejar operaciones aparentemente completadas.
   - Las pruebas de concurrencia no generan estructuras inconsistentes.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 ### [TAREA-07] Implementar una estrategia integral de almacenamiento, conservación y recuperación
 - **Origen del Hallazgo:** Auditoría de la Fase 1, octubre de 2026 (AUDITORIA_FASE1_PLANIFICACION_EXPANSION.md - Sección G)
