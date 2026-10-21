@@ -714,33 +714,44 @@ const ROLE_PERMISSIONS = {
   ]
 };
 
-// [T-GOV-02] [pendientes3.md] - Función verificadora de rol en servidor (getUserVerifiedRole) para validación estricta de propiedad y alcance de acceso.
+// [TAREA-01] [Fase 1 - Seguridad RBAC] - Validar y reforzar la seguridad de los servicios y la separación de permisos en el servidor.
 function getUserVerifiedRole(payload) {
   if (!payload) return "Estudiante";
-  const declaredRole = payload.authRole || payload.rol || (payload.currentUser && payload.currentUser.rol);
-  const userId = payload.userId || (payload.currentUser && payload.currentUser.userId);
+  const userId = payload.userId || payload.authUserId || (payload.currentUser && payload.currentUser.userId);
   const email = payload.email || (payload.currentUser && payload.currentUser.email);
+  const declaredRole = payload.authRole || payload.rol || (payload.currentUser && payload.currentUser.rol);
 
-  if (userId || email) {
-    try {
-      const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
-      const sheet = ss.getSheetByName("Usuarios");
-      if (sheet) {
-        const data = sheet.getDataRange().getValues();
-        for (let i = 1; i < data.length; i++) {
-          const rUserId = String(data[i][0]).trim();
-          const rEmail = String(data[i][4]).toLowerCase().trim();
-          if ((userId && rUserId === String(userId).trim()) || (email && rEmail === String(email).toLowerCase().trim())) {
-            const trueRole = data[i][6];
-            if (trueRole) return String(trueRole).trim();
-          }
+  if (!userId && !email) {
+    return "Estudiante";
+  }
+
+  const cacheKey = "user_role_" + (userId || email);
+  try {
+    const cache = CacheService.getScriptCache();
+    const cachedRole = cache.get(cacheKey);
+    if (cachedRole) {
+      return cachedRole;
+    }
+
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const sheet = ss.getSheetByName("Usuarios");
+    if (sheet) {
+      const data = sheet.getDataRange().getValues();
+      for (let i = 1; i < data.length; i++) {
+        const rUserId = String(data[i][0]).trim();
+        const rEmail = String(data[i][4]).toLowerCase().trim();
+        if ((userId && rUserId === String(userId).trim()) || (email && rEmail === String(email).toLowerCase().trim())) {
+          const trueRole = String(data[i][6] || "Estudiante").trim();
+          cache.put(cacheKey, trueRole, 21600);
+          return trueRole;
         }
       }
-    } catch (e) {
-      logDebug("Error consultando rol verificado en backend: " + e.message);
     }
+  } catch (e) {
+    logDebug("Error consultando rol verificado en backend: " + e.message);
   }
-  return declaredRole || "Estudiante";
+
+  return "Estudiante";
 }
 
 function validateRolePermission(action, payload) {

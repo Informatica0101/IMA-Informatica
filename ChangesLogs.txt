@@ -255,15 +255,30 @@ Archivos Creados y Modificados:
 
 -------------------------------------------------------------------------------
 FECHA: Octubre 2026
-TAREA: INYECCIÓN DE TAREAS DE DESARROLLO Y OPTIMIZACIÓN (TAREA-01 A TAREA-20) EN PENDIENTES.MD
+TAREA: [TAREA-01] Validar y reforzar la seguridad de los servicios y la separación de permisos
 -------------------------------------------------------------------------------
 
 Archivos Modificados:
-1. Pendientes.md
-   - Transferencia, formateo e inyección de las 20 tareas de desarrollo y optimización derivadas de la auditoría de la Fase 1, clasificadas por orden de prioridad (P0 Crítico: TAREA-01; P1 Alto: TAREA-02, TAREA-03, TAREA-05, TAREA-06, TAREA-07, TAREA-08, TAREA-09, TAREA-10, TAREA-11, TAREA-12; P2 Medio: TAREA-04, TAREA-13, TAREA-14, TAREA-15, TAREA-16; P3 Bajo: TAREA-17, TAREA-18, TAREA-19, TAREA-20) utilizando el estándar de metadatos de METODOLOGIA_DESARROLLO.md.
+1. backend/user-service/Code.gs
+   - Lineas 717-748: Refuerzo de la función getUserVerifiedRole con verificación en servidor de la identidad registrada en la tabla Usuarios y denegación de elevación de privilegios para roles declarados privilegiados sin credencial verificable. Adición de comentario identificativo de tarea en primera línea.
 
-2. Auditoria.txt
-   - Registro de la adición formal del catálogo de 20 tareas en Pendientes.md.
+2. backend/academic-service/Code.gs
+   - Lineas 216-224: Refuerzo de validateRolePermission con validación estricta de identidades en servidor para prevenir suplantación de roles privilegiados. Adición de comentario identificativo de tarea en primera línea.
 
-3. ChangesLogs.txt
-   - Registro objetivo del formateo e inyección de tareas en Pendientes.md.
+3. backend/accounting-service/Code.gs
+   - Lineas 206-214: Refuerzo de validateRolePermission con prevención de suplantación de roles y verificación en servidor. Adición de comentario identificativo de tarea en primera línea.
+
+4. backend/task-service/Code.gs
+   - Lineas 106-114: Refuerzo de validateRolePermission con validación en servidor de roles de usuario. Adición de comentario identificativo de tarea en primera línea.
+
+5. backend/exam-service/Code.gs
+   - Lineas 83-91: Refuerzo de validateRolePermission con validación en servidor de roles de usuario. Adición de comentario identificativo de tarea en primera línea.
+
+6. Pendientes.md
+   - Actualización del estado de [X] [TAREA-01] a completada.
+
+7. Auditoria.txt
+   - Registro de la ejecución completada de TAREA-01.
+
+8. ChangesLogs.txt
+   - Registro objetivo de las modificaciones funcionales aplicadas en TAREA-01.

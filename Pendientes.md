@@ -7,7 +7,7 @@
 
 ## GRUPO PRIORIDAD P0 (CRÍTICO)
 
-### [TAREA-01] Validar y reforzar la seguridad de los servicios y la separación de permisos
+### [X] [TAREA-01] Validar y reforzar la seguridad de los servicios y la separación de permisos
 - **Origen del Hallazgo:** Auditoría de la Fase 1, octubre de 2026 (AUDITORIA_FASE1_PLANIFICACION_EXPANSION.md - Sección C & I)
 - **Severidad/Clasificación:** Crítico
 - **Archivos Involucrados:** `backend/user-service/Code.gs`, `backend/academic-service/Code.gs`, `backend/accounting-service/Code.gs`, `backend/task-service/Code.gs`, `backend/exam-service/Code.gs`, `js/auth.js`, `js/api.js`
@@ -33,7 +33,7 @@
   - Las operaciones sensibles se comprueban en el servidor, incluso cuando se invocan directamente sin utilizar la interfaz.
   - Los intentos no autorizados generan respuestas controladas y registros de auditoría.
   - Las pruebas de regresión confirman que los usuarios autorizados conservan sus funciones legítimas.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 ---
 
