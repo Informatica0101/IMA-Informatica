@@ -201,7 +201,7 @@
   - Las áreas y asignaturas nuevas aparecen en los formularios, filtros y reportes correspondientes.
 - **Estado:** [X] Completada
 
-### [TAREA-09] Crear un servicio de Apps Script especializado para cada área curricular
+### [X] [TAREA-09] Crear un servicio de Apps Script especializado para cada área curricular
 - **Origen del Hallazgo:** Auditoría de la Fase 1, octubre de 2026 (AUDITORIA_FASE1_PLANIFICACION_EXPANSION.md - Sección D & K)
 - **Severidad/Clasificación:** Alto
 - **Archivos Involucrados:** `backend/academic-service/Code.gs`, `backend/task-service/Code.gs`, `backend/exam-service/Code.gs`, `js/config.js`, `js/api.js`
@@ -230,7 +230,7 @@
   - Las calificaciones se integran correctamente con el historial académico.
   - La desactivación de un área no elimina tareas, entregas ni resultados históricos.
   - Se pueden incorporar áreas nuevas sin reconstruir los servicios comunes.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 ### [TAREA-10] Ampliar el sistema de tareas, entregas, revisiones y retroalimentación
 - **Origen del Hallazgo:** Auditoría de la Fase 1, octubre de 2026 (AUDITORIA_FASE1_PLANIFICACION_EXPANSION.md - Sección B & H)

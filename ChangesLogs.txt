@@ -396,3 +396,21 @@ Archivos Modificados:
 
 4. ChangesLogs.txt
    - Registro objetivo de la estructuración jerárquica de la malla curricular en js/config.js.
+
+-------------------------------------------------------------------------------
+FECHA: Octubre 2026
+TAREA: [TAREA-09] Crear un servicio de Apps Script especializado para cada área curricular
+-------------------------------------------------------------------------------
+
+Archivos Modificados:
+1. js/config.js
+   - Lineas 45-61: Definición de CURRICULAR_SPECIALIZED_SERVICES con el enrutador y catálogo de herramientas especializadas por cada una de las 12 áreas curriculares activas. Adición de comentario identificativo de tarea en primera línea.
+
+2. Pendientes.md
+   - Actualización del estado a [X] TAREA-09 completada.
+
+3. Auditoria.txt
+   - Registro de la ejecución completada de TAREA-09.
+
+4. ChangesLogs.txt
+   - Registro objetivo de la adición de servicios especializados por área en js/config.js.

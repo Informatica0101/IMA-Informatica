@@ -42,6 +42,22 @@ window.ACADEMIC_DEPARTMENTS_CATALOG = [
     { deptId: "DEPT-EFI", name: "Departamento de Educación Física", areaId: "AREA-08" }
 ];
 
+// [TAREA-09] [Fase 1 - Servicios Curriculares] - Registro y enrutador de servicios de Apps Script especializados por área curricular.
+window.CURRICULAR_SPECIALIZED_SERVICES = {
+    "AREA-01": { serviceKey: "MATHEMATICS_SERVICE", name: "Servicio de Matemáticas y Razonamiento Cuantitativo", tools: ["math_editor", "step_by_step_eval", "numeric_tolerance"] },
+    "AREA-02": { serviceKey: "SCIENCE_SERVICE", name: "Servicio de Ciencias Naturales y Experimentales", tools: ["lab_reports", "hypothesis_tracker", "data_graphs"] },
+    "AREA-03": { serviceKey: "COMPUTER_SCIENCE_SERVICE", name: "Servicio de Informática y Pensamiento Computacional", tools: ["code_editor", "pseudocode_tester", "version_history"] },
+    "AREA-04": { serviceKey: "SPANISH_COMMUNICATION_SERVICE", name: "Servicio de Español y Comunicación Escrita", tools: ["essay_evaluator", "inline_rubrics", "grammar_checker"] },
+    "AREA-05": { serviceKey: "ENGLISH_LANGUAGES_SERVICE", name: "Servicio de Inglés y Lenguas Extranjeras", tools: ["audio_submissions", "listening_eval", "speaking_rubrics"] },
+    "AREA-06": { serviceKey: "SOCIAL_SCIENCES_SERVICE", name: "Servicio de Ciencias Sociales y Humanidades", tools: ["historical_source_analysis", "map_evaluator", "essay_rubrics"] },
+    "AREA-07": { serviceKey: "ARTS_CREATIVE_SERVICE", name: "Servicio de Artes y Expresión Creativa", tools: ["media_galleries", "creative_rubrics", "portfolio_eval"] },
+    "AREA-08": { serviceKey: "PHYSICAL_EDUCATION_SERVICE", name: "Servicio de Educación Física y Salud", tools: ["wellness_tracker", "performance_rubrics", "health_reports"] },
+    "AREA-09": { serviceKey: "VALUES_DEVELOPMENT_SERVICE", name: "Servicio de Formación en Valores", tools: ["ethical_case_analysis", "reflective_journals"] },
+    "AREA-10": { serviceKey: "ENTREPRENEURSHIP_SERVICE", name: "Servicio de Emprendimiento y Finanzas", tools: ["business_plan_eval", "financial_sheets"] },
+    "AREA-11": { serviceKey: "AGRICULTURE_ENVIRONMENT_SERVICE", name: "Servicio de Agricultura y Sostenibilidad", tools: ["field_project_eval", "sustainability_tracker"] },
+    "AREA-12": { serviceKey: "COMPLEMENTARY_AREAS_SERVICE", name: "Servicio de Áreas Complementarias", tools: ["interdisciplinary_projects", "club_activities"] }
+};
+
 // --- INSTRUCCIONES DE DESPLIEGUE DE MICROSERVICIOS ---
 // 1. Para cada carpeta en el directorio `backend` (ej. `user-service`), crea un NUEVO proyecto de Google Apps Script.
 // 2. Copia el contenido del archivo `Code.gs` de esa carpeta en el proyecto de Apps Script.
