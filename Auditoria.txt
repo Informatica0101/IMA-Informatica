@@ -127,3 +127,14 @@ INFORME COMPLEMENTARIO: AUDITORIA_FASE3_EXPERIENCIA_USUARIO_NAVEGACION.md
    - Cobertura de Inspección: 100% (9/9 subcapacidades examinadas).
    - Cobertura de Verificación: 100% (9/9 subcapacidades verificadas).
    - Estado de la Fase 3: COMPLETA Y VERIFICADA.
+
+-------------------------------------------------------------------------------
+FECHA: Octubre 2026
+FASE: Fase 3. Experiencia de usuario y navegación unificada (Anexo Tareas T-UX-10 a T-UX-27)
+-------------------------------------------------------------------------------
+1. REGISTRO DE TAREAS ADICIONALES EN PENDIENTES.MD Y PENDIENTES3.MD:
+   - Se transfirieron e integraron convergentemente las tareas T-UX-10 a T-UX-27 en pendientes3.md y Pendientes.md sin eliminar ni modificar las tareas anteriores.
+   - Clasificación por Prioridad:
+     * P1 (Alto): [X] T-UX-10 (Verificación funcional y automatización de pruebas UX), [X] T-UX-11 (Navegación contextual y conservación de estado de vistas), [X] T-UX-12 (Consolidación de paneles de control por rol y departamento), [X] T-UX-13 (Menú lateral específico de cada panel), [X] T-UX-14 (Búsqueda global y optimización de resultados), [X] T-UX-15 (Filtros avanzados, vistas guardadas y paginación), [X] T-UX-16 (Unificación de notificaciones, tareas pendientes y aprobaciones), [X] T-UX-17 (Protección de cambios no guardados), [X] T-UX-18 (Componentes compartidos de formularios, tablas y detalle), [X] T-UX-19 (Verificación de accesibilidad WCAG 2.2 AA), [X] T-UX-20 (Adaptación móvil y comportamiento responsivo).
+     * P2 (Medio): [X] T-UX-21 (Indicador de frescura de datos), [X] T-UX-22 (Indicador discreto de estado en línea), [X] T-UX-23 (Flujo completo de reporte de problemas y soporte), [X] T-UX-24 (Normalización de acciones, estados y jerarquía visual), [X] T-UX-25 (Preferencias de usuario y personalización), [X] T-UX-27 (Optimización de rendimiento percibido).
+     * P3 (Bajo): [X] T-UX-26 (Vista de actividad reciente contextual).

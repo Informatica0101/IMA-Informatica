@@ -598,6 +598,208 @@
   - Navegación fluida en escritorio y dispositivos táctiles.
 - **Estado:** [X] Completada
 
+### [X] [T-UX-10] Completar la verificación funcional y automatizar las pruebas de experiencia de usuario
+- **Origen del Hallazgo:** Auditoría de la Fase 3, octubre de 2026 (AUDITORIA_FASE3_EXPERIENCIA_USUARIO_NAVEGACION.md)
+- **Severidad/Clasificación:** Alto
+- **Archivos Involucrados:** `js/ui-common.js`, `js/student.js`, `js/teacher.js`, `js/accounting.js`
+- **Dependencias Expuestas:** Navegación global, paneles de control, búsqueda omnibox, menús laterales, notificaciones, formularios, protección de cambios no guardados, estado de conexión, reporte de problemas y estilos compartidos.
+- **Descripción del Alcance:**
+  1. Crear una matriz de pruebas automatizadas para las nueve subcapacidades identificadas como UX-01 a UX-09.
+  2. Ampliar las pruebas para incluir los flujos funcionales completos, no solo la presencia de controles o la apertura de ventanas.
+  3. Verificar que los componentes compartidos funcionen en los paneles reales de estudiantes, docentes, dirección, recursos humanos y contabilidad.
+  4. Incorporar pruebas de regresión para navegación, permisos, búsqueda, notificaciones, formularios, estados de conexión y accesibilidad.
+  5. Diferenciar resultados correctos, fallidos, no ejecutados y bloqueados.
+- **Criterios de Aceptación:**
+  - Las nueve subcapacidades originales tienen casos de prueba identificables.
+  - La búsqueda global se prueba con resultados válidos, búsquedas sin coincidencias, permisos insuficientes y errores de servicio.
+  - El menú lateral se prueba en escritorio, móvil y distintos roles.
+  - El centro de notificaciones se prueba con avisos leídos, no leídos, destinos inaccesibles y errores de carga.
+  - El reporte de problemas se prueba desde la apertura del formulario hasta la confirmación real de recepción.
+  - La protección de cambios no guardados se prueba al navegar, cerrar ventanas y abandonar formularios.
+- **Estado:** [X] Completada
+
+### [X] [T-UX-11] Unificar la navegación contextual y conservar el estado de las vistas
+- **Origen del Hallazgo:** Auditoría de la Fase 3, octubre de 2026 (AUDITORIA_FASE3_EXPERIENCIA_USUARIO_NAVEGACION.md - Área 1)
+- **Severidad/Clasificación:** Alto
+- **Archivos Involucrados:** `js/ui-common.js`, Dashboards HTML
+- **Dependencias Expuestas:** Encabezados institucionales, menú principal, menú lateral de sección, rutas de navegación, listas, vistas de detalle y manejo de sesión.
+- **Descripción del Alcance:**
+  1. Mantener una estructura de navegación consistente entre los paneles de control.
+  2. Mostrar la ubicación actual dentro de la plataforma.
+  3. Conservar el contexto de las listas al abrir y cerrar vistas de detalle.
+  4. Permitir volver a la sección anterior sin perder innecesariamente el trabajo.
+  5. Gestionar las rutas directas, los enlaces inválidos y las sesiones vencidas.
+  6. Adaptar las opciones de navegación al rol y a los permisos efectivos.
+- **Criterios de Aceptación:**
+  - Al abrir un registro desde una lista filtrada, regresar conserva los filtros y la página anterior.
+  - Si el registro se abre mediante una ruta directa, la vista funciona sin depender de una navegación previa.
+  - Los enlaces y controles de regreso conducen al destino correcto.
+  - Una sesión vencida no produce una falsa confirmación de guardado.
+  - Las rutas inválidas muestran una salida comprensible.
+- **Estado:** [X] Completada
+
+### [X] [T-UX-12] Consolidar los paneles de control por rol y departamento
+- **Origen del Hallazgo:** Auditoría de la Fase 3, octubre de 2026 (AUDITORIA_FASE3_EXPERIENCIA_USUARIO_NAVEGACION.md - Área 2)
+- **Severidad/Clasificación:** Alto
+- **Archivos Involucrados:** `js/student.js`, `js/teacher.js`, `js/accounting.js`
+- **Dependencias Expuestas:** Paneles de estudiantes, docentes, dirección, recursos humanos y contabilidad; servicios de datos y permisos asociados.
+- **Descripción del Alcance:**
+  1. Definir el contenido funcional de cada panel según las responsabilidades reales del rol.
+  2. Mostrar información prioritaria, tareas pendientes, avisos y accesos frecuentes.
+  3. Diferenciar los indicadores de resumen de las listas operativas.
+  4. Evitar mostrar datos irrelevantes, duplicados o desactualizados como si fueran actuales.
+  5. Permitir acceso directo a las tareas que requieren atención.
+  6. Respetar permisos tanto en la interfaz como en los servicios.
+- **Criterios de Aceptación:**
+  - Cada rol existente tiene un panel definido y comprobado.
+  - Los indicadores corresponden al contexto, período y usuario correctos.
+  - Los datos no disponibles se distinguen de los valores cero.
+  - Los accesos conducen a operaciones reales.
+  - Las acciones visibles respetan los permisos efectivos.
+- **Estado:** [X] Completada
+
+### [X] [T-UX-13] Completar el menú lateral específico de cada panel
+- **Origen del Hallazgo:** Auditoría de la Fase 3, octubre de 2026 (AUDITORIA_FASE3_EXPERIENCIA_USUARIO_NAVEGACION.md - Área 3)
+- **Severidad/Clasificación:** Alto
+- **Archivos Involucrados:** `js/ui-common.js`, Dashboards HTML
+- **Dependencias Expuestas:** Menú lateral de sección, encabezados institucionales y paneles de control.
+- **Descripción del Alcance:**
+  1. Organizar en un menú lateral las opciones de navegación propias de cada panel.
+  2. Mantener separados los elementos comunes y las opciones exclusivas de cada rol.
+  3. Diferenciar las opciones de navegación de las acciones inmediatas.
+  4. Identificar visualmente la sección activa.
+  5. Permitir contraer y expandir el menú en escritorio cuando corresponda.
+  6. Proporcionar una presentación móvil adecuada.
+- **Criterios de Aceptación:**
+  - Las opciones de cada panel están inventariadas y vinculadas a rutas reales.
+  - Las opciones específicas aparecen únicamente en los contextos autorizados.
+  - La sección activa se identifica visualmente y mediante un estado accesible.
+  - El menú se puede utilizar con teclado y controles táctiles.
+  - En móvil, puede abrirse y cerrarse sin bloquear el contenido.
+- **Estado:** [X] Completada
+
+### [X] [T-UX-14] Completar la búsqueda global y optimizar sus resultados
+- **Origen del Hallazgo:** Auditoría de la Fase 3, octubre de 2026 (AUDITORIA_FASE3_EXPERIENCIA_USUARIO_NAVEGACION.md - Área 4)
+- **Severidad/Clasificación:** Alto
+- **Archivos Involucrados:** `js/ui-common.js`, `backend/user-service/Code.gs`
+- **Dependencias Expuestas:** Omnibox, modal de búsqueda global, normalizador de texto y servicio de búsqueda global.
+- **Descripción del Alcance:**
+  1. Mantener los atajos "Ctrl+K" y "Cmd+K", respetando los contextos en los que no deban interceptarse.
+  2. Buscar en los tipos de registros que el usuario esté autorizado a consultar.
+  3. Normalizar mayúsculas, minúsculas y diacríticos de manera coherente.
+  4. Identificar el tipo de entidad y el contexto de cada resultado.
+  5. Permitir navegar directamente al registro correcto.
+  6. Gestionar consultas vacías, sin coincidencias y con caracteres especiales.
+- **Criterios de Aceptación:**
+  - Los atajos funcionan en los sistemas y navegadores compatibles.
+  - El foco se coloca en el campo de búsqueda al abrir el omnibox.
+  - Las búsquedas equivalentes con y sin tildes devuelven coincidencias pertinentes.
+  - Se prueban nombres, identificadores, términos parciales y resultados ambiguos.
+- **Estado:** [X] Completada
+
+### [X] [T-UX-15] Implementar filtros avanzados, vistas guardadas y paginación coherente
+- **Origen del Hallazgo:** Auditoría de la Fase 3, octubre de 2026 (AUDITORIA_FASE3_EXPERIENCIA_USUARIO_NAVEGACION.md - Área 5)
+- **Severidad/Clasificación:** Alto
+- **Archivos Involucrados:** `js/ui-common.js`
+- **Dependencias Expuestas:** Tablas, listas, filtros, ordenamiento, paginación y preferencias de usuario.
+- **Descripción del Alcance:**
+  1. Permitir filtrar registros mediante campos pertinentes a cada módulo.
+  2. Combinar varios filtros con resultados predecibles.
+  3. Mostrar los filtros activos y permitir eliminarlos.
+  4. Mantener los filtros durante la paginación y la navegación al detalle.
+  5. Guardar vistas reutilizables cuando exista una necesidad real.
+  6. Diferenciar vistas personales de vistas compartidas.
+- **Criterios de Aceptación:**
+  - La combinación de filtros produce resultados correctos.
+  - El usuario puede eliminar filtros individualmente y restablecer la consulta.
+  - La paginación conserva los criterios activos.
+  - El ordenamiento es coherente con los datos mostrados.
+- **Estado:** [X] Completada
+
+### [X] [T-UX-16] Unificar los estados de notificaciones, tareas pendientes y aprobaciones
+- **Origen del Hallazgo:** Auditoría de la Fase 3, octubre de 2026 (AUDITORIA_FASE3_EXPERIENCIA_USUARIO_NAVEGACION.md - Área 11 & 12)
+- **Severidad/Clasificación:** Alto
+- **Archivos Involucrados:** `js/ui-common.js`, `backend/user-service/Code.gs`
+- **Dependencias Expuestas:** Centro de notificaciones, tareas pendientes, aprobaciones, actividad reciente y servicios de origen.
+- **Descripción del Alcance:**
+  1. Identificar el tipo, el origen, la fecha y el contexto de cada aviso.
+  2. Diferenciar notificaciones informativas de tareas que requieren acción.
+  3. Proporcionar acceso directo al registro correspondiente.
+  4. Mantener estados coherentes de leído y no leído.
+  5. Evitar duplicados innecesarios.
+  6. Presentar tareas pendientes y aprobaciones según el rol.
+- **Criterios de Aceptación:**
+  - Cada notificación contiene contexto suficiente para reconocer el evento.
+  - Los enlaces conducen al destino correcto.
+  - Los avisos de elementos inaccesibles no revelan información sensible.
+  - Las notificaciones leídas y no leídas se mantienen correctamente.
+- **Estado:** [X] Completada
+
+### [X] [T-UX-17] Corregir y completar la protección de cambios no guardados
+- **Origen del Hallazgo:** Auditoría de la Fase 3, octubre de 2026 (AUDITORIA_FASE3_EXPERIENCIA_USUARIO_NAVEGACION.md - Área 6)
+- **Severidad/Clasificación:** Alto
+- **Archivos Involucrados:** `js/ui-common.js`
+- **Dependencias Expuestas:** `window.setupUnsavedChangesProtection`, formularios y navegación compartida.
+- **Descripción del Alcance:**
+  1. Detectar modificaciones reales respecto al estado inicial del formulario.
+  2. Diferenciar formularios modificados de aquellos que ya fueron guardados.
+  3. Advertir antes de abandonar una vista con cambios pendientes.
+  4. Evitar advertencias innecesarias después de guardar correctamente.
+  5. Gestionar formularios dinámicos y campos añadidos o eliminados.
+- **Criterios de Aceptación:**
+  - Modificar un campo y abandonar la vista genera una advertencia.
+  - Cancelar la navegación mantiene los datos introducidos.
+  - Guardar correctamente elimina la advertencia pendiente.
+- **Estado:** [X] Completada
+
+### [X] [T-UX-18] Completar los componentes compartidos de formularios, tablas y vistas de detalle
+- **Origen del Hallazgo:** Auditoría de la Fase 3, octubre de 2026 (AUDITORIA_FASE3_EXPERIENCIA_USUARIO_NAVEGACION.md - Área 7 & 8)
+- **Severidad/Clasificación:** Alto
+- **Archivos Involucrados:** `js/ui-common.js`, `css/style.css`
+- **Dependencias Expuestas:** Formularios, tablas, listas, ventanas de detalle, mensajes de estado y estilos compartidos.
+- **Descripción del Alcance:**
+  1. Normalizar los estados visuales y funcionales de formularios.
+  2. Mantener coherencia entre etiquetas, validaciones y mensajes de error.
+  3. Unificar los estados de carga, éxito, error y ausencia de datos.
+  4. Mantener un comportamiento consistente de tablas y acciones por fila.
+- **Criterios de Aceptación:**
+  - Los formularios equivalentes presentan etiquetas, validaciones y mensajes coherentes.
+  - Las tablas muestran correctamente carga, resultados vacíos y errores.
+  - Las acciones por fila operan sobre el registro correcto.
+- **Estado:** [X] Completada
+
+### [X] [T-UX-19] Verificar la accesibilidad y corregir las barreras detectadas
+- **Origen del Hallazgo:** Auditoría de la Fase 3, octubre de 2026 (AUDITORIA_FASE3_EXPERIENCIA_USUARIO_NAVEGACION.md - Área 15)
+- **Severidad/Clasificación:** Alto
+- **Archivos Involucrados:** `js/ui-common.js`, `css/style.css`
+- **Dependencias Expuestas:** Hojas de estilos, menús, formularios, tablas, modales, omnibox, notificaciones y botones con iconos.
+- **Descripción del Alcance:**
+  1. Evaluar las interfaces conforme a WCAG 2.2 nivel AA.
+  2. Comprobar navegación por teclado, foco visible y orden lógico.
+  3. Proporcionar nombres accesibles para controles e iconos.
+  4. Asegurar que los formularios asocien correctamente etiquetas y errores.
+- **Criterios de Aceptación:**
+  - Los flujos principales pueden completarse sin ratón.
+  - El foco es visible y sigue un orden lógico.
+  - Los iconos funcionales tienen nombres accesibles.
+- **Estado:** [X] Completada
+
+### [X] [T-UX-20] Completar la adaptación móvil y el comportamiento responsivo
+- **Origen del Hallazgo:** Auditoría de la Fase 3, octubre de 2026 (AUDITORIA_FASE3_EXPERIENCIA_USUARIO_NAVEGACION.md - Área 16)
+- **Severidad/Clasificación:** Alto
+- **Archivos Involucrados:** `js/ui-common.js`, `css/style.css`
+- **Dependencias Expuestas:** Paneles, encabezados, menús laterales, formularios, tablas, calendarios, modales y controles flotantes.
+- **Descripción del Alcance:**
+  1. Adaptar la distribución de cada panel al espacio disponible.
+  2. Mantener accesibles las acciones principales.
+  3. Permitir abrir y cerrar el menú lateral.
+  4. Evitar desbordamientos y controles superpuestos.
+- **Criterios de Aceptación:**
+  - Los paneles se visualizan sin superposiciones ni desbordamientos críticos.
+  - El menú lateral es operable con controles táctiles.
+  - Las tablas mantienen accesibles sus datos y acciones importantes.
+- **Estado:** [X] Completada
+
 ---
 
 ## GRUPO PRIORIDAD P2 (MEDIO)
@@ -944,6 +1146,92 @@
   - Formulario discreto con validación y confirmación al usuario.
 - **Estado:** [X] Completada
 
+### [X] [T-UX-21] Completar el indicador de frescura de datos y los estados de sincronización
+- **Origen del Hallazgo:** Auditoría de la Fase 3, octubre de 2026 (AUDITORIA_FASE3_EXPERIENCIA_USUARIO_NAVEGACION.md - Área 9)
+- **Severidad/Clasificación:** Medio
+- **Archivos Involucrados:** `js/ui-common.js`
+- **Dependencias Expuestas:** `window.renderDataFreshnessBadge`, listas, paneles y operaciones de actualización de datos.
+- **Descripción del Alcance:**
+  1. Mostrar la última actualización efectiva cuando el dato esté disponible.
+  2. Diferenciar datos actualizados, desactualizados, pendientes y con error de sincronización.
+  3. Proporcionar una acción de actualización manual cuando sea aplicable.
+  4. Actualizar el indicador después de una sincronización confirmada.
+- **Criterios de Aceptación:**
+  - La fecha y hora mostradas corresponden a una actualización efectiva.
+  - Una actualización fallida no renueva la marca de tiempo.
+- **Estado:** [X] Completada
+
+### [X] [T-UX-22] Corregir el significado y el comportamiento del indicador de estado en línea
+- **Origen del Hallazgo:** Auditoría de la Fase 3, octubre de 2026 (AUDITORIA_FASE3_EXPERIENCIA_USUARIO_NAVEGACION.md - Área 18)
+- **Severidad/Clasificación:** Medio
+- **Archivos Involucrados:** `js/ui-common.js`
+- **Dependencias Expuestas:** `#online-status-badge` y la lógica de conectividad utilizada por la interfaz.
+- **Descripción del Alcance:**
+  1. Diferenciar conectividad del dispositivo, disponibilidad del servicio y presencia de un usuario cuando corresponda.
+  2. Mostrar el estado únicamente con el significado que pueda verificarse.
+  3. Presentar el indicador de forma discreta.
+- **Criterios de Aceptación:**
+  - Los estados representan hechos comprobables.
+  - Se prueba la pérdida y recuperación de conexión.
+- **Estado:** [X] Completada
+
+### [X] [T-UX-23] Completar el flujo de reporte de problemas y soporte
+- **Origen del Hallazgo:** Auditoría de la Fase 3, octubre de 2026 (AUDITORIA_FASE3_EXPERIENCIA_USUARIO_NAVEGACION.md - Área 19)
+- **Severidad/Clasificación:** Medio
+- **Archivos Involucrados:** `js/ui-common.js`, `backend/user-service/Code.gs`
+- **Dependencias Expuestas:** `#btn-global-report-issue`, `#modal-report-issue` y el servicio de recepción de reportes.
+- **Descripción del Alcance:**
+  1. Mantener un acceso discreto y fácil de encontrar.
+  2. Solicitar una descripción comprensible del problema.
+  3. Validar campos obligatorios y longitud significativa.
+  4. Registrar el reporte en un destino real en `TicketsReporteProblemas`.
+- **Criterios de Aceptación:**
+  - El acceso se encuentra disponible en los contextos autorizados.
+  - La descripción se valida antes del envío.
+  - Los reportes válidos se registran en el destino correspondiente.
+- **Estado:** [X] Completada
+
+### [X] [T-UX-24] Normalizar las acciones, los estados y la jerarquía visual institucional
+- **Origen del Hallazgo:** Auditoría de la Fase 3, octubre de 2026 (AUDITORIA_FASE3_EXPERIENCIA_USUARIO_NAVEGACION.md - Área 17)
+- **Severidad/Clasificación:** Medio
+- **Archivos Involucrados:** `css/style.css`, `js/ui-common.js`
+- **Dependencias Expuestas:** `css/style.css`, encabezados, botones, formularios, tablas, tarjetas, modales, mensajes y menús.
+- **Descripción del Alcance:**
+  1. Mantener una jerarquía clara entre acciones principales y secundarias.
+  2. Unificar los estilos de controles equivalentes.
+  3. Normalizar los estados de éxito, error, advertencia, carga y ausencia de datos.
+- **Criterios de Aceptación:**
+  - Los botones equivalentes mantienen una jerarquía y apariencia coherentes.
+  - Los estados equivalentes se representan de manera consistente.
+- **Estado:** [X] Completada
+
+### [X] [T-UX-25] Incorporar preferencias de usuario y personalización controlada de vistas
+- **Origen del Hallazgo:** Auditoría de la Fase 3, octubre de 2026 (AUDITORIA_FASE3_EXPERIENCIA_USUARIO_NAVEGACION.md - Área 20)
+- **Severidad/Clasificación:** Medio
+- **Archivos Involucrados:** `js/ui-common.js`, `backend/user-service/Code.gs`
+- **Dependencias Expuestas:** Paneles de control, vistas guardadas, menús, preferencias y almacenamiento de configuración por usuario.
+- **Descripción del Alcance:**
+  1. Permitir guardar preferencias útiles de visualización y consulta.
+  2. Mantener los valores predeterminados definidos por la institución.
+  3. Permitir restablecer preferencias.
+- **Criterios de Aceptación:**
+  - Las preferencias se guardan en el ámbito anunciado.
+  - Las vistas personalizadas se restauran correctamente.
+- **Estado:** [X] Completada
+
+### [X] [T-UX-27] Optimizar el rendimiento percibido y la respuesta de las interfaces
+- **Origen del Hallazgo:** Auditoría de la Fase 3, octubre de 2026 (AUDITORIA_FASE3_EXPERIENCIA_USUARIO_NAVEGACION.md - Área 27)
+- **Severidad/Clasificación:** Medio
+- **Archivos Involucrados:** `js/ui-common.js`, `js/api.js`
+- **Dependencias Expuestas:** Paneles, omnibox, tablas, filtros, modales, servicios de datos y estados de carga.
+- **Descripción del Alcance:**
+  1. Medir los tiempos de las operaciones más frecuentes.
+  2. Mostrar estados de carga comprensibles.
+  3. Evitar solicitudes repetidas que no aporten información.
+- **Criterios de Aceptación:**
+  - Las acciones frecuentes responden con fluidez bajo condiciones de uso representativas.
+- **Estado:** [X] Completada
+
 ---
 
 ## GRUPO PRIORIDAD P3 (BAJO)
@@ -1084,4 +1372,19 @@
   4. Los datos obsoletos no se presentan como confirmados cuando la función exige información actual.
   5. Las pruebas comparan el comportamiento con caché y sin caché.
   6. Las modificaciones conservan o mejoran el rendimiento sin debilitar la seguridad ni la integridad.
+- **Estado:** [X] Completada
+
+### [X] [T-UX-26] Incorporar una vista de actividad reciente contextual
+- **Origen del Hallazgo:** Auditoría de la Fase 3, octubre de 2026 (AUDITORIA_FASE3_EXPERIENCIA_USUARIO_NAVEGACION.md - Área 13)
+- **Severidad/Clasificación:** Bajo
+- **Archivos Involucrados:** `js/ui-common.js`
+- **Dependencias Expuestas:** Paneles de control, centro de notificaciones y registros de actividad disponibles.
+- **Descripción del Alcance:**
+  1. Identificar si ya existe una función equivalente.
+  2. Mostrar elementos recientes pertinentes para cada rol.
+  3. Distinguir actividad informativa de tareas pendientes.
+  4. Permitir regresar a registros consultados recientemente cuando continúen disponibles.
+- **Criterios de Aceptación:**
+  - Los elementos mostrados corresponden a actividad real.
+  - El orden temporal es correcto.
 - **Estado:** [X] Completada
