@@ -81,6 +81,10 @@ function fetchApi(service, action, payload, retryCount, options) {
         if (action.indexOf('get') !== 0 && !payload.idempotencyToken && !payload.idempotencyKey) {
             payload.idempotencyToken = 'IDEM-' + Date.now() + '-' + Math.floor(Math.random() * 100000);
         }
+        // [FASE2-T08] [Fase 2 - Trazabilidad y Correlación] - Inyección automática de identificador de correlación para reconstrucción de operaciones inter-servicio.
+        if (!payload.correlationId && !payload.requestId) {
+            payload.correlationId = 'CORR-' + Date.now() + '-' + Math.floor(Math.random() * 1000000);
+        }
     }
 
     var fetchOptions = {

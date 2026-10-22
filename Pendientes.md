@@ -516,7 +516,7 @@
   10. Los fallos reiterados pueden detectarse sin depender de inspecciones manuales del código.
 - **Estado:** [X] Completada
 
-### [ ] [FASE2-T08] Implementar trazabilidad y correlación de operaciones entre servicios
+### [X] [FASE2-T08] Implementar trazabilidad y correlación de operaciones entre servicios
 - **Origen del Hallazgo:** Auditoría de la Fase 2, octubre de 2026 (AUDITORIA_FASE2_ARQUITECTURA_INTEROPERABILIDAD.md - Área 6 & 7)
 - **Severidad/Clasificación:** Alto
 - **Archivos Involucrados:** `backend/user-service/Code.gs`, `js/api.js`
@@ -538,7 +538,7 @@
   4. Los registros no exponen credenciales ni datos sensibles innecesarios.
   5. Un usuario sin permisos no puede consultar registros de auditoría restringidos.
   6. La ausencia de un registro esperado puede detectarse en las pruebas de integración.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 ### [ ] [T-UX-02] Soporte Universal Tecla Escape para Cierre de Modales y Restauración de Foco
 - **Origen del Hallazgo:** Auditoría de la Fase 3, octubre de 2026 (AUDITORIA_FASE3_EXPERIENCIA_USUARIO_NAVEGACION.md - Área 7)

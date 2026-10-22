@@ -755,7 +755,7 @@ const ROLE_PERMISSIONS = {
     "getInstitutionalCriteria", "saveInstitutionalCriterion", "getFormativeEvaluations", "saveFormativeEvaluation", "getSupportPlans", "saveSupportPlan",
     "createLinkInvitation", "acceptLinkInvitation", "getGuardianStudents", "getInstitutionalAnnouncements", "createInstitutionalAnnouncement", "submitAnnouncementReceiptConfirmation", "getAnnouncementReadReport", "getDepartmentalWorkInbox", "closeConversationThread", "getInternalConversations", "getInternalMessages", "sendInternalMessage", "getUserNotifications", "getUnifiedNotifications", "markNotificationAsRead", "createUserNotification", "sendMultiChannelNotification", "getNotificationPreferences", "getAdministrativeRequests", "getAdministrativeRequestsHistory", "submitAdministrativeRequest", "submitStudentAbsenceJustification", "getStudentAbsenceJustifications", "reviewAbsenceJustification", "updateRequestStatus", "saveInstitutionalForm", "getInstitutionalForms", "submitInstitutionalFormRequest", "saveApprovalWorkflow", "getApprovalWorkflows", "processWorkflowDecision", "getWorkflowHistory", "registerDocumentSignature", "configureNotificationChannel", "getNotificationChannelConfigs", "sendChannelNotificationTest", "getAppointmentBookings", "bookAppointment", "updateAppointmentStatus", "getInstitutionalCalendarEvents", "getPendingReminders",
     "getUserSettings", "saveUserSettings", "getSystemConfigurations", "saveSystemConfiguration", "getProviderIntegrations", "configureProviderIntegration",
-    "updateTicketStatus", "saveVisualPaletteProposal", "approveVisualPaletteProposal", "registerAndDispatchEvent", "retryFailedEventsQueue"
+    "updateTicketStatus", "saveVisualPaletteProposal", "approveVisualPaletteProposal", "registerAndDispatchEvent", "retryFailedEventsQueue", "recordTraceabilityLog", "getTraceabilityCorrelationLogs"
   ],
   "Subdirector": [
     "createNews", "uploadNewsImage", "getNews", "updateNewsStatus", "getStudents", "getStudentsByGradoSeccion", "getUserInfo", "saveGameResult", "getGameStats", "getGlobalTop", "recordAnalytics", "getLearningProfile", "mergeGuestData", "updateUserProfile", "findPersonMatches", "generateInstitutionalId",
@@ -919,6 +919,8 @@ function doPost(e) {
       case "sendMultiChannelNotification": result = sendMultiChannelNotification(payload); break;
       case "registerAndDispatchEvent": result = registerAndDispatchEvent(payload); break;
       case "retryFailedEventsQueue": result = retryFailedEventsQueue(payload); break;
+      case "recordTraceabilityLog": result = recordTraceabilityLog(payload); break;
+      case "getTraceabilityCorrelationLogs": result = getTraceabilityCorrelationLogs(payload); break;
       case "getNotificationPreferences": result = getNotificationPreferences(payload); break;
       case "markNotificationAsRead": result = markNotificationAsRead(payload); break;
       case "createUserNotification": result = createUserNotification(payload); break;
@@ -2316,6 +2318,76 @@ function getUnifiedNotifications(payload) {
   const unreadCount = data.slice(1).filter(r => String(r[1]).trim() === String(userId).trim() && (r[6] !== true && String(r[6]).toLowerCase() !== "true")).length;
 
   return { status: "success", data: notifications, unreadCount: unreadCount };
+}
+
+// [FASE2-T08] [Fase 2 - Trazabilidad y Correlación] - Registro y consulta de trazabilidad con identificador de correlación para reconstrucción de operaciones inter-servicio.
+function recordTraceabilityLog(payload) {
+  const { correlationId, originService, targetService, action, status, durationMs, errorDetails } = payload || {};
+  if (!correlationId || !originService || !action) {
+    throw new Error("Parámetros obligatorios ausentes: correlationId, originService y action.");
+  }
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "BitacoraTrazabilidad");
+
+  if (sheet.getLastRow() === 0) {
+    sheet.appendRow(["CorrelationID", "ServicioOrigen", "ServicioDestino", "Accion", "Estado", "DuracionMS", "ErrorDetalle", "FechaRegistro"]);
+  }
+
+  sheet.appendRow([
+    String(correlationId).trim().toUpperCase(),
+    String(originService).trim().toUpperCase(),
+    String(targetService || originService).trim().toUpperCase(),
+    String(action).trim(),
+    String(status || "SUCCESS").trim().toUpperCase(),
+    parseInt(durationMs) || 0,
+    errorDetails ? String(errorDetails).substring(0, 500) : "",
+    new Date().toISOString()
+  ]);
+
+  return { status: "success", correlationId: String(correlationId).trim().toUpperCase() };
+}
+
+function getTraceabilityCorrelationLogs(payload) {
+  const { correlationId, status, service, limit } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "BitacoraTrazabilidad");
+
+  const rows = sheet.getDataRange().getValues().slice(1);
+  const cleanCorr = correlationId ? String(correlationId).trim().toUpperCase() : "";
+  const cleanStatus = status ? String(status).trim().toUpperCase() : "";
+  const cleanSvc = service ? String(service).trim().toUpperCase() : "";
+
+  const filtered = rows.filter(r => {
+    const rowCorr = String(r[0] || "").trim().toUpperCase();
+    const rowOrig = String(r[1] || "").trim().toUpperCase();
+    const rowDest = String(r[2] || "").trim().toUpperCase();
+    const rowStatus = String(r[4] || "").trim().toUpperCase();
+
+    if (cleanCorr && rowCorr !== cleanCorr) return false;
+    if (cleanStatus && rowStatus !== cleanStatus) return false;
+    if (cleanSvc && rowOrig !== cleanSvc && rowDest !== cleanSvc) return false;
+
+    return true;
+  }).map(r => ({
+    correlationId: r[0],
+    originService: r[1],
+    targetService: r[2],
+    action: r[3],
+    status: r[4],
+    durationMs: r[5],
+    errorDetails: r[6],
+    fechaRegistro: r[7]
+  }));
+
+  const maxRecords = parseInt(limit) || 100;
+  const result = filtered.slice(-maxRecords).reverse();
+
+  return {
+    status: "success",
+    totalEncontrados: filtered.length,
+    registros: result
+  };
 }
 
 // [FASE2-T07] [Fase 2 - Motor Fortalecido de Eventos Automáticos] - Registro, deduplicación, estados de ejecución, reintentos con tope y recuperación de eventos interdepartamentales.
