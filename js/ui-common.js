@@ -4363,6 +4363,29 @@ window.openAnalyticsChartModal = function(chartCategory) {
 // Proporciona navegación adaptativa según el rol activo (Estudiante, Docente, Contabilidad, RH, Dirección), con menús colapsables suaves en móviles y restauraciones de navegación.
 // ---------------------------------------------------------------------------
 
+// ---------------------------------------------------------------------------
+// [T-UX-13] [Fase 3: Experiencia de Usuario y Navegación Unificada] - MENÚ LATERAL ESPECÍFICO DE CADA PANEL Y DESTACADO DE SECCIÓN ACTIVA
+// Identifica visualmente y mediante atributos de accesibilidad (aria-current="page") la sección activa del menú lateral específico por rol y panel.
+// ---------------------------------------------------------------------------
+window.highlightActiveSidebarNavItem = function(containerId, activeItemId) {
+    var container = document.getElementById(containerId) || document.body;
+    if (!container || !activeItemId) return;
+
+    var navLinks = container.querySelectorAll('a[href], button[id]');
+    navLinks.forEach(function(link) {
+        link.classList.remove('bg-blue-600', 'text-white', 'font-black', 'active-nav-item');
+        link.removeAttribute('aria-current');
+
+        var href = link.getAttribute('href') || '';
+        var linkId = link.id || '';
+
+        if (linkId === activeItemId || (href && href !== 'javascript:void(0)' && href.indexOf(activeItemId) !== -1)) {
+            link.classList.add('bg-blue-600', 'text-white', 'font-black', 'active-nav-item');
+            link.setAttribute('aria-current', 'page');
+        }
+    });
+};
+
 /* ==========================================================================
    ROLE NAVIGATION MENU & ACCORDION SIDEBAR / HAMBURGER DRAWER SYSTEM
    ========================================================================== */

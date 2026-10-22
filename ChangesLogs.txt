@@ -903,3 +903,15 @@ Archivos Modificados:
    - Actualización del estado de [T-UX-12] a [X] Completada.
 
 -------------------------------------------------------------------------------
+FECHA: Octubre 2026
+TAREA: [T-UX-13] Completar el menú lateral específico de cada panel
+-------------------------------------------------------------------------------
+
+Archivos Modificados:
+1. js/ui-common.js
+   - Lineas 4366-4386: Implementación de window.highlightActiveSidebarNavItem(containerId, activeItemId) para remoción/adición dinámica de clases activas y atributo aria-current="page" en enlaces de menús laterales por rol.
+
+2. Pendientes.md
+   - Actualización del estado de [T-UX-13] a [X] Completada.
+
+-------------------------------------------------------------------------------

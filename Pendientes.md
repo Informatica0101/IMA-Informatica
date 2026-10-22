@@ -658,7 +658,7 @@
   - Las acciones visibles respetan los permisos efectivos.
 - **Estado:** [X] Completada
 
-### [ ] [T-UX-13] Completar el menú lateral específico de cada panel
+### [X] [T-UX-13] Completar el menú lateral específico de cada panel
 - **Origen del Hallazgo:** Auditoría de la Fase 3, octubre de 2026 (AUDITORIA_FASE3_EXPERIENCIA_USUARIO_NAVEGACION.md - Área 3)
 - **Severidad/Clasificación:** Alto
 - **Archivos Involucrados:** `js/ui-common.js`, Dashboards HTML
@@ -676,7 +676,7 @@
   - La sección activa se identifica visualmente y mediante un estado accesible.
   - El menú se puede utilizar con teclado y controles táctiles.
   - En móvil, puede abrirse y cerrarse sin bloquear el contenido.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 ### [ ] [T-UX-14] Completar la búsqueda global y optimizar sus resultados
 - **Origen del Hallazgo:** Auditoría de la Fase 3, octubre de 2026 (AUDITORIA_FASE3_EXPERIENCIA_USUARIO_NAVEGACION.md - Área 4)
