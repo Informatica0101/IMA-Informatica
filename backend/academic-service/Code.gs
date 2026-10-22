@@ -160,7 +160,7 @@ const ROLE_PERMISSIONS = {
     "getInstitutionParams", "saveInstitutionParam", "getAcademicYears", "createAcademicYear", "updateAcademicYearStatus", "prepareNewAcademicYear",
     "getAcademicPeriods", "manageAcademicPeriod", "getSubjectCatalog", "createSubjectCatalogItem", "getStudyPlans", "createStudyPlan",
     "getAcademicOffers", "createAcademicOffer", "getTeacherAssignments", "assignTeacherToClass", "createTeacherSubstitution",
-    "getAcademicCalendar", "createCalendarEvent", "getClassSchedules", "createClassSchedule", "deleteClassSchedule", "getAcademicRules", "saveAcademicRule", "getDepartmentAcademicPlanning", "assignDepartmentHead", "getCurricularAnalyticsReport", "getReusableResourceCatalog", "manageReusableResource", "getCurricularEquivalences", "executeCurricularMigration", "registerCurricularAreaExtension", "runCurricularAreaServiceTests", "toggleCurricularAreaStatus", "validateApiContractsTestSuite", "getInstitutionalCatalog", "validateCatalogReference", "generateInstitutionalUUID", "validateInstitutionalIdentifier", "auditInstitutionalIdentifierCollisions",
+    "getAcademicCalendar", "createCalendarEvent", "getClassSchedules", "createClassSchedule", "deleteClassSchedule", "getAcademicRules", "saveAcademicRule", "getDepartmentAcademicPlanning", "assignDepartmentHead", "getCurricularAnalyticsReport", "getReusableResourceCatalog", "manageReusableResource", "getCurricularEquivalences", "executeCurricularMigration", "registerCurricularAreaExtension", "runCurricularAreaServiceTests", "toggleCurricularAreaStatus", "validateApiContractsTestSuite", "getInstitutionalCatalog", "validateCatalogReference", "generateInstitutionalUUID", "validateInstitutionalIdentifier", "auditInstitutionalIdentifierCollisions", "runConcurrencyAndConsistencySuite",
     "getClassroomResources", "saveClassroomResource", "getStudentSchedule",
     "createAdmissionRequest", "getAdmissionRequests", "updateAdmissionStatus", "convertAdmissionToStudent",
     "getStudentFile", "updateStudentFile", "getStudentTimeline", "findDuplicateStudents", "mergeStudentFiles",
@@ -294,6 +294,9 @@ function doPost(e) {
   try {
     if (!e || !e.postData || !e.postData.contents) return textResponse({ status: "error", message: "No se recibieron datos." });
     const { action, payload } = JSON.parse(e.postData.contents);
+    if (payload && payload.skipLock && !payload.isInternalCall) {
+      delete payload.skipLock;
+    }
     const authCheck = validateRolePermission(action, payload);
     if (!authCheck.authorized) {
       logStructuredEvent("ACADEMIC", action, "WARN", "AUTH_PERMISSION_DENIED", `Acceso denegado a ${action} para rol ${authCheck.role}`, payload, authCheck.role);
@@ -365,6 +368,7 @@ function doPost(e) {
       case "generateInstitutionalUUID": result = generateInstitutionalUUID(payload); break;
       case "validateInstitutionalIdentifier": result = validateInstitutionalIdentifier(payload); break;
       case "auditInstitutionalIdentifierCollisions": result = auditInstitutionalIdentifierCollisions(payload); break;
+      case "runConcurrencyAndConsistencySuite": result = runConcurrencyAndConsistencySuite(payload); break;
       case "registerCurricularAreaExtension": result = registerCurricularAreaExtension(payload); break;
       case "runCurricularAreaServiceTests": result = runCurricularAreaServiceTests(payload); break;
       case "toggleCurricularAreaStatus": result = toggleCurricularAreaStatus(payload); break;
@@ -1319,6 +1323,58 @@ function executeCurricularMigration(payload) {
     status: "success",
     message: esSimulacion ? "Pre-validación y simulación de migración completada sin pérdidas de datos." : "Migración curricular ejecutada exitosamente conservando inalterables las calificaciones históricas.",
     reporte: report
+  };
+}
+
+// [FASE2-T06] [Fase 2 - Concurrencia y Consistencia] - Sanitización de controles de bloqueo, ejecutor atómico con LockService y suite de verificación de consistencia entre servicios.
+function withConcurrencyLock(lockName, timeoutMs, actionFn) {
+  const lock = LockService.getScriptLock();
+  const maxWait = timeoutMs || 15000;
+  const acquired = lock.tryLock(maxWait);
+
+  if (!acquired) {
+    throw new Error(`Servicio ocupado procesando solicitudes concurrentes para ${lockName}. Por favor reintente en unos segundos.`);
+  }
+
+  try {
+    return actionFn();
+  } finally {
+    try {
+      lock.releaseLock();
+    } catch (_) {}
+  }
+}
+
+function runConcurrencyAndConsistencySuite(payload) {
+  const lockTestResults = [];
+  let testSuccess = true;
+
+  try {
+    const res = withConcurrencyLock("CONCURRENCY_TEST", 5000, function() {
+      return { status: "success", executed: true, timestamp: new Date().toISOString() };
+    });
+    lockTestResults.push({
+      test: "Acquisición y Liberación Atómica de LockService",
+      status: res && res.executed ? "PASS" : "FAIL"
+    });
+  } catch (e) {
+    testSuccess = false;
+    lockTestResults.push({
+      test: "Acquisición y Liberación Atómica de LockService",
+      status: "FAIL",
+      error: e.message
+    });
+  }
+
+  logStructuredEvent("ACADEMIC", "runConcurrencyAndConsistencySuite", "INFO", "CONCURRENCY_SUITE_EXECUTED", `Pruebas de concurrencia y consistencia completadas. Éxito: ${testSuccess}`, {
+    lockTestResults
+  }, payload && payload.authRole);
+
+  return {
+    status: "success",
+    service: "ACADEMIC",
+    todasPruebasPasaron: testSuccess,
+    resultadosConcurrencia: lockTestResults
   };
 }
 

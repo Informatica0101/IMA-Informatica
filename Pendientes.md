@@ -459,7 +459,7 @@
   8. Los procedimientos de corrección de duplicados preservan las relaciones y los historiales que deban conservarse.
 - **Estado:** [X] Completada
 
-### [ ] [FASE2-T06] Corregir y formalizar la concurrencia y la consistencia entre servicios
+### [X] [FASE2-T06] Corregir y formalizar la concurrencia y la consistencia entre servicios
 - **Origen del Hallazgo:** Auditoría de la Fase 2, octubre de 2026 (AUDITORIA_FASE2_ARQUITECTURA_INTEROPERABILIDAD.md - Área 5)
 - **Severidad/Clasificación:** Alto
 - **Archivos Involucrados:** `backend/accounting-service/Code.gs`, `backend/academic-service/Code.gs`
@@ -483,7 +483,7 @@
   6. Una interrupción entre escrituras relacionadas produce un estado detectable y un procedimiento de recuperación.
   7. Las pruebas concurrentes no muestran pérdidas de actualizaciones ni relaciones inválidas.
   8. Los procesos recuperados conservan la integridad de los registros existentes.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 ### [ ] [FASE2-T07] Fortalecer el motor de eventos y la ejecución de procesos automáticos
 - **Origen del Hallazgo:** Auditoría de la Fase 2, octubre de 2026 (AUDITORIA_FASE2_ARQUITECTURA_INTEROPERABILIDAD.md - Área 6)

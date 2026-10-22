@@ -277,6 +277,9 @@ function doPost(e) {
   try {
     if (!e || !e.postData || !e.postData.contents) return textResponse({ status: "error", message: "No se recibieron datos." });
     const { action, payload } = JSON.parse(e.postData.contents);
+    if (payload && payload.skipLock && !payload.isInternalCall) {
+      delete payload.skipLock;
+    }
     const authCheck = validateRolePermission(action, payload);
     if (!authCheck.authorized) {
       return textResponse({ status: "error", code: "AUTH_PERMISSION_DENIED", message: "Acceso denegado: El rol " + authCheck.role + " no tiene permiso para la acción " + action + "." });

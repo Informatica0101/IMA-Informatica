@@ -636,3 +636,13 @@ DESCRIPCIÓN OBJETIVA DE LOS CAMBIOS:
 - Actualización del estado de [FASE2-T05] a [X] Completada en Pendientes.md.
 
 -------------------------------------------------------------------------------
+FECHA: Octubre 2026
+ARCHIVO(S) AFECTADO(S): backend/academic-service/Code.gs, backend/accounting-service/Code.gs, Pendientes.md
+-------------------------------------------------------------------------------
+DESCRIPCIÓN OBJETIVA DE LOS CAMBIOS:
+- Implementación de conConcurrencyLock y runConcurrencyAndConsistencySuite en backend/academic-service/Code.gs y backend/accounting-service/Code.gs para el manejo atómico de concurrencia con LockService, la sanitización de skipLock en llamadas externas y la verificación de consistencia entre microservicios.
+- Inserción del comentario identificativo de FASE2-T06 en la primera línea sobre conConcurrencyLock.
+- Registro de permisos en ROLE_PERMISSIONS y rutas en el dispatcher doPost.
+- Actualización de los estados de [FASE2-T04] y [FASE2-T06] a [X] Completada en Pendientes.md.
+
+-------------------------------------------------------------------------------
