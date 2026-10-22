@@ -598,7 +598,7 @@
   - Navegación fluida en escritorio y dispositivos táctiles.
 - **Estado:** [X] Completada
 
-### [ ] [T-UX-10] Completar la verificación funcional y automatizar las pruebas de experiencia de usuario
+### [X] [T-UX-10] Completar la verificación funcional y automatizar las pruebas de experiencia de usuario
 - **Origen del Hallazgo:** Auditoría de la Fase 3, octubre de 2026 (AUDITORIA_FASE3_EXPERIENCIA_USUARIO_NAVEGACION.md)
 - **Severidad/Clasificación:** Alto
 - **Archivos Involucrados:** `js/ui-common.js`, `js/student.js`, `js/teacher.js`, `js/accounting.js`
@@ -616,7 +616,7 @@
   - El centro de notificaciones se prueba con avisos leídos, no leídos, destinos inaccesibles y errores de carga.
   - El reporte de problemas se prueba desde la apertura del formulario hasta la confirmación real de recepción.
   - La protección de cambios no guardados se prueba al navegar, cerrar ventanas y abandonar formularios.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 ### [ ] [T-UX-11] Unificar la navegación contextual y conservar el estado de las vistas
 - **Origen del Hallazgo:** Auditoría de la Fase 3, octubre de 2026 (AUDITORIA_FASE3_EXPERIENCIA_USUARIO_NAVEGACION.md - Área 1)

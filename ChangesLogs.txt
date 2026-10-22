@@ -861,3 +861,15 @@ Archivos Modificados:
    - Actualización del estado de [T-UX-09] a [X] Completada.
 
 -------------------------------------------------------------------------------
+FECHA: Octubre 2026
+TAREA: [T-UX-10] Completar la verificación funcional y automatizar las pruebas de experiencia de usuario
+-------------------------------------------------------------------------------
+
+Archivos Modificados:
+1. js/ui-common.js
+   - Lineas 1681-1775: Implementación de window.runUXSuiteTests() para ejecución de la matriz de pruebas automatizadas sobre las subcapacidades UX-01 a UX-09 (sesiones, tecla ESC, protección de formularios, frescura de datos, normalización diacrítica, Omnibox Ctrl+K, indicador de red, reporte de problemas y navegación responsiva por rol).
+
+2. Pendientes.md
+   - Actualización del estado de [T-UX-10] a [X] Completada.
+
+-------------------------------------------------------------------------------

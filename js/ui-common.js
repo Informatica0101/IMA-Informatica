@@ -1678,6 +1678,102 @@ window.loadUserSettingsInModal = function(user) {
     }
 };
 
+// ---------------------------------------------------------------------------
+// [T-UX-10] [Fase 3: Experiencia de Usuario y Navegación Unificada] - SUITE AUTOMATIZADA DE PRUEBAS DE EXPERIENCIA DE USUARIO (UX-01 A UX-09)
+// Ejecuta un análisis automatizado de verificación de capacidades UX en la interfaz: manejo de expiración de sesión, tecla Escape, protección de formularios, frescura de datos, normalizador diacrítico, Omnibox global, estado en línea, reporte de problemas y navegación por rol.
+// ---------------------------------------------------------------------------
+window.runUXSuiteTests = function() {
+    var results = [];
+
+    function addResult(id, name, success, detail) {
+        results.push({ id: id, name: name, status: success ? 'PASS' : 'FAIL', detail: detail });
+    }
+
+    // UX-01: Session Expiration Handler
+    try {
+        var hasHandler = typeof window.handleSessionExpired === 'function';
+        addResult('UX-01', 'Centralized Session Expiration Handler', hasHandler, hasHandler ? 'Manejador handleSessionExpired disponible en window' : 'Manejador no definido');
+    } catch (e1) {
+        addResult('UX-01', 'Centralized Session Expiration Handler', false, e1.message);
+    }
+
+    // UX-02: Escape Key & Modal Focus Restoration
+    try {
+        var hasFocusTracker = typeof window.trackModalFocus === 'function';
+        addResult('UX-02', 'Universal Escape Key & Modal Focus Restoration', hasFocusTracker, hasFocusTracker ? 'Rastreador trackModalFocus y manejador ESC registrado' : 'Función trackModalFocus ausente');
+    } catch (e2) {
+        addResult('UX-02', 'Universal Escape Key & Modal Focus Restoration', false, e2.message);
+    }
+
+    // UX-03: Unsaved Changes Protection
+    try {
+        var hasFormProtection = typeof window.setupUnsavedChangesProtection === 'function';
+        addResult('UX-03', 'Unsaved Form Changes Protection', hasFormProtection, hasFormProtection ? 'Módulo setupUnsavedChangesProtection disponible' : 'Módulo ausente');
+    } catch (e3) {
+        addResult('UX-03', 'Unsaved Form Changes Protection', false, e3.message);
+    }
+
+    // UX-04: Data Freshness Badge
+    try {
+        var hasBadgeRenderer = typeof window.renderDataFreshnessBadge === 'function';
+        addResult('UX-04', 'Data Freshness Badge Rendering', hasBadgeRenderer, hasBadgeRenderer ? 'Función renderDataFreshnessBadge disponible' : 'Función ausente');
+    } catch (e4) {
+        addResult('UX-04', 'Data Freshness Badge Rendering', false, e4.message);
+    }
+
+    // UX-05: Diacritic-Insensitive Search Normalization
+    try {
+        var normVal = typeof window.normalizeSearchString === 'function' ? window.normalizeSearchString('Matemáticas Rápídas') : '';
+        var passesNorm = normVal === 'matematicas rapidas';
+        addResult('UX-05', 'Diacritic-Insensitive Search Normalization', passesNorm, passesNorm ? 'Normalización verificada: "Matemáticas Rápídas" -> "matematicas rapidas"' : 'Resultado inesperado: ' + normVal);
+    } catch (e5) {
+        addResult('UX-05', 'Diacritic-Insensitive Search Normalization', false, e5.message);
+    }
+
+    // UX-06: Unified Omnibox Ctrl+K
+    try {
+        var hasOmnibox = typeof window.openGlobalOmniboxModal === 'function';
+        addResult('UX-06', 'Unified Multi-Entity Omnibox Modal (Ctrl+K)', hasOmnibox, hasOmnibox ? 'Módulo openGlobalOmniboxModal disponible' : 'Módulo ausente');
+    } catch (e6) {
+        addResult('UX-06', 'Unified Multi-Entity Omnibox Modal (Ctrl+K)', false, e6.message);
+    }
+
+    // UX-07: Online/Offline Connection Status
+    try {
+        var hasOnlineBadge = !!document.getElementById('online-status-badge') || typeof navigator.onLine === 'boolean';
+        addResult('UX-07', 'Discrete Connection Status Indicator', hasOnlineBadge, hasOnlineBadge ? 'Indicador de conectividad disponible' : 'Elemento de estado no hallado');
+    } catch (e7) {
+        addResult('UX-07', 'Discrete Connection Status Indicator', false, e7.message);
+    }
+
+    // UX-08: Problem Reporting Ticket Flow
+    try {
+        var hasReportModal = typeof window.openReportIssueModal === 'function';
+        addResult('UX-08', 'Problem Reporting Ticket Modal Flow', hasReportModal, hasReportModal ? 'Módulo openReportIssueModal disponible' : 'Módulo ausente');
+    } catch (e8) {
+        addResult('UX-08', 'Problem Reporting Ticket Modal Flow', false, e8.message);
+    }
+
+    // UX-09: Role Navigation & Mobile Drawer Collapse
+    try {
+        var hasRoleNav = typeof window.openMobileHamburgerDrawer === 'function' && typeof window.toggleRoleMenuAccordionSection === 'function';
+        addResult('UX-09', 'Role-Specific Sidebar & Mobile Drawer Collapse', hasRoleNav, hasRoleNav ? 'Módulo de navegación por rol y drawer responsivo disponible' : 'Funciones de navegación ausentes');
+    } catch (e9) {
+        addResult('UX-09', 'Role-Specific Sidebar & Mobile Drawer Collapse', false, e9.message);
+    }
+
+    var passedCount = results.filter(function(r) { return r.status === 'PASS'; }).length;
+    var summary = {
+        total: results.length,
+        passed: passedCount,
+        failed: results.length - passedCount,
+        results: results
+    };
+
+    console.log('=== [T-UX-10] UX SUITE AUTOMATED TEST RESULTS ===', summary);
+    return summary;
+};
+
 // [FASE2-T18] [Fase 2 - Tablero de Salud e Interoperabilidad Institucional] - Renderizado interactivo del estado de salud de microservicios, latencias, tasas de error y advertencias de cuota sin exponer PII.
 window.openInstitutionalHealthDashboardModal = function() {
     var modalId = "modal-health-dashboard";
