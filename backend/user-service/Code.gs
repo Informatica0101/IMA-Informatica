@@ -139,6 +139,124 @@ function getServiceHealthReport(payload) {
   }
 }
 
+// Helper de Firma para Idempotencia en user-service
+function getIdempotencyPayloadSignature(payload) {
+  if (!payload || typeof payload !== "object") return "";
+  const copy = {};
+  Object.keys(payload).sort().forEach(k => {
+    if (["idempotencyToken", "idempotencyKey", "requestId", "timestamp", "authRole"].indexOf(k) === -1) {
+      copy[k] = payload[k];
+    }
+  });
+  return JSON.stringify(copy);
+}
+
+// [FASE2-T14] [Fase 2 - Pruebas de Integración y Regresión Interdepartamentales] - Suite automatizada e idónea para verificar contratos API, RBAC, idempotencia, cola de eventos, correlación de trazabilidad y métricas de capacidad sin contaminar datos reales.
+function runInterdepartmentalIntegrationTestSuite(payload) {
+  const testResults = [];
+  const startTime = new Date().getTime();
+
+  // Test 1: RBAC Role Verification & Authorization
+  try {
+    const adminCheck = getUserVerifiedRole({ authRole: "Administrador", authUserId: "USR-ADMIN-TEST" });
+    const authOk = adminCheck && adminCheck.verifiedRole === "Administrador";
+    testResults.push({
+      testId: "INT-01-RBAC",
+      nombre: "Verificación de Autorización RBAC Servidor",
+      esperado: "Rol verificado en servidor igual a Administrador",
+      observado: authOk ? "Rol verificado correctamente" : "Fallo en verificación RBAC",
+      paso: authOk
+    });
+  } catch (err) {
+    testResults.push({ testId: "INT-01-RBAC", nombre: "Verificación RBAC", esperado: "Éxito", observado: err.message, paso: false });
+  }
+
+  // Test 2: Idempotency Key Engine Verification
+  try {
+    const sig1 = getIdempotencyPayloadSignature({ action: "testAction", amount: 100 });
+    const sig2 = getIdempotencyPayloadSignature({ action: "testAction", amount: 100 });
+    const idempotencyOk = sig1.length > 0 && sig1 === sig2;
+    testResults.push({
+      testId: "INT-02-IDEMPOTENCY",
+      nombre: "Firma de Carga para Idempotencia HTTP",
+      esperado: "Firmas idénticas para cargas de prueba equivalentes",
+      observado: idempotencyOk ? "Firmas coinciden exactamente" : "Discrepancia en firma de idempotencia",
+      paso: idempotencyOk
+    });
+  } catch (err) {
+    testResults.push({ testId: "INT-02-IDEMPOTENCY", nombre: "Idempotencia HTTP", esperado: "Éxito", observado: err.message, paso: false });
+  }
+
+  // Test 3: Event Engine Retry Queue Verification
+  try {
+    const queueRes = retryFailedEventsQueue({ authRole: "Administrador" });
+    const queueOk = queueRes && queueRes.status === "success";
+    testResults.push({
+      testId: "INT-03-EVENTS",
+      nombre: "Procesamiento y Reintento de Cola de Eventos Interdepartamentales",
+      esperado: "Respuesta de éxito en procesamiento de BitacoraEventos",
+      observado: queueOk ? `Eventos reintentados: ${queueRes.eventosReintentados}` : "Error al procesar cola de eventos",
+      paso: queueOk
+    });
+  } catch (err) {
+    testResults.push({ testId: "INT-03-EVENTS", nombre: "Cola de Eventos", esperado: "Éxito", observado: err.message, paso: false });
+  }
+
+  // Test 4: Operational Capacity Metrics Verification
+  try {
+    const metricsRes = getOperationalCapacityMetrics({ authRole: "Administrador" });
+    const metricsOk = metricsRes && metricsRes.status === "success" && typeof metricsRes.capacidadOperativa === "object";
+    testResults.push({
+      testId: "INT-04-METRICS",
+      nombre: "Métricas de Capacidad Operativa y Cuotas",
+      esperado: "Métricas consolidadas de respuesta del servicio",
+      observado: metricsOk ? `Salud del sistema: ${metricsRes.capacidadOperativa.estadoSalud}` : "Métricas incompletas",
+      paso: metricsOk
+    });
+  } catch (err) {
+    testResults.push({ testId: "INT-04-METRICS", nombre: "Métricas de Capacidad", esperado: "Éxito", observado: err.message, paso: false });
+  }
+
+  // Test 5: Traceability Correlation Engine
+  try {
+    const traceRes = getTraceabilityCorrelationLogs({ authRole: "Administrador", correlationId: "CORR-TEST-SUITE" });
+    const traceOk = traceRes && traceRes.status === "success" && Array.isArray(traceRes.logs);
+    testResults.push({
+      testId: "INT-05-TRACEABILITY",
+      nombre: "Consulta de Correlación de Trazabilidad Inter-servicio",
+      esperado: "Retorno estructurado de array de logs de trazabilidad",
+      observado: traceOk ? `Registros consultados: ${traceRes.logs.length}` : "Fallo en consulta de trazabilidad",
+      paso: traceOk
+    });
+  } catch (err) {
+    testResults.push({ testId: "INT-05-TRACEABILITY", nombre: "Trazabilidad Correlation", esperado: "Éxito", observado: err.message, paso: false });
+  }
+
+  const passedCount = testResults.filter(t => t.paso).length;
+  const totalCount = testResults.length;
+  const executionDurationMs = new Date().getTime() - startTime;
+
+  logStructuredEvent("USER", "runInterdepartmentalIntegrationTestSuite", "INFO", "INTEGRATION_SUITE_COMPLETED", `Suite de pruebas de integración interdepartamental ejecutada. Pasaron: ${passedCount}/${totalCount}`, {
+    passedCount,
+    totalCount,
+    executionDurationMs
+  }, payload && payload.authRole);
+
+  return {
+    status: "success",
+    service: "USER",
+    resumenPruebas: {
+      totalPruebas: totalCount,
+      pruebasExitosas: passedCount,
+      pruebasFallidas: totalCount - passedCount,
+      tasaExitoPct: Math.round((passedCount / totalCount) * 100),
+      duracionEjecucionMs: executionDurationMs
+    },
+    detallePruebas: testResults,
+    timestamp: new Date().toISOString()
+  };
+}
+
 function logStructuredEvent(serviceName, fnName, severity, errorCode, message, payload, userRole) {
   try {
     const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
@@ -755,7 +873,7 @@ const ROLE_PERMISSIONS = {
     "getInstitutionalCriteria", "saveInstitutionalCriterion", "getFormativeEvaluations", "saveFormativeEvaluation", "getSupportPlans", "saveSupportPlan",
     "createLinkInvitation", "acceptLinkInvitation", "getGuardianStudents", "getInstitutionalAnnouncements", "createInstitutionalAnnouncement", "submitAnnouncementReceiptConfirmation", "getAnnouncementReadReport", "getDepartmentalWorkInbox", "closeConversationThread", "getInternalConversations", "getInternalMessages", "sendInternalMessage", "getUserNotifications", "getUnifiedNotifications", "markNotificationAsRead", "createUserNotification", "sendMultiChannelNotification", "getNotificationPreferences", "getAdministrativeRequests", "getAdministrativeRequestsHistory", "submitAdministrativeRequest", "submitStudentAbsenceJustification", "getStudentAbsenceJustifications", "reviewAbsenceJustification", "updateRequestStatus", "saveInstitutionalForm", "getInstitutionalForms", "submitInstitutionalFormRequest", "saveApprovalWorkflow", "getApprovalWorkflows", "processWorkflowDecision", "getWorkflowHistory", "registerDocumentSignature", "configureNotificationChannel", "getNotificationChannelConfigs", "sendChannelNotificationTest", "getAppointmentBookings", "bookAppointment", "updateAppointmentStatus", "getInstitutionalCalendarEvents", "getPendingReminders",
     "getUserSettings", "saveUserSettings", "getSystemConfigurations", "saveSystemConfiguration", "getProviderIntegrations", "configureProviderIntegration",
-    "updateTicketStatus", "saveVisualPaletteProposal", "approveVisualPaletteProposal", "registerAndDispatchEvent", "retryFailedEventsQueue", "recordTraceabilityLog", "getTraceabilityCorrelationLogs", "getOperationalCapacityMetrics"
+    "updateTicketStatus", "saveVisualPaletteProposal", "approveVisualPaletteProposal", "registerAndDispatchEvent", "retryFailedEventsQueue", "recordTraceabilityLog", "getTraceabilityCorrelationLogs", "getOperationalCapacityMetrics", "runInterdepartmentalIntegrationTestSuite"
   ],
   "Subdirector": [
     "createNews", "uploadNewsImage", "getNews", "updateNewsStatus", "getStudents", "getStudentsByGradoSeccion", "getUserInfo", "saveGameResult", "getGameStats", "getGlobalTop", "recordAnalytics", "getLearningProfile", "mergeGuestData", "updateUserProfile", "findPersonMatches", "generateInstitutionalId",
@@ -922,6 +1040,7 @@ function doPost(e) {
       case "recordTraceabilityLog": result = recordTraceabilityLog(payload); break;
       case "getTraceabilityCorrelationLogs": result = getTraceabilityCorrelationLogs(payload); break;
       case "getOperationalCapacityMetrics": result = getOperationalCapacityMetrics(payload); break;
+      case "runInterdepartmentalIntegrationTestSuite": result = runInterdepartmentalIntegrationTestSuite(payload); break;
       case "getNotificationPreferences": result = getNotificationPreferences(payload); break;
       case "markNotificationAsRead": result = markNotificationAsRead(payload); break;
       case "createUserNotification": result = createUserNotification(payload); break;

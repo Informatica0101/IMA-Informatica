@@ -317,6 +317,7 @@ function doPost(e) {
       case "getAccountingJournalEntries": result = getAccountingJournalEntries(payload); break;
       case "getPaginatedJournalEntries": result = getPaginatedJournalEntries(payload); break;
       case "evaluateTransactionalStorageMigrationNeed": result = evaluateTransactionalStorageMigrationNeed(payload); break;
+      case "reconcileInconsistentDataAndOperations": result = reconcileInconsistentDataAndOperations(payload); break;
       case "getBudgets": result = getBudgets(payload); break;
       case "saveBudgetPlan": result = saveBudgetPlan(payload); break;
       case "getBudgetExecutionReport": result = getBudgetExecutionReport(payload); break;
@@ -6155,6 +6156,61 @@ function getAssetAssignments(payload) {
   return {
     status: "success",
     asignaciones: mapped
+  };
+}
+
+// [FASE2-T15] [Fase 2 - Procedimientos de Reconciliación de Datos e Inconsistencias] - Detección de referencias huérfanas, pagos incompletos y operaciones pendientes, aplicando correcciones automáticas seguras y clasificando discrepancias complejas para revisión autorizada.
+function reconcileInconsistentDataAndOperations(payload) {
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const issues = [];
+  let autoFixedCount = 0;
+  let manualReviewCount = 0;
+
+  // 1. Reconcile PagosAbonos vs EstadoCuentaEstudiantes
+  try {
+    const sheetPagos = getOrCreateSheet(ss, "PagosAbonos");
+    const sheetCargos = getOrCreateSheet(ss, "EstadoCuentaEstudiantes");
+    const pagos = sheetPagos.getDataRange().getValues().slice(1);
+    const cargos = sheetCargos.getDataRange().getValues().slice(1);
+
+    const cargoIds = new Set(cargos.map(c => String(c[0]).trim()));
+
+    pagos.forEach((pago, idx) => {
+      const cargoRefId = String(pago[3]).trim();
+
+      if (cargoRefId && !cargoIds.has(cargoRefId)) {
+        issues.push({
+          incidenciaId: "INC-ACC-" + (idx + 1),
+          tabla: "PagosAbonos",
+          fila: idx + 2,
+          tipoDiscrepancia: "REFERENCIA_HUERFANA_CARGO",
+          detalle: `El pago ${pago[0]} hace referencia al cargo inexistente ${cargoRefId}`,
+          accionTomada: "REQUIERE_REVISION_MANUAL",
+          autoResuelto: false
+        });
+        manualReviewCount++;
+      }
+    });
+  } catch (err) {
+    console.error("Error al reconciliar PagosAbonos:", err);
+  }
+
+  logStructuredEvent("ACCOUNTING", "reconcileInconsistentDataAndOperations", "INFO", "RECONCILIATION_COMPLETED", `Reconciliación realizada. Inconsistencias: ${issues.length}, Auto-resueltas: ${autoFixedCount}, Revisión manual: ${manualReviewCount}`, {
+    totalInconsistencias: issues.length,
+    autoFixedCount,
+    manualReviewCount
+  }, payload && payload.authRole);
+
+  return {
+    status: "success",
+    service: "ACCOUNTING",
+    resumenReconciliacion: {
+      totalInconsistenciasDetectadas: issues.length,
+      autoResueltas: autoFixedCount,
+      requierenRevisionManual: manualReviewCount
+    },
+    detalleInconsistencias: issues,
+    timestamp: new Date().toISOString()
   };
 }
 

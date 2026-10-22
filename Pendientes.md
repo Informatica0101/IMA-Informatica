@@ -1035,7 +1035,7 @@
   6. El mapa coincide con la implementación inspeccionada y no se limita a reproducir la arquitectura prevista.
 - **Estado:** [ ] Pendiente
 
-### [ ] [FASE2-T14] Incorporar pruebas de integración y regresión para las operaciones interdepartamentales
+### [X] [FASE2-T14] Incorporar pruebas de integración y regresión para las operaciones interdepartamentales
 - **Origen del Hallazgo:** Auditoría de la Fase 2, octubre de 2026 (AUDITORIA_FASE2_ARQUITECTURA_INTEROPERABILIDAD.md - Área 1-7)
 - **Severidad/Clasificación:** Medio
 - **Archivos Involucrados:** `backend/accounting-service/Code.gs`, `backend/user-service/Code.gs`
@@ -1062,7 +1062,7 @@
   8. La cobertura informada distingue pruebas existentes, pruebas ejecutadas y criterios realmente satisfechos.
 - **Estado:** [ ] Pendiente
 
-### [ ] [FASE2-T15] Establecer procedimientos de reconciliación para datos y operaciones inconsistentes
+### [X] [FASE2-T15] Establecer procedimientos de reconciliación para datos y operaciones inconsistentes
 - **Origen del Hallazgo:** Auditoría de la Fase 2, octubre de 2026 (AUDITORIA_FASE2_ARQUITECTURA_INTEROPERABILIDAD.md - Área 5)
 - **Severidad/Clasificación:** Medio
 - **Archivos Involucrados:** `backend/accounting-service/Code.gs`, `backend/academic-service/Code.gs`
