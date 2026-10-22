@@ -575,7 +575,7 @@
   - Búsqueda "matematica" coincide con "Matemáticas".
 - **Estado:** [X] Completada
 
-### [ ] [T-UX-06] Omnibox Unificado Multi-Entidad con Atajo Global `Ctrl + K`
+### [X] [T-UX-06] Omnibox Unificado Multi-Entidad con Atajo Global `Ctrl + K`
 - **Origen del Hallazgo:** Auditoría de la Fase 3, octubre de 2026 (AUDITORIA_FASE3_EXPERIENCIA_USUARIO_NAVEGACION.md - Área 4)
 - **Severidad/Clasificación:** Alto
 - **Archivos Involucrados:** `js/ui-common.js`, `backend/user-service/Code.gs`
@@ -585,7 +585,7 @@
   2. Búsqueda multi-entidad con validación RBAC en servidor.
 - **Criterios de Aceptación:**
   - Apertura rápida y filtrado seguro de registros.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 ### [ ] [T-UX-09] Menú Lateral Responsivo Específico por Rol con Colapso Móvil Suave
 - **Origen del Hallazgo:** Auditoría de la Fase 3, octubre de 2026 (AUDITORIA_FASE3_EXPERIENCIA_USUARIO_NAVEGACION.md - Área 3)

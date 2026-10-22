@@ -4436,12 +4436,12 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 // ---------------------------------------------------------------------------
-// REQ-OMNI-001: BARRA DE BÚSQUEDA OMNIBOX UNIFICADA GLOBAL (CTRL + K / CMD + K)
+// [T-UX-06] [Fase 3: Experiencia de Usuario y Navegación Unificada] - BARRA DE BÚSQUEDA OMNIBOX UNIFICADA GLOBAL (CTRL + K / CMD + K) Y CONSULTA MULTI-ENTIDAD
 // ---------------------------------------------------------------------------
 
 var omniboxActiveTrigger = null;
 
-// [T-UX-02] [Fase 3: Experiencia de Usuario y Navegación Unificada] - Modal Omnibox unificado con atajos de teclado (Ctrl+K/Cmd+K/ESC) y restauración de foco.
+// [T-UX-06] [Fase 3: Experiencia de Usuario y Navegación Unificada] - Modal Omnibox unificado con atajos de teclado (Ctrl+K/Cmd+K/ESC) y restauración de foco.
 window.openGlobalOmniboxModal = function() {
     if (window.trackModalFocus) window.trackModalFocus();
     omniboxActiveTrigger = document.activeElement;

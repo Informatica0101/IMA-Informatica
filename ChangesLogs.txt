@@ -833,3 +833,18 @@ Archivos Modificados:
    - Actualización del estado de [T-UX-05] a [X] Completada.
 
 -------------------------------------------------------------------------------
+FECHA: Octubre 2026
+TAREA: [T-UX-06] Omnibox Unificado Multi-Entidad con Atajo Global Ctrl + K
+-------------------------------------------------------------------------------
+
+Archivos Modificados:
+1. backend/user-service/Code.gs
+   - Lineas 4148-4235: Optimización de searchGlobalOmnibox con función normalizeString para consultas insensibles a tildes y caracteres especiales en búsqueda multi-entidad (Usuarios, Noticias y Trámites) con validación RBAC en servidor.
+
+2. js/ui-common.js
+   - Lineas 4436-4444: Adición de comentario identificativo de T-UX-06 en el módulo global de Omnibox (Ctrl+K / Cmd+K).
+
+3. Pendientes.md
+   - Actualización del estado de [T-UX-06] a [X] Completada.
+
+-------------------------------------------------------------------------------

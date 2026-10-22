@@ -4144,12 +4144,12 @@ function purgeStructuredLogs(payload) {
   }
 }
 
-// [REQ-OMNI-001] [pendientes2.md] - Service backend endpoint (searchGlobalOmnibox) para búsqueda unificada multi-entidad con validación RBAC.
+// [T-UX-06] [Fase 3: Experiencia de Usuario y Navegación Unificada] - Búsqueda global omnibox multi-entidad con validación RBAC y normalización insensible a tildes.
 function searchGlobalOmnibox(payload) {
   try {
     if (!payload) return { status: "error", message: "Payload no provisto." };
-    const query = String(payload.query || "").trim().toLowerCase();
-    if (query.length < 2) {
+    const normQuery = normalizeString(payload.query || "");
+    if (normQuery.length < 2) {
       return { status: "success", results: [] };
     }
     const verifiedRole = getUserVerifiedRole(payload);
@@ -4167,7 +4167,7 @@ function searchGlobalOmnibox(payload) {
           const name = String(row[1] || "");
           const email = String(row[4] || "");
           const role = String(row[6] || "");
-          if (name.toLowerCase().indexOf(query) !== -1 || email.toLowerCase().indexOf(query) !== -1 || uid.toLowerCase().indexOf(query) !== -1) {
+          if (normalizeString(name).indexOf(normQuery) !== -1 || normalizeString(email).indexOf(normQuery) !== -1 || normalizeString(uid).indexOf(normQuery) !== -1) {
             results.push({
               id: uid,
               title: name || email,
@@ -4189,9 +4189,9 @@ function searchGlobalOmnibox(payload) {
       const nData = newsSheet.getDataRange().getValues();
       for (let i = 1; i < nData.length; i++) {
         const row = nData[i];
-        const title = String(row[1] || "");
-        const content = String(row[2] || "");
-        if (title.toLowerCase().indexOf(query) !== -1 || content.toLowerCase().indexOf(query) !== -1) {
+        const title = String(row[3] || row[1] || "");
+        const content = String(row[4] || row[2] || "");
+        if (normalizeString(title).indexOf(normQuery) !== -1 || normalizeString(content).indexOf(normQuery) !== -1) {
           results.push({
             id: row[0] || ("news-" + i),
             title: title,
@@ -4213,9 +4213,9 @@ function searchGlobalOmnibox(payload) {
       for (let i = 1; i < rData.length; i++) {
         const row = rData[i];
         const reqId = String(row[0] || "");
-        const asunto = String(row[2] || "");
+        const asunto = String(row[4] || row[2] || "");
         const tipo = String(row[3] || "");
-        if (reqId.toLowerCase().indexOf(query) !== -1 || asunto.toLowerCase().indexOf(query) !== -1 || tipo.toLowerCase().indexOf(query) !== -1) {
+        if (normalizeString(reqId).indexOf(normQuery) !== -1 || normalizeString(asunto).indexOf(normQuery) !== -1 || normalizeString(tipo).indexOf(normQuery) !== -1) {
           results.push({
             id: reqId,
             title: asunto || ("Trámite " + reqId),
