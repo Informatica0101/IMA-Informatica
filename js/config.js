@@ -7,12 +7,90 @@ window.SERVICE_VERSIONS = {
   ACCOUNTING: '1.0.0'
 };
 
+// [FASE2-T19] [Fase 2 - Gestión de Caché de Datos Institucionales] - Políticas de vigencia (TTL), aislamiento por identidad de usuario e invalidación para datos institucionales.
+window.CACHE_POLICIES = {
+  USER_ROLES: { ttlSeconds: 21600, scope: "USER_SPECIFIC", description: "Canché de roles verificados de usuario (6 horas max) con invalidación inmediata al cambiar estado" },
+  INSTITUTIONAL_CATALOGS: { ttlSeconds: 43200, scope: "GLOBAL", description: "Catálogos estáticos como áreas curriculares y materias (12 horas)" },
+  SESSION_PERMISSIONS: { ttlSeconds: 3600, scope: "USER_SPECIFIC", description: "Permisos de sesión por rol (1 hora)" },
+  FINANCIAL_STATEMENTS: { ttlSeconds: 0, scope: "NO_CACHE", description: "Estados de cuenta y saldos nunca se almacenan en caché sin confirmación del servidor" }
+};
+
+// [FASE2-T17] [Fase 2 - Política de Versionado de Configuraciones Compartidas] - Validación de compatibilidad entre cliente y servidor, detección de consumidores obsoletos y política de evolución de contratos.
+window.getSharedConfigVersion = function() {
+  return "2.0.0";
+};
+
+window.validateServiceVersionCompatibility = function(serviceName, clientMinVersion) {
+  var serviceVersions = window.SERVICE_VERSIONS || {};
+  var currentSvcVersion = serviceVersions[serviceName] || "1.0.0";
+
+  function parseSemVer(v) {
+    var parts = (v || "1.0.0").split(".").map(Number);
+    return { major: parts[0] || 1, minor: parts[1] || 0, patch: parts[2] || 0 };
+  }
+
+  var current = parseSemVer(currentSvcVersion);
+  var required = parseSemVer(clientMinVersion || "1.0.0");
+
+  var isCompatible = current.major === required.major && current.minor >= required.minor;
+
+  if (!isCompatible) {
+    console.warn("[VERSION_COMPATIBILITY_WARN] El servicio " + serviceName + " (v" + currentSvcVersion + ") es incompatible con el cliente (v" + clientMinVersion + ").");
+  }
+
+  return {
+    isCompatible: isCompatible,
+    currentVersion: currentSvcVersion,
+    requiredVersion: clientMinVersion || "1.0.0",
+    actionRequired: isCompatible ? "NONE" : "RELOAD_CLIENT_APP"
+  };
+};
+
 window.DEPARTMENT_SERVICES_MAP = {
   'DIRECCION_SECRETARIA': ['USER', 'ACADEMIC'],
   'RECURSOS_HUMANOS': ['USER', 'ACCOUNTING'],
   'CONTABILIDAD_FINANZAS': ['ACCOUNTING'],
   'DOCENCIA_ACADEMICO': ['ACADEMIC', 'TASK', 'EXAM'],
   'ALUMNADO_PADRES': ['USER', 'ACADEMIC', 'TASK', 'EXAM', 'ACCOUNTING']
+};
+
+// [FASE2-T13] [Fase 2 - Documentación de Dependencias] - Mapa programático de responsabilidades de servicios, funciones públicas, roles consumidores y pruebas de integración.
+window.getDepartmentalDependencyMap = function() {
+  return {
+    version: "2.0.0",
+    services: {
+      USER: {
+        domain: "Gestión de Usuarios, Autenticación y RBAC",
+        responsibilities: ["Autenticación de usuarios", "Verificación RBAC con CacheService", "Notificaciones multicanal", "Omnibox global", "Bitácora de eventos y trazabilidad"],
+        consumerRoles: ["Administrador", "Director", "Docente", "Estudiante", "Padre", "RecursosHumanos", "Contador"],
+        integrationTests: ["runUXSuiteTests", "loginUserTest"]
+      },
+      ACADEMIC: {
+        domain: "Gestión Académica, Malla Curricular y Expedientes",
+        responsibilities: ["Malla curricular de 12 áreas", "Expediente digital de estudiante", "Calificaciones SACE y cuadro de honor", "Aulas y ofertas académicas", "Criterios de almacenamiento transaccional"],
+        consumerRoles: ["Administrador", "Director", "Subdirector", "Profesor", "Estudiante", "Padre"],
+        integrationTests: ["runCurricularAreaServiceTests", "reconcileRestoredDataIntegrity"]
+      },
+      ACCOUNTING: {
+        domain: "Contabilidad, Finanzas y Recursos Humanos",
+        responsibilities: ["Estado de cuenta y cobro de aranceles", "Asientos contables y caja/bancos", "Recursos Humanos (Planillas, licencias, contrataciones, evaluaciones)", "Compras, inventario y activos fijos"],
+        consumerRoles: ["Administrador", "Contador", "RecursosHumanos", "EncargadoTienda", "EncargadoCafeteria"],
+        integrationTests: ["runHRIntegrationAndRegressionTests", "runCriticalProcessConcurrencySuite"]
+      },
+      TASK: {
+        domain: "Gestión de Tareas y Entregas con Rúbricas",
+        responsibilities: ["Creación y asignación de tareas", "Borradores progresivos y entregas", "Evaluación con rúbricas", "Penalización por morosidad/tardanza"],
+        consumerRoles: ["Docente", "Profesor", "Estudiante"],
+        integrationTests: ["gradeSubmissionWithRubricTest"]
+      },
+      EXAM: {
+        domain: "Evaluación en Línea y Banco de Preguntas",
+        responsibilities: ["Banco de preguntas por asignatura", "Exámenes cronometrados", "Calificación automática e intentos"],
+        consumerRoles: ["Docente", "Profesor", "Estudiante"],
+        integrationTests: ["getQuestionBankTest"]
+      }
+    }
+  };
 };
 
 // [TAREA-08] [Fase 1 - Malla Curricular] - Estructura jerárquica de la malla curricular por áreas, asignaturas y departamentos.
@@ -477,6 +555,30 @@ window.isContentAuthorized = function(contentUnit, contentSubject, contentTopic,
     return true;
 };
 
+// [FASE2-T04] [Fase 2 - Fuente de Verdad Institucional de Catálogos] - Sincronización del cliente con el catálogo centralizado de la institución.
+window.fetchInstitutionalCatalog = function(catalogType) {
+    if (typeof fetchApi !== 'function') {
+        console.warn("[CATALOG-SYNC] fetchApi no disponible para consulta de catálogos.");
+        return Promise.resolve({ status: "success", data: window.CURRICULAR_AREAS_CATALOG });
+    }
+    return fetchApi('ACADEMIC', 'getInstitutionalCatalog', { catalogType: catalogType || 'ALL_INSTITUTIONAL_CATALOGS' })
+        .then(function(res) {
+            if (res && res.status === 'success' && res.data) {
+                if (Array.isArray(res.data.areasCurriculares)) {
+                    res.data.areasCurriculares.forEach(function(area) {
+                        window.registerNewCurricularAreaServiceConfig(area);
+                    });
+                }
+                return res;
+            }
+            return { status: "success", data: window.CURRICULAR_AREAS_CATALOG };
+        })
+        .catch(function(e) {
+            console.error("[CATALOG-SYNC] Error en sincronización de catálogos:", e);
+            return { status: "success", data: window.CURRICULAR_AREAS_CATALOG };
+        });
+};
+
 window.validateQuestion = function(q) {
     var normalized = window.normalizeQuestion(q);
     var required = ['Asignatura', 'Nivel', 'Pregunta', 'RespuestaCorrecta'];
@@ -588,4 +690,28 @@ window.normalizeQuestion = function(q) {
     result.respuestaCorrecta = result.RespuestaCorrecta;
 
     return result;
+};
+
+// [TAREA-20] [Fase 1 - Incorporación Curricular] - Plantilla técnica estandarizada para registro e incorporación de nuevas áreas y servicios curriculares en la configuración global.
+window.registerNewCurricularAreaServiceConfig = function(areaConfig) {
+    if (!areaConfig || !areaConfig.areaId || !areaConfig.name) return false;
+    if (!Array.isArray(window.CURRICULAR_AREAS_CATALOG)) {
+        window.CURRICULAR_AREAS_CATALOG = [];
+    }
+    if (!window.CURRICULAR_AREAS_CATALOG.some(function(a) { return a.areaId === areaConfig.areaId; })) {
+        window.CURRICULAR_AREAS_CATALOG.push({
+            areaId: areaConfig.areaId,
+            name: areaConfig.name,
+            code: areaConfig.code || areaConfig.areaId
+        });
+    }
+    if (areaConfig.serviceKey) {
+        if (!window.CURRICULAR_SPECIALIZED_SERVICES) window.CURRICULAR_SPECIALIZED_SERVICES = {};
+        window.CURRICULAR_SPECIALIZED_SERVICES[areaConfig.areaId] = {
+            serviceKey: areaConfig.serviceKey,
+            name: areaConfig.name,
+            tools: areaConfig.tools || []
+        };
+    }
+    return true;
 };

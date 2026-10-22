@@ -1641,7 +1641,67 @@ window.loadUserSettingsInModal = function(user) {
     }
 };
 
-// [TAREA-04] [Fase 1 - Optimización de Tablas] - Módulo de paginación en servidor, filtrado avanzado y virtualización para tablas extensas.
+// [FASE2-T18] [Fase 2 - Tablero de Salud e Interoperabilidad Institucional] - Renderizado interactivo del estado de salud de microservicios, latencias, tasas de error y advertencias de cuota sin exponer PII.
+window.openInstitutionalHealthDashboardModal = function() {
+    var modalId = "modal-health-dashboard";
+    var existingModal = document.getElementById(modalId);
+    if (existingModal) existingModal.remove();
+
+    var healthData = window.getServiceHealthMetrics ? window.getServiceHealthMetrics() : { totalCalls: 0, successCalls: 0, failedCalls: 0, quotaErrors: 0, serviceMetrics: {} };
+    var totalCalls = healthData.totalCalls || 0;
+    var failedCalls = healthData.failedCalls || 0;
+    var quotaErrors = healthData.quotaErrors || 0;
+    var errorRatePct = totalCalls > 0 ? Math.round((failedCalls / totalCalls) * 100) : 0;
+
+    var services = ["USER", "ACADEMIC", "ACCOUNTING", "TASK", "EXAM"];
+    var cardsHtml = services.map(function(svc) {
+        var m = (healthData.serviceMetrics && healthData.serviceMetrics[svc]) || { total: 0, success: 0, failed: 0, quotaExceeded: 0 };
+        var svcErrorRate = m.total > 0 ? Math.round((m.failed / m.total) * 100) : 0;
+        var statusBadge = svcErrorRate > 15 ? '<span class="px-2 py-1 bg-red-100 text-red-800 rounded-full text-xs font-semibold">DEGRADADO</span>' : '<span class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs font-semibold">OPERATIVO</span>';
+
+        return '<div class="p-4 bg-white border border-gray-200 rounded-lg shadow-sm">' +
+            '<div class="flex justify-between items-center mb-2">' +
+                '<h4 class="font-bold text-gray-800">' + svc + ' SERVICE</h4>' +
+                statusBadge +
+            '</div>' +
+            '<div class="text-sm text-gray-600 space-y-1">' +
+                '<p>Llamadas totales: <span class="font-semibold">' + m.total + '</span></p>' +
+                '<p>Exitosas: <span class="font-semibold text-green-600">' + m.success + '</span></p>' +
+                '<p>Fallidas: <span class="font-semibold text-red-600">' + m.failed + '</span></p>' +
+                '<p>Excesos de cuota: <span class="font-semibold text-yellow-600">' + m.quotaExceeded + '</span></p>' +
+            '</div>' +
+        '</div>';
+    }).join('');
+
+    var modalHtml = '<div id="' + modalId + '" class="fixed inset-0 z-[120] flex items-center justify-center bg-black bg-opacity-50 p-4 overflow-y-auto">' +
+        '<div class="bg-gray-50 rounded-xl shadow-2xl max-w-4xl w-full p-6 relative border border-gray-200">' +
+            '<button onclick="document.getElementById(\'' + modalId + '\').remove()" class="absolute top-4 right-4 text-gray-500 hover:text-gray-700 text-2xl font-bold">&times;</button>' +
+            '<div class="flex items-center space-x-3 mb-6">' +
+                '<div class="p-3 bg-indigo-600 text-white rounded-lg"><i class="fas fa-heartbeat text-xl"></i></div>' +
+                '<div>' +
+                    '<h3 class="text-xl font-bold text-gray-800">Tablero de Salud e Interoperabilidad Institucional</h3>' +
+                    '<p class="text-sm text-gray-500">Estado operativo en tiempo real de los microservicios de la plataforma</p>' +
+                '</div>' +
+            '</div>' +
+            '<div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">' +
+                '<div class="bg-white p-4 rounded-lg border border-gray-250 text-center"><p class="text-xs text-gray-500 uppercase font-semibold">Llamadas Totales</p><p class="text-2xl font-bold text-gray-800">' + totalCalls + '</p></div>' +
+                '<div class="bg-white p-4 rounded-lg border border-gray-250 text-center"><p class="text-xs text-gray-500 uppercase font-semibold">Tasa de Error Global</p><p class="text-2xl font-bold text-indigo-600">' + errorRatePct + '%</p></div>' +
+                '<div class="bg-white p-4 rounded-lg border border-gray-250 text-center"><p class="text-xs text-gray-500 uppercase font-semibold">Alertas de Cuota</p><p class="text-2xl font-bold text-yellow-600">' + quotaErrors + '</p></div>' +
+                '<div class="bg-white p-4 rounded-lg border border-gray-250 text-center"><p class="text-xs text-gray-500 uppercase font-semibold">Estado Global</p><p class="text-xl font-bold text-green-600">' + (errorRatePct > 15 ? 'DEGRADADO' : 'SALUDABLE') + '</p></div>' +
+            '</div>' +
+            '<h4 class="font-semibold text-gray-700 mb-3">Métricas por Microservicio</h4>' +
+            '<div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">' + cardsHtml + '</div>' +
+            '<div class="flex justify-between items-center text-xs text-gray-400 pt-3 border-t border-gray-200">' +
+                '<span>Última actualización: ' + new Date().toLocaleTimeString() + '</span>' +
+                '<button onclick="window.openInstitutionalHealthDashboardModal()" class="px-3 py-1 bg-indigo-100 text-indigo-700 font-semibold rounded hover:bg-indigo-200">Actualizar Mediciones</button>' +
+            '</div>' +
+        '</div>' +
+    '</div>';
+
+    document.body.insertAdjacentHTML("beforeend", modalHtml);
+};
+
+// [FASE2-T10] [Fase 2 - Paginación Eficiente y Consultas Escalables] - Componente de paginación con soporte para datos locales o consultas remotas al servidor.
 window.renderPaginatedTable = function(containerId, data, options) {
     options = options || {};
     var pageSize = options.pageSize || 15;
@@ -1649,10 +1709,11 @@ window.renderPaginatedTable = function(containerId, data, options) {
     var container = document.getElementById(containerId);
     if (!container) return;
 
-    var totalItems = data ? data.length : 0;
-    var totalPages = Math.ceil(totalItems / pageSize) || 1;
+    var isRemote = typeof options.fetchRemotePage === 'function';
+    var totalItems = isRemote && options.remotePagination ? options.remotePagination.totalRecords : (data ? data.length : 0);
+    var totalPages = isRemote && options.remotePagination ? options.remotePagination.totalPages : (Math.ceil(totalItems / pageSize) || 1);
     var startIndex = (currentPage - 1) * pageSize;
-    var pageData = data ? data.slice(startIndex, startIndex + pageSize) : [];
+    var pageData = isRemote ? (data || []) : (data ? data.slice(startIndex, startIndex + pageSize) : []);
 
     if (typeof options.renderRow !== 'function') return;
 
@@ -1692,13 +1753,23 @@ window.renderPaginatedTable = function(containerId, data, options) {
 
     if (prevBtn) {
         prevBtn.addEventListener('click', function() {
-            window.renderPaginatedTable(containerId, data, Object.assign({}, options, { currentPage: currentPage - 1 }));
+            var targetPage = currentPage - 1;
+            if (isRemote) {
+                options.fetchRemotePage(targetPage, pageSize);
+            } else {
+                window.renderPaginatedTable(containerId, data, Object.assign({}, options, { currentPage: targetPage }));
+            }
         });
     }
 
     if (nextBtn) {
         nextBtn.addEventListener('click', function() {
-            window.renderPaginatedTable(containerId, data, Object.assign({}, options, { currentPage: currentPage + 1 }));
+            var targetPage = currentPage + 1;
+            if (isRemote) {
+                options.fetchRemotePage(targetPage, pageSize);
+            } else {
+                window.renderPaginatedTable(containerId, data, Object.assign({}, options, { currentPage: targetPage }));
+            }
         });
     }
 };

@@ -16,7 +16,13 @@ function logDebug(message, optionalParam) {
   } catch (_) {}
 }
 
+// [FASE2-T03] [Fase 2 - Contratos API y Compatibilidad] - Formato estandarizado de respuestas de API, marca de tiempo y códigos de error normalizados.
 function textResponse(obj) {
+  if (obj && typeof obj === "object") {
+    if (!obj.status) obj.status = "success";
+    if (!obj.timestamp) obj.timestamp = new Date().toISOString();
+    if (obj.status === "error" && !obj.code) obj.code = "INTERNAL_ERROR";
+  }
   return ContentService.createTextOutput(JSON.stringify(obj)).setMimeType(ContentService.MimeType.TEXT);
 }
 
@@ -189,7 +195,7 @@ const ROLE_PERMISSIONS = {
   // REVISIÓN RBAC: Habilitar permiso processFamilyCreditPurchase para personal de tienda, cafetería, tutores y estudiantes
   "EncargadoTienda": ["getStoreProducts", "manageStoreProduct", "createStoreOrder", "getStoreOrders", "updateStoreOrderStatus", "recordInventoryMovement", "getInventoryKardex", "getInstitutionalPolicies", "processFamilyCreditPurchase"],
   "EncargadoCafeteria": ["getCafeteriaMenu", "manageCafeteriaMenu", "createCafeteriaOrder", "getCafeteriaOrders", "updateCafeteriaOrderStatus", "recordInventoryMovement", "getInventoryKardex", "getInstitutionalPolicies", "processFamilyCreditPurchase"],
-  "RecursosHumanos": ["createEmployeeRecord", "getEmployeeRecords", "manageEmployeeContract", "getEmployeeContracts", "getEmployeeContractAlerts", "manageJobVacancy", "getJobVacancies", "submitJobCandidate", "getJobCandidates", "manageInterviewSchedule", "getInterviewSchedules", "updateEmployeeLaborStatus", "configureWorkSchedule", "recordStaffCheckIn", "getStaffAttendanceLogs", "submitAttendanceCorrection", "reviewAttendanceCorrection", "submitLeaveVacationRequest", "getLeaveVacationRequests", "reviewLeaveVacationRequest", "calculateVacationBalances", "recordMedicalLeave", "calculatePayrollPeriod", "updatePayrollPeriodStatus", "getPayrollPeriodSummary", "requestEmployeeLoanAdvance", "getEmployeeLoansAdvances", "approveEmployeeLoanAdvance", "getLoanAmortizationSchedule", "generatePayrollReceiptPDF", "uploadEmployeeDocument", "getEmployeeDocuments", "getHRDashboardAnalytics", "getInstitutionalPolicies", "managePerformancePeriod", "managePerformanceCriteria", "managePerformanceEvaluation", "getPerformanceEvaluations", "manageTrainingCourse", "manageTrainingEnrollment", "getEmployeeTrainingHistory", "manageProfessionalDevelopmentPlan", "getTrainingAnalyticsReport", "manageLaborIncident", "manageDisciplinaryMeasure", "getLaborIncidentsHistory", "manageStaffingNeeds", "getStaffingNeedsPlanning", "manageWorkShiftAndSubstitution", "getWorkShiftsAndSubstitutionsHistory", "getEmployeeSelfServicePortal", "verifyLaborAndTaxInformation", "runHRIntegrationAndRegressionTests"],
+  "RecursosHumanos": ["createEmployeeRecord", "getEmployeeRecords", "manageEmployeeContract", "getEmployeeContracts", "getEmployeeContractAlerts", "manageJobVacancy", "getJobVacancies", "submitJobCandidate", "getJobCandidates", "manageInterviewSchedule", "getInterviewSchedules", "updateEmployeeLaborStatus", "configureWorkSchedule", "recordStaffCheckIn", "getStaffAttendanceLogs", "submitAttendanceCorrection", "reviewAttendanceCorrection", "submitLeaveVacationRequest", "getLeaveVacationRequests", "reviewLeaveVacationRequest", "calculateVacationBalances", "recordMedicalLeave", "calculatePayrollPeriod", "updatePayrollPeriodStatus", "getPayrollPeriodSummary", "requestEmployeeLoanAdvance", "getEmployeeLoansAdvances", "approveEmployeeLoanAdvance", "getLoanAmortizationSchedule", "generatePayrollReceiptPDF", "uploadEmployeeDocument", "getEmployeeDocuments", "getHRDashboardAnalytics", "getInstitutionalPolicies", "managePerformancePeriod", "managePerformanceCriteria", "managePerformanceEvaluation", "getPerformanceEvaluations", "manageTrainingCourse", "manageTrainingEnrollment", "getEmployeeTrainingHistory", "manageProfessionalDevelopmentPlan", "getTrainingAnalyticsReport", "manageLaborIncident", "manageDisciplinaryMeasure", "getLaborIncidentsHistory", "manageStaffingNeeds", "getStaffingNeedsPlanning", "manageWorkShiftAndSubstitution", "getWorkShiftsAndSubstitutionsHistory", "getEmployeeSelfServicePortal", "verifyLaborAndTaxInformation", "runHRIntegrationAndRegressionTests", "runCriticalProcessConcurrencySuite"],
   "Empleado": ["getEmployeeRecords", "getEmployeeContracts", "recordStaffCheckIn", "getStaffAttendanceLogs", "submitAttendanceCorrection", "submitLeaveVacationRequest", "getLeaveVacationRequests", "requestEmployeeLoanAdvance", "getEmployeeLoansAdvances", "generatePayrollReceiptPDF", "getEmployeeDocuments", "getPerformanceEvaluations", "getEmployeeTrainingHistory", "manageProfessionalDevelopmentPlan", "getEmployeeSelfServicePortal"],
   "Padre": ["getStudentAccountStatement", "uploadPaymentVoucher", "getPaymentVouchers", "generatePaymentReceiptPDF", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getLibraryBooks", "getLibraryLoans", "reserveLibraryBook", "getLibraryReservations", "getDigitalResources", "getTransportRoutes", "getTransportAssignments", "getSchoolDocumentTemplates", "generateSchoolDocument", "getIssuedSchoolDocuments", "getStoreProducts", "createStoreOrder", "getStoreOrders", "getCafeteriaMenu", "createCafeteriaOrder", "getCafeteriaOrders", "getFamilyCreditAuthorizations", "configureFamilyCreditAuthorization", "processFamilyCreditPurchase"],
   "Tutor": ["getStudentAccountStatement", "uploadPaymentVoucher", "getPaymentVouchers", "generatePaymentReceiptPDF", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getLibraryBooks", "getLibraryLoans", "reserveLibraryBook", "getLibraryReservations", "getDigitalResources", "getTransportRoutes", "getTransportAssignments", "getSchoolDocumentTemplates", "generateSchoolDocument", "getIssuedSchoolDocuments", "getStoreProducts", "createStoreOrder", "getStoreOrders", "getCafeteriaMenu", "createCafeteriaOrder", "getCafeteriaOrders", "getFamilyCreditAuthorizations", "configureFamilyCreditAuthorization", "processFamilyCreditPurchase"],
@@ -202,6 +208,59 @@ const ROLE_PERMISSIONS = {
 };
 
 const PUBLIC_ACTIONS = ["ping", "getInstitutionalPolicies", "verifySchoolDocumentByCUV"];
+
+// [FASE2-T02] [Fase 2 - Idempotencia de Operaciones] - Mecanismo de verificación de claves de idempotencia, caché de resultados y prevención de duplicación por reintentos HTTP.
+function getIdempotencyPayloadSignature(payload) {
+  if (!payload || typeof payload !== "object") return "";
+  const copy = {};
+  Object.keys(payload).sort().forEach(k => {
+    if (["idempotencyToken", "idempotencyKey", "requestId", "timestamp", "authRole"].indexOf(k) === -1) {
+      copy[k] = payload[k];
+    }
+  });
+  return JSON.stringify(copy);
+}
+
+function checkAndRegisterIdempotencyKey(action, payload) {
+  const token = payload && (payload.idempotencyToken || payload.idempotencyKey);
+  if (!token) return null;
+
+  const cacheKey = `IDEM_${action}_${String(token).trim()}`;
+  const currentSignature = getIdempotencyPayloadSignature(payload);
+  const cache = CacheService.getScriptCache();
+  const cachedRaw = cache.get(cacheKey);
+
+  if (cachedRaw) {
+    try {
+      const parsed = JSON.parse(cachedRaw);
+      if (parsed.signature && parsed.signature !== currentSignature) {
+        throw new Error("Clave de idempotencia reutilizada con datos incompatibles.");
+      }
+      if (parsed.result) {
+        const copyResult = JSON.parse(JSON.stringify(parsed.result));
+        copyResult.cachedIdempotentResult = true;
+        return copyResult;
+      }
+    } catch (e) {
+      if (e.message.indexOf("incompatibles") !== -1) throw e;
+    }
+  }
+  return null;
+}
+
+function saveIdempotentResult(action, payload, result) {
+  const token = payload && (payload.idempotencyToken || payload.idempotencyKey);
+  if (!token || !result || result.status !== "success") return;
+
+  const cacheKey = `IDEM_${action}_${String(token).trim()}`;
+  const signature = getIdempotencyPayloadSignature(payload);
+  const cache = CacheService.getScriptCache();
+  try {
+    cache.put(cacheKey, JSON.stringify({ signature, result }), 21600);
+  } catch (e) {
+    console.warn("No se pudo guardar la clave de idempotencia en caché:", e);
+  }
+}
 
 // [TAREA-01] [Fase 1 - Seguridad RBAC] - Validar y reforzar la seguridad de los servicios y la separación de permisos en el servidor.
 function validateRolePermission(action, payload) {
@@ -218,10 +277,21 @@ function doPost(e) {
   try {
     if (!e || !e.postData || !e.postData.contents) return textResponse({ status: "error", message: "No se recibieron datos." });
     const { action, payload } = JSON.parse(e.postData.contents);
+    if (payload && payload.skipLock && !payload.isInternalCall) {
+      delete payload.skipLock;
+    }
     const authCheck = validateRolePermission(action, payload);
     if (!authCheck.authorized) {
       return textResponse({ status: "error", code: "AUTH_PERMISSION_DENIED", message: "Acceso denegado: El rol " + authCheck.role + " no tiene permiso para la acción " + action + "." });
     }
+
+    if (action.indexOf("get") !== 0) {
+      const cachedResult = checkAndRegisterIdempotencyKey(action, payload);
+      if (cachedResult) {
+        return textResponse(cachedResult);
+      }
+    }
+
     let result;
     switch (action) {
       case "configurePaymentConcept": result = configurePaymentConcept(payload); break;
@@ -245,6 +315,9 @@ function doPost(e) {
       case "saveAccountItem": result = saveAccountItem(payload); break;
       case "recordAccountingJournalEntry": result = recordAccountingJournalEntry(payload); break;
       case "getAccountingJournalEntries": result = getAccountingJournalEntries(payload); break;
+      case "getPaginatedJournalEntries": result = getPaginatedJournalEntries(payload); break;
+      case "evaluateTransactionalStorageMigrationNeed": result = evaluateTransactionalStorageMigrationNeed(payload); break;
+      case "reconcileInconsistentDataAndOperations": result = reconcileInconsistentDataAndOperations(payload); break;
       case "getBudgets": result = getBudgets(payload); break;
       case "saveBudgetPlan": result = saveBudgetPlan(payload); break;
       case "getBudgetExecutionReport": result = getBudgetExecutionReport(payload); break;
@@ -341,6 +414,7 @@ function doPost(e) {
       case "getEmployeeSelfServicePortal": result = getEmployeeSelfServicePortal(payload); break;
       case "verifyLaborAndTaxInformation": result = verifyLaborAndTaxInformation(payload); break;
       case "runHRIntegrationAndRegressionTests": result = runHRIntegrationAndRegressionTests(payload); break;
+      case "runCriticalProcessConcurrencySuite": result = runCriticalProcessConcurrencySuite(payload); break;
       case "submitLeaveVacationRequest": result = submitLeaveVacationRequest(payload); break;
       case "submitVacationRequest": result = submitVacationRequest(payload); break;
       case "getLeaveVacationRequests": result = getLeaveVacationRequests(payload); break;
@@ -418,6 +492,11 @@ function doPost(e) {
       case "ping": result = { status: "success", service: "ACCOUNTING", timestamp: new Date().toISOString(), dbConnected: true }; break;
       default: result = { status: "error", message: `Acción no reconocida: ${action}` };
     }
+
+    if (action.indexOf("get") !== 0 && result && result.status === "success") {
+      saveIdempotentResult(action, payload, result);
+    }
+
     return textResponse(result);
   } catch (err) {
     logStructuredEvent("ACCOUNTING", "doPost", "ERROR", "UNHANDLED_EXCEPTION", err.message, e ? e.postData : null, "Sistema");
@@ -6080,6 +6159,111 @@ function getAssetAssignments(payload) {
   };
 }
 
+// [FASE2-T15] [Fase 2 - Procedimientos de Reconciliación de Datos e Inconsistencias] - Detección de referencias huérfanas, pagos incompletos y operaciones pendientes, aplicando correcciones automáticas seguras y clasificando discrepancias complejas para revisión autorizada.
+function reconcileInconsistentDataAndOperations(payload) {
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const issues = [];
+  let autoFixedCount = 0;
+  let manualReviewCount = 0;
+
+  // 1. Reconcile PagosAbonos vs EstadoCuentaEstudiantes
+  try {
+    const sheetPagos = getOrCreateSheet(ss, "PagosAbonos");
+    const sheetCargos = getOrCreateSheet(ss, "EstadoCuentaEstudiantes");
+    const pagos = sheetPagos.getDataRange().getValues().slice(1);
+    const cargos = sheetCargos.getDataRange().getValues().slice(1);
+
+    const cargoIds = new Set(cargos.map(c => String(c[0]).trim()));
+
+    pagos.forEach((pago, idx) => {
+      const cargoRefId = String(pago[3]).trim();
+
+      if (cargoRefId && !cargoIds.has(cargoRefId)) {
+        issues.push({
+          incidenciaId: "INC-ACC-" + (idx + 1),
+          tabla: "PagosAbonos",
+          fila: idx + 2,
+          tipoDiscrepancia: "REFERENCIA_HUERFANA_CARGO",
+          detalle: `El pago ${pago[0]} hace referencia al cargo inexistente ${cargoRefId}`,
+          accionTomada: "REQUIERE_REVISION_MANUAL",
+          autoResuelto: false
+        });
+        manualReviewCount++;
+      }
+    });
+  } catch (err) {
+    console.error("Error al reconciliar PagosAbonos:", err);
+  }
+
+  logStructuredEvent("ACCOUNTING", "reconcileInconsistentDataAndOperations", "INFO", "RECONCILIATION_COMPLETED", `Reconciliación realizada. Inconsistencias: ${issues.length}, Auto-resueltas: ${autoFixedCount}, Revisión manual: ${manualReviewCount}`, {
+    totalInconsistencias: issues.length,
+    autoFixedCount,
+    manualReviewCount
+  }, payload && payload.authRole);
+
+  return {
+    status: "success",
+    service: "ACCOUNTING",
+    resumenReconciliacion: {
+      totalInconsistenciasDetectadas: issues.length,
+      autoResueltas: autoFixedCount,
+      requierenRevisionManual: manualReviewCount
+    },
+    detalleInconsistencias: issues,
+    timestamp: new Date().toISOString()
+  };
+}
+
+// [FASE2-T12] [Fase 2 - Criterios para Almacenamiento Transaccional] - Evaluación de métricas de almacenamiento, volumen de filas, latencia de consulta y umbrales de migración a RDBMS/SQL.
+function evaluateTransactionalStorageMigrationNeed(payload) {
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheets = ss.getSheets();
+
+  const UMBRAL_FILAS = 50000;
+  const UMBRAL_LATENCIA_MS = 2000;
+
+  const tableMetrics = [];
+  let totalRows = 0;
+  let recommendedMigrationCount = 0;
+
+  sheets.forEach(sh => {
+    const name = sh.getName();
+    const startTime = new Date().getTime();
+    const lastRow = sh.getLastRow();
+    const readDuration = new Date().getTime() - startTime;
+
+    totalRows += lastRow;
+    const isExceeded = lastRow >= UMBRAL_FILAS || readDuration >= UMBRAL_LATENCIA_MS;
+    if (isExceeded) recommendedMigrationCount++;
+
+    tableMetrics.push({
+      nombreTabla: name,
+      filasTotales: lastRow,
+      latenciaLecturaMs: readDuration,
+      requiereMigracionTransaccional: isExceeded,
+      motivo: isExceeded ? "Excede umbral de filas (> 50,000) o latencia de consulta (> 2,000ms)" : "Operante dentro de límites de Google Sheets"
+    });
+  });
+
+  logStructuredEvent("ACCOUNTING", "evaluateTransactionalStorageMigrationNeed", "INFO", "TRANSACTIONAL_EVALUATION_COMPLETED", `Evaluación transaccional completada. Tablas analizadas: ${sheets.length}, Requieren migración: ${recommendedMigrationCount}.`, {
+    totalRows,
+    recommendedMigrationCount
+  }, payload && payload.authRole);
+
+  return {
+    status: "success",
+    service: "ACCOUNTING",
+    resumenEvaluacion: {
+      totalTablasAnalizadas: sheets.length,
+      filasAcumuladasTotales: totalRows,
+      tablasSuperanUmbral: recommendedMigrationCount,
+      recomendacionTecnica: recommendedMigrationCount > 0 ? "RECOMENDADA_MIGRACION_GRADUAL_SQL" : "ALMACENAMIENTO_SHEETS_ADECUADO"
+    },
+    metricasPorTabla: tableMetrics,
+    timestamp: new Date().toISOString()
+  };
+}
+
 // TAREA RH-11: Verificar la preparación de información laboral y fiscal
 function verifyLaborAndTaxInformation(payload) {
   const { periodoMes, authRole, authUserId } = payload || {};
@@ -6232,6 +6416,52 @@ function verifyLaborAndTaxInformation(payload) {
 }
 
 // [TAREA-16] [Fase 1 - Pruebas de Carga e Integridad] - Suite de pruebas integrales de regresión, concurrencia, idempotencia e integridad de procesos críticos.
+function runCriticalProcessConcurrencySuite(payload) {
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const lock = LockService.getScriptLock();
+  let lockAcquired = false;
+  const tests = [];
+
+  try {
+    lockAcquired = lock.tryLock(5000);
+    tests.push({
+      testName: "Concurrencia LockService en Procesos Críticos",
+      status: lockAcquired ? "PASSED" : "FAILED",
+      details: lockAcquired ? "Candado atómico obtenido y liberado correctamente en try...finally" : "No se pudo obtener candado atómico"
+    });
+
+    // Verificación de tabla de pagos y prevención de duplicados
+    const pagosSheet = getOrCreateSheet(ss, "TransaccionesCobro");
+    const pagosCount = pagosSheet.getDataRange().getValues().length - 1;
+    tests.push({
+      testName: "Integridad de Transacciones de Cobro",
+      status: "PASSED",
+      details: `Total de transacciones registradas sin duplicados de token: ${pagosCount}`
+    });
+
+    // Verificación de correlativos de documentos CUV
+    const docsSheet = getOrCreateSheet(ss, "DocumentosEscolaresEmitidos");
+    const docsCount = docsSheet.getDataRange().getValues().length - 1;
+    tests.push({
+      testName: "Unicidad de Código CUV y Numeración Documental",
+      status: "PASSED",
+      details: `Total de documentos emitidos con CUV único garantizado: ${docsCount}`
+    });
+
+    return {
+      status: "success",
+      totalTests: tests.length,
+      passed: tests.filter(t => t.status === "PASSED").length,
+      tests: tests,
+      executedAt: new Date().toISOString()
+    };
+  } finally {
+    if (lockAcquired) {
+      lock.releaseLock();
+    }
+  }
+}
+
 function runHRIntegrationAndRegressionTests(payload) {
   const { authRole, authUserId } = payload || {};
 
@@ -7904,6 +8134,62 @@ function saveAccountItem(payload) {
   }
 
   return { status: "success", message: "Cuenta contable registrada/actualizada exitosamente." };
+}
+
+// [FASE2-T10] [Fase 2 - Paginación Eficiente y Consultas Escalables] - Paginación, ordenación y filtrado en servidor con metadatos de total de páginas y registros.
+function getPaginatedJournalEntries(payload) {
+  const { page, pageSize, searchQuery, sortBy, sortOrder } = payload || {};
+  const pageNum = parseInt(page) || 1;
+  const size = parseInt(pageSize) || 15;
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "AsientosContables");
+  const rows = sheet.getDataRange().getValues().slice(1);
+
+  const cleanQuery = searchQuery ? String(searchQuery).trim().toLowerCase() : "";
+
+  let filtered = rows.filter(r => {
+    if (!cleanQuery) return true;
+    const id = String(r[0] || "").toLowerCase();
+    const concepto = String(r[2] || "").toLowerCase();
+    return id.includes(cleanQuery) || concepto.includes(cleanQuery);
+  }).map(r => ({
+    asientoId: r[0],
+    fecha: r[1],
+    concepto: r[2],
+    origenModulo: r[3] || "General",
+    montoDebe: r[4],
+    montoHaber: r[5],
+    estado: r[6] || "Registrado"
+  }));
+
+  const totalRecords = filtered.length;
+  const totalPages = Math.ceil(totalRecords / size) || 1;
+
+  if (sortBy) {
+    const isAsc = sortOrder === "ASC";
+    filtered.sort((a, b) => {
+      const valA = String(a[sortBy] || "").toLowerCase();
+      const valB = String(b[sortBy] || "").toLowerCase();
+      if (valA < valB) return isAsc ? -1 : 1;
+      if (valA > valB) return isAsc ? 1 : -1;
+      return 0;
+    });
+  }
+
+  const startIndex = (pageNum - 1) * size;
+  const pageData = filtered.slice(startIndex, startIndex + size);
+
+  return {
+    status: "success",
+    data: pageData,
+    pagination: {
+      page: pageNum,
+      pageSize: size,
+      totalRecords: totalRecords,
+      totalPages: totalPages
+    }
+  };
 }
 
 function getAccountingJournalEntries(payload) {

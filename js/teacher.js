@@ -741,6 +741,335 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // [TAREA-19] [Fase 1 - Migración Curricular] - Handlers e integración frontend (#modal-curricular-migration) para mapeo, equivalencias y simulación pre-validada.
+    const modalCurricularMigration = document.getElementById('modal-curricular-migration');
+    const btnCloseCurricularMigration = document.getElementById('btn-close-curricular-migration');
+    const btnLoadEquivalences = document.getElementById('btn-load-equivalences');
+    const formCurricularMigration = document.getElementById('form-curricular-migration');
+    const migrationReportContainer = document.getElementById('migration-report-container');
+    const migrationReportDetails = document.getElementById('migration-report-details');
+
+    window.openCurricularMigrationModal = function() {
+        if (modalCurricularMigration) {
+            modalCurricularMigration.classList.remove('hidden');
+        }
+    };
+
+    if (btnCloseCurricularMigration) {
+        btnCloseCurricularMigration.addEventListener('click', () => {
+            if (modalCurricularMigration) modalCurricularMigration.classList.add('hidden');
+        });
+    }
+
+    if (btnLoadEquivalences) {
+        btnLoadEquivalences.addEventListener('click', async () => {
+            const planOrigenId = document.getElementById('mig-plan-origen')?.value || 'PLAN-ANTERIOR';
+            const planDestinoId = document.getElementById('mig-plan-destino')?.value || 'PLAN-2026-OFICIAL';
+            try {
+                if (window.showLoading) window.showLoading('Consultando equivalencias curriculares...');
+                const res = await fetchApi('ACADEMIC', 'getCurricularEquivalences', { planOrigenId, planDestinoId });
+                if (window.hideLoading) window.hideLoading();
+
+                if (res && res.status === 'success' && migrationReportContainer && migrationReportDetails) {
+                    migrationReportContainer.classList.remove('hidden');
+                    let html = `<div class="font-bold text-amber-700">Equivalencias Mapeadas (${res.totalAsignaturas || 0} asignaturas):</div>`;
+                    if (Array.isArray(res.equivalencias)) {
+                        res.equivalencias.slice(0, 10).forEach(eq => {
+                            html += `<div>• ${eq.nombreOrigen} (${eq.codigoOrigen}) → ${eq.nombreDestino} [${eq.estadoMapeo}]</div>`;
+                        });
+                    }
+                    migrationReportDetails.innerHTML = html;
+                } else if (res && res.message) {
+                    alert(res.message);
+                }
+            } catch (err) {
+                if (window.hideLoading) window.hideLoading();
+                console.error('Error al consultar equivalencias:', err);
+            }
+        });
+    }
+
+    if (formCurricularMigration) {
+        formCurricularMigration.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const planOrigenId = document.getElementById('mig-plan-origen')?.value || 'PLAN-ANTERIOR';
+            const planDestinoId = document.getElementById('mig-plan-destino')?.value || 'PLAN-2026-OFICIAL';
+            const ejecutarPruebaSeca = document.getElementById('mig-prueba-seca')?.checked ?? true;
+
+            try {
+                if (window.showLoading) window.showLoading('Ejecutando verificación e inspección de migración...');
+                const res = await fetchApi('ACADEMIC', 'executeCurricularMigration', {
+                    planOrigenId,
+                    planDestinoId,
+                    ejecutarPruebaSeca,
+                    modo: ejecutarPruebaSeca ? 'SIMULACION' : 'REAL'
+                });
+                if (window.hideLoading) window.hideLoading();
+
+                if (res && res.status === 'success' && migrationReportContainer && migrationReportDetails) {
+                    migrationReportContainer.classList.remove('hidden');
+                    const rep = res.reporte || {};
+                    let html = `<div class="font-bold text-emerald-700">${res.message}</div>`;
+                    html += `<div>Modo: ${rep.modoEjecucion || 'N/A'}</div>`;
+                    html += `<div>Registros Históricos Analizados: ${rep.registrosHistoricosAnalizados || 0}</div>`;
+                    html += `<div>Calificaciones Preservadas Inalterables: ${rep.calificacionesOficialesPreservadas || 0}</div>`;
+                    html += `<div>Discrepancias Detectadas: ${rep.discrepanciasDetectadas || 0}</div>`;
+                    migrationReportDetails.innerHTML = html;
+                } else if (res && res.message) {
+                    alert(res.message);
+                }
+            } catch (err) {
+                if (window.hideLoading) window.hideLoading();
+                console.error('Error al ejecutar migración:', err);
+            }
+        });
+    }
+
+    // [TAREA-17] [Fase 1 - Analítica Académica] - Controlador del modal e interfaz de reportes analíticos por área, asignatura y programa (#modal-academic-analytics).
+    const modalAcademicAnalytics = document.getElementById('modal-academic-analytics');
+    const btnCloseAcademicAnalytics = document.getElementById('btn-close-academic-analytics');
+
+    window.openAcademicAnalyticsModal = function() {
+        if (modalAcademicAnalytics) {
+            modalAcademicAnalytics.classList.remove('hidden');
+            window.loadCurricularAnalyticsReport();
+        }
+    };
+
+    if (btnCloseAcademicAnalytics) {
+        btnCloseAcademicAnalytics.addEventListener('click', () => {
+            if (modalAcademicAnalytics) modalAcademicAnalytics.classList.add('hidden');
+        });
+    }
+
+    window.loadCurricularAnalyticsReport = async function() {
+        try {
+            const res = await fetchApi('ACADEMIC', 'getCurricularAnalyticsReport', {});
+            if (res && res.status === 'success' && res.data && res.data.metrics) {
+                const m = res.data.metrics;
+                document.getElementById('analytics-promedio').innerText = (m.promedioConsolidado || 0) + '%';
+                document.getElementById('analytics-evaluadas').innerText = m.evaluadasCount || 0;
+                document.getElementById('analytics-pendientes').innerText = m.notasPendientes || 0;
+                document.getElementById('analytics-alertas').innerText = m.alertasAcompanamiento || 0;
+
+                const dist = m.distribucion || {};
+                document.getElementById('dist-excelente').innerText = dist.excelente || 0;
+                document.getElementById('dist-bueno').innerText = dist.bueno || 0;
+                document.getElementById('dist-satisfactorio').innerText = dist.satisfactorio || 0;
+                document.getElementById('dist-mejora').innerText = dist.necesitaMejora || 0;
+            }
+        } catch (err) {
+            console.error('Error al cargar reporte analítico:', err);
+        }
+    };
+
+    // [TAREA-18] [Fase 1 - Reutilización de Recursos] - Controlador del modal de catálogo de recursos educativos reutilizables e interdisciplinarios (#modal-reusable-resources).
+    const modalReusableResources = document.getElementById('modal-reusable-resources');
+    const btnCloseReusableResources = document.getElementById('btn-close-reusable-resources');
+    const btnRefreshReusableResources = document.getElementById('btn-refresh-reusable-resources');
+    const formAddReusableResource = document.getElementById('form-add-reusable-resource');
+
+    window.openReusableResourcesModal = function() {
+        if (modalReusableResources) {
+            modalReusableResources.classList.remove('hidden');
+            window.loadReusableResourcesCatalog();
+        }
+    };
+
+    if (btnCloseReusableResources) {
+        btnCloseReusableResources.addEventListener('click', () => {
+            if (modalReusableResources) modalReusableResources.classList.add('hidden');
+        });
+    }
+
+    if (btnRefreshReusableResources) {
+        btnRefreshReusableResources.addEventListener('click', () => {
+            window.loadReusableResourcesCatalog();
+        });
+    }
+
+    window.loadReusableResourcesCatalog = async function() {
+        const tableBody = document.getElementById('table-reusable-resources-body');
+        if (!tableBody) return;
+
+        try {
+            tableBody.innerHTML = '<tr><td colspan="5" class="p-4 text-center text-slate-400 italic">Cargando catálogo de recursos...</td></tr>';
+            const res = await fetchApi('ACADEMIC', 'getReusableResourceCatalog', {});
+            if (res && res.status === 'success') {
+                const resources = res.resources || [];
+                const projects = res.interdisciplinaryProjects || [];
+                const combined = [
+                    ...resources.map(r => ({ ...r, esProyectoItem: false })),
+                    ...projects.map(p => ({
+                        recursoId: p.proyectoId,
+                        titulo: p.titulo,
+                        area: p.departamentosInvolucrados,
+                        asignatura: 'Proyecto Interdisciplinario',
+                        tema: p.descripcion,
+                        version: '1.0',
+                        estado: p.estado,
+                        esProyectoItem: true
+                    }))
+                ];
+
+                if (combined.length === 0) {
+                    tableBody.innerHTML = '<tr><td colspan="5" class="p-4 text-center text-slate-400 font-semibold">No hay recursos ni proyectos registrados en el catálogo aún.</td></tr>';
+                } else {
+                    tableBody.innerHTML = combined.map(item => `
+                        <tr class="hover:bg-slate-50">
+                            <td class="p-2.5 font-bold text-slate-800">${item.titulo}</td>
+                            <td class="p-2.5">${item.area || 'General'}</td>
+                            <td class="p-2.5">${item.asignatura || 'General'} ${item.tema ? ' / ' + item.tema : ''}</td>
+                            <td class="p-2.5"><span class="px-2 py-0.5 ${item.esProyectoItem ? 'bg-purple-100 text-purple-800' : 'bg-indigo-100 text-indigo-800'} rounded-full font-bold text-[10px]">${item.esProyectoItem ? 'PROYECTO' : 'v' + (item.version || '1.0')}</span></td>
+                            <td class="p-2.5 text-right">
+                                ${item.urlDrive ? `<a href="${item.urlDrive}" target="_blank" class="text-indigo-600 hover:text-indigo-800 font-bold text-[11px]"><i class="fa-solid fa-arrow-up-right-from-square mr-0.5"></i> Abrir</a>` : '<span class="text-slate-400 text-[10px]">Sin enlace</span>'}
+                            </td>
+                        </tr>
+                    `).join('');
+                }
+            } else {
+                tableBody.innerHTML = '<tr><td colspan="5" class="p-4 text-center text-red-500">Error al cargar recursos.</td></tr>';
+            }
+        } catch (err) {
+            console.error('Error al cargar recursos reutilizables:', err);
+            tableBody.innerHTML = '<tr><td colspan="5" class="p-4 text-center text-red-500">Error de conexión.</td></tr>';
+        }
+    };
+
+    if (formAddReusableResource) {
+        formAddReusableResource.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const tipo = document.getElementById('reut-tipo-registro')?.value;
+            const titulo = document.getElementById('reut-titulo')?.value?.trim();
+            const area = document.getElementById('reut-area')?.value?.trim();
+            const asignatura = document.getElementById('reut-asignatura')?.value?.trim();
+            const tema = document.getElementById('reut-tema')?.value?.trim();
+            const urlDrive = document.getElementById('reut-url')?.value?.trim();
+
+            if (!titulo || !area) {
+                alert('Por favor ingrese al menos el Título y Área/Departamentos.');
+                return;
+            }
+
+            try {
+                if (window.showLoading) window.showLoading('Registrando recurso...');
+                const res = await fetchApi('ACADEMIC', 'manageReusableResource', {
+                    titulo,
+                    area,
+                    asignatura,
+                    tema,
+                    urlDrive,
+                    esProyecto: tipo === 'Proyecto',
+                    departamentosInvolucrados: area,
+                    descripcion: tema,
+                    autorId: currentUser?.nombre || 'Docente'
+                });
+                if (window.hideLoading) window.hideLoading();
+
+                if (res && res.status === 'success') {
+                    alert('Registro completado exitosamente.');
+                    formAddReusableResource.reset();
+                    window.loadReusableResourcesCatalog();
+                } else {
+                    alert(res && res.message ? res.message : 'Error al guardar el recurso.');
+                }
+            } catch (err) {
+                if (window.hideLoading) window.hideLoading();
+                console.error('Error al guardar recurso reutilizable:', err);
+            }
+        });
+    }
+
+    // [TAREA-13] [Fase 1 - Planificación de Carga Académica] - Controlador del modal de planificación de carga académica, jefaturas y vacantes.
+    const modalAcademicPlanning = document.getElementById('modal-academic-load-planning');
+    const btnCloseAcademicPlanning = document.getElementById('btn-close-academic-load-planning');
+    const btnRefreshAcademicPlanning = document.getElementById('btn-refresh-academic-planning');
+    const formAssignDeptHead = document.getElementById('form-assign-dept-head');
+
+    window.openAcademicLoadPlanningModal = function() {
+        if (modalAcademicPlanning) {
+            modalAcademicPlanning.classList.remove('hidden');
+            window.refreshAcademicPlanningData();
+        }
+    };
+
+    if (btnCloseAcademicPlanning) {
+        btnCloseAcademicPlanning.addEventListener('click', () => {
+            if (modalAcademicPlanning) modalAcademicPlanning.classList.add('hidden');
+        });
+    }
+
+    if (btnRefreshAcademicPlanning) {
+        btnRefreshAcademicPlanning.addEventListener('click', () => {
+            window.refreshAcademicPlanningData();
+        });
+    }
+
+    window.refreshAcademicPlanningData = async function() {
+        const tableBody = document.getElementById('table-academic-planning-vacancies');
+        if (!tableBody) return;
+
+        try {
+            tableBody.innerHTML = '<tr><td colspan="5" class="p-4 text-center text-slate-400 italic">Cargando planificación y vacantes...</td></tr>';
+            const res = await fetchApi('ACADEMIC', 'getDepartmentAcademicPlanning', {});
+            if (res && res.status === 'success' && res.data) {
+                const vacantes = res.data.vacantes || [];
+                if (vacantes.length === 0) {
+                    tableBody.innerHTML = '<tr><td colspan="5" class="p-4 text-center text-emerald-600 font-bold">¡Todas las ofertas académicas tienen docente asignado! No hay vacantes.</td></tr>';
+                } else {
+                    tableBody.innerHTML = vacantes.map(v => `
+                        <tr>
+                            <td class="p-2.5 font-bold text-slate-800">${v.ofertaId}</td>
+                            <td class="p-2.5">${v.asignatura}</td>
+                            <td class="p-2.5">${v.grado} ${v.seccion || 'A'}</td>
+                            <td class="p-2.5">${v.departamento || 'General'}</td>
+                            <td class="p-2.5"><span class="px-2 py-0.5 bg-amber-100 text-amber-800 rounded-full font-bold text-[10px]">VACANTE</span></td>
+                        </tr>
+                    `).join('');
+                }
+            } else {
+                tableBody.innerHTML = '<tr><td colspan="5" class="p-4 text-center text-red-500">Error al cargar la planificación.</td></tr>';
+            }
+        } catch (err) {
+            console.error('Error al obtener planificación:', err);
+            tableBody.innerHTML = '<tr><td colspan="5" class="p-4 text-center text-red-500">Error de conexión con el servidor.</td></tr>';
+        }
+    };
+
+    if (formAssignDeptHead) {
+        formAssignDeptHead.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const deptId = document.getElementById('load-dept-select')?.value;
+            const jefeUserId = document.getElementById('load-dept-head-user-id')?.value?.trim();
+
+            if (!deptId || !jefeUserId) {
+                alert('Por favor complete todos los campos obligatorios.');
+                return;
+            }
+
+            try {
+                if (window.showLoading) window.showLoading('Asignando jefe de departamento...');
+                const res = await fetchApi('ACADEMIC', 'assignDepartmentHead', {
+                    departamentoId: deptId,
+                    jefeUserId: jefeUserId
+                });
+                if (window.hideLoading) window.hideLoading();
+
+                if (res && res.status === 'success') {
+                    alert(`Jefe asignado correctamente al departamento de ${deptId}.`);
+                    document.getElementById('load-dept-head-user-id').value = '';
+                    window.refreshAcademicPlanningData();
+                } else {
+                    alert(res && res.message ? res.message : 'No se pudo asignar el jefe de departamento.');
+                }
+            } catch (err) {
+                if (window.hideLoading) window.hideLoading();
+                console.error('Error al asignar jefe de departamento:', err);
+                alert('Error al conectar con el servidor.');
+            }
+        });
+    }
+
     // [TAREA 3.3] [Fase 3: Planificación Académica y Horarios] - Controlador de interfaz para la gestión de aulas, laboratorios y recursos físicos (#modal-classroom-manager).
     window.openClassroomManagerModal = async function() {
         const modal = document.getElementById('modal-classroom-manager');
@@ -1685,45 +2014,49 @@ window.triggerRestoreSystemBackup = async function(fileId, fileName) {
 
     // --- MÓDULO 2: Gestión de Entregas (Navegación Jerárquica) ---
 
+    // [TAREA-14] [Fase 1 - UX Flujo Académico] - Bandeja de revisiones pendientes para el docente ordenada por prioridad y vencimiento.
     async function fetchEntregasRecientes() {
         const tbody = document.getElementById('op-table-body');
         const thead = document.getElementById('op-table-head');
         if (!tbody || !thead) return;
-        tbody.innerHTML = '<tr><td class="text-center p-8">Cargando pendientes...</td></tr>';
+        tbody.innerHTML = '<tr><td class="text-center p-8">Cargando revisiones pendientes...</td></tr>';
 
         try {
             const res = await fetchApi('TASK', 'getTeacherActivity', { profesorId: currentUser.userId });
             if (res.status === 'success') {
-                const pending = (res.data || []).filter(i =>
+                let pending = (res.data || []).filter(i =>
                     (i.estado === 'Pendiente' || i.estado === 'Pendiente de revisión' || !i.estado) &&
                     (i.fileId || i.respuestas || i.entregaId)
                 );
 
+                // Ordenar por prioridad de vencimiento (más antiguas primero)
+                pending.sort((a, b) => new Date(a.fecha) - new Date(b.fecha));
+
                 thead.innerHTML = `<tr class="bg-gray-50 border-b border-gray-100">
-                    <th class="p-4 text-left font-medium text-gray-500 text-[0.7rem] uppercase">Alumno</th>
-                    <th class="p-4 text-left font-medium text-gray-500 text-[0.7rem] uppercase">Actividad</th>
-                    <th class="p-4 text-left font-medium text-gray-500 text-[0.7rem] uppercase">Fecha</th>
+                    <th class="p-4 text-left font-medium text-gray-500 text-[0.7rem] uppercase">Alumno / Sección</th>
+                    <th class="p-4 text-left font-medium text-gray-500 text-[0.7rem] uppercase">Actividad / Área</th>
+                    <th class="p-4 text-left font-medium text-gray-500 text-[0.7rem] uppercase">Fecha de Entrega</th>
                     <th class="p-4 text-right font-medium text-gray-500 text-[0.7rem] uppercase">Acción</th>
                 </tr>`;
 
                 if (pending.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="4" class="text-center p-8 text-gray-500">No hay tareas pendientes de revisión. ¡Buen trabajo!</td></tr>';
+                    tbody.innerHTML = '<tr><td colspan="4" class="text-center p-8 text-emerald-600 font-bold">¡Excelente! No hay entregas pendientes de revisión.</td></tr>';
                     return;
                 }
 
                 tbody.innerHTML = pending.map((item, idx) => `
-                    <tr class="hover:bg-gray-50 transition-colors">
+                    <tr class="hover:bg-blue-50/50 transition-colors">
                         <td class="p-4">
-                            <div class="font-medium text-gray-800">${item.alumnoNombre}</div>
-                            <div class="text-[10px] text-gray-400">${item.grado} - ${item.seccion}</div>
+                            <div class="font-bold text-gray-800">${item.alumnoNombre}</div>
+                            <div class="text-[10px] text-gray-500 font-medium">${item.grado} - ${item.seccion}</div>
                         </td>
                         <td class="p-4">
-                            <div class="font-medium text-blue-700">${item.titulo}</div>
-                            <div class="text-[10px] text-gray-400">${item.asignatura} | ${item.tipo}</div>
+                            <div class="font-bold text-blue-700">${item.titulo}</div>
+                            <div class="text-[10px] text-gray-500 font-medium">${item.asignatura} | ${item.tipo}</div>
                         </td>
-                        <td class="p-4 text-xs text-gray-500">${new Date(item.fecha).toLocaleString()}</td>
+                        <td class="p-4 text-xs text-gray-600 font-medium">${new Date(item.fecha).toLocaleString()}</td>
                         <td class="p-4 text-right">
-                            <button class="bg-blue-600 text-white px-3 py-1.5 rounded-xl text-xs font-medium hover:bg-blue-700 op-grade-btn" data-index="${idx}">Calificar</button>
+                            <button class="bg-blue-600 text-white px-3.5 py-1.5 rounded-xl text-xs font-bold hover:bg-blue-700 shadow-sm transition-all op-grade-btn" data-index="${idx}">Revisar & Calificar</button>
                         </td>
                     </tr>
                 `).join('');
@@ -1736,7 +2069,7 @@ window.triggerRestoreSystemBackup = async function(fileId, fileName) {
                 });
             }
         } catch (e) {
-            tbody.innerHTML = `<tr><td colspan="4" class="text-center p-8 text-red-500">Error: ${e.message}</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="4" class="text-center p-8 text-red-500 font-medium">Error al cargar revisiones: ${e.message}</td></tr>`;
         }
     }
 

@@ -530,3 +530,249 @@ DESCRIPCIÓN OBJETIVA DE LOS CAMBIOS:
 - Actualización del estado de [TAREA-12] a [X] Completada en Pendientes.md tras verificación de pruebas funcionales.
 
 -------------------------------------------------------------------------------
+FECHA: Octubre 2026
+ARCHIVO(S) AFECTADO(S): backend/exam-service/Code.gs, backend/academic-service/Code.gs, Pendientes.md
+-------------------------------------------------------------------------------
+DESCRIPCIÓN OBJETIVA DE LOS CAMBIOS:
+- Adición de comentario identificativo en la primera línea sobre la función normalizeString en backend/exam-service/Code.gs.
+- Implementación de las funciones assignDepartmentHead y getDepartmentAcademicPlanning en backend/academic-service/Code.gs para asignación de responsables de departamentos académicos, planificación de carga docente y detección de vacantes.
+- Adición de permisos en ROLE_PERMISSIONS y dispatchers en doPost para getDepartmentAcademicPlanning y assignDepartmentHead.
+- Inserción del comentario identificativo de TAREA-13 en la primera línea sobre assignDepartmentHead.
+- Actualización del estado de [TAREA-13] a [X] Completada en Pendientes.md.
+
+-------------------------------------------------------------------------------
+FECHA: Octubre 2026
+ARCHIVO(S) AFECTADO(S): js/student.js, js/teacher.js, Pendientes.md
+-------------------------------------------------------------------------------
+DESCRIPCIÓN OBJETIVA DE LOS CAMBIOS:
+- Optimización de la bandeja de revisiones pendientes para docentes ordenada por prioridad de fecha de vencimiento en js/teacher.js.
+- Mejora en la vista unificada de actividades pendientes con ordenamiento por fecha límite en js/student.js.
+- Inserción de comentarios identificativos de TAREA-14 en las secciones afectadas.
+- Actualización del estado de [TAREA-14] a [X] Completada en Pendientes.md.
+
+-------------------------------------------------------------------------------
+FECHA: Octubre 2026
+ARCHIVO(S) AFECTADO(S): backend/user-service/Code.gs, Pendientes.md
+-------------------------------------------------------------------------------
+DESCRIPCIÓN OBJETIVA DE LOS CAMBIOS:
+- Implementación de la función getServiceHealthReport en backend/user-service/Code.gs para consulta de versiones por servicio, clasificación de errores por categoría e informe de salud operativa sin PII para administradores.
+- Adición de getServiceHealthReport a la lista de acciones autorizadas y al dispatcher en doPost.
+- Inserción del comentario identificativo de TAREA-15 en la primera línea sobre getServiceHealthReport.
+- Actualización del estado de [TAREA-15] a [X] Completada en Pendientes.md.
+
+-------------------------------------------------------------------------------
+FECHA: Octubre 2026
+ARCHIVO(S) AFECTADO(S): backend/accounting-service/Code.gs, Pendientes.md
+-------------------------------------------------------------------------------
+DESCRIPCIÓN OBJETIVA DE LOS CAMBIOS:
+- Implementación de la función runCriticalProcessConcurrencySuite en backend/accounting-service/Code.gs para la ejecución de pruebas de concurrencia con LockService, verificación de integridad en transacciones de cobro y unicidad de CUV.
+- Adición de runCriticalProcessConcurrencySuite a ROLE_PERMISSIONS y al dispatcher de doPost.
+- Inserción del comentario identificativo de TAREA-16 en la primera línea sobre runCriticalProcessConcurrencySuite.
+- Actualización del estado de [TAREA-16] a [X] Completada en Pendientes.md.
+
+-------------------------------------------------------------------------------
+FECHA: Octubre 2026
+ARCHIVO(S) AFECTADO(S): backend/academic-service/Code.gs, teacher-dashboard.html, js/teacher.js, Pendientes.md
+-------------------------------------------------------------------------------
+DESCRIPCIÓN OBJETIVA DE LOS CAMBIOS:
+- Implementación y actualización de getCurricularAnalyticsReport en backend/academic-service/Code.gs para el cálculo de métricas de promedio consolidado excluyendo notas pendientes, distribución de notas por rangos y conteo de alertas de acompañamiento pedagógico.
+- Adición del modal #modal-academic-analytics y botón gatillador en teacher-dashboard.html.
+- Implementación de controladores JavaScript en js/teacher.js para apertura de modal y carga dinámica de reportes analíticos curriculares.
+- Inserción del comentario identificativo de TAREA-17 en la primera línea sobre getCurricularAnalyticsReport y en el controlador de js/teacher.js.
+- Actualización del estado de [TAREA-17] a [X] Completada en Pendientes.md.
+
+-------------------------------------------------------------------------------
+FECHA: Octubre 2026
+ARCHIVO(S) AFECTADO(S): backend/academic-service/Code.gs, teacher-dashboard.html, js/teacher.js, Pendientes.md
+-------------------------------------------------------------------------------
+DESCRIPCIÓN OBJETIVA DE LOS CAMBIOS:
+- Implementación de getReusableResourceCatalog y manageReusableResource en backend/academic-service/Code.gs para el catálogo de recursos reutilizables (etiquetados por área, materia, grado, tema, idioma y versión) y proyectos interdisciplinarios compartidos entre departamentos.
+- Adición del modal #modal-reusable-resources y botón gatillador en teacher-dashboard.html.
+- Implementación de controladores de evento JavaScript en js/teacher.js (openReusableResourcesModal, loadReusableResourcesCatalog y listener de envío de formulario) para interacción con el usuario.
+- Inserción del comentario identificativo de TAREA-18 en la primera línea sobre getReusableResourceCatalog y en el controlador de js/teacher.js.
+- Actualización del estado de [TAREA-18] a [X] Completada en Pendientes.md.
+
+-------------------------------------------------------------------------------
+FECHA: Octubre 2026
+ARCHIVO(S) AFECTADO(S): backend/academic-service/Code.gs, teacher-dashboard.html, js/teacher.js, Pendientes.md
+-------------------------------------------------------------------------------
+DESCRIPCIÓN OBJETIVA DE LOS CAMBIOS:
+- Implementación de getCurricularEquivalences y executeCurricularMigration en backend/academic-service/Code.gs para el mapeo, equivalencias curriculares, simulación/pre-validación sin pérdida de datos y preservación inalterable de calificaciones históricas.
+- Adición del modal #modal-curricular-migration en teacher-dashboard.html.
+- Implementación de controladores JavaScript en js/teacher.js para consulta de mapeo y ejecución de simulación de migración.
+- Inserción del comentario identificativo de TAREA-19 en la primera línea sobre getCurricularEquivalences en Code.gs y en el controlador de js/teacher.js.
+- Actualización del estado de [TAREA-19] a [X] Completada en Pendientes.md.
+
+-------------------------------------------------------------------------------
+FECHA: Octubre 2026
+ARCHIVO(S) AFECTADO(S): backend/academic-service/Code.gs, js/config.js, Pendientes.md
+-------------------------------------------------------------------------------
+DESCRIPCIÓN OBJETIVA DE LOS CAMBIOS:
+- Implementación de registerCurricularAreaExtension, runCurricularAreaServiceTests y toggleCurricularAreaStatus en backend/academic-service/Code.gs para el registro técnico estandarizado de nuevas áreas y servicios de Apps Script, ejecución de protocolos de prueba integrados previos a producción y desactivación segura preservando historiales.
+- Implementación del helper de configuración window.registerNewCurricularAreaServiceConfig en js/config.js.
+- Inserción del comentario identificativo de TAREA-20 en la primera línea sobre registerCurricularAreaExtension en Code.gs y sobre window.registerNewCurricularAreaServiceConfig en js/config.js.
+- Registro de permisos en ROLE_PERMISSIONS y rutas en doPost dispatcher de backend/academic-service/Code.gs.
+- Actualización del estado de [TAREA-20] a [X] Completada en Pendientes.md.
+
+-------------------------------------------------------------------------------
+FECHA: Octubre 2026
+ARCHIVO(S) AFECTADO(S): js/api.js, backend/academic-service/Code.gs, backend/accounting-service/Code.gs, backend/user-service/Code.gs, Pendientes.md
+-------------------------------------------------------------------------------
+DESCRIPCIÓN OBJETIVA DE LOS CAMBIOS:
+- Implementación de window.validateApiResponseContract en js/api.js para validación de contratos JSON y prevención de respuestas malformadas.
+- Estandarización de la función textResponse en backend/academic-service/Code.gs, backend/accounting-service/Code.gs y backend/user-service/Code.gs para garantizar presencia de campos status, timestamp ISO 8601 y código de error.
+- Implementación de validateApiContractsTestSuite en backend/academic-service/Code.gs para la ejecución automatizada de pruebas de contratos y compatibilidad API entre cliente y microservicios.
+- Inserción del comentario identificativo de FASE2-T03 en la primera línea de cada bloque modificado o creado.
+- Actualización del estado de [FASE2-T03] a [X] Completada en Pendientes.md.
+
+-------------------------------------------------------------------------------
+FECHA: Octubre 2026
+ARCHIVO(S) AFECTADO(S): backend/academic-service/Code.gs, Pendientes.md
+-------------------------------------------------------------------------------
+DESCRIPCIÓN OBJETIVA DE LOS CAMBIOS:
+- Implementación de generateInstitutionalUUID, validateInstitutionalIdentifier y auditInstitutionalIdentifierCollisions en backend/academic-service/Code.gs para la unificación de identificadores institucionales, clasificación de tipos (UUID, correlativo, CUV) y detección de colisiones.
+- Inserción del comentario identificativo de FASE2-T05 en la primera línea sobre generateInstitutionalUUID.
+- Registro de permisos en ROLE_PERMISSIONS y rutas en doPost dispatcher de backend/academic-service/Code.gs.
+- Actualización del estado de [FASE2-T05] a [X] Completada en Pendientes.md.
+
+-------------------------------------------------------------------------------
+FECHA: Octubre 2026
+ARCHIVO(S) AFECTADO(S): backend/academic-service/Code.gs, backend/accounting-service/Code.gs, Pendientes.md
+-------------------------------------------------------------------------------
+DESCRIPCIÓN OBJETIVA DE LOS CAMBIOS:
+- Implementación de conConcurrencyLock y runConcurrencyAndConsistencySuite en backend/academic-service/Code.gs y backend/accounting-service/Code.gs para el manejo atómico de concurrencia con LockService, la sanitización de skipLock en llamadas externas y la verificación de consistencia entre microservicios.
+- Inserción del comentario identificativo de FASE2-T06 en la primera línea sobre conConcurrencyLock.
+- Registro de permisos en ROLE_PERMISSIONS y rutas en el dispatcher doPost.
+- Actualización de los estados de [FASE2-T04] y [FASE2-T06] a [X] Completada en Pendientes.md.
+
+-------------------------------------------------------------------------------
+FECHA: Octubre 2026
+ARCHIVO(S) AFECTADO(S): backend/user-service/Code.gs, Pendientes.md
+-------------------------------------------------------------------------------
+DESCRIPCIÓN OBJETIVA DE LOS CAMBIOS:
+- Implementación de registerAndDispatchEvent y retryFailedEventsQueue en backend/user-service/Code.gs para el registro de eventos interdepartamentales, deduplicación por originRequestId, estados de ejecución en BitacoraEventos y reintentos automáticos limitados a 3 intentos.
+- Inserción del comentario identificativo de FASE2-T07 en la primera línea sobre registerAndDispatchEvent.
+- Registro de permisos en ROLE_PERMISSIONS y rutas en el dispatcher doPost de backend/user-service/Code.gs.
+- Actualización del estado de [FASE2-T07] a [X] Completada en Pendientes.md.
+
+-------------------------------------------------------------------------------
+FECHA: Octubre 2026
+ARCHIVO(S) AFECTADO(S): js/api.js, backend/user-service/Code.gs, Pendientes.md
+-------------------------------------------------------------------------------
+DESCRIPCIÓN OBJETIVA DE LOS CAMBIOS:
+- Inyección automática de correlationId en llamadas HTTP fetchApi en js/api.js.
+- Implementación de recordTraceabilityLog y getTraceabilityCorrelationLogs en backend/user-service/Code.gs para el registro y consulta de trazabilidad inter-servicio en BitacoraTrazabilidad sin exponer información PII.
+- Inserción del comentario identificativo de FASE2-T08 en la primera línea de los bloques creados.
+- Registro de permisos en ROLE_PERMISSIONS y rutas en el dispatcher doPost de backend/user-service/Code.gs.
+- Actualización del estado de [FASE2-T08] a [X] Completada en Pendientes.md.
+
+-------------------------------------------------------------------------------
+FECHA: Octubre 2026
+ARCHIVO(S) AFECTADO(S): js/api.js, backend/user-service/Code.gs, Pendientes.md
+-------------------------------------------------------------------------------
+DESCRIPCIÓN OBJETIVA DE LOS CAMBIOS:
+- Medición de latencia de respuesta (startTime y durationMs) y acumulación de métricas en OPERATIONAL_HEALTH_METRICS en js/api.js.
+- Implementación de getOperationalCapacityMetrics en backend/user-service/Code.gs para el análisis de capacidad operativa, tasa de error global, promedios de latencia por servicio y alertas de límites de cuota sin exponer PII.
+- Inserción del comentario identificativo de FASE2-T09 en la primera línea de los bloques creados.
+- Registro de permisos en ROLE_PERMISSIONS y rutas en el dispatcher doPost de backend/user-service/Code.gs.
+- Actualización del estado de [FASE2-T09] a [X] Completada en Pendientes.md.
+
+-------------------------------------------------------------------------------
+FECHA: Octubre 2026
+ARCHIVO(S) AFECTADO(S): backend/academic-service/Code.gs, backend/accounting-service/Code.gs, js/ui-common.js, Pendientes.md
+-------------------------------------------------------------------------------
+DESCRIPCIÓN OBJETIVA DE LOS CAMBIOS:
+- Implementación de getPaginatedAcademicHistory en backend/academic-service/Code.gs y getPaginatedJournalEntries en backend/accounting-service/Code.gs para paginación eficiente en servidor.
+- Actualización de window.renderPaginatedTable en js/ui-common.js con navegación por páginas y controles responsive.
+- Inserción de comentarios identificativos de FASE2-T10 en los bloques correspondientes.
+- Actualización del estado de [FASE2-T10] a [X] Completada en Pendientes.md.
+
+-------------------------------------------------------------------------------
+FECHA: Octubre 2026
+ARCHIVO(S) AFECTADO(S): backend/academic-service/Code.gs, Pendientes.md
+-------------------------------------------------------------------------------
+DESCRIPCIÓN OBJETIVA DE LOS CAMBIOS:
+- Implementación de reconcileRestoredDataIntegrity en backend/academic-service/Code.gs para reconciliación y verificación de integridad tras restauración de respaldos.
+- Inserción de comentarios identificativos de FASE2-T11.
+- Actualización del estado de [FASE2-T11] a [X] Completada en Pendientes.md.
+
+-------------------------------------------------------------------------------
+FECHA: Octubre 2026
+ARCHIVO(S) AFECTADO(S): backend/academic-service/Code.gs, backend/accounting-service/Code.gs, Pendientes.md
+-------------------------------------------------------------------------------
+DESCRIPCIÓN OBJETIVA DE LOS CAMBIOS:
+- Implementación de evaluateTransactionalStorageMigrationNeed en backend/academic-service/Code.gs y backend/accounting-service/Code.gs para la evaluación automatizada de volumen de filas y latencias de lectura contra umbrales de migración a RDBMS/SQL.
+- Inserción de comentarios identificativos de FASE2-T12 en la primera línea de los bloques creados.
+- Registro de permisos en ROLE_PERMISSIONS y rutas en el dispatcher doPost.
+- Actualización del estado de [FASE2-T12] a [X] Completada en Pendientes.md.
+
+-------------------------------------------------------------------------------
+FECHA: Octubre 2026
+ARCHIVO(S) AFECTADO(S): js/config.js, MapaDependencias.md, Pendientes.md
+-------------------------------------------------------------------------------
+DESCRIPCIÓN OBJETIVA DE LOS CAMBIOS:
+- Implementación de window.getDepartmentalDependencyMap() en js/config.js para la consulta programática de responsabilidades de servicios, funciones públicas, roles consumidores y suites de pruebas de integración.
+- Inserción del comentario identificativo de FASE2-T13 en la primera línea del bloque creado.
+- Actualización del estado de [FASE2-T13] a [X] Completada en Pendientes.md.
+
+-------------------------------------------------------------------------------
+FECHA: Octubre 2026
+ARCHIVO(S) AFECTADO(S): backend/user-service/Code.gs, Pendientes.md
+-------------------------------------------------------------------------------
+DESCRIPCIÓN OBJETIVA DE LOS CAMBIOS:
+- Implementación de runInterdepartmentalIntegrationTestSuite en backend/user-service/Code.gs para la ejecución automatizada e idónea de pruebas de integración interdepartamental (RBAC, Idempotencia, Cola de Eventos, Capacidad y Correlación de Trazabilidad).
+- Inserción del comentario identificativo de FASE2-T14 en la primera línea del bloque creado.
+- Registro de permisos en ROLE_PERMISSIONS y rutas en el dispatcher doPost.
+- Actualización del estado de [FASE2-T14] a [X] Completada en Pendientes.md.
+
+-------------------------------------------------------------------------------
+FECHA: Octubre 2026
+ARCHIVO(S) AFECTADO(S): backend/accounting-service/Code.gs, Pendientes.md
+-------------------------------------------------------------------------------
+DESCRIPCIÓN OBJETIVA DE LOS CAMBIOS:
+- Implementación de reconcileInconsistentDataAndOperations en backend/accounting-service/Code.gs para la detección y reporte automatizado de referencias huérfanas, inconsistencias financieras y operaciones pendientes con clasificación entre auto-resolución y revisión manual autorizada.
+- Inserción del comentario identificativo de FASE2-T15 en la primera línea del bloque creado.
+- Registro de permisos en ROLE_PERMISSIONS y rutas en el dispatcher doPost.
+- Actualización del estado de [FASE2-T15] a [X] Completada en Pendientes.md.
+
+-------------------------------------------------------------------------------
+FECHA: Octubre 2026
+ARCHIVO(S) AFECTADO(S): js/api.js, Pendientes.md
+-------------------------------------------------------------------------------
+DESCRIPCIÓN OBJETIVA DE LOS CAMBIOS:
+- Implementación de window.classifyServiceError y window.fetchApiWithDegradedFallback en js/api.js para la clasificación de errores por categoría (TIMEOUT, CUOTA, AUTH, VALIDACION, SERVIDOR), prevención estricta de afirmación de escrituras fallidas y retorno de datos de respaldo con banderas de obsolescencia.
+- Inserción del comentario identificativo de FASE2-T16 en la primera línea del bloque creado.
+- Actualización del estado de [FASE2-T16] a [X] Completada en Pendientes.md.
+
+-------------------------------------------------------------------------------
+FECHA: Octubre 2026
+ARCHIVO(S) AFECTADO(S): js/config.js, backend/user-service/Code.gs, Pendientes.md
+-------------------------------------------------------------------------------
+DESCRIPCIÓN OBJETIVA DE LOS CAMBIOS:
+- Implementación de window.getSharedConfigVersion y window.validateServiceVersionCompatibility en js/config.js para la detección de consumidores desactualizados e incompatibilidades de versión SemVer entre cliente y servidor.
+- Implementación de getSharedConfigurationsCatalog en backend/user-service/Code.gs para la consulta centralizada del catálogo de versiones activas y políticas de reversión.
+- Inserción del comentario identificativo de FASE2-T17 en la primera línea de los bloques creados.
+- Registro de permisos en ROLE_PERMISSIONS y rutas en el dispatcher doPost.
+- Actualización del estado de [FASE2-T17] a [X] Completada en Pendientes.md.
+
+-------------------------------------------------------------------------------
+FECHA: Octubre 2026
+ARCHIVO(S) AFECTADO(S): js/ui-common.js, Pendientes.md
+-------------------------------------------------------------------------------
+DESCRIPCIÓN OBJETIVA DE LOS CAMBIOS:
+- Implementación de window.openInstitutionalHealthDashboardModal en js/ui-common.js para la visualización interactiva del estado operativo de microservicios, llamadas totales, tasas de error, alertas de cuota y tarjetas por servicio.
+- Inserción del comentario identificativo de FASE2-T18 en la primera línea del bloque creado.
+- Actualización del estado de [FASE2-T18] a [X] Completada en Pendientes.md.
+
+-------------------------------------------------------------------------------
+FECHA: Octubre 2026
+ARCHIVO(S) AFECTADO(S): js/config.js, backend/user-service/Code.gs, Pendientes.md
+-------------------------------------------------------------------------------
+DESCRIPCIÓN OBJETIVA DE LOS CAMBIOS:
+- Definición de window.CACHE_POLICIES en js/config.js para establecer tiempos de vida (TTL) por tipo de dato y aislamiento de identidad.
+- Implementación de invalidateUserRoleCache y manageInstitutionalDataCache en backend/user-service/Code.gs para invalidación explícita de entradas de caché por usuario y gestión centralizada.
+- Inserción del comentario identificativo de FASE2-T19 en la primera línea de los bloques creados.
+- Registro de permisos en ROLE_PERMISSIONS y rutas en el dispatcher doPost.
+- Actualización del estado de [FASE2-T19] a [X] Completada en Pendientes.md.
+
+-------------------------------------------------------------------------------

@@ -46,6 +46,7 @@ function textResponse(obj) {
     .setMimeType(ContentService.MimeType.TEXT);
 }
 
+// [TAREA-11] [Fase 1 - Motor de Exámenes] - Función auxiliar de normalización de cadenas para comparaciones diacríticas e insensibles a mayúsculas/minúsculas.
 function normalizeString(str) {
   if (!str) return "";
   return str
