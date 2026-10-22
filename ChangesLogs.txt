@@ -820,3 +820,16 @@ Archivos Modificados:
    - Actualización del estado de [T-UX-03] a [X] Completada.
 
 -------------------------------------------------------------------------------
+FECHA: Octubre 2026
+TAREA: [T-UX-05] Normalización Diacrítica Insensible a Tildes para Búsquedas y Filtros
+-------------------------------------------------------------------------------
+
+Archivos Modificados:
+1. js/ui-common.js
+   - Lineas 1815-1825: Refuerzo de window.normalizeSearchString(str) para manejo seguro de valores nulos/indefinidos y eliminación diacrítica insensible a acentos NFD.
+   - Lineas 3696-3715: Integración de window.normalizeSearchString en la función renderAdminTicketsUI para filtrado dinámico de tickets de soporte por ID, usuario, área y descripción.
+
+2. Pendientes.md
+   - Actualización del estado de [T-UX-05] a [X] Completada.
+
+-------------------------------------------------------------------------------

@@ -564,7 +564,7 @@
   - Navegar fuera de un formulario sucio activa alerta de confirmación.
 - **Estado:** [X] Completada
 
-### [ ] [T-UX-05] Normalización Diacrítica Insensible a Tildes para Búsquedas y Filtros
+### [X] [T-UX-05] Normalización Diacrítica Insensible a Tildes para Búsquedas y Filtros
 - **Origen del Hallazgo:** Auditoría de la Fase 3, octubre de 2026 (AUDITORIA_FASE3_EXPERIENCIA_USUARIO_NAVEGACION.md - Área 4)
 - **Severidad/Clasificación:** Alto
 - **Archivos Involucrados:** `js/ui-common.js`
@@ -573,7 +573,7 @@
   1. `window.normalizeSearchString(str)` elimina marcas diacríticas usando NFD regex.
 - **Criterios de Aceptación:**
   - Búsqueda "matematica" coincide con "Matemáticas".
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 ### [ ] [T-UX-06] Omnibox Unificado Multi-Entidad con Atajo Global `Ctrl + K`
 - **Origen del Hallazgo:** Auditoría de la Fase 3, octubre de 2026 (AUDITORIA_FASE3_EXPERIENCIA_USUARIO_NAVEGACION.md - Área 4)

@@ -207,7 +207,7 @@ var startTime = Date.now();
                     }
 
                     // [T-UX-01] [Fase 3: Experiencia de Usuario y Navegación Unificada] - Detección centralizada de errores de permisos y expiración de sesión.
-                    if (parsed && (parsed.code === 'AUTH_PERMISSION_DENIED' || (parsed.status === 'error' && (parsed.code === '401' || parsed.code === '403' || (parsed.message && (parsed.message.indexOf('Acceso denegado') !== -1 || parsed.message.indexOf('no autorizado') !== -1 || parsed.message.indexOf('sesión expirada') !== -1)))))) {
+                    if (parsed && (parsed.code === 'AUTH_PERMISSION_DENIED' || (parsed.status === 'error' && (String(parsed.code) === '401' || String(parsed.code) === '403' || parsed.code == 401 || parsed.code == 403 || (parsed.message && (parsed.message.indexOf('Acceso denegado') !== -1 || parsed.message.indexOf('no autorizado') !== -1 || parsed.message.indexOf('sesión expirada') !== -1)))))) {
                         console.warn('[API-AUTH] Error de autorización o sesión expirada:', parsed.message);
                         if (typeof window.handleSessionExpired === 'function') {
                             window.handleSessionExpired(parsed.message || 'Su sesión ha expirado o sus permisos han cambiado.');

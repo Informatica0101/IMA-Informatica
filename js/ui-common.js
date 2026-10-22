@@ -1811,9 +1811,9 @@ window.renderPaginatedTable = function(containerId, data, options) {
     }
 };
 
-// [T-UX-05] [Fase 3: Experiencia de Usuario y Navegación Unificada] - Función utilitaria de normalización avanzada de búsquedas (acentos, minúsculas, espacios y caracteres especiales).
+// [T-UX-05] [Fase 3: Experiencia de Usuario y Navegación Unificada] - Función utilitaria de normalización avanzada de búsquedas insensibles a acentos, signos de puntuación, mayúsculas y espacios diacríticos.
 window.normalizeSearchString = function(str) {
-    if (!str) return '';
+    if (str === null || str === undefined) return '';
     return str
         .toString()
         .toLowerCase()
@@ -3696,7 +3696,7 @@ window.renderAdminTicketsUI = function() {
     var searchInput = document.getElementById('admin-ticket-search-input');
 
     var filterState = filterSelect ? filterSelect.value : 'TODOS';
-    var searchQuery = searchInput ? searchInput.value.toLowerCase().trim() : '';
+    var searchQuery = searchInput ? window.normalizeSearchString(searchInput.value) : '';
 
     fetchApi('USER', 'getProblemTickets', {}).then(function(res) {
         if (!res || res.status !== 'success' || !res.tickets || res.tickets.length === 0) {
@@ -3707,10 +3707,10 @@ window.renderAdminTicketsUI = function() {
         var filtered = res.tickets.filter(function(t) {
             if (filterState !== 'TODOS' && t.estado !== filterState) return false;
             if (searchQuery) {
-                var matchId = t.ticketId.toLowerCase().includes(searchQuery);
-                var matchUser = (t.nombreUsuario || '').toLowerCase().includes(searchQuery);
-                var matchArea = (t.areaFuncion || '').toLowerCase().includes(searchQuery);
-                var matchDesc = (t.descripcion || '').toLowerCase().includes(searchQuery);
+                var matchId = window.normalizeSearchString(t.ticketId).indexOf(searchQuery) !== -1;
+                var matchUser = window.normalizeSearchString(t.nombreUsuario).indexOf(searchQuery) !== -1;
+                var matchArea = window.normalizeSearchString(t.areaFuncion).indexOf(searchQuery) !== -1;
+                var matchDesc = window.normalizeSearchString(t.descripcion).indexOf(searchQuery) !== -1;
                 if (!matchId && !matchUser && !matchArea && !matchDesc) return false;
             }
             return true;
