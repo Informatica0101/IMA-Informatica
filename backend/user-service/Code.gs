@@ -755,7 +755,7 @@ const ROLE_PERMISSIONS = {
     "getInstitutionalCriteria", "saveInstitutionalCriterion", "getFormativeEvaluations", "saveFormativeEvaluation", "getSupportPlans", "saveSupportPlan",
     "createLinkInvitation", "acceptLinkInvitation", "getGuardianStudents", "getInstitutionalAnnouncements", "createInstitutionalAnnouncement", "submitAnnouncementReceiptConfirmation", "getAnnouncementReadReport", "getDepartmentalWorkInbox", "closeConversationThread", "getInternalConversations", "getInternalMessages", "sendInternalMessage", "getUserNotifications", "getUnifiedNotifications", "markNotificationAsRead", "createUserNotification", "sendMultiChannelNotification", "getNotificationPreferences", "getAdministrativeRequests", "getAdministrativeRequestsHistory", "submitAdministrativeRequest", "submitStudentAbsenceJustification", "getStudentAbsenceJustifications", "reviewAbsenceJustification", "updateRequestStatus", "saveInstitutionalForm", "getInstitutionalForms", "submitInstitutionalFormRequest", "saveApprovalWorkflow", "getApprovalWorkflows", "processWorkflowDecision", "getWorkflowHistory", "registerDocumentSignature", "configureNotificationChannel", "getNotificationChannelConfigs", "sendChannelNotificationTest", "getAppointmentBookings", "bookAppointment", "updateAppointmentStatus", "getInstitutionalCalendarEvents", "getPendingReminders",
     "getUserSettings", "saveUserSettings", "getSystemConfigurations", "saveSystemConfiguration", "getProviderIntegrations", "configureProviderIntegration",
-    "updateTicketStatus", "saveVisualPaletteProposal", "approveVisualPaletteProposal"
+    "updateTicketStatus", "saveVisualPaletteProposal", "approveVisualPaletteProposal", "registerAndDispatchEvent", "retryFailedEventsQueue"
   ],
   "Subdirector": [
     "createNews", "uploadNewsImage", "getNews", "updateNewsStatus", "getStudents", "getStudentsByGradoSeccion", "getUserInfo", "saveGameResult", "getGameStats", "getGlobalTop", "recordAnalytics", "getLearningProfile", "mergeGuestData", "updateUserProfile", "findPersonMatches", "generateInstitutionalId",
@@ -917,6 +917,8 @@ function doPost(e) {
       case "getUnifiedNotifications": result = getUnifiedNotifications(payload); break;
       case "getUserNotifications": result = getUserNotifications(payload); break;
       case "sendMultiChannelNotification": result = sendMultiChannelNotification(payload); break;
+      case "registerAndDispatchEvent": result = registerAndDispatchEvent(payload); break;
+      case "retryFailedEventsQueue": result = retryFailedEventsQueue(payload); break;
       case "getNotificationPreferences": result = getNotificationPreferences(payload); break;
       case "markNotificationAsRead": result = markNotificationAsRead(payload); break;
       case "createUserNotification": result = createUserNotification(payload); break;
@@ -2314,6 +2316,149 @@ function getUnifiedNotifications(payload) {
   const unreadCount = data.slice(1).filter(r => String(r[1]).trim() === String(userId).trim() && (r[6] !== true && String(r[6]).toLowerCase() !== "true")).length;
 
   return { status: "success", data: notifications, unreadCount: unreadCount };
+}
+
+// [FASE2-T07] [Fase 2 - Motor Fortalecido de Eventos Automáticos] - Registro, deduplicación, estados de ejecución, reintentos con tope y recuperación de eventos interdepartamentales.
+function registerAndDispatchEvent(payload) {
+  const { eventType, originService, originRequestId, recipientUserId, eventData, maxRetries } = payload || {};
+  if (!eventType || !originService) {
+    throw new Error("Parámetros obligatorios ausentes: eventType y originService son requeridos.");
+  }
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "BitacoraEventos");
+
+  if (sheet.getLastRow() === 0) {
+    sheet.appendRow(["EventID", "TipoEvento", "ServicioOrigen", "RequestIDOrigen", "DestinatarioID", "DatosJSON", "Estado", "Intentos", "UltimoIntentoFecha", "ErrorDetalle"]);
+  }
+
+  const values = sheet.getDataRange().getValues();
+  const cleanOriginReq = originRequestId ? String(originRequestId).trim().toUpperCase() : "";
+
+  if (cleanOriginReq) {
+    for (let i = 1; i < values.length; i++) {
+      if (String(values[i][3]).trim().toUpperCase() === cleanOriginReq && String(values[i][1]).trim().toUpperCase() === String(eventType).trim().toUpperCase()) {
+        if (values[i][6] === "PROCESADO") {
+          return {
+            status: "success",
+            deduplicated: true,
+            eventId: values[i][0],
+            message: "Evento ya procesado previamente. Se omitió ejecución duplicada."
+          };
+        }
+      }
+    }
+  }
+
+  const eventId = "EVT-" + new Date().getFullYear() + "-" + Math.random().toString(36).substr(2, 8).toUpperCase();
+  const dataStr = typeof eventData === "object" ? JSON.stringify(eventData) : String(eventData || "{}");
+
+  let status = "PENDIENTE";
+  let errorMsg = "";
+
+  try {
+    if (recipientUserId && (eventType.includes("NOTIF") || eventType.includes("ALERT") || eventType.includes("COMUNICADO"))) {
+      sendMultiChannelNotification({
+        userId: recipientUserId,
+        titulo: eventData && eventData.titulo ? eventData.titulo : `Evento: ${eventType}`,
+        mensaje: eventData && eventData.mensaje ? eventData.mensaje : `Notificación automática de ${originService}`,
+        tipo: eventType,
+        authRole: payload && payload.authRole
+      });
+    }
+    status = "PROCESADO";
+  } catch (err) {
+    status = "FALLIDO";
+    errorMsg = err.message || "Error al despachar evento.";
+  }
+
+  sheet.appendRow([
+    eventId,
+    eventType,
+    originService,
+    cleanOriginReq,
+    recipientUserId || "GLOBAL",
+    dataStr,
+    status,
+    1,
+    new Date().toISOString(),
+    errorMsg
+  ]);
+
+  logStructuredEvent("USER", "registerAndDispatchEvent", status === "PROCESADO" ? "INFO" : "ERROR", "EVENT_DISPATCHED", `Evento ${eventId} (${eventType}) procesado con estado ${status}.`, {
+    eventId,
+    eventType,
+    status,
+    errorMsg
+  }, payload && payload.authRole);
+
+  return {
+    status: status === "PROCESADO" ? "success" : "error",
+    eventId,
+    eventType,
+    estado: status,
+    error: errorMsg || null
+  };
+}
+
+function retryFailedEventsQueue(payload) {
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "BitacoraEventos");
+  const values = sheet.getDataRange().getValues();
+
+  let retriedCount = 0;
+  let resolvedCount = 0;
+
+  for (let i = 1; i < values.length; i++) {
+    const estado = String(values[i][6]).trim().toUpperCase();
+    const intentos = parseInt(values[i][7]) || 1;
+
+    if ((estado === "FALLIDO" || estado === "REINTENTANDO" || estado === "PENDIENTE") && intentos < 3) {
+      retriedCount++;
+      const eventId = values[i][0];
+      const eventType = values[i][1];
+      const originService = values[i][2];
+      const recipientUserId = values[i][4];
+      let eventData = {};
+
+      try {
+        eventData = JSON.parse(values[i][5]);
+      } catch (_) {}
+
+      try {
+        if (recipientUserId && recipientUserId !== "GLOBAL") {
+          sendMultiChannelNotification({
+            userId: recipientUserId,
+            titulo: eventData && eventData.titulo ? eventData.titulo : `Reintento Evento: ${eventType}`,
+            mensaje: eventData && eventData.mensaje ? eventData.mensaje : `Notificación automática reintentada de ${originService}`,
+            tipo: eventType,
+            authRole: payload && payload.authRole
+          });
+        }
+        sheet.getRange(i + 1, 7).setValue("PROCESADO");
+        sheet.getRange(i + 1, 8).setValue(intentos + 1);
+        sheet.getRange(i + 1, 9).setValue(new Date().toISOString());
+        sheet.getRange(i + 1, 10).setValue("");
+        resolvedCount++;
+      } catch (err) {
+        sheet.getRange(i + 1, 7).setValue(intentos + 1 >= 3 ? "FALLIDO_PERMANENTE" : "REINTENTANDO");
+        sheet.getRange(i + 1, 8).setValue(intentos + 1);
+        sheet.getRange(i + 1, 9).setValue(new Date().toISOString());
+        sheet.getRange(i + 1, 10).setValue(err.message || "Fallo en reintento.");
+      }
+    }
+  }
+
+  logStructuredEvent("USER", "retryFailedEventsQueue", "INFO", "EVENTS_QUEUE_RETRIED", `Reintento de cola de eventos completado. Evaluados: ${retriedCount}, Resueltos: ${resolvedCount}.`, {
+    retriedCount,
+    resolvedCount
+  }, payload && payload.authRole);
+
+  return {
+    status: "success",
+    eventosEvaluados: retriedCount,
+    eventosResueltosExitosamente: resolvedCount
+  };
 }
 
 function sendMultiChannelNotification(payload) {

@@ -485,7 +485,7 @@
   8. Los procesos recuperados conservan la integridad de los registros existentes.
 - **Estado:** [X] Completada
 
-### [ ] [FASE2-T07] Fortalecer el motor de eventos y la ejecución de procesos automáticos
+### [X] [FASE2-T07] Fortalecer el motor de eventos y la ejecución de procesos automáticos
 - **Origen del Hallazgo:** Auditoría de la Fase 2, octubre de 2026 (AUDITORIA_FASE2_ARQUITECTURA_INTEROPERABILIDAD.md - Área 6)
 - **Severidad/Clasificación:** Alto
 - **Archivos Involucrados:** `backend/user-service/Code.gs`
@@ -514,7 +514,7 @@
   8. Los procesos automáticos no generan ciclos ilimitados.
   9. Las alertas de riesgo académico, inasistencia y mora conservan sus reglas de negocio, y sus umbrales pueden verificarse con casos de prueba.
   10. Los fallos reiterados pueden detectarse sin depender de inspecciones manuales del código.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 ### [ ] [FASE2-T08] Implementar trazabilidad y correlación de operaciones entre servicios
 - **Origen del Hallazgo:** Auditoría de la Fase 2, octubre de 2026 (AUDITORIA_FASE2_ARQUITECTURA_INTEROPERABILIDAD.md - Área 6 & 7)
