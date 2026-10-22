@@ -4262,6 +4262,11 @@ window.openAnalyticsChartModal = function(chartCategory) {
     });
 };
 
+// ---------------------------------------------------------------------------
+// [T-UX-09] [Fase 3: Experiencia de Usuario y Navegación Unificada] - MENÚ LATERAL RESPONSIVO ESPECÍFICO POR ROL CON COLAPSO MÓVIL SUAVE
+// Proporciona navegación adaptativa según el rol activo (Estudiante, Docente, Contabilidad, RH, Dirección), con menús colapsables suaves en móviles y restauraciones de navegación.
+// ---------------------------------------------------------------------------
+
 /* ==========================================================================
    ROLE NAVIGATION MENU & ACCORDION SIDEBAR / HAMBURGER DRAWER SYSTEM
    ========================================================================== */
@@ -4335,30 +4340,37 @@ window.initRoleNavigationMenu = function() {
 window.openMobileHamburgerDrawer = function() {
     var drawerId = 'mobile-hamburger-drawer';
     var drawer = document.getElementById(drawerId);
+
+    var currentUser = {};
+    try {
+        currentUser = JSON.parse(localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser') || localStorage.getItem('usuario_actual') || '{}');
+    } catch (_) {}
+
+    var role = currentUser.rol || 'Estudiante';
+    var normalizedRole = role.toString().toLowerCase();
+
     if (!drawer) {
         drawer = document.createElement('div');
         drawer.id = drawerId;
         drawer.className = 'fixed inset-0 z-[9998] bg-slate-900/80 backdrop-blur-sm flex justify-start animate-fade-in md:hidden';
-
-        var currentUser = {};
-        try {
-            currentUser = JSON.parse(localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser') || localStorage.getItem('usuario_actual') || '{}');
-        } catch (_) {}
-
-        var role = currentUser.rol || 'Estudiante';
+        drawer.onclick = function(e) {
+            if (e.target === drawer) {
+                drawer.classList.add('hidden');
+            }
+        };
 
         drawer.innerHTML = '' +
-            '<div class="w-80 bg-white h-full shadow-2xl p-6 space-y-6 flex flex-col justify-between overflow-y-auto pb-24">' +
+            '<div class="w-80 bg-white h-full shadow-2xl p-6 space-y-6 flex flex-col justify-between overflow-y-auto pb-24" onclick="event.stopPropagation()">' +
                 '<div class="space-y-4">' +
                     '<div class="flex items-center justify-between border-b border-slate-100 pb-4">' +
                         '<div class="flex items-center gap-2.5">' +
-                            '<img src="imagenes/new-generation-logo.png" class="w-8 h-8 object-contain">' +
+                            '<img src="imagenes/new-generation-logo.png" class="w-8 h-8 object-contain" alt="Logo">' +
                             '<div>' +
                                 '<h4 class="text-xs font-black text-slate-900 uppercase">New Generation</h4>' +
                                 '<p class="text-[9px] font-bold text-blue-600 uppercase tracking-widest">' + role + '</p>' +
                             '</div>' +
                         '</div>' +
-                        '<button onclick="document.getElementById(\'' + drawerId + '\').classList.add(\'hidden\')" class="w-8 h-8 rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200 flex items-center justify-center font-bold text-xs">' +
+                        '<button onclick="document.getElementById(\'' + drawerId + '\').classList.add(\'hidden\')" class="w-8 h-8 rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200 flex items-center justify-center font-bold text-xs" aria-label="Cerrar menú">' +
                             '<i class="fas fa-times"></i>' +
                         '</button>' +
                     '</div>' +
@@ -4371,9 +4383,9 @@ window.openMobileHamburgerDrawer = function() {
                                 '<i class="fas fa-chevron-down text-[10px]"></i>' +
                             '</button>' +
                             '<div id="sec-drawer-academic" class="accordion-section-content hidden p-3 bg-white space-y-2 border-t border-slate-100 text-[11px]">' +
-                                '<a href="student-dashboard.html" class="block p-2 hover:bg-blue-50 text-slate-700 hover:text-blue-600 rounded-lg">👨‍🎓 Portal del Estudiante</a>' +
-                                '<a href="teacher-dashboard.html" class="block p-2 hover:bg-blue-50 text-slate-700 hover:text-blue-600 rounded-lg">👨‍🏫 Portal Docente & Clases</a>' +
-                                '<a href="javascript:void(0)" onclick="window.openAnalyticsChartModal(\'DESEMPEÑO ACADÉMICO\')" class="block p-2 hover:bg-blue-50 text-slate-700 hover:text-blue-600 rounded-lg">📊 Gráficas de Rendimiento</a>' +
+                                '<a href="student-dashboard.html" onclick="document.getElementById(\'' + drawerId + '\').classList.add(\'hidden\')" class="block p-2 hover:bg-blue-50 text-slate-700 hover:text-blue-600 rounded-lg">👨‍🎓 Portal del Estudiante</a>' +
+                                '<a href="teacher-dashboard.html" onclick="document.getElementById(\'' + drawerId + '\').classList.add(\'hidden\')" class="block p-2 hover:bg-blue-50 text-slate-700 hover:text-blue-600 rounded-lg">👨‍🏫 Portal Docente & Clases</a>' +
+                                '<a href="javascript:void(0)" onclick="document.getElementById(\'' + drawerId + '\').classList.add(\'hidden\'); window.openAnalyticsChartModal(\'DESEMPEÑO ACADÉMICO\')" class="block p-2 hover:bg-blue-50 text-slate-700 hover:text-blue-600 rounded-lg">📊 Gráficas de Rendimiento</a>' +
                             '</div>' +
                         '</div>' +
 
@@ -4383,9 +4395,9 @@ window.openMobileHamburgerDrawer = function() {
                                 '<i class="fas fa-chevron-down text-[10px]"></i>' +
                             '</button>' +
                             '<div id="sec-drawer-admin" class="accordion-section-content hidden p-3 bg-white space-y-2 border-t border-slate-100 text-[11px]">' +
-                                '<a href="dashboard-contabilidad.html" class="block p-2 hover:bg-emerald-50 text-slate-700 hover:text-emerald-600 rounded-lg">💼 Área de Contaduría</a>' +
-                                '<a href="dashboard-recursos-humanos.html" class="block p-2 hover:bg-emerald-50 text-slate-700 hover:text-emerald-600 rounded-lg">👥 Recursos Humanos</a>' +
-                                '<a href="politica-de-uso.html" target="_blank" class="block p-2 hover:bg-emerald-50 text-slate-700 hover:text-emerald-600 rounded-lg">📜 Términos & Políticas</a>' +
+                                '<a href="dashboard-contabilidad.html" onclick="document.getElementById(\'' + drawerId + '\').classList.add(\'hidden\')" class="block p-2 hover:bg-emerald-50 text-slate-700 hover:text-emerald-600 rounded-lg">💼 Área de Contaduría</a>' +
+                                '<a href="dashboard-recursos-humanos.html" onclick="document.getElementById(\'' + drawerId + '\').classList.add(\'hidden\')" class="block p-2 hover:bg-emerald-50 text-slate-700 hover:text-emerald-600 rounded-lg">👥 Recursos Humanos</a>' +
+                                '<a href="politica-de-uso.html" target="_blank" onclick="document.getElementById(\'' + drawerId + '\').classList.add(\'hidden\')" class="block p-2 hover:bg-emerald-50 text-slate-700 hover:text-emerald-600 rounded-lg">📜 Términos & Políticas</a>' +
                             '</div>' +
                         '</div>' +
 
@@ -4395,15 +4407,15 @@ window.openMobileHamburgerDrawer = function() {
                                 '<i class="fas fa-chevron-down text-[10px]"></i>' +
                             '</button>' +
                             '<div id="sec-drawer-services" class="accordion-section-content hidden p-3 bg-white space-y-2 border-t border-slate-100 text-[11px]">' +
-                                '<a href="dashboard-tienda.html" class="block p-2 hover:bg-amber-50 text-slate-700 hover:text-amber-600 rounded-lg">🛍️ Tiendita Escolar</a>' +
-                                '<a href="dashboard-cafeteria.html" class="block p-2 hover:bg-amber-50 text-slate-700 hover:text-amber-600 rounded-lg">🥪 Cafetería</a>' +
+                                '<a href="dashboard-tienda.html" onclick="document.getElementById(\'' + drawerId + '\').classList.add(\'hidden\')" class="block p-2 hover:bg-amber-50 text-slate-700 hover:text-amber-600 rounded-lg">🛍️ Tiendita Escolar</a>' +
+                                '<a href="dashboard-cafeteria.html" onclick="document.getElementById(\'' + drawerId + '\').classList.add(\'hidden\')" class="block p-2 hover:bg-amber-50 text-slate-700 hover:text-amber-600 rounded-lg">🥪 Cafetería</a>' +
                             '</div>' +
                         '</div>' +
                     '</div>' +
                 '</div>' +
 
                 '<div class="pt-4 border-t border-slate-100 space-y-2 text-xs font-bold text-slate-500">' +
-                    '<button onclick="window.openReportIssueModal()" class="w-full p-2.5 bg-slate-100 hover:bg-slate-200 text-slate-800 rounded-xl flex items-center justify-center gap-2 uppercase tracking-wider font-black">' +
+                    '<button onclick="document.getElementById(\'' + drawerId + '\').classList.add(\'hidden\'); window.openReportIssueModal()" class="w-full p-2.5 bg-slate-100 hover:bg-slate-200 text-slate-800 rounded-xl flex items-center justify-center gap-2 uppercase tracking-wider font-black">' +
                         '<i class="fa-solid fa-circle-exclamation text-amber-500"></i> Reportar Problema' +
                     '</button>' +
                 '</div>' +
@@ -4412,6 +4424,13 @@ window.openMobileHamburgerDrawer = function() {
     } else {
         drawer.classList.remove('hidden');
     }
+
+    // Expand initial accordion section based on user role context
+    var defaultSectionId = 'sec-drawer-academic';
+    if (normalizedRole.indexOf('admin') !== -1 || normalizedRole.indexOf('director') !== -1 || normalizedRole.indexOf('secretar') !== -1 || normalizedRole.indexOf('contad') !== -1 || normalizedRole.indexOf('recursos') !== -1 || normalizedRole.indexOf('rh') !== -1) {
+        defaultSectionId = 'sec-drawer-admin';
+    }
+    window.toggleRoleMenuAccordionSection(defaultSectionId, 'drawer-accordion-container');
 };
 
 window.initNoLoopHistoryManager = function() {

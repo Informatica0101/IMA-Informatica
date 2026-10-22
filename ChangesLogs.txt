@@ -848,3 +848,16 @@ Archivos Modificados:
    - Actualización del estado de [T-UX-06] a [X] Completada.
 
 -------------------------------------------------------------------------------
+FECHA: Octubre 2026
+TAREA: [T-UX-09] Menú Lateral Responsivo Específico por Rol con Colapso Móvil Suave
+-------------------------------------------------------------------------------
+
+Archivos Modificados:
+1. js/ui-common.js
+   - Lineas 4265-4269: Adición de encabezado de tarea T-UX-09.
+   - Lineas 4340-4432: Optimización de window.openMobileHamburgerDrawer con auto-expansión contextual del acordeón de navegación por rol, cierre automático al hacer clic en fondo o enlaces y atributos accesibles.
+
+2. Pendientes.md
+   - Actualización del estado de [T-UX-09] a [X] Completada.
+
+-------------------------------------------------------------------------------

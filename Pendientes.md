@@ -587,7 +587,7 @@
   - Apertura rápida y filtrado seguro de registros.
 - **Estado:** [X] Completada
 
-### [ ] [T-UX-09] Menú Lateral Responsivo Específico por Rol con Colapso Móvil Suave
+### [X] [T-UX-09] Menú Lateral Responsivo Específico por Rol con Colapso Móvil Suave
 - **Origen del Hallazgo:** Auditoría de la Fase 3, octubre de 2026 (AUDITORIA_FASE3_EXPERIENCIA_USUARIO_NAVEGACION.md - Área 3)
 - **Severidad/Clasificación:** Alto
 - **Archivos Involucrados:** `js/ui-common.js`, Dashboards HTML
@@ -596,7 +596,7 @@
   1. Menú lateral específico por rol con colapso responsivo móvil.
 - **Criterios de Aceptación:**
   - Navegación fluida en escritorio y dispositivos táctiles.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 ### [ ] [T-UX-10] Completar la verificación funcional y automatizar las pruebas de experiencia de usuario
 - **Origen del Hallazgo:** Auditoría de la Fase 3, octubre de 2026 (AUDITORIA_FASE3_EXPERIENCIA_USUARIO_NAVEGACION.md)
