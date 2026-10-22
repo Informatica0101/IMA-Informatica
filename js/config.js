@@ -15,6 +15,45 @@ window.DEPARTMENT_SERVICES_MAP = {
   'ALUMNADO_PADRES': ['USER', 'ACADEMIC', 'TASK', 'EXAM', 'ACCOUNTING']
 };
 
+// [FASE2-T13] [Fase 2 - Documentación de Dependencias] - Mapa programático de responsabilidades de servicios, funciones públicas, roles consumidores y pruebas de integración.
+window.getDepartmentalDependencyMap = function() {
+  return {
+    version: "2.0.0",
+    services: {
+      USER: {
+        domain: "Gestión de Usuarios, Autenticación y RBAC",
+        responsibilities: ["Autenticación de usuarios", "Verificación RBAC con CacheService", "Notificaciones multicanal", "Omnibox global", "Bitácora de eventos y trazabilidad"],
+        consumerRoles: ["Administrador", "Director", "Docente", "Estudiante", "Padre", "RecursosHumanos", "Contador"],
+        integrationTests: ["runUXSuiteTests", "loginUserTest"]
+      },
+      ACADEMIC: {
+        domain: "Gestión Académica, Malla Curricular y Expedientes",
+        responsibilities: ["Malla curricular de 12 áreas", "Expediente digital de estudiante", "Calificaciones SACE y cuadro de honor", "Aulas y ofertas académicas", "Criterios de almacenamiento transaccional"],
+        consumerRoles: ["Administrador", "Director", "Subdirector", "Profesor", "Estudiante", "Padre"],
+        integrationTests: ["runCurricularAreaServiceTests", "reconcileRestoredDataIntegrity"]
+      },
+      ACCOUNTING: {
+        domain: "Contabilidad, Finanzas y Recursos Humanos",
+        responsibilities: ["Estado de cuenta y cobro de aranceles", "Asientos contables y caja/bancos", "Recursos Humanos (Planillas, licencias, contrataciones, evaluaciones)", "Compras, inventario y activos fijos"],
+        consumerRoles: ["Administrador", "Contador", "RecursosHumanos", "EncargadoTienda", "EncargadoCafeteria"],
+        integrationTests: ["runHRIntegrationAndRegressionTests", "runCriticalProcessConcurrencySuite"]
+      },
+      TASK: {
+        domain: "Gestión de Tareas y Entregas con Rúbricas",
+        responsibilities: ["Creación y asignación de tareas", "Borradores progresivos y entregas", "Evaluación con rúbricas", "Penalización por morosidad/tardanza"],
+        consumerRoles: ["Docente", "Profesor", "Estudiante"],
+        integrationTests: ["gradeSubmissionWithRubricTest"]
+      },
+      EXAM: {
+        domain: "Evaluación en Línea y Banco de Preguntas",
+        responsibilities: ["Banco de preguntas por asignatura", "Exámenes cronometrados", "Calificación automática e intentos"],
+        consumerRoles: ["Docente", "Profesor", "Estudiante"],
+        integrationTests: ["getQuestionBankTest"]
+      }
+    }
+  };
+};
+
 // [TAREA-08] [Fase 1 - Malla Curricular] - Estructura jerárquica de la malla curricular por áreas, asignaturas y departamentos.
 window.CURRICULAR_AREAS_CATALOG = [
     { areaId: "AREA-01", name: "Matemáticas y razonamiento cuantitativo", code: "MAT" },

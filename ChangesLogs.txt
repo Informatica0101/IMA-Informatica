@@ -707,3 +707,12 @@ DESCRIPCIÓN OBJETIVA DE LOS CAMBIOS:
 - Actualización del estado de [FASE2-T12] a [X] Completada en Pendientes.md.
 
 -------------------------------------------------------------------------------
+FECHA: Octubre 2026
+ARCHIVO(S) AFECTADO(S): js/config.js, MapaDependencias.md, Pendientes.md
+-------------------------------------------------------------------------------
+DESCRIPCIÓN OBJETIVA DE LOS CAMBIOS:
+- Implementación de window.getDepartmentalDependencyMap() en js/config.js para la consulta programática de responsabilidades de servicios, funciones públicas, roles consumidores y suites de pruebas de integración.
+- Inserción del comentario identificativo de FASE2-T13 en la primera línea del bloque creado.
+- Actualización del estado de [FASE2-T13] a [X] Completada en Pendientes.md.
+
+-------------------------------------------------------------------------------

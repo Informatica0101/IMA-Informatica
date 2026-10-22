@@ -1012,7 +1012,7 @@
   7. No se ejecuta una migración únicamente por superar un número arbitrario de filas.
 - **Estado:** [ ] Pendiente
 
-### [ ] [FASE2-T13] Documentar el mapa de dependencias y las responsabilidades de los servicios
+### [X] [FASE2-T13] Documentar el mapa de dependencias y las responsabilidades de los servicios
 - **Origen del Hallazgo:** Auditoría de la Fase 2, octubre de 2026 (AUDITORIA_FASE2_ARQUITECTURA_INTEROPERABILIDAD.md - Área 1)
 - **Severidad/Clasificación:** Medio
 - **Archivos Involucrados:** `MapaDependencias.md`, `js/config.js`
