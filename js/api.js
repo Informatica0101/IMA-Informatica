@@ -87,6 +87,9 @@ function fetchApi(service, action, payload, retryCount, options) {
         }
     }
 
+// [FASE2-T09] [Fase 2 - Métricas Operativas y Capacidad] - Medición de latencia de respuesta (startTime/durationMs) y registro de cuotas por servicio.
+var startTime = Date.now();
+
     var fetchOptions = {
         method: 'POST',
         headers: {
@@ -167,11 +170,15 @@ function fetchApi(service, action, payload, retryCount, options) {
                         window.PersistenceManager.reconcile(options.store, parsed, options.onUpdate, options.key);
                     }
 
+                    var durationMs = Date.now() - startTime;
                     if (window.OPERATIONAL_HEALTH_METRICS) {
                         window.OPERATIONAL_HEALTH_METRICS.successCalls++;
-                        if (window.OPERATIONAL_HEALTH_METRICS.serviceMetrics[service]) {
-                            window.OPERATIONAL_HEALTH_METRICS.serviceMetrics[service].success++;
+                        window.OPERATIONAL_HEALTH_METRICS.totalLatencyMs = (window.OPERATIONAL_HEALTH_METRICS.totalLatencyMs || 0) + durationMs;
+                        if (!window.OPERATIONAL_HEALTH_METRICS.serviceMetrics[service]) {
+                            window.OPERATIONAL_HEALTH_METRICS.serviceMetrics[service] = { success: 0, failed: 0, quotaExceeded: 0, totalLatencyMs: 0 };
                         }
+                        window.OPERATIONAL_HEALTH_METRICS.serviceMetrics[service].success++;
+                        window.OPERATIONAL_HEALTH_METRICS.serviceMetrics[service].totalLatencyMs = (window.OPERATIONAL_HEALTH_METRICS.serviceMetrics[service].totalLatencyMs || 0) + durationMs;
                     }
 
                     return parsed;
@@ -184,14 +191,18 @@ function fetchApi(service, action, payload, retryCount, options) {
         .catch(function(error) {
             console.error('Intento ' + (retryCount + 1) + ' fallido para ' + service + '/' + action + ':', error);
 
+            var durationMs = Date.now() - startTime;
             if (window.OPERATIONAL_HEALTH_METRICS) {
                 window.OPERATIONAL_HEALTH_METRICS.failedCalls++;
-                if (window.OPERATIONAL_HEALTH_METRICS.serviceMetrics[service]) {
-                    window.OPERATIONAL_HEALTH_METRICS.serviceMetrics[service].failed++;
-                    if (error.message && (error.message.indexOf('quota') !== -1 || error.message.indexOf('Quota') !== -1 || error.message.indexOf('LIMIT') !== -1)) {
-                        window.OPERATIONAL_HEALTH_METRICS.quotaErrors++;
-                        window.OPERATIONAL_HEALTH_METRICS.serviceMetrics[service].quotaExceeded++;
-                    }
+                window.OPERATIONAL_HEALTH_METRICS.totalLatencyMs = (window.OPERATIONAL_HEALTH_METRICS.totalLatencyMs || 0) + durationMs;
+                if (!window.OPERATIONAL_HEALTH_METRICS.serviceMetrics[service]) {
+                    window.OPERATIONAL_HEALTH_METRICS.serviceMetrics[service] = { success: 0, failed: 0, quotaExceeded: 0, totalLatencyMs: 0 };
+                }
+                window.OPERATIONAL_HEALTH_METRICS.serviceMetrics[service].failed++;
+                window.OPERATIONAL_HEALTH_METRICS.serviceMetrics[service].totalLatencyMs = (window.OPERATIONAL_HEALTH_METRICS.serviceMetrics[service].totalLatencyMs || 0) + durationMs;
+                if (error.message && (error.message.indexOf('quota') !== -1 || error.message.indexOf('Quota') !== -1 || error.message.indexOf('LIMIT') !== -1)) {
+                    window.OPERATIONAL_HEALTH_METRICS.quotaErrors++;
+                    window.OPERATIONAL_HEALTH_METRICS.serviceMetrics[service].quotaExceeded++;
                 }
             }
 

@@ -35,7 +35,7 @@
   - Las pruebas de regresión confirman que los usuarios autorizados conservan sus funciones legítimas.
 - **Estado:** [X] Completada
 
-### [ ] [FASE2-T01] Verificar y reforzar la autorización institucional y la vigencia de los permisos entre servicios
+### [X] [FASE2-T01] Verificar y reforzar la autorización institucional y la vigencia de los permisos entre servicios
 - **Origen del Hallazgo:** Auditoría de la Fase 2, octubre de 2026 (AUDITORIA_FASE2_ARQUITECTURA_INTEROPERABILIDAD.md - Área 1)
 - **Severidad/Clasificación:** Crítico
 - **Archivos Involucrados:** `backend/user-service/Code.gs`, `backend/academic-service/Code.gs`, `backend/accounting-service/Code.gs`, `backend/task-service/Code.gs`, `backend/exam-service/Code.gs`, `js/auth.js`, `js/api.js`
@@ -904,7 +904,7 @@
   - Las pruebas no alteran datos institucionales reales.
 - **Estado:** [X] Completada
 
-### [ ] [FASE2-T09] Convertir las métricas operativas en supervisión real de cuotas, errores y capacidad
+### [X] [FASE2-T09] Convertir las métricas operativas en supervisión real de cuotas, errores y capacidad
 - **Origen del Hallazgo:** Auditoría de la Fase 2, octubre de 2026 (AUDITORIA_FASE2_ARQUITECTURA_INTEROPERABILIDAD.md - Área 7)
 - **Severidad/Clasificación:** Medio
 - **Archivos Involucrados:** `js/api.js`, `backend/user-service/Code.gs`
@@ -929,7 +929,7 @@
   6. Las alertas se generan cuando las condiciones configuradas se cumplen.
   7. El sistema no informa que un servicio está saludable basándose únicamente en llamadas registradas por el cliente.
   8. Las pruebas de supervisión permiten verificar que los registros se generen ante condiciones controladas.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 ### [ ] [FASE2-T10] Implementar paginación eficiente y consultas escalables de datos
 - **Origen del Hallazgo:** Auditoría de la Fase 2, octubre de 2026 (AUDITORIA_FASE2_ARQUITECTURA_INTEROPERABILIDAD.md - Área 7)

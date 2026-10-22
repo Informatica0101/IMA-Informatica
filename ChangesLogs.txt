@@ -667,3 +667,14 @@ DESCRIPCIÓN OBJETIVA DE LOS CAMBIOS:
 - Actualización del estado de [FASE2-T08] a [X] Completada en Pendientes.md.
 
 -------------------------------------------------------------------------------
+FECHA: Octubre 2026
+ARCHIVO(S) AFECTADO(S): js/api.js, backend/user-service/Code.gs, Pendientes.md
+-------------------------------------------------------------------------------
+DESCRIPCIÓN OBJETIVA DE LOS CAMBIOS:
+- Medición de latencia de respuesta (startTime y durationMs) y acumulación de métricas en OPERATIONAL_HEALTH_METRICS en js/api.js.
+- Implementación de getOperationalCapacityMetrics en backend/user-service/Code.gs para el análisis de capacidad operativa, tasa de error global, promedios de latencia por servicio y alertas de límites de cuota sin exponer PII.
+- Inserción del comentario identificativo de FASE2-T09 en la primera línea de los bloques creados.
+- Registro de permisos en ROLE_PERMISSIONS y rutas en el dispatcher doPost de backend/user-service/Code.gs.
+- Actualización del estado de [FASE2-T09] a [X] Completada en Pendientes.md.
+
+-------------------------------------------------------------------------------

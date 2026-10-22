@@ -755,7 +755,7 @@ const ROLE_PERMISSIONS = {
     "getInstitutionalCriteria", "saveInstitutionalCriterion", "getFormativeEvaluations", "saveFormativeEvaluation", "getSupportPlans", "saveSupportPlan",
     "createLinkInvitation", "acceptLinkInvitation", "getGuardianStudents", "getInstitutionalAnnouncements", "createInstitutionalAnnouncement", "submitAnnouncementReceiptConfirmation", "getAnnouncementReadReport", "getDepartmentalWorkInbox", "closeConversationThread", "getInternalConversations", "getInternalMessages", "sendInternalMessage", "getUserNotifications", "getUnifiedNotifications", "markNotificationAsRead", "createUserNotification", "sendMultiChannelNotification", "getNotificationPreferences", "getAdministrativeRequests", "getAdministrativeRequestsHistory", "submitAdministrativeRequest", "submitStudentAbsenceJustification", "getStudentAbsenceJustifications", "reviewAbsenceJustification", "updateRequestStatus", "saveInstitutionalForm", "getInstitutionalForms", "submitInstitutionalFormRequest", "saveApprovalWorkflow", "getApprovalWorkflows", "processWorkflowDecision", "getWorkflowHistory", "registerDocumentSignature", "configureNotificationChannel", "getNotificationChannelConfigs", "sendChannelNotificationTest", "getAppointmentBookings", "bookAppointment", "updateAppointmentStatus", "getInstitutionalCalendarEvents", "getPendingReminders",
     "getUserSettings", "saveUserSettings", "getSystemConfigurations", "saveSystemConfiguration", "getProviderIntegrations", "configureProviderIntegration",
-    "updateTicketStatus", "saveVisualPaletteProposal", "approveVisualPaletteProposal", "registerAndDispatchEvent", "retryFailedEventsQueue", "recordTraceabilityLog", "getTraceabilityCorrelationLogs"
+    "updateTicketStatus", "saveVisualPaletteProposal", "approveVisualPaletteProposal", "registerAndDispatchEvent", "retryFailedEventsQueue", "recordTraceabilityLog", "getTraceabilityCorrelationLogs", "getOperationalCapacityMetrics"
   ],
   "Subdirector": [
     "createNews", "uploadNewsImage", "getNews", "updateNewsStatus", "getStudents", "getStudentsByGradoSeccion", "getUserInfo", "saveGameResult", "getGameStats", "getGlobalTop", "recordAnalytics", "getLearningProfile", "mergeGuestData", "updateUserProfile", "findPersonMatches", "generateInstitutionalId",
@@ -921,6 +921,7 @@ function doPost(e) {
       case "retryFailedEventsQueue": result = retryFailedEventsQueue(payload); break;
       case "recordTraceabilityLog": result = recordTraceabilityLog(payload); break;
       case "getTraceabilityCorrelationLogs": result = getTraceabilityCorrelationLogs(payload); break;
+      case "getOperationalCapacityMetrics": result = getOperationalCapacityMetrics(payload); break;
       case "getNotificationPreferences": result = getNotificationPreferences(payload); break;
       case "markNotificationAsRead": result = markNotificationAsRead(payload); break;
       case "createUserNotification": result = createUserNotification(payload); break;
@@ -2318,6 +2319,77 @@ function getUnifiedNotifications(payload) {
   const unreadCount = data.slice(1).filter(r => String(r[1]).trim() === String(userId).trim() && (r[6] !== true && String(r[6]).toLowerCase() !== "true")).length;
 
   return { status: "success", data: notifications, unreadCount: unreadCount };
+}
+
+// [FASE2-T09] [Fase 2 - Métricas Operativas y Capacidad] - Supervisión real de cuotas, análisis de latencia por servicio, tasa de error y alertas de capacidad.
+function getOperationalCapacityMetrics(payload) {
+  const { metricsClient } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const auditSheet = ss.getSheetByName("BitacoraTrazabilidad");
+
+  let totalEvents = 0;
+  let errorEvents = 0;
+  let quotaEvents = 0;
+  const serviceDurations = {};
+
+  if (auditSheet) {
+    const rows = auditSheet.getDataRange().getValues().slice(1);
+    totalEvents = rows.length;
+
+    rows.forEach(r => {
+      const svc = String(r[1] || "DESCONOCIDO").toUpperCase();
+      const status = String(r[4] || "").toUpperCase();
+      const dur = parseInt(r[5]) || 0;
+      const err = String(r[6] || "").toLowerCase();
+
+      if (!serviceDurations[svc]) {
+        serviceDurations[svc] = { totalMs: 0, count: 0, errors: 0, quotaErrors: 0 };
+      }
+
+      serviceDurations[svc].totalMs += dur;
+      serviceDurations[svc].count += 1;
+
+      if (status === "ERROR" || status === "FALLIDO") {
+        errorEvents++;
+        serviceDurations[svc].errors += 1;
+      }
+
+      if (err.includes("quota") || err.includes("limit") || err.includes("cuota")) {
+        quotaEvents++;
+        serviceDurations[svc].quotaErrors += 1;
+      }
+    });
+  }
+
+  const serviceBreakdown = {};
+  Object.keys(serviceDurations).forEach(svc => {
+    const item = serviceDurations[svc];
+    serviceBreakdown[svc] = {
+      peticionesProcesadas: item.count,
+      latenciaPromedioMs: item.count > 0 ? Math.round(item.totalMs / item.count) : 0,
+      erroresTotales: item.errors,
+      erroresCuota: item.quotaErrors,
+      tasaErrorPorcentaje: item.count > 0 ? Math.round((item.errors / item.count) * 10000) / 100 : 0
+    };
+  });
+
+  const overallErrorRate = totalEvents > 0 ? Math.round((errorEvents / totalEvents) * 10000) / 100 : 0;
+  const isDegraded = overallErrorRate > 10.0 || quotaEvents > 5;
+
+  return {
+    status: "success",
+    capacidadEstado: isDegraded ? "DEGRADADO_ADVERTENCIA" : "OPTIMO",
+    resumenGeneral: {
+      totalOperacionesRegistradas: totalEvents,
+      erroresTotales: errorEvents,
+      erroresCuotaLimite: quotaEvents,
+      tasaErrorGlobalPorcentaje: overallErrorRate,
+      estadoSaludPlataforma: isDegraded ? "Advertencia de Capacidad / Cuota Próxima al Límite" : "Operación Normal"
+    },
+    desgloseServicios: serviceBreakdown,
+    clienteMetricasLocal: metricsClient || null,
+    timestamp: new Date().toISOString()
+  };
 }
 
 // [FASE2-T08] [Fase 2 - Trazabilidad y Correlación] - Registro y consulta de trazabilidad con identificador de correlación para reconstrucción de operaciones inter-servicio.
