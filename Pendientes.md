@@ -678,7 +678,7 @@
   - En móvil, puede abrirse y cerrarse sin bloquear el contenido.
 - **Estado:** [X] Completada
 
-### [ ] [T-UX-14] Completar la búsqueda global y optimizar sus resultados
+### [X] [T-UX-14] Completar la búsqueda global y optimizar sus resultados
 - **Origen del Hallazgo:** Auditoría de la Fase 3, octubre de 2026 (AUDITORIA_FASE3_EXPERIENCIA_USUARIO_NAVEGACION.md - Área 4)
 - **Severidad/Clasificación:** Alto
 - **Archivos Involucrados:** `js/ui-common.js`, `backend/user-service/Code.gs`
@@ -695,7 +695,7 @@
   - El foco se coloca en el campo de búsqueda al abrir el omnibox.
   - Las búsquedas equivalentes con y sin tildes devuelven coincidencias pertinentes.
   - Se prueban nombres, identificadores, términos parciales y resultados ambiguos.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 ### [ ] [T-UX-15] Implementar filtros avanzados, vistas guardadas y paginación coherente
 - **Origen del Hallazgo:** Auditoría de la Fase 3, octubre de 2026 (AUDITORIA_FASE3_EXPERIENCIA_USUARIO_NAVEGACION.md - Área 5)

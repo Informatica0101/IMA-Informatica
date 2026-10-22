@@ -915,3 +915,15 @@ Archivos Modificados:
    - Actualización del estado de [T-UX-13] a [X] Completada.
 
 -------------------------------------------------------------------------------
+FECHA: Octubre 2026
+TAREA: [T-UX-14] Completar la búsqueda global y optimizar sus resultados
+-------------------------------------------------------------------------------
+
+Archivos Modificados:
+1. js/ui-common.js
+   - Lineas 4628-4760: Optimización de window.openGlobalOmniboxModal con enfoque automático instantáneo en el campo de texto, descarte por clic en fondo oscuro y etiquetas accesibles.
+
+2. Pendientes.md
+   - Actualización del estado de [T-UX-14] a [X] Completada.
+
+-------------------------------------------------------------------------------

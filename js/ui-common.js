@@ -4055,6 +4055,7 @@ window.openFirstLoginTermsModal = function() {
     } else {
         modal.classList.remove('hidden');
     }
+
 };
 
 window.closeFirstLoginTermsModalAndLogout = function() {
@@ -4625,6 +4626,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
 var omniboxActiveTrigger = null;
 
+// ---------------------------------------------------------------------------
+// [T-UX-14] [Fase 3: Experiencia de Usuario y Navegación Unificada] - BÚSQUEDA GLOBAL OPTIMIZADA Y RESULTADOS CONTEXTUALES MULTI-ENTIDAD
+// Optimiza la consulta Omnibox global con foco automático instantáneo, descarte por clic en fondo, filtrado por categorías y navegación directa al registro.
+// ---------------------------------------------------------------------------
+
 // [T-UX-06] [Fase 3: Experiencia de Usuario y Navegación Unificada] - Modal Omnibox unificado con atajos de teclado (Ctrl+K/Cmd+K/ESC) y restauración de foco.
 window.openGlobalOmniboxModal = function() {
     if (window.trackModalFocus) window.trackModalFocus();
@@ -4634,12 +4640,16 @@ window.openGlobalOmniboxModal = function() {
         modal = document.createElement('div');
         modal.id = 'modal-global-omnibox';
         modal.className = 'fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-[120] flex items-start justify-center p-3 md:p-6 animate-fade-in';
+        modal.onclick = function(e) {
+            if (e.target === modal) window.closeGlobalOmniboxModal();
+        };
+
         modal.innerHTML =
-            '<div class="bg-white rounded-3xl max-w-2xl w-full max-h-[85vh] flex flex-col shadow-2xl border border-slate-100 overflow-hidden mt-10 md:mt-16">' +
+            '<div class="bg-white rounded-3xl max-w-2xl w-full max-h-[85vh] flex flex-col shadow-2xl border border-slate-100 overflow-hidden mt-10 md:mt-16" onclick="event.stopPropagation()">' +
                 '<div class="p-4 bg-slate-900 text-white flex items-center gap-3 border-b border-slate-800 flex-shrink-0">' +
                     '<i class="fa-solid fa-magnifying-glass text-blue-400 text-lg"></i>' +
                     '<input type="text" id="omnibox-search-input" placeholder="Buscar estudiantes, avisos, trámites... (Ctrl + K)" class="w-full bg-slate-800 text-white border border-slate-700 rounded-xl px-4 py-2 text-sm focus:outline-none focus:border-blue-500 font-medium" autofocus>' +
-                    '<button onclick="window.closeGlobalOmniboxModal()" class="w-8 h-8 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white flex items-center justify-center transition-colors">' +
+                    '<button onclick="window.closeGlobalOmniboxModal()" class="w-8 h-8 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white flex items-center justify-center transition-colors" aria-label="Cerrar modal">' +
                         '<i class="fa-solid fa-xmark"></i>' +
                     '</button>' +
                 '</div>' +
@@ -4736,6 +4746,14 @@ window.executeOmniboxSearch = function(query) {
                 '</div>';
         });
     }
+
+    setTimeout(function() {
+        var inp = document.getElementById('omnibox-search-input');
+        if (inp) {
+            inp.focus();
+            inp.select();
+        }
+    }, 50);
 };
 
 window.handleOmniboxResultClick = function(type, id) {
