@@ -1351,7 +1351,7 @@
   6. La interfaz no informa disponibilidad completa cuando existen operaciones críticas fallidas o pendientes.
 - **Estado:** [ ] Pendiente
 
-### [ ] [FASE2-T19] Optimizar la gestión de caché de datos institucionales
+### [X] [FASE2-T19] Optimizar la gestión de caché de datos institucionales
 - **Origen del Hallazgo:** Auditoría de la Fase 2, octubre de 2026 (AUDITORIA_FASE2_ARQUITECTURA_INTEROPERABILIDAD.md - Área 1 & 3)
 - **Severidad/Clasificación:** Bajo
 - **Archivos Involucrados:** `backend/user-service/Code.gs`, `js/config.js`

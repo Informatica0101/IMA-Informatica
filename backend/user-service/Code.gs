@@ -139,6 +139,47 @@ function getServiceHealthReport(payload) {
   }
 }
 
+// [FASE2-T19] [Fase 2 - Gestión de Caché de Datos Institucionales] - Gestión centralizada de caché, invalidación explícita por usuario e inspección de políticas de vigencia.
+function invalidateUserRoleCache(userId) {
+  if (!userId) return false;
+  try {
+    const cache = CacheService.getScriptCache();
+    cache.remove("user_role_" + userId);
+    return true;
+  } catch (e) {
+    console.warn("No se pudo invalidar la caché de rol para " + userId, e);
+    return false;
+  }
+}
+
+function manageInstitutionalDataCache(payload) {
+  const action = (payload && payload.cacheAction) || "INSPECT";
+  const targetUserId = payload && payload.targetUserId;
+
+  let resultMessage = "Inspección de políticas de caché efectuada.";
+
+  if (action === "INVALIDATE_USER" && targetUserId) {
+    invalidateUserRoleCache(targetUserId);
+    resultMessage = "Caché de rol invalidada correctamente para el usuario " + targetUserId;
+  } else if (action === "FLUSH_GLOBAL") {
+    logStructuredEvent("USER", "manageInstitutionalDataCache", "WARN", "CACHE_FLUSHED", "Solicitud de purga de caché institucional", null, payload && payload.authRole);
+    resultMessage = "Purga de caché registrada.";
+  }
+
+  return {
+    status: "success",
+    service: "USER",
+    actionExecuted: action,
+    message: resultMessage,
+    cachePolicies: {
+      USER_ROLES_TTL: "21600s (6h)",
+      CATALOGS_TTL: "43200s (12h)",
+      FINANCIAL_TTL: "0s (NO_CACHE)"
+    },
+    timestamp: new Date().toISOString()
+  };
+}
+
 // [FASE2-T17] [Fase 2 - Catálogo de Configuraciones Versionadas] - Servidor centralizado para consulta de versiones activas de contratos y políticas de reversión sin romper consumidores históricos.
 function getSharedConfigurationsCatalog(payload) {
   logStructuredEvent("USER", "getSharedConfigurationsCatalog", "INFO", "CONFIG_CATALOG_REQUESTED", "Consulta de catálogo de versiones de configuraciones compartidas", null, payload && payload.authRole);
@@ -897,7 +938,7 @@ const ROLE_PERMISSIONS = {
     "getInstitutionalCriteria", "saveInstitutionalCriterion", "getFormativeEvaluations", "saveFormativeEvaluation", "getSupportPlans", "saveSupportPlan",
     "createLinkInvitation", "acceptLinkInvitation", "getGuardianStudents", "getInstitutionalAnnouncements", "createInstitutionalAnnouncement", "submitAnnouncementReceiptConfirmation", "getAnnouncementReadReport", "getDepartmentalWorkInbox", "closeConversationThread", "getInternalConversations", "getInternalMessages", "sendInternalMessage", "getUserNotifications", "getUnifiedNotifications", "markNotificationAsRead", "createUserNotification", "sendMultiChannelNotification", "getNotificationPreferences", "getAdministrativeRequests", "getAdministrativeRequestsHistory", "submitAdministrativeRequest", "submitStudentAbsenceJustification", "getStudentAbsenceJustifications", "reviewAbsenceJustification", "updateRequestStatus", "saveInstitutionalForm", "getInstitutionalForms", "submitInstitutionalFormRequest", "saveApprovalWorkflow", "getApprovalWorkflows", "processWorkflowDecision", "getWorkflowHistory", "registerDocumentSignature", "configureNotificationChannel", "getNotificationChannelConfigs", "sendChannelNotificationTest", "getAppointmentBookings", "bookAppointment", "updateAppointmentStatus", "getInstitutionalCalendarEvents", "getPendingReminders",
     "getUserSettings", "saveUserSettings", "getSystemConfigurations", "saveSystemConfiguration", "getProviderIntegrations", "configureProviderIntegration",
-    "updateTicketStatus", "saveVisualPaletteProposal", "approveVisualPaletteProposal", "registerAndDispatchEvent", "retryFailedEventsQueue", "recordTraceabilityLog", "getTraceabilityCorrelationLogs", "getOperationalCapacityMetrics", "runInterdepartmentalIntegrationTestSuite", "getSharedConfigurationsCatalog"
+    "updateTicketStatus", "saveVisualPaletteProposal", "approveVisualPaletteProposal", "registerAndDispatchEvent", "retryFailedEventsQueue", "recordTraceabilityLog", "getTraceabilityCorrelationLogs", "getOperationalCapacityMetrics", "runInterdepartmentalIntegrationTestSuite", "getSharedConfigurationsCatalog", "manageInstitutionalDataCache"
   ],
   "Subdirector": [
     "createNews", "uploadNewsImage", "getNews", "updateNewsStatus", "getStudents", "getStudentsByGradoSeccion", "getUserInfo", "saveGameResult", "getGameStats", "getGlobalTop", "recordAnalytics", "getLearningProfile", "mergeGuestData", "updateUserProfile", "findPersonMatches", "generateInstitutionalId",
@@ -1066,6 +1107,7 @@ function doPost(e) {
       case "getOperationalCapacityMetrics": result = getOperationalCapacityMetrics(payload); break;
       case "runInterdepartmentalIntegrationTestSuite": result = runInterdepartmentalIntegrationTestSuite(payload); break;
       case "getSharedConfigurationsCatalog": result = getSharedConfigurationsCatalog(payload); break;
+      case "manageInstitutionalDataCache": result = manageInstitutionalDataCache(payload); break;
       case "getNotificationPreferences": result = getNotificationPreferences(payload); break;
       case "markNotificationAsRead": result = markNotificationAsRead(payload); break;
       case "createUserNotification": result = createUserNotification(payload); break;

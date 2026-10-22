@@ -765,3 +765,14 @@ DESCRIPCIÓN OBJETIVA DE LOS CAMBIOS:
 - Actualización del estado de [FASE2-T18] a [X] Completada en Pendientes.md.
 
 -------------------------------------------------------------------------------
+FECHA: Octubre 2026
+ARCHIVO(S) AFECTADO(S): js/config.js, backend/user-service/Code.gs, Pendientes.md
+-------------------------------------------------------------------------------
+DESCRIPCIÓN OBJETIVA DE LOS CAMBIOS:
+- Definición de window.CACHE_POLICIES en js/config.js para establecer tiempos de vida (TTL) por tipo de dato y aislamiento de identidad.
+- Implementación de invalidateUserRoleCache y manageInstitutionalDataCache en backend/user-service/Code.gs para invalidación explícita de entradas de caché por usuario y gestión centralizada.
+- Inserción del comentario identificativo de FASE2-T19 en la primera línea de los bloques creados.
+- Registro de permisos en ROLE_PERMISSIONS y rutas en el dispatcher doPost.
+- Actualización del estado de [FASE2-T19] a [X] Completada en Pendientes.md.
+
+-------------------------------------------------------------------------------

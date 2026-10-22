@@ -7,6 +7,14 @@ window.SERVICE_VERSIONS = {
   ACCOUNTING: '1.0.0'
 };
 
+// [FASE2-T19] [Fase 2 - Gestión de Caché de Datos Institucionales] - Políticas de vigencia (TTL), aislamiento por identidad de usuario e invalidación para datos institucionales.
+window.CACHE_POLICIES = {
+  USER_ROLES: { ttlSeconds: 21600, scope: "USER_SPECIFIC", description: "Canché de roles verificados de usuario (6 horas max) con invalidación inmediata al cambiar estado" },
+  INSTITUTIONAL_CATALOGS: { ttlSeconds: 43200, scope: "GLOBAL", description: "Catálogos estáticos como áreas curriculares y materias (12 horas)" },
+  SESSION_PERMISSIONS: { ttlSeconds: 3600, scope: "USER_SPECIFIC", description: "Permisos de sesión por rol (1 hora)" },
+  FINANCIAL_STATEMENTS: { ttlSeconds: 0, scope: "NO_CACHE", description: "Estados de cuenta y saldos nunca se almacenan en caché sin confirmación del servidor" }
+};
+
 // [FASE2-T17] [Fase 2 - Política de Versionado de Configuraciones Compartidas] - Validación de compatibilidad entre cliente y servidor, detección de consumidores obsoletos y política de evolución de contratos.
 window.getSharedConfigVersion = function() {
   return "2.0.0";
