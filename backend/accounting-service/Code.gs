@@ -315,6 +315,7 @@ function doPost(e) {
       case "saveAccountItem": result = saveAccountItem(payload); break;
       case "recordAccountingJournalEntry": result = recordAccountingJournalEntry(payload); break;
       case "getAccountingJournalEntries": result = getAccountingJournalEntries(payload); break;
+      case "getPaginatedJournalEntries": result = getPaginatedJournalEntries(payload); break;
       case "getBudgets": result = getBudgets(payload); break;
       case "saveBudgetPlan": result = saveBudgetPlan(payload); break;
       case "getBudgetExecutionReport": result = getBudgetExecutionReport(payload); break;
@@ -8026,6 +8027,62 @@ function saveAccountItem(payload) {
   }
 
   return { status: "success", message: "Cuenta contable registrada/actualizada exitosamente." };
+}
+
+// [FASE2-T10] [Fase 2 - Paginación Eficiente y Consultas Escalables] - Paginación, ordenación y filtrado en servidor con metadatos de total de páginas y registros.
+function getPaginatedJournalEntries(payload) {
+  const { page, pageSize, searchQuery, sortBy, sortOrder } = payload || {};
+  const pageNum = parseInt(page) || 1;
+  const size = parseInt(pageSize) || 15;
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "AsientosContables");
+  const rows = sheet.getDataRange().getValues().slice(1);
+
+  const cleanQuery = searchQuery ? String(searchQuery).trim().toLowerCase() : "";
+
+  let filtered = rows.filter(r => {
+    if (!cleanQuery) return true;
+    const id = String(r[0] || "").toLowerCase();
+    const concepto = String(r[2] || "").toLowerCase();
+    return id.includes(cleanQuery) || concepto.includes(cleanQuery);
+  }).map(r => ({
+    asientoId: r[0],
+    fecha: r[1],
+    concepto: r[2],
+    origenModulo: r[3] || "General",
+    montoDebe: r[4],
+    montoHaber: r[5],
+    estado: r[6] || "Registrado"
+  }));
+
+  const totalRecords = filtered.length;
+  const totalPages = Math.ceil(totalRecords / size) || 1;
+
+  if (sortBy) {
+    const isAsc = sortOrder === "ASC";
+    filtered.sort((a, b) => {
+      const valA = String(a[sortBy] || "").toLowerCase();
+      const valB = String(b[sortBy] || "").toLowerCase();
+      if (valA < valB) return isAsc ? -1 : 1;
+      if (valA > valB) return isAsc ? 1 : -1;
+      return 0;
+    });
+  }
+
+  const startIndex = (pageNum - 1) * size;
+  const pageData = filtered.slice(startIndex, startIndex + size);
+
+  return {
+    status: "success",
+    data: pageData,
+    pagination: {
+      page: pageNum,
+      pageSize: size,
+      totalRecords: totalRecords,
+      totalPages: totalPages
+    }
+  };
 }
 
 function getAccountingJournalEntries(payload) {

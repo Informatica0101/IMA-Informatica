@@ -160,7 +160,7 @@ const ROLE_PERMISSIONS = {
     "getInstitutionParams", "saveInstitutionParam", "getAcademicYears", "createAcademicYear", "updateAcademicYearStatus", "prepareNewAcademicYear",
     "getAcademicPeriods", "manageAcademicPeriod", "getSubjectCatalog", "createSubjectCatalogItem", "getStudyPlans", "createStudyPlan",
     "getAcademicOffers", "createAcademicOffer", "getTeacherAssignments", "assignTeacherToClass", "createTeacherSubstitution",
-    "getAcademicCalendar", "createCalendarEvent", "getClassSchedules", "createClassSchedule", "deleteClassSchedule", "getAcademicRules", "saveAcademicRule", "getDepartmentAcademicPlanning", "assignDepartmentHead", "getCurricularAnalyticsReport", "getReusableResourceCatalog", "manageReusableResource", "getCurricularEquivalences", "executeCurricularMigration", "registerCurricularAreaExtension", "runCurricularAreaServiceTests", "toggleCurricularAreaStatus", "validateApiContractsTestSuite", "getInstitutionalCatalog", "validateCatalogReference", "generateInstitutionalUUID", "validateInstitutionalIdentifier", "auditInstitutionalIdentifierCollisions", "runConcurrencyAndConsistencySuite",
+    "getAcademicCalendar", "createCalendarEvent", "getClassSchedules", "createClassSchedule", "deleteClassSchedule", "getAcademicRules", "saveAcademicRule", "getDepartmentAcademicPlanning", "assignDepartmentHead", "getCurricularAnalyticsReport", "getReusableResourceCatalog", "manageReusableResource", "getCurricularEquivalences", "executeCurricularMigration", "registerCurricularAreaExtension", "runCurricularAreaServiceTests", "toggleCurricularAreaStatus", "validateApiContractsTestSuite", "getInstitutionalCatalog", "validateCatalogReference", "generateInstitutionalUUID", "validateInstitutionalIdentifier", "auditInstitutionalIdentifierCollisions", "runConcurrencyAndConsistencySuite", "getPaginatedAcademicHistory",
     "getClassroomResources", "saveClassroomResource", "getStudentSchedule",
     "createAdmissionRequest", "getAdmissionRequests", "updateAdmissionStatus", "convertAdmissionToStudent",
     "getStudentFile", "updateStudentFile", "getStudentTimeline", "findDuplicateStudents", "mergeStudentFiles",
@@ -369,6 +369,7 @@ function doPost(e) {
       case "validateInstitutionalIdentifier": result = validateInstitutionalIdentifier(payload); break;
       case "auditInstitutionalIdentifierCollisions": result = auditInstitutionalIdentifierCollisions(payload); break;
       case "runConcurrencyAndConsistencySuite": result = runConcurrencyAndConsistencySuite(payload); break;
+      case "getPaginatedAcademicHistory": result = getPaginatedAcademicHistory(payload); break;
       case "registerCurricularAreaExtension": result = registerCurricularAreaExtension(payload); break;
       case "runCurricularAreaServiceTests": result = runCurricularAreaServiceTests(payload); break;
       case "toggleCurricularAreaStatus": result = toggleCurricularAreaStatus(payload); break;
@@ -1323,6 +1324,63 @@ function executeCurricularMigration(payload) {
     status: "success",
     message: esSimulacion ? "Pre-validación y simulación de migración completada sin pérdidas de datos." : "Migración curricular ejecutada exitosamente conservando inalterables las calificaciones históricas.",
     reporte: report
+  };
+}
+
+// [FASE2-T10] [Fase 2 - Paginación Eficiente y Consultas Escalables] - Paginación, ordenación y filtrado en servidor con metadatos de total de páginas y registros.
+function getPaginatedAcademicHistory(payload) {
+  const { page, pageSize, searchQuery, sortBy, sortOrder } = payload || {};
+  const pageNum = parseInt(page) || 1;
+  const size = parseInt(pageSize) || 15;
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "HistorialAcademico");
+  const rows = sheet.getDataRange().getValues().slice(1);
+
+  const cleanQuery = searchQuery ? String(searchQuery).trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "") : "";
+
+  let filtered = rows.filter(r => {
+    if (!cleanQuery) return true;
+    const studentName = String(r[1] || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    const subjectName = String(r[2] || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    return studentName.includes(cleanQuery) || subjectName.includes(cleanQuery);
+  }).map(r => ({
+    historialId: r[0],
+    estudianteNombre: r[1],
+    asignaturaNombre: r[2],
+    grado: r[3],
+    seccion: r[4],
+    notaFinal: r[5],
+    periodoLectivo: r[6],
+    estado: r[7]
+  }));
+
+  const totalRecords = filtered.length;
+  const totalPages = Math.ceil(totalRecords / size) || 1;
+
+  if (sortBy) {
+    const isAsc = sortOrder === "ASC";
+    filtered.sort((a, b) => {
+      const valA = String(a[sortBy] || "").toLowerCase();
+      const valB = String(b[sortBy] || "").toLowerCase();
+      if (valA < valB) return isAsc ? -1 : 1;
+      if (valA > valB) return isAsc ? 1 : -1;
+      return 0;
+    });
+  }
+
+  const startIndex = (pageNum - 1) * size;
+  const pageData = filtered.slice(startIndex, startIndex + size);
+
+  return {
+    status: "success",
+    data: pageData,
+    pagination: {
+      page: pageNum,
+      pageSize: size,
+      totalRecords: totalRecords,
+      totalPages: totalPages
+    }
   };
 }
 

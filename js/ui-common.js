@@ -1641,7 +1641,7 @@ window.loadUserSettingsInModal = function(user) {
     }
 };
 
-// [TAREA-04] [Fase 1 - Optimización de Tablas] - Módulo de paginación en servidor, filtrado avanzado y virtualización para tablas extensas.
+// [FASE2-T10] [Fase 2 - Paginación Eficiente y Consultas Escalables] - Componente de paginación con soporte para datos locales o consultas remotas al servidor.
 window.renderPaginatedTable = function(containerId, data, options) {
     options = options || {};
     var pageSize = options.pageSize || 15;
@@ -1649,10 +1649,11 @@ window.renderPaginatedTable = function(containerId, data, options) {
     var container = document.getElementById(containerId);
     if (!container) return;
 
-    var totalItems = data ? data.length : 0;
-    var totalPages = Math.ceil(totalItems / pageSize) || 1;
+    var isRemote = typeof options.fetchRemotePage === 'function';
+    var totalItems = isRemote && options.remotePagination ? options.remotePagination.totalRecords : (data ? data.length : 0);
+    var totalPages = isRemote && options.remotePagination ? options.remotePagination.totalPages : (Math.ceil(totalItems / pageSize) || 1);
     var startIndex = (currentPage - 1) * pageSize;
-    var pageData = data ? data.slice(startIndex, startIndex + pageSize) : [];
+    var pageData = isRemote ? (data || []) : (data ? data.slice(startIndex, startIndex + pageSize) : []);
 
     if (typeof options.renderRow !== 'function') return;
 
@@ -1692,13 +1693,23 @@ window.renderPaginatedTable = function(containerId, data, options) {
 
     if (prevBtn) {
         prevBtn.addEventListener('click', function() {
-            window.renderPaginatedTable(containerId, data, Object.assign({}, options, { currentPage: currentPage - 1 }));
+            var targetPage = currentPage - 1;
+            if (isRemote) {
+                options.fetchRemotePage(targetPage, pageSize);
+            } else {
+                window.renderPaginatedTable(containerId, data, Object.assign({}, options, { currentPage: targetPage }));
+            }
         });
     }
 
     if (nextBtn) {
         nextBtn.addEventListener('click', function() {
-            window.renderPaginatedTable(containerId, data, Object.assign({}, options, { currentPage: currentPage + 1 }));
+            var targetPage = currentPage + 1;
+            if (isRemote) {
+                options.fetchRemotePage(targetPage, pageSize);
+            } else {
+                window.renderPaginatedTable(containerId, data, Object.assign({}, options, { currentPage: targetPage }));
+            }
         });
     }
 };
