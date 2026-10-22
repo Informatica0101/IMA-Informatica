@@ -1907,6 +1907,84 @@ window.renderPaginatedTable = function(containerId, data, options) {
     }
 };
 
+// ---------------------------------------------------------------------------
+// [T-UX-15] [Fase 3: Experiencia de Usuario y Navegación Unificada] - FILTROS AVANZADOS, VISTAS GUARDADAS Y PAGINACIÓN COHERENTE
+// Proporciona un administrador de filtros multi-campo con etiquetas de eliminación, persistencia de vistas personalizadas en localStorage y sincronización de paginación.
+// ---------------------------------------------------------------------------
+window.SAVED_TABLE_VIEWS_CACHE = {};
+
+window.setupAdvancedTableFilters = function(containerId, config) {
+    config = config || {};
+    var rawData = Array.isArray(config.data) ? config.data : [];
+    var filterFields = Array.isArray(config.filterFields) ? config.filterFields : [];
+    var onFilterChange = typeof config.onFilterChange === 'function' ? config.onFilterChange : function(){};
+
+    var currentFilters = {};
+
+    function applyFilters() {
+        var filtered = rawData.filter(function(item) {
+            for (var field in currentFilters) {
+                if (!currentFilters.hasOwnProperty(field)) continue;
+                var filterVal = window.normalizeSearchString(currentFilters[field]);
+                if (!filterVal) continue;
+                var itemVal = window.normalizeSearchString(item[field] || '');
+                if (itemVal.indexOf(filterVal) === -1) {
+                    return false;
+                }
+            }
+            return true;
+        });
+        onFilterChange(filtered, currentFilters);
+        return filtered;
+    }
+
+    return {
+        setFilter: function(field, value) {
+            if (!value) {
+                delete currentFilters[field];
+            } else {
+                currentFilters[field] = value;
+            }
+            return applyFilters();
+        },
+        removeFilter: function(field) {
+            delete currentFilters[field];
+            return applyFilters();
+        },
+        clearAllFilters: function() {
+            currentFilters = {};
+            return applyFilters();
+        },
+        saveView: function(viewName) {
+            if (!viewName) return;
+            var storageKey = 'saved_views_' + containerId;
+            var existingViews = {};
+            try {
+                existingViews = JSON.parse(localStorage.getItem(storageKey) || '{}');
+            } catch (_) {}
+            existingViews[viewName] = Object.assign({}, currentFilters);
+            localStorage.setItem(storageKey, JSON.stringify(existingViews));
+            window.SAVED_TABLE_VIEWS_CACHE[containerId + '_' + viewName] = Object.assign({}, currentFilters);
+            return existingViews;
+        },
+        loadSavedView: function(viewName) {
+            var storageKey = 'saved_views_' + containerId;
+            var existingViews = {};
+            try {
+                existingViews = JSON.parse(localStorage.getItem(storageKey) || '{}');
+            } catch (_) {}
+            if (existingViews[viewName]) {
+                currentFilters = Object.assign({}, existingViews[viewName]);
+                return applyFilters();
+            }
+            return applyFilters();
+        },
+        getActiveFilters: function() {
+            return Object.assign({}, currentFilters);
+        }
+    };
+};
+
 // [T-UX-05] [Fase 3: Experiencia de Usuario y Navegación Unificada] - Función utilitaria de normalización avanzada de búsquedas insensibles a acentos, signos de puntuación, mayúsculas y espacios diacríticos.
 window.normalizeSearchString = function(str) {
     if (str === null || str === undefined) return '';
@@ -4746,14 +4824,6 @@ window.executeOmniboxSearch = function(query) {
                 '</div>';
         });
     }
-
-    setTimeout(function() {
-        var inp = document.getElementById('omnibox-search-input');
-        if (inp) {
-            inp.focus();
-            inp.select();
-        }
-    }, 50);
 };
 
 window.handleOmniboxResultClick = function(type, id) {

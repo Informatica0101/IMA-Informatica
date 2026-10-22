@@ -927,3 +927,15 @@ Archivos Modificados:
    - Actualización del estado de [T-UX-14] a [X] Completada.
 
 -------------------------------------------------------------------------------
+FECHA: Octubre 2026
+TAREA: [T-UX-15] Implementar filtros avanzados, vistas guardadas y paginación coherente
+-------------------------------------------------------------------------------
+
+Archivos Modificados:
+1. js/ui-common.js
+   - Lineas 1910-1985: Implementación de window.setupAdvancedTableFilters(containerId, config) para filtrado multi-campo insensible a diacríticos, eliminación de filtros individuales, guardado/carga de vistas personalizadas en localStorage y sincronización con callbacks de paginación.
+
+2. Pendientes.md
+   - Actualización del estado de [T-UX-15] a [X] Completada.
+
+-------------------------------------------------------------------------------

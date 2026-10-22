@@ -697,7 +697,7 @@
   - Se prueban nombres, identificadores, términos parciales y resultados ambiguos.
 - **Estado:** [X] Completada
 
-### [ ] [T-UX-15] Implementar filtros avanzados, vistas guardadas y paginación coherente
+### [X] [T-UX-15] Implementar filtros avanzados, vistas guardadas y paginación coherente
 - **Origen del Hallazgo:** Auditoría de la Fase 3, octubre de 2026 (AUDITORIA_FASE3_EXPERIENCIA_USUARIO_NAVEGACION.md - Área 5)
 - **Severidad/Clasificación:** Alto
 - **Archivos Involucrados:** `js/ui-common.js`
@@ -714,7 +714,7 @@
   - El usuario puede eliminar filtros individualmente y restablecer la consulta.
   - La paginación conserva los criterios activos.
   - El ordenamiento es coherente con los datos mostrados.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 ### [ ] [T-UX-16] Unificar los estados de notificaciones, tareas pendientes y aprobaciones
 - **Origen del Hallazgo:** Auditoría de la Fase 3, octubre de 2026 (AUDITORIA_FASE3_EXPERIENCIA_USUARIO_NAVEGACION.md - Área 11 & 12)
