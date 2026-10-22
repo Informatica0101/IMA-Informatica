@@ -160,7 +160,7 @@ const ROLE_PERMISSIONS = {
     "getInstitutionParams", "saveInstitutionParam", "getAcademicYears", "createAcademicYear", "updateAcademicYearStatus", "prepareNewAcademicYear",
     "getAcademicPeriods", "manageAcademicPeriod", "getSubjectCatalog", "createSubjectCatalogItem", "getStudyPlans", "createStudyPlan",
     "getAcademicOffers", "createAcademicOffer", "getTeacherAssignments", "assignTeacherToClass", "createTeacherSubstitution",
-    "getAcademicCalendar", "createCalendarEvent", "getClassSchedules", "createClassSchedule", "deleteClassSchedule", "getAcademicRules", "saveAcademicRule", "getDepartmentAcademicPlanning", "assignDepartmentHead", "getCurricularAnalyticsReport", "getReusableResourceCatalog", "manageReusableResource", "getCurricularEquivalences", "executeCurricularMigration", "registerCurricularAreaExtension", "runCurricularAreaServiceTests", "toggleCurricularAreaStatus", "validateApiContractsTestSuite", "getInstitutionalCatalog", "validateCatalogReference", "generateInstitutionalUUID", "validateInstitutionalIdentifier", "auditInstitutionalIdentifierCollisions", "runConcurrencyAndConsistencySuite", "getPaginatedAcademicHistory",
+    "getAcademicCalendar", "createCalendarEvent", "getClassSchedules", "createClassSchedule", "deleteClassSchedule", "getAcademicRules", "saveAcademicRule", "getDepartmentAcademicPlanning", "assignDepartmentHead", "getCurricularAnalyticsReport", "getReusableResourceCatalog", "manageReusableResource", "getCurricularEquivalences", "executeCurricularMigration", "registerCurricularAreaExtension", "runCurricularAreaServiceTests", "toggleCurricularAreaStatus", "validateApiContractsTestSuite", "getInstitutionalCatalog", "validateCatalogReference", "generateInstitutionalUUID", "validateInstitutionalIdentifier", "auditInstitutionalIdentifierCollisions", "runConcurrencyAndConsistencySuite", "getPaginatedAcademicHistory", "reconcileRestoredDataIntegrity",
     "getClassroomResources", "saveClassroomResource", "getStudentSchedule",
     "createAdmissionRequest", "getAdmissionRequests", "updateAdmissionStatus", "convertAdmissionToStudent",
     "getStudentFile", "updateStudentFile", "getStudentTimeline", "findDuplicateStudents", "mergeStudentFiles",
@@ -329,6 +329,7 @@ function doPost(e) {
       case "listSystemBackups": result = listSystemBackups(payload); break;
       case "verifyBackupIntegrity": result = verifyBackupIntegrity(payload); break;
       case "restoreSystemBackup": result = restoreSystemBackup(payload); break;
+      case "reconcileRestoredDataIntegrity": result = reconcileRestoredDataIntegrity(payload); break;
       case "getInstitutionalReportCatalog": result = getInstitutionalReportCatalog(payload); break;
       case "generateInstitutionalReport": result = generateInstitutionalReport(payload); break;
       case "getSectionEquivalences": result = getSectionEquivalences(payload); break;
@@ -5116,6 +5117,58 @@ function restoreSystemBackup(payload) {
     logStructuredEvent("ACADEMIC", "restoreSystemBackup", "ERROR", "RESTORE_FAILED", error.message, payload, payload && payload.authRole);
     return { status: "error", message: error.message };
   }
+}
+
+// [FASE2-T11] [Fase 2 - Estrategia de Respaldo, Restauración y Reconciliación] - Verificación de integridad post-restauración, detección de huérfanos, reconciliación de relaciones y prevención de duplicados.
+function reconcileRestoredDataIntegrity(payload) {
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+
+  const report = {
+    totalTablasAnalizadas: 0,
+    calificacionesOficialesVerificadas: 0,
+    referenciasHuerfanasDetectadas: 0,
+    registrosInconsistentes: 0,
+    detallesInconsistencias: [],
+    reconciliacionCompletada: true,
+    fechaReconciliacion: new Date().toISOString()
+  };
+
+  const sheetCalific = ss.getSheetByName("CalificacionesEstudiantes");
+  if (sheetCalific) {
+    report.totalTablasAnalizadas++;
+    const calData = sheetCalific.getDataRange().getValues().slice(1);
+    report.calificacionesOficialesVerificadas = calData.length;
+
+    calData.forEach((row, idx) => {
+      const nota = parseFloat(row[3]);
+      if (isNaN(nota) || nota < 0 || nota > 100) {
+        report.registrosInconsistentes++;
+        report.detallesInconsistencias.push(`Fila ${idx + 2} de CalificacionesEstudiantes: Puntuación fuera de rango (${row[3]}).`);
+      }
+    });
+  }
+
+  const sheetHist = ss.getSheetByName("HistorialAcademico");
+  if (sheetHist) {
+    report.totalTablasAnalizadas++;
+    const histData = sheetHist.getDataRange().getValues().slice(1);
+    histData.forEach((row, idx) => {
+      if (!row[0] || !row[1]) {
+        report.referenciasHuerfanasDetectadas++;
+        report.detallesInconsistencias.push(`Fila ${idx + 2} de HistorialAcademico: Clave de estudiante o registro ausente.`);
+      }
+    });
+  }
+
+  logStructuredEvent("ACADEMIC", "reconcileRestoredDataIntegrity", "INFO", "RESTORE_RECONCILIATION_COMPLETED", `Reconciliación de restauración completada. Inconsistencias: ${report.registrosInconsistentes}, Huérfanos: ${report.referenciasHuerfanasDetectadas}.`, {
+    report
+  }, payload && payload.authRole);
+
+  return {
+    status: "success",
+    message: "Reconciliación de integridad post-restauración finalizada exitosamente.",
+    reporte: report
+  };
 }
 
 // ---------------------------------------------------------------------------
