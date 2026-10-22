@@ -756,3 +756,12 @@ DESCRIPCIÓN OBJETIVA DE LOS CAMBIOS:
 - Actualización del estado de [FASE2-T17] a [X] Completada en Pendientes.md.
 
 -------------------------------------------------------------------------------
+FECHA: Octubre 2026
+ARCHIVO(S) AFECTADO(S): js/ui-common.js, Pendientes.md
+-------------------------------------------------------------------------------
+DESCRIPCIÓN OBJETIVA DE LOS CAMBIOS:
+- Implementación de window.openInstitutionalHealthDashboardModal en js/ui-common.js para la visualización interactiva del estado operativo de microservicios, llamadas totales, tasas de error, alertas de cuota y tarjetas por servicio.
+- Inserción del comentario identificativo de FASE2-T18 en la primera línea del bloque creado.
+- Actualización del estado de [FASE2-T18] a [X] Completada en Pendientes.md.
+
+-------------------------------------------------------------------------------
