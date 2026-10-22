@@ -808,3 +808,15 @@ Archivos Modificados:
    - Actualización del estado de [T-UX-02] a [X] Completada.
 
 -------------------------------------------------------------------------------
+FECHA: Octubre 2026
+TAREA: [T-UX-03] Módulo de Protección contra Pérdida de Cambios No Guardados en Formularios
+-------------------------------------------------------------------------------
+
+Archivos Modificados:
+1. js/ui-common.js
+   - Lineas 4573-4615: Refuerzo funcional de window.setupUnsavedChangesProtection(containerIdOrElement, options) añadiendo detectores de eventos submit y reset en formularios principales y sub-formularios para limpiar automáticamente la bandera isDirty en envíos o reinicios autorizados, previniendo falsos positivos de beforeunload.
+
+2. Pendientes.md
+   - Actualización del estado de [T-UX-03] a [X] Completada.
+
+-------------------------------------------------------------------------------

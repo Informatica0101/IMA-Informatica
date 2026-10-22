@@ -82,6 +82,7 @@ window.setupCommonUI = function() {
 
     window.addEventListener('keydown', function(e) {
         if (e.key === 'Escape' || e.keyCode === 27) {
+            var modalWasClosed = false;
             var activeModals = [
                 'profile-modal',
                 'modal-dashboard-settings',
@@ -110,22 +111,25 @@ window.setupCommonUI = function() {
                 var el = document.getElementById(modalId);
                 if (el && !el.classList.contains('hidden')) {
                     el.classList.add('hidden');
+                    modalWasClosed = true;
                 }
             });
 
-            var dynamicModals = document.querySelectorAll('.fixed.inset-0:not(.hidden), [role="dialog"]:not(.hidden)');
+            var dynamicModals = document.querySelectorAll('.fixed.inset-0[role="dialog"]:not(.hidden), [role="dialog"]:not(.hidden), .modal:not(.hidden), [data-modal]:not(.hidden)');
             for (var i = 0; i < dynamicModals.length; i++) {
                 dynamicModals[i].classList.add('hidden');
+                modalWasClosed = true;
             }
 
             if (window.closeInteractiveGuide) {
                 window.closeInteractiveGuide();
             }
 
-            if (window.lastActiveElementBeforeModal && typeof window.lastActiveElementBeforeModal.focus === 'function' && document.body.contains(window.lastActiveElementBeforeModal)) {
+            if (modalWasClosed && window.lastActiveElementBeforeModal && typeof window.lastActiveElementBeforeModal.focus === 'function' && document.body.contains(window.lastActiveElementBeforeModal)) {
                 try {
                     window.lastActiveElementBeforeModal.focus();
                 } catch (_) {}
+                window.lastActiveElementBeforeModal = null;
             }
         }
     });
@@ -4573,7 +4577,7 @@ window.addEventListener('keydown', function(e) {
     }
 });
 
-// [TAREA-14] [Fase 1 - UX Flujo Académico] - Protección de formularios, avisos de sincronización offline y navegación fluida entre tareas y expedientes.
+// [T-UX-03] [Fase 3: Experiencia de Usuario y Navegación Unificada] - Módulo de protección contra pérdida de cambios no guardados en formularios con detección de modificaciones y descarte limpio en envíos autorizados.
 window.setupUnsavedChangesProtection = function(containerIdOrElement, options) {
     options = options || {};
     var container = typeof containerIdOrElement === 'string' ? document.getElementById(containerIdOrElement) : containerIdOrElement;
@@ -4585,10 +4589,21 @@ window.setupUnsavedChangesProtection = function(containerIdOrElement, options) {
     function markClean() { isDirty = false; }
 
     var inputs = container.querySelectorAll('input, textarea, select');
-    inputs.forEach(function(inp) {
-        inp.addEventListener('change', markDirty);
-        inp.addEventListener('input', markDirty);
-    });
+    for (var i = 0; i < inputs.length; i++) {
+        inputs[i].addEventListener('change', markDirty);
+        inputs[i].addEventListener('input', markDirty);
+    }
+
+    if (container.tagName === 'FORM') {
+        container.addEventListener('submit', markClean);
+        container.addEventListener('reset', markClean);
+    } else {
+        var subForms = container.querySelectorAll('form');
+        for (var j = 0; j < subForms.length; j++) {
+            subForms[j].addEventListener('submit', markClean);
+            subForms[j].addEventListener('reset', markClean);
+        }
+    }
 
     window.addEventListener('beforeunload', function(e) {
         if (isDirty) {

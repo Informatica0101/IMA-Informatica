@@ -552,7 +552,7 @@
   - Presionar Escape cierra modales abiertos de forma limpia.
 - **Estado:** [X] Completada
 
-### [ ] [T-UX-03] Módulo de Protección contra Pérdida de Cambios No Guardados en Formularios
+### [X] [T-UX-03] Módulo de Protección contra Pérdida de Cambios No Guardados en Formularios
 - **Origen del Hallazgo:** Auditoría de la Fase 3, octubre de 2026 (AUDITORIA_FASE3_EXPERIENCIA_USUARIO_NAVEGACION.md - Área 6)
 - **Severidad/Clasificación:** Alto
 - **Archivos Involucrados:** `js/ui-common.js`
@@ -562,7 +562,7 @@
   2. Dispara confirmación `beforeunload` para evitar pérdida de datos accidental.
 - **Criterios de Aceptación:**
   - Navegar fuera de un formulario sucio activa alerta de confirmación.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 ### [ ] [T-UX-05] Normalización Diacrítica Insensible a Tildes para Búsquedas y Filtros
 - **Origen del Hallazgo:** Auditoría de la Fase 3, octubre de 2026 (AUDITORIA_FASE3_EXPERIENCIA_USUARIO_NAVEGACION.md - Área 4)
