@@ -7,6 +7,37 @@ window.SERVICE_VERSIONS = {
   ACCOUNTING: '1.0.0'
 };
 
+// [FASE2-T17] [Fase 2 - Política de Versionado de Configuraciones Compartidas] - Validación de compatibilidad entre cliente y servidor, detección de consumidores obsoletos y política de evolución de contratos.
+window.getSharedConfigVersion = function() {
+  return "2.0.0";
+};
+
+window.validateServiceVersionCompatibility = function(serviceName, clientMinVersion) {
+  var serviceVersions = window.SERVICE_VERSIONS || {};
+  var currentSvcVersion = serviceVersions[serviceName] || "1.0.0";
+
+  function parseSemVer(v) {
+    var parts = (v || "1.0.0").split(".").map(Number);
+    return { major: parts[0] || 1, minor: parts[1] || 0, patch: parts[2] || 0 };
+  }
+
+  var current = parseSemVer(currentSvcVersion);
+  var required = parseSemVer(clientMinVersion || "1.0.0");
+
+  var isCompatible = current.major === required.major && current.minor >= required.minor;
+
+  if (!isCompatible) {
+    console.warn("[VERSION_COMPATIBILITY_WARN] El servicio " + serviceName + " (v" + currentSvcVersion + ") es incompatible con el cliente (v" + clientMinVersion + ").");
+  }
+
+  return {
+    isCompatible: isCompatible,
+    currentVersion: currentSvcVersion,
+    requiredVersion: clientMinVersion || "1.0.0",
+    actionRequired: isCompatible ? "NONE" : "RELOAD_CLIENT_APP"
+  };
+};
+
 window.DEPARTMENT_SERVICES_MAP = {
   'DIRECCION_SECRETARIA': ['USER', 'ACADEMIC'],
   'RECURSOS_HUMANOS': ['USER', 'ACCOUNTING'],

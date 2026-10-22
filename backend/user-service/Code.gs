@@ -139,6 +139,30 @@ function getServiceHealthReport(payload) {
   }
 }
 
+// [FASE2-T17] [Fase 2 - Catálogo de Configuraciones Versionadas] - Servidor centralizado para consulta de versiones activas de contratos y políticas de reversión sin romper consumidores históricos.
+function getSharedConfigurationsCatalog(payload) {
+  logStructuredEvent("USER", "getSharedConfigurationsCatalog", "INFO", "CONFIG_CATALOG_REQUESTED", "Consulta de catálogo de versiones de configuraciones compartidas", null, payload && payload.authRole);
+
+  return {
+    status: "success",
+    service: "USER",
+    configVersion: "2.0.0",
+    serviceVersions: {
+      USER: "1.0.0",
+      ACADEMIC: "1.0.0",
+      TASK: "1.0.0",
+      EXAM: "1.0.0",
+      ACCOUNTING: "1.0.0"
+    },
+    deprecationPolicy: {
+      legacyVersionSupport: true,
+      minSupportedVersion: "1.0.0",
+      rollbackProcedure: "Restauración de respaldo JSON con suma de verificación SHA-256 en backend/academic-service"
+    },
+    timestamp: new Date().toISOString()
+  };
+}
+
 // Helper de Firma para Idempotencia en user-service
 function getIdempotencyPayloadSignature(payload) {
   if (!payload || typeof payload !== "object") return "";
@@ -873,7 +897,7 @@ const ROLE_PERMISSIONS = {
     "getInstitutionalCriteria", "saveInstitutionalCriterion", "getFormativeEvaluations", "saveFormativeEvaluation", "getSupportPlans", "saveSupportPlan",
     "createLinkInvitation", "acceptLinkInvitation", "getGuardianStudents", "getInstitutionalAnnouncements", "createInstitutionalAnnouncement", "submitAnnouncementReceiptConfirmation", "getAnnouncementReadReport", "getDepartmentalWorkInbox", "closeConversationThread", "getInternalConversations", "getInternalMessages", "sendInternalMessage", "getUserNotifications", "getUnifiedNotifications", "markNotificationAsRead", "createUserNotification", "sendMultiChannelNotification", "getNotificationPreferences", "getAdministrativeRequests", "getAdministrativeRequestsHistory", "submitAdministrativeRequest", "submitStudentAbsenceJustification", "getStudentAbsenceJustifications", "reviewAbsenceJustification", "updateRequestStatus", "saveInstitutionalForm", "getInstitutionalForms", "submitInstitutionalFormRequest", "saveApprovalWorkflow", "getApprovalWorkflows", "processWorkflowDecision", "getWorkflowHistory", "registerDocumentSignature", "configureNotificationChannel", "getNotificationChannelConfigs", "sendChannelNotificationTest", "getAppointmentBookings", "bookAppointment", "updateAppointmentStatus", "getInstitutionalCalendarEvents", "getPendingReminders",
     "getUserSettings", "saveUserSettings", "getSystemConfigurations", "saveSystemConfiguration", "getProviderIntegrations", "configureProviderIntegration",
-    "updateTicketStatus", "saveVisualPaletteProposal", "approveVisualPaletteProposal", "registerAndDispatchEvent", "retryFailedEventsQueue", "recordTraceabilityLog", "getTraceabilityCorrelationLogs", "getOperationalCapacityMetrics", "runInterdepartmentalIntegrationTestSuite"
+    "updateTicketStatus", "saveVisualPaletteProposal", "approveVisualPaletteProposal", "registerAndDispatchEvent", "retryFailedEventsQueue", "recordTraceabilityLog", "getTraceabilityCorrelationLogs", "getOperationalCapacityMetrics", "runInterdepartmentalIntegrationTestSuite", "getSharedConfigurationsCatalog"
   ],
   "Subdirector": [
     "createNews", "uploadNewsImage", "getNews", "updateNewsStatus", "getStudents", "getStudentsByGradoSeccion", "getUserInfo", "saveGameResult", "getGameStats", "getGlobalTop", "recordAnalytics", "getLearningProfile", "mergeGuestData", "updateUserProfile", "findPersonMatches", "generateInstitutionalId",
@@ -1041,6 +1065,7 @@ function doPost(e) {
       case "getTraceabilityCorrelationLogs": result = getTraceabilityCorrelationLogs(payload); break;
       case "getOperationalCapacityMetrics": result = getOperationalCapacityMetrics(payload); break;
       case "runInterdepartmentalIntegrationTestSuite": result = runInterdepartmentalIntegrationTestSuite(payload); break;
+      case "getSharedConfigurationsCatalog": result = getSharedConfigurationsCatalog(payload); break;
       case "getNotificationPreferences": result = getNotificationPreferences(payload); break;
       case "markNotificationAsRead": result = markNotificationAsRead(payload); break;
       case "createUserNotification": result = createUserNotification(payload); break;

@@ -745,3 +745,14 @@ DESCRIPCIÓN OBJETIVA DE LOS CAMBIOS:
 - Actualización del estado de [FASE2-T16] a [X] Completada en Pendientes.md.
 
 -------------------------------------------------------------------------------
+FECHA: Octubre 2026
+ARCHIVO(S) AFECTADO(S): js/config.js, backend/user-service/Code.gs, Pendientes.md
+-------------------------------------------------------------------------------
+DESCRIPCIÓN OBJETIVA DE LOS CAMBIOS:
+- Implementación de window.getSharedConfigVersion y window.validateServiceVersionCompatibility en js/config.js para la detección de consumidores desactualizados e incompatibilidades de versión SemVer entre cliente y servidor.
+- Implementación de getSharedConfigurationsCatalog en backend/user-service/Code.gs para la consulta centralizada del catálogo de versiones activas y políticas de reversión.
+- Inserción del comentario identificativo de FASE2-T17 en la primera línea de los bloques creados.
+- Registro de permisos en ROLE_PERMISSIONS y rutas en el dispatcher doPost.
+- Actualización del estado de [FASE2-T17] a [X] Completada en Pendientes.md.
+
+-------------------------------------------------------------------------------
