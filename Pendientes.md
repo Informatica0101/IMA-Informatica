@@ -540,7 +540,7 @@
   6. La ausencia de un registro esperado puede detectarse en las pruebas de integración.
 - **Estado:** [X] Completada
 
-### [ ] [T-UX-02] Soporte Universal Tecla Escape para Cierre de Modales y Restauración de Foco
+### [X] [T-UX-02] Soporte Universal Tecla Escape para Cierre de Modales y Restauración de Foco
 - **Origen del Hallazgo:** Auditoría de la Fase 3, octubre de 2026 (AUDITORIA_FASE3_EXPERIENCIA_USUARIO_NAVEGACION.md - Área 7)
 - **Severidad/Clasificación:** Alto
 - **Archivos Involucrados:** `js/ui-common.js`
@@ -550,7 +550,7 @@
   2. Cerrar modales activos ocultando elementos con clase `.hidden`.
 - **Criterios de Aceptación:**
   - Presionar Escape cierra modales abiertos de forma limpia.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 ### [ ] [T-UX-03] Módulo de Protección contra Pérdida de Cambios No Guardados en Formularios
 - **Origen del Hallazgo:** Auditoría de la Fase 3, octubre de 2026 (AUDITORIA_FASE3_EXPERIENCIA_USUARIO_NAVEGACION.md - Área 6)

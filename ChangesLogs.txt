@@ -795,3 +795,16 @@ Archivos Modificados:
    - Actualización del estado de [T-UX-01] a [X] Completada.
 
 -------------------------------------------------------------------------------
+FECHA: Octubre 2026
+TAREA: [T-UX-02] Soporte Universal Tecla Escape para Cierre de Modales y Restauración de Foco
+-------------------------------------------------------------------------------
+
+Archivos Modificados:
+1. js/ui-common.js
+   - Lineas 65-115: Implementación de window.trackModalFocus(triggerEl) para almacenar el elemento enfocado antes de abrir un modal. Ampliación del manejador global de la tecla Escape (e.key === 'Escape' / keyCode 27) para cerrar modales activos tanto estáticos (profile-modal, modal-dashboard-settings, etc.) como dinámicos (.fixed.inset-0:not(.hidden), [role="dialog"]:not(.hidden)) y restaurar automáticamente el foco al elemento gatillador guardado en window.lastActiveElementBeforeModal.
+   - Lineas 130, 892, 1850: Integración de window.trackModalFocus() en las funciones de apertura de modales (openProfileModal, openDashboardSettingsModal, openGlobalOmniboxModal).
+
+2. Pendientes.md
+   - Actualización del estado de [T-UX-02] a [X] Completada.
+
+-------------------------------------------------------------------------------

@@ -75,7 +75,11 @@ window.setupCommonUI = function() {
         });
     }
 
-    // --- Accessibility: Global Escape Key Listener for Modals ---
+    // [T-UX-02] [Fase 3: Experiencia de Usuario y Navegación Unificada] - Soporte universal de tecla Escape para cierre de modales y restauración de foco.
+    window.trackModalFocus = function(triggerEl) {
+        window.lastActiveElementBeforeModal = triggerEl || document.activeElement;
+    };
+
     window.addEventListener('keydown', function(e) {
         if (e.key === 'Escape' || e.keyCode === 27) {
             var activeModals = [
@@ -89,7 +93,18 @@ window.setupCommonUI = function() {
                 'modal-workflow-builder',
                 'modal-workflow-decision',
                 'modal-channel-config',
-                'modal-excel-importer'
+                'modal-excel-importer',
+                'modal-global-omnibox',
+                'modal-report-issue',
+                'modal-my-tickets',
+                'modal-admin-tickets',
+                'modal-health-dashboard',
+                'modal-interactive-help',
+                'modal-conflict-resolution',
+                'modal-first-login-terms',
+                'modal-universal-analytics-chart',
+                'academic-menu-modal',
+                'mobile-hamburger-drawer'
             ];
             activeModals.forEach(function(modalId) {
                 var el = document.getElementById(modalId);
@@ -97,8 +112,20 @@ window.setupCommonUI = function() {
                     el.classList.add('hidden');
                 }
             });
+
+            var dynamicModals = document.querySelectorAll('.fixed.inset-0:not(.hidden), [role="dialog"]:not(.hidden)');
+            for (var i = 0; i < dynamicModals.length; i++) {
+                dynamicModals[i].classList.add('hidden');
+            }
+
             if (window.closeInteractiveGuide) {
                 window.closeInteractiveGuide();
+            }
+
+            if (window.lastActiveElementBeforeModal && typeof window.lastActiveElementBeforeModal.focus === 'function' && document.body.contains(window.lastActiveElementBeforeModal)) {
+                try {
+                    window.lastActiveElementBeforeModal.focus();
+                } catch (_) {}
             }
         }
     });
@@ -114,6 +141,7 @@ window.setupCommonUI = function() {
 
     // --- Unified Profile Modal Logic (A-75) ---
     window.openProfileModal = function(pushState) {
+        if (window.trackModalFocus) window.trackModalFocus();
         if (pushState === undefined) pushState = true;
         var modal = document.getElementById('profile-modal');
         if (!modal) return;
@@ -1576,6 +1604,7 @@ window.switchSettingsTab = function(tabName) {
 };
 
 window.openDashboardSettingsModal = function() {
+    if (window.trackModalFocus) window.trackModalFocus();
     window.ensureDashboardSettingsModalExists();
     var modal = document.getElementById('modal-dashboard-settings');
     if (!modal) return;
@@ -4410,6 +4439,7 @@ var omniboxActiveTrigger = null;
 
 // [T-UX-02] [Fase 3: Experiencia de Usuario y Navegación Unificada] - Modal Omnibox unificado con atajos de teclado (Ctrl+K/Cmd+K/ESC) y restauración de foco.
 window.openGlobalOmniboxModal = function() {
+    if (window.trackModalFocus) window.trackModalFocus();
     omniboxActiveTrigger = document.activeElement;
     let modal = document.getElementById('modal-global-omnibox');
     if (!modal) {
