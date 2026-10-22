@@ -736,3 +736,12 @@ DESCRIPCIÓN OBJETIVA DE LOS CAMBIOS:
 - Actualización del estado de [FASE2-T15] a [X] Completada en Pendientes.md.
 
 -------------------------------------------------------------------------------
+FECHA: Octubre 2026
+ARCHIVO(S) AFECTADO(S): js/api.js, Pendientes.md
+-------------------------------------------------------------------------------
+DESCRIPCIÓN OBJETIVA DE LOS CAMBIOS:
+- Implementación de window.classifyServiceError y window.fetchApiWithDegradedFallback en js/api.js para la clasificación de errores por categoría (TIMEOUT, CUOTA, AUTH, VALIDACION, SERVIDOR), prevención estricta de afirmación de escrituras fallidas y retorno de datos de respaldo con banderas de obsolescencia.
+- Inserción del comentario identificativo de FASE2-T16 en la primera línea del bloque creado.
+- Actualización del estado de [FASE2-T16] a [X] Completada en Pendientes.md.
+
+-------------------------------------------------------------------------------

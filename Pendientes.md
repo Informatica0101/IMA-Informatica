@@ -1087,7 +1087,7 @@
   7. Cada modificación resultante puede rastrearse hasta la incidencia que la originó.
 - **Estado:** [ ] Pendiente
 
-### [ ] [FASE2-T16] Optimizar la recuperación de errores y el comportamiento de los servicios degradados
+### [X] [FASE2-T16] Optimizar la recuperación de errores y el comportamiento de los servicios degradados
 - **Origen del Hallazgo:** Auditoría de la Fase 2, octubre de 2026 (AUDITORIA_FASE2_ARQUITECTURA_INTEROPERABILIDAD.md - Área 2)
 - **Severidad/Clasificación:** Medio
 - **Archivos Involucrados:** `js/api.js`, `js/ui-common.js`

@@ -18,6 +18,61 @@ window.validateApiResponseContract = function(res, service, action) {
     return true;
 };
 
+// [FASE2-T16] [Fase 2 - Gestión de Errores y Servicios Degradados] - Clasificación de errores, protección de escrituras no confirmadas y manejo de datos de respaldo con indicadores de obsolescencia.
+window.classifyServiceError = function(error) {
+    if (!error) return { category: "UNKNOWN", isRecoverable: false, userMessage: "Ocurrió un error inesperado." };
+    var msg = (error.message || String(error)).toLowerCase();
+
+    if (msg.indexOf("timeout") !== -1 || msg.indexOf("aborted") !== -1 || msg.indexOf("networkerror") !== -1 || msg.indexOf("failed to fetch") !== -1) {
+        return { category: "NETWORK_TIMEOUT", isRecoverable: true, userMessage: "Conexión inestable o tiempo de espera agotado. Por favor reintente." };
+    }
+    if (msg.indexOf("429") !== -1 || msg.indexOf("quota") !== -1 || msg.indexOf("rate limit") !== -1) {
+        return { category: "QUOTA_EXHAUSTED", isRecoverable: true, userMessage: "Límite de solicitudes alcanzado. Espere unos momentos e intente de nuevo." };
+    }
+    if (msg.indexOf("401") !== -1 || msg.indexOf("403") !== -1 || msg.indexOf("denied") !== -1 || msg.indexOf("no autorizado") !== -1) {
+        return { category: "AUTH_PERMISSION", isRecoverable: false, userMessage: "No tiene permisos para realizar esta acción o su sesión ha expirado." };
+    }
+    if (msg.indexOf("400") !== -1 || msg.indexOf("validación") !== -1 || msg.indexOf("invalido") !== -1) {
+        return { category: "VALIDATION_ERROR", isRecoverable: false, userMessage: "Los datos enviados contienen errores de formato o validación." };
+    }
+
+    return { category: "SERVER_ERROR", isRecoverable: true, userMessage: "Error temporal en el servicio. Intente nuevamente en unos minutos." };
+};
+
+window.fetchApiWithDegradedFallback = function(service, action, payload, fallbackData) {
+    var isWriteOperation = action.indexOf("get") !== 0 && action.indexOf("list") !== 0 && action.indexOf("search") !== 0 && action.indexOf("verify") !== 0 && action.indexOf("ping") !== 0;
+
+    return fetchApi(service, action, payload).then(function(res) {
+        if (res && res.status === "success") {
+            return res;
+        }
+        throw new Error(res.message || "Error en respuesta del servidor");
+    }).catch(function(err) {
+        var classified = window.classifyServiceError(err);
+
+        if (isWriteOperation) {
+            console.error("[DEGRADED_SERVICE] Operación de escritura fallida (" + action + "). No se afirma confirmación.", classified);
+            throw new Error("No se pudo confirmar la operación de escritura: " + classified.userMessage);
+        }
+
+        if (fallbackData !== undefined) {
+            console.warn("[DEGRADED_SERVICE] Servidor no disponible para " + action + ". Retornando datos de respaldo con advertencia de antigüedad.");
+            if (window.showToast) {
+                window.showToast("Servicio temporalmente degradado. Mostrando datos de respaldo.", "warning");
+            }
+            return {
+                status: "success",
+                data: fallbackData,
+                isDegradedFallback: true,
+                staleWarning: "Datos mostrados desde respaldo local debido a indisponibilidad temporal del servidor.",
+                classifiedError: classified
+            };
+        }
+
+        throw err;
+    });
+};
+
 window.getServiceHealthMetrics = function() {
     return window.OPERATIONAL_HEALTH_METRICS;
 };
