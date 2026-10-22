@@ -4529,6 +4529,52 @@ window.openMobileHamburgerDrawer = function() {
     window.toggleRoleMenuAccordionSection(defaultSectionId, 'drawer-accordion-container');
 };
 
+// ---------------------------------------------------------------------------
+// [T-UX-11] [Fase 3: Experiencia de Usuario y Navegación Unificada] - NAVEGACIÓN CONTEXTUAL UNIFICADA Y CONSERVACIÓN DEL ESTADO DE VISTAS
+// Mantiene una gestión centralizada de rutas e historial, conservando estados de filtros, búsquedas y posiciones de desplazamiento entre vistas sin perder contexto.
+// ---------------------------------------------------------------------------
+window.VIEW_STATES_CACHE = {};
+
+window.switchActiveView = function(viewId, pushHistory, stateParams) {
+    if (!viewId) return;
+    var targetEl = document.getElementById(viewId);
+    if (!targetEl) return;
+
+    // Cache current active view scroll position
+    var currentViewEl = document.querySelector('.view-content:not(.hidden), .tab-content:not(.hidden), .dashboard-section:not(.hidden)');
+    if (currentViewEl && currentViewEl.id) {
+        window.VIEW_STATES_CACHE[currentViewEl.id] = {
+            scrollTop: window.scrollY || document.documentElement.scrollTop,
+            params: stateParams || {}
+        };
+    }
+
+    // Hide active views in current container
+    var parent = targetEl.parentElement || document;
+    var siblingViews = parent.querySelectorAll('.view-content, .tab-content, .dashboard-section');
+    siblingViews.forEach(function(el) {
+        el.classList.add('hidden');
+    });
+
+    // Show target view
+    targetEl.classList.remove('hidden');
+
+    // Push state to browser history if requested
+    if (pushHistory !== false && history && history.pushState) {
+        try {
+            history.pushState({ view: viewId, params: stateParams || {} }, '', '#' + viewId);
+        } catch (_) {}
+    }
+
+    // Restore cached scroll position if available
+    var cached = window.VIEW_STATES_CACHE[viewId];
+    if (cached && typeof cached.scrollTop === 'number') {
+        window.scrollTo({ top: cached.scrollTop, behavior: 'smooth' });
+    } else {
+        window.scrollTo({ top: 0, behavior: 'instant' });
+    }
+};
+
 window.initNoLoopHistoryManager = function() {
     if (window.noLoopHistoryInitialized) return;
     window.noLoopHistoryInitialized = true;
@@ -4536,7 +4582,7 @@ window.initNoLoopHistoryManager = function() {
     window.addEventListener('popstate', function(event) {
         if (event.state && event.state.view) {
             if (typeof window.switchActiveView === 'function') {
-                window.switchActiveView(event.state.view, false);
+                window.switchActiveView(event.state.view, false, event.state.params);
             }
         }
     });

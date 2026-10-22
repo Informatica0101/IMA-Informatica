@@ -873,3 +873,15 @@ Archivos Modificados:
    - Actualización del estado de [T-UX-10] a [X] Completada.
 
 -------------------------------------------------------------------------------
+FECHA: Octubre 2026
+TAREA: [T-UX-11] Unificar la navegación contextual y conservar el estado de las vistas
+-------------------------------------------------------------------------------
+
+Archivos Modificados:
+1. js/ui-common.js
+   - Lineas 4532-4586: Implementación de window.switchActiveView(viewId, pushHistory, stateParams) y memoria caché de estado VIEW_STATES_CACHE para conservación de desplazamiento y parámetros al cambiar de vistas o navegar en historial del navegador (popstate).
+
+2. Pendientes.md
+   - Actualización del estado de [T-UX-11] a [X] Completada.
+
+-------------------------------------------------------------------------------

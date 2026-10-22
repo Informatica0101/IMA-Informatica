@@ -618,7 +618,7 @@
   - La protección de cambios no guardados se prueba al navegar, cerrar ventanas y abandonar formularios.
 - **Estado:** [X] Completada
 
-### [ ] [T-UX-11] Unificar la navegación contextual y conservar el estado de las vistas
+### [X] [T-UX-11] Unificar la navegación contextual y conservar el estado de las vistas
 - **Origen del Hallazgo:** Auditoría de la Fase 3, octubre de 2026 (AUDITORIA_FASE3_EXPERIENCIA_USUARIO_NAVEGACION.md - Área 1)
 - **Severidad/Clasificación:** Alto
 - **Archivos Involucrados:** `js/ui-common.js`, Dashboards HTML
@@ -636,7 +636,7 @@
   - Los enlaces y controles de regreso conducen al destino correcto.
   - Una sesión vencida no produce una falsa confirmación de guardado.
   - Las rutas inválidas muestran una salida comprensible.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 ### [ ] [T-UX-12] Consolidar los paneles de control por rol y departamento
 - **Origen del Hallazgo:** Auditoría de la Fase 3, octubre de 2026 (AUDITORIA_FASE3_EXPERIENCIA_USUARIO_NAVEGACION.md - Área 2)
