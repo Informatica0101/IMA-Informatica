@@ -885,3 +885,21 @@ Archivos Modificados:
    - Actualización del estado de [T-UX-11] a [X] Completada.
 
 -------------------------------------------------------------------------------
+FECHA: Octubre 2026
+TAREA: [T-UX-12] Consolidar los paneles de control por rol y departamento
+-------------------------------------------------------------------------------
+
+Archivos Modificados:
+1. js/student.js
+   - Lineas 5-20: Implementación de window.consolidateStudentDashboardSummary para agregación de métricas de tareas y promedio ponderado del estudiante.
+
+2. js/teacher.js
+   - Lineas 5-19: Implementación de window.consolidateTeacherDashboardSummary para consolidación de clases activas, entregas pendientes de revisión y total de estudiantes asignados.
+
+3. js/accounting.js
+   - Lineas 10-25: Implementación de window.consolidateAccountingDashboardSummary para resumen financiero de ingresos, egresos, balance neto y facturas pendientes.
+
+4. Pendientes.md
+   - Actualización del estado de [T-UX-12] a [X] Completada.
+
+-------------------------------------------------------------------------------

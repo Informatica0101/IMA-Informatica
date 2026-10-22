@@ -638,7 +638,7 @@
   - Las rutas inválidas muestran una salida comprensible.
 - **Estado:** [X] Completada
 
-### [ ] [T-UX-12] Consolidar los paneles de control por rol y departamento
+### [X] [T-UX-12] Consolidar los paneles de control por rol y departamento
 - **Origen del Hallazgo:** Auditoría de la Fase 3, octubre de 2026 (AUDITORIA_FASE3_EXPERIENCIA_USUARIO_NAVEGACION.md - Área 2)
 - **Severidad/Clasificación:** Alto
 - **Archivos Involucrados:** `js/student.js`, `js/teacher.js`, `js/accounting.js`
@@ -656,7 +656,7 @@
   - Los datos no disponibles se distinguen de los valores cero.
   - Los accesos conducen a operaciones reales.
   - Las acciones visibles respetan los permisos efectivos.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 ### [ ] [T-UX-13] Completar el menú lateral específico de cada panel
 - **Origen del Hallazgo:** Auditoría de la Fase 3, octubre de 2026 (AUDITORIA_FASE3_EXPERIENCIA_USUARIO_NAVEGACION.md - Área 3)
