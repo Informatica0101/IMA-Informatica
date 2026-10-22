@@ -5,9 +5,24 @@ document.addEventListener('DOMContentLoaded', () => {
 
     var urlParams = new URLSearchParams(window.location.search);
     if (urlParams.has('session_expired')) {
+        var rawReason = urlParams.get('session_expired');
+        var bannerMsg = 'Su sesión ha expirado o sus permisos han cambiado. Por favor ingrese de nuevo.';
+        if (rawReason && rawReason !== '1' && rawReason !== 'true') {
+            try {
+                var decoded = decodeURIComponent(rawReason);
+                if (decoded && decoded.trim().length > 0) {
+                    bannerMsg = decoded;
+                }
+            } catch (_) {}
+        }
         var banner = document.createElement('div');
         banner.className = 'mb-4 p-4 bg-amber-50 border border-amber-200 text-amber-900 rounded-2xl text-xs font-semibold flex items-center gap-3 animate-fade-in-up';
-        banner.innerHTML = '<i class="fa-solid fa-triangle-exclamation text-amber-600 text-lg"></i><span>Su sesión ha expirado o sus permisos han cambiado. Por favor ingrese de nuevo.</span>';
+        var icon = document.createElement('i');
+        icon.className = 'fa-solid fa-triangle-exclamation text-amber-600 text-lg';
+        var textSpan = document.createElement('span');
+        textSpan.textContent = bannerMsg;
+        banner.appendChild(icon);
+        banner.appendChild(textSpan);
         if (loginForm) loginForm.parentNode.insertBefore(banner, loginForm);
     }
 

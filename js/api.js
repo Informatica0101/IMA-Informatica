@@ -207,10 +207,10 @@ var startTime = Date.now();
                     }
 
                     // [T-UX-01] [Fase 3: Experiencia de Usuario y Navegación Unificada] - Detección centralizada de errores de permisos y expiración de sesión.
-                    if (parsed && (parsed.code === 'AUTH_PERMISSION_DENIED' || (parsed.message && parsed.message.indexOf('Acceso denegado') !== -1))) {
+                    if (parsed && (parsed.code === 'AUTH_PERMISSION_DENIED' || (parsed.status === 'error' && (parsed.code === '401' || parsed.code === '403' || (parsed.message && (parsed.message.indexOf('Acceso denegado') !== -1 || parsed.message.indexOf('no autorizado') !== -1 || parsed.message.indexOf('sesión expirada') !== -1)))))) {
                         console.warn('[API-AUTH] Error de autorización o sesión expirada:', parsed.message);
                         if (typeof window.handleSessionExpired === 'function') {
-                            window.handleSessionExpired(parsed.message);
+                            window.handleSessionExpired(parsed.message || 'Su sesión ha expirado o sus permisos han cambiado.');
                         }
                     }
 
@@ -245,6 +245,15 @@ var startTime = Date.now();
         })
         .catch(function(error) {
             console.error('Intento ' + (retryCount + 1) + ' fallido para ' + service + '/' + action + ':', error);
+
+            var classified = window.classifyServiceError ? window.classifyServiceError(error) : null;
+            if (classified && classified.category === 'AUTH_PERMISSION') {
+                console.warn('[API-AUTH] Excepción de permisos/autorización capturada:', error.message);
+                if (typeof window.handleSessionExpired === 'function') {
+                    window.handleSessionExpired(classified.userMessage || error.message);
+                    return { status: 'error', code: 'AUTH_PERMISSION_DENIED', message: classified.userMessage || error.message };
+                }
+            }
 
             var durationMs = Date.now() - startTime;
             if (window.OPERATIONAL_HEALTH_METRICS) {

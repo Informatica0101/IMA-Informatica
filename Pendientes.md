@@ -91,7 +91,7 @@
   9. Las pruebas incluyen emisión de documentos, pagos, matrículas, planillas y otras escrituras de consecuencias relevantes.
 - **Estado:** [X] Completada
 
-### [ ] [T-UX-01] Manejo Centralizado de Expiración de Sesión y Excepciones de Autorización
+### [X] [T-UX-01] Manejo Centralizado de Expiración de Sesión y Excepciones de Autorización
 - **Origen del Hallazgo:** Auditoría de la Fase 3, octubre de 2026 (AUDITORIA_FASE3_EXPERIENCIA_USUARIO_NAVEGACION.md - Área 1)
 - **Severidad/Clasificación:** Crítico
 - **Archivos Involucrados:** `js/api.js`, `js/ui-common.js`, `js/auth.js`
@@ -102,7 +102,7 @@
   3. Redirigir al usuario a `login.html?session_expired=...` desplegando banner informativo.
 - **Criterios de Aceptación:**
   - Redirección limpia a login ante expiración de sesión sin errores no capturados.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 ---
 

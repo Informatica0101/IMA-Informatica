@@ -190,6 +190,10 @@ window.setupCommonUI = function() {
     window.handleSessionExpired = function(reason) {
         localStorage.removeItem('currentUser');
         sessionStorage.removeItem('currentUser');
+        localStorage.removeItem('usuario_actual');
+        sessionStorage.removeItem('usuario_actual');
+        localStorage.removeItem('usuario_sesion');
+        sessionStorage.removeItem('usuario_sesion');
         var msg = reason ? encodeURIComponent(reason) : '1';
         window.location.href = 'login.html?session_expired=' + msg;
     };
