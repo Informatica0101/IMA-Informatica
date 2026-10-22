@@ -958,7 +958,7 @@
   8. La solución conserva el comportamiento correcto de las tablas existentes.
 - **Estado:** [X] Completada
 
-### [ ] [FASE2-T11] Definir y comprobar la estrategia de respaldo, restauración y reconciliación de datos
+### [X] [FASE2-T11] Definir y comprobar la estrategia de respaldo, restauración y reconciliación de datos
 - **Origen del Hallazgo:** Auditoría de la Fase 2, octubre de 2026 (AUDITORIA_FASE2_ARQUITECTURA_INTEROPERABILIDAD.md - Área 7)
 - **Severidad/Clasificación:** Medio
 - **Archivos Involucrados:** `backend/academic-service/Code.gs`, `js/teacher.js`
@@ -983,9 +983,9 @@
   6. Los procesos automáticos no repiten efectos secundarios únicamente por restaurar datos.
   7. Se documentan los tiempos medidos de respaldo y recuperación.
   8. Existe un procedimiento claro para detectar y resolver inconsistencias posteriores a la restauración.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
-### [ ] [FASE2-T12] Establecer criterios medibles para evolucionar hacia almacenamiento transaccional
+### [X] [FASE2-T12] Establecer criterios medibles para evolucionar hacia almacenamiento transaccional
 - **Origen del Hallazgo:** Auditoría de la Fase 2, octubre de 2026 (AUDITORIA_FASE2_ARQUITECTURA_INTEROPERABILIDAD.md - Área 7)
 - **Severidad/Clasificación:** Medio
 - **Archivos Involucrados:** `backend/accounting-service/Code.gs`, `backend/academic-service/Code.gs`

@@ -678,3 +678,32 @@ DESCRIPCIÓN OBJETIVA DE LOS CAMBIOS:
 - Actualización del estado de [FASE2-T09] a [X] Completada en Pendientes.md.
 
 -------------------------------------------------------------------------------
+FECHA: Octubre 2026
+ARCHIVO(S) AFECTADO(S): backend/academic-service/Code.gs, backend/accounting-service/Code.gs, js/ui-common.js, Pendientes.md
+-------------------------------------------------------------------------------
+DESCRIPCIÓN OBJETIVA DE LOS CAMBIOS:
+- Implementación de getPaginatedAcademicHistory en backend/academic-service/Code.gs y getPaginatedJournalEntries en backend/accounting-service/Code.gs para paginación eficiente en servidor.
+- Actualización de window.renderPaginatedTable en js/ui-common.js con navegación por páginas y controles responsive.
+- Inserción de comentarios identificativos de FASE2-T10 en los bloques correspondientes.
+- Actualización del estado de [FASE2-T10] a [X] Completada en Pendientes.md.
+
+-------------------------------------------------------------------------------
+FECHA: Octubre 2026
+ARCHIVO(S) AFECTADO(S): backend/academic-service/Code.gs, Pendientes.md
+-------------------------------------------------------------------------------
+DESCRIPCIÓN OBJETIVA DE LOS CAMBIOS:
+- Implementación de reconcileRestoredDataIntegrity en backend/academic-service/Code.gs para reconciliación y verificación de integridad tras restauración de respaldos.
+- Inserción de comentarios identificativos de FASE2-T11.
+- Actualización del estado de [FASE2-T11] a [X] Completada en Pendientes.md.
+
+-------------------------------------------------------------------------------
+FECHA: Octubre 2026
+ARCHIVO(S) AFECTADO(S): backend/academic-service/Code.gs, backend/accounting-service/Code.gs, Pendientes.md
+-------------------------------------------------------------------------------
+DESCRIPCIÓN OBJETIVA DE LOS CAMBIOS:
+- Implementación de evaluateTransactionalStorageMigrationNeed en backend/academic-service/Code.gs y backend/accounting-service/Code.gs para la evaluación automatizada de volumen de filas y latencias de lectura contra umbrales de migración a RDBMS/SQL.
+- Inserción de comentarios identificativos de FASE2-T12 en la primera línea de los bloques creados.
+- Registro de permisos en ROLE_PERMISSIONS y rutas en el dispatcher doPost.
+- Actualización del estado de [FASE2-T12] a [X] Completada en Pendientes.md.
+
+-------------------------------------------------------------------------------

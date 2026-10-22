@@ -160,7 +160,7 @@ const ROLE_PERMISSIONS = {
     "getInstitutionParams", "saveInstitutionParam", "getAcademicYears", "createAcademicYear", "updateAcademicYearStatus", "prepareNewAcademicYear",
     "getAcademicPeriods", "manageAcademicPeriod", "getSubjectCatalog", "createSubjectCatalogItem", "getStudyPlans", "createStudyPlan",
     "getAcademicOffers", "createAcademicOffer", "getTeacherAssignments", "assignTeacherToClass", "createTeacherSubstitution",
-    "getAcademicCalendar", "createCalendarEvent", "getClassSchedules", "createClassSchedule", "deleteClassSchedule", "getAcademicRules", "saveAcademicRule", "getDepartmentAcademicPlanning", "assignDepartmentHead", "getCurricularAnalyticsReport", "getReusableResourceCatalog", "manageReusableResource", "getCurricularEquivalences", "executeCurricularMigration", "registerCurricularAreaExtension", "runCurricularAreaServiceTests", "toggleCurricularAreaStatus", "validateApiContractsTestSuite", "getInstitutionalCatalog", "validateCatalogReference", "generateInstitutionalUUID", "validateInstitutionalIdentifier", "auditInstitutionalIdentifierCollisions", "runConcurrencyAndConsistencySuite", "getPaginatedAcademicHistory", "reconcileRestoredDataIntegrity",
+    "getAcademicCalendar", "createCalendarEvent", "getClassSchedules", "createClassSchedule", "deleteClassSchedule", "getAcademicRules", "saveAcademicRule", "getDepartmentAcademicPlanning", "assignDepartmentHead", "getCurricularAnalyticsReport", "getReusableResourceCatalog", "manageReusableResource", "getCurricularEquivalences", "executeCurricularMigration", "registerCurricularAreaExtension", "runCurricularAreaServiceTests", "toggleCurricularAreaStatus", "validateApiContractsTestSuite", "getInstitutionalCatalog", "validateCatalogReference", "generateInstitutionalUUID", "validateInstitutionalIdentifier", "auditInstitutionalIdentifierCollisions", "runConcurrencyAndConsistencySuite", "getPaginatedAcademicHistory", "reconcileRestoredDataIntegrity", "evaluateTransactionalStorageMigrationNeed",
     "getClassroomResources", "saveClassroomResource", "getStudentSchedule",
     "createAdmissionRequest", "getAdmissionRequests", "updateAdmissionStatus", "convertAdmissionToStudent",
     "getStudentFile", "updateStudentFile", "getStudentTimeline", "findDuplicateStudents", "mergeStudentFiles",
@@ -330,6 +330,7 @@ function doPost(e) {
       case "verifyBackupIntegrity": result = verifyBackupIntegrity(payload); break;
       case "restoreSystemBackup": result = restoreSystemBackup(payload); break;
       case "reconcileRestoredDataIntegrity": result = reconcileRestoredDataIntegrity(payload); break;
+      case "evaluateTransactionalStorageMigrationNeed": result = evaluateTransactionalStorageMigrationNeed(payload); break;
       case "getInstitutionalReportCatalog": result = getInstitutionalReportCatalog(payload); break;
       case "generateInstitutionalReport": result = generateInstitutionalReport(payload); break;
       case "getSectionEquivalences": result = getSectionEquivalences(payload); break;
@@ -5643,5 +5644,55 @@ function calculateUnifiedAcademicGrade(payload) {
     equivalenciaSACE: equivalenciaSACE,
     esCuadroHonor: esCuadroHonor,
     ponderacionesPorCategoria: ponderacionesPorCategoria
+  };
+}
+
+// [FASE2-T12] [Fase 2 - Criterios para Almacenamiento Transaccional] - Evaluación de métricas de almacenamiento, volumen de filas, latencia de consulta y umbrales de migración a RDBMS/SQL.
+function evaluateTransactionalStorageMigrationNeed(payload) {
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheets = ss.getSheets();
+
+  const UMBRAL_FILAS = 50000;
+  const UMBRAL_LATENCIA_MS = 2000;
+
+  const tableMetrics = [];
+  let totalRows = 0;
+  let recommendedMigrationCount = 0;
+
+  sheets.forEach(sh => {
+    const name = sh.getName();
+    const startTime = new Date().getTime();
+    const lastRow = sh.getLastRow();
+    const readDuration = new Date().getTime() - startTime;
+
+    totalRows += lastRow;
+    const isExceeded = lastRow >= UMBRAL_FILAS || readDuration >= UMBRAL_LATENCIA_MS;
+    if (isExceeded) recommendedMigrationCount++;
+
+    tableMetrics.push({
+      nombreTabla: name,
+      filasTotales: lastRow,
+      latenciaLecturaMs: readDuration,
+      requiereMigracionTransaccional: isExceeded,
+      motivo: isExceeded ? "Excede umbral de filas (> 50,000) o latencia de consulta (> 2,000ms)" : "Operante dentro de límites de Google Sheets"
+    });
+  });
+
+  logStructuredEvent("ACADEMIC", "evaluateTransactionalStorageMigrationNeed", "INFO", "TRANSACTIONAL_EVALUATION_COMPLETED", `Evaluación transaccional completada. Tablas analizadas: ${sheets.length}, Requieren migración: ${recommendedMigrationCount}.`, {
+    totalRows,
+    recommendedMigrationCount
+  }, payload && payload.authRole);
+
+  return {
+    status: "success",
+    service: "ACADEMIC",
+    resumenEvaluacion: {
+      totalTablasAnalizadas: sheets.length,
+      filasAcumuladasTotales: totalRows,
+      tablasSuperanUmbral: recommendedMigrationCount,
+      recomendacionTecnica: recommendedMigrationCount > 0 ? "RECOMENDADA_MIGRACION_GRADUAL_SQL" : "ALMACENAMIENTO_SHEETS_ADECUADO"
+    },
+    metricasPorTabla: tableMetrics,
+    timestamp: new Date().toISOString()
   };
 }

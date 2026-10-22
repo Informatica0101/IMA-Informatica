@@ -316,6 +316,7 @@ function doPost(e) {
       case "recordAccountingJournalEntry": result = recordAccountingJournalEntry(payload); break;
       case "getAccountingJournalEntries": result = getAccountingJournalEntries(payload); break;
       case "getPaginatedJournalEntries": result = getPaginatedJournalEntries(payload); break;
+      case "evaluateTransactionalStorageMigrationNeed": result = evaluateTransactionalStorageMigrationNeed(payload); break;
       case "getBudgets": result = getBudgets(payload); break;
       case "saveBudgetPlan": result = saveBudgetPlan(payload); break;
       case "getBudgetExecutionReport": result = getBudgetExecutionReport(payload); break;
@@ -6154,6 +6155,56 @@ function getAssetAssignments(payload) {
   return {
     status: "success",
     asignaciones: mapped
+  };
+}
+
+// [FASE2-T12] [Fase 2 - Criterios para Almacenamiento Transaccional] - Evaluación de métricas de almacenamiento, volumen de filas, latencia de consulta y umbrales de migración a RDBMS/SQL.
+function evaluateTransactionalStorageMigrationNeed(payload) {
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheets = ss.getSheets();
+
+  const UMBRAL_FILAS = 50000;
+  const UMBRAL_LATENCIA_MS = 2000;
+
+  const tableMetrics = [];
+  let totalRows = 0;
+  let recommendedMigrationCount = 0;
+
+  sheets.forEach(sh => {
+    const name = sh.getName();
+    const startTime = new Date().getTime();
+    const lastRow = sh.getLastRow();
+    const readDuration = new Date().getTime() - startTime;
+
+    totalRows += lastRow;
+    const isExceeded = lastRow >= UMBRAL_FILAS || readDuration >= UMBRAL_LATENCIA_MS;
+    if (isExceeded) recommendedMigrationCount++;
+
+    tableMetrics.push({
+      nombreTabla: name,
+      filasTotales: lastRow,
+      latenciaLecturaMs: readDuration,
+      requiereMigracionTransaccional: isExceeded,
+      motivo: isExceeded ? "Excede umbral de filas (> 50,000) o latencia de consulta (> 2,000ms)" : "Operante dentro de límites de Google Sheets"
+    });
+  });
+
+  logStructuredEvent("ACCOUNTING", "evaluateTransactionalStorageMigrationNeed", "INFO", "TRANSACTIONAL_EVALUATION_COMPLETED", `Evaluación transaccional completada. Tablas analizadas: ${sheets.length}, Requieren migración: ${recommendedMigrationCount}.`, {
+    totalRows,
+    recommendedMigrationCount
+  }, payload && payload.authRole);
+
+  return {
+    status: "success",
+    service: "ACCOUNTING",
+    resumenEvaluacion: {
+      totalTablasAnalizadas: sheets.length,
+      filasAcumuladasTotales: totalRows,
+      tablasSuperanUmbral: recommendedMigrationCount,
+      recomendacionTecnica: recommendedMigrationCount > 0 ? "RECOMENDADA_MIGRACION_GRADUAL_SQL" : "ALMACENAMIENTO_SHEETS_ADECUADO"
+    },
+    metricasPorTabla: tableMetrics,
+    timestamp: new Date().toISOString()
   };
 }
 
