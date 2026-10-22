@@ -939,3 +939,15 @@ Archivos Modificados:
    - Actualización del estado de [T-UX-15] a [X] Completada.
 
 -------------------------------------------------------------------------------
+FECHA: Octubre 2026
+TAREA: [T-UX-16] Unificar los estados de notificaciones, tareas pendientes y aprobaciones
+-------------------------------------------------------------------------------
+
+Archivos Modificados:
+1. js/ui-common.js
+   - Lineas 1915-1965: Implementación de window.consolidatePendingApprovalsAndNotifications(items) para normalización de categorías de aviso, cálculo de contadores no leídos y marcas de estado de aprobación.
+
+2. Pendientes.md
+   - Actualización del estado de [T-UX-16] a [X] Completada.
+
+-------------------------------------------------------------------------------

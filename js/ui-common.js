@@ -1913,6 +1913,58 @@ window.renderPaginatedTable = function(containerId, data, options) {
 // ---------------------------------------------------------------------------
 window.SAVED_TABLE_VIEWS_CACHE = {};
 
+// ---------------------------------------------------------------------------
+// [T-UX-16] [Fase 3: Experiencia de Usuario y Navegación Unificada] - ESTADOS UNIFICADOS DE NOTIFICACIONES, TAREAS PENDIENTES Y APROBACIONES
+// Unifica el procesamiento de avisos informativos, solicitudes de aprobación y tareas pendientes con cálculo de no leídos, prioridades y rutas de navegación.
+// ---------------------------------------------------------------------------
+window.consolidatePendingApprovalsAndNotifications = function(rawItems) {
+    var items = Array.isArray(rawItems) ? rawItems : [];
+    var unreadCount = 0;
+    var pendingApprovalsCount = 0;
+
+    var processedItems = items.map(function(item) {
+        var isRead = !!item.leido || item.estado === 'LEIDO';
+        if (!isRead) unreadCount++;
+
+        var category = (item.tipo || item.categoria || 'INFO').toString().toUpperCase();
+        if (category === 'APROBACION' || category === 'APPROVAL' || category === 'TRAMITE') {
+            category = 'APPROVAL';
+            if (!isRead && item.estado !== 'APROBADO' && item.estado !== 'RECHAZADO') {
+                pendingApprovalsCount++;
+            }
+        }
+
+        return {
+            id: item.id || item.codigo || ('NOTIF-' + Math.random().toString(36).substr(2, 6)),
+            title: item.titulo || item.asunto || 'Aviso Institucional',
+            description: item.descripcion || item.mensaje || '',
+            category: category,
+            priority: (item.prioridad || 'NORMAL').toString().toUpperCase(),
+            isRead: isRead,
+            timestamp: item.fecha || item.timestamp || new Date().toISOString(),
+            targetModule: item.modulo || item.targetModule || 'dashboard'
+        };
+    });
+
+    return {
+        items: processedItems,
+        unreadCount: unreadCount,
+        pendingApprovalsCount: pendingApprovalsCount,
+        markAsRead: function(itemId) {
+            for (var i = 0; i < processedItems.length; i++) {
+                if (processedItems[i].id === itemId) {
+                    if (!processedItems[i].isRead) {
+                        processedItems[i].isRead = true;
+                        unreadCount = Math.max(0, unreadCount - 1);
+                    }
+                    break;
+                }
+            }
+            return unreadCount;
+        }
+    };
+};
+
 window.setupAdvancedTableFilters = function(containerId, config) {
     config = config || {};
     var rawData = Array.isArray(config.data) ? config.data : [];

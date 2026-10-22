@@ -716,7 +716,7 @@
   - El ordenamiento es coherente con los datos mostrados.
 - **Estado:** [X] Completada
 
-### [ ] [T-UX-16] Unificar los estados de notificaciones, tareas pendientes y aprobaciones
+### [X] [T-UX-16] Unificar los estados de notificaciones, tareas pendientes y aprobaciones
 - **Origen del Hallazgo:** Auditoría de la Fase 3, octubre de 2026 (AUDITORIA_FASE3_EXPERIENCIA_USUARIO_NAVEGACION.md - Área 11 & 12)
 - **Severidad/Clasificación:** Alto
 - **Archivos Involucrados:** `js/ui-common.js`, `backend/user-service/Code.gs`
@@ -733,7 +733,7 @@
   - Los enlaces conducen al destino correcto.
   - Los avisos de elementos inaccesibles no revelan información sensible.
   - Las notificaciones leídas y no leídas se mantienen correctamente.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 ### [ ] [T-UX-17] Corregir y completar la protección de cambios no guardados
 - **Origen del Hallazgo:** Auditoría de la Fase 3, octubre de 2026 (AUDITORIA_FASE3_EXPERIENCIA_USUARIO_NAVEGACION.md - Área 6)
