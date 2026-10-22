@@ -4901,22 +4901,33 @@ window.addEventListener('keydown', function(e) {
     }
 });
 
+// ---------------------------------------------------------------------------
+// [T-UX-17] [Fase 3: Experiencia de Usuario y Navegación Unificada] - PROTECCIÓN AVANZADA CONTRA PÉRDIDA DE CAMBIOS NO GUARDADOS
+// Rastrea modificaciones en formularios estáticos y dinámicos (MutationObserver), permitiendo descarte limpio en envíos autorizados y advertencias antes de abandonar.
+// ---------------------------------------------------------------------------
+
 // [T-UX-03] [Fase 3: Experiencia de Usuario y Navegación Unificada] - Módulo de protección contra pérdida de cambios no guardados en formularios con detección de modificaciones y descarte limpio en envíos autorizados.
 window.setupUnsavedChangesProtection = function(containerIdOrElement, options) {
     options = options || {};
     var container = typeof containerIdOrElement === 'string' ? document.getElementById(containerIdOrElement) : containerIdOrElement;
-    if (!container) return { markClean: function(){}, markDirty: function(){}, isDirty: function(){ return false; } };
+    if (!container) return { markClean: function(){}, markDirty: function(){}, isDirty: function(){ return false; }, resetProtection: function(){} };
 
     var isDirty = false;
 
     function markDirty() { isDirty = true; }
     function markClean() { isDirty = false; }
 
-    var inputs = container.querySelectorAll('input, textarea, select');
-    for (var i = 0; i < inputs.length; i++) {
-        inputs[i].addEventListener('change', markDirty);
-        inputs[i].addEventListener('input', markDirty);
+    function bindInputs() {
+        var inputs = container.querySelectorAll('input, textarea, select');
+        for (var i = 0; i < inputs.length; i++) {
+            inputs[i].removeEventListener('change', markDirty);
+            inputs[i].removeEventListener('input', markDirty);
+            inputs[i].addEventListener('change', markDirty);
+            inputs[i].addEventListener('input', markDirty);
+        }
     }
+
+    bindInputs();
 
     if (container.tagName === 'FORM') {
         container.addEventListener('submit', markClean);
@@ -4927,6 +4938,14 @@ window.setupUnsavedChangesProtection = function(containerIdOrElement, options) {
             subForms[j].addEventListener('submit', markClean);
             subForms[j].addEventListener('reset', markClean);
         }
+    }
+
+    // Dynamic fields tracking
+    if (typeof MutationObserver !== 'undefined') {
+        var observer = new MutationObserver(function() {
+            bindInputs();
+        });
+        observer.observe(container, { childList: true, subtree: true });
     }
 
     window.addEventListener('beforeunload', function(e) {
@@ -4941,7 +4960,11 @@ window.setupUnsavedChangesProtection = function(containerIdOrElement, options) {
     return {
         markClean: markClean,
         markDirty: markDirty,
-        isDirty: function() { return isDirty; }
+        isDirty: function() { return isDirty; },
+        resetProtection: function() {
+            markClean();
+            bindInputs();
+        }
     };
 };
 

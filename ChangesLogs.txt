@@ -951,3 +951,15 @@ Archivos Modificados:
    - Actualización del estado de [T-UX-16] a [X] Completada.
 
 -------------------------------------------------------------------------------
+FECHA: Octubre 2026
+TAREA: [T-UX-17] Corregir y completar la protección de cambios no guardados
+-------------------------------------------------------------------------------
+
+Archivos Modificados:
+1. js/ui-common.js
+   - Lineas 4905-4965: Optimización de window.setupUnsavedChangesProtection con rastreo dinámico de campos mediante MutationObserver, remoción/revinculación limpia de eventos y función resetProtection().
+
+2. Pendientes.md
+   - Actualización del estado de [T-UX-17] a [X] Completada.
+
+-------------------------------------------------------------------------------

@@ -735,7 +735,7 @@
   - Las notificaciones leídas y no leídas se mantienen correctamente.
 - **Estado:** [X] Completada
 
-### [ ] [T-UX-17] Corregir y completar la protección de cambios no guardados
+### [X] [T-UX-17] Corregir y completar la protección de cambios no guardados
 - **Origen del Hallazgo:** Auditoría de la Fase 3, octubre de 2026 (AUDITORIA_FASE3_EXPERIENCIA_USUARIO_NAVEGACION.md - Área 6)
 - **Severidad/Clasificación:** Alto
 - **Archivos Involucrados:** `js/ui-common.js`
@@ -750,7 +750,7 @@
   - Modificar un campo y abandonar la vista genera una advertencia.
   - Cancelar la navegación mantiene los datos introducidos.
   - Guardar correctamente elimina la advertencia pendiente.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 ### [ ] [T-UX-18] Completar los componentes compartidos de formularios, tablas y vistas de detalle
 - **Origen del Hallazgo:** Auditoría de la Fase 3, octubre de 2026 (AUDITORIA_FASE3_EXPERIENCIA_USUARIO_NAVEGACION.md - Área 7 & 8)
