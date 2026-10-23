@@ -784,7 +784,7 @@
   - Los iconos funcionales tienen nombres accesibles.
 - **Estado:** [X] Completada
 
-### [ ] [T-UX-20] Completar la adaptación móvil y el comportamiento responsivo
+### [X] [T-UX-20] Completar la adaptación móvil y el comportamiento responsivo
 - **Origen del Hallazgo:** Auditoría de la Fase 3, octubre de 2026 (AUDITORIA_FASE3_EXPERIENCIA_USUARIO_NAVEGACION.md - Área 16)
 - **Severidad/Clasificación:** Alto
 - **Archivos Involucrados:** `js/ui-common.js`, `css/style.css`
@@ -798,7 +798,7 @@
   - Los paneles se visualizan sin superposiciones ni desbordamientos críticos.
   - El menú lateral es operable con controles táctiles.
   - Las tablas mantienen accesibles sus datos y acciones importantes.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 ---
 

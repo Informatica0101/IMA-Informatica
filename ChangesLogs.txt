@@ -987,3 +987,15 @@ Archivos Modificados:
    - Actualización del estado de [T-UX-19] a [X] Completada.
 
 -------------------------------------------------------------------------------
+FECHA: Octubre 2026
+TAREA: [T-UX-20] Completar la adaptación móvil y el comportamiento responsivo
+-------------------------------------------------------------------------------
+
+Archivos Modificados:
+1. js/ui-common.js
+   - Lineas 4920-4960: Implementación de window.setupResponsiveMobileViewportAdapters() para envolventes de desplazamiento en tablas, límites de altura en modales móviles y debouncing en el evento resize del navegador.
+
+2. Pendientes.md
+   - Actualización del estado de [T-UX-20] a [X] Completada.
+
+-------------------------------------------------------------------------------

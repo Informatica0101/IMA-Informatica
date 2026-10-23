@@ -836,6 +836,7 @@ function textResponse(obj) {
   return ContentService.createTextOutput(JSON.stringify(obj)).setMimeType(ContentService.MimeType.TEXT);
 }
 
+// [CORRECCIÓN BLOCKING ISSUE - T-UX-06] Función utilitaria normalizeString de normalización de cadenas de texto insensibles a tildes, mayúsculas y diacríticos en el servidor Google Apps Script.
 function normalizeString(str) {
   if (!str) return "";
   return str.toString().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();

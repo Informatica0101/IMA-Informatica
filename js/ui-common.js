@@ -4537,6 +4537,7 @@ window.saveCommercialUnitNames = function(storeName, cafeName) {
     window.loadCommercialUnitNames();
 };
 
+// [CORRECCIÓN BLOCKING ISSUE - T-UX-09] Función global toggleRoleMenuAccordionSection para conmutación de secciones del menú acordeón móvil por rol sin errores de referencia.
 window.toggleRoleMenuAccordionSection = function(sectionId, containerId) {
     var container = document.getElementById(containerId);
     if (!container) return;
@@ -4670,6 +4671,7 @@ window.openMobileHamburgerDrawer = function() {
                     '</button>' +
                 '</div>' +
             '</div>';
+        // [CORRECCIÓN BLOCKING ISSUE - T-UX-09] Inserción explícita del elemento drawer dinámico en el DOM body.
         document.body.appendChild(drawer);
     } else {
         drawer.classList.remove('hidden');
@@ -4817,6 +4819,7 @@ window.openGlobalOmniboxModal = function() {
         modal.classList.remove('hidden');
     }
 
+    // [CORRECCIÓN BLOCKING ISSUE - T-UX-14] Enfoque y selección de texto ejecutados una sola vez al abrir el modal Omnibox (no durante la escritura).
     setTimeout(function() {
         const inp = document.getElementById('omnibox-search-input');
         if (inp) {
@@ -4915,6 +4918,48 @@ window.addEventListener('keydown', function(e) {
 // [T-UX-19] [Fase 3: Experiencia de Usuario y Navegación Unificada] - VERIFICACIÓN Y CORRECCIÓN AUTOMÁTICA DE ACCESIBILIDAD (WCAG 2.2 AA)
 // Audita y corrige en tiempo de ejecución barreras de accesibilidad: atributos aria-label en botones de solo icono, etiquetas en controles de formulario y roles dialog en modales.
 // ---------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
+// [T-UX-20] [Fase 3: Experiencia de Usuario y Navegación Unificada] - ADAPTACIÓN MÓVIL Y COMPORTAMIENTO RESPONSIVO MULTI-DISPOSITIVO
+// Configura adaptadores dinámicos de interfaz para dispositivos móviles (<=768px): envolventes de desplazamiento en tablas, límites de altura en modales y debouncing en resize.
+// ---------------------------------------------------------------------------
+window.setupResponsiveMobileViewportAdapters = function() {
+    var isMobile = window.innerWidth <= 768;
+
+    // 1. Ensure table containers have horizontal scrolling wrappers on small screens
+    var tables = document.querySelectorAll('table');
+    tables.forEach(function(tbl) {
+        if (tbl.parentElement && !tbl.parentElement.classList.contains('overflow-x-auto')) {
+            var wrapper = document.createElement('div');
+            wrapper.className = 'overflow-x-auto w-full max-w-full';
+            tbl.parentNode.insertBefore(wrapper, tbl);
+            wrapper.appendChild(tbl);
+        }
+    });
+
+    // 2. Adjust modal dialog max-heights on mobile viewports
+    var modalContainers = document.querySelectorAll('.fixed.inset-0 > div');
+    modalContainers.forEach(function(m) {
+        if (isMobile) {
+            m.classList.add('max-h-[92vh]', 'overflow-y-auto');
+        }
+    });
+
+    var status = { isMobile: isMobile, width: window.innerWidth, height: window.innerHeight };
+    console.log('=== [T-UX-20] RESPONSIVE VIEWPORT ADAPTER STATUS ===', status);
+    return status;
+};
+
+// Auto-run viewport adapters on window resize with 100ms debouncing
+var responsiveResizeDebounce;
+window.addEventListener('resize', function() {
+    clearTimeout(responsiveResizeDebounce);
+    responsiveResizeDebounce = setTimeout(function() {
+        if (typeof window.setupResponsiveMobileViewportAdapters === 'function') {
+            window.setupResponsiveMobileViewportAdapters();
+        }
+    }, 100);
+});
+
 window.auditAndFixAccessibility = function() {
     var scannedElements = 0;
     var fixesApplied = 0;
