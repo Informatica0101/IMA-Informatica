@@ -219,7 +219,7 @@
 
 ## GRUPO PRIORIDAD P2 (MEDIO)
 
-### [ ] [TAREA-F4-P2-01] Eliminar la generación de identificadores de usuario basada en marcas de tiempo
+### [X] [TAREA-F4-P2-01] Eliminar la generación de identificadores de usuario basada en marcas de tiempo
 - **Origen del Hallazgo:** Auditoría de la Fase 4 (AUDITORIA_FASE4_IDENTIDAD_PERMISOS_GOBIERNO.md)
 - **Severidad/Clasificación:** Medio · Identidad
 - **Archivos Involucrados:** `backend/user-service/Code.gs`
@@ -227,8 +227,8 @@
 - **Descripción del Alcance:**
   1. Forzar que `registerUser` obtenga su ID únicamente desde `generateInstitutionalId('Usuario', 'USR-')` con secuencias atómicas, removiendo `now.getTime()`.
 - **Criterios de Aceptación:**
-  - [ ] Todas las cuentas usan secuencias atómicas institucionales sin marcas de tiempo.
-- **Estado:** [ ] Pendiente
+  - [X] Todas las cuentas usan secuencias atómicas institucionales sin marcas de tiempo.
+- **Estado:** [X] Completada
 
 ### [ ] [TAREA-F4-P2-02] Implementar una gestión completa del ciclo de vida de cuentas y sesiones
 - **Origen del Hallazgo:** Auditoría de la Fase 4 (AUDITORIA_FASE4_IDENTIDAD_PERMISOS_GOBIERNO.md)

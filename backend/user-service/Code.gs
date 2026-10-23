@@ -2141,6 +2141,7 @@ function manageAccountState(payload) {
 // LÓGICA DE USUARIOS
 // ---------------------------------------------------------------------------
 
+// [TAREA-F4-P2-01] [Fase 4: Identidad Unica] - Eliminación de marcas de tiempo en IDs de usuario y forzado de secuencias atómicas institucionales
 function registerUser(payload) {
   const { nombre, grado, seccion, email, password, telefono, numeroLista, forceUpdate, personaId } = payload || {};
   if (!nombre || !email || !password) throw new Error("Datos obligatorios faltantes.");
@@ -2178,7 +2179,10 @@ function registerUser(payload) {
     return { status: "error", exists: true, message: "Email ya registrado.", data: { nombre: data[existingIndex][1], gradoActual: data[existingIndex][2], seccionActual: data[existingIndex][3] } };
   }
   const genIdRes = generateInstitutionalId({ entityType: "Usuario", prefix: "USR-" });
-  const userId = genIdRes.generatedId || ("USR-" + now.getTime());
+  const userId = genIdRes && genIdRes.generatedId ? genIdRes.generatedId : null;
+  if (!userId) {
+    throw new Error("No se pudo generar un identificador institucional único para el usuario.");
+  }
   const passBytes = Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, password);
   const passArr = Array.from ? Array.from(passBytes) : [].slice.call(passBytes);
   const hashedPassword = passArr.map(b => ('0' + (b & 0xFF).toString(16)).slice(-2)).join('');
@@ -2609,7 +2613,10 @@ function manageDepartmentPositions(payload) {
     }
 
     const genRes = generateInstitutionalId({ entityType: "Adscripcion", prefix: "ADS-" });
-    const adsId = genRes.generatedId || ("ADS-" + Date.now());
+    const adsId = genRes && genRes.generatedId ? genRes.generatedId : null;
+    if (!adsId) {
+      throw new Error("No se pudo generar un identificador institucional único para la adscripción.");
+    }
 
     adsSheet.appendRow([
       adsId,

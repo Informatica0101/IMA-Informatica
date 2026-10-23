@@ -1281,3 +1281,7 @@ Archivos Modificados:
   - Implementada la vista modal interactiva window.openSecurityAndComplianceDashboardModal con tarjetas de métricas, controles de filtrado y tabla de eventos auditados.
 - dashboard-direccion.html:
   - Agregado el botón #btn-security-compliance-dashboard e integrado evento gatillador para apertura del panel de seguridad.
+
+[TAREA-F4-P2-01] [Fase 4 - Eliminar IDs de Usuario con Marcas de Tiempo]
+- backend/user-service/Code.gs:
+  - Modificada la función registerUser para eliminar el fallback de generación de ID basado en marcas de tiempo (now.getTime()), forzando exclusivamente la generación atómica de secuencias institucionales mediante generateInstitutionalId({ entityType: 'Usuario', prefix: 'USR-' }).
