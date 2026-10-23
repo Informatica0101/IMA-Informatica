@@ -1011,3 +1011,15 @@ Archivos Modificados:
    - Actualización del estado de [T-UX-04] a [X] Completada.
 
 -------------------------------------------------------------------------------
+FECHA: Octubre 2026
+TAREA: [T-UX-07] Indicador Discreto de Estado de Conexión En Línea / Offline
+-------------------------------------------------------------------------------
+
+Archivos Modificados:
+1. js/ui-common.js
+   - Lineas 28-50: Exportación de window.updateOnlineBadge con renderizado discreto del indicador #online-status-badge en la esquina inferior izquierda.
+
+2. Pendientes.md
+   - Actualización del estado de [T-UX-07] a [X] Completada.
+
+-------------------------------------------------------------------------------

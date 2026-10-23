@@ -24,6 +24,10 @@ window.setupCommonUI = function() {
         });
     }
 
+    // ---------------------------------------------------------------------------
+    // [T-UX-07] [Fase 3: Experiencia de Usuario y Navegación Unificada] - INDICADOR DISCRETO DE ESTADO DE CONEXIÓN EN LÍNEA / OFFLINE
+    // Renderiza un indicador discreto en la esquina inferior izquierda que reacciona a eventos online/offline sin obstruir el contenido principal de la pantalla.
+    // ---------------------------------------------------------------------------
     // Online / Offline Status Badge
     function updateOnlineBadge() {
         var badge = document.getElementById('online-status-badge');
@@ -42,6 +46,7 @@ window.setupCommonUI = function() {
             badge.innerHTML = '<i class="fa-solid fa-wifi"></i> <span>Modo Sin Conexión (Cambios Locales)</span>';
         }
     }
+    window.updateOnlineBadge = updateOnlineBadge;
 
     window.addEventListener('online', function() {
         updateOnlineBadge();

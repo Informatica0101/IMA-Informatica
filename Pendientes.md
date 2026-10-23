@@ -1144,7 +1144,7 @@
   - Badge visible notificando tiempo transcurrido desde la última sincronización.
 - **Estado:** [X] Completada
 
-### [ ] [T-UX-07] Indicador Discreto de Estado de Conexión En Línea / Offline
+### [X] [T-UX-07] Indicador Discreto de Estado de Conexión En Línea / Offline
 - **Origen del Hallazgo:** Auditoría de la Fase 3, octubre de 2026 (AUDITORIA_FASE3_EXPERIENCIA_USUARIO_NAVEGACION.md - Área 10)
 - **Severidad/Clasificación:** Medio
 - **Archivos Involucrados:** `js/ui-common.js`
@@ -1153,7 +1153,7 @@
   1. Indicador discreto de estado en línea `#online-status-badge`.
 - **Criterios de Aceptación:**
   - Badge discreto en esquina inferior izquierda sin tapar contenido principal.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 ### [ ] [T-UX-08] Botón y Flujo Discreto de Reporte de Problemas Técnicos
 - **Origen del Hallazgo:** Auditoría de la Fase 3, octubre de 2026 (AUDITORIA_FASE3_EXPERIENCIA_USUARIO_NAVEGACION.md - Área 10)
