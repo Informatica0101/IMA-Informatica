@@ -4639,8 +4639,9 @@ window.openMobileHamburgerDrawer = function() {
                         '</button>' +
                     '</div>' +
 
-                    '<!-- Menú Acordeón por Rol -->' +
-                    '<div id="drawer-accordion-container" class="space-y-2 text-xs font-bold text-slate-700">' +
+                    '<!-- Menú Acordeón por Rol [T-UX-09] -->' +
+                    '<!-- [CORRECCIÓN BLOCKING ISSUE] Asignación explícita de id="drawer-accordion-container" con clase text-slate-600 -->' +
+                    '<div class="space-y-2 text-xs font-bold text-slate-600" id="drawer-accordion-container">' +
                         '<div class="rounded-2xl border border-slate-100 overflow-hidden">' +
                             '<button onclick="window.toggleRoleMenuAccordionSection(\'sec-drawer-academic\', \'drawer-accordion-container\')" class="w-full p-3 bg-slate-50 hover:bg-slate-100 flex items-center justify-between font-black uppercase text-[11px] text-slate-800">' +
                                 '<span><i class="fas fa-graduation-cap mr-2 text-blue-600"></i> Académico & Clases</span>' +
