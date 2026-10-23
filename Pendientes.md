@@ -1133,7 +1133,7 @@
   7. Los mensajes de error indican qué acción puede realizar el usuario sin afirmar resultados no confirmados.
 - **Estado:** [ ] Pendiente
 
-### [ ] [T-UX-04] Indicador e Badge de Frescura de Datos Sincronizados con Trigger Manual
+### [X] [T-UX-04] Indicador e Badge de Frescura de Datos Sincronizados con Trigger Manual
 - **Origen del Hallazgo:** Auditoría de la Fase 3, octubre de 2026 (AUDITORIA_FASE3_EXPERIENCIA_USUARIO_NAVEGACION.md - Área 9)
 - **Severidad/Clasificación:** Medio
 - **Archivos Involucrados:** `js/ui-common.js`
@@ -1142,7 +1142,7 @@
   1. `window.renderDataFreshnessBadge(containerId, lastSyncTimestamp)` muestra frescura de datos.
 - **Criterios de Aceptación:**
   - Badge visible notificando tiempo transcurrido desde la última sincronización.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 ### [ ] [T-UX-07] Indicador Discreto de Estado de Conexión En Línea / Offline
 - **Origen del Hallazgo:** Auditoría de la Fase 3, octubre de 2026 (AUDITORIA_FASE3_EXPERIENCIA_USUARIO_NAVEGACION.md - Área 10)

@@ -5122,19 +5122,36 @@ window.setupUnsavedChangesProtection = function(containerIdOrElement, options) {
     };
 };
 
+// ---------------------------------------------------------------------------
+// [T-UX-04] [Fase 3: Experiencia de Usuario y Navegación Unificada] - INDICADOR Y BADGE DE FRESCURA DE DATOS SINCRONIZADOS CON TRIGGER MANUAL
+// Renderiza un distintivo visual notificando el tiempo relativo transcurrido desde la última sincronización ("Hace X min") con botón manual de actualización.
+// ---------------------------------------------------------------------------
+
 // [T-UX-04] [Fase 3: Experiencia de Usuario y Navegación Unificada] - Componente utilitario para mostrar la frescura de los datos y control de actualización.
 window.renderDataFreshnessBadge = function(containerIdOrElement, lastUpdatedTimestamp, onRefreshCallback) {
     var container = typeof containerIdOrElement === 'string' ? document.getElementById(containerIdOrElement) : containerIdOrElement;
     if (!container) return;
 
+    // Clear previous badge instances in container
+    var existingBadge = container.querySelector('.data-freshness-badge-element');
+    if (existingBadge) existingBadge.remove();
+
     var dateObj = lastUpdatedTimestamp ? new Date(lastUpdatedTimestamp) : new Date();
-    var timeStr = dateObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    var now = new Date();
+    var diffMs = now - dateObj;
+    var diffMins = Math.floor(diffMs / 60000);
+
+    var relativeStr = 'Hace un momento';
+    if (diffMins >= 1 && diffMins < 60) relativeStr = 'Hace ' + diffMins + ' min';
+    else if (diffMins >= 60) relativeStr = 'Hace ' + Math.floor(diffMins / 60) + ' h';
+
+    var clockTime = dateObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
     var badge = document.createElement('div');
-    badge.className = 'inline-flex items-center gap-2 text-[10px] font-semibold text-slate-500 bg-slate-100 border border-slate-200 px-3 py-1 rounded-xl shadow-sm';
+    badge.className = 'data-freshness-badge-element inline-flex items-center gap-2 text-[10px] font-semibold text-slate-500 bg-slate-100 border border-slate-200 px-3 py-1 rounded-xl shadow-sm';
     badge.innerHTML =
-        '<span><i class="fa-solid fa-clock-rotate-left text-slate-400 mr-1"></i> Actualizado: ' + timeStr + '</span>' +
-        '<button class="btn-refresh-badge text-blue-600 hover:text-blue-800 font-bold uppercase tracking-wider ml-1">' +
+        '<span title="Sincronizado a las ' + clockTime + '"><i class="fa-solid fa-clock-rotate-left text-slate-400 mr-1"></i> ' + relativeStr + ' (' + clockTime + ')</span>' +
+        '<button class="btn-refresh-badge text-blue-600 hover:text-blue-800 font-bold uppercase tracking-wider ml-1" aria-label="Sincronizar datos">' +
             '<i class="fa-solid fa-rotate-right"></i>' +
         '</button>';
 
@@ -5147,6 +5164,7 @@ window.renderDataFreshnessBadge = function(containerIdOrElement, lastUpdatedTime
             refreshBtn.classList.add('animate-spin');
             onRefreshCallback(function() {
                 refreshBtn.classList.remove('animate-spin');
+                window.renderDataFreshnessBadge(containerIdOrElement, new Date().toISOString(), onRefreshCallback);
             });
         });
     }

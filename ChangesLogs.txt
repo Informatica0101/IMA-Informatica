@@ -999,3 +999,15 @@ Archivos Modificados:
    - Actualización del estado de [T-UX-20] a [X] Completada.
 
 -------------------------------------------------------------------------------
+FECHA: Octubre 2026
+TAREA: [T-UX-04] Indicador e Badge de Frescura de Datos Sincronizados con Trigger Manual
+-------------------------------------------------------------------------------
+
+Archivos Modificados:
+1. js/ui-common.js
+   - Lineas 5125-5170: Optimización de window.renderDataFreshnessBadge con cálculo de tiempo relativo ("Hace X min"), remoción de instancias previas e integración de re-renderizado al completar la sincronización manual.
+
+2. Pendientes.md
+   - Actualización del estado de [T-UX-04] a [X] Completada.
+
+-------------------------------------------------------------------------------
