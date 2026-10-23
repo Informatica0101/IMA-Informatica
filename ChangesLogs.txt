@@ -1095,3 +1095,15 @@ Archivos Modificados:
    - Actualización del estado de [T-UX-25] a [X] Completada.
 
 -------------------------------------------------------------------------------
+FECHA: Octubre 2026
+TAREA: [T-UX-27] Optimizar el rendimiento percibido y la respuesta de las interfaces
+-------------------------------------------------------------------------------
+
+Archivos Modificados:
+1. js/ui-common.js
+   - Lineas 4995-5020: Implementación de window.renderUIProgressSkeleton para inyección de esqueletos de carga animados (pulse skeleton UI) en contenedores dinámicos durante peticiones asíncronas.
+
+2. Pendientes.md
+   - Actualización del estado de [T-UX-27] a [X] Completada.
+
+-------------------------------------------------------------------------------

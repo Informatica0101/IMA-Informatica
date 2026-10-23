@@ -156,8 +156,8 @@
 - **Archivos Involucrados:** `js/ui-common.js`
 - **Estado:** [ ] Pendiente
 
-### [ ] [T-UX-27] Optimizar el rendimiento percibido y la respuesta de las interfaces
+### [X] [T-UX-27] Optimizar el rendimiento percibido y la respuesta de las interfaces
 - **Origen del Hallazgo:** Auditoría de la Fase 3, octubre de 2026 (AUDITORIA_FASE3_EXPERIENCIA_USUARIO_NAVEGACION.md - Área 27)
 - **Severidad/Clasificación:** Medio
 - **Archivos Involucrados:** `js/ui-common.js`, `js/api.js`
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada

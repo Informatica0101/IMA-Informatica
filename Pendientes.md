@@ -1239,7 +1239,7 @@
   - Las vistas personalizadas se restauran correctamente.
 - **Estado:** [X] Completada
 
-### [ ] [T-UX-27] Optimizar el rendimiento percibido y la respuesta de las interfaces
+### [X] [T-UX-27] Optimizar el rendimiento percibido y la respuesta de las interfaces
 - **Origen del Hallazgo:** Auditoría de la Fase 3, octubre de 2026 (AUDITORIA_FASE3_EXPERIENCIA_USUARIO_NAVEGACION.md - Área 27)
 - **Severidad/Clasificación:** Medio
 - **Archivos Involucrados:** `js/ui-common.js`, `js/api.js`
@@ -1250,7 +1250,7 @@
   3. Evitar solicitudes repetidas que no aporten información.
 - **Criterios de Aceptación:**
   - Las acciones frecuentes responden con fluidez bajo condiciones de uso representativas.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 ---
 

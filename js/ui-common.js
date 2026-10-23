@@ -4993,6 +4993,30 @@ window.DEFAULT_USER_VIEW_PREFERENCES = {
     sidebarCollapsed: false
 };
 
+// ---------------------------------------------------------------------------
+// [T-UX-27] [Fase 3: Experiencia de Usuario y Navegación Unificada] - OPTIMIZACIÓN DE RENDIMIENTO PERCIBIDO Y RESPUESTA DE INTERFAZ
+// Inyecta esqueletos de carga animados (pulse skeleton UI) en contenedores dinámicos durante la respuesta asíncrona de datos para mejorar la fluidez percibida.
+// ---------------------------------------------------------------------------
+window.renderUIProgressSkeleton = function(containerIdOrElement, count) {
+    var container = typeof containerIdOrElement === 'string' ? document.getElementById(containerIdOrElement) : containerIdOrElement;
+    if (!container) return;
+
+    var skeletonCount = count || 3;
+    var html = '<div class="space-y-3 animate-pulse p-2">';
+    for (var i = 0; i < skeletonCount; i++) {
+        html +=
+            '<div class="h-16 bg-slate-100 border border-slate-200/60 rounded-2xl flex items-center p-4 justify-between">' +
+                '<div class="space-y-2 w-2/3">' +
+                    '<div class="h-3 bg-slate-200 rounded-full w-3/4"></div>' +
+                    '<div class="h-2 bg-slate-200/80 rounded-full w-1/2"></div>' +
+                '</div>' +
+                '<div class="h-8 w-16 bg-slate-200 rounded-xl"></div>' +
+            '</div>';
+    }
+    html += '</div>';
+    container.innerHTML = html;
+};
+
 window.getUserViewPreferences = function() {
     try {
         var stored = localStorage.getItem('user_view_preferences');
