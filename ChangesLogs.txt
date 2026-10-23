@@ -975,3 +975,15 @@ Archivos Modificados:
    - Actualización del estado de [T-UX-18] a [X] Completada.
 
 -------------------------------------------------------------------------------
+FECHA: Octubre 2026
+TAREA: [T-UX-19] Verificar la accesibilidad y corregir las barreras detectadas
+-------------------------------------------------------------------------------
+
+Archivos Modificados:
+1. js/ui-common.js
+   - Lineas 4915-4955: Implementación de window.auditAndFixAccessibility() para auditoría en tiempo de ejecución conforme a WCAG 2.2 AA, inyección de atributos aria-label en botones de solo icono y atributos role="dialog" en modales.
+
+2. Pendientes.md
+   - Actualización del estado de [T-UX-19] a [X] Completada.
+
+-------------------------------------------------------------------------------

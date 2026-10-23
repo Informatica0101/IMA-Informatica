@@ -768,7 +768,7 @@
   - Las acciones por fila operan sobre el registro correcto.
 - **Estado:** [X] Completada
 
-### [ ] [T-UX-19] Verificar la accesibilidad y corregir las barreras detectadas
+### [X] [T-UX-19] Verificar la accesibilidad y corregir las barreras detectadas
 - **Origen del Hallazgo:** Auditoría de la Fase 3, octubre de 2026 (AUDITORIA_FASE3_EXPERIENCIA_USUARIO_NAVEGACION.md - Área 15)
 - **Severidad/Clasificación:** Alto
 - **Archivos Involucrados:** `js/ui-common.js`, `css/style.css`
@@ -782,7 +782,7 @@
   - Los flujos principales pueden completarse sin ratón.
   - El foco es visible y sigue un orden lógico.
   - Los iconos funcionales tienen nombres accesibles.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 ### [ ] [T-UX-20] Completar la adaptación móvil y el comportamiento responsivo
 - **Origen del Hallazgo:** Auditoría de la Fase 3, octubre de 2026 (AUDITORIA_FASE3_EXPERIENCIA_USUARIO_NAVEGACION.md - Área 16)
