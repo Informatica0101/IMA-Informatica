@@ -1212,3 +1212,10 @@ Archivos Modificados:
   - Actualizada verifySessionToken en los 5 microservicios para validar llaves de revocacion revoked_user_<userId> y revoked_session_<sessionId>.
 - js/ui-common.js:
   - Actualizadas funciones handleLogout y handleSessionExpired para purgar sessionToken de localStorage y sessionStorage.
+
+[TAREA-F4-P0-04] [Fase 4 - Auditoría de Autenticación y Registro de Intentos Fallidos]
+- backend/user-service/Code.gs:
+  - Implementada función logoutUser y expuesta en PUBLIC_ACTIONS y doPost switch.
+  - Actualizada función loginUser para generar correlationId único y registrar eventos LOGIN_FAILED categorizados (CONTRASEÑA_INCORRECTA, CUENTA_INACTIVA_O_BLOQUEADA, USUARIO_INEXISTENTE).
+  - Sanitizadas respuestas de error en loginUser con mensajes genéricos ("Credenciales incorrectas o cuenta no disponible") previniendo enumeración de usuarios.
+  - Implementado bloqueo automático de cuenta al acumular 5 intentos fallidos consecutivos de contraseña.

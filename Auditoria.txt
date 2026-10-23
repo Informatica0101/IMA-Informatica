@@ -93,3 +93,8 @@ Resultado de Verificación:
   - manageAccountState: Inyección comprobada de revoked_user_<userId> en CacheService.
 - js/ui-common.js:
   - handleLogout & handleSessionExpired: Verificada la purga de sessionToken en almacenamiento del cliente.
+
+[AUDITORÍA TAREA-F4-P0-04]
+- backend/user-service/Code.gs:
+  - loginUser & logoutUser: Verificado el registro estructurado de eventos LOGIN_FAILED, LOGIN_SUCCESS y LOGOUT_SUCCESS sin almacenamiento de contraseñas.
+  - loginUser: Verificada la sanitización de respuestas genéricas de autenticación e incremento de contador de intentos fallidos antes de bloqueo.

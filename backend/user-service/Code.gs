@@ -917,7 +917,7 @@ function doGet() { return textResponse({ status: "success", service: "USER", tim
 // CONTROL DE ACCESO BASADO EN ROLES (RBAC SERVIDOR - REQ-EXP-008 & FASE 2)
 // ---------------------------------------------------------------------------
 const PUBLIC_ACTIONS = [
-  "registerUser", "loginUser", "requestPasswordRecovery", "resetPassword", "ping", "getNews", "getInstitutionalAnnouncements", "getActiveVisualPalette"
+  "registerUser", "loginUser", "logoutUser", "requestPasswordRecovery", "resetPassword", "ping", "getNews", "getInstitutionalAnnouncements", "getActiveVisualPalette"
 ];
 
 const ROLE_PERMISSIONS = {
@@ -1127,6 +1127,7 @@ function doPost(e) {
     switch (action) {
       case "registerUser": result = registerUser(payload); break;
       case "loginUser": result = loginUser(payload); break;
+      case "logoutUser": result = logoutUser(payload); break;
       case "getStudents": result = getStudents(payload); break;
       case "getStudentsByGradoSeccion": result = getStudentsByGradoSeccion(payload); break;
       case "getUserInfo": result = getUserInfo(payload); break;
@@ -1508,10 +1509,37 @@ function registerUser(payload) {
   return { status: "success", userId };
 }
 
-// [T-GOV-01] [pendientes3.md] - Función loginUser con invalidación de sesiones y protección contra ataques de fuerza bruta (bloqueo al acumular 5 intentos fallidos).
+// [TAREA-F4-P0-04] [Fase 4: Auditoría y Protección] - Registro de intentos fallidos/exitosos, cierres de sesión y respuestas genéricas
+function logoutUser(payload) {
+  const { sessionToken, userId, sessionId } = payload || {};
+  let effectiveUserId = userId;
+  let effectiveSessionId = sessionId;
+
+  if (sessionToken) {
+    const claims = verifySessionToken(sessionToken);
+    if (claims) {
+      if (!effectiveUserId) effectiveUserId = claims.userId;
+      if (!effectiveSessionId) effectiveSessionId = claims.sessionId;
+    }
+  }
+
+  if (effectiveUserId || effectiveSessionId) {
+    revokeUserSession({ userId: effectiveUserId, sessionId: effectiveSessionId });
+  }
+
+  logStructuredEvent("USER", "logoutUser", "INFO", "LOGOUT_SUCCESS", `Cierre de sesión registrado para usuario ${effectiveUserId || 'Anónimo'}`, { userId: effectiveUserId, sessionId: effectiveSessionId }, "Anónimo");
+
+  return { status: "success", message: "Cierre de sesión registrado exitosamente." };
+}
+
+// [TAREA-F4-P0-04] [Fase 4: Registro de Intentos y Fuerza Bruta] - loginUser con registro LOGIN_FAILED categorizado, correlationId y respuestas genéricas sanitizadas
 function loginUser(payload) {
   const { identifier, password } = payload || {};
-  if (!identifier || !password) return { status: "error", message: "Identificador y contraseña son requeridos." };
+  if (!identifier || !password) return { status: "error", message: "Credenciales incorrectas o cuenta no disponible." };
+
+  const correlationId = "CID-" + Date.now() + "-" + Math.floor(Math.random() * 1000);
+  const cleanIdentifier = String(identifier).trim();
+  const idLower = cleanIdentifier.toLowerCase();
 
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
   const sheet = getSheetOrThrow(ss, "Usuarios");
@@ -1519,7 +1547,6 @@ function loginUser(payload) {
   const passBytes = Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, password);
   const passArr = Array.from ? Array.from(passBytes) : [].slice.call(passBytes);
   const hp = passArr.map(b => ('0' + (b & 0xFF).toString(16)).slice(-2)).join('');
-  const id = identifier.toLowerCase().trim();
 
   for (let i = 1; i < data.length; i++) {
     const row = data[i];
@@ -1527,18 +1554,16 @@ function loginUser(payload) {
     const uNombre = row[1]?.toString().toLowerCase().trim();
     const state = row[10] || "Activa";
 
-    if (uEmail === id || uNombre === id) {
+    if (uEmail === idLower || uNombre === idLower) {
       if (state === "Suspendida" || state === "Desactivada" || state === "Bloqueada") {
-        logStructuredEvent("USER", "loginUser", "WARN", "LOGIN_BLOCKED", `Intento de inicio de sesión en cuenta ${state}`, { identifier, userId: row[0], state }, "Sistema");
-        return { status: "error", message: `Su cuenta se encuentra en estado '${state}'. Por favor contacte a la administración.` };
+        logStructuredEvent("USER", "loginUser", "WARN", "LOGIN_FAILED", `Intento de inicio de sesión fallido: cuenta ${state}`, { correlationId, identifier: cleanIdentifier, userId: row[0], state, reason: "CUENTA_INACTIVA_O_BLOQUEADA" }, "Anónimo");
+        return { status: "error", message: "Credenciales incorrectas o cuenta no disponible." };
       }
 
       if (row[5] === hp) {
-        // Éxito - Resetear intentos fallidos y actualizar último acceso
         sheet.getRange(i + 1, 12).setValue(0);
         sheet.getRange(i + 1, 13).setValue(new Date());
 
-        // [TAREA-F4-P0-01] [Fase 4: Identidad y Permisos] - Emisión de token de sesión firmado HMAC-SHA256
         const sessionToken = generateSessionToken({
           userId: row[0],
           email: row[4],
@@ -1546,7 +1571,7 @@ function loginUser(payload) {
           accountState: state
         });
 
-        logStructuredEvent("USER", "loginUser", "INFO", "LOGIN_SUCCESS", `Inicio de sesión exitoso para usuario ${row[0]}`, { userId: row[0], rol: row[6] }, row[6]);
+        logStructuredEvent("USER", "loginUser", "INFO", "LOGIN_SUCCESS", `Inicio de sesión exitoso para usuario ${row[0]}`, { correlationId, userId: row[0], rol: row[6] }, row[6]);
 
         return {
           status: "success",
@@ -1566,21 +1591,23 @@ function loginUser(payload) {
           }
         };
       } else {
-        // Fallo de contraseña - Incrementar contador de intentos fallidos
         const currentFailed = parseInt(row[11] || 0, 10) + 1;
         sheet.getRange(i + 1, 12).setValue(currentFailed);
 
+        logStructuredEvent("USER", "loginUser", "WARN", "LOGIN_FAILED", `Intento de inicio de sesión fallido: contraseña incorrecta (intento ${currentFailed})`, { correlationId, identifier: cleanIdentifier, userId: row[0], currentFailed, reason: "CONTRASEÑA_INCORRECTA" }, "Anónimo");
+
         if (currentFailed >= 5) {
           sheet.getRange(i + 1, 11).setValue("Bloqueada");
-          logStructuredEvent("USER", "loginUser", "WARN", "LOGIN_BLOCKED_BRUTE_FORCE", `Cuenta ${row[0]} bloqueada por acumular ${currentFailed} intentos fallidos de contraseña.`, { identifier, userId: row[0], currentFailed }, "Sistema");
-          return { status: "error", message: "Su cuenta ha sido bloqueada por acumular 5 intentos de inicio de sesión fallidos. Contacte a la administración." };
+          logStructuredEvent("USER", "loginUser", "WARN", "LOGIN_BLOCKED_BRUTE_FORCE", `Cuenta ${row[0]} bloqueada por acumular 5 intentos fallidos.`, { correlationId, identifier: cleanIdentifier, userId: row[0], currentFailed }, "Anónimo");
         }
 
-        return { status: "error", message: `Credenciales incorrectas. Intentos fallidos: ${currentFailed}/5.` };
+        return { status: "error", message: "Credenciales incorrectas o cuenta no disponible." };
       }
     }
   }
-  return { status: "error", message: "Credenciales incorrectas." };
+
+  logStructuredEvent("USER", "loginUser", "WARN", "LOGIN_FAILED", "Intento de inicio de sesión fallido: usuario inexistente", { correlationId, identifier: cleanIdentifier, reason: "USUARIO_INEXISTENTE" }, "Anónimo");
+  return { status: "error", message: "Credenciales incorrectas o cuenta no disponible." };
 }
 
 function getStudents(payload) {

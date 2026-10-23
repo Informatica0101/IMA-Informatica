@@ -68,7 +68,7 @@
   - [X] La expiración de sesión se gestiona correctamente tanto en el cliente como en el backend.
 - **Estado:** [X] Completada
 
-### [ ] [TAREA-F4-P0-04] Registrar los intentos fallidos de autenticación y reforzar la protección contra ataques
+### [X] [TAREA-F4-P0-04] Registrar los intentos fallidos de autenticación y reforzar la protección contra ataques
 - **Origen del Hallazgo:** Auditoría de la Fase 4 (AUDITORIA_FASE4_IDENTIDAD_PERMISOS_GOBIERNO.md - HALLAZGO-F4-P0-04)
 - **Severidad/Clasificación:** Crítico · Seguridad · Auditoría · Autenticación
 - **Archivos Involucrados:** `backend/user-service/Code.gs`, `BitacoraEventos`, `BitacoraTraceability`
@@ -80,11 +80,11 @@
   4. Aplicar límites de intentos fallidos antes de bloquear temporalmente la IP/cuenta.
   5. Asegurar respuestas genéricas que no revelen innecesariamente si el correo existe.
 - **Criterios de Aceptación:**
-  - [ ] Las contraseñas incorrectas generan eventos LOGIN_FAILED.
-  - [ ] Las cuentas bloqueadas, suspendidas y desactivadas generan registros categorizados.
-  - [ ] Ninguna bitácora contiene contraseñas ni tokens reutilizables.
-  - [ ] Las respuestas de autenticación no revelan innecesariamente si una cuenta existe.
-- **Estado:** [ ] Pendiente
+  - [X] Las contraseñas incorrectas generan eventos LOGIN_FAILED.
+  - [X] Las cuentas bloqueadas, suspendidas y desactivadas generan registros categorizados.
+  - [X] Ninguna bitácora contiene contraseñas ni tokens reutilizables.
+  - [X] Las respuestas de autenticación no revelan innecesariamente si una cuenta existe.
+- **Estado:** [X] Completada
 
 ---
 
