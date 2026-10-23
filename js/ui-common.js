@@ -4978,6 +4978,43 @@ window.addEventListener('resize', function() {
     }, 100);
 });
 
+// ---------------------------------------------------------------------------
+// [T-UX-24] [Fase 3: Experiencia de Usuario y Navegación Unificada] - NORMALIZACIÓN DE ACCIONES, ESTADOS Y JERARQUÍA VISUAL INSTITUCIONAL
+// Mantiene coherencia visual entre estados (éxito/aprobado, pendiente/advertencia, rechazado/error) y estandariza la jerarquía de botones de acción.
+// ---------------------------------------------------------------------------
+window.getStandardStatusBadgeClass = function(status) {
+    var s = (status || '').toString().toUpperCase().trim();
+    if (s === 'APROBADO' || s === 'COMPLETADO' || s === 'ACTIVO' || s === 'EXITO' || s === 'VERIFICADO' || s === 'SUCCESS') {
+        return 'bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-full px-2.5 py-0.5 text-[10px] font-black uppercase tracking-wider inline-flex items-center gap-1';
+    }
+    if (s === 'PENDIENTE' || s === 'EN_REVISION' || s === 'BORRADOR' || s === 'ADVERTENCIA' || s === 'WARNING') {
+        return 'bg-amber-50 text-amber-700 border border-amber-200 rounded-full px-2.5 py-0.5 text-[10px] font-black uppercase tracking-wider inline-flex items-center gap-1';
+    }
+    if (s === 'RECHAZADO' || s === 'INACTIVO' || s === 'ERROR' || s === 'CANCELADO' || s === 'BLOQUEADO') {
+        return 'bg-rose-50 text-rose-700 border border-rose-200 rounded-full px-2.5 py-0.5 text-[10px] font-black uppercase tracking-wider inline-flex items-center gap-1';
+    }
+    return 'bg-slate-100 text-slate-700 border border-slate-200 rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider inline-flex items-center gap-1';
+};
+
+window.normalizeActionButtonsHierarchy = function(containerId) {
+    var container = typeof containerId === 'string' ? document.getElementById(containerId) : containerId;
+    if (!container) return;
+
+    var primaryBtns = container.querySelectorAll('.btn-primary, button[type="submit"]');
+    primaryBtns.forEach(function(btn) {
+        if (!btn.classList.contains('normalized-btn')) {
+            btn.classList.add('normalized-btn', 'px-4', 'py-2', 'bg-blue-600', 'hover:bg-blue-700', 'text-white', 'font-bold', 'text-xs', 'rounded-xl', 'shadow-sm', 'transition-all');
+        }
+    });
+
+    var cancelBtns = container.querySelectorAll('.btn-secondary, .btn-cancel, button[data-dismiss]');
+    cancelBtns.forEach(function(btn) {
+        if (!btn.classList.contains('normalized-btn')) {
+            btn.classList.add('normalized-btn', 'px-4', 'py-2', 'bg-slate-100', 'hover:bg-slate-200', 'text-slate-700', 'font-bold', 'text-xs', 'rounded-xl', 'transition-all');
+        }
+    });
+};
+
 window.auditAndFixAccessibility = function() {
     var scannedElements = 0;
     var fixesApplied = 0;

@@ -1071,3 +1071,15 @@ Archivos Modificados:
    - Actualización del estado de [T-UX-23] a [X] Completada.
 
 -------------------------------------------------------------------------------
+FECHA: Octubre 2026
+TAREA: [T-UX-24] Normalizar las acciones, los estados y la jerarquía visual institucional
+-------------------------------------------------------------------------------
+
+Archivos Modificados:
+1. js/ui-common.js
+   - Lineas 4980-5015: Implementación de window.getStandardStatusBadgeClass y window.normalizeActionButtonsHierarchy para normalización de insignias de estado y estandarización de botones primarios/cancelar.
+
+2. Pendientes.md
+   - Actualización del estado de [T-UX-24] a [X] Completada.
+
+-------------------------------------------------------------------------------

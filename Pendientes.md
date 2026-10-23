@@ -1211,7 +1211,7 @@
   - Los reportes válidos se registran en el destino correspondiente.
 - **Estado:** [X] Completada
 
-### [ ] [T-UX-24] Normalizar las acciones, los estados y la jerarquía visual institucional
+### [X] [T-UX-24] Normalizar las acciones, los estados y la jerarquía visual institucional
 - **Origen del Hallazgo:** Auditoría de la Fase 3, octubre de 2026 (AUDITORIA_FASE3_EXPERIENCIA_USUARIO_NAVEGACION.md - Área 17)
 - **Severidad/Clasificación:** Medio
 - **Archivos Involucrados:** `css/style.css`, `js/ui-common.js`
@@ -1223,7 +1223,7 @@
 - **Criterios de Aceptación:**
   - Los botones equivalentes mantienen una jerarquía y apariencia coherentes.
   - Los estados equivalentes se representan de manera consistente.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 ### [ ] [T-UX-25] Incorporar preferencias de usuario y personalización controlada de vistas
 - **Origen del Hallazgo:** Auditoría de la Fase 3, octubre de 2026 (AUDITORIA_FASE3_EXPERIENCIA_USUARIO_NAVEGACION.md - Área 20)
