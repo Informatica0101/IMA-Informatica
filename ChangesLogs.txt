@@ -1194,3 +1194,13 @@ Archivos Modificados:
   - Implementada función revokeUserSession para revocacion explícita de sesiones por sessionId y userId.
   - Actualizada manageAccountState para inyectar revocación explícita (revoked_user_<userId>) en CacheService cuando la cuenta pase a Suspendida, Bloqueada o Desactivada.
   - Actualizada verifySessionToken en los 5 microservicios para comprobar llaves de revocacion revoked_user_<userId> y revoked_session_<sessionId>.
+
+[TAREA-F4-P0-02] [Fase 4 - Protección IDOR y Aislamiento de Datos Personales]
+- backend/user-service/Code.gs:
+  - getUserInfo: Aislamiento estricto por _verifiedUserId.
+  - getUnifiedNotifications & getAdministrativeRequests: Inyectadas verificaciones de rol y sobreescritura de targetUserId / userId por _verifiedUserId.
+  - getGuardianStudents, getFamilyConsolidatedSummary, getStudentAbsenceJustifications: Aislamiento mediante _verifiedUserId y relacion comprobada en FamiliaEstudiantes.
+- backend/accounting-service/Code.gs:
+  - getStudentAccountStatement & getPaymentVouchers: Sobreescritura de targetUserId / userId con _verifiedUserId para rol Estudiante.
+- backend/academic-service/Code.gs, backend/exam-service/Code.gs, backend/task-service/Code.gs:
+  - Aislamiento estricto en getAcademicHistory, getStudentEnrollmentHistory, getStudentExams, getStudentTasks usando _verifiedUserId.

@@ -2663,16 +2663,27 @@ function sendInternalMessage(payload) {
   return { status: "success", message: "Mensaje interno enviado.", data: { mensajeId: msgId, conversacionId: convId } };
 }
 
+// [TAREA-F4-P0-02] [Fase 4: Protección IDOR y ABAC] - Aislamiento estricto de notificaciones unificadas
 function getUnifiedNotifications(payload) {
-  const { userId, categoria, leido } = payload || {};
-  if (!userId) throw new Error("userId es requerido.");
+  const callerRole = getUserVerifiedRole(payload);
+  if (callerRole === "NO_ACCESS") {
+    throw new Error("Acceso denegado: Credenciales de sesión inválidas o expiradas.");
+  }
+  let targetUserId = payload && payload.userId;
+  if ((callerRole === "Estudiante" || callerRole === "Alumno" || callerRole === "Padre" || callerRole === "Tutor") && payload._verifiedUserId) {
+    targetUserId = payload._verifiedUserId;
+  }
+  if (!targetUserId && payload && payload._verifiedUserId) {
+    targetUserId = payload._verifiedUserId;
+  }
+  if (!targetUserId) throw new Error("userId es requerido.");
 
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
   const sheet = getOrCreateSheet(ss, "BandejaNotificaciones");
   const data = sheet.getDataRange().getValues();
   if (data.length <= 1) return { status: "success", data: [], unreadCount: 0 };
 
-  let filtered = data.slice(1).filter(r => String(r[1]).trim() === String(userId).trim());
+  let filtered = data.slice(1).filter(r => String(r[1]).trim() === String(targetUserId).trim());
 
   if (categoria) {
     filtered = filtered.filter(r => String(r[5]).toLowerCase().trim() === String(categoria).toLowerCase().trim());
@@ -3063,8 +3074,21 @@ function createUserNotification(payload) {
   return { status: "success", message: "Notificación registrada.", data: { notificacionId: notifId } };
 }
 
+// [TAREA-F4-P0-02] [Fase 4: Protección IDOR y ABAC] - Aislamiento de solicitudes administrativas
 function getAdministrativeRequests(payload) {
-  const { userId, estudianteId } = payload || {};
+  const callerRole = getUserVerifiedRole(payload);
+  if (callerRole === "NO_ACCESS") {
+    throw new Error("Acceso denegado: Credenciales de sesión inválidas o expiradas.");
+  }
+  let { userId, estudianteId } = payload || {};
+  if ((callerRole === "Estudiante" || callerRole === "Alumno") && payload._verifiedUserId) {
+    userId = payload._verifiedUserId;
+    estudianteId = payload._verifiedUserId;
+  }
+  if (!userId && payload && payload._verifiedUserId) {
+    userId = payload._verifiedUserId;
+  }
+
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
   const sheet = getOrCreateSheet(ss, "SolicitudesTramites");
   const data = sheet.getDataRange().getValues();

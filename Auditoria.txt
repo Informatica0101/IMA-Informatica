@@ -78,3 +78,11 @@ Resultado de Verificación:
   - verifySessionToken & manageAccountState: Verificada revocación explicita por sessionId y estado de cuenta no activo.
 - backend/academic-service/Code.gs, backend/accounting-service/Code.gs, backend/exam-service/Code.gs, backend/task-service/Code.gs:
   - verifySessionToken: Verificada la lectura en CacheService de llaves de revocacion revoked_user_<userId> y revoked_session_<sessionId>.
+
+[AUDITORÍA TAREA-F4-P0-02]
+- backend/user-service/Code.gs:
+  - getUnifiedNotifications & getAdministrativeRequests: Verificado aislamiento IDOR mediante _verifiedUserId.
+- backend/accounting-service/Code.gs:
+  - getStudentAccountStatement & getPaymentVouchers: Verificada sobreescritura de parametros por _verifiedUserId.
+- backend/academic-service/Code.gs, backend/exam-service/Code.gs, backend/task-service/Code.gs:
+  - Verificada protección ABAC / IDOR en endpoints de historial académico, evaluaciones y tareas.
