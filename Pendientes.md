@@ -241,7 +241,7 @@
   - [X] Transiciones de estado validadas y auditadas.
 - **Estado:** [X] Completada
 
-### [ ] [TAREA-F4-P2-03] Mejorar la experiencia administrativa de gestión de usuarios, permisos y delegaciones
+### [X] [TAREA-F4-P2-03] Mejorar la experiencia administrativa de gestión de usuarios, permisos y delegaciones
 - **Origen del Hallazgo:** Auditoría de la Fase 4 (AUDITORIA_FASE4_IDENTIDAD_PERMISOS_GOBIERNO.md)
 - **Severidad/Clasificación:** Medio · Interfaz · Usabilidad
 - **Archivos Involucrados:** `js/ui-common.js`, Dashboards HTML
@@ -249,8 +249,8 @@
 - **Descripción del Alcance:**
   1. Vistas mejoradas de gestión de usuarios con filtros, visualización de permisos efectivos y delegaciones.
 - **Criterios de Aceptación:**
-  - [ ] Interfaz administrativa fluida con confirmaciones para acciones sensibles.
-- **Estado:** [ ] Pendiente
+  - [X] Interfaz administrativa fluida con confirmaciones para acciones sensibles.
+- **Estado:** [X] Completada
 
 ### [ ] [TAREA-F4-P2-04] Optimizar la concurrencia y la consistencia de las operaciones de identidad
 - **Origen del Hallazgo:** Auditoría de la Fase 4 (AUDITORIA_FASE4_IDENTIDAD_PERMISOS_GOBIERNO.md)

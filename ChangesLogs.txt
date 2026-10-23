@@ -1290,3 +1290,9 @@ Archivos Modificados:
 - backend/user-service/Code.gs:
   - Definida la constante ALLOWED_ACCOUNT_STATE_TRANSITIONS con reglas de transición entre estados de cuenta (Pendiente, InvitacionEnviada, Activa, Suspendida, Bloqueada, Desactivada).
   - Modificada manageAccountState para validar transiciones permitidas, rechazar cambios inválidos con mensajes de error descriptivos, registrar diffs en HistorialCambiosEntidad y despachar eventos de seguridad inter-servicio vía dispatchSecurityEvent.
+
+[TAREA-F4-P2-03] [Fase 4 - Experiencia Administrativa de Gestión de Usuarios y Permisos]
+- js/ui-common.js:
+  - Implementada la función window.openUserManagementAdministrationModal para despliegue de la interfaz modal interactiva de gestión de directorio de cuentas, búsqueda multi-campo, filtrado por estado de cuenta y diálogo de confirmación previa para acciones administrativas sensibles.
+- dashboard-direccion.html:
+  - Incorporado el botón de acceso #btn-user-management-admin con vinculación de evento gatillador para la gestión administrativa de cuentas y permisos.

@@ -5441,6 +5441,155 @@ window.renderDataFreshnessBadge = function(containerIdOrElement, lastUpdatedTime
 
     container.appendChild(badge);
 
+// [TAREA-F4-P2-03] [Fase 4: Experiencia Administrativa de Identidad y Permisos] - Vista administrativa de gestión de usuarios, filtrado, permisos efectivos y delegaciones con confirmación de acciones sensibles
+window.openUserManagementAdministrationModal = function(triggerEl) {
+    if (typeof trackModalFocus === "function") trackModalFocus(triggerEl || document.activeElement);
+
+    var existingModal = document.getElementById("modal-user-management-admin");
+    if (existingModal) existingModal.remove();
+
+    var modalHtml = '<div id="modal-user-management-admin" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm" role="dialog" aria-modal="true" aria-labelledby="usr-admin-title">' +
+        '<div class="bg-white rounded-3xl shadow-2xl border border-slate-100 w-full max-w-6xl max-h-[90vh] flex flex-col overflow-hidden animate-fade-in">' +
+            '<div class="flex items-center justify-between px-6 py-4 bg-slate-900 text-white border-b border-slate-800">' +
+                '<div class="flex items-center gap-3">' +
+                    '<div class="p-2 bg-blue-500/20 text-blue-400 rounded-xl"><i class="fa-solid fa-users-gear text-xl"></i></div>' +
+                    '<div>' +
+                        '<h2 id="usr-admin-title" class="text-base font-black uppercase tracking-tight">Gestión Administrativa de Usuarios & Permisos</h2>' +
+                        '<p class="text-xs text-slate-400 font-medium">Control de estados de cuenta, consulta de permisos efectivos y delegaciones</p>' +
+                    '</div>' +
+                '</div>' +
+                '<button id="btn-close-usr-admin-modal" class="p-2 text-slate-400 hover:text-white rounded-xl hover:bg-slate-800 transition-all focus:outline-none" aria-label="Cerrar modal">' +
+                    '<i class="fa-solid fa-xmark text-lg"></i>' +
+                '</button>' +
+            '</div>' +
+            '<div class="p-6 overflow-y-auto space-y-6 flex-1 bg-slate-50/50">' +
+                '<!-- Filters -->' +
+                '<div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-wrap items-center gap-3">' +
+                    '<input type="text" id="usr-search-query" placeholder="Buscar por Nombre, Email o ID..." class="px-3 py-2 text-xs border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 flex-1 min-w-[200px]" />' +
+                    '<select id="usr-filter-state" class="px-3 py-2 text-xs border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500">' +
+                        '<option value="">Todos los estados</option>' +
+                        '<option value="Activa">Activa</option>' +
+                        '<option value="Pendiente">Pendiente</option>' +
+                        '<option value="InvitacionEnviada">InvitacionEnviada</option>' +
+                        '<option value="Suspendida">Suspendida</option>' +
+                        '<option value="Bloqueada">Bloqueada</option>' +
+                        '<option value="Desactivada">Desactivada</option>' +
+                    '</select>' +
+                    '<button id="btn-apply-usr-filters" class="px-4 py-2 bg-slate-900 text-white rounded-xl font-bold text-xs hover:bg-slate-800 transition-all"><i class="fa-solid fa-magnifying-glass mr-1"></i> Buscar</button>' +
+                '</div>' +
+                '<!-- Users Table -->' +
+                '<div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">' +
+                    '<div class="px-5 py-3 bg-slate-100 border-b border-slate-200 flex items-center justify-between">' +
+                        '<h3 class="text-xs font-black uppercase text-slate-700">Directorio Institucional de Cuentas</h3>' +
+                        '<span class="text-[10px] font-bold text-slate-500" id="usr-counter-label">Cargando directorio...</span>' +
+                    '</div>' +
+                    '<div class="overflow-x-auto max-h-[380px] overflow-y-auto">' +
+                        '<table class="w-full text-left text-xs text-slate-600">' +
+                            '<thead class="bg-slate-50 text-[10px] font-black uppercase text-slate-500 sticky top-0">' +
+                                '<tr>' +
+                                    '<th class="px-4 py-2">ID Usuario</th>' +
+                                    '<th class="px-4 py-2">Nombre / Email</th>' +
+                                    '<th class="px-4 py-2">Rol Asignado</th>' +
+                                    '<th class="px-4 py-2">Estado</th>' +
+                                    '<th class="px-4 py-2 text-right">Acciones</th>' +
+                                '</tr>' +
+                            '</thead>' +
+                            '<tbody id="usr-table-tbody" class="divide-y divide-slate-100">' +
+                                '<tr><td colspan="5" class="px-4 py-6 text-center text-slate-400 font-bold">Cargando lista de usuarios...</td></tr>' +
+                            '</tbody>' +
+                        '</table>' +
+                    '</div>' +
+                '</div>' +
+            '</div>' +
+        '</div>' +
+    '</div>';
+
+    document.body.insertAdjacentHTML("beforeend", modalHtml);
+
+    var modalContainer = document.getElementById("modal-user-management-admin");
+    var closeBtn = document.getElementById("btn-close-usr-admin-modal");
+    var applyFiltersBtn = document.getElementById("btn-apply-usr-filters");
+
+    function closeModal() {
+        modalContainer.remove();
+        if (window.lastActiveElementBeforeModal && typeof window.lastActiveElementBeforeModal.focus === "function") {
+            window.lastActiveElementBeforeModal.focus();
+        }
+    }
+
+    closeBtn.addEventListener("click", closeModal);
+    modalContainer.addEventListener("click", function(e) {
+        if (e.target === modalContainer) closeModal();
+    });
+
+    function loadUsersList() {
+        var query = document.getElementById("usr-search-query").value;
+        var state = document.getElementById("usr-filter-state").value;
+        var tbody = document.getElementById("usr-table-tbody");
+
+        tbody.innerHTML = '<tr><td colspan="5" class="px-4 py-6 text-center text-slate-400 font-bold"><i class="fa-solid fa-spinner animate-spin mr-2"></i> Cargando usuarios...</td></tr>';
+
+        fetchApi("getStudents", { search: query, estadoFilter: state }, "USER")
+        .then(function(res) {
+            var users = (res && res.data) ? res.data : [];
+            document.getElementById("usr-counter-label").textContent = "Total usuarios: " + users.length;
+
+            if (users.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" class="px-4 py-6 text-center text-slate-400 font-bold">No se encontraron usuarios.</td></tr>';
+                return;
+            }
+
+            var html = "";
+            users.forEach(function(u) {
+                var stClass = "bg-emerald-100 text-emerald-800";
+                if (u.estadoCuenta === "Suspendida" || u.estadoCuenta === "Bloqueada") stClass = "bg-amber-100 text-amber-800";
+                if (u.estadoCuenta === "Desactivada") stClass = "bg-red-100 text-red-800";
+
+                html += '<tr class="hover:bg-slate-50 transition-colors">' +
+                    '<td class="px-4 py-2 font-mono text-[10px] text-slate-500">' + (u.userId || u.id || "-") + '</td>' +
+                    '<td class="px-4 py-2"><p class="font-bold text-slate-800">' + (u.nombre || u.nombreCompleto || "-") + '</p><p class="text-[10px] text-slate-400">' + (u.email || "-") + '</p></td>' +
+                    '<td class="px-4 py-2"><span class="px-2 py-0.5 rounded-full text-[10px] bg-slate-100 font-bold text-slate-700">' + (u.rol || u.authRole || "Estudiante") + '</span></td>' +
+                    '<td class="px-4 py-2"><span class="px-2 py-0.5 rounded-full text-[10px] font-bold ' + stClass + '">' + (u.estadoCuenta || "Activa") + '</span></td>' +
+                    '<td class="px-4 py-2 text-right space-x-1">' +
+                        '<button class="btn-change-state text-blue-600 hover:text-blue-800 font-bold text-[11px] px-2 py-1 rounded bg-blue-50 hover:bg-blue-100" data-id="' + (u.userId || u.id) + '" data-state="' + (u.estadoCuenta || "Activa") + '"><i class="fa-solid fa-sliders mr-1"></i> Estado</button>' +
+                    '</td>' +
+                '</tr>';
+            });
+            tbody.innerHTML = html;
+
+            tbody.querySelectorAll(".btn-change-state").forEach(function(btn) {
+                btn.addEventListener("click", function() {
+                    var uid = btn.getAttribute("data-id");
+                    var currSt = btn.getAttribute("data-state");
+                    var newSt = prompt("Seleccione el nuevo estado para el usuario (" + uid + "):\n[Activa, Suspendida, Bloqueada, Desactivada]", currSt === "Activa" ? "Suspendida" : "Activa");
+                    if (newSt && newSt !== currSt) {
+                        if (confirm("¿Confirmar cambio de estado de '" + currSt + "' a '" + newSt + "' para el usuario " + uid + "?")) {
+                            fetchApi("manageAccountState", { userId: uid, newState: newSt, motivo: "Cambio administrativo desde panel de usuarios" }, "USER")
+                            .then(function(changeRes) {
+                                if (changeRes && changeRes.status === "success") {
+                                    alert(changeRes.message || "Estado actualizado exitosamente.");
+                                    loadUsersList();
+                                } else {
+                                    alert("Error: " + (changeRes.message || "No se pudo cambiar el estado."));
+                                }
+                            })
+                            .catch(function(err) {
+                                alert("Error: " + err.message);
+                            });
+                        }
+                    }
+                });
+            });
+        })
+        .catch(function(err) {
+            tbody.innerHTML = '<tr><td colspan="5" class="px-4 py-6 text-center text-red-500 font-bold">Error de conexión: ' + err.message + '</td></tr>';
+        });
+    }
+
+    applyFiltersBtn.addEventListener("click", loadUsersList);
+    loadUsersList();
+};
+
 // [TAREA-F4-P1-09] [Fase 4: Panel de Seguridad, Auditoría y Cumplimiento Institucional] - Tablero administrativo interactivo para monitoreo de intentos fallidos, accesos revocados, delegaciones activas e indicadores de salud
 window.openSecurityAndComplianceDashboardModal = function(triggerEl) {
     if (typeof trackModalFocus === "function") trackModalFocus(triggerEl || document.activeElement);
