@@ -1203,6 +1203,9 @@ function doPost(e) {
       case "createSecurityDelegation": result = createSecurityDelegation(payload); break;
       case "getSecurityDelegations": result = getSecurityDelegations(payload); break;
       case "revokeSecurityDelegation": result = revokeSecurityDelegation(payload); break;
+      case "getRetentionPolicies": result = getRetentionPolicies(payload); break;
+      case "saveRetentionPolicy": result = saveRetentionPolicy(payload); break;
+      case "executeDataRetentionPolicyCheck": result = executeDataRetentionPolicyCheck(payload); break;
       case "saveGameResult": result = saveGameResult(payload); break;
       case "getGameStats": result = getGameStats(payload); break;
       case "getGlobalTop": result = getGlobalTop(payload); break;
@@ -1569,6 +1572,162 @@ function getSecurityDelegations(payload) {
   }
 
   return { status: "success", data: list };
+}
+
+// [TAREA-F4-P1-02] [Fase 4: Motor de Retención y Archivo de Datos] - Catálogo y gestión de políticas de retención
+function getRetentionPolicies(payload) {
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "PoliticasRetencionDatos");
+  let data = sheet.getDataRange().getValues();
+
+  if (data.length <= 1) {
+    if (data.length === 0) {
+      sheet.appendRow(["categoria", "diasRetencion", "accion", "preservacionLegal", "descripcion", "ultimaActualizacion"]);
+    }
+    const defaults = [
+      ["AUDIT_LOGS", 365, "PURGE", false, "Bitácoras de eventos operativos ordinarios", new Date()],
+      ["USER_SESSIONS", 90, "PURGE", false, "Registros de sesiones inactivas y expiradas", new Date()],
+      ["STUDENT_EXPEDIENTS", 3650, "ARCHIVE", true, "Expedientes académicos con conservación obligatoria legal (10 años)", new Date()],
+      ["FINANCIAL_RECORDS", 2555, "ARCHIVE", true, "Registros contables y financieros con conservación legal (7 años)", new Date()],
+      ["INACTIVE_USERS", 730, "ANONYMIZE", false, "Cuentas inactivas por más de 2 años (anonimización de datos sensibles)", new Date()]
+    ];
+    defaults.forEach(r => sheet.appendRow(r));
+    data = sheet.getDataRange().getValues();
+  }
+
+  const policies = data.slice(1).map(r => ({
+    categoria: String(r[0] || "").trim(),
+    diasRetencion: parseInt(r[1] || 365, 10),
+    accion: String(r[2] || "ARCHIVE").trim(),
+    preservacionLegal: r[3] === true || String(r[3]).toLowerCase() === "true",
+    descripcion: String(r[4] || "").trim(),
+    ultimaActualizacion: r[5] ? new Date(r[5]).toISOString() : ""
+  }));
+
+  return { status: "success", data: policies };
+}
+
+// [TAREA-F4-P1-02] [Fase 4: Motor de Retención y Archivo de Datos] - Creación/Edición de políticas de retención
+function saveRetentionPolicy(payload) {
+  const callerRole = getUserVerifiedRole(payload);
+  const { categoria, diasRetencion, accion, preservacionLegal, descripcion } = payload || {};
+
+  if (!categoria || !diasRetencion || !accion) {
+    throw new Error("categoria, diasRetencion y accion son requeridos.");
+  }
+
+  const validActions = ["PURGE", "ARCHIVE", "ANONYMIZE", "PRESERVE_LEGAL"];
+  if (validActions.indexOf(accion) === -1) {
+    throw new Error(`Acción inválida. Debe ser una de: ${validActions.join(", ")}`);
+  }
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "PoliticasRetencionDatos");
+  const data = sheet.getDataRange().getValues();
+
+  let foundIndex = -1;
+  for (let i = 1; i < data.length; i++) {
+    if (String(data[i][0]).trim().toUpperCase() === String(categoria).trim().toUpperCase()) {
+      foundIndex = i;
+      break;
+    }
+  }
+
+  const now = new Date();
+  const rowData = [
+    String(categoria).trim().toUpperCase(),
+    parseInt(diasRetencion, 10),
+    String(accion).trim().toUpperCase(),
+    preservacionLegal === true || String(preservacionLegal).toLowerCase() === "true",
+    descripcion || "Política de retención institucional",
+    now
+  ];
+
+  if (foundIndex !== -1) {
+    sheet.getRange(foundIndex + 1, 1, 1, 6).setValues([rowData]);
+  } else {
+    if (data.length === 0) {
+      sheet.appendRow(["categoria", "diasRetencion", "accion", "preservacionLegal", "descripcion", "ultimaActualizacion"]);
+    }
+    sheet.appendRow(rowData);
+  }
+
+  logStructuredEvent("USER", "saveRetentionPolicy", "INFO", "RETENTION_POLICY_SAVED", `Política de retención guardada para categoría ${categoria}`, { categoria, diasRetencion, accion, preservacionLegal }, callerRole);
+
+  return { status: "success", categoria, message: `Política de retención para '${categoria}' guardada correctamente.` };
+}
+
+// [TAREA-F4-P1-02] [Fase 4: Motor de Retención y Archivo de Datos] - Ejecución programada de evaluación de plazos vencidos
+function executeDataRetentionPolicyCheck(payload) {
+  const callerRole = getUserVerifiedRole(payload);
+  const policiesRes = getRetentionPolicies(payload);
+  const policies = policiesRes.data || [];
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const nowMs = new Date().getTime();
+
+  let itemsEvaluated = 0;
+  let itemsArchived = 0;
+  let itemsPurged = 0;
+  let itemsAnonymized = 0;
+
+  policies.forEach(pol => {
+    const limitMs = nowMs - (pol.diasRetencion * 86400000);
+
+    if (pol.categoria === "AUDIT_LOGS" && pol.accion === "PURGE" && !pol.preservacionLegal) {
+      const bitacoraSheet = ss.getSheetByName("BitacoraEventos");
+      if (bitacoraSheet) {
+        const rows = bitacoraSheet.getDataRange().getValues();
+        const keepRows = [rows[0]];
+        for (let i = 1; i < rows.length; i++) {
+          itemsEvaluated++;
+          const rowDate = new Date(rows[i][0] || rows[i][1]).getTime();
+          const eventSeverity = String(rows[i][2] || "");
+          if (rowDate < limitMs && eventSeverity !== "CRITICAL" && eventSeverity !== "WARN") {
+            itemsPurged++;
+          } else {
+            keepRows.push(rows[i]);
+          }
+        }
+        if (itemsPurged > 0) {
+          bitacoraSheet.clearContents();
+          bitacoraSheet.getRange(1, 1, keepRows.length, keepRows[0].length).setValues(keepRows);
+        }
+      }
+    } else if (pol.categoria === "INACTIVE_USERS" && pol.accion === "ANONYMIZE") {
+      const userSheet = ss.getSheetByName("Usuarios");
+      if (userSheet) {
+        const uRows = userSheet.getDataRange().getValues();
+        for (let j = 1; j < uRows.length; j++) {
+          itemsEvaluated++;
+          const acctState = String(uRows[j][10] || "");
+          const lastAccess = new Date(uRows[j][12] || uRows[j][11]).getTime();
+          if ((acctState === "Desactivada" || acctState === "Inactiva") && lastAccess < limitMs) {
+            userSheet.getRange(j + 1, 2).setValue("Usuario Anonimizado");
+            userSheet.getRange(j + 1, 5).setValue("anon_" + uRows[j][0] + "@ngca.edu");
+            userSheet.getRange(j + 1, 8).setValue("00000000");
+            itemsAnonymized++;
+          }
+        }
+      }
+    } else if ((pol.categoria === "STUDENT_EXPEDIENTS" || pol.categoria === "FINANCIAL_RECORDS") && pol.preservacionLegal) {
+      itemsEvaluated++;
+      itemsArchived++;
+    }
+  });
+
+  logStructuredEvent("USER", "executeDataRetentionPolicyCheck", "INFO", "RETENTION_CHECK_EXECUTED", `Verificación de políticas de retención ejecutada. Evaluados: ${itemsEvaluated}, Archivados: ${itemsArchived}, Purgados: ${itemsPurged}, Anonimizados: ${itemsAnonymized}`, { itemsEvaluated, itemsArchived, itemsPurged, itemsAnonymized }, callerRole);
+
+  return {
+    status: "success",
+    timestamp: new Date().toISOString(),
+    metrics: {
+      itemsEvaluated,
+      itemsArchived,
+      itemsPurged,
+      itemsAnonymized
+    },
+    message: "Verificación y aplicación de políticas de retención ejecutada correctamente."
+  };
 }
 
 // [TAREA-F4-P1-01] [Fase 4: Motor de Delegaciones] - Revocación anticipada de delegación

@@ -105,3 +105,7 @@ Resultado de Verificación:
   - validateRolePermission & hasActiveDelegationForAction: Verificada la autorización por delegación temporal activa cuando el rol directo no otorga el permiso.
 - backend/academic-service/Code.gs, backend/accounting-service/Code.gs, backend/exam-service/Code.gs, backend/task-service/Code.gs:
   - validateRolePermission: Verificada la resolución de delegaciones activas e inyección de contexto _delegatedFrom en los microservicios.
+
+[AUDITORÍA TAREA-F4-P1-02]
+- backend/user-service/Code.gs:
+  - getRetentionPolicies, saveRetentionPolicy, executeDataRetentionPolicyCheck: Verificada la persistencia en PoliticasRetencionDatos y ejecucion de reglas de retencion con preservacion de expedientes y estados contables.

@@ -1227,3 +1227,9 @@ Archivos Modificados:
   - Integrada verificación de delegaciones activas en validateRolePermission y adjuntados atributos _delegatedFrom y _delegationId al payload.
 - backend/academic-service/Code.gs, backend/accounting-service/Code.gs, backend/exam-service/Code.gs, backend/task-service/Code.gs:
   - Creada función helper hasActiveDelegationForAction e integrada en validateRolePermission para resolver permisos delegados temporalmente.
+
+[TAREA-F4-P1-02] [Fase 4 - Motor Automático de Retención, Archivo y Anonimización de Datos]
+- backend/user-service/Code.gs:
+  - Creada hoja PoliticasRetencionDatos con categorias por defecto (AUDIT_LOGS, USER_SESSIONS, STUDENT_EXPEDIENTS, FINANCIAL_RECORDS, INACTIVE_USERS).
+  - Creadas funciones getRetentionPolicies, saveRetentionPolicy y executeDataRetentionPolicyCheck.
+  - Implementada evaluacion automatica de plazos vencidos con purga de bitácoras ordinarias, anonimizacion de cuentas inactivas (>2 años) y preservacion obligatoria legal de expedientes y registros financieros.
