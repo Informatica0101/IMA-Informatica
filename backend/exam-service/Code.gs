@@ -137,7 +137,11 @@ function verifySessionToken(tokenString) {
     return null;
   }
   try {
-    const jsonStr = Utilities.newBlob(Utilities.base64DecodeWebSafe(payloadB64)).getDataAsString();
+    let normalizedB64 = payloadB64.replace(/-/g, '+').replace(/_/g, '/');
+    while (normalizedB64.length % 4 !== 0) {
+      normalizedB64 += '=';
+    }
+    const jsonStr = Utilities.newBlob(Utilities.base64Decode(normalizedB64)).getDataAsString();
     const claims = JSON.parse(jsonStr);
     const now = Math.floor(Date.now() / 1000);
     if (claims.exp && now > claims.exp) {

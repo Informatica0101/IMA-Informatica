@@ -300,7 +300,11 @@ function verifySessionToken(tokenString) {
     return null;
   }
   try {
-    const jsonStr = Utilities.newBlob(Utilities.base64DecodeWebSafe(payloadB64)).getDataAsString();
+    let normalizedB64 = payloadB64.replace(/-/g, '+').replace(/_/g, '/');
+    while (normalizedB64.length % 4 !== 0) {
+      normalizedB64 += '=';
+    }
+    const jsonStr = Utilities.newBlob(Utilities.base64Decode(normalizedB64)).getDataAsString();
     const claims = JSON.parse(jsonStr);
     const now = Math.floor(Date.now() / 1000);
     if (claims.exp && now > claims.exp) {
@@ -3010,11 +3014,21 @@ function configurePaymentConcept(payload) {
   return { status: "success", conceptoId: cId, message: "Concepto de cobro configurado correctamente." };
 }
 
+// [TAREA-F4-P0-02] [Fase 4: Protección IDOR y ABAC] - Aislamiento estricto de estado de cuenta por estudiante
 function getStudentAccountStatement(payload) {
-  const { userId } = payload || {};
-  if (!userId) throw new Error("userId requerido.");
+  const callerRole = (payload && payload._verifiedRole) || "Estudiante";
+  let targetUserId = payload && payload.userId;
+
+  if ((callerRole === "Estudiante" || callerRole === "Alumno") && payload._verifiedUserId) {
+    targetUserId = payload._verifiedUserId;
+  }
+  if (!targetUserId && payload && payload._verifiedUserId) {
+    targetUserId = payload._verifiedUserId;
+  }
+  if (!targetUserId) throw new Error("userId requerido.");
+
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
-  const sUserId = String(userId).trim();
+  const sUserId = String(targetUserId).trim();
 
   const cargosRows = getOrCreateSheet(ss, "CargosEstudiante").getDataRange().getValues().slice(1);
   const pagosRows = getOrCreateSheet(ss, "PagosAbonos").getDataRange().getValues().slice(1);
@@ -3194,8 +3208,15 @@ function uploadPaymentVoucher(payload) {
   };
 }
 
+// [TAREA-F4-P0-02] [Fase 4: Protección IDOR y ABAC] - Aislamiento estricto de comprobantes de pago por usuario
 function getPaymentVouchers(payload) {
-  const { userId, estado } = payload || {};
+  const callerRole = (payload && payload._verifiedRole) || "Estudiante";
+  let { userId, estado } = payload || {};
+
+  if ((callerRole === "Estudiante" || callerRole === "Alumno") && payload._verifiedUserId) {
+    userId = payload._verifiedUserId;
+  }
+
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
   const rows = getOrCreateSheet(ss, "ComprobantesPago").getDataRange().getValues().slice(1);
 

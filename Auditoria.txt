@@ -64,3 +64,11 @@ Resultado de Verificación:
   - invalidateUserRoleCache: Purgado dinámico de estado de cuenta acct_state_<userId> y rol user_role_<userId>.
   - manageAccountState: Invalidación en tiempo real de sesión/rol e inyección directa en caché de script.
   - updateUserProfile: Invocación de invalidateUserRoleCache tras persistencia en hoja Usuarios.
+
+[AUDITORÍA TAREA-F4-P0-02]
+- backend/user-service/Code.gs:
+  - getUserInfo: Verificado aislamiento por _verifiedUserId y fallback automatico de consulta propia.
+- backend/accounting-service/Code.gs:
+  - getStudentAccountStatement & getPaymentVouchers: Verificada proteccion IDOR para estudiantes usando _verifiedUserId.
+- backend/academic-service/Code.gs, backend/exam-service/Code.gs, backend/task-service/Code.gs:
+  - Verificada sobreescritura de identificadores privados por contexto autenticado _verifiedUserId.
