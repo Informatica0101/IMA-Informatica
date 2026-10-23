@@ -29,7 +29,7 @@
   - [X] Todas las acciones protegidas de los cinco servicios pasan por el mismo control de autenticación.
 - **Estado:** [X] Completada
 
-### [ ] [TAREA-F4-P0-02] Corregir las vulnerabilidades IDOR y garantizar el aislamiento de datos personales
+### [X] [TAREA-F4-P0-02] Corregir las vulnerabilidades IDOR y garantizar el aislamiento de datos personales
 - **Origen del Hallazgo:** Auditoría de la Fase 4 (AUDITORIA_FASE4_IDENTIDAD_PERMISOS_GOBIERNO.md - HALLAZGO-F4-P0-02)
 - **Severidad/Clasificación:** Crítico · Seguridad · Protección de datos · Backend
 - **Archivos Involucrados:** `backend/user-service/Code.gs`, `backend/academic-service/Code.gs`, `backend/accounting-service/Code.gs`, `backend/exam-service/Code.gs`, `backend/task-service/Code.gs`
@@ -43,14 +43,14 @@
   6. Para docentes, limitar las operaciones a las asignaturas, secciones y estudiantes asignados en `AsignacionesDocentes`.
   7. Forzar la sobreescritura o verificación estricta de `userId` / `studentId` en el backend.
 - **Criterios de Aceptación:**
-  - [ ] Un estudiante no puede consultar ni modificar el expediente de otro estudiante alterando un identificador.
-  - [ ] Un tutor no puede acceder a estudiantes con los que no mantiene una relación autorizada.
-  - [ ] Un docente no puede acceder a estudiantes, grupos o asignaturas ajenos a su ámbito de asignación.
-  - [ ] Un usuario sin privilegios financieros no puede acceder a documentos contables modificando identificadores.
-  - [ ] Se conserva la integridad de los historiales académicos, administrativos y contables.
-- **Estado:** [ ] Pendiente
+  - [X] Un estudiante no puede consultar ni modificar el expediente de otro estudiante alterando un identificador.
+  - [X] Un tutor no puede acceder a estudiantes con los que no mantiene una relación autorizada.
+  - [X] Un docente no puede acceder a estudiantes, grupos o asignaturas ajenos a su ámbito de asignación.
+  - [X] Un usuario sin privilegios financieros no puede acceder a documentos contables modificando identificadores.
+  - [X] Se conserva la integridad de los historiales académicos, administrativos y contables.
+- **Estado:** [X] Completada
 
-### [ ] [TAREA-F4-P0-03] Garantizar la revocación efectiva de sesiones y la actualización inmediata de privilegios
+### [X] [TAREA-F4-P0-03] Garantizar la revocación efectiva de sesiones y la actualización inmediata de privilegios
 - **Origen del Hallazgo:** Auditoría de la Fase 4 (AUDITORIA_FASE4_IDENTIDAD_PERMISOS_GOBIERNO.md - HALLAZGO-F4-P0-03)
 - **Severidad/Clasificación:** Crítico · Seguridad · Gestión de sesiones · Backend
 - **Archivos Involucrados:** `backend/user-service/Code.gs`, `backend/academic-service/Code.gs`, `backend/accounting-service/Code.gs`, `backend/exam-service/Code.gs`, `backend/task-service/Code.gs`, `js/auth.js`, `js/api.js`, `js/ui-common.js`
@@ -62,13 +62,13 @@
   4. Impedir la reutilización de credenciales revocadas o expiradas en los 5 microservicios.
   5. Manejar respuestas del cliente ante revocación redirigiendo a login de forma limpia.
 - **Criterios de Aceptación:**
-  - [ ] Una cuenta desactivada no puede ejecutar operaciones protegidas en ninguno de los cinco servicios.
-  - [ ] Una sesión revocada no vuelve a ser válida por reutilizar su token.
-  - [ ] Una reducción de privilegios impide seguir utilizando los permisos retirados.
-  - [ ] La expiración de sesión se gestiona correctamente tanto en el cliente como en el backend.
-- **Estado:** [ ] Pendiente
+  - [X] Una cuenta desactivada no puede ejecutar operaciones protegidas en ninguno de los cinco servicios.
+  - [X] Una sesión revocada no vuelve a ser válida por reutilizar su token.
+  - [X] Una reducción de privilegios impide seguir utilizando los permisos retirados.
+  - [X] La expiración de sesión se gestiona correctamente tanto en el cliente como en el backend.
+- **Estado:** [X] Completada
 
-### [ ] [TAREA-F4-P0-04] Registrar los intentos fallidos de autenticación y reforzar la protección contra ataques
+### [X] [TAREA-F4-P0-04] Registrar los intentos fallidos de autenticación y reforzar la protección contra ataques
 - **Origen del Hallazgo:** Auditoría de la Fase 4 (AUDITORIA_FASE4_IDENTIDAD_PERMISOS_GOBIERNO.md - HALLAZGO-F4-P0-04)
 - **Severidad/Clasificación:** Crítico · Seguridad · Auditoría · Autenticación
 - **Archivos Involucrados:** `backend/user-service/Code.gs`, `BitacoraEventos`, `BitacoraTraceability`
@@ -80,17 +80,17 @@
   4. Aplicar límites de intentos fallidos antes de bloquear temporalmente la IP/cuenta.
   5. Asegurar respuestas genéricas que no revelen innecesariamente si el correo existe.
 - **Criterios de Aceptación:**
-  - [ ] Las contraseñas incorrectas generan eventos LOGIN_FAILED.
-  - [ ] Las cuentas bloqueadas, suspendidas y desactivadas generan registros categorizados.
-  - [ ] Ninguna bitácora contiene contraseñas ni tokens reutilizables.
-  - [ ] Las respuestas de autenticación no revelan innecesariamente si una cuenta existe.
-- **Estado:** [ ] Pendiente
+  - [X] Las contraseñas incorrectas generan eventos LOGIN_FAILED.
+  - [X] Las cuentas bloqueadas, suspendidas y desactivadas generan registros categorizados.
+  - [X] Ninguna bitácora contiene contraseñas ni tokens reutilizables.
+  - [X] Las respuestas de autenticación no revelan innecesariamente si una cuenta existe.
+- **Estado:** [X] Completada
 
 ---
 
 ## GRUPO PRIORIDAD P1 (ALTO)
 
-### [ ] [TAREA-F4-P1-01] Implementar el motor transversal de delegaciones de seguridad y permisos temporales
+### [X] [TAREA-F4-P1-01] Implementar el motor transversal de delegaciones de seguridad y permisos temporales
 - **Origen del Hallazgo:** Auditoría de la Fase 4 (AUDITORIA_FASE4_IDENTIDAD_PERMISOS_GOBIERNO.md - HALLAZGO-F4-P1-01)
 - **Severidad/Clasificación:** Alto · Seguridad · Gobierno Institucional
 - **Archivos Involucrados:** `backend/user-service/Code.gs`, `backend/academic-service/Code.gs`, `backend/accounting-service/Code.gs`, `js/ui-common.js`
@@ -101,13 +101,13 @@
   3. Validar caducidad en el motor de permisos y permitir revocación anticipada.
   4. Registrar actor ejecutor real y delegante titular en las bitácoras.
 - **Criterios de Aceptación:**
-  - [ ] Se pueden crear delegaciones con permisos y ámbitos delimitados.
-  - [ ] Las delegaciones expiran automáticamente en la fecha/hora programada.
-  - [ ] Una delegación revocada deja de autorizar operaciones posteriores.
-  - [ ] Las bitácoras identifican al ejecutor real, al delegante y la delegación usada.
-- **Estado:** [ ] Pendiente
+  - [X] Se pueden crear delegaciones con permisos y ámbitos delimitados.
+  - [X] Las delegaciones expiran automáticamente en la fecha/hora programada.
+  - [X] Una delegación revocada deja de autorizar operaciones posteriores.
+  - [X] Las bitácoras identifican al ejecutor real, al delegante y la delegación usada.
+- **Estado:** [X] Completada
 
-### [ ] [TAREA-F4-P1-02] Implementar el motor automático de retención, archivo y anonimización de datos
+### [X] [TAREA-F4-P1-02] Implementar el motor automático de retención, archivo y anonimización de datos
 - **Origen del Hallazgo:** Auditoría de la Fase 4 (AUDITORIA_FASE4_IDENTIDAD_PERMISOS_GOBIERNO.md - HALLAZGO-F4-P1-02)
 - **Severidad/Clasificación:** Alto · Privacidad · Protección de datos
 - **Archivos Involucrados:** `backend/user-service/Code.gs`, `backend/academic-service/Code.gs`, `backend/accounting-service/Code.gs`
@@ -118,12 +118,12 @@
   3. Permitir acciones de archivo, restricción de acceso, anonimización o purga autorizada.
   4. Preservar registros académicos y contables con conservación legal obligatoria.
 - **Criterios de Aceptación:**
-  - [ ] Cada categoría de información tiene una política de retención identificable.
-  - [ ] Los registros sujetos a conservación obligatoria no se eliminan.
-  - [ ] Las operaciones de archivo, anonimización y purga quedan auditadas.
-- **Estado:** [ ] Pendiente
+  - [X] Cada categoría de información tiene una política de retención identificable.
+  - [X] Los registros sujetos a conservación obligatoria no se eliminan.
+  - [X] Las operaciones de archivo, anonimización y purga quedan auditadas.
+- **Estado:** [X] Completada
 
-### [ ] [TAREA-F4-P1-03] Implementar una matriz dinámica de permisos por rol, acción, módulo y ámbito
+### [X] [TAREA-F4-P1-03] Implementar una matriz dinámica de permisos por rol, acción, módulo y ámbito
 - **Origen del Hallazgo:** Auditoría de la Fase 4 (AUDITORIA_FASE4_IDENTIDAD_PERMISOS_GOBIERNO.md)
 - **Severidad/Clasificación:** Alto · Autorización · Administración
 - **Archivos Involucrados:** `backend/user-service/Code.gs`, `js/ui-common.js`, Dashboards
@@ -133,12 +133,12 @@
   2. Proporcionar un editor visual en la interfaz administrativa para gestionar permisos sin editar código.
   3. Guardar versiones de la matriz con auditoría de cambios.
 - **Criterios de Aceptación:**
-  - [ ] La matriz muestra permisos efectivos por rol y módulo.
-  - [ ] Permite modificar reglas y propagar la actualización a los microservicios.
-  - [ ] Los cambios quedan auditados.
-- **Estado:** [ ] Pendiente
+  - [X] La matriz muestra permisos efectivos por rol y módulo.
+  - [X] Permite modificar reglas y propagar la actualización a los microservicios.
+  - [X] Los cambios quedan auditados.
+- **Estado:** [X] Completada
 
-### [ ] [TAREA-F4-P1-04] Implementar una política unificada de autorización contextual RBAC/ABAC
+### [X] [TAREA-F4-P1-04] Implementar una política unificada de autorización contextual RBAC/ABAC
 - **Origen del Hallazgo:** Auditoría de la Fase 4 (AUDITORIA_FASE4_IDENTIDAD_PERMISOS_GOBIERNO.md)
 - **Severidad/Clasificación:** Alto · Seguridad · Backend
 - **Archivos Involucrados:** `backend/*/Code.gs`
@@ -147,11 +147,11 @@
   1. Integrar reglas ABAC (atributos de contexto, asignaciones docentes, vínculos familiares) en `validateRolePermission`.
   2. Aplicar validaciones a consultas, creaciones, modificaciones, eliminaciones y exportaciones.
 - **Criterios de Aceptación:**
-  - [ ] Un permiso general no concede acceso a registros ajenos al ámbito del usuario.
-  - [ ] Las exportaciones respetan las mismas reglas contextuales que las consultas.
-- **Estado:** [ ] Pendiente
+  - [X] Un permiso general no concede acceso a registros ajenos al ámbito del usuario.
+  - [X] Las exportaciones respetan las mismas reglas contextuales que las consultas.
+- **Estado:** [X] Completada
 
-### [ ] [TAREA-F4-P1-05] Incorporar un panel de gobierno de privacidad y gestión de derechos sobre datos
+### [X] [TAREA-F4-P1-05] Incorporar un panel de gobierno de privacidad y gestión de derechos sobre datos
 - **Origen del Hallazgo:** Auditoría de la Fase 4 (AUDITORIA_FASE4_IDENTIDAD_PERMISOS_GOBIERNO.md)
 - **Severidad/Clasificación:** Alto · Privacidad · Administración
 - **Archivos Involucrados:** `backend/user-service/Code.gs`, `politica-de-privacidad.html`, `js/ui-common.js`
@@ -160,9 +160,9 @@
   1. Crear el módulo de solicitudes de derechos de privacidad (acceso, rectificación, exportación, eliminación).
   2. Proveer flujo de revisión para administradores y respuesta al usuario.
 - **Criterios de Aceptación:**
-  - [ ] Permite registrar, tramitar y responder solicitudes de derechos sobre datos personales.
-  - [ ] Las solicitudes quedan auditadas con su estado.
-- **Estado:** [ ] Pendiente
+  - [X] Permite registrar, tramitar y responder solicitudes de derechos sobre datos personales.
+  - [X] Las solicitudes quedan auditadas con su estado.
+- **Estado:** [X] Completada
 
 ### [X] [TAREA-F4-P1-06] Fortalecer la trazabilidad mediante historial de cambios y auditoría de versiones
 - **Origen del Hallazgo:** Auditoría de la Fase 4 (AUDITORIA_FASE4_IDENTIDAD_PERMISOS_GOBIERNO.md)
@@ -203,7 +203,7 @@
   - [X] Permite recuperar sincronizaciones fallidas mediante cola de reintentos.
 - **Estado:** [X] Completada
 
-### [ ] [TAREA-F4-P1-09] Crear un panel de seguridad, auditoría y cumplimiento institucional
+### [X] [TAREA-F4-P1-09] Crear un panel de seguridad, auditoría y cumplimiento institucional
 - **Origen del Hallazgo:** Auditoría de la Fase 4 (AUDITORIA_FASE4_IDENTIDAD_PERMISOS_GOBIERNO.md)
 - **Severidad/Clasificación:** Alto · Observabilidad · Seguridad
 - **Archivos Involucrados:** `js/ui-common.js`, `dashboard-direccion.html`, `backend/user-service/Code.gs`
@@ -211,9 +211,9 @@
 - **Descripción del Alcance:**
   1. Construir un tablero administrativo de seguridad para monitorear intentos fallidos, accesos revocados, delegaciones activas e indicadores de salud.
 - **Criterios de Aceptación:**
-  - [ ] Muestra el estado consolidado de seguridad de los 5 microservicios.
-  - [ ] Permite filtrar la bitácora por fecha, usuario y tipo de evento.
-- **Estado:** [ ] Pendiente
+  - [X] Muestra el estado consolidado de seguridad de los 5 microservicios.
+  - [X] Permite filtrar la bitácora por fecha, usuario y tipo de evento.
+- **Estado:** [X] Completada
 
 ---
 

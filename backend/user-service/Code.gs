@@ -940,7 +940,7 @@ const ROLE_PERMISSIONS = {
     "getInstitutionalCriteria", "saveInstitutionalCriterion", "getFormativeEvaluations", "saveFormativeEvaluation", "getSupportPlans", "saveSupportPlan",
     "createLinkInvitation", "acceptLinkInvitation", "getGuardianStudents", "getInstitutionalAnnouncements", "createInstitutionalAnnouncement", "submitAnnouncementReceiptConfirmation", "getAnnouncementReadReport", "getDepartmentalWorkInbox", "closeConversationThread", "getInternalConversations", "getInternalMessages", "sendInternalMessage", "getUserNotifications", "getUnifiedNotifications", "markNotificationAsRead", "createUserNotification", "sendMultiChannelNotification", "getNotificationPreferences", "getAdministrativeRequests", "getAdministrativeRequestsHistory", "submitAdministrativeRequest", "submitStudentAbsenceJustification", "getStudentAbsenceJustifications", "reviewAbsenceJustification", "updateRequestStatus", "saveInstitutionalForm", "getInstitutionalForms", "submitInstitutionalFormRequest", "saveApprovalWorkflow", "getApprovalWorkflows", "processWorkflowDecision", "getWorkflowHistory", "registerDocumentSignature", "configureNotificationChannel", "getNotificationChannelConfigs", "sendChannelNotificationTest", "getAppointmentBookings", "bookAppointment", "updateAppointmentStatus", "getInstitutionalCalendarEvents", "getPendingReminders",
     "getUserSettings", "saveUserSettings", "getSystemConfigurations", "saveSystemConfiguration", "getProviderIntegrations", "configureProviderIntegration",
-    "updateTicketStatus", "saveVisualPaletteProposal", "approveVisualPaletteProposal", "registerAndDispatchEvent", "retryFailedEventsQueue", "recordTraceabilityLog", "getTraceabilityCorrelationLogs", "getOperationalCapacityMetrics", "runInterdepartmentalIntegrationTestSuite", "getSharedConfigurationsCatalog", "manageInstitutionalDataCache", "purgeSecurityCaches", "dispatchSecurityEvent", "processSecurityEventQueue", "getSecurityEventsQueue"
+    "updateTicketStatus", "saveVisualPaletteProposal", "approveVisualPaletteProposal", "registerAndDispatchEvent", "retryFailedEventsQueue", "recordTraceabilityLog", "getTraceabilityCorrelationLogs", "getOperationalCapacityMetrics", "runInterdepartmentalIntegrationTestSuite", "getSharedConfigurationsCatalog", "manageInstitutionalDataCache", "purgeSecurityCaches", "dispatchSecurityEvent", "processSecurityEventQueue", "getSecurityEventsQueue", "getSecurityAndComplianceDashboardData"
   ],
   "Subdirector": [
     "createNews", "uploadNewsImage", "getNews", "updateNewsStatus", "getStudents", "getStudentsByGradoSeccion", "getUserInfo", "saveGameResult", "getGameStats", "getGlobalTop", "recordAnalytics", "getLearningProfile", "mergeGuestData", "updateUserProfile", "findPersonMatches", "generateInstitutionalId",
@@ -1308,6 +1308,7 @@ function doPost(e) {
       case "dispatchSecurityEvent": result = dispatchSecurityEvent(payload); break;
       case "processSecurityEventQueue": result = processSecurityEventQueue(payload); break;
       case "getSecurityEventsQueue": result = getSecurityEventsQueue(payload); break;
+      case "getSecurityAndComplianceDashboardData": result = getSecurityAndComplianceDashboardData(payload); break;
       case "getNotificationPreferences": result = getNotificationPreferences(payload); break;
       case "markNotificationAsRead": result = markNotificationAsRead(payload); break;
       case "createUserNotification": result = createUserNotification(payload); break;
@@ -3732,6 +3733,100 @@ function getOperationalCapacityMetrics(payload) {
     },
     desgloseServicios: serviceBreakdown,
     clienteMetricasLocal: metricsClient || null,
+    timestamp: new Date().toISOString()
+  };
+}
+
+// [TAREA-F4-P1-09] [Fase 4: Panel de Seguridad, Auditoría y Cumplimiento Institucional] - Consolidación de indicadores de seguridad, auditoría de eventos y delegaciones activas
+function getSecurityAndComplianceDashboardData(payload) {
+  const { startDate, endDate, targetUserId, eventType } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+
+  const bitacoraSheet = ss.getSheetByName("BitacoraEventos");
+  const bitacoraData = bitacoraSheet ? bitacoraSheet.getDataRange().getValues() : [];
+
+  let eventsList = [];
+  let failedLogins = 0;
+  let successfulLogins = 0;
+  let revokedSessions = 0;
+
+  const startMs = startDate ? new Date(startDate).getTime() : 0;
+  const endMs = endDate ? new Date(endDate).getTime() + 86400000 : Infinity;
+
+  if (bitacoraData.length > 1) {
+    for (let i = 1; i < bitacoraData.length; i++) {
+      const row = bitacoraData[i];
+      const evtId = row[0];
+      const evtDateStr = row[1];
+      const evtType = String(row[2] || "").trim();
+      const userId = String(row[3] || "").trim();
+      const role = row[4];
+      const module = row[5];
+      const action = row[6];
+      const result = row[7];
+      const details = row[8];
+      const correlationId = row[9];
+
+      const evtMs = evtDateStr ? new Date(evtDateStr).getTime() : 0;
+
+      if (evtMs >= startMs && evtMs <= endMs) {
+        if (!targetUserId || userId.toLowerCase().indexOf(String(targetUserId).toLowerCase()) !== -1) {
+          if (!eventType || evtType.toLowerCase() === String(eventType).toLowerCase()) {
+            eventsList.push({
+              eventId: evtId,
+              timestamp: evtDateStr,
+              eventType: evtType,
+              userId: userId,
+              role: role,
+              module: module,
+              action: action,
+              result: result,
+              details: details,
+              correlationId: correlationId
+            });
+          }
+        }
+      }
+
+      if (evtType === "LOGIN_FAILED") failedLogins++;
+      if (evtType === "LOGIN_SUCCESS") successfulLogins++;
+      if (evtType === "SESSION_REVOKED" || evtType === "SESSION_EXPIRED") revokedSessions++;
+    }
+  }
+
+  eventsList.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+  const paginatedEvents = eventsList.slice(0, 200);
+
+  let activeDelegations = [];
+  try {
+    const delRes = getSecurityDelegations({ statusFilter: "ACTIVA" });
+    if (delRes && delRes.delegations) activeDelegations = delRes.delegations;
+  } catch (e) {
+    console.warn("No se pudieron obtener delegaciones activas", e);
+  }
+
+  let healthRes = null;
+  try {
+    healthRes = getOperationalCapacityMetrics({});
+  } catch (e) {
+    console.warn("No se pudieron obtener métricas de salud", e);
+  }
+
+  logStructuredEvent("USER", "getSecurityAndComplianceDashboardData", "INFO", "SECURITY_DASHBOARD_CONSULTED", "Consulta de tablero de seguridad y cumplimiento", null, payload && payload.authRole);
+
+  return {
+    status: "success",
+    service: "USER",
+    metrics: {
+      failedLoginsCount: failedLogins,
+      successfulLoginsCount: successfulLogins,
+      revokedSessionsCount: revokedSessions,
+      activeDelegationsCount: activeDelegations.length,
+      totalEventsAudited: eventsList.length
+    },
+    events: paginatedEvents,
+    activeDelegations: activeDelegations,
+    healthReport: healthRes,
     timestamp: new Date().toISOString()
   };
 }
