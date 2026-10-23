@@ -25,6 +25,10 @@ window.setupCommonUI = function() {
     }
 
     // ---------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------
+    // [T-UX-22] [Fase 3: Experiencia de Usuario y Navegación Unificada] - COMPORTAMIENTO Y SIGNIFICADO PRECISO DEL INDICADOR DE CONEXIÓN EN LÍNEA / OFFLINE
+    // Asegura la representación precisa del estado comprobable de red (navigator.onLine), removiendo opacidades obsoletas y notificando explícitamente reconexiones.
+    // ---------------------------------------------------------------------------
     // [T-UX-07] [Fase 3: Experiencia de Usuario y Navegación Unificada] - INDICADOR DISCRETO DE ESTADO DE CONEXIÓN EN LÍNEA / OFFLINE
     // Renderiza un indicador discreto en la esquina inferior izquierda que reacciona a eventos online/offline sin obstruir el contenido principal de la pantalla.
     // ---------------------------------------------------------------------------
@@ -38,12 +42,12 @@ window.setupCommonUI = function() {
             document.body.appendChild(badge);
         }
         if (navigator.onLine) {
-            badge.className = 'fixed bottom-4 left-4 z-[9999] px-3 py-1.5 rounded-full text-[10px] font-bold transition-all shadow-md flex items-center gap-1.5 bg-green-50 text-green-700 border border-green-200';
-            badge.innerHTML = '<span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span> <span>En línea</span>';
-            setTimeout(function() { if (badge) badge.classList.add('opacity-0'); }, 3000);
+            badge.className = 'fixed bottom-4 left-4 z-[9999] px-3 py-1.5 rounded-full text-[10px] font-bold transition-all shadow-md flex items-center gap-1.5 bg-green-50 text-green-700 border border-green-200 opacity-100';
+            badge.innerHTML = '<span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span> <span>Conexión Estable</span>';
+            setTimeout(function() { if (badge && navigator.onLine) badge.classList.add('opacity-0'); }, 4000);
         } else {
             badge.className = 'fixed bottom-4 left-4 z-[9999] px-3 py-1.5 rounded-full text-[10px] font-bold transition-all shadow-lg flex items-center gap-1.5 bg-amber-500 text-white opacity-100';
-            badge.innerHTML = '<i class="fa-solid fa-wifi"></i> <span>Modo Sin Conexión (Cambios Locales)</span>';
+            badge.innerHTML = '<i class="fa-solid fa-wifi-slash"></i> <span>Sin Conexión (Modo Local)</span>';
         }
     }
     window.updateOnlineBadge = updateOnlineBadge;

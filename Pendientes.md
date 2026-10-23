@@ -1181,7 +1181,7 @@
   - Una actualización fallida no renueva la marca de tiempo.
 - **Estado:** [X] Completada
 
-### [ ] [T-UX-22] Corregir el significado y el comportamiento del indicador de estado en línea
+### [X] [T-UX-22] Corregir el significado y el comportamiento del indicador de estado en línea
 - **Origen del Hallazgo:** Auditoría de la Fase 3, octubre de 2026 (AUDITORIA_FASE3_EXPERIENCIA_USUARIO_NAVEGACION.md - Área 18)
 - **Severidad/Clasificación:** Medio
 - **Archivos Involucrados:** `js/ui-common.js`
@@ -1193,7 +1193,7 @@
 - **Criterios de Aceptación:**
   - Los estados representan hechos comprobables.
   - Se prueba la pérdida y recuperación de conexión.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 ### [ ] [T-UX-23] Completar el flujo de reporte de problemas y soporte
 - **Origen del Hallazgo:** Auditoría de la Fase 3, octubre de 2026 (AUDITORIA_FASE3_EXPERIENCIA_USUARIO_NAVEGACION.md - Área 19)

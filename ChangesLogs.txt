@@ -1047,3 +1047,15 @@ Archivos Modificados:
    - Actualización del estado de [T-UX-21] a [X] Completada.
 
 -------------------------------------------------------------------------------
+FECHA: Octubre 2026
+TAREA: [T-UX-22] Corregir el significado y el comportamiento del indicador de estado en línea
+-------------------------------------------------------------------------------
+
+Archivos Modificados:
+1. js/ui-common.js
+   - Lineas 28-55: Optimización de window.updateOnlineBadge para precisión del estado comprobable de red ("Conexión Estable" vs "Sin Conexión") e icono adaptativo.
+
+2. Pendientes.md
+   - Actualización del estado de [T-UX-22] a [X] Completada.
+
+-------------------------------------------------------------------------------
