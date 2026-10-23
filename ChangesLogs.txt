@@ -1168,3 +1168,9 @@ Archivos Modificados:
 5. Pendientes.md
    - Actualización del estado a [X] TAREA-F4-P0-02.
 -------------------------------------------------------------------------------
+
+[TAREA-F4-P0-03] [Fase 4 - Revocación de Sesiones e Invalidación de Privilegios]
+- backend/user-service/Code.gs:
+  - Modificada función invalidateUserRoleCache para purgar acct_state_<userId> además de user_role_<userId>.
+  - Modificada función manageAccountState para purgar la caché de rol e inyectar acct_state_<userId> actualizado en CacheService.
+  - Modificada función updateUserProfile para purgar la caché de rol y usuario al actualizar datos de perfil.

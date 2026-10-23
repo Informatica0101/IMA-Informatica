@@ -139,15 +139,16 @@ function getServiceHealthReport(payload) {
   }
 }
 
-// [FASE2-T19] [Fase 2 - Gestión de Caché de Datos Institucionales] - Gestión centralizada de caché, invalidación explícita por usuario e inspección de políticas de vigencia.
+// [TAREA-F4-P0-03] [Fase 4: Revocación y Gestión de Sesiones] - Purga de caché de roles y estado de cuenta de usuario
 function invalidateUserRoleCache(userId) {
   if (!userId) return false;
   try {
     const cache = CacheService.getScriptCache();
     cache.remove("user_role_" + userId);
+    cache.remove("acct_state_" + userId);
     return true;
   } catch (e) {
-    console.warn("No se pudo invalidar la caché de rol para " + userId, e);
+    console.warn("No se pudo invalidar la caché para " + userId, e);
     return false;
   }
 }
@@ -977,7 +978,8 @@ const ROLE_PERMISSIONS = {
 // [TAREA-F4-P0-01] [Fase 4: Identidad, Permisos y Gobierno] - Generación y verificación de tokens firmados con HMAC-SHA256 para unificación de autenticación
 function computeHmacSignature(message, secret) {
   const bytes = Utilities.computeHmacSha256Signature(message, secret);
-  return bytes.map(b => ('0' + (b & 0xFF).toString(16)).slice(-2)).join('');
+  const arr = Array.from ? Array.from(bytes) : [].slice.call(bytes);
+  return arr.map(b => ('0' + (b & 0xFF).toString(16)).slice(-2)).join('');
 }
 
 function getAuthTokenSecret() {
@@ -987,8 +989,9 @@ function getAuthTokenSecret() {
     secret = props.getProperty("AUTH_TOKEN_SECRET");
   } catch (e) {}
   if (!secret) {
-    secret = Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, SPREADSHEET_ID + "_MASTER_AUTH_HMAC_SECRET")
-      .map(b => ('0' + (b & 0xFF).toString(16)).slice(-2)).join('');
+    const rawBytes = Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, SPREADSHEET_ID + "_MASTER_AUTH_HMAC_SECRET");
+    const arr = Array.from ? Array.from(rawBytes) : [].slice.call(rawBytes);
+    secret = arr.map(b => ('0' + (b & 0xFF).toString(16)).slice(-2)).join('');
     try {
       props.setProperty("AUTH_TOKEN_SECRET", secret);
     } catch (e) {}
@@ -1381,6 +1384,7 @@ function generateInstitutionalId(payload) {
   }
 }
 
+// [TAREA-F4-P0-03] [Fase 4: Revocación de Sesiones] - Cambios de estado e invalidación en tiempo real de sesión/rol
 function manageAccountState(payload) {
   const { userId, newState, motivo } = payload || {};
   if (!userId || !newState) throw new Error("userId y newState son requeridos.");
@@ -1396,6 +1400,15 @@ function manageAccountState(payload) {
   if (idx === -1) throw new Error("Cuenta de usuario no encontrada.");
 
   sheet.getRange(idx + 1, 11).setValue(newState);
+
+  // Invalidation & real-time revocation in cache
+  invalidateUserRoleCache(userId);
+  try {
+    const cache = CacheService.getScriptCache();
+    cache.put("acct_state_" + userId, newState, 21600);
+  } catch (e) {
+    console.warn("Error guardando acct_state en cache para " + userId, e);
+  }
 
   logStructuredEvent("USER", "manageAccountState", "WARN", "ACCOUNT_STATE_CHANGED", `Estado de cuenta ${userId} cambiado a ${newState}. Motivo: ${motivo || 'N/A'}`, { userId, newState, motivo }, payload && payload.authRole);
 
@@ -1420,7 +1433,9 @@ function registerUser(payload) {
   if (existingIndex !== -1) {
     if (forceUpdate) {
       const userId = data[existingIndex][0];
-      const hashedPassword = Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, password).map(b => ('0' + (b & 0xFF).toString(16)).slice(-2)).join('');
+      const passBytes = Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, password);
+      const passArr = Array.from ? Array.from(passBytes) : [].slice.call(passBytes);
+      const hashedPassword = passArr.map(b => ('0' + (b & 0xFF).toString(16)).slice(-2)).join('');
       sheet.getRange(existingIndex + 1, 1, 1, 13).setValues([[
         userId,
         nombre,
@@ -1441,7 +1456,9 @@ function registerUser(payload) {
     return { status: "error", exists: true, message: "Email ya registrado.", data: { nombre: data[existingIndex][1], gradoActual: data[existingIndex][2], seccionActual: data[existingIndex][3] } };
   }
   const userId = "USR-" + now.getTime();
-  const hashedPassword = Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, password).map(b => ('0' + (b & 0xFF).toString(16)).slice(-2)).join('');
+  const passBytes = Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, password);
+  const passArr = Array.from ? Array.from(passBytes) : [].slice.call(passBytes);
+  const hashedPassword = passArr.map(b => ('0' + (b & 0xFF).toString(16)).slice(-2)).join('');
   sheet.appendRow([
     userId,
     nombre,
@@ -1468,7 +1485,9 @@ function loginUser(payload) {
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
   const sheet = getSheetOrThrow(ss, "Usuarios");
   const data = sheet.getDataRange().getValues();
-  const hp = Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, password).map(b => ('0' + (b & 0xFF).toString(16)).slice(-2)).join('');
+  const passBytes = Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, password);
+  const passArr = Array.from ? Array.from(passBytes) : [].slice.call(passBytes);
+  const hp = passArr.map(b => ('0' + (b & 0xFF).toString(16)).slice(-2)).join('');
   const id = identifier.toLowerCase().trim();
 
   for (let i = 1; i < data.length; i++) {
@@ -1570,6 +1589,10 @@ function getUserInfo(payload) {
     }
   }
 
+  if (!targetUserId && payload && payload._verifiedUserId) {
+    targetUserId = payload._verifiedUserId;
+  }
+
   const r = getSheetOrThrow(SpreadsheetApp.openById(SPREADSHEET_ID), "Usuarios").getDataRange().getValues().find(r => String(r[0]).trim() === String(targetUserId).trim());
   if (!r) throw new Error("Usuario no encontrado.");
   const callerId = payload._verifiedUserId || (payload && payload.currentUser && payload.currentUser.userId);
@@ -1599,7 +1622,9 @@ function requestPasswordRecovery(payload) {
   const user = data.find(r => r[4]?.toString().toLowerCase().trim() === email.toLowerCase().trim());
   if (!user) return { status: "error", message: "Correo no encontrado." };
   const p = { userId: user[0], exp: Date.now() + 3600000 };
-  const s = Utilities.computeHmacSha256Signature(JSON.stringify(p), SECRET_KEY).map(b => ('0' + (b & 0xFF).toString(16)).slice(-2)).join('');
+  const hmacBytes = Utilities.computeHmacSha256Signature(JSON.stringify(p), SECRET_KEY);
+  const hmacArr = Array.from ? Array.from(hmacBytes) : [].slice.call(hmacBytes);
+  const s = hmacArr.map(b => ('0' + (b & 0xFF).toString(16)).slice(-2)).join('');
   const token = Utilities.base64Encode(JSON.stringify({ p, s }));
   MailApp.sendEmail(email, "Recuperación de Contraseña", `Enlace: ${FRONTEND_URL}/reset-password.html?token=${encodeURIComponent(token)}`);
   return { status: "success", message: "Email enviado." };
@@ -1608,14 +1633,18 @@ function requestPasswordRecovery(payload) {
 function resetPassword(payload) {
   const { token, newPassword } = payload;
   const decoded = JSON.parse(Utilities.newBlob(Utilities.base64Decode(token)).getDataAsString());
-  const expectedS = Utilities.computeHmacSha256Signature(JSON.stringify(decoded.p), SECRET_KEY).map(b => ('0' + (b & 0xFF).toString(16)).slice(-2)).join('');
+  const expBytes = Utilities.computeHmacSha256Signature(JSON.stringify(decoded.p), SECRET_KEY);
+  const expArr = Array.from ? Array.from(expBytes) : [].slice.call(expBytes);
+  const expectedS = expArr.map(b => ('0' + (b & 0xFF).toString(16)).slice(-2)).join('');
   if (decoded.s !== expectedS) throw new Error("Firma inválida.");
   if (Date.now() > decoded.p.exp) throw new Error("Expirado.");
   const sheet = getSheetOrThrow(SpreadsheetApp.openById(SPREADSHEET_ID), "Usuarios");
   const data = sheet.getDataRange().getValues();
   const idx = data.findIndex(r => String(r[0]) === String(decoded.p.userId));
   if (idx === -1) throw new Error("Usuario no encontrado.");
-  const hp = Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, newPassword).map(b => ('0' + (b & 0xFF).toString(16)).slice(-2)).join('');
+  const passBytes = Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, newPassword);
+  const passArr = Array.from ? Array.from(passBytes) : [].slice.call(passBytes);
+  const hp = passArr.map(b => ('0' + (b & 0xFF).toString(16)).slice(-2)).join('');
   sheet.getRange(idx + 1, 6).setValue(hp);
   return { status: "success", message: "Contraseña actualizada." };
 }
@@ -1640,15 +1669,23 @@ function updateUserProfile(payload) {
   if (idx === -1) throw new Error("No encontrado.");
   const userRow = [...data[idx]];
   if (password) {
-    const ch = Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, currentPassword).map(b => ('0' + (b & 0xFF).toString(16)).slice(-2)).join('');
+    const currBytes = Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, currentPassword);
+    const currArr = Array.from ? Array.from(currBytes) : [].slice.call(currBytes);
+    const ch = currArr.map(b => ('0' + (b & 0xFF).toString(16)).slice(-2)).join('');
     if (userRow[5] !== ch) throw new Error("Actual incorrecta.");
-    userRow[5] = Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, password).map(b => ('0' + (b & 0xFF).toString(16)).slice(-2)).join('');
+    const newBytes = Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, password);
+    const newArr = Array.from ? Array.from(newBytes) : [].slice.call(newBytes);
+    userRow[5] = newArr.map(b => ('0' + (b & 0xFF).toString(16)).slice(-2)).join('');
   }
   if (nombre) userRow[1] = nombre.trim();
   if (email) userRow[4] = email.toLowerCase().trim();
   if (telefono !== undefined) userRow[7] = String(telefono).trim();
   if (numeroLista !== undefined) userRow[8] = String(numeroLista).trim();
   sheet.getRange(idx + 1, 1, 1, userRow.length).setValues([userRow]);
+
+  // Purga inmediata de caché tras actualización de datos de usuario
+  invalidateUserRoleCache(targetUserId);
+
   return { status: "success", message: "Perfil actualizado." };
 }
 

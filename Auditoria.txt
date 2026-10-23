@@ -58,3 +58,9 @@ Resolución Aplicada:
 Resultado de Verificación:
 - Estudiantes que alteran `userId` en la solicitud: El servidor sobreescribe con el ID verificado del token y retorna solo sus propios datos.
 - Tutores solicitando estudiantes no vinculados: Rechazados con error explícito de autorización.
+
+[AUDITORÍA TAREA-F4-P0-03]
+- backend/user-service/Code.gs:
+  - invalidateUserRoleCache: Purgado dinámico de estado de cuenta acct_state_<userId> y rol user_role_<userId>.
+  - manageAccountState: Invalidación en tiempo real de sesión/rol e inyección directa en caché de script.
+  - updateUserProfile: Invocación de invalidateUserRoleCache tras persistencia en hoja Usuarios.

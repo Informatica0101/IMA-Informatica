@@ -102,7 +102,8 @@ const ROLE_PERMISSIONS = {
 // [TAREA-F4-P0-01] [Fase 4: Identidad y Permisos] - Funciones de verificación de firma HMAC-SHA256 e integración con token de sesión
 function computeHmacSignature(message, secret) {
   const bytes = Utilities.computeHmacSha256Signature(message, secret);
-  return bytes.map(b => ('0' + (b & 0xFF).toString(16)).slice(-2)).join('');
+  const arr = Array.from ? Array.from(bytes) : [].slice.call(bytes);
+  return arr.map(b => ('0' + (b & 0xFF).toString(16)).slice(-2)).join('');
 }
 
 function getAuthTokenSecret() {
@@ -112,8 +113,9 @@ function getAuthTokenSecret() {
     secret = props.getProperty("AUTH_TOKEN_SECRET");
   } catch (e) {}
   if (!secret) {
-    secret = Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, SPREADSHEET_ID + "_MASTER_AUTH_HMAC_SECRET")
-      .map(b => ('0' + (b & 0xFF).toString(16)).slice(-2)).join('');
+    const rawBytes = Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, SPREADSHEET_ID + "_MASTER_AUTH_HMAC_SECRET");
+    const arr = Array.from ? Array.from(rawBytes) : [].slice.call(rawBytes);
+    secret = arr.map(b => ('0' + (b & 0xFF).toString(16)).slice(-2)).join('');
     try {
       props.setProperty("AUTH_TOKEN_SECRET", secret);
     } catch (e) {}
