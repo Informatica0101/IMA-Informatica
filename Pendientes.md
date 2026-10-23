@@ -1166,7 +1166,7 @@
   - Formulario discreto con validación y confirmación al usuario.
 - **Estado:** [X] Completada
 
-### [ ] [T-UX-21] Completar el indicador de frescura de datos y los estados de sincronización
+### [X] [T-UX-21] Completar el indicador de frescura de datos y los estados de sincronización
 - **Origen del Hallazgo:** Auditoría de la Fase 3, octubre de 2026 (AUDITORIA_FASE3_EXPERIENCIA_USUARIO_NAVEGACION.md - Área 9)
 - **Severidad/Clasificación:** Medio
 - **Archivos Involucrados:** `js/ui-common.js`
@@ -1179,7 +1179,7 @@
 - **Criterios de Aceptación:**
   - La fecha y hora mostradas corresponden a una actualización efectiva.
   - Una actualización fallida no renueva la marca de tiempo.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 ### [ ] [T-UX-22] Corregir el significado y el comportamiento del indicador de estado en línea
 - **Origen del Hallazgo:** Auditoría de la Fase 3, octubre de 2026 (AUDITORIA_FASE3_EXPERIENCIA_USUARIO_NAVEGACION.md - Área 18)

@@ -1035,3 +1035,15 @@ Archivos Modificados:
    - Actualización del estado de [T-UX-08] a [X] Completada.
 
 -------------------------------------------------------------------------------
+FECHA: Octubre 2026
+TAREA: [T-UX-21] Completar el indicador de frescura de datos y los estados de sincronización
+-------------------------------------------------------------------------------
+
+Archivos Modificados:
+1. js/ui-common.js
+   - Lineas 5168-5188: Enhancements a window.renderDataFreshnessBadge para no renovar la marca de tiempo ante fallos de sincronización y mostrar indicador visual de error en el distintivo.
+
+2. Pendientes.md
+   - Actualización del estado de [T-UX-21] a [X] Completada.
+
+-------------------------------------------------------------------------------

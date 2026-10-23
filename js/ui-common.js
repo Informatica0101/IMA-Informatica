@@ -5166,14 +5166,25 @@ window.renderDataFreshnessBadge = function(containerIdOrElement, lastUpdatedTime
 
     container.appendChild(badge);
 
+// ---------------------------------------------------------------------------
+// [T-UX-21] [Fase 3: Experiencia de Usuario y Navegación Unificada] - COMPROBACIÓN DE FRESCURA DE DATOS Y ESTADOS DE SINCRONIZACIÓN CON CONTROL DE FALLO
+// Garantiza que la marca de tiempo de sincronización se renueve únicamente tras una actualización exitosa, conservando la hora previa e indicando error en caso de fallo.
+// ---------------------------------------------------------------------------
     var refreshBtn = badge.querySelector('.btn-refresh-badge');
     if (refreshBtn && typeof onRefreshCallback === 'function') {
         refreshBtn.addEventListener('click', function(e) {
             e.stopPropagation();
             refreshBtn.classList.add('animate-spin');
-            onRefreshCallback(function() {
+            onRefreshCallback(function(success, updatedTimestamp) {
                 refreshBtn.classList.remove('animate-spin');
-                window.renderDataFreshnessBadge(containerIdOrElement, new Date().toISOString(), onRefreshCallback);
+                if (success === false) {
+                    badge.classList.remove('bg-slate-100', 'border-slate-200');
+                    badge.classList.add('bg-amber-50', 'border-amber-300', 'text-amber-800');
+                    var labelSpan = badge.querySelector('span');
+                    if (labelSpan) labelSpan.innerHTML = '<i class="fa-solid fa-triangle-exclamation text-amber-500 mr-1"></i> Error al sincronizar (' + clockTime + ')';
+                } else {
+                    window.renderDataFreshnessBadge(containerIdOrElement, updatedTimestamp || new Date().toISOString(), onRefreshCallback);
+                }
             });
         });
     }
