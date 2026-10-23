@@ -4982,6 +4982,61 @@ window.addEventListener('resize', function() {
 // [T-UX-24] [Fase 3: Experiencia de Usuario y Navegación Unificada] - NORMALIZACIÓN DE ACCIONES, ESTADOS Y JERARQUÍA VISUAL INSTITUCIONAL
 // Mantiene coherencia visual entre estados (éxito/aprobado, pendiente/advertencia, rechazado/error) y estandariza la jerarquía de botones de acción.
 // ---------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
+// [T-UX-25] [Fase 3: Experiencia de Usuario y Navegación Unificada] - PREFERENCIAS DE USUARIO Y PERSONALIZACIÓN CONTROLADA DE VISTAS
+// Gestiona la persistencia de preferencias de visualización por usuario (densidad, tamaño de página, tema) con respaldo en localStorage e integración con el servicio backend.
+// ---------------------------------------------------------------------------
+window.DEFAULT_USER_VIEW_PREFERENCES = {
+    theme: 'light',
+    density: 'comfortable',
+    defaultPageSize: 15,
+    sidebarCollapsed: false
+};
+
+window.getUserViewPreferences = function() {
+    try {
+        var stored = localStorage.getItem('user_view_preferences');
+        if (stored) {
+            return Object.assign({}, window.DEFAULT_USER_VIEW_PREFERENCES, JSON.parse(stored));
+        }
+    } catch (_) {}
+    return Object.assign({}, window.DEFAULT_USER_VIEW_PREFERENCES);
+};
+
+window.saveUserViewPreference = function(key, value) {
+    if (!key) return;
+    var prefs = window.getUserViewPreferences();
+    prefs[key] = value;
+    try {
+        localStorage.setItem('user_view_preferences', JSON.stringify(prefs));
+    } catch (_) {}
+
+    var currentUser = {};
+    try {
+        currentUser = JSON.parse(localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser') || '{}');
+    } catch (_) {}
+
+    if (currentUser.userId || currentUser.id) {
+        if (typeof fetchApi === 'function') {
+            fetchApi('USER', 'saveUserSettings', {
+                userId: currentUser.userId || currentUser.id,
+                uiTheme: prefs.theme,
+                viewPreferences: prefs
+            }).catch(function(err) {
+                console.warn('Error guardando preferencias en servidor:', err);
+            });
+        }
+    }
+    return prefs;
+};
+
+window.resetUserViewPreferences = function() {
+    try {
+        localStorage.removeItem('user_view_preferences');
+    } catch (_) {}
+    return Object.assign({}, window.DEFAULT_USER_VIEW_PREFERENCES);
+};
+
 window.getStandardStatusBadgeClass = function(status) {
     var s = (status || '').toString().toUpperCase().trim();
     if (s === 'APROBADO' || s === 'COMPLETADO' || s === 'ACTIVO' || s === 'EXITO' || s === 'VERIFICADO' || s === 'SUCCESS') {

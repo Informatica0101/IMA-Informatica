@@ -1030,7 +1030,7 @@
   5. El plan de migración contempla identificadores, relaciones, historial, permisos, validación y reversión.
   6. La estrategia evita escrituras contradictorias en fuentes paralelas.
   7. No se ejecuta una migración únicamente por superar un número arbitrario de filas.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 ### [X] [FASE2-T13] Documentar el mapa de dependencias y las responsabilidades de los servicios
 - **Origen del Hallazgo:** Auditoría de la Fase 2, octubre de 2026 (AUDITORIA_FASE2_ARQUITECTURA_INTEROPERABILIDAD.md - Área 1)
@@ -1053,7 +1053,7 @@
   4. Los ciclos y las responsabilidades duplicadas están identificados y tienen una decisión documentada.
   5. Cada cambio crítico puede relacionarse con los componentes y pruebas que podrían verse afectados.
   6. El mapa coincide con la implementación inspeccionada y no se limita a reproducir la arquitectura prevista.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 ### [X] [FASE2-T14] Incorporar pruebas de integración y regresión para las operaciones interdepartamentales
 - **Origen del Hallazgo:** Auditoría de la Fase 2, octubre de 2026 (AUDITORIA_FASE2_ARQUITECTURA_INTEROPERABILIDAD.md - Área 1-7)
@@ -1080,7 +1080,7 @@
   6. Los resultados identifican el caso ejecutado, el resultado esperado y el observado.
   7. Un cambio incompatible provoca el fallo de las pruebas correspondientes.
   8. La cobertura informada distingue pruebas existentes, pruebas ejecutadas y criterios realmente satisfechos.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 ### [X] [FASE2-T15] Establecer procedimientos de reconciliación para datos y operaciones inconsistentes
 - **Origen del Hallazgo:** Auditoría de la Fase 2, octubre de 2026 (AUDITORIA_FASE2_ARQUITECTURA_INTEROPERABILIDAD.md - Área 5)
@@ -1105,7 +1105,7 @@
   5. Los casos que no puedan resolverse automáticamente quedan pendientes de revisión y no se marcan como corregidos.
   6. Las correcciones mantienen las relaciones e historiales que deban preservarse.
   7. Cada modificación resultante puede rastrearse hasta la incidencia que la originó.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 ### [X] [FASE2-T16] Optimizar la recuperación de errores y el comportamiento de los servicios degradados
 - **Origen del Hallazgo:** Auditoría de la Fase 2, octubre de 2026 (AUDITORIA_FASE2_ARQUITECTURA_INTEROPERABILIDAD.md - Área 2)
@@ -1225,7 +1225,7 @@
   - Los estados equivalentes se representan de manera consistente.
 - **Estado:** [X] Completada
 
-### [ ] [T-UX-25] Incorporar preferencias de usuario y personalización controlada de vistas
+### [X] [T-UX-25] Incorporar preferencias de usuario y personalización controlada de vistas
 - **Origen del Hallazgo:** Auditoría de la Fase 3, octubre de 2026 (AUDITORIA_FASE3_EXPERIENCIA_USUARIO_NAVEGACION.md - Área 20)
 - **Severidad/Clasificación:** Medio
 - **Archivos Involucrados:** `js/ui-common.js`, `backend/user-service/Code.gs`
@@ -1237,7 +1237,7 @@
 - **Criterios de Aceptación:**
   - Las preferencias se guardan en el ámbito anunciado.
   - Las vistas personalizadas se restauran correctamente.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 ### [ ] [T-UX-27] Optimizar el rendimiento percibido y la respuesta de las interfaces
 - **Origen del Hallazgo:** Auditoría de la Fase 3, octubre de 2026 (AUDITORIA_FASE3_EXPERIENCIA_USUARIO_NAVEGACION.md - Área 27)
@@ -1346,7 +1346,7 @@
   3. Los registros históricos siguen siendo interpretables tras una actualización.
   4. Una actualización de configuración puede validarse antes de aplicarse a todos los consumidores.
   5. Existe un procedimiento de reversión para los cambios de configuración que lo requieran.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 ### [X] [FASE2-T18] Crear un tablero de salud e interoperabilidad institucional
 - **Origen del Hallazgo:** Auditoría de la Fase 2, octubre de 2026 (AUDITORIA_FASE2_ARQUITECTURA_INTEROPERABILIDAD.md - Área 7)
@@ -1369,7 +1369,7 @@
   4. Las incidencias pueden filtrarse y consultarse por personal autorizado.
   5. Los datos mostrados coinciden con las mediciones o registros reales disponibles.
   6. La interfaz no informa disponibilidad completa cuando existen operaciones críticas fallidas o pendientes.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 ### [X] [FASE2-T19] Optimizar la gestión de caché de datos institucionales
 - **Origen del Hallazgo:** Auditoría de la Fase 2, octubre de 2026 (AUDITORIA_FASE2_ARQUITECTURA_INTEROPERABILIDAD.md - Área 1 & 3)

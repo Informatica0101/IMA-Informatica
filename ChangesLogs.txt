@@ -1083,3 +1083,15 @@ Archivos Modificados:
    - Actualización del estado de [T-UX-24] a [X] Completada.
 
 -------------------------------------------------------------------------------
+FECHA: Octubre 2026
+TAREA: [T-UX-25] Incorporar preferencias de usuario y personalización controlada de vistas
+-------------------------------------------------------------------------------
+
+Archivos Modificados:
+1. js/ui-common.js
+   - Lineas 4985-5035: Implementación de window.getUserViewPreferences, window.saveUserViewPreference y window.resetUserViewPreferences con almacenamiento local y sincronización con endpoint saveUserSettings del servidor.
+
+2. Pendientes.md
+   - Actualización del estado de [T-UX-25] a [X] Completada.
+
+-------------------------------------------------------------------------------
