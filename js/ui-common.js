@@ -3585,6 +3585,10 @@ window.updateReportCounter = function(inputId, counterId) {
     }
 };
 
+// ---------------------------------------------------------------------------
+// [T-UX-08] [Fase 3: Experiencia de Usuario y Navegación Unificada] - BOTÓN Y FLUJO DISCRETO DE REPORTE DE PROBLEMAS TÉCNICOS
+// Proporciona un botón flotante discreto e interactivo y formulario de reporte técnico con validación de campos, captura de área y almacenamiento de tickets.
+// ---------------------------------------------------------------------------
 window.openReportIssueModal = function(areaOverride) {
     window.ensureReportIssueModalExists();
     var modal = document.getElementById('modal-report-issue');

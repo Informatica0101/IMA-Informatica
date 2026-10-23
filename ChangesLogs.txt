@@ -1023,3 +1023,15 @@ Archivos Modificados:
    - Actualización del estado de [T-UX-07] a [X] Completada.
 
 -------------------------------------------------------------------------------
+FECHA: Octubre 2026
+TAREA: [T-UX-08] Botón y Flujo Discreto de Reporte de Problemas Técnicos
+-------------------------------------------------------------------------------
+
+Archivos Modificados:
+1. js/ui-common.js
+   - Lineas 3588-3605: Exportación de window.openReportIssueModal con encabezado identificativo T-UX-08 y detección automática de área funcional.
+
+2. Pendientes.md
+   - Actualización del estado de [T-UX-08] a [X] Completada.
+
+-------------------------------------------------------------------------------
