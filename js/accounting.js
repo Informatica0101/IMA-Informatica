@@ -3,6 +3,27 @@
  * New Generation Christian Academy / Bilingual School and Institute
  */
 
+// ---------------------------------------------------------------------------
+// [T-UX-12] [Fase 3: Experiencia de Usuario y Navegación Unificada] - CONSOLIDACIÓN DE PANELES DE CONTROL POR ROL Y DEPARTAMENTO
+// Consolida la visualización de indicadores clave, métricas financieras y accesos operativos para el departamento de contabilidad y finanzas.
+// ---------------------------------------------------------------------------
+window.consolidateAccountingDashboardSummary = function(accountingData) {
+    if (!accountingData) {
+        return { totalRevenueFormatted: "L 0.00", totalExpensesFormatted: "L 0.00", netBalanceFormatted: "L 0.00", pendingInvoicesCount: 0 };
+    }
+    var revenue = typeof accountingData.totalRevenue === 'number' ? accountingData.totalRevenue : 0;
+    var expenses = typeof accountingData.totalExpenses === 'number' ? accountingData.totalExpenses : 0;
+    var net = revenue - expenses;
+    var pendingCount = typeof accountingData.pendingInvoicesCount === 'number' ? accountingData.pendingInvoicesCount : 0;
+
+    return {
+        totalRevenueFormatted: "L " + revenue.toFixed(2),
+        totalExpensesFormatted: "L " + expenses.toFixed(2),
+        netBalanceFormatted: "L " + net.toFixed(2),
+        pendingInvoicesCount: pendingCount
+    };
+};
+
 document.addEventListener('DOMContentLoaded', function () {
   if (typeof window.initAccountingDashboard === 'function') {
     window.initAccountingDashboard();

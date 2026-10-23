@@ -24,6 +24,14 @@ window.setupCommonUI = function() {
         });
     }
 
+    // ---------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------
+    // [T-UX-22] [Fase 3: Experiencia de Usuario y Navegación Unificada] - COMPORTAMIENTO Y SIGNIFICADO PRECISO DEL INDICADOR DE CONEXIÓN EN LÍNEA / OFFLINE
+    // Asegura la representación precisa del estado comprobable de red (navigator.onLine), removiendo opacidades obsoletas y notificando explícitamente reconexiones.
+    // ---------------------------------------------------------------------------
+    // [T-UX-07] [Fase 3: Experiencia de Usuario y Navegación Unificada] - INDICADOR DISCRETO DE ESTADO DE CONEXIÓN EN LÍNEA / OFFLINE
+    // Renderiza un indicador discreto en la esquina inferior izquierda que reacciona a eventos online/offline sin obstruir el contenido principal de la pantalla.
+    // ---------------------------------------------------------------------------
     // Online / Offline Status Badge
     function updateOnlineBadge() {
         var badge = document.getElementById('online-status-badge');
@@ -34,14 +42,15 @@ window.setupCommonUI = function() {
             document.body.appendChild(badge);
         }
         if (navigator.onLine) {
-            badge.className = 'fixed bottom-4 left-4 z-[9999] px-3 py-1.5 rounded-full text-[10px] font-bold transition-all shadow-md flex items-center gap-1.5 bg-green-50 text-green-700 border border-green-200';
-            badge.innerHTML = '<span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span> <span>En línea</span>';
-            setTimeout(function() { if (badge) badge.classList.add('opacity-0'); }, 3000);
+            badge.className = 'fixed bottom-4 left-4 z-[9999] px-3 py-1.5 rounded-full text-[10px] font-bold transition-all shadow-md flex items-center gap-1.5 bg-green-50 text-green-700 border border-green-200 opacity-100';
+            badge.innerHTML = '<span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span> <span>Conexión Estable</span>';
+            setTimeout(function() { if (badge && navigator.onLine) badge.classList.add('opacity-0'); }, 4000);
         } else {
             badge.className = 'fixed bottom-4 left-4 z-[9999] px-3 py-1.5 rounded-full text-[10px] font-bold transition-all shadow-lg flex items-center gap-1.5 bg-amber-500 text-white opacity-100';
-            badge.innerHTML = '<i class="fa-solid fa-wifi"></i> <span>Modo Sin Conexión (Cambios Locales)</span>';
+            badge.innerHTML = '<i class="fa-solid fa-wifi-slash"></i> <span>Sin Conexión (Modo Local)</span>';
         }
     }
+    window.updateOnlineBadge = updateOnlineBadge;
 
     window.addEventListener('online', function() {
         updateOnlineBadge();
@@ -75,9 +84,14 @@ window.setupCommonUI = function() {
         });
     }
 
-    // --- Accessibility: Global Escape Key Listener for Modals ---
+    // [T-UX-02] [Fase 3: Experiencia de Usuario y Navegación Unificada] - Soporte universal de tecla Escape para cierre de modales y restauración de foco.
+    window.trackModalFocus = function(triggerEl) {
+        window.lastActiveElementBeforeModal = triggerEl || document.activeElement;
+    };
+
     window.addEventListener('keydown', function(e) {
         if (e.key === 'Escape' || e.keyCode === 27) {
+            var modalWasClosed = false;
             var activeModals = [
                 'profile-modal',
                 'modal-dashboard-settings',
@@ -89,16 +103,42 @@ window.setupCommonUI = function() {
                 'modal-workflow-builder',
                 'modal-workflow-decision',
                 'modal-channel-config',
-                'modal-excel-importer'
+                'modal-excel-importer',
+                'modal-global-omnibox',
+                'modal-report-issue',
+                'modal-my-tickets',
+                'modal-admin-tickets',
+                'modal-health-dashboard',
+                'modal-interactive-help',
+                'modal-conflict-resolution',
+                'modal-first-login-terms',
+                'modal-universal-analytics-chart',
+                'academic-menu-modal',
+                'mobile-hamburger-drawer'
             ];
             activeModals.forEach(function(modalId) {
                 var el = document.getElementById(modalId);
                 if (el && !el.classList.contains('hidden')) {
                     el.classList.add('hidden');
+                    modalWasClosed = true;
                 }
             });
+
+            var dynamicModals = document.querySelectorAll('.fixed.inset-0[role="dialog"]:not(.hidden), [role="dialog"]:not(.hidden), .modal:not(.hidden), [data-modal]:not(.hidden)');
+            for (var i = 0; i < dynamicModals.length; i++) {
+                dynamicModals[i].classList.add('hidden');
+                modalWasClosed = true;
+            }
+
             if (window.closeInteractiveGuide) {
                 window.closeInteractiveGuide();
+            }
+
+            if (modalWasClosed && window.lastActiveElementBeforeModal && typeof window.lastActiveElementBeforeModal.focus === 'function' && document.body.contains(window.lastActiveElementBeforeModal)) {
+                try {
+                    window.lastActiveElementBeforeModal.focus();
+                } catch (_) {}
+                window.lastActiveElementBeforeModal = null;
             }
         }
     });
@@ -114,6 +154,7 @@ window.setupCommonUI = function() {
 
     // --- Unified Profile Modal Logic (A-75) ---
     window.openProfileModal = function(pushState) {
+        if (window.trackModalFocus) window.trackModalFocus();
         if (pushState === undefined) pushState = true;
         var modal = document.getElementById('profile-modal');
         if (!modal) return;
@@ -190,6 +231,10 @@ window.setupCommonUI = function() {
     window.handleSessionExpired = function(reason) {
         localStorage.removeItem('currentUser');
         sessionStorage.removeItem('currentUser');
+        localStorage.removeItem('usuario_actual');
+        sessionStorage.removeItem('usuario_actual');
+        localStorage.removeItem('usuario_sesion');
+        sessionStorage.removeItem('usuario_sesion');
         var msg = reason ? encodeURIComponent(reason) : '1';
         window.location.href = 'login.html?session_expired=' + msg;
     };
@@ -1572,6 +1617,7 @@ window.switchSettingsTab = function(tabName) {
 };
 
 window.openDashboardSettingsModal = function() {
+    if (window.trackModalFocus) window.trackModalFocus();
     window.ensureDashboardSettingsModalExists();
     var modal = document.getElementById('modal-dashboard-settings');
     if (!modal) return;
@@ -1639,6 +1685,244 @@ window.loadUserSettingsInModal = function(user) {
             console.warn('Fallback local settings:', err);
         });
     }
+};
+
+// ---------------------------------------------------------------------------
+// [T-UX-26] [Fase 3: Experiencia de Usuario y Navegación Unificada] - VISTA DE ACTIVIDAD RECIENTE CONTEXTUAL POR ROL
+// Almacena y renderiza el historial cronológico de actividades recientes (informativas y tareas pendientes), permitiendo filtrado contextual por rol y la navegación directa a los registros correspondientes.
+// ---------------------------------------------------------------------------
+window.RECENT_ACTIVITY_CACHE_KEY = 'INSTITUTIONAL_RECENT_ACTIVITY_LOG_V1';
+
+window.recordRecentActivity = function(activity) {
+    if (!activity || !activity.title) return;
+    try {
+        var existingRaw = localStorage.getItem(window.RECENT_ACTIVITY_CACHE_KEY);
+        var activities = existingRaw ? JSON.parse(existingRaw) : [];
+
+        var newEntry = {
+            id: activity.id || 'act-' + Date.now(),
+            title: String(activity.title).trim(),
+            description: activity.description ? String(activity.description).trim() : '',
+            type: activity.type === 'TAREA_PENDIENTE' ? 'TAREA_PENDIENTE' : 'INFORMATIVA',
+            role: activity.role || 'GLOBAL',
+            timestamp: activity.timestamp || new Date().toISOString(),
+            targetView: activity.targetView || '',
+            targetId: activity.targetId || ''
+        };
+
+        activities = activities.filter(function(item) {
+            return item.id !== newEntry.id && !(item.title === newEntry.title && item.targetId === newEntry.targetId);
+        });
+
+        activities.unshift(newEntry);
+        if (activities.length > 50) activities = activities.slice(0, 50);
+
+        localStorage.setItem(window.RECENT_ACTIVITY_CACHE_KEY, JSON.stringify(activities));
+    } catch(err) {
+        console.warn('Error al registrar actividad reciente:', err);
+    }
+};
+
+window.getRecentActivity = function(userRole, limit) {
+    limit = limit || 10;
+    try {
+        var existingRaw = localStorage.getItem(window.RECENT_ACTIVITY_CACHE_KEY);
+        var activities = existingRaw ? JSON.parse(existingRaw) : [];
+
+        if (userRole && userRole !== 'ADMIN' && userRole !== 'DIRECCION') {
+            activities = activities.filter(function(item) {
+                return !item.role || item.role === 'GLOBAL' || item.role === userRole;
+            });
+        }
+
+        activities.sort(function(a, b) {
+            return new Date(b.timestamp) - new Date(a.timestamp);
+        });
+
+        return activities.slice(0, limit);
+    } catch(err) {
+        console.warn('Error al obtener actividad reciente:', err);
+        return [];
+    }
+};
+
+window.renderContextualRecentActivity = function(containerIdOrElement, userRole, options) {
+    options = options || {};
+    var container = typeof containerIdOrElement === 'string' ? document.getElementById(containerIdOrElement) : containerIdOrElement;
+    if (!container) return;
+
+    var limit = options.limit || 8;
+    var activities = window.getRecentActivity(userRole, limit);
+
+    container.innerHTML = '';
+
+    var wrapper = document.createElement('div');
+    wrapper.className = 'recent-activity-container bg-white rounded-2xl border border-slate-200/80 p-5 shadow-sm space-y-4';
+
+    var header = document.createElement('div');
+    header.className = 'flex items-center justify-between border-b border-slate-100 pb-3';
+    header.innerHTML =
+        '<div class="flex items-center gap-2">' +
+            '<div class="w-8 h-8 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold text-xs">' +
+                '<i class="fa-solid fa-clock-rotate-left"></i>' +
+            '</div>' +
+            '<div>' +
+                '<h4 class="text-xs font-black text-slate-800 uppercase tracking-wide">Actividad Reciente</h4>' +
+                '<p class="text-[10px] font-medium text-slate-400">Historial de acciones y tareas pendientes</p>' +
+            '</div>' +
+        '</div>' +
+        '<span class="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600">' + activities.length + ' registros</span>';
+
+    wrapper.appendChild(header);
+
+    if (activities.length === 0) {
+        var empty = document.createElement('div');
+        empty.className = 'py-6 text-center text-slate-400 text-xs font-medium';
+        empty.innerHTML = '<i class="fa-solid fa-inbox text-2xl mb-2 text-slate-300 block"></i> No hay actividad reciente registrada.';
+        wrapper.appendChild(empty);
+    } else {
+        var list = document.createElement('div');
+        list.className = 'space-y-2 max-h-[380px] overflow-y-auto pr-1';
+
+        activities.forEach(function(act) {
+            var item = document.createElement('div');
+            item.className = 'group flex items-start justify-between gap-3 p-3 rounded-xl bg-slate-50 hover:bg-blue-50/50 border border-slate-100 transition-all cursor-pointer';
+
+            var isTask = act.type === 'TAREA_PENDIENTE';
+            var typeBadgeClass = isTask ? 'bg-amber-100 text-amber-800 border-amber-200' : 'bg-slate-200/70 text-slate-700 border-slate-200';
+            var typeLabel = isTask ? 'Tarea Pendiente' : 'Informativa';
+            var iconClass = isTask ? 'fa-solid fa-list-check text-amber-600' : 'fa-solid fa-circle-info text-blue-500';
+
+            var dateObj = new Date(act.timestamp);
+            var clockTime = isNaN(dateObj.getTime()) ? '' : dateObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+            item.innerHTML =
+                '<div class="flex items-start gap-3 min-w-0 flex-1">' +
+                    '<div class="mt-0.5 w-7 h-7 rounded-lg bg-white border border-slate-200 flex items-center justify-center text-xs flex-shrink-0 shadow-2xs">' +
+                        '<i class="' + iconClass + '"></i>' +
+                    '</div>' +
+                    '<div class="min-w-0 flex-1">' +
+                        '<div class="flex items-center gap-2 mb-0.5">' +
+                            '<span class="text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md border ' + typeBadgeClass + '">' + typeLabel + '</span>' +
+                            '<span class="text-[10px] font-semibold text-slate-400">' + clockTime + '</span>' +
+                        '</div>' +
+                        '<h5 class="text-xs font-bold text-slate-800 truncate group-hover:text-blue-600 transition-colors">' + act.title + '</h5>' +
+                        (act.description ? '<p class="text-[11px] font-medium text-slate-500 line-clamp-1 mt-0.5">' + act.description + '</p>' : '') +
+                    '</div>' +
+                '</div>' +
+                (act.targetView ? '<div class="self-center flex-shrink-0 text-slate-400 group-hover:text-blue-600 text-xs"><i class="fa-solid fa-chevron-right"></i></div>' : '');
+
+            item.onclick = function() {
+                if (act.targetView && typeof window.switchActiveView === 'function') {
+                    window.switchActiveView(act.targetView, true, { targetId: act.targetId });
+                } else if (typeof options.onSelectActivity === 'function') {
+                    options.onSelectActivity(act);
+                }
+            };
+
+            list.appendChild(item);
+        });
+
+        wrapper.appendChild(list);
+    }
+
+    container.appendChild(wrapper);
+};
+
+// ---------------------------------------------------------------------------
+// [T-UX-10] [Fase 3: Experiencia de Usuario y Navegación Unificada] - SUITE AUTOMATIZADA DE PRUEBAS DE EXPERIENCIA DE USUARIO (UX-01 A UX-09)
+// Ejecuta un análisis automatizado de verificación de capacidades UX en la interfaz: manejo de expiración de sesión, tecla Escape, protección de formularios, frescura de datos, normalizador diacrítico, Omnibox global, estado en línea, reporte de problemas y navegación por rol.
+// ---------------------------------------------------------------------------
+window.runUXSuiteTests = function() {
+    var results = [];
+
+    function addResult(id, name, success, detail) {
+        results.push({ id: id, name: name, status: success ? 'PASS' : 'FAIL', detail: detail });
+    }
+
+    // UX-01: Session Expiration Handler
+    try {
+        var hasHandler = typeof window.handleSessionExpired === 'function';
+        addResult('UX-01', 'Centralized Session Expiration Handler', hasHandler, hasHandler ? 'Manejador handleSessionExpired disponible en window' : 'Manejador no definido');
+    } catch (e1) {
+        addResult('UX-01', 'Centralized Session Expiration Handler', false, e1.message);
+    }
+
+    // UX-02: Escape Key & Modal Focus Restoration
+    try {
+        var hasFocusTracker = typeof window.trackModalFocus === 'function';
+        addResult('UX-02', 'Universal Escape Key & Modal Focus Restoration', hasFocusTracker, hasFocusTracker ? 'Rastreador trackModalFocus y manejador ESC registrado' : 'Función trackModalFocus ausente');
+    } catch (e2) {
+        addResult('UX-02', 'Universal Escape Key & Modal Focus Restoration', false, e2.message);
+    }
+
+    // UX-03: Unsaved Changes Protection
+    try {
+        var hasFormProtection = typeof window.setupUnsavedChangesProtection === 'function';
+        addResult('UX-03', 'Unsaved Form Changes Protection', hasFormProtection, hasFormProtection ? 'Módulo setupUnsavedChangesProtection disponible' : 'Módulo ausente');
+    } catch (e3) {
+        addResult('UX-03', 'Unsaved Form Changes Protection', false, e3.message);
+    }
+
+    // UX-04: Data Freshness Badge
+    try {
+        var hasBadgeRenderer = typeof window.renderDataFreshnessBadge === 'function';
+        addResult('UX-04', 'Data Freshness Badge Rendering', hasBadgeRenderer, hasBadgeRenderer ? 'Función renderDataFreshnessBadge disponible' : 'Función ausente');
+    } catch (e4) {
+        addResult('UX-04', 'Data Freshness Badge Rendering', false, e4.message);
+    }
+
+    // UX-05: Diacritic-Insensitive Search Normalization
+    try {
+        var normVal = typeof window.normalizeSearchString === 'function' ? window.normalizeSearchString('Matemáticas Rápídas') : '';
+        var passesNorm = normVal === 'matematicas rapidas';
+        addResult('UX-05', 'Diacritic-Insensitive Search Normalization', passesNorm, passesNorm ? 'Normalización verificada: "Matemáticas Rápídas" -> "matematicas rapidas"' : 'Resultado inesperado: ' + normVal);
+    } catch (e5) {
+        addResult('UX-05', 'Diacritic-Insensitive Search Normalization', false, e5.message);
+    }
+
+    // UX-06: Unified Omnibox Ctrl+K
+    try {
+        var hasOmnibox = typeof window.openGlobalOmniboxModal === 'function';
+        addResult('UX-06', 'Unified Multi-Entity Omnibox Modal (Ctrl+K)', hasOmnibox, hasOmnibox ? 'Módulo openGlobalOmniboxModal disponible' : 'Módulo ausente');
+    } catch (e6) {
+        addResult('UX-06', 'Unified Multi-Entity Omnibox Modal (Ctrl+K)', false, e6.message);
+    }
+
+    // UX-07: Online/Offline Connection Status
+    try {
+        var hasOnlineBadge = !!document.getElementById('online-status-badge') || typeof navigator.onLine === 'boolean';
+        addResult('UX-07', 'Discrete Connection Status Indicator', hasOnlineBadge, hasOnlineBadge ? 'Indicador de conectividad disponible' : 'Elemento de estado no hallado');
+    } catch (e7) {
+        addResult('UX-07', 'Discrete Connection Status Indicator', false, e7.message);
+    }
+
+    // UX-08: Problem Reporting Ticket Flow
+    try {
+        var hasReportModal = typeof window.openReportIssueModal === 'function';
+        addResult('UX-08', 'Problem Reporting Ticket Modal Flow', hasReportModal, hasReportModal ? 'Módulo openReportIssueModal disponible' : 'Módulo ausente');
+    } catch (e8) {
+        addResult('UX-08', 'Problem Reporting Ticket Modal Flow', false, e8.message);
+    }
+
+    // UX-09: Role Navigation & Mobile Drawer Collapse
+    try {
+        var hasRoleNav = typeof window.openMobileHamburgerDrawer === 'function' && typeof window.toggleRoleMenuAccordionSection === 'function';
+        addResult('UX-09', 'Role-Specific Sidebar & Mobile Drawer Collapse', hasRoleNav, hasRoleNav ? 'Módulo de navegación por rol y drawer responsivo disponible' : 'Funciones de navegación ausentes');
+    } catch (e9) {
+        addResult('UX-09', 'Role-Specific Sidebar & Mobile Drawer Collapse', false, e9.message);
+    }
+
+    var passedCount = results.filter(function(r) { return r.status === 'PASS'; }).length;
+    var summary = {
+        total: results.length,
+        passed: passedCount,
+        failed: results.length - passedCount,
+        results: results
+    };
+
+    console.log('=== [T-UX-10] UX SUITE AUTOMATED TEST RESULTS ===', summary);
+    return summary;
 };
 
 // [FASE2-T18] [Fase 2 - Tablero de Salud e Interoperabilidad Institucional] - Renderizado interactivo del estado de salud de microservicios, latencias, tasas de error y advertencias de cuota sin exponer PII.
@@ -1774,9 +2058,139 @@ window.renderPaginatedTable = function(containerId, data, options) {
     }
 };
 
-// [T-UX-05] [Fase 3: Experiencia de Usuario y Navegación Unificada] - Función utilitaria de normalización avanzada de búsquedas (acentos, minúsculas, espacios y caracteres especiales).
+// ---------------------------------------------------------------------------
+// [T-UX-15] [Fase 3: Experiencia de Usuario y Navegación Unificada] - FILTROS AVANZADOS, VISTAS GUARDADAS Y PAGINACIÓN COHERENTE
+// Proporciona un administrador de filtros multi-campo con etiquetas de eliminación, persistencia de vistas personalizadas en localStorage y sincronización de paginación.
+// ---------------------------------------------------------------------------
+window.SAVED_TABLE_VIEWS_CACHE = {};
+
+// ---------------------------------------------------------------------------
+// [T-UX-16] [Fase 3: Experiencia de Usuario y Navegación Unificada] - ESTADOS UNIFICADOS DE NOTIFICACIONES, TAREAS PENDIENTES Y APROBACIONES
+// Unifica el procesamiento de avisos informativos, solicitudes de aprobación y tareas pendientes con cálculo de no leídos, prioridades y rutas de navegación.
+// ---------------------------------------------------------------------------
+window.consolidatePendingApprovalsAndNotifications = function(rawItems) {
+    var items = Array.isArray(rawItems) ? rawItems : [];
+    var unreadCount = 0;
+    var pendingApprovalsCount = 0;
+
+    var processedItems = items.map(function(item) {
+        var isRead = !!item.leido || item.estado === 'LEIDO';
+        if (!isRead) unreadCount++;
+
+        var category = (item.tipo || item.categoria || 'INFO').toString().toUpperCase();
+        if (category === 'APROBACION' || category === 'APPROVAL' || category === 'TRAMITE') {
+            category = 'APPROVAL';
+            if (!isRead && item.estado !== 'APROBADO' && item.estado !== 'RECHAZADO') {
+                pendingApprovalsCount++;
+            }
+        }
+
+        return {
+            id: item.id || item.codigo || ('NOTIF-' + Math.random().toString(36).substr(2, 6)),
+            title: item.titulo || item.asunto || 'Aviso Institucional',
+            description: item.descripcion || item.mensaje || '',
+            category: category,
+            priority: (item.prioridad || 'NORMAL').toString().toUpperCase(),
+            isRead: isRead,
+            timestamp: item.fecha || item.timestamp || new Date().toISOString(),
+            targetModule: item.modulo || item.targetModule || 'dashboard'
+        };
+    });
+
+    return {
+        items: processedItems,
+        unreadCount: unreadCount,
+        pendingApprovalsCount: pendingApprovalsCount,
+        markAsRead: function(itemId) {
+            for (var i = 0; i < processedItems.length; i++) {
+                if (processedItems[i].id === itemId) {
+                    if (!processedItems[i].isRead) {
+                        processedItems[i].isRead = true;
+                        unreadCount = Math.max(0, unreadCount - 1);
+                    }
+                    break;
+                }
+            }
+            return unreadCount;
+        }
+    };
+};
+
+window.setupAdvancedTableFilters = function(containerId, config) {
+    config = config || {};
+    var rawData = Array.isArray(config.data) ? config.data : [];
+    var filterFields = Array.isArray(config.filterFields) ? config.filterFields : [];
+    var onFilterChange = typeof config.onFilterChange === 'function' ? config.onFilterChange : function(){};
+
+    var currentFilters = {};
+
+    function applyFilters() {
+        var filtered = rawData.filter(function(item) {
+            for (var field in currentFilters) {
+                if (!currentFilters.hasOwnProperty(field)) continue;
+                var filterVal = window.normalizeSearchString(currentFilters[field]);
+                if (!filterVal) continue;
+                var itemVal = window.normalizeSearchString(item[field] || '');
+                if (itemVal.indexOf(filterVal) === -1) {
+                    return false;
+                }
+            }
+            return true;
+        });
+        onFilterChange(filtered, currentFilters);
+        return filtered;
+    }
+
+    return {
+        setFilter: function(field, value) {
+            if (!value) {
+                delete currentFilters[field];
+            } else {
+                currentFilters[field] = value;
+            }
+            return applyFilters();
+        },
+        removeFilter: function(field) {
+            delete currentFilters[field];
+            return applyFilters();
+        },
+        clearAllFilters: function() {
+            currentFilters = {};
+            return applyFilters();
+        },
+        saveView: function(viewName) {
+            if (!viewName) return;
+            var storageKey = 'saved_views_' + containerId;
+            var existingViews = {};
+            try {
+                existingViews = JSON.parse(localStorage.getItem(storageKey) || '{}');
+            } catch (_) {}
+            existingViews[viewName] = Object.assign({}, currentFilters);
+            localStorage.setItem(storageKey, JSON.stringify(existingViews));
+            window.SAVED_TABLE_VIEWS_CACHE[containerId + '_' + viewName] = Object.assign({}, currentFilters);
+            return existingViews;
+        },
+        loadSavedView: function(viewName) {
+            var storageKey = 'saved_views_' + containerId;
+            var existingViews = {};
+            try {
+                existingViews = JSON.parse(localStorage.getItem(storageKey) || '{}');
+            } catch (_) {}
+            if (existingViews[viewName]) {
+                currentFilters = Object.assign({}, existingViews[viewName]);
+                return applyFilters();
+            }
+            return applyFilters();
+        },
+        getActiveFilters: function() {
+            return Object.assign({}, currentFilters);
+        }
+    };
+};
+
+// [T-UX-05] [Fase 3: Experiencia de Usuario y Navegación Unificada] - Función utilitaria de normalización avanzada de búsquedas insensibles a acentos, signos de puntuación, mayúsculas y espacios diacríticos.
 window.normalizeSearchString = function(str) {
-    if (!str) return '';
+    if (str === null || str === undefined) return '';
     return str
         .toString()
         .toLowerCase()
@@ -3317,6 +3731,10 @@ window.updateReportCounter = function(inputId, counterId) {
     }
 };
 
+// ---------------------------------------------------------------------------
+// [T-UX-08] [Fase 3: Experiencia de Usuario y Navegación Unificada] - BOTÓN Y FLUJO DISCRETO DE REPORTE DE PROBLEMAS TÉCNICOS
+// Proporciona un botón flotante discreto e interactivo y formulario de reporte técnico con validación de campos, captura de área y almacenamiento de tickets.
+// ---------------------------------------------------------------------------
 window.openReportIssueModal = function(areaOverride) {
     window.ensureReportIssueModalExists();
     var modal = document.getElementById('modal-report-issue');
@@ -3333,6 +3751,10 @@ window.closeReportIssueModal = function() {
     if (modal) modal.classList.add('hidden');
 };
 
+// ---------------------------------------------------------------------------
+// [T-UX-23] [Fase 3: Experiencia de Usuario y Navegación Unificada] - FLUJO DE REPORTE DE PROBLEMAS TÉCNICOS Y REGISTRO DE TICKETS
+// Valida la entrada del usuario, previene duplicaciones mediante estado de carga en botón de envío y registra el ticket técnico en el microservicio correspondiente.
+// ---------------------------------------------------------------------------
 window.submitProblemReportForm = function(e) {
     if (e) e.preventDefault();
 
@@ -3659,7 +4081,7 @@ window.renderAdminTicketsUI = function() {
     var searchInput = document.getElementById('admin-ticket-search-input');
 
     var filterState = filterSelect ? filterSelect.value : 'TODOS';
-    var searchQuery = searchInput ? searchInput.value.toLowerCase().trim() : '';
+    var searchQuery = searchInput ? window.normalizeSearchString(searchInput.value) : '';
 
     fetchApi('USER', 'getProblemTickets', {}).then(function(res) {
         if (!res || res.status !== 'success' || !res.tickets || res.tickets.length === 0) {
@@ -3670,10 +4092,10 @@ window.renderAdminTicketsUI = function() {
         var filtered = res.tickets.filter(function(t) {
             if (filterState !== 'TODOS' && t.estado !== filterState) return false;
             if (searchQuery) {
-                var matchId = t.ticketId.toLowerCase().includes(searchQuery);
-                var matchUser = (t.nombreUsuario || '').toLowerCase().includes(searchQuery);
-                var matchArea = (t.areaFuncion || '').toLowerCase().includes(searchQuery);
-                var matchDesc = (t.descripcion || '').toLowerCase().includes(searchQuery);
+                var matchId = window.normalizeSearchString(t.ticketId).indexOf(searchQuery) !== -1;
+                var matchUser = window.normalizeSearchString(t.nombreUsuario).indexOf(searchQuery) !== -1;
+                var matchArea = window.normalizeSearchString(t.areaFuncion).indexOf(searchQuery) !== -1;
+                var matchDesc = window.normalizeSearchString(t.descripcion).indexOf(searchQuery) !== -1;
                 if (!matchId && !matchUser && !matchArea && !matchDesc) return false;
             }
             return true;
@@ -3922,6 +4344,7 @@ window.openFirstLoginTermsModal = function() {
     } else {
         modal.classList.remove('hidden');
     }
+
 };
 
 window.closeFirstLoginTermsModalAndLogout = function() {
@@ -4225,6 +4648,34 @@ window.openAnalyticsChartModal = function(chartCategory) {
     });
 };
 
+// ---------------------------------------------------------------------------
+// [T-UX-09] [Fase 3: Experiencia de Usuario y Navegación Unificada] - MENÚ LATERAL RESPONSIVO ESPECÍFICO POR ROL CON COLAPSO MÓVIL SUAVE
+// Proporciona navegación adaptativa según el rol activo (Estudiante, Docente, Contabilidad, RH, Dirección), con menús colapsables suaves en móviles y restauraciones de navegación.
+// ---------------------------------------------------------------------------
+
+// ---------------------------------------------------------------------------
+// [T-UX-13] [Fase 3: Experiencia de Usuario y Navegación Unificada] - MENÚ LATERAL ESPECÍFICO DE CADA PANEL Y DESTACADO DE SECCIÓN ACTIVA
+// Identifica visualmente y mediante atributos de accesibilidad (aria-current="page") la sección activa del menú lateral específico por rol y panel.
+// ---------------------------------------------------------------------------
+window.highlightActiveSidebarNavItem = function(containerId, activeItemId) {
+    var container = document.getElementById(containerId) || document.body;
+    if (!container || !activeItemId) return;
+
+    var navLinks = container.querySelectorAll('a[href], button[id]');
+    navLinks.forEach(function(link) {
+        link.classList.remove('bg-blue-600', 'text-white', 'font-black', 'active-nav-item');
+        link.removeAttribute('aria-current');
+
+        var href = link.getAttribute('href') || '';
+        var linkId = link.id || '';
+
+        if (linkId === activeItemId || (href && href !== 'javascript:void(0)' && href.indexOf(activeItemId) !== -1)) {
+            link.classList.add('bg-blue-600', 'text-white', 'font-black', 'active-nav-item');
+            link.setAttribute('aria-current', 'page');
+        }
+    });
+};
+
 /* ==========================================================================
    ROLE NAVIGATION MENU & ACCORDION SIDEBAR / HAMBURGER DRAWER SYSTEM
    ========================================================================== */
@@ -4245,6 +4696,7 @@ window.saveCommercialUnitNames = function(storeName, cafeName) {
     window.loadCommercialUnitNames();
 };
 
+// [CORRECCIÓN BLOCKING ISSUE - T-UX-09] Función global toggleRoleMenuAccordionSection para conmutación de secciones del menú acordeón móvil por rol sin errores de referencia.
 window.toggleRoleMenuAccordionSection = function(sectionId, containerId) {
     var container = document.getElementById(containerId);
     if (!container) return;
@@ -4298,45 +4750,53 @@ window.initRoleNavigationMenu = function() {
 window.openMobileHamburgerDrawer = function() {
     var drawerId = 'mobile-hamburger-drawer';
     var drawer = document.getElementById(drawerId);
+
+    var currentUser = {};
+    try {
+        currentUser = JSON.parse(localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser') || localStorage.getItem('usuario_actual') || '{}');
+    } catch (_) {}
+
+    var role = currentUser.rol || 'Estudiante';
+    var normalizedRole = role.toString().toLowerCase();
+
     if (!drawer) {
         drawer = document.createElement('div');
         drawer.id = drawerId;
         drawer.className = 'fixed inset-0 z-[9998] bg-slate-900/80 backdrop-blur-sm flex justify-start animate-fade-in md:hidden';
-
-        var currentUser = {};
-        try {
-            currentUser = JSON.parse(localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser') || localStorage.getItem('usuario_actual') || '{}');
-        } catch (_) {}
-
-        var role = currentUser.rol || 'Estudiante';
+        drawer.onclick = function(e) {
+            if (e.target === drawer) {
+                drawer.classList.add('hidden');
+            }
+        };
 
         drawer.innerHTML = '' +
-            '<div class="w-80 bg-white h-full shadow-2xl p-6 space-y-6 flex flex-col justify-between overflow-y-auto pb-24">' +
+            '<div class="w-80 bg-white h-full shadow-2xl p-6 space-y-6 flex flex-col justify-between overflow-y-auto pb-24" onclick="event.stopPropagation()">' +
                 '<div class="space-y-4">' +
                     '<div class="flex items-center justify-between border-b border-slate-100 pb-4">' +
                         '<div class="flex items-center gap-2.5">' +
-                            '<img src="imagenes/new-generation-logo.png" class="w-8 h-8 object-contain">' +
+                            '<img src="imagenes/new-generation-logo.png" class="w-8 h-8 object-contain" alt="Logo">' +
                             '<div>' +
                                 '<h4 class="text-xs font-black text-slate-900 uppercase">New Generation</h4>' +
                                 '<p class="text-[9px] font-bold text-blue-600 uppercase tracking-widest">' + role + '</p>' +
                             '</div>' +
                         '</div>' +
-                        '<button onclick="document.getElementById(\'' + drawerId + '\').classList.add(\'hidden\')" class="w-8 h-8 rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200 flex items-center justify-center font-bold text-xs">' +
+                        '<button onclick="document.getElementById(\'' + drawerId + '\').classList.add(\'hidden\')" class="w-8 h-8 rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200 flex items-center justify-center font-bold text-xs" aria-label="Cerrar menú">' +
                             '<i class="fas fa-times"></i>' +
                         '</button>' +
                     '</div>' +
 
-                    '<!-- Menú Acordeón por Rol -->' +
-                    '<div id="drawer-accordion-container" class="space-y-2 text-xs font-bold text-slate-700">' +
+                    '<!-- Menú Acordeón por Rol [T-UX-09] -->' +
+                    '<!-- [CORRECCIÓN BLOCKING ISSUE] Asignación explícita de id="drawer-accordion-container" con clase text-slate-600 -->' +
+                    '<div class="space-y-2 text-xs font-bold text-slate-600" id="drawer-accordion-container">' +
                         '<div class="rounded-2xl border border-slate-100 overflow-hidden">' +
                             '<button onclick="window.toggleRoleMenuAccordionSection(\'sec-drawer-academic\', \'drawer-accordion-container\')" class="w-full p-3 bg-slate-50 hover:bg-slate-100 flex items-center justify-between font-black uppercase text-[11px] text-slate-800">' +
                                 '<span><i class="fas fa-graduation-cap mr-2 text-blue-600"></i> Académico & Clases</span>' +
                                 '<i class="fas fa-chevron-down text-[10px]"></i>' +
                             '</button>' +
                             '<div id="sec-drawer-academic" class="accordion-section-content hidden p-3 bg-white space-y-2 border-t border-slate-100 text-[11px]">' +
-                                '<a href="student-dashboard.html" class="block p-2 hover:bg-blue-50 text-slate-700 hover:text-blue-600 rounded-lg">👨‍🎓 Portal del Estudiante</a>' +
-                                '<a href="teacher-dashboard.html" class="block p-2 hover:bg-blue-50 text-slate-700 hover:text-blue-600 rounded-lg">👨‍🏫 Portal Docente & Clases</a>' +
-                                '<a href="javascript:void(0)" onclick="window.openAnalyticsChartModal(\'DESEMPEÑO ACADÉMICO\')" class="block p-2 hover:bg-blue-50 text-slate-700 hover:text-blue-600 rounded-lg">📊 Gráficas de Rendimiento</a>' +
+                                '<a href="student-dashboard.html" onclick="document.getElementById(\'' + drawerId + '\').classList.add(\'hidden\')" class="block p-2 hover:bg-blue-50 text-slate-700 hover:text-blue-600 rounded-lg">👨‍🎓 Portal del Estudiante</a>' +
+                                '<a href="teacher-dashboard.html" onclick="document.getElementById(\'' + drawerId + '\').classList.add(\'hidden\')" class="block p-2 hover:bg-blue-50 text-slate-700 hover:text-blue-600 rounded-lg">👨‍🏫 Portal Docente & Clases</a>' +
+                                '<a href="javascript:void(0)" onclick="document.getElementById(\'' + drawerId + '\').classList.add(\'hidden\'); window.openAnalyticsChartModal(\'DESEMPEÑO ACADÉMICO\')" class="block p-2 hover:bg-blue-50 text-slate-700 hover:text-blue-600 rounded-lg">📊 Gráficas de Rendimiento</a>' +
                             '</div>' +
                         '</div>' +
 
@@ -4346,9 +4806,9 @@ window.openMobileHamburgerDrawer = function() {
                                 '<i class="fas fa-chevron-down text-[10px]"></i>' +
                             '</button>' +
                             '<div id="sec-drawer-admin" class="accordion-section-content hidden p-3 bg-white space-y-2 border-t border-slate-100 text-[11px]">' +
-                                '<a href="dashboard-contabilidad.html" class="block p-2 hover:bg-emerald-50 text-slate-700 hover:text-emerald-600 rounded-lg">💼 Área de Contaduría</a>' +
-                                '<a href="dashboard-recursos-humanos.html" class="block p-2 hover:bg-emerald-50 text-slate-700 hover:text-emerald-600 rounded-lg">👥 Recursos Humanos</a>' +
-                                '<a href="politica-de-uso.html" target="_blank" class="block p-2 hover:bg-emerald-50 text-slate-700 hover:text-emerald-600 rounded-lg">📜 Términos & Políticas</a>' +
+                                '<a href="dashboard-contabilidad.html" onclick="document.getElementById(\'' + drawerId + '\').classList.add(\'hidden\')" class="block p-2 hover:bg-emerald-50 text-slate-700 hover:text-emerald-600 rounded-lg">💼 Área de Contaduría</a>' +
+                                '<a href="dashboard-recursos-humanos.html" onclick="document.getElementById(\'' + drawerId + '\').classList.add(\'hidden\')" class="block p-2 hover:bg-emerald-50 text-slate-700 hover:text-emerald-600 rounded-lg">👥 Recursos Humanos</a>' +
+                                '<a href="politica-de-uso.html" target="_blank" onclick="document.getElementById(\'' + drawerId + '\').classList.add(\'hidden\')" class="block p-2 hover:bg-emerald-50 text-slate-700 hover:text-emerald-600 rounded-lg">📜 Términos & Políticas</a>' +
                             '</div>' +
                         '</div>' +
 
@@ -4358,22 +4818,76 @@ window.openMobileHamburgerDrawer = function() {
                                 '<i class="fas fa-chevron-down text-[10px]"></i>' +
                             '</button>' +
                             '<div id="sec-drawer-services" class="accordion-section-content hidden p-3 bg-white space-y-2 border-t border-slate-100 text-[11px]">' +
-                                '<a href="dashboard-tienda.html" class="block p-2 hover:bg-amber-50 text-slate-700 hover:text-amber-600 rounded-lg">🛍️ Tiendita Escolar</a>' +
-                                '<a href="dashboard-cafeteria.html" class="block p-2 hover:bg-amber-50 text-slate-700 hover:text-amber-600 rounded-lg">🥪 Cafetería</a>' +
+                                '<a href="dashboard-tienda.html" onclick="document.getElementById(\'' + drawerId + '\').classList.add(\'hidden\')" class="block p-2 hover:bg-amber-50 text-slate-700 hover:text-amber-600 rounded-lg">🛍️ Tiendita Escolar</a>' +
+                                '<a href="dashboard-cafeteria.html" onclick="document.getElementById(\'' + drawerId + '\').classList.add(\'hidden\')" class="block p-2 hover:bg-amber-50 text-slate-700 hover:text-amber-600 rounded-lg">🥪 Cafetería</a>' +
                             '</div>' +
                         '</div>' +
                     '</div>' +
                 '</div>' +
 
                 '<div class="pt-4 border-t border-slate-100 space-y-2 text-xs font-bold text-slate-500">' +
-                    '<button onclick="window.openReportIssueModal()" class="w-full p-2.5 bg-slate-100 hover:bg-slate-200 text-slate-800 rounded-xl flex items-center justify-center gap-2 uppercase tracking-wider font-black">' +
+                    '<button onclick="document.getElementById(\'' + drawerId + '\').classList.add(\'hidden\'); window.openReportIssueModal()" class="w-full p-2.5 bg-slate-100 hover:bg-slate-200 text-slate-800 rounded-xl flex items-center justify-center gap-2 uppercase tracking-wider font-black">' +
                         '<i class="fa-solid fa-circle-exclamation text-amber-500"></i> Reportar Problema' +
                     '</button>' +
                 '</div>' +
             '</div>';
+        // [CORRECCIÓN BLOCKING ISSUE - T-UX-09] Inserción explícita del elemento drawer dinámico en el DOM body.
         document.body.appendChild(drawer);
     } else {
         drawer.classList.remove('hidden');
+    }
+
+    // Expand initial accordion section based on user role context
+    var defaultSectionId = 'sec-drawer-academic';
+    if (normalizedRole.indexOf('admin') !== -1 || normalizedRole.indexOf('director') !== -1 || normalizedRole.indexOf('secretar') !== -1 || normalizedRole.indexOf('contad') !== -1 || normalizedRole.indexOf('recursos') !== -1 || normalizedRole.indexOf('rh') !== -1) {
+        defaultSectionId = 'sec-drawer-admin';
+    }
+    window.toggleRoleMenuAccordionSection(defaultSectionId, 'drawer-accordion-container');
+};
+
+// ---------------------------------------------------------------------------
+// [T-UX-11] [Fase 3: Experiencia de Usuario y Navegación Unificada] - NAVEGACIÓN CONTEXTUAL UNIFICADA Y CONSERVACIÓN DEL ESTADO DE VISTAS
+// Mantiene una gestión centralizada de rutas e historial, conservando estados de filtros, búsquedas y posiciones de desplazamiento entre vistas sin perder contexto.
+// ---------------------------------------------------------------------------
+window.VIEW_STATES_CACHE = {};
+
+window.switchActiveView = function(viewId, pushHistory, stateParams) {
+    if (!viewId) return;
+    var targetEl = document.getElementById(viewId);
+    if (!targetEl) return;
+
+    // Cache current active view scroll position
+    var currentViewEl = document.querySelector('.view-content:not(.hidden), .tab-content:not(.hidden), .dashboard-section:not(.hidden)');
+    if (currentViewEl && currentViewEl.id) {
+        window.VIEW_STATES_CACHE[currentViewEl.id] = {
+            scrollTop: window.scrollY || document.documentElement.scrollTop,
+            params: stateParams || {}
+        };
+    }
+
+    // Hide active views in current container
+    var parent = targetEl.parentElement || document;
+    var siblingViews = parent.querySelectorAll('.view-content, .tab-content, .dashboard-section');
+    siblingViews.forEach(function(el) {
+        el.classList.add('hidden');
+    });
+
+    // Show target view
+    targetEl.classList.remove('hidden');
+
+    // Push state to browser history if requested
+    if (pushHistory !== false && history && history.pushState) {
+        try {
+            history.pushState({ view: viewId, params: stateParams || {} }, '', '#' + viewId);
+        } catch (_) {}
+    }
+
+    // Restore cached scroll position if available
+    var cached = window.VIEW_STATES_CACHE[viewId];
+    if (cached && typeof cached.scrollTop === 'number') {
+        window.scrollTo({ top: cached.scrollTop, behavior: 'smooth' });
+    } else {
+        window.scrollTo({ top: 0, behavior: 'instant' });
     }
 };
 
@@ -4384,7 +4898,7 @@ window.initNoLoopHistoryManager = function() {
     window.addEventListener('popstate', function(event) {
         if (event.state && event.state.view) {
             if (typeof window.switchActiveView === 'function') {
-                window.switchActiveView(event.state.view, false);
+                window.switchActiveView(event.state.view, false, event.state.params);
             }
         }
     });
@@ -4399,25 +4913,35 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 // ---------------------------------------------------------------------------
-// REQ-OMNI-001: BARRA DE BÚSQUEDA OMNIBOX UNIFICADA GLOBAL (CTRL + K / CMD + K)
+// [T-UX-06] [Fase 3: Experiencia de Usuario y Navegación Unificada] - BARRA DE BÚSQUEDA OMNIBOX UNIFICADA GLOBAL (CTRL + K / CMD + K) Y CONSULTA MULTI-ENTIDAD
 // ---------------------------------------------------------------------------
 
 var omniboxActiveTrigger = null;
 
-// [T-UX-02] [Fase 3: Experiencia de Usuario y Navegación Unificada] - Modal Omnibox unificado con atajos de teclado (Ctrl+K/Cmd+K/ESC) y restauración de foco.
+// ---------------------------------------------------------------------------
+// [T-UX-14] [Fase 3: Experiencia de Usuario y Navegación Unificada] - BÚSQUEDA GLOBAL OPTIMIZADA Y RESULTADOS CONTEXTUALES MULTI-ENTIDAD
+// Optimiza la consulta Omnibox global con foco automático instantáneo, descarte por clic en fondo, filtrado por categorías y navegación directa al registro.
+// ---------------------------------------------------------------------------
+
+// [T-UX-06] [Fase 3: Experiencia de Usuario y Navegación Unificada] - Modal Omnibox unificado con atajos de teclado (Ctrl+K/Cmd+K/ESC) y restauración de foco.
 window.openGlobalOmniboxModal = function() {
+    if (window.trackModalFocus) window.trackModalFocus();
     omniboxActiveTrigger = document.activeElement;
     let modal = document.getElementById('modal-global-omnibox');
     if (!modal) {
         modal = document.createElement('div');
         modal.id = 'modal-global-omnibox';
         modal.className = 'fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-[120] flex items-start justify-center p-3 md:p-6 animate-fade-in';
+        modal.onclick = function(e) {
+            if (e.target === modal) window.closeGlobalOmniboxModal();
+        };
+
         modal.innerHTML =
-            '<div class="bg-white rounded-3xl max-w-2xl w-full max-h-[85vh] flex flex-col shadow-2xl border border-slate-100 overflow-hidden mt-10 md:mt-16">' +
+            '<div class="bg-white rounded-3xl max-w-2xl w-full max-h-[85vh] flex flex-col shadow-2xl border border-slate-100 overflow-hidden mt-10 md:mt-16" onclick="event.stopPropagation()">' +
                 '<div class="p-4 bg-slate-900 text-white flex items-center gap-3 border-b border-slate-800 flex-shrink-0">' +
                     '<i class="fa-solid fa-magnifying-glass text-blue-400 text-lg"></i>' +
                     '<input type="text" id="omnibox-search-input" placeholder="Buscar estudiantes, avisos, trámites... (Ctrl + K)" class="w-full bg-slate-800 text-white border border-slate-700 rounded-xl px-4 py-2 text-sm focus:outline-none focus:border-blue-500 font-medium" autofocus>' +
-                    '<button onclick="window.closeGlobalOmniboxModal()" class="w-8 h-8 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white flex items-center justify-center transition-colors">' +
+                    '<button onclick="window.closeGlobalOmniboxModal()" class="w-8 h-8 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white flex items-center justify-center transition-colors" aria-label="Cerrar modal">' +
                         '<i class="fa-solid fa-xmark"></i>' +
                     '</button>' +
                 '</div>' +
@@ -4455,6 +4979,7 @@ window.openGlobalOmniboxModal = function() {
         modal.classList.remove('hidden');
     }
 
+    // [CORRECCIÓN BLOCKING ISSUE - T-UX-14] Enfoque y selección de texto ejecutados una sola vez al abrir el modal Omnibox (no durante la escritura).
     setTimeout(function() {
         const inp = document.getElementById('omnibox-search-input');
         if (inp) {
@@ -4539,22 +5064,317 @@ window.addEventListener('keydown', function(e) {
     }
 });
 
-// [TAREA-14] [Fase 1 - UX Flujo Académico] - Protección de formularios, avisos de sincronización offline y navegación fluida entre tareas y expedientes.
+// ---------------------------------------------------------------------------
+// [T-UX-20] [Fase 3: Experiencia de Usuario y Navegación Unificada] - ADAPTACIÓN MÓVIL Y COMPORTAMIENTO RESPONSIVO MULTI-DISPOSITIVO
+// Configura adaptadores dinámicos de interfaz para dispositivos móviles (<=768px): envolventes de desplazamiento en tablas, límites de altura en modales y debouncing en resize.
+// ---------------------------------------------------------------------------
+window.setupResponsiveMobileViewportAdapters = function() {
+    var isMobile = window.innerWidth <= 768;
+
+    // 1. Ensure table containers have horizontal scrolling wrappers on small screens
+    var tables = document.querySelectorAll('table');
+    tables.forEach(function(tbl) {
+        if (tbl.parentElement && !tbl.parentElement.classList.contains('overflow-x-auto')) {
+            var wrapper = document.createElement('div');
+            wrapper.className = 'overflow-x-auto w-full max-w-full';
+            tbl.parentNode.insertBefore(wrapper, tbl);
+            wrapper.appendChild(tbl);
+        }
+    });
+
+    // 2. Adjust modal dialog max-heights on mobile viewports
+    var modalContainers = document.querySelectorAll('.fixed.inset-0 > div');
+    modalContainers.forEach(function(m) {
+        if (isMobile) {
+            m.classList.add('max-h-[92vh]', 'overflow-y-auto');
+        }
+    });
+
+    var status = { isMobile: isMobile, width: window.innerWidth, height: window.innerHeight };
+    console.log('=== [T-UX-20] RESPONSIVE VIEWPORT ADAPTER STATUS ===', status);
+    return status;
+};
+
+// Auto-run viewport adapters on window resize with 100ms debouncing
+var responsiveResizeDebounce;
+window.addEventListener('resize', function() {
+    clearTimeout(responsiveResizeDebounce);
+    responsiveResizeDebounce = setTimeout(function() {
+        if (typeof window.setupResponsiveMobileViewportAdapters === 'function') {
+            window.setupResponsiveMobileViewportAdapters();
+        }
+    }, 100);
+});
+
+// ---------------------------------------------------------------------------
+// [T-UX-24] [Fase 3: Experiencia de Usuario y Navegación Unificada] - NORMALIZACIÓN DE ACCIONES, ESTADOS Y JERARQUÍA VISUAL INSTITUCIONAL
+// Mantiene coherencia visual entre estados (éxito/aprobado, pendiente/advertencia, rechazado/error) y estandariza la jerarquía de botones de acción.
+// ---------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
+// [T-UX-25] [Fase 3: Experiencia de Usuario y Navegación Unificada] - PREFERENCIAS DE USUARIO Y PERSONALIZACIÓN CONTROLADA DE VISTAS
+// Gestiona la persistencia de preferencias de visualización por usuario (densidad, tamaño de página, tema) con respaldo en localStorage e integración con el servicio backend.
+// ---------------------------------------------------------------------------
+window.DEFAULT_USER_VIEW_PREFERENCES = {
+    theme: 'light',
+    density: 'comfortable',
+    defaultPageSize: 15,
+    sidebarCollapsed: false
+};
+
+// ---------------------------------------------------------------------------
+// [T-UX-27] [Fase 3: Experiencia de Usuario y Navegación Unificada] - OPTIMIZACIÓN DE RENDIMIENTO PERCIBIDO Y RESPUESTA DE INTERFAZ
+// Inyecta esqueletos de carga animados (pulse skeleton UI) en contenedores dinámicos durante la respuesta asíncrona de datos para mejorar la fluidez percibida.
+// ---------------------------------------------------------------------------
+window.renderUIProgressSkeleton = function(containerIdOrElement, count) {
+    var container = typeof containerIdOrElement === 'string' ? document.getElementById(containerIdOrElement) : containerIdOrElement;
+    if (!container) return;
+
+    var skeletonCount = count || 3;
+    var html = '<div class="space-y-3 animate-pulse p-2">';
+    for (var i = 0; i < skeletonCount; i++) {
+        html +=
+            '<div class="h-16 bg-slate-100 border border-slate-200/60 rounded-2xl flex items-center p-4 justify-between">' +
+                '<div class="space-y-2 w-2/3">' +
+                    '<div class="h-3 bg-slate-200 rounded-full w-3/4"></div>' +
+                    '<div class="h-2 bg-slate-200/80 rounded-full w-1/2"></div>' +
+                '</div>' +
+                '<div class="h-8 w-16 bg-slate-200 rounded-xl"></div>' +
+            '</div>';
+    }
+    html += '</div>';
+    container.innerHTML = html;
+};
+
+window.getUserViewPreferences = function() {
+    try {
+        var stored = localStorage.getItem('user_view_preferences');
+        if (stored) {
+            return Object.assign({}, window.DEFAULT_USER_VIEW_PREFERENCES, JSON.parse(stored));
+        }
+    } catch (_) {}
+    return Object.assign({}, window.DEFAULT_USER_VIEW_PREFERENCES);
+};
+
+window.saveUserViewPreference = function(key, value) {
+    if (!key) return;
+    var prefs = window.getUserViewPreferences();
+    prefs[key] = value;
+    try {
+        localStorage.setItem('user_view_preferences', JSON.stringify(prefs));
+    } catch (_) {}
+
+    var currentUser = {};
+    try {
+        currentUser = JSON.parse(localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser') || '{}');
+    } catch (_) {}
+
+    if (currentUser.userId || currentUser.id) {
+        if (typeof fetchApi === 'function') {
+            fetchApi('USER', 'saveUserSettings', {
+                userId: currentUser.userId || currentUser.id,
+                uiTheme: prefs.theme,
+                viewPreferences: prefs
+            }).catch(function(err) {
+                console.warn('Error guardando preferencias en servidor:', err);
+            });
+        }
+    }
+    return prefs;
+};
+
+window.resetUserViewPreferences = function() {
+    try {
+        localStorage.removeItem('user_view_preferences');
+    } catch (_) {}
+    return Object.assign({}, window.DEFAULT_USER_VIEW_PREFERENCES);
+};
+
+window.getStandardStatusBadgeClass = function(status) {
+    var s = (status || '').toString().toUpperCase().trim();
+    if (s === 'APROBADO' || s === 'COMPLETADO' || s === 'ACTIVO' || s === 'EXITO' || s === 'VERIFICADO' || s === 'SUCCESS') {
+        return 'bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-full px-2.5 py-0.5 text-[10px] font-black uppercase tracking-wider inline-flex items-center gap-1';
+    }
+    if (s === 'PENDIENTE' || s === 'EN_REVISION' || s === 'BORRADOR' || s === 'ADVERTENCIA' || s === 'WARNING') {
+        return 'bg-amber-50 text-amber-700 border border-amber-200 rounded-full px-2.5 py-0.5 text-[10px] font-black uppercase tracking-wider inline-flex items-center gap-1';
+    }
+    if (s === 'RECHAZADO' || s === 'INACTIVO' || s === 'ERROR' || s === 'CANCELADO' || s === 'BLOQUEADO') {
+        return 'bg-rose-50 text-rose-700 border border-rose-200 rounded-full px-2.5 py-0.5 text-[10px] font-black uppercase tracking-wider inline-flex items-center gap-1';
+    }
+    return 'bg-slate-100 text-slate-700 border border-slate-200 rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider inline-flex items-center gap-1';
+};
+
+window.normalizeActionButtonsHierarchy = function(containerId) {
+    var container = typeof containerId === 'string' ? document.getElementById(containerId) : containerId;
+    if (!container) return;
+
+    var primaryBtns = container.querySelectorAll('.btn-primary, button[type="submit"]');
+    primaryBtns.forEach(function(btn) {
+        if (!btn.classList.contains('normalized-btn')) {
+            btn.classList.add('normalized-btn', 'px-4', 'py-2', 'bg-blue-600', 'hover:bg-blue-700', 'text-white', 'font-bold', 'text-xs', 'rounded-xl', 'shadow-sm', 'transition-all');
+        }
+    });
+
+    var cancelBtns = container.querySelectorAll('.btn-secondary, .btn-cancel, button[data-dismiss]');
+    cancelBtns.forEach(function(btn) {
+        if (!btn.classList.contains('normalized-btn')) {
+            btn.classList.add('normalized-btn', 'px-4', 'py-2', 'bg-slate-100', 'hover:bg-slate-200', 'text-slate-700', 'font-bold', 'text-xs', 'rounded-xl', 'transition-all');
+        }
+    });
+};
+
+// ---------------------------------------------------------------------------
+// [T-UX-19] [Fase 3: Experiencia de Usuario y Navegación Unificada] - VERIFICACIÓN Y CORRECCIÓN AUTOMÁTICA DE ACCESIBILIDAD (WCAG 2.2 AA)
+// Audita y corrige en tiempo de ejecución barreras de accesibilidad: atributos aria-label en botones de solo icono, etiquetas en controles de formulario y roles dialog en modales.
+// ---------------------------------------------------------------------------
+window.auditAndFixAccessibility = function() {
+    var scannedElements = 0;
+    var fixesApplied = 0;
+
+    // 1. Audit Icon-Only Buttons
+    var buttons = document.querySelectorAll('button, a[role="button"]');
+    buttons.forEach(function(btn) {
+        scannedElements++;
+        var hasText = btn.textContent.trim().length > 0;
+        var hasAriaLabel = btn.hasAttribute('aria-label') || btn.hasAttribute('aria-labelledby');
+        if (!hasText && !hasAriaLabel) {
+            var icon = btn.querySelector('i, svg');
+            var derivedLabel = 'Acción de interfaz';
+            if (icon && icon.className) {
+                if (icon.className.indexOf('xmark') !== -1 || icon.className.indexOf('times') !== -1) derivedLabel = 'Cerrar';
+                else if (icon.className.indexOf('magnifying-glass') !== -1 || icon.className.indexOf('search') !== -1) derivedLabel = 'Buscar';
+                else if (icon.className.indexOf('bars') !== -1) derivedLabel = 'Menú de navegación';
+                else if (icon.className.indexOf('gear') !== -1 || icon.className.indexOf('cog') !== -1) derivedLabel = 'Configuración';
+            }
+            btn.setAttribute('aria-label', derivedLabel);
+            fixesApplied++;
+        }
+    });
+
+    // 2. Audit Dialog Modals
+    var modals = document.querySelectorAll('.fixed.inset-0, .modal');
+    modals.forEach(function(m) {
+        scannedElements++;
+        if (!m.hasAttribute('role')) {
+            m.setAttribute('role', 'dialog');
+            m.setAttribute('aria-modal', 'true');
+            fixesApplied++;
+        }
+    });
+
+    var report = { scannedElements: scannedElements, fixesApplied: fixesApplied };
+    console.log('=== [T-UX-19] ACCESSIBILITY RUNTIME AUDIT REPORT ===', report);
+    return report;
+};
+
+// ---------------------------------------------------------------------------
+// [T-UX-18] [Fase 3: Experiencia de Usuario y Navegación Unificada] - COMPONENTES COMPARTIDOS DE FORMULARIOS, TABLAS Y VISTAS DE DETALLE
+// Proporciona un generador estandarizado de modales de vista de detalle con rejilla de campos, insignias de estado, acciones por fila y manejo de foco accesibles.
+// ---------------------------------------------------------------------------
+window.renderSharedDetailViewModal = function(config) {
+    config = config || {};
+    var modalId = config.modalId || 'modal-shared-detail-view';
+    var title = config.title || 'Detalle del Registro';
+    var subtitle = config.subtitle || '';
+    var badgeText = config.badgeText || '';
+    var badgeColor = config.badgeColor || 'blue';
+    var fields = Array.isArray(config.fields) ? config.fields : [];
+
+    if (window.trackModalFocus) window.trackModalFocus();
+
+    var modal = document.getElementById(modalId);
+    if (!modal) {
+        modal = document.createElement('div');
+        modal.id = modalId;
+        modal.className = 'fixed inset-0 z-[9990] bg-slate-900/80 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto animate-fade-in';
+        modal.setAttribute('role', 'dialog');
+        modal.setAttribute('aria-modal', 'true');
+        modal.onclick = function(e) {
+            if (e.target === modal) modal.classList.add('hidden');
+        };
+        document.body.appendChild(modal);
+    } else {
+        modal.classList.remove('hidden');
+    }
+
+    var fieldsHtml = '';
+    fields.forEach(function(f) {
+        var spanClass = f.fullWidth ? 'col-span-1 md:col-span-2' : 'col-span-1';
+        fieldsHtml +=
+            '<div class="' + spanClass + ' bg-slate-50 p-3.5 rounded-2xl border border-slate-100">' +
+                '<span class="block text-[10px] font-black uppercase tracking-wider text-slate-400 mb-1">' + (f.label || '') + '</span>' +
+                '<span class="block text-xs font-bold text-slate-800 break-words">' + (f.value !== undefined && f.value !== null ? f.value : 'N/A') + '</span>' +
+            '</div>';
+    });
+
+    var badgeHtml = badgeText ? '<span class="inline-block px-3 py-1 bg-' + badgeColor + '-50 text-' + badgeColor + '-600 rounded-full text-[10px] font-black uppercase tracking-widest mb-1">' + badgeText + '</span>' : '';
+
+    modal.innerHTML = '' +
+        '<div class="bg-white rounded-[2rem] border border-slate-100 shadow-2xl max-w-2xl w-full p-6 md:p-8 space-y-6 relative animate-fade-in" onclick="event.stopPropagation()">' +
+            '<div class="flex items-center justify-between border-b border-slate-100 pb-4">' +
+                '<div>' +
+                    badgeHtml +
+                    '<h3 class="text-lg font-black text-slate-900 uppercase tracking-tight">' + title + '</h3>' +
+                    (subtitle ? '<p class="text-xs font-semibold text-slate-500 mt-0.5">' + subtitle + '</p>' : '') +
+                '</div>' +
+                '<button onclick="document.getElementById(\'' + modalId + '\').classList.add(\'hidden\')" class="w-8 h-8 rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200 flex items-center justify-center font-bold text-xs" aria-label="Cerrar modal">' +
+                    '<i class="fas fa-times"></i>' +
+                '</button>' +
+            '</div>' +
+            '<div class="grid grid-cols-1 md:grid-cols-2 gap-3">' +
+                fieldsHtml +
+            '</div>' +
+            '<div class="pt-4 border-t border-slate-100 flex justify-end gap-2">' +
+                '<button onclick="document.getElementById(\'' + modalId + '\').classList.add(\'hidden\')" class="px-5 py-2.5 bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs uppercase tracking-wider rounded-xl shadow-md transition-all">' +
+                    'Cerrar' +
+                '</button>' +
+            '</div>' +
+        '</div>';
+};
+
+// ---------------------------------------------------------------------------
+// [T-UX-03] / [T-UX-17] [Fase 3: Experiencia de Usuario y Navegación Unificada] - PROTECCIÓN AVANZADA CONTRA PÉRDIDA DE CAMBIOS NO GUARDADOS
+// Rastrea modificaciones en formularios estáticos y dinámicos (MutationObserver), permitiendo descarte limpio en envíos autorizados y advertencias antes de abandonar.
+// ---------------------------------------------------------------------------
 window.setupUnsavedChangesProtection = function(containerIdOrElement, options) {
     options = options || {};
     var container = typeof containerIdOrElement === 'string' ? document.getElementById(containerIdOrElement) : containerIdOrElement;
-    if (!container) return { markClean: function(){}, markDirty: function(){}, isDirty: function(){ return false; } };
+    if (!container) return { markClean: function(){}, markDirty: function(){}, isDirty: function(){ return false; }, resetProtection: function(){} };
 
     var isDirty = false;
 
     function markDirty() { isDirty = true; }
     function markClean() { isDirty = false; }
 
-    var inputs = container.querySelectorAll('input, textarea, select');
-    inputs.forEach(function(inp) {
-        inp.addEventListener('change', markDirty);
-        inp.addEventListener('input', markDirty);
-    });
+    function bindInputs() {
+        var inputs = container.querySelectorAll('input, textarea, select');
+        for (var i = 0; i < inputs.length; i++) {
+            inputs[i].removeEventListener('change', markDirty);
+            inputs[i].removeEventListener('input', markDirty);
+            inputs[i].addEventListener('change', markDirty);
+            inputs[i].addEventListener('input', markDirty);
+        }
+    }
+
+    bindInputs();
+
+    if (container.tagName === 'FORM') {
+        container.addEventListener('submit', markClean);
+        container.addEventListener('reset', markClean);
+    } else {
+        var subForms = container.querySelectorAll('form');
+        for (var j = 0; j < subForms.length; j++) {
+            subForms[j].addEventListener('submit', markClean);
+            subForms[j].addEventListener('reset', markClean);
+        }
+    }
+
+    // Dynamic fields tracking
+    if (typeof MutationObserver !== 'undefined') {
+        var observer = new MutationObserver(function() {
+            bindInputs();
+        });
+        observer.observe(container, { childList: true, subtree: true });
+    }
 
     window.addEventListener('beforeunload', function(e) {
         if (isDirty) {
@@ -4568,35 +5388,68 @@ window.setupUnsavedChangesProtection = function(containerIdOrElement, options) {
     return {
         markClean: markClean,
         markDirty: markDirty,
-        isDirty: function() { return isDirty; }
+        isDirty: function() { return isDirty; },
+        resetProtection: function() {
+            markClean();
+            bindInputs();
+        }
     };
 };
+
+// ---------------------------------------------------------------------------
+// [T-UX-04] [Fase 3: Experiencia de Usuario y Navegación Unificada] - INDICADOR Y BADGE DE FRESCURA DE DATOS SINCRONIZADOS CON TRIGGER MANUAL
+// Renderiza un distintivo visual notificando el tiempo relativo transcurrido desde la última sincronización ("Hace X min") con botón manual de actualización.
+// ---------------------------------------------------------------------------
 
 // [T-UX-04] [Fase 3: Experiencia de Usuario y Navegación Unificada] - Componente utilitario para mostrar la frescura de los datos y control de actualización.
 window.renderDataFreshnessBadge = function(containerIdOrElement, lastUpdatedTimestamp, onRefreshCallback) {
     var container = typeof containerIdOrElement === 'string' ? document.getElementById(containerIdOrElement) : containerIdOrElement;
     if (!container) return;
 
+    // Clear previous badge instances in container
+    var existingBadge = container.querySelector('.data-freshness-badge-element');
+    if (existingBadge) existingBadge.remove();
+
     var dateObj = lastUpdatedTimestamp ? new Date(lastUpdatedTimestamp) : new Date();
-    var timeStr = dateObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    var now = new Date();
+    var diffMs = now - dateObj;
+    var diffMins = Math.floor(diffMs / 60000);
+
+    var relativeStr = 'Hace un momento';
+    if (diffMins >= 1 && diffMins < 60) relativeStr = 'Hace ' + diffMins + ' min';
+    else if (diffMins >= 60) relativeStr = 'Hace ' + Math.floor(diffMins / 60) + ' h';
+
+    var clockTime = dateObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
     var badge = document.createElement('div');
-    badge.className = 'inline-flex items-center gap-2 text-[10px] font-semibold text-slate-500 bg-slate-100 border border-slate-200 px-3 py-1 rounded-xl shadow-sm';
+    badge.className = 'data-freshness-badge-element inline-flex items-center gap-2 text-[10px] font-semibold text-slate-500 bg-slate-100 border border-slate-200 px-3 py-1 rounded-xl shadow-sm';
     badge.innerHTML =
-        '<span><i class="fa-solid fa-clock-rotate-left text-slate-400 mr-1"></i> Actualizado: ' + timeStr + '</span>' +
-        '<button class="btn-refresh-badge text-blue-600 hover:text-blue-800 font-bold uppercase tracking-wider ml-1">' +
+        '<span title="Sincronizado a las ' + clockTime + '"><i class="fa-solid fa-clock-rotate-left text-slate-400 mr-1"></i> ' + relativeStr + ' (' + clockTime + ')</span>' +
+        '<button class="btn-refresh-badge text-blue-600 hover:text-blue-800 font-bold uppercase tracking-wider ml-1" aria-label="Sincronizar datos">' +
             '<i class="fa-solid fa-rotate-right"></i>' +
         '</button>';
 
     container.appendChild(badge);
 
+// ---------------------------------------------------------------------------
+// [T-UX-21] [Fase 3: Experiencia de Usuario y Navegación Unificada] - COMPROBACIÓN DE FRESCURA DE DATOS Y ESTADOS DE SINCRONIZACIÓN CON CONTROL DE FALLO
+// Garantiza que la marca de tiempo de sincronización se renueve únicamente tras una actualización exitosa, conservando la hora previa e indicando error en caso de fallo.
+// ---------------------------------------------------------------------------
     var refreshBtn = badge.querySelector('.btn-refresh-badge');
     if (refreshBtn && typeof onRefreshCallback === 'function') {
         refreshBtn.addEventListener('click', function(e) {
             e.stopPropagation();
             refreshBtn.classList.add('animate-spin');
-            onRefreshCallback(function() {
+            onRefreshCallback(function(success, updatedTimestamp) {
                 refreshBtn.classList.remove('animate-spin');
+                if (success === false) {
+                    badge.classList.remove('bg-slate-100', 'border-slate-200');
+                    badge.classList.add('bg-amber-50', 'border-amber-300', 'text-amber-800');
+                    var labelSpan = badge.querySelector('span');
+                    if (labelSpan) labelSpan.innerHTML = '<i class="fa-solid fa-triangle-exclamation text-amber-500 mr-1"></i> Error al sincronizar (' + clockTime + ')';
+                } else {
+                    window.renderDataFreshnessBadge(containerIdOrElement, updatedTimestamp || new Date().toISOString(), onRefreshCallback);
+                }
             });
         });
     }

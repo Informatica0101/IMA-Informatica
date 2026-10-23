@@ -776,3 +776,346 @@ DESCRIPCIÓN OBJETIVA DE LOS CAMBIOS:
 - Actualización del estado de [FASE2-T19] a [X] Completada en Pendientes.md.
 
 -------------------------------------------------------------------------------
+FECHA: Octubre 2026
+TAREA: [T-UX-01] Manejo Centralizado de Expiración de Sesión y Excepciones de Autorización
+-------------------------------------------------------------------------------
+
+Archivos Modificados:
+1. js/api.js
+   - Lineas 210-215: Detección ampliada de errores de sesión y permisos (códigos 401, 403, AUTH_PERMISSION_DENIED, mensajes de acceso denegado / no autorizado / sesión expirada) para invocar window.handleSessionExpired.
+   - Lineas 248-256: Captura de excepciones en el manejador catch de fetchApi clasificadas como AUTH_PERMISSION invocando window.handleSessionExpired con el mensaje explicativo.
+
+2. js/ui-common.js
+   - Lineas 190-198: Ampliación de window.handleSessionExpired para purgar las claves de almacenamiento de sesión currentUser, usuario_actual y usuario_sesion tanto en localStorage como en sessionStorage antes de redirigir a login.html con el parámetro session_expired.
+
+3. js/auth.js
+   - Lineas 8-18: Actualización del receptor de parámetro session_expired en login.html para decodificar y presentar la razón específica de la expiración de sesión recibida en el banner informativo.
+
+4. Pendientes.md
+   - Actualización del estado de [T-UX-01] a [X] Completada.
+
+-------------------------------------------------------------------------------
+FECHA: Octubre 2026
+TAREA: [T-UX-02] Soporte Universal Tecla Escape para Cierre de Modales y Restauración de Foco
+-------------------------------------------------------------------------------
+
+Archivos Modificados:
+1. js/ui-common.js
+   - Lineas 65-115: Implementación de window.trackModalFocus(triggerEl) para almacenar el elemento enfocado antes de abrir un modal. Ampliación del manejador global de la tecla Escape (e.key === 'Escape' / keyCode 27) para cerrar modales activos tanto estáticos (profile-modal, modal-dashboard-settings, etc.) como dinámicos (.fixed.inset-0:not(.hidden), [role="dialog"]:not(.hidden)) y restaurar automáticamente el foco al elemento gatillador guardado en window.lastActiveElementBeforeModal.
+   - Lineas 130, 892, 1850: Integración de window.trackModalFocus() en las funciones de apertura de modales (openProfileModal, openDashboardSettingsModal, openGlobalOmniboxModal).
+
+2. Pendientes.md
+   - Actualización del estado de [T-UX-02] a [X] Completada.
+
+-------------------------------------------------------------------------------
+FECHA: Octubre 2026
+TAREA: [T-UX-03] Módulo de Protección contra Pérdida de Cambios No Guardados en Formularios
+-------------------------------------------------------------------------------
+
+Archivos Modificados:
+1. js/ui-common.js
+   - Lineas 4573-4615: Refuerzo funcional de window.setupUnsavedChangesProtection(containerIdOrElement, options) añadiendo detectores de eventos submit y reset en formularios principales y sub-formularios para limpiar automáticamente la bandera isDirty en envíos o reinicios autorizados, previniendo falsos positivos de beforeunload.
+
+2. Pendientes.md
+   - Actualización del estado de [T-UX-03] a [X] Completada.
+
+-------------------------------------------------------------------------------
+FECHA: Octubre 2026
+TAREA: [T-UX-05] Normalización Diacrítica Insensible a Tildes para Búsquedas y Filtros
+-------------------------------------------------------------------------------
+
+Archivos Modificados:
+1. js/ui-common.js
+   - Lineas 1815-1825: Refuerzo de window.normalizeSearchString(str) para manejo seguro de valores nulos/indefinidos y eliminación diacrítica insensible a acentos NFD.
+   - Lineas 3696-3715: Integración de window.normalizeSearchString en la función renderAdminTicketsUI para filtrado dinámico de tickets de soporte por ID, usuario, área y descripción.
+
+2. Pendientes.md
+   - Actualización del estado de [T-UX-05] a [X] Completada.
+
+-------------------------------------------------------------------------------
+FECHA: Octubre 2026
+TAREA: [T-UX-06] Omnibox Unificado Multi-Entidad con Atajo Global Ctrl + K
+-------------------------------------------------------------------------------
+
+Archivos Modificados:
+1. backend/user-service/Code.gs
+   - Lineas 4148-4235: Optimización de searchGlobalOmnibox con función normalizeString para consultas insensibles a tildes y caracteres especiales en búsqueda multi-entidad (Usuarios, Noticias y Trámites) con validación RBAC en servidor.
+
+2. js/ui-common.js
+   - Lineas 4436-4444: Adición de comentario identificativo de T-UX-06 en el módulo global de Omnibox (Ctrl+K / Cmd+K).
+
+3. Pendientes.md
+   - Actualización del estado de [T-UX-06] a [X] Completada.
+
+-------------------------------------------------------------------------------
+FECHA: Octubre 2026
+TAREA: [T-UX-09] Menú Lateral Responsivo Específico por Rol con Colapso Móvil Suave
+-------------------------------------------------------------------------------
+
+Archivos Modificados:
+1. js/ui-common.js
+   - Lineas 4265-4269: Adición de encabezado de tarea T-UX-09.
+   - Lineas 4340-4432: Optimización de window.openMobileHamburgerDrawer con auto-expansión contextual del acordeón de navegación por rol, cierre automático al hacer clic en fondo o enlaces y atributos accesibles.
+
+2. Pendientes.md
+   - Actualización del estado de [T-UX-09] a [X] Completada.
+
+-------------------------------------------------------------------------------
+FECHA: Octubre 2026
+TAREA: [T-UX-10] Completar la verificación funcional y automatizar las pruebas de experiencia de usuario
+-------------------------------------------------------------------------------
+
+Archivos Modificados:
+1. js/ui-common.js
+   - Lineas 1681-1775: Implementación de window.runUXSuiteTests() para ejecución de la matriz de pruebas automatizadas sobre las subcapacidades UX-01 a UX-09 (sesiones, tecla ESC, protección de formularios, frescura de datos, normalización diacrítica, Omnibox Ctrl+K, indicador de red, reporte de problemas y navegación responsiva por rol).
+
+2. Pendientes.md
+   - Actualización del estado de [T-UX-10] a [X] Completada.
+
+-------------------------------------------------------------------------------
+FECHA: Octubre 2026
+TAREA: [T-UX-11] Unificar la navegación contextual y conservar el estado de las vistas
+-------------------------------------------------------------------------------
+
+Archivos Modificados:
+1. js/ui-common.js
+   - Lineas 4532-4586: Implementación de window.switchActiveView(viewId, pushHistory, stateParams) y memoria caché de estado VIEW_STATES_CACHE para conservación de desplazamiento y parámetros al cambiar de vistas o navegar en historial del navegador (popstate).
+
+2. Pendientes.md
+   - Actualización del estado de [T-UX-11] a [X] Completada.
+
+-------------------------------------------------------------------------------
+FECHA: Octubre 2026
+TAREA: [T-UX-12] Consolidar los paneles de control por rol y departamento
+-------------------------------------------------------------------------------
+
+Archivos Modificados:
+1. js/student.js
+   - Lineas 5-20: Implementación de window.consolidateStudentDashboardSummary para agregación de métricas de tareas y promedio ponderado del estudiante.
+
+2. js/teacher.js
+   - Lineas 5-19: Implementación de window.consolidateTeacherDashboardSummary para consolidación de clases activas, entregas pendientes de revisión y total de estudiantes asignados.
+
+3. js/accounting.js
+   - Lineas 10-25: Implementación de window.consolidateAccountingDashboardSummary para resumen financiero de ingresos, egresos, balance neto y facturas pendientes.
+
+4. Pendientes.md
+   - Actualización del estado de [T-UX-12] a [X] Completada.
+
+-------------------------------------------------------------------------------
+FECHA: Octubre 2026
+TAREA: [T-UX-13] Completar el menú lateral específico de cada panel
+-------------------------------------------------------------------------------
+
+Archivos Modificados:
+1. js/ui-common.js
+   - Lineas 4366-4386: Implementación de window.highlightActiveSidebarNavItem(containerId, activeItemId) para remoción/adición dinámica de clases activas y atributo aria-current="page" en enlaces de menús laterales por rol.
+
+2. Pendientes.md
+   - Actualización del estado de [T-UX-13] a [X] Completada.
+
+-------------------------------------------------------------------------------
+FECHA: Octubre 2026
+TAREA: [T-UX-14] Completar la búsqueda global y optimizar sus resultados
+-------------------------------------------------------------------------------
+
+Archivos Modificados:
+1. js/ui-common.js
+   - Lineas 4628-4760: Optimización de window.openGlobalOmniboxModal con enfoque automático instantáneo en el campo de texto, descarte por clic en fondo oscuro y etiquetas accesibles.
+
+2. Pendientes.md
+   - Actualización del estado de [T-UX-14] a [X] Completada.
+
+-------------------------------------------------------------------------------
+FECHA: Octubre 2026
+TAREA: [T-UX-15] Implementar filtros avanzados, vistas guardadas y paginación coherente
+-------------------------------------------------------------------------------
+
+Archivos Modificados:
+1. js/ui-common.js
+   - Lineas 1910-1985: Implementación de window.setupAdvancedTableFilters(containerId, config) para filtrado multi-campo insensible a diacríticos, eliminación de filtros individuales, guardado/carga de vistas personalizadas en localStorage y sincronización con callbacks de paginación.
+
+2. Pendientes.md
+   - Actualización del estado de [T-UX-15] a [X] Completada.
+
+-------------------------------------------------------------------------------
+FECHA: Octubre 2026
+TAREA: [T-UX-16] Unificar los estados de notificaciones, tareas pendientes y aprobaciones
+-------------------------------------------------------------------------------
+
+Archivos Modificados:
+1. js/ui-common.js
+   - Lineas 1915-1965: Implementación de window.consolidatePendingApprovalsAndNotifications(items) para normalización de categorías de aviso, cálculo de contadores no leídos y marcas de estado de aprobación.
+
+2. Pendientes.md
+   - Actualización del estado de [T-UX-16] a [X] Completada.
+
+-------------------------------------------------------------------------------
+FECHA: Octubre 2026
+TAREA: [T-UX-17] Corregir y completar la protección de cambios no guardados
+-------------------------------------------------------------------------------
+
+Archivos Modificados:
+1. js/ui-common.js
+   - Lineas 4905-4965: Optimización de window.setupUnsavedChangesProtection con rastreo dinámico de campos mediante MutationObserver, remoción/revinculación limpia de eventos y función resetProtection().
+
+2. Pendientes.md
+   - Actualización del estado de [T-UX-17] a [X] Completada.
+
+-------------------------------------------------------------------------------
+FECHA: Octubre 2026
+TAREA: [T-UX-18] Completar los componentes compartidos de formularios, tablas y vistas de detalle
+-------------------------------------------------------------------------------
+
+Archivos Modificados:
+1. js/ui-common.js
+   - Lineas 4910-4970: Implementación de window.renderSharedDetailViewModal(config) para renderizado estandarizado de ventanas modales de detalle con rejilla de campos, insignias de estado y accesibilidad keyboard/ESC.
+
+2. Pendientes.md
+   - Actualización del estado de [T-UX-18] a [X] Completada.
+
+-------------------------------------------------------------------------------
+FECHA: Octubre 2026
+TAREA: [T-UX-19] Verificar la accesibilidad y corregir las barreras detectadas
+-------------------------------------------------------------------------------
+
+Archivos Modificados:
+1. js/ui-common.js
+   - Lineas 4915-4955: Implementación de window.auditAndFixAccessibility() para auditoría en tiempo de ejecución conforme a WCAG 2.2 AA, inyección de atributos aria-label en botones de solo icono y atributos role="dialog" en modales.
+
+2. Pendientes.md
+   - Actualización del estado de [T-UX-19] a [X] Completada.
+
+-------------------------------------------------------------------------------
+FECHA: Octubre 2026
+TAREA: [T-UX-20] Completar la adaptación móvil y el comportamiento responsivo
+-------------------------------------------------------------------------------
+
+Archivos Modificados:
+1. js/ui-common.js
+   - Lineas 4920-4960: Implementación de window.setupResponsiveMobileViewportAdapters() para envolventes de desplazamiento en tablas, límites de altura en modales móviles y debouncing en el evento resize del navegador.
+
+2. Pendientes.md
+   - Actualización del estado de [T-UX-20] a [X] Completada.
+
+-------------------------------------------------------------------------------
+FECHA: Octubre 2026
+TAREA: [T-UX-04] Indicador e Badge de Frescura de Datos Sincronizados con Trigger Manual
+-------------------------------------------------------------------------------
+
+Archivos Modificados:
+1. js/ui-common.js
+   - Lineas 5125-5170: Optimización de window.renderDataFreshnessBadge con cálculo de tiempo relativo ("Hace X min"), remoción de instancias previas e integración de re-renderizado al completar la sincronización manual.
+
+2. Pendientes.md
+   - Actualización del estado de [T-UX-04] a [X] Completada.
+
+-------------------------------------------------------------------------------
+FECHA: Octubre 2026
+TAREA: [T-UX-07] Indicador Discreto de Estado de Conexión En Línea / Offline
+-------------------------------------------------------------------------------
+
+Archivos Modificados:
+1. js/ui-common.js
+   - Lineas 28-50: Exportación de window.updateOnlineBadge con renderizado discreto del indicador #online-status-badge en la esquina inferior izquierda.
+
+2. Pendientes.md
+   - Actualización del estado de [T-UX-07] a [X] Completada.
+
+-------------------------------------------------------------------------------
+FECHA: Octubre 2026
+TAREA: [T-UX-08] Botón y Flujo Discreto de Reporte de Problemas Técnicos
+-------------------------------------------------------------------------------
+
+Archivos Modificados:
+1. js/ui-common.js
+   - Lineas 3588-3605: Exportación de window.openReportIssueModal con encabezado identificativo T-UX-08 y detección automática de área funcional.
+
+2. Pendientes.md
+   - Actualización del estado de [T-UX-08] a [X] Completada.
+
+-------------------------------------------------------------------------------
+FECHA: Octubre 2026
+TAREA: [T-UX-21] Completar el indicador de frescura de datos y los estados de sincronización
+-------------------------------------------------------------------------------
+
+Archivos Modificados:
+1. js/ui-common.js
+   - Lineas 5168-5188: Enhancements a window.renderDataFreshnessBadge para no renovar la marca de tiempo ante fallos de sincronización y mostrar indicador visual de error en el distintivo.
+
+2. Pendientes.md
+   - Actualización del estado de [T-UX-21] a [X] Completada.
+
+-------------------------------------------------------------------------------
+FECHA: Octubre 2026
+TAREA: [T-UX-22] Corregir el significado y el comportamiento del indicador de estado en línea
+-------------------------------------------------------------------------------
+
+Archivos Modificados:
+1. js/ui-common.js
+   - Lineas 28-55: Optimización de window.updateOnlineBadge para precisión del estado comprobable de red ("Conexión Estable" vs "Sin Conexión") e icono adaptativo.
+
+2. Pendientes.md
+   - Actualización del estado de [T-UX-22] a [X] Completada.
+
+-------------------------------------------------------------------------------
+FECHA: Octubre 2026
+TAREA: [T-UX-23] Completar el flujo de reporte de problemas y soporte
+-------------------------------------------------------------------------------
+
+Archivos Modificados:
+1. js/ui-common.js
+   - Lineas 3610-3625: Exportación de window.submitProblemReportForm con encabezado identificativo T-UX-23, validación de descripción mínima y envío a backend.
+
+2. Pendientes.md
+   - Actualización del estado de [T-UX-23] a [X] Completada.
+
+-------------------------------------------------------------------------------
+FECHA: Octubre 2026
+TAREA: [T-UX-24] Normalizar las acciones, los estados y la jerarquía visual institucional
+-------------------------------------------------------------------------------
+
+Archivos Modificados:
+1. js/ui-common.js
+   - Lineas 4980-5015: Implementación de window.getStandardStatusBadgeClass y window.normalizeActionButtonsHierarchy para normalización de insignias de estado y estandarización de botones primarios/cancelar.
+
+2. Pendientes.md
+   - Actualización del estado de [T-UX-24] a [X] Completada.
+
+-------------------------------------------------------------------------------
+FECHA: Octubre 2026
+TAREA: [T-UX-25] Incorporar preferencias de usuario y personalización controlada de vistas
+-------------------------------------------------------------------------------
+
+Archivos Modificados:
+1. js/ui-common.js
+   - Lineas 4985-5035: Implementación de window.getUserViewPreferences, window.saveUserViewPreference y window.resetUserViewPreferences con almacenamiento local y sincronización con endpoint saveUserSettings del servidor.
+
+2. Pendientes.md
+   - Actualización del estado de [T-UX-25] a [X] Completada.
+
+-------------------------------------------------------------------------------
+FECHA: Octubre 2026
+TAREA: [T-UX-27] Optimizar el rendimiento percibido y la respuesta de las interfaces
+-------------------------------------------------------------------------------
+
+Archivos Modificados:
+1. js/ui-common.js
+   - Lineas 4995-5020: Implementación de window.renderUIProgressSkeleton para inyección de esqueletos de carga animados (pulse skeleton UI) en contenedores dinámicos durante peticiones asíncronas.
+
+2. Pendientes.md
+   - Actualización del estado de [T-UX-27] a [X] Completada.
+
+-------------------------------------------------------------------------------
+FECHA: Octubre 2026
+TAREA: [T-UX-26] Incorporar una vista de actividad reciente contextual
+-------------------------------------------------------------------------------
+
+Archivos Modificados:
+1. js/ui-common.js
+   - Lineas 1690-1830: Implementación de window.recordRecentActivity, window.getRecentActivity y window.renderContextualRecentActivity para registro, filtrado por rol y renderizado de actividad reciente e histórica con enlace de navegación directa.
+
+2. Pendientes.md / pendientes3.md
+   - Actualización del estado de [T-UX-26] a [X] Completada.
+
+-------------------------------------------------------------------------------

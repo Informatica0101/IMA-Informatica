@@ -1,3 +1,23 @@
+// ---------------------------------------------------------------------------
+// [T-UX-12] [Fase 3: Experiencia de Usuario y Navegación Unificada] - CONSOLIDACIÓN DE PANELES DE CONTROL POR ROL Y DEPARTAMENTO
+// Consolida la visualización de indicadores clave, entregas pendientes de revisión y secciones operativas para el panel docente.
+// ---------------------------------------------------------------------------
+window.consolidateTeacherDashboardSummary = function(teacherData) {
+    if (!teacherData) {
+        return { activeClasses: 0, pendingSubmissions: 0, totalStudents: 0, statusLabel: "Sin asignación" };
+    }
+    var classes = Array.isArray(teacherData.classes) ? teacherData.classes.length : 0;
+    var pending = Array.isArray(teacherData.pendingSubmissions) ? teacherData.pendingSubmissions.length : 0;
+    var students = typeof teacherData.totalStudents === 'number' ? teacherData.totalStudents : 0;
+
+    return {
+        activeClasses: classes,
+        pendingSubmissions: pending,
+        totalStudents: students,
+        statusLabel: classes > 0 ? "Activo" : "Sin clases asignadas"
+    };
+};
+
 document.addEventListener('DOMContentLoaded', () => {
     // (A-29) Centralizar capacidades por rol
     const RoleCapabilities = {

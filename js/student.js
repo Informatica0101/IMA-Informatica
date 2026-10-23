@@ -1,3 +1,24 @@
+// ---------------------------------------------------------------------------
+// [T-UX-12] [Fase 3: Experiencia de Usuario y Navegación Unificada] - CONSOLIDACIÓN DE PANELES DE CONTROL POR ROL Y DEPARTAMENTO
+// Consolida la visualización de indicadores clave, métricas resumidas y accesos prioritarios para el panel del estudiante, distinguiendo datos nulos de ceros.
+// ---------------------------------------------------------------------------
+window.consolidateStudentDashboardSummary = function(studentData) {
+    if (!studentData) {
+        return { totalTasks: 0, pendingTasks: 0, completedTasks: 0, gpaFormatted: "N/A" };
+    }
+    var total = Array.isArray(studentData.activities) ? studentData.activities.length : 0;
+    var pending = Array.isArray(studentData.activities) ? studentData.activities.filter(function(a) { return !a.entregado; }).length : 0;
+    var completed = total - pending;
+    var gpa = typeof studentData.promedioGeneral === 'number' ? studentData.promedioGeneral.toFixed(1) + '%' : "N/A";
+
+    return {
+        totalTasks: total,
+        pendingTasks: pending,
+        completedTasks: completed,
+        gpaFormatted: gpa
+    };
+};
+
 document.addEventListener('DOMContentLoaded', function() {
     var currentUser = JSON.parse(localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser'));
     if (!currentUser || (currentUser.rol !== 'Estudiante' && currentUser.rol !== 'Alumno')) {
