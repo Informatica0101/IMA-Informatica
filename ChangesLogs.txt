@@ -1252,3 +1252,10 @@ Archivos Modificados:
   - Creada hoja SolicitudesDerechosPrivacidad.
   - Creadas funciones submitPrivacyRightsRequest, getPrivacyRightsRequests y updatePrivacyRightsRequestStatus.
   - Registrados endpoints en doPost switch con auditoria estructurada logStructuredEvent.
+
+[TAREA-F4-P1-06] [Fase 4 - Trazabilidad e Historial de Versiones]
+- backend/user-service/Code.gs:
+  - Creada hoja HistorialCambiosEntidad y helper sanitizeValueForAudit para remover campos sensibles (contraseñas, tokens, claves).
+  - Creada función recordEntityChangeLog para guardar diferencias de valores anteriores y nuevos sanitizados.
+  - Creada función getEntityAuditHistory para permitir la reconstrucción cronológica de la línea de tiempo de cambios sobre un usuario o recurso.
+  - Integrado registro de cambios en manageAccountState y updateUserProfile.

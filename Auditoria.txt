@@ -124,3 +124,7 @@ Resultado de Verificación:
 [AUDITORÍA TAREA-F4-P1-05]
 - backend/user-service/Code.gs:
   - submitPrivacyRightsRequest, getPrivacyRightsRequests, updatePrivacyRightsRequestStatus: Verificada la tramitación, aislamiento de solicitudes propias para usuarios no administradores y registro de eventos de auditoría.
+
+[AUDITORÍA TAREA-F4-P1-06]
+- backend/user-service/Code.gs:
+  - recordEntityChangeLog & getEntityAuditHistory: Verificado el almacenamiento sanitizado de diferencias en HistorialCambiosEntidad y la reconstrucción cronológica por entityType y entityId.

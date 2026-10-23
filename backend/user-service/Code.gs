@@ -1181,7 +1181,7 @@ function validateRolePermission(action, payload) {
   if (userRole === "NO_ACCESS") {
     return { authorized: false, role: "Cuenta Inactiva/Bloqueada" };
   }
-  if (["submitProblemTicket", "getProblemTickets", "replyProblemTicket", "searchGlobalOmnibox", "configureAutomationRules", "getAutomationRules", "getNotificationAuditLogs", "getServiceHealthReport"].indexOf(action) !== -1) {
+  if (["submitProblemTicket", "getProblemTickets", "replyProblemTicket", "searchGlobalOmnibox", "configureAutomationRules", "getAutomationRules", "getNotificationAuditLogs", "getServiceHealthReport", "submitPrivacyRightsRequest", "getPrivacyRightsRequests"].indexOf(action) !== -1) {
     return { authorized: true, role: userRole };
   }
 
@@ -1253,6 +1253,7 @@ function doPost(e) {
       case "submitPrivacyRightsRequest": result = submitPrivacyRightsRequest(payload); break;
       case "getPrivacyRightsRequests": result = getPrivacyRightsRequests(payload); break;
       case "updatePrivacyRightsRequestStatus": result = updatePrivacyRightsRequestStatus(payload); break;
+      case "getEntityAuditHistory": result = getEntityAuditHistory(payload); break;
       case "saveGameResult": result = saveGameResult(payload); break;
       case "getGameStats": result = getGameStats(payload); break;
       case "getGlobalTop": result = getGlobalTop(payload); break;
@@ -2105,7 +2106,10 @@ function manageAccountState(payload) {
   const idx = data.findIndex(r => String(r[0]).trim() === String(userId).trim());
   if (idx === -1) throw new Error("Cuenta de usuario no encontrada.");
 
+  const oldState = data[idx][10] || "Activa";
   sheet.getRange(idx + 1, 11).setValue(newState);
+
+  recordEntityChangeLog("Usuario", userId, { estadoCuenta: oldState }, { estadoCuenta: newState }, "ACCOUNT_STATE_CHANGED", payload && payload._verifiedUserId);
 
   // Invalidation & real-time revocation in cache
   invalidateUserRoleCache(userId);
@@ -2419,12 +2423,119 @@ function updateUserProfile(payload) {
   if (email) userRow[4] = email.toLowerCase().trim();
   if (telefono !== undefined) userRow[7] = String(telefono).trim();
   if (numeroLista !== undefined) userRow[8] = String(numeroLista).trim();
+  const oldValues = { nombre: data[idx][1], email: data[idx][4], telefono: data[idx][7], numeroLista: data[idx][8] };
   sheet.getRange(idx + 1, 1, 1, userRow.length).setValues([userRow]);
+  const newValues = { nombre: userRow[1], email: userRow[4], telefono: userRow[7], numeroLista: userRow[8] };
+
+  recordEntityChangeLog("Usuario", targetUserId, oldValues, newValues, "PROFILE_UPDATED", payload && payload._verifiedUserId);
 
   // Purga inmediata de caché tras actualización de datos de usuario
   invalidateUserRoleCache(targetUserId);
 
   return { status: "success", message: "Perfil actualizado." };
+}
+
+// [TAREA-F4-P1-06] [Fase 4: Trazabilidad e Historial de Versiones] - Sanitización de campos sensibles para auditoría
+function sanitizeValueForAudit(obj) {
+  if (!obj || typeof obj !== "object") return obj;
+  const copy = Array.isArray(obj) ? [] : {};
+  Object.keys(obj).forEach(key => {
+    const lKey = key.toLowerCase();
+    if (lKey.indexOf("pass") !== -1 || lKey.indexOf("token") !== -1 || lKey.indexOf("secret") !== -1 || lKey.indexOf("clave") !== -1) {
+      copy[key] = "[REDACTED]";
+    } else if (typeof obj[key] === "object" && obj[key] !== null) {
+      copy[key] = sanitizeValueForAudit(obj[key]);
+    } else {
+      copy[key] = obj[key];
+    }
+  });
+  return copy;
+}
+
+// [TAREA-F4-P1-06] [Fase 4: Trazabilidad e Historial de Versiones] - Registro de cambios sanitizados con versión anterior y posterior
+function recordEntityChangeLog(entityType, entityId, previousValue, newValue, action, callerUserId, correlationId) {
+  try {
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const sheet = getOrCreateSheet(ss, "HistorialCambiosEntidad");
+    if (sheet.getLastRow() === 0) {
+      sheet.appendRow(["cambioId", "entityType", "entityId", "accion", "valoresAnteriores", "valoresNuevos", "ejecutadoPor", "fechaCambio", "correlationId"]);
+    }
+
+    const genRes = generateInstitutionalId({ entityType: "AuditoriaCambio", prefix: "CHG-" });
+    const cambioId = genRes.generatedId || ("CHG-" + Date.now());
+    const sanitizedPrev = JSON.stringify(sanitizeValueForAudit(previousValue || {}));
+    const sanitizedNew = JSON.stringify(sanitizeValueForAudit(newValue || {}));
+
+    sheet.appendRow([
+      cambioId,
+      String(entityType || "General").trim(),
+      String(entityId || "").trim(),
+      String(action || "UPDATE").trim(),
+      sanitizedPrev,
+      sanitizedNew,
+      String(callerUserId || "Sistema").trim(),
+      new Date(),
+      String(correlationId || ("CID-" + Date.now())).trim()
+    ]);
+  } catch (e) {
+    console.warn("Error registrando historial de cambios de entidad:", e);
+  }
+}
+
+// [TAREA-F4-P1-06] [Fase 4: Trazabilidad e Historial de Versiones] - Reconstrucción de la línea de tiempo de una entidad o recurso
+function getEntityAuditHistory(payload) {
+  const callerRole = getUserVerifiedRole(payload);
+  const callerId = payload._verifiedUserId;
+  const { entityType, entityId, limit } = payload || {};
+
+  if (!entityId) throw new Error("entityId es requerido.");
+
+  if (callerRole !== "Administrador" && callerRole !== "Desarrollador") {
+    if (String(entityId).trim() !== String(callerId).trim()) {
+      throw new Error("Acceso denegado: Únicamente puede consultar el historial propio de cambios.");
+    }
+  }
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = ss.getSheetByName("HistorialCambiosEntidad");
+  if (!sheet || sheet.getLastRow() <= 1) return { status: "success", data: [] };
+
+  const data = sheet.getDataRange().getValues().slice(1);
+  const maxLimit = parseInt(limit || 100, 10);
+  const history = [];
+
+  for (let i = data.length - 1; i >= 0; i--) {
+    const row = data[i];
+    const eType = String(row[1] || "");
+    const eId = String(row[2] || "");
+
+    let matches = true;
+    if (entityType && String(entityType).toLowerCase().trim() !== eType.toLowerCase().trim()) matches = false;
+    if (String(entityId).trim() !== eId) matches = false;
+
+    if (matches) {
+      let prevObj = {};
+      let newObj = {};
+      try { prevObj = JSON.parse(row[4] || "{}"); } catch (e) {}
+      try { newObj = JSON.parse(row[5] || "{}"); } catch (e) {}
+
+      history.push({
+        cambioId: row[0],
+        entityType: eType,
+        entityId: eId,
+        accion: row[3],
+        valoresAnteriores: prevObj,
+        valoresNuevos: newObj,
+        ejecutadoPor: row[6],
+        fechaCambio: row[7] ? new Date(row[7]).toISOString() : "",
+        correlationId: row[8] || ""
+      });
+
+      if (history.length >= maxLimit) break;
+    }
+  }
+
+  return { status: "success", data: history };
 }
 
 // ---------------------------------------------------------------------------
