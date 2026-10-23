@@ -5,6 +5,26 @@
 
 ---
 
+## AUDITORÍA Y VERIFICACIÓN DE CODE REVIEWS (BLOCKING ISSUES)
+
+### [X] [AUDIT-CR-01] Verificación y resolución de normalizeString en backend/user-service/Code.gs
+- **Origen:** Auditoría de Code Review de chat history
+- **Estado:** [X] Completada (Definida en línea 839 de `backend/user-service/Code.gs` y comentada explícitamente).
+
+### [X] [AUDIT-CR-02] Verificación y resolución de toggleRoleMenuAccordionSection en js/ui-common.js
+- **Origen:** Auditoría de Code Review de chat history
+- **Estado:** [X] Completada (Definida en línea 4540 de `js/ui-common.js` y comentada explícitamente).
+
+### [X] [AUDIT-CR-03] Verificación e inserción de nodo DOM body en openMobileHamburgerDrawer
+- **Origen:** Auditoría de Code Review de chat history
+- **Estado:** [X] Completada (Presente en línea 4674 de `js/ui-common.js` con `document.body.appendChild(drawer)`).
+
+### [X] [AUDIT-CR-04] Eliminación de re-selección de texto en Omnibox durante la escritura
+- **Origen:** Auditoría de Code Review de chat history
+- **Estado:** [X] Completada (Restringida la llamada focus/select a la apertura inicial del modal en línea 4822 de `js/ui-common.js`).
+
+---
+
 ## GRUPO PRIORIDAD P0 (CRÍTICO)
 
 ### [X] [TAREA-01] Validar y reforzar la seguridad de los servicios y la separación de permisos
