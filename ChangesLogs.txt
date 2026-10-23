@@ -1233,3 +1233,11 @@ Archivos Modificados:
   - Creada hoja PoliticasRetencionDatos con categorias por defecto (AUDIT_LOGS, USER_SESSIONS, STUDENT_EXPEDIENTS, FINANCIAL_RECORDS, INACTIVE_USERS).
   - Creadas funciones getRetentionPolicies, saveRetentionPolicy y executeDataRetentionPolicyCheck.
   - Implementada evaluacion automatica de plazos vencidos con purga de bitácoras ordinarias, anonimizacion de cuentas inactivas (>2 años) y preservacion obligatoria legal de expedientes y registros financieros.
+
+[TAREA-F4-P1-03] [Fase 4 - Matriz Dinámica de Permisos por Rol, Acción, Módulo y Ámbito]
+- backend/user-service/Code.gs:
+  - Creadas funciones getPermissionMatrix, savePermissionMatrix y helper getDynamicPermissionsForRole con almacenamiento en CacheService (600s TTL).
+  - Creada hoja MatrizPermisosRoles e inyectadas reglas por defecto basadas en ROLE_PERMISSIONS.
+  - Integrada la consulta de permisos dinámicos en validateRolePermission priorizándolos sobre los arreglos estáticos.
+- backend/academic-service/Code.gs, backend/accounting-service/Code.gs, backend/exam-service/Code.gs, backend/task-service/Code.gs:
+  - Creada función helper getDynamicPermissionsForRole e integrada en validateRolePermission para sincronizar permisos dinámicos entre servicios.

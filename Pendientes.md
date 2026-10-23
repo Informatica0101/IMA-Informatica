@@ -123,7 +123,7 @@
   - [X] Las operaciones de archivo, anonimización y purga quedan auditadas.
 - **Estado:** [X] Completada
 
-### [ ] [TAREA-F4-P1-03] Implementar una matriz dinámica de permisos por rol, acción, módulo y ámbito
+### [X] [TAREA-F4-P1-03] Implementar una matriz dinámica de permisos por rol, acción, módulo y ámbito
 - **Origen del Hallazgo:** Auditoría de la Fase 4 (AUDITORIA_FASE4_IDENTIDAD_PERMISOS_GOBIERNO.md)
 - **Severidad/Clasificación:** Alto · Autorización · Administración
 - **Archivos Involucrados:** `backend/user-service/Code.gs`, `js/ui-common.js`, Dashboards
@@ -133,10 +133,10 @@
   2. Proporcionar un editor visual en la interfaz administrativa para gestionar permisos sin editar código.
   3. Guardar versiones de la matriz con auditoría de cambios.
 - **Criterios de Aceptación:**
-  - [ ] La matriz muestra permisos efectivos por rol y módulo.
-  - [ ] Permite modificar reglas y propagar la actualización a los microservicios.
-  - [ ] Los cambios quedan auditados.
-- **Estado:** [ ] Pendiente
+  - [X] La matriz muestra permisos efectivos por rol y módulo.
+  - [X] Permite modificar reglas y propagar la actualización a los microservicios.
+  - [X] Los cambios quedan auditados.
+- **Estado:** [X] Completada
 
 ### [ ] [TAREA-F4-P1-04] Implementar una política unificada de autorización contextual RBAC/ABAC
 - **Origen del Hallazgo:** Auditoría de la Fase 4 (AUDITORIA_FASE4_IDENTIDAD_PERMISOS_GOBIERNO.md)

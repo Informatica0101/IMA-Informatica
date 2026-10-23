@@ -1206,6 +1206,8 @@ function doPost(e) {
       case "getRetentionPolicies": result = getRetentionPolicies(payload); break;
       case "saveRetentionPolicy": result = saveRetentionPolicy(payload); break;
       case "executeDataRetentionPolicyCheck": result = executeDataRetentionPolicyCheck(payload); break;
+      case "getPermissionMatrix": result = getPermissionMatrix(payload); break;
+      case "savePermissionMatrix": result = savePermissionMatrix(payload); break;
       case "saveGameResult": result = saveGameResult(payload); break;
       case "getGameStats": result = getGameStats(payload); break;
       case "getGlobalTop": result = getGlobalTop(payload); break;
@@ -1572,6 +1574,129 @@ function getSecurityDelegations(payload) {
   }
 
   return { status: "success", data: list };
+}
+
+// [TAREA-F4-P1-03] [Fase 4: Matriz Dinámica de Permisos] - Consulta y caché de la matriz dinámica por rol y acción
+function getDynamicPermissionsForRole(role, action) {
+  if (!role || !action) return null;
+  const cache = CacheService.getScriptCache();
+  const cacheKey = "dynamic_permissions_matrix";
+  let matrix = null;
+  try {
+    const raw = cache.get(cacheKey);
+    if (raw) matrix = JSON.parse(raw);
+  } catch (e) {}
+
+  if (!matrix) {
+    try {
+      const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+      const sheet = ss.getSheetByName("MatrizPermisosRoles");
+      if (!sheet || sheet.getLastRow() <= 1) return null;
+      const data = sheet.getDataRange().getValues();
+      matrix = {};
+      for (let i = 1; i < data.length; i++) {
+        const rRole = String(data[i][0] || "").trim();
+        const rAction = String(data[i][2] || "").trim();
+        const rPermitted = data[i][3] === true || String(data[i][3]).toLowerCase() === "true";
+        if (!matrix[rRole]) matrix[rRole] = {};
+        matrix[rRole][rAction] = rPermitted;
+      }
+      cache.put(cacheKey, JSON.stringify(matrix), 600);
+    } catch (e) {
+      return null;
+    }
+  }
+
+  if (matrix && matrix[role]) {
+    if (matrix[role]["*"] !== undefined) return matrix[role]["*"];
+    if (matrix[role][action] !== undefined) return matrix[role][action];
+  }
+  return null;
+}
+
+// [TAREA-F4-P1-03] [Fase 4: Matriz Dinámica de Permisos] - Obtención de la matriz dinámica persistente
+function getPermissionMatrix(payload) {
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "MatrizPermisosRoles");
+  let data = sheet.getDataRange().getValues();
+
+  if (data.length <= 1) {
+    if (data.length === 0) {
+      sheet.appendRow(["rol", "modulo", "accion", "permitido", "ambito", "ultimaModificacion", "modificadoPor"]);
+    }
+    const now = new Date();
+    Object.keys(ROLE_PERMISSIONS).forEach(role => {
+      const actions = ROLE_PERMISSIONS[role] || [];
+      actions.forEach(act => {
+        sheet.appendRow([role, "General", act, true, "Global", now, "Sistema"]);
+      });
+    });
+    data = sheet.getDataRange().getValues();
+  }
+
+  const list = data.slice(1).map(r => ({
+    rol: String(r[0] || "").trim(),
+    modulo: String(r[1] || "General").trim(),
+    accion: String(r[2] || "").trim(),
+    permitido: r[3] === true || String(r[3]).toLowerCase() === "true",
+    ambito: String(r[4] || "Global").trim(),
+    ultimaModificacion: r[5] ? new Date(r[5]).toISOString() : "",
+    modificadoPor: String(r[6] || "").trim()
+  }));
+
+  return { status: "success", data: list };
+}
+
+// [TAREA-F4-P1-03] [Fase 4: Matriz Dinámica de Permisos] - Actualización y persistencia de la matriz con auditoría de versión
+function savePermissionMatrix(payload) {
+  const callerRole = getUserVerifiedRole(payload);
+  const callerId = payload._verifiedUserId;
+  const { matrix, rol, modulo, accion, permitido, ambito } = payload || {};
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "MatrizPermisosRoles");
+  if (sheet.getLastRow() === 0) {
+    sheet.appendRow(["rol", "modulo", "accion", "permitido", "ambito", "ultimaModificacion", "modificadoPor"]);
+  }
+
+  const now = new Date();
+  const rulesToSave = Array.isArray(matrix) ? matrix : (rol && accion !== undefined ? [{ rol, modulo, accion, permitido, ambito }] : []);
+
+  if (rulesToSave.length === 0) {
+    throw new Error("Se requiere al menos una regla de permiso válida.");
+  }
+
+  const data = sheet.getDataRange().getValues();
+
+  rulesToSave.forEach(rule => {
+    const targetRol = String(rule.rol || "").trim();
+    const targetAction = String(rule.accion || "").trim();
+    const targetPermitted = rule.permitido === true || String(rule.permitido).toLowerCase() === "true";
+    const targetModule = String(rule.modulo || "General").trim();
+    const targetAmbito = String(rule.ambito || "Global").trim();
+
+    let foundIdx = -1;
+    for (let i = 1; i < data.length; i++) {
+      if (String(data[i][0]).trim() === targetRol && String(data[i][2]).trim() === targetAction) {
+        foundIdx = i;
+        break;
+      }
+    }
+
+    if (foundIdx !== -1) {
+      sheet.getRange(foundIdx + 1, 2, 1, 6).setValues([[targetModule, targetAction, targetPermitted, targetAmbito, now, callerId]]);
+    } else {
+      sheet.appendRow([targetRol, targetModule, targetAction, targetPermitted, targetAmbito, now, callerId]);
+    }
+  });
+
+  try {
+    CacheService.getScriptCache().remove("dynamic_permissions_matrix");
+  } catch (e) {}
+
+  logStructuredEvent("USER", "savePermissionMatrix", "INFO", "PERMISSION_MATRIX_UPDATED", `Matriz de permisos actualizada por ${callerId}. Reglas procesadas: ${rulesToSave.length}`, { rulesCount: rulesToSave.length, updatedBy: callerId }, callerRole);
+
+  return { status: "success", count: rulesToSave.length, message: "Matriz dinámica de permisos actualizada exitosamente." };
 }
 
 // [TAREA-F4-P1-02] [Fase 4: Motor de Retención y Archivo de Datos] - Catálogo y gestión de políticas de retención

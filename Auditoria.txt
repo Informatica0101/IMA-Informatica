@@ -109,3 +109,10 @@ Resultado de Verificación:
 [AUDITORÍA TAREA-F4-P1-02]
 - backend/user-service/Code.gs:
   - getRetentionPolicies, saveRetentionPolicy, executeDataRetentionPolicyCheck: Verificada la persistencia en PoliticasRetencionDatos y ejecucion de reglas de retencion con preservacion de expedientes y estados contables.
+
+[AUDITORÍA TAREA-F4-P1-03]
+- backend/user-service/Code.gs:
+  - getPermissionMatrix & savePermissionMatrix: Verificada la lectura y guardado con versión en hoja MatrizPermisosRoles e invalidación de caché.
+  - validateRolePermission & getDynamicPermissionsForRole: Verificada la priorización de permisos dinámicos sobre estáticos en el control de acceso.
+- backend/academic-service/Code.gs, backend/accounting-service/Code.gs, backend/exam-service/Code.gs, backend/task-service/Code.gs:
+  - validateRolePermission: Verificada la sincronización de reglas dinámicas por rol y acción desde MatrizPermisosRoles.

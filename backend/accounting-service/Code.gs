@@ -371,9 +371,14 @@ function validateRolePermission(action, payload) {
     return { authorized: false, role: "Sin Credenciales de Sesión" };
   }
 
-  const permitted = ROLE_PERMISSIONS[userRole] || [];
-  if (permitted.indexOf("*") !== -1 || permitted.indexOf(action) !== -1) {
-    return { authorized: true, role: userRole };
+  const dynamicCheck = getDynamicPermissionsForRole(userRole, action);
+  if (dynamicCheck !== null) {
+    if (dynamicCheck === true) return { authorized: true, role: userRole };
+  } else {
+    const permitted = ROLE_PERMISSIONS[userRole] || [];
+    if (permitted.indexOf("*") !== -1 || permitted.indexOf(action) !== -1) {
+      return { authorized: true, role: userRole };
+    }
   }
 
   const verifiedId = payload && payload._verifiedUserId;
@@ -389,6 +394,44 @@ function validateRolePermission(action, payload) {
   }
 
   return { authorized: false, role: userRole };
+}
+
+// [TAREA-F4-P1-03] [Fase 4: Matriz Dinámica de Permisos] - Consulta y caché de la matriz dinámica por rol y acción
+function getDynamicPermissionsForRole(role, action) {
+  if (!role || !action) return null;
+  const cache = CacheService.getScriptCache();
+  const cacheKey = "dynamic_permissions_matrix";
+  let matrix = null;
+  try {
+    const raw = cache.get(cacheKey);
+    if (raw) matrix = JSON.parse(raw);
+  } catch (e) {}
+
+  if (!matrix) {
+    try {
+      const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+      const sheet = ss.getSheetByName("MatrizPermisosRoles");
+      if (!sheet || sheet.getLastRow() <= 1) return null;
+      const data = sheet.getDataRange().getValues();
+      matrix = {};
+      for (let i = 1; i < data.length; i++) {
+        const rRole = String(data[i][0] || "").trim();
+        const rAction = String(data[i][2] || "").trim();
+        const rPermitted = data[i][3] === true || String(data[i][3]).toLowerCase() === "true";
+        if (!matrix[rRole]) matrix[rRole] = {};
+        matrix[rRole][rAction] = rPermitted;
+      }
+      cache.put(cacheKey, JSON.stringify(matrix), 600);
+    } catch (e) {
+      return null;
+    }
+  }
+
+  if (matrix && matrix[role]) {
+    if (matrix[role]["*"] !== undefined) return matrix[role]["*"];
+    if (matrix[role][action] !== undefined) return matrix[role][action];
+  }
+  return null;
 }
 
 // [TAREA-F4-P1-01] [Fase 4: Motor de Delegaciones] - Verificación de delegaciones de seguridad activas
