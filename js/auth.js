@@ -165,11 +165,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     const otherStorage = rememberMe ? sessionStorage : localStorage;
                     otherStorage.removeItem('currentUser');
 
+                    // [TAREA-F4-P0-01] [Fase 4: Identidad y Permisos] - Almacenamiento de sessionToken firmado HMAC-SHA256 en credenciales del usuario
                     const userData = {
                         userId: result.data.userId || result.data.id,
                         nombre: result.data.nombre,
                         email: result.data.email,
                         rol: result.data.rol || 'Estudiante',
+                        sessionToken: result.data.sessionToken || result.sessionToken || "",
                         grado: result.data.grado,
                         seccion: result.data.seccion,
                         numeroLista: result.data.numeroLista,

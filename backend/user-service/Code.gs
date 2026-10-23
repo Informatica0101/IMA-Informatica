@@ -974,52 +974,114 @@ const ROLE_PERMISSIONS = {
   ]
 };
 
-// [FASE2-T01] [Fase 2 - Autorización e Interoperabilidad] - Verifica y refuerza la autorización institucional, validación de vigencia de cuentas y revocación de permisos.
-function getUserVerifiedRole(payload) {
-  if (!payload) return "Estudiante";
-  const userId = payload.userId || payload.authUserId || (payload.currentUser && payload.currentUser.userId);
-  const email = payload.email || (payload.currentUser && payload.currentUser.email);
+// [TAREA-F4-P0-01] [Fase 4: Identidad, Permisos y Gobierno] - Generación y verificación de tokens firmados con HMAC-SHA256 para unificación de autenticación
+function computeHmacSignature(message, secret) {
+  const bytes = Utilities.computeHmacSha256Signature(message, secret);
+  return bytes.map(b => ('0' + (b & 0xFF).toString(16)).slice(-2)).join('');
+}
 
-  if (!userId && !email) {
-    return "Estudiante";
-  }
-
-  const bypassCache = payload.skipRoleCache === true || payload.ignoreCache === true;
-  const cacheKey = "user_role_" + (userId || email);
-
+function getAuthTokenSecret() {
+  const props = PropertiesService.getScriptProperties();
+  let secret = "";
   try {
-    const cache = CacheService.getScriptCache();
-    if (!bypassCache) {
-      const cachedRole = cache.get(cacheKey);
-      if (cachedRole) {
-        return cachedRole;
-      }
-    }
+    secret = props.getProperty("AUTH_TOKEN_SECRET");
+  } catch (e) {}
+  if (!secret) {
+    secret = Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, SPREADSHEET_ID + "_MASTER_AUTH_HMAC_SECRET")
+      .map(b => ('0' + (b & 0xFF).toString(16)).slice(-2)).join('');
+    try {
+      props.setProperty("AUTH_TOKEN_SECRET", secret);
+    } catch (e) {}
+  }
+  return secret;
+}
 
-    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
-    const sheet = ss.getSheetByName("Usuarios");
-    if (sheet) {
-      const data = sheet.getDataRange().getValues();
-      for (let i = 1; i < data.length; i++) {
-        const rUserId = String(data[i][0]).trim();
-        const rEmail = String(data[i][4]).toLowerCase().trim();
-        if ((userId && rUserId === String(userId).trim()) || (email && rEmail === String(email).toLowerCase().trim())) {
-          const accountState = String(data[i][10] || "Activa").trim();
-          if (accountState === "Desactivada" || accountState === "Bloqueada" || accountState === "Suspendida") {
-            cache.remove(cacheKey);
-            return "NO_ACCESS";
+function generateSessionToken(user) {
+  const secret = getAuthTokenSecret();
+  const now = Math.floor(Date.now() / 1000);
+  const exp = now + (24 * 3600); // 24 horas de vigencia
+  const payloadData = {
+    userId: user.userId,
+    email: user.email,
+    role: user.role,
+    accountState: user.accountState || "Activa",
+    iat: now,
+    exp: exp,
+    sessionId: "SES-" + Utilities.getUuid()
+  };
+  const payloadB64 = Utilities.base64EncodeWebSafe(JSON.stringify(payloadData));
+  const signature = computeHmacSignature(payloadB64, secret);
+  return payloadB64 + "." + signature;
+}
+
+function verifySessionToken(tokenString) {
+  if (!tokenString || typeof tokenString !== "string" || tokenString.indexOf(".") === -1) {
+    return null;
+  }
+  const parts = tokenString.split(".");
+  if (parts.length !== 2) return null;
+  const payloadB64 = parts[0];
+  const providedSignature = parts[1];
+  const secret = getAuthTokenSecret();
+  const expectedSignature = computeHmacSignature(payloadB64, secret);
+  if (providedSignature !== expectedSignature) {
+    return null;
+  }
+  try {
+    const jsonStr = Utilities.newBlob(Utilities.base64DecodeWebSafe(payloadB64)).getDataAsString();
+    const claims = JSON.parse(jsonStr);
+    const now = Math.floor(Date.now() / 1000);
+    if (claims.exp && now > claims.exp) {
+      return null;
+    }
+    // [TAREA-F4-P0-03] Verificación de revocación y estado de cuenta en tiempo real (Fail-Closed)
+    if (claims.userId) {
+      const cacheKey = "acct_state_" + claims.userId;
+      const cache = CacheService.getScriptCache();
+      let acctState = cache.get(cacheKey);
+      if (!acctState) {
+        try {
+          const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+          const uSheet = ss.getSheetByName("Usuarios");
+          if (uSheet) {
+            const data = uSheet.getDataRange().getValues();
+            for (let i = 1; i < data.length; i++) {
+              if (String(data[i][0]).trim() === String(claims.userId).trim()) {
+                acctState = String(data[i][10] || "Activa").trim();
+                cache.put(cacheKey, acctState, 60);
+                break;
+              }
+            }
           }
-          const trueRole = String(data[i][6] || "Estudiante").trim();
-          cache.put(cacheKey, trueRole, 21600);
-          return trueRole;
-        }
+        } catch (e) {}
+      }
+      if (!acctState || acctState !== "Activa") {
+        return null;
       }
     }
+    return claims;
   } catch (e) {
-    logDebug("Error consultando rol verificado en backend: " + e.message);
+    return null;
+  }
+}
+
+// [FASE2-T01] [TAREA-F4-P0-01] [Fase 4 - Autorización e Interoperabilidad] - Exige token de sesión firmado sin fallbacks no autenticados.
+function getUserVerifiedRole(payload) {
+  if (!payload) return "NO_ACCESS";
+
+  const token = payload.sessionToken || payload.authToken || payload.token;
+  if (!token) {
+    return "NO_ACCESS";
   }
 
-  return "Estudiante";
+  const claims = verifySessionToken(token);
+  if (!claims) {
+    return "NO_ACCESS";
+  }
+
+  payload._verifiedUserId = claims.userId;
+  payload._verifiedRole = claims.role;
+  return claims.role || "Estudiante";
 }
 
 function validateRolePermission(action, payload) {
@@ -1426,8 +1488,19 @@ function loginUser(payload) {
         sheet.getRange(i + 1, 12).setValue(0);
         sheet.getRange(i + 1, 13).setValue(new Date());
 
+        // [TAREA-F4-P0-01] [Fase 4: Identidad y Permisos] - Emisión de token de sesión firmado HMAC-SHA256
+        const sessionToken = generateSessionToken({
+          userId: row[0],
+          email: row[4],
+          role: row[6],
+          accountState: state
+        });
+
+        logStructuredEvent("USER", "loginUser", "INFO", "LOGIN_SUCCESS", `Inicio de sesión exitoso para usuario ${row[0]}`, { userId: row[0], rol: row[6] }, row[6]);
+
         return {
           status: "success",
+          sessionToken: sessionToken,
           data: {
             userId: row[0],
             nombre: row[1],
@@ -1435,6 +1508,7 @@ function loginUser(payload) {
             seccion: row[3],
             email: row[4],
             rol: row[6],
+            sessionToken: sessionToken,
             telefono: row[7] || "",
             numeroLista: row[8] || "",
             personaId: row[9] || "",

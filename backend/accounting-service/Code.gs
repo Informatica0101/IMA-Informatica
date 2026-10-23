@@ -262,10 +262,101 @@ function saveIdempotentResult(action, payload, result) {
   }
 }
 
-// [TAREA-01] [Fase 1 - Seguridad RBAC] - Validar y reforzar la seguridad de los servicios y la separación de permisos en el servidor.
+// [TAREA-F4-P0-01] [Fase 4: Identidad y Permisos] - Funciones de verificación de firma HMAC-SHA256 e integración con token de sesión
+function computeHmacSignature(message, secret) {
+  const bytes = Utilities.computeHmacSha256Signature(message, secret);
+  return bytes.map(b => ('0' + (b & 0xFF).toString(16)).slice(-2)).join('');
+}
+
+function getAuthTokenSecret() {
+  const props = PropertiesService.getScriptProperties();
+  let secret = "";
+  try {
+    secret = props.getProperty("AUTH_TOKEN_SECRET");
+  } catch (e) {}
+  if (!secret) {
+    secret = Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, SPREADSHEET_ID + "_MASTER_AUTH_HMAC_SECRET")
+      .map(b => ('0' + (b & 0xFF).toString(16)).slice(-2)).join('');
+    try {
+      props.setProperty("AUTH_TOKEN_SECRET", secret);
+    } catch (e) {}
+  }
+  return secret;
+}
+
+function verifySessionToken(tokenString) {
+  if (!tokenString || typeof tokenString !== "string" || tokenString.indexOf(".") === -1) {
+    return null;
+  }
+  const parts = tokenString.split(".");
+  if (parts.length !== 2) return null;
+  const payloadB64 = parts[0];
+  const providedSignature = parts[1];
+  const secret = getAuthTokenSecret();
+  const expectedSignature = computeHmacSignature(payloadB64, secret);
+  if (providedSignature !== expectedSignature) {
+    return null;
+  }
+  try {
+    const jsonStr = Utilities.newBlob(Utilities.base64DecodeWebSafe(payloadB64)).getDataAsString();
+    const claims = JSON.parse(jsonStr);
+    const now = Math.floor(Date.now() / 1000);
+    if (claims.exp && now > claims.exp) {
+      return null;
+    }
+    if (claims.userId) {
+      const cacheKey = "acct_state_" + claims.userId;
+      const cache = CacheService.getScriptCache();
+      let acctState = cache.get(cacheKey);
+      if (!acctState) {
+        try {
+          const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+          const uSheet = ss.getSheetByName("Usuarios");
+          if (uSheet) {
+            const data = uSheet.getDataRange().getValues();
+            for (let i = 1; i < data.length; i++) {
+              if (String(data[i][0]).trim() === String(claims.userId).trim()) {
+                acctState = String(data[i][10] || "Activa").trim();
+                cache.put(cacheKey, acctState, 60);
+                break;
+              }
+            }
+          }
+        } catch (e) {}
+      }
+      if (!acctState || acctState !== "Activa") {
+        return null;
+      }
+    }
+    return claims;
+  } catch (e) {
+    return null;
+  }
+}
+
+// [TAREA-01] [TAREA-F4-P0-01] [Fase 4 - Seguridad RBAC y Token Unificado] - Validar y reforzar la seguridad mediante verificación de credencial de sesión HMAC
 function validateRolePermission(action, payload) {
   if (PUBLIC_ACTIONS.indexOf(action) !== -1) return { authorized: true };
-  const userRole = (payload && (payload.authRole || payload.rol)) || "Estudiante";
+
+  let userRole = "Estudiante";
+  let verifiedUserId = null;
+  const token = payload && (payload.sessionToken || payload.authToken || payload.token);
+
+  if (token) {
+    const claims = verifySessionToken(token);
+    if (!claims) {
+      return { authorized: false, role: "Token Inválido/Expirado" };
+    }
+    userRole = claims.role || "Estudiante";
+    verifiedUserId = claims.userId;
+    if (payload) {
+      payload._verifiedUserId = verifiedUserId;
+      payload._verifiedRole = userRole;
+    }
+  } else {
+    return { authorized: false, role: "Sin Credenciales de Sesión" };
+  }
+
   const permitted = ROLE_PERMISSIONS[userRole] || ROLE_PERMISSIONS["Estudiante"];
   if (permitted.indexOf("*") !== -1 || permitted.indexOf(action) !== -1) {
     return { authorized: true, role: userRole };
