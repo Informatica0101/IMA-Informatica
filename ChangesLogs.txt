@@ -1107,3 +1107,15 @@ Archivos Modificados:
    - Actualización del estado de [T-UX-27] a [X] Completada.
 
 -------------------------------------------------------------------------------
+FECHA: Octubre 2026
+TAREA: [T-UX-26] Incorporar una vista de actividad reciente contextual
+-------------------------------------------------------------------------------
+
+Archivos Modificados:
+1. js/ui-common.js
+   - Lineas 1690-1830: Implementación de window.recordRecentActivity, window.getRecentActivity y window.renderContextualRecentActivity para registro, filtrado por rol y renderizado de actividad reciente e histórica con enlace de navegación directa.
+
+2. Pendientes.md / pendientes3.md
+   - Actualización del estado de [T-UX-26] a [X] Completada.
+
+-------------------------------------------------------------------------------

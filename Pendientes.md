@@ -1394,7 +1394,7 @@
   6. Las modificaciones conservan o mejoran el rendimiento sin debilitar la seguridad ni la integridad.
 - **Estado:** [ ] Pendiente
 
-### [ ] [T-UX-26] Incorporar una vista de actividad reciente contextual
+### [X] [T-UX-26] Incorporar una vista de actividad reciente contextual
 - **Origen del Hallazgo:** Auditoría de la Fase 3, octubre de 2026 (AUDITORIA_FASE3_EXPERIENCIA_USUARIO_NAVEGACION.md - Área 13)
 - **Severidad/Clasificación:** Bajo
 - **Archivos Involucrados:** `js/ui-common.js`
@@ -1407,4 +1407,4 @@
 - **Criterios de Aceptación:**
   - Los elementos mostrados corresponden a actividad real.
   - El orden temporal es correcto.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada

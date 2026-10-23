@@ -150,11 +150,11 @@
 - **Archivos Involucrados:** `js/ui-common.js`, `backend/user-service/Code.gs`
 - **Estado:** [X] Completada
 
-### [ ] [T-UX-26] Incorporar una vista de actividad reciente contextual
+### [X] [T-UX-26] Incorporar una vista de actividad reciente contextual
 - **Origen del Hallazgo:** Auditoría de la Fase 3, octubre de 2026 (AUDITORIA_FASE3_EXPERIENCIA_USUARIO_NAVEGACION.md - Área 13)
 - **Severidad/Clasificación:** Bajo
 - **Archivos Involucrados:** `js/ui-common.js`
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 ### [X] [T-UX-27] Optimizar el rendimiento percibido y la respuesta de las interfaces
 - **Origen del Hallazgo:** Auditoría de la Fase 3, octubre de 2026 (AUDITORIA_FASE3_EXPERIENCIA_USUARIO_NAVEGACION.md - Área 27)

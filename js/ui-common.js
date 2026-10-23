@@ -1688,6 +1688,148 @@ window.loadUserSettingsInModal = function(user) {
 };
 
 // ---------------------------------------------------------------------------
+// [T-UX-26] [Fase 3: Experiencia de Usuario y Navegación Unificada] - VISTA DE ACTIVIDAD RECIENTE CONTEXTUAL POR ROL
+// Almacena y renderiza el historial cronológico de actividades recientes (informativas y tareas pendientes), permitiendo filtrado contextual por rol y la navegación directa a los registros correspondientes.
+// ---------------------------------------------------------------------------
+window.RECENT_ACTIVITY_CACHE_KEY = 'INSTITUTIONAL_RECENT_ACTIVITY_LOG_V1';
+
+window.recordRecentActivity = function(activity) {
+    if (!activity || !activity.title) return;
+    try {
+        var existingRaw = localStorage.getItem(window.RECENT_ACTIVITY_CACHE_KEY);
+        var activities = existingRaw ? JSON.parse(existingRaw) : [];
+
+        var newEntry = {
+            id: activity.id || 'act-' + Date.now(),
+            title: String(activity.title).trim(),
+            description: activity.description ? String(activity.description).trim() : '',
+            type: activity.type === 'TAREA_PENDIENTE' ? 'TAREA_PENDIENTE' : 'INFORMATIVA',
+            role: activity.role || 'GLOBAL',
+            timestamp: activity.timestamp || new Date().toISOString(),
+            targetView: activity.targetView || '',
+            targetId: activity.targetId || ''
+        };
+
+        activities = activities.filter(function(item) {
+            return item.id !== newEntry.id && !(item.title === newEntry.title && item.targetId === newEntry.targetId);
+        });
+
+        activities.unshift(newEntry);
+        if (activities.length > 50) activities = activities.slice(0, 50);
+
+        localStorage.setItem(window.RECENT_ACTIVITY_CACHE_KEY, JSON.stringify(activities));
+    } catch(err) {
+        console.warn('Error al registrar actividad reciente:', err);
+    }
+};
+
+window.getRecentActivity = function(userRole, limit) {
+    limit = limit || 10;
+    try {
+        var existingRaw = localStorage.getItem(window.RECENT_ACTIVITY_CACHE_KEY);
+        var activities = existingRaw ? JSON.parse(existingRaw) : [];
+
+        if (userRole && userRole !== 'ADMIN' && userRole !== 'DIRECCION') {
+            activities = activities.filter(function(item) {
+                return !item.role || item.role === 'GLOBAL' || item.role === userRole;
+            });
+        }
+
+        activities.sort(function(a, b) {
+            return new Date(b.timestamp) - new Date(a.timestamp);
+        });
+
+        return activities.slice(0, limit);
+    } catch(err) {
+        console.warn('Error al obtener actividad reciente:', err);
+        return [];
+    }
+};
+
+window.renderContextualRecentActivity = function(containerIdOrElement, userRole, options) {
+    options = options || {};
+    var container = typeof containerIdOrElement === 'string' ? document.getElementById(containerIdOrElement) : containerIdOrElement;
+    if (!container) return;
+
+    var limit = options.limit || 8;
+    var activities = window.getRecentActivity(userRole, limit);
+
+    container.innerHTML = '';
+
+    var wrapper = document.createElement('div');
+    wrapper.className = 'recent-activity-container bg-white rounded-2xl border border-slate-200/80 p-5 shadow-sm space-y-4';
+
+    var header = document.createElement('div');
+    header.className = 'flex items-center justify-between border-b border-slate-100 pb-3';
+    header.innerHTML =
+        '<div class="flex items-center gap-2">' +
+            '<div class="w-8 h-8 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold text-xs">' +
+                '<i class="fa-solid fa-clock-rotate-left"></i>' +
+            '</div>' +
+            '<div>' +
+                '<h4 class="text-xs font-black text-slate-800 uppercase tracking-wide">Actividad Reciente</h4>' +
+                '<p class="text-[10px] font-medium text-slate-400">Historial de acciones y tareas pendientes</p>' +
+            '</div>' +
+        '</div>' +
+        '<span class="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600">' + activities.length + ' registros</span>';
+
+    wrapper.appendChild(header);
+
+    if (activities.length === 0) {
+        var empty = document.createElement('div');
+        empty.className = 'py-6 text-center text-slate-400 text-xs font-medium';
+        empty.innerHTML = '<i class="fa-solid fa-inbox text-2xl mb-2 text-slate-300 block"></i> No hay actividad reciente registrada.';
+        wrapper.appendChild(empty);
+    } else {
+        var list = document.createElement('div');
+        list.className = 'space-y-2 max-h-[380px] overflow-y-auto pr-1';
+
+        activities.forEach(function(act) {
+            var item = document.createElement('div');
+            item.className = 'group flex items-start justify-between gap-3 p-3 rounded-xl bg-slate-50 hover:bg-blue-50/50 border border-slate-100 transition-all cursor-pointer';
+
+            var isTask = act.type === 'TAREA_PENDIENTE';
+            var typeBadgeClass = isTask ? 'bg-amber-100 text-amber-800 border-amber-200' : 'bg-slate-200/70 text-slate-700 border-slate-200';
+            var typeLabel = isTask ? 'Tarea Pendiente' : 'Informativa';
+            var iconClass = isTask ? 'fa-solid fa-list-check text-amber-600' : 'fa-solid fa-circle-info text-blue-500';
+
+            var dateObj = new Date(act.timestamp);
+            var clockTime = isNaN(dateObj.getTime()) ? '' : dateObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+            item.innerHTML =
+                '<div class="flex items-start gap-3 min-w-0 flex-1">' +
+                    '<div class="mt-0.5 w-7 h-7 rounded-lg bg-white border border-slate-200 flex items-center justify-center text-xs flex-shrink-0 shadow-2xs">' +
+                        '<i class="' + iconClass + '"></i>' +
+                    '</div>' +
+                    '<div class="min-w-0 flex-1">' +
+                        '<div class="flex items-center gap-2 mb-0.5">' +
+                            '<span class="text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md border ' + typeBadgeClass + '">' + typeLabel + '</span>' +
+                            '<span class="text-[10px] font-semibold text-slate-400">' + clockTime + '</span>' +
+                        '</div>' +
+                        '<h5 class="text-xs font-bold text-slate-800 truncate group-hover:text-blue-600 transition-colors">' + act.title + '</h5>' +
+                        (act.description ? '<p class="text-[11px] font-medium text-slate-500 line-clamp-1 mt-0.5">' + act.description + '</p>' : '') +
+                    '</div>' +
+                '</div>' +
+                (act.targetView ? '<div class="self-center flex-shrink-0 text-slate-400 group-hover:text-blue-600 text-xs"><i class="fa-solid fa-chevron-right"></i></div>' : '');
+
+            item.onclick = function() {
+                if (act.targetView && typeof window.switchActiveView === 'function') {
+                    window.switchActiveView(act.targetView, true, { targetId: act.targetId });
+                } else if (typeof options.onSelectActivity === 'function') {
+                    options.onSelectActivity(act);
+                }
+            };
+
+            list.appendChild(item);
+        });
+
+        wrapper.appendChild(list);
+    }
+
+    container.appendChild(wrapper);
+};
+
+// ---------------------------------------------------------------------------
 // [T-UX-10] [Fase 3: Experiencia de Usuario y Navegación Unificada] - SUITE AUTOMATIZADA DE PRUEBAS DE EXPERIENCIA DE USUARIO (UX-01 A UX-09)
 // Ejecuta un análisis automatizado de verificación de capacidades UX en la interfaz: manejo de expiración de sesión, tecla Escape, protección de formularios, frescura de datos, normalizador diacrítico, Omnibox global, estado en línea, reporte de problemas y navegación por rol.
 // ---------------------------------------------------------------------------
@@ -4923,20 +5065,6 @@ window.addEventListener('keydown', function(e) {
 });
 
 // ---------------------------------------------------------------------------
-// [T-UX-17] [Fase 3: Experiencia de Usuario y Navegación Unificada] - PROTECCIÓN AVANZADA CONTRA PÉRDIDA DE CAMBIOS NO GUARDADOS
-// Rastrea modificaciones en formularios estáticos y dinámicos (MutationObserver), permitiendo descarte limpio en envíos autorizados y advertencias antes de abandonar.
-// ---------------------------------------------------------------------------
-
-// [T-UX-03] [Fase 3: Experiencia de Usuario y Navegación Unificada] - Módulo de protección contra pérdida de cambios no guardados en formularios con detección de modificaciones y descarte limpio en envíos autorizados.
-// ---------------------------------------------------------------------------
-// [T-UX-18] [Fase 3: Experiencia de Usuario y Navegación Unificada] - COMPONENTES COMPARTIDOS DE FORMULARIOS, TABLAS Y VISTAS DE DETALLE
-// Proporciona un generador estandarizado de modales de vista de detalle con rejilla de campos, insignias de estado, acciones por fila y manejo de foco accesibles.
-// ---------------------------------------------------------------------------
-// ---------------------------------------------------------------------------
-// [T-UX-19] [Fase 3: Experiencia de Usuario y Navegación Unificada] - VERIFICACIÓN Y CORRECCIÓN AUTOMÁTICA DE ACCESIBILIDAD (WCAG 2.2 AA)
-// Audita y corrige en tiempo de ejecución barreras de accesibilidad: atributos aria-label en botones de solo icono, etiquetas en controles de formulario y roles dialog en modales.
-// ---------------------------------------------------------------------------
-// ---------------------------------------------------------------------------
 // [T-UX-20] [Fase 3: Experiencia de Usuario y Navegación Unificada] - ADAPTACIÓN MÓVIL Y COMPORTAMIENTO RESPONSIVO MULTI-DISPOSITIVO
 // Configura adaptadores dinámicos de interfaz para dispositivos móviles (<=768px): envolventes de desplazamiento en tablas, límites de altura en modales y debouncing en resize.
 // ---------------------------------------------------------------------------
@@ -5094,6 +5222,10 @@ window.normalizeActionButtonsHierarchy = function(containerId) {
     });
 };
 
+// ---------------------------------------------------------------------------
+// [T-UX-19] [Fase 3: Experiencia de Usuario y Navegación Unificada] - VERIFICACIÓN Y CORRECCIÓN AUTOMÁTICA DE ACCESIBILIDAD (WCAG 2.2 AA)
+// Audita y corrige en tiempo de ejecución barreras de accesibilidad: atributos aria-label en botones de solo icono, etiquetas en controles de formulario y roles dialog en modales.
+// ---------------------------------------------------------------------------
 window.auditAndFixAccessibility = function() {
     var scannedElements = 0;
     var fixesApplied = 0;
@@ -5134,6 +5266,10 @@ window.auditAndFixAccessibility = function() {
     return report;
 };
 
+// ---------------------------------------------------------------------------
+// [T-UX-18] [Fase 3: Experiencia de Usuario y Navegación Unificada] - COMPONENTES COMPARTIDOS DE FORMULARIOS, TABLAS Y VISTAS DE DETALLE
+// Proporciona un generador estandarizado de modales de vista de detalle con rejilla de campos, insignias de estado, acciones por fila y manejo de foco accesibles.
+// ---------------------------------------------------------------------------
 window.renderSharedDetailViewModal = function(config) {
     config = config || {};
     var modalId = config.modalId || 'modal-shared-detail-view';
@@ -5195,6 +5331,10 @@ window.renderSharedDetailViewModal = function(config) {
         '</div>';
 };
 
+// ---------------------------------------------------------------------------
+// [T-UX-03] / [T-UX-17] [Fase 3: Experiencia de Usuario y Navegación Unificada] - PROTECCIÓN AVANZADA CONTRA PÉRDIDA DE CAMBIOS NO GUARDADOS
+// Rastrea modificaciones en formularios estáticos y dinámicos (MutationObserver), permitiendo descarte limpio en envíos autorizados y advertencias antes de abandonar.
+// ---------------------------------------------------------------------------
 window.setupUnsavedChangesProtection = function(containerIdOrElement, options) {
     options = options || {};
     var container = typeof containerIdOrElement === 'string' ? document.getElementById(containerIdOrElement) : containerIdOrElement;
