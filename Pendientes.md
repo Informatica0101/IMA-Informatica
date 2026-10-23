@@ -230,7 +230,7 @@
   - [X] Todas las cuentas usan secuencias atómicas institucionales sin marcas de tiempo.
 - **Estado:** [X] Completada
 
-### [ ] [TAREA-F4-P2-02] Implementar una gestión completa del ciclo de vida de cuentas y sesiones
+### [X] [TAREA-F4-P2-02] Implementar una gestión completa del ciclo de vida de cuentas y sesiones
 - **Origen del Hallazgo:** Auditoría de la Fase 4 (AUDITORIA_FASE4_IDENTIDAD_PERMISOS_GOBIERNO.md)
 - **Severidad/Clasificación:** Medio · Identidad · Administración
 - **Archivos Involucrados:** `backend/user-service/Code.gs`, `js/auth.js`, `js/ui-common.js`
@@ -238,8 +238,8 @@
 - **Descripción del Alcance:**
   1. Definir máquina de estados para transiciones permitidas entre `Pendiente`, `InvitacionEnviada`, `Activa`, `Suspendida`, `Bloqueada`, `Desactivada`.
 - **Criterios de Aceptación:**
-  - [ ] Transiciones de estado validadas y auditadas.
-- **Estado:** [ ] Pendiente
+  - [X] Transiciones de estado validadas y auditadas.
+- **Estado:** [X] Completada
 
 ### [ ] [TAREA-F4-P2-03] Mejorar la experiencia administrativa de gestión de usuarios, permisos y delegaciones
 - **Origen del Hallazgo:** Auditoría de la Fase 4 (AUDITORIA_FASE4_IDENTIDAD_PERMISOS_GOBIERNO.md)

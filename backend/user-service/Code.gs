@@ -2099,6 +2099,16 @@ function revokeUserSession(payload) {
   return { status: "success", message: "Sesión revocada exitosamente." };
 }
 
+// [TAREA-F4-P2-02] [Fase 4: Ciclo de Vida de Cuentas] - Máquina de estados para transiciones permitidas y auditoría de cambios de cuenta
+const ALLOWED_ACCOUNT_STATE_TRANSITIONS = {
+  "Pendiente": ["InvitacionEnviada", "Activa", "Desactivada"],
+  "InvitacionEnviada": ["Activa", "Pendiente", "Desactivada"],
+  "Activa": ["Suspendida", "Bloqueada", "Desactivada"],
+  "Suspendida": ["Activa", "Desactivada"],
+  "Bloqueada": ["Activa", "Suspendida", "Desactivada"],
+  "Desactivada": ["Activa"]
+};
+
 function manageAccountState(payload) {
   const { userId, newState, motivo } = payload || {};
   if (!userId || !newState) throw new Error("userId y newState son requeridos.");
@@ -2113,28 +2123,29 @@ function manageAccountState(payload) {
   const idx = data.findIndex(r => String(r[0]).trim() === String(userId).trim());
   if (idx === -1) throw new Error("Cuenta de usuario no encontrada.");
 
-  const oldState = data[idx][10] || "Activa";
+  const oldState = String(data[idx][10] || "Activa").trim();
+
+  if (oldState !== newState) {
+    const allowedTargets = ALLOWED_ACCOUNT_STATE_TRANSITIONS[oldState] || ["Activa", "Suspendida", "Bloqueada", "Desactivada"];
+    if (allowedTargets.indexOf(newState) === -1) {
+      throw new Error(`Transición de estado no permitida de '${oldState}' a '${newState}'. Transiciones válidas: ${allowedTargets.join(", ")}`);
+    }
+  }
+
   sheet.getRange(idx + 1, 11).setValue(newState);
 
   recordEntityChangeLog("Usuario", userId, { estadoCuenta: oldState }, { estadoCuenta: newState }, "ACCOUNT_STATE_CHANGED", payload && payload._verifiedUserId);
 
-  // Invalidation & real-time revocation in cache
-  invalidateUserRoleCache(userId);
-  try {
-    const cache = CacheService.getScriptCache();
-    cache.put("acct_state_" + userId, newState, 21600);
-    if (newState === "Suspendida" || newState === "Bloqueada" || newState === "Desactivada") {
-      cache.put("revoked_user_" + userId, "REVOKED", 21600);
-    } else if (newState === "Activa") {
-      cache.remove("revoked_user_" + userId);
-    }
-  } catch (e) {
-    console.warn("Error guardando acct_state en cache para " + userId, e);
-  }
+  dispatchSecurityEvent({
+    eventType: "ACCOUNT_STATE_CHANGED",
+    targetUserId: userId,
+    accountState: newState,
+    details: `Transición de estado de cuenta: ${oldState} -> ${newState}. Motivo: ${motivo || 'N/A'}`
+  });
 
-  logStructuredEvent("USER", "manageAccountState", "WARN", "ACCOUNT_STATE_CHANGED", `Estado de cuenta ${userId} cambiado a ${newState}. Motivo: ${motivo || 'N/A'}`, { userId, newState, motivo }, payload && payload.authRole);
+  logStructuredEvent("USER", "manageAccountState", "WARN", "ACCOUNT_STATE_CHANGED", `Estado de cuenta ${userId} cambiado de ${oldState} a ${newState}. Motivo: ${motivo || 'N/A'}`, { userId, oldState, newState, motivo }, payload && payload.authRole);
 
-  return { status: "success", userId: userId, newState: newState, message: `Estado de la cuenta actualizado a '${newState}'.` };
+  return { status: "success", userId: userId, oldState: oldState, newState: newState, message: `Estado de la cuenta actualizado exitosamente de '${oldState}' a '${newState}'.` };
 }
 
 // ---------------------------------------------------------------------------
@@ -3807,7 +3818,7 @@ function getSecurityAndComplianceDashboardData(payload) {
   let activeDelegations = [];
   try {
     const delRes = getSecurityDelegations({ statusFilter: "ACTIVA" });
-    if (delRes && delRes.delegations) activeDelegations = delRes.delegations;
+    if (delRes) activeDelegations = delRes.delegations || delRes.data || [];
   } catch (e) {
     console.warn("No se pudieron obtener delegaciones activas", e);
   }

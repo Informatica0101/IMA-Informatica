@@ -1285,3 +1285,8 @@ Archivos Modificados:
 [TAREA-F4-P2-01] [Fase 4 - Eliminar IDs de Usuario con Marcas de Tiempo]
 - backend/user-service/Code.gs:
   - Modificada la función registerUser para eliminar el fallback de generación de ID basado en marcas de tiempo (now.getTime()), forzando exclusivamente la generación atómica de secuencias institucionales mediante generateInstitutionalId({ entityType: 'Usuario', prefix: 'USR-' }).
+
+[TAREA-F4-P2-02] [Fase 4 - Máquina de Estados del Ciclo de Vida de Cuentas]
+- backend/user-service/Code.gs:
+  - Definida la constante ALLOWED_ACCOUNT_STATE_TRANSITIONS con reglas de transición entre estados de cuenta (Pendiente, InvitacionEnviada, Activa, Suspendida, Bloqueada, Desactivada).
+  - Modificada manageAccountState para validar transiciones permitidas, rechazar cambios inválidos con mensajes de error descriptivos, registrar diffs en HistorialCambiosEntidad y despachar eventos de seguridad inter-servicio vía dispatchSecurityEvent.
