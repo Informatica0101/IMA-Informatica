@@ -357,7 +357,7 @@ function validateRolePermission(action, payload) {
     return { authorized: false, role: "Sin Credenciales de Sesión" };
   }
 
-  const permitted = ROLE_PERMISSIONS[userRole] || ROLE_PERMISSIONS["Estudiante"];
+  const permitted = ROLE_PERMISSIONS[userRole] || [];
   if (permitted.indexOf("*") !== -1 || permitted.indexOf(action) !== -1) {
     return { authorized: true, role: userRole };
   }

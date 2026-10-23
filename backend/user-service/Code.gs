@@ -1093,7 +1093,7 @@ function validateRolePermission(action, payload) {
   if (["submitProblemTicket", "getProblemTickets", "replyProblemTicket", "searchGlobalOmnibox", "configureAutomationRules", "getAutomationRules", "getNotificationAuditLogs", "getServiceHealthReport"].indexOf(action) !== -1) {
     return { authorized: true, role: userRole };
   }
-  const permitted = ROLE_PERMISSIONS[userRole] || ROLE_PERMISSIONS["Estudiante"];
+  const permitted = ROLE_PERMISSIONS[userRole] || [];
   if (permitted.indexOf("*") !== -1 || permitted.indexOf(action) !== -1) {
     return { authorized: true, role: userRole };
   }
@@ -1548,11 +1548,31 @@ function getStudentsByGradoSeccion(payload) {
   return { status: "success", data: students };
 }
 
+// [TAREA-F4-P0-02] [Fase 4: Protección IDOR y ABAC] - Aislamiento estricto de datos personales y prevención de IDOR en la consulta de usuario
 function getUserInfo(payload) {
-  const r = getSheetOrThrow(SpreadsheetApp.openById(SPREADSHEET_ID), "Usuarios").getDataRange().getValues().find(r => String(r[0]) === String(payload.userId));
-  if (!r) throw new Error("Usuario no encontrado.");
   const callerRole = getUserVerifiedRole(payload);
-  const callerId = payload && payload.currentUser && payload.currentUser.userId;
+  if (callerRole === "NO_ACCESS") {
+    throw new Error("Acceso denegado: Credenciales de sesión inválidas o expiradas.");
+  }
+  let targetUserId = payload && payload.userId;
+
+  if ((callerRole === "Estudiante" || callerRole === "Alumno") && payload._verifiedUserId) {
+    targetUserId = payload._verifiedUserId;
+  } else if ((callerRole === "Padre" || callerRole === "Tutor") && payload._verifiedUserId) {
+    if (targetUserId && String(targetUserId) !== String(payload._verifiedUserId)) {
+      const guardianRes = getGuardianStudents({ userId: payload._verifiedUserId, sessionToken: payload.sessionToken });
+      const linkedStudents = (guardianRes.data || []).map(s => String(s.studentUserId || s.userId).trim());
+      if (linkedStudents.indexOf(String(targetUserId).trim()) === -1) {
+        throw new Error("Acceso denegado: No tiene autorización para consultar los datos del estudiante solicitado.");
+      }
+    } else {
+      targetUserId = payload._verifiedUserId;
+    }
+  }
+
+  const r = getSheetOrThrow(SpreadsheetApp.openById(SPREADSHEET_ID), "Usuarios").getDataRange().getValues().find(r => String(r[0]).trim() === String(targetUserId).trim());
+  if (!r) throw new Error("Usuario no encontrado.");
+  const callerId = payload._verifiedUserId || (payload && payload.currentUser && payload.currentUser.userId);
   const isTargetAdmin = (r[6] === "Administrador" || r[6] === "Desarrollador");
 
   if (isTargetAdmin && callerRole !== "Administrador" && callerRole !== "Desarrollador" && String(callerId) !== String(r[0])) {
@@ -1603,6 +1623,9 @@ function resetPassword(payload) {
 // [TAREA-F4-P0-02] [Fase 4: Protección IDOR y ABAC] - Aislamiento estricto en actualización de perfil de usuario
 function updateUserProfile(payload) {
   const callerRole = getUserVerifiedRole(payload);
+  if (callerRole === "NO_ACCESS") {
+    throw new Error("Acceso denegado: Credenciales de sesión inválidas o expiradas.");
+  }
   let targetUserId = payload.userId;
 
   if ((callerRole === "Estudiante" || callerRole === "Alumno" || callerRole === "Padre" || callerRole === "Tutor") && payload._verifiedUserId) {
@@ -2091,9 +2114,18 @@ function acceptLinkInvitation(payload) {
   return { status: "success", message: "Vinculación familiar completada exitosamente." };
 }
 
+// [TAREA-F4-P0-02] [Fase 4: Protección IDOR y ABAC] - Verificación estricta de vínculo tutores-estudiantes en RelacionesFamiliares
 function getGuardianStudents(payload) {
-  const { userIdResponsable, userId } = payload || {};
-  const uid = userIdResponsable || userId;
+  const callerRole = getUserVerifiedRole(payload);
+  if (callerRole === "NO_ACCESS") {
+    throw new Error("Acceso denegado: Credenciales de sesión inválidas o expiradas.");
+  }
+  let uid = payload.userIdResponsable || payload.userId;
+
+  if ((callerRole === "Padre" || callerRole === "Tutor" || callerRole === "Responsable") && payload._verifiedUserId) {
+    uid = payload._verifiedUserId;
+  }
+  if (!uid) uid = payload._verifiedUserId;
   if (!uid) throw new Error("userIdResponsable es requerido.");
 
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
@@ -2169,6 +2201,9 @@ function getGuardianStudents(payload) {
 // [TAREA-F4-P0-02] [Fase 4: Protección IDOR y ABAC] - Aislamiento estricto de resumen financiero familiar por tutor
 function getFamilyConsolidatedSummary(payload) {
   const callerRole = getUserVerifiedRole(payload);
+  if (callerRole === "NO_ACCESS") {
+    throw new Error("Acceso denegado: Credenciales de sesión inválidas o expiradas.");
+  }
   let uid = payload.userIdResponsable || payload.userId;
 
   if ((callerRole === "Padre" || callerRole === "Tutor" || callerRole === "Responsable") && payload._verifiedUserId) {

@@ -1143,3 +1143,28 @@ Archivos Modificados:
    - Actualización del estado a [X] TAREA-F4-P0-01.
 
 -------------------------------------------------------------------------------
+FECHA: Octubre 2026
+TAREA: [TAREA-F4-P0-02] Corregir las vulnerabilidades IDOR y garantizar el aislamiento de datos personales
+-------------------------------------------------------------------------------
+
+Archivos Modificados:
+1. backend/user-service/Code.gs
+   - Lineas 1550-1575: Actualización de getUserInfo forzando targetUserId = _verifiedUserId para estudiantes/alumnos y verificando vínculo en getGuardianStudents para tutores.
+   - Lineas 1600-1620: Actualización de updateUserProfile forzando targetUserId = _verifiedUserId.
+   - Lineas 2585-2600: Actualización de getUnifiedNotifications para forzar targetUserId = _verifiedUserId en roles no administrativos.
+   - Lineas 2995-3010: Actualización de getAdministrativeRequests y getStudentAbsenceJustifications para forzar userId = _verifiedUserId en estudiantes y comprobar vinculación de tutor en RelacionesFamiliares para tutores.
+   - Lineas 2110-2175: Actualización de getGuardianStudents y getFamilyConsolidatedSummary para forzar uid = _verifiedUserId en roles de tutores/padres.
+
+2. backend/academic-service/Code.gs
+   - Lineas 5466-5485: Actualización de getAcademicHistory forzando targetStudentId = _verifiedUserId para roles de estudiante.
+   - Lineas 5625-5640: Actualización de getStudentEnrollmentHistory forzando targetUserId = _verifiedUserId para roles de estudiante.
+
+3. backend/task-service/Code.gs
+   - Lineas 452-465: Actualización de getStudentTasks forzando targetUserId = _verifiedUserId para roles de estudiante.
+
+4. backend/exam-service/Code.gs
+   - Lineas 578-592: Actualización de getStudentExams forzando targetUserId = _verifiedUserId para roles de estudiante.
+
+5. Pendientes.md
+   - Actualización del estado a [X] TAREA-F4-P0-02.
+-------------------------------------------------------------------------------

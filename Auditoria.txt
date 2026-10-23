@@ -31,3 +31,30 @@ Resultado de Verificación:
 - Peticiones con `sessionToken` válido: Autorizadas según rol verificado en el token.
 - Peticiones con firma alterada o sin token: Rechazadas con `AUTH_PERMISSION_DENIED`.
 - Peticiones de cuentas desactivadas: Rechazadas con `Cuenta Inactiva/Bloqueada`.
+
+-------------------------------------------------------------------------------
+FECHA: Octubre 2026
+TAREA: [TAREA-F4-P0-02] Corregir las vulnerabilidades IDOR y garantizar el aislamiento de datos personales
+NIVEL DE CRITICIDAD: P0 (Crítico)
+-------------------------------------------------------------------------------
+
+Archivos Auditados y Modificados:
+1. `backend/user-service/Code.gs`
+2. `backend/academic-service/Code.gs`
+3. `backend/task-service/Code.gs`
+4. `backend/exam-service/Code.gs`
+
+Hallazgo Inicial:
+Varias funciones aceptaban identificadores de recursos/usuarios (`userId`, `studentId`, `guardianUserId`) desde el cuerpo de la petición sin validar que el solicitante fuera el propio usuario o tuviera un vínculo institucional verificado, exponiendo información confidencial a otros usuarios con el mismo rol (IDOR).
+
+Resolución Aplicada:
+- `getUserInfo`: Forzado de `targetUserId = payload._verifiedUserId` para Estudiantes/Alumnos, y verificación de vínculo en `RelacionesFamiliares` via `getGuardianStudents` para Padres/Tutores.
+- `getUnifiedNotifications` y `updateUserProfile`: Forzado de `targetUserId = payload._verifiedUserId`.
+- `getAdministrativeRequests` y `getStudentAbsenceJustifications`: Forzado de `userId = payload._verifiedUserId` para Estudiantes y validación de vínculo para Padres.
+- `getAcademicHistory` y `getStudentEnrollmentHistory` en `academic-service`: Aislamiento estricto por `targetStudentId = payload._verifiedUserId` para roles de estudiante.
+- `getStudentTasks` en `task-service` y `getStudentExams` en `exam-service`: Aislamiento estricto por `_verifiedUserId`.
+- `getFamilyConsolidatedSummary`: Aislamiento de resumen financiero por `_verifiedUserId` de tutor.
+
+Resultado de Verificación:
+- Estudiantes que alteran `userId` en la solicitud: El servidor sobreescribe con el ID verificado del token y retorna solo sus propios datos.
+- Tutores solicitando estudiantes no vinculados: Rechazados con error explícito de autorización.
