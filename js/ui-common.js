@@ -221,13 +221,21 @@ window.setupCommonUI = function() {
     if (cancelBtn) cancelBtn.onclick = window.closeProfileModal;
 
     // --- Logout Logic (Global) ---
+    // [TAREA-F4-P0-03] [Fase 4: Revocación de Sesiones] - Purga completa de credenciales y token de sesión al cerrar sesión
     window.handleLogout = function() {
         localStorage.removeItem('currentUser');
         sessionStorage.removeItem('currentUser');
+        localStorage.removeItem('usuario_actual');
+        sessionStorage.removeItem('usuario_actual');
+        localStorage.removeItem('usuario_sesion');
+        sessionStorage.removeItem('usuario_sesion');
+        localStorage.removeItem('sessionToken');
+        sessionStorage.removeItem('sessionToken');
         window.location.href = 'login.html';
     };
 
     // [T-UX-01] [Fase 3: Experiencia de Usuario y Navegación Unificada] - Función centralizada para el manejo de expiración de sesión y redirección con aviso explicativo.
+    // [TAREA-F4-P0-03] [Fase 4: Revocación de Sesiones] - Purga de sessionToken en expiración o revocación
     window.handleSessionExpired = function(reason) {
         localStorage.removeItem('currentUser');
         sessionStorage.removeItem('currentUser');
@@ -235,6 +243,8 @@ window.setupCommonUI = function() {
         sessionStorage.removeItem('usuario_actual');
         localStorage.removeItem('usuario_sesion');
         sessionStorage.removeItem('usuario_sesion');
+        localStorage.removeItem('sessionToken');
+        sessionStorage.removeItem('sessionToken');
         var msg = reason ? encodeURIComponent(reason) : '1';
         window.location.href = 'login.html?session_expired=' + msg;
     };

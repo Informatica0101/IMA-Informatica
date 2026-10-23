@@ -86,3 +86,10 @@ Resultado de Verificación:
   - getStudentAccountStatement & getPaymentVouchers: Verificada sobreescritura de parametros por _verifiedUserId.
 - backend/academic-service/Code.gs, backend/exam-service/Code.gs, backend/task-service/Code.gs:
   - Verificada protección ABAC / IDOR en endpoints de historial académico, evaluaciones y tareas.
+
+[AUDITORÍA TAREA-F4-P0-03]
+- backend/user-service/Code.gs:
+  - verifySessionToken: Verificada la verificación de llaves de revocación e invalidación de cuenta.
+  - manageAccountState: Inyección comprobada de revoked_user_<userId> en CacheService.
+- js/ui-common.js:
+  - handleLogout & handleSessionExpired: Verificada la purga de sessionToken en almacenamiento del cliente.

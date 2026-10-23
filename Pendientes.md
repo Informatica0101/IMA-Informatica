@@ -50,7 +50,7 @@
   - [X] Se conserva la integridad de los historiales académicos, administrativos y contables.
 - **Estado:** [X] Completada
 
-### [ ] [TAREA-F4-P0-03] Garantizar la revocación efectiva de sesiones y la actualización inmediata de privilegios
+### [X] [TAREA-F4-P0-03] Garantizar la revocación efectiva de sesiones y la actualización inmediata de privilegios
 - **Origen del Hallazgo:** Auditoría de la Fase 4 (AUDITORIA_FASE4_IDENTIDAD_PERMISOS_GOBIERNO.md - HALLAZGO-F4-P0-03)
 - **Severidad/Clasificación:** Crítico · Seguridad · Gestión de sesiones · Backend
 - **Archivos Involucrados:** `backend/user-service/Code.gs`, `backend/academic-service/Code.gs`, `backend/accounting-service/Code.gs`, `backend/exam-service/Code.gs`, `backend/task-service/Code.gs`, `js/auth.js`, `js/api.js`, `js/ui-common.js`
@@ -62,11 +62,11 @@
   4. Impedir la reutilización de credenciales revocadas o expiradas en los 5 microservicios.
   5. Manejar respuestas del cliente ante revocación redirigiendo a login de forma limpia.
 - **Criterios de Aceptación:**
-  - [ ] Una cuenta desactivada no puede ejecutar operaciones protegidas en ninguno de los cinco servicios.
-  - [ ] Una sesión revocada no vuelve a ser válida por reutilizar su token.
-  - [ ] Una reducción de privilegios impide seguir utilizando los permisos retirados.
-  - [ ] La expiración de sesión se gestiona correctamente tanto en el cliente como en el backend.
-- **Estado:** [ ] Pendiente
+  - [X] Una cuenta desactivada no puede ejecutar operaciones protegidas en ninguno de los cinco servicios.
+  - [X] Una sesión revocada no vuelve a ser válida por reutilizar su token.
+  - [X] Una reducción de privilegios impide seguir utilizando los permisos retirados.
+  - [X] La expiración de sesión se gestiona correctamente tanto en el cliente como en el backend.
+- **Estado:** [X] Completada
 
 ### [ ] [TAREA-F4-P0-04] Registrar los intentos fallidos de autenticación y reforzar la protección contra ataques
 - **Origen del Hallazgo:** Auditoría de la Fase 4 (AUDITORIA_FASE4_IDENTIDAD_PERMISOS_GOBIERNO.md - HALLAZGO-F4-P0-04)

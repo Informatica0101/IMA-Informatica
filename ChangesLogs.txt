@@ -1204,3 +1204,11 @@ Archivos Modificados:
   - getStudentAccountStatement & getPaymentVouchers: Sobreescritura de targetUserId / userId con _verifiedUserId para rol Estudiante.
 - backend/academic-service/Code.gs, backend/exam-service/Code.gs, backend/task-service/Code.gs:
   - Aislamiento estricto en getAcademicHistory, getStudentEnrollmentHistory, getStudentExams, getStudentTasks usando _verifiedUserId.
+
+[TAREA-F4-P0-03] [Fase 4 - Revocación de Sesiones e Invalidez de Privilegios]
+- backend/user-service/Code.gs:
+  - Implementada función revokeUserSession y registrado endpoint en doPost.
+  - Modificada manageAccountState para inyectar revocacion explícita de usuario (revoked_user_<userId>) cuando la cuenta pasa a estado Suspendida, Bloqueada o Desactivada.
+  - Actualizada verifySessionToken en los 5 microservicios para validar llaves de revocacion revoked_user_<userId> y revoked_session_<sessionId>.
+- js/ui-common.js:
+  - Actualizadas funciones handleLogout y handleSessionExpired para purgar sessionToken de localStorage y sessionStorage.
