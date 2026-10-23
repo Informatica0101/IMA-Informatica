@@ -1041,10 +1041,17 @@ function verifySessionToken(tokenString) {
     if (claims.exp && now > claims.exp) {
       return null;
     }
-    // [TAREA-F4-P0-03] Verificación de revocación y estado de cuenta en tiempo real (Fail-Closed)
+    // [TAREA-F4-P0-03] [Fase 4: Gestión de Sesiones] - Verificación de revocación explícita por sessionId y estado de cuenta
     if (claims.userId) {
-      const cacheKey = "acct_state_" + claims.userId;
       const cache = CacheService.getScriptCache();
+      if (cache.get("revoked_user_" + claims.userId)) {
+        return null;
+      }
+      if (claims.sessionId && cache.get("revoked_session_" + claims.sessionId)) {
+        return null;
+      }
+
+      const cacheKey = "acct_state_" + claims.userId;
       let acctState = cache.get(cacheKey);
       if (!acctState) {
         try {
@@ -1130,6 +1137,7 @@ function doPost(e) {
       case "createPerson": result = createPerson(payload); break;
       case "linkPersonAccount": result = linkPersonAccount(payload); break;
       case "manageAccountState": result = manageAccountState(payload); break;
+      case "revokeUserSession": result = revokeUserSession(payload); break;
       case "saveGameResult": result = saveGameResult(payload); break;
       case "getGameStats": result = getGameStats(payload); break;
       case "getGlobalTop": result = getGlobalTop(payload); break;
@@ -1388,7 +1396,21 @@ function generateInstitutionalId(payload) {
   }
 }
 
-// [TAREA-F4-P0-03] [Fase 4: Revocación de Sesiones] - Cambios de estado e invalidación en tiempo real de sesión/rol
+// [TAREA-F4-P0-03] [Fase 4: Revocación de Sesiones] - Cambios de estado, revocación explícita de sesiones e invalidación en tiempo real
+function revokeUserSession(payload) {
+  const { userId, sessionId } = payload || {};
+  const cache = CacheService.getScriptCache();
+  if (sessionId) {
+    cache.put("revoked_session_" + sessionId, "REVOKED", 21600);
+  }
+  if (userId) {
+    cache.put("revoked_user_" + userId, "REVOKED", 21600);
+    invalidateUserRoleCache(userId);
+  }
+  logStructuredEvent("USER", "revokeUserSession", "WARN", "SESSION_REVOKED", `Sesión revocada para usuario ${userId || 'N/A'}, sessionId: ${sessionId || 'ALL'}`, payload, payload && payload.authRole);
+  return { status: "success", message: "Sesión revocada exitosamente." };
+}
+
 function manageAccountState(payload) {
   const { userId, newState, motivo } = payload || {};
   if (!userId || !newState) throw new Error("userId y newState son requeridos.");
@@ -1410,6 +1432,11 @@ function manageAccountState(payload) {
   try {
     const cache = CacheService.getScriptCache();
     cache.put("acct_state_" + userId, newState, 21600);
+    if (newState === "Suspendida" || newState === "Bloqueada" || newState === "Desactivada") {
+      cache.put("revoked_user_" + userId, "REVOKED", 21600);
+    } else if (newState === "Activa") {
+      cache.remove("revoked_user_" + userId);
+    }
   } catch (e) {
     console.warn("Error guardando acct_state en cache para " + userId, e);
   }

@@ -310,9 +310,17 @@ function verifySessionToken(tokenString) {
     if (claims.exp && now > claims.exp) {
       return null;
     }
+    // [TAREA-F4-P0-03] [Fase 4: Gestión de Sesiones] - Verificación de revocación explícita por sessionId y estado de cuenta
     if (claims.userId) {
-      const cacheKey = "acct_state_" + claims.userId;
       const cache = CacheService.getScriptCache();
+      if (cache.get("revoked_user_" + claims.userId)) {
+        return null;
+      }
+      if (claims.sessionId && cache.get("revoked_session_" + claims.sessionId)) {
+        return null;
+      }
+
+      const cacheKey = "acct_state_" + claims.userId;
       let acctState = cache.get(cacheKey);
       if (!acctState) {
         try {

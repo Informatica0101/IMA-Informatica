@@ -72,3 +72,9 @@ Resultado de Verificación:
   - getStudentAccountStatement & getPaymentVouchers: Verificada proteccion IDOR para estudiantes usando _verifiedUserId.
 - backend/academic-service/Code.gs, backend/exam-service/Code.gs, backend/task-service/Code.gs:
   - Verificada sobreescritura de identificadores privados por contexto autenticado _verifiedUserId.
+
+[AUDITORÍA TAREA-F4-P0-03]
+- backend/user-service/Code.gs:
+  - verifySessionToken & manageAccountState: Verificada revocación explicita por sessionId y estado de cuenta no activo.
+- backend/academic-service/Code.gs, backend/accounting-service/Code.gs, backend/exam-service/Code.gs, backend/task-service/Code.gs:
+  - verifySessionToken: Verificada la lectura en CacheService de llaves de revocacion revoked_user_<userId> y revoked_session_<sessionId>.

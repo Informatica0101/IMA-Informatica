@@ -29,7 +29,7 @@
   - [X] Todas las acciones protegidas de los cinco servicios pasan por el mismo control de autenticación.
 - **Estado:** [X] Completada
 
-### [X] [TAREA-F4-P0-02] Corregir las vulnerabilidades IDOR y garantizar el aislamiento de datos personales
+### [ ] [TAREA-F4-P0-02] Corregir las vulnerabilidades IDOR y garantizar el aislamiento de datos personales
 - **Origen del Hallazgo:** Auditoría de la Fase 4 (AUDITORIA_FASE4_IDENTIDAD_PERMISOS_GOBIERNO.md - HALLAZGO-F4-P0-02)
 - **Severidad/Clasificación:** Crítico · Seguridad · Protección de datos · Backend
 - **Archivos Involucrados:** `backend/user-service/Code.gs`, `backend/academic-service/Code.gs`, `backend/accounting-service/Code.gs`, `backend/exam-service/Code.gs`, `backend/task-service/Code.gs`
@@ -43,12 +43,12 @@
   6. Para docentes, limitar las operaciones a las asignaturas, secciones y estudiantes asignados en `AsignacionesDocentes`.
   7. Forzar la sobreescritura o verificación estricta de `userId` / `studentId` en el backend.
 - **Criterios de Aceptación:**
-  - [X] Un estudiante no puede consultar ni modificar el expediente de otro estudiante alterando un identificador.
-  - [X] Un tutor no puede acceder a estudiantes con los que no mantiene una relación autorizada.
-  - [X] Un docente no puede acceder a estudiantes, grupos o asignaturas ajenos a su ámbito de asignación.
-  - [X] Un usuario sin privilegios financieros no puede acceder a documentos contables modificando identificadores.
-  - [X] Se conserva la integridad de los historiales académicos, administrativos y contables.
-- **Estado:** [X] Completada
+  - [ ] Un estudiante no puede consultar ni modificar el expediente de otro estudiante alterando un identificador.
+  - [ ] Un tutor no puede acceder a estudiantes con los que no mantiene una relación autorizada.
+  - [ ] Un docente no puede acceder a estudiantes, grupos o asignaturas ajenos a su ámbito de asignación.
+  - [ ] Un usuario sin privilegios financieros no puede acceder a documentos contables modificando identificadores.
+  - [ ] Se conserva la integridad de los historiales académicos, administrativos y contables.
+- **Estado:** [ ] Pendiente
 
 ### [ ] [TAREA-F4-P0-03] Garantizar la revocación efectiva de sesiones y la actualización inmediata de privilegios
 - **Origen del Hallazgo:** Auditoría de la Fase 4 (AUDITORIA_FASE4_IDENTIDAD_PERMISOS_GOBIERNO.md - HALLAZGO-F4-P0-03)
