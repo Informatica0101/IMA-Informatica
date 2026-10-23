@@ -963,3 +963,15 @@ Archivos Modificados:
    - Actualización del estado de [T-UX-17] a [X] Completada.
 
 -------------------------------------------------------------------------------
+FECHA: Octubre 2026
+TAREA: [T-UX-18] Completar los componentes compartidos de formularios, tablas y vistas de detalle
+-------------------------------------------------------------------------------
+
+Archivos Modificados:
+1. js/ui-common.js
+   - Lineas 4910-4970: Implementación de window.renderSharedDetailViewModal(config) para renderizado estandarizado de ventanas modales de detalle con rejilla de campos, insignias de estado y accesibilidad keyboard/ESC.
+
+2. Pendientes.md
+   - Actualización del estado de [T-UX-18] a [X] Completada.
+
+-------------------------------------------------------------------------------

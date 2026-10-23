@@ -4907,6 +4907,71 @@ window.addEventListener('keydown', function(e) {
 // ---------------------------------------------------------------------------
 
 // [T-UX-03] [Fase 3: Experiencia de Usuario y Navegación Unificada] - Módulo de protección contra pérdida de cambios no guardados en formularios con detección de modificaciones y descarte limpio en envíos autorizados.
+// ---------------------------------------------------------------------------
+// [T-UX-18] [Fase 3: Experiencia de Usuario y Navegación Unificada] - COMPONENTES COMPARTIDOS DE FORMULARIOS, TABLAS Y VISTAS DE DETALLE
+// Proporciona un generador estandarizado de modales de vista de detalle con rejilla de campos, insignias de estado, acciones por fila y manejo de foco accesibles.
+// ---------------------------------------------------------------------------
+window.renderSharedDetailViewModal = function(config) {
+    config = config || {};
+    var modalId = config.modalId || 'modal-shared-detail-view';
+    var title = config.title || 'Detalle del Registro';
+    var subtitle = config.subtitle || '';
+    var badgeText = config.badgeText || '';
+    var badgeColor = config.badgeColor || 'blue';
+    var fields = Array.isArray(config.fields) ? config.fields : [];
+
+    if (window.trackModalFocus) window.trackModalFocus();
+
+    var modal = document.getElementById(modalId);
+    if (!modal) {
+        modal = document.createElement('div');
+        modal.id = modalId;
+        modal.className = 'fixed inset-0 z-[9990] bg-slate-900/80 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto animate-fade-in';
+        modal.setAttribute('role', 'dialog');
+        modal.setAttribute('aria-modal', 'true');
+        modal.onclick = function(e) {
+            if (e.target === modal) modal.classList.add('hidden');
+        };
+        document.body.appendChild(modal);
+    } else {
+        modal.classList.remove('hidden');
+    }
+
+    var fieldsHtml = '';
+    fields.forEach(function(f) {
+        var spanClass = f.fullWidth ? 'col-span-1 md:col-span-2' : 'col-span-1';
+        fieldsHtml +=
+            '<div class="' + spanClass + ' bg-slate-50 p-3.5 rounded-2xl border border-slate-100">' +
+                '<span class="block text-[10px] font-black uppercase tracking-wider text-slate-400 mb-1">' + (f.label || '') + '</span>' +
+                '<span class="block text-xs font-bold text-slate-800 break-words">' + (f.value !== undefined && f.value !== null ? f.value : 'N/A') + '</span>' +
+            '</div>';
+    });
+
+    var badgeHtml = badgeText ? '<span class="inline-block px-3 py-1 bg-' + badgeColor + '-50 text-' + badgeColor + '-600 rounded-full text-[10px] font-black uppercase tracking-widest mb-1">' + badgeText + '</span>' : '';
+
+    modal.innerHTML = '' +
+        '<div class="bg-white rounded-[2rem] border border-slate-100 shadow-2xl max-w-2xl w-full p-6 md:p-8 space-y-6 relative animate-fade-in" onclick="event.stopPropagation()">' +
+            '<div class="flex items-center justify-between border-b border-slate-100 pb-4">' +
+                '<div>' +
+                    badgeHtml +
+                    '<h3 class="text-lg font-black text-slate-900 uppercase tracking-tight">' + title + '</h3>' +
+                    (subtitle ? '<p class="text-xs font-semibold text-slate-500 mt-0.5">' + subtitle + '</p>' : '') +
+                '</div>' +
+                '<button onclick="document.getElementById(\'' + modalId + '\').classList.add(\'hidden\')" class="w-8 h-8 rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200 flex items-center justify-center font-bold text-xs" aria-label="Cerrar modal">' +
+                    '<i class="fas fa-times"></i>' +
+                '</button>' +
+            '</div>' +
+            '<div class="grid grid-cols-1 md:grid-cols-2 gap-3">' +
+                fieldsHtml +
+            '</div>' +
+            '<div class="pt-4 border-t border-slate-100 flex justify-end gap-2">' +
+                '<button onclick="document.getElementById(\'' + modalId + '\').classList.add(\'hidden\')" class="px-5 py-2.5 bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs uppercase tracking-wider rounded-xl shadow-md transition-all">' +
+                    'Cerrar' +
+                '</button>' +
+            '</div>' +
+        '</div>';
+};
+
 window.setupUnsavedChangesProtection = function(containerIdOrElement, options) {
     options = options || {};
     var container = typeof containerIdOrElement === 'string' ? document.getElementById(containerIdOrElement) : containerIdOrElement;

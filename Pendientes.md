@@ -752,7 +752,7 @@
   - Guardar correctamente elimina la advertencia pendiente.
 - **Estado:** [X] Completada
 
-### [ ] [T-UX-18] Completar los componentes compartidos de formularios, tablas y vistas de detalle
+### [X] [T-UX-18] Completar los componentes compartidos de formularios, tablas y vistas de detalle
 - **Origen del Hallazgo:** Auditoría de la Fase 3, octubre de 2026 (AUDITORIA_FASE3_EXPERIENCIA_USUARIO_NAVEGACION.md - Área 7 & 8)
 - **Severidad/Clasificación:** Alto
 - **Archivos Involucrados:** `js/ui-common.js`, `css/style.css`
@@ -766,7 +766,7 @@
   - Los formularios equivalentes presentan etiquetas, validaciones y mensajes coherentes.
   - Las tablas muestran correctamente carga, resultados vacíos y errores.
   - Las acciones por fila operan sobre el registro correcto.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 ### [ ] [T-UX-19] Verificar la accesibilidad y corregir las barreras detectadas
 - **Origen del Hallazgo:** Auditoría de la Fase 3, octubre de 2026 (AUDITORIA_FASE3_EXPERIENCIA_USUARIO_NAVEGACION.md - Área 15)
