@@ -1195,7 +1195,7 @@
   - Se prueba la pérdida y recuperación de conexión.
 - **Estado:** [X] Completada
 
-### [ ] [T-UX-23] Completar el flujo de reporte de problemas y soporte
+### [X] [T-UX-23] Completar el flujo de reporte de problemas y soporte
 - **Origen del Hallazgo:** Auditoría de la Fase 3, octubre de 2026 (AUDITORIA_FASE3_EXPERIENCIA_USUARIO_NAVEGACION.md - Área 19)
 - **Severidad/Clasificación:** Medio
 - **Archivos Involucrados:** `js/ui-common.js`, `backend/user-service/Code.gs`
@@ -1209,7 +1209,7 @@
   - El acceso se encuentra disponible en los contextos autorizados.
   - La descripción se valida antes del envío.
   - Los reportes válidos se registran en el destino correspondiente.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 ### [ ] [T-UX-24] Normalizar las acciones, los estados y la jerarquía visual institucional
 - **Origen del Hallazgo:** Auditoría de la Fase 3, octubre de 2026 (AUDITORIA_FASE3_EXPERIENCIA_USUARIO_NAVEGACION.md - Área 17)

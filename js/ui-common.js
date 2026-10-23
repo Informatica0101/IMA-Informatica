@@ -3609,6 +3609,10 @@ window.closeReportIssueModal = function() {
     if (modal) modal.classList.add('hidden');
 };
 
+// ---------------------------------------------------------------------------
+// [T-UX-23] [Fase 3: Experiencia de Usuario y Navegación Unificada] - FLUJO DE REPORTE DE PROBLEMAS TÉCNICOS Y REGISTRO DE TICKETS
+// Valida la entrada del usuario, previene duplicaciones mediante estado de carga en botón de envío y registra el ticket técnico en el microservicio correspondiente.
+// ---------------------------------------------------------------------------
 window.submitProblemReportForm = function(e) {
     if (e) e.preventDefault();
 

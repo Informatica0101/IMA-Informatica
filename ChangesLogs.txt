@@ -1059,3 +1059,15 @@ Archivos Modificados:
    - Actualización del estado de [T-UX-22] a [X] Completada.
 
 -------------------------------------------------------------------------------
+FECHA: Octubre 2026
+TAREA: [T-UX-23] Completar el flujo de reporte de problemas y soporte
+-------------------------------------------------------------------------------
+
+Archivos Modificados:
+1. js/ui-common.js
+   - Lineas 3610-3625: Exportación de window.submitProblemReportForm con encabezado identificativo T-UX-23, validación de descripción mínima y envío a backend.
+
+2. Pendientes.md
+   - Actualización del estado de [T-UX-23] a [X] Completada.
+
+-------------------------------------------------------------------------------
