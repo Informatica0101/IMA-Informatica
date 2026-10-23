@@ -186,6 +186,23 @@ function verifySessionToken(tokenString) {
 }
 
 // [TAREA-01] [TAREA-F4-P0-01] [Fase 4 - Seguridad RBAC y Token Unificado] - Validar y reforzar la seguridad mediante verificación de credencial de sesión HMAC
+// [TAREA-F4-P1-04] [Fase 4: Reglas Contextuales RBAC/ABAC] - Validación de atributos contextuales (Docentes, Tutores, Estudiantes)
+function validateContextualAccess(action, payload, verifiedUserId, userRole) {
+  if (!userRole || userRole === "Administrador" || userRole === "Desarrollador") {
+    return { authorized: true };
+  }
+
+  const targetStudentId = payload && (payload.studentId || payload.estudianteId || payload.targetUserId || payload.userId);
+
+  if (userRole === "Estudiante" || userRole === "Alumno") {
+    if (targetStudentId && verifiedUserId && String(targetStudentId).trim() !== String(verifiedUserId).trim()) {
+      return { authorized: false, reason: "Aislamiento estricto de estudiante: intento de acceso a ID ajeno." };
+    }
+  }
+
+  return { authorized: true };
+}
+
 function validateRolePermission(action, payload) {
   if (PUBLIC_ACTIONS.indexOf(action) !== -1) return { authorized: true };
 
@@ -206,6 +223,11 @@ function validateRolePermission(action, payload) {
     }
   } else {
     return { authorized: false, role: "Sin Credenciales de Sesión" };
+  }
+
+  const ctxCheck = validateContextualAccess(action, payload, verifiedUserId, userRole);
+  if (!ctxCheck.authorized) {
+    return { authorized: false, role: userRole + " (" + ctxCheck.reason + ")" };
   }
 
   const dynamicCheck = getDynamicPermissionsForRole(userRole, action);

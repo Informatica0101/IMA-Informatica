@@ -1241,3 +1241,8 @@ Archivos Modificados:
   - Integrada la consulta de permisos dinámicos en validateRolePermission priorizándolos sobre los arreglos estáticos.
 - backend/academic-service/Code.gs, backend/accounting-service/Code.gs, backend/exam-service/Code.gs, backend/task-service/Code.gs:
   - Creada función helper getDynamicPermissionsForRole e integrada en validateRolePermission para sincronizar permisos dinámicos entre servicios.
+
+[TAREA-F4-P1-04] [Fase 4 - Política Unificada de Autorización Contextual RBAC/ABAC]
+- backend/user-service/Code.gs, backend/academic-service/Code.gs, backend/accounting-service/Code.gs, backend/exam-service/Code.gs, backend/task-service/Code.gs:
+  - Creada función helper validateContextualAccess para evaluar atributos de contexto (peticiones de estudiantes, tutores y docentes).
+  - Integrada validateContextualAccess en validateRolePermission rechazando peticiones que violen aislamiento de ámbito antes de consultar la matriz de permisos.

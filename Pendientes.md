@@ -138,18 +138,18 @@
   - [X] Los cambios quedan auditados.
 - **Estado:** [X] Completada
 
-### [ ] [TAREA-F4-P1-04] Implementar una política unificada de autorización contextual RBAC/ABAC
+### [X] [TAREA-F4-P1-04] Implementar una política unificada de autorización contextual RBAC/ABAC
 - **Origen del Hallazgo:** Auditoría de la Fase 4 (AUDITORIA_FASE4_IDENTIDAD_PERMISOS_GOBIERNO.md)
 - **Severidad/Clasificación:** Alto · Seguridad · Backend
 - **Archivos Involucrados:** `backend/*/Code.gs`
-- **Dependencias:** TAREA-F4-P0-01, TAREA-F4-P0-02, TAREA-F4-P1-03.
+- **Dependencias:** TAREA-F4-P0-01, TAREA-F4-P0-02, TAREA-F1-P1-03.
 - **Descripción del Alcance:**
   1. Integrar reglas ABAC (atributos de contexto, asignaciones docentes, vínculos familiares) en `validateRolePermission`.
   2. Aplicar validaciones a consultas, creaciones, modificaciones, eliminaciones y exportaciones.
 - **Criterios de Aceptación:**
-  - [ ] Un permiso general no concede acceso a registros ajenos al ámbito del usuario.
-  - [ ] Las exportaciones respetan las mismas reglas contextuales que las consultas.
-- **Estado:** [ ] Pendiente
+  - [X] Un permiso general no concede acceso a registros ajenos al ámbito del usuario.
+  - [X] Las exportaciones respetan las mismas reglas contextuales que las consultas.
+- **Estado:** [X] Completada
 
 ### [ ] [TAREA-F4-P1-05] Incorporar un panel de gobierno de privacidad y gestión de derechos sobre datos
 - **Origen del Hallazgo:** Auditoría de la Fase 4 (AUDITORIA_FASE4_IDENTIDAD_PERMISOS_GOBIERNO.md)

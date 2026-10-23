@@ -1146,6 +1146,35 @@ function hasActiveDelegationForAction(userId, action) {
   return null;
 }
 
+// [TAREA-F4-P1-04] [Fase 4: Reglas Contextuales RBAC/ABAC] - Validación de atributos contextuales (Docentes, Tutores, Estudiantes)
+function validateContextualAccess(action, payload, verifiedUserId, userRole) {
+  if (!userRole || userRole === "Administrador" || userRole === "Desarrollador") {
+    return { authorized: true };
+  }
+
+  const targetStudentId = payload && (payload.studentId || payload.estudianteId || payload.targetUserId || payload.userId);
+
+  if (userRole === "Estudiante" || userRole === "Alumno") {
+    if (targetStudentId && verifiedUserId && String(targetStudentId).trim() !== String(verifiedUserId).trim()) {
+      return { authorized: false, reason: "Aislamiento estricto de estudiante: intento de acceso a ID ajeno." };
+    }
+  }
+
+  if (userRole === "Padre" || userRole === "Tutor" || userRole === "Responsable") {
+    if (targetStudentId && verifiedUserId && String(targetStudentId).trim() !== String(verifiedUserId).trim()) {
+      try {
+        const guardianRes = getGuardianStudents({ userId: verifiedUserId });
+        const linkedStudents = (guardianRes.data || []).map(s => String(s.studentUserId || s.userId).trim());
+        if (linkedStudents.indexOf(String(targetStudentId).trim()) === -1) {
+          return { authorized: false, reason: "Aislamiento estricto de tutor: el estudiante no está vinculado al tutor." };
+        }
+      } catch (e) {}
+    }
+  }
+
+  return { authorized: true };
+}
+
 function validateRolePermission(action, payload) {
   if (PUBLIC_ACTIONS.indexOf(action) !== -1) return { authorized: true };
   const userRole = getUserVerifiedRole(payload);
@@ -1155,12 +1184,25 @@ function validateRolePermission(action, payload) {
   if (["submitProblemTicket", "getProblemTickets", "replyProblemTicket", "searchGlobalOmnibox", "configureAutomationRules", "getAutomationRules", "getNotificationAuditLogs", "getServiceHealthReport"].indexOf(action) !== -1) {
     return { authorized: true, role: userRole };
   }
-  const permitted = ROLE_PERMISSIONS[userRole] || [];
-  if (permitted.indexOf("*") !== -1 || permitted.indexOf(action) !== -1) {
-    return { authorized: true, role: userRole };
-  }
 
   const verifiedId = payload && payload._verifiedUserId;
+  const ctxCheck = validateContextualAccess(action, payload, verifiedId, userRole);
+  if (!ctxCheck.authorized) {
+    return { authorized: false, role: userRole + " (" + ctxCheck.reason + ")" };
+  }
+
+  const dynamicCheck = getDynamicPermissionsForRole(userRole, action);
+  if (dynamicCheck !== null) {
+    if (dynamicCheck === true) {
+      return { authorized: true, role: userRole };
+    }
+  } else {
+    const permitted = ROLE_PERMISSIONS[userRole] || [];
+    if (permitted.indexOf("*") !== -1 || permitted.indexOf(action) !== -1) {
+      return { authorized: true, role: userRole };
+    }
+  }
+
   if (verifiedId) {
     const activeDel = hasActiveDelegationForAction(verifiedId, action);
     if (activeDel) {

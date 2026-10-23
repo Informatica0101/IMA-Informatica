@@ -116,3 +116,7 @@ Resultado de Verificación:
   - validateRolePermission & getDynamicPermissionsForRole: Verificada la priorización de permisos dinámicos sobre estáticos en el control de acceso.
 - backend/academic-service/Code.gs, backend/accounting-service/Code.gs, backend/exam-service/Code.gs, backend/task-service/Code.gs:
   - validateRolePermission: Verificada la sincronización de reglas dinámicas por rol y acción desde MatrizPermisosRoles.
+
+[AUDITORÍA TAREA-F4-P1-04]
+- backend/*/Code.gs:
+  - validateRolePermission & validateContextualAccess: Verificada la evaluacion contextual RBAC/ABAC para prevenir que permisos generales concedan acceso a registros fuera de ambito.
