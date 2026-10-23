@@ -1254,6 +1254,8 @@ function doPost(e) {
       case "getPrivacyRightsRequests": result = getPrivacyRightsRequests(payload); break;
       case "updatePrivacyRightsRequestStatus": result = updatePrivacyRightsRequestStatus(payload); break;
       case "getEntityAuditHistory": result = getEntityAuditHistory(payload); break;
+      case "manageDepartmentPositions": result = manageDepartmentPositions(payload); break;
+      case "getUserInstitutionalAffiliations": result = getUserInstitutionalAffiliations(payload); break;
       case "saveGameResult": result = saveGameResult(payload); break;
       case "getGameStats": result = getGameStats(payload); break;
       case "getGlobalTop": result = getGlobalTop(payload); break;
@@ -2536,6 +2538,137 @@ function getEntityAuditHistory(payload) {
   }
 
   return { status: "success", data: history };
+}
+
+// [TAREA-F4-P1-07] [Fase 4: Gestión de Roles y Adscripciones] - Administración centralizada de departamentos, cargos e historial laboral/académico
+function manageDepartmentPositions(payload) {
+  const callerRole = getUserVerifiedRole(payload);
+  const callerId = payload._verifiedUserId;
+  const { subAction, deptId, deptNombre, jefaturaUserId, cargoId, cargoNombre, nivelJerarquico, userId, motivo } = payload || {};
+
+  if (callerRole !== "Administrador" && callerRole !== "Desarrollador" && callerRole !== "RecursosHumanos") {
+    throw new Error("Acceso denegado: Se requieren permisos administrativos o de Recursos Humanos.");
+  }
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const act = String(subAction || "ASSIGN_USER").toUpperCase().trim();
+
+  if (act === "CREATE_DEPT") {
+    if (!deptNombre) throw new Error("deptNombre es requerido.");
+    const deptSheet = getOrCreateSheet(ss, "CatalogoDepartamentos");
+    if (deptSheet.getLastRow() === 0) {
+      deptSheet.appendRow(["deptId", "nombre", "jefaturaUserId", "estado", "fechaCreacion"]);
+    }
+    const genRes = generateInstitutionalId({ entityType: "Departamento", prefix: "DEP-" });
+    const newDeptId = deptId || genRes.generatedId || ("DEP-" + Date.now());
+    deptSheet.appendRow([newDeptId, deptNombre.trim(), jefaturaUserId || "", "Activo", new Date()]);
+    logStructuredEvent("USER", "manageDepartmentPositions", "INFO", "DEPARTMENT_CREATED", `Departamento ${newDeptId} (${deptNombre}) creado por ${callerId}`, { deptId: newDeptId, deptNombre }, callerRole);
+    return { status: "success", deptId: newDeptId, message: "Departamento registrado exitosamente." };
+  }
+
+  if (act === "CREATE_CARGO") {
+    if (!cargoNombre) throw new Error("cargoNombre es requerido.");
+    const cargoSheet = getOrCreateSheet(ss, "CatalogoCargos");
+    if (cargoSheet.getLastRow() === 0) {
+      cargoSheet.appendRow(["cargoId", "deptId", "nombreCargo", "nivelJerarquico", "estado", "fechaCreacion"]);
+    }
+    const genRes = generateInstitutionalId({ entityType: "Cargo", prefix: "CRG-" });
+    const newCargoId = cargoId || genRes.generatedId || ("CRG-" + Date.now());
+    cargoSheet.appendRow([newCargoId, deptId || "DEP-GEN", cargoNombre.trim(), nivelJerarquico || 1, "Activo", new Date()]);
+    logStructuredEvent("USER", "manageDepartmentPositions", "INFO", "CARGO_CREATED", `Cargo ${newCargoId} (${cargoNombre}) creado por ${callerId}`, { cargoId: newCargoId, cargoNombre }, callerRole);
+    return { status: "success", cargoId: newCargoId, message: "Cargo registrado exitosamente." };
+  }
+
+  if (act === "ASSIGN_USER") {
+    if (!userId || !deptId || !cargoId) throw new Error("userId, deptId y cargoId son requeridos para asignación.");
+
+    const userSheet = ss.getSheetByName("Usuarios");
+    if (!userSheet) throw new Error("Hoja Usuarios no encontrada.");
+    const uRows = userSheet.getDataRange().getValues();
+    const userRow = uRows.find(r => String(r[0]).trim() === String(userId).trim());
+    if (!userRow) throw new Error("Usuario no encontrado.");
+
+    const adsSheet = getOrCreateSheet(ss, "HistorialAdscripciones");
+    if (adsSheet.getLastRow() === 0) {
+      adsSheet.appendRow(["adscripcionId", "userId", "deptId", "cargoId", "fechaInicio", "fechaFin", "estado", "motivo", "autorizadoPor", "fechaRegistro"]);
+    }
+
+    const adsData = adsSheet.getDataRange().getValues();
+    const now = new Date();
+
+    for (let i = 1; i < adsData.length; i++) {
+      if (String(adsData[i][1]).trim() === String(userId).trim() && String(adsData[i][6]).trim() === "Activa") {
+        adsSheet.getRange(i + 1, 6).setValue(now);
+        adsSheet.getRange(i + 1, 7).setValue("Inactiva");
+      }
+    }
+
+    const genRes = generateInstitutionalId({ entityType: "Adscripcion", prefix: "ADS-" });
+    const adsId = genRes.generatedId || ("ADS-" + Date.now());
+
+    adsSheet.appendRow([
+      adsId,
+      String(userId).trim(),
+      String(deptId).trim(),
+      String(cargoId).trim(),
+      now,
+      "",
+      "Activa",
+      motivo || "Cambio de cargo/departamento institucional",
+      callerId,
+      now
+    ]);
+
+    invalidateUserRoleCache(userId);
+
+    recordEntityChangeLog("UsuarioAdscripcion", userId, {}, { deptId, cargoId, estado: "Activa" }, "AFFILIATION_UPDATED", callerId);
+    logStructuredEvent("USER", "manageDepartmentPositions", "INFO", "INSTITUTIONAL_AFFILIATION_UPDATED", `Adscripción ${adsId} asignada a ${userId}: Dept ${deptId}, Cargo ${cargoId}`, { adsId, userId, deptId, cargoId }, callerRole);
+
+    return { status: "success", adscripcionId: adsId, message: "Adscripción de departamento y cargo registrada exitosamente." };
+  }
+
+  throw new Error("Acción de gestión de departamento/cargo no soportada.");
+}
+
+// [TAREA-F4-P1-07] [Fase 4: Gestión de Roles y Adscripciones] - Consulta de historial completo de adscripciones pasadas y vigentes
+function getUserInstitutionalAffiliations(payload) {
+  const callerRole = getUserVerifiedRole(payload);
+  const callerId = payload._verifiedUserId;
+  const { userId } = payload || {};
+
+  let targetUserId = userId || callerId;
+  if (callerRole !== "Administrador" && callerRole !== "Desarrollador" && callerRole !== "RecursosHumanos") {
+    targetUserId = callerId;
+  }
+
+  if (!targetUserId) throw new Error("userId es requerido.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const adsSheet = ss.getSheetByName("HistorialAdscripciones");
+  if (!adsSheet || adsSheet.getLastRow() <= 1) return { status: "success", data: [] };
+
+  const data = adsSheet.getDataRange().getValues().slice(1);
+  const affiliations = [];
+
+  for (let i = data.length - 1; i >= 0; i--) {
+    const row = data[i];
+    if (String(row[1]).trim() === String(targetUserId).trim()) {
+      affiliations.push({
+        adscripcionId: row[0],
+        userId: row[1],
+        deptId: row[2],
+        cargoId: row[3],
+        fechaInicio: row[4] ? new Date(row[4]).toISOString() : "",
+        fechaFin: row[5] ? new Date(row[5]).toISOString() : "",
+        estado: row[6],
+        motivo: row[7] || "",
+        autorizadoPor: row[8] || "",
+        fechaRegistro: row[9] ? new Date(row[9]).toISOString() : ""
+      });
+    }
+  }
+
+  return { status: "success", data: affiliations };
 }
 
 // ---------------------------------------------------------------------------

@@ -128,3 +128,7 @@ Resultado de Verificación:
 [AUDITORÍA TAREA-F4-P1-06]
 - backend/user-service/Code.gs:
   - recordEntityChangeLog & getEntityAuditHistory: Verificado el almacenamiento sanitizado de diferencias en HistorialCambiosEntidad y la reconstrucción cronológica por entityType y entityId.
+
+[AUDITORÍA TAREA-F4-P1-07]
+- backend/user-service/Code.gs:
+  - manageDepartmentPositions & getUserInstitutionalAffiliations: Verificada la creación de departamentos/cargos, integridad referencial de usuarios, registro del historial en HistorialAdscripciones e invalidación de caché.

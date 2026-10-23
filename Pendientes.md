@@ -177,7 +177,7 @@
   - [X] Permite reconstruir la secuencia de eventos de una entidad.
 - **Estado:** [X] Completada
 
-### [ ] [TAREA-F4-P1-07] Implementar gestión institucional de roles, cargos, departamentos y asignaciones
+### [X] [TAREA-F4-P1-07] Implementar gestión institucional de roles, cargos, departamentos y asignaciones
 - **Origen del Hallazgo:** Auditoría de la Fase 4 (AUDITORIA_FASE4_IDENTIDAD_PERMISOS_GOBIERNO.md)
 - **Severidad/Clasificación:** Alto · Identidad · Backend
 - **Archivos Involucrados:** `backend/user-service/Code.gs`, `backend/academic-service/Code.gs`
@@ -186,9 +186,9 @@
   1. Administrar de forma centralizada departamentos, cargos, jefaturas e historiales laborales/académicos.
   2. Validar integridad referencial al cambiar un usuario de departamento o cargo.
 - **Criterios de Aceptación:**
-  - [ ] Los cambios de cargo o departamento actualizan los permisos contextuales de inmediato.
-  - [ ] Mantiene el historial de adscripciones pasadas del colaborador.
-- **Estado:** [ ] Pendiente
+  - [X] Los cambios de cargo o departamento actualizan los permisos contextuales de inmediato.
+  - [X] Mantiene el historial de adscripciones pasadas del colaborador.
+- **Estado:** [X] Completada
 
 ### [ ] [TAREA-F4-P1-08] Implementar un mecanismo central de propagación y recuperación de cambios de seguridad
 - **Origen del Hallazgo:** Auditoría de la Fase 4 (AUDITORIA_FASE4_IDENTIDAD_PERMISOS_GOBIERNO.md)

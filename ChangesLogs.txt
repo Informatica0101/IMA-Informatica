@@ -1259,3 +1259,9 @@ Archivos Modificados:
   - Creada función recordEntityChangeLog para guardar diferencias de valores anteriores y nuevos sanitizados.
   - Creada función getEntityAuditHistory para permitir la reconstrucción cronológica de la línea de tiempo de cambios sobre un usuario o recurso.
   - Integrado registro de cambios en manageAccountState y updateUserProfile.
+
+[TAREA-F4-P1-07] [Fase 4 - Gestión Institucional de Roles, Cargos, Departamentos y Asignaciones]
+- backend/user-service/Code.gs:
+  - Creadas hojas CatalogoDepartamentos, CatalogoCargos y HistorialAdscripciones.
+  - Creadas funciones manageDepartmentPositions y getUserInstitutionalAffiliations.
+  - Implementada la finalización automática de adscripciones previas activas al reasignar departamento/cargo y purga de caché de permisos invalidateUserRoleCache.
