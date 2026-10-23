@@ -168,7 +168,7 @@ const ROLE_PERMISSIONS = {
     "createStudentEnrollment", "getStudentEnrollments", "renewStudentEnrollment", "checkEnrollmentCapacity",
     "changeStudentSection", "recordStudentTransfer", "recordStudentWithdrawal", "processStudentReentry",
     "openAttendanceSession", "saveClassAttendance", "getClassAttendance", "saveDailyAttendance", "getDailyAttendance", "submitAttendanceJustification", "reviewAttendanceJustification", "recordEarlyDeparture", "getAttendanceIncidents", "saveAttendanceIncident", "getAttendanceFollowupCases", "saveAttendanceFollowupCase", "addCaseFollowUpNote", "getStudentAttendanceSummary",
-    "createTeacherSupervision", "getTeacherSupervisions", "updateSupervisionStatus", "saveSupervisionObservation", "getSupervisionObservation", "saveTeacherImprovementPlan", "getTeacherImprovementPlans"
+    "createTeacherSupervision", "getTeacherSupervisions", "updateSupervisionStatus", "saveSupervisionObservation", "getSupervisionObservation", "saveTeacherImprovementPlan", "getTeacherImprovementPlans", "purgeSecurityCaches"
   ],
   "Subdirector": [
     "getAcademicConfig", "getAcademicHistory", "getAsignaturasActivas", "getWhatsAppLink", "getQuestionBank", "registerStudentEnrollment", "getStudentEnrollmentHistory",
@@ -558,6 +558,7 @@ function doPost(e) {
       case "registerStudentEnrollment": result = registerStudentEnrollment(payload); break;
       case "getStudentEnrollmentHistory": result = getStudentEnrollmentHistory(payload); break;
       case "createSystemBackup": result = createSystemBackup(payload); break;
+      case "purgeSecurityCaches": result = purgeSecurityCaches(payload); break;
       case "listSystemBackups": result = listSystemBackups(payload); break;
       case "verifyBackupIntegrity": result = verifyBackupIntegrity(payload); break;
       case "restoreSystemBackup": result = restoreSystemBackup(payload); break;
@@ -1689,6 +1690,55 @@ function generateInstitutionalUUID(payload) {
     institutionalId: fullId,
     timestamp: new Date().toISOString()
   };
+}
+
+// [TAREA-F4-P1-08] [Fase 4: Propagación y Recuperación de Cambios de Seguridad] - Purga de cachés de seguridad local
+function purgeSecurityCaches(payload) {
+  const eventType = (payload && payload.eventType) || "GENERIC_PURGE";
+  const targetUserId = payload && payload.targetUserId;
+  const targetRole = payload && payload.targetRole;
+  const sessionId = payload && payload.sessionId;
+
+  try {
+    const cache = CacheService.getScriptCache();
+    if (targetUserId) {
+      cache.remove("user_role_" + targetUserId);
+      cache.remove("acct_state_" + targetUserId);
+      cache.remove("delegations_" + targetUserId);
+    }
+    if (targetRole) {
+      cache.remove("perm_matrix_" + targetRole);
+      cache.remove("dynamic_perms_" + targetRole);
+    }
+    if (sessionId) {
+      cache.remove("revoked_session_" + sessionId);
+    }
+    if (eventType === "SESSION_REVOKED" || eventType === "ACCOUNT_STATE_CHANGED") {
+      if (targetUserId && payload.accountState && payload.accountState !== "Activa") {
+        cache.put("revoked_user_" + targetUserId, "REVOKED", 86400);
+      } else if (targetUserId && payload.accountState === "Activa") {
+        cache.remove("revoked_user_" + targetUserId);
+      }
+    }
+
+    return {
+      status: "success",
+      service: "ACADEMIC",
+      eventType: eventType,
+      targetUserId: targetUserId || null,
+      targetRole: targetRole || null,
+      message: "Cachés de seguridad purgadas en el microservicio ACADEMIC.",
+      timestamp: new Date().toISOString()
+    };
+  } catch (e) {
+    console.error("Error al purgar cachés de seguridad en ACADEMIC: ", e);
+    return {
+      status: "error",
+      service: "ACADEMIC",
+      message: "Error al purgar cachés: " + e.toString(),
+      timestamp: new Date().toISOString()
+    };
+  }
 }
 
 function validateInstitutionalIdentifier(payload) {

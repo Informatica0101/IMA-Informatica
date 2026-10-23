@@ -190,7 +190,7 @@
   - [X] Mantiene el historial de adscripciones pasadas del colaborador.
 - **Estado:** [X] Completada
 
-### [ ] [TAREA-F4-P1-08] Implementar un mecanismo central de propagación y recuperación de cambios de seguridad
+### [X] [TAREA-F4-P1-08] Implementar un mecanismo central de propagación y recuperación de cambios de seguridad
 - **Origen del Hallazgo:** Auditoría de la Fase 4 (AUDITORIA_FASE4_IDENTIDAD_PERMISOS_GOBIERNO.md)
 - **Severidad/Clasificación:** Alto · Arquitectura · Consistencia
 - **Archivos Involucrados:** `backend/*/Code.gs`
@@ -199,9 +199,9 @@
   1. Despachar eventos de seguridad (`ACCOUNT_STATE_CHANGED`, `PERMISSIONS_CHANGED`, `SESSION_REVOKED`) a todos los microservicios.
   2. Invalidar automáticamente la caché de permisos en los 5 microservicios.
 - **Criterios de Aceptación:**
-  - [ ] Los eventos de cambio de seguridad purgan las cachés locales e inter-servicio.
-  - [ ] Permite recuperar sincronizaciones fallidas mediante cola de reintentos.
-- **Estado:** [ ] Pendiente
+  - [X] Los eventos de cambio de seguridad purgan las cachés locales e inter-servicio.
+  - [X] Permite recuperar sincronizaciones fallidas mediante cola de reintentos.
+- **Estado:** [X] Completada
 
 ### [ ] [TAREA-F4-P1-09] Crear un panel de seguridad, auditoría y cumplimiento institucional
 - **Origen del Hallazgo:** Auditoría de la Fase 4 (AUDITORIA_FASE4_IDENTIDAD_PERMISOS_GOBIERNO.md)

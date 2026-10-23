@@ -356,6 +356,7 @@ function doPost(e) {
     let result;
 
     switch (action) {
+      case "purgeSecurityCaches": result = purgeSecurityCaches(payload); break;
       case "createExam": result = createExam(payload); break;
       case "getExamQuestions": result = getExamQuestions(payload); break;
       case "submitExam": result = submitExam(payload); break;
@@ -656,6 +657,55 @@ function getExamQuestions({ examenId }) {
       preguntas: preguntas
     }
   };
+}
+
+// [TAREA-F4-P1-08] [Fase 4: Propagación y Recuperación de Cambios de Seguridad] - Purga de cachés de seguridad local
+function purgeSecurityCaches(payload) {
+  const eventType = (payload && payload.eventType) || "GENERIC_PURGE";
+  const targetUserId = payload && payload.targetUserId;
+  const targetRole = payload && payload.targetRole;
+  const sessionId = payload && payload.sessionId;
+
+  try {
+    const cache = CacheService.getScriptCache();
+    if (targetUserId) {
+      cache.remove("user_role_" + targetUserId);
+      cache.remove("acct_state_" + targetUserId);
+      cache.remove("delegations_" + targetUserId);
+    }
+    if (targetRole) {
+      cache.remove("perm_matrix_" + targetRole);
+      cache.remove("dynamic_perms_" + targetRole);
+    }
+    if (sessionId) {
+      cache.remove("revoked_session_" + sessionId);
+    }
+    if (eventType === "SESSION_REVOKED" || eventType === "ACCOUNT_STATE_CHANGED") {
+      if (targetUserId && payload.accountState && payload.accountState !== "Activa") {
+        cache.put("revoked_user_" + targetUserId, "REVOKED", 86400);
+      } else if (targetUserId && payload.accountState === "Activa") {
+        cache.remove("revoked_user_" + targetUserId);
+      }
+    }
+
+    return {
+      status: "success",
+      service: "EXAM",
+      eventType: eventType,
+      targetUserId: targetUserId || null,
+      targetRole: targetRole || null,
+      message: "Cachés de seguridad purgadas en el microservicio EXAM.",
+      timestamp: new Date().toISOString()
+    };
+  } catch (e) {
+    console.error("Error al purgar cachés de seguridad en EXAM: ", e);
+    return {
+      status: "error",
+      service: "EXAM",
+      message: "Error al purgar cachés: " + e.toString(),
+      timestamp: new Date().toISOString()
+    };
+  }
 }
 
 function submitExam({ examenId, userId, respuestas }) {

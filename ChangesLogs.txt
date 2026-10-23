@@ -1265,3 +1265,11 @@ Archivos Modificados:
   - Creadas hojas CatalogoDepartamentos, CatalogoCargos y HistorialAdscripciones.
   - Creadas funciones manageDepartmentPositions y getUserInstitutionalAffiliations.
   - Implementada la finalización automática de adscripciones previas activas al reasignar departamento/cargo y purga de caché de permisos invalidateUserRoleCache.
+
+[TAREA-F4-P1-08] [Fase 4 - Propagación y Recuperación de Cambios de Seguridad]
+- backend/user-service/Code.gs:
+  - Creadas funciones dispatchSecurityEvent, purgeSecurityCaches, processSecurityEventQueue y getSecurityEventsQueue.
+  - Creada hoja ColaEventosSeguridad para almacenamiento de eventos de seguridad y sincronización entre microservicios.
+  - Registrados endpoints en ROLE_PERMISSIONS y doPost switch.
+- backend/academic-service/Code.gs, backend/accounting-service/Code.gs, backend/exam-service/Code.gs, backend/task-service/Code.gs:
+  - Creada función purgeSecurityCaches en los 4 microservicios secundarios e integrada en ROLE_PERMISSIONS y doPost switch para purga de llaves de caché (user_role, acct_state, delegations, perm_matrix, revoked_user) ante eventos de seguridad.
