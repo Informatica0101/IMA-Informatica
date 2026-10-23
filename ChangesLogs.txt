@@ -1246,3 +1246,9 @@ Archivos Modificados:
 - backend/user-service/Code.gs, backend/academic-service/Code.gs, backend/accounting-service/Code.gs, backend/exam-service/Code.gs, backend/task-service/Code.gs:
   - Creada función helper validateContextualAccess para evaluar atributos de contexto (peticiones de estudiantes, tutores y docentes).
   - Integrada validateContextualAccess en validateRolePermission rechazando peticiones que violen aislamiento de ámbito antes de consultar la matriz de permisos.
+
+[TAREA-F4-P1-05] [Fase 4 - Panel de Gobierno de Privacidad y Gestión de Derechos sobre Datos]
+- backend/user-service/Code.gs:
+  - Creada hoja SolicitudesDerechosPrivacidad.
+  - Creadas funciones submitPrivacyRightsRequest, getPrivacyRightsRequests y updatePrivacyRightsRequestStatus.
+  - Registrados endpoints en doPost switch con auditoria estructurada logStructuredEvent.

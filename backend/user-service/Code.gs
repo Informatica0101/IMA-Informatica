@@ -977,7 +977,7 @@ const ROLE_PERMISSIONS = {
 
 // [TAREA-F4-P0-01] [Fase 4: Identidad, Permisos y Gobierno] - Generación y verificación de tokens firmados con HMAC-SHA256 para unificación de autenticación
 function computeHmacSignature(message, secret) {
-  const bytes = Utilities.computeHmacSha256Signature(message, secret);
+  const bytes = Utilities.computeHmacSignature(Utilities.MacAlgorithm.HMAC_SHA_256, message, secret);
   const arr = Array.from ? Array.from(bytes) : [].slice.call(bytes);
   return arr.map(b => ('0' + (b & 0xFF).toString(16)).slice(-2)).join('');
 }
@@ -1250,6 +1250,9 @@ function doPost(e) {
       case "executeDataRetentionPolicyCheck": result = executeDataRetentionPolicyCheck(payload); break;
       case "getPermissionMatrix": result = getPermissionMatrix(payload); break;
       case "savePermissionMatrix": result = savePermissionMatrix(payload); break;
+      case "submitPrivacyRightsRequest": result = submitPrivacyRightsRequest(payload); break;
+      case "getPrivacyRightsRequests": result = getPrivacyRightsRequests(payload); break;
+      case "updatePrivacyRightsRequestStatus": result = updatePrivacyRightsRequestStatus(payload); break;
       case "saveGameResult": result = saveGameResult(payload); break;
       case "getGameStats": result = getGameStats(payload); break;
       case "getGlobalTop": result = getGlobalTop(payload); break;
@@ -1741,6 +1744,140 @@ function savePermissionMatrix(payload) {
   return { status: "success", count: rulesToSave.length, message: "Matriz dinámica de permisos actualizada exitosamente." };
 }
 
+// [TAREA-F4-P1-05] [Fase 4: Gobierno de Privacidad] - Registro de solicitudes de derechos sobre datos personales (ARCO)
+function submitPrivacyRightsRequest(payload) {
+  const callerRole = getUserVerifiedRole(payload);
+  const callerId = payload._verifiedUserId;
+  const { tipoDerecho, motivo, detalles } = payload || {};
+
+  if (!callerId) throw new Error("Acceso denegado: Usuario no autenticado.");
+  if (!tipoDerecho || !motivo) throw new Error("tipoDerecho y motivo son requeridos.");
+
+  const validTypes = ["ACCESO", "RECTIFICACION", "EXPORTACION", "ELIMINACION", "OPOSICION"];
+  if (validTypes.indexOf(String(tipoDerecho).toUpperCase().trim()) === -1) {
+    throw new Error(`Tipo de derecho de privacidad inválido. Debe ser uno de: ${validTypes.join(", ")}`);
+  }
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "SolicitudesDerechosPrivacidad");
+  if (sheet.getLastRow() === 0) {
+    sheet.appendRow(["solicitudId", "userId", "tipoDerecho", "motivo", "detalles", "estado", "respuestaAdmin", "atendidoPor", "fechaSolicitud", "fechaRespuesta"]);
+  }
+
+  const genRes = generateInstitutionalId({ entityType: "Privacidad", prefix: "PRV-" });
+  const solId = genRes.generatedId || ("PRV-" + Date.now());
+  const now = new Date();
+
+  sheet.appendRow([
+    solId,
+    callerId,
+    String(tipoDerecho).toUpperCase().trim(),
+    String(motivo).trim(),
+    detalles || "",
+    "Enviada",
+    "",
+    "",
+    now,
+    ""
+  ]);
+
+  logStructuredEvent("USER", "submitPrivacyRightsRequest", "INFO", "PRIVACY_RIGHTS_REQUESTED", `Solicitud de derechos de privacidad ${solId} (${tipoDerecho}) registrada por ${callerId}`, { solicitudId: solId, userId: callerId, tipoDerecho, motivo }, callerRole);
+
+  return { status: "success", solicitudId: solId, message: "Solicitud de derechos de privacidad registrada exitosamente. Un administrador la revisará a la brevedad." };
+}
+
+// [TAREA-F4-P1-05] [Fase 4: Gobierno de Privacidad] - Consulta de solicitudes de derechos de privacidad
+function getPrivacyRightsRequests(payload) {
+  const callerRole = getUserVerifiedRole(payload);
+  const callerId = payload._verifiedUserId;
+  const { userId, tipoDerecho, estado } = payload || {};
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = ss.getSheetByName("SolicitudesDerechosPrivacidad");
+  if (!sheet || sheet.getLastRow() <= 1) return { status: "success", data: [] };
+
+  const data = sheet.getDataRange().getValues().slice(1);
+  const requests = [];
+
+  for (let i = 0; i < data.length; i++) {
+    const row = data[i];
+    const solId = String(row[0] || "");
+    const uId = String(row[1] || "");
+    const tipo = String(row[2] || "");
+    const st = String(row[5] || "Enviada");
+
+    let matches = true;
+    if (callerRole !== "Administrador" && callerRole !== "Desarrollador") {
+      if (uId !== callerId) matches = false;
+    }
+    if (userId && String(userId).trim() !== uId) matches = false;
+    if (tipoDerecho && String(tipoDerecho).toUpperCase().trim() !== tipo) matches = false;
+    if (estado && String(estado).toLowerCase().trim() !== st.toLowerCase().trim()) matches = false;
+
+    if (matches) {
+      requests.push({
+        solicitudId: solId,
+        userId: uId,
+        tipoDerecho: tipo,
+        motivo: String(row[3] || ""),
+        detalles: String(row[4] || ""),
+        estado: st,
+        respuestaAdmin: String(row[6] || ""),
+        atendidoPor: String(row[7] || ""),
+        fechaSolicitud: row[8] ? new Date(row[8]).toISOString() : "",
+        fechaRespuesta: row[9] ? new Date(row[9]).toISOString() : ""
+      });
+    }
+  }
+
+  return { status: "success", data: requests };
+}
+
+// [TAREA-F4-P1-05] [Fase 4: Gobierno de Privacidad] - Tramitación y actualización de estado por administradores
+function updatePrivacyRightsRequestStatus(payload) {
+  const callerRole = getUserVerifiedRole(payload);
+  const callerId = payload._verifiedUserId;
+  const { solicitudId, nuevoEstado, respuestaAdmin } = payload || {};
+
+  if (callerRole !== "Administrador" && callerRole !== "Desarrollador") {
+    throw new Error("Acceso denegado: Únicamente los administradores pueden tramitar solicitudes de derechos de privacidad.");
+  }
+  if (!solicitudId || !nuevoEstado) {
+    throw new Error("solicitudId y nuevoEstado son requeridos.");
+  }
+
+  const validStates = ["Enviada", "En_Revision", "Aprobada", "Completada", "Rechazada"];
+  if (validStates.indexOf(nuevoEstado) === -1) {
+    throw new Error(`Estado inválido. Debe ser uno de: ${validStates.join(", ")}`);
+  }
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = ss.getSheetByName("SolicitudesDerechosPrivacidad");
+  if (!sheet) throw new Error("Solicitud no encontrada.");
+
+  const data = sheet.getDataRange().getValues();
+  let targetIndex = -1;
+
+  for (let i = 1; i < data.length; i++) {
+    if (String(data[i][0]).trim() === String(solicitudId).trim()) {
+      targetIndex = i;
+      break;
+    }
+  }
+
+  if (targetIndex === -1) throw new Error("Solicitud no encontrada.");
+
+  const now = new Date();
+  sheet.getRange(targetIndex + 1, 6).setValue(nuevoEstado);
+  if (respuestaAdmin) sheet.getRange(targetIndex + 1, 7).setValue(respuestaAdmin);
+  sheet.getRange(targetIndex + 1, 8).setValue(callerId);
+  sheet.getRange(targetIndex + 1, 10).setValue(now);
+
+  logStructuredEvent("USER", "updatePrivacyRightsRequestStatus", "INFO", "PRIVACY_RIGHTS_UPDATED", `Estado de solicitud de privacidad ${solicitudId} actualizado a '${nuevoEstado}' por ${callerId}`, { solicitudId, nuevoEstado, respuestaAdmin, atendidoPor: callerId }, callerRole);
+
+  return { status: "success", solicitudId, nuevoEstado, message: `Estado de la solicitud ${solicitudId} actualizado a '${nuevoEstado}'.` };
+}
+
 // [TAREA-F4-P1-02] [Fase 4: Motor de Retención y Archivo de Datos] - Catálogo y gestión de políticas de retención
 function getRetentionPolicies(payload) {
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
@@ -2223,7 +2360,7 @@ function requestPasswordRecovery(payload) {
   const user = data.find(r => r[4]?.toString().toLowerCase().trim() === email.toLowerCase().trim());
   if (!user) return { status: "error", message: "Correo no encontrado." };
   const p = { userId: user[0], exp: Date.now() + 3600000 };
-  const hmacBytes = Utilities.computeHmacSha256Signature(JSON.stringify(p), SECRET_KEY);
+  const hmacBytes = Utilities.computeHmacSignature(Utilities.MacAlgorithm.HMAC_SHA_256, JSON.stringify(p), SECRET_KEY);
   const hmacArr = Array.from ? Array.from(hmacBytes) : [].slice.call(hmacBytes);
   const s = hmacArr.map(b => ('0' + (b & 0xFF).toString(16)).slice(-2)).join('');
   const token = Utilities.base64Encode(JSON.stringify({ p, s }));
@@ -2234,7 +2371,7 @@ function requestPasswordRecovery(payload) {
 function resetPassword(payload) {
   const { token, newPassword } = payload;
   const decoded = JSON.parse(Utilities.newBlob(Utilities.base64Decode(token)).getDataAsString());
-  const expBytes = Utilities.computeHmacSha256Signature(JSON.stringify(decoded.p), SECRET_KEY);
+  const expBytes = Utilities.computeHmacSignature(Utilities.MacAlgorithm.HMAC_SHA_256, JSON.stringify(decoded.p), SECRET_KEY);
   const expArr = Array.from ? Array.from(expBytes) : [].slice.call(expBytes);
   const expectedS = expArr.map(b => ('0' + (b & 0xFF).toString(16)).slice(-2)).join('');
   if (decoded.s !== expectedS) throw new Error("Firma inválida.");

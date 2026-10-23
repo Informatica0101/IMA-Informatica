@@ -151,7 +151,7 @@
   - [X] Las exportaciones respetan las mismas reglas contextuales que las consultas.
 - **Estado:** [X] Completada
 
-### [ ] [TAREA-F4-P1-05] Incorporar un panel de gobierno de privacidad y gestión de derechos sobre datos
+### [X] [TAREA-F4-P1-05] Incorporar un panel de gobierno de privacidad y gestión de derechos sobre datos
 - **Origen del Hallazgo:** Auditoría de la Fase 4 (AUDITORIA_FASE4_IDENTIDAD_PERMISOS_GOBIERNO.md)
 - **Severidad/Clasificación:** Alto · Privacidad · Administración
 - **Archivos Involucrados:** `backend/user-service/Code.gs`, `politica-de-privacidad.html`, `js/ui-common.js`
@@ -160,9 +160,9 @@
   1. Crear el módulo de solicitudes de derechos de privacidad (acceso, rectificación, exportación, eliminación).
   2. Proveer flujo de revisión para administradores y respuesta al usuario.
 - **Criterios de Aceptación:**
-  - [ ] Permite registrar, tramitar y responder solicitudes de derechos sobre datos personales.
-  - [ ] Las solicitudes quedan auditadas con su estado.
-- **Estado:** [ ] Pendiente
+  - [X] Permite registrar, tramitar y responder solicitudes de derechos sobre datos personales.
+  - [X] Las solicitudes quedan auditadas con su estado.
+- **Estado:** [X] Completada
 
 ### [ ] [TAREA-F4-P1-06] Fortalecer la trazabilidad mediante historial de cambios y auditoría de versiones
 - **Origen del Hallazgo:** Auditoría de la Fase 4 (AUDITORIA_FASE4_IDENTIDAD_PERMISOS_GOBIERNO.md)

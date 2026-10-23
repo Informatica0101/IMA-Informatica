@@ -101,7 +101,7 @@ const ROLE_PERMISSIONS = {
 
 // [TAREA-F4-P0-01] [Fase 4: Identidad y Permisos] - Funciones de verificación de firma HMAC-SHA256 e integración con token de sesión
 function computeHmacSignature(message, secret) {
-  const bytes = Utilities.computeHmacSha256Signature(message, secret);
+  const bytes = Utilities.computeHmacSignature(Utilities.MacAlgorithm.HMAC_SHA_256, message, secret);
   const arr = Array.from ? Array.from(bytes) : [].slice.call(bytes);
   return arr.map(b => ('0' + (b & 0xFF).toString(16)).slice(-2)).join('');
 }
