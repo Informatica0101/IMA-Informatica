@@ -1119,3 +1119,27 @@ Archivos Modificados:
    - Actualización del estado de [T-UX-26] a [X] Completada.
 
 -------------------------------------------------------------------------------
+FECHA: Octubre 2026
+TAREA: [TAREA-F4-P0-01] Unificar la autenticación y autorización de los cinco microservicios
+-------------------------------------------------------------------------------
+
+Archivos Modificados:
+1. backend/user-service/Code.gs
+   - Lineas 974-1050: Implementación de computeHmacSignature, getAuthTokenSecret, generateSessionToken y verifySessionToken para emisión y verificación de credenciales firmadas con HMAC-SHA256 conteniendo userId, email, rol, estado de cuenta y exp.
+   - Linea 1052: Actualización de getUserVerifiedRole para validar primeramente el token de sesión firmado en payload.sessionToken o payload.authToken.
+   - Lineas 1500-1555: Actualización de loginUser para emitir sessionToken e inyectarlo en la respuesta del servidor.
+
+2. backend/academic-service/Code.gs, backend/accounting-service/Code.gs, backend/exam-service/Code.gs, backend/task-service/Code.gs
+   - Adición de funciones computeHmacSignature, getAuthTokenSecret y verifySessionToken.
+   - Actualización de validateRolePermission en los 4 servicios secundarios para verificar la validez y firma de payload.sessionToken antes de autorizar cualquier operación protegida, rechazando peticiones sin credenciales o con firma alterada.
+
+3. js/api.js
+   - Linea 122: Inyección automática de payload.sessionToken desde currentUser en todas las llamadas fetchApi dirigidas a cualquier microservicio.
+
+4. js/auth.js
+   - Lineas 165-175: Almacenamiento de result.data.sessionToken dentro del objeto userData en localStorage/sessionStorage al iniciar sesión exitosamente.
+
+5. Pendientes.md
+   - Actualización del estado a [X] TAREA-F4-P0-01.
+
+-------------------------------------------------------------------------------

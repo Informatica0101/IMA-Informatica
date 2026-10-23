@@ -452,8 +452,18 @@ function getOrCreateSheet(ss, name) {
   return sheet;
 }
 
+// [TAREA-F4-P0-02] [Fase 4: Protección IDOR y ABAC] - Aislamiento estricto de tareas por estudiante
 function getStudentTasks(payload) {
-  const { userId, grado, seccion } = payload;
+  const userRole = (payload && payload._verifiedRole) || "Estudiante";
+  let targetUserId = payload && payload.userId;
+
+  if ((userRole === "Estudiante" || userRole === "Alumno") && payload && payload._verifiedUserId) {
+    targetUserId = payload._verifiedUserId;
+  }
+  if (!targetUserId) targetUserId = payload && payload._verifiedUserId;
+
+  const { grado, seccion } = payload || {};
+  const userId = targetUserId;
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
   const tareasSheet = getSheetOrThrow(ss, "Tareas");
   const entregasSheet = getSheetOrThrow(ss, "Entregas");

@@ -578,7 +578,18 @@ function submitExam({ examenId, userId, respuestas }) {
   };
 }
 
-function getStudentExams({ userId, grado, seccion }) {
+// [TAREA-F4-P0-02] [Fase 4: Protección IDOR y ABAC] - Aislamiento estricto de evaluaciones por estudiante
+function getStudentExams(payload) {
+  const userRole = (payload && payload._verifiedRole) || "Estudiante";
+  let targetUserId = payload && payload.userId;
+
+  if ((userRole === "Estudiante" || userRole === "Alumno") && payload && payload._verifiedUserId) {
+    targetUserId = payload._verifiedUserId;
+  }
+  if (!targetUserId) targetUserId = payload && payload._verifiedUserId;
+
+  const { grado, seccion } = payload || {};
+  const userId = targetUserId;
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
   const examenes = getSheetOrThrow(ss, "Examenes").getDataRange().getValues().slice(1);
   const entregas = getSheetOrThrow(ss, "EntregasExamen").getDataRange().getValues().slice(1);

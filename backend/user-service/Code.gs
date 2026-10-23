@@ -1600,12 +1600,20 @@ function resetPassword(payload) {
   return { status: "success", message: "Contraseña actualizada." };
 }
 
+// [TAREA-F4-P0-02] [Fase 4: Protección IDOR y ABAC] - Aislamiento estricto en actualización de perfil de usuario
 function updateUserProfile(payload) {
-  const { userId, nombre, email, telefono, numeroLista, currentPassword, password } = payload || {};
+  const callerRole = getUserVerifiedRole(payload);
+  let targetUserId = payload.userId;
+
+  if ((callerRole === "Estudiante" || callerRole === "Alumno" || callerRole === "Padre" || callerRole === "Tutor") && payload._verifiedUserId) {
+    targetUserId = payload._verifiedUserId;
+  }
+  if (!targetUserId) targetUserId = payload._verifiedUserId;
+
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
   const sheet = getSheetOrThrow(ss, "Usuarios");
   const data = sheet.getDataRange().getValues();
-  const idx = data.findIndex(r => String(r[0]) === String(userId));
+  const idx = data.findIndex(r => String(r[0]).trim() === String(targetUserId).trim());
   if (idx === -1) throw new Error("No encontrado.");
   const userRow = [...data[idx]];
   if (password) {
@@ -2158,9 +2166,15 @@ function getGuardianStudents(payload) {
   return { status: "success", data: verifiedStudents };
 }
 
+// [TAREA-F4-P0-02] [Fase 4: Protección IDOR y ABAC] - Aislamiento estricto de resumen financiero familiar por tutor
 function getFamilyConsolidatedSummary(payload) {
-  const { userIdResponsable, userId } = payload || {};
-  const uid = userIdResponsable || userId;
+  const callerRole = getUserVerifiedRole(payload);
+  let uid = payload.userIdResponsable || payload.userId;
+
+  if ((callerRole === "Padre" || callerRole === "Tutor" || callerRole === "Responsable") && payload._verifiedUserId) {
+    uid = payload._verifiedUserId;
+  }
+  if (!uid) uid = payload._verifiedUserId;
   if (!uid) throw new Error("userIdResponsable es requerido.");
 
   const studentsRes = getGuardianStudents({ userIdResponsable: uid });
@@ -3002,9 +3016,23 @@ function submitStudentAbsenceJustification(payload) {
   return { status: "success", solicitudId: solId, message: "Justificación de ausencia ingresada y en proceso de revisión." };
 }
 
+// [TAREA-F4-P0-02] [Fase 4: Protección IDOR y ABAC] - Aislamiento estricto de justificaciones de ausencia
 function getStudentAbsenceJustifications(payload) {
-  const { estudianteId, userId } = payload || {};
-  const res = getAdministrativeRequests({ userId, estudianteId });
+  const callerRole = getUserVerifiedRole(payload);
+  let { estudianteId, userId } = payload || {};
+
+  if ((callerRole === "Estudiante" || callerRole === "Alumno") && payload._verifiedUserId) {
+    userId = payload._verifiedUserId;
+  } else if ((callerRole === "Padre" || callerRole === "Tutor" || callerRole === "Responsable") && payload._verifiedUserId) {
+    const guardianRes = getGuardianStudents({ userId: payload._verifiedUserId, sessionToken: payload.sessionToken });
+    const linkedStudents = (guardianRes.data || []).map(s => String(s.studentUserId || s.userId).trim());
+    if (estudianteId && linkedStudents.indexOf(String(estudianteId).trim()) === -1) {
+      throw new Error("Acceso denegado: El estudiante solicitado no está vinculado a su cuenta de tutor.");
+    }
+    userId = payload._verifiedUserId;
+  }
+
+  const res = getAdministrativeRequests({ userId, estudianteId, sessionToken: payload.sessionToken });
   const justs = (res.data || []).filter(r => r.tipoTramite === "Justificación de Ausencia");
   return { status: "success", justificantes: justs };
 }

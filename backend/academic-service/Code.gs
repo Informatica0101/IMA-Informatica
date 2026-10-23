@@ -5466,13 +5466,23 @@ function saveToAcademicHistory(scope) {
   if (newEntries.length > 0) sheet.getRange(sheet.getLastRow() + 1, 1, newEntries.length, 8).setValues(newEntries);
 }
 
+// [TAREA-F4-P0-02] [Fase 4: Protección IDOR y ABAC] - Aislamiento estricto de historial académico por estudiante
 function getAcademicHistory(payload) {
-  const { grado, seccion } = payload || {};
+  const callerRole = (payload && payload._verifiedRole) || "Estudiante";
+  const verifiedUserId = payload && payload._verifiedUserId;
+  const { grado, seccion, estudianteId } = payload || {};
+
+  let targetStudentId = estudianteId;
+  if ((callerRole === "Estudiante" || callerRole === "Alumno") && verifiedUserId) {
+    targetStudentId = verifiedUserId;
+  }
+
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
   const sheet = ss.getSheetByName("HistorialAcademico");
   if (!sheet) return { status: "success", data: [] };
   const data = sheet.getDataRange().getValues().slice(1);
   const filtered = data.filter(r => {
+    if (targetStudentId && String(r[0]).trim() !== String(targetStudentId).trim()) return false;
     const norm = (g) => {
       const gn = normalizeString(g);
       if (gn.includes("duodecimo") || gn.includes("12") || gn.includes("iiibtp")) return "duodécimo";
@@ -5615,11 +5625,20 @@ function registerStudentEnrollment(payload) {
   return { status: "success", matriculaId: matriculaId, message: "Matrícula registrada exitosamente." };
 }
 
+// [TAREA-F4-P0-02] [Fase 4: Protección IDOR y ABAC] - Aislamiento estricto de historial de matrícula por usuario
 function getStudentEnrollmentHistory(payload) {
-  const { userId } = payload || {};
-  if (!userId) throw new Error("userId requerido.");
+  const callerRole = (payload && payload._verifiedRole) || "Estudiante";
+  const verifiedUserId = payload && payload._verifiedUserId;
+  let targetUserId = payload && payload.userId;
+
+  if ((callerRole === "Estudiante" || callerRole === "Alumno") && verifiedUserId) {
+    targetUserId = verifiedUserId;
+  }
+  if (!targetUserId) targetUserId = verifiedUserId;
+  if (!targetUserId) throw new Error("userId requerido.");
+
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
-  const sUserId = String(userId).trim();
+  const sUserId = String(targetUserId).trim();
 
   const matRows = getOrCreateSheet(ss, "Matriculas").getDataRange().getValues().slice(1);
   const userMatriculas = matRows.filter(r => String(r[2]).trim() === sUserId).map(r => ({

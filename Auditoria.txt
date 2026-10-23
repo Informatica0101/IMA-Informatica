@@ -1,0 +1,33 @@
+===============================================================================
+REGISTRO OFICIAL DE AUDITORÍA Y HALLAZGOS TÉCNICOS (Auditoria.txt)
+Plataforma: Ecosistema Educativo New Generation Christian Academy
+===============================================================================
+
+-------------------------------------------------------------------------------
+FECHA: Octubre 2026
+TAREA: [TAREA-F4-P0-01] Unificar la autenticación y autorización de los cinco microservicios
+NIVEL DE CRITICIDAD: P0 (Crítico)
+-------------------------------------------------------------------------------
+
+Archivos Auditados y Modificados:
+1. `backend/user-service/Code.gs`
+2. `backend/academic-service/Code.gs`
+3. `backend/accounting-service/Code.gs`
+4. `backend/exam-service/Code.gs`
+5. `backend/task-service/Code.gs`
+6. `js/api.js`
+7. `js/auth.js`
+
+Hallazgo Inicial:
+Los microservicios secundarios (`academic-service`, `accounting-service`, `exam-service`, `task-service`) confiaban ciegamente en `payload.authRole` enviado desde la petición HTTP POST, permitiendo suplantación de roles y omisión de comprobación de cuentas desactivadas o bloqueadas mediante peticiones directas.
+
+Resolución Aplicada:
+- Implementación de `computeHmacSignature`, `getAuthTokenSecret`, `generateSessionToken` y `verifySessionToken` en los 5 microservicios backend.
+- Modificación de `validateRolePermission` en los 5 microservicios para exigir y validar la firma criptográfica HMAC-SHA256 del `sessionToken` en todas las acciones protegidas.
+- Emisión de `sessionToken` firmado con 24 horas de expiración e id de sesión único en `loginUser`.
+- Inyección automática de `sessionToken` desde `currentUser` en `js/api.js` y almacenamiento persistente en `js/auth.js`.
+
+Resultado de Verificación:
+- Peticiones con `sessionToken` válido: Autorizadas según rol verificado en el token.
+- Peticiones con firma alterada o sin token: Rechazadas con `AUTH_PERMISSION_DENIED`.
+- Peticiones de cuentas desactivadas: Rechazadas con `Cuenta Inactiva/Bloqueada`.
