@@ -1131,7 +1131,7 @@
   5. Los reintentos respetan las reglas de idempotencia.
   6. La recuperación de una solicitud no sobrescribe cambios válidos realizados por otra operación.
   7. Los mensajes de error indican qué acción puede realizar el usuario sin afirmar resultados no confirmados.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 ### [X] [T-UX-04] Indicador e Badge de Frescura de Datos Sincronizados con Trigger Manual
 - **Origen del Hallazgo:** Auditoría de la Fase 3, octubre de 2026 (AUDITORIA_FASE3_EXPERIENCIA_USUARIO_NAVEGACION.md - Área 9)
@@ -1392,7 +1392,7 @@
   4. Los datos obsoletos no se presentan como confirmados cuando la función exige información actual.
   5. Las pruebas comparan el comportamiento con caché y sin caché.
   6. Las modificaciones conservan o mejoran el rendimiento sin debilitar la seguridad ni la integridad.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completada
 
 ### [X] [T-UX-26] Incorporar una vista de actividad reciente contextual
 - **Origen del Hallazgo:** Auditoría de la Fase 3, octubre de 2026 (AUDITORIA_FASE3_EXPERIENCIA_USUARIO_NAVEGACION.md - Área 13)
