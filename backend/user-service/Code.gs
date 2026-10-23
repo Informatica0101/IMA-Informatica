@@ -1098,6 +1098,54 @@ function getUserVerifiedRole(payload) {
   return claims.role || "Estudiante";
 }
 
+// [TAREA-F4-P1-01] [Fase 4: Motor de Delegaciones] - Verificación de delegaciones de seguridad activas y vigentes
+function hasActiveDelegationForAction(userId, action) {
+  if (!userId || !action) return null;
+  const cache = CacheService.getScriptCache();
+  const cacheKey = "active_delegations_" + userId;
+  let cached = null;
+  try {
+    const raw = cache.get(cacheKey);
+    if (raw) cached = JSON.parse(raw);
+  } catch (e) {}
+
+  if (!cached) {
+    try {
+      const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+      const sheet = ss.getSheetByName("DelegacionesSeguridad");
+      if (!sheet) return null;
+      const data = sheet.getDataRange().getValues();
+      const now = new Date().getTime();
+      cached = [];
+      for (let i = 1; i < data.length; i++) {
+        const row = data[i];
+        const delId = String(row[0] || "");
+        const delegante = String(row[1] || "");
+        const delegado = String(row[2] || "");
+        const acciones = String(row[3] || "").split(",").map(s => s.trim());
+        const fInicio = new Date(row[5]).getTime();
+        const fFin = new Date(row[6]).getTime();
+        const estado = String(row[7] || "");
+
+        if (String(delegado).trim() === String(userId).trim() && estado === "Activa" && now >= fInicio && now <= fFin) {
+          cached.push({ delId, delegante, acciones });
+        }
+      }
+      cache.put(cacheKey, JSON.stringify(cached), 300);
+    } catch (err) {
+      return null;
+    }
+  }
+
+  for (let j = 0; j < cached.length; j++) {
+    const item = cached[j];
+    if (item.acciones.indexOf("*") !== -1 || item.acciones.indexOf(action) !== -1) {
+      return item;
+    }
+  }
+  return null;
+}
+
 function validateRolePermission(action, payload) {
   if (PUBLIC_ACTIONS.indexOf(action) !== -1) return { authorized: true };
   const userRole = getUserVerifiedRole(payload);
@@ -1111,6 +1159,19 @@ function validateRolePermission(action, payload) {
   if (permitted.indexOf("*") !== -1 || permitted.indexOf(action) !== -1) {
     return { authorized: true, role: userRole };
   }
+
+  const verifiedId = payload && payload._verifiedUserId;
+  if (verifiedId) {
+    const activeDel = hasActiveDelegationForAction(verifiedId, action);
+    if (activeDel) {
+      if (payload) {
+        payload._delegatedFrom = activeDel.delegante;
+        payload._delegationId = activeDel.delId;
+      }
+      return { authorized: true, role: userRole + " (Delegado de " + activeDel.delegante + ")" };
+    }
+  }
+
   return { authorized: false, role: userRole };
 }
 
@@ -1139,6 +1200,9 @@ function doPost(e) {
       case "linkPersonAccount": result = linkPersonAccount(payload); break;
       case "manageAccountState": result = manageAccountState(payload); break;
       case "revokeUserSession": result = revokeUserSession(payload); break;
+      case "createSecurityDelegation": result = createSecurityDelegation(payload); break;
+      case "getSecurityDelegations": result = getSecurityDelegations(payload); break;
+      case "revokeSecurityDelegation": result = revokeSecurityDelegation(payload); break;
       case "saveGameResult": result = saveGameResult(payload); break;
       case "getGameStats": result = getGameStats(payload); break;
       case "getGlobalTop": result = getGlobalTop(payload); break;
@@ -1397,6 +1461,158 @@ function generateInstitutionalId(payload) {
   }
 }
 
+// [TAREA-F4-P1-01] [Fase 4: Motor de Delegaciones] - Creación de delegaciones temporales de seguridad
+function createSecurityDelegation(payload) {
+  const callerRole = getUserVerifiedRole(payload);
+  const callerId = payload._verifiedUserId;
+  const { delegadoUserId, accionesAutorizadas, ambito, fechaInicio, fechaFin, motivo } = payload || {};
+
+  if (!delegadoUserId || !accionesAutorizadas || !fechaInicio || !fechaFin) {
+    throw new Error("delegadoUserId, accionesAutorizadas, fechaInicio y fechaFin son requeridos.");
+  }
+
+  const dInicio = new Date(fechaInicio);
+  const dFin = new Date(fechaFin);
+  if (isNaN(dInicio.getTime()) || isNaN(dFin.getTime()) || dInicio >= dFin) {
+    throw new Error("Rango de fechas de delegación inválido.");
+  }
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "DelegacionesSeguridad");
+
+  if (sheet.getLastRow() === 0) {
+    sheet.appendRow(["delegacionId", "deleganteUserId", "delegadoUserId", "accionesAutorizadas", "ambito", "fechaInicio", "fechaFin", "estado", "motivo", "creadoPor", "fechaCreacion"]);
+  }
+
+  const genRes = generateInstitutionalId({ entityType: "Delegacion", prefix: "DEL-" });
+  const delId = genRes.generatedId || ("DEL-" + Date.now());
+  const now = new Date();
+
+  sheet.appendRow([
+    delId,
+    callerId,
+    String(delegadoUserId).trim(),
+    Array.isArray(accionesAutorizadas) ? accionesAutorizadas.join(",") : String(accionesAutorizadas).trim(),
+    ambito || "General",
+    dInicio,
+    dFin,
+    "Activa",
+    motivo || "Delegación temporal de funciones",
+    callerId,
+    now
+  ]);
+
+  try {
+    CacheService.getScriptCache().remove("active_delegations_" + String(delegadoUserId).trim());
+  } catch (e) {}
+
+  logStructuredEvent("USER", "createSecurityDelegation", "INFO", "DELEGATION_CREATED", `Delegación ${delId} creada por ${callerId} para ${delegadoUserId}`, { delId, delegante: callerId, delegado: delegadoUserId, acciones: accionesAutorizadas, fechaInicio, fechaFin }, callerRole);
+
+  return { status: "success", delegacionId: delId, message: "Delegación de seguridad registrada exitosamente." };
+}
+
+// [TAREA-F4-P1-01] [Fase 4: Motor de Delegaciones] - Consulta y evaluación de caducidad automática
+function getSecurityDelegations(payload) {
+  const callerRole = getUserVerifiedRole(payload);
+  const callerId = payload._verifiedUserId;
+  const { deleganteUserId, delegadoUserId, estado } = payload || {};
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = ss.getSheetByName("DelegacionesSeguridad");
+  if (!sheet) return { status: "success", data: [] };
+
+  const data = sheet.getDataRange().getValues();
+  if (data.length <= 1) return { status: "success", data: [] };
+
+  const now = new Date().getTime();
+  const list = [];
+
+  for (let i = 1; i < data.length; i++) {
+    const row = data[i];
+    const delId = String(row[0] || "");
+    const delegante = String(row[1] || "");
+    const delegado = String(row[2] || "");
+    const acciones = String(row[3] || "");
+    const amb = String(row[4] || "");
+    const fIni = new Date(row[5]);
+    const fFin = new Date(row[6]);
+    let st = String(row[7] || "Activa");
+
+    if (st === "Activa" && now > fFin.getTime()) {
+      st = "Expirada";
+      sheet.getRange(i + 1, 8).setValue("Expirada");
+    }
+
+    let matches = true;
+    if (callerRole !== "Administrador" && callerRole !== "Desarrollador") {
+      if (delegante !== callerId && delegado !== callerId) matches = false;
+    }
+    if (deleganteUserId && String(deleganteUserId).trim() !== delegante) matches = false;
+    if (delegadoUserId && String(delegadoUserId).trim() !== delegado) matches = false;
+    if (estado && String(estado).toLowerCase().trim() !== st.toLowerCase()) matches = false;
+
+    if (matches) {
+      list.push({
+        delegacionId: delId,
+        deleganteUserId: delegante,
+        delegadoUserId: delegado,
+        accionesAutorizadas: acciones,
+        ambito: amb,
+        fechaInicio: fIni.toISOString(),
+        fechaFin: fFin.toISOString(),
+        estado: st,
+        motivo: row[8] || "",
+        creadoPor: row[9] || "",
+        fechaCreacion: row[10] ? new Date(row[10]).toISOString() : ""
+      });
+    }
+  }
+
+  return { status: "success", data: list };
+}
+
+// [TAREA-F4-P1-01] [Fase 4: Motor de Delegaciones] - Revocación anticipada de delegación
+function revokeSecurityDelegation(payload) {
+  const callerRole = getUserVerifiedRole(payload);
+  const callerId = payload._verifiedUserId;
+  const { delegacionId, motivo } = payload || {};
+
+  if (!delegacionId) throw new Error("delegacionId es requerido.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = ss.getSheetByName("DelegacionesSeguridad");
+  if (!sheet) throw new Error("Delegación no encontrada.");
+
+  const data = sheet.getDataRange().getValues();
+  let targetIndex = -1;
+  let delegadoId = "";
+
+  for (let i = 1; i < data.length; i++) {
+    if (String(data[i][0]).trim() === String(delegacionId).trim()) {
+      targetIndex = i;
+      delegadoId = String(data[i][2] || "").trim();
+      if (callerRole !== "Administrador" && callerRole !== "Desarrollador" && String(data[i][1]).trim() !== callerId) {
+        throw new Error("Acceso denegado: Únicamente el delegante titular o un administrador pueden revocar la delegación.");
+      }
+      break;
+    }
+  }
+
+  if (targetIndex === -1) throw new Error("Delegación no encontrada.");
+
+  sheet.getRange(targetIndex + 1, 8).setValue("Revocada");
+
+  if (delegadoId) {
+    try {
+      CacheService.getScriptCache().remove("active_delegations_" + delegadoId);
+    } catch (e) {}
+  }
+
+  logStructuredEvent("USER", "revokeSecurityDelegation", "WARN", "DELEGATION_REVOKED", `Delegación ${delegacionId} revocada por ${callerId}. Motivo: ${motivo || 'N/A'}`, { delegacionId, motivo, revocadaPor: callerId }, callerRole);
+
+  return { status: "success", delegacionId: delegacionId, message: "Delegación de seguridad revocada exitosamente." };
+}
+
 // [TAREA-F4-P0-03] [Fase 4: Revocación de Sesiones] - Cambios de estado, revocación explícita de sesiones e invalidación en tiempo real
 function revokeUserSession(payload) {
   const { userId, sessionId } = payload || {};
@@ -1454,13 +1670,13 @@ function manageAccountState(payload) {
 function registerUser(payload) {
   const { nombre, grado, seccion, email, password, telefono, numeroLista, forceUpdate, personaId } = payload || {};
   if (!nombre || !email || !password) throw new Error("Datos obligatorios faltantes.");
+  const now = new Date();
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
   const sheet = getSheetOrThrow(ss, "Usuarios");
   const data = sheet.getDataRange().getValues();
   const lowerEmail = email.toLowerCase().trim();
   let existingIndex = -1;
   for (let i = 1; i < data.length; i++) { if (data[i][4]?.toString().toLowerCase().trim() === lowerEmail) { existingIndex = i; break; } }
-  const now = new Date();
 
   if (existingIndex !== -1) {
     if (forceUpdate) {
@@ -1487,7 +1703,8 @@ function registerUser(payload) {
     }
     return { status: "error", exists: true, message: "Email ya registrado.", data: { nombre: data[existingIndex][1], gradoActual: data[existingIndex][2], seccionActual: data[existingIndex][3] } };
   }
-  const userId = "USR-" + now.getTime();
+  const genIdRes = generateInstitutionalId({ entityType: "Usuario", prefix: "USR-" });
+  const userId = genIdRes.generatedId || ("USR-" + now.getTime());
   const passBytes = Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, password);
   const passArr = Array.from ? Array.from(passBytes) : [].slice.call(passBytes);
   const hashedPassword = passArr.map(b => ('0' + (b & 0xFF).toString(16)).slice(-2)).join('');

@@ -1219,3 +1219,11 @@ Archivos Modificados:
   - Actualizada función loginUser para generar correlationId único y registrar eventos LOGIN_FAILED categorizados (CONTRASEÑA_INCORRECTA, CUENTA_INACTIVA_O_BLOQUEADA, USUARIO_INEXISTENTE).
   - Sanitizadas respuestas de error en loginUser con mensajes genéricos ("Credenciales incorrectas o cuenta no disponible") previniendo enumeración de usuarios.
   - Implementado bloqueo automático de cuenta al acumular 5 intentos fallidos consecutivos de contraseña.
+
+[TAREA-F4-P1-01] [Fase 4 - Motor Transversal de Delegaciones de Seguridad y Permisos Temporales]
+- backend/user-service/Code.gs:
+  - Creadas funciones createSecurityDelegation, getSecurityDelegations y revokeSecurityDelegation con auto-expiración de delegaciones vencidas.
+  - Creada función helper hasActiveDelegationForAction con almacenamiento en CacheService (300s TTL).
+  - Integrada verificación de delegaciones activas en validateRolePermission y adjuntados atributos _delegatedFrom y _delegationId al payload.
+- backend/academic-service/Code.gs, backend/accounting-service/Code.gs, backend/exam-service/Code.gs, backend/task-service/Code.gs:
+  - Creada función helper hasActiveDelegationForAction e integrada en validateRolePermission para resolver permisos delegados temporalmente.

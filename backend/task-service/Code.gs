@@ -226,7 +226,68 @@ function validateRolePermission(action, payload) {
   if (permitted.indexOf("*") !== -1 || permitted.indexOf(action) !== -1) {
     return { authorized: true, role: userRole };
   }
+
+  const verifiedId = payload && payload._verifiedUserId;
+  if (verifiedId) {
+    const activeDel = hasActiveDelegationForAction(verifiedId, action);
+    if (activeDel) {
+      if (payload) {
+        payload._delegatedFrom = activeDel.delegante;
+        payload._delegationId = activeDel.delId;
+      }
+      return { authorized: true, role: userRole + " (Delegado de " + activeDel.delegante + ")" };
+    }
+  }
+
   return { authorized: false, role: userRole };
+}
+
+// [TAREA-F4-P1-01] [Fase 4: Motor de Delegaciones] - Verificación de delegaciones de seguridad activas
+function hasActiveDelegationForAction(userId, action) {
+  if (!userId || !action) return null;
+  const cache = CacheService.getScriptCache();
+  const cacheKey = "active_delegations_" + userId;
+  let cached = null;
+  try {
+    const raw = cache.get(cacheKey);
+    if (raw) cached = JSON.parse(raw);
+  } catch (e) {}
+
+  if (!cached) {
+    try {
+      const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+      const sheet = ss.getSheetByName("DelegacionesSeguridad");
+      if (!sheet) return null;
+      const data = sheet.getDataRange().getValues();
+      const now = new Date().getTime();
+      cached = [];
+      for (let i = 1; i < data.length; i++) {
+        const row = data[i];
+        const delId = String(row[0] || "");
+        const delegante = String(row[1] || "");
+        const delegado = String(row[2] || "");
+        const acciones = String(row[3] || "").split(",").map(s => s.trim());
+        const fInicio = new Date(row[5]).getTime();
+        const fFin = new Date(row[6]).getTime();
+        const estado = String(row[7] || "");
+
+        if (String(delegado).trim() === String(userId).trim() && estado === "Activa" && now >= fInicio && now <= fFin) {
+          cached.push({ delId, delegante, acciones });
+        }
+      }
+      cache.put(cacheKey, JSON.stringify(cached), 300);
+    } catch (err) {
+      return null;
+    }
+  }
+
+  for (let j = 0; j < cached.length; j++) {
+    const item = cached[j];
+    if (item.acciones.indexOf("*") !== -1 || item.acciones.indexOf(action) !== -1) {
+      return item;
+    }
+  }
+  return null;
 }
 
 function doPost(e) {

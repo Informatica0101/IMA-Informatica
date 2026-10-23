@@ -98,3 +98,10 @@ Resultado de Verificación:
 - backend/user-service/Code.gs:
   - loginUser & logoutUser: Verificado el registro estructurado de eventos LOGIN_FAILED, LOGIN_SUCCESS y LOGOUT_SUCCESS sin almacenamiento de contraseñas.
   - loginUser: Verificada la sanitización de respuestas genéricas de autenticación e incremento de contador de intentos fallidos antes de bloqueo.
+
+[AUDITORÍA TAREA-F4-P1-01]
+- backend/user-service/Code.gs:
+  - createSecurityDelegation, getSecurityDelegations, revokeSecurityDelegation: Verificada la persistencia en hoja DelegacionesSeguridad y auto-expiración.
+  - validateRolePermission & hasActiveDelegationForAction: Verificada la autorización por delegación temporal activa cuando el rol directo no otorga el permiso.
+- backend/academic-service/Code.gs, backend/accounting-service/Code.gs, backend/exam-service/Code.gs, backend/task-service/Code.gs:
+  - validateRolePermission: Verificada la resolución de delegaciones activas e inyección de contexto _delegatedFrom en los microservicios.
