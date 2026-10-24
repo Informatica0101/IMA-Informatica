@@ -1430,3 +1430,12 @@ Archivos Modificados:
   - Incorporada sección `#modal-adm-tutors-container` en el modal de detalle de admisión.
 - js/secretary.js:
   - Implementados controladores `loadGuardianLinkageStatus` y `promptIssueTutorInvitation`.
+
+[TAREA-F5-010] [Fase 5 - Control Consistente de Capacidad de Plazas, Reservas y Matrículas]
+- backend/academic-service/Code.gs:
+  - Reestructuración de `checkEnrollmentCapacity` con comentario identificativo [TAREA-F5-010], protección por candado `LockService`, desglose de capacidad (capacidadMaxima, inscritosActuales, plazasReservadas por solicitudes Admitidas, totalOcupados, cuposDisponibles) y soporte para directiva `OVERBOOKING_ALLOWED`.
+  - Actualización de `updateAdmissionStatus` para exigir verificación de capacidad de cupo antes de marcar una solicitud como 'Admitida'.
+- dashboard-secretaria.html:
+  - Incorporada sección `#modal-adm-capacity-container` en el modal de detalle de admisión.
+- js/secretary.js:
+  - Implementado controlador `loadAdmissionCapacityStatus` para despliegue interactivo de la tarjeta de capacidad del grado.

@@ -184,6 +184,9 @@ window.openAdmissionDetailModal = function(solicitudId) {
     // [TAREA-F5-009] Cargar vinculación de tutor
     window.loadGuardianLinkageStatus(found);
 
+    // [TAREA-F5-010] Cargar disponibilidad de cupos
+    window.loadAdmissionCapacityStatus(found.anolectivo, found.gradoSolicitado);
+
     if (actionsEl) {
         const allowedTransitions = {
             "Recibida": ["En_Revision", "Rechazada", "Retirada"],
@@ -485,6 +488,61 @@ window.promptIssueTutorInvitation = async function(solicitudIdInput, expedienteI
         }
     } catch (err) {
         alert("Error de red: " + err.message);
+    }
+};
+
+// [TAREA-F5-010] [Fase 5: Admisiones y Matrícula] - Consulta y visualización del desglose de capacidad de cupos por grado
+window.loadAdmissionCapacityStatus = async function(anolectivo, grado) {
+    const container = document.getElementById('modal-adm-capacity-container');
+    if (!container) return;
+
+    container.innerHTML = `<p class="text-gray-400"><i class="fas fa-spinner fa-spin mr-1"></i> Consultando disponibilidad de cupos...</p>`;
+
+    try {
+        const res = await window.fetchApi('ACADEMIC', 'checkEnrollmentCapacity', { anolectivo, grado });
+        if (res && res.status === 'success') {
+            let statusBadge = "bg-green-100 text-green-800 border-green-200";
+            let statusText = "Cupos Disponibles";
+
+            if (!res.hayCupo) {
+                statusBadge = "bg-red-100 text-red-800 border-red-200";
+                statusText = "Capacidad Agotada";
+            } else if (res.cuposDisponibles <= 3) {
+                statusBadge = "bg-amber-100 text-amber-800 border-amber-200";
+                statusText = "Últimos Cupos";
+            }
+
+            container.innerHTML = `
+                <div class="p-3 bg-white rounded-xl border border-gray-100 shadow-sm space-y-2">
+                    <div class="flex justify-between items-center">
+                        <span class="font-bold text-gray-900">${grado} (${anolectivo})</span>
+                        <span class="px-2 py-0.5 text-[9px] font-bold rounded-full border ${statusBadge}">${statusText}</span>
+                    </div>
+                    <div class="grid grid-cols-4 gap-2 text-center text-[10px]">
+                        <div class="p-1.5 bg-gray-50 rounded-lg">
+                            <span class="text-gray-400 block font-bold">Capacidad</span>
+                            <span class="font-black text-gray-800 text-sm">${res.capacidadMaxima}</span>
+                        </div>
+                        <div class="p-1.5 bg-blue-50 rounded-lg">
+                            <span class="text-blue-600 block font-bold">Matriculados</span>
+                            <span class="font-black text-blue-800 text-sm">${res.inscritosActuales}</span>
+                        </div>
+                        <div class="p-1.5 bg-indigo-50 rounded-lg">
+                            <span class="text-indigo-600 block font-bold">Reservados</span>
+                            <span class="font-black text-indigo-800 text-sm">${res.plazasReservadas || 0}</span>
+                        </div>
+                        <div class="p-1.5 bg-green-50 rounded-lg">
+                            <span class="text-green-600 block font-bold">Disponibles</span>
+                            <span class="font-black text-green-800 text-sm">${res.cuposDisponibles}</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+        } else {
+            container.innerHTML = `<p class="text-red-500 font-medium">Error al consultar capacidad: ${((res && res.message) || 'Error del servidor')}</p>`;
+        }
+    } catch (err) {
+        container.innerHTML = `<p class="text-red-500 font-medium">Error de conexión: ${err.message}</p>`;
     }
 };
 

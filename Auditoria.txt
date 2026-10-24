@@ -111,4 +111,9 @@ RESOLUCIÓN Y VERIFICACIÓN DE TAREAS EJECUTADAS:
  - Estado: COMPLETADA Y VERIFICADA (2026-03-29)
  - Archivos Modificados: backend/user-service/Code.gs, backend/academic-service/Code.gs, dashboard-secretaria.html, js/secretary.js
  - Verificación: Unificados los flujos de vinculación por token de invitación de 7 días (`createLinkInvitation`, `acceptLinkInvitation`) con comprobación de coincidencia de correo electrónico y neutralización de vínculos duplicados en `RelacionesFamiliares`. Implementadas `revokeFamilyLink` y `updateFamilyLinkPermissions` para administración de permisos granulares por relación (`PermisoAcademico`, `PermisoFinanciero`, `PermisoDocumental`, `PermisoAsistencia`) evaluados en `validateContextualAccess`. Creados componentes UI e interactividad en `dashboard-secretaria.html` y `js/secretary.js`. Comentario identificativo [TAREA-F5-009] inyectado en `backend/user-service/Code.gs`.
+
+[TAREA-F5-010] Integrar las plazas, reservas y matrículas en un control de capacidad consistente
+ - Estado: COMPLETADA Y VERIFICADA (2026-03-29)
+ - Archivos Modificados: backend/academic-service/Code.gs, dashboard-secretaria.html, js/secretary.js
+ - Verificación: Reestructurada función `checkEnrollmentCapacity` con candado `LockService`, cálculo atómico de capacidad restando matrículas activas y plazas reservadas por solicitudes `Admitida`, desglose detallado de cupos y soporte para la directiva `OVERBOOKING_ALLOWED`. Actualizado endpoint `updateAdmissionStatus` para bloquear el cambio a 'Admitida' si la sección está agotada. Creado componente visual `#modal-adm-capacity-container` y controlador `loadAdmissionCapacityStatus` en Secretaría. Comentario identificativo [TAREA-F5-010] inyectado en `backend/academic-service/Code.gs`.
 ================================================================================

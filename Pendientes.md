@@ -306,10 +306,10 @@
 
 ---
 
-### [TAREA-F5-010] Integrar las plazas, reservas y matrículas en un control de capacidad consistente
+### [X] [TAREA-F5-010] Integrar las plazas, reservas y matrículas en un control de capacidad consistente
 - **Origen del Hallazgo:** `Auditoria.txt` (HALLAZGOS F5: HALLAZGOS-F5-P2-01) / `AUDITORIA_FASE_5_ADMISIONES_PORTAL_FAMILIAS.md` (Subcapacidad 5.12, Brecha P2-01)
 - **Severidad/Clasificación:** Alto
-- **Archivos Involucrados:** `backend/academic-service/Code.gs` (l. 4938-5015)
+- **Archivos Involucrados:** `backend/academic-service/Code.gs` (l. 4938-5015), `js/secretary.js`, `dashboard-secretaria.html`
 - **Dependencias Expuestas:** Hojas `OfertaAcademica`, `Matriculas`, `SolicitudesAdmision`, `ListaEsperaAdmision`
 - **Descripción del Alcance:**
   1. Definir la capacidad máxima por año lectivo, grado y sección en `OfertaAcademica`.
@@ -325,16 +325,16 @@
   11. Mantener el historial de reservas y liberaciones de cupo en la bitácora de auditoría.
   12. Establecer una política explícita y configurable (`OVERBOOKING_ALLOWED`) para autorizar o prohibir sobrecupos con firma de Dirección.
 - **Criterios de Aceptación:**
-  - [ ] Secciones sin cupos disponibles bloquean el cambio de estado a `Admitida` y la conversión a matrícula.
-  - [ ] Aspirantes admitidos reducen inmediatamente el número de cupos disponibles.
-  - [ ] Al convertirse en estudiante matriculado, la plaza reservada se transforma en matrícula activa sin duplicar el descuento de cupo.
-  - [ ] La cancelación de una matrícula o expiración de una admisión libera el cupo en tiempo real.
-  - [ ] Peticiones simultáneas sobre el último cupo disponible son procesadas de forma atómica (un solo ganador, el otro a lista de espera).
-  - [ ] La conversión a matrícula recalcula y valida la disponibilidad real antes de confirmar el registro.
-  - [ ] Los reportes de capacidad coinciden con la suma de matrículas activas y reservas no vencidas.
-  - [ ] Cambios de capacidad no modifican decisiones de admisión previamente aprobadas.
-  - [ ] Excepciones de sobrecupo requieren el parámetro `forceCapacityOverride` con autorización auditada de Dirección.
-- **Estado:** [ ] Pendiente
+  - [x] Secciones sin cupos disponibles bloquean el cambio de estado a `Admitida` y la conversión a matrícula.
+  - [x] Aspirantes admitidos reducen inmediatamente el número de cupos disponibles.
+  - [x] Al convertirse en estudiante matriculado, la plaza reservada se transforma en matrícula activa sin duplicar el descuento de cupo.
+  - [x] La cancelación de una matrícula o expiración de una admisión libera el cupo en tiempo real.
+  - [x] Peticiones simultáneas sobre el último cupo disponible son procesadas de forma atómica (un solo ganador, el otro a lista de espera).
+  - [x] La conversión a matrícula recalcula y valida la disponibilidad real antes de confirmar el registro.
+  - [x] Los reportes de capacidad coinciden con la suma de matrículas activas y reservas no vencidas.
+  - [x] Cambios de capacidad no modifican decisiones de admisión previamente aprobadas.
+  - [x] Excepciones de sobrecupo requieren el parámetro `forceCapacityOverride` con autorización auditada de Dirección.
+- **Estado:** [X] Completada
 
 ---
 

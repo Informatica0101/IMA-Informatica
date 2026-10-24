@@ -1357,6 +1357,14 @@ function updateAdmissionStatus(payload) {
           throw new Error(`Acción denegada: La solicitud ${solicitudId} tiene ${pendingOrFailed.length} evaluación(es) obligatoria(s) pendiente(s) o reprobada(s).`);
         }
       }
+
+      // [TAREA-F5-010] Verificar disponibilidad de cupo antes de marcar como Admitida
+      const anolectivoVal = String(row[2] || "2026").trim();
+      const gradoVal = String(row[3] || "").trim();
+      const capCheck = checkEnrollmentCapacity({ anolectivo: anolectivoVal, grado: gradoVal, skipLock: true });
+      if (capCheck && capCheck.hayCupo === false && !payload.forceCapacityOverride) {
+        throw new Error(`Acción denegada: No hay cupos disponibles en el grado ${gradoVal} para el año ${anolectivoVal}. (Capacidad Máxima: ${capCheck.capacidadMaxima}, Ocupados + Reservados: ${capCheck.totalOcupados}).`);
+      }
     }
 
     // Actualizar estado u observaciones
@@ -5811,35 +5819,59 @@ function updateDocumentStatus(payload) {
 // FASE 4: 6. MATRÍCULAS, RENOVACIONES Y CONTROL DE CUPOS
 // ---------------------------------------------------------------------------
 
+// [TAREA-F5-010] [Fase 5: Admisiones y Matrícula] - Control consistente de capacidad integrando matrículas activas y plazas reservadas (solicitudes Admitidas) con LockService
 function checkEnrollmentCapacity(payload) {
-  const { anolectivo, grado, seccion } = payload || {};
-  if (!grado || !seccion) throw new Error("Grado y sección requeridos.");
+  const { anolectivo, grado, seccion, skipLock } = payload || {};
+  if (!grado) throw new Error("Grado es requerido.");
 
-  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
-  const targetAno = anolectivo || "2026";
+  let hasLock = false;
+  const lock = LockService.getScriptLock();
+  try {
+    if (!skipLock) {
+      hasLock = lock.tryLock(5000);
+    }
 
-  // Consultar capacidad máxima en OfertaAcademica si existe
-  const offerRows = getOrCreateSheet(ss, "OfertaAcademica").getDataRange().getValues().slice(1);
-  const offer = offerRows.find(r => String(r[1]).trim() === String(targetAno).trim() && normalizeString(r[3]) === normalizeString(grado) && normalizeString(r[4]) === normalizeString(seccion));
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const targetAno = anolectivo || "2026";
+    const targetSeccion = seccion || "A";
 
-  const maxCapacity = offer ? parseInt(offer[8] || 35) : 35;
+    // 1. Consultar capacidad máxima en OfertaAcademica si existe
+    const offerRows = getOrCreateSheet(ss, "OfertaAcademica").getDataRange().getValues().slice(1);
+    const offer = offerRows.find(r => String(r[1]).trim() === String(targetAno).trim() && normalizeString(r[3]) === normalizeString(grado) && (normalizeString(r[4]) === normalizeString(targetSeccion) || normalizeString(r[3]) === normalizeString(targetSeccion)));
 
-  // Consultar ocupación en Matriculas
-  const matRows = getOrCreateSheet(ss, "Matriculas").getDataRange().getValues().slice(1);
-  const currentEnrolled = matRows.filter(r => String(r[6]).trim() === String(targetAno).trim() && normalizeString(r[4]) === normalizeString(grado) && normalizeString(r[5]) === normalizeString(seccion) && (r[8] === "Activa" || r[8] === "Confirmada")).length;
+    const maxCapacity = offer ? parseInt(offer[8] || 35) : 35;
 
-  const availableSlots = Math.max(0, maxCapacity - currentEnrolled);
+    // 2. Consultar inscritos confirmados en Matriculas
+    const matRows = getOrCreateSheet(ss, "Matriculas").getDataRange().getValues().slice(1);
+    const currentEnrolled = matRows.filter(r => String(r[6]).trim() === String(targetAno).trim() && normalizeString(r[4]) === normalizeString(grado) && normalizeString(r[5]) === normalizeString(targetSeccion) && (r[8] === "Activa" || r[8] === "Confirmada")).length;
 
-  return {
-    status: "success",
-    anolectivo: targetAno,
-    grado: grado,
-    seccion: seccion,
-    capacidadMaxima: maxCapacity,
-    inscritosActuales: currentEnrolled,
-    cuposDisponibles: availableSlots,
-    hayCupo: availableSlots > 0
-  };
+    // 3. Consultar plazas reservadas por aspirantes en estado 'Admitida' (pendientes de formalizar matrícula)
+    const admRows = getOrCreateSheet(ss, "SolicitudesAdmision").getDataRange().getValues().slice(1);
+    const reservedSlots = admRows.filter(r => String(r[2]).trim() === String(targetAno).trim() && normalizeString(r[3]) === normalizeString(grado) && String(r[11]).trim() === "Admitida").length;
+
+    const totalOccupied = currentEnrolled + reservedSlots;
+    const availableSlots = Math.max(0, maxCapacity - totalOccupied);
+
+    // Permitir sobrecupo únicamente si la directiva OVERBOOKING_ALLOWED está activa o se proporciona autorización
+    const overbookingAllowed = typeof OVERBOOKING_ALLOWED !== "undefined" && OVERBOOKING_ALLOWED === true;
+
+    return {
+      status: "success",
+      anolectivo: targetAno,
+      grado: grado,
+      seccion: targetSeccion,
+      capacidadMaxima: maxCapacity,
+      inscritosActuales: currentEnrolled,
+      plazasReservadas: reservedSlots,
+      totalOcupados: totalOccupied,
+      cuposDisponibles: availableSlots,
+      hayCupo: availableSlots > 0 || overbookingAllowed
+    };
+  } finally {
+    if (hasLock) {
+      try { lock.releaseLock(); } catch (_) {}
+    }
+  }
 }
 
 function createStudentEnrollment(payload) {
