@@ -190,6 +190,9 @@ window.openAdmissionDetailModal = function(solicitudId) {
     // [TAREA-F5-011] Cargar seguimiento de notificaciones enviadas
     window.loadAdmissionNotificationLogs(found.solicitudId);
 
+    // [TAREA-F5-014] Cargar línea de tiempo de trazabilidad
+    window.loadAdmissionAuditTrail(found.solicitudId);
+
     if (actionsEl) {
         const allowedTransitions = {
             "Recibida": ["En_Revision", "Rechazada", "Retirada"],
@@ -491,6 +494,47 @@ window.promptIssueTutorInvitation = async function(solicitudIdInput, expedienteI
         }
     } catch (err) {
         alert("Error de red: " + err.message);
+    }
+};
+
+// [TAREA-F5-014] [Fase 5: Trazabilidad y Auditoría] - Carga y despliegue del historial de cambios de la solicitud de admisión
+window.loadAdmissionAuditTrail = async function(solicitudId) {
+    const container = document.getElementById('modal-adm-audit-container');
+    if (!container) return;
+
+    container.innerHTML = `<p class="text-gray-400"><i class="fas fa-spinner fa-spin mr-1"></i> Consultando línea de tiempo de trazabilidad...</p>`;
+
+    try {
+        const res = await window.fetchApi('USER', 'getEntityAuditHistory', { entityType: 'SolicitudAdmision', entityId: solicitudId, limit: 15 });
+        if (res && res.status === 'success' && Array.isArray(res.data)) {
+            if (res.data.length === 0) {
+                container.innerHTML = `<p class="text-gray-400 italic">No se registran cambios de estado o modificaciones auditadas en la bitácora.</p>`;
+                return;
+            }
+
+            let html = `<div class="space-y-2 max-h-48 overflow-y-auto pr-1">`;
+            res.data.forEach(chg => {
+                const dateStr = chg.fechaCambio ? new Date(chg.fechaCambio).toLocaleString('es-HN') : 'Sin fecha';
+                html += `
+                    <div class="p-2 bg-white rounded-lg border border-gray-100 flex flex-col gap-1 shadow-sm">
+                        <div class="flex justify-between items-center text-[10px]">
+                            <span class="font-bold text-gray-800 flex items-center gap-1">
+                                <i class="fa-solid fa-clock-rotate-left text-amber-500"></i> ${window.escapeHtml ? window.escapeHtml(chg.accion) : chg.accion}
+                            </span>
+                            <span class="text-gray-400">${dateStr}</span>
+                        </div>
+                        <p class="text-gray-600 text-[11px] leading-tight">Por: <strong>${chg.ejecutadoPor}</strong></p>
+                        ${chg.valoresNuevos ? `<div class="text-[10px] text-gray-500 bg-gray-50 p-1.5 rounded border border-gray-100 font-mono overflow-x-auto">${window.escapeHtml ? window.escapeHtml(JSON.stringify(chg.valoresNuevos)) : JSON.stringify(chg.valoresNuevos)}</div>` : ''}
+                    </div>
+                `;
+            });
+            html += `</div>`;
+            container.innerHTML = html;
+        } else {
+            container.innerHTML = `<p class="text-gray-400 italic">No fue posible cargar el historial de auditoría.</p>`;
+        }
+    } catch (err) {
+        container.innerHTML = `<p class="text-red-500">Error al cargar bitácora: ${err.message}</p>`;
     }
 };
 

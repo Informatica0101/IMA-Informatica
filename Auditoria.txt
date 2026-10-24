@@ -131,4 +131,9 @@ RESOLUCIÓN Y VERIFICACIÓN DE TAREAS EJECUTADAS:
  - Estado: COMPLETADA Y VERIFICADA (2026-03-29)
  - Archivos Modificados: backend/accounting-service/Code.gs, js/student.js
  - Verificación: Implementadas las funciones backend `getAdmissionFinancialStatus` y `createAdmissionCharge` en `accounting-service/Code.gs` para vinculación de cobros de admisión a `solicitudId`, consulta de solvencia e insensibilidad a mayúsculas/minúsculas. Incorporadas las reglas RBAC en `ROLE_PERMISSIONS` para tutores/responsables. Creado el controlador `loadApplicantFinancialStatus` en `js/student.js` y el contenedor `#family-applicant-financial-container` en el Portal Familiar. Comentario identificativo [TAREA-F5-013] inyectado.
+
+[TAREA-F5-014] Completar la trazabilidad de admisiones y las notificaciones de auditoría
+ - Estado: COMPLETADA Y VERIFICADA (2026-03-29)
+ - Archivos Modificados: backend/user-service/Code.gs, dashboard-secretaria.html, js/secretary.js
+ - Verificación: Habilitados los permisos de trazabilidad en `getEntityAuditHistory` para roles de Secretaría y Dirección en `user-service/Code.gs`. Creados el componente `#modal-adm-audit-container` en `dashboard-secretaria.html` y el controlador `loadAdmissionAuditTrail` en `js/secretary.js` para consultar la línea de tiempo de cambios sobre el expediente de admisión. Comentario identificativo [TAREA-F5-014] inyectado.
 ================================================================================

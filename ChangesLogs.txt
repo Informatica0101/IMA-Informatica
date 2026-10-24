@@ -1469,3 +1469,11 @@ Archivos Modificados:
   - Registro de permisos "getAdmissionFinancialStatus" y "createAdmissionCharge" en `ROLE_PERMISSIONS` para roles Padre, Tutor, Responsable y dispatcher en `doPost`.
 - js/student.js:
   - Implementación de `loadApplicantFinancialStatus` con comentario identificativo [TAREA-F5-013] e inyección del contenedor `#family-applicant-financial-container` dentro del panel de seguimiento de admisiones.
+
+[TAREA-F5-014] [Fase 5 - Trazabilidad y Notificaciones de Auditoría de Admisiones]
+- backend/user-service/Code.gs:
+  - Actualización de `getEntityAuditHistory` con comentario identificativo [TAREA-F5-014] para permitir consulta de auditoría y trazabilidad a roles Secretaría y Dirección.
+- dashboard-secretaria.html:
+  - Incorporado contenedor `#modal-adm-audit-container` en el modal de detalle de admisión.
+- js/secretary.js:
+  - Implementado controlador `loadAdmissionAuditTrail` con comentario identificativo [TAREA-F5-014] para despliegue de la línea de tiempo de cambios sobre la solicitud.

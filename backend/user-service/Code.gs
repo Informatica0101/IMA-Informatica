@@ -2535,7 +2535,7 @@ function recordEntityChangeLog(entityType, entityId, previousValue, newValue, ac
   }
 }
 
-// [TAREA-F4-P1-06] [Fase 4: Trazabilidad e Historial de Versiones] - Reconstrucción de la línea de tiempo de una entidad o recurso
+// [TAREA-F5-014] [TAREA-F4-P1-06] [Fase 5: Trazabilidad y Notificaciones de Auditoría] - Reconstrucción de la línea de tiempo de cambios de entidad y trazabilidad de admisiones
 function getEntityAuditHistory(payload) {
   const callerRole = getUserVerifiedRole(payload);
   const callerId = payload._verifiedUserId;
@@ -2543,9 +2543,9 @@ function getEntityAuditHistory(payload) {
 
   if (!entityId) throw new Error("entityId es requerido.");
 
-  if (callerRole !== "Administrador" && callerRole !== "Desarrollador") {
+  if (callerRole !== "Administrador" && callerRole !== "Desarrollador" && callerRole !== "Secretaría" && callerRole !== "Secretaria" && callerRole !== "Director") {
     if (String(entityId).trim() !== String(callerId).trim()) {
-      throw new Error("Acceso denegado: Únicamente puede consultar el historial propio de cambios.");
+      throw new Error("Acceso denegado: Únicamente personal autorizado de Administración, Dirección o Secretaría puede consultar la trazabilidad de otras entidades.");
     }
   }
 

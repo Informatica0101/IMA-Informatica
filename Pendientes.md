@@ -442,7 +442,7 @@
 
 ---
 
-### [TAREA-F5-014] Completar la trazabilidad de admisiones y las notificaciones de auditoría
+### [X] [TAREA-F5-014] Completar la trazabilidad de admisiones y las notificaciones de auditoría
 - **Origen del Hallazgo:** `Auditoria.txt` (HALLAZGOS F5: HALLAZGOS-F5-P1-01) / `AUDITORIA_FASE_5_ADMISIONES_PORTAL_FAMILIAS.md` (Subcapacidad 5.15, Brecha P1-01)
 - **Severidad/Clasificación:** Alto
 - **Archivos Involucrados:** `backend/academic-service/Code.gs` (l. 743, 795), `backend/user-service/Code.gs`
@@ -461,14 +461,14 @@
   11. Facilitar la reconstrucción cronológica completa de una conversión o de una operación que haya fallado parcialmente.
   12. Vincular los identificadores de trazabilidad (`correlationId`) entre el servicio académico, de usuarios y contable.
 - **Criterios de Aceptación:**
-  - [ ] Toda actualización de estado o conversión de admisión genera su registro de diff en `HistorialCambiosEntidad`.
-  - [ ] Intentos de modificación no autorizados en la bitácora son bloqueados.
-  - [ ] Los logs sanitizan contraseñas, tokens e información altamente confidencial.
-  - [ ] Operaciones fallidas quedan marcadas con nivel `ERROR` o `WARN` con el detalle de la excepción.
-  - [ ] Se puede reconstruir la línea de tiempo completa de una solicitud desde su recepción hasta la matrícula.
-  - [ ] Descargas de documentos de menores quedan registradas con el usuario y la fecha.
-  - [ ] El `correlationId` permite rastrear una transacción a través de los 5 microservicios backend.
-- **Estado:** [ ] Pendiente
+  - [x] Toda actualización de estado o conversión de admisión genera su registro de diff en `HistorialCambiosEntidad`.
+  - [x] Intentos de modificación no autorizados en la bitácora son bloqueados.
+  - [x] Los logs sanitizan contraseñas, tokens e información altamente confidencial.
+  - [x] Operaciones fallidas quedan marcadas con nivel `ERROR` o `WARN` con el detalle de la excepción.
+  - [x] Se puede reconstruir la línea de tiempo completa de una solicitud desde su recepción hasta la matrícula.
+  - [x] Descargas de documentos de menores quedan registradas con el usuario y la fecha.
+  - [x] El `correlationId` permite rastrear una transacción a través de los 5 microservicios backend.
+- **Estado:** [X] Completada
 
 ---
 
