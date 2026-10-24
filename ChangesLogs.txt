@@ -1486,3 +1486,7 @@ Archivos Modificados:
 - admision.html:
   - Inyección del indicador `#draft-save-indicator` con comentario identificativo [TAREA-F5-015].
   - Implementación de `triggerAdmissionAutoSave` (debounce 3s, guardado híbrido local/servidor) y `restoreAdmissionDraftOnLoad`.
+
+[TAREA-F5-016] [Fase 5 - Accesibilidad WCAG 2.2 AA y Adaptación Móvil de Admisiones]
+- admision.html:
+  - Actualización de `goToStep` con comentario identificativo [TAREA-F5-016], enfoque automático en el primer control del nuevo paso, atributos ARIA (`aria-current`), actualización elástica de la barra de progreso e inyección de ejecución automática de `auditAndFixAccessibility()`.

@@ -141,4 +141,9 @@ RESOLUCIÓN Y VERIFICACIÓN DE TAREAS EJECUTADAS:
  - Estado: COMPLETADA Y VERIFICADA (2026-03-29)
  - Archivos Modificados: backend/academic-service/Code.gs, admision.html
  - Verificación: Creada la hoja `BorradoresAdmision` e implementadas las funciones backend `saveAdmissionDraft` y `getAdmissionDraft` en `academic-service/Code.gs` con consumo/purga automática de borradores al enviar la solicitud formal (`createAdmissionRequest`). Implementados en `admision.html` el indicador visual de estado de borrador, el guardado híbrido local/servidor con debounce de 3s y la auto-restauración de datos al cargar la página. Comentarios identificativos [TAREA-F5-015] inyectados.
+
+[TAREA-F5-016] Mejorar la experiencia de uso, accesibilidad y adaptación móvil del proceso de admisión
+ - Estado: COMPLETADA Y VERIFICADA (2026-03-29)
+ - Archivos Modificados: admision.html, js/ui-common.js
+ - Verificación: Mejorado el stepper en `admision.html` con atributos ARIA accesibles (`aria-current`), enfoque automático en el primer control del nuevo paso, barra de progreso elástica, soporte responsivo para móviles de 320px en adelante y ejecución automática de `auditAndFixAccessibility()` al cambiar de paso. Comentarios identificativos [TAREA-F5-016] inyectados.
 ================================================================================

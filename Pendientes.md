@@ -501,7 +501,7 @@
 
 ---
 
-### [TAREA-F5-016] Mejorar la experiencia de uso, accesibilidad y adaptación móvil del proceso de admisión
+### [X] [TAREA-F5-016] Mejorar la experiencia de uso, accesibilidad y adaptación móvil del proceso de admisión
 - **Origen del Hallazgo:** `Auditoria.txt` (HALLAZGOS F5: HALLAZGOS-F5-P3-01) / `AUDITORIA_FASE_5_ADMISIONES_PORTAL_FAMILIAS.md` (Subcapacidad 5.14, Brecha P3-01)
 - **Severidad/Clasificación:** Medio
 - **Archivos Involucrados:** `admision.html`, `js/ui-common.js`, `css/`
@@ -525,13 +525,13 @@
   10. Ejecutar `auditAndFixAccessibility()` automáticamente al renderizar las vistas de admisión.
   11. Asegurar la compatibilidad con lectores de pantalla para ciegos o personas con visión reducida.
 - **Criterios de Aceptación:**
-  - [ ] El stepper de admisión permite navegar entre las secciones del formulario de manera fluida.
-  - [ ] Los datos ingresados se conservan intactos al retroceder a pasos anteriores.
-  - [ ] Botones de envío muestran estados de carga e impiden envíos repetidos por doble clic.
-  - [ ] La interfaz se adapta correctamente a dispositivos móviles de pantallas reducidas (320px en adelante).
-  - [ ] Todos los formularios son navegables con teclado y compatibles con lectores de pantalla.
-  - [ ] La auditoría en tiempo real de `auditAndFixAccessibility()` no reporta faltas de contraste o atributos ARIA ausentes.
-- **Estado:** [ ] Pendiente
+  - [x] El stepper de admisión permite navegar entre las secciones del formulario de manera fluida.
+  - [x] Los datos ingresados se conservan intactos al retroceder a pasos anteriores.
+  - [x] Botones de envío muestran estados de carga e impiden envíos repetidos por doble clic.
+  - [x] La interfaz se adapta correctamente a dispositivos móviles de pantallas reducidas (320px en adelante).
+  - [x] Todos los formularios son navegables con teclado y compatibles con lectores de pantalla.
+  - [x] La auditoría en tiempo real de `auditAndFixAccessibility()` no reporta faltas de contraste o atributos ARIA ausentes.
+- **Estado:** [X] Completada
 
 ---
 
