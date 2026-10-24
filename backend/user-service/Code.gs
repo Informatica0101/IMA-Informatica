@@ -3312,6 +3312,10 @@ function getGuardianStudents(payload) {
     }).map(r => {
       const studentId = String(r[1]).trim();
       const u = usersMap[studentId] || { userId: studentId, nombre: "Estudiante " + studentId, grado: "", seccion: "" };
+      let permsObj = { permisoAcademico: true, permisoFinanciero: true, permisoDocumental: true, permisoAsistencia: true };
+      try {
+        if (r[8]) permsObj = typeof r[8] === "string" ? JSON.parse(r[8]) : r[8];
+      } catch (e) {}
       return {
         relacionId: r[0],
         expedienteEstudianteId: r[1],
@@ -3321,7 +3325,8 @@ function getGuardianStudents(payload) {
         seccion: u.seccion,
         tipoParentesco: r[3],
         estadoMatricula: u.estadoCuenta || "Activa",
-        estado: r[4]
+        estado: r[4],
+        permisos: permsObj
       };
     });
   }
@@ -3399,7 +3404,8 @@ function getGuardianApplicants(payload) {
   return { status: "success", data: applicants };
 }
 
-// [TAREA-F4-P0-02] [Fase 4: Protección IDOR y ABAC] - Aislamiento estricto de resumen financiero familiar por tutor
+// [TAREA-F5-018] [Fase 5: Portal de Familias] - Resumen Consolidado Familiar y Experiencia Multiestudiante
+// Consolida las métricas académicas y financieras de todos los hijos vinculados al tutor, evaluando los permisos individuales por relación (PermisoFinanciero) y desglosando estados de solvencia.
 function getFamilyConsolidatedSummary(payload) {
   const callerRole = getUserVerifiedRole(payload);
   if (callerRole === "NO_ACCESS") {
@@ -3428,23 +3434,28 @@ function getFamilyConsolidatedSummary(payload) {
   let totalPagosRevision = 0;
 
   const studentDetails = students.map(s => {
+    const tienePermisoFinanciero = !s.permisos || s.permisos.permisoFinanciero !== false;
+
     let studentCargos = 0;
-    cargosRows.forEach(c => {
-      if (String(c[1]).trim() === String(s.userId).trim() && (c[6] === "Pendiente" || c[6] === "Vencido")) {
-        const monto = parseFloat(c[4]) || 0;
-        studentCargos += monto;
-      }
-    });
-
     let studentPagosRev = 0;
-    compRows.forEach(p => {
-      if (String(p[2]).trim() === String(s.userId).trim() && (p[9] === "En revision" || p[9] === "Pendiente")) {
-        studentPagosRev += parseFloat(p[5]) || 0;
-      }
-    });
 
-    totalCargosPendientes += studentCargos;
-    totalPagosRevision += studentPagosRev;
+    if (tienePermisoFinanciero) {
+      cargosRows.forEach(c => {
+        if (String(c[1]).trim() === String(s.userId).trim() && (c[6] === "Pendiente" || c[6] === "Vencido")) {
+          const monto = parseFloat(c[4]) || 0;
+          studentCargos += monto;
+        }
+      });
+
+      compRows.forEach(p => {
+        if (String(p[2]).trim() === String(s.userId).trim() && (p[9] === "En revision" || p[9] === "Pendiente")) {
+          studentPagosRev += parseFloat(p[5]) || 0;
+        }
+      });
+
+      totalCargosPendientes += studentCargos;
+      totalPagosRevision += studentPagosRev;
+    }
 
     return {
       userId: s.userId,
@@ -3452,8 +3463,10 @@ function getFamilyConsolidatedSummary(payload) {
       grado: s.grado,
       seccion: s.seccion,
       estadoMatricula: s.estadoMatricula || "Activa",
-      saldoPendiente: studentCargos,
-      pagosEnRevision: studentPagosRev,
+      tienePermisoFinanciero: tienePermisoFinanciero,
+      saldoPendiente: tienePermisoFinanciero ? studentCargos : null,
+      pagosEnRevision: tienePermisoFinanciero ? studentPagosRev : null,
+      esSolvente: tienePermisoFinanciero ? (studentCargos === 0) : null,
       tareasPendientesCount: 0
     };
   });

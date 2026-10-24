@@ -1500,3 +1500,12 @@ Archivos Modificados:
   - Inserción de la tarjeta contenedora `#modal-adm-duplicates-container` en el modal de detalle de admisión.
 - js/secretary.js:
   - Implementación de `checkAdmissionDuplicates`, `renderAdmissionDuplicatesSection` y `promptResolveAdmissionDuplicate` con comentario identificativo [TAREA-F5-017] para consulta en tiempo real y flujo interactivo de resolución de coincidencias desde Secretaría.
+
+[TAREA-F5-018] [Fase 5 - Experiencia Multiestudiante y Resumen Familiar Consolidado]
+- backend/user-service/Code.gs:
+  - Actualización de `getGuardianStudents` para extraer y retornar el objeto de permisos de relación familiar (`permisos`).
+  - Reestructuración de `getFamilyConsolidatedSummary` con comentario identificativo [TAREA-F5-018] para evaluar explícitamente `permisoFinanciero` por estudiante, omitiendo saldos para tutores restringidos y retornando indicadores de solvencia (`esSolvente: true/false/null`).
+- js/student.js:
+  - Modificación de `initFamilyStudentSwitcher` con comentario identificativo [TAREA-F5-018] para ejecutar el refresco integral de todos los paneles académicos y administrativos (`renderStudentHeader`, `fetchAllActivities`, `fetchAndRenderFormativeEvaluations`, `fetchAndRenderStudentAttendanceSummary`, `fetchAndRenderStudentAdministrativeRequests`, `fetchAndRenderStudentSchedule`, `fetchAndRenderVirtualClassroom`, `fetchAndRenderLearningProfile`, `loadStudentAcademicResults`) al conmutar entre hijos sin mezclar datos.
+  - Aislamiento de claves de caché local (`cache_estudiante_dashboard_<userId>` y `cache_estudiante_profile_<userId>`) para prevenir infiltración de contexto.
+  - Actualización de `renderFamilyConsolidatedSummary` para renderizar insignias explícitas de solvencia (`L. 0.00 (Solvente)`) y bloqueo de saldos para tutores sin `PermisoFinanciero`.

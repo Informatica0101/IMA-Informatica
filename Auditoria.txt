@@ -148,7 +148,16 @@ RESOLUCIÓN Y VERIFICACIÓN DE TAREAS EJECUTADAS:
  - Verificación: Mejorado el stepper en `admision.html` con atributos ARIA accesibles (`aria-current`), enfoque automático en el primer control del nuevo paso, barra de progreso elástica, soporte responsivo para móviles de 320px en adelante y ejecución automática de `auditAndFixAccessibility()` al cambiar de paso. Comentarios identificativos [TAREA-F5-016] inyectados.
 
 [TAREA-F5-017] Mejorar la gestión de duplicados, validación y calidad de los datos de aspirantes
- - Estado: EN PROCESO DE IMPLEMENTACIÓN Y VERIFICACIÓN (2026-03-29)
- - Archivos Modificados: backend/academic-service/Code.gs, dashboard-secretaria.html, js/secretary.js
- - Verificación: Auditados la función `findDuplicateStudents`, la validación de solicitudes en `createAdmissionRequest` y los flujos de resolución de duplicados en Secretaría. Se extenderá `findDuplicateStudents` para comparar `SolicitudesAdmision` contra expedientes y otras solicitudes, implementar clasificación por niveles de coincidencia (Exacta, Alta, Media), prohibir la fusión automática sin intervención de Secretaría y proporcionar la función de resolución `resolveAdmissionDuplicate`.
+ - Estado: COMPLETADA Y VERIFICADA (2026-03-29)
+ - Archivos Modificados: backend/academic-service/Code.gs (l. 4615-4680), dashboard-secretaria.html (l. 195-240), js/secretary.js (l. 1380-1490)
+ - Verificación: Extendida la función `findDuplicateStudents` en `academic-service/Code.gs` para clasificar coincidencias por niveles (Exacta por DNI, Alta por Nombre+FechaNacimiento, Media por Email/Teléfono), prohibiendo la fusión automática. Creados la función backend `resolveAdmissionDuplicate` para resolución administrativa con motivo obligatorio (mín. 10 caracteres) y registro en `HistorialCambiosEntidad`, y la interfaz `#modal-adm-duplicates-container` con controlador `checkAdmissionDuplicates` en `js/secretary.js`. Verificado exitosamente con prueba Playwright `verify_duplicates.py` y revisión de código `#Correct#`.
+
+[TAREA-F5-018] Completar la experiencia multiestudiante y el resumen familiar consolidado
+ - Estado: AUDITORÍA COMPLETADA, EN PROCESO DE IMPLEMENTACIÓN (2026-03-29)
+ - Archivos Auditados: js/student.js (l. 182-350, 480-550), backend/user-service/Code.gs (l. 3330-3480)
+ - Hallazgos de Auditoría:
+   1. [Infiltración de Contexto por Caché]: `cache_estudiante_dashboard` y `cache_estudiante_profile` en `js/student.js` guardan datos locales sin incluir el `userId` del estudiante en la clave de caché. Al conmutar entre hijos en `initFamilyStudentSwitcher`, se muestran actividades o perfiles del hijo anterior.
+   2. [Refresco Incompleto de Paneles en Conmutación]: Al cambiar de estudiante en `initFamilyStudentSwitcher`, únicamente se invocan `renderStudentHeader()` y `fetchAllActivities()`, dejando desactualizados los paneles de asistencia (`fetchAndRenderStudentAttendanceSummary`), trámites (`fetchAndRenderStudentAdministrativeRequests`), horario (`fetchAndRenderStudentSchedule`), aula virtual (`fetchAndRenderVirtualClassroom`), evaluaciones formativas (`fetchAndRenderFormativeEvaluations`) y boletines académicos (`loadStudentAcademicResults`).
+   3. [Falta de Permiso Financiero por Tutor]: `getFamilyConsolidatedSummary` y `submitJointFamilyPayment` en `backend/user-service/Code.gs` no evalúan la matriz de permisos individuales por tutor (`PermisoFinanciero` en `RelacionesFamiliares`). Si un tutor no posee permiso financiero para un estudiante, debe excluirse o marcarse como restringido sin exponer saldos.
+   4. [Distinción Ambigua entre Cero y Error]: En `renderFamilyConsolidatedSummary` de `js/student.js`, un saldo de L 0.00 no indica explícitamente el estado de "Solvente", ni se distingue visualmente de un fallo de red o información no cargada por el docente.
 ================================================================================

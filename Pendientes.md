@@ -563,7 +563,7 @@
 
 ---
 
-### [TAREA-F5-018] Completar la experiencia multiestudiante y el resumen familiar consolidado
+### [X] [TAREA-F5-018] Completar la experiencia multiestudiante y el resumen familiar consolidado
 - **Origen del Hallazgo:** `Auditoria.txt` (HALLAZGOS F5: HALLAZGOS-F5-P1-01) / `AUDITORIA_FASE_5_ADMISIONES_PORTAL_FAMILIAS.md` (Subcapacidad 5.9, Brecha P1-01)
 - **Severidad/Clasificación:** Medio
 - **Archivos Involucrados:** `js/student.js` (l. 182-350), `backend/user-service/Code.gs` (l. 3261-3320)
@@ -583,12 +583,12 @@
   8. Asegurar que un error de red en la consulta de un estudiante no altere ni ponga a cero los datos de los demás hijos.
   9. Si se revoca la relación familiar de un estudiante, removerlo inmediatamente del selector y de los totales consolidados.
 - **Criterios de Aceptación:**
-  - [ ] Al seleccionar otro estudiante, todo el panel refresca su información académica y contable sin mezclar datos del estudiante anterior.
-  - [ ] Un saldo de L 0.00 se diferencia visualmente de un error de carga del servidor.
-  - [ ] El pago conjunto multihijo registra la transacción contable desglosando los abonos para cada estudiante.
-  - [ ] Tutores sin permisos financieros no pueden ver ni operar los saldos consolidados de la familia.
-  - [ ] La revocación de un vínculo actualiza en tiempo real el selector multiestudiante.
-- **Estado:** [ ] Pendiente
+  - [x] Al seleccionar otro estudiante, todo el panel refresca su información académica y contable sin mezclar datos del estudiante anterior.
+  - [x] Un saldo de L 0.00 se diferencia visualmente de un error de carga del servidor.
+  - [x] El pago conjunto multihijo registra la transacción contable desglosando los abonos para cada estudiante.
+  - [x] Tutores sin permisos financieros no pueden ver ni operar los saldos consolidados de la familia.
+  - [x] La revocación de un vínculo actualiza en tiempo real el selector multiestudiante.
+- **Estado:** [X] Completada
 
 ---
 

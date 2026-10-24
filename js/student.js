@@ -180,7 +180,7 @@ document.addEventListener('DOMContentLoaded', function() {
     window.familyLinkedStudents = [];
     window.familyApplicants = [];
 
-    // [TAREA-F5-012] [Fase 5: Portal de Familias] - Extensión del selector multiestudiante para categorizar entre "Estudiantes Matriculados" y "Aspirantes en Admisión"
+    // [TAREA-F5-018] [Fase 5: Portal de Familias] - Extensión del selector multiestudiante con aislamiento total de contexto por estudiante
     function initFamilyStudentSwitcher() {
         var switcherContainer = document.getElementById('family-student-switcher-container');
         var switcherSelect = document.getElementById('family-student-switcher');
@@ -241,8 +241,17 @@ document.addEventListener('DOMContentLoaded', function() {
                         if (selectedStudent) {
                             currentUser = selectedStudent;
                             localStorage.setItem('currentUser', JSON.stringify(selectedStudent));
+
+                            // Refresco integral de contexto sin filtración de datos entre estudiantes
                             renderStudentHeader();
                             fetchAllActivities();
+                            fetchAndRenderFormativeEvaluations();
+                            fetchAndRenderStudentAttendanceSummary();
+                            fetchAndRenderStudentAdministrativeRequests();
+                            fetchAndRenderStudentSchedule();
+                            fetchAndRenderVirtualClassroom();
+                            fetchAndRenderLearningProfile();
+                            if (typeof loadStudentAcademicResults === 'function') loadStudentAcademicResults();
                         }
                     }
                 };
@@ -381,6 +390,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     };
 
+    // [TAREA-F5-018] [Fase 5: Portal de Familias] - Resumen Consolidado Familiar con distinción visual de Permiso Financiero y Solvencia L 0.00
     window.renderFamilyConsolidatedSummary = function() {
         var cont = document.getElementById('family-consolidated-summary-container');
         if (!cont || !currentUser) return;
@@ -429,6 +439,19 @@ document.addEventListener('DOMContentLoaded', function() {
                             '<h4 class="text-xs font-black text-slate-700 uppercase tracking-wider">Desglose Individual de Hijos</h4>' +
                             '<div class="grid grid-cols-1 md:grid-cols-2 gap-4">' +
                                 (d.estudiantes || []).map(function(st) {
+                                    var saldoBadge = '';
+                                    if (st.tienePermisoFinanciero === false) {
+                                        saldoBadge = '<span class="text-amber-600 font-bold text-[10px]"><i class="fas fa-lock mr-1"></i>Restringido (Sin Permiso Financiero)</span>';
+                                    } else if (st.esSolvente) {
+                                        saldoBadge = '<span class="text-emerald-600 font-black text-[11px]"><i class="fas fa-check-circle mr-1"></i>L. 0.00 (Solvente)</span>';
+                                    } else {
+                                        saldoBadge = '<strong class="text-amber-700 font-black text-xs">L. ' + (parseFloat(st.saldoPendiente) || 0).toFixed(2) + '</strong>';
+                                    }
+
+                                    var pagosRevBadge = (st.tienePermisoFinanciero === false) ?
+                                        '<span class="text-slate-400 text-[10px]">Restringido</span>' :
+                                        '<strong class="text-blue-600 font-black">L. ' + (parseFloat(st.pagosEnRevision) || 0).toFixed(2) + '</strong>';
+
                                     return '' +
                                         '<div class="p-4 bg-white rounded-2xl border border-slate-200 shadow-sm space-y-3 relative hover:border-indigo-300 transition-all">' +
                                             '<div class="flex items-center justify-between gap-3">' +
@@ -446,8 +469,8 @@ document.addEventListener('DOMContentLoaded', function() {
                                                 '</button>' +
                                             '</div>' +
                                             '<div class="flex items-center justify-between text-[11px] pt-2 border-t border-slate-100 font-semibold">' +
-                                                '<span class="text-slate-600">Saldo Pendiente: <strong class="text-slate-900">L. ' + (parseFloat(st.saldoPendiente) || 0).toFixed(2) + '</strong></span>' +
-                                                '<span class="text-slate-600">Pagos en revisión: <strong class="text-blue-600">L. ' + (parseFloat(st.pagosEnRevision) || 0).toFixed(2) + '</strong></span>' +
+                                                '<span class="text-slate-600">Saldo Pendiente: ' + saldoBadge + '</span>' +
+                                                '<span class="text-slate-600">En revisión: ' + pagosRevBadge + '</span>' +
                                             '</div>' +
                                         '</div>';
                                 }).join('') +
@@ -460,7 +483,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             })
             .catch(function(err) {
-                cont.innerHTML = '<div class="text-center py-6 text-rose-500 text-xs font-semibold">Error al cargar el resumen familiar: ' + err.message + '</div>';
+                cont.innerHTML = '<div class="text-center py-6 text-rose-500 text-xs font-semibold"><i class="fas fa-exclamation-triangle text-rose-500 mr-1"></i> Error al cargar el resumen familiar: ' + window.escapeHtml(err.message) + '</div>';
             });
     };
 
@@ -1081,18 +1104,16 @@ document.addEventListener('DOMContentLoaded', function() {
         // Tarea 4: Cargar historial en paralelo para optimizar (v7.8.2)
         var historyPromise = fetchAcademicHistory();
 
-        // REQ: Eager Caching & Offline-First (Modulo 1)
-        // Priorizar renderizado local de 0ms desde cache_estudiante_dashboard
+        // REQ: Eager Caching & Offline-First aislado por estudiante (Modulo 1)
+        var cacheKeyDashboard = 'cache_estudiante_dashboard_' + (currentUser.userId || 'default');
         var hasLocalData = false;
         if (window.PersistenceManager) {
-            var cached = await window.PersistenceManager.get('cache_estudiante_dashboard');
+            var cached = await window.PersistenceManager.get(cacheKeyDashboard);
             if (cached && cached.data) {
                 allActivitiesData = cached.data.allActivities || [];
-                // Esperar al historial si es necesario para los botones
                 await historyPromise;
                 renderStudentExpediente(allActivitiesData);
                 renderSubjectNavigation(allActivitiesData);
-                // Si ya tenemos caché, procedemos a conciliación silenciosa sin bloquear la UI
                 hasLocalData = true;
             }
         }
@@ -1195,9 +1216,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     }));
                 }
 
-                // Persistir en cache_estudiante_dashboard para el próximo inicio (Modulo 1)
+                // Persistir en cache_estudiante_dashboard aislado por estudiante (Modulo 1)
                 if (window.PersistenceManager) {
-                    window.PersistenceManager.set('cache_estudiante_dashboard', {
+                    window.PersistenceManager.set(cacheKeyDashboard, {
                         allActivities: allActivities,
                         timestamp: Date.now()
                     });
@@ -2583,9 +2604,9 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     async function fetchAndRenderLearningProfile(dataOnly = false) {
-        // REQ: Eager Caching for Learning Profile (Ticket: Optimización de Caché)
+        var cacheKeyProfile = 'cache_estudiante_profile_' + (currentUser.userId || 'default');
         if (window.PersistenceManager) {
-            var cached = await window.PersistenceManager.get('cache_estudiante_profile');
+            var cached = await window.PersistenceManager.get(cacheKeyProfile);
             if (cached && cached.data && !dataOnly) {
                 renderLearningProfileData(cached.data);
             }
@@ -2593,7 +2614,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         try {
             var res = await fetchApi('USER', 'getLearningProfile', { userId: currentUser.userId }, 0, {
-                store: 'cache_estudiante_profile',
+                store: cacheKeyProfile,
                 onUpdate: function(data) {
                     if (!dataOnly) renderLearningProfileData(data.data || data);
                 }
