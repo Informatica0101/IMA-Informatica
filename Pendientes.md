@@ -377,7 +377,7 @@
 
 ---
 
-### [TAREA-F5-012] Incorporar seguimiento de aspirantes en el portal familiar
+### [X] [TAREA-F5-012] Incorporar seguimiento de aspirantes en el portal familiar
 - **Origen del Hallazgo:** `Auditoria.txt` (HALLAZGOS F5: HALLAZGOS-F5-P0-01) / `AUDITORIA_FASE_5_ADMISIONES_PORTAL_FAMILIAS.md` (Subcapacidad 5.9 y 5.14, Brecha P0-01)
 - **Severidad/Clasificación:** Alto
 - **Archivos Involucrados:** `student-dashboard.html`, `js/student.js` (l. 180-260), `backend/user-service/Code.gs`
@@ -397,15 +397,15 @@
   12. Diferenciar claramente entre "Sin información registrada", "Falta de permisos" y "Error de carga del servidor".
   13. Evitar atribuir cobros de admisión como deudas de matrícula de estudiantes activos.
 - **Criterios de Aceptación:**
-  - [ ] Un tutor autenticado puede conmutar entre sus hijos matriculados y sus hijos postulantes desde el portal.
-  - [ ] Intento de consultar solicitudes de aspirantes ajenos modificando IDs es bloqueado en el backend.
-  - [ ] Las solicitudes de admisión se distinguen visualmente con etiquetas y colores de las matrículas activas.
-  - [ ] El panel muestra el estado real de los documentos, citas y decisiones de admisión.
-  - [ ] Cambios realizados por admisiones se reflejan inmediatamente al actualizar el portal familiar.
-  - [ ] Los errores de servidor muestran alertas descriptivas sin presentar datos vacíos como inexistentes.
-  - [ ] La interfaz guía a la familia sobre los pasos exactos para completar la admisión.
-  - [ ] Al convertirse en estudiante, el aspirante pasa automáticamente a la sección de estudiantes matriculados.
-- **Estado:** [ ] Pendiente
+  - [x] Un tutor autenticado puede conmutar entre sus hijos matriculados y sus hijos postulantes desde el portal.
+  - [x] Intento de consultar solicitudes de aspirantes ajenos modificando IDs es bloqueado en el backend.
+  - [x] Las solicitudes de admisión se distinguen visualmente con etiquetas y colores de las matrículas activas.
+  - [x] El panel muestra el estado real de los documentos, citas y decisiones de admisión.
+  - [x] Cambios realizados por admisiones se reflejan inmediatamente al actualizar el portal familiar.
+  - [x] Los errores de servidor muestran alertas descriptivas sin presentar datos vacíos como inexistentes.
+  - [x] La interfaz guía a la familia sobre los pasos exactos para completar la admisión.
+  - [x] Al convertirse en estudiante, el aspirante pasa automáticamente a la sección de estudiantes matriculados.
+- **Estado:** [X] Completada
 
 ---
 

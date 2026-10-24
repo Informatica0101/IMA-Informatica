@@ -121,4 +121,9 @@ RESOLUCIÓN Y VERIFICACIÓN DE TAREAS EJECUTADAS:
  - Estado: COMPLETADA Y VERIFICADA (2026-03-29)
  - Archivos Modificados: backend/user-service/Code.gs, backend/academic-service/Code.gs, dashboard-secretaria.html, js/secretary.js
  - Verificación: Reestructurada la función `sendMultiChannelNotification` en `user-service/Code.gs` para conectar el envío por correo electrónico `MailApp` con plantillas HTML personalizables, claves de deduplicación preventiva `deduplicationKey`, registro histórico en `BandejaNotificaciones` y estados de entrega (`Entregado`, `Pendiente_Reintento`). Disparados avisos automáticos en `createAdmissionRequest` (recepción de solicitud) y `updateAdmissionStatus` (cambio de estado). Creados el componente `#modal-adm-notifications-container` y el controlador `loadAdmissionNotificationLogs` en la consola de Secretaría. Comentario identificativo [TAREA-F5-011] inyectado en `backend/user-service/Code.gs`.
+
+[TAREA-F5-012] Incorporar seguimiento de aspirantes en el portal familiar
+ - Estado: COMPLETADA Y VERIFICADA (2026-03-29)
+ - Archivos Modificados: backend/user-service/Code.gs, student-dashboard.html, js/student.js
+ - Verificación: Implementada la función backend `getGuardianApplicants` en `user-service/Code.gs` para consulta aislada de solicitudes de admisión vinculadas al tutor autenticado por correo/userId con protección IDOR. Extendido el selector multiestudiante (`initFamilyStudentSwitcher`) en `js/student.js` para categorizar con grupos de opciones entre "🎓 Estudiantes Matriculados" y "📝 Aspirantes en Admisión". Incorporados el panel `#family-applicant-tracking-container` en `student-dashboard.html` y el controlador `renderApplicantTrackingPanel` en `js/student.js` con línea de tiempo visual del proceso. Comentarios identificativos [TAREA-F5-012] inyectados.
 ================================================================================

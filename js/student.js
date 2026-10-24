@@ -176,43 +176,140 @@ document.addEventListener('DOMContentLoaded', function() {
             });
     }
 
-    // Portal Familiar: Cargar estudiantes vinculados para tutores/padres
+    // Portal Familiar: Cargar estudiantes vinculados y aspirantes en admisión para tutores/padres
     window.familyLinkedStudents = [];
+    window.familyApplicants = [];
 
+    // [TAREA-F5-012] [Fase 5: Portal de Familias] - Extensión del selector multiestudiante para categorizar entre "Estudiantes Matriculados" y "Aspirantes en Admisión"
     function initFamilyStudentSwitcher() {
         var switcherContainer = document.getElementById('family-student-switcher-container');
         var switcherSelect = document.getElementById('family-student-switcher');
         if (!switcherContainer || !switcherSelect || !currentUser) return;
 
-        fetchApi('USER', 'getGuardianStudents', { userId: currentUser.userId })
-            .then(function(res) {
-                if (res && res.status === 'success' && Array.isArray(res.data) && res.data.length > 0) {
-                    window.familyLinkedStudents = res.data;
-                    switcherContainer.classList.remove('hidden');
-                    switcherSelect.innerHTML = res.data.map(function(st) {
+        Promise.all([
+            fetchApi('USER', 'getGuardianStudents', { userId: currentUser.userId }).catch(function() { return { data: [] }; }),
+            fetchApi('USER', 'getGuardianApplicants', { userId: currentUser.userId }).catch(function() { return { data: [] }; })
+        ]).then(function(results) {
+            var studRes = results[0];
+            var appRes = results[1];
+
+            var students = (studRes && studRes.status === 'success' && Array.isArray(studRes.data)) ? studRes.data : [];
+            var applicants = (appRes && appRes.status === 'success' && Array.isArray(appRes.data)) ? appRes.data : [];
+
+            window.familyLinkedStudents = students;
+            window.familyApplicants = applicants;
+
+            if (students.length > 0 || applicants.length > 0) {
+                switcherContainer.classList.remove('hidden');
+
+                var optionsHtml = '';
+                if (students.length > 0) {
+                    optionsHtml += '<optgroup label="🎓 Estudiantes Matriculados">';
+                    students.forEach(function(st) {
                         var selected = (st.userId === currentUser.userId) ? 'selected' : '';
-                        return '<option value="' + st.userId + '" ' + selected + '>👦 ' + st.nombre + ' — ' + (st.grado || '') + ' ' + (st.seccion || '') + '</option>';
-                    }).join('');
+                        optionsHtml += '<option value="STU_' + st.userId + '" ' + selected + '>👦 ' + st.nombre + ' — ' + (st.grado || '') + ' ' + (st.seccion || '') + '</option>';
+                    });
+                    optionsHtml += '</optgroup>';
+                }
 
-                    switcherSelect.onchange = function() {
-                        var selectedId = switcherSelect.value;
-                        var summaryCont = document.getElementById('family-consolidated-summary-container');
-                        if (summaryCont) summaryCont.classList.add('hidden');
+                if (applicants.length > 0) {
+                    optionsHtml += '<optgroup label="📝 Aspirantes en Admisión">';
+                    applicants.forEach(function(ap) {
+                        optionsHtml += '<option value="APP_' + ap.solicitudId + '">📝 ' + ap.nombresAspirante + ' ' + ap.apellidosAspirante + ' (' + ap.gradoSolicitado + ' - ' + ap.estadoSolicitud + ')</option>';
+                    });
+                    optionsHtml += '</optgroup>';
+                }
 
-                        var selectedStudent = res.data.find(function(s) { return s.userId === selectedId; });
+                switcherSelect.innerHTML = optionsHtml;
+
+                switcherSelect.onchange = function() {
+                    var val = switcherSelect.value;
+                    var summaryCont = document.getElementById('family-consolidated-summary-container');
+                    var trackingCont = document.getElementById('family-applicant-tracking-container');
+                    if (summaryCont) summaryCont.classList.add('hidden');
+
+                    if (val.indexOf('APP_') === 0) {
+                        var solId = val.replace('APP_', '');
+                        if (trackingCont) {
+                            trackingCont.classList.remove('hidden');
+                            window.renderApplicantTrackingPanel(solId);
+                        }
+                    } else {
+                        if (trackingCont) trackingCont.classList.add('hidden');
+                        var selectedId = val.replace('STU_', '');
+                        var selectedStudent = students.find(function(s) { return s.userId === selectedId; });
                         if (selectedStudent) {
                             currentUser = selectedStudent;
                             localStorage.setItem('currentUser', JSON.stringify(selectedStudent));
                             renderStudentHeader();
                             fetchAllActivities();
                         }
+                    }
+                };
+            }
+        }).catch(function(err) {
+            console.warn("Familiar student switcher deferred:", err);
+        });
+    }
+
+    // [TAREA-F5-012] Renderizado del panel de seguimiento de admisión para aspirantes en el Portal Familiar
+    window.renderApplicantTrackingPanel = function(solicitudId) {
+        var cont = document.getElementById('family-applicant-tracking-container');
+        if (!cont) return;
+
+        cont.innerHTML = '<div class="text-center py-6 text-slate-500 text-xs font-semibold"><i class="fas fa-circle-notch fa-spin mr-2"></i> Cargando seguimiento de solicitud ' + solicitudId + '...</div>';
+
+        fetchApi('ACADEMIC', 'getAdmissionRequests', { solicitudId: solicitudId })
+            .then(function(res) {
+                if (res && res.status === 'success' && Array.isArray(res.requests) && res.requests.length > 0) {
+                    var req = res.requests[0];
+                    var statusColors = {
+                        "Recibida": "bg-blue-100 text-blue-800",
+                        "En_Revision": "bg-yellow-100 text-yellow-800",
+                        "Evaluacion": "bg-purple-100 text-purple-800",
+                        "En_Espera": "bg-amber-100 text-amber-800",
+                        "Admitida": "bg-green-100 text-green-800",
+                        "Rechazada": "bg-red-100 text-red-800",
+                        "Convertida": "bg-teal-100 text-teal-800"
                     };
+
+                    var html = '' +
+                        '<div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 border-b border-indigo-100 pb-4">' +
+                            '<div>' +
+                                '<span class="inline-block px-3 py-1 bg-indigo-50 text-indigo-600 rounded-full text-[10px] font-black uppercase tracking-widest mb-1">Trámite de Admisión</span>' +
+                                '<h3 class="text-xl font-black text-slate-900 uppercase tracking-tight">' + req.nombresAspirante + ' ' + req.apellidosAspirante + '</h3>' +
+                                '<p class="text-xs font-bold text-slate-400 uppercase tracking-widest">Código: ' + req.solicitudId + ' | Grado: ' + req.gradoSolicitado + ' (' + req.anolectivo + ')</p>' +
+                            '</div>' +
+                            '<div>' +
+                                '<span class="px-3 py-1.5 rounded-full text-xs font-black uppercase tracking-wider ' + (statusColors[req.estadoSolicitud] || 'bg-gray-100 text-gray-800') + '">' +
+                                    req.estadoSolicitud +
+                                '</span>' +
+                            '</div>' +
+                        '</div>' +
+
+                        '<!-- Línea de tiempo visual -->' +
+                        '<div class="py-4">' +
+                            '<h4 class="text-xs font-bold text-slate-700 uppercase tracking-wider mb-3">Línea de Tiempo del Proceso</h4>' +
+                            '<div class="grid grid-cols-2 md:grid-cols-5 gap-2 text-center text-[10px] font-bold">' +
+                                '<div class="p-2 rounded-xl border ' + (['Recibida','En_Revision','Evaluacion','En_Espera','Admitida','Convertida'].indexOf(req.estadoSolicitud) !== -1 ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-slate-50 text-slate-400') + '">1. Recibida</div>' +
+                                '<div class="p-2 rounded-xl border ' + (['En_Revision','Evaluacion','En_Espera','Admitida','Convertida'].indexOf(req.estadoSolicitud) !== -1 ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-slate-50 text-slate-400') + '">2. En Revisión</div>' +
+                                '<div class="p-2 rounded-xl border ' + (['Evaluacion','En_Espera','Admitida','Convertida'].indexOf(req.estadoSolicitud) !== -1 ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-slate-50 text-slate-400') + '">3. Evaluación</div>' +
+                                '<div class="p-2 rounded-xl border ' + (['Admitida','Convertida'].indexOf(req.estadoSolicitud) !== -1 ? 'bg-green-600 text-white border-green-600' : (req.estadoSolicitud === 'En_Espera' ? 'bg-amber-500 text-white' : 'bg-slate-50 text-slate-400')) + '">4. Decisión</div>' +
+                                '<div class="p-2 rounded-xl border ' + (req.estadoSolicitud === 'Convertida' ? 'bg-teal-600 text-white border-teal-600' : 'bg-slate-50 text-slate-400') + '">5. Matrícula</div>' +
+                            '</div>' +
+                        '</div>' +
+
+                        (req.observaciones ? '<div class="p-3 bg-indigo-50/50 rounded-xl text-xs text-indigo-900 border border-indigo-100"><strong>Observaciones de Admisión:</strong> ' + window.escapeHtml(req.observaciones) + '</div>' : '');
+
+                    cont.innerHTML = html;
+                } else {
+                    cont.innerHTML = '<p class="text-red-500 text-xs">No se encontró la solicitud de admisión especificada.</p>';
                 }
             })
             .catch(function(err) {
-                console.warn("Familiar student switcher deferred:", err);
+                cont.innerHTML = '<p class="text-red-500 text-xs">Error de carga: ' + err.message + '</p>';
             });
-    }
+    };
 
     window.toggleFamilyConsolidatedSummary = function() {
         var cont = document.getElementById('family-consolidated-summary-container');

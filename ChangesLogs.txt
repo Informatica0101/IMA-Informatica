@@ -1452,3 +1452,13 @@ Archivos Modificados:
   - Incorporada sección `#modal-adm-notifications-container` en el modal de detalle de admisión para visualizar el historial de notificaciones despachadas.
 - js/secretary.js:
   - Implementado controlador `loadAdmissionNotificationLogs` para consulta y despliegue interactivo del historial de avisos enviados a la familia.
+
+[TAREA-F5-012] [Fase 5 - Seguimiento de Aspirantes en el Portal Familiar]
+- backend/user-service/Code.gs:
+  - Implementación de `getGuardianApplicants` con comentario identificativo [TAREA-F5-012], consulta de solicitudes asociadas al tutor autenticado por correo/userId con aislamiento IDOR.
+  - Registro de permiso "getGuardianApplicants" en `ROLE_PERMISSIONS` para roles Padre, Tutor y Responsable, y dispatcher en `doPost`.
+- student-dashboard.html:
+  - Incorporado contenedor `#family-applicant-tracking-container` para el panel de seguimiento de admisiones en el Portal Familiar.
+- js/student.js:
+  - Extensión de `initFamilyStudentSwitcher` con comentario identificativo [TAREA-F5-012] para categorizar entre "🎓 Estudiantes Matriculados" y "📝 Aspirantes en Admisión" mediante `Promise.all`.
+  - Implementación de `renderApplicantTrackingPanel` para renderizar el estado del trámite y la línea de tiempo visual del aspirante.

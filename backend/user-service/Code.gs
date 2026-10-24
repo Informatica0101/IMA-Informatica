@@ -925,15 +925,15 @@ const ROLE_PERMISSIONS = {
   "Desarrollador": ["*"],
   "Padre": [
     "getUserInfo", "getNews", "getInstitutionalCriteria", "getFormativeEvaluations", "getSupportPlans",
-    "acceptLinkInvitation", "getGuardianStudents", "getInstitutionalAnnouncements", "getInternalMessages", "sendInternalMessage", "getUserNotifications", "getUnifiedNotifications", "markNotificationAsRead", "getAdministrativeRequests", "submitAdministrativeRequest", "submitStudentAbsenceJustification", "getStudentAbsenceJustifications", "getAppointmentBookings", "bookAppointment", "getInstitutionalCalendarEvents", "getPendingReminders"
+    "acceptLinkInvitation", "getGuardianStudents", "getGuardianApplicants", "getInstitutionalAnnouncements", "getInternalMessages", "sendInternalMessage", "getUserNotifications", "getUnifiedNotifications", "markNotificationAsRead", "getAdministrativeRequests", "submitAdministrativeRequest", "submitStudentAbsenceJustification", "getStudentAbsenceJustifications", "getAppointmentBookings", "bookAppointment", "getInstitutionalCalendarEvents", "getPendingReminders"
   ],
   "Tutor": [
     "getUserInfo", "getNews", "getInstitutionalCriteria", "getFormativeEvaluations", "getSupportPlans",
-    "acceptLinkInvitation", "getGuardianStudents", "getInstitutionalAnnouncements", "getInternalMessages", "sendInternalMessage", "getUserNotifications", "getUnifiedNotifications", "markNotificationAsRead", "getAdministrativeRequests", "submitAdministrativeRequest", "submitStudentAbsenceJustification", "getStudentAbsenceJustifications", "getInstitutionalForms", "submitInstitutionalFormRequest", "getAppointmentBookings", "bookAppointment", "getInstitutionalCalendarEvents", "getPendingReminders"
+    "acceptLinkInvitation", "getGuardianStudents", "getGuardianApplicants", "getInstitutionalAnnouncements", "getInternalMessages", "sendInternalMessage", "getUserNotifications", "getUnifiedNotifications", "markNotificationAsRead", "getAdministrativeRequests", "submitAdministrativeRequest", "submitStudentAbsenceJustification", "getStudentAbsenceJustifications", "getAppointmentBookings", "bookAppointment", "getInstitutionalCalendarEvents", "getPendingReminders"
   ],
   "Responsable": [
     "getUserInfo", "getNews", "getInstitutionalCriteria", "getFormativeEvaluations", "getSupportPlans",
-    "acceptLinkInvitation", "getGuardianStudents", "getFamilyConsolidatedSummary", "submitJointFamilyPayment", "getFamilyScholarships", "submitFamilyScholarshipApplication", "getInstitutionalAnnouncements", "getInternalMessages", "sendInternalMessage", "getUserNotifications", "getUnifiedNotifications", "markNotificationAsRead", "getAdministrativeRequests", "submitAdministrativeRequest", "submitStudentAbsenceJustification", "getStudentAbsenceJustifications", "getInstitutionalForms", "submitInstitutionalFormRequest", "getAppointmentBookings", "bookAppointment", "getInstitutionalCalendarEvents", "getPendingReminders"
+    "acceptLinkInvitation", "getGuardianStudents", "getGuardianApplicants", "getInstitutionalAnnouncements", "getInternalMessages", "sendInternalMessage", "getUserNotifications", "getUnifiedNotifications", "markNotificationAsRead", "getAdministrativeRequests", "submitAdministrativeRequest", "submitStudentAbsenceJustification", "getStudentAbsenceJustifications", "getAppointmentBookings", "bookAppointment", "getInstitutionalCalendarEvents", "getPendingReminders"
   ],
   "Director": [
     "createNews", "uploadNewsImage", "getNews", "updateNewsStatus", "getStudents", "getStudentsByGradoSeccion", "getUserInfo", "saveGameResult", "getGameStats", "getGlobalTop", "recordAnalytics", "getLearningProfile", "mergeGuestData", "updateUserProfile", "findPersonMatches", "createPerson", "linkPersonAccount", "manageAccountState", "generateInstitutionalId",
@@ -1292,6 +1292,7 @@ function doPost(e) {
       case "revokeFamilyLink": result = revokeFamilyLink(payload); break;
       case "updateFamilyLinkPermissions": result = updateFamilyLinkPermissions(payload); break;
       case "getGuardianStudents": result = getGuardianStudents(payload); break;
+      case "getGuardianApplicants": result = getGuardianApplicants(payload); break;
       case "getFamilyConsolidatedSummary": result = getFamilyConsolidatedSummary(payload); break;
       case "submitJointFamilyPayment": result = submitJointFamilyPayment(payload); break;
       case "getFamilyScholarships": result = getFamilyScholarships(payload); break;
@@ -3351,6 +3352,51 @@ function getGuardianStudents(payload) {
   }
 
   return { status: "success", data: verifiedStudents };
+}
+
+// [TAREA-F5-012] [Fase 5: Portal de Familias] - Consulta aislada de solicitudes de admisión para aspirantes vinculados al tutor
+function getGuardianApplicants(payload) {
+  const callerRole = getUserVerifiedRole(payload);
+  if (callerRole === "NO_ACCESS") {
+    throw new Error("Acceso denegado: Credenciales de sesión inválidas o expiradas.");
+  }
+
+  let uid = payload.userIdResponsable || payload.userId;
+  if ((callerRole === "Padre" || callerRole === "Tutor" || callerRole === "Responsable") && payload._verifiedUserId) {
+    uid = payload._verifiedUserId;
+  }
+  if (!uid) uid = payload._verifiedUserId;
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+
+  // Obtener correo del tutor autenticado
+  const userRow = getOrCreateSheet(ss, "Usuarios").getDataRange().getValues().slice(1).find(r => String(r[0]).trim() === String(uid).trim());
+  const userEmail = userRow ? String(userRow[4] || "").trim().toLowerCase() : "";
+
+  // Consultar SolicitudesAdmision filtrando por correo del responsable o userId
+  const admRows = getOrCreateSheet(ss, "SolicitudesAdmision").getDataRange().getValues().slice(1);
+  const applicants = admRows.filter(r => {
+    const rowEmail = String(r[10] || "").trim().toLowerCase();
+    return (userEmail && rowEmail === userEmail) || (String(r[8] || "").toLowerCase().includes(String(uid).toLowerCase()));
+  }).map(r => ({
+    solicitudId: r[0],
+    fechaSolicitud: r[1],
+    anolectivo: r[2],
+    gradoSolicitado: r[3],
+    nombresAspirante: r[4],
+    apellidosAspirante: r[5],
+    identificacion: r[6],
+    fechaNacimiento: r[7],
+    nombreResponsable: r[8],
+    telefonoContacto: r[9],
+    emailContacto: r[10],
+    estadoSolicitud: r[11],
+    canalIngreso: r[12] || "Online",
+    observaciones: r[13] || "",
+    expedienteId: r[14] || ""
+  }));
+
+  return { status: "success", data: applicants };
 }
 
 // [TAREA-F4-P0-02] [Fase 4: Protección IDOR y ABAC] - Aislamiento estricto de resumen financiero familiar por tutor
