@@ -1120,6 +1120,21 @@ Archivos Modificados:
 
 -------------------------------------------------------------------------------
 FECHA: Marzo 2026
+TAREA: [TAREA-F5-003] Implementar identificadores únicos, control de concurrencia e idempotencia en admisiones
+-------------------------------------------------------------------------------
+
+Archivos Modificados:
+1. backend/academic-service/Code.gs
+   - Lineas 710-820: Reestructurada función createAdmissionRequest con comentario identificativo de primera línea [TAREA-F5-003]. Integrado el mecanismo atómico generateInstitutionalId para la secuencia de IDs de solicitudes (ADM-000001) respaldado por la hoja SecuenciasIDs, candado de concurrencia LockService.getScriptLock(10000) con lanzamiento explícito de error ante fallos de bloqueo, detección preventiva de solicitudes duplicadas activas por DNI/Identificación o combinación de Nombres+FechaNacimiento para el mismo año lectivo, y verificación/registro de claves de idempotencia mediante checkAndRegisterIdempotencyKey y saveIdempotentResult.
+
+2. Pendientes.md
+   - Marcada como [X] Completada la tarea [TAREA-F5-003].
+
+3. Auditoria.txt
+   - Registrado el informe de resolución y verificación de [TAREA-F5-003].
+
+-------------------------------------------------------------------------------
+FECHA: Marzo 2026
 TAREA: [TAREA-F5-002] Implementar una máquina de estados y reglas de transición para las solicitudes
 -------------------------------------------------------------------------------
 

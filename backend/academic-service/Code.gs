@@ -712,38 +712,103 @@ function doPost(e) {
 // FASE 4: 1. ADMISIONES Y SOLICITUDES DE INGRESO
 // ---------------------------------------------------------------------------
 
+// [TAREA-F5-003] [Fase 5: Admisiones y Matrícula] - Creación atómica de solicitudes con generador de IDs secuencial, candado LockService, detección de duplicados e idempotencia
 function createAdmissionRequest(payload) {
-  const { anolectivo, gradoSolicitado, nombresAspirante, apellidosAspirante, identificacion, fechaNacimiento, nombreResponsable, telefonoContacto, emailContacto, observaciones, canalIngreso } = payload || {};
+  const { anolectivo, gradoSolicitado, nombresAspirante, apellidosAspirante, identificacion, fechaNacimiento, nombreResponsable, telefonoContacto, emailContacto, observaciones, canalIngreso, skipLock } = payload || {};
   if (!nombresAspirante || !apellidosAspirante || !gradoSolicitado) {
     throw new Error("Nombres del aspirante, apellidos y grado solicitado son obligatorios.");
   }
 
-  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
-  const sheet = getOrCreateSheet(ss, "SolicitudesAdmision");
-  const now = new Date();
-  const solicitudId = "ADM-" + now.getTime();
+  // Verificación de clave de idempotencia
+  const cachedResult = checkAndRegisterIdempotencyKey("createAdmissionRequest", payload);
+  if (cachedResult) return cachedResult;
 
-  sheet.appendRow([
-    solicitudId,
-    now,
-    anolectivo || "2026",
-    gradoSolicitado,
-    nombresAspirante.trim(),
-    apellidosAspirante.trim(),
-    identificacion ? String(identificacion).trim() : "",
-    fechaNacimiento || "",
-    nombreResponsable || "",
-    telefonoContacto ? String(telefonoContacto).trim() : "",
-    emailContacto ? String(emailContacto).trim().toLowerCase() : "",
-    "Recibida",
-    canalIngreso || "Web/Portal",
-    observaciones || "",
-    "" // ExpedienteID inicialmente vacío
-  ]);
+  let hasLock = false;
+  const lock = LockService.getScriptLock();
+  try {
+    if (!skipLock) {
+      hasLock = lock.tryLock(10000);
+      if (!hasLock) {
+        throw new Error("Servicio ocupado procesando solicitudes de admisión en paralelo. Por favor reintente en unos segundos.");
+      }
+    }
 
-  logStructuredEvent("ACADEMIC", "createAdmissionRequest", "INFO", "ADMISSION_CREATED", `Solicitud de admisión ${solicitudId} registrada para ${nombresAspirante} ${apellidosAspirante}`, { solicitudId, gradoSolicitado }, payload && payload.authRole);
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const sheet = getOrCreateSheet(ss, "SolicitudesAdmision");
+    const data = sheet.getDataRange().getValues();
 
-  return { status: "success", solicitudId: solicitudId, message: "Solicitud de admisión registrada con éxito." };
+    const targetAno = String(anolectivo || "2026").trim();
+    const cleanIdent = identificacion ? String(identificacion).trim() : "";
+    const cleanEmail = emailContacto ? String(emailContacto).trim().toLowerCase() : "";
+    const normName = normalizeString(`${nombresAspirante} ${apellidosAspirante}`);
+
+    // Detección de solicitudes duplicadas dentro de la sección protegida por LockService
+    if (data.length > 1) {
+      const rows = data.slice(1);
+      const duplicate = rows.find(r => {
+        const rEstado = String(r[11] || "").trim();
+        if (rEstado === "Rechazada" || rEstado === "Retirada") return false;
+
+        const rAno = String(r[2] || "").trim();
+        const rIdent = String(r[6] || "").trim();
+        const rName = normalizeString(`${r[4] || ''} ${r[5] || ''}`);
+
+        if (rAno === targetAno) {
+          if (cleanIdent && rIdent && cleanIdent === rIdent) return true;
+          if (normName && rName && normName === rName && fechaNacimiento && String(r[7]).trim() === String(fechaNacimiento).trim()) return true;
+        }
+        return false;
+      });
+
+      if (duplicate) {
+        throw new Error(`Solicitud duplicada detectada: Ya existe una solicitud registrada (${duplicate[0]}) para el aspirante ${nombresAspirante} ${apellidosAspirante} en el año lectivo ${targetAno}.`);
+      }
+    }
+
+    // Generación de ID Atómico de Solicitud (sin usar marcas de tiempo como único mecanismo)
+    const idGen = generateInstitutionalId({ entityType: "SolicitudAdmision", prefix: "ADM-", skipLock: true });
+    const now = new Date();
+    const solicitudId = (idGen && idGen.generatedId) ? idGen.generatedId : ("ADM-000001");
+
+    const newRow = [
+      solicitudId,
+      now,
+      targetAno,
+      String(gradoSolicitado).trim(),
+      String(nombresAspirante).trim(),
+      String(apellidosAspirante).trim(),
+      cleanIdent,
+      fechaNacimiento || "",
+      String(nombreResponsable || "").trim(),
+      String(telefonoContacto || "").trim(),
+      cleanEmail,
+      "Recibida",
+      canalIngreso || "Web/Portal",
+      observaciones || "",
+      "" // ExpedienteID inicialmente vacío
+    ];
+
+    sheet.appendRow(newRow);
+    SpreadsheetApp.flush();
+
+    const result = {
+      status: "success",
+      solicitudId: solicitudId,
+      anolectivo: targetAno,
+      gradoSolicitado: gradoSolicitado,
+      message: `Solicitud de admisión ${solicitudId} registrada exitosamente.`
+    };
+
+    saveIdempotentResult("createAdmissionRequest", payload, result);
+    logStructuredEvent("ACADEMIC", "createAdmissionRequest", "INFO", "ADMISSION_CREATED", `Solicitud de admisión ${solicitudId} registrada para ${nombresAspirante} ${apellidosAspirante}`, { solicitudId, gradoSolicitado, targetAno }, payload && payload.authRole);
+
+    return result;
+
+  } finally {
+    if (hasLock) {
+      try { lock.releaseLock(); } catch (_) {}
+    }
+  }
 }
 
 function getAdmissionRequests(payload) {

@@ -73,7 +73,7 @@
 
 ---
 
-### [TAREA-F5-003] Implementar identificadores únicos, control de concurrencia e idempotencia en admisiones
+### [X] [TAREA-F5-003] Implementar identificadores únicos, control de concurrencia e idempotencia en admisiones
 - **Origen del Hallazgo:** `Auditoria.txt` (HALLAZGOS F5: HALLAZGOS-F5-P0-04) / `AUDITORIA_FASE_5_ADMISIONES_PORTAL_FAMILIAS.md` (Subcapacidad 5.1 y 5.11, Brecha P0-04)
 - **Severidad/Clasificación:** Crítico
 - **Archivos Involucrados:** `backend/academic-service/Code.gs` (l. 714-740, 800-860)
@@ -88,14 +88,14 @@
   7. Implementar rollback/reversión si la persistencia falla a mitad de la operación para evitar registros incompletos.
   8. Registrar conflictos de concurrencia y reintentos en `logStructuredEvent` sin exponer datos personales sensibles.
 - **Criterios de Aceptación:**
-  - [ ] Las solicitudes simultáneas reciben identificadores atómicos distintos y secuenciales.
-  - [ ] La repetición de una operación con la misma clave de idempotencia no crea registros adicionales.
-  - [ ] La reutilización de una clave de idempotencia con datos incompatibles se rechaza.
-  - [ ] Los duplicados potenciales por DNI o Email se identifican antes de crear una nueva solicitud.
-  - [ ] Los errores de persistencia no dejan solicitudes que aparenten estar completas.
-  - [ ] Las pruebas concurrentes no producen identificadores repetidos ni matrículas duplicadas.
-  - [ ] El mecanismo no depende exclusivamente de la precisión temporal del reloj del servidor.
-- **Estado:** [ ] Pendiente
+  - [x] Las solicitudes simultáneas reciben identificadores atómicos distintos y secuenciales.
+  - [x] La repetición de una operación con la misma clave de idempotencia no crea registros adicionales.
+  - [x] La reutilización de una clave de idempotencia con datos incompatibles se rechaza.
+  - [x] Los duplicados potenciales por DNI o Email se identifican antes de crear una nueva solicitud.
+  - [x] Los errores de persistencia no dejan solicitudes que aparenten estar completas.
+  - [x] Las pruebas concurrentes no producen identificadores repetidos ni matrículas duplicadas.
+  - [x] El mecanismo no depende exclusivamente de la precisión temporal del reloj del servidor.
+- **Estado:** [X] Completada
 
 ---
 

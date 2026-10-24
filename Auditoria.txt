@@ -76,4 +76,9 @@ RESOLUCIÓN Y VERIFICACIÓN DE TAREAS EJECUTADAS:
  - Estado: COMPLETADA Y VERIFICADA (2026-03-29)
  - Archivos Modificados: backend/academic-service/Code.gs (l. 775-920)
  - Verificación: Definida constante ALLOWED_ADMISSION_STATE_TRANSITIONS con reglas de flujo (Recibida -> En_Revision -> Evaluacion -> Admitida / Rechazada / En_Espera -> Convertida). Reestructurada updateAdmissionStatus con validación de transiciones, justificación obligatoria (mínimo 10 caracteres) para rechazos, verificación de documentos pendientes antes de etapa Evaluacion, registro de diffs en HistorialCambiosEntidad y candado atómico LockService. Implementada reopenAdmissionRequest para reapertura controlada por Director/Admin conservando la bitácora.
+
+[TAREA-F5-003] Implementar identificadores únicos, control de concurrencia e idempotencia en admisiones
+ - Estado: COMPLETADA Y VERIFICADA (2026-03-29)
+ - Archivos Modificados: backend/academic-service/Code.gs (l. 710-820)
+ - Verificación: Reestructurada función createAdmissionRequest con comentario identificativo de primera línea [TAREA-F5-003]. Integrada la generación de IDs atómicos secuenciales (ADM-000001) mediante generateInstitutionalId y SecuenciasIDs, candado atómico LockService.getScriptLock(10000) con control de excepciones de bloqueo, detección preventiva de solicitudes duplicadas por DNI o Nombre+FechaNacimiento en el mismo año lectivo, e integración con checkAndRegisterIdempotencyKey / saveIdempotentResult para prevención de reintentos de red duplicados.
 ================================================================================
