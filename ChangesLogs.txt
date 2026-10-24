@@ -1398,3 +1398,13 @@ Archivos Modificados:
   - Incorporada sección `#modal-adm-docs-container` en el modal de detalle de solicitud de admisión.
 - js/secretary.js:
   - Implementadas las funciones `loadAdmissionApplicantDocuments` y `updateApplicantDocumentStatusAction` para consulta, vista y calificación (`Aceptado`, `Rechazado`, `Requiere_Sustitucion`) de documentos de aspirantes.
+
+[TAREA-F5-007] [Fase 5 - Módulo de Entrevistas y Evaluaciones de Admisión]
+- backend/academic-service/Code.gs:
+  - Implementación de las tablas `EntrevistasAdmision` y `EvaluacionesAdmision` en `getOrCreateSheet`.
+  - Implementación de las funciones backend `scheduleAdmissionInterview`, `getAdmissionInterviews`, `recordInterviewOutcome`, `saveAdmissionEvaluation` y `getAdmissionEvaluations` con validaciones de conflicto de agenda y bloqueo de transición a estado 'Admitida' en `updateAdmissionStatus` ante evaluaciones obligatorias pendientes o reprobadas.
+  - Comentario identificativo [TAREA-F5-007] inyectado en el módulo backend.
+- dashboard-secretaria.html:
+  - Incorporadas secciones `#modal-adm-interviews-container` y `#modal-adm-evaluations-container` en el modal de detalle de admisión.
+- js/secretary.js:
+  - Implementados controladores `loadAdmissionInterviews`, `promptScheduleInterview`, `recordInterviewOutcomeAction`, `loadAdmissionEvaluations` y `promptSaveEvaluation`.

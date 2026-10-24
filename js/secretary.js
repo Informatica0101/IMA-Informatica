@@ -173,6 +173,11 @@ window.openAdmissionDetailModal = function(solicitudId) {
     // [TAREA-F5-006] Cargar y renderizar documentos adjuntos de la solicitud
     window.loadAdmissionApplicantDocuments(found.solicitudId);
 
+    // [TAREA-F5-007] Cargar entrevistas y evaluaciones
+    window.currentActiveSolicitudId = found.solicitudId;
+    window.loadAdmissionInterviews(found.solicitudId);
+    window.loadAdmissionEvaluations(found.solicitudId);
+
     if (actionsEl) {
         const allowedTransitions = {
             "Recibida": ["En_Revision", "Rechazada", "Retirada"],
@@ -330,5 +335,161 @@ window.updateApplicantDocumentStatusAction = async function(documentoId, nuevoEs
         }
     } catch (err) {
         alert('Error de comunicación: ' + err.message);
+    }
+};
+
+// [TAREA-F5-007] [Fase 5: Admisiones y Matrícula] - Controladores de interfaz para Entrevistas y Evaluaciones de Admisión
+window.loadAdmissionInterviews = async function(solicitudId) {
+    const container = document.getElementById('modal-adm-interviews-container');
+    if (!container) return;
+
+    container.innerHTML = `<p class="text-gray-400"><i class="fas fa-spinner fa-spin mr-1"></i> Cargando entrevistas...</p>`;
+
+    try {
+        const res = await window.fetchApi('ACADEMIC', 'getAdmissionInterviews', { solicitudId });
+        if (res && res.status === 'success' && Array.isArray(res.interviews) && res.interviews.length > 0) {
+            container.innerHTML = res.interviews.map(i => {
+                let badgeClass = "bg-blue-100 text-blue-800 border-blue-200";
+                if (i.estado === 'Completada') badgeClass = "bg-green-100 text-green-800 border-green-200";
+                if (i.estado === 'Cancelada' || i.estado === 'No_Asistio') badgeClass = "bg-red-100 text-red-800 border-red-200";
+
+                return `
+                    <div class="p-2.5 bg-white rounded-xl border border-gray-100 shadow-sm space-y-1">
+                        <div class="flex justify-between items-center">
+                            <strong class="text-gray-900">${i.fecha} (${i.horaInicio} - ${i.horaFin})</strong>
+                            <span class="px-2 py-0.5 text-[9px] font-bold rounded-full border ${badgeClass}">${i.estado}</span>
+                        </div>
+                        <p class="text-[10px] text-gray-500">Evaluador: ${i.evaluadorUserId} | ${i.modalidad} (${i.lugarEnlace})</p>
+                        ${i.observaciones ? `<p class="text-[10px] text-amber-800 bg-amber-50 p-1.5 rounded-lg border border-amber-100">${i.observaciones}</p>` : ''}
+                        ${i.estado === 'Programada' ? `
+                            <div class="flex gap-1 pt-1 justify-end">
+                                <button onclick="window.recordInterviewOutcomeAction('${i.entrevistaId}', 'Completada')" class="px-2 py-0.5 bg-green-50 text-green-700 font-bold rounded text-[9px]">Completar</button>
+                                <button onclick="window.recordInterviewOutcomeAction('${i.entrevistaId}', 'No_Asistio')" class="px-2 py-0.5 bg-red-50 text-red-700 font-bold rounded text-[9px]">No Asistió</button>
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            }).join('');
+        } else {
+            container.innerHTML = `<p class="text-gray-400 italic">No hay entrevistas agendadas.</p>`;
+        }
+    } catch (err) {
+        container.innerHTML = `<p class="text-red-500">Error: ${err.message}</p>`;
+    }
+};
+
+window.promptScheduleInterview = async function() {
+    const solicitudId = window.currentActiveSolicitudId;
+    if (!solicitudId) return;
+
+    const fecha = prompt("Fecha de la entrevista (AAAA-MM-DD):", new Date().toISOString().split('T')[0]);
+    if (!fecha) return;
+
+    const horaInicio = prompt("Hora inicio (HH:MM):", "09:00");
+    if (!horaInicio) return;
+
+    const horaFin = prompt("Hora fin (HH:MM):", "09:30");
+    if (!horaFin) return;
+
+    const evaluadorUserId = prompt("ID del Evaluador/Docente:", "DOCENTE-001");
+    if (!evaluadorUserId) return;
+
+    const modalidad = prompt("Modalidad (Presencial / Virtual):", "Presencial") || "Presencial";
+    const lugarEnlace = prompt("Lugar / Enlace:", "Campus Principal - Salón A") || "Campus Principal";
+
+    try {
+        const res = await window.fetchApi('ACADEMIC', 'scheduleAdmissionInterview', {
+            solicitudId, fecha, horaInicio, horaFin, evaluadorUserId, modalidad, lugarEnlace
+        });
+
+        if (res && res.status === 'success') {
+            alert("Entrevista agendada exitosamente.");
+            window.loadAdmissionInterviews(solicitudId);
+        } else {
+            alert("Error al agendar entrevista: " + ((res && res.message) || "Error desconocido"));
+        }
+    } catch (err) {
+        alert("Error de comunicación: " + err.message);
+    }
+};
+
+window.recordInterviewOutcomeAction = async function(entrevistaId, estado) {
+    const obs = prompt(`Observaciones de la entrevista (${estado}):`, '');
+    if (obs === null) return;
+
+    try {
+        const res = await window.fetchApi('ACADEMIC', 'recordInterviewOutcome', {
+            entrevistaId, estado, observaciones: obs
+        });
+
+        if (res && res.status === 'success') {
+            alert("Estado de entrevista actualizado.");
+            if (window.currentActiveSolicitudId) window.loadAdmissionInterviews(window.currentActiveSolicitudId);
+        } else {
+            alert("Error: " + ((res && res.message) || "Inconveniente del servidor."));
+        }
+    } catch (err) {
+        alert("Error: " + err.message);
+    }
+};
+
+window.loadAdmissionEvaluations = async function(solicitudId) {
+    const container = document.getElementById('modal-adm-evaluations-container');
+    if (!container) return;
+
+    container.innerHTML = `<p class="text-gray-400"><i class="fas fa-spinner fa-spin mr-1"></i> Cargando evaluaciones...</p>`;
+
+    try {
+        const res = await window.fetchApi('ACADEMIC', 'getAdmissionEvaluations', { solicitudId });
+        if (res && res.status === 'success' && Array.isArray(res.evaluations) && res.evaluations.length > 0) {
+            container.innerHTML = res.evaluations.map(e => {
+                let badgeClass = "bg-green-100 text-green-800 border-green-200";
+                if (e.dictamen === 'Reprobado') badgeClass = "bg-red-100 text-red-800 border-red-200";
+                if (e.dictamen === 'Pendiente') badgeClass = "bg-amber-100 text-amber-800 border-amber-200";
+
+                return `
+                    <div class="p-2.5 bg-white rounded-xl border border-gray-100 shadow-sm space-y-1">
+                        <div class="flex justify-between items-center">
+                            <strong class="text-gray-900">${e.tipoEvaluacion} ${e.esObligatoria ? '<span class="text-red-500 font-bold">*</span>' : ''}</strong>
+                            <span class="px-2 py-0.5 text-[9px] font-bold rounded-full border ${badgeClass}">${e.dictamen}</span>
+                        </div>
+                        <p class="text-[10px] text-gray-500">Puntaje: ${e.puntajeNum} pts (${e.escalaQual || 'Standard'}) | Evaluador: ${e.evaluadorUserId}</p>
+                        ${e.observaciones ? `<p class="text-[10px] text-gray-600 bg-gray-50 p-1.5 rounded-lg">${e.observaciones}</p>` : ''}
+                    </div>
+                `;
+            }).join('');
+        } else {
+            container.innerHTML = `<p class="text-gray-400 italic">No se han registrado evaluaciones de ingreso.</p>`;
+        }
+    } catch (err) {
+        container.innerHTML = `<p class="text-red-500">Error: ${err.message}</p>`;
+    }
+};
+
+window.promptSaveEvaluation = async function() {
+    const solicitudId = window.currentActiveSolicitudId;
+    if (!solicitudId) return;
+
+    const tipoEvaluacion = prompt("Tipo de Evaluación (Examen de Admisión / Diagnóstico Psicopedagógico):", "Examen de Admisión");
+    if (!tipoEvaluacion) return;
+
+    const puntajeNum = parseFloat(prompt("Puntaje Obtenido (0 - 100):", "85")) || 0;
+    const dictamen = prompt("Dictamen Final (Aprobado / Reprobado / Pendiente):", puntajeNum >= 70 ? "Aprobado" : "Reprobado") || "Aprobado";
+    const esObligatoria = confirm("¿Es esta una evaluación obligatoria para la admisión?");
+    const observaciones = prompt("Observaciones / Dictamen Pedagógico:", "Cumple con los requisitos académicos de ingreso.") || "";
+
+    try {
+        const res = await window.fetchApi('ACADEMIC', 'saveAdmissionEvaluation', {
+            solicitudId, tipoEvaluacion, puntajeNum, dictamen, esObligatoria, observaciones
+        });
+
+        if (res && res.status === 'success') {
+            alert("Evaluación registrada correctamente.");
+            window.loadAdmissionEvaluations(solicitudId);
+        } else {
+            alert("Error al registrar evaluación: " + ((res && res.message) || "Inconveniente del servidor."));
+        }
+    } catch (err) {
+        alert("Error de red: " + err.message);
     }
 };

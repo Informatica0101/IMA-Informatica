@@ -202,10 +202,10 @@
 
 ---
 
-### [TAREA-F5-007] Implementar el módulo de entrevistas y evaluaciones de admisión
+### [X] [TAREA-F5-007] Implementar el módulo de entrevistas y evaluaciones de admisión
 - **Origen del Hallazgo:** `Auditoria.txt` (HALLAZGOS F5: HALLAZGOS-F5-P1-01) / `AUDITORIA_FASE_5_ADMISIONES_PORTAL_FAMILIAS.md` (Subcapacidad 5.5, Brecha P1-01)
 - **Severidad/Clasificación:** Alto
-- **Archivos Involucrados:** `backend/academic-service/Code.gs` (Nuevo Módulo), `js/teacher.js`, `teacher-dashboard.html`
+- **Archivos Involucrados:** `backend/academic-service/Code.gs`, `js/secretary.js`, `dashboard-secretaria.html`
 - **Dependencias Expuestas:** Hojas `EntrevistasAdmision`, `EvaluacionesAdmision`, `SolicitudesAdmision`
 - **Descripción del Alcance:**
   1. Crear el esquema de base de datos e implementar las hojas `EntrevistasAdmision` y `EvaluacionesAdmision`.
@@ -223,17 +223,17 @@
   13. Soporte para registrar excepciones autorizadas de evaluación con firma digital y justificación de Dirección.
   14. Permitir registrar múltiples entrevistas o evaluaciones para un aspirante sin sobrescribir registros anteriores.
 - **Criterios de Aceptación:**
-  - [ ] Se puede agendar una entrevista vinculada a una solicitud existente.
-  - [ ] Se puede reprogramar una cita conservando la fecha original en la bitácora.
-  - [ ] El sistema detecta y rechaza solapamientos de horario en la agenda del docente evaluador.
-  - [ ] Una evaluación programada no aparece como completada hasta registrar la nota.
-  - [ ] Las notas y observaciones se conservan e integran al expediente de admisión.
-  - [ ] Evaluadores no autorizados no pueden calificar ni modificar entrevistas ajenas.
-  - [ ] Múltiples evaluaciones se acumulan cronológicamente sin sobrescribirse.
-  - [ ] Solicitudes con evaluaciones obligatorias pendientes no pueden cambiar a `Admitida`.
-  - [ ] Excepciones de evaluación quedan documentadas con el usuario autor y motivo.
-  - [ ] El historial de auditoría registra quién programó, realizó, evaluó o modificó cada cita.
-- **Estado:** [ ] Pendiente
+  - [x] Se puede agendar una entrevista vinculada a una solicitud existente.
+  - [x] Se puede reprogramar una cita conservando la fecha original en la bitácora.
+  - [x] El sistema detecta y rechaza solapamientos de horario en la agenda del docente evaluador.
+  - [x] Una evaluación programada no aparece como completada hasta registrar la nota.
+  - [x] Las notas y observaciones se conservan e integran al expediente de admisión.
+  - [x] Evaluadores no autorizados no pueden calificar ni modificar entrevistas ajenas.
+  - [x] Múltiples evaluaciones se acumulan cronológicamente sin sobrescribirse.
+  - [x] Solicitudes con evaluaciones obligatorias pendientes no pueden cambiar a `Admitida`.
+  - [x] Excepciones de evaluación quedan documentadas con el usuario autor y motivo.
+  - [x] El historial de auditoría registra quién programó, realizó, evaluó o modificó cada cita.
+- **Estado:** [X] Completada
 
 ---
 

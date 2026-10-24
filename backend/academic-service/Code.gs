@@ -122,7 +122,6 @@ function getOrCreateSheet(ss, name) {
     if (name === "DocumentosEstudiante") sheet.appendRow(["DocumentoID", "ExpedienteID", "SolicitudID", "TipoDocumento", "NombreArchivo", "DriveFileId", "DriveUrl", "FechaRecepcion", "FechaVencimiento", "EstadoRevision", "SubidoPor", "ValidadoPor", "Observaciones"]);
     if (name === "MovimientosEstudiante") sheet.appendRow(["MovimientoID", "ExpedienteID", "MatriculaID", "AnoLectivo", "TipoMovimiento", "GradoOrigen", "SeccionOrigen", "GradoDestino", "SeccionDestino", "FechaEfectiva", "Motivo", "AutorizadoPor", "Estado"]);
     if (name === "AntecedentesAcademicos") sheet.appendRow(["AntecedenteID", "ExpedienteID", "InstitucionOrigen", "GradoCompletado", "AnoCompletado", "PromedioObtenido", "EstadoVerificacion", "Observaciones"]);
-
     // Nuevas Tablas Fase 7 - Asistencia y Seguimiento Estudiantil
     if (name === "SesionesAsistencia") sheet.appendRow(["SesionID", "Fecha", "HoraInicio", "HoraFin", "Grado", "Seccion", "AsignaturaID", "DocenteUserId", "Estado", "Observaciones"]);
     if (name === "RegistrosAsistencia") sheet.appendRow(["RegistroID", "SesionID", "UserId", "EstadoAsistencia", "HoraLlegada", "MinutosTardanza", "Justificado", "ObservacionDocente", "FechaRegistro"]);
@@ -139,6 +138,10 @@ function getOrCreateSheet(ss, name) {
     // TAREA-18 - Recursos Educativos y Proyectos Interdisciplinarios
     if (name === "RecursosEducativosReutilizables") sheet.appendRow(["RecursoID", "Titulo", "Area", "Asignatura", "Grado", "Tema", "Idioma", "Version", "Estado", "AutorID", "UrlDrive", "EsInterdisciplinario"]);
     if (name === "ProyectosInterdisciplinarios") sheet.appendRow(["ProyectoID", "Titulo", "DepartamentosInvolucrados", "Descripcion", "LiderProyectoID", "AnoLectivo", "Estado"]);
+
+    // [TAREA-F5-007] Tablas de Entrevistas y Evaluaciones de Admisión
+    if (name === "EntrevistasAdmision") sheet.appendRow(["EntrevistaID", "SolicitudID", "Fecha", "HoraInicio", "HoraFin", "EvaluadorUserId", "LugarEnlace", "Modalidad", "Estado", "Observaciones", "FechaCreacion"]);
+    if (name === "EvaluacionesAdmision") sheet.appendRow(["EvaluacionID", "SolicitudID", "TipoEvaluacion", "PuntajeNum", "EscalaQual", "Dictamen", "EsObligatoria", "EvaluadorUserId", "RubricaJSON", "Observaciones", "FechaEvaluacion"]);
   }
   return sheet;
 }
@@ -162,7 +165,7 @@ const ROLE_PERMISSIONS = {
     "getAcademicOffers", "createAcademicOffer", "getTeacherAssignments", "assignTeacherToClass", "createTeacherSubstitution",
     "getAcademicCalendar", "createCalendarEvent", "getClassSchedules", "createClassSchedule", "deleteClassSchedule", "getAcademicRules", "saveAcademicRule", "getDepartmentAcademicPlanning", "assignDepartmentHead", "getCurricularAnalyticsReport", "getReusableResourceCatalog", "manageReusableResource", "getCurricularEquivalences", "executeCurricularMigration", "registerCurricularAreaExtension", "runCurricularAreaServiceTests", "toggleCurricularAreaStatus", "validateApiContractsTestSuite", "getInstitutionalCatalog", "validateCatalogReference", "generateInstitutionalUUID", "validateInstitutionalIdentifier", "auditInstitutionalIdentifierCollisions", "runConcurrencyAndConsistencySuite", "getPaginatedAcademicHistory", "reconcileRestoredDataIntegrity", "evaluateTransactionalStorageMigrationNeed",
     "getClassroomResources", "saveClassroomResource", "getStudentSchedule",
-    "createAdmissionRequest", "getAdmissionRequests", "updateAdmissionStatus", "reopenAdmissionRequest", "convertAdmissionToStudent",
+    "createAdmissionRequest", "getAdmissionRequests", "updateAdmissionStatus", "reopenAdmissionRequest", "convertAdmissionToStudent", "scheduleAdmissionInterview", "getAdmissionInterviews", "recordInterviewOutcome", "saveAdmissionEvaluation", "getAdmissionEvaluations",
     "getStudentFile", "updateStudentFile", "getStudentTimeline", "findDuplicateStudents", "mergeStudentFiles",
     "getStudentGuardians", "saveStudentGuardian", "unlinkStudentGuardian", "uploadStudentDocument", "getStudentDocuments", "updateDocumentStatus",
     "createStudentEnrollment", "getStudentEnrollments", "renewStudentEnrollment", "checkEnrollmentCapacity",
@@ -185,7 +188,7 @@ const ROLE_PERMISSIONS = {
     "getInstitutionParams", "getAcademicYears", "getAcademicPeriods", "getSubjectCatalog", "getStudyPlans", "getAcademicOffers",
     "createAcademicOffer", "getTeacherAssignments", "assignTeacherToClass", "createTeacherSubstitution", "getAcademicCalendar", "createCalendarEvent", "getClassSchedules", "createClassSchedule", "deleteClassSchedule", "copyClassSchedules", "getTeacherTeachingLoad", "generateAutoSchedules", "recordClassSessionOutcome", "getTeachingHoursSummary", "rescheduleCancelledSession", "getPendingSessionRecoveries", "publishClassSchedules", "getIndividualCalendar", "syncAcademicScheduleIntegrity", "getAcademicAuditLogs", "getReusableResourceCatalog", "manageReusableResource",
     "getClassroomResources", "saveClassroomResource", "getStudentSchedule",
-    "createAdmissionRequest", "getAdmissionRequests", "updateAdmissionStatus", "convertAdmissionToStudent",
+    "createAdmissionRequest", "getAdmissionRequests", "updateAdmissionStatus", "convertAdmissionToStudent", "scheduleAdmissionInterview", "getAdmissionInterviews", "recordInterviewOutcome", "saveAdmissionEvaluation", "getAdmissionEvaluations",
     "getStudentFile", "updateStudentFile", "getStudentTimeline", "findDuplicateStudents",
     "getStudentGuardians", "saveStudentGuardian", "unlinkStudentGuardian", "uploadStudentDocument", "getStudentDocuments", "updateDocumentStatus",
     "createStudentEnrollment", "getStudentEnrollments", "renewStudentEnrollment", "checkEnrollmentCapacity",
@@ -198,7 +201,7 @@ const ROLE_PERMISSIONS = {
     "getInstitutionParams", "getAcademicYears", "getAcademicPeriods", "getSubjectCatalog", "getStudyPlans", "getAcademicOffers",
     "createAcademicOffer", "getTeacherAssignments", "assignTeacherToClass", "createTeacherSubstitution", "getAcademicCalendar", "createCalendarEvent", "getClassSchedules", "createClassSchedule", "deleteClassSchedule", "copyClassSchedules", "getTeacherTeachingLoad", "generateAutoSchedules", "recordClassSessionOutcome", "getTeachingHoursSummary", "rescheduleCancelledSession", "getPendingSessionRecoveries", "publishClassSchedules", "getIndividualCalendar", "syncAcademicScheduleIntegrity", "getAcademicAuditLogs", "getReusableResourceCatalog", "manageReusableResource",
     "getClassroomResources", "saveClassroomResource", "getStudentSchedule",
-    "createAdmissionRequest", "getAdmissionRequests", "updateAdmissionStatus", "convertAdmissionToStudent",
+    "createAdmissionRequest", "getAdmissionRequests", "updateAdmissionStatus", "convertAdmissionToStudent", "scheduleAdmissionInterview", "getAdmissionInterviews", "recordInterviewOutcome", "saveAdmissionEvaluation", "getAdmissionEvaluations",
     "getStudentFile", "updateStudentFile", "getStudentTimeline", "findDuplicateStudents",
     "getStudentGuardians", "saveStudentGuardian", "unlinkStudentGuardian", "uploadStudentDocument", "getStudentDocuments", "updateDocumentStatus",
     "createStudentEnrollment", "getStudentEnrollments", "renewStudentEnrollment", "checkEnrollmentCapacity",
@@ -660,6 +663,11 @@ function doPost(e) {
       case "getAdmissionRequests": result = getAdmissionRequests(payload); break;
       case "getPublicAdmissionStatus": result = getPublicAdmissionStatus(payload); break;
       case "updateAdmissionStatus": result = updateAdmissionStatus(payload); break;
+      case "scheduleAdmissionInterview": result = scheduleAdmissionInterview(payload); break;
+      case "getAdmissionInterviews": result = getAdmissionInterviews(payload); break;
+      case "recordInterviewOutcome": result = recordInterviewOutcome(payload); break;
+      case "saveAdmissionEvaluation": result = saveAdmissionEvaluation(payload); break;
+      case "getAdmissionEvaluations": result = getAdmissionEvaluations(payload); break;
       case "reopenAdmissionRequest": result = reopenAdmissionRequest(payload); break;
       case "convertAdmissionToStudent": result = convertAdmissionToStudent(payload); break;
       case "getStudentFile": result = getStudentFile(payload); break;
@@ -931,6 +939,161 @@ function recordEntityChangeLog(entityType, entityId, previousValue, newValue, ac
   }
 }
 
+// [TAREA-F5-007] [Fase 5: Admisiones y Matrícula] - Módulo de Entrevistas y Evaluaciones de Admisión
+function scheduleAdmissionInterview(payload) {
+  const { solicitudId, fecha, horaInicio, horaFin, evaluadorUserId, lugarEnlace, modalidad, observaciones } = payload || {};
+  if (!solicitudId || !fecha || !horaInicio || !horaFin || !evaluadorUserId) {
+    throw new Error("solicitudId, fecha, horaInicio, horaFin y evaluadorUserId son obligatorios.");
+  }
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "EntrevistasAdmision");
+  const data = sheet.getDataRange().getValues();
+
+  // Detección de solapamiento/conflicto en la agenda del evaluador
+  if (data.length > 1) {
+    const existing = data.slice(1).find(r => {
+      if (String(r[5]).trim() !== String(evaluadorUserId).trim()) return false;
+      if (r[8] === "Cancelada") return false;
+      if (String(r[2]).trim() !== String(fecha).trim()) return false;
+
+      const exStart = String(r[3]);
+      const exEnd = String(r[4]);
+      return (horaInicio < exEnd && horaFin > exStart);
+    });
+
+    if (existing) {
+      throw new Error(`Conflicto de horario: El evaluador ${evaluadorUserId} ya tiene una cita programada el ${fecha} de ${existing[3]} a ${existing[4]}.`);
+    }
+  }
+
+  const idGen = generateInstitutionalId({ entityType: "EntrevistaAdmision", prefix: "ENT-ADM-", skipLock: true });
+  const entrevistaId = (idGen && idGen.generatedId) ? idGen.generatedId : ("ENT-ADM-" + Date.now());
+  const now = new Date();
+
+  sheet.appendRow([
+    entrevistaId,
+    solicitudId,
+    fecha,
+    horaInicio,
+    horaFin,
+    evaluadorUserId,
+    lugarEnlace || "Campus Principal",
+    modalidad || "Presencial",
+    "Programada",
+    observaciones || "",
+    now
+  ]);
+
+  logStructuredEvent("ACADEMIC", "scheduleAdmissionInterview", "INFO", "INTERVIEW_SCHEDULED", `Entrevista ${entrevistaId} agendada para solicitud ${solicitudId}`, { entrevistaId, solicitudId, fecha, evaluadorUserId }, payload && payload.authRole);
+
+  return { status: "success", entrevistaId: entrevistaId, message: "Entrevista de admisión agendada exitosamente." };
+}
+
+function getAdmissionInterviews(payload) {
+  const { solicitudId, evaluadorUserId } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const rows = getOrCreateSheet(ss, "EntrevistasAdmision").getDataRange().getValues().slice(1);
+
+  let filtered = rows;
+  if (solicitudId) filtered = filtered.filter(r => String(r[1]).trim() === String(solicitudId).trim());
+  if (evaluadorUserId) filtered = filtered.filter(r => String(r[5]).trim() === String(evaluadorUserId).trim());
+
+  const mapped = filtered.map(r => ({
+    entrevistaId: r[0],
+    solicitudId: r[1],
+    fecha: r[2],
+    horaInicio: r[3],
+    horaFin: r[4],
+    evaluadorUserId: r[5],
+    lugarEnlace: r[6],
+    modalidad: r[7],
+    estado: r[8],
+    observaciones: r[9],
+    fechaCreacion: r[10]
+  }));
+
+  return { status: "success", interviews: mapped };
+}
+
+function recordInterviewOutcome(payload) {
+  const { entrevistaId, estado, observaciones } = payload || {};
+  if (!entrevistaId || !estado) throw new Error("entrevistaId y estado son requeridos.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "EntrevistasAdmision");
+  const data = sheet.getDataRange().getValues();
+
+  const idx = data.findIndex(r => String(r[0]).trim() === String(entrevistaId).trim());
+  if (idx === -1) throw new Error("Entrevista no encontrada.");
+
+  sheet.getRange(idx + 1, 9).setValue(estado);
+  if (observaciones) {
+    const obsPrev = String(data[idx][9] || "");
+    sheet.getRange(idx + 1, 10).setValue(obsPrev ? `${obsPrev} | [${estado}]: ${observaciones}` : `[${estado}]: ${observaciones}`);
+  }
+
+  return { status: "success", message: `Entrevista actualizada a estado '${estado}'.` };
+}
+
+function saveAdmissionEvaluation(payload) {
+  const { solicitudId, tipoEvaluacion, puntajeNum, escalaQual, dictamen, esObligatoria, rubricaJSON, observaciones } = payload || {};
+  if (!solicitudId || !tipoEvaluacion || !dictamen) {
+    throw new Error("solicitudId, tipoEvaluacion y dictamen son obligatorios.");
+  }
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "EvaluacionesAdmision");
+  const now = new Date();
+
+  const idGen = generateInstitutionalId({ entityType: "EvaluacionAdmision", prefix: "EVAL-ADM-", skipLock: true });
+  const evalId = (idGen && idGen.generatedId) ? idGen.generatedId : ("EVAL-ADM-" + Date.now());
+  const evaluatorId = (payload && (payload._verifiedUserId || payload.userId)) || "Secretaría";
+
+  sheet.appendRow([
+    evalId,
+    solicitudId,
+    tipoEvaluacion,
+    puntajeNum || 0,
+    escalaQual || "",
+    dictamen, // Aprobado / Reprobado / Pendiente
+    esObligatoria !== undefined ? esObligatoria : true,
+    evaluatorId,
+    typeof rubricaJSON === 'object' ? JSON.stringify(rubricaJSON) : (rubricaJSON || '{}'),
+    observaciones || "",
+    now
+  ]);
+
+  logStructuredEvent("ACADEMIC", "saveAdmissionEvaluation", "INFO", "EVALUATION_SAVED", `Evaluación ${evalId} (${dictamen}) registrada para solicitud ${solicitudId}`, { evalId, solicitudId, tipoEvaluacion, dictamen }, payload && payload.authRole);
+
+  return { status: "success", evaluacionId: evalId, message: "Evaluación de admisión registrada exitosamente." };
+}
+
+function getAdmissionEvaluations(payload) {
+  const { solicitudId } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const rows = getOrCreateSheet(ss, "EvaluacionesAdmision").getDataRange().getValues().slice(1);
+
+  let filtered = rows;
+  if (solicitudId) filtered = filtered.filter(r => String(r[1]).trim() === String(solicitudId).trim());
+
+  const mapped = filtered.map(r => ({
+    evaluacionId: r[0],
+    solicitudId: r[1],
+    tipoEvaluacion: r[2],
+    puntajeNum: r[3],
+    escalaQual: r[4],
+    dictamen: r[5],
+    esObligatoria: r[6] === true || String(r[6]).toLowerCase() === "true",
+    evaluadorUserId: r[7],
+    rubricaJSON: r[8],
+    observaciones: r[9],
+    fechaEvaluacion: r[10]
+  }));
+
+  return { status: "success", evaluations: mapped };
+}
+
 // [TAREA-F5-002] [Fase 5: Admisiones y Matrícula] - Actualización controlada de estado con máquina de estados, validaciones y justificación obligatoria
 function updateAdmissionStatus(payload) {
   const { solicitudId, nuevoEstado, observaciones, justificacion, skipLock } = payload || {};
@@ -996,6 +1159,16 @@ function updateAdmissionStatus(payload) {
         const pendingDocs = docRes.documents.filter(d => d.estadoRevision === "Pendiente" || d.estadoRevision === "Rechazado");
         if (pendingDocs.length > 0) {
           throw new Error(`Acción denegada: La solicitud tiene ${pendingDocs.length} documento(s) pendiente(s) de revisión antes de pasar a la etapa de Evaluación.`);
+        }
+      }
+    }
+
+    if (estadoSolicitado === "Admitida") {
+      const evalRes = getAdmissionEvaluations({ solicitudId });
+      if (evalRes && Array.isArray(evalRes.evaluations)) {
+        const pendingOrFailed = evalRes.evaluations.filter(ev => ev.esObligatoria && (ev.dictamen === 'Reprobado' || ev.dictamen === 'Pendiente'));
+        if (pendingOrFailed.length > 0) {
+          throw new Error(`Acción denegada: La solicitud ${solicitudId} tiene ${pendingOrFailed.length} evaluación(es) obligatoria(s) pendiente(s) o reprobada(s).`);
         }
       }
     }

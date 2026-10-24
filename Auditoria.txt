@@ -96,4 +96,9 @@ RESOLUCIÓN Y VERIFICACIÓN DE TAREAS EJECUTADAS:
  - Estado: COMPLETADA Y VERIFICADA (2026-03-29)
  - Archivos Modificados: backend/academic-service/Code.gs, dashboard-secretaria.html, js/secretary.js
  - Verificación: Modificadas `uploadStudentDocument` y `getStudentDocuments` para vincular documentos a `solicitudId` antes de la conversión y migración automática a `expedienteId` tras la conversión. Incorporadas validaciones en servidor para tipo MIME, máximo de 10 MB y comprobación de bytes no nulos. Implementado el panel de revisión y calificación documental de aspirantes (`modal-adm-docs-container`, `loadAdmissionApplicantDocuments`, `updateApplicantDocumentStatusAction`) en la consola de Secretaría. Comentario identificativo [TAREA-F5-006] inyectado en `backend/academic-service/Code.gs`.
+
+[TAREA-F5-007] Implementar el módulo de entrevistas y evaluaciones de admisión
+ - Estado: COMPLETADA Y VERIFICADA (2026-03-29)
+ - Archivos Modificados: backend/academic-service/Code.gs, dashboard-secretaria.html, js/secretary.js
+ - Verificación: Creadas hojas `EntrevistasAdmision` y `EvaluacionesAdmision`, implementados endpoints backend `scheduleAdmissionInterview`, `getAdmissionInterviews`, `recordInterviewOutcome`, `saveAdmissionEvaluation` y `getAdmissionEvaluations` con detección de solapamientos de agenda del evaluador y bloqueo de decisión 'Admitida' en `updateAdmissionStatus` ante evaluaciones obligatorias pendientes/reprobadas. Creados componentes e interfaces de agendamiento y calificación en `dashboard-secretaria.html` y `js/secretary.js`. Comentario identificativo [TAREA-F5-007] inyectado en `backend/academic-service/Code.gs`.
 ================================================================================
