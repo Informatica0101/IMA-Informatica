@@ -299,15 +299,74 @@ document.addEventListener('DOMContentLoaded', function() {
                             '</div>' +
                         '</div>' +
 
-                        (req.observaciones ? '<div class="p-3 bg-indigo-50/50 rounded-xl text-xs text-indigo-900 border border-indigo-100"><strong>Observaciones de Admisión:</strong> ' + window.escapeHtml(req.observaciones) + '</div>' : '');
+                        (req.observaciones ? '<div class="p-3 bg-indigo-50/50 rounded-xl text-xs text-indigo-900 border border-indigo-100 mb-4"><strong>Observaciones de Admisión:</strong> ' + window.escapeHtml(req.observaciones) + '</div>' : '') +
+
+                        '<!-- [TAREA-F5-013] Estado Financiero y Cobros de Admisión -->' +
+                        '<div id="family-applicant-financial-container" class="mt-4 p-4 bg-slate-50 rounded-2xl border border-slate-200">' +
+                            '<h4 class="text-xs font-bold text-slate-800 uppercase tracking-wider mb-2 flex items-center gap-2">' +
+                                '<i class="fas fa-file-invoice-dollar text-emerald-600"></i> Estado Financiero del Trámite de Admisión' +
+                            '</h4>' +
+                            '<div id="applicant-financial-status-content" class="text-xs text-slate-600">' +
+                                '<p class="text-slate-400"><i class="fas fa-circle-notch fa-spin mr-1"></i> Consultando estado de cobros de admisión...</p>' +
+                            '</div>' +
+                        '</div>';
 
                     cont.innerHTML = html;
+                    window.loadApplicantFinancialStatus(solicitudId);
                 } else {
                     cont.innerHTML = '<p class="text-red-500 text-xs">No se encontró la solicitud de admisión especificada.</p>';
                 }
             })
             .catch(function(err) {
                 cont.innerHTML = '<p class="text-red-500 text-xs">Error de carga: ' + err.message + '</p>';
+            });
+    };
+
+    // [TAREA-F5-013] [Fase 5: Portal de Familias] - Carga y despliegue del estado financiero del aspirante en admisión
+    window.loadApplicantFinancialStatus = function(solicitudId) {
+        var finCont = document.getElementById('applicant-financial-status-content');
+        if (!finCont) return;
+
+        fetchApi('ACCOUNTING', 'getAdmissionFinancialStatus', { solicitudId: solicitudId })
+            .then(function(res) {
+                if (res && res.status === 'success') {
+                    var statusBadge = res.esSolvente ?
+                        '<span class="px-2.5 py-1 bg-green-100 text-green-800 rounded-full font-bold text-[10px]">SOLVENTE / PAGADO</span>' :
+                        '<span class="px-2.5 py-1 bg-amber-100 text-amber-800 rounded-full font-bold text-[10px]">PENDIENTE (L ' + res.montoPendiente.toFixed(2) + ')</span>';
+
+                    var html = '' +
+                        '<div class="flex items-center justify-between border-b border-slate-200 pb-2 mb-3">' +
+                            '<span>Saldo Pendiente de Admisión:</span>' +
+                            statusBadge +
+                        '</div>';
+
+                    if (Array.isArray(res.cargos) && res.cargos.length > 0) {
+                        html += '<div class="space-y-2">';
+                        res.cargos.forEach(function(c) {
+                            html += '' +
+                                '<div class="p-2 bg-white rounded-xl border border-slate-100 flex justify-between items-center">' +
+                                    '<div>' +
+                                        '<p class="font-bold text-slate-800 text-[11px]">' + window.escapeHtml(c.concepto) + '</p>' +
+                                        '<p class="text-[10px] text-slate-400">Cargo ID: ' + c.cargoId + '</p>' +
+                                    '</div>' +
+                                    '<div class="text-right">' +
+                                        '<p class="font-bold text-slate-900 text-xs">L ' + c.montoFinal.toFixed(2) + '</p>' +
+                                        '<span class="text-[9px] font-bold uppercase ' + (c.estado === 'Pagado' ? 'text-green-600' : 'text-amber-600') + '">' + c.estado + '</span>' +
+                                    '</div>' +
+                                '</div>';
+                        });
+                        html += '</div>';
+                    } else {
+                        html += '<p class="text-slate-400 italic text-[11px]">No hay cargos configurados aún para esta solicitud de admisión.</p>';
+                    }
+
+                    finCont.innerHTML = html;
+                } else {
+                    finCont.innerHTML = '<p class="text-red-500 text-xs">No fue posible consultar el estado financiero de la admisión.</p>';
+                }
+            })
+            .catch(function(err) {
+                finCont.innerHTML = '<p class="text-red-500 text-xs">Error de consulta financiera: ' + err.message + '</p>';
             });
     };
 

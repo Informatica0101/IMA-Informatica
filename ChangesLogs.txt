@@ -1462,3 +1462,10 @@ Archivos Modificados:
 - js/student.js:
   - Extensión de `initFamilyStudentSwitcher` con comentario identificativo [TAREA-F5-012] para categorizar entre "🎓 Estudiantes Matriculados" y "📝 Aspirantes en Admisión" mediante `Promise.all`.
   - Implementación de `renderApplicantTrackingPanel` para renderizar el estado del trámite y la línea de tiempo visual del aspirante.
+
+[TAREA-F5-013] [Fase 5 - Integración de Cobros, Pagos y Becas de Admisión]
+- backend/accounting-service/Code.gs:
+  - Implementación de `getAdmissionFinancialStatus` y `createAdmissionCharge` con comentario identificativo [TAREA-F5-013], vinculación de cobros a `solicitudId`, cálculo de solvencia y deduplicación.
+  - Registro de permisos "getAdmissionFinancialStatus" y "createAdmissionCharge" en `ROLE_PERMISSIONS` para roles Padre, Tutor, Responsable y dispatcher en `doPost`.
+- js/student.js:
+  - Implementación de `loadApplicantFinancialStatus` con comentario identificativo [TAREA-F5-013] e inyección del contenedor `#family-applicant-financial-container` dentro del panel de seguimiento de admisiones.

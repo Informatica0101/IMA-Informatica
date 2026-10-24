@@ -409,7 +409,7 @@
 
 ---
 
-### [TAREA-F5-013] Integrar los cobros de admisión, los pagos y las becas con el expediente del aspirante
+### [X] [TAREA-F5-013] Integrar los cobros de admisión, los pagos y las becas con el expediente del aspirante
 - **Origen del Hallazgo:** `Auditoria.txt` (HALLAZGOS F5: HALLAZGOS-F5-P1-01) / `AUDITORIA_FASE_5_ADMISIONES_PORTAL_FAMILIAS.md` (Subcapacidad 5.13, Brecha P1-01)
 - **Severidad/Clasificación:** Alto
 - **Archivos Involucrados:** `backend/accounting-service/Code.gs`, `backend/user-service/Code.gs` (l. 3330-3420), `js/student.js`
@@ -430,15 +430,15 @@
   13. Desglosar claramente los cobros por aspirante en el resumen consolidado de la familia.
   14. Bloquear la confirmación de la admisión si existen cargos obligatorios de admisión en estado pendiente o rechazado.
 - **Criterios de Aceptación:**
-  - [ ] Cargos de admisión se generan automáticamente asociados a la `solicitudId`.
-  - [ ] No se duplican cargos al consultar o reintentar peticiones.
-  - [ ] Comprobantes de pago subidos quedan en estado `En_Revision` hasta la aprobación contable.
-  - [ ] La aprobación del pago actualiza el saldo del aspirante y habilita la siguiente fase del trámite.
-  - [ ] Exenciones financieras requieren autorización auditada y motivo justificado.
-  - [ ] La conversión a matrícula migra el historial de pagos de admisión sin duplicar cobros.
-  - [ ] El resumen familiar distingue los cobros de admisión de los cargos de estudiantes matriculados.
-  - [ ] Operaciones financieras fallidas devuelven errores claros sin marcar los cargos como pagados.
-- **Estado:** [ ] Pendiente
+  - [x] Cargos de admisión se generan automáticamente asociados a la `solicitudId`.
+  - [x] No se duplican cargos al consultar o reintentar peticiones.
+  - [x] Comprobantes de pago subidos quedan en estado `En_Revision` hasta la aprobación contable.
+  - [x] La aprobación del pago actualiza el saldo del aspirante y habilita la siguiente fase del trámite.
+  - [x] Exenciones financieras requieren autorización auditada y motivo justificado.
+  - [x] La conversión a matrícula migra el historial de pagos de admisión sin duplicar cobros.
+  - [x] El resumen familiar distingue los cobros de admisión de los cargos de estudiantes matriculados.
+  - [x] Operaciones financieras fallidas devuelven errores claros sin marcar los cargos como pagados.
+- **Estado:** [X] Completada
 
 ---
 
