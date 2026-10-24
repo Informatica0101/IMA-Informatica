@@ -31,6 +31,12 @@
                     <a href="dashboard-tienda.html" class="px-3 py-2 text-gray-600 hover:text-blue-600">Tienda</a>
                     <a href="dashboard-cafeteria.html" class="px-3 py-2 text-gray-600 hover:text-blue-600">Cafetería</a>
                 </nav>
+                <button id="btn-user-management-admin" class="p-2 text-blue-600 hover:text-blue-800 rounded-xl hover:bg-blue-50 text-lg transition-all focus:outline-none focus:ring-2 focus:ring-blue-500" title="Gestión Administrativa de Usuarios y Permisos" aria-label="Gestión de Usuarios">
+                    <i class="fa-solid fa-users-gear"></i>
+                </button>
+                <button id="btn-security-compliance-dashboard" class="p-2 text-red-600 hover:text-red-800 rounded-xl hover:bg-red-50 text-lg transition-all focus:outline-none focus:ring-2 focus:ring-red-500" title="Panel de Seguridad, Auditoría y Cumplimiento" aria-label="Panel de Seguridad">
+                    <i class="fa-solid fa-shield-halved"></i>
+                </button>
                 <button id="btn-global-dashboard-settings" class="p-2 text-slate-600 hover:text-slate-900 rounded-xl hover:bg-slate-100 text-lg transition-all focus:outline-none focus:ring-2 focus:ring-blue-500" title="Opciones y Configuración del Dashboard" aria-label="Opciones y Configuración">
                     <i class="fa-solid fa-gear"></i>
                 </button>
@@ -63,5 +69,27 @@
     <script src="js/config.js?v=23"></script>
     <script src="js/api.js?v=23"></script>
     <script src="js/ui-common.js?v=23"></script>
+    <script>
+        // [TAREA-F4-P2-03] [Fase 4: Gestión de Usuarios] - Vinculación de los botones de gestión de usuarios y seguridad
+        document.addEventListener("DOMContentLoaded", function() {
+            var usrBtn = document.getElementById("btn-user-management-admin");
+            if (usrBtn) {
+                usrBtn.addEventListener("click", function() {
+                    if (typeof window.openUserManagementAdministrationModal === "function") {
+                        window.openUserManagementAdministrationModal(usrBtn);
+                    }
+                });
+            }
+
+            var secBtn = document.getElementById("btn-security-compliance-dashboard");
+            if (secBtn) {
+                secBtn.addEventListener("click", function() {
+                    if (typeof window.openSecurityAndComplianceDashboardModal === "function") {
+                        window.openSecurityAndComplianceDashboardModal(secBtn);
+                    }
+                });
+            }
+        });
+    </script>
 </body>
 </html>

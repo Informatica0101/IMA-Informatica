@@ -189,7 +189,7 @@ function doGet() { return textResponse({ status: "success", service: "ACCOUNTING
 
 const ROLE_PERMISSIONS = {
   "Administrador": ["*"],
-  "Director": ["configurePaymentConcept", "configurePaymentTariff", "getStudentAccountStatement", "recordStudentPayment", "uploadPaymentVoucher", "getPaymentVouchers", "reviewPaymentVoucher", "generatePaymentReceiptPDF", "createFiscalInvoice", "getFiscalInvoices", "configureGatewayIntegration", "testGatewayConnection", "recordCashBankMovement", "closeCashSession", "getCashBankSummary", "performBankReconciliation", "recordAccountsPayableExpense", "getChartOfAccounts", "saveAccountItem", "recordAccountingJournalEntry", "getAccountingJournalEntries", "getBudgets", "saveBudgetPlan", "getBudgetExecutionReport", "getFinancialSummary", "getAccountsReceivablePayableSummary", "getCashFlowSixMonthProjection", "recordCollectionManagementAction", "getCollectionManagementLogs", "getComparativeFinancialSummary", "reconcileFinancialReportCoherence", "verifyAccountingIntegrity", "generatePayrollPeriod", "recordStaffAttendance", "getStaffPayrollReceipt", "recordInventoryMovement", "getInventoryKardex", "registerSupplier", "manageSupplierContract", "getSupplierContractAlerts", "createEmployeeRecord", "getEmployeeRecords", "manageEmployeeContract", "getEmployeeContracts", "submitVacationRequest", "getVacationRequests", "reviewVacationRequest", "configureFiscalPolicy", "getFiscalPolicies", "publishInstitutionalPolicy", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getAdvancedDashboardAnalytics", "manageLibraryBook", "getLibraryBooks", "processLibraryLoan", "getLibraryLoans", "reserveLibraryBook", "getLibraryReservations", "recordLibraryIncident", "getLibraryIncidents", "manageDigitalResource", "getDigitalResources", "manageAssetItem", "getAssetItems", "assignAssetCustody", "getAssetAssignments", "manageTransportRoute", "getTransportRoutes", "assignStudentTransport", "getTransportAssignments", "registerSpreadsheetSource", "resolveSpreadsheetSource", "getSpreadsheetCatalog", "configureSchoolDocumentTemplate", "getSchoolDocumentTemplates", "generateSchoolDocument", "getIssuedSchoolDocuments", "validateImportPreview", "importDataWithColumnMapping", "getMigrationLogs", "verifySACETemplateCompatibility", "generateSACEReportFile", "configureDiscountScholarshipRule", "getDiscountScholarshipRules", "submitDiscountScholarshipRequest", "getDiscountScholarshipRequests", "approveDiscountScholarshipRequest", "calculateAppliedDiscount", "configureLateFeeRule", "getLateFeeRules", "calculateLateFeesForAccount", "manageStoreProduct", "getStoreProducts", "createStoreOrder", "getStoreOrders", "updateStoreOrderStatus", "manageCafeteriaMenu", "getCafeteriaMenu", "createCafeteriaOrder", "getCafeteriaOrders", "updateCafeteriaOrderStatus", "configureFamilyCreditAuthorization", "getFamilyCreditAuthorizations", "processFamilyCreditPurchase", "createFamilyPaymentAgreement", "getFamilyPaymentAgreements", "saveMultiYearBudgetProjection", "getMultiYearBudgetProjections", "createPurchaseRequest", "getPurchaseRequests", "submitPurchaseQuotation", "getPurchaseQuotations", "createPurchaseOrder", "approvePurchaseOrder", "getPurchaseOrders", "recordPurchaseReceipt", "manageWarehouseLocation", "getWarehouseLocations", "transferInventoryStock", "createMaterialRequisition", "getMaterialRequisitions", "deliverMaterialRequisition", "createPhysicalInventoryCount", "getPhysicalInventoryCounts", "reconcilePhysicalCount", "manageMaintenanceOrder", "getMaintenanceOrders", "registerAssetDisposal", "getAssetDisposals"],
+  "Director": ["configurePaymentConcept", "configurePaymentTariff", "getStudentAccountStatement", "recordStudentPayment", "uploadPaymentVoucher", "getPaymentVouchers", "reviewPaymentVoucher", "generatePaymentReceiptPDF", "createFiscalInvoice", "getFiscalInvoices", "configureGatewayIntegration", "testGatewayConnection", "recordCashBankMovement", "closeCashSession", "getCashBankSummary", "performBankReconciliation", "recordAccountsPayableExpense", "getChartOfAccounts", "saveAccountItem", "recordAccountingJournalEntry", "getAccountingJournalEntries", "getBudgets", "saveBudgetPlan", "getBudgetExecutionReport", "getFinancialSummary", "getAccountsReceivablePayableSummary", "getCashFlowSixMonthProjection", "recordCollectionManagementAction", "getCollectionManagementLogs", "getComparativeFinancialSummary", "reconcileFinancialReportCoherence", "verifyAccountingIntegrity", "generatePayrollPeriod", "recordStaffAttendance", "getStaffPayrollReceipt", "recordInventoryMovement", "getInventoryKardex", "registerSupplier", "manageSupplierContract", "getSupplierContractAlerts", "createEmployeeRecord", "getEmployeeRecords", "manageEmployeeContract", "getEmployeeContracts", "submitVacationRequest", "getVacationRequests", "reviewVacationRequest", "configureFiscalPolicy", "getFiscalPolicies", "publishInstitutionalPolicy", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getAdvancedDashboardAnalytics", "manageLibraryBook", "getLibraryBooks", "processLibraryLoan", "getLibraryLoans", "reserveLibraryBook", "getLibraryReservations", "recordLibraryIncident", "getLibraryIncidents", "manageDigitalResource", "getDigitalResources", "manageAssetItem", "getAssetItems", "assignAssetCustody", "getAssetAssignments", "manageTransportRoute", "getTransportRoutes", "assignStudentTransport", "getTransportAssignments", "registerSpreadsheetSource", "resolveSpreadsheetSource", "getSpreadsheetCatalog", "configureSchoolDocumentTemplate", "getSchoolDocumentTemplates", "generateSchoolDocument", "getIssuedSchoolDocuments", "validateImportPreview", "importDataWithColumnMapping", "getMigrationLogs", "verifySACETemplateCompatibility", "generateSACEReportFile", "configureDiscountScholarshipRule", "getDiscountScholarshipRules", "submitDiscountScholarshipRequest", "getDiscountScholarshipRequests", "approveDiscountScholarshipRequest", "calculateAppliedDiscount", "configureLateFeeRule", "getLateFeeRules", "calculateLateFeesForAccount", "manageStoreProduct", "getStoreProducts", "createStoreOrder", "getStoreOrders", "updateStoreOrderStatus", "manageCafeteriaMenu", "getCafeteriaMenu", "createCafeteriaOrder", "getCafeteriaOrders", "updateCafeteriaOrderStatus", "configureFamilyCreditAuthorization", "getFamilyCreditAuthorizations", "processFamilyCreditPurchase", "createFamilyPaymentAgreement", "getFamilyPaymentAgreements", "saveMultiYearBudgetProjection", "getMultiYearBudgetProjections", "createPurchaseRequest", "getPurchaseRequests", "submitPurchaseQuotation", "getPurchaseQuotations", "createPurchaseOrder", "approvePurchaseOrder", "getPurchaseOrders", "recordPurchaseReceipt", "manageWarehouseLocation", "getWarehouseLocations", "transferInventoryStock", "createMaterialRequisition", "getMaterialRequisitions", "deliverMaterialRequisition", "createPhysicalInventoryCount", "getPhysicalInventoryCounts", "reconcilePhysicalCount", "manageMaintenanceOrder", "getMaintenanceOrders", "registerAssetDisposal", "getAssetDisposals", "purgeSecurityCaches"],
   "Subdirector": ["configurePaymentConcept", "configurePaymentTariff", "getStudentAccountStatement", "recordStudentPayment", "uploadPaymentVoucher", "getPaymentVouchers", "reviewPaymentVoucher", "generatePaymentReceiptPDF", "createFiscalInvoice", "getFiscalInvoices", "configureGatewayIntegration", "testGatewayConnection", "recordCashBankMovement", "closeCashSession", "getCashBankSummary", "performBankReconciliation", "recordAccountsPayableExpense", "getChartOfAccounts", "saveAccountItem", "recordAccountingJournalEntry", "getAccountingJournalEntries", "getBudgets", "saveBudgetPlan", "getBudgetExecutionReport", "getFinancialSummary", "getAccountsReceivablePayableSummary", "generatePayrollPeriod", "recordStaffAttendance", "getStaffPayrollReceipt", "recordInventoryMovement", "getInventoryKardex", "registerSupplier", "createEmployeeRecord", "getEmployeeRecords", "manageEmployeeContract", "getEmployeeContracts", "submitVacationRequest", "getVacationRequests", "reviewVacationRequest", "configureFiscalPolicy", "getFiscalPolicies", "publishInstitutionalPolicy", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getAdvancedDashboardAnalytics", "manageLibraryBook", "getLibraryBooks", "processLibraryLoan", "getLibraryLoans", "reserveLibraryBook", "getLibraryReservations", "recordLibraryIncident", "getLibraryIncidents", "manageDigitalResource", "getDigitalResources", "manageAssetItem", "getAssetItems", "assignAssetCustody", "getAssetAssignments", "manageTransportRoute", "getTransportRoutes", "assignStudentTransport", "getTransportAssignments", "registerSpreadsheetSource", "resolveSpreadsheetSource", "getSpreadsheetCatalog", "configureSchoolDocumentTemplate", "getSchoolDocumentTemplates", "generateSchoolDocument", "getIssuedSchoolDocuments", "validateImportPreview", "importDataWithColumnMapping", "getMigrationLogs", "verifySACETemplateCompatibility", "generateSACEReportFile", "configureDiscountScholarshipRule", "getDiscountScholarshipRules", "submitDiscountScholarshipRequest", "getDiscountScholarshipRequests", "approveDiscountScholarshipRequest", "calculateAppliedDiscount", "createPurchaseRequest", "getPurchaseRequests", "submitPurchaseQuotation", "getPurchaseQuotations", "createPurchaseOrder", "approvePurchaseOrder", "getPurchaseOrders", "recordPurchaseReceipt", "manageWarehouseLocation", "getWarehouseLocations", "transferInventoryStock", "createMaterialRequisition", "getMaterialRequisitions", "deliverMaterialRequisition", "createPhysicalInventoryCount", "getPhysicalInventoryCounts", "reconcilePhysicalCount", "manageMaintenanceOrder", "getMaintenanceOrders", "registerAssetDisposal", "getAssetDisposals"],
   "Contador": ["configurePaymentConcept", "configurePaymentTariff", "getStudentAccountStatement", "recordStudentPayment", "uploadPaymentVoucher", "getPaymentVouchers", "reviewPaymentVoucher", "generatePaymentReceiptPDF", "createFiscalInvoice", "getFiscalInvoices", "configureGatewayIntegration", "testGatewayConnection", "recordCashBankMovement", "closeCashSession", "getCashBankSummary", "performBankReconciliation", "recordAccountsPayableExpense", "getChartOfAccounts", "saveAccountItem", "recordAccountingJournalEntry", "getAccountingJournalEntries", "getBudgets", "saveBudgetPlan", "getBudgetExecutionReport", "getFinancialSummary", "getAccountsReceivablePayableSummary", "generatePayrollPeriod", "recordStaffAttendance", "getStaffPayrollReceipt", "recordInventoryMovement", "getInventoryKardex", "registerSupplier", "createEmployeeRecord", "getEmployeeRecords", "manageEmployeeContract", "getEmployeeContracts", "submitVacationRequest", "getVacationRequests", "reviewVacationRequest", "configureFiscalPolicy", "getFiscalPolicies", "publishInstitutionalPolicy", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getAdvancedDashboardAnalytics", "manageLibraryBook", "getLibraryBooks", "processLibraryLoan", "getLibraryLoans", "reserveLibraryBook", "getLibraryReservations", "recordLibraryIncident", "getLibraryIncidents", "manageDigitalResource", "getDigitalResources", "manageAssetItem", "getAssetItems", "assignAssetCustody", "getAssetAssignments", "resolveSpreadsheetSource", "getSpreadsheetCatalog", "validateImportPreview", "importDataWithColumnMapping", "getMigrationLogs", "configureDiscountScholarshipRule", "getDiscountScholarshipRules", "submitDiscountScholarshipRequest", "getDiscountScholarshipRequests", "calculateAppliedDiscount", "getStoreProducts", "getStoreOrders", "getCafeteriaMenu", "getCafeteriaOrders", "createPurchaseRequest", "getPurchaseRequests", "submitPurchaseQuotation", "getPurchaseQuotations", "createPurchaseOrder", "approvePurchaseOrder", "getPurchaseOrders", "recordPurchaseReceipt", "manageWarehouseLocation", "getWarehouseLocations", "transferInventoryStock", "createMaterialRequisition", "getMaterialRequisitions", "deliverMaterialRequisition", "createPhysicalInventoryCount", "getPhysicalInventoryCounts", "reconcilePhysicalCount", "manageMaintenanceOrder", "getMaintenanceOrders", "registerAssetDisposal", "getAssetDisposals"],
   // REVISIÓN RBAC: Habilitar permiso processFamilyCreditPurchase para personal de tienda, cafetería, tutores y estudiantes
@@ -262,15 +262,246 @@ function saveIdempotentResult(action, payload, result) {
   }
 }
 
-// [TAREA-01] [Fase 1 - Seguridad RBAC] - Validar y reforzar la seguridad de los servicios y la separación de permisos en el servidor.
+// [TAREA-F4-P0-01] [Fase 4: Identidad y Permisos] - Funciones de verificación de firma HMAC-SHA256 e integración con token de sesión
+function computeHmacSignature(message, secret) {
+  const bytes = Utilities.computeHmacSignature(Utilities.MacAlgorithm.HMAC_SHA_256, message, secret);
+  const arr = Array.from ? Array.from(bytes) : [].slice.call(bytes);
+  return arr.map(b => ('0' + (b & 0xFF).toString(16)).slice(-2)).join('');
+}
+
+function getAuthTokenSecret() {
+  const props = PropertiesService.getScriptProperties();
+  let secret = "";
+  try {
+    secret = props.getProperty("AUTH_TOKEN_SECRET");
+  } catch (e) {}
+  if (!secret) {
+    const rawBytes = Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, SPREADSHEET_ID + "_MASTER_AUTH_HMAC_SECRET");
+    const arr = Array.from ? Array.from(rawBytes) : [].slice.call(rawBytes);
+    secret = arr.map(b => ('0' + (b & 0xFF).toString(16)).slice(-2)).join('');
+    try {
+      props.setProperty("AUTH_TOKEN_SECRET", secret);
+    } catch (e) {}
+  }
+  return secret;
+}
+
+function verifySessionToken(tokenString) {
+  if (!tokenString || typeof tokenString !== "string" || tokenString.indexOf(".") === -1) {
+    return null;
+  }
+  const parts = tokenString.split(".");
+  if (parts.length !== 2) return null;
+  const payloadB64 = parts[0];
+  const providedSignature = parts[1];
+  const secret = getAuthTokenSecret();
+  const expectedSignature = computeHmacSignature(payloadB64, secret);
+  if (providedSignature !== expectedSignature) {
+    return null;
+  }
+  try {
+    let normalizedB64 = payloadB64.replace(/-/g, '+').replace(/_/g, '/');
+    while (normalizedB64.length % 4 !== 0) {
+      normalizedB64 += '=';
+    }
+    const jsonStr = Utilities.newBlob(Utilities.base64Decode(normalizedB64)).getDataAsString();
+    const claims = JSON.parse(jsonStr);
+    const now = Math.floor(Date.now() / 1000);
+    if (claims.exp && now > claims.exp) {
+      return null;
+    }
+    // [TAREA-F4-P0-03] [Fase 4: Gestión de Sesiones] - Verificación de revocación explícita por sessionId y estado de cuenta
+    if (claims.userId) {
+      const cache = CacheService.getScriptCache();
+      if (cache.get("revoked_user_" + claims.userId)) {
+        return null;
+      }
+      if (claims.sessionId && cache.get("revoked_session_" + claims.sessionId)) {
+        return null;
+      }
+
+      const cacheKey = "acct_state_" + claims.userId;
+      let acctState = cache.get(cacheKey);
+      if (!acctState) {
+        try {
+          const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+          const uSheet = ss.getSheetByName("Usuarios");
+          if (uSheet) {
+            const data = uSheet.getDataRange().getValues();
+            for (let i = 1; i < data.length; i++) {
+              if (String(data[i][0]).trim() === String(claims.userId).trim()) {
+                acctState = String(data[i][10] || "Activa").trim();
+                cache.put(cacheKey, acctState, 60);
+                break;
+              }
+            }
+          }
+        } catch (e) {}
+      }
+      if (!acctState || acctState !== "Activa") {
+        return null;
+      }
+    }
+    return claims;
+  } catch (e) {
+    return null;
+  }
+}
+
+// [TAREA-01] [TAREA-F4-P0-01] [Fase 4 - Seguridad RBAC y Token Unificado] - Validar y reforzar la seguridad mediante verificación de credencial de sesión HMAC
+// [TAREA-F4-P1-04] [Fase 4: Reglas Contextuales RBAC/ABAC] - Validación de atributos contextuales (Docentes, Tutores, Estudiantes)
+function validateContextualAccess(action, payload, verifiedUserId, userRole) {
+  if (!userRole || userRole === "Administrador" || userRole === "Desarrollador") {
+    return { authorized: true };
+  }
+
+  const targetStudentId = payload && (payload.studentId || payload.estudianteId || payload.targetUserId || payload.userId);
+
+  if (userRole === "Estudiante" || userRole === "Alumno") {
+    if (targetStudentId && verifiedUserId && String(targetStudentId).trim() !== String(verifiedUserId).trim()) {
+      return { authorized: false, reason: "Aislamiento estricto de estudiante: intento de acceso a ID ajeno." };
+    }
+  }
+
+  return { authorized: true };
+}
+
 function validateRolePermission(action, payload) {
   if (PUBLIC_ACTIONS.indexOf(action) !== -1) return { authorized: true };
-  const userRole = (payload && (payload.authRole || payload.rol)) || "Estudiante";
-  const permitted = ROLE_PERMISSIONS[userRole] || ROLE_PERMISSIONS["Estudiante"];
-  if (permitted.indexOf("*") !== -1 || permitted.indexOf(action) !== -1) {
-    return { authorized: true, role: userRole };
+
+  let userRole = "Estudiante";
+  let verifiedUserId = null;
+  const token = payload && (payload.sessionToken || payload.authToken || payload.token);
+
+  if (token) {
+    const claims = verifySessionToken(token);
+    if (!claims) {
+      return { authorized: false, role: "Token Inválido/Expirado" };
+    }
+    userRole = claims.role || "Estudiante";
+    verifiedUserId = claims.userId;
+    if (payload) {
+      payload._verifiedUserId = verifiedUserId;
+      payload._verifiedRole = userRole;
+    }
+  } else {
+    return { authorized: false, role: "Sin Credenciales de Sesión" };
   }
+
+  const ctxCheck = validateContextualAccess(action, payload, verifiedUserId, userRole);
+  if (!ctxCheck.authorized) {
+    return { authorized: false, role: userRole + " (" + ctxCheck.reason + ")" };
+  }
+
+  const dynamicCheck = getDynamicPermissionsForRole(userRole, action);
+  if (dynamicCheck !== null) {
+    if (dynamicCheck === true) return { authorized: true, role: userRole };
+  } else {
+    const permitted = ROLE_PERMISSIONS[userRole] || [];
+    if (permitted.indexOf("*") !== -1 || permitted.indexOf(action) !== -1) {
+      return { authorized: true, role: userRole };
+    }
+  }
+
+  const verifiedId = payload && payload._verifiedUserId;
+  if (verifiedId) {
+    const activeDel = hasActiveDelegationForAction(verifiedId, action);
+    if (activeDel) {
+      if (payload) {
+        payload._delegatedFrom = activeDel.delegante;
+        payload._delegationId = activeDel.delId;
+      }
+      return { authorized: true, role: userRole + " (Delegado de " + activeDel.delegante + ")" };
+    }
+  }
+
   return { authorized: false, role: userRole };
+}
+
+// [TAREA-F4-P1-03] [Fase 4: Matriz Dinámica de Permisos] - Consulta y caché de la matriz dinámica por rol y acción
+function getDynamicPermissionsForRole(role, action) {
+  if (!role || !action) return null;
+  const cache = CacheService.getScriptCache();
+  const cacheKey = "dynamic_permissions_matrix";
+  let matrix = null;
+  try {
+    const raw = cache.get(cacheKey);
+    if (raw) matrix = JSON.parse(raw);
+  } catch (e) {}
+
+  if (!matrix) {
+    try {
+      const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+      const sheet = ss.getSheetByName("MatrizPermisosRoles");
+      if (!sheet || sheet.getLastRow() <= 1) return null;
+      const data = sheet.getDataRange().getValues();
+      matrix = {};
+      for (let i = 1; i < data.length; i++) {
+        const rRole = String(data[i][0] || "").trim();
+        const rAction = String(data[i][2] || "").trim();
+        const rPermitted = data[i][3] === true || String(data[i][3]).toLowerCase() === "true";
+        if (!matrix[rRole]) matrix[rRole] = {};
+        matrix[rRole][rAction] = rPermitted;
+      }
+      cache.put(cacheKey, JSON.stringify(matrix), 600);
+    } catch (e) {
+      return null;
+    }
+  }
+
+  if (matrix && matrix[role]) {
+    if (matrix[role]["*"] !== undefined) return matrix[role]["*"];
+    if (matrix[role][action] !== undefined) return matrix[role][action];
+  }
+  return null;
+}
+
+// [TAREA-F4-P1-01] [Fase 4: Motor de Delegaciones] - Verificación de delegaciones de seguridad activas
+function hasActiveDelegationForAction(userId, action) {
+  if (!userId || !action) return null;
+  const cache = CacheService.getScriptCache();
+  const cacheKey = "active_delegations_" + userId;
+  let cached = null;
+  try {
+    const raw = cache.get(cacheKey);
+    if (raw) cached = JSON.parse(raw);
+  } catch (e) {}
+
+  if (!cached) {
+    try {
+      const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+      const sheet = ss.getSheetByName("DelegacionesSeguridad");
+      if (!sheet) return null;
+      const data = sheet.getDataRange().getValues();
+      const now = new Date().getTime();
+      cached = [];
+      for (let i = 1; i < data.length; i++) {
+        const row = data[i];
+        const delId = String(row[0] || "");
+        const delegante = String(row[1] || "");
+        const delegado = String(row[2] || "");
+        const acciones = String(row[3] || "").split(",").map(s => s.trim());
+        const fInicio = new Date(row[5]).getTime();
+        const fFin = new Date(row[6]).getTime();
+        const estado = String(row[7] || "");
+
+        if (String(delegado).trim() === String(userId).trim() && estado === "Activa" && now >= fInicio && now <= fFin) {
+          cached.push({ delId, delegante, acciones });
+        }
+      }
+      cache.put(cacheKey, JSON.stringify(cached), 300);
+    } catch (err) {
+      return null;
+    }
+  }
+
+  for (let j = 0; j < cached.length; j++) {
+    const item = cached[j];
+    if (item.acciones.indexOf("*") !== -1 || item.acciones.indexOf(action) !== -1) {
+      return item;
+    }
+  }
+  return null;
 }
 
 function doPost(e) {
@@ -294,6 +525,7 @@ function doPost(e) {
 
     let result;
     switch (action) {
+      case "purgeSecurityCaches": result = purgeSecurityCaches(payload); break;
       case "configurePaymentConcept": result = configurePaymentConcept(payload); break;
       case "configurePaymentTariff": result = configurePaymentTariff(payload); break;
       case "getStudentAccountStatement": result = getStudentAccountStatement(payload); break;
@@ -2917,11 +3149,21 @@ function configurePaymentConcept(payload) {
   return { status: "success", conceptoId: cId, message: "Concepto de cobro configurado correctamente." };
 }
 
+// [TAREA-F4-P0-02] [Fase 4: Protección IDOR y ABAC] - Aislamiento estricto de estado de cuenta por estudiante
 function getStudentAccountStatement(payload) {
-  const { userId } = payload || {};
-  if (!userId) throw new Error("userId requerido.");
+  const callerRole = (payload && payload._verifiedRole) || "Estudiante";
+  let targetUserId = payload && payload.userId;
+
+  if ((callerRole === "Estudiante" || callerRole === "Alumno") && payload._verifiedUserId) {
+    targetUserId = payload._verifiedUserId;
+  }
+  if (!targetUserId && payload && payload._verifiedUserId) {
+    targetUserId = payload._verifiedUserId;
+  }
+  if (!targetUserId) throw new Error("userId requerido.");
+
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
-  const sUserId = String(userId).trim();
+  const sUserId = String(targetUserId).trim();
 
   const cargosRows = getOrCreateSheet(ss, "CargosEstudiante").getDataRange().getValues().slice(1);
   const pagosRows = getOrCreateSheet(ss, "PagosAbonos").getDataRange().getValues().slice(1);
@@ -3101,8 +3343,15 @@ function uploadPaymentVoucher(payload) {
   };
 }
 
+// [TAREA-F4-P0-02] [Fase 4: Protección IDOR y ABAC] - Aislamiento estricto de comprobantes de pago por usuario
 function getPaymentVouchers(payload) {
-  const { userId, estado } = payload || {};
+  const callerRole = (payload && payload._verifiedRole) || "Estudiante";
+  let { userId, estado } = payload || {};
+
+  if ((callerRole === "Estudiante" || callerRole === "Alumno") && payload._verifiedUserId) {
+    userId = payload._verifiedUserId;
+  }
+
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
   const rows = getOrCreateSheet(ss, "ComprobantesPago").getDataRange().getValues().slice(1);
 
@@ -6157,6 +6406,55 @@ function getAssetAssignments(payload) {
     status: "success",
     asignaciones: mapped
   };
+}
+
+// [TAREA-F4-P1-08] [Fase 4: Propagación y Recuperación de Cambios de Seguridad] - Purga de cachés de seguridad local
+function purgeSecurityCaches(payload) {
+  const eventType = (payload && payload.eventType) || "GENERIC_PURGE";
+  const targetUserId = payload && payload.targetUserId;
+  const targetRole = payload && payload.targetRole;
+  const sessionId = payload && payload.sessionId;
+
+  try {
+    const cache = CacheService.getScriptCache();
+    if (targetUserId) {
+      cache.remove("user_role_" + targetUserId);
+      cache.remove("acct_state_" + targetUserId);
+      cache.remove("delegations_" + targetUserId);
+    }
+    if (targetRole) {
+      cache.remove("perm_matrix_" + targetRole);
+      cache.remove("dynamic_perms_" + targetRole);
+    }
+    if (sessionId) {
+      cache.remove("revoked_session_" + sessionId);
+    }
+    if (eventType === "SESSION_REVOKED" || eventType === "ACCOUNT_STATE_CHANGED") {
+      if (targetUserId && payload.accountState && payload.accountState !== "Activa") {
+        cache.put("revoked_user_" + targetUserId, "REVOKED", 86400);
+      } else if (targetUserId && payload.accountState === "Activa") {
+        cache.remove("revoked_user_" + targetUserId);
+      }
+    }
+
+    return {
+      status: "success",
+      service: "ACCOUNTING",
+      eventType: eventType,
+      targetUserId: targetUserId || null,
+      targetRole: targetRole || null,
+      message: "Cachés de seguridad purgadas en el microservicio ACCOUNTING.",
+      timestamp: new Date().toISOString()
+    };
+  } catch (e) {
+    console.error("Error al purgar cachés de seguridad en ACCOUNTING: ", e);
+    return {
+      status: "error",
+      service: "ACCOUNTING",
+      message: "Error al purgar cachés: " + e.toString(),
+      timestamp: new Date().toISOString()
+    };
+  }
 }
 
 // [FASE2-T15] [Fase 2 - Procedimientos de Reconciliación de Datos e Inconsistencias] - Detección de referencias huérfanas, pagos incompletos y operaciones pendientes, aplicando correcciones automáticas seguras y clasificando discrepancias complejas para revisión autorizada.

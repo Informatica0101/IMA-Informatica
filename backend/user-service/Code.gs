@@ -139,15 +139,16 @@ function getServiceHealthReport(payload) {
   }
 }
 
-// [FASE2-T19] [Fase 2 - Gestión de Caché de Datos Institucionales] - Gestión centralizada de caché, invalidación explícita por usuario e inspección de políticas de vigencia.
+// [TAREA-F4-P0-03] [Fase 4: Revocación y Gestión de Sesiones] - Purga de caché de roles y estado de cuenta de usuario
 function invalidateUserRoleCache(userId) {
   if (!userId) return false;
   try {
     const cache = CacheService.getScriptCache();
     cache.remove("user_role_" + userId);
+    cache.remove("acct_state_" + userId);
     return true;
   } catch (e) {
-    console.warn("No se pudo invalidar la caché de rol para " + userId, e);
+    console.warn("No se pudo invalidar la caché para " + userId, e);
     return false;
   }
 }
@@ -916,7 +917,7 @@ function doGet() { return textResponse({ status: "success", service: "USER", tim
 // CONTROL DE ACCESO BASADO EN ROLES (RBAC SERVIDOR - REQ-EXP-008 & FASE 2)
 // ---------------------------------------------------------------------------
 const PUBLIC_ACTIONS = [
-  "registerUser", "loginUser", "requestPasswordRecovery", "resetPassword", "ping", "getNews", "getInstitutionalAnnouncements", "getActiveVisualPalette"
+  "registerUser", "loginUser", "logoutUser", "requestPasswordRecovery", "resetPassword", "ping", "getNews", "getInstitutionalAnnouncements", "getActiveVisualPalette"
 ];
 
 const ROLE_PERMISSIONS = {
@@ -939,7 +940,7 @@ const ROLE_PERMISSIONS = {
     "getInstitutionalCriteria", "saveInstitutionalCriterion", "getFormativeEvaluations", "saveFormativeEvaluation", "getSupportPlans", "saveSupportPlan",
     "createLinkInvitation", "acceptLinkInvitation", "getGuardianStudents", "getInstitutionalAnnouncements", "createInstitutionalAnnouncement", "submitAnnouncementReceiptConfirmation", "getAnnouncementReadReport", "getDepartmentalWorkInbox", "closeConversationThread", "getInternalConversations", "getInternalMessages", "sendInternalMessage", "getUserNotifications", "getUnifiedNotifications", "markNotificationAsRead", "createUserNotification", "sendMultiChannelNotification", "getNotificationPreferences", "getAdministrativeRequests", "getAdministrativeRequestsHistory", "submitAdministrativeRequest", "submitStudentAbsenceJustification", "getStudentAbsenceJustifications", "reviewAbsenceJustification", "updateRequestStatus", "saveInstitutionalForm", "getInstitutionalForms", "submitInstitutionalFormRequest", "saveApprovalWorkflow", "getApprovalWorkflows", "processWorkflowDecision", "getWorkflowHistory", "registerDocumentSignature", "configureNotificationChannel", "getNotificationChannelConfigs", "sendChannelNotificationTest", "getAppointmentBookings", "bookAppointment", "updateAppointmentStatus", "getInstitutionalCalendarEvents", "getPendingReminders",
     "getUserSettings", "saveUserSettings", "getSystemConfigurations", "saveSystemConfiguration", "getProviderIntegrations", "configureProviderIntegration",
-    "updateTicketStatus", "saveVisualPaletteProposal", "approveVisualPaletteProposal", "registerAndDispatchEvent", "retryFailedEventsQueue", "recordTraceabilityLog", "getTraceabilityCorrelationLogs", "getOperationalCapacityMetrics", "runInterdepartmentalIntegrationTestSuite", "getSharedConfigurationsCatalog", "manageInstitutionalDataCache"
+    "updateTicketStatus", "saveVisualPaletteProposal", "approveVisualPaletteProposal", "registerAndDispatchEvent", "retryFailedEventsQueue", "recordTraceabilityLog", "getTraceabilityCorrelationLogs", "getOperationalCapacityMetrics", "runInterdepartmentalIntegrationTestSuite", "getSharedConfigurationsCatalog", "manageInstitutionalDataCache", "purgeSecurityCaches", "dispatchSecurityEvent", "processSecurityEventQueue", "getSecurityEventsQueue", "getSecurityAndComplianceDashboardData", "generatePrivilegeAndAccountAuditReport", "getPaginatedAuditLogReport", "auditAndReconcileIdentityInconsistencies"
   ],
   "Subdirector": [
     "createNews", "uploadNewsImage", "getNews", "updateNewsStatus", "getStudents", "getStudentsByGradoSeccion", "getUserInfo", "saveGameResult", "getGameStats", "getGlobalTop", "recordAnalytics", "getLearningProfile", "mergeGuestData", "updateUserProfile", "findPersonMatches", "generateInstitutionalId",
@@ -974,52 +975,204 @@ const ROLE_PERMISSIONS = {
   ]
 };
 
-// [FASE2-T01] [Fase 2 - Autorización e Interoperabilidad] - Verifica y refuerza la autorización institucional, validación de vigencia de cuentas y revocación de permisos.
-function getUserVerifiedRole(payload) {
-  if (!payload) return "Estudiante";
-  const userId = payload.userId || payload.authUserId || (payload.currentUser && payload.currentUser.userId);
-  const email = payload.email || (payload.currentUser && payload.currentUser.email);
+// [TAREA-F4-P0-01] [Fase 4: Identidad, Permisos y Gobierno] - Generación y verificación de tokens firmados con HMAC-SHA256 para unificación de autenticación
+function computeHmacSignature(message, secret) {
+  const bytes = Utilities.computeHmacSignature(Utilities.MacAlgorithm.HMAC_SHA_256, message, secret);
+  const arr = Array.from ? Array.from(bytes) : [].slice.call(bytes);
+  return arr.map(b => ('0' + (b & 0xFF).toString(16)).slice(-2)).join('');
+}
 
-  if (!userId && !email) {
-    return "Estudiante";
-  }
-
-  const bypassCache = payload.skipRoleCache === true || payload.ignoreCache === true;
-  const cacheKey = "user_role_" + (userId || email);
-
+function getAuthTokenSecret() {
+  const props = PropertiesService.getScriptProperties();
+  let secret = "";
   try {
-    const cache = CacheService.getScriptCache();
-    if (!bypassCache) {
-      const cachedRole = cache.get(cacheKey);
-      if (cachedRole) {
-        return cachedRole;
+    secret = props.getProperty("AUTH_TOKEN_SECRET");
+  } catch (e) {}
+  if (!secret) {
+    const rawBytes = Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, SPREADSHEET_ID + "_MASTER_AUTH_HMAC_SECRET");
+    const arr = Array.from ? Array.from(rawBytes) : [].slice.call(rawBytes);
+    secret = arr.map(b => ('0' + (b & 0xFF).toString(16)).slice(-2)).join('');
+    try {
+      props.setProperty("AUTH_TOKEN_SECRET", secret);
+    } catch (e) {}
+  }
+  return secret;
+}
+
+function generateSessionToken(user) {
+  const secret = getAuthTokenSecret();
+  const now = Math.floor(Date.now() / 1000);
+  const exp = now + (24 * 3600); // 24 horas de vigencia
+  const payloadData = {
+    userId: user.userId,
+    email: user.email,
+    role: user.role,
+    accountState: user.accountState || "Activa",
+    iat: now,
+    exp: exp,
+    sessionId: "SES-" + Utilities.getUuid()
+  };
+  const payloadB64 = Utilities.base64EncodeWebSafe(JSON.stringify(payloadData));
+  const signature = computeHmacSignature(payloadB64, secret);
+  return payloadB64 + "." + signature;
+}
+
+function verifySessionToken(tokenString) {
+  if (!tokenString || typeof tokenString !== "string" || tokenString.indexOf(".") === -1) {
+    return null;
+  }
+  const parts = tokenString.split(".");
+  if (parts.length !== 2) return null;
+  const payloadB64 = parts[0];
+  const providedSignature = parts[1];
+  const secret = getAuthTokenSecret();
+  const expectedSignature = computeHmacSignature(payloadB64, secret);
+  if (providedSignature !== expectedSignature) {
+    return null;
+  }
+  try {
+    let normalizedB64 = payloadB64.replace(/-/g, '+').replace(/_/g, '/');
+    while (normalizedB64.length % 4 !== 0) {
+      normalizedB64 += '=';
+    }
+    const jsonStr = Utilities.newBlob(Utilities.base64Decode(normalizedB64)).getDataAsString();
+    const claims = JSON.parse(jsonStr);
+    const now = Math.floor(Date.now() / 1000);
+    if (claims.exp && now > claims.exp) {
+      return null;
+    }
+    // [TAREA-F4-P0-03] [Fase 4: Gestión de Sesiones] - Verificación de revocación explícita por sessionId y estado de cuenta
+    if (claims.userId) {
+      const cache = CacheService.getScriptCache();
+      if (cache.get("revoked_user_" + claims.userId)) {
+        return null;
+      }
+      if (claims.sessionId && cache.get("revoked_session_" + claims.sessionId)) {
+        return null;
+      }
+
+      const cacheKey = "acct_state_" + claims.userId;
+      let acctState = cache.get(cacheKey);
+      if (!acctState) {
+        try {
+          const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+          const uSheet = ss.getSheetByName("Usuarios");
+          if (uSheet) {
+            const data = uSheet.getDataRange().getValues();
+            for (let i = 1; i < data.length; i++) {
+              if (String(data[i][0]).trim() === String(claims.userId).trim()) {
+                acctState = String(data[i][10] || "Activa").trim();
+                cache.put(cacheKey, acctState, 60);
+                break;
+              }
+            }
+          }
+        } catch (e) {}
+      }
+      if (!acctState || acctState !== "Activa") {
+        return null;
       }
     }
+    return claims;
+  } catch (e) {
+    return null;
+  }
+}
 
-    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
-    const sheet = ss.getSheetByName("Usuarios");
-    if (sheet) {
+// [FASE2-T01] [TAREA-F4-P0-01] [Fase 4 - Autorización e Interoperabilidad] - Exige token de sesión firmado sin fallbacks no autenticados.
+function getUserVerifiedRole(payload) {
+  if (!payload) return "NO_ACCESS";
+
+  const token = payload.sessionToken || payload.authToken || payload.token;
+  if (!token) {
+    return "NO_ACCESS";
+  }
+
+  const claims = verifySessionToken(token);
+  if (!claims) {
+    return "NO_ACCESS";
+  }
+
+  payload._verifiedUserId = claims.userId;
+  payload._verifiedRole = claims.role;
+  return claims.role || "Estudiante";
+}
+
+// [TAREA-F4-P1-01] [Fase 4: Motor de Delegaciones] - Verificación de delegaciones de seguridad activas y vigentes
+function hasActiveDelegationForAction(userId, action) {
+  if (!userId || !action) return null;
+  const cache = CacheService.getScriptCache();
+  const cacheKey = "active_delegations_" + userId;
+  let cached = null;
+  try {
+    const raw = cache.get(cacheKey);
+    if (raw) cached = JSON.parse(raw);
+  } catch (e) {}
+
+  if (!cached) {
+    try {
+      const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+      const sheet = ss.getSheetByName("DelegacionesSeguridad");
+      if (!sheet) return null;
       const data = sheet.getDataRange().getValues();
+      const now = new Date().getTime();
+      cached = [];
       for (let i = 1; i < data.length; i++) {
-        const rUserId = String(data[i][0]).trim();
-        const rEmail = String(data[i][4]).toLowerCase().trim();
-        if ((userId && rUserId === String(userId).trim()) || (email && rEmail === String(email).toLowerCase().trim())) {
-          const accountState = String(data[i][10] || "Activa").trim();
-          if (accountState === "Desactivada" || accountState === "Bloqueada" || accountState === "Suspendida") {
-            cache.remove(cacheKey);
-            return "NO_ACCESS";
-          }
-          const trueRole = String(data[i][6] || "Estudiante").trim();
-          cache.put(cacheKey, trueRole, 21600);
-          return trueRole;
+        const row = data[i];
+        const delId = String(row[0] || "");
+        const delegante = String(row[1] || "");
+        const delegado = String(row[2] || "");
+        const acciones = String(row[3] || "").split(",").map(s => s.trim());
+        const fInicio = new Date(row[5]).getTime();
+        const fFin = new Date(row[6]).getTime();
+        const estado = String(row[7] || "");
+
+        if (String(delegado).trim() === String(userId).trim() && estado === "Activa" && now >= fInicio && now <= fFin) {
+          cached.push({ delId, delegante, acciones });
         }
       }
+      cache.put(cacheKey, JSON.stringify(cached), 300);
+    } catch (err) {
+      return null;
     }
-  } catch (e) {
-    logDebug("Error consultando rol verificado en backend: " + e.message);
   }
 
-  return "Estudiante";
+  for (let j = 0; j < cached.length; j++) {
+    const item = cached[j];
+    if (item.acciones.indexOf("*") !== -1 || item.acciones.indexOf(action) !== -1) {
+      return item;
+    }
+  }
+  return null;
+}
+
+// [TAREA-F4-P1-04] [Fase 4: Reglas Contextuales RBAC/ABAC] - Validación de atributos contextuales (Docentes, Tutores, Estudiantes)
+function validateContextualAccess(action, payload, verifiedUserId, userRole) {
+  if (!userRole || userRole === "Administrador" || userRole === "Desarrollador") {
+    return { authorized: true };
+  }
+
+  const targetStudentId = payload && (payload.studentId || payload.estudianteId || payload.targetUserId || payload.userId);
+
+  if (userRole === "Estudiante" || userRole === "Alumno") {
+    if (targetStudentId && verifiedUserId && String(targetStudentId).trim() !== String(verifiedUserId).trim()) {
+      return { authorized: false, reason: "Aislamiento estricto de estudiante: intento de acceso a ID ajeno." };
+    }
+  }
+
+  if (userRole === "Padre" || userRole === "Tutor" || userRole === "Responsable") {
+    if (targetStudentId && verifiedUserId && String(targetStudentId).trim() !== String(verifiedUserId).trim()) {
+      try {
+        const guardianRes = getGuardianStudents({ userId: verifiedUserId });
+        const linkedStudents = (guardianRes.data || []).map(s => String(s.studentUserId || s.userId).trim());
+        if (linkedStudents.indexOf(String(targetStudentId).trim()) === -1) {
+          return { authorized: false, reason: "Aislamiento estricto de tutor: el estudiante no está vinculado al tutor." };
+        }
+      } catch (e) {}
+    }
+  }
+
+  return { authorized: true };
 }
 
 function validateRolePermission(action, payload) {
@@ -1028,13 +1181,39 @@ function validateRolePermission(action, payload) {
   if (userRole === "NO_ACCESS") {
     return { authorized: false, role: "Cuenta Inactiva/Bloqueada" };
   }
-  if (["submitProblemTicket", "getProblemTickets", "replyProblemTicket", "searchGlobalOmnibox", "configureAutomationRules", "getAutomationRules", "getNotificationAuditLogs", "getServiceHealthReport"].indexOf(action) !== -1) {
+  if (["submitProblemTicket", "getProblemTickets", "replyProblemTicket", "searchGlobalOmnibox", "configureAutomationRules", "getAutomationRules", "getNotificationAuditLogs", "getServiceHealthReport", "submitPrivacyRightsRequest", "getPrivacyRightsRequests"].indexOf(action) !== -1) {
     return { authorized: true, role: userRole };
   }
-  const permitted = ROLE_PERMISSIONS[userRole] || ROLE_PERMISSIONS["Estudiante"];
-  if (permitted.indexOf("*") !== -1 || permitted.indexOf(action) !== -1) {
-    return { authorized: true, role: userRole };
+
+  const verifiedId = payload && payload._verifiedUserId;
+  const ctxCheck = validateContextualAccess(action, payload, verifiedId, userRole);
+  if (!ctxCheck.authorized) {
+    return { authorized: false, role: userRole + " (" + ctxCheck.reason + ")" };
   }
+
+  const dynamicCheck = getDynamicPermissionsForRole(userRole, action);
+  if (dynamicCheck !== null) {
+    if (dynamicCheck === true) {
+      return { authorized: true, role: userRole };
+    }
+  } else {
+    const permitted = ROLE_PERMISSIONS[userRole] || [];
+    if (permitted.indexOf("*") !== -1 || permitted.indexOf(action) !== -1) {
+      return { authorized: true, role: userRole };
+    }
+  }
+
+  if (verifiedId) {
+    const activeDel = hasActiveDelegationForAction(verifiedId, action);
+    if (activeDel) {
+      if (payload) {
+        payload._delegatedFrom = activeDel.delegante;
+        payload._delegationId = activeDel.delId;
+      }
+      return { authorized: true, role: userRole + " (Delegado de " + activeDel.delegante + ")" };
+    }
+  }
+
   return { authorized: false, role: userRole };
 }
 
@@ -1051,6 +1230,7 @@ function doPost(e) {
     switch (action) {
       case "registerUser": result = registerUser(payload); break;
       case "loginUser": result = loginUser(payload); break;
+      case "logoutUser": result = logoutUser(payload); break;
       case "getStudents": result = getStudents(payload); break;
       case "getStudentsByGradoSeccion": result = getStudentsByGradoSeccion(payload); break;
       case "getUserInfo": result = getUserInfo(payload); break;
@@ -1061,6 +1241,21 @@ function doPost(e) {
       case "createPerson": result = createPerson(payload); break;
       case "linkPersonAccount": result = linkPersonAccount(payload); break;
       case "manageAccountState": result = manageAccountState(payload); break;
+      case "revokeUserSession": result = revokeUserSession(payload); break;
+      case "createSecurityDelegation": result = createSecurityDelegation(payload); break;
+      case "getSecurityDelegations": result = getSecurityDelegations(payload); break;
+      case "revokeSecurityDelegation": result = revokeSecurityDelegation(payload); break;
+      case "getRetentionPolicies": result = getRetentionPolicies(payload); break;
+      case "saveRetentionPolicy": result = saveRetentionPolicy(payload); break;
+      case "executeDataRetentionPolicyCheck": result = executeDataRetentionPolicyCheck(payload); break;
+      case "getPermissionMatrix": result = getPermissionMatrix(payload); break;
+      case "savePermissionMatrix": result = savePermissionMatrix(payload); break;
+      case "submitPrivacyRightsRequest": result = submitPrivacyRightsRequest(payload); break;
+      case "getPrivacyRightsRequests": result = getPrivacyRightsRequests(payload); break;
+      case "updatePrivacyRightsRequestStatus": result = updatePrivacyRightsRequestStatus(payload); break;
+      case "getEntityAuditHistory": result = getEntityAuditHistory(payload); break;
+      case "manageDepartmentPositions": result = manageDepartmentPositions(payload); break;
+      case "getUserInstitutionalAffiliations": result = getUserInstitutionalAffiliations(payload); break;
       case "saveGameResult": result = saveGameResult(payload); break;
       case "getGameStats": result = getGameStats(payload); break;
       case "getGlobalTop": result = getGlobalTop(payload); break;
@@ -1109,6 +1304,14 @@ function doPost(e) {
       case "runInterdepartmentalIntegrationTestSuite": result = runInterdepartmentalIntegrationTestSuite(payload); break;
       case "getSharedConfigurationsCatalog": result = getSharedConfigurationsCatalog(payload); break;
       case "manageInstitutionalDataCache": result = manageInstitutionalDataCache(payload); break;
+      case "purgeSecurityCaches": result = purgeSecurityCaches(payload); break;
+      case "dispatchSecurityEvent": result = dispatchSecurityEvent(payload); break;
+      case "processSecurityEventQueue": result = processSecurityEventQueue(payload); break;
+      case "getSecurityEventsQueue": result = getSecurityEventsQueue(payload); break;
+      case "getSecurityAndComplianceDashboardData": result = getSecurityAndComplianceDashboardData(payload); break;
+      case "generatePrivilegeAndAccountAuditReport": result = generatePrivilegeAndAccountAuditReport(payload); break;
+      case "getPaginatedAuditLogReport": result = getPaginatedAuditLogReport(payload); break;
+      case "auditAndReconcileIdentityInconsistencies": result = auditAndReconcileIdentityInconsistencies(payload); break;
       case "getNotificationPreferences": result = getNotificationPreferences(payload); break;
       case "markNotificationAsRead": result = markNotificationAsRead(payload); break;
       case "createUserNotification": result = createUserNotification(payload); break;
@@ -1319,6 +1522,603 @@ function generateInstitutionalId(payload) {
   }
 }
 
+// [TAREA-F4-P2-04] [TAREA-F4-P1-01] [Fase 4: Concurrencia de Identidad y Delegaciones] - Creación de delegaciones temporales con candado atómico LockService
+function createSecurityDelegation(payload) {
+  const callerRole = getUserVerifiedRole(payload);
+  const callerId = payload._verifiedUserId;
+  const { delegadoUserId, accionesAutorizadas, ambito, fechaInicio, fechaFin, motivo } = payload || {};
+
+  if (!delegadoUserId || !accionesAutorizadas || !fechaInicio || !fechaFin) {
+    throw new Error("delegadoUserId, accionesAutorizadas, fechaInicio y fechaFin son requeridos.");
+  }
+
+  const dInicio = new Date(fechaInicio);
+  const dFin = new Date(fechaFin);
+  if (isNaN(dInicio.getTime()) || isNaN(dFin.getTime()) || dInicio >= dFin) {
+    throw new Error("Rango de fechas de delegación inválido.");
+  }
+
+  const lock = LockService.getScriptLock();
+  try {
+    lock.waitLock(10000);
+
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const sheet = getOrCreateSheet(ss, "DelegacionesSeguridad");
+
+    if (sheet.getLastRow() === 0) {
+      sheet.appendRow(["delegacionId", "deleganteUserId", "delegadoUserId", "accionesAutorizadas", "ambito", "fechaInicio", "fechaFin", "estado", "motivo", "creadoPor", "fechaCreacion"]);
+    }
+
+    const genRes = generateInstitutionalId({ entityType: "Delegacion", prefix: "DEL-" });
+    const delId = genRes.generatedId || ("DEL-" + Date.now());
+    const now = new Date();
+
+    sheet.appendRow([
+      delId,
+      callerId,
+      String(delegadoUserId).trim(),
+      Array.isArray(accionesAutorizadas) ? accionesAutorizadas.join(",") : String(accionesAutorizadas).trim(),
+      ambito || "General",
+      dInicio,
+      dFin,
+      "Activa",
+      motivo || "Delegación temporal de funciones",
+      callerId,
+      now
+    ]);
+
+    try {
+      CacheService.getScriptCache().remove("active_delegations_" + String(delegadoUserId).trim());
+    } catch (e) {}
+
+    logStructuredEvent("USER", "createSecurityDelegation", "INFO", "DELEGATION_CREATED", `Delegación ${delId} creada por ${callerId} para ${delegadoUserId}`, { delId, delegante: callerId, delegado: delegadoUserId, acciones: accionesAutorizadas, fechaInicio, fechaFin }, callerRole);
+
+    return { status: "success", delegacionId: delId, message: "Delegación de seguridad registrada exitosamente." };
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+// [TAREA-F4-P1-01] [Fase 4: Motor de Delegaciones] - Consulta y evaluación de caducidad automática
+function getSecurityDelegations(payload) {
+  const callerRole = getUserVerifiedRole(payload);
+  const callerId = payload._verifiedUserId;
+  const { deleganteUserId, delegadoUserId, estado } = payload || {};
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = ss.getSheetByName("DelegacionesSeguridad");
+  if (!sheet) return { status: "success", data: [] };
+
+  const data = sheet.getDataRange().getValues();
+  if (data.length <= 1) return { status: "success", data: [] };
+
+  const now = new Date().getTime();
+  const list = [];
+
+  for (let i = 1; i < data.length; i++) {
+    const row = data[i];
+    const delId = String(row[0] || "");
+    const delegante = String(row[1] || "");
+    const delegado = String(row[2] || "");
+    const acciones = String(row[3] || "");
+    const amb = String(row[4] || "");
+    const fIni = new Date(row[5]);
+    const fFin = new Date(row[6]);
+    let st = String(row[7] || "Activa");
+
+    if (st === "Activa" && now > fFin.getTime()) {
+      st = "Expirada";
+      sheet.getRange(i + 1, 8).setValue("Expirada");
+    }
+
+    let matches = true;
+    if (callerRole !== "Administrador" && callerRole !== "Desarrollador") {
+      if (delegante !== callerId && delegado !== callerId) matches = false;
+    }
+    if (deleganteUserId && String(deleganteUserId).trim() !== delegante) matches = false;
+    if (delegadoUserId && String(delegadoUserId).trim() !== delegado) matches = false;
+    if (estado && String(estado).toLowerCase().trim() !== st.toLowerCase()) matches = false;
+
+    if (matches) {
+      list.push({
+        delegacionId: delId,
+        deleganteUserId: delegante,
+        delegadoUserId: delegado,
+        accionesAutorizadas: acciones,
+        ambito: amb,
+        fechaInicio: fIni.toISOString(),
+        fechaFin: fFin.toISOString(),
+        estado: st,
+        motivo: row[8] || "",
+        creadoPor: row[9] || "",
+        fechaCreacion: row[10] ? new Date(row[10]).toISOString() : ""
+      });
+    }
+  }
+
+  return { status: "success", data: list };
+}
+
+// [TAREA-F4-P1-03] [Fase 4: Matriz Dinámica de Permisos] - Consulta y caché de la matriz dinámica por rol y acción
+function getDynamicPermissionsForRole(role, action) {
+  if (!role || !action) return null;
+  const cache = CacheService.getScriptCache();
+  const cacheKey = "dynamic_permissions_matrix";
+  let matrix = null;
+  try {
+    const raw = cache.get(cacheKey);
+    if (raw) matrix = JSON.parse(raw);
+  } catch (e) {}
+
+  if (!matrix) {
+    try {
+      const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+      const sheet = ss.getSheetByName("MatrizPermisosRoles");
+      if (!sheet || sheet.getLastRow() <= 1) return null;
+      const data = sheet.getDataRange().getValues();
+      matrix = {};
+      for (let i = 1; i < data.length; i++) {
+        const rRole = String(data[i][0] || "").trim();
+        const rAction = String(data[i][2] || "").trim();
+        const rPermitted = data[i][3] === true || String(data[i][3]).toLowerCase() === "true";
+        if (!matrix[rRole]) matrix[rRole] = {};
+        matrix[rRole][rAction] = rPermitted;
+      }
+      cache.put(cacheKey, JSON.stringify(matrix), 600);
+    } catch (e) {
+      return null;
+    }
+  }
+
+  if (matrix && matrix[role]) {
+    if (matrix[role]["*"] !== undefined) return matrix[role]["*"];
+    if (matrix[role][action] !== undefined) return matrix[role][action];
+  }
+  return null;
+}
+
+// [TAREA-F4-P1-03] [Fase 4: Matriz Dinámica de Permisos] - Obtención de la matriz dinámica persistente
+function getPermissionMatrix(payload) {
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "MatrizPermisosRoles");
+  let data = sheet.getDataRange().getValues();
+
+  if (data.length <= 1) {
+    if (data.length === 0) {
+      sheet.appendRow(["rol", "modulo", "accion", "permitido", "ambito", "ultimaModificacion", "modificadoPor"]);
+    }
+    const now = new Date();
+    Object.keys(ROLE_PERMISSIONS).forEach(role => {
+      const actions = ROLE_PERMISSIONS[role] || [];
+      actions.forEach(act => {
+        sheet.appendRow([role, "General", act, true, "Global", now, "Sistema"]);
+      });
+    });
+    data = sheet.getDataRange().getValues();
+  }
+
+  const list = data.slice(1).map(r => ({
+    rol: String(r[0] || "").trim(),
+    modulo: String(r[1] || "General").trim(),
+    accion: String(r[2] || "").trim(),
+    permitido: r[3] === true || String(r[3]).toLowerCase() === "true",
+    ambito: String(r[4] || "Global").trim(),
+    ultimaModificacion: r[5] ? new Date(r[5]).toISOString() : "",
+    modificadoPor: String(r[6] || "").trim()
+  }));
+
+  return { status: "success", data: list };
+}
+
+// [TAREA-F4-P1-03] [Fase 4: Matriz Dinámica de Permisos] - Actualización y persistencia de la matriz con auditoría de versión
+function savePermissionMatrix(payload) {
+  const callerRole = getUserVerifiedRole(payload);
+  const callerId = payload._verifiedUserId;
+  const { matrix, rol, modulo, accion, permitido, ambito } = payload || {};
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "MatrizPermisosRoles");
+  if (sheet.getLastRow() === 0) {
+    sheet.appendRow(["rol", "modulo", "accion", "permitido", "ambito", "ultimaModificacion", "modificadoPor"]);
+  }
+
+  const now = new Date();
+  const rulesToSave = Array.isArray(matrix) ? matrix : (rol && accion !== undefined ? [{ rol, modulo, accion, permitido, ambito }] : []);
+
+  if (rulesToSave.length === 0) {
+    throw new Error("Se requiere al menos una regla de permiso válida.");
+  }
+
+  const data = sheet.getDataRange().getValues();
+
+  rulesToSave.forEach(rule => {
+    const targetRol = String(rule.rol || "").trim();
+    const targetAction = String(rule.accion || "").trim();
+    const targetPermitted = rule.permitido === true || String(rule.permitido).toLowerCase() === "true";
+    const targetModule = String(rule.modulo || "General").trim();
+    const targetAmbito = String(rule.ambito || "Global").trim();
+
+    let foundIdx = -1;
+    for (let i = 1; i < data.length; i++) {
+      if (String(data[i][0]).trim() === targetRol && String(data[i][2]).trim() === targetAction) {
+        foundIdx = i;
+        break;
+      }
+    }
+
+    if (foundIdx !== -1) {
+      sheet.getRange(foundIdx + 1, 2, 1, 6).setValues([[targetModule, targetAction, targetPermitted, targetAmbito, now, callerId]]);
+    } else {
+      sheet.appendRow([targetRol, targetModule, targetAction, targetPermitted, targetAmbito, now, callerId]);
+    }
+  });
+
+  try {
+    CacheService.getScriptCache().remove("dynamic_permissions_matrix");
+  } catch (e) {}
+
+  logStructuredEvent("USER", "savePermissionMatrix", "INFO", "PERMISSION_MATRIX_UPDATED", `Matriz de permisos actualizada por ${callerId}. Reglas procesadas: ${rulesToSave.length}`, { rulesCount: rulesToSave.length, updatedBy: callerId }, callerRole);
+
+  return { status: "success", count: rulesToSave.length, message: "Matriz dinámica de permisos actualizada exitosamente." };
+}
+
+// [TAREA-F4-P1-05] [Fase 4: Gobierno de Privacidad] - Registro de solicitudes de derechos sobre datos personales (ARCO)
+function submitPrivacyRightsRequest(payload) {
+  const callerRole = getUserVerifiedRole(payload);
+  const callerId = payload._verifiedUserId;
+  const { tipoDerecho, motivo, detalles } = payload || {};
+
+  if (!callerId) throw new Error("Acceso denegado: Usuario no autenticado.");
+  if (!tipoDerecho || !motivo) throw new Error("tipoDerecho y motivo son requeridos.");
+
+  const validTypes = ["ACCESO", "RECTIFICACION", "EXPORTACION", "ELIMINACION", "OPOSICION"];
+  if (validTypes.indexOf(String(tipoDerecho).toUpperCase().trim()) === -1) {
+    throw new Error(`Tipo de derecho de privacidad inválido. Debe ser uno de: ${validTypes.join(", ")}`);
+  }
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "SolicitudesDerechosPrivacidad");
+  if (sheet.getLastRow() === 0) {
+    sheet.appendRow(["solicitudId", "userId", "tipoDerecho", "motivo", "detalles", "estado", "respuestaAdmin", "atendidoPor", "fechaSolicitud", "fechaRespuesta"]);
+  }
+
+  const genRes = generateInstitutionalId({ entityType: "Privacidad", prefix: "PRV-" });
+  const solId = genRes.generatedId || ("PRV-" + Date.now());
+  const now = new Date();
+
+  sheet.appendRow([
+    solId,
+    callerId,
+    String(tipoDerecho).toUpperCase().trim(),
+    String(motivo).trim(),
+    detalles || "",
+    "Enviada",
+    "",
+    "",
+    now,
+    ""
+  ]);
+
+  logStructuredEvent("USER", "submitPrivacyRightsRequest", "INFO", "PRIVACY_RIGHTS_REQUESTED", `Solicitud de derechos de privacidad ${solId} (${tipoDerecho}) registrada por ${callerId}`, { solicitudId: solId, userId: callerId, tipoDerecho, motivo }, callerRole);
+
+  return { status: "success", solicitudId: solId, message: "Solicitud de derechos de privacidad registrada exitosamente. Un administrador la revisará a la brevedad." };
+}
+
+// [TAREA-F4-P1-05] [Fase 4: Gobierno de Privacidad] - Consulta de solicitudes de derechos de privacidad
+function getPrivacyRightsRequests(payload) {
+  const callerRole = getUserVerifiedRole(payload);
+  const callerId = payload._verifiedUserId;
+  const { userId, tipoDerecho, estado } = payload || {};
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = ss.getSheetByName("SolicitudesDerechosPrivacidad");
+  if (!sheet || sheet.getLastRow() <= 1) return { status: "success", data: [] };
+
+  const data = sheet.getDataRange().getValues().slice(1);
+  const requests = [];
+
+  for (let i = 0; i < data.length; i++) {
+    const row = data[i];
+    const solId = String(row[0] || "");
+    const uId = String(row[1] || "");
+    const tipo = String(row[2] || "");
+    const st = String(row[5] || "Enviada");
+
+    let matches = true;
+    if (callerRole !== "Administrador" && callerRole !== "Desarrollador") {
+      if (uId !== callerId) matches = false;
+    }
+    if (userId && String(userId).trim() !== uId) matches = false;
+    if (tipoDerecho && String(tipoDerecho).toUpperCase().trim() !== tipo) matches = false;
+    if (estado && String(estado).toLowerCase().trim() !== st.toLowerCase().trim()) matches = false;
+
+    if (matches) {
+      requests.push({
+        solicitudId: solId,
+        userId: uId,
+        tipoDerecho: tipo,
+        motivo: String(row[3] || ""),
+        detalles: String(row[4] || ""),
+        estado: st,
+        respuestaAdmin: String(row[6] || ""),
+        atendidoPor: String(row[7] || ""),
+        fechaSolicitud: row[8] ? new Date(row[8]).toISOString() : "",
+        fechaRespuesta: row[9] ? new Date(row[9]).toISOString() : ""
+      });
+    }
+  }
+
+  return { status: "success", data: requests };
+}
+
+// [TAREA-F4-P1-05] [Fase 4: Gobierno de Privacidad] - Tramitación y actualización de estado por administradores
+function updatePrivacyRightsRequestStatus(payload) {
+  const callerRole = getUserVerifiedRole(payload);
+  const callerId = payload._verifiedUserId;
+  const { solicitudId, nuevoEstado, respuestaAdmin } = payload || {};
+
+  if (callerRole !== "Administrador" && callerRole !== "Desarrollador") {
+    throw new Error("Acceso denegado: Únicamente los administradores pueden tramitar solicitudes de derechos de privacidad.");
+  }
+  if (!solicitudId || !nuevoEstado) {
+    throw new Error("solicitudId y nuevoEstado son requeridos.");
+  }
+
+  const validStates = ["Enviada", "En_Revision", "Aprobada", "Completada", "Rechazada"];
+  if (validStates.indexOf(nuevoEstado) === -1) {
+    throw new Error(`Estado inválido. Debe ser uno de: ${validStates.join(", ")}`);
+  }
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = ss.getSheetByName("SolicitudesDerechosPrivacidad");
+  if (!sheet) throw new Error("Solicitud no encontrada.");
+
+  const data = sheet.getDataRange().getValues();
+  let targetIndex = -1;
+
+  for (let i = 1; i < data.length; i++) {
+    if (String(data[i][0]).trim() === String(solicitudId).trim()) {
+      targetIndex = i;
+      break;
+    }
+  }
+
+  if (targetIndex === -1) throw new Error("Solicitud no encontrada.");
+
+  const now = new Date();
+  sheet.getRange(targetIndex + 1, 6).setValue(nuevoEstado);
+  if (respuestaAdmin) sheet.getRange(targetIndex + 1, 7).setValue(respuestaAdmin);
+  sheet.getRange(targetIndex + 1, 8).setValue(callerId);
+  sheet.getRange(targetIndex + 1, 10).setValue(now);
+
+  logStructuredEvent("USER", "updatePrivacyRightsRequestStatus", "INFO", "PRIVACY_RIGHTS_UPDATED", `Estado de solicitud de privacidad ${solicitudId} actualizado a '${nuevoEstado}' por ${callerId}`, { solicitudId, nuevoEstado, respuestaAdmin, atendidoPor: callerId }, callerRole);
+
+  return { status: "success", solicitudId, nuevoEstado, message: `Estado de la solicitud ${solicitudId} actualizado a '${nuevoEstado}'.` };
+}
+
+// [TAREA-F4-P1-02] [Fase 4: Motor de Retención y Archivo de Datos] - Catálogo y gestión de políticas de retención
+function getRetentionPolicies(payload) {
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "PoliticasRetencionDatos");
+  let data = sheet.getDataRange().getValues();
+
+  if (data.length <= 1) {
+    if (data.length === 0) {
+      sheet.appendRow(["categoria", "diasRetencion", "accion", "preservacionLegal", "descripcion", "ultimaActualizacion"]);
+    }
+    const defaults = [
+      ["AUDIT_LOGS", 365, "PURGE", false, "Bitácoras de eventos operativos ordinarios", new Date()],
+      ["USER_SESSIONS", 90, "PURGE", false, "Registros de sesiones inactivas y expiradas", new Date()],
+      ["STUDENT_EXPEDIENTS", 3650, "ARCHIVE", true, "Expedientes académicos con conservación obligatoria legal (10 años)", new Date()],
+      ["FINANCIAL_RECORDS", 2555, "ARCHIVE", true, "Registros contables y financieros con conservación legal (7 años)", new Date()],
+      ["INACTIVE_USERS", 730, "ANONYMIZE", false, "Cuentas inactivas por más de 2 años (anonimización de datos sensibles)", new Date()]
+    ];
+    defaults.forEach(r => sheet.appendRow(r));
+    data = sheet.getDataRange().getValues();
+  }
+
+  const policies = data.slice(1).map(r => ({
+    categoria: String(r[0] || "").trim(),
+    diasRetencion: parseInt(r[1] || 365, 10),
+    accion: String(r[2] || "ARCHIVE").trim(),
+    preservacionLegal: r[3] === true || String(r[3]).toLowerCase() === "true",
+    descripcion: String(r[4] || "").trim(),
+    ultimaActualizacion: r[5] ? new Date(r[5]).toISOString() : ""
+  }));
+
+  return { status: "success", data: policies };
+}
+
+// [TAREA-F4-P1-02] [Fase 4: Motor de Retención y Archivo de Datos] - Creación/Edición de políticas de retención
+function saveRetentionPolicy(payload) {
+  const callerRole = getUserVerifiedRole(payload);
+  const { categoria, diasRetencion, accion, preservacionLegal, descripcion } = payload || {};
+
+  if (!categoria || !diasRetencion || !accion) {
+    throw new Error("categoria, diasRetencion y accion son requeridos.");
+  }
+
+  const validActions = ["PURGE", "ARCHIVE", "ANONYMIZE", "PRESERVE_LEGAL"];
+  if (validActions.indexOf(accion) === -1) {
+    throw new Error(`Acción inválida. Debe ser una de: ${validActions.join(", ")}`);
+  }
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "PoliticasRetencionDatos");
+  const data = sheet.getDataRange().getValues();
+
+  let foundIndex = -1;
+  for (let i = 1; i < data.length; i++) {
+    if (String(data[i][0]).trim().toUpperCase() === String(categoria).trim().toUpperCase()) {
+      foundIndex = i;
+      break;
+    }
+  }
+
+  const now = new Date();
+  const rowData = [
+    String(categoria).trim().toUpperCase(),
+    parseInt(diasRetencion, 10),
+    String(accion).trim().toUpperCase(),
+    preservacionLegal === true || String(preservacionLegal).toLowerCase() === "true",
+    descripcion || "Política de retención institucional",
+    now
+  ];
+
+  if (foundIndex !== -1) {
+    sheet.getRange(foundIndex + 1, 1, 1, 6).setValues([rowData]);
+  } else {
+    if (data.length === 0) {
+      sheet.appendRow(["categoria", "diasRetencion", "accion", "preservacionLegal", "descripcion", "ultimaActualizacion"]);
+    }
+    sheet.appendRow(rowData);
+  }
+
+  logStructuredEvent("USER", "saveRetentionPolicy", "INFO", "RETENTION_POLICY_SAVED", `Política de retención guardada para categoría ${categoria}`, { categoria, diasRetencion, accion, preservacionLegal }, callerRole);
+
+  return { status: "success", categoria, message: `Política de retención para '${categoria}' guardada correctamente.` };
+}
+
+// [TAREA-F4-P1-02] [Fase 4: Motor de Retención y Archivo de Datos] - Ejecución programada de evaluación de plazos vencidos
+function executeDataRetentionPolicyCheck(payload) {
+  const callerRole = getUserVerifiedRole(payload);
+  const policiesRes = getRetentionPolicies(payload);
+  const policies = policiesRes.data || [];
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const nowMs = new Date().getTime();
+
+  let itemsEvaluated = 0;
+  let itemsArchived = 0;
+  let itemsPurged = 0;
+  let itemsAnonymized = 0;
+
+  policies.forEach(pol => {
+    const limitMs = nowMs - (pol.diasRetencion * 86400000);
+
+    if (pol.categoria === "AUDIT_LOGS" && pol.accion === "PURGE" && !pol.preservacionLegal) {
+      const bitacoraSheet = ss.getSheetByName("BitacoraEventos");
+      if (bitacoraSheet) {
+        const rows = bitacoraSheet.getDataRange().getValues();
+        const keepRows = [rows[0]];
+        for (let i = 1; i < rows.length; i++) {
+          itemsEvaluated++;
+          const rowDate = new Date(rows[i][0] || rows[i][1]).getTime();
+          const eventSeverity = String(rows[i][2] || "");
+          if (rowDate < limitMs && eventSeverity !== "CRITICAL" && eventSeverity !== "WARN") {
+            itemsPurged++;
+          } else {
+            keepRows.push(rows[i]);
+          }
+        }
+        if (itemsPurged > 0) {
+          bitacoraSheet.clearContents();
+          bitacoraSheet.getRange(1, 1, keepRows.length, keepRows[0].length).setValues(keepRows);
+        }
+      }
+    } else if (pol.categoria === "INACTIVE_USERS" && pol.accion === "ANONYMIZE") {
+      const userSheet = ss.getSheetByName("Usuarios");
+      if (userSheet) {
+        const uRows = userSheet.getDataRange().getValues();
+        for (let j = 1; j < uRows.length; j++) {
+          itemsEvaluated++;
+          const acctState = String(uRows[j][10] || "");
+          const lastAccess = new Date(uRows[j][12] || uRows[j][11]).getTime();
+          if ((acctState === "Desactivada" || acctState === "Inactiva") && lastAccess < limitMs) {
+            userSheet.getRange(j + 1, 2).setValue("Usuario Anonimizado");
+            userSheet.getRange(j + 1, 5).setValue("anon_" + uRows[j][0] + "@ngca.edu");
+            userSheet.getRange(j + 1, 8).setValue("00000000");
+            itemsAnonymized++;
+          }
+        }
+      }
+    } else if ((pol.categoria === "STUDENT_EXPEDIENTS" || pol.categoria === "FINANCIAL_RECORDS") && pol.preservacionLegal) {
+      itemsEvaluated++;
+      itemsArchived++;
+    }
+  });
+
+  logStructuredEvent("USER", "executeDataRetentionPolicyCheck", "INFO", "RETENTION_CHECK_EXECUTED", `Verificación de políticas de retención ejecutada. Evaluados: ${itemsEvaluated}, Archivados: ${itemsArchived}, Purgados: ${itemsPurged}, Anonimizados: ${itemsAnonymized}`, { itemsEvaluated, itemsArchived, itemsPurged, itemsAnonymized }, callerRole);
+
+  return {
+    status: "success",
+    timestamp: new Date().toISOString(),
+    metrics: {
+      itemsEvaluated,
+      itemsArchived,
+      itemsPurged,
+      itemsAnonymized
+    },
+    message: "Verificación y aplicación de políticas de retención ejecutada correctamente."
+  };
+}
+
+// [TAREA-F4-P1-01] [Fase 4: Motor de Delegaciones] - Revocación anticipada de delegación
+function revokeSecurityDelegation(payload) {
+  const callerRole = getUserVerifiedRole(payload);
+  const callerId = payload._verifiedUserId;
+  const { delegacionId, motivo } = payload || {};
+
+  if (!delegacionId) throw new Error("delegacionId es requerido.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = ss.getSheetByName("DelegacionesSeguridad");
+  if (!sheet) throw new Error("Delegación no encontrada.");
+
+  const data = sheet.getDataRange().getValues();
+  let targetIndex = -1;
+  let delegadoId = "";
+
+  for (let i = 1; i < data.length; i++) {
+    if (String(data[i][0]).trim() === String(delegacionId).trim()) {
+      targetIndex = i;
+      delegadoId = String(data[i][2] || "").trim();
+      if (callerRole !== "Administrador" && callerRole !== "Desarrollador" && String(data[i][1]).trim() !== callerId) {
+        throw new Error("Acceso denegado: Únicamente el delegante titular o un administrador pueden revocar la delegación.");
+      }
+      break;
+    }
+  }
+
+  if (targetIndex === -1) throw new Error("Delegación no encontrada.");
+
+  sheet.getRange(targetIndex + 1, 8).setValue("Revocada");
+
+  if (delegadoId) {
+    try {
+      CacheService.getScriptCache().remove("active_delegations_" + delegadoId);
+    } catch (e) {}
+  }
+
+  logStructuredEvent("USER", "revokeSecurityDelegation", "WARN", "DELEGATION_REVOKED", `Delegación ${delegacionId} revocada por ${callerId}. Motivo: ${motivo || 'N/A'}`, { delegacionId, motivo, revocadaPor: callerId }, callerRole);
+
+  return { status: "success", delegacionId: delegacionId, message: "Delegación de seguridad revocada exitosamente." };
+}
+
+// [TAREA-F4-P0-03] [Fase 4: Revocación de Sesiones] - Cambios de estado, revocación explícita de sesiones e invalidación en tiempo real
+function revokeUserSession(payload) {
+  const { userId, sessionId } = payload || {};
+  const cache = CacheService.getScriptCache();
+  if (sessionId) {
+    cache.put("revoked_session_" + sessionId, "REVOKED", 21600);
+  }
+  if (userId) {
+    cache.put("revoked_user_" + userId, "REVOKED", 21600);
+    invalidateUserRoleCache(userId);
+  }
+  logStructuredEvent("USER", "revokeUserSession", "WARN", "SESSION_REVOKED", `Sesión revocada para usuario ${userId || 'N/A'}, sessionId: ${sessionId || 'ALL'}`, payload, payload && payload.authRole);
+  return { status: "success", message: "Sesión revocada exitosamente." };
+}
+
+// [TAREA-F4-P2-04] [TAREA-F4-P2-02] [Fase 4: Ciclo de Vida de Cuentas y Concurrencia] - Máquina de estados y candado atómico LockService para cambios de cuenta
+const ALLOWED_ACCOUNT_STATE_TRANSITIONS = {
+  "Pendiente": ["InvitacionEnviada", "Activa", "Desactivada"],
+  "InvitacionEnviada": ["Activa", "Pendiente", "Desactivada"],
+  "Activa": ["Suspendida", "Bloqueada", "Desactivada"],
+  "Suspendida": ["Activa", "Desactivada"],
+  "Bloqueada": ["Activa", "Suspendida", "Desactivada"],
+  "Desactivada": ["Activa"]
+};
+
 function manageAccountState(payload) {
   const { userId, newState, motivo } = payload || {};
   if (!userId || !newState) throw new Error("userId y newState son requeridos.");
@@ -1326,39 +2126,67 @@ function manageAccountState(payload) {
   const validStates = ["Pendiente", "InvitacionEnviada", "Activa", "Suspendida", "Bloqueada", "Desactivada"];
   if (validStates.indexOf(newState) === -1) throw new Error(`Estado inválido. Debe ser uno de: ${validStates.join(", ")}`);
 
-  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
-  const sheet = getSheetOrThrow(ss, "Usuarios");
-  const data = sheet.getDataRange().getValues();
+  const lock = LockService.getScriptLock();
+  try {
+    lock.waitLock(10000);
 
-  const idx = data.findIndex(r => String(r[0]).trim() === String(userId).trim());
-  if (idx === -1) throw new Error("Cuenta de usuario no encontrada.");
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const sheet = getSheetOrThrow(ss, "Usuarios");
+    const data = sheet.getDataRange().getValues();
 
-  sheet.getRange(idx + 1, 11).setValue(newState);
+    const idx = data.findIndex(r => String(r[0]).trim() === String(userId).trim());
+    if (idx === -1) throw new Error("Cuenta de usuario no encontrada.");
 
-  logStructuredEvent("USER", "manageAccountState", "WARN", "ACCOUNT_STATE_CHANGED", `Estado de cuenta ${userId} cambiado a ${newState}. Motivo: ${motivo || 'N/A'}`, { userId, newState, motivo }, payload && payload.authRole);
+    const oldState = String(data[idx][10] || "Activa").trim();
 
-  return { status: "success", userId: userId, newState: newState, message: `Estado de la cuenta actualizado a '${newState}'.` };
+    if (oldState !== newState) {
+      const allowedTargets = ALLOWED_ACCOUNT_STATE_TRANSITIONS[oldState] || ["Activa", "Suspendida", "Bloqueada", "Desactivada"];
+      if (allowedTargets.indexOf(newState) === -1) {
+        throw new Error(`Transición de estado no permitida de '${oldState}' a '${newState}'. Transiciones válidas: ${allowedTargets.join(", ")}`);
+      }
+    }
+
+    sheet.getRange(idx + 1, 11).setValue(newState);
+
+    recordEntityChangeLog("Usuario", userId, { estadoCuenta: oldState }, { estadoCuenta: newState }, "ACCOUNT_STATE_CHANGED", payload && payload._verifiedUserId);
+
+    dispatchSecurityEvent({
+      eventType: "ACCOUNT_STATE_CHANGED",
+      targetUserId: userId,
+      accountState: newState,
+      details: `Transición de estado de cuenta: ${oldState} -> ${newState}. Motivo: ${motivo || 'N/A'}`
+    });
+
+    logStructuredEvent("USER", "manageAccountState", "WARN", "ACCOUNT_STATE_CHANGED", `Estado de cuenta ${userId} cambiado de ${oldState} a ${newState}. Motivo: ${motivo || 'N/A'}`, { userId, oldState, newState, motivo }, payload && payload.authRole);
+
+    return { status: "success", userId: userId, oldState: oldState, newState: newState, message: `Estado de la cuenta actualizado exitosamente de '${oldState}' a '${newState}'.` };
+  } finally {
+    lock.releaseLock();
+  }
 }
 
 // ---------------------------------------------------------------------------
 // LÓGICA DE USUARIOS
 // ---------------------------------------------------------------------------
 
+// [TAREA-F4-P2-01] [Fase 4: Identidad Unica] - Eliminación de marcas de tiempo en IDs de usuario y forzado de secuencias atómicas institucionales
 function registerUser(payload) {
   const { nombre, grado, seccion, email, password, telefono, numeroLista, forceUpdate, personaId } = payload || {};
   if (!nombre || !email || !password) throw new Error("Datos obligatorios faltantes.");
+  const now = new Date();
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
   const sheet = getSheetOrThrow(ss, "Usuarios");
   const data = sheet.getDataRange().getValues();
   const lowerEmail = email.toLowerCase().trim();
   let existingIndex = -1;
   for (let i = 1; i < data.length; i++) { if (data[i][4]?.toString().toLowerCase().trim() === lowerEmail) { existingIndex = i; break; } }
-  const now = new Date();
 
   if (existingIndex !== -1) {
     if (forceUpdate) {
       const userId = data[existingIndex][0];
-      const hashedPassword = Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, password).map(b => ('0' + (b & 0xFF).toString(16)).slice(-2)).join('');
+      const passBytes = Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, password);
+      const passArr = Array.from ? Array.from(passBytes) : [].slice.call(passBytes);
+      const hashedPassword = passArr.map(b => ('0' + (b & 0xFF).toString(16)).slice(-2)).join('');
       sheet.getRange(existingIndex + 1, 1, 1, 13).setValues([[
         userId,
         nombre,
@@ -1378,8 +2206,14 @@ function registerUser(payload) {
     }
     return { status: "error", exists: true, message: "Email ya registrado.", data: { nombre: data[existingIndex][1], gradoActual: data[existingIndex][2], seccionActual: data[existingIndex][3] } };
   }
-  const userId = "USR-" + now.getTime();
-  const hashedPassword = Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, password).map(b => ('0' + (b & 0xFF).toString(16)).slice(-2)).join('');
+  const genIdRes = generateInstitutionalId({ entityType: "Usuario", prefix: "USR-" });
+  const userId = genIdRes && genIdRes.generatedId ? genIdRes.generatedId : null;
+  if (!userId) {
+    throw new Error("No se pudo generar un identificador institucional único para el usuario.");
+  }
+  const passBytes = Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, password);
+  const passArr = Array.from ? Array.from(passBytes) : [].slice.call(passBytes);
+  const hashedPassword = passArr.map(b => ('0' + (b & 0xFF).toString(16)).slice(-2)).join('');
   sheet.appendRow([
     userId,
     nombre,
@@ -1398,16 +2232,44 @@ function registerUser(payload) {
   return { status: "success", userId };
 }
 
-// [T-GOV-01] [pendientes3.md] - Función loginUser con invalidación de sesiones y protección contra ataques de fuerza bruta (bloqueo al acumular 5 intentos fallidos).
+// [TAREA-F4-P0-04] [Fase 4: Auditoría y Protección] - Registro de intentos fallidos/exitosos, cierres de sesión y respuestas genéricas
+function logoutUser(payload) {
+  const { sessionToken, userId, sessionId } = payload || {};
+  let effectiveUserId = userId;
+  let effectiveSessionId = sessionId;
+
+  if (sessionToken) {
+    const claims = verifySessionToken(sessionToken);
+    if (claims) {
+      if (!effectiveUserId) effectiveUserId = claims.userId;
+      if (!effectiveSessionId) effectiveSessionId = claims.sessionId;
+    }
+  }
+
+  if (effectiveUserId || effectiveSessionId) {
+    revokeUserSession({ userId: effectiveUserId, sessionId: effectiveSessionId });
+  }
+
+  logStructuredEvent("USER", "logoutUser", "INFO", "LOGOUT_SUCCESS", `Cierre de sesión registrado para usuario ${effectiveUserId || 'Anónimo'}`, { userId: effectiveUserId, sessionId: effectiveSessionId }, "Anónimo");
+
+  return { status: "success", message: "Cierre de sesión registrado exitosamente." };
+}
+
+// [TAREA-F4-P0-04] [Fase 4: Registro de Intentos y Fuerza Bruta] - loginUser con registro LOGIN_FAILED categorizado, correlationId y respuestas genéricas sanitizadas
 function loginUser(payload) {
   const { identifier, password } = payload || {};
-  if (!identifier || !password) return { status: "error", message: "Identificador y contraseña son requeridos." };
+  if (!identifier || !password) return { status: "error", message: "Credenciales incorrectas o cuenta no disponible." };
+
+  const correlationId = "CID-" + Date.now() + "-" + Math.floor(Math.random() * 1000);
+  const cleanIdentifier = String(identifier).trim();
+  const idLower = cleanIdentifier.toLowerCase();
 
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
   const sheet = getSheetOrThrow(ss, "Usuarios");
   const data = sheet.getDataRange().getValues();
-  const hp = Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, password).map(b => ('0' + (b & 0xFF).toString(16)).slice(-2)).join('');
-  const id = identifier.toLowerCase().trim();
+  const passBytes = Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, password);
+  const passArr = Array.from ? Array.from(passBytes) : [].slice.call(passBytes);
+  const hp = passArr.map(b => ('0' + (b & 0xFF).toString(16)).slice(-2)).join('');
 
   for (let i = 1; i < data.length; i++) {
     const row = data[i];
@@ -1415,19 +2277,28 @@ function loginUser(payload) {
     const uNombre = row[1]?.toString().toLowerCase().trim();
     const state = row[10] || "Activa";
 
-    if (uEmail === id || uNombre === id) {
+    if (uEmail === idLower || uNombre === idLower) {
       if (state === "Suspendida" || state === "Desactivada" || state === "Bloqueada") {
-        logStructuredEvent("USER", "loginUser", "WARN", "LOGIN_BLOCKED", `Intento de inicio de sesión en cuenta ${state}`, { identifier, userId: row[0], state }, "Sistema");
-        return { status: "error", message: `Su cuenta se encuentra en estado '${state}'. Por favor contacte a la administración.` };
+        logStructuredEvent("USER", "loginUser", "WARN", "LOGIN_FAILED", `Intento de inicio de sesión fallido: cuenta ${state}`, { correlationId, identifier: cleanIdentifier, userId: row[0], state, reason: "CUENTA_INACTIVA_O_BLOQUEADA" }, "Anónimo");
+        return { status: "error", message: "Credenciales incorrectas o cuenta no disponible." };
       }
 
       if (row[5] === hp) {
-        // Éxito - Resetear intentos fallidos y actualizar último acceso
         sheet.getRange(i + 1, 12).setValue(0);
         sheet.getRange(i + 1, 13).setValue(new Date());
 
+        const sessionToken = generateSessionToken({
+          userId: row[0],
+          email: row[4],
+          role: row[6],
+          accountState: state
+        });
+
+        logStructuredEvent("USER", "loginUser", "INFO", "LOGIN_SUCCESS", `Inicio de sesión exitoso para usuario ${row[0]}`, { correlationId, userId: row[0], rol: row[6] }, row[6]);
+
         return {
           status: "success",
+          sessionToken: sessionToken,
           data: {
             userId: row[0],
             nombre: row[1],
@@ -1435,6 +2306,7 @@ function loginUser(payload) {
             seccion: row[3],
             email: row[4],
             rol: row[6],
+            sessionToken: sessionToken,
             telefono: row[7] || "",
             numeroLista: row[8] || "",
             personaId: row[9] || "",
@@ -1442,21 +2314,23 @@ function loginUser(payload) {
           }
         };
       } else {
-        // Fallo de contraseña - Incrementar contador de intentos fallidos
         const currentFailed = parseInt(row[11] || 0, 10) + 1;
         sheet.getRange(i + 1, 12).setValue(currentFailed);
 
+        logStructuredEvent("USER", "loginUser", "WARN", "LOGIN_FAILED", `Intento de inicio de sesión fallido: contraseña incorrecta (intento ${currentFailed})`, { correlationId, identifier: cleanIdentifier, userId: row[0], currentFailed, reason: "CONTRASEÑA_INCORRECTA" }, "Anónimo");
+
         if (currentFailed >= 5) {
           sheet.getRange(i + 1, 11).setValue("Bloqueada");
-          logStructuredEvent("USER", "loginUser", "WARN", "LOGIN_BLOCKED_BRUTE_FORCE", `Cuenta ${row[0]} bloqueada por acumular ${currentFailed} intentos fallidos de contraseña.`, { identifier, userId: row[0], currentFailed }, "Sistema");
-          return { status: "error", message: "Su cuenta ha sido bloqueada por acumular 5 intentos de inicio de sesión fallidos. Contacte a la administración." };
+          logStructuredEvent("USER", "loginUser", "WARN", "LOGIN_BLOCKED_BRUTE_FORCE", `Cuenta ${row[0]} bloqueada por acumular 5 intentos fallidos.`, { correlationId, identifier: cleanIdentifier, userId: row[0], currentFailed }, "Anónimo");
         }
 
-        return { status: "error", message: `Credenciales incorrectas. Intentos fallidos: ${currentFailed}/5.` };
+        return { status: "error", message: "Credenciales incorrectas o cuenta no disponible." };
       }
     }
   }
-  return { status: "error", message: "Credenciales incorrectas." };
+
+  logStructuredEvent("USER", "loginUser", "WARN", "LOGIN_FAILED", "Intento de inicio de sesión fallido: usuario inexistente", { correlationId, identifier: cleanIdentifier, reason: "USUARIO_INEXISTENTE" }, "Anónimo");
+  return { status: "error", message: "Credenciales incorrectas o cuenta no disponible." };
 }
 
 function getStudents(payload) {
@@ -1474,11 +2348,35 @@ function getStudentsByGradoSeccion(payload) {
   return { status: "success", data: students };
 }
 
+// [TAREA-F4-P0-02] [Fase 4: Protección IDOR y ABAC] - Aislamiento estricto de datos personales y prevención de IDOR en la consulta de usuario
 function getUserInfo(payload) {
-  const r = getSheetOrThrow(SpreadsheetApp.openById(SPREADSHEET_ID), "Usuarios").getDataRange().getValues().find(r => String(r[0]) === String(payload.userId));
-  if (!r) throw new Error("Usuario no encontrado.");
   const callerRole = getUserVerifiedRole(payload);
-  const callerId = payload && payload.currentUser && payload.currentUser.userId;
+  if (callerRole === "NO_ACCESS") {
+    throw new Error("Acceso denegado: Credenciales de sesión inválidas o expiradas.");
+  }
+  let targetUserId = payload && (payload.userId || payload.targetUserId || payload.studentId);
+
+  if ((callerRole === "Estudiante" || callerRole === "Alumno") && payload._verifiedUserId) {
+    targetUserId = payload._verifiedUserId;
+  } else if ((callerRole === "Padre" || callerRole === "Tutor") && payload._verifiedUserId) {
+    if (targetUserId && String(targetUserId) !== String(payload._verifiedUserId)) {
+      const guardianRes = getGuardianStudents({ userId: payload._verifiedUserId, sessionToken: payload.sessionToken });
+      const linkedStudents = (guardianRes.data || []).map(s => String(s.studentUserId || s.userId).trim());
+      if (linkedStudents.indexOf(String(targetUserId).trim()) === -1) {
+        throw new Error("Acceso denegado: No tiene autorización para consultar los datos del estudiante solicitado.");
+      }
+    } else {
+      targetUserId = payload._verifiedUserId;
+    }
+  }
+
+  if (!targetUserId && payload && payload._verifiedUserId) {
+    targetUserId = payload._verifiedUserId;
+  }
+
+  const r = getSheetOrThrow(SpreadsheetApp.openById(SPREADSHEET_ID), "Usuarios").getDataRange().getValues().find(r => String(r[0]).trim() === String(targetUserId).trim());
+  if (!r) throw new Error("Usuario no encontrado.");
+  const callerId = payload._verifiedUserId || (payload && payload.currentUser && payload.currentUser.userId);
   const isTargetAdmin = (r[6] === "Administrador" || r[6] === "Desarrollador");
 
   if (isTargetAdmin && callerRole !== "Administrador" && callerRole !== "Desarrollador" && String(callerId) !== String(r[0])) {
@@ -1505,7 +2403,9 @@ function requestPasswordRecovery(payload) {
   const user = data.find(r => r[4]?.toString().toLowerCase().trim() === email.toLowerCase().trim());
   if (!user) return { status: "error", message: "Correo no encontrado." };
   const p = { userId: user[0], exp: Date.now() + 3600000 };
-  const s = Utilities.computeHmacSha256Signature(JSON.stringify(p), SECRET_KEY).map(b => ('0' + (b & 0xFF).toString(16)).slice(-2)).join('');
+  const hmacBytes = Utilities.computeHmacSignature(Utilities.MacAlgorithm.HMAC_SHA_256, JSON.stringify(p), SECRET_KEY);
+  const hmacArr = Array.from ? Array.from(hmacBytes) : [].slice.call(hmacBytes);
+  const s = hmacArr.map(b => ('0' + (b & 0xFF).toString(16)).slice(-2)).join('');
   const token = Utilities.base64Encode(JSON.stringify({ p, s }));
   MailApp.sendEmail(email, "Recuperación de Contraseña", `Enlace: ${FRONTEND_URL}/reset-password.html?token=${encodeURIComponent(token)}`);
   return { status: "success", message: "Email enviado." };
@@ -1514,37 +2414,301 @@ function requestPasswordRecovery(payload) {
 function resetPassword(payload) {
   const { token, newPassword } = payload;
   const decoded = JSON.parse(Utilities.newBlob(Utilities.base64Decode(token)).getDataAsString());
-  const expectedS = Utilities.computeHmacSha256Signature(JSON.stringify(decoded.p), SECRET_KEY).map(b => ('0' + (b & 0xFF).toString(16)).slice(-2)).join('');
+  const expBytes = Utilities.computeHmacSignature(Utilities.MacAlgorithm.HMAC_SHA_256, JSON.stringify(decoded.p), SECRET_KEY);
+  const expArr = Array.from ? Array.from(expBytes) : [].slice.call(expBytes);
+  const expectedS = expArr.map(b => ('0' + (b & 0xFF).toString(16)).slice(-2)).join('');
   if (decoded.s !== expectedS) throw new Error("Firma inválida.");
   if (Date.now() > decoded.p.exp) throw new Error("Expirado.");
   const sheet = getSheetOrThrow(SpreadsheetApp.openById(SPREADSHEET_ID), "Usuarios");
   const data = sheet.getDataRange().getValues();
   const idx = data.findIndex(r => String(r[0]) === String(decoded.p.userId));
   if (idx === -1) throw new Error("Usuario no encontrado.");
-  const hp = Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, newPassword).map(b => ('0' + (b & 0xFF).toString(16)).slice(-2)).join('');
+  const passBytes = Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, newPassword);
+  const passArr = Array.from ? Array.from(passBytes) : [].slice.call(passBytes);
+  const hp = passArr.map(b => ('0' + (b & 0xFF).toString(16)).slice(-2)).join('');
   sheet.getRange(idx + 1, 6).setValue(hp);
   return { status: "success", message: "Contraseña actualizada." };
 }
 
+// [TAREA-F4-P0-02] [Fase 4: Protección IDOR y ABAC] - Aislamiento estricto en actualización de perfil de usuario
 function updateUserProfile(payload) {
-  const { userId, nombre, email, telefono, numeroLista, currentPassword, password } = payload || {};
+  const callerRole = getUserVerifiedRole(payload);
+  if (callerRole === "NO_ACCESS") {
+    throw new Error("Acceso denegado: Credenciales de sesión inválidas o expiradas.");
+  }
+  let targetUserId = payload.userId;
+
+  if ((callerRole === "Estudiante" || callerRole === "Alumno" || callerRole === "Padre" || callerRole === "Tutor") && payload._verifiedUserId) {
+    targetUserId = payload._verifiedUserId;
+  }
+  if (!targetUserId) targetUserId = payload._verifiedUserId;
+
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
   const sheet = getSheetOrThrow(ss, "Usuarios");
   const data = sheet.getDataRange().getValues();
-  const idx = data.findIndex(r => String(r[0]) === String(userId));
+  const idx = data.findIndex(r => String(r[0]).trim() === String(targetUserId).trim());
   if (idx === -1) throw new Error("No encontrado.");
   const userRow = [...data[idx]];
   if (password) {
-    const ch = Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, currentPassword).map(b => ('0' + (b & 0xFF).toString(16)).slice(-2)).join('');
+    const currBytes = Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, currentPassword);
+    const currArr = Array.from ? Array.from(currBytes) : [].slice.call(currBytes);
+    const ch = currArr.map(b => ('0' + (b & 0xFF).toString(16)).slice(-2)).join('');
     if (userRow[5] !== ch) throw new Error("Actual incorrecta.");
-    userRow[5] = Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, password).map(b => ('0' + (b & 0xFF).toString(16)).slice(-2)).join('');
+    const newBytes = Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, password);
+    const newArr = Array.from ? Array.from(newBytes) : [].slice.call(newBytes);
+    userRow[5] = newArr.map(b => ('0' + (b & 0xFF).toString(16)).slice(-2)).join('');
   }
   if (nombre) userRow[1] = nombre.trim();
   if (email) userRow[4] = email.toLowerCase().trim();
   if (telefono !== undefined) userRow[7] = String(telefono).trim();
   if (numeroLista !== undefined) userRow[8] = String(numeroLista).trim();
+  const oldValues = { nombre: data[idx][1], email: data[idx][4], telefono: data[idx][7], numeroLista: data[idx][8] };
   sheet.getRange(idx + 1, 1, 1, userRow.length).setValues([userRow]);
+  const newValues = { nombre: userRow[1], email: userRow[4], telefono: userRow[7], numeroLista: userRow[8] };
+
+  recordEntityChangeLog("Usuario", targetUserId, oldValues, newValues, "PROFILE_UPDATED", payload && payload._verifiedUserId);
+
+  // Purga inmediata de caché tras actualización de datos de usuario
+  invalidateUserRoleCache(targetUserId);
+
   return { status: "success", message: "Perfil actualizado." };
+}
+
+// [TAREA-F4-P1-06] [Fase 4: Trazabilidad e Historial de Versiones] - Sanitización de campos sensibles para auditoría
+function sanitizeValueForAudit(obj) {
+  if (!obj || typeof obj !== "object") return obj;
+  const copy = Array.isArray(obj) ? [] : {};
+  Object.keys(obj).forEach(key => {
+    const lKey = key.toLowerCase();
+    if (lKey.indexOf("pass") !== -1 || lKey.indexOf("token") !== -1 || lKey.indexOf("secret") !== -1 || lKey.indexOf("clave") !== -1) {
+      copy[key] = "[REDACTED]";
+    } else if (typeof obj[key] === "object" && obj[key] !== null) {
+      copy[key] = sanitizeValueForAudit(obj[key]);
+    } else {
+      copy[key] = obj[key];
+    }
+  });
+  return copy;
+}
+
+// [TAREA-F4-P1-06] [Fase 4: Trazabilidad e Historial de Versiones] - Registro de cambios sanitizados con versión anterior y posterior
+function recordEntityChangeLog(entityType, entityId, previousValue, newValue, action, callerUserId, correlationId) {
+  try {
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const sheet = getOrCreateSheet(ss, "HistorialCambiosEntidad");
+    if (sheet.getLastRow() === 0) {
+      sheet.appendRow(["cambioId", "entityType", "entityId", "accion", "valoresAnteriores", "valoresNuevos", "ejecutadoPor", "fechaCambio", "correlationId"]);
+    }
+
+    const genRes = generateInstitutionalId({ entityType: "AuditoriaCambio", prefix: "CHG-" });
+    const cambioId = genRes.generatedId || ("CHG-" + Date.now());
+    const sanitizedPrev = JSON.stringify(sanitizeValueForAudit(previousValue || {}));
+    const sanitizedNew = JSON.stringify(sanitizeValueForAudit(newValue || {}));
+
+    sheet.appendRow([
+      cambioId,
+      String(entityType || "General").trim(),
+      String(entityId || "").trim(),
+      String(action || "UPDATE").trim(),
+      sanitizedPrev,
+      sanitizedNew,
+      String(callerUserId || "Sistema").trim(),
+      new Date(),
+      String(correlationId || ("CID-" + Date.now())).trim()
+    ]);
+  } catch (e) {
+    console.warn("Error registrando historial de cambios de entidad:", e);
+  }
+}
+
+// [TAREA-F4-P1-06] [Fase 4: Trazabilidad e Historial de Versiones] - Reconstrucción de la línea de tiempo de una entidad o recurso
+function getEntityAuditHistory(payload) {
+  const callerRole = getUserVerifiedRole(payload);
+  const callerId = payload._verifiedUserId;
+  const { entityType, entityId, limit } = payload || {};
+
+  if (!entityId) throw new Error("entityId es requerido.");
+
+  if (callerRole !== "Administrador" && callerRole !== "Desarrollador") {
+    if (String(entityId).trim() !== String(callerId).trim()) {
+      throw new Error("Acceso denegado: Únicamente puede consultar el historial propio de cambios.");
+    }
+  }
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = ss.getSheetByName("HistorialCambiosEntidad");
+  if (!sheet || sheet.getLastRow() <= 1) return { status: "success", data: [] };
+
+  const data = sheet.getDataRange().getValues().slice(1);
+  const maxLimit = parseInt(limit || 100, 10);
+  const history = [];
+
+  for (let i = data.length - 1; i >= 0; i--) {
+    const row = data[i];
+    const eType = String(row[1] || "");
+    const eId = String(row[2] || "");
+
+    let matches = true;
+    if (entityType && String(entityType).toLowerCase().trim() !== eType.toLowerCase().trim()) matches = false;
+    if (String(entityId).trim() !== eId) matches = false;
+
+    if (matches) {
+      let prevObj = {};
+      let newObj = {};
+      try { prevObj = JSON.parse(row[4] || "{}"); } catch (e) {}
+      try { newObj = JSON.parse(row[5] || "{}"); } catch (e) {}
+
+      history.push({
+        cambioId: row[0],
+        entityType: eType,
+        entityId: eId,
+        accion: row[3],
+        valoresAnteriores: prevObj,
+        valoresNuevos: newObj,
+        ejecutadoPor: row[6],
+        fechaCambio: row[7] ? new Date(row[7]).toISOString() : "",
+        correlationId: row[8] || ""
+      });
+
+      if (history.length >= maxLimit) break;
+    }
+  }
+
+  return { status: "success", data: history };
+}
+
+// [TAREA-F4-P1-07] [Fase 4: Gestión de Roles y Adscripciones] - Administración centralizada de departamentos, cargos e historial laboral/académico
+function manageDepartmentPositions(payload) {
+  const callerRole = getUserVerifiedRole(payload);
+  const callerId = payload._verifiedUserId;
+  const { subAction, deptId, deptNombre, jefaturaUserId, cargoId, cargoNombre, nivelJerarquico, userId, motivo } = payload || {};
+
+  if (callerRole !== "Administrador" && callerRole !== "Desarrollador" && callerRole !== "RecursosHumanos") {
+    throw new Error("Acceso denegado: Se requieren permisos administrativos o de Recursos Humanos.");
+  }
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const act = String(subAction || "ASSIGN_USER").toUpperCase().trim();
+
+  if (act === "CREATE_DEPT") {
+    if (!deptNombre) throw new Error("deptNombre es requerido.");
+    const deptSheet = getOrCreateSheet(ss, "CatalogoDepartamentos");
+    if (deptSheet.getLastRow() === 0) {
+      deptSheet.appendRow(["deptId", "nombre", "jefaturaUserId", "estado", "fechaCreacion"]);
+    }
+    const genRes = generateInstitutionalId({ entityType: "Departamento", prefix: "DEP-" });
+    const newDeptId = deptId || genRes.generatedId || ("DEP-" + Date.now());
+    deptSheet.appendRow([newDeptId, deptNombre.trim(), jefaturaUserId || "", "Activo", new Date()]);
+    logStructuredEvent("USER", "manageDepartmentPositions", "INFO", "DEPARTMENT_CREATED", `Departamento ${newDeptId} (${deptNombre}) creado por ${callerId}`, { deptId: newDeptId, deptNombre }, callerRole);
+    return { status: "success", deptId: newDeptId, message: "Departamento registrado exitosamente." };
+  }
+
+  if (act === "CREATE_CARGO") {
+    if (!cargoNombre) throw new Error("cargoNombre es requerido.");
+    const cargoSheet = getOrCreateSheet(ss, "CatalogoCargos");
+    if (cargoSheet.getLastRow() === 0) {
+      cargoSheet.appendRow(["cargoId", "deptId", "nombreCargo", "nivelJerarquico", "estado", "fechaCreacion"]);
+    }
+    const genRes = generateInstitutionalId({ entityType: "Cargo", prefix: "CRG-" });
+    const newCargoId = cargoId || genRes.generatedId || ("CRG-" + Date.now());
+    cargoSheet.appendRow([newCargoId, deptId || "DEP-GEN", cargoNombre.trim(), nivelJerarquico || 1, "Activo", new Date()]);
+    logStructuredEvent("USER", "manageDepartmentPositions", "INFO", "CARGO_CREATED", `Cargo ${newCargoId} (${cargoNombre}) creado por ${callerId}`, { cargoId: newCargoId, cargoNombre }, callerRole);
+    return { status: "success", cargoId: newCargoId, message: "Cargo registrado exitosamente." };
+  }
+
+  if (act === "ASSIGN_USER") {
+    if (!userId || !deptId || !cargoId) throw new Error("userId, deptId y cargoId son requeridos para asignación.");
+
+    const userSheet = ss.getSheetByName("Usuarios");
+    if (!userSheet) throw new Error("Hoja Usuarios no encontrada.");
+    const uRows = userSheet.getDataRange().getValues();
+    const userRow = uRows.find(r => String(r[0]).trim() === String(userId).trim());
+    if (!userRow) throw new Error("Usuario no encontrado.");
+
+    const adsSheet = getOrCreateSheet(ss, "HistorialAdscripciones");
+    if (adsSheet.getLastRow() === 0) {
+      adsSheet.appendRow(["adscripcionId", "userId", "deptId", "cargoId", "fechaInicio", "fechaFin", "estado", "motivo", "autorizadoPor", "fechaRegistro"]);
+    }
+
+    const adsData = adsSheet.getDataRange().getValues();
+    const now = new Date();
+
+    for (let i = 1; i < adsData.length; i++) {
+      if (String(adsData[i][1]).trim() === String(userId).trim() && String(adsData[i][6]).trim() === "Activa") {
+        adsSheet.getRange(i + 1, 6).setValue(now);
+        adsSheet.getRange(i + 1, 7).setValue("Inactiva");
+      }
+    }
+
+    const genRes = generateInstitutionalId({ entityType: "Adscripcion", prefix: "ADS-" });
+    const adsId = genRes && genRes.generatedId ? genRes.generatedId : null;
+    if (!adsId) {
+      throw new Error("No se pudo generar un identificador institucional único para la adscripción.");
+    }
+
+    adsSheet.appendRow([
+      adsId,
+      String(userId).trim(),
+      String(deptId).trim(),
+      String(cargoId).trim(),
+      now,
+      "",
+      "Activa",
+      motivo || "Cambio de cargo/departamento institucional",
+      callerId,
+      now
+    ]);
+
+    invalidateUserRoleCache(userId);
+
+    recordEntityChangeLog("UsuarioAdscripcion", userId, {}, { deptId, cargoId, estado: "Activa" }, "AFFILIATION_UPDATED", callerId);
+    logStructuredEvent("USER", "manageDepartmentPositions", "INFO", "INSTITUTIONAL_AFFILIATION_UPDATED", `Adscripción ${adsId} asignada a ${userId}: Dept ${deptId}, Cargo ${cargoId}`, { adsId, userId, deptId, cargoId }, callerRole);
+
+    return { status: "success", adscripcionId: adsId, message: "Adscripción de departamento y cargo registrada exitosamente." };
+  }
+
+  throw new Error("Acción de gestión de departamento/cargo no soportada.");
+}
+
+// [TAREA-F4-P1-07] [Fase 4: Gestión de Roles y Adscripciones] - Consulta de historial completo de adscripciones pasadas y vigentes
+function getUserInstitutionalAffiliations(payload) {
+  const callerRole = getUserVerifiedRole(payload);
+  const callerId = payload._verifiedUserId;
+  const { userId } = payload || {};
+
+  let targetUserId = userId || callerId;
+  if (callerRole !== "Administrador" && callerRole !== "Desarrollador" && callerRole !== "RecursosHumanos") {
+    targetUserId = callerId;
+  }
+
+  if (!targetUserId) throw new Error("userId es requerido.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const adsSheet = ss.getSheetByName("HistorialAdscripciones");
+  if (!adsSheet || adsSheet.getLastRow() <= 1) return { status: "success", data: [] };
+
+  const data = adsSheet.getDataRange().getValues().slice(1);
+  const affiliations = [];
+
+  for (let i = data.length - 1; i >= 0; i--) {
+    const row = data[i];
+    if (String(row[1]).trim() === String(targetUserId).trim()) {
+      affiliations.push({
+        adscripcionId: row[0],
+        userId: row[1],
+        deptId: row[2],
+        cargoId: row[3],
+        fechaInicio: row[4] ? new Date(row[4]).toISOString() : "",
+        fechaFin: row[5] ? new Date(row[5]).toISOString() : "",
+        estado: row[6],
+        motivo: row[7] || "",
+        autorizadoPor: row[8] || "",
+        fechaRegistro: row[9] ? new Date(row[9]).toISOString() : ""
+      });
+    }
+  }
+
+  return { status: "success", data: affiliations };
 }
 
 // ---------------------------------------------------------------------------
@@ -2009,9 +3173,18 @@ function acceptLinkInvitation(payload) {
   return { status: "success", message: "Vinculación familiar completada exitosamente." };
 }
 
+// [TAREA-F4-P0-02] [Fase 4: Protección IDOR y ABAC] - Verificación estricta de vínculo tutores-estudiantes en RelacionesFamiliares
 function getGuardianStudents(payload) {
-  const { userIdResponsable, userId } = payload || {};
-  const uid = userIdResponsable || userId;
+  const callerRole = getUserVerifiedRole(payload);
+  if (callerRole === "NO_ACCESS") {
+    throw new Error("Acceso denegado: Credenciales de sesión inválidas o expiradas.");
+  }
+  let uid = payload.userIdResponsable || payload.userId;
+
+  if ((callerRole === "Padre" || callerRole === "Tutor" || callerRole === "Responsable") && payload._verifiedUserId) {
+    uid = payload._verifiedUserId;
+  }
+  if (!uid) uid = payload._verifiedUserId;
   if (!uid) throw new Error("userIdResponsable es requerido.");
 
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
@@ -2084,9 +3257,18 @@ function getGuardianStudents(payload) {
   return { status: "success", data: verifiedStudents };
 }
 
+// [TAREA-F4-P0-02] [Fase 4: Protección IDOR y ABAC] - Aislamiento estricto de resumen financiero familiar por tutor
 function getFamilyConsolidatedSummary(payload) {
-  const { userIdResponsable, userId } = payload || {};
-  const uid = userIdResponsable || userId;
+  const callerRole = getUserVerifiedRole(payload);
+  if (callerRole === "NO_ACCESS") {
+    throw new Error("Acceso denegado: Credenciales de sesión inválidas o expiradas.");
+  }
+  let uid = payload.userIdResponsable || payload.userId;
+
+  if ((callerRole === "Padre" || callerRole === "Tutor" || callerRole === "Responsable") && payload._verifiedUserId) {
+    uid = payload._verifiedUserId;
+  }
+  if (!uid) uid = payload._verifiedUserId;
   if (!uid) throw new Error("userIdResponsable es requerido.");
 
   const studentsRes = getGuardianStudents({ userIdResponsable: uid });
@@ -2472,16 +3654,27 @@ function sendInternalMessage(payload) {
   return { status: "success", message: "Mensaje interno enviado.", data: { mensajeId: msgId, conversacionId: convId } };
 }
 
+// [TAREA-F4-P0-02] [Fase 4: Protección IDOR y ABAC] - Aislamiento estricto de notificaciones unificadas
 function getUnifiedNotifications(payload) {
-  const { userId, categoria, leido } = payload || {};
-  if (!userId) throw new Error("userId es requerido.");
+  const callerRole = getUserVerifiedRole(payload);
+  if (callerRole === "NO_ACCESS") {
+    throw new Error("Acceso denegado: Credenciales de sesión inválidas o expiradas.");
+  }
+  let targetUserId = payload && payload.userId;
+  if ((callerRole === "Estudiante" || callerRole === "Alumno" || callerRole === "Padre" || callerRole === "Tutor") && payload._verifiedUserId) {
+    targetUserId = payload._verifiedUserId;
+  }
+  if (!targetUserId && payload && payload._verifiedUserId) {
+    targetUserId = payload._verifiedUserId;
+  }
+  if (!targetUserId) throw new Error("userId es requerido.");
 
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
   const sheet = getOrCreateSheet(ss, "BandejaNotificaciones");
   const data = sheet.getDataRange().getValues();
   if (data.length <= 1) return { status: "success", data: [], unreadCount: 0 };
 
-  let filtered = data.slice(1).filter(r => String(r[1]).trim() === String(userId).trim());
+  let filtered = data.slice(1).filter(r => String(r[1]).trim() === String(targetUserId).trim());
 
   if (categoria) {
     filtered = filtered.filter(r => String(r[5]).toLowerCase().trim() === String(categoria).toLowerCase().trim());
@@ -2575,6 +3768,403 @@ function getOperationalCapacityMetrics(payload) {
     },
     desgloseServicios: serviceBreakdown,
     clienteMetricasLocal: metricsClient || null,
+    timestamp: new Date().toISOString()
+  };
+}
+
+// [TAREA-F4-P3-03] [Fase 4: Reconciliación de Identidad] - Detección y corrección de inconsistencias referenciales, delegaciones huérfanas y adscripciones obsoletas
+function auditAndReconcileIdentityInconsistencies(payload) {
+  const { autoFix } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+
+  const usersSheet = ss.getSheetByName("Usuarios");
+  const usersData = usersSheet ? usersSheet.getDataRange().getValues() : [];
+  const validUserIds = new Set();
+
+  if (usersData.length > 1) {
+    for (let i = 1; i < usersData.length; i++) {
+      const uid = String(usersData[i][0] || "").trim();
+      if (uid) validUserIds.add(uid);
+    }
+  }
+
+  let issuesFound = [];
+  let fixedCount = 0;
+
+  const delSheet = ss.getSheetByName("DelegacionesSeguridad");
+  if (delSheet) {
+    const delData = delSheet.getDataRange().getValues();
+    for (let d = 1; d < delData.length; d++) {
+      const row = delData[d];
+      const delId = String(row[0] || "").trim();
+      const delegante = String(row[1] || "").trim();
+      const delegado = String(row[2] || "").trim();
+      const estado = String(row[7] || "").trim();
+
+      if (estado === "Activa") {
+        const deleganteExists = validUserIds.has(delegante);
+        const delegadoExists = validUserIds.has(delegado);
+
+        if (!deleganteExists || !delegadoExists) {
+          issuesFound.push({
+            type: "ORPHAN_DELEGATION",
+            id: delId,
+            description: `Delegación ${delId} hace referencia a usuario inexistente (Delegante: ${delegante}, Delegado: ${delegado})`,
+            status: autoFix ? "CORREGIDO" : "PENDIENTE"
+          });
+
+          if (autoFix) {
+            delSheet.getRange(d + 1, 8).setValue("Revocada");
+            fixedCount++;
+          }
+        }
+      }
+    }
+  }
+
+  const adsSheet = ss.getSheetByName("HistorialAdscripciones");
+  if (adsSheet) {
+    const adsData = adsSheet.getDataRange().getValues();
+    for (let a = 1; a < adsData.length; a++) {
+      const row = adsData[a];
+      const adsId = String(row[0] || "").trim();
+      const userId = String(row[1] || "").trim();
+      const estado = String(row[6] || "").trim();
+
+      if (estado === "Activa" && !validUserIds.has(userId)) {
+        issuesFound.push({
+          type: "ORPHAN_AFFILIATION",
+          id: adsId,
+          description: `Adscripción ${adsId} vinculada a usuario inexistente ${userId}`,
+          status: autoFix ? "CORREGIDO" : "PENDIENTE"
+        });
+
+        if (autoFix) {
+          adsSheet.getRange(a + 1, 7).setValue("Inactiva");
+          fixedCount++;
+        }
+      }
+    }
+  }
+
+  logStructuredEvent("USER", "auditAndReconcileIdentityInconsistencies", "WARN", "IDENTITY_INCONSISTENCIES_AUDITED", `Escáner de coherencia ejecutado. Detectados: ${issuesFound.length}, Corregidos: ${fixedCount}`, { issuesCount: issuesFound.length, fixedCount, autoFix }, payload && payload.authRole);
+
+  return {
+    status: "success",
+    service: "USER",
+    resumen: {
+      totalUsuariosRegistrados: validUserIds.size,
+      inconsistenciasDetectadas: issuesFound.length,
+      inconsistenciasCorregidas: fixedCount,
+      modoAutoCorreccion: !!autoFix,
+      fechaEscaner: new Date().toISOString()
+    },
+    inconsistencias: issuesFound,
+    timestamp: new Date().toISOString()
+  };
+}
+
+// [TAREA-F4-P3-02] [Fase 4: Paginación de Auditoría] - Paginación eficiente en servidor para consultas masivas sobre BitacoraEventos y BitacoraTraceability
+function getPaginatedAuditLogReport(payload) {
+  const { logType, page, pageSize, startDate, endDate, searchQuery, eventType } = payload || {};
+  const pageNum = Math.max(1, parseInt(page) || 1);
+  const limit = Math.min(100, Math.max(1, parseInt(pageSize) || 25));
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  let allLogs = [];
+
+  const startMs = startDate ? new Date(startDate).getTime() : 0;
+  const endMs = endDate ? new Date(endDate).getTime() + 86400000 : Infinity;
+  const queryClean = searchQuery ? String(searchQuery).trim().toLowerCase() : "";
+  const typeClean = eventType ? String(eventType).trim().toLowerCase() : "";
+
+  if (!logType || logType === "ALL" || logType === "EVENTOS") {
+    const sheet = ss.getSheetByName("BitacoraEventos");
+    if (sheet) {
+      const data = sheet.getDataRange().getValues();
+      for (let i = 1; i < data.length; i++) {
+        const row = data[i];
+        const evtId = String(row[0] || "").trim();
+        const dateStr = row[1];
+        const evtType = String(row[2] || "").trim();
+        const userId = String(row[3] || "").trim();
+        const role = row[4];
+        const module = row[5];
+        const action = row[6];
+        const result = row[7];
+        const details = row[8];
+        const correlationId = row[9];
+
+        const dateMs = dateStr ? new Date(dateStr).getTime() : 0;
+        if (dateMs >= startMs && dateMs <= endMs) {
+          if (!typeClean || evtType.toLowerCase() === typeClean) {
+            const matchesQuery = !queryClean ||
+              evtId.toLowerCase().indexOf(queryClean) !== -1 ||
+              userId.toLowerCase().indexOf(queryClean) !== -1 ||
+              String(details).toLowerCase().indexOf(queryClean) !== -1 ||
+              String(action).toLowerCase().indexOf(queryClean) !== -1;
+
+            if (matchesQuery) {
+              allLogs.push({
+                logSource: "BitacoraEventos",
+                id: evtId,
+                timestamp: dateStr,
+                eventType: evtType,
+                userId: userId,
+                role: role,
+                module: module,
+                action: action,
+                result: result,
+                details: details,
+                correlationId: correlationId
+              });
+            }
+          }
+        }
+      }
+    }
+  }
+
+  if (!logType || logType === "ALL" || logType === "TRACEABILITY") {
+    const sheet = ss.getSheetByName("BitacoraTraceability");
+    if (sheet) {
+      const data = sheet.getDataRange().getValues();
+      for (let j = 1; j < data.length; j++) {
+        const row = data[j];
+        const corrId = String(row[0] || "").trim();
+        const origSvc = String(row[1] || "").trim();
+        const targSvc = String(row[2] || "").trim();
+        const action = String(row[3] || "").trim();
+        const status = String(row[4] || "").trim();
+        const durationMs = row[5];
+        const errorDetails = row[6];
+        const dateStr = row[7];
+
+        const dateMs = dateStr ? new Date(dateStr).getTime() : 0;
+        if (dateMs >= startMs && dateMs <= endMs) {
+          if (!typeClean || status.toLowerCase() === typeClean) {
+            const matchesQuery = !queryClean ||
+              corrId.toLowerCase().indexOf(queryClean) !== -1 ||
+              origSvc.toLowerCase().indexOf(queryClean) !== -1 ||
+              targSvc.toLowerCase().indexOf(queryClean) !== -1 ||
+              action.toLowerCase().indexOf(queryClean) !== -1;
+
+            if (matchesQuery) {
+              allLogs.push({
+                logSource: "BitacoraTraceability",
+                id: corrId,
+                timestamp: dateStr,
+                eventType: status,
+                userId: origSvc + "->" + targSvc,
+                role: "SYSTEM",
+                module: origSvc,
+                action: action,
+                result: status,
+                details: "Duración: " + durationMs + "ms. " + (errorDetails || ""),
+                correlationId: corrId
+              });
+            }
+          }
+        }
+      }
+    }
+  }
+
+  allLogs.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+
+  const totalItems = allLogs.length;
+  const totalPages = Math.ceil(totalItems / limit) || 1;
+  const startIndex = (pageNum - 1) * limit;
+  const paginatedItems = allLogs.slice(startIndex, startIndex + limit);
+
+  return {
+    status: "success",
+    service: "USER",
+    items: paginatedItems,
+    pagination: {
+      page: pageNum,
+      pageSize: limit,
+      totalItems: totalItems,
+      totalPages: totalPages,
+      hasNextPage: pageNum < totalPages,
+      hasPrevPage: pageNum > 1
+    },
+    timestamp: new Date().toISOString()
+  };
+}
+
+// [TAREA-F4-P3-01] [Fase 4: Gobierno de Privilegios] - Reporte periódico automático de revisión de cuentas inactivas y privilegios elevados para auditoría
+function generatePrivilegeAndAccountAuditReport(payload) {
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getSheetOrThrow(ss, "Usuarios");
+  const data = sheet.getDataRange().getValues();
+
+  let adminAccounts = [];
+  let inactiveAccounts = [];
+  let totalAccounts = 0;
+  let activeAccounts = 0;
+
+  const nowMs = Date.now();
+  const NinetyDaysMs = 90 * 24 * 60 * 60 * 1000;
+
+  if (data.length > 1) {
+    for (let i = 1; i < data.length; i++) {
+      const row = data[i];
+      const uid = String(row[0] || "").trim();
+      const name = row[1];
+      const email = row[4];
+      const role = String(row[6] || "").trim();
+      const state = String(row[10] || "Activa").trim();
+      const lastLoginStr = row[12];
+
+      if (!uid) continue;
+      totalAccounts++;
+
+      if (state === "Activa") activeAccounts++;
+
+      if (["Administrador", "Director", "Subdirector", "Sistemas", "Secretaría", "RecursosHumanos"].indexOf(role) !== -1) {
+        adminAccounts.push({
+          userId: uid,
+          nombre: name,
+          email: email,
+          rol: role,
+          estadoCuenta: state,
+          ultimoAcceso: lastLoginStr
+        });
+      }
+
+      const lastLoginMs = lastLoginStr ? new Date(lastLoginStr).getTime() : 0;
+      const isStale = (nowMs - lastLoginMs) > NinetyDaysMs;
+
+      if (state !== "Activa" || isStale) {
+        inactiveAccounts.push({
+          userId: uid,
+          nombre: name,
+          email: email,
+          rol: role,
+          estadoCuenta: state,
+          diasSinActividad: lastLoginMs ? Math.floor((nowMs - lastLoginMs) / (1000 * 60 * 60 * 24)) : "Sin registro",
+          motivoInactividad: state !== "Activa" ? ("Estado " + state) : "Más de 90 días sin iniciar sesión"
+        });
+      }
+    }
+  }
+
+  let delegationsCount = 0;
+  try {
+    const delRes = getSecurityDelegations({ statusFilter: "ACTIVA" });
+    if (delRes) delegationsCount = (delRes.delegations || delRes.data || []).length;
+  } catch (e) {}
+
+  logStructuredEvent("USER", "generatePrivilegeAndAccountAuditReport", "INFO", "PRIVILEGE_AUDIT_REPORT_GENERATED", "Generado reporte de revisión de privilegios y cuentas", null, payload && payload.authRole);
+
+  return {
+    status: "success",
+    service: "USER",
+    resumen: {
+      totalCuentasRegistradas: totalAccounts,
+      cuentasActivas: activeAccounts,
+      cuentasPrivilegiadasElevadas: adminAccounts.length,
+      cuentasInactivasOEstancadas: inactiveAccounts.length,
+      delegacionesSeguridadVigentes: delegationsCount,
+      fechaReporte: new Date().toISOString()
+    },
+    cuentasPrivilegiadas: adminAccounts,
+    cuentasInactivas: inactiveAccounts,
+    timestamp: new Date().toISOString()
+  };
+}
+
+// [TAREA-F4-P1-09] [Fase 4: Panel de Seguridad, Auditoría y Cumplimiento Institucional] - Consolidación de indicadores de seguridad, auditoría de eventos y delegaciones activas
+function getSecurityAndComplianceDashboardData(payload) {
+  const { startDate, endDate, targetUserId, eventType } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+
+  const bitacoraSheet = ss.getSheetByName("BitacoraEventos");
+  const bitacoraData = bitacoraSheet ? bitacoraSheet.getDataRange().getValues() : [];
+
+  let eventsList = [];
+  let failedLogins = 0;
+  let successfulLogins = 0;
+  let revokedSessions = 0;
+
+  const startMs = startDate ? new Date(startDate).getTime() : 0;
+  const endMs = endDate ? new Date(endDate).getTime() + 86400000 : Infinity;
+
+  if (bitacoraData.length > 1) {
+    for (let i = 1; i < bitacoraData.length; i++) {
+      const row = bitacoraData[i];
+      const evtId = row[0];
+      const evtDateStr = row[1];
+      const evtType = String(row[2] || "").trim();
+      const userId = String(row[3] || "").trim();
+      const role = row[4];
+      const module = row[5];
+      const action = row[6];
+      const result = row[7];
+      const details = row[8];
+      const correlationId = row[9];
+
+      const evtMs = evtDateStr ? new Date(evtDateStr).getTime() : 0;
+
+      if (evtMs >= startMs && evtMs <= endMs) {
+        if (!targetUserId || userId.toLowerCase().indexOf(String(targetUserId).toLowerCase()) !== -1) {
+          if (!eventType || evtType.toLowerCase() === String(eventType).toLowerCase()) {
+            eventsList.push({
+              eventId: evtId,
+              timestamp: evtDateStr,
+              eventType: evtType,
+              userId: userId,
+              role: role,
+              module: module,
+              action: action,
+              result: result,
+              details: details,
+              correlationId: correlationId
+            });
+          }
+        }
+      }
+
+      if (evtType === "LOGIN_FAILED") failedLogins++;
+      if (evtType === "LOGIN_SUCCESS") successfulLogins++;
+      if (evtType === "SESSION_REVOKED" || evtType === "SESSION_EXPIRED") revokedSessions++;
+    }
+  }
+
+  eventsList.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+  const paginatedEvents = eventsList.slice(0, 200);
+
+  let activeDelegations = [];
+  try {
+    const delRes = getSecurityDelegations({ statusFilter: "ACTIVA" });
+    if (delRes) activeDelegations = delRes.delegations || delRes.data || [];
+  } catch (e) {
+    console.warn("No se pudieron obtener delegaciones activas", e);
+  }
+
+  let healthRes = null;
+  try {
+    healthRes = getOperationalCapacityMetrics({});
+  } catch (e) {
+    console.warn("No se pudieron obtener métricas de salud", e);
+  }
+
+  logStructuredEvent("USER", "getSecurityAndComplianceDashboardData", "INFO", "SECURITY_DASHBOARD_CONSULTED", "Consulta de tablero de seguridad y cumplimiento", null, payload && payload.authRole);
+
+  return {
+    status: "success",
+    service: "USER",
+    metrics: {
+      failedLoginsCount: failedLogins,
+      successfulLoginsCount: successfulLogins,
+      revokedSessionsCount: revokedSessions,
+      activeDelegationsCount: activeDelegations.length,
+      totalEventsAudited: eventsList.length
+    },
+    events: paginatedEvents,
+    activeDelegations: activeDelegations,
+    healthReport: healthRes,
     timestamp: new Date().toISOString()
   };
 }
@@ -2872,8 +4462,21 @@ function createUserNotification(payload) {
   return { status: "success", message: "Notificación registrada.", data: { notificacionId: notifId } };
 }
 
+// [TAREA-F4-P0-02] [Fase 4: Protección IDOR y ABAC] - Aislamiento de solicitudes administrativas
 function getAdministrativeRequests(payload) {
-  const { userId, estudianteId } = payload || {};
+  const callerRole = getUserVerifiedRole(payload);
+  if (callerRole === "NO_ACCESS") {
+    throw new Error("Acceso denegado: Credenciales de sesión inválidas o expiradas.");
+  }
+  let { userId, estudianteId } = payload || {};
+  if ((callerRole === "Estudiante" || callerRole === "Alumno") && payload._verifiedUserId) {
+    userId = payload._verifiedUserId;
+    estudianteId = payload._verifiedUserId;
+  }
+  if (!userId && payload && payload._verifiedUserId) {
+    userId = payload._verifiedUserId;
+  }
+
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
   const sheet = getOrCreateSheet(ss, "SolicitudesTramites");
   const data = sheet.getDataRange().getValues();
@@ -2928,9 +4531,23 @@ function submitStudentAbsenceJustification(payload) {
   return { status: "success", solicitudId: solId, message: "Justificación de ausencia ingresada y en proceso de revisión." };
 }
 
+// [TAREA-F4-P0-02] [Fase 4: Protección IDOR y ABAC] - Aislamiento estricto de justificaciones de ausencia
 function getStudentAbsenceJustifications(payload) {
-  const { estudianteId, userId } = payload || {};
-  const res = getAdministrativeRequests({ userId, estudianteId });
+  const callerRole = getUserVerifiedRole(payload);
+  let { estudianteId, userId } = payload || {};
+
+  if ((callerRole === "Estudiante" || callerRole === "Alumno") && payload._verifiedUserId) {
+    userId = payload._verifiedUserId;
+  } else if ((callerRole === "Padre" || callerRole === "Tutor" || callerRole === "Responsable") && payload._verifiedUserId) {
+    const guardianRes = getGuardianStudents({ userId: payload._verifiedUserId, sessionToken: payload.sessionToken });
+    const linkedStudents = (guardianRes.data || []).map(s => String(s.studentUserId || s.userId).trim());
+    if (estudianteId && linkedStudents.indexOf(String(estudianteId).trim()) === -1) {
+      throw new Error("Acceso denegado: El estudiante solicitado no está vinculado a su cuenta de tutor.");
+    }
+    userId = payload._verifiedUserId;
+  }
+
+  const res = getAdministrativeRequests({ userId, estudianteId, sessionToken: payload.sessionToken });
   const justs = (res.data || []).filter(r => r.tipoTramite === "Justificación de Ausencia");
   return { status: "success", justificantes: justs };
 }

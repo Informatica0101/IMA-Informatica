@@ -1119,3 +1119,204 @@ Archivos Modificados:
    - Actualización del estado de [T-UX-26] a [X] Completada.
 
 -------------------------------------------------------------------------------
+FECHA: Octubre 2026
+TAREA: [TAREA-F4-P0-01] Unificar la autenticación y autorización de los cinco microservicios
+-------------------------------------------------------------------------------
+
+Archivos Modificados:
+1. backend/user-service/Code.gs
+   - Lineas 974-1050: Implementación de computeHmacSignature, getAuthTokenSecret, generateSessionToken y verifySessionToken para emisión y verificación de credenciales firmadas con HMAC-SHA256 conteniendo userId, email, rol, estado de cuenta y exp.
+   - Linea 1052: Actualización de getUserVerifiedRole para validar primeramente el token de sesión firmado en payload.sessionToken o payload.authToken.
+   - Lineas 1500-1555: Actualización de loginUser para emitir sessionToken e inyectarlo en la respuesta del servidor.
+
+2. backend/academic-service/Code.gs, backend/accounting-service/Code.gs, backend/exam-service/Code.gs, backend/task-service/Code.gs
+   - Adición de funciones computeHmacSignature, getAuthTokenSecret y verifySessionToken.
+   - Actualización de validateRolePermission en los 4 servicios secundarios para verificar la validez y firma de payload.sessionToken antes de autorizar cualquier operación protegida, rechazando peticiones sin credenciales o con firma alterada.
+
+3. js/api.js
+   - Linea 122: Inyección automática de payload.sessionToken desde currentUser en todas las llamadas fetchApi dirigidas a cualquier microservicio.
+
+4. js/auth.js
+   - Lineas 165-175: Almacenamiento de result.data.sessionToken dentro del objeto userData en localStorage/sessionStorage al iniciar sesión exitosamente.
+
+5. Pendientes.md
+   - Actualización del estado a [X] TAREA-F4-P0-01.
+
+-------------------------------------------------------------------------------
+FECHA: Octubre 2026
+TAREA: [TAREA-F4-P0-02] Corregir las vulnerabilidades IDOR y garantizar el aislamiento de datos personales
+-------------------------------------------------------------------------------
+
+Archivos Modificados:
+1. backend/user-service/Code.gs
+   - Lineas 1550-1575: Actualización de getUserInfo forzando targetUserId = _verifiedUserId para estudiantes/alumnos y verificando vínculo en getGuardianStudents para tutores.
+   - Lineas 1600-1620: Actualización de updateUserProfile forzando targetUserId = _verifiedUserId.
+   - Lineas 2585-2600: Actualización de getUnifiedNotifications para forzar targetUserId = _verifiedUserId en roles no administrativos.
+   - Lineas 2995-3010: Actualización de getAdministrativeRequests y getStudentAbsenceJustifications para forzar userId = _verifiedUserId en estudiantes y comprobar vinculación de tutor en RelacionesFamiliares para tutores.
+   - Lineas 2110-2175: Actualización de getGuardianStudents y getFamilyConsolidatedSummary para forzar uid = _verifiedUserId en roles de tutores/padres.
+
+2. backend/academic-service/Code.gs
+   - Lineas 5466-5485: Actualización de getAcademicHistory forzando targetStudentId = _verifiedUserId para roles de estudiante.
+   - Lineas 5625-5640: Actualización de getStudentEnrollmentHistory forzando targetUserId = _verifiedUserId para roles de estudiante.
+
+3. backend/task-service/Code.gs
+   - Lineas 452-465: Actualización de getStudentTasks forzando targetUserId = _verifiedUserId para roles de estudiante.
+
+4. backend/exam-service/Code.gs
+   - Lineas 578-592: Actualización de getStudentExams forzando targetUserId = _verifiedUserId para roles de estudiante.
+
+5. Pendientes.md
+   - Actualización del estado a [X] TAREA-F4-P0-02.
+-------------------------------------------------------------------------------
+
+[TAREA-F4-P0-03] [Fase 4 - Revocación de Sesiones e Invalidación de Privilegios]
+- backend/user-service/Code.gs:
+  - Modificada función invalidateUserRoleCache para purgar acct_state_<userId> además de user_role_<userId>.
+  - Modificada función manageAccountState para purgar la caché de rol e inyectar acct_state_<userId> actualizado en CacheService.
+  - Modificada función updateUserProfile para purgar la caché de rol y usuario al actualizar datos de perfil.
+
+[TAREA-F4-P0-02] [Fase 4 - Protección IDOR y Aislamiento de Datos Personales]
+- backend/user-service/Code.gs:
+  - getUserInfo: Agregado fallback automatico a payload._verifiedUserId cuando no se especifique targetUserId.
+  - getGuardianStudents, getFamilyConsolidatedSummary, getStudentAbsenceJustifications: Aislamiento mediante _verifiedUserId y verificacion de relaciones familiares.
+- backend/accounting-service/Code.gs:
+  - getStudentAccountStatement: Modificado para sobreescribir targetUserId con payload._verifiedUserId para rol Estudiante.
+  - getPaymentVouchers: Modificado para sobreescribir userId con payload._verifiedUserId para rol Estudiante.
+- backend/academic-service/Code.gs:
+  - getAcademicHistory, getStudentEnrollmentHistory: Aislamiento estricto por _verifiedUserId.
+- backend/exam-service/Code.gs:
+  - getStudentExams: Aislamiento estricto por _verifiedUserId.
+- backend/task-service/Code.gs:
+  - getStudentTasks: Aislamiento estricto por _verifiedUserId.
+
+[TAREA-F4-P0-03] [Fase 4 - Revocación Efectiva de Sesiones e Invalidez en Tiempo Real]
+- backend/user-service/Code.gs:
+  - Implementada función revokeUserSession para revocacion explícita de sesiones por sessionId y userId.
+  - Actualizada manageAccountState para inyectar revocación explícita (revoked_user_<userId>) en CacheService cuando la cuenta pase a Suspendida, Bloqueada o Desactivada.
+  - Actualizada verifySessionToken en los 5 microservicios para comprobar llaves de revocacion revoked_user_<userId> y revoked_session_<sessionId>.
+
+[TAREA-F4-P0-02] [Fase 4 - Protección IDOR y Aislamiento de Datos Personales]
+- backend/user-service/Code.gs:
+  - getUserInfo: Aislamiento estricto por _verifiedUserId.
+  - getUnifiedNotifications & getAdministrativeRequests: Inyectadas verificaciones de rol y sobreescritura de targetUserId / userId por _verifiedUserId.
+  - getGuardianStudents, getFamilyConsolidatedSummary, getStudentAbsenceJustifications: Aislamiento mediante _verifiedUserId y relacion comprobada en FamiliaEstudiantes.
+- backend/accounting-service/Code.gs:
+  - getStudentAccountStatement & getPaymentVouchers: Sobreescritura de targetUserId / userId con _verifiedUserId para rol Estudiante.
+- backend/academic-service/Code.gs, backend/exam-service/Code.gs, backend/task-service/Code.gs:
+  - Aislamiento estricto en getAcademicHistory, getStudentEnrollmentHistory, getStudentExams, getStudentTasks usando _verifiedUserId.
+
+[TAREA-F4-P0-03] [Fase 4 - Revocación de Sesiones e Invalidez de Privilegios]
+- backend/user-service/Code.gs:
+  - Implementada función revokeUserSession y registrado endpoint en doPost.
+  - Modificada manageAccountState para inyectar revocacion explícita de usuario (revoked_user_<userId>) cuando la cuenta pasa a estado Suspendida, Bloqueada o Desactivada.
+  - Actualizada verifySessionToken en los 5 microservicios para validar llaves de revocacion revoked_user_<userId> y revoked_session_<sessionId>.
+- js/ui-common.js:
+  - Actualizadas funciones handleLogout y handleSessionExpired para purgar sessionToken de localStorage y sessionStorage.
+
+[TAREA-F4-P0-04] [Fase 4 - Auditoría de Autenticación y Registro de Intentos Fallidos]
+- backend/user-service/Code.gs:
+  - Implementada función logoutUser y expuesta en PUBLIC_ACTIONS y doPost switch.
+  - Actualizada función loginUser para generar correlationId único y registrar eventos LOGIN_FAILED categorizados (CONTRASEÑA_INCORRECTA, CUENTA_INACTIVA_O_BLOQUEADA, USUARIO_INEXISTENTE).
+  - Sanitizadas respuestas de error en loginUser con mensajes genéricos ("Credenciales incorrectas o cuenta no disponible") previniendo enumeración de usuarios.
+  - Implementado bloqueo automático de cuenta al acumular 5 intentos fallidos consecutivos de contraseña.
+
+[TAREA-F4-P1-01] [Fase 4 - Motor Transversal de Delegaciones de Seguridad y Permisos Temporales]
+- backend/user-service/Code.gs:
+  - Creadas funciones createSecurityDelegation, getSecurityDelegations y revokeSecurityDelegation con auto-expiración de delegaciones vencidas.
+  - Creada función helper hasActiveDelegationForAction con almacenamiento en CacheService (300s TTL).
+  - Integrada verificación de delegaciones activas en validateRolePermission y adjuntados atributos _delegatedFrom y _delegationId al payload.
+- backend/academic-service/Code.gs, backend/accounting-service/Code.gs, backend/exam-service/Code.gs, backend/task-service/Code.gs:
+  - Creada función helper hasActiveDelegationForAction e integrada en validateRolePermission para resolver permisos delegados temporalmente.
+
+[TAREA-F4-P1-02] [Fase 4 - Motor Automático de Retención, Archivo y Anonimización de Datos]
+- backend/user-service/Code.gs:
+  - Creada hoja PoliticasRetencionDatos con categorias por defecto (AUDIT_LOGS, USER_SESSIONS, STUDENT_EXPEDIENTS, FINANCIAL_RECORDS, INACTIVE_USERS).
+  - Creadas funciones getRetentionPolicies, saveRetentionPolicy y executeDataRetentionPolicyCheck.
+  - Implementada evaluacion automatica de plazos vencidos con purga de bitácoras ordinarias, anonimizacion de cuentas inactivas (>2 años) y preservacion obligatoria legal de expedientes y registros financieros.
+
+[TAREA-F4-P1-03] [Fase 4 - Matriz Dinámica de Permisos por Rol, Acción, Módulo y Ámbito]
+- backend/user-service/Code.gs:
+  - Creadas funciones getPermissionMatrix, savePermissionMatrix y helper getDynamicPermissionsForRole con almacenamiento en CacheService (600s TTL).
+  - Creada hoja MatrizPermisosRoles e inyectadas reglas por defecto basadas en ROLE_PERMISSIONS.
+  - Integrada la consulta de permisos dinámicos en validateRolePermission priorizándolos sobre los arreglos estáticos.
+- backend/academic-service/Code.gs, backend/accounting-service/Code.gs, backend/exam-service/Code.gs, backend/task-service/Code.gs:
+  - Creada función helper getDynamicPermissionsForRole e integrada en validateRolePermission para sincronizar permisos dinámicos entre servicios.
+
+[TAREA-F4-P1-04] [Fase 4 - Política Unificada de Autorización Contextual RBAC/ABAC]
+- backend/user-service/Code.gs, backend/academic-service/Code.gs, backend/accounting-service/Code.gs, backend/exam-service/Code.gs, backend/task-service/Code.gs:
+  - Creada función helper validateContextualAccess para evaluar atributos de contexto (peticiones de estudiantes, tutores y docentes).
+  - Integrada validateContextualAccess en validateRolePermission rechazando peticiones que violen aislamiento de ámbito antes de consultar la matriz de permisos.
+
+[TAREA-F4-P1-05] [Fase 4 - Panel de Gobierno de Privacidad y Gestión de Derechos sobre Datos]
+- backend/user-service/Code.gs:
+  - Creada hoja SolicitudesDerechosPrivacidad.
+  - Creadas funciones submitPrivacyRightsRequest, getPrivacyRightsRequests y updatePrivacyRightsRequestStatus.
+  - Registrados endpoints en doPost switch con auditoria estructurada logStructuredEvent.
+
+[TAREA-F4-P1-06] [Fase 4 - Trazabilidad e Historial de Versiones]
+- backend/user-service/Code.gs:
+  - Creada hoja HistorialCambiosEntidad y helper sanitizeValueForAudit para remover campos sensibles (contraseñas, tokens, claves).
+  - Creada función recordEntityChangeLog para guardar diferencias de valores anteriores y nuevos sanitizados.
+  - Creada función getEntityAuditHistory para permitir la reconstrucción cronológica de la línea de tiempo de cambios sobre un usuario o recurso.
+  - Integrado registro de cambios en manageAccountState y updateUserProfile.
+
+[TAREA-F4-P1-07] [Fase 4 - Gestión Institucional de Roles, Cargos, Departamentos y Asignaciones]
+- backend/user-service/Code.gs:
+  - Creadas hojas CatalogoDepartamentos, CatalogoCargos y HistorialAdscripciones.
+  - Creadas funciones manageDepartmentPositions y getUserInstitutionalAffiliations.
+  - Implementada la finalización automática de adscripciones previas activas al reasignar departamento/cargo y purga de caché de permisos invalidateUserRoleCache.
+
+[TAREA-F4-P1-08] [Fase 4 - Propagación y Recuperación de Cambios de Seguridad]
+- backend/user-service/Code.gs:
+  - Creadas funciones dispatchSecurityEvent, purgeSecurityCaches, processSecurityEventQueue y getSecurityEventsQueue.
+  - Creada hoja ColaEventosSeguridad para almacenamiento de eventos de seguridad y sincronización entre microservicios.
+  - Registrados endpoints en ROLE_PERMISSIONS y doPost switch.
+- backend/academic-service/Code.gs, backend/accounting-service/Code.gs, backend/exam-service/Code.gs, backend/task-service/Code.gs:
+  - Creada función purgeSecurityCaches en los 4 microservicios secundarios e integrada en ROLE_PERMISSIONS y doPost switch para purga de llaves de caché (user_role, acct_state, delegations, perm_matrix, revoked_user) ante eventos de seguridad.
+
+[TAREA-F4-P1-09] [Fase 4 - Panel de Seguridad, Auditoría y Cumplimiento Institucional]
+- backend/user-service/Code.gs:
+  - Implementada función getSecurityAndComplianceDashboardData con agregación de métricas (intentos fallidos, logins exitosos, accesos revocados, delegaciones activas), filtrado por rango de fechas, ID de usuario y tipo de evento, e integrada en ROLE_PERMISSIONS y doPost switch.
+- js/ui-common.js:
+  - Implementada la vista modal interactiva window.openSecurityAndComplianceDashboardModal con tarjetas de métricas, controles de filtrado y tabla de eventos auditados.
+- dashboard-direccion.html:
+  - Agregado el botón #btn-security-compliance-dashboard e integrado evento gatillador para apertura del panel de seguridad.
+
+[TAREA-F4-P2-01] [Fase 4 - Eliminar IDs de Usuario con Marcas de Tiempo]
+- backend/user-service/Code.gs:
+  - Modificada la función registerUser para eliminar el fallback de generación de ID basado en marcas de tiempo (now.getTime()), forzando exclusivamente la generación atómica de secuencias institucionales mediante generateInstitutionalId({ entityType: 'Usuario', prefix: 'USR-' }).
+
+[TAREA-F4-P2-02] [Fase 4 - Máquina de Estados del Ciclo de Vida de Cuentas]
+- backend/user-service/Code.gs:
+  - Definida la constante ALLOWED_ACCOUNT_STATE_TRANSITIONS con reglas de transición entre estados de cuenta (Pendiente, InvitacionEnviada, Activa, Suspendida, Bloqueada, Desactivada).
+  - Modificada manageAccountState para validar transiciones permitidas, rechazar cambios inválidos con mensajes de error descriptivos, registrar diffs en HistorialCambiosEntidad y despachar eventos de seguridad inter-servicio vía dispatchSecurityEvent.
+
+[TAREA-F4-P2-03] [Fase 4 - Experiencia Administrativa de Gestión de Usuarios y Permisos]
+- js/ui-common.js:
+  - Implementada la función window.openUserManagementAdministrationModal para despliegue de la interfaz modal interactiva de gestión de directorio de cuentas, búsqueda multi-campo, filtrado por estado de cuenta y diálogo de confirmación previa para acciones administrativas sensibles.
+- dashboard-direccion.html:
+  - Incorporado el botón de acceso #btn-user-management-admin con vinculación de evento gatillador para la gestión administrativa de cuentas y permisos.
+
+[TAREA-F4-P2-04] [Fase 4 - Concurrencia y Candados Atómicos en Operaciones de Identidad]
+- backend/user-service/Code.gs:
+  - Coordinada la gestión de concurrencia mediante LockService.getScriptLock() con tiempo de espera de 10.000ms y bloques try...finally { lock.releaseLock(); } en createSecurityDelegation, revokeSecurityDelegation, updateUserProfile y manageAccountState para garantizar escrituras consistentes y prevenir condiciones de carrera.
+
+[TAREA-F4-P2-05] [Fase 4 - Consolidación de Documentación Institucional de Privacidad y Retención de Datos]
+- politica-de-privacidad.html:
+  - Actualizada la sección de políticas con desglose explícito de los plazos de retención de datos (6 meses para bitácoras, 30 días para sesiones, anonimización tras 2 años para cuentas inactivas y conservación obligatoria permanente para expedientes académicos y registros financieros) y especificación de los derechos ARCO de privacidad.
+- politica-de-uso.html:
+  - Sincronizada la sección 7 para referenciar la aplicación de controles RBAC/ABAC, la observancia de plazos institucionales de retención y la protección de derechos ARCO.
+- politica-financiera.html:
+  - Actualizada la sección 2 especificando la emisión de comprobantes CUV y la conservación legal obligatoria permanente de registros contables y fiscales conforme a la SAR.
+
+[TAREA-F4-P3-01] [Fase 4 - Reportes Periódicos de Revisión de Privilegios y Cuentas]
+- backend/user-service/Code.gs:
+  - Implementada la función generatePrivilegeAndAccountAuditReport para el análisis automatizado y periódico de cuentas privilegiadas (Administrador, Director, Subdirector, Sistemas, Secretaría, RecursosHumanos), cuentas inactivas o estancadas (>90 días sin iniciar sesión) y delegaciones vigentes.
+
+[TAREA-F4-P3-02] [Fase 4 - Paginación en Servidor de Informes de Auditoría]
+- backend/user-service/Code.gs:
+  - Implementada la función getPaginatedAuditLogReport con soporte para paginación eficiente en servidor (page, pageSize) sobre BitacoraEventos y BitacoraTraceability, filtrado multi-criterio por fecha, usuario, acción y tipo de evento, y cálculo de metadatos de paginación.
+
+[TAREA-F4-P3-03] [Fase 4 - Sistema de Detección y Reconciliación de Inconsistencias de Identidad]
+- backend/user-service/Code.gs:
+  - Implementada la función auditAndReconcileIdentityInconsistencias para el escaneo automático de inconsistencias referenciales, delegaciones de seguridad huérfanas y adscripciones departamentales inactivas o sin usuario existente, permitiendo auto-reconciliación segura (autoFix: true) con auditoría estructurada.

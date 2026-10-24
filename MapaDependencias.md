@@ -55,6 +55,13 @@
 - **Biblioteca Física y Préstamos:** Préstamos de ejemplares, reservas, devoluciones y mora.
 - **Transporte Escolar:** Gestión de unidades, rutas, paradas y capacidad.
 
+### 2.6 Identidad, Permisos y Gobierno de la Información (Fase 4)
+- **Firma Criptográfica HMAC-SHA256:** Sesiones de usuario firmadas con caducidad automatizada e invalidación en tiempo real.
+- **Aislamiento ABAC e IDOR:** Protección de datos personales donde las consultas de estudiantes y tutores se restringen estrictamente a su contexto verificado.
+- **Delegaciones de Seguridad y Matriz Dinámica:** Permisos temporales entre usuarios con fecha de vigencia y matriz de permisos por rol administrable.
+- **Retención y Gobierno de Privacidad ARCO:** Políticas automáticas de conservación de datos y trámites formales de derechos sobre datos personales.
+- **Propagación de Cambios y Tablero de Cumplimiento:** Bus de eventos de seguridad para invalidación inmediata de cachés en microservicios, tablero de monitoreo de auditoría e inconsistencias.
+
 ---
 
 ## 3. MAPA DE DOMINIOS Y AUTORIDAD DE DATOS

@@ -221,13 +221,21 @@ window.setupCommonUI = function() {
     if (cancelBtn) cancelBtn.onclick = window.closeProfileModal;
 
     // --- Logout Logic (Global) ---
+    // [TAREA-F4-P0-03] [Fase 4: Revocación de Sesiones] - Purga completa de credenciales y token de sesión al cerrar sesión
     window.handleLogout = function() {
         localStorage.removeItem('currentUser');
         sessionStorage.removeItem('currentUser');
+        localStorage.removeItem('usuario_actual');
+        sessionStorage.removeItem('usuario_actual');
+        localStorage.removeItem('usuario_sesion');
+        sessionStorage.removeItem('usuario_sesion');
+        localStorage.removeItem('sessionToken');
+        sessionStorage.removeItem('sessionToken');
         window.location.href = 'login.html';
     };
 
     // [T-UX-01] [Fase 3: Experiencia de Usuario y Navegación Unificada] - Función centralizada para el manejo de expiración de sesión y redirección con aviso explicativo.
+    // [TAREA-F4-P0-03] [Fase 4: Revocación de Sesiones] - Purga de sessionToken en expiración o revocación
     window.handleSessionExpired = function(reason) {
         localStorage.removeItem('currentUser');
         sessionStorage.removeItem('currentUser');
@@ -235,6 +243,8 @@ window.setupCommonUI = function() {
         sessionStorage.removeItem('usuario_actual');
         localStorage.removeItem('usuario_sesion');
         sessionStorage.removeItem('usuario_sesion');
+        localStorage.removeItem('sessionToken');
+        sessionStorage.removeItem('sessionToken');
         var msg = reason ? encodeURIComponent(reason) : '1';
         window.location.href = 'login.html?session_expired=' + msg;
     };
@@ -5430,6 +5440,306 @@ window.renderDataFreshnessBadge = function(containerIdOrElement, lastUpdatedTime
         '</button>';
 
     container.appendChild(badge);
+
+// [TAREA-F4-P2-03] [Fase 4: Experiencia Administrativa de Identidad y Permisos] - Vista administrativa de gestión de usuarios, filtrado, permisos efectivos y delegaciones con confirmación de acciones sensibles
+window.openUserManagementAdministrationModal = function(triggerEl) {
+    if (typeof trackModalFocus === "function") trackModalFocus(triggerEl || document.activeElement);
+
+    var existingModal = document.getElementById("modal-user-management-admin");
+    if (existingModal) existingModal.remove();
+
+    var modalHtml = '<div id="modal-user-management-admin" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm" role="dialog" aria-modal="true" aria-labelledby="usr-admin-title">' +
+        '<div class="bg-white rounded-3xl shadow-2xl border border-slate-100 w-full max-w-6xl max-h-[90vh] flex flex-col overflow-hidden animate-fade-in">' +
+            '<div class="flex items-center justify-between px-6 py-4 bg-slate-900 text-white border-b border-slate-800">' +
+                '<div class="flex items-center gap-3">' +
+                    '<div class="p-2 bg-blue-500/20 text-blue-400 rounded-xl"><i class="fa-solid fa-users-gear text-xl"></i></div>' +
+                    '<div>' +
+                        '<h2 id="usr-admin-title" class="text-base font-black uppercase tracking-tight">Gestión Administrativa de Usuarios & Permisos</h2>' +
+                        '<p class="text-xs text-slate-400 font-medium">Control de estados de cuenta, consulta de permisos efectivos y delegaciones</p>' +
+                    '</div>' +
+                '</div>' +
+                '<button id="btn-close-usr-admin-modal" class="p-2 text-slate-400 hover:text-white rounded-xl hover:bg-slate-800 transition-all focus:outline-none" aria-label="Cerrar modal">' +
+                    '<i class="fa-solid fa-xmark text-lg"></i>' +
+                '</button>' +
+            '</div>' +
+            '<div class="p-6 overflow-y-auto space-y-6 flex-1 bg-slate-50/50">' +
+                '<!-- Filters -->' +
+                '<div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-wrap items-center gap-3">' +
+                    '<input type="text" id="usr-search-query" placeholder="Buscar por Nombre, Email o ID..." class="px-3 py-2 text-xs border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 flex-1 min-w-[200px]" />' +
+                    '<select id="usr-filter-state" class="px-3 py-2 text-xs border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500">' +
+                        '<option value="">Todos los estados</option>' +
+                        '<option value="Activa">Activa</option>' +
+                        '<option value="Pendiente">Pendiente</option>' +
+                        '<option value="InvitacionEnviada">InvitacionEnviada</option>' +
+                        '<option value="Suspendida">Suspendida</option>' +
+                        '<option value="Bloqueada">Bloqueada</option>' +
+                        '<option value="Desactivada">Desactivada</option>' +
+                    '</select>' +
+                    '<button id="btn-apply-usr-filters" class="px-4 py-2 bg-slate-900 text-white rounded-xl font-bold text-xs hover:bg-slate-800 transition-all"><i class="fa-solid fa-magnifying-glass mr-1"></i> Buscar</button>' +
+                '</div>' +
+                '<!-- Users Table -->' +
+                '<div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">' +
+                    '<div class="px-5 py-3 bg-slate-100 border-b border-slate-200 flex items-center justify-between">' +
+                        '<h3 class="text-xs font-black uppercase text-slate-700">Directorio Institucional de Cuentas</h3>' +
+                        '<span class="text-[10px] font-bold text-slate-500" id="usr-counter-label">Cargando directorio...</span>' +
+                    '</div>' +
+                    '<div class="overflow-x-auto max-h-[380px] overflow-y-auto">' +
+                        '<table class="w-full text-left text-xs text-slate-600">' +
+                            '<thead class="bg-slate-50 text-[10px] font-black uppercase text-slate-500 sticky top-0">' +
+                                '<tr>' +
+                                    '<th class="px-4 py-2">ID Usuario</th>' +
+                                    '<th class="px-4 py-2">Nombre / Email</th>' +
+                                    '<th class="px-4 py-2">Rol Asignado</th>' +
+                                    '<th class="px-4 py-2">Estado</th>' +
+                                    '<th class="px-4 py-2 text-right">Acciones</th>' +
+                                '</tr>' +
+                            '</thead>' +
+                            '<tbody id="usr-table-tbody" class="divide-y divide-slate-100">' +
+                                '<tr><td colspan="5" class="px-4 py-6 text-center text-slate-400 font-bold">Cargando lista de usuarios...</td></tr>' +
+                            '</tbody>' +
+                        '</table>' +
+                    '</div>' +
+                '</div>' +
+            '</div>' +
+        '</div>' +
+    '</div>';
+
+    document.body.insertAdjacentHTML("beforeend", modalHtml);
+
+    var modalContainer = document.getElementById("modal-user-management-admin");
+    var closeBtn = document.getElementById("btn-close-usr-admin-modal");
+    var applyFiltersBtn = document.getElementById("btn-apply-usr-filters");
+
+    function closeModal() {
+        modalContainer.remove();
+        if (window.lastActiveElementBeforeModal && typeof window.lastActiveElementBeforeModal.focus === "function") {
+            window.lastActiveElementBeforeModal.focus();
+        }
+    }
+
+    closeBtn.addEventListener("click", closeModal);
+    modalContainer.addEventListener("click", function(e) {
+        if (e.target === modalContainer) closeModal();
+    });
+
+    function loadUsersList() {
+        var query = document.getElementById("usr-search-query").value;
+        var state = document.getElementById("usr-filter-state").value;
+        var tbody = document.getElementById("usr-table-tbody");
+
+        tbody.innerHTML = '<tr><td colspan="5" class="px-4 py-6 text-center text-slate-400 font-bold"><i class="fa-solid fa-spinner animate-spin mr-2"></i> Cargando usuarios...</td></tr>';
+
+        fetchApi("getStudents", { search: query, estadoFilter: state }, "USER")
+        .then(function(res) {
+            var users = (res && res.data) ? res.data : [];
+            document.getElementById("usr-counter-label").textContent = "Total usuarios: " + users.length;
+
+            if (users.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" class="px-4 py-6 text-center text-slate-400 font-bold">No se encontraron usuarios.</td></tr>';
+                return;
+            }
+
+            var html = "";
+            users.forEach(function(u) {
+                var stClass = "bg-emerald-100 text-emerald-800";
+                if (u.estadoCuenta === "Suspendida" || u.estadoCuenta === "Bloqueada") stClass = "bg-amber-100 text-amber-800";
+                if (u.estadoCuenta === "Desactivada") stClass = "bg-red-100 text-red-800";
+
+                html += '<tr class="hover:bg-slate-50 transition-colors">' +
+                    '<td class="px-4 py-2 font-mono text-[10px] text-slate-500">' + (u.userId || u.id || "-") + '</td>' +
+                    '<td class="px-4 py-2"><p class="font-bold text-slate-800">' + (u.nombre || u.nombreCompleto || "-") + '</p><p class="text-[10px] text-slate-400">' + (u.email || "-") + '</p></td>' +
+                    '<td class="px-4 py-2"><span class="px-2 py-0.5 rounded-full text-[10px] bg-slate-100 font-bold text-slate-700">' + (u.rol || u.authRole || "Estudiante") + '</span></td>' +
+                    '<td class="px-4 py-2"><span class="px-2 py-0.5 rounded-full text-[10px] font-bold ' + stClass + '">' + (u.estadoCuenta || "Activa") + '</span></td>' +
+                    '<td class="px-4 py-2 text-right space-x-1">' +
+                        '<button class="btn-change-state text-blue-600 hover:text-blue-800 font-bold text-[11px] px-2 py-1 rounded bg-blue-50 hover:bg-blue-100" data-id="' + (u.userId || u.id) + '" data-state="' + (u.estadoCuenta || "Activa") + '"><i class="fa-solid fa-sliders mr-1"></i> Estado</button>' +
+                    '</td>' +
+                '</tr>';
+            });
+            tbody.innerHTML = html;
+
+            tbody.querySelectorAll(".btn-change-state").forEach(function(btn) {
+                btn.addEventListener("click", function() {
+                    var uid = btn.getAttribute("data-id");
+                    var currSt = btn.getAttribute("data-state");
+                    var newSt = prompt("Seleccione el nuevo estado para el usuario (" + uid + "):\n[Activa, Suspendida, Bloqueada, Desactivada]", currSt === "Activa" ? "Suspendida" : "Activa");
+                    if (newSt && newSt !== currSt) {
+                        if (confirm("¿Confirmar cambio de estado de '" + currSt + "' a '" + newSt + "' para el usuario " + uid + "?")) {
+                            fetchApi("manageAccountState", { userId: uid, newState: newSt, motivo: "Cambio administrativo desde panel de usuarios" }, "USER")
+                            .then(function(changeRes) {
+                                if (changeRes && changeRes.status === "success") {
+                                    alert(changeRes.message || "Estado actualizado exitosamente.");
+                                    loadUsersList();
+                                } else {
+                                    alert("Error: " + (changeRes.message || "No se pudo cambiar el estado."));
+                                }
+                            })
+                            .catch(function(err) {
+                                alert("Error: " + err.message);
+                            });
+                        }
+                    }
+                });
+            });
+        })
+        .catch(function(err) {
+            tbody.innerHTML = '<tr><td colspan="5" class="px-4 py-6 text-center text-red-500 font-bold">Error de conexión: ' + err.message + '</td></tr>';
+        });
+    }
+
+    applyFiltersBtn.addEventListener("click", loadUsersList);
+    loadUsersList();
+};
+
+// [TAREA-F4-P1-09] [Fase 4: Panel de Seguridad, Auditoría y Cumplimiento Institucional] - Tablero administrativo interactivo para monitoreo de intentos fallidos, accesos revocados, delegaciones activas e indicadores de salud
+window.openSecurityAndComplianceDashboardModal = function(triggerEl) {
+    if (typeof trackModalFocus === "function") trackModalFocus(triggerEl || document.activeElement);
+
+    var existingModal = document.getElementById("modal-security-compliance-dashboard");
+    if (existingModal) existingModal.remove();
+
+    var modalHtml = '<div id="modal-security-compliance-dashboard" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm" role="dialog" aria-modal="true" aria-labelledby="sec-modal-title">' +
+        '<div class="bg-white rounded-3xl shadow-2xl border border-slate-100 w-full max-w-6xl max-h-[90vh] flex flex-col overflow-hidden animate-fade-in">' +
+            '<div class="flex items-center justify-between px-6 py-4 bg-slate-900 text-white border-b border-slate-800">' +
+                '<div class="flex items-center gap-3">' +
+                    '<div class="p-2 bg-red-500/20 text-red-400 rounded-xl"><i class="fa-solid fa-shield-halved text-xl"></i></div>' +
+                    '<div>' +
+                        '<h2 id="sec-modal-title" class="text-base font-black uppercase tracking-tight">Panel de Seguridad, Auditoría y Cumplimiento</h2>' +
+                        '<p class="text-xs text-slate-400 font-medium">Monitoreo consolidado de eventos, accesos revocados y salud operativa</p>' +
+                    '</div>' +
+                '</div>' +
+                '<button id="btn-close-sec-modal" class="p-2 text-slate-400 hover:text-white rounded-xl hover:bg-slate-800 transition-all focus:outline-none" aria-label="Cerrar modal">' +
+                    '<i class="fa-solid fa-xmark text-lg"></i>' +
+                '</button>' +
+            '</div>' +
+            '<div class="p-6 overflow-y-auto space-y-6 flex-1 bg-slate-50/50">' +
+                '<!-- Metrics Cards -->' +
+                '<div class="grid grid-cols-2 md:grid-cols-4 gap-4" id="sec-metrics-container">' +
+                    '<div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm"><p class="text-[10px] font-black uppercase text-slate-400">Intentos Fallidos</p><p class="text-2xl font-black text-red-600 mt-1" id="sec-metric-failed">0</p></div>' +
+                    '<div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm"><p class="text-[10px] font-black uppercase text-slate-400">Inicios Exitosos</p><p class="text-2xl font-black text-emerald-600 mt-1" id="sec-metric-success">0</p></div>' +
+                    '<div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm"><p class="text-[10px] font-black uppercase text-slate-400">Accesos Revocados</p><p class="text-2xl font-black text-amber-600 mt-1" id="sec-metric-revoked">0</p></div>' +
+                    '<div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm"><p class="text-[10px] font-black uppercase text-slate-400">Delegaciones Activas</p><p class="text-2xl font-black text-blue-600 mt-1" id="sec-metric-delegations">0</p></div>' +
+                '</div>' +
+                '<!-- Filters -->' +
+                '<div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-wrap items-center gap-3">' +
+                    '<input type="date" id="sec-filter-start" class="px-3 py-2 text-xs border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500" />' +
+                    '<input type="date" id="sec-filter-end" class="px-3 py-2 text-xs border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500" />' +
+                    '<input type="text" id="sec-filter-user" placeholder="Filtrar por Usuario ID..." class="px-3 py-2 text-xs border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 flex-1 min-w-[150px]" />' +
+                    '<select id="sec-filter-type" class="px-3 py-2 text-xs border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500">' +
+                        '<option value="">Todos los eventos</option>' +
+                        '<option value="LOGIN_FAILED">LOGIN_FAILED</option>' +
+                        '<option value="LOGIN_SUCCESS">LOGIN_SUCCESS</option>' +
+                        '<option value="SESSION_REVOKED">SESSION_REVOKED</option>' +
+                        '<option value="ACCOUNT_STATE_CHANGED">ACCOUNT_STATE_CHANGED</option>' +
+                        '<option value="PERMISSIONS_CHANGED">PERMISSIONS_CHANGED</option>' +
+                    '</select>' +
+                    '<button id="btn-apply-sec-filters" class="px-4 py-2 bg-slate-900 text-white rounded-xl font-bold text-xs hover:bg-slate-800 transition-all"><i class="fa-solid fa-filter mr-1"></i> Filtrar</button>' +
+                '</div>' +
+                '<!-- Events Table -->' +
+                '<div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">' +
+                    '<div class="px-5 py-3 bg-slate-100 border-b border-slate-200 flex items-center justify-between">' +
+                        '<h3 class="text-xs font-black uppercase text-slate-700">Bitácora de Eventos de Seguridad y Auditoría</h3>' +
+                        '<span class="text-[10px] font-bold text-slate-500" id="sec-events-counter">Mostrando 0 eventos</span>' +
+                    '</div>' +
+                    '<div class="overflow-x-auto max-h-[350px] overflow-y-auto">' +
+                        '<table class="w-full text-left text-xs text-slate-600">' +
+                            '<thead class="bg-slate-50 text-[10px] font-black uppercase text-slate-500 sticky top-0">' +
+                                '<tr>' +
+                                    '<th class="px-4 py-2">ID Evento</th>' +
+                                    '<th class="px-4 py-2">Fecha / Hora</th>' +
+                                    '<th class="px-4 py-2">Tipo</th>' +
+                                    '<th class="px-4 py-2">Usuario</th>' +
+                                    '<th class="px-4 py-2">Módulo / Acción</th>' +
+                                    '<th class="px-4 py-2">Detalles</th>' +
+                                '</tr>' +
+                            '</thead>' +
+                            '<tbody id="sec-events-tbody" class="divide-y divide-slate-100">' +
+                                '<tr><td colspan="6" class="px-4 py-6 text-center text-slate-400 font-bold">Cargando eventos...</td></tr>' +
+                            '</tbody>' +
+                        '</table>' +
+                    '</div>' +
+                '</div>' +
+            '</div>' +
+        '</div>' +
+    '</div>';
+
+    document.body.insertAdjacentHTML("beforeend", modalHtml);
+
+    var modalContainer = document.getElementById("modal-security-compliance-dashboard");
+    var closeBtn = document.getElementById("btn-close-sec-modal");
+    var applyFilterBtn = document.getElementById("btn-apply-sec-filters");
+
+    function closeModal() {
+        modalContainer.remove();
+        if (window.lastActiveElementBeforeModal && typeof window.lastActiveElementBeforeModal.focus === "function") {
+            window.lastActiveElementBeforeModal.focus();
+        }
+    }
+
+    closeBtn.addEventListener("click", closeModal);
+    modalContainer.addEventListener("click", function(e) {
+        if (e.target === modalContainer) closeModal();
+    });
+
+    function loadData() {
+        var startDate = document.getElementById("sec-filter-start").value;
+        var endDate = document.getElementById("sec-filter-end").value;
+        var targetUserId = document.getElementById("sec-filter-user").value;
+        var eventType = document.getElementById("sec-filter-type").value;
+
+        var tbody = document.getElementById("sec-events-tbody");
+        tbody.innerHTML = '<tr><td colspan="6" class="px-4 py-6 text-center text-slate-400 font-bold"><i class="fa-solid fa-spinner animate-spin mr-2"></i> Cargando información...</td></tr>';
+
+        fetchApi("getSecurityAndComplianceDashboardData", {
+            startDate: startDate,
+            endDate: endDate,
+            targetUserId: targetUserId,
+            eventType: eventType
+        }, "USER")
+        .then(function(res) {
+            if (res && res.status === "success") {
+                var metrics = res.metrics || {};
+                document.getElementById("sec-metric-failed").textContent = metrics.failedLoginsCount || 0;
+                document.getElementById("sec-metric-success").textContent = metrics.successfulLoginsCount || 0;
+                document.getElementById("sec-metric-revoked").textContent = metrics.revokedSessionsCount || 0;
+                document.getElementById("sec-metric-delegations").textContent = metrics.activeDelegationsCount || 0;
+
+                var events = res.events || [];
+                document.getElementById("sec-events-counter").textContent = "Mostrando " + events.length + " eventos";
+
+                if (events.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="6" class="px-4 py-6 text-center text-slate-400 font-bold">No se encontraron eventos con los filtros seleccionados.</td></tr>';
+                    return;
+                }
+
+                var html = "";
+                events.forEach(function(evt) {
+                    var typeClass = "bg-slate-100 text-slate-700";
+                    if (evt.eventType === "LOGIN_FAILED") typeClass = "bg-red-100 text-red-700 font-bold";
+                    if (evt.eventType === "LOGIN_SUCCESS") typeClass = "bg-emerald-100 text-emerald-700 font-bold";
+                    if (evt.eventType === "SESSION_REVOKED") typeClass = "bg-amber-100 text-amber-700 font-bold";
+
+                    html += '<tr class="hover:bg-slate-50 transition-colors">' +
+                        '<td class="px-4 py-2 font-mono text-[10px] text-slate-500">' + (evt.eventId || "-") + '</td>' +
+                        '<td class="px-4 py-2 whitespace-nowrap text-slate-600">' + (evt.timestamp ? new Date(evt.timestamp).toLocaleString("es-HN") : "-") + '</td>' +
+                        '<td class="px-4 py-2"><span class="px-2 py-0.5 rounded-full text-[10px] uppercase ' + typeClass + '">' + (evt.eventType || "EVENTO") + '</span></td>' +
+                        '<td class="px-4 py-2 font-bold text-slate-800">' + (evt.userId || "Anónimo") + '</td>' +
+                        '<td class="px-4 py-2 text-slate-600">' + (evt.module || "SYSTEM") + ' / ' + (evt.action || "-") + '</td>' +
+                        '<td class="px-4 py-2 text-slate-500 max-w-xs truncate" title="' + (evt.details || "") + '">' + (evt.details || "-") + '</td>' +
+                    '</tr>';
+                });
+                tbody.innerHTML = html;
+            } else {
+                tbody.innerHTML = '<tr><td colspan="6" class="px-4 py-6 text-center text-red-500 font-bold">Error al consultar el panel de seguridad.</td></tr>';
+            }
+        })
+        .catch(function(err) {
+            tbody.innerHTML = '<tr><td colspan="6" class="px-4 py-6 text-center text-red-500 font-bold">Error de conexión: ' + err.message + '</td></tr>';
+        });
+    }
+
+    applyFilterBtn.addEventListener("click", loadData);
+    loadData();
+};
 
 // ---------------------------------------------------------------------------
 // [T-UX-21] [Fase 3: Experiencia de Usuario y Navegación Unificada] - COMPROBACIÓN DE FRESCURA DE DATOS Y ESTADOS DE SINCRONIZACIÓN CON CONTROL DE FALLO

@@ -122,16 +122,20 @@ function fetchApi(service, action, payload, retryCount, options) {
     }
 
 
-    // REQ-EXP-008 & FASE 2: Inyectar authRole e idempotencyToken para acciones de escritura
+    // REQ-EXP-008 & FASE 2 & TAREA-F4-P0-01: Inyectar authRole y sessionToken de forma unificada
     if (payload && typeof payload === "object") {
-        if (!payload.authRole) {
-            try {
-                var sessionUser = JSON.parse(localStorage.getItem("currentUser") || sessionStorage.getItem("currentUser") || localStorage.getItem("usuario_actual") || "{}");
-                if (sessionUser && sessionUser.rol) {
+        try {
+            var sessionUser = JSON.parse(localStorage.getItem("currentUser") || sessionStorage.getItem("currentUser") || localStorage.getItem("usuario_actual") || "{}");
+            if (sessionUser) {
+                if (!payload.authRole && sessionUser.rol) {
                     payload.authRole = sessionUser.rol;
                 }
-            } catch (_) {}
-        }
+                // [TAREA-F4-P0-01] [Fase 4: Identidad y Permisos] - Inyección automática de token de sesión firmado en todas las llamadas API
+                if (!payload.sessionToken && !payload.token && sessionUser.sessionToken) {
+                    payload.sessionToken = sessionUser.sessionToken;
+                }
+            }
+        } catch (_) {}
         // [FASE2-T02] [Fase 2 - Idempotencia de Operaciones] - Inyección automática de token de idempotencia para escrituras con efectos secundarios y prevención de duplicación por reintentos HTTP.
         if (action.indexOf('get') !== 0 && !payload.idempotencyToken && !payload.idempotencyKey) {
             payload.idempotencyToken = 'IDEM-' + Date.now() + '-' + Math.floor(Math.random() * 100000);

@@ -1,6 +1,6 @@
 # Ecosistema Educativo New Generation Christian Academy - Plataforma Integral de Gestión Institucional
 
-Bienvenido a la documentación oficial y guía funcional del **Ecosistema Educativo New Generation Christian Academy** (Versión Global **1.0** - Fase 3 Final).
+Bienvenido a la documentación oficial y guía funcional del **Ecosistema Educativo New Generation Christian Academy** (Versión Global **1.0** - Fase 4 Final: Identidad, Permisos y Gobierno de la Información).
 
 La plataforma constituye una solución tecnológica centralizada que integra la gestión académica, administrativa, financiera, comunicativa, de recursos humanos y de operaciones físicas de la institución. Conecta en tiempo real a directivos, coordinadores, docentes, estudiantes, padres de familia y personal administrativo en un entorno único, seguro, intuitivo y accesible desde navegadores web y dispositivos móviles (PWA).
 
@@ -65,7 +65,16 @@ La plataforma constituye una solución tecnológica centralizada que integra la 
 * **Transporte Escolar:** Gestión de unidades, rutas, paradas asignadas y control de capacidad por vehículo.
 
 ### 9. Gobernanza, Seguridad y Soporte Técnico
-* **Control de Acceso Basado en Roles:** Restricciones de privacidad y permisos en el servidor según el rol activo (Dirección, Secretaría, Contabilidad, Docente, Estudiante, Padre/Tutor).
+* **Control de Acceso Basado en Roles y Atributos (RBAC/ABAC):** Firmas criptográficas HMAC-SHA256 para tokens de sesión y restricciones de privacidad a nivel de objeto e identidad en el servidor (`_verifiedUserId`).
+* **Revocación de Sesiones y Control de Fuerza Bruta:** Invalidación en tiempo real de credenciales revocadas o suspendidas y bloqueo automático ante intentos fallidos reiterados con registro de auditoría (`LOGIN_FAILED`).
+* **Motor Transversal de Delegaciones Temporales:** Delegación de capacidades específicas con fechas de vigencia y autorizaciones acotadas.
+* **Retención y Anonimización Automatizada de Datos:** Evaluación periódica de plazos de conservación, purga de bitácoras obsoletas, anonimización de cuentas inactivas y preservación legal obligatoria para expedientes académicos y financieros.
+* **Matriz Dinámica de Permisos y Gobierno ARCO:** Configuración de reglas de acceso por rol y panel de solicitudes de derechos sobre datos personales (Acceso, Rectificación, Cancelación y Oposición).
+* **Trazabilidad, Diffs e Historial de Cambios:** Registro de versiones anteriores y posteriores sanitizadas para reconstrucción cronológica de modificaciones en cuentas y recursos.
+* **Gestión de Cargos, Departamentos y Ciclo de Vida de Cuentas:** Máquina de estados con transiciones permitidas para cuentas de usuario, asignación de cargos e historial de adscripciones.
+* **Propagación de Eventos de Seguridad y Reintentos:** Cola de eventos de seguridad que notifica y purga cachés locales e inter-servicio en tiempo real con cola de reintentos.
+* **Tablero de Seguridad, Auditoría y Cumplimiento:** Panel interactivo de monitoreo de intentos fallidos, accesos revocados, delegaciones activas, reportes de revisión de privilegios y paginación en servidor de bitácoras.
+* **Escáner de Reconciliación de Identidad:** Sistema automatizado de detección y autocorrección de inconsistencias referenciales, delegaciones huérfanas y adscripciones obsoletas.
 * **Tablero de Salud Operativa e Indicadores:** Monitor en tiempo real del estado de los servicios, volumen de peticiones y prevención de cuotas de almacenamiento.
 * **Respaldo e Integridad de Datos:** Generación periódica de copias de seguridad de datos institucionales con verificación de sumas de comprobación.
 * **Operación Sin Conexión (PWA):** Soporte de navegación en dispositivos móviles con cola de sincronización automática al recuperar señal.
