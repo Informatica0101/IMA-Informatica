@@ -3289,7 +3289,7 @@ function getGuardianStudents(payload) {
   const usersData = usersSheet.getDataRange().getValues().slice(1);
   const usersMap = {};
   usersData.forEach(u => {
-    usersMap[String(u[0]).trim()] = {
+    const userObj = {
       userId: u[0],
       nombre: u[1],
       grado: u[2] || '',
@@ -3300,6 +3300,8 @@ function getGuardianStudents(payload) {
       personaId: u[9] || '',
       estadoCuenta: u[10] || 'Activa'
     };
+    if (u[0]) usersMap[String(u[0]).trim()] = userObj;
+    if (u[9]) usersMap[String(u[9]).trim()] = userObj;
   });
 
   const relSheet = getOrCreateSheet(ss, "RelacionesFamiliares");
@@ -3319,7 +3321,8 @@ function getGuardianStudents(payload) {
       return {
         relacionId: r[0],
         expedienteEstudianteId: r[1],
-        userId: u.userId,
+        studentUserId: u.userId || studentId,
+        userId: u.userId || studentId,
         nombre: u.nombre,
         grado: u.grado,
         seccion: u.seccion,
@@ -3344,7 +3347,8 @@ function getGuardianStudents(payload) {
         return {
           relacionId: r[0],
           expedienteEstudianteId: r[1],
-          userId: u.userId,
+          studentUserId: u.userId || studentId,
+          userId: u.userId || studentId,
           nombre: u.nombre,
           grado: u.grado,
           seccion: u.seccion,

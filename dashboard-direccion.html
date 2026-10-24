@@ -32,6 +32,10 @@
                     <a href="dashboard-tienda.html" class="px-3 py-2 text-gray-600 hover:text-blue-600">Tienda</a>
                     <a href="dashboard-cafeteria.html" class="px-3 py-2 text-gray-600 hover:text-blue-600">Cafetería</a>
                 </nav>
+                <!-- [TAREA-F5-019] Botón de Analítica de Admisiones -->
+                <button id="btn-admission-analytics" class="p-2 text-emerald-600 hover:text-emerald-800 rounded-xl hover:bg-emerald-50 text-lg transition-all focus:outline-none focus:ring-2 focus:ring-emerald-500" title="Analítica y Seguimiento Operativo de Admisiones" aria-label="Analítica de Admisiones">
+                    <i class="fa-solid fa-chart-line"></i>
+                </button>
                 <button id="btn-user-management-admin" class="p-2 text-blue-600 hover:text-blue-800 rounded-xl hover:bg-blue-50 text-lg transition-all focus:outline-none focus:ring-2 focus:ring-blue-500" title="Gestión Administrativa de Usuarios y Permisos" aria-label="Gestión de Usuarios">
                     <i class="fa-solid fa-users-gear"></i>
                 </button>
@@ -70,9 +74,109 @@
     <script src="js/config.js?v=23"></script>
     <script src="js/api.js?v=23"></script>
     <script src="js/ui-common.js?v=23"></script>
+    <!-- [TAREA-F5-019] MODAL DE ANALÍTICA Y SEGUIMIENTO OPERATIVO DE ADMISIONES -->
+    <div id="modal-admission-analytics" class="fixed inset-0 z-[120] bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+        <div class="bg-white w-full max-w-5xl max-h-[90vh] rounded-[2rem] shadow-2xl flex flex-col overflow-hidden border border-slate-100">
+            <div class="p-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+                <div>
+                    <span class="px-3 py-1 bg-indigo-50 text-indigo-700 rounded-full text-[10px] font-black uppercase tracking-widest">Dirección & Junta Directiva</span>
+                    <h3 class="text-xl font-black text-slate-900 uppercase tracking-tight mt-1">Analítica y Seguimiento Operativo de Admisiones</h3>
+                </div>
+                <button onclick="document.getElementById('modal-admission-analytics').classList.add('hidden')" class="w-10 h-10 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center transition-all">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+
+            <div class="p-6 overflow-y-auto space-y-6">
+                <!-- Filtros y Descarga CSV -->
+                <div class="flex flex-col sm:flex-row items-center justify-between gap-4 p-4 bg-slate-50 rounded-2xl border border-slate-100">
+                    <div class="flex items-center gap-3">
+                        <label class="text-xs font-black uppercase text-slate-500">Año Lectivo:</label>
+                        <select id="analytics-ano-lectivo" class="px-3 py-1.5 bg-white border border-slate-200 rounded-xl text-xs font-bold text-slate-800" onchange="window.loadAdmissionAnalyticsData()">
+                            <option value="2026" selected>2026</option>
+                            <option value="2025">2025</option>
+                        </select>
+                    </div>
+                    <button onclick="window.exportAdmissionAnalyticsCSV()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-black uppercase tracking-wider shadow-sm flex items-center gap-2 transition-all">
+                        <i class="fa-solid fa-file-csv"></i> Exportar Reporte CSV
+                    </button>
+                </div>
+
+                <!-- Tarjetas de Métricas Clave -->
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div class="p-4 bg-slate-50 rounded-2xl border border-slate-100">
+                        <p class="text-[10px] font-black uppercase text-slate-400">Total Solicitudes</p>
+                        <p id="analytics-metric-total" class="text-2xl font-black text-slate-900 mt-1">0</p>
+                    </div>
+                    <div class="p-4 bg-emerald-50 rounded-2xl border border-emerald-100">
+                        <p class="text-[10px] font-black uppercase text-emerald-600">Tasa Conversión (Matrícula)</p>
+                        <p id="analytics-metric-conversion" class="text-2xl font-black text-emerald-800 mt-1">0%</p>
+                    </div>
+                    <div class="p-4 bg-blue-50 rounded-2xl border border-blue-100">
+                        <p class="text-[10px] font-black uppercase text-blue-600">Tiempo Promedio Atención</p>
+                        <p id="analytics-metric-time" class="text-2xl font-black text-blue-900 mt-1">0 Días</p>
+                    </div>
+                    <div class="p-4 bg-amber-50 rounded-2xl border border-amber-100">
+                        <p class="text-[10px] font-black uppercase text-amber-600">Estancadas (>7 Días)</p>
+                        <p id="analytics-metric-stuck" class="text-2xl font-black text-amber-800 mt-1">0</p>
+                    </div>
+                </div>
+
+                <!-- Estado Operativo de Solicitudes -->
+                <div class="p-5 bg-white rounded-2xl border border-slate-200">
+                    <h4 class="text-xs font-black uppercase text-slate-700 tracking-wider mb-4">Estado Operativo de Solicitudes</h4>
+                    <div id="analytics-status-grid" class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                        <!-- Carga dinámica -->
+                    </div>
+                </div>
+
+                <!-- Embudo por Grado Académico -->
+                <div class="p-5 bg-white rounded-2xl border border-slate-200">
+                    <h4 class="text-xs font-black uppercase text-slate-700 tracking-wider mb-4">Embudo de Admisión por Grado</h4>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="border-b border-slate-100 text-[10px] font-black uppercase text-slate-400">
+                                    <th class="py-2 px-3">Grado Académico</th>
+                                    <th class="py-2 px-3">Postulantes</th>
+                                    <th class="py-2 px-3">En Revisión</th>
+                                    <th class="py-2 px-3">Admitidos</th>
+                                    <th class="py-2 px-3">Matriculados</th>
+                                    <th class="py-2 px-3">Conversión %</th>
+                                </tr>
+                            </thead>
+                            <tbody id="analytics-funnel-tbody" class="text-xs font-bold text-slate-800 divide-y divide-slate-50">
+                                <tr><td colspan="6" class="py-4 text-center text-slate-400">Cargando embudo de conversión...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Muestra de Motivos de Rechazo -->
+                <div class="p-5 bg-red-50/50 rounded-2xl border border-red-100">
+                    <h4 class="text-xs font-black uppercase text-red-800 tracking-wider mb-3 flex items-center gap-2">
+                        <i class="fa-solid fa-circle-exclamation"></i> Muestra de Motivos de Rechazo / Desestimación
+                    </h4>
+                    <div id="analytics-rejections-list" class="space-y-2 text-xs font-medium text-slate-700">
+                        <p class="text-slate-400 italic">No hay registros de rechazo en este periodo.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/teacher.js?v=23"></script>
     <script>
         // [TAREA-F4-P2-03] [Fase 4: Gestión de Usuarios] - Vinculación de los botones de gestión de usuarios y seguridad
         document.addEventListener("DOMContentLoaded", function() {
+            var analyticsBtn = document.getElementById("btn-admission-analytics");
+            if (analyticsBtn) {
+                analyticsBtn.addEventListener("click", function() {
+                    if (typeof window.openAdmissionAnalyticsModal === "function") {
+                        window.openAdmissionAnalyticsModal();
+                    }
+                });
+            }
             var usrBtn = document.getElementById("btn-user-management-admin");
             if (usrBtn) {
                 usrBtn.addEventListener("click", function() {

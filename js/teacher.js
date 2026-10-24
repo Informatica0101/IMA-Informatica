@@ -2,6 +2,118 @@
 // [T-UX-12] [Fase 3: Experiencia de Usuario y Navegación Unificada] - CONSOLIDACIÓN DE PANELES DE CONTROL POR ROL Y DEPARTAMENTO
 // Consolida la visualización de indicadores clave, entregas pendientes de revisión y secciones operativas para el panel docente.
 // ---------------------------------------------------------------------------
+// [TAREA-F5-019] [Fase 5: Analítica de Admisiones] - Controladores globales de seguimiento operativo de admisiones
+window.openAdmissionAnalyticsModal = function() {
+    var modal = document.getElementById("modal-admission-analytics");
+    if (modal) {
+        modal.classList.remove("hidden");
+        window.loadAdmissionAnalyticsData();
+    }
+};
+
+window.loadAdmissionAnalyticsData = function() {
+    var yearSelect = document.getElementById("analytics-ano-lectivo");
+    var targetAno = yearSelect ? yearSelect.value : "2026";
+
+    fetchApi("ACADEMIC", "getAdmissionAnalyticsReport", { anolectivo: targetAno })
+        .then(function(res) {
+            if (!res || res.status !== "success") {
+                showToast("Error al cargar la analítica de admisiones: " + ((res && res.message) || "Error desconocido"), "error");
+                return;
+            }
+
+            var totEl = document.getElementById("analytics-metric-total");
+            if (totEl) totEl.textContent = res.totalSolicitudes || 0;
+
+            var convEl = document.getElementById("analytics-metric-conversion");
+            if (convEl) convEl.textContent = (res.tasaConversionPct || 0) + "%";
+
+            var timeEl = document.getElementById("analytics-metric-time");
+            if (timeEl) timeEl.textContent = (res.tiempoPromedioAtencionDias || 0) + " Días";
+
+            var stuckEl = document.getElementById("analytics-metric-stuck");
+            if (stuckEl) stuckEl.textContent = res.solicitudesEstancadas || 0;
+
+            var statusGrid = document.getElementById("analytics-status-grid");
+            if (statusGrid && res.desgloseEstado) {
+                var gridHtml = "";
+                var colorMap = {
+                    Recibida: "bg-blue-50 text-blue-800 border-blue-100",
+                    En_Revision: "bg-amber-50 text-amber-800 border-amber-100",
+                    Evaluacion: "bg-purple-50 text-purple-800 border-purple-100",
+                    En_Espera: "bg-yellow-50 text-yellow-800 border-yellow-100",
+                    Admitida: "bg-emerald-50 text-emerald-800 border-emerald-100",
+                    Convertida: "bg-teal-50 text-teal-800 border-teal-100",
+                    Rechazada: "bg-red-50 text-red-800 border-red-100",
+                    Retirada: "bg-gray-50 text-gray-800 border-gray-100"
+                };
+                Object.keys(res.desgloseEstado).forEach(function(st) {
+                    var cls = colorMap[st] || "bg-slate-50 text-slate-800 border-slate-100";
+                    gridHtml += '<div class="p-3 rounded-xl border ' + cls + ' font-bold">' +
+                        '<div class="text-[10px] uppercase opacity-75">' + st.replace('_', ' ') + '</div>' +
+                        '<div class="text-lg font-black mt-0.5">' + res.desgloseEstado[st] + '</div>' +
+                        '</div>';
+                });
+                statusGrid.innerHTML = gridHtml;
+            }
+
+            var funnelBody = document.getElementById("analytics-funnel-tbody");
+            if (funnelBody) {
+                if (Array.isArray(res.embudoPorGrado) && res.embudoPorGrado.length > 0) {
+                    var fHtml = "";
+                    res.embudoPorGrado.forEach(function(g) {
+                        fHtml += '<tr class="hover:bg-slate-50/80 transition-colors">' +
+                            '<td class="py-2.5 px-3 font-black text-slate-900">' + (g.grado || 'General') + '</td>' +
+                            '<td class="py-2.5 px-3">' + (g.total || 0) + '</td>' +
+                            '<td class="py-2.5 px-3 text-amber-600">' + (g.enRevision || 0) + '</td>' +
+                            '<td class="py-2.5 px-3 text-emerald-600">' + (g.admitidos || 0) + '</td>' +
+                            '<td class="py-2.5 px-3 text-teal-600">' + (g.matriculados || 0) + '</td>' +
+                            '<td class="py-2.5 px-3 text-indigo-600 font-black">' + (g.tasaConversionGradoPct || 0) + '%</td>' +
+                            '</tr>';
+                    });
+                    funnelBody.innerHTML = fHtml;
+                } else {
+                    funnelBody.innerHTML = '<tr><td colspan="6" class="py-4 text-center text-slate-400 italic">No hay registros de admisión para el año lectivo seleccionado.</td></tr>';
+                }
+            }
+
+            var rejectionsList = document.getElementById("analytics-rejections-list");
+            if (rejectionsList) {
+                if (Array.isArray(res.motivosRechazoMuestra) && res.motivosRechazoMuestra.length > 0) {
+                    var rHtml = "";
+                    res.motivosRechazoMuestra.forEach(function(m) {
+                        rHtml += '<div class="p-2.5 bg-white rounded-xl border border-red-100 shadow-2xs">' +
+                            '<p class="font-bold text-slate-800">' + (m.nombreAspirante || 'Aspirante') + ' <span class="text-[10px] text-slate-400 font-mono">(' + (m.solicitudId || '') + ')</span></p>' +
+                            '<p class="text-slate-600 text-[11px] mt-0.5">' + (m.motivo || 'Sin motivo detallado') + '</p>' +
+                            '</div>';
+                    });
+                    rejectionsList.innerHTML = rHtml;
+                } else {
+                    rejectionsList.innerHTML = '<p class="text-slate-400 italic">No hay registros de rechazo en este periodo.</p>';
+                }
+            }
+
+            window._lastAdmissionAnalyticsCSV = res.csvReport || "Sin datos";
+        })
+        .catch(function(err) {
+            showToast("Error de conexión al cargar analítica: " + (err.message || err), "error");
+        });
+};
+
+window.exportAdmissionAnalyticsCSV = function() {
+    var csvContent = window._lastAdmissionAnalyticsCSV || "Sin datos";
+    var blob = new Blob(["\uFEFF" + csvContent], { type: "text/csv;charset=utf-8;" });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement("a");
+    a.href = url;
+    a.download = "Reporte_Analitica_Admisiones_" + new Date().toISOString().slice(0, 10) + ".csv";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    showToast("Reporte analítico exportado exitosamente en formato CSV.", "success");
+};
+
 window.consolidateTeacherDashboardSummary = function(teacherData) {
     if (!teacherData) {
         return { activeClasses: 0, pendingSubmissions: 0, totalStudents: 0, statusLabel: "Sin asignación" };

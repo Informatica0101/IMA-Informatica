@@ -169,7 +169,7 @@ const ROLE_PERMISSIONS = {
     "getAcademicOffers", "createAcademicOffer", "getTeacherAssignments", "assignTeacherToClass", "createTeacherSubstitution",
     "getAcademicCalendar", "createCalendarEvent", "getClassSchedules", "createClassSchedule", "deleteClassSchedule", "getAcademicRules", "saveAcademicRule", "getDepartmentAcademicPlanning", "assignDepartmentHead", "getCurricularAnalyticsReport", "getReusableResourceCatalog", "manageReusableResource", "getCurricularEquivalences", "executeCurricularMigration", "registerCurricularAreaExtension", "runCurricularAreaServiceTests", "toggleCurricularAreaStatus", "validateApiContractsTestSuite", "getInstitutionalCatalog", "validateCatalogReference", "generateInstitutionalUUID", "validateInstitutionalIdentifier", "auditInstitutionalIdentifierCollisions", "runConcurrencyAndConsistencySuite", "getPaginatedAcademicHistory", "reconcileRestoredDataIntegrity", "evaluateTransactionalStorageMigrationNeed",
     "getClassroomResources", "saveClassroomResource", "getStudentSchedule",
-    "createAdmissionRequest", "getAdmissionRequests", "updateAdmissionStatus", "reopenAdmissionRequest", "convertAdmissionToStudent", "scheduleAdmissionInterview", "getAdmissionInterviews", "recordInterviewOutcome", "saveAdmissionEvaluation", "getAdmissionEvaluations", "addToWaitlist", "getWaitlist", "reorderWaitlist", "offerWaitlistSlot", "respondToWaitlistSlot", "resolveAdmissionDuplicate",
+    "createAdmissionRequest", "getAdmissionRequests", "updateAdmissionStatus", "reopenAdmissionRequest", "convertAdmissionToStudent", "scheduleAdmissionInterview", "getAdmissionInterviews", "recordInterviewOutcome", "saveAdmissionEvaluation", "getAdmissionEvaluations", "addToWaitlist", "getWaitlist", "reorderWaitlist", "offerWaitlistSlot", "respondToWaitlistSlot", "resolveAdmissionDuplicate", "getAdmissionAnalyticsReport",
     "getStudentFile", "updateStudentFile", "getStudentTimeline", "findDuplicateStudents", "mergeStudentFiles",
     "getStudentGuardians", "saveStudentGuardian", "unlinkStudentGuardian", "uploadStudentDocument", "getStudentDocuments", "updateDocumentStatus",
     "createStudentEnrollment", "getStudentEnrollments", "renewStudentEnrollment", "checkEnrollmentCapacity",
@@ -680,6 +680,7 @@ function doPost(e) {
       case "offerWaitlistSlot": result = offerWaitlistSlot(payload); break;
       case "respondToWaitlistSlot": result = respondToWaitlistSlot(payload); break;
       case "resolveAdmissionDuplicate": result = resolveAdmissionDuplicate(payload); break;
+      case "getAdmissionAnalyticsReport": result = getAdmissionAnalyticsReport(payload); break;
       case "reopenAdmissionRequest": result = reopenAdmissionRequest(payload); break;
       case "convertAdmissionToStudent": result = convertAdmissionToStudent(payload); break;
       case "getStudentFile": result = getStudentFile(payload); break;
@@ -6340,6 +6341,132 @@ function changeStudentSection(payload) {
   ]);
 
   return { status: "success", message: `Estudiante trasladado exitosamente a la Sección ${nuevaSeccion}.` };
+}
+
+// [TAREA-F5-019] [Fase 5: Seguimiento Operativo] - Analítica e indicadores de tramitación de admisiones
+function getAdmissionAnalyticsReport(payload) {
+  const { anolectivo } = payload || {};
+  const targetAno = anolectivo || "2026";
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+
+  const sheet = getOrCreateSheet(ss, "SolicitudesAdmision");
+  const rows = sheet.getDataRange().getValues();
+  if (rows.length <= 1) {
+    return {
+      status: "success",
+      anolectivo: targetAno,
+      totalSolicitudes: 0,
+      desgloseEstado: {},
+      tasaConversionPct: 0,
+      tiempoPromedioAtencionDias: 0,
+      solicitudesEstancadas: 0,
+      embudoPorGrado: [],
+      motivosRechazoMuestra: [],
+      csvReport: "Estado,Total\nSin datos,0"
+    };
+  }
+
+  const headers = rows[0];
+  const idxAno = headers.indexOf("anoLectivo");
+  const idxEstado = headers.indexOf("estadoSolicitud");
+  const idxFechaRec = headers.indexOf("fechaRecepcion");
+  const idxFechaMod = headers.indexOf("fechaUltimaModificacion");
+  const idxGrado = headers.indexOf("gradoSolicitado");
+  const idxMotivo = headers.indexOf("motivoRechazo") !== -1 ? headers.indexOf("motivoRechazo") : headers.indexOf("observacionesInternas");
+
+  const filtered = rows.slice(1).filter(r => {
+    if (idxAno === -1) return true;
+    return String(r[idxAno]).trim() === String(targetAno).trim();
+  });
+
+  const desgloseEstado = {
+    Recibida: 0,
+    En_Revision: 0,
+    Evaluacion: 0,
+    En_Espera: 0,
+    Admitida: 0,
+    Convertida: 0,
+    Rechazada: 0,
+    Retirada: 0
+  };
+
+  const embudoGradoMap = {};
+  let totalDiasAtencion = 0;
+  let atencionCount = 0;
+  let solicitudesEstancadas = 0;
+  const now = new Date().getTime();
+  const SIETE_DIAS_MS = 7 * 24 * 60 * 60 * 1000;
+  const motivosRechazoMuestra = [];
+
+  filtered.forEach(r => {
+    const estado = String(r[idxEstado] || "Recibida").trim();
+    if (desgloseEstado[estado] !== undefined) desgloseEstado[estado]++;
+    else desgloseEstado[estado] = 1;
+
+    const grado = String(r[idxGrado] || "General").trim();
+    if (!embudoGradoMap[grado]) {
+      embudoGradoMap[grado] = { grado, total: 0, enRevision: 0, admitidos: 0, matriculados: 0 };
+    }
+    embudoGradoMap[grado].total++;
+    if (estado === "En_Revision" || estado === "Evaluacion") embudoGradoMap[grado].enRevision++;
+    if (estado === "Admitida") embudoGradoMap[grado].admitidos++;
+    if (estado === "Convertida") embudoGradoMap[grado].matriculados++;
+
+    const fRec = idxFechaRec !== -1 && r[idxFechaRec] ? new Date(r[idxFechaRec]).getTime() : null;
+    const fMod = idxFechaMod !== -1 && r[idxFechaMod] ? new Date(r[idxFechaMod]).getTime() : null;
+
+    if (fRec && fMod && fMod >= fRec) {
+      const diffDias = (fMod - fRec) / (1000 * 60 * 60 * 24);
+      totalDiasAtencion += diffDias;
+      atencionCount++;
+    }
+
+    if ((estado === "Recibida" || estado === "En_Revision") && fRec && (now - fRec) > SIETE_DIAS_MS) {
+      solicitudesEstancadas++;
+    }
+
+    if (estado === "Rechazada" && idxMotivo !== -1 && r[idxMotivo]) {
+      motivosRechazoMuestra.push({
+        solicitudId: r[0],
+        nombreAspirante: `${r[2] || ''} ${r[3] || ''}`.trim(),
+        motivo: String(r[idxMotivo]).trim()
+      });
+    }
+  });
+
+  const totalSolicitudes = filtered.length;
+  const totalConvertidos = desgloseEstado.Convertida || 0;
+  const tasaConversionPct = totalSolicitudes > 0 ? Math.round((totalConvertidos / totalSolicitudes) * 1000) / 10 : 0;
+  const tiempoPromedioAtencionDias = atencionCount > 0 ? Math.round((totalDiasAtencion / atencionCount) * 10) / 10 : 0;
+
+  const embudoPorGrado = Object.values(embudoGradoMap).map(g => ({
+    ...g,
+    tasaConversionGradoPct: g.total > 0 ? Math.round((g.matriculados / g.total) * 1000) / 10 : 0
+  }));
+
+  let csvReport = "AÑO LECTIVO,TOTAL SOLICITUDES,CONVERTIDAS,TASA CONVERSION %,TIEMPO PROMEDIO DIAS,ESTANCADAS >7 DIAS\n";
+  csvReport += `${targetAno},${totalSolicitudes},${totalConvertidos},${tasaConversionPct}%,${tiempoPromedioAtencionDias},${solicitudesEstancadas}\n\n`;
+  csvReport += "ESTADO OPERATIVO,CANTIDAD\n";
+  Object.keys(desgloseEstado).forEach(k => {
+    csvReport += `"${k}",${desgloseEstado[k]}\n`;
+  });
+  csvReport += "\nGRADO ACADÉMICO,POSTULANTES,EN REVISIÓN,ADMITIDOS,MATRICULADOS,CONVERSIÓN %\n";
+  embudoPorGrado.forEach(g => {
+    csvReport += `"${g.grado}",${g.total},${g.enRevision},${g.admitidos},${g.matriculados},${g.tasaConversionGradoPct}%\n`;
+  });
+
+  return {
+    status: "success",
+    anolectivo: targetAno,
+    totalSolicitudes,
+    desgloseEstado,
+    tasaConversionPct,
+    tiempoPromedioAtencionDias,
+    solicitudesEstancadas,
+    embudoPorGrado,
+    motivosRechazoMuestra: motivosRechazoMuestra.slice(0, 10),
+    csvReport
+  };
 }
 
 function recordStudentTransfer(payload) {
