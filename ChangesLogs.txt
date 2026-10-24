@@ -1308,3 +1308,7 @@ Archivos Modificados:
   - Sincronizada la sección 7 para referenciar la aplicación de controles RBAC/ABAC, la observancia de plazos institucionales de retención y la protección de derechos ARCO.
 - politica-financiera.html:
   - Actualizada la sección 2 especificando la emisión de comprobantes CUV y la conservación legal obligatoria permanente de registros contables y fiscales conforme a la SAR.
+
+[TAREA-F4-P3-01] [Fase 4 - Reportes Periódicos de Revisión de Privilegios y Cuentas]
+- backend/user-service/Code.gs:
+  - Implementada la función generatePrivilegeAndAccountAuditReport para el análisis automatizado y periódico de cuentas privilegiadas (Administrador, Director, Subdirector, Sistemas, Secretaría, RecursosHumanos), cuentas inactivas o estancadas (>90 días sin iniciar sesión) y delegaciones vigentes.

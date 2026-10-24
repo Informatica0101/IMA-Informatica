@@ -940,7 +940,7 @@ const ROLE_PERMISSIONS = {
     "getInstitutionalCriteria", "saveInstitutionalCriterion", "getFormativeEvaluations", "saveFormativeEvaluation", "getSupportPlans", "saveSupportPlan",
     "createLinkInvitation", "acceptLinkInvitation", "getGuardianStudents", "getInstitutionalAnnouncements", "createInstitutionalAnnouncement", "submitAnnouncementReceiptConfirmation", "getAnnouncementReadReport", "getDepartmentalWorkInbox", "closeConversationThread", "getInternalConversations", "getInternalMessages", "sendInternalMessage", "getUserNotifications", "getUnifiedNotifications", "markNotificationAsRead", "createUserNotification", "sendMultiChannelNotification", "getNotificationPreferences", "getAdministrativeRequests", "getAdministrativeRequestsHistory", "submitAdministrativeRequest", "submitStudentAbsenceJustification", "getStudentAbsenceJustifications", "reviewAbsenceJustification", "updateRequestStatus", "saveInstitutionalForm", "getInstitutionalForms", "submitInstitutionalFormRequest", "saveApprovalWorkflow", "getApprovalWorkflows", "processWorkflowDecision", "getWorkflowHistory", "registerDocumentSignature", "configureNotificationChannel", "getNotificationChannelConfigs", "sendChannelNotificationTest", "getAppointmentBookings", "bookAppointment", "updateAppointmentStatus", "getInstitutionalCalendarEvents", "getPendingReminders",
     "getUserSettings", "saveUserSettings", "getSystemConfigurations", "saveSystemConfiguration", "getProviderIntegrations", "configureProviderIntegration",
-    "updateTicketStatus", "saveVisualPaletteProposal", "approveVisualPaletteProposal", "registerAndDispatchEvent", "retryFailedEventsQueue", "recordTraceabilityLog", "getTraceabilityCorrelationLogs", "getOperationalCapacityMetrics", "runInterdepartmentalIntegrationTestSuite", "getSharedConfigurationsCatalog", "manageInstitutionalDataCache", "purgeSecurityCaches", "dispatchSecurityEvent", "processSecurityEventQueue", "getSecurityEventsQueue", "getSecurityAndComplianceDashboardData"
+    "updateTicketStatus", "saveVisualPaletteProposal", "approveVisualPaletteProposal", "registerAndDispatchEvent", "retryFailedEventsQueue", "recordTraceabilityLog", "getTraceabilityCorrelationLogs", "getOperationalCapacityMetrics", "runInterdepartmentalIntegrationTestSuite", "getSharedConfigurationsCatalog", "manageInstitutionalDataCache", "purgeSecurityCaches", "dispatchSecurityEvent", "processSecurityEventQueue", "getSecurityEventsQueue", "getSecurityAndComplianceDashboardData", "generatePrivilegeAndAccountAuditReport"
   ],
   "Subdirector": [
     "createNews", "uploadNewsImage", "getNews", "updateNewsStatus", "getStudents", "getStudentsByGradoSeccion", "getUserInfo", "saveGameResult", "getGameStats", "getGlobalTop", "recordAnalytics", "getLearningProfile", "mergeGuestData", "updateUserProfile", "findPersonMatches", "generateInstitutionalId",
@@ -1309,6 +1309,7 @@ function doPost(e) {
       case "processSecurityEventQueue": result = processSecurityEventQueue(payload); break;
       case "getSecurityEventsQueue": result = getSecurityEventsQueue(payload); break;
       case "getSecurityAndComplianceDashboardData": result = getSecurityAndComplianceDashboardData(payload); break;
+      case "generatePrivilegeAndAccountAuditReport": result = generatePrivilegeAndAccountAuditReport(payload); break;
       case "getNotificationPreferences": result = getNotificationPreferences(payload); break;
       case "markNotificationAsRead": result = markNotificationAsRead(payload); break;
       case "createUserNotification": result = createUserNotification(payload); break;
@@ -3765,6 +3766,88 @@ function getOperationalCapacityMetrics(payload) {
     },
     desgloseServicios: serviceBreakdown,
     clienteMetricasLocal: metricsClient || null,
+    timestamp: new Date().toISOString()
+  };
+}
+
+// [TAREA-F4-P3-01] [Fase 4: Gobierno de Privilegios] - Reporte periódico automático de revisión de cuentas inactivas y privilegios elevados para auditoría
+function generatePrivilegeAndAccountAuditReport(payload) {
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getSheetOrThrow(ss, "Usuarios");
+  const data = sheet.getDataRange().getValues();
+
+  let adminAccounts = [];
+  let inactiveAccounts = [];
+  let totalAccounts = 0;
+  let activeAccounts = 0;
+
+  const nowMs = Date.now();
+  const NinetyDaysMs = 90 * 24 * 60 * 60 * 1000;
+
+  if (data.length > 1) {
+    for (let i = 1; i < data.length; i++) {
+      const row = data[i];
+      const uid = String(row[0] || "").trim();
+      const name = row[1];
+      const email = row[4];
+      const role = String(row[6] || "").trim();
+      const state = String(row[10] || "Activa").trim();
+      const lastLoginStr = row[12];
+
+      if (!uid) continue;
+      totalAccounts++;
+
+      if (state === "Activa") activeAccounts++;
+
+      if (["Administrador", "Director", "Subdirector", "Sistemas", "Secretaría", "RecursosHumanos"].indexOf(role) !== -1) {
+        adminAccounts.push({
+          userId: uid,
+          nombre: name,
+          email: email,
+          rol: role,
+          estadoCuenta: state,
+          ultimoAcceso: lastLoginStr
+        });
+      }
+
+      const lastLoginMs = lastLoginStr ? new Date(lastLoginStr).getTime() : 0;
+      const isStale = (nowMs - lastLoginMs) > NinetyDaysMs;
+
+      if (state !== "Activa" || isStale) {
+        inactiveAccounts.push({
+          userId: uid,
+          nombre: name,
+          email: email,
+          rol: role,
+          estadoCuenta: state,
+          diasSinActividad: lastLoginMs ? Math.floor((nowMs - lastLoginMs) / (1000 * 60 * 60 * 24)) : "Sin registro",
+          motivoInactividad: state !== "Activa" ? ("Estado " + state) : "Más de 90 días sin iniciar sesión"
+        });
+      }
+    }
+  }
+
+  let delegationsCount = 0;
+  try {
+    const delRes = getSecurityDelegations({ statusFilter: "ACTIVA" });
+    if (delRes) delegationsCount = (delRes.delegations || delRes.data || []).length;
+  } catch (e) {}
+
+  logStructuredEvent("USER", "generatePrivilegeAndAccountAuditReport", "INFO", "PRIVILEGE_AUDIT_REPORT_GENERATED", "Generado reporte de revisión de privilegios y cuentas", null, payload && payload.authRole);
+
+  return {
+    status: "success",
+    service: "USER",
+    resumen: {
+      totalCuentasRegistradas: totalAccounts,
+      cuentasActivas: activeAccounts,
+      cuentasPrivilegiadasElevadas: adminAccounts.length,
+      cuentasInactivasOEstancadas: inactiveAccounts.length,
+      delegacionesSeguridadVigentes: delegationsCount,
+      fechaReporte: new Date().toISOString()
+    },
+    cuentasPrivilegiadas: adminAccounts,
+    cuentasInactivas: inactiveAccounts,
     timestamp: new Date().toISOString()
   };
 }
