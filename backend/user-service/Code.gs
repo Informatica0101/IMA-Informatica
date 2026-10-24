@@ -940,7 +940,7 @@ const ROLE_PERMISSIONS = {
     "getInstitutionalCriteria", "saveInstitutionalCriterion", "getFormativeEvaluations", "saveFormativeEvaluation", "getSupportPlans", "saveSupportPlan",
     "createLinkInvitation", "acceptLinkInvitation", "getGuardianStudents", "getInstitutionalAnnouncements", "createInstitutionalAnnouncement", "submitAnnouncementReceiptConfirmation", "getAnnouncementReadReport", "getDepartmentalWorkInbox", "closeConversationThread", "getInternalConversations", "getInternalMessages", "sendInternalMessage", "getUserNotifications", "getUnifiedNotifications", "markNotificationAsRead", "createUserNotification", "sendMultiChannelNotification", "getNotificationPreferences", "getAdministrativeRequests", "getAdministrativeRequestsHistory", "submitAdministrativeRequest", "submitStudentAbsenceJustification", "getStudentAbsenceJustifications", "reviewAbsenceJustification", "updateRequestStatus", "saveInstitutionalForm", "getInstitutionalForms", "submitInstitutionalFormRequest", "saveApprovalWorkflow", "getApprovalWorkflows", "processWorkflowDecision", "getWorkflowHistory", "registerDocumentSignature", "configureNotificationChannel", "getNotificationChannelConfigs", "sendChannelNotificationTest", "getAppointmentBookings", "bookAppointment", "updateAppointmentStatus", "getInstitutionalCalendarEvents", "getPendingReminders",
     "getUserSettings", "saveUserSettings", "getSystemConfigurations", "saveSystemConfiguration", "getProviderIntegrations", "configureProviderIntegration",
-    "updateTicketStatus", "saveVisualPaletteProposal", "approveVisualPaletteProposal", "registerAndDispatchEvent", "retryFailedEventsQueue", "recordTraceabilityLog", "getTraceabilityCorrelationLogs", "getOperationalCapacityMetrics", "runInterdepartmentalIntegrationTestSuite", "getSharedConfigurationsCatalog", "manageInstitutionalDataCache", "purgeSecurityCaches", "dispatchSecurityEvent", "processSecurityEventQueue", "getSecurityEventsQueue", "getSecurityAndComplianceDashboardData", "generatePrivilegeAndAccountAuditReport", "getPaginatedAuditLogReport"
+    "updateTicketStatus", "saveVisualPaletteProposal", "approveVisualPaletteProposal", "registerAndDispatchEvent", "retryFailedEventsQueue", "recordTraceabilityLog", "getTraceabilityCorrelationLogs", "getOperationalCapacityMetrics", "runInterdepartmentalIntegrationTestSuite", "getSharedConfigurationsCatalog", "manageInstitutionalDataCache", "purgeSecurityCaches", "dispatchSecurityEvent", "processSecurityEventQueue", "getSecurityEventsQueue", "getSecurityAndComplianceDashboardData", "generatePrivilegeAndAccountAuditReport", "getPaginatedAuditLogReport", "auditAndReconcileIdentityInconsistencies"
   ],
   "Subdirector": [
     "createNews", "uploadNewsImage", "getNews", "updateNewsStatus", "getStudents", "getStudentsByGradoSeccion", "getUserInfo", "saveGameResult", "getGameStats", "getGlobalTop", "recordAnalytics", "getLearningProfile", "mergeGuestData", "updateUserProfile", "findPersonMatches", "generateInstitutionalId",
@@ -1311,6 +1311,7 @@ function doPost(e) {
       case "getSecurityAndComplianceDashboardData": result = getSecurityAndComplianceDashboardData(payload); break;
       case "generatePrivilegeAndAccountAuditReport": result = generatePrivilegeAndAccountAuditReport(payload); break;
       case "getPaginatedAuditLogReport": result = getPaginatedAuditLogReport(payload); break;
+      case "auditAndReconcileIdentityInconsistencies": result = auditAndReconcileIdentityInconsistencies(payload); break;
       case "getNotificationPreferences": result = getNotificationPreferences(payload); break;
       case "markNotificationAsRead": result = markNotificationAsRead(payload); break;
       case "createUserNotification": result = createUserNotification(payload); break;
@@ -3767,6 +3768,98 @@ function getOperationalCapacityMetrics(payload) {
     },
     desgloseServicios: serviceBreakdown,
     clienteMetricasLocal: metricsClient || null,
+    timestamp: new Date().toISOString()
+  };
+}
+
+// [TAREA-F4-P3-03] [Fase 4: Reconciliación de Identidad] - Detección y corrección de inconsistencias referenciales, delegaciones huérfanas y adscripciones obsoletas
+function auditAndReconcileIdentityInconsistencies(payload) {
+  const { autoFix } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+
+  const usersSheet = ss.getSheetByName("Usuarios");
+  const usersData = usersSheet ? usersSheet.getDataRange().getValues() : [];
+  const validUserIds = new Set();
+
+  if (usersData.length > 1) {
+    for (let i = 1; i < usersData.length; i++) {
+      const uid = String(usersData[i][0] || "").trim();
+      if (uid) validUserIds.add(uid);
+    }
+  }
+
+  let issuesFound = [];
+  let fixedCount = 0;
+
+  const delSheet = ss.getSheetByName("DelegacionesSeguridad");
+  if (delSheet) {
+    const delData = delSheet.getDataRange().getValues();
+    for (let d = 1; d < delData.length; d++) {
+      const row = delData[d];
+      const delId = String(row[0] || "").trim();
+      const delegante = String(row[1] || "").trim();
+      const delegado = String(row[2] || "").trim();
+      const estado = String(row[7] || "").trim();
+
+      if (estado === "Activa") {
+        const deleganteExists = validUserIds.has(delegante);
+        const delegadoExists = validUserIds.has(delegado);
+
+        if (!deleganteExists || !delegadoExists) {
+          issuesFound.push({
+            type: "ORPHAN_DELEGATION",
+            id: delId,
+            description: `Delegación ${delId} hace referencia a usuario inexistente (Delegante: ${delegante}, Delegado: ${delegado})`,
+            status: autoFix ? "CORREGIDO" : "PENDIENTE"
+          });
+
+          if (autoFix) {
+            delSheet.getRange(d + 1, 8).setValue("Revocada");
+            fixedCount++;
+          }
+        }
+      }
+    }
+  }
+
+  const adsSheet = ss.getSheetByName("HistorialAdscripciones");
+  if (adsSheet) {
+    const adsData = adsSheet.getDataRange().getValues();
+    for (let a = 1; a < adsData.length; a++) {
+      const row = adsData[a];
+      const adsId = String(row[0] || "").trim();
+      const userId = String(row[1] || "").trim();
+      const estado = String(row[6] || "").trim();
+
+      if (estado === "Activa" && !validUserIds.has(userId)) {
+        issuesFound.push({
+          type: "ORPHAN_AFFILIATION",
+          id: adsId,
+          description: `Adscripción ${adsId} vinculada a usuario inexistente ${userId}`,
+          status: autoFix ? "CORREGIDO" : "PENDIENTE"
+        });
+
+        if (autoFix) {
+          adsSheet.getRange(a + 1, 7).setValue("Inactiva");
+          fixedCount++;
+        }
+      }
+    }
+  }
+
+  logStructuredEvent("USER", "auditAndReconcileIdentityInconsistencies", "WARN", "IDENTITY_INCONSISTENCIES_AUDITED", `Escáner de coherencia ejecutado. Detectados: ${issuesFound.length}, Corregidos: ${fixedCount}`, { issuesCount: issuesFound.length, fixedCount, autoFix }, payload && payload.authRole);
+
+  return {
+    status: "success",
+    service: "USER",
+    resumen: {
+      totalUsuariosRegistrados: validUserIds.size,
+      inconsistenciasDetectadas: issuesFound.length,
+      inconsistenciasCorregidas: fixedCount,
+      modoAutoCorreccion: !!autoFix,
+      fechaEscaner: new Date().toISOString()
+    },
+    inconsistencias: issuesFound,
     timestamp: new Date().toISOString()
   };
 }

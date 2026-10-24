@@ -300,7 +300,7 @@
   - [X] Consultas de auditoría optimizadas con paginación.
 - **Estado:** [X] Completada
 
-### [ ] [TAREA-F4-P3-03] Establecer un sistema de detección y reconciliación de inconsistencias de identidad
+### [X] [TAREA-F4-P3-03] Establecer un sistema de detección y reconciliación de inconsistencias de identidad
 - **Origen del Hallazgo:** Auditoría de la Fase 4 (AUDITORIA_FASE4_IDENTIDAD_PERMISOS_GOBIERNO.md)
 - **Severidad/Clasificación:** Bajo · Integridad · Identidad
 - **Archivos Involucrados:** `backend/user-service/Code.gs`
@@ -308,5 +308,5 @@
 - **Descripción del Alcance:**
   1. Ampliar el escáner de coherencia para detectar asignaciones de rol o delegaciones huérfanas.
 - **Criterios de Aceptación:**
-  - [ ] Escáner reporta y permite corregir inconsistencias referenciales.
-- **Estado:** [ ] Pendiente
+  - [X] Escáner reporta y permite corregir inconsistencias referenciales.
+- **Estado:** [X] Completada
