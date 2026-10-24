@@ -204,7 +204,7 @@ const ROLE_PERMISSIONS = {
     "getInstitutionParams", "getAcademicYears", "getAcademicPeriods", "getSubjectCatalog", "getStudyPlans", "getAcademicOffers",
     "createAcademicOffer", "getTeacherAssignments", "assignTeacherToClass", "createTeacherSubstitution", "getAcademicCalendar", "createCalendarEvent", "getClassSchedules", "createClassSchedule", "deleteClassSchedule", "copyClassSchedules", "getTeacherTeachingLoad", "generateAutoSchedules", "recordClassSessionOutcome", "getTeachingHoursSummary", "rescheduleCancelledSession", "getPendingSessionRecoveries", "publishClassSchedules", "getIndividualCalendar", "syncAcademicScheduleIntegrity", "getAcademicAuditLogs", "getReusableResourceCatalog", "manageReusableResource",
     "getClassroomResources", "saveClassroomResource", "getStudentSchedule",
-    "createAdmissionRequest", "getAdmissionRequests", "updateAdmissionStatus", "convertAdmissionToStudent", "scheduleAdmissionInterview", "getAdmissionInterviews", "recordInterviewOutcome", "saveAdmissionEvaluation", "getAdmissionEvaluations",
+    "createAdmissionRequest", "getAdmissionRequests", "updateAdmissionStatus", "convertAdmissionToStudent", "scheduleAdmissionInterview", "getAdmissionInterviews", "recordInterviewOutcome", "saveAdmissionEvaluation", "getAdmissionEvaluations", "addToWaitlist", "getWaitlist", "reorderWaitlist", "offerWaitlistSlot", "respondToWaitlistSlot",
     "getStudentFile", "updateStudentFile", "getStudentTimeline", "findDuplicateStudents",
     "getStudentGuardians", "saveStudentGuardian", "unlinkStudentGuardian", "uploadStudentDocument", "getStudentDocuments", "updateDocumentStatus",
     "createStudentEnrollment", "getStudentEnrollments", "renewStudentEnrollment", "checkEnrollmentCapacity",
@@ -5819,9 +5819,9 @@ function updateDocumentStatus(payload) {
 // FASE 4: 6. MATRÍCULAS, RENOVACIONES Y CONTROL DE CUPOS
 // ---------------------------------------------------------------------------
 
-// [TAREA-F5-010] [Fase 5: Admisiones y Matrícula] - Control consistente de capacidad integrando matrículas activas y plazas reservadas (solicitudes Admitidas) con LockService
+// [TAREA-F5-010] [Fase 5: Admisiones y Matrícula] - Control consistente de capacidad integrando matrículas activas y plazas reservadas (solicitudes Admitidas) con caducidad de reservas, estado de oferta y LockService
 function checkEnrollmentCapacity(payload) {
-  const { anolectivo, grado, seccion, skipLock } = payload || {};
+  const { anolectivo, grado, seccion, skipLock, forceCapacityOverride } = payload || {};
   if (!grado) throw new Error("Grado es requerido.");
 
   let hasLock = false;
@@ -5835,25 +5835,59 @@ function checkEnrollmentCapacity(payload) {
     const targetAno = anolectivo || "2026";
     const targetSeccion = seccion || "A";
 
-    // 1. Consultar capacidad máxima en OfertaAcademica si existe
+    // 1. Consultar capacidad máxima y estado de sección en OfertaAcademica si existe
     const offerRows = getOrCreateSheet(ss, "OfertaAcademica").getDataRange().getValues().slice(1);
-    const offer = offerRows.find(r => String(r[1]).trim() === String(targetAno).trim() && normalizeString(r[3]) === normalizeString(grado) && (normalizeString(r[4]) === normalizeString(targetSeccion) || normalizeString(r[3]) === normalizeString(targetSeccion)));
+    const offer = offerRows.find(r => String(r[1]).trim() === String(targetAno).trim() && normalizeString(r[3]) === normalizeString(grado) && normalizeString(r[4]) === normalizeString(targetSeccion));
 
-    const maxCapacity = offer ? parseInt(offer[8] || 35) : 35;
+    const maxCapacity = offer ? parseInt(offer[8] || 35, 10) : 35;
+    const offerState = offer ? String(offer[9] || "Activa").trim() : "Activa";
+    const isSectionOpen = offerState !== "Cerrada" && offerState !== "Inactiva";
 
     // 2. Consultar inscritos confirmados en Matriculas
     const matRows = getOrCreateSheet(ss, "Matriculas").getDataRange().getValues().slice(1);
     const currentEnrolled = matRows.filter(r => String(r[6]).trim() === String(targetAno).trim() && normalizeString(r[4]) === normalizeString(grado) && normalizeString(r[5]) === normalizeString(targetSeccion) && (r[8] === "Activa" || r[8] === "Confirmada")).length;
 
-    // 3. Consultar plazas reservadas por aspirantes en estado 'Admitida' (pendientes de formalizar matrícula)
+    // 3. Consultar plazas reservadas por aspirantes en estado 'Admitida' evaluando caducidad (default 5 días o RESERVATION_EXPIRATION_DAYS)
+    const expirationDays = (typeof RESERVATION_EXPIRATION_DAYS !== "undefined" && typeof RESERVATION_EXPIRATION_DAYS === "number") ? RESERVATION_EXPIRATION_DAYS : 5;
+    const nowMs = new Date().getTime();
+    const expirationThresholdMs = expirationDays * 24 * 60 * 60 * 1000;
+
     const admRows = getOrCreateSheet(ss, "SolicitudesAdmision").getDataRange().getValues().slice(1);
-    const reservedSlots = admRows.filter(r => String(r[2]).trim() === String(targetAno).trim() && normalizeString(r[3]) === normalizeString(grado) && String(r[11]).trim() === "Admitida").length;
+    let reservedSlots = 0;
+    let expiredReservations = 0;
+
+    admRows.forEach(r => {
+      const rowAno = String(r[2]).trim();
+      const rowGrado = String(r[3]).trim();
+      const rowEstado = String(r[11]).trim();
+      const rowObs = String(r[13] || "");
+
+      if (rowAno === targetAno && normalizeString(rowGrado) === normalizeString(grado) && rowEstado === "Admitida") {
+        // Verificar si la fecha de decisión en observaciones o fecha de solicitud indica caducidad
+        let admissionDate = r[1] instanceof Date ? r[1] : new Date(r[1]);
+        const obsMatch = rowObs.match(/\[(\d{4}-\d{2}-\d{2})\s*-\s*Admitida\]/);
+        if (obsMatch && obsMatch[1]) {
+          admissionDate = new Date(obsMatch[1]);
+        }
+
+        if (admissionDate && !isNaN(admissionDate.getTime()) && (nowMs - admissionDate.getTime()) > expirationThresholdMs) {
+          expiredReservations++;
+        } else {
+          reservedSlots++;
+        }
+      }
+    });
 
     const totalOccupied = currentEnrolled + reservedSlots;
     const availableSlots = Math.max(0, maxCapacity - totalOccupied);
 
     // Permitir sobrecupo únicamente si la directiva OVERBOOKING_ALLOWED está activa o se proporciona autorización
     const overbookingAllowed = typeof OVERBOOKING_ALLOWED !== "undefined" && OVERBOOKING_ALLOWED === true;
+    const isAvailable = isSectionOpen && (availableSlots > 0 || overbookingAllowed || Boolean(forceCapacityOverride));
+
+    if (forceCapacityOverride) {
+      logStructuredEvent("ACADEMIC", "checkEnrollmentCapacity", "WARN", "CAPACITY_OVERRIDE_AUTHORIZED", `Sobrecupo forzado autorizadamente para grado ${grado} sección ${targetSeccion}`, { anolectivo: targetAno, grado, seccion: targetSeccion, forceCapacityOverride: true });
+    }
 
     return {
       status: "success",
@@ -5863,15 +5897,41 @@ function checkEnrollmentCapacity(payload) {
       capacidadMaxima: maxCapacity,
       inscritosActuales: currentEnrolled,
       plazasReservadas: reservedSlots,
+      reservasExpiradas: expiredReservations,
       totalOcupados: totalOccupied,
       cuposDisponibles: availableSlots,
-      hayCupo: availableSlots > 0 || overbookingAllowed
+      seccionAbierta: isSectionOpen,
+      estadoSeccion: offerState,
+      hayCupo: isAvailable
     };
   } finally {
     if (hasLock) {
       try { lock.releaseLock(); } catch (_) {}
     }
   }
+}
+
+// [TAREA-F5-010] Endpoint de consulta consolidada de capacidad de cupos por año lectivo
+function getEnrollmentCapacityReport(payload) {
+  const { anolectivo } = payload || {};
+  const targetAno = anolectivo || "2026";
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+
+  const offerRows = getOrCreateSheet(ss, "OfertaAcademica").getDataRange().getValues().slice(1);
+  const targetOffers = offerRows.filter(r => String(r[1]).trim() === String(targetAno).trim());
+
+  const reports = targetOffers.map(r => {
+    const g = String(r[3] || "").trim();
+    const sec = String(r[4] || "A").trim();
+    return checkEnrollmentCapacity({ anolectivo: targetAno, grado: g, seccion: sec, skipLock: true });
+  });
+
+  return {
+    status: "success",
+    anolectivo: targetAno,
+    totalSecciones: reports.length,
+    reportesCapacidad: reports
+  };
 }
 
 function createStudentEnrollment(payload) {
