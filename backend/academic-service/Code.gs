@@ -169,7 +169,7 @@ const ROLE_PERMISSIONS = {
     "getAcademicOffers", "createAcademicOffer", "getTeacherAssignments", "assignTeacherToClass", "createTeacherSubstitution",
     "getAcademicCalendar", "createCalendarEvent", "getClassSchedules", "createClassSchedule", "deleteClassSchedule", "getAcademicRules", "saveAcademicRule", "getDepartmentAcademicPlanning", "assignDepartmentHead", "getCurricularAnalyticsReport", "getReusableResourceCatalog", "manageReusableResource", "getCurricularEquivalences", "executeCurricularMigration", "registerCurricularAreaExtension", "runCurricularAreaServiceTests", "toggleCurricularAreaStatus", "validateApiContractsTestSuite", "getInstitutionalCatalog", "validateCatalogReference", "generateInstitutionalUUID", "validateInstitutionalIdentifier", "auditInstitutionalIdentifierCollisions", "runConcurrencyAndConsistencySuite", "getPaginatedAcademicHistory", "reconcileRestoredDataIntegrity", "evaluateTransactionalStorageMigrationNeed",
     "getClassroomResources", "saveClassroomResource", "getStudentSchedule",
-    "createAdmissionRequest", "getAdmissionRequests", "updateAdmissionStatus", "reopenAdmissionRequest", "convertAdmissionToStudent", "scheduleAdmissionInterview", "getAdmissionInterviews", "recordInterviewOutcome", "saveAdmissionEvaluation", "getAdmissionEvaluations", "addToWaitlist", "getWaitlist", "reorderWaitlist", "offerWaitlistSlot", "respondToWaitlistSlot",
+    "createAdmissionRequest", "getAdmissionRequests", "updateAdmissionStatus", "reopenAdmissionRequest", "convertAdmissionToStudent", "scheduleAdmissionInterview", "getAdmissionInterviews", "recordInterviewOutcome", "saveAdmissionEvaluation", "getAdmissionEvaluations", "addToWaitlist", "getWaitlist", "reorderWaitlist", "offerWaitlistSlot", "respondToWaitlistSlot", "resolveAdmissionDuplicate",
     "getStudentFile", "updateStudentFile", "getStudentTimeline", "findDuplicateStudents", "mergeStudentFiles",
     "getStudentGuardians", "saveStudentGuardian", "unlinkStudentGuardian", "uploadStudentDocument", "getStudentDocuments", "updateDocumentStatus",
     "createStudentEnrollment", "getStudentEnrollments", "renewStudentEnrollment", "checkEnrollmentCapacity",
@@ -192,7 +192,7 @@ const ROLE_PERMISSIONS = {
     "getInstitutionParams", "getAcademicYears", "getAcademicPeriods", "getSubjectCatalog", "getStudyPlans", "getAcademicOffers",
     "createAcademicOffer", "getTeacherAssignments", "assignTeacherToClass", "createTeacherSubstitution", "getAcademicCalendar", "createCalendarEvent", "getClassSchedules", "createClassSchedule", "deleteClassSchedule", "copyClassSchedules", "getTeacherTeachingLoad", "generateAutoSchedules", "recordClassSessionOutcome", "getTeachingHoursSummary", "rescheduleCancelledSession", "getPendingSessionRecoveries", "publishClassSchedules", "getIndividualCalendar", "syncAcademicScheduleIntegrity", "getAcademicAuditLogs", "getReusableResourceCatalog", "manageReusableResource",
     "getClassroomResources", "saveClassroomResource", "getStudentSchedule",
-    "createAdmissionRequest", "getAdmissionRequests", "updateAdmissionStatus", "convertAdmissionToStudent", "scheduleAdmissionInterview", "getAdmissionInterviews", "recordInterviewOutcome", "saveAdmissionEvaluation", "getAdmissionEvaluations", "addToWaitlist", "getWaitlist", "reorderWaitlist", "offerWaitlistSlot", "respondToWaitlistSlot",
+    "createAdmissionRequest", "getAdmissionRequests", "updateAdmissionStatus", "convertAdmissionToStudent", "scheduleAdmissionInterview", "getAdmissionInterviews", "recordInterviewOutcome", "saveAdmissionEvaluation", "getAdmissionEvaluations", "addToWaitlist", "getWaitlist", "reorderWaitlist", "offerWaitlistSlot", "respondToWaitlistSlot", "resolveAdmissionDuplicate",
     "getStudentFile", "updateStudentFile", "getStudentTimeline", "findDuplicateStudents",
     "getStudentGuardians", "saveStudentGuardian", "unlinkStudentGuardian", "uploadStudentDocument", "getStudentDocuments", "updateDocumentStatus",
     "createStudentEnrollment", "getStudentEnrollments", "renewStudentEnrollment", "checkEnrollmentCapacity",
@@ -679,6 +679,7 @@ function doPost(e) {
       case "reorderWaitlist": result = reorderWaitlist(payload); break;
       case "offerWaitlistSlot": result = offerWaitlistSlot(payload); break;
       case "respondToWaitlistSlot": result = respondToWaitlistSlot(payload); break;
+      case "resolveAdmissionDuplicate": result = resolveAdmissionDuplicate(payload); break;
       case "reopenAdmissionRequest": result = reopenAdmissionRequest(payload); break;
       case "convertAdmissionToStudent": result = convertAdmissionToStudent(payload); break;
       case "getStudentFile": result = getStudentFile(payload); break;
@@ -5579,9 +5580,9 @@ function getStudentTimeline(payload) {
 // FASE 4: 3. DETECCIÓN Y FUSIÓN CONTROLADA DE DUPLICADOS
 // ---------------------------------------------------------------------------
 
-// [REQ-EXP-006] [Fase 1: Registro y Expediente de Estudiantes] - Service backend endpoints (findDuplicateStudents, mergeStudentFiles) para la detección preventiva y fusión controlada de expedientes duplicados.
+// [TAREA-F5-017] [Fase 5: Admisiones y Calidad de Datos] - Detección de duplicados, clasificación por niveles de coincidencia y resolución de duplicados.
 function findDuplicateStudents(payload) {
-  const { nombres, apellidos, identificacion, email } = payload || {};
+  const { nombres, apellidos, identificacion, fechaNacimiento, email, telefono, solicitudId } = payload || {};
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
 
   const admRows = getOrCreateSheet(ss, "SolicitudesAdmision").getDataRange().getValues().slice(1);
@@ -5590,33 +5591,168 @@ function findDuplicateStudents(payload) {
 
   const normIdent = normalizeString(identificacion);
   const normEmail = normalizeString(email);
+  const normPhone = (telefono || "").replace(/\D/g, "");
   const normFullName = normalizeString(`${nombres || ''} ${apellidos || ''}`);
+  const normFechaNac = fechaNacimiento ? String(fechaNacimiento).trim() : "";
 
   const candidates = [];
 
+  // 1. Comparar contra Expedientes de Estudiantes Matriculados
   expRows.forEach(e => {
+    const expId = String(e[0]).trim();
     const user = userRows.find(u => String(u[0]).trim() === String(e[1]).trim());
     const uNombre = user ? user[1] : "";
     const uEmail = user ? user[4] : "";
+    const uPhone = user && user[5] ? String(user[5]).replace(/\D/g, "") : "";
+    const uIdent = user ? normalizeString(user[8]) : "";
 
     let matchReason = null;
-    if (normIdent && user && normalizeString(user[8]) === normIdent) matchReason = "IDENTIFICACION_EXACTA";
-    else if (normEmail && uEmail && normalizeString(uEmail) === normEmail) matchReason = "EMAIL_EXACTO";
-    else if (normFullName && uNombre && normalizeString(uNombre) === normFullName) matchReason = "NOMBRE_SIMILAR";
+    let matchLevel = null;
+
+    if (normIdent && uIdent && uIdent === normIdent) {
+      matchReason = "IDENTIFICACION_EXACTA";
+      matchLevel = "COINCIDENCIA_EXACTA";
+    } else if (normFullName && uNombre && normalizeString(uNombre) === normFullName && normFechaNac && String(e[7] || "").trim() === normFechaNac) {
+      matchReason = "NOMBRE_Y_FECHA_NACIMIENTO";
+      matchLevel = "COINCIDENCIA_ALTA";
+    } else if (normEmail && uEmail && normalizeString(uEmail) === normEmail) {
+      matchReason = "EMAIL_COINCIDENTE";
+      matchLevel = "COINCIDENCIA_MEDIA";
+    } else if (normPhone && uPhone && uPhone.length >= 8 && normPhone.endsWith(uPhone.slice(-8))) {
+      matchReason = "TELEFONO_COINCIDENTE";
+      matchLevel = "COINCIDENCIA_MEDIA";
+    }
 
     if (matchReason) {
       candidates.push({
-        expedienteId: e[0],
-        userId: e[1],
-        codigoInstitucional: e[2],
-        nombreAlumno: uNombre,
-        email: uEmail,
-        coincidencia: matchReason
+        id: expId,
+        tipo: "EXPEDIENTE_ESTUDIANTE",
+        codigoInstitucional: e[2] || expId,
+        nombreCompleto: uNombre || `${nombres || ''} ${apellidos || ''}`,
+        identificacion: uIdent ? maskDni(uIdent) : "N/D",
+        email: uEmail || "N/D",
+        coincidencia: matchReason,
+        nivelCoincidencia: matchLevel
+      });
+    }
+  });
+
+  // 2. Comparar contra Solicitudes de Admisión Activas
+  admRows.forEach(r => {
+    const sId = String(r[0]).trim();
+    const rEstado = String(r[11] || "").trim();
+    if (sId === String(solicitudId || "").trim() || rEstado === "Rechazada" || rEstado === "Retirada") return;
+
+    const rIdent = normalizeString(r[6]);
+    const rName = normalizeString(`${r[4] || ''} ${r[5] || ''}`);
+    const rFechaNac = String(r[7] || "").trim();
+    const rEmail = normalizeString(r[10]);
+    const rPhone = String(r[9] || "").replace(/\D/g, "");
+
+    let matchReason = null;
+    let matchLevel = null;
+
+    if (normIdent && rIdent && rIdent === normIdent) {
+      matchReason = "IDENTIFICACION_EXACTA";
+      matchLevel = "COINCIDENCIA_EXACTA";
+    } else if (normFullName && rName && normFullName === rName && normFechaNac && rFechaNac === normFechaNac) {
+      matchReason = "NOMBRE_Y_FECHA_NACIMIENTO";
+      matchLevel = "COINCIDENCIA_ALTA";
+    } else if (normEmail && rEmail && normEmail === rEmail) {
+      matchReason = "EMAIL_COINCIDENTE";
+      matchLevel = "COINCIDENCIA_MEDIA";
+    } else if (normPhone && rPhone && rPhone.length >= 8 && normPhone.endsWith(rPhone.slice(-8))) {
+      matchReason = "TELEFONO_COINCIDENTE";
+      matchLevel = "COINCIDENCIA_MEDIA";
+    }
+
+    if (matchReason) {
+      candidates.push({
+        id: sId,
+        tipo: "SOLICITUD_ADMISION",
+        codigoInstitucional: sId,
+        nombreCompleto: `${r[4] || ''} ${r[5] || ''}`.trim(),
+        identificacion: rIdent ? maskDni(rIdent) : "N/D",
+        email: rEmail || "N/D",
+        estadoSolicitud: rEstado,
+        coincidencia: matchReason,
+        nivelCoincidencia: matchLevel
       });
     }
   });
 
   return { status: "success", duplicatesCount: candidates.length, candidates: candidates };
+}
+
+function maskDni(dni) {
+  if (!dni) return "";
+  const s = String(dni).trim();
+  if (s.length <= 4) return "****";
+  return s.substring(0, 4) + "****" + s.substring(s.length - 2);
+}
+
+// [TAREA-F5-017] [Fase 5: Admisiones y Calidad de Datos] - Endpoint de resolución de alertas de duplicidad sin fusión automática arbitraria
+function resolveAdmissionDuplicate(payload) {
+  const { solicitudId, resolucion, expedienteDestinoId, motivoJustificado, authRole, authUserId } = payload || {};
+  if (!solicitudId || !resolucion) throw new Error("solicitudId y resolucion son obligatorios.");
+  if (!motivoJustificado || String(motivoJustificado).trim().length < 10) {
+    throw new Error("Debe proporcionar una motivación justificada de al menos 10 caracteres.");
+  }
+
+  const validResolutions = ["AprobarNuevo", "VincularExistente", "RechazarDuplicado"];
+  if (!validResolutions.includes(resolucion)) {
+    throw new Error(`Resolución no válida: ${resolucion}. Opciones válidas: ${validResolutions.join(", ")}.`);
+  }
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "SolicitudesAdmision");
+  const data = sheet.getDataRange().getValues();
+  const rowIndex = data.findIndex(r => String(r[0]).trim() === String(solicitudId).trim());
+
+  if (rowIndex === -1) throw new Error(`Solicitud de admisión ${solicitudId} no encontrada.`);
+
+  const oldObs = String(data[rowIndex][13] || "");
+  const nowStr = new Date().toISOString();
+  let newObs = oldObs;
+  let newStatus = data[rowIndex][11];
+
+  if (resolucion === "AprobarNuevo") {
+    newObs = `[DUPLICADO_RESUELTO: Aprobado como nuevo postulante por ${authUserId || 'Secretaría'} el ${nowStr}. Motivo: ${motivoJustificado}] ${oldObs}`.trim();
+  } else if (resolucion === "VincularExistente") {
+    if (!expedienteDestinoId) throw new Error("expedienteDestinoId es requerido para la vinculación.");
+    sheet.getRange(rowIndex + 1, 15).setValue(expedienteDestinoId); // expedienteId col
+    newObs = `[DUPLICADO_RESUELTO: Vinculado a expediente ${expedienteDestinoId} por ${authUserId || 'Secretaría'} el ${nowStr}. Motivo: ${motivoJustificado}] ${oldObs}`.trim();
+  } else if (resolucion === "RechazarDuplicado") {
+    newStatus = "Rechazada";
+    sheet.getRange(rowIndex + 1, 12).setValue("Rechazada");
+    newObs = `[DUPLICADO_RESUELTO: Rechazada por duplicidad por ${authUserId || 'Secretaría'} el ${nowStr}. Motivo: ${motivoJustificado}] ${oldObs}`.trim();
+  }
+
+  sheet.getRange(rowIndex + 1, 14).setValue(newObs);
+
+  logStructuredEvent("ACADEMIC", "resolveAdmissionDuplicate", "INFO", "DUPLICATE_RESOLVED", `Solicitud ${solicitudId} resuelta con opción ${resolucion}`, { solicitudId, resolucion, expedienteDestinoId, motivoJustificado }, authRole);
+
+  try {
+    const histSheet = getOrCreateSheet(ss, "HistorialCambiosEntidad");
+    histSheet.appendRow([
+      `HIST-${Date.now()}`,
+      "SolicitudAdmision",
+      solicitudId,
+      "DeteccionDuplicados",
+      resolucion,
+      authUserId || "Secretaría",
+      nowStr,
+      motivoJustificado
+    ]);
+  } catch (_) {}
+
+  return {
+    status: "success",
+    solicitudId: solicitudId,
+    resolucion: resolucion,
+    nuevoEstado: newStatus,
+    message: `Alerta de duplicado para ${solicitudId} resuelta exitosamente como ${resolucion}.`
+  };
 }
 
 function mergeStudentFiles(payload) {

@@ -535,7 +535,7 @@
 
 ---
 
-### [TAREA-F5-017] Mejorar la gestión de duplicados, validación y calidad de los datos de aspirantes
+### [X] [TAREA-F5-017] Mejorar la gestión de duplicados, validación y calidad de los datos de aspirantes
 - **Origen del Hallazgo:** `Auditoria.txt` (HALLAZGOS F5: HALLAZGOS-F5-P0-01) / `AUDITORIA_FASE_5_ADMISIONES_PORTAL_FAMILIAS.md` (Subcapacidad 5.1 y 5.6, Brecha P0-01)
 - **Severidad/Clasificación:** Medio
 - **Archivos Involucrados:** `backend/academic-service/Code.gs` (l. 714, 4615-4650), `js/student.js`
@@ -554,12 +554,12 @@
   8. Registrar la decisión de resolución de duplicados en la bitácora de auditoría.
   9. Validar que la corrección de datos en una solicitud conserve la trazabilidad original.
 - **Criterios de Aceptación:**
-  - [ ] Intentos de registrar un aspirante con un DNI ya existente en `SolicitudesAdmision` o `ExpedientesEstudiantes` son detectados e informados.
-  - [ ] No se realizan fusiones automáticas de personas basadas únicamente en coincidencias de nombres.
-  - [ ] La consola de administración despliega alertas de duplicidad para la revisión de Secretaría.
-  - [ ] Los mensajes de validación no revelan información confidencial de terceros.
-  - [ ] La resolución de duplicados queda documentada con el usuario, fecha y decisión en la bitácora.
-- **Estado:** [ ] Pendiente
+  - [x] Intentos de registrar un aspirante con un DNI ya existente en `SolicitudesAdmision` o `ExpedientesEstudiantes` son detectados e informados.
+  - [x] No se realizan fusiones automáticas de personas basadas únicamente en coincidencias de nombres.
+  - [x] La consola de administración despliega alertas de duplicidad para la revisión de Secretaría.
+  - [x] Los mensajes de validación no revelan información confidencial de terceros.
+  - [x] La resolución de duplicados queda documentada con el usuario, fecha y decisión en la bitácora.
+- **Estado:** [X] Completada
 
 ---
 

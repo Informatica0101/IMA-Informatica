@@ -1490,3 +1490,13 @@ Archivos Modificados:
 [TAREA-F5-016] [Fase 5 - Accesibilidad WCAG 2.2 AA y Adaptación Móvil de Admisiones]
 - admision.html:
   - Actualización de `goToStep` con comentario identificativo [TAREA-F5-016], enfoque automático en el primer control del nuevo paso, atributos ARIA (`aria-current`), actualización elástica de la barra de progreso e inyección de ejecución automática de `auditAndFixAccessibility()`.
+
+[TAREA-F5-017] [Fase 5 - Detección y Gestión de Duplicados en Admisiones]
+- backend/academic-service/Code.gs:
+  - Extensión de `findDuplicateStudents` con comentario identificativo [TAREA-F5-017] para auditar la hoja `SolicitudesAdmision` y comparar solicitudes activas contra expedientes existentes o de otros aspirantes, normalizando cadenas con `normalizeString`, enmascarando DNI con `maskDni` y clasificando por niveles de coincidencia (`COINCIDENCIA_EXACTA`, `COINCIDENCIA_ALTA`, `COINCIDENCIA_MEDIA`).
+  - Creación del endpoint `resolveAdmissionDuplicate` con justificación obligatoria de al menos 10 caracteres, auditoría estructurada en `HistorialCambiosEntidad` y opciones de resolución (`AprobarNuevo`, `VincularExistente`, `RechazarDuplicado`).
+  - Actualización de `ROLE_PERMISSIONS` y enrutador `doPost` con permiso `resolveAdmissionDuplicate`.
+- dashboard-secretaria.html:
+  - Inserción de la tarjeta contenedora `#modal-adm-duplicates-container` en el modal de detalle de admisión.
+- js/secretary.js:
+  - Implementación de `checkAdmissionDuplicates`, `renderAdmissionDuplicatesSection` y `promptResolveAdmissionDuplicate` con comentario identificativo [TAREA-F5-017] para consulta en tiempo real y flujo interactivo de resolución de coincidencias desde Secretaría.

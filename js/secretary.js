@@ -193,6 +193,9 @@ window.openAdmissionDetailModal = function(solicitudId) {
     // [TAREA-F5-014] Cargar línea de tiempo de trazabilidad
     window.loadAdmissionAuditTrail(found.solicitudId);
 
+    // [TAREA-F5-017] Cargar evaluación de duplicados y coincidencia
+    window.checkAdmissionDuplicates(found.solicitudId);
+
     if (actionsEl) {
         const allowedTransitions = {
             "Recibida": ["En_Revision", "Rechazada", "Retirada"],
@@ -535,6 +538,136 @@ window.loadAdmissionAuditTrail = async function(solicitudId) {
         }
     } catch (err) {
         container.innerHTML = `<p class="text-red-500">Error al cargar bitácora: ${err.message}</p>`;
+    }
+};
+
+// [TAREA-F5-017] Detección de duplicados, calidad de datos y resolución de alertas
+window.checkAdmissionDuplicates = async function(solicitudIdTarget) {
+    const sId = solicitudIdTarget || window.currentActiveSolicitudId;
+    const container = document.getElementById('modal-adm-duplicates-container');
+    if (!container) return;
+
+    const found = (window.allAdmissionRequests || []).find(r => r.solicitudId === sId);
+    if (!found) {
+        container.innerHTML = `<p class="text-gray-400">Seleccione una solicitud para evaluar coincidencias.</p>`;
+        return;
+    }
+
+    container.innerHTML = `<p class="text-gray-500 text-xs"><i class="fas fa-spinner fa-spin mr-1"></i> Analizando base de datos en busca de posibles duplicados...</p>`;
+
+    try {
+        const resp = await window.callAppsScript('findDuplicateStudents', {
+            solicitudId: found.solicitudId,
+            nombres: found.nombresAspirante,
+            apellidos: found.apellidosAspirante,
+            identificacion: found.identificacion,
+            fechaNacimiento: found.fechaNacimiento,
+            email: found.emailContacto,
+            telefono: found.telefonoContacto
+        });
+
+        if (resp && resp.status === 'success') {
+            const candidates = resp.candidates || [];
+            if (candidates.length === 0) {
+                container.innerHTML = `
+                    <div class="p-3 bg-green-50 border border-green-200 rounded-xl text-green-800 text-xs flex items-center justify-between">
+                        <div>
+                            <span class="font-bold"><i class="fa-solid fa-circle-check text-green-600 mr-1"></i> Sin duplicados detectados</span>
+                            <p class="text-[10px] text-green-700 mt-0.5">No se encontraron registros de estudiantes ni solicitudes coincidentes con ${found.nombresAspirante} ${found.apellidosAspirante}.</p>
+                        </div>
+                        <span class="px-2 py-0.5 bg-green-100 text-green-800 font-bold text-[9px] rounded-full uppercase">100% Único</span>
+                    </div>
+                `;
+            } else {
+                let html = `
+                    <div class="p-3 bg-amber-50 border border-amber-200 rounded-xl text-amber-900 text-xs space-y-2">
+                        <div class="flex items-center justify-between">
+                            <span class="font-bold text-rose-700"><i class="fa-solid fa-triangle-exclamation text-rose-600 mr-1"></i> Se encontraron ${candidates.length} posible(s) coincidencia(s)</span>
+                            <button onclick="window.promptResolveAdmissionDuplicate('${sId}')" class="px-2.5 py-1 bg-rose-600 hover:bg-rose-700 text-white font-bold text-[9px] rounded-lg uppercase tracking-wider transition-all">
+                                Resolver Alerta
+                            </button>
+                        </div>
+                        <div class="space-y-1.5 pt-1">
+                `;
+
+                candidates.forEach(c => {
+                    const levelColor = c.nivelCoincidencia === 'COINCIDENCIA_EXACTA' ? 'bg-rose-100 text-rose-800 border-rose-300' : (c.nivelCoincidencia === 'COINCIDENCIA_ALTA' ? 'bg-amber-100 text-amber-800 border-amber-300' : 'bg-blue-100 text-blue-800 border-blue-300');
+                    html += `
+                        <div class="p-2 bg-white rounded-lg border border-amber-100 flex items-center justify-between text-[11px]">
+                            <div>
+                                <span class="font-bold text-gray-900">${c.nombreCompleto}</span>
+                                <span class="text-gray-500 text-[10px] ml-1">(${c.tipo === 'EXPEDIENTE_ESTUDIANTE' ? 'Estudiante Matriculado' : 'Solicitud de Admisión'})</span>
+                                <div class="text-[10px] text-gray-600">ID: ${c.codigoInstitucional || c.id} | DNI: ${c.identificacion || 'N/D'} | Motivo: <span class="font-bold">${c.coincidencia}</span></div>
+                            </div>
+                            <span class="px-2 py-0.5 font-bold text-[9px] rounded-full border ${levelColor}">${c.nivelCoincidencia || 'COINCIDENCIA'}</span>
+                        </div>
+                    `;
+                });
+
+                html += `
+                        </div>
+                    </div>
+                `;
+                container.innerHTML = html;
+            }
+        } else {
+            container.innerHTML = `<p class="text-rose-600 text-xs font-bold">No se pudo verificar la detección de duplicados.</p>`;
+        }
+    } catch (err) {
+        container.innerHTML = `<p class="text-rose-600 text-xs">Error evaluando duplicados: ${err.message}</p>`;
+    }
+};
+
+window.promptResolveAdmissionDuplicate = async function(sIdTarget) {
+    const sId = sIdTarget || window.currentActiveSolicitudId;
+    if (!sId) return;
+
+    const action = prompt(`Resolución de alerta de duplicidad para solicitud ${sId}:\n\nSeleccione el número de la acción a ejecutar:\n1. Aprobar como nuevo postulante (Sin duplicado real)\n2. Vincular a expediente de estudiante existente\n3. Rechazar solicitud por ser un registro duplicado`, "1");
+
+    if (!action) return;
+
+    let resolucion = null;
+    let expedienteDestinoId = "";
+
+    if (action.trim() === "1") {
+        resolucion = "AprobarNuevo";
+    } else if (action.trim() === "2") {
+        resolucion = "VincularExistente";
+        expedienteDestinoId = prompt("Ingrese el identificador del expediente de estudiante destino (ej. EXP-2026-00001):");
+        if (!expedienteDestinoId) {
+            alert("Operación cancelada: Debe proporcionar el expediente de estudiante destino.");
+            return;
+        }
+    } else if (action.trim() === "3") {
+        resolucion = "RechazarDuplicado";
+    } else {
+        alert("Opción no válida.");
+        return;
+    }
+
+    const motivoJustificado = prompt("Ingrese la justificación de la decisión (mínimo 10 caracteres):", "Verificado por Secretaría. Expediente verificado y validado.");
+    if (!motivoJustificado || motivoJustificado.trim().length < 10) {
+        alert("Operación cancelada: Debe proporcionar una motivación justificada de al menos 10 caracteres.");
+        return;
+    }
+
+    try {
+        const resp = await window.callAppsScript('resolveAdmissionDuplicate', {
+            solicitudId: sId,
+            resolucion: resolucion,
+            expedienteDestinoId: expedienteDestinoId,
+            motivoJustificado: motivoJustificado
+        });
+
+        if (resp && resp.status === 'success') {
+            alert(resp.message || 'Alerta de duplicidad resuelta correctamente.');
+            await window.loadAdmissionRequestsList();
+            window.openAdmissionDetailModal(sId);
+        } else {
+            alert('Error resolviendo duplicado: ' + (resp ? resp.message : 'Error en servidor'));
+        }
+    } catch (err) {
+        alert('Fallo procesando resolución de duplicado: ' + err.message);
     }
 };
 
