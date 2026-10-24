@@ -749,6 +749,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
         });
 
+
         Promise.all(promises).then(function() {
             if (btn) {
                 btn.disabled = false;

@@ -81,4 +81,69 @@ RESOLUCIÓN Y VERIFICACIÓN DE TAREAS EJECUTADAS:
  - Estado: COMPLETADA Y VERIFICADA (2026-03-29)
  - Archivos Modificados: backend/academic-service/Code.gs (l. 710-820)
  - Verificación: Reestructurada función createAdmissionRequest con comentario identificativo de primera línea [TAREA-F5-003]. Integrada la generación de IDs atómicos secuenciales (ADM-000001) mediante generateInstitutionalId y SecuenciasIDs, candado atómico LockService.getScriptLock(10000) con control de excepciones de bloqueo, detección preventiva de solicitudes duplicadas por DNI o Nombre+FechaNacimiento en el mismo año lectivo, e integración con checkAndRegisterIdempotencyKey / saveIdempotentResult para prevención de reintentos de red duplicados.
+
+[TAREA-F5-004] Construir el formulario público de admisión y conectarlo con el backend
+ - Estado: COMPLETADA Y VERIFICADA (2026-03-29)
+ - Archivos Modificados: admision.html (Nuevo), js/student.js, index.html, login.html
+ - Verificación: Creada la interfaz pública admision.html con flujo guiado por stepper en 4 pasos (Aspirante, Responsable, Selección Académica, Confirmación), aviso de privacidad y consentimiento ARCO, validación de DNI de 13 dígitos de Honduras y teléfono de 8 dígitos (+504), panel público de seguimiento de trámites por código ADM-XXXXXX o DNI del aspirante, integración limpia con el backend via submitPublicAdmissionRequest (createAdmissionRequest) y getPublicAdmissionStatus (getAdmissionRequests), con tokens de idempotencia para prevenir reintentos duplicados y enlaces de navegación pública desde index.html y login.html. Comentarios identificativos de la tarea inyectados en la cabecera de admision.html y en js/student.js.
+
+[TAREA-F5-005] Crear la consola administrativa de revisión y decisión de admisiones
+ - Estado: COMPLETADA Y VERIFICADA (2026-03-29)
+ - Archivos Modificados: dashboard-secretaria.html (Nuevo), js/secretary.js (Nuevo), dashboard-direccion.html, js/auth.js, backend/academic-service/Code.gs
+ - Verificación: Creado el panel dedicado de Secretaría General & Admisiones (dashboard-secretaria.html) y su controlador (js/secretary.js) para mantener la estricta separación de responsabilidades por rol y evitar mezclar funciones de matrícula en el dashboard docente. Incorporadas tarjetas de métricas por estado, filtros avanzados (año lectivo, grado, estado, búsqueda por nombre/DNI), modal de inspección de expedientes (#modal-admission-detail), renderizado dinámico de transiciones autorizadas, exigencia de justificación obligatoria (mínimo 10 caracteres) para rechazar/retirar y conversión a estudiante con un solo clic. Configurados permisos explícitos en backend/academic-service/Code.gs y enrutamiento post-login en js/auth.js. Comentarios identificativos [TAREA-F5-005] inyectados en dashboard-secretaria.html, js/secretary.js y Code.gs.
+
+[TAREA-F5-006] Implementar la gestión documental de aspirantes antes de la matrícula
+ - Estado: COMPLETADA Y VERIFICADA (2026-03-29)
+ - Archivos Modificados: backend/academic-service/Code.gs, dashboard-secretaria.html, js/secretary.js
+ - Verificación: Modificadas `uploadStudentDocument` y `getStudentDocuments` para vincular documentos a `solicitudId` antes de la conversión y migración automática a `expedienteId` tras la conversión. Incorporadas validaciones en servidor para tipo MIME, máximo de 10 MB y comprobación de bytes no nulos. Implementado el panel de revisión y calificación documental de aspirantes (`modal-adm-docs-container`, `loadAdmissionApplicantDocuments`, `updateApplicantDocumentStatusAction`) en la consola de Secretaría. Comentario identificativo [TAREA-F5-006] inyectado en `backend/academic-service/Code.gs`.
+
+[TAREA-F5-007] Implementar el módulo de entrevistas y evaluaciones de admisión
+ - Estado: COMPLETADA Y VERIFICADA (2026-03-29)
+ - Archivos Modificados: backend/academic-service/Code.gs, dashboard-secretaria.html, js/secretary.js
+ - Verificación: Creadas hojas `EntrevistasAdmision` y `EvaluacionesAdmision`, implementados endpoints backend `scheduleAdmissionInterview`, `getAdmissionInterviews`, `recordInterviewOutcome`, `saveAdmissionEvaluation` y `getAdmissionEvaluations` con detección de solapamientos de agenda del evaluador y bloqueo de decisión 'Admitida' en `updateAdmissionStatus` ante evaluaciones obligatorias pendientes/reprobadas. Creados componentes e interfaces de agendamiento y calificación en `dashboard-secretaria.html` y `js/secretary.js`. Comentario identificativo [TAREA-F5-007] inyectado en `backend/academic-service/Code.gs`.
+
+[TAREA-F5-008] Implementar listas de espera con orden de prelación y asignación controlada de plazas
+ - Estado: COMPLETADA Y VERIFICADA (2026-03-29)
+ - Archivos Modificados: backend/academic-service/Code.gs, dashboard-secretaria.html, js/secretary.js
+ - Verificación: Creada hoja `ListaEsperaAdmision`, implementados endpoints backend `addToWaitlist`, `getWaitlist`, `reorderWaitlist`, `offerWaitlistSlot` y `respondToWaitlistSlot` con cálculo automático de prioridades según criterios de prelación (hermanos, exalumnos, personal), reordenamiento con justificación trazable y transición automática a 'Admitida' al aceptar ofertas de vacantes. Creados componentes UI e interactividad en `dashboard-secretaria.html` y `js/secretary.js`. Comentario identificativo [TAREA-F5-008] inyectado en `backend/academic-service/Code.gs`.
+
+[TAREA-F5-009] Corregir la vinculación familiar y establecer permisos individuales por relación
+ - Estado: COMPLETADA Y VERIFICADA (2026-03-29)
+ - Archivos Modificados: backend/user-service/Code.gs, backend/academic-service/Code.gs, dashboard-secretaria.html, js/secretary.js
+ - Verificación: Unificados los flujos de vinculación por token de invitación de 7 días (`createLinkInvitation`, `acceptLinkInvitation`) con comprobación de coincidencia de correo electrónico y neutralización de vínculos duplicados en `RelacionesFamiliares`. Implementadas `revokeFamilyLink` y `updateFamilyLinkPermissions` para administración de permisos granulares por relación (`PermisoAcademico`, `PermisoFinanciero`, `PermisoDocumental`, `PermisoAsistencia`) evaluados en `validateContextualAccess`. Creados componentes UI e interactividad en `dashboard-secretaria.html` y `js/secretary.js`. Comentario identificativo [TAREA-F5-009] inyectado en `backend/user-service/Code.gs`.
+
+[TAREA-F5-010] Integrar las plazas, reservas y matrículas en un control de capacidad consistente
+ - Estado: COMPLETADA Y VERIFICADA (2026-03-29)
+ - Archivos Modificados: backend/academic-service/Code.gs, dashboard-secretaria.html, js/secretary.js
+ - Verificación: Reestructurada función `checkEnrollmentCapacity` con candado `LockService`, cálculo atómico de capacidad restando matrículas activas y plazas reservadas por solicitudes `Admitida`, desglose detallado de cupos y soporte para la directiva `OVERBOOKING_ALLOWED`. Actualizado endpoint `updateAdmissionStatus` para bloquear el cambio a 'Admitida' si la sección está agotada. Creado componente visual `#modal-adm-capacity-container` y controlador `loadAdmissionCapacityStatus` en Secretaría. Comentario identificativo [TAREA-F5-010] inyectado en `backend/academic-service/Code.gs`.
+
+[TAREA-F5-011] Implementar notificaciones automáticas y seguimiento del proceso de admisión
+ - Estado: COMPLETADA Y VERIFICADA (2026-03-29)
+ - Archivos Modificados: backend/user-service/Code.gs, backend/academic-service/Code.gs, dashboard-secretaria.html, js/secretary.js
+ - Verificación: Reestructurada la función `sendMultiChannelNotification` en `user-service/Code.gs` para conectar el envío por correo electrónico `MailApp` con plantillas HTML personalizables, claves de deduplicación preventiva `deduplicationKey`, registro histórico en `BandejaNotificaciones` y estados de entrega (`Entregado`, `Pendiente_Reintento`). Disparados avisos automáticos en `createAdmissionRequest` (recepción de solicitud) y `updateAdmissionStatus` (cambio de estado). Creados el componente `#modal-adm-notifications-container` y el controlador `loadAdmissionNotificationLogs` en la consola de Secretaría. Comentario identificativo [TAREA-F5-011] inyectado en `backend/user-service/Code.gs`.
+
+[TAREA-F5-012] Incorporar seguimiento de aspirantes en el portal familiar
+ - Estado: COMPLETADA Y VERIFICADA (2026-03-29)
+ - Archivos Modificados: backend/user-service/Code.gs, student-dashboard.html, js/student.js
+ - Verificación: Implementada la función backend `getGuardianApplicants` en `user-service/Code.gs` para consulta aislada de solicitudes de admisión vinculadas al tutor autenticado por correo/userId con protección IDOR. Extendido el selector multiestudiante (`initFamilyStudentSwitcher`) en `js/student.js` para categorizar con grupos de opciones entre "🎓 Estudiantes Matriculados" y "📝 Aspirantes en Admisión". Incorporados el panel `#family-applicant-tracking-container` en `student-dashboard.html` y el controlador `renderApplicantTrackingPanel` en `js/student.js` con línea de tiempo visual del proceso. Comentarios identificativos [TAREA-F5-012] inyectados.
+
+[TAREA-F5-013] Integrar los cobros de admisión, los pagos y las becas con el expediente del aspirante
+ - Estado: COMPLETADA Y VERIFICADA (2026-03-29)
+ - Archivos Modificados: backend/accounting-service/Code.gs, js/student.js
+ - Verificación: Implementadas las funciones backend `getAdmissionFinancialStatus` y `createAdmissionCharge` en `accounting-service/Code.gs` para vinculación de cobros de admisión a `solicitudId`, consulta de solvencia e insensibilidad a mayúsculas/minúsculas. Incorporadas las reglas RBAC en `ROLE_PERMISSIONS` para tutores/responsables. Creado el controlador `loadApplicantFinancialStatus` en `js/student.js` y el contenedor `#family-applicant-financial-container` en el Portal Familiar. Comentario identificativo [TAREA-F5-013] inyectado.
+
+[TAREA-F5-014] Completar la trazabilidad de admisiones y las notificaciones de auditoría
+ - Estado: COMPLETADA Y VERIFICADA (2026-03-29)
+ - Archivos Modificados: backend/user-service/Code.gs, dashboard-secretaria.html, js/secretary.js
+ - Verificación: Habilitados los permisos de trazabilidad en `getEntityAuditHistory` para roles de Secretaría y Dirección en `user-service/Code.gs`. Creados el componente `#modal-adm-audit-container` en `dashboard-secretaria.html` y el controlador `loadAdmissionAuditTrail` en `js/secretary.js` para consultar la línea de tiempo de cambios sobre el expediente de admisión. Comentario identificativo [TAREA-F5-014] inyectado.
+
+[TAREA-F5-015] Implementar guardado automático de borradores y recuperación de solicitudes
+ - Estado: COMPLETADA Y VERIFICADA (2026-03-29)
+ - Archivos Modificados: backend/academic-service/Code.gs, admision.html
+ - Verificación: Creada la hoja `BorradoresAdmision` e implementadas las funciones backend `saveAdmissionDraft` y `getAdmissionDraft` en `academic-service/Code.gs` con consumo/purga automática de borradores al enviar la solicitud formal (`createAdmissionRequest`). Implementados en `admision.html` el indicador visual de estado de borrador, el guardado híbrido local/servidor con debounce de 3s y la auto-restauración de datos al cargar la página. Comentarios identificativos [TAREA-F5-015] inyectados.
+
+[TAREA-F5-016] Mejorar la experiencia de uso, accesibilidad y adaptación móvil del proceso de admisión
+ - Estado: COMPLETADA Y VERIFICADA (2026-03-29)
+ - Archivos Modificados: admision.html, js/ui-common.js
+ - Verificación: Mejorado el stepper en `admision.html` con atributos ARIA accesibles (`aria-current`), enfoque automático en el primer control del nuevo paso, barra de progreso elástica, soporte responsivo para móviles de 320px en adelante y ejecución automática de `auditAndFixAccessibility()` al cambiar de paso. Comentarios identificativos [TAREA-F5-016] inyectados.
 ================================================================================

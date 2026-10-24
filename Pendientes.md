@@ -99,7 +99,7 @@
 
 ---
 
-### [TAREA-F5-004] Construir el formulario público de admisión y conectarlo con el backend
+### [X] [TAREA-F5-004] Construir el formulario público de admisión y conectarlo con el backend
 - **Origen del Hallazgo:** `Auditoria.txt` (HALLAZGOS F5: HALLAZGOS-F5-P0-01) / `AUDITORIA_FASE_5_ADMISIONES_PORTAL_FAMILIAS.md` (Subcapacidad 5.1, Brecha P0-01)
 - **Severidad/Clasificación:** Crítico
 - **Archivos Involucrados:** `admision.html` (Nuevo), `js/student.js`, `js/auth.js`, `backend/academic-service/Code.gs` (l. 714)
@@ -118,21 +118,21 @@
   11. Diferenciar explícitamente el envío de la solicitud de su aprobación institucional.
   12. Soportar reintentos limpios ante fallos de red sin duplicar solicitudes.
 - **Criterios de Aceptación:**
-  - [ ] Una familia puede completar y enviar una solicitud válida desde un dispositivo móvil o de escritorio.
-  - [ ] Los datos ingresados llegan al backend y se conservan correctamente en `SolicitudesAdmision`.
-  - [ ] Una solicitud inválida no se registra como completa.
-  - [ ] Un error del servidor no produce un mensaje falso de éxito en la pantalla.
-  - [ ] Una solicitud enviada devuelve e informa un identificador de seguimiento único (`solicitudId`).
-  - [ ] El usuario puede corregir errores de validación sin volver a introducir todos los datos.
-  - [ ] Los intentos duplicados se detectan y notifican adecuadamente.
-  - [ ] La interfaz impide seleccionar grados u ofertas no disponibles en la institución.
-  - [ ] La pantalla funciona mediante teclado y cumple WCAG 2.2 AA.
-  - [ ] No se exponen datos de otros aspirantes en mensajes de error o validación.
-- **Estado:** [ ] Pendiente
+  - [x] Una familia puede completar y enviar una solicitud válida desde un dispositivo móvil o de escritorio.
+  - [x] Los datos ingresados llegan al backend y se conservan correctamente en `SolicitudesAdmision`.
+  - [x] Una solicitud inválida no se registra como completa.
+  - [x] Un error del servidor no produce un mensaje falso de éxito en la pantalla.
+  - [x] Una solicitud enviada devuelve e informa un identificador de seguimiento único (`solicitudId`).
+  - [x] El usuario puede corregir errores de validación sin volver a introducir todos los datos.
+  - [x] Los intentos duplicados se detectan y notifican adecuadamente.
+  - [x] La interfaz impide seleccionar grados u ofertas no disponibles en la institución.
+  - [x] La pantalla funciona mediante teclado y cumple WCAG 2.2 AA.
+  - [x] No se exponen datos de otros aspirantes en mensajes de error o validación.
+- **Estado:** [X] Completada
 
 ---
 
-### [TAREA-F5-005] Crear la consola administrativa de revisión y decisión de admisiones
+### [X] [TAREA-F5-005] Crear la consola administrativa de revisión y decisión de admisiones
 - **Origen del Hallazgo:** `Auditoria.txt` (HALLAZGOS F5: HALLAZGOS-F5-P0-01) / `AUDITORIA_FASE_5_ADMISIONES_PORTAL_FAMILIAS.md` (Subcapacidad 5.6, Brecha P0-01)
 - **Severidad/Clasificación:** Crítico
 - **Archivos Involucrados:** `dashboard-direccion.html`, `teacher-dashboard.html`, `js/teacher.js`, `backend/academic-service/Code.gs` (l. 748, 779, 800)
@@ -151,25 +151,25 @@
   11. Implementar paginación en servidor e indicadores de carga (`renderUIProgressSkeleton`).
   12. Aplicar restricciones ABAC/RBAC para que el personal de nivel sólo acceda a las solicitudes de su departamento asignado.
 - **Criterios de Aceptación:**
-  - [ ] El personal autorizado de Secretaría y Dirección puede consultar y filtrar solicitudes en tiempo real.
-  - [ ] Los filtros producen resultados coherentes con los registros persistidos en la hoja.
-  - [ ] El modal de detalle permite revisar todos los componentes del expediente sin cambiar de pantalla.
-  - [ ] Los botones de acción muestran únicamente transiciones válidas para el estado activo.
-  - [ ] Una respuesta de error mantiene visible el estado real persistido en el servidor.
-  - [ ] El rechazo sin justificación obligatoria no se puede confirmar.
-  - [ ] Un usuario no autorizado no puede consultar ni decidir solicitudes invocando directamente el endpoint.
-  - [ ] La paginación navega limpiamente sin omitir ni duplicar filas.
-  - [ ] Se detectan cambios concurrentes realizados por otro usuario antes de sobrescribir una decisión.
-- **Estado:** [ ] Pendiente
+  - [x] El personal autorizado de Secretaría y Dirección puede consultar y filtrar solicitudes en tiempo real.
+  - [x] Los filtros producen resultados coherentes con los registros persistidos en la hoja.
+  - [x] El modal de detalle permite revisar todos los componentes del expediente sin cambiar de pantalla.
+  - [x] Los botones de acción muestran únicamente transiciones válidas para el estado activo.
+  - [x] Una respuesta de error mantiene visible el estado real persistido en el servidor.
+  - [x] El rechazo sin justificación obligatoria no se puede confirmar.
+  - [x] Un usuario no autorizado no puede consultar ni decidir solicitudes invocando directamente el endpoint.
+  - [x] La paginación navega limpiamente sin omitir ni duplicar filas.
+  - [x] Se detectan cambios concurrentes realizados por otro usuario antes de sobrescribir una decisión.
+- **Estado:** [X] Completada
 
 ---
 
 ## PRIORIDAD P1: EXPEDIENTES, DOCUMENTOS, EVALUACIÓN Y VINCULACIÓN FAMILIAR
 
-### [TAREA-F5-006] Implementar la gestión documental de aspirantes antes de la matrícula
+### [X] [TAREA-F5-006] Implementar la gestión documental de aspirantes antes de la matrícula
 - **Origen del Hallazgo:** `Auditoria.txt` (HALLAZGOS F5: HALLAZGOS-F5-P1-02) / `AUDITORIA_FASE_5_ADMISIONES_PORTAL_FAMILIAS.md` (Subcapacidad 5.3, Brecha P1-02)
 - **Severidad/Clasificación:** Alto
-- **Archivos Involucrados:** `backend/academic-service/Code.gs` (l. 4838-4930), `js/student.js`, `js/teacher.js`
+- **Archivos Involucrados:** `backend/academic-service/Code.gs` (l. 4838-4930), `js/student.js`, `js/secretary.js`
 - **Dependencias Expuestas:** Hoja `DocumentosEstudiante`, `DriveApp`, `getSecureDocumentStream`
 - **Descripción del Alcance:**
   1. Modificar `uploadStudentDocument` y `getStudentDocuments` para aceptar tanto `expedienteId` de estudiante activo como `solicitudId` de aspirante pre-matriculado.
@@ -187,25 +187,25 @@
   13. Impedir descargas no autorizadas bloqueando URLs públicas de Drive sin proxy autenticado.
   14. Mostrar alertas visuales de documentos vencidos o rechazados en los paneles de la familia y de dirección.
 - **Criterios de Aceptación:**
-  - [ ] Un aspirante puede cargar un documento asociado a su `solicitudId` antes de estar matriculado.
-  - [ ] El documento queda correctamente vinculado a la solicitud de origen.
-  - [ ] Archivos con formatos no permitidos (.exe, .bat, etc.) o superiores a 10 MB son rechazados en el servidor.
-  - [ ] Cargas interrumpidas o con error no aparecen como documentos válidos.
-  - [ ] Un documento rechazado muestra el motivo e instruye la sustitución.
-  - [ ] La sustitución de un archivo conserva la versión anterior en el historial de Drive.
-  - [ ] Peticiones no autorizadas con IDs de archivo ajenos son denegadas con error 403.
-  - [ ] Los requisitos pendientes se despliegan en el portal familiar y en la consola de admisiones.
-  - [ ] La conversión a matrícula migra los documentos de la solicitud al nuevo expediente sin duplicar archivos en Drive.
-  - [ ] La presencia de documentos obligatorios pendientes o rechazados bloquea la conversión ordinaria.
-  - [ ] Las operaciones documentales quedan registradas en la bitácora de auditoría.
-- **Estado:** [ ] Pendiente
+  - [x] Un aspirante puede cargar un documento asociado a su `solicitudId` antes de estar matriculado.
+  - [x] El documento queda correctamente vinculado a la solicitud de origen.
+  - [x] Archivos con formatos no permitidos (.exe, .bat, etc.) o superiores a 10 MB son rechazados en el servidor.
+  - [x] Cargas interrumpidas o con error no aparecen como documentos válidos.
+  - [x] Un documento rechazado muestra el motivo e instruye la sustitución.
+  - [x] La sustitución de un archivo conserva la versión anterior en el historial de Drive.
+  - [x] Peticiones no autorizadas con IDs de archivo ajenos son denegadas con error 403.
+  - [x] Los requisitos pendientes se despliegan en el portal familiar y en la consola de admisiones.
+  - [x] La conversión a matrícula migra los documentos de la solicitud al nuevo expediente sin duplicar archivos en Drive.
+  - [x] La presencia de documentos obligatorios pendientes o rechazados bloquea la conversión ordinaria.
+  - [x] Las operaciones documentales quedan registradas en la bitácora de auditoría.
+- **Estado:** [X] Completada
 
 ---
 
-### [TAREA-F5-007] Implementar el módulo de entrevistas y evaluaciones de admisión
+### [X] [TAREA-F5-007] Implementar el módulo de entrevistas y evaluaciones de admisión
 - **Origen del Hallazgo:** `Auditoria.txt` (HALLAZGOS F5: HALLAZGOS-F5-P1-01) / `AUDITORIA_FASE_5_ADMISIONES_PORTAL_FAMILIAS.md` (Subcapacidad 5.5, Brecha P1-01)
 - **Severidad/Clasificación:** Alto
-- **Archivos Involucrados:** `backend/academic-service/Code.gs` (Nuevo Módulo), `js/teacher.js`, `teacher-dashboard.html`
+- **Archivos Involucrados:** `backend/academic-service/Code.gs`, `js/secretary.js`, `dashboard-secretaria.html`
 - **Dependencias Expuestas:** Hojas `EntrevistasAdmision`, `EvaluacionesAdmision`, `SolicitudesAdmision`
 - **Descripción del Alcance:**
   1. Crear el esquema de base de datos e implementar las hojas `EntrevistasAdmision` y `EvaluacionesAdmision`.
@@ -223,24 +223,24 @@
   13. Soporte para registrar excepciones autorizadas de evaluación con firma digital y justificación de Dirección.
   14. Permitir registrar múltiples entrevistas o evaluaciones para un aspirante sin sobrescribir registros anteriores.
 - **Criterios de Aceptación:**
-  - [ ] Se puede agendar una entrevista vinculada a una solicitud existente.
-  - [ ] Se puede reprogramar una cita conservando la fecha original en la bitácora.
-  - [ ] El sistema detecta y rechaza solapamientos de horario en la agenda del docente evaluador.
-  - [ ] Una evaluación programada no aparece como completada hasta registrar la nota.
-  - [ ] Las notas y observaciones se conservan e integran al expediente de admisión.
-  - [ ] Evaluadores no autorizados no pueden calificar ni modificar entrevistas ajenas.
-  - [ ] Múltiples evaluaciones se acumulan cronológicamente sin sobrescribirse.
-  - [ ] Solicitudes con evaluaciones obligatorias pendientes no pueden cambiar a `Admitida`.
-  - [ ] Excepciones de evaluación quedan documentadas con el usuario autor y motivo.
-  - [ ] El historial de auditoría registra quién programó, realizó, evaluó o modificó cada cita.
-- **Estado:** [ ] Pendiente
+  - [x] Se puede agendar una entrevista vinculada a una solicitud existente.
+  - [x] Se puede reprogramar una cita conservando la fecha original en la bitácora.
+  - [x] El sistema detecta y rechaza solapamientos de horario en la agenda del docente evaluador.
+  - [x] Una evaluación programada no aparece como completada hasta registrar la nota.
+  - [x] Las notas y observaciones se conservan e integran al expediente de admisión.
+  - [x] Evaluadores no autorizados no pueden calificar ni modificar entrevistas ajenas.
+  - [x] Múltiples evaluaciones se acumulan cronológicamente sin sobrescribirse.
+  - [x] Solicitudes con evaluaciones obligatorias pendientes no pueden cambiar a `Admitida`.
+  - [x] Excepciones de evaluación quedan documentadas con el usuario autor y motivo.
+  - [x] El historial de auditoría registra quién programó, realizó, evaluó o modificó cada cita.
+- **Estado:** [X] Completada
 
 ---
 
-### [TAREA-F5-008] Implementar listas de espera con orden de prelación y asignación controlada de plazas
+### [X] [TAREA-F5-008] Implementar listas de espera con orden de prelación y asignación controlada de plazas
 - **Origen del Hallazgo:** `Auditoria.txt` (HALLAZGOS F5: HALLAZGOS-F5-P1-01) / `AUDITORIA_FASE_5_ADMISIONES_PORTAL_FAMILIAS.md` (Subcapacidad 5.5 y 5.12, Brecha P1-01)
 - **Severidad/Clasificación:** Alto
-- **Archivos Involucrados:** `backend/academic-service/Code.gs` (Nuevo Módulo), `js/teacher.js`, `dashboard-direccion.html`
+- **Archivos Involucrados:** `backend/academic-service/Code.gs`, `js/secretary.js`, `dashboard-secretaria.html`
 - **Dependencias Expuestas:** Hoja `ListaEsperaAdmision`, `OfertaAcademica`, `SolicitudesAdmision`
 - **Descripción del Alcance:**
   1. Crear la hoja `ListaEsperaAdmision` e implementar endpoints `addToWaitlist`, `getWaitlist`, `reorderWaitlist` y `offerWaitlistSlot`.
@@ -256,24 +256,24 @@
   11. Garantizar que la aceptación de la oferta cambie la solicitud a `Admitida` requiriendo formalizar la matrícula.
   12. Mantener la trazabilidad de todos los movimientos de la lista de espera.
 - **Criterios de Aceptación:**
-  - [ ] Una solicitud sólo puede entrar a la lista de espera si está en estado elegible.
-  - [ ] La posición en la lista se calcula transparentemente según los criterios de prelación definidos.
-  - [ ] Reordenamientos manuales exigen justificación y quedan registrados en la bitácora.
-  - [ ] Una plaza liberada se asigna únicamente a un aspirante a la vez.
-  - [ ] Al rechazar o expirar una oferta, el cupo se libera automáticamente para el siguiente aspirante en la lista.
-  - [ ] La aceptación de la oferta actualiza el estado de la solicitud a `Admitida`.
-  - [ ] Solicitudes concurrentes no pueden reservar la misma plaza en la lista de espera.
-  - [ ] Solicitudes retiradas salen de la lista y no reciben nuevas ofertas de cupo.
-  - [ ] La familia sólo consulta la posición relativa de su propia solicitud de admisión.
-  - [ ] Se conserva el historial completo de ofertas, vencimientos y aceptaciones.
-- **Estado:** [ ] Pendiente
+  - [x] Una solicitud sólo puede entrar a la lista de espera si está en estado elegible.
+  - [x] La posición en la lista se calcula transparentemente según los criterios de prelación definidos.
+  - [x] Reordenamientos manuales exigen justificación y quedan registrados en la bitácora.
+  - [x] Una plaza liberada se asigna únicamente a un aspirante a la vez.
+  - [x] Al rechazar o expirar una oferta, el cupo se libera automáticamente para el siguiente aspirante en la lista.
+  - [x] La aceptación de la oferta actualiza el estado de la solicitud a `Admitida`.
+  - [x] Solicitudes concurrentes no pueden reservar la misma plaza en la lista de espera.
+  - [x] Solicitudes retiradas salen de la lista y no reciben nuevas ofertas de cupo.
+  - [x] La familia sólo consulta la posición relativa de su propia solicitud de admisión.
+  - [x] Se conserva el historial completo de ofertas, vencimientos y aceptaciones.
+- **Estado:** [X] Completada
 
 ---
 
-### [TAREA-F5-009] Corregir la vinculación familiar y establecer permisos individuales por relación
+### [X] [TAREA-F5-009] Corregir la vinculación familiar y establecer permisos individuales por relación
 - **Origen del Hallazgo:** `Auditoria.txt` (HALLAZGOS F5: HALLAZGOS-F5-P0-02) / `AUDITORIA_FASE_5_ADMISIONES_PORTAL_FAMILIAS.md` (Subcapacidad 5.7, Brecha P0-02)
 - **Severidad/Clasificación:** Crítico
-- **Archivos Involucrados:** `backend/user-service/Code.gs` (l. 3113-3250), `backend/academic-service/Code.gs` (l. 4698-4820), `js/teacher.js`
+- **Archivos Involucrados:** `backend/user-service/Code.gs` (l. 3113-3250), `backend/academic-service/Code.gs` (l. 4698-4820), `js/secretary.js`
 - **Dependencias Expuestas:** Hojas `RelacionesFamiliares`, `InvitacionesVinculacion`, `Usuarios`, `validateContextualAccess`
 - **Descripción del Alcance:**
   1. Unificar los flujos de vinculación para que toda relación familiar requiera una invitación con token o autorización explícita verificada.
@@ -292,24 +292,24 @@
   14. Prohibir la creación automática de cuentas de usuario basándose únicamente en cadenas de texto de un formulario.
   15. Integrar el proceso en la conversión a matrícula transfiriendo al tutor declarado a la cola de invitaciones de vinculación.
 - **Criterios de Aceptación:**
-  - [ ] El personal administrativo no puede otorgar acceso al portal sin completar el flujo de verificación.
-  - [ ] Tokens expirados, revocados o usados previamente son rechazados.
-  - [ ] Un token no se puede usar para vincular a un estudiante diferente del autorizado en la invitación.
-  - [ ] Intentos de vinculación duplicados son neutralizados sin crear filas redundantes.
-  - [ ] Dos tutores del mismo estudiante pueden tener conjuntos de permisos diferenciados (ej. Tutor 1 Financiero, Tutor 2 Académico).
-  - [ ] La revocación de un vínculo bloquea inmediatamente el acceso del tutor a la información del alumno.
-  - [ ] Alterar el ID de estudiante en peticiones API es rechazado por el aislamiento de `validateContextualAccess`.
-  - [ ] La conversión de admisión a matrícula transfiere correctamente al tutor declarado al flujo de invitaciones sin perder sus datos.
-  - [ ] Registro completo de auditoría para cada cambio de estado en la relación familiar.
-  - [ ] La autorización efectiva se verifica en el servidor en cada endpoint del portal de familias.
-- **Estado:** [ ] Pendiente
+  - [x] El personal administrativo no puede otorgar acceso al portal sin completar el flujo de verificación.
+  - [x] Tokens expirados, revocados o usados previamente son rechazados.
+  - [x] Un token no se puede usar para vincular a un estudiante diferente del autorizado en la invitación.
+  - [x] Intentos de vinculación duplicados son neutralizados sin crear filas redundantes.
+  - [x] Dos tutores del mismo estudiante pueden tener conjuntos de permisos diferenciados (ej. Tutor 1 Financiero, Tutor 2 Académico).
+  - [x] La revocación de un vínculo bloquea inmediatamente el acceso del tutor a la información del alumno.
+  - [x] Alterar el ID de estudiante en peticiones API es rechazado por el aislamiento de `validateContextualAccess`.
+  - [x] La conversión de admisión a matrícula transfiere correctamente al tutor declarado al flujo de invitaciones sin perder sus datos.
+  - [x] Registro completo de auditoría para cada cambio de estado en la relación familiar.
+  - [x] La autorización efectiva se verifica en el servidor en cada endpoint del portal de familias.
+- **Estado:** [X] Completada
 
 ---
 
-### [TAREA-F5-010] Integrar las plazas, reservas y matrículas en un control de capacidad consistente
+### [X] [TAREA-F5-010] Integrar las plazas, reservas y matrículas en un control de capacidad consistente
 - **Origen del Hallazgo:** `Auditoria.txt` (HALLAZGOS F5: HALLAZGOS-F5-P2-01) / `AUDITORIA_FASE_5_ADMISIONES_PORTAL_FAMILIAS.md` (Subcapacidad 5.12, Brecha P2-01)
 - **Severidad/Clasificación:** Alto
-- **Archivos Involucrados:** `backend/academic-service/Code.gs` (l. 4938-5015)
+- **Archivos Involucrados:** `backend/academic-service/Code.gs` (l. 4938-5015), `js/secretary.js`, `dashboard-secretaria.html`
 - **Dependencias Expuestas:** Hojas `OfertaAcademica`, `Matriculas`, `SolicitudesAdmision`, `ListaEsperaAdmision`
 - **Descripción del Alcance:**
   1. Definir la capacidad máxima por año lectivo, grado y sección en `OfertaAcademica`.
@@ -325,20 +325,20 @@
   11. Mantener el historial de reservas y liberaciones de cupo en la bitácora de auditoría.
   12. Establecer una política explícita y configurable (`OVERBOOKING_ALLOWED`) para autorizar o prohibir sobrecupos con firma de Dirección.
 - **Criterios de Aceptación:**
-  - [ ] Secciones sin cupos disponibles bloquean el cambio de estado a `Admitida` y la conversión a matrícula.
-  - [ ] Aspirantes admitidos reducen inmediatamente el número de cupos disponibles.
-  - [ ] Al convertirse en estudiante matriculado, la plaza reservada se transforma en matrícula activa sin duplicar el descuento de cupo.
-  - [ ] La cancelación de una matrícula o expiración de una admisión libera el cupo en tiempo real.
-  - [ ] Peticiones simultáneas sobre el último cupo disponible son procesadas de forma atómica (un solo ganador, el otro a lista de espera).
-  - [ ] La conversión a matrícula recalcula y valida la disponibilidad real antes de confirmar el registro.
-  - [ ] Los reportes de capacidad coinciden con la suma de matrículas activas y reservas no vencidas.
-  - [ ] Cambios de capacidad no modifican decisiones de admisión previamente aprobadas.
-  - [ ] Excepciones de sobrecupo requieren el parámetro `forceCapacityOverride` con autorización auditada de Dirección.
-- **Estado:** [ ] Pendiente
+  - [x] Secciones sin cupos disponibles bloquean el cambio de estado a `Admitida` y la conversión a matrícula.
+  - [x] Aspirantes admitidos reducen inmediatamente el número de cupos disponibles.
+  - [x] Al convertirse en estudiante matriculado, la plaza reservada se transforma en matrícula activa sin duplicar el descuento de cupo.
+  - [x] La cancelación de una matrícula o expiración de una admisión libera el cupo en tiempo real.
+  - [x] Peticiones simultáneas sobre el último cupo disponible son procesadas de forma atómica (un solo ganador, el otro a lista de espera).
+  - [x] La conversión a matrícula recalcula y valida la disponibilidad real antes de confirmar el registro.
+  - [x] Los reportes de capacidad coinciden con la suma de matrículas activas y reservas no vencidas.
+  - [x] Cambios de capacidad no modifican decisiones de admisión previamente aprobadas.
+  - [x] Excepciones de sobrecupo requieren el parámetro `forceCapacityOverride` con autorización auditada de Dirección.
+- **Estado:** [X] Completada
 
 ---
 
-### [TAREA-F5-011] Implementar notificaciones automáticas y seguimiento del proceso de admisión
+### [X] [TAREA-F5-011] Implementar notificaciones automáticas y seguimiento del proceso de admisión
 - **Origen del Hallazgo:** `Auditoria.txt` (HALLAZGOS F5: HALLAZGOS-F5-P1-03) / `AUDITORIA_FASE_5_ADMISIONES_PORTAL_FAMILIAS.md` (Subcapacidad 5.10, Brecha P1-03)
 - **Severidad/Clasificación:** Alto
 - **Archivos Involucrados:** `backend/academic-service/Code.gs`, `backend/user-service/Code.gs` (l. 948, 1298)
@@ -365,19 +365,19 @@
   11. Garantizar la privacidad enviando correos individuales o ocultando destinatarios en avisos masivos.
   12. Consola de monitoreo para que Secretaría verifique el historial de avisos enviados y reenviar manualmente si es necesario.
 - **Criterios de Aceptación:**
-  - [ ] El registro de una solicitud envía un correo de confirmación con su código de seguimiento.
-  - [ ] Cambios de estado en la admisión disparan el correo automático correspondiente a la familia.
-  - [ ] Solicitudes rechazadas no envían por error plantillas de aceptación.
-  - [ ] Fallos en el servidor de correo activan el reintento en la cola asíncrona sin cancelar la transacción de base de datos.
-  - [ ] Reintentos de peticiones no duplican los correos enviados a la familia.
-  - [ ] Se registra el estado de entrega de cada mensaje en `BitacoraTraceability`.
-  - [ ] Los mensajes son individuales y no revelan direcciones de correo de otros postulantes.
-  - [ ] Secretaría puede revisar el log de notificaciones enviadas a cada aspirante.
-- **Estado:** [ ] Pendiente
+  - [x] El registro de una solicitud envía un correo de confirmación con su código de seguimiento.
+  - [x] Cambios de estado en la admisión disparan el correo automático correspondiente a la familia.
+  - [x] Solicitudes rechazadas no envían por error plantillas de aceptación.
+  - [x] Fallos en el servidor de correo activan el reintento en la cola asíncrona sin cancelar la transacción de base de datos.
+  - [x] Reintentos de peticiones no duplican los correos enviados a la familia.
+  - [x] Se registra el estado de entrega de cada mensaje en `BitacoraTraceability`.
+  - [x] Los mensajes son individuales y no revelan direcciones de correo de otros postulantes.
+  - [x] Secretaría puede revisar el log de notificaciones enviadas a cada aspirante.
+- **Estado:** [X] Completada
 
 ---
 
-### [TAREA-F5-012] Incorporar seguimiento de aspirantes en el portal familiar
+### [X] [TAREA-F5-012] Incorporar seguimiento de aspirantes en el portal familiar
 - **Origen del Hallazgo:** `Auditoria.txt` (HALLAZGOS F5: HALLAZGOS-F5-P0-01) / `AUDITORIA_FASE_5_ADMISIONES_PORTAL_FAMILIAS.md` (Subcapacidad 5.9 y 5.14, Brecha P0-01)
 - **Severidad/Clasificación:** Alto
 - **Archivos Involucrados:** `student-dashboard.html`, `js/student.js` (l. 180-260), `backend/user-service/Code.gs`
@@ -397,19 +397,19 @@
   12. Diferenciar claramente entre "Sin información registrada", "Falta de permisos" y "Error de carga del servidor".
   13. Evitar atribuir cobros de admisión como deudas de matrícula de estudiantes activos.
 - **Criterios de Aceptación:**
-  - [ ] Un tutor autenticado puede conmutar entre sus hijos matriculados y sus hijos postulantes desde el portal.
-  - [ ] Intento de consultar solicitudes de aspirantes ajenos modificando IDs es bloqueado en el backend.
-  - [ ] Las solicitudes de admisión se distinguen visualmente con etiquetas y colores de las matrículas activas.
-  - [ ] El panel muestra el estado real de los documentos, citas y decisiones de admisión.
-  - [ ] Cambios realizados por admisiones se reflejan inmediatamente al actualizar el portal familiar.
-  - [ ] Los errores de servidor muestran alertas descriptivas sin presentar datos vacíos como inexistentes.
-  - [ ] La interfaz guía a la familia sobre los pasos exactos para completar la admisión.
-  - [ ] Al convertirse en estudiante, el aspirante pasa automáticamente a la sección de estudiantes matriculados.
-- **Estado:** [ ] Pendiente
+  - [x] Un tutor autenticado puede conmutar entre sus hijos matriculados y sus hijos postulantes desde el portal.
+  - [x] Intento de consultar solicitudes de aspirantes ajenos modificando IDs es bloqueado en el backend.
+  - [x] Las solicitudes de admisión se distinguen visualmente con etiquetas y colores de las matrículas activas.
+  - [x] El panel muestra el estado real de los documentos, citas y decisiones de admisión.
+  - [x] Cambios realizados por admisiones se reflejan inmediatamente al actualizar el portal familiar.
+  - [x] Los errores de servidor muestran alertas descriptivas sin presentar datos vacíos como inexistentes.
+  - [x] La interfaz guía a la familia sobre los pasos exactos para completar la admisión.
+  - [x] Al convertirse en estudiante, el aspirante pasa automáticamente a la sección de estudiantes matriculados.
+- **Estado:** [X] Completada
 
 ---
 
-### [TAREA-F5-013] Integrar los cobros de admisión, los pagos y las becas con el expediente del aspirante
+### [X] [TAREA-F5-013] Integrar los cobros de admisión, los pagos y las becas con el expediente del aspirante
 - **Origen del Hallazgo:** `Auditoria.txt` (HALLAZGOS F5: HALLAZGOS-F5-P1-01) / `AUDITORIA_FASE_5_ADMISIONES_PORTAL_FAMILIAS.md` (Subcapacidad 5.13, Brecha P1-01)
 - **Severidad/Clasificación:** Alto
 - **Archivos Involucrados:** `backend/accounting-service/Code.gs`, `backend/user-service/Code.gs` (l. 3330-3420), `js/student.js`
@@ -430,19 +430,19 @@
   13. Desglosar claramente los cobros por aspirante en el resumen consolidado de la familia.
   14. Bloquear la confirmación de la admisión si existen cargos obligatorios de admisión en estado pendiente o rechazado.
 - **Criterios de Aceptación:**
-  - [ ] Cargos de admisión se generan automáticamente asociados a la `solicitudId`.
-  - [ ] No se duplican cargos al consultar o reintentar peticiones.
-  - [ ] Comprobantes de pago subidos quedan en estado `En_Revision` hasta la aprobación contable.
-  - [ ] La aprobación del pago actualiza el saldo del aspirante y habilita la siguiente fase del trámite.
-  - [ ] Exenciones financieras requieren autorización auditada y motivo justificado.
-  - [ ] La conversión a matrícula migra el historial de pagos de admisión sin duplicar cobros.
-  - [ ] El resumen familiar distingue los cobros de admisión de los cargos de estudiantes matriculados.
-  - [ ] Operaciones financieras fallidas devuelven errores claros sin marcar los cargos como pagados.
-- **Estado:** [ ] Pendiente
+  - [x] Cargos de admisión se generan automáticamente asociados a la `solicitudId`.
+  - [x] No se duplican cargos al consultar o reintentar peticiones.
+  - [x] Comprobantes de pago subidos quedan en estado `En_Revision` hasta la aprobación contable.
+  - [x] La aprobación del pago actualiza el saldo del aspirante y habilita la siguiente fase del trámite.
+  - [x] Exenciones financieras requieren autorización auditada y motivo justificado.
+  - [x] La conversión a matrícula migra el historial de pagos de admisión sin duplicar cobros.
+  - [x] El resumen familiar distingue los cobros de admisión de los cargos de estudiantes matriculados.
+  - [x] Operaciones financieras fallidas devuelven errores claros sin marcar los cargos como pagados.
+- **Estado:** [X] Completada
 
 ---
 
-### [TAREA-F5-014] Completar la trazabilidad de admisiones y las notificaciones de auditoría
+### [X] [TAREA-F5-014] Completar la trazabilidad de admisiones y las notificaciones de auditoría
 - **Origen del Hallazgo:** `Auditoria.txt` (HALLAZGOS F5: HALLAZGOS-F5-P1-01) / `AUDITORIA_FASE_5_ADMISIONES_PORTAL_FAMILIAS.md` (Subcapacidad 5.15, Brecha P1-01)
 - **Severidad/Clasificación:** Alto
 - **Archivos Involucrados:** `backend/academic-service/Code.gs` (l. 743, 795), `backend/user-service/Code.gs`
@@ -461,20 +461,20 @@
   11. Facilitar la reconstrucción cronológica completa de una conversión o de una operación que haya fallado parcialmente.
   12. Vincular los identificadores de trazabilidad (`correlationId`) entre el servicio académico, de usuarios y contable.
 - **Criterios de Aceptación:**
-  - [ ] Toda actualización de estado o conversión de admisión genera su registro de diff en `HistorialCambiosEntidad`.
-  - [ ] Intentos de modificación no autorizados en la bitácora son bloqueados.
-  - [ ] Los logs sanitizan contraseñas, tokens e información altamente confidencial.
-  - [ ] Operaciones fallidas quedan marcadas con nivel `ERROR` o `WARN` con el detalle de la excepción.
-  - [ ] Se puede reconstruir la línea de tiempo completa de una solicitud desde su recepción hasta la matrícula.
-  - [ ] Descargas de documentos de menores quedan registradas con el usuario y la fecha.
-  - [ ] El `correlationId` permite rastrear una transacción a través de los 5 microservicios backend.
-- **Estado:** [ ] Pendiente
+  - [x] Toda actualización de estado o conversión de admisión genera su registro de diff en `HistorialCambiosEntidad`.
+  - [x] Intentos de modificación no autorizados en la bitácora son bloqueados.
+  - [x] Los logs sanitizan contraseñas, tokens e información altamente confidencial.
+  - [x] Operaciones fallidas quedan marcadas con nivel `ERROR` o `WARN` con el detalle de la excepción.
+  - [x] Se puede reconstruir la línea de tiempo completa de una solicitud desde su recepción hasta la matrícula.
+  - [x] Descargas de documentos de menores quedan registradas con el usuario y la fecha.
+  - [x] El `correlationId` permite rastrear una transacción a través de los 5 microservicios backend.
+- **Estado:** [X] Completada
 
 ---
 
 ## PRIORIDAD P2: CONTINUIDAD DEL TRÁMITE, EXPERIENCIA DE USUARIO Y CALIDAD DE LA INFORMACIÓN
 
-### [TAREA-F5-015] Implementar guardado automático de borradores y recuperación de solicitudes
+### [X] [TAREA-F5-015] Implementar guardado automático de borradores y recuperación de solicitudes
 - **Origen del Hallazgo:** `Auditoria.txt` (HALLAZGOS F5: HALLAZGOS-F5-P2-02) / `AUDITORIA_FASE_5_ADMISIONES_PORTAL_FAMILIAS.md` (Subcapacidad 5.2, Brecha P2-02)
 - **Severidad/Clasificación:** Medio
 - **Archivos Involucrados:** `js/student.js`, `admision.html`, `backend/academic-service/Code.gs`
@@ -491,17 +491,17 @@
   9. Proteger los borradores guardados en `localStorage` evitando la exposición de datos personales en computadoras públicas.
   10. Resolver conflictos de versión si el mismo borrador se edita desde múltiples dispositivos.
 - **Criterios de Aceptación:**
-  - [ ] Un usuario puede cerrar la página a mitad del formulario y recuperar los datos al reingresar.
-  - [ ] Se permite guardar un borrador sin haber completado todos los campos obligatorios.
-  - [ ] El estado del borrador muestra claramente la fecha y hora de la última actualización.
-  - [ ] Al confirmar el envío formal, el borrador se convierte en solicitud y se purga del almacenamiento temporal.
-  - [ ] Errores de conexión no borran la copia local del borrador.
-  - [ ] Múltiples reintentos de guardado no generan borradores duplicados en la base de datos.
-- **Estado:** [ ] Pendiente
+  - [x] Un usuario puede cerrar la página a mitad del formulario y recuperar los datos al reingresar.
+  - [x] Se permite guardar un borrador sin haber completado todos los campos obligatorios.
+  - [x] El estado del borrador muestra claramente la fecha y hora de la última actualización.
+  - [x] Al confirmar el envío formal, el borrador se convierte en solicitud y se purga del almacenamiento temporal.
+  - [x] Errores de conexión no borran la copia local del borrador.
+  - [x] Múltiples reintentos de guardado no generan borradores duplicados en la base de datos.
+- **Estado:** [X] Completada
 
 ---
 
-### [TAREA-F5-016] Mejorar la experiencia de uso, accesibilidad y adaptación móvil del proceso de admisión
+### [X] [TAREA-F5-016] Mejorar la experiencia de uso, accesibilidad y adaptación móvil del proceso de admisión
 - **Origen del Hallazgo:** `Auditoria.txt` (HALLAZGOS F5: HALLAZGOS-F5-P3-01) / `AUDITORIA_FASE_5_ADMISIONES_PORTAL_FAMILIAS.md` (Subcapacidad 5.14, Brecha P3-01)
 - **Severidad/Clasificación:** Medio
 - **Archivos Involucrados:** `admision.html`, `js/ui-common.js`, `css/`
@@ -525,13 +525,13 @@
   10. Ejecutar `auditAndFixAccessibility()` automáticamente al renderizar las vistas de admisión.
   11. Asegurar la compatibilidad con lectores de pantalla para ciegos o personas con visión reducida.
 - **Criterios de Aceptación:**
-  - [ ] El stepper de admisión permite navegar entre las secciones del formulario de manera fluida.
-  - [ ] Los datos ingresados se conservan intactos al retroceder a pasos anteriores.
-  - [ ] Botones de envío muestran estados de carga e impiden envíos repetidos por doble clic.
-  - [ ] La interfaz se adapta correctamente a dispositivos móviles de pantallas reducidas (320px en adelante).
-  - [ ] Todos los formularios son navegables con teclado y compatibles con lectores de pantalla.
-  - [ ] La auditoría en tiempo real de `auditAndFixAccessibility()` no reporta faltas de contraste o atributos ARIA ausentes.
-- **Estado:** [ ] Pendiente
+  - [x] El stepper de admisión permite navegar entre las secciones del formulario de manera fluida.
+  - [x] Los datos ingresados se conservan intactos al retroceder a pasos anteriores.
+  - [x] Botones de envío muestran estados de carga e impiden envíos repetidos por doble clic.
+  - [x] La interfaz se adapta correctamente a dispositivos móviles de pantallas reducidas (320px en adelante).
+  - [x] Todos los formularios son navegables con teclado y compatibles con lectores de pantalla.
+  - [x] La auditoría en tiempo real de `auditAndFixAccessibility()` no reporta faltas de contraste o atributos ARIA ausentes.
+- **Estado:** [X] Completada
 
 ---
 
