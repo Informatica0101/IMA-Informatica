@@ -594,7 +594,7 @@
 
 ## PRIORIDAD P3: OPTIMIZACIÓN OPERATIVA Y MEJORA CONTINUA
 
-### [TAREA-F5-019] Implementar herramientas de seguimiento operativo y análisis de admisiones
+### [X] [TAREA-F5-019] Implementar herramientas de seguimiento operativo y análisis de admisiones
 - **Origen del Hallazgo:** `Auditoria.txt` (HALLAZGOS F5: HALLAZGOS-F5-P3-01) / `AUDITORIA_FASE_5_ADMISIONES_PORTAL_FAMILIAS.md` (Subcapacidad 5.15, Brecha P3-01)
 - **Severidad/Clasificación:** Bajo
 - **Archivos Involucrados:** `dashboard-direccion.html`, `js/teacher.js`, `backend/academic-service/Code.gs`
@@ -612,12 +612,12 @@
   6. Exportación de reportes analíticos en formato CSV/PDF para reuniones de junta directiva.
   7. Garantizar que las consultas analíticas se ejecuten sin alterar los estados o datos de los expedientes.
 - **Criterios de Aceptación:**
-  - [ ] El cuadro de mando despliega métricas exactas calculadas desde los registros reales de `SolicitudesAdmision`.
-  - [ ] Los indicadores permiten filtrar dinámicamente por año lectivo y grado.
-  - [ ] Se calculan con precisión los tiempos promedios de atención y las tasas de conversión.
-  - [ ] La exportación de datos genera reportes sanitizados sin exponer contraseñas ni secrets.
-  - [ ] La generación de reportes no degrada el rendimiento de las operaciones ordinarias.
-- **Estado:** [ ] Pendiente
+  - [x] El cuadro de mando despliega métricas exactas calculadas desde los registros reales de `SolicitudesAdmision`.
+  - [x] Los indicadores permiten filtrar dinámicamente por año lectivo y grado.
+  - [x] Se calculan con precisión los tiempos promedios de atención y las tasas de conversión.
+  - [x] La exportación de datos genera reportes sanitizados sin exponer contraseñas ni secrets.
+  - [x] La generación de reportes no degrada el rendimiento de las operaciones ordinarias.
+- **Estado:** [X] Completada
 
 ---
 
