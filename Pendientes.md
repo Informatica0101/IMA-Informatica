@@ -4,7 +4,7 @@
 
 ## PRIORIDAD P0: INTEGRIDAD DE DATOS, SEGURIDAD Y FLUJO PRINCIPAL DE ADMISIÓN
 
-### [TAREA-F5-001] Corregir la conversión de aspirantes y garantizar la integridad del expediente
+### [X] [TAREA-F5-001] Corregir la conversión de aspirantes y garantizar la integridad del expediente
 - **Origen del Hallazgo:** `Auditoria.txt` (HALLAZGOS F5: HALLAZGOS-F5-P0-02, HALLAZGOS-F5-P0-03, HALLAZGOS-F5-P0-04) / `AUDITORIA_FASE_5_ADMISIONES_PORTAL_FAMILIAS.md` (Sección H - Brechas P0-02, P0-03, P0-04)
 - **Severidad/Clasificación:** Crítico
 - **Archivos Involucrados:** `backend/academic-service/Code.gs` (l. 800-880), `backend/user-service/Code.gs` (l. 3110-3200), `backend/accounting-service/Code.gs`
@@ -16,29 +16,29 @@
   4. Generar identificadores únicos atómicos mediante `generateInstitutionalId` y `LockService.getScriptLock(10000)` para el expediente (`EXP-`), la matrícula (`MAT-`) y los registros relacionados. Se prohíbe el uso exclusivo de marcas de tiempo (`now.getTime()`).
   5. Aplicar control de concurrencia a la operación completa, incluida la comprobación del estado de la solicitud y de la disponibilidad de plazas.
   6. Vincular el nuevo expediente con la solicitud de origen mediante el identificador persistente `solicitudId`.
-  7. Transferir los datos personales y de contacto del aspirante sin alteraciones injustificadas.
+  7. Transferir los datos personales y de contacto del aspirante sin alterations injustificadas.
   8. Crear o actualizar la relación con el responsable utilizando el mecanismo institucional de identidad y vinculación. Crear el usuario del tutor y generar la fila en `RelacionesFamiliares`. Si el responsable no posee cuenta, iniciar el procedimiento de invitación por token (`createLinkInvitation`) y verificación, sin conceder accesos automáticos no verificados. Si se requiere flexibilidad institucional, el comportamiento de invitación directa vs token de verificación será configurable en la plataforma mediante la directiva `MANDATORY_TUTOR_TOKEN_VERIFICATION`.
   9. Evitar duplicar personas, usuarios, relaciones familiares, expedientes, matrículas y cargos cuando se reintente una operación.
   10. Crear los cargos de matrícula y otros conceptos obligatorios únicamente conforme a la configuración institucional vigente en `OfertaAcademica` / `ConfiguracionFinanciera`, evitando importes predeterminados arbitrarios.
   11. Registrar el estado de la conversión y sus resultados para distinguir una operación completada de otra pendiente o fallida.
   12. Implementar un mecanismo de recuperación y compensación que permita reanudar o compensar los pasos fallidos en transacciones distribuídas entre microservicios sin duplicar registros.
 - **Criterios de Aceptación:**
-  - [ ] Una solicitud en estado `Recibida` no puede convertirse.
-  - [ ] Una solicitud en estado `En_Revision` no puede convertirse.
-  - [ ] Una solicitud en estado `Rechazada` no puede convertirse.
-  - [ ] Una solicitud `Admitida` con requisitos obligatorios pendientes no puede convertirse (salvo excepción autorizada configurada).
-  - [ ] Una solicitud `Admitida` que cumple todos los requisitos puede convertirse correctamente.
-  - [ ] La conversión conserva el identificador de la solicitud original (`solicitudId`).
-  - [ ] El expediente y la matrícula contienen los datos académicos correctos.
-  - [ ] Los datos del responsable quedan asociados al proceso de vinculación familiar en `RelacionesFamiliares`.
-  - [ ] La creación de una relación familiar no concede acceso al portal antes de completar la verificación exigida.
-  - [ ] Dos peticiones simultáneas de conversión no producen dos expedientes ni dos matrículas para la misma solicitud (bloqueo por `LockService`).
-  - [ ] Repetir una petición completada devuelve el resultado existente o informa que la solicitud ya fue convertida, sin duplicar efectos.
-  - [ ] Si falla la creación de un cargo, la operación queda en un estado recuperable y no se presenta como completamente finalizada.
-  - [ ] Si no hay plazas disponibles, la conversión se bloquea sin crear una matrícula activa.
-  - [ ] Los errores no dejan relaciones familiares, cargos o matrículas huérfanos sin posibilidad de reconciliación.
-  - [ ] Los eventos y cambios quedan registrados en `BitacoraTraceability` y `HistorialCambiosEntidad` para reconstruir la secuencia de la operación.
-- **Estado:** [ ] Pendiente
+  - [x] Una solicitud en estado `Recibida` no puede convertirse.
+  - [x] Una solicitud en estado `En_Revision` no puede convertirse.
+  - [x] Una solicitud en estado `Rechazada` no puede convertirse.
+  - [x] Una solicitud `Admitida` con requisitos obligatorios pendientes no puede convertirse (salvo excepción autorizada configurada).
+  - [x] Una solicitud `Admitida` que cumple todos los requisitos puede convertirse correctamente.
+  - [x] La conversión conserva el identificador de la solicitud original (`solicitudId`).
+  - [x] El expediente y la matrícula contienen los datos académicos correctos.
+  - [x] Los datos del responsable quedan asociados al proceso de vinculación familiar en `RelacionesFamiliares`.
+  - [x] La creación de una relación familiar no concede acceso al portal antes de completar la verificación exigida.
+  - [x] Dos peticiones simultáneas de conversión no producen dos expedientes ni dos matrículas para la misma solicitud (bloqueo por `LockService`).
+  - [x] Repetir una petición completada devuelve el resultado existente o informa que la solicitud ya fue convertida, sin duplicar efectos.
+  - [x] Si falla la creación de un cargo, la operación queda en un estado recuperable y no se presenta como completamente finalizada.
+  - [x] Si no hay plazas disponibles, la conversión se bloquea sin crear una matrícula activa.
+  - [x] Los errores no dejan relaciones familiares, cargos o matrículas huérfanos sin posibilidad de reconciliación.
+  - [x] Los eventos y cambios quedan registrados en `BitacoraTraceability` y `HistorialCambiosEntidad` para reconstruir la secuencia de la operación.
+- **Estado:** [X] Completada
 
 ---
 

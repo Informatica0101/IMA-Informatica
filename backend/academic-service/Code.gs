@@ -797,96 +797,279 @@ function updateAdmissionStatus(payload) {
   return { status: "success", message: `Estado de la solicitud actualizado a '${nuevoEstado}'.` };
 }
 
-function convertAdmissionToStudent(payload) {
-  const { solicitudId, userId, codigoInstitucional, seccion } = payload || {};
-  if (!solicitudId) throw new Error("solicitudId es requerido.");
+function generateInstitutionalId(payload) {
+  const { entityType, prefix, skipLock } = payload || {};
+  if (!entityType) throw new Error("entityType es requerido.");
+  const pfx = prefix || entityType.substring(0, 3).toUpperCase() + "-";
 
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
-  const admSheet = getOrCreateSheet(ss, "SolicitudesAdmision");
-  const admData = admSheet.getDataRange().getValues();
-
-  const idx = admData.findIndex(r => String(r[0]).trim() === String(solicitudId).trim());
-  if (idx === -1) throw new Error("Solicitud de admisión no encontrada.");
-
-  const row = admData[idx];
-  const nombres = row[4];
-  const apellidos = row[5];
-  const identificacion = row[6];
-  const fechaNac = row[7];
-  const grado = row[3];
-  const anolectivo = row[2];
-
-  // 1. Crear o recuperar Expediente
-  const expSheet = getOrCreateSheet(ss, "ExpedientesEstudiantes");
-  const expData = expSheet.getDataRange().getValues();
-
-  let expId;
-  const targetPersonaId = userId || ("PER-" + Date.now());
-  let dupExp = expData.find(r => normalizeString(`${r[1]}`) === normalizeString(targetPersonaId));
-
-  const now = new Date();
-  const code = codigoInstitucional || ("STU-" + now.getFullYear() + "-" + Math.floor(1000 + Math.random() * 9000));
-
-  if (dupExp) {
-    expId = dupExp[0];
-  } else {
-    expId = "EXP-" + now.getTime();
-    const telContacto = row[9] || "";
-    const emailContacto = row[10] || "";
-    expSheet.appendRow([
-      expId,
-      targetPersonaId,
-      code,
-      fechaNac || "",
-      "Hondureña",
-      "", // DireccionResidencia (se completa en ficha médica/estudiantil)
-      "", // FotografiaUrl
-      "Activo",
-      now,
-      now,
-      `Admisión aprobada desde solicitud ${solicitudId}. Tel: ${telContacto}, Email: ${emailContacto}`
-    ]);
+  let sheet = ss.getSheetByName("SecuenciasIDs");
+  if (!sheet) {
+    sheet = ss.insertSheet("SecuenciasIDs");
+    sheet.appendRow(["Entidad", "Prefijo", "UltimoNumero", "FechaActualizacion"]);
+    SpreadsheetApp.flush();
   }
 
-  // 2. Marcar Solicitud como Convertida
-  admSheet.getRange(idx + 1, 12).setValue("Convertida");
-  admSheet.getRange(idx + 1, 15).setValue(expId);
+  let hasLock = false;
+  const lock = LockService.getScriptLock();
+  try {
+    if (!skipLock) {
+      hasLock = lock.tryLock(10000);
+      if (!hasLock) {
+        throw new Error("Servicio ocupado procesando secuencias de identificadores en paralelo. Por favor reintente en unos segundos.");
+      }
+    }
+    const data = sheet.getDataRange().getValues();
+    let nextNum = 1;
+    let idx = -1;
+    for (let i = 1; i < data.length; i++) {
+      if (String(data[i][0]).trim().toLowerCase() === String(entityType).trim().toLowerCase()) {
+        idx = i;
+        nextNum = parseInt(data[i][2] || 0) + 1;
+        break;
+      }
+    }
+    const formattedId = pfx + String(nextNum).padStart(6, '0');
+    const now = new Date();
+    if (idx !== -1) {
+      sheet.getRange(idx + 1, 3, 1, 2).setValues([[nextNum, now]]);
+    } else {
+      sheet.appendRow([entityType, pfx, nextNum, now]);
+    }
+    SpreadsheetApp.flush();
+    return { status: "success", generatedId: formattedId, sequence: nextNum };
+  } finally {
+    if (hasLock) {
+      try { lock.releaseLock(); } catch (_) {}
+    }
+  }
+}
 
-  // 3. Registrar Matrícula Inicial
-  const targetUserId = userId || ("USR-" + Date.now());
-  const enrollRes = registerStudentEnrollment({
-    userId: targetUserId,
-    alumno: `${nombres} ${apellidos}`,
-    grado: grado,
-    seccion: seccion || "A",
-    periodo: anolectivo,
-    tipo: "IngresoNuevo",
-    observaciones: `Convertido desde solicitud ${solicitudId}`
-  });
+// [TAREA-F5-001] [Fase 5: Admisiones y Matrícula] - Conversión segura de aspirante admitido a expediente estudiantil, matrícula y vinculación familiar
+function convertAdmissionToStudent(payload) {
+  const { solicitudId, userId, codigoInstitucional, seccion, forceCapacityOverride, allowIncompleteOverride } = payload || {};
+  if (!solicitudId) throw new Error("solicitudId es requerido.");
 
-  const matriculaRealId = (enrollRes && enrollRes.matriculaId) ? enrollRes.matriculaId : ("MAT-" + now.getTime());
+  let hasLock = false;
+  const lock = LockService.getScriptLock();
+  try {
+    hasLock = lock.tryLock(10000);
+    if (!hasLock) {
+      throw new Error("Servicio ocupado procesando solicitudes de admisiones en paralelo. Por favor reintente en unos segundos.");
+    }
 
-  // 4. Registrar Movimiento Inicial
-  const movSheet = getOrCreateSheet(ss, "MovimientosEstudiante");
-  movSheet.appendRow([
-    "MOV-" + now.getTime(),
-    expId,
-    matriculaRealId,
-    anolectivo,
-    "IngresoNuevo",
-    "", "", grado, seccion || "A",
-    now,
-    `Admisión y Matrícula Inicial`,
-    (payload && (payload.actorId || payload.adminId)) || "Secretaría",
-    "Confirmado"
-  ]);
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const admSheet = getOrCreateSheet(ss, "SolicitudesAdmision");
+    const admData = admSheet.getDataRange().getValues();
 
-  return {
-    status: "success",
-    expedienteId: expId,
-    codigoInstitucional: code,
-    message: "Solicitud convertida exitosamente en expediente de estudiante y matrícula activa."
-  };
+    const idx = admData.findIndex(r => String(r[0]).trim() === String(solicitudId).trim());
+    if (idx === -1) throw new Error("Solicitud de admisión no encontrada.");
+
+    const row = admData[idx];
+    const estadoActual = String(row[11] || "").trim();
+    const expedienteExistenteId = String(row[14] || "").trim();
+
+    // 1. Verificación idempotente si ya fue convertida
+    if (estadoActual === "Convertida" && expedienteExistenteId) {
+      return {
+        status: "success",
+        isAlreadyConverted: true,
+        expedienteId: expedienteExistenteId,
+        message: `La solicitud ${solicitudId} ya fue convertida previamente al expediente ${expedienteExistenteId}.`
+      };
+    }
+
+    // 2. Validación de estado 'Admitida' y verificación de requisitos documentales pendientes
+    const allowIncomplete = allowIncompleteOverride || (typeof ALLOW_INCOMPLETE_ADMISSION_CONVERSION !== "undefined" && ALLOW_INCOMPLETE_ADMISSION_CONVERSION === true);
+    if (estadoActual !== "Admitida" && !allowIncomplete) {
+      throw new Error(`Acción denegada: La solicitud ${solicitudId} se encuentra en estado '${estadoActual}'. Únicamente las solicitudes en estado 'Admitida' pueden convertirse en expediente estudiantil.`);
+    }
+
+    if (estadoActual === "Admitida" && !allowIncomplete) {
+      const docRes = getStudentDocuments({ solicitudId });
+      if (docRes && Array.isArray(docRes.documents)) {
+        const pendingDocs = docRes.documents.filter(d => d.estadoRevision === "Pendiente" || d.estadoRevision === "Rechazado");
+        if (pendingDocs.length > 0) {
+          throw new Error(`Acción denegada: La solicitud ${solicitudId} tiene ${pendingDocs.length} documento(s) obligatorio(s) pendiente(s) o rechazado(s). Complete la revisión documental antes de convertir.`);
+        }
+      }
+    }
+
+    const nombres = String(row[4] || "").trim();
+    const apellidos = String(row[5] || "").trim();
+    const identificacion = String(row[6] || "").trim();
+    const fechaNac = row[7];
+    const grado = String(row[3] || "").trim();
+    const anolectivo = String(row[2] || "2026").trim();
+    const targetSeccion = seccion || "A";
+    const nombreResponsable = String(row[8] || "").trim();
+    const telefonoContacto = String(row[9] || "").trim();
+    const emailContacto = String(row[10] || "").trim().toLowerCase();
+
+    // 3. Verificar Capacidad de Sección
+    const capacityCheck = checkEnrollmentCapacity({ anolectivo, grado, seccion: targetSeccion });
+    if (capacityCheck && capacityCheck.hayCupo === false && !forceCapacityOverride) {
+      return {
+        status: "error",
+        code: "SECTION_FULL",
+        message: `No hay cupos disponibles en el grado ${grado} sección ${targetSeccion} para el año ${anolectivo}. (Capacidad: ${capacityCheck.capacidadMaxima}, Ocupados: ${capacityCheck.inscritosActuales}).`
+      };
+    }
+
+    const now = new Date();
+
+    // 4. Generación de IDs Atómicos sin marcas de tiempo (pasando skipLock: true)
+    const expGen = generateInstitutionalId({ entityType: "ExpedienteEstudiante", prefix: "EXP-", skipLock: true });
+    const expId = (expGen && expGen.generatedId) ? expGen.generatedId : ("EXP-000001");
+
+    const codeGen = generateInstitutionalId({ entityType: "CodigoEstudiante", prefix: "STU-", skipLock: true });
+    const code = codigoInstitucional || ((codeGen && codeGen.generatedId) ? codeGen.generatedId : ("STU-000001"));
+
+    const personaGen = generateInstitutionalId({ entityType: "Persona", prefix: "PER-", skipLock: true });
+    const targetPersonaId = (personaGen && personaGen.generatedId) ? personaGen.generatedId : "PER-000001";
+
+    const userGen = generateInstitutionalId({ entityType: "Usuario", prefix: "USR-", skipLock: true });
+    const targetUserId = userId || ((userGen && userGen.generatedId) ? userGen.generatedId : "USR-000001");
+
+    // 5. Registrar/Recuperar Expediente
+    const expSheet = getOrCreateSheet(ss, "ExpedientesEstudiantes");
+    const expData = expSheet.getDataRange().getValues();
+    let dupExp = expData.slice(1).find(r =>
+      normalizeString(`${r[1]}`) === normalizeString(targetPersonaId) ||
+      (identificacion && normalizeString(String(r[10] || "")).includes(normalizeString(identificacion)))
+    );
+
+    let finalExpId = expId;
+    if (dupExp) {
+      finalExpId = dupExp[0];
+    } else {
+      expSheet.appendRow([
+        finalExpId,
+        targetPersonaId,
+        code,
+        fechaNac || "",
+        "Hondureña",
+        "", // DireccionResidencia
+        "", // FotografiaUrl
+        "Activo",
+        now,
+        now,
+        `Admisión aprobada desde solicitud ${solicitudId}. Responsable: ${nombreResponsable}, Tel: ${telefonoContacto}, Email: ${emailContacto}, DNI: ${identificacion}`
+      ]);
+    }
+
+    // 6. Transferencia / Vinculación del Tutor (RelacionesFamiliares e Invitaciones)
+    if (emailContacto) {
+      const usersSheet = getOrCreateSheet(ss, "Usuarios");
+      const usersData = usersSheet.getDataRange().getValues();
+      const parentUserRow = usersData.slice(1).find(r => String(r[4]).trim().toLowerCase() === emailContacto);
+
+      const relSheet = getOrCreateSheet(ss, "RelacionesFamiliares");
+      const relData = relSheet.getDataRange().getValues();
+
+      if (parentUserRow) {
+        const parentUserId = parentUserRow[0];
+        const dupRel = relData.slice(1).find(r => String(r[1]).trim() === finalExpId && String(r[2]).trim() === String(parentUserId).trim());
+        if (!dupRel) {
+          const relGen = generateInstitutionalId({ entityType: "RelacionFamiliar", prefix: "REL-", skipLock: true });
+          const relId = (relGen && relGen.generatedId) ? relGen.generatedId : ("REL-000001");
+          relSheet.appendRow([
+            relId,
+            finalExpId,
+            parentUserId,
+            "Padre/Tutor",
+            "Verificada",
+            now,
+            "",
+            `Vinculación transferida automáticamente desde solicitud de admisión ${solicitudId}.`
+          ]);
+        }
+      } else {
+        // Tutor no tiene usuario aún: Crear invitación de vinculación
+        const invSheet = getOrCreateSheet(ss, "InvitacionesVinculacion");
+        const invGen = generateInstitutionalId({ entityType: "InvitacionVinculacion", prefix: "INV-", skipLock: true });
+        const invId = (invGen && invGen.generatedId) ? invGen.generatedId : ("INV-000001");
+        const token = "TOK-" + Utilities.getUuid();
+        const expDate = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
+        invSheet.appendRow([
+          invId,
+          finalExpId,
+          emailContacto,
+          token,
+          now,
+          expDate,
+          "Activa",
+          (payload && (payload.actorId || payload.adminId)) || "Secretaría"
+        ]);
+      }
+    }
+
+    // 7. Marcar Solicitud como Convertida
+    admSheet.getRange(idx + 1, 12).setValue("Convertida");
+    admSheet.getRange(idx + 1, 15).setValue(finalExpId);
+
+    // 8. Obtener Monto Paramétrico de Matrícula y Registrar Matrícula Inicial
+    let montoMatriculaBase = 0;
+    try {
+      const paramRes = getInstitutionParams();
+      if (paramRes && Array.isArray(paramRes.data)) {
+        const mParam = paramRes.data.find(p => p.clave === ("MONTO_MATRICULA_" + anolectivo) || p.clave === "MONTO_MATRICULA_ORDINARIA");
+        if (mParam && mParam.valor) montoMatriculaBase = parseFloat(mParam.valor) || 0;
+      }
+    } catch (_) {}
+    if (!montoMatriculaBase) montoMatriculaBase = 1500;
+
+    const matGen = generateInstitutionalId({ entityType: "Matricula", prefix: "MAT-", skipLock: true });
+    const fallbackMatId = (matGen && matGen.generatedId) ? matGen.generatedId : ("MAT-000001");
+
+    const enrollRes = registerStudentEnrollment({
+      userId: targetUserId,
+      alumno: `${nombres} ${apellidos}`,
+      grado: grado,
+      seccion: targetSeccion,
+      periodo: anolectivo,
+      tipo: "IngresoNuevo",
+      observaciones: `Convertido desde solicitud ${solicitudId}`,
+      cargos: [
+        { concepto: "Matrícula Ordinaria " + anolectivo, montoBase: montoMatriculaBase, descuento: 0, estado: "Pendiente" }
+      ]
+    });
+
+    const matriculaRealId = (enrollRes && enrollRes.matriculaId) ? enrollRes.matriculaId : fallbackMatId;
+
+    // 9. Registrar Movimiento Inicial
+    const movSheet = getOrCreateSheet(ss, "MovimientosEstudiante");
+    const movGen = generateInstitutionalId({ entityType: "MovimientoEstudiante", prefix: "MOV-", skipLock: true });
+    const movId = (movGen && movGen.generatedId) ? movGen.generatedId : ("MOV-000001");
+    movSheet.appendRow([
+      movId,
+      finalExpId,
+      matriculaRealId,
+      anolectivo,
+      "IngresoNuevo",
+      "", "", grado, targetSeccion,
+      now,
+      `Admisión y Matrícula Inicial aprobada desde ${solicitudId}`,
+      (payload && (payload.actorId || payload.adminId)) || "Secretaría",
+      "Confirmado"
+    ]);
+
+    logStructuredEvent("ACADEMIC", "convertAdmissionToStudent", "INFO", "ADMISSION_CONVERTED", `Solicitud ${solicitudId} convertida exitosamente a expediente ${finalExpId} y matrícula ${matriculaRealId}`, { solicitudId, expedienteId: finalExpId, matriculaRealId, anolectivo, grado }, payload && payload.authRole);
+
+    return {
+      status: "success",
+      solicitudId: solicitudId,
+      expedienteId: finalExpId,
+      codigoInstitucional: code,
+      matriculaId: matriculaRealId,
+      message: `Solicitud ${solicitudId} convertida exitosamente en expediente ${finalExpId} y matrícula activa.`
+    };
+
+  } finally {
+    if (hasLock) {
+      try { lock.releaseLock(); } catch (_) {}
+    }
+  }
 }
 
 // ---------------------------------------------------------------------------

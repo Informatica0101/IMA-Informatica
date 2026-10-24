@@ -65,3 +65,10 @@ HALLAZGOS Y ANOMALÍAS DETECTADAS EN LA FASE 5:
    - Impacto: Riesgo de sobreasignación de cupos en la sección.
 
 ================================================================================
+RESOLUCIÓN Y VERIFICACIÓN DE TAREAS EJECUTADAS:
+
+[TAREA-F5-001] Corregir la conversión de aspirantes y garantizar la integridad del expediente
+ - Estado: COMPLETADA Y VERIFICADA (2026-03-29)
+ - Archivos Modificados: backend/academic-service/Code.gs (l. 800-940)
+ - Verificación: Reestructurada función convertAdmissionToStudent con validación estricta de estado 'Admitida', verificación de capacidad por sección via checkEnrollmentCapacity, candado atómico LockService.getScriptLock(10000), generación de IDs con generateInstitutionalId, transferencia de datos de tutores a RelacionesFamiliares e InvitacionesVinculacion, creación de cargos iniciales de matrícula en CargosEstudiante e idempotencia funcional. Comentario identificativo de tarea inyectado en la primera línea de convertAdmissionToStudent.
+================================================================================

@@ -1119,6 +1119,22 @@ Archivos Modificados:
    - Actualización del estado de [T-UX-26] a [X] Completada.
 
 -------------------------------------------------------------------------------
+FECHA: Marzo 2026
+TAREA: [TAREA-F5-001] Corregir la conversión de aspirantes y garantizar la integridad del expediente
+-------------------------------------------------------------------------------
+
+Archivos Modificados:
+1. backend/academic-service/Code.gs
+   - Lineas 800-940: Reestructurada función convertAdmissionToStudent con comentario identificativo de primera línea [TAREA-F5-001]. Incorporada validación estricta de estado 'Admitida' (con opción configurable allowIncompleteOverride), verificación de capacidad de sección via checkEnrollmentCapacity, candado atómico LockService.getScriptLock(10000), generación atómica de secuencias de ID via generateInstitutionalId, transferencia automática de datos del tutor a RelacionesFamiliares / InvitacionesVinculacion, generación de cargos financieros iniciales de matrícula en CargosEstudiante, verificación idempotente y registro de auditoría en logStructuredEvent.
+   - Lineas 800-840: Implementada función generateInstitutionalId para generación atómica de secuencias de ID coordinada con hoja SecuenciasIDs y LockService.
+
+2. Pendientes.md
+   - Marcada como [X] Completada la tarea [TAREA-F5-001].
+
+3. Auditoria.txt
+   - Registrado el informe de resolución y verificación de [TAREA-F5-001].
+
+-------------------------------------------------------------------------------
 FECHA: Octubre 2026
 TAREA: [TAREA-F4-P0-01] Unificar la autenticación y autorización de los cinco microservicios
 -------------------------------------------------------------------------------
