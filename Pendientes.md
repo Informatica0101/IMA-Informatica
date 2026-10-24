@@ -289,7 +289,7 @@
   - [X] Reporte de revisión de privilegios disponible para administradores.
 - **Estado:** [X] Completada
 
-### [ ] [TAREA-F4-P3-02] Optimizar los informes de auditoría y el diagnóstico de incidencias
+### [X] [TAREA-F4-P3-02] Optimizar los informes de auditoría y el diagnóstico de incidencias
 - **Origen del Hallazgo:** Auditoría de la Fase 4 (AUDITORIA_FASE4_IDENTIDAD_PERMISOS_GOBIERNO.md)
 - **Severidad/Clasificación:** Bajo · Observabilidad · Rendimiento
 - **Archivos Involucrados:** `backend/user-service/Code.gs`
@@ -297,8 +297,8 @@
 - **Descripción del Alcance:**
   1. Paginación en servidor para consultas masivas sobre `BitacoraEventos` y `BitacoraTraceability`.
 - **Criterios de Aceptación:**
-  - [ ] Consultas de auditoría optimizadas con paginación.
-- **Estado:** [ ] Pendiente
+  - [X] Consultas de auditoría optimizadas con paginación.
+- **Estado:** [X] Completada
 
 ### [ ] [TAREA-F4-P3-03] Establecer un sistema de detección y reconciliación de inconsistencias de identidad
 - **Origen del Hallazgo:** Auditoría de la Fase 4 (AUDITORIA_FASE4_IDENTIDAD_PERMISOS_GOBIERNO.md)

@@ -1312,3 +1312,7 @@ Archivos Modificados:
 [TAREA-F4-P3-01] [Fase 4 - Reportes Periódicos de Revisión de Privilegios y Cuentas]
 - backend/user-service/Code.gs:
   - Implementada la función generatePrivilegeAndAccountAuditReport para el análisis automatizado y periódico de cuentas privilegiadas (Administrador, Director, Subdirector, Sistemas, Secretaría, RecursosHumanos), cuentas inactivas o estancadas (>90 días sin iniciar sesión) y delegaciones vigentes.
+
+[TAREA-F4-P3-02] [Fase 4 - Paginación en Servidor de Informes de Auditoría]
+- backend/user-service/Code.gs:
+  - Implementada la función getPaginatedAuditLogReport con soporte para paginación eficiente en servidor (page, pageSize) sobre BitacoraEventos y BitacoraTraceability, filtrado multi-criterio por fecha, usuario, acción y tipo de evento, y cálculo de metadatos de paginación.

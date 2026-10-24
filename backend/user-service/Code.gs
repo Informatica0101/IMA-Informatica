@@ -940,7 +940,7 @@ const ROLE_PERMISSIONS = {
     "getInstitutionalCriteria", "saveInstitutionalCriterion", "getFormativeEvaluations", "saveFormativeEvaluation", "getSupportPlans", "saveSupportPlan",
     "createLinkInvitation", "acceptLinkInvitation", "getGuardianStudents", "getInstitutionalAnnouncements", "createInstitutionalAnnouncement", "submitAnnouncementReceiptConfirmation", "getAnnouncementReadReport", "getDepartmentalWorkInbox", "closeConversationThread", "getInternalConversations", "getInternalMessages", "sendInternalMessage", "getUserNotifications", "getUnifiedNotifications", "markNotificationAsRead", "createUserNotification", "sendMultiChannelNotification", "getNotificationPreferences", "getAdministrativeRequests", "getAdministrativeRequestsHistory", "submitAdministrativeRequest", "submitStudentAbsenceJustification", "getStudentAbsenceJustifications", "reviewAbsenceJustification", "updateRequestStatus", "saveInstitutionalForm", "getInstitutionalForms", "submitInstitutionalFormRequest", "saveApprovalWorkflow", "getApprovalWorkflows", "processWorkflowDecision", "getWorkflowHistory", "registerDocumentSignature", "configureNotificationChannel", "getNotificationChannelConfigs", "sendChannelNotificationTest", "getAppointmentBookings", "bookAppointment", "updateAppointmentStatus", "getInstitutionalCalendarEvents", "getPendingReminders",
     "getUserSettings", "saveUserSettings", "getSystemConfigurations", "saveSystemConfiguration", "getProviderIntegrations", "configureProviderIntegration",
-    "updateTicketStatus", "saveVisualPaletteProposal", "approveVisualPaletteProposal", "registerAndDispatchEvent", "retryFailedEventsQueue", "recordTraceabilityLog", "getTraceabilityCorrelationLogs", "getOperationalCapacityMetrics", "runInterdepartmentalIntegrationTestSuite", "getSharedConfigurationsCatalog", "manageInstitutionalDataCache", "purgeSecurityCaches", "dispatchSecurityEvent", "processSecurityEventQueue", "getSecurityEventsQueue", "getSecurityAndComplianceDashboardData", "generatePrivilegeAndAccountAuditReport"
+    "updateTicketStatus", "saveVisualPaletteProposal", "approveVisualPaletteProposal", "registerAndDispatchEvent", "retryFailedEventsQueue", "recordTraceabilityLog", "getTraceabilityCorrelationLogs", "getOperationalCapacityMetrics", "runInterdepartmentalIntegrationTestSuite", "getSharedConfigurationsCatalog", "manageInstitutionalDataCache", "purgeSecurityCaches", "dispatchSecurityEvent", "processSecurityEventQueue", "getSecurityEventsQueue", "getSecurityAndComplianceDashboardData", "generatePrivilegeAndAccountAuditReport", "getPaginatedAuditLogReport"
   ],
   "Subdirector": [
     "createNews", "uploadNewsImage", "getNews", "updateNewsStatus", "getStudents", "getStudentsByGradoSeccion", "getUserInfo", "saveGameResult", "getGameStats", "getGlobalTop", "recordAnalytics", "getLearningProfile", "mergeGuestData", "updateUserProfile", "findPersonMatches", "generateInstitutionalId",
@@ -1310,6 +1310,7 @@ function doPost(e) {
       case "getSecurityEventsQueue": result = getSecurityEventsQueue(payload); break;
       case "getSecurityAndComplianceDashboardData": result = getSecurityAndComplianceDashboardData(payload); break;
       case "generatePrivilegeAndAccountAuditReport": result = generatePrivilegeAndAccountAuditReport(payload); break;
+      case "getPaginatedAuditLogReport": result = getPaginatedAuditLogReport(payload); break;
       case "getNotificationPreferences": result = getNotificationPreferences(payload); break;
       case "markNotificationAsRead": result = markNotificationAsRead(payload); break;
       case "createUserNotification": result = createUserNotification(payload); break;
@@ -3766,6 +3767,135 @@ function getOperationalCapacityMetrics(payload) {
     },
     desgloseServicios: serviceBreakdown,
     clienteMetricasLocal: metricsClient || null,
+    timestamp: new Date().toISOString()
+  };
+}
+
+// [TAREA-F4-P3-02] [Fase 4: Paginación de Auditoría] - Paginación eficiente en servidor para consultas masivas sobre BitacoraEventos y BitacoraTraceability
+function getPaginatedAuditLogReport(payload) {
+  const { logType, page, pageSize, startDate, endDate, searchQuery, eventType } = payload || {};
+  const pageNum = Math.max(1, parseInt(page) || 1);
+  const limit = Math.min(100, Math.max(1, parseInt(pageSize) || 25));
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  let allLogs = [];
+
+  const startMs = startDate ? new Date(startDate).getTime() : 0;
+  const endMs = endDate ? new Date(endDate).getTime() + 86400000 : Infinity;
+  const queryClean = searchQuery ? String(searchQuery).trim().toLowerCase() : "";
+  const typeClean = eventType ? String(eventType).trim().toLowerCase() : "";
+
+  if (!logType || logType === "ALL" || logType === "EVENTOS") {
+    const sheet = ss.getSheetByName("BitacoraEventos");
+    if (sheet) {
+      const data = sheet.getDataRange().getValues();
+      for (let i = 1; i < data.length; i++) {
+        const row = data[i];
+        const evtId = String(row[0] || "").trim();
+        const dateStr = row[1];
+        const evtType = String(row[2] || "").trim();
+        const userId = String(row[3] || "").trim();
+        const role = row[4];
+        const module = row[5];
+        const action = row[6];
+        const result = row[7];
+        const details = row[8];
+        const correlationId = row[9];
+
+        const dateMs = dateStr ? new Date(dateStr).getTime() : 0;
+        if (dateMs >= startMs && dateMs <= endMs) {
+          if (!typeClean || evtType.toLowerCase() === typeClean) {
+            const matchesQuery = !queryClean ||
+              evtId.toLowerCase().indexOf(queryClean) !== -1 ||
+              userId.toLowerCase().indexOf(queryClean) !== -1 ||
+              String(details).toLowerCase().indexOf(queryClean) !== -1 ||
+              String(action).toLowerCase().indexOf(queryClean) !== -1;
+
+            if (matchesQuery) {
+              allLogs.push({
+                logSource: "BitacoraEventos",
+                id: evtId,
+                timestamp: dateStr,
+                eventType: evtType,
+                userId: userId,
+                role: role,
+                module: module,
+                action: action,
+                result: result,
+                details: details,
+                correlationId: correlationId
+              });
+            }
+          }
+        }
+      }
+    }
+  }
+
+  if (!logType || logType === "ALL" || logType === "TRACEABILITY") {
+    const sheet = ss.getSheetByName("BitacoraTraceability");
+    if (sheet) {
+      const data = sheet.getDataRange().getValues();
+      for (let j = 1; j < data.length; j++) {
+        const row = data[j];
+        const corrId = String(row[0] || "").trim();
+        const origSvc = String(row[1] || "").trim();
+        const targSvc = String(row[2] || "").trim();
+        const action = String(row[3] || "").trim();
+        const status = String(row[4] || "").trim();
+        const durationMs = row[5];
+        const errorDetails = row[6];
+        const dateStr = row[7];
+
+        const dateMs = dateStr ? new Date(dateStr).getTime() : 0;
+        if (dateMs >= startMs && dateMs <= endMs) {
+          if (!typeClean || status.toLowerCase() === typeClean) {
+            const matchesQuery = !queryClean ||
+              corrId.toLowerCase().indexOf(queryClean) !== -1 ||
+              origSvc.toLowerCase().indexOf(queryClean) !== -1 ||
+              targSvc.toLowerCase().indexOf(queryClean) !== -1 ||
+              action.toLowerCase().indexOf(queryClean) !== -1;
+
+            if (matchesQuery) {
+              allLogs.push({
+                logSource: "BitacoraTraceability",
+                id: corrId,
+                timestamp: dateStr,
+                eventType: status,
+                userId: origSvc + "->" + targSvc,
+                role: "SYSTEM",
+                module: origSvc,
+                action: action,
+                result: status,
+                details: "Duración: " + durationMs + "ms. " + (errorDetails || ""),
+                correlationId: corrId
+              });
+            }
+          }
+        }
+      }
+    }
+  }
+
+  allLogs.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+
+  const totalItems = allLogs.length;
+  const totalPages = Math.ceil(totalItems / limit) || 1;
+  const startIndex = (pageNum - 1) * limit;
+  const paginatedItems = allLogs.slice(startIndex, startIndex + limit);
+
+  return {
+    status: "success",
+    service: "USER",
+    items: paginatedItems,
+    pagination: {
+      page: pageNum,
+      pageSize: limit,
+      totalItems: totalItems,
+      totalPages: totalPages,
+      hasNextPage: pageNum < totalPages,
+      hasPrevPage: pageNum > 1
+    },
     timestamp: new Date().toISOString()
   };
 }
