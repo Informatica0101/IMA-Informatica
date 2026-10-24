@@ -1119,6 +1119,53 @@ Archivos Modificados:
    - Actualización del estado de [T-UX-26] a [X] Completada.
 
 -------------------------------------------------------------------------------
+FECHA: Marzo 2026
+TAREA: [TAREA-F5-003] Implementar identificadores únicos, control de concurrencia e idempotencia en admisiones
+-------------------------------------------------------------------------------
+
+Archivos Modificados:
+1. backend/academic-service/Code.gs
+   - Lineas 710-820: Reestructurada función createAdmissionRequest con comentario identificativo de primera línea [TAREA-F5-003]. Integrado el mecanismo atómico generateInstitutionalId para la secuencia de IDs de solicitudes (ADM-000001) respaldado por la hoja SecuenciasIDs, candado de concurrencia LockService.getScriptLock(10000) con lanzamiento explícito de error ante fallos de bloqueo, detección preventiva de solicitudes duplicadas activas por DNI/Identificación o combinación de Nombres+FechaNacimiento para el mismo año lectivo, y verificación/registro de claves de idempotencia mediante checkAndRegisterIdempotencyKey y saveIdempotentResult.
+
+2. Pendientes.md
+   - Marcada como [X] Completada la tarea [TAREA-F5-003].
+
+3. Auditoria.txt
+   - Registrado el informe de resolución y verificación de [TAREA-F5-003].
+
+-------------------------------------------------------------------------------
+FECHA: Marzo 2026
+TAREA: [TAREA-F5-002] Implementar una máquina de estados y reglas de transición para las solicitudes
+-------------------------------------------------------------------------------
+
+Archivos Modificados:
+1. backend/academic-service/Code.gs
+   - Lineas 775-920: Definida constante ALLOWED_ADMISSION_STATE_TRANSITIONS con la matriz de estados y transiciones permitidas. Reestructurada función updateAdmissionStatus con comentario identificativo de primera línea [TAREA-F5-002], incorporando validación de estados destinos reconocidos, verificación de flujo permitido, justificación obligatoria (mínimo 10 caracteres) para rechazos, comprobación de documentos completos antes de avanzar a Evaluación, registro de diffs sanitizados en HistorialCambiosEntidad y control de concurrencia mediante LockService. Implementada función reopenAdmissionRequest para la reapertura explícita de solicitudes cerrada/rechazadas restringida a roles Director/Administrador con registro en la bitácora.
+   - Lineas 162, 646: Adición de permiso "reopenAdmissionRequest" en ROLE_PERMISSIONS y dispatcher en doPost.
+
+2. Pendientes.md
+   - Marcada como [X] Completada la tarea [TAREA-F5-002].
+
+3. Auditoria.txt
+   - Registrado el informe de resolución y verificación de [TAREA-F5-002].
+
+-------------------------------------------------------------------------------
+FECHA: Marzo 2026
+TAREA: [TAREA-F5-001] Corregir la conversión de aspirantes y garantizar la integridad del expediente
+-------------------------------------------------------------------------------
+
+Archivos Modificados:
+1. backend/academic-service/Code.gs
+   - Lineas 800-940: Reestructurada función convertAdmissionToStudent con comentario identificativo de primera línea [TAREA-F5-001]. Incorporada validación estricta de estado 'Admitida' (con opción configurable allowIncompleteOverride), verificación de capacidad de sección via checkEnrollmentCapacity, candado atómico LockService.getScriptLock(10000), generación atómica de secuencias de ID via generateInstitutionalId, transferencia automática de datos del tutor a RelacionesFamiliares / InvitacionesVinculacion, generación de cargos financieros iniciales de matrícula en CargosEstudiante, verificación idempotente y registro de auditoría en logStructuredEvent.
+   - Lineas 800-840: Implementada función generateInstitutionalId para generación atómica de secuencias de ID coordinada con hoja SecuenciasIDs y LockService.
+
+2. Pendientes.md
+   - Marcada como [X] Completada la tarea [TAREA-F5-001].
+
+3. Auditoria.txt
+   - Registrado el informe de resolución y verificación de [TAREA-F5-001].
+
+-------------------------------------------------------------------------------
 FECHA: Octubre 2026
 TAREA: [TAREA-F4-P0-01] Unificar la autenticación y autorización de los cinco microservicios
 -------------------------------------------------------------------------------

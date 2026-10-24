@@ -162,7 +162,7 @@ const ROLE_PERMISSIONS = {
     "getAcademicOffers", "createAcademicOffer", "getTeacherAssignments", "assignTeacherToClass", "createTeacherSubstitution",
     "getAcademicCalendar", "createCalendarEvent", "getClassSchedules", "createClassSchedule", "deleteClassSchedule", "getAcademicRules", "saveAcademicRule", "getDepartmentAcademicPlanning", "assignDepartmentHead", "getCurricularAnalyticsReport", "getReusableResourceCatalog", "manageReusableResource", "getCurricularEquivalences", "executeCurricularMigration", "registerCurricularAreaExtension", "runCurricularAreaServiceTests", "toggleCurricularAreaStatus", "validateApiContractsTestSuite", "getInstitutionalCatalog", "validateCatalogReference", "generateInstitutionalUUID", "validateInstitutionalIdentifier", "auditInstitutionalIdentifierCollisions", "runConcurrencyAndConsistencySuite", "getPaginatedAcademicHistory", "reconcileRestoredDataIntegrity", "evaluateTransactionalStorageMigrationNeed",
     "getClassroomResources", "saveClassroomResource", "getStudentSchedule",
-    "createAdmissionRequest", "getAdmissionRequests", "updateAdmissionStatus", "convertAdmissionToStudent",
+    "createAdmissionRequest", "getAdmissionRequests", "updateAdmissionStatus", "reopenAdmissionRequest", "convertAdmissionToStudent",
     "getStudentFile", "updateStudentFile", "getStudentTimeline", "findDuplicateStudents", "mergeStudentFiles",
     "getStudentGuardians", "saveStudentGuardian", "unlinkStudentGuardian", "uploadStudentDocument", "getStudentDocuments", "updateDocumentStatus",
     "createStudentEnrollment", "getStudentEnrollments", "renewStudentEnrollment", "checkEnrollmentCapacity",
@@ -646,6 +646,7 @@ function doPost(e) {
       case "createAdmissionRequest": result = createAdmissionRequest(payload); break;
       case "getAdmissionRequests": result = getAdmissionRequests(payload); break;
       case "updateAdmissionStatus": result = updateAdmissionStatus(payload); break;
+      case "reopenAdmissionRequest": result = reopenAdmissionRequest(payload); break;
       case "convertAdmissionToStudent": result = convertAdmissionToStudent(payload); break;
       case "getStudentFile": result = getStudentFile(payload); break;
       case "updateStudentFile": result = updateStudentFile(payload); break;
@@ -711,38 +712,103 @@ function doPost(e) {
 // FASE 4: 1. ADMISIONES Y SOLICITUDES DE INGRESO
 // ---------------------------------------------------------------------------
 
+// [TAREA-F5-003] [Fase 5: Admisiones y Matrícula] - Creación atómica de solicitudes con generador de IDs secuencial, candado LockService, detección de duplicados e idempotencia
 function createAdmissionRequest(payload) {
-  const { anolectivo, gradoSolicitado, nombresAspirante, apellidosAspirante, identificacion, fechaNacimiento, nombreResponsable, telefonoContacto, emailContacto, observaciones, canalIngreso } = payload || {};
+  const { anolectivo, gradoSolicitado, nombresAspirante, apellidosAspirante, identificacion, fechaNacimiento, nombreResponsable, telefonoContacto, emailContacto, observaciones, canalIngreso, skipLock } = payload || {};
   if (!nombresAspirante || !apellidosAspirante || !gradoSolicitado) {
     throw new Error("Nombres del aspirante, apellidos y grado solicitado son obligatorios.");
   }
 
-  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
-  const sheet = getOrCreateSheet(ss, "SolicitudesAdmision");
-  const now = new Date();
-  const solicitudId = "ADM-" + now.getTime();
+  // Verificación de clave de idempotencia
+  const cachedResult = checkAndRegisterIdempotencyKey("createAdmissionRequest", payload);
+  if (cachedResult) return cachedResult;
 
-  sheet.appendRow([
-    solicitudId,
-    now,
-    anolectivo || "2026",
-    gradoSolicitado,
-    nombresAspirante.trim(),
-    apellidosAspirante.trim(),
-    identificacion ? String(identificacion).trim() : "",
-    fechaNacimiento || "",
-    nombreResponsable || "",
-    telefonoContacto ? String(telefonoContacto).trim() : "",
-    emailContacto ? String(emailContacto).trim().toLowerCase() : "",
-    "Recibida",
-    canalIngreso || "Web/Portal",
-    observaciones || "",
-    "" // ExpedienteID inicialmente vacío
-  ]);
+  let hasLock = false;
+  const lock = LockService.getScriptLock();
+  try {
+    if (!skipLock) {
+      hasLock = lock.tryLock(10000);
+      if (!hasLock) {
+        throw new Error("Servicio ocupado procesando solicitudes de admisión en paralelo. Por favor reintente en unos segundos.");
+      }
+    }
 
-  logStructuredEvent("ACADEMIC", "createAdmissionRequest", "INFO", "ADMISSION_CREATED", `Solicitud de admisión ${solicitudId} registrada para ${nombresAspirante} ${apellidosAspirante}`, { solicitudId, gradoSolicitado }, payload && payload.authRole);
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const sheet = getOrCreateSheet(ss, "SolicitudesAdmision");
+    const data = sheet.getDataRange().getValues();
 
-  return { status: "success", solicitudId: solicitudId, message: "Solicitud de admisión registrada con éxito." };
+    const targetAno = String(anolectivo || "2026").trim();
+    const cleanIdent = identificacion ? String(identificacion).trim() : "";
+    const cleanEmail = emailContacto ? String(emailContacto).trim().toLowerCase() : "";
+    const normName = normalizeString(`${nombresAspirante} ${apellidosAspirante}`);
+
+    // Detección de solicitudes duplicadas dentro de la sección protegida por LockService
+    if (data.length > 1) {
+      const rows = data.slice(1);
+      const duplicate = rows.find(r => {
+        const rEstado = String(r[11] || "").trim();
+        if (rEstado === "Rechazada" || rEstado === "Retirada") return false;
+
+        const rAno = String(r[2] || "").trim();
+        const rIdent = String(r[6] || "").trim();
+        const rName = normalizeString(`${r[4] || ''} ${r[5] || ''}`);
+
+        if (rAno === targetAno) {
+          if (cleanIdent && rIdent && cleanIdent === rIdent) return true;
+          if (normName && rName && normName === rName && fechaNacimiento && String(r[7]).trim() === String(fechaNacimiento).trim()) return true;
+        }
+        return false;
+      });
+
+      if (duplicate) {
+        throw new Error(`Solicitud duplicada detectada: Ya existe una solicitud registrada (${duplicate[0]}) para el aspirante ${nombresAspirante} ${apellidosAspirante} en el año lectivo ${targetAno}.`);
+      }
+    }
+
+    // Generación de ID Atómico de Solicitud (sin usar marcas de tiempo como único mecanismo)
+    const idGen = generateInstitutionalId({ entityType: "SolicitudAdmision", prefix: "ADM-", skipLock: true });
+    const now = new Date();
+    const solicitudId = (idGen && idGen.generatedId) ? idGen.generatedId : ("ADM-000001");
+
+    const newRow = [
+      solicitudId,
+      now,
+      targetAno,
+      String(gradoSolicitado).trim(),
+      String(nombresAspirante).trim(),
+      String(apellidosAspirante).trim(),
+      cleanIdent,
+      fechaNacimiento || "",
+      String(nombreResponsable || "").trim(),
+      String(telefonoContacto || "").trim(),
+      cleanEmail,
+      "Recibida",
+      canalIngreso || "Web/Portal",
+      observaciones || "",
+      "" // ExpedienteID inicialmente vacío
+    ];
+
+    sheet.appendRow(newRow);
+    SpreadsheetApp.flush();
+
+    const result = {
+      status: "success",
+      solicitudId: solicitudId,
+      anolectivo: targetAno,
+      gradoSolicitado: gradoSolicitado,
+      message: `Solicitud de admisión ${solicitudId} registrada exitosamente.`
+    };
+
+    saveIdempotentResult("createAdmissionRequest", payload, result);
+    logStructuredEvent("ACADEMIC", "createAdmissionRequest", "INFO", "ADMISSION_CREATED", `Solicitud de admisión ${solicitudId} registrada para ${nombresAspirante} ${apellidosAspirante}`, { solicitudId, gradoSolicitado, targetAno }, payload && payload.authRole);
+
+    return result;
+
+  } finally {
+    if (hasLock) {
+      try { lock.releaseLock(); } catch (_) {}
+    }
+  }
 }
 
 function getAdmissionRequests(payload) {
@@ -776,10 +842,159 @@ function getAdmissionRequests(payload) {
   return { status: "success", requests: mapped };
 }
 
-function updateAdmissionStatus(payload) {
-  const { solicitudId, nuevoEstado, observaciones } = payload || {};
-  if (!solicitudId || !nuevoEstado) throw new Error("solicitudId y nuevoEstado requeridos.");
+// [TAREA-F5-002] [Fase 5: Admisiones y Matrícula] - Máquina de estados y reglas de transición de solicitudes de admisión
+const ALLOWED_ADMISSION_STATE_TRANSITIONS = {
+  "Recibida": ["En_Revision", "Rechazada", "Retirada"],
+  "En_Revision": ["Evaluacion", "Admitida", "Rechazada", "En_Espera", "Retirada"],
+  "Evaluacion": ["Admitida", "Rechazada", "En_Espera", "Retirada"],
+  "En_Espera": ["Admitida", "Rechazada", "Retirada"],
+  "Admitida": ["Convertida", "Rechazada", "Retirada"],
+  "Rechazada": ["Reabierta"],
+  "Convertida": [],
+  "Retirada": ["Reabierta"],
+  "Reabierta": ["En_Revision", "Evaluacion"]
+};
 
+function recordEntityChangeLog(entityType, entityId, previousValue, newValue, action, callerUserId, correlationId) {
+  try {
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const sheet = getOrCreateSheet(ss, "HistorialCambiosEntidad");
+    if (sheet.getLastRow() === 0) {
+      sheet.appendRow(["HistorialID", "Fecha", "EntidadTipo", "EntidadID", "Accion", "ValorAnteriorJSON", "ValorNuevoJSON", "UsuarioResponsable", "CorrelationID"]);
+      SpreadsheetApp.flush();
+    }
+    const histId = "HIST-CHANGE-" + Date.now() + "-" + Math.floor(Math.random() * 1000);
+    const now = new Date();
+    sheet.appendRow([
+      histId,
+      now,
+      entityType,
+      entityId,
+      action || "UPDATE",
+      JSON.stringify(previousValue || {}),
+      JSON.stringify(newValue || {}),
+      callerUserId || "Sistema",
+      correlationId || ("CORR-" + Date.now())
+    ]);
+  } catch (err) {
+    console.error("Error al registrar historial de cambios de entidad:", err);
+  }
+}
+
+// [TAREA-F5-002] [Fase 5: Admisiones y Matrícula] - Actualización controlada de estado con máquina de estados, validaciones y justificación obligatoria
+function updateAdmissionStatus(payload) {
+  const { solicitudId, nuevoEstado, observaciones, justificacion, skipLock } = payload || {};
+  if (!solicitudId || !nuevoEstado) {
+    throw new Error("solicitudId y nuevoEstado son requeridos.");
+  }
+
+  const estadoSolicitado = String(nuevoEstado).trim();
+
+  // Validar si el estado solicitado es reconocido
+  if (!ALLOWED_ADMISSION_STATE_TRANSITIONS.hasOwnProperty(estadoSolicitado)) {
+    throw new Error(`INVALID_ADMISSION_STATE: El estado '${estadoSolicitado}' no es un estado válido en el sistema de admisiones.`);
+  }
+
+  let hasLock = false;
+  const lock = LockService.getScriptLock();
+  try {
+    if (!skipLock) {
+      hasLock = lock.tryLock(10000);
+      if (!hasLock) {
+        throw new Error("Servicio ocupado procesando cambios de estado de admisiones en paralelo. Por favor reintente en unos segundos.");
+      }
+    }
+
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const sheet = getOrCreateSheet(ss, "SolicitudesAdmision");
+    const data = sheet.getDataRange().getValues();
+
+    const idx = data.findIndex(r => String(r[0]).trim() === String(solicitudId).trim());
+    if (idx === -1) throw new Error("Solicitud de admisión no encontrada.");
+
+    const row = data[idx];
+    const estadoActual = String(row[11] || "Recibida").trim();
+    const actorUserId = (payload && (payload._verifiedUserId || payload.actorId || payload.adminId)) || "Secretaría";
+
+    // Si ya está en el estado solicitado, retornar idempotente
+    if (estadoActual === estadoSolicitado) {
+      return {
+        status: "success",
+        isAlreadyInState: true,
+        solicitudId: solicitudId,
+        estadoActual: estadoActual,
+        message: `La solicitud ${solicitudId} ya se encuentra en estado '${estadoActual}'.`
+      };
+    }
+
+    // Validar transición permitida en la máquina de estados
+    const allowedNextStates = ALLOWED_ADMISSION_STATE_TRANSITIONS[estadoActual] || [];
+    if (allowedNextStates.indexOf(estadoSolicitado) === -1) {
+      throw new Error(`Acción denegada: Transición inválida de '${estadoActual}' a '${estadoSolicitado}'. Transiciones permitidas desde '${estadoActual}': [${allowedNextStates.join(", ")}].`);
+    }
+
+    // Exigir justificación obligatoria (mínimo 10 caracteres) para rechazos o decisiones definitivas
+    const textoJustificacion = String(justificacion || observaciones || "").trim();
+    if ((estadoSolicitado === "Rechazada" || estadoSolicitado === "Retirada") && textoJustificacion.length < 10) {
+      throw new Error("Justificación obligatoria requerida: Para rechazar o retirar una solicitud se exige ingresar un motivo justificado de al menos 10 caracteres.");
+    }
+
+    // Validaciones específicas según el estado destino
+    if (estadoSolicitado === "Evaluacion") {
+      const docRes = getStudentDocuments({ solicitudId });
+      if (docRes && Array.isArray(docRes.documents)) {
+        const pendingDocs = docRes.documents.filter(d => d.estadoRevision === "Pendiente" || d.estadoRevision === "Rechazado");
+        if (pendingDocs.length > 0) {
+          throw new Error(`Acción denegada: La solicitud tiene ${pendingDocs.length} documento(s) pendiente(s) de revisión antes de pasar a la etapa de Evaluación.`);
+        }
+      }
+    }
+
+    // Actualizar estado u observaciones
+    sheet.getRange(idx + 1, 12).setValue(estadoSolicitado);
+    if (textoJustificacion) {
+      const obsPrevias = String(row[13] || "").trim();
+      const nuevaObs = obsPrevias ? `${obsPrevias} | [${new Date().toISOString().split('T')[0]} - ${estadoSolicitado}]: ${textoJustificacion}` : `[${new Date().toISOString().split('T')[0]} - ${estadoSolicitado}]: ${textoJustificacion}`;
+      sheet.getRange(idx + 1, 14).setValue(nuevaObs);
+    }
+
+    // Registrar en HistorialCambiosEntidad y logStructuredEvent
+    recordEntityChangeLog("SolicitudAdmision", solicitudId, { estadoSolicitud: estadoActual }, { estadoSolicitud: estadoSolicitado, justificacion: textoJustificacion }, "ADMISSION_STATUS_UPDATED", actorUserId);
+    logStructuredEvent("ACADEMIC", "updateAdmissionStatus", "INFO", "ADMISSION_STATUS_UPDATED", `Estado de solicitud ${solicitudId} cambiado de '${estadoActual}' a '${estadoSolicitado}'`, { solicitudId, estadoAnterior: estadoActual, estadoNuevo: estadoSolicitado, justificacion: textoJustificacion }, payload && payload.authRole);
+
+    return {
+      status: "success",
+      solicitudId: solicitudId,
+      estadoAnterior: estadoActual,
+      nuevoEstado: estadoSolicitado,
+      message: `Estado de la solicitud ${solicitudId} actualizado exitosamente de '${estadoActual}' a '${estadoSolicitado}'.`
+    };
+
+  } finally {
+    if (hasLock) {
+      try { lock.releaseLock(); } catch (_) {}
+    }
+  }
+}
+
+// [TAREA-F5-002] [Fase 5: Admisiones y Matrícula] - Reapertura explícita de solicitudes rechazadas/cerradas por Dirección o Administración
+function reopenAdmissionRequest(payload) {
+  const callerRole = (payload && payload._verifiedRole) || getUserVerifiedRole(payload);
+  if (callerRole !== "Director" && callerRole !== "Administrador" && callerRole !== "Desarrollador") {
+    throw new Error("Acción denegada: Únicamente los usuarios con rol Director o Administrador están autorizados a reabrir expedientes de admisión.");
+  }
+
+  const { solicitudId, motivoReapertura, nuevoEstado } = payload || {};
+  if (!solicitudId || !motivoReapertura) {
+    throw new Error("solicitudId y motivoReapertura son requeridos.");
+  }
+
+  const textoMotivo = String(motivoReapertura).trim();
+  if (textoMotivo.length < 10) {
+    throw new Error("El motivo de reapertura debe contener al menos 10 caracteres exponiendo la justificación institucional.");
+  }
+
+  const targetState = nuevoEstado || "Reabierta";
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
   const sheet = getOrCreateSheet(ss, "SolicitudesAdmision");
   const data = sheet.getDataRange().getValues();
@@ -787,106 +1002,300 @@ function updateAdmissionStatus(payload) {
   const idx = data.findIndex(r => String(r[0]).trim() === String(solicitudId).trim());
   if (idx === -1) throw new Error("Solicitud de admisión no encontrada.");
 
-  sheet.getRange(idx + 1, 12).setValue(nuevoEstado);
-  if (observaciones) {
-    sheet.getRange(idx + 1, 14).setValue(observaciones);
-  }
+  const row = data[idx];
+  const estadoAnterior = String(row[11] || "").trim();
 
-  logStructuredEvent("ACADEMIC", "updateAdmissionStatus", "INFO", "ADMISSION_STATUS_UPDATED", `Estado de solicitud ${solicitudId} cambiado a ${nuevoEstado}`, { solicitudId, nuevoEstado }, payload && payload.authRole);
+  sheet.getRange(idx + 1, 12).setValue(targetState);
+  const obsPrevias = String(row[13] || "").trim();
+  const nuevaObs = `${obsPrevias} | [REAPERTURA ${new Date().toISOString().split('T')[0]} por ${callerRole}]: ${textoMotivo}`;
+  sheet.getRange(idx + 1, 14).setValue(nuevaObs);
 
-  return { status: "success", message: `Estado de la solicitud actualizado a '${nuevoEstado}'.` };
-}
-
-function convertAdmissionToStudent(payload) {
-  const { solicitudId, userId, codigoInstitucional, seccion } = payload || {};
-  if (!solicitudId) throw new Error("solicitudId es requerido.");
-
-  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
-  const admSheet = getOrCreateSheet(ss, "SolicitudesAdmision");
-  const admData = admSheet.getDataRange().getValues();
-
-  const idx = admData.findIndex(r => String(r[0]).trim() === String(solicitudId).trim());
-  if (idx === -1) throw new Error("Solicitud de admisión no encontrada.");
-
-  const row = admData[idx];
-  const nombres = row[4];
-  const apellidos = row[5];
-  const identificacion = row[6];
-  const fechaNac = row[7];
-  const grado = row[3];
-  const anolectivo = row[2];
-
-  // 1. Crear o recuperar Expediente
-  const expSheet = getOrCreateSheet(ss, "ExpedientesEstudiantes");
-  const expData = expSheet.getDataRange().getValues();
-
-  let expId;
-  const targetPersonaId = userId || ("PER-" + Date.now());
-  let dupExp = expData.find(r => normalizeString(`${r[1]}`) === normalizeString(targetPersonaId));
-
-  const now = new Date();
-  const code = codigoInstitucional || ("STU-" + now.getFullYear() + "-" + Math.floor(1000 + Math.random() * 9000));
-
-  if (dupExp) {
-    expId = dupExp[0];
-  } else {
-    expId = "EXP-" + now.getTime();
-    const telContacto = row[9] || "";
-    const emailContacto = row[10] || "";
-    expSheet.appendRow([
-      expId,
-      targetPersonaId,
-      code,
-      fechaNac || "",
-      "Hondureña",
-      "", // DireccionResidencia (se completa en ficha médica/estudiantil)
-      "", // FotografiaUrl
-      "Activo",
-      now,
-      now,
-      `Admisión aprobada desde solicitud ${solicitudId}. Tel: ${telContacto}, Email: ${emailContacto}`
-    ]);
-  }
-
-  // 2. Marcar Solicitud como Convertida
-  admSheet.getRange(idx + 1, 12).setValue("Convertida");
-  admSheet.getRange(idx + 1, 15).setValue(expId);
-
-  // 3. Registrar Matrícula Inicial
-  const targetUserId = userId || ("USR-" + Date.now());
-  const enrollRes = registerStudentEnrollment({
-    userId: targetUserId,
-    alumno: `${nombres} ${apellidos}`,
-    grado: grado,
-    seccion: seccion || "A",
-    periodo: anolectivo,
-    tipo: "IngresoNuevo",
-    observaciones: `Convertido desde solicitud ${solicitudId}`
-  });
-
-  const matriculaRealId = (enrollRes && enrollRes.matriculaId) ? enrollRes.matriculaId : ("MAT-" + now.getTime());
-
-  // 4. Registrar Movimiento Inicial
-  const movSheet = getOrCreateSheet(ss, "MovimientosEstudiante");
-  movSheet.appendRow([
-    "MOV-" + now.getTime(),
-    expId,
-    matriculaRealId,
-    anolectivo,
-    "IngresoNuevo",
-    "", "", grado, seccion || "A",
-    now,
-    `Admisión y Matrícula Inicial`,
-    (payload && (payload.actorId || payload.adminId)) || "Secretaría",
-    "Confirmado"
-  ]);
+  const actorUserId = (payload && payload._verifiedUserId) || "Director";
+  recordEntityChangeLog("SolicitudAdmision", solicitudId, { estadoSolicitud: estadoAnterior }, { estadoSolicitud: targetState, motivoReapertura: textoMotivo }, "ADMISSION_REOPENED", actorUserId);
+  logStructuredEvent("ACADEMIC", "reopenAdmissionRequest", "WARN", "ADMISSION_REOPENED", `Solicitud ${solicitudId} reabierta por ${callerRole} desde '${estadoAnterior}' a '${targetState}'`, { solicitudId, estadoAnterior, targetState, motivoReapertura: textoMotivo }, callerRole);
 
   return {
     status: "success",
-    expedienteId: expId,
-    codigoInstitucional: code,
-    message: "Solicitud convertida exitosamente en expediente de estudiante y matrícula activa."
+    solicitudId: solicitudId,
+    estadoAnterior: estadoAnterior,
+    nuevoEstado: targetState,
+    message: `Solicitud ${solicitudId} reabierta exitosamente. Estado actualizado a '${targetState}'.`
   };
+}
+
+function generateInstitutionalId(payload) {
+  const { entityType, prefix, skipLock } = payload || {};
+  if (!entityType) throw new Error("entityType es requerido.");
+  const pfx = prefix || entityType.substring(0, 3).toUpperCase() + "-";
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  let sheet = ss.getSheetByName("SecuenciasIDs");
+  if (!sheet) {
+    sheet = ss.insertSheet("SecuenciasIDs");
+    sheet.appendRow(["Entidad", "Prefijo", "UltimoNumero", "FechaActualizacion"]);
+    SpreadsheetApp.flush();
+  }
+
+  let hasLock = false;
+  const lock = LockService.getScriptLock();
+  try {
+    if (!skipLock) {
+      hasLock = lock.tryLock(10000);
+      if (!hasLock) {
+        throw new Error("Servicio ocupado procesando secuencias de identificadores en paralelo. Por favor reintente en unos segundos.");
+      }
+    }
+    const data = sheet.getDataRange().getValues();
+    let nextNum = 1;
+    let idx = -1;
+    for (let i = 1; i < data.length; i++) {
+      if (String(data[i][0]).trim().toLowerCase() === String(entityType).trim().toLowerCase()) {
+        idx = i;
+        nextNum = parseInt(data[i][2] || 0) + 1;
+        break;
+      }
+    }
+    const formattedId = pfx + String(nextNum).padStart(6, '0');
+    const now = new Date();
+    if (idx !== -1) {
+      sheet.getRange(idx + 1, 3, 1, 2).setValues([[nextNum, now]]);
+    } else {
+      sheet.appendRow([entityType, pfx, nextNum, now]);
+    }
+    SpreadsheetApp.flush();
+    return { status: "success", generatedId: formattedId, sequence: nextNum };
+  } finally {
+    if (hasLock) {
+      try { lock.releaseLock(); } catch (_) {}
+    }
+  }
+}
+
+// [TAREA-F5-001] [Fase 5: Admisiones y Matrícula] - Conversión segura de aspirante admitido a expediente estudiantil, matrícula y vinculación familiar
+function convertAdmissionToStudent(payload) {
+  const { solicitudId, userId, codigoInstitucional, seccion, forceCapacityOverride, allowIncompleteOverride } = payload || {};
+  if (!solicitudId) throw new Error("solicitudId es requerido.");
+
+  let hasLock = false;
+  const lock = LockService.getScriptLock();
+  try {
+    hasLock = lock.tryLock(10000);
+    if (!hasLock) {
+      throw new Error("Servicio ocupado procesando solicitudes de admisiones en paralelo. Por favor reintente en unos segundos.");
+    }
+
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const admSheet = getOrCreateSheet(ss, "SolicitudesAdmision");
+    const admData = admSheet.getDataRange().getValues();
+
+    const idx = admData.findIndex(r => String(r[0]).trim() === String(solicitudId).trim());
+    if (idx === -1) throw new Error("Solicitud de admisión no encontrada.");
+
+    const row = admData[idx];
+    const estadoActual = String(row[11] || "").trim();
+    const expedienteExistenteId = String(row[14] || "").trim();
+
+    // 1. Verificación idempotente si ya fue convertida
+    if (estadoActual === "Convertida" && expedienteExistenteId) {
+      return {
+        status: "success",
+        isAlreadyConverted: true,
+        expedienteId: expedienteExistenteId,
+        message: `La solicitud ${solicitudId} ya fue convertida previamente al expediente ${expedienteExistenteId}.`
+      };
+    }
+
+    // 2. Validación de estado 'Admitida' y verificación de requisitos documentales pendientes
+    const allowIncomplete = allowIncompleteOverride || (typeof ALLOW_INCOMPLETE_ADMISSION_CONVERSION !== "undefined" && ALLOW_INCOMPLETE_ADMISSION_CONVERSION === true);
+    if (estadoActual !== "Admitida" && !allowIncomplete) {
+      throw new Error(`Acción denegada: La solicitud ${solicitudId} se encuentra en estado '${estadoActual}'. Únicamente las solicitudes en estado 'Admitida' pueden convertirse en expediente estudiantil.`);
+    }
+
+    if (estadoActual === "Admitida" && !allowIncomplete) {
+      const docRes = getStudentDocuments({ solicitudId });
+      if (docRes && Array.isArray(docRes.documents)) {
+        const pendingDocs = docRes.documents.filter(d => d.estadoRevision === "Pendiente" || d.estadoRevision === "Rechazado");
+        if (pendingDocs.length > 0) {
+          throw new Error(`Acción denegada: La solicitud ${solicitudId} tiene ${pendingDocs.length} documento(s) obligatorio(s) pendiente(s) o rechazado(s). Complete la revisión documental antes de convertir.`);
+        }
+      }
+    }
+
+    const nombres = String(row[4] || "").trim();
+    const apellidos = String(row[5] || "").trim();
+    const identificacion = String(row[6] || "").trim();
+    const fechaNac = row[7];
+    const grado = String(row[3] || "").trim();
+    const anolectivo = String(row[2] || "2026").trim();
+    const targetSeccion = seccion || "A";
+    const nombreResponsable = String(row[8] || "").trim();
+    const telefonoContacto = String(row[9] || "").trim();
+    const emailContacto = String(row[10] || "").trim().toLowerCase();
+
+    // 3. Verificar Capacidad de Sección
+    const capacityCheck = checkEnrollmentCapacity({ anolectivo, grado, seccion: targetSeccion });
+    if (capacityCheck && capacityCheck.hayCupo === false && !forceCapacityOverride) {
+      return {
+        status: "error",
+        code: "SECTION_FULL",
+        message: `No hay cupos disponibles en el grado ${grado} sección ${targetSeccion} para el año ${anolectivo}. (Capacidad: ${capacityCheck.capacidadMaxima}, Ocupados: ${capacityCheck.inscritosActuales}).`
+      };
+    }
+
+    const now = new Date();
+
+    // 4. Generación de IDs Atómicos sin marcas de tiempo (pasando skipLock: true)
+    const expGen = generateInstitutionalId({ entityType: "ExpedienteEstudiante", prefix: "EXP-", skipLock: true });
+    const expId = (expGen && expGen.generatedId) ? expGen.generatedId : ("EXP-000001");
+
+    const codeGen = generateInstitutionalId({ entityType: "CodigoEstudiante", prefix: "STU-", skipLock: true });
+    const code = codigoInstitucional || ((codeGen && codeGen.generatedId) ? codeGen.generatedId : ("STU-000001"));
+
+    const personaGen = generateInstitutionalId({ entityType: "Persona", prefix: "PER-", skipLock: true });
+    const targetPersonaId = (personaGen && personaGen.generatedId) ? personaGen.generatedId : "PER-000001";
+
+    const userGen = generateInstitutionalId({ entityType: "Usuario", prefix: "USR-", skipLock: true });
+    const targetUserId = userId || ((userGen && userGen.generatedId) ? userGen.generatedId : "USR-000001");
+
+    // 5. Registrar/Recuperar Expediente
+    const expSheet = getOrCreateSheet(ss, "ExpedientesEstudiantes");
+    const expData = expSheet.getDataRange().getValues();
+    let dupExp = expData.slice(1).find(r =>
+      normalizeString(`${r[1]}`) === normalizeString(targetPersonaId) ||
+      (identificacion && normalizeString(String(r[10] || "")).includes(normalizeString(identificacion)))
+    );
+
+    let finalExpId = expId;
+    if (dupExp) {
+      finalExpId = dupExp[0];
+    } else {
+      expSheet.appendRow([
+        finalExpId,
+        targetPersonaId,
+        code,
+        fechaNac || "",
+        "Hondureña",
+        "", // DireccionResidencia
+        "", // FotografiaUrl
+        "Activo",
+        now,
+        now,
+        `Admisión aprobada desde solicitud ${solicitudId}. Responsable: ${nombreResponsable}, Tel: ${telefonoContacto}, Email: ${emailContacto}, DNI: ${identificacion}`
+      ]);
+    }
+
+    // 6. Transferencia / Vinculación del Tutor (RelacionesFamiliares e Invitaciones)
+    if (emailContacto) {
+      const usersSheet = getOrCreateSheet(ss, "Usuarios");
+      const usersData = usersSheet.getDataRange().getValues();
+      const parentUserRow = usersData.slice(1).find(r => String(r[4]).trim().toLowerCase() === emailContacto);
+
+      const relSheet = getOrCreateSheet(ss, "RelacionesFamiliares");
+      const relData = relSheet.getDataRange().getValues();
+
+      if (parentUserRow) {
+        const parentUserId = parentUserRow[0];
+        const dupRel = relData.slice(1).find(r => String(r[1]).trim() === finalExpId && String(r[2]).trim() === String(parentUserId).trim());
+        if (!dupRel) {
+          const relGen = generateInstitutionalId({ entityType: "RelacionFamiliar", prefix: "REL-", skipLock: true });
+          const relId = (relGen && relGen.generatedId) ? relGen.generatedId : ("REL-000001");
+          relSheet.appendRow([
+            relId,
+            finalExpId,
+            parentUserId,
+            "Padre/Tutor",
+            "Verificada",
+            now,
+            "",
+            `Vinculación transferida automáticamente desde solicitud de admisión ${solicitudId}.`
+          ]);
+        }
+      } else {
+        // Tutor no tiene usuario aún: Crear invitación de vinculación
+        const invSheet = getOrCreateSheet(ss, "InvitacionesVinculacion");
+        const invGen = generateInstitutionalId({ entityType: "InvitacionVinculacion", prefix: "INV-", skipLock: true });
+        const invId = (invGen && invGen.generatedId) ? invGen.generatedId : ("INV-000001");
+        const token = "TOK-" + Utilities.getUuid();
+        const expDate = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
+        invSheet.appendRow([
+          invId,
+          finalExpId,
+          emailContacto,
+          token,
+          now,
+          expDate,
+          "Activa",
+          (payload && (payload.actorId || payload.adminId)) || "Secretaría"
+        ]);
+      }
+    }
+
+    // 7. Marcar Solicitud como Convertida
+    admSheet.getRange(idx + 1, 12).setValue("Convertida");
+    admSheet.getRange(idx + 1, 15).setValue(finalExpId);
+
+    // 8. Obtener Monto Paramétrico de Matrícula y Registrar Matrícula Inicial
+    let montoMatriculaBase = 0;
+    try {
+      const paramRes = getInstitutionParams();
+      if (paramRes && Array.isArray(paramRes.data)) {
+        const mParam = paramRes.data.find(p => p.clave === ("MONTO_MATRICULA_" + anolectivo) || p.clave === "MONTO_MATRICULA_ORDINARIA");
+        if (mParam && mParam.valor) montoMatriculaBase = parseFloat(mParam.valor) || 0;
+      }
+    } catch (_) {}
+    if (!montoMatriculaBase) montoMatriculaBase = 1500;
+
+    const matGen = generateInstitutionalId({ entityType: "Matricula", prefix: "MAT-", skipLock: true });
+    const fallbackMatId = (matGen && matGen.generatedId) ? matGen.generatedId : ("MAT-000001");
+
+    const enrollRes = registerStudentEnrollment({
+      userId: targetUserId,
+      alumno: `${nombres} ${apellidos}`,
+      grado: grado,
+      seccion: targetSeccion,
+      periodo: anolectivo,
+      tipo: "IngresoNuevo",
+      observaciones: `Convertido desde solicitud ${solicitudId}`,
+      cargos: [
+        { concepto: "Matrícula Ordinaria " + anolectivo, montoBase: montoMatriculaBase, descuento: 0, estado: "Pendiente" }
+      ]
+    });
+
+    const matriculaRealId = (enrollRes && enrollRes.matriculaId) ? enrollRes.matriculaId : fallbackMatId;
+
+    // 9. Registrar Movimiento Inicial
+    const movSheet = getOrCreateSheet(ss, "MovimientosEstudiante");
+    const movGen = generateInstitutionalId({ entityType: "MovimientoEstudiante", prefix: "MOV-", skipLock: true });
+    const movId = (movGen && movGen.generatedId) ? movGen.generatedId : ("MOV-000001");
+    movSheet.appendRow([
+      movId,
+      finalExpId,
+      matriculaRealId,
+      anolectivo,
+      "IngresoNuevo",
+      "", "", grado, targetSeccion,
+      now,
+      `Admisión y Matrícula Inicial aprobada desde ${solicitudId}`,
+      (payload && (payload.actorId || payload.adminId)) || "Secretaría",
+      "Confirmado"
+    ]);
+
+    logStructuredEvent("ACADEMIC", "convertAdmissionToStudent", "INFO", "ADMISSION_CONVERTED", `Solicitud ${solicitudId} convertida exitosamente a expediente ${finalExpId} y matrícula ${matriculaRealId}`, { solicitudId, expedienteId: finalExpId, matriculaRealId, anolectivo, grado }, payload && payload.authRole);
+
+    return {
+      status: "success",
+      solicitudId: solicitudId,
+      expedienteId: finalExpId,
+      codigoInstitucional: code,
+      matriculaId: matriculaRealId,
+      message: `Solicitud ${solicitudId} convertida exitosamente en expediente ${finalExpId} y matrícula activa.`
+    };
+
+  } finally {
+    if (hasLock) {
+      try { lock.releaseLock(); } catch (_) {}
+    }
+  }
 }
 
 // ---------------------------------------------------------------------------
