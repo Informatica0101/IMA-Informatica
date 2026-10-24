@@ -132,7 +132,7 @@
 
 ---
 
-### [TAREA-F5-005] Crear la consola administrativa de revisión y decisión de admisiones
+### [X] [TAREA-F5-005] Crear la consola administrativa de revisión y decisión de admisiones
 - **Origen del Hallazgo:** `Auditoria.txt` (HALLAZGOS F5: HALLAZGOS-F5-P0-01) / `AUDITORIA_FASE_5_ADMISIONES_PORTAL_FAMILIAS.md` (Subcapacidad 5.6, Brecha P0-01)
 - **Severidad/Clasificación:** Crítico
 - **Archivos Involucrados:** `dashboard-direccion.html`, `teacher-dashboard.html`, `js/teacher.js`, `backend/academic-service/Code.gs` (l. 748, 779, 800)
@@ -151,16 +151,16 @@
   11. Implementar paginación en servidor e indicadores de carga (`renderUIProgressSkeleton`).
   12. Aplicar restricciones ABAC/RBAC para que el personal de nivel sólo acceda a las solicitudes de su departamento asignado.
 - **Criterios de Aceptación:**
-  - [ ] El personal autorizado de Secretaría y Dirección puede consultar y filtrar solicitudes en tiempo real.
-  - [ ] Los filtros producen resultados coherentes con los registros persistidos en la hoja.
-  - [ ] El modal de detalle permite revisar todos los componentes del expediente sin cambiar de pantalla.
-  - [ ] Los botones de acción muestran únicamente transiciones válidas para el estado activo.
-  - [ ] Una respuesta de error mantiene visible el estado real persistido en el servidor.
-  - [ ] El rechazo sin justificación obligatoria no se puede confirmar.
-  - [ ] Un usuario no autorizado no puede consultar ni decidir solicitudes invocando directamente el endpoint.
-  - [ ] La paginación navega limpiamente sin omitir ni duplicar filas.
-  - [ ] Se detectan cambios concurrentes realizados por otro usuario antes de sobrescribir una decisión.
-- **Estado:** [ ] Pendiente
+  - [x] El personal autorizado de Secretaría y Dirección puede consultar y filtrar solicitudes en tiempo real.
+  - [x] Los filtros producen resultados coherentes con los registros persistidos en la hoja.
+  - [x] El modal de detalle permite revisar todos los componentes del expediente sin cambiar de pantalla.
+  - [x] Los botones de acción muestran únicamente transiciones válidas para el estado activo.
+  - [x] Una respuesta de error mantiene visible el estado real persistido en el servidor.
+  - [x] El rechazo sin justificación obligatoria no se puede confirmar.
+  - [x] Un usuario no autorizado no puede consultar ni decidir solicitudes invocando directamente el endpoint.
+  - [x] La paginación navega limpiamente sin omitir ni duplicar filas.
+  - [x] Se detectan cambios concurrentes realizados por otro usuario antes de sobrescribir una decisión.
+- **Estado:** [X] Completada
 
 ---
 

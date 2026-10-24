@@ -1377,3 +1377,15 @@ Archivos Modificados:
   - Añadido enlace directo a "Admisiones" en la barra de navegación principal.
 - login.html:
   - Añadido enlace de acceso a la solicitud de admisión para aspirantes nuevos.
+
+[TAREA-F5-005] [Fase 5 - Consola Administrativa de Revisión y Decisión de Admisiones]
+- dashboard-secretaria.html:
+  - Creación de la consola administrativa de admisiones para Secretaría General & Admisiones con tarjetas métricas, filtros avanzados por año lectivo, grado, estado y búsqueda por aspirante/DNI, tabla de solicitudes y modal de inspección `#modal-admission-detail`.
+- js/secretary.js:
+  - Implementación de controladores para la gestión de admisiones en Secretaría (`loadAdmissionRequestsList`, `updateAdmissionMetricsCards`, `filterAdmissionRequestsLocal`, `openAdmissionDetailModal`, `closeAdmissionDetailModal`, `updateAdmissionStatusAction` exigiendo justificación obligatoria de al menos 10 caracteres, y `convertAdmissionToStudentAction`).
+- dashboard-direccion.html:
+  - Enlace directo a Secretaría (`dashboard-secretaria.html`) en la barra de navegación del equipo de Dirección.
+- js/auth.js:
+  - Configuración del enrutamiento post-autenticación para dirigir usuarios con rol "Secretaría" / "Secretaria" a `dashboard-secretaria.html`.
+- backend/academic-service/Code.gs:
+  - Configuración de permisos explícitos para el rol "Secretaria" en `ROLE_PERMISSIONS` con comentario identificativo [TAREA-F5-005].

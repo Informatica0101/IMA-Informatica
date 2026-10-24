@@ -192,6 +192,19 @@ const ROLE_PERMISSIONS = {
     "changeStudentSection", "recordStudentTransfer", "recordStudentWithdrawal", "processStudentReentry",
     "openAttendanceSession", "saveClassAttendance", "getClassAttendance", "saveDailyAttendance", "getDailyAttendance", "submitAttendanceJustification", "reviewAttendanceJustification", "recordEarlyDeparture", "getAttendanceIncidents", "saveAttendanceIncident", "getAttendanceFollowupCases", "saveAttendanceFollowupCase", "addCaseFollowUpNote", "getStudentAttendanceSummary"
   ],
+  // [TAREA-F5-005] [Fase 5: Admisiones y Matrícula] - Permisos para Secretaría General & Admisiones
+  "Secretaria": [
+    "getAcademicConfig", "getAsignaturasActivas", "registerStudentEnrollment", "getStudentEnrollmentHistory",
+    "getInstitutionParams", "getAcademicYears", "getAcademicPeriods", "getSubjectCatalog", "getStudyPlans", "getAcademicOffers",
+    "createAcademicOffer", "getTeacherAssignments", "assignTeacherToClass", "createTeacherSubstitution", "getAcademicCalendar", "createCalendarEvent", "getClassSchedules", "createClassSchedule", "deleteClassSchedule", "copyClassSchedules", "getTeacherTeachingLoad", "generateAutoSchedules", "recordClassSessionOutcome", "getTeachingHoursSummary", "rescheduleCancelledSession", "getPendingSessionRecoveries", "publishClassSchedules", "getIndividualCalendar", "syncAcademicScheduleIntegrity", "getAcademicAuditLogs", "getReusableResourceCatalog", "manageReusableResource",
+    "getClassroomResources", "saveClassroomResource", "getStudentSchedule",
+    "createAdmissionRequest", "getAdmissionRequests", "updateAdmissionStatus", "convertAdmissionToStudent",
+    "getStudentFile", "updateStudentFile", "getStudentTimeline", "findDuplicateStudents",
+    "getStudentGuardians", "saveStudentGuardian", "unlinkStudentGuardian", "uploadStudentDocument", "getStudentDocuments", "updateDocumentStatus",
+    "createStudentEnrollment", "getStudentEnrollments", "renewStudentEnrollment", "checkEnrollmentCapacity",
+    "changeStudentSection", "recordStudentTransfer", "recordStudentWithdrawal", "processStudentReentry",
+    "openAttendanceSession", "saveClassAttendance", "getClassAttendance", "saveDailyAttendance", "getDailyAttendance", "submitAttendanceJustification", "reviewAttendanceJustification", "recordEarlyDeparture", "getAttendanceIncidents", "saveAttendanceIncident", "getAttendanceFollowupCases", "saveAttendanceFollowupCase", "addCaseFollowUpNote", "getStudentAttendanceSummary"
+  ],
   "Contador": ["getAcademicConfig", "registerStudentEnrollment", "getStudentEnrollmentHistory", "getAcademicYears", "getAcademicOffers", "getStudentFile", "getStudentEnrollments"],
   "Consejeros": ["getAcademicConfig", "getAcademicYears", "getAcademicCalendar", "getClassSchedules", "getStudentSchedule", "getStudentFile", "getStudentTimeline", "getStudentGuardians", "getAttendanceIncidents", "saveAttendanceIncident", "getAttendanceFollowupCases", "saveAttendanceFollowupCase", "addCaseFollowUpNote", "getStudentAttendanceSummary"],
   "Padre": [
