@@ -1300,3 +1300,11 @@ Archivos Modificados:
 [TAREA-F4-P2-04] [Fase 4 - Concurrencia y Candados Atómicos en Operaciones de Identidad]
 - backend/user-service/Code.gs:
   - Coordinada la gestión de concurrencia mediante LockService.getScriptLock() con tiempo de espera de 10.000ms y bloques try...finally { lock.releaseLock(); } en createSecurityDelegation, revokeSecurityDelegation, updateUserProfile y manageAccountState para garantizar escrituras consistentes y prevenir condiciones de carrera.
+
+[TAREA-F4-P2-05] [Fase 4 - Consolidación de Documentación Institucional de Privacidad y Retención de Datos]
+- politica-de-privacidad.html:
+  - Actualizada la sección de políticas con desglose explícito de los plazos de retención de datos (6 meses para bitácoras, 30 días para sesiones, anonimización tras 2 años para cuentas inactivas y conservación obligatoria permanente para expedientes académicos y registros financieros) y especificación de los derechos ARCO de privacidad.
+- politica-de-uso.html:
+  - Sincronizada la sección 7 para referenciar la aplicación de controles RBAC/ABAC, la observancia de plazos institucionales de retención y la protección de derechos ARCO.
+- politica-financiera.html:
+  - Actualizada la sección 2 especificando la emisión de comprobantes CUV y la conservación legal obligatoria permanente de registros contables y fiscales conforme a la SAR.

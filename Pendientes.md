@@ -263,7 +263,7 @@
   - [X] Operaciones simultáneas producen resultados consistentes sin sobreescrituras accidentales.
 - **Estado:** [X] Completada
 
-### [ ] [TAREA-F4-P2-05] Consolidar la documentación institucional de privacidad y tratamiento de datos
+### [X] [TAREA-F4-P2-05] Consolidar la documentación institucional de privacidad y tratamiento de datos
 - **Origen del Hallazgo:** Auditoría de la Fase 4 (AUDITORIA_FASE4_IDENTIDAD_PERMISOS_GOBIERNO.md)
 - **Severidad/Clasificación:** Medio · Privacidad · Documentación
 - **Archivos Involucrados:** `politica-de-privacidad.html`, `politica-de-uso.html`, `politica-financiera.html`
@@ -271,8 +271,8 @@
 - **Descripción del Alcance:**
   1. Actualizar páginas HTML de políticas para reflejar con precisión los plazos de retención y derechos de datos.
 - **Criterios de Aceptación:**
-  - [ ] Las páginas de políticas están sincronizadas con la arquitectura del sistema.
-- **Estado:** [ ] Pendiente
+  - [X] Las páginas de políticas están sincronizadas con la arquitectura del sistema.
+- **Estado:** [X] Completada
 
 ---
 
