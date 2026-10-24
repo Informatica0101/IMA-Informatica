@@ -117,6 +117,7 @@ function getOrCreateSheet(ss, name) {
     // Nuevas Tablas Fase 4 - Expedientes, Admisiones y Matrículas
     if (name === "ExpedientesEstudiantes") sheet.appendRow(["ExpedienteID", "PersonaID", "CodigoInstitucional", "FechaNacimiento", "Nacionalidad", "DireccionResidencia", "FotografiaUrl", "EstadoExpediente", "FechaCreacion", "FechaActualizacion", "Observaciones"]);
     if (name === "SolicitudesAdmision") sheet.appendRow(["SolicitudID", "FechaSolicitud", "AnoLectivo", "GradoSolicitado", "NombresAspirante", "ApellidosAspirante", "Identificacion", "FechaNacimiento", "NombreResponsable", "TelefonoContacto", "EmailContacto", "EstadoSolicitud", "CanalIngreso", "Observaciones", "ExpedienteID"]);
+    if (name === "BorradoresAdmision") sheet.appendRow(["BorradorID", "IdentificadorUsuario", "EmailResponsable", "DatosDraftJSON", "FechaCreacion", "FechaActualizacion", "Estado"]);
     if (name === "ResponsablesTutores") sheet.appendRow(["ResponsableID", "PersonaID", "Nombres", "Apellidos", "Identificacion", "Telefono", "Email", "Direccion", "Ocupacion", "Estado"]);
     if (name === "RelacionesEstudianteTutor") sheet.appendRow(["RelacionID", "ExpedienteID", "ResponsableID", "TipoParentesco", "EsRepresentanteLegal", "EsContactoEmergencia", "EsResponsableFinanciero", "AutorizadoPickUp", "AccesoPortal", "Estado", "Observaciones"]);
     if (name === "DocumentosEstudiante") sheet.appendRow(["DocumentoID", "ExpedienteID", "SolicitudID", "TipoDocumento", "NombreArchivo", "DriveFileId", "DriveUrl", "FechaRecepcion", "FechaVencimiento", "EstadoRevision", "SubidoPor", "ValidadoPor", "Observaciones"]);
@@ -240,7 +241,7 @@ const ROLE_PERMISSIONS = {
   "Alumno": ["getAcademicConfig", "getAcademicHistory", "getAsignaturasActivas", "getWhatsAppLink", "getStudentEnrollmentHistory", "getAcademicYears", "getAcademicPeriods", "getAcademicOffers", "getAcademicCalendar", "getClassSchedules", "getStudentSchedule", "getStudentFile", "getStudentTimeline", "getStudentDocuments", "getStudentEnrollments", "submitAttendanceJustification", "getStudentAttendanceSummary", "getAttendanceIncidents"]
 };
 
-const PUBLIC_ACTIONS = ["ping", "createAdmissionRequest", "getPublicAdmissionStatus"];
+const PUBLIC_ACTIONS = ["ping", "createAdmissionRequest", "getPublicAdmissionStatus", "saveAdmissionDraft", "getAdmissionDraft"];
 
 // [FASE2-T02] [Fase 2 - Idempotencia de Operaciones] - Mecanismo de verificación de claves de idempotencia, caché de resultados y prevención de duplicación por reintentos HTTP.
 function getIdempotencyPayloadSignature(payload) {
@@ -664,6 +665,8 @@ function doPost(e) {
       // Nuevos Endpoints Fase 4 - Admisiones, Expedientes, Matrículas y Movimientos
       case "createAdmissionRequest": result = createAdmissionRequest(payload); break;
       case "getAdmissionRequests": result = getAdmissionRequests(payload); break;
+      case "saveAdmissionDraft": result = saveAdmissionDraft(payload); break;
+      case "getAdmissionDraft": result = getAdmissionDraft(payload); break;
       case "getPublicAdmissionStatus": result = getPublicAdmissionStatus(payload); break;
       case "updateAdmissionStatus": result = updateAdmissionStatus(payload); break;
       case "scheduleAdmissionInterview": result = scheduleAdmissionInterview(payload); break;
@@ -849,6 +852,19 @@ function createAdmissionRequest(payload) {
       logStructuredEvent("ACADEMIC", "createAdmissionRequest", "WARN", "NOTIF_DISPATCH_FAILED", `Fallo no bloqueante de notificación: ${notifErr.message}`, { solicitudId });
     }
 
+    // [TAREA-F5-015] Purgar borrador al enviar la solicitud formalmente
+    try {
+      const draftKey = (emailContacto || identificacion || "").toLowerCase().trim();
+      if (draftKey) {
+        const draftSheet = getOrCreateSheet(ss, "BorradoresAdmision");
+        const dData = draftSheet.getDataRange().getValues();
+        const dIdx = dData.findIndex(r => String(r[1] || "").toLowerCase().trim() === draftKey || String(r[2] || "").toLowerCase().trim() === draftKey);
+        if (dIdx !== -1) {
+          draftSheet.getRange(dIdx + 1, 7).setValue("Consumido");
+        }
+      }
+    } catch (_) {}
+
     return result;
 
   } finally {
@@ -887,6 +903,83 @@ function getAdmissionRequests(payload) {
   }));
 
   return { status: "success", requests: mapped };
+}
+
+// [TAREA-F5-015] [Fase 5: Admisiones y Portal de Familias] - Guardado y recuperación híbrida de borradores de admisión
+function saveAdmissionDraft(payload) {
+  const { draftKey, draftDataJSON, emailResponsable } = payload || {};
+  if (!draftDataJSON) throw new Error("draftDataJSON es requerido.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "BorradoresAdmision");
+  const data = sheet.getDataRange().getValues();
+
+  const userKey = (draftKey || emailResponsable || "ANONIMO").toLowerCase().trim();
+  const now = new Date();
+
+  let idx = -1;
+  if (userKey !== "anonimo") {
+    idx = data.findIndex(r => String(r[1] || "").toLowerCase().trim() === userKey || String(r[2] || "").toLowerCase().trim() === userKey);
+  }
+
+  if (idx !== -1) {
+    sheet.getRange(idx + 1, 4).setValue(draftDataJSON);
+    sheet.getRange(idx + 1, 6).setValue(now);
+    sheet.getRange(idx + 1, 7).setValue("Borrador");
+    return {
+      status: "success",
+      borradorId: data[idx][0],
+      fechaActualizacion: now.toISOString(),
+      message: "Borrador de admisión actualizado en la nube."
+    };
+  }
+
+  const idGen = generateInstitutionalId({ entityType: "BorradorAdmision", prefix: "DFT-", skipLock: true });
+  const draftId = (idGen && idGen.generatedId) ? idGen.generatedId : ("DFT-" + Date.now());
+
+  sheet.appendRow([
+    draftId,
+    userKey,
+    emailResponsable || "",
+    draftDataJSON,
+    now,
+    now,
+    "Borrador"
+  ]);
+
+  return {
+    status: "success",
+    borradorId: draftId,
+    fechaActualizacion: now.toISOString(),
+    message: "Borrador de admisión guardado en la nube."
+  };
+}
+
+function getAdmissionDraft(payload) {
+  const { draftKey, emailResponsable } = payload || {};
+  const userKey = (draftKey || emailResponsable || "").toLowerCase().trim();
+  if (!userKey) throw new Error("draftKey o emailResponsable es requerido.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "BorradoresAdmision");
+  const data = sheet.getDataRange().getValues().slice(1);
+
+  const found = data.find(r => (String(r[1] || "").toLowerCase().trim() === userKey || String(r[2] || "").toLowerCase().trim() === userKey) && String(r[6]).trim() === "Borrador");
+
+  if (!found) {
+    return { status: "success", found: false, message: "No se encontró ningún borrador activo." };
+  }
+
+  let draftObj = {};
+  try { draftObj = JSON.parse(found[3]); } catch (_) {}
+
+  return {
+    status: "success",
+    found: true,
+    borradorId: found[0],
+    fechaActualizacion: found[5] ? new Date(found[5]).toISOString() : "",
+    draftData: draftObj
+  };
 }
 
 // [TAREA-F5-004] [Fase 5: Admisiones y Matrícula] - Endpoint seguro de consulta pública de estado de admisión sanitizando PII de terceros

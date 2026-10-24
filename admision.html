@@ -57,7 +57,13 @@
         <!-- SECCIÓN 1: FORMULARIO DE ADMISIÓN (STEPPER) -->
         <section id="section-solicitud" class="bg-white rounded-3xl p-6 md:p-10 shadow-xl border border-gray-100">
             <div class="text-center mb-8">
-                <span class="inline-block px-3 py-1 bg-blue-50 text-blue-700 text-[11px] font-bold uppercase tracking-wider rounded-full mb-2">Proceso Lectivo 2026</span>
+                <div class="flex items-center justify-between mb-2">
+                    <span class="inline-block px-3 py-1 bg-blue-50 text-blue-700 text-[11px] font-bold uppercase tracking-wider rounded-full">Proceso Lectivo 2026</span>
+                    <!-- [TAREA-F5-015] Indicador de guardado automático de borradores -->
+                    <span id="draft-save-indicator" class="text-[11px] font-semibold text-gray-400 flex items-center gap-1">
+                        <i class="fas fa-save text-gray-300"></i> Borrador limpio
+                    </span>
+                </div>
                 <h2 class="text-2xl md:text-3xl font-black text-gray-900 tracking-tight">Solicitud de Admisión de Aspirante</h2>
                 <p class="text-xs md:text-sm text-gray-500 mt-2 max-w-xl mx-auto">Complete el formulario formal para iniciar el trámite de postulación académica en New Generation Christian Academy.</p>
             </div>
@@ -636,6 +642,113 @@
                 alert('Código de seguimiento copiado al portapapeles: ' + code);
             });
         }
+
+        // [TAREA-F5-015] Implementación del guardado automático de borradores en segundo plano con debounce de 3s y recuperación
+        let autoSaveTimer = null;
+
+        function updateDraftSaveIndicator(statusText, iconClass = "fa-save text-blue-500") {
+            const indicator = document.getElementById('draft-save-indicator');
+            if (indicator) {
+                indicator.innerHTML = `<i class="fas ${iconClass}"></i> ${statusText}`;
+            }
+        }
+
+        function collectFormData() {
+            const form = document.getElementById('admission-form');
+            if (!form) return {};
+            const formData = new FormData(form);
+            const data = {};
+            formData.forEach((value, key) => { data[key] = value; });
+            return data;
+        }
+
+        function triggerAdmissionAutoSave() {
+            if (autoSaveTimer) clearTimeout(autoSaveTimer);
+            updateDraftSaveIndicator("Modificaciones pendientes...", "fa-circle-notch fa-spin text-amber-500");
+
+            autoSaveTimer = setTimeout(async () => {
+                const draftData = collectFormData();
+                const draftKey = (draftData.emailContacto || draftData.identificacion || "draft_local").toLowerCase().trim();
+
+                // 1. Guardar copia local inmediata en localStorage
+                try {
+                    localStorage.setItem('ngca_admission_draft_' + draftKey, JSON.stringify({
+                        timestamp: new Date().toISOString(),
+                        data: draftData
+                    }));
+                } catch (_) {}
+
+                // 2. Sincronización con backend si existe clave
+                if (draftKey && draftKey !== "draft_local") {
+                    try {
+                        await window.fetchApi('ACADEMIC', 'saveAdmissionDraft', {
+                            draftKey: draftKey,
+                            emailResponsable: draftData.emailContacto || "",
+                            draftDataJSON: JSON.stringify(draftData)
+                        });
+                        updateDraftSaveIndicator("Borrador guardado en nube", "fa-cloud-arrow-up text-green-500");
+                    } catch (_) {
+                        updateDraftSaveIndicator("Borrador guardado localmente", "fa-check text-blue-500");
+                    }
+                } else {
+                    updateDraftSaveIndicator("Borrador guardado localmente", "fa-check text-blue-500");
+                }
+            }, 3000);
+        }
+
+        function restoreAdmissionDraftOnLoad() {
+            try {
+                const keys = Object.keys(localStorage).filter(k => k.indexOf('ngca_admission_draft_') === 0);
+                if (keys.length > 0) {
+                    const raw = localStorage.getItem(keys[0]);
+                    if (raw) {
+                        const parsed = JSON.parse(raw);
+                        if (parsed && parsed.data) {
+                            const form = document.getElementById('admission-form');
+                            Object.keys(parsed.data).forEach(field => {
+                                const input = form.querySelector(`[name="${field}"]`);
+                                if (input && parsed.data[field]) {
+                                    input.value = parsed.data[field];
+                                }
+                            });
+                            updateDraftSaveIndicator("Borrador restaurado", "fa-clock-rotate-left text-indigo-500");
+                        }
+                    }
+                }
+            } catch (e) {
+                console.warn("Fallo al restaurar borrador local:", e);
+            }
+        }
+
+        async function fetchAcademicOffers() {
+            try {
+                const res = await window.fetchApi('ACADEMIC', 'getAcademicOffers', { anoId: '2026' });
+                if (res && res.status === 'success' && Array.isArray(res.data)) {
+                    const gradeSelect = document.getElementById('gradoSolicitado');
+                    if (gradeSelect && res.data.length > 0) {
+                        const gradesMap = {};
+                        res.data.forEach(o => { if (o.grado) gradesMap[o.grado] = true; });
+                        const availableGrades = Object.keys(gradesMap);
+                        if (availableGrades.length > 0) {
+                            gradeSelect.innerHTML = '<option value="">-- Seleccionar Grado --</option>' + availableGrades.map(g => `<option value="${g}">${g}</option>`).join('');
+                        }
+                    }
+                }
+            } catch (err) {
+                console.warn("Consulta de oferta académica diferida:", err);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchAcademicOffers();
+            restoreAdmissionDraftOnLoad();
+
+            const form = document.getElementById('admission-form');
+            if (form) {
+                form.addEventListener('input', triggerAdmissionAutoSave);
+                form.addEventListener('change', triggerAdmissionAutoSave);
+            }
+        });
     </script>
 </body>
 </html>

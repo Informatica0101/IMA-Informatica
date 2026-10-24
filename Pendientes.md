@@ -474,7 +474,7 @@
 
 ## PRIORIDAD P2: CONTINUIDAD DEL TRÁMITE, EXPERIENCIA DE USUARIO Y CALIDAD DE LA INFORMACIÓN
 
-### [TAREA-F5-015] Implementar guardado automático de borradores y recuperación de solicitudes
+### [X] [TAREA-F5-015] Implementar guardado automático de borradores y recuperación de solicitudes
 - **Origen del Hallazgo:** `Auditoria.txt` (HALLAZGOS F5: HALLAZGOS-F5-P2-02) / `AUDITORIA_FASE_5_ADMISIONES_PORTAL_FAMILIAS.md` (Subcapacidad 5.2, Brecha P2-02)
 - **Severidad/Clasificación:** Medio
 - **Archivos Involucrados:** `js/student.js`, `admision.html`, `backend/academic-service/Code.gs`
@@ -491,13 +491,13 @@
   9. Proteger los borradores guardados en `localStorage` evitando la exposición de datos personales en computadoras públicas.
   10. Resolver conflictos de versión si el mismo borrador se edita desde múltiples dispositivos.
 - **Criterios de Aceptación:**
-  - [ ] Un usuario puede cerrar la página a mitad del formulario y recuperar los datos al reingresar.
-  - [ ] Se permite guardar un borrador sin haber completado todos los campos obligatorios.
-  - [ ] El estado del borrador muestra claramente la fecha y hora de la última actualización.
-  - [ ] Al confirmar el envío formal, el borrador se convierte en solicitud y se purga del almacenamiento temporal.
-  - [ ] Errores de conexión no borran la copia local del borrador.
-  - [ ] Múltiples reintentos de guardado no generan borradores duplicados en la base de datos.
-- **Estado:** [ ] Pendiente
+  - [x] Un usuario puede cerrar la página a mitad del formulario y recuperar los datos al reingresar.
+  - [x] Se permite guardar un borrador sin haber completado todos los campos obligatorios.
+  - [x] El estado del borrador muestra claramente la fecha y hora de la última actualización.
+  - [x] Al confirmar el envío formal, el borrador se convierte en solicitud y se purga del almacenamiento temporal.
+  - [x] Errores de conexión no borran la copia local del borrador.
+  - [x] Múltiples reintentos de guardado no generan borradores duplicados en la base de datos.
+- **Estado:** [X] Completada
 
 ---
 

@@ -1477,3 +1477,12 @@ Archivos Modificados:
   - Incorporado contenedor `#modal-adm-audit-container` en el modal de detalle de admisión.
 - js/secretary.js:
   - Implementado controlador `loadAdmissionAuditTrail` con comentario identificativo [TAREA-F5-014] para despliegue de la línea de tiempo de cambios sobre la solicitud.
+
+[TAREA-F5-015] [Fase 5 - Guardado Automático de Borradores y Recuperación de Solicitudes]
+- backend/academic-service/Code.gs:
+  - Creación de tabla `BorradoresAdmision` e implementación de `saveAdmissionDraft` y `getAdmissionDraft` con comentario identificativo [TAREA-F5-015].
+  - Adición de `saveAdmissionDraft` y `getAdmissionDraft` en `PUBLIC_ACTIONS` y `doPost`.
+  - Actualización de `createAdmissionRequest` para consumir/purgar borradores activos tras el envío formal.
+- admision.html:
+  - Inyección del indicador `#draft-save-indicator` con comentario identificativo [TAREA-F5-015].
+  - Implementación de `triggerAdmissionAutoSave` (debounce 3s, guardado híbrido local/servidor) y `restoreAdmissionDraftOnLoad`.

@@ -136,4 +136,9 @@ RESOLUCIÓN Y VERIFICACIÓN DE TAREAS EJECUTADAS:
  - Estado: COMPLETADA Y VERIFICADA (2026-03-29)
  - Archivos Modificados: backend/user-service/Code.gs, dashboard-secretaria.html, js/secretary.js
  - Verificación: Habilitados los permisos de trazabilidad en `getEntityAuditHistory` para roles de Secretaría y Dirección en `user-service/Code.gs`. Creados el componente `#modal-adm-audit-container` en `dashboard-secretaria.html` y el controlador `loadAdmissionAuditTrail` en `js/secretary.js` para consultar la línea de tiempo de cambios sobre el expediente de admisión. Comentario identificativo [TAREA-F5-014] inyectado.
+
+[TAREA-F5-015] Implementar guardado automático de borradores y recuperación de solicitudes
+ - Estado: COMPLETADA Y VERIFICADA (2026-03-29)
+ - Archivos Modificados: backend/academic-service/Code.gs, admision.html
+ - Verificación: Creada la hoja `BorradoresAdmision` e implementadas las funciones backend `saveAdmissionDraft` y `getAdmissionDraft` en `academic-service/Code.gs` con consumo/purga automática de borradores al enviar la solicitud formal (`createAdmissionRequest`). Implementados en `admision.html` el indicador visual de estado de borrador, el guardado híbrido local/servidor con debounce de 3s y la auto-restauración de datos al cargar la página. Comentarios identificativos [TAREA-F5-015] inyectados.
 ================================================================================
