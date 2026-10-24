@@ -1163,9 +1163,9 @@ function validateContextualAccess(action, payload, verifiedUserId, userRole) {
   if (userRole === "Padre" || userRole === "Tutor" || userRole === "Responsable") {
     if (targetStudentId && verifiedUserId && String(targetStudentId).trim() !== String(verifiedUserId).trim()) {
       try {
-        const guardianRes = getGuardianStudents({ userId: verifiedUserId });
+        const guardianRes = getGuardianStudents({ userId: verifiedUserId, _verifiedUserId: verifiedUserId, _verifiedRole: userRole });
         const linkedStudents = (guardianRes.data || []);
-        const match = linkedStudents.find(s => String(s.studentUserId || s.userId).trim() === String(targetStudentId).trim());
+        const match = linkedStudents.find(s => String(s.studentUserId || s.userId || s.expedienteEstudianteId).trim() === String(targetStudentId).trim());
         if (!match) {
           return { authorized: false, reason: "Aislamiento estricto de tutor: el estudiante no está vinculado al tutor." };
         }
@@ -1178,7 +1178,9 @@ function validateContextualAccess(action, payload, verifiedUserId, userRole) {
             }
           }
         }
-      } catch (e) {}
+      } catch (e) {
+        return { authorized: false, reason: "Aislamiento estricto de tutor: fallo al verificar vinculación familiar: " + e.message };
+      }
     }
   }
 
@@ -3285,6 +3287,15 @@ function getGuardianStudents(payload) {
   if (!uid) throw new Error("userIdResponsable es requerido.");
 
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+
+  // Mapear expedientes a PersonaID / UserId
+  const expSheet = getOrCreateSheet(ss, "ExpedientesEstudiantes");
+  const expData = expSheet.getDataRange().getValues().slice(1);
+  const expToUserMap = {};
+  expData.forEach(e => {
+    if (e[0]) expToUserMap[String(e[0]).trim()] = String(e[1] || e[0]).trim();
+  });
+
   const usersSheet = getOrCreateSheet(ss, "Usuarios");
   const usersData = usersSheet.getDataRange().getValues().slice(1);
   const usersMap = {};
@@ -3312,8 +3323,9 @@ function getGuardianStudents(payload) {
     verifiedStudents = relData.slice(1).filter(r => {
       return String(r[2]).trim() === String(uid).trim() && (r[4] === "Verificada" || r[4] === "Activa" || r[4] === "Aprobada");
     }).map(r => {
-      const studentId = String(r[1]).trim();
-      const u = usersMap[studentId] || { userId: studentId, nombre: "Estudiante " + studentId, grado: "", seccion: "" };
+      const expId = String(r[1]).trim();
+      const mappedUserId = expToUserMap[expId] || expId;
+      const u = usersMap[mappedUserId] || usersMap[expId] || { userId: mappedUserId, nombre: "Estudiante " + expId, grado: "", seccion: "" };
       let permsObj = { permisoAcademico: true, permisoFinanciero: true, permisoDocumental: true, permisoAsistencia: true };
       try {
         if (r[8]) permsObj = typeof r[8] === "string" ? JSON.parse(r[8]) : r[8];
@@ -3321,8 +3333,8 @@ function getGuardianStudents(payload) {
       return {
         relacionId: r[0],
         expedienteEstudianteId: r[1],
-        studentUserId: u.userId || studentId,
-        userId: u.userId || studentId,
+        studentUserId: u.userId || expId,
+        userId: u.userId || expId,
         nombre: u.nombre,
         grado: u.grado,
         seccion: u.seccion,

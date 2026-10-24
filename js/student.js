@@ -268,10 +268,24 @@ document.addEventListener('DOMContentLoaded', function() {
 
         cont.innerHTML = '<div class="text-center py-6 text-slate-500 text-xs font-semibold"><i class="fas fa-circle-notch fa-spin mr-2"></i> Cargando seguimiento de solicitud ' + solicitudId + '...</div>';
 
-        fetchApi('ACADEMIC', 'getAdmissionRequests', { solicitudId: solicitudId })
+        fetchApi('USER', 'getGuardianApplicants', {})
             .then(function(res) {
-                if (res && res.status === 'success' && Array.isArray(res.requests) && res.requests.length > 0) {
-                    var req = res.requests[0];
+                var applicants = (res && res.status === 'success' && Array.isArray(res.data)) ? res.data : [];
+                var req = applicants.find(function(a) { return String(a.solicitudId).trim() === String(solicitudId).trim(); });
+
+                if (!req) {
+                    // Intentar consulta por servicio público si no viene en lista de guardianes
+                    return fetchApi('ACADEMIC', 'getPublicAdmissionStatus', { searchKey: solicitudId }).then(function(pubRes) {
+                        if (pubRes && pubRes.status === 'success' && pubRes.found && pubRes.request) {
+                            return pubRes.request;
+                        }
+                        return null;
+                    });
+                }
+                return req;
+            })
+            .then(function(req) {
+                if (req) {
                     var statusColors = {
                         "Recibida": "bg-blue-100 text-blue-800",
                         "En_Revision": "bg-yellow-100 text-yellow-800",

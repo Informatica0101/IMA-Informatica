@@ -1509,3 +1509,18 @@ Archivos Modificados:
   - Modificación de `initFamilyStudentSwitcher` con comentario identificativo [TAREA-F5-018] para ejecutar el refresco integral de todos los paneles académicos y administrativos (`renderStudentHeader`, `fetchAllActivities`, `fetchAndRenderFormativeEvaluations`, `fetchAndRenderStudentAttendanceSummary`, `fetchAndRenderStudentAdministrativeRequests`, `fetchAndRenderStudentSchedule`, `fetchAndRenderVirtualClassroom`, `fetchAndRenderLearningProfile`, `loadStudentAcademicResults`) al conmutar entre hijos sin mezclar datos.
   - Aislamiento de claves de caché local (`cache_estudiante_dashboard_<userId>` y `cache_estudiante_profile_<userId>`) para prevenir infiltración de contexto.
   - Actualización de `renderFamilyConsolidatedSummary` para renderizar insignias explícitas de solvencia (`L. 0.00 (Solvente)`) y bloqueo de saldos para tutores sin `PermisoFinanciero`.
+
+[TAREA-F5-019] [Fase 5 - Herramientas de Seguimiento Operativo y Análisis de Admisiones]
+- backend/academic-service/Code.gs:
+  - Implementación de la función backend `getAdmissionAnalyticsReport` con comentario identificativo [TAREA-F5-019], calculando métricas consolidadas (total de solicitudes, desgloses por estado, tasa de conversión a matrícula %, tiempo promedio de tramitación en días, detección de embotellamientos estancados > 7 días, embudo por grado académico, muestra de motivos de rechazo y cadena CSV sanitizada para descarga).
+  - Adición de permiso "getAdmissionAnalyticsReport" en `ROLE_PERMISSIONS` para roles Direccion y Administrador, y enrutador `doPost`.
+- dashboard-direccion.html:
+  - Inserción del botón `#btn-admission-analytics` en la botonera de Dirección y la interfaz modal `#modal-admission-analytics` con tarjetas de métricas, distribución de estados, embudo por grado, registro de rechazos y descarga de reportes.
+- js/teacher.js:
+  - Implementación de los controladores globales `window.openAdmissionAnalyticsModal`, `window.loadAdmissionAnalyticsData` y `window.exportAdmissionAnalyticsCSV` con comentario identificativo [TAREA-F5-019] ubicados en el ámbito superior global.
+
+[TAREA-F5-020] [Fase 5 - Optimización de Consultas, Sincronización y Capacidad de Respuesta de Admisiones]
+- backend/academic-service/Code.gs:
+  - Reestructuración de `getAdmissionRequests` con comentario identificativo [TAREA-F5-020], incorporando paginación en servidor (`page`, `pageSize`), cálculo de metadatos (`totalRecords`, `totalPages`) y monitoreo de tiempo de ejecución con registro de alertas `LATENCY_THRESHOLD_EXCEEDED` si supera los 2,000 ms.
+  - Implementación de caché selectiva de 10 minutos (600s) mediante `CacheService` en `getAcademicOffers` con indicador de caché `_cached: true`.
+  - Inyección de invalidación de caché explícita en `createAcademicOffer` y purga de catálogos en `purgeSecurityCaches`.

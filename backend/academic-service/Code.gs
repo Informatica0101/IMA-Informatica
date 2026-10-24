@@ -876,17 +876,35 @@ function createAdmissionRequest(payload) {
   }
 }
 
+// [TAREA-F5-020] [Fase 5: Optimización de Admisiones] - Consulta con paginación en servidor, ordenamiento y monitoreo de latencia (>2000ms)
 function getAdmissionRequests(payload) {
-  const { estado, anolectivo, grado } = payload || {};
+  const startTime = new Date().getTime();
+  const { estado, anolectivo, grado, solicitudId, page, pageSize, fetchAll } = payload || {};
+
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
   const rows = getOrCreateSheet(ss, "SolicitudesAdmision").getDataRange().getValues().slice(1);
 
   let filtered = rows;
+  if (solicitudId) filtered = filtered.filter(r => String(r[0]).trim() === String(solicitudId).trim());
   if (estado) filtered = filtered.filter(r => String(r[11]).trim() === String(estado).trim());
   if (anolectivo) filtered = filtered.filter(r => String(r[2]).trim() === String(anolectivo).trim());
   if (grado) filtered = filtered.filter(r => normalizeString(r[3]) === normalizeString(grado));
 
-  const mapped = filtered.map(r => ({
+  const totalRecords = filtered.length;
+  let paginatedRows = filtered;
+  let pageNum = 1;
+  let limit = totalRecords || 1;
+  let totalPages = 1;
+
+  if (!fetchAll && page !== undefined) {
+    pageNum = parseInt(page, 10) || 1;
+    limit = parseInt(pageSize, 10) || 50;
+    totalPages = Math.ceil(totalRecords / limit) || 1;
+    const startIndex = (pageNum - 1) * limit;
+    paginatedRows = filtered.slice(startIndex, startIndex + limit);
+  }
+
+  const mapped = paginatedRows.map(r => ({
     solicitudId: r[0],
     fechaSolicitud: r[1],
     anolectivo: r[2],
@@ -904,7 +922,21 @@ function getAdmissionRequests(payload) {
     expedienteId: r[14]
   }));
 
-  return { status: "success", requests: mapped };
+  const durationMs = new Date().getTime() - startTime;
+  if (durationMs > 2000) {
+    logStructuredEvent("ACADEMIC", "getAdmissionRequests", "WARN", "LATENCY_THRESHOLD_EXCEEDED", `Consulta de solicitudes de admisión excedió el umbral óptimo (${durationMs}ms)`, { totalRecords, durationMs });
+  }
+
+  return {
+    status: "success",
+    requests: mapped,
+    pagination: {
+      currentPage: pageNum,
+      pageSize: limit,
+      totalRecords: totalRecords,
+      totalPages: totalPages
+    }
+  };
 }
 
 // [TAREA-F5-015] [Fase 5: Admisiones y Portal de Familias] - Guardado y recuperación híbrida de borradores de admisión
@@ -2662,7 +2694,7 @@ function generateInstitutionalUUID(payload) {
   };
 }
 
-// [TAREA-F4-P1-08] [Fase 4: Propagación y Recuperación de Cambios de Seguridad] - Purga de cachés de seguridad local
+// [TAREA-F4-P1-08] [TAREA-F5-020] [Fase 4 y 5: Propagación de Seguridad y Purga de Cachés de Admisiones]
 function purgeSecurityCaches(payload) {
   const eventType = (payload && payload.eventType) || "GENERIC_PURGE";
   const targetUserId = payload && payload.targetUserId;
@@ -3904,8 +3936,19 @@ function createStudyPlan(payload) {
   return { status: "success", message: "Plan de estudio registrado.", data: { planId } };
 }
 
+// [TAREA-F5-020] [Fase 5: Optimización de Admisiones] - Caché selectiva de catálogos estáticos (10 min TTL) e invalidación
 function getAcademicOffers(payload) {
   const { anoId, grado, seccion } = payload || {};
+  const cacheKey = `offers_${anoId || 'ALL'}_${grado || 'ALL'}_${seccion || 'ALL'}`;
+
+  try {
+    const cache = CacheService.getScriptCache();
+    const cachedData = cache.get(cacheKey);
+    if (cachedData) {
+      return { status: "success", data: JSON.parse(cachedData), _cached: true };
+    }
+  } catch (_) {}
+
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
   const sheet = getOrCreateSheet(ss, "OfertaAcademica");
   const data = sheet.getDataRange().getValues();
@@ -3925,6 +3968,12 @@ function getAcademicOffers(payload) {
     planId: r[5],
     estado: r[6] || "Activa"
   }));
+
+  try {
+    const cache = CacheService.getScriptCache();
+    cache.put(cacheKey, JSON.stringify(offers), 600); // 10 minutos TTL
+  } catch (_) {}
+
   return { status: "success", data: offers };
 }
 
@@ -3940,6 +3989,13 @@ function createAcademicOffer(payload) {
 
   const ofertaId = "OFE-" + Date.now();
   sheet.appendRow([ofertaId, anoId || "ANO-CURRENT", grado, seccion || "A", asignaturaId, planId || "PLAN-DEFAULT", "Activa"]);
+
+  // Invalidación de caché de ofertas académicas
+  try {
+    const cache = CacheService.getScriptCache();
+    cache.remove(`offers_${anoId || 'ALL'}_${grado || 'ALL'}_${seccion || 'ALL'}`);
+    cache.remove("offers_ALL_ALL_ALL");
+  } catch (_) {}
 
   return { status: "success", message: "Oferta académica registrada.", data: { ofertaId } };
 }
@@ -6366,13 +6422,13 @@ function getAdmissionAnalyticsReport(payload) {
     };
   }
 
-  const headers = rows[0];
-  const idxAno = headers.indexOf("anoLectivo");
-  const idxEstado = headers.indexOf("estadoSolicitud");
-  const idxFechaRec = headers.indexOf("fechaRecepcion");
-  const idxFechaMod = headers.indexOf("fechaUltimaModificacion");
-  const idxGrado = headers.indexOf("gradoSolicitado");
-  const idxMotivo = headers.indexOf("motivoRechazo") !== -1 ? headers.indexOf("motivoRechazo") : headers.indexOf("observacionesInternas");
+  const headers = rows[0].map(h => String(h || "").trim().toLowerCase());
+  const idxAno = headers.indexOf("anolectivo") !== -1 ? headers.indexOf("anolectivo") : 2;
+  const idxEstado = headers.indexOf("estadosolicitud") !== -1 ? headers.indexOf("estadosolicitud") : 11;
+  const idxFechaRec = headers.indexOf("fechasolicitud") !== -1 ? headers.indexOf("fechasolicitud") : (headers.indexOf("fecharecepcion") !== -1 ? headers.indexOf("fecharecepcion") : 1);
+  const idxFechaMod = headers.indexOf("fechaactualizacion") !== -1 ? headers.indexOf("fechaactualizacion") : (headers.indexOf("fechamodificacion") !== -1 ? headers.indexOf("fechamodificacion") : -1);
+  const idxGrado = headers.indexOf("gradosolicitado") !== -1 ? headers.indexOf("gradosolicitado") : 3;
+  const idxMotivo = headers.indexOf("observaciones") !== -1 ? headers.indexOf("observaciones") : (headers.indexOf("motivorechazo") !== -1 ? headers.indexOf("motivorechazo") : 13);
 
   const filtered = rows.slice(1).filter(r => {
     if (idxAno === -1) return true;
@@ -6428,7 +6484,7 @@ function getAdmissionAnalyticsReport(payload) {
     if (estado === "Rechazada" && idxMotivo !== -1 && r[idxMotivo]) {
       motivosRechazoMuestra.push({
         solicitudId: r[0],
-        nombreAspirante: `${r[2] || ''} ${r[3] || ''}`.trim(),
+        nombreAspirante: `${r[4] || ''} ${r[5] || ''}`.trim() || 'Aspirante',
         motivo: String(r[idxMotivo]).trim()
       });
     }

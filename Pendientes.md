@@ -621,7 +621,7 @@
 
 ---
 
-### [TAREA-F5-020] Optimizar las consultas, la sincronización y la capacidad de respuesta del proceso de admisión
+### [X] [TAREA-F5-020] Optimizar las consultas, la sincronización y la capacidad de respuesta del proceso de admisión
 - **Origen del Hallazgo:** `Auditoria.txt` (HALLAZGOS F5: HALLAZGOS-F5-P3-01) / `AUDITORIA_FASE_5_ADMISIONES_PORTAL_FAMILIAS.md` (Subcapacidad 5.15, Brecha P3-01)
 - **Severidad/Clasificación:** Bajo
 - **Archivos Involucrados:** `backend/academic-service/Code.gs`, `backend/user-service/Code.gs`, `js/api.js`
@@ -635,12 +635,12 @@
   6. Definir límites de tamaño de peticiones y control de velocidad (*rate limiting*) para prevenir abuso de endpoints públicos.
   7. Monitorear tiempos de ejecución y registrar advertencias si un endpoint de admisión supera los 2000 ms.
 - **Criterios de Aceptación:**
-  - [ ] Las listas de solicitudes cargan mediante paginación en servidor sin retrasos visuales.
-  - [ ] Catálogos estáticos se recuperan desde la caché reduciendo lecturas a las hojas de cálculo.
-  - [ ] La invalidación de caché funciona en tiempo real al actualizar un registro de admisión.
-  - [ ] Las consultas del portal familiar responden en menos de 1.5 segundos en condiciones normales.
-  - [ ] Pruebas de estrés verifican que la optimización no corrompe la integridad de los datos.
-- **Estado:** [ ] Pendiente
+  - [x] Las listas de solicitudes cargan mediante paginación en servidor sin retrasos visuales.
+  - [x] Catálogos estáticos se recuperan desde la caché reduciendo lecturas a las hojas de cálculo.
+  - [x] La invalidación de caché funciona en tiempo real al actualizar un registro de admisión.
+  - [x] Las consultas del portal familiar responden en menos de 1.5 segundos en condiciones normales.
+  - [x] Pruebas de estrés verifican que la optimización no corrompe la integridad de los datos.
+- **Estado:** [X] Completada
 
 ---
 *Plan Maestro de Tareas Pendientes registrado y unificado por Jules conforme a los requerimientos oficiales de la Plataforma Integral de Gestión Educativa.*
