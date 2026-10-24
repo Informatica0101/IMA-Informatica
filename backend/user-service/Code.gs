@@ -938,7 +938,7 @@ const ROLE_PERMISSIONS = {
   "Director": [
     "createNews", "uploadNewsImage", "getNews", "updateNewsStatus", "getStudents", "getStudentsByGradoSeccion", "getUserInfo", "saveGameResult", "getGameStats", "getGlobalTop", "recordAnalytics", "getLearningProfile", "mergeGuestData", "updateUserProfile", "findPersonMatches", "createPerson", "linkPersonAccount", "manageAccountState", "generateInstitutionalId",
     "getInstitutionalCriteria", "saveInstitutionalCriterion", "getFormativeEvaluations", "saveFormativeEvaluation", "getSupportPlans", "saveSupportPlan",
-    "createLinkInvitation", "acceptLinkInvitation", "getGuardianStudents", "getInstitutionalAnnouncements", "createInstitutionalAnnouncement", "submitAnnouncementReceiptConfirmation", "getAnnouncementReadReport", "getDepartmentalWorkInbox", "closeConversationThread", "getInternalConversations", "getInternalMessages", "sendInternalMessage", "getUserNotifications", "getUnifiedNotifications", "markNotificationAsRead", "createUserNotification", "sendMultiChannelNotification", "getNotificationPreferences", "getAdministrativeRequests", "getAdministrativeRequestsHistory", "submitAdministrativeRequest", "submitStudentAbsenceJustification", "getStudentAbsenceJustifications", "reviewAbsenceJustification", "updateRequestStatus", "saveInstitutionalForm", "getInstitutionalForms", "submitInstitutionalFormRequest", "saveApprovalWorkflow", "getApprovalWorkflows", "processWorkflowDecision", "getWorkflowHistory", "registerDocumentSignature", "configureNotificationChannel", "getNotificationChannelConfigs", "sendChannelNotificationTest", "getAppointmentBookings", "bookAppointment", "updateAppointmentStatus", "getInstitutionalCalendarEvents", "getPendingReminders",
+    "createLinkInvitation", "acceptLinkInvitation", "getGuardianStudents", "getInstitutionalAnnouncements", "createInstitutionalAnnouncement", "submitAnnouncementReceiptConfirmation", "getAnnouncementReadReport", "getDepartmentalWorkInbox", "closeConversationThread", "getInternalConversations", "getInternalMessages", "sendInternalMessage", "getUserNotifications", "getUnifiedNotifications", "markNotificationAsRead", "createUserNotification", "sendMultiChannelNotification", "getAdmissionNotificationLogs", "getNotificationPreferences", "getAdministrativeRequests", "getAdministrativeRequestsHistory", "submitAdministrativeRequest", "submitStudentAbsenceJustification", "getStudentAbsenceJustifications", "reviewAbsenceJustification", "updateRequestStatus", "saveInstitutionalForm", "getInstitutionalForms", "submitInstitutionalFormRequest", "saveApprovalWorkflow", "getApprovalWorkflows", "processWorkflowDecision", "getWorkflowHistory", "registerDocumentSignature", "configureNotificationChannel", "getNotificationChannelConfigs", "sendChannelNotificationTest", "getAppointmentBookings", "bookAppointment", "updateAppointmentStatus", "getInstitutionalCalendarEvents", "getPendingReminders",
     "getUserSettings", "saveUserSettings", "getSystemConfigurations", "saveSystemConfiguration", "getProviderIntegrations", "configureProviderIntegration",
     "updateTicketStatus", "saveVisualPaletteProposal", "approveVisualPaletteProposal", "registerAndDispatchEvent", "retryFailedEventsQueue", "recordTraceabilityLog", "getTraceabilityCorrelationLogs", "getOperationalCapacityMetrics", "runInterdepartmentalIntegrationTestSuite", "getSharedConfigurationsCatalog", "manageInstitutionalDataCache", "purgeSecurityCaches", "dispatchSecurityEvent", "processSecurityEventQueue", "getSecurityEventsQueue", "getSecurityAndComplianceDashboardData", "generatePrivilegeAndAccountAuditReport", "getPaginatedAuditLogReport", "auditAndReconcileIdentityInconsistencies"
   ],
@@ -950,7 +950,7 @@ const ROLE_PERMISSIONS = {
   "Secretaría": [
     "createNews", "uploadNewsImage", "getNews", "updateNewsStatus", "getStudents", "getStudentsByGradoSeccion", "getUserInfo", "updateUserProfile", "findPersonMatches", "createPerson", "linkPersonAccount", "manageAccountState", "generateInstitutionalId",
     "getInstitutionalCriteria", "getFormativeEvaluations", "saveFormativeEvaluation", "getSupportPlans", "saveSupportPlan",
-    "createLinkInvitation", "acceptLinkInvitation", "getGuardianStudents", "getInstitutionalAnnouncements", "createInstitutionalAnnouncement", "submitAnnouncementReceiptConfirmation", "getAnnouncementReadReport", "getDepartmentalWorkInbox", "closeConversationThread", "getInternalConversations", "getInternalMessages", "sendInternalMessage", "getUserNotifications", "getUnifiedNotifications", "markNotificationAsRead", "createUserNotification", "sendMultiChannelNotification", "getNotificationPreferences", "getAdministrativeRequests", "getAdministrativeRequestsHistory", "submitAdministrativeRequest", "submitStudentAbsenceJustification", "getStudentAbsenceJustifications", "reviewAbsenceJustification", "updateRequestStatus", "saveInstitutionalForm", "getInstitutionalForms", "submitInstitutionalFormRequest", "saveApprovalWorkflow", "getApprovalWorkflows", "processWorkflowDecision", "getWorkflowHistory", "registerDocumentSignature", "configureNotificationChannel", "getNotificationChannelConfigs", "sendChannelNotificationTest", "getAppointmentBookings", "bookAppointment", "updateAppointmentStatus", "getInstitutionalCalendarEvents", "getPendingReminders"
+    "createLinkInvitation", "acceptLinkInvitation", "getGuardianStudents", "getInstitutionalAnnouncements", "createInstitutionalAnnouncement", "submitAnnouncementReceiptConfirmation", "getAnnouncementReadReport", "getDepartmentalWorkInbox", "closeConversationThread", "getInternalConversations", "getInternalMessages", "sendInternalMessage", "getUserNotifications", "getUnifiedNotifications", "markNotificationAsRead", "createUserNotification", "sendMultiChannelNotification", "getAdmissionNotificationLogs", "getNotificationPreferences", "getAdministrativeRequests", "getAdministrativeRequestsHistory", "submitAdministrativeRequest", "submitStudentAbsenceJustification", "getStudentAbsenceJustifications", "reviewAbsenceJustification", "updateRequestStatus", "saveInstitutionalForm", "getInstitutionalForms", "submitInstitutionalFormRequest", "saveApprovalWorkflow", "getApprovalWorkflows", "processWorkflowDecision", "getWorkflowHistory", "registerDocumentSignature", "configureNotificationChannel", "getNotificationChannelConfigs", "sendChannelNotificationTest", "getAppointmentBookings", "bookAppointment", "updateAppointmentStatus", "getInstitutionalCalendarEvents", "getPendingReminders"
   ],
   "Contador": ["getStudents", "getUserInfo", "getNews", "getInstitutionalAnnouncements", "getUserNotifications", "markNotificationAsRead", "getAdministrativeRequests", "submitAdministrativeRequest"],
   "RecursosHumanos": ["getStudents", "getUserInfo", "getNews", "getInstitutionalAnnouncements", "getUserNotifications", "markNotificationAsRead", "getAdministrativeRequests", "submitAdministrativeRequest", "createNews", "getInternalMessages", "sendInternalMessage"],
@@ -1308,6 +1308,7 @@ function doPost(e) {
       case "getUnifiedNotifications": result = getUnifiedNotifications(payload); break;
       case "getUserNotifications": result = getUserNotifications(payload); break;
       case "sendMultiChannelNotification": result = sendMultiChannelNotification(payload); break;
+      case "getAdmissionNotificationLogs": result = getAdmissionNotificationLogs(payload); break;
       case "registerAndDispatchEvent": result = registerAndDispatchEvent(payload); break;
       case "retryFailedEventsQueue": result = retryFailedEventsQueue(payload); break;
       case "recordTraceabilityLog": result = recordTraceabilityLog(payload); break;
@@ -4477,22 +4478,118 @@ function retryFailedEventsQueue(payload) {
   };
 }
 
+// [TAREA-F5-011] [Fase 5: Admisiones y Portal de Familias] - Motor multicanal de notificaciones automáticas y seguimiento del proceso de admisión con plantillas, deduplicación e historial
 function sendMultiChannelNotification(payload) {
-  const { userId, titulo, mensaje, tipo, categoria, canal, enlaceAccion } = payload || {};
-  if (!userId || !titulo || !mensaje) throw new Error("userId, titulo y mensaje son requeridos.");
+  const { userId, emailRecipient, titulo, mensaje, tipo, categoria, canal, enlaceAccion, deduplicationKey } = payload || {};
+  const targetUser = userId || emailRecipient || "INVITADO";
+  if (!targetUser || !titulo || !mensaje) throw new Error("Destinatario (userId/emailRecipient), título y mensaje son requeridos.");
 
-  const res = createUserNotification({
-    userId: userId,
-    titulo: titulo,
-    mensaje: mensaje,
-    tipo: tipo || "NotificacionTransversal",
-    categoria: categoria || "General",
-    enlaceAccion: enlaceAccion || ""
-  });
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "BandejaNotificaciones");
 
-  logStructuredEvent("USER", "sendMultiChannelNotification", "INFO", "NOTIFICATION_SENT", `Notificación enviada a ${userId} por canal ${canal || 'Plataforma'}`, payload, payload.authRole);
+  // Deduplicación preventiva por deduplicationKey
+  if (deduplicationKey) {
+    const data = sheet.getDataRange().getValues();
+    const dup = data.find(r => String(r[9] || "").trim() === String(deduplicationKey).trim());
+    if (dup) {
+      logStructuredEvent("USER", "sendMultiChannelNotification", "INFO", "NOTIFICATION_DEDUPLICATED", `Notificación omita por duplicación key=${deduplicationKey}`, { deduplicationKey, notificacionId: dup[0] }, payload && payload.authRole);
+      return { status: "success", deduplicated: true, notificacionId: dup[0], message: "Notificación ya despachada previamente." };
+    }
+  }
 
-  return { status: "success", notificacionId: res.data ? res.data.notificacionId : "NOTIF-OK", canalUtilizado: canal || "PlataformaInterna", message: "Notificación despachada correctamente." };
+  const now = new Date();
+  const notifId = "NTF-" + now.getFullYear() + "-" + Math.floor(100000 + Math.random() * 900000);
+  let deliveryStatus = "Entregado";
+  let emailSent = false;
+
+  // Intento de envío vía MailApp si se proporciona un correo o si userId parece un email
+  const targetEmail = (emailRecipient || (userId && userId.includes("@") ? userId : "")).trim();
+  if (targetEmail) {
+    try {
+      if (typeof MailApp !== "undefined") {
+        MailApp.sendEmail({
+          to: targetEmail,
+          subject: `[NGCA Admisiones] ${titulo}`,
+          htmlBody: `
+            <div style="font-family: Arial, sans-serif; color: #1f2937; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e5e7eb; border-radius: 8px;">
+              <h2 style="color: #0d6efd; margin-top: 0;">New Generation Christian Academy</h2>
+              <h3 style="color: #111827;">${titulo}</h3>
+              <p style="font-size: 15px; line-height: 1.6;">${mensaje}</p>
+              ${enlaceAccion ? `<div style="margin: 25px 0;"><a href="${enlaceAccion}" style="background-color: #0d6efd; color: white; padding: 12px 20px; text-decoration: none; border-radius: 6px; font-weight: bold; display: inline-block;">Verificar en el Portal</a></div>` : ''}
+              <hr style="border: 0; border-top: 1px solid #e5e7eb; margin: 20px 0;" />
+              <p style="font-size: 12px; color: #6b7280;">Este es un mensaje automático enviado por la plataforma de admisiones. Por favor no responda directamente a este correo.</p>
+            </div>
+          `
+        });
+        emailSent = true;
+      }
+    } catch (mailErr) {
+      logStructuredEvent("USER", "sendMultiChannelNotification", "WARN", "MAIL_SEND_FAILED", `Fallo al enviar correo a ${targetEmail}: ${mailErr.message}`, { targetEmail, notifId }, payload && payload.authRole);
+      deliveryStatus = "Pendiente_Reintento";
+    }
+  }
+
+  // Registro en BandejaNotificaciones
+  sheet.appendRow([
+    notifId,
+    targetUser,
+    tipo || "NotificacionAdmision",
+    titulo,
+    mensaje,
+    now,
+    false, // leido
+    categoria || "Admisiones",
+    enlaceAccion || "",
+    deduplicationKey || "",
+    deliveryStatus,
+    targetEmail || ""
+  ]);
+
+  logStructuredEvent("USER", "sendMultiChannelNotification", "INFO", "NOTIFICATION_SENT", `Notificación ${notifId} enviada a ${targetUser} (Email: ${emailSent ? 'Sí' : 'No'})`, { notifId, targetUser, deliveryStatus, emailSent }, payload && payload.authRole);
+
+  return {
+    status: "success",
+    notificacionId: notifId,
+    canalUtilizado: emailSent ? "CorreoYPlataforma" : "PlataformaInterna",
+    estadoEntrega: deliveryStatus,
+    message: "Notificación despachada correctamente."
+  };
+}
+
+// [TAREA-F5-011] Endpoint para consulta de logs de notificaciones de admisiones en Secretaría
+function getAdmissionNotificationLogs(payload) {
+  const { solicitudId, limit } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const rows = getOrCreateSheet(ss, "BandejaNotificaciones").getDataRange().getValues().slice(1);
+
+  let filtered = rows;
+  if (solicitudId) {
+    const searchId = String(solicitudId).trim().toLowerCase();
+    filtered = filtered.filter(r => String(r[4] || "").toLowerCase().includes(searchId) || String(r[9] || "").toLowerCase().includes(searchId));
+  }
+
+  filtered.reverse(); // Ordenar del más reciente al más antiguo
+  const maxRows = parseInt(limit || 50, 10);
+  const mapped = filtered.slice(0, maxRows).map(r => ({
+    notificacionId: r[0],
+    usuarioDestino: r[1],
+    tipo: r[2],
+    titulo: r[3],
+    mensaje: r[4],
+    fechaEnvio: r[5],
+    leido: Boolean(r[6]),
+    categoria: r[7],
+    enlaceAccion: r[8],
+    deduplicationKey: r[9],
+    estadoEntrega: r[10] || "Entregado",
+    emailDestino: r[11] || ""
+  }));
+
+  return {
+    status: "success",
+    totalNotificaciones: mapped.length,
+    notificaciones: mapped
+  };
 }
 
 function getNotificationPreferences(payload) {

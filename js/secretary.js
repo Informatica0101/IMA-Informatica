@@ -187,6 +187,9 @@ window.openAdmissionDetailModal = function(solicitudId) {
     // [TAREA-F5-010] Cargar disponibilidad de cupos
     window.loadAdmissionCapacityStatus(found.anolectivo, found.gradoSolicitado);
 
+    // [TAREA-F5-011] Cargar seguimiento de notificaciones enviadas
+    window.loadAdmissionNotificationLogs(found.solicitudId);
+
     if (actionsEl) {
         const allowedTransitions = {
             "Recibida": ["En_Revision", "Rechazada", "Retirada"],
@@ -488,6 +491,53 @@ window.promptIssueTutorInvitation = async function(solicitudIdInput, expedienteI
         }
     } catch (err) {
         alert("Error de red: " + err.message);
+    }
+};
+
+// [TAREA-F5-011] [Fase 5: Admisiones y Portal de Familias] - Consulta e inspección de notificaciones despachadas por solicitud
+window.loadAdmissionNotificationLogs = async function(solicitudId) {
+    const container = document.getElementById('modal-adm-notifications-container');
+    if (!container) return;
+
+    container.innerHTML = `<p class="text-gray-400"><i class="fas fa-spinner fa-spin mr-1"></i> Consultando historial de avisos...</p>`;
+
+    try {
+        const res = await window.fetchApi('USER', 'getAdmissionNotificationLogs', { solicitudId, limit: 10 });
+        if (res && res.status === 'success' && Array.isArray(res.notificaciones)) {
+            if (res.notificaciones.length === 0) {
+                container.innerHTML = `<p class="text-gray-400 italic">No se registran notificaciones despachadas para este código de seguimiento.</p>`;
+                return;
+            }
+
+            let html = `<div class="space-y-2 max-h-48 overflow-y-auto pr-1">`;
+            res.notificaciones.forEach(n => {
+                const dateStr = n.fechaEnvio ? new Date(n.fechaEnvio).toLocaleString('es-HN') : 'Sin fecha';
+                const isEmail = n.emailDestino || (n.canalUtilizado && n.canalUtilizado.includes('Correo'));
+                html += `
+                    <div class="p-2 bg-white rounded-lg border border-gray-100 flex flex-col gap-1 shadow-sm">
+                        <div class="flex justify-between items-center text-[10px]">
+                            <span class="font-bold text-gray-800 flex items-center gap-1">
+                                <i class="fa-solid fa-paper-plane text-indigo-500"></i> ${window.escapeHtml ? window.escapeHtml(n.titulo) : n.titulo}
+                            </span>
+                            <span class="text-gray-400">${dateStr}</span>
+                        </div>
+                        <p class="text-gray-600 text-[11px] leading-tight">${window.escapeHtml ? window.escapeHtml(n.mensaje) : n.mensaje}</p>
+                        <div class="flex items-center justify-between mt-1 text-[9px] text-gray-400 border-t border-gray-50 pt-1">
+                            <span>Destino: <strong>${n.emailDestino || n.usuarioDestino}</strong></span>
+                            <span class="px-1.5 py-0.5 rounded font-semibold ${n.estadoEntrega === 'Entregado' ? 'bg-green-50 text-green-700' : 'bg-amber-50 text-amber-700'}">
+                                ${n.estadoEntrega || 'Entregado'}
+                            </span>
+                        </div>
+                    </div>
+                `;
+            });
+            html += `</div>`;
+            container.innerHTML = html;
+        } else {
+            container.innerHTML = `<p class="text-gray-400 italic">No fue posible cargar el historial de notificaciones.</p>`;
+        }
+    } catch (err) {
+        container.innerHTML = `<p class="text-red-500">Error al cargar notificaciones: ${err.message}</p>`;
     }
 };
 

@@ -832,6 +832,23 @@ function createAdmissionRequest(payload) {
     saveIdempotentResult("createAdmissionRequest", payload, result);
     logStructuredEvent("ACADEMIC", "createAdmissionRequest", "INFO", "ADMISSION_CREATED", `Solicitud de admisión ${solicitudId} registrada para ${nombresAspirante} ${apellidosAspirante}`, { solicitudId, gradoSolicitado, targetAno }, payload && payload.authRole);
 
+    // [TAREA-F5-011] Disparar notificación automática de recepción de solicitud
+    try {
+      if (typeof sendMultiChannelNotification === "function") {
+        sendMultiChannelNotification({
+          userId: emailContacto || "INVITADO",
+          emailRecipient: emailContacto,
+          titulo: "Solicitud de Admisión Recibida",
+          mensaje: `Estimado(a) ${nombreResponsable || 'Responsable'}, hemos recibido exitosamente la solicitud de admisión de ${nombresAspirante} ${apellidosAspirante} para ${gradoSolicitado} (${targetAno}). Su código de seguimiento es: ${solicitudId}.`,
+          tipo: "ADMISSION_REQUEST_RECEIVED",
+          categoria: "Admisiones",
+          deduplicationKey: `NOTIF_RECV_${solicitudId}`
+        });
+      }
+    } catch (notifErr) {
+      logStructuredEvent("ACADEMIC", "createAdmissionRequest", "WARN", "NOTIF_DISPATCH_FAILED", `Fallo no bloqueante de notificación: ${notifErr.message}`, { solicitudId });
+    }
+
     return result;
 
   } finally {
@@ -1378,6 +1395,26 @@ function updateAdmissionStatus(payload) {
     // Registrar en HistorialCambiosEntidad y logStructuredEvent
     recordEntityChangeLog("SolicitudAdmision", solicitudId, { estadoSolicitud: estadoActual }, { estadoSolicitud: estadoSolicitado, justificacion: textoJustificacion }, "ADMISSION_STATUS_UPDATED", actorUserId);
     logStructuredEvent("ACADEMIC", "updateAdmissionStatus", "INFO", "ADMISSION_STATUS_UPDATED", `Estado de solicitud ${solicitudId} cambiado de '${estadoActual}' a '${estadoSolicitado}'`, { solicitudId, estadoAnterior: estadoActual, estadoNuevo: estadoSolicitado, justificacion: textoJustificacion }, payload && payload.authRole);
+
+    // [TAREA-F5-011] Disparar notificación automática de cambio de estado
+    try {
+      const emailContacto = String(row[10] || "").trim();
+      const nombreResp = String(row[8] || "Familia").trim();
+      const nombreAspirante = `${row[4] || ''} ${row[5] || ''}`.trim();
+      if (emailContacto && typeof sendMultiChannelNotification === "function") {
+        sendMultiChannelNotification({
+          userId: emailContacto,
+          emailRecipient: emailContacto,
+          titulo: `Actualización de Solicitud: ${estadoSolicitado}`,
+          mensaje: `Estimado(a) ${nombreResp}, el estado del trámite de admisión de ${nombreAspirante} (${solicitudId}) ha cambiado a: '${estadoSolicitado}'. ${textoJustificacion ? 'Observaciones: ' + textoJustificacion : ''}`,
+          tipo: "ADMISSION_STATUS_CHANGED",
+          categoria: "Admisiones",
+          deduplicationKey: `NOTIF_STATUS_${solicitudId}_${estadoSolicitado}`
+        });
+      }
+    } catch (notifErr) {
+      logStructuredEvent("ACADEMIC", "updateAdmissionStatus", "WARN", "NOTIF_DISPATCH_FAILED", `Fallo no bloqueante de notificación: ${notifErr.message}`, { solicitudId, estadoSolicitado });
+    }
 
     return {
       status: "success",

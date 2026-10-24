@@ -338,7 +338,7 @@
 
 ---
 
-### [TAREA-F5-011] Implementar notificaciones automáticas y seguimiento del proceso de admisión
+### [X] [TAREA-F5-011] Implementar notificaciones automáticas y seguimiento del proceso de admisión
 - **Origen del Hallazgo:** `Auditoria.txt` (HALLAZGOS F5: HALLAZGOS-F5-P1-03) / `AUDITORIA_FASE_5_ADMISIONES_PORTAL_FAMILIAS.md` (Subcapacidad 5.10, Brecha P1-03)
 - **Severidad/Clasificación:** Alto
 - **Archivos Involucrados:** `backend/academic-service/Code.gs`, `backend/user-service/Code.gs` (l. 948, 1298)
@@ -365,15 +365,15 @@
   11. Garantizar la privacidad enviando correos individuales o ocultando destinatarios en avisos masivos.
   12. Consola de monitoreo para que Secretaría verifique el historial de avisos enviados y reenviar manualmente si es necesario.
 - **Criterios de Aceptación:**
-  - [ ] El registro de una solicitud envía un correo de confirmación con su código de seguimiento.
-  - [ ] Cambios de estado en la admisión disparan el correo automático correspondiente a la familia.
-  - [ ] Solicitudes rechazadas no envían por error plantillas de aceptación.
-  - [ ] Fallos en el servidor de correo activan el reintento en la cola asíncrona sin cancelar la transacción de base de datos.
-  - [ ] Reintentos de peticiones no duplican los correos enviados a la familia.
-  - [ ] Se registra el estado de entrega de cada mensaje en `BitacoraTraceability`.
-  - [ ] Los mensajes son individuales y no revelan direcciones de correo de otros postulantes.
-  - [ ] Secretaría puede revisar el log de notificaciones enviadas a cada aspirante.
-- **Estado:** [ ] Pendiente
+  - [x] El registro de una solicitud envía un correo de confirmación con su código de seguimiento.
+  - [x] Cambios de estado en la admisión disparan el correo automático correspondiente a la familia.
+  - [x] Solicitudes rechazadas no envían por error plantillas de aceptación.
+  - [x] Fallos en el servidor de correo activan el reintento en la cola asíncrona sin cancelar la transacción de base de datos.
+  - [x] Reintentos de peticiones no duplican los correos enviados a la familia.
+  - [x] Se registra el estado de entrega de cada mensaje en `BitacoraTraceability`.
+  - [x] Los mensajes son individuales y no revelan direcciones de correo de otros postulantes.
+  - [x] Secretaría puede revisar el log de notificaciones enviadas a cada aspirante.
+- **Estado:** [X] Completada
 
 ---
 

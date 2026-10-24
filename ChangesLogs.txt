@@ -1439,3 +1439,16 @@ Archivos Modificados:
   - Incorporada sección `#modal-adm-capacity-container` en el modal de detalle de admisión.
 - js/secretary.js:
   - Implementado controlador `loadAdmissionCapacityStatus` para despliegue interactivo de la tarjeta de capacidad del grado.
+
+[TAREA-F5-011] [Fase 5 - Notificaciones Automáticas y Seguimiento del Proceso de Admisión]
+- backend/user-service/Code.gs:
+  - Reestructuración de `sendMultiChannelNotification` con comentario identificativo [TAREA-F5-011], soporte para envío por correo `MailApp` con plantilla HTML, clave de deduplicación preventiva `deduplicationKey`, guardado en `BandejaNotificaciones` y estados de entrega (`Entregado`, `Pendiente_Reintento`).
+  - Adición de `getAdmissionNotificationLogs` para consulta del historial de notificaciones enviadas por código de seguimiento o aspirante.
+  - Registro de permiso "getAdmissionNotificationLogs" en `ROLE_PERMISSIONS` y dispatcher en `doPost`.
+- backend/academic-service/Code.gs:
+  - Conexión de `createAdmissionRequest` para disparar notificación automática al recibir una solicitud con clave `NOTIF_RECV_<solicitudId>`.
+  - Conexión de `updateAdmissionStatus` para disparar notificación automática al modificar el estado del trámite con clave `NOTIF_STATUS_<solicitudId>_<estado>`.
+- dashboard-secretaria.html:
+  - Incorporada sección `#modal-adm-notifications-container` en el modal de detalle de admisión para visualizar el historial de notificaciones despachadas.
+- js/secretary.js:
+  - Implementado controlador `loadAdmissionNotificationLogs` para consulta y despliegue interactivo del historial de avisos enviados a la familia.

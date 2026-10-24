@@ -116,4 +116,9 @@ RESOLUCIÓN Y VERIFICACIÓN DE TAREAS EJECUTADAS:
  - Estado: COMPLETADA Y VERIFICADA (2026-03-29)
  - Archivos Modificados: backend/academic-service/Code.gs, dashboard-secretaria.html, js/secretary.js
  - Verificación: Reestructurada función `checkEnrollmentCapacity` con candado `LockService`, cálculo atómico de capacidad restando matrículas activas y plazas reservadas por solicitudes `Admitida`, desglose detallado de cupos y soporte para la directiva `OVERBOOKING_ALLOWED`. Actualizado endpoint `updateAdmissionStatus` para bloquear el cambio a 'Admitida' si la sección está agotada. Creado componente visual `#modal-adm-capacity-container` y controlador `loadAdmissionCapacityStatus` en Secretaría. Comentario identificativo [TAREA-F5-010] inyectado en `backend/academic-service/Code.gs`.
+
+[TAREA-F5-011] Implementar notificaciones automáticas y seguimiento del proceso de admisión
+ - Estado: COMPLETADA Y VERIFICADA (2026-03-29)
+ - Archivos Modificados: backend/user-service/Code.gs, backend/academic-service/Code.gs, dashboard-secretaria.html, js/secretary.js
+ - Verificación: Reestructurada la función `sendMultiChannelNotification` en `user-service/Code.gs` para conectar el envío por correo electrónico `MailApp` con plantillas HTML personalizables, claves de deduplicación preventiva `deduplicationKey`, registro histórico en `BandejaNotificaciones` y estados de entrega (`Entregado`, `Pendiente_Reintento`). Disparados avisos automáticos en `createAdmissionRequest` (recepción de solicitud) y `updateAdmissionStatus` (cambio de estado). Creados el componente `#modal-adm-notifications-container` y el controlador `loadAdmissionNotificationLogs` en la consola de Secretaría. Comentario identificativo [TAREA-F5-011] inyectado en `backend/user-service/Code.gs`.
 ================================================================================
