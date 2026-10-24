@@ -166,10 +166,10 @@
 
 ## PRIORIDAD P1: EXPEDIENTES, DOCUMENTOS, EVALUACIÓN Y VINCULACIÓN FAMILIAR
 
-### [TAREA-F5-006] Implementar la gestión documental de aspirantes antes de la matrícula
+### [X] [TAREA-F5-006] Implementar la gestión documental de aspirantes antes de la matrícula
 - **Origen del Hallazgo:** `Auditoria.txt` (HALLAZGOS F5: HALLAZGOS-F5-P1-02) / `AUDITORIA_FASE_5_ADMISIONES_PORTAL_FAMILIAS.md` (Subcapacidad 5.3, Brecha P1-02)
 - **Severidad/Clasificación:** Alto
-- **Archivos Involucrados:** `backend/academic-service/Code.gs` (l. 4838-4930), `js/student.js`, `js/teacher.js`
+- **Archivos Involucrados:** `backend/academic-service/Code.gs` (l. 4838-4930), `js/student.js`, `js/secretary.js`
 - **Dependencias Expuestas:** Hoja `DocumentosEstudiante`, `DriveApp`, `getSecureDocumentStream`
 - **Descripción del Alcance:**
   1. Modificar `uploadStudentDocument` y `getStudentDocuments` para aceptar tanto `expedienteId` de estudiante activo como `solicitudId` de aspirante pre-matriculado.
@@ -187,18 +187,18 @@
   13. Impedir descargas no autorizadas bloqueando URLs públicas de Drive sin proxy autenticado.
   14. Mostrar alertas visuales de documentos vencidos o rechazados en los paneles de la familia y de dirección.
 - **Criterios de Aceptación:**
-  - [ ] Un aspirante puede cargar un documento asociado a su `solicitudId` antes de estar matriculado.
-  - [ ] El documento queda correctamente vinculado a la solicitud de origen.
-  - [ ] Archivos con formatos no permitidos (.exe, .bat, etc.) o superiores a 10 MB son rechazados en el servidor.
-  - [ ] Cargas interrumpidas o con error no aparecen como documentos válidos.
-  - [ ] Un documento rechazado muestra el motivo e instruye la sustitución.
-  - [ ] La sustitución de un archivo conserva la versión anterior en el historial de Drive.
-  - [ ] Peticiones no autorizadas con IDs de archivo ajenos son denegadas con error 403.
-  - [ ] Los requisitos pendientes se despliegan en el portal familiar y en la consola de admisiones.
-  - [ ] La conversión a matrícula migra los documentos de la solicitud al nuevo expediente sin duplicar archivos en Drive.
-  - [ ] La presencia de documentos obligatorios pendientes o rechazados bloquea la conversión ordinaria.
-  - [ ] Las operaciones documentales quedan registradas en la bitácora de auditoría.
-- **Estado:** [ ] Pendiente
+  - [x] Un aspirante puede cargar un documento asociado a su `solicitudId` antes de estar matriculado.
+  - [x] El documento queda correctamente vinculado a la solicitud de origen.
+  - [x] Archivos con formatos no permitidos (.exe, .bat, etc.) o superiores a 10 MB son rechazados en el servidor.
+  - [x] Cargas interrumpidas o con error no aparecen como documentos válidos.
+  - [x] Un documento rechazado muestra el motivo e instruye la sustitución.
+  - [x] La sustitución de un archivo conserva la versión anterior en el historial de Drive.
+  - [x] Peticiones no autorizadas con IDs de archivo ajenos son denegadas con error 403.
+  - [x] Los requisitos pendientes se despliegan en el portal familiar y en la consola de admisiones.
+  - [x] La conversión a matrícula migra los documentos de la solicitud al nuevo expediente sin duplicar archivos en Drive.
+  - [x] La presencia de documentos obligatorios pendientes o rechazados bloquea la conversión ordinaria.
+  - [x] Las operaciones documentales quedan registradas en la bitácora de auditoría.
+- **Estado:** [X] Completada
 
 ---
 

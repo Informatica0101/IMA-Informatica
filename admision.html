@@ -572,29 +572,18 @@
             btnTrack.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
 
             try {
-                let isId = trackVal.toUpperCase().startsWith('ADM-');
-                let payload = {};
-                if (isId) {
-                    payload = { estado: null };
-                }
+                const res = await window.getPublicAdmissionStatus(trackVal);
+                resContainer.classList.remove('hidden');
 
-                const res = await window.fetchApi('ACADEMIC', 'getAdmissionRequests', payload);
-                if (res && res.status === 'success' && Array.isArray(res.requests)) {
-                    const found = res.requests.find(r =>
-                        r.solicitudId.toLowerCase() === trackVal.toLowerCase() ||
-                        (r.identificacion && r.identificacion.replace(/[^0-9]/g, '') === trackVal.replace(/[^0-9]/g, ''))
-                    );
+                if (res && res.status === 'success' && res.found && res.request) {
+                    const found = res.request;
+                    let statusColor = "bg-blue-100 text-blue-800";
+                    if (found.estadoSolicitud === 'Admitida') statusColor = "bg-green-100 text-green-800";
+                    if (found.estadoSolicitud === 'Rechazada') statusColor = "bg-red-100 text-red-800";
+                    if (found.estadoSolicitud === 'En_Revision') statusColor = "bg-amber-100 text-amber-800";
+                    if (found.estadoSolicitud === 'Convertida') statusColor = "bg-purple-100 text-purple-800";
 
-                    resContainer.classList.remove('hidden');
-
-                    if (found) {
-                        let statusColor = "bg-blue-100 text-blue-800";
-                        if (found.estadoSolicitud === 'Admitida') statusColor = "bg-green-100 text-green-800";
-                        if (found.estadoSolicitud === 'Rechazada') statusColor = "bg-red-100 text-red-800";
-                        if (found.estadoSolicitud === 'En_Revision') statusColor = "bg-amber-100 text-amber-800";
-                        if (found.estadoSolicitud === 'Convertida') statusColor = "bg-purple-100 text-purple-800";
-
-                        resContainer.innerHTML = `
+                    resContainer.innerHTML = `
                             <div class="bg-gray-50 border border-gray-200 rounded-3xl p-6 space-y-4 text-left">
                                 <div class="flex justify-between items-start border-b border-gray-200 pb-3">
                                     <div>

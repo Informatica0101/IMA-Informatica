@@ -234,7 +234,7 @@ const ROLE_PERMISSIONS = {
   "Alumno": ["getAcademicConfig", "getAcademicHistory", "getAsignaturasActivas", "getWhatsAppLink", "getStudentEnrollmentHistory", "getAcademicYears", "getAcademicPeriods", "getAcademicOffers", "getAcademicCalendar", "getClassSchedules", "getStudentSchedule", "getStudentFile", "getStudentTimeline", "getStudentDocuments", "getStudentEnrollments", "submitAttendanceJustification", "getStudentAttendanceSummary", "getAttendanceIncidents"]
 };
 
-const PUBLIC_ACTIONS = ["ping", "createAdmissionRequest"];
+const PUBLIC_ACTIONS = ["ping", "createAdmissionRequest", "getPublicAdmissionStatus"];
 
 // [FASE2-T02] [Fase 2 - Idempotencia de Operaciones] - Mecanismo de verificación de claves de idempotencia, caché de resultados y prevención de duplicación por reintentos HTTP.
 function getIdempotencyPayloadSignature(payload) {
@@ -658,6 +658,7 @@ function doPost(e) {
       // Nuevos Endpoints Fase 4 - Admisiones, Expedientes, Matrículas y Movimientos
       case "createAdmissionRequest": result = createAdmissionRequest(payload); break;
       case "getAdmissionRequests": result = getAdmissionRequests(payload); break;
+      case "getPublicAdmissionStatus": result = getPublicAdmissionStatus(payload); break;
       case "updateAdmissionStatus": result = updateAdmissionStatus(payload); break;
       case "reopenAdmissionRequest": result = reopenAdmissionRequest(payload); break;
       case "convertAdmissionToStudent": result = convertAdmissionToStudent(payload); break;
@@ -853,6 +854,42 @@ function getAdmissionRequests(payload) {
   }));
 
   return { status: "success", requests: mapped };
+}
+
+// [TAREA-F5-004] [Fase 5: Admisiones y Matrícula] - Endpoint seguro de consulta pública de estado de admisión sanitizando PII de terceros
+function getPublicAdmissionStatus(payload) {
+  const { searchKey } = payload || {};
+  if (!searchKey) throw new Error("Parámetro obligatorio ausente: searchKey (código de seguimiento o DNI).");
+
+  const cleanSearch = String(searchKey).trim().toLowerCase();
+  const cleanDigits = String(searchKey).replace(/[^0-9]/g, '');
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const rows = getOrCreateSheet(ss, "SolicitudesAdmision").getDataRange().getValues().slice(1);
+
+  const match = rows.find(r => {
+    const sId = String(r[0] || "").trim().toLowerCase();
+    const rIdent = String(r[6] || "").replace(/[^0-9]/g, '');
+    return sId === cleanSearch || (cleanDigits && rIdent && cleanDigits === rIdent);
+  });
+
+  if (!match) {
+    return { status: "success", found: false, message: "No se encontró ninguna solicitud de admisión para el criterio ingresado." };
+  }
+
+  // Sanitizar respuesta pública para evitar fuga de PII de terceros
+  const sanitizedRequest = {
+    solicitudId: match[0],
+    fechaSolicitud: match[1],
+    anolectivo: match[2],
+    gradoSolicitado: match[3],
+    nombresAspirante: match[4],
+    apellidosAspirante: match[5],
+    estadoSolicitud: match[11],
+    expedienteId: match[14]
+  };
+
+  return { status: "success", found: true, request: sanitizedRequest };
 }
 
 // [TAREA-F5-002] [Fase 5: Admisiones y Matrícula] - Máquina de estados y reglas de transición de solicitudes de admisión
@@ -1243,9 +1280,21 @@ function convertAdmissionToStudent(payload) {
       }
     }
 
-    // 7. Marcar Solicitud como Convertida
+    // 7. Marcar Solicitud como Convertida y migrar documentos de la solicitud al nuevo expediente
     admSheet.getRange(idx + 1, 12).setValue("Convertida");
     admSheet.getRange(idx + 1, 15).setValue(finalExpId);
+
+    try {
+      const docSheet = getOrCreateSheet(ss, "DocumentosEstudiante");
+      const docData = docSheet.getDataRange().getValues();
+      for (let d = 1; d < docData.length; d++) {
+        if (String(docData[d][2]).trim() === String(solicitudId).trim() && !docData[d][1]) {
+          docSheet.getRange(d + 1, 2).setValue(finalExpId);
+        }
+      }
+    } catch (eDoc) {
+      console.warn("Advertencia migración de documentos:", eDoc.message);
+    }
 
     // 8. Obtener Monto Paramétrico de Matrícula y Registrar Matrícula Inicial
     let montoMatriculaBase = 0;
@@ -5256,11 +5305,38 @@ function unlinkStudentGuardian(payload) {
 // FASE 4: 5. GESTIÓN DOCUMENTAL DE EXPEDIENTES
 // ---------------------------------------------------------------------------
 
-// [REQ-EXP-004] [Fase 1: Registro y Expediente de Estudiantes] - Service backend endpoints (uploadStudentDocument, getStudentDocuments, updateDocumentStatus) para la carga y gestión de documentos y fotografías del estudiante.
+// [TAREA-F5-006] [Fase 5: Admisiones y Matrícula] - Gestión documental de aspirantes con asociación por solicitudId, validación de tamaño (10MB), tipo MIME y migración al expediente.
 function uploadStudentDocument(payload) {
   const { expedienteId, solicitudId, tipoDocumento, fileName, fileData, fechaVencimiento, observaciones } = payload || {};
   if ((!expedienteId && !solicitudId) || !tipoDocumento || !fileData) {
     throw new Error("expedienteId o solicitudId, tipoDocumento y fileData son requeridos.");
+  }
+
+  // Validación de tipo MIME y tamaño de archivo (máximo 10 MB = 10,485,760 bytes)
+  let mimeType = "application/pdf";
+  let base64Data = "";
+  if (typeof fileData === "string" && fileData.indexOf("data:") === 0) {
+    const parts = fileData.split(",");
+    const match = parts[0].match(/:(.*?);/);
+    if (match) mimeType = match[1];
+    base64Data = parts[1] || "";
+  } else if (typeof fileData === "string") {
+    base64Data = fileData;
+  }
+
+  const allowedMimeTypes = ["application/pdf", "image/jpeg", "image/jpg", "image/png", "image/webp"];
+  if (allowedMimeTypes.indexOf(mimeType.toLowerCase()) === -1) {
+    throw new Error(`Formato de archivo no permitido: '${mimeType}'. Únicamente se admiten archivos PDF, JPG, PNG o WEBP.`);
+  }
+
+  const rawBytes = Utilities.base64Decode(base64Data);
+  if (!rawBytes || rawBytes.length === 0) {
+    throw new Error("El archivo subido está vacío (0 bytes) o corrupto.");
+  }
+
+  const maxSizeBytes = 10 * 1024 * 1024; // 10 MB
+  if (rawBytes.length > maxSizeBytes) {
+    throw new Error(`El archivo excede el tamaño máximo permitido de 10 MB. Tamaño del archivo: ${(rawBytes.length / (1024 * 1024)).toFixed(2)} MB.`);
   }
 
   let driveFileId = "";
@@ -5273,20 +5349,21 @@ function uploadStudentDocument(payload) {
     let docFolder = parent.getFoldersByName("Documentos_Estudiantes");
     let targetFolder = docFolder.hasNext() ? docFolder.next() : parent.createFolder("Documentos_Estudiantes");
 
-    const mimeType = fileData.split(',')[0].match(/:(.*?);/)[1];
-    const base64Data = fileData.split(',')[1];
-    const file = targetFolder.createFile(Utilities.newBlob(Utilities.base64Decode(base64Data), mimeType, fileName || `${tipoDocumento}_${Date.now()}`));
+    const blob = Utilities.newBlob(rawBytes, mimeType, fileName || `${tipoDocumento}_${Date.now()}`);
+    const file = targetFolder.createFile(blob);
 
     driveFileId = file.getId();
     driveUrl = `https://lh3.googleusercontent.com/d/${file.getId()}`;
   } catch (e) {
     logDebug("Error subida archivo documento estudiante:", e.message);
+    throw new Error("Fallo al guardar el archivo en almacenamiento seguro de Google Drive: " + e.message);
   }
 
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
   const sheet = getOrCreateSheet(ss, "DocumentosEstudiante");
   const now = new Date();
-  const docId = "DOC-" + now.getTime();
+  const idGen = generateInstitutionalId({ entityType: "DocumentoEstudiante", prefix: "DOC-", skipLock: true });
+  const docId = (idGen && idGen.generatedId) ? idGen.generatedId : ("DOC-" + now.getTime());
 
   sheet.appendRow([
     docId,
@@ -5299,12 +5376,14 @@ function uploadStudentDocument(payload) {
     now,
     fechaVencimiento || "",
     "EnRevision",
-    (payload && payload.userId) || "Secretaría",
+    (payload && (payload._verifiedUserId || payload.userId)) || "Secretaría",
     "",
     observaciones || ""
   ]);
 
-  return { status: "success", documentoId: docId, driveUrl: driveUrl, message: "Documento adjuntado al expediente correctamente." };
+  logStructuredEvent("ACADEMIC", "uploadStudentDocument", "INFO", "DOCUMENT_UPLOADED", `Documento ${docId} (${tipoDocumento}) subido para ${expedienteId || solicitudId}`, { docId, expedienteId, solicitudId, tipoDocumento, fileName, sizeBytes: rawBytes.length }, payload && payload.authRole);
+
+  return { status: "success", documentoId: docId, driveUrl: driveUrl, message: "Documento adjuntado correctamente." };
 }
 
 function getStudentDocuments(payload) {

@@ -2944,22 +2944,7 @@ window.submitPublicAdmissionRequest = async function(formData) {
 window.getPublicAdmissionStatus = async function(searchKey) {
     if (!searchKey) return { status: "error", message: "Debe ingresar un código de seguimiento o número de DNI." };
     try {
-        const res = await window.fetchApi('ACADEMIC', 'getAdmissionRequests', {});
-        if (res && res.status === 'success' && Array.isArray(res.requests)) {
-            const cleanSearch = searchKey.trim().toLowerCase();
-            const cleanDigits = searchKey.replace(/[^0-9]/g, '');
-
-            const match = res.requests.find(r =>
-                r.solicitudId.toLowerCase() === cleanSearch ||
-                (cleanDigits && r.identificacion && r.identificacion.replace(/[^0-9]/g, '') === cleanDigits)
-            );
-
-            if (match) {
-                return { status: "success", found: true, request: match };
-            } else {
-                return { status: "success", found: false, message: "No se encontró ninguna solicitud registrada para el criterio ingresado." };
-            }
-        }
+        const res = await window.fetchApi('ACADEMIC', 'getPublicAdmissionStatus', { searchKey: searchKey });
         return res;
     } catch (err) {
         return { status: "error", message: "Error al consultar el estado de la admisión: " + err.message };

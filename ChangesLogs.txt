@@ -1389,3 +1389,12 @@ Archivos Modificados:
   - Configuración del enrutamiento post-autenticación para dirigir usuarios con rol "Secretaría" / "Secretaria" a `dashboard-secretaria.html`.
 - backend/academic-service/Code.gs:
   - Configuración de permisos explícitos para el rol "Secretaria" en `ROLE_PERMISSIONS` con comentario identificativo [TAREA-F5-005].
+
+[TAREA-F5-006] [Fase 5 - Gestión Documental de Aspirantes Antes de la Matrícula]
+- backend/academic-service/Code.gs:
+  - Actualizada `uploadStudentDocument` con comentario identificativo [TAREA-F5-006], validaciones server-side para límite de tamaño de 10 MB, verificación de tipo MIME (PDF, JPG, PNG, WEBP), prevención de archivos de 0 bytes y generación atómica de IDs de documento.
+  - Actualizada `convertAdmissionToStudent` para asociar/migrar automáticamente los documentos vinculados a la `solicitudId` al nuevo `expedienteId` al realizar la conversión.
+- dashboard-secretaria.html:
+  - Incorporada sección `#modal-adm-docs-container` en el modal de detalle de solicitud de admisión.
+- js/secretary.js:
+  - Implementadas las funciones `loadAdmissionApplicantDocuments` y `updateApplicantDocumentStatusAction` para consulta, vista y calificación (`Aceptado`, `Rechazado`, `Requiere_Sustitucion`) de documentos de aspirantes.

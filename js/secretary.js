@@ -170,6 +170,9 @@ window.openAdmissionDetailModal = function(solicitudId) {
         `;
     }
 
+    // [TAREA-F5-006] Cargar y renderizar documentos adjuntos de la solicitud
+    window.loadAdmissionApplicantDocuments(found.solicitudId);
+
     if (actionsEl) {
         const allowedTransitions = {
             "Recibida": ["En_Revision", "Rechazada", "Retirada"],
@@ -264,5 +267,68 @@ window.convertAdmissionToStudentAction = async function(solicitudId) {
         }
     } catch (err) {
         alert('Error de conexión al convertir la solicitud: ' + err.message);
+    }
+};
+
+// [TAREA-F5-006] [Fase 5: Admisiones y Matrícula] - Módulo de consulta y revisión documental de aspirantes en Secretaría
+window.loadAdmissionApplicantDocuments = async function(solicitudId) {
+    const docsContainer = document.getElementById('modal-adm-docs-container');
+    if (!docsContainer) return;
+
+    docsContainer.innerHTML = `<p class="text-gray-400"><i class="fas fa-spinner fa-spin mr-1"></i> Consultando documentos del aspirante...</p>`;
+
+    try {
+        const res = await window.fetchApi('ACADEMIC', 'getStudentDocuments', { solicitudId });
+        if (res && res.status === 'success' && Array.isArray(res.documents) && res.documents.length > 0) {
+            docsContainer.innerHTML = res.documents.map(d => {
+                let badgeClass = "bg-amber-100 text-amber-800 border-amber-200";
+                if (d.estadoRevision === 'Aceptado' || d.estadoRevision === 'Aprobado') badgeClass = "bg-green-100 text-green-800 border-green-200";
+                if (d.estadoRevision === 'Rechazado' || d.estadoRevision === 'Requiere_Sustitucion') badgeClass = "bg-red-100 text-red-800 border-red-200";
+
+                return `
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between p-3 bg-white rounded-xl border border-gray-100 gap-2 shadow-sm">
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <span class="font-bold text-gray-900">${d.tipoDocumento}</span>
+                                <span class="px-2 py-0.5 text-[9px] font-bold uppercase rounded-full border ${badgeClass}">${d.estadoRevision || 'EnRevision'}</span>
+                            </div>
+                            <span class="text-[10px] text-gray-500 block truncate max-w-xs">${d.nombreArchivo || 'Archivo adjunto'}</span>
+                            ${d.observaciones ? `<span class="text-[10px] text-amber-700 block mt-0.5">Nota: ${d.observaciones}</span>` : ''}
+                        </div>
+                        <div class="flex items-center gap-2">
+                            ${d.driveUrl ? `<a href="${d.driveUrl}" target="_blank" rel="noopener noreferrer" class="px-2.5 py-1 bg-blue-50 text-blue-700 hover:bg-blue-100 font-bold rounded-lg text-[10px] uppercase transition-all"><i class="fa-solid fa-file-arrow-down"></i> Ver</a>` : ''}
+                            <button onclick="window.updateApplicantDocumentStatusAction('${d.documentoId}', 'Aceptado', '${solicitudId}')" class="px-2.5 py-1 bg-green-50 text-green-700 hover:bg-green-100 font-bold rounded-lg text-[10px] uppercase transition-all" title="Aprobar Documento"><i class="fa-solid fa-check"></i> Aprobar</button>
+                            <button onclick="window.updateApplicantDocumentStatusAction('${d.documentoId}', 'Rechazado', '${solicitudId}')" class="px-2.5 py-1 bg-red-50 text-red-700 hover:bg-red-100 font-bold rounded-lg text-[10px] uppercase transition-all" title="Rechazar Documento"><i class="fa-solid fa-xmark"></i> Rechazar</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        } else {
+            docsContainer.innerHTML = `<p class="text-gray-400 italic">No se han registrado documentos o requisitos adjuntos para esta solicitud.</p>`;
+        }
+    } catch (err) {
+        docsContainer.innerHTML = `<p class="text-red-500 font-medium">Error al cargar documentos: ${err.message}</p>`;
+    }
+};
+
+window.updateApplicantDocumentStatusAction = async function(documentoId, nuevoEstado, solicitudId) {
+    const obs = prompt(`Ingrese observaciones para cambiar el estado del documento a '${nuevoEstado}':`, '');
+    if (obs === null) return; // Cancelado
+
+    try {
+        const res = await window.fetchApi('ACADEMIC', 'updateDocumentStatus', {
+            documentoId: documentoId,
+            nuevoEstado: nuevoEstado,
+            observaciones: obs
+        });
+
+        if (res && res.status === 'success') {
+            alert(`Documento actualizado a ${nuevoEstado}.`);
+            window.loadAdmissionApplicantDocuments(solicitudId);
+        } else {
+            alert('Error al actualizar estado del documento: ' + ((res && res.message) || 'Inconveniente del servidor.'));
+        }
+    } catch (err) {
+        alert('Error de comunicación: ' + err.message);
     }
 };
