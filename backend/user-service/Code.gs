@@ -1146,7 +1146,7 @@ function hasActiveDelegationForAction(userId, action) {
   return null;
 }
 
-// [TAREA-F4-P1-04] [Fase 4: Reglas Contextuales RBAC/ABAC] - Validación de atributos contextuales (Docentes, Tutores, Estudiantes)
+// [TAREA-F5-009] [TAREA-F4-P1-04] [Fase 5: Admisiones y Portal de Familias] - Validación contextual con permisos individuales por relación de tutor
 function validateContextualAccess(action, payload, verifiedUserId, userRole) {
   if (!userRole || userRole === "Administrador" || userRole === "Desarrollador") {
     return { authorized: true };
@@ -1164,9 +1164,19 @@ function validateContextualAccess(action, payload, verifiedUserId, userRole) {
     if (targetStudentId && verifiedUserId && String(targetStudentId).trim() !== String(verifiedUserId).trim()) {
       try {
         const guardianRes = getGuardianStudents({ userId: verifiedUserId });
-        const linkedStudents = (guardianRes.data || []).map(s => String(s.studentUserId || s.userId).trim());
-        if (linkedStudents.indexOf(String(targetStudentId).trim()) === -1) {
+        const linkedStudents = (guardianRes.data || []);
+        const match = linkedStudents.find(s => String(s.studentUserId || s.userId).trim() === String(targetStudentId).trim());
+        if (!match) {
           return { authorized: false, reason: "Aislamiento estricto de tutor: el estudiante no está vinculado al tutor." };
+        }
+
+        // Evaluar permisos individuales por tutor si la directiva GRANULAR_FAMILY_PERMISSIONS_ENABLED está activa
+        if (typeof GRANULAR_FAMILY_PERMISSIONS_ENABLED !== "undefined" && GRANULAR_FAMILY_PERMISSIONS_ENABLED === true && match.permisos) {
+          if (action.indexOf("Payment") !== -1 || action.indexOf("Finance") !== -1 || action.indexOf("Account") !== -1) {
+            if (match.permisos.permisoFinanciero === false) {
+              return { authorized: false, reason: "Permiso denegado: El tutor no cuenta con Permiso Financiero asignado para este alumno." };
+            }
+          }
         }
       } catch (e) {}
     }
@@ -1279,6 +1289,8 @@ function doPost(e) {
       // Endpoints Fase 8 - Portal Familiar y Comunicación Institucional
       case "createLinkInvitation": result = createLinkInvitation(payload); break;
       case "acceptLinkInvitation": result = acceptLinkInvitation(payload); break;
+      case "revokeFamilyLink": result = revokeFamilyLink(payload); break;
+      case "updateFamilyLinkPermissions": result = updateFamilyLinkPermissions(payload); break;
       case "getGuardianStudents": result = getGuardianStudents(payload); break;
       case "getFamilyConsolidatedSummary": result = getFamilyConsolidatedSummary(payload); break;
       case "submitJointFamilyPayment": result = submitJointFamilyPayment(payload); break;
@@ -3110,67 +3122,150 @@ function saveSupportPlan(payload) {
 
 // --- FUNCIONES PORTAL FAMILIAR Y COMUNICACIÓN INSTITUCIONAL (FASE 8) ---
 
+// [TAREA-F5-009] [Fase 5: Admisiones y Portal de Familias] - Gestión de vinculaciones familiares por token de invitación de un solo uso, revocación y permisos granulares por relación
 function createLinkInvitation(payload) {
-  const { expedienteId, emailResponsable, creadoPor } = payload || {};
-  if (!expedienteId || !emailResponsable) throw new Error("expedienteId y emailResponsable son requeridos.");
+  const { expedienteId, solicitudId, emailResponsable, creadoPor, permisos } = payload || {};
+  if ((!expedienteId && !solicitudId) || !emailResponsable) {
+    throw new Error("expedienteId o solicitudId y emailResponsable son requeridos.");
+  }
 
+  const cleanEmail = String(emailResponsable).trim().toLowerCase();
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
   const sheet = getOrCreateSheet(ss, "InvitacionesVinculacion");
 
   const invId = "INV-" + Date.now();
   const token = "TOK-" + Utilities.getUuid();
   const now = new Date();
-  const expDate = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
+  const expDate = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000); // 7 días de vigencia
+
+  const defaultPerms = permisos || {
+    permisoAcademico: true,
+    permisoFinanciero: true,
+    permisoDocumental: true,
+    permisoAsistencia: true
+  };
 
   sheet.appendRow([
     invId,
-    expedienteId,
-    emailResponsable,
+    expedienteId || "",
+    cleanEmail,
     token,
     now,
     expDate,
     "Activa",
-    creadoPor || "Secretaría"
+    (payload && (payload._verifiedUserId || payload.userId)) || creadoPor || "Secretaría",
+    solicitudId || "",
+    JSON.stringify(defaultPerms)
   ]);
 
-  return { status: "success", message: "Invitación de vinculación emitida.", data: { invitacionId: invId, token } };
+  logStructuredEvent("USER", "createLinkInvitation", "INFO", "INVITATION_ISSUED", `Invitación ${invId} emitida para ${cleanEmail} (Expediente: ${expedienteId || solicitudId})`, { invId, expedienteId, solicitudId, cleanEmail, token }, payload && payload.authRole);
+
+  return { status: "success", message: "Invitación de vinculación emitida exitosamente.", data: { invitacionId: invId, token, fechaExpiracion: expDate } };
 }
 
 function acceptLinkInvitation(payload) {
-  const { token, userIdResponsable } = payload || {};
-  if (!token || !userIdResponsable) throw new Error("Token e Identificador de Responsable son requeridos.");
+  const { token, userIdResponsable, userEmail } = payload || {};
+  if (!token) throw new Error("Token de invitación es requerido.");
+
+  const targetUserId = (payload && payload._verifiedUserId) || userIdResponsable;
+  if (!targetUserId) throw new Error("Identificador de responsable autenticado no proporcionado.");
 
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
   const sheet = getOrCreateSheet(ss, "InvitacionesVinculacion");
   const data = sheet.getDataRange().getValues();
-  const idx = data.findIndex(r => String(r[3]).trim() === String(token).trim() && r[6] === "Activa");
+  const idx = data.findIndex(r => String(r[3]).trim() === String(token).trim());
 
-  if (idx === -1) throw new Error("Invitación no encontrada o expirada.");
+  if (idx === -1) throw new Error("Invitación no encontrada o token inválido.");
 
   const row = data[idx];
+  const estadoInv = String(row[6] || "").trim();
+  if (estadoInv !== "Activa") {
+    throw new Error(`La invitación se encuentra en estado '${estadoInv}' y no puede ser utilizada.`);
+  }
+
   const now = new Date();
   const expDate = new Date(row[5]);
   if (now.getTime() > expDate.getTime()) {
     sheet.getRange(idx + 1, 7).setValue("Expirada");
-    throw new Error("La invitación ha expirado.");
+    throw new Error("La invitación ha expirado (vigencia de 7 días agotada).");
   }
 
+  // Verificación opcional de coincidencia de correo electrónico si se proporciona
+  const invitedEmail = String(row[2] || "").trim().toLowerCase();
+  const cleanUserEmail = userEmail ? String(userEmail).trim().toLowerCase() : "";
+  if (cleanUserEmail && invitedEmail && cleanUserEmail !== invitedEmail) {
+    throw new Error(`Acción denegada: El correo autenticado (${cleanUserEmail}) no coincide con el destinatario de la invitación (${invitedEmail}).`);
+  }
+
+  const targetExpedienteId = String(row[1] || "").trim();
+  const permisosJSON = row[9] || JSON.stringify({ permisoAcademico: true, permisoFinanciero: true, permisoDocumental: true, permisoAsistencia: true });
+
+  // Detectar y prevenir vínculos duplicados en RelacionesFamiliares
+  const relSheet = getOrCreateSheet(ss, "RelacionesFamiliares");
+  const relData = relSheet.getDataRange().getValues();
+  const existingRel = relData.slice(1).find(r => String(r[1]).trim() === targetExpedienteId && String(r[2]).trim() === String(targetUserId).trim() && r[4] !== "Revocada");
+
+  if (existingRel) {
+    sheet.getRange(idx + 1, 7).setValue("Utilizada");
+    return { status: "success", isAlreadyLinked: true, message: "El vínculo familiar ya se encuentra registrado y verificado." };
+  }
+
+  // Marcar invitación como utilizada
   sheet.getRange(idx + 1, 7).setValue("Utilizada");
 
-  const relSheet = getOrCreateSheet(ss, "RelacionesFamiliares");
   const relId = "REL-" + Date.now();
   relSheet.appendRow([
     relId,
-    row[1],
-    userIdResponsable,
+    targetExpedienteId,
+    targetUserId,
     "Padre/Tutor",
     "Verificada",
     now,
     "",
-    "Vinculación aceptada mediante invitación con token."
+    "Vinculación verificada y aceptada mediante token.",
+    permisosJSON
   ]);
 
-  return { status: "success", message: "Vinculación familiar completada exitosamente." };
+  logStructuredEvent("USER", "acceptLinkInvitation", "INFO", "LINK_ACCEPTED", `Vínculo familiar ${relId} verificado para usuario ${targetUserId} y expediente ${targetExpedienteId}`, { relId, targetUserId, targetExpedienteId, token }, payload && payload.authRole);
+
+  return { status: "success", relId: relId, message: "Vinculación familiar completada y verificada exitosamente." };
+}
+
+function revokeFamilyLink(payload) {
+  const { relacionId, motivo } = payload || {};
+  if (!relacionId) throw new Error("relacionId es requerido.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "RelacionesFamiliares");
+  const data = sheet.getDataRange().getValues();
+
+  const idx = data.findIndex(r => String(r[0]).trim() === String(relacionId).trim());
+  if (idx === -1) throw new Error("Vínculo familiar no encontrado.");
+
+  sheet.getRange(idx + 1, 5).setValue("Revocada");
+  const obsPrev = String(data[idx][7] || "");
+  sheet.getRange(idx + 1, 8).setValue(`${obsPrev} | [REVOCADA ${new Date().toISOString().split('T')[0]}]: ${motivo || 'Revocación administrativa'}`);
+
+  const actorUserId = (payload && (payload._verifiedUserId || payload.userId)) || "Secretaría";
+  logStructuredEvent("USER", "revokeFamilyLink", "WARN", "LINK_REVOKED", `Vínculo familiar ${relacionId} revocado por ${actorUserId}`, { relacionId, motivo }, payload && payload.authRole);
+
+  return { status: "success", message: `Vínculo familiar ${relacionId} revocado exitosamente.` };
+}
+
+function updateFamilyLinkPermissions(payload) {
+  const { relacionId, permisos } = payload || {};
+  if (!relacionId || !permisos) throw new Error("relacionId y objeto de permisos son requeridos.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "RelacionesFamiliares");
+  const data = sheet.getDataRange().getValues();
+
+  const idx = data.findIndex(r => String(r[0]).trim() === String(relacionId).trim());
+  if (idx === -1) throw new Error("Vínculo familiar no encontrado.");
+
+  sheet.getRange(idx + 1, 9).setValue(JSON.stringify(permisos));
+
+  return { status: "success", message: "Permisos del tutor actualizados exitosamente." };
 }
 
 // [TAREA-F4-P0-02] [Fase 4: Protección IDOR y ABAC] - Verificación estricta de vínculo tutores-estudiantes en RelacionesFamiliares

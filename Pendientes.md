@@ -270,10 +270,10 @@
 
 ---
 
-### [TAREA-F5-009] Corregir la vinculación familiar y establecer permisos individuales por relación
+### [X] [TAREA-F5-009] Corregir la vinculación familiar y establecer permisos individuales por relación
 - **Origen del Hallazgo:** `Auditoria.txt` (HALLAZGOS F5: HALLAZGOS-F5-P0-02) / `AUDITORIA_FASE_5_ADMISIONES_PORTAL_FAMILIAS.md` (Subcapacidad 5.7, Brecha P0-02)
 - **Severidad/Clasificación:** Crítico
-- **Archivos Involucrados:** `backend/user-service/Code.gs` (l. 3113-3250), `backend/academic-service/Code.gs` (l. 4698-4820), `js/teacher.js`
+- **Archivos Involucrados:** `backend/user-service/Code.gs` (l. 3113-3250), `backend/academic-service/Code.gs` (l. 4698-4820), `js/secretary.js`
 - **Dependencias Expuestas:** Hojas `RelacionesFamiliares`, `InvitacionesVinculacion`, `Usuarios`, `validateContextualAccess`
 - **Descripción del Alcance:**
   1. Unificar los flujos de vinculación para que toda relación familiar requiera una invitación con token o autorización explícita verificada.
@@ -292,17 +292,17 @@
   14. Prohibir la creación automática de cuentas de usuario basándose únicamente en cadenas de texto de un formulario.
   15. Integrar el proceso en la conversión a matrícula transfiriendo al tutor declarado a la cola de invitaciones de vinculación.
 - **Criterios de Aceptación:**
-  - [ ] El personal administrativo no puede otorgar acceso al portal sin completar el flujo de verificación.
-  - [ ] Tokens expirados, revocados o usados previamente son rechazados.
-  - [ ] Un token no se puede usar para vincular a un estudiante diferente del autorizado en la invitación.
-  - [ ] Intentos de vinculación duplicados son neutralizados sin crear filas redundantes.
-  - [ ] Dos tutores del mismo estudiante pueden tener conjuntos de permisos diferenciados (ej. Tutor 1 Financiero, Tutor 2 Académico).
-  - [ ] La revocación de un vínculo bloquea inmediatamente el acceso del tutor a la información del alumno.
-  - [ ] Alterar el ID de estudiante en peticiones API es rechazado por el aislamiento de `validateContextualAccess`.
-  - [ ] La conversión de admisión a matrícula transfiere correctamente al tutor declarado al flujo de invitaciones sin perder sus datos.
-  - [ ] Registro completo de auditoría para cada cambio de estado en la relación familiar.
-  - [ ] La autorización efectiva se verifica en el servidor en cada endpoint del portal de familias.
-- **Estado:** [ ] Pendiente
+  - [x] El personal administrativo no puede otorgar acceso al portal sin completar el flujo de verificación.
+  - [x] Tokens expirados, revocados o usados previamente son rechazados.
+  - [x] Un token no se puede usar para vincular a un estudiante diferente del autorizado en la invitación.
+  - [x] Intentos de vinculación duplicados son neutralizados sin crear filas redundantes.
+  - [x] Dos tutores del mismo estudiante pueden tener conjuntos de permisos diferenciados (ej. Tutor 1 Financiero, Tutor 2 Académico).
+  - [x] La revocación de un vínculo bloquea inmediatamente el acceso del tutor a la información del alumno.
+  - [x] Alterar el ID de estudiante en peticiones API es rechazado por el aislamiento de `validateContextualAccess`.
+  - [x] La conversión de admisión a matrícula transfiere correctamente al tutor declarado al flujo de invitaciones sin perder sus datos.
+  - [x] Registro completo de auditoría para cada cambio de estado en la relación familiar.
+  - [x] La autorización efectiva se verifica en el servidor en cada endpoint del portal de familias.
+- **Estado:** [X] Completada
 
 ---
 

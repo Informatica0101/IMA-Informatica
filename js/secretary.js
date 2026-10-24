@@ -181,6 +181,9 @@ window.openAdmissionDetailModal = function(solicitudId) {
     // [TAREA-F5-008] Cargar lista de espera
     window.loadAdmissionWaitlistStatus(found.solicitudId);
 
+    // [TAREA-F5-009] Cargar vinculación de tutor
+    window.loadGuardianLinkageStatus(found);
+
     if (actionsEl) {
         const allowedTransitions = {
             "Recibida": ["En_Revision", "Rechazada", "Retirada"],
@@ -433,6 +436,55 @@ window.recordInterviewOutcomeAction = async function(entrevistaId, estado) {
         }
     } catch (err) {
         alert("Error: " + err.message);
+    }
+};
+
+// [TAREA-F5-009] [Fase 5: Admisiones y Portal de Familias] - Controladores UI de Vinculación Familiar e Invitaciones por Token
+window.loadGuardianLinkageStatus = function(solicitudObj) {
+    const container = document.getElementById('modal-adm-tutors-container');
+    if (!container) return;
+
+    if (!solicitudObj) {
+        container.innerHTML = `<p class="text-gray-400">Sin datos de la solicitud.</p>`;
+        return;
+    }
+
+    const email = solicitudObj.emailContacto || '';
+    const name = solicitudObj.nombreResponsable || 'Responsable Declarado';
+
+    container.innerHTML = `
+        <div class="p-3 bg-white rounded-xl border border-gray-100 shadow-sm space-y-2">
+            <div class="flex justify-between items-center">
+                <strong class="text-gray-900">${name}</strong>
+                <span class="px-2 py-0.5 text-[9px] font-bold rounded-full bg-blue-100 text-blue-800 border border-blue-200">Declarado</span>
+            </div>
+            <p class="text-[10px] text-gray-500">Correo Electrónico: ${email || 'N/A'}</p>
+            <div class="flex gap-2 justify-end pt-1">
+                <button onclick="window.promptIssueTutorInvitation('${solicitudObj.solicitudId}', '${solicitudObj.expedienteId || ''}', '${email}')" class="px-2.5 py-1 bg-blue-50 text-blue-700 hover:bg-blue-100 font-bold rounded-lg text-[10px] uppercase"><i class="fa-solid fa-key"></i> Generar Token de Invitación</button>
+            </div>
+        </div>
+    `;
+};
+
+window.promptIssueTutorInvitation = async function(solicitudIdInput, expedienteIdInput, emailInput) {
+    const solicitudId = solicitudIdInput || window.currentActiveSolicitudId;
+    const email = emailInput || prompt("Correo electrónico del responsable/tutor:", "");
+    if (!email) return;
+
+    try {
+        const res = await window.fetchApi('USER', 'createLinkInvitation', {
+            solicitudId: solicitudId,
+            expedienteId: expedienteIdInput || "",
+            emailResponsable: email
+        });
+
+        if (res && res.status === 'success' && res.data) {
+            alert(`¡Invitación por Token Emitida Exitosamente!\n\nToken Seguro: ${res.data.token}\nDestinatario: ${email}\nVigencia: 7 días\n\nEl tutor podrá vincularse ingresando este token en su Portal Familiar.`);
+        } else {
+            alert("Error al emitir invitación: " + ((res && res.message) || "Inconveniente del servidor."));
+        }
+    } catch (err) {
+        alert("Error de red: " + err.message);
     }
 };
 

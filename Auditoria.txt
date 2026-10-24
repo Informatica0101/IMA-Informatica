@@ -106,4 +106,9 @@ RESOLUCIÓN Y VERIFICACIÓN DE TAREAS EJECUTADAS:
  - Estado: COMPLETADA Y VERIFICADA (2026-03-29)
  - Archivos Modificados: backend/academic-service/Code.gs, dashboard-secretaria.html, js/secretary.js
  - Verificación: Creada hoja `ListaEsperaAdmision`, implementados endpoints backend `addToWaitlist`, `getWaitlist`, `reorderWaitlist`, `offerWaitlistSlot` y `respondToWaitlistSlot` con cálculo automático de prioridades según criterios de prelación (hermanos, exalumnos, personal), reordenamiento con justificación trazable y transición automática a 'Admitida' al aceptar ofertas de vacantes. Creados componentes UI e interactividad en `dashboard-secretaria.html` y `js/secretary.js`. Comentario identificativo [TAREA-F5-008] inyectado en `backend/academic-service/Code.gs`.
+
+[TAREA-F5-009] Corregir la vinculación familiar y establecer permisos individuales por relación
+ - Estado: COMPLETADA Y VERIFICADA (2026-03-29)
+ - Archivos Modificados: backend/user-service/Code.gs, backend/academic-service/Code.gs, dashboard-secretaria.html, js/secretary.js
+ - Verificación: Unificados los flujos de vinculación por token de invitación de 7 días (`createLinkInvitation`, `acceptLinkInvitation`) con comprobación de coincidencia de correo electrónico y neutralización de vínculos duplicados en `RelacionesFamiliares`. Implementadas `revokeFamilyLink` y `updateFamilyLinkPermissions` para administración de permisos granulares por relación (`PermisoAcademico`, `PermisoFinanciero`, `PermisoDocumental`, `PermisoAsistencia`) evaluados en `validateContextualAccess`. Creados componentes UI e interactividad en `dashboard-secretaria.html` y `js/secretary.js`. Comentario identificativo [TAREA-F5-009] inyectado en `backend/user-service/Code.gs`.
 ================================================================================

@@ -1418,3 +1418,15 @@ Archivos Modificados:
   - Incorporada sección `#modal-adm-waitlist-container` en el modal de detalle de admisión.
 - js/secretary.js:
   - Implementados controladores `loadAdmissionWaitlistStatus`, `promptAddToWaitlist`, `offerWaitlistSlotAction` y `reorderWaitlistAction`.
+
+[TAREA-F5-009] [Fase 5 - Vinculación Familiar y Permisos Granulares por Tutor]
+- backend/user-service/Code.gs:
+  - Actualización de `createLinkInvitation` con emisión de tokens de 7 días (`TOK-UUID`), soporte para `solicitudId` / `expedienteId` y almacenamiento de objeto de permisos.
+  - Actualización de `acceptLinkInvitation` con verificación de coincidencia de correo electrónico del invitado, neutralización de duplicados en `RelacionesFamiliares` e inyección de permisos.
+  - Implementación de `revokeFamilyLink` y `updateFamilyLinkPermissions`.
+  - Evaluación de permisos individuales por tutor (`GRANULAR_FAMILY_PERMISSIONS_ENABLED`) en `validateContextualAccess`.
+  - Comentario identificativo [TAREA-F5-009] inyectado en las funciones modificadas.
+- dashboard-secretaria.html:
+  - Incorporada sección `#modal-adm-tutors-container` en el modal de detalle de admisión.
+- js/secretary.js:
+  - Implementados controladores `loadGuardianLinkageStatus` y `promptIssueTutorInvitation`.
