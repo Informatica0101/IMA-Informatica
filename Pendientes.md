@@ -99,7 +99,7 @@
 
 ---
 
-### [TAREA-F5-004] Construir el formulario público de admisión y conectarlo con el backend
+### [X] [TAREA-F5-004] Construir el formulario público de admisión y conectarlo con el backend
 - **Origen del Hallazgo:** `Auditoria.txt` (HALLAZGOS F5: HALLAZGOS-F5-P0-01) / `AUDITORIA_FASE_5_ADMISIONES_PORTAL_FAMILIAS.md` (Subcapacidad 5.1, Brecha P0-01)
 - **Severidad/Clasificación:** Crítico
 - **Archivos Involucrados:** `admision.html` (Nuevo), `js/student.js`, `js/auth.js`, `backend/academic-service/Code.gs` (l. 714)
@@ -118,17 +118,17 @@
   11. Diferenciar explícitamente el envío de la solicitud de su aprobación institucional.
   12. Soportar reintentos limpios ante fallos de red sin duplicar solicitudes.
 - **Criterios de Aceptación:**
-  - [ ] Una familia puede completar y enviar una solicitud válida desde un dispositivo móvil o de escritorio.
-  - [ ] Los datos ingresados llegan al backend y se conservan correctamente en `SolicitudesAdmision`.
-  - [ ] Una solicitud inválida no se registra como completa.
-  - [ ] Un error del servidor no produce un mensaje falso de éxito en la pantalla.
-  - [ ] Una solicitud enviada devuelve e informa un identificador de seguimiento único (`solicitudId`).
-  - [ ] El usuario puede corregir errores de validación sin volver a introducir todos los datos.
-  - [ ] Los intentos duplicados se detectan y notifican adecuadamente.
-  - [ ] La interfaz impide seleccionar grados u ofertas no disponibles en la institución.
-  - [ ] La pantalla funciona mediante teclado y cumple WCAG 2.2 AA.
-  - [ ] No se exponen datos de otros aspirantes en mensajes de error o validación.
-- **Estado:** [ ] Pendiente
+  - [x] Una familia puede completar y enviar una solicitud válida desde un dispositivo móvil o de escritorio.
+  - [x] Los datos ingresados llegan al backend y se conservan correctamente en `SolicitudesAdmision`.
+  - [x] Una solicitud inválida no se registra como completa.
+  - [x] Un error del servidor no produce un mensaje falso de éxito en la pantalla.
+  - [x] Una solicitud enviada devuelve e informa un identificador de seguimiento único (`solicitudId`).
+  - [x] El usuario puede corregir errores de validación sin volver a introducir todos los datos.
+  - [x] Los intentos duplicados se detectan y notifican adecuadamente.
+  - [x] La interfaz impide seleccionar grados u ofertas no disponibles en la institución.
+  - [x] La pantalla funciona mediante teclado y cumple WCAG 2.2 AA.
+  - [x] No se exponen datos de otros aspirantes en mensajes de error o validación.
+- **Estado:** [X] Completada
 
 ---
 

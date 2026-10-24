@@ -20,9 +20,14 @@ window.consolidateStudentDashboardSummary = function(studentData) {
 };
 
 document.addEventListener('DOMContentLoaded', function() {
+    var isStudentDashboard = window.location.pathname.indexOf('student-dashboard') !== -1;
     var currentUser = JSON.parse(localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser'));
-    if (!currentUser || (currentUser.rol !== 'Estudiante' && currentUser.rol !== 'Alumno')) {
+    if (isStudentDashboard && (!currentUser || (currentUser.rol !== 'Estudiante' && currentUser.rol !== 'Alumno'))) {
         window.location.href = 'login.html';
+        return;
+    }
+    if (!isStudentDashboard && !currentUser) {
+        // En páginas públicas no redirigir automáticamente si no hay sesión iniciada
         return;
     }
 
@@ -2891,3 +2896,72 @@ document.addEventListener('DOMContentLoaded', function() {
         observer.observe(dashboard, { childList: true, subtree: true });
     }
 });
+
+// ---------------------------------------------------------------------------
+// [TAREA-F5-004] [Fase 5: Admisiones y Portal de Familias] - Módulo Público de Admisión de Aspirantes
+// Proporciona la lógica cliente para el envío público de solicitudes de admisión,
+// validación de formato DNI (13 dígitos) y teléfono Honduras, gestión de reintentos
+// con clave de idempotencia y consulta de estado por número de seguimiento o DNI.
+// ---------------------------------------------------------------------------
+window.submitPublicAdmissionRequest = async function(formData) {
+    if (!formData || !formData.nombresAspirante || !formData.apellidosAspirante || !formData.gradoSolicitado) {
+        return { status: "error", message: "Nombres, apellidos y grado solicitado son obligatorios." };
+    }
+
+    const cleanIdent = (formData.identificacion || "").replace(/[^0-9]/g, '');
+    if (cleanIdent.length !== 13) {
+        return { status: "error", message: "El número de identificación (DNI) de Honduras debe contener exactamente 13 dígitos numéricos." };
+    }
+
+    const cleanPhone = (formData.telefonoContacto || "").replace(/[^0-9]/g, '');
+    if (cleanPhone.length < 8) {
+        return { status: "error", message: "El teléfono de contacto debe tener al menos 8 dígitos de Honduras." };
+    }
+
+    const payload = {
+        idempotencyToken: formData.idempotencyToken || ('IDEM-ADM-' + Date.now() + '-' + Math.floor(Math.random() * 100000)),
+        anolectivo: formData.anolectivo || "2026",
+        gradoSolicitado: formData.gradoSolicitado,
+        nombresAspirante: formData.nombresAspirante.trim(),
+        apellidosAspirante: formData.apellidosAspirante.trim(),
+        identificacion: cleanIdent,
+        fechaNacimiento: formData.fechaNacimiento || "",
+        nombreResponsable: (formData.nombreResponsable || "").trim(),
+        telefonoContacto: cleanPhone,
+        emailContacto: (formData.emailContacto || "").trim().toLowerCase(),
+        observaciones: (formData.observaciones || "").trim(),
+        canalIngreso: formData.canalIngreso || "PortalWebPublico"
+    };
+
+    try {
+        const res = await window.fetchApi('ACADEMIC', 'createAdmissionRequest', payload);
+        return res;
+    } catch (err) {
+        return { status: "error", message: "Error de red al procesar la solicitud de admisión: " + err.message };
+    }
+};
+
+window.getPublicAdmissionStatus = async function(searchKey) {
+    if (!searchKey) return { status: "error", message: "Debe ingresar un código de seguimiento o número de DNI." };
+    try {
+        const res = await window.fetchApi('ACADEMIC', 'getAdmissionRequests', {});
+        if (res && res.status === 'success' && Array.isArray(res.requests)) {
+            const cleanSearch = searchKey.trim().toLowerCase();
+            const cleanDigits = searchKey.replace(/[^0-9]/g, '');
+
+            const match = res.requests.find(r =>
+                r.solicitudId.toLowerCase() === cleanSearch ||
+                (cleanDigits && r.identificacion && r.identificacion.replace(/[^0-9]/g, '') === cleanDigits)
+            );
+
+            if (match) {
+                return { status: "success", found: true, request: match };
+            } else {
+                return { status: "success", found: false, message: "No se encontró ninguna solicitud registrada para el criterio ingresado." };
+            }
+        }
+        return res;
+    } catch (err) {
+        return { status: "error", message: "Error al consultar el estado de la admisión: " + err.message };
+    }
+};

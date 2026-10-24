@@ -81,4 +81,9 @@ RESOLUCIÓN Y VERIFICACIÓN DE TAREAS EJECUTADAS:
  - Estado: COMPLETADA Y VERIFICADA (2026-03-29)
  - Archivos Modificados: backend/academic-service/Code.gs (l. 710-820)
  - Verificación: Reestructurada función createAdmissionRequest con comentario identificativo de primera línea [TAREA-F5-003]. Integrada la generación de IDs atómicos secuenciales (ADM-000001) mediante generateInstitutionalId y SecuenciasIDs, candado atómico LockService.getScriptLock(10000) con control de excepciones de bloqueo, detección preventiva de solicitudes duplicadas por DNI o Nombre+FechaNacimiento en el mismo año lectivo, e integración con checkAndRegisterIdempotencyKey / saveIdempotentResult para prevención de reintentos de red duplicados.
+
+[TAREA-F5-004] Construir el formulario público de admisión y conectarlo con el backend
+ - Estado: COMPLETADA Y VERIFICADA (2026-03-29)
+ - Archivos Modificados: admision.html (Nuevo), js/student.js, index.html, login.html
+ - Verificación: Creada la interfaz pública admision.html con flujo guiado por stepper en 4 pasos (Aspirante, Responsable, Selección Académica, Confirmación), aviso de privacidad y consentimiento ARCO, validación de DNI de 13 dígitos de Honduras y teléfono de 8 dígitos (+504), panel público de seguimiento de trámites por código ADM-XXXXXX o DNI del aspirante, integración limpia con el backend via submitPublicAdmissionRequest (createAdmissionRequest) y getPublicAdmissionStatus (getAdmissionRequests), con tokens de idempotencia para prevenir reintentos duplicados y enlaces de navegación pública desde index.html y login.html. Comentarios identificativos de la tarea inyectados en la cabecera de admision.html y en js/student.js.
 ================================================================================

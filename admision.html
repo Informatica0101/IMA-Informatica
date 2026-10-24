@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <!-- [TAREA-F5-004] [Fase 5: Admisiones y Portal de Familias] - Formulario Público de Admisión y Consulta de Solicitudes -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <title>Solicitud de Admisión - New Generation Christian Academy</title>
+    <link rel="icon" type="image/png" href="imagenes/new-generation-logo.png">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#2563eb">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Admisiones NGCA">
+    <link rel="apple-touch-icon" href="imagenes/new-generation-logo.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css?v=22">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="font-inter antialiased text-gray-900 bg-gray-50 min-h-screen flex flex-col">
+
+    <!-- Encabezado Institucional -->
+    <header id="main-header" class="fixed w-full z-50 transition-all duration-300 bg-white border-b border-gray-100 shadow-sm">
+        <div class="container mx-auto px-4 md:px-6 flex justify-between items-center h-16 md:h-20">
+            <div class="flex items-center gap-4">
+                <a href="index.html" class="flex items-center gap-3 group" title="Ir al Inicio">
+                    <img src="imagenes/new-generation-logo.png" alt="Logo NGCA" class="logo-img transition-transform duration-300 group-hover:scale-105 w-[50px] md:w-[70px] h-auto">
+                    <div class="header-title-container">
+                        <h1 class="text-sm md:text-xl font-black text-gray-900 uppercase tracking-tighter leading-none">New Generation</h1>
+                        <p class="text-[9px] md:text-[11px] font-bold text-blue-600 uppercase tracking-widest mt-1">New Generation Christian Academy</p>
+                    </div>
+                </a>
+            </div>
+
+            <nav class="hidden md:flex items-center gap-2">
+                <a href="index.html" class="nav-link-desktop">Inicio</a>
+                <button onclick="switchTab('solicitud')" id="tab-btn-solicitud" class="px-4 py-2 rounded-xl text-sm font-semibold text-blue-600 bg-blue-50 transition-all">Nueva Solicitud</button>
+                <button onclick="switchTab('seguimiento')" id="tab-btn-seguimiento" class="px-4 py-2 rounded-xl text-sm font-semibold text-gray-600 hover:bg-gray-100 transition-all">Consultar Estado</button>
+                <a href="login.html" class="btn-ima-primary px-5 py-2 text-xs">Acceso Portal</a>
+            </nav>
+
+            <div class="flex items-center gap-3">
+                <img src="imagenes/bandera-de-honduras.png" alt="Bandera de Honduras" class="w-8 md:w-[40px] h-auto block">
+            </div>
+        </div>
+    </header>
+
+    <!-- Contenido Principal -->
+    <main class="mt-[4.5rem] md:mt-[5.5rem] flex-grow container mx-auto px-4 md:px-6 py-8 max-w-4xl">
+
+        <!-- Selector de Pestañas Móvil / Secundario -->
+        <div class="flex md:hidden bg-white p-1 rounded-2xl shadow-sm border border-gray-100 mb-6">
+            <button onclick="switchTab('solicitud')" id="mob-tab-solicitud" class="flex-1 py-2.5 text-xs font-bold text-center rounded-xl bg-blue-600 text-white transition-all">Nueva Solicitud</button>
+            <button onclick="switchTab('seguimiento')" id="mob-tab-seguimiento" class="flex-1 py-2.5 text-xs font-bold text-center rounded-xl text-gray-600 transition-all">Consultar Estado</button>
+        </div>
+
+        <!-- SECCIÓN 1: FORMULARIO DE ADMISIÓN (STEPPER) -->
+        <section id="section-solicitud" class="bg-white rounded-3xl p-6 md:p-10 shadow-xl border border-gray-100">
+            <div class="text-center mb-8">
+                <span class="inline-block px-3 py-1 bg-blue-50 text-blue-700 text-[11px] font-bold uppercase tracking-wider rounded-full mb-2">Proceso Lectivo 2026</span>
+                <h2 class="text-2xl md:text-3xl font-black text-gray-900 tracking-tight">Solicitud de Admisión de Aspirante</h2>
+                <p class="text-xs md:text-sm text-gray-500 mt-2 max-w-xl mx-auto">Complete el formulario formal para iniciar el trámite de postulación académica en New Generation Christian Academy.</p>
+            </div>
+
+            <!-- Stepper Visual -->
+            <div class="mb-10" aria-label="Progreso del formulario">
+                <div class="flex justify-between items-center relative max-w-2xl mx-auto">
+                    <div class="absolute left-0 top-1/2 transform -translate-y-1/2 w-full h-1 bg-gray-100 -z-0"></div>
+                    <div id="stepper-progress-bar" class="absolute left-0 top-1/2 transform -translate-y-1/2 h-1 bg-blue-600 transition-all duration-300 -z-0" style="width: 0%;"></div>
+
+                    <div class="stepper-step flex flex-col items-center z-10" id="step-node-1">
+                        <div class="step-circle w-10 h-10 rounded-full bg-blue-600 text-white font-black flex items-center justify-center text-sm shadow-md transition-all">1</div>
+                        <span class="text-[10px] md:text-xs font-bold text-blue-600 mt-2 uppercase tracking-tight">Aspirante</span>
+                    </div>
+
+                    <div class="stepper-step flex flex-col items-center z-10" id="step-node-2">
+                        <div class="step-circle w-10 h-10 rounded-full bg-gray-200 text-gray-600 font-black flex items-center justify-center text-sm transition-all">2</div>
+                        <span class="text-[10px] md:text-xs font-bold text-gray-400 mt-2 uppercase tracking-tight">Responsable</span>
+                    </div>
+
+                    <div class="stepper-step flex flex-col items-center z-10" id="step-node-3">
+                        <div class="step-circle w-10 h-10 rounded-full bg-gray-200 text-gray-600 font-black flex items-center justify-center text-sm transition-all">3</div>
+                        <span class="text-[10px] md:text-xs font-bold text-gray-400 mt-2 uppercase tracking-tight">Académico</span>
+                    </div>
+
+                    <div class="stepper-step flex flex-col items-center z-10" id="step-node-4">
+                        <div class="step-circle w-10 h-10 rounded-full bg-gray-200 text-gray-600 font-black flex items-center justify-center text-sm transition-all">4</div>
+                        <span class="text-[10px] md:text-xs font-bold text-gray-400 mt-2 uppercase tracking-tight">Confirmación</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Formulario Principal -->
+            <form id="admission-form" onsubmit="handleAdmissionSubmit(event)" class="space-y-6">
+
+                <!-- PASO 1: DATOS DEL ASPIRANTE -->
+                <div id="form-step-1" class="step-content space-y-5">
+                    <h3 class="text-base font-bold text-gray-900 border-b pb-2 flex items-center gap-2">
+                        <i class="fas fa-user-graduate text-blue-600"></i> Paso 1: Datos Personales del Aspirante
+                    </h3>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <div>
+                            <label for="nombresAspirante" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">Nombres del Aspirante <span class="text-red-500">*</span></label>
+                            <input type="text" id="nombresAspirante" name="nombresAspirante" required class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:bg-white focus:outline-none transition-all text-sm" placeholder="Ej. Carlos Eduardo">
+                            <span class="text-[11px] text-red-500 hidden" id="err-nombresAspirante">Ingrese los nombres del aspirante.</span>
+                        </div>
+
+                        <div>
+                            <label for="apellidosAspirante" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">Apellidos del Aspirante <span class="text-red-500">*</span></label>
+                            <input type="text" id="apellidosAspirante" name="apellidosAspirante" required class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:bg-white focus:outline-none transition-all text-sm" placeholder="Ej. Martínez López">
+                            <span class="text-[11px] text-red-500 hidden" id="err-apellidosAspirante">Ingrese los apellidos del aspirante.</span>
+                        </div>
+
+                        <div>
+                            <label for="identificacion" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">DNI / Identificación Nacional (Honduras) <span class="text-red-500">*</span></label>
+                            <input type="text" id="identificacion" name="identificacion" maxlength="15" required class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:bg-white focus:outline-none transition-all text-sm" placeholder="Ej. 0801-2010-12345 (13 dígitos)">
+                            <span class="text-[11px] text-gray-400 mt-1 block">Formato: 13 dígitos numéricos de identidad de Honduras.</span>
+                            <span class="text-[11px] text-red-500 hidden" id="err-identificacion">El DNI debe tener exactamente 13 dígitos válidos.</span>
+                        </div>
+
+                        <div>
+                            <label for="fechaNacimiento" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">Fecha de Nacimiento <span class="text-red-500">*</span></label>
+                            <input type="date" id="fechaNacimiento" name="fechaNacimiento" required class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:bg-white focus:outline-none transition-all text-sm">
+                            <span class="text-[11px] text-red-500 hidden" id="err-fechaNacimiento">Ingrese una fecha de nacimiento válida.</span>
+                        </div>
+                    </div>
+
+                    <div class="flex justify-end mt-6">
+                        <button type="button" onclick="goToStep(2)" class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl text-xs uppercase tracking-wider transition-all shadow-md flex items-center gap-2">
+                            Siguiente Paso <i class="fas fa-arrow-right"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- PASO 2: DATOS DEL RESPONSABLE -->
+                <div id="form-step-2" class="step-content space-y-5 hidden">
+                    <h3 class="text-base font-bold text-gray-900 border-b pb-2 flex items-center gap-2">
+                        <i class="fas fa-users text-blue-600"></i> Paso 2: Datos del Padre, Madre o Tutor Legal
+                    </h3>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <div>
+                            <label for="nombreResponsable" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">Nombre Completo del Responsable <span class="text-red-500">*</span></label>
+                            <input type="text" id="nombreResponsable" name="nombreResponsable" required class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:bg-white focus:outline-none transition-all text-sm" placeholder="Ej. Ana María López">
+                            <span class="text-[11px] text-red-500 hidden" id="err-nombreResponsable">Ingrese el nombre del responsable legal.</span>
+                        </div>
+
+                        <div>
+                            <label for="parentescoResponsable" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">Parentesco / Relación <span class="text-red-500">*</span></label>
+                            <select id="parentescoResponsable" name="parentescoResponsable" required class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:bg-white focus:outline-none transition-all text-sm">
+                                <option value="Madre">Madre</option>
+                                <option value="Padre">Padre</option>
+                                <option value="Tutor Legal">Tutor Legal</option>
+                                <option value="Familiar Responsable">Familiar Responsable</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label for="telefonoContacto" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">Teléfono de Contacto (Honduras) <span class="text-red-500">*</span></label>
+                            <input type="tel" id="telefonoContacto" name="telefonoContacto" maxlength="15" required class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:bg-white focus:outline-none transition-all text-sm" placeholder="Ej. +504 9999-9999">
+                            <span class="text-[11px] text-gray-400 mt-1 block">Número de 8 dígitos (ej. 99998888) o con prefijo (+504).</span>
+                            <span class="text-[11px] text-red-500 hidden" id="err-telefonoContacto">Ingrese un teléfono válido de Honduras (8 dígitos).</span>
+                        </div>
+
+                        <div>
+                            <label for="emailContacto" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">Correo Electrónico del Tutor <span class="text-red-500">*</span></label>
+                            <input type="email" id="emailContacto" name="emailContacto" required class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:bg-white focus:outline-none transition-all text-sm" placeholder="ejemplo@correo.com">
+                            <span class="text-[11px] text-gray-400 mt-1 block">Recibirá el código de seguimiento e invitaciones del portal.</span>
+                            <span class="text-[11px] text-red-500 hidden" id="err-emailContacto">Ingrese un correo electrónico válido.</span>
+                        </div>
+                    </div>
+
+                    <div class="flex justify-between mt-6">
+                        <button type="button" onclick="goToStep(1)" class="px-5 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold rounded-xl text-xs uppercase tracking-wider transition-all flex items-center gap-2">
+                            <i class="fas fa-arrow-left"></i> Anterior
+                        </button>
+                        <button type="button" onclick="goToStep(3)" class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl text-xs uppercase tracking-wider transition-all shadow-md flex items-center gap-2">
+                            Siguiente Paso <i class="fas fa-arrow-right"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- PASO 3: SELECCIÓN ACADÉMICA Y REQUISITOS -->
+                <div id="form-step-3" class="step-content space-y-5 hidden">
+                    <h3 class="text-base font-bold text-gray-900 border-b pb-2 flex items-center gap-2">
+                        <i class="fas fa-school text-blue-600"></i> Paso 3: Selección Académica y Requisitos
+                    </h3>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <div>
+                            <label for="anolectivo" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">Año Lectivo <span class="text-red-500">*</span></label>
+                            <select id="anolectivo" name="anolectivo" required class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:bg-white focus:outline-none transition-all text-sm">
+                                <option value="2026" selected>2026</option>
+                                <option value="2027">2027</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label for="gradoSolicitado" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">Grado Solicitado <span class="text-red-500">*</span></label>
+                            <select id="gradoSolicitado" name="gradoSolicitado" onchange="updateDocumentRequirementsList()" required class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:bg-white focus:outline-none transition-all text-sm">
+                                <option value="Décimo">Décimo Grado (I BTP)</option>
+                                <option value="Undécimo">Undécimo Grado (II BTP)</option>
+                                <option value="Duodécimo">Duodécimo Grado (III BTP)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Panel Informativo de Requisitos Documentales por Grado -->
+                    <div class="bg-blue-50/60 p-5 rounded-2xl border border-blue-100">
+                        <h4 class="text-xs font-bold text-blue-900 uppercase tracking-wider mb-2 flex items-center gap-2">
+                            <i class="fas fa-file-alt text-blue-600"></i> Requisitos Documentales Obligatorios:
+                        </h4>
+                        <ul id="requirements-list" class="text-xs text-blue-800 space-y-1.5 list-disc list-inside font-medium">
+                            <li>Partida de Nacimiento Original / Certificado Nacional de Registro (RNP)</li>
+                            <li>Certificado de Estudios o Certificación de Notas del Grado Anterior</li>
+                            <li>Constancia de Conducta y Solvencia del Centro Educativo de Origen</li>
+                            <li>Copia de Identificación del Padre, Madre o Tutor Responsable</li>
+                        </ul>
+                    </div>
+
+                    <div>
+                        <label for="observaciones" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">Observaciones o Antecedentes Médicos / Pedagógicos (Opcional)</label>
+                        <textarea id="observaciones" name="observaciones" rows="3" class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:bg-white focus:outline-none transition-all text-sm" placeholder="Ingrese información adicional relevante sobre el aspirante..."></textarea>
+                    </div>
+
+                    <div class="flex justify-between mt-6">
+                        <button type="button" onclick="goToStep(2)" class="px-5 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold rounded-xl text-xs uppercase tracking-wider transition-all flex items-center gap-2">
+                            <i class="fas fa-arrow-left"></i> Anterior
+                        </button>
+                        <button type="button" onclick="goToStep(4)" class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl text-xs uppercase tracking-wider transition-all shadow-md flex items-center gap-2">
+                            Siguiente Paso <i class="fas fa-arrow-right"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- PASO 4: REVISIÓN GENERAL Y CONSENTIMIENTO ARCO -->
+                <div id="form-step-4" class="step-content space-y-5 hidden">
+                    <h3 class="text-base font-bold text-gray-900 border-b pb-2 flex items-center gap-2">
+                        <i class="fas fa-check-circle text-blue-600"></i> Paso 4: Resumen y Consentimiento Informado
+                    </h3>
+
+                    <!-- Cuadro Resumen -->
+                    <div id="summary-card" class="bg-gray-50 p-5 rounded-2xl border border-gray-200 text-xs space-y-3">
+                        <p class="font-semibold text-gray-500">Por favor verifique que los datos sean correctos antes de confirmar el envío:</p>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            <div><strong class="text-gray-700">Aspirante:</strong> <span id="sum-aspirante">-</span></div>
+                            <div><strong class="text-gray-700">Identificación (DNI):</strong> <span id="sum-identificacion">-</span></div>
+                            <div><strong class="text-gray-700">Responsable:</strong> <span id="sum-responsable">-</span></div>
+                            <div><strong class="text-gray-700">Contacto:</strong> <span id="sum-contacto">-</span></div>
+                            <div><strong class="text-gray-700">Año / Grado:</strong> <span id="sum-grado">-</span></div>
+                        </div>
+                    </div>
+
+                    <!-- Aviso Ley ARCO y Consentimiento -->
+                    <div class="p-4 bg-amber-50/80 border border-amber-200 rounded-2xl text-xs text-amber-900 space-y-2">
+                        <p class="font-bold flex items-center gap-2">
+                            <i class="fas fa-shield-alt text-amber-600"></i> Aviso de Privacidad y Tratamiento de Datos (ARCO)
+                        </p>
+                        <p class="text-[11px] leading-relaxed text-amber-800">
+                            Los datos recopilados en esta solicitud serán utilizados exclusivamente para fines del trámite de admisión institucional de New Generation Christian Academy. De acuerdo con la normativa de protección de datos personales de menores, usted declara que es el representante legal autorizado para suministrar la información y ejercer los derechos ARCO (Acceso, Rectificación, Cancelación y Oposición).
+                        </p>
+                        <div class="flex items-start gap-2 pt-2">
+                            <input type="checkbox" id="consentimientoArco" name="consentimientoArco" required class="mt-0.5 rounded text-blue-600 focus:ring-blue-500">
+                            <label for="consentimientoArco" class="text-[11px] font-bold text-gray-800">
+                                He leído, comprendo y acepto los términos de privacidad y declaro que la información proporcionada es verdadera y completa. <span class="text-red-500">*</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="p-3 bg-blue-50 border border-blue-200 rounded-xl text-[11px] text-blue-800 flex items-center gap-2">
+                        <i class="fas fa-info-circle text-blue-600"></i>
+                        <span><strong>Nota Institucional:</strong> El envío de la solicitud no constituye aprobación ni matrícula automática. El expediente será evaluado por Secretaría y Dirección.</span>
+                    </div>
+
+                    <!-- Botón Enviar -->
+                    <div class="flex justify-between mt-6">
+                        <button type="button" onclick="goToStep(3)" class="px-5 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold rounded-xl text-xs uppercase tracking-wider transition-all flex items-center gap-2">
+                            <i class="fas fa-arrow-left"></i> Anterior
+                        </button>
+
+                        <button type="submit" id="btn-submit-admission" class="px-8 py-3.5 bg-blue-600 hover:bg-blue-700 text-white font-black rounded-xl text-xs uppercase tracking-wider transition-all shadow-lg flex items-center gap-2">
+                            <i class="fas fa-paper-plane"></i> Enviar Solicitud de Admisión
+                        </button>
+                    </div>
+                </div>
+
+            </form>
+        </section>
+
+        <!-- SECCIÓN 2: CONSULTA Y SEGUIMIENTO DE ESTADO -->
+        <section id="section-seguimiento" class="bg-white rounded-3xl p-6 md:p-10 shadow-xl border border-gray-100 hidden">
+            <div class="text-center mb-8">
+                <span class="inline-block px-3 py-1 bg-green-50 text-green-700 text-[11px] font-bold uppercase tracking-wider rounded-full mb-2">Portal Público de Consulta</span>
+                <h2 class="text-2xl md:text-3xl font-black text-gray-900 tracking-tight">Seguimiento de Solicitud de Admisión</h2>
+                <p class="text-xs md:text-sm text-gray-500 mt-2 max-w-xl mx-auto">Consulte el estado actualizado de su trámite ingresando su Código de Seguimiento o DNI registrado.</p>
+            </div>
+
+            <form onsubmit="handleTrackStatus(event)" class="max-w-xl mx-auto space-y-4 mb-8">
+                <div>
+                    <label for="trackCodigo" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">Código de Seguimiento (ADM-XXXXXX) o DNI del Aspirante <span class="text-red-500">*</span></label>
+                    <div class="flex gap-2">
+                        <input type="text" id="trackCodigo" required class="flex-1 px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:bg-white focus:outline-none transition-all text-sm font-semibold" placeholder="Ej. ADM-000001 o DNI 0801201012345">
+                        <button type="submit" id="btn-track-submit" class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl text-xs uppercase tracking-wider transition-all shadow-md flex items-center gap-2">
+                            <i class="fas fa-search"></i> Consultar
+                        </button>
+                    </div>
+                </div>
+            </form>
+
+            <!-- Resultado de la Consulta -->
+            <div id="track-result-container" class="hidden max-w-xl mx-auto">
+                <!-- Inyectado dinámicamente -->
+            </div>
+        </section>
+
+    </main>
+
+    <!-- MODAL CONFIRMACIÓN DE SOLICITUD EXITOSA -->
+    <div id="modal-confirm-admission" class="fixed inset-0 z-[100] flex items-center justify-center bg-black bg-opacity-60 opacity-0 pointer-events-none transition-opacity duration-300 p-4">
+        <div class="bg-white w-full max-w-lg rounded-3xl shadow-2xl overflow-hidden p-6 md:p-8 text-center space-y-5 transform scale-95 transition-transform duration-300">
+            <div class="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto text-2xl shadow-inner">
+                <i class="fas fa-check"></i>
+            </div>
+
+            <div>
+                <span class="text-[10px] font-bold text-green-600 uppercase tracking-widest bg-green-50 px-3 py-1 rounded-full">Solicitud Recibida Exitosamente</span>
+                <h3 class="text-xl md:text-2xl font-black text-gray-900 mt-2">¡Trámite de Admisión Registrado!</h3>
+                <p class="text-xs text-gray-500 mt-1">Guarde su código de seguimiento oficial para consultar el avance de su solicitud.</p>
+            </div>
+
+            <div class="bg-gray-50 border border-gray-200 p-4 rounded-2xl">
+                <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest block">Código Único de Seguimiento</span>
+                <span id="confirm-solicitud-id" class="text-2xl font-black text-blue-600 tracking-wider block mt-1">ADM-XXXXXX</span>
+            </div>
+
+            <p class="text-[11px] text-gray-500 leading-relaxed">
+                Hemos enviado un mensaje de confirmación al correo electrónico del tutor registrado. Secretaría revisará la documentación y se pondrá en contacto para programar las evaluaciones correspondientes.
+            </p>
+
+            <div class="flex gap-3 pt-2">
+                <button onclick="copyTrackingCode()" class="flex-1 py-3 bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold rounded-xl text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-2">
+                    <i class="fas fa-copy"></i> Copiar Código
+                </button>
+                <button onclick="closeAdmissionModal()" class="flex-1 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl text-xs uppercase tracking-wider transition-all shadow-md">
+                    Entendido
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pie de Página Institucional -->
+    <footer class="bg-white border-t border-gray-100 py-6 mt-auto">
+        <div class="container mx-auto px-6 text-center">
+            <p class="text-[10px] font-medium text-gray-400 uppercase tracking-widest mb-2">
+                &copy; 2026 <strong>New Generation Christian Academy</strong>. Todos los derechos reservados.
+            </p>
+            <p class="text-[10px] font-medium text-gray-400 uppercase tracking-widest opacity-60">
+                <a href="politica-de-privacidad.html" class="hover:text-blue-600 transition-colors">Política de Privacidad ARCO</a>
+                <span class="mx-1">-</span>
+                <a href="politica-de-uso.html" class="hover:text-blue-600 transition-colors">Términos de Servicio</a>
+            </p>
+        </div>
+    </footer>
+
+    <!-- Scripts del Proyecto -->
+    <script src="js/ui-common.js?v=22"></script>
+    <script src="js/data.js?v=22"></script>
+    <script src="js/config.js?v=22"></script>
+    <script src="js/persistence.js?v=22"></script>
+    <script src="js/api.js?v=22"></script>
+    <script src="js/auth.js?v=22"></script>
+    <script src="js/student.js?v=22"></script>
+
+    <script>
+        let currentStep = 1;
+        let generatedIdempotencyToken = 'IDEM-ADM-' + Date.now() + '-' + Math.floor(Math.random() * 100000);
+
+        document.addEventListener('DOMContentLoaded', () => {
+            if (window.setupCommonUI) window.setupCommonUI();
+            updateDocumentRequirementsList();
+        });
+
+        function switchTab(tabName) {
+            const secSolicitud = document.getElementById('section-solicitud');
+            const secSeguimiento = document.getElementById('section-seguimiento');
+            const btnSol = document.getElementById('tab-btn-solicitud');
+            const btnSeg = document.getElementById('tab-btn-seguimiento');
+            const mobSol = document.getElementById('mob-tab-solicitud');
+            const mobSeg = document.getElementById('mob-tab-seguimiento');
+
+            if (tabName === 'solicitud') {
+                secSolicitud.classList.remove('hidden');
+                secSeguimiento.classList.add('hidden');
+                btnSol.className = "px-4 py-2 rounded-xl text-sm font-semibold text-blue-600 bg-blue-50 transition-all";
+                btnSeg.className = "px-4 py-2 rounded-xl text-sm font-semibold text-gray-600 hover:bg-gray-100 transition-all";
+                if (mobSol) mobSol.className = "flex-1 py-2.5 text-xs font-bold text-center rounded-xl bg-blue-600 text-white transition-all";
+                if (mobSeg) mobSeg.className = "flex-1 py-2.5 text-xs font-bold text-center rounded-xl text-gray-600 transition-all";
+            } else {
+                secSolicitud.classList.add('hidden');
+                secSeguimiento.classList.remove('hidden');
+                btnSeg.className = "px-4 py-2 rounded-xl text-sm font-semibold text-blue-600 bg-blue-50 transition-all";
+                btnSol.className = "px-4 py-2 rounded-xl text-sm font-semibold text-gray-600 hover:bg-gray-100 transition-all";
+                if (mobSeg) mobSeg.className = "flex-1 py-2.5 text-xs font-bold text-center rounded-xl bg-blue-600 text-white transition-all";
+                if (mobSol) mobSol.className = "flex-1 py-2.5 text-xs font-bold text-center rounded-xl text-gray-600 transition-all";
+            }
+        }
+
+        function validateStep(step) {
+            let isValid = true;
+            if (step === 1) {
+                const nom = document.getElementById('nombresAspirante');
+                const ape = document.getElementById('apellidosAspirante');
+                const ident = document.getElementById('identificacion');
+                const fn = document.getElementById('fechaNacimiento');
+
+                const errNom = document.getElementById('err-nombresAspirante');
+                const errApe = document.getElementById('err-apellidosAspirante');
+                const errIdent = document.getElementById('err-identificacion');
+                const errFn = document.getElementById('err-fechaNacimiento');
+
+                if (!nom.value.trim()) { errNom.classList.remove('hidden'); isValid = false; } else errNom.classList.add('hidden');
+                if (!ape.value.trim()) { errApe.classList.remove('hidden'); isValid = false; } else errApe.classList.add('hidden');
+
+                const cleanIdent = ident.value.replace(/[^0-9]/g, '');
+                if (!cleanIdent || cleanIdent.length !== 13) { errIdent.classList.remove('hidden'); isValid = false; } else errIdent.classList.add('hidden');
+                if (!fn.value) { errFn.classList.remove('hidden'); isValid = false; } else errFn.classList.add('hidden');
+            } else if (step === 2) {
+                const nomR = document.getElementById('nombreResponsable');
+                const telR = document.getElementById('telefonoContacto');
+                const emailR = document.getElementById('emailContacto');
+
+                const errNomR = document.getElementById('err-nombreResponsable');
+                const errTelR = document.getElementById('err-telefonoContacto');
+                const errEmailR = document.getElementById('err-emailContacto');
+
+                if (!nomR.value.trim()) { errNomR.classList.remove('hidden'); isValid = false; } else errNomR.classList.add('hidden');
+
+                const cleanTel = telR.value.replace(/[^0-9]/g, '');
+                if (!cleanTel || cleanTel.length < 8) { errTelR.classList.remove('hidden'); isValid = false; } else errTelR.classList.add('hidden');
+
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailR.value.trim() || !emailRegex.test(emailR.value.trim())) { errEmailR.classList.remove('hidden'); isValid = false; } else errEmailR.classList.add('hidden');
+            }
+            return isValid;
+        }
+
+        function goToStep(targetStep) {
+            if (targetStep > currentStep) {
+                if (!validateStep(currentStep)) return;
+            }
+
+            document.querySelectorAll('.step-content').forEach(el => el.classList.add('hidden'));
+            document.getElementById(`form-step-${targetStep}`).classList.remove('hidden');
+
+            currentStep = targetStep;
+
+            // Actualizar nodos del stepper
+            for (let i = 1; i <= 4; i++) {
+                const node = document.getElementById(`step-node-${i}`);
+                if (!node) continue;
+                const circle = node.querySelector('.step-circle');
+                const label = node.querySelector('span');
+
+                if (i < currentStep) {
+                    circle.className = "step-circle w-10 h-10 rounded-full bg-green-600 text-white font-black flex items-center justify-center text-sm shadow-md transition-all";
+                    circle.innerHTML = '<i class="fas fa-check text-xs"></i>';
+                    label.className = "text-[10px] md:text-xs font-bold text-green-600 mt-2 uppercase tracking-tight";
+                } else if (i === currentStep) {
+                    circle.className = "step-circle w-10 h-10 rounded-full bg-blue-600 text-white font-black flex items-center justify-center text-sm shadow-md transition-all";
+                    circle.innerHTML = i;
+                    label.className = "text-[10px] md:text-xs font-bold text-blue-600 mt-2 uppercase tracking-tight";
+                } else {
+                    circle.className = "step-circle w-10 h-10 rounded-full bg-gray-200 text-gray-600 font-black flex items-center justify-center text-sm transition-all";
+                    circle.innerHTML = i;
+                    label.className = "text-[10px] md:text-xs font-bold text-gray-400 mt-2 uppercase tracking-tight";
+                }
+            }
+
+            const progressPct = ((currentStep - 1) / 3) * 100;
+            document.getElementById('stepper-progress-bar').style.width = `${progressPct}%`;
+
+            if (targetStep === 4) {
+                updateSummaryCard();
+            }
+        }
+
+        function updateSummaryCard() {
+            document.getElementById('sum-aspirante').textContent = `${document.getElementById('nombresAspirante').value.trim()} ${document.getElementById('apellidosAspirante').value.trim()}`;
+            document.getElementById('sum-identificacion').textContent = document.getElementById('identificacion').value.trim();
+            document.getElementById('sum-responsable').textContent = `${document.getElementById('nombreResponsable').value.trim()} (${document.getElementById('parentescoResponsable').value})`;
+            document.getElementById('sum-contacto').textContent = `${document.getElementById('telefonoContacto').value.trim()} | ${document.getElementById('emailContacto').value.trim()}`;
+            document.getElementById('sum-grado').textContent = `${document.getElementById('anolectivo').value} - ${document.getElementById('gradoSolicitado').value}`;
+        }
+
+        function updateDocumentRequirementsList() {
+            const grado = document.getElementById('gradoSolicitado').value;
+            const reqList = document.getElementById('requirements-list');
+            if (grado === 'Décimo') {
+                reqList.innerHTML = `
+                    <li>Partida de Nacimiento Original / Registro RNP</li>
+                    <li>Certificación de Estudios de 7mo, 8vo y 9no Grado</li>
+                    <li>Constancia de Conducta y Solvencia del Centro Origen</li>
+                    <li>Copia de DNI del Padre/Madre/Tutor Legal</li>
+                `;
+            } else {
+                reqList.innerHTML = `
+                    <li>Partida de Nacimiento Original / Registro RNP</li>
+                    <li>Certificación de Estudios y Calificaciones del Grado Previo BTP</li>
+                    <li>Constancia de Conducta y Solvencia Financiera</li>
+                    <li>Copia de DNI del Tutor Legal</li>
+                `;
+            }
+        }
+
+        async function handleAdmissionSubmit(e) {
+            e.preventDefault();
+            if (!validateStep(1) || !validateStep(2)) return;
+
+            const consentCheck = document.getElementById('consentimientoArco');
+            if (!consentCheck.checked) {
+                alert('Debe aceptar la casilla de aviso de privacidad y consentimiento informado.');
+                return;
+            }
+
+            const btnSubmit = document.getElementById('btn-submit-admission');
+            btnSubmit.disabled = true;
+            btnSubmit.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Procesando Solicitud...';
+
+            const payload = {
+                idempotencyToken: generatedIdempotencyToken,
+                anolectivo: document.getElementById('anolectivo').value,
+                gradoSolicitado: document.getElementById('gradoSolicitado').value,
+                nombresAspirante: document.getElementById('nombresAspirante').value.trim(),
+                apellidosAspirante: document.getElementById('apellidosAspirante').value.trim(),
+                identificacion: document.getElementById('identificacion').value.trim(),
+                fechaNacimiento: document.getElementById('fechaNacimiento').value,
+                nombreResponsable: document.getElementById('nombreResponsable').value.trim(),
+                telefonoContacto: document.getElementById('telefonoContacto').value.trim(),
+                emailContacto: document.getElementById('emailContacto').value.trim(),
+                observaciones: document.getElementById('observaciones').value.trim(),
+                canalIngreso: "PortalWebPublico"
+            };
+
+            try {
+                const res = await window.fetchApi('ACADEMIC', 'createAdmissionRequest', payload);
+                if (res && res.status === 'success') {
+                    document.getElementById('confirm-solicitud-id').textContent = res.solicitudId;
+                    showAdmissionModal();
+                    document.getElementById('admission-form').reset();
+                    goToStep(1);
+                    generatedIdempotencyToken = 'IDEM-ADM-' + Date.now() + '-' + Math.floor(Math.random() * 100000);
+                } else {
+                    alert('Error al procesar la solicitud: ' + ((res && res.message) || 'Inconveniente con el servidor.'));
+                }
+            } catch (err) {
+                alert('Error de conexión con el servidor. Por favor reintente en unos segundos. ' + err.message);
+            } finally {
+                btnSubmit.disabled = false;
+                btnSubmit.innerHTML = '<i class="fas fa-paper-plane"></i> Enviar Solicitud de Admisión';
+            }
+        }
+
+        async function handleTrackStatus(e) {
+            e.preventDefault();
+            const trackVal = document.getElementById('trackCodigo').value.trim();
+            if (!trackVal) return;
+
+            const btnTrack = document.getElementById('btn-track-submit');
+            const resContainer = document.getElementById('track-result-container');
+            btnTrack.disabled = true;
+            btnTrack.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+
+            try {
+                let isId = trackVal.toUpperCase().startsWith('ADM-');
+                let payload = {};
+                if (isId) {
+                    payload = { estado: null };
+                }
+
+                const res = await window.fetchApi('ACADEMIC', 'getAdmissionRequests', payload);
+                if (res && res.status === 'success' && Array.isArray(res.requests)) {
+                    const found = res.requests.find(r =>
+                        r.solicitudId.toLowerCase() === trackVal.toLowerCase() ||
+                        (r.identificacion && r.identificacion.replace(/[^0-9]/g, '') === trackVal.replace(/[^0-9]/g, ''))
+                    );
+
+                    resContainer.classList.remove('hidden');
+
+                    if (found) {
+                        let statusColor = "bg-blue-100 text-blue-800";
+                        if (found.estadoSolicitud === 'Admitida') statusColor = "bg-green-100 text-green-800";
+                        if (found.estadoSolicitud === 'Rechazada') statusColor = "bg-red-100 text-red-800";
+                        if (found.estadoSolicitud === 'En_Revision') statusColor = "bg-amber-100 text-amber-800";
+                        if (found.estadoSolicitud === 'Convertida') statusColor = "bg-purple-100 text-purple-800";
+
+                        resContainer.innerHTML = `
+                            <div class="bg-gray-50 border border-gray-200 rounded-3xl p-6 space-y-4 text-left">
+                                <div class="flex justify-between items-start border-b border-gray-200 pb-3">
+                                    <div>
+                                        <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Código de Trámite</span>
+                                        <h4 class="text-xl font-black text-gray-900">${found.solicitudId}</h4>
+                                    </div>
+                                    <span class="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider ${statusColor}">${found.estadoSolicitud}</span>
+                                </div>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+                                    <div><strong class="text-gray-700">Aspirante:</strong> ${found.nombresAspirante} ${found.apellidosAspirante}</div>
+                                    <div><strong class="text-gray-700">Grado:</strong> ${found.gradoSolicitado} (${found.anolectivo})</div>
+                                    <div><strong class="text-gray-700">Responsable:</strong> ${found.nombreResponsable || '-'}</div>
+                                    <div><strong class="text-gray-700">Canal:</strong> ${found.canalIngreso || 'Web'}</div>
+                                </div>
+                                ${found.observaciones ? `<div class="p-3 bg-white rounded-xl text-[11px] text-gray-600 border border-gray-100"><strong>Observaciones:</strong> ${found.observaciones}</div>` : ''}
+                            </div>
+                        `;
+                    } else {
+                        resContainer.innerHTML = `
+                            <div class="bg-amber-50 border border-amber-200 rounded-2xl p-4 text-center text-xs text-amber-900 font-medium">
+                                <i class="fas fa-exclamation-triangle text-amber-600 mb-1 text-lg block"></i>
+                                No se encontró ninguna solicitud registrada para "<strong>${trackVal}</strong>". Verifique el código ingresado o el número de identificación.
+                            </div>
+                        `;
+                    }
+                } else {
+                    resContainer.innerHTML = `<div class="p-4 text-xs text-red-500 text-center">Error al consultar el servidor.</div>`;
+                }
+            } catch (err) {
+                resContainer.innerHTML = `<div class="p-4 text-xs text-red-500 text-center">Error de conexión: ${err.message}</div>`;
+            } finally {
+                btnTrack.disabled = false;
+                btnTrack.innerHTML = '<i class="fas fa-search"></i> Consultar';
+            }
+        }
+
+        function showAdmissionModal() {
+            const modal = document.getElementById('modal-confirm-admission');
+            modal.classList.remove('opacity-0', 'pointer-events-none');
+        }
+
+        function closeAdmissionModal() {
+            const modal = document.getElementById('modal-confirm-admission');
+            modal.classList.add('opacity-0', 'pointer-events-none');
+        }
+
+        function copyTrackingCode() {
+            const code = document.getElementById('confirm-solicitud-id').textContent;
+            navigator.clipboard.writeText(code).then(() => {
+                alert('Código de seguimiento copiado al portapapeles: ' + code);
+            });
+        }
+    </script>
+</body>
+</html>

@@ -1367,3 +1367,13 @@ Archivos Modificados:
 [TAREA-F4-P3-03] [Fase 4 - Sistema de Detección y Reconciliación de Inconsistencias de Identidad]
 - backend/user-service/Code.gs:
   - Implementada la función auditAndReconcileIdentityInconsistencias para el escaneo automático de inconsistencias referenciales, delegaciones de seguridad huérfanas y adscripciones departamentales inactivas o sin usuario existente, permitiendo auto-reconciliación segura (autoFix: true) con auditoría estructurada.
+
+[TAREA-F5-004] [Fase 5 - Formulario Público de Admisión y Consulta de Solicitudes]
+- admision.html:
+  - Creado el formulario público de admisión accesible con diseño responsivo, stepper de 4 pasos (Aspirante, Responsable, Selección Académica, Confirmación), avisos de privacidad y consentimiento Ley ARCO, modal de confirmación con código de seguimiento ADM-XXXXXX y panel de consulta pública por código de seguimiento o DNI.
+- js/student.js:
+  - Añadidas las funciones window.submitPublicAdmissionRequest y window.getPublicAdmissionStatus para conectar la interfaz pública de admisión con las acciones createAdmissionRequest y getAdmissionRequests del microservicio académico, con validación de DNI de 13 dígitos y teléfono de Honduras (+504).
+- index.html:
+  - Añadido enlace directo a "Admisiones" en la barra de navegación principal.
+- login.html:
+  - Añadido enlace de acceso a la solicitud de admisión para aspirantes nuevos.
