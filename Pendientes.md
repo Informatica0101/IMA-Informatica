@@ -252,7 +252,7 @@
   - [X] Interfaz administrativa fluida con confirmaciones para acciones sensibles.
 - **Estado:** [X] Completada
 
-### [ ] [TAREA-F4-P2-04] Optimizar la concurrencia y la consistencia de las operaciones de identidad
+### [X] [TAREA-F4-P2-04] Optimizar la concurrencia y la consistencia de las operaciones de identidad
 - **Origen del Hallazgo:** Auditoría de la Fase 4 (AUDITORIA_FASE4_IDENTIDAD_PERMISOS_GOBIERNO.md)
 - **Severidad/Clasificación:** Medio · Backend · Rendimiento
 - **Archivos Involucrados:** `backend/*/Code.gs`
@@ -260,8 +260,8 @@
 - **Descripción del Alcance:**
   1. Coordinar cierres de candados atómicos (`LockService`) en escrituras concurrentes de cuentas y delegaciones.
 - **Criterios de Aceptación:**
-  - [ ] Operaciones simultáneas producen resultados consistentes sin sobreescrituras accidentales.
-- **Estado:** [ ] Pendiente
+  - [X] Operaciones simultáneas producen resultados consistentes sin sobreescrituras accidentales.
+- **Estado:** [X] Completada
 
 ### [ ] [TAREA-F4-P2-05] Consolidar la documentación institucional de privacidad y tratamiento de datos
 - **Origen del Hallazgo:** Auditoría de la Fase 4 (AUDITORIA_FASE4_IDENTIDAD_PERMISOS_GOBIERNO.md)

@@ -1296,3 +1296,7 @@ Archivos Modificados:
   - Implementada la función window.openUserManagementAdministrationModal para despliegue de la interfaz modal interactiva de gestión de directorio de cuentas, búsqueda multi-campo, filtrado por estado de cuenta y diálogo de confirmación previa para acciones administrativas sensibles.
 - dashboard-direccion.html:
   - Incorporado el botón de acceso #btn-user-management-admin con vinculación de evento gatillador para la gestión administrativa de cuentas y permisos.
+
+[TAREA-F4-P2-04] [Fase 4 - Concurrencia y Candados Atómicos en Operaciones de Identidad]
+- backend/user-service/Code.gs:
+  - Coordinada la gestión de concurrencia mediante LockService.getScriptLock() con tiempo de espera de 10.000ms y bloques try...finally { lock.releaseLock(); } en createSecurityDelegation, revokeSecurityDelegation, updateUserProfile y manageAccountState para garantizar escrituras consistentes y prevenir condiciones de carrera.

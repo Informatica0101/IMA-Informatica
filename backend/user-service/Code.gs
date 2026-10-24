@@ -1519,7 +1519,7 @@ function generateInstitutionalId(payload) {
   }
 }
 
-// [TAREA-F4-P1-01] [Fase 4: Motor de Delegaciones] - Creación de delegaciones temporales de seguridad
+// [TAREA-F4-P2-04] [TAREA-F4-P1-01] [Fase 4: Concurrencia de Identidad y Delegaciones] - Creación de delegaciones temporales con candado atómico LockService
 function createSecurityDelegation(payload) {
   const callerRole = getUserVerifiedRole(payload);
   const callerId = payload._verifiedUserId;
@@ -1535,38 +1535,45 @@ function createSecurityDelegation(payload) {
     throw new Error("Rango de fechas de delegación inválido.");
   }
 
-  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
-  const sheet = getOrCreateSheet(ss, "DelegacionesSeguridad");
-
-  if (sheet.getLastRow() === 0) {
-    sheet.appendRow(["delegacionId", "deleganteUserId", "delegadoUserId", "accionesAutorizadas", "ambito", "fechaInicio", "fechaFin", "estado", "motivo", "creadoPor", "fechaCreacion"]);
-  }
-
-  const genRes = generateInstitutionalId({ entityType: "Delegacion", prefix: "DEL-" });
-  const delId = genRes.generatedId || ("DEL-" + Date.now());
-  const now = new Date();
-
-  sheet.appendRow([
-    delId,
-    callerId,
-    String(delegadoUserId).trim(),
-    Array.isArray(accionesAutorizadas) ? accionesAutorizadas.join(",") : String(accionesAutorizadas).trim(),
-    ambito || "General",
-    dInicio,
-    dFin,
-    "Activa",
-    motivo || "Delegación temporal de funciones",
-    callerId,
-    now
-  ]);
-
+  const lock = LockService.getScriptLock();
   try {
-    CacheService.getScriptCache().remove("active_delegations_" + String(delegadoUserId).trim());
-  } catch (e) {}
+    lock.waitLock(10000);
 
-  logStructuredEvent("USER", "createSecurityDelegation", "INFO", "DELEGATION_CREATED", `Delegación ${delId} creada por ${callerId} para ${delegadoUserId}`, { delId, delegante: callerId, delegado: delegadoUserId, acciones: accionesAutorizadas, fechaInicio, fechaFin }, callerRole);
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const sheet = getOrCreateSheet(ss, "DelegacionesSeguridad");
 
-  return { status: "success", delegacionId: delId, message: "Delegación de seguridad registrada exitosamente." };
+    if (sheet.getLastRow() === 0) {
+      sheet.appendRow(["delegacionId", "deleganteUserId", "delegadoUserId", "accionesAutorizadas", "ambito", "fechaInicio", "fechaFin", "estado", "motivo", "creadoPor", "fechaCreacion"]);
+    }
+
+    const genRes = generateInstitutionalId({ entityType: "Delegacion", prefix: "DEL-" });
+    const delId = genRes.generatedId || ("DEL-" + Date.now());
+    const now = new Date();
+
+    sheet.appendRow([
+      delId,
+      callerId,
+      String(delegadoUserId).trim(),
+      Array.isArray(accionesAutorizadas) ? accionesAutorizadas.join(",") : String(accionesAutorizadas).trim(),
+      ambito || "General",
+      dInicio,
+      dFin,
+      "Activa",
+      motivo || "Delegación temporal de funciones",
+      callerId,
+      now
+    ]);
+
+    try {
+      CacheService.getScriptCache().remove("active_delegations_" + String(delegadoUserId).trim());
+    } catch (e) {}
+
+    logStructuredEvent("USER", "createSecurityDelegation", "INFO", "DELEGATION_CREATED", `Delegación ${delId} creada por ${callerId} para ${delegadoUserId}`, { delId, delegante: callerId, delegado: delegadoUserId, acciones: accionesAutorizadas, fechaInicio, fechaFin }, callerRole);
+
+    return { status: "success", delegacionId: delId, message: "Delegación de seguridad registrada exitosamente." };
+  } finally {
+    lock.releaseLock();
+  }
 }
 
 // [TAREA-F4-P1-01] [Fase 4: Motor de Delegaciones] - Consulta y evaluación de caducidad automática
@@ -2099,7 +2106,7 @@ function revokeUserSession(payload) {
   return { status: "success", message: "Sesión revocada exitosamente." };
 }
 
-// [TAREA-F4-P2-02] [Fase 4: Ciclo de Vida de Cuentas] - Máquina de estados para transiciones permitidas y auditoría de cambios de cuenta
+// [TAREA-F4-P2-04] [TAREA-F4-P2-02] [Fase 4: Ciclo de Vida de Cuentas y Concurrencia] - Máquina de estados y candado atómico LockService para cambios de cuenta
 const ALLOWED_ACCOUNT_STATE_TRANSITIONS = {
   "Pendiente": ["InvitacionEnviada", "Activa", "Desactivada"],
   "InvitacionEnviada": ["Activa", "Pendiente", "Desactivada"],
@@ -2116,36 +2123,43 @@ function manageAccountState(payload) {
   const validStates = ["Pendiente", "InvitacionEnviada", "Activa", "Suspendida", "Bloqueada", "Desactivada"];
   if (validStates.indexOf(newState) === -1) throw new Error(`Estado inválido. Debe ser uno de: ${validStates.join(", ")}`);
 
-  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
-  const sheet = getSheetOrThrow(ss, "Usuarios");
-  const data = sheet.getDataRange().getValues();
+  const lock = LockService.getScriptLock();
+  try {
+    lock.waitLock(10000);
 
-  const idx = data.findIndex(r => String(r[0]).trim() === String(userId).trim());
-  if (idx === -1) throw new Error("Cuenta de usuario no encontrada.");
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const sheet = getSheetOrThrow(ss, "Usuarios");
+    const data = sheet.getDataRange().getValues();
 
-  const oldState = String(data[idx][10] || "Activa").trim();
+    const idx = data.findIndex(r => String(r[0]).trim() === String(userId).trim());
+    if (idx === -1) throw new Error("Cuenta de usuario no encontrada.");
 
-  if (oldState !== newState) {
-    const allowedTargets = ALLOWED_ACCOUNT_STATE_TRANSITIONS[oldState] || ["Activa", "Suspendida", "Bloqueada", "Desactivada"];
-    if (allowedTargets.indexOf(newState) === -1) {
-      throw new Error(`Transición de estado no permitida de '${oldState}' a '${newState}'. Transiciones válidas: ${allowedTargets.join(", ")}`);
+    const oldState = String(data[idx][10] || "Activa").trim();
+
+    if (oldState !== newState) {
+      const allowedTargets = ALLOWED_ACCOUNT_STATE_TRANSITIONS[oldState] || ["Activa", "Suspendida", "Bloqueada", "Desactivada"];
+      if (allowedTargets.indexOf(newState) === -1) {
+        throw new Error(`Transición de estado no permitida de '${oldState}' a '${newState}'. Transiciones válidas: ${allowedTargets.join(", ")}`);
+      }
     }
+
+    sheet.getRange(idx + 1, 11).setValue(newState);
+
+    recordEntityChangeLog("Usuario", userId, { estadoCuenta: oldState }, { estadoCuenta: newState }, "ACCOUNT_STATE_CHANGED", payload && payload._verifiedUserId);
+
+    dispatchSecurityEvent({
+      eventType: "ACCOUNT_STATE_CHANGED",
+      targetUserId: userId,
+      accountState: newState,
+      details: `Transición de estado de cuenta: ${oldState} -> ${newState}. Motivo: ${motivo || 'N/A'}`
+    });
+
+    logStructuredEvent("USER", "manageAccountState", "WARN", "ACCOUNT_STATE_CHANGED", `Estado de cuenta ${userId} cambiado de ${oldState} a ${newState}. Motivo: ${motivo || 'N/A'}`, { userId, oldState, newState, motivo }, payload && payload.authRole);
+
+    return { status: "success", userId: userId, oldState: oldState, newState: newState, message: `Estado de la cuenta actualizado exitosamente de '${oldState}' a '${newState}'.` };
+  } finally {
+    lock.releaseLock();
   }
-
-  sheet.getRange(idx + 1, 11).setValue(newState);
-
-  recordEntityChangeLog("Usuario", userId, { estadoCuenta: oldState }, { estadoCuenta: newState }, "ACCOUNT_STATE_CHANGED", payload && payload._verifiedUserId);
-
-  dispatchSecurityEvent({
-    eventType: "ACCOUNT_STATE_CHANGED",
-    targetUserId: userId,
-    accountState: newState,
-    details: `Transición de estado de cuenta: ${oldState} -> ${newState}. Motivo: ${motivo || 'N/A'}`
-  });
-
-  logStructuredEvent("USER", "manageAccountState", "WARN", "ACCOUNT_STATE_CHANGED", `Estado de cuenta ${userId} cambiado de ${oldState} a ${newState}. Motivo: ${motivo || 'N/A'}`, { userId, oldState, newState, motivo }, payload && payload.authRole);
-
-  return { status: "success", userId: userId, oldState: oldState, newState: newState, message: `Estado de la cuenta actualizado exitosamente de '${oldState}' a '${newState}'.` };
 }
 
 // ---------------------------------------------------------------------------
