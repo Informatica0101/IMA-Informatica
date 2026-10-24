@@ -162,7 +162,7 @@ const ROLE_PERMISSIONS = {
     "getAcademicOffers", "createAcademicOffer", "getTeacherAssignments", "assignTeacherToClass", "createTeacherSubstitution",
     "getAcademicCalendar", "createCalendarEvent", "getClassSchedules", "createClassSchedule", "deleteClassSchedule", "getAcademicRules", "saveAcademicRule", "getDepartmentAcademicPlanning", "assignDepartmentHead", "getCurricularAnalyticsReport", "getReusableResourceCatalog", "manageReusableResource", "getCurricularEquivalences", "executeCurricularMigration", "registerCurricularAreaExtension", "runCurricularAreaServiceTests", "toggleCurricularAreaStatus", "validateApiContractsTestSuite", "getInstitutionalCatalog", "validateCatalogReference", "generateInstitutionalUUID", "validateInstitutionalIdentifier", "auditInstitutionalIdentifierCollisions", "runConcurrencyAndConsistencySuite", "getPaginatedAcademicHistory", "reconcileRestoredDataIntegrity", "evaluateTransactionalStorageMigrationNeed",
     "getClassroomResources", "saveClassroomResource", "getStudentSchedule",
-    "createAdmissionRequest", "getAdmissionRequests", "updateAdmissionStatus", "convertAdmissionToStudent",
+    "createAdmissionRequest", "getAdmissionRequests", "updateAdmissionStatus", "reopenAdmissionRequest", "convertAdmissionToStudent",
     "getStudentFile", "updateStudentFile", "getStudentTimeline", "findDuplicateStudents", "mergeStudentFiles",
     "getStudentGuardians", "saveStudentGuardian", "unlinkStudentGuardian", "uploadStudentDocument", "getStudentDocuments", "updateDocumentStatus",
     "createStudentEnrollment", "getStudentEnrollments", "renewStudentEnrollment", "checkEnrollmentCapacity",
@@ -646,6 +646,7 @@ function doPost(e) {
       case "createAdmissionRequest": result = createAdmissionRequest(payload); break;
       case "getAdmissionRequests": result = getAdmissionRequests(payload); break;
       case "updateAdmissionStatus": result = updateAdmissionStatus(payload); break;
+      case "reopenAdmissionRequest": result = reopenAdmissionRequest(payload); break;
       case "convertAdmissionToStudent": result = convertAdmissionToStudent(payload); break;
       case "getStudentFile": result = getStudentFile(payload); break;
       case "updateStudentFile": result = updateStudentFile(payload); break;
@@ -776,10 +777,159 @@ function getAdmissionRequests(payload) {
   return { status: "success", requests: mapped };
 }
 
-function updateAdmissionStatus(payload) {
-  const { solicitudId, nuevoEstado, observaciones } = payload || {};
-  if (!solicitudId || !nuevoEstado) throw new Error("solicitudId y nuevoEstado requeridos.");
+// [TAREA-F5-002] [Fase 5: Admisiones y Matrícula] - Máquina de estados y reglas de transición de solicitudes de admisión
+const ALLOWED_ADMISSION_STATE_TRANSITIONS = {
+  "Recibida": ["En_Revision", "Rechazada", "Retirada"],
+  "En_Revision": ["Evaluacion", "Admitida", "Rechazada", "En_Espera", "Retirada"],
+  "Evaluacion": ["Admitida", "Rechazada", "En_Espera", "Retirada"],
+  "En_Espera": ["Admitida", "Rechazada", "Retirada"],
+  "Admitida": ["Convertida", "Rechazada", "Retirada"],
+  "Rechazada": ["Reabierta"],
+  "Convertida": [],
+  "Retirada": ["Reabierta"],
+  "Reabierta": ["En_Revision", "Evaluacion"]
+};
 
+function recordEntityChangeLog(entityType, entityId, previousValue, newValue, action, callerUserId, correlationId) {
+  try {
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const sheet = getOrCreateSheet(ss, "HistorialCambiosEntidad");
+    if (sheet.getLastRow() === 0) {
+      sheet.appendRow(["HistorialID", "Fecha", "EntidadTipo", "EntidadID", "Accion", "ValorAnteriorJSON", "ValorNuevoJSON", "UsuarioResponsable", "CorrelationID"]);
+      SpreadsheetApp.flush();
+    }
+    const histId = "HIST-CHANGE-" + Date.now() + "-" + Math.floor(Math.random() * 1000);
+    const now = new Date();
+    sheet.appendRow([
+      histId,
+      now,
+      entityType,
+      entityId,
+      action || "UPDATE",
+      JSON.stringify(previousValue || {}),
+      JSON.stringify(newValue || {}),
+      callerUserId || "Sistema",
+      correlationId || ("CORR-" + Date.now())
+    ]);
+  } catch (err) {
+    console.error("Error al registrar historial de cambios de entidad:", err);
+  }
+}
+
+// [TAREA-F5-002] [Fase 5: Admisiones y Matrícula] - Actualización controlada de estado con máquina de estados, validaciones y justificación obligatoria
+function updateAdmissionStatus(payload) {
+  const { solicitudId, nuevoEstado, observaciones, justificacion, skipLock } = payload || {};
+  if (!solicitudId || !nuevoEstado) {
+    throw new Error("solicitudId y nuevoEstado son requeridos.");
+  }
+
+  const estadoSolicitado = String(nuevoEstado).trim();
+
+  // Validar si el estado solicitado es reconocido
+  if (!ALLOWED_ADMISSION_STATE_TRANSITIONS.hasOwnProperty(estadoSolicitado)) {
+    throw new Error(`INVALID_ADMISSION_STATE: El estado '${estadoSolicitado}' no es un estado válido en el sistema de admisiones.`);
+  }
+
+  let hasLock = false;
+  const lock = LockService.getScriptLock();
+  try {
+    if (!skipLock) {
+      hasLock = lock.tryLock(10000);
+      if (!hasLock) {
+        throw new Error("Servicio ocupado procesando cambios de estado de admisiones en paralelo. Por favor reintente en unos segundos.");
+      }
+    }
+
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const sheet = getOrCreateSheet(ss, "SolicitudesAdmision");
+    const data = sheet.getDataRange().getValues();
+
+    const idx = data.findIndex(r => String(r[0]).trim() === String(solicitudId).trim());
+    if (idx === -1) throw new Error("Solicitud de admisión no encontrada.");
+
+    const row = data[idx];
+    const estadoActual = String(row[11] || "Recibida").trim();
+    const actorUserId = (payload && (payload._verifiedUserId || payload.actorId || payload.adminId)) || "Secretaría";
+
+    // Si ya está en el estado solicitado, retornar idempotente
+    if (estadoActual === estadoSolicitado) {
+      return {
+        status: "success",
+        isAlreadyInState: true,
+        solicitudId: solicitudId,
+        estadoActual: estadoActual,
+        message: `La solicitud ${solicitudId} ya se encuentra en estado '${estadoActual}'.`
+      };
+    }
+
+    // Validar transición permitida en la máquina de estados
+    const allowedNextStates = ALLOWED_ADMISSION_STATE_TRANSITIONS[estadoActual] || [];
+    if (allowedNextStates.indexOf(estadoSolicitado) === -1) {
+      throw new Error(`Acción denegada: Transición inválida de '${estadoActual}' a '${estadoSolicitado}'. Transiciones permitidas desde '${estadoActual}': [${allowedNextStates.join(", ")}].`);
+    }
+
+    // Exigir justificación obligatoria (mínimo 10 caracteres) para rechazos o decisiones definitivas
+    const textoJustificacion = String(justificacion || observaciones || "").trim();
+    if ((estadoSolicitado === "Rechazada" || estadoSolicitado === "Retirada") && textoJustificacion.length < 10) {
+      throw new Error("Justificación obligatoria requerida: Para rechazar o retirar una solicitud se exige ingresar un motivo justificado de al menos 10 caracteres.");
+    }
+
+    // Validaciones específicas según el estado destino
+    if (estadoSolicitado === "Evaluacion") {
+      const docRes = getStudentDocuments({ solicitudId });
+      if (docRes && Array.isArray(docRes.documents)) {
+        const pendingDocs = docRes.documents.filter(d => d.estadoRevision === "Pendiente" || d.estadoRevision === "Rechazado");
+        if (pendingDocs.length > 0) {
+          throw new Error(`Acción denegada: La solicitud tiene ${pendingDocs.length} documento(s) pendiente(s) de revisión antes de pasar a la etapa de Evaluación.`);
+        }
+      }
+    }
+
+    // Actualizar estado u observaciones
+    sheet.getRange(idx + 1, 12).setValue(estadoSolicitado);
+    if (textoJustificacion) {
+      const obsPrevias = String(row[13] || "").trim();
+      const nuevaObs = obsPrevias ? `${obsPrevias} | [${new Date().toISOString().split('T')[0]} - ${estadoSolicitado}]: ${textoJustificacion}` : `[${new Date().toISOString().split('T')[0]} - ${estadoSolicitado}]: ${textoJustificacion}`;
+      sheet.getRange(idx + 1, 14).setValue(nuevaObs);
+    }
+
+    // Registrar en HistorialCambiosEntidad y logStructuredEvent
+    recordEntityChangeLog("SolicitudAdmision", solicitudId, { estadoSolicitud: estadoActual }, { estadoSolicitud: estadoSolicitado, justificacion: textoJustificacion }, "ADMISSION_STATUS_UPDATED", actorUserId);
+    logStructuredEvent("ACADEMIC", "updateAdmissionStatus", "INFO", "ADMISSION_STATUS_UPDATED", `Estado de solicitud ${solicitudId} cambiado de '${estadoActual}' a '${estadoSolicitado}'`, { solicitudId, estadoAnterior: estadoActual, estadoNuevo: estadoSolicitado, justificacion: textoJustificacion }, payload && payload.authRole);
+
+    return {
+      status: "success",
+      solicitudId: solicitudId,
+      estadoAnterior: estadoActual,
+      nuevoEstado: estadoSolicitado,
+      message: `Estado de la solicitud ${solicitudId} actualizado exitosamente de '${estadoActual}' a '${estadoSolicitado}'.`
+    };
+
+  } finally {
+    if (hasLock) {
+      try { lock.releaseLock(); } catch (_) {}
+    }
+  }
+}
+
+// [TAREA-F5-002] [Fase 5: Admisiones y Matrícula] - Reapertura explícita de solicitudes rechazadas/cerradas por Dirección o Administración
+function reopenAdmissionRequest(payload) {
+  const callerRole = (payload && payload._verifiedRole) || getUserVerifiedRole(payload);
+  if (callerRole !== "Director" && callerRole !== "Administrador" && callerRole !== "Desarrollador") {
+    throw new Error("Acción denegada: Únicamente los usuarios con rol Director o Administrador están autorizados a reabrir expedientes de admisión.");
+  }
+
+  const { solicitudId, motivoReapertura, nuevoEstado } = payload || {};
+  if (!solicitudId || !motivoReapertura) {
+    throw new Error("solicitudId y motivoReapertura son requeridos.");
+  }
+
+  const textoMotivo = String(motivoReapertura).trim();
+  if (textoMotivo.length < 10) {
+    throw new Error("El motivo de reapertura debe contener al menos 10 caracteres exponiendo la justificación institucional.");
+  }
+
+  const targetState = nuevoEstado || "Reabierta";
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
   const sheet = getOrCreateSheet(ss, "SolicitudesAdmision");
   const data = sheet.getDataRange().getValues();
@@ -787,14 +937,25 @@ function updateAdmissionStatus(payload) {
   const idx = data.findIndex(r => String(r[0]).trim() === String(solicitudId).trim());
   if (idx === -1) throw new Error("Solicitud de admisión no encontrada.");
 
-  sheet.getRange(idx + 1, 12).setValue(nuevoEstado);
-  if (observaciones) {
-    sheet.getRange(idx + 1, 14).setValue(observaciones);
-  }
+  const row = data[idx];
+  const estadoAnterior = String(row[11] || "").trim();
 
-  logStructuredEvent("ACADEMIC", "updateAdmissionStatus", "INFO", "ADMISSION_STATUS_UPDATED", `Estado de solicitud ${solicitudId} cambiado a ${nuevoEstado}`, { solicitudId, nuevoEstado }, payload && payload.authRole);
+  sheet.getRange(idx + 1, 12).setValue(targetState);
+  const obsPrevias = String(row[13] || "").trim();
+  const nuevaObs = `${obsPrevias} | [REAPERTURA ${new Date().toISOString().split('T')[0]} por ${callerRole}]: ${textoMotivo}`;
+  sheet.getRange(idx + 1, 14).setValue(nuevaObs);
 
-  return { status: "success", message: `Estado de la solicitud actualizado a '${nuevoEstado}'.` };
+  const actorUserId = (payload && payload._verifiedUserId) || "Director";
+  recordEntityChangeLog("SolicitudAdmision", solicitudId, { estadoSolicitud: estadoAnterior }, { estadoSolicitud: targetState, motivoReapertura: textoMotivo }, "ADMISSION_REOPENED", actorUserId);
+  logStructuredEvent("ACADEMIC", "reopenAdmissionRequest", "WARN", "ADMISSION_REOPENED", `Solicitud ${solicitudId} reabierta por ${callerRole} desde '${estadoAnterior}' a '${targetState}'`, { solicitudId, estadoAnterior, targetState, motivoReapertura: textoMotivo }, callerRole);
+
+  return {
+    status: "success",
+    solicitudId: solicitudId,
+    estadoAnterior: estadoAnterior,
+    nuevoEstado: targetState,
+    message: `Solicitud ${solicitudId} reabierta exitosamente. Estado actualizado a '${targetState}'.`
+  };
 }
 
 function generateInstitutionalId(payload) {

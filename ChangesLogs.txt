@@ -1120,6 +1120,22 @@ Archivos Modificados:
 
 -------------------------------------------------------------------------------
 FECHA: Marzo 2026
+TAREA: [TAREA-F5-002] Implementar una máquina de estados y reglas de transición para las solicitudes
+-------------------------------------------------------------------------------
+
+Archivos Modificados:
+1. backend/academic-service/Code.gs
+   - Lineas 775-920: Definida constante ALLOWED_ADMISSION_STATE_TRANSITIONS con la matriz de estados y transiciones permitidas. Reestructurada función updateAdmissionStatus con comentario identificativo de primera línea [TAREA-F5-002], incorporando validación de estados destinos reconocidos, verificación de flujo permitido, justificación obligatoria (mínimo 10 caracteres) para rechazos, comprobación de documentos completos antes de avanzar a Evaluación, registro de diffs sanitizados en HistorialCambiosEntidad y control de concurrencia mediante LockService. Implementada función reopenAdmissionRequest para la reapertura explícita de solicitudes cerrada/rechazadas restringida a roles Director/Administrador con registro en la bitácora.
+   - Lineas 162, 646: Adición de permiso "reopenAdmissionRequest" en ROLE_PERMISSIONS y dispatcher en doPost.
+
+2. Pendientes.md
+   - Marcada como [X] Completada la tarea [TAREA-F5-002].
+
+3. Auditoria.txt
+   - Registrado el informe de resolución y verificación de [TAREA-F5-002].
+
+-------------------------------------------------------------------------------
+FECHA: Marzo 2026
 TAREA: [TAREA-F5-001] Corregir la conversión de aspirantes y garantizar la integridad del expediente
 -------------------------------------------------------------------------------
 

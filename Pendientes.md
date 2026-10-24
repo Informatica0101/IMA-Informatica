@@ -42,7 +42,7 @@
 
 ---
 
-### [TAREA-F5-002] Implementar una máquina de estados y reglas de transición para las solicitudes
+### [X] [TAREA-F5-002] Implementar una máquina de estados y reglas de transición para las solicitudes
 - **Origen del Hallazgo:** `Auditoria.txt` (HALLAZGOS F5: HALLAZGOS-F5-P0-03) / `AUDITORIA_FASE_5_ADMISIONES_PORTAL_FAMILIAS.md` (Subcapacidad 5.4, Brecha P0-03)
 - **Severidad/Clasificación:** Crítico
 - **Archivos Involucrados:** `backend/academic-service/Code.gs` (l. 779-799), `backend/user-service/Code.gs`
@@ -59,17 +59,17 @@
   9. Proteger las transiciones frente a solicitudes concurrentes con `LockService` y frente a reintentos con claves de idempotencia.
   10. Separar explícitamente el estado de admisión del estado de matrícula para que una solicitud admitida no se considere automáticamente matriculada.
 - **Criterios de Aceptación:**
-  - [ ] Un estado desconocido es rechazado por el servidor con error `INVALID_ADMISSION_STATE`.
-  - [ ] No se permite pasar directamente de `Recibida` a `Convertida`.
-  - [ ] No se permite convertir una solicitud sin aprobación previa en estado `Admitida`.
-  - [ ] Un rechazo sin justificación obligatoria se rechaza sin modificar el estado.
-  - [ ] Una solicitud con requisitos obligatorios pendientes no puede avanzar a una etapa que los requiera.
-  - [ ] Un usuario sin autorización no puede modificar estados aunque invoque directamente el endpoint backend.
-  - [ ] Dos cambios simultáneos no sobrescriben silenciosamente una decisión más reciente.
-  - [ ] Un reintento no genera decisiones, notificaciones ni registros duplicados.
-  - [ ] El historial en `HistorialCambiosEntidad` permite reconstruir cada transición y su autor.
-  - [ ] Reabrir una solicitud no elimina ni altera el registro de su decisión anterior.
-- **Estado:** [ ] Pendiente
+  - [x] Un estado desconocido es rechazado por el servidor con error `INVALID_ADMISSION_STATE`.
+  - [x] No se permite pasar directamente de `Recibida` a `Convertida`.
+  - [x] No se permite convertir una solicitud sin aprobación previa en estado `Admitida`.
+  - [x] Un rechazo sin justificación obligatoria se rechaza sin modificar el estado.
+  - [x] Una solicitud con requisitos obligatorios pendientes no puede avanzar a una etapa que los requiera.
+  - [x] Un usuario sin autorización no puede modificar estados aunque invoque directamente el endpoint backend.
+  - [x] Dos cambios simultáneos no sobrescriben silenciosamente una decisión más reciente.
+  - [x] Un reintento no genera decisiones, notificaciones ni registros duplicados.
+  - [x] El historial en `HistorialCambiosEntidad` permite reconstruir cada transición y su autor.
+  - [x] Reabrir una solicitud no elimina ni altera el registro de su decisión anterior.
+- **Estado:** [X] Completada
 
 ---
 

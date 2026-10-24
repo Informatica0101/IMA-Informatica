@@ -71,4 +71,9 @@ RESOLUCIÓN Y VERIFICACIÓN DE TAREAS EJECUTADAS:
  - Estado: COMPLETADA Y VERIFICADA (2026-03-29)
  - Archivos Modificados: backend/academic-service/Code.gs (l. 800-940)
  - Verificación: Reestructurada función convertAdmissionToStudent con validación estricta de estado 'Admitida', verificación de capacidad por sección via checkEnrollmentCapacity, candado atómico LockService.getScriptLock(10000), generación de IDs con generateInstitutionalId, transferencia de datos de tutores a RelacionesFamiliares e InvitacionesVinculacion, creación de cargos iniciales de matrícula en CargosEstudiante e idempotencia funcional. Comentario identificativo de tarea inyectado en la primera línea de convertAdmissionToStudent.
+
+[TAREA-F5-002] Implementar una máquina de estados y reglas de transición para las solicitudes
+ - Estado: COMPLETADA Y VERIFICADA (2026-03-29)
+ - Archivos Modificados: backend/academic-service/Code.gs (l. 775-920)
+ - Verificación: Definida constante ALLOWED_ADMISSION_STATE_TRANSITIONS con reglas de flujo (Recibida -> En_Revision -> Evaluacion -> Admitida / Rechazada / En_Espera -> Convertida). Reestructurada updateAdmissionStatus con validación de transiciones, justificación obligatoria (mínimo 10 caracteres) para rechazos, verificación de documentos pendientes antes de etapa Evaluacion, registro de diffs en HistorialCambiosEntidad y candado atómico LockService. Implementada reopenAdmissionRequest para reapertura controlada por Director/Admin conservando la bitácora.
 ================================================================================
