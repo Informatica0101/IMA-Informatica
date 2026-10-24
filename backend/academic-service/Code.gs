@@ -5559,14 +5559,30 @@ function uploadStudentDocument(payload) {
   return { status: "success", documentoId: docId, driveUrl: driveUrl, message: "Documento adjuntado correctamente." };
 }
 
+// [TAREA-F5-006] [Fase 5: Admisiones y Matrícula] - Consulta y filtrado de documentos por expedienteID o solicitudID de aspirante
 function getStudentDocuments(payload) {
   const { expedienteId, solicitudId } = payload || {};
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
   const rows = getOrCreateSheet(ss, "DocumentosEstudiante").getDataRange().getValues().slice(1);
 
-  let filtered = rows;
-  if (expedienteId) filtered = filtered.filter(r => String(r[1]).trim() === String(expedienteId).trim());
-  if (solicitudId) filtered = filtered.filter(r => String(r[2]).trim() === String(solicitudId).trim());
+  const cleanExpId = expedienteId ? String(expedienteId).trim().toLowerCase() : "";
+  const cleanSolId = solicitudId ? String(solicitudId).trim().toLowerCase() : "";
+
+  const filtered = rows.filter(r => {
+    const rowExpId = String(r[1] || "").trim().toLowerCase();
+    const rowSolId = String(r[2] || "").trim().toLowerCase();
+
+    if (cleanExpId && cleanSolId) {
+      return rowExpId === cleanExpId || rowSolId === cleanSolId;
+    }
+    if (cleanExpId) {
+      return rowExpId === cleanExpId;
+    }
+    if (cleanSolId) {
+      return rowSolId === cleanSolId;
+    }
+    return true;
+  });
 
   const mapped = filtered.map(r => ({
     documentoId: r[0],
