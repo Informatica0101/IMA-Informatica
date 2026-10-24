@@ -101,4 +101,9 @@ RESOLUCIÓN Y VERIFICACIÓN DE TAREAS EJECUTADAS:
  - Estado: COMPLETADA Y VERIFICADA (2026-03-29)
  - Archivos Modificados: backend/academic-service/Code.gs, dashboard-secretaria.html, js/secretary.js
  - Verificación: Creadas hojas `EntrevistasAdmision` y `EvaluacionesAdmision`, implementados endpoints backend `scheduleAdmissionInterview`, `getAdmissionInterviews`, `recordInterviewOutcome`, `saveAdmissionEvaluation` y `getAdmissionEvaluations` con detección de solapamientos de agenda del evaluador y bloqueo de decisión 'Admitida' en `updateAdmissionStatus` ante evaluaciones obligatorias pendientes/reprobadas. Creados componentes e interfaces de agendamiento y calificación en `dashboard-secretaria.html` y `js/secretary.js`. Comentario identificativo [TAREA-F5-007] inyectado en `backend/academic-service/Code.gs`.
+
+[TAREA-F5-008] Implementar listas de espera con orden de prelación y asignación controlada de plazas
+ - Estado: COMPLETADA Y VERIFICADA (2026-03-29)
+ - Archivos Modificados: backend/academic-service/Code.gs, dashboard-secretaria.html, js/secretary.js
+ - Verificación: Creada hoja `ListaEsperaAdmision`, implementados endpoints backend `addToWaitlist`, `getWaitlist`, `reorderWaitlist`, `offerWaitlistSlot` y `respondToWaitlistSlot` con cálculo automático de prioridades según criterios de prelación (hermanos, exalumnos, personal), reordenamiento con justificación trazable y transición automática a 'Admitida' al aceptar ofertas de vacantes. Creados componentes UI e interactividad en `dashboard-secretaria.html` y `js/secretary.js`. Comentario identificativo [TAREA-F5-008] inyectado en `backend/academic-service/Code.gs`.
 ================================================================================

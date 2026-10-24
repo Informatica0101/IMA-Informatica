@@ -1408,3 +1408,13 @@ Archivos Modificados:
   - Incorporadas secciones `#modal-adm-interviews-container` y `#modal-adm-evaluations-container` en el modal de detalle de admisión.
 - js/secretary.js:
   - Implementados controladores `loadAdmissionInterviews`, `promptScheduleInterview`, `recordInterviewOutcomeAction`, `loadAdmissionEvaluations` y `promptSaveEvaluation`.
+
+[TAREA-F5-008] [Fase 5 - Módulo de Listas de Espera con Orden de Prelación y Asignación Controlada de Plazas]
+- backend/academic-service/Code.gs:
+  - Implementación de la tabla `ListaEsperaAdmision` en `getOrCreateSheet`.
+  - Implementación de las funciones backend `addToWaitlist`, `getWaitlist`, `reorderWaitlist`, `offerWaitlistSlot` y `respondToWaitlistSlot` con cálculo automático de prioridades, reordenamiento manual con justificación obligatoria y transiciones automáticas a 'Admitida' al aceptar ofertas.
+  - Comentario identificativo [TAREA-F5-008] inyectado en el módulo backend.
+- dashboard-secretaria.html:
+  - Incorporada sección `#modal-adm-waitlist-container` en el modal de detalle de admisión.
+- js/secretary.js:
+  - Implementados controladores `loadAdmissionWaitlistStatus`, `promptAddToWaitlist`, `offerWaitlistSlotAction` y `reorderWaitlistAction`.

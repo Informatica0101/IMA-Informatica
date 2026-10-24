@@ -178,6 +178,9 @@ window.openAdmissionDetailModal = function(solicitudId) {
     window.loadAdmissionInterviews(found.solicitudId);
     window.loadAdmissionEvaluations(found.solicitudId);
 
+    // [TAREA-F5-008] Cargar lista de espera
+    window.loadAdmissionWaitlistStatus(found.solicitudId);
+
     if (actionsEl) {
         const allowedTransitions = {
             "Recibida": ["En_Revision", "Rechazada", "Retirada"],
@@ -491,5 +494,125 @@ window.promptSaveEvaluation = async function() {
         }
     } catch (err) {
         alert("Error de red: " + err.message);
+    }
+};
+
+// [TAREA-F5-008] [Fase 5: Admisiones y Matrícula] - Controladores de interfaz para Lista de Espera de Admisión
+window.loadAdmissionWaitlistStatus = async function(solicitudId) {
+    const container = document.getElementById('modal-adm-waitlist-container');
+    if (!container) return;
+
+    container.innerHTML = `<p class="text-gray-400"><i class="fas fa-spinner fa-spin mr-1"></i> Consultando lista de espera...</p>`;
+
+    try {
+        const res = await window.fetchApi('ACADEMIC', 'getWaitlist', {});
+        if (res && res.status === 'success' && Array.isArray(res.waitlist)) {
+            const match = res.waitlist.find(w => String(w.solicitudId).trim() === String(solicitudId).trim());
+            if (match) {
+                let badgeClass = "bg-amber-100 text-amber-800 border-amber-200";
+                if (match.estadoOferta === 'Plaza_Ofrecida') badgeClass = "bg-indigo-100 text-indigo-800 border-indigo-200";
+                if (match.estadoOferta === 'Oferta_Aceptada') badgeClass = "bg-green-100 text-green-800 border-green-200";
+                if (match.estadoOferta === 'Oferta_Rechazada') badgeClass = "bg-red-100 text-red-800 border-red-200";
+
+                container.innerHTML = `
+                    <div class="p-3 bg-white rounded-xl border border-gray-100 shadow-sm space-y-2">
+                        <div class="flex justify-between items-center">
+                            <strong class="text-gray-900">Posición #${match.posicion} (Puntaje Prioridad: ${match.puntajePrioridad} pts)</strong>
+                            <span class="px-2 py-0.5 text-[9px] font-bold rounded-full border ${badgeClass}">${match.estadoOferta}</span>
+                        </div>
+                        ${match.fechaExpiracionOferta ? `<p class="text-[10px] text-indigo-700">Vigencia oferta hasta: ${new Date(match.fechaExpiracionOferta).toLocaleString('es-HN')}</p>` : ''}
+                        ${match.justificacionManual ? `<p class="text-[10px] text-amber-800 bg-amber-50 p-1.5 rounded-lg">${match.justificacionManual}</p>` : ''}
+                        <div class="flex gap-2 justify-end pt-1">
+                            ${match.estadoOferta === 'En_Espera' ? `
+                                <button onclick="window.offerWaitlistSlotAction('${match.esperaId}')" class="px-2.5 py-1 bg-indigo-50 text-indigo-700 font-bold rounded-lg text-[10px] uppercase"><i class="fa-solid fa-gift"></i> Ofrecer Vacante</button>
+                                <button onclick="window.reorderWaitlistAction('${match.esperaId}')" class="px-2.5 py-1 bg-gray-100 text-gray-700 font-bold rounded-lg text-[10px] uppercase"><i class="fa-solid fa-arrow-up-down"></i> Reordenar</button>
+                            ` : ''}
+                        </div>
+                    </div>
+                `;
+            } else {
+                container.innerHTML = `<p class="text-gray-400 italic">Esta solicitud no ha sido ingresada a la lista de espera.</p>`;
+            }
+        } else {
+            container.innerHTML = `<p class="text-gray-400 italic">Lista de espera vacía.</p>`;
+        }
+    } catch (err) {
+        container.innerHTML = `<p class="text-red-500">Error: ${err.message}</p>`;
+    }
+};
+
+window.promptAddToWaitlist = async function() {
+    const solicitudId = window.currentActiveSolicitudId;
+    if (!solicitudId) return;
+
+    const tieneHermanos = confirm("¿Tiene hermanos matriculados en la institución?");
+    const esHijoExalumno = confirm("¿Es hijo de exalumnos de la institución?");
+    const esHijoPersonal = confirm("¿Es hijo de personal docente o administrativo?");
+
+    const criteriosJSON = {
+        tieneHermanosMatriculados: tieneHermanos,
+        esHijoExalumno: esHijoExalumno,
+        esHijoPersonal: esHijoPersonal
+    };
+
+    try {
+        const res = await window.fetchApi('ACADEMIC', 'addToWaitlist', {
+            solicitudId, criteriosJSON
+        });
+
+        if (res && res.status === 'success') {
+            alert(res.message || "Incorporado a lista de espera.");
+            window.loadAdmissionWaitlistStatus(solicitudId);
+        } else {
+            alert("Error: " + ((res && res.message) || "Error desconocido"));
+        }
+    } catch (err) {
+        alert("Error de red: " + err.message);
+    }
+};
+
+window.offerWaitlistSlotAction = async function(esperaId) {
+    const horas = prompt("Horas de vigencia para responder la oferta (ej. 48 o 72):", "72");
+    if (!horas) return;
+
+    try {
+        const res = await window.fetchApi('ACADEMIC', 'offerWaitlistSlot', {
+            esperaId, horasVigencia: horas
+        });
+
+        if (res && res.status === 'success') {
+            alert("Plaza ofrecida exitosamente a la familia.");
+            if (window.currentActiveSolicitudId) window.loadAdmissionWaitlistStatus(window.currentActiveSolicitudId);
+        } else {
+            alert("Error: " + ((res && res.message) || "Error del servidor."));
+        }
+    } catch (err) {
+        alert("Error: " + err.message);
+    }
+};
+
+window.reorderWaitlistAction = async function(esperaId) {
+    const nuevaPosicion = parseInt(prompt("Ingrese la nueva posición numérica en la lista:", "1"), 10);
+    if (isNaN(nuevaPosicion) || nuevaPosicion < 1) return;
+
+    const justificacionManual = prompt("Justificación obligatoria de Dirección/Secretaría (mínimo 10 caracteres):", "");
+    if (!justificacionManual || justificacionManual.trim().length < 10) {
+        alert("Justificación obligatoria requerida de al menos 10 caracteres.");
+        return;
+    }
+
+    try {
+        const res = await window.fetchApi('ACADEMIC', 'reorderWaitlist', {
+            esperaId, nuevaPosicion, justificacionManual
+        });
+
+        if (res && res.status === 'success') {
+            alert("Posición en lista de espera reordenada.");
+            if (window.currentActiveSolicitudId) window.loadAdmissionWaitlistStatus(window.currentActiveSolicitudId);
+        } else {
+            alert("Error: " + ((res && res.message) || "Error del servidor."));
+        }
+    } catch (err) {
+        alert("Error: " + err.message);
     }
 };

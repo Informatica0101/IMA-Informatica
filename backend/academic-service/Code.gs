@@ -142,6 +142,9 @@ function getOrCreateSheet(ss, name) {
     // [TAREA-F5-007] Tablas de Entrevistas y Evaluaciones de Admisión
     if (name === "EntrevistasAdmision") sheet.appendRow(["EntrevistaID", "SolicitudID", "Fecha", "HoraInicio", "HoraFin", "EvaluadorUserId", "LugarEnlace", "Modalidad", "Estado", "Observaciones", "FechaCreacion"]);
     if (name === "EvaluacionesAdmision") sheet.appendRow(["EvaluacionID", "SolicitudID", "TipoEvaluacion", "PuntajeNum", "EscalaQual", "Dictamen", "EsObligatoria", "EvaluadorUserId", "RubricaJSON", "Observaciones", "FechaEvaluacion"]);
+
+    // [TAREA-F5-008] Tabla de Lista de Espera de Admisión
+    if (name === "ListaEsperaAdmision") sheet.appendRow(["EsperaID", "SolicitudID", "AnoLectivo", "Grado", "Posicion", "PuntajePrioridad", "CriteriosJSON", "EstadoOferta", "FechaExpiracionOferta", "JustificacionManual", "FechaIngreso", "UltimaActualizacion"]);
   }
   return sheet;
 }
@@ -165,7 +168,7 @@ const ROLE_PERMISSIONS = {
     "getAcademicOffers", "createAcademicOffer", "getTeacherAssignments", "assignTeacherToClass", "createTeacherSubstitution",
     "getAcademicCalendar", "createCalendarEvent", "getClassSchedules", "createClassSchedule", "deleteClassSchedule", "getAcademicRules", "saveAcademicRule", "getDepartmentAcademicPlanning", "assignDepartmentHead", "getCurricularAnalyticsReport", "getReusableResourceCatalog", "manageReusableResource", "getCurricularEquivalences", "executeCurricularMigration", "registerCurricularAreaExtension", "runCurricularAreaServiceTests", "toggleCurricularAreaStatus", "validateApiContractsTestSuite", "getInstitutionalCatalog", "validateCatalogReference", "generateInstitutionalUUID", "validateInstitutionalIdentifier", "auditInstitutionalIdentifierCollisions", "runConcurrencyAndConsistencySuite", "getPaginatedAcademicHistory", "reconcileRestoredDataIntegrity", "evaluateTransactionalStorageMigrationNeed",
     "getClassroomResources", "saveClassroomResource", "getStudentSchedule",
-    "createAdmissionRequest", "getAdmissionRequests", "updateAdmissionStatus", "reopenAdmissionRequest", "convertAdmissionToStudent", "scheduleAdmissionInterview", "getAdmissionInterviews", "recordInterviewOutcome", "saveAdmissionEvaluation", "getAdmissionEvaluations",
+    "createAdmissionRequest", "getAdmissionRequests", "updateAdmissionStatus", "reopenAdmissionRequest", "convertAdmissionToStudent", "scheduleAdmissionInterview", "getAdmissionInterviews", "recordInterviewOutcome", "saveAdmissionEvaluation", "getAdmissionEvaluations", "addToWaitlist", "getWaitlist", "reorderWaitlist", "offerWaitlistSlot", "respondToWaitlistSlot",
     "getStudentFile", "updateStudentFile", "getStudentTimeline", "findDuplicateStudents", "mergeStudentFiles",
     "getStudentGuardians", "saveStudentGuardian", "unlinkStudentGuardian", "uploadStudentDocument", "getStudentDocuments", "updateDocumentStatus",
     "createStudentEnrollment", "getStudentEnrollments", "renewStudentEnrollment", "checkEnrollmentCapacity",
@@ -188,7 +191,7 @@ const ROLE_PERMISSIONS = {
     "getInstitutionParams", "getAcademicYears", "getAcademicPeriods", "getSubjectCatalog", "getStudyPlans", "getAcademicOffers",
     "createAcademicOffer", "getTeacherAssignments", "assignTeacherToClass", "createTeacherSubstitution", "getAcademicCalendar", "createCalendarEvent", "getClassSchedules", "createClassSchedule", "deleteClassSchedule", "copyClassSchedules", "getTeacherTeachingLoad", "generateAutoSchedules", "recordClassSessionOutcome", "getTeachingHoursSummary", "rescheduleCancelledSession", "getPendingSessionRecoveries", "publishClassSchedules", "getIndividualCalendar", "syncAcademicScheduleIntegrity", "getAcademicAuditLogs", "getReusableResourceCatalog", "manageReusableResource",
     "getClassroomResources", "saveClassroomResource", "getStudentSchedule",
-    "createAdmissionRequest", "getAdmissionRequests", "updateAdmissionStatus", "convertAdmissionToStudent", "scheduleAdmissionInterview", "getAdmissionInterviews", "recordInterviewOutcome", "saveAdmissionEvaluation", "getAdmissionEvaluations",
+    "createAdmissionRequest", "getAdmissionRequests", "updateAdmissionStatus", "convertAdmissionToStudent", "scheduleAdmissionInterview", "getAdmissionInterviews", "recordInterviewOutcome", "saveAdmissionEvaluation", "getAdmissionEvaluations", "addToWaitlist", "getWaitlist", "reorderWaitlist", "offerWaitlistSlot", "respondToWaitlistSlot",
     "getStudentFile", "updateStudentFile", "getStudentTimeline", "findDuplicateStudents",
     "getStudentGuardians", "saveStudentGuardian", "unlinkStudentGuardian", "uploadStudentDocument", "getStudentDocuments", "updateDocumentStatus",
     "createStudentEnrollment", "getStudentEnrollments", "renewStudentEnrollment", "checkEnrollmentCapacity",
@@ -668,6 +671,11 @@ function doPost(e) {
       case "recordInterviewOutcome": result = recordInterviewOutcome(payload); break;
       case "saveAdmissionEvaluation": result = saveAdmissionEvaluation(payload); break;
       case "getAdmissionEvaluations": result = getAdmissionEvaluations(payload); break;
+      case "addToWaitlist": result = addToWaitlist(payload); break;
+      case "getWaitlist": result = getWaitlist(payload); break;
+      case "reorderWaitlist": result = reorderWaitlist(payload); break;
+      case "offerWaitlistSlot": result = offerWaitlistSlot(payload); break;
+      case "respondToWaitlistSlot": result = respondToWaitlistSlot(payload); break;
       case "reopenAdmissionRequest": result = reopenAdmissionRequest(payload); break;
       case "convertAdmissionToStudent": result = convertAdmissionToStudent(payload); break;
       case "getStudentFile": result = getStudentFile(payload); break;
@@ -1092,6 +1100,184 @@ function getAdmissionEvaluations(payload) {
   }));
 
   return { status: "success", evaluations: mapped };
+}
+
+// [TAREA-F5-008] [Fase 5: Admisiones y Matrícula] - Módulo de Listas de Espera con Orden de Prelación y Asignación Controlada de Plazas
+function addToWaitlist(payload) {
+  const { solicitudId, criteriosJSON } = payload || {};
+  if (!solicitudId) throw new Error("solicitudId es requerido.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const admSheet = getOrCreateSheet(ss, "SolicitudesAdmision");
+  const admData = admSheet.getDataRange().getValues();
+
+  const admIdx = admData.findIndex(r => String(r[0]).trim() === String(solicitudId).trim());
+  if (admIdx === -1) throw new Error("Solicitud de admisión no encontrada.");
+
+  const admRow = admData[admIdx];
+  const anolectivo = String(admRow[2] || "2026").trim();
+  const grado = String(admRow[3] || "").trim();
+
+  const waitSheet = getOrCreateSheet(ss, "ListaEsperaAdmision");
+  const waitData = waitSheet.getDataRange().getValues();
+
+  // Verificar si ya está en la lista de espera
+  const existing = waitData.slice(1).find(r => String(r[1]).trim() === String(solicitudId).trim() && r[7] !== "Oferta_Rechazada" && r[7] !== "Oferta_Expirada" && r[7] !== "Retirada");
+  if (existing) {
+    return { status: "success", esperaId: existing[0], isExisting: true, message: `La solicitud ${solicitudId} ya se encuentra en la lista de espera (Posición ${existing[4]}).` };
+  }
+
+  // Calcular puntaje de prioridad según criterios de prelación
+  const criterios = typeof criteriosJSON === 'object' ? criteriosJSON : (criteriosJSON ? JSON.parse(criteriosJSON) : {});
+  let puntaje = 0;
+  if (criterios.tieneHermanosMatriculados) puntaje += 50;
+  if (criterios.esHijoExalumno) puntaje += 30;
+  if (criterios.esHijoPersonal) puntaje += 40;
+  if (criterios.repostulante) puntaje += 10;
+
+  // Calcular posición según puntaje y orden de llegada
+  const sameGroup = waitData.slice(1).filter(r => String(r[2]).trim() === anolectivo && String(r[3]).trim() === grado && r[7] === "En_Espera");
+  const posicion = sameGroup.length + 1;
+
+  const idGen = generateInstitutionalId({ entityType: "ListaEsperaAdmision", prefix: "ESP-", skipLock: true });
+  const esperaId = (idGen && idGen.generatedId) ? idGen.generatedId : ("ESP-" + Date.now());
+  const now = new Date();
+
+  waitSheet.appendRow([
+    esperaId,
+    solicitudId,
+    anolectivo,
+    grado,
+    posicion,
+    puntaje,
+    JSON.stringify(criterios),
+    "En_Espera",
+    "", // FechaExpiracionOferta
+    "", // JustificacionManual
+    now,
+    now
+  ]);
+
+  // Actualizar estado de la solicitud a En_Espera
+  admSheet.getRange(admIdx + 1, 12).setValue("En_Espera");
+
+  logStructuredEvent("ACADEMIC", "addToWaitlist", "INFO", "ADDED_TO_WAITLIST", `Solicitud ${solicitudId} incorporada a lista de espera ${esperaId} (Posición ${posicion}, Puntaje ${puntaje})`, { esperaId, solicitudId, anolectivo, grado, posicion, puntaje }, payload && payload.authRole);
+
+  return { status: "success", esperaId: esperaId, posicion: posicion, puntajePrioridad: puntaje, message: `Solicitud incorporada a lista de espera en posición ${posicion}.` };
+}
+
+function getWaitlist(payload) {
+  const { anolectivo, grado, estadoOferta } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const rows = getOrCreateSheet(ss, "ListaEsperaAdmision").getDataRange().getValues().slice(1);
+  const admRows = getOrCreateSheet(ss, "SolicitudesAdmision").getDataRange().getValues().slice(1);
+
+  let filtered = rows;
+  if (anolectivo) filtered = filtered.filter(r => String(r[2]).trim() === String(anolectivo).trim());
+  if (grado) filtered = filtered.filter(r => String(r[3]).trim() === String(grado).trim());
+  if (estadoOferta) filtered = filtered.filter(r => String(r[7]).trim() === String(estadoOferta).trim());
+
+  const mapped = filtered.map(r => {
+    const adm = admRows.find(a => String(a[0]).trim() === String(r[1]).trim());
+    return {
+      esperaId: r[0],
+      solicitudId: r[1],
+      anolectivo: r[2],
+      grado: r[3],
+      posicion: r[4],
+      puntajePrioridad: r[5],
+      criteriosJSON: r[6],
+      estadoOferta: r[7],
+      fechaExpiracionOferta: r[8],
+      justificacionManual: r[9],
+      fechaIngreso: r[10],
+      ultimaActualizacion: r[11],
+      aspiranteNombre: adm ? `${adm[4]} ${adm[5]}` : "N/A",
+      identificacion: adm ? adm[6] : "N/A"
+    };
+  });
+
+  mapped.sort((a, b) => (a.posicion || 999) - (b.posicion || 999));
+
+  return { status: "success", waitlist: mapped };
+}
+
+function reorderWaitlist(payload) {
+  const { esperaId, nuevaPosicion, justificacionManual } = payload || {};
+  if (!esperaId || !nuevaPosicion || !justificacionManual) {
+    throw new Error("esperaId, nuevaPosicion y justificacionManual (mínimo 10 caracteres) son requeridos.");
+  }
+
+  if (String(justificacionManual).trim().length < 10) {
+    throw new Error("Justificación obligatoria requerida: Se exigen al menos 10 caracteres exponiendo el motivo institucional.");
+  }
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "ListaEsperaAdmision");
+  const data = sheet.getDataRange().getValues();
+
+  const idx = data.findIndex(r => String(r[0]).trim() === String(esperaId).trim());
+  if (idx === -1) throw new Error("Registro de lista de espera no encontrado.");
+
+  sheet.getRange(idx + 1, 5).setValue(nuevaPosicion);
+  sheet.getRange(idx + 1, 10).setValue(`[Reordenamiento Manual]: ${justificacionManual}`);
+  sheet.getRange(idx + 1, 12).setValue(new Date());
+
+  const actorUserId = (payload && (payload._verifiedUserId || payload.userId)) || "Secretaría";
+  logStructuredEvent("ACADEMIC", "reorderWaitlist", "WARN", "WAITLIST_REORDERED", `Posición de ${esperaId} ajustada manualmente a ${nuevaPosicion}`, { esperaId, nuevaPosicion, justificacionManual }, payload && payload.authRole);
+
+  return { status: "success", message: `Posición reordenada a ${nuevaPosicion} con trazabilidad registrada.` };
+}
+
+function offerWaitlistSlot(payload) {
+  const { esperaId, horasVigencia } = payload || {};
+  if (!esperaId) throw new Error("esperaId es requerido.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const waitSheet = getOrCreateSheet(ss, "ListaEsperaAdmision");
+  const waitData = waitSheet.getDataRange().getValues();
+
+  const idx = waitData.findIndex(r => String(r[0]).trim() === String(esperaId).trim());
+  if (idx === -1) throw new Error("Registro de lista de espera no encontrado.");
+
+  const row = waitData[idx];
+  const solicitudId = row[1];
+  const horas = parseInt(horasVigencia) || 72; // Default 72 horas
+  const expDate = new Date(Date.now() + horas * 60 * 60 * 1000);
+
+  waitSheet.getRange(idx + 1, 8).setValue("Plaza_Ofrecida");
+  waitSheet.getRange(idx + 1, 9).setValue(expDate);
+  waitSheet.getRange(idx + 1, 12).setValue(new Date());
+
+  logStructuredEvent("ACADEMIC", "offerWaitlistSlot", "INFO", "WAITLIST_SLOT_OFFERED", `Plaza ofrecida para solicitud ${solicitudId} (Vigente hasta ${expDate.toISOString()})`, { esperaId, solicitudId, expDate }, payload && payload.authRole);
+
+  return { status: "success", esperaId: esperaId, solicitudId: solicitudId, fechaExpiracionOferta: expDate, message: `Plaza vacante ofrecida a la solicitud ${solicitudId} con vigencia de ${horas} horas.` };
+}
+
+function respondToWaitlistSlot(payload) {
+  const { esperaId, respuesta, motivo } = payload || {};
+  if (!esperaId || !respuesta) throw new Error("esperaId y respuesta (Aceptar/Rechazar) son requeridos.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const waitSheet = getOrCreateSheet(ss, "ListaEsperaAdmision");
+  const waitData = waitSheet.getDataRange().getValues();
+
+  const idx = waitData.findIndex(r => String(r[0]).trim() === String(esperaId).trim());
+  if (idx === -1) throw new Error("Registro de lista de espera no encontrado.");
+
+  const row = waitData[idx];
+  const solicitudId = row[1];
+
+  if (respuesta === 'Aceptar' || respuesta === 'Aceptada') {
+    waitSheet.getRange(idx + 1, 8).setValue("Oferta_Aceptada");
+    updateAdmissionStatus({ solicitudId: solicitudId, nuevoEstado: "Admitida", justificacion: `Oferta de plaza en lista de espera aceptada por la familia. ${motivo || ''}` });
+  } else {
+    waitSheet.getRange(idx + 1, 8).setValue("Oferta_Rechazada");
+    if (motivo) waitSheet.getRange(idx + 1, 10).setValue(`[Rechazo Oferta]: ${motivo}`);
+  }
+  waitSheet.getRange(idx + 1, 12).setValue(new Date());
+
+  return { status: "success", message: `Respuesta a oferta de plaza registrada (${respuesta}).` };
 }
 
 // [TAREA-F5-002] [Fase 5: Admisiones y Matrícula] - Actualización controlada de estado con máquina de estados, validaciones y justificación obligatoria

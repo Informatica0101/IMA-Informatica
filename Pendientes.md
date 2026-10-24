@@ -237,10 +237,10 @@
 
 ---
 
-### [TAREA-F5-008] Implementar listas de espera con orden de prelación y asignación controlada de plazas
+### [X] [TAREA-F5-008] Implementar listas de espera con orden de prelación y asignación controlada de plazas
 - **Origen del Hallazgo:** `Auditoria.txt` (HALLAZGOS F5: HALLAZGOS-F5-P1-01) / `AUDITORIA_FASE_5_ADMISIONES_PORTAL_FAMILIAS.md` (Subcapacidad 5.5 y 5.12, Brecha P1-01)
 - **Severidad/Clasificación:** Alto
-- **Archivos Involucrados:** `backend/academic-service/Code.gs` (Nuevo Módulo), `js/teacher.js`, `dashboard-direccion.html`
+- **Archivos Involucrados:** `backend/academic-service/Code.gs`, `js/secretary.js`, `dashboard-secretaria.html`
 - **Dependencias Expuestas:** Hoja `ListaEsperaAdmision`, `OfertaAcademica`, `SolicitudesAdmision`
 - **Descripción del Alcance:**
   1. Crear la hoja `ListaEsperaAdmision` e implementar endpoints `addToWaitlist`, `getWaitlist`, `reorderWaitlist` y `offerWaitlistSlot`.
@@ -256,17 +256,17 @@
   11. Garantizar que la aceptación de la oferta cambie la solicitud a `Admitida` requiriendo formalizar la matrícula.
   12. Mantener la trazabilidad de todos los movimientos de la lista de espera.
 - **Criterios de Aceptación:**
-  - [ ] Una solicitud sólo puede entrar a la lista de espera si está en estado elegible.
-  - [ ] La posición en la lista se calcula transparentemente según los criterios de prelación definidos.
-  - [ ] Reordenamientos manuales exigen justificación y quedan registrados en la bitácora.
-  - [ ] Una plaza liberada se asigna únicamente a un aspirante a la vez.
-  - [ ] Al rechazar o expirar una oferta, el cupo se libera automáticamente para el siguiente aspirante en la lista.
-  - [ ] La aceptación de la oferta actualiza el estado de la solicitud a `Admitida`.
-  - [ ] Solicitudes concurrentes no pueden reservar la misma plaza en la lista de espera.
-  - [ ] Solicitudes retiradas salen de la lista y no reciben nuevas ofertas de cupo.
-  - [ ] La familia sólo consulta la posición relativa de su propia solicitud de admisión.
-  - [ ] Se conserva el historial completo de ofertas, vencimientos y aceptaciones.
-- **Estado:** [ ] Pendiente
+  - [x] Una solicitud sólo puede entrar a la lista de espera si está en estado elegible.
+  - [x] La posición en la lista se calcula transparentemente según los criterios de prelación definidos.
+  - [x] Reordenamientos manuales exigen justificación y quedan registrados en la bitácora.
+  - [x] Una plaza liberada se asigna únicamente a un aspirante a la vez.
+  - [x] Al rechazar o expirar una oferta, el cupo se libera automáticamente para el siguiente aspirante en la lista.
+  - [x] La aceptación de la oferta actualiza el estado de la solicitud a `Admitida`.
+  - [x] Solicitudes concurrentes no pueden reservar la misma plaza en la lista de espera.
+  - [x] Solicitudes retiradas salen de la lista y no reciben nuevas ofertas de cupo.
+  - [x] La familia sólo consulta la posición relativa de su propia solicitud de admisión.
+  - [x] Se conserva el historial completo de ofertas, vencimientos y aceptaciones.
+- **Estado:** [X] Completada
 
 ---
 
