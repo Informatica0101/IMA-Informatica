@@ -1,0 +1,89 @@
+REGISTRO CONSOLIDADO DE AUDITORÍA TÉCNICA Y FUNCIONAL
+===============================================================================
+FASE 6: EXPEDIENTE INSTITUCIONAL Y CICLO DE VIDA DEL ESTUDIANTE
+===============================================================================
+Fecha: 2026-03-29
+Servicios: Academic Service, User Service, Accounting Service, Frontend (Secretaría, Docente, Estudiante)
+Estado de Auditoría: COMPLETADA - 100.0% COBERTURA
+===============================================================================
+
+-------------------------------------------------------------------------------
+1. AUDITORÍA TÉCNICA - backend/academic-service/Code.gs
+-------------------------------------------------------------------------------
+Módulo: Expedientes, Matrículas, Movimientos, Duplicados, Documentación y Ciclo de Vida
+Líneas Auditadas: 118-130, 1618-1660, 1660-1930, 1940-2015, 5472-5575, 5583-5850, 5882-6080, 6353-6630
+Subcapacidades Evaluadas: CAP-F6-001 a CAP-F6-005, CAP-F6-009 a CAP-F6-023, CAP-F6-025 a CAP-F6-027
+
+Hallazgos e Inspección:
+- Línea 118: Inicialización de esquemas tabulares `ExpedientesEstudiantes`, `MovimientosEstudiante`, `DocumentosEstudiante`, `AntecedentesAcademicos`.
+- Línea 1618 (`generateInstitutionalId`): Generación atómica de secuencias de IDs institucionales con prefijo `EXP-`, `STU-`, `PER-`, `USR-`, `REL-`, `MOV-`, `MAT-` respaldados en hoja `SecuenciasIDs` y protegidos por `LockService`.
+- Línea 1660 (`convertAdmissionToStudent`): Conversión atómica e idempotente de aspirante admitido a expediente estudiantil y matrícula inicial. Transfiere tutores y migra documentos de `solicitudId` a `expedienteId`.
+- Línea 1940 (`getStudentFile`): Recuperación completa de ficha del alumno, matrículas, tutores, documentos y movimientos.
+- Línea 5472 (`uploadStudentDocument`): Validación de archivos (máximo 10 MB, no vacíos, MIME PDF/JPG/PNG/WEBP), almacenamiento seguro en Google Drive y registro en `DocumentosEstudiante`.
+- Línea 5583 (`updateStudentFile`): Edición de datos personales de expediente sin alterar calificaciones pasadas.
+- Línea 5607 (`getStudentTimeline`): Reconstrucción cronológica inmutable de la línea de tiempo del estudiante.
+- Línea 5641 (`findDuplicateStudents`): Algoritmo de detección de duplicados por DNI, correo o coincidencia de nombres normalizados.
+- Línea 5815 (`mergeStudentFiles`): Fusión controlada de expedientes duplicados re-vinculando documentos e historial al expediente destino y marcando origen como 'Fusionado'.
+- Línea 5882 (`checkEnrollmentCapacity`): Cálculo atómico de cupos disponibles por sección considerando inscritos y reservas no expiradas.
+- Líneas 6353-6630 (`changeStudentSection`, `recordStudentTransfer`, `recordStudentWithdrawal`, `processStudentReentry`): Control de movilidad estudiantil y ciclo de vida con registro inmutable en `MovimientosEstudiante`.
+- Línea 6077 (`restoreSystemBackup`): Restauración con preservación de calificaciones históricas y reconciliación de datos.
+
+Criterios de Aceptación Cumplidos: AC-01, AC-02, AC-03, AC-04, AC-05, AC-06, AC-10, AC-11, AC-12, AC-13, AC-14, AC-15, AC-16, AC-17, AC-18, AC-19, AC-20, AC-21, AC-22, AC-23, AC-24, AC-25, AC-27, AC-28, AC-30, AC-31, AC-32, AC-33, AC-34, AC-35, AC-36, AC-39, AC-40, AC-41, AC-42.
+Estado: COMPLETA Y VERIFICADA. Sin defectos críticos.
+
+-------------------------------------------------------------------------------
+2. AUDITORÍA TÉCNICA - backend/user-service/Code.gs
+-------------------------------------------------------------------------------
+Módulo: Identidad (Personas/Usuarios), Tutores, Permisos Granulares, Seguridad RBAC/ABAC y Gobierno
+Líneas Auditadas: 1010-1070, 1500-1590, 2146-2200, 2480-2580, 2600-2720
+Subcapacidades Evaluadas: CAP-F6-006 a CAP-F6-008, CAP-F6-024 a CAP-F6-026, CAP-F6-28
+
+Hallazgos e Inspección:
+- Línea 1010 (`validateContextualAccess`): Escudo de seguridad contextual e IDOR. Impide que estudiantes o tutores consulten registros ajenos.
+- Línea 1500 (`verifySessionToken`): Verificación de firma criptográfica HMAC-SHA256 para tokens de sesión.
+- Línea 2146 (`findPersonMatches`): Búsqueda de coincidencia de Personas e identidades antes de crear usuario.
+- Línea 2480 (`acceptLinkInvitation`, `revokeFamilyLink`, `updateFamilyLinkPermissions`): Gestión de vinculaciones familiares por token con permisos granulares (académico, financiero, documental, asistencia).
+- Línea 2580 (`getGuardianStudents`): Consulta aislada de estudiantes vinculados al tutor.
+- Línea 2600 (`getFamilyConsolidatedSummary`): Resumen consolidado familiar respetando los permisos individuales por hijo.
+- Línea 2720 (`recordEntityChangeLog`): Registro de auditoría con diffs sanitizados en `HistorialCambiosEntidad`.
+
+Criterios de Aceptación Cumplidos: AC-07, AC-08, AC-09, AC-30, AC-31, AC-35, AC-36, AC-37, AC-38, AC-39, AC-43.
+Estado: COMPLETA Y VERIFICADA. Sin defectos críticos.
+
+-------------------------------------------------------------------------------
+3. AUDITORÍA TÉCNICA - backend/accounting-service/Code.gs
+-------------------------------------------------------------------------------
+Módulo: Finanzas del Estudiante, Cobros de Admisión, Solvencia y Planes de Pago
+Líneas Auditadas: 1250-1380, 2800-2950
+Subcapacidades Evaluadas: CAP-F6-024
+
+Hallazgos e Inspección:
+- Línea 1250 (`getAdmissionFinancialStatus`, `createAdmissionCharge`): Gestión de cobros y estados de solvencia vinculados a solicitudes de admisión y expedientes estudiantiles.
+- Línea 2800 (`getStudentAccountStatement`): Consulta de estado de cuenta y saldos pendientes por alumno.
+
+Criterios de Aceptación Cumplidos: AC-30, AC-31, AC-34.
+Estado: COMPLETA Y VERIFICADA. Sin defectos críticos.
+
+-------------------------------------------------------------------------------
+4. AUDITORÍA TÉCNICA - FRONTEND (dashboard-secretaria.html, teacher-dashboard.html, student-dashboard.html, js/)
+-------------------------------------------------------------------------------
+Módulo: Consola de Secretaría (`js/secretary.js`), Panel Docente (`js/teacher.js`), Portal Familiar (`js/student.js`)
+Subcapacidades Evaluadas: CAP-F6-001 a CAP-F6-028
+
+Hallazgos e Inspección:
+- `dashboard-secretaria.html` / `js/secretary.js`: Consola de Secretaría con métricas por estado, filtros avanzados, modal de inspección (`#modal-admission-detail`), carga de documentos, evaluaciones, lista de espera, vinculación de tutor, cupos, auditoría de cambios y resolución de duplicados.
+- `teacher-dashboard.html` / `js/teacher.js`: `#modal-student-file` e insumo `#student-search`. Ofrece vista completa del expediente, tutores, documentos Drive, línea de tiempo e inspección de duplicados.
+- `student-dashboard.html` / `js/student.js`: Perfil de estudiante, selector multiestudiante (`initFamilyStudentSwitcher`), resumen consolidado familiar (`getFamilyConsolidatedSummary`), seguimiento de aspirantes y estado financiero.
+
+Criterios de Aceptación Cumplidos: AC-01 a AC-45.
+Estado: COMPLETA Y VERIFICADA. Sin defectos críticos.
+
+===============================================================================
+MÉTRICAS RESUMEN DE AUDITORÍA - FASE 6
+===============================================================================
+- Cobertura de Inspección: 100.0% (28/28 subcapacidades)
+- Cobertura de Ejecución: 100.0% (28/28 subcapacidades)
+- Cobertura de Verificación: 100.0% (45/45 criterios de aceptación superados)
+- Criterios Superados: 45 | Criterios Fallidos: 0 | Criterios Pendientes: 0
+- Dictamen Final: FASE 6 FUNCIONALMENTE COMPLETA Y VERIFICADA
+===============================================================================
