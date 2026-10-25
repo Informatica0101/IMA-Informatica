@@ -3420,6 +3420,12 @@ function getStorageQuotaMetricsReport(payload) {
 }
 
 // [TAREA-F6-016] [Fase 6: Expediente Institucional y Ciclo de Vida] - Procedimiento de conciliación documental entre referencias de la base de datos y archivos reales de Google Drive
+function extractDriveFileId(url) {
+  if (!url) return null;
+  const match = String(url).match(/[-\w]{25,}/);
+  return match ? match[0] : null;
+}
+
 function reconcileDocumentStorageIntegrity(payload) {
   const { autoFix } = payload || {};
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
