@@ -29,6 +29,53 @@ const ROLE_PERMISSIONS = {
   "Desarrollador": ["getCentralServiceRegistry", "registerServiceInstance", "updateServiceStatus", "auditInterServiceCalls", "manageUserMultiRolePermissions", "getCentralizedLogs", "executeOperationalCommand", "getServiceVersionChangelog", "executeServiceVersionRollback", "getCentralConfigAndContractCatalog", "validateServiceConfigDependencies", "runFullArchitectureIntegrationAndPerformanceSuite", "getServiceHealthDiagnostics"]
 };
 
+function getAuthTokenSecret() {
+  const props = PropertiesService.getScriptProperties();
+  let secret = "";
+  try {
+    secret = props.getProperty("AUTH_TOKEN_SECRET");
+  } catch (_) {}
+  if (!secret) {
+    const rawBytes = Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, SPREADSHEET_ID + "_MASTER_AUTH_HMAC_SECRET");
+    const arr = Array.from ? Array.from(rawBytes) : [].slice.call(rawBytes);
+    secret = arr.map(b => ('0' + (b & 0xFF).toString(16)).slice(-2)).join('');
+    try {
+      props.setProperty("AUTH_TOKEN_SECRET", secret);
+    } catch (_) {}
+  }
+  return secret;
+}
+
+function verifySessionToken(tokenString) {
+  if (!tokenString || typeof tokenString !== "string" || tokenString.indexOf(".") === -1) {
+    return null;
+  }
+  const parts = tokenString.split(".");
+  if (parts.length !== 2) return null;
+  const payloadB64 = parts[0];
+  const providedSignature = parts[1];
+  const secret = getAuthTokenSecret();
+  const rawSig = Utilities.computeHmacSignature(Utilities.MacAlgorithm.HMAC_SHA_256, payloadB64, secret);
+  const arr = Array.from ? Array.from(rawSig) : [].slice.call(rawSig);
+  const expectedSignature = arr.map(b => ('0' + (b & 0xFF).toString(16)).slice(-2)).join('');
+  if (providedSignature !== expectedSignature) {
+    return null;
+  }
+  try {
+    let normalizedB64 = payloadB64.replace(/-/g, '+').replace(/_/g, '/');
+    while (normalizedB64.length % 4 !== 0) {
+      normalizedB64 += '=';
+    }
+    const jsonStr = Utilities.newBlob(Utilities.base64Decode(normalizedB64)).getDataAsString();
+    const claims = JSON.parse(jsonStr);
+    const now = Math.floor(Date.now() / 1000);
+    if (claims.exp && now > claims.exp) return null;
+    return claims;
+  } catch (e) {
+    return null;
+  }
+}
+
 function doPost(e) {
   try {
     let payload = {};
@@ -39,7 +86,17 @@ function doPost(e) {
     const action = payload.action || "ping";
     if (action === "ping") return doGet();
 
-    const userRole = payload.authRole || "SinRol";
+    let userRole = "SinRol";
+    const token = payload && (payload.sessionToken || payload.authToken || payload.token);
+    if (token) {
+      const claims = verifySessionToken(token);
+      if (claims && claims.role) {
+        userRole = claims.role;
+      }
+    } else if (payload && payload.authRole) {
+      userRole = payload.authRole;
+    }
+
     const permitted = ROLE_PERMISSIONS[userRole] || [];
     if (!permitted.includes("*") && !permitted.includes(action)) {
       return textResponse({ status: "error", code: "PERMISSION_DENIED", message: `No tiene permisos para ejecutar la acción '${action}'.` });

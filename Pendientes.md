@@ -537,7 +537,7 @@ FASE 6. EXPEDIENTE INSTITUCIONAL Y CICLO DE VIDA DEL ESTUDIANTE
   - CA-090: Una exención autorizada queda registrada y no puede concederla un rol sin permiso.
   - CA-091: La sustitución de un archivo conserva la versión anterior, el autor del cambio y la fecha.
   - CA-092: La lista de pendientes se mantiene consistente tras actualizar o recargar la sesión.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completado
 
 ---
 

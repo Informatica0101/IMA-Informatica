@@ -171,7 +171,7 @@ const ROLE_PERMISSIONS = {
     "getClassroomResources", "saveClassroomResource", "getStudentSchedule",
     "createAdmissionRequest", "getAdmissionRequests", "updateAdmissionStatus", "reopenAdmissionRequest", "convertAdmissionToStudent", "scheduleAdmissionInterview", "getAdmissionInterviews", "recordInterviewOutcome", "saveAdmissionEvaluation", "getAdmissionEvaluations", "addToWaitlist", "getWaitlist", "reorderWaitlist", "offerWaitlistSlot", "respondToWaitlistSlot", "resolveAdmissionDuplicate", "getAdmissionAnalyticsReport",
     "getStudentFile", "updateStudentFile", "getStudentTimeline", "findDuplicateStudents", "mergeStudentFiles",
-    "getStudentGuardians", "saveStudentGuardian", "unlinkStudentGuardian", "uploadStudentDocument", "getStudentDocuments", "updateDocumentStatus",
+    "getStudentGuardians", "saveStudentGuardian", "unlinkStudentGuardian", "uploadStudentDocument", "getStudentDocuments", "updateDocumentStatus", "getPendingDocumentsReport", "grantDocumentExemption",
     "createStudentEnrollment", "getStudentEnrollments", "renewStudentEnrollment", "checkEnrollmentCapacity",
     "changeStudentSection", "recordStudentTransfer", "recordStudentWithdrawal", "processStudentReentry", "processStudentPromotion", "processStudentGraduation", "updateStudentLifecycleStatus", "reconcileStudentLifecycleState", "runStudentLifecycleRegressionSuite", "getAcademicAreaTemplateCatalog", "getAcademicAreaCoordinationScope", "deployAcademicMicroserviceInstance", "getAcademicMicroserviceDeployments", "previewBackupRestoreImpact", "getStorageQuotaMetricsReport", "reconcileDocumentStorageIntegrity",
     "openAttendanceSession", "saveClassAttendance", "getClassAttendance", "saveDailyAttendance", "getDailyAttendance", "submitAttendanceJustification", "reviewAttendanceJustification", "recordEarlyDeparture", "getAttendanceIncidents", "saveAttendanceIncident", "getAttendanceFollowupCases", "saveAttendanceFollowupCase", "addCaseFollowUpNote", "getStudentAttendanceSummary",
@@ -710,6 +710,8 @@ function doPost(e) {
       case "uploadStudentDocument": result = uploadStudentDocument(payload); break;
       case "getStudentDocuments": result = getStudentDocuments(payload); break;
       case "updateDocumentStatus": result = updateDocumentStatus(payload); break;
+      case "getPendingDocumentsReport": result = getPendingDocumentsReport(payload); break;
+      case "grantDocumentExemption": result = grantDocumentExemption(payload); break;
       case "createStudentEnrollment": result = createStudentEnrollment(payload); break;
       case "getStudentEnrollments": result = getStudentEnrollments(payload); break;
       case "renewStudentEnrollment": result = renewStudentEnrollment(payload); break;
@@ -6642,6 +6644,111 @@ function updateDocumentStatus(payload) {
   if (observaciones) sheet.getRange(idx + 1, 13).setValue(observaciones);
 
   return { status: "success", message: `Estado del documento actualizado a '${nuevoEstado}'.` };
+}
+
+// [TAREA-F6-017] [Fase 6: Expediente Institucional y Ciclo de Vida] - Reporte de documentos pendientes, faltantes, vencidos y exenciones por expediente
+function getPendingDocumentsReport(payload) {
+  const { expedienteId, solicitudId } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+
+  const mandatoryRequirements = [
+    { tipoDocumento: "PartidaNacimiento", obligatorio: true, descripcion: "Certificado o Partida de Nacimiento" },
+    { tipoDocumento: "IdentificacionPadreTutor", obligatorio: true, descripcion: "DNI/Identificación de Padre o Tutor" },
+    { tipoDocumento: "CertificadoEstudiosPrevios", obligatorio: true, descripcion: "Certificado de Estudios o Nota de Conducta" },
+    { tipoDocumento: "FichaMedicaVacunas", obligatorio: false, descripcion: "Ficha Médica o Registro de Vacunación" }
+  ];
+
+  const docRes = getStudentDocuments({ expedienteId, solicitudId });
+  const presentDocs = docRes.documents || [];
+
+  const exempSheet = getOrCreateSheet(ss, "ExencionesDocumentales");
+  const exempRows = exempSheet.getDataRange().getValues().slice(1);
+  const activeExemptions = exempRows.filter(r => (expedienteId && String(r[1]).trim() === String(expedienteId).trim()) || (solicitudId && String(r[2]).trim() === String(solicitudId).trim()));
+
+  const now = new Date().getTime();
+  const report = {
+    expedienteId: expedienteId || "N/A",
+    solicitudId: solicitudId || "N/A",
+    cumplimientoDocumentalPct: 0,
+    esDocumentalmenteCompleto: false,
+    documentosAprobados: [],
+    documentosPendientesRevision: [],
+    documentosRechazados: [],
+    documentosVencidos: [],
+    requisitosFaltantesObligatorios: [],
+    requisitosFaltantesOpcionales: [],
+    exencionesOtorgadas: activeExemptions.map(e => ({ exencionId: e[0], tipoDocumento: e[3], motivo: e[4], otorgadoPor: e[5], fecha: e[6] }))
+  };
+
+  mandatoryRequirements.forEach(req => {
+    const isExempt = activeExemptions.some(e => String(e[3]).trim().toLowerCase() === req.tipoDocumento.toLowerCase());
+    const doc = presentDocs.find(d => String(d.tipoDocumento).trim().toLowerCase() === req.tipoDocumento.toLowerCase());
+
+    if (isExempt) {
+      report.documentosAprobados.push({ tipoDocumento: req.tipoDocumento, estado: "Exento", observaciones: "Exención autorizada" });
+    } else if (!doc) {
+      if (req.obligatorio) report.requisitosFaltantesObligatorios.push(req);
+      else report.requisitosFaltantesOpcionales.push(req);
+    } else {
+      const state = String(doc.estadoRevision || "Pendiente").trim();
+      const expirationTime = doc.fechaVencimiento ? new Date(doc.fechaVencimiento).getTime() : null;
+      const isExpired = expirationTime && expirationTime < now;
+
+      if (isExpired) {
+        report.documentosVencidos.push({ ...doc, estadoRevision: "Vencido" });
+      } else if (state === "Aprobado" || state === "Aceptado") {
+        report.documentosAprobados.push(doc);
+      } else if (state === "Rechazado") {
+        report.documentosRechazados.push(doc);
+      } else {
+        report.documentosPendientesRevision.push(doc);
+      }
+    }
+  });
+
+  const totalMandatory = mandatoryRequirements.filter(r => r.obligatorio).length;
+  const approvedCount = report.documentosAprobados.length;
+  report.cumplimientoDocumentalPct = totalMandatory > 0 ? Math.round((approvedCount / totalMandatory) * 100) : 100;
+  report.esDocumentalmenteCompleto = report.requisitosFaltantesObligatorios.length === 0 && report.documentosVencidos.length === 0 && report.documentosRechazados.length === 0;
+
+  return { status: "success", report };
+}
+
+// [TAREA-F6-017] [Fase 6: Expediente Institucional y Ciclo de Vida] - Concesión de exención documental justificada para expedientes o trámites específicos
+function grantDocumentExemption(payload) {
+  const { expedienteId, solicitudId, tipoDocumento, motivo, fechaVencimientoExencion } = payload || {};
+  if ((!expedienteId && !solicitudId) || !tipoDocumento || !motivo) {
+    throw new Error("expedienteId/solicitudId, tipoDocumento y motivo son requeridos.");
+  }
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "ExencionesDocumentales");
+  if (sheet.getLastRow() === 0) {
+    sheet.appendRow(["ExencionID", "ExpedienteID", "SolicitudID", "TipoDocumento", "Motivo", "OtorgadoPor", "FechaOtorgamiento", "FechaVencimientoExencion"]);
+  }
+
+  const exencionId = "EXEMP-" + Date.now();
+  const now = new Date();
+  const author = (payload && payload.userId) || "Secretaría";
+
+  sheet.appendRow([
+    exencionId,
+    expedienteId || "",
+    solicitudId || "",
+    String(tipoDocumento).trim(),
+    String(motivo).trim(),
+    author,
+    now,
+    fechaVencimientoExencion || "Indefinido"
+  ]);
+
+  logStructuredEvent("ACADEMIC", "grantDocumentExemption", "INFO", "DOCUMENT_EXEMPTION_GRANTED", `Exención otorgada para ${tipoDocumento} en ${expedienteId || solicitudId}`, { exencionId, tipoDocumento, motivo, author }, payload && payload.authRole);
+
+  return {
+    status: "success",
+    exencionId: exencionId,
+    message: `Exención de documento '${tipoDocumento}' otorgada con éxito.`
+  };
 }
 
 // ---------------------------------------------------------------------------
