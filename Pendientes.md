@@ -177,7 +177,7 @@ FASE 6. EXPEDIENTE INSTITUCIONAL Y CICLO DE VIDA DEL ESTUDIANTE
   - CA-034: Facturas, cobros y recibos mantienen referencias consistentes en todo momento.
   - CA-035: Un usuario con múltiples roles ejecuta operaciones en distintas áreas sin ampliar permisos indebidamente en otras.
   - CA-036: La indisponibilidad de un módulo no bloquea las operaciones independientes de los demás.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completado
 
 ---
 
