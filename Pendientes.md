@@ -144,7 +144,7 @@ FASE 6. EXPEDIENTE INSTITUCIONAL Y CICLO DE VIDA DEL ESTUDIANTE
   - CA-028: Las funciones migradas producen resultados equivalentes y conservan sus controles de acceso.
   - CA-029: El registro central identifica qué servicio atiende cada función y dónde está desplegado.
   - CA-030: No quedan funciones existentes desconectadas, referencias obsoletas ni llamadas a endpoints inexistentes.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completado
 
 ---
 

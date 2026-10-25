@@ -6490,7 +6490,7 @@ function renewStudentEnrollment(payload) {
     seccion: nuevaSeccion || "A",
     tipo: "Renovacion",
     authRole: payload && payload.authRole,
-    userId: payload && payload.userId
+    callerUserId: payload && payload.userId
   });
 }
 
@@ -6864,7 +6864,7 @@ function processStudentReentry(payload) {
       observaciones: motivo || "Reingreso tras período fuera del centro",
       skipLock: true,
       authRole: payload && payload.authRole,
-      userId: payload && payload.userId
+      callerUserId: payload && payload.userId
     });
 
     const movSheet = getOrCreateSheet(ss, "MovimientosEstudiante");
@@ -6927,7 +6927,7 @@ function processStudentPromotion(payload) {
       observaciones: motivo || `Decisión académica: ${decision}`,
       skipLock: true,
       authRole: payload && payload.authRole,
-      userId: payload && payload.userId
+      callerUserId: payload && payload.userId
     });
 
     const movSheet = getOrCreateSheet(ss, "MovimientosEstudiante");

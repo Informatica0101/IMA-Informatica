@@ -164,6 +164,67 @@ window.SERVICE_URLS = {
   ACCOUNTING: 'https://script.google.com/macros/s/AKfycbzAccountingSvc/exec'
 };
 
+// [TAREA-F6-004] [Fase 6: Reestructuración en microservicios independientes] - Registro centralizado de descubrimiento de microservicios con endpoints, versiones y recursos
+window.SERVICE_REGISTRY = {
+  USER: {
+    serviceId: "SVC-USER-01",
+    name: "Microservicio de Usuarios, Permisos e Identidad",
+    version: "v8.4.0",
+    endpointUrl: window.SERVICE_URLS.USER,
+    healthStatus: "ACTIVE",
+    responsibilities: ["Autenticación", "Usuarios", "Roles", "RelacionesFamiliares", "Auditoria"],
+    resources: {
+      spreadsheetId: "1-USER-SPREADSHEET-ID",
+      driveFolderId: "1-USER-DRIVE-FOLDER-ID"
+    }
+  },
+  ACADEMIC: {
+    serviceId: "SVC-ACADEMIC-02",
+    name: "Microservicio Académico, Admisiones y Ciclo de Vida",
+    version: "v8.4.0",
+    endpointUrl: window.SERVICE_URLS.ACADEMIC,
+    healthStatus: "ACTIVE",
+    responsibilities: ["ExpedientesEstudiantes", "Matriculas", "SolicitudesAdmision", "Asistencia", "SupervisionDocente"],
+    resources: {
+      spreadsheetId: "1-ACADEMIC-SPREADSHEET-ID",
+      driveFolderId: "1-ACADEMIC-DRIVE-FOLDER-ID"
+    }
+  },
+  TASK: {
+    serviceId: "SVC-TASK-03",
+    name: "Microservicio de Tareas y Tareas Formativas",
+    version: "v8.4.0",
+    endpointUrl: window.SERVICE_URLS.TASK,
+    healthStatus: "ACTIVE",
+    responsibilities: ["Tareas", "Entregas", "CalificacionesTareas"],
+    resources: {
+      spreadsheetId: "1-TASK-SPREADSHEET-ID"
+    }
+  },
+  EXAM: {
+    serviceId: "SVC-EXAM-04",
+    name: "Microservicio de Exámenes y Banco de Preguntas",
+    version: "v8.4.0",
+    endpointUrl: window.SERVICE_URLS.EXAM,
+    healthStatus: "ACTIVE",
+    responsibilities: ["Examenes", "BancoPreguntas", "CalificacionesExamenes"],
+    resources: {
+      spreadsheetId: "1-EXAM-SPREADSHEET-ID"
+    }
+  },
+  ACCOUNTING: {
+    serviceId: "SVC-ACCOUNTING-05",
+    name: "Microservicio de Contabilidad, Cobros y Planillas",
+    version: "v8.4.0",
+    endpointUrl: window.SERVICE_URLS.ACCOUNTING,
+    healthStatus: "ACTIVE",
+    responsibilities: ["CobrosAdmision", "PagosMatricula", "BecasExenciones", "Facturacion"],
+    resources: {
+      spreadsheetId: "1-ACCOUNTING-SPREADSHEET-ID"
+    }
+  }
+};
+
 // --- URL del sitio para CORS (si es necesario ajustarlo en el backend) ---
 var FRONTEND_URL = 'https://informatica0101.github.io';
 

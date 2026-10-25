@@ -98,15 +98,16 @@ function fetchApi(service, action, payload, retryCount, options) {
     retryCount = retryCount || 0;
     options = options || {};
 
-    // REQ: Uso de constante global v3.3
+    // [TAREA-F6-004] [Fase 6: Reestructuración en microservicios independientes] - Descubrimiento centralizado de microservicios vía SERVICE_REGISTRY con fallback a SERVICE_URLS
+    var registry = window.SERVICE_REGISTRY || {};
     var urls = window.SERVICE_URLS || (typeof SERVICE_URLS !== 'undefined' ? SERVICE_URLS : {});
 
-    if (!urls[service]) {
-        console.error('URL para el servicio "' + service + '" no encontrada.');
+    var url = (registry[service] && registry[service].endpointUrl) ? registry[service].endpointUrl : urls[service];
+
+    if (!url) {
+        console.error('URL o registro para el servicio "' + service + '" no encontrada.');
         return Promise.resolve({ status: 'error', message: 'Configuración de servicio no encontrada.', isFallback: true, data: [] });
     }
-
-    var url = urls[service];
 
     // REQ: Implementación de Timeout para evitar bloqueos por Gateway Timeout (Tarea 1)
     var controller = null;
