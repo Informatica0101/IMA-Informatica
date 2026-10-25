@@ -1561,3 +1561,8 @@ Archivos Modificados:
 - backend/academic-service/Code.gs:
   - Verificadas funciones deployAcademicMicroserviceInstance y getAcademicMicroserviceDeployments para el despliegue e inicialización idempotente de instancias de microservicios académicos.
   - Marcada TAREA-F6-007 como completada [X] en Pendientes.md.
+
+[TAREA-F6-008] Crear el microservicio central del desarrollador y el registro de servicios
+- backend/developer-service/Code.gs:
+  - Verificada la implementacion de endpoints del plano de control central y registro de microservicios (getCentralServiceRegistry, registerServiceInstance, updateServiceStatus, auditInterServiceCalls y manageUserMultiRolePermissions).
+  - Marcada TAREA-F6-008 como completada [X] en Pendientes.md.

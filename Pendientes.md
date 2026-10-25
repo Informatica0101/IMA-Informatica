@@ -241,7 +241,7 @@ FASE 6. EXPEDIENTE INSTITUCIONAL Y CICLO DE VIDA DEL ESTUDIANTE
 
 ---
 
-### [TAREA-F6-008] Crear el microservicio central del desarrollador y el registro de servicios
+### [X] [TAREA-F6-008] Crear el microservicio central del desarrollador y el registro de servicios
 - **Origen del Hallazgo:** Reestructuración Arquitectónica / F6-011 (P1 · Administración Centralizada)
 - **Prioridad:** P1
 - **Severidad/Clasificación:** Alta (Plano de control y registro de microservicios)
