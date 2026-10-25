@@ -1581,3 +1581,8 @@ Archivos Modificados:
 - backend/academic-service/Code.gs:
   - Verificada la funcion previewBackupRestoreImpact y verifyBackupIntegrity para inspeccionar respaldos, validar sumas SHA-256 y prevenir restauraciones destructivas sin confirmacion explicita.
   - Marcada TAREA-F6-011 como completada [X] en Pendientes.md.
+
+[TAREA-F6-012] Establecer seguridad, aislamiento y gestión centralizada de permisos
+- backend/academic-service/Code.gs:
+  - Verificada la función validateContextualAccess con aislamiento estricto IDOR por estudiante y aislamiento de ámbito de supervisión por área para el rol Coordinador.
+  - Marcada TAREA-F6-012 como completada [X] en Pendientes.md.

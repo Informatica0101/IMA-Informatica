@@ -235,3 +235,15 @@ Archivos verificados:
 Resultados de verificación:
 - Validación de sumas de verificación SHA-256 previa a la restauración de respaldos.
 - Exigencia de confirmación explícita RESTORE-CONFIRMED y reporte de impacto comparativo por hoja de cálculo.
+
+===========================================================
+AUDITORÍA DE CÓDIGO - TAREA-F6-012
+===========================================================
+Fecha: 2025-05-18
+Archivos verificados:
+- backend/academic-service/Code.gs
+- Pendientes.md
+
+Resultados de verificación:
+- Validación de aislamiento contextual de usuario e IDOR en validateContextualAccess.
+- Ámbito de supervisión por área para Coordinadores verificado en el servidor.

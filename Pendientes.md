@@ -354,7 +354,7 @@ FASE 6. EXPEDIENTE INSTITUCIONAL Y CICLO DE VIDA DEL ESTUDIANTE
 
 ---
 
-### [TAREA-F6-012] Establecer seguridad, aislamiento y gestión centralizada de permisos
+### [X] [TAREA-F6-012] Establecer seguridad, aislamiento y gestión centralizada de permisos
 - **Origen del Hallazgo:** Reestructuración Arquitectónica / F6-015 (P1 · Seguridad y Control de Acceso)
 - **Prioridad:** P1
 - **Severidad/Clasificación:** Alta (Seguridad, identidad única, RBAC y aislamiento)
