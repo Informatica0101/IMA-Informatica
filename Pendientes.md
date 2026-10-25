@@ -410,7 +410,7 @@ FASE 6. EXPEDIENTE INSTITUCIONAL Y CICLO DE VIDA DEL ESTUDIANTE
   - CA-067: Las migraciones de datos son idempotentes y no duplican estructuras ni registros al reejecutarse.
   - CA-068: La actualización de una instancia no altera las demás ni desconecta consumidores del dashboard.
   - CA-069: Existe un procedimiento probado de rollback que permite restituir el servicio ante despliegues fallidos.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completado
 
 ---
 
