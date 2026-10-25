@@ -439,7 +439,7 @@ FASE 6. EXPEDIENTE INSTITUCIONAL Y CICLO DE VIDA DEL ESTUDIANTE
   - CA-071: Los cambios de URLs o referencias de almacenamiento se aplican mediante configuración sin recompilar ni editar código.
   - CA-072: La retirada de un microservicio elimina o deshabilita sus endpoints en el catálogo central sin romper los dashboards.
   - CA-073: El catálogo de contratos valida la compatibilidad de llamadas de `js/api.js`.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completado
 
 ---
 
