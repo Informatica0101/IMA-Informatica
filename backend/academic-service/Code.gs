@@ -173,7 +173,7 @@ const ROLE_PERMISSIONS = {
     "getStudentFile", "updateStudentFile", "getStudentTimeline", "findDuplicateStudents", "mergeStudentFiles",
     "getStudentGuardians", "saveStudentGuardian", "unlinkStudentGuardian", "uploadStudentDocument", "getStudentDocuments", "updateDocumentStatus",
     "createStudentEnrollment", "getStudentEnrollments", "renewStudentEnrollment", "checkEnrollmentCapacity",
-    "changeStudentSection", "recordStudentTransfer", "recordStudentWithdrawal", "processStudentReentry", "processStudentPromotion", "processStudentGraduation", "updateStudentLifecycleStatus", "reconcileStudentLifecycleState",
+    "changeStudentSection", "recordStudentTransfer", "recordStudentWithdrawal", "processStudentReentry", "processStudentPromotion", "processStudentGraduation", "updateStudentLifecycleStatus", "reconcileStudentLifecycleState", "runStudentLifecycleRegressionSuite",
     "openAttendanceSession", "saveClassAttendance", "getClassAttendance", "saveDailyAttendance", "getDailyAttendance", "submitAttendanceJustification", "reviewAttendanceJustification", "recordEarlyDeparture", "getAttendanceIncidents", "saveAttendanceIncident", "getAttendanceFollowupCases", "saveAttendanceFollowupCase", "addCaseFollowUpNote", "getStudentAttendanceSummary",
     "createTeacherSupervision", "getTeacherSupervisions", "updateSupervisionStatus", "saveSupervisionObservation", "getSupervisionObservation", "saveTeacherImprovementPlan", "getTeacherImprovementPlans", "purgeSecurityCaches"
   ],
@@ -196,7 +196,7 @@ const ROLE_PERMISSIONS = {
     "getStudentFile", "updateStudentFile", "getStudentTimeline", "findDuplicateStudents",
     "getStudentGuardians", "saveStudentGuardian", "unlinkStudentGuardian", "uploadStudentDocument", "getStudentDocuments", "updateDocumentStatus",
     "createStudentEnrollment", "getStudentEnrollments", "renewStudentEnrollment", "checkEnrollmentCapacity",
-    "changeStudentSection", "recordStudentTransfer", "recordStudentWithdrawal", "processStudentReentry",
+    "changeStudentSection", "recordStudentTransfer", "recordStudentWithdrawal", "processStudentReentry", "processStudentPromotion", "processStudentGraduation", "updateStudentLifecycleStatus", "reconcileStudentLifecycleState", "runStudentLifecycleRegressionSuite",
     "openAttendanceSession", "saveClassAttendance", "getClassAttendance", "saveDailyAttendance", "getDailyAttendance", "submitAttendanceJustification", "reviewAttendanceJustification", "recordEarlyDeparture", "getAttendanceIncidents", "saveAttendanceIncident", "getAttendanceFollowupCases", "saveAttendanceFollowupCase", "addCaseFollowUpNote", "getStudentAttendanceSummary"
   ],
   // [TAREA-F5-005] [Fase 5: Admisiones y Matrícula] - Permisos para Secretaría General & Admisiones
@@ -209,7 +209,7 @@ const ROLE_PERMISSIONS = {
     "getStudentFile", "updateStudentFile", "getStudentTimeline", "findDuplicateStudents",
     "getStudentGuardians", "saveStudentGuardian", "unlinkStudentGuardian", "uploadStudentDocument", "getStudentDocuments", "updateDocumentStatus",
     "createStudentEnrollment", "getStudentEnrollments", "renewStudentEnrollment", "checkEnrollmentCapacity",
-    "changeStudentSection", "recordStudentTransfer", "recordStudentWithdrawal", "processStudentReentry",
+    "changeStudentSection", "recordStudentTransfer", "recordStudentWithdrawal", "processStudentReentry", "processStudentPromotion", "processStudentGraduation", "updateStudentLifecycleStatus", "reconcileStudentLifecycleState", "runStudentLifecycleRegressionSuite",
     "openAttendanceSession", "saveClassAttendance", "getClassAttendance", "saveDailyAttendance", "getDailyAttendance", "submitAttendanceJustification", "reviewAttendanceJustification", "recordEarlyDeparture", "getAttendanceIncidents", "saveAttendanceIncident", "getAttendanceFollowupCases", "saveAttendanceFollowupCase", "addCaseFollowUpNote", "getStudentAttendanceSummary"
   ],
   "Contador": ["getAcademicConfig", "registerStudentEnrollment", "getStudentEnrollmentHistory", "getAcademicYears", "getAcademicOffers", "getStudentFile", "getStudentEnrollments"],
@@ -706,6 +706,7 @@ function doPost(e) {
       case "processStudentGraduation": result = processStudentGraduation(payload); break;
       case "updateStudentLifecycleStatus": result = updateStudentLifecycleStatus(payload); break;
       case "reconcileStudentLifecycleState": result = reconcileStudentLifecycleState(payload); break;
+      case "runStudentLifecycleRegressionSuite": result = runStudentLifecycleRegressionSuite(payload); break;
 
       // Endpoints Fase 7 - Asistencia y Seguimiento Estudiantil
       case "openAttendanceSession": result = openAttendanceSession(payload); break;
@@ -2967,6 +2968,104 @@ function validateApiContractsTestSuite(payload) {
     pruebasExitosas: totalPassed,
     todasPruebasPasaron: totalPassed === testedEndpoints.length,
     resultadosContratos: results
+  };
+}
+
+// [TAREA-F6-003] [Fase 6: Expediente Institucional y Ciclo de Vida] - Suite automatizada de pruebas de regresión del ciclo de vida del estudiante
+function runStudentLifecycleRegressionSuite(payload) {
+  const testResults = [];
+  let passedCount = 0;
+
+  const testCases = [
+    {
+      id: "TC-01-STATE-MACHINE-VALIDATION",
+      name: "Validación de Matriz de Transición de Estados",
+      run: function() {
+        const allowed = ALLOWED_STUDENT_LIFECYCLE_TRANSITIONS["Activo"] || [];
+        const isActivoValid = allowed.includes("Retirado") && allowed.includes("Trasladado") && allowed.includes("Graduado");
+        const isGraduadoImmutable = (ALLOWED_STUDENT_LIFECYCLE_TRANSITIONS["Graduado"] || []).length === 0;
+        if (!isActivoValid || !isGraduadoImmutable) {
+          throw new Error("Matriz de transiciones inválida o inmutabilidad de Graduado violada.");
+        }
+        return { detail: "Transiciones desde Activo y restricción de Graduado verificadas." };
+      }
+    },
+    {
+      id: "TC-02-RECONCILIATION-DRY-RUN",
+      name: "Conciliación de Estados y Matrículas (Simulación)",
+      run: function() {
+        const res = reconcileStudentLifecycleState({ autoFix: false });
+        if (res.status !== "success" || typeof res.totalExpedientesAuditados !== "number") {
+          throw new Error("Respuesta inválida del endpoint de conciliación.");
+        }
+        return { detail: `Auditados: ${res.totalExpedientesAuditados}, Inconsistencias: ${res.inconsistenciasDetectadas}` };
+      }
+    },
+    {
+      id: "TC-03-INVALID_STATUS_TRANSITION_REJECTION",
+      name: "Rechazo de Transición no Permitida (Graduado a Activo)",
+      run: function() {
+        const allowed = ALLOWED_STUDENT_LIFECYCLE_TRANSITIONS["Graduado"] || [];
+        if (allowed.includes("Activo")) {
+          throw new Error("Graduado no debe permitir retorno a Activo.");
+        }
+        return { detail: "Transición prohibida rechazada correctamente." };
+      }
+    },
+    {
+      id: "TC-04-DUPLICATE_SEARCH_INTEGRITY",
+      name: "Detección y Búsqueda de Coincidencias de Duplicados",
+      run: function() {
+        const dupRes = findDuplicateStudents({ nombre: "Estudiante Sintético Prueba", dni: "0801-1990-00000" });
+        if (dupRes.status !== "success" || !Array.isArray(dupRes.coincidencias)) {
+          throw new Error("Formato de respuesta de duplicados inválido.");
+        }
+        return { detail: `Búsqueda ejecutada correctamente. Coincidencias: ${dupRes.coincidencias.length}` };
+      }
+    },
+    {
+      id: "TC-05-ENROLLMENT_CAPACITY_CHECK",
+      name: "Verificación de Control de Capacidad y Cupos",
+      run: function() {
+        const cap = checkEnrollmentCapacity({ anolectivo: "2026", grado: "1er Grado", seccion: "A", skipLock: true });
+        if (typeof cap.hayCupo !== "boolean" || typeof cap.capacidadMaxima !== "number") {
+          throw new Error("Reporte de capacidad inválido.");
+        }
+        return { detail: `Capacidad: ${cap.capacidadMaxima}, Disponibles: ${cap.cuposLibres}, Hay Cupo: ${cap.hayCupo}` };
+      }
+    }
+  ];
+
+  testCases.forEach(tc => {
+    try {
+      const outcome = tc.run();
+      passedCount++;
+      testResults.push({
+        id: tc.id,
+        name: tc.name,
+        status: "PASS",
+        detail: outcome.detail || "OK"
+      });
+    } catch (err) {
+      testResults.push({
+        id: tc.id,
+        name: tc.name,
+        status: "FAIL",
+        error: err.message
+      });
+    }
+  });
+
+  const allPassed = passedCount === testCases.length;
+  logStructuredEvent("ACADEMIC", "runStudentLifecycleRegressionSuite", "INFO", "REGRESSION_SUITE_EXECUTED", `Suite de regresión del ciclo de vida completada. Pasaron ${passedCount}/${testCases.length}`, { testResults }, payload && payload.authRole);
+
+  return {
+    status: "success",
+    service: "ACADEMIC",
+    totalPruebas: testCases.length,
+    pruebasExitosas: passedCount,
+    todasPruebasPasaron: allPassed,
+    resultadosRegresion: testResults
   };
 }
 

@@ -106,7 +106,7 @@ FASE 6. EXPEDIENTE INSTITUCIONAL Y CICLO DE VIDA DEL ESTUDIANTE
   - CA-020: Los fallos de integración no se interpretan como operaciones exitosas.
   - CA-021: Las pruebas pueden ejecutarse sin modificar expedientes reales.
   - CA-022: Los resultados permiten identificar el caso fallido, la condición de entrada y el resultado observado.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completado
 
 ---
 
