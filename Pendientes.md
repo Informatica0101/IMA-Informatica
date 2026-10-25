@@ -381,7 +381,7 @@ FASE 6. EXPEDIENTE INSTITUCIONAL Y CICLO DE VIDA DEL ESTUDIANTE
   - CA-063: Un usuario ejerce múltiples roles en distintas áreas desde una sola cuenta sin duplicación de identidad.
   - CA-064: La manipulación de IDs en parámetros de llamada no permite acceder a expedientes ni documentos ajenos.
   - CA-065: Las revocaciones de permisos se aplican de inmediato en todas las llamadas protegidas del backend.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completado
 
 ---
 

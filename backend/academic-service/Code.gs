@@ -399,6 +399,20 @@ function validateContextualAccess(action, payload, verifiedUserId, userRole) {
     }
   }
 
+  // [TAREA-F6-012] [Fase 6: Reestructuración en microservicios independientes] - Validación de aislamiento y ámbito de supervisión por área para Coordinadores
+  if (userRole === "Coordinador") {
+    const targetAreaId = payload && payload.areaId;
+    if (targetAreaId && verifiedUserId) {
+      try {
+        const scopesRes = getAcademicAreaCoordinationScope({ areaId: targetAreaId, userId: verifiedUserId });
+        const matchedScope = (scopesRes.scopes || []).find(s => String(s.areaId).trim().toUpperCase() === String(targetAreaId).trim().toUpperCase());
+        if (!matchedScope) {
+          return { authorized: false, reason: "Aislamiento de coordinación: el usuario no tiene la área " + targetAreaId + " asignada en su ámbito de supervisión." };
+        }
+      } catch (_) {}
+    }
+  }
+
   return { authorized: true };
 }
 
