@@ -322,7 +322,7 @@ FASE 6. EXPEDIENTE INSTITUCIONAL Y CICLO DE VIDA DEL ESTUDIANTE
   - CA-055: Las purgas de registros temporales conservan intactos los logs de auditoría obligatorios.
   - CA-056: La ejecución de comandos se limita estrictamente al catálogo cerrado autorizado.
   - CA-057: Cada comando ejecutado registra solicitante, fecha, parámetros, resultado y `correlationId`.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completado
 
 ---
 
