@@ -48,7 +48,13 @@ document.addEventListener('DOMContentLoaded', () => {
             localStorage.removeItem('quizpro_interrupted_intent');
         }
 
-        if (user.rol === 'Profesor') {
+        if (user.rol === 'Secretaría' || user.rol === 'Secretaria' || user.rol === 'Asistente') {
+            window.location.href = 'dashboard-secretaria.html';
+        } else if (user.rol === 'Director' || user.rol === 'Administrador' || user.rol === 'Subdirector') {
+            window.location.href = 'dashboard-direccion.html';
+        } else if (user.rol === 'Contador') {
+            window.location.href = 'dashboard-contabilidad.html';
+        } else if (user.rol === 'Profesor') {
             window.location.href = 'teacher-dashboard.html';
         } else {
             window.location.href = 'student-dashboard.html';

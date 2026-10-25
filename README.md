@@ -1,6 +1,6 @@
 # Ecosistema Educativo New Generation Christian Academy - Plataforma Integral de Gestión Institucional
 
-Bienvenido a la documentación oficial y guía funcional del **Ecosistema Educativo New Generation Christian Academy** (Versión Global **1.0** - Fase 4 Final: Identidad, Permisos y Gobierno de la Información).
+Bienvenido a la documentación oficial y guía funcional del **Ecosistema Educativo New Generation Christian Academy** (Versión Global **1.0** - Fase 5 Final: Admisiones, Aspirantes, Vinculación de Responsables y Portal de Familias).
 
 La plataforma constituye una solución tecnológica centralizada que integra la gestión académica, administrativa, financiera, comunicativa, de recursos humanos y de operaciones físicas de la institución. Conecta en tiempo real a directivos, coordinadores, docentes, estudiantes, padres de familia y personal administrativo en un entorno único, seguro, intuitivo y accesible desde navegadores web y dispositivos móviles (PWA).
 
@@ -21,10 +21,14 @@ La plataforma constituye una solución tecnológica centralizada que integra la 
 * **Vista de Actividad Reciente Contextual:** Historial ordenado cronológicamente por rol que diferencia entre avisos informativos y tareas pendientes, permitiendo retornar con un clic a registros previamente consultados.
 * **Preferencias Personalizadas y Esqueletos de Carga:** Opciones individuales de densidad de pantalla, temas y vistas con indicadores visuales animados durante la carga de información.
 
-### 2. Gestión Académica, Matrícula y Expediente Estudiantil
+### 2. Gestión Académica, Admisiones, Matrícula y Expediente Estudiantil
 * **Ciclo Escolar y Estructura Curricular:** Planificación de periodos lectivos (parciales, semestres, trimestres), jornadas académicas, catálogo de 12 áreas curriculares estructuradas y planes de estudio.
 * **Expediente Digital Único:** Registro integral del estudiante que consolida datos personales, tutores legales, documentos digitalizados, línea de tiempo de movimientos académicos (traslados, cambios de sección, retiros) y prevención de expedientes duplicados.
-* **Admisiones y Matrícula:** Formulario de solicitud de ingreso, carga y revisión de requisitos, asignación de secciones y matriculación formal anual.
+* **Formulario Público de Admisión y Stepper Guiado:** Proceso público de postulación de aspirantes accesible en móvil y escritorio con stepper de pasos, validación de DNI de 13 dígitos (+504), consentimiento ARCO y consulta pública por código de seguimiento.
+* **Consola Administrativa de Admisiones y Matrícula:** Panel exclusivo para Secretaría General que permite auditar postulaciones, evaluar requisitos, agendar entrevistas/evaluaciones, gestionar listas de espera con orden de prelación, controlar cupos atómicos por sección y realizar la conversión a expediente estudiantil.
+* **Gestión Documental Pre-Matrícula:** Carga y calificación de documentos de aspirantes adjuntos a su código de postulación antes de formalizar la matrícula, con migración automática de archivos al expediente.
+* **Detección y Resolución de Duplicados:** Algoritmo de detección de coincidencias exactas, altas y medias entre aspirantes y estudiantes existentes con panel de resolución motivada.
+* **Guardado Automático de Borradores y Optimización:** Auto-guardado híbrido local/servidor con recuperación tras desconexiones, paginación en servidor y caché selectiva de 10 minutos para ofertas académicas.
 * **Gestión de Horarios y Espacios Físicos:** Matriz de horarios por nivel, grado y docente, control de capacidad de aulas, prevención automática de solapamiento de horarios y asignación de docentes sustitutos.
 
 ### 3. Aula Virtual, LMS y Material Didáctico

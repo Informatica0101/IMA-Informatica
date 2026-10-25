@@ -197,9 +197,9 @@ const ROLE_PERMISSIONS = {
   "EncargadoCafeteria": ["getCafeteriaMenu", "manageCafeteriaMenu", "createCafeteriaOrder", "getCafeteriaOrders", "updateCafeteriaOrderStatus", "recordInventoryMovement", "getInventoryKardex", "getInstitutionalPolicies", "processFamilyCreditPurchase"],
   "RecursosHumanos": ["createEmployeeRecord", "getEmployeeRecords", "manageEmployeeContract", "getEmployeeContracts", "getEmployeeContractAlerts", "manageJobVacancy", "getJobVacancies", "submitJobCandidate", "getJobCandidates", "manageInterviewSchedule", "getInterviewSchedules", "updateEmployeeLaborStatus", "configureWorkSchedule", "recordStaffCheckIn", "getStaffAttendanceLogs", "submitAttendanceCorrection", "reviewAttendanceCorrection", "submitLeaveVacationRequest", "getLeaveVacationRequests", "reviewLeaveVacationRequest", "calculateVacationBalances", "recordMedicalLeave", "calculatePayrollPeriod", "updatePayrollPeriodStatus", "getPayrollPeriodSummary", "requestEmployeeLoanAdvance", "getEmployeeLoansAdvances", "approveEmployeeLoanAdvance", "getLoanAmortizationSchedule", "generatePayrollReceiptPDF", "uploadEmployeeDocument", "getEmployeeDocuments", "getHRDashboardAnalytics", "getInstitutionalPolicies", "managePerformancePeriod", "managePerformanceCriteria", "managePerformanceEvaluation", "getPerformanceEvaluations", "manageTrainingCourse", "manageTrainingEnrollment", "getEmployeeTrainingHistory", "manageProfessionalDevelopmentPlan", "getTrainingAnalyticsReport", "manageLaborIncident", "manageDisciplinaryMeasure", "getLaborIncidentsHistory", "manageStaffingNeeds", "getStaffingNeedsPlanning", "manageWorkShiftAndSubstitution", "getWorkShiftsAndSubstitutionsHistory", "getEmployeeSelfServicePortal", "verifyLaborAndTaxInformation", "runHRIntegrationAndRegressionTests", "runCriticalProcessConcurrencySuite"],
   "Empleado": ["getEmployeeRecords", "getEmployeeContracts", "recordStaffCheckIn", "getStaffAttendanceLogs", "submitAttendanceCorrection", "submitLeaveVacationRequest", "getLeaveVacationRequests", "requestEmployeeLoanAdvance", "getEmployeeLoansAdvances", "generatePayrollReceiptPDF", "getEmployeeDocuments", "getPerformanceEvaluations", "getEmployeeTrainingHistory", "manageProfessionalDevelopmentPlan", "getEmployeeSelfServicePortal"],
-  "Padre": ["getStudentAccountStatement", "uploadPaymentVoucher", "getPaymentVouchers", "generatePaymentReceiptPDF", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getLibraryBooks", "getLibraryLoans", "reserveLibraryBook", "getLibraryReservations", "getDigitalResources", "getTransportRoutes", "getTransportAssignments", "getSchoolDocumentTemplates", "generateSchoolDocument", "getIssuedSchoolDocuments", "getStoreProducts", "createStoreOrder", "getStoreOrders", "getCafeteriaMenu", "createCafeteriaOrder", "getCafeteriaOrders", "getFamilyCreditAuthorizations", "configureFamilyCreditAuthorization", "processFamilyCreditPurchase"],
-  "Tutor": ["getStudentAccountStatement", "uploadPaymentVoucher", "getPaymentVouchers", "generatePaymentReceiptPDF", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getLibraryBooks", "getLibraryLoans", "reserveLibraryBook", "getLibraryReservations", "getDigitalResources", "getTransportRoutes", "getTransportAssignments", "getSchoolDocumentTemplates", "generateSchoolDocument", "getIssuedSchoolDocuments", "getStoreProducts", "createStoreOrder", "getStoreOrders", "getCafeteriaMenu", "createCafeteriaOrder", "getCafeteriaOrders", "getFamilyCreditAuthorizations", "configureFamilyCreditAuthorization", "processFamilyCreditPurchase"],
-  "Responsable": ["getStudentAccountStatement", "uploadPaymentVoucher", "getPaymentVouchers", "generatePaymentReceiptPDF", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getLibraryBooks", "getLibraryLoans", "reserveLibraryBook", "getLibraryReservations", "getDigitalResources", "getTransportRoutes", "getTransportAssignments", "getSchoolDocumentTemplates", "generateSchoolDocument", "getIssuedSchoolDocuments", "getStoreProducts", "createStoreOrder", "getStoreOrders", "getCafeteriaMenu", "createCafeteriaOrder", "getCafeteriaOrders", "getFamilyCreditAuthorizations", "configureFamilyCreditAuthorization", "processFamilyCreditPurchase"],
+  "Padre": ["getStudentAccountStatement", "getAdmissionFinancialStatus", "createAdmissionCharge", "uploadPaymentVoucher", "getPaymentVouchers", "generatePaymentReceiptPDF", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getLibraryBooks", "getLibraryLoans", "reserveLibraryBook", "getLibraryReservations", "getDigitalResources", "getTransportRoutes", "getTransportAssignments", "getSchoolDocumentTemplates", "generateSchoolDocument", "getIssuedSchoolDocuments", "getStoreProducts", "createStoreOrder", "getStoreOrders", "getCafeteriaMenu", "createCafeteriaOrder", "getCafeteriaOrders", "getFamilyCreditAuthorizations", "configureFamilyCreditAuthorization", "processFamilyCreditPurchase"],
+  "Tutor": ["getStudentAccountStatement", "getAdmissionFinancialStatus", "createAdmissionCharge", "uploadPaymentVoucher", "getPaymentVouchers", "generatePaymentReceiptPDF", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getLibraryBooks", "getLibraryLoans", "reserveLibraryBook", "getLibraryReservations", "getDigitalResources", "getTransportRoutes", "getTransportAssignments", "getSchoolDocumentTemplates", "generateSchoolDocument", "getIssuedSchoolDocuments", "getStoreProducts", "createStoreOrder", "getStoreOrders", "getCafeteriaMenu", "createCafeteriaOrder", "getCafeteriaOrders", "getFamilyCreditAuthorizations", "configureFamilyCreditAuthorization", "processFamilyCreditPurchase"],
+  "Responsable": ["getStudentAccountStatement", "getAdmissionFinancialStatus", "createAdmissionCharge", "uploadPaymentVoucher", "getPaymentVouchers", "generatePaymentReceiptPDF", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getLibraryBooks", "getLibraryLoans", "reserveLibraryBook", "getLibraryReservations", "getDigitalResources", "getTransportRoutes", "getTransportAssignments", "getSchoolDocumentTemplates", "generateSchoolDocument", "getIssuedSchoolDocuments", "getStoreProducts", "createStoreOrder", "getStoreOrders", "getCafeteriaMenu", "createCafeteriaOrder", "getCafeteriaOrders", "getFamilyCreditAuthorizations", "configureFamilyCreditAuthorization", "processFamilyCreditPurchase"],
   "Consejeros": ["getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getLibraryBooks", "getLibraryLoans", "reserveLibraryBook", "getLibraryReservations", "getDigitalResources", "getTransportRoutes", "getSchoolDocumentTemplates", "generateSchoolDocument", "getIssuedSchoolDocuments"],
   "Profesor": ["getStaffPayrollReceipt", "submitVacationRequest", "getVacationRequests", "getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getLibraryBooks", "getLibraryLoans", "reserveLibraryBook", "getLibraryReservations", "getDigitalResources", "getTransportRoutes", "getSchoolDocumentTemplates", "generateSchoolDocument", "getIssuedSchoolDocuments", "verifySACETemplateCompatibility", "generateSACEReportFile", "getEmployeeSelfServicePortal"],
   "Asistente": ["getInstitutionalPolicies", "recordPolicyAcceptance", "getPolicyAcceptances", "getLibraryBooks", "getLibraryLoans", "getDigitalResources", "getSchoolDocumentTemplates"],
@@ -557,6 +557,8 @@ function doPost(e) {
       case "getMultiYearBudgetProjections": result = getMultiYearBudgetProjections(payload); break;
       case "getFinancialSummary": result = getFinancialSummary(payload); break;
       case "getAccountsReceivablePayableSummary": result = getAccountsReceivablePayableSummary(payload); break;
+      case "getAdmissionFinancialStatus": result = getAdmissionFinancialStatus(payload); break;
+      case "createAdmissionCharge": result = createAdmissionCharge(payload); break;
       case "getCashFlowSixMonthProjection": result = getCashFlowSixMonthProjection(payload); break;
       case "recordCollectionManagementAction": result = recordCollectionManagementAction(payload); break;
       case "getCollectionManagementLogs": result = getCollectionManagementLogs(payload); break;
@@ -2131,6 +2133,117 @@ function getPerformanceEvaluations(payload) {
       criterios,
       evaluaciones
     }
+  };
+}
+
+// [TAREA-F5-013] [Fase 5: Admisiones, Pagos y Becas] - Gestión de cobros de admisión, comprobantes y exenciones
+function getAdmissionFinancialStatus(payload) {
+  const { solicitudId } = payload || {};
+  if (!solicitudId) throw new Error("solicitudId es requerido.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const cargosRows = getOrCreateSheet(ss, "CargosEstudiante").getDataRange().getValues().slice(1);
+  const compRows = getOrCreateSheet(ss, "ComprobantesPago").getDataRange().getValues().slice(1);
+
+  const cleanSolId = String(solicitudId).trim().toLowerCase();
+
+  // Filtrar cargos asociados a la solicitudId o al id del aspirante
+  const admissionCargos = cargosRows.filter(r => String(r[2] || "").trim().toLowerCase() === cleanSolId || String(r[8] || "").trim().toLowerCase() === cleanSolId).map(r => ({
+    cargoId: r[0],
+    fecha: r[1],
+    solicitudId: r[2],
+    concepto: r[3],
+    montoBase: parseFloat(r[4] || 0),
+    descuento: parseFloat(r[5] || 0),
+    montoFinal: parseFloat(r[6] || 0),
+    estado: r[7] || "Pendiente"
+  }));
+
+  const admissionComprobantes = compRows.filter(r => String(r[2] || "").trim().toLowerCase() === cleanSolId).map(r => ({
+    comprobanteId: r[0],
+    fechaSubida: r[1],
+    solicitudId: r[2],
+    montoDeclarado: parseFloat(r[4] || 0),
+    bancoOrigen: r[5],
+    numeroReferencia: r[6],
+    comprobanteUrl: r[8],
+    estadoRevision: r[9] || "En_Revision"
+  }));
+
+  let totalMonto = 0;
+  let totalPendiente = 0;
+  let tieneObligatorioPendiente = false;
+
+  admissionCargos.forEach(c => {
+    totalMonto += c.montoFinal;
+    if (c.estado === "Pendiente" || c.estado === "Vencido") {
+      totalPendiente += c.montoFinal;
+      tieneObligatorioPendiente = true;
+    }
+  });
+
+  return {
+    status: "success",
+    solicitudId: solicitudId,
+    totalCargos: admissionCargos.length,
+    montoTotal: parseFloat(totalMonto.toFixed(2)),
+    montoPendiente: parseFloat(totalPendiente.toFixed(2)),
+    esSolvente: totalPendiente === 0,
+    tieneObligatorioPendiente: tieneObligatorioPendiente,
+    cargos: admissionCargos,
+    comprobantes: admissionComprobantes
+  };
+}
+
+// [TAREA-F5-013] Generación de cargo automático de admisión
+function createAdmissionCharge(payload) {
+  const { solicitudId, concepto, montoBase, descuento, observaciones } = payload || {};
+  if (!solicitudId || !concepto) throw new Error("solicitudId y concepto son requeridos.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "CargosEstudiante");
+  const data = sheet.getDataRange().getValues();
+
+  // Detección de duplicados por solicitudId y concepto
+  const cleanSolId = String(solicitudId).trim().toLowerCase();
+  const cleanConcept = String(concepto).trim().toLowerCase();
+  const dup = data.slice(1).find(r => String(r[2] || "").trim().toLowerCase() === cleanSolId && String(r[3] || "").trim().toLowerCase() === cleanConcept && r[7] !== "Anulado");
+
+  if (dup) {
+    return {
+      status: "success",
+      cargoId: dup[0],
+      isExisting: true,
+      message: `El cargo '${concepto}' ya existe para la solicitud ${solicitudId}.`
+    };
+  }
+
+  const now = new Date();
+  const cargoId = "CRG-ADM-" + Math.floor(100000 + Math.random() * 900000);
+  const base = parseFloat(montoBase || 500);
+  const desc = parseFloat(descuento || 0);
+  const finalMonto = Math.max(0, base - desc);
+
+  sheet.appendRow([
+    cargoId,
+    now,
+    solicitudId,
+    concepto,
+    base,
+    desc,
+    finalMonto,
+    "Pendiente",
+    solicitudId, // Ref solicitudId en col 9
+    observaciones || "Cargo generado automáticamente por trámite de admisión."
+  ]);
+
+  logStructuredEvent("ACCOUNTING", "createAdmissionCharge", "INFO", "ADMISSION_CHARGE_CREATED", `Cargo ${cargoId} (${concepto}) generado para solicitud ${solicitudId}`, { cargoId, solicitudId, concepto, finalMonto }, payload && payload.authRole);
+
+  return {
+    status: "success",
+    cargoId: cargoId,
+    montoFinal: finalMonto,
+    message: `Cargo de admisión '${concepto}' registrado exitosamente.`
   };
 }
 

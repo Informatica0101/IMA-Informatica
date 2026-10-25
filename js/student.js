@@ -20,9 +20,14 @@ window.consolidateStudentDashboardSummary = function(studentData) {
 };
 
 document.addEventListener('DOMContentLoaded', function() {
+    var isStudentDashboard = window.location.pathname.indexOf('student-dashboard') !== -1;
     var currentUser = JSON.parse(localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser'));
-    if (!currentUser || (currentUser.rol !== 'Estudiante' && currentUser.rol !== 'Alumno')) {
+    if (isStudentDashboard && (!currentUser || (currentUser.rol !== 'Estudiante' && currentUser.rol !== 'Alumno'))) {
         window.location.href = 'login.html';
+        return;
+    }
+    if (!isStudentDashboard && !currentUser) {
+        // En páginas públicas no redirigir automáticamente si no hay sesión iniciada
         return;
     }
 
@@ -171,43 +176,222 @@ document.addEventListener('DOMContentLoaded', function() {
             });
     }
 
-    // Portal Familiar: Cargar estudiantes vinculados para tutores/padres
+    // Portal Familiar: Cargar estudiantes vinculados y aspirantes en admisión para tutores/padres
     window.familyLinkedStudents = [];
+    window.familyApplicants = [];
 
+    // [TAREA-F5-018] [Fase 5: Portal de Familias] - Extensión del selector multiestudiante con aislamiento total de contexto por estudiante
     function initFamilyStudentSwitcher() {
         var switcherContainer = document.getElementById('family-student-switcher-container');
         var switcherSelect = document.getElementById('family-student-switcher');
         if (!switcherContainer || !switcherSelect || !currentUser) return;
 
-        fetchApi('USER', 'getGuardianStudents', { userId: currentUser.userId })
-            .then(function(res) {
-                if (res && res.status === 'success' && Array.isArray(res.data) && res.data.length > 0) {
-                    window.familyLinkedStudents = res.data;
-                    switcherContainer.classList.remove('hidden');
-                    switcherSelect.innerHTML = res.data.map(function(st) {
+        Promise.all([
+            fetchApi('USER', 'getGuardianStudents', { userId: currentUser.userId }).catch(function() { return { data: [] }; }),
+            fetchApi('USER', 'getGuardianApplicants', { userId: currentUser.userId }).catch(function() { return { data: [] }; })
+        ]).then(function(results) {
+            var studRes = results[0];
+            var appRes = results[1];
+
+            var students = (studRes && studRes.status === 'success' && Array.isArray(studRes.data)) ? studRes.data : [];
+            var applicants = (appRes && appRes.status === 'success' && Array.isArray(appRes.data)) ? appRes.data : [];
+
+            window.familyLinkedStudents = students;
+            window.familyApplicants = applicants;
+
+            if (students.length > 0 || applicants.length > 0) {
+                switcherContainer.classList.remove('hidden');
+
+                var optionsHtml = '';
+                if (students.length > 0) {
+                    optionsHtml += '<optgroup label="🎓 Estudiantes Matriculados">';
+                    students.forEach(function(st) {
                         var selected = (st.userId === currentUser.userId) ? 'selected' : '';
-                        return '<option value="' + st.userId + '" ' + selected + '>👦 ' + st.nombre + ' — ' + (st.grado || '') + ' ' + (st.seccion || '') + '</option>';
-                    }).join('');
+                        optionsHtml += '<option value="STU_' + st.userId + '" ' + selected + '>👦 ' + st.nombre + ' — ' + (st.grado || '') + ' ' + (st.seccion || '') + '</option>';
+                    });
+                    optionsHtml += '</optgroup>';
+                }
 
-                    switcherSelect.onchange = function() {
-                        var selectedId = switcherSelect.value;
-                        var summaryCont = document.getElementById('family-consolidated-summary-container');
-                        if (summaryCont) summaryCont.classList.add('hidden');
+                if (applicants.length > 0) {
+                    optionsHtml += '<optgroup label="📝 Aspirantes en Admisión">';
+                    applicants.forEach(function(ap) {
+                        optionsHtml += '<option value="APP_' + ap.solicitudId + '">📝 ' + ap.nombresAspirante + ' ' + ap.apellidosAspirante + ' (' + ap.gradoSolicitado + ' - ' + ap.estadoSolicitud + ')</option>';
+                    });
+                    optionsHtml += '</optgroup>';
+                }
 
-                        var selectedStudent = res.data.find(function(s) { return s.userId === selectedId; });
+                switcherSelect.innerHTML = optionsHtml;
+
+                switcherSelect.onchange = function() {
+                    var val = switcherSelect.value;
+                    var summaryCont = document.getElementById('family-consolidated-summary-container');
+                    var trackingCont = document.getElementById('family-applicant-tracking-container');
+                    if (summaryCont) summaryCont.classList.add('hidden');
+
+                    if (val.indexOf('APP_') === 0) {
+                        var solId = val.replace('APP_', '');
+                        if (trackingCont) {
+                            trackingCont.classList.remove('hidden');
+                            window.renderApplicantTrackingPanel(solId);
+                        }
+                    } else {
+                        if (trackingCont) trackingCont.classList.add('hidden');
+                        var selectedId = val.replace('STU_', '');
+                        var selectedStudent = students.find(function(s) { return s.userId === selectedId; });
                         if (selectedStudent) {
                             currentUser = selectedStudent;
                             localStorage.setItem('currentUser', JSON.stringify(selectedStudent));
+
+                            // Refresco integral de contexto sin filtración de datos entre estudiantes
                             renderStudentHeader();
                             fetchAllActivities();
+                            fetchAndRenderFormativeEvaluations();
+                            fetchAndRenderStudentAttendanceSummary();
+                            fetchAndRenderStudentAdministrativeRequests();
+                            fetchAndRenderStudentSchedule();
+                            fetchAndRenderVirtualClassroom();
+                            fetchAndRenderLearningProfile();
+                            if (typeof loadStudentAcademicResults === 'function') loadStudentAcademicResults();
                         }
+                    }
+                };
+            }
+        }).catch(function(err) {
+            console.warn("Familiar student switcher deferred:", err);
+        });
+    }
+
+    // [TAREA-F5-012] Renderizado del panel de seguimiento de admisión para aspirantes en el Portal Familiar
+    window.renderApplicantTrackingPanel = function(solicitudId) {
+        var cont = document.getElementById('family-applicant-tracking-container');
+        if (!cont) return;
+
+        cont.innerHTML = '<div class="text-center py-6 text-slate-500 text-xs font-semibold"><i class="fas fa-circle-notch fa-spin mr-2"></i> Cargando seguimiento de solicitud ' + solicitudId + '...</div>';
+
+        fetchApi('USER', 'getGuardianApplicants', {})
+            .then(function(res) {
+                var applicants = (res && res.status === 'success' && Array.isArray(res.data)) ? res.data : [];
+                var req = applicants.find(function(a) { return String(a.solicitudId).trim() === String(solicitudId).trim(); });
+
+                if (!req) {
+                    // Intentar consulta por servicio público si no viene en lista de guardianes
+                    return fetchApi('ACADEMIC', 'getPublicAdmissionStatus', { searchKey: solicitudId }).then(function(pubRes) {
+                        if (pubRes && pubRes.status === 'success' && pubRes.found && pubRes.request) {
+                            return pubRes.request;
+                        }
+                        return null;
+                    });
+                }
+                return req;
+            })
+            .then(function(req) {
+                if (req) {
+                    var statusColors = {
+                        "Recibida": "bg-blue-100 text-blue-800",
+                        "En_Revision": "bg-yellow-100 text-yellow-800",
+                        "Evaluacion": "bg-purple-100 text-purple-800",
+                        "En_Espera": "bg-amber-100 text-amber-800",
+                        "Admitida": "bg-green-100 text-green-800",
+                        "Rechazada": "bg-red-100 text-red-800",
+                        "Convertida": "bg-teal-100 text-teal-800"
                     };
+
+                    var html = '' +
+                        '<div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 border-b border-indigo-100 pb-4">' +
+                            '<div>' +
+                                '<span class="inline-block px-3 py-1 bg-indigo-50 text-indigo-600 rounded-full text-[10px] font-black uppercase tracking-widest mb-1">Trámite de Admisión</span>' +
+                                '<h3 class="text-xl font-black text-slate-900 uppercase tracking-tight">' + req.nombresAspirante + ' ' + req.apellidosAspirante + '</h3>' +
+                                '<p class="text-xs font-bold text-slate-400 uppercase tracking-widest">Código: ' + req.solicitudId + ' | Grado: ' + req.gradoSolicitado + ' (' + req.anolectivo + ')</p>' +
+                            '</div>' +
+                            '<div>' +
+                                '<span class="px-3 py-1.5 rounded-full text-xs font-black uppercase tracking-wider ' + (statusColors[req.estadoSolicitud] || 'bg-gray-100 text-gray-800') + '">' +
+                                    req.estadoSolicitud +
+                                '</span>' +
+                            '</div>' +
+                        '</div>' +
+
+                        '<!-- Línea de tiempo visual -->' +
+                        '<div class="py-4">' +
+                            '<h4 class="text-xs font-bold text-slate-700 uppercase tracking-wider mb-3">Línea de Tiempo del Proceso</h4>' +
+                            '<div class="grid grid-cols-2 md:grid-cols-5 gap-2 text-center text-[10px] font-bold">' +
+                                '<div class="p-2 rounded-xl border ' + (['Recibida','En_Revision','Evaluacion','En_Espera','Admitida','Convertida'].indexOf(req.estadoSolicitud) !== -1 ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-slate-50 text-slate-400') + '">1. Recibida</div>' +
+                                '<div class="p-2 rounded-xl border ' + (['En_Revision','Evaluacion','En_Espera','Admitida','Convertida'].indexOf(req.estadoSolicitud) !== -1 ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-slate-50 text-slate-400') + '">2. En Revisión</div>' +
+                                '<div class="p-2 rounded-xl border ' + (['Evaluacion','En_Espera','Admitida','Convertida'].indexOf(req.estadoSolicitud) !== -1 ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-slate-50 text-slate-400') + '">3. Evaluación</div>' +
+                                '<div class="p-2 rounded-xl border ' + (['Admitida','Convertida'].indexOf(req.estadoSolicitud) !== -1 ? 'bg-green-600 text-white border-green-600' : (req.estadoSolicitud === 'En_Espera' ? 'bg-amber-500 text-white' : 'bg-slate-50 text-slate-400')) + '">4. Decisión</div>' +
+                                '<div class="p-2 rounded-xl border ' + (req.estadoSolicitud === 'Convertida' ? 'bg-teal-600 text-white border-teal-600' : 'bg-slate-50 text-slate-400') + '">5. Matrícula</div>' +
+                            '</div>' +
+                        '</div>' +
+
+                        (req.observaciones ? '<div class="p-3 bg-indigo-50/50 rounded-xl text-xs text-indigo-900 border border-indigo-100 mb-4"><strong>Observaciones de Admisión:</strong> ' + window.escapeHtml(req.observaciones) + '</div>' : '') +
+
+                        '<!-- [TAREA-F5-013] Estado Financiero y Cobros de Admisión -->' +
+                        '<div id="family-applicant-financial-container" class="mt-4 p-4 bg-slate-50 rounded-2xl border border-slate-200">' +
+                            '<h4 class="text-xs font-bold text-slate-800 uppercase tracking-wider mb-2 flex items-center gap-2">' +
+                                '<i class="fas fa-file-invoice-dollar text-emerald-600"></i> Estado Financiero del Trámite de Admisión' +
+                            '</h4>' +
+                            '<div id="applicant-financial-status-content" class="text-xs text-slate-600">' +
+                                '<p class="text-slate-400"><i class="fas fa-circle-notch fa-spin mr-1"></i> Consultando estado de cobros de admisión...</p>' +
+                            '</div>' +
+                        '</div>';
+
+                    cont.innerHTML = html;
+                    window.loadApplicantFinancialStatus(solicitudId);
+                } else {
+                    cont.innerHTML = '<p class="text-red-500 text-xs">No se encontró la solicitud de admisión especificada.</p>';
                 }
             })
             .catch(function(err) {
-                console.warn("Familiar student switcher deferred:", err);
+                cont.innerHTML = '<p class="text-red-500 text-xs">Error de carga: ' + err.message + '</p>';
             });
-    }
+    };
+
+    // [TAREA-F5-013] [Fase 5: Portal de Familias] - Carga y despliegue del estado financiero del aspirante en admisión
+    window.loadApplicantFinancialStatus = function(solicitudId) {
+        var finCont = document.getElementById('applicant-financial-status-content');
+        if (!finCont) return;
+
+        fetchApi('ACCOUNTING', 'getAdmissionFinancialStatus', { solicitudId: solicitudId })
+            .then(function(res) {
+                if (res && res.status === 'success') {
+                    var statusBadge = res.esSolvente ?
+                        '<span class="px-2.5 py-1 bg-green-100 text-green-800 rounded-full font-bold text-[10px]">SOLVENTE / PAGADO</span>' :
+                        '<span class="px-2.5 py-1 bg-amber-100 text-amber-800 rounded-full font-bold text-[10px]">PENDIENTE (L ' + res.montoPendiente.toFixed(2) + ')</span>';
+
+                    var html = '' +
+                        '<div class="flex items-center justify-between border-b border-slate-200 pb-2 mb-3">' +
+                            '<span>Saldo Pendiente de Admisión:</span>' +
+                            statusBadge +
+                        '</div>';
+
+                    if (Array.isArray(res.cargos) && res.cargos.length > 0) {
+                        html += '<div class="space-y-2">';
+                        res.cargos.forEach(function(c) {
+                            html += '' +
+                                '<div class="p-2 bg-white rounded-xl border border-slate-100 flex justify-between items-center">' +
+                                    '<div>' +
+                                        '<p class="font-bold text-slate-800 text-[11px]">' + window.escapeHtml(c.concepto) + '</p>' +
+                                        '<p class="text-[10px] text-slate-400">Cargo ID: ' + c.cargoId + '</p>' +
+                                    '</div>' +
+                                    '<div class="text-right">' +
+                                        '<p class="font-bold text-slate-900 text-xs">L ' + c.montoFinal.toFixed(2) + '</p>' +
+                                        '<span class="text-[9px] font-bold uppercase ' + (c.estado === 'Pagado' ? 'text-green-600' : 'text-amber-600') + '">' + c.estado + '</span>' +
+                                    '</div>' +
+                                '</div>';
+                        });
+                        html += '</div>';
+                    } else {
+                        html += '<p class="text-slate-400 italic text-[11px]">No hay cargos configurados aún para esta solicitud de admisión.</p>';
+                    }
+
+                    finCont.innerHTML = html;
+                } else {
+                    finCont.innerHTML = '<p class="text-red-500 text-xs">No fue posible consultar el estado financiero de la admisión.</p>';
+                }
+            })
+            .catch(function(err) {
+                finCont.innerHTML = '<p class="text-red-500 text-xs">Error de consulta financiera: ' + err.message + '</p>';
+            });
+    };
 
     window.toggleFamilyConsolidatedSummary = function() {
         var cont = document.getElementById('family-consolidated-summary-container');
@@ -220,6 +404,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     };
 
+    // [TAREA-F5-018] [Fase 5: Portal de Familias] - Resumen Consolidado Familiar con distinción visual de Permiso Financiero y Solvencia L 0.00
     window.renderFamilyConsolidatedSummary = function() {
         var cont = document.getElementById('family-consolidated-summary-container');
         if (!cont || !currentUser) return;
@@ -268,6 +453,19 @@ document.addEventListener('DOMContentLoaded', function() {
                             '<h4 class="text-xs font-black text-slate-700 uppercase tracking-wider">Desglose Individual de Hijos</h4>' +
                             '<div class="grid grid-cols-1 md:grid-cols-2 gap-4">' +
                                 (d.estudiantes || []).map(function(st) {
+                                    var saldoBadge = '';
+                                    if (st.tienePermisoFinanciero === false) {
+                                        saldoBadge = '<span class="text-amber-600 font-bold text-[10px]"><i class="fas fa-lock mr-1"></i>Restringido (Sin Permiso Financiero)</span>';
+                                    } else if (st.esSolvente) {
+                                        saldoBadge = '<span class="text-emerald-600 font-black text-[11px]"><i class="fas fa-check-circle mr-1"></i>L. 0.00 (Solvente)</span>';
+                                    } else {
+                                        saldoBadge = '<strong class="text-amber-700 font-black text-xs">L. ' + (parseFloat(st.saldoPendiente) || 0).toFixed(2) + '</strong>';
+                                    }
+
+                                    var pagosRevBadge = (st.tienePermisoFinanciero === false) ?
+                                        '<span class="text-slate-400 text-[10px]">Restringido</span>' :
+                                        '<strong class="text-blue-600 font-black">L. ' + (parseFloat(st.pagosEnRevision) || 0).toFixed(2) + '</strong>';
+
                                     return '' +
                                         '<div class="p-4 bg-white rounded-2xl border border-slate-200 shadow-sm space-y-3 relative hover:border-indigo-300 transition-all">' +
                                             '<div class="flex items-center justify-between gap-3">' +
@@ -285,8 +483,8 @@ document.addEventListener('DOMContentLoaded', function() {
                                                 '</button>' +
                                             '</div>' +
                                             '<div class="flex items-center justify-between text-[11px] pt-2 border-t border-slate-100 font-semibold">' +
-                                                '<span class="text-slate-600">Saldo Pendiente: <strong class="text-slate-900">L. ' + (parseFloat(st.saldoPendiente) || 0).toFixed(2) + '</strong></span>' +
-                                                '<span class="text-slate-600">Pagos en revisión: <strong class="text-blue-600">L. ' + (parseFloat(st.pagosEnRevision) || 0).toFixed(2) + '</strong></span>' +
+                                                '<span class="text-slate-600">Saldo Pendiente: ' + saldoBadge + '</span>' +
+                                                '<span class="text-slate-600">En revisión: ' + pagosRevBadge + '</span>' +
                                             '</div>' +
                                         '</div>';
                                 }).join('') +
@@ -299,7 +497,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             })
             .catch(function(err) {
-                cont.innerHTML = '<div class="text-center py-6 text-rose-500 text-xs font-semibold">Error al cargar el resumen familiar: ' + err.message + '</div>';
+                cont.innerHTML = '<div class="text-center py-6 text-rose-500 text-xs font-semibold"><i class="fas fa-exclamation-triangle text-rose-500 mr-1"></i> Error al cargar el resumen familiar: ' + window.escapeHtml(err.message) + '</div>';
             });
     };
 
@@ -920,18 +1118,16 @@ document.addEventListener('DOMContentLoaded', function() {
         // Tarea 4: Cargar historial en paralelo para optimizar (v7.8.2)
         var historyPromise = fetchAcademicHistory();
 
-        // REQ: Eager Caching & Offline-First (Modulo 1)
-        // Priorizar renderizado local de 0ms desde cache_estudiante_dashboard
+        // REQ: Eager Caching & Offline-First aislado por estudiante (Modulo 1)
+        var cacheKeyDashboard = 'cache_estudiante_dashboard_' + (currentUser.userId || 'default');
         var hasLocalData = false;
         if (window.PersistenceManager) {
-            var cached = await window.PersistenceManager.get('cache_estudiante_dashboard');
+            var cached = await window.PersistenceManager.get(cacheKeyDashboard);
             if (cached && cached.data) {
                 allActivitiesData = cached.data.allActivities || [];
-                // Esperar al historial si es necesario para los botones
                 await historyPromise;
                 renderStudentExpediente(allActivitiesData);
                 renderSubjectNavigation(allActivitiesData);
-                // Si ya tenemos caché, procedemos a conciliación silenciosa sin bloquear la UI
                 hasLocalData = true;
             }
         }
@@ -1034,9 +1230,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     }));
                 }
 
-                // Persistir en cache_estudiante_dashboard para el próximo inicio (Modulo 1)
+                // Persistir en cache_estudiante_dashboard aislado por estudiante (Modulo 1)
                 if (window.PersistenceManager) {
-                    window.PersistenceManager.set('cache_estudiante_dashboard', {
+                    window.PersistenceManager.set(cacheKeyDashboard, {
                         allActivities: allActivities,
                         timestamp: Date.now()
                     });
@@ -2422,9 +2618,9 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     async function fetchAndRenderLearningProfile(dataOnly = false) {
-        // REQ: Eager Caching for Learning Profile (Ticket: Optimización de Caché)
+        var cacheKeyProfile = 'cache_estudiante_profile_' + (currentUser.userId || 'default');
         if (window.PersistenceManager) {
-            var cached = await window.PersistenceManager.get('cache_estudiante_profile');
+            var cached = await window.PersistenceManager.get(cacheKeyProfile);
             if (cached && cached.data && !dataOnly) {
                 renderLearningProfileData(cached.data);
             }
@@ -2432,7 +2628,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         try {
             var res = await fetchApi('USER', 'getLearningProfile', { userId: currentUser.userId }, 0, {
-                store: 'cache_estudiante_profile',
+                store: cacheKeyProfile,
                 onUpdate: function(data) {
                     if (!dataOnly) renderLearningProfileData(data.data || data);
                 }
@@ -2891,3 +3087,57 @@ document.addEventListener('DOMContentLoaded', function() {
         observer.observe(dashboard, { childList: true, subtree: true });
     }
 });
+
+// ---------------------------------------------------------------------------
+// [TAREA-F5-004] [Fase 5: Admisiones y Portal de Familias] - Módulo Público de Admisión de Aspirantes
+// Proporciona la lógica cliente para el envío público de solicitudes de admisión,
+// validación de formato DNI (13 dígitos) y teléfono Honduras, gestión de reintentos
+// con clave de idempotencia y consulta de estado por número de seguimiento o DNI.
+// ---------------------------------------------------------------------------
+window.submitPublicAdmissionRequest = async function(formData) {
+    if (!formData || !formData.nombresAspirante || !formData.apellidosAspirante || !formData.gradoSolicitado) {
+        return { status: "error", message: "Nombres, apellidos y grado solicitado son obligatorios." };
+    }
+
+    const cleanIdent = (formData.identificacion || "").replace(/[^0-9]/g, '');
+    if (cleanIdent.length !== 13) {
+        return { status: "error", message: "El número de identificación (DNI) de Honduras debe contener exactamente 13 dígitos numéricos." };
+    }
+
+    const cleanPhone = (formData.telefonoContacto || "").replace(/[^0-9]/g, '');
+    if (cleanPhone.length < 8) {
+        return { status: "error", message: "El teléfono de contacto debe tener al menos 8 dígitos de Honduras." };
+    }
+
+    const payload = {
+        idempotencyToken: formData.idempotencyToken || ('IDEM-ADM-' + Date.now() + '-' + Math.floor(Math.random() * 100000)),
+        anolectivo: formData.anolectivo || "2026",
+        gradoSolicitado: formData.gradoSolicitado,
+        nombresAspirante: formData.nombresAspirante.trim(),
+        apellidosAspirante: formData.apellidosAspirante.trim(),
+        identificacion: cleanIdent,
+        fechaNacimiento: formData.fechaNacimiento || "",
+        nombreResponsable: (formData.nombreResponsable || "").trim(),
+        telefonoContacto: cleanPhone,
+        emailContacto: (formData.emailContacto || "").trim().toLowerCase(),
+        observaciones: (formData.observaciones || "").trim(),
+        canalIngreso: formData.canalIngreso || "PortalWebPublico"
+    };
+
+    try {
+        const res = await window.fetchApi('ACADEMIC', 'createAdmissionRequest', payload);
+        return res;
+    } catch (err) {
+        return { status: "error", message: "Error de red al procesar la solicitud de admisión: " + err.message };
+    }
+};
+
+window.getPublicAdmissionStatus = async function(searchKey) {
+    if (!searchKey) return { status: "error", message: "Debe ingresar un código de seguimiento o número de DNI." };
+    try {
+        const res = await window.fetchApi('ACADEMIC', 'getPublicAdmissionStatus', { searchKey: searchKey });
+        return res;
+    } catch (err) {
+        return { status: "error", message: "Error al consultar el estado de la admisión: " + err.message };
+    }
+};

@@ -925,20 +925,20 @@ const ROLE_PERMISSIONS = {
   "Desarrollador": ["*"],
   "Padre": [
     "getUserInfo", "getNews", "getInstitutionalCriteria", "getFormativeEvaluations", "getSupportPlans",
-    "acceptLinkInvitation", "getGuardianStudents", "getInstitutionalAnnouncements", "getInternalMessages", "sendInternalMessage", "getUserNotifications", "getUnifiedNotifications", "markNotificationAsRead", "getAdministrativeRequests", "submitAdministrativeRequest", "submitStudentAbsenceJustification", "getStudentAbsenceJustifications", "getAppointmentBookings", "bookAppointment", "getInstitutionalCalendarEvents", "getPendingReminders"
+    "acceptLinkInvitation", "getGuardianStudents", "getGuardianApplicants", "getInstitutionalAnnouncements", "getInternalMessages", "sendInternalMessage", "getUserNotifications", "getUnifiedNotifications", "markNotificationAsRead", "getAdministrativeRequests", "submitAdministrativeRequest", "submitStudentAbsenceJustification", "getStudentAbsenceJustifications", "getAppointmentBookings", "bookAppointment", "getInstitutionalCalendarEvents", "getPendingReminders"
   ],
   "Tutor": [
     "getUserInfo", "getNews", "getInstitutionalCriteria", "getFormativeEvaluations", "getSupportPlans",
-    "acceptLinkInvitation", "getGuardianStudents", "getInstitutionalAnnouncements", "getInternalMessages", "sendInternalMessage", "getUserNotifications", "getUnifiedNotifications", "markNotificationAsRead", "getAdministrativeRequests", "submitAdministrativeRequest", "submitStudentAbsenceJustification", "getStudentAbsenceJustifications", "getInstitutionalForms", "submitInstitutionalFormRequest", "getAppointmentBookings", "bookAppointment", "getInstitutionalCalendarEvents", "getPendingReminders"
+    "acceptLinkInvitation", "getGuardianStudents", "getGuardianApplicants", "getInstitutionalAnnouncements", "getInternalMessages", "sendInternalMessage", "getUserNotifications", "getUnifiedNotifications", "markNotificationAsRead", "getAdministrativeRequests", "submitAdministrativeRequest", "submitStudentAbsenceJustification", "getStudentAbsenceJustifications", "getAppointmentBookings", "bookAppointment", "getInstitutionalCalendarEvents", "getPendingReminders"
   ],
   "Responsable": [
     "getUserInfo", "getNews", "getInstitutionalCriteria", "getFormativeEvaluations", "getSupportPlans",
-    "acceptLinkInvitation", "getGuardianStudents", "getFamilyConsolidatedSummary", "submitJointFamilyPayment", "getFamilyScholarships", "submitFamilyScholarshipApplication", "getInstitutionalAnnouncements", "getInternalMessages", "sendInternalMessage", "getUserNotifications", "getUnifiedNotifications", "markNotificationAsRead", "getAdministrativeRequests", "submitAdministrativeRequest", "submitStudentAbsenceJustification", "getStudentAbsenceJustifications", "getInstitutionalForms", "submitInstitutionalFormRequest", "getAppointmentBookings", "bookAppointment", "getInstitutionalCalendarEvents", "getPendingReminders"
+    "acceptLinkInvitation", "getGuardianStudents", "getGuardianApplicants", "getInstitutionalAnnouncements", "getInternalMessages", "sendInternalMessage", "getUserNotifications", "getUnifiedNotifications", "markNotificationAsRead", "getAdministrativeRequests", "submitAdministrativeRequest", "submitStudentAbsenceJustification", "getStudentAbsenceJustifications", "getAppointmentBookings", "bookAppointment", "getInstitutionalCalendarEvents", "getPendingReminders"
   ],
   "Director": [
     "createNews", "uploadNewsImage", "getNews", "updateNewsStatus", "getStudents", "getStudentsByGradoSeccion", "getUserInfo", "saveGameResult", "getGameStats", "getGlobalTop", "recordAnalytics", "getLearningProfile", "mergeGuestData", "updateUserProfile", "findPersonMatches", "createPerson", "linkPersonAccount", "manageAccountState", "generateInstitutionalId",
     "getInstitutionalCriteria", "saveInstitutionalCriterion", "getFormativeEvaluations", "saveFormativeEvaluation", "getSupportPlans", "saveSupportPlan",
-    "createLinkInvitation", "acceptLinkInvitation", "getGuardianStudents", "getInstitutionalAnnouncements", "createInstitutionalAnnouncement", "submitAnnouncementReceiptConfirmation", "getAnnouncementReadReport", "getDepartmentalWorkInbox", "closeConversationThread", "getInternalConversations", "getInternalMessages", "sendInternalMessage", "getUserNotifications", "getUnifiedNotifications", "markNotificationAsRead", "createUserNotification", "sendMultiChannelNotification", "getNotificationPreferences", "getAdministrativeRequests", "getAdministrativeRequestsHistory", "submitAdministrativeRequest", "submitStudentAbsenceJustification", "getStudentAbsenceJustifications", "reviewAbsenceJustification", "updateRequestStatus", "saveInstitutionalForm", "getInstitutionalForms", "submitInstitutionalFormRequest", "saveApprovalWorkflow", "getApprovalWorkflows", "processWorkflowDecision", "getWorkflowHistory", "registerDocumentSignature", "configureNotificationChannel", "getNotificationChannelConfigs", "sendChannelNotificationTest", "getAppointmentBookings", "bookAppointment", "updateAppointmentStatus", "getInstitutionalCalendarEvents", "getPendingReminders",
+    "createLinkInvitation", "acceptLinkInvitation", "getGuardianStudents", "getInstitutionalAnnouncements", "createInstitutionalAnnouncement", "submitAnnouncementReceiptConfirmation", "getAnnouncementReadReport", "getDepartmentalWorkInbox", "closeConversationThread", "getInternalConversations", "getInternalMessages", "sendInternalMessage", "getUserNotifications", "getUnifiedNotifications", "markNotificationAsRead", "createUserNotification", "sendMultiChannelNotification", "getAdmissionNotificationLogs", "getNotificationPreferences", "getAdministrativeRequests", "getAdministrativeRequestsHistory", "submitAdministrativeRequest", "submitStudentAbsenceJustification", "getStudentAbsenceJustifications", "reviewAbsenceJustification", "updateRequestStatus", "saveInstitutionalForm", "getInstitutionalForms", "submitInstitutionalFormRequest", "saveApprovalWorkflow", "getApprovalWorkflows", "processWorkflowDecision", "getWorkflowHistory", "registerDocumentSignature", "configureNotificationChannel", "getNotificationChannelConfigs", "sendChannelNotificationTest", "getAppointmentBookings", "bookAppointment", "updateAppointmentStatus", "getInstitutionalCalendarEvents", "getPendingReminders",
     "getUserSettings", "saveUserSettings", "getSystemConfigurations", "saveSystemConfiguration", "getProviderIntegrations", "configureProviderIntegration",
     "updateTicketStatus", "saveVisualPaletteProposal", "approveVisualPaletteProposal", "registerAndDispatchEvent", "retryFailedEventsQueue", "recordTraceabilityLog", "getTraceabilityCorrelationLogs", "getOperationalCapacityMetrics", "runInterdepartmentalIntegrationTestSuite", "getSharedConfigurationsCatalog", "manageInstitutionalDataCache", "purgeSecurityCaches", "dispatchSecurityEvent", "processSecurityEventQueue", "getSecurityEventsQueue", "getSecurityAndComplianceDashboardData", "generatePrivilegeAndAccountAuditReport", "getPaginatedAuditLogReport", "auditAndReconcileIdentityInconsistencies"
   ],
@@ -950,7 +950,7 @@ const ROLE_PERMISSIONS = {
   "Secretaría": [
     "createNews", "uploadNewsImage", "getNews", "updateNewsStatus", "getStudents", "getStudentsByGradoSeccion", "getUserInfo", "updateUserProfile", "findPersonMatches", "createPerson", "linkPersonAccount", "manageAccountState", "generateInstitutionalId",
     "getInstitutionalCriteria", "getFormativeEvaluations", "saveFormativeEvaluation", "getSupportPlans", "saveSupportPlan",
-    "createLinkInvitation", "acceptLinkInvitation", "getGuardianStudents", "getInstitutionalAnnouncements", "createInstitutionalAnnouncement", "submitAnnouncementReceiptConfirmation", "getAnnouncementReadReport", "getDepartmentalWorkInbox", "closeConversationThread", "getInternalConversations", "getInternalMessages", "sendInternalMessage", "getUserNotifications", "getUnifiedNotifications", "markNotificationAsRead", "createUserNotification", "sendMultiChannelNotification", "getNotificationPreferences", "getAdministrativeRequests", "getAdministrativeRequestsHistory", "submitAdministrativeRequest", "submitStudentAbsenceJustification", "getStudentAbsenceJustifications", "reviewAbsenceJustification", "updateRequestStatus", "saveInstitutionalForm", "getInstitutionalForms", "submitInstitutionalFormRequest", "saveApprovalWorkflow", "getApprovalWorkflows", "processWorkflowDecision", "getWorkflowHistory", "registerDocumentSignature", "configureNotificationChannel", "getNotificationChannelConfigs", "sendChannelNotificationTest", "getAppointmentBookings", "bookAppointment", "updateAppointmentStatus", "getInstitutionalCalendarEvents", "getPendingReminders"
+    "createLinkInvitation", "acceptLinkInvitation", "getGuardianStudents", "getInstitutionalAnnouncements", "createInstitutionalAnnouncement", "submitAnnouncementReceiptConfirmation", "getAnnouncementReadReport", "getDepartmentalWorkInbox", "closeConversationThread", "getInternalConversations", "getInternalMessages", "sendInternalMessage", "getUserNotifications", "getUnifiedNotifications", "markNotificationAsRead", "createUserNotification", "sendMultiChannelNotification", "getAdmissionNotificationLogs", "getNotificationPreferences", "getAdministrativeRequests", "getAdministrativeRequestsHistory", "submitAdministrativeRequest", "submitStudentAbsenceJustification", "getStudentAbsenceJustifications", "reviewAbsenceJustification", "updateRequestStatus", "saveInstitutionalForm", "getInstitutionalForms", "submitInstitutionalFormRequest", "saveApprovalWorkflow", "getApprovalWorkflows", "processWorkflowDecision", "getWorkflowHistory", "registerDocumentSignature", "configureNotificationChannel", "getNotificationChannelConfigs", "sendChannelNotificationTest", "getAppointmentBookings", "bookAppointment", "updateAppointmentStatus", "getInstitutionalCalendarEvents", "getPendingReminders"
   ],
   "Contador": ["getStudents", "getUserInfo", "getNews", "getInstitutionalAnnouncements", "getUserNotifications", "markNotificationAsRead", "getAdministrativeRequests", "submitAdministrativeRequest"],
   "RecursosHumanos": ["getStudents", "getUserInfo", "getNews", "getInstitutionalAnnouncements", "getUserNotifications", "markNotificationAsRead", "getAdministrativeRequests", "submitAdministrativeRequest", "createNews", "getInternalMessages", "sendInternalMessage"],
@@ -1146,7 +1146,7 @@ function hasActiveDelegationForAction(userId, action) {
   return null;
 }
 
-// [TAREA-F4-P1-04] [Fase 4: Reglas Contextuales RBAC/ABAC] - Validación de atributos contextuales (Docentes, Tutores, Estudiantes)
+// [TAREA-F5-009] [TAREA-F4-P1-04] [Fase 5: Admisiones y Portal de Familias] - Validación contextual con permisos individuales por relación de tutor
 function validateContextualAccess(action, payload, verifiedUserId, userRole) {
   if (!userRole || userRole === "Administrador" || userRole === "Desarrollador") {
     return { authorized: true };
@@ -1163,12 +1163,24 @@ function validateContextualAccess(action, payload, verifiedUserId, userRole) {
   if (userRole === "Padre" || userRole === "Tutor" || userRole === "Responsable") {
     if (targetStudentId && verifiedUserId && String(targetStudentId).trim() !== String(verifiedUserId).trim()) {
       try {
-        const guardianRes = getGuardianStudents({ userId: verifiedUserId });
-        const linkedStudents = (guardianRes.data || []).map(s => String(s.studentUserId || s.userId).trim());
-        if (linkedStudents.indexOf(String(targetStudentId).trim()) === -1) {
+        const guardianRes = getGuardianStudents({ userId: verifiedUserId, _verifiedUserId: verifiedUserId, _verifiedRole: userRole });
+        const linkedStudents = (guardianRes.data || []);
+        const match = linkedStudents.find(s => String(s.studentUserId || s.userId || s.expedienteEstudianteId).trim() === String(targetStudentId).trim());
+        if (!match) {
           return { authorized: false, reason: "Aislamiento estricto de tutor: el estudiante no está vinculado al tutor." };
         }
-      } catch (e) {}
+
+        // Evaluar permisos individuales por tutor si la directiva GRANULAR_FAMILY_PERMISSIONS_ENABLED está activa
+        if (typeof GRANULAR_FAMILY_PERMISSIONS_ENABLED !== "undefined" && GRANULAR_FAMILY_PERMISSIONS_ENABLED === true && match.permisos) {
+          if (action.indexOf("Payment") !== -1 || action.indexOf("Finance") !== -1 || action.indexOf("Account") !== -1) {
+            if (match.permisos.permisoFinanciero === false) {
+              return { authorized: false, reason: "Permiso denegado: El tutor no cuenta con Permiso Financiero asignado para este alumno." };
+            }
+          }
+        }
+      } catch (e) {
+        return { authorized: false, reason: "Aislamiento estricto de tutor: fallo al verificar vinculación familiar: " + e.message };
+      }
     }
   }
 
@@ -1279,7 +1291,10 @@ function doPost(e) {
       // Endpoints Fase 8 - Portal Familiar y Comunicación Institucional
       case "createLinkInvitation": result = createLinkInvitation(payload); break;
       case "acceptLinkInvitation": result = acceptLinkInvitation(payload); break;
+      case "revokeFamilyLink": result = revokeFamilyLink(payload); break;
+      case "updateFamilyLinkPermissions": result = updateFamilyLinkPermissions(payload); break;
       case "getGuardianStudents": result = getGuardianStudents(payload); break;
+      case "getGuardianApplicants": result = getGuardianApplicants(payload); break;
       case "getFamilyConsolidatedSummary": result = getFamilyConsolidatedSummary(payload); break;
       case "submitJointFamilyPayment": result = submitJointFamilyPayment(payload); break;
       case "getFamilyScholarships": result = getFamilyScholarships(payload); break;
@@ -1296,6 +1311,7 @@ function doPost(e) {
       case "getUnifiedNotifications": result = getUnifiedNotifications(payload); break;
       case "getUserNotifications": result = getUserNotifications(payload); break;
       case "sendMultiChannelNotification": result = sendMultiChannelNotification(payload); break;
+      case "getAdmissionNotificationLogs": result = getAdmissionNotificationLogs(payload); break;
       case "registerAndDispatchEvent": result = registerAndDispatchEvent(payload); break;
       case "retryFailedEventsQueue": result = retryFailedEventsQueue(payload); break;
       case "recordTraceabilityLog": result = recordTraceabilityLog(payload); break;
@@ -2521,7 +2537,7 @@ function recordEntityChangeLog(entityType, entityId, previousValue, newValue, ac
   }
 }
 
-// [TAREA-F4-P1-06] [Fase 4: Trazabilidad e Historial de Versiones] - Reconstrucción de la línea de tiempo de una entidad o recurso
+// [TAREA-F5-014] [TAREA-F4-P1-06] [Fase 5: Trazabilidad y Notificaciones de Auditoría] - Reconstrucción de la línea de tiempo de cambios de entidad y trazabilidad de admisiones
 function getEntityAuditHistory(payload) {
   const callerRole = getUserVerifiedRole(payload);
   const callerId = payload._verifiedUserId;
@@ -2529,9 +2545,9 @@ function getEntityAuditHistory(payload) {
 
   if (!entityId) throw new Error("entityId es requerido.");
 
-  if (callerRole !== "Administrador" && callerRole !== "Desarrollador") {
+  if (callerRole !== "Administrador" && callerRole !== "Desarrollador" && callerRole !== "Secretaría" && callerRole !== "Secretaria" && callerRole !== "Director") {
     if (String(entityId).trim() !== String(callerId).trim()) {
-      throw new Error("Acceso denegado: Únicamente puede consultar el historial propio de cambios.");
+      throw new Error("Acceso denegado: Únicamente personal autorizado de Administración, Dirección o Secretaría puede consultar la trazabilidad de otras entidades.");
     }
   }
 
@@ -3110,67 +3126,150 @@ function saveSupportPlan(payload) {
 
 // --- FUNCIONES PORTAL FAMILIAR Y COMUNICACIÓN INSTITUCIONAL (FASE 8) ---
 
+// [TAREA-F5-009] [Fase 5: Admisiones y Portal de Familias] - Gestión de vinculaciones familiares por token de invitación de un solo uso, revocación y permisos granulares por relación
 function createLinkInvitation(payload) {
-  const { expedienteId, emailResponsable, creadoPor } = payload || {};
-  if (!expedienteId || !emailResponsable) throw new Error("expedienteId y emailResponsable son requeridos.");
+  const { expedienteId, solicitudId, emailResponsable, creadoPor, permisos } = payload || {};
+  if ((!expedienteId && !solicitudId) || !emailResponsable) {
+    throw new Error("expedienteId o solicitudId y emailResponsable son requeridos.");
+  }
 
+  const cleanEmail = String(emailResponsable).trim().toLowerCase();
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
   const sheet = getOrCreateSheet(ss, "InvitacionesVinculacion");
 
   const invId = "INV-" + Date.now();
   const token = "TOK-" + Utilities.getUuid();
   const now = new Date();
-  const expDate = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
+  const expDate = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000); // 7 días de vigencia
+
+  const defaultPerms = permisos || {
+    permisoAcademico: true,
+    permisoFinanciero: true,
+    permisoDocumental: true,
+    permisoAsistencia: true
+  };
 
   sheet.appendRow([
     invId,
-    expedienteId,
-    emailResponsable,
+    expedienteId || "",
+    cleanEmail,
     token,
     now,
     expDate,
     "Activa",
-    creadoPor || "Secretaría"
+    (payload && (payload._verifiedUserId || payload.userId)) || creadoPor || "Secretaría",
+    solicitudId || "",
+    JSON.stringify(defaultPerms)
   ]);
 
-  return { status: "success", message: "Invitación de vinculación emitida.", data: { invitacionId: invId, token } };
+  logStructuredEvent("USER", "createLinkInvitation", "INFO", "INVITATION_ISSUED", `Invitación ${invId} emitida para ${cleanEmail} (Expediente: ${expedienteId || solicitudId})`, { invId, expedienteId, solicitudId, cleanEmail, token }, payload && payload.authRole);
+
+  return { status: "success", message: "Invitación de vinculación emitida exitosamente.", data: { invitacionId: invId, token, fechaExpiracion: expDate } };
 }
 
 function acceptLinkInvitation(payload) {
-  const { token, userIdResponsable } = payload || {};
-  if (!token || !userIdResponsable) throw new Error("Token e Identificador de Responsable son requeridos.");
+  const { token, userIdResponsable, userEmail } = payload || {};
+  if (!token) throw new Error("Token de invitación es requerido.");
+
+  const targetUserId = (payload && payload._verifiedUserId) || userIdResponsable;
+  if (!targetUserId) throw new Error("Identificador de responsable autenticado no proporcionado.");
 
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
   const sheet = getOrCreateSheet(ss, "InvitacionesVinculacion");
   const data = sheet.getDataRange().getValues();
-  const idx = data.findIndex(r => String(r[3]).trim() === String(token).trim() && r[6] === "Activa");
+  const idx = data.findIndex(r => String(r[3]).trim() === String(token).trim());
 
-  if (idx === -1) throw new Error("Invitación no encontrada o expirada.");
+  if (idx === -1) throw new Error("Invitación no encontrada o token inválido.");
 
   const row = data[idx];
+  const estadoInv = String(row[6] || "").trim();
+  if (estadoInv !== "Activa") {
+    throw new Error(`La invitación se encuentra en estado '${estadoInv}' y no puede ser utilizada.`);
+  }
+
   const now = new Date();
   const expDate = new Date(row[5]);
   if (now.getTime() > expDate.getTime()) {
     sheet.getRange(idx + 1, 7).setValue("Expirada");
-    throw new Error("La invitación ha expirado.");
+    throw new Error("La invitación ha expirado (vigencia de 7 días agotada).");
   }
 
+  // Verificación opcional de coincidencia de correo electrónico si se proporciona
+  const invitedEmail = String(row[2] || "").trim().toLowerCase();
+  const cleanUserEmail = userEmail ? String(userEmail).trim().toLowerCase() : "";
+  if (cleanUserEmail && invitedEmail && cleanUserEmail !== invitedEmail) {
+    throw new Error(`Acción denegada: El correo autenticado (${cleanUserEmail}) no coincide con el destinatario de la invitación (${invitedEmail}).`);
+  }
+
+  const targetExpedienteId = String(row[1] || "").trim();
+  const permisosJSON = row[9] || JSON.stringify({ permisoAcademico: true, permisoFinanciero: true, permisoDocumental: true, permisoAsistencia: true });
+
+  // Detectar y prevenir vínculos duplicados en RelacionesFamiliares
+  const relSheet = getOrCreateSheet(ss, "RelacionesFamiliares");
+  const relData = relSheet.getDataRange().getValues();
+  const existingRel = relData.slice(1).find(r => String(r[1]).trim() === targetExpedienteId && String(r[2]).trim() === String(targetUserId).trim() && r[4] !== "Revocada");
+
+  if (existingRel) {
+    sheet.getRange(idx + 1, 7).setValue("Utilizada");
+    return { status: "success", isAlreadyLinked: true, message: "El vínculo familiar ya se encuentra registrado y verificado." };
+  }
+
+  // Marcar invitación como utilizada
   sheet.getRange(idx + 1, 7).setValue("Utilizada");
 
-  const relSheet = getOrCreateSheet(ss, "RelacionesFamiliares");
   const relId = "REL-" + Date.now();
   relSheet.appendRow([
     relId,
-    row[1],
-    userIdResponsable,
+    targetExpedienteId,
+    targetUserId,
     "Padre/Tutor",
     "Verificada",
     now,
     "",
-    "Vinculación aceptada mediante invitación con token."
+    "Vinculación verificada y aceptada mediante token.",
+    permisosJSON
   ]);
 
-  return { status: "success", message: "Vinculación familiar completada exitosamente." };
+  logStructuredEvent("USER", "acceptLinkInvitation", "INFO", "LINK_ACCEPTED", `Vínculo familiar ${relId} verificado para usuario ${targetUserId} y expediente ${targetExpedienteId}`, { relId, targetUserId, targetExpedienteId, token }, payload && payload.authRole);
+
+  return { status: "success", relId: relId, message: "Vinculación familiar completada y verificada exitosamente." };
+}
+
+function revokeFamilyLink(payload) {
+  const { relacionId, motivo } = payload || {};
+  if (!relacionId) throw new Error("relacionId es requerido.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "RelacionesFamiliares");
+  const data = sheet.getDataRange().getValues();
+
+  const idx = data.findIndex(r => String(r[0]).trim() === String(relacionId).trim());
+  if (idx === -1) throw new Error("Vínculo familiar no encontrado.");
+
+  sheet.getRange(idx + 1, 5).setValue("Revocada");
+  const obsPrev = String(data[idx][7] || "");
+  sheet.getRange(idx + 1, 8).setValue(`${obsPrev} | [REVOCADA ${new Date().toISOString().split('T')[0]}]: ${motivo || 'Revocación administrativa'}`);
+
+  const actorUserId = (payload && (payload._verifiedUserId || payload.userId)) || "Secretaría";
+  logStructuredEvent("USER", "revokeFamilyLink", "WARN", "LINK_REVOKED", `Vínculo familiar ${relacionId} revocado por ${actorUserId}`, { relacionId, motivo }, payload && payload.authRole);
+
+  return { status: "success", message: `Vínculo familiar ${relacionId} revocado exitosamente.` };
+}
+
+function updateFamilyLinkPermissions(payload) {
+  const { relacionId, permisos } = payload || {};
+  if (!relacionId || !permisos) throw new Error("relacionId y objeto de permisos son requeridos.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "RelacionesFamiliares");
+  const data = sheet.getDataRange().getValues();
+
+  const idx = data.findIndex(r => String(r[0]).trim() === String(relacionId).trim());
+  if (idx === -1) throw new Error("Vínculo familiar no encontrado.");
+
+  sheet.getRange(idx + 1, 9).setValue(JSON.stringify(permisos));
+
+  return { status: "success", message: "Permisos del tutor actualizados exitosamente." };
 }
 
 // [TAREA-F4-P0-02] [Fase 4: Protección IDOR y ABAC] - Verificación estricta de vínculo tutores-estudiantes en RelacionesFamiliares
@@ -3188,11 +3287,20 @@ function getGuardianStudents(payload) {
   if (!uid) throw new Error("userIdResponsable es requerido.");
 
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+
+  // Mapear expedientes a PersonaID / UserId
+  const expSheet = getOrCreateSheet(ss, "ExpedientesEstudiantes");
+  const expData = expSheet.getDataRange().getValues().slice(1);
+  const expToUserMap = {};
+  expData.forEach(e => {
+    if (e[0]) expToUserMap[String(e[0]).trim()] = String(e[1] || e[0]).trim();
+  });
+
   const usersSheet = getOrCreateSheet(ss, "Usuarios");
   const usersData = usersSheet.getDataRange().getValues().slice(1);
   const usersMap = {};
   usersData.forEach(u => {
-    usersMap[String(u[0]).trim()] = {
+    const userObj = {
       userId: u[0],
       nombre: u[1],
       grado: u[2] || '',
@@ -3203,6 +3311,8 @@ function getGuardianStudents(payload) {
       personaId: u[9] || '',
       estadoCuenta: u[10] || 'Activa'
     };
+    if (u[0]) usersMap[String(u[0]).trim()] = userObj;
+    if (u[9]) usersMap[String(u[9]).trim()] = userObj;
   });
 
   const relSheet = getOrCreateSheet(ss, "RelacionesFamiliares");
@@ -3213,18 +3323,25 @@ function getGuardianStudents(payload) {
     verifiedStudents = relData.slice(1).filter(r => {
       return String(r[2]).trim() === String(uid).trim() && (r[4] === "Verificada" || r[4] === "Activa" || r[4] === "Aprobada");
     }).map(r => {
-      const studentId = String(r[1]).trim();
-      const u = usersMap[studentId] || { userId: studentId, nombre: "Estudiante " + studentId, grado: "", seccion: "" };
+      const expId = String(r[1]).trim();
+      const mappedUserId = expToUserMap[expId] || expId;
+      const u = usersMap[mappedUserId] || usersMap[expId] || { userId: mappedUserId, nombre: "Estudiante " + expId, grado: "", seccion: "" };
+      let permsObj = { permisoAcademico: true, permisoFinanciero: true, permisoDocumental: true, permisoAsistencia: true };
+      try {
+        if (r[8]) permsObj = typeof r[8] === "string" ? JSON.parse(r[8]) : r[8];
+      } catch (e) {}
       return {
         relacionId: r[0],
         expedienteEstudianteId: r[1],
-        userId: u.userId,
+        studentUserId: u.userId || expId,
+        userId: u.userId || expId,
         nombre: u.nombre,
         grado: u.grado,
         seccion: u.seccion,
         tipoParentesco: r[3],
         estadoMatricula: u.estadoCuenta || "Activa",
-        estado: r[4]
+        estado: r[4],
+        permisos: permsObj
       };
     });
   }
@@ -3242,7 +3359,8 @@ function getGuardianStudents(payload) {
         return {
           relacionId: r[0],
           expedienteEstudianteId: r[1],
-          userId: u.userId,
+          studentUserId: u.userId || studentId,
+          userId: u.userId || studentId,
           nombre: u.nombre,
           grado: u.grado,
           seccion: u.seccion,
@@ -3257,7 +3375,53 @@ function getGuardianStudents(payload) {
   return { status: "success", data: verifiedStudents };
 }
 
-// [TAREA-F4-P0-02] [Fase 4: Protección IDOR y ABAC] - Aislamiento estricto de resumen financiero familiar por tutor
+// [TAREA-F5-012] [Fase 5: Portal de Familias] - Consulta aislada de solicitudes de admisión para aspirantes vinculados al tutor
+function getGuardianApplicants(payload) {
+  const callerRole = getUserVerifiedRole(payload);
+  if (callerRole === "NO_ACCESS") {
+    throw new Error("Acceso denegado: Credenciales de sesión inválidas o expiradas.");
+  }
+
+  let uid = payload.userIdResponsable || payload.userId;
+  if ((callerRole === "Padre" || callerRole === "Tutor" || callerRole === "Responsable") && payload._verifiedUserId) {
+    uid = payload._verifiedUserId;
+  }
+  if (!uid) uid = payload._verifiedUserId;
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+
+  // Obtener correo del tutor autenticado
+  const userRow = getOrCreateSheet(ss, "Usuarios").getDataRange().getValues().slice(1).find(r => String(r[0]).trim() === String(uid).trim());
+  const userEmail = userRow ? String(userRow[4] || "").trim().toLowerCase() : "";
+
+  // Consultar SolicitudesAdmision filtrando por correo del responsable o userId
+  const admRows = getOrCreateSheet(ss, "SolicitudesAdmision").getDataRange().getValues().slice(1);
+  const applicants = admRows.filter(r => {
+    const rowEmail = String(r[10] || "").trim().toLowerCase();
+    return (userEmail && rowEmail === userEmail) || (String(r[8] || "").toLowerCase().includes(String(uid).toLowerCase()));
+  }).map(r => ({
+    solicitudId: r[0],
+    fechaSolicitud: r[1],
+    anolectivo: r[2],
+    gradoSolicitado: r[3],
+    nombresAspirante: r[4],
+    apellidosAspirante: r[5],
+    identificacion: r[6],
+    fechaNacimiento: r[7],
+    nombreResponsable: r[8],
+    telefonoContacto: r[9],
+    emailContacto: r[10],
+    estadoSolicitud: r[11],
+    canalIngreso: r[12] || "Online",
+    observaciones: r[13] || "",
+    expedienteId: r[14] || ""
+  }));
+
+  return { status: "success", data: applicants };
+}
+
+// [TAREA-F5-018] [Fase 5: Portal de Familias] - Resumen Consolidado Familiar y Experiencia Multiestudiante
+// Consolida las métricas académicas y financieras de todos los hijos vinculados al tutor, evaluando los permisos individuales por relación (PermisoFinanciero) y desglosando estados de solvencia.
 function getFamilyConsolidatedSummary(payload) {
   const callerRole = getUserVerifiedRole(payload);
   if (callerRole === "NO_ACCESS") {
@@ -3286,23 +3450,28 @@ function getFamilyConsolidatedSummary(payload) {
   let totalPagosRevision = 0;
 
   const studentDetails = students.map(s => {
+    const tienePermisoFinanciero = !s.permisos || s.permisos.permisoFinanciero !== false;
+
     let studentCargos = 0;
-    cargosRows.forEach(c => {
-      if (String(c[1]).trim() === String(s.userId).trim() && (c[6] === "Pendiente" || c[6] === "Vencido")) {
-        const monto = parseFloat(c[4]) || 0;
-        studentCargos += monto;
-      }
-    });
-
     let studentPagosRev = 0;
-    compRows.forEach(p => {
-      if (String(p[2]).trim() === String(s.userId).trim() && (p[9] === "En revision" || p[9] === "Pendiente")) {
-        studentPagosRev += parseFloat(p[5]) || 0;
-      }
-    });
 
-    totalCargosPendientes += studentCargos;
-    totalPagosRevision += studentPagosRev;
+    if (tienePermisoFinanciero) {
+      cargosRows.forEach(c => {
+        if (String(c[1]).trim() === String(s.userId).trim() && (c[6] === "Pendiente" || c[6] === "Vencido")) {
+          const monto = parseFloat(c[4]) || 0;
+          studentCargos += monto;
+        }
+      });
+
+      compRows.forEach(p => {
+        if (String(p[2]).trim() === String(s.userId).trim() && (p[9] === "En revision" || p[9] === "Pendiente")) {
+          studentPagosRev += parseFloat(p[5]) || 0;
+        }
+      });
+
+      totalCargosPendientes += studentCargos;
+      totalPagosRevision += studentPagosRev;
+    }
 
     return {
       userId: s.userId,
@@ -3310,8 +3479,10 @@ function getFamilyConsolidatedSummary(payload) {
       grado: s.grado,
       seccion: s.seccion,
       estadoMatricula: s.estadoMatricula || "Activa",
-      saldoPendiente: studentCargos,
-      pagosEnRevision: studentPagosRev,
+      tienePermisoFinanciero: tienePermisoFinanciero,
+      saldoPendiente: tienePermisoFinanciero ? studentCargos : null,
+      pagosEnRevision: tienePermisoFinanciero ? studentPagosRev : null,
+      esSolvente: tienePermisoFinanciero ? (studentCargos === 0) : null,
       tareasPendientesCount: 0
     };
   });
@@ -4382,22 +4553,118 @@ function retryFailedEventsQueue(payload) {
   };
 }
 
+// [TAREA-F5-011] [Fase 5: Admisiones y Portal de Familias] - Motor multicanal de notificaciones automáticas y seguimiento del proceso de admisión con plantillas, deduplicación e historial
 function sendMultiChannelNotification(payload) {
-  const { userId, titulo, mensaje, tipo, categoria, canal, enlaceAccion } = payload || {};
-  if (!userId || !titulo || !mensaje) throw new Error("userId, titulo y mensaje son requeridos.");
+  const { userId, emailRecipient, titulo, mensaje, tipo, categoria, canal, enlaceAccion, deduplicationKey } = payload || {};
+  const targetUser = userId || emailRecipient || "INVITADO";
+  if (!targetUser || !titulo || !mensaje) throw new Error("Destinatario (userId/emailRecipient), título y mensaje son requeridos.");
 
-  const res = createUserNotification({
-    userId: userId,
-    titulo: titulo,
-    mensaje: mensaje,
-    tipo: tipo || "NotificacionTransversal",
-    categoria: categoria || "General",
-    enlaceAccion: enlaceAccion || ""
-  });
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "BandejaNotificaciones");
 
-  logStructuredEvent("USER", "sendMultiChannelNotification", "INFO", "NOTIFICATION_SENT", `Notificación enviada a ${userId} por canal ${canal || 'Plataforma'}`, payload, payload.authRole);
+  // Deduplicación preventiva por deduplicationKey
+  if (deduplicationKey) {
+    const data = sheet.getDataRange().getValues();
+    const dup = data.find(r => String(r[9] || "").trim() === String(deduplicationKey).trim());
+    if (dup) {
+      logStructuredEvent("USER", "sendMultiChannelNotification", "INFO", "NOTIFICATION_DEDUPLICATED", `Notificación omita por duplicación key=${deduplicationKey}`, { deduplicationKey, notificacionId: dup[0] }, payload && payload.authRole);
+      return { status: "success", deduplicated: true, notificacionId: dup[0], message: "Notificación ya despachada previamente." };
+    }
+  }
 
-  return { status: "success", notificacionId: res.data ? res.data.notificacionId : "NOTIF-OK", canalUtilizado: canal || "PlataformaInterna", message: "Notificación despachada correctamente." };
+  const now = new Date();
+  const notifId = "NTF-" + now.getFullYear() + "-" + Math.floor(100000 + Math.random() * 900000);
+  let deliveryStatus = "Entregado";
+  let emailSent = false;
+
+  // Intento de envío vía MailApp si se proporciona un correo o si userId parece un email
+  const targetEmail = (emailRecipient || (userId && userId.includes("@") ? userId : "")).trim();
+  if (targetEmail) {
+    try {
+      if (typeof MailApp !== "undefined") {
+        MailApp.sendEmail({
+          to: targetEmail,
+          subject: `[NGCA Admisiones] ${titulo}`,
+          htmlBody: `
+            <div style="font-family: Arial, sans-serif; color: #1f2937; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e5e7eb; border-radius: 8px;">
+              <h2 style="color: #0d6efd; margin-top: 0;">New Generation Christian Academy</h2>
+              <h3 style="color: #111827;">${titulo}</h3>
+              <p style="font-size: 15px; line-height: 1.6;">${mensaje}</p>
+              ${enlaceAccion ? `<div style="margin: 25px 0;"><a href="${enlaceAccion}" style="background-color: #0d6efd; color: white; padding: 12px 20px; text-decoration: none; border-radius: 6px; font-weight: bold; display: inline-block;">Verificar en el Portal</a></div>` : ''}
+              <hr style="border: 0; border-top: 1px solid #e5e7eb; margin: 20px 0;" />
+              <p style="font-size: 12px; color: #6b7280;">Este es un mensaje automático enviado por la plataforma de admisiones. Por favor no responda directamente a este correo.</p>
+            </div>
+          `
+        });
+        emailSent = true;
+      }
+    } catch (mailErr) {
+      logStructuredEvent("USER", "sendMultiChannelNotification", "WARN", "MAIL_SEND_FAILED", `Fallo al enviar correo a ${targetEmail}: ${mailErr.message}`, { targetEmail, notifId }, payload && payload.authRole);
+      deliveryStatus = "Pendiente_Reintento";
+    }
+  }
+
+  // Registro en BandejaNotificaciones
+  sheet.appendRow([
+    notifId,
+    targetUser,
+    tipo || "NotificacionAdmision",
+    titulo,
+    mensaje,
+    now,
+    false, // leido
+    categoria || "Admisiones",
+    enlaceAccion || "",
+    deduplicationKey || "",
+    deliveryStatus,
+    targetEmail || ""
+  ]);
+
+  logStructuredEvent("USER", "sendMultiChannelNotification", "INFO", "NOTIFICATION_SENT", `Notificación ${notifId} enviada a ${targetUser} (Email: ${emailSent ? 'Sí' : 'No'})`, { notifId, targetUser, deliveryStatus, emailSent }, payload && payload.authRole);
+
+  return {
+    status: "success",
+    notificacionId: notifId,
+    canalUtilizado: emailSent ? "CorreoYPlataforma" : "PlataformaInterna",
+    estadoEntrega: deliveryStatus,
+    message: "Notificación despachada correctamente."
+  };
+}
+
+// [TAREA-F5-011] Endpoint para consulta de logs de notificaciones de admisiones en Secretaría
+function getAdmissionNotificationLogs(payload) {
+  const { solicitudId, limit } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const rows = getOrCreateSheet(ss, "BandejaNotificaciones").getDataRange().getValues().slice(1);
+
+  let filtered = rows;
+  if (solicitudId) {
+    const searchId = String(solicitudId).trim().toLowerCase();
+    filtered = filtered.filter(r => String(r[4] || "").toLowerCase().includes(searchId) || String(r[9] || "").toLowerCase().includes(searchId));
+  }
+
+  filtered.reverse(); // Ordenar del más reciente al más antiguo
+  const maxRows = parseInt(limit || 50, 10);
+  const mapped = filtered.slice(0, maxRows).map(r => ({
+    notificacionId: r[0],
+    usuarioDestino: r[1],
+    tipo: r[2],
+    titulo: r[3],
+    mensaje: r[4],
+    fechaEnvio: r[5],
+    leido: Boolean(r[6]),
+    categoria: r[7],
+    enlaceAccion: r[8],
+    deduplicationKey: r[9],
+    estadoEntrega: r[10] || "Entregado",
+    emailDestino: r[11] || ""
+  }));
+
+  return {
+    status: "success",
+    totalNotificaciones: mapped.length,
+    notificaciones: mapped
+  };
 }
 
 function getNotificationPreferences(payload) {
