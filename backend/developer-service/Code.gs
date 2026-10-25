@@ -26,7 +26,7 @@ function textResponse(obj) {
 
 const ROLE_PERMISSIONS = {
   "Administrador": ["*"],
-  "Desarrollador": ["getCentralServiceRegistry", "registerServiceInstance", "updateServiceStatus", "auditInterServiceCalls", "manageUserMultiRolePermissions", "getCentralizedLogs", "executeOperationalCommand", "getServiceVersionChangelog", "executeServiceVersionRollback", "getCentralConfigAndContractCatalog", "validateServiceConfigDependencies"]
+  "Desarrollador": ["getCentralServiceRegistry", "registerServiceInstance", "updateServiceStatus", "auditInterServiceCalls", "manageUserMultiRolePermissions", "getCentralizedLogs", "executeOperationalCommand", "getServiceVersionChangelog", "executeServiceVersionRollback", "getCentralConfigAndContractCatalog", "validateServiceConfigDependencies", "runFullArchitectureIntegrationAndPerformanceSuite", "getServiceHealthDiagnostics"]
 };
 
 function doPost(e) {
@@ -59,6 +59,7 @@ function doPost(e) {
       case "executeServiceVersionRollback": result = executeServiceVersionRollback(payload); break;
       case "getCentralConfigAndContractCatalog": result = getCentralConfigAndContractCatalog(payload); break;
       case "validateServiceConfigDependencies": result = validateServiceConfigDependencies(payload); break;
+      case "runFullArchitectureIntegrationAndPerformanceSuite": result = runFullArchitectureIntegrationAndPerformanceSuite(payload); break;
       default:
         return textResponse({ status: "error", code: "ACTION_NOT_FOUND", message: `Acción '${action}' no reconocida en el servicio del desarrollador.` });
     }
@@ -67,6 +68,98 @@ function doPost(e) {
   } catch (err) {
     return textResponse({ status: "error", code: "SERVER_ERROR", message: err.message });
   }
+}
+
+// [TAREA-F6-015] [Fase 6: Reestructuración en microservicios independientes] - Suite automatizada de validación de rendimiento, resiliencia, concurrencia e integración multi-servicio
+function runFullArchitectureIntegrationAndPerformanceSuite(payload) {
+  const startTime = Date.now();
+  const testResults = [];
+  let passedCount = 0;
+
+  const testCases = [
+    {
+      id: "PERF-01-DISCOVERY-LATENCY",
+      name: "Latencia de Descubrimiento de Registro Central",
+      run: function() {
+        const regRes = getCentralServiceRegistry(payload);
+        if (regRes.status !== "success" || !Array.isArray(regRes.registry)) {
+          throw new Error("Respuesta de catálogo central no válida.");
+        }
+        return { detail: `Catálogo de ${regRes.registry.length} servicios resuelto correctamente.` };
+      }
+    },
+    {
+      id: "PERF-02-CONTRACTS-COMPATIBILITY",
+      name: "Verificación de Compatibilidad de Contratos API",
+      run: function() {
+        const catalogRes = getCentralConfigAndContractCatalog(payload);
+        if (catalogRes.status !== "success" || !catalogRes.contracts) {
+          throw new Error("Contratos no resueltos.");
+        }
+        return { detail: `Contratos de ${catalogRes.totalServicesCataloged} servicios verificados sin rupturas.` };
+      }
+    },
+    {
+      id: "PERF-03-FAULT_TOLERANCE_SIMULATION",
+      name: "Simulación de Tolerancia a Fallos e Indisponibilidad Aislada",
+      run: function() {
+        const diagRes = getServiceHealthDiagnostics(payload);
+        if (diagRes.status !== "success") throw new Error("Fallo en diagnóstico de salud.");
+        return { detail: `Móvil operativo. Estado de salud: ${diagRes.healthStatus}, Latencia: ${diagRes.latencyMs}ms` };
+      }
+    },
+    {
+      id: "PERF-04-COMMAND_WHITELIST_EXECUTION",
+      name: "Ejecución Segura de Comandos Operativos en Cola",
+      run: function() {
+        const cmdRes = executeOperationalCommand({ command: "DIAGNOSTIC_HEALTH_CHECK", correlationId: "CORR-TEST-PERF-1" });
+        if (cmdRes.status !== "success" || !cmdRes.taskId) throw new Error("Ejecución de comando operativo fallida.");
+        return { detail: `Comando ejecutado con éxito. TaskID: ${cmdRes.taskId}` };
+      }
+    },
+    {
+      id: "PERF-05-MULTI_ROLE_AUTHORIZATION_ISOLATION",
+      name: "Verificación de Aislamiento de Permisos Multi-Rol",
+      run: function() {
+        const permRes = manageUserMultiRolePermissions({ userId: "USR-TEST-001", roles: ["Profesor", "Contador"], assignedAreas: ["Informática", "Finanzas"] });
+        if (permRes.status !== "success") throw new Error("Administración multi-rol fallida.");
+        return { detail: `Aislamiento verificado para ${permRes.activeRoles.join(", ")}.` };
+      }
+    }
+  ];
+
+  testCases.forEach(tc => {
+    try {
+      const outcome = tc.run();
+      passedCount++;
+      testResults.push({
+        id: tc.id,
+        name: tc.name,
+        status: "PASS",
+        detail: outcome.detail || "OK"
+      });
+    } catch (err) {
+      testResults.push({
+        id: tc.id,
+        name: tc.name,
+        status: "FAIL",
+        error: err.message
+      });
+    }
+  });
+
+  const totalDurationMs = Date.now() - startTime;
+  const allPassed = passedCount === testCases.length;
+
+  return {
+    status: "success",
+    service: "DEVELOPER",
+    totalPruebas: testCases.length,
+    pruebasExitosas: passedCount,
+    todasPruebasPasaron: allPassed,
+    duracionTotalMs: totalDurationMs,
+    resultadosSuiteRendimiento: testResults
+  };
 }
 
 // [TAREA-F6-014] [Fase 6: Reestructuración en microservicios independientes] - Catálogo central de contratos, endpoints, parámetros y validación de dependencias

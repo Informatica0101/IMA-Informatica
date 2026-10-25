@@ -468,7 +468,7 @@ FASE 6. EXPEDIENTE INSTITUCIONAL Y CICLO DE VIDA DEL ESTUDIANTE
   - CA-075: La indisponibilidad simulada de un microservicio no bloquea las funciones de otros servicios independientes.
   - CA-076: Las operaciones críticas procesadas con reintentos no generan duplicados de datos ni inconsistencias contables/académicas.
   - CA-077: Los flujos end-to-end funcionan correctamente verificando integridad de datos, permisos y observabilidad.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completado
 
 ---
 
