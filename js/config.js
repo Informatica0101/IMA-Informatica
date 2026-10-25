@@ -161,7 +161,10 @@ window.SERVICE_URLS = {
   EXAM: 'https://script.google.com/macros/s/AKfycbwUlIlqEnkEFeCTrp_tgsyAydhNsLKx6h14A8SvWjbfxNFIj3vSciN5xAe93qtNV-g/exec',
 
   // Microservicio de Contabilidad y Planillas (v8.0.0)
-  ACCOUNTING: 'https://script.google.com/macros/s/AKfycbzAccountingSvc/exec'
+  ACCOUNTING: 'https://script.google.com/macros/s/AKfycbzAccountingSvc/exec',
+
+  // Microservicio Central del Desarrollador y Registro de Servicios (v8.4.0) [TAREA-F6-008]
+  DEVELOPER: 'https://script.google.com/macros/s/AKfycbzDeveloperControlPlaneSvc/exec'
 };
 
 // [TAREA-F6-004] [Fase 6: Reestructuración en microservicios independientes] - Registro centralizado de descubrimiento de microservicios con endpoints, versiones y recursos
@@ -221,6 +224,18 @@ window.SERVICE_REGISTRY = {
     responsibilities: ["CobrosAdmision", "PagosMatricula", "BecasExenciones", "Facturacion"],
     resources: {
       spreadsheetId: "1-ACCOUNTING-SPREADSHEET-ID"
+    }
+  },
+  // [TAREA-F6-008] Plano de Control Central del Desarrollador
+  DEVELOPER: {
+    serviceId: "SVC-DEVELOPER-00",
+    name: "Microservicio Central del Desarrollador y Registro de Servicios",
+    version: "v8.4.0",
+    endpointUrl: window.SERVICE_URLS.DEVELOPER,
+    healthStatus: "ACTIVE",
+    responsibilities: ["RegistroServicios", "ControlPlane", "Diagnostico", "AuditoriaInterServicio", "PermisosMultiRol"],
+    resources: {
+      spreadsheetId: "1-DEVELOPER-SPREADSHEET-ID"
     }
   }
 };

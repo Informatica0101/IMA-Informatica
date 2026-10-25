@@ -265,7 +265,7 @@ FASE 6. EXPEDIENTE INSTITUCIONAL Y CICLO DE VIDA DEL ESTUDIANTE
   - CA-047: Las solicitudes entre servicios utilizan el contrato común con `correlationId`.
   - CA-048: La indisponibilidad del microservicio central no detiene la operación de los servicios académicos, administrativos ni financieros.
   - CA-049: Un usuario ejerce múltiples roles en distintas áreas sin duplicidad de cuentas ni elevación no autorizada de privilegios.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completado
 
 ---
 
