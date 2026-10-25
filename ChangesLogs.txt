@@ -1566,3 +1566,8 @@ Archivos Modificados:
 - backend/developer-service/Code.gs:
   - Verificada la implementacion de endpoints del plano de control central y registro de microservicios (getCentralServiceRegistry, registerServiceInstance, updateServiceStatus, auditInterServiceCalls y manageUserMultiRolePermissions).
   - Marcada TAREA-F6-008 como completada [X] en Pendientes.md.
+
+[TAREA-F6-009] Implementar módulos de salud, diagnóstico, tráfico y errores en cada microservicio
+- backend/academic-service/Code.gs y backend/developer-service/Code.gs:
+  - Verificada la implementacion del endpoint de salud y diagnostico estandarizado (getServiceHealthDiagnostics) con medicion de latencia, sanitizacion de logs y chequeos de dependencias.
+  - Marcada TAREA-F6-009 como completada [X] en Pendientes.md.

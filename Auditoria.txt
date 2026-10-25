@@ -198,3 +198,16 @@ Archivos verificados:
 Resultados de verificación:
 - Plano de control del desarrollador desplegado con registro central de servicios.
 - Contrato comun de comunicación con auditoría e inter-operabilidad multi-rol.
+
+===========================================================
+AUDITORÍA DE CÓDIGO - TAREA-F6-009
+===========================================================
+Fecha: 2025-05-18
+Archivos verificados:
+- backend/academic-service/Code.gs
+- backend/developer-service/Code.gs
+- Pendientes.md
+
+Resultados de verificación:
+- Endpoints de salud getServiceHealthDiagnostics desplegados y expuestos en PUBLIC_ACTIONS y doPost.
+- Diagnóstico estandarizado con métricas de tráfico, latencia y sanitización de registros de errores.

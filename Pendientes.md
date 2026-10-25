@@ -269,7 +269,7 @@ FASE 6. EXPEDIENTE INSTITUCIONAL Y CICLO DE VIDA DEL ESTUDIANTE
 
 ---
 
-### [TAREA-F6-009] Implementar módulos de salud, diagnóstico, tráfico y errores en cada microservicio
+### [X] [TAREA-F6-009] Implementar módulos de salud, diagnóstico, tráfico y errores en cada microservicio
 - **Origen del Hallazgo:** Reestructuración Arquitectónica / F6-012 (P1 · Observabilidad y Diagnóstico)
 - **Prioridad:** P1
 - **Severidad/Clasificación:** Alta (Salud, métricas y registro de errores de microservicios)
