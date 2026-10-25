@@ -126,3 +126,16 @@ Archivos verificados:
 Resultados de verificación:
 - Descubrimiento centralizado de microservicios verificado en window.SERVICE_REGISTRY y fetchApi.
 - Comprobada sintaxis JavaScript en js/api.js y js/config.js sin errores.
+
+===========================================================
+AUDITORÍA DE CÓDIGO - TAREA-F6-018
+===========================================================
+Fecha: 2025-05-18
+Archivos verificados:
+- backend/user-service/Code.gs
+- Pendientes.md
+
+Resultados de verificación:
+- registerLegalCustodyRestriction revoca automáticamente enlaces familiares y desactiva permisos ante restricciones de custodia total o prohibición de contacto.
+- getStudentGuardianConsolidatedList entrega consolidado transparente de tutores y restricciones judiciales.
+- Verificada sintaxis mediante VM Script sin errores.

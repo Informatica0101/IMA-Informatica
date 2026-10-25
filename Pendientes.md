@@ -541,7 +541,7 @@ FASE 6. EXPEDIENTE INSTITUCIONAL Y CICLO DE VIDA DEL ESTUDIANTE
 
 ---
 
-### [TAREA-F6-018] Completar la gestión de autorizaciones, responsables legales y contactos de emergencia
+### [X] [TAREA-F6-018] Completar la gestión de autorizaciones, responsables legales y contactos de emergencia
 - **Origen del Hallazgo:** `AUDITORIA_FASE_6_EXPEDIENTE_CICLO_VIDA.md` / Tarea 4 (P2 · Protección de Estudiantes)
 - **Prioridad:** P2
 - **Severidad/Clasificación:** Medio (Protección de estudiantes y permisos familiares)

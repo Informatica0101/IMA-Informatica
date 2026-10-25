@@ -1537,3 +1537,9 @@ Archivos Modificados:
 [TAREA-F6-004] Reestructurar la arquitectura en microservicios independientes
 - js/api.js:
   - Reforzada resolucion dinamica de endpoints en fetchApi evaluando estado operativo del servicio en SERVICE_REGISTRY antes de acudir al fallback SERVICE_URLS.
+
+[TAREA-F6-018] Completar la gestión de autorizaciones, responsables legales y contactos de emergencia
+- backend/user-service/Code.gs:
+  - Creada funcion registerLegalCustodyRestriction para registrar ordenes judiciales y restricciones de custodia legal por expediente y tutor.
+  - Creada funcion getStudentGuardianConsolidatedList para obtener la lista consolidada de tutores con sus permisos y estado de restricciones judiciales.
+  - Registradas ambas funciones en ROLE_PERMISSIONS para Director, Subdirector y Secretaría, y agregadas en el enrutamiento doPost.
