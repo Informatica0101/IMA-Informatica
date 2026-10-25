@@ -3,7 +3,7 @@
 FASE 6. EXPEDIENTE INSTITUCIONAL Y CICLO DE VIDA DEL ESTUDIANTE
 ===============================================================================
 
-### [TAREA-F6-001] Restringir los controles de gestión de expedientes duplicados según los permisos efectivos del usuario
+### [X] [TAREA-F6-001] Restringir los controles de gestión de expedientes duplicados según los permisos efectivos del usuario
 - **Origen del Hallazgo:** `Auditoria.txt` / `AUDITORIA_FASE_6_EXPEDIENTE_CICLO_VIDA.md` / Tarea 1 (P2 · Seguridad Operativa)
 - **Prioridad:** P2
 - **Severidad/Clasificación:** Medio (Seguridad operativa e interfaz)
