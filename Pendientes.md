@@ -350,7 +350,7 @@ FASE 6. EXPEDIENTE INSTITUCIONAL Y CICLO DE VIDA DEL ESTUDIANTE
   - CA-059: La restauración de un microservicio no altera ni sobrescribe datos de otros servicios.
   - CA-060: Copias de seguridad corruptas o con suma de verificación alterada son rechazadas antes de aplicar cambios.
   - CA-061: La restauración verifica y conserva las relaciones referenciales entre entidades del servicio.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completado
 
 ---
 

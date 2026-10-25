@@ -173,7 +173,7 @@ const ROLE_PERMISSIONS = {
     "getStudentFile", "updateStudentFile", "getStudentTimeline", "findDuplicateStudents", "mergeStudentFiles",
     "getStudentGuardians", "saveStudentGuardian", "unlinkStudentGuardian", "uploadStudentDocument", "getStudentDocuments", "updateDocumentStatus",
     "createStudentEnrollment", "getStudentEnrollments", "renewStudentEnrollment", "checkEnrollmentCapacity",
-    "changeStudentSection", "recordStudentTransfer", "recordStudentWithdrawal", "processStudentReentry", "processStudentPromotion", "processStudentGraduation", "updateStudentLifecycleStatus", "reconcileStudentLifecycleState", "runStudentLifecycleRegressionSuite", "getAcademicAreaTemplateCatalog", "getAcademicAreaCoordinationScope", "deployAcademicMicroserviceInstance", "getAcademicMicroserviceDeployments",
+    "changeStudentSection", "recordStudentTransfer", "recordStudentWithdrawal", "processStudentReentry", "processStudentPromotion", "processStudentGraduation", "updateStudentLifecycleStatus", "reconcileStudentLifecycleState", "runStudentLifecycleRegressionSuite", "getAcademicAreaTemplateCatalog", "getAcademicAreaCoordinationScope", "deployAcademicMicroserviceInstance", "getAcademicMicroserviceDeployments", "previewBackupRestoreImpact",
     "openAttendanceSession", "saveClassAttendance", "getClassAttendance", "saveDailyAttendance", "getDailyAttendance", "submitAttendanceJustification", "reviewAttendanceJustification", "recordEarlyDeparture", "getAttendanceIncidents", "saveAttendanceIncident", "getAttendanceFollowupCases", "saveAttendanceFollowupCase", "addCaseFollowUpNote", "getStudentAttendanceSummary",
     "createTeacherSupervision", "getTeacherSupervisions", "updateSupervisionStatus", "saveSupervisionObservation", "getSupervisionObservation", "saveTeacherImprovementPlan", "getTeacherImprovementPlans", "purgeSecurityCaches"
   ],
@@ -714,6 +714,7 @@ function doPost(e) {
       case "deployAcademicMicroserviceInstance": result = deployAcademicMicroserviceInstance(payload); break;
       case "getAcademicMicroserviceDeployments": result = getAcademicMicroserviceDeployments(payload); break;
       case "getServiceHealthDiagnostics": result = getServiceHealthDiagnostics(payload); break;
+      case "previewBackupRestoreImpact": result = previewBackupRestoreImpact(payload); break;
 
       // Endpoints Fase 7 - Asistencia y Seguimiento Estudiantil
       case "openAttendanceSession": result = openAttendanceSession(payload); break;
@@ -2583,6 +2584,51 @@ function executeCurricularMigration(payload) {
     status: "success",
     message: esSimulacion ? "Pre-validación y simulación de migración completada sin pérdidas de datos." : "Migración curricular ejecutada exitosamente conservando inalterables las calificaciones históricas.",
     reporte: report
+  };
+}
+
+// [TAREA-F6-011] [Fase 6: Reestructuración en microservicios independientes] - Vista previa e inspección de impacto previa a la restauración de respaldos aislados
+function previewBackupRestoreImpact(payload) {
+  const { fileId } = payload || {};
+  if (!fileId) throw new Error("ID de archivo de respaldo es requerido.");
+
+  const verifyRes = verifyBackupIntegrity(payload);
+  if (!verifyRes.isValid) {
+    return {
+      status: "error",
+      message: `El archivo de respaldo tiene una suma de verificación alterada o estructura corrupta: ${verifyRes.message || 'Checksum mismatch'}.`
+    };
+  }
+
+  const file = DriveApp.getFileById(fileId);
+  const content = file.getBlob().getDataAsString();
+  const parsed = JSON.parse(content);
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const impactSummary = [];
+
+  for (const sheetName in parsed.sheets) {
+    const backupRows = parsed.sheets[sheetName] || [];
+    const liveSheet = ss.getSheetByName(sheetName);
+    const liveRowCount = liveSheet ? liveSheet.getLastRow() : 0;
+    const backupRowCount = backupRows.length;
+
+    impactSummary.push({
+      sheetName: sheetName,
+      liveRows: liveRowCount,
+      backupRows: backupRowCount,
+      impact: liveRowCount === 0 ? "NEW_SHEET_CREATION" : (backupRowCount >= liveRowCount ? "OVERWRITE_AND_EXPAND" : "OVERWRITE_AND_SHRINK")
+    });
+  }
+
+  return {
+    status: "success",
+    fileName: file.getName(),
+    checksumValid: true,
+    totalSheets: Object.keys(parsed.sheets).length,
+    impactSummary: impactSummary,
+    requireConfirmationCode: "RESTORE-CONFIRMED",
+    message: "Vista previa de impacto generada. Especifique confirmCode: 'RESTORE-CONFIRMED' para proceder con la restauración."
   };
 }
 
@@ -6679,7 +6725,7 @@ function createStudentEnrollment(payload) {
       if (curState !== "Activo") {
         expSheet.getRange(expRowIdx + 1, 8).setValue("Activo");
         expSheet.getRange(expRowIdx + 1, 10).setValue(now);
-        recordEntityChangeLog("ExpedienteEstudiante", expData[expRowIdx][0], curState, "Activo", "RE-ACTIVATION_VIA_ENROLLMENT", (payload && payload.userId) || "Sistema", "MAT-" + Date.now());
+        recordEntityChangeLog("ExpedienteEstudiante", expData[expRowIdx][0], curState, "Activo", "RE-ACTIVATION_VIA_ENROLLMENT", (payload && (payload.callerUserId || payload.userId)) || "Sistema", "MAT-" + Date.now());
       }
     }
 

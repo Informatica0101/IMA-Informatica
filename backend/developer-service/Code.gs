@@ -39,8 +39,8 @@ function doPost(e) {
     const action = payload.action || "ping";
     if (action === "ping") return doGet();
 
-    const userRole = payload.authRole || "Desarrollador";
-    const permitted = ROLE_PERMISSIONS[userRole] || ROLE_PERMISSIONS["Desarrollador"] || [];
+    const userRole = payload.authRole || "SinRol";
+    const permitted = ROLE_PERMISSIONS[userRole] || [];
     if (!permitted.includes("*") && !permitted.includes(action)) {
       return textResponse({ status: "error", code: "PERMISSION_DENIED", message: `No tiene permisos para ejecutar la acción '${action}'.` });
     }
