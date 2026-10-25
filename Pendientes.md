@@ -181,7 +181,7 @@ FASE 6. EXPEDIENTE INSTITUCIONAL Y CICLO DE VIDA DEL ESTUDIANTE
 
 ---
 
-### [TAREA-F6-006] Crear una plantilla de microservicio académico reutilizable para múltiples áreas
+### [X] [TAREA-F6-006] Crear una plantilla de microservicio académico reutilizable para múltiples áreas
 - **Origen del Hallazgo:** Reestructuración Arquitectónica / F6-009 (P1 · Modularización y Reutilización)
 - **Prioridad:** P1
 - **Severidad/Clasificación:** Alta (Plantilla genérica de servicio académico y coordinaciones)

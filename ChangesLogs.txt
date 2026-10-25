@@ -1551,3 +1551,8 @@ Archivos Modificados:
 - backend/accounting-service/Code.gs:
   - Verificada inicialización automatica de la estructura jerárquica de Drive (initializeFinancialDriveStructure) para Contabilidad, Recursos Humanos, Facturación, Inventarios y Bancos.
   - Marcada TAREA-F6-005 como completada [X] en Pendientes.md.
+
+[TAREA-F6-006] Crear una plantilla de microservicio académico reutilizable para múltiples áreas
+- backend/academic-service/Code.gs:
+  - Verificada plantilla generica de servicio academico parametrizada (getAcademicAreaTemplateCatalog y getAcademicAreaCoordinationScope) para las 7 areas academicas sin harcodeo en logica.
+  - Marcada TAREA-F6-006 como completada [X] en Pendientes.md.

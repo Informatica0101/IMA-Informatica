@@ -162,3 +162,15 @@ Archivos verificados:
 Resultados de verificación:
 - Módulos financieros y de RRHH cuentan con separación por responsabilidades y carpetas aisladas en Google Drive.
 - Estructura jerárquica inicializada sin duplicación mediante getOrCreateFolder.
+
+===========================================================
+AUDITORÍA DE CÓDIGO - TAREA-F6-006
+===========================================================
+Fecha: 2025-05-18
+Archivos verificados:
+- backend/academic-service/Code.gs
+- Pendientes.md
+
+Resultados de verificación:
+- Catalogo de 7 areas academicas parametrizadas en AreasCurricularesExtensiones sin condicionales fijos de nombres.
+- Ambito de supervisión por area mediante getAcademicAreaCoordinationScope.
