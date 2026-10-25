@@ -298,7 +298,7 @@ FASE 6. EXPEDIENTE INSTITUCIONAL Y CICLO DE VIDA DEL ESTUDIANTE
 
 ---
 
-### [TAREA-F6-010] Incorporar administración segura de logs y comandos operativos
+### [X] [TAREA-F6-010] Incorporar administración segura de logs y comandos operativos
 - **Origen del Hallazgo:** Reestructuración Arquitectónica / F6-013 (P1 · Mantenimiento Seguro)
 - **Prioridad:** P1
 - **Severidad/Clasificación:** Alta (Administración de logs y cola de comandos)

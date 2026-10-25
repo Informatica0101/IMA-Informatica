@@ -1571,3 +1571,8 @@ Archivos Modificados:
 - backend/academic-service/Code.gs y backend/developer-service/Code.gs:
   - Verificada la implementacion del endpoint de salud y diagnostico estandarizado (getServiceHealthDiagnostics) con medicion de latencia, sanitizacion de logs y chequeos de dependencias.
   - Marcada TAREA-F6-009 como completada [X] en Pendientes.md.
+
+[TAREA-F6-010] Incorporar administración segura de logs y comandos operativos
+- backend/developer-service/Code.gs:
+  - Verificada la implementacion del catalogo cerrado de comandos operativos autorizados ALLOWED_OPERATIONAL_COMMANDS y la gestion centralizada de logs en getCentralizedLogs y executeOperationalCommand.
+  - Marcada TAREA-F6-010 como completada [X] en Pendientes.md.
