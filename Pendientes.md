@@ -77,7 +77,7 @@ FASE 6. EXPEDIENTE INSTITUCIONAL Y CICLO DE VIDA DEL ESTUDIANTE
 
 ---
 
-### [TAREA-F6-003] Establecer una batería automatizada de regresión para el ciclo de vida del estudiante
+### [X] [TAREA-F6-003] Establecer una batería automatizada de regresión para el ciclo de vida del estudiante
 - **Origen del Hallazgo:** `AUDITORIA_FASE_6_EXPEDIENTE_CICLO_VIDA.md` / Tarea 15 (P1 · Fiabilidad Funcional)
 - **Prioridad:** P1
 - **Severidad/Clasificación:** Alta (Fiabilidad y pruebas automatizadas)

@@ -1529,3 +1529,7 @@ Archivos Modificados:
 - backend/academic-service/Code.gs:
   - Actualizada funcion changeStudentSection con validacion de estado del expediente (rechazo si esta inactivo, retirado, trasladado o graduado), verificacion de capacidad con checkEnrollmentCapacity y fechaEfectiva opcional.
   - Verificados y mantenidos comentarios identificativos [TAREA-F6-002] en las funciones de movilidad del ciclo de vida (changeStudentSection, recordStudentTransfer, recordStudentWithdrawal, processStudentReentry, processStudentPromotion, processStudentGraduation, updateStudentLifecycleStatus, reconcileStudentLifecycleState).
+
+[TAREA-F6-003] Establecer una batería automatizada de regresión para el ciclo de vida del estudiante
+- backend/academic-service/Code.gs:
+  - Añadidos casos de prueba TC-06-HISTORICAL_ACADEMIC_RECORD_IMMUTABILITY y TC-07-CONCURRENT_ENROLLMENT_IDEMPOTENCY_CHECK en runStudentLifecycleRegressionSuite para comprobar la inmutabilidad de historiales en periodos pasados e idempotencia de matrícula.

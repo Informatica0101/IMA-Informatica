@@ -100,3 +100,16 @@ Resultados de verificación:
 - changeStudentSection valida correctamente la inexistencia de estados incompatibles antes de reubicar seccion.
 - Verificada compatibilidad de matriz de estados ALLOWED_STUDENT_LIFECYCLE_TRANSITIONS.
 - Ejecutada suite de sintaxis JavaScript en backend/academic-service/Code.gs sin errores.
+
+===========================================================
+AUDITORÍA DE CÓDIGO - TAREA-F6-003
+===========================================================
+Fecha: 2025-05-18
+Archivos verificados:
+- backend/academic-service/Code.gs
+- Pendientes.md
+
+Resultados de verificación:
+- Ampliada suite automatizada de regresión del ciclo de vida (runStudentLifecycleRegressionSuite) a 7 casos de prueba integrales.
+- Verificada inmutabilidad histórica e idempotencia de matrículas.
+- Ejecutada verificación de sintaxis VM Script sin errores.
