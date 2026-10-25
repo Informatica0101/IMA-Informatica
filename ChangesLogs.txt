@@ -1543,3 +1543,6 @@ Archivos Modificados:
   - Creada funcion registerLegalCustodyRestriction para registrar ordenes judiciales y restricciones de custodia legal por expediente y tutor.
   - Creada funcion getStudentGuardianConsolidatedList para obtener la lista consolidada de tutores con sus permisos y estado de restricciones judiciales.
   - Registradas ambas funciones en ROLE_PERMISSIONS para Director, Subdirector y Secretaría, y agregadas en el enrutamiento doPost.
+
+[FIX-BLOCKING-ISSUE] backend/academic-service/Code.gs:
+  - Agregado comentario identificativo explicito [BLOCKING-ISSUE-FIX] sobre renewStudentEnrollment documentando la desestructuracion explicita de userId, nuevoAnoLectivo, nuevoGrado y nuevaSeccion.
