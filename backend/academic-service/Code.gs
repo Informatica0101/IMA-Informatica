@@ -7005,9 +7005,9 @@ function renewStudentEnrollment(payload) {
 // ---------------------------------------------------------------------------
 
 // [REQ-EXP-008] [Fase 1: Registro y Expediente de Estudiantes] - Service backend endpoints (changeStudentSection, recordStudentTransfer, recordStudentWithdrawal, processStudentReentry) para la gestión de estados y movilidad estudiantil.
-// [TAREA-F6-002] [Fase 6: Expediente Institucional y Ciclo de Vida] - Cambio de sección con validación y registro inmutable
+// [TAREA-F6-002] [Fase 6: Expediente Institucional y Ciclo de Vida] - Cambio de sección con validación de estado del expediente, capacidad y registro inmutable
 function changeStudentSection(payload) {
-  const { expedienteId, userId, anolectivo, nuevaSeccion, motivo } = payload || {};
+  const { expedienteId, userId, anolectivo, nuevaSeccion, motivo, fechaEfectiva } = payload || {};
   if ((!expedienteId && !userId) || !nuevaSeccion) throw new Error("Expediente/userId y nuevaSeccion son requeridos.");
 
   const lock = LockService.getScriptLock();
@@ -7023,12 +7023,14 @@ function changeStudentSection(payload) {
     const expSheet = getOrCreateSheet(ss, "ExpedientesEstudiantes");
     const expData = expSheet.getDataRange().getValues();
 
-    if (!sUserId && sExpId) {
-      const expRow = expData.find(r => String(r[0]).trim() === sExpId);
-      if (expRow && expRow[1]) sUserId = String(expRow[1]).trim();
-    } else if (sUserId && !sExpId) {
-      const expRow = expData.find(r => String(r[1]).trim() === sUserId);
-      if (expRow && expRow[0]) sExpId = String(expRow[0]).trim();
+    const expRowIdx = expData.findIndex(r => (sExpId && String(r[0]).trim() === sExpId) || (sUserId && String(r[1]).trim() === sUserId));
+    if (expRowIdx !== -1) {
+      if (!sExpId) sExpId = String(expData[expRowIdx][0]).trim();
+      if (!sUserId) sUserId = String(expData[expRowIdx][1]).trim();
+      const estadoExp = String(expData[expRowIdx][7] || "Activo").trim();
+      if (estadoExp === "Fusionado" || estadoExp === "Eliminado" || estadoExp === "Graduado" || estadoExp === "Retirado" || estadoExp === "Trasladado") {
+        throw new Error("No se puede reubicar de sección a un estudiante con expediente en estado '" + estadoExp + "'.");
+      }
     }
 
     const matSheet = getOrCreateSheet(ss, "Matriculas");
@@ -7040,12 +7042,25 @@ function changeStudentSection(payload) {
     const oldGrado = matData[idx][4];
     const oldSeccion = matData[idx][5];
 
+    if (String(oldSeccion).trim() === String(nuevaSeccion).trim()) {
+      return { status: "success", isUnchanged: true, message: "El estudiante ya se encuentra asignado a la Sección " + nuevaSeccion + "." };
+    }
+
+    // Validar capacidad de la sección de destino
+    if (!(payload && payload.forceCapacityOverride)) {
+      const cap = checkEnrollmentCapacity({ anolectivo: targetAno, grado: oldGrado, seccion: nuevaSeccion, skipLock: true });
+      if (!cap.hayCupo) {
+        return { status: "error", code: "SECTION_FULL", message: "La sección de destino " + nuevaSeccion + " para el grado " + oldGrado + " ha alcanzado su capacidad máxima (" + cap.capacidadMaxima + ")." };
+      }
+    }
+
     // Actualizar Sección en Matrícula
     matSheet.getRange(idx + 1, 6).setValue(nuevaSeccion);
 
     // Registrar Movimiento Inmutable
     const movSheet = getOrCreateSheet(ss, "MovimientosEstudiante");
     const now = new Date();
+    const fechaEf = fechaEfectiva ? new Date(fechaEfectiva) : now;
     movSheet.appendRow([
       "MOV-" + now.getTime(),
       sExpId || "",
@@ -7056,15 +7071,15 @@ function changeStudentSection(payload) {
       oldSeccion,
       oldGrado,
       nuevaSeccion,
-      now,
+      fechaEf,
       motivo || "Reubicación de Sección",
       (payload && payload.userId) || "Secretaría",
       "Confirmado"
     ]);
 
-    logStructuredEvent("ACADEMIC", "changeStudentSection", "INFO", "SECTION_CHANGED", `Sección cambiada de ${oldSeccion} a ${nuevaSeccion} para matrícula ${matData[idx][0]}`, { sUserId, sExpId, oldSeccion, nuevaSeccion, motivo }, payload && payload.authRole);
+    logStructuredEvent("ACADEMIC", "changeStudentSection", "INFO", "SECTION_CHANGED", "Sección cambiada de " + oldSeccion + " a " + nuevaSeccion + " para matrícula " + matData[idx][0], { sUserId, sExpId, oldSeccion, nuevaSeccion, motivo }, payload && payload.authRole);
 
-    return { status: "success", message: `Estudiante trasladado exitosamente a la Sección ${nuevaSeccion}.` };
+    return { status: "success", message: "Estudiante trasladado exitosamente a la Sección " + nuevaSeccion + "." };
   } finally {
     lock.releaseLock();
   }

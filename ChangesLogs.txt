@@ -1524,3 +1524,8 @@ Archivos Modificados:
   - Reestructuración de `getAdmissionRequests` con comentario identificativo [TAREA-F5-020], incorporando paginación en servidor (`page`, `pageSize`), cálculo de metadatos (`totalRecords`, `totalPages`) y monitoreo de tiempo de ejecución con registro de alertas `LATENCY_THRESHOLD_EXCEEDED` si supera los 2,000 ms.
   - Implementación de caché selectiva de 10 minutos (600s) mediante `CacheService` en `getAcademicOffers` con indicador de caché `_cached: true`.
   - Inyección de invalidación de caché explícita en `createAcademicOffer` y purga de catálogos en `purgeSecurityCaches`.
+
+[TAREA-F6-002] Robustecer las operaciones del ciclo de vida y prevenir estados de matrícula incompatibles
+- backend/academic-service/Code.gs:
+  - Actualizada funcion changeStudentSection con validacion de estado del expediente (rechazo si esta inactivo, retirado, trasladado o graduado), verificacion de capacidad con checkEnrollmentCapacity y fechaEfectiva opcional.
+  - Verificados y mantenidos comentarios identificativos [TAREA-F6-002] en las funciones de movilidad del ciclo de vida (changeStudentSection, recordStudentTransfer, recordStudentWithdrawal, processStudentReentry, processStudentPromotion, processStudentGraduation, updateStudentLifecycleStatus, reconcileStudentLifecycleState).
