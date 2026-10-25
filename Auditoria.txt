@@ -247,3 +247,15 @@ Archivos verificados:
 Resultados de verificación:
 - Validación de aislamiento contextual de usuario e IDOR en validateContextualAccess.
 - Ámbito de supervisión por área para Coordinadores verificado en el servidor.
+
+===========================================================
+AUDITORÍA DE CÓDIGO - TAREA-F6-013
+===========================================================
+Fecha: 2025-05-18
+Archivos verificados:
+- backend/developer-service/Code.gs
+- Pendientes.md
+
+Resultados de verificación:
+- Versionado explícito de código y esquema expuesto en getServiceVersionChangelog.
+- Reversión (rollback) controlada con confirmación ROLLBACK-CONFIRMED y verificación de contratos API.

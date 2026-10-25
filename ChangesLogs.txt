@@ -1586,3 +1586,8 @@ Archivos Modificados:
 - backend/academic-service/Code.gs:
   - Verificada la función validateContextualAccess con aislamiento estricto IDOR por estudiante y aislamiento de ámbito de supervisión por área para el rol Coordinador.
   - Marcada TAREA-F6-012 como completada [X] en Pendientes.md.
+
+[TAREA-F6-013] Implementar despliegues versionados, migraciones y reversión controlada
+- backend/developer-service/Code.gs:
+  - Verificada la implementación de funciones getServiceVersionChangelog y executeServiceVersionRollback para el versionado de código/esquema y procedimientos de rollback controlados con confirmación ROLLBACK-CONFIRMED.
+  - Marcada TAREA-F6-013 como completada [X] en Pendientes.md.

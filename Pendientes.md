@@ -385,7 +385,7 @@ FASE 6. EXPEDIENTE INSTITUCIONAL Y CICLO DE VIDA DEL ESTUDIANTE
 
 ---
 
-### [TAREA-F6-013] Implementar despliegues versionados, migraciones y reversión controlada
+### [X] [TAREA-F6-013] Implementar despliegues versionados, migraciones y reversión controlada
 - **Origen del Hallazgo:** Reestructuración Arquitectónica / F6-016 (P1 · Mantenimiento y Evolución)
 - **Prioridad:** P1
 - **Severidad/Clasificación:** Alta (Versionado de servicios, migraciones de esquema y rollback)
