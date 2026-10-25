@@ -134,7 +134,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // (A-29) Centralizar capacidades por rol
     const RoleCapabilities = {
         canGrade: (user) => user && (user.rol === 'Profesor' || user.rol === 'Administrador' || user.rol === 'Director' || user.rol === 'Subdirector' || user.rol === 'Secretaria'),
-        canManageExams: (user) => user && (user.rol === 'Profesor' || user.rol === 'Coordinador' || user.rol === 'Administrador' || user.rol === 'Director' || user.rol === 'Subdirector' || user.rol === 'Secretaria')
+        canManageExams: (user) => user && (user.rol === 'Profesor' || user.rol === 'Coordinador' || user.rol === 'Administrador' || user.rol === 'Director' || user.rol === 'Subdirector' || user.rol === 'Secretaria'),
+        canManageDuplicates: (user) => user && (user.rol === 'Administrador' || user.rol === 'Director' || user.rol === 'Secretaría' || user.rol === 'Secretaria' || user.rol === 'Subdirector' || user.rol === 'Coordinador' || user.rol === 'Desarrollador')
     };
 
     let submissionsTableBody = document.getElementById('submissions-table-body');
@@ -6437,7 +6438,7 @@ window.reviewOvertimeAction = function(overtimeId, accion) {
         // [TAREA-F6-001] [Fase 6: Expediente Institucional] - Restringir controles de expedientes duplicados por rol
         const dupTabBtn = document.querySelector('.stfile-tab-btn[data-tab="tab-stfile-duplicates"]');
         const dupTabContent = document.getElementById('tab-stfile-duplicates');
-        const isAuthorizedForDuplicates = currentUser && ['Administrador', 'Director', 'Secretaría', 'Secretaria', 'Subdirector', 'Coordinador', 'Desarrollador'].includes(currentUser.rol);
+        const isAuthorizedForDuplicates = RoleCapabilities.canManageDuplicates(currentUser);
         if (dupTabBtn) {
             if (isAuthorizedForDuplicates) {
                 dupTabBtn.classList.remove('hidden');
