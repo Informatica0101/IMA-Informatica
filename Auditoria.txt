@@ -150,3 +150,15 @@ Archivos verificados:
 Resultados de verificación:
 - Agregado comentario identificativo en renewStudentEnrollment.
 - Verificada sintaxis JavaScript de backend/academic-service/Code.gs sin errores.
+
+===========================================================
+AUDITORÍA DE CÓDIGO - TAREA-F6-005
+===========================================================
+Fecha: 2025-05-18
+Archivos verificados:
+- backend/accounting-service/Code.gs
+- Pendientes.md
+
+Resultados de verificación:
+- Módulos financieros y de RRHH cuentan con separación por responsabilidades y carpetas aisladas en Google Drive.
+- Estructura jerárquica inicializada sin duplicación mediante getOrCreateFolder.

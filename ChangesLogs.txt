@@ -1546,3 +1546,8 @@ Archivos Modificados:
 
 [FIX-BLOCKING-ISSUE] backend/academic-service/Code.gs:
   - Agregado comentario identificativo explicito [BLOCKING-ISSUE-FIX] sobre renewStudentEnrollment documentando la desestructuracion explicita de userId, nuevoAnoLectivo, nuevoGrado y nuevaSeccion.
+
+[TAREA-F6-005] Crear los microservicios administrativos y financieros con separación por responsabilidades
+- backend/accounting-service/Code.gs:
+  - Verificada inicialización automatica de la estructura jerárquica de Drive (initializeFinancialDriveStructure) para Contabilidad, Recursos Humanos, Facturación, Inventarios y Bancos.
+  - Marcada TAREA-F6-005 como completada [X] en Pendientes.md.

@@ -148,7 +148,7 @@ FASE 6. EXPEDIENTE INSTITUCIONAL Y CICLO DE VIDA DEL ESTUDIANTE
 
 ---
 
-### [TAREA-F6-005] Crear los microservicios administrativos y financieros con separación por responsabilidades
+### [X] [TAREA-F6-005] Crear los microservicios administrativos y financieros con separación por responsabilidades
 - **Origen del Hallazgo:** Reestructuración Arquitectónica / F6-008 (P1 · Reestructuración de Servicios)
 - **Prioridad:** P1
 - **Severidad/Clasificación:** Alta (Microservicios administrativos y financieros)
