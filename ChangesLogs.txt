@@ -1533,3 +1533,7 @@ Archivos Modificados:
 [TAREA-F6-003] Establecer una batería automatizada de regresión para el ciclo de vida del estudiante
 - backend/academic-service/Code.gs:
   - Añadidos casos de prueba TC-06-HISTORICAL_ACADEMIC_RECORD_IMMUTABILITY y TC-07-CONCURRENT_ENROLLMENT_IDEMPOTENCY_CHECK en runStudentLifecycleRegressionSuite para comprobar la inmutabilidad de historiales en periodos pasados e idempotencia de matrícula.
+
+[TAREA-F6-004] Reestructurar la arquitectura en microservicios independientes
+- js/api.js:
+  - Reforzada resolucion dinamica de endpoints en fetchApi evaluando estado operativo del servicio en SERVICE_REGISTRY antes de acudir al fallback SERVICE_URLS.

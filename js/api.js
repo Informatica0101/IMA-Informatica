@@ -102,7 +102,13 @@ function fetchApi(service, action, payload, retryCount, options) {
     var registry = window.SERVICE_REGISTRY || {};
     var urls = window.SERVICE_URLS || (typeof SERVICE_URLS !== 'undefined' ? SERVICE_URLS : {});
 
-    var url = (registry[service] && registry[service].endpointUrl) ? registry[service].endpointUrl : urls[service];
+    // Resolucion dinamica con comprobacion de estado operativo del servicio
+    var url = null;
+    if (registry[service] && registry[service].endpointUrl && registry[service].status !== "INACTIVE") {
+        url = registry[service].endpointUrl;
+    } else {
+        url = urls[service];
+    }
 
     if (!url) {
         console.error('URL o registro para el servicio "' + service + '" no encontrada.');

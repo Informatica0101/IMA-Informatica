@@ -110,7 +110,7 @@ FASE 6. EXPEDIENTE INSTITUCIONAL Y CICLO DE VIDA DEL ESTUDIANTE
 
 ---
 
-### [TAREA-F6-004] Reestructurar la arquitectura en microservicios independientes
+### [X] [TAREA-F6-004] Reestructurar la arquitectura en microservicios independientes
 - **Origen del Hallazgo:** Reestructuración Arquitectónica / F6-007 (P1 · Reestructuración Arquitectónica)
 - **Prioridad:** P1
 - **Severidad/Clasificación:** Alta (Arquitectura y escalabilidad de microservicios)
