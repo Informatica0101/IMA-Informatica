@@ -223,3 +223,15 @@ Archivos verificados:
 Resultados de verificación:
 - Prohibición de ejecuciones de cadenas libres de Apps Script.
 - Ejecución segura con lista blanca de comandos operativos e identificación de correlationId.
+
+===========================================================
+AUDITORÍA DE CÓDIGO - TAREA-F6-011
+===========================================================
+Fecha: 2025-05-18
+Archivos verificados:
+- backend/academic-service/Code.gs
+- Pendientes.md
+
+Resultados de verificación:
+- Validación de sumas de verificación SHA-256 previa a la restauración de respaldos.
+- Exigencia de confirmación explícita RESTORE-CONFIRMED y reporte de impacto comparativo por hoja de cálculo.

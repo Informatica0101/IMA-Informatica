@@ -1576,3 +1576,8 @@ Archivos Modificados:
 - backend/developer-service/Code.gs:
   - Verificada la implementacion del catalogo cerrado de comandos operativos autorizados ALLOWED_OPERATIONAL_COMMANDS y la gestion centralizada de logs en getCentralizedLogs y executeOperationalCommand.
   - Marcada TAREA-F6-010 como completada [X] en Pendientes.md.
+
+[TAREA-F6-011] Implementar respaldos independientes y recuperación por área
+- backend/academic-service/Code.gs:
+  - Verificada la funcion previewBackupRestoreImpact y verifyBackupIntegrity para inspeccionar respaldos, validar sumas SHA-256 y prevenir restauraciones destructivas sin confirmacion explicita.
+  - Marcada TAREA-F6-011 como completada [X] en Pendientes.md.

@@ -326,7 +326,7 @@ FASE 6. EXPEDIENTE INSTITUCIONAL Y CICLO DE VIDA DEL ESTUDIANTE
 
 ---
 
-### [TAREA-F6-011] Implementar respaldos independientes y recuperación por área
+### [X] [TAREA-F6-011] Implementar respaldos independientes y recuperación por área
 - **Origen del Hallazgo:** Reestructuración Arquitectónica / F6-014 (P1 · Continuidad Operativa)
 - **Prioridad:** P1
 - **Severidad/Clasificación:** Alta (Respaldos aislados y restauración por microservicio)
