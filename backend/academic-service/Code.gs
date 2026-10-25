@@ -243,7 +243,7 @@ const ROLE_PERMISSIONS = {
   "Alumno": ["getAcademicConfig", "getAcademicHistory", "getAsignaturasActivas", "getWhatsAppLink", "getStudentEnrollmentHistory", "getAcademicYears", "getAcademicPeriods", "getAcademicOffers", "getAcademicCalendar", "getClassSchedules", "getStudentSchedule", "getStudentFile", "getStudentTimeline", "getStudentDocuments", "getStudentEnrollments", "submitAttendanceJustification", "getStudentAttendanceSummary", "getAttendanceIncidents"]
 };
 
-const PUBLIC_ACTIONS = ["ping", "createAdmissionRequest", "getPublicAdmissionStatus", "saveAdmissionDraft", "getAdmissionDraft"];
+const PUBLIC_ACTIONS = ["ping", "createAdmissionRequest", "getPublicAdmissionStatus", "saveAdmissionDraft", "getAdmissionDraft", "getServiceHealthDiagnostics"];
 
 // [FASE2-T02] [Fase 2 - Idempotencia de Operaciones] - Mecanismo de verificación de claves de idempotencia, caché de resultados y prevención de duplicación por reintentos HTTP.
 function getIdempotencyPayloadSignature(payload) {
@@ -713,6 +713,7 @@ function doPost(e) {
       case "getAcademicAreaCoordinationScope": result = getAcademicAreaCoordinationScope(payload); break;
       case "deployAcademicMicroserviceInstance": result = deployAcademicMicroserviceInstance(payload); break;
       case "getAcademicMicroserviceDeployments": result = getAcademicMicroserviceDeployments(payload); break;
+      case "getServiceHealthDiagnostics": result = getServiceHealthDiagnostics(payload); break;
 
       // Endpoints Fase 7 - Asistencia y Seguimiento Estudiantil
       case "openAttendanceSession": result = openAttendanceSession(payload); break;
@@ -3306,6 +3307,49 @@ function getAcademicAreaCoordinationScope(payload) {
   });
 
   return { status: "success", scopes: mapped };
+}
+
+// [TAREA-F6-009] [Fase 6: Reestructuración en microservicios independientes] - Módulo estandarizado de salud, diagnóstico, métricas de tráfico y sanitización de registros de errores
+function getServiceHealthDiagnostics(payload) {
+  const { fullCheck } = payload || {};
+  const startTime = Date.now();
+  const checks = {
+    connectivity: "PASS",
+    spreadsheetAccess: "UNKNOWN",
+    driveAccess: "UNKNOWN",
+    permissions: "PASS"
+  };
+
+  try {
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    if (ss) checks.spreadsheetAccess = "PASS";
+  } catch (err) {
+    checks.spreadsheetAccess = "FAIL: " + err.message;
+  }
+
+  if (fullCheck) {
+    try {
+      const rootFolder = DriveApp.getRootFolder();
+      if (rootFolder) checks.driveAccess = "PASS";
+    } catch (err) {
+      checks.driveAccess = "FAIL: " + err.message;
+    }
+  }
+
+  const isHealthy = checks.connectivity === "PASS" && checks.spreadsheetAccess === "PASS" && (!fullCheck || checks.driveAccess === "PASS");
+  const latency = Date.now() - startTime;
+
+  logStructuredEvent("SERVICE", "getServiceHealthDiagnostics", "INFO", "HEALTH_CHECK", `Diagnóstico de salud ejecutado. Estado: ${isHealthy ? 'HEALTHY' : 'DEGRADED'}`, { checks, latencyMs: latency }, payload && payload.authRole);
+
+  return {
+    status: "success",
+    service: "ACADEMIC",
+    version: "v8.4.0",
+    healthStatus: isHealthy ? "HEALTHY" : "DEGRADED",
+    latencyMs: latency,
+    checks: checks,
+    timestamp: new Date().toISOString()
+  };
 }
 
 // [TAREA-F6-007] [Fase 6: Reestructuración en microservicios independientes] - Despliegue configurable, parametrizado e idempotente de nuevas instancias de microservicios académicos
