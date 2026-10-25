@@ -32,7 +32,7 @@ FASE 6. EXPEDIENTE INSTITUCIONAL Y CICLO DE VIDA DEL ESTUDIANTE
   - CA-005: La ocultación de los controles no afecta las demás pestañas ni las operaciones autorizadas del expediente.
   - CA-006: La interfaz mantiene su funcionamiento en dispositivos móviles y de escritorio.
   - CA-007: Las pruebas de regresión confirman que la gestión de duplicados continúa funcionando para los usuarios autorizados.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completado
 
 ---
 

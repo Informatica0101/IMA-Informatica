@@ -6434,6 +6434,21 @@ window.reviewOvertimeAction = function(overtimeId, accion) {
         document.getElementById('stfile-direccion').value = data.direccion || '';
         document.getElementById('stfile-observaciones').value = data.observaciones || '';
 
+        // [TAREA-F6-001] [Fase 6: Expediente Institucional] - Restringir controles de expedientes duplicados por rol
+        const dupTabBtn = document.querySelector('.stfile-tab-btn[data-tab="tab-stfile-duplicates"]');
+        const dupTabContent = document.getElementById('tab-stfile-duplicates');
+        const isAuthorizedForDuplicates = currentUser && ['Administrador', 'Director', 'Secretaría', 'Secretaria', 'Subdirector', 'Coordinador', 'Desarrollador'].includes(currentUser.rol);
+        if (dupTabBtn) {
+            if (isAuthorizedForDuplicates) {
+                dupTabBtn.classList.remove('hidden');
+            } else {
+                dupTabBtn.classList.add('hidden');
+            }
+        }
+        if (dupTabContent && !isAuthorizedForDuplicates) {
+            dupTabContent.classList.add('hidden');
+        }
+
         // Reset active tab to personal
         switchStudentFileTab('tab-stfile-personal');
 
