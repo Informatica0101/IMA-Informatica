@@ -173,7 +173,7 @@ const ROLE_PERMISSIONS = {
     "getStudentFile", "updateStudentFile", "getStudentTimeline", "findDuplicateStudents", "mergeStudentFiles",
     "getStudentGuardians", "saveStudentGuardian", "unlinkStudentGuardian", "uploadStudentDocument", "getStudentDocuments", "updateDocumentStatus",
     "createStudentEnrollment", "getStudentEnrollments", "renewStudentEnrollment", "checkEnrollmentCapacity",
-    "changeStudentSection", "recordStudentTransfer", "recordStudentWithdrawal", "processStudentReentry",
+    "changeStudentSection", "recordStudentTransfer", "recordStudentWithdrawal", "processStudentReentry", "processStudentPromotion", "processStudentGraduation", "updateStudentLifecycleStatus", "reconcileStudentLifecycleState",
     "openAttendanceSession", "saveClassAttendance", "getClassAttendance", "saveDailyAttendance", "getDailyAttendance", "submitAttendanceJustification", "reviewAttendanceJustification", "recordEarlyDeparture", "getAttendanceIncidents", "saveAttendanceIncident", "getAttendanceFollowupCases", "saveAttendanceFollowupCase", "addCaseFollowUpNote", "getStudentAttendanceSummary",
     "createTeacherSupervision", "getTeacherSupervisions", "updateSupervisionStatus", "saveSupervisionObservation", "getSupervisionObservation", "saveTeacherImprovementPlan", "getTeacherImprovementPlans", "purgeSecurityCaches"
   ],
@@ -702,6 +702,10 @@ function doPost(e) {
       case "recordStudentTransfer": result = recordStudentTransfer(payload); break;
       case "recordStudentWithdrawal": result = recordStudentWithdrawal(payload); break;
       case "processStudentReentry": result = processStudentReentry(payload); break;
+      case "processStudentPromotion": result = processStudentPromotion(payload); break;
+      case "processStudentGraduation": result = processStudentGraduation(payload); break;
+      case "updateStudentLifecycleStatus": result = updateStudentLifecycleStatus(payload); break;
+      case "reconcileStudentLifecycleState": result = reconcileStudentLifecycleState(payload); break;
 
       // Endpoints Fase 7 - Asistencia y Seguimiento Estudiantil
       case "openAttendanceSession": result = openAttendanceSession(payload); break;
@@ -1051,6 +1055,16 @@ function getPublicAdmissionStatus(payload) {
 
   return { status: "success", found: true, request: sanitizedRequest };
 }
+
+// [TAREA-F6-002] [Fase 6: Expediente Institucional y Ciclo de Vida] - Máquina de estados y matriz de transición del expediente del estudiante
+const ALLOWED_STUDENT_LIFECYCLE_TRANSITIONS = {
+  "Activo": ["Inactivo", "Retirado", "Trasladado", "Graduado", "Suspendido"],
+  "Inactivo": ["Activo", "Retirado", "Trasladado"],
+  "Retirado": ["Activo"],
+  "Trasladado": ["Activo"],
+  "Suspendido": ["Activo", "Retirado"],
+  "Graduado": []
+};
 
 // [TAREA-F5-002] [Fase 5: Admisiones y Matrícula] - Máquina de estados y reglas de transición de solicitudes de admisión
 const ALLOWED_ADMISSION_STATE_TRANSITIONS = {
@@ -6257,51 +6271,87 @@ function getEnrollmentCapacityReport(payload) {
   };
 }
 
+// [TAREA-F6-002] [Fase 6: Expediente Institucional y Ciclo de Vida] - Creación de matrícula con candado de concurrencia, validación de estado institucional y prevención de matrículas duplicadas
 function createStudentEnrollment(payload) {
-  const { userId, alumno, grado, seccion, anolectivo, tipo, becaDescuento, observaciones, forceCapacityOverride } = payload || {};
+  const { userId, alumno, grado, seccion, anolectivo, tipo, becaDescuento, observaciones, forceCapacityOverride, skipLock } = payload || {};
   if (!userId || !grado || !seccion) throw new Error("userId, grado y sección requeridos.");
 
-  const targetAno = anolectivo || "2026";
-  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const lock = !skipLock ? LockService.getScriptLock() : null;
+  if (lock) {
+    const success = lock.tryLock(10000);
+    if (!success) throw new Error("Servicio ocupado. Por favor, reintente la operación de matrícula.");
+  }
 
-  // 1. Validar Cupos
-  if (!forceCapacityOverride) {
-    const cap = checkEnrollmentCapacity({ anolectivo: targetAno, grado, seccion });
-    if (!cap.hayCupo) {
-      return { status: "error", code: "SECTION_FULL", message: `La sección ${seccion} del grado ${grado} ha alcanzado su capacidad máxima (${cap.capacidadMaxima}).` };
+  try {
+    const targetAno = anolectivo || "2026";
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const sUserId = String(userId).trim();
+
+    // 1. Validar integridad de Expediente y Estado Institucional
+    const expSheet = getOrCreateSheet(ss, "ExpedientesEstudiantes");
+    const expData = expSheet.getDataRange().getValues();
+    const expRowIdx = expData.findIndex(r => String(r[1]).trim() === sUserId || String(r[0]).trim() === sUserId);
+
+    if (expRowIdx !== -1) {
+      const estadoExp = String(expData[expRowIdx][7] || "Activo").trim();
+      if (estadoExp === "Fusionado" || estadoExp === "Eliminado") {
+        throw new Error("El expediente del estudiante se encuentra fusionado o inactivo. No se permiten nuevas matrículas.");
+      }
+      if (estadoExp === "Graduado") {
+        throw new Error("El estudiante cuenta con estado 'Graduado'. No se permite registrar nuevas matrículas activas.");
+      }
     }
+
+    // 2. Validar Cupos
+    if (!forceCapacityOverride) {
+      const cap = checkEnrollmentCapacity({ anolectivo: targetAno, grado, seccion, skipLock: true });
+      if (!cap.hayCupo) {
+        return { status: "error", code: "SECTION_FULL", message: `La sección ${seccion} del grado ${grado} ha alcanzado su capacidad máxima (${cap.capacidadMaxima}).` };
+      }
+    }
+
+    // 3. Prevenir doble matrícula activa en el mismo año lectivo
+    const matSheet = getOrCreateSheet(ss, "Matriculas");
+    const matData = matSheet.getDataRange().getValues();
+
+    const dup = matData.find(r => String(r[2]).trim() === sUserId && String(r[6]).trim() === String(targetAno).trim() && (r[8] === "Activa" || r[8] === "Confirmada"));
+    if (dup) {
+      return { status: "success", matriculaId: dup[0], isExisting: true, message: `El estudiante ya cuenta con una matrícula activa para el año ${targetAno}.` };
+    }
+
+    const now = new Date();
+    const matriculaId = "MAT-" + targetAno + "-" + Math.floor(10000 + Math.random() * 90000);
+
+    matSheet.appendRow([
+      matriculaId,
+      now,
+      sUserId,
+      alumno || "Estudiante",
+      grado,
+      seccion,
+      targetAno,
+      tipo || "IngresoNuevo",
+      "Confirmada",
+      becaDescuento || 0,
+      observaciones || ""
+    ]);
+
+    // Actualizar EstadoExpediente a Activo si estaba Inactivo/Retirado/Trasladado/Suspendido
+    if (expRowIdx !== -1) {
+      const curState = String(expData[expRowIdx][7] || "Activo").trim();
+      if (curState !== "Activo") {
+        expSheet.getRange(expRowIdx + 1, 8).setValue("Activo");
+        expSheet.getRange(expRowIdx + 1, 10).setValue(now);
+        recordEntityChangeLog("ExpedienteEstudiante", expData[expRowIdx][0], curState, "Activo", "RE-ACTIVATION_VIA_ENROLLMENT", (payload && payload.userId) || "Sistema", "MAT-" + Date.now());
+      }
+    }
+
+    logStructuredEvent("ACADEMIC", "createStudentEnrollment", "INFO", "ENROLLMENT_CREATED", `Matrícula ${matriculaId} confirmada para ${alumno} en ${grado} ${seccion} (${targetAno})`, { matriculaId, targetAno, grado, seccion }, payload && payload.authRole);
+
+    return { status: "success", matriculaId: matriculaId, message: "Matrícula procesada y confirmada con éxito." };
+  } finally {
+    if (lock) lock.releaseLock();
   }
-
-  // 2. Prevenir doble matrícula activa en el mismo año
-  const matSheet = getOrCreateSheet(ss, "Matriculas");
-  const matData = matSheet.getDataRange().getValues();
-  const sUserId = String(userId).trim();
-
-  const dup = matData.find(r => String(r[2]).trim() === sUserId && String(r[6]).trim() === String(targetAno).trim() && (r[8] === "Activa" || r[8] === "Confirmada"));
-  if (dup) {
-    return { status: "success", matriculaId: dup[0], isExisting: true, message: `El estudiante ya cuenta con una matrícula activa para el año ${targetAno}.` };
-  }
-
-  const now = new Date();
-  const matriculaId = "MAT-" + targetAno + "-" + Math.floor(10000 + Math.random() * 90000);
-
-  matSheet.appendRow([
-    matriculaId,
-    now,
-    sUserId,
-    alumno || "Estudiante",
-    grado,
-    seccion,
-    targetAno,
-    tipo || "IngresoNuevo",
-    "Confirmada",
-    becaDescuento || 0,
-    observaciones || ""
-  ]);
-
-  logStructuredEvent("ACADEMIC", "createStudentEnrollment", "INFO", "ENROLLMENT_CREATED", `Matrícula ${matriculaId} confirmada para ${alumno} en ${grado} ${seccion} (${targetAno})`, { matriculaId, targetAno, grado, seccion }, payload && payload.authRole);
-
-  return { status: "success", matriculaId: matriculaId, message: "Matrícula procesada y confirmada con éxito." };
 }
 
 function getStudentEnrollments(payload) {
@@ -6350,53 +6400,69 @@ function renewStudentEnrollment(payload) {
 // ---------------------------------------------------------------------------
 
 // [REQ-EXP-008] [Fase 1: Registro y Expediente de Estudiantes] - Service backend endpoints (changeStudentSection, recordStudentTransfer, recordStudentWithdrawal, processStudentReentry) para la gestión de estados y movilidad estudiantil.
+// [TAREA-F6-002] [Fase 6: Expediente Institucional y Ciclo de Vida] - Cambio de sección con validación y registro inmutable
 function changeStudentSection(payload) {
   const { expedienteId, userId, anolectivo, nuevaSeccion, motivo } = payload || {};
   if ((!expedienteId && !userId) || !nuevaSeccion) throw new Error("Expediente/userId y nuevaSeccion son requeridos.");
 
-  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
-  const targetAno = anolectivo || "2026";
+  const lock = LockService.getScriptLock();
+  const success = lock.tryLock(10000);
+  if (!success) throw new Error("Servicio ocupado. Por favor, reintente la reubicación de sección.");
 
-  let sUserId = userId ? String(userId).trim() : "";
-  if (!sUserId && expedienteId) {
+  try {
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const targetAno = anolectivo || "2026";
+
+    let sUserId = userId ? String(userId).trim() : "";
+    let sExpId = expedienteId ? String(expedienteId).trim() : "";
     const expSheet = getOrCreateSheet(ss, "ExpedientesEstudiantes");
     const expData = expSheet.getDataRange().getValues();
-    const expRow = expData.find(r => String(r[0]).trim() === String(expedienteId).trim());
-    if (expRow && expRow[1]) sUserId = String(expRow[1]).trim();
+
+    if (!sUserId && sExpId) {
+      const expRow = expData.find(r => String(r[0]).trim() === sExpId);
+      if (expRow && expRow[1]) sUserId = String(expRow[1]).trim();
+    } else if (sUserId && !sExpId) {
+      const expRow = expData.find(r => String(r[1]).trim() === sUserId);
+      if (expRow && expRow[0]) sExpId = String(expRow[0]).trim();
+    }
+
+    const matSheet = getOrCreateSheet(ss, "Matriculas");
+    const matData = matSheet.getDataRange().getValues();
+
+    const idx = matData.findIndex(r => String(r[2]).trim() === sUserId && String(r[6]).trim() === String(targetAno).trim() && (r[8] === "Activa" || r[8] === "Confirmada"));
+    if (idx === -1) throw new Error("Matrícula activa no encontrada para el estudiante en el año seleccionado.");
+
+    const oldGrado = matData[idx][4];
+    const oldSeccion = matData[idx][5];
+
+    // Actualizar Sección en Matrícula
+    matSheet.getRange(idx + 1, 6).setValue(nuevaSeccion);
+
+    // Registrar Movimiento Inmutable
+    const movSheet = getOrCreateSheet(ss, "MovimientosEstudiante");
+    const now = new Date();
+    movSheet.appendRow([
+      "MOV-" + now.getTime(),
+      sExpId || "",
+      matData[idx][0],
+      targetAno,
+      "CambioSeccion",
+      oldGrado,
+      oldSeccion,
+      oldGrado,
+      nuevaSeccion,
+      now,
+      motivo || "Reubicación de Sección",
+      (payload && payload.userId) || "Secretaría",
+      "Confirmado"
+    ]);
+
+    logStructuredEvent("ACADEMIC", "changeStudentSection", "INFO", "SECTION_CHANGED", `Sección cambiada de ${oldSeccion} a ${nuevaSeccion} para matrícula ${matData[idx][0]}`, { sUserId, sExpId, oldSeccion, nuevaSeccion, motivo }, payload && payload.authRole);
+
+    return { status: "success", message: `Estudiante trasladado exitosamente a la Sección ${nuevaSeccion}.` };
+  } finally {
+    lock.releaseLock();
   }
-
-  const matSheet = getOrCreateSheet(ss, "Matriculas");
-  const matData = matSheet.getDataRange().getValues();
-
-  const idx = matData.findIndex(r => String(r[2]).trim() === sUserId && String(r[6]).trim() === String(targetAno).trim() && (r[8] === "Activa" || r[8] === "Confirmada"));
-  if (idx === -1) throw new Error("Matrícula activa no encontrada para el estudiante en el año seleccionado.");
-
-  const oldGrado = matData[idx][4];
-  const oldSeccion = matData[idx][5];
-
-  // Actualizar Sección en Matrícula
-  matSheet.getRange(idx + 1, 6).setValue(nuevaSeccion);
-
-  // Registrar Movimiento Inmutable
-  const movSheet = getOrCreateSheet(ss, "MovimientosEstudiante");
-  const now = new Date();
-  movSheet.appendRow([
-    "MOV-" + now.getTime(),
-    expedienteId || "",
-    matData[idx][0],
-    targetAno,
-    "CambioSeccion",
-    oldGrado,
-    oldSeccion,
-    oldGrado,
-    nuevaSeccion,
-    now,
-    motivo || "Reubicación de Sección",
-    (payload && payload.userId) || "Secretaría",
-    "Confirmado"
-  ]);
-
-  return { status: "success", message: `Estudiante trasladado exitosamente a la Sección ${nuevaSeccion}.` };
 }
 
 // [TAREA-F5-019] [Fase 5: Seguimiento Operativo] - Analítica e indicadores de tramitación de admisiones
@@ -6525,110 +6591,436 @@ function getAdmissionAnalyticsReport(payload) {
   };
 }
 
+// [TAREA-F6-002] [Fase 6: Expediente Institucional y Ciclo de Vida] - Registro de traslado externo con diferenciación de estado de trámite y actualización de expediente
 function recordStudentTransfer(payload) {
-  const { expedienteId, userId, anolectivo, institucionDestino, motivo } = payload || {};
+  const { expedienteId, userId, anolectivo, institucionDestino, motivo, estadoTramite, fechaSalidaEfectiva } = payload || {};
   if (!expedienteId && !userId) throw new Error("expedienteId o userId requerido.");
 
-  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
-  const targetAno = anolectivo || "2026";
+  const lock = LockService.getScriptLock();
+  const success = lock.tryLock(10000);
+  if (!success) throw new Error("Servicio ocupado. Por favor, reintente el registro del traslado.");
 
-  let sUserId = userId ? String(userId).trim() : "";
-  if (!sUserId && expedienteId) {
+  try {
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const targetAno = anolectivo || "2026";
+
+    let sUserId = userId ? String(userId).trim() : "";
+    let sExpId = expedienteId ? String(expedienteId).trim() : "";
     const expSheet = getOrCreateSheet(ss, "ExpedientesEstudiantes");
     const expData = expSheet.getDataRange().getValues();
-    const expRow = expData.find(r => String(r[0]).trim() === String(expedienteId).trim());
-    if (expRow && expRow[1]) sUserId = String(expRow[1]).trim();
+    const expRowIdx = expData.findIndex(r => (sExpId && String(r[0]).trim() === sExpId) || (sUserId && String(r[1]).trim() === sUserId));
+
+    if (expRowIdx !== -1) {
+      if (!sExpId) sExpId = String(expData[expRowIdx][0]).trim();
+      if (!sUserId) sUserId = String(expData[expRowIdx][1]).trim();
+    }
+
+    const matSheet = getOrCreateSheet(ss, "Matriculas");
+    const matData = matSheet.getDataRange().getValues();
+
+    const idx = matData.findIndex(r => String(r[2]).trim() === sUserId && String(r[6]).trim() === String(targetAno).trim() && (r[8] === "Activa" || r[8] === "Confirmada"));
+    if (idx !== -1) {
+      matSheet.getRange(idx + 1, 9).setValue("Trasladado");
+    }
+
+    const now = new Date();
+    const fechaEfectiva = fechaSalidaEfectiva ? new Date(fechaSalidaEfectiva) : now;
+
+    // Actualizar EstadoExpediente a 'Trasladado'
+    if (expRowIdx !== -1) {
+      const curState = String(expData[expRowIdx][7] || "Activo").trim();
+      expSheet.getRange(expRowIdx + 1, 8).setValue("Trasladado");
+      expSheet.getRange(expRowIdx + 1, 10).setValue(now);
+      expSheet.getRange(expRowIdx + 1, 11).setValue(`Traslado externo a: ${institucionDestino || 'Otra Institución'}. Motivo: ${motivo || 'N/A'}`);
+      recordEntityChangeLog("ExpedienteEstudiante", sExpId, curState, "Trasladado", "STUDENT_TRANSFER", (payload && payload.userId) || "Secretaría", "MOV-" + Date.now());
+    }
+
+    const movSheet = getOrCreateSheet(ss, "MovimientosEstudiante");
+    movSheet.appendRow([
+      "MOV-" + now.getTime(),
+      sExpId || "",
+      idx !== -1 ? matData[idx][0] : "",
+      targetAno,
+      "TrasladoExterno",
+      idx !== -1 ? matData[idx][4] : "",
+      idx !== -1 ? matData[idx][5] : "",
+      "Externo",
+      institucionDestino || "Otra Institución",
+      fechaEfectiva,
+      motivo || "Traslado Voluntario",
+      (payload && payload.userId) || "Secretaría",
+      estadoTramite || "Completado"
+    ]);
+
+    logStructuredEvent("ACADEMIC", "recordStudentTransfer", "INFO", "STUDENT_TRANSFERRED", `Traslado registrado para ${sExpId} a ${institucionDestino}`, { sExpId, sUserId, institucionDestino, motivo, estadoTramite: estadoTramite || "Completado" }, payload && payload.authRole);
+
+    return { status: "success", message: "Traslado externo registrado exitosamente. Historial académico conservado inalterado." };
+  } finally {
+    lock.releaseLock();
   }
-
-  const matSheet = getOrCreateSheet(ss, "Matriculas");
-  const matData = matSheet.getDataRange().getValues();
-
-  const idx = matData.findIndex(r => String(r[2]).trim() === sUserId && String(r[6]).trim() === String(targetAno).trim());
-  if (idx !== -1) {
-    matSheet.getRange(idx + 1, 9).setValue("Trasladado");
-  }
-
-  const movSheet = getOrCreateSheet(ss, "MovimientosEstudiante");
-  const now = new Date();
-  movSheet.appendRow([
-    "MOV-" + now.getTime(),
-    expedienteId || "",
-    idx !== -1 ? matData[idx][0] : "",
-    targetAno,
-    "TrasladoExterno",
-    idx !== -1 ? matData[idx][4] : "",
-    idx !== -1 ? matData[idx][5] : "",
-    "Externo",
-    institucionDestino || "Otra Institución",
-    now,
-    motivo || "Traslado Voluntario",
-    (payload && payload.userId) || "Secretaría",
-    "Confirmado"
-  ]);
-
-  return { status: "success", message: "Traslado externo registrado exitosamente. Historial académico conservado." };
 }
 
+// [TAREA-F6-002] [Fase 6: Expediente Institucional y Ciclo de Vida] - Registro de retiro con diferenciación temporal/definitiva y conservación de historial
 function recordStudentWithdrawal(payload) {
-  const { expedienteId, userId, anolectivo, motivo, tipoRetiro } = payload || {};
+  const { expedienteId, userId, anolectivo, motivo, tipoRetiro, fechaRetiroEfectiva } = payload || {};
   if (!expedienteId && !userId) throw new Error("expedienteId o userId requerido.");
 
-  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
-  const targetAno = anolectivo || "2026";
+  const lock = LockService.getScriptLock();
+  const success = lock.tryLock(10000);
+  if (!success) throw new Error("Servicio ocupado. Por favor, reintente el registro de retiro.");
 
-  let sUserId = userId ? String(userId).trim() : "";
-  if (!sUserId && expedienteId) {
+  try {
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const targetAno = anolectivo || "2026";
+
+    let sUserId = userId ? String(userId).trim() : "";
+    let sExpId = expedienteId ? String(expedienteId).trim() : "";
     const expSheet = getOrCreateSheet(ss, "ExpedientesEstudiantes");
     const expData = expSheet.getDataRange().getValues();
-    const expRow = expData.find(r => String(r[0]).trim() === String(expedienteId).trim());
-    if (expRow && expRow[1]) sUserId = String(expRow[1]).trim();
+    const expRowIdx = expData.findIndex(r => (sExpId && String(r[0]).trim() === sExpId) || (sUserId && String(r[1]).trim() === sUserId));
+
+    if (expRowIdx !== -1) {
+      if (!sExpId) sExpId = String(expData[expRowIdx][0]).trim();
+      if (!sUserId) sUserId = String(expData[expRowIdx][1]).trim();
+    }
+
+    const matSheet = getOrCreateSheet(ss, "Matriculas");
+    const matData = matSheet.getDataRange().getValues();
+
+    const idx = matData.findIndex(r => String(r[2]).trim() === sUserId && String(r[6]).trim() === String(targetAno).trim() && (r[8] === "Activa" || r[8] === "Confirmada"));
+    if (idx !== -1) {
+      matSheet.getRange(idx + 1, 9).setValue("Retirada");
+    }
+
+    const now = new Date();
+    const fechaEfectiva = fechaRetiroEfectiva ? new Date(fechaRetiroEfectiva) : now;
+
+    // Actualizar EstadoExpediente a 'Retirado'
+    if (expRowIdx !== -1) {
+      const curState = String(expData[expRowIdx][7] || "Activo").trim();
+      expSheet.getRange(expRowIdx + 1, 8).setValue("Retirado");
+      expSheet.getRange(expRowIdx + 1, 10).setValue(now);
+      expSheet.getRange(expRowIdx + 1, 11).setValue(`Retiro (${tipoRetiro || 'Definitivo'}). Motivo: ${motivo || 'N/A'}`);
+      recordEntityChangeLog("ExpedienteEstudiante", sExpId, curState, "Retirado", "STUDENT_WITHDRAWAL", (payload && payload.userId) || "Secretaría", "MOV-" + Date.now());
+    }
+
+    const movSheet = getOrCreateSheet(ss, "MovimientosEstudiante");
+    movSheet.appendRow([
+      "MOV-" + now.getTime(),
+      sExpId || "",
+      idx !== -1 ? matData[idx][0] : "",
+      targetAno,
+      tipoRetiro || "RetiroDefinitivo",
+      idx !== -1 ? matData[idx][4] : "",
+      idx !== -1 ? matData[idx][5] : "",
+      "Retirado",
+      "N/A",
+      fechaEfectiva,
+      motivo || "Retiro Solicitado por Familia",
+      (payload && payload.userId) || "Secretaría",
+      "Confirmado"
+    ]);
+
+    logStructuredEvent("ACADEMIC", "recordStudentWithdrawal", "INFO", "STUDENT_WITHDRAWN", `Retiro (${tipoRetiro || 'Definitivo'}) registrado para ${sExpId}`, { sExpId, sUserId, tipoRetiro: tipoRetiro || "RetiroDefinitivo", motivo }, payload && payload.authRole);
+
+    return { status: "success", message: "Retiro de estudiante registrado exitosamente. Expediente histórico conservado intacto para consulta." };
+  } finally {
+    lock.releaseLock();
   }
-
-  const matSheet = getOrCreateSheet(ss, "Matriculas");
-  const matData = matSheet.getDataRange().getValues();
-
-  const idx = matData.findIndex(r => String(r[2]).trim() === sUserId && String(r[6]).trim() === String(targetAno).trim());
-  if (idx !== -1) {
-    matSheet.getRange(idx + 1, 9).setValue("Retirada");
-  }
-
-  const movSheet = getOrCreateSheet(ss, "MovimientosEstudiante");
-  const now = new Date();
-  movSheet.appendRow([
-    "MOV-" + now.getTime(),
-    expedienteId || "",
-    idx !== -1 ? matData[idx][0] : "",
-    targetAno,
-    tipoRetiro || "RetiroDefinitivo",
-    idx !== -1 ? matData[idx][4] : "",
-    idx !== -1 ? matData[idx][5] : "",
-    "Retirado",
-    "N/A",
-    now,
-    motivo || "Retiro Solicitado por Familia",
-    (payload && payload.userId) || "Secretaría",
-    "Confirmado"
-  ]);
-
-  return { status: "success", message: "Retiro de estudiante registrado. Expediente histórico conservado para consulta." };
 }
 
+// [TAREA-F6-002] [Fase 6: Expediente Institucional y Ciclo de Vida] - Reincorporación/Reingreso reutilizando expediente existente
 function processStudentReentry(payload) {
   const { expedienteId, userId, nuevoAnoLectivo, grado, seccion, motivo } = payload || {};
-  if (!userId || !nuevoAnoLectivo || !grado) throw new Error("userId, nuevoAnoLectivo y grado son requeridos.");
+  if ((!userId && !expedienteId) || !nuevoAnoLectivo || !grado) throw new Error("userId/expedienteId, nuevoAnoLectivo y grado son requeridos.");
 
-  const result = createStudentEnrollment({
-    userId: userId,
-    anolectivo: nuevoAnoLectivo,
-    grado: grado,
-    seccion: seccion || "A",
-    tipo: "Reingreso",
-    observaciones: motivo || "Reingreso tras período fuera del centro",
-    authRole: payload && payload.authRole,
-    userId: payload && payload.userId
+  const lock = LockService.getScriptLock();
+  const success = lock.tryLock(10000);
+  if (!success) throw new Error("Servicio ocupado. Por favor, reintente la reincorporación.");
+
+  try {
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    let sUserId = userId ? String(userId).trim() : "";
+    let sExpId = expedienteId ? String(expedienteId).trim() : "";
+
+    const expSheet = getOrCreateSheet(ss, "ExpedientesEstudiantes");
+    const expData = expSheet.getDataRange().getValues();
+    const expRowIdx = expData.findIndex(r => (sExpId && String(r[0]).trim() === sExpId) || (sUserId && String(r[1]).trim() === sUserId));
+
+    if (expRowIdx !== -1) {
+      if (!sExpId) sExpId = String(expData[expRowIdx][0]).trim();
+      if (!sUserId) sUserId = String(expData[expRowIdx][1]).trim();
+      const curState = String(expData[expRowIdx][7] || "Retirado").trim();
+      expSheet.getRange(expRowIdx + 1, 8).setValue("Activo");
+      expSheet.getRange(expRowIdx + 1, 10).setValue(new Date());
+      recordEntityChangeLog("ExpedienteEstudiante", sExpId, curState, "Activo", "STUDENT_REENTRY", (payload && payload.userId) || "Secretaría", "MOV-" + Date.now());
+    }
+
+    const result = createStudentEnrollment({
+      userId: sUserId,
+      anolectivo: nuevoAnoLectivo,
+      grado: grado,
+      seccion: seccion || "A",
+      tipo: "Reingreso",
+      observaciones: motivo || "Reingreso tras período fuera del centro",
+      skipLock: true,
+      authRole: payload && payload.authRole,
+      userId: payload && payload.userId
+    });
+
+    const movSheet = getOrCreateSheet(ss, "MovimientosEstudiante");
+    const now = new Date();
+    movSheet.appendRow([
+      "MOV-" + now.getTime(),
+      sExpId || "",
+      result.matriculaId || "",
+      nuevoAnoLectivo,
+      "Reingreso",
+      "Previo",
+      "N/A",
+      grado,
+      seccion || "A",
+      now,
+      motivo || "Reincorporación institucional",
+      (payload && payload.userId) || "Secretaría",
+      "Confirmado"
+    ]);
+
+    logStructuredEvent("ACADEMIC", "processStudentReentry", "INFO", "STUDENT_REENTERED", `Reingreso registrado para ${sExpId} en año ${nuevoAnoLectivo}`, { sExpId, sUserId, nuevoAnoLectivo, grado, seccion }, payload && payload.authRole);
+
+    return { status: "success", matriculaId: result.matriculaId, message: "Reingreso de estudiante procesado con éxito sobre expediente existente." };
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+// [TAREA-F6-002] [Fase 6: Expediente Institucional y Ciclo de Vida] - Promoción o Repitencia basada en resultados de periodo cerrado
+function processStudentPromotion(payload) {
+  const { expedienteId, userId, anoLectivoCerrado, anoLectivoNuevo, nuevoGrado, nuevaSeccion, decisionAdministrativa, motivo } = payload || {};
+  if ((!userId && !expedienteId) || !anoLectivoNuevo || !nuevoGrado) throw new Error("userId/expedienteId, anoLectivoNuevo y nuevoGrado son requeridos.");
+
+  const lock = LockService.getScriptLock();
+  const success = lock.tryLock(10000);
+  if (!success) throw new Error("Servicio ocupado. Por favor, reintente el procesamiento de promoción.");
+
+  try {
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    let sUserId = userId ? String(userId).trim() : "";
+    let sExpId = expedienteId ? String(expedienteId).trim() : "";
+
+    const expSheet = getOrCreateSheet(ss, "ExpedientesEstudiantes");
+    const expData = expSheet.getDataRange().getValues();
+    const expRowIdx = expData.findIndex(r => (sExpId && String(r[0]).trim() === sExpId) || (sUserId && String(r[1]).trim() === sUserId));
+
+    if (expRowIdx !== -1) {
+      if (!sExpId) sExpId = String(expData[expRowIdx][0]).trim();
+      if (!sUserId) sUserId = String(expData[expRowIdx][1]).trim();
+    }
+
+    const decision = decisionAdministrativa || "Promocionado";
+
+    const result = createStudentEnrollment({
+      userId: sUserId,
+      anolectivo: anoLectivoNuevo,
+      grado: nuevoGrado,
+      seccion: nuevaSeccion || "A",
+      tipo: decision === "Promocionado" ? "Promocion" : "Repitencia",
+      observaciones: motivo || `Decisión académica: ${decision}`,
+      skipLock: true,
+      authRole: payload && payload.authRole,
+      userId: payload && payload.userId
+    });
+
+    const movSheet = getOrCreateSheet(ss, "MovimientosEstudiante");
+    const now = new Date();
+    movSheet.appendRow([
+      "MOV-" + now.getTime(),
+      sExpId || "",
+      result.matriculaId || "",
+      anoLectivoNuevo,
+      decision === "Promocionado" ? "PromocionGrado" : "RepitenciaGrado",
+      "Anterior",
+      "N/A",
+      nuevoGrado,
+      nuevaSeccion || "A",
+      now,
+      motivo || `Promoción/Repitencia: ${decision}`,
+      (payload && payload.userId) || "Secretaría",
+      "Confirmado"
+    ]);
+
+    logStructuredEvent("ACADEMIC", "processStudentPromotion", "INFO", "PROMOTION_PROCESSED", `Promoción (${decision}) procesada para ${sExpId} a ${nuevoGrado}`, { sExpId, sUserId, decision, nuevoGrado, anoLectivoNuevo }, payload && payload.authRole);
+
+    return { status: "success", matriculaId: result.matriculaId, message: `Decisión de ${decision} registrada exitosamente.` };
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+// [TAREA-F6-002] [Fase 6: Expediente Institucional y Ciclo de Vida] - Graduación de estudiante y cierre inmutable de matrículas activas
+function processStudentGraduation(payload) {
+  const { expedienteId, userId, anolectivo, programaGraduacion, fechaGraduacion, observaciones } = payload || {};
+  if (!expedienteId && !userId) throw new Error("expedienteId o userId es requerido.");
+
+  const lock = LockService.getScriptLock();
+  const success = lock.tryLock(10000);
+  if (!success) throw new Error("Servicio ocupado. Por favor, reintente el registro de graduación.");
+
+  try {
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const targetAno = anolectivo || "2026";
+
+    let sUserId = userId ? String(userId).trim() : "";
+    let sExpId = expedienteId ? String(expedienteId).trim() : "";
+    const expSheet = getOrCreateSheet(ss, "ExpedientesEstudiantes");
+    const expData = expSheet.getDataRange().getValues();
+    const expRowIdx = expData.findIndex(r => (sExpId && String(r[0]).trim() === sExpId) || (sUserId && String(r[1]).trim() === sUserId));
+
+    if (expRowIdx === -1) throw new Error("Expediente de estudiante no encontrado.");
+    sExpId = String(expData[expRowIdx][0]).trim();
+    sUserId = String(expData[expRowIdx][1]).trim();
+
+    const curState = String(expData[expRowIdx][7] || "Activo").trim();
+    if (curState === "Graduado") {
+      return { status: "success", message: "El estudiante ya contaba con la condición de Graduado." };
+    }
+
+    // Actualizar matrículas activas a 'Graduada'
+    const matSheet = getOrCreateSheet(ss, "Matriculas");
+    const matData = matSheet.getDataRange().getValues();
+    for (let i = 1; i < matData.length; i++) {
+      if (String(matData[i][2]).trim() === sUserId && (matData[i][8] === "Activa" || matData[i][8] === "Confirmada")) {
+        matSheet.getRange(i + 1, 9).setValue("Graduada");
+      }
+    }
+
+    const now = new Date();
+    const fechaGrad = fechaGraduacion ? new Date(fechaGraduacion) : now;
+
+    // Actualizar EstadoExpediente a 'Graduado'
+    expSheet.getRange(expRowIdx + 1, 8).setValue("Graduado");
+    expSheet.getRange(expRowIdx + 1, 10).setValue(now);
+    expSheet.getRange(expRowIdx + 1, 11).setValue(`Graduación (${programaGraduacion || 'Educación Secundaria'}). Observaciones: ${observaciones || 'Requisitos concluidos'}`);
+
+    recordEntityChangeLog("ExpedienteEstudiante", sExpId, curState, "Graduado", "STUDENT_GRADUATION", (payload && payload.userId) || "Secretaría", "MOV-" + Date.now());
+
+    const movSheet = getOrCreateSheet(ss, "MovimientosEstudiante");
+    movSheet.appendRow([
+      "MOV-" + now.getTime(),
+      sExpId,
+      "N/A",
+      targetAno,
+      "Graduacion",
+      "UltimoGrado",
+      "N/A",
+      "Egresado",
+      "N/A",
+      fechaGrad,
+      observaciones || `Graduación del Programa: ${programaGraduacion || 'General'}`,
+      (payload && payload.userId) || "Secretaría",
+      "Confirmado"
+    ]);
+
+    logStructuredEvent("ACADEMIC", "processStudentGraduation", "INFO", "STUDENT_GRADUATED", `Graduación registrada para ${sExpId}`, { sExpId, sUserId, programaGraduacion, targetAno }, payload && payload.authRole);
+
+    return { status: "success", message: "Graduación registrada exitosamente. Expediente institucional consolidado como Egresado Graduado." };
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+// [TAREA-F6-002] [Fase 6: Expediente Institucional y Ciclo de Vida] - Actualización directa del estado institucional con validación de matriz de transición
+function updateStudentLifecycleStatus(payload) {
+  const { expedienteId, nuevoEstado, motivo } = payload || {};
+  if (!expedienteId || !nuevoEstado) throw new Error("expedienteId y nuevoEstado son requeridos.");
+  if (!motivo || String(motivo).trim().length < 5) throw new Error("Debe proporcionar una justificación válida de al menos 5 caracteres.");
+
+  const lock = LockService.getScriptLock();
+  const success = lock.tryLock(10000);
+  if (!success) throw new Error("Servicio ocupado. Por favor, reintente el cambio de estado.");
+
+  try {
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const sheet = getOrCreateSheet(ss, "ExpedientesEstudiantes");
+    const data = sheet.getDataRange().getValues();
+
+    const idx = data.findIndex(r => String(r[0]).trim() === String(expedienteId).trim());
+    if (idx === -1) throw new Error("Expediente de estudiante no encontrado.");
+
+    const estadoActual = String(data[idx][7] || "Activo").trim();
+    if (estadoActual === nuevoEstado) {
+      return { status: "success", message: `El expediente ya se encuentra en estado '${nuevoEstado}'.` };
+    }
+
+    const allowed = ALLOWED_STUDENT_LIFECYCLE_TRANSITIONS[estadoActual] || [];
+    if (!allowed.includes(nuevoEstado)) {
+      throw new Error(`Transición no permitida de '${estadoActual}' a '${nuevoEstado}'. Transiciones válidas: [${allowed.join(", ")}].`);
+    }
+
+    const now = new Date();
+    sheet.getRange(idx + 1, 8).setValue(nuevoEstado);
+    sheet.getRange(idx + 1, 10).setValue(now);
+    sheet.getRange(idx + 1, 11).setValue(`Cambio de estado manual a ${nuevoEstado}. Justificación: ${motivo}`);
+
+    recordEntityChangeLog("ExpedienteEstudiante", expedienteId, estadoActual, nuevoEstado, "STATUS_CHANGE", (payload && payload.userId) || "Administración", "LIFECYCLE-" + Date.now());
+    logStructuredEvent("ACADEMIC", "updateStudentLifecycleStatus", "INFO", "LIFECYCLE_STATUS_UPDATED", `Estado de expediente ${expedienteId} actualizado de ${estadoActual} a ${nuevoEstado}`, { expedienteId, estadoActual, nuevoEstado, motivo }, payload && payload.authRole);
+
+    return { status: "success", message: `Estado del expediente actualizado a '${nuevoEstado}'.` };
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+// [TAREA-F6-002] [Fase 6: Expediente Institucional y Ciclo de Vida] - Auditoría y conciliación de consistencia de estados entre Expedientes y Matrículas
+function reconcileStudentLifecycleState(payload) {
+  const { autoFix } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+
+  const expSheet = getOrCreateSheet(ss, "ExpedientesEstudiantes");
+  const expRows = expSheet.getDataRange().getValues().slice(1);
+  const matSheet = getOrCreateSheet(ss, "Matriculas");
+  const matRows = matSheet.getDataRange().getValues();
+
+  const inconsistencies = [];
+  let fixedCount = 0;
+
+  expRows.forEach((exp, i) => {
+    const expId = exp[0];
+    const userId = exp[1];
+    const estadoExp = String(exp[7] || "Activo").trim();
+
+    if (estadoExp === "Graduado" || estadoExp === "Retirado" || estadoExp === "Trasladado") {
+      // Verificar si existen matrículas 'Activa' o 'Confirmada'
+      matRows.slice(1).forEach((m, mIdx) => {
+        const mUserId = m[2];
+        const mEstado = m[8];
+        if (String(mUserId).trim() === String(userId).trim() && (mEstado === "Activa" || mEstado === "Confirmada")) {
+          const targetState = estadoExp === "Graduado" ? "Graduada" : (estadoExp === "Retirado" ? "Retirada" : "Trasladada");
+          inconsistencies.push({
+            expedienteId: expId,
+            userId: userId,
+            estadoExpediente: estadoExp,
+            matriculaId: m[0],
+            estadoMatriculaActual: mEstado,
+            estadoMatriculaSugerido: targetState
+          });
+
+          if (autoFix) {
+            matSheet.getRange(mIdx + 2, 9).setValue(targetState);
+            fixedCount++;
+          }
+        }
+      });
+    }
   });
 
-  return { status: "success", matriculaId: result.matriculaId, message: "Reingreso de estudiante procesado con éxito sobre expediente existente." };
+  return {
+    status: "success",
+    totalExpedientesAuditados: expRows.length,
+    inconsistenciasDetectadas: inconsistencies.length,
+    inconsistenciasCorregidas: fixedCount,
+    detallesInconsistencias: inconsistencies
+  };
 }
 
 // ---------------------------------------------------------------------------

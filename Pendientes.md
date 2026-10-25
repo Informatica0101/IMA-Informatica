@@ -73,7 +73,7 @@ FASE 6. EXPEDIENTE INSTITUCIONAL Y CICLO DE VIDA DEL ESTUDIANTE
   - CA-013: Una graduación correctamente registrada conserva el acceso autorizado al expediente histórico.
   - CA-014: Las operaciones retroactivas pueden distinguirse de las realizadas en tiempo real.
   - CA-015: Los registros relacionados mantienen una situación coherente después de un fallo simulado y su recuperación.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completado
 
 ---
 
