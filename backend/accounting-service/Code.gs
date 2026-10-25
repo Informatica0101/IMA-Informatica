@@ -106,10 +106,11 @@ function getParentDriveFolder() {
   return DriveApp.getRootFolder();
 }
 
-function getOrCreateFolderNews(parent, name) {
+function getOrCreateFolder(parent, name) {
   const f = parent.getFoldersByName(name);
   return f.hasNext() ? f.next() : parent.createFolder(name);
 }
+const getOrCreateFolderNews = getOrCreateFolder;
 
 function getOrCreateSheet(ss, name) {
   let sheet = ss.getSheetByName(name);
@@ -6526,21 +6527,21 @@ function getAssetAssignments(payload) {
 function initializeFinancialDriveStructure(payload) {
   try {
     const parent = getParentDriveFolder();
-    const adminFolder = getOrCreateFolderNews(parent, "Administracion_Financiera");
+    const adminFolder = getOrCreateFolder(parent, "Administracion_Financiera");
 
     const foldersMap = {
-      Contabilidad: getOrCreateFolderNews(adminFolder, "Contabilidad"),
-      Recursos_Humanos: getOrCreateFolderNews(adminFolder, "Recursos_Humanos"),
-      Facturacion_Recibos: getOrCreateFolderNews(adminFolder, "Facturacion_Recibos"),
-      Inventarios_Tienda: getOrCreateFolderNews(adminFolder, "Inventarios_Tienda"),
-      Bancos_Caja: getOrCreateFolderNews(adminFolder, "Bancos_Caja")
+      Contabilidad: getOrCreateFolder(adminFolder, "Contabilidad"),
+      Recursos_Humanos: getOrCreateFolder(adminFolder, "Recursos_Humanos"),
+      Facturacion_Recibos: getOrCreateFolder(adminFolder, "Facturacion_Recibos"),
+      Inventarios_Tienda: getOrCreateFolder(adminFolder, "Inventarios_Tienda"),
+      Bancos_Caja: getOrCreateFolder(adminFolder, "Bancos_Caja")
     };
 
     const subFolders = {
-      Contabilidad_Asientos: getOrCreateFolderNews(foldersMap.Contabilidad, "Asientos_y_Estados"),
-      RRHH_Planillas: getOrCreateFolderNews(foldersMap.Recursos_Humanos, "Planillas_y_Contratos"),
-      RRHH_Evaluaciones: getOrCreateFolderNews(foldersMap.Recursos_Humanos, "Evaluaciones_Desempeno"),
-      Facturacion_Comprobantes: getOrCreateFolderNews(foldersMap.Facturacion_Recibos, "Comprobantes_Ventanilla")
+      Contabilidad_Asientos: getOrCreateFolder(foldersMap.Contabilidad, "Asientos_y_Estados"),
+      RRHH_Planillas: getOrCreateFolder(foldersMap.Recursos_Humanos, "Planillas_y_Contratos"),
+      RRHH_Evaluaciones: getOrCreateFolder(foldersMap.Recursos_Humanos, "Evaluaciones_Desempeno"),
+      Facturacion_Comprobantes: getOrCreateFolder(foldersMap.Facturacion_Recibos, "Comprobantes_Ventanilla")
     };
 
     logStructuredEvent("ACCOUNTING", "initializeFinancialDriveStructure", "INFO", "DRIVE_STRUCTURE_INITIALIZED", "Estructura jerárquica de carpetas creada o verificada.", { parentId: parent.getId(), adminFolderId: adminFolder.getId() }, payload && payload.authRole);

@@ -207,7 +207,7 @@ FASE 6. EXPEDIENTE INSTITUCIONAL Y CICLO DE VIDA DEL ESTUDIANTE
   - CA-039: Cada instancia gestiona sus tareas, exámenes y entregas con aislamiento total de datos.
   - CA-040: Los estudiantes solo consultan sus asignaturas matriculadas y los docentes solo sus grupos autorizados.
   - CA-041: Un coordinador supervisa sus asignaturas asignadas sin obtener privilegios en áreas ajenas ni duplicar cuenta.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completado
 
 ---
 

@@ -173,7 +173,7 @@ const ROLE_PERMISSIONS = {
     "getStudentFile", "updateStudentFile", "getStudentTimeline", "findDuplicateStudents", "mergeStudentFiles",
     "getStudentGuardians", "saveStudentGuardian", "unlinkStudentGuardian", "uploadStudentDocument", "getStudentDocuments", "updateDocumentStatus",
     "createStudentEnrollment", "getStudentEnrollments", "renewStudentEnrollment", "checkEnrollmentCapacity",
-    "changeStudentSection", "recordStudentTransfer", "recordStudentWithdrawal", "processStudentReentry", "processStudentPromotion", "processStudentGraduation", "updateStudentLifecycleStatus", "reconcileStudentLifecycleState", "runStudentLifecycleRegressionSuite",
+    "changeStudentSection", "recordStudentTransfer", "recordStudentWithdrawal", "processStudentReentry", "processStudentPromotion", "processStudentGraduation", "updateStudentLifecycleStatus", "reconcileStudentLifecycleState", "runStudentLifecycleRegressionSuite", "getAcademicAreaTemplateCatalog", "getAcademicAreaCoordinationScope",
     "openAttendanceSession", "saveClassAttendance", "getClassAttendance", "saveDailyAttendance", "getDailyAttendance", "submitAttendanceJustification", "reviewAttendanceJustification", "recordEarlyDeparture", "getAttendanceIncidents", "saveAttendanceIncident", "getAttendanceFollowupCases", "saveAttendanceFollowupCase", "addCaseFollowUpNote", "getStudentAttendanceSummary",
     "createTeacherSupervision", "getTeacherSupervisions", "updateSupervisionStatus", "saveSupervisionObservation", "getSupervisionObservation", "saveTeacherImprovementPlan", "getTeacherImprovementPlans", "purgeSecurityCaches"
   ],
@@ -212,6 +212,7 @@ const ROLE_PERMISSIONS = {
     "changeStudentSection", "recordStudentTransfer", "recordStudentWithdrawal", "processStudentReentry", "processStudentPromotion", "processStudentGraduation", "updateStudentLifecycleStatus", "reconcileStudentLifecycleState", "runStudentLifecycleRegressionSuite",
     "openAttendanceSession", "saveClassAttendance", "getClassAttendance", "saveDailyAttendance", "getDailyAttendance", "submitAttendanceJustification", "reviewAttendanceJustification", "recordEarlyDeparture", "getAttendanceIncidents", "saveAttendanceIncident", "getAttendanceFollowupCases", "saveAttendanceFollowupCase", "addCaseFollowUpNote", "getStudentAttendanceSummary"
   ],
+  "Coordinador": ["getAcademicConfig", "getAcademicHistory", "getAsignaturasActivas", "getAcademicYears", "getAcademicOffers", "getSubjectCatalog", "getStudyPlans", "getTeacherAssignments", "getClassSchedules", "getStudentFile", "getAcademicAreaTemplateCatalog", "getAcademicAreaCoordinationScope"],
   "Contador": ["getAcademicConfig", "registerStudentEnrollment", "getStudentEnrollmentHistory", "getAcademicYears", "getAcademicOffers", "getStudentFile", "getStudentEnrollments"],
   "Consejeros": ["getAcademicConfig", "getAcademicYears", "getAcademicCalendar", "getClassSchedules", "getStudentSchedule", "getStudentFile", "getStudentTimeline", "getStudentGuardians", "getAttendanceIncidents", "saveAttendanceIncident", "getAttendanceFollowupCases", "saveAttendanceFollowupCase", "addCaseFollowUpNote", "getStudentAttendanceSummary"],
   "Padre": [
@@ -707,6 +708,8 @@ function doPost(e) {
       case "updateStudentLifecycleStatus": result = updateStudentLifecycleStatus(payload); break;
       case "reconcileStudentLifecycleState": result = reconcileStudentLifecycleState(payload); break;
       case "runStudentLifecycleRegressionSuite": result = runStudentLifecycleRegressionSuite(payload); break;
+      case "getAcademicAreaTemplateCatalog": result = getAcademicAreaTemplateCatalog(payload); break;
+      case "getAcademicAreaCoordinationScope": result = getAcademicAreaCoordinationScope(payload); break;
 
       // Endpoints Fase 7 - Asistencia y Seguimiento Estudiantil
       case "openAttendanceSession": result = openAttendanceSession(payload); break;
@@ -3229,6 +3232,77 @@ function toggleCurricularAreaStatus(payload) {
     areaId,
     nuevoEstado: estadoLimpio
   };
+}
+
+// [TAREA-F6-006] [Fase 6: Reestructuración en microservicios independientes] - Plantilla técnica parametrizada de microservicio académico reutilizable para múltiples áreas
+function getAcademicAreaTemplateCatalog(payload) {
+  const defaultAreas = [
+    { areaId: "AREA-COMUNICATION", name: "Comunicaciones y Lenguaje", code: "LENG", departmentId: "DEPT-HUMANIDADES", state: "Activo" },
+    { areaId: "AREA-ENGLISH", name: "Idioma Inglés", code: "ING", departmentId: "DEPT-IDIOMAS", state: "Activo" },
+    { areaId: "AREA-SOCIALS", name: "Ciencias Sociales y Filosofía", code: "SOC", departmentId: "DEPT-HUMANIDADES", state: "Activo" },
+    { areaId: "AREA-SCIENCE", name: "Ciencias Naturales y Exactas", code: "CNAT", departmentId: "DEPT-CIENCIAS", state: "Activo" },
+    { areaId: "AREA-MATH", name: "Matemáticas", code: "MAT", departmentId: "DEPT-MATEMATICAS", state: "Activo" },
+    { areaId: "AREA-IT", name: "Informática y Tecnología", code: "INFO", departmentId: "DEPT-INFORMATICA", state: "Activo" },
+    { areaId: "AREA-FINANCE", name: "Contaduría y Finanzas", code: "FIN", departmentId: "DEPT-FINANZAS", state: "Activo" }
+  ];
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "AreasCurricularesExtensiones");
+  if (sheet.getLastRow() === 0) {
+    sheet.appendRow(["AreaID", "NombreArea", "Codigo", "ServiceKey", "ServiceUrl", "HerramientasJSON", "DepartamentoID", "Estado", "FechaRegistro"]);
+    defaultAreas.forEach(a => {
+      sheet.appendRow([a.areaId, a.name, a.code, `SERVICE_${a.code}`, "", "[]", a.departmentId, a.state, new Date().toISOString()]);
+    });
+  }
+
+  const rows = sheet.getDataRange().getValues().slice(1);
+  const mapped = rows.map(r => ({
+    areaId: r[0],
+    name: r[1],
+    code: r[2],
+    serviceKey: r[3],
+    serviceUrl: r[4],
+    tools: r[5],
+    departmentId: r[6],
+    state: r[7]
+  }));
+
+  return {
+    status: "success",
+    totalAreas: mapped.length,
+    catalog: mapped
+  };
+}
+
+// [TAREA-F6-006] [Fase 6: Reestructuración en microservicios independientes] - Gestión de ámbito de supervisión y coordinaciones académicas parametrizadas por área
+function getAcademicAreaCoordinationScope(payload) {
+  const { areaId, userId } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "CoordinacionesArea");
+  if (sheet.getLastRow() === 0) {
+    sheet.appendRow(["CoordinacionID", "AreaID", "UserId", "NombreCoordinador", "AmbitoJSON", "Estado", "FechaAsignacion"]);
+  }
+
+  const rows = sheet.getDataRange().getValues().slice(1);
+  let filtered = rows.filter(r => String(r[5] || 'Activo').trim() === "Activo");
+  if (areaId) filtered = filtered.filter(r => String(r[1]).trim().toUpperCase() === String(areaId).trim().toUpperCase());
+  if (userId) filtered = filtered.filter(r => String(r[2]).trim() === String(userId).trim());
+
+  const mapped = filtered.map(r => {
+    let ambito = {};
+    try { ambito = JSON.parse(r[4] || "{}"); } catch (_) {}
+    return {
+      coordinacionId: r[0],
+      areaId: r[1],
+      userId: r[2],
+      nombreCoordinador: r[3],
+      ambitoSupervision: ambito,
+      estado: r[5],
+      fechaAsignacion: r[6]
+    };
+  });
+
+  return { status: "success", scopes: mapped };
 }
 
 function getSchoolYearConfigs(payload) {
