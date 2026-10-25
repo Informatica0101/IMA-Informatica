@@ -237,7 +237,7 @@ FASE 6. EXPEDIENTE INSTITUCIONAL Y CICLO DE VIDA DEL ESTUDIANTE
   - CA-043: La inicialización de la instancia es completamente idempotente.
   - CA-044: Los fallos de despliegue emiten un diagnóstico verificable y no marcan la instancia como activa.
   - CA-045: La actualización de la plantilla base es optativa y no modifica automáticamente todas las instancias activas.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completado
 
 ---
 

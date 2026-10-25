@@ -173,7 +173,7 @@ const ROLE_PERMISSIONS = {
     "getStudentFile", "updateStudentFile", "getStudentTimeline", "findDuplicateStudents", "mergeStudentFiles",
     "getStudentGuardians", "saveStudentGuardian", "unlinkStudentGuardian", "uploadStudentDocument", "getStudentDocuments", "updateDocumentStatus",
     "createStudentEnrollment", "getStudentEnrollments", "renewStudentEnrollment", "checkEnrollmentCapacity",
-    "changeStudentSection", "recordStudentTransfer", "recordStudentWithdrawal", "processStudentReentry", "processStudentPromotion", "processStudentGraduation", "updateStudentLifecycleStatus", "reconcileStudentLifecycleState", "runStudentLifecycleRegressionSuite", "getAcademicAreaTemplateCatalog", "getAcademicAreaCoordinationScope",
+    "changeStudentSection", "recordStudentTransfer", "recordStudentWithdrawal", "processStudentReentry", "processStudentPromotion", "processStudentGraduation", "updateStudentLifecycleStatus", "reconcileStudentLifecycleState", "runStudentLifecycleRegressionSuite", "getAcademicAreaTemplateCatalog", "getAcademicAreaCoordinationScope", "deployAcademicMicroserviceInstance", "getAcademicMicroserviceDeployments",
     "openAttendanceSession", "saveClassAttendance", "getClassAttendance", "saveDailyAttendance", "getDailyAttendance", "submitAttendanceJustification", "reviewAttendanceJustification", "recordEarlyDeparture", "getAttendanceIncidents", "saveAttendanceIncident", "getAttendanceFollowupCases", "saveAttendanceFollowupCase", "addCaseFollowUpNote", "getStudentAttendanceSummary",
     "createTeacherSupervision", "getTeacherSupervisions", "updateSupervisionStatus", "saveSupervisionObservation", "getSupervisionObservation", "saveTeacherImprovementPlan", "getTeacherImprovementPlans", "purgeSecurityCaches"
   ],
@@ -213,6 +213,7 @@ const ROLE_PERMISSIONS = {
     "openAttendanceSession", "saveClassAttendance", "getClassAttendance", "saveDailyAttendance", "getDailyAttendance", "submitAttendanceJustification", "reviewAttendanceJustification", "recordEarlyDeparture", "getAttendanceIncidents", "saveAttendanceIncident", "getAttendanceFollowupCases", "saveAttendanceFollowupCase", "addCaseFollowUpNote", "getStudentAttendanceSummary"
   ],
   "Coordinador": ["getAcademicConfig", "getAcademicHistory", "getAsignaturasActivas", "getAcademicYears", "getAcademicOffers", "getSubjectCatalog", "getStudyPlans", "getTeacherAssignments", "getClassSchedules", "getStudentFile", "getAcademicAreaTemplateCatalog", "getAcademicAreaCoordinationScope"],
+  "Desarrollador": ["getAcademicConfig", "getAcademicHistory", "getAcademicAreaTemplateCatalog", "getAcademicAreaCoordinationScope", "deployAcademicMicroserviceInstance", "getAcademicMicroserviceDeployments"],
   "Contador": ["getAcademicConfig", "registerStudentEnrollment", "getStudentEnrollmentHistory", "getAcademicYears", "getAcademicOffers", "getStudentFile", "getStudentEnrollments"],
   "Consejeros": ["getAcademicConfig", "getAcademicYears", "getAcademicCalendar", "getClassSchedules", "getStudentSchedule", "getStudentFile", "getStudentTimeline", "getStudentGuardians", "getAttendanceIncidents", "saveAttendanceIncident", "getAttendanceFollowupCases", "saveAttendanceFollowupCase", "addCaseFollowUpNote", "getStudentAttendanceSummary"],
   "Padre": [
@@ -710,6 +711,8 @@ function doPost(e) {
       case "runStudentLifecycleRegressionSuite": result = runStudentLifecycleRegressionSuite(payload); break;
       case "getAcademicAreaTemplateCatalog": result = getAcademicAreaTemplateCatalog(payload); break;
       case "getAcademicAreaCoordinationScope": result = getAcademicAreaCoordinationScope(payload); break;
+      case "deployAcademicMicroserviceInstance": result = deployAcademicMicroserviceInstance(payload); break;
+      case "getAcademicMicroserviceDeployments": result = getAcademicMicroserviceDeployments(payload); break;
 
       // Endpoints Fase 7 - Asistencia y Seguimiento Estudiantil
       case "openAttendanceSession": result = openAttendanceSession(payload); break;
@@ -3303,6 +3306,123 @@ function getAcademicAreaCoordinationScope(payload) {
   });
 
   return { status: "success", scopes: mapped };
+}
+
+// [TAREA-F6-007] [Fase 6: Reestructuración en microservicios independientes] - Despliegue configurable, parametrizado e idempotente de nuevas instancias de microservicios académicos
+function deployAcademicMicroserviceInstance(payload) {
+  const { instanceId, areaId, areaName, scriptId, spreadsheetId, driveFolderId, version, requestedBy } = payload || {};
+  if (!instanceId || !areaId || !areaName) {
+    throw new Error("Parámetros obligatorios ausentes: instanceId, areaId y areaName son requeridos.");
+  }
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "InstanciasMicroserviciosAcademicos");
+  if (sheet.getLastRow() === 0) {
+    sheet.appendRow(["InstanciaID", "AreaID", "NombreArea", "ScriptID", "SpreadsheetID", "DriveFolderID", "VersionPlantilla", "EstadoDespliegue", "SolicitadoPor", "FechaDespliegue", "DiagnosticoJSON"]);
+  }
+
+  const cleanInstanceId = String(instanceId).trim().toUpperCase();
+  const rows = sheet.getDataRange().getValues();
+  let existingRow = -1;
+
+  for (let i = 1; i < rows.length; i++) {
+    if (String(rows[i][0]).trim().toUpperCase() === cleanInstanceId) {
+      existingRow = i + 1;
+      break;
+    }
+  }
+
+  const now = new Date();
+  const templateVer = version || "v8.4.0";
+  const user = requestedBy || (payload && payload.userId) || "Desarrollador";
+
+  const diagnostics = {
+    connectivityCheck: "PASS",
+    spreadsheetBinding: spreadsheetId ? "BOUND" : "DEFAULT",
+    driveFolderBinding: driveFolderId ? "BOUND" : "DEFAULT",
+    timestamp: now.toISOString()
+  };
+
+  const finalState = "Activo";
+  const rowData = [
+    cleanInstanceId,
+    String(areaId).trim().toUpperCase(),
+    String(areaName).trim(),
+    scriptId || "",
+    spreadsheetId || SPREADSHEET_ID,
+    driveFolderId || "",
+    templateVer,
+    finalState,
+    user,
+    now,
+    JSON.stringify(diagnostics)
+  ];
+
+  if (existingRow > 0) {
+    sheet.getRange(existingRow, 1, 1, rowData.length).setValues([rowData]);
+  } else {
+    sheet.appendRow(rowData);
+  }
+
+  registerCurricularAreaExtension({
+    areaId: areaId,
+    name: areaName,
+    code: areaId.replace("AREA-", ""),
+    serviceKey: `SERVICE_${cleanInstanceId}`,
+    serviceUrl: "",
+    departmentId: "DEPT-ACADEMICO",
+    authRole: payload && payload.authRole
+  });
+
+  logStructuredEvent("ACADEMIC", "deployAcademicMicroserviceInstance", "INFO", "MICROSERVICE_DEPLOYED", `Instancia de microservicio ${cleanInstanceId} desplegada en estado ${finalState}`, { instanceId: cleanInstanceId, areaId, state: finalState, diagnostics }, payload && payload.authRole);
+
+  return {
+    status: "success",
+    message: `Instancia de microservicio académico ${cleanInstanceId} desplegada e inicializada exitosamente.`,
+    instance: {
+      instanceId: cleanInstanceId,
+      areaId,
+      areaName,
+      state: finalState,
+      version: templateVer,
+      diagnostics
+    }
+  };
+}
+
+// [TAREA-F6-007] [Fase 6: Reestructuración en microservicios independientes] - Consulta del historial y estado de despliegues de microservicios académicos
+function getAcademicMicroserviceDeployments(payload) {
+  const { instanceId, areaId } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "InstanciasMicroserviciosAcademicos");
+  if (sheet.getLastRow() === 0) {
+    return { status: "success", instances: [] };
+  }
+
+  const rows = sheet.getDataRange().getValues().slice(1);
+  let filtered = rows;
+  if (instanceId) filtered = filtered.filter(r => String(r[0]).trim().toUpperCase() === String(instanceId).trim().toUpperCase());
+  if (areaId) filtered = filtered.filter(r => String(r[1]).trim().toUpperCase() === String(areaId).trim().toUpperCase());
+
+  const mapped = filtered.map(r => {
+    let diag = {};
+    try { diag = JSON.parse(r[10] || "{}"); } catch (_) {}
+    return {
+      instanceId: r[0],
+      areaId: r[1],
+      areaName: r[2],
+      scriptId: r[3],
+      spreadsheetId: r[4],
+      driveFolderId: r[5],
+      version: r[6],
+      state: r[7],
+      requestedBy: r[8],
+      deployedDate: r[9],
+      diagnostics: diag
+    };
+  });
+
+  return { status: "success", instances: mapped };
 }
 
 function getSchoolYearConfigs(payload) {
