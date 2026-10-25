@@ -174,3 +174,15 @@ Archivos verificados:
 Resultados de verificación:
 - Catalogo de 7 areas academicas parametrizadas en AreasCurricularesExtensiones sin condicionales fijos de nombres.
 - Ambito de supervisión por area mediante getAcademicAreaCoordinationScope.
+
+===========================================================
+AUDITORÍA DE CÓDIGO - TAREA-F6-007
+===========================================================
+Fecha: 2025-05-18
+Archivos verificados:
+- backend/academic-service/Code.gs
+- Pendientes.md
+
+Resultados de verificación:
+- Despliegue idempotente con registro de diagnosticos en InstanciasMicroserviciosAcademicos.
+- Control explícito de estados de despliegue y auditoría de solicitante.

@@ -1556,3 +1556,8 @@ Archivos Modificados:
 - backend/academic-service/Code.gs:
   - Verificada plantilla generica de servicio academico parametrizada (getAcademicAreaTemplateCatalog y getAcademicAreaCoordinationScope) para las 7 areas academicas sin harcodeo en logica.
   - Marcada TAREA-F6-006 como completada [X] en Pendientes.md.
+
+[TAREA-F6-007] Implementar el despliegue configurable de nuevos microservicios académicos
+- backend/academic-service/Code.gs:
+  - Verificadas funciones deployAcademicMicroserviceInstance y getAcademicMicroserviceDeployments para el despliegue e inicialización idempotente de instancias de microservicios académicos.
+  - Marcada TAREA-F6-007 como completada [X] en Pendientes.md.

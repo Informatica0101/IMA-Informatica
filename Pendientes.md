@@ -211,7 +211,7 @@ FASE 6. EXPEDIENTE INSTITUCIONAL Y CICLO DE VIDA DEL ESTUDIANTE
 
 ---
 
-### [TAREA-F6-007] Implementar el despliegue configurable de nuevos microservicios académicos
+### [X] [TAREA-F6-007] Implementar el despliegue configurable de nuevos microservicios académicos
 - **Origen del Hallazgo:** Reestructuración Arquitectónica / F6-010 (P1 · Automatización de Despliegues)
 - **Prioridad:** P1
 - **Severidad/Clasificación:** Alta (Despliegue e inicialización de instancias académicas)
