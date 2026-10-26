@@ -1606,3 +1606,9 @@ Archivos Modificados:
 - backend/academic-service/Code.gs:
   - Verificada la implementación de getStorageQuotaMetricsReport y reconcileDocumentStorageIntegrity para el cálculo de volumen de almacenamiento, umbrales de advertencia al 80%/90%/95% y conciliación no destructiva entre referencias y archivos en Google Drive.
   - Marcada TAREA-F6-016 como completada [X] en Pendientes.md.
+
+[TAREA-F6-017] Completar el flujo de gestión de documentos pendientes, vencidos y faltantes
+- backend/academic-service/Code.gs:
+  - Verificada la implementación de getPendingDocumentsReport y grantDocumentExemption para el cálculo de porcentaje de cumplimiento documental, requisitos faltantes obligatorios/opcionales y otorgamiento de exenciones.
+  - Registrados permisos getPendingDocumentsReport y grantDocumentExemption para Secretaría y Secretaria en ROLE_PERMISSIONS.
+  - Marcada TAREA-F6-017 como completada [X] en Pendientes.md.

@@ -507,7 +507,7 @@ FASE 6. EXPEDIENTE INSTITUCIONAL Y CICLO DE VIDA DEL ESTUDIANTE
 
 ---
 
-### [TAREA-F6-017] Completar el flujo de gestión de documentos pendientes, vencidos y faltantes
+### [X] [TAREA-F6-017] Completar el flujo de gestión de documentos pendientes, vencidos y faltantes
 - **Origen del Hallazgo:** `AUDITORIA_FASE_6_EXPEDIENTE_CICLO_VIDA.md` / Tarea 3 (P2 · Gestión Documental)
 - **Prioridad:** P2
 - **Severidad/Clasificación:** Medio (Ampliación de gestión documental)

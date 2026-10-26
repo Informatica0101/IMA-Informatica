@@ -295,3 +295,15 @@ Archivos verificados:
 Resultados de verificación:
 - Supervisión preventiva de cuotas de almacenamiento en Google Drive con alertas configurables por umbrales.
 - Procedimiento de conciliación no destructiva que detecta referencias huérfanas sin eliminar documentos automáticamente.
+
+===========================================================
+AUDITORÍA DE CÓDIGO - TAREA-F6-017
+===========================================================
+Fecha: 2025-05-18
+Archivos verificados:
+- backend/academic-service/Code.gs
+- Pendientes.md
+
+Resultados de verificación:
+- Módulo de gestión de documentos pendientes con clasificación entre obligatorios y opcionales.
+- Concesión de exenciones documentales registradas en ExencionesDocumentales con trazabilidad por rol.
