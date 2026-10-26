@@ -2788,8 +2788,14 @@
                     <label class="block text-xs font-bold text-slate-600 mb-1">Estado</label>
                     <select id="clsr-estado" class="w-full px-3 py-2 text-xs border rounded-xl">
                         <option value="Activo">Activo</option>
+                        <option value="Indisponible">Indisponible (Mantenimiento)</option>
                         <option value="Inactivo">Inactivo</option>
                     </select>
+                </div>
+                <!-- [TAREA-F7-IMP-06] Campo de equipamiento especifico -->
+                <div class="md:col-span-2">
+                    <label class="block text-xs font-bold text-slate-600 mb-1">Equipamiento Específico</label>
+                    <input type="text" id="clsr-equipamiento" class="w-full px-3 py-2 text-xs border rounded-xl" placeholder="Ej: Proyector HD, Computadoras, Climatización, Red LAN">
                 </div>
                 <div class="flex items-end">
                     <button type="submit" class="w-full py-2 bg-blue-600 text-white rounded-xl font-bold text-xs hover:bg-blue-700 shadow-sm transition">
@@ -2800,7 +2806,7 @@
 
             <!-- Lista de Espacios Registrados -->
             <div class="space-y-2">
-                <h4 class="font-bold text-xs text-slate-700 uppercase tracking-wider">Espacios Registrados</h4>
+                <h4 class="font-bold text-xs text-slate-700 uppercase tracking-wider">Espacios y Equipamiento Registrado</h4>
                 <div class="max-h-60 overflow-y-auto border border-slate-100 rounded-2xl">
                     <table class="w-full text-xs text-left text-slate-600">
                         <thead class="bg-slate-100 text-slate-700 font-bold sticky top-0">
@@ -2809,6 +2815,7 @@
                                 <th class="p-2.5">Nombre</th>
                                 <th class="p-2.5">Tipo</th>
                                 <th class="p-2.5">Capacidad</th>
+                                <th class="p-2.5">Equipamiento</th>
                                 <th class="p-2.5">Estado</th>
                                 <th class="p-2.5 text-right">Acción</th>
                             </tr>

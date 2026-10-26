@@ -792,3 +792,19 @@ Auditoría final y verificación de TAREA-F7-IMP-05:
   - Implementada la función `openTeacherWorkLoadPreferencesModal` antecedida por la etiqueta identificativa `[TAREA-F7-IMP-05]` para capturar y enviar límites y horarios preferidos por docente.
 - Pendientes.md:
   - Estado actualizado a `[X] Completado`.
+
+
+-------------------------------------------------------------------------------
+FECHA: 2026-10-26
+TAREA: [TAREA-F7-IMP-06] Ampliar la gestión de disponibilidad, equipamiento y capacidad de espacios
+-------------------------------------------------------------------------------
+Auditoría inicial e inspección de archivos para TAREA-F7-IMP-06:
+- backend/academic-service/Code.gs:
+  - Inspeccionadas las funciones `getClassroomResources`, `saveClassroomResource` y `checkScheduleConflict`.
+  - Se ampliará `saveClassroomResource` y `getClassroomResources` para soportar equipamiento (ej: Proyector, Cómputo, Laboratorio) y mantenimiento/indisponibilidad en la hoja `MantenimientoAulas`.
+  - Se creará la función `saveClassroomMaintenance` e integrará en `checkScheduleConflict` la comprobación de mantenimiento activo para la fecha/horario de la clase.
+- teacher-dashboard.html / js/teacher.js:
+  - Se añadirán campos de equipamiento y botón de registro de mantenimiento en `#modal-classroom-manager`.
+  - Se implementará la función `openClassroomMaintenanceModal` / controlador de mantenimiento con la etiqueta identificativa `[TAREA-F7-IMP-06]`.
+- Pendientes.md:
+  - Se actualizará el estado de la TAREA-F7-IMP-06 a `[X] Completado`.

@@ -1879,3 +1879,17 @@ Descripción objetiva:
 - Implementada la función `saveTeacherWorkLoadPreferences` en `backend/academic-service/Code.gs` e integrada en `ROLE_PERMISSIONS` y enrutador `doPost`.
 - Añadido botón UI "Preferencias Carga" en `teacher-dashboard.html` e implementada la función `openTeacherWorkLoadPreferencesModal` en `js/teacher.js` antecedida por la etiqueta identificativa `[TAREA-F7-IMP-05]`.
 - Actualizado el estado de [TAREA-F7-IMP-05] a Completado en Pendientes.md.
+
+
+Fecha: 2026-10-26
+Archivos modificados:
+- backend/academic-service/Code.gs (Líneas 171, 656, 5725-5880)
+- teacher-dashboard.html (Líneas 2790-2820)
+- js/teacher.js (Líneas 1470-1615)
+- Pendientes.md (Línea 1586)
+Descripción objetiva:
+- Actualizadas las funciones `getClassroomResources` y `saveClassroomResource` en `backend/academic-service/Code.gs` para consultar e incluir equipamiento específico de aulas e indisponibilidad.
+- Creada la función `saveClassroomMaintenance` en `backend/academic-service/Code.gs` e integrada en `ROLE_PERMISSIONS` y dispatcher `doPost`.
+- Modificada la función `checkScheduleConflict` en `backend/academic-service/Code.gs` para validar si el aula cuenta con mantenimiento o indisponibilidad activa en `MantenimientoAulas`.
+- Incorporados campo de equipamiento y función `openClassroomMaintenanceModal` en `teacher-dashboard.html` y `js/teacher.js` con la etiqueta identificativa `[TAREA-F7-IMP-06]`.
+- Actualizado el estado de [TAREA-F7-IMP-06] a Completado en Pendientes.md.

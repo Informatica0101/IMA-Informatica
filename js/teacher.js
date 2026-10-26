@@ -1468,7 +1468,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // [TAREA 3.3] [Fase 3: Planificación Académica y Horarios] - Controlador de interfaz para la gestión de aulas, laboratorios y recursos físicos (#modal-classroom-manager).
+    // [TAREA-F7-IMP-06] [Fase 7: Planificación Académica, Horarios y Recursos] - Controlador de interfaz para la gestión de aulas, equipamiento e indisponibilidad (#modal-classroom-manager).
     window.openClassroomManagerModal = async function() {
         const modal = document.getElementById('modal-classroom-manager');
         if (!modal) return;
@@ -1479,13 +1479,13 @@ document.addEventListener('DOMContentLoaded', () => {
     async function loadClassroomResourcesTable() {
         const tbody = document.getElementById('tbl-classroom-resources-body');
         if (!tbody) return;
-        tbody.innerHTML = '<tr><td colspan="6" class="p-3 text-center text-slate-400">Cargando espacios...</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="7" class="p-3 text-center text-slate-400">Cargando espacios...</td></tr>';
 
         try {
             const res = await fetchApi('ACADEMIC', 'getClassroomResources', {});
             if (res && res.status === 'success' && Array.isArray(res.data)) {
                 if (res.data.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="6" class="p-3 text-center text-slate-400">No hay espacios registrados.</td></tr>';
+                    tbody.innerHTML = '<tr><td colspan="7" class="p-3 text-center text-slate-400">No hay espacios registrados.</td></tr>';
                     return;
                 }
                 tbody.innerHTML = res.data.map(cls => `
@@ -1494,19 +1494,25 @@ document.addEventListener('DOMContentLoaded', () => {
                         <td class="p-2.5">${cls.nombreAula}</td>
                         <td class="p-2.5"><span class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-slate-100 text-slate-700">${cls.tipoEspacio || 'Aula'}</span></td>
                         <td class="p-2.5 font-medium">${cls.capacidad || 30} est.</td>
+                        <td class="p-2.5 text-[11px] text-slate-600">${cls.equipamiento || 'Básico'}</td>
                         <td class="p-2.5">
-                            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${cls.estado === 'Inactivo' ? 'bg-red-100 text-red-700' : 'bg-emerald-100 text-emerald-700'}">
+                            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${cls.estado === 'Inactivo' ? 'bg-red-100 text-red-700' : cls.estado === 'Indisponible' ? 'bg-amber-100 text-amber-700' : 'bg-emerald-100 text-emerald-700'}">
                                 ${cls.estado || 'Activo'}
                             </span>
                         </td>
-                        <td class="p-2.5 text-right">
+                        <td class="p-2.5 text-right space-x-1">
                             <button class="btn-edit-clsr text-blue-600 hover:text-blue-800 font-bold text-[11px]"
                                 data-codigo="${cls.aulaCodigo}"
                                 data-nombre="${cls.nombreAula}"
                                 data-capacidad="${cls.capacidad || 30}"
                                 data-tipo="${cls.tipoEspacio || 'Aula'}"
+                                data-equipamiento="${cls.equipamiento || ''}"
                                 data-estado="${cls.estado || 'Activo'}">
                                 <i class="fa-solid fa-pen-to-square mr-0.5"></i> Editar
+                            </button>
+                            <button class="btn-maint-clsr text-amber-600 hover:text-amber-800 font-bold text-[11px]"
+                                data-codigo="${cls.aulaCodigo}">
+                                <i class="fa-solid fa-screwdriver-wrench mr-0.5"></i> Mantenimiento
                             </button>
                         </td>
                     </tr>
@@ -1519,14 +1525,53 @@ document.addEventListener('DOMContentLoaded', () => {
                         document.getElementById('clsr-capacidad').value = btn.getAttribute('data-capacidad');
                         document.getElementById('clsr-tipo').value = btn.getAttribute('data-tipo');
                         document.getElementById('clsr-estado').value = btn.getAttribute('data-estado');
+                        const eqInput = document.getElementById('clsr-equipamiento');
+                        if (eqInput) eqInput.value = btn.getAttribute('data-equipamiento');
+                    });
+                });
+
+                document.querySelectorAll('.btn-maint-clsr').forEach(btn => {
+                    btn.addEventListener('click', async () => {
+                        const aulaCodigo = btn.getAttribute('data-codigo');
+                        await openClassroomMaintenanceModal(aulaCodigo);
                     });
                 });
             } else {
-                tbody.innerHTML = '<tr><td colspan="6" class="p-3 text-center text-red-500">Error al cargar espacios.</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="7" class="p-3 text-center text-red-500">Error al cargar espacios.</td></tr>';
             }
         } catch (err) {
             console.error('Error al obtener recursos de aulas:', err);
-            tbody.innerHTML = '<tr><td colspan="6" class="p-3 text-center text-red-500">Error de comunicación con el servidor.</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="7" class="p-3 text-center text-red-500">Error de comunicación con el servidor.</td></tr>';
+        }
+    }
+
+    // [TAREA-F7-IMP-06] Registrar mantenimiento o indisponibilidad para un aula
+    async function openClassroomMaintenanceModal(aulaCodigo) {
+        const motivo = prompt(`Ingrese el motivo del mantenimiento/indisponibilidad para el aula ${aulaCodigo}:`, 'Mantenimiento preventivo de equipos y climatización');
+        if (!motivo) return;
+
+        const hoyStr = new Date().toISOString().split('T')[0];
+        try {
+            if (window.showLoading) window.showLoading('Registrando mantenimiento...');
+            const res = await fetchApi('ACADEMIC', 'saveClassroomMaintenance', {
+                aulaCodigo,
+                fechaInicio: hoyStr,
+                fechaFin: hoyStr,
+                motivo,
+                estado: 'Programado'
+            });
+            if (window.hideLoading) window.hideLoading();
+
+            if (res && res.status === 'success') {
+                alert(`Mantenimiento registrado para el aula ${aulaCodigo}.`);
+                await loadClassroomResourcesTable();
+            } else {
+                alert(res && res.message ? res.message : 'Error al registrar mantenimiento.');
+            }
+        } catch (err) {
+            if (window.hideLoading) window.hideLoading();
+            console.error('Error al registrar mantenimiento:', err);
+            alert('Error al comunicar con el servidor.');
         }
     }
 
@@ -1547,6 +1592,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const capacidad = parseInt(document.getElementById('clsr-capacidad').value, 10);
             const tipoEspacio = document.getElementById('clsr-tipo').value;
             const estado = document.getElementById('clsr-estado').value;
+            const eqInput = document.getElementById('clsr-equipamiento');
+            const equipamiento = eqInput ? eqInput.value.trim() : '';
 
             if (!aulaCodigo || !nombreAula) {
                 alert('Código y Nombre del espacio son obligatorios.');
@@ -1560,12 +1607,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     nombreAula,
                     capacidad,
                     tipoEspacio,
-                    estado
+                    estado,
+                    equipamiento
                 });
                 if (window.hideLoading) window.hideLoading();
 
                 if (res && res.status === 'success') {
-                    alert('Espacio guardado correctamente.');
+                    alert('Espacio y equipamiento guardado correctamente.');
                     formClassroomResource.reset();
                     await loadClassroomResourcesTable();
                 } else {

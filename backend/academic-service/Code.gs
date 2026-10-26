@@ -168,7 +168,7 @@ const ROLE_PERMISSIONS = {
     "getAcademicPeriods", "manageAcademicPeriod", "getSubjectCatalog", "createSubjectCatalogItem", "getStudyPlans", "createStudyPlan",
     "getAcademicOffers", "createAcademicOffer", "getTeacherAssignments", "assignTeacherToClass", "createTeacherSubstitution",
     "getAcademicCalendar", "createCalendarEvent", "getClassSchedules", "createClassSchedule", "deleteClassSchedule", "getAcademicRules", "saveAcademicRule", "getDepartmentAcademicPlanning", "assignDepartmentHead", "getCurricularAnalyticsReport", "getReusableResourceCatalog", "manageReusableResource", "getCurricularEquivalences", "executeCurricularMigration", "registerCurricularAreaExtension", "runCurricularAreaServiceTests", "toggleCurricularAreaStatus", "validateApiContractsTestSuite", "getInstitutionalCatalog", "validateCatalogReference", "generateInstitutionalUUID", "validateInstitutionalIdentifier", "auditInstitutionalIdentifierCollisions", "runConcurrencyAndConsistencySuite", "getPaginatedAcademicHistory", "reconcileRestoredDataIntegrity", "evaluateTransactionalStorageMigrationNeed",
-    "getClassroomResources", "saveClassroomResource", "getStudentSchedule", "getScheduleConflictResolutionAlternatives", "saveScheduleScenario", "getScheduleScenarios", "saveTeacherWorkLoadPreferences",
+    "getClassroomResources", "saveClassroomResource", "saveClassroomMaintenance", "getStudentSchedule", "getScheduleConflictResolutionAlternatives", "saveScheduleScenario", "getScheduleScenarios", "saveTeacherWorkLoadPreferences",
     "createAdmissionRequest", "getAdmissionRequests", "updateAdmissionStatus", "reopenAdmissionRequest", "convertAdmissionToStudent", "scheduleAdmissionInterview", "getAdmissionInterviews", "recordInterviewOutcome", "saveAdmissionEvaluation", "getAdmissionEvaluations", "addToWaitlist", "getWaitlist", "reorderWaitlist", "offerWaitlistSlot", "respondToWaitlistSlot", "resolveAdmissionDuplicate", "getAdmissionAnalyticsReport",
     "getStudentFile", "getStudentFileSummary", "updateStudentFile", "getStudentTimeline", "findDuplicateStudents", "mergeStudentFiles", "getMergePreviewComparison", "unmergeStudentFiles", "getStudentFileAdministrativeReports", "initializeDirectionSecretaryDriveStructure",
     "getStudentGuardians", "saveStudentGuardian", "unlinkStudentGuardian", "uploadStudentDocument", "getStudentDocuments", "updateDocumentStatus", "getPendingDocumentsReport", "grantDocumentExemption", "restoreDocumentVersion", "checkAndNotifyExpiringStudentDocuments",
@@ -653,6 +653,7 @@ function doPost(e) {
       case "deleteClassSchedule": result = deleteClassSchedule(payload); break;
       case "getClassroomResources": result = getClassroomResources(payload); break;
       case "saveClassroomResource": result = saveClassroomResource(payload); break;
+      case "saveClassroomMaintenance": result = saveClassroomMaintenance(payload); break;
       case "getStudentSchedule": result = getStudentSchedule(payload); break;
       case "getScheduleConflictResolutionAlternatives": result = getScheduleConflictResolutionAlternatives(payload); break;
       case "getAcademicRules": result = getAcademicRules(payload); break;
@@ -5721,6 +5722,14 @@ function checkScheduleConflict(params) {
         return { hasConflict: true, reason: `El aula ${aulaCodigo} (${aula[3]}) tiene capacidad máxima de ${aula[4]} estudiantes, menor a la matrícula activa de ${effectiveEstudiantesCount} estudiantes.` };
       }
     }
+
+    // [TAREA-F7-IMP-06] Validar mantenimientos o indisponibilidad programada del aula
+    const maintSheet = getOrCreateSheet(ss, "MantenimientoAulas");
+    const maintRows = maintSheet.getDataRange().getValues().slice(1);
+    const activeMaint = maintRows.find(m => String(m[1]).trim() === String(aulaCodigo).trim() && (m[5] === "Programado" || m[5] === "EnProceso"));
+    if (activeMaint) {
+      return { hasConflict: true, reason: `El aula ${aulaCodigo} se encuentra en mantenimiento/indisponibilidad (${activeMaint[4] || 'Mantenimiento activo'}).` };
+    }
   }
 
   const sheet = getOrCreateSheet(ss, "HorariosClase");
@@ -5754,27 +5763,31 @@ function checkScheduleConflict(params) {
   return { hasConflict: false };
 }
 
-// [TAREA 3.3] [Fase 3: Planificación Académica y Horarios] - Consulta de recursos de aulas, laboratorios y espacios físicos.
+// [TAREA-F7-IMP-06] [Fase 7: Planificación Académica, Horarios y Recursos] - Consulta de recursos de aulas, equipamiento e indisponibilidad.
 function getClassroomResources(payload) {
   const { sedeId } = payload || {};
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
   const sheet = getOrCreateSheet(ss, "SedesAulas");
   const data = sheet.getDataRange().getValues();
+
+  const maintSheet = getOrCreateSheet(ss, "MantenimientoAulas");
+  const maintData = maintSheet.getDataRange().getValues().slice(1);
+
   if (data.length <= 1) {
-    // Si la tabla está vacía, sembrar aulas institucionales por defecto
+    // Si la tabla está vacía, sembrar aulas institucionales por defecto con equipamiento
     const defaultAulas = [
-      ["SED-MAIN", "Campus Principal", "AULA-101", "Aula 101 - Informática", 35, "Aula", "Activo"],
-      ["SED-MAIN", "Campus Principal", "AULA-102", "Aula 102 - Multiusos", 35, "Aula", "Activo"],
-      ["SED-MAIN", "Campus Principal", "LAB-COMP", "Laboratorio de Cómputo", 30, "Laboratorio", "Activo"],
-      ["SED-MAIN", "Campus Principal", "LAB-CIEN", "Laboratorio de Ciencias", 25, "Laboratorio", "Activo"],
-      ["SED-MAIN", "Campus Principal", "AUDITORIO", "Auditorio Institucional", 150, "Auditorio", "Activo"],
-      ["SED-MAIN", "Campus Principal", "CANCHA-1", "Cancha Polideportiva", 100, "Deportes", "Activo"]
+      ["SED-MAIN", "Campus Principal", "AULA-101", "Aula 101 - Informática", 35, "Aula", "Activo", "Proyector, Computadoras, Climatización"],
+      ["SED-MAIN", "Campus Principal", "AULA-102", "Aula 102 - Multiusos", 35, "Aula", "Activo", "Proyector, Audio"],
+      ["SED-MAIN", "Campus Principal", "LAB-COMP", "Laboratorio de Cómputo", 30, "Laboratorio", "Activo", "Proyector, 30 Equipos PC, Red LAN, Climatización"],
+      ["SED-MAIN", "Campus Principal", "LAB-CIEN", "Laboratorio de Ciencias", 25, "Laboratorio", "Activo", "Mesas de Trabajo, Gas, Extractores"],
+      ["SED-MAIN", "Campus Principal", "AUDITORIO", "Auditorio Institucional", 150, "Auditorio", "Activo", "Proyector HD, Sistema Audio Pro, Escenario"],
+      ["SED-MAIN", "Campus Principal", "CANCHA-1", "Cancha Polideportiva", 100, "Deportes", "Activo", "Graderías, Redes, Tableros"]
     ];
     defaultAulas.forEach(row => sheet.appendRow(row));
     return {
       status: "success",
       data: defaultAulas.map(r => ({
-        sedeId: r[0], nombreSede: r[1], aulaCodigo: r[2], nombreAula: r[3], capacidad: r[4], tipoEspacio: r[5], estado: r[6]
+        sedeId: r[0], nombreSede: r[1], aulaCodigo: r[2], nombreAula: r[3], capacidad: r[4], tipoEspacio: r[5], estado: r[6], equipamiento: r[7] || "", mantenimientos: []
       }))
     };
   }
@@ -5782,22 +5795,35 @@ function getClassroomResources(payload) {
   const classrooms = data.slice(1).filter(r => {
     if (sedeId && String(r[0]).trim() !== String(sedeId).trim()) return false;
     return r[6] !== "Inactivo";
-  }).map(r => ({
-    sedeId: r[0],
-    nombreSede: r[1],
-    aulaCodigo: r[2],
-    nombreAula: r[3],
-    capacidad: r[4],
-    tipoEspacio: r[5],
-    estado: r[6] || "Activo"
-  }));
+  }).map(r => {
+    const codigo = String(r[2]).trim();
+    const maints = maintData.filter(m => String(m[1]).trim() === codigo && (m[5] === "Programado" || m[5] === "EnProceso")).map(m => ({
+      maintId: m[0],
+      fechaInicio: m[2],
+      fechaFin: m[3],
+      motivo: m[4],
+      estado: m[5]
+    }));
+
+    return {
+      sedeId: r[0],
+      nombreSede: r[1],
+      aulaCodigo: r[2],
+      nombreAula: r[3],
+      capacidad: r[4],
+      tipoEspacio: r[5],
+      estado: r[6] || "Activo",
+      equipamiento: r[7] || "Básico",
+      mantenimientos: maints
+    };
+  });
 
   return { status: "success", data: classrooms };
 }
 
-// [TAREA 3.3] [Fase 3: Planificación Académica y Horarios] - Registro, edición y gestión de aulas y espacios desde la interfaz.
+// [TAREA-F7-IMP-06] [Fase 7: Planificación Académica, Horarios y Recursos] - Registro y actualización de equipamiento y capacidad de aulas.
 function saveClassroomResource(payload) {
-  const { aulaCodigo, nombreAula, capacidad, tipoEspacio, sedeId, nombreSede, estado } = payload || {};
+  const { aulaCodigo, nombreAula, capacidad, tipoEspacio, sedeId, nombreSede, estado, equipamiento } = payload || {};
   if (!aulaCodigo || !nombreAula) throw new Error("aulaCodigo y nombreAula son requeridos.");
 
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
@@ -5810,6 +5836,7 @@ function saveClassroomResource(payload) {
     if (capacidad) sheet.getRange(idx + 1, 5).setValue(capacidad);
     if (tipoEspacio) sheet.getRange(idx + 1, 6).setValue(tipoEspacio);
     if (estado) sheet.getRange(idx + 1, 7).setValue(estado);
+    if (equipamiento !== undefined) sheet.getRange(idx + 1, 8).setValue(equipamiento);
   } else {
     sheet.appendRow([
       sedeId || "SED-MAIN",
@@ -5818,11 +5845,47 @@ function saveClassroomResource(payload) {
       nombreAula,
       capacidad || 30,
       tipoEspacio || "Aula",
-      estado || "Activo"
+      estado || "Activo",
+      equipamiento || "Básico"
     ]);
   }
 
+  logStructuredEvent("ACADEMIC", "saveClassroomResource", "INFO", "CLASSROOM_SAVED", `Espacio/Aula ${aulaCodigo} registrado/actualizado`, { aulaCodigo, nombreAula, capacidad, equipamiento }, payload && payload.authRole);
+
   return { status: "success", message: "Espacio/Aula registrada exitosamente." };
+}
+
+// [TAREA-F7-IMP-06] [Fase 7: Planificación Académica, Horarios y Recursos] - Registro de mantenimientos e indisponibilidad de aulas y espacios físicos.
+function saveClassroomMaintenance(payload) {
+  const { aulaCodigo, fechaInicio, fechaFin, motivo, estado } = payload || {};
+  if (!aulaCodigo) throw new Error("aulaCodigo es requerido.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "MantenimientoAulas");
+  const maintId = "MAIN-" + Utilities.getUuid().substring(0, 8).toUpperCase();
+
+  sheet.appendRow([
+    maintId,
+    aulaCodigo,
+    fechaInicio || Utilities.formatDate(new Date(), "GMT-6", "yyyy-MM-dd"),
+    fechaFin || Utilities.formatDate(new Date(), "GMT-6", "yyyy-MM-dd"),
+    motivo || "Mantenimiento preventivo de equipamiento / espacio",
+    estado || "Programado",
+    payload && payload.authUserId ? payload.authUserId : "ADMIN"
+  ]);
+
+  if (estado === "EnProceso" || estado === "Programado") {
+    const aulaSheet = getOrCreateSheet(ss, "SedesAulas");
+    const aulaData = aulaSheet.getDataRange().getValues();
+    const idx = aulaData.findIndex(r => String(r[2]).trim() === String(aulaCodigo).trim());
+    if (idx !== -1) {
+      aulaSheet.getRange(idx + 1, 7).setValue("Indisponible");
+    }
+  }
+
+  logStructuredEvent("ACADEMIC", "saveClassroomMaintenance", "INFO", "CLASSROOM_MAINTENANCE_SAVED", `Mantenimiento registrado para aula ${aulaCodigo}`, { maintId, aulaCodigo, motivo }, payload && payload.authRole);
+
+  return { status: "success", message: `Mantenimiento para aula ${aulaCodigo} registrado exitosamente.`, maintId };
 }
 
 // [TAREA 3.14] [Fase 3: Planificación Académica y Horarios] - Permisos y consulta trazable de registros de auditoría de operaciones académicas.

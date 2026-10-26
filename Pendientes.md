@@ -1586,7 +1586,7 @@ FASE 7. PLANIFICACIÓN ACADÉMICA, HORARIOS Y RECURSOS
 
 ---
 
-### [ ] [TAREA-F7-IMP-06] Ampliar la gestión de disponibilidad, equipamiento y capacidad de espacios
+### [X] [TAREA-F7-IMP-06] Ampliar la gestión de disponibilidad, equipamiento y capacidad de espacios
 - **Origen del Hallazgo:** `AUDITORIA_FASE_7_PLANIFICACION_HORARIOS_RECURSOS.md` / Tarea F7-IMP-06 (P1 · Gestión de Espacios)
 - **Prioridad:** P1
 - **Severidad/Clasificación:** Alta (Ampliación de recursos compartidos)
@@ -1618,7 +1618,7 @@ FASE 7. PLANIFICACIÓN ACADÉMICA, HORARIOS Y RECURSOS
   - CA-F7-42: El sistema permite consultar las reservas existentes y sus intervalos.
   - CA-F7-43: La desactivación de un aula no elimina las referencias históricas.
   - CA-F7-44: Las reglas de capacidad solo se aplican cuando existe información suficiente y una política definida.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completado
 
 ---
 
