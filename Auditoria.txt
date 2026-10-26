@@ -593,3 +593,17 @@ Auditoría inicial de archivos para TAREA-F6-037:
 
 Hallazgos:
 - Se inyectarán los comentarios identificativos explícitos de `[TAREA-F6-037]` sobre las funciones de validación contextual y autorización en los microservicios backend.
+
+-------------------------------------------------------------------------------
+FECHA: Marzo 2026
+TAREA: [TAREA-F6-038] Implementar despliegues versionados, migraciones y reversión controlada
+-------------------------------------------------------------------------------
+Auditoría inicial de archivos para TAREA-F6-038:
+- backend/developer-service/Code.gs:
+  - Inspeccionadas las funciones `getServiceVersionChangelog` y `executeServiceVersionRollback`.
+  - Se confirma que implementan la consulta de versiones y changelog de código y esquemas, así como el procedimiento de reversión (rollback) controlado que exige el código de confirmación `ROLLBACK-CONFIRMED`.
+- Pendientes.md:
+  - Inspeccionada la especificación de TAREA-F6-038.
+
+Hallazgos:
+- Se inyectarán los comentarios identificativos explícitos de `[TAREA-F6-038]` en las funciones de versionado y reversión en `backend/developer-service/Code.gs`.

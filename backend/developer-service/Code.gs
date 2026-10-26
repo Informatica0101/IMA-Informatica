@@ -264,7 +264,7 @@ function validateServiceConfigDependencies(payload) {
   };
 }
 
-// [TAREA-F6-013] [Fase 6: Reestructuración en microservicios independientes] - Registro de versiones, esquemas y historial de cambios de microservicios
+// [TAREA-F6-013] [TAREA-F6-038] [Fase 6: Versionado, Migraciones e Impacto] - Registro de versiones, esquemas, changelog y compatibilidad de contratos por microservicio
 function getServiceVersionChangelog(payload) {
   const { serviceId } = payload || {};
   const changelog = [
@@ -281,7 +281,7 @@ function getServiceVersionChangelog(payload) {
   };
 }
 
-// [TAREA-F6-013] [Fase 6: Reestructuración en microservicios independientes] - Procedimiento de reversión (rollback) de versión y esquema controlado por microservicio
+// [TAREA-F6-013] [TAREA-F6-038] [Fase 6: Versionado, Migraciones e Impacto] - Procedimiento de reversión (rollback) de código y esquema controlado con confirmación ROLLBACK-CONFIRMED y preservación de relaciones
 function executeServiceVersionRollback(payload) {
   const { serviceId, targetVersion, rollbackConfirmation } = payload || {};
   if (!serviceId || !targetVersion) throw new Error("serviceId y targetVersion son requeridos.");

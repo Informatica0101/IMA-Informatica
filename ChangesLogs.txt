@@ -1769,3 +1769,9 @@ Archivos Modificados:
   - Verificada la función `validateContextualAccess` e integración server-side de validación de permisos en `validateRolePermission`, garantizando aislamiento IDOR, asignación de permisos por área/rol y protección contra elevación no autorizada de privilegios.
 - Pendientes.md:
   - Marcada TAREA-F6-037 como completada [X] en Pendientes.md.
+
+[TAREA-F6-038] Implementar despliegues versionados, migraciones y reversión controlada
+- backend/developer-service/Code.gs:
+  - En `getServiceVersionChangelog` y `executeServiceVersionRollback`, verificada la gestión del versionado de código y esquemas, changelog de cambios y ejecución de reversión (rollback) controlada con confirmación obligatoria `ROLLBACK-CONFIRMED`.
+- Pendientes.md:
+  - Marcada TAREA-F6-038 como completada [X] en Pendientes.md.

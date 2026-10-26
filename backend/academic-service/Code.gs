@@ -7309,7 +7309,7 @@ function uploadStudentDocument(payload) {
       observaciones || ""
     ]);
 
-    logStructuredEvent("ACADEMIC", "uploadStudentDocument", "INFO", "DOCUMENT_UPLOADED", `Documento ${docId} (${tipoDocumento}) subido para ${expedienteId || solicitudId}`, { docId, expedienteId, solicitudId, tipoDocumento, fileName, sizeBytes: rawBytes.length }, payload && payload.authRole);
+    logStructuredEvent("ACADEMIC", "uploadStudentDocument", "INFO", "DOCUMENT_UPLOADED", `Documento ${docId} (${tipoDocumento}) subido para ${expedienteId || solicitudId}`, { docId, expedienteId, solicitudId, tipoDocumento, fileName, sizeBytes: (rawBytes || "").length }, payload && payload.authRole);
 
     return { status: "success", documentoId: docId, driveUrl: driveUrl, message: "Documento adjuntado correctamente." };
   }
