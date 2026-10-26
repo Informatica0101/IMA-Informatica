@@ -586,9 +586,71 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // --- LÓGICA CONSTRUCTOR DE HORARIOS Y SUSTITUCIONES DOCENTES (FASE 7) ---
-    async function loadMasterSchedules() {
+    let masterScheduleData = [];
+
+    // [TAREA-F7-IMP-02] [Fase 7: Planificación Académica, Horarios y Recursos] - Matriz visual de planificación y disponibilidad multi-perspectiva (Docente, Sección, Aula, Estado).
+    window.renderSchedulePlanningMatrix = function(schedules) {
         const tbody = document.getElementById('schedules-table-body');
         const badge = document.getElementById('schedule-count-badge');
+        if (!tbody) return;
+
+        const mode = document.getElementById('sch-matrix-mode')?.value || 'institucional';
+        const statusFilter = document.getElementById('sch-matrix-status')?.value || 'todos';
+        const query = (document.getElementById('sch-matrix-search')?.value || '').toLowerCase().trim();
+
+        let filtered = (schedules || []).filter(s => {
+            if (statusFilter !== 'todos' && String(s.estado || 'Activo').toLowerCase() !== statusFilter.toLowerCase()) {
+                return false;
+            }
+            if (query) {
+                const matchStr = `${s.diaSemana || ''} ${s.ofertaId || ''} ${s.grado || ''} ${s.seccion || ''} ${s.aulaCodigo || ''} ${s.docenteUserId || ''}`.toLowerCase();
+                if (!matchStr.includes(query)) return false;
+            }
+            return true;
+        });
+
+        if (badge) badge.textContent = `${filtered.length} Bloques`;
+
+        if (filtered.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="6" class="p-6 text-center text-gray-400 italic">No hay bloques de horario registrados que coincidan con los filtros seleccionados.</td></tr>';
+            return;
+        }
+
+        tbody.innerHTML = filtered.map(s => {
+            const isDraft = String(s.estado).toLowerCase() === 'borrador';
+            const statusBadge = isDraft
+                ? '<span class="px-2 py-0.5 bg-amber-100 text-amber-800 font-black rounded-md text-[9px] uppercase">Borrador</span>'
+                : '<span class="px-2 py-0.5 bg-emerald-100 text-emerald-800 font-bold rounded-md text-[9px] uppercase">Publicado</span>';
+
+            return `
+                <tr class="hover:bg-indigo-50/40 transition-colors border-b border-gray-100">
+                    <td class="p-3 font-bold text-gray-800">
+                        <span class="px-2 py-0.5 bg-indigo-50 text-indigo-700 rounded-md text-[9px] uppercase mr-1.5">${s.diaSemana}</span>
+                        <span>${s.horaInicio} - ${s.horaFin}</span>
+                    </td>
+                    <td class="p-3 font-semibold text-gray-700">
+                        ${s.ofertaId}
+                        <div class="mt-0.5">${statusBadge}</div>
+                    </td>
+                    <td class="p-3 text-gray-600 font-medium">${s.grado || 'Grado'} ${s.seccion || 'Secc.'}</td>
+                    <td class="p-3 font-mono text-gray-600"><span class="px-2 py-1 bg-teal-50 text-teal-700 font-bold rounded-lg text-[10px]"><i class="fas fa-door-open mr-1"></i>${s.aulaCodigo || 'AULA-101'}</span></td>
+                    <td class="p-3 text-gray-600">${s.docenteUserId || currentUser.nombre}</td>
+                    <td class="p-3 text-right">
+                        <button onclick="window.deleteScheduleBlock('${s.horarioId}')" class="px-2.5 py-1 bg-red-50 text-red-600 hover:bg-red-100 rounded-lg text-[10px] font-bold uppercase transition-colors" title="Eliminar">
+                            <i class="fas fa-trash-alt mr-1"></i>Eliminar
+                        </button>
+                    </td>
+                </tr>
+            `;
+        }).join('');
+    };
+
+    window.filterScheduleMatrix = function() {
+        window.renderSchedulePlanningMatrix(masterScheduleData);
+    };
+
+    async function loadMasterSchedules() {
+        const tbody = document.getElementById('schedules-table-body');
         if (!tbody) return;
 
         tbody.innerHTML = '<tr><td colspan="6" class="p-6 text-center text-gray-400 italic"><i class="fas fa-spinner fa-spin mr-2"></i>Cargando matriz de horarios...</td></tr>';
@@ -596,31 +658,8 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             const res = await fetchApi('ACADEMIC', 'getClassSchedules', { docenteUserId: currentUser.userId });
             if (res.status === 'success') {
-                const schedules = res.data || [];
-                if (badge) badge.textContent = `${schedules.length} Bloques`;
-
-                if (schedules.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="6" class="p-6 text-center text-gray-400 italic">No hay bloques de horario registrados para este docente. Utilice el formulario superior para programar sus clases.</td></tr>';
-                    return;
-                }
-
-                tbody.innerHTML = schedules.map(s => `
-                    <tr class="hover:bg-indigo-50/40 transition-colors">
-                        <td class="p-3 font-bold text-gray-800">
-                            <span class="px-2 py-0.5 bg-indigo-50 text-indigo-700 rounded-md uppercase text-[9px] mr-1.5">${s.diaSemana}</span>
-                            <span>${s.horaInicio} - ${s.horaFin}</span>
-                        </td>
-                        <td class="p-3 font-semibold text-gray-700">${s.ofertaId}</td>
-                        <td class="p-3 text-gray-600 font-medium">Grado / Secc. Asignada</td>
-                        <td class="p-3 font-mono text-gray-600">${s.aulaCodigo || 'N/A'}</td>
-                        <td class="p-3 text-gray-600">${s.docenteUserId || currentUser.nombre}</td>
-                        <td class="p-3 text-right">
-                            <button onclick="window.deleteScheduleBlock('${s.horarioId}')" class="px-2.5 py-1 bg-red-50 text-red-600 hover:bg-red-100 rounded-lg text-[10px] font-bold uppercase transition-colors">
-                                <i class="fas fa-trash-alt mr-1"></i>Eliminar
-                            </button>
-                        </td>
-                    </tr>
-                `).join('');
+                masterScheduleData = res.data || [];
+                window.renderSchedulePlanningMatrix(masterScheduleData);
             } else {
                 tbody.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-red-500">${res.message || 'Error al cargar horarios'}</td></tr>`;
             }

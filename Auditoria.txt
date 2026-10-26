@@ -722,3 +722,21 @@ Auditoría inicial de archivos para TAREA-F7-IMP-01:
 
 Hallazgos:
 - La función `checkScheduleConflict` cuenta con validaciones básicas de traslape, pero requiere soportar excepciones explícitamente configuradas en la hoja `ExcepcionesHorarios` y retornar información estructurada de advertencias vs conflictos críticos para cumplir con CA-F7-01 a CA-F7-08.
+
+
+-------------------------------------------------------------------------------
+FECHA: 2026-10-26
+TAREA: [TAREA-F7-IMP-02] Implementar una matriz visual de planificación y disponibilidad
+-------------------------------------------------------------------------------
+Auditoría inicial de archivos para TAREA-F7-IMP-02:
+- teacher-dashboard.html:
+  - Inspeccionada la sección de Matriz de Horarios Institucionales Programados (`#schedules-table-body`).
+  - Se incorporará una barra de filtros contextuales (Modo de vista: Institucional, Docente, Sección, Asignatura, Aula/Espacio; Grado, Sección, Estado, Búsqueda).
+- js/teacher.js:
+  - Inspeccionada la función `loadMasterSchedules`.
+  - Se implementará la función `renderSchedulePlanningMatrix` para agrupar, filtrar y clasificar visualmente la matriz de horarios por perspectiva, badges de estado (Activo, Borrador, Cancelado, Conflicto) y manejo de estados vacíos.
+- Pendientes.md:
+  - Se actualizará el estado de la TAREA-F7-IMP-02 a `[X] Completado`.
+
+Hallazgos:
+- La vista de horarios actual renderiza una tabla plana de registros, pero no permite filtrar por perspectivas (por docente, por sección, por aula o por estado) ni consultar la disponibilidad de aulas de forma unificada.

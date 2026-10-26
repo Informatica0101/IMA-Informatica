@@ -1432,7 +1432,7 @@ FASE 7. PLANIFICACIÓN ACADÉMICA, HORARIOS Y RECURSOS
 
 ---
 
-### [ ] [TAREA-F7-IMP-02] Implementar una matriz visual de planificación y disponibilidad
+### [X] [TAREA-F7-IMP-02] Implementar una matriz visual de planificación y disponibilidad
 - **Origen del Hallazgo:** `AUDITORIA_FASE_7_PLANIFICACION_HORARIOS_RECURSOS.md` / Tarea F7-IMP-02 (P1 · Interfaz de Planificación)
 - **Prioridad:** P1
 - **Severidad/Clasificación:** Alta (Ampliación de interfaz y herramientas de planificación)
@@ -1472,7 +1472,7 @@ FASE 7. PLANIFICACIÓN ACADÉMICA, HORARIOS Y RECURSOS
   - CA-F7-14: Los usuarios sin permiso de modificación no pueden alterar los horarios desde esta interfaz.
   - CA-F7-15: Las consultas no muestran información de períodos o grupos ajenos al ámbito autorizado.
   - CA-F7-16: La vista funciona con horarios extensos sin bloquear la interacción ni ocultar información esencial.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completado
 
 ---
 

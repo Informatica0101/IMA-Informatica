@@ -1829,3 +1829,14 @@ Descripción objetiva:
 - Actualizado `createClassSchedule` en `backend/academic-service/Code.gs` para recibir `excepcionJustificacion` y procesar el guardado con autorización de excepción.
 - Actualizado el controlador de eventos UI en `js/teacher.js` para capturar el conflicto y solicitar la justificación del usuario cuando decida registrar una excepción explícita.
 - Actualizado el estado de [TAREA-F7-IMP-01] a Completado en Pendientes.md.
+
+
+Fecha: 2026-10-26
+Archivos modificados:
+- teacher-dashboard.html (Líneas 612-632)
+- js/teacher.js (Líneas 588-662)
+- Pendientes.md (Líneas 1432-1475)
+Descripción objetiva:
+- Incorporada la barra de filtros de perspectiva (Institucional, Docente, Sección, Aula) y de estado (Todos, Activo, Borrador) con búsqueda dinámica en `teacher-dashboard.html`.
+- Creadas las funciones `renderSchedulePlanningMatrix` y `filterScheduleMatrix` en `js/teacher.js` con el encabezado identificativo `[TAREA-F7-IMP-02]` para renderizar la matriz de disponibilidad multi-perspectiva.
+- Actualizado el estado de [TAREA-F7-IMP-02] a Completado en Pendientes.md.

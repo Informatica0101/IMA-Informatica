@@ -373,3 +373,4 @@ TAREAS PENDIENTES DE REVISIÓN
 - TAREA-F6-018: Completar la gestión de autorizaciones, responsables legales y contactos de emergencia (Restricciones de Custodia Legal y Consolidado de Tutores)
 - TAREA-F6-020: Mejorar la búsqueda global y la navegación operativa del expediente (Filtros contextuales omnibox y prioridad por coincidencia exacta)
 - TAREA-F7-IMP-01: Ampliar la validación integral de horarios y asignaciones (Soporte de excepciones justificadas y motor de traslapes en checkScheduleConflict)
+- TAREA-F7-IMP-02: Implementar una matriz visual de planificación y disponibilidad (Matriz unificada multi-perspectiva y filtros por estado)
