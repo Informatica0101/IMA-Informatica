@@ -670,6 +670,77 @@ window.loadGuardianLinkageStatus = function(solicitudObj) {
             </div>
         </div>
     `;
+
+    if (solicitudObj.expedienteId) {
+        window.loadStudentGuardianConsolidatedList(solicitudObj.expedienteId);
+    }
+};
+
+// [TAREA-F6-018] [Fase 6: Expediente Institucional y Ciclo de Vida] - Gestión de autorizaciones, responsables legales y lista consolidada de tutores
+window.loadStudentGuardianConsolidatedList = async function(expedienteId) {
+    const container = document.getElementById('modal-adm-tutors-container');
+    if (!container || !expedienteId) return;
+
+    try {
+        const res = await fetchApi('USER', 'getStudentGuardianConsolidatedList', { expedienteId });
+        if (res && res.status === 'success' && Array.isArray(res.tutores) && res.tutores.length > 0) {
+            let html = `<div class="space-y-2 pt-2 border-t border-gray-100">
+                <p class="text-[10px] font-bold text-gray-700 uppercase tracking-wider">Consolidado de Tutores y Restricciones Judiciales:</p>`;
+            res.tutores.forEach(t => {
+                const restBadge = t.restriccionActiva
+                    ? `<span class="px-2 py-0.5 text-[8px] font-black rounded bg-red-100 text-red-800 border border-red-200">RESTRICCIÓN: ${t.restriccionActiva.tipoRestriccion}</span>`
+                    : `<span class="px-2 py-0.5 text-[8px] font-bold rounded bg-emerald-100 text-emerald-800 border border-emerald-200">Sin Restricciones</span>`;
+                html += `
+                    <div class="p-2.5 bg-gray-50 rounded-lg border border-gray-200 space-y-1">
+                        <div class="flex justify-between items-center">
+                            <span class="font-bold text-gray-900">${t.nombreTutor} (${t.parentesco})</span>
+                            ${restBadge}
+                        </div>
+                        <p class="text-[9px] text-gray-500">ID Usuario Tutor: <code class="bg-gray-200 px-1 rounded">${t.tutorUserId}</code> | Estado Vínculo: <strong>${t.estadoVinculo}</strong></p>
+                        ${t.restriccionActiva ? `<p class="text-[9px] text-red-600 font-medium">Ref. Judicial: ${t.restriccionActiva.ordenJudicialRef || 'N/A'} | Prohibir Contacto: ${t.restriccionActiva.prohibirContacto}</p>` : ''}
+                    </div>
+                `;
+            });
+            html += `</div>`;
+            container.insertAdjacentHTML('beforeend', html);
+        }
+    } catch (err) {
+        console.warn("No se pudo cargar la lista consolidada de tutores:", err);
+    }
+};
+
+window.promptRegisterCustodyRestriction = async function(expedienteIdInput) {
+    const expedienteId = expedienteIdInput || (window.currentActiveSolicitudObj && window.currentActiveSolicitudObj.expedienteId) || prompt("Ingrese el ID de Expediente del estudiante:", "");
+    if (!expedienteId) return;
+
+    const tutorUserId = prompt("Ingrese el UserId del tutor/responsable a restringir:", "");
+    if (!tutorUserId) return;
+
+    const tipoRestriccion = prompt("Tipo de Restricción Legal (ej. RestriccionTotal, ParcialLectura, ContactoProhibido):", "RestriccionTotal");
+    if (!tipoRestriccion) return;
+
+    const ordenJudicialRef = prompt("Número o Referencia de la Orden Judicial / Resolución:", "");
+    const prohibirContacto = confirm("¿Desea prohibir todo contacto y revocar automáticamente permisos del tutor?");
+    const observaciones = prompt("Observaciones justificativas de la restricción legal:", "");
+
+    try {
+        const res = await fetchApi('USER', 'registerLegalCustodyRestriction', {
+            expedienteId,
+            tutorUserId,
+            tipoRestriccion,
+            ordenJudicialRef,
+            prohibirContacto,
+            observaciones
+        });
+        if (res && res.status === 'success') {
+            alert("Restricción judicial de custodia legal registrada correctamente. ID: " + res.restriccionId);
+            if (expedienteId) window.loadStudentGuardianConsolidatedList(expedienteId);
+        } else {
+            alert("Error al registrar restricción: " + (res ? res.message : "Error desconocido"));
+        }
+    } catch (err) {
+        alert("Error de comunicación: " + err.message);
+    }
 };
 
 window.promptIssueTutorInvitation = async function(solicitudIdInput, expedienteIdInput, emailInput) {

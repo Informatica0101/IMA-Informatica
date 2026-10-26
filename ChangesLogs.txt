@@ -1787,3 +1787,14 @@ Archivos Modificados:
   - En `runFullArchitectureIntegrationAndPerformanceSuite`, verificada la ejecución de pruebas integrales multi-servicio que evalúan descubrimiento, resiliencia, tolerancia a fallos, comandos operativos y permisos multi-rol.
 - Pendientes.md:
   - Marcada TAREA-F6-040 como completada [X] en Pendientes.md.
+
+
+Fecha: 2026-03-29
+Archivos modificados:
+- dashboard-secretaria.html (Líneas 227-238)
+- js/secretary.js (Líneas 673-745)
+- Pendientes.md (Línea 575)
+Descripción objetiva:
+- Agregado botón UI y controlador `promptRegisterCustodyRestriction` para el registro de restricciones judiciales de custodia legal sobre expedientes estudiantiles.
+- Implementada la función `loadStudentGuardianConsolidatedList` para consultar y renderizar la lista consolidada de tutores con categorización de estado, vinculación y distintivo de restricción judicial activa.
+- Actualizado el estado de [TAREA-F6-018] a Completado en Pendientes.md.

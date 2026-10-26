@@ -635,3 +635,24 @@ Auditoría inicial de archivos para TAREA-F6-040:
 
 Hallazgos:
 - Se inyectará el comentario identificativo explícito de `[TAREA-F6-040]` en `backend/developer-service/Code.gs`.
+
+
+-------------------------------------------------------------------------------
+FECHA: 2026-03-29
+TAREA: [TAREA-F6-018] Completar la gestión de autorizaciones, responsables legales y contactos de emergencia
+-------------------------------------------------------------------------------
+Auditoría inicial de archivos para TAREA-F6-018:
+- backend/user-service/Code.gs:
+  - Inspeccionadas las funciones `registerLegalCustodyRestriction` y `getStudentGuardianConsolidatedList`.
+  - Se verifica que registran restricciones judiciales de custodia y revocan automáticamente permisos familiares cuando aplica.
+- dashboard-secretaria.html:
+  - Inspeccionado el modal de detalle e inspección de admisiones/expedientes (`#modal-admission-detail`).
+  - Se añadirá el bloque UI para registro de restricciones de custodia legal y visualización de la lista consolidada de tutores con categorización de permisos.
+- js/secretary.js:
+  - Inspeccionadas las funciones asociadas a tutores.
+  - Se añadirán las funciones UI `window.loadStudentGuardianConsolidatedList` y `window.promptRegisterCustodyRestriction` con su correspondiente encabezado identificativo de `[TAREA-F6-018]`.
+- Pendientes.md:
+  - Se actualizará el estado de la TAREA-F6-018 a `[X] Completado`.
+
+Hallazgos:
+- Se requiere integrar en el frontend (`dashboard-secretaria.html` y `js/secretary.js`) los controladores y vistas de usuario para invocar `registerLegalCustodyRestriction` y `getStudentGuardianConsolidatedList` del backend.

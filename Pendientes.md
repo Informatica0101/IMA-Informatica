@@ -572,7 +572,7 @@ FASE 6. EXPEDIENTE INSTITUCIONAL Y CICLO DE VIDA DEL ESTUDIANTE
   - CA-097: Un vínculo vencido no otorga permisos activos.
   - CA-098: Los cambios quedan registrados con autor, fecha, valor anterior, valor nuevo y motivo.
   - CA-099: Las restricciones legales documentadas prevalecen sobre los permisos ordinarios incompatibles.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completado
 
 ---
 
