@@ -576,7 +576,7 @@ FASE 6. EXPEDIENTE INSTITUCIONAL Y CICLO DE VIDA DEL ESTUDIANTE
 
 ---
 
-### [TAREA-F6-019] Fortalecer la trazabilidad del expediente y la consulta del historial institucional
+### [X] [TAREA-F6-019] Fortalecer la trazabilidad del expediente y la consulta del historial institucional
 - **Origen del Hallazgo:** `AUDITORIA_FASE_6_EXPEDIENTE_CICLO_VIDA.md` / Tarea 5 (P2 · Integridad Histórica)
 - **Prioridad:** P2
 - **Severidad/Clasificación:** Medio (Trazabilidad y auditoría administrativa)

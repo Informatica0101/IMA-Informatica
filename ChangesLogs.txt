@@ -1612,3 +1612,8 @@ Archivos Modificados:
   - Verificada la implementación de getPendingDocumentsReport y grantDocumentExemption para el cálculo de porcentaje de cumplimiento documental, requisitos faltantes obligatorios/opcionales y otorgamiento de exenciones.
   - Registrados permisos getPendingDocumentsReport y grantDocumentExemption para Secretaría y Secretaria en ROLE_PERMISSIONS.
   - Marcada TAREA-F6-017 como completada [X] en Pendientes.md.
+
+[TAREA-F6-019] Fortalecer la trazabilidad del expediente y la consulta del historial institucional
+- backend/academic-service/Code.gs:
+  - Verificada la función getStudentTimeline con consolidación cronológica de eventos (apertura, matrículas, movimientos, documentos, auditoría), filtros por año/categoría/actor/búsqueda y minimización de PII según rol.
+  - Marcada TAREA-F6-019 como completada [X] en Pendientes.md.

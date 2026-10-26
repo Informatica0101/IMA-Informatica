@@ -307,3 +307,15 @@ Archivos verificados:
 Resultados de verificación:
 - Módulo de gestión de documentos pendientes con clasificación entre obligatorios y opcionales.
 - Concesión de exenciones documentales registradas en ExencionesDocumentales con trazabilidad por rol.
+
+===========================================================
+AUDITORÍA DE CÓDIGO - TAREA-F6-019
+===========================================================
+Fecha: 2025-05-18
+Archivos verificados:
+- backend/academic-service/Code.gs
+- Pendientes.md
+
+Resultados de verificación:
+- Vista cronológica auditable del ciclo de vida del expediente.
+- Filtrado dinámico por periodo lectivo, actor y categoría, respetando permisos y minimización de PII.

@@ -6139,34 +6139,126 @@ function updateStudentFile(payload) {
   return { status: "success", message: "Expediente digital actualizado exitosamente." };
 }
 
-// [REQ-EXP-005] [Fase 1: Registro y Expediente de Estudiantes] - Service backend endpoint (getStudentTimeline) para consultar la línea de tiempo e historial cronológico de movimientos del estudiante.
+// [TAREA-F6-019] [Fase 6: Expediente Institucional y Ciclo de Vida] - Trazabilidad consolidada, filtros, minimización de PII y consulta del historial del expediente
 function getStudentTimeline(payload) {
-  const { expedienteId } = payload || {};
+  const { expedienteId, anolectivo, categoria, actor, tipoMovimiento, searchQuery } = payload || {};
   const fileRes = getStudentFile(payload);
   if (fileRes.status !== "success") return fileRes;
 
   const exp = fileRes.studentFile;
   const events = [];
+  const userRole = (payload && payload.authRole) || "";
+  const isPrivileged = ["Administrador", "Director", "Secretaría", "Secretaria", "Subdirector", "Desarrollador"].indexOf(userRole) !== -1;
 
   if (exp.fechaCreacion) {
-    events.push({ fecha: exp.fechaCreacion, tipo: "CreacionExpediente", titulo: "Apertura de Expediente Digital", detalle: `Código: ${exp.codigoInstitucional}` });
+    events.push({
+      fecha: exp.fechaCreacion,
+      categoria: "Apertura",
+      tipo: "CreacionExpediente",
+      titulo: "Apertura de Expediente Digital",
+      periodo: exp.anoIngreso || "N/A",
+      actor: "Sistema",
+      detalle: "Código Institucional: " + (exp.codigoInstitucional || "N/A"),
+      refId: exp.expedienteId
+    });
   }
 
-  exp.enrollments.forEach(e => {
-    events.push({ fecha: e.fecha, tipo: "Matricula", titulo: `Matrícula ${e.tipo}`, detalle: `Año ${e.periodo} - ${e.grado} (Secc. ${e.seccion})` });
+  (exp.enrollments || []).forEach(e => {
+    events.push({
+      fecha: e.fecha,
+      categoria: "Matricula",
+      tipo: "Matricula_" + (e.tipo || "Ordinaria"),
+      titulo: "Matrícula " + (e.tipo || "Ordinaria"),
+      periodo: String(e.periodo || "2026"),
+      actor: e.registradoPor || "Secretaría",
+      detalle: "Grado: " + (e.grado || "") + " | Sección: " + (e.seccion || "") + " | Estado: " + (e.estado || "Activa"),
+      refId: e.matriculaId
+    });
   });
 
-  exp.movements.forEach(m => {
-    events.push({ fecha: m.fechaEfectiva, tipo: m.tipoMovimiento, titulo: `Movimiento: ${m.tipoMovimiento}`, detalle: `${m.gradoOrigen || ''} ${m.seccionOrigen || ''} -> ${m.gradoDestino || ''} ${m.seccionDestino || ''} (${m.motivo || ''})` });
+  (exp.movements || []).forEach(m => {
+    events.push({
+      fecha: m.fechaEfectiva || m.fechaRegistro,
+      categoria: "Movilidad",
+      tipo: m.tipoMovimiento || "MovimientoEstudiantil",
+      titulo: "Movimiento: " + (m.tipoMovimiento || "Registro"),
+      periodo: String(m.anoLectivo || "2026"),
+      actor: m.registradoPor || "Secretaría",
+      detalle: (m.gradoOrigen || "") + " (" + (m.seccionOrigen || "") + ") -> " + (m.gradoDestino || "") + " (" + (m.seccionDestino || "") + ") | Motivo: " + (m.motivo || "N/A"),
+      refId: m.movimientoId
+    });
   });
 
-  exp.documents.forEach(d => {
-    events.push({ fecha: d.fechaRecepcion, tipo: "Documento", titulo: `Documento ${d.tipoDocumento}`, detalle: `${d.nombreArchivo} - Estado: ${d.estadoRevision}` });
+  (exp.documents || []).forEach(d => {
+    events.push({
+      fecha: d.fechaRecepcion,
+      categoria: "Documental",
+      tipo: "Documento_" + (d.tipoDocumento || "Adjunto"),
+      titulo: "Documento: " + (d.tipoDocumento || "Adjunto"),
+      periodo: "N/A",
+      actor: d.revisadoPor || "Secretaría",
+      detalle: "Archivo: " + (isPrivileged ? (d.nombreArchivo || "Documento") : "[REDACTADO]") + " | Estado: " + (d.estadoRevision || "Recibido"),
+      refId: d.documentoId
+    });
   });
 
-  events.sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
+  // Consultar auditoría de cambios de entidad (HistorialCambiosEntidad)
+  try {
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const histSheet = getOrCreateSheet(ss, "HistorialCambiosEntidad");
+    const histRows = histSheet.getDataRange().getValues().slice(1);
+    const targetExpId = String(expedienteId || exp.expedienteId || "").trim();
 
-  return { status: "success", timeline: events };
+    histRows.forEach(h => {
+      if (String(h[3]).trim() === targetExpId) {
+        events.push({
+          fecha: h[1],
+          categoria: "Auditoria",
+          tipo: h[4] || "CAMBIO_ENTIDAD",
+          titulo: "Auditoría: " + (h[4] || "Modificación de Expediente"),
+          periodo: "N/A",
+          actor: h[7] || "Sistema",
+          detalle: isPrivileged ? ("Anterior: " + String(h[5] || "").slice(0, 50) + " | Nuevo: " + String(h[6] || "").slice(0, 50)) : "Modificación registrada en bitácora protegida.",
+          refId: h[0]
+        });
+      }
+    });
+  } catch (_) {}
+
+  // Filtrar eventos por parámetros opcionales
+  let filtered = events;
+  if (anolectivo) {
+    filtered = filtered.filter(ev => String(ev.periodo).trim() === String(anolectivo).trim() || ev.periodo === "N/A");
+  }
+  if (categoria) {
+    filtered = filtered.filter(ev => String(ev.categoria).toLowerCase() === String(categoria).toLowerCase());
+  }
+  if (actor) {
+    filtered = filtered.filter(ev => String(ev.actor).toLowerCase().indexOf(String(actor).toLowerCase()) !== -1);
+  }
+  if (tipoMovimiento) {
+    filtered = filtered.filter(ev => String(ev.tipo).toLowerCase().indexOf(String(tipoMovimiento).toLowerCase()) !== -1);
+  }
+  if (searchQuery) {
+    const q = String(searchQuery).toLowerCase();
+    filtered = filtered.filter(ev => String(ev.titulo).toLowerCase().indexOf(q) !== -1 || String(ev.detalle).toLowerCase().indexOf(q) !== -1 || String(ev.actor).toLowerCase().indexOf(q) !== -1);
+  }
+
+  filtered.sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
+
+  return {
+    status: "success",
+    expedienteId: exp.expedienteId,
+    codigoInstitucional: exp.codigoInstitucional,
+    situacionActual: {
+      estadoInstitucional: exp.estadoExpediente || "Activo",
+      gradoActual: exp.gradoActual || "N/A",
+      seccionActual: exp.seccionActual || "N/A",
+      anoIngreso: exp.anoIngreso || "2026"
+    },
+    totalEventos: filtered.length,
+    timeline: filtered
+  };
 }
 
 // ---------------------------------------------------------------------------
