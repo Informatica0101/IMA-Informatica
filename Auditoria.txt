@@ -459,3 +459,23 @@ Resultados de verificación:
 - Implementación de `auditAndFixAccessibility` para auditoría y corrección dinámica de pautas WCAG 2.2 AA (atributos `aria-*`, indicadores de foco visibles e iconos explicativos de color).
 - Configuración de trampas de foco y navegación accesible por teclado (`Tab`, `Esc`, `Enter`) en modales del expediente estudiantil (`#modal-student-file`).
 - Preservación automática de borradores de formulario ante pérdidas temporales de conexión y adaptación de tablas a tarjetas colapsables desde 320px+.
+
+
+-------------------------------------------------------------------------------
+FECHA: Marzo 2026
+TAREA: [TAREA-F6-029] Reestructurar la arquitectura en microservicios independientes
+-------------------------------------------------------------------------------
+Auditoría inicial de archivos para TAREA-F6-029:
+- js/config.js:
+  - Inspeccionado el registro centralizado de microservicios `window.SERVICE_REGISTRY` y `window.SERVICE_URLS`.
+  - Se verifica que incluye los microservicios USER, ACADEMIC, TASK, EXAM, ACCOUNTING y DEVELOPER con sus IDs, nombres, versiones, endpoints, recursos y responsabilidades.
+  - Para cumplir TAREA-F6-029, se agregará en `window.SERVICE_REGISTRY` la función auxiliar `getServiceDescriptor(serviceId)` para consultar descriptores completos de cada servicio de forma agnóstica a la plataforma, desacoplando aún más el descubrimiento y la resolución de endpoints.
+- js/api.js:
+  - Inspeccionada la resolución dinámica de endpoints en `fetchApi`.
+  - Se verifica que `fetchApi` evalúa `registry[service]` e inyecta parámetros de idempotencia, autenticación y correlación. Se mejorará la resolución para usar `getServiceDescriptor` cuando esté disponible.
+- backend/developer-service/Code.gs:
+  - Inspeccionadas las funciones del plano de control central (`getCentralServiceRegistry`, `registerServiceInstance`, `updateServiceStatus`).
+  - Se añadirá el identificador y comentario de TAREA-F6-029 sobre el registro centralizado de microservicios independientes.
+
+Hallazgos:
+- La arquitectura de microservicios está estructurada pero se requiere formalizar la función `getServiceDescriptor` en `js/config.js` e integrarla en `js/api.js` y `backend/developer-service/Code.gs` para completar el requerimiento de desacoplamiento e independencia de microservicios de TAREA-F6-029.

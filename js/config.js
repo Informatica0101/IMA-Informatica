@@ -240,6 +240,31 @@ window.SERVICE_REGISTRY = {
   }
 };
 
+// [TAREA-F6-029] [Fase 6: Reestructuración en microservicios independientes] - Consulta de descriptor completo de microservicio para desacoplar el descubrimiento y enrutamiento inter-servicio.
+window.getServiceDescriptor = function(serviceKey) {
+  var registry = window.SERVICE_REGISTRY || {};
+  var svc = registry[serviceKey];
+  if (!svc) {
+    return {
+      serviceId: "SVC-UNKNOWN",
+      name: serviceKey || "Desconocido",
+      healthStatus: "UNREGISTERED",
+      endpointUrl: (window.SERVICE_URLS && window.SERVICE_URLS[serviceKey]) || null,
+      responsibilities: [],
+      resources: {}
+    };
+  }
+  return {
+    serviceId: svc.serviceId,
+    name: svc.name,
+    version: svc.version,
+    endpointUrl: svc.endpointUrl,
+    healthStatus: svc.healthStatus || "ACTIVE",
+    responsibilities: svc.responsibilities || [],
+    resources: svc.resources || {}
+  };
+};
+
 // --- URL del sitio para CORS (si es necesario ajustarlo en el backend) ---
 var FRONTEND_URL = 'https://informatica0101.github.io';
 

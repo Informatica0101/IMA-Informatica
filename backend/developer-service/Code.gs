@@ -372,13 +372,15 @@ function executeOperationalCommand(payload) {
 }
 
 // [TAREA-F6-008] [Fase 6: Reestructuración en microservicios independientes] - Consulta del registro central de microservicios, recursos y versiones
+// [TAREA-F6-029] [Fase 6: Reestructuración en microservicios independientes] - Registro centralizado de microservicios con descriptores desacoplados y aislamiento de almacenamiento
 function getCentralServiceRegistry(payload) {
   const defaultServices = [
     { serviceId: "SVC-USER-01", name: "User Service", type: "IDENTITY", state: "Activo", version: "v8.4.0", responsibilities: ["Auth", "Users", "Roles"] },
     { serviceId: "SVC-ACADEMIC-02", name: "Academic Service", type: "ACADEMIC", state: "Activo", version: "v8.4.0", responsibilities: ["Files", "Enrollments", "Admissions"] },
     { serviceId: "SVC-TASK-03", name: "Task Service", type: "ACADEMIC_SUB", state: "Activo", version: "v8.4.0", responsibilities: ["Tasks", "Submissions"] },
     { serviceId: "SVC-EXAM-04", name: "Exam Service", type: "ACADEMIC_SUB", state: "Activo", version: "v8.4.0", responsibilities: ["Exams", "QuestionBank"] },
-    { serviceId: "SVC-ACCOUNTING-05", name: "Accounting Service", type: "FINANCIAL", state: "Activo", version: "v8.4.0", responsibilities: ["Billing", "Payments", "Payroll"] }
+    { serviceId: "SVC-ACCOUNTING-05", name: "Accounting Service", type: "FINANCIAL", state: "Activo", version: "v8.4.0", responsibilities: ["Billing", "Payments", "Payroll"] },
+    { serviceId: "SVC-DEVELOPER-00", name: "Developer Service", type: "CONTROL_PLANE", state: "Activo", version: "v8.4.0", responsibilities: ["ControlPlane", "Diagnostics", "InterServiceAudit"] }
   ];
 
   return {
