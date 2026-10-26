@@ -808,3 +808,20 @@ Auditoría inicial e inspección de archivos para TAREA-F7-IMP-06:
   - Se implementará la función `openClassroomMaintenanceModal` / controlador de mantenimiento con la etiqueta identificativa `[TAREA-F7-IMP-06]`.
 - Pendientes.md:
   - Se actualizará el estado de la TAREA-F7-IMP-06 a `[X] Completado`.
+
+
+-------------------------------------------------------------------------------
+FECHA: 2026-10-26
+TAREA: [TAREA-F7-IMP-07] Fortalecer la programación de evaluaciones y la prevención de sobrecargas
+-------------------------------------------------------------------------------
+Auditoría inicial e inspección de archivos para TAREA-F7-IMP-07:
+- backend/exam-service/Code.gs:
+  - Inspeccionadas las funciones `createExam`, `updateExam`, `getAllExams`, `getStudentExams`.
+  - Se creará la función `checkExamSchedulingConflict` para evaluar el límite diario de evaluaciones por sección (máximo 2 evaluaciones/día), choque con días no lectivos en `CalendarioAcademico` y traslapes de docente/aula.
+  - Se creará la función `simulateExamReschedule` para previsualizar el impacto de reprogramaciones de exámenes de forma segura sin alterar calificaciones históricas.
+  - Se registrarán `checkExamSchedulingConflict` y `simulateExamReschedule` en `ROLE_PERMISSIONS` y dispatcher `doPost` de `backend/exam-service/Code.gs`.
+- teacher-dashboard.html / js/teacher.js:
+  - Se añadirá el modal `#modal-exam-schedule-validation` para la simulación y validación de sobrecarga evaluativa.
+  - Se implementarán las funciones `openExamScheduleValidationModal` y `simulateExamRescheduleAction` con la etiqueta identificativa `[TAREA-F7-IMP-07]`.
+- Pendientes.md:
+  - Se actualizará el estado de la TAREA-F7-IMP-07 a `[X] Completado`.

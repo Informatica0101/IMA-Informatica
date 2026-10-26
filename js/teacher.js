@@ -860,6 +860,79 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
+    // [TAREA-F7-IMP-07] [Fase 7: Planificación Académica, Horarios y Recursos] - Controlador de validación de sobrecarga evaluativa y simulación de reprogramación
+    window.openExamScheduleValidationModal = function() {
+        const modal = document.getElementById('modal-exam-schedule-validation');
+        if (modal) modal.classList.remove('hidden');
+
+        const formSim = document.getElementById('form-exam-reschedule-simulation');
+        if (formSim && !formSim.dataset.listener) {
+            formSim.dataset.listener = 'true';
+            formSim.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const examenId = document.getElementById('sim-exam-id').value.trim();
+                const nuevaSeccion = document.getElementById('sim-exam-seccion').value.trim();
+                const nuevaFecha = document.getElementById('sim-exam-fecha').value;
+
+                const resultBox = document.getElementById('sim-exam-result-box');
+                if (resultBox) {
+                    resultBox.classList.remove('hidden');
+                    resultBox.className = 'p-4 rounded-2xl border bg-slate-50 text-slate-600 border-slate-200';
+                    resultBox.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-1"></i> Simulando reprogramación...';
+                }
+
+                try {
+                    const res = await fetchApi('EXAM', 'simulateExamReschedule', {
+                        examenId,
+                        nuevaSeccion,
+                        nuevaFecha
+                    });
+
+                    if (res && res.status === 'success' && res.simulacion) {
+                        const sim = res.simulacion;
+                        if (sim.tieneConflicto) {
+                            resultBox.className = 'p-4 rounded-2xl border bg-rose-50 border-rose-200 text-rose-800';
+                            resultBox.innerHTML = `
+                                <div class="flex items-center gap-2 font-bold mb-1">
+                                    <i class="fa-solid fa-triangle-exclamation text-rose-600 text-base"></i>
+                                    <span>Conflicto / Sobrecarga Detectada</span>
+                                </div>
+                                <p class="text-xs mb-2">${sim.motivoConflicto}</p>
+                                <div class="text-[11px] text-rose-700 bg-white/80 p-2 rounded-xl border border-rose-100">
+                                    <strong>Evaluación:</strong> ${sim.titulo} (${sim.asignatura})<br>
+                                    <strong>Sección:</strong> ${sim.seccionDestino}<br>
+                                    <strong>Fecha Propuesta:</strong> ${sim.fechaPropuesta}
+                                </div>
+                            `;
+                        } else {
+                            resultBox.className = 'p-4 rounded-2xl border bg-emerald-50 border-emerald-200 text-emerald-800';
+                            resultBox.innerHTML = `
+                                <div class="flex items-center gap-2 font-bold mb-1">
+                                    <i class="fa-solid fa-circle-check text-emerald-600 text-base"></i>
+                                    <span>Simulación Exitosa - Sin Sobrecarga</span>
+                                </div>
+                                <p class="text-xs mb-2">La nueva fecha está libre y cumple con el límite diario de evaluaciones (máximo 2 por día).</p>
+                                <div class="text-[11px] text-emerald-700 bg-white/80 p-2 rounded-xl border border-emerald-100">
+                                    <strong>Evaluación:</strong> ${sim.titulo} (${sim.asignatura})<br>
+                                    <strong>Sección:</strong> ${sim.seccionDestino}<br>
+                                    <strong>Fecha Propuesta:</strong> ${sim.fechaPropuesta}
+                                </div>
+                            `;
+                        }
+                    } else {
+                        resultBox.className = 'p-4 rounded-2xl border bg-amber-50 border-amber-200 text-amber-800';
+                        resultBox.innerHTML = `<p class="font-bold">Error:</p><p>${res ? res.message : 'Error al simular'}</p>`;
+                    }
+                } catch (err) {
+                    if (resultBox) {
+                        resultBox.className = 'p-4 rounded-2xl border bg-rose-50 border-rose-200 text-rose-800';
+                        resultBox.innerHTML = `<p class="font-bold">Error de comunicación:</p><p>${err.message}</p>`;
+                    }
+                }
+            });
+        }
+    };
+
     // [TAREA-F7-IMP-05] [Fase 7: Planificación Académica, Horarios y Recursos] - Controlador de límites de carga laboral y preferencias horarias por docente
     window.openTeacherWorkLoadPreferencesModal = async function() {
         const docenteUserId = prompt("Ingrese el UserId o correo del Docente para configurar carga/preferencias:", currentUser.userId);

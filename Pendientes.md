@@ -1622,7 +1622,7 @@ FASE 7. PLANIFICACIÓN ACADÉMICA, HORARIOS Y RECURSOS
 
 ---
 
-### [ ] [TAREA-F7-IMP-07] Fortalecer la programación de evaluaciones y la prevención de sobrecargas
+### [X] [TAREA-F7-IMP-07] Fortalecer la programación de evaluaciones y la prevención de sobrecargas
 - **Origen del Hallazgo:** `AUDITORIA_FASE_7_PLANIFICACION_HORARIOS_RECURSOS.md` / Tarea F7-IMP-07 (P1 · Programación de Evaluaciones)
 - **Prioridad:** P1
 - **Severidad/Clasificación:** Alta (Ampliación de planificación evaluativa)
@@ -1655,7 +1655,7 @@ FASE 7. PLANIFICACIÓN ACADÉMICA, HORARIOS Y RECURSOS
   - CA-F7-48: Las calificaciones y los registros históricos permanecen vinculados a la evaluación correcta.
   - CA-F7-49: Los días no lectivos se respetan conforme a las reglas institucionales.
   - CA-F7-50: Los conflictos resultantes de una reprogramación se muestran antes de confirmar los cambios.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completado
 
 ---
 

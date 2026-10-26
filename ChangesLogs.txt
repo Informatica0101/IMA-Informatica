@@ -1893,3 +1893,15 @@ Descripción objetiva:
 - Modificada la función `checkScheduleConflict` en `backend/academic-service/Code.gs` para validar si el aula cuenta con mantenimiento o indisponibilidad activa en `MantenimientoAulas`.
 - Incorporados campo de equipamiento y función `openClassroomMaintenanceModal` en `teacher-dashboard.html` y `js/teacher.js` con la etiqueta identificativa `[TAREA-F7-IMP-06]`.
 - Actualizado el estado de [TAREA-F7-IMP-06] a Completado en Pendientes.md.
+
+
+Fecha: 2026-10-26
+Archivos modificados:
+- backend/exam-service/Code.gs (Líneas 92, 385, 663-735)
+- teacher-dashboard.html (Líneas 552, 1564-1602)
+- js/teacher.js (Líneas 863-935)
+- Pendientes.md (Línea 1625)
+Descripción objetiva:
+- Creadas las funciones `checkExamSchedulingConflict` y `simulateExamReschedule` en `backend/exam-service/Code.gs` e integradas en `ROLE_PERMISSIONS` y enrutador `doPost` para validar límites diarios de evaluaciones por sección (máximo 2/día) y simular reprogramaciones previa confirmación.
+- Incorporado el botón UI "Validar Evaluaciones", el modal `#modal-exam-schedule-validation` y la función `openExamScheduleValidationModal` en `teacher-dashboard.html` y `js/teacher.js` con la etiqueta identificativa `[TAREA-F7-IMP-07]`.
+- Actualizado el estado de [TAREA-F7-IMP-07] a Completado en Pendientes.md.

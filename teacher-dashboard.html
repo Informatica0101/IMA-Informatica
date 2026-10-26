@@ -549,6 +549,9 @@
                                 <button onclick="window.openTeacherWorkLoadPreferencesModal()" class="bg-purple-600 text-white px-3.5 py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider hover:bg-purple-700 transition-all shadow-md">
                                     <i class="fa-solid fa-user-clock mr-1"></i> Preferencias Carga
                                 </button>
+                                <button onclick="window.openExamScheduleValidationModal()" class="bg-rose-600 text-white px-3.5 py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider hover:bg-rose-700 transition-all shadow-md">
+                                    <i class="fa-solid fa-file-pen mr-1"></i> Validar Evaluaciones
+                                </button>
                                 <button id="btn-load-schedules-list" class="bg-indigo-600 text-white px-3.5 py-2.5 rounded-xl font-bold text-xs uppercase tracking-widest hover:bg-indigo-700 transition-all shadow-md">
                                     <i class="fas fa-sync-alt mr-1"></i> Actualizar
                                 </button>
@@ -1554,6 +1557,46 @@
             </div>
             <div class="flex justify-center bg-gray-50 rounded-2xl overflow-hidden">
                 <img id="lightbox-image" src="" alt="Vista previa" class="max-w-full max-h-[70vh] object-contain">
+            </div>
+        </div>
+    </div>
+
+    <!-- [TAREA-F7-IMP-07] [Fase 7: Planificación Académica, Horarios y Recursos] - Modal de Simulación y Validación de Sobrecarga Evaluativa (#modal-exam-schedule-validation) -->
+    <div id="modal-exam-schedule-validation" class="fixed inset-0 z-[110] bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-3xl shadow-2xl max-w-lg w-full overflow-hidden border border-slate-100 animate-fade-in">
+            <div class="p-5 bg-rose-50 border-b border-rose-100 flex justify-between items-center">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-2xl bg-rose-600 text-white flex items-center justify-center text-lg shadow-md">
+                        <i class="fa-solid fa-file-circle-check"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-slate-800 text-sm">Validación de Sobrecarga Evaluativa</h3>
+                        <p class="text-[10px] text-slate-500 font-medium">Límite de evaluaciones diarias por sección y reprogramación</p>
+                    </div>
+                </div>
+                <button onclick="document.getElementById('modal-exam-schedule-validation').classList.add('hidden')" class="w-8 h-8 rounded-full bg-white/80 text-slate-500 hover:text-slate-800 flex items-center justify-center">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div id="exam-schedule-validation-content" class="p-6 space-y-4 max-h-[70vh] overflow-y-auto text-xs">
+                <form id="form-exam-reschedule-simulation" class="space-y-3 bg-slate-50 p-4 rounded-2xl border border-slate-200">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-600 mb-1">ID o Código de Examen / Evaluación</label>
+                        <input type="text" id="sim-exam-id" class="w-full px-3 py-2 text-xs border rounded-xl" placeholder="Ej: EXM-101" required>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-600 mb-1">Sección de Destino</label>
+                        <input type="text" id="sim-exam-seccion" class="w-full px-3 py-2 text-xs border rounded-xl" placeholder="Ej: Séptimo 1 / SEC-7A" required>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-600 mb-1">Nueva Fecha Propuesta</label>
+                        <input type="date" id="sim-exam-fecha" class="w-full px-3 py-2 text-xs border rounded-xl" required>
+                    </div>
+                    <button type="submit" class="w-full py-2 bg-rose-600 text-white rounded-xl font-bold text-xs hover:bg-rose-700 shadow-sm transition">
+                        <i class="fa-solid fa-magnifying-glass mr-1"></i> Simular Reprogramación
+                    </button>
+                </form>
+                <div id="sim-exam-result-box" class="hidden p-4 rounded-2xl border text-xs"></div>
             </div>
         </div>
     </div>
