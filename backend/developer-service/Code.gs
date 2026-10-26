@@ -440,7 +440,7 @@ function manageUserMultiRolePermissions(payload) {
   };
 }
 
-// [TAREA-F6-009] [Fase 6: Reestructuración en microservicios independientes] - Módulo estandarizado de salud, diagnóstico, métricas de tráfico y sanitización de registros de errores
+// [TAREA-F6-009] [TAREA-F6-034] [Fase 6: Observabilidad y Mantenimiento Preventivo] - Módulo de salud, diagnóstico, métricas de tráfico y sanitización de registros de errores para el microservicio del desarrollador
 function getServiceHealthDiagnostics(payload) {
   const startTime = Date.now();
   const checks = {

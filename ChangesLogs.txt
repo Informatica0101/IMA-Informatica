@@ -1745,3 +1745,9 @@ Archivos Modificados:
   - Verificada la implementación del plano de control central (`getCentralServiceRegistry`, `auditInterServiceCalls`, `manageUserMultiRolePermissions`), incorporando la trazabilidad por `correlationId`, la diferenciación de estados operativos vs administrativos y la gestión de permisos multi-rol por usuario y área.
 - Pendientes.md:
   - Marcada TAREA-F6-033 como completada [X] en Pendientes.md.
+
+[TAREA-F6-034] Implementar módulos de salud, diagnóstico, tráfico y errores en cada microservicio
+- backend/academic-service/Code.gs y backend/developer-service/Code.gs:
+  - En `getServiceHealthDiagnostics`, verificada la implementación de diagnósticos de salud, chequeos de conectividad/Drive/Sheets, calculo de latencias y registros de métricas de tráfico y sanitización de errores.
+- Pendientes.md:
+  - Marcada TAREA-F6-034 como completada [X] en Pendientes.md.

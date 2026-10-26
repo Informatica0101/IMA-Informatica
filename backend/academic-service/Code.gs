@@ -3731,7 +3731,7 @@ function reconcileDocumentStorageIntegrity(payload) {
   };
 }
 
-// [TAREA-F6-009] [Fase 6: Reestructuración en microservicios independientes] - Módulo estandarizado de salud, diagnóstico, métricas de tráfico y sanitización de registros de errores
+// [TAREA-F6-009] [TAREA-F6-034] [Fase 6: Observabilidad y Mantenimiento Preventivo] - Módulo de salud, diagnóstico, métricas de tráfico y sanitización de registros de errores conforme al contrato común
 function getServiceHealthDiagnostics(payload) {
   const { fullCheck } = payload || {};
   const startTime = Date.now();
@@ -3881,6 +3881,13 @@ function configureAcademicLevelsAndDynamicStorage(payload) {
     sheetLevels.appendRow(["ConfigID", "NivelID", "NombreNivel", "CarrerasJSON", "GradosJSON", "Estado", "FechaActualizacion"]);
   }
 
+  const existingRows = sheetLevels.getDataRange().getValues();
+  const existingNivelIds = {};
+  for (let i = 1; i < existingRows.length; i++) {
+    const nid = String(existingRows[i][1]).trim().toUpperCase();
+    if (nid) existingNivelIds[nid] = i + 1;
+  }
+
   const levelsCatalog = academicLevels || [
     { nivelId: "NIVEL-PRE", nombre: "Preescolar / Prebásica", carreras: [], grados: ["Kínder", "Preparatoria"] },
     { nivelId: "NIVEL-BASICA", nombre: "Educación Básica", carreras: [], grados: ["1ero", "2do", "3ero", "4to", "5to", "6to", "7mo", "8vo", "9no"] },
@@ -3889,7 +3896,8 @@ function configureAcademicLevelsAndDynamicStorage(payload) {
   ];
 
   levelsCatalog.forEach(l => {
-    sheetLevels.appendRow([
+    const cleanNid = String(l.nivelId).trim().toUpperCase();
+    const rowValues = [
       `CFG-NIV-${Date.now()}-${Math.floor(Math.random()*1000)}`,
       l.nivelId,
       l.nombre,
@@ -3897,7 +3905,13 @@ function configureAcademicLevelsAndDynamicStorage(payload) {
       JSON.stringify(l.grados || []),
       "Activo",
       new Date().toISOString()
-    ]);
+    ];
+
+    if (existingNivelIds[cleanNid]) {
+      sheetLevels.getRange(existingNivelIds[cleanNid], 1, 1, rowValues.length).setValues([rowValues]);
+    } else {
+      sheetLevels.appendRow(rowValues);
+    }
   });
 
   logStructuredEvent("ACADEMIC", "configureAcademicLevelsAndDynamicStorage", "INFO", "DYNAMIC_STORAGE_AND_LEVELS_CONFIGURED", "Configurada estructura dinámica de almacenamiento y niveles académicos.", {
