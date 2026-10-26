@@ -168,7 +168,7 @@ const ROLE_PERMISSIONS = {
     "getAcademicPeriods", "manageAcademicPeriod", "getSubjectCatalog", "createSubjectCatalogItem", "getStudyPlans", "createStudyPlan",
     "getAcademicOffers", "createAcademicOffer", "getTeacherAssignments", "assignTeacherToClass", "createTeacherSubstitution",
     "getAcademicCalendar", "createCalendarEvent", "getClassSchedules", "createClassSchedule", "deleteClassSchedule", "getAcademicRules", "saveAcademicRule", "getDepartmentAcademicPlanning", "assignDepartmentHead", "getCurricularAnalyticsReport", "getReusableResourceCatalog", "manageReusableResource", "getCurricularEquivalences", "executeCurricularMigration", "registerCurricularAreaExtension", "runCurricularAreaServiceTests", "toggleCurricularAreaStatus", "validateApiContractsTestSuite", "getInstitutionalCatalog", "validateCatalogReference", "generateInstitutionalUUID", "validateInstitutionalIdentifier", "auditInstitutionalIdentifierCollisions", "runConcurrencyAndConsistencySuite", "getPaginatedAcademicHistory", "reconcileRestoredDataIntegrity", "evaluateTransactionalStorageMigrationNeed",
-    "getClassroomResources", "saveClassroomResource", "saveClassroomMaintenance", "getStudentSchedule", "getScheduleConflictResolutionAlternatives", "saveScheduleScenario", "getScheduleScenarios", "saveTeacherWorkLoadPreferences",
+    "getClassroomResources", "saveClassroomResource", "saveClassroomMaintenance", "getStudentSchedule", "getScheduleConflictResolutionAlternatives", "saveScheduleScenario", "getScheduleScenarios", "saveTeacherWorkLoadPreferences", "createSessionException",
     "createAdmissionRequest", "getAdmissionRequests", "updateAdmissionStatus", "reopenAdmissionRequest", "convertAdmissionToStudent", "scheduleAdmissionInterview", "getAdmissionInterviews", "recordInterviewOutcome", "saveAdmissionEvaluation", "getAdmissionEvaluations", "addToWaitlist", "getWaitlist", "reorderWaitlist", "offerWaitlistSlot", "respondToWaitlistSlot", "resolveAdmissionDuplicate", "getAdmissionAnalyticsReport",
     "getStudentFile", "getStudentFileSummary", "updateStudentFile", "getStudentTimeline", "findDuplicateStudents", "mergeStudentFiles", "getMergePreviewComparison", "unmergeStudentFiles", "getStudentFileAdministrativeReports", "initializeDirectionSecretaryDriveStructure",
     "getStudentGuardians", "saveStudentGuardian", "unlinkStudentGuardian", "uploadStudentDocument", "getStudentDocuments", "updateDocumentStatus", "getPendingDocumentsReport", "grantDocumentExemption", "restoreDocumentVersion", "checkAndNotifyExpiringStudentDocuments",
@@ -664,6 +664,7 @@ function doPost(e) {
       case "recordClassSessionOutcome": result = recordClassSessionOutcome(payload); break;
       case "getTeachingHoursSummary": result = getTeachingHoursSummary(payload); break;
       case "rescheduleCancelledSession": result = rescheduleCancelledSession(payload); break;
+      case "createSessionException": result = createSessionException(payload); break;
       case "getPendingSessionRecoveries": result = getPendingSessionRecoveries(payload); break;
       case "publishClassSchedules": result = publishClassSchedules(payload); break;
       case "getIndividualCalendar": result = getIndividualCalendar(payload); break;
@@ -2257,6 +2258,42 @@ function rescheduleCancelledSession(payload) {
       horaFin,
       docenteEfectivoUserId
     }
+  };
+}
+
+// [TAREA-F7-IMP-08] [Fase 7: Planificación Académica, Horarios y Recursos] - Gestión de excepciones puntuales para sesiones individuales dentro de series de horarios recurrentes.
+function createSessionException(payload) {
+  const { horarioId, fechaAfectada, tipoExcepcion, nuevaFecha, nuevaHoraInicio, nuevaHoraFin, nuevoAula, motivo } = payload || {};
+  if (!horarioId || !fechaAfectada || !tipoExcepcion) {
+    throw new Error("horarioId, fechaAfectada y tipoExcepcion son requeridos.");
+  }
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "ExcepcionesSesiones");
+  const excepcionId = "EXC-" + Utilities.getUuid().substring(0, 8).toUpperCase();
+  const nowStr = new Date().toISOString();
+  const registradoPor = payload && payload.authUserId ? payload.authUserId : "ADMIN";
+
+  sheet.appendRow([
+    excepcionId,
+    horarioId,
+    fechaAfectada,
+    tipoExcepcion,
+    nuevaFecha || fechaAfectada,
+    nuevaHoraInicio || "",
+    nuevaHoraFin || "",
+    nuevoAula || "",
+    motivo || "Excepción de sesión individual por causas de fuerza mayor / reprogramación puntual",
+    registradoPor,
+    nowStr
+  ]);
+
+  logStructuredEvent("ACADEMIC", "createSessionException", "INFO", "SESSION_EXCEPTION_CREATED", `Excepción de sesión registrada para horario ${horarioId} el ${fechaAfectada}`, { excepcionId, horarioId, fechaAfectada, tipoExcepcion }, payload && payload.authRole);
+
+  return {
+    status: "success",
+    message: `Excepción de sesión puntual (${tipoExcepcion}) registrada exitosamente.`,
+    excepcionId
   };
 }
 

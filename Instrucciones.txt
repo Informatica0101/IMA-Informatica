@@ -378,4 +378,4 @@ TAREAS PENDIENTES DE REVISIÓN
 - TAREA-F7-IMP-04: Incorporar planificación masiva y optimización de horarios (Gestión y almacenamiento de escenarios en borrador)
 - TAREA-F7-IMP-05: Ampliar el control de carga laboral y las preferencias docentes (Configuración de límites de jornada por contrato y preferencias por docente)
 - TAREA-F7-IMP-06: Ampliar la gestión de disponibilidad, equipamiento y capacidad de espacios (Equipamiento de aulas e indisponibilidad por mantenimiento)
-- TAREA-F7-IMP-07: Fortalecer la programación de evaluaciones y la prevención de sobrecargas (Límite de evaluaciones diarias por sección y simulación de reprogramaciones)
+- TAREA-F7-IMP-08: Ampliar las excepciones del calendario y la gestión de sesiones (Excepciones de sesión puntual sin alterar serie recurrente)

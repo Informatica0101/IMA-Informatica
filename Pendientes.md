@@ -1659,7 +1659,7 @@ FASE 7. PLANIFICACIÓN ACADÉMICA, HORARIOS Y RECURSOS
 
 ---
 
-### [ ] [TAREA-F7-IMP-08] Ampliar las excepciones del calendario y la gestión de sesiones
+### [X] [TAREA-F7-IMP-08] Ampliar las excepciones del calendario y la gestión de sesiones
 - **Origen del Hallazgo:** `AUDITORIA_FASE_7_PLANIFICACION_HORARIOS_RECURSOS.md` / Tarea F7-IMP-08 (P1 · Excepciones del Calendario)
 - **Prioridad:** P1
 - **Severidad/Clasificación:** Alta (Ampliación funcional del calendario académico)
@@ -1689,7 +1689,7 @@ FASE 7. PLANIFICACIÓN ACADÉMICA, HORARIOS Y RECURSOS
   - CA-F7-54: Las sesiones pasadas conservan sus registros históricos.
   - CA-F7-55: Una excepción no produce dos sesiones activas para el mismo evento.
   - CA-F7-56: Los calendarios muestran la fecha efectiva y permiten identificar una reprogramación.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completado
 
 ---
 

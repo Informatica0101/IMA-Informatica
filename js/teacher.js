@@ -860,6 +860,55 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
+    // [TAREA-F7-IMP-08] [Fase 7: Planificación Académica, Horarios y Recursos] - Controlador de excepciones puntuales de sesiones de clase
+    window.openSessionExceptionModal = function() {
+        const modal = document.getElementById('modal-session-exception');
+        if (modal) modal.classList.remove('hidden');
+
+        const formExc = document.getElementById('form-session-exception');
+        if (formExc && !formExc.dataset.listener) {
+            formExc.dataset.listener = 'true';
+            formExc.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const horarioId = document.getElementById('exc-horario-id').value.trim();
+                const fechaAfectada = document.getElementById('exc-fecha-afectada').value;
+                const tipoExcepcion = document.getElementById('exc-tipo').value;
+                const nuevaFecha = document.getElementById('exc-nueva-fecha').value;
+                const nuevoAula = document.getElementById('exc-nuevo-aula').value.trim();
+                const nuevaHoraInicio = document.getElementById('exc-nueva-hora-inicio').value;
+                const nuevaHoraFin = document.getElementById('exc-nueva-hora-fin').value;
+                const motivo = document.getElementById('exc-motivo').value.trim();
+
+                try {
+                    if (window.showLoading) window.showLoading('Registrando excepción de sesión...');
+                    const res = await fetchApi('ACADEMIC', 'createSessionException', {
+                        horarioId,
+                        fechaAfectada,
+                        tipoExcepcion,
+                        nuevaFecha,
+                        nuevoAula,
+                        nuevaHoraInicio,
+                        nuevaHoraFin,
+                        motivo
+                    });
+                    if (window.hideLoading) window.hideLoading();
+
+                    if (res && res.status === 'success') {
+                        alert(`¡Excepción puntual (${tipoExcepcion}) registrada correctamente! ID: ${res.excepcionId}`);
+                        modal.classList.add('hidden');
+                        formExc.reset();
+                    } else {
+                        alert('Error al registrar excepción: ' + (res ? res.message : 'Error desconocido'));
+                    }
+                } catch (err) {
+                    if (window.hideLoading) window.hideLoading();
+                    console.error('Error al registrar excepción:', err);
+                    alert('Error de comunicación con el servidor.');
+                }
+            });
+        }
+    };
+
     // [TAREA-F7-IMP-07] [Fase 7: Planificación Académica, Horarios y Recursos] - Controlador de validación de sobrecarga evaluativa y simulación de reprogramación
     window.openExamScheduleValidationModal = function() {
         const modal = document.getElementById('modal-exam-schedule-validation');

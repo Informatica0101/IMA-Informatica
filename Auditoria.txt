@@ -812,16 +812,15 @@ Auditoría inicial e inspección de archivos para TAREA-F7-IMP-06:
 
 -------------------------------------------------------------------------------
 FECHA: 2026-10-26
-TAREA: [TAREA-F7-IMP-07] Fortalecer la programación de evaluaciones y la prevención de sobrecargas
+TAREA: [TAREA-F7-IMP-08] Ampliar las excepciones del calendario y la gestión de sesiones
 -------------------------------------------------------------------------------
-Auditoría inicial e inspección de archivos para TAREA-F7-IMP-07:
-- backend/exam-service/Code.gs:
-  - Inspeccionadas las funciones `createExam`, `updateExam`, `getAllExams`, `getStudentExams`.
-  - Se creará la función `checkExamSchedulingConflict` para evaluar el límite diario de evaluaciones por sección (máximo 2 evaluaciones/día), choque con días no lectivos en `CalendarioAcademico` y traslapes de docente/aula.
-  - Se creará la función `simulateExamReschedule` para previsualizar el impacto de reprogramaciones de exámenes de forma segura sin alterar calificaciones históricas.
-  - Se registrarán `checkExamSchedulingConflict` y `simulateExamReschedule` en `ROLE_PERMISSIONS` y dispatcher `doPost` de `backend/exam-service/Code.gs`.
+Auditoría inicial e inspección de archivos para TAREA-F7-IMP-08:
+- backend/academic-service/Code.gs:
+  - Inspeccionadas las funciones `rescheduleCancelledSession`, `createCalendarEvent` y `getClassSchedules`.
+  - Se creará la función `createSessionException` para registrar cancelaciones o reprogramaciones puntuales de una sesión en la hoja `ExcepcionesSesiones` sin alterar la serie de horarios recurrentes en `HorariosClase`.
+  - Se registrará `createSessionException` en `ROLE_PERMISSIONS` y dispatcher `doPost` de `backend/academic-service/Code.gs`.
 - teacher-dashboard.html / js/teacher.js:
-  - Se añadirá el modal `#modal-exam-schedule-validation` para la simulación y validación de sobrecarga evaluativa.
-  - Se implementarán las funciones `openExamScheduleValidationModal` y `simulateExamRescheduleAction` con la etiqueta identificativa `[TAREA-F7-IMP-07]`.
+  - Se añadirá el modal `#modal-session-exception` para registrar excepciones de sesión individual.
+  - Se implementará la función `openSessionExceptionModal` en `js/teacher.js` con la etiqueta identificativa `[TAREA-F7-IMP-08]`.
 - Pendientes.md:
-  - Se actualizará el estado de la TAREA-F7-IMP-07 a `[X] Completado`.
+  - Se actualizará el estado de la TAREA-F7-IMP-08 a `[X] Completado`.

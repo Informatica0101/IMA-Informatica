@@ -1905,3 +1905,15 @@ Descripción objetiva:
 - Creadas las funciones `checkExamSchedulingConflict` y `simulateExamReschedule` en `backend/exam-service/Code.gs` e integradas en `ROLE_PERMISSIONS` y enrutador `doPost` para validar límites diarios de evaluaciones por sección (máximo 2/día) y simular reprogramaciones previa confirmación.
 - Incorporado el botón UI "Validar Evaluaciones", el modal `#modal-exam-schedule-validation` y la función `openExamScheduleValidationModal` en `teacher-dashboard.html` y `js/teacher.js` con la etiqueta identificativa `[TAREA-F7-IMP-07]`.
 - Actualizado el estado de [TAREA-F7-IMP-07] a Completado en Pendientes.md.
+
+
+Fecha: 2026-10-26
+Archivos modificados:
+- backend/academic-service/Code.gs (Líneas 171, 667, 2262-2298)
+- teacher-dashboard.html (Líneas 552, 1564-1618)
+- js/teacher.js (Líneas 863-905)
+- Pendientes.md (Línea 1662)
+Descripción objetiva:
+- Creada la función `createSessionException` en `backend/academic-service/Code.gs` e integrada en `ROLE_PERMISSIONS` y dispatcher `doPost` para registrar cancelaciones o reprogramaciones puntuales de una sesión individual en `ExcepcionesSesiones` sin alterar la serie recurrente de horarios.
+- Incorporado el botón UI "Excepción Sesión", el modal `#modal-session-exception` y la función `openSessionExceptionModal` en `teacher-dashboard.html` y `js/teacher.js` con la etiqueta identificativa `[TAREA-F7-IMP-08]`.
+- Actualizado el estado de [TAREA-F7-IMP-08] a Completado en Pendientes.md.
