@@ -5051,15 +5051,12 @@ window.executeOmniboxSearch = function(query) {
     }
 };
 
-// [TAREA-F6-020] [Fase 6: Expediente Institucional y Ciclo de Vida] - Manejador de selección explicita y navegación directa al expediente o modulo de destino
 window.handleOmniboxResultClick = function(type, id) {
     window.closeGlobalOmniboxModal();
-    if ((type === 'user' || type === 'student_file') && typeof window.openStudentFileModal === 'function') {
+    if (type === 'user' && typeof window.openStudentFileModal === 'function') {
         window.openStudentFileModal(id);
     } else {
-        if (typeof showToast === 'function') {
-            showToast('Navegando al elemento: ' + id, 'info');
-        }
+        alert('Navegando al elemento: ' + id);
     }
 };
 

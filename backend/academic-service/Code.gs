@@ -6457,6 +6457,7 @@ function resolveAdmissionDuplicate(payload) {
   };
 }
 
+// [TAREA-F6-019] [Fase 6: Expediente Institucional y Ciclo de Vida] - Fusión de expedientes con persistencia de trazabilidad inmutable en FusionesExpedientes
 function mergeStudentFiles(payload) {
   const { targetExpedienteId, sourceExpedienteId, motivo } = payload || {};
   if (!targetExpedienteId || !sourceExpedienteId) throw new Error("targetExpedienteId y sourceExpedienteId son requeridos.");
