@@ -219,7 +219,7 @@ function runFullArchitectureIntegrationAndPerformanceSuite(payload) {
   };
 }
 
-// [TAREA-F6-014] [Fase 6: Reestructuración en microservicios independientes] - Catálogo central de contratos, endpoints, parámetros y validación de dependencias
+// [TAREA-F6-014] [TAREA-F6-039] [Fase 6: Configuración e Interoperabilidad] - Catálogo centralizado de configuraciones, contratos API, endpoints, referencias de almacenamiento y detección de llamadas obsoletas
 function getCentralConfigAndContractCatalog(payload) {
   const { serviceKey } = payload || {};
   const contracts = {
@@ -242,7 +242,7 @@ function getCentralConfigAndContractCatalog(payload) {
   };
 }
 
-// [TAREA-F6-014] [Fase 6: Reestructuración en microservicios independientes] - Validación de configuración, recursos (Spreadsheet/Drive) y dependencias previa activación
+// [TAREA-F6-014] [TAREA-F6-039] [Fase 6: Configuración e Interoperabilidad] - Validación de configuración, recursos (Spreadsheet/Drive) y dependencias previas a la activación de instancias
 function validateServiceConfigDependencies(payload) {
   const { serviceKey, spreadsheetId, driveFolderId } = payload || {};
   if (!serviceKey) throw new Error("serviceKey es requerido.");

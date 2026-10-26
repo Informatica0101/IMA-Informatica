@@ -1331,9 +1331,10 @@ SEGUNDA PARTE: REESTRUCTURACIÓN ARQUITECTÓNICA, ESCALABILIDAD Y ADMINISTRACIÓ
 
 ---
 
-### [TAREA-F6-039] Centralizar la configuración y las dependencias sin centralizar todos los datos
+### [X] [TAREA-F6-039] Centralizar la configuración y las dependencias sin centralizar todos los datos
 - **Origen del Hallazgo:** F6-017 / Configuración e interoperabilidad
 - **Prioridad:** P1
+- **Estado:** [X] Completado
 - **Severidad/Clasificación:** Alta (Configuración e interoperabilidad)
 - **Archivos Involucrados:** Registro de servicios, microservicio del desarrollador, autenticación, dashboards y servicios operativos.
 - **Descripción del Alcance:**

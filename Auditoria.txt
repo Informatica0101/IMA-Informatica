@@ -607,3 +607,17 @@ Auditoría inicial de archivos para TAREA-F6-038:
 
 Hallazgos:
 - Se inyectarán los comentarios identificativos explícitos de `[TAREA-F6-038]` en las funciones de versionado y reversión en `backend/developer-service/Code.gs`.
+
+-------------------------------------------------------------------------------
+FECHA: Marzo 2026
+TAREA: [TAREA-F6-039] Centralizar la configuración y las dependencias sin centralizar todos los datos
+-------------------------------------------------------------------------------
+Auditoría inicial de archivos para TAREA-F6-039:
+- backend/developer-service/Code.gs:
+  - Inspeccionadas las funciones `getCentralConfigAndContractCatalog` y `validateServiceConfigDependencies`.
+  - Se confirma la centralización del catálogo de configuraciones, endpoints y referencias de almacenamiento, así como la validación de dependencias previa activación y detección de contratos/llamadas obsoletas sin centralizar los datos operativos.
+- Pendientes.md:
+  - Inspeccionada la especificación de TAREA-F6-039.
+
+Hallazgos:
+- Se inyectarán los comentarios identificativos explícitos de `[TAREA-F6-039]` sobre las funciones de catálogo de contratos y validación de dependencias en `backend/developer-service/Code.gs`.
