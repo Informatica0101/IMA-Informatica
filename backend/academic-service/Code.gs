@@ -6457,6 +6457,7 @@ function getStudentTimeline(payload) {
   if (fileRes.status !== "success") return fileRes;
 
   const exp = fileRes.studentFile;
+  const targetExpId = String(expedienteId || (exp && exp.expedienteId) || "").trim();
   const events = [];
   const userRole = (payload && payload.authRole) || "";
   const isPrivileged = ["Administrador", "Director", "Secretaría", "Secretaria", "Subdirector", "Desarrollador"].indexOf(userRole) !== -1;
@@ -6518,7 +6519,6 @@ function getStudentTimeline(payload) {
     const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
     const histSheet = getOrCreateSheet(ss, "HistorialCambiosEntidad");
     const histRows = histSheet.getDataRange().getValues().slice(1);
-    const targetExpId = String(expedienteId || exp.expedienteId || "").trim();
 
     histRows.forEach(h => {
       if (String(h[3]).trim() === targetExpId) {
