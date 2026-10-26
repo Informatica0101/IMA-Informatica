@@ -621,3 +621,17 @@ Auditoría inicial de archivos para TAREA-F6-039:
 
 Hallazgos:
 - Se inyectarán los comentarios identificativos explícitos de `[TAREA-F6-039]` sobre las funciones de catálogo de contratos y validación de dependencias en `backend/developer-service/Code.gs`.
+
+-------------------------------------------------------------------------------
+FECHA: Marzo 2026
+TAREA: [TAREA-F6-040] Validar el rendimiento, la capacidad y la recuperación de la arquitectura completa
+-------------------------------------------------------------------------------
+Auditoría inicial de archivos para TAREA-F6-040:
+- backend/developer-service/Code.gs:
+  - Inspeccionada la función `runFullArchitectureIntegrationAndPerformanceSuite`.
+  - Se confirma la implementación de pruebas integrales multi-servicio que evalúan descubrimiento, compatibilidad de contratos, simulación de tolerancia a fallos, ejecución segura de comandos y aislamiento de permisos multi-rol.
+- Pendientes.md:
+  - Inspeccionada la especificación de TAREA-F6-040.
+
+Hallazgos:
+- Se inyectará el comentario identificativo explícito de `[TAREA-F6-040]` en `backend/developer-service/Code.gs`.

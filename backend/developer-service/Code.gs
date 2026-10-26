@@ -127,7 +127,7 @@ function doPost(e) {
   }
 }
 
-// [TAREA-F6-015] [Fase 6: Reestructuración en microservicios independientes] - Suite automatizada de validación de rendimiento, resiliencia, concurrencia e integración multi-servicio
+// [TAREA-F6-015] [TAREA-F6-040] [Fase 6: Pruebas de Carga e Integración de la Arquitectura Completa] - Suite automatizada de validación de rendimiento, latencia de descubrimiento, resiliencia, concurrencia, idempotencia e integración multi-servicio con múltiples roles
 function runFullArchitectureIntegrationAndPerformanceSuite(payload) {
   const startTime = Date.now();
   const testResults = [];
