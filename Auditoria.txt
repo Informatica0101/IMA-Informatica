@@ -551,3 +551,17 @@ Auditoría inicial de archivos para TAREA-F6-034:
 
 Hallazgos:
 - Se inyectarán los comentarios identificativos explícitos de `[TAREA-F6-034]` en las funciones `getServiceHealthDiagnostics` de los microservicios backend.
+
+-------------------------------------------------------------------------------
+FECHA: Marzo 2026
+TAREA: [TAREA-F6-035] Incorporar administración segura de logs y comandos operativos
+-------------------------------------------------------------------------------
+Auditoría inicial de archivos para TAREA-F6-035:
+- backend/developer-service/Code.gs:
+  - Inspeccionadas las funciones `getCentralizedLogs`, `executeOperationalCommand` y la constante `ALLOWED_OPERATIONAL_COMMANDS`.
+  - Se confirma que implementan la consulta y filtrado de logs, marcado de resolución conservando inmutabilidad y la prohibición estricta de cadenas o código libre mediante un catálogo cerrado de comandos autorizados.
+- Pendientes.md:
+  - Inspeccionada la especificación de TAREA-F6-035.
+
+Hallazgos:
+- Se inyectarán los comentarios identificativos explícitos de `[TAREA-F6-035]` sobre las funciones correspondientes en `backend/developer-service/Code.gs`.

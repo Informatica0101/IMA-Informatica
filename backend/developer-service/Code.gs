@@ -309,7 +309,7 @@ function executeServiceVersionRollback(payload) {
   };
 }
 
-// [TAREA-F6-010] [Fase 6: Reestructuración en microservicios independientes] - Catálogo cerrado de comandos operativos permitidos para mantenimiento seguro
+// [TAREA-F6-010] [TAREA-F6-035] [Fase 6: Herramientas de Mantenimiento y Comandos Operativos] - Catálogo cerrado de comandos operativos permitidos con prohibición de ejecución de código libre
 const ALLOWED_OPERATIONAL_COMMANDS = [
   "DIAGNOSTIC_HEALTH_CHECK",
   "STORAGE_CAPACITY_CHECK",
@@ -319,7 +319,7 @@ const ALLOWED_OPERATIONAL_COMMANDS = [
   "FLUSH_EXPIRED_CACHE"
 ];
 
-// [TAREA-F6-010] [Fase 6: Reestructuración en microservicios independientes] - Consulta y filtrado centralizado de logs y marcas de resolución de errores
+// [TAREA-F6-010] [TAREA-F6-035] [Fase 6: Herramientas de Mantenimiento y Comandos Operativos] - Consulta y filtrado centralizado de logs multi-servicio con marcas de resolución e inmutabilidad de bitácora
 function getCentralizedLogs(payload) {
   const { service, severity, search, resolveLogId } = payload || {};
 
@@ -344,7 +344,7 @@ function getCentralizedLogs(payload) {
   };
 }
 
-// [TAREA-F6-010] [Fase 6: Reestructuración en microservicios independientes] - Ejecutor seguro de comandos operativos en cola de mantenimiento asíncrono
+// [TAREA-F6-010] [TAREA-F6-035] [Fase 6: Herramientas de Mantenimiento y Comandos Operativos] - Ejecutor seguro de comandos operativos en catálogo cerrado con trazabilidad por correlationId e idempotencia
 function executeOperationalCommand(payload) {
   const { command, parameters, correlationId } = payload || {};
   if (!command) throw new Error("Parámetro 'command' es requerido.");

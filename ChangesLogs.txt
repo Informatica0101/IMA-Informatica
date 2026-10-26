@@ -1751,3 +1751,9 @@ Archivos Modificados:
   - En `getServiceHealthDiagnostics`, verificada la implementación de diagnósticos de salud, chequeos de conectividad/Drive/Sheets, calculo de latencias y registros de métricas de tráfico y sanitización de errores.
 - Pendientes.md:
   - Marcada TAREA-F6-034 como completada [X] en Pendientes.md.
+
+[TAREA-F6-035] Incorporar administración segura de logs y comandos operativos
+- backend/developer-service/Code.gs:
+  - Verificada la implementación de `getCentralizedLogs` y `executeOperationalCommand` con catálogo cerrado `ALLOWED_OPERATIONAL_COMMANDS`, prohibición de cadenas o código libre y trazabilidad por `correlationId`.
+- Pendientes.md:
+  - Marcada TAREA-F6-035 como completada [X] en Pendientes.md.
