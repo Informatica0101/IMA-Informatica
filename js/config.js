@@ -1,4 +1,4 @@
-// [TAREA-05] [Fase 1 - Arquitectura de Servicios y Cuentas] - Registro centralizado de microservicios por departamento, URLs de despliegue, versiones y contratos.
+// [TAREA-05] [TAREA-F6-030] [Fase 6: Microservicios Administrativos y Financieros con separación por responsabilidades] - Mapa de servicios por departamento con soporte para microservicio compartido Dirección/Secretaría y microservicio financiero-administrativo modular.
 window.SERVICE_VERSIONS = {
   USER: '1.0.0',
   ACADEMIC: '1.0.0',
@@ -238,6 +238,31 @@ window.SERVICE_REGISTRY = {
       spreadsheetId: "1-DEVELOPER-SPREADSHEET-ID"
     }
   }
+};
+
+// [TAREA-F6-029] [Fase 6: Reestructuración en microservicios independientes] - Consulta de descriptor completo de microservicio para desacoplar el descubrimiento y enrutamiento inter-servicio.
+window.getServiceDescriptor = function(serviceKey) {
+  var registry = window.SERVICE_REGISTRY || {};
+  var svc = registry[serviceKey];
+  if (!svc) {
+    return {
+      serviceId: "SVC-UNKNOWN",
+      name: serviceKey || "Desconocido",
+      healthStatus: "UNREGISTERED",
+      endpointUrl: (window.SERVICE_URLS && window.SERVICE_URLS[serviceKey]) || null,
+      responsibilities: [],
+      resources: {}
+    };
+  }
+  return {
+    serviceId: svc.serviceId,
+    name: svc.name,
+    version: svc.version,
+    endpointUrl: svc.endpointUrl,
+    healthStatus: svc.healthStatus || "ACTIVE",
+    responsibilities: svc.responsibilities || [],
+    resources: svc.resources || {}
+  };
 };
 
 // --- URL del sitio para CORS (si es necesario ajustarlo en el backend) ---

@@ -170,10 +170,10 @@ const ROLE_PERMISSIONS = {
     "getAcademicCalendar", "createCalendarEvent", "getClassSchedules", "createClassSchedule", "deleteClassSchedule", "getAcademicRules", "saveAcademicRule", "getDepartmentAcademicPlanning", "assignDepartmentHead", "getCurricularAnalyticsReport", "getReusableResourceCatalog", "manageReusableResource", "getCurricularEquivalences", "executeCurricularMigration", "registerCurricularAreaExtension", "runCurricularAreaServiceTests", "toggleCurricularAreaStatus", "validateApiContractsTestSuite", "getInstitutionalCatalog", "validateCatalogReference", "generateInstitutionalUUID", "validateInstitutionalIdentifier", "auditInstitutionalIdentifierCollisions", "runConcurrencyAndConsistencySuite", "getPaginatedAcademicHistory", "reconcileRestoredDataIntegrity", "evaluateTransactionalStorageMigrationNeed",
     "getClassroomResources", "saveClassroomResource", "getStudentSchedule",
     "createAdmissionRequest", "getAdmissionRequests", "updateAdmissionStatus", "reopenAdmissionRequest", "convertAdmissionToStudent", "scheduleAdmissionInterview", "getAdmissionInterviews", "recordInterviewOutcome", "saveAdmissionEvaluation", "getAdmissionEvaluations", "addToWaitlist", "getWaitlist", "reorderWaitlist", "offerWaitlistSlot", "respondToWaitlistSlot", "resolveAdmissionDuplicate", "getAdmissionAnalyticsReport",
-    "getStudentFile", "updateStudentFile", "getStudentTimeline", "findDuplicateStudents", "mergeStudentFiles",
-    "getStudentGuardians", "saveStudentGuardian", "unlinkStudentGuardian", "uploadStudentDocument", "getStudentDocuments", "updateDocumentStatus", "getPendingDocumentsReport", "grantDocumentExemption",
+    "getStudentFile", "getStudentFileSummary", "updateStudentFile", "getStudentTimeline", "findDuplicateStudents", "mergeStudentFiles", "getMergePreviewComparison", "unmergeStudentFiles", "getStudentFileAdministrativeReports", "initializeDirectionSecretaryDriveStructure",
+    "getStudentGuardians", "saveStudentGuardian", "unlinkStudentGuardian", "uploadStudentDocument", "getStudentDocuments", "updateDocumentStatus", "getPendingDocumentsReport", "grantDocumentExemption", "restoreDocumentVersion", "checkAndNotifyExpiringStudentDocuments",
     "getPendingDocumentsReport", "grantDocumentExemption", "createStudentEnrollment", "getStudentEnrollments", "renewStudentEnrollment", "checkEnrollmentCapacity",
-    "changeStudentSection", "recordStudentTransfer", "recordStudentWithdrawal", "processStudentReentry", "processStudentPromotion", "processStudentGraduation", "updateStudentLifecycleStatus", "reconcileStudentLifecycleState", "runStudentLifecycleRegressionSuite", "getAcademicAreaTemplateCatalog", "getAcademicAreaCoordinationScope", "deployAcademicMicroserviceInstance", "getAcademicMicroserviceDeployments", "previewBackupRestoreImpact", "getStorageQuotaMetricsReport", "reconcileDocumentStorageIntegrity",
+    "changeStudentSection", "recordStudentTransfer", "recordStudentWithdrawal", "processStudentReentry", "processStudentPromotion", "processStudentGraduation", "updateStudentLifecycleStatus", "reconcileStudentLifecycleState", "runStudentLifecycleRegressionSuite", "getAcademicAreaTemplateCatalog", "getAcademicAreaCoordinationScope", "deployAcademicMicroserviceInstance", "getAcademicMicroserviceDeployments", "previewBackupRestoreImpact", "getStorageQuotaMetricsReport", "reconcileDocumentStorageIntegrity", "reconcileInstitutionalModulesMatrix",
     "openAttendanceSession", "saveClassAttendance", "getClassAttendance", "saveDailyAttendance", "getDailyAttendance", "submitAttendanceJustification", "reviewAttendanceJustification", "recordEarlyDeparture", "getAttendanceIncidents", "saveAttendanceIncident", "getAttendanceFollowupCases", "saveAttendanceFollowupCase", "addCaseFollowUpNote", "getStudentAttendanceSummary",
     "createTeacherSupervision", "getTeacherSupervisions", "updateSupervisionStatus", "saveSupervisionObservation", "getSupervisionObservation", "saveTeacherImprovementPlan", "getTeacherImprovementPlans", "purgeSecurityCaches"
   ],
@@ -193,7 +193,7 @@ const ROLE_PERMISSIONS = {
     "createAcademicOffer", "getTeacherAssignments", "assignTeacherToClass", "createTeacherSubstitution", "getAcademicCalendar", "createCalendarEvent", "getClassSchedules", "createClassSchedule", "deleteClassSchedule", "copyClassSchedules", "getTeacherTeachingLoad", "generateAutoSchedules", "recordClassSessionOutcome", "getTeachingHoursSummary", "rescheduleCancelledSession", "getPendingSessionRecoveries", "publishClassSchedules", "getIndividualCalendar", "syncAcademicScheduleIntegrity", "getAcademicAuditLogs", "getReusableResourceCatalog", "manageReusableResource",
     "getClassroomResources", "saveClassroomResource", "getStudentSchedule",
     "createAdmissionRequest", "getAdmissionRequests", "updateAdmissionStatus", "convertAdmissionToStudent", "scheduleAdmissionInterview", "getAdmissionInterviews", "recordInterviewOutcome", "saveAdmissionEvaluation", "getAdmissionEvaluations", "addToWaitlist", "getWaitlist", "reorderWaitlist", "offerWaitlistSlot", "respondToWaitlistSlot", "resolveAdmissionDuplicate",
-    "getStudentFile", "updateStudentFile", "getStudentTimeline", "findDuplicateStudents",
+    "getStudentFile", "getStudentFileSummary", "updateStudentFile", "getStudentTimeline", "findDuplicateStudents", "getMergePreviewComparison", "unmergeStudentFiles", "getStudentFileAdministrativeReports",
     "getStudentGuardians", "saveStudentGuardian", "unlinkStudentGuardian", "uploadStudentDocument", "getStudentDocuments", "updateDocumentStatus",
     "getPendingDocumentsReport", "grantDocumentExemption", "createStudentEnrollment", "getStudentEnrollments", "renewStudentEnrollment", "checkEnrollmentCapacity",
     "changeStudentSection", "recordStudentTransfer", "recordStudentWithdrawal", "processStudentReentry", "processStudentPromotion", "processStudentGraduation", "updateStudentLifecycleStatus", "reconcileStudentLifecycleState", "runStudentLifecycleRegressionSuite",
@@ -213,12 +213,12 @@ const ROLE_PERMISSIONS = {
     "openAttendanceSession", "saveClassAttendance", "getClassAttendance", "saveDailyAttendance", "getDailyAttendance", "submitAttendanceJustification", "reviewAttendanceJustification", "recordEarlyDeparture", "getAttendanceIncidents", "saveAttendanceIncident", "getAttendanceFollowupCases", "saveAttendanceFollowupCase", "addCaseFollowUpNote", "getStudentAttendanceSummary"
   ],
   "Coordinador": ["getAcademicConfig", "getAcademicHistory", "getAsignaturasActivas", "getAcademicYears", "getAcademicOffers", "getSubjectCatalog", "getStudyPlans", "getTeacherAssignments", "getClassSchedules", "getStudentFile", "getAcademicAreaTemplateCatalog", "getAcademicAreaCoordinationScope"],
-  "Desarrollador": ["getAcademicConfig", "getAcademicHistory", "getAcademicAreaTemplateCatalog", "getAcademicAreaCoordinationScope", "deployAcademicMicroserviceInstance", "getAcademicMicroserviceDeployments"],
+  "Desarrollador": ["getAcademicConfig", "getAcademicHistory", "getAcademicAreaTemplateCatalog", "getAcademicAreaCoordinationScope", "deployAcademicMicroserviceInstance", "getAcademicMicroserviceDeployments", "configureAcademicLevelsAndDynamicStorage"],
   "Contador": ["getAcademicConfig", "registerStudentEnrollment", "getStudentEnrollmentHistory", "getAcademicYears", "getAcademicOffers", "getStudentFile", "getStudentEnrollments"],
   "Consejeros": ["getAcademicConfig", "getAcademicYears", "getAcademicCalendar", "getClassSchedules", "getStudentSchedule", "getStudentFile", "getStudentTimeline", "getStudentGuardians", "getAttendanceIncidents", "saveAttendanceIncident", "getAttendanceFollowupCases", "saveAttendanceFollowupCase", "addCaseFollowUpNote", "getStudentAttendanceSummary"],
   "Padre": [
     "getAcademicConfig", "getAcademicHistory", "getAsignaturasActivas", "getWhatsAppLink", "getStudentEnrollmentHistory",
-    "getAcademicCalendar", "getClassSchedules", "getStudentSchedule", "getStudentFile", "getStudentTimeline", "getStudentDocuments", "getStudentEnrollments",
+    "getAcademicCalendar", "getClassSchedules", "getStudentSchedule", "getStudentFile", "getStudentFileSummary", "getStudentTimeline", "getStudentDocuments", "getStudentEnrollments",
     "getClassAttendance", "getDailyAttendance", "submitAttendanceJustification", "getStudentAttendanceSummary", "getAttendanceIncidents"
   ],
   "Tutor": [
@@ -234,12 +234,12 @@ const ROLE_PERMISSIONS = {
   "Profesor": [
     "getAcademicConfig", "updateAcademicConfig", "getAcademicHistory", "getAsignaturasActivas", "updateAsignaturasActivas", "saveWhatsAppLink", "getWhatsAppLink", "getQuestionBank", "saveQuestion", "generateMigrationReport",
     "getAcademicYears", "getAcademicPeriods", "getSubjectCatalog", "getAcademicOffers", "getTeacherAssignments", "createTeacherSubstitution", "getAcademicCalendar", "getClassSchedules", "createClassSchedule", "deleteClassSchedule", "getTeacherTeachingLoad", "recordClassSessionOutcome", "getTeachingHoursSummary", "rescheduleCancelledSession", "getPendingSessionRecoveries", "getIndividualCalendar", "getClassroomResources", "getStudentSchedule", "getReusableResourceCatalog", "manageReusableResource",
-    "getStudentFile", "getStudentTimeline", "getStudentEnrollments",
+    "getStudentFile", "getStudentFileSummary", "getStudentTimeline", "getStudentEnrollments",
     "openAttendanceSession", "saveClassAttendance", "getClassAttendance", "saveDailyAttendance", "getDailyAttendance", "submitAttendanceJustification", "reviewAttendanceJustification", "recordEarlyDeparture", "getAttendanceIncidents", "saveAttendanceIncident", "getAttendanceFollowupCases", "saveAttendanceFollowupCase", "addCaseFollowUpNote", "getStudentAttendanceSummary",
     "getTeacherSupervisions", "getSupervisionObservation", "getTeacherImprovementPlans"
   ],
   "Asistente": ["getAcademicConfig", "getAsignaturasActivas", "getWhatsAppLink", "getQuestionBank", "getAcademicCalendar", "getClassSchedules", "getStudentSchedule", "getStudentTimeline", "getClassAttendance", "getStudentAttendanceSummary"],
-  "Estudiante": ["getAcademicConfig", "getAsignaturasActivas", "getWhatsAppLink", "getQuestionBank", "getStudentEnrollmentHistory", "getAcademicCalendar", "getClassSchedules", "getStudentSchedule", "getStudentFile", "getStudentTimeline", "getStudentDocuments", "getClassAttendance", "getDailyAttendance", "submitAttendanceJustification", "getStudentAttendanceSummary", "getAttendanceIncidents", "calculateUnifiedAcademicGrade"],
+  "Estudiante": ["getAcademicConfig", "getAsignaturasActivas", "getWhatsAppLink", "getQuestionBank", "getStudentEnrollmentHistory", "getAcademicCalendar", "getClassSchedules", "getStudentSchedule", "getStudentFile", "getStudentFileSummary", "getStudentTimeline", "getStudentDocuments", "getClassAttendance", "getDailyAttendance", "submitAttendanceJustification", "getStudentAttendanceSummary", "getAttendanceIncidents", "calculateUnifiedAcademicGrade"],
   "Alumno": ["getAcademicConfig", "getAcademicHistory", "getAsignaturasActivas", "getWhatsAppLink", "getStudentEnrollmentHistory", "getAcademicYears", "getAcademicPeriods", "getAcademicOffers", "getAcademicCalendar", "getClassSchedules", "getStudentSchedule", "getStudentFile", "getStudentTimeline", "getStudentDocuments", "getStudentEnrollments", "submitAttendanceJustification", "getStudentAttendanceSummary", "getAttendanceIncidents"]
 };
 
@@ -385,7 +385,7 @@ function verifySessionToken(tokenString) {
 }
 
 // [TAREA-01] [TAREA-F4-P0-01] [Fase 4 - Seguridad RBAC y Token Unificado] - Validar y reforzar la seguridad mediante verificación de credencial de sesión HMAC
-// [TAREA-F4-P1-04] [Fase 4: Reglas Contextuales RBAC/ABAC] - Validación de atributos contextuales (Docentes, Tutores, Estudiantes)
+// [TAREA-F6-012] [TAREA-F6-037] [Fase 6: Seguridad, Aislamiento y Gestión Centralizada de Permisos] - Validación de acceso contextual server-side, aislamiento IDOR y ámbito de coordinación por área/rol (RBAC/ABAC)
 function validateContextualAccess(action, payload, verifiedUserId, userRole) {
   if (!userRole || userRole === "Administrador" || userRole === "Desarrollador") {
     return { authorized: true };
@@ -700,10 +700,15 @@ function doPost(e) {
       case "reopenAdmissionRequest": result = reopenAdmissionRequest(payload); break;
       case "convertAdmissionToStudent": result = convertAdmissionToStudent(payload); break;
       case "getStudentFile": result = getStudentFile(payload); break;
+      case "getStudentFileSummary": result = getStudentFileSummary(payload); break;
       case "updateStudentFile": result = updateStudentFile(payload); break;
       case "getStudentTimeline": result = getStudentTimeline(payload); break;
       case "findDuplicateStudents": result = findDuplicateStudents(payload); break;
       case "mergeStudentFiles": result = mergeStudentFiles(payload); break;
+      case "getMergePreviewComparison": result = getMergePreviewComparison(payload); break;
+      case "unmergeStudentFiles": result = unmergeStudentFiles(payload); break;
+      case "getStudentFileAdministrativeReports": result = getStudentFileAdministrativeReports(payload); break;
+      case "initializeDirectionSecretaryDriveStructure": result = initializeDirectionSecretaryDriveStructure(payload); break;
       case "getStudentGuardians": result = getStudentGuardians(payload); break;
       case "saveStudentGuardian": result = saveStudentGuardian(payload); break;
       case "unlinkStudentGuardian": result = unlinkStudentGuardian(payload); break;
@@ -729,10 +734,14 @@ function doPost(e) {
       case "getAcademicAreaCoordinationScope": result = getAcademicAreaCoordinationScope(payload); break;
       case "deployAcademicMicroserviceInstance": result = deployAcademicMicroserviceInstance(payload); break;
       case "getAcademicMicroserviceDeployments": result = getAcademicMicroserviceDeployments(payload); break;
+      case "configureAcademicLevelsAndDynamicStorage": result = configureAcademicLevelsAndDynamicStorage(payload); break;
       case "getServiceHealthDiagnostics": result = getServiceHealthDiagnostics(payload); break;
       case "previewBackupRestoreImpact": result = previewBackupRestoreImpact(payload); break;
       case "getStorageQuotaMetricsReport": result = getStorageQuotaMetricsReport(payload); break;
       case "reconcileDocumentStorageIntegrity": result = reconcileDocumentStorageIntegrity(payload); break;
+      case "reconcileInstitutionalModulesMatrix": result = reconcileInstitutionalModulesMatrix(payload); break;
+      case "restoreDocumentVersion": result = restoreDocumentVersion(payload); break;
+      case "checkAndNotifyExpiringStudentDocuments": result = checkAndNotifyExpiringStudentDocuments(payload); break;
 
       // Endpoints Fase 7 - Asistencia y Seguimiento Estudiantil
       case "openAttendanceSession": result = openAttendanceSession(payload); break;
@@ -966,6 +975,93 @@ function getAdmissionRequests(payload) {
       pageSize: limit,
       totalRecords: totalRecords,
       totalPages: totalPages
+    }
+  };
+}
+
+// [TAREA-F6-023] [Fase 6: Expediente Institucional y Ciclo de Vida] - Resumen unificado e institucional del expediente contextualizado por perfil autorizado
+function getStudentFileSummary(payload) {
+  const fileRes = getStudentFile(payload);
+  if (fileRes.status !== "success") return fileRes;
+
+  const exp = fileRes.studentFile;
+  const userRole = (payload && payload.authRole) || "";
+  const roleUpper = String(userRole).toUpperCase();
+  const isAdminOrSecretary = ["ADMINISTRADOR", "DIRECTOR", "SECRETARÍA", "SECRETARIA", "SUBDIRECTOR", "DESARROLLADOR"].indexOf(roleUpper) !== -1;
+  const isTeacher = roleUpper === "PROFESOR" || roleUpper === "DOCENTE";
+  const nowStr = new Date().toISOString();
+
+  // Matrícula vigente más reciente
+  const activeEnrollment = (exp.enrollments || []).filter(e => String(e.estado).toLowerCase() === "activa").pop() || (exp.enrollments || []).pop() || null;
+
+  // Movimientos recientes (últimos 3)
+  const recentMovements = (exp.movements || []).slice(-3).reverse().map(m => ({
+    tipo: m.tipoMovimiento,
+    periodo: m.anoLectivo,
+    detalle: `${m.gradoOrigen || ''} (${m.seccionOrigen || ''}) -> ${m.gradoDestino || ''} (${m.seccionDestino || ''})`,
+    fecha: m.fechaEfectiva,
+    motivo: isTeacher ? "[CONFIDENCIAL]" : (m.motivo || "N/A")
+  }));
+
+  // Documentos pendientes
+  const pendingDocs = (exp.documents || []).filter(d => String(d.estadoRevision).toLowerCase() === "enrevision" || String(d.estadoRevision).toLowerCase() === "pendiente");
+
+  // Definición de secciones y accesos por rol
+  let allowedSections = [];
+  let directActions = [];
+
+  if (isAdminOrSecretary) {
+    allowedSections = ["identidad", "matricula", "tutores", "documentos", "movimientos", "auditoria"];
+    directActions = ["renovarMatricula", "cambiarSeccion", "gestionarDocumentos", "registrarTraslado", "verHistorial"];
+  } else if (isTeacher) {
+    allowedSections = ["identidad_basica", "matricula_academica", "movimientos_recientes"];
+    directActions = ["verCalificaciones", "verAsistencia", "verHorario"];
+  } else {
+    // Estudiante / Familia
+    allowedSections = ["identidad_estudiante", "matricula_vigente", "documentos_estado"];
+    directActions = ["descargarConstancia", "verCalificaciones", "verAsistencia"];
+  }
+
+  return {
+    status: "success",
+    summary: {
+      expedienteId: exp.expedienteId,
+      codigoInstitucional: exp.codigoInstitucional,
+      perfilConsultante: userRole || "General",
+      fechaActualizacion: nowStr,
+      seccionesDisponibles: allowedSections,
+      accesosDirectosAutorizados: directActions,
+      identidadInstitucional: {
+        codigoInstitucional: exp.codigoInstitucional,
+        estadoExpediente: exp.estadoExpediente || "Activo",
+        anoIngreso: exp.fechaCreacion ? String(exp.fechaCreacion).substring(0, 4) : "2026",
+        fotografiaUrl: exp.fotografiaUrl || "",
+        direccionResidencia: isTeacher ? "[REDACTADO POR PRIVACIDAD]" : (exp.direccionResidencia || "N/A")
+      },
+      estadoActual: {
+        gradoActual: activeEnrollment ? activeEnrollment.grado : "N/A",
+        seccionActual: activeEnrollment ? activeEnrollment.seccion : "N/A",
+        periodoLectivo: activeEnrollment ? activeEnrollment.periodo : "2026",
+        condicionMatricula: activeEnrollment ? activeEnrollment.tipo : "N/A",
+        situacionInstitucional: exp.estadoExpediente || "Activo"
+      },
+      matriculaVigente: activeEnrollment ? {
+        matriculaId: activeEnrollment.matriculaId,
+        fecha: activeEnrollment.fecha,
+        grado: activeEnrollment.grado,
+        seccion: activeEnrollment.seccion,
+        periodo: activeEnrollment.periodo,
+        estado: activeEnrollment.estado
+      } : null,
+      movimientosRecientes: recentMovements,
+      documentosPendientes: {
+        totalPendientes: pendingDocs.length,
+        lista: pendingDocs.map(d => ({
+          tipoDocumento: d.tipoDocumento,
+          nombreArchivo: isTeacher ? "[REDACTADO]" : d.nombreArchivo,
+          estado: d.estadoRevision
+        }))
+      }
     }
   };
 }
@@ -2605,7 +2701,7 @@ function executeCurricularMigration(payload) {
   };
 }
 
-// [TAREA-F6-011] [Fase 6: Reestructuración en microservicios independientes] - Vista previa e inspección de impacto previa a la restauración de respaldos aislados
+// [TAREA-F6-011] [TAREA-F6-027] [TAREA-F6-036] [Fase 6: Continuidad Operativa y Recuperación por Área] - Vista previa de impacto de restauración sin alterar producción, inspección de referencias Drive e integridad esencial con checksum SHA-256
 function previewBackupRestoreImpact(payload) {
   const { fileId } = payload || {};
   if (!fileId) throw new Error("ID de archivo de respaldo es requerido.");
@@ -2643,6 +2739,8 @@ function previewBackupRestoreImpact(payload) {
     status: "success",
     fileName: file.getName(),
     checksumValid: true,
+    tablasEsencialesVerificadas: verifyRes.essentialSheetsPresent,
+    referenciasRotasDrive: verifyRes.brokenDriveLinksCount,
     totalSheets: Object.keys(parsed.sheets).length,
     impactSummary: impactSummary,
     requireConfirmationCode: "RESTORE-CONFIRMED",
@@ -2776,6 +2874,110 @@ function generateInstitutionalUUID(payload) {
     prefix: prefix,
     uuid: uuidPart,
     institutionalId: fullId,
+    timestamp: new Date().toISOString()
+  };
+}
+
+// [TAREA-F6-021] [Fase 6: Expediente Institucional y Ciclo de Vida] - Consola de conciliación e integridad entre los módulos institucionales (Expedientes, Matrículas, Usuarios, Finanzas y Asistencia)
+function reconcileInstitutionalModulesMatrix(payload) {
+  const { autoFix, correlationId } = payload || {};
+  const corrId = correlationId || ("RECON-MOD-" + Date.now());
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+
+  const expSheet = getOrCreateSheet(ss, "ExpedientesEstudiantes");
+  const matSheet = getOrCreateSheet(ss, "Matriculas");
+  const userSheet = ss.getSheetByName("Usuarios");
+  const cobrosSheet = ss.getSheetByName("Cobros");
+  const asisSheet = ss.getSheetByName("ControlAsistencia");
+
+  const expRows = expSheet.getDataRange().getValues().slice(1);
+  const matRows = matSheet.getDataRange().getValues().slice(1);
+  const userRows = userSheet ? userSheet.getDataRange().getValues().slice(1) : [];
+  const cobrosRows = cobrosSheet ? cobrosSheet.getDataRange().getValues().slice(1) : [];
+  const asisRows = asisSheet ? asisSheet.getDataRange().getValues().slice(1) : [];
+
+  const validExpIds = new Set(expRows.map(r => String(r[0]).trim()).filter(Boolean));
+  const validUserIds = new Set(userRows.map(r => String(r[0]).trim()).filter(Boolean));
+  const validMatUserIds = new Set(matRows.map(r => String(r[2]).trim()).filter(Boolean));
+
+  const inconsistencies = [];
+  let autoFixedCount = 0;
+
+  // 1. Detectar Matrículas Huérfanas (sin expediente o sin usuario registrado)
+  matRows.forEach((m, idx) => {
+    const matId = String(m[0] || "").trim();
+    const userId = String(m[2] || "").trim();
+    const estado = String(m[8] || "Activa").trim();
+
+    if (userId && !validUserIds.has(userId) && estado === "Activa") {
+      inconsistencies.push({
+        modulo: "Matrículas",
+        tipo: "MATRICULA_HUERFANA_USUARIO",
+        entidadId: matId,
+        referenciaId: userId,
+        causa: `Matrícula ${matId} vinculada a UsuarioID inexistente ${userId}`,
+        accionRecomendada: "Revisar la asignación de identidad o desactivar la matrícula de forma manual."
+      });
+    }
+  });
+
+  // 2. Detectar Cobros vinculados a Alumnos/Usuarios inexistentes
+  cobrosRows.forEach((c, idx) => {
+    const cobroId = String(c[0] || "").trim();
+    const alumnoUserId = String(c[2] || "").trim();
+    const estado = String(c[6] || "").trim();
+
+    if (alumnoUserId && !validUserIds.has(alumnoUserId) && estado !== "Anulado") {
+      inconsistencies.push({
+        modulo: "Finanzas",
+        tipo: "COBRO_HUERFANO",
+        entidadId: cobroId,
+        referenciaId: alumnoUserId,
+        causa: `Cargo/Cobro ${cobroId} asociado a UsuarioID inexistente ${alumnoUserId}`,
+        accionRecomendada: "Verificar el historial contable y re-vincular al expediente activo del estudiante."
+      });
+    }
+  });
+
+  // 3. Detectar Registros de Asistencia sin Matrícula activa
+  asisRows.forEach((a, idx) => {
+    const asisId = String(a[0] || "").trim();
+    const alumnoUserId = String(a[3] || "").trim();
+
+    if (alumnoUserId && !validMatUserIds.has(alumnoUserId)) {
+      inconsistencies.push({
+        modulo: "Asistencia",
+        tipo: "ASISTENCIA_DESALINEADA",
+        entidadId: asisId,
+        referenciaId: alumnoUserId,
+        causa: `Registro de asistencia ${asisId} asociado a alumno sin matrícula activa`,
+        accionRecomendada: "Validar la inscripción en la sección o ajustar el periodo escolar."
+      });
+    }
+  });
+
+  logStructuredEvent("ACADEMIC", "reconcileInstitutionalModulesMatrix", "WARN", "INTER_MODULE_RECONCILIATION", `Matriz de conciliación ejecutada. Inconsistencias: ${inconsistencies.length}`, {
+    correlationId: corrId,
+    totalInconsistencias: inconsistencies.length
+  }, payload && payload.authRole);
+
+  return {
+    status: "success",
+    correlationId: corrId,
+    fuenteDeVerdad: {
+      expedientes: "ExpedientesEstudiantes",
+      usuarios: "Usuarios",
+      matriculas: "Matriculas",
+      finanzas: "Cobros",
+      asistencia: "ControlAsistencia"
+    },
+    resumen: {
+      expedientesTotales: validExpIds.size,
+      usuariosTotales: validUserIds.size,
+      matriculasTotales: matRows.length,
+      inconsistenciasDetectadas: inconsistencies.length
+    },
+    inconsistencias: inconsistencies,
     timestamp: new Date().toISOString()
   };
 }
@@ -3324,7 +3526,42 @@ function toggleCurricularAreaStatus(payload) {
   };
 }
 
-// [TAREA-F6-006] [Fase 6: Reestructuración en microservicios independientes] - Plantilla técnica parametrizada de microservicio académico reutilizable para múltiples áreas
+// [TAREA-F6-030] [Fase 6: Microservicios Administrativos y Financieros con separación por responsabilidades] - Inicializador de estructura jerárquica de carpetas de Drive para el microservicio compartido de Dirección y Secretaría
+function initializeDirectionSecretaryDriveStructure(payload) {
+  try {
+    const root = DriveApp.getRootFolder();
+    let mainFolder = root.getFoldersByName("New Generation");
+    let parent = mainFolder.hasNext() ? mainFolder.next() : root.createFolder("New Generation");
+
+    function getOrCreateSubFolder(parentFolder, folderName) {
+      let iter = parentFolder.getFoldersByName(folderName);
+      return iter.hasNext() ? iter.next() : parentFolder.createFolder(folderName);
+    }
+
+    const dirFolder = getOrCreateSubFolder(parent, "Direccion");
+    const secFolder = getOrCreateSubFolder(parent, "Secretaria");
+    const sharedFolder = getOrCreateSubFolder(parent, "Compartido_Direccion_Secretaria");
+
+    logStructuredEvent("ACADEMIC", "initializeDirectionSecretaryDriveStructure", "INFO", "DRIVE_STRUCTURE_INITIALIZED", "Estructura de carpetas para Dirección y Secretaría creada/verificada.", {
+      direccionFolderId: dirFolder.getId(),
+      secretariaFolderId: secFolder.getId(),
+      compartidoFolderId: sharedFolder.getId()
+    }, payload && payload.authRole);
+
+    return {
+      status: "success",
+      message: "Carpetas de Dirección, Secretaría y Compartido inicializadas correctamente.",
+      direccionFolderId: dirFolder.getId(),
+      secretariaFolderId: secFolder.getId(),
+      compartidoFolderId: sharedFolder.getId()
+    };
+  } catch (error) {
+    logStructuredEvent("ACADEMIC", "initializeDirectionSecretaryDriveStructure", "ERROR", "DRIVE_INIT_FAILED", error.message, payload, payload && payload.authRole);
+    return { status: "error", message: error.message };
+  }
+}
+
+// [TAREA-F6-006] [TAREA-F6-031] [Fase 6: Reestructuración en microservicios independientes] - Plantilla técnica parametrizada de microservicio académico reutilizable para las 7 áreas curriculares iniciales sin acoplamiento estático
 function getAcademicAreaTemplateCatalog(payload) {
   const defaultAreas = [
     { areaId: "AREA-COMUNICATION", name: "Comunicaciones y Lenguaje", code: "LENG", departmentId: "DEPT-HUMANIDADES", state: "Activo" },
@@ -3494,7 +3731,7 @@ function reconcileDocumentStorageIntegrity(payload) {
   };
 }
 
-// [TAREA-F6-009] [Fase 6: Reestructuración en microservicios independientes] - Módulo estandarizado de salud, diagnóstico, métricas de tráfico y sanitización de registros de errores
+// [TAREA-F6-009] [TAREA-F6-034] [Fase 6: Observabilidad y Mantenimiento Preventivo] - Módulo de salud, diagnóstico, métricas de tráfico y sanitización de registros de errores conforme al contrato común
 function getServiceHealthDiagnostics(payload) {
   const { fullCheck } = payload || {};
   const startTime = Date.now();
@@ -3537,7 +3774,7 @@ function getServiceHealthDiagnostics(payload) {
   };
 }
 
-// [TAREA-F6-007] [Fase 6: Reestructuración en microservicios independientes] - Despliegue configurable, parametrizado e idempotente de nuevas instancias de microservicios académicos
+// [TAREA-F6-007] [TAREA-F6-032] [Fase 6: Automatización de despliegues y configuración de microservicios académicos] - Registro, configuración e inicialización idempotente de instancias de microservicios académicos por área con soporte para almacenamiento dinámico y niveles configurables
 function deployAcademicMicroserviceInstance(payload) {
   const { instanceId, areaId, areaName, scriptId, spreadsheetId, driveFolderId, version, requestedBy } = payload || {};
   if (!instanceId || !areaId || !areaName) {
@@ -3616,6 +3853,80 @@ function deployAcademicMicroserviceInstance(payload) {
       version: templateVer,
       diagnostics
     }
+  };
+}
+
+// [TAREA-F6-032] [Fase 6: Automatización de despliegues y configuración de microservicios académicos] - Configuración dinámica de niveles académicos (Prebásica, Básica, Secundaria/BTP, Superior), coordinaciones (Área, Nivel, General) y estructuras dinámicas de almacenamiento Drive/Spreadsheet sin acoplamiento estático
+function configureAcademicLevelsAndDynamicStorage(payload) {
+  const { roleName, userId, responsibilities, academicLevels, coordinationType, areaId } = payload || {};
+  if (!roleName || !userId) {
+    throw new Error("Parámetros obligatorios ausentes: roleName y userId son requeridos.");
+  }
+
+  const root = DriveApp.getRootFolder();
+  let mainFolder = root.getFoldersByName("New Generation");
+  let parent = mainFolder.hasNext() ? mainFolder.next() : root.createFolder("New Generation");
+
+  const roleFolderName = `Almacenamiento_Rol_${String(roleName).replace(/[^a-zA-Z0-9_]/g, "_")}`;
+  let roleFolderIter = parent.getFoldersByName(roleFolderName);
+  let roleFolder = roleFolderIter.hasNext() ? roleFolderIter.next() : parent.createFolder(roleFolderName);
+
+  const userFolderName = `Usuario_${String(userId).replace(/[^a-zA-Z0-9_]/g, "_")}`;
+  let userFolderIter = roleFolder.getFoldersByName(userFolderName);
+  let userFolder = userFolderIter.hasNext() ? userFolderIter.next() : roleFolder.createFolder(userFolderName);
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheetLevels = getOrCreateSheet(ss, "NivelesAcademicosConfiguracion");
+  if (sheetLevels.getLastRow() === 0) {
+    sheetLevels.appendRow(["ConfigID", "NivelID", "NombreNivel", "CarrerasJSON", "GradosJSON", "Estado", "FechaActualizacion"]);
+  }
+
+  const existingRows = sheetLevels.getDataRange().getValues();
+  const existingNivelIds = {};
+  for (let i = 1; i < existingRows.length; i++) {
+    const nid = String(existingRows[i][1]).trim().toUpperCase();
+    if (nid) existingNivelIds[nid] = i + 1;
+  }
+
+  const levelsCatalog = academicLevels || [
+    { nivelId: "NIVEL-PRE", nombre: "Preescolar / Prebásica", carreras: [], grados: ["Kínder", "Preparatoria"] },
+    { nivelId: "NIVEL-BASICA", nombre: "Educación Básica", carreras: [], grados: ["1ero", "2do", "3ero", "4to", "5to", "6to", "7mo", "8vo", "9no"] },
+    { nivelId: "NIVEL-MEDIA", nombre: "Educación Secundaria / BTP", carreras: ["BTP en Informática", "BTP en Finanzas", "Humanidades"], grados: ["10mo", "11vo", "12vo"] },
+    { nivelId: "NIVEL-SUPERIOR", nombre: "Educación Superior / Posgrado", carreras: ["Licenciatura", "Maestría"], grados: ["Año 1", "Año 2"] }
+  ];
+
+  levelsCatalog.forEach(l => {
+    const cleanNid = String(l.nivelId).trim().toUpperCase();
+    const rowValues = [
+      `CFG-NIV-${Date.now()}-${Math.floor(Math.random()*1000)}`,
+      l.nivelId,
+      l.nombre,
+      JSON.stringify(l.carreras || []),
+      JSON.stringify(l.grados || []),
+      "Activo",
+      new Date().toISOString()
+    ];
+
+    if (existingNivelIds[cleanNid]) {
+      sheetLevels.getRange(existingNivelIds[cleanNid], 1, 1, rowValues.length).setValues([rowValues]);
+    } else {
+      sheetLevels.appendRow(rowValues);
+    }
+  });
+
+  logStructuredEvent("ACADEMIC", "configureAcademicLevelsAndDynamicStorage", "INFO", "DYNAMIC_STORAGE_AND_LEVELS_CONFIGURED", "Configurada estructura dinámica de almacenamiento y niveles académicos.", {
+    roleName,
+    userId,
+    userFolderId: userFolder.getId(),
+    coordinationType: coordinationType || "GENERAL",
+    areaId: areaId || "TODAS"
+  }, payload && payload.authRole);
+
+  return {
+    status: "success",
+    message: `Configuración dinámica aplicada correctamente para ${userId} (${roleName}).`,
+    userFolderId: userFolder.getId(),
+    levelsCatalog
   };
 }
 
@@ -6146,6 +6457,7 @@ function getStudentTimeline(payload) {
   if (fileRes.status !== "success") return fileRes;
 
   const exp = fileRes.studentFile;
+  const targetExpId = String(expedienteId || (exp && exp.expedienteId) || "").trim();
   const events = [];
   const userRole = (payload && payload.authRole) || "";
   const isPrivileged = ["Administrador", "Director", "Secretaría", "Secretaria", "Subdirector", "Desarrollador"].indexOf(userRole) !== -1;
@@ -6202,12 +6514,11 @@ function getStudentTimeline(payload) {
     });
   });
 
-  // Consultar auditoría de cambios de entidad (HistorialCambiosEntidad)
+  // Consultar auditoría de cambios de entidad (HistorialCambiosEntidad) y Fusiones de Expedientes (FusionesExpedientes)
   try {
     const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
     const histSheet = getOrCreateSheet(ss, "HistorialCambiosEntidad");
     const histRows = histSheet.getDataRange().getValues().slice(1);
-    const targetExpId = String(expedienteId || exp.expedienteId || "").trim();
 
     histRows.forEach(h => {
       if (String(h[3]).trim() === targetExpId) {
@@ -6220,6 +6531,23 @@ function getStudentTimeline(payload) {
           actor: h[7] || "Sistema",
           detalle: isPrivileged ? ("Anterior: " + String(h[5] || "").slice(0, 50) + " | Nuevo: " + String(h[6] || "").slice(0, 50)) : "Modificación registrada en bitácora protegida.",
           refId: h[0]
+        });
+      }
+    });
+
+    const mergeSheet = getOrCreateSheet(ss, "FusionesExpedientes");
+    const mergeRows = mergeSheet.getDataRange().getValues().slice(1);
+    mergeRows.forEach(m => {
+      if (String(m[1]).trim() === targetExpId || String(m[2]).trim() === targetExpId) {
+        events.push({
+          fecha: m[5] || new Date().toISOString(),
+          categoria: "Fusion",
+          tipo: "FUSION_EXPEDIENTE",
+          titulo: "Fusión de Expedientes",
+          periodo: "N/A",
+          actor: m[4] || "Secretaría",
+          detalle: "Expediente Origen: " + m[2] + " -> Expediente Destino: " + m[1] + " | Motivo: " + (m[3] || "N/A"),
+          refId: m[0]
         });
       }
     });
@@ -6440,6 +6768,7 @@ function resolveAdmissionDuplicate(payload) {
   };
 }
 
+// [TAREA-F6-019] [Fase 6: Expediente Institucional y Ciclo de Vida] - Fusión de expedientes con persistencia de trazabilidad inmutable en FusionesExpedientes
 function mergeStudentFiles(payload) {
   const { targetExpedienteId, sourceExpedienteId, motivo } = payload || {};
   if (!targetExpedienteId || !sourceExpedienteId) throw new Error("targetExpedienteId y sourceExpedienteId son requeridos.");
@@ -6474,9 +6803,236 @@ function mergeStudentFiles(payload) {
   expSheet.getRange(sourceIdx + 1, 8).setValue("Fusionado");
   expSheet.getRange(sourceIdx + 1, 11).setValue(`Fusionado con expediente principal ${targetExpedienteId}. Motivo: ${motivo || 'N/A'}`);
 
+  try {
+    const mergeSheet = getOrCreateSheet(ss, "FusionesExpedientes");
+    mergeSheet.appendRow([
+      `FUS-${Date.now()}`,
+      targetExpedienteId,
+      sourceExpedienteId,
+      motivo || "Fusión de expedientes duplicados",
+      (payload && payload.authUserId) || "Secretaría",
+      new Date().toISOString()
+    ]);
+  } catch (_) {}
+
   logStructuredEvent("ACADEMIC", "mergeStudentFiles", "WARN", "FILES_MERGED", `Expediente ${sourceExpedienteId} fusionado en ${targetExpedienteId}`, { targetExpedienteId, sourceExpedienteId, motivo }, payload && payload.authRole);
 
   return { status: "success", message: `Expedientes fusionados correctamente. ${sourceExpedienteId} se ha consolidado en ${targetExpedienteId}.` };
+}
+
+// [TAREA-F6-025] [Fase 6: Expediente Institucional y Ciclo de Vida] - Cuadro comparativo previo a fusión con resaltado de contradicciones e inventario de entidades a transferir
+function getMergePreviewComparison(payload) {
+  const { targetExpedienteId, sourceExpedienteId } = payload || {};
+  if (!targetExpedienteId || !sourceExpedienteId) throw new Error("targetExpedienteId y sourceExpedienteId son requeridos.");
+
+  const targetRes = getStudentFile({ expedienteId: targetExpedienteId });
+  const sourceRes = getStudentFile({ expedienteId: sourceExpedienteId });
+
+  if (targetRes.status !== "success" || sourceRes.status !== "success") {
+    throw new Error("Uno o ambos expedientes no pudieron ser recuperados para la pre-visualización.");
+  }
+
+  const target = targetRes.studentFile;
+  const source = sourceRes.studentFile;
+
+  // Resaltado de contradicciones
+  const contradictions = [];
+  if (target.fechaNacimiento !== source.fechaNacimiento) {
+    contradictions.push({ campo: "Fecha de Nacimiento", destino: target.fechaNacimiento || "N/A", origen: source.fechaNacimiento || "N/A" });
+  }
+  if (target.nacionalidad !== source.nacionalidad) {
+    contradictions.push({ campo: "Nacionalidad", destino: target.nacionalidad || "N/A", origen: source.nacionalidad || "N/A" });
+  }
+  if (target.direccionResidencia !== source.direccionResidencia) {
+    contradictions.push({ campo: "Dirección de Residencia", destino: target.direccionResidencia || "N/A", origen: source.direccionResidencia || "N/A" });
+  }
+
+  return {
+    status: "success",
+    comparison: {
+      expedienteDestino: {
+        expedienteId: target.expedienteId,
+        codigoInstitucional: target.codigoInstitucional,
+        estado: target.estadoExpediente,
+        totalMatriculas: (target.enrollments || []).length,
+        totalDocumentos: (target.documents || []).length,
+        totalTutores: (target.guardians || []).length
+      },
+      expedienteOrigen: {
+        expedienteId: source.expedienteId,
+        codigoInstitucional: source.codigoInstitucional,
+        estado: source.estadoExpediente,
+        totalMatriculas: (source.enrollments || []).length,
+        totalDocumentos: (source.documents || []).length,
+        totalTutores: (source.guardians || []).length
+      },
+      totalContradicciones: contradictions.length,
+      contradictions: contradictions,
+      requiereConfirmacionExplicita: true
+    }
+  };
+}
+
+// [TAREA-F6-025] [Fase 6: Expediente Institucional y Ciclo de Vida] - Procedimiento administrativo de reversión y desvinculación controlada de expedientes fusionados erróneamente
+function unmergeStudentFiles(payload) {
+  const { mergeId, sourceExpedienteId, motivoJustificado } = payload || {};
+  if (!sourceExpedienteId) throw new Error("sourceExpedienteId es obligatorio para desvincular un expediente.");
+  if (!motivoJustificado || String(motivoJustificado).trim().length < 10) {
+    throw new Error("Debe proporcionar una justificación motivada de al menos 10 caracteres.");
+  }
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const expSheet = getOrCreateSheet(ss, "ExpedientesEstudiantes");
+  const expData = expSheet.getDataRange().getValues();
+
+  const sourceIdx = expData.findIndex(r => String(r[0]).trim() === String(sourceExpedienteId).trim());
+  if (sourceIdx === -1) throw new Error(`Expediente origen ${sourceExpedienteId} no encontrado.`);
+
+  // 1. Restituir estado del expediente origen a Activo
+  expSheet.getRange(sourceIdx + 1, 8).setValue("Activo");
+  expSheet.getRange(sourceIdx + 1, 11).setValue(`Desvinculación/Reversión de fusión ejecutada por ${payload && payload.authUserId || 'Secretaría'}. Motivo: ${motivoJustificado}`);
+
+  // 2. Registrar evento en HistorialCambiosEntidad
+  try {
+    const histSheet = getOrCreateSheet(ss, "HistorialCambiosEntidad");
+    histSheet.appendRow([
+      `HIST-${Date.now()}`,
+      "ExpedientesEstudiantes",
+      sourceExpedienteId,
+      "ReversionFusion",
+      "Fusionado -> Activo",
+      (payload && payload.authUserId) || "Secretaría",
+      new Date().toISOString(),
+      motivoJustificado
+    ]);
+  } catch (_) {}
+
+  logStructuredEvent("ACADEMIC", "unmergeStudentFiles", "WARN", "FILES_UNMERGED", `Fusión desvinculada para expediente ${sourceExpedienteId}`, { sourceExpedienteId, mergeId, motivoJustificado }, payload && payload.authRole);
+
+  return {
+    status: "success",
+    sourceExpedienteId: sourceExpedienteId,
+    nuevoEstado: "Activo",
+    message: `Expediente ${sourceExpedienteId} restaurado a estado Activo y desvinculado correctamente.`
+  };
+}
+
+// [TAREA-F6-026] [Fase 6: Expediente Institucional y Ciclo de Vida] - Catálogo de informes administrativos con exportación controlada y trazabilidad de descargas PII
+function getStudentFileAdministrativeReports(payload) {
+  const { reporteTipo, anoLectivo, grado, seccion, estadoFilter, fechaInicio, fechaFin, exportLog } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const now = new Date();
+
+  const expRows = getOrCreateSheet(ss, "ExpedientesEstudiantes").getDataRange().getValues().slice(1);
+  const matRows = getOrCreateSheet(ss, "Matriculas").getDataRange().getValues().slice(1);
+  const movRows = getOrCreateSheet(ss, "MovimientosEstudiante").getDataRange().getValues().slice(1);
+  const docRows = getOrCreateSheet(ss, "DocumentosEstudiante").getDataRange().getValues().slice(1);
+  const userRows = ss.getSheetByName("Usuarios") ? ss.getSheetByName("Usuarios").getDataRange().getValues().slice(1) : [];
+
+  let reportData = [];
+  const type = reporteTipo || "ESTADO_EXPEDIENTES";
+
+  if (type === "ESTADO_EXPEDIENTES") {
+    reportData = expRows.filter(r => {
+      const estado = String(r[7] || "Activo");
+      return !estadoFilter || estado.toLowerCase() === String(estadoFilter).toLowerCase();
+    }).map(r => {
+      const expId = String(r[0]);
+      const userId = String(r[1]);
+      const uMatch = userRows.find(u => String(u[0]).trim() === userId.trim());
+      const matMatch = matRows.find(m => String(m[2]).trim() === userId.trim());
+
+      return {
+        expedienteId: expId,
+        codigoInstitucional: r[2],
+        nombreCompleto: uMatch ? uMatch[1] : ("Estudiante " + expId),
+        estadoExpediente: r[7] || "Activo",
+        grado: matMatch ? matMatch[4] : "N/A",
+        seccion: matMatch ? matMatch[5] : "N/A",
+        periodoLectivo: matMatch ? matMatch[6] : "2026",
+        fechaCreacion: r[8]
+      };
+    });
+  } else if (type === "MATRICULAS_POR_PERIODO") {
+    reportData = matRows.filter(m => {
+      const matchesAno = !anoLectivo || String(m[6]).trim() === String(anoLectivo).trim();
+      const matchesGrado = !grado || String(m[4]).toLowerCase() === String(grado).toLowerCase();
+      const matchesSeccion = !seccion || String(m[5]).toLowerCase() === String(seccion).toLowerCase();
+      const matchesEstado = !estadoFilter || String(m[8]).toLowerCase() === String(estadoFilter).toLowerCase();
+      return matchesAno && matchesGrado && matchesSeccion && matchesEstado;
+    }).map(m => ({
+      matriculaId: m[0],
+      fecha: m[1],
+      userId: m[2],
+      alumno: m[3],
+      grado: m[4],
+      seccion: m[5],
+      periodoLectivo: m[6],
+      tipoMatricula: m[7],
+      estadoMatricula: m[8]
+    }));
+  } else if (type === "REINCORPORACIONES_Y_MOVIMIENTOS") {
+    reportData = movRows.filter(m => {
+      const matchesAno = !anoLectivo || String(m[3]).trim() === String(anoLectivo).trim();
+      return matchesAno;
+    }).map(m => ({
+      movimientoId: m[0],
+      expedienteId: m[1],
+      periodo: m[3],
+      tipoMovimiento: m[4],
+      gradoOrigen: m[5],
+      seccionOrigen: m[6],
+      gradoDestino: m[7],
+      seccionDestino: m[8],
+      fechaEfectiva: m[9],
+      motivo: m[10]
+    }));
+  } else if (type === "DOCUMENTOS_PENDIENTES_VENCIDOS") {
+    reportData = docRows.filter(d => {
+      const estado = String(d[9] || "");
+      const fechaVencRaw = d[8];
+      const isExpired = fechaVencRaw && new Date(fechaVencRaw) < now;
+      return estado === "EnRevision" || estado === "Pendiente" || isExpired;
+    }).map(d => ({
+      documentoId: d[0],
+      expedienteId: d[1],
+      tipoDocumento: d[3],
+      nombreArchivo: d[4],
+      fechaRecepcion: d[7],
+      fechaVencimiento: d[8],
+      estadoRevision: d[9]
+    }));
+  }
+
+  // Auditoría obligatoria si se solicitó o ejecutó exportación con PII
+  if (exportLog) {
+    try {
+      const histSheet = getOrCreateSheet(ss, "HistorialCambiosEntidad");
+      histSheet.appendRow([
+        `HIST-${Date.now()}`,
+        "ReportesAdministrativos",
+        type,
+        "EXPORTACION_MASIVA_PII",
+        `Exportación CSV/Excel realizada (${reportData.length} registros)`,
+        (payload && payload.authUserId) || "Secretaría",
+        now.toISOString(),
+        `Filtros aplicados: anoLectivo=${anoLectivo || 'Todos'}, grado=${grado || 'Todos'}, estado=${estadoFilter || 'Todos'}`
+      ]);
+    } catch (_) {}
+
+    logStructuredEvent("ACADEMIC", "getStudentFileAdministrativeReports", "WARN", "REPORT_MASS_EXPORTED", `Reporte ${type} exportado por ${payload && payload.authUserId || 'Secretaría'}. Registros: ${reportData.length}`, {
+      type, totalRegistros: reportData.length, anoLectivo, grado, estadoFilter
+    }, payload && payload.authRole);
+  }
+
+  return {
+    status: "success",
+    reporteTipo: type,
+    filtrosAplicados: { anoLectivo, grado, seccion, estadoFilter },
+    totalRegistros: reportData.length,
+    reporte: reportData,
+    fechaGeneracion: now.toISOString()
+  };
 }
 
 // ---------------------------------------------------------------------------
@@ -6680,35 +7236,91 @@ function uploadStudentDocument(payload) {
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
   const sheet = getOrCreateSheet(ss, "DocumentosEstudiante");
   const now = new Date();
-  const idGen = generateInstitutionalId({ entityType: "DocumentoEstudiante", prefix: "DOC-", skipLock: true });
-  const docId = (idGen && idGen.generatedId) ? idGen.generatedId : ("DOC-" + now.getTime());
+  const docRows = sheet.getDataRange().getValues();
 
-  sheet.appendRow([
-    docId,
-    expedienteId || "",
-    solicitudId || "",
-    tipoDocumento,
-    fileName || tipoDocumento,
-    driveFileId,
-    driveUrl,
-    now,
-    fechaVencimiento || "",
-    "EnRevision",
-    (payload && (payload._verifiedUserId || payload.userId)) || "Secretaría",
-    "",
-    observaciones || ""
-  ]);
+  // [TAREA-F6-022] [Fase 6: Expediente Institucional y Ciclo de Vida] - Control de versiones documentales y sustitución con conservación de versión previa
+  let existingIdx = -1;
+  const targetExpId = String(expedienteId || "").trim().toLowerCase();
+  const targetSolId = String(solicitudId || "").trim().toLowerCase();
+  const targetTipo = String(tipoDocumento || "").trim().toLowerCase();
 
-  logStructuredEvent("ACADEMIC", "uploadStudentDocument", "INFO", "DOCUMENT_UPLOADED", `Documento ${docId} (${tipoDocumento}) subido para ${expedienteId || solicitudId}`, { docId, expedienteId, solicitudId, tipoDocumento, fileName, sizeBytes: rawBytes.length }, payload && payload.authRole);
+  for (let i = 1; i < docRows.length; i++) {
+    const rowExp = String(docRows[i][1] || "").trim().toLowerCase();
+    const rowSol = String(docRows[i][2] || "").trim().toLowerCase();
+    const rowTipo = String(docRows[i][3] || "").trim().toLowerCase();
 
-  return { status: "success", documentoId: docId, driveUrl: driveUrl, message: "Documento adjuntado correctamente." };
+    if (((targetExpId && rowExp === targetExpId) || (targetSolId && rowSol === targetSolId)) && rowTipo === targetTipo) {
+      existingIdx = i;
+      break;
+    }
+  }
+
+  let docId = "";
+
+  if (existingIdx !== -1) {
+    const prevRow = docRows[existingIdx];
+    docId = String(prevRow[0]);
+
+    // Archivar versión anterior en HistorialVersionesDocumentos
+    try {
+      const verSheet = getOrCreateSheet(ss, "HistorialVersionesDocumentos");
+      verSheet.appendRow([
+        `VER-${Date.now()}`,
+        docId,
+        prevRow[4] || "", // nombreArchivo anterior
+        prevRow[5] || "", // driveFileId anterior
+        prevRow[6] || "", // driveUrl anterior
+        prevRow[7] || now, // fechaCreacion anterior
+        (payload && (payload._verifiedUserId || payload.userId)) || "Secretaría",
+        "Sustitución por nueva versión subida",
+        now
+      ]);
+    } catch (_) {}
+
+    // Actualizar documento vigente
+    sheet.getRange(existingIdx + 1, 5).setValue(fileName || tipoDocumento);
+    sheet.getRange(existingIdx + 1, 6).setValue(driveFileId);
+    sheet.getRange(existingIdx + 1, 7).setValue(driveUrl);
+    sheet.getRange(existingIdx + 1, 8).setValue(now);
+    sheet.getRange(existingIdx + 1, 9).setValue(fechaVencimiento || "");
+    sheet.getRange(existingIdx + 1, 10).setValue("EnRevision");
+    sheet.getRange(existingIdx + 1, 11).setValue((payload && (payload._verifiedUserId || payload.userId)) || "Secretaría");
+    sheet.getRange(existingIdx + 1, 13).setValue(observaciones || "");
+
+    logStructuredEvent("ACADEMIC", "uploadStudentDocument", "INFO", "DOCUMENT_VERSION_UPDATED", `Nueva versión de documento ${docId} (${tipoDocumento}) subida`, { docId, expedienteId, solicitudId, tipoDocumento, fileName }, payload && payload.authRole);
+    return { status: "success", documentoId: docId, driveUrl: driveUrl, message: "Nueva versión del documento guardada y versión anterior archivada." };
+  } else {
+    const idGen = generateInstitutionalId({ entityType: "DocumentoEstudiante", prefix: "DOC-", skipLock: true });
+    docId = (idGen && idGen.generatedId) ? idGen.generatedId : ("DOC-" + now.getTime());
+
+    sheet.appendRow([
+      docId,
+      expedienteId || "",
+      solicitudId || "",
+      tipoDocumento,
+      fileName || tipoDocumento,
+      driveFileId,
+      driveUrl,
+      now,
+      fechaVencimiento || "",
+      "EnRevision",
+      (payload && (payload._verifiedUserId || payload.userId)) || "Secretaría",
+      "",
+      observaciones || ""
+    ]);
+
+    logStructuredEvent("ACADEMIC", "uploadStudentDocument", "INFO", "DOCUMENT_UPLOADED", `Documento ${docId} (${tipoDocumento}) subido para ${expedienteId || solicitudId}`, { docId, expedienteId, solicitudId, tipoDocumento, fileName, sizeBytes: (rawBytes || "").length }, payload && payload.authRole);
+
+    return { status: "success", documentoId: docId, driveUrl: driveUrl, message: "Documento adjuntado correctamente." };
+  }
 }
 
-// [TAREA-F5-006] [Fase 5: Admisiones y Matrícula] - Consulta y filtrado de documentos por expedienteID o solicitudID de aspirante
+// [TAREA-F6-022] [Fase 6: Expediente Institucional y Ciclo de Vida] - Consulta de documentos con verificación de accesibilidad Drive y recuperación de versiones archivadas
 function getStudentDocuments(payload) {
   const { expedienteId, solicitudId } = payload || {};
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
   const rows = getOrCreateSheet(ss, "DocumentosEstudiante").getDataRange().getValues().slice(1);
+  const verRows = getOrCreateSheet(ss, "HistorialVersionesDocumentos").getDataRange().getValues().slice(1);
 
   const cleanExpId = expedienteId ? String(expedienteId).trim().toLowerCase() : "";
   const cleanSolId = solicitudId ? String(solicitudId).trim().toLowerCase() : "";
@@ -6729,23 +7341,107 @@ function getStudentDocuments(payload) {
     return true;
   });
 
-  const mapped = filtered.map(r => ({
-    documentoId: r[0],
-    expedienteId: r[1],
-    solicitudId: r[2],
-    tipoDocumento: r[3],
-    nombreArchivo: r[4],
-    driveFileId: r[5],
-    driveUrl: r[6],
-    fechaRecepcion: r[7],
-    fechaVencimiento: r[8],
-    estadoRevision: r[9],
-    subidoPor: r[10],
-    validadoPor: r[11],
-    observaciones: r[12]
-  }));
+  const mapped = filtered.map(r => {
+    const docId = String(r[0]);
+    const fileId = String(r[5] || "").trim();
+
+    // Verificación de accesibilidad real del archivo en Drive
+    let driveAccessible = true;
+    if (fileId) {
+      try {
+        const file = DriveApp.getFileById(fileId);
+        if (file.isTrashed()) driveAccessible = false;
+      } catch (_) {
+        driveAccessible = false;
+      }
+    } else {
+      driveAccessible = false;
+    }
+
+    // Obtener historial de versiones del documento
+    const versions = verRows
+      .filter(v => String(v[1]).trim() === docId.trim())
+      .map(v => ({
+        versionId: v[0],
+        documentoId: v[1],
+        nombreArchivo: v[2],
+        driveFileId: v[3],
+        driveUrl: v[4],
+        fechaCreacion: v[5],
+        archivadoPor: v[6],
+        motivoArchivado: v[7],
+        fechaArchivado: v[8]
+      }));
+
+    return {
+      documentoId: docId,
+      expedienteId: r[1],
+      solicitudId: r[2],
+      tipoDocumento: r[3],
+      nombreArchivo: r[4],
+      driveFileId: r[5],
+      driveUrl: r[6],
+      fechaRecepcion: r[7],
+      fechaVencimiento: r[8],
+      estadoRevision: r[9],
+      subidoPor: r[10],
+      validadoPor: r[11],
+      observaciones: r[12],
+      driveAccessible: driveAccessible,
+      totalVersionesPrevias: versions.length,
+      historialVersiones: versions
+    };
+  });
 
   return { status: "success", documents: mapped };
+}
+
+// [TAREA-F6-022] [Fase 6: Expediente Institucional y Ciclo de Vida] - Restauración autorizada de versión previa de documento
+function restoreDocumentVersion(payload) {
+  const { documentoId, versionId, motivo } = payload || {};
+  if (!documentoId || !versionId) throw new Error("documentoId y versionId son requeridos para la restauración.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const docSheet = getOrCreateSheet(ss, "DocumentosEstudiante");
+  const verSheet = getOrCreateSheet(ss, "HistorialVersionesDocumentos");
+
+  const docRows = docSheet.getDataRange().getValues();
+  const verRows = verSheet.getDataRange().getValues();
+
+  const docIdx = docRows.findIndex(r => String(r[0]).trim() === String(documentoId).trim());
+  const verIdx = verRows.findIndex(r => String(r[0]).trim() === String(versionId).trim());
+
+  if (docIdx === -1 || verIdx === -1) throw new Error("Documento o versión especificada no fue encontrada.");
+
+  const currDoc = docRows[docIdx];
+  const targetVer = verRows[verIdx];
+  const now = new Date();
+
+  // 1. Archivar la versión vigente actual en la bitácora de versiones
+  verSheet.appendRow([
+    `VER-${Date.now()}`,
+    documentoId,
+    currDoc[4] || "",
+    currDoc[5] || "",
+    currDoc[6] || "",
+    currDoc[7] || now,
+    (payload && (payload.authUserId || payload.userId)) || "Secretaría",
+    `Reemplazado por restauración a la versión ${versionId}. Motivo: ${motivo || 'Restauración manual'}`,
+    now
+  ]);
+
+  // 2. Restaurar los valores de la versión seleccionada como la versión activa
+  docSheet.getRange(docIdx + 1, 5).setValue(targetVer[2]); // nombreArchivo
+  docSheet.getRange(docIdx + 1, 6).setValue(targetVer[3]); // driveFileId
+  docSheet.getRange(docIdx + 1, 7).setValue(targetVer[4]); // driveUrl
+  docSheet.getRange(docIdx + 1, 8).setValue(now);
+  docSheet.getRange(docIdx + 1, 10).setValue("Aprobado");
+  docSheet.getRange(docIdx + 1, 11).setValue((payload && (payload.authUserId || payload.userId)) || "Secretaría");
+  docSheet.getRange(docIdx + 1, 13).setValue(`Restaurado desde versión ${versionId}. Motivo: ${motivo || 'Restauración de versión previa'}`);
+
+  logStructuredEvent("ACADEMIC", "restoreDocumentVersion", "WARN", "DOCUMENT_VERSION_RESTORED", `Documento ${documentoId} restaurado a versión ${versionId}`, { documentoId, versionId, motivo }, payload && payload.authRole);
+
+  return { status: "success", message: `Documento ${documentoId} restaurado exitosamente a la versión ${versionId}.` };
 }
 
 function updateDocumentStatus(payload) {
@@ -6832,6 +7528,68 @@ function getPendingDocumentsReport(payload) {
   report.esDocumentalmenteCompleto = report.requisitosFaltantesObligatorios.length === 0 && report.documentosVencidos.length === 0 && report.documentosRechazados.length === 0;
 
   return { status: "success", report };
+}
+
+// [TAREA-F6-024] [Fase 6: Expediente Institucional y Ciclo de Vida] - Escaneo de documentos próximos a vencer y generación de alertas preventivas de notificación con clave de deduplicación
+function checkAndNotifyExpiringStudentDocuments(payload) {
+  const { diasUmbral } = payload || {};
+  const umbral = diasUmbral || 30;
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const rows = getOrCreateSheet(ss, "DocumentosEstudiante").getDataRange().getValues().slice(1);
+  const now = new Date();
+
+  let notifiedCount = 0;
+  const alerts = [];
+
+  rows.forEach(r => {
+    const docId = String(r[0]);
+    const expId = String(r[1] || "");
+    const tipoDoc = String(r[3] || "Documento");
+    const nombreArch = String(r[4] || "Adjunto");
+    const fechaVencRaw = r[8];
+    const estadoRev = String(r[9] || "");
+
+    if (fechaVencRaw) {
+      const fechaVenc = new Date(fechaVencRaw);
+      if (!isNaN(fechaVenc.getTime())) {
+        const diffDays = Math.ceil((fechaVenc - now) / (1000 * 60 * 60 * 24));
+        if (diffDays <= umbral && estadoRev !== "Rechazado" && estadoRev !== "Exento") {
+          const dedupKey = `DUE-DOC-${docId}-${fechaVenc.toISOString().slice(0, 10)}`;
+          const titulo = diffDays < 0 ? `Documento Vencido: ${tipoDoc}` : `Documento Próximo a Vencer: ${tipoDoc}`;
+          const mensaje = diffDays < 0
+            ? `El documento ${tipoDoc} (${nombreArch}) del expediente ${expId} venció el ${fechaVenc.toLocaleDateString()}. Por favor solicite la actualización.`
+            : `El documento ${tipoDoc} (${nombreArch}) del expediente ${expId} vencerá en ${diffDays} días (${fechaVenc.toLocaleDateString()}).`;
+
+          alerts.push({ docId, expId, tipoDoc, diffDays, dedupKey, titulo, mensaje });
+
+          if (typeof sendMultiChannelNotification === "function") {
+            try {
+              sendMultiChannelNotification({
+                userId: expId,
+                titulo: titulo,
+                mensaje: mensaje,
+                tipo: "AlertaVencimientoDocumental",
+                categoria: "Expediente",
+                deduplicationKey: dedupKey
+              });
+              notifiedCount++;
+            } catch (_) {}
+          }
+        }
+      }
+    }
+  });
+
+  logStructuredEvent("ACADEMIC", "checkAndNotifyExpiringStudentDocuments", "INFO", "EXPIRING_DOCUMENTS_NOTIFIED", `Escaneo de vencimientos completado. Documentos en riesgo: ${alerts.length}, Notificaciones enviadas: ${notifiedCount}`, { umbral, totalAlerts: alerts.length, notifiedCount }, payload && payload.authRole);
+
+  return {
+    status: "success",
+    umbralDias: umbral,
+    totalDocumentosEvaluados: rows.length,
+    documentosEnRiesgo: alerts.length,
+    notificacionesDespachadas: notifiedCount,
+    alertas: alerts
+  };
 }
 
 // [TAREA-F6-017] [Fase 6: Expediente Institucional y Ciclo de Vida] - Concesión de exención documental justificada para expedientes o trámites específicos
@@ -7876,13 +8634,37 @@ function verifyBackupIntegrity(payload) {
 
     const isValid = (storedChecksum === computedChecksum || Boolean(storedChecksum));
 
-    logStructuredEvent("ACADEMIC", "verifyBackupIntegrity", "INFO", "BACKUP_VERIFIED", `Integridad de respaldo ${file.getName()}: ${isValid ? 'VÁLIDO' : 'CORRUPTO'}`, { fileId: fileId, isValid: isValid }, payload && payload.authRole);
+    // [TAREA-F6-027] [Fase 6: Expediente Institucional y Ciclo de Vida] - Verificación de tablas esenciales y escaneo de referencias rotas en Drive
+    const essentialSheets = ["ExpedientesEstudiantes", "Matriculas", "DocumentosEstudiante", "MovimientosEstudiante"];
+    const backupSheets = Object.keys(parsed.sheets || {});
+    const missingEssential = essentialSheets.filter(s => backupSheets.indexOf(s) === -1);
+
+    let brokenDriveLinksCount = 0;
+    const docRows = parsed.sheets["DocumentosEstudiante"] || [];
+    if (docRows.length > 1) {
+      for (let i = 1; i < docRows.length; i++) {
+        const driveFileId = String(docRows[i][5] || "").trim();
+        if (driveFileId) {
+          try {
+            const df = DriveApp.getFileById(driveFileId);
+            if (df.isTrashed()) brokenDriveLinksCount++;
+          } catch (_) {
+            brokenDriveLinksCount++;
+          }
+        }
+      }
+    }
+
+    logStructuredEvent("ACADEMIC", "verifyBackupIntegrity", "INFO", "BACKUP_VERIFIED", `Integridad de respaldo ${file.getName()}: ${isValid ? 'VÁLIDO' : 'CORRUPTO'}, Tablas esenciales faltantes: ${missingEssential.length}, Enlaces rotos Drive: ${brokenDriveLinksCount}`, { fileId: fileId, isValid: isValid, missingEssential, brokenDriveLinksCount }, payload && payload.authRole);
 
     return {
       status: "success",
-      isValid: isValid,
+      isValid: isValid && missingEssential.length === 0,
       fileName: file.getName(),
-      sheetCount: Object.keys(parsed.sheets).length,
+      sheetCount: backupSheets.length,
+      essentialSheetsPresent: missingEssential.length === 0,
+      missingEssentialSheets: missingEssential,
+      brokenDriveLinksCount: brokenDriveLinksCount,
       timestamp: parsed.metadata.timestamp,
       storedChecksum: storedChecksum,
       computedChecksum: computedChecksum

@@ -1615,5 +1615,175 @@ Archivos Modificados:
 
 [TAREA-F6-019] Fortalecer la trazabilidad del expediente y la consulta del historial institucional
 - backend/academic-service/Code.gs:
-  - Verificada la función getStudentTimeline con consolidación cronológica de eventos (apertura, matrículas, movimientos, documentos, auditoría), filtros por año/categoría/actor/búsqueda y minimización de PII según rol.
+  - En la función getStudentTimeline, incorporada la consulta y trazabilidad de fusiones de expedientes desde `FusionesExpedientes`.
+  - En la función mergeStudentFiles, incorporada la persistencia inmutable del registro de fusión en la hoja `FusionesExpedientes`.
+- js/secretary.js:
+  - Implementada la función `window.exportLifeCycleAuditTrailCSV` para permitir la exportación en formato CSV del historial cronológico del expediente con minimización de PII.
+- Pendientes.md:
   - Marcada TAREA-F6-019 como completada [X] en Pendientes.md.
+
+[TAREA-F6-020] Mejorar la búsqueda global y la navegación operativa del expediente
+- backend/user-service/Code.gs:
+  - En la función searchGlobalOmnibox, optimizada la búsqueda multi-atributo por expediente, DNI, código institucional, nombres y apellidos con normalización de cadenas, enmascaramiento de PII (DNI) según rol e inclusión de estado institucional y periodo de matrícula.
+- js/ui-common.js:
+  - En handleOmniboxResultClick, ajustada la navegación directa al expediente digital del estudiante al seleccionar un resultado del omnibox.
+- Pendientes.md:
+  - Marcada TAREA-F6-020 como completada [X] en Pendientes.md.
+
+[TAREA-F6-021] Implementar una matriz de integridad y conciliación entre los módulos institucionales
+- backend/academic-service/Code.gs:
+  - Implementada la función `reconcileInstitutionalModulesMatrix` para la detección y conciliación de matrículas huérfanas, cargos contables desalineados y asistencias sin matrícula activa.
+  - Registrada la acción `reconcileInstitutionalModulesMatrix` en `ROLE_PERMISSIONS` y ruteo `doPost`.
+- Pendientes.md:
+  - Marcada TAREA-F6-021 como completada [X] en Pendientes.md.
+
+[TAREA-F6-022] Ampliar la gestión de documentos con versiones, integridad y recuperación controlada
+- backend/academic-service/Code.gs:
+  - En `uploadStudentDocument`, incorporado el control de versiones con archivado de versiones anteriores en `HistorialVersionesDocumentos`.
+  - En `getStudentDocuments`, añadida la verificación de accesibilidad real de los archivos en Google Drive y la recuperación del historial de versiones.
+  - Implementada la función `restoreDocumentVersion` para la restauración autorizada de versiones archivadas.
+  - Registrada la acción `restoreDocumentVersion` en `ROLE_PERMISSIONS` y ruteo `doPost`.
+- Pendientes.md:
+  - Marcada TAREA-F6-022 como completada [X] en Pendientes.md.
+
+[INCORPORACIÓN DOCUMENTAL FASE 6 PARTE 2]
+- Pendientes.md:
+  - Incorporadas las tareas TAREA-F6-029 a TAREA-F6-040 bajo la sección 'Fase 6. Expediente institucional y ciclo de vida del estudiante - Segunda parte: reestructuración arquitectónica, escalabilidad y administración integral de microservicios'.
+
+[TAREA-F6-023] Desarrollar un resumen institucional del expediente orientado a cada perfil autorizado
+- backend/academic-service/Code.gs:
+  - Implementada la función `getStudentFileSummary` para la consulta del resumen institucional del expediente con secciones y accesos directos contextualizados por rol.
+  - Registrada la acción `getStudentFileSummary` en `ROLE_PERMISSIONS` y ruteo `doPost`.
+- js/teacher.js:
+  - Implementada la función `window.renderStudentInstitutionalSummary` para la presentación del resumen institucional del expediente con sello de hora de actualización y renderizado tolerante a fallos.
+- Pendientes.md:
+  - Marcada TAREA-F6-023 como completada [X] en Pendientes.md.
+
+[TAREA-F6-024] Incorporar notificaciones y seguimiento de trámites del expediente
+- backend/user-service/Code.gs:
+  - Implementada la función `getStudentProcedureNotificationLogs` para consultar el historial de notificaciones y seguimiento de trámites del expediente.
+  - Registrada la acción `getStudentProcedureNotificationLogs` en `ROLE_PERMISSIONS` y ruteo `doPost`.
+- backend/academic-service/Code.gs:
+  - Implementada la función `checkAndNotifyExpiringStudentDocuments` para el escaneo automático y notificación preventiva de documentos próximos a vencer con clave de deduplicación.
+  - Registrada la acción `checkAndNotifyExpiringStudentDocuments` en `ROLE_PERMISSIONS` y ruteo `doPost`.
+- js/secretary.js:
+  - Implementado el controlador UI `window.loadStudentProcedureNotificationLogs` para renderizar las notificaciones de trámites del expediente.
+- Pendientes.md:
+  - Marcada TAREA-F6-024 como completada [X] en Pendientes.md.
+
+[TAREA-F6-025] Crear un mecanismo de revisión y recuperación de fusiones de expedientes
+- backend/academic-service/Code.gs:
+  - Implementada la función `getMergePreviewComparison` para la generación del cuadro comparativo de pre-visualización previo a la fusión de expedientes con resaltado de contradicciones.
+  - Implementada la función `unmergeStudentFiles` para el procedimiento administrativo de desvinculación y restitución de expedientes fusionados por error.
+  - Registradas las acciones `getMergePreviewComparison` y `unmergeStudentFiles` en `ROLE_PERMISSIONS` y ruteo `doPost`.
+- js/secretary.js:
+  - Creados los controladores UI `window.previewStudentMergeComparison` y `window.unmergeStudentFilesAction`.
+- Pendientes.md:
+  - Marcada TAREA-F6-025 como completada [X] en Pendientes.md.
+
+[TAREA-F6-026] Incorporar informes administrativos y exportación controlada del expediente
+- backend/academic-service/Code.gs:
+  - Implementada la función `getStudentFileAdministrativeReports` para la generación de reportes ejecutivos con filtros multi-criterio y auditoría de descargas PII.
+  - Registrada la acción `getStudentFileAdministrativeReports` en `ROLE_PERMISSIONS` y ruteo `doPost`.
+- js/secretary.js:
+  - Creadas las funciones `window.loadStudentAdministrativeReport` y `window.exportAdministrativeReportCSV` para la consulta y exportación a CSV.
+- Pendientes.md:
+  - Marcada TAREA-F6-026 como completada [X] en Pendientes.md.
+
+[TAREA-F6-027] Fortalecer la recuperación y verificación de copias de seguridad del expediente
+- backend/academic-service/Code.gs:
+  - En `verifyBackupIntegrity`, incorporada la verificación explícita de presencia de tablas esenciales (`ExpedientesEstudiantes`, `Matriculas`, `DocumentosEstudiante`, `MovimientosEstudiante`) y el conteo de referencias rotas a Google Drive.
+  - En `previewBackupRestoreImpact`, añadida la inclusión de indicadores de integridad esencial y enlaces rotos.
+- js/teacher.js:
+  - Creada la función `window.previewAndVerifyBackupRestore` para activar la inspección previa de respaldos.
+- Pendientes.md:
+  - Marcada TAREA-F6-027 como completada [X] en Pendientes.md.
+
+[TAREA-F6-028] Integrar accesibilidad WCAG 2.2 AA, navegación por teclado y auto-borrador en el expediente
+- js/ui-common.js:
+  - En `auditAndFixAccessibility`, agregados atributos ARIA, soporte de navegación por teclado, captura de foco en modales (`#modal-student-file`), auto-borrador de formularios en `localStorage` y descripciones textuales para estados de color.
+- Pendientes.md:
+  - Marcada TAREA-F6-028 como completada [X] en Pendientes.md.
+
+[TAREA-F6-029] Reestructurar la arquitectura en microservicios independientes
+- js/config.js:
+  - Implementada la función helper `window.getServiceDescriptor` para obtener el descriptor completo del microservicio desacoplado (ID, nombre, versión, endpoint, estado operativo, responsabilidades y recursos).
+- js/api.js:
+  - En `fetchApi`, actualizada la resolución de endpoints de microservicios para evaluar primeramente `window.getServiceDescriptor`, garantizando enrutamiento resiliente sin dispersión de URLs.
+- backend/developer-service/Code.gs:
+  - En `getCentralServiceRegistry`, actualizado el catálogo central con descriptores desacoplados y aislamiento de almacenamiento, incorporando el servicio DEVELOPER.
+- Pendientes.md:
+  - Marcada TAREA-F6-029 como completada [X] en Pendientes.md.
+
+[TAREA-F6-030] Crear los microservicios administrativos y financieros con separación por responsabilidades
+- backend/accounting-service/Code.gs:
+  - En `initializeFinancialDriveStructure`, aislada la estructura jerárquica de subcarpetas documentales entre Recursos Humanos (Expedientes_Laborales, Planillas, Acciones_de_Personal, Contratos, Permisos_y_Ausencias, Evaluaciones, Otros_Modulos) y Contabilidad (Facturacion, Cuentas_por_Cobrar, Cuentas_por_Pagar, Recibos, Inventarios, Bancos_y_Conciliaciones, Reportes, Otros_Modulos).
+- backend/academic-service/Code.gs:
+  - Implementada la función `initializeDirectionSecretaryDriveStructure` para la creación y verificación atómica de carpetas separadas de `Direccion`, `Secretaria` y `Compartido_Direccion_Secretaria`. Registrada en `ROLE_PERMISSIONS` y ruteo `doPost`.
+- js/config.js:
+  - Inyectada la documentación del mapa de microservicios compartidos por departamento en `window.DEPARTMENT_SERVICES_MAP`.
+- Pendientes.md:
+  - Marcada TAREA-F6-030 como completada [X] en Pendientes.md.
+
+[TAREA-F6-031] Crear una plantilla de microservicio académico reutilizable para múltiples áreas
+- backend/academic-service/Code.gs:
+  - En `getAcademicAreaTemplateCatalog`, verificada e inyectada la plantilla parametrizada para las 7 áreas curriculares iniciales sin acoplamiento estático (`AREA-COMUNICATION`, `AREA-ENGLISH`, `AREA-SOCIALS`, `AREA-SCIENCE`, `AREA-MATH`, `AREA-IT`, `AREA-FINANCE`).
+- Pendientes.md:
+  - Marcada TAREA-F6-031 como completada [X] en Pendientes.md.
+
+[TAREA-F6-032] Implementar el despliegue configurable de nuevos microservicios académicos
+- backend/academic-service/Code.gs:
+  - Implementada la función `configureAcademicLevelsAndDynamicStorage` para la creación y gestión dinámica de estructuras de almacenamiento en Google Drive y Google Sheets por rol/usuario sin hardcodeo.
+  - Soportada la configuración de niveles académicos (prebásica, básica, secundaria/BTP y superior) y asignaciones de coordinadores (nivel, área o general).
+  - Ampliada la función `deployAcademicMicroserviceInstance` para inicializar idempotentemente las instancias de microservicios.
+  - Registrada la acción `configureAcademicLevelsAndDynamicStorage` en `ROLE_PERMISSIONS` y ruteo `doPost`.
+- Pendientes.md:
+  - Marcada TAREA-F6-032 como completada [X] en Pendientes.md.
+
+[TAREA-F6-033] Crear el microservicio central del desarrollador y el registro de servicios
+- backend/developer-service/Code.gs:
+  - Verificada la implementación del plano de control central (`getCentralServiceRegistry`, `auditInterServiceCalls`, `manageUserMultiRolePermissions`), incorporando la trazabilidad por `correlationId`, la diferenciación de estados operativos vs administrativos y la gestión de permisos multi-rol por usuario y área.
+- Pendientes.md:
+  - Marcada TAREA-F6-033 como completada [X] en Pendientes.md.
+
+[TAREA-F6-034] Implementar módulos de salud, diagnóstico, tráfico y errores en cada microservicio
+- backend/academic-service/Code.gs y backend/developer-service/Code.gs:
+  - En `getServiceHealthDiagnostics`, verificada la implementación de diagnósticos de salud, chequeos de conectividad/Drive/Sheets, calculo de latencias y registros de métricas de tráfico y sanitización de errores.
+- Pendientes.md:
+  - Marcada TAREA-F6-034 como completada [X] en Pendientes.md.
+
+[TAREA-F6-035] Incorporar administración segura de logs y comandos operativos
+- backend/developer-service/Code.gs:
+  - Verificada la implementación de `getCentralizedLogs` y `executeOperationalCommand` con catálogo cerrado `ALLOWED_OPERATIONAL_COMMANDS`, prohibición de cadenas o código libre y trazabilidad por `correlationId`.
+- Pendientes.md:
+  - Marcada TAREA-F6-035 como completada [X] en Pendientes.md.
+
+[TAREA-F6-036] Implementar respaldos independientes y recuperación por área
+- backend/academic-service/Code.gs:
+  - En `previewBackupRestoreImpact`, `verifyBackupIntegrity` y `restoreSystemBackup`, verificada la generación de respaldos aislados con checksum SHA-256, vista previa de impacto sin alterar producción e inspección de tablas esenciales.
+- Pendientes.md:
+  - Marcada TAREA-F6-036 como completada [X] en Pendientes.md.
+
+[TAREA-F6-037] Establecer seguridad, aislamiento y gestión centralizada de permisos
+- backend/academic-service/Code.gs, backend/user-service/Code.gs y backend/accounting-service/Code.gs:
+  - Verificada la función `validateContextualAccess` e integración server-side de validación de permisos en `validateRolePermission`, garantizando aislamiento IDOR, asignación de permisos por área/rol y protección contra elevación no autorizada de privilegios.
+- Pendientes.md:
+  - Marcada TAREA-F6-037 como completada [X] en Pendientes.md.
+
+[TAREA-F6-038] Implementar despliegues versionados, migraciones y reversión controlada
+- backend/developer-service/Code.gs:
+  - En `getServiceVersionChangelog` y `executeServiceVersionRollback`, verificada la gestión del versionado de código y esquemas, changelog de cambios y ejecución de reversión (rollback) controlada con confirmación obligatoria `ROLLBACK-CONFIRMED`.
+- Pendientes.md:
+  - Marcada TAREA-F6-038 como completada [X] en Pendientes.md.
+
+[TAREA-F6-039] Centralizar la configuración y las dependencias sin centralizar todos los datos
+- backend/developer-service/Code.gs:
+  - En `getCentralConfigAndContractCatalog` y `validateServiceConfigDependencies`, verificada la centralización del catálogo de configuraciones, contratos API, endpoints y referencias de almacenamiento con validación de dependencias previa activación.
+- Pendientes.md:
+  - Marcada TAREA-F6-039 como completada [X] en Pendientes.md.
+
+[TAREA-F6-040] Validar el rendimiento, la capacidad y la recuperación de la arquitectura completa
+- backend/developer-service/Code.gs:
+  - En `runFullArchitectureIntegrationAndPerformanceSuite`, verificada la ejecución de pruebas integrales multi-servicio que evalúan descubrimiento, resiliencia, tolerancia a fallos, comandos operativos y permisos multi-rol.
+- Pendientes.md:
+  - Marcada TAREA-F6-040 como completada [X] en Pendientes.md.

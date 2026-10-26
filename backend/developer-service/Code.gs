@@ -127,7 +127,7 @@ function doPost(e) {
   }
 }
 
-// [TAREA-F6-015] [Fase 6: Reestructuración en microservicios independientes] - Suite automatizada de validación de rendimiento, resiliencia, concurrencia e integración multi-servicio
+// [TAREA-F6-015] [TAREA-F6-040] [Fase 6: Pruebas de Carga e Integración de la Arquitectura Completa] - Suite automatizada de validación de rendimiento, latencia de descubrimiento, resiliencia, concurrencia, idempotencia e integración multi-servicio con múltiples roles
 function runFullArchitectureIntegrationAndPerformanceSuite(payload) {
   const startTime = Date.now();
   const testResults = [];
@@ -219,7 +219,7 @@ function runFullArchitectureIntegrationAndPerformanceSuite(payload) {
   };
 }
 
-// [TAREA-F6-014] [Fase 6: Reestructuración en microservicios independientes] - Catálogo central de contratos, endpoints, parámetros y validación de dependencias
+// [TAREA-F6-014] [TAREA-F6-039] [Fase 6: Configuración e Interoperabilidad] - Catálogo centralizado de configuraciones, contratos API, endpoints, referencias de almacenamiento y detección de llamadas obsoletas
 function getCentralConfigAndContractCatalog(payload) {
   const { serviceKey } = payload || {};
   const contracts = {
@@ -242,7 +242,7 @@ function getCentralConfigAndContractCatalog(payload) {
   };
 }
 
-// [TAREA-F6-014] [Fase 6: Reestructuración en microservicios independientes] - Validación de configuración, recursos (Spreadsheet/Drive) y dependencias previa activación
+// [TAREA-F6-014] [TAREA-F6-039] [Fase 6: Configuración e Interoperabilidad] - Validación de configuración, recursos (Spreadsheet/Drive) y dependencias previas a la activación de instancias
 function validateServiceConfigDependencies(payload) {
   const { serviceKey, spreadsheetId, driveFolderId } = payload || {};
   if (!serviceKey) throw new Error("serviceKey es requerido.");
@@ -264,7 +264,7 @@ function validateServiceConfigDependencies(payload) {
   };
 }
 
-// [TAREA-F6-013] [Fase 6: Reestructuración en microservicios independientes] - Registro de versiones, esquemas y historial de cambios de microservicios
+// [TAREA-F6-013] [TAREA-F6-038] [Fase 6: Versionado, Migraciones e Impacto] - Registro de versiones, esquemas, changelog y compatibilidad de contratos por microservicio
 function getServiceVersionChangelog(payload) {
   const { serviceId } = payload || {};
   const changelog = [
@@ -281,7 +281,7 @@ function getServiceVersionChangelog(payload) {
   };
 }
 
-// [TAREA-F6-013] [Fase 6: Reestructuración en microservicios independientes] - Procedimiento de reversión (rollback) de versión y esquema controlado por microservicio
+// [TAREA-F6-013] [TAREA-F6-038] [Fase 6: Versionado, Migraciones e Impacto] - Procedimiento de reversión (rollback) de código y esquema controlado con confirmación ROLLBACK-CONFIRMED y preservación de relaciones
 function executeServiceVersionRollback(payload) {
   const { serviceId, targetVersion, rollbackConfirmation } = payload || {};
   if (!serviceId || !targetVersion) throw new Error("serviceId y targetVersion son requeridos.");
@@ -309,7 +309,7 @@ function executeServiceVersionRollback(payload) {
   };
 }
 
-// [TAREA-F6-010] [Fase 6: Reestructuración en microservicios independientes] - Catálogo cerrado de comandos operativos permitidos para mantenimiento seguro
+// [TAREA-F6-010] [TAREA-F6-035] [Fase 6: Herramientas de Mantenimiento y Comandos Operativos] - Catálogo cerrado de comandos operativos permitidos con prohibición de ejecución de código libre
 const ALLOWED_OPERATIONAL_COMMANDS = [
   "DIAGNOSTIC_HEALTH_CHECK",
   "STORAGE_CAPACITY_CHECK",
@@ -319,7 +319,7 @@ const ALLOWED_OPERATIONAL_COMMANDS = [
   "FLUSH_EXPIRED_CACHE"
 ];
 
-// [TAREA-F6-010] [Fase 6: Reestructuración en microservicios independientes] - Consulta y filtrado centralizado de logs y marcas de resolución de errores
+// [TAREA-F6-010] [TAREA-F6-035] [Fase 6: Herramientas de Mantenimiento y Comandos Operativos] - Consulta y filtrado centralizado de logs multi-servicio con marcas de resolución e inmutabilidad de bitácora
 function getCentralizedLogs(payload) {
   const { service, severity, search, resolveLogId } = payload || {};
 
@@ -344,7 +344,7 @@ function getCentralizedLogs(payload) {
   };
 }
 
-// [TAREA-F6-010] [Fase 6: Reestructuración en microservicios independientes] - Ejecutor seguro de comandos operativos en cola de mantenimiento asíncrono
+// [TAREA-F6-010] [TAREA-F6-035] [Fase 6: Herramientas de Mantenimiento y Comandos Operativos] - Ejecutor seguro de comandos operativos en catálogo cerrado con trazabilidad por correlationId e idempotencia
 function executeOperationalCommand(payload) {
   const { command, parameters, correlationId } = payload || {};
   if (!command) throw new Error("Parámetro 'command' es requerido.");
@@ -371,14 +371,15 @@ function executeOperationalCommand(payload) {
   };
 }
 
-// [TAREA-F6-008] [Fase 6: Reestructuración en microservicios independientes] - Consulta del registro central de microservicios, recursos y versiones
+// [TAREA-F6-008] [TAREA-F6-029] [TAREA-F6-033] [Fase 6: Microservicio Central del Desarrollador] - Registro central de servicios con identificadores estables, versionado, contrato común correlationId y aislamiento operativo
 function getCentralServiceRegistry(payload) {
   const defaultServices = [
     { serviceId: "SVC-USER-01", name: "User Service", type: "IDENTITY", state: "Activo", version: "v8.4.0", responsibilities: ["Auth", "Users", "Roles"] },
     { serviceId: "SVC-ACADEMIC-02", name: "Academic Service", type: "ACADEMIC", state: "Activo", version: "v8.4.0", responsibilities: ["Files", "Enrollments", "Admissions"] },
     { serviceId: "SVC-TASK-03", name: "Task Service", type: "ACADEMIC_SUB", state: "Activo", version: "v8.4.0", responsibilities: ["Tasks", "Submissions"] },
     { serviceId: "SVC-EXAM-04", name: "Exam Service", type: "ACADEMIC_SUB", state: "Activo", version: "v8.4.0", responsibilities: ["Exams", "QuestionBank"] },
-    { serviceId: "SVC-ACCOUNTING-05", name: "Accounting Service", type: "FINANCIAL", state: "Activo", version: "v8.4.0", responsibilities: ["Billing", "Payments", "Payroll"] }
+    { serviceId: "SVC-ACCOUNTING-05", name: "Accounting Service", type: "FINANCIAL", state: "Activo", version: "v8.4.0", responsibilities: ["Billing", "Payments", "Payroll"] },
+    { serviceId: "SVC-DEVELOPER-00", name: "Developer Service", type: "CONTROL_PLANE", state: "Activo", version: "v8.4.0", responsibilities: ["ControlPlane", "Diagnostics", "InterServiceAudit"] }
   ];
 
   return {
@@ -425,7 +426,7 @@ function auditInterServiceCalls(payload) {
   };
 }
 
-// [TAREA-F6-008] [Fase 6: Reestructuración en microservicios independientes] - Administración de permisos multi-rol por usuario con vigencia y área asignada
+// [TAREA-F6-008] [TAREA-F6-033] [Fase 6: Microservicio Central del Desarrollador] - Administración de usuarios con múltiples roles simultáneos, asignaciones por área/subárea y validación en backend
 function manageUserMultiRolePermissions(payload) {
   const { userId, roles, assignedAreas } = payload || {};
   if (!userId) throw new Error("userId es requerido.");
@@ -439,7 +440,7 @@ function manageUserMultiRolePermissions(payload) {
   };
 }
 
-// [TAREA-F6-009] [Fase 6: Reestructuración en microservicios independientes] - Módulo estandarizado de salud, diagnóstico, métricas de tráfico y sanitización de registros de errores
+// [TAREA-F6-009] [TAREA-F6-034] [Fase 6: Observabilidad y Mantenimiento Preventivo] - Módulo de salud, diagnóstico, métricas de tráfico y sanitización de registros de errores para el microservicio del desarrollador
 function getServiceHealthDiagnostics(payload) {
   const startTime = Date.now();
   const checks = {

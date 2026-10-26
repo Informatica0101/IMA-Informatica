@@ -98,16 +98,22 @@ function fetchApi(service, action, payload, retryCount, options) {
     retryCount = retryCount || 0;
     options = options || {};
 
-    // [TAREA-F6-004] [Fase 6: Reestructuración en microservicios independientes] - Descubrimiento centralizado de microservicios vía SERVICE_REGISTRY con fallback a SERVICE_URLS
-    var registry = window.SERVICE_REGISTRY || {};
-    var urls = window.SERVICE_URLS || (typeof SERVICE_URLS !== 'undefined' ? SERVICE_URLS : {});
-
-    // Resolucion dinamica con comprobacion de estado operativo del servicio
+    // [TAREA-F6-029] [Fase 6: Reestructuración en microservicios independientes] - Enrutamiento y descubrimiento resiliente evaluando descriptor de microservicio desacoplado
     var url = null;
-    if (registry[service] && registry[service].endpointUrl && registry[service].status !== "INACTIVE") {
-        url = registry[service].endpointUrl;
-    } else {
-        url = urls[service];
+    if (typeof window.getServiceDescriptor === "function") {
+        var descriptor = window.getServiceDescriptor(service);
+        if (descriptor && descriptor.endpointUrl && descriptor.healthStatus !== "INACTIVE") {
+            url = descriptor.endpointUrl;
+        }
+    }
+    if (!url) {
+        var registry = window.SERVICE_REGISTRY || {};
+        var urls = window.SERVICE_URLS || (typeof SERVICE_URLS !== 'undefined' ? SERVICE_URLS : {});
+        if (registry[service] && registry[service].endpointUrl && registry[service].healthStatus !== "INACTIVE") {
+            url = registry[service].endpointUrl;
+        } else {
+            url = urls[service];
+        }
     }
 
     if (!url) {

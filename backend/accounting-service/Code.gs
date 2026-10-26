@@ -6523,7 +6523,7 @@ function getAssetAssignments(payload) {
   };
 }
 
-// [TAREA-F6-005] [Fase 6: Microservicios Administrativos y Financieros] - Inicializador de estructura jerárquica de carpetas de Drive para la gestión financiera y de RRHH
+// [TAREA-F6-005] [TAREA-F6-030] [Fase 6: Microservicios Administrativos y Financieros con separación por responsabilidades] - Inicializador de estructura jerárquica de carpetas de Drive para la gestión financiera y de RRHH con aislamiento estricto de subcarpetas documentales
 function initializeFinancialDriveStructure(payload) {
   try {
     const parent = getParentDriveFolder();
@@ -6538,9 +6538,21 @@ function initializeFinancialDriveStructure(payload) {
     };
 
     const subFolders = {
-      Contabilidad_Asientos: getOrCreateFolder(foldersMap.Contabilidad, "Asientos_y_Estados"),
-      RRHH_Planillas: getOrCreateFolder(foldersMap.Recursos_Humanos, "Planillas_y_Contratos"),
-      RRHH_Evaluaciones: getOrCreateFolder(foldersMap.Recursos_Humanos, "Evaluaciones_Desempeno"),
+      Contabilidad_Facturacion: getOrCreateFolder(foldersMap.Contabilidad, "Facturacion"),
+      Contabilidad_Cuentas_Por_Cobrar: getOrCreateFolder(foldersMap.Contabilidad, "Cuentas_por_Cobrar"),
+      Contabilidad_Cuentas_Por_Pagar: getOrCreateFolder(foldersMap.Contabilidad, "Cuentas_por_Pagar"),
+      Contabilidad_Recibos: getOrCreateFolder(foldersMap.Contabilidad, "Recibos"),
+      Contabilidad_Inventarios: getOrCreateFolder(foldersMap.Contabilidad, "Inventarios"),
+      Contabilidad_Bancos: getOrCreateFolder(foldersMap.Contabilidad, "Bancos_y_Conciliaciones"),
+      Contabilidad_Reportes: getOrCreateFolder(foldersMap.Contabilidad, "Reportes"),
+      Contabilidad_Otros: getOrCreateFolder(foldersMap.Contabilidad, "Otros_Modulos"),
+      RRHH_Expedientes: getOrCreateFolder(foldersMap.Recursos_Humanos, "Expedientes_Laborales"),
+      RRHH_Planillas: getOrCreateFolder(foldersMap.Recursos_Humanos, "Planillas"),
+      RRHH_Acciones_Personal: getOrCreateFolder(foldersMap.Recursos_Humanos, "Acciones_de_Personal"),
+      RRHH_Contratos: getOrCreateFolder(foldersMap.Recursos_Humanos, "Contratos"),
+      RRHH_Permisos_Ausencias: getOrCreateFolder(foldersMap.Recursos_Humanos, "Permisos_y_Ausencias"),
+      RRHH_Evaluaciones: getOrCreateFolder(foldersMap.Recursos_Humanos, "Evaluaciones"),
+      RRHH_Otros: getOrCreateFolder(foldersMap.Recursos_Humanos, "Otros_Modulos"),
       Facturacion_Comprobantes: getOrCreateFolder(foldersMap.Facturacion_Recibos, "Comprobantes_Ventanilla")
     };
 

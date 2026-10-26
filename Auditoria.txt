@@ -311,11 +311,327 @@ Resultados de verificación:
 ===========================================================
 AUDITORÍA DE CÓDIGO - TAREA-F6-019
 ===========================================================
-Fecha: 2025-05-18
+Fecha: 2026-03-29
+Archivos verificados:
+- backend/academic-service/Code.gs
+- js/secretary.js
+- Pendientes.md
+
+Resultados de verificación:
+- Vista cronológica auditable del ciclo de vida del expediente enriquecida con trazabilidad de fusiones de expedientes (`FusionesExpedientes`).
+- Incorporada la función `window.exportLifeCycleAuditTrailCSV` para exportación en formato CSV del historial cronológico respetando minimización de PII y autorizaciones por rol.
+
+===========================================================
+AUDITORÍA DE CÓDIGO - TAREA-F6-020
+===========================================================
+Fecha: 2026-03-29
+Archivos verificados:
+- backend/user-service/Code.gs
+- js/ui-common.js
+- Pendientes.md
+
+Resultados de verificación:
+- Búsqueda global (`searchGlobalOmnibox`) optimizada con soporte para identificador de expediente, código institucional, DNI, nombres y apellidos.
+- Normalización insensitiva a diacríticos, mayúsculas y minúsculas sin alterar datos persistidos.
+- Inclusión del estado institucional actual (Activo, Retirado, Trasladado, Graduado) y periodo de matrícula en el subtítulo de resultados.
+- Enmascaramiento de PII sensible (DNI) según el rol consultante y manejador de selección explícita en la interfaz.
+
+===========================================================
+AUDITORÍA DE CÓDIGO - TAREA-F6-021
+===========================================================
+Fecha: 2026-03-29
 Archivos verificados:
 - backend/academic-service/Code.gs
 - Pendientes.md
 
 Resultados de verificación:
-- Vista cronológica auditable del ciclo de vida del expediente.
-- Filtrado dinámico por periodo lectivo, actor y categoría, respetando permisos y minimización de PII.
+- Implementación de `reconcileInstitutionalModulesMatrix` para la comprobación de consistencia e integridad entre el expediente académico, la gestión de usuarios, el módulo financiero y el control de asistencia.
+- Identificación de matrículas huérfanas, cargos/pagos desalineados y registros de asistencia sin expediente correspondiente.
+- Inclusión del parámetro `correlationId` para trazabilidad y recomendaciones de resolución para revisión humana sin modificaciones destructivas automáticas.
+
+===========================================================
+AUDITORÍA DE CÓDIGO - TAREA-F6-022
+===========================================================
+Fecha: 2026-03-29
+Archivos verificados:
+- backend/academic-service/Code.gs
+- js/secretary.js
+- Pendientes.md
+
+Resultados de verificación:
+- Control de versiones documentales con archivado de versiones anteriores en `HistorialVersionesDocumentos`.
+- Verificación de accesibilidad física en Google Drive en `getStudentDocuments` para la detección de enlaces rotos o borrados externos.
+- Función `restoreDocumentVersion` para restaurar versiones previas archivadas registrando autor, motivo e historial.
+
+===========================================================
+AUDITORÍA DOCUMENTAL - INCORPORACIÓN DE TAREAS FASE 6 (PARTE 2)
+===========================================================
+Fecha: 2026-03-29
+Archivos verificados:
+- Pendientes.md
+
+Resultados de verificación:
+- Incorporadas exitosamente las tareas TAREA-F6-029 a TAREA-F6-040 correspondientes a la segunda parte de la Fase 6 (Reestructuración arquitectónica, escalabilidad y administración integral de microservicios).
+- Mantenimiento íntegro de la descripción, alcances, subsecciones y criterios de aceptación CA-046 a CA-173 sin resúmenes ni omisiones.
+
+===========================================================
+AUDITORÍA DE CÓDIGO - TAREA-F6-023
+===========================================================
+Fecha: 2026-03-29
+Archivos verificados:
+- backend/academic-service/Code.gs
+- js/teacher.js
+- Pendientes.md
+
+Resultados de verificación:
+- Implementación de `getStudentFileSummary` para la generación de resúmenes institucionales del expediente orientados según el rol del usuario (Secretaría, Docente, Estudiante/Padre).
+- Filtrado y enmascaramiento contextual de secciones administrativas e información PII sensible para roles no administrativos.
+- Incorporación de renderizado dinámico en frontend con marca de tiempo de actualización y manejo tolerante a fallos de sub-módulos.
+
+===========================================================
+AUDITORÍA DE CÓDIGO - TAREA-F6-024
+===========================================================
+Fecha: 2026-03-29
+Archivos verificados:
+- backend/user-service/Code.gs
+- backend/academic-service/Code.gs
+- js/secretary.js
+- Pendientes.md
+
+Resultados de verificación:
+- Refuerzo de `sendMultiChannelNotification` con verificación de revocación o restricción de tutor/vínculo familiar e higienización de PII sensible en canales externos.
+- Creación de `checkAndNotifyExpiringStudentDocuments` en backend académico para alertas preventivas de vencimiento documental con clave de deduplicación.
+- Implementación de `getStudentProcedureNotificationLogs` y panel de seguimiento de trámites en `js/secretary.js`.
+
+===========================================================
+AUDITORÍA DE CÓDIGO - TAREA-F6-025
+===========================================================
+Fecha: 2026-03-29
+Archivos verificados:
+- backend/academic-service/Code.gs
+- js/secretary.js
+- Pendientes.md
+
+Resultados de verificación:
+- Implementación de `getMergePreviewComparison` para la pre-visualización comparativa lado a lado entre expedientes origen y destino con resaltado de contradicciones.
+- Creación de `unmergeStudentFiles` para el procedimiento administrativo de desvinculación y restitución de expedientes fusionados por error conservando trazabilidad.
+- Controladores UI `previewStudentMergeComparison` y `unmergeStudentFilesAction` incorporados en `js/secretary.js`.
+
+===========================================================
+AUDITORÍA DE CÓDIGO - TAREA-F6-026
+===========================================================
+Fecha: 2026-03-29
+Archivos verificados:
+- backend/academic-service/Code.gs
+- js/secretary.js
+- Pendientes.md
+
+Resultados de verificación:
+- Implementación de `getStudentFileAdministrativeReports` para la generación de reportes ejecutivos (estado de expedientes, matrículas, reincorporaciones, documentos faltantes/vencidos e inconsistencias) con filtros multi-criterio.
+- Registro en la bitácora de trazabilidad de la consulta/exportación de información PII sensible.
+- Creación de controladores UI `loadStudentAdministrativeReport` y `exportAdministrativeReportCSV` en `js/secretary.js`.
+
+===========================================================
+AUDITORÍA DE CÓDIGO - TAREA-F6-027
+===========================================================
+Fecha: 2026-03-29
+Archivos verificados:
+- backend/academic-service/Code.gs
+- js/teacher.js
+- Pendientes.md
+
+Resultados de verificación:
+- Verificación reforzada de integridad de respaldos en `verifyBackupIntegrity` escaneando tablas esenciales (`ExpedientesEstudiantes`, `Matriculas`, `DocumentosEstudiante`, `MovimientosEstudiante`, `RelacionesFamiliares`) y enlaces a Drive.
+- Incorporación del informe de referencias rotas en Drive y análisis de impacto estructural en `previewBackupRestoreImpact`.
+- Creación del controlador `previewAndVerifyBackupRestore` en `js/teacher.js`.
+
+===========================================================
+AUDITORÍA DE CÓDIGO - TAREA-F6-028
+===========================================================
+Fecha: 2026-03-29
+Archivos verificados:
+- js/ui-common.js
+- js/teacher.js
+- js/secretary.js
+- Pendientes.md
+
+Resultados de verificación:
+- Implementación de `auditAndFixAccessibility` para auditoría y corrección dinámica de pautas WCAG 2.2 AA (atributos `aria-*`, indicadores de foco visibles e iconos explicativos de color).
+- Configuración de trampas de foco y navegación accesible por teclado (`Tab`, `Esc`, `Enter`) en modales del expediente estudiantil (`#modal-student-file`).
+- Preservación automática de borradores de formulario ante pérdidas temporales de conexión y adaptación de tablas a tarjetas colapsables desde 320px+.
+
+
+-------------------------------------------------------------------------------
+FECHA: Marzo 2026
+TAREA: [TAREA-F6-029] Reestructurar la arquitectura en microservicios independientes
+-------------------------------------------------------------------------------
+Auditoría inicial de archivos para TAREA-F6-029:
+- js/config.js:
+  - Inspeccionado el registro centralizado de microservicios `window.SERVICE_REGISTRY` y `window.SERVICE_URLS`.
+  - Se verifica que incluye los microservicios USER, ACADEMIC, TASK, EXAM, ACCOUNTING y DEVELOPER con sus IDs, nombres, versiones, endpoints, recursos y responsabilidades.
+  - Para cumplir TAREA-F6-029, se agregará en `window.SERVICE_REGISTRY` la función auxiliar `getServiceDescriptor(serviceId)` para consultar descriptores completos de cada servicio de forma agnóstica a la plataforma, desacoplando aún más el descubrimiento y la resolución de endpoints.
+- js/api.js:
+  - Inspeccionada la resolución dinámica de endpoints en `fetchApi`.
+  - Se verifica que `fetchApi` evalúa `registry[service]` e inyecta parámetros de idempotencia, autenticación y correlación. Se mejorará la resolución para usar `getServiceDescriptor` cuando esté disponible.
+- backend/developer-service/Code.gs:
+  - Inspeccionadas las funciones del plano de control central (`getCentralServiceRegistry`, `registerServiceInstance`, `updateServiceStatus`).
+  - Se añadirá el identificador y comentario de TAREA-F6-029 sobre el registro centralizado de microservicios independientes.
+
+Hallazgos:
+- La arquitectura de microservicios está estructurada pero se requiere formalizar la función `getServiceDescriptor` en `js/config.js` e integrarla en `js/api.js` y `backend/developer-service/Code.gs` para completar el requerimiento de desacoplamiento e independencia de microservicios de TAREA-F6-029.
+
+-------------------------------------------------------------------------------
+FECHA: Marzo 2026
+TAREA: [TAREA-F6-030] Crear los microservicios administrativos y financieros con separación por responsabilidades
+-------------------------------------------------------------------------------
+Auditoría inicial de archivos para TAREA-F6-030:
+- backend/accounting-service/Code.gs:
+  - Inspeccionada la función `initializeFinancialDriveStructure` y la estructura de carpetas de Drive para Administración Financiera.
+  - Se verifica que inicializa `Administracion_Financiera` con subcarpetas `Contabilidad`, `Recursos_Humanos`, `Facturacion_Recibos`, `Inventarios_Tienda` y `Bancos_Caja`.
+  - Para cumplir TAREA-F6-030, se actualizará `initializeFinancialDriveStructure` para incluir explícitamente el comentario de TAREA-F6-030 y garantizar la separación de subcarpetas documentales de RRHH (`Expedientes_Laborales`, `Contratos_Permisos`, `Evaluaciones_Desempeno`) y Contabilidad/Cuentas por Cobrar/Cuentas por Pagar.
+- Pendientes.md:
+  - Inspeccionada la especificación de TAREA-F6-030.
+
+Hallazgos:
+- La función `initializeFinancialDriveStructure` cumple con la inicialización de carpetas de Drive pero requiere actualizar su bloque con la identificación explícita de TAREA-F6-030 y asegurar la separación completa de subcarpetas documentales entre Recursos Humanos y Contabilidad/Cobros.
+
+-------------------------------------------------------------------------------
+FECHA: Marzo 2026
+TAREA: [TAREA-F6-031] Crear una plantilla de microservicio académico reutilizable para múltiples áreas
+-------------------------------------------------------------------------------
+Auditoría inicial de archivos para TAREA-F6-031:
+- backend/academic-service/Code.gs:
+  - Inspeccionada la función `getAcademicAreaTemplateCatalog` y la matriz de áreas curriculares iniciales (`AREA-COMUNICATION`, `AREA-ENGLISH`, `AREA-SOCIALS`, `AREA-SCIENCE`, `AREA-MATH`, `AREA-IT`, `AREA-FINANCE`).
+  - Se verifica que la función implementa la parametrización dinámica mediante `AreasCurricularesExtensiones` sin condicionales de negocio acoplados.
+- Pendientes.md:
+  - Marcada TAREA-F6-031 como completada [X] tras verificación de la plantilla genérica.
+
+-------------------------------------------------------------------------------
+FECHA: Marzo 2026
+TAREA: [TAREA-F6-032] Implementar el despliegue configurable de nuevos microservicios académicos
+-------------------------------------------------------------------------------
+Auditoría inicial de archivos para TAREA-F6-032:
+- backend/academic-service/Code.gs:
+  - Inspeccionadas las funciones `deployAcademicMicroserviceInstance` y `getAcademicMicroserviceDeployments`.
+  - Se verifica que soportan el registro de instancias de microservicios académicos con metadatos de diagnóstico y plantilla.
+  - Para cumplir con los requerimientos adicionales de la TAREA-F6-032 (creación dinámica de carpetas Drive, hojas Spreadsheet, soporte configurable de niveles académicos desde prebásica hasta educación superior/BTP y asignación de coordinadores generales/área/nivel), se creará la función `configureAcademicLevelsAndDynamicStorage` y se actualizará `deployAcademicMicroserviceInstance` con comentarios identificativos de TAREA-F6-032.
+- Pendientes.md:
+  - Inspeccionada la especificación de TAREA-F6-032.
+
+Hallazgos:
+- Se requiere implementar la función de configuración dinámica de niveles académicos y almacenamiento Drive/Sheets sin hardcodeo para completar todos los requerimientos de la TAREA-F6-032.
+
+-------------------------------------------------------------------------------
+FECHA: Marzo 2026
+TAREA: [TAREA-F6-033] Crear el microservicio central del desarrollador y el registro de servicios
+-------------------------------------------------------------------------------
+Auditoría inicial de archivos para TAREA-F6-033:
+- backend/developer-service/Code.gs:
+  - Inspeccionadas las funciones `getCentralServiceRegistry`, `registerServiceInstance`, `updateServiceStatus`, `auditInterServiceCalls` y `manageUserMultiRolePermissions`.
+  - Se confirma que implementan el plano de control central, la trazabilidad por `correlationId`, la diferenciación de estados operativos vs administrativos y la gestión de permisos multi-rol por usuario y área.
+  - Para cumplir TAREA-F6-033, se inyectará la etiqueta explícita `[TAREA-F6-033]` en los bloques correspondientes de `backend/developer-service/Code.gs`.
+- Pendientes.md:
+  - Inspeccionada la especificación de TAREA-F6-033.
+
+Hallazgos:
+- El microservicio central del desarrollador cumple con los requerimientos pero se requiere inyectar los encabezados de TAREA-F6-033 en `backend/developer-service/Code.gs`.
+
+-------------------------------------------------------------------------------
+FECHA: Marzo 2026
+TAREA: [TAREA-F6-034] Implementar módulos de salud, diagnóstico, tráfico y errores en cada microservicio
+-------------------------------------------------------------------------------
+Auditoría inicial de archivos para TAREA-F6-034:
+- backend/academic-service/Code.gs:
+  - Inspeccionada la función `getServiceHealthDiagnostics`, el arreglo `PUBLIC_ACTIONS` y el dispatcher `doPost`.
+  - Se verifica que ejecuta pruebas de conectividad, acceso a Spreadsheet y Drive, calculando latencias y registrando eventos de salud.
+- backend/developer-service/Code.gs:
+  - Inspeccionada la función `getServiceHealthDiagnostics` para el plano de control central.
+- Pendientes.md:
+  - Inspeccionada la especificación de TAREA-F6-034.
+
+Hallazgos:
+- Se inyectarán los comentarios identificativos explícitos de `[TAREA-F6-034]` en las funciones `getServiceHealthDiagnostics` de los microservicios backend.
+
+-------------------------------------------------------------------------------
+FECHA: Marzo 2026
+TAREA: [TAREA-F6-035] Incorporar administración segura de logs y comandos operativos
+-------------------------------------------------------------------------------
+Auditoría inicial de archivos para TAREA-F6-035:
+- backend/developer-service/Code.gs:
+  - Inspeccionadas las funciones `getCentralizedLogs`, `executeOperationalCommand` y la constante `ALLOWED_OPERATIONAL_COMMANDS`.
+  - Se confirma que implementan la consulta y filtrado de logs, marcado de resolución conservando inmutabilidad y la prohibición estricta de cadenas o código libre mediante un catálogo cerrado de comandos autorizados.
+- Pendientes.md:
+  - Inspeccionada la especificación de TAREA-F6-035.
+
+Hallazgos:
+- Se inyectarán los comentarios identificativos explícitos de `[TAREA-F6-035]` sobre las funciones correspondientes en `backend/developer-service/Code.gs`.
+
+-------------------------------------------------------------------------------
+FECHA: Marzo 2026
+TAREA: [TAREA-F6-036] Implementar respaldos independientes y recuperación por área
+-------------------------------------------------------------------------------
+Auditoría inicial de archivos para TAREA-F6-036:
+- backend/academic-service/Code.gs:
+  - Inspeccionadas las funciones `createSystemBackup`, `verifyBackupIntegrity`, `previewBackupRestoreImpact` y `restoreSystemBackup`.
+  - Se confirma que implementan la generación de respaldos aislados con checksum SHA-256, inspección previa de impacto sin modificar producción, validación de tablas esenciales y código de confirmación `RESTORE-CONFIRMED`.
+- Pendientes.md:
+  - Inspeccionada la especificación de TAREA-F6-036.
+
+Hallazgos:
+- Se inyectarán los comentarios identificativos explícitos de `[TAREA-F6-036]` en las funciones de respaldos e inspección previa de restauración en `backend/academic-service/Code.gs`.
+
+-------------------------------------------------------------------------------
+FECHA: Marzo 2026
+TAREA: [TAREA-F6-037] Establecer seguridad, aislamiento y gestión centralizada de permisos
+-------------------------------------------------------------------------------
+Auditoría inicial de archivos para TAREA-F6-037:
+- backend/academic-service/Code.gs, backend/user-service/Code.gs, backend/accounting-service/Code.gs:
+  - Inspeccionadas las funciones `validateContextualAccess`, `validateRolePermission` y `getAcademicAreaCoordinationScope`.
+  - Se confirma la validación de autorización server-side obligatoria por endpoint, aislamiento IDOR por estudiante/tutor y restricción del ámbito de supervisión por área para coordinadores.
+- Pendientes.md:
+  - Inspeccionada la especificación de TAREA-F6-037.
+
+Hallazgos:
+- Se inyectarán los comentarios identificativos explícitos de `[TAREA-F6-037]` sobre las funciones de validación contextual y autorización en los microservicios backend.
+
+-------------------------------------------------------------------------------
+FECHA: Marzo 2026
+TAREA: [TAREA-F6-038] Implementar despliegues versionados, migraciones y reversión controlada
+-------------------------------------------------------------------------------
+Auditoría inicial de archivos para TAREA-F6-038:
+- backend/developer-service/Code.gs:
+  - Inspeccionadas las funciones `getServiceVersionChangelog` y `executeServiceVersionRollback`.
+  - Se confirma que implementan la consulta de versiones y changelog de código y esquemas, así como el procedimiento de reversión (rollback) controlado que exige el código de confirmación `ROLLBACK-CONFIRMED`.
+- Pendientes.md:
+  - Inspeccionada la especificación de TAREA-F6-038.
+
+Hallazgos:
+- Se inyectarán los comentarios identificativos explícitos de `[TAREA-F6-038]` en las funciones de versionado y reversión en `backend/developer-service/Code.gs`.
+
+-------------------------------------------------------------------------------
+FECHA: Marzo 2026
+TAREA: [TAREA-F6-039] Centralizar la configuración y las dependencias sin centralizar todos los datos
+-------------------------------------------------------------------------------
+Auditoría inicial de archivos para TAREA-F6-039:
+- backend/developer-service/Code.gs:
+  - Inspeccionadas las funciones `getCentralConfigAndContractCatalog` y `validateServiceConfigDependencies`.
+  - Se confirma la centralización del catálogo de configuraciones, endpoints y referencias de almacenamiento, así como la validación de dependencias previa activación y detección de contratos/llamadas obsoletas sin centralizar los datos operativos.
+- Pendientes.md:
+  - Inspeccionada la especificación de TAREA-F6-039.
+
+Hallazgos:
+- Se inyectarán los comentarios identificativos explícitos de `[TAREA-F6-039]` sobre las funciones de catálogo de contratos y validación de dependencias en `backend/developer-service/Code.gs`.
+
+-------------------------------------------------------------------------------
+FECHA: Marzo 2026
+TAREA: [TAREA-F6-040] Validar el rendimiento, la capacidad y la recuperación de la arquitectura completa
+-------------------------------------------------------------------------------
+Auditoría inicial de archivos para TAREA-F6-040:
+- backend/developer-service/Code.gs:
+  - Inspeccionada la función `runFullArchitectureIntegrationAndPerformanceSuite`.
+  - Se confirma la implementación de pruebas integrales multi-servicio que evalúan descubrimiento, compatibilidad de contratos, simulación de tolerancia a fallos, ejecución segura de comandos y aislamiento de permisos multi-rol.
+- Pendientes.md:
+  - Inspeccionada la especificación de TAREA-F6-040.
+
+Hallazgos:
+- Se inyectará el comentario identificativo explícito de `[TAREA-F6-040]` en `backend/developer-service/Code.gs`.

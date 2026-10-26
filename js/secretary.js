@@ -451,6 +451,200 @@ window.recordInterviewOutcomeAction = async function(entrevistaId, estado) {
     }
 };
 
+// [TAREA-F6-026] [Fase 6: Expediente Institucional y Ciclo de Vida] - Consulta y exportación controlada de informes administrativos del expediente
+window.loadStudentAdministrativeReport = async function(reporteTipo, filters) {
+    try {
+        const payload = Object.assign({ reporteTipo: reporteTipo || 'ESTADO_EXPEDIENTES' }, filters || {});
+        const res = await window.fetchApi('ACADEMIC', 'getStudentFileAdministrativeReports', payload);
+        if (res && res.status === 'success' && Array.isArray(res.reporte)) {
+            window._lastAdminReportData = res.reporte;
+            window._lastAdminReportType = reporteTipo;
+            return res.reporte;
+        } else {
+            alert("Error al consultar reporte: " + ((res && res.message) || "Sin datos disponibles."));
+            return [];
+        }
+    } catch (err) {
+        alert("Error al conectar para consultar el reporte: " + err.message);
+        return [];
+    }
+};
+
+window.exportAdministrativeReportCSV = async function(reporteTipo, filters) {
+    try {
+        const payload = Object.assign({ reporteTipo: reporteTipo || 'ESTADO_EXPEDIENTES', exportLog: true }, filters || {});
+        const res = await window.fetchApi('ACADEMIC', 'getStudentFileAdministrativeReports', payload);
+
+        if (!res || res.status !== 'success' || !Array.isArray(res.reporte) || res.reporte.length === 0) {
+            alert("No hay registros disponibles para exportar con los filtros seleccionados.");
+            return;
+        }
+
+        const data = res.reporte;
+        const keys = Object.keys(data[0]);
+        const headers = keys.join(",");
+        const rows = data.map(item => keys.map(k => `"${String(item[k] || '').replace(/"/g, '""')}"`).join(","));
+
+        const csvContent = [headers, ...rows].join("\n");
+        const blob = new Blob(["\uFEFF" + csvContent], { type: "text/csv;charset=utf-8;" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `Reporte_Administrativo_${reporteTipo}_${new Date().toISOString().slice(0, 10)}.csv`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+
+        if (typeof showToast === 'function') {
+            showToast("Reporte administrativo exportado exitosamente con registro de auditoría PII.", "success");
+        } else {
+            alert("Reporte administrativo exportado exitosamente con registro de auditoría PII.");
+        }
+    } catch (err) {
+        alert("Error al exportar reporte administrativo: " + err.message);
+    }
+};
+
+// [TAREA-F6-025] [Fase 6: Expediente Institucional y Ciclo de Vida] - Pre-visualización comparativa previa a fusión de expedientes y desvinculación administrativa
+window.previewStudentMergeComparison = async function(targetExpedienteId, sourceExpedienteId) {
+    if (!targetExpedienteId || !sourceExpedienteId) {
+        alert("Especifique ambos expedientes para pre-visualizar la comparación.");
+        return;
+    }
+
+    try {
+        const res = await window.fetchApi('ACADEMIC', 'getMergePreviewComparison', { targetExpedienteId, sourceExpedienteId });
+        if (res && res.status === 'success' && res.comparison) {
+            const comp = res.comparison;
+            let msg = `--- COMPARACIÓN PREVIA DE FUSIÓN DE EXPEDIENTES ---\n\n`;
+            msg += `EXPEDIENTE DESTINO (${comp.expedienteDestino.expedienteId}):\n`;
+            msg += `• Código: ${comp.expedienteDestino.codigoInstitucional} | Estado: ${comp.expedienteDestino.estado}\n`;
+            msg += `• Matrículas: ${comp.expedienteDestino.totalMatriculas} | Documentos: ${comp.expedienteDestino.totalDocumentos}\n\n`;
+            msg += `EXPEDIENTE ORIGEN (${comp.expedienteOrigen.expedienteId}):\n`;
+            msg += `• Código: ${comp.expedienteOrigen.codigoInstitucional} | Estado: ${comp.expedienteOrigen.estado}\n`;
+            msg += `• Matrículas: ${comp.expedienteOrigen.totalMatriculas} | Documentos: ${comp.expedienteOrigen.totalDocumentos}\n\n`;
+
+            if (comp.totalContradicciones > 0) {
+                msg += `⚠️ CONTRADICCIONES DETECTADAS (${comp.totalContradicciones}):\n`;
+                comp.contradictions.forEach(c => {
+                    msg += `• ${c.campo}: Destino='${c.destino}' vs Origen='${c.origen}'\n`;
+                });
+            } else {
+                msg += `✓ Sin contradicciones de datos personales detectadas.\n`;
+            }
+
+            alert(msg);
+        } else {
+            alert("Error: " + ((res && res.message) || "No se pudo recuperar la pre-visualización."));
+        }
+    } catch (err) {
+        alert("Error al obtener la pre-visualización: " + err.message);
+    }
+};
+
+window.unmergeStudentFilesAction = async function(sourceExpedienteId) {
+    const expedienteId = sourceExpedienteId || prompt("Ingrese el ID del expediente fusionado a desvincular/restaurar:", "");
+    if (!expedienteId) return;
+
+    const motivoJustificado = prompt("Justificación administrativa obligatoria para la desvinculación (mínimo 10 caracteres):", "");
+    if (!motivoJustificado || motivoJustificado.trim().length < 10) {
+        alert("Motivo obligatorio requerido con al menos 10 caracteres.");
+        return;
+    }
+
+    try {
+        const res = await window.fetchApi('ACADEMIC', 'unmergeStudentFiles', {
+            sourceExpedienteId: expedienteId,
+            motivoJustificado
+        });
+
+        if (res && res.status === 'success') {
+            alert(`Expediente ${expedienteId} desvinculado exitosamente. Estado restaurado a Activo.`);
+        } else {
+            alert("Error: " + ((res && res.message) || "Fallo del servidor al desvincular."));
+        }
+    } catch (err) {
+        alert("Error al desvincular expediente: " + err.message);
+    }
+};
+
+// [TAREA-F6-024] [Fase 6: Expediente Institucional y Ciclo de Vida] - Carga y renderizado del historial de notificaciones y seguimiento de trámites en el expediente
+window.loadStudentProcedureNotificationLogs = async function(expedienteId, containerId) {
+    const container = document.getElementById(containerId || 'stfile-notifications-container');
+    if (!container || !expedienteId) return;
+
+    container.innerHTML = '<div class="text-slate-400 text-xs py-4 text-center"><i class="fa-solid fa-spinner fa-spin mr-1"></i>Cargando historial de notificaciones...</div>';
+
+    try {
+        const res = await window.fetchApi('USER', 'getStudentProcedureNotificationLogs', { expedienteId });
+        const logs = (res && res.status === 'success' && Array.isArray(res.logs)) ? res.logs : [];
+
+        if (logs.length === 0) {
+            container.innerHTML = '<div class="text-slate-400 text-xs py-4 text-center font-semibold">No se han registrado notificaciones ni alertas para este expediente.</div>';
+            return;
+        }
+
+        container.innerHTML = logs.map(log => `
+            <div class="p-3 bg-slate-50 border border-slate-200 rounded-xl space-y-1 mb-2">
+                <div class="flex items-center justify-between">
+                    <span class="font-bold text-xs text-slate-800">${log.titulo || 'Notificación de Trámite'}</span>
+                    <span class="text-[10px] px-2 py-0.5 rounded-full font-bold ${log.estadoEntrega === 'Entregado' ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'}">${log.estadoEntrega}</span>
+                </div>
+                <p class="text-xs text-slate-600">${log.mensaje || ''}</p>
+                <div class="flex items-center justify-between text-[10px] text-slate-400 pt-1 border-t border-slate-100">
+                    <span>Categoría: ${log.categoria || 'Expediente'}</span>
+                    <span>${log.fechaEmision ? new Date(log.fechaEmision).toLocaleString() : 'N/A'}</span>
+                </div>
+            </div>
+        `).join('');
+    } catch (err) {
+        console.error('Error al cargar notificaciones de expediente:', err);
+        container.innerHTML = '<div class="text-amber-600 text-xs py-4 text-center">No se pudo recuperar la bitácora de notificaciones.</div>';
+    }
+};
+
+// [TAREA-F6-019] [Fase 6: Expediente Institucional y Ciclo de Vida] - Exportación del historial de trazabilidad del estudiante a formato CSV
+window.exportLifeCycleAuditTrailCSV = function(timelineEvents, studentCode) {
+    if (!Array.isArray(timelineEvents) || timelineEvents.length === 0) {
+        if (typeof showToast === "function") {
+            showToast("No hay eventos en la línea de tiempo para exportar.", "warning");
+        } else {
+            alert("No hay eventos en la línea de tiempo para exportar.");
+        }
+        return;
+    }
+
+    const headers = ["Fecha", "Categoría", "Tipo", "Título", "Periodo", "Actor", "Detalle", "RefID"];
+    const rows = timelineEvents.map(ev => [
+        `"${String(ev.fecha || '').replace(/"/g, '""')}"`,
+        `"${String(ev.categoria || '').replace(/"/g, '""')}"`,
+        `"${String(ev.tipo || '').replace(/"/g, '""')}"`,
+        `"${String(ev.titulo || '').replace(/"/g, '""')}"`,
+        `"${String(ev.periodo || '').replace(/"/g, '""')}"`,
+        `"${String(ev.actor || '').replace(/"/g, '""')}"`,
+        `"${String(ev.detalle || '').replace(/"/g, '""')}"`,
+        `"${String(ev.refId || '').replace(/"/g, '""')}"`
+    ]);
+
+    const csvContent = [headers.join(","), ...rows.map(r => r.join(","))].join("\n");
+    const blob = new Blob(["\uFEFF" + csvContent], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `Historial_Expediente_${studentCode || 'Estudiante'}_${new Date().toISOString().slice(0, 10)}.csv`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+
+    if (typeof showToast === "function") {
+        showToast("Historial de trazabilidad exportado exitosamente.", "success");
+    } else {
+        alert("Historial de trazabilidad exportado exitosamente.");
+    }
+};
+
 // [TAREA-F5-009] [Fase 5: Admisiones y Portal de Familias] - Controladores UI de Vinculación Familiar e Invitaciones por Token
 window.loadGuardianLinkageStatus = function(solicitudObj) {
     const container = document.getElementById('modal-adm-tutors-container');

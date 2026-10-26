@@ -875,6 +875,36 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // [TAREA-F6-027] [Fase 6: Expediente Institucional y Ciclo de Vida] - Controlador de inspección de integridad y vista previa de impacto de restauración
+    window.previewAndVerifyBackupRestore = async function(fileId) {
+        if (!fileId) {
+            fileId = prompt("Ingrese el ID del archivo de respaldo en Google Drive:", "");
+            if (!fileId) return;
+        }
+
+        try {
+            if (window.showLoading) window.showLoading('Inspeccionando integridad de respaldo...');
+            const res = await fetchApi('ACADEMIC', 'previewBackupRestoreImpact', { fileId });
+            if (window.hideLoading) window.hideLoading();
+
+            if (res && res.status === 'success') {
+                let msg = `--- RESULTADO DE INSPECCIÓN DE RESPALDO ---\n\n`;
+                msg += `Archivo: ${res.fileName}\n`;
+                msg += `Checksum Válido: ${res.checksumValid ? 'SÍ' : 'NO'}\n`;
+                msg += `Tablas Esenciales Integras: ${res.tablasEsencialesVerificadas ? 'SÍ' : 'NO'}\n`;
+                msg += `Referencias Rotas Drive: ${res.referenciasRotasDrive}\n\n`;
+                msg += `Para proceder con la restauración confirme el código: ${res.requireConfirmationCode}\n`;
+
+                alert(msg);
+            } else {
+                alert("Error al verificar respaldo: " + ((res && res.message) || "Respaldo corrupto o inválido."));
+            }
+        } catch (err) {
+            if (window.hideLoading) window.hideLoading();
+            alert("Error al conectar para inspeccionar respaldo: " + err.message);
+        }
+    };
+
     // [TAREA-19] [Fase 1 - Migración Curricular] - Handlers e integración frontend (#modal-curricular-migration) para mapeo, equivalencias y simulación pre-validada.
     const modalCurricularMigration = document.getElementById('modal-curricular-migration');
     const btnCloseCurricularMigration = document.getElementById('btn-close-curricular-migration');
@@ -6450,6 +6480,9 @@ window.reviewOvertimeAction = function(overtimeId, accion) {
             dupTabContent.classList.add('hidden');
         }
 
+        // [TAREA-F6-023] [Fase 6: Expediente Institucional y Ciclo de Vida] - Renderizar resumen institucional unificado por perfil autorizado
+        renderStudentInstitutionalSummary(data);
+
         // Reset active tab to personal
         switchStudentFileTab('tab-stfile-personal');
 
@@ -6458,6 +6491,55 @@ window.reviewOvertimeAction = function(overtimeId, accion) {
         loadStudentDocuments();
         loadStudentTimeline();
     }
+
+    // [TAREA-F6-023] [Fase 6: Expediente Institucional y Ciclo de Vida] - Renderizador de resumen institucional contextualizado por rol con tolerancia a fallos parciales
+    window.renderStudentInstitutionalSummary = function(data) {
+        if (!data) return;
+        const container = document.getElementById('stfile-summary-card');
+        if (!container) return;
+
+        const role = (currentUser && currentUser.role) || 'General';
+        const nowStr = new Date().toLocaleString();
+
+        try {
+            const isTeacher = role === 'Profesor' || role === 'Docente';
+            const activeEnrollment = (data.enrollments || []).find(e => String(e.estado).toLowerCase() === 'activa') || (data.enrollments || [])[0] || {};
+
+            container.innerHTML = `
+                <div class="bg-gradient-to-r from-blue-900 to-indigo-800 text-white p-4 rounded-2xl shadow-sm space-y-3 mb-4">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <span class="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-blue-700/60 text-blue-200">Resumen Institucional • ${role}</span>
+                            <h3 class="text-sm font-extrabold mt-1">${data.nombreCompleto || 'Estudiante'}</h3>
+                        </div>
+                        <span class="text-[10px] text-blue-200"><i class="fa-solid fa-clock-rotate-left mr-1"></i>Act.: ${nowStr}</span>
+                    </div>
+
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
+                        <div class="bg-white/10 p-2 rounded-xl backdrop-blur-sm">
+                            <span class="text-[10px] text-blue-200 block">Código</span>
+                            <span class="font-black">${data.codigoInstitucional || data.codigoEstudiante || 'N/A'}</span>
+                        </div>
+                        <div class="bg-white/10 p-2 rounded-xl backdrop-blur-sm">
+                            <span class="text-[10px] text-blue-200 block">Estado</span>
+                            <span class="font-black text-emerald-300">${data.estadoExpediente || 'Activo'}</span>
+                        </div>
+                        <div class="bg-white/10 p-2 rounded-xl backdrop-blur-sm">
+                            <span class="text-[10px] text-blue-200 block">Grado/Sección</span>
+                            <span class="font-black">${activeEnrollment.grado || 'N/A'} ${activeEnrollment.seccion || ''}</span>
+                        </div>
+                        <div class="bg-white/10 p-2 rounded-xl backdrop-blur-sm">
+                            <span class="text-[10px] text-blue-200 block">Año Lectivo</span>
+                            <span class="font-black">${activeEnrollment.periodo || '2026'}</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+        } catch (err) {
+            console.error('Error al renderizar resumen institucional:', err);
+            container.innerHTML = '<div class="text-amber-600 text-xs p-2 bg-amber-50 rounded-xl">Carga parcial del resumen institucional. Algunos datos no están disponibles.</div>';
+        }
+    };
 
     // Tabs switching
     document.querySelectorAll('.stfile-tab-btn').forEach(btn => {
