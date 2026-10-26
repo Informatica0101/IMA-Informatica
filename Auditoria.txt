@@ -565,3 +565,17 @@ Auditoría inicial de archivos para TAREA-F6-035:
 
 Hallazgos:
 - Se inyectarán los comentarios identificativos explícitos de `[TAREA-F6-035]` sobre las funciones correspondientes en `backend/developer-service/Code.gs`.
+
+-------------------------------------------------------------------------------
+FECHA: Marzo 2026
+TAREA: [TAREA-F6-036] Implementar respaldos independientes y recuperación por área
+-------------------------------------------------------------------------------
+Auditoría inicial de archivos para TAREA-F6-036:
+- backend/academic-service/Code.gs:
+  - Inspeccionadas las funciones `createSystemBackup`, `verifyBackupIntegrity`, `previewBackupRestoreImpact` y `restoreSystemBackup`.
+  - Se confirma que implementan la generación de respaldos aislados con checksum SHA-256, inspección previa de impacto sin modificar producción, validación de tablas esenciales y código de confirmación `RESTORE-CONFIRMED`.
+- Pendientes.md:
+  - Inspeccionada la especificación de TAREA-F6-036.
+
+Hallazgos:
+- Se inyectarán los comentarios identificativos explícitos de `[TAREA-F6-036]` en las funciones de respaldos e inspección previa de restauración en `backend/academic-service/Code.gs`.

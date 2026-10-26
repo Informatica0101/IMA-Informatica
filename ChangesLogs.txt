@@ -1757,3 +1757,9 @@ Archivos Modificados:
   - Verificada la implementación de `getCentralizedLogs` y `executeOperationalCommand` con catálogo cerrado `ALLOWED_OPERATIONAL_COMMANDS`, prohibición de cadenas o código libre y trazabilidad por `correlationId`.
 - Pendientes.md:
   - Marcada TAREA-F6-035 como completada [X] en Pendientes.md.
+
+[TAREA-F6-036] Implementar respaldos independientes y recuperación por área
+- backend/academic-service/Code.gs:
+  - En `previewBackupRestoreImpact`, `verifyBackupIntegrity` y `restoreSystemBackup`, verificada la generación de respaldos aislados con checksum SHA-256, vista previa de impacto sin alterar producción e inspección de tablas esenciales.
+- Pendientes.md:
+  - Marcada TAREA-F6-036 como completada [X] en Pendientes.md.

@@ -2701,7 +2701,7 @@ function executeCurricularMigration(payload) {
   };
 }
 
-// [TAREA-F6-027] [Fase 6: Expediente Institucional y Ciclo de Vida] - Vista previa de impacto de restauración con reporte de referencias a Drive e inspección de tablas esenciales
+// [TAREA-F6-011] [TAREA-F6-027] [TAREA-F6-036] [Fase 6: Continuidad Operativa y Recuperación por Área] - Vista previa de impacto de restauración sin alterar producción, inspección de referencias Drive e integridad esencial con checksum SHA-256
 function previewBackupRestoreImpact(payload) {
   const { fileId } = payload || {};
   if (!fileId) throw new Error("ID de archivo de respaldo es requerido.");
