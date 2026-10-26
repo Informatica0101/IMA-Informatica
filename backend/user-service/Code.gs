@@ -938,7 +938,7 @@ const ROLE_PERMISSIONS = {
   "Director": [
     "createNews", "uploadNewsImage", "getNews", "updateNewsStatus", "getStudents", "getStudentsByGradoSeccion", "getUserInfo", "saveGameResult", "getGameStats", "getGlobalTop", "recordAnalytics", "getLearningProfile", "mergeGuestData", "updateUserProfile", "findPersonMatches", "createPerson", "linkPersonAccount", "manageAccountState", "generateInstitutionalId",
     "getInstitutionalCriteria", "saveInstitutionalCriterion", "getFormativeEvaluations", "saveFormativeEvaluation", "getSupportPlans", "saveSupportPlan",
-    "createLinkInvitation", "acceptLinkInvitation", "getGuardianStudents", "getInstitutionalAnnouncements", "createInstitutionalAnnouncement", "submitAnnouncementReceiptConfirmation", "getAnnouncementReadReport", "getDepartmentalWorkInbox", "closeConversationThread", "getInternalConversations", "getInternalMessages", "sendInternalMessage", "getUserNotifications", "getUnifiedNotifications", "markNotificationAsRead", "createUserNotification", "sendMultiChannelNotification", "getAdmissionNotificationLogs", "getNotificationPreferences", "getAdministrativeRequests", "getAdministrativeRequestsHistory", "submitAdministrativeRequest", "submitStudentAbsenceJustification", "getStudentAbsenceJustifications", "reviewAbsenceJustification", "updateRequestStatus", "saveInstitutionalForm", "getInstitutionalForms", "submitInstitutionalFormRequest", "saveApprovalWorkflow", "getApprovalWorkflows", "processWorkflowDecision", "getWorkflowHistory", "registerDocumentSignature", "configureNotificationChannel", "getNotificationChannelConfigs", "sendChannelNotificationTest", "getAppointmentBookings", "bookAppointment", "updateAppointmentStatus", "getInstitutionalCalendarEvents", "getPendingReminders",
+    "createLinkInvitation", "acceptLinkInvitation", "getGuardianStudents", "registerLegalCustodyRestriction", "getStudentGuardianConsolidatedList", "getInstitutionalAnnouncements", "createInstitutionalAnnouncement", "submitAnnouncementReceiptConfirmation", "getAnnouncementReadReport", "getDepartmentalWorkInbox", "closeConversationThread", "getInternalConversations", "getInternalMessages", "sendInternalMessage", "getUserNotifications", "getUnifiedNotifications", "markNotificationAsRead", "createUserNotification", "sendMultiChannelNotification", "getAdmissionNotificationLogs", "getNotificationPreferences", "getAdministrativeRequests", "getAdministrativeRequestsHistory", "submitAdministrativeRequest", "submitStudentAbsenceJustification", "getStudentAbsenceJustifications", "reviewAbsenceJustification", "updateRequestStatus", "saveInstitutionalForm", "getInstitutionalForms", "submitInstitutionalFormRequest", "saveApprovalWorkflow", "getApprovalWorkflows", "processWorkflowDecision", "getWorkflowHistory", "registerDocumentSignature", "configureNotificationChannel", "getNotificationChannelConfigs", "sendChannelNotificationTest", "getAppointmentBookings", "bookAppointment", "updateAppointmentStatus", "getInstitutionalCalendarEvents", "getPendingReminders",
     "getUserSettings", "saveUserSettings", "getSystemConfigurations", "saveSystemConfiguration", "getProviderIntegrations", "configureProviderIntegration",
     "updateTicketStatus", "saveVisualPaletteProposal", "approveVisualPaletteProposal", "registerAndDispatchEvent", "retryFailedEventsQueue", "recordTraceabilityLog", "getTraceabilityCorrelationLogs", "getOperationalCapacityMetrics", "runInterdepartmentalIntegrationTestSuite", "getSharedConfigurationsCatalog", "manageInstitutionalDataCache", "purgeSecurityCaches", "dispatchSecurityEvent", "processSecurityEventQueue", "getSecurityEventsQueue", "getSecurityAndComplianceDashboardData", "generatePrivilegeAndAccountAuditReport", "getPaginatedAuditLogReport", "auditAndReconcileIdentityInconsistencies"
   ],
@@ -950,7 +950,7 @@ const ROLE_PERMISSIONS = {
   "Secretaría": [
     "createNews", "uploadNewsImage", "getNews", "updateNewsStatus", "getStudents", "getStudentsByGradoSeccion", "getUserInfo", "updateUserProfile", "findPersonMatches", "createPerson", "linkPersonAccount", "manageAccountState", "generateInstitutionalId",
     "getInstitutionalCriteria", "getFormativeEvaluations", "saveFormativeEvaluation", "getSupportPlans", "saveSupportPlan",
-    "createLinkInvitation", "acceptLinkInvitation", "getGuardianStudents", "getInstitutionalAnnouncements", "createInstitutionalAnnouncement", "submitAnnouncementReceiptConfirmation", "getAnnouncementReadReport", "getDepartmentalWorkInbox", "closeConversationThread", "getInternalConversations", "getInternalMessages", "sendInternalMessage", "getUserNotifications", "getUnifiedNotifications", "markNotificationAsRead", "createUserNotification", "sendMultiChannelNotification", "getAdmissionNotificationLogs", "getNotificationPreferences", "getAdministrativeRequests", "getAdministrativeRequestsHistory", "submitAdministrativeRequest", "submitStudentAbsenceJustification", "getStudentAbsenceJustifications", "reviewAbsenceJustification", "updateRequestStatus", "saveInstitutionalForm", "getInstitutionalForms", "submitInstitutionalFormRequest", "saveApprovalWorkflow", "getApprovalWorkflows", "processWorkflowDecision", "getWorkflowHistory", "registerDocumentSignature", "configureNotificationChannel", "getNotificationChannelConfigs", "sendChannelNotificationTest", "getAppointmentBookings", "bookAppointment", "updateAppointmentStatus", "getInstitutionalCalendarEvents", "getPendingReminders"
+    "createLinkInvitation", "acceptLinkInvitation", "getGuardianStudents", "registerLegalCustodyRestriction", "getStudentGuardianConsolidatedList", "getInstitutionalAnnouncements", "createInstitutionalAnnouncement", "submitAnnouncementReceiptConfirmation", "getAnnouncementReadReport", "getDepartmentalWorkInbox", "closeConversationThread", "getInternalConversations", "getInternalMessages", "sendInternalMessage", "getUserNotifications", "getUnifiedNotifications", "markNotificationAsRead", "createUserNotification", "sendMultiChannelNotification", "getAdmissionNotificationLogs", "getNotificationPreferences", "getAdministrativeRequests", "getAdministrativeRequestsHistory", "submitAdministrativeRequest", "submitStudentAbsenceJustification", "getStudentAbsenceJustifications", "reviewAbsenceJustification", "updateRequestStatus", "saveInstitutionalForm", "getInstitutionalForms", "submitInstitutionalFormRequest", "saveApprovalWorkflow", "getApprovalWorkflows", "processWorkflowDecision", "getWorkflowHistory", "registerDocumentSignature", "configureNotificationChannel", "getNotificationChannelConfigs", "sendChannelNotificationTest", "getAppointmentBookings", "bookAppointment", "updateAppointmentStatus", "getInstitutionalCalendarEvents", "getPendingReminders"
   ],
   "Contador": ["getStudents", "getUserInfo", "getNews", "getInstitutionalAnnouncements", "getUserNotifications", "markNotificationAsRead", "getAdministrativeRequests", "submitAdministrativeRequest"],
   "RecursosHumanos": ["getStudents", "getUserInfo", "getNews", "getInstitutionalAnnouncements", "getUserNotifications", "markNotificationAsRead", "getAdministrativeRequests", "submitAdministrativeRequest", "createNews", "getInternalMessages", "sendInternalMessage"],
@@ -1292,6 +1292,8 @@ function doPost(e) {
       case "createLinkInvitation": result = createLinkInvitation(payload); break;
       case "acceptLinkInvitation": result = acceptLinkInvitation(payload); break;
       case "revokeFamilyLink": result = revokeFamilyLink(payload); break;
+      case "registerLegalCustodyRestriction": result = registerLegalCustodyRestriction(payload); break;
+      case "getStudentGuardianConsolidatedList": result = getStudentGuardianConsolidatedList(payload); break;
       case "updateFamilyLinkPermissions": result = updateFamilyLinkPermissions(payload); break;
       case "getGuardianStudents": result = getGuardianStudents(payload); break;
       case "getGuardianApplicants": result = getGuardianApplicants(payload); break;
@@ -6611,4 +6613,106 @@ function generateInstitutionalReport(payload) {
     logStructuredEvent("USER", "generateInstitutionalReport", "ERROR", "REPORT_FAILED", error.message, payload, payload && payload.authRole);
     return { status: "error", message: error.message };
   }
+}
+
+
+// [TAREA-F6-018] [Fase 6: Expediente Institucional y Ciclo de Vida] - Gestión de restricciones de custodia legal y lista consolidada de tutores
+function registerLegalCustodyRestriction(payload) {
+  const { expedienteId, tutorUserId, tipoRestriccion, ordenJudicialRef, prohibirContacto, observaciones } = payload || {};
+  if (!expedienteId || !tutorUserId || !tipoRestriccion) {
+    throw new Error("expedienteId, tutorUserId y tipoRestriccion son requeridos.");
+  }
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "RestriccionesCustodiaLegal");
+  if (sheet.getLastRow() === 0) {
+    sheet.appendRow(["RestriccionID", "ExpedienteID", "TutorUserId", "TipoRestriccion", "OrdenJudicialRef", "ProhibirContacto", "Observaciones", "FechaRegistro", "RegistradoPor", "Estado"]);
+    SpreadsheetApp.flush();
+  }
+
+  const restId = "CUST-" + Date.now();
+  const now = new Date();
+  const actorUserId = (payload && (payload._verifiedUserId || payload.userId)) || "Secretaría";
+
+  sheet.appendRow([
+    restId,
+    String(expedienteId).trim(),
+    String(tutorUserId).trim(),
+    String(tipoRestriccion).trim(),
+    ordenJudicialRef || "N/A",
+    prohibirContacto ? "SÍ" : "NO",
+    observaciones || "Restricción registrada por orden administrativa/legal",
+    now,
+    actorUserId,
+    "Activa"
+  ]);
+
+  // Si la restricción es Total o prohíbe contacto, revocar automáticamente los permisos en RelacionesFamiliares
+  if (tipoRestriccion === "RestriccionTotal" || prohibirContacto) {
+    const relSheet = getOrCreateSheet(ss, "RelacionesFamiliares");
+    const relData = relSheet.getDataRange().getValues();
+    for (let i = 1; i < relData.length; i++) {
+      if (String(relData[i][1]).trim() === String(expedienteId).trim() && String(relData[i][2]).trim() === String(tutorUserId).trim()) {
+        relSheet.getRange(i + 1, 5).setValue("Revocada");
+        relSheet.getRange(i + 1, 8).setValue(`[REVOCADA POR CUSTODIA LEGAL ${now.toISOString().split("T")[0]}]: ${tipoRestriccion} - ${ordenJudicialRef || ""}`);
+        relSheet.getRange(i + 1, 9).setValue(JSON.stringify({
+          permisoAcademico: false,
+          permisoFinanciero: false,
+          permisoDocumental: false,
+          permisoAsistencia: false,
+          restriccionJudicialActiva: true
+        }));
+      }
+    }
+  }
+
+  logStructuredEvent("USER", "registerLegalCustodyRestriction", "WARN", "CUSTODY_RESTRICTION_REGISTERED", `Restricción de custodia ${restId} registrada para tutor ${tutorUserId} sobre expediente ${expedienteId}`, { expedienteId, tutorUserId, tipoRestriccion, ordenJudicialRef }, payload && payload.authRole);
+
+  return { status: "success", restriccionId: restId, message: "Restricción judicial de custodia legal registrada exitosamente." };
+}
+
+function getStudentGuardianConsolidatedList(payload) {
+  const { expedienteId } = payload || {};
+  if (!expedienteId) throw new Error("expedienteId es requerido.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const relSheet = getOrCreateSheet(ss, "RelacionesFamiliares");
+  const relData = relSheet.getDataRange().getValues().slice(1);
+
+  const custSheet = getOrCreateSheet(ss, "RestriccionesCustodiaLegal");
+  const custData = custSheet.getDataRange().getValues().slice(1);
+
+  const matchedRels = relData.filter(r => String(r[1]).trim() === String(expedienteId).trim());
+  const matchedCust = custData.filter(c => String(c[1]).trim() === String(expedienteId).trim() && String(c[9]).trim() === "Activa");
+
+  const list = matchedRels.map(r => {
+    const tutorId = String(r[2]).trim();
+    const custInfo = matchedCust.find(c => String(c[2]).trim() === tutorId);
+    let perms = {};
+    try { perms = JSON.parse(r[8] || "{}"); } catch(e) {}
+
+    return {
+      relacionId: r[0],
+      expedienteId: r[1],
+      tutorUserId: tutorId,
+      nombreTutor: r[3] || "N/A",
+      parentesco: r[4] || "Tutor",
+      estadoVinculo: r[5] || "Activo",
+      permisos: perms,
+      restriccionJudicial: custInfo ? {
+        restriccionId: custInfo[0],
+        tipoRestriccion: custInfo[3],
+        ordenJudicialRef: custInfo[4],
+        prohibirContacto: custInfo[5] === "SÍ",
+        observaciones: custInfo[6]
+      } : null
+    };
+  });
+
+  return {
+    status: "success",
+    expedienteId: expedienteId,
+    totalTutores: list.length,
+    tutores: list
+  };
 }

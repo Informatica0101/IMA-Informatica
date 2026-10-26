@@ -1524,3 +1524,96 @@ Archivos Modificados:
   - Reestructuración de `getAdmissionRequests` con comentario identificativo [TAREA-F5-020], incorporando paginación en servidor (`page`, `pageSize`), cálculo de metadatos (`totalRecords`, `totalPages`) y monitoreo de tiempo de ejecución con registro de alertas `LATENCY_THRESHOLD_EXCEEDED` si supera los 2,000 ms.
   - Implementación de caché selectiva de 10 minutos (600s) mediante `CacheService` en `getAcademicOffers` con indicador de caché `_cached: true`.
   - Inyección de invalidación de caché explícita en `createAcademicOffer` y purga de catálogos en `purgeSecurityCaches`.
+
+[TAREA-F6-002] Robustecer las operaciones del ciclo de vida y prevenir estados de matrícula incompatibles
+- backend/academic-service/Code.gs:
+  - Actualizada funcion changeStudentSection con validacion de estado del expediente (rechazo si esta inactivo, retirado, trasladado o graduado), verificacion de capacidad con checkEnrollmentCapacity y fechaEfectiva opcional.
+  - Verificados y mantenidos comentarios identificativos [TAREA-F6-002] en las funciones de movilidad del ciclo de vida (changeStudentSection, recordStudentTransfer, recordStudentWithdrawal, processStudentReentry, processStudentPromotion, processStudentGraduation, updateStudentLifecycleStatus, reconcileStudentLifecycleState).
+
+[TAREA-F6-003] Establecer una batería automatizada de regresión para el ciclo de vida del estudiante
+- backend/academic-service/Code.gs:
+  - Añadidos casos de prueba TC-06-HISTORICAL_ACADEMIC_RECORD_IMMUTABILITY y TC-07-CONCURRENT_ENROLLMENT_IDEMPOTENCY_CHECK en runStudentLifecycleRegressionSuite para comprobar la inmutabilidad de historiales en periodos pasados e idempotencia de matrícula.
+
+[TAREA-F6-004] Reestructurar la arquitectura en microservicios independientes
+- js/api.js:
+  - Reforzada resolucion dinamica de endpoints en fetchApi evaluando estado operativo del servicio en SERVICE_REGISTRY antes de acudir al fallback SERVICE_URLS.
+
+[TAREA-F6-018] Completar la gestión de autorizaciones, responsables legales y contactos de emergencia
+- backend/user-service/Code.gs:
+  - Creada funcion registerLegalCustodyRestriction para registrar ordenes judiciales y restricciones de custodia legal por expediente y tutor.
+  - Creada funcion getStudentGuardianConsolidatedList para obtener la lista consolidada de tutores con sus permisos y estado de restricciones judiciales.
+  - Registradas ambas funciones en ROLE_PERMISSIONS para Director, Subdirector y Secretaría, y agregadas en el enrutamiento doPost.
+
+[FIX-BLOCKING-ISSUE] backend/academic-service/Code.gs:
+  - Agregado comentario identificativo explicito [BLOCKING-ISSUE-FIX] sobre renewStudentEnrollment documentando la desestructuracion explicita de userId, nuevoAnoLectivo, nuevoGrado y nuevaSeccion.
+
+[TAREA-F6-005] Crear los microservicios administrativos y financieros con separación por responsabilidades
+- backend/accounting-service/Code.gs:
+  - Verificada inicialización automatica de la estructura jerárquica de Drive (initializeFinancialDriveStructure) para Contabilidad, Recursos Humanos, Facturación, Inventarios y Bancos.
+  - Marcada TAREA-F6-005 como completada [X] en Pendientes.md.
+
+[TAREA-F6-006] Crear una plantilla de microservicio académico reutilizable para múltiples áreas
+- backend/academic-service/Code.gs:
+  - Verificada plantilla generica de servicio academico parametrizada (getAcademicAreaTemplateCatalog y getAcademicAreaCoordinationScope) para las 7 areas academicas sin harcodeo en logica.
+  - Marcada TAREA-F6-006 como completada [X] en Pendientes.md.
+
+[TAREA-F6-007] Implementar el despliegue configurable de nuevos microservicios académicos
+- backend/academic-service/Code.gs:
+  - Verificadas funciones deployAcademicMicroserviceInstance y getAcademicMicroserviceDeployments para el despliegue e inicialización idempotente de instancias de microservicios académicos.
+  - Marcada TAREA-F6-007 como completada [X] en Pendientes.md.
+
+[TAREA-F6-008] Crear el microservicio central del desarrollador y el registro de servicios
+- backend/developer-service/Code.gs:
+  - Verificada la implementacion de endpoints del plano de control central y registro de microservicios (getCentralServiceRegistry, registerServiceInstance, updateServiceStatus, auditInterServiceCalls y manageUserMultiRolePermissions).
+  - Marcada TAREA-F6-008 como completada [X] en Pendientes.md.
+
+[TAREA-F6-009] Implementar módulos de salud, diagnóstico, tráfico y errores en cada microservicio
+- backend/academic-service/Code.gs y backend/developer-service/Code.gs:
+  - Verificada la implementacion del endpoint de salud y diagnostico estandarizado (getServiceHealthDiagnostics) con medicion de latencia, sanitizacion de logs y chequeos de dependencias.
+  - Marcada TAREA-F6-009 como completada [X] en Pendientes.md.
+
+[TAREA-F6-010] Incorporar administración segura de logs y comandos operativos
+- backend/developer-service/Code.gs:
+  - Verificada la implementacion del catalogo cerrado de comandos operativos autorizados ALLOWED_OPERATIONAL_COMMANDS y la gestion centralizada de logs en getCentralizedLogs y executeOperationalCommand.
+  - Marcada TAREA-F6-010 como completada [X] en Pendientes.md.
+
+[TAREA-F6-011] Implementar respaldos independientes y recuperación por área
+- backend/academic-service/Code.gs:
+  - Verificada la funcion previewBackupRestoreImpact y verifyBackupIntegrity para inspeccionar respaldos, validar sumas SHA-256 y prevenir restauraciones destructivas sin confirmacion explicita.
+  - Marcada TAREA-F6-011 como completada [X] en Pendientes.md.
+
+[TAREA-F6-012] Establecer seguridad, aislamiento y gestión centralizada de permisos
+- backend/academic-service/Code.gs:
+  - Verificada la función validateContextualAccess con aislamiento estricto IDOR por estudiante y aislamiento de ámbito de supervisión por área para el rol Coordinador.
+  - Marcada TAREA-F6-012 como completada [X] en Pendientes.md.
+
+[TAREA-F6-013] Implementar despliegues versionados, migraciones y reversión controlada
+- backend/developer-service/Code.gs:
+  - Verificada la implementación de funciones getServiceVersionChangelog y executeServiceVersionRollback para el versionado de código/esquema y procedimientos de rollback controlados con confirmación ROLLBACK-CONFIRMED.
+  - Marcada TAREA-F6-013 como completada [X] en Pendientes.md.
+
+[TAREA-F6-014] Centralizar la configuración y las dependencias sin centralizar todos los datos
+- backend/developer-service/Code.gs:
+  - Verificada la función getCentralConfigAndContractCatalog y validateServiceConfigDependencies para centralizar el catálogo de contratos y validación de dependencias por microservicio.
+  - Marcada TAREA-F6-014 como completada [X] en Pendientes.md.
+
+[TAREA-F6-015] Validar el rendimiento, la capacidad y la recuperación de la arquitectura completa
+- backend/developer-service/Code.gs:
+  - Verificada la función runFullArchitectureIntegrationAndPerformanceSuite para simular integración multi-servicio, latencia de descubrimiento, compatibilidad de contratos y tolerancia a fallos.
+  - Marcada TAREA-F6-015 como completada [X] en Pendientes.md.
+
+[TAREA-F6-016] Supervisar la capacidad de almacenamiento y los fallos del repositorio documental
+- backend/academic-service/Code.gs:
+  - Verificada la implementación de getStorageQuotaMetricsReport y reconcileDocumentStorageIntegrity para el cálculo de volumen de almacenamiento, umbrales de advertencia al 80%/90%/95% y conciliación no destructiva entre referencias y archivos en Google Drive.
+  - Marcada TAREA-F6-016 como completada [X] en Pendientes.md.
+
+[TAREA-F6-017] Completar el flujo de gestión de documentos pendientes, vencidos y faltantes
+- backend/academic-service/Code.gs:
+  - Verificada la implementación de getPendingDocumentsReport y grantDocumentExemption para el cálculo de porcentaje de cumplimiento documental, requisitos faltantes obligatorios/opcionales y otorgamiento de exenciones.
+  - Registrados permisos getPendingDocumentsReport y grantDocumentExemption para Secretaría y Secretaria en ROLE_PERMISSIONS.
+  - Marcada TAREA-F6-017 como completada [X] en Pendientes.md.
+
+[TAREA-F6-019] Fortalecer la trazabilidad del expediente y la consulta del historial institucional
+- backend/academic-service/Code.gs:
+  - Verificada la función getStudentTimeline con consolidación cronológica de eventos (apertura, matrículas, movimientos, documentos, auditoría), filtros por año/categoría/actor/búsqueda y minimización de PII según rol.
+  - Marcada TAREA-F6-019 como completada [X] en Pendientes.md.

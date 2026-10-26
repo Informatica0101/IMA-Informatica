@@ -134,7 +134,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // (A-29) Centralizar capacidades por rol
     const RoleCapabilities = {
         canGrade: (user) => user && (user.rol === 'Profesor' || user.rol === 'Administrador' || user.rol === 'Director' || user.rol === 'Subdirector' || user.rol === 'Secretaria'),
-        canManageExams: (user) => user && (user.rol === 'Profesor' || user.rol === 'Coordinador' || user.rol === 'Administrador' || user.rol === 'Director' || user.rol === 'Subdirector' || user.rol === 'Secretaria')
+        canManageExams: (user) => user && (user.rol === 'Profesor' || user.rol === 'Coordinador' || user.rol === 'Administrador' || user.rol === 'Director' || user.rol === 'Subdirector' || user.rol === 'Secretaria'),
+        canManageDuplicates: (user) => user && (user.rol === 'Administrador' || user.rol === 'Director' || user.rol === 'Secretaría' || user.rol === 'Secretaria' || user.rol === 'Subdirector' || user.rol === 'Coordinador' || user.rol === 'Desarrollador')
     };
 
     let submissionsTableBody = document.getElementById('submissions-table-body');
@@ -6433,6 +6434,21 @@ window.reviewOvertimeAction = function(overtimeId, accion) {
         document.getElementById('stfile-estado-expediente').value = data.estadoExpediente || data.estado || 'Activo';
         document.getElementById('stfile-direccion').value = data.direccion || '';
         document.getElementById('stfile-observaciones').value = data.observaciones || '';
+
+        // [TAREA-F6-001] [Fase 6: Expediente Institucional] - Restringir controles de expedientes duplicados por rol
+        const dupTabBtn = document.querySelector('.stfile-tab-btn[data-tab="tab-stfile-duplicates"]');
+        const dupTabContent = document.getElementById('tab-stfile-duplicates');
+        const isAuthorizedForDuplicates = RoleCapabilities.canManageDuplicates(currentUser);
+        if (dupTabBtn) {
+            if (isAuthorizedForDuplicates) {
+                dupTabBtn.classList.remove('hidden');
+            } else {
+                dupTabBtn.classList.add('hidden');
+            }
+        }
+        if (dupTabContent && !isAuthorizedForDuplicates) {
+            dupTabContent.classList.add('hidden');
+        }
 
         // Reset active tab to personal
         switchStudentFileTab('tab-stfile-personal');
