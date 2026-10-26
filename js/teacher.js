@@ -609,6 +609,18 @@ document.addEventListener('DOMContentLoaded', () => {
             return true;
         });
 
+        // Aplicar ordenamiento dinámico según la perspectiva seleccionada (Institucional, Docente, Sección, Aula)
+        filtered.sort((a, b) => {
+            if (mode === 'docente') {
+                return String(a.docenteUserId || '').localeCompare(String(b.docenteUserId || ''));
+            } else if (mode === 'seccion') {
+                return String(`${a.grado || ''} ${a.seccion || ''}`).localeCompare(String(`${b.grado || ''} ${b.seccion || ''}`));
+            } else if (mode === 'aula') {
+                return String(a.aulaCodigo || '').localeCompare(String(b.aulaCodigo || ''));
+            }
+            return 0;
+        });
+
         if (badge) badge.textContent = `${filtered.length} Bloques`;
 
         if (filtered.length === 0) {
@@ -845,6 +857,31 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         } catch (err) {
             container.innerHTML = `<div class="p-4 text-center text-red-600 font-bold">Error de conexión: ${err.message}</div>`;
+        }
+    };
+
+    // [TAREA-F7-IMP-04] [Fase 7: Planificación Académica, Horarios y Recursos] - Controlador de generación y previsualización de escenarios masivos de planificación en borrador
+    window.openScheduleScenarioModal = async function() {
+        const ano = prompt("Ingrese el Año Lectivo para el escenario de planificación masiva:", "2026");
+        if (!ano) return;
+
+        const escenarioNombre = prompt("Nombre descriptivo para el escenario de prueba (borrador):", `Escenario de Planificación ${ano}`);
+        if (!escenarioNombre) return;
+
+        try {
+            const res = await fetchApi('ACADEMIC', 'generateAutoSchedules', {
+                anoLectivo: ano,
+                escenarioNombre
+            });
+
+            if (res && res.status === 'success') {
+                alert(`¡Escenario de planificación masiva generado en borrador!\n\nID: ${res.resumen?.escenarioId || 'OK'}\nProgramadas: ${res.resumen?.programadas || 0}\nPendientes: ${res.resumen?.pendientes || 0}`);
+                loadMasterSchedules();
+            } else {
+                alert("Error al generar escenario: " + (res ? res.message : "Error desconocido"));
+            }
+        } catch (err) {
+            alert("Error de comunicación: " + err.message);
         }
     };
 

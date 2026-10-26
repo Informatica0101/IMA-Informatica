@@ -759,3 +759,21 @@ Auditoría inicial de archivos para TAREA-F7-IMP-03:
 
 Hallazgos:
 - El sistema detecta conflictos pero carece de un endpoint y modal asistido que proponga automáticamente aulas o bloques horarios alternativos al usuario al encontrar una colisión.
+
+
+-------------------------------------------------------------------------------
+FECHA: 2026-10-26
+TAREA: [TAREA-F7-IMP-04] Incorporar planificación masiva y optimización de horarios
+-------------------------------------------------------------------------------
+Auditoría inicial de archivos para TAREA-F7-IMP-04:
+- backend/academic-service/Code.gs:
+  - Inspeccionada la función `generateAutoSchedules`.
+  - Se actualizará para soportar bloqueo de bloques (`bloqueadosIds`), evaluación de preferencias de distribución y persistencia/consulta de escenarios de prueba (`saveScheduleScenario` y `getScheduleScenarios`) en la hoja `EscenariosHorarios` sin alterar el horario oficial publicado hasta la confirmación.
+- teacher-dashboard.html / js/teacher.js:
+  - Inspeccionados los botones de generación de horarios.
+  - Se implementará la interfaz y controlador `openScheduleScenarioModal` antecedido por el comentario identificativo `[TAREA-F7-IMP-04]` para ejecutar y previsualizar escenarios masivos de planificación.
+- Pendientes.md:
+  - Se actualizará el estado de la TAREA-F7-IMP-04 a `[X] Completado`.
+
+Hallazgos:
+- La función `generateAutoSchedules` genera directamente filas en `HorariosClase` en estado `Borrador`, pero no cuenta con un aislamiento de escenarios separados por ID, soporte para bloquear bloques existentes ni comparación con el horario vigente antes de la publicación oficial.

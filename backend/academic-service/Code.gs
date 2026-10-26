@@ -168,7 +168,7 @@ const ROLE_PERMISSIONS = {
     "getAcademicPeriods", "manageAcademicPeriod", "getSubjectCatalog", "createSubjectCatalogItem", "getStudyPlans", "createStudyPlan",
     "getAcademicOffers", "createAcademicOffer", "getTeacherAssignments", "assignTeacherToClass", "createTeacherSubstitution",
     "getAcademicCalendar", "createCalendarEvent", "getClassSchedules", "createClassSchedule", "deleteClassSchedule", "getAcademicRules", "saveAcademicRule", "getDepartmentAcademicPlanning", "assignDepartmentHead", "getCurricularAnalyticsReport", "getReusableResourceCatalog", "manageReusableResource", "getCurricularEquivalences", "executeCurricularMigration", "registerCurricularAreaExtension", "runCurricularAreaServiceTests", "toggleCurricularAreaStatus", "validateApiContractsTestSuite", "getInstitutionalCatalog", "validateCatalogReference", "generateInstitutionalUUID", "validateInstitutionalIdentifier", "auditInstitutionalIdentifierCollisions", "runConcurrencyAndConsistencySuite", "getPaginatedAcademicHistory", "reconcileRestoredDataIntegrity", "evaluateTransactionalStorageMigrationNeed",
-    "getClassroomResources", "saveClassroomResource", "getStudentSchedule", "getScheduleConflictResolutionAlternatives",
+    "getClassroomResources", "saveClassroomResource", "getStudentSchedule", "getScheduleConflictResolutionAlternatives", "saveScheduleScenario", "getScheduleScenarios",
     "createAdmissionRequest", "getAdmissionRequests", "updateAdmissionStatus", "reopenAdmissionRequest", "convertAdmissionToStudent", "scheduleAdmissionInterview", "getAdmissionInterviews", "recordInterviewOutcome", "saveAdmissionEvaluation", "getAdmissionEvaluations", "addToWaitlist", "getWaitlist", "reorderWaitlist", "offerWaitlistSlot", "respondToWaitlistSlot", "resolveAdmissionDuplicate", "getAdmissionAnalyticsReport",
     "getStudentFile", "getStudentFileSummary", "updateStudentFile", "getStudentTimeline", "findDuplicateStudents", "mergeStudentFiles", "getMergePreviewComparison", "unmergeStudentFiles", "getStudentFileAdministrativeReports", "initializeDirectionSecretaryDriveStructure",
     "getStudentGuardians", "saveStudentGuardian", "unlinkStudentGuardian", "uploadStudentDocument", "getStudentDocuments", "updateDocumentStatus", "getPendingDocumentsReport", "grantDocumentExemption", "restoreDocumentVersion", "checkAndNotifyExpiringStudentDocuments",
@@ -623,6 +623,8 @@ function doPost(e) {
       case "getCoordinatorOverview": result = getCoordinatorOverview(payload); break;
       case "assignTeacherToSection": result = assignTeacherToSection(payload); break;
       case "generateAutoSchedules": result = generateAutoSchedules(payload); break;
+      case "saveScheduleScenario": result = saveScheduleScenario(payload); break;
+      case "getScheduleScenarios": result = getScheduleScenarios(payload); break;
       case "getTeacherAssignments": result = getTeacherAssignments(payload); break;
       case "assignTeacherToClass": result = assignTeacherToClass(payload); break;
       case "createTeacherSubstitution": result = createTeacherSubstitution(payload); break;
@@ -5041,10 +5043,22 @@ function generateAutoSchedules(payload) {
 
   logStructuredEvent("ACADEMIC", "generateAutoSchedules", "INFO", "AUTO_SCHEDULE_GENERATED", `Generación automática de horarios para ${targetAno}. Creados: ${borradorCount}, Pendientes: ${pendientesCount}`, { targetAno, borradorCount, pendientesCount }, payload && payload.authRole);
 
+  // Guardar registro del escenario generado en la hoja EscenariosHorarios
+  const escenarioId = "ESC-" + Date.now();
+  saveScheduleScenario({
+    escenarioId,
+    nombre: payload.escenarioNombre || `Escenario Masivo ${targetAno}`,
+    anoLectivo: targetAno,
+    borradorCount,
+    pendientesCount,
+    detallesJSON: JSON.stringify(logs)
+  });
+
   return {
     status: "success",
-    message: `Propuesta automática de horarios generada exitosamente en estado Borrador.`,
+    message: `Propuesta automática de horarios generada exitosamente en estado Borrador (Escenario ID: ${escenarioId}).`,
     resumen: {
+      escenarioId,
       anoLectivo: targetAno,
       ofertasProcesadas: targetOffers.length,
       bloquesBorradorCreados: borradorCount,
@@ -5052,6 +5066,43 @@ function generateAutoSchedules(payload) {
       logs
     }
   };
+}
+
+// [TAREA-F7-IMP-04] [Fase 7: Planificación Académica, Horarios y Recursos] - Persistencia y gestión de escenarios de prueba para planificación masiva.
+function saveScheduleScenario(payload) {
+  const { escenarioId, nombre, anoLectivo, borradorCount, pendientesCount, detallesJSON } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "EscenariosHorarios");
+  if (sheet.getLastRow() === 0) {
+    sheet.appendRow(["EscenarioID", "Nombre", "AnoLectivo", "BorradorCount", "PendientesCount", "DetallesJSON", "FechaCreacion", "Estado"]);
+  }
+
+  const id = escenarioId || ("ESC-" + Date.now());
+  sheet.appendRow([id, nombre || "Escenario Borrador", anoLectivo || "2026", borradorCount || 0, pendientesCount || 0, detallesJSON || "[]", new Date(), "Borrador"]);
+  return { status: "success", escenarioId: id };
+}
+
+function getScheduleScenarios(payload) {
+  const { anoLectivo } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "EscenariosHorarios");
+  const data = sheet.getDataRange().getValues();
+  if (data.length <= 1) return { status: "success", data: [] };
+
+  const scenarios = data.slice(1).filter(r => {
+    if (anoLectivo && String(r[2]).trim() !== String(anoLectivo).trim()) return false;
+    return true;
+  }).map(r => ({
+    escenarioId: r[0],
+    nombre: r[1],
+    anoLectivo: r[2],
+    borradorCount: r[3],
+    pendientesCount: r[4],
+    fechaCreacion: r[6],
+    estado: r[7]
+  }));
+
+  return { status: "success", data: scenarios };
 }
 
 function createTeacherSubstitution(payload) {
@@ -5226,8 +5277,9 @@ function createClassSchedule(payload) {
   const sheet = getOrCreateSheet(ss, "HorariosClase");
   const data = sheet.getDataRange().getValues();
 
+  const authRole = (payload && payload.authRole) || "";
   // Motor de prevención de conflictos por solapamiento de docente, aula u oferta académica y validación de capacidad
-  const conflict = checkScheduleConflict({ diaSemana, horaInicio, horaFin, aulaCodigo, docenteUserId, ofertaId, excludeHorarioId: horarioId, estudiantesCount, excepcionJustificacion });
+  const conflict = checkScheduleConflict({ diaSemana, horaInicio, horaFin, aulaCodigo, docenteUserId, ofertaId, excludeHorarioId: horarioId, estudiantesCount, excepcionJustificacion, authRole });
   if (conflict.hasConflict) {
     throw new Error(`Conflicto de horario detectado: ${conflict.reason}`);
   }
@@ -5538,8 +5590,11 @@ function checkScheduleConflict(params) {
   const { diaSemana, horaInicio, horaFin, aulaCodigo, docenteUserId, ofertaId, excludeHorarioId, estudiantesCount, fechaEspecifica, maxHorasDocente, excepcionJustificacion } = params || {};
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
 
-  // Comprobar si existe una excepción justificada autorizada explícitamente configurada
-  if (excepcionJustificacion && String(excepcionJustificacion).trim().length > 5) {
+  // Comprobar si existe una excepción justificada autorizada explícitamente por personal administrativo/coordinación
+  const userRole = (params && (params.authRole || params.userRole)) || "";
+  const canAuthorizeException = ["Administrador", "Director", "Subdirector", "Secretaría", "Secretaria", "Desarrollador", "Coordinador"].indexOf(userRole) !== -1;
+
+  if (canAuthorizeException && excepcionJustificacion && String(excepcionJustificacion).trim().length > 5) {
     const excSheet = getOrCreateSheet(ss, "ExcepcionesHorarios");
     if (excSheet.getLastRow() === 0) {
       excSheet.appendRow(["ExcepcionID", "OfertaID", "DocenteUserId", "AulaCodigo", "DiaSemana", "HoraInicio", "HoraFin", "Justificacion", "FechaRegistro", "Estado"]);
@@ -5957,7 +6012,7 @@ function getStudentSchedule(payload) {
 
 // [TAREA-F7-IMP-03] [Fase 7: Planificación Académica, Horarios y Recursos] - Herramienta de resolución asistida de conflictos (propuestas de aulas alternativas, bloques libres y sustitutos).
 function getScheduleConflictResolutionAlternatives(payload) {
-  const { diaSemana, horaInicio, horaFin, aulaCodigo, docenteUserId, ofertaId, estudiantesCount } = payload || {};
+  const { diaSemana, horaInicio, horaFin, aulaCodigo, docenteUserId, ofertaId, estudiantesCount, excludeHorarioId } = payload || {};
   if (!diaSemana || !horaInicio || !horaFin) {
     throw new Error("Día, horaInicio y horaFin son requeridos para proponer alternativas.");
   }
@@ -5976,6 +6031,7 @@ function getScheduleConflictResolutionAlternatives(payload) {
       aulaCodigo: aula.aulaCodigo,
       docenteUserId,
       ofertaId,
+      excludeHorarioId,
       estudiantesCount
     });
     if (!testConflict.hasConflict) {
@@ -6011,6 +6067,7 @@ function getScheduleConflictResolutionAlternatives(payload) {
       aulaCodigo,
       docenteUserId,
       ofertaId,
+      excludeHorarioId,
       estudiantesCount
     });
     if (!testConflict.hasConflict) {

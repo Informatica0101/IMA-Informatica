@@ -1853,3 +1853,16 @@ Descripción objetiva:
 - Incorporado el modal `#modal-schedule-conflict-resolution` en `teacher-dashboard.html`.
 - Creadas las funciones UI `openAssistedConflictResolutionModal` y `applyConflictAlternative` en `js/teacher.js` antecedidas por el comentario identificativo `[TAREA-F7-IMP-03]` para evaluar y aplicar soluciones asistidas ante conflictos de horarios.
 - Actualizado el estado de [TAREA-F7-IMP-03] a Completado en Pendientes.md.
+
+
+Fecha: 2026-10-26
+Archivos modificados:
+- backend/academic-service/Code.gs (Líneas 168, 623-625, 5043-5100)
+- teacher-dashboard.html (Líneas 543-548)
+- js/teacher.js (Líneas 848-875)
+- Pendientes.md (Líneas 1513-1550)
+Descripción objetiva:
+- Actualizada la función `generateAutoSchedules` en `backend/academic-service/Code.gs` para registrar la propuesta en la hoja `EscenariosHorarios` asignando identificador `escenarioId` único.
+- Creadas las funciones `saveScheduleScenario` y `getScheduleScenarios` en `backend/academic-service/Code.gs` e integradas en `doPost` y `ROLE_PERMISSIONS`.
+- Incorporado el botón UI "Escenarios Masivos" en `teacher-dashboard.html` y la función `openScheduleScenarioModal` en `js/teacher.js` antecedida por el comentario identificativo `[TAREA-F7-IMP-04]`.
+- Actualizado el estado de [TAREA-F7-IMP-04] a Completado en Pendientes.md.

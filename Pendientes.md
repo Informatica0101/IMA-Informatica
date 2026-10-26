@@ -1513,7 +1513,7 @@ FASE 7. PLANIFICACIÓN ACADÉMICA, HORARIOS Y RECURSOS
 
 ---
 
-### [ ] [TAREA-F7-IMP-04] Incorporar planificación masiva y optimización de horarios
+### [X] [TAREA-F7-IMP-04] Incorporar planificación masiva y optimización de horarios
 - **Origen del Hallazgo:** `AUDITORIA_FASE_7_PLANIFICACION_HORARIOS_RECURSOS.md` / Tarea F7-IMP-04 (P2 · Planificación Masiva)
 - **Prioridad:** P2
 - **Severidad/Clasificación:** Medio (Nueva herramienta de planificación avanzada)
@@ -1547,7 +1547,7 @@ FASE 7. PLANIFICACIÓN ACADÉMICA, HORARIOS Y RECURSOS
   - CA-F7-29: El sistema permite comparar la carga docente y la utilización de recursos antes y después.
   - CA-F7-30: Una ejecución fallida no destruye el escenario anterior ni el horario oficial.
   - CA-F7-31: La publicación requiere una confirmación explícita y una validación final.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completado
 
 ---
 
