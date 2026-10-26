@@ -1615,5 +1615,9 @@ Archivos Modificados:
 
 [TAREA-F6-019] Fortalecer la trazabilidad del expediente y la consulta del historial institucional
 - backend/academic-service/Code.gs:
-  - Verificada la función getStudentTimeline con consolidación cronológica de eventos (apertura, matrículas, movimientos, documentos, auditoría), filtros por año/categoría/actor/búsqueda y minimización de PII según rol.
+  - En la función getStudentTimeline, incorporada la consulta y trazabilidad de fusiones de expedientes desde `FusionesExpedientes`.
+  - En la función mergeStudentFiles, incorporada la persistencia inmutable del registro de fusión en la hoja `FusionesExpedientes`.
+- js/secretary.js:
+  - Implementada la función `window.exportLifeCycleAuditTrailCSV` para permitir la exportación en formato CSV del historial cronológico del expediente con minimización de PII.
+- Pendientes.md:
   - Marcada TAREA-F6-019 como completada [X] en Pendientes.md.

@@ -6202,7 +6202,7 @@ function getStudentTimeline(payload) {
     });
   });
 
-  // Consultar auditoría de cambios de entidad (HistorialCambiosEntidad)
+  // Consultar auditoría de cambios de entidad (HistorialCambiosEntidad) y Fusiones de Expedientes (FusionesExpedientes)
   try {
     const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
     const histSheet = getOrCreateSheet(ss, "HistorialCambiosEntidad");
@@ -6220,6 +6220,23 @@ function getStudentTimeline(payload) {
           actor: h[7] || "Sistema",
           detalle: isPrivileged ? ("Anterior: " + String(h[5] || "").slice(0, 50) + " | Nuevo: " + String(h[6] || "").slice(0, 50)) : "Modificación registrada en bitácora protegida.",
           refId: h[0]
+        });
+      }
+    });
+
+    const mergeSheet = getOrCreateSheet(ss, "FusionesExpedientes");
+    const mergeRows = mergeSheet.getDataRange().getValues().slice(1);
+    mergeRows.forEach(m => {
+      if (String(m[1]).trim() === targetExpId || String(m[2]).trim() === targetExpId) {
+        events.push({
+          fecha: m[5] || new Date().toISOString(),
+          categoria: "Fusion",
+          tipo: "FUSION_EXPEDIENTE",
+          titulo: "Fusión de Expedientes",
+          periodo: "N/A",
+          actor: m[4] || "Secretaría",
+          detalle: "Expediente Origen: " + m[2] + " -> Expediente Destino: " + m[1] + " | Motivo: " + (m[3] || "N/A"),
+          refId: m[0]
         });
       }
     });
@@ -6473,6 +6490,18 @@ function mergeStudentFiles(payload) {
   // Marcar expediente origen como Fusionado/Inactivo
   expSheet.getRange(sourceIdx + 1, 8).setValue("Fusionado");
   expSheet.getRange(sourceIdx + 1, 11).setValue(`Fusionado con expediente principal ${targetExpedienteId}. Motivo: ${motivo || 'N/A'}`);
+
+  try {
+    const mergeSheet = getOrCreateSheet(ss, "FusionesExpedientes");
+    mergeSheet.appendRow([
+      `FUS-${Date.now()}`,
+      targetExpedienteId,
+      sourceExpedienteId,
+      motivo || "Fusión de expedientes duplicados",
+      (payload && payload.authUserId) || "Secretaría",
+      new Date().toISOString()
+    ]);
+  } catch (_) {}
 
   logStructuredEvent("ACADEMIC", "mergeStudentFiles", "WARN", "FILES_MERGED", `Expediente ${sourceExpedienteId} fusionado en ${targetExpedienteId}`, { targetExpedienteId, sourceExpedienteId, motivo }, payload && payload.authRole);
 

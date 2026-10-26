@@ -451,6 +451,47 @@ window.recordInterviewOutcomeAction = async function(entrevistaId, estado) {
     }
 };
 
+// [TAREA-F6-019] [Fase 6: Expediente Institucional y Ciclo de Vida] - Exportación del historial de trazabilidad del estudiante a formato CSV
+window.exportLifeCycleAuditTrailCSV = function(timelineEvents, studentCode) {
+    if (!Array.isArray(timelineEvents) || timelineEvents.length === 0) {
+        if (typeof showToast === "function") {
+            showToast("No hay eventos en la línea de tiempo para exportar.", "warning");
+        } else {
+            alert("No hay eventos en la línea de tiempo para exportar.");
+        }
+        return;
+    }
+
+    const headers = ["Fecha", "Categoría", "Tipo", "Título", "Periodo", "Actor", "Detalle", "RefID"];
+    const rows = timelineEvents.map(ev => [
+        `"${String(ev.fecha || '').replace(/"/g, '""')}"`,
+        `"${String(ev.categoria || '').replace(/"/g, '""')}"`,
+        `"${String(ev.tipo || '').replace(/"/g, '""')}"`,
+        `"${String(ev.titulo || '').replace(/"/g, '""')}"`,
+        `"${String(ev.periodo || '').replace(/"/g, '""')}"`,
+        `"${String(ev.actor || '').replace(/"/g, '""')}"`,
+        `"${String(ev.detalle || '').replace(/"/g, '""')}"`,
+        `"${String(ev.refId || '').replace(/"/g, '""')}"`
+    ]);
+
+    const csvContent = [headers.join(","), ...rows.map(r => r.join(","))].join("\n");
+    const blob = new Blob(["\uFEFF" + csvContent], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `Historial_Expediente_${studentCode || 'Estudiante'}_${new Date().toISOString().slice(0, 10)}.csv`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+
+    if (typeof showToast === "function") {
+        showToast("Historial de trazabilidad exportado exitosamente.", "success");
+    } else {
+        alert("Historial de trazabilidad exportado exitosamente.");
+    }
+};
+
 // [TAREA-F5-009] [Fase 5: Admisiones y Portal de Familias] - Controladores UI de Vinculación Familiar e Invitaciones por Token
 window.loadGuardianLinkageStatus = function(solicitudObj) {
     const container = document.getElementById('modal-adm-tutors-container');

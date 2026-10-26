@@ -606,7 +606,7 @@ FASE 6. EXPEDIENTE INSTITUCIONAL Y CICLO DE VIDA DEL ESTUDIANTE
   - CA-103: Los filtros por año lectivo devuelven exclusivamente los eventos del periodo seleccionado.
   - CA-104: Las fusiones de expedientes conservan una relación verificable entre origen y destino.
   - CA-105: La exportación coincide con los registros que el usuario está autorizado a consultar.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completado
 
 ---
 
