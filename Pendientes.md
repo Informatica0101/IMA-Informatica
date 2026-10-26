@@ -1551,7 +1551,7 @@ FASE 7. PLANIFICACIÓN ACADÉMICA, HORARIOS Y RECURSOS
 
 ---
 
-### [ ] [TAREA-F7-IMP-05] Ampliar el control de carga laboral y las preferencias docentes
+### [X] [TAREA-F7-IMP-05] Ampliar el control de carga laboral y las preferencias docentes
 - **Origen del Hallazgo:** `AUDITORIA_FASE_7_PLANIFICACION_HORARIOS_RECURSOS.md` / Tarea F7-IMP-05 (P1 · Carga Docente)
 - **Prioridad:** P1
 - **Severidad/Clasificación:** Alta (Ampliación de reglas académicas y laborales)
@@ -1582,7 +1582,7 @@ FASE 7. PLANIFICACIÓN ACADÉMICA, HORARIOS Y RECURSOS
   - CA-F7-36: El sistema identifica excesos de carga y explica qué asignaciones los producen.
   - CA-F7-37: Las preferencias docentes no permiten incumplir restricciones obligatorias.
   - CA-F7-38: Si no existe una política definida para una regla, el sistema no inventa un límite institucional.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completado
 
 ---
 

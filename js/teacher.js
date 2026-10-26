@@ -860,6 +860,38 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
+    // [TAREA-F7-IMP-05] [Fase 7: Planificación Académica, Horarios y Recursos] - Controlador de límites de carga laboral y preferencias horarias por docente
+    window.openTeacherWorkLoadPreferencesModal = async function() {
+        const docenteUserId = prompt("Ingrese el UserId o correo del Docente para configurar carga/preferencias:", currentUser.userId);
+        if (!docenteUserId) return;
+
+        const maxHorasStr = prompt("Límite máximo de horas lectivas semanales para el docente:", "40");
+        if (!maxHorasStr) return;
+        const maxHorasSemanales = parseFloat(maxHorasStr) || 40;
+
+        const horaEntrada = prompt("Hora de entrada autorizada (HH:MM):", "07:00");
+        const horaSalida = prompt("Hora de salida autorizada (HH:MM):", "16:00");
+
+        try {
+            const res = await fetchApi('ACADEMIC', 'saveTeacherWorkLoadPreferences', {
+                docenteUserId,
+                maxHorasSemanales,
+                horaEntrada,
+                horaSalida,
+                diasLaboralesJSON: JSON.stringify(["Lunes", "Martes", "Miércoles", "Jueves", "Viernes"])
+            });
+
+            if (res && res.status === 'success') {
+                alert(`¡Límite de carga laboral (${maxHorasSemanales}h/semana) y preferencias guardadas para ${docenteUserId}!`);
+                loadMasterSchedules();
+            } else {
+                alert("Error al guardar preferencias: " + (res ? res.message : "Error desconocido"));
+            }
+        } catch (err) {
+            alert("Error de comunicación: " + err.message);
+        }
+    };
+
     // [TAREA-F7-IMP-04] [Fase 7: Planificación Académica, Horarios y Recursos] - Controlador de generación y previsualización de escenarios masivos de planificación en borrador
     window.openScheduleScenarioModal = async function() {
         const ano = prompt("Ingrese el Año Lectivo para el escenario de planificación masiva:", "2026");

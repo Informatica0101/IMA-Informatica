@@ -168,7 +168,7 @@ const ROLE_PERMISSIONS = {
     "getAcademicPeriods", "manageAcademicPeriod", "getSubjectCatalog", "createSubjectCatalogItem", "getStudyPlans", "createStudyPlan",
     "getAcademicOffers", "createAcademicOffer", "getTeacherAssignments", "assignTeacherToClass", "createTeacherSubstitution",
     "getAcademicCalendar", "createCalendarEvent", "getClassSchedules", "createClassSchedule", "deleteClassSchedule", "getAcademicRules", "saveAcademicRule", "getDepartmentAcademicPlanning", "assignDepartmentHead", "getCurricularAnalyticsReport", "getReusableResourceCatalog", "manageReusableResource", "getCurricularEquivalences", "executeCurricularMigration", "registerCurricularAreaExtension", "runCurricularAreaServiceTests", "toggleCurricularAreaStatus", "validateApiContractsTestSuite", "getInstitutionalCatalog", "validateCatalogReference", "generateInstitutionalUUID", "validateInstitutionalIdentifier", "auditInstitutionalIdentifierCollisions", "runConcurrencyAndConsistencySuite", "getPaginatedAcademicHistory", "reconcileRestoredDataIntegrity", "evaluateTransactionalStorageMigrationNeed",
-    "getClassroomResources", "saveClassroomResource", "getStudentSchedule", "getScheduleConflictResolutionAlternatives", "saveScheduleScenario", "getScheduleScenarios",
+    "getClassroomResources", "saveClassroomResource", "getStudentSchedule", "getScheduleConflictResolutionAlternatives", "saveScheduleScenario", "getScheduleScenarios", "saveTeacherWorkLoadPreferences",
     "createAdmissionRequest", "getAdmissionRequests", "updateAdmissionStatus", "reopenAdmissionRequest", "convertAdmissionToStudent", "scheduleAdmissionInterview", "getAdmissionInterviews", "recordInterviewOutcome", "saveAdmissionEvaluation", "getAdmissionEvaluations", "addToWaitlist", "getWaitlist", "reorderWaitlist", "offerWaitlistSlot", "respondToWaitlistSlot", "resolveAdmissionDuplicate", "getAdmissionAnalyticsReport",
     "getStudentFile", "getStudentFileSummary", "updateStudentFile", "getStudentTimeline", "findDuplicateStudents", "mergeStudentFiles", "getMergePreviewComparison", "unmergeStudentFiles", "getStudentFileAdministrativeReports", "initializeDirectionSecretaryDriveStructure",
     "getStudentGuardians", "saveStudentGuardian", "unlinkStudentGuardian", "uploadStudentDocument", "getStudentDocuments", "updateDocumentStatus", "getPendingDocumentsReport", "grantDocumentExemption", "restoreDocumentVersion", "checkAndNotifyExpiringStudentDocuments",
@@ -659,6 +659,7 @@ function doPost(e) {
       case "saveAcademicRule": result = saveAcademicRule(payload); break;
       case "copyClassSchedules": result = copyClassSchedules(payload); break;
       case "getTeacherTeachingLoad": result = getTeacherTeachingLoad(payload); break;
+      case "saveTeacherWorkLoadPreferences": result = saveTeacherWorkLoadPreferences(payload); break;
       case "recordClassSessionOutcome": result = recordClassSessionOutcome(payload); break;
       case "getTeachingHoursSummary": result = getTeachingHoursSummary(payload); break;
       case "rescheduleCancelledSession": result = rescheduleCancelledSession(payload); break;
@@ -5185,12 +5186,19 @@ function getClassSchedules(payload) {
   return { status: "success", data: schedules };
 }
 
-// [TAREA 3.7] [Fase 3: Planificación Académica y Horarios] - Control de carga lectiva máxima por docente y cálculo de horas semanales frente a grupo.
+// [TAREA-F7-IMP-05] [Fase 7: Planificación Académica, Horarios y Recursos] - Ampliación del control de carga laboral docente por contrato y configuración de preferencias horarias.
 function getTeacherTeachingLoad(payload) {
   const { docenteUserId, maxHorasSemanales, anoId, excludeHorarioId } = payload || {};
   if (!docenteUserId) throw new Error("docenteUserId es requerido.");
 
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const hlSheet = getOrCreateSheet(ss, "HorariosLaborales");
+  const hlRows = hlSheet.getDataRange().getValues().slice(1);
+
+  // Buscar límite personalizado configurado para el docente en HorariosLaborales
+  const docHL = hlRows.find(r => r[7] !== "Inactivo" && String(r[0]).trim() === String(docenteUserId).trim());
+  const customMaxHours = docHL && Number(docHL[5]) > 0 ? Number(docHL[5]) : null;
+
   const horSheet = getOrCreateSheet(ss, "HorariosClase");
   const horRows = horSheet.getDataRange().getValues().slice(1);
 
@@ -5202,6 +5210,7 @@ function getTeacherTeachingLoad(payload) {
   });
 
   let totalMinutosSemanales = 0;
+  const distribucionDiaria = {};
   const bloques = [];
 
   teacherSchedules.forEach(r => {
@@ -5215,6 +5224,8 @@ function getTeacherTeachingLoad(payload) {
 
     if (mins > 0) {
       totalMinutosSemanales += mins;
+      distribucionDiaria[diaSemana] = (distribucionDiaria[diaSemana] || 0) + (mins / 60);
+
       bloques.push({
         horarioId: r[0],
         ofertaId: r[1],
@@ -5227,7 +5238,7 @@ function getTeacherTeachingLoad(payload) {
   });
 
   const totalHorasSemanales = Math.round((totalMinutosSemanales / 60) * 100) / 100;
-  const limiteMaximo = Number(maxHorasSemanales) || 40; // Límite institucional estándar (40 horas lectivas semanales)
+  const limiteMaximo = customMaxHours || Number(maxHorasSemanales) || 40; // Usar límite dinámico por docente si existe, o 40h estándar
   const excedeLimite = totalHorasSemanales > limiteMaximo;
 
   return {
@@ -5237,10 +5248,45 @@ function getTeacherTeachingLoad(payload) {
       totalHorasSemanales,
       totalMinutosSemanales,
       limiteMaximo,
+      limitePersonalizado: Boolean(customMaxHours),
       excedeLimite,
+      distribucionDiaria,
       bloques
     }
   };
+}
+
+function saveTeacherWorkLoadPreferences(payload) {
+  const { docenteUserId, maxHorasSemanales, horaEntrada, horaSalida, diasLaboralesJSON } = payload || {};
+  if (!docenteUserId) throw new Error("docenteUserId es requerido.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "HorariosLaborales");
+  const data = sheet.getDataRange().getValues();
+
+  const idx = data.findIndex(r => String(r[0]).trim() === String(docenteUserId).trim());
+  if (idx !== -1) {
+    if (horaEntrada) sheet.getRange(idx + 1, 4).setValue(horaEntrada);
+    if (horaSalida) sheet.getRange(idx + 1, 5).setValue(horaSalida);
+    if (maxHorasSemanales) sheet.getRange(idx + 1, 6).setValue(maxHorasSemanales);
+    if (diasLaboralesJSON) sheet.getRange(idx + 1, 7).setValue(diasLaboralesJSON);
+    sheet.getRange(idx + 1, 8).setValue("Activo");
+  } else {
+    sheet.appendRow([
+      docenteUserId,
+      "Docente Asignado",
+      "Jornada Completa",
+      horaEntrada || "07:00",
+      horaSalida || "16:00",
+      maxHorasSemanales || 40,
+      diasLaboralesJSON || JSON.stringify(["Lunes", "Martes", "Miércoles", "Jueves", "Viernes"]),
+      "Activo"
+    ]);
+  }
+
+  logStructuredEvent("ACADEMIC", "saveTeacherWorkLoadPreferences", "INFO", "WORKLOAD_PREFERENCES_SAVED", `Límites y preferencias de carga laboral guardadas para docente ${docenteUserId}`, { docenteUserId, maxHorasSemanales }, payload && payload.authRole);
+
+  return { status: "success", message: "Preferencias y límite de carga docente guardados exitosamente." };
 }
 
 // [TAREA 3.6] [Fase 3: Planificación Académica y Horarios] - Integración de horarios con eventos del calendario académico y suspensión de clases.

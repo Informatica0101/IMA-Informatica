@@ -1866,3 +1866,16 @@ Descripción objetiva:
 - Creadas las funciones `saveScheduleScenario` y `getScheduleScenarios` en `backend/academic-service/Code.gs` e integradas en `doPost` y `ROLE_PERMISSIONS`.
 - Incorporado el botón UI "Escenarios Masivos" en `teacher-dashboard.html` y la función `openScheduleScenarioModal` en `js/teacher.js` antecedida por el comentario identificativo `[TAREA-F7-IMP-04]`.
 - Actualizado el estado de [TAREA-F7-IMP-04] a Completado en Pendientes.md.
+
+
+Fecha: 2026-10-26
+Archivos modificados:
+- backend/academic-service/Code.gs (Líneas 171, 662, 5186-5285)
+- teacher-dashboard.html (Línea 546)
+- js/teacher.js (Líneas 880-925)
+- Pendientes.md (Línea 1552)
+Descripción objetiva:
+- Actualizada la función `getTeacherTeachingLoad` en `backend/academic-service/Code.gs` para consultar límites dinámicos personalizados por docente en la hoja `HorariosLaborales` e incorporar desglose de distribución de horas por día.
+- Implementada la función `saveTeacherWorkLoadPreferences` en `backend/academic-service/Code.gs` e integrada en `ROLE_PERMISSIONS` y enrutador `doPost`.
+- Añadido botón UI "Preferencias Carga" en `teacher-dashboard.html` e implementada la función `openTeacherWorkLoadPreferencesModal` en `js/teacher.js` antecedida por la etiqueta identificativa `[TAREA-F7-IMP-05]`.
+- Actualizado el estado de [TAREA-F7-IMP-05] a Completado en Pendientes.md.

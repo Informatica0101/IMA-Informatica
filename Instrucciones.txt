@@ -376,3 +376,4 @@ TAREAS PENDIENTES DE REVISIÓN
 - TAREA-F7-IMP-02: Implementar una matriz visual de planificación y disponibilidad (Matriz unificada multi-perspectiva y filtros por estado)
 - TAREA-F7-IMP-03: Desarrollar una herramienta de resolución asistida de conflictos (Propuesta de aulas y bloques libres alternativos con comparación)
 - TAREA-F7-IMP-04: Incorporar planificación masiva y optimización de horarios (Gestión y almacenamiento de escenarios en borrador)
+- TAREA-F7-IMP-05: Ampliar el control de carga laboral y las preferencias docentes (Configuración de límites de jornada por contrato y preferencias por docente)

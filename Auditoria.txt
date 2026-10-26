@@ -777,3 +777,18 @@ Auditoría inicial de archivos para TAREA-F7-IMP-04:
 
 Hallazgos:
 - La función `generateAutoSchedules` genera directamente filas en `HorariosClase` en estado `Borrador`, pero no cuenta con un aislamiento de escenarios separados por ID, soporte para bloquear bloques existentes ni comparación con el horario vigente antes de la publicación oficial.
+
+
+-------------------------------------------------------------------------------
+FECHA: 2026-10-26
+TAREA: [TAREA-F7-IMP-05] Ampliar el control de carga laboral y las preferencias docentes
+-------------------------------------------------------------------------------
+Auditoría final y verificación de TAREA-F7-IMP-05:
+- backend/academic-service/Code.gs:
+  - `getTeacherTeachingLoad` actualizado para consultar la hoja `HorariosLaborales`, extraer límites dinámicos de horas semanales por docente y calcular el desglose de distribución diaria de horas lectivas.
+  - Creada la función `saveTeacherWorkLoadPreferences` e integrada en `ROLE_PERMISSIONS` y dispatcher `doPost` para persistir jornada, límite de horas semanales y preferencias.
+- teacher-dashboard.html / js/teacher.js:
+  - Agregado el botón UI "Preferencias Carga" en la interfaz de gestión de horarios.
+  - Implementada la función `openTeacherWorkLoadPreferencesModal` antecedida por la etiqueta identificativa `[TAREA-F7-IMP-05]` para capturar y enviar límites y horarios preferidos por docente.
+- Pendientes.md:
+  - Estado actualizado a `[X] Completado`.
