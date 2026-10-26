@@ -443,7 +443,7 @@ FASE 6. EXPEDIENTE INSTITUCIONAL Y CICLO DE VIDA DEL ESTUDIANTE
 
 ---
 
-### [TAREA-F6-015] Validar el rendimiento, la capacidad y la recuperación de la arquitectura completa
+### [X] [TAREA-F6-015] Validar el rendimiento, la capacidad y la recuperación de la arquitectura completa
 - **Origen del Hallazgo:** Reestructuración Arquitectónica / F6-018 (P1 · Pruebas de Integración)
 - **Prioridad:** P1
 - **Severidad/Clasificación:** Alta (Pruebas de carga, escalabilidad e integración total)

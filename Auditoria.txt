@@ -271,3 +271,15 @@ Archivos verificados:
 Resultados de verificación:
 - Registro central de contratos API y dependencias sin centralizar almacenamiento de datos operativos.
 - Detección de llamadas obsoletas y validación previa a la activación de servicios.
+
+===========================================================
+AUDITORÍA DE CÓDIGO - TAREA-F6-015
+===========================================================
+Fecha: 2025-05-18
+Archivos verificados:
+- backend/developer-service/Code.gs
+- Pendientes.md
+
+Resultados de verificación:
+- Suite automatizada de integración y rendimiento ejecutada y validada en el microservicio del desarrollador.
+- Evaluación de latencia de descubrimiento, resiliencia a fallos aislados e idempotencia.

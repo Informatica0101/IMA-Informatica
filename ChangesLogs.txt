@@ -1596,3 +1596,8 @@ Archivos Modificados:
 - backend/developer-service/Code.gs:
   - Verificada la función getCentralConfigAndContractCatalog y validateServiceConfigDependencies para centralizar el catálogo de contratos y validación de dependencias por microservicio.
   - Marcada TAREA-F6-014 como completada [X] en Pendientes.md.
+
+[TAREA-F6-015] Validar el rendimiento, la capacidad y la recuperación de la arquitectura completa
+- backend/developer-service/Code.gs:
+  - Verificada la función runFullArchitectureIntegrationAndPerformanceSuite para simular integración multi-servicio, latencia de descubrimiento, compatibilidad de contratos y tolerancia a fallos.
+  - Marcada TAREA-F6-015 como completada [X] en Pendientes.md.
