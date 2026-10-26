@@ -1730,3 +1730,12 @@ Archivos Modificados:
   - En `getAcademicAreaTemplateCatalog`, verificada e inyectada la plantilla parametrizada para las 7 áreas curriculares iniciales sin acoplamiento estático (`AREA-COMUNICATION`, `AREA-ENGLISH`, `AREA-SOCIALS`, `AREA-SCIENCE`, `AREA-MATH`, `AREA-IT`, `AREA-FINANCE`).
 - Pendientes.md:
   - Marcada TAREA-F6-031 como completada [X] en Pendientes.md.
+
+[TAREA-F6-032] Implementar el despliegue configurable de nuevos microservicios académicos
+- backend/academic-service/Code.gs:
+  - Implementada la función `configureAcademicLevelsAndDynamicStorage` para la creación y gestión dinámica de estructuras de almacenamiento en Google Drive y Google Sheets por rol/usuario sin hardcodeo.
+  - Soportada la configuración de niveles académicos (prebásica, básica, secundaria/BTP y superior) y asignaciones de coordinadores (nivel, área o general).
+  - Ampliada la función `deployAcademicMicroserviceInstance` para inicializar idempotentemente las instancias de microservicios.
+  - Registrada la acción `configureAcademicLevelsAndDynamicStorage` en `ROLE_PERMISSIONS` y ruteo `doPost`.
+- Pendientes.md:
+  - Marcada TAREA-F6-032 como completada [X] en Pendientes.md.

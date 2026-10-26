@@ -505,3 +505,18 @@ Auditoría inicial de archivos para TAREA-F6-031:
   - Se verifica que la función implementa la parametrización dinámica mediante `AreasCurricularesExtensiones` sin condicionales de negocio acoplados.
 - Pendientes.md:
   - Marcada TAREA-F6-031 como completada [X] tras verificación de la plantilla genérica.
+
+-------------------------------------------------------------------------------
+FECHA: Marzo 2026
+TAREA: [TAREA-F6-032] Implementar el despliegue configurable de nuevos microservicios académicos
+-------------------------------------------------------------------------------
+Auditoría inicial de archivos para TAREA-F6-032:
+- backend/academic-service/Code.gs:
+  - Inspeccionadas las funciones `deployAcademicMicroserviceInstance` y `getAcademicMicroserviceDeployments`.
+  - Se verifica que soportan el registro de instancias de microservicios académicos con metadatos de diagnóstico y plantilla.
+  - Para cumplir con los requerimientos adicionales de la TAREA-F6-032 (creación dinámica de carpetas Drive, hojas Spreadsheet, soporte configurable de niveles académicos desde prebásica hasta educación superior/BTP y asignación de coordinadores generales/área/nivel), se creará la función `configureAcademicLevelsAndDynamicStorage` y se actualizará `deployAcademicMicroserviceInstance` con comentarios identificativos de TAREA-F6-032.
+- Pendientes.md:
+  - Inspeccionada la especificación de TAREA-F6-032.
+
+Hallazgos:
+- Se requiere implementar la función de configuración dinámica de niveles académicos y almacenamiento Drive/Sheets sin hardcodeo para completar todos los requerimientos de la TAREA-F6-032.

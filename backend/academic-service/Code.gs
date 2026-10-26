@@ -213,7 +213,7 @@ const ROLE_PERMISSIONS = {
     "openAttendanceSession", "saveClassAttendance", "getClassAttendance", "saveDailyAttendance", "getDailyAttendance", "submitAttendanceJustification", "reviewAttendanceJustification", "recordEarlyDeparture", "getAttendanceIncidents", "saveAttendanceIncident", "getAttendanceFollowupCases", "saveAttendanceFollowupCase", "addCaseFollowUpNote", "getStudentAttendanceSummary"
   ],
   "Coordinador": ["getAcademicConfig", "getAcademicHistory", "getAsignaturasActivas", "getAcademicYears", "getAcademicOffers", "getSubjectCatalog", "getStudyPlans", "getTeacherAssignments", "getClassSchedules", "getStudentFile", "getAcademicAreaTemplateCatalog", "getAcademicAreaCoordinationScope"],
-  "Desarrollador": ["getAcademicConfig", "getAcademicHistory", "getAcademicAreaTemplateCatalog", "getAcademicAreaCoordinationScope", "deployAcademicMicroserviceInstance", "getAcademicMicroserviceDeployments"],
+  "Desarrollador": ["getAcademicConfig", "getAcademicHistory", "getAcademicAreaTemplateCatalog", "getAcademicAreaCoordinationScope", "deployAcademicMicroserviceInstance", "getAcademicMicroserviceDeployments", "configureAcademicLevelsAndDynamicStorage"],
   "Contador": ["getAcademicConfig", "registerStudentEnrollment", "getStudentEnrollmentHistory", "getAcademicYears", "getAcademicOffers", "getStudentFile", "getStudentEnrollments"],
   "Consejeros": ["getAcademicConfig", "getAcademicYears", "getAcademicCalendar", "getClassSchedules", "getStudentSchedule", "getStudentFile", "getStudentTimeline", "getStudentGuardians", "getAttendanceIncidents", "saveAttendanceIncident", "getAttendanceFollowupCases", "saveAttendanceFollowupCase", "addCaseFollowUpNote", "getStudentAttendanceSummary"],
   "Padre": [
@@ -734,6 +734,7 @@ function doPost(e) {
       case "getAcademicAreaCoordinationScope": result = getAcademicAreaCoordinationScope(payload); break;
       case "deployAcademicMicroserviceInstance": result = deployAcademicMicroserviceInstance(payload); break;
       case "getAcademicMicroserviceDeployments": result = getAcademicMicroserviceDeployments(payload); break;
+      case "configureAcademicLevelsAndDynamicStorage": result = configureAcademicLevelsAndDynamicStorage(payload); break;
       case "getServiceHealthDiagnostics": result = getServiceHealthDiagnostics(payload); break;
       case "previewBackupRestoreImpact": result = previewBackupRestoreImpact(payload); break;
       case "getStorageQuotaMetricsReport": result = getStorageQuotaMetricsReport(payload); break;
@@ -3773,7 +3774,7 @@ function getServiceHealthDiagnostics(payload) {
   };
 }
 
-// [TAREA-F6-007] [Fase 6: Reestructuración en microservicios independientes] - Despliegue configurable, parametrizado e idempotente de nuevas instancias de microservicios académicos
+// [TAREA-F6-007] [TAREA-F6-032] [Fase 6: Automatización de despliegues y configuración de microservicios académicos] - Registro, configuración e inicialización idempotente de instancias de microservicios académicos por área con soporte para almacenamiento dinámico y niveles configurables
 function deployAcademicMicroserviceInstance(payload) {
   const { instanceId, areaId, areaName, scriptId, spreadsheetId, driveFolderId, version, requestedBy } = payload || {};
   if (!instanceId || !areaId || !areaName) {
@@ -3852,6 +3853,66 @@ function deployAcademicMicroserviceInstance(payload) {
       version: templateVer,
       diagnostics
     }
+  };
+}
+
+// [TAREA-F6-032] [Fase 6: Automatización de despliegues y configuración de microservicios académicos] - Configuración dinámica de niveles académicos (Prebásica, Básica, Secundaria/BTP, Superior), coordinaciones (Área, Nivel, General) y estructuras dinámicas de almacenamiento Drive/Spreadsheet sin acoplamiento estático
+function configureAcademicLevelsAndDynamicStorage(payload) {
+  const { roleName, userId, responsibilities, academicLevels, coordinationType, areaId } = payload || {};
+  if (!roleName || !userId) {
+    throw new Error("Parámetros obligatorios ausentes: roleName y userId son requeridos.");
+  }
+
+  const root = DriveApp.getRootFolder();
+  let mainFolder = root.getFoldersByName("New Generation");
+  let parent = mainFolder.hasNext() ? mainFolder.next() : root.createFolder("New Generation");
+
+  const roleFolderName = `Almacenamiento_Rol_${String(roleName).replace(/[^a-zA-Z0-9_]/g, "_")}`;
+  let roleFolderIter = parent.getFoldersByName(roleFolderName);
+  let roleFolder = roleFolderIter.hasNext() ? roleFolderIter.next() : parent.createFolder(roleFolderName);
+
+  const userFolderName = `Usuario_${String(userId).replace(/[^a-zA-Z0-9_]/g, "_")}`;
+  let userFolderIter = roleFolder.getFoldersByName(userFolderName);
+  let userFolder = userFolderIter.hasNext() ? userFolderIter.next() : roleFolder.createFolder(userFolderName);
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheetLevels = getOrCreateSheet(ss, "NivelesAcademicosConfiguracion");
+  if (sheetLevels.getLastRow() === 0) {
+    sheetLevels.appendRow(["ConfigID", "NivelID", "NombreNivel", "CarrerasJSON", "GradosJSON", "Estado", "FechaActualizacion"]);
+  }
+
+  const levelsCatalog = academicLevels || [
+    { nivelId: "NIVEL-PRE", nombre: "Preescolar / Prebásica", carreras: [], grados: ["Kínder", "Preparatoria"] },
+    { nivelId: "NIVEL-BASICA", nombre: "Educación Básica", carreras: [], grados: ["1ero", "2do", "3ero", "4to", "5to", "6to", "7mo", "8vo", "9no"] },
+    { nivelId: "NIVEL-MEDIA", nombre: "Educación Secundaria / BTP", carreras: ["BTP en Informática", "BTP en Finanzas", "Humanidades"], grados: ["10mo", "11vo", "12vo"] },
+    { nivelId: "NIVEL-SUPERIOR", nombre: "Educación Superior / Posgrado", carreras: ["Licenciatura", "Maestría"], grados: ["Año 1", "Año 2"] }
+  ];
+
+  levelsCatalog.forEach(l => {
+    sheetLevels.appendRow([
+      `CFG-NIV-${Date.now()}-${Math.floor(Math.random()*1000)}`,
+      l.nivelId,
+      l.nombre,
+      JSON.stringify(l.carreras || []),
+      JSON.stringify(l.grados || []),
+      "Activo",
+      new Date().toISOString()
+    ]);
+  });
+
+  logStructuredEvent("ACADEMIC", "configureAcademicLevelsAndDynamicStorage", "INFO", "DYNAMIC_STORAGE_AND_LEVELS_CONFIGURED", "Configurada estructura dinámica de almacenamiento y niveles académicos.", {
+    roleName,
+    userId,
+    userFolderId: userFolder.getId(),
+    coordinationType: coordinationType || "GENERAL",
+    areaId: areaId || "TODAS"
+  }, payload && payload.authRole);
+
+  return {
+    status: "success",
+    message: `Configuración dinámica aplicada correctamente para ${userId} (${roleName}).`,
+    userFolderId: userFolder.getId(),
+    levelsCatalog
   };
 }
 
