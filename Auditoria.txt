@@ -656,3 +656,21 @@ Auditoría inicial de archivos para TAREA-F6-018:
 
 Hallazgos:
 - Se requiere integrar en el frontend (`dashboard-secretaria.html` y `js/secretary.js`) los controladores y vistas de usuario para invocar `registerLegalCustodyRestriction` y `getStudentGuardianConsolidatedList` del backend.
+
+
+-------------------------------------------------------------------------------
+FECHA: 2026-03-29
+TAREA: [TAREA-F6-020] Mejorar la búsqueda global y la navegación operativa del expediente
+-------------------------------------------------------------------------------
+Auditoría inicial de archivos para TAREA-F6-020:
+- backend/user-service/Code.gs:
+  - Inspeccionada la función `searchGlobalOmnibox`.
+  - Se optimizará la búsqueda para aceptar filtros parametrizados (`anoLectivo`, `grado`, `seccion`, `estadoExpediente`), resaltar coincidencias exactas (`exactMatch`) y exponer identificadores secundarios para evitar confusión entre homónimos.
+- js/ui-common.js:
+  - Inspeccionadas las funciones `executeOmniboxSearch` y `handleOmniboxResultClick`.
+  - Se actualizará la renderización de resultados de búsqueda para soportar insignias de coincidencia exacta, filtros contextuales e identificadores secundarios.
+- Pendientes.md:
+  - Se actualizará el estado de la TAREA-F6-020 a `[X] Completado`.
+
+Hallazgos:
+- La función de búsqueda en backend y la interfaz en frontend requieren la incorporación de los parámetros de filtrado avanzado y distinción visual de coincidencias exactas para cumplir los criterios CA-106 a CA-111 de la TAREA-F6-020.

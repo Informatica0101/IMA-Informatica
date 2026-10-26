@@ -681,10 +681,14 @@ window.loadStudentGuardianConsolidatedList = async function(expedienteId) {
     const container = document.getElementById('modal-adm-tutors-container');
     if (!container || !expedienteId) return;
 
+    // Limpiar previo consolidado si existe para evitar duplicación en re-renderizados
+    const existingList = container.querySelector('.consolidated-tutors-wrapper');
+    if (existingList) existingList.remove();
+
     try {
         const res = await fetchApi('USER', 'getStudentGuardianConsolidatedList', { expedienteId });
         if (res && res.status === 'success' && Array.isArray(res.tutores) && res.tutores.length > 0) {
-            let html = `<div class="space-y-2 pt-2 border-t border-gray-100">
+            let html = `<div class="consolidated-tutors-wrapper space-y-2 pt-2 border-t border-gray-100">
                 <p class="text-[10px] font-bold text-gray-700 uppercase tracking-wider">Consolidado de Tutores y Restricciones Judiciales:</p>`;
             res.tutores.forEach(t => {
                 const restBadge = t.restriccionActiva

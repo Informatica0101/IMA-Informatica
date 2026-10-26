@@ -1798,3 +1798,14 @@ Descripción objetiva:
 - Agregado botón UI y controlador `promptRegisterCustodyRestriction` para el registro de restricciones judiciales de custodia legal sobre expedientes estudiantiles.
 - Implementada la función `loadStudentGuardianConsolidatedList` para consultar y renderizar la lista consolidada de tutores con categorización de estado, vinculación y distintivo de restricción judicial activa.
 - Actualizado el estado de [TAREA-F6-018] a Completado en Pendientes.md.
+
+
+Fecha: 2026-03-29
+Archivos modificados:
+- backend/user-service/Code.gs (Líneas 6078-6150)
+- js/ui-common.js (Líneas 5010-5040)
+- Pendientes.md (Línea 645)
+Descripción objetiva:
+- Actualizada la función `searchGlobalOmnibox` en `backend/user-service/Code.gs` para admitir parámetros de filtrado opcionales (`filterAnoLectivo`, `filterGrado`, `filterSeccion`, `filterEstado`) y priorizar ordenamiento por coincidencias exactas.
+- Modificada la función `executeOmniboxSearch` en `js/ui-common.js` para enviar parámetros de filtrado e inyectar insignia visual de coincidencia exacta (`exactMatch`).
+- Actualizado el estado de [TAREA-F6-020] a Completado en Pendientes.md.

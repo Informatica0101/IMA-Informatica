@@ -371,3 +371,4 @@ TAREAS PENDIENTES DE REVISIÓN
 - Fase 3: Experiencia de Usuario, Navegación Unificada y Diseño Centrado en las Personas - Sistema de Diseño Institucional, Portal Familiar Prioritario, Navegación por Rol, Ayudas Contextuales y Lenguaje No Técnico
 - Implementación de Código para Fase 2 (Arquitectura, Identidad Persona/Cuenta, Errores Estandarizados e Idempotencia) y Fase 3 (UX, Tokens de Diseño, Portal Familiar, Ayudas Contextuales y Navegación Unificada)
 - TAREA-F6-018: Completar la gestión de autorizaciones, responsables legales y contactos de emergencia (Restricciones de Custodia Legal y Consolidado de Tutores)
+- TAREA-F6-020: Mejorar la búsqueda global y la navegación operativa del expediente (Filtros contextuales omnibox y prioridad por coincidencia exacta)

@@ -6074,17 +6074,19 @@ function purgeStructuredLogs(payload) {
   }
 }
 
-// [TAREA-F6-020] [Fase 6: Expediente Institucional y Ciclo de Vida] - Búsqueda global omnibox multi-entidad por expediente, DNI, código, nombres con enmascaramiento de PII y estado de matrícula
+// [TAREA-F6-020] [Fase 6: Expediente Institucional y Ciclo de Vida] - Búsqueda global omnibox multi-entidad por expediente, DNI, código, nombres con enmascaramiento de PII, filtros contextuales y estado de matrícula
 function searchGlobalOmnibox(payload) {
   try {
     if (!payload) return { status: "error", message: "Payload no provisto." };
     const normQuery = normalizeString(payload.query || "");
-    if (normQuery.length < 2) {
+    if (normQuery.length < 2 && !payload.filterGrado && !payload.filterAnoLectivo && !payload.filterEstado) {
       return { status: "success", results: [] };
     }
     const verifiedRole = getUserVerifiedRole(payload);
     const results = [];
     const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+
+    const { filterAnoLectivo, filterGrado, filterSeccion, filterEstado } = payload || {};
 
     if (["Administrador", "Desarrollador", "Director", "Subdirector", "Secretaría", "Profesor", "Coordinador", "Consejeros", "Contador", "RecursosHumanos"].indexOf(verifiedRole) !== -1) {
       const isPrivileged = ["Administrador", "Director", "Secretaría", "Secretaria", "Subdirector", "Desarrollador"].indexOf(verifiedRole) !== -1;
@@ -6113,13 +6115,22 @@ function searchGlobalOmnibox(payload) {
         const normExpId = normalizeString(expId);
         const normName = normalizeString(nombreComp);
 
-        if (normExpId.indexOf(normQuery) !== -1 || normCode.indexOf(normQuery) !== -1 || normDni.indexOf(normQuery) !== -1 || normName.indexOf(normQuery) !== -1) {
-          const mat = matData.find(m => String(m[2]).trim() === studentUserId.trim());
-          const periodoMat = mat ? String(mat[6] || "2026") : (expRow[8] || "N/A");
-          const gradoMat = mat ? String(mat[4] || "") : (expRow[5] || "");
-          const seccionMat = mat ? String(mat[5] || "") : (expRow[6] || "");
+        const mat = matData.find(m => String(m[2]).trim() === studentUserId.trim());
+        const periodoMat = mat ? String(mat[6] || "2026") : (expRow[8] || "N/A");
+        const gradoMat = mat ? String(mat[4] || "") : (expRow[5] || "");
+        const seccionMat = mat ? String(mat[5] || "") : (expRow[6] || "");
 
+        // Aplicar filtros opcionales por año lectivo, grado, sección o estado del expediente
+        if (filterAnoLectivo && String(periodoMat).trim() !== String(filterAnoLectivo).trim()) return;
+        if (filterGrado && normalizeString(gradoMat).indexOf(normalizeString(filterGrado)) === -1) return;
+        if (filterSeccion && normalizeString(seccionMat) !== normalizeString(filterSeccion)) return;
+        if (filterEstado && normalizeString(estadoExp) !== normalizeString(filterEstado)) return;
+
+        const matchesQuery = !normQuery || (normExpId.indexOf(normQuery) !== -1 || normCode.indexOf(normQuery) !== -1 || normDni.indexOf(normQuery) !== -1 || normName.indexOf(normQuery) !== -1);
+
+        if (matchesQuery) {
           const maskedDni = dniVal ? (isPrivileged ? dniVal : (dniVal.slice(0, 4) + "****" + dniVal.slice(-2))) : "N/A";
+          const isExact = normCode === normQuery || normExpId === normQuery || normDni === normQuery;
 
           results.push({
             id: studentUserId || expId,
@@ -6131,10 +6142,13 @@ function searchGlobalOmnibox(payload) {
             icon: "fa-id-card",
             type: "student_file",
             targetModule: "student_file",
-            exactMatch: normCode === normQuery || normExpId === normQuery || normDni === normQuery
+            exactMatch: isExact
           });
         }
       });
+
+      // Ordenar priorizando coincidencias exactas arriba
+      results.sort((a, b) => (b.exactMatch ? 1 : 0) - (a.exactMatch ? 1 : 0));
 
       if (uData.length > 0) {
         for (let i = 0; i < uData.length; i++) {
