@@ -170,7 +170,7 @@ const ROLE_PERMISSIONS = {
     "getAcademicCalendar", "createCalendarEvent", "getClassSchedules", "createClassSchedule", "deleteClassSchedule", "getAcademicRules", "saveAcademicRule", "getDepartmentAcademicPlanning", "assignDepartmentHead", "getCurricularAnalyticsReport", "getReusableResourceCatalog", "manageReusableResource", "getCurricularEquivalences", "executeCurricularMigration", "registerCurricularAreaExtension", "runCurricularAreaServiceTests", "toggleCurricularAreaStatus", "validateApiContractsTestSuite", "getInstitutionalCatalog", "validateCatalogReference", "generateInstitutionalUUID", "validateInstitutionalIdentifier", "auditInstitutionalIdentifierCollisions", "runConcurrencyAndConsistencySuite", "getPaginatedAcademicHistory", "reconcileRestoredDataIntegrity", "evaluateTransactionalStorageMigrationNeed",
     "getClassroomResources", "saveClassroomResource", "getStudentSchedule",
     "createAdmissionRequest", "getAdmissionRequests", "updateAdmissionStatus", "reopenAdmissionRequest", "convertAdmissionToStudent", "scheduleAdmissionInterview", "getAdmissionInterviews", "recordInterviewOutcome", "saveAdmissionEvaluation", "getAdmissionEvaluations", "addToWaitlist", "getWaitlist", "reorderWaitlist", "offerWaitlistSlot", "respondToWaitlistSlot", "resolveAdmissionDuplicate", "getAdmissionAnalyticsReport",
-    "getStudentFile", "getStudentFileSummary", "updateStudentFile", "getStudentTimeline", "findDuplicateStudents", "mergeStudentFiles", "getMergePreviewComparison", "unmergeStudentFiles",
+    "getStudentFile", "getStudentFileSummary", "updateStudentFile", "getStudentTimeline", "findDuplicateStudents", "mergeStudentFiles", "getMergePreviewComparison", "unmergeStudentFiles", "getStudentFileAdministrativeReports",
     "getStudentGuardians", "saveStudentGuardian", "unlinkStudentGuardian", "uploadStudentDocument", "getStudentDocuments", "updateDocumentStatus", "getPendingDocumentsReport", "grantDocumentExemption", "restoreDocumentVersion", "checkAndNotifyExpiringStudentDocuments",
     "getPendingDocumentsReport", "grantDocumentExemption", "createStudentEnrollment", "getStudentEnrollments", "renewStudentEnrollment", "checkEnrollmentCapacity",
     "changeStudentSection", "recordStudentTransfer", "recordStudentWithdrawal", "processStudentReentry", "processStudentPromotion", "processStudentGraduation", "updateStudentLifecycleStatus", "reconcileStudentLifecycleState", "runStudentLifecycleRegressionSuite", "getAcademicAreaTemplateCatalog", "getAcademicAreaCoordinationScope", "deployAcademicMicroserviceInstance", "getAcademicMicroserviceDeployments", "previewBackupRestoreImpact", "getStorageQuotaMetricsReport", "reconcileDocumentStorageIntegrity", "reconcileInstitutionalModulesMatrix",
@@ -193,7 +193,7 @@ const ROLE_PERMISSIONS = {
     "createAcademicOffer", "getTeacherAssignments", "assignTeacherToClass", "createTeacherSubstitution", "getAcademicCalendar", "createCalendarEvent", "getClassSchedules", "createClassSchedule", "deleteClassSchedule", "copyClassSchedules", "getTeacherTeachingLoad", "generateAutoSchedules", "recordClassSessionOutcome", "getTeachingHoursSummary", "rescheduleCancelledSession", "getPendingSessionRecoveries", "publishClassSchedules", "getIndividualCalendar", "syncAcademicScheduleIntegrity", "getAcademicAuditLogs", "getReusableResourceCatalog", "manageReusableResource",
     "getClassroomResources", "saveClassroomResource", "getStudentSchedule",
     "createAdmissionRequest", "getAdmissionRequests", "updateAdmissionStatus", "convertAdmissionToStudent", "scheduleAdmissionInterview", "getAdmissionInterviews", "recordInterviewOutcome", "saveAdmissionEvaluation", "getAdmissionEvaluations", "addToWaitlist", "getWaitlist", "reorderWaitlist", "offerWaitlistSlot", "respondToWaitlistSlot", "resolveAdmissionDuplicate",
-    "getStudentFile", "getStudentFileSummary", "updateStudentFile", "getStudentTimeline", "findDuplicateStudents", "getMergePreviewComparison", "unmergeStudentFiles",
+    "getStudentFile", "getStudentFileSummary", "updateStudentFile", "getStudentTimeline", "findDuplicateStudents", "getMergePreviewComparison", "unmergeStudentFiles", "getStudentFileAdministrativeReports",
     "getStudentGuardians", "saveStudentGuardian", "unlinkStudentGuardian", "uploadStudentDocument", "getStudentDocuments", "updateDocumentStatus",
     "getPendingDocumentsReport", "grantDocumentExemption", "createStudentEnrollment", "getStudentEnrollments", "renewStudentEnrollment", "checkEnrollmentCapacity",
     "changeStudentSection", "recordStudentTransfer", "recordStudentWithdrawal", "processStudentReentry", "processStudentPromotion", "processStudentGraduation", "updateStudentLifecycleStatus", "reconcileStudentLifecycleState", "runStudentLifecycleRegressionSuite",
@@ -707,6 +707,7 @@ function doPost(e) {
       case "mergeStudentFiles": result = mergeStudentFiles(payload); break;
       case "getMergePreviewComparison": result = getMergePreviewComparison(payload); break;
       case "unmergeStudentFiles": result = unmergeStudentFiles(payload); break;
+      case "getStudentFileAdministrativeReports": result = getStudentFileAdministrativeReports(payload); break;
       case "getStudentGuardians": result = getStudentGuardians(payload); break;
       case "saveStudentGuardian": result = saveStudentGuardian(payload); break;
       case "unlinkStudentGuardian": result = unlinkStudentGuardian(payload); break;
@@ -6800,6 +6801,124 @@ function unmergeStudentFiles(payload) {
     sourceExpedienteId: sourceExpedienteId,
     nuevoEstado: "Activo",
     message: `Expediente ${sourceExpedienteId} restaurado a estado Activo y desvinculado correctamente.`
+  };
+}
+
+// [TAREA-F6-026] [Fase 6: Expediente Institucional y Ciclo de Vida] - Catálogo de informes administrativos con exportación controlada y trazabilidad de descargas PII
+function getStudentFileAdministrativeReports(payload) {
+  const { reporteTipo, anoLectivo, grado, seccion, estadoFilter, fechaInicio, fechaFin, exportLog } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const now = new Date();
+
+  const expRows = getOrCreateSheet(ss, "ExpedientesEstudiantes").getDataRange().getValues().slice(1);
+  const matRows = getOrCreateSheet(ss, "Matriculas").getDataRange().getValues().slice(1);
+  const movRows = getOrCreateSheet(ss, "MovimientosEstudiante").getDataRange().getValues().slice(1);
+  const docRows = getOrCreateSheet(ss, "DocumentosEstudiante").getDataRange().getValues().slice(1);
+  const userRows = ss.getSheetByName("Usuarios") ? ss.getSheetByName("Usuarios").getDataRange().getValues().slice(1) : [];
+
+  let reportData = [];
+  const type = reporteTipo || "ESTADO_EXPEDIENTES";
+
+  if (type === "ESTADO_EXPEDIENTES") {
+    reportData = expRows.filter(r => {
+      const estado = String(r[7] || "Activo");
+      return !estadoFilter || estado.toLowerCase() === String(estadoFilter).toLowerCase();
+    }).map(r => {
+      const expId = String(r[0]);
+      const userId = String(r[1]);
+      const uMatch = userRows.find(u => String(u[0]).trim() === userId.trim());
+      const matMatch = matRows.find(m => String(m[2]).trim() === userId.trim());
+
+      return {
+        expedienteId: expId,
+        codigoInstitucional: r[2],
+        nombreCompleto: uMatch ? uMatch[1] : ("Estudiante " + expId),
+        estadoExpediente: r[7] || "Activo",
+        grado: matMatch ? matMatch[4] : "N/A",
+        seccion: matMatch ? matMatch[5] : "N/A",
+        periodoLectivo: matMatch ? matMatch[6] : "2026",
+        fechaCreacion: r[8]
+      };
+    });
+  } else if (type === "MATRICULAS_POR_PERIODO") {
+    reportData = matRows.filter(m => {
+      const matchesAno = !anoLectivo || String(m[6]).trim() === String(anoLectivo).trim();
+      const matchesGrado = !grado || String(m[4]).toLowerCase() === String(grado).toLowerCase();
+      const matchesSeccion = !seccion || String(m[5]).toLowerCase() === String(seccion).toLowerCase();
+      const matchesEstado = !estadoFilter || String(m[8]).toLowerCase() === String(estadoFilter).toLowerCase();
+      return matchesAno && matchesGrado && matchesSeccion && matchesEstado;
+    }).map(m => ({
+      matriculaId: m[0],
+      fecha: m[1],
+      userId: m[2],
+      alumno: m[3],
+      grado: m[4],
+      seccion: m[5],
+      periodoLectivo: m[6],
+      tipoMatricula: m[7],
+      estadoMatricula: m[8]
+    }));
+  } else if (type === "REINCORPORACIONES_Y_MOVIMIENTOS") {
+    reportData = movRows.filter(m => {
+      const matchesAno = !anoLectivo || String(m[3]).trim() === String(anoLectivo).trim();
+      return matchesAno;
+    }).map(m => ({
+      movimientoId: m[0],
+      expedienteId: m[1],
+      periodo: m[3],
+      tipoMovimiento: m[4],
+      gradoOrigen: m[5],
+      seccionOrigen: m[6],
+      gradoDestino: m[7],
+      seccionDestino: m[8],
+      fechaEfectiva: m[9],
+      motivo: m[10]
+    }));
+  } else if (type === "DOCUMENTOS_PENDIENTES_VENCIDOS") {
+    reportData = docRows.filter(d => {
+      const estado = String(d[9] || "");
+      const fechaVencRaw = d[8];
+      const isExpired = fechaVencRaw && new Date(fechaVencRaw) < now;
+      return estado === "EnRevision" || estado === "Pendiente" || isExpired;
+    }).map(d => ({
+      documentoId: d[0],
+      expedienteId: d[1],
+      tipoDocumento: d[3],
+      nombreArchivo: d[4],
+      fechaRecepcion: d[7],
+      fechaVencimiento: d[8],
+      estadoRevision: d[9]
+    }));
+  }
+
+  // Auditoría obligatoria si se solicitó o ejecutó exportación con PII
+  if (exportLog) {
+    try {
+      const histSheet = getOrCreateSheet(ss, "HistorialCambiosEntidad");
+      histSheet.appendRow([
+        `HIST-${Date.now()}`,
+        "ReportesAdministrativos",
+        type,
+        "EXPORTACION_MASIVA_PII",
+        `Exportación CSV/Excel realizada (${reportData.length} registros)`,
+        (payload && payload.authUserId) || "Secretaría",
+        now.toISOString(),
+        `Filtros aplicados: anoLectivo=${anoLectivo || 'Todos'}, grado=${grado || 'Todos'}, estado=${estadoFilter || 'Todos'}`
+      ]);
+    } catch (_) {}
+
+    logStructuredEvent("ACADEMIC", "getStudentFileAdministrativeReports", "WARN", "REPORT_MASS_EXPORTED", `Reporte ${type} exportado por ${payload && payload.authUserId || 'Secretaría'}. Registros: ${reportData.length}`, {
+      type, totalRegistros: reportData.length, anoLectivo, grado, estadoFilter
+    }, payload && payload.authRole);
+  }
+
+  return {
+    status: "success",
+    reporteTipo: type,
+    filtrosAplicados: { anoLectivo, grado, seccion, estadoFilter },
+    totalRegistros: reportData.length,
+    reporte: reportData,
+    fechaGeneracion: now.toISOString()
   };
 }
 

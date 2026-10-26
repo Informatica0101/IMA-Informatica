@@ -416,3 +416,17 @@ Resultados de verificación:
 - Implementación de `getMergePreviewComparison` para la pre-visualización comparativa lado a lado entre expedientes origen y destino con resaltado de contradicciones.
 - Creación de `unmergeStudentFiles` para el procedimiento administrativo de desvinculación y restitución de expedientes fusionados por error conservando trazabilidad.
 - Controladores UI `previewStudentMergeComparison` y `unmergeStudentFilesAction` incorporados en `js/secretary.js`.
+
+===========================================================
+AUDITORÍA DE CÓDIGO - TAREA-F6-026
+===========================================================
+Fecha: 2026-03-29
+Archivos verificados:
+- backend/academic-service/Code.gs
+- js/secretary.js
+- Pendientes.md
+
+Resultados de verificación:
+- Implementación de `getStudentFileAdministrativeReports` para la generación de reportes ejecutivos (estado de expedientes, matrículas, reincorporaciones, documentos faltantes/vencidos e inconsistencias) con filtros multi-criterio.
+- Registro en la bitácora de trazabilidad de la consulta/exportación de información PII sensible.
+- Creación de controladores UI `loadStudentAdministrativeReport` y `exportAdministrativeReportCSV` en `js/secretary.js`.

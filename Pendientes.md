@@ -804,7 +804,7 @@ FASE 6. EXPEDIENTE INSTITUCIONAL Y CICLO DE VIDA DEL ESTUDIANTE
 
 ---
 
-### [TAREA-F6-026] Incorporar informes administrativos y exportación controlada del expediente
+### [X] [TAREA-F6-026] Incorporar informes administrativos y exportación controlada del expediente
 - **Origen del Hallazgo:** `AUDITORIA_FASE_6_EXPEDIENTE_CICLO_VIDA.md` / Tarea 13 (P2 · Información Institucional)
 - **Prioridad:** P2
 - **Severidad/Clasificación:** Medio (Informes ejecutivos y exportación de datos)
@@ -828,7 +828,7 @@ FASE 6. EXPEDIENTE INSTITUCIONAL Y CICLO DE VIDA DEL ESTUDIANTE
   - CA-135: La exportación CSV coincide exactamente con la grilla de datos visualizada.
   - CA-136: La descarga de información sensible queda registrada en la bitácora de trazabilidad.
   - CA-137: Usuarios sin permisos no pueden ejecutar exportaciones masivas.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completado
 
 ---
 

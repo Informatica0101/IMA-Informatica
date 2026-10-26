@@ -1680,3 +1680,12 @@ Archivos Modificados:
   - Creados los controladores UI `window.previewStudentMergeComparison` y `window.unmergeStudentFilesAction`.
 - Pendientes.md:
   - Marcada TAREA-F6-025 como completada [X] en Pendientes.md.
+
+[TAREA-F6-026] Incorporar informes administrativos y exportación controlada del expediente
+- backend/academic-service/Code.gs:
+  - Implementada la función `getStudentFileAdministrativeReports` para la generación de reportes ejecutivos con filtros multi-criterio y auditoría de descargas PII.
+  - Registrada la acción `getStudentFileAdministrativeReports` en `ROLE_PERMISSIONS` y ruteo `doPost`.
+- js/secretary.js:
+  - Creadas las funciones `window.loadStudentAdministrativeReport` y `window.exportAdministrativeReportCSV` para la consulta y exportación a CSV.
+- Pendientes.md:
+  - Marcada TAREA-F6-026 como completada [X] en Pendientes.md.

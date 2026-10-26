@@ -451,6 +451,61 @@ window.recordInterviewOutcomeAction = async function(entrevistaId, estado) {
     }
 };
 
+// [TAREA-F6-026] [Fase 6: Expediente Institucional y Ciclo de Vida] - Consulta y exportación controlada de informes administrativos del expediente
+window.loadStudentAdministrativeReport = async function(reporteTipo, filters) {
+    try {
+        const payload = Object.assign({ reporteTipo: reporteTipo || 'ESTADO_EXPEDIENTES' }, filters || {});
+        const res = await window.fetchApi('ACADEMIC', 'getStudentFileAdministrativeReports', payload);
+        if (res && res.status === 'success' && Array.isArray(res.reporte)) {
+            window._lastAdminReportData = res.reporte;
+            window._lastAdminReportType = reporteTipo;
+            return res.reporte;
+        } else {
+            alert("Error al consultar reporte: " + ((res && res.message) || "Sin datos disponibles."));
+            return [];
+        }
+    } catch (err) {
+        alert("Error al conectar para consultar el reporte: " + err.message);
+        return [];
+    }
+};
+
+window.exportAdministrativeReportCSV = async function(reporteTipo, filters) {
+    try {
+        const payload = Object.assign({ reporteTipo: reporteTipo || 'ESTADO_EXPEDIENTES', exportLog: true }, filters || {});
+        const res = await window.fetchApi('ACADEMIC', 'getStudentFileAdministrativeReports', payload);
+
+        if (!res || res.status !== 'success' || !Array.isArray(res.reporte) || res.reporte.length === 0) {
+            alert("No hay registros disponibles para exportar con los filtros seleccionados.");
+            return;
+        }
+
+        const data = res.reporte;
+        const keys = Object.keys(data[0]);
+        const headers = keys.join(",");
+        const rows = data.map(item => keys.map(k => `"${String(item[k] || '').replace(/"/g, '""')}"`).join(","));
+
+        const csvContent = [headers, ...rows].join("\n");
+        const blob = new Blob(["\uFEFF" + csvContent], { type: "text/csv;charset=utf-8;" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `Reporte_Administrativo_${reporteTipo}_${new Date().toISOString().slice(0, 10)}.csv`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+
+        if (typeof showToast === 'function') {
+            showToast("Reporte administrativo exportado exitosamente con registro de auditoría PII.", "success");
+        } else {
+            alert("Reporte administrativo exportado exitosamente con registro de auditoría PII.");
+        }
+    } catch (err) {
+        alert("Error al exportar reporte administrativo: " + err.message);
+    }
+};
+
 // [TAREA-F6-025] [Fase 6: Expediente Institucional y Ciclo de Vida] - Pre-visualización comparativa previa a fusión de expedientes y desvinculación administrativa
 window.previewStudentMergeComparison = async function(targetExpedienteId, sourceExpedienteId) {
     if (!targetExpedienteId || !sourceExpedienteId) {
