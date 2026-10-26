@@ -682,7 +682,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
 
-            const res = await fetchApi('ACADEMIC', 'createClassSchedule', {
+            // [TAREA-F7-IMP-01] Soporte de excepciones justificadas al asignar horarios
+            let res = await fetchApi('ACADEMIC', 'createClassSchedule', {
                 ofertaId,
                 diaSemana,
                 horaInicio,
@@ -698,7 +699,31 @@ document.addEventListener('DOMContentLoaded', () => {
                 throw new Error(res.message);
             }
         } catch (err) {
-            alert("Conflicto / Error en asignación de horario:\n" + err.message);
+            if (err.message && err.message.includes("Conflicto de horario detectado") && confirm("Conflicto detectado: " + err.message + "\n\n¿Desea registrar una excepción justificada para autorizar esta asignación?")) {
+                const excepcionJustificacion = prompt("Ingrese el motivo / justificación explícita de la excepción:", "");
+                if (excepcionJustificacion && excepcionJustificacion.trim().length > 5) {
+                    try {
+                        const resExc = await fetchApi('ACADEMIC', 'createClassSchedule', {
+                            ofertaId,
+                            diaSemana,
+                            horaInicio,
+                            horaFin,
+                            aulaCodigo,
+                            docenteUserId,
+                            excepcionJustificacion
+                        });
+                        if (resExc.status === 'success') {
+                            alert("¡Horario asignado con excepción explícitamente configurada!");
+                            loadMasterSchedules();
+                            return;
+                        }
+                    } catch (excErr) {
+                        alert("Error al procesar excepción: " + excErr.message);
+                    }
+                }
+            } else {
+                alert("Conflicto / Error en asignación de horario:\n" + err.message);
+            }
         } finally {
             btn.disabled = false;
             btn.innerHTML = '<i class="fas fa-check mr-1"></i> Publicar Horario';

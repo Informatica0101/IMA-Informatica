@@ -372,3 +372,4 @@ TAREAS PENDIENTES DE REVISIÓN
 - Implementación de Código para Fase 2 (Arquitectura, Identidad Persona/Cuenta, Errores Estandarizados e Idempotencia) y Fase 3 (UX, Tokens de Diseño, Portal Familiar, Ayudas Contextuales y Navegación Unificada)
 - TAREA-F6-018: Completar la gestión de autorizaciones, responsables legales y contactos de emergencia (Restricciones de Custodia Legal y Consolidado de Tutores)
 - TAREA-F6-020: Mejorar la búsqueda global y la navegación operativa del expediente (Filtros contextuales omnibox y prioridad por coincidencia exacta)
+- TAREA-F7-IMP-01: Ampliar la validación integral de horarios y asignaciones (Soporte de excepciones justificadas y motor de traslapes en checkScheduleConflict)

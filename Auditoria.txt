@@ -704,3 +704,21 @@ Inyección y estructuración de 25 nuevas tareas derivadas de la Auditoría Func
 - Registradas las tareas TAREA-F7-IMP-01 a TAREA-F7-IMP-25 clasificadas por prioridad (P1, P2, P3).
 - Todas las tareas cuentan con la plantilla de metadatos estandarizada: Origen del Hallazgo, Prioridad, Severidad/Clasificación, Archivos Involucrados, Dependencias Expuestas, Descripción del Alcance, Criterios de Aceptación y Estado [ ] Pendiente.
 - Conservadas intactas las tareas existentes de la Fase 6 sin corrupción de registros.
+
+
+-------------------------------------------------------------------------------
+FECHA: 2026-10-26
+TAREA: [TAREA-F7-IMP-01] Ampliar la validación integral de horarios y asignaciones
+-------------------------------------------------------------------------------
+Auditoría inicial de archivos para TAREA-F7-IMP-01:
+- backend/academic-service/Code.gs:
+  - Inspeccionadas las funciones `checkScheduleConflict` y `createClassSchedule`.
+  - Se ampliará `checkScheduleConflict` para soportar la verificación de `ExcepcionesHorarios` (excepciones justificadas expresamente configuradas), estructuración de advertencias no bloqueantes frente a conflictos críticos y retorno de detalles enriquecidos `{ hasConflict, isWarning, reason, details }`.
+- js/teacher.js:
+  - Inspeccionado el controlador UI de guardado de horarios.
+  - Se actualizará para enviar `excepcionJustificacion` al backend cuando aplique.
+- Pendientes.md:
+  - Se actualizará el estado de la TAREA-F7-IMP-01 a `[X] Completado`.
+
+Hallazgos:
+- La función `checkScheduleConflict` cuenta con validaciones básicas de traslape, pero requiere soportar excepciones explícitamente configuradas en la hoja `ExcepcionesHorarios` y retornar información estructurada de advertencias vs conflictos críticos para cumplir con CA-F7-01 a CA-F7-08.

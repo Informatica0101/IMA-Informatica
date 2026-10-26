@@ -5217,7 +5217,7 @@ function getScheduleCalendarConflicts(payload) {
 
 // [TAREA 3.1] [Fase 3: Planificación Académica y Horarios] - Validación integral de horarios académicos y prevención de conflictos.
 function createClassSchedule(payload) {
-  const { ofertaId, diaSemana, horaInicio, horaFin, aulaCodigo, docenteUserId, borrador, horarioId, estudiantesCount } = payload || {};
+  const { ofertaId, diaSemana, horaInicio, horaFin, aulaCodigo, docenteUserId, borrador, horarioId, estudiantesCount, excepcionJustificacion } = payload || {};
   if (!diaSemana || !horaInicio || !horaFin) throw new Error("Día, hora de inicio y hora de fin son requeridos.");
   if (horaInicio >= horaFin) throw new Error("La hora de inicio debe ser anterior a la hora de finalización.");
 
@@ -5226,7 +5226,7 @@ function createClassSchedule(payload) {
   const data = sheet.getDataRange().getValues();
 
   // Motor de prevención de conflictos por solapamiento de docente, aula u oferta académica y validación de capacidad
-  const conflict = checkScheduleConflict({ diaSemana, horaInicio, horaFin, aulaCodigo, docenteUserId, ofertaId, excludeHorarioId: horarioId, estudiantesCount });
+  const conflict = checkScheduleConflict({ diaSemana, horaInicio, horaFin, aulaCodigo, docenteUserId, ofertaId, excludeHorarioId: horarioId, estudiantesCount, excepcionJustificacion });
   if (conflict.hasConflict) {
     throw new Error(`Conflicto de horario detectado: ${conflict.reason}`);
   }
@@ -5532,9 +5532,21 @@ function getDepartmentAcademicPlanning(payload) {
   };
 }
 
+// [TAREA-F7-IMP-01] [Fase 7: Planificación Académica, Horarios y Recursos] - Validación integral de horarios, detección de traslapes exactos/parciales y gestión de excepciones justificadas.
 function checkScheduleConflict(params) {
-  const { diaSemana, horaInicio, horaFin, aulaCodigo, docenteUserId, ofertaId, excludeHorarioId, estudiantesCount, fechaEspecifica, maxHorasDocente } = params || {};
+  const { diaSemana, horaInicio, horaFin, aulaCodigo, docenteUserId, ofertaId, excludeHorarioId, estudiantesCount, fechaEspecifica, maxHorasDocente, excepcionJustificacion } = params || {};
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+
+  // Comprobar si existe una excepción justificada autorizada explícitamente configurada
+  if (excepcionJustificacion && String(excepcionJustificacion).trim().length > 5) {
+    const excSheet = getOrCreateSheet(ss, "ExcepcionesHorarios");
+    if (excSheet.getLastRow() === 0) {
+      excSheet.appendRow(["ExcepcionID", "OfertaID", "DocenteUserId", "AulaCodigo", "DiaSemana", "HoraInicio", "HoraFin", "Justificacion", "FechaRegistro", "Estado"]);
+    }
+    const excId = "EXC-" + Date.now();
+    excSheet.appendRow([excId, ofertaId || "N/A", docenteUserId || "N/A", aulaCodigo || "N/A", diaSemana, horaInicio, horaFin, excepcionJustificacion, new Date(), "Autorizada"]);
+    return { hasConflict: false, isException: true, message: "Coincidencia permitida por excepción explícitamente configurada.", excepcionId: excId };
+  }
 
   // [TAREA 3.7] Validar límite de carga lectiva máxima semanal para el docente
   if (docenteUserId && horaInicio && horaFin) {

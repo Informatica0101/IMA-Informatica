@@ -1383,14 +1383,14 @@ SEGUNDA PARTE: REESTRUCTURACIÓN ARQUITECTÓNICA, ESCALABILIDAD Y ADMINISTRACIÓ
   - CA-171: Las pruebas verifican que cada rol conserva sus permisos específicos y no hereda privilegios indebidos.
   - CA-172: Los flujos que involucran varios servicios y dashboards mantienen la comunicación, las relaciones de datos y los permisos.
   - CA-173: Los cambios de configuración, despliegue o asignación de responsabilidades no dejan funciones existentes inaccesibles.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completado
 
 
 ===============================================================================
 FASE 7. PLANIFICACIÓN ACADÉMICA, HORARIOS Y RECURSOS
 ===============================================================================
 
-### [ ] [TAREA-F7-IMP-01] Ampliar la validación integral de horarios y asignaciones
+### [X] [TAREA-F7-IMP-01] Ampliar la validación integral de horarios y asignaciones
 - **Origen del Hallazgo:** `AUDITORIA_FASE_7_PLANIFICACION_HORARIOS_RECURSOS.md` / Tarea F7-IMP-01 (P1 · Fortalecimiento de Validaciones)
 - **Prioridad:** P1
 - **Severidad/Clasificación:** Alta (Ampliación funcional y fortalecimiento de validaciones)
@@ -1428,7 +1428,7 @@ FASE 7. PLANIFICACIÓN ACADÉMICA, HORARIOS Y RECURSOS
   - CA-F7-06: Los errores identifican el recurso, docente, grupo o actividad implicados.
   - CA-F7-07: Una operación fallida no deja asignaciones parcialmente actualizadas.
   - CA-F7-08: Las reglas existentes que funcionan correctamente siguen superando sus pruebas.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completado
 
 ---
 

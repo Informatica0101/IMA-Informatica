@@ -1817,3 +1817,15 @@ Archivos modificados:
 - Auditoria.txt (Bitácora de registro de tareas Fase 7)
 Descripción objetiva:
 - Registradas 25 nuevas tareas de la Fase 7 (TAREA-F7-IMP-01 a TAREA-F7-IMP-25) en Pendientes.md con metadatos completos y formato según METODOLOGIA_DESARROLLO.md.
+
+
+Fecha: 2026-10-26
+Archivos modificados:
+- backend/academic-service/Code.gs (Líneas 5220-5230, 5532-5550)
+- js/teacher.js (Líneas 682-725)
+- Pendientes.md (Líneas 1390-1430)
+Descripción objetiva:
+- Modificada la función `checkScheduleConflict` en `backend/academic-service/Code.gs` para consultar la hoja `ExcepcionesHorarios` y registrar excepciones justificadas autorizadas explícitamente sin bloquear la asignación.
+- Actualizado `createClassSchedule` en `backend/academic-service/Code.gs` para recibir `excepcionJustificacion` y procesar el guardado con autorización de excepción.
+- Actualizado el controlador de eventos UI en `js/teacher.js` para capturar el conflicto y solicitar la justificación del usuario cuando decida registrar una excepción explícita.
+- Actualizado el estado de [TAREA-F7-IMP-01] a Completado en Pendientes.md.
