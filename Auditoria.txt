@@ -320,3 +320,18 @@ Archivos verificados:
 Resultados de verificación:
 - Vista cronológica auditable del ciclo de vida del expediente enriquecida con trazabilidad de fusiones de expedientes (`FusionesExpedientes`).
 - Incorporada la función `window.exportLifeCycleAuditTrailCSV` para exportación en formato CSV del historial cronológico respetando minimización de PII y autorizaciones por rol.
+
+===========================================================
+AUDITORÍA DE CÓDIGO - TAREA-F6-020
+===========================================================
+Fecha: 2026-03-29
+Archivos verificados:
+- backend/user-service/Code.gs
+- js/ui-common.js
+- Pendientes.md
+
+Resultados de verificación:
+- Búsqueda global (`searchGlobalOmnibox`) con soporte para expedienteId, código de estudiante, DNI, nombres y apellidos.
+- Normalización de diacríticos, mayúsculas y minúsculas sin alterar datos persistidos.
+- Inclusión del estado institucional actual y periodo de matrícula en los resultados de la búsqueda.
+- Enmascaramiento de PII sensible (DNI parcial) según permisos del rol consultante y selección explícita requerida ante coincidencias ambiguas.

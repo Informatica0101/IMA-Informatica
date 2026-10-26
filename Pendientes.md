@@ -642,7 +642,7 @@ FASE 6. EXPEDIENTE INSTITUCIONAL Y CICLO DE VIDA DEL ESTUDIANTE
   - CA-109: Un estudiante retirado o graduado puede localizarse indicando su estado real.
   - CA-110: Los fallos de conexión no se presentan como cero resultados.
   - CA-111: La navegación mantiene su funcionamiento en pantallas móviles y de escritorio.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completado
 
 ---
 
