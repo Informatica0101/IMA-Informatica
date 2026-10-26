@@ -387,3 +387,18 @@ Resultados de verificación:
 - Implementación de `getStudentFileSummary` para la generación de resúmenes institucionales del expediente orientados según el rol del usuario (Secretaría, Docente, Estudiante/Padre).
 - Filtrado y enmascaramiento contextual de secciones administrativas e información PII sensible para roles no administrativos.
 - Incorporación de renderizado dinámico en frontend con marca de tiempo de actualización y manejo tolerante a fallos de sub-módulos.
+
+===========================================================
+AUDITORÍA DE CÓDIGO - TAREA-F6-024
+===========================================================
+Fecha: 2026-03-29
+Archivos verificados:
+- backend/user-service/Code.gs
+- backend/academic-service/Code.gs
+- js/secretary.js
+- Pendientes.md
+
+Resultados de verificación:
+- Refuerzo de `sendMultiChannelNotification` con verificación de revocación o restricción de tutor/vínculo familiar e higienización de PII sensible en canales externos.
+- Creación de `checkAndNotifyExpiringStudentDocuments` en backend académico para alertas preventivas de vencimiento documental con clave de deduplicación.
+- Implementación de `getStudentProcedureNotificationLogs` y panel de seguimiento de trámites en `js/secretary.js`.

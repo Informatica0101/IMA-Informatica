@@ -744,7 +744,7 @@ FASE 6. EXPEDIENTE INSTITUCIONAL Y CICLO DE VIDA DEL ESTUDIANTE
 
 ---
 
-### [TAREA-F6-024] Incorporar notificaciones y seguimiento de trámites del expediente
+### [X] [TAREA-F6-024] Incorporar notificaciones y seguimiento de trámites del expediente
 - **Origen del Hallazgo:** `AUDITORIA_FASE_6_EXPEDIENTE_CICLO_VIDA.md` / Tarea 11 (P2 · Automatización Administrativa)
 - **Prioridad:** P2
 - **Severidad/Clasificación:** Medio (Notificaciones y trámites)
@@ -771,7 +771,7 @@ FASE 6. EXPEDIENTE INSTITUCIONAL Y CICLO DE VIDA DEL ESTUDIANTE
   - CA-127: Reintentar un trámite no genera múltiples notificaciones idénticas.
   - CA-128: Un tutor revocado no recibe notificaciones posteriores.
   - CA-129: El estado de entrega se registra sin bloquear el trámite si el canal falla.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completado
 
 ---
 

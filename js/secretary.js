@@ -451,6 +451,41 @@ window.recordInterviewOutcomeAction = async function(entrevistaId, estado) {
     }
 };
 
+// [TAREA-F6-024] [Fase 6: Expediente Institucional y Ciclo de Vida] - Carga y renderizado del historial de notificaciones y seguimiento de trámites en el expediente
+window.loadStudentProcedureNotificationLogs = async function(expedienteId, containerId) {
+    const container = document.getElementById(containerId || 'stfile-notifications-container');
+    if (!container || !expedienteId) return;
+
+    container.innerHTML = '<div class="text-slate-400 text-xs py-4 text-center"><i class="fa-solid fa-spinner fa-spin mr-1"></i>Cargando historial de notificaciones...</div>';
+
+    try {
+        const res = await window.fetchApi('USER', 'getStudentProcedureNotificationLogs', { expedienteId });
+        const logs = (res && res.status === 'success' && Array.isArray(res.logs)) ? res.logs : [];
+
+        if (logs.length === 0) {
+            container.innerHTML = '<div class="text-slate-400 text-xs py-4 text-center font-semibold">No se han registrado notificaciones ni alertas para este expediente.</div>';
+            return;
+        }
+
+        container.innerHTML = logs.map(log => `
+            <div class="p-3 bg-slate-50 border border-slate-200 rounded-xl space-y-1 mb-2">
+                <div class="flex items-center justify-between">
+                    <span class="font-bold text-xs text-slate-800">${log.titulo || 'Notificación de Trámite'}</span>
+                    <span class="text-[10px] px-2 py-0.5 rounded-full font-bold ${log.estadoEntrega === 'Entregado' ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'}">${log.estadoEntrega}</span>
+                </div>
+                <p class="text-xs text-slate-600">${log.mensaje || ''}</p>
+                <div class="flex items-center justify-between text-[10px] text-slate-400 pt-1 border-t border-slate-100">
+                    <span>Categoría: ${log.categoria || 'Expediente'}</span>
+                    <span>${log.fechaEmision ? new Date(log.fechaEmision).toLocaleString() : 'N/A'}</span>
+                </div>
+            </div>
+        `).join('');
+    } catch (err) {
+        console.error('Error al cargar notificaciones de expediente:', err);
+        container.innerHTML = '<div class="text-amber-600 text-xs py-4 text-center">No se pudo recuperar la bitácora de notificaciones.</div>';
+    }
+};
+
 // [TAREA-F6-019] [Fase 6: Expediente Institucional y Ciclo de Vida] - Exportación del historial de trazabilidad del estudiante a formato CSV
 window.exportLifeCycleAuditTrailCSV = function(timelineEvents, studentCode) {
     if (!Array.isArray(timelineEvents) || timelineEvents.length === 0) {

@@ -171,7 +171,7 @@ const ROLE_PERMISSIONS = {
     "getClassroomResources", "saveClassroomResource", "getStudentSchedule",
     "createAdmissionRequest", "getAdmissionRequests", "updateAdmissionStatus", "reopenAdmissionRequest", "convertAdmissionToStudent", "scheduleAdmissionInterview", "getAdmissionInterviews", "recordInterviewOutcome", "saveAdmissionEvaluation", "getAdmissionEvaluations", "addToWaitlist", "getWaitlist", "reorderWaitlist", "offerWaitlistSlot", "respondToWaitlistSlot", "resolveAdmissionDuplicate", "getAdmissionAnalyticsReport",
     "getStudentFile", "getStudentFileSummary", "updateStudentFile", "getStudentTimeline", "findDuplicateStudents", "mergeStudentFiles",
-    "getStudentGuardians", "saveStudentGuardian", "unlinkStudentGuardian", "uploadStudentDocument", "getStudentDocuments", "updateDocumentStatus", "getPendingDocumentsReport", "grantDocumentExemption", "restoreDocumentVersion",
+    "getStudentGuardians", "saveStudentGuardian", "unlinkStudentGuardian", "uploadStudentDocument", "getStudentDocuments", "updateDocumentStatus", "getPendingDocumentsReport", "grantDocumentExemption", "restoreDocumentVersion", "checkAndNotifyExpiringStudentDocuments",
     "getPendingDocumentsReport", "grantDocumentExemption", "createStudentEnrollment", "getStudentEnrollments", "renewStudentEnrollment", "checkEnrollmentCapacity",
     "changeStudentSection", "recordStudentTransfer", "recordStudentWithdrawal", "processStudentReentry", "processStudentPromotion", "processStudentGraduation", "updateStudentLifecycleStatus", "reconcileStudentLifecycleState", "runStudentLifecycleRegressionSuite", "getAcademicAreaTemplateCatalog", "getAcademicAreaCoordinationScope", "deployAcademicMicroserviceInstance", "getAcademicMicroserviceDeployments", "previewBackupRestoreImpact", "getStorageQuotaMetricsReport", "reconcileDocumentStorageIntegrity", "reconcileInstitutionalModulesMatrix",
     "openAttendanceSession", "saveClassAttendance", "getClassAttendance", "saveDailyAttendance", "getDailyAttendance", "submitAttendanceJustification", "reviewAttendanceJustification", "recordEarlyDeparture", "getAttendanceIncidents", "saveAttendanceIncident", "getAttendanceFollowupCases", "saveAttendanceFollowupCase", "addCaseFollowUpNote", "getStudentAttendanceSummary",
@@ -736,6 +736,7 @@ function doPost(e) {
       case "reconcileDocumentStorageIntegrity": result = reconcileDocumentStorageIntegrity(payload); break;
       case "reconcileInstitutionalModulesMatrix": result = reconcileInstitutionalModulesMatrix(payload); break;
       case "restoreDocumentVersion": result = restoreDocumentVersion(payload); break;
+      case "checkAndNotifyExpiringStudentDocuments": result = checkAndNotifyExpiringStudentDocuments(payload); break;
 
       // Endpoints Fase 7 - Asistencia y Seguimiento Estudiantil
       case "openAttendanceSession": result = openAttendanceSession(payload); break;
@@ -7196,6 +7197,68 @@ function getPendingDocumentsReport(payload) {
   report.esDocumentalmenteCompleto = report.requisitosFaltantesObligatorios.length === 0 && report.documentosVencidos.length === 0 && report.documentosRechazados.length === 0;
 
   return { status: "success", report };
+}
+
+// [TAREA-F6-024] [Fase 6: Expediente Institucional y Ciclo de Vida] - Escaneo de documentos próximos a vencer y generación de alertas preventivas de notificación con clave de deduplicación
+function checkAndNotifyExpiringStudentDocuments(payload) {
+  const { diasUmbral } = payload || {};
+  const umbral = diasUmbral || 30;
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const rows = getOrCreateSheet(ss, "DocumentosEstudiante").getDataRange().getValues().slice(1);
+  const now = new Date();
+
+  let notifiedCount = 0;
+  const alerts = [];
+
+  rows.forEach(r => {
+    const docId = String(r[0]);
+    const expId = String(r[1] || "");
+    const tipoDoc = String(r[3] || "Documento");
+    const nombreArch = String(r[4] || "Adjunto");
+    const fechaVencRaw = r[8];
+    const estadoRev = String(r[9] || "");
+
+    if (fechaVencRaw) {
+      const fechaVenc = new Date(fechaVencRaw);
+      if (!isNaN(fechaVenc.getTime())) {
+        const diffDays = Math.ceil((fechaVenc - now) / (1000 * 60 * 60 * 24));
+        if (diffDays <= umbral && estadoRev !== "Rechazado" && estadoRev !== "Exento") {
+          const dedupKey = `DUE-DOC-${docId}-${fechaVenc.toISOString().slice(0, 10)}`;
+          const titulo = diffDays < 0 ? `Documento Vencido: ${tipoDoc}` : `Documento Próximo a Vencer: ${tipoDoc}`;
+          const mensaje = diffDays < 0
+            ? `El documento ${tipoDoc} (${nombreArch}) del expediente ${expId} venció el ${fechaVenc.toLocaleDateString()}. Por favor solicite la actualización.`
+            : `El documento ${tipoDoc} (${nombreArch}) del expediente ${expId} vencerá en ${diffDays} días (${fechaVenc.toLocaleDateString()}).`;
+
+          alerts.push({ docId, expId, tipoDoc, diffDays, dedupKey, titulo, mensaje });
+
+          if (typeof sendMultiChannelNotification === "function") {
+            try {
+              sendMultiChannelNotification({
+                userId: expId,
+                titulo: titulo,
+                mensaje: mensaje,
+                tipo: "AlertaVencimientoDocumental",
+                categoria: "Expediente",
+                deduplicationKey: dedupKey
+              });
+              notifiedCount++;
+            } catch (_) {}
+          }
+        }
+      }
+    }
+  });
+
+  logStructuredEvent("ACADEMIC", "checkAndNotifyExpiringStudentDocuments", "INFO", "EXPIRING_DOCUMENTS_NOTIFIED", `Escaneo de vencimientos completado. Documentos en riesgo: ${alerts.length}, Notificaciones enviadas: ${notifiedCount}`, { umbral, totalAlerts: alerts.length, notifiedCount }, payload && payload.authRole);
+
+  return {
+    status: "success",
+    umbralDias: umbral,
+    totalDocumentosEvaluados: rows.length,
+    documentosEnRiesgo: alerts.length,
+    notificacionesDespachadas: notifiedCount,
+    alertas: alerts
+  };
 }
 
 // [TAREA-F6-017] [Fase 6: Expediente Institucional y Ciclo de Vida] - Concesión de exención documental justificada para expedientes o trámites específicos

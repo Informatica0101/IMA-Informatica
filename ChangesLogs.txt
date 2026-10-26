@@ -1658,3 +1658,15 @@ Archivos Modificados:
   - Implementada la función `window.renderStudentInstitutionalSummary` para la presentación del resumen institucional del expediente con sello de hora de actualización y renderizado tolerante a fallos.
 - Pendientes.md:
   - Marcada TAREA-F6-023 como completada [X] en Pendientes.md.
+
+[TAREA-F6-024] Incorporar notificaciones y seguimiento de trámites del expediente
+- backend/user-service/Code.gs:
+  - Implementada la función `getStudentProcedureNotificationLogs` para consultar el historial de notificaciones y seguimiento de trámites del expediente.
+  - Registrada la acción `getStudentProcedureNotificationLogs` en `ROLE_PERMISSIONS` y ruteo `doPost`.
+- backend/academic-service/Code.gs:
+  - Implementada la función `checkAndNotifyExpiringStudentDocuments` para el escaneo automático y notificación preventiva de documentos próximos a vencer con clave de deduplicación.
+  - Registrada la acción `checkAndNotifyExpiringStudentDocuments` en `ROLE_PERMISSIONS` y ruteo `doPost`.
+- js/secretary.js:
+  - Implementado el controlador UI `window.loadStudentProcedureNotificationLogs` para renderizar las notificaciones de trámites del expediente.
+- Pendientes.md:
+  - Marcada TAREA-F6-024 como completada [X] en Pendientes.md.
