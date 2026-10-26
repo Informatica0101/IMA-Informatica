@@ -679,7 +679,7 @@ FASE 6. EXPEDIENTE INSTITUCIONAL Y CICLO DE VIDA DEL ESTUDIANTE
 
 ---
 
-### [TAREA-F6-022] Ampliar la gestión de documentos con versiones, integridad y recuperación controlada
+### [X] [TAREA-F6-022] Ampliar la gestión de documentos con versiones, integridad y recuperación controlada
 - **Origen del Hallazgo:** `AUDITORIA_FASE_6_EXPEDIENTE_CICLO_VIDA.md` / Tarea 9 (P2 · Protección Documental)
 - **Prioridad:** P2
 - **Severidad/Clasificación:** Medio (Gestión documental avanzada y versiones)
@@ -1138,9 +1138,10 @@ SEGUNDA PARTE: REESTRUCTURACIÓN ARQUITECTÓNICA, ESCALABILIDAD Y ADMINISTRACIÓ
 
 ---
 
-### [TAREA-F6-033] Crear el microservicio central del desarrollador y el registro de servicios
+### [X] [TAREA-F6-033] Crear el microservicio central del desarrollador y el registro de servicios
 - **Origen del Hallazgo:** F6-011 / Administración y supervisión centralizada
 - **Prioridad:** P1
+- **Estado:** [X] Completado
 - **Severidad/Clasificación:** Alta (Plano de control central)
 - **Archivos Involucrados:** Microservicio del desarrollador, dashboard del desarrollador, registro central y todos los servicios registrados.
 - **Descripción del Alcance:**

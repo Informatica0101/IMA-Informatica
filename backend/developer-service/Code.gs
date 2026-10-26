@@ -371,8 +371,7 @@ function executeOperationalCommand(payload) {
   };
 }
 
-// [TAREA-F6-008] [Fase 6: Reestructuración en microservicios independientes] - Consulta del registro central de microservicios, recursos y versiones
-// [TAREA-F6-029] [Fase 6: Reestructuración en microservicios independientes] - Registro centralizado de microservicios con descriptores desacoplados y aislamiento de almacenamiento
+// [TAREA-F6-008] [TAREA-F6-029] [TAREA-F6-033] [Fase 6: Microservicio Central del Desarrollador] - Registro central de servicios con identificadores estables, versionado, contrato común correlationId y aislamiento operativo
 function getCentralServiceRegistry(payload) {
   const defaultServices = [
     { serviceId: "SVC-USER-01", name: "User Service", type: "IDENTITY", state: "Activo", version: "v8.4.0", responsibilities: ["Auth", "Users", "Roles"] },
@@ -427,7 +426,7 @@ function auditInterServiceCalls(payload) {
   };
 }
 
-// [TAREA-F6-008] [Fase 6: Reestructuración en microservicios independientes] - Administración de permisos multi-rol por usuario con vigencia y área asignada
+// [TAREA-F6-008] [TAREA-F6-033] [Fase 6: Microservicio Central del Desarrollador] - Administración de usuarios con múltiples roles simultáneos, asignaciones por área/subárea y validación en backend
 function manageUserMultiRolePermissions(payload) {
   const { userId, roles, assignedAreas } = payload || {};
   if (!userId) throw new Error("userId es requerido.");

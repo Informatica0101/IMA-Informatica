@@ -1739,3 +1739,9 @@ Archivos Modificados:
   - Registrada la acción `configureAcademicLevelsAndDynamicStorage` en `ROLE_PERMISSIONS` y ruteo `doPost`.
 - Pendientes.md:
   - Marcada TAREA-F6-032 como completada [X] en Pendientes.md.
+
+[TAREA-F6-033] Crear el microservicio central del desarrollador y el registro de servicios
+- backend/developer-service/Code.gs:
+  - Verificada la implementación del plano de control central (`getCentralServiceRegistry`, `auditInterServiceCalls`, `manageUserMultiRolePermissions`), incorporando la trazabilidad por `correlationId`, la diferenciación de estados operativos vs administrativos y la gestión de permisos multi-rol por usuario y área.
+- Pendientes.md:
+  - Marcada TAREA-F6-033 como completada [X] en Pendientes.md.
