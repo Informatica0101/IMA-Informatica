@@ -479,3 +479,18 @@ Auditoría inicial de archivos para TAREA-F6-029:
 
 Hallazgos:
 - La arquitectura de microservicios está estructurada pero se requiere formalizar la función `getServiceDescriptor` en `js/config.js` e integrarla en `js/api.js` y `backend/developer-service/Code.gs` para completar el requerimiento de desacoplamiento e independencia de microservicios de TAREA-F6-029.
+
+-------------------------------------------------------------------------------
+FECHA: Marzo 2026
+TAREA: [TAREA-F6-030] Crear los microservicios administrativos y financieros con separación por responsabilidades
+-------------------------------------------------------------------------------
+Auditoría inicial de archivos para TAREA-F6-030:
+- backend/accounting-service/Code.gs:
+  - Inspeccionada la función `initializeFinancialDriveStructure` y la estructura de carpetas de Drive para Administración Financiera.
+  - Se verifica que inicializa `Administracion_Financiera` con subcarpetas `Contabilidad`, `Recursos_Humanos`, `Facturacion_Recibos`, `Inventarios_Tienda` y `Bancos_Caja`.
+  - Para cumplir TAREA-F6-030, se actualizará `initializeFinancialDriveStructure` para incluir explícitamente el comentario de TAREA-F6-030 y garantizar la separación de subcarpetas documentales de RRHH (`Expedientes_Laborales`, `Contratos_Permisos`, `Evaluaciones_Desempeno`) y Contabilidad/Cuentas por Cobrar/Cuentas por Pagar.
+- Pendientes.md:
+  - Inspeccionada la especificación de TAREA-F6-030.
+
+Hallazgos:
+- La función `initializeFinancialDriveStructure` cumple con la inicialización de carpetas de Drive pero requiere actualizar su bloque con la identificación explícita de TAREA-F6-030 y asegurar la separación completa de subcarpetas documentales entre Recursos Humanos y Contabilidad/Cobros.

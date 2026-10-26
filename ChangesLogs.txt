@@ -1714,3 +1714,11 @@ Archivos Modificados:
   - En `getCentralServiceRegistry`, actualizado el catálogo central con descriptores desacoplados y aislamiento de almacenamiento, incorporando el servicio DEVELOPER.
 - Pendientes.md:
   - Marcada TAREA-F6-029 como completada [X] en Pendientes.md.
+
+[TAREA-F6-030] Crear los microservicios administrativos y financieros con separación por responsabilidades
+- backend/accounting-service/Code.gs:
+  - En `initializeFinancialDriveStructure`, aislada la estructura jerárquica de subcarpetas documentales entre Recursos Humanos (Expedientes_Laborales, Planillas_y_Nomena, Contratos_y_Permisos, Evaluaciones_Desempeno) y Contabilidad/Cuentas por Cobrar/Cuentas por Pagar.
+- js/config.js:
+  - Inyectada la documentación del mapa de microservicios compartidos por departamento en `window.DEPARTMENT_SERVICES_MAP`.
+- Pendientes.md:
+  - Marcada TAREA-F6-030 como completada [X] en Pendientes.md.

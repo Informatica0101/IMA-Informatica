@@ -1,4 +1,4 @@
-// [TAREA-05] [Fase 1 - Arquitectura de Servicios y Cuentas] - Registro centralizado de microservicios por departamento, URLs de despliegue, versiones y contratos.
+// [TAREA-05] [TAREA-F6-030] [Fase 6: Microservicios Administrativos y Financieros con separación por responsabilidades] - Mapa de servicios por departamento con soporte para microservicio compartido Dirección/Secretaría y microservicio financiero-administrativo modular.
 window.SERVICE_VERSIONS = {
   USER: '1.0.0',
   ACADEMIC: '1.0.0',
