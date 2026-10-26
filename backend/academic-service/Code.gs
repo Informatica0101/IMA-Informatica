@@ -170,7 +170,7 @@ const ROLE_PERMISSIONS = {
     "getAcademicCalendar", "createCalendarEvent", "getClassSchedules", "createClassSchedule", "deleteClassSchedule", "getAcademicRules", "saveAcademicRule", "getDepartmentAcademicPlanning", "assignDepartmentHead", "getCurricularAnalyticsReport", "getReusableResourceCatalog", "manageReusableResource", "getCurricularEquivalences", "executeCurricularMigration", "registerCurricularAreaExtension", "runCurricularAreaServiceTests", "toggleCurricularAreaStatus", "validateApiContractsTestSuite", "getInstitutionalCatalog", "validateCatalogReference", "generateInstitutionalUUID", "validateInstitutionalIdentifier", "auditInstitutionalIdentifierCollisions", "runConcurrencyAndConsistencySuite", "getPaginatedAcademicHistory", "reconcileRestoredDataIntegrity", "evaluateTransactionalStorageMigrationNeed",
     "getClassroomResources", "saveClassroomResource", "getStudentSchedule",
     "createAdmissionRequest", "getAdmissionRequests", "updateAdmissionStatus", "reopenAdmissionRequest", "convertAdmissionToStudent", "scheduleAdmissionInterview", "getAdmissionInterviews", "recordInterviewOutcome", "saveAdmissionEvaluation", "getAdmissionEvaluations", "addToWaitlist", "getWaitlist", "reorderWaitlist", "offerWaitlistSlot", "respondToWaitlistSlot", "resolveAdmissionDuplicate", "getAdmissionAnalyticsReport",
-    "getStudentFile", "getStudentFileSummary", "updateStudentFile", "getStudentTimeline", "findDuplicateStudents", "mergeStudentFiles",
+    "getStudentFile", "getStudentFileSummary", "updateStudentFile", "getStudentTimeline", "findDuplicateStudents", "mergeStudentFiles", "getMergePreviewComparison", "unmergeStudentFiles",
     "getStudentGuardians", "saveStudentGuardian", "unlinkStudentGuardian", "uploadStudentDocument", "getStudentDocuments", "updateDocumentStatus", "getPendingDocumentsReport", "grantDocumentExemption", "restoreDocumentVersion", "checkAndNotifyExpiringStudentDocuments",
     "getPendingDocumentsReport", "grantDocumentExemption", "createStudentEnrollment", "getStudentEnrollments", "renewStudentEnrollment", "checkEnrollmentCapacity",
     "changeStudentSection", "recordStudentTransfer", "recordStudentWithdrawal", "processStudentReentry", "processStudentPromotion", "processStudentGraduation", "updateStudentLifecycleStatus", "reconcileStudentLifecycleState", "runStudentLifecycleRegressionSuite", "getAcademicAreaTemplateCatalog", "getAcademicAreaCoordinationScope", "deployAcademicMicroserviceInstance", "getAcademicMicroserviceDeployments", "previewBackupRestoreImpact", "getStorageQuotaMetricsReport", "reconcileDocumentStorageIntegrity", "reconcileInstitutionalModulesMatrix",
@@ -193,7 +193,7 @@ const ROLE_PERMISSIONS = {
     "createAcademicOffer", "getTeacherAssignments", "assignTeacherToClass", "createTeacherSubstitution", "getAcademicCalendar", "createCalendarEvent", "getClassSchedules", "createClassSchedule", "deleteClassSchedule", "copyClassSchedules", "getTeacherTeachingLoad", "generateAutoSchedules", "recordClassSessionOutcome", "getTeachingHoursSummary", "rescheduleCancelledSession", "getPendingSessionRecoveries", "publishClassSchedules", "getIndividualCalendar", "syncAcademicScheduleIntegrity", "getAcademicAuditLogs", "getReusableResourceCatalog", "manageReusableResource",
     "getClassroomResources", "saveClassroomResource", "getStudentSchedule",
     "createAdmissionRequest", "getAdmissionRequests", "updateAdmissionStatus", "convertAdmissionToStudent", "scheduleAdmissionInterview", "getAdmissionInterviews", "recordInterviewOutcome", "saveAdmissionEvaluation", "getAdmissionEvaluations", "addToWaitlist", "getWaitlist", "reorderWaitlist", "offerWaitlistSlot", "respondToWaitlistSlot", "resolveAdmissionDuplicate",
-    "getStudentFile", "getStudentFileSummary", "updateStudentFile", "getStudentTimeline", "findDuplicateStudents",
+    "getStudentFile", "getStudentFileSummary", "updateStudentFile", "getStudentTimeline", "findDuplicateStudents", "getMergePreviewComparison", "unmergeStudentFiles",
     "getStudentGuardians", "saveStudentGuardian", "unlinkStudentGuardian", "uploadStudentDocument", "getStudentDocuments", "updateDocumentStatus",
     "getPendingDocumentsReport", "grantDocumentExemption", "createStudentEnrollment", "getStudentEnrollments", "renewStudentEnrollment", "checkEnrollmentCapacity",
     "changeStudentSection", "recordStudentTransfer", "recordStudentWithdrawal", "processStudentReentry", "processStudentPromotion", "processStudentGraduation", "updateStudentLifecycleStatus", "reconcileStudentLifecycleState", "runStudentLifecycleRegressionSuite",
@@ -705,6 +705,8 @@ function doPost(e) {
       case "getStudentTimeline": result = getStudentTimeline(payload); break;
       case "findDuplicateStudents": result = findDuplicateStudents(payload); break;
       case "mergeStudentFiles": result = mergeStudentFiles(payload); break;
+      case "getMergePreviewComparison": result = getMergePreviewComparison(payload); break;
+      case "unmergeStudentFiles": result = unmergeStudentFiles(payload); break;
       case "getStudentGuardians": result = getStudentGuardians(payload); break;
       case "saveStudentGuardian": result = saveStudentGuardian(payload); break;
       case "unlinkStudentGuardian": result = unlinkStudentGuardian(payload); break;
@@ -6702,6 +6704,103 @@ function mergeStudentFiles(payload) {
   logStructuredEvent("ACADEMIC", "mergeStudentFiles", "WARN", "FILES_MERGED", `Expediente ${sourceExpedienteId} fusionado en ${targetExpedienteId}`, { targetExpedienteId, sourceExpedienteId, motivo }, payload && payload.authRole);
 
   return { status: "success", message: `Expedientes fusionados correctamente. ${sourceExpedienteId} se ha consolidado en ${targetExpedienteId}.` };
+}
+
+// [TAREA-F6-025] [Fase 6: Expediente Institucional y Ciclo de Vida] - Cuadro comparativo previo a fusión con resaltado de contradicciones e inventario de entidades a transferir
+function getMergePreviewComparison(payload) {
+  const { targetExpedienteId, sourceExpedienteId } = payload || {};
+  if (!targetExpedienteId || !sourceExpedienteId) throw new Error("targetExpedienteId y sourceExpedienteId son requeridos.");
+
+  const targetRes = getStudentFile({ expedienteId: targetExpedienteId });
+  const sourceRes = getStudentFile({ expedienteId: sourceExpedienteId });
+
+  if (targetRes.status !== "success" || sourceRes.status !== "success") {
+    throw new Error("Uno o ambos expedientes no pudieron ser recuperados para la pre-visualización.");
+  }
+
+  const target = targetRes.studentFile;
+  const source = sourceRes.studentFile;
+
+  // Resaltado de contradicciones
+  const contradictions = [];
+  if (target.fechaNacimiento !== source.fechaNacimiento) {
+    contradictions.push({ campo: "Fecha de Nacimiento", destino: target.fechaNacimiento || "N/A", origen: source.fechaNacimiento || "N/A" });
+  }
+  if (target.nacionalidad !== source.nacionalidad) {
+    contradictions.push({ campo: "Nacionalidad", destino: target.nacionalidad || "N/A", origen: source.nacionalidad || "N/A" });
+  }
+  if (target.direccionResidencia !== source.direccionResidencia) {
+    contradictions.push({ campo: "Dirección de Residencia", destino: target.direccionResidencia || "N/A", origen: source.direccionResidencia || "N/A" });
+  }
+
+  return {
+    status: "success",
+    comparison: {
+      expedienteDestino: {
+        expedienteId: target.expedienteId,
+        codigoInstitucional: target.codigoInstitucional,
+        estado: target.estadoExpediente,
+        totalMatriculas: (target.enrollments || []).length,
+        totalDocumentos: (target.documents || []).length,
+        totalTutores: (target.guardians || []).length
+      },
+      expedienteOrigen: {
+        expedienteId: source.expedienteId,
+        codigoInstitucional: source.codigoInstitucional,
+        estado: source.estadoExpediente,
+        totalMatriculas: (source.enrollments || []).length,
+        totalDocumentos: (source.documents || []).length,
+        totalTutores: (source.guardians || []).length
+      },
+      totalContradicciones: contradictions.length,
+      contradictions: contradictions,
+      requiereConfirmacionExplicita: true
+    }
+  };
+}
+
+// [TAREA-F6-025] [Fase 6: Expediente Institucional y Ciclo de Vida] - Procedimiento administrativo de reversión y desvinculación controlada de expedientes fusionados erróneamente
+function unmergeStudentFiles(payload) {
+  const { mergeId, sourceExpedienteId, motivoJustificado } = payload || {};
+  if (!sourceExpedienteId) throw new Error("sourceExpedienteId es obligatorio para desvincular un expediente.");
+  if (!motivoJustificado || String(motivoJustificado).trim().length < 10) {
+    throw new Error("Debe proporcionar una justificación motivada de al menos 10 caracteres.");
+  }
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const expSheet = getOrCreateSheet(ss, "ExpedientesEstudiantes");
+  const expData = expSheet.getDataRange().getValues();
+
+  const sourceIdx = expData.findIndex(r => String(r[0]).trim() === String(sourceExpedienteId).trim());
+  if (sourceIdx === -1) throw new Error(`Expediente origen ${sourceExpedienteId} no encontrado.`);
+
+  // 1. Restituir estado del expediente origen a Activo
+  expSheet.getRange(sourceIdx + 1, 8).setValue("Activo");
+  expSheet.getRange(sourceIdx + 1, 11).setValue(`Desvinculación/Reversión de fusión ejecutada por ${payload && payload.authUserId || 'Secretaría'}. Motivo: ${motivoJustificado}`);
+
+  // 2. Registrar evento en HistorialCambiosEntidad
+  try {
+    const histSheet = getOrCreateSheet(ss, "HistorialCambiosEntidad");
+    histSheet.appendRow([
+      `HIST-${Date.now()}`,
+      "ExpedientesEstudiantes",
+      sourceExpedienteId,
+      "ReversionFusion",
+      "Fusionado -> Activo",
+      (payload && payload.authUserId) || "Secretaría",
+      new Date().toISOString(),
+      motivoJustificado
+    ]);
+  } catch (_) {}
+
+  logStructuredEvent("ACADEMIC", "unmergeStudentFiles", "WARN", "FILES_UNMERGED", `Fusión desvinculada para expediente ${sourceExpedienteId}`, { sourceExpedienteId, mergeId, motivoJustificado }, payload && payload.authRole);
+
+  return {
+    status: "success",
+    sourceExpedienteId: sourceExpedienteId,
+    nuevoEstado: "Activo",
+    message: `Expediente ${sourceExpedienteId} restaurado a estado Activo y desvinculado correctamente.`
+  };
 }
 
 // ---------------------------------------------------------------------------

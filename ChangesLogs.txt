@@ -1670,3 +1670,13 @@ Archivos Modificados:
   - Implementado el controlador UI `window.loadStudentProcedureNotificationLogs` para renderizar las notificaciones de trámites del expediente.
 - Pendientes.md:
   - Marcada TAREA-F6-024 como completada [X] en Pendientes.md.
+
+[TAREA-F6-025] Crear un mecanismo de revisión y recuperación de fusiones de expedientes
+- backend/academic-service/Code.gs:
+  - Implementada la función `getMergePreviewComparison` para la generación del cuadro comparativo de pre-visualización previo a la fusión de expedientes con resaltado de contradicciones.
+  - Implementada la función `unmergeStudentFiles` para el procedimiento administrativo de desvinculación y restitución de expedientes fusionados por error.
+  - Registradas las acciones `getMergePreviewComparison` y `unmergeStudentFiles` en `ROLE_PERMISSIONS` y ruteo `doPost`.
+- js/secretary.js:
+  - Creados los controladores UI `window.previewStudentMergeComparison` y `window.unmergeStudentFilesAction`.
+- Pendientes.md:
+  - Marcada TAREA-F6-025 como completada [X] en Pendientes.md.

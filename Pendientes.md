@@ -775,7 +775,7 @@ FASE 6. EXPEDIENTE INSTITUCIONAL Y CICLO DE VIDA DEL ESTUDIANTE
 
 ---
 
-### [TAREA-F6-025] Crear un mecanismo de revisión y recuperación de fusiones de expedientes
+### [X] [TAREA-F6-025] Crear un mecanismo de revisión y recuperación de fusiones de expedientes
 - **Origen del Hallazgo:** `AUDITORIA_FASE_6_EXPEDIENTE_CICLO_VIDA.md` / Tarea 12 (P2 · Integridad de Identidad)
 - **Prioridad:** P2
 - **Severidad/Clasificación:** Medio (Auditoría y reversión de fusiones)
@@ -800,7 +800,7 @@ FASE 6. EXPEDIENTE INSTITUCIONAL Y CICLO DE VIDA DEL ESTUDIANTE
   - CA-131: Todas las entidades transferidas son rastreables hasta su expediente original.
   - CA-132: Los identificadores históricos del expediente origen se conservan y no se eliminan.
   - CA-133: El procedimiento de corrección permite restituir asociaciones erróneas.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completado
 
 ---
 

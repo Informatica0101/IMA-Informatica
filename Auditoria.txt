@@ -402,3 +402,17 @@ Resultados de verificación:
 - Refuerzo de `sendMultiChannelNotification` con verificación de revocación o restricción de tutor/vínculo familiar e higienización de PII sensible en canales externos.
 - Creación de `checkAndNotifyExpiringStudentDocuments` en backend académico para alertas preventivas de vencimiento documental con clave de deduplicación.
 - Implementación de `getStudentProcedureNotificationLogs` y panel de seguimiento de trámites en `js/secretary.js`.
+
+===========================================================
+AUDITORÍA DE CÓDIGO - TAREA-F6-025
+===========================================================
+Fecha: 2026-03-29
+Archivos verificados:
+- backend/academic-service/Code.gs
+- js/secretary.js
+- Pendientes.md
+
+Resultados de verificación:
+- Implementación de `getMergePreviewComparison` para la pre-visualización comparativa lado a lado entre expedientes origen y destino con resaltado de contradicciones.
+- Creación de `unmergeStudentFiles` para el procedimiento administrativo de desvinculación y restitución de expedientes fusionados por error conservando trazabilidad.
+- Controladores UI `previewStudentMergeComparison` y `unmergeStudentFilesAction` incorporados en `js/secretary.js`.

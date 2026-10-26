@@ -451,6 +451,69 @@ window.recordInterviewOutcomeAction = async function(entrevistaId, estado) {
     }
 };
 
+// [TAREA-F6-025] [Fase 6: Expediente Institucional y Ciclo de Vida] - Pre-visualización comparativa previa a fusión de expedientes y desvinculación administrativa
+window.previewStudentMergeComparison = async function(targetExpedienteId, sourceExpedienteId) {
+    if (!targetExpedienteId || !sourceExpedienteId) {
+        alert("Especifique ambos expedientes para pre-visualizar la comparación.");
+        return;
+    }
+
+    try {
+        const res = await window.fetchApi('ACADEMIC', 'getMergePreviewComparison', { targetExpedienteId, sourceExpedienteId });
+        if (res && res.status === 'success' && res.comparison) {
+            const comp = res.comparison;
+            let msg = `--- COMPARACIÓN PREVIA DE FUSIÓN DE EXPEDIENTES ---\n\n`;
+            msg += `EXPEDIENTE DESTINO (${comp.expedienteDestino.expedienteId}):\n`;
+            msg += `• Código: ${comp.expedienteDestino.codigoInstitucional} | Estado: ${comp.expedienteDestino.estado}\n`;
+            msg += `• Matrículas: ${comp.expedienteDestino.totalMatriculas} | Documentos: ${comp.expedienteDestino.totalDocumentos}\n\n`;
+            msg += `EXPEDIENTE ORIGEN (${comp.expedienteOrigen.expedienteId}):\n`;
+            msg += `• Código: ${comp.expedienteOrigen.codigoInstitucional} | Estado: ${comp.expedienteOrigen.estado}\n`;
+            msg += `• Matrículas: ${comp.expedienteOrigen.totalMatriculas} | Documentos: ${comp.expedienteOrigen.totalDocumentos}\n\n`;
+
+            if (comp.totalContradicciones > 0) {
+                msg += `⚠️ CONTRADICCIONES DETECTADAS (${comp.totalContradicciones}):\n`;
+                comp.contradictions.forEach(c => {
+                    msg += `• ${c.campo}: Destino='${c.destino}' vs Origen='${c.origen}'\n`;
+                });
+            } else {
+                msg += `✓ Sin contradicciones de datos personales detectadas.\n`;
+            }
+
+            alert(msg);
+        } else {
+            alert("Error: " + ((res && res.message) || "No se pudo recuperar la pre-visualización."));
+        }
+    } catch (err) {
+        alert("Error al obtener la pre-visualización: " + err.message);
+    }
+};
+
+window.unmergeStudentFilesAction = async function(sourceExpedienteId) {
+    const expedienteId = sourceExpedienteId || prompt("Ingrese el ID del expediente fusionado a desvincular/restaurar:", "");
+    if (!expedienteId) return;
+
+    const motivoJustificado = prompt("Justificación administrativa obligatoria para la desvinculación (mínimo 10 caracteres):", "");
+    if (!motivoJustificado || motivoJustificado.trim().length < 10) {
+        alert("Motivo obligatorio requerido con al menos 10 caracteres.");
+        return;
+    }
+
+    try {
+        const res = await window.fetchApi('ACADEMIC', 'unmergeStudentFiles', {
+            sourceExpedienteId: expedienteId,
+            motivoJustificado
+        });
+
+        if (res && res.status === 'success') {
+            alert(`Expediente ${expedienteId} desvinculado exitosamente. Estado restaurado a Activo.`);
+        } else {
+            alert("Error: " + ((res && res.message) || "Fallo del servidor al desvincular."));
+        }
+    } catch (err) {
+        alert("Error al desvincular expediente: " + err.message);
+    }
+};
+
 // [TAREA-F6-024] [Fase 6: Expediente Institucional y Ciclo de Vida] - Carga y renderizado del historial de notificaciones y seguimiento de trámites en el expediente
 window.loadStudentProcedureNotificationLogs = async function(expedienteId, containerId) {
     const container = document.getElementById(containerId || 'stfile-notifications-container');
