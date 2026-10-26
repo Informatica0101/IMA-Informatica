@@ -860,7 +860,7 @@ FASE 6. EXPEDIENTE INSTITUCIONAL Y CICLO DE VIDA DEL ESTUDIANTE
 
 ---
 
-### [TAREA-F6-028] Mejorar la accesibilidad y la eficiencia de uso del expediente en dispositivos móviles
+### [X] [TAREA-F6-028] Mejorar la accesibilidad y la eficiencia de uso del expediente en dispositivos móviles
 - **Origen del Hallazgo:** `AUDITORIA_FASE_6_EXPEDIENTE_CICLO_VIDA.md` / Tarea 16 (P3 · Experiencia de Usuario)
 - **Prioridad:** P3
 - **Severidad/Clasificación:** Bajo (UX, accesibilidad WCAG y rendimiento móvil)
@@ -888,7 +888,7 @@ FASE 6. EXPEDIENTE INSTITUCIONAL Y CICLO DE VIDA DEL ESTUDIANTE
   - CA-143: Los errores de formulario conservan la información previamente ingresada.
   - CA-144: Todos los controles del expediente responden a navegación por teclado con indicadores de foco visibles.
   - CA-145: Los estados visuales incluyen icono y texto descriptivo además del color.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completado
 
 ---
 

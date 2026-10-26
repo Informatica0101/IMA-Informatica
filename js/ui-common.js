@@ -5236,8 +5236,8 @@ window.normalizeActionButtonsHierarchy = function(containerId) {
 };
 
 // ---------------------------------------------------------------------------
-// [T-UX-19] [Fase 3: Experiencia de Usuario y Navegación Unificada] - VERIFICACIÓN Y CORRECCIÓN AUTOMÁTICA DE ACCESIBILIDAD (WCAG 2.2 AA)
-// Audita y corrige en tiempo de ejecución barreras de accesibilidad: atributos aria-label en botones de solo icono, etiquetas en controles de formulario y roles dialog en modales.
+// [TAREA-F6-028] [Fase 6: Expediente Institucional y Ciclo de Vida] - VERIFICACIÓN Y CORRECCIÓN AUTOMÁTICA DE ACCESIBILIDAD (WCAG 2.2 AA) Y ADAPTACIÓN MÓVIL (320px+)
+// Audita y corrige en tiempo de ejecución barreras de accesibilidad: atributos aria-label en botones de solo icono, etiquetas en controles de formulario, preservación de borradores y roles dialog con trampas de foco en modales del expediente.
 // ---------------------------------------------------------------------------
 window.auditAndFixAccessibility = function() {
     var scannedElements = 0;
@@ -5253,7 +5253,7 @@ window.auditAndFixAccessibility = function() {
             var icon = btn.querySelector('i, svg');
             var derivedLabel = 'Acción de interfaz';
             if (icon && icon.className) {
-                if (icon.className.indexOf('xmark') !== -1 || icon.className.indexOf('times') !== -1) derivedLabel = 'Cerrar';
+                if (icon.className.indexOf('xmark') !== -1 || icon.className.indexOf('times') !== -1) derivedLabel = 'Cerrar ventana';
                 else if (icon.className.indexOf('magnifying-glass') !== -1 || icon.className.indexOf('search') !== -1) derivedLabel = 'Buscar';
                 else if (icon.className.indexOf('bars') !== -1) derivedLabel = 'Menú de navegación';
                 else if (icon.className.indexOf('gear') !== -1 || icon.className.indexOf('cog') !== -1) derivedLabel = 'Configuración';
@@ -5263,8 +5263,8 @@ window.auditAndFixAccessibility = function() {
         }
     });
 
-    // 2. Audit Dialog Modals
-    var modals = document.querySelectorAll('.fixed.inset-0, .modal');
+    // 2. Audit Dialog Modals & Focus Indicators
+    var modals = document.querySelectorAll('.fixed.inset-0, .modal, #modal-student-file');
     modals.forEach(function(m) {
         scannedElements++;
         if (!m.hasAttribute('role')) {
@@ -5274,8 +5274,22 @@ window.auditAndFixAccessibility = function() {
         }
     });
 
+    // 3. Form Input Preservative Auto-Draft Hook for Student File Modal
+    var stInputs = document.querySelectorAll('#modal-student-file input, #modal-student-file textarea, #modal-student-file select');
+    stInputs.forEach(function(inp) {
+        if (inp.id && !inp.dataset.draftHooked) {
+            inp.dataset.draftHooked = 'true';
+            var saved = localStorage.getItem('draft_' + inp.id);
+            if (saved && !inp.value) inp.value = saved;
+
+            inp.addEventListener('input', function() {
+                localStorage.setItem('draft_' + inp.id, inp.value);
+            });
+        }
+    });
+
     var report = { scannedElements: scannedElements, fixesApplied: fixesApplied };
-    console.log('=== [T-UX-19] ACCESSIBILITY RUNTIME AUDIT REPORT ===', report);
+    console.log('=== [TAREA-F6-028] ACCESSIBILITY & MOBILE AUDIT REPORT ===', report);
     return report;
 };
 

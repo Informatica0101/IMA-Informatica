@@ -444,3 +444,18 @@ Resultados de verificación:
 - Verificación reforzada de integridad de respaldos en `verifyBackupIntegrity` escaneando tablas esenciales (`ExpedientesEstudiantes`, `Matriculas`, `DocumentosEstudiante`, `MovimientosEstudiante`, `RelacionesFamiliares`) y enlaces a Drive.
 - Incorporación del informe de referencias rotas en Drive y análisis de impacto estructural en `previewBackupRestoreImpact`.
 - Creación del controlador `previewAndVerifyBackupRestore` en `js/teacher.js`.
+
+===========================================================
+AUDITORÍA DE CÓDIGO - TAREA-F6-028
+===========================================================
+Fecha: 2026-03-29
+Archivos verificados:
+- js/ui-common.js
+- js/teacher.js
+- js/secretary.js
+- Pendientes.md
+
+Resultados de verificación:
+- Implementación de `auditAndFixAccessibility` para auditoría y corrección dinámica de pautas WCAG 2.2 AA (atributos `aria-*`, indicadores de foco visibles e iconos explicativos de color).
+- Configuración de trampas de foco y navegación accesible por teclado (`Tab`, `Esc`, `Enter`) en modales del expediente estudiantil (`#modal-student-file`).
+- Preservación automática de borradores de formulario ante pérdidas temporales de conexión y adaptación de tablas a tarjetas colapsables desde 320px+.

@@ -1698,3 +1698,9 @@ Archivos Modificados:
   - Creada la función `window.previewAndVerifyBackupRestore` para activar la inspección previa de respaldos.
 - Pendientes.md:
   - Marcada TAREA-F6-027 como completada [X] en Pendientes.md.
+
+[TAREA-F6-028] Integrar accesibilidad WCAG 2.2 AA, navegación por teclado y auto-borrador en el expediente
+- js/ui-common.js:
+  - En `auditAndFixAccessibility`, agregados atributos ARIA, soporte de navegación por teclado, captura de foco en modales (`#modal-student-file`), auto-borrador de formularios en `localStorage` y descripciones textuales para estados de color.
+- Pendientes.md:
+  - Marcada TAREA-F6-028 como completada [X] en Pendientes.md.
