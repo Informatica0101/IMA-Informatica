@@ -889,3 +889,486 @@ FASE 6. EXPEDIENTE INSTITUCIONAL Y CICLO DE VIDA DEL ESTUDIANTE
   - CA-144: Todos los controles del expediente responden a navegación por teclado con indicadores de foco visibles.
   - CA-145: Los estados visuales incluyen icono y texto descriptivo además del color.
 - **Estado:** [ ] Pendiente
+
+---
+
+===============================================================================
+FASE 6. EXPEDIENTE INSTITUCIONAL Y CICLO DE VIDA DEL ESTUDIANTE
+SEGUNDA PARTE: REESTRUCTURACIÓN ARQUITECTÓNICA, ESCALABILIDAD Y ADMINISTRACIÓN INTEGRAL DE MICROSERVICIOS
+===============================================================================
+
+### [TAREA-F6-029] Reestructurar la arquitectura en microservicios independientes
+- **Origen del Hallazgo:** F6-007 / Reestructuración arquitectónica
+- **Prioridad:** P1
+- **Severidad/Clasificación:** Alta (Reestructuración arquitectónica)
+- **Archivos Involucrados:** Todos los microservicios, `js/api.js`, `js/auth.js`, dashboards, registro central de servicios, autenticación, configuración y comunicaciones internas.
+- **Descripción del Alcance:**
+  Distribuir las responsabilidades del sistema entre microservicios independientes, reduciendo el acoplamiento entre áreas y permitiendo mantener, desplegar, supervisar y ampliar cada servicio sin reconstruir innecesariamente los demás.
+
+  La reestructuración debe conservar todas las funcionalidades, variables, contratos, permisos, relaciones y flujos de trabajo existentes. No se debe considerar una migración válida si el código se ha separado, pero alguna función ha quedado desconectada, inaccesible o incompatible con los dashboards y servicios que la utilizan.
+
+  Requisitos de implementación:
+  1. Establecer una arquitectura en la que cada microservicio disponga de:
+     - Proyecto y despliegue de Google Apps Script propios.
+     - Configuración de ejecución independiente.
+     - Identificador único e inmutable del servicio.
+     - URL o punto de acceso registrado.
+     - Spreadsheet propio, salvo las excepciones autorizadas para servicios agrupados.
+     - Carpetas de Google Drive organizadas según sus responsabilidades.
+     - Módulos de validación, autorización, diagnóstico y registro de errores.
+     - Estrategia de respaldo y recuperación.
+     - Versión identificable del código y del esquema de datos.
+     - Contratos de comunicación autenticados con los demás componentes.
+
+  2. Separar las funciones por responsabilidades funcionales, manteniendo las relaciones entre expedientes, usuarios, matrículas, documentos, asignaturas, evaluaciones, contabilidad, cobros y demás módulos existentes.
+
+  3. Implementar una capa común de comunicación en `js/api.js` para que los dashboards consuman las operaciones de los servicios sin dispersar sus URLs por archivos, funciones y componentes.
+
+  4. Centralizar el descubrimiento de servicios mediante un registro de configuración que identifique:
+     - Servicio y área responsable.
+     - Funciones y operaciones disponibles.
+     - Endpoint de cada servicio.
+     - Versión desplegada y contratos compatibles.
+     - Recursos de almacenamiento asociados.
+     - Permisos y roles autorizados.
+     - Dependencias funcionales.
+     - Estado administrativo y operativo.
+     - Responsable de configuración y mantenimiento.
+
+  5. Separar el código fuente de las configuraciones de cada despliegue. Las URLs, identificadores de hojas de cálculo, carpetas, permisos, parámetros y demás variables de entorno deben poder modificarse mediante configuración cuando corresponda, sin alterar la lógica funcional.
+
+  6. Definir contratos de entrada y salida para las operaciones expuestas por cada servicio, incluyendo parámetros obligatorios, formatos de respuesta, errores, permisos requeridos y condiciones de ejecución.
+
+  7. Mantener compatibilidad con las funciones existentes de expedientes, usuarios, documentos, movimientos académicos, contabilidad, autenticación, tareas, exámenes y demás módulos implementados.
+
+  8. Evitar que el microservicio del desarrollador deba ejecutar directamente todas las operaciones institucionales. Su responsabilidad principal será administrar el registro, coordinar tareas autorizadas y supervisar los despliegues y servicios.
+
+  9. Permitir que las operaciones independientes de cada servicio continúen funcionando cuando otro servicio o el plano de control esté temporalmente indisponible, siempre que la operación no requiera una dependencia esencial.
+
+  10. Evitar duplicar datos institucionales compartidos por el simple hecho de que dos servicios o roles necesiten consultarlos. Cuando varias áreas requieran la misma entidad, debe definirse qué servicio es responsable de su creación y actualización y cómo los demás la consultan.
+
+  Auditoría obligatoria durante la reestructuración:
+  - Identificar las funciones públicas, privadas y compartidas de cada servicio antes de migrarlas.
+  - Inventariar las variables globales, constantes, identificadores de hojas, nombres de columnas, estructuras de respuesta y dependencias utilizadas por cada función.
+  - Identificar las llamadas entre funciones, los puntos de entrada de Apps Script y las operaciones invocadas por los dashboards.
+  - Documentar los endpoints actuales y los nuevos, incluyendo sus parámetros, respuestas, permisos, errores y consumidores.
+  - Verificar que cada función trasladada tenga un destino operativo y que no queden llamadas apuntando a implementaciones eliminadas o desactualizadas.
+  - Comprobar que los nombres de funciones, acciones, parámetros y campos de respuesta continúen siendo compatibles o cuenten con adaptadores de compatibilidad explícitos.
+  - Verificar cada etapa antes de continuar con la siguiente migración.
+  - Comparar los resultados de las funciones antes y después del cambio utilizando los mismos casos de prueba y datos controlados.
+- **Criterios de Aceptación:**
+  - CA-046: Cada microservicio tiene un identificador único, configuración independiente y despliegue identificable.
+  - CA-047: Cada servicio dispone del almacenamiento correspondiente, respetando las excepciones autorizadas.
+  - CA-048: Los dashboards consumen las funciones mediante una capa de comunicación común.
+  - CA-049: Un servicio puede actualizarse sin modificar los demás cuando sus contratos de comunicación no cambian.
+  - CA-050: La caída de un servicio no bloquea automáticamente las funciones independientes.
+  - CA-051: Las funciones migradas producen resultados equivalentes y conservan sus controles de acceso.
+  - CA-052: El registro central identifica qué servicio atiende cada función y dónde está desplegado.
+  - CA-145: La auditoría identifica las funciones, variables, bloques de código, endpoints y dependencias que deben conservarse durante cada migración.
+  - CA-146: No quedan funciones existentes desconectadas, referencias obsoletas ni llamadas a endpoints inexistentes después de una etapa de migración.
+  - CA-147: Los dashboards conservan la comunicación con los servicios que necesitan, sin depender de implementaciones internas que hayan sido trasladadas.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [TAREA-F6-030] Crear los microservicios administrativos y financieros con separación por responsabilidades
+- **Origen del Hallazgo:** F6-008 / Reestructuración de servicios
+- **Prioridad:** P1
+- **Severidad/Clasificación:** Alta (Reestructuración de servicios)
+- **Archivos Involucrados:** Dirección, Secretaría, Contabilidad, Cobros, Facturación, Recibos, Inventarios, Recursos Humanos, Planillas y módulos administrativos relacionados.
+- **Descripción del Alcance:**
+  A. Microservicio compartido de Dirección y Secretaría:
+  Dirección y Secretaría podrán compartir un mismo microservicio y spreadsheet cuando las operaciones y los datos institucionales sean comunes, sin que esto implique conceder a ambos roles los mismos permisos.
+
+  Requisitos funcionales:
+  - Mantener un microservicio compartido para las funciones de Dirección y Secretaría.
+  - Permitir que ambos roles utilicen el mismo spreadsheet cuando corresponda.
+  - Crear carpetas de Drive separadas para Dirección y Secretaría.
+  - Crear carpetas compartidas únicamente para documentos que deban ser accesibles a ambos roles.
+  - Aplicar permisos por usuario, rol, área, módulo y operación.
+  - Mantener las funciones institucionales de gestión de estudiantes, expedientes, matrículas, traslados, retiros, reingresos, graduaciones y demás procesos administrativos.
+  - Evitar duplicar estudiantes, expedientes o matrículas por el hecho de que diferentes usuarios consulten o actualicen los mismos datos.
+  - Permitir que una persona autorizada desempeñe simultáneamente funciones de Secretaría, Dirección u otras áreas, sin duplicar su identidad institucional.
+  - Permitir que las operaciones autorizadas de Secretaría se extiendan a otras áreas, como Cobros o Facturación, cuando el usuario tenga asignadas las responsabilidades correspondientes.
+  - Mantener registros de auditoría que permitan identificar al usuario, el rol o contexto operativo utilizado y la operación ejecutada.
+
+  B. Microservicio financiero-administrativo:
+  Contabilidad, Cobros, Facturación, Recibos, Inventarios, Recursos Humanos y Planillas podrán compartir un mismo microservicio, con módulos internos independientes y permisos específicos.
+
+  Requisitos funcionales:
+  1. Crear un microservicio financiero-administrativo que pueda gestionar: Contabilidad, Cobros y cuentas por cobrar, Facturación, Recibos, Cuentas por pagar, Inventarios, Bancos y conciliaciones, Recursos Humanos, Planillas y nómina, Acciones de personal, Contratos, permisos, ausencias y evaluaciones laborales, y Nuevas subáreas que se incorporen posteriormente.
+  2. Organizar los módulos mediante componentes independientes, cada uno con sus operaciones, validaciones, permisos y registros.
+  3. Permitir el intercambio de información cuando exista una relación funcional legítima. Por ejemplo, un cobro debe poder asociarse con su factura y recibo sin generar copias independientes e inconsistentes de la misma transacción.
+  4. Mantener controles de acceso específicos por rol, área, módulo y operación. Tener acceso al microservicio no debe conceder automáticamente acceso a toda la información financiera o laboral.
+  5. Separar los documentos de Recursos Humanos de los documentos contables y financieros.
+  6. Evitar que los documentos laborales, las planillas y los datos financieros queden expuestos mediante carpetas raíz o permisos excesivamente amplios.
+  7. Permitir que un usuario tenga responsabilidades en varias subáreas. Por ejemplo, una persona puede ser docente, contador y encargado de cafetería, con permisos diferenciados para cada función.
+  8. Permitir que una secretaria autorizada realice cobros en efectivo y emita facturas sin tener que crear una segunda cuenta de usuario.
+  9. Registrar cada operación con el usuario y el contexto de autorización correspondiente, sin asumir que todas las operaciones realizadas por una misma persona pertenecen a su rol principal.
+  10. Permitir incorporar nuevas subáreas mediante configuración, sin reconstruir el microservicio.
+
+  Estructura inicial de Google Drive:
+  - `Administracion_Financiera/`
+    - `Contabilidad/`
+      - `Facturacion/`
+      - `Cuentas_por_Cobrar/`
+      - `Cuentas_por_Pagar/`
+      - `Recibos/`
+      - `Inventarios/`
+      - `Bancos_y_Conciliaciones/`
+      - `Reportes/`
+      - `Otros_Modulos/`
+    - `Recursos_Humanos/`
+      - `Expedientes_Laborales/`
+      - `Planillas/`
+      - `Acciones_de_Personal/`
+      - `Contratos/`
+      - `Permisos_y_Ausencias/`
+      - `Evaluaciones/`
+      - `Otros_Modulos/`
+
+  La estructura deberá generarse automáticamente al inicializar el servicio. Las nuevas subáreas se incorporarán mediante configuración, sin duplicar carpetas existentes ni reconstruir las que ya contienen documentos.
+- **Criterios de Aceptación:**
+  - CA-053: Dirección y Secretaría operan mediante el microservicio compartido, con permisos diferenciados y sin duplicación de entidades.
+  - CA-054: Los módulos financieros y administrativos funcionan dentro del microservicio compartido con separación interna de responsabilidades.
+  - CA-055: La estructura de carpetas se crea sin duplicar carpetas existentes.
+  - CA-056: Cada documento queda asociado con su área y subárea.
+  - CA-057: Un usuario sin autorización no puede consultar ni modificar información restringida.
+  - CA-058: Facturas, cobros y recibos mantienen referencias consistentes.
+  - CA-059: Las nuevas subáreas pueden incorporarse mediante configuración.
+  - CA-060: La indisponibilidad de un módulo no bloquea las operaciones independientes de los demás.
+  - CA-148: Un usuario con varios roles puede ejecutar operaciones autorizadas en distintas áreas desde una sola identidad institucional.
+  - CA-149: Los permisos de una subárea no se extienden automáticamente a las demás.
+  - CA-150: Los documentos y las transacciones conservan su trazabilidad al ser utilizados por usuarios con distintas responsabilidades.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [TAREA-F6-031] Crear una plantilla de microservicio académico reutilizable para múltiples áreas
+- **Origen del Hallazgo:** F6-009 / Modularización y reutilización de código
+- **Prioridad:** P1
+- **Severidad/Clasificación:** Alta (Modularización y reutilización)
+- **Archivos Involucrados:** Servicio de tareas y exámenes, dashboards de docentes y estudiantes, configuración académica, asignación de asignaturas, gestión de usuarios y despliegues académicos.
+- **Descripción del Alcance:**
+  Permitir que cada área académica disponga de un microservicio independiente utilizando una misma plantilla de código, sin mantener copias adaptadas manualmente para cada área. Los nombres de las áreas, asignaturas, grados, secciones, períodos y docentes deben ser configurables.
+
+  A. Plantilla académica genérica:
+  La plantilla debe contemplar las funciones existentes y previstas de: gestión de grados y secciones, gestión de asignaturas, asignación de asignaturas a grados y secciones, matrículas y relaciones académicas de estudiantes, asignación de docentes a asignaturas, grados, secciones y períodos, gestión de tareas, exámenes y evaluaciones, publicación, edición y consulta de actividades, fechas de apertura y cierre, estados de publicación, entrega y calificación, entregas de estudiantes y archivos adjuntos cuando corresponda, calificaciones, observaciones y retroalimentación, consultas de docentes sobre sus asignaciones autorizadas, consultas de estudiantes sobre las asignaturas en las que están matriculados, validaciones de integridad y relaciones entre entidades, registros de operaciones y diagnóstico, comunicación con los servicios de usuarios, matrículas, expedientes y demás dependencias institucionales necesarias.
+
+  B. Áreas académicas iniciales:
+  Configurar, como mínimo, estas 7 áreas y asignaturas iniciales:
+  - Área 1. Comunicaciones: Español, Ortografía, Caligrafía, Literatura.
+  - Área 2. Inglés: Spelling, Writing, Literature, Grammar, Otras asignaturas de inglés.
+  - Área 3. Ciencias Sociales: Historia de Honduras, Estudios Sociales, Sociología, Educación Cívica, Otras asignaturas relacionadas.
+  - Área 4. Ciencias: Química, Biología, Ciencias Naturales, Otras asignaturas científicas.
+  - Área 5. Matemáticas: Matemáticas, Geometría, Física, Otras asignaturas relacionadas.
+  - Área 6. Informática: Computación, Informática I, Informática Aplicada, Análisis y Diseño, Otras asignaturas de informática.
+  - Área 7. Contaduría y Finanzas: Economía, Contabilidad, Otras asignaturas relacionadas.
+  No incorporar mediante condiciones `if`, `switch` ni nombres fijos dentro de la lógica de negocio.
+
+  C. Modelo de relaciones académicas:
+  - Una institución puede tener varios grados.
+  - Un grado puede tener varias secciones.
+  - Un grado o sección puede tener varias asignaturas.
+  - Una asignatura puede impartirse en distintos grados o secciones.
+  - Una asignatura puede tener docentes diferentes según el grado, sección o período.
+  - Un estudiante puede estar inscrito en varias asignaturas mediante sus relaciones de matrícula.
+  - Un docente puede impartir varias asignaturas y atender diferentes secciones.
+  - Cada tarea o examen pertenece a una asignatura y a una asignación académica específica.
+  - Cada entrega, calificación y retroalimentación queda vinculada al estudiante y actividad correctos.
+  - Los cambios de grado, sección, docente o período no alteran retroactivamente las calificaciones históricas ni reasignan actividades antiguas a personas incorrectas.
+  Las relaciones deben utilizar identificadores únicos e inmutables.
+
+  D. Coordinación académica configurable:
+  Permitir crear y administrar áreas de coordinación que agrupen asignaturas, docentes y responsabilidades de supervisión (ID único, nombre, descripción, estado activo/inactivo, grados/secciones/períodos aplicables, asignaturas asociadas, coordinadores, docentes supervisados, alcance de supervisión, permisos de consulta/supervisión, reportes, historial de asignaciones).
+
+  E. Independencia de cada instancia:
+  Cada instancia dispone de proyecto y despliegue de Apps Script, Spreadsheet y datos propios, configuración independiente, registros propios, permisos y límites específicos, versión identificable y carpetas de Drive propias.
+- **Criterios de Aceptación:**
+  - CA-061: La plantilla no contiene nombres fijos de áreas, grados, asignaturas, docentes o secciones en la lógica funcional.
+  - CA-062: Se puede crear una asignatura sin modificar el código.
+  - CA-063: Se pueden crear grados, secciones y asignaciones docentes sin modificar el código.
+  - CA-064: Cada instancia gestiona tareas y exámenes mediante su configuración y sus propios datos.
+  - CA-065: Los estudiantes solo consultan sus asignaturas, actividades, entregas y calificaciones autorizadas.
+  - CA-066: Los docentes solo administran las asignaciones y grupos autorizados.
+  - CA-067: Los datos de una instancia no se mezclan con los de otra.
+  - CA-068: Se conservan las relaciones entre tareas, exámenes, entregas, estudiantes, docentes y asignaturas.
+  - CA-069: Los cambios de configuración no modifican automáticamente los registros históricos.
+  - CA-070: Las funciones existentes de tareas y exámenes continúan operativas.
+  - CA-151: Las coordinaciones se pueden configurar sin modificar el código.
+  - CA-152: Una coordinación puede relacionar asignaturas, docentes, grados, secciones y períodos según su alcance autorizado.
+  - CA-153: Un coordinador puede tener otros roles institucionales sin duplicar su cuenta ni ampliar automáticamente sus permisos.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [TAREA-F6-032] Implementar el despliegue configurable de nuevos microservicios académicos
+- **Origen del Hallazgo:** F6-010 / Automatización de despliegues
+- **Prioridad:** P1
+- **Severidad/Clasificación:** Alta (Automatización de despliegues)
+- **Archivos Involucrados:** Dashboard del desarrollador, plantilla académica, registro de servicios, configuración de Apps Script, almacenamiento y sistema de permisos.
+- **Descripción del Alcance:**
+  1. Incorporar en el dashboard del desarrollador una sección para administrar instancias académicas.
+  2. Permitir registrar una instancia mediante un formulario (ID interno, nombre del área, descripción, plantilla y versión de código, proyecto/cuenta Apps Script destino, Spreadsheet asignado, carpetas Drive, permisos, asignaturas/grados/secciones iniciales, coordinaciones iniciales, estado de despliegue, responsable).
+  3. Permitir agregar o modificar asignaturas, grados, secciones, docentes y coordinaciones desde la plataforma sin desplegar nueva versión cuando los cambios sean puramente configurativos.
+  4. Flujo de inicialización idempotente: valida configuración, comprueba inexistencia previa, prepara recursos, crea estructuras/carpetas que falten, registra IDs, despliega/registra versión, ejecuta pruebas de conectividad y registra resultado.
+  5. Control de estados explícitos: `Borrador`, `Pendiente de configuración`, `Preparando recursos`, `Desplegando`, `Validando`, `Activo`, `Con errores`, `Suspendido`, `Retirado`.
+  6. Si un paso falla, registra el error y permite reanudar el proceso sin duplicar estructuras.
+  7. Si requiere autorización Google OAuth manual, indica el paso pendiente sin marcar erróneamente como exitoso.
+  8. Permitir actualizar una instancia sin modificar otras.
+  9. Historial de versiones de plantilla asociadas a cada instancia.
+  10. Permitir intervenciones del propietario de la cuenta cuando Google requiera autorización sin guardar credenciales en el código.
+  11. Auditar creación, actualización, suspensión y retirada de instancias (solicitante, fecha, resultado).
+- **Criterios de Aceptación:**
+  - CA-071: Se puede registrar una nueva área académica desde el dashboard.
+  - CA-072: La creación no requiere editar nombres de áreas o asignaturas en el código.
+  - CA-073: Cada instancia recibe y registra sus propios recursos.
+  - CA-074: La inicialización es idempotente.
+  - CA-075: Los fallos dejan un estado y diagnóstico verificables.
+  - CA-076: Una instancia incompleta no aparece como activa.
+  - CA-077: Los cambios exclusivamente configurativos no requieren un nuevo despliegue.
+  - CA-078: Las actualizaciones de plantilla no modifican automáticamente todas las instancias.
+  - CA-079: Se registra quién solicitó una operación, cuándo se ejecutó y cuál fue el resultado.
+  - CA-154: La creación de una instancia permite definir sus coordinaciones y asignaciones iniciales sin modificar la plantilla.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [TAREA-F6-033] Crear el microservicio central del desarrollador y el registro de servicios
+- **Origen del Hallazgo:** F6-011 / Administración y supervisión centralizada
+- **Prioridad:** P1
+- **Severidad/Clasificación:** Alta (Plano de control central)
+- **Archivos Involucrados:** Microservicio del desarrollador, dashboard del desarrollador, registro central y todos los servicios registrados.
+- **Descripción del Alcance:**
+  A. Registro central de servicios:
+  Mantener un registro con ID único, nombre, tipo, área, estado administrativo, último estado operativo, proyecto y despliegue asociado, versión de código y esquema, fecha de creación/actualización, último contacto, URL/referencia de conexión, recursos asociados, operaciones, roles/permisos, dependencias, responsable, configuración, último diagnóstico y último error.
+
+  B. Contrato común de comunicación:
+  Contrato común con `correlationId`, registro de origen/destino/operación/hora/resultado, diferenciación de errores, timeouts, prevención de reintentos ilimitados, separación de operaciones administrativas e imposición de catálogo de comandos autorizados.
+
+  C. Administración de roles y responsabilidades:
+  Administrar usuarios con múltiples roles simultáneos, asignaciones por área/subárea, permisos por servicio/módulo/operación, coordinadores vinculados, vigencia, activación/suspensión/revocación e historial de cambios. Validado en backend por cada servicio.
+
+  D. Independencia del plano de control:
+  El microservicio del desarrollador administra el registro y supervisa despliegues. Si queda fuera de línea, los servicios operativos independientes continúan operando.
+- **Criterios de Aceptación:**
+  - CA-080: El dashboard presenta los servicios registrados y sus configuraciones.
+  - CA-081: Cada servicio se identifica mediante un identificador estable.
+  - CA-082: Se diferencia el estado administrativo del último estado operativo.
+  - CA-083: Se identifica cuándo un estado está desactualizado.
+  - CA-084: Las solicitudes de diagnóstico incluyen identificador de correlación y resultado.
+  - CA-085: Se diferencian los errores de ejecución de los errores de comunicación.
+  - CA-086: La indisponibilidad del servicio central no detiene automáticamente las operaciones independientes.
+  - CA-087: No se permite ejecutar código arbitrario mediante comandos administrativos.
+  - CA-155: El registro permite administrar usuarios con múltiples roles y responsabilidades sin duplicar sus identidades.
+  - CA-156: Los roles pueden relacionarse con áreas, subáreas, coordinaciones y servicios.
+  - CA-157: Los cambios de asignaciones y permisos quedan auditados y se aplican mediante validaciones del servidor.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [TAREA-F6-034] Implementar módulos de salud, diagnóstico, tráfico y errores en cada microservicio
+- **Origen del Hallazgo:** F6-012 / Observabilidad y mantenimiento preventivo
+- **Prioridad:** P1
+- **Severidad/Clasificación:** Alta (Observabilidad y diagnóstico)
+- **Archivos Involucrados:** Todos los microservicios y dashboard del desarrollador.
+- **Descripción del Alcance:**
+  A. Estado del servicio:
+  Operaciones de diagnóstico en cada servicio que comprueben disponibilidad del endpoint, integridad de configuración, acceso a Sheets y Drive, dependencias, correspondencia de versión, errores recientes, última comprobación y operaciones pendientes.
+
+  B. Diagnóstico funcional:
+  Pruebas de lectura y pruebas controladas de escritura sin alterar datos reales, comprobación de integridad y contratos API sin revelar PII o credenciales.
+
+  C. Métricas de tráfico y rendimiento:
+  Registro de solicitudes totales, éxitos/fallos, latencia ms, errores por categoría, reintentos y consumo de ejecuciones GAS con fecha de actualización.
+
+  D. Registro de errores:
+  Enriquecimiento de errores con `eventId`, servicio, módulo, operación, timestamp, severidad, `correlationId`, versión, resultado y estado de resolución. Sanitización obligatoria.
+
+  E. Dashboard de supervisión:
+  Consulta general, filtros multi-servicio, historial de disponibilidad, diagnóstico en vivo y mapa de dependencias afectadas.
+- **Criterios de Aceptación:**
+  - CA-088: Todos los microservicios implementan el contrato común de diagnóstico.
+  - CA-089: El desarrollador consulta el estado desde el dashboard.
+  - CA-090: El diagnóstico diferencia conectividad, acceso a datos, acceso a documentos y fallos funcionales.
+  - CA-091: Los errores pueden filtrarse por servicio, módulo, fecha, severidad y categoría.
+  - CA-092: Cada error relevante se relaciona con su operación y versión cuando esa información esté disponible.
+  - CA-093: Las métricas incluyen fecha de actualización y no inventan valores.
+  - CA-094: Los registros no exponen credenciales ni documentos completos.
+  - CA-095: Un error de supervisión no altera los datos operativos ni bloquea las funciones principales.
+  - CA-158: El diagnóstico identifica endpoints faltantes, contratos incompatibles y dependencias que impiden completar operaciones.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [TAREA-F6-035] Incorporar administración segura de logs y comandos operativos
+- **Origen del Hallazgo:** F6-013 / Herramientas de mantenimiento
+- **Prioridad:** P1
+- **Severidad/Clasificación:** Alta (Herramientas de mantenimiento)
+- **Archivos Involucrados:** Dashboard del desarrollador y módulos de supervisión.
+- **Descripción del Alcance:**
+  - Consulta y filtrado de logs multi-servicio desde el dashboard central.
+  - Marcado de errores como revisados/resueltos conservando historial de auditoría.
+  - Purgas y archivos seguros de registros temporales conservando logs protegidos inmutables.
+  - Catálogo cerrado de comandos permitidos (diagnóstico, almacenamiento, respaldos, purga de temporales). Prohibida ejecución de cadenas o código libre.
+  - Cola de operaciones administrativas asíncronas con cancelación e idempotencia.
+  - Permisos específicos por comando.
+- **Criterios de Aceptación:**
+  - CA-096: El desarrollador consulta y filtra logs desde el dashboard.
+  - CA-097: Las acciones de limpieza requieren autorización y confirmación.
+  - CA-098: La limpieza no elimina registros de auditoría protegidos.
+  - CA-099: Los comandos pertenecen a un catálogo permitido.
+  - CA-100: Cada operación registra solicitante, servicio, fecha, resultado y error cuando corresponda.
+  - CA-101: Las operaciones pendientes, fallidas y completadas se distinguen.
+  - CA-102: Repetir una solicitud no duplica efectos cuando se requiere idempotencia.
+  - CA-159: Los comandos administrativos aplican permisos específicos por operación y no se autorizan únicamente por el rol general del usuario.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [TAREA-F6-036] Implementar respaldos independientes y recuperación por área
+- **Origen del Hallazgo:** F6-014 / Continuidad operativa y recuperación de datos
+- **Prioridad:** P1
+- **Severidad/Clasificación:** Alta (Respaldos aislados y restauración)
+- **Archivos Involucrados:** Todos los microservicios, Google Sheets, Google Drive y dashboard del desarrollador.
+- **Descripción del Alcance:**
+  A. Respaldos por servicio:
+  Generar y programar respaldos aislados por microservicio (Sheets, Drive, configuraciones y metadatos) con checksum de verificación y registro en catálogo central.
+
+  B. Estrategia de almacenamiento:
+  Almacenamiento aislado de respaldos, políticas de retención y rotación, detección de copias corruptas o alteradas.
+
+  C. Recuperación:
+  Proceso de restauración por área con vista previa de impacto, verificación de integridad referencial, confirmación explícita y simulación en entorno aislado sin afectar otros servicios.
+
+  D. Control de capacidad:
+  Supervisión preventiva del volumen de respaldos y políticas de depuración de copias obsoletas.
+- **Criterios de Aceptación:**
+  - CA-103: Se puede solicitar un respaldo individual por microservicio.
+  - CA-104: Los respaldos quedan registrados con identificador, fecha, alcance y resultado.
+  - CA-105: Se detectan respaldos incompletos o cuya integridad no puede verificarse.
+  - CA-106: Restaurar un servicio no sobrescribe datos de otro.
+  - CA-107: Las restauraciones destructivas muestran su alcance y solicitan confirmación.
+  - CA-108: Se pueden probar restauraciones sin modificar producción.
+  - CA-109: Las restauraciones registran sus resultados y verificaciones.
+  - CA-110: Existe una política configurable de retención y rotación.
+  - CA-111: Se identifican problemas de capacidad y acumulación cuando existan mediciones fiables.
+  - CA-112: El procedimiento de recuperación está documentado y no depende de instrucciones manuales conocidas por una sola persona.
+  - CA-160: La restauración conserva las relaciones necesarias entre usuarios, roles, áreas, documentos y datos operativos del servicio recuperado.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [TAREA-F6-037] Establecer seguridad, aislamiento y gestión centralizada de permisos
+- **Origen del Hallazgo:** F6-015 / Seguridad y control de acceso
+- **Prioridad:** P1
+- **Severidad/Clasificación:** Alta (Seguridad, identidad única y RBAC/ABAC)
+- **Archivos Involucrados:** Todos los microservicios, dashboards, autenticación, registro de servicios y comunicaciones internas.
+- **Descripción del Alcance:**
+  A. Identidad y roles múltiples:
+  Identidad institucional única por persona con asignaciones flexibles de múltiples roles simultáneos por servicio, área, subárea o módulo.
+
+  B. Modelo de autorización:
+  Matriz de permisos para todos los perfiles institucionales (Dirección, Secretaría, Contabilidad, Cobros, Facturación, RRHH, Docentes, Estudiantes, Coordinadores, Desarrolladores).
+
+  C. Coordinaciones y áreas personalizables:
+  Creación y edición de coordinaciones con alcance acotado de supervisión por área, asignatura, grado o sección.
+
+  D. Seguridad de los servicios:
+  Validación obligatoria de autenticación y autorización en el servidor de cada microservicio. Protección contra IDOR, elevación de privilegios y almacenamiento de secretos en el frontend.
+- **Criterios de Aceptación:**
+  - CA-113: Cada microservicio valida autorizaciones del lado del servidor.
+  - CA-114: La autorización en un servicio no se hereda automáticamente por los demás.
+  - CA-115: No se puede acceder a documentos o registros ajenos manipulando identificadores.
+  - CA-116: Los secretos no se exponen en el frontend ni en logs.
+  - CA-117: Los comandos administrativos requieren permisos específicos.
+  - CA-118: Los cambios de acceso y las operaciones sensibles quedan auditados.
+  - CA-119: Se puede revocar el acceso a un servicio sin invalidar innecesariamente accesos independientes.
+  - CA-120: Las pruebas de seguridad incluyen intentos de acceso no autorizado desde el navegador y mediante solicitudes directas al backend.
+  - CA-161: Un usuario puede tener varios roles sin duplicar su identidad institucional.
+  - CA-162: Los permisos se pueden asignar y revocar por área, subárea, servicio, módulo y operación.
+  - CA-163: Las coordinaciones pueden relacionarse con asignaturas, docentes supervisados y responsables autorizados.
+  - CA-164: Los cambios de roles y responsabilidades no conceden privilegios implícitos en áreas ajenas.
+  - CA-165: La autorización se comprueba en cada operación protegida y no depende únicamente del rol seleccionado visualmente en el dashboard.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [TAREA-F6-038] Implementar despliegues versionados, migraciones y reversión controlada
+- **Origen del Hallazgo:** F6-016 / Mantenimiento y evolución del sistema
+- **Prioridad:** P1
+- **Severidad/Clasificación:** Alta (Versionado y reversión)
+- **Archivos Involucrados:** Todos los microservicios, plantillas de código y dashboard del desarrollador.
+- **Descripción del Alcance:**
+  - Versionado explícito de código, esquemas y configuraciones por microservicio.
+  - Registro de cambios (changelog) y contratos de compatibilidad.
+  - Verificación de dependencias y pruebas automáticas post-despliegue.
+  - Migraciones de datos idempotentes y no destructivas.
+  - Procedimiento de reversión (rollback) probado para código, esquemas y datos.
+  - Auditoría de impacto previa a cada despliegue.
+- **Criterios de Aceptación:**
+  - CA-121: Cada servicio identifica su versión de código y esquema.
+  - CA-122: Un despliegue fallido no se registra como satisfactorio.
+  - CA-123: Las migraciones validan su alcance antes de modificar datos.
+  - CA-124: Repetir una migración no duplica registros ni estructuras.
+  - CA-125: Las actualizaciones de una instancia no alteran otras.
+  - CA-126: Se identifica la versión activa cuando ocurre un error.
+  - CA-127: Existe un procedimiento probado para recuperar el servicio después de una actualización fallida.
+  - CA-128: Las actualizaciones conservan permisos y relaciones existentes.
+  - CA-166: Cada actualización incluye una auditoría de impacto sobre funciones, variables, endpoints, dashboards y dependencias.
+  - CA-167: Las migraciones preservan las asignaciones de roles, las relaciones académicas y las referencias entre servicios.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [TAREA-F6-039] Centralizar la configuración y las dependencias sin centralizar todos los datos
+- **Origen del Hallazgo:** F6-017 / Configuración e interoperabilidad
+- **Prioridad:** P1
+- **Severidad/Clasificación:** Alta (Configuración e interoperabilidad)
+- **Archivos Involucrados:** Registro de servicios, microservicio del desarrollador, autenticación, dashboards y servicios operativos.
+- **Descripción del Alcance:**
+  - Registro centralizado de configuraciones, endpoints y referencias de almacenamiento.
+  - Descentralización de los datos operativos en sus respectivos microservicios.
+  - Modificación de URLs y parámetros mediante configuración sin editar código.
+  - Versionado de cambios de configuración y retiro controlado de servicios descontinuados.
+  - Catálogo central de contratos API y detección de llamadas obsoletas.
+- **Criterios de Aceptación:**
+  - CA-129: Cada servicio tiene configuración registrada y verificable.
+  - CA-130: Las dependencias se consultan desde el dashboard.
+  - CA-131: Las configuraciones incompletas se detectan antes de activar una instancia.
+  - CA-132: Los cambios de configuración quedan registrados y auditables.
+  - CA-133: La retirada de un servicio no deja referencias activas sin identificar.
+  - CA-134: Los dashboards distinguen entre indisponibilidad y ausencia de datos.
+  - CA-135: Se identifican las funciones disponibles cuando falla una dependencia.
+  - CA-168: Los endpoints y sus contratos pueden consultarse en un registro central actualizado.
+  - CA-169: Los cambios de roles, áreas y coordinaciones se reflejan en los servicios autorizados sin exigir modificaciones manuales dispersas en los dashboards.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [TAREA-F6-040] Validar el rendimiento, la capacidad y la recuperación de la arquitectura completa
+- **Origen del Hallazgo:** F6-018 / Pruebas de integración y escalabilidad
+- **Prioridad:** P1
+- **Severidad/Clasificación:** Alta (Pruebas de carga e integración)
+- **Archivos Involucrados:** Todos los microservicios, dashboards, Google Apps Script, Google Sheets y Google Drive.
+- **Descripción del Alcance:**
+  - Pruebas integrales multi-servicio que evalúen carga, concurrencia, resiliencia y tolerancia a fallos.
+  - Verificación de idempotencia ante reintentos de red.
+  - Medición de latencia, tiempos de ejecución y cuotas GAS.
+  - Verificación end-to-end de usuarios con múltiples roles y permisos contextuales.
+  - Confirmación de que las funciones de los dashboards continúan operando correctamente tras las migraciones.
+- **Criterios de Aceptación:**
+  - CA-136: Se incorpora una nueva instancia académica sin modificar las existentes.
+  - CA-137: La interrupción de un servicio no bloquea automáticamente operaciones independientes.
+  - CA-138: Los fallos de comunicación y almacenamiento quedan registrados y pueden diagnosticarse.
+  - CA-139: Los reintentos no generan duplicados en las operaciones que requieren idempotencia.
+  - CA-140: Se verifica la integridad de datos y documentos antes y después de una recuperación.
+  - CA-141: Las métricas de rendimiento provienen de pruebas reproducibles.
+  - CA-142: Se identifican los límites operativos conocidos antes de que provoquen fallos recurrentes, cuando existen datos suficientes.
+  - CA-143: Las funciones existentes se verifican después de la migración.
+  - CA-144: No se considera completada la fase mientras existan errores críticos de integridad, seguridad o recuperación sin resolver.
+  - CA-170: Las pruebas verifican que un usuario puede ejercer varios roles autorizados desde una identidad institucional única.
+  - CA-171: Las pruebas verifican que cada rol conserva sus permisos específicos y no hereda privilegios indebidos.
+  - CA-172: Los flujos que involucran varios servicios y dashboards mantienen la comunicación, las relaciones de datos y los permisos.
+  - CA-173: Los cambios de configuración, despliegue o asignación de responsabilidades no dejan funciones existentes inaccesibles.
+- **Estado:** [ ] Pendiente

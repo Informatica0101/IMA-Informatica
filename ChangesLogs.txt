@@ -1645,3 +1645,7 @@ Archivos Modificados:
   - Registrada la acción `restoreDocumentVersion` en `ROLE_PERMISSIONS` y ruteo `doPost`.
 - Pendientes.md:
   - Marcada TAREA-F6-022 como completada [X] en Pendientes.md.
+
+[INCORPORACIÓN DOCUMENTAL FASE 6 PARTE 2]
+- Pendientes.md:
+  - Incorporadas las tareas TAREA-F6-029 a TAREA-F6-040 bajo la sección 'Fase 6. Expediente institucional y ciclo de vida del estudiante - Segunda parte: reestructuración arquitectónica, escalabilidad y administración integral de microservicios'.
