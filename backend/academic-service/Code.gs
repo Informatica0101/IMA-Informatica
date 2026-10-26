@@ -385,7 +385,7 @@ function verifySessionToken(tokenString) {
 }
 
 // [TAREA-01] [TAREA-F4-P0-01] [Fase 4 - Seguridad RBAC y Token Unificado] - Validar y reforzar la seguridad mediante verificación de credencial de sesión HMAC
-// [TAREA-F4-P1-04] [Fase 4: Reglas Contextuales RBAC/ABAC] - Validación de atributos contextuales (Docentes, Tutores, Estudiantes)
+// [TAREA-F6-012] [TAREA-F6-037] [Fase 6: Seguridad, Aislamiento y Gestión Centralizada de Permisos] - Validación de acceso contextual server-side, aislamiento IDOR y ámbito de coordinación por área/rol (RBAC/ABAC)
 function validateContextualAccess(action, payload, verifiedUserId, userRole) {
   if (!userRole || userRole === "Administrador" || userRole === "Desarrollador") {
     return { authorized: true };

@@ -1267,9 +1267,10 @@ SEGUNDA PARTE: REESTRUCTURACIÓN ARQUITECTÓNICA, ESCALABILIDAD Y ADMINISTRACIÓ
 
 ---
 
-### [TAREA-F6-037] Establecer seguridad, aislamiento y gestión centralizada de permisos
+### [X] [TAREA-F6-037] Establecer seguridad, aislamiento y gestión centralizada de permisos
 - **Origen del Hallazgo:** F6-015 / Seguridad y control de acceso
 - **Prioridad:** P1
+- **Estado:** [X] Completado
 - **Severidad/Clasificación:** Alta (Seguridad, identidad única y RBAC/ABAC)
 - **Archivos Involucrados:** Todos los microservicios, dashboards, autenticación, registro de servicios y comunicaciones internas.
 - **Descripción del Alcance:**

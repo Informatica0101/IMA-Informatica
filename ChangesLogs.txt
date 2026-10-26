@@ -1763,3 +1763,9 @@ Archivos Modificados:
   - En `previewBackupRestoreImpact`, `verifyBackupIntegrity` y `restoreSystemBackup`, verificada la generación de respaldos aislados con checksum SHA-256, vista previa de impacto sin alterar producción e inspección de tablas esenciales.
 - Pendientes.md:
   - Marcada TAREA-F6-036 como completada [X] en Pendientes.md.
+
+[TAREA-F6-037] Establecer seguridad, aislamiento y gestión centralizada de permisos
+- backend/academic-service/Code.gs, backend/user-service/Code.gs y backend/accounting-service/Code.gs:
+  - Verificada la función `validateContextualAccess` e integración server-side de validación de permisos en `validateRolePermission`, garantizando aislamiento IDOR, asignación de permisos por área/rol y protección contra elevación no autorizada de privilegios.
+- Pendientes.md:
+  - Marcada TAREA-F6-037 como completada [X] en Pendientes.md.

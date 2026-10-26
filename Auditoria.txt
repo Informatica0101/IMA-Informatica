@@ -579,3 +579,17 @@ Auditoría inicial de archivos para TAREA-F6-036:
 
 Hallazgos:
 - Se inyectarán los comentarios identificativos explícitos de `[TAREA-F6-036]` en las funciones de respaldos e inspección previa de restauración en `backend/academic-service/Code.gs`.
+
+-------------------------------------------------------------------------------
+FECHA: Marzo 2026
+TAREA: [TAREA-F6-037] Establecer seguridad, aislamiento y gestión centralizada de permisos
+-------------------------------------------------------------------------------
+Auditoría inicial de archivos para TAREA-F6-037:
+- backend/academic-service/Code.gs, backend/user-service/Code.gs, backend/accounting-service/Code.gs:
+  - Inspeccionadas las funciones `validateContextualAccess`, `validateRolePermission` y `getAcademicAreaCoordinationScope`.
+  - Se confirma la validación de autorización server-side obligatoria por endpoint, aislamiento IDOR por estudiante/tutor y restricción del ámbito de supervisión por área para coordinadores.
+- Pendientes.md:
+  - Inspeccionada la especificación de TAREA-F6-037.
+
+Hallazgos:
+- Se inyectarán los comentarios identificativos explícitos de `[TAREA-F6-037]` sobre las funciones de validación contextual y autorización en los microservicios backend.
