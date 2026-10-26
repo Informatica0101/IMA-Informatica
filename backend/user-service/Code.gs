@@ -6031,7 +6031,7 @@ function purgeStructuredLogs(payload) {
   }
 }
 
-// [T-UX-06] [Fase 3: Experiencia de Usuario y Navegación Unificada] - Búsqueda global omnibox multi-entidad con validación RBAC y normalización insensible a tildes.
+// [TAREA-F6-020] [Fase 6: Expediente Institucional y Ciclo de Vida] - Búsqueda global omnibox multi-entidad por expediente, DNI, código, nombres con enmascaramiento de PII y estado de matrícula
 function searchGlobalOmnibox(payload) {
   try {
     if (!payload) return { status: "error", message: "Payload no provisto." };
@@ -6043,12 +6043,58 @@ function searchGlobalOmnibox(payload) {
     const results = [];
     const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
 
-    // 1. Search Usuarios / Personas / ExpedientesEstudiantes
     if (["Administrador", "Desarrollador", "Director", "Subdirector", "Secretaría", "Profesor", "Coordinador", "Consejeros", "Contador", "RecursosHumanos"].indexOf(verifiedRole) !== -1) {
+      const isPrivileged = ["Administrador", "Director", "Secretaría", "Secretaria", "Subdirector", "Desarrollador"].indexOf(verifiedRole) !== -1;
+
+      const expSheet = ss.getSheetByName("ExpedientesEstudiantes");
+      const matSheet = ss.getSheetByName("Matriculas");
       const userSheet = ss.getSheetByName("Usuarios");
-      if (userSheet) {
-        const uData = userSheet.getDataRange().getValues();
-        for (let i = 1; i < uData.length; i++) {
+
+      const expData = expSheet ? expSheet.getDataRange().getValues().slice(1) : [];
+      const matData = matSheet ? matSheet.getDataRange().getValues().slice(1) : [];
+      const uData = userSheet ? userSheet.getDataRange().getValues().slice(1) : [];
+
+      expData.forEach(expRow => {
+        const expId = String(expRow[0] || "");
+        const studentUserId = String(expRow[1] || "");
+        const codigoInst = String(expRow[2] || "");
+        const estadoExp = String(expRow[7] || "Activo");
+
+        const uMatch = uData.find(u => String(u[0]).trim() === studentUserId.trim());
+
+        const nombreComp = uMatch ? String(uMatch[1] || "") : "";
+        const dniVal = uMatch ? String(uMatch[8] || "") : "";
+
+        const normDni = normalizeString(dniVal);
+        const normCode = normalizeString(codigoInst);
+        const normExpId = normalizeString(expId);
+        const normName = normalizeString(nombreComp);
+
+        if (normExpId.indexOf(normQuery) !== -1 || normCode.indexOf(normQuery) !== -1 || normDni.indexOf(normQuery) !== -1 || normName.indexOf(normQuery) !== -1) {
+          const mat = matData.find(m => String(m[2]).trim() === studentUserId.trim());
+          const periodoMat = mat ? String(mat[6] || "2026") : (expRow[8] || "N/A");
+          const gradoMat = mat ? String(mat[4] || "") : (expRow[5] || "");
+          const seccionMat = mat ? String(mat[5] || "") : (expRow[6] || "");
+
+          const maskedDni = dniVal ? (isPrivileged ? dniVal : (dniVal.slice(0, 4) + "****" + dniVal.slice(-2))) : "N/A";
+
+          results.push({
+            id: studentUserId || expId,
+            expedienteId: expId,
+            codigoInstitucional: codigoInst,
+            title: nombreComp || ("Expediente " + expId),
+            category: "Expediente Estudiantil",
+            subtitle: "Cod: " + codigoInst + " | Estado: " + estadoExp + " | DNI: " + maskedDni + " | " + gradoMat + " " + seccionMat + " (" + periodoMat + ")",
+            icon: "fa-id-card",
+            type: "student_file",
+            targetModule: "student_file",
+            exactMatch: normCode === normQuery || normExpId === normQuery || normDni === normQuery
+          });
+        }
+      });
+
+      if (uData.length > 0) {
+        for (let i = 0; i < uData.length; i++) {
           const row = uData[i];
           const uid = String(row[0] || "");
           const name = String(row[1] || "");
@@ -6064,7 +6110,7 @@ function searchGlobalOmnibox(payload) {
               type: "user",
               targetModule: "student_file"
             });
-            if (results.length >= 25) break;
+            if (results.length >= 35) break;
           }
         }
       }

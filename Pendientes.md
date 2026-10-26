@@ -610,7 +610,7 @@ FASE 6. EXPEDIENTE INSTITUCIONAL Y CICLO DE VIDA DEL ESTUDIANTE
 
 ---
 
-### [TAREA-F6-020] Mejorar la búsqueda global y la navegación operativa del expediente
+### [X] [TAREA-F6-020] Mejorar la búsqueda global y la navegación operativa del expediente
 - **Origen del Hallazgo:** `AUDITORIA_FASE_6_EXPEDIENTE_CICLO_VIDA.md` / Tarea 7 (P2 · Productividad Administrativa)
 - **Prioridad:** P2
 - **Severidad/Clasificación:** Medio (Navegación y productividad administrativa)
