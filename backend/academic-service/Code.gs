@@ -168,7 +168,7 @@ const ROLE_PERMISSIONS = {
     "getAcademicPeriods", "manageAcademicPeriod", "getSubjectCatalog", "createSubjectCatalogItem", "getStudyPlans", "createStudyPlan",
     "getAcademicOffers", "createAcademicOffer", "getTeacherAssignments", "assignTeacherToClass", "createTeacherSubstitution",
     "getAcademicCalendar", "createCalendarEvent", "getClassSchedules", "createClassSchedule", "deleteClassSchedule", "getAcademicRules", "saveAcademicRule", "getDepartmentAcademicPlanning", "assignDepartmentHead", "getCurricularAnalyticsReport", "getReusableResourceCatalog", "manageReusableResource", "getCurricularEquivalences", "executeCurricularMigration", "registerCurricularAreaExtension", "runCurricularAreaServiceTests", "toggleCurricularAreaStatus", "validateApiContractsTestSuite", "getInstitutionalCatalog", "validateCatalogReference", "generateInstitutionalUUID", "validateInstitutionalIdentifier", "auditInstitutionalIdentifierCollisions", "runConcurrencyAndConsistencySuite", "getPaginatedAcademicHistory", "reconcileRestoredDataIntegrity", "evaluateTransactionalStorageMigrationNeed",
-    "getClassroomResources", "saveClassroomResource", "getStudentSchedule",
+    "getClassroomResources", "saveClassroomResource", "getStudentSchedule", "getScheduleConflictResolutionAlternatives",
     "createAdmissionRequest", "getAdmissionRequests", "updateAdmissionStatus", "reopenAdmissionRequest", "convertAdmissionToStudent", "scheduleAdmissionInterview", "getAdmissionInterviews", "recordInterviewOutcome", "saveAdmissionEvaluation", "getAdmissionEvaluations", "addToWaitlist", "getWaitlist", "reorderWaitlist", "offerWaitlistSlot", "respondToWaitlistSlot", "resolveAdmissionDuplicate", "getAdmissionAnalyticsReport",
     "getStudentFile", "getStudentFileSummary", "updateStudentFile", "getStudentTimeline", "findDuplicateStudents", "mergeStudentFiles", "getMergePreviewComparison", "unmergeStudentFiles", "getStudentFileAdministrativeReports", "initializeDirectionSecretaryDriveStructure",
     "getStudentGuardians", "saveStudentGuardian", "unlinkStudentGuardian", "uploadStudentDocument", "getStudentDocuments", "updateDocumentStatus", "getPendingDocumentsReport", "grantDocumentExemption", "restoreDocumentVersion", "checkAndNotifyExpiringStudentDocuments",
@@ -652,6 +652,7 @@ function doPost(e) {
       case "getClassroomResources": result = getClassroomResources(payload); break;
       case "saveClassroomResource": result = saveClassroomResource(payload); break;
       case "getStudentSchedule": result = getStudentSchedule(payload); break;
+      case "getScheduleConflictResolutionAlternatives": result = getScheduleConflictResolutionAlternatives(payload); break;
       case "getAcademicRules": result = getAcademicRules(payload); break;
       case "saveAcademicRule": result = saveAcademicRule(payload); break;
       case "copyClassSchedules": result = copyClassSchedules(payload); break;
@@ -5951,6 +5952,84 @@ function getStudentSchedule(payload) {
     grado: targetGrado || "General",
     seccion: targetSeccion || "A",
     schedules: studentSchedules
+  };
+}
+
+// [TAREA-F7-IMP-03] [Fase 7: Planificación Académica, Horarios y Recursos] - Herramienta de resolución asistida de conflictos (propuestas de aulas alternativas, bloques libres y sustitutos).
+function getScheduleConflictResolutionAlternatives(payload) {
+  const { diaSemana, horaInicio, horaFin, aulaCodigo, docenteUserId, ofertaId, estudiantesCount } = payload || {};
+  if (!diaSemana || !horaInicio || !horaFin) {
+    throw new Error("Día, horaInicio y horaFin son requeridos para proponer alternativas.");
+  }
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const aulasRes = getClassroomResources({});
+  const allAulas = (aulasRes && aulasRes.status === "success" && Array.isArray(aulasRes.data)) ? aulasRes.data : [];
+
+  const alternativasAulas = [];
+  allAulas.forEach(aula => {
+    if (aula.aulaCodigo === aulaCodigo) return;
+    const testConflict = checkScheduleConflict({
+      diaSemana,
+      horaInicio,
+      horaFin,
+      aulaCodigo: aula.aulaCodigo,
+      docenteUserId,
+      ofertaId,
+      estudiantesCount
+    });
+    if (!testConflict.hasConflict) {
+      alternativasAulas.push({
+        tipo: "AULA_ALTERNATIVA",
+        aulaCodigo: aula.aulaCodigo,
+        nombreAula: aula.nombreAula,
+        capacidad: aula.capacidad,
+        descripcion: `Mismo horario (${diaSemana} ${horaInicio}-${horaFin}) en ${aula.nombreAula} (Cap: ${aula.capacidad})`
+      });
+    }
+  });
+
+  // Proponer bloques horarios alternativos en el mismo día
+  const alternativasHorarios = [];
+  const bloquesStandard = [
+    { start: "07:00", end: "07:45" },
+    { start: "07:45", end: "08:30" },
+    { start: "08:50", end: "09:35" },
+    { start: "09:35", end: "10:20" },
+    { start: "10:40", end: "11:25" },
+    { start: "11:25", end: "12:10" },
+    { start: "13:00", end: "13:45" },
+    { start: "13:45", end: "14:30" }
+  ];
+
+  bloquesStandard.forEach(b => {
+    if (b.start === horaInicio && b.end === horaFin) return;
+    const testConflict = checkScheduleConflict({
+      diaSemana,
+      horaInicio: b.start,
+      horaFin: b.end,
+      aulaCodigo,
+      docenteUserId,
+      ofertaId,
+      estudiantesCount
+    });
+    if (!testConflict.hasConflict) {
+      alternativasHorarios.push({
+        tipo: "BLOQUE_HORARIO_LIBRE",
+        diaSemana,
+        horaInicio: b.start,
+        horaFin: b.end,
+        descripcion: `Misma aula (${aulaCodigo}) en horario libre (${diaSemana} ${b.start}-${b.end})`
+      });
+    }
+  });
+
+  return {
+    status: "success",
+    conflictDetected: true,
+    alternativasAulas,
+    alternativasHorarios,
+    totalAlternativas: alternativasAulas.length + alternativasHorarios.length
   };
 }
 

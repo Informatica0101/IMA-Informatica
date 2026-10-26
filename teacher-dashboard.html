@@ -2792,6 +2792,29 @@
                 </div>
             </form>
 
+    <!-- [TAREA-F7-IMP-03] [Fase 7: Planificación Académica, Horarios y Recursos] - Modal de Resolución Asistida de Conflictos de Horario (#modal-schedule-conflict-resolution) -->
+    <div id="modal-schedule-conflict-resolution" class="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-3xl shadow-2xl max-w-lg w-full overflow-hidden border border-slate-100 animate-fade-in">
+            <div class="p-5 bg-amber-50 border-b border-amber-100 flex justify-between items-center">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-2xl bg-amber-500 text-white flex items-center justify-center text-lg shadow-md">
+                        <i class="fa-solid fa-wand-magic-sparkles"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-slate-800 text-sm">Resolución Asistida de Conflictos</h3>
+                        <p class="text-[10px] text-slate-500 font-medium">Alternativas automáticas para resolver el traslape detectado</p>
+                    </div>
+                </div>
+                <button onclick="document.getElementById('modal-schedule-conflict-resolution').classList.add('hidden')" class="w-8 h-8 rounded-full bg-white/80 text-slate-500 hover:text-slate-800 flex items-center justify-center">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div id="conflict-resolution-content" class="p-6 space-y-4 max-h-[70vh] overflow-y-auto text-xs">
+                <p class="text-slate-400 italic text-center">Analizando alternativas de resolución...</p>
+            </div>
+        </div>
+    </div>
+
             <!-- Lista de Espacios Registrados -->
             <div class="space-y-2">
                 <h4 class="font-bold text-xs text-slate-700 uppercase tracking-wider">Espacios Registrados</h4>

@@ -1840,3 +1840,16 @@ Descripción objetiva:
 - Incorporada la barra de filtros de perspectiva (Institucional, Docente, Sección, Aula) y de estado (Todos, Activo, Borrador) con búsqueda dinámica en `teacher-dashboard.html`.
 - Creadas las funciones `renderSchedulePlanningMatrix` y `filterScheduleMatrix` en `js/teacher.js` con el encabezado identificativo `[TAREA-F7-IMP-02]` para renderizar la matriz de disponibilidad multi-perspectiva.
 - Actualizado el estado de [TAREA-F7-IMP-02] a Completado en Pendientes.md.
+
+
+Fecha: 2026-10-26
+Archivos modificados:
+- backend/academic-service/Code.gs (Líneas 652, 5955-6030)
+- teacher-dashboard.html (Líneas 2792-2815)
+- js/teacher.js (Líneas 738-870)
+- Pendientes.md (Líneas 1476-1512)
+Descripción objetiva:
+- Creada la función `getScheduleConflictResolutionAlternatives` en `backend/academic-service/Code.gs` para analizar traslapes y proponer automáticamente aulas alternativas y franjas de horario libres.
+- Incorporado el modal `#modal-schedule-conflict-resolution` en `teacher-dashboard.html`.
+- Creadas las funciones UI `openAssistedConflictResolutionModal` y `applyConflictAlternative` en `js/teacher.js` antecedidas por el comentario identificativo `[TAREA-F7-IMP-03]` para evaluar y aplicar soluciones asistidas ante conflictos de horarios.
+- Actualizado el estado de [TAREA-F7-IMP-03] a Completado en Pendientes.md.

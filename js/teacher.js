@@ -738,26 +738,38 @@ document.addEventListener('DOMContentLoaded', () => {
                 throw new Error(res.message);
             }
         } catch (err) {
-            if (err.message && err.message.includes("Conflicto de horario detectado") && confirm("Conflicto detectado: " + err.message + "\n\n¿Desea registrar una excepción justificada para autorizar esta asignación?")) {
-                const excepcionJustificacion = prompt("Ingrese el motivo / justificación explícita de la excepción:", "");
-                if (excepcionJustificacion && excepcionJustificacion.trim().length > 5) {
-                    try {
-                        const resExc = await fetchApi('ACADEMIC', 'createClassSchedule', {
-                            ofertaId,
-                            diaSemana,
-                            horaInicio,
-                            horaFin,
-                            aulaCodigo,
-                            docenteUserId,
-                            excepcionJustificacion
-                        });
-                        if (resExc.status === 'success') {
-                            alert("¡Horario asignado con excepción explícitamente configurada!");
-                            loadMasterSchedules();
-                            return;
+            if (err.message && err.message.includes("Conflicto de horario detectado")) {
+                if (confirm("Conflicto detectado: " + err.message + "\n\n¿Desea abrir el Asistente de Resolución de Conflictos para evaluar alternativas de aula u horario?")) {
+                    window.openAssistedConflictResolutionModal({
+                        ofertaId,
+                        diaSemana,
+                        horaInicio,
+                        horaFin,
+                        aulaCodigo,
+                        docenteUserId,
+                        reason: err.message
+                    });
+                } else if (confirm("¿Desea registrar una excepción justificada para autorizar esta asignación?")) {
+                    const excepcionJustificacion = prompt("Ingrese el motivo / justificación explícita de la excepción:", "");
+                    if (excepcionJustificacion && excepcionJustificacion.trim().length > 5) {
+                        try {
+                            const resExc = await fetchApi('ACADEMIC', 'createClassSchedule', {
+                                ofertaId,
+                                diaSemana,
+                                horaInicio,
+                                horaFin,
+                                aulaCodigo,
+                                docenteUserId,
+                                excepcionJustificacion
+                            });
+                            if (resExc.status === 'success') {
+                                alert("¡Horario asignado con excepción explícitamente configurada!");
+                                loadMasterSchedules();
+                                return;
+                            }
+                        } catch (excErr) {
+                            alert("Error al procesar excepción: " + excErr.message);
                         }
-                    } catch (excErr) {
-                        alert("Error al procesar excepción: " + excErr.message);
                     }
                 }
             } else {
@@ -768,6 +780,95 @@ document.addEventListener('DOMContentLoaded', () => {
             btn.innerHTML = '<i class="fas fa-check mr-1"></i> Publicar Horario';
         }
     });
+
+    // [TAREA-F7-IMP-03] [Fase 7: Planificación Académica, Horarios y Recursos] - Controlador de resolución asistida de conflictos
+    window.openAssistedConflictResolutionModal = async function(conflictData) {
+        const modal = document.getElementById('modal-schedule-conflict-resolution');
+        const container = document.getElementById('conflict-resolution-content');
+        if (!modal || !container) return;
+
+        modal.classList.remove('hidden');
+        container.innerHTML = `<div class="p-4 text-center text-amber-600 font-bold"><i class="fas fa-spinner fa-spin mr-2"></i>Buscando alternativas disponibles de aula y horario...</div>`;
+
+        try {
+            const res = await fetchApi('ACADEMIC', 'getScheduleConflictResolutionAlternatives', conflictData);
+            if (res && res.status === 'success') {
+                let html = `
+                    <div class="p-3 bg-red-50 text-red-800 rounded-xl border border-red-200 mb-3 space-y-1">
+                        <strong class="block uppercase text-[10px]">Conflicto que Impide la Asignación:</strong>
+                        <p class="text-xs font-medium">${conflictData.reason || 'Soliapamiento de horario/aula'}</p>
+                    </div>
+                    <div class="space-y-3">
+                        <h4 class="font-bold text-slate-800 uppercase tracking-wider text-[10px]">Alternativas Sugeridas (${res.totalAlternativas} disponibles):</h4>
+                `;
+
+                if (Array.isArray(res.alternativasAulas) && res.alternativasAulas.length > 0) {
+                    html += `<div class="space-y-1.5"><p class="font-bold text-teal-700 text-[10px] uppercase">Aulas Alternativas Disponibles:</p>`;
+                    res.alternativasAulas.forEach(a => {
+                        html += `
+                            <div class="p-2.5 bg-teal-50/60 rounded-xl border border-teal-200 flex justify-between items-center">
+                                <div>
+                                    <strong class="text-slate-800">${a.nombreAula} (${a.aulaCodigo})</strong>
+                                    <p class="text-[10px] text-slate-500">${a.descripcion}</p>
+                                </div>
+                                <button onclick="window.applyConflictAlternative('${conflictData.ofertaId}', '${conflictData.diaSemana}', '${conflictData.horaInicio}', '${conflictData.horaFin}', '${a.aulaCodigo}', '${conflictData.docenteUserId}')" class="px-2.5 py-1 bg-teal-600 text-white font-bold rounded-lg text-[10px] uppercase hover:bg-teal-700">Aplicar</button>
+                            </div>
+                        `;
+                    });
+                    html += `</div>`;
+                }
+
+                if (Array.isArray(res.alternativasHorarios) && res.alternativasHorarios.length > 0) {
+                    html += `<div class="space-y-1.5 pt-2"><p class="font-bold text-indigo-700 text-[10px] uppercase">Bloques Horarios Libres en Misma Aula:</p>`;
+                    res.alternativasHorarios.forEach(h => {
+                        html += `
+                            <div class="p-2.5 bg-indigo-50/60 rounded-xl border border-indigo-200 flex justify-between items-center">
+                                <div>
+                                    <strong class="text-slate-800">${h.diaSemana} ${h.horaInicio} - ${h.horaFin}</strong>
+                                    <p class="text-[10px] text-slate-500">${h.descripcion}</p>
+                                </div>
+                                <button onclick="window.applyConflictAlternative('${conflictData.ofertaId}', '${h.diaSemana}', '${h.horaInicio}', '${h.horaFin}', '${conflictData.aulaCodigo}', '${conflictData.docenteUserId}')" class="px-2.5 py-1 bg-indigo-600 text-white font-bold rounded-lg text-[10px] uppercase hover:bg-indigo-700">Aplicar</button>
+                            </div>
+                        `;
+                    });
+                    html += `</div>`;
+                }
+
+                if (res.totalAlternativas === 0) {
+                    html += `<p class="p-4 text-center text-slate-400 italic bg-slate-50 rounded-xl">No se encontraron alternativas automáticas sin conflicto en la misma jornada. Pruebe cambiando manualmente el docente o el día.</p>`;
+                }
+
+                html += `</div>`;
+                container.innerHTML = html;
+            } else {
+                container.innerHTML = `<div class="p-4 text-center text-red-600 font-bold">${res.message || 'Error al obtener alternativas.'}</div>`;
+            }
+        } catch (err) {
+            container.innerHTML = `<div class="p-4 text-center text-red-600 font-bold">Error de conexión: ${err.message}</div>`;
+        }
+    };
+
+    window.applyConflictAlternative = async function(ofertaId, diaSemana, horaInicio, horaFin, aulaCodigo, docenteUserId) {
+        try {
+            const res = await fetchApi('ACADEMIC', 'createClassSchedule', {
+                ofertaId,
+                diaSemana,
+                horaInicio,
+                horaFin,
+                aulaCodigo,
+                docenteUserId
+            });
+            if (res && res.status === 'success') {
+                alert("¡Alternativa de horario aplicada con éxito!");
+                document.getElementById('modal-schedule-conflict-resolution')?.classList.add('hidden');
+                loadMasterSchedules();
+            } else {
+                alert("Error al aplicar alternativa: " + (res ? res.message : "Error desconocido"));
+            }
+        } catch (err) {
+            alert("Error al guardar alternativa: " + err.message);
+        }
+    };
 
     document.getElementById('btn-load-schedules-list')?.addEventListener('click', loadMasterSchedules);
 

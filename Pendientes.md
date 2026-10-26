@@ -1476,7 +1476,7 @@ FASE 7. PLANIFICACIÓN ACADÉMICA, HORARIOS Y RECURSOS
 
 ---
 
-### [ ] [TAREA-F7-IMP-03] Desarrollar una herramienta de resolución asistida de conflictos
+### [X] [TAREA-F7-IMP-03] Desarrollar una herramienta de resolución asistida de conflictos
 - **Origen del Hallazgo:** `AUDITORIA_FASE_7_PLANIFICACION_HORARIOS_RECURSOS.md` / Tarea F7-IMP-03 (P1 · Optimización de Horarios)
 - **Prioridad:** P1
 - **Severidad/Clasificación:** Alta (Nueva capacidad de planificación y optimización)
@@ -1509,7 +1509,7 @@ FASE 7. PLANIFICACIÓN ACADÉMICA, HORARIOS Y RECURSOS
   - CA-F7-21: La confirmación aplica únicamente los cambios seleccionados.
   - CA-F7-22: Si la operación falla, no quedan modificaciones parciales.
   - CA-F7-23: Si no existe una alternativa válida, el sistema lo comunica sin presentar una solución incorrecta como aceptable.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completado
 
 ---
 

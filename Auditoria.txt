@@ -740,3 +740,22 @@ Auditoría inicial de archivos para TAREA-F7-IMP-02:
 
 Hallazgos:
 - La vista de horarios actual renderiza una tabla plana de registros, pero no permite filtrar por perspectivas (por docente, por sección, por aula o por estado) ni consultar la disponibilidad de aulas de forma unificada.
+
+
+-------------------------------------------------------------------------------
+FECHA: 2026-10-26
+TAREA: [TAREA-F7-IMP-03] Desarrollar una herramienta de resolución asistida de conflictos
+-------------------------------------------------------------------------------
+Auditoría inicial de archivos para TAREA-F7-IMP-03:
+- backend/academic-service/Code.gs:
+  - Inspeccionada la función `checkScheduleConflict`.
+  - Se implementará la función `getScheduleConflictResolutionAlternatives` para analizar colisiones detectadas y proponer alternativas válidas (aulas alternativas con capacidad, bloques de tiempo libres, docentes sustitutos disponibles) sin modificar los datos oficiales antes de confirmación.
+- teacher-dashboard.html:
+  - Se añadirá el modal `#modal-schedule-conflict-resolution` para previsualizar y comparar alternativas de resolución de conflictos.
+- js/teacher.js:
+  - Se añadirá la función `window.openAssistedConflictResolutionModal` antecedida por la etiqueta identificativa `[TAREA-F7-IMP-03]` para conectar la detección de traslapes con la vista asistida de alternativas.
+- Pendientes.md:
+  - Se actualizará el estado de la TAREA-F7-IMP-03 a `[X] Completado`.
+
+Hallazgos:
+- El sistema detecta conflictos pero carece de un endpoint y modal asistido que proponga automáticamente aulas o bloques horarios alternativos al usuario al encontrar una colisión.
