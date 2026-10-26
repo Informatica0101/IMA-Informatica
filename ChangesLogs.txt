@@ -1689,3 +1689,12 @@ Archivos Modificados:
   - Creadas las funciones `window.loadStudentAdministrativeReport` y `window.exportAdministrativeReportCSV` para la consulta y exportación a CSV.
 - Pendientes.md:
   - Marcada TAREA-F6-026 como completada [X] en Pendientes.md.
+
+[TAREA-F6-027] Fortalecer la recuperación y verificación de copias de seguridad del expediente
+- backend/academic-service/Code.gs:
+  - En `verifyBackupIntegrity`, incorporada la verificación explícita de presencia de tablas esenciales (`ExpedientesEstudiantes`, `Matriculas`, `DocumentosEstudiante`, `MovimientosEstudiante`) y el conteo de referencias rotas a Google Drive.
+  - En `previewBackupRestoreImpact`, añadida la inclusión de indicadores de integridad esencial y enlaces rotos.
+- js/teacher.js:
+  - Creada la función `window.previewAndVerifyBackupRestore` para activar la inspección previa de respaldos.
+- Pendientes.md:
+  - Marcada TAREA-F6-027 como completada [X] en Pendientes.md.

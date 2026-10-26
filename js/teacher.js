@@ -875,6 +875,36 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // [TAREA-F6-027] [Fase 6: Expediente Institucional y Ciclo de Vida] - Controlador de inspección de integridad y vista previa de impacto de restauración
+    window.previewAndVerifyBackupRestore = async function(fileId) {
+        if (!fileId) {
+            fileId = prompt("Ingrese el ID del archivo de respaldo en Google Drive:", "");
+            if (!fileId) return;
+        }
+
+        try {
+            if (window.showLoading) window.showLoading('Inspeccionando integridad de respaldo...');
+            const res = await fetchApi('ACADEMIC', 'previewBackupRestoreImpact', { fileId });
+            if (window.hideLoading) window.hideLoading();
+
+            if (res && res.status === 'success') {
+                let msg = `--- RESULTADO DE INSPECCIÓN DE RESPALDO ---\n\n`;
+                msg += `Archivo: ${res.fileName}\n`;
+                msg += `Checksum Válido: ${res.checksumValid ? 'SÍ' : 'NO'}\n`;
+                msg += `Tablas Esenciales Integras: ${res.tablasEsencialesVerificadas ? 'SÍ' : 'NO'}\n`;
+                msg += `Referencias Rotas Drive: ${res.referenciasRotasDrive}\n\n`;
+                msg += `Para proceder con la restauración confirme el código: ${res.requireConfirmationCode}\n`;
+
+                alert(msg);
+            } else {
+                alert("Error al verificar respaldo: " + ((res && res.message) || "Respaldo corrupto o inválido."));
+            }
+        } catch (err) {
+            if (window.hideLoading) window.hideLoading();
+            alert("Error al conectar para inspeccionar respaldo: " + err.message);
+        }
+    };
+
     // [TAREA-19] [Fase 1 - Migración Curricular] - Handlers e integración frontend (#modal-curricular-migration) para mapeo, equivalencias y simulación pre-validada.
     const modalCurricularMigration = document.getElementById('modal-curricular-migration');
     const btnCloseCurricularMigration = document.getElementById('btn-close-curricular-migration');

@@ -2699,7 +2699,7 @@ function executeCurricularMigration(payload) {
   };
 }
 
-// [TAREA-F6-011] [Fase 6: Reestructuración en microservicios independientes] - Vista previa e inspección de impacto previa a la restauración de respaldos aislados
+// [TAREA-F6-027] [Fase 6: Expediente Institucional y Ciclo de Vida] - Vista previa de impacto de restauración con reporte de referencias a Drive e inspección de tablas esenciales
 function previewBackupRestoreImpact(payload) {
   const { fileId } = payload || {};
   if (!fileId) throw new Error("ID de archivo de respaldo es requerido.");
@@ -2737,6 +2737,8 @@ function previewBackupRestoreImpact(payload) {
     status: "success",
     fileName: file.getName(),
     checksumValid: true,
+    tablasEsencialesVerificadas: verifyRes.essentialSheetsPresent,
+    referenciasRotasDrive: verifyRes.brokenDriveLinksCount,
     totalSheets: Object.keys(parsed.sheets).length,
     impactSummary: impactSummary,
     requireConfirmationCode: "RESTORE-CONFIRMED",
@@ -8521,13 +8523,37 @@ function verifyBackupIntegrity(payload) {
 
     const isValid = (storedChecksum === computedChecksum || Boolean(storedChecksum));
 
-    logStructuredEvent("ACADEMIC", "verifyBackupIntegrity", "INFO", "BACKUP_VERIFIED", `Integridad de respaldo ${file.getName()}: ${isValid ? 'VÁLIDO' : 'CORRUPTO'}`, { fileId: fileId, isValid: isValid }, payload && payload.authRole);
+    // [TAREA-F6-027] [Fase 6: Expediente Institucional y Ciclo de Vida] - Verificación de tablas esenciales y escaneo de referencias rotas en Drive
+    const essentialSheets = ["ExpedientesEstudiantes", "Matriculas", "DocumentosEstudiante", "MovimientosEstudiante"];
+    const backupSheets = Object.keys(parsed.sheets || {});
+    const missingEssential = essentialSheets.filter(s => backupSheets.indexOf(s) === -1);
+
+    let brokenDriveLinksCount = 0;
+    const docRows = parsed.sheets["DocumentosEstudiante"] || [];
+    if (docRows.length > 1) {
+      for (let i = 1; i < docRows.length; i++) {
+        const driveFileId = String(docRows[i][5] || "").trim();
+        if (driveFileId) {
+          try {
+            const df = DriveApp.getFileById(driveFileId);
+            if (df.isTrashed()) brokenDriveLinksCount++;
+          } catch (_) {
+            brokenDriveLinksCount++;
+          }
+        }
+      }
+    }
+
+    logStructuredEvent("ACADEMIC", "verifyBackupIntegrity", "INFO", "BACKUP_VERIFIED", `Integridad de respaldo ${file.getName()}: ${isValid ? 'VÁLIDO' : 'CORRUPTO'}, Tablas esenciales faltantes: ${missingEssential.length}, Enlaces rotos Drive: ${brokenDriveLinksCount}`, { fileId: fileId, isValid: isValid, missingEssential, brokenDriveLinksCount }, payload && payload.authRole);
 
     return {
       status: "success",
-      isValid: isValid,
+      isValid: isValid && missingEssential.length === 0,
       fileName: file.getName(),
-      sheetCount: Object.keys(parsed.sheets).length,
+      sheetCount: backupSheets.length,
+      essentialSheetsPresent: missingEssential.length === 0,
+      missingEssentialSheets: missingEssential,
+      brokenDriveLinksCount: brokenDriveLinksCount,
       timestamp: parsed.metadata.timestamp,
       storedChecksum: storedChecksum,
       computedChecksum: computedChecksum

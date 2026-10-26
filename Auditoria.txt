@@ -430,3 +430,17 @@ Resultados de verificación:
 - Implementación de `getStudentFileAdministrativeReports` para la generación de reportes ejecutivos (estado de expedientes, matrículas, reincorporaciones, documentos faltantes/vencidos e inconsistencias) con filtros multi-criterio.
 - Registro en la bitácora de trazabilidad de la consulta/exportación de información PII sensible.
 - Creación de controladores UI `loadStudentAdministrativeReport` y `exportAdministrativeReportCSV` en `js/secretary.js`.
+
+===========================================================
+AUDITORÍA DE CÓDIGO - TAREA-F6-027
+===========================================================
+Fecha: 2026-03-29
+Archivos verificados:
+- backend/academic-service/Code.gs
+- js/teacher.js
+- Pendientes.md
+
+Resultados de verificación:
+- Verificación reforzada de integridad de respaldos en `verifyBackupIntegrity` escaneando tablas esenciales (`ExpedientesEstudiantes`, `Matriculas`, `DocumentosEstudiante`, `MovimientosEstudiante`, `RelacionesFamiliares`) y enlaces a Drive.
+- Incorporación del informe de referencias rotas en Drive y análisis de impacto estructural en `previewBackupRestoreImpact`.
+- Creación del controlador `previewAndVerifyBackupRestore` en `js/teacher.js`.

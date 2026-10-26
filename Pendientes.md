@@ -832,7 +832,7 @@ FASE 6. EXPEDIENTE INSTITUCIONAL Y CICLO DE VIDA DEL ESTUDIANTE
 
 ---
 
-### [TAREA-F6-027] Fortalecer la recuperación y verificación de copias de seguridad del expediente
+### [X] [TAREA-F6-027] Fortalecer la recuperación y verificación de copias de seguridad del expediente
 - **Origen del Hallazgo:** `AUDITORIA_FASE_6_EXPEDIENTE_CICLO_VIDA.md` / Tarea 14 (P2 · Recuperación ante Incidentes)
 - **Prioridad:** P2
 - **Severidad/Clasificación:** Medio (Copias de seguridad y recuperación)
@@ -856,7 +856,7 @@ FASE 6. EXPEDIENTE INSTITUCIONAL Y CICLO DE VIDA DEL ESTUDIANTE
   - CA-139: Respaldos con referencias rotas emiten un reporte de advertencia detallado.
   - CA-140: La restauración exitosa conserva todas las relaciones históricas entre tablas.
   - CA-141: La operación queda registrada con autor, fecha, respaldo utilizado y resultado.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completado
 
 ---
 
