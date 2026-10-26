@@ -1384,3 +1384,905 @@ SEGUNDA PARTE: REESTRUCTURACIÓN ARQUITECTÓNICA, ESCALABILIDAD Y ADMINISTRACIÓ
   - CA-172: Los flujos que involucran varios servicios y dashboards mantienen la comunicación, las relaciones de datos y los permisos.
   - CA-173: Los cambios de configuración, despliegue o asignación de responsabilidades no dejan funciones existentes inaccesibles.
 - **Estado:** [ ] Pendiente
+
+
+===============================================================================
+FASE 7. PLANIFICACIÓN ACADÉMICA, HORARIOS Y RECURSOS
+===============================================================================
+
+### [ ] [TAREA-F7-IMP-01] Ampliar la validación integral de horarios y asignaciones
+- **Origen del Hallazgo:** `AUDITORIA_FASE_7_PLANIFICACION_HORARIOS_RECURSOS.md` / Tarea F7-IMP-01 (P1 · Fortalecimiento de Validaciones)
+- **Prioridad:** P1
+- **Severidad/Clasificación:** Alta (Ampliación funcional y fortalecimiento de validaciones)
+- **Archivos Involucrados:**
+  - `backend/academic-service/Code.gs`
+  - `teacher-dashboard.html`
+  - `js/teacher.js`
+- **Dependencias Expuestas:** `checkScheduleConflict`, `createClassSchedule`, `getTeacherTeachingLoad`, `HorariosClase`, `CalendarioAcademico`, `HorariosLaborales`, `SedesAulas`
+- **Descripción del Alcance:**
+  Consolidar las reglas de validación aplicables a las asignaciones académicas, considerando las relaciones entre horarios, disponibilidad, períodos académicos, evaluaciones, recursos y reglas institucionales antes de crear, modificar, importar o publicar una asignación.
+
+  Requisitos Funcionales:
+  1. Consolidar las reglas de validación aplicables a las asignaciones académicas, sin duplicar innecesariamente las comprobaciones existentes.
+  2. Evaluar las restricciones pertinentes antes de crear, modificar, importar o publicar una asignación.
+  3. Distinguir entre:
+     - Conflictos que impiden guardar o publicar.
+     - Advertencias que permiten continuar con autorización.
+     - Preferencias de planificación que pueden incumplirse sin invalidar la operación.
+     - Errores de configuración que impiden evaluar correctamente una asignación.
+  4. Detectar superposiciones horarias exactas y parciales.
+  5. Considerar las fechas efectivas de las actividades, las excepciones del calendario y los períodos académicos aplicables.
+  6. Validar la disponibilidad del docente, el aula y los recursos requeridos.
+  7. Comprobar las restricciones de las secciones y los grupos involucrados.
+  8. Identificar incompatibilidades entre clases, evaluaciones y otras actividades cuando compartan participantes o recursos exclusivos.
+  9. Ejecutar las validaciones sobre el estado actualizado de los datos, no exclusivamente sobre información previamente cargada en la interfaz.
+  10. Devolver resultados estructurados que permitan identificar las asignaciones afectadas y la regla incumplida.
+  11. Evitar que la creación o modificación de un horario deje el sistema en un estado inconsistente si una validación o escritura falla.
+  12. Conservar las excepciones legítimas que estén expresamente configuradas, sin convertir todas las coincidencias horarias en errores.
+- **Criterios de Aceptación:**
+  - CA-F7-01: Una asignación incompatible con una restricción obligatoria no puede confirmarse.
+  - CA-F7-02: Una coincidencia permitida por una excepción explícita se acepta y conserva la justificación correspondiente.
+  - CA-F7-03: Los intervalos parcialmente superpuestos se detectan correctamente.
+  - CA-F7-04: Los intervalos consecutivos que no se superponen se aceptan, salvo que exista otra restricción aplicable.
+  - CA-F7-05: Las modificaciones se validan considerando tanto el horario anterior como el nuevo, sin generar conflictos artificiales con el registro que se está actualizando.
+  - CA-F7-06: Los errores identifican el recurso, docente, grupo o actividad implicados.
+  - CA-F7-07: Una operación fallida no deja asignaciones parcialmente actualizadas.
+  - CA-F7-08: Las reglas existentes que funcionan correctamente siguen superando sus pruebas.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [ ] [TAREA-F7-IMP-02] Implementar una matriz visual de planificación y disponibilidad
+- **Origen del Hallazgo:** `AUDITORIA_FASE_7_PLANIFICACION_HORARIOS_RECURSOS.md` / Tarea F7-IMP-02 (P1 · Interfaz de Planificación)
+- **Prioridad:** P1
+- **Severidad/Clasificación:** Alta (Ampliación de interfaz y herramientas de planificación)
+- **Archivos Involucrados:**
+  - `teacher-dashboard.html`
+  - `js/teacher.js`
+  - `backend/academic-service/Code.gs`
+- **Dependencias Expuestas:** `getClassSchedules`, `getClassroomResources`, `getTeacherAssignments`, `HorariosClase`, `SedesAulas`
+- **Descripción del Alcance:**
+  Incorporar una herramienta integral de visualización que permita comparar la disponibilidad de docentes, secciones, asignaturas, aulas y recursos para tomar decisiones de planificación desde una misma matriz unificada.
+
+  Requisitos Funcionales:
+  1. Incorporar una vista de planificación que permita alternar entre:
+     - Horario institucional.
+     - Horario por docente.
+     - Horario por sección.
+     - Horario por asignatura.
+     - Ocupación por aula.
+     - Disponibilidad por recurso.
+  2. Permitir filtrar por año lectivo, período académico, jornada, sede, grado, sección y estado de publicación.
+  3. Mostrar, para cada asignación, la información pertinente: asignatura, sección/grupo, docente, aula, día y horario, período académico y estado de la asignación.
+  4. Diferenciar visualmente las clases confirmadas, los borradores, las actividades canceladas y los conflictos pendientes.
+  5. Mostrar los intervalos disponibles y ocupados.
+  6. Permitir seleccionar un bloque para consultar sus detalles y ejecutar las acciones autorizadas.
+  7. Permitir identificar la disponibilidad simultánea de los recursos necesarios para una nueva clase.
+  8. Actualizar los resultados después de guardar, modificar o cancelar una asignación.
+  9. Proporcionar estados vacíos y mensajes claros cuando no existan resultados para los filtros seleccionados.
+  10. Mantener la interfaz utilizable en pantallas de escritorio, tabletas y dispositivos móviles.
+  11. Facilitar la impresión o exportación de las vistas cuando corresponda.
+  12. Respetar los permisos de consulta y modificación del usuario.
+- **Criterios de Aceptación:**
+  - CA-F7-09: Un coordinador puede consultar la ocupación de un aula para un intervalo determinado.
+  - CA-F7-10: Puede identificar los horarios de un docente y de una sección sin consultar manualmente cada registro.
+  - CA-F7-11: Los filtros combinados devuelven únicamente los registros que cumplen las condiciones seleccionadas.
+  - CA-F7-12: Una asignación cancelada deja de mostrarse como vigente, aunque pueda seguir disponible en el historial.
+  - CA-F7-13: Una modificación confirmada se refleja en todas las vistas pertinentes.
+  - CA-F7-14: Los usuarios sin permiso de modificación no pueden alterar los horarios desde esta interfaz.
+  - CA-F7-15: Las consultas no muestran información de períodos o grupos ajenos al ámbito autorizado.
+  - CA-F7-16: La vista funciona con horarios extensos sin bloquear la interacción ni ocultar información esencial.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [ ] [TAREA-F7-IMP-03] Desarrollar una herramienta de resolución asistida de conflictos
+- **Origen del Hallazgo:** `AUDITORIA_FASE_7_PLANIFICACION_HORARIOS_RECURSOS.md` / Tarea F7-IMP-03 (P1 · Optimización de Horarios)
+- **Prioridad:** P1
+- **Severidad/Clasificación:** Alta (Nueva capacidad de planificación y optimización)
+- **Archivos Involucrados:**
+  - `backend/academic-service/Code.gs`
+  - `teacher-dashboard.html`
+  - `js/teacher.js`
+- **Dependencias Expuestas:** `checkScheduleConflict`, `getClassSchedules`, `getTeacherTeachingLoad`, `getClassroomResources`, `F7-IMP-01`, `F7-IMP-02`
+- **Descripción del Alcance:**
+  Implementar un mecanismo integral de resolución asistida que agrupe conflictos, proporcione explicaciones claras y evalúe alternativas válidas (cambio de horario, sustituto disponible, aula alternativa, reprogramación) permitiendo comparar sus consecuencias antes de aplicar cambios oficiales.
+
+  Requisitos Funcionales:
+  1. Mostrar los conflictos agrupados por docente, aula, sección, recurso y actividad.
+  2. Identificar todas las asignaciones que participan en un mismo conflicto.
+  3. Explicar qué regla se incumple y qué intervalo produce la incompatibilidad.
+  4. Proponer alternativas válidas, cuando existan: cambiar el horario, utilizar otro docente disponible, seleccionar otra aula compatible, reasignar el recurso, reprogramar la actividad.
+  5. Comprobar que cada alternativa propuesta satisface las restricciones obligatorias.
+  6. Mostrar las consecuencias de cada alternativa sobre las asignaciones relacionadas.
+  7. Permitir comparar alternativas sin modificar todavía los datos oficiales.
+  8. Exigir confirmación antes de aplicar cambios que afecten a otras asignaciones o usuarios.
+  9. Volver a validar la alternativa seleccionada inmediatamente antes de guardarla.
+  10. Identificar los casos en que no exista una solución válida y explicar las restricciones que lo impiden.
+  11. Registrar la resolución seleccionada y los cambios efectivamente aplicados.
+  12. Permitir que el usuario descarte una propuesta sin alterar la planificación existente.
+- **Criterios de Aceptación:**
+  - CA-F7-17: Ante un conflicto docente, el sistema puede mostrar intervalos alternativos que respeten su disponibilidad.
+  - CA-F7-18: Las alternativas que producen otros conflictos obligatorios se descartan o se identifican explícitamente como inválidas.
+  - CA-F7-19: Una propuesta no modifica los datos oficiales antes de su confirmación.
+  - CA-F7-20: Si los datos cambian mientras se evalúa una alternativa, el sistema vuelve a validarla.
+  - CA-F7-21: La confirmación aplica únicamente los cambios seleccionados.
+  - CA-F7-22: Si la operación falla, no quedan modificaciones parciales.
+  - CA-F7-23: Si no existe una alternativa válida, el sistema lo comunica sin presentar una solución incorrecta como aceptable.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [ ] [TAREA-F7-IMP-04] Incorporar planificación masiva y optimización de horarios
+- **Origen del Hallazgo:** `AUDITORIA_FASE_7_PLANIFICACION_HORARIOS_RECURSOS.md` / Tarea F7-IMP-04 (P2 · Planificación Masiva)
+- **Prioridad:** P2
+- **Severidad/Clasificación:** Medio (Nueva herramienta de planificación avanzada)
+- **Archivos Involucrados:**
+  - `backend/academic-service/Code.gs`
+  - `teacher-dashboard.html`
+  - `js/teacher.js`
+- **Dependencias Expuestas:** `publishClassSchedules`, `checkScheduleConflict`, `F7-IMP-01`, `F7-IMP-02`, `F7-IMP-03`
+- **Descripción del Alcance:**
+  Desarrollar un entorno de escenarios de planificación masiva en borrador que permita generar, reorganizar y optimizar conjuntos completos de horarios respetando restricciones obligatorias (disponibilidad docente, exclusividad de aula, jornadas) y evaluando preferencias configurables sin alterar el horario oficial hasta su publicación explícita.
+
+  Requisitos Funcionales:
+  1. Permitir preparar un escenario de planificación sin modificar el horario oficial.
+  2. Incorporar las clases, asignaturas, secciones, docentes, aulas y períodos que participarán en el escenario.
+  3. Utilizar como restricciones obligatorias: disponibilidad docente, exclusividad de aulas y recursos, compatibilidad de jornadas, disponibilidad de las secciones, duración de las clases, restricciones académicas configuradas.
+  4. Permitir establecer preferencias, cuando sean pertinentes: reducir períodos libres innecesarios, distribuir la carga docente, evitar concentraciones de clases o evaluaciones, favorecer uso eficiente de aulas, respetar preferencias docentes autorizadas.
+  5. Diferenciar las restricciones obligatorias de las preferencias optimizables.
+  6. Permitir comparar el escenario propuesto con el horario actual.
+  7. Mostrar las asignaciones que no pudieron ubicarse y las razones identificadas.
+  8. Permitir bloquear asignaciones que no deban cambiar durante una reorganización.
+  9. Recalcular las asignaciones afectadas cuando cambie una restricción.
+  10. Permitir guardar un escenario como borrador y retomarlo posteriormente.
+  11. Exigir validación y confirmación antes de publicar el resultado.
+  12. Registrar los cambios introducidos al aplicar un escenario.
+- **Criterios de Aceptación:**
+  - CA-F7-24: La generación de un escenario no modifica el horario oficial.
+  - CA-F7-25: Ningún escenario puede publicarse si contiene conflictos obligatorios no resueltos.
+  - CA-F7-26: Las asignaciones bloqueadas se conservan durante la reorganización.
+  - CA-F7-27: Las restricciones imposibles de satisfacer se identifican de forma explícita.
+  - CA-F7-28: Las preferencias no sustituyen a las restricciones obligatorias.
+  - CA-F7-29: El sistema permite comparar la carga docente y la utilización de recursos antes y después.
+  - CA-F7-30: Una ejecución fallida no destruye el escenario anterior ni el horario oficial.
+  - CA-F7-31: La publicación requiere una confirmación explícita y una validación final.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [ ] [TAREA-F7-IMP-05] Ampliar el control de carga laboral y las preferencias docentes
+- **Origen del Hallazgo:** `AUDITORIA_FASE_7_PLANIFICACION_HORARIOS_RECURSOS.md` / Tarea F7-IMP-05 (P1 · Carga Docente)
+- **Prioridad:** P1
+- **Severidad/Clasificación:** Alta (Ampliación de reglas académicas y laborales)
+- **Archivos Involucrados:**
+  - `backend/academic-service/Code.gs`
+  - `teacher-dashboard.html`
+  - `js/teacher.js`
+- **Dependencias Expuestas:** `getTeacherTeachingLoad`, `HorariosLaborales`, `HorariosClase`, `checkScheduleConflict`
+- **Descripción del Alcance:**
+  Parametrizar de forma configurable los límites de carga laboral docente por contrato, jornada o política institucional (separando horas lectivas de actividades adicionales), e integrar el cálculo dinámico y el registro de preferencias autorizadas en la matriz de planificación.
+
+  Requisitos Funcionales:
+  1. Identificar y separar las reglas de carga obligatoria de las preferencias de distribución.
+  2. Permitir configurar límites aplicables a cada docente según las políticas institucionales.
+  3. Considerar: horas lectivas semanales, cantidad de sesiones, duración de las clases, límites diarios, períodos consecutivos, descansos mínimos, jornadas autorizadas, disponibilidad parcial, responsabilidades adicionales.
+  4. Evitar que las clases recurrentes se contabilicen varias veces en el cálculo semanal.
+  5. Diferenciar las horas lectivas de las actividades adicionales cuando la institución las contabilice por separado.
+  6. Mostrar la carga total, el límite aplicable y la distribución por día.
+  7. Identificar las asignaciones que provocan un exceso de carga.
+  8. Permitir registrar preferencias de horario cuando estén autorizadas y sean compatibles con las reglas obligatorias.
+  9. Actualizar los cálculos después de modificar una asignación.
+  10. Conservar el historial de las reglas aplicadas cuando sea necesario explicar una planificación anterior.
+- **Criterios de Aceptación:**
+  - CA-F7-32: Los límites se aplican según la configuración efectiva y no mediante un valor global arbitrario.
+  - CA-F7-33: Una modificación de horario actualiza la carga del docente afectado.
+  - CA-F7-34: Las clases recurrentes se contabilizan de acuerdo con su frecuencia real.
+  - CA-F7-35: Los períodos libres no se contabilizan como horas lectivas.
+  - CA-F7-36: El sistema identifica excesos de carga y explica qué asignaciones los producen.
+  - CA-F7-37: Las preferencias docentes no permiten incumplir restricciones obligatorias.
+  - CA-F7-38: Si no existe una política definida para una regla, el sistema no inventa un límite institucional.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [ ] [TAREA-F7-IMP-06] Ampliar la gestión de disponibilidad, equipamiento y capacidad de espacios
+- **Origen del Hallazgo:** `AUDITORIA_FASE_7_PLANIFICACION_HORARIOS_RECURSOS.md` / Tarea F7-IMP-06 (P1 · Gestión de Espacios)
+- **Prioridad:** P1
+- **Severidad/Clasificación:** Alta (Ampliación de recursos compartidos)
+- **Archivos Involucrados:**
+  - `backend/academic-service/Code.gs`
+  - `teacher-dashboard.html`
+  - `js/teacher.js`
+- **Dependencias Expuestas:** `SedesAulas`, `getClassroomResources`, `saveClassroomResource`, `RecursosReutilizables`, `checkScheduleConflict`
+- **Descripción del Alcance:**
+  Ampliación de la gestión de aulas y espacios físicos para incluir requerimientos de equipamiento específico, períodos temporales de mantenimiento e indisponibilidad, y comparación entre la capacidad real del espacio y la matrícula efectiva de la sección.
+
+  Requisitos Funcionales:
+  1. Permitir registrar las características de cada espacio relevantes para la planificación.
+  2. Representar la capacidad máxima y los requisitos de equipamiento cuando sean aplicables.
+  3. Identificar los recursos compartidos que pueden utilizarse simultáneamente y aquellos que requieren exclusividad.
+  4. Registrar intervalos de indisponibilidad por mantenimiento, reparación u otras causas.
+  5. Evitar nuevas asignaciones dentro de intervalos de indisponibilidad.
+  6. Detectar las clases futuras afectadas cuando un aula o recurso deje de estar disponible.
+  7. Permitir consultar la ocupación por día, semana, período académico y recurso.
+  8. Permitir identificar espacios alternativos que satisfagan las restricciones de una actividad.
+  9. Distinguir entre espacios activos, temporalmente indisponibles e inactivos.
+  10. Evitar que la desactivación de un recurso elimine su historial de utilización.
+  11. Integrar la disponibilidad de los recursos con la validación de horarios.
+  12. Evitar que la capacidad de un aula se confunda con la matrícula efectiva de una sección.
+- **Criterios de Aceptación:**
+  - CA-F7-39: Un aula indisponible no puede asignarse a una nueva actividad dentro del intervalo restringido.
+  - CA-F7-40: Una actividad que requiere equipamiento específico no se asigna a un espacio incompatible.
+  - CA-F7-41: Una restricción nueva identifica las asignaciones futuras afectadas.
+  - CA-F7-42: El sistema permite consultar las reservas existentes y sus intervalos.
+  - CA-F7-43: La desactivación de un aula no elimina las referencias históricas.
+  - CA-F7-44: Las reglas de capacidad solo se aplican cuando existe información suficiente y una política definida.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [ ] [TAREA-F7-IMP-07] Fortalecer la programación de evaluaciones y la prevención de sobrecargas
+- **Origen del Hallazgo:** `AUDITORIA_FASE_7_PLANIFICACION_HORARIOS_RECURSOS.md` / Tarea F7-IMP-07 (P1 · Programación de Evaluaciones)
+- **Prioridad:** P1
+- **Severidad/Clasificación:** Alta (Ampliación de planificación evaluativa)
+- **Archivos Involucrados:**
+  - `backend/exam-service/Code.gs`
+  - `backend/academic-service/Code.gs`
+  - `teacher-dashboard.html`
+  - `js/teacher.js`
+- **Dependencias Expuestas:** `CalendarioAcademico`, `checkScheduleConflict`, `createCalendarEvent`, `Examenes`
+- **Descripción del Alcance:**
+  Establecer reglas configurables para la programación de evaluaciones (exámenes parciales, recuperaciones) que controlen la sobrecarga diaria de exámenes por sección, días no lectivos, disponibilidad de aulas y la simulación pre-confirmación de reprogramaciones.
+
+  Requisitos Funcionales:
+  1. Permitir configurar las restricciones institucionales aplicables a las evaluaciones.
+  2. Comprobar las coincidencias de evaluaciones para una misma sección o grupo.
+  3. Detectar conflictos de docentes, aulas y recursos.
+  4. Permitir definir límites de evaluaciones por día o intervalo, si la institución los establece.
+  5. Permitir definir períodos de separación entre evaluaciones cuando corresponda.
+  6. Considerar las fechas de vacaciones, suspensiones y días no lectivos.
+  7. Diferenciar exámenes ordinarios, recuperaciones y otras actividades evaluativas.
+  8. Permitir simular cambios de fecha antes de confirmarlos.
+  9. Identificar a los estudiantes o grupos afectados cuando exista información suficiente.
+  10. Conservar los resultados y calificaciones históricos al modificar la programación.
+  11. Propagar los cambios a los calendarios y vistas pertinentes.
+  12. Evitar que las reglas nuevas contradigan las configuraciones académicas existentes.
+- **Criterios de Aceptación:**
+  - CA-F7-45: Las evaluaciones incompatibles se identifican antes de su confirmación.
+  - CA-F7-46: Los límites diarios se aplican únicamente cuando están configurados.
+  - CA-F7-47: Una reprogramación actualiza la fecha efectiva sin duplicar la evaluación.
+  - CA-F7-48: Las calificaciones y los registros históricos permanecen vinculados a la evaluación correcta.
+  - CA-F7-49: Los días no lectivos se respetan conforme a las reglas institucionales.
+  - CA-F7-50: Los conflictos resultantes de una reprogramación se muestran antes de confirmar los cambios.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [ ] [TAREA-F7-IMP-08] Ampliar las excepciones del calendario y la gestión de sesiones
+- **Origen del Hallazgo:** `AUDITORIA_FASE_7_PLANIFICACION_HORARIOS_RECURSOS.md` / Tarea F7-IMP-08 (P1 · Excepciones del Calendario)
+- **Prioridad:** P1
+- **Severidad/Clasificación:** Alta (Ampliación funcional del calendario académico)
+- **Archivos Involucrados:**
+  - `backend/academic-service/Code.gs`
+  - `teacher-dashboard.html`
+  - `js/teacher.js`
+- **Dependencias Expuestas:** `CalendarioAcademico`, `getAcademicCalendar`, `createCalendarEvent`, `HorariosClase`
+- **Descripción del Alcance:**
+  Implementar el control de excepciones para sesiones individuales dentro de series de horarios recurrentes, permitiendo cancelaciones o reprogramaciones puntuales sin alterar la serie completa ni duplicar eventos en el calendario.
+
+  Requisitos Funcionales:
+  1. Diferenciar eventos institucionales, eventos académicos, sesiones de clase y excepciones de una sesión.
+  2. Permitir cancelar o reprogramar una sesión sin alterar las demás sesiones recurrentes.
+  3. Permitir modificar una serie completa cuando el usuario lo seleccione expresamente.
+  4. Identificar las sesiones afectadas por vacaciones, suspensiones y cambios del calendario.
+  5. Diferenciar un día no lectivo de un día en el que una actividad concreta ha sido cancelada.
+  6. Registrar las reprogramaciones y mantener la referencia a la sesión original.
+  7. Evitar duplicaciones al recalcular las sesiones recurrentes.
+  8. Permitir consultar las sesiones originales y sus excepciones.
+  9. Actualizar la disponibilidad de aulas y docentes cuando se cancele o reprograma una sesión.
+  10. Conservar los registros de asistencia y evaluación asociados a sesiones pasadas.
+- **Criterios de Aceptación:**
+  - CA-F7-51: Cambiar una sesión individual no altera las demás sesiones recurrentes.
+  - CA-F7-52: Cambiar una serie afecta únicamente las sesiones incluidas en la operación confirmada.
+  - CA-F7-53: Cancelar una sesión libera los recursos correspondientes.
+  - CA-F7-54: Las sesiones pasadas conservan sus registros históricos.
+  - CA-F7-55: Una excepción no produce dos sesiones activas para el mismo evento.
+  - CA-F7-56: Los calendarios muestran la fecha efectiva y permiten identificar una reprogramación.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [ ] [TAREA-F7-IMP-09] Desarrollar versiones de horarios, comparación y restauración controlada
+- **Origen del Hallazgo:** `AUDITORIA_FASE_7_PLANIFICACION_HORARIOS_RECURSOS.md` / Tarea F7-IMP-09 (P2 · Control de Versiones de Horario)
+- **Prioridad:** P2
+- **Severidad/Clasificación:** Medio (Nueva capacidad de control de cambios)
+- **Archivos Involucrados:**
+  - `backend/academic-service/Code.gs`
+  - `teacher-dashboard.html`
+  - `js/teacher.js`
+- **Dependencias Expuestas:** `HorariosClase`, `publishClassSchedules`, `HistorialCambiosEntidad`, `F7-IMP-01`, `F7-IMP-08`
+- **Descripción del Alcance:**
+  Implementar el control de versiones de la matriz de horarios publicados con herramientas de comparación visual (diff), guardado de borradores no publicados y restauración controlada con re-validación de conflictos.
+
+  Requisitos Funcionales:
+  1. Registrar las versiones relevantes de un horario publicado.
+  2. Identificar quién realizó cada cambio y cuándo.
+  3. Mostrar las diferencias entre dos versiones.
+  4. Identificar asignaciones nuevas, modificadas, canceladas y restauradas.
+  5. Conservar el motivo del cambio cuando sea requerido por el flujo.
+  6. Permitir guardar borradores sin alterar la versión publicada.
+  7. Permitir comparar el borrador con el horario vigente.
+  8. Permitir restaurar una versión anterior mediante una nueva operación controlada.
+  9. Volver a validar los conflictos antes de restaurar o publicar.
+  10. Conservar las versiones anteriores como historial.
+  11. Registrar qué cambios se aplicaron al restaurar una versión.
+  12. Evitar que la restauración elimine información posterior que no forme parte de la operación.
+- **Criterios de Aceptación:**
+  - CA-F7-57: Es posible comparar dos versiones e identificar las diferencias relevantes.
+  - CA-F7-58: Un borrador no modifica el horario publicado.
+  - CA-F7-59: Una restauración requiere autorización y validación.
+  - CA-F7-60: Las versiones históricas permanecen consultables.
+  - CA-F7-61: Una restauración no elimina silenciosamente cambios posteriores ajenos a ella.
+  - CA-F7-62: Las diferencias y los resultados de la operación quedan registrados.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [ ] [TAREA-F7-IMP-10] Fortalecer las notificaciones y la trazabilidad de cambios académicos
+- **Origen del Hallazgo:** `AUDITORIA_FASE_7_PLANIFICACION_HORARIOS_RECURSOS.md` / Tarea F7-IMP-10 (P1 · Notificaciones de Horarios)
+- **Prioridad:** P1
+- **Severidad/Clasificación:** Alta (Ampliación de notificaciones e integración)
+- **Archivos Involucrados:**
+  - `backend/user-service/Code.gs`
+  - `backend/academic-service/Code.gs`
+  - `js/teacher.js`
+  - `js/secretary.js`
+- **Dependencias Expuestas:** `sendMultiChannelNotification`, `HistorialCambiosEntidad`, `BitacoraNotificaciones`
+- **Descripción del Alcance:**
+  Estandarizar las notificaciones automáticas por cambios de horario, docente o aula con claves de deduplicación, registro de estado de entrega (preparado, enviado, entregado, fallido) y aislamiento frente a fallos de comunicación.
+
+  Requisitos Funcionales:
+  1. Identificar los destinatarios afectados por cada cambio.
+  2. Diferenciar las notificaciones dirigidas a docentes, estudiantes, familias y responsables institucionales.
+  3. Incorporar los cambios de fecha, hora, aula, docente, cancelación y reprogramación.
+  4. Incluir la información anterior y la nueva cuando corresponda.
+  5. Permitir consultar el historial de notificaciones asociadas a una actividad.
+  6. Diferenciar los estados de preparado, enviado, entregado, fallido y leído, únicamente cuando el canal permita comprobarlos.
+  7. Aplicar claves de deduplicación coherentes con el evento y el destinatario.
+  8. Permitir reintentar notificaciones fallidas sin repetir innecesariamente las que ya se entregaron.
+  9. Aislar los errores de comunicación del resultado de la operación académica.
+  10. Evitar que las notificaciones revelen datos que el destinatario no está autorizado a consultar.
+  11. Registrar los errores que requieran intervención.
+  12. Permitir configurar los canales disponibles y las preferencias compatibles con las políticas institucionales.
+- **Criterios de Aceptación:**
+  - CA-F7-63: Cada cambio confirmado genera las notificaciones que correspondan según los destinatarios y las reglas configuradas.
+  - CA-F7-64: Un fallo de comunicación no revierte una modificación académica confirmada.
+  - CA-F7-65: Los reintentos no duplican injustificadamente los avisos.
+  - CA-F7-66: El historial permite identificar el evento, los destinatarios y el resultado del envío.
+  - CA-F7-67: Los estados de entrega no se marcan como confirmados sin evidencia del canal.
+  - CA-F7-68: Los destinatarios no reciben información ajena a sus permisos.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [ ] [TAREA-F7-IMP-11] Fortalecer la coherencia y actualización de los portales relacionados
+- **Origen del Hallazgo:** `AUDITORIA_FASE_7_PLANIFICACION_HORARIOS_RECURSOS.md` / Tarea F7-IMP-11 (P1 · Integración Multi-Portal)
+- **Prioridad:** P1
+- **Severidad/Clasificación:** Alta (Ampliación de integración multi-módulo)
+- **Archivos Involucrados:**
+  - `js/teacher.js`
+  - `js/student.js`
+  - `js/secretary.js`
+  - `backend/academic-service/Code.gs`
+- **Dependencias Expuestas:** `getClassSchedules`, `getStudentSchedule`, `fetchAndRenderStudentSchedule`
+- **Descripción del Alcance:**
+  Garantizar la sincronización coherente y en tiempo real de los horarios entre el backend y los portales de Docentes, Estudiantes y Familias, previniendo visualización de datos en caché obsoletos o desalineados tras una modificación o cancelación.
+
+  Requisitos Funcionales:
+  1. Identificar la fuente de verdad de las asignaciones y las reglas de actualización de cada portal.
+  2. Definir qué operaciones requieren volver a consultar los datos y cuáles pueden actualizar una vista de manera incremental.
+  3. Evitar que los horarios cancelados o modificados permanezcan visibles como si siguieran vigentes.
+  4. Diferenciar los datos confirmados de la información temporal o pendiente de sincronización.
+  5. Mostrar mensajes claros cuando no sea posible recuperar el horario actualizado.
+  6. Evitar que una respuesta tardía sobrescriba datos más recientes.
+  7. Garantizar que los filtros por usuario, matrícula, sección y período se apliquen correctamente.
+  8. Verificar que los cambios de docente o aula se reflejen en todas las vistas pertinentes.
+  9. Mantener los registros históricos de asistencia y evaluación asociados a sus sesiones originales.
+  10. Evitar consultas duplicadas que degraden el rendimiento sin aportar información adicional.
+  11. Aplicar las restricciones de acceso en las consultas y servicios correspondientes.
+  12. Proporcionar una forma de actualizar los datos cuando una vista detecte que su información está desactualizada.
+- **Criterios de Aceptación:**
+  - CA-F7-69: Un cambio confirmado se refleja en las vistas pertinentes después de la actualización prevista.
+  - CA-F7-70: Los errores de comunicación no se presentan como una actualización exitosa.
+  - CA-F7-71: Los datos obsoletos no sobrescriben silenciosamente información más reciente.
+  - CA-F7-72: Cada usuario consulta únicamente los horarios correspondientes a sus permisos y relaciones académicas.
+  - CA-F7-73: Las cancelaciones no aparecen como asignaciones vigentes.
+  - CA-F7-74: Las modificaciones de horario no trasladan ni eliminan registros históricos de asistencia o evaluación.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [ ] [TAREA-F7-IMP-12] Ampliar los reportes de carga docente, ocupación y calidad de planificación
+- **Origen del Hallazgo:** `AUDITORIA_FASE_7_PLANIFICACION_HORARIOS_RECURSOS.md` / Tarea F7-IMP-12 (P2 · Analítica de Horarios)
+- **Prioridad:** P2
+- **Severidad/Clasificación:** Medio (Ampliación de análisis y reportes)
+- **Archivos Involucrados:**
+  - `backend/academic-service/Code.gs`
+  - `teacher-dashboard.html`
+  - `js/teacher.js`
+- **Dependencias Expuestas:** `getTeachingHoursSummary`, `getCurricularAnalyticsReport`, `getTeacherTeachingLoad`
+- **Descripción del Alcance:**
+  Crear indicadores analíticos y reportes ejecutivos sobre la ocupación porcentual de aulas/laboratorios, distribución de carga laboral docente por período y detección de horas huecas o conflictos de calidad de planificación.
+
+  Requisitos Funcionales:
+  1. Incorporar reportes de carga docente por día, semana, período y año lectivo.
+  2. Permitir comparar la carga con los límites aplicables a cada docente.
+  3. Mostrar la ocupación de aulas y recursos por intervalo.
+  4. Identificar los períodos de alta y baja utilización.
+  5. Mostrar los conflictos pendientes y las asignaciones que requieren revisión.
+  6. Resumir las evaluaciones y actividades programadas por sección y período.
+  7. Permitir filtrar por sede, jornada, grado, sección, docente, aula y período, según corresponda.
+  8. Diferenciar las asignaciones activas, canceladas y pendientes de publicación.
+  9. Mostrar la fecha de actualización de los datos cuando sea relevante.
+  10. Permitir exportar los reportes en los formatos admitidos por la plataforma.
+  11. Restringir los datos sensibles según el rol.
+  12. Evitar que los registros históricos se mezclen con la planificación vigente.
+- **Criterios de Aceptación:**
+  - CA-F7-75: Los totales de carga coinciden con las asignaciones incluidas en el período consultado.
+  - CA-F7-76: Las actividades canceladas se contabilizan conforme a la definición de cada indicador.
+  - CA-F7-77: La ocupación de recursos se calcula a partir de intervalos efectivos.
+  - CA-F7-78: Los filtros combinados producen resultados coherentes.
+  - CA-F7-79: Los reportes no incluyen datos fuera del ámbito autorizado.
+  - CA-F7-80: Las exportaciones coinciden con los resultados presentados en pantalla.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [ ] [TAREA-F7-IMP-13] Incorporar importación, exportación y validación masiva de horarios
+- **Origen del Hallazgo:** `AUDITORIA_FASE_7_PLANIFICACION_HORARIOS_RECURSOS.md` / Tarea F7-IMP-13 (P2 · Intercambio Masivo de Horarios)
+- **Prioridad:** P2
+- **Severidad/Clasificación:** Medio (Nueva herramienta de administración académica)
+- **Archivos Involucrados:**
+  - `backend/academic-service/Code.gs`
+  - `teacher-dashboard.html`
+  - `js/teacher.js`
+- **Dependencias Expuestas:** `createClassSchedule`, `checkScheduleConflict`, `F7-IMP-01`, `F7-IMP-02`
+- **Descripción del Alcance:**
+  Desarrollar la herramienta de importación/exportación masiva de horarios en formato estructurado (CSV/JSON), con fase previa de previsualización, validación atómica de conflictos y reporte de filas con error.
+
+  Requisitos Funcionales:
+  1. Permitir exportar horarios con sus relaciones académicas y estados pertinentes.
+  2. Permitir importar datos desde un formato estructurado admitido por la plataforma.
+  3. Validar la estructura y los campos obligatorios antes de procesar el archivo.
+  4. Comprobar la existencia de los grados, secciones, asignaturas, docentes, aulas y períodos referenciados.
+  5. Identificar duplicados y asignaciones que ya existan.
+  6. Detectar conflictos antes de aplicar los registros importados.
+  7. Presentar un resumen de registros válidos, advertencias, errores y duplicados.
+  8. Permitir revisar el resultado antes de confirmar la importación.
+  9. Diferenciar las operaciones de creación, actualización y omisión.
+  10. Evitar que una importación parcial deje registros relacionados en un estado inconsistente.
+  11. Registrar el resultado de la operación.
+  12. Aplicar los permisos correspondientes a la importación y exportación.
+- **Criterios de Aceptación:**
+  - CA-F7-81: Un archivo inválido se rechaza con errores identificables.
+  - CA-F7-82: Los registros conflictivos se identifican antes de confirmar la importación.
+  - CA-F7-83: La previsualización no modifica los horarios oficiales.
+  - CA-F7-84: Los duplicados se gestionan según la operación seleccionada.
+  - CA-F7-85: Una importación fallida no deja datos parcialmente aplicados sin control.
+  - CA-F7-86: La exportación puede volver a importarse sin perder los datos esenciales, dentro del alcance del formato definido.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [ ] [TAREA-F7-IMP-14] Fortalecer la publicación y el control de cambios masivos
+- **Origen del Hallazgo:** `AUDITORIA_FASE_7_PLANIFICACION_HORARIOS_RECURSOS.md` / Tarea F7-IMP-14 (P1 · Flujo de Publicación)
+- **Prioridad:** P1
+- **Severidad/Clasificación:** Alta (Ampliación del flujo de publicación)
+- **Archivos Involucrados:**
+  - `backend/academic-service/Code.gs`
+  - `teacher-dashboard.html`
+  - `js/teacher.js`
+- **Dependencias Expuestas:** `publishClassSchedules`, `checkScheduleConflict`, `HistorialCambiosEntidad`
+- **Descripción del Alcance:**
+  Enriquecer la función `publishClassSchedules` para incluir una etapa de revisión de impacto masivo, re-validación de conflictos en el conjunto completo de borradores y generación ordenada de notificaciones post-publicación.
+
+  Requisitos Funcionales:
+  1. Diferenciar claramente los borradores de los horarios publicados.
+  2. Permitir revisar todas las modificaciones antes de publicar.
+  3. Mostrar las asignaciones nuevas, modificadas y canceladas.
+  4. Detectar conflictos y restricciones incumplidas en el conjunto que se pretende publicar.
+  5. Identificar las clases, docentes, grupos y recursos afectados.
+  6. Solicitar confirmación cuando la publicación altere horarios vigentes.
+  7. Volver a validar los datos antes de confirmar la publicación.
+  8. Evitar que una publicación parcial se presente como completada.
+  9. Registrar quién publicó los cambios y cuándo.
+  10. Generar las notificaciones pertinentes después de confirmar la publicación.
+  11. Permitir consultar la versión publicada y su historial.
+  12. Evitar que los borradores de otros usuarios se publiquen accidentalmente.
+- **Criterios de Aceptación:**
+  - CA-F7-87: Un borrador no altera el horario visible como vigente.
+  - CA-F7-88: La publicación identifica los cambios y sus consecuencias.
+  - CA-F7-89: Los conflictos obligatorios impiden publicar.
+  - CA-F7-90: La confirmación publica únicamente los cambios incluidos en la operación.
+  - CA-F7-91: Si la publicación falla, el sistema identifica el estado efectivo y permite completar o resolver la operación sin duplicaciones.
+  - CA-F7-92: Las notificaciones se generan a partir de los cambios realmente publicados.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [ ] [TAREA-F7-IMP-15] Incorporar control de concurrencia y protección de operaciones críticas
+- **Origen del Hallazgo:** `AUDITORIA_FASE_7_PLANIFICACION_HORARIOS_RECURSOS.md` / Tarea F7-IMP-15 (P1 · Concurrencia en Horarios)
+- **Prioridad:** P1
+- **Severidad/Clasificación:** Alta (Fortalecimiento de integridad y consistencia)
+- **Archivos Involucrados:**
+  - `backend/academic-service/Code.gs`
+- **Dependencias Expuestas:** `LockService`, `createClassSchedule`, `publishClassSchedules`, `saveClassroomResource`
+- **Descripción del Alcance:**
+  Proteger las operaciones de creación, edición y publicación de horarios mediante cerrojos de concurrencia de Apps Script (`LockService`) y timestamps de versionado para evitar carreras entre escrituras simultáneas sobre el mismo espacio o docente.
+
+  Requisitos Funcionales:
+  1. Identificar las operaciones críticas que deben protegerse frente a cambios concurrentes.
+  2. Detectar cuando una asignación haya cambiado desde que un usuario la consultó o comenzó a editarla.
+  3. Evitar que una modificación basada en datos obsoletos sobrescriba silenciosamente cambios recientes.
+  4. Volver a comprobar la disponibilidad de docentes, aulas y recursos antes de confirmar una asignación.
+  5. Aplicar los mecanismos de exclusión o control de versiones adecuados al almacenamiento existente.
+  6. Evitar bloqueos prolongados que impidan operar a otros usuarios.
+  7. Gestionar los errores de concurrencia con mensajes que permitan recargar y reintentar.
+  8. Mantener la integridad de las operaciones que afecten a varios registros relacionados.
+  9. Diferenciar un conflicto de planificación de un conflicto técnico de actualización.
+  10. Registrar los fallos que requieran investigación.
+- **Criterios de Aceptación:**
+  - CA-F7-93: Dos usuarios no pueden confirmar asignaciones incompatibles por una carrera entre validación y escritura.
+  - CA-F7-94: Una edición basada en datos obsoletos se rechaza o requiere reconciliación explícita.
+  - CA-F7-95: Los cambios concurrentes no sobrescriben silenciosamente información confirmada por otro usuario.
+  - CA-F7-96: Los errores permiten identificar el registro afectado.
+  - CA-F7-97: Las operaciones fallidas no dejan reservas o asignaciones parciales.
+  - CA-F7-98: Las pruebas de concurrencia demuestran que se mantienen las restricciones obligatorias.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [ ] [TAREA-F7-IMP-16] Ampliar la gestión de sustituciones y la reasignación de clases afectadas
+- **Origen del Hallazgo:** `AUDITORIA_FASE_7_PLANIFICACION_HORARIOS_RECURSOS.md` / Tarea F7-IMP-16 (P1 · Sustituciones Complejas)
+- **Prioridad:** P1
+- **Severidad/Clasificación:** Alta (Ampliación de gestión docente)
+- **Archivos Involucrados:**
+  - `backend/academic-service/Code.gs`
+  - `teacher-dashboard.html`
+  - `js/teacher.js`
+- **Dependencias Expuestas:** `createTeacherSubstitution`, `AsignacionesDocentes`, `checkScheduleConflict`
+- **Descripción del Alcance:**
+  Ampliación del módulo de sustituciones docentes para gestionar licencias prolongadas con reasignación de múltiples bloques horarios, verificación automática de carga del sustituto y caducidad automática de la sustitución al vencer su período.
+
+  Requisitos Funcionales:
+  1. Permitir identificar el intervalo exacto de la sustitución.
+  2. Localizar las clases y actividades afectadas por la ausencia.
+  3. Comprobar la disponibilidad del sustituto en cada intervalo.
+  4. Validar su compatibilidad con las asignaturas, grupos y requisitos correspondientes.
+  5. Detectar conflictos de carga laboral, horario y aula.
+  6. Permitir gestionar varias sustituciones relacionadas.
+  7. Conservar la asignación del docente titular.
+  8. Distinguir entre sustituciones temporales y cambios permanentes.
+  9. Registrar quién autorizó la sustitución y su período de vigencia.
+  10. Propagar los cambios a las vistas y notificaciones pertinentes.
+  11. Evitar que una sustitución temporal modifique las clases posteriores al período autorizado.
+  12. Permitir consultar el historial de sustituciones.
+- **Criterios de Aceptación:**
+  - CA-F7-99: Una sustitución se aplica únicamente durante el intervalo autorizado.
+  - CA-F7-100: El docente titular conserva su asignación histórica.
+  - CA-F7-101: El sustituto no recibe clases incompatibles.
+  - CA-F7-102: Los conflictos pendientes se identifican antes de confirmar.
+  - CA-F7-103: Las vistas de los usuarios reflejan el responsable efectivo.
+  - CA-F7-104: Las notificaciones se envían a los destinatarios correspondientes.
+  - CA-F7-105: La finalización de la sustitución no altera indebidamente las asignaciones futuras.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [ ] [TAREA-F7-IMP-17] Ampliar la gestión de eventos y actividades con participantes y recursos
+- **Origen del Hallazgo:** `AUDITORIA_FASE_7_PLANIFICACION_HORARIOS_RECURSOS.md` / Tarea F7-IMP-17 (P2 · Eventos e Infraestructura)
+- **Prioridad:** P2
+- **Severidad/Clasificación:** Medio (Ampliación del calendario institucional)
+- **Archivos Involucrados:**
+  - `backend/academic-service/Code.gs`
+  - `teacher-dashboard.html`
+  - `js/teacher.js`
+- **Dependencias Expuestas:** `CalendarioAcademico`, `getAcademicCalendar`, `createCalendarEvent`, `SedesAulas`
+- **Descripción del Alcance:**
+  Desarrollar un modelo unificado para la reserva de espacios y recursos asignados a eventos institucionales o extracurriculares (reuniones docentes, actos, deportes) con validación de reservas y control de visibilidad por rol.
+
+  Requisitos Funcionales:
+  1. Permitir asociar una actividad con su responsable y ámbito académico.
+  2. Identificar a los participantes o grupos afectados cuando corresponda.
+  3. Asociar aulas, equipos y recursos compartidos.
+  4. Validar las reservas y disponibilidades.
+  5. Permitir registrar actividades recurrentes cuando sea necesario.
+  6. Gestionar cancelaciones y cambios de fecha.
+  7. Diferenciar los eventos informativos de las actividades que reservan recursos.
+  8. Permitir definir la visibilidad del evento según los permisos y destinatarios.
+  9. Propagar los cambios al calendario correspondiente.
+  10. Evitar que una actividad sin requisitos de aula o docente quede blocked por campos no aplicables.
+  11. Conservar el historial de modificaciones.
+  12. Integrar las notificaciones con el alcance real de la actividad.
+- **Criterios de Aceptación:**
+  - CA-F7-106: Una actividad con recursos reservados respeta las restricciones de disponibilidad.
+  - CA-F7-107: Una actividad informativa puede crearse sin asignar recursos que no necesita.
+  - CA-F7-108: Los cambios se reflejan en los calendarios pertinentes.
+  - CA-F7-109: La cancelación libera las reservas correspondientes.
+  - CA-F7-110: Los participantes solo consultan la información que les corresponde.
+  - CA-F7-111: El historial permite identificar las modificaciones realizadas.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [ ] [TAREA-F7-IMP-18] Ampliar la gestión de restricciones académicas y dependencias entre asignaturas
+- **Origen del Hallazgo:** `AUDITORIA_FASE_7_PLANIFICACION_HORARIOS_RECURSOS.md` / Tarea F7-IMP-18 (P2 · Dependencias Curriculares)
+- **Prioridad:** P2
+- **Severidad/Clasificación:** Medio (Nueva capacidad de planificación académica avanzada)
+- **Archivos Involucrados:**
+  - `backend/academic-service/Code.gs`
+  - `teacher-dashboard.html`
+  - `js/teacher.js`
+- **Dependencias Expuestas:** `CatalogoAsignaturas`, `MallaCurricular`, `F7-IMP-01`, `F7-IMP-04`
+- **Descripción del Alcance:**
+  Implementar la configuración de restricciones de co-requisito horario entre asignaturas (clases simultáneas requeridas, bloques estrictamente consecutivos o dictados secuenciales obligatorios) e integrarlas en el motor de validación.
+
+  Requisitos Funcionales:
+  1. Permitir representar las relaciones académicas que afecten a la planificación.
+  2. Distinguir entre:
+     - Actividades que deben coincidir en horario.
+     - Actividades que no pueden coincidir.
+     - Actividades que requieren una secuencia temporal.
+     - Actividades que necesitan compartir recursos.
+     - Actividades que deben permanecer separadas.
+  3. Permitir asociar las restricciones con asignaturas, secciones o tipos de actividad, según corresponda.
+  4. Validar que las relaciones no sean contradictorias.
+  5. Considerar las dependencias al generar o reorganizar horarios.
+  6. Explicar qué restricción impide una asignación.
+  7. Permitir desactivar o modificar una relación con los permisos adecuados.
+  8. Conservar el historial de cambios en las reglas.
+  9. Evitar que las dependencias se apliquen a períodos o secciones ajenos a su ámbito.
+  10. Permitir comprobar las consecuencias de una modificación antes de aplicarla.
+- **Criterios de Aceptación:**
+  - CA-F7-112: Una relación configurada se aplica únicamente a las asignaciones comprendidas en su ámbito.
+  - CA-F7-113: Las relaciones obligatorias se respetan al validar y publicar horarios.
+  - CA-F7-114: Las reglas contradictorias se identifican antes de generar un escenario.
+  - CA-F7-115: El sistema explica las dependencias que impiden una asignación.
+  - CA-F7-116: Los cambios en las reglas no alteran silenciosamente los registros históricos.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [ ] [TAREA-F7-IMP-19] Ampliar el control de capacidad y distribución de estudiantes por sección
+- **Origen del Hallazgo:** `AUDITORIA_FASE_7_PLANIFICACION_HORARIOS_RECURSOS.md` / Tarea F7-IMP-19 (P2 · Capacidad de Sección)
+- **Prioridad:** P2
+- **Severidad/Clasificación:** Medio (Ampliación de planificación y administración de secciones)
+- **Archivos Involucrados:**
+  - `backend/academic-service/Code.gs`
+  - `teacher-dashboard.html`
+  - `js/teacher.js`
+- **Dependencias Expuestas:** `Matriculas`, `OfertaAcademica`, `SedesAulas`, `checkScheduleConflict`
+- **Descripción del Alcance:**
+  Integrar las validaciones de capacidad de aula con el conteo dinámico de matrícula activa por sección, generando alertas preventivas cuando la inscripción supere el cupo físico del espacio asignado.
+
+  Requisitos Funcionales:
+  1. Identificar la matrícula efectiva de cada sección para el período correspondiente.
+  2. Permitir configurar la capacidad máxima de una sección cuando sea aplicable.
+  3. Comparar la matrícula con la capacidad del aula asignada.
+  4. Diferenciar la capacidad física del espacio del límite administrativo de la sección.
+  5. Identificar secciones que excedan alguno de los límites aplicables.
+  6. Detectar cuándo una modificación de matrícula afecta a una asignación existente.
+  7. Permitir consultar alternativas de aula compatibles.
+  8. Conservar la relación entre estudiantes, sección y período académico.
+  9. Evitar que una sección inactiva o de otro período se utilice en una nueva planificación.
+  10. Mostrar advertencias cuando falten datos necesarios para validar la capacidad.
+- **Criterios de Aceptación:**
+  - CA-F7-117: Una sección no supera silenciosamente un límite obligatorio configurado.
+  - CA-F7-118: Un aula con capacidad insuficiente se identifica antes de publicar el horario.
+  - CA-F7-119: Los cambios de matrícula permiten detectar asignaciones que ya no cumplen las restricciones.
+  - CA-F7-120: Los límites se aplican según las reglas institucionales efectivas.
+  - CA-F7-121: La falta de datos se comunica sin presentar una validación incompleta como satisfactoria.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [ ] [TAREA-F7-IMP-20] Optimizar el rendimiento y la escalabilidad de las consultas de planificación
+- **Origen del Hallazgo:** `AUDITORIA_FASE_7_PLANIFICACION_HORARIOS_RECURSOS.md` / Tarea F7-IMP-20 (P2 · Rendimiento)
+- **Prioridad:** P2
+- **Severidad/Clasificación:** Medio (Optimización técnica y funcional)
+- **Archivos Involucrados:**
+  - `backend/academic-service/Code.gs`
+  - `js/teacher.js`
+  - `js/student.js`
+- **Dependencias Expuestas:** `getClassSchedules`, `getStudentSchedule`, `getClassroomResources`
+- **Descripción del Alcance:**
+  Optimizar los algoritmos de lectura de horarios, agregando filtrado en el origen por año lectivo y docente, e implementando estrategias de almacenamiento en caché invalidables ante escrituras para reducir latencias en Google Apps Script.
+
+  Requisitos Funcionales:
+  1. Identificar las consultas más frecuentes y costosas de la planificación.
+  2. Evitar lecturas repetitivas de los mismos conjuntos de datos cuando no sean necesarias.
+  3. Aplicar filtros en el origen de los datos siempre que resulte viable.
+  4. Limitar los resultados de consultas extensas mediante paginación o mecanismos equivalentes cuando corresponda.
+  5. Evitar cargar todos los períodos académicos y todos los horarios si el usuario solo necesita un intervalo reducido.
+  6. Mantener la coherencia entre la caché y los datos confirmados.
+  7. Invalidar o actualizar la información almacenada cuando se produzcan cambios relevantes.
+  8. Evitar que las consultas analíticas bloqueen operaciones críticas de escritura.
+  9. Proporcionar indicadores de carga y mensajes adecuados cuando una consulta tarde más de lo esperado.
+  10. Identificar errores de tiempo de ejecución, límites del servicio y operaciones que excedan los recursos disponibles.
+- **Criterios de Aceptación:**
+  - CA-F7-122: Las consultas de una semana no necesitan cargar innecesariamente todo el historial académico.
+  - CA-F7-123: Los filtros reducen el conjunto de datos procesados cuando corresponda.
+  - CA-F7-124: Una modificación confirmada no deja la caché mostrando indefinidamente datos obsoletos.
+  - CA-F7-125: La optimización no cambia el significado de los resultados.
+  - CA-F7-126: Los informes y las vistas conservan la coherencia con los datos de origen.
+  - CA-F7-127: Las pruebas con volúmenes representativos permiten medir el rendimiento antes y después.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [ ] [TAREA-F7-IMP-21] Ampliar la auditoría operativa y la trazabilidad de la planificación
+- **Origen del Hallazgo:** `AUDITORIA_FASE_7_PLANIFICACION_HORARIOS_RECURSOS.md` / Tarea F7-IMP-21 (P2 · Trazabilidad de Planificación)
+- **Prioridad:** P2
+- **Severidad/Clasificación:** Medio (Ampliación de observabilidad y control administrativo)
+- **Archivos Involucrados:**
+  - `backend/academic-service/Code.gs`
+  - `teacher-dashboard.html`
+  - `js/teacher.js`
+- **Dependencias Expuestas:** `HistorialCambiosEntidad`, `BitacoraTraceability`, `getAcademicAuditLogs`
+- **Descripción del Alcance:**
+  Crear una vista de auditoría consolidada de planificación que permita filtrar y revisar todas las operaciones de creación, edición, borrador, publicación y eliminación de horarios con detalles de usuario actor, timestamp y payload de cambios.
+
+  Requisitos Funcionales:
+  1. Registrar las operaciones relevantes de creación, modificación, cancelación, publicación y restauración.
+  2. Identificar el usuario responsable, la fecha, la operación y los registros afectados.
+  3. Diferenciar las operaciones exitosas de las rechazadas o fallidas.
+  4. Registrar los conflictos detectados y su resolución.
+  5. Identificar las notificaciones fallidas que requieran atención.
+  6. Permitir filtrar por usuario, período, recurso, tipo de operación y estado.
+  7. Restringir la consulta de la bitácora a los roles autorizados.
+  8. Evitar que los usuarios sin permiso puedan alterar o borrar los registros.
+  9. Permitir correlacionar una operación con los errores o notificaciones relacionados.
+  10. Facilitar la identificación de problemas repetidos sin registrar información sensible innecesaria.
+- **Criterios de Aceptación:**
+  - CA-F7-128: Una operación relevante puede rastrearse desde su solicitud hasta su resultado.
+  - CA-F7-129: Los errores permiten identificar el componente y el registro afectados.
+  - CA-F7-130: Los usuarios no autorizados no pueden consultar ni alterar la bitácora.
+  - CA-F7-131: Los registros permiten diferenciar un conflicto de planificación de un fallo técnico.
+  - CA-F7-132: Las consultas de seguimiento no modifican los datos auditados.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [ ] [TAREA-F7-IMP-22] Ampliar la planificación mediante plantillas y reutilización controlada de horarios
+- **Origen del Hallazgo:** `AUDITORIA_FASE_7_PLANIFICACION_HORARIOS_RECURSOS.md` / Tarea F7-IMP-22 (P2 · Plantillas de Horario)
+- **Prioridad:** P2
+- **Severidad/Clasificación:** Medio (Nueva herramienta de productividad)
+- **Archivos Involucrados:**
+  - `backend/academic-service/Code.gs`
+  - `teacher-dashboard.html`
+  - `js/teacher.js`
+- **Dependencias Expuestas:** `copyClassSchedules`, `HorariosClase`, `F7-IMP-01`, `F7-IMP-02`, `F7-IMP-09`
+- **Descripción del Alcance:**
+  Desarrollar la capacidad de guardar la estructura de distribución horaria semanal de un período o sección como plantilla reutilizable, permitiendo clonarla hacia otro período con previsualización y re-validación de aulas y docentes.
+
+  Requisitos Funcionales:
+  1. Permitir guardar una estructura de horario como plantilla cuando corresponda.
+  2. Permitir seleccionar qué elementos se reutilizarán: distribución semanal, períodos horarios, asignaturas, estructura de secciones, preferencias de planificación.
+  3. Evitar copiar automáticamente docentes, aulas o asignaciones que deban volver a validarse para el nuevo período.
+  4. Identificar las referencias que no existan en el período de destino.
+  5. Validar la plantilla antes de aplicarla.
+  6. Permitir previsualizar las asignaciones resultantes.
+  7. Detectar conflictos con los recursos y docentes del período de destino.
+  8. Permitir ajustar la plantilla antes de confirmar.
+  9. Registrar el origen de la plantilla y la operación realizada.
+  10. Evitar modificar la plantilla original cuando se aplica a otro período.
+- **Criterios de Aceptación:**
+  - CA-F7-133: Aplicar una plantilla no modifica su versión original.
+  - CA-F7-134: Las referencias inexistentes se identifican antes de confirmar.
+  - CA-F7-135: Las asignaciones resultantes se validan contra la disponibilidad del período de destino.
+  - CA-F7-136: El sistema no publica automáticamente un horario generado sin revisión.
+  - CA-F7-137: Los cambios aplicados quedan registrados y pueden identificarse posteriormente.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [ ] [TAREA-F7-IMP-23] Ampliar las herramientas de impresión y distribución de horarios
+- **Origen del Hallazgo:** `AUDITORIA_FASE_7_PLANIFICACION_HORARIOS_RECURSOS.md` / Tarea F7-IMP-23 (P3 · Exportación e Impresión)
+- **Prioridad:** P3
+- **Severidad/Clasificación:** Bajo (Mejora de accesibilidad y distribución de información)
+- **Archivos Involucrados:**
+  - `teacher-dashboard.html`
+  - `student-dashboard.html`
+  - `js/teacher.js`
+  - `js/student.js`
+- **Dependencias Expuestas:** `getClassSchedules`, `getStudentSchedule`, `F7-IMP-02`, `F7-IMP-12`
+- **Descripción del Alcance:**
+  Incorporar vistas de impresión formateadas CSS `@media print` y exportación limpia para horarios de docentes, secciones y aulas con membrete institucional e identificación explícita de versión publicada o borrador.
+
+  Requisitos Funcionales:
+  1. Permitir preparar horarios imprimibles por docente, sección, aula y período.
+  2. Permitir seleccionar el intervalo de fechas y los filtros pertinentes.
+  3. Mostrar la información necesaria para identificar cada clase.
+  4. Diferenciar los horarios vigentes de los borradores.
+  5. Evitar incluir información que el usuario no esté autorizado a consultar.
+  6. Mantener una distribución legible en páginas impresas.
+  7. Permitir exportar los datos en los formatos admitidos.
+  8. Mostrar la fecha de generación y el período al que corresponde el documento.
+  9. Identificar si el horario exportado corresponde a una versión publicada.
+  10. Evitar que los documentos distribuidos presenten cambios pendientes como si fueran oficiales.
+- **Criterios de Aceptación:**
+  - CA-F7-138: El documento exportado coincide con los filtros y el horario seleccionado.
+  - CA-F7-139: La información se presenta de manera legible.
+  - CA-F7-140: Los datos restringidos no se incluyen en la exportación.
+  - CA-F7-141: El documento permite identificar su período y estado.
+  - CA-F7-142: Las modificaciones posteriores no alteran retroactivamente un documento ya generado.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [ ] [TAREA-F7-IMP-24] Ampliar las preferencias de calendario y la personalización de vistas
+- **Origen del Hallazgo:** `AUDITORIA_FASE_7_PLANIFICACION_HORARIOS_RECURSOS.md` / Tarea F7-IMP-24 (P3 · Personalización de Calendarios)
+- **Prioridad:** P3
+- **Severidad/Clasificación:** Bajo (Mejora de experiencia de usuario)
+- **Archivos Involucrados:**
+  - `teacher-dashboard.html`
+  - `student-dashboard.html`
+  - `js/teacher.js`
+  - `js/student.js`
+- **Dependencias Expuestas:** `getAcademicCalendar`, `F7-IMP-02`, `F7-IMP-10`
+- **Descripción del Alcance:**
+  Incorporar controles de personalización de vista en el calendario académico unificado (alternancia de filtros por categoría de evento, leyenda explicativa por colores y adaptabilidad en pantallas móviles).
+
+  Requisitos Funcionales:
+  1. Permitir filtrar las actividades por tipo, período, asignatura, sección y estado.
+  2. Permitir mostrar u ocultar categorías de eventos cuando el usuario esté autorizado.
+  3. Diferenciar clases, evaluaciones, actividades institucionales y cancelaciones.
+  4. Permitir consultar los detalles de cada evento desde el calendario.
+  5. Facilitar la navegación entre días, semanas y períodos.
+  6. Mantener filtros compatibles con el rol y el ámbito de acceso.
+  7. Proporcionar una vista adecuada para dispositivos móviles.
+  8. Evitar que las preferencias visuales oculten permanentemente información crítica, como cancelaciones o cambios importantes.
+  9. Permitir restablecer la configuración de visualización.
+  10. Actualizar la vista cuando cambien los datos de origen.
+- **Criterios de Aceptación:**
+  - CA-F7-143: Los filtros modifican la visualización sin alterar los datos académicos.
+  - CA-F7-144: Los eventos mostrados corresponden al ámbito autorizado.
+  - CA-F7-145: Las cancelaciones y cambios importantes pueden identificarse.
+  - CA-F7-146: Las preferencias personales no afectan a otros usuarios.
+  - CA-F7-147: La vista continúa mostrando los datos actualizados después de modificaciones confirmadas.
+- **Estado:** [ ] Pendiente
+
+---
+
+### [ ] [TAREA-F7-IMP-25] Ampliar la verificación de calidad mediante pruebas automatizadas de planificación
+- **Origen del Hallazgo:** `AUDITORIA_FASE_7_PLANIFICACION_HORARIOS_RECURSOS.md` / Tarea F7-IMP-25 (P1 · Pruebas de Regresión)
+- **Prioridad:** P1
+- **Severidad/Clasificación:** Alta (Fortalecimiento de calidad y prevención de regresiones)
+- **Archivos Involucrados:**
+  - `backend/academic-service/Code.gs`
+  - `backend/developer-service/Code.gs`
+- **Dependencias Expuestas:** `runConcurrencyAndConsistencySuite`, `checkScheduleConflict`, `getTeacherTeachingLoad`
+- **Descripción del Alcance:**
+  Construir una batería automatizada de pruebas de regresión e integración para el módulo de planificación académica que evalúe sintéticamente la prevención de conflictos, cargas docentes, sustituciones y la concurrencia en la publicación de horarios.
+
+  Requisitos Funcionales:
+  1. Identificar las pruebas automatizadas existentes relacionadas con la Fase 7.
+  2. Incorporar pruebas para: creación y actualización de horarios, conflictos docentes, conflictos de aulas, conflictos de secciones, disponibilidad laboral, carga docente, excepciones del calendario, programación de evaluaciones, sustituciones, publicación y cancelación, notificaciones y deduplicación, permisos, integración con asistencia y portales.
+  3. Incluir casos límite, datos inválidos y errores de persistencia.
+  4. Verificar que las operaciones fallidas no generen cambios parciales.
+  5. Incorporar pruebas de concurrencia para las operaciones críticas.
+  6. Comprobar las relaciones entre los datos persistidos y las vistas.
+  7. Separar las pruebas unitarias, de integración y de extremo a extremo.
+  8. Utilizar datos de prueba controlados y evitar modificar información real.
+  9. Registrar los resultados de las ejecuciones.
+  10. Permitir repetir las pruebas después de una corrección o ampliación.
+- **Criterios de Aceptación:**
+  - CA-F7-148: Cada requisito crítico cuenta con pruebas reproducibles.
+  - CA-F7-149: Los conflictos obligatorios se detectan en los escenarios previstos.
+  - CA-F7-150: Las asignaciones válidas siguen funcionando.
+  - CA-F7-151: Las pruebas de permisos demuestran que las operaciones restringidas son rechazadas.
+  - CA-F7-152: Los fallos no dejan datos inconsistentes.
+  - CA-F7-153: Las pruebas de integración comprueban las relaciones entre los módulos implicados.
+  - CA-F7-154: Los resultados permiten identificar qué pruebas se ejecutaron, cuáles fallaron y cuáles no pudieron completarse.
+- **Estado:** [ ] Pendiente

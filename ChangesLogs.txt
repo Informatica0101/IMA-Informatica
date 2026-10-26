@@ -1809,3 +1809,11 @@ Descripción objetiva:
 - Actualizada la función `searchGlobalOmnibox` en `backend/user-service/Code.gs` para admitir parámetros de filtrado opcionales (`filterAnoLectivo`, `filterGrado`, `filterSeccion`, `filterEstado`) y priorizar ordenamiento por coincidencias exactas.
 - Modificada la función `executeOmniboxSearch` en `js/ui-common.js` para enviar parámetros de filtrado e inyectar insignia visual de coincidencia exacta (`exactMatch`).
 - Actualizado el estado de [TAREA-F6-020] a Completado en Pendientes.md.
+
+
+Fecha: 2026-10-26
+Archivos modificados:
+- Pendientes.md (Anexo de tareas Fase 7)
+- Auditoria.txt (Bitácora de registro de tareas Fase 7)
+Descripción objetiva:
+- Registradas 25 nuevas tareas de la Fase 7 (TAREA-F7-IMP-01 a TAREA-F7-IMP-25) en Pendientes.md con metadatos completos y formato según METODOLOGIA_DESARROLLO.md.

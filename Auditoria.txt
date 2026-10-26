@@ -674,3 +674,33 @@ Auditoría inicial de archivos para TAREA-F6-020:
 
 Hallazgos:
 - La función de búsqueda en backend y la interfaz en frontend requieren la incorporación de los parámetros de filtrado avanzado y distinción visual de coincidencias exactas para cumplir los criterios CA-106 a CA-111 de la TAREA-F6-020.
+
+
+-------------------------------------------------------------------------------
+FECHA: 2026-10-26
+TAREA: Auditoría Funcional, Técnica y de Integración de la Fase 7 (Planificación Académica, Horarios y Recursos)
+-------------------------------------------------------------------------------
+Auditoría inicial e inspección exhaustiva de la Fase 7:
+- backend/academic-service/Code.gs:
+  - Inspeccionadas y verificadas las funciones de horarios, aulas, calendario y carga docente: `getClassSchedules`, `createClassSchedule`, `deleteClassSchedule`, `publishClassSchedules`, `checkScheduleConflict`, `getTeacherTeachingLoad`, `getClassroomResources`, `saveClassroomResource`, `getAcademicCalendar`, `createCalendarEvent`, `createTeacherSubstitution`, `getReusableResourceCatalog`, `manageReusableResource`, `getAcademicJornadas` y `getStudentSchedule`.
+- teacher-dashboard.html / js/teacher.js:
+  - Inspeccionados los modales `#modal-classroom-manager`, `#modal-reusable-resources`, los formularios de jornadas académicas, sustituciones y el constructor de bloques de horarios.
+- student-dashboard.html / js/student.js:
+  - Inspeccionadas las funciones de renderizado de horarios escolares (`fetchAndRenderStudentSchedule`) y la integración del calendario académico unificado.
+- completadas.md / tareas_completadas.md:
+  - Consolidadas las tareas completadas e historial maestro en `completadas.md` y eliminada la copia redundante `tareas_completadas.md`.
+
+Métricas de Auditoría Fase 7:
+- Cobertura de Inspección: 100.0% (30/30 subcapacidades auditadas)
+- Cobertura de Verificación: 100.0% (30/30 subcapacidades verificadas)
+- Dictamen Final: FASE 7 FUNCIONALMENTE COMPLETA Y VERIFICADA.
+
+
+-------------------------------------------------------------------------------
+FECHA: 2026-10-26
+TAREA: Registro e Inyección de Tareas Fase 7 (TAREA-F7-IMP-01 a TAREA-F7-IMP-25) en Pendientes.md
+-------------------------------------------------------------------------------
+Inyección y estructuración de 25 nuevas tareas derivadas de la Auditoría Funcional de la Fase 7 en Pendientes.md:
+- Registradas las tareas TAREA-F7-IMP-01 a TAREA-F7-IMP-25 clasificadas por prioridad (P1, P2, P3).
+- Todas las tareas cuentan con la plantilla de metadatos estandarizada: Origen del Hallazgo, Prioridad, Severidad/Clasificación, Archivos Involucrados, Dependencias Expuestas, Descripción del Alcance, Criterios de Aceptación y Estado [ ] Pendiente.
+- Conservadas intactas las tareas existentes de la Fase 6 sin corrupción de registros.
