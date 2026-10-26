@@ -472,7 +472,7 @@ FASE 6. EXPEDIENTE INSTITUCIONAL Y CICLO DE VIDA DEL ESTUDIANTE
 
 ---
 
-### [TAREA-F6-016] Supervisar la capacidad de almacenamiento y los fallos del repositorio documental
+### [X] [TAREA-F6-016] Supervisar la capacidad de almacenamiento y los fallos del repositorio documental
 - **Origen del Hallazgo:** `Auditoria.txt` / `AUDITORIA_FASE_6_EXPEDIENTE_CICLO_VIDA.md` / Tarea 2 (P2 · Continuidad Operativa)
 - **Prioridad:** P2
 - **Severidad/Clasificación:** Bajo (Mejora operativa y mantenimiento preventivo)

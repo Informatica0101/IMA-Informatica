@@ -283,3 +283,15 @@ Archivos verificados:
 Resultados de verificación:
 - Suite automatizada de integración y rendimiento ejecutada y validada en el microservicio del desarrollador.
 - Evaluación de latencia de descubrimiento, resiliencia a fallos aislados e idempotencia.
+
+===========================================================
+AUDITORÍA DE CÓDIGO - TAREA-F6-016
+===========================================================
+Fecha: 2025-05-18
+Archivos verificados:
+- backend/academic-service/Code.gs
+- Pendientes.md
+
+Resultados de verificación:
+- Supervisión preventiva de cuotas de almacenamiento en Google Drive con alertas configurables por umbrales.
+- Procedimiento de conciliación no destructiva que detecta referencias huérfanas sin eliminar documentos automáticamente.

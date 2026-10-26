@@ -7009,7 +7009,7 @@ function getStudentEnrollments(payload) {
 
 // [TAREA-F6-002] [BLOCKING-ISSUE-FIX] - Desestructuración explícita de userId, nuevoAnoLectivo, nuevoGrado y nuevaSeccion para la renovación de matrícula de estudiante
 function renewStudentEnrollment(payload) {
-  const { userId, nuevoAnoLectivo, nuevoGrado, nuevaSeccion } = payload || {};
+  const { userId, nuevoAnoLectivo, nuevoGrado, nuevaSeccion, motivo } = payload || {};
   if (!userId || !nuevoAnoLectivo || !nuevoGrado) throw new Error("userId, nuevoAñoLectivo y nuevoGrado son requeridos.");
 
   return createStudentEnrollment({

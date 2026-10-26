@@ -1601,3 +1601,8 @@ Archivos Modificados:
 - backend/developer-service/Code.gs:
   - Verificada la función runFullArchitectureIntegrationAndPerformanceSuite para simular integración multi-servicio, latencia de descubrimiento, compatibilidad de contratos y tolerancia a fallos.
   - Marcada TAREA-F6-015 como completada [X] en Pendientes.md.
+
+[TAREA-F6-016] Supervisar la capacidad de almacenamiento y los fallos del repositorio documental
+- backend/academic-service/Code.gs:
+  - Verificada la implementación de getStorageQuotaMetricsReport y reconcileDocumentStorageIntegrity para el cálculo de volumen de almacenamiento, umbrales de advertencia al 80%/90%/95% y conciliación no destructiva entre referencias y archivos en Google Drive.
+  - Marcada TAREA-F6-016 como completada [X] en Pendientes.md.
