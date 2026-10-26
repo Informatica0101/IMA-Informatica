@@ -1591,3 +1591,8 @@ Archivos Modificados:
 - backend/developer-service/Code.gs:
   - Verificada la implementación de funciones getServiceVersionChangelog y executeServiceVersionRollback para el versionado de código/esquema y procedimientos de rollback controlados con confirmación ROLLBACK-CONFIRMED.
   - Marcada TAREA-F6-013 como completada [X] en Pendientes.md.
+
+[TAREA-F6-014] Centralizar la configuración y las dependencias sin centralizar todos los datos
+- backend/developer-service/Code.gs:
+  - Verificada la función getCentralConfigAndContractCatalog y validateServiceConfigDependencies para centralizar el catálogo de contratos y validación de dependencias por microservicio.
+  - Marcada TAREA-F6-014 como completada [X] en Pendientes.md.

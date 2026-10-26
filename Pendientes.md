@@ -414,7 +414,7 @@ FASE 6. EXPEDIENTE INSTITUCIONAL Y CICLO DE VIDA DEL ESTUDIANTE
 
 ---
 
-### [TAREA-F6-014] Centralizar la configuración y las dependencias sin centralizar todos los datos
+### [X] [TAREA-F6-014] Centralizar la configuración y las dependencias sin centralizar todos los datos
 - **Origen del Hallazgo:** Reestructuración Arquitectónica / F6-017 (P1 · Configuración e Interoperabilidad)
 - **Prioridad:** P1
 - **Severidad/Clasificación:** Alta (Registro central de configuración y catálogo de contratos)
