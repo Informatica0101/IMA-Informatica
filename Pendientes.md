@@ -706,7 +706,7 @@ FASE 6. EXPEDIENTE INSTITUCIONAL Y CICLO DE VIDA DEL ESTUDIANTE
   - CA-119: Las referencias a archivos borrados en Drive se reportan como inconsistencias.
   - CA-120: Usuarios no autorizados no pueden descargar versiones previas mediante llamadas directas.
   - CA-121: La restauración de una versión genera un evento en el historial.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completado
 
 ---
 

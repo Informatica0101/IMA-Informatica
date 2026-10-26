@@ -348,3 +348,17 @@ Resultados de verificación:
 - Implementación de `reconcileInstitutionalModulesMatrix` para la comprobación de consistencia e integridad entre el expediente académico, la gestión de usuarios, el módulo financiero y el control de asistencia.
 - Identificación de matrículas huérfanas, cargos/pagos desalineados y registros de asistencia sin expediente correspondiente.
 - Inclusión del parámetro `correlationId` para trazabilidad y recomendaciones de resolución para revisión humana sin modificaciones destructivas automáticas.
+
+===========================================================
+AUDITORÍA DE CÓDIGO - TAREA-F6-022
+===========================================================
+Fecha: 2026-03-29
+Archivos verificados:
+- backend/academic-service/Code.gs
+- js/secretary.js
+- Pendientes.md
+
+Resultados de verificación:
+- Control de versiones documentales con archivado de versiones anteriores en `HistorialVersionesDocumentos`.
+- Verificación de accesibilidad física en Google Drive en `getStudentDocuments` para la detección de enlaces rotos o borrados externos.
+- Función `restoreDocumentVersion` para restaurar versiones previas archivadas registrando autor, motivo e historial.

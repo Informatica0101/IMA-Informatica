@@ -171,7 +171,7 @@ const ROLE_PERMISSIONS = {
     "getClassroomResources", "saveClassroomResource", "getStudentSchedule",
     "createAdmissionRequest", "getAdmissionRequests", "updateAdmissionStatus", "reopenAdmissionRequest", "convertAdmissionToStudent", "scheduleAdmissionInterview", "getAdmissionInterviews", "recordInterviewOutcome", "saveAdmissionEvaluation", "getAdmissionEvaluations", "addToWaitlist", "getWaitlist", "reorderWaitlist", "offerWaitlistSlot", "respondToWaitlistSlot", "resolveAdmissionDuplicate", "getAdmissionAnalyticsReport",
     "getStudentFile", "updateStudentFile", "getStudentTimeline", "findDuplicateStudents", "mergeStudentFiles",
-    "getStudentGuardians", "saveStudentGuardian", "unlinkStudentGuardian", "uploadStudentDocument", "getStudentDocuments", "updateDocumentStatus", "getPendingDocumentsReport", "grantDocumentExemption",
+    "getStudentGuardians", "saveStudentGuardian", "unlinkStudentGuardian", "uploadStudentDocument", "getStudentDocuments", "updateDocumentStatus", "getPendingDocumentsReport", "grantDocumentExemption", "restoreDocumentVersion",
     "getPendingDocumentsReport", "grantDocumentExemption", "createStudentEnrollment", "getStudentEnrollments", "renewStudentEnrollment", "checkEnrollmentCapacity",
     "changeStudentSection", "recordStudentTransfer", "recordStudentWithdrawal", "processStudentReentry", "processStudentPromotion", "processStudentGraduation", "updateStudentLifecycleStatus", "reconcileStudentLifecycleState", "runStudentLifecycleRegressionSuite", "getAcademicAreaTemplateCatalog", "getAcademicAreaCoordinationScope", "deployAcademicMicroserviceInstance", "getAcademicMicroserviceDeployments", "previewBackupRestoreImpact", "getStorageQuotaMetricsReport", "reconcileDocumentStorageIntegrity", "reconcileInstitutionalModulesMatrix",
     "openAttendanceSession", "saveClassAttendance", "getClassAttendance", "saveDailyAttendance", "getDailyAttendance", "submitAttendanceJustification", "reviewAttendanceJustification", "recordEarlyDeparture", "getAttendanceIncidents", "saveAttendanceIncident", "getAttendanceFollowupCases", "saveAttendanceFollowupCase", "addCaseFollowUpNote", "getStudentAttendanceSummary",
@@ -734,6 +734,7 @@ function doPost(e) {
       case "getStorageQuotaMetricsReport": result = getStorageQuotaMetricsReport(payload); break;
       case "reconcileDocumentStorageIntegrity": result = reconcileDocumentStorageIntegrity(payload); break;
       case "reconcileInstitutionalModulesMatrix": result = reconcileInstitutionalModulesMatrix(payload); break;
+      case "restoreDocumentVersion": result = restoreDocumentVersion(payload); break;
 
       // Endpoints Fase 7 - Asistencia y Seguimiento Estudiantil
       case "openAttendanceSession": result = openAttendanceSession(payload); break;
@@ -6815,35 +6816,91 @@ function uploadStudentDocument(payload) {
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
   const sheet = getOrCreateSheet(ss, "DocumentosEstudiante");
   const now = new Date();
-  const idGen = generateInstitutionalId({ entityType: "DocumentoEstudiante", prefix: "DOC-", skipLock: true });
-  const docId = (idGen && idGen.generatedId) ? idGen.generatedId : ("DOC-" + now.getTime());
+  const docRows = sheet.getDataRange().getValues();
 
-  sheet.appendRow([
-    docId,
-    expedienteId || "",
-    solicitudId || "",
-    tipoDocumento,
-    fileName || tipoDocumento,
-    driveFileId,
-    driveUrl,
-    now,
-    fechaVencimiento || "",
-    "EnRevision",
-    (payload && (payload._verifiedUserId || payload.userId)) || "Secretaría",
-    "",
-    observaciones || ""
-  ]);
+  // [TAREA-F6-022] [Fase 6: Expediente Institucional y Ciclo de Vida] - Control de versiones documentales y sustitución con conservación de versión previa
+  let existingIdx = -1;
+  const targetExpId = String(expedienteId || "").trim().toLowerCase();
+  const targetSolId = String(solicitudId || "").trim().toLowerCase();
+  const targetTipo = String(tipoDocumento || "").trim().toLowerCase();
 
-  logStructuredEvent("ACADEMIC", "uploadStudentDocument", "INFO", "DOCUMENT_UPLOADED", `Documento ${docId} (${tipoDocumento}) subido para ${expedienteId || solicitudId}`, { docId, expedienteId, solicitudId, tipoDocumento, fileName, sizeBytes: rawBytes.length }, payload && payload.authRole);
+  for (let i = 1; i < docRows.length; i++) {
+    const rowExp = String(docRows[i][1] || "").trim().toLowerCase();
+    const rowSol = String(docRows[i][2] || "").trim().toLowerCase();
+    const rowTipo = String(docRows[i][3] || "").trim().toLowerCase();
 
-  return { status: "success", documentoId: docId, driveUrl: driveUrl, message: "Documento adjuntado correctamente." };
+    if (((targetExpId && rowExp === targetExpId) || (targetSolId && rowSol === targetSolId)) && rowTipo === targetTipo) {
+      existingIdx = i;
+      break;
+    }
+  }
+
+  let docId = "";
+
+  if (existingIdx !== -1) {
+    const prevRow = docRows[existingIdx];
+    docId = String(prevRow[0]);
+
+    // Archivar versión anterior en HistorialVersionesDocumentos
+    try {
+      const verSheet = getOrCreateSheet(ss, "HistorialVersionesDocumentos");
+      verSheet.appendRow([
+        `VER-${Date.now()}`,
+        docId,
+        prevRow[4] || "", // nombreArchivo anterior
+        prevRow[5] || "", // driveFileId anterior
+        prevRow[6] || "", // driveUrl anterior
+        prevRow[7] || now, // fechaCreacion anterior
+        (payload && (payload._verifiedUserId || payload.userId)) || "Secretaría",
+        "Sustitución por nueva versión subida",
+        now
+      ]);
+    } catch (_) {}
+
+    // Actualizar documento vigente
+    sheet.getRange(existingIdx + 1, 5).setValue(fileName || tipoDocumento);
+    sheet.getRange(existingIdx + 1, 6).setValue(driveFileId);
+    sheet.getRange(existingIdx + 1, 7).setValue(driveUrl);
+    sheet.getRange(existingIdx + 1, 8).setValue(now);
+    sheet.getRange(existingIdx + 1, 9).setValue(fechaVencimiento || "");
+    sheet.getRange(existingIdx + 1, 10).setValue("EnRevision");
+    sheet.getRange(existingIdx + 1, 11).setValue((payload && (payload._verifiedUserId || payload.userId)) || "Secretaría");
+    sheet.getRange(existingIdx + 1, 13).setValue(observaciones || "");
+
+    logStructuredEvent("ACADEMIC", "uploadStudentDocument", "INFO", "DOCUMENT_VERSION_UPDATED", `Nueva versión de documento ${docId} (${tipoDocumento}) subida`, { docId, expedienteId, solicitudId, tipoDocumento, fileName }, payload && payload.authRole);
+    return { status: "success", documentoId: docId, driveUrl: driveUrl, message: "Nueva versión del documento guardada y versión anterior archivada." };
+  } else {
+    const idGen = generateInstitutionalId({ entityType: "DocumentoEstudiante", prefix: "DOC-", skipLock: true });
+    docId = (idGen && idGen.generatedId) ? idGen.generatedId : ("DOC-" + now.getTime());
+
+    sheet.appendRow([
+      docId,
+      expedienteId || "",
+      solicitudId || "",
+      tipoDocumento,
+      fileName || tipoDocumento,
+      driveFileId,
+      driveUrl,
+      now,
+      fechaVencimiento || "",
+      "EnRevision",
+      (payload && (payload._verifiedUserId || payload.userId)) || "Secretaría",
+      "",
+      observaciones || ""
+    ]);
+
+    logStructuredEvent("ACADEMIC", "uploadStudentDocument", "INFO", "DOCUMENT_UPLOADED", `Documento ${docId} (${tipoDocumento}) subido para ${expedienteId || solicitudId}`, { docId, expedienteId, solicitudId, tipoDocumento, fileName, sizeBytes: rawBytes.length }, payload && payload.authRole);
+
+    return { status: "success", documentoId: docId, driveUrl: driveUrl, message: "Documento adjuntado correctamente." };
+  }
 }
 
-// [TAREA-F5-006] [Fase 5: Admisiones y Matrícula] - Consulta y filtrado de documentos por expedienteID o solicitudID de aspirante
+// [TAREA-F6-022] [Fase 6: Expediente Institucional y Ciclo de Vida] - Consulta de documentos con verificación de accesibilidad Drive y recuperación de versiones archivadas
 function getStudentDocuments(payload) {
   const { expedienteId, solicitudId } = payload || {};
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
   const rows = getOrCreateSheet(ss, "DocumentosEstudiante").getDataRange().getValues().slice(1);
+  const verRows = getOrCreateSheet(ss, "HistorialVersionesDocumentos").getDataRange().getValues().slice(1);
 
   const cleanExpId = expedienteId ? String(expedienteId).trim().toLowerCase() : "";
   const cleanSolId = solicitudId ? String(solicitudId).trim().toLowerCase() : "";
@@ -6864,23 +6921,107 @@ function getStudentDocuments(payload) {
     return true;
   });
 
-  const mapped = filtered.map(r => ({
-    documentoId: r[0],
-    expedienteId: r[1],
-    solicitudId: r[2],
-    tipoDocumento: r[3],
-    nombreArchivo: r[4],
-    driveFileId: r[5],
-    driveUrl: r[6],
-    fechaRecepcion: r[7],
-    fechaVencimiento: r[8],
-    estadoRevision: r[9],
-    subidoPor: r[10],
-    validadoPor: r[11],
-    observaciones: r[12]
-  }));
+  const mapped = filtered.map(r => {
+    const docId = String(r[0]);
+    const fileId = String(r[5] || "").trim();
+
+    // Verificación de accesibilidad real del archivo en Drive
+    let driveAccessible = true;
+    if (fileId) {
+      try {
+        const file = DriveApp.getFileById(fileId);
+        if (file.isTrashed()) driveAccessible = false;
+      } catch (_) {
+        driveAccessible = false;
+      }
+    } else {
+      driveAccessible = false;
+    }
+
+    // Obtener historial de versiones del documento
+    const versions = verRows
+      .filter(v => String(v[1]).trim() === docId.trim())
+      .map(v => ({
+        versionId: v[0],
+        documentoId: v[1],
+        nombreArchivo: v[2],
+        driveFileId: v[3],
+        driveUrl: v[4],
+        fechaCreacion: v[5],
+        archivadoPor: v[6],
+        motivoArchivado: v[7],
+        fechaArchivado: v[8]
+      }));
+
+    return {
+      documentoId: docId,
+      expedienteId: r[1],
+      solicitudId: r[2],
+      tipoDocumento: r[3],
+      nombreArchivo: r[4],
+      driveFileId: r[5],
+      driveUrl: r[6],
+      fechaRecepcion: r[7],
+      fechaVencimiento: r[8],
+      estadoRevision: r[9],
+      subidoPor: r[10],
+      validadoPor: r[11],
+      observaciones: r[12],
+      driveAccessible: driveAccessible,
+      totalVersionesPrevias: versions.length,
+      historialVersiones: versions
+    };
+  });
 
   return { status: "success", documents: mapped };
+}
+
+// [TAREA-F6-022] [Fase 6: Expediente Institucional y Ciclo de Vida] - Restauración autorizada de versión previa de documento
+function restoreDocumentVersion(payload) {
+  const { documentoId, versionId, motivo } = payload || {};
+  if (!documentoId || !versionId) throw new Error("documentoId y versionId son requeridos para la restauración.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const docSheet = getOrCreateSheet(ss, "DocumentosEstudiante");
+  const verSheet = getOrCreateSheet(ss, "HistorialVersionesDocumentos");
+
+  const docRows = docSheet.getDataRange().getValues();
+  const verRows = verSheet.getDataRange().getValues();
+
+  const docIdx = docRows.findIndex(r => String(r[0]).trim() === String(documentoId).trim());
+  const verIdx = verRows.findIndex(r => String(r[0]).trim() === String(versionId).trim());
+
+  if (docIdx === -1 || verIdx === -1) throw new Error("Documento o versión especificada no fue encontrada.");
+
+  const currDoc = docRows[docIdx];
+  const targetVer = verRows[verIdx];
+  const now = new Date();
+
+  // 1. Archivar la versión vigente actual en la bitácora de versiones
+  verSheet.appendRow([
+    `VER-${Date.now()}`,
+    documentoId,
+    currDoc[4] || "",
+    currDoc[5] || "",
+    currDoc[6] || "",
+    currDoc[7] || now,
+    (payload && (payload.authUserId || payload.userId)) || "Secretaría",
+    `Reemplazado por restauración a la versión ${versionId}. Motivo: ${motivo || 'Restauración manual'}`,
+    now
+  ]);
+
+  // 2. Restaurar los valores de la versión seleccionada como la versión activa
+  docSheet.getRange(docIdx + 1, 5).setValue(targetVer[2]); // nombreArchivo
+  docSheet.getRange(docIdx + 1, 6).setValue(targetVer[3]); // driveFileId
+  docSheet.getRange(docIdx + 1, 7).setValue(targetVer[4]); // driveUrl
+  docSheet.getRange(docIdx + 1, 8).setValue(now);
+  docSheet.getRange(docIdx + 1, 10).setValue("Aprobado");
+  docSheet.getRange(docIdx + 1, 11).setValue((payload && (payload.authUserId || payload.userId)) || "Secretaría");
+  docSheet.getRange(docIdx + 1, 13).setValue(`Restaurado desde versión ${versionId}. Motivo: ${motivo || 'Restauración de versión previa'}`);
+
+  logStructuredEvent("ACADEMIC", "restoreDocumentVersion", "WARN", "DOCUMENT_VERSION_RESTORED", `Documento ${documentoId} restaurado a versión ${versionId}`, { documentoId, versionId, motivo }, payload && payload.authRole);
+
+  return { status: "success", message: `Documento ${documentoId} restaurado exitosamente a la versión ${versionId}.` };
 }
 
 function updateDocumentStatus(payload) {

@@ -1636,3 +1636,12 @@ Archivos Modificados:
   - Registrada la acción `reconcileInstitutionalModulesMatrix` en `ROLE_PERMISSIONS` y ruteo `doPost`.
 - Pendientes.md:
   - Marcada TAREA-F6-021 como completada [X] en Pendientes.md.
+
+[TAREA-F6-022] Ampliar la gestión de documentos con versiones, integridad y recuperación controlada
+- backend/academic-service/Code.gs:
+  - En `uploadStudentDocument`, incorporado el control de versiones con archivado de versiones anteriores en `HistorialVersionesDocumentos`.
+  - En `getStudentDocuments`, añadida la verificación de accesibilidad real de los archivos en Google Drive y la recuperación del historial de versiones.
+  - Implementada la función `restoreDocumentVersion` para la restauración autorizada de versiones archivadas.
+  - Registrada la acción `restoreDocumentVersion` en `ROLE_PERMISSIONS` y ruteo `doPost`.
+- Pendientes.md:
+  - Marcada TAREA-F6-022 como completada [X] en Pendientes.md.
