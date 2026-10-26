@@ -1649,3 +1649,12 @@ Archivos Modificados:
 [INCORPORACIÓN DOCUMENTAL FASE 6 PARTE 2]
 - Pendientes.md:
   - Incorporadas las tareas TAREA-F6-029 a TAREA-F6-040 bajo la sección 'Fase 6. Expediente institucional y ciclo de vida del estudiante - Segunda parte: reestructuración arquitectónica, escalabilidad y administración integral de microservicios'.
+
+[TAREA-F6-023] Desarrollar un resumen institucional del expediente orientado a cada perfil autorizado
+- backend/academic-service/Code.gs:
+  - Implementada la función `getStudentFileSummary` para la consulta del resumen institucional del expediente con secciones y accesos directos contextualizados por rol.
+  - Registrada la acción `getStudentFileSummary` en `ROLE_PERMISSIONS` y ruteo `doPost`.
+- js/teacher.js:
+  - Implementada la función `window.renderStudentInstitutionalSummary` para la presentación del resumen institucional del expediente con sello de hora de actualización y renderizado tolerante a fallos.
+- Pendientes.md:
+  - Marcada TAREA-F6-023 como completada [X] en Pendientes.md.

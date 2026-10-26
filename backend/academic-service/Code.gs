@@ -170,7 +170,7 @@ const ROLE_PERMISSIONS = {
     "getAcademicCalendar", "createCalendarEvent", "getClassSchedules", "createClassSchedule", "deleteClassSchedule", "getAcademicRules", "saveAcademicRule", "getDepartmentAcademicPlanning", "assignDepartmentHead", "getCurricularAnalyticsReport", "getReusableResourceCatalog", "manageReusableResource", "getCurricularEquivalences", "executeCurricularMigration", "registerCurricularAreaExtension", "runCurricularAreaServiceTests", "toggleCurricularAreaStatus", "validateApiContractsTestSuite", "getInstitutionalCatalog", "validateCatalogReference", "generateInstitutionalUUID", "validateInstitutionalIdentifier", "auditInstitutionalIdentifierCollisions", "runConcurrencyAndConsistencySuite", "getPaginatedAcademicHistory", "reconcileRestoredDataIntegrity", "evaluateTransactionalStorageMigrationNeed",
     "getClassroomResources", "saveClassroomResource", "getStudentSchedule",
     "createAdmissionRequest", "getAdmissionRequests", "updateAdmissionStatus", "reopenAdmissionRequest", "convertAdmissionToStudent", "scheduleAdmissionInterview", "getAdmissionInterviews", "recordInterviewOutcome", "saveAdmissionEvaluation", "getAdmissionEvaluations", "addToWaitlist", "getWaitlist", "reorderWaitlist", "offerWaitlistSlot", "respondToWaitlistSlot", "resolveAdmissionDuplicate", "getAdmissionAnalyticsReport",
-    "getStudentFile", "updateStudentFile", "getStudentTimeline", "findDuplicateStudents", "mergeStudentFiles",
+    "getStudentFile", "getStudentFileSummary", "updateStudentFile", "getStudentTimeline", "findDuplicateStudents", "mergeStudentFiles",
     "getStudentGuardians", "saveStudentGuardian", "unlinkStudentGuardian", "uploadStudentDocument", "getStudentDocuments", "updateDocumentStatus", "getPendingDocumentsReport", "grantDocumentExemption", "restoreDocumentVersion",
     "getPendingDocumentsReport", "grantDocumentExemption", "createStudentEnrollment", "getStudentEnrollments", "renewStudentEnrollment", "checkEnrollmentCapacity",
     "changeStudentSection", "recordStudentTransfer", "recordStudentWithdrawal", "processStudentReentry", "processStudentPromotion", "processStudentGraduation", "updateStudentLifecycleStatus", "reconcileStudentLifecycleState", "runStudentLifecycleRegressionSuite", "getAcademicAreaTemplateCatalog", "getAcademicAreaCoordinationScope", "deployAcademicMicroserviceInstance", "getAcademicMicroserviceDeployments", "previewBackupRestoreImpact", "getStorageQuotaMetricsReport", "reconcileDocumentStorageIntegrity", "reconcileInstitutionalModulesMatrix",
@@ -193,7 +193,7 @@ const ROLE_PERMISSIONS = {
     "createAcademicOffer", "getTeacherAssignments", "assignTeacherToClass", "createTeacherSubstitution", "getAcademicCalendar", "createCalendarEvent", "getClassSchedules", "createClassSchedule", "deleteClassSchedule", "copyClassSchedules", "getTeacherTeachingLoad", "generateAutoSchedules", "recordClassSessionOutcome", "getTeachingHoursSummary", "rescheduleCancelledSession", "getPendingSessionRecoveries", "publishClassSchedules", "getIndividualCalendar", "syncAcademicScheduleIntegrity", "getAcademicAuditLogs", "getReusableResourceCatalog", "manageReusableResource",
     "getClassroomResources", "saveClassroomResource", "getStudentSchedule",
     "createAdmissionRequest", "getAdmissionRequests", "updateAdmissionStatus", "convertAdmissionToStudent", "scheduleAdmissionInterview", "getAdmissionInterviews", "recordInterviewOutcome", "saveAdmissionEvaluation", "getAdmissionEvaluations", "addToWaitlist", "getWaitlist", "reorderWaitlist", "offerWaitlistSlot", "respondToWaitlistSlot", "resolveAdmissionDuplicate",
-    "getStudentFile", "updateStudentFile", "getStudentTimeline", "findDuplicateStudents",
+    "getStudentFile", "getStudentFileSummary", "updateStudentFile", "getStudentTimeline", "findDuplicateStudents",
     "getStudentGuardians", "saveStudentGuardian", "unlinkStudentGuardian", "uploadStudentDocument", "getStudentDocuments", "updateDocumentStatus",
     "getPendingDocumentsReport", "grantDocumentExemption", "createStudentEnrollment", "getStudentEnrollments", "renewStudentEnrollment", "checkEnrollmentCapacity",
     "changeStudentSection", "recordStudentTransfer", "recordStudentWithdrawal", "processStudentReentry", "processStudentPromotion", "processStudentGraduation", "updateStudentLifecycleStatus", "reconcileStudentLifecycleState", "runStudentLifecycleRegressionSuite",
@@ -218,7 +218,7 @@ const ROLE_PERMISSIONS = {
   "Consejeros": ["getAcademicConfig", "getAcademicYears", "getAcademicCalendar", "getClassSchedules", "getStudentSchedule", "getStudentFile", "getStudentTimeline", "getStudentGuardians", "getAttendanceIncidents", "saveAttendanceIncident", "getAttendanceFollowupCases", "saveAttendanceFollowupCase", "addCaseFollowUpNote", "getStudentAttendanceSummary"],
   "Padre": [
     "getAcademicConfig", "getAcademicHistory", "getAsignaturasActivas", "getWhatsAppLink", "getStudentEnrollmentHistory",
-    "getAcademicCalendar", "getClassSchedules", "getStudentSchedule", "getStudentFile", "getStudentTimeline", "getStudentDocuments", "getStudentEnrollments",
+    "getAcademicCalendar", "getClassSchedules", "getStudentSchedule", "getStudentFile", "getStudentFileSummary", "getStudentTimeline", "getStudentDocuments", "getStudentEnrollments",
     "getClassAttendance", "getDailyAttendance", "submitAttendanceJustification", "getStudentAttendanceSummary", "getAttendanceIncidents"
   ],
   "Tutor": [
@@ -234,12 +234,12 @@ const ROLE_PERMISSIONS = {
   "Profesor": [
     "getAcademicConfig", "updateAcademicConfig", "getAcademicHistory", "getAsignaturasActivas", "updateAsignaturasActivas", "saveWhatsAppLink", "getWhatsAppLink", "getQuestionBank", "saveQuestion", "generateMigrationReport",
     "getAcademicYears", "getAcademicPeriods", "getSubjectCatalog", "getAcademicOffers", "getTeacherAssignments", "createTeacherSubstitution", "getAcademicCalendar", "getClassSchedules", "createClassSchedule", "deleteClassSchedule", "getTeacherTeachingLoad", "recordClassSessionOutcome", "getTeachingHoursSummary", "rescheduleCancelledSession", "getPendingSessionRecoveries", "getIndividualCalendar", "getClassroomResources", "getStudentSchedule", "getReusableResourceCatalog", "manageReusableResource",
-    "getStudentFile", "getStudentTimeline", "getStudentEnrollments",
+    "getStudentFile", "getStudentFileSummary", "getStudentTimeline", "getStudentEnrollments",
     "openAttendanceSession", "saveClassAttendance", "getClassAttendance", "saveDailyAttendance", "getDailyAttendance", "submitAttendanceJustification", "reviewAttendanceJustification", "recordEarlyDeparture", "getAttendanceIncidents", "saveAttendanceIncident", "getAttendanceFollowupCases", "saveAttendanceFollowupCase", "addCaseFollowUpNote", "getStudentAttendanceSummary",
     "getTeacherSupervisions", "getSupervisionObservation", "getTeacherImprovementPlans"
   ],
   "Asistente": ["getAcademicConfig", "getAsignaturasActivas", "getWhatsAppLink", "getQuestionBank", "getAcademicCalendar", "getClassSchedules", "getStudentSchedule", "getStudentTimeline", "getClassAttendance", "getStudentAttendanceSummary"],
-  "Estudiante": ["getAcademicConfig", "getAsignaturasActivas", "getWhatsAppLink", "getQuestionBank", "getStudentEnrollmentHistory", "getAcademicCalendar", "getClassSchedules", "getStudentSchedule", "getStudentFile", "getStudentTimeline", "getStudentDocuments", "getClassAttendance", "getDailyAttendance", "submitAttendanceJustification", "getStudentAttendanceSummary", "getAttendanceIncidents", "calculateUnifiedAcademicGrade"],
+  "Estudiante": ["getAcademicConfig", "getAsignaturasActivas", "getWhatsAppLink", "getQuestionBank", "getStudentEnrollmentHistory", "getAcademicCalendar", "getClassSchedules", "getStudentSchedule", "getStudentFile", "getStudentFileSummary", "getStudentTimeline", "getStudentDocuments", "getClassAttendance", "getDailyAttendance", "submitAttendanceJustification", "getStudentAttendanceSummary", "getAttendanceIncidents", "calculateUnifiedAcademicGrade"],
   "Alumno": ["getAcademicConfig", "getAcademicHistory", "getAsignaturasActivas", "getWhatsAppLink", "getStudentEnrollmentHistory", "getAcademicYears", "getAcademicPeriods", "getAcademicOffers", "getAcademicCalendar", "getClassSchedules", "getStudentSchedule", "getStudentFile", "getStudentTimeline", "getStudentDocuments", "getStudentEnrollments", "submitAttendanceJustification", "getStudentAttendanceSummary", "getAttendanceIncidents"]
 };
 
@@ -700,6 +700,7 @@ function doPost(e) {
       case "reopenAdmissionRequest": result = reopenAdmissionRequest(payload); break;
       case "convertAdmissionToStudent": result = convertAdmissionToStudent(payload); break;
       case "getStudentFile": result = getStudentFile(payload); break;
+      case "getStudentFileSummary": result = getStudentFileSummary(payload); break;
       case "updateStudentFile": result = updateStudentFile(payload); break;
       case "getStudentTimeline": result = getStudentTimeline(payload); break;
       case "findDuplicateStudents": result = findDuplicateStudents(payload); break;
@@ -968,6 +969,93 @@ function getAdmissionRequests(payload) {
       pageSize: limit,
       totalRecords: totalRecords,
       totalPages: totalPages
+    }
+  };
+}
+
+// [TAREA-F6-023] [Fase 6: Expediente Institucional y Ciclo de Vida] - Resumen unificado e institucional del expediente contextualizado por perfil autorizado
+function getStudentFileSummary(payload) {
+  const fileRes = getStudentFile(payload);
+  if (fileRes.status !== "success") return fileRes;
+
+  const exp = fileRes.studentFile;
+  const userRole = (payload && payload.authRole) || "";
+  const roleUpper = String(userRole).toUpperCase();
+  const isAdminOrSecretary = ["ADMINISTRADOR", "DIRECTOR", "SECRETARÍA", "SECRETARIA", "SUBDIRECTOR", "DESARROLLADOR"].indexOf(roleUpper) !== -1;
+  const isTeacher = roleUpper === "PROFESOR" || roleUpper === "DOCENTE";
+  const nowStr = new Date().toISOString();
+
+  // Matrícula vigente más reciente
+  const activeEnrollment = (exp.enrollments || []).filter(e => String(e.estado).toLowerCase() === "activa").pop() || (exp.enrollments || []).pop() || null;
+
+  // Movimientos recientes (últimos 3)
+  const recentMovements = (exp.movements || []).slice(-3).reverse().map(m => ({
+    tipo: m.tipoMovimiento,
+    periodo: m.anoLectivo,
+    detalle: `${m.gradoOrigen || ''} (${m.seccionOrigen || ''}) -> ${m.gradoDestino || ''} (${m.seccionDestino || ''})`,
+    fecha: m.fechaEfectiva,
+    motivo: isTeacher ? "[CONFIDENCIAL]" : (m.motivo || "N/A")
+  }));
+
+  // Documentos pendientes
+  const pendingDocs = (exp.documents || []).filter(d => String(d.estadoRevision).toLowerCase() === "enrevision" || String(d.estadoRevision).toLowerCase() === "pendiente");
+
+  // Definición de secciones y accesos por rol
+  let allowedSections = [];
+  let directActions = [];
+
+  if (isAdminOrSecretary) {
+    allowedSections = ["identidad", "matricula", "tutores", "documentos", "movimientos", "auditoria"];
+    directActions = ["renovarMatricula", "cambiarSeccion", "gestionarDocumentos", "registrarTraslado", "verHistorial"];
+  } else if (isTeacher) {
+    allowedSections = ["identidad_basica", "matricula_academica", "movimientos_recientes"];
+    directActions = ["verCalificaciones", "verAsistencia", "verHorario"];
+  } else {
+    // Estudiante / Familia
+    allowedSections = ["identidad_estudiante", "matricula_vigente", "documentos_estado"];
+    directActions = ["descargarConstancia", "verCalificaciones", "verAsistencia"];
+  }
+
+  return {
+    status: "success",
+    summary: {
+      expedienteId: exp.expedienteId,
+      codigoInstitucional: exp.codigoInstitucional,
+      perfilConsultante: userRole || "General",
+      fechaActualizacion: nowStr,
+      seccionesDisponibles: allowedSections,
+      accesosDirectosAutorizados: directActions,
+      identidadInstitucional: {
+        codigoInstitucional: exp.codigoInstitucional,
+        estadoExpediente: exp.estadoExpediente || "Activo",
+        anoIngreso: exp.fechaCreacion ? String(exp.fechaCreacion).substring(0, 4) : "2026",
+        fotografiaUrl: exp.fotografiaUrl || "",
+        direccionResidencia: isTeacher ? "[REDACTADO POR PRIVACIDAD]" : (exp.direccionResidencia || "N/A")
+      },
+      estadoActual: {
+        gradoActual: activeEnrollment ? activeEnrollment.grado : "N/A",
+        seccionActual: activeEnrollment ? activeEnrollment.seccion : "N/A",
+        periodoLectivo: activeEnrollment ? activeEnrollment.periodo : "2026",
+        condicionMatricula: activeEnrollment ? activeEnrollment.tipo : "N/A",
+        situacionInstitucional: exp.estadoExpediente || "Activo"
+      },
+      matriculaVigente: activeEnrollment ? {
+        matriculaId: activeEnrollment.matriculaId,
+        fecha: activeEnrollment.fecha,
+        grado: activeEnrollment.grado,
+        seccion: activeEnrollment.seccion,
+        periodo: activeEnrollment.periodo,
+        estado: activeEnrollment.estado
+      } : null,
+      movimientosRecientes: recentMovements,
+      documentosPendientes: {
+        totalPendientes: pendingDocs.length,
+        lista: pendingDocs.map(d => ({
+          tipoDocumento: d.tipoDocumento,
+          nombreArchivo: isTeacher ? "[REDACTADO]" : d.nombreArchivo,
+          estado: d.estadoRevision
+        }))
+      }
     }
   };
 }

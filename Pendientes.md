@@ -710,7 +710,7 @@ FASE 6. EXPEDIENTE INSTITUCIONAL Y CICLO DE VIDA DEL ESTUDIANTE
 
 ---
 
-### [TAREA-F6-023] Desarrollar un resumen institucional del expediente orientado a cada perfil autorizado
+### [X] [TAREA-F6-023] Desarrollar un resumen institucional del expediente orientado a cada perfil autorizado
 - **Origen del Hallazgo:** `AUDITORIA_FASE_6_EXPEDIENTE_CICLO_VIDA.md` / Tarea 10 (P2 · Experiencia de Usuario)
 - **Prioridad:** P2
 - **Severidad/Clasificación:** Medio (UX y visualización unificada por rol)
@@ -740,7 +740,7 @@ FASE 6. EXPEDIENTE INSTITUCIONAL Y CICLO DE VIDA DEL ESTUDIANTE
   - CA-123: El estado de matrícula coincide con el registro oficial.
   - CA-124: El fallo de un módulo no rompe la carga del resto del resumen.
   - CA-125: Los datos históricos se distinguen visualmente de los actuales.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completado
 
 ---
 

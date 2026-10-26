@@ -373,3 +373,17 @@ Archivos verificados:
 Resultados de verificación:
 - Incorporadas exitosamente las tareas TAREA-F6-029 a TAREA-F6-040 correspondientes a la segunda parte de la Fase 6 (Reestructuración arquitectónica, escalabilidad y administración integral de microservicios).
 - Mantenimiento íntegro de la descripción, alcances, subsecciones y criterios de aceptación CA-046 a CA-173 sin resúmenes ni omisiones.
+
+===========================================================
+AUDITORÍA DE CÓDIGO - TAREA-F6-023
+===========================================================
+Fecha: 2026-03-29
+Archivos verificados:
+- backend/academic-service/Code.gs
+- js/teacher.js
+- Pendientes.md
+
+Resultados de verificación:
+- Implementación de `getStudentFileSummary` para la generación de resúmenes institucionales del expediente orientados según el rol del usuario (Secretaría, Docente, Estudiante/Padre).
+- Filtrado y enmascaramiento contextual de secciones administrativas e información PII sensible para roles no administrativos.
+- Incorporación de renderizado dinámico en frontend con marca de tiempo de actualización y manejo tolerante a fallos de sub-módulos.
