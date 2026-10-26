@@ -170,7 +170,7 @@ const ROLE_PERMISSIONS = {
     "getAcademicCalendar", "createCalendarEvent", "getClassSchedules", "createClassSchedule", "deleteClassSchedule", "getAcademicRules", "saveAcademicRule", "getDepartmentAcademicPlanning", "assignDepartmentHead", "getCurricularAnalyticsReport", "getReusableResourceCatalog", "manageReusableResource", "getCurricularEquivalences", "executeCurricularMigration", "registerCurricularAreaExtension", "runCurricularAreaServiceTests", "toggleCurricularAreaStatus", "validateApiContractsTestSuite", "getInstitutionalCatalog", "validateCatalogReference", "generateInstitutionalUUID", "validateInstitutionalIdentifier", "auditInstitutionalIdentifierCollisions", "runConcurrencyAndConsistencySuite", "getPaginatedAcademicHistory", "reconcileRestoredDataIntegrity", "evaluateTransactionalStorageMigrationNeed",
     "getClassroomResources", "saveClassroomResource", "getStudentSchedule",
     "createAdmissionRequest", "getAdmissionRequests", "updateAdmissionStatus", "reopenAdmissionRequest", "convertAdmissionToStudent", "scheduleAdmissionInterview", "getAdmissionInterviews", "recordInterviewOutcome", "saveAdmissionEvaluation", "getAdmissionEvaluations", "addToWaitlist", "getWaitlist", "reorderWaitlist", "offerWaitlistSlot", "respondToWaitlistSlot", "resolveAdmissionDuplicate", "getAdmissionAnalyticsReport",
-    "getStudentFile", "getStudentFileSummary", "updateStudentFile", "getStudentTimeline", "findDuplicateStudents", "mergeStudentFiles", "getMergePreviewComparison", "unmergeStudentFiles", "getStudentFileAdministrativeReports",
+    "getStudentFile", "getStudentFileSummary", "updateStudentFile", "getStudentTimeline", "findDuplicateStudents", "mergeStudentFiles", "getMergePreviewComparison", "unmergeStudentFiles", "getStudentFileAdministrativeReports", "initializeDirectionSecretaryDriveStructure",
     "getStudentGuardians", "saveStudentGuardian", "unlinkStudentGuardian", "uploadStudentDocument", "getStudentDocuments", "updateDocumentStatus", "getPendingDocumentsReport", "grantDocumentExemption", "restoreDocumentVersion", "checkAndNotifyExpiringStudentDocuments",
     "getPendingDocumentsReport", "grantDocumentExemption", "createStudentEnrollment", "getStudentEnrollments", "renewStudentEnrollment", "checkEnrollmentCapacity",
     "changeStudentSection", "recordStudentTransfer", "recordStudentWithdrawal", "processStudentReentry", "processStudentPromotion", "processStudentGraduation", "updateStudentLifecycleStatus", "reconcileStudentLifecycleState", "runStudentLifecycleRegressionSuite", "getAcademicAreaTemplateCatalog", "getAcademicAreaCoordinationScope", "deployAcademicMicroserviceInstance", "getAcademicMicroserviceDeployments", "previewBackupRestoreImpact", "getStorageQuotaMetricsReport", "reconcileDocumentStorageIntegrity", "reconcileInstitutionalModulesMatrix",
@@ -708,6 +708,7 @@ function doPost(e) {
       case "getMergePreviewComparison": result = getMergePreviewComparison(payload); break;
       case "unmergeStudentFiles": result = unmergeStudentFiles(payload); break;
       case "getStudentFileAdministrativeReports": result = getStudentFileAdministrativeReports(payload); break;
+      case "initializeDirectionSecretaryDriveStructure": result = initializeDirectionSecretaryDriveStructure(payload); break;
       case "getStudentGuardians": result = getStudentGuardians(payload); break;
       case "saveStudentGuardian": result = saveStudentGuardian(payload); break;
       case "unlinkStudentGuardian": result = unlinkStudentGuardian(payload); break;
@@ -3524,7 +3525,42 @@ function toggleCurricularAreaStatus(payload) {
   };
 }
 
-// [TAREA-F6-006] [Fase 6: Reestructuración en microservicios independientes] - Plantilla técnica parametrizada de microservicio académico reutilizable para múltiples áreas
+// [TAREA-F6-030] [Fase 6: Microservicios Administrativos y Financieros con separación por responsabilidades] - Inicializador de estructura jerárquica de carpetas de Drive para el microservicio compartido de Dirección y Secretaría
+function initializeDirectionSecretaryDriveStructure(payload) {
+  try {
+    const root = DriveApp.getRootFolder();
+    let mainFolder = root.getFoldersByName("New Generation");
+    let parent = mainFolder.hasNext() ? mainFolder.next() : root.createFolder("New Generation");
+
+    function getOrCreateSubFolder(parentFolder, folderName) {
+      let iter = parentFolder.getFoldersByName(folderName);
+      return iter.hasNext() ? iter.next() : parentFolder.createFolder(folderName);
+    }
+
+    const dirFolder = getOrCreateSubFolder(parent, "Direccion");
+    const secFolder = getOrCreateSubFolder(parent, "Secretaria");
+    const sharedFolder = getOrCreateSubFolder(parent, "Compartido_Direccion_Secretaria");
+
+    logStructuredEvent("ACADEMIC", "initializeDirectionSecretaryDriveStructure", "INFO", "DRIVE_STRUCTURE_INITIALIZED", "Estructura de carpetas para Dirección y Secretaría creada/verificada.", {
+      direccionFolderId: dirFolder.getId(),
+      secretariaFolderId: secFolder.getId(),
+      compartidoFolderId: sharedFolder.getId()
+    }, payload && payload.authRole);
+
+    return {
+      status: "success",
+      message: "Carpetas de Dirección, Secretaría y Compartido inicializadas correctamente.",
+      direccionFolderId: dirFolder.getId(),
+      secretariaFolderId: secFolder.getId(),
+      compartidoFolderId: sharedFolder.getId()
+    };
+  } catch (error) {
+    logStructuredEvent("ACADEMIC", "initializeDirectionSecretaryDriveStructure", "ERROR", "DRIVE_INIT_FAILED", error.message, payload, payload && payload.authRole);
+    return { status: "error", message: error.message };
+  }
+}
+
+// [TAREA-F6-006] [TAREA-F6-031] [Fase 6: Reestructuración en microservicios independientes] - Plantilla técnica parametrizada de microservicio académico reutilizable para las 7 áreas curriculares iniciales sin acoplamiento estático
 function getAcademicAreaTemplateCatalog(payload) {
   const defaultAreas = [
     { areaId: "AREA-COMUNICATION", name: "Comunicaciones y Lenguaje", code: "LENG", departmentId: "DEPT-HUMANIDADES", state: "Activo" },

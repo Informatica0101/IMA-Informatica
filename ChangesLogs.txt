@@ -1717,8 +1717,16 @@ Archivos Modificados:
 
 [TAREA-F6-030] Crear los microservicios administrativos y financieros con separación por responsabilidades
 - backend/accounting-service/Code.gs:
-  - En `initializeFinancialDriveStructure`, aislada la estructura jerárquica de subcarpetas documentales entre Recursos Humanos (Expedientes_Laborales, Planillas_y_Nomena, Contratos_y_Permisos, Evaluaciones_Desempeno) y Contabilidad/Cuentas por Cobrar/Cuentas por Pagar.
+  - En `initializeFinancialDriveStructure`, aislada la estructura jerárquica de subcarpetas documentales entre Recursos Humanos (Expedientes_Laborales, Planillas, Acciones_de_Personal, Contratos, Permisos_y_Ausencias, Evaluaciones, Otros_Modulos) y Contabilidad (Facturacion, Cuentas_por_Cobrar, Cuentas_por_Pagar, Recibos, Inventarios, Bancos_y_Conciliaciones, Reportes, Otros_Modulos).
+- backend/academic-service/Code.gs:
+  - Implementada la función `initializeDirectionSecretaryDriveStructure` para la creación y verificación atómica de carpetas separadas de `Direccion`, `Secretaria` y `Compartido_Direccion_Secretaria`. Registrada en `ROLE_PERMISSIONS` y ruteo `doPost`.
 - js/config.js:
   - Inyectada la documentación del mapa de microservicios compartidos por departamento en `window.DEPARTMENT_SERVICES_MAP`.
 - Pendientes.md:
   - Marcada TAREA-F6-030 como completada [X] en Pendientes.md.
+
+[TAREA-F6-031] Crear una plantilla de microservicio académico reutilizable para múltiples áreas
+- backend/academic-service/Code.gs:
+  - En `getAcademicAreaTemplateCatalog`, verificada e inyectada la plantilla parametrizada para las 7 áreas curriculares iniciales sin acoplamiento estático (`AREA-COMUNICATION`, `AREA-ENGLISH`, `AREA-SOCIALS`, `AREA-SCIENCE`, `AREA-MATH`, `AREA-IT`, `AREA-FINANCE`).
+- Pendientes.md:
+  - Marcada TAREA-F6-031 como completada [X] en Pendientes.md.

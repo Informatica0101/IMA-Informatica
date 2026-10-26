@@ -494,3 +494,14 @@ Auditoría inicial de archivos para TAREA-F6-030:
 
 Hallazgos:
 - La función `initializeFinancialDriveStructure` cumple con la inicialización de carpetas de Drive pero requiere actualizar su bloque con la identificación explícita de TAREA-F6-030 y asegurar la separación completa de subcarpetas documentales entre Recursos Humanos y Contabilidad/Cobros.
+
+-------------------------------------------------------------------------------
+FECHA: Marzo 2026
+TAREA: [TAREA-F6-031] Crear una plantilla de microservicio académico reutilizable para múltiples áreas
+-------------------------------------------------------------------------------
+Auditoría inicial de archivos para TAREA-F6-031:
+- backend/academic-service/Code.gs:
+  - Inspeccionada la función `getAcademicAreaTemplateCatalog` y la matriz de áreas curriculares iniciales (`AREA-COMUNICATION`, `AREA-ENGLISH`, `AREA-SOCIALS`, `AREA-SCIENCE`, `AREA-MATH`, `AREA-IT`, `AREA-FINANCE`).
+  - Se verifica que la función implementa la parametrización dinámica mediante `AreasCurricularesExtensiones` sin condicionales de negocio acoplados.
+- Pendientes.md:
+  - Marcada TAREA-F6-031 como completada [X] tras verificación de la plantilla genérica.

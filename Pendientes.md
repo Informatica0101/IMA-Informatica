@@ -1046,9 +1046,10 @@ SEGUNDA PARTE: REESTRUCTURACIÓN ARQUITECTÓNICA, ESCALABILIDAD Y ADMINISTRACIÓ
 
 ---
 
-### [TAREA-F6-031] Crear una plantilla de microservicio académico reutilizable para múltiples áreas
+### [X] [TAREA-F6-031] Crear una plantilla de microservicio académico reutilizable para múltiples áreas
 - **Origen del Hallazgo:** F6-009 / Modularización y reutilización de código
 - **Prioridad:** P1
+- **Estado:** [X] Completado
 - **Severidad/Clasificación:** Alta (Modularización y reutilización)
 - **Archivos Involucrados:** Servicio de tareas y exámenes, dashboards de docentes y estudiantes, configuración académica, asignación de asignaturas, gestión de usuarios y despliegues académicos.
 - **Descripción del Alcance:**

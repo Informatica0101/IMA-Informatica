@@ -6538,15 +6538,21 @@ function initializeFinancialDriveStructure(payload) {
     };
 
     const subFolders = {
-      Contabilidad_Asientos: getOrCreateFolder(foldersMap.Contabilidad, "Asientos_y_Estados"),
       Contabilidad_Facturacion: getOrCreateFolder(foldersMap.Contabilidad, "Facturacion"),
       Contabilidad_Cuentas_Por_Cobrar: getOrCreateFolder(foldersMap.Contabilidad, "Cuentas_por_Cobrar"),
       Contabilidad_Cuentas_Por_Pagar: getOrCreateFolder(foldersMap.Contabilidad, "Cuentas_por_Pagar"),
+      Contabilidad_Recibos: getOrCreateFolder(foldersMap.Contabilidad, "Recibos"),
+      Contabilidad_Inventarios: getOrCreateFolder(foldersMap.Contabilidad, "Inventarios"),
       Contabilidad_Bancos: getOrCreateFolder(foldersMap.Contabilidad, "Bancos_y_Conciliaciones"),
+      Contabilidad_Reportes: getOrCreateFolder(foldersMap.Contabilidad, "Reportes"),
+      Contabilidad_Otros: getOrCreateFolder(foldersMap.Contabilidad, "Otros_Modulos"),
       RRHH_Expedientes: getOrCreateFolder(foldersMap.Recursos_Humanos, "Expedientes_Laborales"),
-      RRHH_Planillas: getOrCreateFolder(foldersMap.Recursos_Humanos, "Planillas_y_Nomena"),
-      RRHH_Contratos_Permisos: getOrCreateFolder(foldersMap.Recursos_Humanos, "Contratos_y_Permisos"),
-      RRHH_Evaluaciones: getOrCreateFolder(foldersMap.Recursos_Humanos, "Evaluaciones_Desempeno"),
+      RRHH_Planillas: getOrCreateFolder(foldersMap.Recursos_Humanos, "Planillas"),
+      RRHH_Acciones_Personal: getOrCreateFolder(foldersMap.Recursos_Humanos, "Acciones_de_Personal"),
+      RRHH_Contratos: getOrCreateFolder(foldersMap.Recursos_Humanos, "Contratos"),
+      RRHH_Permisos_Ausencias: getOrCreateFolder(foldersMap.Recursos_Humanos, "Permisos_y_Ausencias"),
+      RRHH_Evaluaciones: getOrCreateFolder(foldersMap.Recursos_Humanos, "Evaluaciones"),
+      RRHH_Otros: getOrCreateFolder(foldersMap.Recursos_Humanos, "Otros_Modulos"),
       Facturacion_Comprobantes: getOrCreateFolder(foldersMap.Facturacion_Recibos, "Comprobantes_Ventanilla")
     };
 
