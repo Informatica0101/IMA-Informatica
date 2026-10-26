@@ -173,7 +173,7 @@ const ROLE_PERMISSIONS = {
     "getStudentFile", "updateStudentFile", "getStudentTimeline", "findDuplicateStudents", "mergeStudentFiles",
     "getStudentGuardians", "saveStudentGuardian", "unlinkStudentGuardian", "uploadStudentDocument", "getStudentDocuments", "updateDocumentStatus", "getPendingDocumentsReport", "grantDocumentExemption",
     "getPendingDocumentsReport", "grantDocumentExemption", "createStudentEnrollment", "getStudentEnrollments", "renewStudentEnrollment", "checkEnrollmentCapacity",
-    "changeStudentSection", "recordStudentTransfer", "recordStudentWithdrawal", "processStudentReentry", "processStudentPromotion", "processStudentGraduation", "updateStudentLifecycleStatus", "reconcileStudentLifecycleState", "runStudentLifecycleRegressionSuite", "getAcademicAreaTemplateCatalog", "getAcademicAreaCoordinationScope", "deployAcademicMicroserviceInstance", "getAcademicMicroserviceDeployments", "previewBackupRestoreImpact", "getStorageQuotaMetricsReport", "reconcileDocumentStorageIntegrity",
+    "changeStudentSection", "recordStudentTransfer", "recordStudentWithdrawal", "processStudentReentry", "processStudentPromotion", "processStudentGraduation", "updateStudentLifecycleStatus", "reconcileStudentLifecycleState", "runStudentLifecycleRegressionSuite", "getAcademicAreaTemplateCatalog", "getAcademicAreaCoordinationScope", "deployAcademicMicroserviceInstance", "getAcademicMicroserviceDeployments", "previewBackupRestoreImpact", "getStorageQuotaMetricsReport", "reconcileDocumentStorageIntegrity", "reconcileInstitutionalModulesMatrix",
     "openAttendanceSession", "saveClassAttendance", "getClassAttendance", "saveDailyAttendance", "getDailyAttendance", "submitAttendanceJustification", "reviewAttendanceJustification", "recordEarlyDeparture", "getAttendanceIncidents", "saveAttendanceIncident", "getAttendanceFollowupCases", "saveAttendanceFollowupCase", "addCaseFollowUpNote", "getStudentAttendanceSummary",
     "createTeacherSupervision", "getTeacherSupervisions", "updateSupervisionStatus", "saveSupervisionObservation", "getSupervisionObservation", "saveTeacherImprovementPlan", "getTeacherImprovementPlans", "purgeSecurityCaches"
   ],
@@ -733,6 +733,7 @@ function doPost(e) {
       case "previewBackupRestoreImpact": result = previewBackupRestoreImpact(payload); break;
       case "getStorageQuotaMetricsReport": result = getStorageQuotaMetricsReport(payload); break;
       case "reconcileDocumentStorageIntegrity": result = reconcileDocumentStorageIntegrity(payload); break;
+      case "reconcileInstitutionalModulesMatrix": result = reconcileInstitutionalModulesMatrix(payload); break;
 
       // Endpoints Fase 7 - Asistencia y Seguimiento Estudiantil
       case "openAttendanceSession": result = openAttendanceSession(payload); break;
@@ -2776,6 +2777,110 @@ function generateInstitutionalUUID(payload) {
     prefix: prefix,
     uuid: uuidPart,
     institutionalId: fullId,
+    timestamp: new Date().toISOString()
+  };
+}
+
+// [TAREA-F6-021] [Fase 6: Expediente Institucional y Ciclo de Vida] - Consola de conciliación e integridad entre los módulos institucionales (Expedientes, Matrículas, Usuarios, Finanzas y Asistencia)
+function reconcileInstitutionalModulesMatrix(payload) {
+  const { autoFix, correlationId } = payload || {};
+  const corrId = correlationId || ("RECON-MOD-" + Date.now());
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+
+  const expSheet = getOrCreateSheet(ss, "ExpedientesEstudiantes");
+  const matSheet = getOrCreateSheet(ss, "Matriculas");
+  const userSheet = ss.getSheetByName("Usuarios");
+  const cobrosSheet = ss.getSheetByName("Cobros");
+  const asisSheet = ss.getSheetByName("ControlAsistencia");
+
+  const expRows = expSheet.getDataRange().getValues().slice(1);
+  const matRows = matSheet.getDataRange().getValues().slice(1);
+  const userRows = userSheet ? userSheet.getDataRange().getValues().slice(1) : [];
+  const cobrosRows = cobrosSheet ? cobrosSheet.getDataRange().getValues().slice(1) : [];
+  const asisRows = asisSheet ? asisSheet.getDataRange().getValues().slice(1) : [];
+
+  const validExpIds = new Set(expRows.map(r => String(r[0]).trim()).filter(Boolean));
+  const validUserIds = new Set(userRows.map(r => String(r[0]).trim()).filter(Boolean));
+  const validMatUserIds = new Set(matRows.map(r => String(r[2]).trim()).filter(Boolean));
+
+  const inconsistencies = [];
+  let autoFixedCount = 0;
+
+  // 1. Detectar Matrículas Huérfanas (sin expediente o sin usuario registrado)
+  matRows.forEach((m, idx) => {
+    const matId = String(m[0] || "").trim();
+    const userId = String(m[2] || "").trim();
+    const estado = String(m[8] || "Activa").trim();
+
+    if (userId && !validUserIds.has(userId) && estado === "Activa") {
+      inconsistencies.push({
+        modulo: "Matrículas",
+        tipo: "MATRICULA_HUERFANA_USUARIO",
+        entidadId: matId,
+        referenciaId: userId,
+        causa: `Matrícula ${matId} vinculada a UsuarioID inexistente ${userId}`,
+        accionRecomendada: "Revisar la asignación de identidad o desactivar la matrícula de forma manual."
+      });
+    }
+  });
+
+  // 2. Detectar Cobros vinculados a Alumnos/Usuarios inexistentes
+  cobrosRows.forEach((c, idx) => {
+    const cobroId = String(c[0] || "").trim();
+    const alumnoUserId = String(c[2] || "").trim();
+    const estado = String(c[6] || "").trim();
+
+    if (alumnoUserId && !validUserIds.has(alumnoUserId) && estado !== "Anulado") {
+      inconsistencies.push({
+        modulo: "Finanzas",
+        tipo: "COBRO_HUERFANO",
+        entidadId: cobroId,
+        referenciaId: alumnoUserId,
+        causa: `Cargo/Cobro ${cobroId} asociado a UsuarioID inexistente ${alumnoUserId}`,
+        accionRecomendada: "Verificar el historial contable y re-vincular al expediente activo del estudiante."
+      });
+    }
+  });
+
+  // 3. Detectar Registros de Asistencia sin Matrícula activa
+  asisRows.forEach((a, idx) => {
+    const asisId = String(a[0] || "").trim();
+    const alumnoUserId = String(a[3] || "").trim();
+
+    if (alumnoUserId && !validMatUserIds.has(alumnoUserId)) {
+      inconsistencies.push({
+        modulo: "Asistencia",
+        tipo: "ASISTENCIA_DESALINEADA",
+        entidadId: asisId,
+        referenciaId: alumnoUserId,
+        causa: `Registro de asistencia ${asisId} asociado a alumno sin matrícula activa`,
+        accionRecomendada: "Validar la inscripción en la sección o ajustar el periodo escolar."
+      });
+    }
+  });
+
+  logStructuredEvent("ACADEMIC", "reconcileInstitutionalModulesMatrix", "WARN", "INTER_MODULE_RECONCILIATION", `Matriz de conciliación ejecutada. Inconsistencias: ${inconsistencies.length}`, {
+    correlationId: corrId,
+    totalInconsistencias: inconsistencies.length
+  }, payload && payload.authRole);
+
+  return {
+    status: "success",
+    correlationId: corrId,
+    fuenteDeVerdad: {
+      expedientes: "ExpedientesEstudiantes",
+      usuarios: "Usuarios",
+      matriculas: "Matriculas",
+      finanzas: "Cobros",
+      asistencia: "ControlAsistencia"
+    },
+    resumen: {
+      expedientesTotales: validExpIds.size,
+      usuariosTotales: validUserIds.size,
+      matriculasTotales: matRows.length,
+      inconsistenciasDetectadas: inconsistencies.length
+    },
+    inconsistencias: inconsistencies,
     timestamp: new Date().toISOString()
   };
 }

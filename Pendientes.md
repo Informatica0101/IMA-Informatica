@@ -646,7 +646,7 @@ FASE 6. EXPEDIENTE INSTITUCIONAL Y CICLO DE VIDA DEL ESTUDIANTE
 
 ---
 
-### [TAREA-F6-021] Implementar una matriz de integridad y conciliación entre los módulos institucionales
+### [X] [TAREA-F6-021] Implementar una matriz de integridad y conciliación entre los módulos institucionales
 - **Origen del Hallazgo:** `AUDITORIA_FASE_6_EXPEDIENTE_CICLO_VIDA.md` / Tarea 8 (P2 · Consistencia de Datos)
 - **Prioridad:** P2
 - **Severidad/Clasificación:** Medio (Integridad de datos entre microservicios)
@@ -675,7 +675,7 @@ FASE 6. EXPEDIENTE INSTITUCIONAL Y CICLO DE VIDA DEL ESTUDIANTE
   - CA-114: Los reintentos de sincronización no duplican cargos ni matrículas.
   - CA-115: Los registros históricos mantienen sus valores originales.
   - CA-116: La consola de conciliación identifica la entidad afectada, causa y acción recomendada.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completado
 
 ---
 

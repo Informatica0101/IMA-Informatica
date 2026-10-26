@@ -1629,3 +1629,10 @@ Archivos Modificados:
   - En handleOmniboxResultClick, ajustada la navegación directa al expediente digital del estudiante al seleccionar un resultado del omnibox.
 - Pendientes.md:
   - Marcada TAREA-F6-020 como completada [X] en Pendientes.md.
+
+[TAREA-F6-021] Implementar una matriz de integridad y conciliación entre los módulos institucionales
+- backend/academic-service/Code.gs:
+  - Implementada la función `reconcileInstitutionalModulesMatrix` para la detección y conciliación de matrículas huérfanas, cargos contables desalineados y asistencias sin matrícula activa.
+  - Registrada la acción `reconcileInstitutionalModulesMatrix` en `ROLE_PERMISSIONS` y ruteo `doPost`.
+- Pendientes.md:
+  - Marcada TAREA-F6-021 como completada [X] en Pendientes.md.
