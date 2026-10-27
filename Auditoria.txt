@@ -924,3 +924,16 @@ Auditoría inicial e inspección de archivos para TAREA-F7-IMP-11:
   - En `js/teacher.js`, la función `loadMasterSchedules` se actualizará con validación del token de frescura y eliminación de registros obsoletos/inactivos.
 - Pendientes.md:
   - Se actualizará el estado de la TAREA-F7-IMP-11 a `[X] Completado`.
+
+--------------------------------------------------------------------------------
+FECHA: 2026-10-27
+TAREA: [TAREA-F7-IMP-15] Incorporar control de concurrencia y protección de operaciones críticas
+--------------------------------------------------------------------------------
+Auditoría inicial e inspección de archivos para TAREA-F7-IMP-15:
+- backend/academic-service/Code.gs:
+  - Inspeccionadas las funciones `createClassSchedule`, `publishClassSchedules`, `saveClassroomResource`, `saveClassroomMaintenance` e `importBulkClassSchedules`.
+  - Se implementará la adquisición de cerrojos de concurrencia mediante `LockService.getScriptLock()` con tiempo de espera de 10 segundos y liberación segura en bloque `finally`.
+  - Se añadirá la verificación opcional de versión/timestamp (`lastUpdated`/`expectedTimestamp`) en `createClassSchedule` para prevenir escrituras basadas en datos obsoletos (optimistic locking).
+  - Se inyectará el comentario identificativo `[TAREA-F7-IMP-15] [Fase 7: Planificación Académica, Horarios y Recursos]`.
+- Pendientes.md:
+  - Se actualizará la TAREA-F7-IMP-15 a marcada `[X] Completado`.

@@ -1990,3 +1990,13 @@ Archivos modificados:
   Se implementó `openPublishImpactPreviewModal` para invocar 'previewPublishImpact', renderizar tarjetas de métricas e impacto, y ejecutar 'publishClassSchedules' tras confirmación.
 - Pendientes.md (Línea 1878):
   Se actualizó la tarea [TAREA-F7-IMP-14] a marcada '[X]'.
+
+================================================================================
+FECHA: 2026-10-27
+TAREA: [TAREA-F7-IMP-15] Incorporar control de concurrencia y protección de operaciones críticas
+================================================================================
+Archivos modificados:
+- backend/academic-service/Code.gs (Líneas 5595-5658, 5700-5810, 6375-6455, 3009-3100):
+  Se incorporaron cerrojos de concurrencia de LockService (tryLock con timeout de 8 a 15 segundos) y bloques de liberación segura `finally { lock.releaseLock(); }` en las funciones `createClassSchedule`, `publishClassSchedules`, `saveClassroomResource`, `saveClassroomMaintenance` e `importBulkClassSchedules`. En `createClassSchedule` se añadió la validación Optimistic Concurrency Control comparando el timestamp `lastUpdated` del payload con el registro existente en la hoja.
+- Pendientes.md (Líneas 1911 y 1942):
+  Se actualizó el estado de la tarea [TAREA-F7-IMP-15] a marcado '[X]' y estado '[X] Completado'.

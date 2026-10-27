@@ -1593,8 +1593,17 @@
                     <i class="fa-solid fa-xmark"></i>
                 </button>
             </div>
-            <div id="publish-impact-content-box" class="p-6 space-y-4 max-h-[70vh] overflow-y-auto text-xs">
-                <p class="text-slate-400 italic text-center">Analizando impacto de publicación de borradores...</p>
+            <div class="p-6 space-y-4 max-h-[70vh] overflow-y-auto text-xs">
+                <div id="publish-impact-summary-box" class="space-y-3">
+                    <p class="text-slate-400 italic text-center"><i class="fa-solid fa-spinner fa-spin mr-1"></i> Analizando impacto de publicación de borradores...</p>
+                </div>
+                <div id="publish-impact-details" class="pt-2 border-t border-slate-100"></div>
+                <div class="flex justify-end gap-2 pt-3 border-t border-slate-100">
+                    <button onclick="document.getElementById('modal-publish-impact-preview').classList.add('hidden')" class="px-4 py-2 bg-slate-100 text-slate-600 hover:bg-slate-200 rounded-xl font-semibold text-xs">Cancelar</button>
+                    <button id="btn-confirm-publish-schedules" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl text-xs shadow-md hidden flex items-center gap-2">
+                        <i class="fa-solid fa-circle-check"></i> Confirmar y Publicar
+                    </button>
+                </div>
             </div>
         </div>
     </div>

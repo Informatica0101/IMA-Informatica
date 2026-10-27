@@ -1911,7 +1911,7 @@ FASE 7. PLANIFICACIÓN ACADÉMICA, HORARIOS Y RECURSOS
 
 ---
 
-### [ ] [TAREA-F7-IMP-15] Incorporar control de concurrencia y protección de operaciones críticas
+### [X] [TAREA-F7-IMP-15] Incorporar control de concurrencia y protección de operaciones críticas
 - **Origen del Hallazgo:** `AUDITORIA_FASE_7_PLANIFICACION_HORARIOS_RECURSOS.md` / Tarea F7-IMP-15 (P1 · Concurrencia en Horarios)
 - **Prioridad:** P1
 - **Severidad/Clasificación:** Alta (Fortalecimiento de integridad y consistencia)
@@ -1939,7 +1939,7 @@ FASE 7. PLANIFICACIÓN ACADÉMICA, HORARIOS Y RECURSOS
   - CA-F7-96: Los errores permiten identificar el registro afectado.
   - CA-F7-97: Las operaciones fallidas no dejan reservas o asignaciones parciales.
   - CA-F7-98: Las pruebas de concurrencia demuestran que se mantienen las restricciones obligatorias.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completado
 
 ---
 
