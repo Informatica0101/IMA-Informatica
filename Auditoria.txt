@@ -55,3 +55,12 @@ DESCRIPCIÓN DE REGISTRO:
 - Se documentaron de manera exhaustiva las estructuras de tablas y columnas actualmente operativas en la plataforma antes de la ejecución de las tareas del anexo técnico.
 - Se creó el documento de referencia docs/architecture/spreadsheets-schema.md y se actualizó MapaDependencias.md incorporando la aclaración de arquitectura obligatoria sobre el carácter recomendable y no obligatorio de las estructuras de los anexos.
 ===============================================================================
+===============================================================================
+FECHA: 2025-05-24
+AUDITORÍA FUNCIONAL Y TÉCNICA - TAREA-AD-02: CATÁLOGO CENTRAL DE RESPONSABILIDADES, CAPACIDADES Y MÓDULOS
+ARCHIVOS AUDITADOS: backend/user-service/Code.gs, backend/developer-service/Code.gs, js/config.js
+RESULTADO DE EVALUACIÓN:
+- Se auditó el catálogo central de responsabilidades, capacidades y módulos.
+- Se identifica la necesidad de definir el catálogo de módulos y capacidades granulares (Consultar, Crear, Editar, Eliminar, Aprobar, Asignar, Exportar, Administrar) y responsabilidades en `js/config.js`.
+- Se requiere implementar en `backend/user-service/Code.gs` y `backend/developer-service/Code.gs` endpoints y servicios backend para consultar y gestionar el catálogo central (`getCentralCapabilitiesCatalog`, `getInstitutionalResponsibilitiesCatalog`, `saveInstitutionalResponsibility`), garantizando la reutilización de capacidades en múltiples roles, la independencia de funciones al modificar permisos y la trazabilidad completa con auditoría.
+===============================================================================

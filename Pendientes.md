@@ -57,7 +57,7 @@
 
 ---
 
-### [ ] [TAREA-AD-02] Implementar un catálogo central de responsabilidades, capacidades y módulos
+### [X] [TAREA-AD-02] Implementar un catálogo central de responsabilidades, capacidades y módulos
 - **Origen del Hallazgo:** Anexo de Tareas: Dashboards dinámicos / Tarea AD-02 (P1 · Catálogo de Responsabilidades)
 - **Prioridad:** P1
 - **Severidad/Clasificación:** Alta (Catálogo de capacidades reutilizables)
@@ -79,7 +79,7 @@
   - CA-AD-104: Una misma capacidad se reutiliza en diferentes roles con permisos y ámbitos independientes.
   - CA-AD-105: Retirar permisos de una responsabilidad no elimina funciones compartidas por otros roles.
   - CA-AD-106: Las asignaciones de roles y responsabilidades registran trazabilidad completa.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completado
 
 ---
 

@@ -117,6 +117,7 @@ function doPost(e) {
       case "getCentralConfigAndContractCatalog": result = getCentralConfigAndContractCatalog(payload); break;
       case "validateServiceConfigDependencies": result = validateServiceConfigDependencies(payload); break;
       case "runFullArchitectureIntegrationAndPerformanceSuite": result = runFullArchitectureIntegrationAndPerformanceSuite(payload); break;
+      case "getCentralCapabilitiesCatalog": result = getCentralCapabilitiesCatalog(payload); break;
       default:
         return textResponse({ status: "error", code: "ACTION_NOT_FOUND", message: `Acción '${action}' no reconocida en el servicio del desarrollador.` });
     }
@@ -216,6 +217,44 @@ function runFullArchitectureIntegrationAndPerformanceSuite(payload) {
     todasPruebasPasaron: allPassed,
     duracionTotalMs: totalDurationMs,
     resultadosSuiteRendimiento: testResults
+  };
+}
+
+// [TAREA-AD-02] [Anexo Tareas: Dashboards Dinámicos - Catálogo de Responsabilidades] - Consulta del catálogo centralizado de capacidades y módulos en el microservicio desarrollador
+function getCentralCapabilitiesCatalog(payload) {
+  var capabilities = [
+    { capacityId: "CAP_CONSULTAR", name: "Consultar", operation: "READ", description: "Permiso para visualizar y consultar registros del módulo o área." },
+    { capacityId: "CAP_CREAR", name: "Crear", operation: "CREATE", description: "Permiso para registrar nuevos elementos en el módulo." },
+    { capacityId: "CAP_EDITAR", name: "Editar", operation: "UPDATE", description: "Permiso para modificar registros existentes." },
+    { capacityId: "CAP_ELIMINAR", name: "Eliminar", operation: "DELETE", description: "Permiso para desactivar o eliminar registros." },
+    { capacityId: "CAP_APROBAR", name: "Aprobar", operation: "APPROVE", description: "Permiso para autorizar, aprobar o rechazar solicitudes y entregas." },
+    { capacityId: "CAP_ASIGNAR", name: "Asignar", operation: "ASSIGN", description: "Permiso para asignar recursos, cargas académicas o responsabilidades." },
+    { capacityId: "CAP_EXPORTAR", name: "Exportar", operation: "EXPORT", description: "Permiso para descargar y exportar reportes o datos." },
+    { capacityId: "CAP_ADMINISTRAR", name: "Administrar", operation: "ADMIN", description: "Permiso de control total sobre el módulo o configuración." }
+  ];
+
+  var modules = [
+    { moduleId: "mod_gestion_usuarios", name: "Gestión de Usuarios e Identidades", service: "USER" },
+    { moduleId: "mod_planificacion_horarios", name: "Planificación de Horarios y Aulas", service: "ACADEMIC" },
+    { moduleId: "mod_coordinacion_academica", name: "Coordinación Académica", service: "ACADEMIC" },
+    { moduleId: "mod_supervision_silabos", name: "Supervisión de Jornalizaciones y Sílabos", service: "ACADEMIC" },
+    { moduleId: "mod_horarios_area", name: "Horarios y Cargas por Departamento", service: "ACADEMIC" },
+    { moduleId: "mod_asistencia_docente", name: "Supervisión de Asistencia Docente", service: "ACADEMIC" },
+    { moduleId: "mod_expedientes_estudiantiles", name: "Expedientes Estudiantiles y Matrícula", service: "ACADEMIC" },
+    { moduleId: "mod_mis_clases", name: "Gestión de Clases Docentes", service: "ACADEMIC" },
+    { moduleId: "mod_aula_virtual_tareas", name: "Aula Virtual y Tareas", service: "TASK" },
+    { moduleId: "mod_mis_horarios", name: "Consulta de Horarios Personalizados", service: "ACADEMIC" },
+    { moduleId: "mod_libro_calificaciones", name: "Libro de Calificaciones", service: "ACADEMIC" },
+    { moduleId: "mod_finanzas", name: "Gestión Financiera y Cobranzas", service: "ACCOUNTING" },
+    { moduleId: "mod_auditoria_sistema", name: "Auditoria y Trazabilidad", service: "USER" }
+  ];
+
+  return {
+    status: "success",
+    service: "DEVELOPER",
+    capacidades: capabilities,
+    modulos: modules,
+    timestamp: new Date().toISOString()
   };
 }
 
