@@ -879,6 +879,23 @@ Auditoría inicial e inspección de archivos para TAREA-F7-IMP-12:
 
 -------------------------------------------------------------------------------
 FECHA: 2026-10-26
+TAREA: [TAREA-F7-IMP-13] Incorporar importación, exportación y validación masiva de horarios
+-------------------------------------------------------------------------------
+Auditoría inicial e inspección de archivos para TAREA-F7-IMP-13:
+- backend/academic-service/Code.gs:
+  - Inspeccionadas las funciones de gestión de horarios `createClassSchedule` y `checkScheduleConflict`.
+  - Se creará la función `exportBulkClassSchedules` para generar exportaciones estructuradas en CSV/JSON con metadatos completos de asignaciones.
+  - Se creará la función `importBulkClassSchedules` para procesar importaciones masivas con fase de previsualización (`previsualizar: true`), validación estructural de columnas, detección de duplicados y comprobación de conflictos previa escritura atómica.
+  - Se registrarán `exportBulkClassSchedules` e `importBulkClassSchedules` en `ROLE_PERMISSIONS` y dispatcher `doPost`.
+- teacher-dashboard.html / js/teacher.js:
+  - Se añadirá el botón UI "Importar / Exportar" y el modal `#modal-bulk-schedule-import-export`.
+  - Se implementarán los controladores `openBulkScheduleImportExportModal` e `importBulkSchedulesAction` con la etiqueta identificativa `[TAREA-F7-IMP-13]`.
+- Pendientes.md:
+  - Se actualizará el estado de la TAREA-F7-IMP-13 a `[X] Completado`.
+
+
+-------------------------------------------------------------------------------
+FECHA: 2026-10-26
 TAREA: [TAREA-F7-IMP-11] Fortalecer la coherencia y actualización de los portales relacionados
 -------------------------------------------------------------------------------
 Auditoría inicial e inspección de archivos para TAREA-F7-IMP-11:

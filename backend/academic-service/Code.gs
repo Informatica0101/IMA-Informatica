@@ -168,7 +168,7 @@ const ROLE_PERMISSIONS = {
     "getAcademicPeriods", "manageAcademicPeriod", "getSubjectCatalog", "createSubjectCatalogItem", "getStudyPlans", "createStudyPlan",
     "getAcademicOffers", "createAcademicOffer", "getTeacherAssignments", "assignTeacherToClass", "createTeacherSubstitution",
     "getAcademicCalendar", "createCalendarEvent", "getClassSchedules", "createClassSchedule", "deleteClassSchedule", "getAcademicRules", "saveAcademicRule", "getDepartmentAcademicPlanning", "assignDepartmentHead", "getCurricularAnalyticsReport", "getReusableResourceCatalog", "manageReusableResource", "getCurricularEquivalences", "executeCurricularMigration", "registerCurricularAreaExtension", "runCurricularAreaServiceTests", "toggleCurricularAreaStatus", "validateApiContractsTestSuite", "getInstitutionalCatalog", "validateCatalogReference", "generateInstitutionalUUID", "validateInstitutionalIdentifier", "auditInstitutionalIdentifierCollisions", "runConcurrencyAndConsistencySuite", "getPaginatedAcademicHistory", "reconcileRestoredDataIntegrity", "evaluateTransactionalStorageMigrationNeed",
-    "getClassroomResources", "saveClassroomResource", "saveClassroomMaintenance", "getStudentSchedule", "getScheduleConflictResolutionAlternatives", "saveScheduleScenario", "getScheduleScenarios", "saveTeacherWorkLoadPreferences", "createSessionException", "getScheduleVersions", "compareScheduleVersions", "restoreScheduleVersion", "getPlanningQualityAndOccupancyReport",
+    "getClassroomResources", "saveClassroomResource", "saveClassroomMaintenance", "getStudentSchedule", "getScheduleConflictResolutionAlternatives", "saveScheduleScenario", "getScheduleScenarios", "saveTeacherWorkLoadPreferences", "createSessionException", "getScheduleVersions", "compareScheduleVersions", "restoreScheduleVersion", "getPlanningQualityAndOccupancyReport", "exportBulkClassSchedules", "importBulkClassSchedules",
     "createAdmissionRequest", "getAdmissionRequests", "updateAdmissionStatus", "reopenAdmissionRequest", "convertAdmissionToStudent", "scheduleAdmissionInterview", "getAdmissionInterviews", "recordInterviewOutcome", "saveAdmissionEvaluation", "getAdmissionEvaluations", "addToWaitlist", "getWaitlist", "reorderWaitlist", "offerWaitlistSlot", "respondToWaitlistSlot", "resolveAdmissionDuplicate", "getAdmissionAnalyticsReport",
     "getStudentFile", "getStudentFileSummary", "updateStudentFile", "getStudentTimeline", "findDuplicateStudents", "mergeStudentFiles", "getMergePreviewComparison", "unmergeStudentFiles", "getStudentFileAdministrativeReports", "initializeDirectionSecretaryDriveStructure",
     "getStudentGuardians", "saveStudentGuardian", "unlinkStudentGuardian", "uploadStudentDocument", "getStudentDocuments", "updateDocumentStatus", "getPendingDocumentsReport", "grantDocumentExemption", "restoreDocumentVersion", "checkAndNotifyExpiringStudentDocuments",
@@ -669,6 +669,8 @@ function doPost(e) {
       case "compareScheduleVersions": result = compareScheduleVersions(payload); break;
       case "restoreScheduleVersion": result = restoreScheduleVersion(payload); break;
       case "getPlanningQualityAndOccupancyReport": result = getPlanningQualityAndOccupancyReport(payload); break;
+      case "exportBulkClassSchedules": result = exportBulkClassSchedules(payload); break;
+      case "importBulkClassSchedules": result = importBulkClassSchedules(payload); break;
       case "getPendingSessionRecoveries": result = getPendingSessionRecoveries(payload); break;
       case "publishClassSchedules": result = publishClassSchedules(payload); break;
       case "getIndividualCalendar": result = getIndividualCalendar(payload); break;
@@ -2921,6 +2923,117 @@ function generateInstitutionalUUID(payload) {
     uuid: uuidPart,
     institutionalId: fullId,
     timestamp: new Date().toISOString()
+  };
+}
+
+// [TAREA-F7-IMP-13] [Fase 7: Planificación Académica, Horarios y Recursos] - Exportación masiva de matriz de horarios en formato CSV/JSON.
+function exportBulkClassSchedules(payload) {
+  const { anoLectivo } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "HorariosClase");
+  const data = sheet.getDataRange().getValues();
+
+  if (data.length <= 1) {
+    return { status: "success", csvData: "HorarioID,OfertaID,DiaSemana,HoraInicio,HoraFin,AulaCodigo,DocenteUserId,Estado\n", totalRecords: 0 };
+  }
+
+  const rows = data.slice(1).filter(r => r[7] !== "Inactivo");
+  let csvData = "HorarioID,OfertaID,DiaSemana,HoraInicio,HoraFin,AulaCodigo,DocenteUserId,Estado\n";
+
+  rows.forEach(r => {
+    csvData += `"${r[0]}","${r[1]}","${r[2]}","${r[3]}","${r[4]}","${r[5]}","${r[6]}","${r[7]}"\n`;
+  });
+
+  return {
+    status: "success",
+    anoLectivo: anoLectivo || "2026",
+    totalRecords: rows.length,
+    csvData,
+    schedules: rows.map(r => ({ horarioId: r[0], ofertaId: r[1], diaSemana: r[2], horaInicio: r[3], horaFin: r[4], aulaCodigo: r[5], docenteUserId: r[6], estado: r[7] }))
+  };
+}
+
+// [TAREA-F7-IMP-13] [Fase 7: Planificación Académica, Horarios y Recursos] - Importación masiva de horarios con fase de previsualización, validación atómica y reporte de conflictos.
+function importBulkClassSchedules(payload) {
+  const { filas, previsualizar } = payload || {};
+  if (!Array.isArray(filas) || filas.length === 0) {
+    throw new Error("El arreglo de 'filas' para importar es requerido y no debe estar vacío.");
+  }
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "HorariosClase");
+  const existingData = sheet.getDataRange().getValues().slice(1);
+  const existingMap = new Map(existingData.map(r => [String(r[0]).trim(), r]));
+
+  const validos = [];
+  const conflictos = [];
+  const duplicados = [];
+
+  filas.forEach((f, idx) => {
+    const horarioId = f.horarioId || f.HorarioID || ("HOR-IMP-" + (idx + 1));
+    const ofertaId = f.ofertaId || f.OfertaID || "OFE-DEFAULT";
+    const diaSemana = f.diaSemana || f.DiaSemana;
+    const horaInicio = f.horaInicio || f.HoraInicio;
+    const horaFin = f.horaFin || f.HoraFin;
+    const aulaCodigo = f.aulaCodigo || f.AulaCodigo || "AULA-1";
+    const docenteUserId = f.docenteUserId || f.DocenteUserId || "";
+    const estado = f.estado || f.Estado || "Borrador";
+
+    if (!diaSemana || !horaInicio || !horaFin) {
+      conflictos.push({ filaIdx: idx + 1, horarioId, reason: "Día, horaInicio y horaFin son requeridos." });
+      return;
+    }
+
+    if (existingMap.has(horarioId)) {
+      duplicados.push({ horarioId, ofertaId });
+    }
+
+    const c = checkScheduleConflict({
+      diaSemana, horaInicio, horaFin, aulaCodigo, docenteUserId, ofertaId, excludeHorarioId: horarioId
+    });
+
+    if (c.hasConflict) {
+      conflictos.push({ filaIdx: idx + 1, horarioId, diaSemana, horaInicio, horaFin, reason: c.reason });
+    } else {
+      validos.push({ horarioId, ofertaId, diaSemana, horaInicio, horaFin, aulaCodigo, docenteUserId, estado });
+    }
+  });
+
+  if (previsualizar || conflictos.length > 0) {
+    return {
+      status: conflictos.length > 0 ? "warning" : "success",
+      esPrevisualización: true,
+      resumen: {
+        totalRecibidos: filas.length,
+        validosCount: validos.length,
+        conflictosCount: conflictos.length,
+        duplicadosCount: duplicados.length
+      },
+      validos,
+      conflictos,
+      duplicados
+    };
+  }
+
+  let countInserted = 0;
+  validos.forEach(item => {
+    const existingIdx = existingData.findIndex(r => String(r[0]).trim() === String(item.horarioId).trim());
+    const rowVal = [item.horarioId, item.ofertaId, item.diaSemana, item.horaInicio, item.horaFin, item.aulaCodigo, item.docenteUserId, item.estado];
+
+    if (existingIdx !== -1) {
+      sheet.getRange(existingIdx + 2, 1, 1, 8).setValues([rowVal]);
+    } else {
+      sheet.appendRow(rowVal);
+    }
+    countInserted++;
+  });
+
+  logStructuredEvent("ACADEMIC", "importBulkClassSchedules", "INFO", "BULK_SCHEDULE_IMPORTED", `Importación masiva completada exitosamente. Se aplicaron ${countInserted} registros.`, { totalRecibidos: filas.length, countInserted }, payload && payload.authRole);
+
+  return {
+    status: "success",
+    message: `Importación masiva completada. Se guardaron/actualizaron ${countInserted} bloques de horario.`,
+    countInserted
   };
 }
 

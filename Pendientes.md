@@ -1839,7 +1839,7 @@ FASE 7. PLANIFICACIÓN ACADÉMICA, HORARIOS Y RECURSOS
 
 ---
 
-### [ ] [TAREA-F7-IMP-13] Incorporar importación, exportación y validación masiva de horarios
+### [X] [TAREA-F7-IMP-13] Incorporar importación, exportación y validación masiva de horarios
 - **Origen del Hallazgo:** `AUDITORIA_FASE_7_PLANIFICACION_HORARIOS_RECURSOS.md` / Tarea F7-IMP-13 (P2 · Intercambio Masivo de Horarios)
 - **Prioridad:** P2
 - **Severidad/Clasificación:** Medio (Nueva herramienta de administración académica)
@@ -1871,7 +1871,7 @@ FASE 7. PLANIFICACIÓN ACADÉMICA, HORARIOS Y RECURSOS
   - CA-F7-84: Los duplicados se gestionan según la operación seleccionada.
   - CA-F7-85: Una importación fallida no deja datos parcialmente aplicados sin control.
   - CA-F7-86: La exportación puede volver a importarse sin perder los datos esenciales, dentro del alcance del formato definido.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completado
 
 ---
 

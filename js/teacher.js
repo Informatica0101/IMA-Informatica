@@ -860,6 +860,133 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
+    // [TAREA-F7-IMP-13] [Fase 7: Planificación Académica, Horarios y Recursos] - Controlador UI de importación, exportación y previsualización masiva de horarios
+    window.openBulkScheduleImportExportModal = function() {
+        const modal = document.getElementById('modal-bulk-schedule-import-export');
+        if (modal) modal.classList.remove('hidden');
+
+        const btnExport = document.getElementById('btn-export-bulk-schedules-csv');
+        if (btnExport) {
+            btnExport.onclick = async () => {
+                try {
+                    if (window.showLoading) window.showLoading('Generando matriz de horarios en CSV...');
+                    const res = await fetchApi('ACADEMIC', 'exportBulkClassSchedules', {});
+                    if (window.hideLoading) window.hideLoading();
+
+                    if (res && res.status === 'success' && res.csvData) {
+                        const blob = new Blob([res.csvData], { type: 'text/csv;charset=utf-8;' });
+                        const link = document.createElement('a');
+                        link.href = URL.createObjectURL(blob);
+                        link.setAttribute('download', `Matriz_Horarios_${res.anoLectivo || '2026'}.csv`);
+                        document.body.appendChild(link);
+                        link.click();
+                        document.body.removeChild(link);
+                    } else {
+                        alert('Error al exportar matriz: ' + (res ? res.message : 'Error desconocido'));
+                    }
+                } catch (err) {
+                    if (window.hideLoading) window.hideLoading();
+                    alert('Error de comunicación: ' + err.message);
+                }
+            };
+        }
+
+        const btnPreview = document.getElementById('btn-preview-bulk-schedule');
+        const btnConfirm = document.getElementById('btn-confirm-bulk-schedule-import');
+        const resultBox = document.getElementById('bulk-import-result-box');
+        let parsedRowsToImport = [];
+
+        if (btnPreview) {
+            btnPreview.onclick = async () => {
+                const fileInput = document.getElementById('input-bulk-schedule-file');
+                if (!fileInput || !fileInput.files[0]) return alert('Por favor seleccione un archivo CSV o JSON.');
+
+                const file = fileInput.files[0];
+                const text = await file.text();
+
+                parsedRowsToImport = [];
+                if (file.name.endsWith('.json')) {
+                    try { parsedRowsToImport = JSON.parse(text); } catch (e) { return alert('JSON malformado.'); }
+                } else {
+                    const lines = text.split('\n').filter(l => l.trim().length > 0);
+                    if (lines.length <= 1) return alert('Archivo CSV sin filas de datos.');
+
+                    for (let i = 1; i < lines.length; i++) {
+                        const cols = lines[i].split(',').map(c => c.replace(/"/g, '').trim());
+                        if (cols.length >= 3) {
+                            parsedRowsToImport.push({
+                                horarioId: cols[0],
+                                ofertaId: cols[1],
+                                diaSemana: cols[2],
+                                horaInicio: cols[3],
+                                horaFin: cols[4],
+                                aulaCodigo: cols[5],
+                                docenteUserId: cols[6],
+                                estado: cols[7] || 'Borrador'
+                            });
+                        }
+                    }
+                }
+
+                if (parsedRowsToImport.length === 0) return alert('No se encontraron filas válidas para importar.');
+
+                try {
+                    if (window.showLoading) window.showLoading('Previsualizando y validando traslapes...');
+                    const res = await fetchApi('ACADEMIC', 'importBulkClassSchedules', {
+                        filas: parsedRowsToImport,
+                        previsualizar: true
+                    });
+                    if (window.hideLoading) window.hideLoading();
+
+                    if (res && res.resumen) {
+                        const r = res.resumen;
+                        resultBox.classList.remove('hidden');
+                        if (r.conflictosCount > 0) {
+                            resultBox.className = 'p-4 rounded-2xl border bg-amber-50 border-amber-200 text-amber-900';
+                            resultBox.innerHTML = `<p class="font-bold mb-1"><i class="fa-solid fa-triangle-exclamation mr-1 text-amber-600"></i>Previsualización con Advertencias:</p>` +
+                                `<p class="text-xs">Válidos: <strong>${r.validosCount}</strong> | Conflictos: <strong>${r.conflictosCount}</strong> | Duplicados: <strong>${r.duplicadosCount}</strong></p>` +
+                                `<div class="mt-2 text-[11px] bg-white/80 p-2 rounded-xl border border-amber-100 max-h-32 overflow-y-auto">${res.conflictos.map(c => `• Fila ${c.filaIdx}: ${c.reason}`).join('<br>')}</div>`;
+                            if (btnConfirm) btnConfirm.classList.add('hidden');
+                        } else {
+                            resultBox.className = 'p-4 rounded-2xl border bg-emerald-50 border-emerald-200 text-emerald-900';
+                            resultBox.innerHTML = `<p class="font-bold mb-1"><i class="fa-solid fa-circle-check mr-1 text-emerald-600"></i>Previsualización Exitosa:</p>` +
+                                `<p class="text-xs">Todas las <strong>${r.validosCount}</strong> filas son válidas sin traslapes detectados.</p>`;
+                            if (btnConfirm) btnConfirm.classList.remove('hidden');
+                        }
+                    }
+                } catch (err) {
+                    if (window.hideLoading) window.hideLoading();
+                    alert('Error en previsualización: ' + err.message);
+                }
+            };
+        }
+
+        if (btnConfirm) {
+            btnConfirm.onclick = async () => {
+                if (parsedRowsToImport.length === 0) return;
+                try {
+                    if (window.showLoading) window.showLoading('Importando matriz de horarios...');
+                    const res = await fetchApi('ACADEMIC', 'importBulkClassSchedules', {
+                        filas: parsedRowsToImport,
+                        previsualizar: false
+                    });
+                    if (window.hideLoading) window.hideLoading();
+
+                    if (res && res.status === 'success') {
+                        alert(`¡Importación masiva completada! Se guardaron ${res.countInserted} bloques de horario.`);
+                        modal.classList.add('hidden');
+                        loadMasterSchedules();
+                    } else {
+                        alert('Error al importar: ' + (res ? res.message : 'Error desconocido'));
+                    }
+                } catch (err) {
+                    if (window.hideLoading) window.hideLoading();
+                    alert('Error de comunicación: ' + err.message);
+                }
+            };
+        }
+    };
+
     // [TAREA-F7-IMP-12] [Fase 7: Planificación Académica, Horarios y Recursos] - Controlador UI de reportes de calidad de planificación y ocupación de aulas
     window.openPlanningQualityReportModal = async function() {
         const modal = document.getElementById('modal-planning-quality-report');

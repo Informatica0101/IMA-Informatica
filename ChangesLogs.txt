@@ -1964,3 +1964,15 @@ Descripción objetiva:
 - Creada la función `getPlanningQualityAndOccupancyReport` en `backend/academic-service/Code.gs` e integrada en `ROLE_PERMISSIONS` y dispatcher `doPost` para calcular la ocupación porcentual física de aulas, distribución de bloques por estado y exportación de datos en CSV.
 - Incorporados el botón UI "Reportes Calidad", el modal `#modal-planning-quality-report` y la función `openPlanningQualityReportModal` con exportación CSV en `teacher-dashboard.html` y `js/teacher.js` antecedida por la etiqueta identificativa `[TAREA-F7-IMP-12]`.
 - Actualizado el estado de [TAREA-F7-IMP-12] a Completado en Pendientes.md.
+
+
+Fecha: 2026-10-26
+Archivos modificados:
+- backend/academic-service/Code.gs (Líneas 171, 672, 2928-3038)
+- teacher-dashboard.html (Líneas 564, 1576-1622)
+- js/teacher.js (Líneas 863-988)
+- Pendientes.md (Línea 1842)
+Descripción objetiva:
+- Creadas las funciones `exportBulkClassSchedules` e `importBulkClassSchedules` en `backend/academic-service/Code.gs` e integradas en `ROLE_PERMISSIONS` y dispatcher `doPost` para la exportación e importación masiva de matrices de horario en CSV/JSON con previsualización (`previsualizar: true`), validación estructural de columnas, detección de duplicados y traslapes.
+- Incorporados el botón UI "Importar / Exportar", el modal `#modal-bulk-schedule-import-export` y la función `openBulkScheduleImportExportModal` en `teacher-dashboard.html` y `js/teacher.js` antecedida por la etiqueta identificativa `[TAREA-F7-IMP-13]`.
+- Actualizado el estado de [TAREA-F7-IMP-13] a Completado en Pendientes.md.
