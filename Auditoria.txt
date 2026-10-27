@@ -55,6 +55,7 @@ DESCRIPCIÓN DE REGISTRO:
 - Se documentaron de manera exhaustiva las estructuras de tablas y columnas actualmente operativas en la plataforma antes de la ejecución de las tareas del anexo técnico.
 - Se creó el documento de referencia docs/architecture/spreadsheets-schema.md y se actualizó MapaDependencias.md incorporando la aclaración de arquitectura obligatoria sobre el carácter recomendable y no obligatorio de las estructuras de los anexos.
 ===============================================================================
+
 ===============================================================================
 FECHA: 2025-05-24
 AUDITORÍA FUNCIONAL Y TÉCNICA - TAREA-AD-02: CATÁLOGO CENTRAL DE RESPONSABILIDADES, CAPACIDADES Y MÓDULOS
