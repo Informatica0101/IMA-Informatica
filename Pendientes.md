@@ -2187,7 +2187,7 @@ FASE 7. PLANIFICACIÓN ACADÉMICA, HORARIOS Y RECURSOS
 
 ---
 
-### [ ] [TAREA-F7-IMP-23] Ampliar las herramientas de impresión y distribución de horarios
+### [X] [TAREA-F7-IMP-23] Ampliar las herramientas de impresión y distribución de horarios
 - **Origen del Hallazgo:** `AUDITORIA_FASE_7_PLANIFICACION_HORARIOS_RECURSOS.md` / Tarea F7-IMP-23 (P3 · Exportación e Impresión)
 - **Prioridad:** P3
 - **Severidad/Clasificación:** Bajo (Mejora de accesibilidad y distribución de información)

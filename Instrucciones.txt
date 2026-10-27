@@ -398,3 +398,4 @@ TAREAS PENDIENTES DE REVISIÓN
 - [TAREA-F7-IMP-20] Optimizar el rendimiento y la escalabilidad de las consultas de planificación
 - [TAREA-F7-IMP-21] Ampliar la auditoría operativa y la trazabilidad de la planificación
 - [TAREA-F7-IMP-22] Ampliar la planificación mediante plantillas y reutilización controlada de horarios
+- [TAREA-F7-IMP-23] Ampliar las herramientas de impresión y distribución de horarios

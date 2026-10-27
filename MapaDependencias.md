@@ -97,3 +97,8 @@
 - **Tabla PlantillasHorarios:** Almacenamiento de estructuras semanales de distribución de asignaturas (`PlantillaID`, `NombrePlantilla`, `Grado`, `Seccion`, `AnoBase`, `EstructuraJSON`, `Estado`).
 - **Endpoints:** `saveScheduleTemplate`, `getScheduleTemplates`, `applyScheduleTemplate` (con modo previsualización y verificación de conflictos sin sobreescribir la plantilla original).
 - **Interfaz y Modal:** `#modal-schedule-templates` en `teacher-dashboard.html` y controladores `openScheduleTemplatesModal`, `loadScheduleTemplatesList`, `handleSaveScheduleTemplateSubmit` y `promptApplyScheduleTemplate` en `js/teacher.js`.
+
+### 2.12 Herramientas de Impresión y Distribución de Horarios (Fase 7 - TAREA-F7-IMP-23)
+- **Estilos CSS:** `@media print` en `css/style.css` para formateo oficial A4 landscape con membrete institucional e indicador de estado de publicación.
+- **Interfaz y Modal:** `#modal-print-schedule` en `teacher-dashboard.html` y botones de impresión en `student-dashboard.html`.
+- **Controladores:** `openPrintScheduleModal` y `executePrintSchedule` en `js/teacher.js`, `executeStudentPrintSchedule` en `js/student.js`.

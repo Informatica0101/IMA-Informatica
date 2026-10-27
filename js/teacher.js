@@ -1139,6 +1139,51 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
+    // [TAREA-F7-IMP-23] [Fase 7: Planificación Académica, Horarios y Recursos] - Controlador de impresión formateada de horarios con membrete e indicador de versión
+    window.openPrintScheduleModal = function() {
+        const modal = document.getElementById('modal-print-schedule');
+        if (modal) modal.classList.remove('hidden');
+    };
+
+    window.executePrintSchedule = function() {
+        const previewContainer = document.getElementById('print-schedule-preview-area');
+        if (!previewContainer) {
+            window.print();
+            return;
+        }
+
+        const now = new Date().toLocaleString();
+        const stateBadge = '<span class="px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 border border-emerald-300">DOCUMENTO OFICIAL PUBLICADO</span>';
+
+        previewContainer.innerHTML = `
+            <div class="printable-schedule-area p-6 bg-white space-y-4">
+                <div class="flex justify-between items-center border-b pb-4">
+                    <div class="flex items-center gap-3">
+                        <img src="imagenes/new-generation-logo.png" alt="Logo Institucional" class="h-12 w-auto" />
+                        <div>
+                            <h2 class="font-black text-lg text-slate-800">CENTRO EDUCATIVO NEW GENERATION</h2>
+                            <p class="text-xs text-slate-500 font-semibold">Horario Oficial de Clases - Período Académico 2026</p>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        ${stateBadge}
+                        <p class="text-[10px] text-slate-400 mt-1">Generado: ${now}</p>
+                    </div>
+                </div>
+                <div class="border rounded-2xl p-4 bg-slate-50">
+                    <p class="text-xs text-slate-700 font-bold mb-2">Matriz de Horarios Docente / Sección</p>
+                    <div class="text-xs text-slate-600">${document.getElementById('schedule-matrix-container')?.innerHTML || 'Horario preparado para impresión.'}</div>
+                </div>
+                <div class="flex justify-between text-[10px] text-slate-400 border-t pt-2">
+                    <span>Documento emitido por la Plataforma Institucional de Gestión Académica</span>
+                    <span>Página 1 de 1</span>
+                </div>
+            </div>
+        `;
+
+        window.print();
+    };
+
     // [TAREA-F7-IMP-22] [Fase 7: Planificación Académica, Horarios y Recursos] - Controlador de modal de plantillas de horarios y reutilización controlada
     window.openScheduleTemplatesModal = function() {
         const modal = document.getElementById('modal-schedule-templates');

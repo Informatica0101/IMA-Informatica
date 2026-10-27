@@ -941,3 +941,31 @@ select:disabled {
     border: none !important;
     box-shadow: none !important;
 }
+
+
+/* [TAREA-F7-IMP-23] [Fase 7: Planificación Académica, Horarios y Recursos] - Estilos CSS para impresión formateada de horarios con membrete institucional */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  .printable-schedule-area, .printable-schedule-area * {
+    visibility: visible;
+  }
+  .printable-schedule-area {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    margin: 0;
+    padding: 20px;
+    background: white !important;
+    color: black !important;
+  }
+  .no-print {
+    display: none !important;
+  }
+  @page {
+    size: A4 landscape;
+    margin: 1cm;
+  }
+}

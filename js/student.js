@@ -840,6 +840,16 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    // [TAREA-F7-IMP-23] [Fase 7: Planificación Académica, Horarios y Recursos] - Controlador de impresión e exportación de horario del estudiante
+    window.openStudentPrintScheduleModal = function() {
+        const modal = document.getElementById('modal-student-print-schedule');
+        if (modal) modal.classList.remove('hidden');
+    };
+
+    window.executeStudentPrintSchedule = function() {
+        window.print();
+    };
+
     // [TAREA-F7-IMP-11] [Fase 7: Planificación Académica, Horarios y Recursos] - Sincronización coherente de horarios en el Portal Familiar con frescura de datos y actualización bajo demanda.
     window.fetchAndRenderStudentSchedule = function fetchAndRenderStudentSchedule() {
         var container = document.getElementById('student-schedule-container');

@@ -5656,7 +5656,7 @@ function createCalendarEvent(payload) {
 // [TAREA-F7-IMP-20] [Fase 7: Planificación Académica, Horarios y Recursos] - Optimización de rendimiento y caché de consultas de horarios de clase
 function getClassSchedules(payload) {
   const { ofertaId, docenteUserId, aulaCodigo, anolectivo, grado, seccion, bypassCache } = payload || {};
-  const cacheKey = "schedules_" + (anolectivo || "all") + "_" + (grado || "all") + "_" + (seccion || "all") + "_" + (docenteUserId || "all");
+  const cacheKey = "schedules_" + (anolectivo || "all") + "_" + (grado || "all") + "_" + (seccion || "all") + "_" + (docenteUserId || "all") + "_" + (ofertaId || "all") + "_" + (aulaCodigo || "all");
 
   if (!bypassCache) {
     try {
@@ -5677,12 +5677,12 @@ function getClassSchedules(payload) {
   if (data.length <= 1) return { status: "success", data: [] };
 
   const schedules = data.slice(1).filter(r => {
-    if (r[10] === "Cancelado") return false;
+    if (r[9] === "Cancelado" || r[10] === "Cancelado") return false;
     if (ofertaId && String(r[1]).trim() !== String(ofertaId).trim()) return false;
     if (docenteUserId && String(r[6] || r[7]).trim() !== String(docenteUserId).trim()) return false;
     if (aulaCodigo && String(r[5] || r[2]).trim() !== String(aulaCodigo).trim()) return false;
-    if (grado && String(r[8]).trim().toLowerCase() !== String(grado).trim().toLowerCase()) return false;
-    if (seccion && String(r[9]).trim().toLowerCase() !== String(seccion).trim().toLowerCase()) return false;
+    if (grado && String(r[7]).trim().toLowerCase() !== String(grado).trim().toLowerCase()) return false;
+    if (seccion && String(r[8]).trim().toLowerCase() !== String(seccion).trim().toLowerCase()) return false;
     return true;
   }).map(r => ({
     horarioId: r[0],
@@ -5693,9 +5693,9 @@ function getClassSchedules(payload) {
     horaFin: r[4],
     aulaCodigo: r[5],
     docenteUserId: r[6],
-    grado: r[7] || r[8] || "",
-    seccion: r[8] || r[9] || "",
-    estado: r[9] || r[10] || r[7] || "Activo"
+    grado: r[7] || "",
+    seccion: r[8] || "",
+    estado: r[9] || "Activo"
   }));
 
   try {
@@ -6570,12 +6570,14 @@ function checkScheduleConflict(params) {
                     mensaje: "Conflicto de Exclusividad Horaria entre " + origR + " y " + destR + " (" + regimenR + ").",
                     regimen: regimenR
                   });
-                } else if (tipoR === "CoRequisitoSimultaneo" && hAsig === otraAsig && (hDia !== regDia || hHoraIni !== regHoraIni)) {
-                  conflictos.push({
-                    tipo: "RESTRICCION_CURRICULAR_COREQUISITO",
-                    mensaje: "Conflicto por Co-Requisito Simultáneo: " + origR + " y " + destR + " deben programarse a la misma hora y día (" + regimenR + ").",
-                    regimen: regimenR
-                  });
+                } else if (tipoR === "CoRequisitoSimultaneo" && hAsig === otraAsig) {
+                  if (hDia === regDia && hHoraIni !== regHoraIni) {
+                    conflictos.push({
+                      tipo: "RESTRICCION_CURRICULAR_COREQUISITO",
+                      mensaje: "Conflicto por Co-Requisito Simultáneo entre " + origR + " y " + destR + " (" + regimenR + ").",
+                      regimen: regimenR
+                    });
+                  }
                 }
               }
             }
@@ -10677,10 +10679,10 @@ function getSectionCapacityAnalyticsReport(payload) {
       var dataH = sheetHor.getDataRange().getValues();
       for (var h = 1; h < dataH.length; h++) {
         var rH = dataH[h];
-        var hAula = (rH[2] || "").toString().trim();
-        var hGrado = (rH[8] || "").toString().trim();
-        var hSecc = (rH[9] || "").toString().trim();
-        var hEstado = (rH[10] || "Activo").toString().trim();
+        var hAula = (rH[5] || "").toString().trim();
+        var hGrado = (rH[7] || "").toString().trim();
+        var hSecc = (rH[8] || "").toString().trim();
+        var hEstado = (rH[9] || "Activo").toString().trim();
 
         if (hGrado && hSecc && hAula && hEstado !== "Cancelado") {
           var kH = hGrado + "_" + hSecc;
@@ -10782,7 +10784,7 @@ function getSectionCapacityAnalyticsReport(payload) {
 
 
 // [TAREA-F7-IMP-20] [Fase 7: Planificación Académica, Horarios y Recursos] - Invalidador de caché de consultas de planificación académica
-function invalidateScheduleCache() {
+function invalidateScheduleCache(docenteUserId, anolectivo, grado, seccion) {
   try {
     var cache = CacheService.getScriptCache();
     cache.remove("all_class_schedules");
@@ -10790,6 +10792,14 @@ function invalidateScheduleCache() {
     cache.remove("all_curricular_constraints");
     cache.remove("schedules_all_all_all_all");
     cache.remove("schedules_2026_all_all_all");
+    if (docenteUserId) {
+      cache.remove("schedules_all_all_all_" + docenteUserId);
+      cache.remove("schedules_2026_all_all_" + docenteUserId);
+    }
+    if (grado && seccion) {
+      cache.remove("schedules_" + (anolectivo || "2026") + "_" + grado + "_" + seccion + "_all");
+      cache.remove("schedules_all_" + grado + "_" + seccion + "_all");
+    }
   } catch (err) {
     Logger.log("Error al invalidar caché de horarios: " + err.message);
   }

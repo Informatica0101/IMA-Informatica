@@ -330,6 +330,9 @@
                         <button id="btn-refresh-student-schedule" class="px-4 py-2 bg-indigo-50 text-indigo-600 hover:bg-indigo-100 rounded-xl font-bold text-xs uppercase tracking-widest transition-all">
                             <i class="fas fa-sync-alt mr-1"></i> Actualizar
                         </button>
+                        <button onclick="window.executeStudentPrintSchedule()" class="px-4 py-2 bg-emerald-600 text-white hover:bg-emerald-700 rounded-xl font-bold text-xs uppercase tracking-widest transition-all shadow-sm no-print">
+                            <i class="fa-solid fa-print mr-1"></i> Imprimir Horario
+                        </button>
                     </div>
                     <div id="student-schedule-container" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-4">
                         <!-- Carga dinámica por días de la semana -->

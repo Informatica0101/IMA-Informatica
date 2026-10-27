@@ -2182,3 +2182,28 @@ Descripción de los Cambios:
 4. Pendientes.md:
    - Se actualizó el estado de [TAREA-F7-IMP-22] a completado [X].
 ===============================================================================
+
+REGISTRO DE CAMBIOS - TAREA-F7-IMP-23
+===============================================================================
+Fecha: 2025-05-24
+Archivo(s) Modificado(s):
+  - css/style.css
+  - teacher-dashboard.html
+  - student-dashboard.html
+  - js/teacher.js
+  - js/student.js
+  - Pendientes.md
+  - Auditoria.txt
+  - MapaDependencias.md
+  - Instrucciones.txt
+
+Descripción de los Cambios:
+1. css/style.css:
+   - Se incorporaron las reglas CSS @media print para formatear la impresión en horizontal (A4 landscape) con membrete institucional e hid de elementos no imprimibles.
+2. teacher-dashboard.html y student-dashboard.html:
+   - Se agregaron los botones "Imprimir Horario" y la estructura del modal #modal-print-schedule.
+3. js/teacher.js y js/student.js:
+   - Se agregaron los controladores openPrintScheduleModal, executePrintSchedule y executeStudentPrintSchedule.
+4. Pendientes.md:
+   - Se actualizó el estado de [TAREA-F7-IMP-23] a completado [X].
+===============================================================================

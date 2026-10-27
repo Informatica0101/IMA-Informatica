@@ -1026,3 +1026,13 @@ HALLAZGO / REQUERIMIENTO:
 - Se requiere pre-validar las asignaciones de aula y docente contra el período de destino con modo previsualización (previsualizar: true) e identificar conflictos o recursos no disponibles antes de confirmar.
 - Se requiere maquetar el modal #modal-schedule-templates en teacher-dashboard.html y los controladores JS en js/teacher.js.
 ===============================================================================
+
+===============================================================================
+FECHA: 2025-05-18
+ARCHIVO AUDITADO: teacher-dashboard.html, student-dashboard.html, js/teacher.js, js/student.js, css/style.css
+TAREA: [TAREA-F7-IMP-23] Ampliar las herramientas de impresión y distribución de horarios
+HALLAZGO / REQUERIMIENTO:
+- Se requiere incorporar estilos CSS @media print en css/style.css para formatear la impresión de la matriz de horarios con membrete institucional, marca de agua/badge de estado (Publicado vs Borrador) y fecha/hora de generación.
+- Se requiere maquetar el modal de configuración de impresión #modal-print-schedule en teacher-dashboard.html y student-dashboard.html.
+- Se requieren controladores JavaScript window.openPrintScheduleModal y window.executePrintSchedule en js/teacher.js y js/student.js para preparar la vista limpia de impresión y ejecutar window.print().
+===============================================================================
