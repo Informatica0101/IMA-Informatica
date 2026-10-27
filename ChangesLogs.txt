@@ -2266,3 +2266,21 @@ Descripción de los Cambios:
 3. Instrucciones.txt:
    - Se agregaron las tareas de la Fase 8 al bloque de pendientes de revisión.
 ===============================================================================
+
+REGISTRO DE CAMBIOS - INTEGRACIÓN DE ANEXO DE TAREAS EN PENDIENTES.MD
+===============================================================================
+Fecha: 2025-05-24
+Archivo(s) Modificado(s):
+  - Pendientes.md
+  - Auditoria.txt
+  - ChangesLogs.txt
+  - Instrucciones.txt
+
+Descripción de los Cambios:
+1. Pendientes.md:
+   - Se registraron e integraron las 16 tareas del anexo de dashboards dinámicos, seguridad, modularización y calidad (TAREA-AD-01 a AD-07, TAREA-MOD-01 a MOD-07, TAREA-CAL-01 y CAL-02) organizadas por prioridad (P1, P2).
+2. Auditoria.txt:
+   - Se agregó la entrada de auditoría para la transferencia del anexo a Pendientes.md.
+3. Instrucciones.txt:
+   - Se registraron los identificadores del anexo en la lista de seguimiento.
+===============================================================================

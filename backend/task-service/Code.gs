@@ -89,20 +89,23 @@ const PUBLIC_ACTIONS = [
 ];
 
 const ROLE_PERMISSIONS = {
-  "Administrador": ["*"],
+  "Administrador": ["*",
+    "getSubmissionDocumentPreviewUrl"],
   "Desarrollador": ["*"],
   "Padre": ["getStudentTasks", "getVirtualClassrooms", "getPosts", "getStudyMaterials", "getSubmissionComments"],
   "Tutor": ["getStudentTasks", "getVirtualClassrooms", "getPosts", "getStudyMaterials", "getSubmissionComments"],
   "Responsable": ["getStudentTasks", "getVirtualClassrooms", "getPosts", "getStudyMaterials", "getSubmissionComments"],
   "Dirección": ["*"],
-  "Secretaría": ["*"],
+  "Secretaría": ["*",
+    "getSubmissionDocumentPreviewUrl"],
   "Profesor": [
     "createTask", "updateTask", "deleteTask", "uploadFile", "gradeSubmission", "gradeSubmissionWithRubric", "deleteSubmission",
     "getStudentTasks", "getAllTasks", "getTeacherActivity", "closeAcademicYear",
     "getVirtualClassrooms", "createVirtualClassroom", "getPosts", "createPost", "updatePost", "deletePost",
     "getStudyMaterials", "createStudyMaterial", "deleteStudyMaterial", "returnSubmissionForRevision",
     "getSubmissionComments", "addSubmissionComment", "getSubmissionVersions"
-  ],
+  ,
+    "getSubmissionDocumentPreviewUrl"],
   "Estudiante": [
     "getStudentTasks", "submitAssignment", "saveSubmissionDraft", "uploadFile", "uploadChunk", "finishChunkedUpload", "deleteFile",
     "saveProject", "deleteProject", "listProjects", "loadProject", "getAllStudentProjects",

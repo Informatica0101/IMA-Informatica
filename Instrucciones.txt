@@ -408,3 +408,23 @@ TAREAS DE FASE 8 REGISTRADAS EN PENDIENTES.MD
 - [TAREA-F8-OPT-01] Implementar la previsualización integrada de documentos PDF en la revisión de entregas
 - [TAREA-F8-OPT-02] Incorporar estadísticas descriptivas y una visualización de la distribución de calificaciones de exámenes
 ===============================================================================
+
+===============================================================================
+ANEXO DE TAREAS REGISTRADO EN PENDIENTES.MD
+- [TAREA-AD-01] Arquitectura de dashboards dinámicos
+- [TAREA-AD-02] Catálogo central de responsabilidades
+- [TAREA-AD-03] Gestión del ámbito de actuación
+- [TAREA-AD-04] Dashboard de coordinador académico
+- [TAREA-AD-05] Integración de dashboards con servicios
+- [TAREA-AD-06] Verificación de autorización en backend
+- [TAREA-AD-07] Consola administrativa de roles
+- [TAREA-MOD-01] Inventario de dependencias
+- [TAREA-MOD-02] Estructura modular de carpetas
+- [TAREA-MOD-03] Modularización de archivos grandes
+- [TAREA-MOD-04] Actualización de rutas y dependencias
+- [TAREA-MOD-05] Mapa de dependencias y arquitectura
+- [TAREA-MOD-06] Pruebas de regresión para modularización
+- [TAREA-MOD-07] Reorganización por etapas
+- [TAREA-CAL-01] Accesibilidad y usabilidad WCAG
+- [TAREA-CAL-02] Rendimiento y mantenibilidad
+===============================================================================

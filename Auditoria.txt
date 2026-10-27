@@ -18,3 +18,16 @@ DESCRIPCIÓN DE REGISTRO:
   3. [TAREA-F8-OPT-02] (Prioridad P2) - Estadísticas descriptivas y visualización de distribución de calificaciones de exámenes.
 - Formato estandarizado conforme a METODOLOGIA_DESARROLLO.md y ordenado estrictamente por niveles de prioridad (P1, P2).
 ===============================================================================
+===============================================================================
+FECHA: 2025-05-24
+REGISTRO DE BACKLOG - ANEXO DE TAREAS: DASHBOARDS DINÁMICOS Y MODULARIZACIÓN
+ARCHIVOS AFECTADOS: Pendientes.md, Auditoria.txt, ChangesLogs.txt, Instrucciones.txt
+DESCRIPCIÓN DE REGISTRO:
+- Se incorporaron las 16 tareas del anexo funcional y arquitectónico a Pendientes.md:
+  * Fase A (Dashboards dinámicos): TAREA-AD-01, TAREA-AD-02, TAREA-AD-03, TAREA-AD-04, TAREA-AD-05.
+  * Fase B (Seguridad y roles): TAREA-AD-06, TAREA-AD-07.
+  * Fase C (Modularización del repositorio): TAREA-MOD-01, TAREA-MOD-02, TAREA-MOD-03, TAREA-MOD-04, TAREA-MOD-05.
+  * Fase D (Validación y regresión): TAREA-MOD-06, TAREA-MOD-07.
+  * Fase E (Calidad y rendimiento): TAREA-CAL-01, TAREA-CAL-02.
+- Clasificación ordenada por prioridades (P1, P2) con requerimientos y criterios de aceptación estandarizados.
+===============================================================================
