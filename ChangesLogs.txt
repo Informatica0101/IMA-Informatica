@@ -2248,3 +2248,21 @@ Descripción de los Cambios:
 3. Auditoria.txt:
    - Se vació el archivo de auditoría según la solicitud del usuario.
 ===============================================================================
+
+REGISTRO DE CAMBIOS - REGISTRO DE BACKLOG DE FASE 8
+===============================================================================
+Fecha: 2025-05-24
+Archivo(s) Modificado(s):
+  - Pendientes.md
+  - Auditoria.txt
+  - ChangesLogs.txt
+  - Instrucciones.txt
+
+Descripción de los Cambios:
+1. Pendientes.md:
+   - Se formatearon y registraron las 3 tareas de la Fase 8 (TAREA-F8-MANT-01, TAREA-F8-OPT-01, TAREA-F8-OPT-02) organizadas por prioridad (P1, P2) con requerimientos funcionales y criterios de aceptación.
+2. Auditoria.txt:
+   - Se agregó la entrada de registro de backlog para las tareas de la Fase 8.
+3. Instrucciones.txt:
+   - Se agregaron las tareas de la Fase 8 al bloque de pendientes de revisión.
+===============================================================================

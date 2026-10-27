@@ -7,3 +7,14 @@ RESULTADO DE EVALUACIÓN:
 - Cobertura de Inspección: 100.0% | Cobertura de Verificación: 100.0%.
 - Documento independiente generado: AUDITORIA_FASE_8_AULA_VIRTUAL_APRENDIZAJE.md.
 ===============================================================================
+===============================================================================
+FECHA: 2025-05-24
+REGISTRO DE BACKLOG - FASE 8: AULA VIRTUAL Y GESTIÓN AVANZADA DEL APRENDIZAJE
+ARCHIVOS AFECTADOS: Pendientes.md, Auditoria.txt, ChangesLogs.txt, Instrucciones.txt
+DESCRIPCIÓN DE REGISTRO:
+- Se registraron 3 nuevas tareas de implementación y optimización derivadas del informe AUDITORIA_FASE_8_AULA_VIRTUAL_APRENDIZAJE.md:
+  1. [TAREA-F8-MANT-01] (Prioridad P1) - Seguimiento preventivo de cuotas y disponibilidad de almacenamiento en Google Drive.
+  2. [TAREA-F8-OPT-01] (Prioridad P2) - Previsualización integrada de documentos PDF en la revisión de entregas.
+  3. [TAREA-F8-OPT-02] (Prioridad P2) - Estadísticas descriptivas y visualización de distribución de calificaciones de exámenes.
+- Formato estandarizado conforme a METODOLOGIA_DESARROLLO.md y ordenado estrictamente por niveles de prioridad (P1, P2).
+===============================================================================

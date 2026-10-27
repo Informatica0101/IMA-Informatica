@@ -401,3 +401,10 @@ TAREAS PENDIENTES DE REVISIÓN
 - [TAREA-F7-IMP-23] Ampliar las herramientas de impresión y distribución de horarios
 - [TAREA-F7-IMP-24] Ampliar las preferencias de calendario y la personalización de vistas
 - [TAREA-F7-IMP-25] Ampliar la verificación de calidad mediante pruebas automatizadas de planificación
+
+===============================================================================
+TAREAS DE FASE 8 REGISTRADAS EN PENDIENTES.MD
+- [TAREA-F8-MANT-01] Implementar el seguimiento preventivo de las cuotas y la disponibilidad de almacenamiento en Google Drive
+- [TAREA-F8-OPT-01] Implementar la previsualización integrada de documentos PDF en la revisión de entregas
+- [TAREA-F8-OPT-02] Incorporar estadísticas descriptivas y una visualización de la distribución de calificaciones de exámenes
+===============================================================================
