@@ -102,3 +102,8 @@
 - **Estilos CSS:** `@media print` en `css/style.css` para formateo oficial A4 landscape con membrete institucional e indicador de estado de publicación.
 - **Interfaz y Modal:** `#modal-print-schedule` en `teacher-dashboard.html` y botones de impresión en `student-dashboard.html`.
 - **Controladores:** `openPrintScheduleModal` y `executePrintSchedule` en `js/teacher.js`, `executeStudentPrintSchedule` en `js/student.js`.
+
+### 2.13 Preferencias de Calendario y Personalización de Vistas (Fase 7 - TAREA-F7-IMP-24)
+- **Persistencia Local:** Preferencias visuales por categoría almacenadas en `localStorage` (`calendar_view_prefs` y `student_cal_view_prefs`).
+- **Interfaz y Filtros:** Barra de leyenda cromática y checkboxes de alternancia de categorías (Clases, Evaluaciones, Eventos, Mantenimiento) en `teacher-dashboard.html` y `student-dashboard.html`.
+- **Controladores:** `filterCalendarEventsByCategory`, `resetCalendarViewPreferences` en `js/teacher.js`, `filterStudentCalendarByCategory` y `resetStudentCalendarPreferences` en `js/student.js`.

@@ -1036,3 +1036,13 @@ HALLAZGO / REQUERIMIENTO:
 - Se requiere maquetar el modal de configuración de impresión #modal-print-schedule en teacher-dashboard.html y student-dashboard.html.
 - Se requieren controladores JavaScript window.openPrintScheduleModal y window.executePrintSchedule en js/teacher.js y js/student.js para preparar la vista limpia de impresión y ejecutar window.print().
 ===============================================================================
+
+===============================================================================
+FECHA: 2025-05-18
+ARCHIVO AUDITADO: teacher-dashboard.html, student-dashboard.html, js/teacher.js, js/student.js
+TAREA: [TAREA-F7-IMP-24] Ampliar las preferencias de calendario y la personalización de vistas
+HALLAZGO / REQUERIMIENTO:
+- Se requiere incorporar la barra de filtros por categoría de eventos (Clases, Evaluaciones, Eventos Institucionales, Mantenimiento/Excepciones, Cancelaciones) y leyenda explicativa por colores en los paneles de horarios y calendario.
+- Se requieren los controladores JavaScript filterCalendarEventsByCategory y resetCalendarViewPreferences en js/teacher.js y js/student.js con almacenamiento de preferencias del usuario en localStorage.
+- Se deben incorporar los interruptores de categoría y el botón de restablecer vista en teacher-dashboard.html y student-dashboard.html.
+===============================================================================

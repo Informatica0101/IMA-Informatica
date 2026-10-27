@@ -673,7 +673,33 @@
                                     <span id="schedule-count-badge" class="px-2.5 py-1 bg-indigo-100 text-indigo-700 rounded-full text-[10px] font-bold">0 Bloques</span>
                                 </div>
                             </div>
-                            <div class="overflow-x-auto">
+                            <!-- [TAREA-F7-IMP-24] [Fase 7: Planificación Académica, Horarios y Recursos] - Barra de Leyenda Cromática y Filtros por Categoría de Evento de Calendario -->
+                <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-wrap items-center justify-between gap-3 text-xs mb-4">
+                    <div class="flex flex-wrap items-center gap-4">
+                        <span class="font-bold text-slate-700"><i class="fa-solid fa-palette mr-1 text-indigo-600"></i> Leyenda y Categorías:</span>
+                        <label class="flex items-center gap-1.5 cursor-pointer">
+                            <input type="checkbox" value="clases" class="cal-cat-checkbox rounded text-indigo-600 focus:ring-indigo-500" checked onchange="window.filterCalendarEventsByCategory('clases', this.checked)" />
+                            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-indigo-100 text-indigo-800">Clases</span>
+                        </label>
+                        <label class="flex items-center gap-1.5 cursor-pointer">
+                            <input type="checkbox" value="evaluaciones" class="cal-cat-checkbox rounded text-purple-600 focus:ring-purple-500" checked onchange="window.filterCalendarEventsByCategory('evaluaciones', this.checked)" />
+                            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-purple-100 text-purple-800">Evaluaciones</span>
+                        </label>
+                        <label class="flex items-center gap-1.5 cursor-pointer">
+                            <input type="checkbox" value="eventos" class="cal-cat-checkbox rounded text-amber-600 focus:ring-amber-500" checked onchange="window.filterCalendarEventsByCategory('eventos', this.checked)" />
+                            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800">Eventos Institucionales</span>
+                        </label>
+                        <label class="flex items-center gap-1.5 cursor-pointer">
+                            <input type="checkbox" value="mantenimiento" class="cal-cat-checkbox rounded text-rose-600 focus:ring-rose-500" checked onchange="window.filterCalendarEventsByCategory('mantenimiento', this.checked)" />
+                            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-100 text-rose-800">Mantenimiento / Cancelaciones</span>
+                        </label>
+                    </div>
+                    <button onclick="window.resetCalendarViewPreferences()" class="text-[11px] text-slate-500 hover:text-slate-800 font-bold underline">
+                        <i class="fa-solid fa-rotate-left mr-1"></i> Restablecer Vista
+                    </button>
+                </div>
+
+<div class="overflow-x-auto">
                                 <table class="w-full text-left border-collapse">
                                     <thead>
                                         <tr class="bg-gray-50/50 text-[9px] font-bold text-gray-400 uppercase tracking-widest border-b border-gray-100">

@@ -315,7 +315,29 @@
                     </div>
                 </div>
 
-                <!-- Horario Oficial de Clases Semanal (Fase 7) -->
+                <!-- [TAREA-F7-IMP-24] [Fase 7: Planificación Académica, Horarios y Recursos] - Leyenda Cromática y Filtro por Categorías en Portal Estudiantil -->
+                <div class="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm flex flex-wrap items-center justify-between gap-3 text-xs mb-4">
+                    <div class="flex flex-wrap items-center gap-4">
+                        <span class="font-bold text-gray-700"><i class="fas fa-palette mr-1 text-indigo-600"></i> Categorías de Eventos:</span>
+                        <label class="flex items-center gap-1.5 cursor-pointer">
+                            <input type="checkbox" value="clases" class="student-cal-cat-checkbox rounded text-indigo-600 focus:ring-indigo-500" checked onchange="window.filterStudentCalendarByCategory('clases', this.checked)" />
+                            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-indigo-100 text-indigo-800">Clases Regulares</span>
+                        </label>
+                        <label class="flex items-center gap-1.5 cursor-pointer">
+                            <input type="checkbox" value="evaluaciones" class="student-cal-cat-checkbox rounded text-purple-600 focus:ring-purple-500" checked onchange="window.filterStudentCalendarByCategory('evaluaciones', this.checked)" />
+                            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-purple-100 text-purple-800">Exámenes / Evaluaciones</span>
+                        </label>
+                        <label class="flex items-center gap-1.5 cursor-pointer">
+                            <input type="checkbox" value="eventos" class="student-cal-cat-checkbox rounded text-amber-600 focus:ring-amber-500" checked onchange="window.filterStudentCalendarByCategory('eventos', this.checked)" />
+                            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800">Actividades Escolares</span>
+                        </label>
+                    </div>
+                    <button onclick="window.resetStudentCalendarPreferences()" class="text-[11px] text-gray-500 hover:text-gray-800 font-bold underline">
+                        <i class="fas fa-undo mr-1"></i> Restablecer Filtros
+                    </button>
+                </div>
+
+<!-- Horario Oficial de Clases Semanal (Fase 7) -->
                 <div id="student-schedule-card" class="bg-white p-6 md:p-8 rounded-[2.5rem] shadow-sm border border-gray-100 mb-10">
                     <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
                         <div class="flex items-center gap-4">

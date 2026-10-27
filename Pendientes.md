@@ -2221,7 +2221,7 @@ FASE 7. PLANIFICACIÓN ACADÉMICA, HORARIOS Y RECURSOS
 
 ---
 
-### [ ] [TAREA-F7-IMP-24] Ampliar las preferencias de calendario y la personalización de vistas
+### [X] [TAREA-F7-IMP-24] Ampliar las preferencias de calendario y la personalización de vistas
 - **Origen del Hallazgo:** `AUDITORIA_FASE_7_PLANIFICACION_HORARIOS_RECURSOS.md` / Tarea F7-IMP-24 (P3 · Personalización de Calendarios)
 - **Prioridad:** P3
 - **Severidad/Clasificación:** Bajo (Mejora de experiencia de usuario)

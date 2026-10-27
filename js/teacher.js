@@ -1139,6 +1139,37 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
+    // [TAREA-F7-IMP-24] [Fase 7: Planificación Académica, Horarios y Recursos] - Personalización de vista de calendario, filtros por categoría y leyenda cromática con persistencia en localStorage
+    window.filterCalendarEventsByCategory = function(categoria, isChecked) {
+        let prefs = {};
+        try {
+            prefs = JSON.parse(localStorage.getItem('calendar_view_prefs') || '{}');
+        } catch (e) {
+            prefs = {};
+        }
+
+        prefs[categoria] = Boolean(isChecked);
+        localStorage.setItem('calendar_view_prefs', JSON.stringify(prefs));
+
+        const elements = document.querySelectorAll(`[data-category="${categoria}"]`);
+        elements.forEach(el => {
+            if (isChecked) {
+                el.classList.remove('hidden');
+            } else {
+                el.classList.add('hidden');
+            }
+        });
+    };
+
+    window.resetCalendarViewPreferences = function() {
+        localStorage.removeItem('calendar_view_prefs');
+        const checkboxes = document.querySelectorAll('.cal-cat-checkbox');
+        checkboxes.forEach(cb => {
+            cb.checked = true;
+            window.filterCalendarEventsByCategory(cb.value, true);
+        });
+    };
+
     // [TAREA-F7-IMP-23] [Fase 7: Planificación Académica, Horarios y Recursos] - Controlador de impresión formateada de horarios con membrete e indicador de versión
     window.openPrintScheduleModal = function() {
         const modal = document.getElementById('modal-print-schedule');

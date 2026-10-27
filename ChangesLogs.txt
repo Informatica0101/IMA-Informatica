@@ -2207,3 +2207,26 @@ Descripción de los Cambios:
 4. Pendientes.md:
    - Se actualizó el estado de [TAREA-F7-IMP-23] a completado [X].
 ===============================================================================
+
+REGISTRO DE CAMBIOS - TAREA-F7-IMP-24
+===============================================================================
+Fecha: 2025-05-24
+Archivo(s) Modificado(s):
+  - teacher-dashboard.html
+  - student-dashboard.html
+  - js/teacher.js
+  - js/student.js
+  - Pendientes.md
+  - Auditoria.txt
+  - MapaDependencias.md
+  - Instrucciones.txt
+
+Descripción de los Cambios:
+1. teacher-dashboard.html y student-dashboard.html:
+   - Se agregaron las barras de leyenda cromática e interruptores de filtro por categoría de evento (Clases, Evaluaciones, Eventos Institucionales, Mantenimiento/Excepciones).
+   - Se agregó el botón de restablecimiento de preferencias visuales.
+2. js/teacher.js y js/student.js:
+   - Se agregaron los controladores filterCalendarEventsByCategory, resetCalendarViewPreferences, filterStudentCalendarByCategory y resetStudentCalendarPreferences con persistencia en localStorage.
+3. Pendientes.md:
+   - Se actualizó el estado de [TAREA-F7-IMP-24] a completado [X].
+===============================================================================
