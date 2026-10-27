@@ -860,6 +860,116 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
+    // [TAREA-F7-IMP-09] [Fase 7: Planificación Académica, Horarios y Recursos] - Controlador de consulta de versiones de horarios, comparación diff y restauración controlada
+    window.openScheduleVersionsModal = async function() {
+        const modal = document.getElementById('modal-schedule-versions');
+        if (modal) modal.classList.remove('hidden');
+
+        const container = document.getElementById('schedule-versions-list-container');
+        if (!container) return;
+        container.innerHTML = '<p class="text-slate-400 italic text-center">Cargando versiones de horarios...</p>';
+
+        try {
+            const res = await fetchApi('ACADEMIC', 'getScheduleVersions', {});
+            if (res && res.status === 'success' && Array.isArray(res.data)) {
+                if (res.data.length === 0) {
+                    container.innerHTML = '<p class="text-slate-400 italic text-center p-4 bg-slate-50 rounded-2xl border border-slate-200">No hay versiones publicadas registradas. Al publicar una matriz de horarios se guardará automáticamente una versión.</p>';
+                    return;
+                }
+
+                container.innerHTML = res.data.map(v => `
+                    <div class="p-3 bg-white rounded-2xl border border-slate-200 shadow-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-2 hover:border-cyan-200 transition">
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <span class="font-black text-cyan-700 text-xs">${v.versionId}</span>
+                                <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-cyan-100 text-cyan-800">${v.anoLectivo || '2026'}</span>
+                                <span class="text-[11px] text-slate-400">${v.timestamp ? new Date(v.timestamp).toLocaleString() : ''}</span>
+                            </div>
+                            <p class="text-slate-600 text-xs mt-0.5">${v.descripcion || 'Versión de horarios'}</p>
+                            <p class="text-[10px] text-slate-400">Total bloques: ${v.totalBloques || 0} | Creado por: ${v.creadoPor || 'Admin'}</p>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <button class="btn-diff-ver px-2.5 py-1 bg-slate-100 text-slate-700 hover:bg-slate-200 rounded-xl font-bold text-[11px]" data-version="${v.versionId}">
+                                <i class="fa-solid fa-code-compare mr-1"></i> Comparar
+                            </button>
+                            <button class="btn-restore-ver px-2.5 py-1 bg-rose-600 text-white hover:bg-rose-700 rounded-xl font-bold text-[11px]" data-version="${v.versionId}">
+                                <i class="fa-solid fa-rotate-left mr-1"></i> Restaurar
+                            </button>
+                        </div>
+                    </div>
+                `).join('');
+
+                document.querySelectorAll('.btn-diff-ver').forEach(btn => {
+                    btn.addEventListener('click', async () => {
+                        const versionId = btn.getAttribute('data-version');
+                        await compareScheduleVersionsAction(versionId);
+                    });
+                });
+
+                document.querySelectorAll('.btn-restore-ver').forEach(btn => {
+                    btn.addEventListener('click', async () => {
+                        const versionId = btn.getAttribute('data-version');
+                        await restoreScheduleVersionAction(versionId);
+                    });
+                });
+            } else {
+                container.innerHTML = '<p class="text-rose-500 italic text-center">Error al cargar el historial de versiones.</p>';
+            }
+        } catch (err) {
+            console.error('Error al consultar versiones:', err);
+            container.innerHTML = '<p class="text-rose-500 italic text-center">Error de comunicación con el servidor.</p>';
+        }
+    };
+
+    async function compareScheduleVersionsAction(versionId) {
+        try {
+            if (window.showLoading) window.showLoading('Comparando versión con el horario actual...');
+            const res = await fetchApi('ACADEMIC', 'compareScheduleVersions', { versionIdA: versionId });
+            if (window.hideLoading) window.hideLoading();
+
+            if (res && res.status === 'success' && res.diff) {
+                const diff = res.diff;
+                alert(`Comparación Diff para ${versionId}:\n\n` +
+                      `Agregados: ${diff.resumen?.totalAgregados || 0}\n` +
+                      `Modificados: ${diff.resumen?.totalModificados || 0}\n` +
+                      `Eliminados: ${diff.resumen?.totalEliminados || 0}`);
+            } else {
+                alert('Error al comparar versiones: ' + (res ? res.message : 'Error desconocido'));
+            }
+        } catch (err) {
+            if (window.hideLoading) window.hideLoading();
+            alert('Error de comunicación: ' + err.message);
+        }
+    }
+
+    async function restoreScheduleVersionAction(versionId) {
+        const confirmCode = prompt(`ADVERTENCIA: ¿Está seguro de restaurar la versión ${versionId}?\n\nEsta acción sobrescribirá la matriz de horarios activa. Para confirmar, ingrese 'RESTORE-SCHEDULE-CONFIRMED':`);
+        if (confirmCode !== 'RESTORE-SCHEDULE-CONFIRMED') {
+            if (confirmCode !== null) alert('Código de confirmación incorrecto. Restauración cancelada.');
+            return;
+        }
+
+        try {
+            if (window.showLoading) window.showLoading('Restaurando versión de horario...');
+            const res = await fetchApi('ACADEMIC', 'restoreScheduleVersion', {
+                versionId,
+                codigoConfirmacion: 'RESTORE-SCHEDULE-CONFIRMED'
+            });
+            if (window.hideLoading) window.hideLoading();
+
+            if (res && res.status === 'success') {
+                alert(`¡Matriz de horarios restaurada exitosamente a la versión ${versionId}!\nNueva versión generada: ${res.newVersionId}`);
+                document.getElementById('modal-schedule-versions')?.classList.add('hidden');
+                loadMasterSchedules();
+            } else {
+                alert('Error al restaurar versión: ' + (res ? res.message : 'Error desconocido'));
+            }
+        } catch (err) {
+            if (window.hideLoading) window.hideLoading();
+            alert('Error de comunicación: ' + err.message);
+        }
+    }
+
     // [TAREA-F7-IMP-08] [Fase 7: Planificación Académica, Horarios y Recursos] - Controlador de excepciones puntuales de sesiones de clase
     window.openSessionExceptionModal = function() {
         const modal = document.getElementById('modal-session-exception');

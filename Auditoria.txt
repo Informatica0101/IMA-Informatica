@@ -824,3 +824,20 @@ Auditoría inicial e inspección de archivos para TAREA-F7-IMP-08:
   - Se implementará la función `openSessionExceptionModal` en `js/teacher.js` con la etiqueta identificativa `[TAREA-F7-IMP-08]`.
 - Pendientes.md:
   - Se actualizará el estado de la TAREA-F7-IMP-08 a `[X] Completado`.
+
+
+-------------------------------------------------------------------------------
+FECHA: 2026-10-26
+TAREA: [TAREA-F7-IMP-09] Desarrollar versiones de horarios, comparación y restauración controlada
+-------------------------------------------------------------------------------
+Auditoría inicial e inspección de archivos para TAREA-F7-IMP-09:
+- backend/academic-service/Code.gs:
+  - Inspeccionada la función `publishClassSchedules` y la hoja `HorariosClase`.
+  - Se implementarán las funciones `getScheduleVersions`, `compareScheduleVersions` y `restoreScheduleVersion` para guardar capturas con identificador de versión (`VER-HOR-XXXXXX`), realizar comparaciones diff (agregados, modificados, eliminados) y restaurar versiones previas exigiendo confirmación `RESTORE-SCHEDULE-CONFIRMED`.
+  - Se actualizará `publishClassSchedules` para registrar automáticamente una instantánea de versión en `VersionesHorarios` al publicar.
+  - Se registrarán `getScheduleVersions`, `compareScheduleVersions` y `restoreScheduleVersion` en `ROLE_PERMISSIONS` y dispatcher `doPost`.
+- teacher-dashboard.html / js/teacher.js:
+  - Se añadirá el botón UI "Versiones Horarios" y el modal `#modal-schedule-versions`.
+  - Se implementará la función `openScheduleVersionsModal` en `js/teacher.js` con la etiqueta identificativa `[TAREA-F7-IMP-09]`.
+- Pendientes.md:
+  - Se actualizará el estado de la TAREA-F7-IMP-09 a `[X] Completado`.

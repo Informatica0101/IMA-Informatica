@@ -1917,3 +1917,16 @@ Descripción objetiva:
 - Creada la función `createSessionException` en `backend/academic-service/Code.gs` e integrada en `ROLE_PERMISSIONS` y dispatcher `doPost` para registrar cancelaciones o reprogramaciones puntuales de una sesión individual en `ExcepcionesSesiones` sin alterar la serie recurrente de horarios.
 - Incorporado el botón UI "Excepción Sesión", el modal `#modal-session-exception` y la función `openSessionExceptionModal` en `teacher-dashboard.html` y `js/teacher.js` con la etiqueta identificativa `[TAREA-F7-IMP-08]`.
 - Actualizado el estado de [TAREA-F7-IMP-08] a Completado en Pendientes.md.
+
+
+Fecha: 2026-10-26
+Archivos modificados:
+- backend/academic-service/Code.gs (Líneas 171, 668, 5490-5715)
+- teacher-dashboard.html (Líneas 558, 1570-1596)
+- js/teacher.js (Líneas 863-970)
+- Pendientes.md (Línea 1696)
+Descripción objetiva:
+- Creadas las funciones `getScheduleVersions`, `compareScheduleVersions` y `restoreScheduleVersion` en `backend/academic-service/Code.gs` e integradas en `ROLE_PERMISSIONS` y enrutador `doPost` para el control de versiones de horarios, comparación diff (agregados, modificados, eliminados) y restauración controlada exigiendo confirmación `RESTORE-SCHEDULE-CONFIRMED`.
+- Actualizada la función `publishClassSchedules` en `backend/academic-service/Code.gs` para registrar automáticamente una instantánea de versión publicada en `VersionesHorarios`.
+- Incorporados el botón UI "Versiones Horario", el modal `#modal-schedule-versions` y las funciones `openScheduleVersionsModal`, `compareScheduleVersionsAction` y `restoreScheduleVersionAction` en `teacher-dashboard.html` y `js/teacher.js` con la etiqueta identificativa `[TAREA-F7-IMP-09]`.
+- Actualizado el estado de [TAREA-F7-IMP-09] a Completado en Pendientes.md.

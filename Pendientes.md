@@ -1693,7 +1693,7 @@ FASE 7. PLANIFICACIÓN ACADÉMICA, HORARIOS Y RECURSOS
 
 ---
 
-### [ ] [TAREA-F7-IMP-09] Desarrollar versiones de horarios, comparación y restauración controlada
+### [X] [TAREA-F7-IMP-09] Desarrollar versiones de horarios, comparación y restauración controlada
 - **Origen del Hallazgo:** `AUDITORIA_FASE_7_PLANIFICACION_HORARIOS_RECURSOS.md` / Tarea F7-IMP-09 (P2 · Control de Versiones de Horario)
 - **Prioridad:** P2
 - **Severidad/Clasificación:** Medio (Nueva capacidad de control de cambios)
@@ -1725,7 +1725,7 @@ FASE 7. PLANIFICACIÓN ACADÉMICA, HORARIOS Y RECURSOS
   - CA-F7-60: Las versiones históricas permanecen consultables.
   - CA-F7-61: Una restauración no elimina silenciosamente cambios posteriores ajenos a ella.
   - CA-F7-62: Las diferencias y los resultados de la operación quedan registrados.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completado
 
 ---
 

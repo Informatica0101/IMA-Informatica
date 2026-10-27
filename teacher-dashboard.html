@@ -555,6 +555,9 @@
                                 <button onclick="window.openExamScheduleValidationModal()" class="bg-rose-600 text-white px-3.5 py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider hover:bg-rose-700 transition-all shadow-md">
                                     <i class="fa-solid fa-file-pen mr-1"></i> Validar Evaluaciones
                                 </button>
+                                <button onclick="window.openScheduleVersionsModal()" class="bg-cyan-600 text-white px-3.5 py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider hover:bg-cyan-700 transition-all shadow-md">
+                                    <i class="fa-solid fa-code-branch mr-1"></i> Versiones Horario
+                                </button>
                                 <button id="btn-load-schedules-list" class="bg-indigo-600 text-white px-3.5 py-2.5 rounded-xl font-bold text-xs uppercase tracking-widest hover:bg-indigo-700 transition-all shadow-md">
                                     <i class="fas fa-sync-alt mr-1"></i> Actualizar
                                 </button>
@@ -1560,6 +1563,35 @@
             </div>
             <div class="flex justify-center bg-gray-50 rounded-2xl overflow-hidden">
                 <img id="lightbox-image" src="" alt="Vista previa" class="max-w-full max-h-[70vh] object-contain">
+            </div>
+        </div>
+    </div>
+
+    <!-- [TAREA-F7-IMP-09] [Fase 7: Planificación Académica, Horarios y Recursos] - Modal de Versiones de Horarios, Comparación Diff y Restauración Controlada (#modal-schedule-versions) -->
+    <div id="modal-schedule-versions" class="fixed inset-0 z-[110] bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-3xl shadow-2xl max-w-2xl w-full overflow-hidden border border-slate-100 animate-fade-in">
+            <div class="p-5 bg-cyan-50 border-b border-cyan-100 flex justify-between items-center">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-2xl bg-cyan-600 text-white flex items-center justify-center text-lg shadow-md">
+                        <i class="fa-solid fa-code-branch"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-slate-800 text-sm">Control de Versiones de Horarios</h3>
+                        <p class="text-[10px] text-slate-500 font-medium">Historial de publicaciones, comparación diff y restauración controlada</p>
+                    </div>
+                </div>
+                <button onclick="document.getElementById('modal-schedule-versions').classList.add('hidden')" class="w-8 h-8 rounded-full bg-white/80 text-slate-500 hover:text-slate-800 flex items-center justify-center">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="p-6 space-y-4 max-h-[70vh] overflow-y-auto text-xs">
+                <div class="flex justify-between items-center bg-slate-50 p-3 rounded-2xl border border-slate-200">
+                    <span class="font-bold text-slate-700">Versiones Registradas</span>
+                    <button onclick="window.openScheduleVersionsModal()" class="px-3 py-1 bg-cyan-600 text-white rounded-lg font-bold text-[11px] hover:bg-cyan-700"><i class="fa-solid fa-sync mr-1"></i> Refrescar</button>
+                </div>
+                <div id="schedule-versions-list-container" class="space-y-2">
+                    <p class="text-slate-400 italic text-center">Cargando versiones de horarios...</p>
+                </div>
             </div>
         </div>
     </div>

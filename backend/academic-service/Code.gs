@@ -168,7 +168,7 @@ const ROLE_PERMISSIONS = {
     "getAcademicPeriods", "manageAcademicPeriod", "getSubjectCatalog", "createSubjectCatalogItem", "getStudyPlans", "createStudyPlan",
     "getAcademicOffers", "createAcademicOffer", "getTeacherAssignments", "assignTeacherToClass", "createTeacherSubstitution",
     "getAcademicCalendar", "createCalendarEvent", "getClassSchedules", "createClassSchedule", "deleteClassSchedule", "getAcademicRules", "saveAcademicRule", "getDepartmentAcademicPlanning", "assignDepartmentHead", "getCurricularAnalyticsReport", "getReusableResourceCatalog", "manageReusableResource", "getCurricularEquivalences", "executeCurricularMigration", "registerCurricularAreaExtension", "runCurricularAreaServiceTests", "toggleCurricularAreaStatus", "validateApiContractsTestSuite", "getInstitutionalCatalog", "validateCatalogReference", "generateInstitutionalUUID", "validateInstitutionalIdentifier", "auditInstitutionalIdentifierCollisions", "runConcurrencyAndConsistencySuite", "getPaginatedAcademicHistory", "reconcileRestoredDataIntegrity", "evaluateTransactionalStorageMigrationNeed",
-    "getClassroomResources", "saveClassroomResource", "saveClassroomMaintenance", "getStudentSchedule", "getScheduleConflictResolutionAlternatives", "saveScheduleScenario", "getScheduleScenarios", "saveTeacherWorkLoadPreferences", "createSessionException",
+    "getClassroomResources", "saveClassroomResource", "saveClassroomMaintenance", "getStudentSchedule", "getScheduleConflictResolutionAlternatives", "saveScheduleScenario", "getScheduleScenarios", "saveTeacherWorkLoadPreferences", "createSessionException", "getScheduleVersions", "compareScheduleVersions", "restoreScheduleVersion",
     "createAdmissionRequest", "getAdmissionRequests", "updateAdmissionStatus", "reopenAdmissionRequest", "convertAdmissionToStudent", "scheduleAdmissionInterview", "getAdmissionInterviews", "recordInterviewOutcome", "saveAdmissionEvaluation", "getAdmissionEvaluations", "addToWaitlist", "getWaitlist", "reorderWaitlist", "offerWaitlistSlot", "respondToWaitlistSlot", "resolveAdmissionDuplicate", "getAdmissionAnalyticsReport",
     "getStudentFile", "getStudentFileSummary", "updateStudentFile", "getStudentTimeline", "findDuplicateStudents", "mergeStudentFiles", "getMergePreviewComparison", "unmergeStudentFiles", "getStudentFileAdministrativeReports", "initializeDirectionSecretaryDriveStructure",
     "getStudentGuardians", "saveStudentGuardian", "unlinkStudentGuardian", "uploadStudentDocument", "getStudentDocuments", "updateDocumentStatus", "getPendingDocumentsReport", "grantDocumentExemption", "restoreDocumentVersion", "checkAndNotifyExpiringStudentDocuments",
@@ -665,6 +665,9 @@ function doPost(e) {
       case "getTeachingHoursSummary": result = getTeachingHoursSummary(payload); break;
       case "rescheduleCancelledSession": result = rescheduleCancelledSession(payload); break;
       case "createSessionException": result = createSessionException(payload); break;
+      case "getScheduleVersions": result = getScheduleVersions(payload); break;
+      case "compareScheduleVersions": result = compareScheduleVersions(payload); break;
+      case "restoreScheduleVersion": result = restoreScheduleVersion(payload); break;
       case "getPendingSessionRecoveries": result = getPendingSessionRecoveries(payload); break;
       case "publishClassSchedules": result = publishClassSchedules(payload); break;
       case "getIndividualCalendar": result = getIndividualCalendar(payload); break;
@@ -5485,11 +5488,230 @@ function publishClassSchedules(payload) {
   const publisher = payload && payload.authUserId ? payload.authUserId : "Administración";
   logStructuredEvent("ACADEMIC", "publishClassSchedules", "INFO", "SCHEDULES_PUBLISHED", `Publicación exitosa de ${publishedCount} bloques de horarios.`, { anoLectivo, publishedCount, publisher }, payload && payload.authRole);
 
+  // [TAREA-F7-IMP-09] Guardar instantánea de versión de horario publicada automáticamente
+  try {
+    const vSheet = getOrCreateSheet(ss, "VersionesHorarios");
+    const newVersionId = "VER-HOR-" + Utilities.getUuid().substring(0, 8).toUpperCase();
+    const activeBlocks = sheet.getDataRange().getValues().slice(1).filter(r => r[7] === "Activo").map(r => ({
+      horarioId: r[0], ofertaId: r[1], diaSemana: r[2], horaInicio: r[3], horaFin: r[4], aulaCodigo: r[5], docenteUserId: r[6], estado: r[7]
+    }));
+
+    vSheet.appendRow([
+      newVersionId,
+      anoLectivo || "2026",
+      `Publicación de matriz de horarios (${publishedCount} bloques activados)`,
+      activeBlocks.length,
+      JSON.stringify(activeBlocks),
+      publisher,
+      new Date().toISOString()
+    ]);
+  } catch (errV) {
+    logStructuredEvent("ACADEMIC", "publishClassSchedules", "WARN", "VERSION_SNAPSHOT_FAILED", `Error guardando versión de horario: ${errV.message}`, {}, payload && payload.authRole);
+  }
+
   return {
     status: "success",
     message: `Matriz de horarios publicada exitosamente. Se activaron ${publishedCount} bloques lectivos.`,
     publishedCount,
     conflicts: []
+  };
+}
+
+// [TAREA-F7-IMP-09] [Fase 7: Planificación Académica, Horarios y Recursos] - Consulta de historial de versiones de la matriz de horarios.
+function getScheduleVersions(payload) {
+  const { anoLectivo } = payload || {};
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = getOrCreateSheet(ss, "VersionesHorarios");
+  const data = sheet.getDataRange().getValues();
+
+  if (data.length <= 1) {
+    return { status: "success", data: [] };
+  }
+
+  const versions = data.slice(1).filter(r => {
+    if (anoLectivo && String(r[1]).trim() !== String(anoLectivo).trim()) return false;
+    return true;
+  }).map(r => ({
+    versionId: r[0],
+    anoLectivo: r[1],
+    descripcion: r[2],
+    totalBloques: r[3],
+    creadoPor: r[5],
+    timestamp: r[6]
+  })).reverse();
+
+  return { status: "success", data: versions };
+}
+
+// [TAREA-F7-IMP-09] [Fase 7: Planificación Académica, Horarios y Recursos] - Comparación diff de versiones de horarios (agregados, modificados, eliminados).
+function compareScheduleVersions(payload) {
+  const { versionIdA, versionIdB } = payload || {};
+  if (!versionIdA) throw new Error("versionIdA es requerido para comparar versiones.");
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const vSheet = getOrCreateSheet(ss, "VersionesHorarios");
+  const vData = vSheet.getDataRange().getValues().slice(1);
+
+  const vA = vData.find(r => String(r[0]).trim() === String(versionIdA).trim());
+  if (!vA) throw new Error("Versión A no encontrada.");
+
+  let blocksA = [];
+  try { blocksA = JSON.parse(vA[4] || "[]"); } catch (e) { blocksA = []; }
+
+  let blocksB = [];
+  if (versionIdB) {
+    const vB = vData.find(r => String(r[0]).trim() === String(versionIdB).trim());
+    if (vB) {
+      try { blocksB = JSON.parse(vB[4] || "[]"); } catch (e) { blocksB = []; }
+    }
+  } else {
+    const horSheet = getOrCreateSheet(ss, "HorariosClase");
+    const horData = horSheet.getDataRange().getValues().slice(1);
+    blocksB = horData.filter(r => r[7] !== "Inactivo").map(r => ({
+      horarioId: r[0],
+      ofertaId: r[1],
+      diaSemana: r[2],
+      horaInicio: r[3],
+      horaFin: r[4],
+      aulaCodigo: r[5],
+      docenteUserId: r[6],
+      estado: r[7]
+    }));
+  }
+
+  const mapA = new Map(blocksA.map(b => [b.horarioId || (b[0]), b]));
+  const mapB = new Map(blocksB.map(b => [b.horarioId || (b[0]), b]));
+
+  const agregados = [];
+  const modificados = [];
+  const eliminados = [];
+
+  mapB.forEach((b, id) => {
+    if (!mapA.has(id)) {
+      agregados.push(b);
+    } else {
+      const a = mapA.get(id);
+      const strA = JSON.stringify(a);
+      const strB = JSON.stringify(b);
+      if (strA !== strB) {
+        modificados.push({ id, versionA: a, versionB: b });
+      }
+    }
+  });
+
+  mapA.forEach((a, id) => {
+    if (!mapB.has(id)) {
+      eliminados.push(a);
+    }
+  });
+
+  return {
+    status: "success",
+    diff: {
+      versionA: versionIdA,
+      versionB: versionIdB || "VIVO_ACTUAL",
+      resumen: {
+        totalAgregados: agregados.length,
+        totalModificados: modificados.length,
+        totalEliminados: eliminados.length
+      },
+      agregados,
+      modificados,
+      eliminados
+    }
+  };
+}
+
+// [TAREA-F7-IMP-09] [Fase 7: Planificación Académica, Horarios y Recursos] - Restauración controlada de versión anterior previa validación de conflictos y código de confirmación.
+function restoreScheduleVersion(payload) {
+  const { versionId, codigoConfirmacion } = payload || {};
+  if (!versionId) throw new Error("versionId es requerido.");
+  if (codigoConfirmacion !== "RESTORE-SCHEDULE-CONFIRMED") {
+    throw new Error("Código de confirmación inválido. Exigido 'RESTORE-SCHEDULE-CONFIRMED'.");
+  }
+
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const vSheet = getOrCreateSheet(ss, "VersionesHorarios");
+  const vData = vSheet.getDataRange().getValues().slice(1);
+  const versionRow = vData.find(r => String(r[0]).trim() === String(versionId).trim());
+
+  if (!versionRow) throw new Error("Versión de horario no encontrada.");
+
+  let blocksToRestore = [];
+  try { blocksToRestore = JSON.parse(versionRow[4] || "[]"); } catch (e) { blocksToRestore = []; }
+
+  if (blocksToRestore.length === 0) throw new Error("La versión seleccionada no contiene bloques de horario.");
+
+  const conflicts = [];
+  blocksToRestore.forEach(b => {
+    const diaSemana = b.diaSemana || b[2];
+    const horaInicio = b.horaInicio || b[3];
+    const horaFin = b.horaFin || b[4];
+    const aulaCodigo = b.aulaCodigo || b[5];
+    const docenteUserId = b.docenteUserId || b[6];
+    const ofertaId = b.ofertaId || b[1];
+    const id = b.horarioId || b[0];
+
+    const c = checkScheduleConflict({
+      diaSemana, horaInicio, horaFin, aulaCodigo, docenteUserId, ofertaId, excludeHorarioId: id
+    });
+    if (c.hasConflict) {
+      conflicts.push({ id, diaSemana, horaInicio, horaFin, reason: c.reason });
+    }
+  });
+
+  if (conflicts.length > 0) {
+    return {
+      status: "error",
+      message: `Se encontraron ${conflicts.length} conflicto(s) al intentar restaurar la versión ${versionId}.`,
+      conflicts
+    };
+  }
+
+  const horSheet = getOrCreateSheet(ss, "HorariosClase");
+  const horData = horSheet.getDataRange().getValues();
+  const restoredBy = payload.authUserId || "ADMIN";
+  const nowStr = new Date().toISOString();
+
+  blocksToRestore.forEach(b => {
+    const id = b.horarioId || b[0];
+    const idx = horData.findIndex(r => String(r[0]).trim() === String(id).trim());
+    const rowVal = [
+      id,
+      b.ofertaId || b[1],
+      b.diaSemana || b[2],
+      b.horaInicio || b[3],
+      b.horaFin || b[4],
+      b.aulaCodigo || b[5],
+      b.docenteUserId || b[6],
+      "Activo"
+    ];
+
+    if (idx !== -1) {
+      horSheet.getRange(idx + 1, 1, 1, 8).setValues([rowVal]);
+    } else {
+      horSheet.appendRow(rowVal);
+    }
+  });
+
+  const newVersionId = "VER-HOR-" + Utilities.getUuid().substring(0, 8).toUpperCase();
+  vSheet.appendRow([
+    newVersionId,
+    versionRow[1],
+    `Restauración a partir de versión ${versionId}`,
+    blocksToRestore.length,
+    JSON.stringify(blocksToRestore),
+    restoredBy,
+    nowStr
+  ]);
+
+  logStructuredEvent("ACADEMIC", "restoreScheduleVersion", "INFO", "SCHEDULE_VERSION_RESTORED", `Matriz de horarios restaurada exitosamente a la versión ${versionId}`, { versionId, newVersionId, restoredCount: blocksToRestore.length }, payload && payload.authRole);
+
+  return {
+    status: "success",
+    message: `Matriz de horarios restaurada exitosamente a la versión ${versionId}. Se generó la nueva versión ${newVersionId}.`,
+    newVersionId,
+    restoredCount: blocksToRestore.length
   };
 }
 
