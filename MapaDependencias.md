@@ -112,3 +112,12 @@
 - **Endpoint:** `runAcademicPlanningRegressionSuite` (Ejecución sintética de batería de pruebas TC-01 a TC-07).
 - **Cobertura de Casos de Prueba:** Detección de colisiones e invariantes de horario, carga laboral docente, restricciones curriculares, capacidad/aforo de secciones, sustituciones, plantillas de horario y bitácora de auditoría.
 - **Acceso:** Restringido a roles autorizados en `ROLE_PERMISSIONS` e integrado en `doPost`.
+
+### 3.1 Supervisión de Cuotas de Almacenamiento en Google Drive (Fase 8 - TAREA-F8-MANT-01)
+- **Endpoint:** `getDriveStorageQuotaMetricsReport` (Cálculo dinámico de bytes utilizados, totales y libres en Google Drive con clasificación de alertas por umbrales).
+- **Integración con Entregas:** Validación en `submitAssignment` para prevenir la confirmación errónea de entregas ante límites de cuota alcanzados.
+- **Acceso:** Registrado en `getDynamicPermissionsForRole` y ruteado en `doPost` de `backend/task-service/Code.gs`.
+
+### 3.2 Previsualización Integrada de Documentos PDF en Entregas (Fase 8 - TAREA-F8-OPT-01)
+- **Endpoint:** `getSubmissionDocumentPreviewUrl` (Generación de URLs seguras de vista previa embebida e identificadores de descarga de Google Drive con verificación RBAC).
+- **Visor Frontend:** `#pdf-preview-wrapper` en `teacher-dashboard.html` y controlador `previewSubmissionPDFDocument` en `js/teacher.js`.

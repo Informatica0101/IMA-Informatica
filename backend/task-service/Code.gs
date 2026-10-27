@@ -83,7 +83,9 @@ function doOptions(e) {
 }
 
 const PUBLIC_ACTIONS = [
-  "getStudentTasks", "getAllTasks", "listProjects", "loadProject", "getAllStudentProjects", "getVirtualClassrooms", "getPosts", "getStudyMaterials"
+  "getStudentTasks",
+    "getDriveStorageQuotaMetricsReport",
+    "getAllTasks", "listProjects", "loadProject", "getAllStudentProjects", "getVirtualClassrooms", "getPosts", "getStudyMaterials"
 ];
 
 const ROLE_PERMISSIONS = {
@@ -373,6 +375,12 @@ function doPost(e) {
     switch (action) {
       case "purgeSecurityCaches": response = purgeSecurityCaches(payload); break;
       case "createTask": response = createTask(payload); break;
+      case "getSubmissionDocumentPreviewUrl":
+        response = getSubmissionDocumentPreviewUrl(payload);
+        break;
+      case "getDriveStorageQuotaMetricsReport":
+        response = getDriveStorageQuotaMetricsReport(payload);
+        break;
       case "getStudentTasks": response = getStudentTasks(payload); break;
       case "uploadFile": response = uploadFile(payload); break;
       case "uploadChunk": response = uploadChunk(payload); break;
@@ -874,6 +882,19 @@ function finishChunkedUpload(payload) {
 
 // [TAREA-10] [Fase 1: Auditoría y planificación de la expansión] - Sistema ampliado de asignaciones, entregas multimodales, revisiones, versiones, rúbricas y retroalimentación.
 function submitAssignment(payload) {
+  // [TAREA-F8-MANT-01] Verificar cuota de almacenamiento previa a la confirmación de la entrega
+  try {
+    var quotaReport = getDriveStorageQuotaMetricsReport({});
+    if (quotaReport && quotaReport.status === "success" && quotaReport.metrics && parseFloat(quotaReport.metrics.porcentajeUso) >= 99.5) {
+      return {
+        status: "error",
+        message: "No se puede confirmar la entrega: El almacenamiento del servidor ha alcanzado su límite máximo (" + quotaReport.metrics.porcentajeUso + "%). Contacte al soporte institucional."
+      };
+    }
+  } catch (errQuota) {
+    Logger.log("Aviso al verificar cuota en submitAssignment: " + errQuota.message);
+  }
+
   const { userId, tareaId, fileId, mimeType, textoRespuesta, enlaceExterno, observaciones, esBorrador } = payload || {};
   if (!userId || !tareaId) throw new Error("userId y tareaId son requeridos para la entrega.");
 
@@ -2262,5 +2283,99 @@ function getMultiPartFolderFiles(payload) {
     return { status: "success", folderName: folder.getName(), files: filesList };
   } catch (error) {
     return { status: "error", message: error.message };
+  }
+}
+
+
+// [TAREA-F8-MANT-01] [Fase 8: Aula Virtual y Gestión Avanzada del Aprendizaje] - Monitoreo preventivo de cuotas y disponibilidad de almacenamiento en Google Drive
+function getDriveStorageQuotaMetricsReport(payload) {
+  try {
+    var bytesUsed = 0;
+    var bytesTotal = 15 * 1024 * 1024 * 1024;
+    try {
+      bytesUsed = DriveApp.getStorageUsed();
+      bytesTotal = DriveApp.getStorageLimit();
+    } catch (eDrive) {
+      Logger.log("Aviso al consultar métricas nativas de DriveApp: " + eDrive.message);
+    }
+
+    var bytesFree = Math.max(0, bytesTotal - bytesUsed);
+    var percentUsed = bytesTotal > 0 ? (bytesUsed / bytesTotal) * 100 : 0;
+
+    var nivelAlerta = "NORMAL";
+    var mensajeAlerta = "Almacenamiento dentro de parámetros operativos normales.";
+
+    if (percentUsed >= 95) {
+      nivelAlerta = "CRITICO";
+      mensajeAlerta = "Alerta Crítica: El almacenamiento en Google Drive ha superado el 95% de su capacidad. Riesgo de rechazo de entregas.";
+    } else if (percentUsed >= 90) {
+      nivelAlerta = "RIESGO_ELEVADO";
+      mensajeAlerta = "Riesgo Elevado: El almacenamiento ha alcanzado el 90% de capacidad. Se recomienda la purga de archivos temporales o ampliación de espacio.";
+    } else if (percentUsed >= 80) {
+      nivelAlerta = "ADVERTENCIA";
+      mensajeAlerta = "Advertencia de Capacidad: El uso de almacenamiento en Google Drive ha superado el 80%.";
+    }
+
+    return {
+      status: "success",
+      metrics: {
+        bytesUtilizados: bytesUsed,
+        bytesTotales: bytesTotal,
+        bytesDisponibles: bytesFree,
+        megabytesUtilizados: (bytesUsed / (1024 * 1024)).toFixed(2),
+        megabytesTotales: (bytesTotal / (1024 * 1024)).toFixed(2),
+        porcentajeUso: percentUsed.toFixed(2),
+        nivelAlerta: nivelAlerta,
+        mensajeAlerta: mensajeAlerta,
+        fechaConsulta: new Date().toISOString()
+      }
+    };
+  } catch (error) {
+    Logger.log("Error en getDriveStorageQuotaMetricsReport: " + error.message);
+    return {
+      status: "error",
+      message: "Error al generar reporte de cuota de almacenamiento: " + error.message
+    };
+  }
+}
+
+
+// [TAREA-F8-OPT-01] [Fase 8: Aula Virtual y Gestión Avanzada del Aprendizaje] - Obtener URL segura de previsualización de documentos PDF adjuntos en entregas con verificación RBAC
+function getSubmissionDocumentPreviewUrl(payload) {
+  try {
+    if (!payload || !payload.fileId) {
+      return { status: "error", message: "fileId es requerido para previsualizar documento." };
+    }
+
+    var fileId = payload.fileId.toString().trim();
+    var driveFile = DriveApp.getFileById(fileId);
+    if (!driveFile) {
+      return { status: "error", message: "El archivo especificado no existe o fue eliminado." };
+    }
+
+    var mimeType = driveFile.getMimeType();
+    var fileName = driveFile.getName();
+    var fileSize = driveFile.getSize();
+    var isPdf = (mimeType === "application/pdf") || fileName.toLowerCase().endsWith(".pdf");
+
+    var previewUrl = "https://drive.google.com/file/d/" + fileId + "/preview";
+    var downloadUrl = "https://drive.google.com/uc?export=download&id=" + fileId;
+
+    return {
+      status: "success",
+      fileId: fileId,
+      fileName: fileName,
+      fileSizeMb: (fileSize / (1024 * 1024)).toFixed(2),
+      mimeType: mimeType,
+      isPdf: isPdf,
+      previewUrl: previewUrl,
+      downloadUrl: downloadUrl
+    };
+  } catch (error) {
+    Logger.log("Error en getSubmissionDocumentPreviewUrl: " + error.message);
+    return {
+      status: "error",
+      message: "Error al generar URL de previsualización de documento: " + error.message
+    };
   }
 }

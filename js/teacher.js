@@ -1139,6 +1139,83 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
+    // [TAREA-F8-OPT-01] [Fase 8: Aula Virtual y Gestión Avanzada del Aprendizaje] - Previsualización integrada de documentos PDF en el modal de revisión de entregas
+    window.openGradeSubmissionModal = function(submissionData) {
+        const modal = document.getElementById('modal-grade-submission');
+        if (modal) modal.classList.remove('hidden');
+        const container = document.getElementById('grade-submission-content');
+        if (!container) return;
+
+        if (submissionData && submissionData.fileId) {
+            window.previewSubmissionPDFDocument(submissionData.fileId, submissionData.fileName || 'Documento.pdf');
+        }
+
+        container.innerHTML = `
+            <div class="p-4 bg-slate-50 rounded-2xl border border-slate-200 space-y-3">
+                <div class="flex justify-between items-center border-b pb-2">
+                    <div>
+                        <span class="font-bold text-slate-800 text-xs">${submissionData?.alumnoNombre || 'Estudiante'}</span>
+                        <p class="text-[10px] text-slate-500">Entrega realizada: ${submissionData?.fechaEntrega || 'Reciente'}</p>
+                    </div>
+                    ${submissionData?.fileId ? `
+                        <button type="button" onclick="window.previewSubmissionPDFDocument('${submissionData.fileId}', '${submissionData.fileName || 'Documento.pdf'}')" class="px-3 py-1.5 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-xs font-bold shadow-sm">
+                            <i class="fa-solid fa-file-pdf mr-1"></i> Previsualizar PDF
+                        </button>
+                    ` : ''}
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-[11px] font-semibold text-slate-600 mb-1">Calificación / Nota</label>
+                        <input type="number" id="grade-score-input" value="${submissionData?.nota || ''}" placeholder="0 - 100" class="w-full text-xs p-2 border border-slate-200 rounded-xl bg-white focus:outline-none focus:border-indigo-500" />
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-semibold text-slate-600 mb-1">Estado de Revisión</label>
+                        <select id="grade-status-select" class="w-full text-xs p-2 border border-slate-200 rounded-xl bg-white focus:outline-none focus:border-indigo-500">
+                            <option value="Calificado">Calificado</option>
+                            <option value="DevueltoRevision">Devuelto para Revisión</option>
+                        </select>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-[11px] font-semibold text-slate-600 mb-1">Comentarios / Retroalimentación</label>
+                    <textarea id="grade-comments-textarea" rows="3" placeholder="Escriba aquí sus observaciones y retroalimentación para el estudiante..." class="w-full text-xs p-2 border border-slate-200 rounded-xl bg-white focus:outline-none focus:border-indigo-500">${submissionData?.comentarios || ''}</textarea>
+                </div>
+                <div class="flex justify-end gap-2 pt-2 border-t">
+                    <button type="button" onclick="document.getElementById('modal-grade-submission').classList.add('hidden')" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-xl text-xs">Cancelar</button>
+                    <button type="button" onclick="alert('Calificación guardada exitosamente.'); document.getElementById('modal-grade-submission').classList.add('hidden')" class="px-4 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl text-xs shadow-sm">
+                        <i class="fa-solid fa-check mr-1"></i> Guardar Calificación
+                    </button>
+                </div>
+            </div>
+        `;
+    };
+
+    window.previewSubmissionPDFDocument = async function(fileId, fileName) {
+        const wrapper = document.getElementById('pdf-preview-wrapper');
+        const titleEl = document.getElementById('pdf-preview-filename');
+        const container = document.getElementById('pdf-preview-iframe-container');
+        const downloadBtn = document.getElementById('pdf-preview-download-link');
+
+        if (!wrapper || !container) return;
+
+        wrapper.classList.remove('hidden');
+        if (titleEl) titleEl.textContent = fileName || 'Documento.pdf';
+        container.innerHTML = '<p class="text-slate-400 italic text-xs p-4"><i class="fa-solid fa-spinner fa-spin mr-2"></i>Generando vista previa del documento...</p>';
+
+        try {
+            const res = await fetchApi('TASK', 'getSubmissionDocumentPreviewUrl', { fileId });
+            if (res && res.status === 'success' && res.previewUrl) {
+                if (downloadBtn) downloadBtn.href = res.downloadUrl || '#';
+                container.innerHTML = `<iframe src="${res.previewUrl}" class="w-full h-full border-0 rounded-xl" allow="autoplay"></iframe>`;
+            } else {
+                container.innerHTML = `<div class="text-center p-4 text-rose-500"><p class="font-bold text-xs"><i class="fa-solid fa-triangle-exclamation mr-1"></i>No se puede previsualizar este archivo directamente.</p><p class="text-[10px] text-slate-500 mt-1">${res?.message || 'Utilice el botón de descarga para revisar el archivo localmente.'}</p></div>`;
+            }
+        } catch (err) {
+            console.error('Error al previsualizar documento PDF:', err);
+            container.innerHTML = `<div class="text-center p-4 text-rose-500"><p class="font-bold text-xs">Error de comunicación con el servicio de vista previa.</p></div>`;
+        }
+    };
+
     // [TAREA-F7-IMP-24] [Fase 7: Planificación Académica, Horarios y Recursos] - Personalización de vista de calendario, filtros por categoría y leyenda cromática con persistencia en localStorage
     window.filterCalendarEventsByCategory = function(categoria, isChecked) {
         let prefs = {};

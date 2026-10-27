@@ -4,7 +4,7 @@
 
 ---
 
-### [ ] [TAREA-F8-MANT-01] Implementar el seguimiento preventivo de las cuotas y la disponibilidad de almacenamiento en Google Drive
+### [X] [TAREA-F8-MANT-01] Implementar el seguimiento preventivo de las cuotas y la disponibilidad de almacenamiento en Google Drive
 - **Origen del Hallazgo:** `AUDITORIA_FASE_8_AULA_VIRTUAL_APRENDIZAJE.md` / Tarea F8-MANT-01 (P1 · Supervisión de Almacenamiento Drive)
 - **Prioridad:** P1
 - **Severidad/Clasificación:** Alta (Mantenimiento preventivo y observabilidad)
@@ -26,7 +26,7 @@
   - CA-F8-010: Se identifican y monitorean las ubicaciones de almacenamiento utilizadas por el aula virtual.
   - CA-F8-011: La simulación de cuota cercana al límite genera alertas preventivas para administradores.
   - CA-F8-012: Las cargas fallidas por espacio no se confirman como entregas registradas exitosamente.
-- **Estado:** [ ] Pendiente
+- **Estado:** [X] Completado
 
 ---
 
@@ -34,7 +34,7 @@
 
 ---
 
-### [ ] [TAREA-F8-OPT-01] Implementar la previsualización integrada de documentos PDF en la revisión de entregas
+### [X] [TAREA-F8-OPT-01] Implementar la previsualización integrada de documentos PDF en la revisión de entregas
 - **Origen del Hallazgo:** `AUDITORIA_FASE_8_AULA_VIRTUAL_APRENDIZAJE.md` / Tarea F8-OPT-01 (P2 · Previsualización PDF)
 - **Prioridad:** P2
 - **Severidad/Clasificación:** Medio (Mejora de usabilidad y eficiencia docente)

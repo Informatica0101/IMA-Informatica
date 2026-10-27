@@ -3663,3 +3663,48 @@
     </script>
 </body>
 </html>
+    <!-- [TAREA-F8-OPT-01] [Fase 8: Aula Virtual y Gestión Avanzada del Aprendizaje] - Visor Integrado de Previsualización PDF de Entregas -->
+    <div id="modal-grade-submission" class="fixed inset-0 z-[110] bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-3xl shadow-2xl max-w-4xl w-full overflow-hidden border border-slate-100 animate-fade-in">
+            <div class="p-5 bg-indigo-50 border-b border-indigo-100 flex justify-between items-center">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-2xl bg-indigo-600 text-white flex items-center justify-center text-lg shadow-md">
+                        <i class="fa-solid fa-file-pen"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-slate-800 text-sm">Revisión y Calificación de Entrega</h3>
+                        <p class="text-[10px] text-slate-500 font-medium">Previsualización integrada de documentos, rúbricas y retroalimentación</p>
+                    </div>
+                </div>
+                <button onclick="document.getElementById('modal-grade-submission').classList.add('hidden')" class="w-8 h-8 rounded-full bg-white/80 text-slate-500 hover:text-slate-800 flex items-center justify-center">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="p-6 space-y-4 max-h-[80vh] overflow-y-auto text-xs">
+                <!-- Visor PDF Embed -->
+                <div id="pdf-preview-wrapper" class="hidden bg-slate-900 rounded-2xl p-4 border border-slate-700 space-y-3">
+                    <div class="flex justify-between items-center text-white border-b border-slate-700 pb-2">
+                        <div class="flex items-center gap-2">
+                            <i class="fa-solid fa-file-pdf text-rose-500 text-base"></i>
+                            <span id="pdf-preview-filename" class="font-bold text-xs">Documento.pdf</span>
+                        </div>
+                        <div class="flex items-center gap-2 text-xs">
+                            <a id="pdf-preview-download-link" href="#" target="_blank" class="px-3 py-1 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl transition">
+                                <i class="fa-solid fa-download mr-1"></i> Descargar Original
+                            </a>
+                            <button type="button" onclick="document.getElementById('pdf-preview-wrapper').classList.add('hidden')" class="text-slate-400 hover:text-white">
+                                <i class="fa-solid fa-xmark text-sm"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div id="pdf-preview-iframe-container" class="w-full h-80 bg-white rounded-xl overflow-hidden shadow-inner flex items-center justify-center">
+                        <p class="text-slate-400 italic text-xs">Cargando previsualización del documento...</p>
+                    </div>
+                </div>
+
+                <div id="grade-submission-content" class="space-y-3">
+                    <p class="text-slate-400 italic text-center p-4">Seleccione una entrega para iniciar la revisión.</p>
+                </div>
+            </div>
+        </div>
+    </div>
